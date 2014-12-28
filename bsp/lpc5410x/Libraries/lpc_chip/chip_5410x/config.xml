@@ -1,0 +1,48 @@
+<LPCOpenCfg>
+	<symbol options="default" name="varChipConfigDir" value="${varChipLibSrcDir}/config"/>
+	<symbol options="default" name="varCPUCore" value="m4"/>
+	<symbol options="default" name="varPMULibName_m4" value="power"/>
+	<symbol options="default" name="varPMULibName_m0plus" value="power_m0"/>
+	<symbol name="varExampleName"     value="${prjCurrClassName}_${prjCurrExampleName}"/> <!-- FIXME: Need to append class name -->
+	<symbol name="varSysinitDir" value="${prjDestToRoot}/${prjExampleBaseDir}/startup"/>
+
+	<module name="core_${varCPUCore}"/>
+	<template section="filelist" name="${varChipLibName}" tool="xpresso">
+		<import src="${varChipConfigDir}" dest="inc">
+			<include>*.h</include>
+		</import>
+	</template>
+	<template section="import" name="${varChipLibName}_inc1" tool="xpresso">
+		<copy>../chip_common/error.h</copy>
+		<copy>../chip_common/iap.h</copy>
+		<copy>../chip_common/packing.h</copy>
+		<copy>../chip_common/rtc_ut.h</copy>
+		<copy>../chip_common/stopwatch.h</copy>
+	</template>
+	<template section="import" name="${varChipLibName}_src1" tool="xpresso">
+		<copy>../chip_common/iap.c</copy>
+		<copy>../chip_common/rtc_ut.c</copy>
+	</template>
+	<template section="filelist" name="${varChipLibName}" tool="xpresso">
+		<import src="${varChipLibSrcDir}/power_lib/lpcxpresso" dest="libs">
+			<copy>lib${varPMULibName_${varCPUCore}}.a</copy>
+		</import>
+	</template>
+	<template section="import" name="${varExampleEnable}_startup" tool="xpresso">
+		<copy>crp.c</copy>
+	</template>
+	<template section="cfglist" tool="xpresso" name="${varExampleEnable}">
+		<setting id="linker.crp">
+			<value>true</value>
+		</setting>
+	</template>
+	<template tool="xpresso" section="cfglist" name="${varExampleEnable}">
+		<setting id="linker.paths">
+			<value>${workspace_loc:/${varChipLibName}/libs}</value>
+		</setting>
+		<!-- FIXME: These must be single -->
+		<setting id="linker.libs">
+			<value>${varPMULibName_${varCPUCore}}</value>
+		</setting>
+	</template>
+</LPCOpenCfg>

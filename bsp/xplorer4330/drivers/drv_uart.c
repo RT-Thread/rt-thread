@@ -244,8 +244,7 @@ void rt_hw_uart_init(void)
     LPC_USART0->DLM    = 0x00;
     LPC_USART0->FDR    = 0xC1;
     LPC_USART0->LCR    = 0x03;            /* DLAB = 0                           */
-    /* enable the receive interrupt */
-    LPC_USART0->IER |= UART_IER_RBRINT_EN;
+	
     /* preemption = 1, sub-priority = 1 */
     NVIC_SetPriority(uart->USART_IRQn, ((0x01 << 3) | 0x01));
 
@@ -297,8 +296,6 @@ void rt_hw_uart_init(void)
     LPC_USART2->DLM    = 0x00;
     LPC_USART2->FDR    = 0xC1;
     LPC_USART2->LCR    = 0x03;            /* DLAB = 0                           */
-    /* enable the receive interrupt */
-    LPC_USART2->IER |= UART_IER_RBRINT_EN;
     /* preemption = 1, sub-priority = 1 */
     NVIC_SetPriority(uart->USART_IRQn, ((0x01 << 3) | 0x01));
 
