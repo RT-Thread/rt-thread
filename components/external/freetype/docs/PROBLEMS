@@ -14,7 +14,7 @@ Running Problems
 -----
 
 Of course,  there might be  bugs in FreeType,  but some fonts based on
-the  PostScript  format can't  behandled indeed.  The  reason  is that
+the  PostScript  format can't  be handled indeed.  The reason  is that
 FreeType  doesn't contain a full  PostScript  interpreter  but applies
 pattern matching instead.  In case a font doesn't follow the  standard
 structure of the given font format, FreeType fails.  A typical example
@@ -24,6 +24,19 @@ between low and high resolution versions of the glyphs.
 It might be  possible to patch  FreeType in  some situations,  though.
 Please report failing fonts so that we investigate the problem and set
 up a list of such problematic fonts.
+
+
+* Why do identical FreeType  versions render differently  on different
+  platforms?
+
+-----
+
+Different distributions compile FreeType with different options.   The
+developer  version of  a  distribution's  FreeType  package,  which is
+needed to compile  your program  against FreeType,  includes the  file
+ftoption.h.  Compare  each platform's  copy of ftoption.h to  find the
+differences.
+
 
 ----------------------------------------------------------------------
 

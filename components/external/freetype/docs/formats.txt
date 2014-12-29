@@ -11,8 +11,9 @@ reference document and whether it is supported in FreeType 2.
   wrapper format:
     The format used  to represent the font data.  In  the table below it
     is used only if the font format differs.  Possible values are `SFNT'
-    (binary), `PS' (a text header, followed by binary or text data), and
-    `LZW' (compressed with either `gzip' or `compress').
+    (binary), `PS' (a text header, followed by binary or text data),
+    `LZW' (compressed with either `gzip' or `compress'), and
+    `BZ2' (compressed with `bzip2`).
 
   font format:
     How the font  is to be accessed, possibly  after converting the file
@@ -111,8 +112,9 @@ MAC  ---     PS     TYPE_1  ---        type1    T1_SPEC.pdf
 ---  ?       ?      CEF     ?          cff      ?
 
 
----  ---     PCF    ---     ---        pcf      X11, [4]
----  LZW     PCF    ---     ---        pcf      X11, [4]
+---  ---     PCF    ---     ---        pcf      X11 [4]
+---  LZW     PCF    ---     ---        pcf      X11 [4]
+---  BZ2     PCF    ---     ---        pcf      X11 [4]
 
 
 ---  ---     PFR    PFR0    ---        pfr      [2]
@@ -143,15 +145,23 @@ MAC  ---     PS     TYPE_1  ---        type1    T1_SPEC.pdf
 
 [3] Support is rudimentary currently; some tables are not loaded yet.
 
-[4] There is no formal PCF specification; you have to deduce the exact
-    format from the source code within X11.  George Williams did this for
-    his FontForge editor:
+[4] See
+
+      THE X WINDOW SYSTEM SERVER: X VERSION 11, RELEASE 5
+      Elias Israel, Erik Fortune, Digital Press, 1992
+      ISBN 1-55558-096-3
+
+    for a specification  given in Appendix D on pgs. 436-450.   However,
+    this information  might be out of  date; unfortunately,  there is no
+    PCF  specification available  online, and this book is out of print.
+    George  Williams deduced  the font  format from the X11  sources and
+    documented it for his FontForge font editor:
 
       http://fontforge.sourceforge.net/pcf-format.html
 
 ------------------------------------------------------------------------
 
-Copyright 2004, 2005, 2008, 2009 by
+Copyright 2004, 2005, 2008, 2009, 2010 by
 David Turner, Robert Wilhelm, and Werner Lemberg.
 
 This  file is  part  of the  FreeType  project, and  may  only be  used,

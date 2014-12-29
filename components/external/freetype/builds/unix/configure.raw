@@ -2,7 +2,7 @@
 #
 # Process this file with autoconf to produce a configure script.
 #
-# Copyright 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010 by
+# Copyright 2001-2014 by
 # David Turner, Robert Wilhelm, and Werner Lemberg.
 #
 # This file is part of the FreeType project, and may only be used, modified,
@@ -17,7 +17,7 @@ AC_CONFIG_SRCDIR([ftconfig.in])
 
 # Don't forget to update docs/VERSION.DLL!
 
-version_info='10:0:4'
+version_info='17:3:11'
 AC_SUBST([version_info])
 ft_version=`echo $version_info | tr : .`
 AC_SUBST([ft_version])
@@ -33,6 +33,10 @@ AC_CANONICAL_HOST
 AC_PROG_CC
 AC_PROG_CPP
 AC_SUBST(EXEEXT)
+
+PKG_PROG_PKG_CONFIG([0.24])
+
+LT_INIT(win32-dll)
 
 
 # checks for native programs to generate building tool
@@ -52,7 +56,7 @@ if test ${cross_compiling} = yes; then
     EXEEXT_BUILD=""
   elif test -x a_out.exe -o -x conftest.exe; then
     EXEEXT_BUILD=".exe"
-  elif test -x conftest.* ; then
+  elif test -x conftest.*; then
     EXEEXT_BUILD=`echo conftest.* | sed -n '1s/^.*\././'`
   fi
   rm -f a.* b.* a_out.exe conftest.*
@@ -66,32 +70,8 @@ AC_SUBST(CC_BUILD)
 AC_SUBST(EXEEXT_BUILD)
 
 
-
-# get compiler flags right
-
-if test "x$GCC" = xyes; then
-  XX_CFLAGS="-Wall"
-  XX_ANSIFLAGS="-pedantic -ansi"
-else
-  case "$host" in
-  *-dec-osf*)
-    CFLAGS=
-    XX_CFLAGS="-std1 -g3"
-    XX_ANSIFLAGS=
-    ;;
-  *)
-    XX_CFLAGS=
-    XX_ANSIFLAGS=
-    ;;
-  esac
-fi
-AC_SUBST([XX_CFLAGS])
-AC_SUBST([XX_ANSIFLAGS])
-
-
 # auxiliary programs
 
-AC_CHECK_PROG([RMF], [rm], [rm -f])
 AC_CHECK_PROG([RMDIR], [rmdir], [rmdir])
 
 
@@ -104,7 +84,8 @@ case "$INSTALL" in
 /*)
   ;;
 */*)
-  INSTALL="`pwd`/$INSTALL" ;;
+  INSTALL="`pwd`/$INSTALL"
+  ;;
 esac
 
 
@@ -123,11 +104,17 @@ AC_CHECK_SIZEOF([long])
 
 # check whether cpp computation of size of int and long in ftconfig.in works
 
-AC_MSG_CHECKING([cpp computation of bit length in ftconfig.in works])
+AC_MSG_CHECKING([whether cpp computation of bit length in ftconfig.in works])
 orig_CPPFLAGS="${CPPFLAGS}"
 CPPFLAGS="-I${srcdir} -I. ${CPPFLAGS}"
-ac_clean_files="ft2build.h ftoption.h ftstdlib.h"
-touch ft2build.h ftoption.h ftstdlib.h
+
+ac_clean_files=
+for f in ft2build.h ftoption.h ftstdlib.h; do
+  if test ! -f $f; then
+    ac_clean_files="$ac_clean_files $f"
+    touch $f
+  fi
+done
 
 cat > conftest.c <<\_ACEOF
 #include <limits.h>
@@ -146,7 +133,7 @@ echo >> conftest.c "#endif"
 
 ${CPP} ${CPPFLAGS} conftest.c | ${GREP} ac_cpp_ft > conftest.sh
 eval `cat conftest.sh`
-${RMF} conftest.c conftest.sh confft2build.h ftoption.h ftstdlib.h
+rm -f conftest.* $ac_clean_files
 
 if test x != "x${ac_cpp_ft_sizeof_int}" \
    -a x != x"${ac_cpp_ft_sizeof_long}"; then
@@ -179,7 +166,8 @@ case :${ft_use_autoconf_sizeof_types}:${enable_biarch_config}: in
 esac
 
 if test x"${ft_use_autoconf_sizeof_types}" = xyes; then
-  AC_DEFINE([FT_USE_AUTOCONF_SIZEOF_TYPES])
+  AC_DEFINE([FT_USE_AUTOCONF_SIZEOF_TYPES], [],
+            [Define if autoconf sizeof types should be used.])
 fi
 
 CPPFLAGS="${orig_CPPFLAGS}"
@@ -189,8 +177,15 @@ CPPFLAGS="${orig_CPPFLAGS}"
 
 # Here we check whether we can use our mmap file component.
 
-AC_FUNC_MMAP
-if test "$ac_cv_func_mmap_fixed_mapped" != yes; then
+AC_ARG_ENABLE([mmap],
+  AS_HELP_STRING([--disable-mmap],
+                 [do not check mmap() and do not use]),
+  [enable_mmap="no"],[enable_mmap="yes"])
+if test "x${enable_mmap}" != "xno"; then
+  AC_FUNC_MMAP
+fi
+if test "x${enable_mmap}" = "xno" \
+   -o "$ac_cv_func_mmap_fixed_mapped" != "yes"; then
   FTSYS_SRC='$(BASE_DIR)/ftsystem.c'
 else
   FTSYS_SRC='$(BUILD_DIR)/ftsystem.c'
@@ -214,19 +209,294 @@ AC_SUBST([FTSYS_SRC])
 AC_CHECK_FUNCS([memcpy memmove])
 
 
+# get compiler flags right
+#
+#   We try to make the compiler work for C89-strict source.  Even if the
+#   C compiler is gcc and C89 flags are available, some system headers
+#   (e.g., Android Bionic libc) are broken in C89 mode.  We have to check
+#   whether the compilation finishes successfully.
+#
+#   Due to bugs in mingwrt 4.0.3 we don't use `-ansi' for MinGW.
+#
+#   To avoid zillions of
+#
+#     ISO C90 does not support 'long long'
+#
+#   warnings, we disable `-pedantic' for gcc version < 4.6.
+#
+if test "x$GCC" = xyes; then
+  XX_CFLAGS="-Wall"
+  case "$host" in
+  *-*-mingw*)
+    XX_ANSIFLAGS="-pedantic"
+    ;;
+  *)
+    GCC_VERSION=`$CC -dumpversion`
+    GCC_MAJOR=`echo "$GCC_VERSION" | sed 's/\([[^.]][[^.]]*\).*/\1/'`
+    GCC_MINOR=`echo "$GCC_VERSION" | sed 's/[[^.]][[^.]]*.\([[^.]][[^.]]*\).*/\1/'`
+
+    XX_PEDANTIC=-pedantic
+    if test $GCC_MAJOR -lt 4; then
+      XX_PEDANTIC=
+    else
+      if test $GCC_MAJOR -eq 4 -a $GCC_MINOR -lt 6; then
+        XX_PEDANTIC=
+      fi
+    fi
+
+    XX_ANSIFLAGS=""
+    for a in $XX_PEDANTIC -ansi
+    do
+      AC_MSG_CHECKING([gcc compiler flag ${a} to assure ANSI C works correctly])
+      orig_CFLAGS="${CFLAGS}"
+      CFLAGS="${CFLAGS} ${XX_ANSIFLAGS} ${a}"
+      AC_COMPILE_IFELSE([
+        AC_LANG_PROGRAM([
+
+#include <stdio.h>
+
+          ],
+          [
+
+            {
+              puts( "" );
+              return 0;
+            }
+
+          ])],
+        [AC_MSG_RESULT([ok, add it to XX_ANSIFLAGS])
+         XX_ANSIFLAGS="${XX_ANSIFLAGS} ${a}"
+        ],
+        [AC_MSG_RESULT([no])])
+      CFLAGS="${orig_CFLAGS}"
+    done
+    ;;
+  esac
+else
+  case "$host" in
+  *-dec-osf*)
+    CFLAGS=
+    XX_CFLAGS="-std1 -g3"
+    XX_ANSIFLAGS=
+    ;;
+  *)
+    XX_CFLAGS=
+    XX_ANSIFLAGS=
+    ;;
+  esac
+fi
+AC_SUBST([XX_CFLAGS])
+AC_SUBST([XX_ANSIFLAGS])
+
+
+# All library tests below try `pkg-config' first.  If that fails, a function
+# from the library is tested in the traditional autoconf way (zlib, bzip2),
+# or a config script is called (libpng).
+#
+# The `xxx_reqpriv' variables are for the `Requires.private' field in
+# `freetype2.pc'.  The `xxx_libpriv' variables are for the `Libs.private'
+# field in `freetype2.pc' if pkg-config doesn't find a proper .pc file.
+#
+# The `xxx_libstaticconf' variables are for the `freetype-config' script.
+#
+# Note that a call to PKG_CHECK_MODULES(XXX, ...) sets and creates the
+# output variables `XXX_CFLAGS' and `XXX_LIBS'.  In case one or both are set
+# for a library by the user, no entry for this library is added to
+# `Requires.private'.  Instead, it gets added to `Libs.private'
+
+
 # check for system zlib
 
-# don't quote AS_HELP_STRING!
 AC_ARG_WITH([zlib],
-  AS_HELP_STRING([--without-zlib],
-                 [use internal zlib instead of system-wide]))
-if test x$with_zlib != xno && test -z "$LIBZ"; then
-  AC_CHECK_LIB([z], [gzsetparams], [AC_CHECK_HEADER([zlib.h], [LIBZ='-lz'])])
+  [AS_HELP_STRING([--with-zlib=@<:@yes|no|auto@:>@],
+                  [use system zlib instead of internal library @<:@default=auto@:>@])],
+  [], [with_zlib=auto])
+
+have_zlib=no
+if test x"$with_zlib" = xyes -o x"$with_zlib" = xauto; then
+  zlib_pkg="zlib"
+  have_zlib_pkg=no
+
+  if test x"$ZLIB_CFLAGS" = x -a x"$ZLIB_LIBS" = x; then
+    PKG_CHECK_EXISTS([$zlib_pkg], [have_zlib_pkg=yes])
+  fi
+  PKG_CHECK_MODULES([ZLIB], [$zlib_pkg],
+                    [have_zlib="yes (pkg-config)"], [:])
+
+  if test $have_zlib_pkg = yes; then
+    # we have zlib.pc
+    zlib_reqpriv="$zlib_pkg"
+    zlib_libpriv=
+    zlib_libstaticconf=`$PKG_CONFIG --static --libs "$zlib_pkg"`
+  else
+    zlib_reqpriv=
+
+    if test "$have_zlib" != no; then
+      # ZLIB_CFLAGS and ZLIB_LIBS are set by the user
+      zlib_libpriv="$ZLIB_LIBS"
+      zlib_libstaticconf="$ZLIB_LIBS"
+      have_zlib="yes (ZLIB_CFLAGS and ZLIB_LIBS)"
+    else
+      # fall back to standard autoconf test
+      AC_CHECK_LIB([z],
+                   [gzsetparams],
+                   [AC_CHECK_HEADER([zlib.h],
+                                    [have_zlib="yes (autoconf test)"
+                                     zlib_libpriv="-lz"
+                                     zlib_libstaticconf="$zlib_libpriv"
+                                     ZLIB_LIBS="$zlib_libpriv"])])
+    fi
+  fi
 fi
-if test x$with_zlib != xno && test -n "$LIBZ"; then
-  CFLAGS="$CFLAGS -DFT_CONFIG_OPTION_SYSTEM_ZLIB"
-  LDFLAGS="$LDFLAGS $LIBZ"
-  SYSTEM_ZLIB=yes
+
+if test x"$with_zlib" = xyes -a "$have_zlib" = no; then
+  AC_MSG_ERROR([external zlib support requested but library not found])
+fi
+
+
+# check for system libbz2
+
+AC_ARG_WITH([bzip2],
+  [AS_HELP_STRING([--with-bzip2=@<:@yes|no|auto@:>@],
+                  [support bzip2 compressed fonts @<:@default=auto@:>@])],
+  [], [with_bzip2=auto])
+
+have_bzip2=no
+if test x"$with_bzip2" = xyes -o x"$with_bzip2" = xauto; then
+  bzip2_pkg="bzip2"
+  have_bzip2_pkg=no
+
+  if test x"$BZIP2_CFLAGS" = x -a x"$BZIP2_LIBS" = x; then
+    PKG_CHECK_EXISTS([$bzip2_pkg], [have_bzip2_pkg=yes])
+  fi
+  PKG_CHECK_MODULES([BZIP2], [$bzip2_pkg],
+                    [have_bzip2="yes (pkg-config)"], [:])
+
+  if test $have_bzip2_pkg = yes; then
+    # we have bzip2.pc
+    bzip2_reqpriv="$bzip2_pkg"
+    bzip2_libpriv=
+    bzip2_libstaticconf=`$PKG_CONFIG --static --libs "$bzip2_pkg"`
+  else
+    bzip2_reqpriv=
+
+    if test "$have_bzip2" != no; then
+      # BZIP2_CFLAGS and BZIP2_LIBS are set by the user
+      bzip2_libpriv="$BZIP2_LIBS"
+      bzip2_libstaticconf="$BZIP2_LIBS"
+      have_bzip2="yes (BZIP2_CFLAGS and BZIP2_LIBS)"
+    else
+      # fall back to standard autoconf test
+      AC_CHECK_LIB([bz2],
+                   [BZ2_bzDecompress],
+                   [AC_CHECK_HEADER([bzlib.h],
+                                    [have_bzip2="yes (autoconf test)"
+                                     bzip2_libpriv="-lbz2"
+                                     bzip2_libstaticconf="$bzip2_libpriv"
+                                     BZIP2_LIBS="$bzip2_libpriv"])])
+    fi
+  fi
+fi
+
+if test x"$with_bzip2" = xyes -a "$have_bzip2" = no; then
+  AC_MSG_ERROR([bzip2 support requested but library not found])
+fi
+
+
+# check for system libpng
+
+AC_ARG_WITH([png],
+  [AS_HELP_STRING([--with-png=@<:@yes|no|auto@:>@],
+                  [support png compressed OpenType embedded bitmaps @<:@default=auto@:>@])],
+  [], [with_png=auto])
+
+have_libpng=no
+if test x"$with_png" = xyes -o x"$with_png" = xauto; then
+  libpng_pkg="libpng"
+  have_libpng_pkg=no
+
+  if test x"$LIBPNG_CFLAGS" = x -a x"$LIBPNG_LIBS" = x; then
+    PKG_CHECK_EXISTS([$libpng_pkg], [have_libpng_pkg=yes])
+  fi
+  PKG_CHECK_MODULES([LIBPNG], [$libpng_pkg],
+                    [have_libpng="yes (pkg-config)"], [:])
+
+  if test $have_libpng_pkg = yes; then
+    # we have libpng.pc
+    libpng_reqpriv="$libpng_pkg"
+    libpng_libpriv=
+    libpng_libstaticconf=`$PKG_CONFIG --static --libs "$libpng_pkg"`
+  else
+    libpng_reqpriv=
+
+    if test "$have_libpng" != no; then
+      # LIBPNG_CFLAGS and LIBPNG_LIBS are set by the user
+      libpng_libpriv="$LIBPNG_LIBS"
+      libpng_libstaticconf="$LIBPNG_LIBS"
+      have_libpng="yes (LIBPNG_CFLAGS and LIBPNG_LIBS)"
+    else
+      # fall back to config script.
+      AC_MSG_CHECKING([for libpng-config])
+      if which libpng-config > /dev/null 2>&1; then
+        LIBPNG_CFLAGS=`libpng-config --cflags`
+        LIBPNG_LIBS=`libpng-config --ldflags`
+        libpng_libpriv=`libpng-config --static --ldflags`
+        libpng_libstaticconf="$libpng_libpriv"
+        have_libpng="yes (libpng-config)"
+        AC_MSG_RESULT([yes])
+      else
+        AC_MSG_RESULT([no])
+      fi
+    fi
+  fi
+fi
+
+if test x"$with_png" = xyes -a "$have_libpng" = no; then
+  AC_MSG_ERROR([libpng support requested but library not found])
+fi
+
+
+# check for system libharfbuzz
+
+AC_ARG_WITH([harfbuzz],
+  [AS_HELP_STRING([--with-harfbuzz=@<:@yes|no|auto@:>@],
+                  [improve auto-hinting of OpenType fonts @<:@default=auto@:>@])],
+  [], [with_harfbuzz=auto])
+
+have_harfbuzz=no
+if test x"$with_harfbuzz" = xyes -o x"$with_harfbuzz" = xauto; then
+  harfbuzz_pkg="harfbuzz >= 0.9.19"
+  have_harfbuzz_pkg=no
+
+  if test x"$HARFBUZZ_CFLAGS" = x -a x"$HARFBUZZ_LIBS" = x; then
+    PKG_CHECK_EXISTS([$harfbuzz_pkg], [have_harfbuzz_pkg=yes])
+  fi
+  PKG_CHECK_MODULES([HARFBUZZ], [$harfbuzz_pkg],
+                    [have_harfbuzz="yes (pkg-config)"], [:])
+
+  if test $have_harfbuzz_pkg = yes; then
+    # we have harfbuzz.pc
+    harfbuzz_reqpriv="$harfbuzz_pkg"
+    harfbuzz_libpriv=
+    harfbuzz_libstaticconf=`$PKG_CONFIG --static --libs "$harfbuzz_pkg"`
+  else
+    harfbuzz_reqpriv=
+
+    if test "$have_harfbuzz" != no; then
+      # HARFBUZZ_CFLAGS and HARFBUZZ_LIBS are set by the user
+      harfbuzz_libpriv="$HARFBUZZ_LIBS"
+      harfbuzz_libstaticconf="$HARFBUZZ_LIBS"
+      have_harfbuzz="yes (HARFBUZZ_CFLAGS and HARFBUZZ_LIBS)"
+    else
+      # since HarfBuzz is quite a new library we don't fall back to a
+      # different test; additionally, it has too many dependencies
+      :
+    fi
+  fi
+fi
+
+if test x"$with_harfbuzz" = xyes -a "$have_harfbuzz" = no; then
+  AC_MSG_ERROR([harfbuzz support requested but library not found])
 fi
 
 
@@ -237,7 +507,7 @@ fi
 save_config_args=$*
 set dummy ${CFLAGS}
 i=1
-while test $i -lt $#
+while test $i -le $#
 do
   c=$1
 
@@ -254,8 +524,8 @@ do
     fi
     shift 1
     ;;
-  -m32|-m64) # options taking no argument
-    AC_MSG_RESULT([whether CFLAGS and LDFLAGS share ${c}])
+  -m32|-m64|-march=*|-mcpu=*) # options taking no argument
+    AC_MSG_CHECKING([whether CFLAGS and LDFLAGS share ${c}])
     if expr " ${LDFLAGS} " : ".* ${c} *${a}.*" > /dev/null
     then
       AC_MSG_RESULT([yes])
@@ -278,15 +548,14 @@ set ${save_config_args}
 
 ftmac_c="" # src/base/ftmac.c should not be included in makefiles by default
 
-# don't quote AS_HELP_STRING!
 AC_ARG_WITH([old-mac-fonts],
   AS_HELP_STRING([--with-old-mac-fonts],
                  [allow Mac resource-based fonts to be used]))
 if test x$with_old_mac_fonts = xyes; then
   orig_LDFLAGS="${LDFLAGS}"
   AC_MSG_CHECKING([CoreServices & ApplicationServices of Mac OS X])
-  FT2_EXTRA_LIBS="-Wl,-framework,CoreServices -Wl,-framework,ApplicationServices"
-  LDFLAGS="$LDFLAGS $FT2_EXTRA_LIBS"
+  ft2_extra_libs="-Wl,-framework,CoreServices -Wl,-framework,ApplicationServices"
+  LDFLAGS="$LDFLAGS $ft2_extra_libs"
   AC_LINK_IFELSE([
     AC_LANG_PROGRAM([
 
@@ -309,8 +578,8 @@ if test x$with_old_mac_fonts = xyes; then
       ])],
     [AC_MSG_RESULT([ok])
      ftmac_c='ftmac.c'
-     AC_MSG_CHECKING([OS_INLINE macro is ANSI compatible])
-     orig_CFLAGS="$CFLAGS"
+     AC_MSG_CHECKING([whether OS_INLINE macro is ANSI compatible])
+     orig_CFLAGS="$CFLAGS -DFT_MACINTOSH"
      CFLAGS="$CFLAGS $XX_CFLAGS $XX_ANSIFLAGS"
      AC_COMPILE_IFELSE([
        AC_LANG_PROGRAM([
@@ -372,7 +641,7 @@ if test x$with_old_mac_fonts = xyes; then
         CFLAGS="$CFLAGS -DHAVE_TYPE_RESOURCE_INDEX=0"
        ])],
     [AC_MSG_RESULT([not found])
-     FT2_EXTRA_LIBS=""
+     ft2_extra_libs=""
      LDFLAGS="${orig_LDFLAGS}"
      CFLAGS="$CFLAGS -DDARWIN_NO_CARBON"])
 else
@@ -381,12 +650,13 @@ else
     dnl AC_MSG_WARN([host system is MacOS but configured to build without Carbon])
     CFLAGS="$CFLAGS -DDARWIN_NO_CARBON"
     ;;
-  *) ;;
+  *)
+    ;;
   esac
 fi
 
 
-# Whether to use FileManager which is deprecated since Mac OS X 10.4.
+# Whether to use FileManager, which is deprecated since Mac OS X 10.4.
 
 AC_ARG_WITH([fsspec],
   AS_HELP_STRING([--with-fsspec],
@@ -495,7 +765,7 @@ elif test x$with_old_mac_fonts = xyes -a x$with_fsref != x; then
 fi
 
 
-# Whether to use QuickDraw API in ToolBox which is deprecated since
+# Whether to use QuickDraw API in ToolBox, which is deprecated since
 # Mac OS X 10.4.
 
 AC_ARG_WITH([quickdraw-toolbox],
@@ -537,7 +807,7 @@ elif test x$with_old_mac_fonts = xyes -a x$with_quickdraw_toolbox != x; then
 fi
 
 
-# Whether to use QuickDraw API in Carbon which is deprecated since
+# Whether to use QuickDraw API in Carbon, which is deprecated since
 # Mac OS X 10.4.
 
 AC_ARG_WITH([quickdraw-carbon],
@@ -591,13 +861,12 @@ fi
 
 # Whether to use AppleTypeService since Mac OS X.
 
-# don't quote AS_HELP_STRING!
 AC_ARG_WITH([ats],
   AS_HELP_STRING([--with-ats],
                  [use AppleTypeService, if available (default=yes)]))
 if test x$with_ats = xno; then
   CFLAGS="$CFLAGS -DHAVE_ATS=0"
-elif test x$with_old_mac_fonts = xyes -a x$with_ats != x ; then
+elif test x$with_old_mac_fonts = xyes -a x$with_ats != x; then
   AC_MSG_CHECKING([AppleTypeService functions])
   AC_LINK_IFELSE([
     AC_LANG_PROGRAM([
@@ -642,20 +911,81 @@ case "$CFLAGS" in
 esac
 
 
+# entries in Requires.private are separated by commas;
+REQUIRES_PRIVATE="$zlib_reqpriv,     \
+                  $bzip2_reqpriv,    \
+                  $libpng_reqpriv,   \
+                  $harfbuzz_reqpriv"
+# beautify
+REQUIRES_PRIVATE=`echo "$REQUIRES_PRIVATE" \
+                  | sed -e 's/^  *//'      \
+                        -e 's/  *$//'      \
+                        -e 's/, */,/g'     \
+                        -e 's/,,*/,/g'     \
+                        -e 's/^,*//'       \
+                        -e 's/,*$//'       \
+                        -e 's/,/, /g'`
+
+LIBS_PRIVATE="$zlib_libpriv     \
+              $bzip2_libpriv    \
+              $libpng_libpriv   \
+              $harfbuzz_libpriv \
+              $ft2_extra_libs"
+# beautify
+LIBS_PRIVATE=`echo "$LIBS_PRIVATE"  \
+              | sed -e 's/^  *//'   \
+                    -e 's/  *$//'   \
+                    -e 's/  */ /g'`
+
+LIBSSTATIC_CONFIG="-lfreetype              \
+                   $zlib_libstaticconf     \
+                   $bzip2_libstaticconf    \
+                   $libpng_libstaticconf   \
+                   $harfbuzz_libstaticconf \
+                   $ft2_extra_libs"
+# remove -L/usr/lib and -L/usr/lib64 since `freetype-config' adds them later
+# on if necessary; also beautify
+LIBSSTATIC_CONFIG=`echo "$LIBSSTATIC_CONFIG"          \
+                   | sed -e 's|-L */usr/lib64/* | |g' \
+                         -e 's|-L */usr/lib/* | |g'   \
+                         -e 's/^  *//'                \
+                         -e 's/  *$//'                \
+                         -e 's/  */ /g'`
+
+
 AC_SUBST([ftmac_c])
-AC_SUBST([LIBZ])
-AC_SUBST([CFLAGS])
-AC_SUBST([LDFLAGS])
-AC_SUBST([FT2_EXTRA_LIBS])
-AC_SUBST([SYSTEM_ZLIB])
-
-
-LT_INIT(win32-dll)
+AC_SUBST([REQUIRES_PRIVATE])
+AC_SUBST([LIBS_PRIVATE])
+AC_SUBST([LIBSSTATIC_CONFIG])
 
 AC_SUBST([hardcode_libdir_flag_spec])
 AC_SUBST([wl])
 AC_SUBST([build_libtool_libs])
 
+
+# changing LDFLAGS value should only be done after
+# lt_cv_prog_compiler_static_works test
+
+if test "$have_zlib" != no; then
+  CFLAGS="$CFLAGS $ZLIB_CFLAGS -DFT_CONFIG_OPTION_SYSTEM_ZLIB"
+  LDFLAGS="$LDFLAGS $ZLIB_LIBS"
+fi
+
+if test "$have_bzip2" != no; then
+  CFLAGS="$CFLAGS $BZIP2_CFLAGS -DFT_CONFIG_OPTION_USE_BZIP2"
+  LDFLAGS="$LDFLAGS $BZIP2_LIBS"
+fi
+if test "$have_libpng" != no; then
+  CFLAGS="$CFLAGS $LIBPNG_CFLAGS -DFT_CONFIG_OPTION_USE_PNG"
+  LDFLAGS="$LDFLAGS $LIBPNG_LIBS"
+fi
+if test "$have_harfbuzz" != no; then
+  CFLAGS="$CFLAGS $HARFBUZZ_CFLAGS -DFT_CONFIG_OPTION_USE_HARFBUZZ"
+  LDFLAGS="$LDFLAGS $HARFBUZZ_LIBS"
+fi
+
+AC_SUBST([CFLAGS])
+AC_SUBST([LDFLAGS])
 
 # configuration file -- stay in 8.3 limit
 #
@@ -671,14 +1001,21 @@ AC_CONFIG_HEADERS([ftconfig.h:ftconfig.in],
 # and `builds/unix/unix-cc.mk' that will be used by the build system
 #
 AC_CONFIG_FILES([unix-cc.mk:unix-cc.in
-                 unix-def.mk:unix-def.in
-                 freetype-config
-                 freetype2.pc:freetype2.in])
+                 unix-def.mk:unix-def.in])
 
 # re-generate the Jamfile to use libtool now
 #
 # AC_CONFIG_FILES([../../Jamfile:../../Jamfile.in])
 
 AC_OUTPUT
+
+AC_MSG_NOTICE([
+
+Library configuration:
+  external zlib: $have_zlib
+  bzip2:         $have_bzip2
+  libpng:        $have_libpng
+  harfbuzz:      $have_harfbuzz
+])
 
 # end of configure.raw

@@ -8,10 +8,9 @@ How to customize the compilation of the library
 
 I. Configuration macros
 
-  The  file found  in `include/freetype/config/ftoption.h'  contains a
-  list  of  commented configuration  macros  that  can  be toggled  by
-  developers  to  indicate  which  features  should  be  active  while
-  building the library.
+  The  file found  in `include/config/ftoption.h'  contains a  list of
+  commented configuration macros that can  be toggled by developers to
+  indicate which features should be active while building the library.
 
   These  options range  from debug  level to  availability  of certain
   features,   like  native   TrueType  hinting   through   a  bytecode
@@ -31,10 +30,14 @@ II. Modules list
   make  uses `modules.cfg'  to  generate `ftmodule.h'  (in the  object
   directory).
 
+  If you build FreeType in a directory separate from the source files,
+  put your  customized `modules.cfg' in  that directory; that  way you
+  can keep the source files `clean'.
+
   If  you don't  use  GNU make  you  have to  manually  edit the  file
-  `include/freetype/config/ftmodule.h'  (which is  *not* used  with if
-  compiled with GNU make) to  add or remove the drivers and components
-  you want  to compile into  the library.  See `INSTALL.ANY'  for more
+  `include/config/ftmodule.h' (which  is *not*  used with  if compiled
+  with GNU make) to add or  remove the drivers and components you want
+  to   compile  into   the  library.    See  `INSTALL.ANY'   for  more
   information.
 
 
@@ -77,11 +80,12 @@ IV. Overriding default configuration and module headers
 
     [This is actually a combination of method 2 and 3.]
 
-    Just put your custom  `ftoption.h' file into the objects directory
-    (normally  `<topdir>/objs'),  which  GNU  make  prefers  over  the
-    standard location.   No action is needed  for `ftmodule.h' because
-    it is generated automatically in the objects directory.
-
+    Just put your custom `ftoption.h'  file into the objects directory
+    (normally `<topdir>/objs' if you build  in the source tree, or the
+    directory where  you invoke configure  if you build in  a separate
+    directory), which GNU make prefers over the standard location.  No
+    action  is  needed  for   `ftmodule.h'  because  it  is  generated
+    automatically in the objects directory.
 
   2. Using the C include path
 
@@ -91,19 +95,16 @@ IV. Overriding default configuration and module headers
       #include FT_CONFIG_OPTIONS_H
       #include FT_CONFIG_MODULES_H
 
-    are      compiled.       Their      default      values      being
-    <freetype/config/ftoption.h> and <freetype/config/ftmodule.h>, you
-    can do something like:
+    are compiled.  Their default  values being <config/ftoption.h> and
+    <config/ftmodule.h>, you can do something like:
 
       custom/
-        freetype/
-          config/
-            ftoption.h    => custom options header
-            ftmodule.h    => custom modules list
+        config/
+          ftoption.h      => custom options header
+          ftmodule.h      => custom modules list
 
       include/            => normal FreeType 2 include
-        freetype/
-          ...
+        ...
 
     then change the C include path to always give the path to `custom'
     before the FreeType 2 `include'.
@@ -121,7 +122,7 @@ IV. Overriding default configuration and module headers
       #define FT_CONFIG_OPTIONS_H  <custom/my-ftoption.h>
       #define FT_CONFIG_MODULES_H  <custom/my-ftmodule.h>
 
-      #include <freetype/config/ftheader.h>
+      #include <config/ftheader.h>
 
       #endif /* __FT2_BUILD_MY_PLATFORM_H__ */
 
@@ -137,7 +138,7 @@ IV. Overriding default configuration and module headers
 
 ----------------------------------------------------------------------
 
-Copyright 2003, 2005, 2006 by
+Copyright 2003, 2005, 2006, 2012, 2013 by
 David Turner, Robert Wilhelm, and Werner Lemberg.
 
 This  file is  part of  the FreeType  project, and  may only  be used,

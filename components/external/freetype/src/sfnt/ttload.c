@@ -5,7 +5,7 @@
 /*    Load the basic TrueType tables, i.e., tables that can be either in   */
 /*    TTF or OTF fonts (body).                                             */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009 by */
+/*  Copyright 1996-2010, 2012-2014 by                                      */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -77,7 +77,8 @@
     {
       /* For compatibility with Windows, we consider    */
       /* zero-length tables the same as missing tables. */
-      if ( entry->Tag == tag ) {
+      if ( entry->Tag == tag )
+      {
         if ( entry->Length != 0 )
         {
           FT_TRACE4(( "found table.\n" ));
@@ -141,7 +142,7 @@
         goto Exit;
     }
     else
-      error = SFNT_Err_Table_Missing;
+      error = FT_THROW( Table_Missing );
 
   Exit:
     return error;
@@ -206,7 +207,10 @@
       }
 
       /* we ignore invalid tables */
-      if ( table.Offset + table.Length > stream->size )
+
+      /* table.Offset + table.Length > stream->size ? */
+      if ( table.Length > stream->size                ||
+           table.Offset > stream->size - table.Length )
       {
         FT_TRACE2(( "check_table_dir: table entry %d invalid\n", nn ));
         continue;
@@ -235,8 +239,9 @@
          */
         if ( table.Length < 0x36 )
         {
-          FT_TRACE2(( "check_table_dir: `head' table too small\n" ));
-          error = SFNT_Err_Table_Missing;
+          FT_TRACE2(( "check_table_dir:"
+                      " `head' or `bhed' table too small\n" ));
+          error = FT_THROW( Table_Missing );
           goto Exit;
         }
 
@@ -245,12 +250,8 @@
           goto Exit;
 
         if ( magic != 0x5F0F3CF5UL )
-        {
           FT_TRACE2(( "check_table_dir:"
-                      " no magic number found in `head' table\n"));
-          error = SFNT_Err_Table_Missing;
-          goto Exit;
-        }
+                      " invalid magic number in `head' or `bhed' table\n"));
 
         if ( FT_STREAM_SEEK( offset + ( nn + 1 ) * 16 ) )
           goto Exit;
@@ -266,14 +267,14 @@
     if ( sfnt->num_tables == 0 )
     {
       FT_TRACE2(( "check_table_dir: no tables found\n" ));
-      error = SFNT_Err_Unknown_File_Format;
+      error = FT_THROW( Unknown_File_Format );
       goto Exit;
     }
 
     /* if `sing' and `meta' tables are present, there is no `head' table */
     if ( has_head || ( has_sing && has_meta ) )
     {
-      error = SFNT_Err_Ok;
+      error = FT_Err_Ok;
       goto Exit;
     }
     else
@@ -284,7 +285,7 @@
 #else
       FT_TRACE2(( " neither `head' nor `sing' table found\n" ));
 #endif
-      error = SFNT_Err_Table_Missing;
+      error = FT_THROW( Table_Missing );
     }
 
   Exit:
@@ -352,7 +353,7 @@
 #if 0
     if ( sfnt.search_range != 1 << ( sfnt.entry_selector + 4 )        ||
          sfnt.search_range + sfnt.range_shift != sfnt.num_tables << 4 )
-      return SFNT_Err_Unknown_File_Format;
+      return FT_THROW( Unknown_File_Format );
 #endif
 
     /* load the table directory */
@@ -360,14 +361,17 @@
     FT_TRACE2(( "-- Number of tables: %10u\n",    sfnt.num_tables ));
     FT_TRACE2(( "-- Format version:   0x%08lx\n", sfnt.format_tag ));
 
-    /* check first */
-    error = check_table_dir( &sfnt, stream );
-    if ( error )
+    if ( sfnt.format_tag != TTAG_OTTO )
     {
-      FT_TRACE2(( "tt_face_load_font_dir:"
-                  " invalid table directory for TrueType\n" ));
+      /* check first */
+      error = check_table_dir( &sfnt, stream );
+      if ( error )
+      {
+        FT_TRACE2(( "tt_face_load_font_dir:"
+                    " invalid table directory for TrueType\n" ));
 
-      goto Exit;
+        goto Exit;
+      }
     }
 
     face->num_tables = sfnt.num_tables;
@@ -382,25 +386,33 @@
 
     entry = face->dir_tables;
 
+    FT_TRACE2(( "\n"
+                "  tag    offset    length   checksum\n"
+                "  ----------------------------------\n" ));
+
     for ( nn = 0; nn < sfnt.num_tables; nn++ )
     {
       entry->Tag      = FT_GET_TAG4();
       entry->CheckSum = FT_GET_ULONG();
-      entry->Offset   = FT_GET_LONG();
-      entry->Length   = FT_GET_LONG();
+      entry->Offset   = FT_GET_ULONG();
+      entry->Length   = FT_GET_ULONG();
 
       /* ignore invalid tables */
-      if ( entry->Offset + entry->Length > stream->size )
+
+      /* entry->Offset + entry->Length > stream->size ? */
+      if ( entry->Length > stream->size                 ||
+           entry->Offset > stream->size - entry->Length )
         continue;
       else
       {
-        FT_TRACE2(( "  %c%c%c%c  -  %08lx  -  %08lx\n",
+        FT_TRACE2(( "  %c%c%c%c  %08lx  %08lx  %08lx\n",
                     (FT_Char)( entry->Tag >> 24 ),
                     (FT_Char)( entry->Tag >> 16 ),
                     (FT_Char)( entry->Tag >> 8  ),
                     (FT_Char)( entry->Tag       ),
                     entry->Offset,
-                    entry->Length ));
+                    entry->Length,
+                    entry->CheckSum ));
         entry++;
       }
     }
@@ -473,7 +485,7 @@
       table = tt_face_lookup_table( face, tag );
       if ( !table )
       {
-        error = SFNT_Err_Table_Missing;
+        error = FT_THROW( Table_Missing );
         goto Exit;
       }
 
@@ -488,7 +500,7 @@
     {
       *length = size;
 
-      return SFNT_Err_Ok;
+      return FT_Err_Ok;
     }
 
     if ( length )
@@ -617,7 +629,7 @@
     FT_Error        error;
     TT_MaxProfile*  maxProfile = &face->max_profile;
 
-    const FT_Frame_Field  maxp_fields[] =
+    static const FT_Frame_Field  maxp_fields[] =
     {
 #undef  FT_STRUCTURE
 #define FT_STRUCTURE  TT_MaxProfile
@@ -628,7 +640,7 @@
       FT_FRAME_END
     };
 
-    const FT_Frame_Field  maxp_fields_extra[] =
+    static const FT_Frame_Field  maxp_fields_extra[] =
     {
       FT_FRAME_START( 26 ),
         FT_FRAME_USHORT( maxPoints ),
@@ -678,9 +690,9 @@
       /*      broken fonts like `Keystrokes MT' :-(           */
       /*                                                      */
       /*   We allocate 64 function entries by default when    */
-      /*   the maxFunctionDefs field is null.                 */
+      /*   the maxFunctionDefs value is smaller.              */
 
-      if ( maxProfile->maxFunctionDefs == 0 )
+      if ( maxProfile->maxFunctionDefs < 64 )
         maxProfile->maxFunctionDefs = 64;
 
       /* we add 4 phantom points later */
@@ -692,6 +704,15 @@
                     " some glyphs might be rendered incorrectly\n" ));
 
         maxProfile->maxTwilightPoints = 0xFFFFU - 4;
+      }
+
+      /* we arbitrarily limit recursion to avoid stack exhaustion */
+      if ( maxProfile->maxComponentDepth > 100 )
+      {
+        FT_TRACE0(( "tt_face_load_maxp:"
+                    " abnormally large component depth (%d) set to 100\n",
+                    maxProfile->maxComponentDepth ));
+        maxProfile->maxComponentDepth = 100;
       }
     }
 
@@ -705,7 +726,7 @@
   /*************************************************************************/
   /*                                                                       */
   /* <Function>                                                            */
-  /*    tt_face_load_names                                                 */
+  /*    tt_face_load_name                                                  */
   /*                                                                       */
   /* <Description>                                                         */
   /*    Loads the name records.                                            */
@@ -783,7 +804,7 @@
     if ( storage_start > storage_limit )
     {
       FT_ERROR(( "tt_face_load_name: invalid `name' table\n" ));
-      error = SFNT_Err_Name_Table_Missing;
+      error = FT_THROW( Name_Table_Missing );
       goto Exit;
     }
 
@@ -936,7 +957,7 @@
     FT_Error  error;
     TT_OS2*   os2;
 
-    const FT_Frame_Field  os2_fields[] =
+    static const FT_Frame_Field  os2_fields[] =
     {
 #undef  FT_STRUCTURE
 #define FT_STRUCTURE  TT_OS2
@@ -988,7 +1009,8 @@
       FT_FRAME_END
     };
 
-    const FT_Frame_Field  os2_fields_extra[] =
+    /* `OS/2' version 1 and newer */
+    static const FT_Frame_Field  os2_fields_extra1[] =
     {
       FT_FRAME_START( 8 ),
         FT_FRAME_ULONG( ulCodePageRange1 ),
@@ -996,7 +1018,8 @@
       FT_FRAME_END
     };
 
-    const FT_Frame_Field  os2_fields_extra2[] =
+    /* `OS/2' version 2 and newer */
+    static const FT_Frame_Field  os2_fields_extra2[] =
     {
       FT_FRAME_START( 10 ),
         FT_FRAME_SHORT ( sxHeight ),
@@ -1004,6 +1027,15 @@
         FT_FRAME_USHORT( usDefaultChar ),
         FT_FRAME_USHORT( usBreakChar ),
         FT_FRAME_USHORT( usMaxContext ),
+      FT_FRAME_END
+    };
+
+    /* `OS/2' version 5 and newer */
+    static const FT_Frame_Field  os2_fields_extra5[] =
+    {
+      FT_FRAME_START( 4 ),
+        FT_FRAME_USHORT( usLowerOpticalPointSize ),
+        FT_FRAME_USHORT( usUpperOpticalPointSize ),
       FT_FRAME_END
     };
 
@@ -1020,18 +1052,20 @@
     if ( FT_STREAM_READ_FIELDS( os2_fields, os2 ) )
       goto Exit;
 
-    os2->ulCodePageRange1 = 0;
-    os2->ulCodePageRange2 = 0;
-    os2->sxHeight         = 0;
-    os2->sCapHeight       = 0;
-    os2->usDefaultChar    = 0;
-    os2->usBreakChar      = 0;
-    os2->usMaxContext     = 0;
+    os2->ulCodePageRange1        = 0;
+    os2->ulCodePageRange2        = 0;
+    os2->sxHeight                = 0;
+    os2->sCapHeight              = 0;
+    os2->usDefaultChar           = 0;
+    os2->usBreakChar             = 0;
+    os2->usMaxContext            = 0;
+    os2->usLowerOpticalPointSize = 0;
+    os2->usUpperOpticalPointSize = 0xFFFF;
 
     if ( os2->version >= 0x0001 )
     {
       /* only version 1 tables */
-      if ( FT_STREAM_READ_FIELDS( os2_fields_extra, os2 ) )
+      if ( FT_STREAM_READ_FIELDS( os2_fields_extra1, os2 ) )
         goto Exit;
 
       if ( os2->version >= 0x0002 )
@@ -1039,6 +1073,13 @@
         /* only version 2 tables */
         if ( FT_STREAM_READ_FIELDS( os2_fields_extra2, os2 ) )
           goto Exit;
+
+        if ( os2->version >= 0x0005 )
+        {
+          /* only version 5 tables */
+          if ( FT_STREAM_READ_FIELDS( os2_fields_extra5, os2 ) )
+            goto Exit;
+        }
       }
     }
 
@@ -1109,7 +1150,7 @@
     FT_TRACE3(( "isFixedPitch:   %s\n", post->isFixedPitch
                                         ? "  yes" : "   no" ));
 
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
@@ -1146,6 +1187,7 @@
         FT_FRAME_USHORT( Style ),
         FT_FRAME_USHORT( TypeFamily ),
         FT_FRAME_USHORT( CapHeight ),
+        FT_FRAME_USHORT( SymbolSet ),
         FT_FRAME_BYTES ( TypeFace, 16 ),
         FT_FRAME_BYTES ( CharacterComplement, 8 ),
         FT_FRAME_BYTES ( FileName, 6 ),
@@ -1197,7 +1239,7 @@
     FT_Memory  memory = stream->memory;
 
     FT_UInt        j,num_ranges;
-    TT_GaspRange   gaspranges;
+    TT_GaspRange   gaspranges = NULL;
 
 
     /* the gasp table is optional */
@@ -1217,18 +1259,18 @@
     if ( face->gasp.version >= 2 )
     {
       face->gasp.numRanges = 0;
-      error = SFNT_Err_Invalid_Table;
+      error = FT_THROW( Invalid_Table );
       goto Exit;
     }
 
     num_ranges = face->gasp.numRanges;
     FT_TRACE3(( "numRanges: %u\n", num_ranges ));
 
-    if ( FT_QNEW_ARRAY( gaspranges, num_ranges ) ||
-         FT_FRAME_ENTER( num_ranges * 4L )      )
+    if ( FT_QNEW_ARRAY( face->gasp.gaspRanges, num_ranges ) ||
+         FT_FRAME_ENTER( num_ranges * 4L )                  )
       goto Exit;
 
-    face->gasp.gaspRanges = gaspranges;
+    gaspranges = face->gasp.gaspRanges;
 
     for ( j = 0; j < num_ranges; j++ )
     {

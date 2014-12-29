@@ -1,0 +1,15 @@
+w/ freetype and rander font:
+total memory: 33554408
+used memory : 1068752
+maximum allocated memory: 1070644
+
+
+w/ freetype but not rander font:
+total memory: 33554408
+used memory : 1005428
+maximum allocated memory: 1007688
+
+w/o freetype:
+total memory: 33554408
+used memory : 807216
+maximum allocated memory: 809476

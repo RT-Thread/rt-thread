@@ -3,7 +3,7 @@
 #
 
 
-# Copyright 1996-2000, 2001, 2002, 2003, 2004, 2005, 2006, 2008 by
+# Copyright 1996-2006, 2008, 2013, 2014 by
 # David Turner, Robert Wilhelm, and Werner Lemberg.
 #
 # This file is part of the FreeType project, and may only be used, modified,
@@ -97,7 +97,7 @@ BASE_DIR := $(SRC_DIR)/base
 
 # Other derived directories.
 #
-PUBLIC_DIR   := $(TOP_DIR)/include/freetype
+PUBLIC_DIR   := $(TOP_DIR)/include
 INTERNAL_DIR := $(PUBLIC_DIR)/internal
 SERVICES_DIR := $(INTERNAL_DIR)/services
 CONFIG_DIR   := $(PUBLIC_DIR)/config
@@ -116,8 +116,8 @@ PROJECT_LIBRARY := $(LIB_DIR)/$(LIBRARY).$A
 # IMPORTANT NOTE: The architecture-dependent directory must ALWAYS be placed
 #                 before the standard include list.  Porters are then able to
 #                 put their own version of some of the FreeType components
-#                 in the `freetype/builds/<system>' directory, as these
-#                 files will override the default sources.
+#                 in the `builds/<system>' directory, as these files will
+#                 override the default sources.
 #
 INCLUDES := $(subst /,$(COMPILER_SEP),$(OBJ_DIR) \
                                       $(DEVEL_DIR) \
@@ -125,6 +125,14 @@ INCLUDES := $(subst /,$(COMPILER_SEP),$(OBJ_DIR) \
                                       $(TOP_DIR)/include)
 
 INCLUDE_FLAGS := $(INCLUDES:%=$I%)
+
+ifdef DEVEL_DIR
+  # We assume that all library dependencies for FreeType are fulfilled for a
+  # development build, so we directly access the necessary include directory
+  # information using `pkg-config'.
+  INCLUDE_FLAGS += $(shell pkg-config --cflags libpng \
+                                               harfbuzz )
+endif
 
 
 # C flags used for the compilation of an object file.  This must include at
@@ -147,13 +155,14 @@ ifneq ($(wildcard $(OBJ_DIR)/ftoption.h),)
   FTOPTION_FLAG := $DFT_CONFIG_OPTIONS_H="<ftoption.h>"
 endif
 
+# Note that a build with the `configure' script uses $(CFLAGS) only.
+#
 FT_CFLAGS  = $(CPPFLAGS) \
              $(INCLUDE_FLAGS) \
              $(CFLAGS) \
              $DFT2_BUILD_LIBRARY \
              $DFT_CONFIG_MODULES_H="<ftmodule.h>" \
              $(FTOPTION_FLAG)
-FT_CC      = $(CC) $(FT_CFLAGS)
 FT_COMPILE = $(CC) $(ANSIFLAGS) $(FT_CFLAGS)
 
 
@@ -178,7 +187,7 @@ PUBLIC_H   := $(wildcard $(PUBLIC_DIR)/*.h)
 INTERNAL_H := $(wildcard $(INTERNAL_DIR)/*.h) \
               $(wildcard $(SERVICES_DIR)/*.h)
 CONFIG_H   := $(wildcard $(CONFIG_DIR)/*.h) \
-              $(wildcard $(BUILD_DIR)/freetype/config/*.h) \
+              $(wildcard $(BUILD_DIR)/config/*.h) \
               $(FTMODULE_H) \
               $(FTOPTION_H)
 DEVEL_H    := $(wildcard $(TOP_DIR)/devel/*.h)
@@ -261,8 +270,6 @@ objects: $(OBJECTS_LIST)
 
 library: $(PROJECT_LIBRARY)
 
-dll: $(PROJECT_LIBRARY) exported_symbols
-
 .c.$O:
 	$(FT_COMPILE) $T$(subst /,$(COMPILER_SEP),$@ $<)
 
@@ -290,19 +297,16 @@ ifneq ($(findstring refdoc,$(MAKECMDGOALS)),)
   version := $(major).$(minor).$(patch)
 endif
 
-# We write-protect the docmaker directory to suppress generation
-# of .pyc files.
+# Option `-B' disables generation of .pyc files (available since python 2.6)
 #
 refdoc:
-	-chmod -w $(SRC_DIR)/tools/docmaker
-	python $(SRC_DIR)/tools/docmaker/docmaker.py \
-               --prefix=ft2                          \
-               --title=FreeType-$(version)           \
-               --output=$(DOC_DIR)                   \
-               $(PUBLIC_DIR)/*.h                     \
-               $(PUBLIC_DIR)/config/*.h              \
-               $(PUBLIC_DIR)/cache/*.h
-	-chmod +w $(SRC_DIR)/tools/docmaker
+	python -B $(SRC_DIR)/tools/docmaker/docmaker.py \
+                  --prefix=ft2                          \
+                  --title=FreeType-$(version)           \
+                  --output=$(DOC_DIR)                   \
+                  $(PUBLIC_DIR)/*.h                     \
+                  $(PUBLIC_DIR)/config/*.h              \
+                  $(PUBLIC_DIR)/cache/*.h
 
 
 .PHONY: clean_project_std distclean_project_std

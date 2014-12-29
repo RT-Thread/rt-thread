@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    FreeType Cache Manager (specification).                              */
 /*                                                                         */
-/*  Copyright 2000-2001, 2003, 2004, 2006 by                               */
+/*  Copyright 2000-2001, 2003, 2004, 2006, 2010, 2013 by                   */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -94,8 +94,8 @@ FT_BEGIN_HEADER
     FT_Memory           memory;
 
     FTC_Node            nodes_list;
-    FT_ULong            max_weight;
-    FT_ULong            cur_weight;
+    FT_Offset           max_weight;
+    FT_Offset           cur_weight;
     FT_UInt             num_nodes;
 
     FTC_Cache           caches[FTC_MAX_CACHES];
@@ -161,7 +161,7 @@ FT_BEGIN_HEADER
           (a)->y_res == (b)->y_res ) ) )
 
 #define FTC_SCALER_HASH( q )                                 \
-    ( FTC_FACE_ID_HASH( (q)->face_id ) +                     \
+    ( _FTC_FACE_ID_HASH( (q)->face_id ) +                     \
       (q)->width + (q)->height*7 +                           \
       ( (q)->pixel ? 0 : ( (q)->x_res*33 ^ (q)->y_res*61 ) ) )
 

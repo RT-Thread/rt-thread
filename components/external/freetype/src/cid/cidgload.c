@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    CID-keyed Type1 Glyph Loader (body).                                 */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006, 2007, 2009, 2010 by */
+/*  Copyright 1996-2007, 2009, 2010, 2013 by                               */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -46,7 +46,7 @@
     FT_Byte*       p;
     FT_UInt        fd_select;
     FT_Stream      stream       = face->cid_stream;
-    FT_Error       error        = CID_Err_Ok;
+    FT_Error       error        = FT_Err_Ok;
     FT_Byte*       charstring   = 0;
     FT_Memory      memory       = face->root.memory;
     FT_ULong       glyph_length = 0;
@@ -58,7 +58,7 @@
 #endif
 
 
-    FT_TRACE4(( "cid_load_glyph: glyph index %d\n", glyph_index ));
+    FT_TRACE1(( "cid_load_glyph: glyph index %d\n", glyph_index ));
 
 #ifdef FT_CONFIG_OPTION_INCREMENTAL
 
@@ -117,7 +117,7 @@
 
       if ( fd_select >= (FT_UInt)cid->num_dicts )
       {
-        error = CID_Err_Invalid_Offset;
+        error = FT_THROW( Invalid_Offset );
         goto Exit;
       }
       if ( glyph_length == 0 )
@@ -258,7 +258,7 @@
 
     psaux->t1_decoder_funcs->done( &decoder );
 
-    return CID_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
@@ -272,7 +272,6 @@
                        FT_Int32      load_flags )
   {
     CID_GlyphSlot  glyph = (CID_GlyphSlot)cidglyph;
-    CID_Size       size  = (CID_Size)cidsize;
     FT_Error       error;
     T1_DecoderRec  decoder;
     CID_Face       face = (CID_Face)cidglyph->face;
@@ -285,7 +284,7 @@
 
     if ( glyph_index >= (FT_UInt)face->root.num_glyphs )
     {
-      error = CID_Err_Invalid_Argument;
+      error = FT_THROW( Invalid_Argument );
       goto Exit;
     }
 
@@ -375,7 +374,7 @@
 
       cidglyph->format            = FT_GLYPH_FORMAT_OUTLINE;
 
-      if ( size && cidsize->metrics.y_ppem < 24 )
+      if ( cidsize->metrics.y_ppem < 24 )
         cidglyph->outline.flags |= FT_OUTLINE_HIGH_PRECISION;
 
       /* apply the font matrix */
@@ -427,7 +426,7 @@
       metrics->horiBearingX = cbox.xMin;
       metrics->horiBearingY = cbox.yMax;
 
-      if ( load_flags & FT_LOAD_VERTICAL_LAYOUT ) 
+      if ( load_flags & FT_LOAD_VERTICAL_LAYOUT )
       {
         /* make up vertical ones */
         ft_synthesize_vertical_metrics( metrics,

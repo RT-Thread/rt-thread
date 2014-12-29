@@ -5,7 +5,7 @@
 /*    Miscellaneous macros for stand-alone rasterizer (specification       */
 /*    only).                                                               */
 /*                                                                         */
-/*  Copyright 2005, 2009 by                                                */
+/*  Copyright 2005, 2009, 2010 by                                          */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used        */
@@ -27,6 +27,7 @@
 #ifndef __FTMISC_H__
 #define __FTMISC_H__
 
+
   /* memset */
 #include FT_CONFIG_STANDARD_LIBRARY_H
 
@@ -34,6 +35,7 @@
 #define FT_END_HEADER
 
 #define FT_LOCAL_DEF( x )   static x
+
 
   /* from include/freetype2/fttypes.h */
 
@@ -77,11 +79,21 @@
 
   } FT_MemoryRec;
 
+
   /* from src/ftcalc.c */
 
-#include <inttypes.h>
+#if ( defined _WIN32 || defined _WIN64 )
+
+  typedef __int64  FT_Int64;
+
+#else
+
+#include "inttypes.h"
 
   typedef int64_t  FT_Int64;
+
+#endif
+
 
   static FT_Long
   FT_MulDiv( FT_Long  a,
@@ -98,6 +110,27 @@
     if ( c < 0 ) { c = -c; s = -s; }
 
     d = (FT_Long)( c > 0 ? ( (FT_Int64)a * b + ( c >> 1 ) ) / c
+                         : 0x7FFFFFFFL );
+
+    return ( s > 0 ) ? d : -d;
+  }
+
+
+  static FT_Long
+  FT_MulDiv_No_Round( FT_Long  a,
+                      FT_Long  b,
+                      FT_Long  c )
+  {
+    FT_Int   s;
+    FT_Long  d;
+
+
+    s = 1;
+    if ( a < 0 ) { a = -a; s = -1; }
+    if ( b < 0 ) { b = -b; s = -s; }
+    if ( c < 0 ) { c = -c; s = -s; }
+
+    d = (FT_Long)( c > 0 ? (FT_Int64)a * b / c
                          : 0x7FFFFFFFL );
 
     return ( s > 0 ) ? d : -d;
