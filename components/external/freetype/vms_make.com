@@ -1,6 +1,6 @@
 $! make Freetype2 under OpenVMS
 $!
-$! Copyright 2003, 2004, 2006, 2007 by
+$! Copyright 2003, 2004, 2006, 2007, 2013 by
 $! David Turner, Robert Wilhelm, and Werner Lemberg.
 $!
 $! This file is part of the FreeType project, and may only be used, modified,
@@ -172,7 +172,7 @@ $ deck
 
 
 all :
-        define freetype [--.include.freetype]
+        define freetype [--.include]
         define psaux [-.psaux]
         define autofit [-.autofit]
         define autohint [-.autohint]

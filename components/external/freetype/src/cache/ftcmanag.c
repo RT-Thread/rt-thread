@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    FreeType Cache Manager (body).                                       */
 /*                                                                         */
-/*  Copyright 2000-2001, 2002, 2003, 2004, 2005, 2006, 2008, 2009 by       */
+/*  Copyright 2000-2006, 2008-2010, 2013, 2014 by                          */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -28,7 +28,7 @@
 
 #ifdef FT_CONFIG_OPTION_PIC
 #error "cache system does not support PIC yet"
-#endif 
+#endif
 
 
 #undef  FT_COMPONENT
@@ -151,7 +151,7 @@
   }
 
 
-  FT_CALLBACK_TABLE_DEF
+  static
   const FTC_MruListClassRec  ftc_size_list_class =
   {
     sizeof ( FTC_SizeNodeRec ),
@@ -186,13 +186,13 @@
     FTC_MruNode  mrunode;
 
 
-    if ( asize == NULL )
-      return FTC_Err_Invalid_Argument;
+    if ( !asize || !scaler )
+      return FT_THROW( Invalid_Argument );
 
     *asize = NULL;
 
     if ( !manager )
-      return FTC_Err_Invalid_Cache_Handle;
+      return FT_THROW( Invalid_Cache_Handle );
 
 #ifdef FTC_INLINE
 
@@ -290,7 +290,7 @@
   }
 
 
-  FT_CALLBACK_TABLE_DEF
+  static
   const FTC_MruListClassRec  ftc_face_list_class =
   {
     sizeof ( FTC_FaceNodeRec),
@@ -313,13 +313,13 @@
     FTC_MruNode  mrunode;
 
 
-    if ( aface == NULL )
-      return FTC_Err_Invalid_Argument;
+    if ( !aface || !face_id )
+      return FT_THROW( Invalid_Argument );
 
     *aface = NULL;
 
     if ( !manager )
-      return FTC_Err_Invalid_Cache_Handle;
+      return FT_THROW( Invalid_Cache_Handle );
 
     /* we break encapsulation for the sake of speed */
 #ifdef FTC_INLINE
@@ -364,7 +364,10 @@
 
 
     if ( !library )
-      return FTC_Err_Invalid_Library_Handle;
+      return FT_THROW( Invalid_Library_Handle );
+
+    if ( !amanager || !requester )
+      return FT_THROW( Invalid_Argument );
 
     memory = library->memory;
 
@@ -451,12 +454,13 @@
   FT_EXPORT_DEF( void )
   FTC_Manager_Reset( FTC_Manager  manager )
   {
-    if ( manager )
-    {
-      FTC_MruList_Reset( &manager->sizes );
-      FTC_MruList_Reset( &manager->faces );
-    }
-    /* XXX: FIXME: flush the caches? */
+    if ( !manager )
+      return;
+
+    FTC_MruList_Reset( &manager->sizes );
+    FTC_MruList_Reset( &manager->faces );
+
+    FTC_Manager_FlushN( manager, manager->num_nodes );
   }
 
 
@@ -473,7 +477,7 @@
     /* check node weights */
     if ( first )
     {
-      FT_ULong  weight = 0;
+      FT_Offset  weight = 0;
 
 
       node = first;
@@ -575,7 +579,7 @@
                              FTC_CacheClass   clazz,
                              FTC_Cache       *acache )
   {
-    FT_Error   error = FTC_Err_Invalid_Argument;
+    FT_Error   error = FT_ERR( Invalid_Argument );
     FTC_Cache  cache = NULL;
 
 
@@ -586,7 +590,7 @@
 
       if ( manager->num_caches >= FTC_MAX_CACHES )
       {
-        error = FTC_Err_Too_Many_Caches;
+        error = FT_THROW( Too_Many_Caches );
         FT_ERROR(( "FTC_Manager_RegisterCache:"
                    " too many registered caches\n" ));
         goto Exit;
@@ -666,11 +670,15 @@
   {
     FT_UInt  nn;
 
+
+    if ( !manager || !face_id )
+      return;
+
     /* this will remove all FTC_SizeNode that correspond to
      * the face_id as well
      */
     FTC_MruList_RemoveSelection( &manager->faces,
-                                 (FTC_MruNode_CompareFunc)NULL,
+                                 ftc_face_node_compare,
                                  face_id );
 
     for ( nn = 0; nn < manager->num_caches; nn++ )
@@ -684,60 +692,11 @@
   FTC_Node_Unref( FTC_Node     node,
                   FTC_Manager  manager )
   {
-    if ( node && (FT_UInt)node->cache_index < manager->num_caches )
+    if ( node                                             &&
+         manager                                          &&
+         (FT_UInt)node->cache_index < manager->num_caches )
       node->ref_count--;
   }
-
-
-#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
-
-  FT_EXPORT_DEF( FT_Error )
-  FTC_Manager_Lookup_Face( FTC_Manager  manager,
-                           FTC_FaceID   face_id,
-                           FT_Face     *aface )
-  {
-    return FTC_Manager_LookupFace( manager, face_id, aface );
-  }
-
-
-  FT_EXPORT( FT_Error )
-  FTC_Manager_Lookup_Size( FTC_Manager  manager,
-                           FTC_Font     font,
-                           FT_Face     *aface,
-                           FT_Size     *asize )
-  {
-    FTC_ScalerRec  scaler;
-    FT_Error       error;
-    FT_Size        size;
-    FT_Face        face;
-
-
-    scaler.face_id = font->face_id;
-    scaler.width   = font->pix_width;
-    scaler.height  = font->pix_height;
-    scaler.pixel   = TRUE;
-    scaler.x_res   = 0;
-    scaler.y_res   = 0;
-
-    error = FTC_Manager_LookupSize( manager, &scaler, &size );
-    if ( error )
-    {
-      face = NULL;
-      size = NULL;
-    }
-    else
-      face = size->face;
-
-    if ( aface )
-      *aface = face;
-
-    if ( asize )
-      *asize = size;
-
-    return error;
-  }
-
-#endif /* FT_CONFIG_OPTION_OLD_INTERNALS */
 
 
 /* END */
