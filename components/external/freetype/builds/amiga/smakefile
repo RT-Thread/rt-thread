@@ -3,7 +3,7 @@
 #
 
 
-# Copyright 2005,2006, 2007, 2009 by
+# Copyright 2005-2007, 2009, 2013 by
 # Werner Lemberg and Detlef Würkner.
 #
 # This file is part of the FreeType project, and may only be used, modified,
@@ -40,7 +40,7 @@
 #
 # link your programs with ft2_680x0.lib and either ftsystem.o or ftsystempure.o
 # (and either ftdebug.o or ftdebugpure.o if you enabled FT_DEBUG_LEVEL_ERROR or
-# FT_DEBUG_LEVEL_TRACE in include/freetype/config/ftoption.h).
+# FT_DEBUG_LEVEL_TRACE in include/config/ftoption.h).
 
 OBJBASE = ftbase.o ftbbox.o ftbdf.o ftbitmap.o ftcid.o ftfstype.o ftgasp.o   \
 	  ftglyph.o ftgxval.o ftlcdfil.o ftmm.o ftotval.o ftpatent.o ftpfr.o \
@@ -98,8 +98,8 @@ assign:
 
 # uses separate object modules in lib to make for easier debugging
 # also, can make smaller programs if entire engine is not used
-ft2_$(CPU).lib:  $(OBJBASE) $(OBJAFIT) $(OBJOTV) $(OBJPS) $(OBJRASTER) $(OBJSFNT) $(OBJCACHE) $(OBJFONTD) lzw.o gzip.o
-	oml $@ r $(OBJBASE) $(OBJAFIT) $(OBJOTV) $(OBJPS) $(OBJRASTER) $(OBJSFNT) $(OBJCACHE) $(OBJFONTD) lzw.o gzip.o
+ft2_$(CPU).lib:  $(OBJBASE) $(OBJAFIT) $(OBJOTV) $(OBJPS) $(OBJRASTER) $(OBJSFNT) $(OBJCACHE) $(OBJFONTD) lzw.o gzip.o bzip2.o
+	oml $@ r $(OBJBASE) $(OBJAFIT) $(OBJOTV) $(OBJPS) $(OBJRASTER) $(OBJSFNT) $(OBJCACHE) $(OBJFONTD) lzw.o gzip.o bzip2.o
 
 clean:
 	-delete \#?.o
@@ -260,6 +260,12 @@ pcf.o: $(CORE)pcf/pcf.c
 # freetype library gzip support for compressed PCF bitmap fonts
 #
 gzip.o: $(CORE)gzip/ftgzip.c
+	sc $(SCFLAGS) define FAR objname=$@ $<
+
+#
+# freetype library bzip2 support for compressed PCF bitmap fonts
+#
+bzip2.o: $(CORE)bzip2/ftbzip2.c
 	sc $(SCFLAGS) define FAR objname=$@ $<
 
 #

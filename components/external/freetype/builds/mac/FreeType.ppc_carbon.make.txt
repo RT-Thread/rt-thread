@@ -17,6 +17,7 @@ Includes        =  \xB6
 Sym-PPC         = -sym off
 
 PPCCOptions     = \xB6
+			-d FT_MACINTOSH=1 \xB6
 			-d HAVE_FSSPEC=1 \xB6
                         -d HAVE_FSREF=1 \xB6
 			-d HAVE_QUICKDRAW_TOOLBOX=1 \xB6
@@ -56,6 +57,7 @@ SrcFiles        =  \xB6
 				  :src:cid:type1cid.c \xB6
 				  :src:gxvalid:gxvalid.c \xB6
 				  :src:gzip:ftgzip.c \xB6
+				  :src:bzip2:ftbzip2.c \xB6
 				  :src:lzw:ftlzw.c \xB6
 				  :src:otvalid:otvalid.c \xB6
 				  :src:pcf:pcf.c \xB6
@@ -100,6 +102,7 @@ ObjFiles-PPC    =  \xB6
 				  "{ObjDir}type1cid.c.x" \xB6
 				  "{ObjDir}gxvalid.c.x" \xB6
 				  "{ObjDir}ftgzip.c.x" \xB6
+				  "{ObjDir}ftbzip2.c.x" \xB6
 				  "{ObjDir}ftlzw.c.x" \xB6
 				  "{ObjDir}otvalid.c.x" \xB6
 				  "{ObjDir}pcf.c.x" \xB6
@@ -180,6 +183,7 @@ FreeType.ppc_carbon.o  \xC4\xC4  {ObjFiles-PPC} {LibFiles-PPC} {\xA5MondoBuild\x
 "{ObjDir}type1cid.c.x" \xC4 :src:cid:type1cid.c
 "{ObjDir}gxvalid.c.x" \xC4 :src:gxvalid:gxvalid.c
 "{ObjDir}ftgzip.c.x" \xC4 :src:gzip:ftgzip.c
+"{ObjDir}ftbzip2.c.x" \xC4 :src:bzip2:ftbzip2.c
 "{ObjDir}ftlzw.c.x" \xC4 :src:lzw:ftlzw.c
 "{ObjDir}otvalid.c.x" \xC4 :src:otvalid:otvalid.c
 "{ObjDir}pcf.c.x" \xC4 :src:pcf:pcf.c

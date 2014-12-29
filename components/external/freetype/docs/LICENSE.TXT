@@ -15,9 +15,12 @@ any of your projects or products.
     is  suited  to products  which  don't  use  the GNU  General  Public
     License.
 
-  - The GNU  General Public License  version 2, found in  `GPL.TXT' (any
+    Note that  this license  is  compatible  to the  GNU General  Public
+    License version 3, but not version 2.
+
+  - The GNU General Public License version 2, found in  `GPLv2.TXT' (any
     later version can be used  also), for programs which already use the
-    GPL.  Note  that the  FTL is  incompatible with the  GPL due  to its
+    GPL.  Note  that the  FTL is  incompatible  with  GPLv2 due  to  its
     advertisement clause.
 
 The contributed BDF and PCF drivers come with a license similar  to that
@@ -26,6 +29,9 @@ file src/bdf/README and src/pcf/README).
 
 The gzip module uses the zlib license (see src/gzip/zlib.h) which too is
 compatible to the above two licenses.
+
+The MD5 checksum support (only used for debugging in development builds)
+is in the public domain.
 
 
 --- end of LICENSE.TXT ---
