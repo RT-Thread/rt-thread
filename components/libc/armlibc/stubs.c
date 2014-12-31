@@ -169,7 +169,8 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 
         console_device = rt_console_get_device();
         if (console_device != 0) rt_device_write(console_device, 0, buf, len);
-        return len;
+
+		return 0;
 #endif
     }
 
