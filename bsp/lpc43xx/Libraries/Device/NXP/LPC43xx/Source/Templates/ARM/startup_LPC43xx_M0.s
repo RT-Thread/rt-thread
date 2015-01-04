@@ -96,10 +96,10 @@ __Vectors       DCD     __initial_sp                      ; 0 Top of Stack
                 DCD     ADC1_IRQHandler                ; 37 ADC1
                 DCD     SSP0_OR_SSP1_IRQHandler        ; 38 SSP0 or SSP1
                 DCD     EVENTROUTER_IRQHandler         ; 39 Event router
-                DCD     USART0_IRQHandler              ; 40 USART0
+                DCD     UART0_IRQHandler               ; 40 USART0
                 DCD     UART1_IRQHandler               ; 41 UART1/Modem
-                DCD     USART2_OR_C_CAN1_IRQHandler    ; 42 USART2 or C CAN1
-                DCD     USART3_IRQHandler              ; 43 USART3
+                DCD     UART2_OR_C_CAN1_IRQHandler     ; 42 USART2 or C CAN1
+                DCD     UART3_IRQHandler               ; 43 USART3
                 DCD     I2S0_OR_I2S1_OR_QEI_IRQHandler ; 44 I2S0 or I2S1 or QEI
                 DCD     C_CAN0_IRQHandler              ; 45 C CAN0
                 DCD     0                                 ; 46 Reserved
@@ -175,10 +175,10 @@ Default_Handler PROC
                 EXPORT   ADC1_IRQHandler                 [WEAK]
                 EXPORT   SSP0_OR_SSP1_IRQHandler         [WEAK]
                 EXPORT   EVENTROUTER_IRQHandler          [WEAK]
-                EXPORT   USART0_IRQHandler               [WEAK]
+                EXPORT   UART0_IRQHandler                [WEAK]
                 EXPORT   UART1_IRQHandler                [WEAK]
-                EXPORT   USART2_OR_C_CAN1_IRQHandler     [WEAK]
-                EXPORT   USART3_IRQHandler               [WEAK]
+                EXPORT   UART2_OR_C_CAN1_IRQHandler      [WEAK]
+                EXPORT   UART3_IRQHandler                [WEAK]
                 EXPORT   I2S0_OR_I2S1_OR_QEI_IRQHandler  [WEAK]
                 EXPORT   C_CAN0_IRQHandler               [WEAK]
 
@@ -206,10 +206,10 @@ SPI_OR_DAC_IRQHandler
 ADC1_IRQHandler
 SSP0_OR_SSP1_IRQHandler
 EVENTROUTER_IRQHandler
-USART0_IRQHandler
+UART0_IRQHandler
 UART1_IRQHandler
-USART2_OR_C_CAN1_IRQHandler
-USART3_IRQHandler
+UART2_OR_C_CAN1_IRQHandler
+UART3_IRQHandler
 I2S0_OR_I2S1_OR_QEI_IRQHandler
 C_CAN0_IRQHandler
 
