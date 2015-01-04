@@ -154,6 +154,22 @@ void UART2_IRQHandler(void)
 }
 #endif
 
+#if defined(RT_USING_UART3)
+struct lpc_uart uart3 =
+{
+    LPC_USART3,
+    USART3_IRQn,
+};
+struct rt_serial_device serial3;
+
+void UART3_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    _do_uart_isr(&serial3);
+    rt_interrupt_leave();
+}
+#endif
+
 void rt_hw_uart_init(void)
 {
     struct lpc_uart *uart;
@@ -194,11 +210,11 @@ void rt_hw_uart_init(void)
         (1 << 0) ;        /* Pin P2_1 used as U0_RXD            */
 
     /* Init USART0                                                              */
-    LPC_USART0->LCR    = 0x83;            /* 8 bits, no Parity, 1 Stop bit      */
-    LPC_USART0->DLL    = 0x06;            /* 115200 Baudrate @ 12 MHz IRC       */
-    LPC_USART0->DLM    = 0x00;
-    LPC_USART0->FDR    = 0xC1;
-    LPC_USART0->LCR    = 0x03;            /* DLAB = 0                           */
+    uart->USART->LCR    = 0x83;            /* 8 bits, no Parity, 1 Stop bit      */
+    uart->USART->DLL    = 0x06;            /* 115200 Baudrate @ 12 MHz IRC       */
+    uart->USART->DLM    = 0x00;
+    uart->USART->FDR    = 0xC1;
+    uart->USART->LCR    = 0x03;            /* DLAB = 0                           */
     /* preemption = 1, sub-priority = 1 */
     NVIC_SetPriority(uart->USART_IRQn, ((0x01 << 3) | 0x01));
 
@@ -228,7 +244,7 @@ void rt_hw_uart_init(void)
     while (!(LPC_CCU1->CLK_M4_GPIO_STAT  & 0x01));
 
     /* Enable USART2 peripheral clock                                           */
-    LPC_CCU2->CLK_APB0_USART2_CFG |= 0x01;
+    LPC_CCU2->CLK_APB2_USART2_CFG |= 0x01;
     while (!(LPC_CCU2->CLK_APB2_USART2_STAT & 0x01));
 
     /* Enable USART2 register interface clock                                   */
@@ -245,11 +261,11 @@ void rt_hw_uart_init(void)
         (1 << 0) ;        /* Pin P1_16 used as U2_RXD            */
 
     /* Init USART2                                                              */
-    LPC_USART2->LCR    = 0x83;            /* 8 bits, no Parity, 1 Stop bit      */
-    LPC_USART2->DLL    = 0x06;            /* 115200 Baudrate @ 12 MHz IRC       */
-    LPC_USART2->DLM    = 0x00;
-    LPC_USART2->FDR    = 0xC1;
-    LPC_USART2->LCR    = 0x03;            /* DLAB = 0                           */
+    uart->USART->LCR    = 0x83;            /* 8 bits, no Parity, 1 Stop bit      */
+    uart->USART->DLL    = 0x06;            /* 115200 Baudrate @ 12 MHz IRC       */
+    uart->USART->DLM    = 0x00;
+    uart->USART->FDR    = 0xC1;
+    uart->USART->LCR    = 0x03;            /* DLAB = 0                           */
 
     /* preemption = 1, sub-priority = 1 */
     NVIC_SetPriority(uart->USART_IRQn, ((0x01 << 3) | 0x01));
@@ -259,6 +275,58 @@ void rt_hw_uart_init(void)
 
     /* register UART2 device */
     rt_hw_serial_register(&serial2, "uart2",
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                          uart);
+#endif
+#ifdef RT_USING_UART3
+    uart = &uart3;
+    config.baud_rate = BAUD_RATE_115200;
+    config.bit_order = BIT_ORDER_LSB;
+    config.data_bits = DATA_BITS_8;
+    config.parity    = PARITY_NONE;
+    config.stop_bits = STOP_BITS_1;
+    config.invert    = NRZ_NORMAL;
+    config.bufsz	 = RT_SERIAL_RB_BUFSZ;
+
+    serial3.ops    = &lpc_uart_ops;
+    serial3.config = config;
+
+    /* Enable GPIO register interface clock                                     */
+    LPC_CCU1->CLK_M4_GPIO_CFG     |= 0x01;
+    while (!(LPC_CCU1->CLK_M4_GPIO_STAT  & 0x01));
+
+    /* Enable USART3 peripheral clock                                           */
+    LPC_CCU2->CLK_APB2_USART3_CFG |= 0x01;
+    while (!(LPC_CCU2->CLK_APB2_USART3_STAT & 0x01));
+
+    /* Enable USART3 register interface clock                                   */
+    LPC_CCU1->CLK_M4_USART3_CFG   |= 0x01;
+    while (!(LPC_CCU1->CLK_M4_USART3_STAT & 0x01));
+
+    /* Init GPIO pins                                                           */
+    LPC_SCU->SFSP2_3 = (1 << 6) |         /* Input buffer enabled               */
+        (1 << 4) |        /* Pull-up disabled                   */
+        (2 << 0) ;        /* Pin P1_15 used as U2_TXD            */
+
+    LPC_SCU->SFSP2_4 = (1 << 6) |         /* Input buffer enabled               */
+        (1 << 4) |        /* Pull-up disabled                   */
+        (2 << 0) ;        /* Pin P1_16 used as U2_RXD            */
+
+    /* Init USART3                                                              */
+    uart->USART->LCR    = 0x83;            /* 8 bits, no Parity, 1 Stop bit      */
+    uart->USART->DLL    = 0x06;            /* 115200 Baudrate @ 12 MHz IRC       */
+    uart->USART->DLM    = 0x00;
+    uart->USART->FDR    = 0xC1;
+    uart->USART->LCR    = 0x03;            /* DLAB = 0                           */
+
+    /* preemption = 1, sub-priority = 1 */
+    NVIC_SetPriority(uart->USART_IRQn, ((0x01 << 3) | 0x01));
+
+    /* Enable Interrupt for UART channel */
+    NVIC_EnableIRQ(uart->USART_IRQn);
+
+    /* register UART2 device */
+    rt_hw_serial_register(&serial3, "uart3",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
 #endif
