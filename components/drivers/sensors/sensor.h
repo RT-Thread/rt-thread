@@ -36,7 +36,9 @@
 #include <rtdevice.h>
 #include <stdint.h>
 
+#ifdef __CC_ARM /* skip warning in armcc */
 #pragma anon_unions
+#endif
 
 /**
  * Handles must be higher than SENSORS_HANDLE_BASE and must be unique.
@@ -729,23 +731,23 @@ enum
  * all values are in SI units (m/s^2)
  */
 #define SENSORS_GRAVITY_SUN                 (275.0f)
-#define SENSORS_GRAVITY_MOON				(1.6f)
+#define SENSORS_GRAVITY_MOON                (1.6f)
 #define SENSORS_GRAVITY_EARTH               (9.80665f)
-#define SENSORS_GRAVITY_STANDARD			(SENSORS_GRAVITY_EARTH)
+#define SENSORS_GRAVITY_STANDARD            (SENSORS_GRAVITY_EARTH)
 
 /** Maximum magnetic field on Earth's surface */
-#define MAGNETIC_FIELD_EARTH_MAX    		(60.0f)
+#define MAGNETIC_FIELD_EARTH_MAX            (60.0f)
 
 /** Minimum magnetic field on Earth's surface */
-#define MAGNETIC_FIELD_EARTH_MIN    		(30.0f)
+#define MAGNETIC_FIELD_EARTH_MIN            (30.0f)
 
 /** Average sea level pressure is 1013.25 hPa */
-#define SENSORS_PRESSURE_SEALEVELHPA      	(1013.25F)
+#define SENSORS_PRESSURE_SEALEVELHPA        (1013.25F)
 
 /** Degrees/s to rad/s multiplier */
-#define SENSORS_DPS_TO_RADS               	(0.017453293F)
+#define SENSORS_DPS_TO_RADS                 (0.017453293F)
 /** Gauss to micro-Tesla multiplier */
-#define SENSORS_GAUSS_TO_MICROTESLA       	(100)
+#define SENSORS_GAUSS_TO_MICROTESLA         (100)
 
 /**
  * status of orientation sensor
@@ -785,15 +787,15 @@ typedef struct
  */
 typedef struct 
 {
-	struct 
-	{
-		int16_t x;
-		int16_t y;
-		int16_t z;
-	};
+    struct 
+    {
+        int16_t x;
+        int16_t y;
+        int16_t z;
+    };
 
-	int8_t status;
-	uint8_t reserved[1];
+    int8_t status;
+    uint8_t reserved[1];
 } sensors_raw_vec_t;
 
 /**
@@ -858,21 +860,21 @@ typedef struct sensors_event_t
 
             /* acceleration values are in meter per second per second (m/s^2) */
             sensors_vec_t   acceleration;
-			/* raw acceleration data */
-			sensors_raw_vec_t raw_acceleration;
+            /* raw acceleration data */
+            sensors_raw_vec_t raw_acceleration;
 
             /* magnetic vector values are in micro-Tesla (uT) */
             sensors_vec_t   magnetic;
-			/* raw magnetic data */
-			sensors_raw_vec_t raw_magnetic;
+            /* raw magnetic data */
+            sensors_raw_vec_t raw_magnetic;
 
             /* orientation values are in degrees */
             sensors_vec_t   orientation;
 
             /* gyroscope values are in rad/s */
             sensors_vec_t   gyro;
-			/* raw gyroscope data */
-			sensors_raw_vec_t raw_gyro;
+            /* raw gyroscope data */
+            sensors_raw_vec_t raw_gyro;
 
             /* temperature is in degrees centigrade (Celsius) */
             float           temperature;
@@ -918,7 +920,6 @@ typedef sensors_event_t sensors_meta_data_event_t;
 
 typedef struct sensor_t
 {
-
     /* Name of this sensor.
      * All sensors of the same "type" must have a different "name".
      */
@@ -979,17 +980,17 @@ typedef struct sensor_t
 
 enum SensorMode
 {
-	SENSOR_MODE_RAW,
-	SENSOR_MODE_CALIBRATED,
-	SENSOR_MODE_NORMAL,
+    SENSOR_MODE_RAW,
+    SENSOR_MODE_CALIBRATED,
+    SENSOR_MODE_NORMAL,
 };
 
 enum SensorAccelRange
 {
-	SENSOR_ACCEL_RANGE_2G,
-	SENSOR_ACCEL_RANGE_4G,
-	SENSOR_ACCEL_RANGE_8G,
-	SENSOR_ACCEL_RANGE_16G,
+    SENSOR_ACCEL_RANGE_2G,
+    SENSOR_ACCEL_RANGE_4G,
+    SENSOR_ACCEL_RANGE_8G,
+    SENSOR_ACCEL_RANGE_16G,
 };
 #define SENSOR_ACCEL_SENSITIVITY_2G  (0.001F)
 #define SENSOR_ACCEL_SENSITIVITY_4G  (0.002F)
@@ -998,55 +999,57 @@ enum SensorAccelRange
 
 enum SensorGyroRange
 {
-	SENSOR_GYRO_RANGE_250DPS,
-	SENSOR_GYRO_RANGE_500DPS,
-	SENSOR_GYRO_RANGE_1000DPS,
-	SENSOR_GYRO_RANGE_2000DPS,
+    SENSOR_GYRO_RANGE_250DPS,
+    SENSOR_GYRO_RANGE_500DPS,
+    SENSOR_GYRO_RANGE_1000DPS,
+    SENSOR_GYRO_RANGE_2000DPS,
 };
-#define SENSOR_GYRO_SENSITIVITY_250DPS	(0.00875F)
-#define SENSOR_GYRO_SENSITIVITY_500DPS	(0.0175F)
-#define SENSOR_GYRO_SENSITIVITY_1000DPS	(0.035F)
-#define SENSOR_GYRO_SENSITIVITY_2000DPS	(0.070F)
+#define SENSOR_GYRO_SENSITIVITY_250DPS  (0.00875F)
+#define SENSOR_GYRO_SENSITIVITY_500DPS  (0.0175F)
+#define SENSOR_GYRO_SENSITIVITY_1000DPS (0.035F)
+#define SENSOR_GYRO_SENSITIVITY_2000DPS (0.070F)
 
 enum SensorDataRate
 {
-	SENSOR_DATARATE_3200HZ,
-	SENSOR_DATARATE_1600HZ,
-	SENSOR_DATARATE_800HZ,
-	SENSOR_DATARATE_400HZ,
-	SENSOR_DATARATE_200HZ,
-	SENSOR_DATARATE_100HZ,
-	SENSOR_DATARATE_50HZ,
-	SENSOR_DATARATE_25HZ,
-	SENSOR_DATARATE_12_5HZ,
-	SENSOR_DATARATE_6_25HZ,
-	SENSOR_DATARATE_3_13HZ,
-	SENSOR_DATARATE_1_56HZ,
-	SENSOR_DATARATE_0_78HZ,
-	SENSOR_DATARATE_0_39HZ,
-	SENSOR_DATARATE_0_20HZ,
-	SENSOR_DATARATE_0_10HZ,
+    SENSOR_DATARATE_3200HZ,
+    SENSOR_DATARATE_1600HZ,
+    SENSOR_DATARATE_800HZ,
+    SENSOR_DATARATE_400HZ,
+    SENSOR_DATARATE_200HZ,
+    SENSOR_DATARATE_100HZ,
+    SENSOR_DATARATE_50HZ,
+    SENSOR_DATARATE_25HZ,
+    SENSOR_DATARATE_12_5HZ,
+    SENSOR_DATARATE_6_25HZ,
+    SENSOR_DATARATE_3_13HZ,
+    SENSOR_DATARATE_1_56HZ,
+    SENSOR_DATARATE_0_78HZ,
+    SENSOR_DATARATE_0_39HZ,
+    SENSOR_DATARATE_0_20HZ,
+    SENSOR_DATARATE_0_10HZ,
 };
-
-class SensorBase;
-class SensorManager;
-typedef void (*SensorEventHandler_t)(SensorBase *sensor, sensors_event_t *event, void *user_data);
 
 /**
  * Sensor Configuration
  */
 typedef struct SensorConfig
 {
-	int mode;
+    int mode;
 
-	enum SensorDataRate data_rate;
+    enum SensorDataRate data_rate;
 
-	union range
-	{
-		enum SensorAccelRange accel_range;
-		enum SensorGyroRange  gyro_range;
-	} range;
+    union range
+    {
+        enum SensorAccelRange accel_range;
+        enum SensorGyroRange  gyro_range;
+    } range;
 }SensorConfig;
+
+typedef void (*SensorEventHandler_t)(sensors_event_t *event, void *user_data);
+
+#ifdef __cplusplus
+class SensorBase;
+class SensorManager;
 
 /**
  * Sensor Base Class
@@ -1068,8 +1071,8 @@ public:
 
     int getType(void);
 
-	int setConfig(SensorConfig *config);
-	int getConfig(SensorConfig *config);
+    int setConfig(SensorConfig *config);
+    int getConfig(SensorConfig *config);
 
     int subscribe(SensorEventHandler_t *handler, void *user_data);
     int publish(sensors_event_t *event);
@@ -1078,8 +1081,8 @@ protected:
     SensorBase *next;
     SensorBase *prev;
 
-	/* sensor configuration */
-	SensorConfig config;
+    /* sensor configuration */
+    SensorConfig config;
 
     SensorEventHandler_t *evtHandler;
     void *userData;
@@ -1102,9 +1105,28 @@ public:
     static SensorBase *getDefaultSensor(int type);
     static int subscribe(int type, SensorEventHandler_t *handler, void *user_data);
 
-	static int sensorEventReady(SensorBase *sensor);
-	static int pollSensor(SensorBase *sensor, sensors_event_t *events, int number, int duration);
+    static int sensorEventReady(SensorBase *sensor);
+    static int pollSensor(SensorBase *sensor, sensors_event_t *events, int number, int duration);
 };
-
 #endif
 
+/* C programming language APIs */
+/* rt_sensor_t is a C typedef for SensorBase */
+typedef void* rt_sensor_t;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+rt_sensor_t rt_sensor_get_default(int type);
+
+int rt_sensor_subscribe(rt_sensor_t sensor, SensorEventHandler_t *handler, void *user_data);
+int rt_sensor_activate (rt_sensor_t sensor, int enable);
+int rt_sensor_configure(rt_sensor_t sensor, SensorConfig *config);
+int rt_sensor_poll(rt_sensor_t sensor, sensors_event_t *event);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
