@@ -59,6 +59,10 @@ def PrepareUA(project, RTT_ROOT, BSP_ROOT):
                 ua.write('\t\t%s\n' % path)
             ua.write('\t]\n\n')
             ua.write('\treturn CPPPATH\n\n')
+        else:
+            ua.write('def GetCPPPATH(BSP_ROOT, RTT_ROOT):\n')
+            ua.write('\tCPPPATH=[]\n\n')
+            ua.write('\treturn CPPPATH\n\n')
 
         if len(CPPDEFINES):
             CPPDEFINES = [i for i in set(CPPDEFINES)]
@@ -66,5 +70,8 @@ def PrepareUA(project, RTT_ROOT, BSP_ROOT):
             ua.write('def GetCPPDEFINES():\n')
             ua.write('\tCPPDEFINES=%s\n' % str(CPPDEFINES))
             ua.write('\treturn CPPDEFINES\n\n')
-            
-            print CPPDEFINES
+
+        else:
+            ua.write('def GetCPPDEFINES():\n')
+            ua.write('\tCPPDEFINES=""\n\n')
+            ua.write('\treturn CPPDEFINES\n\n')
