@@ -22,9 +22,9 @@
  */
 SensorBase::SensorBase(int type)
 {
-	memset(&(this->config), 0x0, sizeof(SensorConfig));
+    memset(&(this->config), 0x0, sizeof(SensorConfig));
 
-	this->type = type;
+    this->type = type;
     this->next = this->prev = NULL;
     subscribe(NULL, NULL);
 }
@@ -40,22 +40,22 @@ int SensorBase::getType(void)
 
 int SensorBase::setConfig(SensorConfig *config)
 {
-	int result;
+    int result;
 
-	/* configure to the low level sensor */
-	result = this->configure(config);
-	if (result == 0)
-	{
-		this->config = *config;
-	}
+    /* configure to the low level sensor */
+    result = this->configure(config);
+    if (result == 0)
+    {
+        this->config = *config;
+    }
 
-	return result;
+    return result;
 }
 
 int SensorBase::getConfig(SensorConfig *config)
 {
-	*config = this->config;
-	return 0;
+    *config = this->config;
+    return 0;
 }
 
 int SensorBase::subscribe(SensorEventHandler_t *handler, void *user_data)
@@ -146,7 +146,7 @@ SensorBase *SensorManager::getDefaultSensor(int type)
         if (sensor->getType() == type) return sensor;
 
         sensor = sensor->next;
-	}while (sensor != sensor_list);
+    }while (sensor != sensor_list);
 
     return NULL;
 }
@@ -167,61 +167,61 @@ int SensorManager::subscribe(int type, SensorEventHandler_t *handler, void *user
 
 int SensorManager::sensorEventReady(SensorBase *sensor)
 {
-	return 0;
+    return 0;
 }
 
 int SensorManager::pollSensor(SensorBase *sensor, sensors_event_t *events, int number, int duration)
 {
-	rt_tick_t tick;
-	int result, index;
+    rt_tick_t tick;
+    int result, index;
 
-	if (sensor == NULL) return -1;
+    if (sensor == NULL) return -1;
 
-	tick = rt_tick_get();
-	for (index = 0; index < number; index ++)
-	{
-		result = sensor->poll(&events[index]);
-		if (result < 0) break;
+    tick = rt_tick_get();
+    for (index = 0; index < number; index ++)
+    {
+        result = sensor->poll(&events[index]);
+        if (result < 0) break;
 
-		if (rt_tick_get() - tick > duration) break;
-	}
+        if (rt_tick_get() - tick > duration) break;
+    }
 
-	return index;
+    return index;
 }
 
 int rt_sensor_subscribe(int type, SensorEventHandler_t *handler, void *user_data)
 {
-	return SensorManager::subscribe(type, handler, user_data);
+    return SensorManager::subscribe(type, handler, user_data);
 }
 
 rt_sensor_t rt_sensor_get_default(int type)
 {
-	return (rt_sensor_t)SensorManager::getDefaultSensor(type);
+    return (rt_sensor_t)SensorManager::getDefaultSensor(type);
 }
 
 int rt_sensor_poll(rt_sensor_t sensor, sensors_event_t *event)
 {
     SensorBase *sensor_base;
-	if (sensor == NULL || event == NULL) return -1;
+    if (sensor == NULL || event == NULL) return -1;
 
-	return sensor_base->poll(event);
+    return sensor_base->poll(event);
 }
 
 int rt_sensor_configure(rt_sensor_t sensor, SensorConfig *config)
 {
     SensorBase *sensor_base;
-	if (sensor == NULL || config == NULL) return -1;
+    if (sensor == NULL || config == NULL) return -1;
 
     sensor_base = (SensorBase*)sensor;
-	return sensor_base->setConfig(config);
+    return sensor_base->setConfig(config);
 }
 
 int rt_sensor_activate(rt_sensor_t sensor, int enable)
 {
     SensorBase *sensor_base;
-	if (sensor == NULL) return -1;
-	
+    if (sensor == NULL) return -1;
+    
     sensor_base = (SensorBase*)sensor;
-	return sensor_base->activate(enable);
+    return sensor_base->activate(enable);
 }
 
