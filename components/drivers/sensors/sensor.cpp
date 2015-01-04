@@ -189,14 +189,19 @@ int SensorManager::pollSensor(SensorBase *sensor, sensors_event_t *events, int n
     return index;
 }
 
-int rt_sensor_subscribe(int type, SensorEventHandler_t *handler, void *user_data)
-{
-    return SensorManager::subscribe(type, handler, user_data);
-}
-
 rt_sensor_t rt_sensor_get_default(int type)
 {
     return (rt_sensor_t)SensorManager::getDefaultSensor(type);
+}
+
+int rt_sensor_subscribe(rt_sensor_t sensor, SensorEventHandler_t *handler, void *user_data)
+{
+    SensorBase *sensor_base;
+    if (sensor == NULL) return -1;
+
+    sensor_base = (SensorBase*)sensor;
+
+    return sensor_base->subscribe(handler, user_data);
 }
 
 int rt_sensor_poll(rt_sensor_t sensor, sensors_event_t *event)
@@ -204,6 +209,7 @@ int rt_sensor_poll(rt_sensor_t sensor, sensors_event_t *event)
     SensorBase *sensor_base;
     if (sensor == NULL || event == NULL) return -1;
 
+    sensor_base = (SensorBase*)sensor;
     return sensor_base->poll(event);
 }
 
@@ -224,4 +230,3 @@ int rt_sensor_activate(rt_sensor_t sensor, int enable)
     sensor_base = (SensorBase*)sensor;
     return sensor_base->activate(enable);
 }
-
