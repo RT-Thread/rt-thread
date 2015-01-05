@@ -26,17 +26,34 @@ void RIT_OR_WWDT_IRQHandler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    rt_tick_increase();
+    if (LPC_RITIMER->CTRL & 0x01)
+    {
+        rt_tick_increase();
+        LPC_RITIMER->CTRL |= 0x01;
+    }
 
     /* leave interrupt */
     rt_interrupt_leave();
 }
+
+extern void SystemCoreClockUpdate(void);
 
 /**
  * This function will initial LPC43xx board.
  */
 void rt_hw_board_init()
 {
+    SystemCoreClockUpdate();
+
+    /* Setup RIT timer. */
+    LPC_RITIMER->COMPVAL  = SystemCoreClock / RT_TICK_PER_SECOND - 1;
+    /* Enable auto-clear. */
+    LPC_RITIMER->CTRL    |= 1 << 1;
+    /* Reset the counter as the counter is enabled after reset. */
+    LPC_RITIMER->COUNTER  = 0;
+    NVIC_SetPriority(M0_RITIMER_OR_WWDT_IRQn, (1 << __NVIC_PRIO_BITS) - 1);
+    NVIC_EnableIRQ(M0_RITIMER_OR_WWDT_IRQn);
+
     /* set pend exception priority */
     NVIC_SetPriority(PendSV_IRQn, (1 << __NVIC_PRIO_BITS) - 1);
 
