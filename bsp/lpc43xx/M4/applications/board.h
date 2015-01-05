@@ -33,7 +33,6 @@
 #define LPC_EXT_SDRAM_END      0xA2000000
 
 // <bool name="RT_USING_UART0" description="Using UART0" default="true" />
-#define RT_USING_UART0
 // <bool name="RT_USING_UART1" description="Using UART1" default="true" />
 //#define RT_USING_UART1
 // <bool name="RT_USING_UART2" description="Using UART2" default="true" />
