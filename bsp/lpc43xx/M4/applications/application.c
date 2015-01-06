@@ -22,6 +22,14 @@
 #include <shell.h>
 #endif
 
+#ifdef RT_USING_LOGTRACE
+#include <log_trace.h>
+#endif
+
+#ifdef RT_USING_VBUS
+#include <vbus.h>
+#endif
+
 static const unsigned char _M0_CODE[] SECTION("M0_CODE") = {
 #include "M0_CODE.h"
 };

@@ -54,6 +54,6 @@ extern int __bss_end;
 
 void rt_hw_board_init(void);
 int  rt_hw_board_heap_init(void);
-
+int rt_vbus_do_init(void);
 
 #endif
