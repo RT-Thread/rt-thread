@@ -11,3 +11,4 @@ for i in fi.read():
     fo.write('0x%02x, ' % ord(i))
     if idx % 16 == 0:
         fo.write('\n')
+fo.write('\n')
