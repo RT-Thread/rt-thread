@@ -12,13 +12,13 @@
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
         <TargetCommonOption>
-          <Device>LPC4357</Device>
-          <Vendor>NXP (founded by Philips)</Vendor>
-          <Cpu>IRAM(0x10000000-0x10007FFF) IRAM2(0x20000000-0x2000FFFF) IROM(0x1A000000-0x1A07FFFF) IROM2(0x1B000000-0x1B07FFFF) CLOCK(12000000) CPUTYPE("Cortex-M4") FPU2</Cpu>
+          <Device>LPC4357 CM0</Device>
+          <Vendor>NXP</Vendor>
+          <Cpu>CLOCK(12000000) CPUTYPE("Cortex-M0")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
-          <StartupFile>"STARTUP\NXP\LPC43xx\startup_LPC43xx.s" ("NXP LPC43xx Startup Code")</StartupFile>
-          <FlashDriverDll>UL2CM3(-O975 -S0 -C0 -FO7 -FD10000000 -FC800 -FN2 -FF0LPC18xx43xx_512_BA -FS01A000000 -FL080000 -FF1LPC18xx43xx_512_BB -FS11B000000 -FL180000)</FlashDriverDll>
-          <DeviceId>6414</DeviceId>
+          <StartupFile>"STARTUP\NXP\LPC43xx\startup_LPC43xx_M0.s" ("NXP LPC43xx CM0 Startup Code")</StartupFile>
+          <FlashDriverDll>UL2CM3(-O910 -S8 -C1 -FO7 -FD10000000 -FC800 -FN0)</FlashDriverDll>
+          <DeviceId>6917</DeviceId>
           <RegisterFile>LPC43xx.H</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
@@ -26,10 +26,11 @@
           <Linker></Linker>
           <OHString></OHString>
           <InfinionOptionDll></InfinionOptionDll>
-          <SLE66CMisc></SLE66CMisc>
+          <SLE66CMisc>-DCORE_M0</SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
           <SFDFile>SFD\NXP\LPC43xx\LPC43xx.SFR</SFDFile>
+          <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
           <IncludePath></IncludePath>
