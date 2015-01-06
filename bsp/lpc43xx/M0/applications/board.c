@@ -62,5 +62,7 @@ void rt_hw_board_init()
 
     /* setup the console device */
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+
+    rt_kprintf("timer compval: %d\n", LPC_RITIMER->COMPVAL);
 }
 

@@ -9,6 +9,7 @@ MEMORY
     CODE (rx) : ORIGIN = 0x1A000000, LENGTH = 0x00080000
     M0CODE (rx) : ORIGIN = 0x1B000000, LENGTH = 0x00080000
     DATA (rw) : ORIGIN = 0x10000000, LENGTH = 0x00008000
+    AHBRAM (rw) : ORIGIN = 0x20000000, LENGTH = 0x00010000
 }
 ENTRY(Reset_Handler)
 _system_stack_size = 0x200;
@@ -96,6 +97,12 @@ SECTIONS
         *(.bss.init)
     } > DATA
     __bss_end = .;
+
+    .vbus_ring (NOLOAD) :
+    {
+        *(vbus_ring)
+    } > AHBRAM
+
 
     .text.M0CODE :
     {

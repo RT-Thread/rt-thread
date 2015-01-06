@@ -65,6 +65,7 @@ void rt_hw_board_init()
 
     /* setup the console device */
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+    rt_kprintf("timer compval: %d\n", SystemCoreClock / RT_TICK_PER_SECOND - 1);
 
 #if LPC_EXT_SDRAM == 1
     lpc_sdram_hw_init();

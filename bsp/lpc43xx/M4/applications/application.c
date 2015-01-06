@@ -58,10 +58,24 @@ static void _boot_M0(void)
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
 {
+    /*
+     *register unsigned int _msp __asm("msp");
+     *register unsigned int _psp __asm("psp");
+     *rt_kprintf("msp@ %p, psp@ %p\n", _msp, _psp);
+     */
+#ifdef RT_USING_LOGTRACE
+    log_trace_init();
+    log_trace_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
+
 #ifdef RT_USING_FINSH
     /* initialize finsh */
     finsh_system_init();
     finsh_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
+
+#ifdef RT_USING_VBUS
+    rt_vbus_do_init();
 #endif
 
     _boot_M0();
@@ -73,26 +87,49 @@ static rt_uint8_t led_stack[ 512 ];
 static struct rt_thread led_thread;
 static void led_thread_entry(void *parameter)
 {
-    rt_uint8_t led_value = 0;
+    rt_uint8_t led_value;
     rt_device_t led_dev;
+    rt_device_t vbus_dev;
+    rt_err_t err;
+
     rt_led_hw_init();
+
     led_dev = rt_device_find("led");
     if (led_dev == RT_NULL)
     {
-        rt_kprintf("can not find the led device!\n");
+        rt_kprintf("can not find the led device\n");
         return;
     }
+
+    vbus_dev = rt_device_find("vecho");
+    if (vbus_dev == RT_NULL)
+    {
+        rt_kprintf("can not find the vbus device\n");
+        return;
+    }
+
+    err = rt_device_open(vbus_dev, RT_DEVICE_OFLAG_RDWR);
+    if (err != RT_EOK)
+    {
+        rt_kprintf("open vbus failed: %d\n", err);
+        return;
+    }
+
+    led_value = 0;
     while (1)
     {
-        /* led0 on */
-        led_value = 1;
-        led_dev->write(led_dev, 0, &led_value, 1);
-        rt_thread_delay(RT_TICK_PER_SECOND / 2); /* sleep 0.5 second and switch to other thread */
+        int len;
 
-        /* led0 off */
-        led_value = 0;
-        led_dev->write(led_dev, 0, &led_value, 1);
-        rt_thread_delay(RT_TICK_PER_SECOND / 2);
+        led_dev->write(led_dev, 0, &led_value, sizeof(led_value));
+
+        led_value = !led_value;
+        len = rt_device_write(vbus_dev, 0, &led_value, sizeof(led_value));
+        if (len <= 0)
+        {
+            rt_kprintf("vbus write err: %d, %d\n", len, rt_get_errno());
+        }
+
+        rt_thread_delay(1000);
     }
 }
 
@@ -102,17 +139,15 @@ int rt_application_init(void)
     rt_err_t result;
     tid = rt_thread_create("init",
                            rt_init_thread_entry, RT_NULL,
-                           2048, RT_THREAD_PRIORITY_MAX / 3, 20);
-    if (tid != RT_NULL) rt_thread_startup(tid);
+                           2048, 3, 20);
+    if (tid != RT_NULL)
+        rt_thread_startup(tid);
+
     /* init led thread */
-    result = rt_thread_init(&led_thread,
-                            "led",
-                            led_thread_entry,
-                            RT_NULL,
-                            (rt_uint8_t *)&led_stack[0],
-                            sizeof(led_stack),
-                            20,
-                            5);
+    result = rt_thread_init(&led_thread, "led",
+                            led_thread_entry, RT_NULL,
+                            (rt_uint8_t *)&led_stack[0], sizeof(led_stack),
+                            20, 5);
     if (result == RT_EOK)
     {
         rt_thread_startup(&led_thread);
