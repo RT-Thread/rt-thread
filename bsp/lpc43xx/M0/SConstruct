@@ -25,5 +25,23 @@ Export('rtconfig')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
+if rtconfig.CROSS_TOOL == 'gcc':
+    import glob
+    # Remove the .o for M0 left on the drivers dir.
+    for i in glob.glob(GetCurrentDir() + '/../drivers/*.o'):
+        print 'RM %s' % i
+        os.unlink(i)
+
+    if sys.platform.startswith('linux'):
+        import glob
+        ocwd = os.getcwdu()
+        res = os.system('cd ../Libraries/; find -name \*.o -exec rm {} \;')
+        os.chdir(ocwd)
+    else:
+        # Assume Windows.
+        ocwd = os.getcwdu()
+        print 'TODO: remove the object files in ../Libraries'
+        os.chdir(ocwd)
+
 # do building 
 DoBuilding(TARGET, objs)
