@@ -46,7 +46,8 @@ void rt_hw_board_init()
     SystemCoreClockUpdate();
 
     /* Setup RIT timer. */
-    LPC_RITIMER->COMPVAL  = SystemCoreClock / RT_TICK_PER_SECOND - 1;
+    LPC_RITIMER->MASK     = 0;
+    LPC_RITIMER->COMPVAL  = SystemCoreClock / RT_TICK_PER_SECOND;
     /* Enable auto-clear. */
     LPC_RITIMER->CTRL    |= 1 << 1;
     /* Reset the counter as the counter is enabled after reset. */
@@ -62,7 +63,5 @@ void rt_hw_board_init()
 
     /* setup the console device */
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
-
-    rt_kprintf("timer compval: %d\n", LPC_RITIMER->COMPVAL);
 }
 
