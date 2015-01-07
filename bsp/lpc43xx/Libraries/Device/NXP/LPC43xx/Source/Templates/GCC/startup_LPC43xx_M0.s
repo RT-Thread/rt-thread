@@ -6,7 +6,7 @@
 
 	.syntax unified
 	.cpu cortex-m0
-	.fpu softvfp
+	.arch armv6-m
 	.thumb
 
 	.word  _sidata
