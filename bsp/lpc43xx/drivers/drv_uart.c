@@ -86,7 +86,7 @@ static const struct rt_uart_ops lpc_uart_ops =
 static void _do_uart_isr(struct rt_serial_device *sdev)
 {
     struct lpc_uart *uart;
-    volatile uint32_t intsrc, temp;
+    uint32_t intsrc;
 
     uart = sdev->parent.user_data;
 
@@ -102,7 +102,7 @@ static void _do_uart_isr(struct rt_serial_device *sdev)
         /* Receive an error data */
         if (intsrc & UART_LSR_PE)
         {
-            temp = uart->USART->RBR;
+            uart->USART->RBR;
         }
         break;
     case UART_IIR_INTID_RDA:
