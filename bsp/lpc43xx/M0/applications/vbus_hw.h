@@ -1,7 +1,7 @@
 /*
  * VMM Bus
  *
- * COPYRIGHT (C) 2014, Shanghai Real-Thread Technology Co., Ltd
+ * COPYRIGHT (C) 2015, Shanghai Real-Thread Technology Co., Ltd
  *
  *  This file is part of RT-Thread (http://www.rt-thread.org)
  *
@@ -23,7 +23,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2014-04-15     Grissiom     init commit
+ * 2015-01-07     Grissiom     init commit
  */
 
 #include <rtthread.h>
