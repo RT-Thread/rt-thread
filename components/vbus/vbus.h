@@ -3,7 +3,8 @@
 /*
  * VBus
  *
- * COPYRIGHT (C) 2013-2014, Shanghai Real-Thread Technology Co., Ltd
+ * COPYRIGHT (C) 2013-2015, Shanghai Real-Thread Technology Co., Ltd
+ *      http://www.rt-thread.com
  *
  *  This file is part of RT-Thread (http://www.rt-thread.org)
  *
@@ -26,6 +27,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2014-06-09     Grissiom     version 2.0.2; add comment
+ * 2015-01-06     Grissiom     version 2.0.3; API change, no functional changes
  */
 
 #include "vbus_local_conf.h"

@@ -1,7 +1,8 @@
 /*
  * Priority Queue
  *
- * COPYRIGHT (C) 2013, Shanghai Real-Thread Technology Co., Ltd
+ * COPYRIGHT (C) 2013-2015, Shanghai Real-Thread Technology Co., Ltd
+ *      http://www.rt-thread.com
  *
  *  This file is part of RT-Thread (http://www.rt-thread.org)
  *

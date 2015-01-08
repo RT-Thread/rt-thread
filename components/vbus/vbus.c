@@ -1,7 +1,8 @@
 /*
  * VMM Bus
  *
- * COPYRIGHT (C) 2013-2014, Shanghai Real-Thread Technology Co., Ltd
+ * COPYRIGHT (C) 2013-2015, Shanghai Real-Thread Technology Co., Ltd
+ *      http://www.rt-thread.com
  *
  *  This file is part of RT-Thread (http://www.rt-thread.org)
  *
@@ -59,7 +60,7 @@ const static struct log_trace_session _lgs = {
 #define vbus_debug(fmt, ...)   log_session_lvl(&_lgs, LOG_TRACE_LEVEL_DEBUG,   fmt, ##__VA_ARGS__)
 #define vbus_verbose(fmt, ...) log_session_lvl(&_lgs, LOG_TRACE_LEVEL_VERBOSE, fmt, ##__VA_ARGS__)
 #define vbus_info(fmt, ...)    log_session_lvl(&_lgs, LOG_TRACE_LEVEL_INFO,    fmt, ##__VA_ARGS__)
-#define vbus_error(fmt, ...)    log_session_lvl(&_lgs, LOG_TRACE_LEVEL_ERROR,    fmt, ##__VA_ARGS__)
+#define vbus_error(fmt, ...)   log_session_lvl(&_lgs, LOG_TRACE_LEVEL_ERROR,    fmt, ##__VA_ARGS__)
 #else
 static struct log_trace_session _lgs = {
     .id  = {.name = "vbus"},
@@ -68,7 +69,7 @@ static struct log_trace_session _lgs = {
 #define vbus_debug(fmt, ...)   log_session(&_lgs, LOG_TRACE_DEBUG""fmt, ##__VA_ARGS__)
 #define vbus_verbose(fmt, ...) log_session(&_lgs, LOG_TRACE_VERBOSE""fmt, ##__VA_ARGS__)
 #define vbus_info(fmt, ...)    log_session(&_lgs, LOG_TRACE_INFO""fmt, ##__VA_ARGS__)
-#define vbus_error(fmt, ...)    log_session(&_lgs, LOG_TRACE_ERROR""fmt, ##__VA_ARGS__)
+#define vbus_error(fmt, ...)   log_session(&_lgs, LOG_TRACE_ERROR""fmt, ##__VA_ARGS__)
 #endif
 #endif // RT_USING_LOGTRACE
 
