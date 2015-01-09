@@ -30,7 +30,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#include "rt_watermark_queue.h"
+#include "watermark_queue.h"
 
 void rt_wm_que_set_mark(struct rt_watermark_queue *wg,
                              unsigned int low, unsigned int high)
