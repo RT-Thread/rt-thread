@@ -20,43 +20,40 @@
 #include "drv_uart.h"
 
 
-/**
- * This is the timer interrupt service routine.
- *
- */
-void SysTick_Handler(void)
+/** M0 does not have SysTick so we have to use RIT timer for it... */
+void RIT_OR_WWDT_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
 
-    rt_tick_increase();
+    if (LPC_RITIMER->CTRL & 0x01)
+    {
+        rt_tick_increase();
+        LPC_RITIMER->CTRL |= 0x01;
+    }
 
     /* leave interrupt */
     rt_interrupt_leave();
 }
 
 extern void SystemCoreClockUpdate(void);
+
 /**
  * This function will initial LPC43xx board.
  */
 void rt_hw_board_init()
 {
-#ifdef CORE_M4
-    /* NVIC Configuration */
-#define NVIC_VTOR_MASK              0x3FFFFF80
-#ifdef  VECT_TAB_RAM
-    /* Set the Vector Table base location at 0x10000000 */
-    SCB->VTOR  = (0x10000000 & NVIC_VTOR_MASK);
-#else  /* VECT_TAB_FLASH  */
-    /* Set the Vector Table base location at 0x00000000 */
-    SCB->VTOR  = (0x00000000 & NVIC_VTOR_MASK);
-#endif
-#endif
-    /* update the core clock */
     SystemCoreClockUpdate();
 
-    /* init systick */
-    SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND - 1);
+    /* Setup RIT timer. */
+    LPC_RITIMER->MASK     = 0;
+    LPC_RITIMER->COMPVAL  = SystemCoreClock / RT_TICK_PER_SECOND;
+    /* Enable auto-clear. */
+    LPC_RITIMER->CTRL    |= 1 << 1;
+    /* Reset the counter as the counter is enabled after reset. */
+    LPC_RITIMER->COUNTER  = 0;
+    NVIC_SetPriority(M0_RITIMER_OR_WWDT_IRQn, (1 << __NVIC_PRIO_BITS) - 1);
+    NVIC_EnableIRQ(M0_RITIMER_OR_WWDT_IRQn);
 
     /* set pend exception priority */
     NVIC_SetPriority(PendSV_IRQn, (1 << __NVIC_PRIO_BITS) - 1);
@@ -66,12 +63,5 @@ void rt_hw_board_init()
 
     /* setup the console device */
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
-
-#if LPC_EXT_SDRAM == 1
-    lpc_sdram_hw_init();
-    mpu_init();
-#endif
 }
-
-
 

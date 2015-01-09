@@ -869,6 +869,7 @@ void SystemCoreClockUpdate (void) {
  *----------------------------------------------------------------------------*/
 void SystemInit (void) {
 
+#ifdef BOOT_PROCESSOR
   #if (__FPU_USED == 1)
     SCB->CPACR |= ((3UL << 10*2) |                 /* set CP10 Full Access */
                    (3UL << 11*2)  );               /* set CP11 Full Access */
@@ -880,9 +881,10 @@ void SystemInit (void) {
   /* Configure PLL0 and PLL1, connect CPU clock to selected clock source */
   SetClock();
 
-  /* Update SystemCoreClock variable */
-  SystemCoreClockUpdate();
-
   /* Configure External Memory Controller */
   SystemInit_ExtMemCtl ();
+#endif
+
+  /* Update SystemCoreClock variable */
+  SystemCoreClockUpdate();
 }
