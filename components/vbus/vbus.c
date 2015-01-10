@@ -162,7 +162,7 @@ rt_inline int _chn_connected(unsigned char chnr)
 }
 
 #ifdef RT_VBUS_USING_FLOW_CONTROL
-#include <rt_watermark_queue.h>
+#include <watermark_queue.h>
 struct rt_watermark_queue _chn_wm_que[RT_VBUS_CHANNEL_NR];
 void rt_vbus_set_post_wm(unsigned char chnr, unsigned int low, unsigned int high)
 {
