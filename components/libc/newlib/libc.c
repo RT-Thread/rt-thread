@@ -9,6 +9,15 @@
 #include <pthread.h>
 #endif
 
+#ifdef RT_USING_DFS
+#include <dfs_posix.h>
+
+#ifdef RT_USING_DFS_DEVFS
+#include <devfs.h>
+#endif
+
+#endif
+
 void libc_system_init(const char* tty_name)
 {
 #ifdef RT_USING_DFS
@@ -18,13 +27,16 @@ void libc_system_init(const char* tty_name)
 #error Please enable devfs by defining RT_USING_DFS_DEVFS in rtconfig.h
 #endif
 
-	/* init console device */
+	/* initialize console device */
 	rt_console_init(tty_name);
 
 	/* open console as stdin/stdout/stderr */
 	fd = open("/dev/console", O_RDONLY, 0);	/* for stdin */
 	fd = open("/dev/console", O_WRONLY, 0);	/* for stdout */
 	fd = open("/dev/console", O_WRONLY, 0);	/* for stderr */
+	
+	/* skip warning */
+	fd = fd;
 #endif
 
 	/* set PATH and HOME */
