@@ -2,14 +2,11 @@
 #ifndef __RTTHREAD_CFG_H__
 #define __RTTHREAD_CFG_H__
 
-/* RT_GDB_STUB */
-//#define RT_USING_GDB
-
 /* RT_NAME_MAX*/
 #define RT_NAME_MAX	   8
 
 /* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE	8
+#define RT_ALIGN_SIZE	4
 
 /* PRIORITY_MAX */
 #define RT_THREAD_PRIORITY_MAX	32
@@ -20,7 +17,6 @@
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
 #define RT_DEBUG
-
 #define RT_USING_OVERFLOW_CHECK
 
 /* Using Hook */
@@ -62,6 +58,16 @@
 /* SECTION: Device System */
 /* Using Device System */
 #define RT_USING_DEVICE
+#define RT_USING_DEVICE_IPC
+/* Using serial framework */
+#define RT_USING_SERIAL
+
+#define RT_USING_UART1
+#define RT_USING_UART2
+#define RT_USING_UART3
+
+/* Using GPIO pin framework */
+#define RT_USING_PIN
 
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
@@ -75,7 +81,14 @@
 #define FINSH_USING_DESCRIPTION
 
 /* SECTION: device filesystem */
+/* Using Device file system */
 /* #define RT_USING_DFS */
+/* the max number of mounted filesystem */
+#define DFS_FILESYSTEMS_MAX			2
+/* the max number of opened files 		*/
+#define DFS_FD_MAX					4
+
+/* Using ELM FATFS */
 //#define RT_USING_DFS_ELMFAT
 #define RT_DFS_ELM_WORD_ACCESS
 /* Reentrancy (thread safe) of the FatFs module.  */
@@ -87,12 +100,8 @@
 /* Maximum sector size to be handled. */
 #define RT_DFS_ELM_MAX_SECTOR_SIZE  512
 
-#define RT_USING_DFS_ROMFS
-
-/* the max number of mounted filesystem */
-#define DFS_FILESYSTEMS_MAX			2
-/* the max number of opened files 		*/
-#define DFS_FD_MAX					4
+/* Using ROM file system */
+// #define RT_USING_DFS_ROMFS
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 /* #define RT_USING_LWIP */
@@ -150,5 +159,8 @@
 #define CHECKSUM_GEN_TCP                0
 #define CHECKSUM_GEN_IP                 0
 #define CHECKSUM_GEN_UDP                0
+
+/* RT_GDB_STUB */
+//#define RT_USING_GDB
 
 #endif

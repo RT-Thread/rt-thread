@@ -17,6 +17,8 @@
 
 #include "stm32f4xx.h"
 #include "board.h"
+#include "usart.h"
+#include "gpio.h"
 
 /**
  * @addtogroup STM32
@@ -92,6 +94,8 @@ void rt_hw_board_init()
     SysTick_Configuration();
 
     rt_hw_usart_init();
+    stm32_hw_pin_init();
+    
 #ifdef RT_USING_CONSOLE
     rt_console_set_device(CONSOLE_DEVICE);
 #endif
