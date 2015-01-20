@@ -93,7 +93,7 @@ void rt_hw_board_init()
     /* Configure the SysTick */
     SysTick_Configuration();
 
-    rt_hw_usart_init();
+    stm32_hw_usart_init();
     stm32_hw_pin_init();
     
 #ifdef RT_USING_CONSOLE
