@@ -642,6 +642,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers/gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>stm32f4xx_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers/stm32f4xx_it.c</FilePath>
