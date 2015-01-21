@@ -22,25 +22,25 @@
 #include <rtdevice.h>
 
 /* UART GPIO define. */
-#define UART1_GPIO_TX		GPIO_Pin_6
+#define UART1_GPIO_TX       GPIO_Pin_6
 #define UART1_TX_PIN_SOURCE GPIO_PinSource6
-#define UART1_GPIO_RX		GPIO_Pin_7
+#define UART1_GPIO_RX       GPIO_Pin_7
 #define UART1_RX_PIN_SOURCE GPIO_PinSource7
-#define UART1_GPIO			GPIOB
+#define UART1_GPIO          GPIOB
 #define UART1_GPIO_RCC      RCC_AHB1Periph_GPIOB
-#define RCC_APBPeriph_UART1	RCC_APB2Periph_USART1
-#define UART1_TX_DMA		DMA1_Channel4
-#define UART1_RX_DMA		DMA1_Channel5
+#define RCC_APBPeriph_UART1 RCC_APB2Periph_USART1
+#define UART1_TX_DMA        DMA1_Channel4
+#define UART1_RX_DMA        DMA1_Channel5
 
-#define UART2_GPIO_TX		GPIO_Pin_2
+#define UART2_GPIO_TX       GPIO_Pin_2
 #define UART2_TX_PIN_SOURCE GPIO_PinSource2
-#define UART2_GPIO_RX		GPIO_Pin_3
+#define UART2_GPIO_RX       GPIO_Pin_3
 #define UART2_RX_PIN_SOURCE GPIO_PinSource3
-#define UART2_GPIO			GPIOA
+#define UART2_GPIO          GPIOA
 #define UART2_GPIO_RCC      RCC_AHB1Periph_GPIOA
-#define RCC_APBPeriph_UART2	RCC_APB1Periph_USART2
-#define UART2_TX_DMA		DMA1_Channel4
-#define UART2_RX_DMA		DMA1_Channel5
+#define RCC_APBPeriph_UART2 RCC_APB1Periph_USART2
+#define UART2_TX_DMA        DMA1_Channel4
+#define UART2_RX_DMA        DMA1_Channel5
 
 #define UART3_GPIO_TX       GPIO_Pin_8
 #define UART3_TX_PIN_SOURCE GPIO_PinSource8
@@ -55,13 +55,13 @@
 /* STM32 uart driver */
 struct stm32_uart
 {
-    USART_TypeDef* uart_device;
+    USART_TypeDef *uart_device;
     IRQn_Type irq;
 };
 
 static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
-    struct stm32_uart* uart;
+    struct stm32_uart *uart;
     USART_InitTypeDef USART_InitStructure;
 
     RT_ASSERT(serial != RT_NULL);
@@ -97,7 +97,7 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
 
 static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *arg)
 {
-    struct stm32_uart* uart;
+    struct stm32_uart *uart;
 
     RT_ASSERT(serial != RT_NULL);
     uart = (struct stm32_uart *)serial->parent.user_data;
@@ -119,7 +119,7 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
 
 static int stm32_putc(struct rt_serial_device *serial, char c)
 {
-    struct stm32_uart* uart;
+    struct stm32_uart *uart;
 
     RT_ASSERT(serial != RT_NULL);
     uart = (struct stm32_uart *)serial->parent.user_data;
@@ -133,7 +133,7 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
 static int stm32_getc(struct rt_serial_device *serial)
 {
     int ch;
-    struct stm32_uart* uart;
+    struct stm32_uart *uart;
 
     RT_ASSERT(serial != RT_NULL);
     uart = (struct stm32_uart *)serial->parent.user_data;
@@ -166,13 +166,13 @@ struct rt_serial_device serial1;
 
 void USART1_IRQHandler(void)
 {
-    struct stm32_uart* uart;
+    struct stm32_uart *uart;
 
     uart = &uart1;
 
     /* enter interrupt */
     rt_interrupt_enter();
-    if(USART_GetITStatus(uart->uart_device, USART_IT_RXNE) != RESET)
+    if (USART_GetITStatus(uart->uart_device, USART_IT_RXNE) != RESET)
     {
         rt_hw_serial_isr(&serial1, RT_SERIAL_EVENT_RX_IND);
         /* clear interrupt */
@@ -200,13 +200,13 @@ struct rt_serial_device serial2;
 
 void USART2_IRQHandler(void)
 {
-    struct stm32_uart* uart;
+    struct stm32_uart *uart;
 
     uart = &uart2;
 
     /* enter interrupt */
     rt_interrupt_enter();
-    if(USART_GetITStatus(uart->uart_device, USART_IT_RXNE) != RESET)
+    if (USART_GetITStatus(uart->uart_device, USART_IT_RXNE) != RESET)
     {
         rt_hw_serial_isr(&serial2, RT_SERIAL_EVENT_RX_IND);
         /* clear interrupt */
@@ -234,13 +234,13 @@ struct rt_serial_device serial3;
 
 void USART3_IRQHandler(void)
 {
-    struct stm32_uart* uart;
+    struct stm32_uart *uart;
 
     uart = &uart3;
 
     /* enter interrupt */
     rt_interrupt_enter();
-    if(USART_GetITStatus(uart->uart_device, USART_IT_RXNE) != RESET)
+    if (USART_GetITStatus(uart->uart_device, USART_IT_RXNE) != RESET)
     {
         rt_hw_serial_isr(&serial3, RT_SERIAL_EVENT_RX_IND);
         /* clear interrupt */
@@ -321,7 +321,7 @@ static void GPIO_Configuration(void)
 #endif /* RT_USING_UART3 */
 }
 
-static void NVIC_Configuration(struct stm32_uart* uart)
+static void NVIC_Configuration(struct stm32_uart *uart)
 {
     NVIC_InitTypeDef NVIC_InitStructure;
 
@@ -335,7 +335,7 @@ static void NVIC_Configuration(struct stm32_uart* uart)
 
 int stm32_hw_usart_init(void)
 {
-    struct stm32_uart* uart;
+    struct stm32_uart *uart;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
     RCC_Configuration();

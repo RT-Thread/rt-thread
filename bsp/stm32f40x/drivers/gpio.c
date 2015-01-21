@@ -88,12 +88,12 @@ static const struct pin_index pins[] =
     {53, RCC_AHB1Periph_GPIOA, GPIOA, GPIO_Pin_4},
 };
 
-#define ITEM_NUM(items)	sizeof(items)/sizeof(items[0])
-const struct pin_index * get_pin(uint8_t pin)
+#define ITEM_NUM(items) sizeof(items)/sizeof(items[0])
+const struct pin_index *get_pin(uint8_t pin)
 {
-    const struct pin_index* index;
+    const struct pin_index *index;
 
-    if(pin < ITEM_NUM(pins))
+    if (pin < ITEM_NUM(pins))
     {
         index = &pins[pin];
     }
@@ -110,12 +110,12 @@ void stm32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     const struct pin_index *index;
 
     index = get_pin(pin);
-    if(index == RT_NULL)
+    if (index == RT_NULL)
     {
         return;
     }
 
-    if(value == PIN_LOW)
+    if (value == PIN_LOW)
     {
         GPIO_ResetBits(index->gpio, index->pin);
     }
@@ -133,12 +133,12 @@ int stm32_pin_read(rt_device_t dev, rt_base_t pin)
     value = PIN_LOW;
 
     index = get_pin(pin);
-    if(index == RT_NULL)
+    if (index == RT_NULL)
     {
         return value;
     }
 
-    if(GPIO_ReadInputDataBit(index->gpio, index->pin) == Bit_RESET)
+    if (GPIO_ReadInputDataBit(index->gpio, index->pin) == Bit_RESET)
     {
         value = PIN_LOW;
     }
@@ -156,7 +156,7 @@ void stm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     GPIO_InitTypeDef  GPIO_InitStructure;
 
     index = get_pin(pin);
-    if(index == RT_NULL)
+    if (index == RT_NULL)
     {
         return;
     }
@@ -169,19 +169,19 @@ void stm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     GPIO_InitStructure.GPIO_OType   = GPIO_OType_PP;
     GPIO_InitStructure.GPIO_Speed   = GPIO_Speed_100MHz;
 
-    if(mode == PIN_MODE_OUTPUT)
+    if (mode == PIN_MODE_OUTPUT)
     {
         /* output setting */
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
         GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
     }
-    else if(mode == PIN_MODE_INPUT)
+    else if (mode == PIN_MODE_INPUT)
     {
         /* input setting: not pull. */
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
         GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
     }
-    else if(mode == PIN_MODE_INPUT_PULLUP)
+    else if (mode == PIN_MODE_INPUT_PULLUP)
     {
         /* input setting: pull up. */
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
@@ -196,7 +196,7 @@ void stm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     GPIO_Init(index->gpio, &GPIO_InitStructure);
 }
 
-const static struct rt_pin_ops _stm32_pin_ops = 
+const static struct rt_pin_ops _stm32_pin_ops =
 {
     stm32_pin_mode,
     stm32_pin_write,
