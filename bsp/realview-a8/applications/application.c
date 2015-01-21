@@ -15,32 +15,18 @@
 #include <rtthread.h>
 #include <components.h>
 
-#include <pthread.h>
-
-void *test_task(void *parameter)
+void init_thread(void* parameter)
 {
-    int count = 0;
-
-    while (1)
-    {
-        rt_thread_delay(RT_TICK_PER_SECOND);
-        rt_kprintf("count = %d\n", count ++);
-    }
-
-    return RT_NULL;
+    rt_components_init();
 }
 
 int rt_application_init()
 {
-    // pthread_t tid;
+    rt_thread_t tid;
 
-    /* do component initialization */
-    rt_components_init();
-#ifdef RT_USING_NEWLIB
-    libc_system_init(RT_CONSOLE_DEVICE_NAME);
-#endif
-
-    // pthread_create(&tid, RT_NULL, test_task, RT_NULL);
+    tid = rt_thread_create("init", init_thread, RT_NULL, 
+        1024, RT_THREAD_PRIORITY_MAX/3, 10);
+    if (tid != RT_NULL) rt_thread_startup(tid);
 
     return 0;
 }
