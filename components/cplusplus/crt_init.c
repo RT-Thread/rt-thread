@@ -51,8 +51,26 @@ int cplusplus_system_init(void)
         (*ctors_func)();
     }
 #elif defined(__CC_ARM)
+# if 1
+    /* If there is no SHT$$INIT_ARRAY, calling
+     * $Super$$__cpp_initialize__aeabi_() will fault. At least until Keil5.12
+     * the problem still exists. So we have to initialize the C++ runtime our
+     * own. */
+    typedef void PROC();
+    extern const unsigned long SHT$$INIT_ARRAY$$Base[];
+    extern const unsigned long SHT$$INIT_ARRAY$$Limit[];
+    const unsigned long *base = SHT$$INIT_ARRAY$$Base;
+    const unsigned long *lim  = SHT$$INIT_ARRAY$$Limit;
+
+    for (; base != lim; base++)
+    {
+        PROC *proc = (PROC*)((const char*)base + *base);
+        (*proc)();
+    }
+# else
     /* call armcc lib to initialize cplusplus */
 	$Super$$__cpp_initialize__aeabi_();
+# endif
 #endif
 
     return 0;
