@@ -601,6 +601,26 @@ u32_t sys_now(void)
 	return rt_tick_get() * (1000 / RT_TICK_PER_SECOND);
 }
 
+/*
+ * lwIP IPv4 input hook
+ */
+#ifdef LWIP_USING_IP4INPUT_HOOK
+static int (*_lwip_ip_input_hook)(struct pbuf *p, struct netif *inp) = RT_NULL;
+
+void lwip_ip_input_set_hook(int (*hook)(struct pbuf *p, struct netif *inp))
+{
+    _lwip_ip_input_hook = hook;
+}
+
+int lwip_ip_input_hook(struct pbuf *p, struct netif *inp)
+{
+    if (_lwip_ip_input_hook != RT_NULL) 
+        return _lwip_ip_input_hook(p, inp);
+
+    return 0;
+}
+#endif
+
 #ifdef RT_LWIP_PPP
 u32_t sio_read(sio_fd_t fd, u8_t *buf, u32_t size)
 {

@@ -161,6 +161,14 @@
  */
 #define SYS_LIGHTWEIGHT_PROT        (NO_SYS==0)
 
+#ifdef LWIP_USING_IP4INPUT_HOOK
+struct pbuf;
+struct netif;
+int lwip_ip_input_hook(struct pbuf *p, struct netif *inp);
+
+#define LWIP_HOOK_IP4_INPUT         lwip_ip_input_hook
+#endif
+
 /* ---------- TCP options ---------- */
 #ifdef RT_LWIP_TCP
 #define LWIP_TCP                    1
