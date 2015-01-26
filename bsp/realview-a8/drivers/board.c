@@ -38,11 +38,11 @@
 #define SYS_CTRL                         __REG32(REALVIEW_SCTL_BASE)
 
 #ifdef RT_USING_VMM
- #include <vmm.h>
- static rt_uint32_t timer_hw_base = 0;
- #define TIMER_HW_BASE                  (timer_hw_base)
+#include <vmm.h>
+static rt_uint32_t timer_hw_base = 0;
+#define TIMER_HW_BASE                  (timer_hw_base)
 #else
- #define TIMER_HW_BASE                  REALVIEW_TIMER2_3_BASE
+#define TIMER_HW_BASE                  REALVIEW_TIMER2_3_BASE
 #endif
 
 void rt_hw_timer_ack(void)
