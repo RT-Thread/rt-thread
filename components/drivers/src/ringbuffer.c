@@ -100,13 +100,13 @@ rt_size_t rt_ringbuffer_put_force(struct rt_ringbuffer *rb,
                             const rt_uint8_t     *ptr,
                             rt_uint16_t           length)
 {
-    enum rt_ringbuffer_state old_state;
+    rt_uint16_t space_length;
 
     RT_ASSERT(rb != RT_NULL);
 
-    old_state = rt_ringbuffer_status(rb);
+    space_length = rt_ringbuffer_space_len(rb);
 
-    if (length > rb->buffer_size)
+    if (length > space_length)
         length = rb->buffer_size;
 
     if (rb->buffer_size - rb->write_index > length)
@@ -117,7 +117,7 @@ rt_size_t rt_ringbuffer_put_force(struct rt_ringbuffer *rb,
          * length of data in current mirror */
         rb->write_index += length;
 
-        if (old_state == RT_RINGBUFFER_FULL)
+        if (length > space_length)
             rb->read_index = rb->write_index;
 
         return length;
@@ -134,7 +134,7 @@ rt_size_t rt_ringbuffer_put_force(struct rt_ringbuffer *rb,
     rb->write_mirror = ~rb->write_mirror;
     rb->write_index = length - (rb->buffer_size - rb->write_index);
 
-    if (old_state == RT_RINGBUFFER_FULL)
+    if (length > space_length)
     {
         rb->read_mirror = ~rb->read_mirror;
         rb->read_index = rb->write_index;
