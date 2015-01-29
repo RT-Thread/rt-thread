@@ -252,9 +252,6 @@ ip_nat_init(void)
   /* we must lock scheduler to protect following code */  
   rt_enter_critical();
   
-  /* register to the ipv4 hook function */
-  lwip_ip_input_set_hook(ip_nat_input);
-  
   /* add a lwip timer for NAT */
   sys_timeout(LWIP_NAT_TMR_INTERVAL_SEC, nat_timer, NULL);
   
