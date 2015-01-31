@@ -103,6 +103,7 @@
 #include "lwip/udp.h"
 #include "lwip/mem.h"
 #include "lwip/sys.h"
+#include "lwip/timers.h"
 #include "netif/etharp.h"
 
 #include <limits.h>
