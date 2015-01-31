@@ -23,6 +23,9 @@
  */
 
 #include <rtthread.h>
+#ifdef RT_USING_DFS
+#include <dfs_posix.h>
+#endif
 #include <yfuns.h>
 
 #pragma module_name = "?__read"
@@ -44,8 +47,7 @@ size_t __read(int handle, unsigned char *buf, size_t len)
 #ifndef RT_USING_DFS
     return _LLIO_ERROR;
 #else
-    size = read(handle - STDERR - 1, buf, len);
+    size = read(handle - _LLIO_STDERR - 1, buf, len);
     return size;
 #endif
 }
-

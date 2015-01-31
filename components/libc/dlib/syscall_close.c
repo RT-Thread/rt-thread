@@ -1,5 +1,5 @@
 /*
- * File      : rmtx.c
+ * File      : syscall_close.c
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
  *
@@ -22,53 +22,22 @@
  * 2015-01-28     Bernard      first version
  */
 #include <rtthread.h>
+#ifdef RT_USING_DFS
+#include <dfs_posix.h>
+#endif
 #include <yfuns.h>
 
-/*
- * for IAR compiler, we recommand to define _DLIB_THREAD_SUPPORT
- * as 2 for dlib multi-thread support.
- */
-
-#if _DLIB_THREAD_SUPPORT
-typedef void* _Rmtx;
-void _Mtxinit(_Rmtx *m)
+#pragma module_name = "?__close"
+int __close(int handle)
 {
-    rt_mutex_t mutex;
+    if (handle == _LLIO_STDOUT ||
+        handle == _LLIO_STDERR ||
+        handle == _LLIO_STDIN)
+        return _LLIO_ERROR;
 
-    RT_ASSERT(m != RT_NULL);
-    
-    mutex = (rt_mutex_t)m;
-    rt_mutex_init(mutex, "iarMtx", RT_IPC_FLAG_FIFO);
-}
-
-void _Mtxdst(_Rmtx *m)
-{
-    rt_mutex_t mutex;
-
-    RT_ASSERT(m != RT_NULL);
-
-    mutex = (rt_mutex_t)m;
-    rt_mutex_detach(mutex);
-}
-
-void _Mtxlock(_Rmtx *m)
-{
-    rt_mutex_t mutex;
-
-    RT_ASSERT(m != RT_NULL);
-
-    mutex = (rt_mutex_t)m;
-    rt_mutex_take(mutex, RT_WAITING_FOREVER);
-}
-
-void _Mtxunlock(_Rmtx *m)
-{
-    rt_mutex_t mutex;
-
-    RT_ASSERT(m != RT_NULL);
-
-    mutex = (rt_mutex_t)m;
-    rt_mutex_release(mutex);
-}
+#ifdef RT_USING_DFS
+    return close(handle);
+#else
+    return 0;
 #endif
-
+}
