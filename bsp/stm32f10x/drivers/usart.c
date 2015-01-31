@@ -12,28 +12,28 @@
  * 2009-01-05     Bernard      the first version
  * 2010-03-29     Bernard      remove interrupt Tx and DMA Rx mode
  * 2013-05-13     aozima       update for kehong-lingtai.
+ * 2015-01-31     armink       make sure the serial transmit complete in putc()
  */
 
 #include "stm32f10x.h"
 #include "usart.h"
 #include "board.h"
-
 #include <rtdevice.h>
 
 /* USART1 */
-#define UART1_GPIO_TX       GPIO_Pin_9
-#define UART1_GPIO_RX       GPIO_Pin_10
-#define UART1_GPIO          GPIOA
+#define UART1_GPIO_TX        GPIO_Pin_9
+#define UART1_GPIO_RX        GPIO_Pin_10
+#define UART1_GPIO           GPIOA
 
 /* USART2 */
-#define UART2_GPIO_TX       GPIO_Pin_2
-#define UART2_GPIO_RX       GPIO_Pin_3
-#define UART2_GPIO          GPIOA
+#define UART2_GPIO_TX        GPIO_Pin_2
+#define UART2_GPIO_RX        GPIO_Pin_3
+#define UART2_GPIO           GPIOA
 
 /* USART3_REMAP[1:0] = 00 */
-#define UART3_GPIO_TX       GPIO_Pin_10
-#define UART3_GPIO_RX       GPIO_Pin_11
-#define UART3_GPIO          GPIOB
+#define UART3_GPIO_TX        GPIO_Pin_10
+#define UART3_GPIO_RX        GPIO_Pin_11
+#define UART3_GPIO           GPIOB
 
 /* STM32 uart driver */
 struct stm32_uart
@@ -54,23 +54,32 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
 
     USART_InitStructure.USART_BaudRate = cfg->baud_rate;
 
-    if (cfg->data_bits == DATA_BITS_8)
+    if (cfg->data_bits == DATA_BITS_8){
         USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+    } else if (cfg->data_bits == DATA_BITS_9) {
+        USART_InitStructure.USART_WordLength = USART_WordLength_9b;
+    }
 
-    if (cfg->stop_bits == STOP_BITS_1)
+    if (cfg->stop_bits == STOP_BITS_1){
         USART_InitStructure.USART_StopBits = USART_StopBits_1;
-    else if (cfg->stop_bits == STOP_BITS_2)
+    } else if (cfg->stop_bits == STOP_BITS_2){
         USART_InitStructure.USART_StopBits = USART_StopBits_2;
+    }
 
-    USART_InitStructure.USART_Parity = USART_Parity_No;
+    if (cfg->parity == PARITY_NONE){
+        USART_InitStructure.USART_Parity = USART_Parity_No;
+    } else if (cfg->parity == PARITY_ODD) {
+        USART_InitStructure.USART_Parity = USART_Parity_Odd;
+    } else if (cfg->parity == PARITY_EVEN) {
+        USART_InitStructure.USART_Parity = USART_Parity_Even;
+    }
+
     USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
     USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
     USART_Init(uart->uart_device, &USART_InitStructure);
 
     /* Enable USART */
     USART_Cmd(uart->uart_device, ENABLE);
-    /* enable interrupt */
-    USART_ITConfig(uart->uart_device, USART_IT_RXNE, ENABLE);
 
     return RT_EOK;
 }
@@ -84,13 +93,19 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
 
     switch (cmd)
     {
+        /* disable interrupt */
     case RT_DEVICE_CTRL_CLR_INT:
         /* disable rx irq */
         UART_DISABLE_IRQ(uart->irq);
+        /* disable interrupt */
+        USART_ITConfig(uart->uart_device, USART_IT_RXNE, DISABLE);
         break;
+        /* enable interrupt */
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
         UART_ENABLE_IRQ(uart->irq);
+        /* enable interrupt */
+        USART_ITConfig(uart->uart_device, USART_IT_RXNE, ENABLE);
         break;
     }
 
@@ -104,8 +119,8 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
     RT_ASSERT(serial != RT_NULL);
     uart = (struct stm32_uart *)serial->parent.user_data;
 
-    while (!(uart->uart_device->SR & USART_FLAG_TXE));
     uart->uart_device->DR = c;
+    while (!(uart->uart_device->SR & USART_FLAG_TC));
 
     return 1;
 }
@@ -158,6 +173,7 @@ void USART1_IRQHandler(void)
         /* clear interrupt */
         USART_ClearITPendingBit(uart->uart_device, USART_IT_RXNE);
     }
+
     if (USART_GetITStatus(uart->uart_device, USART_IT_TC) != RESET)
     {
         /* clear interrupt */
@@ -250,21 +266,21 @@ void USART3_IRQHandler(void)
 
 static void RCC_Configuration(void)
 {
-#ifdef RT_USING_UART1
+#if defined(RT_USING_UART1)
     /* Enable UART GPIO clocks */
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
     /* Enable UART clock */
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
 #endif /* RT_USING_UART1 */
 
-#ifdef RT_USING_UART2
+#if defined(RT_USING_UART2)
     /* Enable UART GPIO clocks */
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
     /* Enable UART clock */
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
 #endif /* RT_USING_UART2 */
 
-#ifdef RT_USING_UART3
+#if defined(RT_USING_UART3)
     /* Enable UART GPIO clocks */
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
     /* Enable UART clock */
@@ -278,7 +294,7 @@ static void GPIO_Configuration(void)
 
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 
-#ifdef RT_USING_UART1
+#if defined(RT_USING_UART1)
     /* Configure USART Rx/tx PIN */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_InitStructure.GPIO_Pin = UART1_GPIO_RX;
@@ -289,7 +305,7 @@ static void GPIO_Configuration(void)
     GPIO_Init(UART1_GPIO, &GPIO_InitStructure);
 #endif /* RT_USING_UART1 */
 
-#ifdef RT_USING_UART2
+#if defined(RT_USING_UART2)
     /* Configure USART Rx/tx PIN */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_InitStructure.GPIO_Pin = UART2_GPIO_RX;
@@ -300,7 +316,7 @@ static void GPIO_Configuration(void)
     GPIO_Init(UART2_GPIO, &GPIO_InitStructure);
 #endif /* RT_USING_UART2 */
 
-#ifdef RT_USING_UART3
+#if defined(RT_USING_UART3)
     /* Configure USART Rx/tx PIN */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_InitStructure.GPIO_Pin = UART3_GPIO_RX;
@@ -332,7 +348,7 @@ void rt_hw_usart_init(void)
     RCC_Configuration();
     GPIO_Configuration();
 
-#ifdef RT_USING_UART1
+#if defined(RT_USING_UART1)
     uart = &uart1;
     config.baud_rate = BAUD_RATE_115200;
 
@@ -343,11 +359,11 @@ void rt_hw_usart_init(void)
 
     /* register UART1 device */
     rt_hw_serial_register(&serial1, "uart1",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX ,
                           uart);
 #endif /* RT_USING_UART1 */
 
-#ifdef RT_USING_UART2
+#if defined(RT_USING_UART2)
     uart = &uart2;
 
     config.baud_rate = BAUD_RATE_115200;
@@ -362,7 +378,7 @@ void rt_hw_usart_init(void)
                           uart);
 #endif /* RT_USING_UART2 */
 
-#ifdef RT_USING_UART3
+#if defined(RT_USING_UART3)
     uart = &uart3;
 
     config.baud_rate = BAUD_RATE_115200;
