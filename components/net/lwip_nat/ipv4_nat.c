@@ -117,9 +117,10 @@
 #define LWIP_NAT_TTL_INFINITE                    (INT_MAX)
 #define LWIP_NAT_DEFAULT_TTL_SECONDS             (128)
 #define LWIP_NAT_FORWARD_HEADER_SIZE_MIN         (sizeof(struct eth_hdr))
-#define LWIP_NAT_DEFAULT_STATE_TABLES_ICMP       (2)
-#define LWIP_NAT_DEFAULT_STATE_TABLES_TCP        (16)
-#define LWIP_NAT_DEFAULT_STATE_TABLES_UDP        (16)
+
+#define LWIP_NAT_DEFAULT_STATE_TABLES_ICMP       (4)
+#define LWIP_NAT_DEFAULT_STATE_TABLES_TCP        (32)
+#define LWIP_NAT_DEFAULT_STATE_TABLES_UDP        (32)
 
 #define LWIP_NAT_DEFAULT_TCP_SOURCE_PORT         (40000)
 #define LWIP_NAT_DEFAULT_UDP_SOURCE_PORT         (40000)
@@ -250,12 +251,12 @@ ip_nat_init(void)
     IPNAT_ENTRY_RESET(&ip_nat_udp_table[i].common);
   }
 
-  /* we must lock scheduler to protect following code */  
+  /* we must lock scheduler to protect following code */
   rt_enter_critical();
-  
+
   /* add a lwip timer for NAT */
   sys_timeout(LWIP_NAT_TMR_INTERVAL_SEC, nat_timer, NULL);
-  
+
   /* un-protect */
   rt_exit_critical();
 }
@@ -361,7 +362,7 @@ ip_nat_reset_state(ip_nat_conf_t *cfg)
 {
   int i;
 
-  /* @todo: optimize this!!! 
+  /* @todo: optimize this!!!
      why do we search for it anyway, if we have the pointer??? */
   for (i = 0; i < LWIP_NAT_DEFAULT_STATE_TABLES_ICMP; i++) {
     if(ip_nat_icmp_table[i].common.cfg == cfg) {
@@ -392,7 +393,7 @@ ip_nat_shallnat(const struct ip_hdr *iphdr)
   ip_nat_conf_t *nat_config = ip_nat_cfg;
 
   for (nat_config = ip_nat_cfg; nat_config != NULL; nat_config = nat_config->next) {
-    if (ip_addr_netcmp(&(iphdr->dest), &(nat_config->entry.dest_net),
+      if (ip_addr_netcmp(&(iphdr->dest), &(nat_config->entry.dest_net),
                        &(nat_config->entry.dest_netmask)) ||
       ip_addr_netcmp(&(iphdr->src), &(nat_config->entry.source_net),
                      &(nat_config->entry.source_netmask))) {
@@ -435,7 +436,7 @@ ip_nat_check_header(struct pbuf *p, u16_t min_size)
  * @return 1 if the packet has been consumed (it was a NAT packet),
  *         0 if the packet has not been consumed (no NAT packet)
  */
-u8_t  
+u8_t
 ip_nat_input(struct pbuf *p)
 {
   struct ip_hdr        *iphdr = (struct ip_hdr*)p->payload;
@@ -538,6 +539,7 @@ ip_nat_input(struct pbuf *p)
       q = pbuf_alloc(PBUF_LINK, 0, PBUF_RAM);
       if (q == NULL) {
         LWIP_DEBUGF(LWIP_NAT_DEBUG, ("ip_nat_input: no pbuf for outgoing header\n"));
+        // rt_kprintf("ip_nat_input: no pbuf for outgoing header\n");
         /* @todo: stats? */
         pbuf_free(p);
         p = NULL;
@@ -549,11 +551,13 @@ ip_nat_input(struct pbuf *p)
       /* restore p->payload to IP header */
       if (pbuf_header(p, -PBUF_LINK_HLEN)) {
         LWIP_DEBUGF(LWIP_NAT_DEBUG, ("ip_nat_input: restoring header failed\n"));
+        // rt_kprintf("ip_nat_input: restoring header failed\n");
         /* @todo: stats? */
         pbuf_free(p);
         p = NULL;
         return 1;
       }
+      else q = p;
     }
     /* if we come here, q is the pbuf to send (either points to p or to a chain) */
     in_if = nat_entry.cmn->cfg->entry.in_if;
@@ -572,6 +576,7 @@ ip_nat_input(struct pbuf *p)
       LWIP_DEBUGF(LWIP_NAT_DEBUG,
         ("ip_nat_input: failed to send rewritten packet. link layer returned %d\n",
         err));
+      // rt_kprintf("ip_nat_input: failed to send rewritten packet. link layer returned %d\n", err);
     }
     /* now that q (and/or p) is sent (or not), give up the reference to it
        this frees the input pbuf (p) as we have consumed it. */
@@ -736,6 +741,7 @@ ip_nat_out(struct pbuf *p)
         if (err != ERR_OK) {
           LWIP_DEBUGF(LWIP_NAT_DEBUG,
             ("ip_nat_out: failed to send rewritten packet. link layer returned %d\n", err));
+          // rt_kprintf("ip_nat_out: failed to send rewritten packet. link layer returned %d\n", err);
         } else {
           sent = 1;
         }
@@ -842,6 +848,7 @@ ip_nat_udp_lookup_outgoing(ip_nat_conf_t *nat_config, const struct ip_hdr *iphdr
                                       nat_entry.udp);
       } else {
         LWIP_DEBUGF(LWIP_NAT_DEBUG, ("ip_nat_udp_lookup_outgoing: no more NAT entries available\n"));
+        // rt_kprintf("ip_nat_udp_lookup_outgoing: no more NAT entries available\n");
       }
     }
   }
@@ -926,6 +933,7 @@ ip_nat_tcp_lookup_outgoing(ip_nat_conf_t *nat_config, const struct ip_hdr *iphdr
                                       nat_entry.tcp);
       } else {
         LWIP_DEBUGF(LWIP_NAT_DEBUG, ("ip_nat_udp_lookup_outgoing: no more NAT entries available\n"));
+        // rt_kprintf("ip_nat_udp_lookup_outgoing: no more NAT entries available\n");
       }
     }
   }
@@ -1005,9 +1013,9 @@ ip_nat_dbg_dump(const char *msg, const struct ip_hdr *iphdr)
   LWIP_ASSERT("NULL != msg", NULL != msg);
   LWIP_ASSERT("NULL != iphdr", NULL != iphdr);
   LWIP_DEBUGF(LWIP_NAT_DEBUG, ("%s: IP: (", msg));
-  ip_nat_dbg_dump_ip(&iphdr->src);
+  ip_nat_dbg_dump_ip((ip_addr_t *)&(iphdr->src));
   LWIP_DEBUGF(LWIP_NAT_DEBUG, (" --> "));
-  ip_nat_dbg_dump_ip(&iphdr->dest);
+  ip_nat_dbg_dump_ip((ip_addr_t *)&(iphdr->dest));
   LWIP_DEBUGF(LWIP_NAT_DEBUG, (" id=%" U16_F ", chksum=%" U16_F ")\n",
     ntohs(IPH_ID(iphdr)), ntohs(IPH_CHKSUM(iphdr))));
 }
