@@ -131,6 +131,7 @@ int dfs_device_fs_close(struct dfs_fd *file)
 
 int dfs_device_fs_open(struct dfs_fd *file)
 {
+    rt_err_t result;
     rt_device_t device;
 
     if (file->flags & DFS_O_CREAT)
@@ -186,9 +187,16 @@ int dfs_device_fs_open(struct dfs_fd *file)
     if (device == RT_NULL)
         return -DFS_STATUS_ENODEV;
 
-    file->data = device;
-    
-    return DFS_STATUS_OK;
+    /* to open device */
+    result = rt_device_open(device, RT_DEVICE_OFLAG_RDWR);
+    if (result == RT_EOK || result == -RT_ENOSYS)
+    {
+        file->data = device;
+        return DFS_STATUS_OK;
+    }
+
+    /* open device failed. */
+    return -DFS_STATUS_EIO;
 }
 
 int dfs_device_fs_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)

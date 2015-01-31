@@ -161,6 +161,12 @@
  */
 #define SYS_LIGHTWEIGHT_PROT        (NO_SYS==0)
 
+#ifdef LWIP_USING_NAT
+#define IP_NAT                      1
+#else
+#define IP_NAT                      0
+#endif
+
 /* ---------- TCP options ---------- */
 #ifdef RT_LWIP_TCP
 #define LWIP_TCP                    1
