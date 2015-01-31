@@ -435,8 +435,8 @@ ip_nat_check_header(struct pbuf *p, u16_t min_size)
  * @return 1 if the packet has been consumed (it was a NAT packet),
  *         0 if the packet has not been consumed (no NAT packet)
  */
-int 
-ip_nat_input(struct pbuf *p, struct netif *inp)
+u8_t  
+ip_nat_input(struct pbuf *p)
 {
   struct ip_hdr        *iphdr = (struct ip_hdr*)p->payload;
   struct tcp_hdr       *tcphdr;
@@ -444,7 +444,7 @@ ip_nat_input(struct pbuf *p, struct netif *inp)
   struct icmp_echo_hdr *icmphdr;
   nat_entry_t           nat_entry;
   err_t                 err;
-  int                   consumed = 0;
+  u8_t                  consumed = 0;
   int                   i;
   struct pbuf          *q = NULL;
 
