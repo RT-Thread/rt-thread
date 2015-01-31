@@ -318,6 +318,24 @@ static void dhcpd_thread_entry(void *parameter)
                 *dhcp_opt++ = 0xFF;
                 *dhcp_opt++ = 0x00;
 
+#ifdef DHCPD_USING_ROUTER
+                // DHCP_OPTION_ROUTER
+                *dhcp_opt++ = DHCP_OPTION_ROUTER;
+                *dhcp_opt++ = 4;
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR0;
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR1;
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR2;
+                *dhcp_opt++ = 1;
+#endif
+
+                // DHCP_OPTION_DNS_SERVER, use the default DNS server address in lwIP
+                *dhcp_opt++ = DHCP_OPTION_DNS_SERVER;
+                *dhcp_opt++ = 4;
+                *dhcp_opt++ = 208;
+                *dhcp_opt++ = 67;
+                *dhcp_opt++ = 222;
+                *dhcp_opt++ = 222;
+
                 // DHCP_OPTION_LEASE_TIME
                 *dhcp_opt++ = DHCP_OPTION_LEASE_TIME;
                 *dhcp_opt++ = 4;
