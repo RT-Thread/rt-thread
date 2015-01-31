@@ -1,5 +1,5 @@
 /*
- * File      : syscalls.c
+ * File      : syscall_mem.c
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
  *
@@ -22,47 +22,23 @@
  * 2015-01-28     Bernard      first version
  */
 #include <rtthread.h>
-#ifdef RT_USING_DFS
-#include <dfs_file.h>
-#endif
-#include <yfuns.h>
 
-#pragma module_name = "?__close"
-int __close(int handle)
+void *malloc(rt_size_t n)
 {
-    if (handle == _LLIO_STDOUT ||
-        handle == _LLIO_STDERR ||
-        handle == _LLIO_STDIN)
-        return _LLIO_ERROR;
-
-#ifdef RT_USING_DFS
-    return close(handle);
-#else
-    return 0;
-#endif
+    return rt_malloc(n);
 }
 
-#pragma module_name = "?remove"
-int remove(const char *val)
+void *realloc(void *rmem, rt_size_t newsize)
 {
-#ifdef RT_USING_DFS
-    dfs_file_unlink(val);
-#endif
-
-    return 0;
+    return rt_realloc(rmem, newsize);
 }
 
-#pragma module_name = "?__lseek"
-long __lseek(int handle, long offset, int whence)
+void *calloc(rt_size_t nelem, rt_size_t elsize)
 {
-#ifdef RT_USING_DFS
-#endif
-
-    if (handle == _LLIO_STDOUT ||
-        handle == _LLIO_STDERR ||
-        handle == _LLIO_STDIN)
-        return _LLIO_ERROR;
-
-    return lseek(handle, offset, whence);
+	return rt_calloc(nelem, elsize);
 }
 
+void free(void *rmem)
+{
+    rt_free(rmem);
+}
