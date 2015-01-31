@@ -12,6 +12,7 @@
  * 2009-01-05     Bernard      the first version
  * 2010-03-29     Bernard      remove interrupt Tx and DMA Rx mode
  * 2013-05-13     aozima       update for kehong-lingtai.
+ * 2015-01-31     armink       make sure the serial transmit complete in putc()
  */
 
 #include "stm32f10x.h"
@@ -118,8 +119,8 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
     RT_ASSERT(serial != RT_NULL);
     uart = (struct stm32_uart *)serial->parent.user_data;
 
-    while (!(uart->uart_device->SR & USART_FLAG_TXE));
     uart->uart_device->DR = c;
+    while (!(uart->uart_device->SR & USART_FLAG_TC));
 
     return 1;
 }
