@@ -18,8 +18,6 @@
 #define S_REG_HOLDING_NREGS           100
 /* salve mode: holding register's all address */
 #define          S_HD_RESERVE                     0
-#define          S_HD_CPU_USAGE_MAJOR             1
-#define          S_HD_CPU_USAGE_MINOR             2
 /* salve mode: input register's all address */
 #define          S_IN_RESERVE                     0
 /* salve mode: coil's all address */

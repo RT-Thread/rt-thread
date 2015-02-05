@@ -25,7 +25,7 @@
 #include "mb.h"
 #include "mbport.h"
 #include "rtdevice.h"
-#include "bsp.h"
+#include "board.h"
 
 #if MB_MASTER_RTU_ENABLED > 0 || MB_MASTER_ASCII_ENABLED > 0
 /* ----------------------- Static variables ---------------------------------*/

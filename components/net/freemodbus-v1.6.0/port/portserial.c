@@ -25,7 +25,7 @@
 #include "mb.h"
 #include "mbport.h"
 #include "rtdevice.h"
-#include "bsp.h"
+#include "board.h"
 
 /* ----------------------- Static variables ---------------------------------*/
 ALIGN(RT_ALIGN_SIZE)
