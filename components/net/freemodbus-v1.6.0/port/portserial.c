@@ -133,7 +133,7 @@ void vMBPortSerialEnable(BOOL xRxEnable, BOOL xTxEnable)
     else
     {
         /* switch 485 to transmit mode */
-    	rt_pin_write(MODBUS_SLAVE_RT_CONTROL_PIN_INDEX, PIN_HIGH);
+        rt_pin_write(MODBUS_SLAVE_RT_CONTROL_PIN_INDEX, PIN_HIGH);
         /* disable RX interrupt */
         serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_RX);
     }

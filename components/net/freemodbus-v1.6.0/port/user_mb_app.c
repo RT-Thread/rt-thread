@@ -260,8 +260,8 @@ eMBErrorCode eMBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT us
     if ((usAddress >= DISCRETE_INPUT_START)
             && (usAddress + usNDiscrete    <= DISCRETE_INPUT_START + DISCRETE_INPUT_NDISCRETES))
     {
-        iRegIndex = (USHORT) (usAddress - usDiscreteInputStart) / 8; //每个寄存器存8个
-        iRegBitIndex = (USHORT) (usAddress - usDiscreteInputStart) % 8; //相对于寄存器内部的位地址
+        iRegIndex = (USHORT) (usAddress - usDiscreteInputStart) / 8;
+        iRegBitIndex = (USHORT) (usAddress - usDiscreteInputStart) % 8;
 
         while (iNReg > 0)
         {
