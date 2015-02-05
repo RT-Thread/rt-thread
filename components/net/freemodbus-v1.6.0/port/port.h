@@ -1,6 +1,6 @@
 /*
  * FreeModbus Libary: BARE Port
- * Copyright (C) 2006 Christian Walter <wolti@sil.at>
+ * Copyright (C) 2013 Armink <armink.ztl@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,17 +34,8 @@
 #define PR_BEGIN_EXTERN_C           extern "C" {
 #define	PR_END_EXTERN_C             }
 
-//TODO  暂时先写B13引脚，等组网测试时再确认
-#define SLAVE_RS485_SEND_MODE  GPIO_SetBits(GPIOB,GPIO_Pin_13)
-#define SLAVE_RS485_RECEIVE_MODE  GPIO_ResetBits(GPIOB,GPIO_Pin_13)
-#define MASTER_RS485_SEND_MODE  GPIO_SetBits(GPIOB,GPIO_Pin_13)
-#define MASTER_RS485_RECEIVE_MODE  GPIO_ResetBits(GPIOB,GPIO_Pin_13)
-
 #define ENTER_CRITICAL_SECTION()	EnterCriticalSection()
 #define EXIT_CRITICAL_SECTION()    ExitCriticalSection()
-
-void EnterCriticalSection(void);
-void ExitCriticalSection(void);
 
 typedef uint8_t BOOL;
 
@@ -64,5 +55,8 @@ typedef int32_t LONG;
 #ifndef FALSE
 #define FALSE           0
 #endif
+
+void EnterCriticalSection(void);
+void ExitCriticalSection(void);
 
 #endif

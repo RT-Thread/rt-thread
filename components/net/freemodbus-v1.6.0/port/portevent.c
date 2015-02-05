@@ -1,5 +1,5 @@
 /*
- * FreeModbus Libary: STM32 Port
+ * FreeModbus Libary: RT-Thread Port
  * Copyright (C) 2013 Armink <armink.ztl@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -24,35 +24,45 @@
 #include "mbport.h"
 
 /* ----------------------- Variables ----------------------------------------*/
-static eMBEventType eQueuedEvent;
-static BOOL     xEventInQueue;
-
+static struct rt_event     xSlaveOsEvent;
 /* ----------------------- Start implementation -----------------------------*/
 BOOL
 xMBPortEventInit( void )
 {
-    xEventInQueue = FALSE;
+    rt_event_init(&xSlaveOsEvent,"slave event",RT_IPC_FLAG_PRIO);
     return TRUE;
 }
 
 BOOL
 xMBPortEventPost( eMBEventType eEvent )
 {
-    xEventInQueue = TRUE;
-    eQueuedEvent = eEvent;
+    rt_event_send(&xSlaveOsEvent, eEvent);
     return TRUE;
 }
 
 BOOL
 xMBPortEventGet( eMBEventType * eEvent )
 {
-    BOOL            xEventHappened = FALSE;
-
-    if( xEventInQueue )
+    rt_uint32_t recvedEvent;
+    /* waiting forever OS event */
+    rt_event_recv(&xSlaveOsEvent,
+            EV_READY | EV_FRAME_RECEIVED | EV_EXECUTE | EV_FRAME_SENT,
+            RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR, RT_WAITING_FOREVER,
+            &recvedEvent);
+    switch (recvedEvent)
     {
-        *eEvent = eQueuedEvent;
-        xEventInQueue = FALSE;
-        xEventHappened = TRUE;
+    case EV_READY:
+        *eEvent = EV_READY;
+        break;
+    case EV_FRAME_RECEIVED:
+        *eEvent = EV_FRAME_RECEIVED;
+        break;
+    case EV_EXECUTE:
+        *eEvent = EV_EXECUTE;
+        break;
+    case EV_FRAME_SENT:
+        *eEvent = EV_FRAME_SENT;
+        break;
     }
-    return xEventHappened;
+    return TRUE;
 }
