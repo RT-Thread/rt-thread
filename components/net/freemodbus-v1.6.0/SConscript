@@ -7,7 +7,6 @@ modbus/functions/mbutils.c
 modbus/functions/mbfuncother.c
 modbus/rtu/mbcrc.c
 port/port.c
-port/user_mb_app.c
 """)
 
 master_rtu_src = Split("""
@@ -20,6 +19,7 @@ modbus/mb_m.c
 port/portevent_m.c
 port/portserial_m.c
 port/porttimer_m.c
+port/user_mb_app_m.c
 """)
 
 slave_rtu_src = Split("""
@@ -32,6 +32,7 @@ modbus/mb.c
 port/portevent.c
 port/portserial.c
 port/porttimer.c
+port/user_mb_app.c
 """)
 
 master_slave_rtu_src = Split("""
@@ -53,6 +54,8 @@ port/portserial.c
 port/portserial_m.c
 port/porttimer.c
 port/porttimer_m.c
+port/user_mb_app.c
+port/user_mb_app_m.c
 """)
 
 # The set of source files associated with this SConscript file.
