@@ -1,5 +1,5 @@
 /*
- * FreeModbus Libary: STM32 Port
+ * FreeModbus Libary: RT-Thread Port
  * Copyright (C) 2013 Armink <armink.ztl@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -24,123 +24,149 @@
 /* ----------------------- Modbus includes ----------------------------------*/
 #include "mb.h"
 #include "mbport.h"
+#include "rtdevice.h"
+#include "board.h"
 
-#if MB_MASTER_RTU_ENABLED > 0 || MB_MASTER_ASCII_ENABLED
+#if MB_MASTER_RTU_ENABLED > 0 || MB_MASTER_ASCII_ENABLED > 0
+/* ----------------------- Static variables ---------------------------------*/
+ALIGN(RT_ALIGN_SIZE)
+/* software simulation serial transmit IRQ handler thread stack */
+static rt_uint8_t serial_soft_trans_irq_stack[512];
+/* software simulation serial transmit IRQ handler thread */
+static struct rt_thread thread_serial_soft_trans_irq;
+/* serial event */
+static struct rt_event event_serial;
+/* modbus slave serial device */
+static rt_serial_t *serial;
+
+/* ----------------------- Defines ------------------------------------------*/
+/* serial transmit event */
+#define EVENT_SERIAL_TRANS_START    (1<<0)
+
 /* ----------------------- static functions ---------------------------------*/
 static void prvvUARTTxReadyISR(void);
 static void prvvUARTRxISR(void);
+static rt_err_t serial_rx_ind(rt_device_t dev, rt_size_t size);
+static void serial_soft_trans_irq(void* parameter);
+
 /* ----------------------- Start implementation -----------------------------*/
+BOOL xMBMasterPortSerialInit(UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits,
+        eMBParity eParity)
+{
+    /**
+     * set 485 mode receive and transmit control IO
+     * @note MODBUS_MASTER_RT_CONTROL_PIN_INDEX need be defined by user
+     */
+    rt_pin_mode(MODBUS_MASTER_RT_CONTROL_PIN_INDEX, PIN_MODE_OUTPUT);
+
+    /* set serial name */
+    if (ucPORT == 1) {
+#if defined(RT_USING_UART1) || defined(RT_USING_REMAP_UART1)
+        extern struct rt_serial_device serial1;
+        serial = &serial1;
+#endif
+    } else if (ucPORT == 2) {
+#if defined(RT_USING_UART2)
+        extern struct rt_serial_device serial2;
+        serial = &serial2;
+#endif
+    } else if (ucPORT == 3) {
+#if defined(RT_USING_UART3)
+        extern struct rt_serial_device serial3;
+        serial = &serial3;
+#endif
+    }
+    /* set serial configure parameter */
+    serial->config.baud_rate = ulBaudRate;
+    serial->config.stop_bits = STOP_BITS_1;
+    switch(eParity){
+    case MB_PAR_NONE: {
+        serial->config.data_bits = DATA_BITS_8;
+        serial->config.parity = PARITY_NONE;
+        break;
+    }
+    case MB_PAR_ODD: {
+        serial->config.data_bits = DATA_BITS_9;
+        serial->config.parity = PARITY_ODD;
+        break;
+    }
+    case MB_PAR_EVEN: {
+        serial->config.data_bits = DATA_BITS_9;
+        serial->config.parity = PARITY_EVEN;
+        break;
+    }
+    }
+    /* set serial configure */
+    serial->ops->configure(serial, &(serial->config));
+
+    /* open serial device */
+    if (!serial->parent.open(&serial->parent,
+            RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX )) {
+        serial->parent.rx_indicate = serial_rx_ind;
+    } else {
+        return FALSE;
+    }
+
+    /* software initialize */
+    rt_thread_init(&thread_serial_soft_trans_irq,
+                   "slave trans",
+                   serial_soft_trans_irq,
+                   RT_NULL,
+                   serial_soft_trans_irq_stack,
+                   sizeof(serial_soft_trans_irq_stack),
+                   10, 5);
+    rt_thread_startup(&thread_serial_soft_trans_irq);
+    rt_event_init(&event_serial, "slave event", RT_IPC_FLAG_PRIO);
+
+    return TRUE;
+}
 
 void vMBMasterPortSerialEnable(BOOL xRxEnable, BOOL xTxEnable)
 {
-	if (xRxEnable)
-	{
-		MASTER_RS485_RECEIVE_MODE;
-		USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
-	}
-	else
-	{
-		MASTER_RS485_SEND_MODE;
-		USART_ITConfig(USART2, USART_IT_RXNE, DISABLE);
-	}
-	if (xTxEnable)
-	{
-		USART_ITConfig(USART2, USART_IT_TXE, ENABLE);
-	}
-	else
-	{
-		USART_ITConfig(USART2, USART_IT_TXE, DISABLE);
-	}
+    rt_uint32_t recved_event;
+    if (xRxEnable)
+    {
+        /* enable RX interrupt */
+        serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void *)RT_DEVICE_FLAG_INT_RX);
+        /* switch 485 to receive mode */
+        rt_pin_write(MODBUS_MASTER_RT_CONTROL_PIN_INDEX, PIN_LOW);
+    }
+    else
+    {
+        /* switch 485 to transmit mode */
+        rt_pin_write(MODBUS_MASTER_RT_CONTROL_PIN_INDEX, PIN_HIGH);
+        /* disable RX interrupt */
+        serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_RX);
+    }
+    if (xTxEnable)
+    {
+        /* start serial transmit */
+        rt_event_send(&event_serial, EVENT_SERIAL_TRANS_START);
+    }
+    else
+    {
+        /* stop serial transmit */
+        rt_event_recv(&event_serial, EVENT_SERIAL_TRANS_START,
+                RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR, 0,
+                &recved_event);
+    }
 }
 
 void vMBMasterPortClose(void)
 {
-	USART_ITConfig(USART2, USART_IT_TXE | USART_IT_RXNE, DISABLE);
-	USART_Cmd(USART2, DISABLE);
-}
-//默认一个主机 串口2 波特率可设置  奇偶检验可设置
-BOOL xMBMasterPortSerialInit(UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits,
-		eMBParity eParity)
-{
-	GPIO_InitTypeDef GPIO_InitStructure;
-	USART_InitTypeDef USART_InitStructure;
-	NVIC_InitTypeDef NVIC_InitStructure;
-	//======================时钟初始化=======================================
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB, ENABLE);
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
-	//======================IO初始化=======================================	
-	//USART2_TX
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
-	//USART2_RX
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
-	//配置485发送和接收模式
-//    TODO   暂时先写B13 等之后组网测试时再修改
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	//======================串口初始化=======================================
-	USART_InitStructure.USART_BaudRate = ulBaudRate;
-	//设置校验模式
-	switch (eParity)
-	{
-	case MB_PAR_NONE: //无校验
-		USART_InitStructure.USART_Parity = USART_Parity_No;
-		USART_InitStructure.USART_WordLength = USART_WordLength_8b;
-		break;
-	case MB_PAR_ODD: //奇校验
-		USART_InitStructure.USART_Parity = USART_Parity_Odd;
-		USART_InitStructure.USART_WordLength = USART_WordLength_9b;
-		break;
-	case MB_PAR_EVEN: //偶校验
-		USART_InitStructure.USART_Parity = USART_Parity_Even;
-		USART_InitStructure.USART_WordLength = USART_WordLength_9b;
-		break;
-	default:
-		return FALSE;
-	}
-
-	USART_InitStructure.USART_StopBits = USART_StopBits_1;
-	USART_InitStructure.USART_HardwareFlowControl =
-			USART_HardwareFlowControl_None;
-	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-	if (ucPORT != 2)
-		return FALSE;
-
-	ENTER_CRITICAL_SECTION(); //关全局中断
-
-	USART_Init(USART2, &USART_InitStructure);
-	USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
-	USART_Cmd(USART2, ENABLE);
-
-	//=====================中断初始化======================================
-	//设置NVIC优先级分组为Group2：0-3抢占式优先级，0-3的响应式优先级
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
-	NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
-
-	EXIT_CRITICAL_SECTION(); //开全局中断
-
-	return TRUE;
+    serial->parent.close(&(serial->parent));
 }
 
 BOOL xMBMasterPortSerialPutByte(CHAR ucByte)
 {
-	USART_SendData(USART2, ucByte);
-	return TRUE;
+    serial->parent.write(&(serial->parent), 0, &ucByte, 1);
+    return TRUE;
 }
 
 BOOL xMBMasterPortSerialGetByte(CHAR * pucByte)
 {
-	*pucByte = USART_ReceiveData(USART2);
-	return TRUE;
+    serial->parent.read(&(serial->parent), 0, pucByte, 1);
+    return TRUE;
 }
 
 /* 
@@ -152,7 +178,7 @@ BOOL xMBMasterPortSerialGetByte(CHAR * pucByte)
  */
 void prvvUARTTxReadyISR(void)
 {
-	pxMBMasterFrameCBTransmitterEmpty();
+    pxMBMasterFrameCBTransmitterEmpty();
 }
 
 /* 
@@ -163,30 +189,37 @@ void prvvUARTTxReadyISR(void)
  */
 void prvvUARTRxISR(void)
 {
-	pxMBMasterFrameCBByteReceived();
+    pxMBMasterFrameCBByteReceived();
 }
-/*******************************************************************************
- * Function Name  : USART2_IRQHandler
- * Description    : This function handles USART2 global interrupt request.
- * Input          : None
- * Output         : None
- * Return         : None
- *******************************************************************************/
-void USART2_IRQHandler(void)
-{
-	rt_interrupt_enter();
-	//接收中断
-	if (USART_GetITStatus(USART2, USART_IT_RXNE) == SET)
-	{
-		USART_ClearITPendingBit(USART2, USART_IT_RXNE);
-		prvvUARTRxISR();
-	}
-	//发送中断
-	if (USART_GetITStatus(USART2, USART_IT_TXE) == SET)
-	{
-		prvvUARTTxReadyISR();
-	}
-	rt_interrupt_leave();
+
+/**
+ * Software simulation serial transmit IRQ handler.
+ *
+ * @param parameter parameter
+ */
+static void serial_soft_trans_irq(void* parameter) {
+    rt_uint32_t recved_event;
+    while (1)
+    {
+        /* waiting for serial transmit start */
+        rt_event_recv(&event_serial, EVENT_SERIAL_TRANS_START, RT_EVENT_FLAG_OR,
+                RT_WAITING_FOREVER, &recved_event);
+        /* execute modbus callback */
+        prvvUARTTxReadyISR();
+    }
+}
+
+/**
+ * This function is serial receive callback function
+ *
+ * @param dev the device of serial
+ * @param size the data size that receive
+ *
+ * @return return RT_EOK
+ */
+static rt_err_t serial_rx_ind(rt_device_t dev, rt_size_t size) {
+    prvvUARTRxISR();
+    return RT_EOK;
 }
 
 #endif
