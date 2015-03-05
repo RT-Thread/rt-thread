@@ -1,7 +1,7 @@
 /*
  * File      : rtdef.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  *                             RT_USING_MEMHEAP condition.
  * 2012-12-30     Bernard      add more control command for graphic.
  * 2013-01-09     Bernard      change version number.
+ * 2015-02-01     Bernard      change version number to v2.1.0
  */
 
 #ifndef __RT_DEF_H__
@@ -49,7 +50,7 @@ extern "C" {
 
 /* RT-Thread version information */
 #define RT_VERSION                      2L              /**< major version number */
-#define RT_SUBVERSION                   0L              /**< minor version number */
+#define RT_SUBVERSION                   1L              /**< minor version number */
 #define RT_REVISION                     0L              /**< revise version number */
 
 /* RT-Thread version */

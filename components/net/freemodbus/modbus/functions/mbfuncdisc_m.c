@@ -1,4 +1,4 @@
-/* 
+/*
  * FreeModbus Libary: A portable Modbus implementation for Modbus ASCII/RTU.
  * Copyright (C) 2013 Armink <armink.ztl@gmail.com>
  * All rights reserved.
@@ -25,8 +25,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * File: $Id: mbfuncinput_m.c,v 1.60 2013/10/12 14:23:40 Armink Add Master Functions  Exp $
+ * File: $Id: mbfuncdisc_m.c,v 1.60 2013/10/15 8:48:20 Armink Add Master Functions  Exp $
  */
+
+
 
 /* ----------------------- System includes ----------------------------------*/
 #include "stdlib.h"
@@ -44,76 +46,103 @@
 
 /* ----------------------- Defines ------------------------------------------*/
 #define MB_PDU_REQ_READ_ADDR_OFF            ( MB_PDU_DATA_OFF + 0 )
-#define MB_PDU_REQ_READ_REGCNT_OFF          ( MB_PDU_DATA_OFF + 2 )
+#define MB_PDU_REQ_READ_DISCCNT_OFF         ( MB_PDU_DATA_OFF + 2 )
 #define MB_PDU_REQ_READ_SIZE                ( 4 )
-#define MB_PDU_FUNC_READ_BYTECNT_OFF        ( MB_PDU_DATA_OFF + 0 )
+#define MB_PDU_FUNC_READ_DISCCNT_OFF        ( MB_PDU_DATA_OFF + 0 )
 #define MB_PDU_FUNC_READ_VALUES_OFF         ( MB_PDU_DATA_OFF + 1 )
 #define MB_PDU_FUNC_READ_SIZE_MIN           ( 1 )
-
-#define MB_PDU_FUNC_READ_RSP_BYTECNT_OFF    ( MB_PDU_DATA_OFF )
 
 /* ----------------------- Static functions ---------------------------------*/
 eMBException    prveMBError2Exception( eMBErrorCode eErrorCode );
 
 /* ----------------------- Start implementation -----------------------------*/
 #if MB_MASTER_RTU_ENABLED > 0 || MB_MASTER_ASCII_ENABLED > 0
-#if MB_FUNC_READ_INPUT_ENABLED > 0
+#if MB_FUNC_READ_DISCRETE_INPUTS_ENABLED > 0
 
+/**
+ * This function will request read discrete inputs.
+ *
+ * @param ucSndAddr salve address
+ * @param usDiscreteAddr discrete start address
+ * @param usNDiscreteIn discrete total number
+ * @param lTimeOut timeout (-1 will waiting forever)
+ *
+ * @return error code
+ */
 eMBMasterReqErrCode
-eMBMasterReqReadInputRegister( UCHAR ucSndAddr, USHORT usRegAddr, USHORT usNRegs )
+eMBMasterReqReadDiscreteInputs( UCHAR ucSndAddr, USHORT usDiscreteAddr, USHORT usNDiscreteIn, LONG lTimeOut )
 {
     UCHAR                 *ucMBFrame;
     eMBMasterReqErrCode    eErrStatus = MB_MRE_NO_ERR;
 
-    if ( xMBMasterGetIsBusy() ) eErrStatus = MB_MRE_MASTER_BUSY;
-    else if ( ucSndAddr > MB_MASTER_TOTAL_SLAVE_NUM ) eErrStatus = MB_MRE_ILL_ARG;
+    if ( ucSndAddr > MB_MASTER_TOTAL_SLAVE_NUM ) eErrStatus = MB_MRE_ILL_ARG;
+    else if ( xMBMasterRunResTake( lTimeOut ) == FALSE ) eErrStatus = MB_MRE_MASTER_BUSY;
     else
     {
 		vMBMasterGetPDUSndBuf(&ucMBFrame);
 		vMBMasterSetDestAddress(ucSndAddr);
-		ucMBFrame[MB_PDU_FUNC_OFF]                = MB_FUNC_READ_INPUT_REGISTER;
-		ucMBFrame[MB_PDU_REQ_READ_ADDR_OFF]       = usRegAddr >> 8;
-		ucMBFrame[MB_PDU_REQ_READ_ADDR_OFF + 1]   = usRegAddr;
-		ucMBFrame[MB_PDU_REQ_READ_REGCNT_OFF]     = usNRegs >> 8;
-		ucMBFrame[MB_PDU_REQ_READ_REGCNT_OFF + 1] = usNRegs;
+		ucMBFrame[MB_PDU_FUNC_OFF]                 = MB_FUNC_READ_DISCRETE_INPUTS;
+		ucMBFrame[MB_PDU_REQ_READ_ADDR_OFF]        = usDiscreteAddr >> 8;
+		ucMBFrame[MB_PDU_REQ_READ_ADDR_OFF + 1]    = usDiscreteAddr;
+		ucMBFrame[MB_PDU_REQ_READ_DISCCNT_OFF ]    = usNDiscreteIn >> 8;
+		ucMBFrame[MB_PDU_REQ_READ_DISCCNT_OFF + 1] = usNDiscreteIn;
 		vMBMasterSetPDUSndLength( MB_PDU_SIZE_MIN + MB_PDU_REQ_READ_SIZE );
 		( void ) xMBMasterPortEventPost( EV_MASTER_FRAME_SENT );
+		eErrStatus = eMBMasterWaitRequestFinish( );
     }
     return eErrStatus;
 }
 
 eMBException
-eMBMasterFuncReadInputRegister( UCHAR * pucFrame, USHORT * usLen )
+eMBMasterFuncReadDiscreteInputs( UCHAR * pucFrame, USHORT * usLen )
 {
-    UCHAR          *ucMBFrame;
     USHORT          usRegAddress;
-    USHORT          usRegCount;
+    USHORT          usDiscreteCnt;
+    UCHAR           ucNBytes;
+    UCHAR          *ucMBFrame;
 
     eMBException    eStatus = MB_EX_NONE;
     eMBErrorCode    eRegStatus;
 
-    if( *usLen >= MB_PDU_SIZE_MIN + MB_PDU_FUNC_READ_SIZE_MIN)
+    /* If this request is broadcast, and it's read mode. This request don't need execute. */
+    if ( xMBMasterRequestIsBroadcast() )
     {
-		vMBMasterGetPDUSndBuf(&ucMBFrame);
+    	eStatus = MB_EX_NONE;
+    }
+    else if( *usLen >= MB_PDU_SIZE_MIN + MB_PDU_FUNC_READ_SIZE_MIN )
+    {
+    	vMBMasterGetPDUSndBuf(&ucMBFrame);
         usRegAddress = ( USHORT )( ucMBFrame[MB_PDU_REQ_READ_ADDR_OFF] << 8 );
         usRegAddress |= ( USHORT )( ucMBFrame[MB_PDU_REQ_READ_ADDR_OFF + 1] );
         usRegAddress++;
 
-        usRegCount = ( USHORT )( ucMBFrame[MB_PDU_REQ_READ_REGCNT_OFF] << 8 );
-        usRegCount = ( USHORT )( ucMBFrame[MB_PDU_REQ_READ_REGCNT_OFF + 1] );
+        usDiscreteCnt = ( USHORT )( ucMBFrame[MB_PDU_REQ_READ_DISCCNT_OFF] << 8 );
+        usDiscreteCnt |= ( USHORT )( ucMBFrame[MB_PDU_REQ_READ_DISCCNT_OFF + 1] );
+
+        /* Test if the quantity of coils is a multiple of 8. If not last
+         * byte is only partially field with unused coils set to zero. */
+        if( ( usDiscreteCnt & 0x0007 ) != 0 )
+        {
+        	ucNBytes = ( UCHAR )( usDiscreteCnt / 8 + 1 );
+        }
+        else
+        {
+        	ucNBytes = ( UCHAR )( usDiscreteCnt / 8 );
+        }
 
         /* Check if the number of registers to read is valid. If not
-         * return Modbus illegal data value exception.
+         * return Modbus illegal data value exception. 
          */
-        if( ( usRegCount >= 1 ) && ( 2 * usRegCount == pucFrame[MB_PDU_FUNC_READ_BYTECNT_OFF] ) )
+		if ((usDiscreteCnt >= 1) && ucNBytes == pucFrame[MB_PDU_FUNC_READ_DISCCNT_OFF])
         {
-            /* Make callback to fill the buffer. */
-            eRegStatus = eMBRegInputCB( &pucFrame[MB_PDU_FUNC_READ_VALUES_OFF], usRegAddress, usRegCount );
-            /* If an error occured convert it into a Modbus exception. */
-            if( eRegStatus != MB_ENOERR )
-            {
-                eStatus = prveMBError2Exception( eRegStatus );
-            }
+	       	/* Make callback to fill the buffer. */
+			eRegStatus = eMBMasterRegDiscreteCB( &pucFrame[MB_PDU_FUNC_READ_VALUES_OFF], usRegAddress, usDiscreteCnt );
+
+			/* If an error occured convert it into a Modbus exception. */
+			if( eRegStatus != MB_ENOERR )
+			{
+				eStatus = prveMBError2Exception( eRegStatus );
+			}
         }
         else
         {
@@ -122,7 +151,8 @@ eMBMasterFuncReadInputRegister( UCHAR * pucFrame, USHORT * usLen )
     }
     else
     {
-        /* Can't be a valid request because the length is incorrect. */
+        /* Can't be a valid read coil register request because the length
+         * is incorrect. */
         eStatus = MB_EX_ILLEGAL_DATA_VALUE;
     }
     return eStatus;

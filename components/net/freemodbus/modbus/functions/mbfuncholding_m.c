@@ -86,14 +86,24 @@ eMBException    prveMBError2Exception( eMBErrorCode eErrorCode );
 #if MB_MASTER_RTU_ENABLED > 0 || MB_MASTER_ASCII_ENABLED > 0
 #if MB_FUNC_WRITE_HOLDING_ENABLED > 0
 
+/**
+ * This function will request write holding register.
+ *
+ * @param ucSndAddr salve address
+ * @param usRegAddr register start address
+ * @param usRegData register data to be written
+ * @param lTimeOut timeout (-1 will waiting forever)
+ *
+ * @return error code
+ */
 eMBMasterReqErrCode
-eMBMasterReqWriteHoldingRegister( UCHAR ucSndAddr, USHORT usRegAddr, USHORT usRegData )
+eMBMasterReqWriteHoldingRegister( UCHAR ucSndAddr, USHORT usRegAddr, USHORT usRegData, LONG lTimeOut )
 {
     UCHAR                 *ucMBFrame;
     eMBMasterReqErrCode    eErrStatus = MB_MRE_NO_ERR;
 
-    if ( xMBMasterGetIsBusy() ) eErrStatus = MB_MRE_MASTER_BUSY;
-    else if ( ucSndAddr > MB_MASTER_TOTAL_SLAVE_NUM ) eErrStatus = MB_MRE_ILL_ARG;
+    if ( ucSndAddr > MB_MASTER_TOTAL_SLAVE_NUM ) eErrStatus = MB_MRE_ILL_ARG;
+    else if ( xMBMasterRunResTake( lTimeOut ) == FALSE ) eErrStatus = MB_MRE_MASTER_BUSY;
     else
     {
 		vMBMasterGetPDUSndBuf(&ucMBFrame);
@@ -105,6 +115,7 @@ eMBMasterReqWriteHoldingRegister( UCHAR ucSndAddr, USHORT usRegAddr, USHORT usRe
 		ucMBFrame[MB_PDU_REQ_WRITE_VALUE_OFF + 1] = usRegData ;
 		vMBMasterSetPDUSndLength( MB_PDU_SIZE_MIN + MB_PDU_REQ_WRITE_SIZE );
 		( void ) xMBMasterPortEventPost( EV_MASTER_FRAME_SENT );
+		eErrStatus = eMBMasterWaitRequestFinish( );
     }
     return eErrStatus;
 }
@@ -123,7 +134,7 @@ eMBMasterFuncWriteHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
         usRegAddress++;
 
         /* Make callback to update the value. */
-        eRegStatus = eMBRegHoldingCB( &pucFrame[MB_PDU_FUNC_WRITE_VALUE_OFF],
+        eRegStatus = eMBMasterRegHoldingCB( &pucFrame[MB_PDU_FUNC_WRITE_VALUE_OFF],
                                       usRegAddress, 1, MB_REG_WRITE );
 
         /* If an error occured convert it into a Modbus exception. */
@@ -143,16 +154,27 @@ eMBMasterFuncWriteHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
 
 #if MB_FUNC_WRITE_MULTIPLE_HOLDING_ENABLED > 0
 
+/**
+ * This function will request write multiple holding register.
+ *
+ * @param ucSndAddr salve address
+ * @param usRegAddr register start address
+ * @param usNRegs register total number
+ * @param pusDataBuffer data to be written
+ * @param lTimeOut timeout (-1 will waiting forever)
+ *
+ * @return error code
+ */
 eMBMasterReqErrCode
 eMBMasterReqWriteMultipleHoldingRegister( UCHAR ucSndAddr,
-		USHORT usRegAddr, USHORT usNRegs, USHORT * pusDataBuffer )
+		USHORT usRegAddr, USHORT usNRegs, USHORT * pusDataBuffer, LONG lTimeOut )
 {
     UCHAR                 *ucMBFrame;
     USHORT                 usRegIndex = 0;
     eMBMasterReqErrCode    eErrStatus = MB_MRE_NO_ERR;
 
-    if ( xMBMasterGetIsBusy() ) eErrStatus = MB_MRE_MASTER_BUSY;
-    else if ( ucSndAddr > MB_MASTER_TOTAL_SLAVE_NUM ) eErrStatus = MB_MRE_ILL_ARG;
+    if ( ucSndAddr > MB_MASTER_TOTAL_SLAVE_NUM ) eErrStatus = MB_MRE_ILL_ARG;
+    else if ( xMBMasterRunResTake( lTimeOut ) == FALSE ) eErrStatus = MB_MRE_MASTER_BUSY;
     else
     {
 		vMBMasterGetPDUSndBuf(&ucMBFrame);
@@ -171,6 +193,7 @@ eMBMasterReqWriteMultipleHoldingRegister( UCHAR ucSndAddr,
 		}
 		vMBMasterSetPDUSndLength( MB_PDU_SIZE_MIN + MB_PDU_REQ_WRITE_MUL_SIZE_MIN + 2*usNRegs );
 		( void ) xMBMasterPortEventPost( EV_MASTER_FRAME_SENT );
+		eErrStatus = eMBMasterWaitRequestFinish( );
     }
     return eErrStatus;
 }
@@ -186,7 +209,8 @@ eMBMasterFuncWriteMultipleHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
     eMBException    eStatus = MB_EX_NONE;
     eMBErrorCode    eRegStatus;
 
-    if( *usLen == MB_PDU_SIZE_MIN + MB_PDU_FUNC_WRITE_MUL_SIZE )
+    /* If this request is broadcast, the *usLen is not need check. */
+    if( ( *usLen == MB_PDU_SIZE_MIN + MB_PDU_FUNC_WRITE_MUL_SIZE ) || xMBMasterRequestIsBroadcast() )
     {
 		vMBMasterGetPDUSndBuf(&ucMBFrame);
         usRegAddress = ( USHORT )( ucMBFrame[MB_PDU_REQ_WRITE_MUL_ADDR_OFF] << 8 );
@@ -202,7 +226,7 @@ eMBMasterFuncWriteMultipleHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
         {
             /* Make callback to update the register values. */
             eRegStatus =
-                eMBRegHoldingCB( &ucMBFrame[MB_PDU_REQ_WRITE_MUL_VALUES_OFF],
+                eMBMasterRegHoldingCB( &ucMBFrame[MB_PDU_REQ_WRITE_MUL_VALUES_OFF],
                                  usRegAddress, usRegCount, MB_REG_WRITE );
 
             /* If an error occured convert it into a Modbus exception. */
@@ -227,14 +251,24 @@ eMBMasterFuncWriteMultipleHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
 
 #if MB_FUNC_READ_HOLDING_ENABLED > 0
 
+/**
+ * This function will request read holding register.
+ *
+ * @param ucSndAddr salve address
+ * @param usRegAddr register start address
+ * @param usNRegs register total number
+ * @param lTimeOut timeout (-1 will waiting forever)
+ *
+ * @return error code
+ */
 eMBMasterReqErrCode
-eMBMasterReqReadHoldingRegister( UCHAR ucSndAddr, USHORT usRegAddr, USHORT usNRegs )
+eMBMasterReqReadHoldingRegister( UCHAR ucSndAddr, USHORT usRegAddr, USHORT usNRegs, LONG lTimeOut )
 {
     UCHAR                 *ucMBFrame;
     eMBMasterReqErrCode    eErrStatus = MB_MRE_NO_ERR;
 
-    if ( xMBMasterGetIsBusy() ) eErrStatus = MB_MRE_MASTER_BUSY;
-    else if ( ucSndAddr > MB_MASTER_TOTAL_SLAVE_NUM ) eErrStatus = MB_MRE_ILL_ARG;
+    if ( ucSndAddr > MB_MASTER_TOTAL_SLAVE_NUM ) eErrStatus = MB_MRE_ILL_ARG;
+    else if ( xMBMasterRunResTake( lTimeOut ) == FALSE ) eErrStatus = MB_MRE_MASTER_BUSY;
     else
     {
 		vMBMasterGetPDUSndBuf(&ucMBFrame);
@@ -246,6 +280,7 @@ eMBMasterReqReadHoldingRegister( UCHAR ucSndAddr, USHORT usRegAddr, USHORT usNRe
 		ucMBFrame[MB_PDU_REQ_READ_REGCNT_OFF + 1] = usNRegs;
 		vMBMasterSetPDUSndLength( MB_PDU_SIZE_MIN + MB_PDU_REQ_READ_SIZE );
 		( void ) xMBMasterPortEventPost( EV_MASTER_FRAME_SENT );
+		eErrStatus = eMBMasterWaitRequestFinish( );
     }
     return eErrStatus;
 }
@@ -260,7 +295,12 @@ eMBMasterFuncReadHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
     eMBException    eStatus = MB_EX_NONE;
     eMBErrorCode    eRegStatus;
 
-    if( *usLen >= MB_PDU_SIZE_MIN + MB_PDU_FUNC_READ_SIZE_MIN )
+    /* If this request is broadcast, and it's read mode. This request don't need execute. */
+    if ( xMBMasterRequestIsBroadcast() )
+    {
+    	eStatus = MB_EX_NONE;
+    }
+    else if( *usLen >= MB_PDU_SIZE_MIN + MB_PDU_FUNC_READ_SIZE_MIN )
     {
 		vMBMasterGetPDUSndBuf(&ucMBFrame);
         usRegAddress = ( USHORT )( ucMBFrame[MB_PDU_REQ_READ_ADDR_OFF] << 8 );
@@ -268,7 +308,7 @@ eMBMasterFuncReadHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
         usRegAddress++;
 
         usRegCount = ( USHORT )( ucMBFrame[MB_PDU_REQ_READ_REGCNT_OFF] << 8 );
-        usRegCount = ( USHORT )( ucMBFrame[MB_PDU_REQ_READ_REGCNT_OFF + 1] );
+        usRegCount |= ( USHORT )( ucMBFrame[MB_PDU_REQ_READ_REGCNT_OFF + 1] );
 
         /* Check if the number of registers to read is valid. If not
          * return Modbus illegal data value exception.
@@ -276,7 +316,7 @@ eMBMasterFuncReadHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
         if( ( usRegCount >= 1 ) && ( 2 * usRegCount == pucFrame[MB_PDU_FUNC_READ_BYTECNT_OFF] ) )
         {
             /* Make callback to fill the buffer. */
-            eRegStatus = eMBRegHoldingCB( &pucFrame[MB_PDU_FUNC_READ_VALUES_OFF], usRegAddress, usRegCount, MB_REG_READ );
+            eRegStatus = eMBMasterRegHoldingCB( &pucFrame[MB_PDU_FUNC_READ_VALUES_OFF], usRegAddress, usRegCount, MB_REG_READ );
             /* If an error occured convert it into a Modbus exception. */
             if( eRegStatus != MB_ENOERR )
             {
@@ -300,17 +340,30 @@ eMBMasterFuncReadHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
 
 #if MB_FUNC_READWRITE_HOLDING_ENABLED > 0
 
+/**
+ * This function will request read and write holding register.
+ *
+ * @param ucSndAddr salve address
+ * @param usReadRegAddr read register start address
+ * @param usNReadRegs read register total number
+ * @param pusDataBuffer data to be written
+ * @param usWriteRegAddr write register start address
+ * @param usNWriteRegs write register total number
+ * @param lTimeOut timeout (-1 will waiting forever)
+ *
+ * @return error code
+ */
 eMBMasterReqErrCode
 eMBMasterReqReadWriteMultipleHoldingRegister( UCHAR ucSndAddr,
 		USHORT usReadRegAddr, USHORT usNReadRegs, USHORT * pusDataBuffer,
-		USHORT usWriteRegAddr, USHORT usNWriteRegs )
+		USHORT usWriteRegAddr, USHORT usNWriteRegs, LONG lTimeOut )
 {
     UCHAR                 *ucMBFrame;
     USHORT                 usRegIndex = 0;
     eMBMasterReqErrCode    eErrStatus = MB_MRE_NO_ERR;
 
-    if ( xMBMasterGetIsBusy() ) eErrStatus = MB_MRE_MASTER_BUSY;
-    else if ( ucSndAddr > MB_MASTER_TOTAL_SLAVE_NUM ) eErrStatus = MB_MRE_ILL_ARG;
+    if ( ucSndAddr > MB_MASTER_TOTAL_SLAVE_NUM ) eErrStatus = MB_MRE_ILL_ARG;
+    else if ( xMBMasterRunResTake( lTimeOut ) == FALSE ) eErrStatus = MB_MRE_MASTER_BUSY;
     else
     {
 		vMBMasterGetPDUSndBuf(&ucMBFrame);
@@ -333,6 +386,7 @@ eMBMasterReqReadWriteMultipleHoldingRegister( UCHAR ucSndAddr,
 		}
 		vMBMasterSetPDUSndLength( MB_PDU_SIZE_MIN + MB_PDU_REQ_READWRITE_SIZE_MIN + 2*usNWriteRegs );
 		( void ) xMBMasterPortEventPost( EV_MASTER_FRAME_SENT );
+		eErrStatus = eMBMasterWaitRequestFinish( );
     }
     return eErrStatus;
 }
@@ -349,7 +403,12 @@ eMBMasterFuncReadWriteMultipleHoldingRegister( UCHAR * pucFrame, USHORT * usLen 
     eMBException    eStatus = MB_EX_NONE;
     eMBErrorCode    eRegStatus;
 
-    if( *usLen >= MB_PDU_SIZE_MIN + MB_PDU_FUNC_READWRITE_SIZE_MIN)
+    /* If this request is broadcast, and it's read mode. This request don't need execute. */
+    if ( xMBMasterRequestIsBroadcast() )
+    {
+    	eStatus = MB_EX_NONE;
+    }
+    else if( *usLen >= MB_PDU_SIZE_MIN + MB_PDU_FUNC_READWRITE_SIZE_MIN )
     {
     	vMBMasterGetPDUSndBuf(&ucMBFrame);
         usRegReadAddress = ( USHORT )( ucMBFrame[MB_PDU_REQ_READWRITE_READ_ADDR_OFF] << 8U );
@@ -369,13 +428,13 @@ eMBMasterFuncReadWriteMultipleHoldingRegister( UCHAR * pucFrame, USHORT * usLen 
         if( ( 2 * usRegReadCount ) == pucFrame[MB_PDU_FUNC_READWRITE_READ_BYTECNT_OFF] )
         {
             /* Make callback to update the register values. */
-            eRegStatus = eMBRegHoldingCB( &ucMBFrame[MB_PDU_REQ_READWRITE_WRITE_VALUES_OFF],
+            eRegStatus = eMBMasterRegHoldingCB( &ucMBFrame[MB_PDU_REQ_READWRITE_WRITE_VALUES_OFF],
                                            usRegWriteAddress, usRegWriteCount, MB_REG_WRITE );
 
             if( eRegStatus == MB_ENOERR )
             {
                 /* Make the read callback. */
-				eRegStatus = eMBRegHoldingCB(&pucFrame[MB_PDU_FUNC_READWRITE_READ_VALUES_OFF],
+				eRegStatus = eMBMasterRegHoldingCB(&pucFrame[MB_PDU_FUNC_READWRITE_READ_VALUES_OFF],
 						                      usRegReadAddress, usRegReadCount, MB_REG_READ);
             }
             if( eRegStatus != MB_ENOERR )

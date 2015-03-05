@@ -74,7 +74,7 @@ static volatile eMBMasterRcvState eRcvState;
 
 static volatile UCHAR  ucMasterRTUSndBuf[MB_PDU_SIZE_MAX];
 static volatile UCHAR  ucMasterRTURcvBuf[MB_SER_PDU_SIZE_MAX];
-static volatile UCHAR  ucMasterSendPDULength;
+static volatile USHORT usMasterSendPDULength;
 
 static volatile UCHAR *pucMasterSndBufferCur;
 static volatile USHORT usMasterSndBufferCount;
@@ -235,7 +235,7 @@ xMBMasterRTUReceiveFSM( void )
     BOOL            xTaskNeedSwitch = FALSE;
     UCHAR           ucByte;
 
-    assert_param( eSndState == STATE_M_TX_IDLE );
+    assert_param(( eSndState == STATE_M_TX_IDLE ) || ( eSndState == STATE_M_TX_XFWR ));
 
     /* Always read the character. */
     ( void )xMBMasterPortSerialGetByte( ( CHAR * ) & ucByte );
@@ -364,12 +364,15 @@ xMBMasterRTUTimerExpired(void)
 
 		/* An error occured while receiving the frame. */
 	case STATE_M_RX_ERROR:
+		vMBMasterSetErrorType(EV_ERROR_RECEIVE_DATA);
+		xNeedPoll = xMBMasterPortEventPost( EV_MASTER_ERROR_PROCESS );
 		break;
 
 		/* Function called in an illegal state. */
 	default:
 		assert_param(
-				( eRcvState == STATE_M_RX_INIT ) || ( eRcvState == STATE_M_RX_RCV ) || ( eRcvState == STATE_M_RX_ERROR ));
+				( eRcvState == STATE_M_RX_INIT ) || ( eRcvState == STATE_M_RX_RCV ) ||
+				( eRcvState == STATE_M_RX_ERROR ) || ( eRcvState == STATE_M_RX_IDLE ));
 		break;
 	}
 	eRcvState = STATE_M_RX_IDLE;
@@ -380,18 +383,24 @@ xMBMasterRTUTimerExpired(void)
 		 * If the frame is broadcast,The master will idle,and if the frame is not
 		 * broadcast.Notify the listener process error.*/
 	case STATE_M_TX_XFWR:
-		if ( xFrameIsBroadcast == FALSE ) xNeedPoll = xMBMasterPortEventPost(EV_MASTER_ERROR_PROCESS);
+		if ( xFrameIsBroadcast == FALSE ) {
+			vMBMasterSetErrorType(EV_ERROR_RESPOND_TIMEOUT);
+			xNeedPoll = xMBMasterPortEventPost(EV_MASTER_ERROR_PROCESS);
+		}
 		break;
 		/* Function called in an illegal state. */
 	default:
-		assert_param( eSndState == STATE_M_TX_XFWR );
+		assert_param(
+				( eSndState == STATE_M_TX_XFWR ) || ( eSndState == STATE_M_TX_IDLE ));
 		break;
 	}
 	eSndState = STATE_M_TX_IDLE;
 
 	vMBMasterPortTimersDisable( );
-	/* If timer mode is convert delay ,then Master is idel now. */
-	if (eMasterCurTimerMode == MB_TMODE_CONVERT_DELAY) vMBMasterSetIsBusy( FALSE );
+	/* If timer mode is convert delay, the master event then turns EV_MASTER_EXECUTE status. */
+	if (eMasterCurTimerMode == MB_TMODE_CONVERT_DELAY) {
+		xNeedPoll = xMBMasterPortEventPost( EV_MASTER_EXECUTE );
+	}
 
 	return xNeedPoll;
 }
@@ -409,21 +418,26 @@ void vMBMasterGetPDUSndBuf( UCHAR ** pucFrame )
 }
 
 /* Set Modbus Master send PDU's buffer length.*/
-void vMBMasterSetPDUSndLength( UCHAR SendPDULength )
+void vMBMasterSetPDUSndLength( USHORT SendPDULength )
 {
-	ucMasterSendPDULength = SendPDULength;
+	usMasterSendPDULength = SendPDULength;
 }
 
 /* Get Modbus Master send PDU's buffer length.*/
-UCHAR ucMBMasterGetPDUSndLength( void )
+USHORT usMBMasterGetPDUSndLength( void )
 {
-	return ucMasterSendPDULength;
+	return usMasterSendPDULength;
 }
 
 /* Set Modbus Master current timer mode.*/
 void vMBMasterSetCurTimerMode( eMBMasterTimerMode eMBTimerMode )
 {
 	eMasterCurTimerMode = eMBTimerMode;
+}
+
+/* The master request is broadcast? */
+BOOL xMBMasterRequestIsBroadcast( void ){
+	return xFrameIsBroadcast;
 }
 #endif
 
