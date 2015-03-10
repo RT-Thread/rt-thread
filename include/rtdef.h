@@ -29,7 +29,6 @@
  *                             RT_USING_MEMHEAP condition.
  * 2012-12-30     Bernard      add more control command for graphic.
  * 2013-01-09     Bernard      change version number.
- * 2014-11-24     Arda.Fu      add INIT_EXPORT_EX micro define
  */
 
 #ifndef __RT_DEF_H__
@@ -173,55 +172,43 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
 /* initialization export */
 #ifdef RT_USING_COMPONENTS_INIT
-    typedef int (*init_fn_t)(void);
-    #ifdef _MSC_VER /* we do not support MS VC++ compiler */
-        #define INIT_EXPORT(fn, level)
-        #define INIT_EXPORT_EX(fn, level, sublevel)
-    #else
-        #if RT_DEBUG_INIT
-            struct rt_init_desc
-            {
-                const char* fn_name;
-                const init_fn_t fn;
-            };
-            #define INIT_EXPORT(fn, level) \
-                const char __rti_##fn##_name[] = "["#level"]"#fn; \
-                const struct rt_init_desc __rt_init_desc_##fn \
-                    SECTION(".rti_fn."level) =  { __rti_##fn##_name, fn};
-            #define INIT_EXPORT_EX(fn, level, index)          \
-                const char __rti_##fn##_name[] = "["#level":"#index"]"#fn; \
-                const struct rt_init_desc __rt_init_desc_##fn \
-                    SECTION(".rti_fn."level#index) = { __rti_##fn##_name, fn};
-        #else
-            #define INIT_EXPORT(fn, level)  \
-                const init_fn_t __rt_init_##fn \
-                    SECTION(".rti_fn."level) = fn
-            #define INIT_EXPORT_EX(fn, level, index) \
-                const init_fn_t __rt_init_##fn \
-                    SECTION(".rti_fn."level#index) = fn
-        #endif
-    #endif
-#else
+typedef int (*init_fn_t)(void);
+#ifdef _MSC_VER /* we do not support MS VC++ compiler */
     #define INIT_EXPORT(fn, level)
-    #define INIT_EXPORT_EX(fn, level, sublevel)
+#else
+	#if RT_DEBUG_INIT
+		struct rt_init_desc
+		{
+			const char* fn_name;
+			const init_fn_t fn;
+		};
+		#define INIT_EXPORT(fn, level)  		\
+			const char __rti_##fn##_name[] = #fn; \
+			const struct rt_init_desc __rt_init_desc_##fn SECTION(".rti_fn."level) = \
+			{ __rti_##fn##_name, fn};
+	#else
+    	#define INIT_EXPORT(fn, level)  \
+        	const init_fn_t __rt_init_##fn SECTION(".rti_fn."level) = fn
+	#endif
+#endif
+#else
+#define INIT_EXPORT(fn, level)
 #endif
 
 /* board init routines will be called in board_init() function */
 #define INIT_BOARD_EXPORT(fn)           INIT_EXPORT(fn, "1")
-#define INIT_BOARD_EXPORT_EX(fn, index) INIT_EXPORT_EX(fn, "1", index)
 /* device/component/fs/app init routines will be called in init_thread */
 /* device initialization */
 #define INIT_DEVICE_EXPORT(fn)          INIT_EXPORT(fn, "2")
-#define INIT_DEVICE_EXPORT_EX(fn, index) INIT_EXPORT_EX(fn, "2", index)
 /* components initialization (dfs, lwip, ...) */
 #define INIT_COMPONENT_EXPORT(fn)       INIT_EXPORT(fn, "3")
 /* file system initialization (dfs-elm, dfs-rom, ...) */
 #define INIT_FS_EXPORT(fn)              INIT_EXPORT(fn, "4")
 /* environment initialization (mount disk, ...) */
-#define INIT_ENV_EXPORT(fn)             INIT_EXPORT(fn, "5")
+#define INIT_ENV_EXPORT(fn)				INIT_EXPORT(fn, "5")
 /* appliation initialization (rtgui application etc ...) */
 #define INIT_APP_EXPORT(fn)             INIT_EXPORT(fn, "6")
-#define INIT_APP_EXPORT_EX(fn, index)   INIT_EXPORT_EX(fn, "6", index)
+
 #if !defined(RT_USING_FINSH)
 /* define these to empty, even if not include finsh.h file */
 #define FINSH_FUNCTION_EXPORT(name, desc)
