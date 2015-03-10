@@ -1,6 +1,6 @@
 # FreeType 2 top Jamfile.
 #
-# Copyright 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009 by
+# Copyright 2001-2014 by
 # David Turner, Robert Wilhelm, and Werner Lemberg.
 #
 # This file is part of the FreeType project, and may only be used, modified,
@@ -76,9 +76,10 @@ FT2_COMPONENTS ?= autofit    # auto-fitter
                   cache      # cache sub-system
                   cff        # CFF/CEF font driver
                   cid        # PostScript CID-keyed font driver
-                  gzip       # support for gzip-compressed files
-                  lzw        # support for LZW-compressed files
                   pcf        # PCF font driver
+                  bzip2      # support for bzip2-compressed PCF font
+                  gzip       # support for gzip-compressed PCF font
+                  lzw        # support for LZW-compressed PCF font
                   pfr        # PFR/TrueDoc font driver
                   psaux      # common PostScript routines module
                   pshinter   # PostScript hinter module
@@ -139,9 +140,9 @@ DEFINES += FT2_BUILD_LIBRARY ;
 # FT2_MULTI = true ;
 
 
-# The file <freetype/config/ftheader.h> is used to define macros that are
-# later used in #include statements.  It needs to be parsed in order to
-# record these definitions.
+# The file <config/ftheader.h> is used to define macros that are later used
+# in #include statements.  It needs to be parsed in order to record these
+# definitions.
 #
 HDRMACRO  [ FT2_SubDir  include freetype config ftheader.h ] ;
 HDRMACRO  [ FT2_SubDir  include freetype internal internal.h ] ;
@@ -176,7 +177,7 @@ actions GenExportSymbols1 bind APINAMES
   $(APINAMES) $(2) > $(1)
 }
 
-GenExportSymbols  ftexport.sym : include/freetype include/freetype/cache ;
+GenExportSymbols  ftexport.sym : include include/cache ;
 
 # Test files (hinter debugging).  Only used by FreeType developers.
 #
@@ -194,7 +195,7 @@ rule RefDoc
 
 actions RefDoc
 {
-  python $(FT2_SRC)/tools/docmaker/docmaker.py --prefix=ft2 --title=FreeType-2.3.12 --output=$(DOC_DIR) $(FT2_INCLUDE)/freetype/*.h $(FT2_INCLUDE)/freetype/config/*.h
+  python $(FT2_SRC)/tools/docmaker/docmaker.py --prefix=ft2 --title=FreeType-2.5.4 --output=$(DOC_DIR) $(FT2_INCLUDE)/*.h $(FT2_INCLUDE)/config/*.h
 }
 
 RefDoc  refdoc ;

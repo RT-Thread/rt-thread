@@ -66,7 +66,8 @@ enum rym_stage {
     RYM_STAGE_ESTABLISHING,
     /* set when we've got the packet 0 and sent ACK and second C */
     RYM_STAGE_ESTABLISHED,
-    /* set when the sender respond to our second C */
+    /* set when the sender respond to our second C and recviever got a real
+     * data packet. */
     RYM_STAGE_TRANSMITTING,
     /* set when the sender send a EOT */
     RYM_STAGE_FINISHING,

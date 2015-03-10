@@ -14,8 +14,9 @@
 
 CC           := @CC@
 COMPILER_SEP := $(SEP)
+FT_LIBTOOL_DIR ?= $(BUILD_DIR)
 
-LIBTOOL ?= $(BUILD_DIR)/libtool
+LIBTOOL := $(FT_LIBTOOL_DIR)/libtool
 
 
 # The object file extension (for standard and static libraries).  This can be

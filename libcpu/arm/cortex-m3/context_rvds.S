@@ -203,4 +203,5 @@ HardFault_Handler    PROC
     BX      lr
     ENDP
 
+    NOP
     END

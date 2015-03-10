@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# Copyright 2000, 2001, 2002, 2003, 2004, 2005, 2008, 2009 by
+# Copyright 2000-2005, 2008, 2009, 2013, 2014 by
 # David Turner, Robert Wilhelm, and Werner Lemberg.
 #
 # This file is part of the FreeType project, and may only be used, modified,
@@ -9,14 +9,15 @@
 # indicate that you have read the license and understand and accept it
 # fully.
 
-prefix=@prefix@
-exec_prefix=@exec_prefix@
-exec_prefix_set=no
-includedir=@includedir@
-libdir=@libdir@
-enable_shared=@build_libtool_libs@
-wl=@wl@
-hardcode_libdir_flag_spec='@hardcode_libdir_flag_spec@'
+LC_ALL=C
+export LC_ALL
+
+prefix="%prefix%"
+exec_prefix="%exec_prefix%"
+exec_prefix_set="no"
+includedir="%includedir%"
+libdir="%libdir%"
+enable_shared="%build_libtool_libs%"
 
 usage()
 {
@@ -37,6 +38,8 @@ Options:
   --libtool              display library name for linking with libtool
   --cflags               display flags for compiling with the FreeType
                          library
+  --static               make command line options display flags
+                         for static linking
 EOF
   exit $1
 }
@@ -72,7 +75,7 @@ while test $# -gt 0 ; do
     echo_exec_prefix=yes
     ;;
   --version)
-    echo @ft_version@
+    echo %ft_version%
     exit 0
     ;;
   --ftversion)
@@ -86,6 +89,9 @@ while test $# -gt 0 ; do
     ;;
   --libtool)
     echo_libtool=yes
+    ;;
+  --static)
+    show_static=yes
     ;;
   *)
     usage 1 1>&2
@@ -118,13 +124,13 @@ else
 fi
 
 if test "$echo_ft_version" = "yes" ; then
-  major=`grep define ${SYSROOT}$includedir/freetype2/freetype/freetype.h \
+  major=`grep define ${SYSROOT}$includedir/freetype2/freetype.h \
          | grep FREETYPE_MAJOR \
          | sed 's/.*[ 	]\([0-9][0-9]*\).*/\1/'`
-  minor=`grep define ${SYSROOT}$includedir/freetype2/freetype/freetype.h \
+  minor=`grep define ${SYSROOT}$includedir/freetype2/freetype.h \
          | grep FREETYPE_MINOR \
          | sed 's/.*[ 	]\([0-9][0-9]*\).*/\1/'`
-  patch=`grep define ${SYSROOT}$includedir/freetype2/freetype/freetype.h \
+  patch=`grep define ${SYSROOT}$includedir/freetype2/freetype.h \
          | grep FREETYPE_PATCH \
          | sed 's/.*[ 	]\([0-9][0-9]*\).*/\1/'`
   echo $major.$minor.$patch
@@ -132,20 +138,17 @@ fi
 
 if test "$echo_cflags" = "yes" ; then
   cflags="-I${SYSROOT}$includedir/freetype2"
-  if test "${SYSROOT}$includedir" != "/usr/include" ; then
-    echo $cflags -I${SYSROOT}$includedir
-  else
-    echo $cflags
-  fi
+  echo $cflags
 fi
 
 if test "$echo_libs" = "yes" ; then
-  rpath=
-  if test "$enable_shared" = "yes" ; then
-    eval "rpath=\"$hardcode_libdir_flag_spec\""
+  libs="-lfreetype"
+  staticlibs="%LIBSSTATIC_CONFIG%"
+  if test "$show_static" = "yes" ; then
+    libs="$staticlibs"
   fi
-  libs="-lfreetype @LIBZ@ @FT2_EXTRA_LIBS@"
-  if test "${SYSROOT}$libdir" != "/usr/lib" && test "${SYSROOT}$libdir" != "/usr/lib64"; then
+  if test "${SYSROOT}$libdir" != "/usr/lib"  &&
+     test "${SYSROOT}$libdir" != "/usr/lib64"; then
     echo -L${SYSROOT}$libdir $libs
   else
     echo $libs

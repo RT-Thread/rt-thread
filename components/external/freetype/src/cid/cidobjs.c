@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    CID objects manager (body).                                          */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006, 2008 by             */
+/*  Copyright 1996-2006, 2008, 2010-2011, 2013 by                          */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -131,7 +131,7 @@
   cid_size_init( FT_Size  cidsize )     /* CID_Size */
   {
     CID_Size           size  = (CID_Size)cidsize;
-    FT_Error           error = 0;
+    FT_Error           error = FT_Err_Ok;
     PSH_Globals_Funcs  funcs = cid_size_get_globals_funcs( size );
 
 
@@ -169,7 +169,7 @@
                         size->metrics.y_scale,
                         0, 0 );
 
-    return CID_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
@@ -299,6 +299,13 @@
       psaux = (PSAux_Service)FT_Get_Module_Interface(
                 FT_FACE_LIBRARY( face ), "psaux" );
 
+      if ( !psaux )
+      {
+        FT_ERROR(( "cid_face_init: cannot access `psaux' module\n" ));
+        error = FT_THROW( Missing_Module );
+        goto Exit;
+      }
+
       face->psaux = psaux;
     }
 
@@ -310,6 +317,8 @@
 
       face->pshinter = pshinter;
     }
+
+    FT_TRACE2(( "CID driver\n" ));
 
     /* open the tokenizer; this will also check the font format */
     if ( FT_STREAM_SEEK( 0 ) )
@@ -328,7 +337,7 @@
     if ( face_index != 0 )
     {
       FT_ERROR(( "cid_face_init: invalid face index\n" ));
-      error = CID_Err_Invalid_Argument;
+      error = FT_THROW( Invalid_Argument );
       goto Exit;
     }
 
@@ -346,9 +355,10 @@
       cidface->num_charmaps = 0;
 
       cidface->face_index = face_index;
-      cidface->face_flags = FT_FACE_FLAG_SCALABLE   | /* scalable outlines */
-                            FT_FACE_FLAG_HORIZONTAL | /* horizontal data   */
-                            FT_FACE_FLAG_HINTER;      /* has native hinter */
+
+      cidface->face_flags |= FT_FACE_FLAG_SCALABLE   | /* scalable outlines */
+                             FT_FACE_FLAG_HORIZONTAL | /* horizontal data   */
+                             FT_FACE_FLAG_HINTER;      /* has native hinter */
 
       if ( info->is_fixed_pitch )
         cidface->face_flags |= FT_FACE_FLAG_FIXED_WIDTH;
@@ -457,7 +467,7 @@
   {
     FT_UNUSED( driver );
 
-    return CID_Err_Ok;
+    return FT_Err_Ok;
   }
 
 

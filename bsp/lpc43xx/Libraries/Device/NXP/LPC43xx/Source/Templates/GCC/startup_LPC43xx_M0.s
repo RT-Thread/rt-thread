@@ -6,9 +6,9 @@
 
 	.syntax unified
 	.cpu cortex-m0
-	.fpu softvfp
+	.arch armv6-m
 	.thumb
-	
+
 	.word  _sidata
 	.word  _sdata
 	.word  _edata
@@ -43,59 +43,38 @@ __interrupt_vector:
     .long   SysTick_Handler             /* SysTick Handler              */
 
 /* External Interrupts */
-    .long   DAC_IRQHandler              /* 16 D/A Converter             */
-    .long   M4CORE_IRQHandler           /* 17 M0 Core                   */
-    .long   DMA_IRQHandler              /* 18 General Purpose DMA       */
-    .long   EZH_IRQHandler              /* 19 EZH/EDM                   */
-    .long   FLASH_EEPROM_IRQHandler     /* 20 Reserved for Typhoon      */
-    .long   ETH_IRQHandler              /* 21 Ethernet                  */
-    .long   SDIO_IRQHandler             /* 22 SD/MMC                    */
-    .long   LCD_IRQHandler              /* 23 LCD                       */
-    .long   USB0_IRQHandler             /* 24 USB0                      */
-    .long   USB1_IRQHandler             /* 25 USB1                      */
-    .long   SCT_IRQHandler              /* 26 State Configurable Timer  */
-    .long   RIT_IRQHandler              /* 27 Repetitive Interrupt Timer*/
-    .long   TIMER0_IRQHandler           /* 28 Timer0                    */
-    .long   TIMER1_IRQHandler           /* 29 Timer1                    */
-    .long   TIMER2_IRQHandler           /* 30 Timer2                    */
-    .long   TIMER3_IRQHandler           /* 31 Timer3                    */
-    .long   MCPWM_IRQHandler            /* 32 Motor Control PWM         */
-    .long   ADC0_IRQHandler             /* 33 A/D Converter 0           */
-    .long   I2C0_IRQHandler             /* 34 I2C0                      */
-    .long   I2C1_IRQHandler             /* 35 I2C1                      */
-    .long   SPI_IRQHandler              /* 36 SPI                       */
-    .long   ADC1_IRQHandler             /* 37 A/D Converter 1           */
-    .long   SSP0_IRQHandler             /* 38 SSP0                      */
-    .long   SSP1_IRQHandler             /* 39 SSP1                      */
-    .long   UART0_IRQHandler            /* 40 UART0                     */
-    .long   UART1_IRQHandler            /* 41 UART1                     */
-    .long   UART2_IRQHandler            /* 42 UART2                     */
-    .long   UART3_IRQHandler            /* 43 UART3                     */
-    .long   I2S0_IRQHandler             /* 44 I2S0                      */
-    .long   I2S1_IRQHandler             /* 45 I2S1                      */
-    .long   SPIFI_IRQHandler            /* 46 SPI Flash Interface       */
-    .long   SGPIO_IRQHandler            /* 47 SGPIO                     */
-    .long   GPIO0_IRQHandler            /* 48 GPIO0                     */
-    .long   GPIO1_IRQHandler            /* 49 GPIO1                     */
-    .long   GPIO2_IRQHandler            /* 50 GPIO2                     */
-    .long   GPIO3_IRQHandler            /* 51 GPIO3                     */
-    .long   GPIO4_IRQHandler            /* 52 GPIO4                     */
-    .long   GPIO5_IRQHandler            /* 53 GPIO5                     */
-    .long   GPIO6_IRQHandler            /* 54 GPIO6                     */
-    .long   GPIO7_IRQHandler            /* 55 GPIO7                     */
-    .long   GINT0_IRQHandler            /* 56 GINT0                     */
-    .long   GINT1_IRQHandler            /* 57 GINT1                     */
-    .long   EVRT_IRQHandler             /* 58 Event Router              */
-    .long   CAN1_IRQHandler             /* 59 C_CAN1                    */
-    .long   0                           /* 60 Reserved                  */
-    .long   VADC_IRQHandler             /* 61 VADC                      */
-    .long   ATIMER_IRQHandler           /* 62 ATIMER                    */
-    .long   RTC_IRQHandler              /* 63 RTC                       */
-    .long   0                           /* 64 Reserved                  */
-    .long   WDT_IRQHandler              /* 65 WDT                       */
-    .long   M0s_IRQHandler              /* 66 M0s                       */
-    .long   CAN0_IRQHandler             /* 67 C_CAN0                    */
-    .long   QEI_IRQHandler              /* 68 QEI                       */
+    .long   RTC_IRQHandler                 /* 16 D/A Converter             */
+    .long   M4CORE_IRQHandler              /* 17 M0 Core                   */
+    .long   DMA_IRQHandler                 /* 18 General Purpose DMA       */
+    .long   0                              /* 19 EZH/EDM                   */
+    .long   FLASHEEPROMAT_IRQHandler       /* 20 Reserved for Typhoon      */
+    .long   ETH_IRQHandler                 /* 21 Ethernet                  */
+    .long   SDIO_IRQHandler                /* 22 SD/MMC                    */
+    .long   LCD_IRQHandler                 /* 23 LCD                       */
+    .long   USB0_IRQHandler                /* 24 USB0                      */
+    .long   USB1_IRQHandler                /* 25 USB1                      */
+    .long   SCT_IRQHandler                 /* 26 State Configurable Timer  */
+    .long   RIT_OR_WWDT_IRQHandler         /* 27 Repetitive Interrupt Timer*/
+    .long   TIMER0_IRQHandler              /* 28 Timer0                    */
+    .long   GINT1_IRQHandler               /* 29 Timer1                    */
+    .long   PIN_INT4_IRQHandler            /* 30 Timer2                    */
+    .long   TIMER3_IRQHandler              /* 31 Timer3                    */
+    .long   MCPWM_IRQHandler               /* 32 Motor Control PWM         */
+    .long   ADC0_IRQHandler                /* 33 A/D Converter 0           */
+    .long   I2C0_OR_I2C1_IRQHandler        /* 34 I2C0                      */
+    .long   SGPIO_IRQHandler               /* 35 I2C1                      */
+    .long   SPI_OR_DAC_IRQHandler          /* 36 SPI                       */
+    .long   ADC1_IRQHandler                /* 37 A/D Converter 1           */
+    .long   SSP0_OR_SSP1_IRQHandler        /* 38 SSP0                      */
+    .long   EVENTROUTER_IRQHandler         /* 39 SSP1                      */
+    .long   UART0_IRQHandler               /* 40 UART0                     */
+    .long   UART1_IRQHandler               /* 41 UART1                     */
+    .long   UART2_OR_C_CAN1_IRQHandler     /* 42 UART2                     */
+    .long   UART3_IRQHandler               /* 43 UART3                     */
+    .long   I2S0_OR_I2S1_OR_QEI_IRQHandler /* 44 I2S0                      */
+    .long   C_CAN0_IRQHandler              /* 45 I2S1                      */
+    .long   0                              /* 46 SPI Flash Interface       */
+    .long   0                              /* 47 SGPIO                     */
 
     .size   __interrupt_vector, . - __interrupt_vector
 
@@ -109,30 +88,56 @@ __interrupt_vector:
 	.type  Reset_Handler, %function
 Reset_Handler:
     .fnstart
-.ifdef RAM_MODE
-/* Clear .bss section (Zero init) */
-	mov     R0, #0
-	ldr     R1, =__bss_start__
-	ldr    R2, =__bss_end__
-	cmp     R1,R2
-	beq     BSSIsEmpty
-LoopZI:
-    cmp     R1, R2
-    bhs     BSSIsEmpty
-    str     R0, [R1]
-    add     R1, #4
-    blo     LoopZI
-BSSIsEmpty:
+/*  Single section scheme.
+ *
+ *  The ranges of copy from/to are specified by following symbols
+ *    _sidata: LMA of start of the section to copy from. Usually end of text
+ *    _sdata: VMA of start of the section to copy to
+ *    _edata: VMA of end of the section to copy to
+ *
+ *  All addresses must be aligned to 4 bytes boundary.
+ */
+	ldr	r1, =_sidata
+	ldr	r2, =_sdata
+	ldr	r3, =_edata
+
+	subs	r3, r2
+	ble	.L_loop1_done
+
+.L_loop1:
+	subs	r3, #4
+	ldr	r0, [r1,r3]
+	str	r0, [r2,r3]
+	bgt	.L_loop1
+
+.L_loop1_done:
+
+/*  Single BSS section scheme.
+ *
+ *  The BSS section is specified by following symbols
+ *    __bss_start: start of the BSS section.
+ *    __bss_end: end of the BSS section.
+ *
+ *  Both addresses must be aligned to 4 bytes boundary.
+ */
+	ldr	r1, =__bss_start
+	ldr	r2, =__bss_end
+
+	movs	r0, 0
+
+	subs	r2, r1
+	ble	.L_loop3_done
+
+.L_loop3:
+	subs	r2, #4
+	str	r0, [r1, r2]
+	bgt	.L_loop3
+.L_loop3_done:
+
     ldr     R0, =SystemInit
     blx     R0
     ldr     R0,=main
     bx      R0
-.else
-    ldr     R0, =SystemInit
-    blx     R0
-    ldr     R0,=main
-    bx      R0
-.endif
 
     .pool
     .cantunwind
@@ -211,56 +216,34 @@ Default_Handler:
     .set    \handler, Default_Handler
     .endm
 
-    IRQ    DAC_IRQHandler
-    IRQ    M0CORE_IRQHandler
+    IRQ    RTC_IRQHandler
+    IRQ    M4CORE_IRQHandler
     IRQ    DMA_IRQHandler
-    IRQ    EZH_IRQHandler
-    IRQ    FLASH_EEPROM_IRQHandler
+    IRQ    FLASHEEPROMAT_IRQHandler
     IRQ    ETH_IRQHandler
     IRQ    SDIO_IRQHandler
     IRQ    LCD_IRQHandler
     IRQ    USB0_IRQHandler
     IRQ    USB1_IRQHandler
     IRQ    SCT_IRQHandler
-    IRQ    RIT_IRQHandler
+    IRQ    RIT_OR_WWDT_IRQHandler
     IRQ    TIMER0_IRQHandler
-    IRQ    TIMER1_IRQHandler
-    IRQ    TIMER2_IRQHandler
+    IRQ    GINT1_IRQHandler
+    IRQ    PIN_INT4_IRQHandler
     IRQ    TIMER3_IRQHandler
     IRQ    MCPWM_IRQHandler
     IRQ    ADC0_IRQHandler
-    IRQ    I2C0_IRQHandler
-    IRQ    I2C1_IRQHandler
-    IRQ    SPI_IRQHandler
+    IRQ    I2C0_OR_I2C1_IRQHandler
+    IRQ    SGPIO_IRQHandler
+    IRQ    SPI_OR_DAC_IRQHandler
     IRQ    ADC1_IRQHandler
-    IRQ    SSP0_IRQHandler
-    IRQ    SSP1_IRQHandler
+    IRQ    SSP0_OR_SSP1_IRQHandler
+    IRQ    EVENTROUTER_IRQHandler
     IRQ    UART0_IRQHandler
     IRQ    UART1_IRQHandler
-    IRQ    UART2_IRQHandler
+    IRQ    UART2_OR_C_CAN1_IRQHandler
     IRQ    UART3_IRQHandler
-    IRQ    I2S0_IRQHandler
-    IRQ    I2S1_IRQHandler
-    IRQ    SPIFI_IRQHandler
-    IRQ    SGPIO_IRQHandler
-    IRQ    GPIO0_IRQHandler
-    IRQ    GPIO1_IRQHandler
-    IRQ    GPIO2_IRQHandler
-    IRQ    GPIO3_IRQHandler
-    IRQ    GPIO4_IRQHandler
-    IRQ    GPIO5_IRQHandler
-    IRQ    GPIO6_IRQHandler
-    IRQ    GPIO7_IRQHandler
-    IRQ    GINT0_IRQHandler
-    IRQ    GINT1_IRQHandler
-    IRQ    EVRT_IRQHandler
-    IRQ    CAN1_IRQHandler
-    IRQ    VADC_IRQHandler
-    IRQ    ATIMER_IRQHandler
-    IRQ    RTC_IRQHandler
-    IRQ    WDT_IRQHandler
-    IRQ    M0s_IRQHandler
-    IRQ    CAN0_IRQHandler
-    IRQ    QEI_IRQHandler
+    IRQ    I2S0_OR_I2S1_OR_QEI_IRQHandler
+    IRQ    C_CAN0_IRQHandler
 
     .end

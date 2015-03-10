@@ -1,7 +1,7 @@
 
 README for the builds/amiga subdirectory.
 
-Copyright 2005 by
+Copyright 2005, 2013 by
 Werner Lemberg and Detlef Würkner.
 
 This file is part of the FreeType project, and may only be used, modified,
@@ -51,8 +51,8 @@ directory.  The results are:
 
 - ftdebug.o, an object module containing the standard version of the
   debugging code which uses vprintf() and exit() (not pure).
-  Debugging can be turned on in FT:include/freetype/config/ftoption.h
-  and with FT_SetTraceLevel().
+  Debugging can be turned on in FT:include/config/ftoption.h and with
+  FT_SetTraceLevel().
 
 - ftdebugpure.o, an object module containing the pure version of the
   debugging code which uses KVPrintf() from lib:debug.lib and no
@@ -64,15 +64,14 @@ directory.  The results are:
   ftsystem.o would force ALL FreeType2 modules to be linked to your
   program, I decided to use a different scheme: You must #include
   FT:src/base/ftinit.c in your sourcecode and specify with #define
-  statements which modules you need.  See
-  include/freetype/config/ftmodule.h.
+  statements which modules you need.  See include/config/ftmodule.h.
 
 
 To use in your own programs:
 
 - Insert the #define and #include statements from top of
-  include/freetype/config/ftmodule.h in your source code and uncomment
-  the #define statements for the FreeType2 modules you need.
+  include/config/ftmodule.h in your source code and uncomment the
+  #define statements for the FreeType2 modules you need.
 
 - You can use either PARAMETERS=REGISTER or PARAMETERS=STACK for
   calling the FreeType2 functions, because the link library and the

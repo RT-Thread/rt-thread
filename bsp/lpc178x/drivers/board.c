@@ -65,7 +65,7 @@ void rt_hw_board_init()
 #endif
 
     /* init systick */
-    SysTick_Config( SystemCoreClock/RT_TICK_PER_SECOND - 1);
+    SysTick_Config(SystemCoreClock/RT_TICK_PER_SECOND);
     /* set pend exception priority */
     NVIC_SetPriority(PendSV_IRQn, (1<<__NVIC_PRIO_BITS) - 1);
 

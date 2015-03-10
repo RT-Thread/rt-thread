@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    Debugging and logging component for WinCE (body).                    */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2005, 2008, 2009 by                         */
+/*  Copyright 1996-2002, 2005, 2008, 2009, 2013 by                         */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -71,7 +71,8 @@
 
 
   FT_BASE_DEF( void )
-  FT_Message( const char*  fmt, ... )
+  FT_Message( const char*  fmt,
+              ... )
   {
     static char  buf[8192];
     va_list      ap;
@@ -87,7 +88,8 @@
 
 
   FT_BASE_DEF( void )
-  FT_Panic( const char*  fmt, ... )
+  FT_Panic( const char*  fmt,
+            ... )
   {
     static char  buf[8192];
     va_list      ap;
@@ -101,6 +103,20 @@
     exit( EXIT_FAILURE );
   }
 
+
+  /* documentation is in ftdebug.h */
+
+  FT_BASE_DEF( int )
+  FT_Throw( FT_Error     error,
+            int          line,
+            const char*  file )
+  {
+    FT_UNUSED( error );
+    FT_UNUSED( line );
+    FT_UNUSED( file );
+
+    return 0;
+  }
 
 #ifdef FT_DEBUG_LEVEL_TRACE
 
@@ -132,8 +148,8 @@
   /* for the memory and stream components which are set to 6 and 5,        */
   /* respectively.                                                         */
   /*                                                                       */
-  /* See the file <freetype/internal/fttrace.h> for details of the         */
-  /* available toggle names.                                               */
+  /* See the file <internal/fttrace.h> for details of the available toggle */
+  /* names.                                                                */
   /*                                                                       */
   /* The level must be between 0 and 6; 0 means quiet (except for serious  */
   /* runtime errors), and 6 means _very_ verbose.                          */
@@ -168,9 +184,12 @@
         while ( *p && *p != ':' )
           p++;
 
+        if ( !*p )
+          break;
+
         if ( *p == ':' && p > q )
         {
-          int  n, i, len = p - q;
+          int  n, i, len = (int)( p - q );
           int  level = -1, found = -1;
 
 
@@ -196,7 +215,7 @@
           p++;
           if ( *p )
           {
-            level = *p++ - '0';
+            level = *p - '0';
             if ( level < 0 || level > 7 )
               level = -1;
           }

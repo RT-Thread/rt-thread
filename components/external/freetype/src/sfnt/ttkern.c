@@ -5,7 +5,7 @@
 /*    Load the basic TrueType kerning table.  This doesn't handle          */
 /*    kerning data within the GPOS table at the moment.                    */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006, 2007, 2009 by       */
+/*  Copyright 1996-2007, 2009, 2010, 2013 by                               */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -61,7 +61,7 @@
     {
       FT_ERROR(( "tt_face_load_kern:"
                  " kerning table is too small - ignored\n" ));
-      error = SFNT_Err_Table_Missing;
+      error = FT_THROW( Table_Missing );
       goto Exit;
     }
 
@@ -99,7 +99,7 @@
       length   = FT_NEXT_USHORT( p );
       coverage = FT_NEXT_USHORT( p );
 
-      if ( length <= 6 )
+      if ( length <= 6 + 8 )
         break;
 
       p_next += length;
@@ -115,7 +115,7 @@
       num_pairs = FT_NEXT_USHORT( p );
       p        += 6;
 
-      if ( ( p_next - p ) / 6 < (int)num_pairs ) /* handle broken count */
+      if ( ( p_next - p ) < 6 * (int)num_pairs ) /* handle broken count */
         num_pairs = (FT_UInt)( ( p_next - p ) / 6 );
 
       avail |= mask;
@@ -183,7 +183,7 @@
                        FT_UInt  right_glyph )
   {
     FT_Int    result = 0;
-    FT_UInt   count, mask = 1;
+    FT_UInt   count, mask;
     FT_Byte*  p       = face->kern_table;
     FT_Byte*  p_limit = p + face->kern_table_size;
 
@@ -196,7 +196,7 @@
           count--, mask <<= 1 )
     {
       FT_Byte* base     = p;
-      FT_Byte* next     = base;
+      FT_Byte* next;
       FT_UInt  version  = FT_NEXT_USHORT( p );
       FT_UInt  length   = FT_NEXT_USHORT( p );
       FT_UInt  coverage = FT_NEXT_USHORT( p );
@@ -220,7 +220,7 @@
       num_pairs = FT_NEXT_USHORT( p );
       p        += 6;
 
-      if ( ( next - p ) / 6 < (int)num_pairs )  /* handle broken count  */
+      if ( ( next - p ) < 6 * (int)num_pairs )  /* handle broken count  */
         num_pairs = (FT_UInt)( ( next - p ) / 6 );
 
       switch ( coverage >> 8 )

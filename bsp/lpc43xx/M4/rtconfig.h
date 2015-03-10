@@ -95,7 +95,8 @@
 // <integer name="RT_CONSOLEBUF_SIZE" description="The buffer size for console output" default="128" />
 #define RT_CONSOLEBUF_SIZE  128
 // <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console" default="uart" />
-#define RT_CONSOLE_DEVICE_NAME  "uart0"
+#define RT_CONSOLE_DEVICE_NAME  "uart3"
+#define RT_USING_UART3
 // </section>
 
 // <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
@@ -222,7 +223,8 @@
 #define RT_LWIP_MSKADDR3 0
 // </section>
 
-
+#define RT_USING_VBUS
+#define RT_USING_LOGTRACE
 
 // </RDTConfigurator>
 

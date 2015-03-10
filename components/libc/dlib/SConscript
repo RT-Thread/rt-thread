@@ -1,0 +1,15 @@
+from building import *
+import rtconfig
+
+src = Glob('*.c')
+cwd = GetCurrentDir()
+group = []
+
+CPPPATH = [cwd]
+CPPDEFINES = ['RT_USING_DLIBC']
+
+if rtconfig.PLATFORM == 'iar':
+    group = DefineGroup('dlib', src, depend = ['RT_USING_LIBC'], 
+        CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+
+Return('group')
