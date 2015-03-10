@@ -17,7 +17,7 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
-#include "tm4c129xnczad.h"
+#include "tm4c1294ncpdt.h"
 #include <rtthread.h>
 #include <stdbool.h>
 #include <stdint.h>
