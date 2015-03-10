@@ -91,11 +91,6 @@ int rt_hw_cpu_init(void)
     MAP_SysTickIntEnable();
     MAP_SysTickEnable();	
 
-    /* set pend exception priority */
-    //IntPrioritySet(FAULT_PENDSV, (1 << 5) - 1);
-
-    /*Enable interrupts to the processor.*/
-    MAP_IntMasterEnable();
     return 0;
 }
 // rt_hw_cpu_init should be run before any other INIT_BOARD_EXPORT
