@@ -259,6 +259,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 def PrepareModuleBuilding(env, root_directory, bsp_directory):
     import rtconfig
 
+    global BuildOptions
     global Env
     global Rtt_Root
 
