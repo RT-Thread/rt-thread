@@ -256,14 +256,23 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     return objs
 
-def PrepareModuleBuilding(env, root_directory):
+def PrepareModuleBuilding(env, root_directory, bsp_directory):
     import rtconfig
 
+    global BuildOptions
     global Env
     global Rtt_Root
 
     Env = env
     Rtt_Root = root_directory
+
+    # parse bsp rtconfig.h to get used component
+    PreProcessor = SCons.cpp.PreProcessor()
+    f = file(bsp_directory + '/rtconfig.h', 'r')
+    contents = f.read()
+    f.close()
+    PreProcessor.process_contents(contents)
+    BuildOptions = PreProcessor.cpp_namespace
 
     # add build/clean library option for library checking
     AddOption('--buildlib',

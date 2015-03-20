@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// tm4c129xnczad.h - TM4C129XNCZAD Register Definitions
+// tm4c1294ncpdt.h - TM4C1294NCPDT Register Definitions
 //
 // Copyright (c) 2013-2014 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
@@ -37,8 +37,8 @@
 //
 //*****************************************************************************
 
-#ifndef __TM4C129XNCZAD_H__
-#define __TM4C129XNCZAD_H__
+#ifndef __TM4C1294NCPDT_H__
+#define __TM4C1294NCPDT_H__
 
 //*****************************************************************************
 //
@@ -135,22 +135,14 @@
 #define INT_GPIOQ5              105         // GPIO Port Q5
 #define INT_GPIOQ6              106         // GPIO Port Q6
 #define INT_GPIOQ7              107         // GPIO Port Q7
-#define INT_GPIOR               108         // GPIO Port R
-#define INT_GPIOS               109         // GPIO Port S
-#define INT_SHA0                110         // SHA/MD5
-#define INT_AES0                111         // AES
-#define INT_DES0                112         // DES
-#define INT_LCD0                113         // LCD
 #define INT_TIMER6A             114         // 16/32-Bit Timer 6A
 #define INT_TIMER6B             115         // 16/32-Bit Timer 6B
 #define INT_TIMER7A             116         // 16/32-Bit Timer 7A
 #define INT_TIMER7B             117         // 16/32-Bit Timer 7B
 #define INT_I2C6                118         // I2C 6
 #define INT_I2C7                119         // I2C 7
-#define INT_ONEWIRE0            121         // 1-Wire
 #define INT_I2C8                125         // I2C 8
 #define INT_I2C9                126         // I2C 9
-#define INT_GPIOT               127         // GPIO T
 
 //*****************************************************************************
 //
@@ -1414,9 +1406,6 @@
                                 (*((volatile uint32_t *)0x40058548))
 #define GPIO_PORTA_AHB_PP_R     (*((volatile uint32_t *)0x40058FC0))
 #define GPIO_PORTA_AHB_PC_R     (*((volatile uint32_t *)0x40058FC4))
-#define GPIO_PCTL_PR_R          (*((volatile uint32_t *)0x00012000))
-#define GPIO_PCTL_PS_R          (*((volatile uint32_t *)0x00013000))
-#define GPIO_PCTL_PT_R          (*((volatile uint32_t *)0x00014000))
 
 //*****************************************************************************
 //
@@ -1459,9 +1448,6 @@
                                 (*((volatile uint32_t *)0x40059548))
 #define GPIO_PORTB_AHB_PP_R     (*((volatile uint32_t *)0x40059FC0))
 #define GPIO_PORTB_AHB_PC_R     (*((volatile uint32_t *)0x40059FC4))
-#define GPIO_PCTL_PR_R          (*((volatile uint32_t *)0x00012000))
-#define GPIO_PCTL_PS_R          (*((volatile uint32_t *)0x00013000))
-#define GPIO_PCTL_PT_R          (*((volatile uint32_t *)0x00014000))
 
 //*****************************************************************************
 //
@@ -1504,9 +1490,6 @@
                                 (*((volatile uint32_t *)0x4005A548))
 #define GPIO_PORTC_AHB_PP_R     (*((volatile uint32_t *)0x4005AFC0))
 #define GPIO_PORTC_AHB_PC_R     (*((volatile uint32_t *)0x4005AFC4))
-#define GPIO_PCTL_PR_R          (*((volatile uint32_t *)0x00012000))
-#define GPIO_PCTL_PS_R          (*((volatile uint32_t *)0x00013000))
-#define GPIO_PCTL_PT_R          (*((volatile uint32_t *)0x00014000))
 
 //*****************************************************************************
 //
@@ -1549,9 +1532,6 @@
                                 (*((volatile uint32_t *)0x4005B548))
 #define GPIO_PORTD_AHB_PP_R     (*((volatile uint32_t *)0x4005BFC0))
 #define GPIO_PORTD_AHB_PC_R     (*((volatile uint32_t *)0x4005BFC4))
-#define GPIO_PCTL_PR_R          (*((volatile uint32_t *)0x00012000))
-#define GPIO_PCTL_PS_R          (*((volatile uint32_t *)0x00013000))
-#define GPIO_PCTL_PT_R          (*((volatile uint32_t *)0x00014000))
 
 //*****************************************************************************
 //
@@ -1594,9 +1574,6 @@
                                 (*((volatile uint32_t *)0x4005C548))
 #define GPIO_PORTE_AHB_PP_R     (*((volatile uint32_t *)0x4005CFC0))
 #define GPIO_PORTE_AHB_PC_R     (*((volatile uint32_t *)0x4005CFC4))
-#define GPIO_PCTL_PR_R          (*((volatile uint32_t *)0x00012000))
-#define GPIO_PCTL_PS_R          (*((volatile uint32_t *)0x00013000))
-#define GPIO_PCTL_PT_R          (*((volatile uint32_t *)0x00014000))
 
 //*****************************************************************************
 //
@@ -1639,9 +1616,6 @@
                                 (*((volatile uint32_t *)0x4005D548))
 #define GPIO_PORTF_AHB_PP_R     (*((volatile uint32_t *)0x4005DFC0))
 #define GPIO_PORTF_AHB_PC_R     (*((volatile uint32_t *)0x4005DFC4))
-#define GPIO_PCTL_PR_R          (*((volatile uint32_t *)0x00012000))
-#define GPIO_PCTL_PS_R          (*((volatile uint32_t *)0x00013000))
-#define GPIO_PCTL_PT_R          (*((volatile uint32_t *)0x00014000))
 
 //*****************************************************************************
 //
@@ -1684,9 +1658,6 @@
                                 (*((volatile uint32_t *)0x4005E548))
 #define GPIO_PORTG_AHB_PP_R     (*((volatile uint32_t *)0x4005EFC0))
 #define GPIO_PORTG_AHB_PC_R     (*((volatile uint32_t *)0x4005EFC4))
-#define GPIO_PCTL_PR_R          (*((volatile uint32_t *)0x00012000))
-#define GPIO_PCTL_PS_R          (*((volatile uint32_t *)0x00013000))
-#define GPIO_PCTL_PT_R          (*((volatile uint32_t *)0x00014000))
 
 //*****************************************************************************
 //
@@ -1729,9 +1700,6 @@
                                 (*((volatile uint32_t *)0x4005F548))
 #define GPIO_PORTH_AHB_PP_R     (*((volatile uint32_t *)0x4005FFC0))
 #define GPIO_PORTH_AHB_PC_R     (*((volatile uint32_t *)0x4005FFC4))
-#define GPIO_PCTL_PR_R          (*((volatile uint32_t *)0x00012000))
-#define GPIO_PCTL_PS_R          (*((volatile uint32_t *)0x00013000))
-#define GPIO_PCTL_PT_R          (*((volatile uint32_t *)0x00014000))
 
 //*****************************************************************************
 //
@@ -1774,9 +1742,6 @@
                                 (*((volatile uint32_t *)0x40060548))
 #define GPIO_PORTJ_AHB_PP_R     (*((volatile uint32_t *)0x40060FC0))
 #define GPIO_PORTJ_AHB_PC_R     (*((volatile uint32_t *)0x40060FC4))
-#define GPIO_PCTL_PR_R          (*((volatile uint32_t *)0x00012000))
-#define GPIO_PCTL_PS_R          (*((volatile uint32_t *)0x00013000))
-#define GPIO_PCTL_PT_R          (*((volatile uint32_t *)0x00014000))
 
 //*****************************************************************************
 //
@@ -1815,9 +1780,6 @@
 #define GPIO_PORTK_WAKESTAT_R   (*((volatile uint32_t *)0x40061548))
 #define GPIO_PORTK_PP_R         (*((volatile uint32_t *)0x40061FC0))
 #define GPIO_PORTK_PC_R         (*((volatile uint32_t *)0x40061FC4))
-#define GPIO_PCTL_PR_R          (*((volatile uint32_t *)0x00012000))
-#define GPIO_PCTL_PS_R          (*((volatile uint32_t *)0x00013000))
-#define GPIO_PCTL_PT_R          (*((volatile uint32_t *)0x00014000))
 
 //*****************************************************************************
 //
@@ -1856,9 +1818,6 @@
 #define GPIO_PORTL_WAKESTAT_R   (*((volatile uint32_t *)0x40062548))
 #define GPIO_PORTL_PP_R         (*((volatile uint32_t *)0x40062FC0))
 #define GPIO_PORTL_PC_R         (*((volatile uint32_t *)0x40062FC4))
-#define GPIO_PCTL_PR_R          (*((volatile uint32_t *)0x00012000))
-#define GPIO_PCTL_PS_R          (*((volatile uint32_t *)0x00013000))
-#define GPIO_PCTL_PT_R          (*((volatile uint32_t *)0x00014000))
 
 //*****************************************************************************
 //
@@ -1897,9 +1856,6 @@
 #define GPIO_PORTM_WAKESTAT_R   (*((volatile uint32_t *)0x40063548))
 #define GPIO_PORTM_PP_R         (*((volatile uint32_t *)0x40063FC0))
 #define GPIO_PORTM_PC_R         (*((volatile uint32_t *)0x40063FC4))
-#define GPIO_PCTL_PR_R          (*((volatile uint32_t *)0x00012000))
-#define GPIO_PCTL_PS_R          (*((volatile uint32_t *)0x00013000))
-#define GPIO_PCTL_PT_R          (*((volatile uint32_t *)0x00014000))
 
 //*****************************************************************************
 //
@@ -1938,9 +1894,6 @@
 #define GPIO_PORTN_WAKESTAT_R   (*((volatile uint32_t *)0x40064548))
 #define GPIO_PORTN_PP_R         (*((volatile uint32_t *)0x40064FC0))
 #define GPIO_PORTN_PC_R         (*((volatile uint32_t *)0x40064FC4))
-#define GPIO_PCTL_PR_R          (*((volatile uint32_t *)0x00012000))
-#define GPIO_PCTL_PS_R          (*((volatile uint32_t *)0x00013000))
-#define GPIO_PCTL_PT_R          (*((volatile uint32_t *)0x00014000))
 
 //*****************************************************************************
 //
@@ -1979,9 +1932,6 @@
 #define GPIO_PORTP_WAKESTAT_R   (*((volatile uint32_t *)0x40065548))
 #define GPIO_PORTP_PP_R         (*((volatile uint32_t *)0x40065FC0))
 #define GPIO_PORTP_PC_R         (*((volatile uint32_t *)0x40065FC4))
-#define GPIO_PCTL_PR_R          (*((volatile uint32_t *)0x00012000))
-#define GPIO_PCTL_PS_R          (*((volatile uint32_t *)0x00013000))
-#define GPIO_PCTL_PT_R          (*((volatile uint32_t *)0x00014000))
 
 //*****************************************************************************
 //
@@ -2020,132 +1970,6 @@
 #define GPIO_PORTQ_WAKESTAT_R   (*((volatile uint32_t *)0x40066548))
 #define GPIO_PORTQ_PP_R         (*((volatile uint32_t *)0x40066FC0))
 #define GPIO_PORTQ_PC_R         (*((volatile uint32_t *)0x40066FC4))
-#define GPIO_PCTL_PR_R          (*((volatile uint32_t *)0x00012000))
-#define GPIO_PCTL_PS_R          (*((volatile uint32_t *)0x00013000))
-#define GPIO_PCTL_PT_R          (*((volatile uint32_t *)0x00014000))
-
-//*****************************************************************************
-//
-// GPIO registers (PORTR)
-//
-//*****************************************************************************
-#define GPIO_PORTR_DATA_BITS_R  ((volatile uint32_t *)0x40067000)
-#define GPIO_PORTR_DATA_R       (*((volatile uint32_t *)0x400673FC))
-#define GPIO_PORTR_DIR_R        (*((volatile uint32_t *)0x40067400))
-#define GPIO_PORTR_IS_R         (*((volatile uint32_t *)0x40067404))
-#define GPIO_PORTR_IBE_R        (*((volatile uint32_t *)0x40067408))
-#define GPIO_PORTR_IEV_R        (*((volatile uint32_t *)0x4006740C))
-#define GPIO_PORTR_IM_R         (*((volatile uint32_t *)0x40067410))
-#define GPIO_PORTR_RIS_R        (*((volatile uint32_t *)0x40067414))
-#define GPIO_PORTR_MIS_R        (*((volatile uint32_t *)0x40067418))
-#define GPIO_PORTR_ICR_R        (*((volatile uint32_t *)0x4006741C))
-#define GPIO_PORTR_AFSEL_R      (*((volatile uint32_t *)0x40067420))
-#define GPIO_PORTR_DR2R_R       (*((volatile uint32_t *)0x40067500))
-#define GPIO_PORTR_DR4R_R       (*((volatile uint32_t *)0x40067504))
-#define GPIO_PORTR_DR8R_R       (*((volatile uint32_t *)0x40067508))
-#define GPIO_PORTR_ODR_R        (*((volatile uint32_t *)0x4006750C))
-#define GPIO_PORTR_PUR_R        (*((volatile uint32_t *)0x40067510))
-#define GPIO_PORTR_PDR_R        (*((volatile uint32_t *)0x40067514))
-#define GPIO_PORTR_SLR_R        (*((volatile uint32_t *)0x40067518))
-#define GPIO_PORTR_DEN_R        (*((volatile uint32_t *)0x4006751C))
-#define GPIO_PORTR_LOCK_R       (*((volatile uint32_t *)0x40067520))
-#define GPIO_PORTR_CR_R         (*((volatile uint32_t *)0x40067524))
-#define GPIO_PORTR_AMSEL_R      (*((volatile uint32_t *)0x40067528))
-#define GPIO_PORTR_PCTL_R       (*((volatile uint32_t *)0x4006752C))
-#define GPIO_PORTR_ADCCTL_R     (*((volatile uint32_t *)0x40067530))
-#define GPIO_PORTR_DMACTL_R     (*((volatile uint32_t *)0x40067534))
-#define GPIO_PORTR_SI_R         (*((volatile uint32_t *)0x40067538))
-#define GPIO_PORTR_DR12R_R      (*((volatile uint32_t *)0x4006753C))
-#define GPIO_PORTR_WAKEPEN_R    (*((volatile uint32_t *)0x40067540))
-#define GPIO_PORTR_WAKELVL_R    (*((volatile uint32_t *)0x40067544))
-#define GPIO_PORTR_WAKESTAT_R   (*((volatile uint32_t *)0x40067548))
-#define GPIO_PORTR_PP_R         (*((volatile uint32_t *)0x40067FC0))
-#define GPIO_PORTR_PC_R         (*((volatile uint32_t *)0x40067FC4))
-#define GPIO_PCTL_PR_R          (*((volatile uint32_t *)0x00012000))
-#define GPIO_PCTL_PS_R          (*((volatile uint32_t *)0x00013000))
-#define GPIO_PCTL_PT_R          (*((volatile uint32_t *)0x00014000))
-
-//*****************************************************************************
-//
-// GPIO registers (PORTS)
-//
-//*****************************************************************************
-#define GPIO_PORTS_DATA_BITS_R  ((volatile uint32_t *)0x40068000)
-#define GPIO_PORTS_DATA_R       (*((volatile uint32_t *)0x400683FC))
-#define GPIO_PORTS_DIR_R        (*((volatile uint32_t *)0x40068400))
-#define GPIO_PORTS_IS_R         (*((volatile uint32_t *)0x40068404))
-#define GPIO_PORTS_IBE_R        (*((volatile uint32_t *)0x40068408))
-#define GPIO_PORTS_IEV_R        (*((volatile uint32_t *)0x4006840C))
-#define GPIO_PORTS_IM_R         (*((volatile uint32_t *)0x40068410))
-#define GPIO_PORTS_RIS_R        (*((volatile uint32_t *)0x40068414))
-#define GPIO_PORTS_MIS_R        (*((volatile uint32_t *)0x40068418))
-#define GPIO_PORTS_ICR_R        (*((volatile uint32_t *)0x4006841C))
-#define GPIO_PORTS_AFSEL_R      (*((volatile uint32_t *)0x40068420))
-#define GPIO_PORTS_DR2R_R       (*((volatile uint32_t *)0x40068500))
-#define GPIO_PORTS_DR4R_R       (*((volatile uint32_t *)0x40068504))
-#define GPIO_PORTS_DR8R_R       (*((volatile uint32_t *)0x40068508))
-#define GPIO_PORTS_ODR_R        (*((volatile uint32_t *)0x4006850C))
-#define GPIO_PORTS_PUR_R        (*((volatile uint32_t *)0x40068510))
-#define GPIO_PORTS_PDR_R        (*((volatile uint32_t *)0x40068514))
-#define GPIO_PORTS_SLR_R        (*((volatile uint32_t *)0x40068518))
-#define GPIO_PORTS_DEN_R        (*((volatile uint32_t *)0x4006851C))
-#define GPIO_PORTS_LOCK_R       (*((volatile uint32_t *)0x40068520))
-#define GPIO_PORTS_CR_R         (*((volatile uint32_t *)0x40068524))
-#define GPIO_PORTS_AMSEL_R      (*((volatile uint32_t *)0x40068528))
-#define GPIO_PORTS_PCTL_R       (*((volatile uint32_t *)0x4006852C))
-#define GPIO_PORTS_ADCCTL_R     (*((volatile uint32_t *)0x40068530))
-#define GPIO_PORTS_DMACTL_R     (*((volatile uint32_t *)0x40068534))
-#define GPIO_PORTS_SI_R         (*((volatile uint32_t *)0x40068538))
-#define GPIO_PORTS_DR12R_R      (*((volatile uint32_t *)0x4006853C))
-#define GPIO_PORTS_WAKEPEN_R    (*((volatile uint32_t *)0x40068540))
-#define GPIO_PORTS_WAKELVL_R    (*((volatile uint32_t *)0x40068544))
-#define GPIO_PORTS_WAKESTAT_R   (*((volatile uint32_t *)0x40068548))
-#define GPIO_PORTS_PP_R         (*((volatile uint32_t *)0x40068FC0))
-#define GPIO_PORTS_PC_R         (*((volatile uint32_t *)0x40068FC4))
-#define GPIO_PCTL_PR_R          (*((volatile uint32_t *)0x00012000))
-#define GPIO_PCTL_PS_R          (*((volatile uint32_t *)0x00013000))
-#define GPIO_PCTL_PT_R          (*((volatile uint32_t *)0x00014000))
-
-//*****************************************************************************
-//
-// GPIO registers (PORTT)
-//
-//*****************************************************************************
-#define GPIO_PORTT_DATA_BITS_R  ((volatile uint32_t *)0x40069000)
-#define GPIO_PORTT_DATA_R       (*((volatile uint32_t *)0x400693FC))
-#define GPIO_PORTT_DIR_R        (*((volatile uint32_t *)0x40069400))
-#define GPIO_PORTT_IS_R         (*((volatile uint32_t *)0x40069404))
-#define GPIO_PORTT_IBE_R        (*((volatile uint32_t *)0x40069408))
-#define GPIO_PORTT_IEV_R        (*((volatile uint32_t *)0x4006940C))
-#define GPIO_PORTT_IM_R         (*((volatile uint32_t *)0x40069410))
-#define GPIO_PORTT_RIS_R        (*((volatile uint32_t *)0x40069414))
-#define GPIO_PORTT_MIS_R        (*((volatile uint32_t *)0x40069418))
-#define GPIO_PORTT_ICR_R        (*((volatile uint32_t *)0x4006941C))
-#define GPIO_PORTT_AFSEL_R      (*((volatile uint32_t *)0x40069420))
-#define GPIO_PORTT_DR2R_R       (*((volatile uint32_t *)0x40069500))
-#define GPIO_PORTT_DR4R_R       (*((volatile uint32_t *)0x40069504))
-#define GPIO_PORTT_DR8R_R       (*((volatile uint32_t *)0x40069508))
-#define GPIO_PORTT_ODR_R        (*((volatile uint32_t *)0x4006950C))
-#define GPIO_PORTT_PUR_R        (*((volatile uint32_t *)0x40069510))
-#define GPIO_PORTT_PDR_R        (*((volatile uint32_t *)0x40069514))
-#define GPIO_PORTT_SLR_R        (*((volatile uint32_t *)0x40069518))
-#define GPIO_PORTT_DEN_R        (*((volatile uint32_t *)0x4006951C))
-#define GPIO_PORTT_LOCK_R       (*((volatile uint32_t *)0x40069520))
-#define GPIO_PORTT_CR_R         (*((volatile uint32_t *)0x40069524))
-#define GPIO_PORTT_AMSEL_R      (*((volatile uint32_t *)0x40069528))
-#define GPIO_PORTT_PCTL_R       (*((volatile uint32_t *)0x4006952C))
-#define GPIO_PORTT_ADCCTL_R     (*((volatile uint32_t *)0x40069530))
-#define GPIO_PORTT_DMACTL_R     (*((volatile uint32_t *)0x40069534))
-#define GPIO_PORTT_SI_R         (*((volatile uint32_t *)0x40069538))
-#define GPIO_PORTT_DR12R_R      (*((volatile uint32_t *)0x4006953C))
-#define GPIO_PORTT_WAKEPEN_R    (*((volatile uint32_t *)0x40069540))
-#define GPIO_PORTT_WAKELVL_R    (*((volatile uint32_t *)0x40069544))
-#define GPIO_PORTT_WAKESTAT_R   (*((volatile uint32_t *)0x40069548))
-#define GPIO_PORTT_PP_R         (*((volatile uint32_t *)0x40069FC0))
-#define GPIO_PORTT_PC_R         (*((volatile uint32_t *)0x40069FC4))
-#define GPIO_PCTL_PR_R          (*((volatile uint32_t *)0x00012000))
-#define GPIO_PCTL_PS_R          (*((volatile uint32_t *)0x00013000))
-#define GPIO_PCTL_PT_R          (*((volatile uint32_t *)0x00014000))
 
 //*****************************************************************************
 //
@@ -2170,22 +1994,6 @@
 #define EEPROM_EEHIDE2_R        (*((volatile uint32_t *)0x400AF058))
 #define EEPROM_EEDBGME_R        (*((volatile uint32_t *)0x400AF080))
 #define EEPROM_PP_R             (*((volatile uint32_t *)0x400AFFC0))
-
-//*****************************************************************************
-//
-// One wire registers (ONEWIRE0)
-//
-//*****************************************************************************
-#define ONEWIRE0_CS_R           (*((volatile uint32_t *)0x400B6000))
-#define ONEWIRE0_TIM_R          (*((volatile uint32_t *)0x400B6004))
-#define ONEWIRE0_DATW_R         (*((volatile uint32_t *)0x400B6008))
-#define ONEWIRE0_DATR_R         (*((volatile uint32_t *)0x400B600C))
-#define ONEWIRE0_IM_R           (*((volatile uint32_t *)0x400B6100))
-#define ONEWIRE0_RIS_R          (*((volatile uint32_t *)0x400B6104))
-#define ONEWIRE0_MIS_R          (*((volatile uint32_t *)0x400B6108))
-#define ONEWIRE0_ICR_R          (*((volatile uint32_t *)0x400B610C))
-#define ONEWIRE0_DMA_R          (*((volatile uint32_t *)0x400B6120))
-#define ONEWIRE0_PP_R           (*((volatile uint32_t *)0x400B6FC0))
 
 //*****************************************************************************
 //
@@ -2777,7 +2585,6 @@
 #define SYSCTL_USBMPC_R         (*((volatile uint32_t *)0x400FE284))
 #define SYSCTL_EMACPDS_R        (*((volatile uint32_t *)0x400FE288))
 #define SYSCTL_EMACMPC_R        (*((volatile uint32_t *)0x400FE28C))
-#define SYSCTL_LCDMPC_R         (*((volatile uint32_t *)0x400FE294))
 #define SYSCTL_PPWD_R           (*((volatile uint32_t *)0x400FE300))
 #define SYSCTL_PPTIMER_R        (*((volatile uint32_t *)0x400FE304))
 #define SYSCTL_PPGPIO_R         (*((volatile uint32_t *)0x400FE308))
@@ -2823,8 +2630,6 @@
 #define SYSCTL_SRQEI_R          (*((volatile uint32_t *)0x400FE544))
 #define SYSCTL_SREEPROM_R       (*((volatile uint32_t *)0x400FE558))
 #define SYSCTL_SRCCM_R          (*((volatile uint32_t *)0x400FE574))
-#define SYSCTL_SRLCD_R          (*((volatile uint32_t *)0x400FE590))
-#define SYSCTL_SROWIRE_R        (*((volatile uint32_t *)0x400FE598))
 #define SYSCTL_SREMAC_R         (*((volatile uint32_t *)0x400FE59C))
 #define SYSCTL_RCGCWD_R         (*((volatile uint32_t *)0x400FE600))
 #define SYSCTL_RCGCTIMER_R      (*((volatile uint32_t *)0x400FE604))
@@ -2844,8 +2649,6 @@
 #define SYSCTL_RCGCQEI_R        (*((volatile uint32_t *)0x400FE644))
 #define SYSCTL_RCGCEEPROM_R     (*((volatile uint32_t *)0x400FE658))
 #define SYSCTL_RCGCCCM_R        (*((volatile uint32_t *)0x400FE674))
-#define SYSCTL_RCGCLCD_R        (*((volatile uint32_t *)0x400FE690))
-#define SYSCTL_RCGCOWIRE_R      (*((volatile uint32_t *)0x400FE698))
 #define SYSCTL_RCGCEMAC_R       (*((volatile uint32_t *)0x400FE69C))
 #define SYSCTL_SCGCWD_R         (*((volatile uint32_t *)0x400FE700))
 #define SYSCTL_SCGCTIMER_R      (*((volatile uint32_t *)0x400FE704))
@@ -2865,8 +2668,6 @@
 #define SYSCTL_SCGCQEI_R        (*((volatile uint32_t *)0x400FE744))
 #define SYSCTL_SCGCEEPROM_R     (*((volatile uint32_t *)0x400FE758))
 #define SYSCTL_SCGCCCM_R        (*((volatile uint32_t *)0x400FE774))
-#define SYSCTL_SCGCLCD_R        (*((volatile uint32_t *)0x400FE790))
-#define SYSCTL_SCGCOWIRE_R      (*((volatile uint32_t *)0x400FE798))
 #define SYSCTL_SCGCEMAC_R       (*((volatile uint32_t *)0x400FE79C))
 #define SYSCTL_DCGCWD_R         (*((volatile uint32_t *)0x400FE800))
 #define SYSCTL_DCGCTIMER_R      (*((volatile uint32_t *)0x400FE804))
@@ -2886,8 +2687,6 @@
 #define SYSCTL_DCGCQEI_R        (*((volatile uint32_t *)0x400FE844))
 #define SYSCTL_DCGCEEPROM_R     (*((volatile uint32_t *)0x400FE858))
 #define SYSCTL_DCGCCCM_R        (*((volatile uint32_t *)0x400FE874))
-#define SYSCTL_DCGCLCD_R        (*((volatile uint32_t *)0x400FE890))
-#define SYSCTL_DCGCOWIRE_R      (*((volatile uint32_t *)0x400FE898))
 #define SYSCTL_DCGCEMAC_R       (*((volatile uint32_t *)0x400FE89C))
 #define SYSCTL_PCWD_R           (*((volatile uint32_t *)0x400FE900))
 #define SYSCTL_PCTIMER_R        (*((volatile uint32_t *)0x400FE904))
@@ -2907,8 +2706,6 @@
 #define SYSCTL_PCQEI_R          (*((volatile uint32_t *)0x400FE944))
 #define SYSCTL_PCEEPROM_R       (*((volatile uint32_t *)0x400FE958))
 #define SYSCTL_PCCCM_R          (*((volatile uint32_t *)0x400FE974))
-#define SYSCTL_PCLCD_R          (*((volatile uint32_t *)0x400FE990))
-#define SYSCTL_PCOWIRE_R        (*((volatile uint32_t *)0x400FE998))
 #define SYSCTL_PCEMAC_R         (*((volatile uint32_t *)0x400FE99C))
 #define SYSCTL_PRWD_R           (*((volatile uint32_t *)0x400FEA00))
 #define SYSCTL_PRTIMER_R        (*((volatile uint32_t *)0x400FEA04))
@@ -2928,10 +2725,7 @@
 #define SYSCTL_PRQEI_R          (*((volatile uint32_t *)0x400FEA44))
 #define SYSCTL_PREEPROM_R       (*((volatile uint32_t *)0x400FEA58))
 #define SYSCTL_PRCCM_R          (*((volatile uint32_t *)0x400FEA74))
-#define SYSCTL_PRLCD_R          (*((volatile uint32_t *)0x400FEA90))
-#define SYSCTL_PROWIRE_R        (*((volatile uint32_t *)0x400FEA98))
 #define SYSCTL_PREMAC_R         (*((volatile uint32_t *)0x400FEA9C))
-#define SYSCTL_CCMCGREQ_R       (*((volatile uint32_t *)0x44030204))
 
 //*****************************************************************************
 //
@@ -2981,165 +2775,6 @@
 #define CCM0_CRCSEED_R          (*((volatile uint32_t *)0x44030410))
 #define CCM0_CRCDIN_R           (*((volatile uint32_t *)0x44030414))
 #define CCM0_CRCRSLTPP_R        (*((volatile uint32_t *)0x44030418))
-
-//*****************************************************************************
-//
-// SHA/MD5 registers (SHAMD5)
-//
-//*****************************************************************************
-#define SHAMD5_ODIGEST_A_R      (*((volatile uint32_t *)0x44034000))
-#define SHAMD5_ODIGEST_B_R      (*((volatile uint32_t *)0x44034004))
-#define SHAMD5_ODIGEST_C_R      (*((volatile uint32_t *)0x44034008))
-#define SHAMD5_ODIGEST_D_R      (*((volatile uint32_t *)0x4403400C))
-#define SHAMD5_ODIGEST_E_R      (*((volatile uint32_t *)0x44034010))
-#define SHAMD5_ODIGEST_F_R      (*((volatile uint32_t *)0x44034014))
-#define SHAMD5_ODIGEST_G_R      (*((volatile uint32_t *)0x44034018))
-#define SHAMD5_ODIGEST_H_R      (*((volatile uint32_t *)0x4403401C))
-#define SHAMD5_IDIGEST_A_R      (*((volatile uint32_t *)0x44034020))
-#define SHAMD5_IDIGEST_B_R      (*((volatile uint32_t *)0x44034024))
-#define SHAMD5_IDIGEST_C_R      (*((volatile uint32_t *)0x44034028))
-#define SHAMD5_IDIGEST_D_R      (*((volatile uint32_t *)0x4403402C))
-#define SHAMD5_IDIGEST_E_R      (*((volatile uint32_t *)0x44034030))
-#define SHAMD5_IDIGEST_F_R      (*((volatile uint32_t *)0x44034034))
-#define SHAMD5_IDIGEST_G_R      (*((volatile uint32_t *)0x44034038))
-#define SHAMD5_IDIGEST_H_R      (*((volatile uint32_t *)0x4403403C))
-#define SHAMD5_DIGEST_COUNT_R   (*((volatile uint32_t *)0x44034040))
-#define SHAMD5_MODE_R           (*((volatile uint32_t *)0x44034044))
-#define SHAMD5_LENGTH_R         (*((volatile uint32_t *)0x44034048))
-#define SHAMD5_DATA_0_IN_R      (*((volatile uint32_t *)0x44034080))
-#define SHAMD5_DATA_1_IN_R      (*((volatile uint32_t *)0x44034084))
-#define SHAMD5_DATA_2_IN_R      (*((volatile uint32_t *)0x44034088))
-#define SHAMD5_DATA_3_IN_R      (*((volatile uint32_t *)0x4403408C))
-#define SHAMD5_DATA_4_IN_R      (*((volatile uint32_t *)0x44034090))
-#define SHAMD5_DATA_5_IN_R      (*((volatile uint32_t *)0x44034094))
-#define SHAMD5_DATA_6_IN_R      (*((volatile uint32_t *)0x44034098))
-#define SHAMD5_DATA_7_IN_R      (*((volatile uint32_t *)0x4403409C))
-#define SHAMD5_DATA_8_IN_R      (*((volatile uint32_t *)0x440340A0))
-#define SHAMD5_DATA_9_IN_R      (*((volatile uint32_t *)0x440340A4))
-#define SHAMD5_DATA_10_IN_R     (*((volatile uint32_t *)0x440340A8))
-#define SHAMD5_DATA_11_IN_R     (*((volatile uint32_t *)0x440340AC))
-#define SHAMD5_DATA_12_IN_R     (*((volatile uint32_t *)0x440340B0))
-#define SHAMD5_DATA_13_IN_R     (*((volatile uint32_t *)0x440340B4))
-#define SHAMD5_DATA_14_IN_R     (*((volatile uint32_t *)0x440340B8))
-#define SHAMD5_DATA_15_IN_R     (*((volatile uint32_t *)0x440340BC))
-#define SHAMD5_REVISION_R       (*((volatile uint32_t *)0x44034100))
-#define SHAMD5_SYSCONFIG_R      (*((volatile uint32_t *)0x44034110))
-#define SHAMD5_SYSSTATUS_R      (*((volatile uint32_t *)0x44034114))
-#define SHAMD5_IRQSTATUS_R      (*((volatile uint32_t *)0x44034118))
-#define SHAMD5_IRQENABLE_R      (*((volatile uint32_t *)0x4403411C))
-#define SHAMD5_DMAIM_R          (*((volatile uint32_t *)0x144030010))
-#define SHAMD5_DMARIS_R         (*((volatile uint32_t *)0x144030014))
-#define SHAMD5_DMAMIS_R         (*((volatile uint32_t *)0x144030018))
-#define SHAMD5_DMAIC_R          (*((volatile uint32_t *)0x14403001C))
-
-//*****************************************************************************
-//
-// AES registers (AES)
-//
-//*****************************************************************************
-#define AES_KEY2_6_R            (*((volatile uint32_t *)0x44036000))
-#define AES_KEY2_7_R            (*((volatile uint32_t *)0x44036004))
-#define AES_KEY2_4_R            (*((volatile uint32_t *)0x44036008))
-#define AES_KEY2_5_R            (*((volatile uint32_t *)0x4403600C))
-#define AES_KEY2_2_R            (*((volatile uint32_t *)0x44036010))
-#define AES_KEY2_3_R            (*((volatile uint32_t *)0x44036014))
-#define AES_KEY2_0_R            (*((volatile uint32_t *)0x44036018))
-#define AES_KEY2_1_R            (*((volatile uint32_t *)0x4403601C))
-#define AES_KEY1_6_R            (*((volatile uint32_t *)0x44036020))
-#define AES_KEY1_7_R            (*((volatile uint32_t *)0x44036024))
-#define AES_KEY1_4_R            (*((volatile uint32_t *)0x44036028))
-#define AES_KEY1_5_R            (*((volatile uint32_t *)0x4403602C))
-#define AES_KEY1_2_R            (*((volatile uint32_t *)0x44036030))
-#define AES_KEY1_3_R            (*((volatile uint32_t *)0x44036034))
-#define AES_KEY1_0_R            (*((volatile uint32_t *)0x44036038))
-#define AES_KEY1_1_R            (*((volatile uint32_t *)0x4403603C))
-#define AES_IV_IN_0_R           (*((volatile uint32_t *)0x44036040))
-#define AES_IV_IN_1_R           (*((volatile uint32_t *)0x44036044))
-#define AES_IV_IN_2_R           (*((volatile uint32_t *)0x44036048))
-#define AES_IV_IN_3_R           (*((volatile uint32_t *)0x4403604C))
-#define AES_CTRL_R              (*((volatile uint32_t *)0x44036050))
-#define AES_C_LENGTH_0_R        (*((volatile uint32_t *)0x44036054))
-#define AES_C_LENGTH_1_R        (*((volatile uint32_t *)0x44036058))
-#define AES_AUTH_LENGTH_R       (*((volatile uint32_t *)0x4403605C))
-#define AES_DATA_IN_0_R         (*((volatile uint32_t *)0x44036060))
-#define AES_DATA_IN_1_R         (*((volatile uint32_t *)0x44036064))
-#define AES_DATA_IN_2_R         (*((volatile uint32_t *)0x44036068))
-#define AES_DATA_IN_3_R         (*((volatile uint32_t *)0x4403606C))
-#define AES_TAG_OUT_0_R         (*((volatile uint32_t *)0x44036070))
-#define AES_TAG_OUT_1_R         (*((volatile uint32_t *)0x44036074))
-#define AES_TAG_OUT_2_R         (*((volatile uint32_t *)0x44036078))
-#define AES_TAG_OUT_3_R         (*((volatile uint32_t *)0x4403607C))
-#define AES_REVISION_R          (*((volatile uint32_t *)0x44036080))
-#define AES_SYSCONFIG_R         (*((volatile uint32_t *)0x44036084))
-#define AES_SYSSTATUS_R         (*((volatile uint32_t *)0x44036088))
-#define AES_IRQSTATUS_R         (*((volatile uint32_t *)0x4403608C))
-#define AES_IRQENABLE_R         (*((volatile uint32_t *)0x44036090))
-#define AES_DIRTYBITS_R         (*((volatile uint32_t *)0x44036094))
-#define AES_DMAIM_R             (*((volatile uint32_t *)0x144030020))
-#define AES_DMARIS_R            (*((volatile uint32_t *)0x144030024))
-#define AES_DMAMIS_R            (*((volatile uint32_t *)0x144030028))
-#define AES_DMAIC_R             (*((volatile uint32_t *)0x14403002C))
-
-//*****************************************************************************
-//
-// DES registers (DES)
-//
-//*****************************************************************************
-#define DES_KEY3_L_R            (*((volatile uint32_t *)0x44038000))
-#define DES_KEY3_H_R            (*((volatile uint32_t *)0x44038004))
-#define DES_KEY2_L_R            (*((volatile uint32_t *)0x44038008))
-#define DES_KEY2_H_R            (*((volatile uint32_t *)0x4403800C))
-#define DES_KEY1_L_R            (*((volatile uint32_t *)0x44038010))
-#define DES_KEY1_H_R            (*((volatile uint32_t *)0x44038014))
-#define DES_IV_L_R              (*((volatile uint32_t *)0x44038018))
-#define DES_IV_H_R              (*((volatile uint32_t *)0x4403801C))
-#define DES_CTRL_R              (*((volatile uint32_t *)0x44038020))
-#define DES_LENGTH_R            (*((volatile uint32_t *)0x44038024))
-#define DES_DATA_L_R            (*((volatile uint32_t *)0x44038028))
-#define DES_DATA_H_R            (*((volatile uint32_t *)0x4403802C))
-#define DES_REVISION_R          (*((volatile uint32_t *)0x44038030))
-#define DES_SYSCONFIG_R         (*((volatile uint32_t *)0x44038034))
-#define DES_SYSSTATUS_R         (*((volatile uint32_t *)0x44038038))
-#define DES_IRQSTATUS_R         (*((volatile uint32_t *)0x4403803C))
-#define DES_IRQENABLE_R         (*((volatile uint32_t *)0x44038040))
-#define DES_DIRTYBITS_R         (*((volatile uint32_t *)0x44038044))
-#define DES_DMAIM_R             (*((volatile uint32_t *)0x144030030))
-#define DES_DMARIS_R            (*((volatile uint32_t *)0x144030034))
-#define DES_DMAMIS_R            (*((volatile uint32_t *)0x144030038))
-#define DES_DMAIC_R             (*((volatile uint32_t *)0x14403003C))
-
-//*****************************************************************************
-//
-// LCD registers (LCD0)
-//
-//*****************************************************************************
-#define LCD0_PID_R              (*((volatile uint32_t *)0x44050000))
-#define LCD0_CTL_R              (*((volatile uint32_t *)0x44050004))
-#define LCD0_LIDDCTL_R          (*((volatile uint32_t *)0x4405000C))
-#define LCD0_LIDDCS0CFG_R       (*((volatile uint32_t *)0x44050010))
-#define LCD0_LIDDCS0ADDR_R      (*((volatile uint32_t *)0x44050014))
-#define LCD0_LIDDCS0DATA_R      (*((volatile uint32_t *)0x44050018))
-#define LCD0_LIDDCS1CFG_R       (*((volatile uint32_t *)0x4405001C))
-#define LCD0_LIDDCS1ADDR_R      (*((volatile uint32_t *)0x44050020))
-#define LCD0_LIDDCS1DATA_R      (*((volatile uint32_t *)0x44050024))
-#define LCD0_RASTRCTL_R         (*((volatile uint32_t *)0x44050028))
-#define LCD0_RASTRTIM0_R        (*((volatile uint32_t *)0x4405002C))
-#define LCD0_RASTRTIM1_R        (*((volatile uint32_t *)0x44050030))
-#define LCD0_RASTRTIM2_R        (*((volatile uint32_t *)0x44050034))
-#define LCD0_RASTRSUBP1_R       (*((volatile uint32_t *)0x44050038))
-#define LCD0_RASTRSUBP2_R       (*((volatile uint32_t *)0x4405003C))
-#define LCD0_DMACTL_R           (*((volatile uint32_t *)0x44050040))
-#define LCD0_DMABAFB0_R         (*((volatile uint32_t *)0x44050044))
-#define LCD0_DMACAFB0_R         (*((volatile uint32_t *)0x44050048))
-#define LCD0_DMABAFB1_R         (*((volatile uint32_t *)0x4405004C))
-#define LCD0_DMACAFB1_R         (*((volatile uint32_t *)0x44050050))
-#define LCD0_SYSCFG_R           (*((volatile uint32_t *)0x44050054))
-#define LCD0_RISSET_R           (*((volatile uint32_t *)0x44050058))
-#define LCD0_MISCLR_R           (*((volatile uint32_t *)0x4405005C))
-#define LCD0_IM_R               (*((volatile uint32_t *)0x44050060))
-#define LCD0_IENC_R             (*((volatile uint32_t *)0x44050064))
-#define LCD0_CLKEN_R            (*((volatile uint32_t *)0x4405006C))
-#define LCD0_CLKRESET_R         (*((volatile uint32_t *)0x44050070))
 
 //*****************************************************************************
 //
@@ -12358,8 +11993,8 @@
 #define SYSCTL_DID1_FAM_M       0x0F000000  // Family
 #define SYSCTL_DID1_FAM_TIVA    0x00000000  // Tiva family of microcontollers
 #define SYSCTL_DID1_PRTNO_M     0x00FF0000  // Part Number
-#define SYSCTL_DID1_PRTNO_TM4C129XNCZAD                                       \
-                                0x00320000  // TM4C129XNCZAD
+#define SYSCTL_DID1_PRTNO_TM4C1294NCPDT                                       \
+                                0x001F0000  // TM4C1294NCPDT
 #define SYSCTL_DID1_PINCNT_M    0x0000E000  // Package Pin Count
 #define SYSCTL_DID1_PINCNT_100  0x00004000  // 100-pin LQFP package
 #define SYSCTL_DID1_PINCNT_64   0x00006000  // 64-pin LQFP package
@@ -12915,16 +12550,6 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the SYSCTL_LCDMPC register.
-//
-//*****************************************************************************
-#define SYSCTL_LCDMPC_PWRCTL_M  0x00000003  // Memory Array Power Control
-#define SYSCTL_LCDMPC_PWRCTL_OFF                                              \
-                                0x00000000  // Array OFF
-#define SYSCTL_LCDMPC_PWRCTL_ON 0x00000003  // Array On
-
-//*****************************************************************************
-//
 // The following are defines for the bit fields in the SYSCTL_PPWD register.
 //
 //*****************************************************************************
@@ -12958,9 +12583,6 @@
 // The following are defines for the bit fields in the SYSCTL_PPGPIO register.
 //
 //*****************************************************************************
-#define SYSCTL_PPGPIO_P17       0x00020000  // GPIO Port T Present
-#define SYSCTL_PPGPIO_P16       0x00010000  // GPIO Port S Present
-#define SYSCTL_PPGPIO_P15       0x00008000  // GPIO Port R Present
 #define SYSCTL_PPGPIO_P14       0x00004000  // GPIO Port Q Present
 #define SYSCTL_PPGPIO_P13       0x00002000  // GPIO Port P Present
 #define SYSCTL_PPGPIO_P12       0x00001000  // GPIO Port N Present
@@ -13206,9 +12828,6 @@
 // The following are defines for the bit fields in the SYSCTL_SRGPIO register.
 //
 //*****************************************************************************
-#define SYSCTL_SRGPIO_R17       0x00020000  // GPIO Port T Software Reset
-#define SYSCTL_SRGPIO_R16       0x00010000  // GPIO Port S Software Reset
-#define SYSCTL_SRGPIO_R15       0x00008000  // GPIO Port R Software Reset
 #define SYSCTL_SRGPIO_R14       0x00004000  // GPIO Port Q Software Reset
 #define SYSCTL_SRGPIO_R13       0x00002000  // GPIO Port P Software Reset
 #define SYSCTL_SRGPIO_R12       0x00001000  // GPIO Port N Software Reset
@@ -13358,20 +12977,6 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the SYSCTL_SRLCD register.
-//
-//*****************************************************************************
-#define SYSCTL_SRLCD_R0         0x00000001  // LCD Module 0 Software Reset
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_SROWIRE register.
-//
-//*****************************************************************************
-#define SYSCTL_SROWIRE_R0       0x00000001  // 1-Wire Module Software Reset
-
-//*****************************************************************************
-//
 // The following are defines for the bit fields in the SYSCTL_SREMAC register.
 //
 //*****************************************************************************
@@ -13417,12 +13022,6 @@
 // register.
 //
 //*****************************************************************************
-#define SYSCTL_RCGCGPIO_R17     0x00020000  // GPIO Port T Run Mode Clock
-                                            // Gating Control
-#define SYSCTL_RCGCGPIO_R16     0x00010000  // GPIO Port S Run Mode Clock
-                                            // Gating Control
-#define SYSCTL_RCGCGPIO_R15     0x00008000  // GPIO Port R Run Mode Clock
-                                            // Gating Control
 #define SYSCTL_RCGCGPIO_R14     0x00004000  // GPIO Port Q Run Mode Clock
                                             // Gating Control
 #define SYSCTL_RCGCGPIO_R13     0x00002000  // GPIO Port P Run Mode Clock
@@ -13622,23 +13221,6 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the SYSCTL_RCGCLCD register.
-//
-//*****************************************************************************
-#define SYSCTL_RCGCLCD_R0       0x00000001  // LCD Controller Module 0 Run Mode
-                                            // Clock Gating Control
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_RCGCOWIRE
-// register.
-//
-//*****************************************************************************
-#define SYSCTL_RCGCOWIRE_R0     0x00000001  // 1-Wire Module 0 Run Mode Clock
-                                            // Gating Control
-
-//*****************************************************************************
-//
 // The following are defines for the bit fields in the SYSCTL_RCGCEMAC
 // register.
 //
@@ -13693,12 +13275,6 @@
 // register.
 //
 //*****************************************************************************
-#define SYSCTL_SCGCGPIO_S17     0x00020000  // GPIO Port T Sleep Mode Clock
-                                            // Gating Control
-#define SYSCTL_SCGCGPIO_S16     0x00010000  // GPIO Port S Sleep Mode Clock
-                                            // Gating Control
-#define SYSCTL_SCGCGPIO_S15     0x00008000  // GPIO Port R Sleep Mode Clock
-                                            // Gating Control
 #define SYSCTL_SCGCGPIO_S14     0x00004000  // GPIO Port Q Sleep Mode Clock
                                             // Gating Control
 #define SYSCTL_SCGCGPIO_S13     0x00002000  // GPIO Port P Sleep Mode Clock
@@ -13898,23 +13474,6 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the SYSCTL_SCGCLCD register.
-//
-//*****************************************************************************
-#define SYSCTL_SCGCLCD_S0       0x00000001  // LCD Controller Module 0 Sleep
-                                            // Mode Clock Gating Control
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_SCGCOWIRE
-// register.
-//
-//*****************************************************************************
-#define SYSCTL_SCGCOWIRE_S0     0x00000001  // 1-Wire Module 0 Sleep Mode Clock
-                                            // Gating Control
-
-//*****************************************************************************
-//
 // The following are defines for the bit fields in the SYSCTL_SCGCEMAC
 // register.
 //
@@ -13969,12 +13528,6 @@
 // register.
 //
 //*****************************************************************************
-#define SYSCTL_DCGCGPIO_D17     0x00020000  // GPIO Port T Deep-Sleep Mode
-                                            // Clock Gating Control
-#define SYSCTL_DCGCGPIO_D16     0x00010000  // GPIO Port S Deep-Sleep Mode
-                                            // Clock Gating Control
-#define SYSCTL_DCGCGPIO_D15     0x00008000  // GPIO Port R Deep-Sleep Mode
-                                            // Clock Gating Control
 #define SYSCTL_DCGCGPIO_D14     0x00004000  // GPIO Port Q Deep-Sleep Mode
                                             // Clock Gating Control
 #define SYSCTL_DCGCGPIO_D13     0x00002000  // GPIO Port P Deep-Sleep Mode
@@ -14176,24 +13729,6 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the SYSCTL_DCGCLCD register.
-//
-//*****************************************************************************
-#define SYSCTL_DCGCLCD_D0       0x00000001  // LCD Controller Module 0
-                                            // Deep-Sleep Mode Clock Gating
-                                            // Control
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_DCGCOWIRE
-// register.
-//
-//*****************************************************************************
-#define SYSCTL_DCGCOWIRE_D0     0x00000001  // 1-Wire Module 0 Deep-Sleep Mode
-                                            // Clock Gating Control
-
-//*****************************************************************************
-//
 // The following are defines for the bit fields in the SYSCTL_DCGCEMAC
 // register.
 //
@@ -14236,9 +13771,6 @@
 // The following are defines for the bit fields in the SYSCTL_PCGPIO register.
 //
 //*****************************************************************************
-#define SYSCTL_PCGPIO_P17       0x00020000  // GPIO Port T Power Control
-#define SYSCTL_PCGPIO_P16       0x00010000  // GPIO Port S Power Control
-#define SYSCTL_PCGPIO_P15       0x00008000  // GPIO Port R Power Control
 #define SYSCTL_PCGPIO_P14       0x00004000  // GPIO Port Q Power Control
 #define SYSCTL_PCGPIO_P13       0x00002000  // GPIO Port P Power Control
 #define SYSCTL_PCGPIO_P12       0x00001000  // GPIO Port N Power Control
@@ -14387,21 +13919,6 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the SYSCTL_PCLCD register.
-//
-//*****************************************************************************
-#define SYSCTL_PCLCD_P0         0x00000001  // LCD Controller Module 0 Power
-                                            // Control
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_PCOWIRE register.
-//
-//*****************************************************************************
-#define SYSCTL_PCOWIRE_P0       0x00000001  // 1-Wire Module 0 Power Control
-
-//*****************************************************************************
-//
 // The following are defines for the bit fields in the SYSCTL_PCEMAC register.
 //
 //*****************************************************************************
@@ -14445,9 +13962,6 @@
 // The following are defines for the bit fields in the SYSCTL_PRGPIO register.
 //
 //*****************************************************************************
-#define SYSCTL_PRGPIO_R17       0x00020000  // GPIO Port T Peripheral Ready
-#define SYSCTL_PRGPIO_R16       0x00010000  // GPIO Port S Peripheral Ready
-#define SYSCTL_PRGPIO_R15       0x00008000  // GPIO Port R Peripheral Ready
 #define SYSCTL_PRGPIO_R14       0x00004000  // GPIO Port Q Peripheral Ready
 #define SYSCTL_PRGPIO_R13       0x00002000  // GPIO Port P Peripheral Ready
 #define SYSCTL_PRGPIO_R12       0x00001000  // GPIO Port N Peripheral Ready
@@ -14597,36 +14111,11 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the SYSCTL_PRLCD register.
-//
-//*****************************************************************************
-#define SYSCTL_PRLCD_R0         0x00000001  // LCD Controller Module 0
-                                            // Peripheral Ready
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_PROWIRE register.
-//
-//*****************************************************************************
-#define SYSCTL_PROWIRE_R0       0x00000001  // 1-Wire Module 0 Peripheral Ready
-
-//*****************************************************************************
-//
 // The following are defines for the bit fields in the SYSCTL_PREMAC register.
 //
 //*****************************************************************************
 #define SYSCTL_PREMAC_R0        0x00000001  // Ethernet MAC Module 0 Peripheral
                                             // Ready
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_CCMCGREQ
-// register.
-//
-//*****************************************************************************
-#define SYSCTL_CCMCGREQ_DESCFG  0x00000004  // DES Clock Gating Request
-#define SYSCTL_CCMCGREQ_AESCFG  0x00000002  // AES Clock Gating Request
-#define SYSCTL_CCMCGREQ_SHACFG  0x00000001  // SHA/MD5 Clock Gating Request
 
 //*****************************************************************************
 //
@@ -15008,1146 +14497,6 @@
 //*****************************************************************************
 #define CCM_CRCRSLTPP_RSLTPP_M  0xFFFFFFFF  // Post Processing Result
 #define CCM_CRCRSLTPP_RSLTPP_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_ODIGEST_A
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_ODIGEST_A_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_ODIGEST_A_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_ODIGEST_B
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_ODIGEST_B_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_ODIGEST_B_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_ODIGEST_C
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_ODIGEST_C_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_ODIGEST_C_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_ODIGEST_D
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_ODIGEST_D_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_ODIGEST_D_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_ODIGEST_E
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_ODIGEST_E_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_ODIGEST_E_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_ODIGEST_F
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_ODIGEST_F_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_ODIGEST_F_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_ODIGEST_G
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_ODIGEST_G_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_ODIGEST_G_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_ODIGEST_H
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_ODIGEST_H_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_ODIGEST_H_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_IDIGEST_A
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_IDIGEST_A_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_IDIGEST_A_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_IDIGEST_B
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_IDIGEST_B_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_IDIGEST_B_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_IDIGEST_C
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_IDIGEST_C_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_IDIGEST_C_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_IDIGEST_D
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_IDIGEST_D_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_IDIGEST_D_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_IDIGEST_E
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_IDIGEST_E_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_IDIGEST_E_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_IDIGEST_F
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_IDIGEST_F_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_IDIGEST_F_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_IDIGEST_G
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_IDIGEST_G_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_IDIGEST_G_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_IDIGEST_H
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_IDIGEST_H_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_IDIGEST_H_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_DIGEST_COUNT
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_DIGEST_COUNT_M   0xFFFFFFFF  // Digest Count
-#define SHAMD5_DIGEST_COUNT_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_MODE register.
-//
-//*****************************************************************************
-#define SHAMD5_MODE_HMAC_OUTER_HASH                                           \
-                                0x00000080  // HMAC Outer Hash Processing
-                                            // Enable
-#define SHAMD5_MODE_HMAC_KEY_PROC                                             \
-                                0x00000020  // HMAC Key Processing Enable
-#define SHAMD5_MODE_CLOSE_HASH  0x00000010  // Performs the padding, the
-                                            // Hash/HMAC will be 'closed' at
-                                            // the end of the block, as per
-                                            // MD5/SHA-1/SHA-2 specification
-#define SHAMD5_MODE_ALGO_CONSTANT                                             \
-                                0x00000008  // The initial digest register will
-                                            // be overwritten with the
-                                            // algorithm constants for the
-                                            // selected algorithm when hashing
-                                            // and the initial digest count
-                                            // register will be reset to 0
-#define SHAMD5_MODE_ALGO_M      0x00000007  // Hash Algorithm
-#define SHAMD5_MODE_ALGO_MD5    0x00000000  // MD5
-#define SHAMD5_MODE_ALGO_SHA1   0x00000002  // SHA-1
-#define SHAMD5_MODE_ALGO_SHA224 0x00000004  // SHA-224
-#define SHAMD5_MODE_ALGO_SHA256 0x00000006  // SHA-256
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_LENGTH
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_LENGTH_M         0xFFFFFFFF  // Block Length/Remaining Byte
-                                            // Count
-#define SHAMD5_LENGTH_S         0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_DATA_0_IN
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_DATA_0_IN_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_DATA_0_IN_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_DATA_1_IN
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_DATA_1_IN_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_DATA_1_IN_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_DATA_2_IN
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_DATA_2_IN_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_DATA_2_IN_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_DATA_3_IN
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_DATA_3_IN_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_DATA_3_IN_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_DATA_4_IN
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_DATA_4_IN_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_DATA_4_IN_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_DATA_5_IN
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_DATA_5_IN_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_DATA_5_IN_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_DATA_6_IN
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_DATA_6_IN_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_DATA_6_IN_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_DATA_7_IN
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_DATA_7_IN_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_DATA_7_IN_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_DATA_8_IN
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_DATA_8_IN_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_DATA_8_IN_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_DATA_9_IN
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_DATA_9_IN_DATA_M 0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_DATA_9_IN_DATA_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_DATA_10_IN
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_DATA_10_IN_DATA_M                                              \
-                                0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_DATA_10_IN_DATA_S                                              \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_DATA_11_IN
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_DATA_11_IN_DATA_M                                              \
-                                0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_DATA_11_IN_DATA_S                                              \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_DATA_12_IN
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_DATA_12_IN_DATA_M                                              \
-                                0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_DATA_12_IN_DATA_S                                              \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_DATA_13_IN
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_DATA_13_IN_DATA_M                                              \
-                                0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_DATA_13_IN_DATA_S                                              \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_DATA_14_IN
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_DATA_14_IN_DATA_M                                              \
-                                0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_DATA_14_IN_DATA_S                                              \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_DATA_15_IN
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_DATA_15_IN_DATA_M                                              \
-                                0xFFFFFFFF  // Digest/Key Data
-#define SHAMD5_DATA_15_IN_DATA_S                                              \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_REVISION
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_REVISION_M       0xFFFFFFFF  // Revision Number
-#define SHAMD5_REVISION_S       0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_SYSCONFIG
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_SYSCONFIG_SADVANCED                                            \
-                                0x00000080  // Advanced Mode Enable
-#define SHAMD5_SYSCONFIG_SIDLE_M                                              \
-                                0x00000030  // Sidle mode
-#define SHAMD5_SYSCONFIG_SIDLE_FORCE                                          \
-                                0x00000000  // Force-idle mode
-#define SHAMD5_SYSCONFIG_DMA_EN 0x00000008  // uDMA Request Enable
-#define SHAMD5_SYSCONFIG_IT_EN  0x00000004  // Interrupt Enable
-#define SHAMD5_SYSCONFIG_SOFTRESET                                            \
-                                0x00000002  // Soft reset
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_SYSSTATUS
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_SYSSTATUS_RESETDONE                                            \
-                                0x00000001  // Reset done status
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_IRQSTATUS
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_IRQSTATUS_CONTEXT_READY                                        \
-                                0x00000008  // Context Ready Status
-#define SHAMD5_IRQSTATUS_INPUT_READY                                          \
-                                0x00000002  // Input Ready Status
-#define SHAMD5_IRQSTATUS_OUTPUT_READY                                         \
-                                0x00000001  // Output Ready Status
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_IRQENABLE
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_IRQENABLE_CONTEXT_READY                                        \
-                                0x00000008  // Mask for context ready interrupt
-#define SHAMD5_IRQENABLE_INPUT_READY                                          \
-                                0x00000002  // Mask for input ready interrupt
-#define SHAMD5_IRQENABLE_OUTPUT_READY                                         \
-                                0x00000001  // Mask for output ready interrupt
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_DMAIM register.
-//
-//*****************************************************************************
-#define SHAMD5_DMAIM_COUT       0x00000004  // Context Out DMA Done Interrupt
-                                            // Mask
-#define SHAMD5_DMAIM_DIN        0x00000002  // Data In DMA Done Interrupt Mask
-#define SHAMD5_DMAIM_CIN        0x00000001  // Context In DMA Done Interrupt
-                                            // Mask
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_DMARIS
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_DMARIS_COUT      0x00000004  // Context Out DMA Done Raw
-                                            // Interrupt Status
-#define SHAMD5_DMARIS_DIN       0x00000002  // Data In DMA Done Raw Interrupt
-                                            // Status
-#define SHAMD5_DMARIS_CIN       0x00000001  // Context In DMA Done Raw
-                                            // Interrupt Status
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_DMAMIS
-// register.
-//
-//*****************************************************************************
-#define SHAMD5_DMAMIS_COUT      0x00000004  // Context Out DMA Done Masked
-                                            // Interrupt Status
-#define SHAMD5_DMAMIS_DIN       0x00000002  // Data In DMA Done Masked
-                                            // Interrupt Status
-#define SHAMD5_DMAMIS_CIN       0x00000001  // Context In DMA Done Raw
-                                            // Interrupt Status
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SHAMD5_O_DMAIC register.
-//
-//*****************************************************************************
-#define SHAMD5_DMAIC_COUT       0x00000004  // Context Out DMA Done Masked
-                                            // Interrupt Status
-#define SHAMD5_DMAIC_DIN        0x00000002  // Data In DMA Done Interrupt Clear
-#define SHAMD5_DMAIC_CIN        0x00000001  // Context In DMA Done Raw
-                                            // Interrupt Status
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_KEY2_6 register.
-//
-//*****************************************************************************
-#define AES_KEY2_6_KEY_M        0xFFFFFFFF  // Key Data
-#define AES_KEY2_6_KEY_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_KEY2_7 register.
-//
-//*****************************************************************************
-#define AES_KEY2_7_KEY_M        0xFFFFFFFF  // Key Data
-#define AES_KEY2_7_KEY_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_KEY2_4 register.
-//
-//*****************************************************************************
-#define AES_KEY2_4_KEY_M        0xFFFFFFFF  // Key Data
-#define AES_KEY2_4_KEY_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_KEY2_5 register.
-//
-//*****************************************************************************
-#define AES_KEY2_5_KEY_M        0xFFFFFFFF  // Key Data
-#define AES_KEY2_5_KEY_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_KEY2_2 register.
-//
-//*****************************************************************************
-#define AES_KEY2_2_KEY_M        0xFFFFFFFF  // Key Data
-#define AES_KEY2_2_KEY_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_KEY2_3 register.
-//
-//*****************************************************************************
-#define AES_KEY2_3_KEY_M        0xFFFFFFFF  // Key Data
-#define AES_KEY2_3_KEY_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_KEY2_0 register.
-//
-//*****************************************************************************
-#define AES_KEY2_0_KEY_M        0xFFFFFFFF  // Key Data
-#define AES_KEY2_0_KEY_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_KEY2_1 register.
-//
-//*****************************************************************************
-#define AES_KEY2_1_KEY_M        0xFFFFFFFF  // Key Data
-#define AES_KEY2_1_KEY_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_KEY1_6 register.
-//
-//*****************************************************************************
-#define AES_KEY1_6_KEY_M        0xFFFFFFFF  // Key Data
-#define AES_KEY1_6_KEY_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_KEY1_7 register.
-//
-//*****************************************************************************
-#define AES_KEY1_7_KEY_M        0xFFFFFFFF  // Key Data
-#define AES_KEY1_7_KEY_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_KEY1_4 register.
-//
-//*****************************************************************************
-#define AES_KEY1_4_KEY_M        0xFFFFFFFF  // Key Data
-#define AES_KEY1_4_KEY_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_KEY1_5 register.
-//
-//*****************************************************************************
-#define AES_KEY1_5_KEY_M        0xFFFFFFFF  // Key Data
-#define AES_KEY1_5_KEY_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_KEY1_2 register.
-//
-//*****************************************************************************
-#define AES_KEY1_2_KEY_M        0xFFFFFFFF  // Key Data
-#define AES_KEY1_2_KEY_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_KEY1_3 register.
-//
-//*****************************************************************************
-#define AES_KEY1_3_KEY_M        0xFFFFFFFF  // Key Data
-#define AES_KEY1_3_KEY_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_KEY1_0 register.
-//
-//*****************************************************************************
-#define AES_KEY1_0_KEY_M        0xFFFFFFFF  // Key Data
-#define AES_KEY1_0_KEY_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_KEY1_1 register.
-//
-//*****************************************************************************
-#define AES_KEY1_1_KEY_M        0xFFFFFFFF  // Key Data
-#define AES_KEY1_1_KEY_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_IV_IN_0 register.
-//
-//*****************************************************************************
-#define AES_IV_IN_0_DATA_M      0xFFFFFFFF  // Initialization Vector Input
-#define AES_IV_IN_0_DATA_S      0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_IV_IN_1 register.
-//
-//*****************************************************************************
-#define AES_IV_IN_1_DATA_M      0xFFFFFFFF  // Initialization Vector Input
-#define AES_IV_IN_1_DATA_S      0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_IV_IN_2 register.
-//
-//*****************************************************************************
-#define AES_IV_IN_2_DATA_M      0xFFFFFFFF  // Initialization Vector Input
-#define AES_IV_IN_2_DATA_S      0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_IV_IN_3 register.
-//
-//*****************************************************************************
-#define AES_IV_IN_3_DATA_M      0xFFFFFFFF  // Initialization Vector Input
-#define AES_IV_IN_3_DATA_S      0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_CTRL register.
-//
-//*****************************************************************************
-#define AES_CTRL_CTXTRDY        0x80000000  // Context Data Registers Ready
-#define AES_CTRL_SVCTXTRDY      0x40000000  // AES TAG/IV Block(s) Ready
-#define AES_CTRL_SAVE_CONTEXT   0x20000000  // TAG or Result IV Save
-#define AES_CTRL_CCM_M_M        0x01C00000  // Counter with CBC-MAC (CCM)
-#define AES_CTRL_CCM_L_M        0x00380000  // L Value
-#define AES_CTRL_CCM_L_2        0x00080000  // width = 2
-#define AES_CTRL_CCM_L_4        0x00180000  // width = 4
-#define AES_CTRL_CCM_L_8        0x00380000  // width = 8
-#define AES_CTRL_CCM            0x00040000  // AES-CCM Mode Enable
-#define AES_CTRL_GCM_M          0x00030000  // AES-GCM Mode Enable
-#define AES_CTRL_GCM_NOP        0x00000000  // No operation
-#define AES_CTRL_GCM_HLY0ZERO   0x00010000  // GHASH with H loaded and
-                                            // Y0-encrypted forced to zero
-#define AES_CTRL_GCM_HLY0CALC   0x00020000  // GHASH with H loaded and
-                                            // Y0-encrypted calculated
-                                            // internally
-#define AES_CTRL_GCM_HY0CALC    0x00030000  // Autonomous GHASH (both H and
-                                            // Y0-encrypted calculated
-                                            // internally)
-#define AES_CTRL_CBCMAC         0x00008000  // AES-CBC MAC Enable
-#define AES_CTRL_F9             0x00004000  // AES f9 Mode Enable
-#define AES_CTRL_F8             0x00002000  // AES f8 Mode Enable
-#define AES_CTRL_XTS_M          0x00001800  // AES-XTS Operation Enabled
-#define AES_CTRL_XTS_NOP        0x00000000  // No operation
-#define AES_CTRL_XTS_TWEAKJL    0x00000800  // Previous/intermediate tweak
-                                            // value and j loaded (value is
-                                            // loaded via IV, j is loaded via
-                                            // the AAD length register)
-#define AES_CTRL_XTS_K2IJL      0x00001000  // Key2, n and j are loaded (n is
-                                            // loaded via IV, j is loaded via
-                                            // the AAD length register)
-#define AES_CTRL_XTS_K2ILJ0     0x00001800  // Key2 and n are loaded; j=0 (n is
-                                            // loaded via IV)
-#define AES_CTRL_CFB            0x00000400  // Full block AES cipher feedback
-                                            // mode (CFB128) Enable
-#define AES_CTRL_ICM            0x00000200  // AES Integer Counter Mode (ICM)
-                                            // Enable
-#define AES_CTRL_CTR_WIDTH_M    0x00000180  // AES-CTR Mode Counter Width
-#define AES_CTRL_CTR_WIDTH_32   0x00000000  // Counter is 32 bits
-#define AES_CTRL_CTR_WIDTH_64   0x00000080  // Counter is 64 bits
-#define AES_CTRL_CTR_WIDTH_96   0x00000100  // Counter is 96 bits
-#define AES_CTRL_CTR_WIDTH_128  0x00000180  // Counter is 128 bits
-#define AES_CTRL_CTR            0x00000040  // Counter Mode
-#define AES_CTRL_MODE           0x00000020  // ECB/CBC Mode
-#define AES_CTRL_KEY_SIZE_M     0x00000018  // Key Size
-#define AES_CTRL_KEY_SIZE_128   0x00000008  // Key is 128 bits
-#define AES_CTRL_KEY_SIZE_192   0x00000010  // Key is 192 bits
-#define AES_CTRL_KEY_SIZE_256   0x00000018  // Key is 256 bits
-#define AES_CTRL_DIRECTION      0x00000004  // Encryption/Decryption Selection
-#define AES_CTRL_INPUT_READY    0x00000002  // Input Ready Status
-#define AES_CTRL_OUTPUT_READY   0x00000001  // Output Ready Status
-#define AES_CTRL_CCM_M_S        22
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_C_LENGTH_0
-// register.
-//
-//*****************************************************************************
-#define AES_C_LENGTH_0_LENGTH_M 0xFFFFFFFF  // Data Length
-#define AES_C_LENGTH_0_LENGTH_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_C_LENGTH_1
-// register.
-//
-//*****************************************************************************
-#define AES_C_LENGTH_1_LENGTH_M 0xFFFFFFFF  // Data Length
-#define AES_C_LENGTH_1_LENGTH_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_AUTH_LENGTH
-// register.
-//
-//*****************************************************************************
-#define AES_AUTH_LENGTH_AUTH_M  0xFFFFFFFF  // Authentication Data Length
-#define AES_AUTH_LENGTH_AUTH_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_DATA_IN_0
-// register.
-//
-//*****************************************************************************
-#define AES_DATA_IN_0_DATA_M    0xFFFFFFFF  // Secure Data RW
-                                            // Plaintext/Ciphertext
-#define AES_DATA_IN_0_DATA_S    0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_DATA_IN_1
-// register.
-//
-//*****************************************************************************
-#define AES_DATA_IN_1_DATA_M    0xFFFFFFFF  // Secure Data RW
-                                            // Plaintext/Ciphertext
-#define AES_DATA_IN_1_DATA_S    0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_DATA_IN_2
-// register.
-//
-//*****************************************************************************
-#define AES_DATA_IN_2_DATA_M    0xFFFFFFFF  // Secure Data RW
-                                            // Plaintext/Ciphertext
-#define AES_DATA_IN_2_DATA_S    0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_DATA_IN_3
-// register.
-//
-//*****************************************************************************
-#define AES_DATA_IN_3_DATA_M    0xFFFFFFFF  // Secure Data RW
-                                            // Plaintext/Ciphertext
-#define AES_DATA_IN_3_DATA_S    0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_TAG_OUT_0
-// register.
-//
-//*****************************************************************************
-#define AES_TAG_OUT_0_HASH_M    0xFFFFFFFF  // Hash Result
-#define AES_TAG_OUT_0_HASH_S    0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_TAG_OUT_1
-// register.
-//
-//*****************************************************************************
-#define AES_TAG_OUT_1_HASH_M    0xFFFFFFFF  // Hash Result
-#define AES_TAG_OUT_1_HASH_S    0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_TAG_OUT_2
-// register.
-//
-//*****************************************************************************
-#define AES_TAG_OUT_2_HASH_M    0xFFFFFFFF  // Hash Result
-#define AES_TAG_OUT_2_HASH_S    0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_TAG_OUT_3
-// register.
-//
-//*****************************************************************************
-#define AES_TAG_OUT_3_HASH_M    0xFFFFFFFF  // Hash Result
-#define AES_TAG_OUT_3_HASH_S    0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_REVISION register.
-//
-//*****************************************************************************
-#define AES_REVISION_M          0xFFFFFFFF  // Revision number
-#define AES_REVISION_S          0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_SYSCONFIG
-// register.
-//
-//*****************************************************************************
-#define AES_SYSCONFIG_K3        0x00001000  // K3 Select
-#define AES_SYSCONFIG_KEYENC    0x00000800  // Key Encoding
-#define AES_SYSCONFIG_MAP_CONTEXT_OUT_ON_DATA_OUT                             \
-                                0x00000200  // Map Context Out on Data Out
-                                            // Enable
-#define AES_SYSCONFIG_DMA_REQ_CONTEXT_OUT_EN                                  \
-                                0x00000100  // DMA Request Context Out Enable
-#define AES_SYSCONFIG_DMA_REQ_CONTEXT_IN_EN                                   \
-                                0x00000080  // DMA Request Context In Enable
-#define AES_SYSCONFIG_DMA_REQ_DATA_OUT_EN                                     \
-                                0x00000040  // DMA Request Data Out Enable
-#define AES_SYSCONFIG_DMA_REQ_DATA_IN_EN                                      \
-                                0x00000020  // DMA Request Data In Enable
-#define AES_SYSCONFIG_SOFTRESET 0x00000002  // Soft reset
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_SYSSTATUS
-// register.
-//
-//*****************************************************************************
-#define AES_SYSSTATUS_RESETDONE 0x00000001  // Reset Done
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_IRQSTATUS
-// register.
-//
-//*****************************************************************************
-#define AES_IRQSTATUS_CONTEXT_OUT                                             \
-                                0x00000008  // Context Output Interrupt Status
-#define AES_IRQSTATUS_DATA_OUT  0x00000004  // Data Out Interrupt Status
-#define AES_IRQSTATUS_DATA_IN   0x00000002  // Data In Interrupt Status
-#define AES_IRQSTATUS_CONTEXT_IN                                              \
-                                0x00000001  // Context In Interrupt Status
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_IRQENABLE
-// register.
-//
-//*****************************************************************************
-#define AES_IRQENABLE_CONTEXT_OUT                                             \
-                                0x00000008  // Context Out Interrupt Enable
-#define AES_IRQENABLE_DATA_OUT  0x00000004  // Data Out Interrupt Enable
-#define AES_IRQENABLE_DATA_IN   0x00000002  // Data In Interrupt Enable
-#define AES_IRQENABLE_CONTEXT_IN                                              \
-                                0x00000001  // Context In Interrupt Enable
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_DIRTYBITS
-// register.
-//
-//*****************************************************************************
-#define AES_DIRTYBITS_S_DIRTY   0x00000002  // AES Dirty Bit
-#define AES_DIRTYBITS_S_ACCESS  0x00000001  // AES Access Bit
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_DMAIM register.
-//
-//*****************************************************************************
-#define AES_DMAIM_DOUT          0x00000008  // Data Out DMA Done Interrupt Mask
-#define AES_DMAIM_DIN           0x00000004  // Data In DMA Done Interrupt Mask
-#define AES_DMAIM_COUT          0x00000002  // Context Out DMA Done Interrupt
-                                            // Mask
-#define AES_DMAIM_CIN           0x00000001  // Context In DMA Done Interrupt
-                                            // Mask
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_DMARIS register.
-//
-//*****************************************************************************
-#define AES_DMARIS_DOUT         0x00000008  // Data Out DMA Done Raw Interrupt
-                                            // Status
-#define AES_DMARIS_DIN          0x00000004  // Data In DMA Done Raw Interrupt
-                                            // Status
-#define AES_DMARIS_COUT         0x00000002  // Context Out DMA Done Raw
-                                            // Interrupt Status
-#define AES_DMARIS_CIN          0x00000001  // Context In DMA Done Raw
-                                            // Interrupt Status
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_DMAMIS register.
-//
-//*****************************************************************************
-#define AES_DMAMIS_DOUT         0x00000008  // Data Out DMA Done Masked
-                                            // Interrupt Status
-#define AES_DMAMIS_DIN          0x00000004  // Data In DMA Done Masked
-                                            // Interrupt Status
-#define AES_DMAMIS_COUT         0x00000002  // Context Out DMA Done Masked
-                                            // Interrupt Status
-#define AES_DMAMIS_CIN          0x00000001  // Context In DMA Done Raw
-                                            // Interrupt Status
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the AES_O_DMAIC register.
-//
-//*****************************************************************************
-#define AES_DMAIC_DOUT          0x00000008  // Data Out DMA Done Interrupt
-                                            // Clear
-#define AES_DMAIC_DIN           0x00000004  // Data In DMA Done Interrupt Clear
-#define AES_DMAIC_COUT          0x00000002  // Context Out DMA Done Masked
-                                            // Interrupt Status
-#define AES_DMAIC_CIN           0x00000001  // Context In DMA Done Raw
-                                            // Interrupt Status
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the DES_O_KEY3_L register.
-//
-//*****************************************************************************
-#define DES_KEY3_L_KEY_M        0xFFFFFFFF  // Key Data
-#define DES_KEY3_L_KEY_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the DES_O_KEY3_H register.
-//
-//*****************************************************************************
-#define DES_KEY3_H_KEY_M        0xFFFFFFFF  // Key Data
-#define DES_KEY3_H_KEY_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the DES_O_KEY2_L register.
-//
-//*****************************************************************************
-#define DES_KEY2_L_KEY_M        0xFFFFFFFF  // Key Data
-#define DES_KEY2_L_KEY_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the DES_O_KEY2_H register.
-//
-//*****************************************************************************
-#define DES_KEY2_H_KEY_M        0xFFFFFFFF  // Key Data
-#define DES_KEY2_H_KEY_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the DES_O_KEY1_L register.
-//
-//*****************************************************************************
-#define DES_KEY1_L_KEY_M        0xFFFFFFFF  // Key Data
-#define DES_KEY1_L_KEY_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the DES_O_KEY1_H register.
-//
-//*****************************************************************************
-#define DES_KEY1_H_KEY_M        0xFFFFFFFF  // Key Data
-#define DES_KEY1_H_KEY_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the DES_O_IV_L register.
-//
-//*****************************************************************************
-#define DES_IV_L_M              0xFFFFFFFF  // Initialization vector for CBC,
-                                            // CFB modes (LSW)
-#define DES_IV_L_S              0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the DES_O_IV_H register.
-//
-//*****************************************************************************
-#define DES_IV_H_M              0xFFFFFFFF  // Initialization vector for CBC,
-                                            // CFB modes (MSW)
-#define DES_IV_H_S              0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the DES_O_CTRL register.
-//
-//*****************************************************************************
-#define DES_CTRL_CONTEXT        0x80000000  // If 1, this read-only status bit
-                                            // indicates that the context data
-                                            // registers can be overwritten and
-                                            // the host is permitted to write
-                                            // the next context
-#define DES_CTRL_MODE_M         0x00000030  // Select CBC, ECB or CFB mode0x0:
-                                            // ECB mode0x1: CBC mode0x2: CFB
-                                            // mode0x3: reserved
-#define DES_CTRL_TDES           0x00000008  // Select DES or triple DES
-                                            // encryption/decryption
-#define DES_CTRL_DIRECTION      0x00000004  // Select encryption/decryption
-                                            // 0x0: decryption is selected0x1:
-                                            // Encryption is selected
-#define DES_CTRL_INPUT_READY    0x00000002  // When 1, ready to encrypt/decrypt
-                                            // data
-#define DES_CTRL_OUTPUT_READY   0x00000001  // When 1, Data decrypted/encrypted
-                                            // ready
-#define DES_CTRL_MODE_S         4
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the DES_O_LENGTH register.
-//
-//*****************************************************************************
-#define DES_LENGTH_M            0xFFFFFFFF  // Cryptographic data length in
-                                            // bytes for all modes
-#define DES_LENGTH_S            0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the DES_O_DATA_L register.
-//
-//*****************************************************************************
-#define DES_DATA_L_M            0xFFFFFFFF  // Data for encryption/decryption,
-                                            // LSW
-#define DES_DATA_L_S            0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the DES_O_DATA_H register.
-//
-//*****************************************************************************
-#define DES_DATA_H_M            0xFFFFFFFF  // Data for encryption/decryption,
-                                            // MSW
-#define DES_DATA_H_S            0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the DES_O_REVISION register.
-//
-//*****************************************************************************
-#define DES_REVISION_M          0xFFFFFFFF  // Revision number
-#define DES_REVISION_S          0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the DES_O_SYSCONFIG
-// register.
-//
-//*****************************************************************************
-#define DES_SYSCONFIG_DMA_REQ_CONTEXT_IN_EN                                   \
-                                0x00000080  // DMA Request Context In Enable
-#define DES_SYSCONFIG_DMA_REQ_DATA_OUT_EN                                     \
-                                0x00000040  // DMA Request Data Out Enable
-#define DES_SYSCONFIG_DMA_REQ_DATA_IN_EN                                      \
-                                0x00000020  // DMA Request Data In Enable
-#define DES_SYSCONFIG_SIDLE_M   0x0000000C  // Sidle mode
-#define DES_SYSCONFIG_SIDLE_FORCE                                             \
-                                0x00000000  // Force-idle mode
-#define DES_SYSCONFIG_SOFTRESET 0x00000002  // Soft reset
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the DES_O_SYSSTATUS
-// register.
-//
-//*****************************************************************************
-#define DES_SYSSTATUS_RESETDONE 0x00000001  // Reset Done
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the DES_O_IRQSTATUS
-// register.
-//
-//*****************************************************************************
-#define DES_IRQSTATUS_DATA_OUT  0x00000004  // This bit indicates data output
-                                            // interrupt is active and triggers
-                                            // the interrupt output
-#define DES_IRQSTATUS_DATA_IN   0x00000002  // This bit indicates data input
-                                            // interrupt is active and triggers
-                                            // the interrupt output
-#define DES_IRQSTATUS_CONTEX_IN 0x00000001  // This bit indicates context
-                                            // interrupt is active and triggers
-                                            // the interrupt output
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the DES_O_IRQENABLE
-// register.
-//
-//*****************************************************************************
-#define DES_IRQENABLE_M_DATA_OUT                                              \
-                                0x00000004  // If this bit is set to 1 the data
-                                            // output interrupt is enabled
-#define DES_IRQENABLE_M_DATA_IN 0x00000002  // If this bit is set to 1 the data
-                                            // input interrupt is enabled
-#define DES_IRQENABLE_M_CONTEX_IN                                             \
-                                0x00000001  // If this bit is set to 1 the
-                                            // context interrupt is enabled
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the DES_O_DIRTYBITS
-// register.
-//
-//*****************************************************************************
-#define DES_DIRTYBITS_S_DIRTY   0x00000002  // This bit is set to 1 by the
-                                            // module if any of the DES_*
-                                            // registers is written
-#define DES_DIRTYBITS_S_ACCESS  0x00000001  // This bit is set to 1 by the
-                                            // module if any of the DES_*
-                                            // registers is read
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the DES_O_DMAIM register.
-//
-//*****************************************************************************
-#define DES_DMAIM_DOUT          0x00000004  // Data Out DMA Done Interrupt Mask
-#define DES_DMAIM_DIN           0x00000002  // Data In DMA Done Interrupt Mask
-#define DES_DMAIM_CIN           0x00000001  // Context In DMA Done Interrupt
-                                            // Mask
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the DES_O_DMARIS register.
-//
-//*****************************************************************************
-#define DES_DMARIS_DOUT         0x00000004  // Data Out DMA Done Raw Interrupt
-                                            // Status
-#define DES_DMARIS_DIN          0x00000002  // Data In DMA Done Raw Interrupt
-                                            // Status
-#define DES_DMARIS_CIN          0x00000001  // Context In DMA Done Raw
-                                            // Interrupt Status
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the DES_O_DMAMIS register.
-//
-//*****************************************************************************
-#define DES_DMAMIS_DOUT         0x00000004  // Data Out DMA Done Masked
-                                            // Interrupt Status
-#define DES_DMAMIS_DIN          0x00000002  // Data In DMA Done Masked
-                                            // Interrupt Status
-#define DES_DMAMIS_CIN          0x00000001  // Context In DMA Done Raw
-                                            // Interrupt Status
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the DES_O_DMAIC register.
-//
-//*****************************************************************************
-#define DES_DMAIC_DOUT          0x00000004  // Data Out DMA Done Interrupt
-                                            // Clear
-#define DES_DMAIC_DIN           0x00000002  // Data In DMA Done Interrupt Clear
-#define DES_DMAIC_CIN           0x00000001  // Context In DMA Done Raw
-                                            // Interrupt Status
 
 //*****************************************************************************
 //
@@ -17260,4 +15609,4 @@
 
 #endif
 
-#endif // __TM4C129XNCZAD_H__
+#endif // __TM4C1294NCPDT_H__
