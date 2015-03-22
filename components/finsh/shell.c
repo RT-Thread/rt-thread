@@ -526,7 +526,8 @@ void finsh_thread_entry(void* parameter)
             else
             {
                 shell->line[shell->line_position] = ch;
-                rt_kprintf("%c", ch);
+                if (shell->echo_mode)
+                    rt_kprintf("%c", ch);
             }
 
             ch = 0;
