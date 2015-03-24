@@ -95,10 +95,10 @@ rt_err_t rt_completion_wait(struct rt_completion *completion,
             result = thread->error;
 
             level = rt_hw_interrupt_disable();
-            /* clean completed flag */
-            completion->flag = RT_UNCOMPLETED;
         }
     }
+    /* clean completed flag */
+    completion->flag = RT_UNCOMPLETED;
 
 __exit:
     rt_hw_interrupt_enable(level);
