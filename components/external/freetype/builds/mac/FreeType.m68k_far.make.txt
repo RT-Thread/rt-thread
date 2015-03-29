@@ -16,6 +16,7 @@ Includes        =  \xB6
 Sym-68K         = -sym off
 
 COptions        = \xB6
+			-d FT_MACINTOSH=1 \xB6
 			-d HAVE_FSSPEC=1 \xB6
 			-d HAVE_FSREF=0 \xB6
 			-d HAVE_QUICKDRAW_TOOLBOX=1 \xB6
@@ -55,6 +56,7 @@ SrcFiles        =  \xB6
 				  :src:cid:type1cid.c \xB6
 				  :src:gxvalid:gxvalid.c \xB6
 				  :src:gzip:ftgzip.c \xB6
+				  :src:bzip2:ftbzip2.c \xB6
 				  :src:lzw:ftlzw.c \xB6
 				  :src:otvalid:otvalid.c \xB6
 				  :src:pcf:pcf.c \xB6
@@ -99,6 +101,7 @@ ObjFiles-68K    =  \xB6
 				  "{ObjDir}type1cid.c.o" \xB6
 				  "{ObjDir}gxvalid.c.o" \xB6
 				  "{ObjDir}ftgzip.c.o" \xB6
+				  "{ObjDir}ftbzip2.c.o" \xB6
 				  "{ObjDir}ftlzw.c.o" \xB6
 				  "{ObjDir}otvalid.c.o" \xB6
 				  "{ObjDir}pcf.c.o" \xB6
@@ -176,6 +179,7 @@ FreeType.m68k_far.o  \xC4\xC4  {ObjFiles-68K} {LibFiles-68K} {\xA5MondoBuild\xA5
 "{ObjDir}type1cid.c.o" \xC4 :src:cid:type1cid.c
 "{ObjDir}gxvalid.c.o" \xC4 :src:gxvalid:gxvalid.c
 "{ObjDir}ftgzip.c.o" \xC4 :src:gzip:ftgzip.c
+"{ObjDir}ftbzip2.c.o" \xC4 :src:bzip2:ftbzip2.c
 "{ObjDir}ftlzw.c.o" \xC4 :src:lzw:ftlzw.c
 "{ObjDir}otvalid.c.o" \xC4 :src:otvalid:otvalid.c
 "{ObjDir}pcf.c.o" \xC4 :src:pcf:pcf.c

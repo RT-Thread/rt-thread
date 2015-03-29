@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    Type 1 character map support (body).                                 */
 /*                                                                         */
-/*  Copyright 2002, 2003, 2006, 2007 by                                    */
+/*  Copyright 2002, 2003, 2006, 2007, 2012 by                              */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -120,8 +120,12 @@
 
 
   FT_CALLBACK_DEF( FT_Error )
-  t1_cmap_standard_init( T1_CMapStd  cmap )
+  t1_cmap_standard_init( T1_CMapStd  cmap,
+                         FT_Pointer  pointer )
   {
+    FT_UNUSED( pointer );
+
+
     t1_cmap_std_init( cmap, 0 );
     return 0;
   }
@@ -142,8 +146,12 @@
 
 
   FT_CALLBACK_DEF( FT_Error )
-  t1_cmap_expert_init( T1_CMapStd  cmap )
+  t1_cmap_expert_init( T1_CMapStd  cmap,
+                       FT_Pointer  pointer )
   {
+    FT_UNUSED( pointer );
+
+
     t1_cmap_std_init( cmap, 1 );
     return 0;
   }
@@ -172,10 +180,13 @@
 
 
   FT_CALLBACK_DEF( FT_Error )
-  t1_cmap_custom_init( T1_CMapCustom  cmap )
+  t1_cmap_custom_init( T1_CMapCustom  cmap,
+                       FT_Pointer     pointer )
   {
     T1_Face      face     = (T1_Face)FT_CMAP_FACE( cmap );
     T1_Encoding  encoding = &face->type1.encoding;
+
+    FT_UNUSED( pointer );
 
 
     cmap->first   = encoding->code_first;
@@ -264,25 +275,28 @@
   /*************************************************************************/
 
   FT_CALLBACK_DEF( const char * )
-  t1_get_glyph_name( T1_Face  face,
-                     FT_UInt  idx )
+  psaux_get_glyph_name( T1_Face  face,
+                        FT_UInt  idx )
   {
     return face->type1.glyph_names[idx];
   }
 
 
   FT_CALLBACK_DEF( FT_Error )
-  t1_cmap_unicode_init( PS_Unicodes  unicodes )
+  t1_cmap_unicode_init( PS_Unicodes  unicodes,
+                        FT_Pointer   pointer )
   {
     T1_Face             face    = (T1_Face)FT_CMAP_FACE( unicodes );
     FT_Memory           memory  = FT_FACE_MEMORY( face );
     FT_Service_PsCMaps  psnames = (FT_Service_PsCMaps)face->psnames;
 
+    FT_UNUSED( pointer );
+
 
     return psnames->unicodes_init( memory,
                                    unicodes,
                                    face->type1.num_glyphs,
-                                   (PS_GetGlyphNameFunc)&t1_get_glyph_name,
+                                   (PS_GetGlyphNameFunc)&psaux_get_glyph_name,
                                    (PS_FreeGlyphNameFunc)NULL,
                                    (FT_Pointer)face );
   }

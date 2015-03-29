@@ -15,9 +15,9 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-
+#include <components.h>
 #include "board.h"
-#include "drv_uart.h"
+
 
 #include "driverlib/interrupt.h"
 #include "driverlib/sysctl.h"
@@ -61,23 +61,27 @@ extern void HardFault_Handler(void);
  */
 void rt_hw_board_init()
 {
-  MAP_IntMasterDisable();
+    //init low level drivers. e.g. cpu uart etc.
+    rt_components_board_init();
+    //redirect RTT stdio to CONSOLE device
+    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+}
+
+int rt_hw_cpu_init(void)
+{
+    MAP_IntMasterDisable();
     IntRegister(FAULT_HARD, HardFault_Handler);	
     IntRegister(FAULT_PENDSV, PendSV_Handler);
     IntRegister(FAULT_SYSTICK, SysTick_Handler);
     
-	  //
     // Enable lazy stacking for interrupt handlers.  This allows floating-point
     // instructions to be used within interrupt handlers, but at the expense of
     // extra stack usage.
-    //
     MAP_FPULazyStackingEnable();
 
-    //
     // Set the clocking to run directly from the external crystal/oscillator.
     // TODO: The SYSCTL_XTAL_ value must be changed to match the value of the
     // crystal on your board.
-    //
     SysClock = MAP_SysCtlClockFreqSet(
                 (SYSCTL_XTAL_25MHZ | SYSCTL_OSC_MAIN | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480),
                 SYS_CLOCK_DEFAULT);
@@ -87,15 +91,8 @@ void rt_hw_board_init()
     MAP_SysTickIntEnable();
     MAP_SysTickEnable();	
 
-    /* set pend exception priority */
-    //IntPrioritySet(FAULT_PENDSV, (1 << 5) - 1);
-    
-    /*init uart device*/		
-    rt_hw_uart_init();
-    //redirect RTT stdio to CONSOLE device
-    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
-    //
-    // Enable interrupts to the processor.
-    //
-	  MAP_IntMasterEnable();
+    return 0;
 }
+// rt_hw_cpu_init should be run before any other INIT_BOARD_EXPORT
+// We use INIT_EXPORT here and set the sequence index to "0.xxxx"
+INIT_EXPORT(rt_hw_cpu_init, "0.post");

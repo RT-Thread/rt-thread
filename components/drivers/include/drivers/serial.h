@@ -65,11 +65,6 @@
 #define RT_SERIAL_RB_BUFSZ              64
 #endif
 
-#define RT_DEVICE_CTRL_CONFIG           0x03    /* configure device */
-#define RT_DEVICE_CTRL_SET_INT          0x10    /* enable receive irq */
-#define RT_DEVICE_CTRL_CLR_INT          0x11    /* disable receive irq */
-#define RT_DEVICE_CTRL_GET_INT          0x12
-
 #define RT_SERIAL_EVENT_RX_IND          0x01    /* Rx indication */
 #define RT_SERIAL_EVENT_TX_DONE         0x02    /* Tx complete   */
 #define RT_SERIAL_EVENT_RX_DMADONE      0x03    /* Rx DMA transfer done */

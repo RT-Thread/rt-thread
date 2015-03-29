@@ -113,7 +113,8 @@ void finsh_set_device(const char* device_name)
     /* check whether it's a same device */
     if (dev == shell->device) return;
     /* open this device and set the new device in finsh shell */
-    if (rt_device_open(dev, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX) == RT_EOK)
+    if (rt_device_open(dev, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX |\
+                       RT_DEVICE_FLAG_STREAM) == RT_EOK)
     {
         if (shell->device != RT_NULL)
         {
@@ -553,7 +554,7 @@ void finsh_system_var_init(const void* begin, const void* end)
     _sysvar_table_end = (struct finsh_sysvar*) end;
 }
 
-#if defined(__ICCARM__)               /* for IAR compiler */
+#if defined(__ICCARM__) || defined(__ICCRX__)               /* for IAR compiler */
   #ifdef FINSH_USING_SYMTAB
     #pragma section="FSymTab"
     #pragma section="VSymTab"
@@ -606,7 +607,7 @@ int finsh_system_init(void)
     #ifndef FINSH_USING_MSH_ONLY
     finsh_system_var_init(&VSymTab$$Base, &VSymTab$$Limit);
     #endif
-#elif defined (__ICCARM__)      /* for IAR Compiler */
+#elif defined (__ICCARM__) || defined(__ICCRX__)      /* for IAR Compiler */
     finsh_system_function_init(__section_begin("FSymTab"),
                                __section_end("FSymTab"));
     finsh_system_var_init(__section_begin("VSymTab"),

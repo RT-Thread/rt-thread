@@ -1,7 +1,7 @@
 /*
  * File      : rtdef.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  *                             RT_USING_MEMHEAP condition.
  * 2012-12-30     Bernard      add more control command for graphic.
  * 2013-01-09     Bernard      change version number.
+ * 2015-02-01     Bernard      change version number to v2.1.0
  */
 
 #ifndef __RT_DEF_H__
@@ -49,7 +50,7 @@ extern "C" {
 
 /* RT-Thread version information */
 #define RT_VERSION                      2L              /**< major version number */
-#define RT_SUBVERSION                   0L              /**< minor version number */
+#define RT_SUBVERSION                   1L              /**< minor version number */
 #define RT_REVISION                     0L              /**< revise version number */
 
 /* RT-Thread version */
@@ -775,6 +776,11 @@ enum rt_device_class_type
 #define RT_DEVICE_FLAG_SUSPENDED        0x020           /**< device is suspended */
 #define RT_DEVICE_FLAG_STREAM           0x040           /**< stream mode */
 
+#define RT_DEVICE_CTRL_CONFIG           0x03    	/* configure device */
+#define RT_DEVICE_CTRL_SET_INT          0x10    	/* enable receive irq */
+#define RT_DEVICE_CTRL_CLR_INT          0x11    	/* disable receive irq */
+#define RT_DEVICE_CTRL_GET_INT          0x12
+
 #define RT_DEVICE_FLAG_INT_RX           0x100           /**< INT mode on Rx */
 #define RT_DEVICE_FLAG_DMA_RX           0x200           /**< DMA mode on Rx */
 #define RT_DEVICE_FLAG_INT_TX           0x400           /**< INT mode on Tx */
@@ -844,7 +850,7 @@ struct rt_device_blk_geometry
 {
     rt_uint32_t sector_count;                           /**< count of sectors */
     rt_uint32_t bytes_per_sector;                       /**< number of bytes per sector */
-    rt_uint32_t block_size;                             /**< size to erase one block */
+    rt_uint32_t block_size;                             /**< number of bytes to erase one block */
 };
 
 /**

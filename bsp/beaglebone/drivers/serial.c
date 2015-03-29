@@ -345,23 +345,16 @@ static void config_pinmux(void)
 
 int rt_hw_serial_init(void)
 {
-    struct serial_configure config;
+    struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
     poweron_per_domain();
     start_uart_clk();
     config_pinmux();
 
 #ifdef RT_USING_UART0
-    config.baud_rate = BAUD_RATE_115200;
-    config.bit_order = BIT_ORDER_LSB;
-    config.data_bits = DATA_BITS_8;
-    config.parity    = PARITY_NONE;
-    config.stop_bits = STOP_BITS_1;
-    config.invert    = NRZ_NORMAL;
-	config.bufsz     = RT_SERIAL_RB_BUFSZ;
-	
     serial0.ops    = &am33xx_uart_ops;
     serial0.config = config;
+
     /* enable RX interrupt */
     UART_IER_REG(uart0.base) = 0x01;
     /* install ISR */
@@ -375,14 +368,6 @@ int rt_hw_serial_init(void)
 #endif
 
 #ifdef RT_USING_UART1
-    config.baud_rate = BAUD_RATE_115200;
-    config.bit_order = BIT_ORDER_LSB;
-    config.data_bits = DATA_BITS_8;
-    config.parity    = PARITY_NONE;
-    config.stop_bits = STOP_BITS_1;
-    config.invert    = NRZ_NORMAL;
-	config.bufsz     = RT_SERIAL_RB_BUFSZ;
-	
     serial1.ops    = &am33xx_uart_ops;
     serial1.config = config;
     /* enable RX interrupt */
@@ -398,14 +383,6 @@ int rt_hw_serial_init(void)
 #endif
 
 #ifdef RT_USING_UART2
-    config.baud_rate = BAUD_RATE_115200;
-    config.bit_order = BIT_ORDER_LSB;
-    config.data_bits = DATA_BITS_8;
-    config.parity    = PARITY_NONE;
-    config.stop_bits = STOP_BITS_1;
-    config.invert    = NRZ_NORMAL;
-	config.bufsz     = RT_SERIAL_RB_BUFSZ;
-	
     serial2.ops    = &am33xx_uart_ops;
     serial2.config = config;
     /* enable RX interrupt */
@@ -421,14 +398,6 @@ int rt_hw_serial_init(void)
 #endif
 
 #ifdef RT_USING_UART3
-    config.baud_rate = BAUD_RATE_115200;
-    config.bit_order = BIT_ORDER_LSB;
-    config.data_bits = DATA_BITS_8;
-    config.parity    = PARITY_NONE;
-    config.stop_bits = STOP_BITS_1;
-    config.invert    = NRZ_NORMAL;
-	config.bufsz     = RT_SERIAL_RB_BUFSZ;
-	
     serial3.ops    = &am33xx_uart_ops;
     serial3.config = config;
     /* enable RX interrupt */
@@ -444,13 +413,8 @@ int rt_hw_serial_init(void)
 #endif
 
 #ifdef RT_USING_UART4
+    /* use 9600bps for GDB stub. */
     config.baud_rate = BAUD_RATE_9600;
-    config.bit_order = BIT_ORDER_LSB;
-    config.data_bits = DATA_BITS_8;
-    config.parity    = PARITY_NONE;
-    config.stop_bits = STOP_BITS_1;
-    config.invert    = NRZ_NORMAL;
-	config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
     serial4.ops    = &am33xx_uart_ops;
     serial4.config = config;
@@ -462,19 +426,13 @@ int rt_hw_serial_init(void)
     rt_hw_interrupt_mask(uart4.irq);
     /* register UART4 device */
     rt_hw_serial_register(&serial4, "uart4",
-            RT_DEVICE_FLAG_RDWR,
+            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
             &uart4);
 #endif
 
 #ifdef RT_USING_UART5
     config.baud_rate = BAUD_RATE_115200;
-    config.bit_order = BIT_ORDER_LSB;
-    config.data_bits = DATA_BITS_8;
-    config.parity    = PARITY_NONE;
-    config.stop_bits = STOP_BITS_1;
-    config.invert    = NRZ_NORMAL;
-	config.bufsz     = RT_SERIAL_RB_BUFSZ;
-  
+
     serial5.ops    = &am33xx_uart_ops;
     serial5.config = config;
     /* enable RX interrupt */

@@ -29,10 +29,11 @@ BUILD = 'debug'
 if PLATFORM == 'gcc':
     # toolchains
     PREFIX = 'arm-none-eabi-'
-    CC = PREFIX + 'gcc'
+    CC  = PREFIX + 'gcc'
+    CXX = PREFIX + 'g++'
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
-    LINK = PREFIX + 'gcc'
+    LINK = PREFIX + 'g++'
     TARGET_EXT = 'elf'
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
@@ -52,11 +53,14 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS += ' -O2'
 
+    CXXFLAGS = CFLAGS
+
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
 elif PLATFORM == 'armcc':
     # toolchains
     CC = 'armcc'
+    CXX = 'armcc'
     AS = 'armasm'
     AR = 'armar'
     LINK = 'armlink'
@@ -70,6 +74,7 @@ elif PLATFORM == 'armcc':
 
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
     LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
+    CXXFLAGS = CFLAGS
 
     EXEC_PATH += '/arm/bin40/'
 

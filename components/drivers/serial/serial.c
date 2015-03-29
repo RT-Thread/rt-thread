@@ -26,6 +26,7 @@
  * 2013-02-20     bernard      use RT_SERIAL_RB_BUFSZ to define
  *                             the size of ring buffer.
  * 2014-07-10     bernard      rewrite serial framework
+ * 2014-12-31     bernard      use open_flag for poll_tx stream mode.
  */
 
 #include <rthw.h>
@@ -67,7 +68,7 @@ rt_inline int _serial_poll_tx(struct rt_serial_device *serial, const rt_uint8_t 
          * to be polite with serial console add a line feed
          * to the carriage return character
          */
-        if (*data == '\n' && (serial->parent.flag & RT_DEVICE_FLAG_STREAM))
+        if (*data == '\n' && (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM))
         {
             serial->ops->putc(serial, '\r');
         }
@@ -278,7 +279,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
                 serial->config.bufsz);
             RT_ASSERT(rx_fifo != RT_NULL);
             rx_fifo->buffer = (rt_uint8_t*) (rx_fifo + 1);
-            rt_memset(rx_fifo->buffer, 0, RT_SERIAL_RB_BUFSZ);
+            rt_memset(rx_fifo->buffer, 0, serial->config.bufsz);
             rx_fifo->put_index = 0;
             rx_fifo->get_index = 0;
 

@@ -246,7 +246,7 @@ rt_err_t rt_usbh_detach_instance(uinst_t device)
 rt_err_t rt_usbh_get_descriptor(uinst_t device, rt_uint8_t type, void* buffer, 
     int nbytes)
 {
-    struct ureqest setup;
+    struct urequest setup;
     int timeout = 100;
     
     RT_ASSERT(device != RT_NULL);
@@ -272,7 +272,7 @@ rt_err_t rt_usbh_get_descriptor(uinst_t device, rt_uint8_t type, void* buffer,
  */
 rt_err_t rt_usbh_set_address(uinst_t device)
 {
-    struct ureqest setup;
+    struct urequest setup;
     int timeout = 100;
     
     RT_ASSERT(device != RT_NULL);
@@ -306,7 +306,7 @@ rt_err_t rt_usbh_set_address(uinst_t device)
  */
 rt_err_t rt_usbh_set_configure(uinst_t device, int config)
 {
-    struct ureqest setup;
+    struct urequest setup;
     int timeout = 100;
 
     /* check parameter */
@@ -335,7 +335,7 @@ rt_err_t rt_usbh_set_configure(uinst_t device, int config)
  */
 rt_err_t rt_usbh_set_interface(uinst_t device, int intf)
 {
-    struct ureqest setup;
+    struct urequest setup;
     int timeout = 100;
 
     /* check parameter */
@@ -364,7 +364,7 @@ rt_err_t rt_usbh_set_interface(uinst_t device, int intf)
  */
 rt_err_t rt_usbh_clear_feature(uinst_t device, int endpoint, int feature)
 {
-    struct ureqest setup;
+    struct urequest setup;
     int timeout = 100;
 
     /* check parameter */

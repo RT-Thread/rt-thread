@@ -31,8 +31,12 @@ if GetDepend('RT_USING_VMM'):
                   ldfile = rtconfig.LINK_SCRIPT)) != 0:
         print 'failed to generate linker script %s' % rtconfig.LINK_SCRIPT
         sys.exit(255)
-# if the linker script changed, relink the target
-Depends(TARGET, rtconfig.LINK_SCRIPT)
+    # if the linker script changed, relink the target
+    Depends(TARGET, rtconfig.LINK_SCRIPT)
+else:
+    # we should use none-vmm link script
+    link_flags = str(env['LINKFLAGS'])
+    env['LINKFLAGS'] = link_flags.replace('_vmm.lds', '.lds')
 
 # make a building
 DoBuilding(TARGET, objs)

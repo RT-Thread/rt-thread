@@ -4,7 +4,7 @@
 #
 
 
-# Copyright 2005, 2006, 2007, 2009 by
+# Copyright 2005-2007, 2009, 2013 by
 # Werner Lemberg and Detlef Würkner.
 #
 # This file is part of the FreeType project, and may only be used, modified,
@@ -40,7 +40,7 @@
 #
 # link your programs with libft2_ppc.a and either ftsystem.ppc.o or ftsystempure.ppc.o
 # (and either ftdebug.ppc.o or ftdebugpure.ppc.o if you enabled FT_DEBUG_LEVEL_ERROR or
-# FT_DEBUG_LEVEL_TRACE in include/freetype/config/ftoption.h).
+# FT_DEBUG_LEVEL_TRACE in include/config/ftoption.h).
 
 all:	assign libft2_ppc.a ftsystem.ppc.o ftsystempure.ppc.o
 
@@ -236,6 +236,12 @@ pcf.ppc.o: FT:src/pcf/pcf.c
 #
 gzip.ppc.o: FT:src/gzip/ftgzip.c
 	$(CC) -c $(CFLAGS) -o $@ /FT/src/gzip/ftgzip.c
+
+#
+# FreeType2 library bzip2 support for compressed PCF bitmap fonts
+#
+bzip2.ppc.o: FT:src/bzip2/ftbzip2.c
+	$(CC) -c $(CFLAGS) -o $@ /FT/src/bzip2/ftbzip2.c
 
 #
 # FreeType2 library compress support for compressed PCF bitmap fonts

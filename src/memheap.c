@@ -517,6 +517,8 @@ void rt_memheap_free(void *ptr)
 
     /* check magic */
     RT_ASSERT((header_ptr->magic & RT_MEMHEAP_MASK) == RT_MEMHEAP_MAGIC);
+    /* check whether this block of memory has been over-written. */
+    RT_ASSERT((header_ptr->next->magic & RT_MEMHEAP_MASK) == RT_MEMHEAP_MAGIC);
 
     /* get pool ptr */
     heap = header_ptr->pool_ptr;

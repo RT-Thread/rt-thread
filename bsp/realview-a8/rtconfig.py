@@ -21,8 +21,6 @@ if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
-VMM = True
-#VMM = False
 
 if PLATFORM == 'gcc':
     # toolchains
@@ -40,10 +38,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -march=armv7-a -mtune=cortex-a8 -mfpu=vfpv3-d16 -ftree-vectorize -ffast-math -mfloat-abi=softfp'
     CFLAGS = DEVICE + ' -Wall'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
-    if VMM:
-        LINK_SCRIPT = 'realview_vmm.lds'
-    else:
-        LINK_SCRIPT = 'realview.lds'
+    LINK_SCRIPT = 'realview_vmm.lds'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=realview.map,-cref,-u,system_vectors'+\
                       ' -T %s' % LINK_SCRIPT
 

@@ -2,15 +2,11 @@ import os
 
 # core to be use
 USE_CORE = 'CORE_M0'
-#USE_CORE = 'CORE_M4'
 
 # toolchains options
 ARCH='arm'
 
-if USE_CORE == 'CORE_M4':
-    CPU = 'cortex-m4'
-else:
-    CPU = 'cortex-m0'
+CPU = 'cortex-m0'
 
 CROSS_TOOL='keil'
 
@@ -35,7 +31,7 @@ if os.getenv('RTT_EXEC_PATH'):
         EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 #
-BUILD = 'release'
+BUILD = 'debug'
 
 if PLATFORM == 'gcc':
     # toolchains
@@ -48,23 +44,24 @@ if PLATFORM == 'gcc':
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
-    DEVICE = ' -mcpu=' + CPU + ' -mthumb -ffunction-sections -fdata-sections'
-    if USE_CORE == 'CORE_M4':
-        DEVICE += ' -mfpu=fpv4-sp-d16 -mfloat-abi=softfp'
-    CFLAGS = DEVICE 
+    DEVICE = ' -mthumb -mcpu=cortex-m0 -ffunction-sections -fdata-sections -Wall'
+    CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc43xx.map,-cref,-u,Reset_Handler -T rtthread-lpc43xx_spifi.ld'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc43xx.map,-cref,-u,Reset_Handler -T rtthread-lpc43xx.ld'
 
     CPATH = ''
     LPATH = ''
 
+    CFLAGS += ' -gdwarf-2'
+    AFLAGS += ' -gdwarf-2'
     if BUILD == 'debug':
-        CFLAGS += ' -O0 -gdwarf-2'
-        AFLAGS += ' -gdwarf-2'
+        CFLAGS += ' -O0'
     else:
         CFLAGS += ' -O2'
 
-    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
+    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' +\
+                  SIZE + ' $TARGET \n' +\
+                  '../bin2C.py rtthread.bin ../M4/applications/M0_CODE.h'
 
 elif PLATFORM == 'armcc':
     # toolchains

@@ -18,6 +18,9 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-void rt_hw_usart_init(void);
+#define UART_ENABLE_IRQ(n)            NVIC_EnableIRQ((n))
+#define UART_DISABLE_IRQ(n)           NVIC_DisableIRQ((n))
+
+int stm32_hw_usart_init(void);
 
 #endif

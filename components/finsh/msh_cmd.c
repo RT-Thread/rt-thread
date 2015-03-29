@@ -276,14 +276,20 @@ int cmd_time(int argc, char** argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_time, __cmd_time, Execute command with time.);
 
+#ifdef RT_USING_HEAP
 int cmd_free(int argc, char** argv)
 {
     extern void list_mem(void);
 
+#ifdef RT_USING_MEMHEAP_AS_HEAP
+    list_memheap();
+#else
     list_mem();
+#endif
     return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_free, __cmd_free, Show the memory usage in the system.);
+#endif
 
 #endif
 

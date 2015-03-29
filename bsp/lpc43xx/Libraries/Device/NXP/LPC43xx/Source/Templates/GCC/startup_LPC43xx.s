@@ -109,30 +109,56 @@ __interrupt_vector:
 	.type  Reset_Handler, %function
 Reset_Handler:
     .fnstart
-.ifdef RAM_MODE
-/* Clear .bss section (Zero init) */
-	mov     R0, #0
-	ldr     R1, =__bss_start__
-	ldr    R2, =__bss_end__
-	cmp     R1,R2
-	beq     BSSIsEmpty
-LoopZI:
-    cmp     R1, R2
-    bhs     BSSIsEmpty
-    str     R0, [R1]
-    add     R1, #4
-    blo     LoopZI
-BSSIsEmpty:
+/*  Single section scheme.
+ *
+ *  The ranges of copy from/to are specified by following symbols
+ *    _sidata: LMA of start of the section to copy from. Usually end of text
+ *    _sdata: VMA of start of the section to copy to
+ *    _edata: VMA of end of the section to copy to
+ *
+ *  All addresses must be aligned to 4 bytes boundary.
+ */
+	ldr	r1, =_sidata
+	ldr	r2, =_sdata
+	ldr	r3, =_edata
+
+	subs	r3, r2
+	ble	.L_loop1_done
+
+.L_loop1:
+	subs	r3, #4
+	ldr	r0, [r1,r3]
+	str	r0, [r2,r3]
+	bgt	.L_loop1
+
+.L_loop1_done:
+
+/*  Single BSS section scheme.
+ *
+ *  The BSS section is specified by following symbols
+ *    __bss_start: start of the BSS section.
+ *    __bss_end: end of the BSS section.
+ *
+ *  Both addresses must be aligned to 4 bytes boundary.
+ */
+	ldr	r1, =__bss_start
+	ldr	r2, =__bss_end
+
+	movs	r0, 0
+
+	subs	r2, r1
+	ble	.L_loop3_done
+
+.L_loop3:
+	subs	r2, #4
+	str	r0, [r1, r2]
+	bgt	.L_loop3
+.L_loop3_done:
+
     ldr     R0, =SystemInit
     blx     R0
     ldr     R0,=main
     bx      R0
-.else
-    ldr     R0, =SystemInit
-    blx     R0
-    ldr     R0,=main
-    bx      R0
-.endif
 
     .pool
     .cantunwind

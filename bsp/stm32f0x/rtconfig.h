@@ -87,20 +87,7 @@
 #define FINSH_USING_DESCRIPTION
 
 /* SECTION: libc management */
-#ifdef __CC_ARM
-/* #define RT_USING_MINILIBC */
-/* #define RT_USING_NEWLIB */
-#endif
-
-#ifdef __ICCARM__
-/* #define RT_USING_MINILIBC */
-/* #define RT_USING_NEWLIB */
-#endif
-
-#ifdef __GNUC__
-/* #define RT_USING_MINILIBC */
-#define RT_USING_NEWLIB
-#endif
+#define RT_USING_LIBC
 
 /* SECTION: device filesystem */
 /* #define RT_USING_DFS */

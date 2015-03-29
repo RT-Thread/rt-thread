@@ -174,6 +174,18 @@ static rt_err_t _rym_trans_data(
         return -RYM_ERR_SEQ;
     }
 
+    /* As we are sending C continuously, there is a chance that the
+     * sender(remote) receive an C after sending the first handshake package.
+     * So the sender will interpret it as NAK and re-send the package. So we
+     * just ignore it and proceed. */
+    if (ctx->stage == RYM_STAGE_ESTABLISHED && ctx->buf[1] == 0x00)
+    {
+        *code = RYM_CODE_NONE;
+        return RT_EOK;
+    }
+
+    ctx->stage = RYM_STAGE_TRANSMITTING;
+
     /* sanity check */
     recv_crc = (rt_uint16_t)(*(ctx->buf+tsz-1) << 8) | *(ctx->buf+tsz);
     if (recv_crc != CRC16(ctx->buf+3, data_sz))
@@ -214,7 +226,6 @@ static rt_err_t _rym_do_trans(struct rym_ctx *ctx)
         default:
             return -RYM_ERR_CODE;
         };
-        ctx->stage = RYM_STAGE_TRANSMITTING;
 
         err = _rym_trans_data(ctx, data_sz, &code);
         if (err != RT_EOK)
