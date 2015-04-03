@@ -122,8 +122,21 @@ void rt_components_init(void)
 }
 
 #ifdef RT_USING_USER_MAIN
+
 void rt_application_init(void);
 void rt_hw_board_init(void);
+
+#ifdef __CC_ARM
+extern int $Super$$main(void);
+/* re-define main function */
+int $Sub$$main(void)
+{
+    rt_hw_interrupt_disable();
+    rtthread_startup();
+    
+    return 0;
+}
+#endif
 
 #ifndef RT_USING_HEAP
 /* if there is not enble heap, we should use static thread and stack. */
@@ -141,7 +154,11 @@ void main_thread_entry(void *parameter)
     rt_components_init();
 
     /* invoke system main function */
+#ifdef __CC_ARM
+    $Sub$$main();
+#else
     main();
+#endif
 }
 
 void rt_application_init(void)
