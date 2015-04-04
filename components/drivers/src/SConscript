@@ -4,7 +4,7 @@ cwd = GetCurrentDir()
 src	= Glob('*.c')
 CPPPATH = [cwd + '/../include']
 
-if GetDepend('RT_USING_HEAP'):
+if not GetDepend('RT_USING_HEAP'):
     SrcRemove(src, 'dataqueue.c')
     SrcRemove(src, 'pipe.c')
 
