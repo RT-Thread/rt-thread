@@ -19,6 +19,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2015.03.27     Bernard      Add author information.
  */
 
 #include <rtthread.h>
