@@ -1,0 +1,27 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+src = Split("""
+nrf51822/Source/templates/system_nrf51.c
+""")
+
+#add for Startup script 
+if rtconfig.CROSS_TOOL == 'gcc':
+     src = src + ['nrf51822/Source/templates/arm/arm_startup_nrf51.s']
+elif rtconfig.CROSS_TOOL == 'keil':
+     src = src + ['nrf51822/Source/templates/arm/arm_startup_nrf51.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+     src = src + ['nrf51822/Source/templates/arm/arm_startup_nrf51.s']
+
+path = [cwd + '/CMSIS/Include',
+        cwd + '/nrf51822/Include']
+
+CPPDEFINES = ['USE_STDPERIPH_DRIVER', 'NRF51']
+group = DefineGroup('Startup Code', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')
