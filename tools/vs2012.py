@@ -99,11 +99,14 @@ def VS_add_ItemGroup(parent, file_type, files, project_path):
         name = fn.name
         path = os.path.dirname(fn.abspath)
 
-        path = _make_path_relative(project_path, path)
+        objpath = path = _make_path_relative(project_path, path)
         path = os.path.join(path, name)
 
         File = SubElement(ItemGroup, item_tag)
         File.set('Include', path.decode(fs_encoding))
+        if file_type == 'C' :
+            ObjName = SubElement(File, 'ObjectFileName')
+            ObjName.text = ''.join('$(IntDir)'+objpath+'\\')
 
 def VS_add_HeadFiles(program, elem, project_path):
     building.source_ext = []
