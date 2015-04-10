@@ -90,6 +90,9 @@ def VS2012_CreateFilter(script, project_path):
 # files: c/h list
 # project_path
 def VS_add_ItemGroup(parent, file_type, files, project_path):
+    from building import Rtt_Root
+    RTT_ROOT = os.path.normpath(Rtt_Root)
+
     file_dict = {'C':"ClCompile", 'H':'ClInclude'}
     item_tag = file_dict[file_type]
 
@@ -99,11 +102,25 @@ def VS_add_ItemGroup(parent, file_type, files, project_path):
         name = fn.name
         path = os.path.dirname(fn.abspath)
 
+        objpath = path.lower()
+        if len(project_path) >= len(RTT_ROOT) :
+            if objpath.startswith(project_path.lower()) :
+                objpath = ''.join('bsp'+objpath[len(project_path):])
+            else :
+                objpath = ''.join('kernel'+objpath[len(RTT_ROOT):])
+        else :
+            if objpath.startswith(RTT_ROOT.lower()) :
+                objpath = ''.join('kernel'+objpath[len(RTT_ROOT):])
+            else :
+                objpath = ''.join('bsp'+objpath[len(project_path):])
         path = _make_path_relative(project_path, path)
         path = os.path.join(path, name)
 
         File = SubElement(ItemGroup, item_tag)
         File.set('Include', path.decode(fs_encoding))
+        if file_type == 'C' :
+            ObjName = SubElement(File, 'ObjectFileName')
+            ObjName.text = ''.join('$(IntDir)'+objpath+'\\')
 
 def VS_add_HeadFiles(program, elem, project_path):
     building.source_ext = []
