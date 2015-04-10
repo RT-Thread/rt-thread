@@ -623,7 +623,6 @@ int list_mod_detail(const char *name)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_mod_detail, list module objects in system)
-MSH_CMD_EXPORT(list_mod_detail, list module objects in system)
 #endif
 
 long list(void)

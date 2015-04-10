@@ -595,6 +595,11 @@ def GlobSubDir(sub_dir, ext_name):
         dst.append(os.path.relpath(item, sub_dir))
     return dst
 
+def PackageSConscript(package):
+    from package import BuildPackage
+
+    return BuildPackage(package)
+
 def file_path_exist(path, *args):
     return os.path.exists(os.path.join(path, *args))
 

@@ -39,6 +39,31 @@ As a special exception, including RT-Thread RTOS header files in a file, instant
 
 RT-Thread RTOS uses [scons](http://www.scons.org) as its building system. Therefore, please install scons and Python 2.7 firstly. 
 
+So far, the RT-Thread scons building system support the command line compiling or generate some IDE's project. There are some option varaibles in the scons building script:
+
+In rtconfig.py file:
+
+* ```RTT_CC``` the compiler which you want to use, gcc/keil/iar. 
+* ```EXEC_PATH``` the path of compiler. 
+
+In SConstruct file:
+
+```RTT_ROOT``` This variable is the root directory of RT-Thread RTOS. If you build the porting in the bsp directory, you can use the default value. Also, you can set the root directory in ```RTT_ROOT``` environment variable.
+
+When you set these variables correctly, you can use command:
+
+    scons 
+    
+  under BSP directory to simplely compile RT-Thread RTOS.
+
+If you want to generate the IDE's project file, firstly you should change the ```RTT_CC``` in the rtconfig.py file. Then use command:
+
+    scons --target=mdk/mdk4/iar/cb -s 
+
+to generate the project file. 
+
+NOTE: RT-Thread scons building system will tailor the system according to your rtconfig.h configuration header file. For example, if you disable the lwIP in the rtconfig.h by commenting the ```#define RT_USING_LWIP```, the generated project file has no lwIP related files. 
+
 ## Contribution ##
 
 Thank all of RT-Thread Developers. 

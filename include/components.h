@@ -1,7 +1,8 @@
 /*
- * File      : components_init.h
+ * File      : components.h
+ *             header for RT-Thread components
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012, RT-Thread Development Team
+ * COPYRIGHT (C) 2012-2015, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,12 +22,12 @@
  * Date           Author       Notes
  * 2012-09-20     Bernard      Change the name to components.h
  *                             And all components related header files.
+ * 2015-02-06     Bernard      Rename the components.h to rtcom.h
+ * 2015-03-22     Bernard      Keep the compatibility.
  */
 
-#ifndef __COMPONENTS_INIT_H__
-#define __COMPONENTS_INIT_H__
-
-#include <rtthread.h>
+#ifndef COMPONENTS_H__
+#define COMPONENTS_H__
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
@@ -36,7 +37,6 @@
 #ifdef RT_USING_LWIP
 #include <lwip/sys.h>
 #include <netif/ethernetif.h>
-extern void lwip_system_init(void);
 #endif
 
 #ifdef RT_USING_DFS
@@ -68,38 +68,12 @@ extern void lwip_system_init(void);
 #endif
 #endif
 
-#ifdef RT_USING_NEWLIB
-#include <libc.h>
-#endif
 #ifdef RT_USING_PTHREADS
 #include <pthread.h>
 #endif
 
 #ifdef RT_USING_MODULE
 #include <rtm.h>
-#endif
-
-#ifdef RT_USING_RTGUI
-#include <rtgui/rtgui_system.h>
-#endif
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/**
- * Initializes board routine in RT-Thread.
- */
-void rt_components_board_init(void);
-
-/**
- * Initializes components in RT-Thread
- * notes: this function must be invoked in Init Thread
- */
-void rt_components_init(void);
-
-#ifdef __cplusplus
-}
 #endif
 
 #endif

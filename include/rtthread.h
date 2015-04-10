@@ -437,6 +437,11 @@ void rt_module_unload_sethook(void (*hook)(rt_module_t module));
 void rt_module_init_object_container(struct rt_module *module);
 rt_err_t rt_module_destroy(rt_module_t module);
 
+/*
+ * application module system initialization
+ */
+int rt_system_module_init(void);
+
 /*@}*/
 #endif
 
@@ -455,10 +460,10 @@ void rt_interrupt_leave(void);
  */
 rt_uint8_t rt_interrupt_get_nest(void);
 
-/**
- * application module
- */
-int rt_system_module_init(void);
+#ifdef RT_USING_COMPONENTS_INIT
+void rt_components_init(void);
+void rt_components_board_init(void);
+#endif
 
 /**
  * @addtogroup KernelService
