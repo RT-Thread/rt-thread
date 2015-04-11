@@ -3,7 +3,7 @@
 from building import *
 
 cwd = GetCurrentDir()
-src = Glob('*.c')
+src = Glob('*.c') + Glob('rpc/*.c')
 CPPPATH = [cwd]
 
 group = DefineGroup('Filesystem', src, depend = ['RT_USING_DFS', 'RT_USING_DFS_NFS'], CPPPATH = CPPPATH)
