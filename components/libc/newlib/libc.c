@@ -51,5 +51,7 @@ int libc_system_init(void)
 #ifdef RT_USING_PTHREADS
     pthread_system_init();
 #endif
+
+    return 0;
 }
 INIT_COMPONENT_EXPORT(libc_system_init);
