@@ -47,17 +47,11 @@ extern void rt_application_init(void);
 
 /*@{*/
 #if defined(__CC_ARM)
-	extern int Image$$ER_ZI$$ZI$$Base;
-	extern int Image$$ER_ZI$$ZI$$Length;
 	extern int Image$$ER_ZI$$ZI$$Limit;
 #elif (defined (__GNUC__))
-	rt_uint8_t _irq_stack_start[1024];
-	rt_uint8_t _fiq_stack_start[1024];
-	rt_uint8_t _undefined_stack_start[512];
-	rt_uint8_t _abort_stack_start[512];
-	rt_uint8_t _svc_stack_start[4096] SECTION(".nobss");
-	extern unsigned char __bss_start;
-	extern unsigned char __bss_end;
+	extern unsigned char __bss_end__;
+#elif (defined (__ICCARM__))
+	#pragma section="HEAP"
 #endif
 
 #ifdef RT_USING_FINSH
@@ -98,8 +92,10 @@ void rtthread_startup(void)
 	/* initialize heap memory system */
 #ifdef __CC_ARM
 	rt_system_heap_init((void*)&Image$$ER_ZI$$ZI$$Limit, (void*)0x24000000);
-#else
-	rt_system_heap_init((void*)&__bss_end, (void*)0x23f00000);
+#elif (defined (__GNUC__))
+	rt_system_heap_init((void*)&__bss_end__, (void*)0x23f00000);
+#elif (defined (__ICCARM__))
+	rt_system_heap_init(__section_begin("HEAP"),(void*)0x23f00000);
 #endif
 
 #ifdef RT_USING_MODULE

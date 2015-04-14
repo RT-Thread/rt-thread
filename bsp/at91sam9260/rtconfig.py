@@ -12,10 +12,11 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= '/opt/arm-2010q1/bin/'
+	#EXEC_PATH 	= 'D:/ArdaArmTools/Sourcery_Lite/bin'
+	EXEC_PATH 	= 'D:/ArdaArmTools/GNUARM_4.9_2015q1/bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
-	EXEC_PATH 	= 'C:/Keil'
+	EXEC_PATH 	= 'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
     print '================ERROR============================'
     print 'Not support yet!'
@@ -43,7 +44,7 @@ if PLATFORM == 'gcc':
 
     DEVICE = ' -mcpu=arm926ej-s'
     CFLAGS = DEVICE
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp' + ' -DTEXT_BASE=' + TextBase
+    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp' + ' -Iplatform'+' -DTEXT_BASE=' + TextBase
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread_at91sam9260.map,-cref,-u,_start -T at91sam9260_ram.ld' + ' -Ttext ' + TextBase
 
     CPATH = ''
@@ -65,9 +66,9 @@ elif PLATFORM == 'armcc':
     LINK = 'armlink'
     TARGET_EXT = 'axf'
 
-    DEVICE = ' --device DARMATS9'
+    DEVICE = ' --cpu=ARM926EJ-S'
     CFLAGS = DEVICE + ' --apcs=interwork --diag_suppress=870'
-    AFLAGS = DEVICE
+    AFLAGS = DEVICE + ' -Iplatform'
     LFLAGS = DEVICE + ' --strict --info sizes --info totals --info unused --info veneers --list rtthread-at91sam9260.map --ro-base 0x20000000 --entry Entry_Point --first Entry_Point'
 
     CFLAGS += ' -I"' + EXEC_PATH + '/ARM/RV31/INC"'

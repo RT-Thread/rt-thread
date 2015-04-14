@@ -25,7 +25,7 @@
 #include <rtthread.h>
 #include <rthw.h>
 
-#include "at91sam926x.h"
+#include <interrupt.h>
 
 /**
  * @addtogroup AT91SAM926X
@@ -36,6 +36,28 @@ extern struct rt_thread *rt_current_thread;
 #ifdef RT_USING_FINSH
 extern long list_thread(void);
 #endif
+
+struct rt_hw_register
+{
+	rt_uint32_t r0;
+	rt_uint32_t r1;
+	rt_uint32_t r2;
+	rt_uint32_t r3;
+	rt_uint32_t r4;
+	rt_uint32_t r5;
+	rt_uint32_t r6;
+	rt_uint32_t r7;
+	rt_uint32_t r8;
+	rt_uint32_t r9;
+	rt_uint32_t r10;
+	rt_uint32_t fp;
+	rt_uint32_t ip;
+	rt_uint32_t sp;
+	rt_uint32_t lr;
+	rt_uint32_t pc;
+	rt_uint32_t cpsr;
+	rt_uint32_t ORIG_r0;
+};
 
 /**
  * this function will show registers of CPU
@@ -105,7 +127,7 @@ void rt_hw_trap_pabt(struct rt_hw_register *regs)
 	rt_hw_show_register(regs);
 
 	rt_kprintf("prefetch abort\n");
-	rt_kprintf("thread - %s stack:\n", rt_current_thread->name);
+	rt_kprintf("thread - %s stack:\n", RT_NAME_MAX, rt_current_thread->name);
 
 #ifdef RT_USING_FINSH
 	list_thread();
@@ -126,7 +148,7 @@ void rt_hw_trap_dabt(struct rt_hw_register *regs)
 	rt_hw_show_register(regs);
 
 	rt_kprintf("data abort\n");
-	rt_kprintf("thread - %s stack:\n", rt_current_thread->name);
+	rt_kprintf("thread - %s stack:\n", RT_NAME_MAX, rt_current_thread->name);
 
 #ifdef RT_USING_FINSH
 	list_thread();
@@ -149,21 +171,21 @@ void rt_hw_trap_resv(struct rt_hw_register *regs)
 }
 
 extern struct rt_irq_desc irq_desc[];
+rt_uint32_t rt_hw_interrupt_get_active(rt_uint32_t fiq_irq, rt_uint32_t* id);
+extern void rt_hw_interrupt_ack(rt_uint32_t fiq_irq);
 
 void rt_hw_trap_irq()
 {
 	rt_isr_handler_t isr_func;
-	rt_uint32_t irqstat, irq, mask;
+	rt_uint32_t irqstat, irq;
 	void *param;
 	//rt_kprintf("irq interrupt request\n");
 	/* get irq number */
-	irq = at91_sys_read(AT91_AIC_IVR);
-	/* clear pending register */
-	irqstat = at91_sys_read(AT91_AIC_ISR);
+	irqstat = rt_hw_interrupt_get_active(INT_IRQ, &irq);
 	if (irqstat == 0)
 	{
 		rt_kprintf("No interrupt occur\n");
-		at91_sys_write(AT91_AIC_EOICR, 0);
+		rt_hw_interrupt_ack(INT_IRQ);
 		return;
 	}
 	
@@ -173,7 +195,9 @@ void rt_hw_trap_irq()
 
 	/* turn to interrupt service routine */
 	isr_func(irq, param);
-	at91_sys_write(AT91_AIC_EOICR, 0x55555555); //EIOCR must be write any value after interrupt, or else can't response next interrupt
+    // EIOCR must be write any value after interrupt,
+    // or else can't response next interrupt
+	rt_hw_interrupt_ack(INT_IRQ);
     irq_desc[irq].counter ++;
 }
 
