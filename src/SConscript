@@ -9,9 +9,9 @@ if rtconfig.CROSS_TOOL == 'keil':
     # add more link flags for module and components_init.
     LINKFLAGS = ''
     if GetDepend('RT_USING_MODULE'):
-        LINKFLAGS = ' --keep *.o(RTMSymTab) '
+        LINKFLAGS += ' --keep *.o(RTMSymTab) '
     if GetDepend('RT_USING_COMPONENTS_INIT'):
-        LINKFLAGS = ' --keep *.o(.rti_fn.*) '
+        LINKFLAGS += ' --keep *.o(.rti_fn.*) '
 else:
     LINKFLAGS = ''
 
