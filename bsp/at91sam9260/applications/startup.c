@@ -47,12 +47,17 @@ extern void rt_application_init(void);
 
 /*@{*/
 #if defined(__CC_ARM)
-	extern int Image$$ER_ZI$$ZI$$Limit;
+extern int Image$$ER_ZI$$ZI$$Limit;
+#define HEAP_START  ((void*)&Image$$ER_ZI$$ZI$$Limit)
 #elif (defined (__GNUC__))
-	extern unsigned char __bss_end__;
+extern unsigned char __bss_end__;
+#define HEAP_START  ((void*)&__bss_end__)
 #elif (defined (__ICCARM__))
-	#pragma section="HEAP"
+#pragma section="HEAP"
+#define HEAP_START  (__section_begin("HEAP"))
 #endif
+
+#define HEAP_END    ((void*)0x24000000)
 
 #ifdef RT_USING_FINSH
 extern void finsh_system_init(void);
@@ -90,13 +95,7 @@ void rtthread_startup(void)
 	rt_system_timer_init();
 
 	/* initialize heap memory system */
-#ifdef __CC_ARM
-	rt_system_heap_init((void*)&Image$$ER_ZI$$ZI$$Limit, (void*)0x24000000);
-#elif (defined (__GNUC__))
-	rt_system_heap_init((void*)&__bss_end__, (void*)0x23f00000);
-#elif (defined (__ICCARM__))
-	rt_system_heap_init(__section_begin("HEAP"),(void*)0x23f00000);
-#endif
+    rt_system_heap_init(HEAP_START, HEAP_END);
 
 #ifdef RT_USING_MODULE
 	/* initialize module system*/

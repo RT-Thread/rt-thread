@@ -20,6 +20,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2011-01-13     weety      modified from mini2440
+ * 2015-04-15     ArdaFu     Add code for IAR
  */
 
 #include <rthw.h>
@@ -42,24 +43,24 @@ rt_inline rt_uint32_t cp15_rd(void)
 
 rt_inline void cache_enable(rt_uint32_t bit)
 {
-    __asm__ __volatile__(            \
-        "mrc  p15,0,r0,c1,c0,0\n\t"    \
-        "orr  r0,r0,%0\n\t"            \
-           "mcr  p15,0,r0,c1,c0,0"        \
-        :                            \
-        :"r" (bit)                    \
-        :"memory");
+    __asm__ __volatile__(\
+                         "mrc  p15,0,r0,c1,c0,0\n\t"    \
+                         "orr  r0,r0,%0\n\t"            \
+                         "mcr  p15,0,r0,c1,c0,0"        \
+                         :                              \
+                         :"r" (bit)                     \
+                         :"memory");
 }
 
 rt_inline void cache_disable(rt_uint32_t bit)
 {
-    __asm__ __volatile__(            \
-        "mrc  p15,0,r0,c1,c0,0\n\t"    \
-        "bic  r0,r0,%0\n\t"            \
-        "mcr  p15,0,r0,c1,c0,0"        \
-        :                            \
-        :"r" (bit)                    \
-        :"memory");
+    __asm__ __volatile__(\
+                         "mrc  p15,0,r0,c1,c0,0\n\t"    \
+                         "bic  r0,r0,%0\n\t"            \
+                         "mcr  p15,0,r0,c1,c0,0"        \
+                         :                              \
+                         :"r" (bit)                     \
+                         :"memory");
 }
 #endif
 
@@ -112,24 +113,24 @@ rt_inline rt_uint32_t cp15_rd(void)
 
 rt_inline void cache_enable(rt_uint32_t bit)
 {
-    asm volatile(            \
-        "mrc  p15,0,r0,c1,c0,0\n\t"    \
-        "orr  r0,r0,%0\n\t"            \
-           "mcr  p15,0,r0,c1,c0,0"        \
-        :                            \
-        :"r" (bit)                    \
-        :"memory");
+    asm volatile(\
+                 "mrc  p15,0,r0,c1,c0,0\n\t"    \
+                 "orr  r0,r0,%0\n\t"            \
+                 "mcr  p15,0,r0,c1,c0,0"        \
+                 :                              \
+                 :"r" (bit)                     \
+                 :"memory");
 }
 
 rt_inline void cache_disable(rt_uint32_t bit)
 {
-    asm volatile(            \
-        "mrc  p15,0,r0,c1,c0,0\n\t"    \
-        "bic  r0,r0,%0\n\t"            \
-        "mcr  p15,0,r0,c1,c0,0"        \
-        :                            \
-        :"r" (bit)                    \
-        :"memory");
+    asm volatile(\
+                 "mrc  p15,0,r0,c1,c0,0\n\t"    \
+                 "bic  r0,r0,%0\n\t"            \
+                 "mcr  p15,0,r0,c1,c0,0"        \
+                 :                              \
+                 :"r" (bit)                     \
+                 :"memory");
 }
 #endif
 
@@ -193,7 +194,7 @@ rt_base_t rt_hw_cpu_dcache_status()
  */
 void rt_hw_cpu_reset()
 {
-    
+
     rt_kprintf("Restarting system...\n");
     machine_reset();
 
@@ -221,13 +222,13 @@ void rt_hw_cpu_shutdown()
 
 #ifdef RT_USING_CPU_FFS
 /**
- * This function finds the first bit set (beginning with the least significant bit) 
+ * This function finds the first bit set (beginning with the least significant bit)
  * in value and return the index of that bit.
  *
- * Bits are numbered starting at 1 (the least significant bit).  A return value of 
+ * Bits are numbered starting at 1 (the least significant bit).  A return value of
  * zero from any of these functions means that the argument was zero.
- * 
- * @return return the index of the first bit set. If value is 0, then this function 
+ *
+ * @return return the index of the first bit set. If value is 0, then this function
  * shall return 0.
  */
 #if defined(__CC_ARM)
@@ -237,7 +238,7 @@ int __rt_ffs(int value)
 
     if (value == 0)
         return value;
-    
+
     __asm
     {
         rsb x, value, #0
@@ -248,7 +249,7 @@ int __rt_ffs(int value)
 
     return x;
 }
-#elif defined(__IAR_SYSTEMS_ICC__)
+#elif defined(__ICCARM__)
 int __rt_ffs(int value)
 {
     if (value == 0)

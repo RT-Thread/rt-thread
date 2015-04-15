@@ -19,7 +19,8 @@
 ; *
 ; * Change Logs:
 ; * Date           Author       Notes
-; * 2011-08-14     weety    copy from mini2440
+; * 2011-08-14     weety      copy from mini2440
+; * 2015-04-15     ArdaFu     convert from context_gcc.s
 ; */
 
 #define NOINT            0xc0

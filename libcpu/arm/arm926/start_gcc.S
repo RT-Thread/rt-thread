@@ -1,7 +1,7 @@
 /*
- * File      : start.S
+ * File      : start_gcc.S
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,8 +20,9 @@
  * Change Logs:
  * Date           Author       Notes
  * 2011-01-13     weety      first version
+ * 2015-04-15     ArdaFu     Split from AT91SAM9260 BSP
  */
-#define CONFIG_STACKSIZE 512
+ 
 #define S_FRAME_SIZE    (18*4)   //72
 
 @#define S_SPSR          (17*4)   //SPSR
@@ -55,7 +56,7 @@
 
 .include  "rt_low_level_gcc.inc"
 
-@; stack table-----------------------------------------------------------------
+@;----------------------- Stack and Heap Definitions ---------------------------
     .section .nobss, "w"
 
     .space UND_STK_SIZE
@@ -88,8 +89,7 @@ FIQ_STACK_START:
 SYS_STACK_START:
 
 
-@; Jump vector table-----------------------------------------------------------
-
+@;--------------Jump vector table-----------------------------------------------
     .section .init, "ax"
     .arm
 
@@ -179,7 +179,6 @@ Setup_Stack:
     MSR     CPSR_cxsf, R1            @; SVC mode
     LDR     SP, =SVC_STACK_START
 
-
     @; clear .bss
     MOV     R0, #0                   @; get a zero
     LDR     R1, =__bss_start__       @; bss start
@@ -203,8 +202,8 @@ ctor_loop:
     BX      R2
     LDMFD   SP!, {R0-R1}
     B       ctor_loop
-
 ctor_end:
+
     @; Enter the C code
     LDR     R0, =main
     BLX     R0

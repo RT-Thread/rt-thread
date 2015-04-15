@@ -20,6 +20,7 @@
 ; * Change Logs:
 ; * Date           Author       Notes
 ; * 2011-01-13     weety      first version
+; * 2015-04-15     ArdaFu     Split from AT91SAM9260 BSP
 ; */
  
 #define S_FRAME_SIZE    (18*4)   ;72
@@ -55,6 +56,7 @@
 
 #include "rt_low_level_iar.inc"
 
+;----------------------- Stack and Heap Definitions ----------------------------
     MODULE ?cstartup
     SECTION .noinit:DATA:NOROOT(3)
     DATA

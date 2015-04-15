@@ -20,10 +20,8 @@
 ; * Change Logs:
 ; * Date           Author       Notes
 ; * 2011-08-14     weety      first version
+; * 2015-04-15     ArdaFu     Split from AT91SAM9260 BSP 
 ; */
-
-
-; Standard definitions of Mode bits and Interrupt (I & F) flags in PSRs
 
 S_FRAME_SIZE    EQU     (18*4)   ;72
 ;S_SPSR          EQU     (17*4)   ;SPSR
@@ -58,11 +56,9 @@ MODEMASK        EQU     0X1F
 
 NOINT           EQU     0xC0
 
-;----------------------- Stack and Heap Definitions ----------------------------
-    AREA    STACK, NOINIT, READWRITE, ALIGN=3
     GET rt_low_level_keil.inc
-
-;-------------- stack area -----------------------------------------------------
+    
+;----------------------- Stack and Heap Definitions ----------------------------
     AREA    STACK, NOINIT, READWRITE, ALIGN=3
 Stack_Mem
 
@@ -103,11 +99,7 @@ Heap_Mem
     SPACE   Heap_Size
 __heap_limit
 
-;----------------------- CODE --------------------------------------------------
     PRESERVE8
-; Area Definition and Entry Point
-;  Startup Code must be linked first at Address at which it expects to run.
-
 ;--------------Jump vector table------------------------------------------------
     EXPORT Entry_Point
     AREA    RESET, CODE, READONLY
@@ -331,7 +323,7 @@ rt_hw_context_switch_interrupt_do PROC
 __user_initial_stackheap
     LDR     R0, =  Heap_Mem
     LDR     R1, = (Stack_Mem + SYS_STK_SIZE)
-    LDR     R2, = (Heap_Mem +      Heap_Size)
+    LDR     R2, = (Heap_Mem + Heap_Size)
     LDR     R3, = Stack_Mem
     BX      LR
     ENDIF

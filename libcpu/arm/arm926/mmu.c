@@ -19,6 +19,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2015-04-15     ArdaFu     Add code for IAR
  */
 
 #include "mmu.h"
@@ -28,11 +29,11 @@ void mmu_setttbase(rt_uint32_t i)
 {
     register rt_uint32_t value;
 
-   /* Invalidates all TLBs.Domain access is selected as
-    * client by configuring domain access register,
-    * in that case access controlled by permission value
-    * set by page table entry
-    */
+    /* Invalidates all TLBs.Domain access is selected as
+     * client by configuring domain access register,
+     * in that case access controlled by permission value
+     * set by page table entry
+     */
     value = 0;
     __asm
     {
@@ -247,11 +248,11 @@ void mmu_setttbase(register rt_uint32_t i)
 {
     register rt_uint32_t value;
 
-   /* Invalidates all TLBs.Domain access is selected as
-    * client by configuring domain access register,
-    * in that case access controlled by permission value
-    * set by page table entry
-    */
+    /* Invalidates all TLBs.Domain access is selected as
+     * client by configuring domain access register,
+     * in that case access controlled by permission value
+     * set by page table entry
+     */
     value = 0;
     asm ("mcr p15, 0, %0, c8, c7, 0"::"r"(value));
 
@@ -433,11 +434,11 @@ void mmu_setttbase(register rt_uint32_t i)
 {
     register rt_uint32_t value;
 
-   /* Invalidates all TLBs.Domain access is selected as
-    * client by configuring domain access register,
-    * in that case access controlled by permission value
-    * set by page table entry
-    */
+    /* Invalidates all TLBs.Domain access is selected as
+     * client by configuring domain access register,
+     * in that case access controlled by permission value
+     * set by page table entry
+     */
     value = 0;
     asm ("mcr p15, 0, %0, c8, c7, 0"::"r"(value));
 
@@ -621,16 +622,18 @@ void mmu_invalidate_dcache_all()
 #pragma data_alignment=(16*1024)
 static volatile unsigned int _page_table[4*1024];;
 #else
-static volatile unsigned int _page_table[4*1024] __attribute__((aligned(16*1024)));
+static volatile unsigned int _page_table[4*1024] \
+__attribute__((aligned(16*1024)));
 #endif
-void mmu_setmtt(rt_uint32_t vaddrStart, rt_uint32_t vaddrEnd, rt_uint32_t paddrStart, rt_uint32_t attr)
+void mmu_setmtt(rt_uint32_t vaddrStart, rt_uint32_t vaddrEnd,
+                rt_uint32_t paddrStart, rt_uint32_t attr)
 {
     volatile rt_uint32_t *pTT;
     volatile int nSec;
     int i = 0;
     pTT=(rt_uint32_t *)_page_table+(vaddrStart>>20);
     nSec=(vaddrEnd>>20)-(vaddrStart>>20);
-    for(i=0;i<=nSec;i++)
+    for(i=0; i<=nSec; i++)
     {
         *pTT = attr |(((paddrStart>>20)+i)<<20);
         pTT++;
@@ -648,8 +651,8 @@ void rt_hw_mmu_init(struct mem_desc *mdesc, rt_uint32_t size)
     /* set page table */
     for (; size > 0; size--)
     {
-        mmu_setmtt(mdesc->vaddr_start, mdesc->vaddr_end, 
-            mdesc->paddr_start, mdesc->attr);
+        mmu_setmtt(mdesc->vaddr_start, mdesc->vaddr_end,
+                   mdesc->paddr_start, mdesc->attr);
         mdesc++;
     }
 
@@ -668,4 +671,3 @@ void rt_hw_mmu_init(struct mem_desc *mdesc, rt_uint32_t size)
     mmu_invalidate_icache();
     mmu_invalidate_dcache_all();
 }
-
