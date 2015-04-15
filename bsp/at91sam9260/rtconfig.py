@@ -2,7 +2,7 @@ import os
 ARCH     = 'arm'
 CPU      = 'arm926'
 # toolchains options
-CROSS_TOOL 	= 'iar'
+CROSS_TOOL 	= 'gcc'
 
 #------- toolchains path -------------------------------------------------------
 if os.getenv('RTT_CC'):
@@ -10,8 +10,8 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
-	#EXEC_PATH 	= 'D:/ArdaArmTools/Sourcery_Lite'
-	EXEC_PATH 	= 'D:/ArdaArmTools/GNUARM_4.9_2015q1'
+	EXEC_PATH 	= 'D:/ArdaArmTools/Sourcery_Lite'
+	#EXEC_PATH 	= 'D:/ArdaArmTools/GNUARM_4.9_2015q1'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'C:/Keil_v5'
