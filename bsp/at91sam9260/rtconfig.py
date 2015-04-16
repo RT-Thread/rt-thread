@@ -10,8 +10,8 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= 'D:/ArdaArmTools/Sourcery_Lite'
-	#EXEC_PATH 	= 'D:/ArdaArmTools/GNUARM_4.9_2015q1'
+	EXEC_PATH 	= 'D:/ArdaArmTools/Sourcery_Lite/bin'
+	#EXEC_PATH 	= 'D:/ArdaArmTools/GNUARM_4.9_2015q1/bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'C:/Keil_v5'
@@ -43,7 +43,6 @@ if PLATFORM == 'gcc':
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
-    EXEC_PATH += '/bin/'
 
     DEVICE = ' -mcpu=arm926ej-s'
     CFLAGS = DEVICE
