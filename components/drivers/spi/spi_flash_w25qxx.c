@@ -347,7 +347,7 @@ rt_err_t w25qxx_init(const char * flash_device_name, const char * spi_device_nam
             FLASH_TRACE("W25Q16DW detection\r\n");
             spi_flash_device.geometry.sector_count = 512;
         }
-		else if(memory_type_capacity == MTC_W25Q80_BV)
+        else if(memory_type_capacity == MTC_W25Q80_BV)
         {
             FLASH_TRACE("W25Q80BV detection\r\n");
             spi_flash_device.geometry.sector_count = 256;
