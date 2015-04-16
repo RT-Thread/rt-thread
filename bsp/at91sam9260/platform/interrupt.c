@@ -24,7 +24,7 @@
 
 #include <rthw.h>
 #include "at91sam926x.h"
-
+#include "interrupt.h"
 #define MAX_HANDLERS    (AIC_IRQS + PIN_IRQS)
 
 extern rt_uint32_t rt_interrupt_nest;
@@ -373,6 +373,53 @@ static int at91_aic_set_type(unsigned irq, unsigned type)
     at91_sys_write(AT91_AIC_SMR(irq), smr | srctype);
     return 0;
 }
+
+rt_uint32_t rt_hw_interrupt_get_active(rt_uint32_t fiq_irq, rt_uint32_t* id)
+{
+
+    rt_uint32_t irqstat;
+    if (fiq_irq == INT_FIQ)
+    {
+        *id = 0;
+    }
+    else //IRQ
+    {
+        /* get irq number */
+        *id = (rt_uint32_t)at91_sys_read(AT91_AIC_IVR);
+        /* clear pending register */
+        irqstat = (rt_uint32_t)at91_sys_read(AT91_AIC_ISR);
+    }
+
+    return irqstat;
+}
+
+void rt_hw_interrupt_ack(rt_uint32_t fiq_irq)
+{
+    if (fiq_irq == INT_FIQ)
+    {
+        /* new FIQ generation */
+
+    }
+    else
+    {
+            // EIOCR must be write any value after interrupt,
+    // or else can't response next interrupt
+        /* new IRQ generation */
+        at91_sys_write(AT91_AIC_EOICR, 0x55555555);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 #ifdef RT_USING_FINSH
 void list_irq(void)

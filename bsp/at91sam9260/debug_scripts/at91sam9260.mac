@@ -1,0 +1,252 @@
+// ---------------------------------------------------------
+//   ATMEL Microcontroller Software Support  -  ROUSSET  -
+// ---------------------------------------------------------
+// The software is delivered "AS IS" without warranty or
+// condition of any  kind, either express, implied or
+// statutory. This includes without limitation any warranty
+// or condition with respect to merchantability or fitness
+// for any particular purpose, or against the infringements of
+// intellectual property rights of others.
+// ---------------------------------------------------------
+//  File: SAM9_SDRAM.mac
+//  User setup file for CSPY debugger.
+//  1.1 08/Aug/06 jpp    : Creation
+//
+//  $Revision: 1.1.2.1 $
+//
+// ---------------------------------------------------------
+__var __mac_i;
+__var __mac_pt;
+
+/*********************************************************************
+*
+*       execUserReset() : JTAG set initially to Full Speed
+*/
+execUserReset()
+{
+    __message "------------------------------ execUserReset ---------------------------------";
+    _MapRAMAt0();                          //* Set the RAM memory at 0x00200000 & 0x00000000
+    __PllSetting();                        //* Init PLL
+    __PllSetting100MHz();              
+    __message "-------------------------------Set PC Reset ----------------------------------";
+}
+
+/*********************************************************************
+*
+*       execUserPreload() : JTAG set initially to 32kHz
+*/
+execUserPreload()
+{
+    __message "------------------------------ execUserPreload ---------------------------------";
+    __hwReset(0);                          //* Hardware Reset: CPU is automatically halted after the reset (JTAG is already configured to 32kHz)
+    __writeMemory32(0xD3,0x98,"Register"); //*  Set CPSR
+    __PllSetting();                        //* Init PLL
+    __PllSetting100MHz();    
+    __initSDRAM();                         //* Init SDRAM before load          
+    _MapRAMAt0();                          //* Set the RAM memory at 0x0020 0000 & 0x0000 0000
+    _InitRSTC();                           //* Enable User Reset to allow execUserReset() execution
+}
+
+
+
+/*********************************************************************
+*
+*       _InitRSTC()
+*
+* Function description
+*   Initializes the RSTC (Reset controller).
+*   This makes sense since the default is to not allow user resets, which makes it impossible to
+*   apply a second RESET via J-Link
+*/
+_InitRSTC() {
+    __writeMemory32(0xA5000001, 0xFFFFFD08,"Memory");    // Allow user reset
+}
+
+
+/*********************************************************************
+*
+*       __initSDRAM()
+* Function description
+* Set SDRAM for works at 100 MHz
+*/
+__initSDRAM()
+{
+//* Configure EBI Chip select	
+//    pCCFG->CCFG_EBICSA |= AT91C_EBI_CS1A_SDRAMC | (1 << 16);
+// AT91C_CCFG_EBICSA ((AT91_REG *) 	0xFFFFEF1C) // (CCFG)  EBI Chip Select Assignement Register
+    __writeMemory32(0x0001003A,0xFFFFEF1C,"Memory");
+
+
+//*  Configure PIOs
+//*	AT91F_PIO_CfgPeriph( AT91C_BASE_PIOC, AT91C_PC16_D16 to AT91C_PC16_D31
+// pPio->PIO_ASR = periphAEnable; AT91C_PIOC_ASR ((AT91_REG *) 0xFFFFF870) // (PIOC) Select A Register
+// pPio->PIO_BSR = periphBEnable;AT91C_PIOC_BSR  ((AT91_REG *) 0xFFFFF874) // (PIOC) Select B Register
+// pPio->PIO_PDR = (periphAEnable | periphBEnable); // Set in Periph mode
+    __writeMemory32(0xFFFF0000,0xFFFFF870,"Memory");
+    __writeMemory32(0x00000000,0xFFFFF874,"Memory");
+    __writeMemory32(0xFFFF0000,0xFFFFF804,"Memory");
+
+//* psdrc->SDRAMC_CR =  AT91C_SDRAMC_NC_9  | AT91C_SDRAMC_NR_13 | AT91C_SDRAMC_CAS_2 |
+//  AT91C_SDRAMC_NB_4_BANKS | AT91C_SDRAMC_DBW_32_BITS | AT91C_SDRAMC_TWR_2 | AT91C_SDRAMC_TRC_7 |
+//  AT91C_SDRAMC_TRP_2 | AT91C_SDRAMC_TRCD_2 | AT91C_SDRAMC_TRAS_5 | AT91C_SDRAMC_TXSR_8 ;
+    __writeMemory32(0x85227259,0xFFFFEA08,"Memory");
+ __delay(1); //100
+//*	psdrc->SDRAMC_MR	= 0x00000002;		// Set PRCHG AL
+    __writeMemory32(0x00000002,0xFFFFEA00,"Memory");
+//*	*AT91C_SDRAM	= 0x00000000;			// Perform PRCHG
+    __writeMemory32(0x00000000,0x20000000,"Memory");
+ __delay(1); //100
+
+
+//*	psdrc->SDRAMC_MR	= AT91C_SDRAMC_MODE_RFSH_CMD;		// Set 1st CBR
+      __writeMemory32(0x00000004,0xFFFFEA00,"Memory");
+
+//*	*(AT91C_SDRAM+4)	= 0x00000001;	// Perform CBR
+    __writeMemory32(0x00000001,0x20000010,"Memory");
+
+//*	psdrc->SDRAMC_MR	= 0x00000004;		// Set 2 CBR
+     __writeMemory32(0x00000004,0xFFFFEA00,"Memory");
+//*	*(AT91C_SDRAM+8)	= 0x00000002;	// Perform CBR
+     __writeMemory32(0x00000002,0x20000020,"Memory");
+
+//*	psdrc->SDRAMC_MR	= AT91C_SDRAMC_MODE_RFSH_CMD;		// Set 3 CBR
+      __writeMemory32(0x00000004,0xFFFFEA00,"Memory");
+//*	*(AT91C_SDRAM+0xc)	= 0x00000003;	// Perform CBR
+     __writeMemory32(0x00000003,0x20000030,"Memory");
+
+//*	psdrc->SDRAMC_MR	= AT91C_SDRAMC_MODE_RFSH_CMD;		// Set 4 CBR
+      __writeMemory32(0x00000004,0xFFFFEA00,"Memory");
+//*	*(AT91C_SDRAM+0x10)	= 0x00000004;	// Perform CBR
+     __writeMemory32(0x00000004,0x20000040,"Memory");
+
+//*	psdrc->SDRAMC_MR	= AT91C_SDRAMC_MODE_RFSH_CMD;		// Set 5 CBR
+      __writeMemory32(0x00000004,0xFFFFEA00,"Memory");
+//*	*(AT91C_SDRAM+0x14)	= 0x00000005;	// Perform CBR
+     __writeMemory32(0x00000005,0x20000050,"Memory");
+
+//*	psdrc->SDRAMC_MR	= AT91C_SDRAMC_MODE_RFSH_CMD;		// Set 6 CBR
+      __writeMemory32(0x00000004,0xFFFFEA00,"Memory");
+//*	*(AT91C_SDRAM+0x18)	= 0x00000006;	// Perform CBR
+     __writeMemory32(0x00000006,0x20000060,"Memory");
+
+//*	psdrc->SDRAMC_MR	= AT91C_SDRAMC_MODE_RFSH_CMD;		// Set 7 CBR
+      __writeMemory32(0x00000004,0xFFFFEA00,"Memory");	
+//*	*(AT91C_SDRAM+0x1c)	= 0x00000007;	// Perform CBR
+     __writeMemory32(0x00000007,0x20000070,"Memory");
+
+//*	psdrc->SDRAMC_MR	= AT91C_SDRAMC_MODE_RFSH_CMD;		// Set 8 CBR
+      __writeMemory32(0x00000004,0xFFFFEA00,"Memory");
+//*	*(AT91C_SDRAM+0x20)	= 0x00000008;	// Perform CBR
+     __writeMemory32(0x00000008,0x20000080,"Memory");
+
+//*	psdrc->SDRAMC_MR	= AT91C_SDRAMC_MODE_LMR_CMD;		// Set LMR operation
+      __writeMemory32(0x00000003,0xFFFFEA00,"Memory");
+//*	*(AT91C_SDRAM+0x24)	= 0xcafedede;		// Perform LMR burst=1, lat=2
+     __writeMemory32(0xCAFEDEDE,0x20000090,"Memory");
+
+//*	psdrc->SDRAMC_TR	= (AT91C_MASTER_CLOCK * 7)/1000000;				// Set Refresh Timer 390 for 25MHz (TR= 15.6 * F )
+//									               // (F : system clock freq. MHz
+
+      __writeMemory32(0x000002B7,0xFFFFEA04,"Memory");
+
+//*	psdrc->SDRAMC_MR	= AT91C_SDRAMC_MODE_NORMAL_CMD;		// Set Normal mode
+      __writeMemory32(0x00000000,0xFFFFEA00,"Memory");
+
+//*	*AT91C_SDRAM	= 0x00000000;	// Perform Normal mode
+      __writeMemory32(0x00000000,0x20000000,"Memory");
+   __message "------------------------------- SDRAM Done at 100 MHz -------------------------------";
+
+}
+
+/*********************************************************************
+*
+*       _MapRAMAt0()
+* Function description
+* Remap RAM at 0
+*/
+_MapRAMAt0()
+{
+// AT91C_MATRIX_MRCR ((AT91_REG *) 	0xFFFFEF00) // (MATRIX)  Master Remp Control Register
+    __mac_i=__readMemory32(0xFFFFEF00,"Memory");
+    __message "----- AT91C_MATRIX_MRCR  : 0x",__mac_i:%X;
+
+    if ( ((__mac_i & 0x01) == 0) || ((__mac_i & 0x02) == 0)){
+        __message "------------------------------- The Remap is NOT & REMAP ----------------------------";
+        __writeMemory32(0x00000003,0xFFFFEF00,"Memory");
+        __mac_i=__readMemory32(0xFFFFEF00,"Memory");
+        __message "----- AT91C_MATRIX_MRCR  : 0x",__mac_i:%X;
+    } else {
+        __message "------------------------------- The Remap is done -----------------------------------";
+    }
+}
+
+
+/*********************************************************************
+*
+*       __PllSetting()
+* Function description
+*   Initializes the PMC.
+*   1. Enable the Main Oscillator
+*   2. Configure PLL
+*   3. Switch Master
+*/
+__PllSetting()
+{
+     if ((__readMemory32(0xFFFFFC30,"Memory")&0x3) != 0 ) {
+//* Disable all PMC interrupt ( $$ JPP)
+//* AT91C_PMC_IDR   ((AT91_REG *) 0xFFFFFC64) //(PMC) Interrupt Disable Register
+//*    pPmc->PMC_IDR = 0xFFFFFFFF;
+    __writeMemory32(0xFFFFFFFF,0xFFFFFC64,"Memory");
+//* AT91C_PMC_PCDR  ((AT91_REG *) 0xFFFFFC14) //(PMC) Peripheral Clock Disable Register
+    __writeMemory32(0xFFFFFFFF,0xFFFFFC14,"Memory");
+// Disable all clock only Processor clock is enabled.
+    __writeMemory32(0xFFFFFFFE,0xFFFFFC04,"Memory");
+
+// AT91C_PMC_MCKR  ((AT91_REG *) 	0xFFFFFC30) // (PMC) Master Clock Register
+    __writeMemory32(0x00000001,0xFFFFFC30,"Memory");
+    __delay(10); //10000
+
+// write reset value to PLLA and PLLB
+// AT91C_PMC_PLLAR ((AT91_REG *) 	0xFFFFFC28) // (PMC) PLL A Register
+    __writeMemory32(0x00003F00,0xFFFFFC28,"Memory");
+
+// AT91C_PMC_PLLBR ((AT91_REG *) 	0xFFFFFC2C) // (PMC) PLL B Register
+    __writeMemory32(0x00003F00,0xFFFFFC2C,"Memory");
+    __delay(10); //10000
+
+   __message "------------------------------- PLL  Enable -----------------------------------------";
+   } else {
+   __message " ********* Core in SLOW CLOCK mode ********* "; }
+}
+
+
+/*********************************************************************
+*
+*       __PllSetting100MHz()
+* Function description
+*   Set core at 200 MHz and MCK at 100 MHz 
+*/
+__PllSetting100MHz()
+{
+
+   __message "------------------------------- PLL Set at 100 MHz ----------------------------------";
+
+//* pPmc->PMC_MOR = (( AT91C_CKGR_OSCOUNT & (0x40 <<8) | AT91C_CKGR_MOSCEN ));
+    __writeMemory32(0x00004001,0xFFFFFC20,"Memory");
+    __delay(10); //10000
+// AT91C_PMC_MCKR  ((AT91_REG *) 	0xFFFFFC30) // (PMC) Master Clock Register
+    __writeMemory32(0x00000001,0xFFFFFC30,"Memory");
+    __delay(10); //10000
+//*   AT91C_BASE_CKGR->CKGR_PLLAR = (AT91C_CKGR_SRCA | ((96 << 16) & AT91C_CKGR_MULA) | 
+//    (AT91C_CKGR_PLLACOUNT | (AT91C_CKGR_OUTA_0 | (9);
+    __writeMemory32(0x2060BF09,0xFFFFFC28,"Memory");
+    __delay(10); //10000
+// AT91C_BASE_PMC->PMC_PLLBR = BOARD_USBDIV| BOARD_CKGR_PLLB | BOARD_PLLBCOUNT | BOARD_MULB| BOARD_DIVB;
+    __writeMemory32(0x207C3F0C,0xFFFFFC2C,"Memory");
+    __delay(10); //10000    
+//*   AT91C_BASE_PMC->PMC_MCKR =  AT91C_PMC_CSS_PLLA_CLK | AT91C_PMC_PRES_CLK | AT91C_PMC_MDIV_2;;
+    __writeMemory32(0x00000102,0xFFFFFC30,"Memory");
+     __delay(10); //10000
+
+}
+
