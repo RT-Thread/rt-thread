@@ -149,13 +149,14 @@ struct rt_thread main_thread;
 void main_thread_entry(void *parameter)
 {
     extern int main(void);
+    extern int $Super$$main(void);
 
     /* RT-Thread components initialization */
     rt_components_init();
 
     /* invoke system main function */
 #ifdef __CC_ARM
-    $Sub$$main();
+    $Super$$main(); /* for ARMCC. */
 #else
     main();
 #endif
@@ -183,6 +184,8 @@ void rt_application_init(void)
 
 int rtthread_startup(void)
 {
+	rt_hw_interrupt_disable();
+
     /* board level initalization
      * NOTE: please initialize heap inside board initialization.
      */
