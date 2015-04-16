@@ -143,7 +143,7 @@ Reset_Handler:
     
     ; Copy Exception Vectors to Internal RAM
     LDR     R8, =Entry_Point        ; Source
-    LDR     R9, =0x00000000         ; Destination
+    LDR     R9, =VECTOR_TABLE_START ; Destination
     CMP     R8, R9
     BEQ     Setup_Stack
     LDMIA   R8!, {R0-R7}            ; Load Vectors

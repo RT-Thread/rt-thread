@@ -29,3 +29,5 @@
 #define IRQ_STK_SIZE 1024
 #define FIQ_STK_SIZE 1024
 #define SYS_STK_SIZE 512
+/* vector table start should be 0x00000000 or 0xFFFF0000 */
+#define VECTOR_TABLE_START    0x00000000
