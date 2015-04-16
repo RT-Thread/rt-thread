@@ -105,4 +105,8 @@ struct Pseudodesc {
 #define 	STS_IG32 			0xe		// 32-bit Interrupt Gate
 #define 	STS_TG32 			0xf		// 32-bit Trap Gate
 
+#ifdef __cplusplus
+ }
+#endif
+
 #endif
