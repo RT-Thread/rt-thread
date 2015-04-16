@@ -55,13 +55,9 @@ rt_hw_context_switch:
     STMFD   SP!, {R0-R12, LR}       ; push lr & register file
     MRS     R4, CPSR
     STMFD   SP!, {R4}               ; push cpsr
-    MRS     R4, SPSR
-    STMFD   SP!, {R4}               ; push spsr
     STR     SP, [R0]                ; store sp in preempted tasks TCB
     LDR     SP, [R1]                ; get new task stack pointer
     LDMFD   SP!, {R4}               ; pop new task spsr
-    MSR     SPSR_cxsf, R4
-    LDMFD   SP!, {R4}               ; pop new task cpsr
     MSR     SPSR_cxsf, R4
     LDMFD   SP!, {R0-R12, LR, PC}^  ; pop new task r0-r12, lr & pc
 
@@ -72,12 +68,8 @@ rt_hw_context_switch:
     PUBLIC rt_hw_context_switch_to
 rt_hw_context_switch_to:
     LDR     SP, [R0]                ; get new task stack pointer
-
     LDMFD   SP!, {R4}               ; pop new task spsr
     MSR     SPSR_cxsf, R4
-    LDMFD   SP!, {R4}               ; pop new task cpsr
-    MSR     SPSR_cxsf, R4
-
     LDMFD   SP!, {R0-R12, LR, PC}^   ; pop new task r0-r12, lr & pc
 
 /*

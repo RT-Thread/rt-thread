@@ -262,24 +262,19 @@ rt_hw_context_switch_interrupt_do:
     STR     R1,  [R0]               ; Save to flag variable
 
     LDMFD   SP!, {R0-R12,LR}        ; Reload saved registers
-    STMFD   SP!, {R0-R3}            ; Save R0-R3
-    MOV     R1,  SP                 ; Save old task's SP to R1
-    ADD     SP,  SP, #16            ; Restore SP
+    STMFD   SP, {R0-R2}             ; Save R0-R2
+    SUB     R1,  SP, #4*3           ; Save old task's SP to R1
     SUB     R2,  LR, #4             ; Save old task's PC to R2
 
-    MRS     R3,  SPSR               ; Get CPSR of interrupt thread
+    MRS     R0,  SPSR               ; Get CPSR of interrupt thread
 
     MSR     CPSR_c, #MODE_SVC|NOINT ; Switch to SVC mode and no interrupt
 
     STMFD   SP!, {R2}               ; Push old task's PC
-    STMFD   SP!, {R4-R12,LR}        ; Push old task's LR,R12-R4
-    MOV     R4,  R1                 ; Special optimised code below
-    MOV     R5,  R3
-    LDMFD   R4!, {R0-R3}
-    STMFD   SP!, {R0-R3}            ; Push old task's R3-R0
-    STMFD   SP!, {R5}               ; Push old task's CPSR
-    MRS     R4,  SPSR
-    STMFD   SP!, {R4}               ; Push old task's SPSR
+    STMFD   SP!, {R3-R12,LR}        ; Push old task's LR,R12-R3
+    LDMFD   R1, {R1-R3}
+    STMFD   SP!, {R1-R3}            ; Push old task's R2-R0
+    STMFD   SP!, {R0}               ; Push old task's CPSR
 
     LDR     R4,  =rt_interrupt_from_thread
     LDR     R5,  [R4]               ; R5 = stack ptr in old tasks's TCB
@@ -291,8 +286,6 @@ rt_hw_context_switch_interrupt_do:
 
     LDMFD   SP!, {R4}               ; Pop new task's SPSR
     MSR     SPSR_cxsf, R4
-    LDMFD   SP!, {R4}               ; Pop new task's CPSR
-    MSR     SPSR_cxsf, R4
 
-    LDMFD   SP!, {R0-R12,LR,PC}^     ; pop new task's R0-R12,LR & PC
+    LDMFD   SP!, {R0-R12,LR,PC}^    ; pop new task's R0-R12,LR & PC SPSR to CPSR
     END
