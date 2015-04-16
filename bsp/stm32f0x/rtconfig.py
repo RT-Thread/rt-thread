@@ -25,7 +25,8 @@ elif CROSS_TOOL == 'iar':
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
-BUILD = 'debug'
+#BUILD = 'debug'
+BUILD = 'release'
 STM32_TYPE = 'STM32F0XX'
 
 if PLATFORM == 'gcc':
