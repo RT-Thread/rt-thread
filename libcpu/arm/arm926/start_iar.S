@@ -21,6 +21,7 @@
 ; * Date           Author       Notes
 ; * 2011-01-13     weety      first version
 ; * 2015-04-15     ArdaFu     Split from AT91SAM9260 BSP
+; * 2015-04-21     ArdaFu     Remove remap code. Using mmu to map vector table
 ; */
  
 #define S_FRAME_SIZE    (18*4)   ;72
@@ -81,14 +82,14 @@ FIQ_STACK_START:
 IRQ_STACK_START:
 
     ALIGNRAM 2
-    DS8 SVC_STK_SIZE
-    PUBLIC SVC_STACK_START
-SVC_STACK_START:
-
-    ALIGNRAM 2
     DS8 SYS_STK_SIZE
     PUBLIC SYS_STACK_START
 SYS_STACK_START:
+
+    ALIGNRAM 2
+    DS8 SVC_STK_SIZE
+    PUBLIC SVC_STACK_START
+SVC_STACK_START:
 
 ;--------------Jump vector table------------------------------------------------
     SECTION .intvec:CODE:ROOT(2)
@@ -134,22 +135,19 @@ Reset_Handler:
     BIC     R0, R0, #MODEMASK
     ORR     R0, R0, #MODE_SVC|NOINT
     MSR     CPSR_cxsf, R0
-    LDR     SP, =SVC_STACK_START
+    
+    ; Set CO-Processor
+    ; little-end，disbale I/D Cache MMU, vector table is 0x00000000
+    MRC     P15, 0, R0, C1, C0, 0   ; Read CP15
+    LDR     R1, =0x00003085         ; set clear bits
+    BIC     R0, R0, R1
+    MCR     P15, 0, R0, C1, C0, 0   ; Write CP15
 
     ; Call low level init function,
-    ; disable and clear all IRQs and remap internal ram to 0x00000000.
+    ; disable and clear all IRQs, Init MMU, Init interrupt controller, etc.
+    LDR     SP, =SVC_STACK_START
     LDR     R0, =rt_low_level_init
     BLX     R0
-    
-    ; Copy Exception Vectors to Internal RAM
-    LDR     R8, =Entry_Point        ; Source
-    LDR     R9, =VECTOR_TABLE_START ; Destination
-    CMP     R8, R9
-    BEQ     Setup_Stack
-    LDMIA   R8!, {R0-R7}            ; Load Vectors
-    STMIA   R9!, {R0-R7}            ; Store Vectors
-    LDMIA   R8!, {R0-R7}            ; Load Handler Addresses
-    STMIA   R9!, {R0-R7}            ; Store Handler Addresses
 
 Setup_Stack:
     ; Setup Stack for each mode

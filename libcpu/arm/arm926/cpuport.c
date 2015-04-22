@@ -32,18 +32,18 @@
 extern void machine_reset(void);
 extern void machine_shutdown(void);
 
-#ifdef __GNUC__
+#if defined(__GNUC__) || defined(__ICCARM__)
 rt_inline rt_uint32_t cp15_rd(void)
 {
     rt_uint32_t i;
 
-    asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+    __asm volatile("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
     return i;
 }
 
 rt_inline void cache_enable(rt_uint32_t bit)
 {
-    __asm__ __volatile__(\
+    __asm volatile(\
                          "mrc  p15,0,r0,c1,c0,0\n\t"    \
                          "orr  r0,r0,%0\n\t"            \
                          "mcr  p15,0,r0,c1,c0,0"        \
@@ -54,7 +54,7 @@ rt_inline void cache_enable(rt_uint32_t bit)
 
 rt_inline void cache_disable(rt_uint32_t bit)
 {
-    __asm__ __volatile__(\
+    __asm volatile(\
                          "mrc  p15,0,r0,c1,c0,0\n\t"    \
                          "bic  r0,r0,%0\n\t"            \
                          "mcr  p15,0,r0,c1,c0,0"        \
@@ -64,12 +64,12 @@ rt_inline void cache_disable(rt_uint32_t bit)
 }
 #endif
 
-#ifdef __CC_ARM
+#if defined(__CC_ARM)
 rt_inline rt_uint32_t cp15_rd(void)
 {
     rt_uint32_t i;
 
-    __asm
+    __asm volatile
     {
         mrc p15, 0, i, c1, c0, 0
     }
@@ -81,7 +81,7 @@ rt_inline void cache_enable(rt_uint32_t bit)
 {
     rt_uint32_t value;
 
-    __asm
+    __asm volatile
     {
         mrc p15, 0, value, c1, c0, 0
         orr value, value, bit
@@ -93,44 +93,12 @@ rt_inline void cache_disable(rt_uint32_t bit)
 {
     rt_uint32_t value;
 
-    __asm
+    __asm volatile
     {
         mrc p15, 0, value, c1, c0, 0
         bic value, value, bit
         mcr p15, 0, value, c1, c0, 0
     }
-}
-#endif
-
-#ifdef __ICCARM__
-rt_inline rt_uint32_t cp15_rd(void)
-{
-    rt_uint32_t i;
-
-    asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
-    return i;
-}
-
-rt_inline void cache_enable(rt_uint32_t bit)
-{
-    asm volatile(\
-                 "mrc  p15,0,r0,c1,c0,0\n\t"    \
-                 "orr  r0,r0,%0\n\t"            \
-                 "mcr  p15,0,r0,c1,c0,0"        \
-                 :                              \
-                 :"r" (bit)                     \
-                 :"memory");
-}
-
-rt_inline void cache_disable(rt_uint32_t bit)
-{
-    asm volatile(\
-                 "mrc  p15,0,r0,c1,c0,0\n\t"    \
-                 "bic  r0,r0,%0\n\t"            \
-                 "mcr  p15,0,r0,c1,c0,0"        \
-                 :                              \
-                 :"r" (bit)                     \
-                 :"memory");
 }
 #endif
 
@@ -249,27 +217,24 @@ int __rt_ffs(int value)
 
     return x;
 }
-#elif defined(__ICCARM__)
+#elif defined(__GNUC__) || defined(__ICCARM__)
 int __rt_ffs(int value)
 {
+    register rt_uint32_t x;
+
     if (value == 0)
         return value;
 
-    __ASM("RSB  r4, r0, #0");
-    __ASM("AND  r4, r4, r0");
-    __ASM("CLZ  r4, r4");
-    __ASM("RSB  r0, r4, #32");
-}
-#elif defined(__GNUC__)
-int __rt_ffs(int value)
-{
-    if (value == 0)
-        return value;
-
-    value &= (-value);
-    asm ("clz %0, %1": "=r"(value) :"r"(value));
-
-    return (32 - value);
+    __asm
+    (
+        "rsb %[temp], %[val], #0\n"
+        "and %[temp], %[temp], %[val]\n"
+        "clz %[temp], %[temp]\n"
+        "rsb %[temp], %[temp], #32\n"
+        :[temp] "=r"(x)
+        :[val] "r"(value)
+    );
+    return x;
 }
 #endif
 
