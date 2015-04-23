@@ -29,5 +29,3 @@
 .equ IRQ_STK_SIZE,    4096
 .equ FIQ_STK_SIZE,    4096
 .equ SYS_STK_SIZE,    2048
-/* vector table start should be 0x00000000 or 0xFFFF0000 */
-.equ VECTOR_TABLE_START,    0x00000000

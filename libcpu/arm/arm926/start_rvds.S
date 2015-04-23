@@ -20,7 +20,8 @@
 ; * Change Logs:
 ; * Date           Author       Notes
 ; * 2011-08-14     weety      first version
-; * 2015-04-15     ArdaFu     Split from AT91SAM9260 BSP 
+; * 2015-04-15     ArdaFu     Split from AT91SAM9260 BSP
+; * 2015-04-21     ArdaFu     Remove remap code. Using mmu to map vector table
 ; */
 
 S_FRAME_SIZE    EQU     (18*4)   ;72
@@ -59,46 +60,38 @@ NOINT           EQU     0xC0
     GET rt_low_level_keil.inc
     
 ;----------------------- Stack and Heap Definitions ----------------------------
-    AREA    STACK, NOINIT, READWRITE, ALIGN=3
+    AREA    STACK, NOINIT, READWRITE, ALIGN=2
 Stack_Mem
 
     SPACE   UND_STK_SIZE
     EXPORT UND_STACK_START
 UND_STACK_START
 
-    ALIGN 8
+    ALIGN 4
     SPACE   ABT_STK_SIZE
     EXPORT ABT_STACK_START
 ABT_STACK_START
 
-    ALIGN 8
+    ALIGN 4
     SPACE   FIQ_STK_SIZE
     EXPORT FIQ_STACK_START
 FIQ_STACK_START
 
-    ALIGN 8
+    ALIGN 4
     SPACE   IRQ_STK_SIZE
     EXPORT IRQ_STACK_START
 IRQ_STACK_START
 
-    ALIGN 8
-    SPACE   SVC_STK_SIZE
-    EXPORT SVC_STACK_START
-SVC_STACK_START
-
-    ALIGN 8
+    ALIGN 4
     SPACE   SYS_STK_SIZE
     EXPORT SYS_STACK_START
 SYS_STACK_START
+
+    ALIGN 4
+    SPACE   SVC_STK_SIZE
+    EXPORT SVC_STACK_START
+SVC_STACK_START
 Stack_Top
-
-Heap_Size EQU     0x00000000
-    AREA    HEAP, NOINIT, READWRITE, ALIGN=3
-__heap_base
-Heap_Mem
-    SPACE   Heap_Size
-__heap_limit
-
     PRESERVE8
 ;--------------Jump vector table------------------------------------------------
     EXPORT Entry_Point
@@ -139,24 +132,21 @@ Reset_Handler
     ; set the cpu to SVC32 mode
     MRS     R0,CPSR
     BIC     R0,R0,#MODEMASK
-    ORR     R0,R0,#MODE_SVC
-    MSR     CPSR_CXSF,R0
-    LDR     SP, =SVC_STACK_START
+    ORR     R0,R0,#MODE_SVC:OR:NOINT
+    MSR     CPSR_cxsf,R0
+    
+    ; Set CO-Processor
+    ; little-end，disbale I/D Cache MMU, vector table is 0x00000000
+    MRC     p15, 0, R0, c1, c0, 0   ; Read CP15
+    LDR     R1, =0x00003085         ; set clear bits
+    BIC     R0, R0, R1
+    MCR     p15, 0, R0, c1, c0, 0   ; Write CP15
 
     ; Call low level init function,
-    ; disable and clear all IRQs and remap internal ram to 0x00000000.
+    ; disable and clear all IRQs, Init MMU, Init interrupt controller, etc.
+    LDR     SP, =SVC_STACK_START
     LDR     R0, =rt_low_level_init
     BLX     R0
-
-    ; Copy Exception Vectors to Internal RAM
-    LDR     R8, =Entry_Point        ; Source
-    LDR     R9, =VECTOR_TABLE_START ; Destination
-    CMP     R8, R9
-    BEQ     Setup_Stack
-    LDMIA   R8!, {R0-R7}            ; Load Vectors
-    STMIA   R9!, {R0-R7}            ; Store Vectors
-    LDMIA   R8!, {R0-R7}            ; Load Handler Addresses
-    STMIA   R9!, {R0-R7}            ; Store Handler Addresses
 
 Setup_Stack
     ; Setup Stack for each mode
@@ -301,23 +291,4 @@ rt_hw_context_switch_interrupt_do PROC
 
     LDMFD   SP!, {R0-R12,LR,PC}^    ; pop new task's R0-R12,LR & PC SPSR to CPSR
     ENDP
-
-    IF  :DEF:__MICROLIB
-
-    EXPORT  __heap_base
-    EXPORT  __heap_limit
-
-    ELSE
-    ; User Initial Stack & Heap
-    AREA |.text|, CODE, READONLY
-
-    IMPORT  __use_two_region_memory
-    EXPORT  __user_initial_stackheap
-__user_initial_stackheap
-    LDR     R0, =  Heap_Mem
-    LDR     R1, = (Stack_Mem + SYS_STK_SIZE)
-    LDR     R2, = (Heap_Mem + Heap_Size)
-    LDR     R3, = Stack_Mem
-    BX      LR
-    ENDIF
     END
