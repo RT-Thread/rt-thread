@@ -280,6 +280,7 @@ FINSH_FUNCTION_EXPORT_ALIAS(cmd_time, __cmd_time, Execute command with time.);
 int cmd_free(int argc, char** argv)
 {
     extern void list_mem(void);
+    extern void list_memheap(void);
 
 #ifdef RT_USING_MEMHEAP_AS_HEAP
     list_memheap();
