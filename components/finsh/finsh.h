@@ -455,6 +455,8 @@ long finsh_stack_bottom(void);
 u_char finsh_errno(void);
 /* get error string */
 const char* finsh_error_string(u_char type);
+/* user identity authentication */
+int finsh_login(char *passwd);
 
 #ifdef RT_USING_HEAP
 /**
