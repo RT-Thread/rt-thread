@@ -353,4 +353,8 @@
 #define LWIP_RAND                  rand
 #endif
 
+#ifdef RT_USING_DFS_LWIP
+#define LWIP_COMPAT_SOCKETS        0
+#endif
+
 #endif /* __LWIPOPTS_H__ */
