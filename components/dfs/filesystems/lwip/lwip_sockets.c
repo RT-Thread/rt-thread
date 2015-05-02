@@ -24,7 +24,8 @@
 
 #include <dfs.h>
 #include <dfs_def.h>
-#include <lwip/sockets.h>
+#include <dfs_posix.h>
+
 #include <sys/socket.h>
 
 #include "dfs_lwip.h"

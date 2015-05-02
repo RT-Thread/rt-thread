@@ -353,8 +353,25 @@
 #define LWIP_RAND                  rand
 #endif
 
-#ifdef RT_USING_DFS_LWIP
+#if defined(RT_USING_DFS_LWIP)
 #define LWIP_COMPAT_SOCKETS        0
+#endif
+
+#if defined(__CC_ARM) || defined(__IAR_SYSTEMS_ICC__)
+
+#if defined(RT_USING_PTHREADS)
+#define LWIP_TIMEVAL_PRIVATE       0
+#include <posix_types.h>
+#else
+/* there is no timeval in CC_ARM and IAR */
+#define LWIP_TIMEVAL_PRIVATE       1
+#endif /* RT_USING_PTHREADS */
+
+#elif defined (__GNUC__)
+
+#define LWIP_TIMEVAL_PRIVATE       0
+#include <sys/time.h>
+
 #endif
 
 #endif /* __LWIPOPTS_H__ */

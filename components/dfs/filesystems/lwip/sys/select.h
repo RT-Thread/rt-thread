@@ -1,5 +1,5 @@
 /*
- * File      : dfs_lwip.h
+ * File      : select.h
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2015, RT-Thread Development Team
  *
@@ -19,22 +19,25 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2015-02-17     Bernard      First version
+ * 2015-05-02     Bernard      First version
  */
 
-#ifndef DFS_LWIP_H__
-#define DFS_LWIP_H__
+#ifndef SELECT_H__
+#define SELECT_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+/* select API */
+#ifdef RT_USING_LWIP
+/* we use lwIP's structure definitions. */
 #include <lwip/sockets.h>
 
-struct dfs_filesystem* dfs_lwip_get_fs(void);
-int dfs_lwip_getsocket(int fd);
-
-int dfs_lwip_system_init(void);
+int
+select(int maxfdp1, fd_set *readset, fd_set *writeset, fd_set *exceptset,
+            struct timeval *timeout);
+#endif
 
 #ifdef __cplusplus
 }

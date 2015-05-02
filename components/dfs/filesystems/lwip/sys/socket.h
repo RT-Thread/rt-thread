@@ -1,5 +1,5 @@
 /*
- * File      : netdb.h
+ * File      : socket.h
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2015, RT-Thread Development Team
  *
@@ -28,6 +28,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include <lwip/sockets.h>
 
 int accept(int s, struct sockaddr *addr, socklen_t *addrlen);
 int bind(int s, const struct sockaddr *name, socklen_t namelen);
