@@ -36,6 +36,7 @@ static const struct pin_index pins[] =
 {
 #if (STM32F10X_PIN_NUMBERS == 64)
     __STM32_PIN_DEFAULT,
+    __STM32_PIN_DEFAULT,
     __STM32_PIN(2, APB2, C, 13),
     __STM32_PIN(3, APB2, C, 14),
     __STM32_PIN(4, APB2, C, 15),
