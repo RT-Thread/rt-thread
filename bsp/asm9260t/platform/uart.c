@@ -22,7 +22,7 @@
  * 2015-04-14     ArdaFu      first version
  */
  
-#include "ASM9260T.h"
+#include "asm9260t.h"
 #include "rtthread.h"
 #include "uart.h"
 

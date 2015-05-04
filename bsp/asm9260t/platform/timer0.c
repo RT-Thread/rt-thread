@@ -23,7 +23,7 @@
  */
 
 #include "timer0.h"
-#include "ASM9260T.h"
+#include "asm9260t.h"
 #include "rtthread.h"
 void hw_timer0_init(void)
 {
