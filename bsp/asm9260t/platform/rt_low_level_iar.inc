@@ -1,5 +1,5 @@
 /*
- * File      : interrupt.h
+ * File      : rt_low_level_iar.inc
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
  *
@@ -21,11 +21,11 @@
  * Date           Author       Notes
  * 2015-04-14     ArdaFu      first version
  */
-#ifndef __INTERRUPT_H__
-#define __INTERRUPT_H__
-
-#define INT_IRQ     0x00
-#define INT_FIQ     0x01
-
-
-#endif
+ 
+/*-------- Stack size of CPU modes -------------------------------------------*/
+#define UND_STK_SIZE 512
+#define SVC_STK_SIZE 4096
+#define ABT_STK_SIZE 512
+#define IRQ_STK_SIZE 1024
+#define FIQ_STK_SIZE 1024
+#define SYS_STK_SIZE 512

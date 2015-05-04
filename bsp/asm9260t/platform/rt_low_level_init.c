@@ -1,5 +1,5 @@
 /*
- * File      : interrupt.h
+ * File      : rt_low_level_init.c
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
  *
@@ -20,12 +20,11 @@
  * Change Logs:
  * Date           Author       Notes
  * 2015-04-14     ArdaFu      first version
+ * 2015-04-27     ArdaFu      Port bsp from at91sam9260 to asm9260t
  */
-#ifndef __INTERRUPT_H__
-#define __INTERRUPT_H__
 
-#define INT_IRQ     0x00
-#define INT_FIQ     0x01
+void rt_low_level_init(void)
+{
 
+}
 
-#endif

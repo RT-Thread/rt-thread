@@ -1,7 +1,7 @@
 /*
- * File      : interrupt.h
+ * File      : led.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
+ * COPYRIGHT (C) 2006-2015, RT-Thread Develop Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,11 +21,27 @@
  * Date           Author       Notes
  * 2015-04-14     ArdaFu      first version
  */
-#ifndef __INTERRUPT_H__
-#define __INTERRUPT_H__
 
-#define INT_IRQ     0x00
-#define INT_FIQ     0x01
+#include <rtthread.h>
+#include <board.h>
+#include "led.h"
+#include "gpio.h"
 
+//ASM9260T EVK pin 16-7 LED0, 0: ON, 1 : OFF
+void led_init(void)
+{
+     // enable IOCONFIG GPIO
+    outl(((1UL<<25) | (1UL<<4)) , REG_SET(HW_AHBCLKCTRL0));
+    HW_SetPinMux(16,7,0);
+    HW_GpioSetDir(16,7,1);
+}
 
-#endif
+void led_on(int num)
+{
+    HW_GpioClrVal(16, 7 );
+}
+
+void led_off(int num)
+{
+    HW_GpioSetVal(16, 7 );
+}

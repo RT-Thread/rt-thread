@@ -25,8 +25,9 @@
 
 #include <rtthread.h>
 #include <rthw.h>
-#include <interrupt.h>
 
+#define INT_IRQ     0x00
+#define INT_FIQ     0x01
 
 extern struct rt_thread *rt_current_thread;
 #ifdef RT_USING_FINSH
@@ -171,24 +172,18 @@ void rt_hw_trap_resv(struct rt_hw_register *regs)
     rt_hw_cpu_shutdown();
 }
 
-
-
+extern struct rt_irq_desc irq_desc[];
+extern rt_uint32_t rt_hw_interrupt_get_active(rt_uint32_t fiq_irq);
+extern void rt_hw_interrupt_ack(rt_uint32_t fiq_irq, rt_uint32_t id);
+    
 void rt_hw_trap_irq()
 {
     rt_isr_handler_t isr_func;
-    rt_uint32_t irqstat;
     rt_uint32_t irq;
     void *param;
-    extern struct rt_irq_desc irq_desc[];
 
     /* get irq number */
-    irqstat = rt_hw_interrupt_get_active(INT_IRQ, &irq);
-    if (irqstat == 0)
-    {
-        rt_kprintf("No interrupt occur\n");
-        rt_hw_interrupt_ack(INT_IRQ);
-        return;
-    }
+    irq = rt_hw_interrupt_get_active(INT_IRQ);
 
     /* get interrupt service routine */
     isr_func = irq_desc[irq].handler;
@@ -197,26 +192,20 @@ void rt_hw_trap_irq()
     /* turn to interrupt service routine */
     isr_func(irq, param);
 
-    rt_hw_interrupt_ack(INT_IRQ);
+    rt_hw_interrupt_ack(INT_IRQ, irq);
+#ifdef RT_USING_INTERRUPT_INFO
     irq_desc[irq].counter ++;
+#endif
 }
 
 void rt_hw_trap_fiq()
 {
     rt_isr_handler_t isr_func;
-    rt_uint32_t irqstat;
     rt_uint32_t irq;
     void *param;
-    extern struct rt_irq_desc irq_desc[];
 
     /* get irq number */
-    irqstat = rt_hw_interrupt_get_active(INT_FIQ, &irq);
-    if (irqstat == 0)
-    {
-        rt_kprintf("No interrupt occur\n");
-        rt_hw_interrupt_ack(INT_FIQ);
-        return;
-    }
+    irq = rt_hw_interrupt_get_active(INT_FIQ);
 
     /* get interrupt service routine */
     isr_func = irq_desc[irq].handler;
@@ -225,6 +214,8 @@ void rt_hw_trap_fiq()
     /* turn to interrupt service routine */
     isr_func(irq, param);
 
-    rt_hw_interrupt_ack(INT_FIQ);
+    rt_hw_interrupt_ack(INT_FIQ, irq);
+#ifdef RT_USING_INTERRUPT_INFO
     irq_desc[irq].counter ++;
+#endif
 }
