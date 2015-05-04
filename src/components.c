@@ -25,6 +25,8 @@
  * 2013-06-23     Bernard      Add the init_call for components initialization.
  * 2013-07-05     Bernard      Remove initialization feature for MS VC++ compiler
  * 2015-02-06     Bernard      Remove the MS VC++ support and move to the kernel
+ * 2015-0504      Bernard      Rename it to components.c because compiling issue 
+ *                             in some IDEs.
  */
 
 #include <rtthread.h>
