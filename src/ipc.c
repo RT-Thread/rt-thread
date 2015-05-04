@@ -643,12 +643,14 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
 {
     register rt_base_t temp;
     struct rt_thread *thread;
+    rt_err_t    error;
 
     /* this function must not be used in interrupt even if time = 0 */
     RT_DEBUG_IN_THREAD_CONTEXT;
 
     RT_ASSERT(mutex != RT_NULL);
 
+    error = RT_EOK;
     /* disable interrupt */
     temp = rt_hw_interrupt_disable();
 
@@ -737,17 +739,13 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
                 /* do schedule */
                 rt_schedule();
 
-                if (thread->error != RT_EOK)
+                temp = rt_hw_interrupt_disable();
+                if (RT_THREAD_SUSPEND == thread->stat)
                 {
-                    /* return error */
-                    return thread->error;
+                    /* resume thread */
+                    rt_ipc_list_resume(&(mutex->parent.suspend_thread));
                 }
-                else
-                {
-                    /* the mutex is taken successfully. */
-                    /* disable interrupt */
-                    temp = rt_hw_interrupt_disable();
-                }
+                error = thread->error;
             }
         }
     }
@@ -757,7 +755,7 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
 
     RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mutex->parent.parent)));
 
-    return RT_EOK;
+    return error;
 }
 RTM_EXPORT(rt_mutex_take);
 
