@@ -992,10 +992,10 @@ enum SensorAccelRange
     SENSOR_ACCEL_RANGE_8G,
     SENSOR_ACCEL_RANGE_16G,
 };
-#define SENSOR_ACCEL_SENSITIVITY_2G  (0.001F)
-#define SENSOR_ACCEL_SENSITIVITY_4G  (0.002F)
-#define SENSOR_ACCEL_SENSITIVITY_8G  (0.004F)
-#define SENSOR_ACCEL_SENSITIVITY_16G (0.012F)
+#define SENSOR_ACCEL_SENSITIVITY_2G  ((float)2/32768)
+#define SENSOR_ACCEL_SENSITIVITY_4G  ((float)4/32768)
+#define SENSOR_ACCEL_SENSITIVITY_8G  ((float)8/32768)
+#define SENSOR_ACCEL_SENSITIVITY_16G ((float)16/32768)
 
 enum SensorGyroRange
 {
@@ -1040,12 +1040,13 @@ typedef struct SensorConfig
 
     union range
     {
+        int range;
         enum SensorAccelRange accel_range;
         enum SensorGyroRange  gyro_range;
     } range;
 }SensorConfig;
 
-typedef void (*SensorEventHandler_t)(sensors_event_t *event, void *user_data);
+typedef void (*SensorEventHandler_t)(void *user_data);
 
 #ifdef __cplusplus
 class SensorBase;
@@ -1074,8 +1075,8 @@ public:
     int setConfig(SensorConfig *config);
     int getConfig(SensorConfig *config);
 
-    int subscribe(SensorEventHandler_t *handler, void *user_data);
-    int publish(sensors_event_t *event);
+    int subscribe(SensorEventHandler_t handler, void *user_data);
+    int publish(void);
 
 protected:
     SensorBase *next;
@@ -1084,7 +1085,7 @@ protected:
     /* sensor configuration */
     SensorConfig config;
 
-    SensorEventHandler_t *evtHandler;
+    SensorEventHandler_t evtHandler;
     void *userData;
 
     friend class SensorManager;
@@ -1103,7 +1104,7 @@ public:
     static int unregisterSensor(SensorBase *sensor);
 
     static SensorBase *getDefaultSensor(int type);
-    static int subscribe(int type, SensorEventHandler_t *handler, void *user_data);
+    static int subscribe(int type, SensorEventHandler_t handler, void *user_data);
 
     static int sensorEventReady(SensorBase *sensor);
     static int pollSensor(SensorBase *sensor, sensors_event_t *events, int number, int duration);
@@ -1120,7 +1121,7 @@ extern "C" {
 
 rt_sensor_t rt_sensor_get_default(int type);
 
-int rt_sensor_subscribe(rt_sensor_t sensor, SensorEventHandler_t *handler, void *user_data);
+int rt_sensor_subscribe(rt_sensor_t sensor, SensorEventHandler_t handler, void *user_data);
 int rt_sensor_activate (rt_sensor_t sensor, int enable);
 int rt_sensor_configure(rt_sensor_t sensor, SensorConfig *config);
 int rt_sensor_poll(rt_sensor_t sensor, sensors_event_t *event);
