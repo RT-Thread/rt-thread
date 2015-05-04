@@ -44,7 +44,7 @@ So far, the RT-Thread scons building system support the command line compiling o
 In rtconfig.py file:
 
 * ```RTT_CC``` the compiler which you want to use, gcc/keil/iar. 
-* ```EXEC_PATH``` the path of compiler. 
+* ```RTT_EXEC_PATH``` the path of compiler. 
 
 In SConstruct file:
 
