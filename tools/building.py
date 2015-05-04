@@ -196,7 +196,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'vs':('msvc', 'cl'),
                 'vs2012':('msvc', 'cl'),
                 'cb':('keil', 'armcc'),
-                'ua':('keil', 'armcc')}
+                'ua':('gcc', 'gcc')}
     tgt_name = GetOption('target')
     if tgt_name:
         # --target will change the toolchain settings which clang-analyzer is
