@@ -1,7 +1,7 @@
 /*
- * File      : interrupt.h
+ * File      : timer0.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
+ * COPYRIGHT (C) 2006-2015, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,13 +19,16 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2015-04-14     ArdaFu      first version
+ * 2015-04-29     ArdaFu       first version
  */
-#ifndef __INTERRUPT_H__
-#define __INTERRUPT_H__
 
-#define INT_IRQ     0x00
-#define INT_FIQ     0x01
+#ifndef __HW_TIMER0_H__
+#define __HW_TIMER0_H__
+////////////////////////////////////////////////////////////////////////////////
+#include "stdint.h"
 
+extern void hw_timer0_init(void);
 
-#endif
+////////////////////////////////////////////////////////////////////////////////
+#endif /* __HW_TIMER0_H__ */
+

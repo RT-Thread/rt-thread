@@ -1,7 +1,7 @@
 /*
- * File      : interrupt.h
+ * File      : reset.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
+ * COPYRIGHT (C) 2006-2015, RT-Thread Develop Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,13 +19,19 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2015-04-14     ArdaFu      first version
+ * 2011-01-13     weety      modified from mini2440
+ * 2015-04-27     ArdaFu      Port bsp from at91sam9260 to asm9260t
  */
-#ifndef __INTERRUPT_H__
-#define __INTERRUPT_H__
 
-#define INT_IRQ     0x00
-#define INT_FIQ     0x01
+#include <rtthread.h>
 
+void machine_reset(void)
+{
 
-#endif
+}
+
+void machine_shutdown(void)
+{
+
+}
+
