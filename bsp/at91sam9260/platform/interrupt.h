@@ -1,25 +1,31 @@
 /*
  * File      : interrupt.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2011, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
- * 2013-07-06     Bernard      first version
+ * 2015-04-14     ArdaFu      first version
  */
-
 #ifndef __INTERRUPT_H__
 #define __INTERRUPT_H__
 
 #define INT_IRQ     0x00
 #define INT_FIQ     0x01
 
-
-rt_uint32_t rt_hw_interrupt_get_active(rt_uint32_t fiq_irq, rt_uint32_t* id);
-void rt_hw_interrupt_ack(rt_uint32_t fiq_irq);
 
 #endif
