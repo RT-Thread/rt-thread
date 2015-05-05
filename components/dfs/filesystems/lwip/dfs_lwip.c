@@ -35,7 +35,9 @@ int dfs_lwip_getsocket(int fd)
     _dfs_fd = fd_get(fd);
     if (_dfs_fd == RT_NULL) return -1;
 
-    return 0;
+    if (_dfs_fd->type != FT_SOCKET) return -1;
+    
+    return (int)_dfs_fd->data;
 }
 
 int dfs_lwip_ioctl(struct dfs_fd* file, int cmd, void* args)
