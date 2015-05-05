@@ -30,6 +30,10 @@
 #include <dfs_file.h>
 #include <dfs_def.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef RT_USING_NEWLIB
 #define O_RDONLY    DFS_O_RDONLY
 #define O_WRONLY    DFS_O_WRONLY
@@ -79,6 +83,7 @@
 
 #if defined(__CC_ARM)
 #include <stdio.h>
+#include <stdlib.h>
 #elif defined(_MSC_VER)
 #include <stdio.h>
 #else
@@ -126,5 +131,8 @@ int rmdir(const char *path);
 int chdir(const char *path);
 char *getcwd(char *buf, size_t size);
 
+#ifdef __cplusplus
+}
 #endif
 
+#endif
