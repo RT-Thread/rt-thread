@@ -28,10 +28,10 @@ msh.c
 
 CPPPATH = [cwd]
 if rtconfig.CROSS_TOOL == 'keil':
-    LINKFLAGS = ' --keep __fsym_*'
+    LINKFLAGS = ' --keep *.o(FSymTab)'
 
     if not GetDepend('FINSH_USING_MSH_ONLY'):
-        LINKFLAGS = LINKFLAGS + ' --keep __vsym_* '
+        LINKFLAGS = LINKFLAGS + ' --keep *.o(VSymTab) '
 else:
     LINKFLAGS = '' 
 
