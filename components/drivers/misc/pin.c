@@ -93,7 +93,7 @@ int rt_device_pin_register(const char *name, const struct rt_pin_ops *ops, void 
     _hw_pin.parent.user_data    = user_data;
 
     /* register a character device */
-    rt_device_register(&_hw_pin.parent, "pin", RT_DEVICE_FLAG_RDWR);
+    rt_device_register(&_hw_pin.parent, name, RT_DEVICE_FLAG_RDWR);
 
     return 0;
 }
