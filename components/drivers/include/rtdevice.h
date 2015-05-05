@@ -28,6 +28,10 @@
 
 #include <rtthread.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define RT_DEVICE(device)            ((rt_device_t)device)
 
 /* completion flag */
@@ -360,6 +364,10 @@ rt_inline void rt_work_init(struct rt_work* work, void (*work_func)(struct rt_wo
 
 #ifdef RT_USING_PIN
 #include "drivers/pin.h"
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* __RT_DEVICE_H__ */
