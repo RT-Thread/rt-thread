@@ -61,7 +61,7 @@ struct finsh_shell* shell;
 const char* finsh_get_prompt()
 {
     #define _MSH_PROMPT "msh "
-    #define _PROMPT 	"finsh "
+    #define _PROMPT     "finsh "
     static char finsh_prompt[RT_CONSOLEBUF_SIZE + 1] = {0};
 
 #ifdef FINSH_USING_MSH
@@ -179,10 +179,10 @@ static void shell_auto_complete(char* prefix)
     {
         msh_auto_complete(prefix);
     }
-    else 
+    else
 #endif
     {
-#ifndef FINSH_USING_MSH_ONLY        
+#ifndef FINSH_USING_MSH_ONLY
         extern void list_prefix(char* prefix);
         list_prefix(prefix);
 #endif
@@ -475,6 +475,11 @@ void finsh_thread_entry(void* parameter)
             /* handle end of line, break */
             if (ch == '\r' || ch == '\n')
             {
+                if (shell->line_position == 0)
+                {
+                    goto NEXT;
+                }
+
                 #ifdef FINSH_USING_HISTORY
                 shell_push_history(shell);
                 #endif
@@ -482,21 +487,33 @@ void finsh_thread_entry(void* parameter)
                 #ifdef FINSH_USING_MSH
                 if (msh_is_used() == RT_TRUE)
                 {
+                #ifdef FINSH_USING_VERIFY
+                    if (!shell->authentic)
+                    {
+                        if ((strncmp(shell->line, "login", 5) != 0) || (shell->line[5] != ' '))
+                        {
+                            rt_kprintf("\nRequires a password to use MSH -- login passwd\n");
+                            goto NEXT;
+                        }
+                    }
+                #endif
+
                     rt_kprintf("\n");
                     msh_exec(shell->line, shell->line_position);
                 }
                 else
                 #endif
                 {
-                #ifndef FINSH_USING_MSH_ONLY                
+                #ifndef FINSH_USING_MSH_ONLY
                     /* add ';' and run the command line */
                     shell->line[shell->line_position] = ';';
 
                     if (shell->line_position != 0) finsh_run_line(&shell->parser, shell->line);
-                    else rt_kprintf("\n");
-                #endif                  
+                #endif
                 }
 
+            NEXT:
+                rt_kprintf("\n");
                 rt_kprintf(FINSH_PROMPT);
                 memset(shell->line, 0, sizeof(shell->line));
                 shell->line_curpos = shell->line_position = 0;
@@ -533,12 +550,12 @@ void finsh_thread_entry(void* parameter)
             ch = 0;
             shell->line_position ++;
             shell->line_curpos++;
-			if (shell->line_position >= 80) 
-			{
-				/* clear command line */
-				shell->line_position = 0;
-				shell->line_curpos = 0;
-			}
+            if (shell->line_position >= 80)
+            {
+                /* clear command line */
+                shell->line_position = 0;
+                shell->line_curpos = 0;
+            }
         } /* end of device read */
     }
 }
@@ -571,7 +588,7 @@ void finsh_system_var_init(const void* begin, const void* end)
 #pragma section("FSymTab$a", read)
 const char __fsym_begin_name[] = "__start";
 const char __fsym_begin_desc[] = "begin of finsh";
-__declspec(allocate("FSymTab$a")) const struct finsh_syscall __fsym_begin = 
+__declspec(allocate("FSymTab$a")) const struct finsh_syscall __fsym_begin =
 {
     __fsym_begin_name,
     __fsym_begin_desc,
@@ -581,7 +598,7 @@ __declspec(allocate("FSymTab$a")) const struct finsh_syscall __fsym_begin =
 #pragma section("FSymTab$z", read)
 const char __fsym_end_name[] = "__end";
 const char __fsym_end_desc[] = "end of finsh";
-__declspec(allocate("FSymTab$z")) const struct finsh_syscall __fsym_end = 
+__declspec(allocate("FSymTab$z")) const struct finsh_syscall __fsym_end =
 {
     __fsym_end_name,
     __fsym_end_desc,
@@ -650,6 +667,9 @@ int finsh_system_init(void)
 #endif
 
     memset(shell, 0, sizeof(struct finsh_shell));
+#ifdef FINSH_USING_VERIFY
+    shell->passwd = FINSH_PASSWD;
+#endif
 
     rt_sem_init(&(shell->rx_sem), "shrx", 0, 0);
     result = rt_thread_init(&finsh_thread,
@@ -664,3 +684,20 @@ int finsh_system_init(void)
 }
 INIT_COMPONENT_EXPORT(finsh_system_init);
 
+int finsh_login(char *passwd)
+{
+#ifdef FINSH_USING_VERIFY
+    if (strcmp(passwd, shell->passwd) == 0)
+    {
+        shell->authentic = 1;
+        rt_kprintf("login success\n");
+        return 0;
+    }
+    else
+    {
+        shell->authentic = 0;
+    }
+#endif
+
+    return -1;
+}

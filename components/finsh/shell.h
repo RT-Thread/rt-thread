@@ -66,6 +66,10 @@ const char* finsh_get_prompt(void);
 	#endif
 #endif
 
+#ifndef FINSH_PASSWD
+#define FINSH_PASSWD "888888"
+#endif
+
 enum input_stat
 {
 	WAIT_NORMAL,
@@ -79,6 +83,10 @@ struct finsh_shell
 	enum input_stat stat;
 
 	rt_uint8_t echo_mode:1;
+	rt_uint8_t authentic:1;
+#ifdef FINSH_USING_VERIFY
+    char *passwd;
+#endif	
 
 #ifdef FINSH_USING_HISTORY
 	rt_uint16_t current_history;

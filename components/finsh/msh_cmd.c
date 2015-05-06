@@ -292,5 +292,12 @@ int cmd_free(int argc, char** argv)
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_free, __cmd_free, Show the memory usage in the system.);
 #endif
 
+#ifdef FINSH_USING_VERIFY
+int cmd_login(int argc, char** argv)
+{
+    return finsh_login(argv[1]);
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_login, __cmd_login, Login to use more command.);
 #endif
 
+#endif
