@@ -378,12 +378,12 @@ void dhcpd_start(char* netif_name)
     rt_thread_t thread;
     struct netif *netif = netif_list;
 
-		 if(strlen(netif_name) > sizeof(netif->name))
+    if(strlen(netif_name) > sizeof(netif->name))
     {
         rt_kprintf("network interface name too long!\r\n");
         return;
     }
-		while(netif != RT_NULL)
+    while(netif != RT_NULL)
     {
         if(strncmp(netif_name, netif->name, sizeof(netif->name)) == 0)
             break;
