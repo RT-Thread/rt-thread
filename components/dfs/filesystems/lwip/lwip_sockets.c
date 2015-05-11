@@ -32,9 +32,48 @@
 
 int accept(int s, struct sockaddr *addr, socklen_t *addrlen)
 {
+	int new_client = -1;
     int sock = dfs_lwip_getsocket(s);
 
-    return lwip_accept(sock, addr, addrlen);
+    new_client = lwip_accept(sock, addr, addrlen);
+	if (new_client != -1)
+	{
+		/* this is a new socket, create it in file system fd */
+		int fd;
+		struct dfs_fd *d;
+		
+		/* allocate a fd */
+		fd = fd_new();
+		if (fd < 0)
+		{
+			rt_set_errno(-DFS_STATUS_ENOMEM);
+			lwip_close(sock);
+
+            printf("no fd yet!\n");
+			return -1;
+		}
+		d = fd_get(fd);
+
+		/* this is a socket fd */
+		d->type = FT_SOCKET;
+		d->path = RT_NULL;
+		
+		d->fs = dfs_lwip_get_fs();
+		
+		d->flags = DFS_O_RDWR; /* set flags as read and write */
+		d->size = 0;
+		d->pos	= 0;
+
+		/* set socket to the data of dfs_fd */
+		d->data = (void*) new_client;
+
+	    /* release the ref-count of fd */
+	    fd_put(d);
+        
+        return fd;
+	}
+
+	return new_client;
 }
 
 int bind(int s, const struct sockaddr *name, socklen_t namelen)
@@ -46,9 +85,28 @@ int bind(int s, const struct sockaddr *name, socklen_t namelen)
 
 int shutdown(int s, int how)
 {
-    int sock = dfs_lwip_getsocket(s);
+    int sock;
+	struct dfs_fd *d;
 
-    return lwip_shutdown(s, how);
+	d = fd_get(s);
+	if (d == RT_NULL)
+	{
+		rt_set_errno(-DFS_STATUS_EBADF);
+		
+		return -1;
+	}
+
+	sock = dfs_lwip_getsocket(s);
+    if (lwip_shutdown(sock, how) == 0)
+    {
+    	/* socket has been closed, delete it from file system fd */
+		fd_put(d);
+		fd_put(d);
+		
+		return 0;
+    }
+
+	return -1;
 }
 
 int getpeername (int s, struct sockaddr *name, socklen_t *namelen)
@@ -163,3 +221,4 @@ int socket(int domain, int type, int protocol)
 
     return fd;
 }
+
