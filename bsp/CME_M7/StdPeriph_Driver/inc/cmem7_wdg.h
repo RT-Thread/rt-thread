@@ -57,13 +57,20 @@
   */
 
 /**
+  * @brief  Deinitializes the Watchdog peripheral registers to their default reset values.
+	* @param[in] None
+  * @retval None
+	*/ 
+void WDG_DeInit(void);
+
+/**
   * @brief  Watchdog initialization
   * @note   This function should be called at first before any other interfaces.
 	* @param[in] trigger Watchdog interrupt trigger mode, which is a value of @ref WDG_TRIGGER_MODE
-	* @param[in] ResetMicroSecond MicroSeconds lasts before global reset
+	* @param[in] ResetMillSecond MillSeconds lasts before global reset
   * @retval None
 	*/ 
-void WDG_Init(uint8_t trigger, uint16_t ResetMicroSecond);
+void WDG_Init(uint8_t trigger, uint16_t ResetMillSecond);
 
 /**
   * @brief  Enable or disable watchdog interrupt. 
@@ -71,28 +78,28 @@ void WDG_Init(uint8_t trigger, uint16_t ResetMicroSecond);
 	* @param[in] Enable The bit indicates if the specific interrupt are enable or not
   * @retval None
 	*/ 
-void WDG_EnableInt(uint8_t Int, BOOL Enable);
+void WDG_ITConfig(uint8_t Int, BOOL Enable);
 
 /**
   * @brief  Check the specific interrupt are set or not 
 	* @param	None
   * @retval BOOL The bit indicates if the specific interrupt are set or not
 	*/
-BOOL WDG_GetIntStatus(void);
+BOOL WDG_GetITStatus(void);
 
 /**
   * @brief  Clear the specific interrupt
 	* @param	None
   * @retval None
 	*/
-void WDG_ClearInt(void);
+void WDG_ClearITPendingBit(void);
 
 /**
   * @brief  Enable or disable watchdog. 
 	* @param[in] Enable The bit indicates if watchdog is enable or not
   * @retval None
 	*/ 
-void WDG_Enable(BOOL Enable);
+void WDG_Cmd(BOOL Enable);
 
 
 #ifdef __cplusplus

@@ -87,9 +87,11 @@ typedef struct
   * @{
   */
 
+#define NVIC_VectTab_CME_CODE        ((uint32_t)0x00000000)
 #define NVIC_VectTab_RAM             ((uint32_t)0x20000000)
 #define NVIC_VectTab_FLASH           ((uint32_t)0x08000000)
-#define IS_NVIC_VECTTAB(VECTTAB) (((VECTTAB) == NVIC_VectTab_RAM) || \
+#define IS_NVIC_VECTTAB(VECTTAB) (((VECTTAB) == NVIC_VectTab_CME_CODE) || \
+                                  ((VECTTAB) == NVIC_VectTab_RAM) || \
                                   ((VECTTAB) == NVIC_VectTab_FLASH))
 /**
   * @}
@@ -198,6 +200,20 @@ void NVIC_SystemLPConfig(uint8_t LowPowerMode, BOOL NewState);
 void GLB_MMAP(uint32_t from, uint32_t to, BOOL isIcacheOn);
 
 /**
+  * @brief  Convert the mapping destination address to source address
+	* @param[in] to address to be mapped to
+  * @retval uint32_t address to be mapped from
+	*/
+uint32_t GLB_ConvertToMappingFromAddr(uint32_t to);
+
+/**
+  * @brief  Convert the mapping source address to destination address
+	* @param[in] from address to be mapped from
+  * @retval uint32_t address to be mapped to
+	*/
+uint32_t GLB_ConvertToMappingToAddr(uint32_t from);
+
+/**
   * @brief  Set NMI irq number, it should be one of @ref IRQn_Type.
 	* @Note		You can assign any valid IRQn_Type to NMI. After that, you will enter NMI 
 	*					interrupt routine if the specific 'irq' occurs. By default, NMI irq number
@@ -227,6 +243,30 @@ void GLB_SetNmiIrqNum(uint32_t irq);
   * @retval None
 	*/
 void GLB_SelectSysClkSource(uint8_t source);
+
+/**
+  * @brief  Simulate instruction 'STRB' or 'STRH' with 'BFI'
+	* @Note		In M7, you have to write a register in 32-bit alignment,
+	*				  not in 8-bit or 16-bit. 
+	* @param[in] addr register address to be written 
+  * @param[in] value value to be written
+  * @param[in] lsb LSB in register to be written
+  * @param[in] len bit length to be written
+  * @retval None
+	*/
+	
+	
+//#define aaaa(len) __asm("LDR len, 11")
+
+#define CMEM7_BFI(addr, value, lsb, len)        \
+  do {                                          \
+    unsigned long tmp;                          \
+    unsigned long tmp1 = (unsigned long)addr;   \
+                                                \
+    __asm("LDR tmp, [tmp1]\n"                   \
+      "BFI tmp, "#value", "#lsb", "#len" \n"    \
+      "STR tmp, [tmp1]\n");                     \
+		} while (0)
 
 #ifdef __cplusplus
 }

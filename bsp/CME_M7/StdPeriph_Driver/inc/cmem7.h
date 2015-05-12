@@ -1,12 +1,12 @@
 
 /****************************************************************************************************//**
- * @file     CMEM7.h
+ * @file     cmem7.h
  *
  * @brief    CMSIS Cortex-M3 Peripheral Access Layer Header File for
- *           CMEM7 from <unknown Vendor>.
+ *           cmem7 from <unknown Vendor>.
  *
  * @version  V1.0
- * @date     5. June 2014
+ * @date     5. January 2015
  *
  * @note     Generated with SVDConv V2.75 
  *           from CMSIS SVD File 'SVDConv_CME_M7.svd' Version 1.0,
@@ -18,7 +18,7 @@
   * @{
   */
 
-/** @addtogroup CMEM7
+/** @addtogroup cmem7
   * @{
   */
 
@@ -46,7 +46,7 @@ typedef enum {
   DebugMonitor_IRQn             =  -4,              /*!<  12  Debug Monitor                                                    */
   PendSV_IRQn                   =  -2,              /*!<  14  Pendable request for system service                              */
   SysTick_IRQn                  =  -1,              /*!<  15  System Tick Timer                                                */
-/* ----------------------  CMEM7 Specific Interrupt Numbers  ---------------------- */
+/* ----------------------  cmem7 Specific Interrupt Numbers  ---------------------- */
   ETH_INT_IRQn                  =   0,              /*!<   0  ETH_INT                                                          */
   USB_INT_IRQn                  =   1,              /*!<   1  USB_INT                                                          */
   DMA_INT_IRQn                  =   2,              /*!<   2  DMA_INT                                                          */
@@ -105,7 +105,7 @@ typedef enum {
 /** @} */ /* End of group Configuration_of_CMSIS */
 
 #include <core_cm3.h>                               /*!< Cortex-M3 processor and core peripherals                              */
-#include "system_cmem7.h"                           /*!< CMEM7 System                                                          */
+#include "system_cmem7.h"                           /*!< cmem7 System                                                          */
 
 
 /* ================================================================================ */
@@ -789,17 +789,17 @@ typedef struct {                                    /*!< RTC Structure          
     
     struct {
       __IO uint32_t  SECOND     :  1;               /*!< 1s interrupt, write 1 clear 0                                         */
-      __IO uint32_t  MICROSECOND:  1;               /*!< 1ms interrupt, write 1 clear 0                                        */
+      __IO uint32_t  MILLSECOND :  1;               /*!< 1ms interrupt, write 1 clear 0                                        */
     } INT_STATUS_b;                                 /*!< BitSize                                                               */
   };
   __IO uint32_t  SECOND;                            /*!< current seconds of system time                                        */
   
   union {
-    __IO uint16_t  MICROSECOND;                     /*!< current micro seconds of system time                                  */
+    __IO uint16_t  MILLSECOND;                      /*!< current millseconds of system time                                    */
     
     struct {
       __IO uint16_t  MS         : 10;               /*!< micro seconds                                                         */
-    } MICROSECOND_b;                                /*!< BitSize                                                               */
+    } MILLSECOND_b;                                 /*!< BitSize                                                               */
   };
 } RTC_Type;
 
@@ -2884,9 +2884,35 @@ typedef struct {                                    /*!< ETH Structure          
                                                          are used to index the content                                         */
     } VLAN_TAG_b;                                   /*!< BitSize                                                               */
   };
-  __I  uint32_t  RESERVED0[8];
+  __I  uint32_t  RESERVED0[2];
+  __IO uint32_t  RWUFFR;                            /*!< Remote Wake-Up Frame Filter Register                                  */
+  
+  union {
+    __IO uint32_t  PMTCSR;                          /*!< PMT Control and Status Register                                       */
+    
+    struct {
+      __IO uint32_t  PWRDWN     :  1;               /*!< Power Down                                                            */
+      __IO uint32_t  MGKPKTEN   :  1;               /*!< Magic Packet Enable                                                   */
+      __IO uint32_t  RWKPKTEN   :  1;               /*!< Remote Wake-Up Frame Enable                                           */
+           uint32_t             :  2;
+      __IO uint32_t  MGKPRCVD   :  1;               /*!< the power management event is generated because of the reception
+                                                         of a magic packet                                                     */
+      __IO uint32_t  RWKPRCVD   :  1;               /*!< When set, this bit indicates the power management event is generated
+                                                         because of the reception of a remote wake-up frame                    */
+           uint32_t             :  2;
+      __IO uint32_t  GLBLUCAST  :  1;               /*!< When set, enables any unicast packet filtered by the MAC (DAF)address
+                                                         recognition to be a remote wake-up frame.                             */
+           uint32_t             : 14;
+      __IO uint32_t  RWKPTR     :  3;               /*!< Remote Wake-up FIFO Pointer                                           */
+           uint32_t             :  4;
+      __IO uint32_t  RWKFILTRST :  1;               /*!< Remote Wake-Up Frame Filter Register Pointer Reset.                   */
+    } PMTCSR_b;                                     /*!< BitSize                                                               */
+  };
+  __I  uint32_t  RESERVED1[2];
+  __IO uint32_t  MACISR;                            /*!< Interrupt Status Register                                             */
+  __IO uint32_t  MACIMR;                            /*!< Interrupt Mask Register                                               */
   __IO uint16_t  ADDR0_HIGH;                        /*!< MAC Address0 High Register                                            */
-  __I  uint16_t  RESERVED1;
+  __I  uint16_t  RESERVED2;
   __IO uint32_t  ADDR0_LOW;                         /*!< MAC Address0 LOW Register                                             */
   
   union {
@@ -2901,10 +2927,51 @@ typedef struct {                                    /*!< ETH Structure          
     } ADDR1_HIGH_b;                                 /*!< BitSize                                                               */
   };
   __IO uint32_t  ADDR1_LOW;                         /*!< MAC Address1 LOW Register                                             */
-  __I  uint32_t  RESERVED2[47];
-  __IO uint32_t  MMC_RX_MASK;                       /*!< MMC Receive interrupt mask                                            */
-  __IO uint32_t  MMC_TX_MASK;                       /*!< MMC Transmit Interrupt Mask                                           */
-  __I  uint32_t  RESERVED3[955];
+  __I  uint32_t  RESERVED3[44];
+  
+  union {
+    __IO uint32_t  MMCCR;                           /*!< MMC Control Register                                                  */
+    
+    struct {
+      __IO uint32_t  CNTRST     :  1;               /*!< Counters Reset                                                        */
+      __IO uint32_t  CNTSTOPRO  :  1;               /*!< Counter Stop Rollover                                                 */
+      __IO uint32_t  RSTONRD    :  1;               /*!< Reset on Read                                                         */
+      __IO uint32_t  CNTFREEZ   :  1;               /*!< MMC Counter Freeze                                                    */
+      __IO uint32_t  CNTPRST    :  1;               /*!< Counters Preset                                                       */
+      __IO uint32_t  CNTPRSTLVL :  1;               /*!< Counters Preset                                                       */
+           uint32_t             :  2;
+      __IO uint32_t  UCDBC      :  1;               /*!< Update MMC Counters for Dropped Broadcast Frames                      */
+    } MMCCR_b;                                      /*!< BitSize                                                               */
+  };
+  __IO uint32_t  MMCRIR;                            /*!< MMC Receive Interrupt Register                                        */
+  __IO uint32_t  MMCTIR;                            /*!< MMC Transmit Interrupt Register                                       */
+  __IO uint32_t  MMCRIMR;                           /*!< MMC Receive interrupt mask                                            */
+  __IO uint32_t  MMCTIMR;                           /*!< MMC Transmit Interrupt Mask                                           */
+  __I  uint32_t  RESERVED4[59];
+  __IO uint32_t  MMCIRCOIM;                         /*!< MMC IPC Receive Checksum Offload Interrupt Mask                       */
+  __I  uint32_t  RESERVED5[319];
+  
+  union {
+    __IO uint32_t  PTPTSCR;                         /*!< Timestamp Control Register                                            */
+    
+    struct {
+      __IO uint32_t  TSENA      :  1;               /*!< Timestamp Enable                                                      */
+      __IO uint32_t  TSCFUPDT   :  1;               /*!< Timestamp Fine or Coarse Update                                       */
+      __IO uint32_t  TSINIT     :  1;               /*!< Timestamp Initialize                                                  */
+      __IO uint32_t  TSUPDT     :  1;               /*!< Timestamp Update                                                      */
+      __IO uint32_t  TSTRIG     :  1;               /*!< Timestamp Interrupt Trigger Enable                                    */
+      __IO uint32_t  TSADDREG   :  1;               /*!< Addend Reg Update                                                     */
+    } PTPTSCR_b;                                    /*!< BitSize                                                               */
+  };
+  __IO uint32_t  PTPSSIR;                           /*!< Sub-Second Increment Register                                         */
+  __IO uint32_t  PTPTSHR;                           /*!< System Time Seconds Register                                          */
+  __IO uint32_t  PTPTSLR;                           /*!< System Time Nanoseconds Register                                      */
+  __IO uint32_t  PTPTSHUR;                          /*!< System Time Seconds Update Register                                   */
+  __IO uint32_t  PTPTSLUR;                          /*!< System Time Nanoseconds Update Register                               */
+  __IO uint32_t  PTPTSAR;                           /*!< Timestamp Addend Register                                             */
+  __IO uint32_t  PTPTTHR;                           /*!< Target Time Seconds Register                                          */
+  __IO uint32_t  PTPTTLR;                           /*!< Target Time Nanoseconds Register                                      */
+  __I  uint32_t  RESERVED6[567];
   
   union {
     __IO uint32_t  BUS_MODE;                        /*!< Flow Control Register                                                 */
@@ -3019,7 +3086,7 @@ typedef struct {                                    /*!< ETH Structure          
       __IO uint32_t  NIE        :  1;               /*!< Normal Interrupt Summary Enable                                       */
     } INT_EN_b;                                     /*!< BitSize                                                               */
   };
-  __I  uint32_t  RESERVED4[3];
+  __I  uint32_t  RESERVED7[3];
   
   union {
     __IO uint32_t  AHB_STATUS;                      /*!< AHB Status Register                                                   */
@@ -3029,7 +3096,7 @@ typedef struct {                                    /*!< ETH Structure          
                                                          in the non-idle state                                                 */
     } AHB_STATUS_b;                                 /*!< BitSize                                                               */
   };
-  __I  uint32_t  RESERVED5[6];
+  __I  uint32_t  RESERVED8[6];
   __I  uint32_t  CURTDESAPTR;                       /*!< Current Host Transmit Descriptor Register                             */
   __I  uint32_t  CURRDESAPTR;                       /*!< Current Host Receive Descriptor Register                              */
   __I  uint32_t  CURTBUFAPTR;                       /*!< Current Host Transmit Buffer Address Register                         */
@@ -7227,7 +7294,7 @@ typedef struct {                                    /*!< GLOBAL_CTRL Structure  
     
     struct {
       __IO uint32_t  SECOND     :  1;               /*!< 1s interrupt enable                                                   */
-      __IO uint32_t  MICROSECOND:  1;               /*!< 1ms interrupt enable                                                  */
+      __IO uint32_t  MILLSECOND :  1;               /*!< 1ms interrupt enable                                                  */
     } RTC_INT_EN_b;                                 /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED1;
@@ -7315,7 +7382,9 @@ typedef struct {                                    /*!< DDRC Structure         
       __IO uint32_t  MODE       :  6;               /*!< DDRC Mode                                                             */
            uint32_t             :  2;
       __IO uint32_t  LANE       :  1;               /*!< LANE synchronization logic bypass                                     */
-           uint32_t             :  7;
+           uint32_t             :  3;
+      __IO uint32_t  ADEC       :  1;               /*!< address decoder mapping                                               */
+           uint32_t             :  3;
       __IO uint32_t  B16        :  2;               /*!< Active 16 bit DQ position when the unmber of DQ IO is 16              */
            uint32_t             :  6;
       __IO uint32_t  CLKPOL     :  2;               /*!< DQS clkpol set by user on the PHY                                     */
@@ -7933,7 +8002,7 @@ typedef struct {                                    /*!< SOFT_RESET Structure   
 
 
 /** @} */ /* End of group Device_Peripheral_Registers */
-/** @} */ /* End of group CMEM7 */
+/** @} */ /* End of group cmem7 */
 /** @} */ /* End of group (null) */
 
 #ifdef __cplusplus
@@ -7941,5 +8010,5 @@ typedef struct {                                    /*!< SOFT_RESET Structure   
 #endif
 
 
-#endif  /* CMEM7_H */
+#endif  /* cmem7_H */
 

@@ -102,6 +102,16 @@
 	#include "cmem7_wdg.h"
 #endif
 
+
+#ifdef _MARVELL
+  #include <marvel_98dx242.h>
+	#include <s24g_i2c.h>
+#endif	
+	
+#ifdef _IP1826D
+  #include <ip1826d_v00.h>
+#endif	
+
 #ifdef __cplusplus
 }
 #endif
