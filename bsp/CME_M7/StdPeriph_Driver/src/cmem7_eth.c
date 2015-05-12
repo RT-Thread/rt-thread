@@ -5,8 +5,8 @@
 	* @brief    CMEM7 ethernet source file
 	*
 	*
-	* @version  V1.0
-	* @date     3. September 2013
+	* @version  V2.0
+	* @date     3. September 2014
 	*
 	* @note               
 	*           
@@ -25,7 +25,7 @@
 	*/
 	
 #include "cmem7_eth.h"
-
+#include "cmem7_misc.h"
 
 typedef struct { 
 	union {
@@ -49,7 +49,7 @@ typedef struct {
 			uint32_t TCH						:  1;		 /*!< Second Address Chained                                */
 			uint32_t 								:  4;
 			uint32_t TTSE           :  1; 	 /*!< enables IEEE1588 hardware timestamping in first segment */
-			uint32_t 								:  2;
+			uint32_t 							  :  2;  
 			uint32_t FS           	:  1; 	 /*!< first segment flag                                    */
 			uint32_t LS           	:  1; 	 /*!< last segment flag                                     */
 			uint32_t IC	           	:  1; 	 /*!< Interrupt on Completion                               */
@@ -190,8 +190,9 @@ static void mac_SetConfig(ETH_InitTypeDef *init) {
 	ETH->CONFIG_b.IPC = init->ETH_ChecksumOffload;
 	ETH->CONFIG_b.DM = init->ETH_Duplex;
 	ETH->CONFIG_b.LM = FALSE;
-	ETH->MMC_RX_MASK = 0xFFFFFFFF;
-	ETH->MMC_TX_MASK = 0xFFFFFFFF;
+	ETH->MMCRIMR = 0xFFFFFFFF;
+	ETH->MMCTIMR = 0xFFFFFFFF;
+	ETH->MMCIRCOIM = 0xFFFFFFFF;
 	
 	if (init->ETH_Speed == ETH_SPEED_10M) {
 		ETH->CONFIG_b.FES = ETH_EXACT_SPEED_10M_BPS;
@@ -209,7 +210,7 @@ static void mac_SetConfig(ETH_InitTypeDef *init) {
 	ETH->CONFIG_b.JD = TRUE;
 	ETH->CONFIG_b.WD = TRUE;
 	ETH->CONFIG_b.TC = FALSE;
-	ETH->CONFIG_b.CST = FALSE;
+	ETH->CONFIG_b.CST = TRUE;
 	ETH->CONFIG_b.TWOKPE = FALSE;
 	ETH->CONFIG_b.SARC = ETH_SOURCE_ADDR_REPLACE;
 }
@@ -318,7 +319,7 @@ static void mac_SetFrameFilter(ETH_FrameFilter *filter) {
 	ETH->FF_b.VTFE = FALSE;
 	ETH->FF_b.IPFE = FALSE;
 	ETH->FF_b.DNTU = FALSE;
-	ETH->FF_b.RA = TRUE;
+	ETH->FF_b.RA = FALSE;//TRUE
 	
 	// receive all
 	if (!filter) {
@@ -339,14 +340,20 @@ static void mac_SetFrameFilter(ETH_FrameFilter *filter) {
 	
 	// SA
 	if (filter->ETH_SourceFilterEnable) {
-		ETH->FF_b.RA = FALSE;
+		uint32_t value;
+    
+    ETH->FF_b.RA = FALSE;
 		ETH->FF_b.SAF = TRUE;
 		ETH->FF_b.SAIF = filter->ETH_SourceDrop;
 		ETH->ADDR1_HIGH_b.AE = TRUE;
-		ETH->ADDR1_HIGH_b.SA = TRUE;
-		ETH->ADDR1_HIGH_b.ADDR = 
+		ETH->ADDR1_HIGH_b.SA = TRUE; 
+    ETH->ADDR1_HIGH_b.ADDR = 
 			(filter->ETH_SourceMacAddr[5] << 8) | filter->ETH_SourceMacAddr[4];
-		ETH->ADDR1_LOW = (filter->ETH_SourceMacAddr[3] << 24) | 
+		
+		
+// 		value = (filter->ETH_SourceMacAddr[5] << 8) | filter->ETH_SourceMacAddr[4];
+//     CMEM7_BFI(&(ETH->ADDR1_HIGH), value, 0, 16);
+    ETH->ADDR1_LOW = (filter->ETH_SourceMacAddr[3] << 24) | 
 			(filter->ETH_SourceMacAddr[2] << 16) | 
 		  (filter->ETH_SourceMacAddr[1] << 8) | 
 			filter->ETH_SourceMacAddr[0];
@@ -355,9 +362,9 @@ static void mac_SetFrameFilter(ETH_FrameFilter *filter) {
 
 static void mac_setFlowControl(void) {
   ETH->FC_b.FCB = FALSE;
-	ETH->FC_b.TFE = TRUE;
-	ETH->FC_b.RFE = TRUE;
-	ETH->FC_b.UP = TRUE;
+	ETH->FC_b.TFE = FALSE;//TRUE
+	ETH->FC_b.RFE = FALSE;//TRUE
+	ETH->FC_b.UP = FALSE;//TRUE
 }
 
 uint32_t ETH_PhyRead(uint32_t phyAddr, uint32_t phyReg) {
@@ -381,27 +388,44 @@ void ETH_PhyWrite(uint32_t phyAddr, uint32_t phyReg, uint32_t data) {
 	while (ETH->GMII_ADDR_b.BUSY) ;
 }
 
-
+void ETH_StructInit(ETH_InitTypeDef* init)
+{
+    init->ETH_Speed = ETH_SPEED_10M;
+    init->ETH_Duplex = ETH_DUPLEX_FULL;
+    init->ETH_JumboFrame = FALSE;
+    init->ETH_LinkUp = FALSE;
+    init->ETH_RxEn = TRUE;
+    init->ETH_TxEn = TRUE;
+    init->ETH_ChecksumOffload = FALSE;
+    init->ETH_Filter = 0;
+    init->ETH_MacAddr[0] = 0;
+    init->ETH_MacAddr[1] = 0;
+    init->ETH_MacAddr[2] = 0;
+    init->ETH_MacAddr[3] = 0;
+    init->ETH_MacAddr[4] = 0;
+    init->ETH_MacAddr[5] = 0;
+    
+}
 BOOL ETH_Init(ETH_InitTypeDef *init) {
-  assert_param(init);
-	assert_param(IS_ETH_SPEED(init->ETH_Speed));
-	assert_param(IS_ETH_DUPLEX(init->ETH_Duplex));
+    assert_param(init);
+    assert_param(IS_ETH_SPEED(init->ETH_Speed));
+    assert_param(IS_ETH_DUPLEX(init->ETH_Duplex));
 	
-	mac_SwReset();
-	mac_SetConfig(init);
-	mac_SetMacAddr(init->ETH_MacAddr);
+    mac_SwReset();
+    mac_SetConfig(init);
+    mac_SetMacAddr(init->ETH_MacAddr);
 	
-	mac_SetBurst(ETH_BURST_MODE_MIXED, 3, 4);
-	mac_SetPriority(TRUE, 0);
-	mac_SetDescMode(TRUE, 0);
-	mac_SetOpertionMode();
-  mac_SetFrameFilter(init->ETH_Filter);
-	mac_setFlowControl();
+    mac_SetBurst(ETH_BURST_MODE_MIXED, 3, 4);
+    mac_SetPriority(TRUE, 0);
+    mac_SetDescMode(TRUE, 0);
+    mac_SetOpertionMode();
+    mac_SetFrameFilter(init->ETH_Filter);
+    mac_setFlowControl();
 	
-	return TRUE;
+    return TRUE;
 }
 
-void ETH_EnableInt(uint32_t Int, BOOL enable) {
+void ETH_ITConfig(uint32_t Int, BOOL enable) {
 	assert_param(IS_ETH_INT(Int));
 	
 	if (enable) {
@@ -426,7 +450,7 @@ void ETH_EnableInt(uint32_t Int, BOOL enable) {
 		}
 	}
 }
-BOOL ETH_GetIntStatus(uint32_t Int) {
+BOOL ETH_GetITStatus(uint32_t Int) {
 	assert_param(IS_ETH_INT(Int));
 	
 	Int &= ETH->INT_EN;
@@ -436,8 +460,7 @@ BOOL ETH_GetIntStatus(uint32_t Int) {
 	
 	return FALSE;
 }
-
-void ETH_ClearInt(uint32_t Int) {
+void ETH_ClearITPendingBit(uint32_t Int) {
 	uint32_t sta;
 	assert_param(IS_ETH_INT(Int));
 		
@@ -450,15 +473,15 @@ void ETH_ClearInt(uint32_t Int) {
 	
 	if (IS_ETH_INT_NORMAL(Int)) {
 		if (!IS_ETH_INT_NORMAL(sta)) {
-			// write 1 clear
-			ETH->STATUS_b.NIS = 1;
+			// write 1 clear NIS
+			ETH->STATUS = ETH_INT_NORMAL_SUMMARY;
 		}
 	}
 	
 	if (IS_ETH_INT_ABNORMAL(Int)) {
 		if (!IS_ETH_INT_ABNORMAL(sta)) {
-			// write 1 clear
-			ETH->STATUS_b.AIS = 1;
+			// write 1 clear AIS
+			ETH->STATUS = ETH_INT_ABNORMAL_SUMMARY;
 		}
 	}
 }
@@ -491,12 +514,25 @@ BOOL ETH_SetTxDescRing(ETH_TX_DESC *ring) {
 		return FALSE;
 	}
 
+  /* If code mapping */
+  ring = (ETH_TX_DESC *)GLB_ConvertToMappingFromAddr((uint32_t)ring);
+  buf = ring;
+  
 	do {
 		INNER_ETH_TX_DESC *desc = (INNER_ETH_TX_DESC *)buf;
+    uint8_t first = desc->TX_0.TX0_b.FS;
+    uint8_t last = desc->TX_0.TX0_b.LS;
+    
+    // clear all bits
+    desc->TX_0.TX0 = 0;
+    desc->TX_0.TX0_b.FS = first;
+    desc->TX_0.TX0_b.LS = last;
 		desc->TX_0.TX0_b.TCH = TRUE;
 		desc->TX_0.TX0_b.IC = TRUE;
 		desc->TX_0.TX0_b.OWN = ETH_DESC_OWN_BY_SELF;
 		
+    buf->bufAddr = GLB_ConvertToMappingFromAddr(buf->bufAddr);
+    buf->nextDescAddr = GLB_ConvertToMappingFromAddr(buf->nextDescAddr);
 		buf = (ETH_TX_DESC *)buf->nextDescAddr;
 	} while (buf != ring);
 	
@@ -553,6 +589,16 @@ void ETH_ReleaseTxDesc(ETH_TX_DESC *desc) {
 	inner->TX_0.TX0_b.OWN = ETH_DESC_OWN_BY_HW;
 }
 
+void ETH_SetTxDescBufAddr(ETH_TX_DESC *desc, uint32_t bufAddr) {
+	if (desc) {
+		desc->bufAddr = GLB_ConvertToMappingFromAddr(bufAddr);;
+	}
+}
+
+uint32_t ETH_GetTxDescBufAddr(ETH_TX_DESC *desc) {
+  return (desc ? GLB_ConvertToMappingToAddr(desc->bufAddr) : 0);
+}
+
 BOOL ETH_SetRxDescRing(ETH_RX_DESC *ring) {
 	ETH_RX_DESC *buf = ring;
 	
@@ -564,12 +610,17 @@ BOOL ETH_SetRxDescRing(ETH_RX_DESC *ring) {
 		return FALSE;
 	}
 
+  /* If code mapping */
+  ring = (ETH_RX_DESC *)GLB_ConvertToMappingFromAddr((uint32_t)ring);
+  buf = ring;
 	do {
 		INNER_ETH_RX_DESC *desc = (INNER_ETH_RX_DESC *)buf;
 		desc->RX_1.RX1_b.RCH = TRUE;
 		desc->RX_1.RX1_b.DIC = FALSE;
 		desc->RX_0.RX0_b.OWN = ETH_DESC_OWN_BY_HW;
 
+    buf->bufAddr = GLB_ConvertToMappingFromAddr(buf->bufAddr);
+    buf->nextDescAddr = GLB_ConvertToMappingFromAddr(buf->nextDescAddr);
 		buf = (ETH_RX_DESC *)buf->nextDescAddr;
 	} while (buf != ring);
 	
@@ -625,5 +676,17 @@ void ETH_ReleaseRxDesc(ETH_RX_DESC *desc) {
 	inner = (INNER_ETH_RX_DESC *)desc;
 	inner->RX_0.RX0_b.OWN = ETH_DESC_OWN_BY_HW;
 }
+
+
+void ETH_SetRxDescBufAddr(ETH_RX_DESC *desc, uint32_t bufAddr) {
+	if (desc) {
+		desc->bufAddr = GLB_ConvertToMappingFromAddr(bufAddr);;
+	}
+}
+
+uint32_t ETH_GetRxDescBufAddr(ETH_RX_DESC *desc) {
+  return (desc ? GLB_ConvertToMappingToAddr(desc->bufAddr) : 0);
+}
+
 
 
