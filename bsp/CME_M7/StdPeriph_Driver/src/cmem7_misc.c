@@ -92,8 +92,20 @@ void NVIC_SystemLPConfig(uint8_t LowPowerMode, BOOL NewState)
 	}
 }
 
+#define DEF_IBUS_OFFSET     0x1FFE0000
+#define DEF_EXT_ADDR        0x08020000
+static BOOL isMappingOn() {
+  /* If default values aren't changed */
+  if ((GLOBAL_CTRL->IBUSOFF == DEF_IBUS_OFFSET) && 
+    (GLOBAL_CTRL->EXTADDR == DEF_EXT_ADDR)) {
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
 void GLB_MMAP(uint32_t from, uint32_t to, BOOL isIcacheOn) {
-	int n;
+	volatile int n;
 	
 	GLOBAL_CTRL->IBUSOFF = GLOBAL_CTRL->DBUSOFF = (from - to);
 	GLOBAL_CTRL->EXTADDR = to;
@@ -102,6 +114,38 @@ void GLB_MMAP(uint32_t from, uint32_t to, BOOL isIcacheOn) {
 	for (n = 0; n < 100; n++);
 	GLOBAL_CTRL->ICACHE_b.EN = isIcacheOn;
 	for (n = 0; n < 100; n++);
+}
+
+/*
+ * ------------------------------------------------------------------
+ * | 0 - 0x20000 | --> 0x20000000 | -> 0x40000000 | -> 0xFFFFFFFF   |
+ * |  code SRAM  | map to region  | data SRAM     | map from region |
+ * ------------------------------------------------------------------
+ */
+#define MAPPING_FROM_REGION_START   0x40000000
+#define MAPPING_TO_REGION_END       0x20000000
+uint32_t GLB_ConvertToMappingFromAddr(uint32_t to) {
+  if (!isMappingOn()) {
+    return to;
+  }
+  
+  if ((to > MAPPING_TO_REGION_END) || (to < GLOBAL_CTRL->EXTADDR)) {
+    return to;
+  }
+  
+  return (to + GLOBAL_CTRL->IBUSOFF);
+}
+
+uint32_t GLB_ConvertToMappingToAddr(uint32_t from) {
+  if (!isMappingOn()) {
+    return from;
+  }
+  
+  if (from < MAPPING_FROM_REGION_START) {
+    return from;
+  }
+  
+  return (from - GLOBAL_CTRL->IBUSOFF);
 }
 
 void GLB_SetNmiIrqNum(uint32_t irq) {

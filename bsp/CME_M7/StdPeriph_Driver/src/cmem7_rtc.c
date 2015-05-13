@@ -28,7 +28,7 @@
 
 #define SECONDS_IN_A_DAY                (86400)
 
-void RTC_EnableInt(uint32_t Int, BOOL Enable) {
+void RTC_ITConfig(uint32_t Int, BOOL Enable) {
 	assert_param(IS_RTC_INT(Int));  
 	
 	if (Enable) {
@@ -38,7 +38,7 @@ void RTC_EnableInt(uint32_t Int, BOOL Enable) {
 	}
 }
 
-BOOL RTC_GetIntStatus(uint32_t Int) {
+BOOL RTC_GetITStatus(uint32_t Int) {
 	assert_param(IS_RTC_INT(Int)); 
 	
 	if (0 != (RTC->INT_STATUS & Int)) {
@@ -48,7 +48,7 @@ BOOL RTC_GetIntStatus(uint32_t Int) {
 	return FALSE;
 }
 
-void RTC_ClearInt(uint32_t Int) {
+void RTC_ClearITPendingBit(uint32_t Int) {
   assert_param(IS_RTC_INT(Int));  
 	
 	RTC->INT_STATUS = Int;
@@ -58,6 +58,6 @@ uint32_t RTC_GetSecond() {
 	return RTC->SECOND;
 }
 
-uint16_t RTC_GetMicroSecond() {
-	return RTC->MICROSECOND_b.MS;
+uint16_t RTC_GetMillSecond() {
+	return RTC->MILLSECOND_b.MS;
 }
