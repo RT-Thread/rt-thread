@@ -140,6 +140,17 @@ void GPIO_InitPwm(uint8_t Channel, uint32_t HighLevelNanoSecond, uint32_t LowLev
 	*/ 
 void GPIO_EnablePwm(uint8_t Channel, BOOL Enable);
 
+
+
+/**
+  xjf 20150324
+  
+**/
+void GPIO_SetBits(uint32_t mask);
+void GPIO_clrBits(uint32_t mask);
+uint32_t GPIO_getBits(uint32_t mask); 
+
+
 #ifdef __cplusplus
 }
 #endif

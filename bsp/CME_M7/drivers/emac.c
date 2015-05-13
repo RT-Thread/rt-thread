@@ -205,14 +205,14 @@ static rt_err_t rt_cme_eth_init(rt_device_t dev)
     RxDescChainInit();
     TxDescChainInit();
 
-    ETH_EnableInt(ETH_INT_BUS_FATAL_ERROR, TRUE);
+    ETH_ITConfig(ETH_INT_BUS_FATAL_ERROR, TRUE);
 
-    ETH_EnableInt(ETH_INT_RX_COMPLETE_FRAME, TRUE);
-    ETH_EnableInt(ETH_INT_RX_BUF_UNAVAI, TRUE);
-    ETH_EnableInt(ETH_INT_RX_STOP, TRUE);
+    ETH_ITConfig(ETH_INT_RX_COMPLETE_FRAME, TRUE);
+    ETH_ITConfig(ETH_INT_RX_BUF_UNAVAI, TRUE);
+    ETH_ITConfig(ETH_INT_RX_STOP, TRUE);
     ETH_StartRx();
 
-    ETH_EnableInt(ETH_INT_TX_COMPLETE_FRAME, TRUE);
+    ETH_ITConfig(ETH_INT_TX_COMPLETE_FRAME, TRUE);
     ETH_StartTx();
 
     return RT_EOK;
@@ -318,8 +318,8 @@ struct pbuf *rt_cme_eth_rx(rt_device_t dev)
     desc = ETH_AcquireFreeRxDesc();
     if(desc == RT_NULL)
     {
-        ETH_EnableInt(ETH_INT_RX_COMPLETE_FRAME, TRUE);
-        ETH_EnableInt(ETH_INT_RX_BUF_UNAVAI, TRUE);
+        ETH_ITConfig(ETH_INT_RX_COMPLETE_FRAME, TRUE);
+        ETH_ITConfig(ETH_INT_RX_BUF_UNAVAI, TRUE);
         ETH_ResumeRx();
         goto _exit;
     }
@@ -414,28 +414,28 @@ void ETH_IRQHandler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    if (ETH_GetIntStatus(ETH_INT_TX_COMPLETE_FRAME))
+    if (ETH_GetITStatus(ETH_INT_TX_COMPLETE_FRAME))
     {
         rt_sem_release(&cme_eth_device.tx_buf_free);
-        ETH_ClearInt(ETH_INT_TX_COMPLETE_FRAME);
+        ETH_ClearITPendingBit(ETH_INT_TX_COMPLETE_FRAME);
     }
 
-    if (ETH_GetIntStatus(ETH_INT_RX_STOP))
+    if (ETH_GetITStatus(ETH_INT_RX_STOP))
     {
         CME_ETH_PRINTF("ETH_INT_RX_STOP\n");
-        ETH_ClearInt(ETH_INT_RX_STOP);
+        ETH_ClearITPendingBit(ETH_INT_RX_STOP);
     }
 
-    if ((ETH_GetIntStatus(ETH_INT_RX_BUF_UNAVAI)) ||
-            (ETH_GetIntStatus(ETH_INT_RX_COMPLETE_FRAME)))
+    if ((ETH_GetITStatus(ETH_INT_RX_BUF_UNAVAI)) ||
+            (ETH_GetITStatus(ETH_INT_RX_COMPLETE_FRAME)))
     {
         /* a frame has been received */
         eth_device_ready(&(cme_eth_device.parent));
 
-        ETH_EnableInt(ETH_INT_RX_COMPLETE_FRAME, FALSE);
-        ETH_EnableInt(ETH_INT_RX_BUF_UNAVAI, FALSE);
-        ETH_ClearInt(ETH_INT_RX_BUF_UNAVAI);
-        ETH_ClearInt(ETH_INT_RX_COMPLETE_FRAME);
+        ETH_ITConfig(ETH_INT_RX_COMPLETE_FRAME, FALSE);
+        ETH_ITConfig(ETH_INT_RX_BUF_UNAVAI, FALSE);
+        ETH_ClearITPendingBit(ETH_INT_RX_BUF_UNAVAI);
+        ETH_ClearITPendingBit(ETH_INT_RX_COMPLETE_FRAME);
     }
 
     /* leave interrupt */
