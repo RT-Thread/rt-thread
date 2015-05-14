@@ -91,7 +91,6 @@ static long _list_thread(struct rt_list_node *list)
 
     rt_kprintf(" thread  pri  status      sp     stack size max used   left tick  error\n");
     rt_kprintf("-------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
-    rt_enter_critical();
     for (node = list->next; node != list; node = node->next)
     {
         thread = rt_list_entry(node, struct rt_thread, list);
@@ -112,7 +111,6 @@ static long _list_thread(struct rt_list_node *list)
             thread->remaining_tick,
             thread->error);
     }
-    rt_exit_critical();
     return 0;
 }
 
