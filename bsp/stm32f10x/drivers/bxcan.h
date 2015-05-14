@@ -9,6 +9,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2015-05-14     aubrcool@qq.com first version
  */
 
 #ifndef BXCAN_H_

@@ -8,8 +8,11 @@
  * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
- * Date           Author       Notes
+ * Date           Author       		Notes
+ * 2015-05-14     aubrcool@qq.com 	first version
  */
+
+#ifdef RT_USING_CAN
 #include <board.h>
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -139,3 +142,4 @@ int rt_can_app_init(void)
 }
 
 INIT_APP_EXPORT(rt_can_app_init);
+#endif /*RT_USING_CAN*/

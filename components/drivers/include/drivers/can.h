@@ -8,7 +8,8 @@
  * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
- * Date           Author       Notes
+ * Date           Author       		Notes
+ * 2015-05-14     aubrcool@qq.com 	first version
  */
 #ifndef CAN_H_
 #define CAN_H_
