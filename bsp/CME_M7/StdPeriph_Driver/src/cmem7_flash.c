@@ -108,7 +108,8 @@ static uint8_t flash_ReadInnerStatusHigh() {
 	return (uint8_t)NOR_FLASH->DATA;	
 }
 
-static void flash_WaitInWritting() {
+//static void flash_WaitInWritting() {
+void flash_WaitInWritting(void) {
 	FLASH_INNER_STATUS s;
 	
 	while (NOR_FLASH->STATUS_b.BUSY);
@@ -173,7 +174,8 @@ static void flash_RwReq(uint8_t cmd, uint32_t addr, uint16_t size) {
 	NOR_FLASH->TRIGGER_b.OP_START = TRUE;
 }
 
-static void flash_WaitReadFifoNotEmpty() {
+//static void flash_WaitReadFifoNotEmpty() {
+void flash_WaitReadFifoNotEmpty(void) {
 	while (NOR_FLASH->STATUS_b.RD_FIFO_EMPTY) {
 		if (wait) {
 			(*wait)();
@@ -181,7 +183,8 @@ static void flash_WaitReadFifoNotEmpty() {
 	}
 }
 
-static uint16_t flash_ReadFifo(uint16_t size, uint8_t* data) {
+//static uint16_t flash_ReadFifo(uint16_t size, uint8_t* data) {
+uint16_t flash_ReadFifo(uint16_t size, uint8_t* data) {
 	uint16_t count = 0;
 	
 	while (!NOR_FLASH->STATUS_b.RD_FIFO_EMPTY && size != 0) {

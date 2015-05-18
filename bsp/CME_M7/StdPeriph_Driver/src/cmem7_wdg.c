@@ -30,29 +30,34 @@ static uint32_t wdg_GetClock() {
 	return SYSTEM_CLOCK_FREQ / (1 << (GLOBAL_CTRL->CLK_SEL_0_b.WDG_CLK + 1));
 }
 
-void WDG_Init(uint8_t trigger, uint16_t ResetMicroSecond) {
+void WDG_DeInit(void){
+  SOFT_RESET->SOFTRST_b.WDT_n = 0;
+	SOFT_RESET->SOFTRST_b.WDT_n = 1;
+}
+
+void WDG_Init(uint8_t trigger, uint16_t ResetMillSecond) {
 	assert_param(IS_WDG_TRIGGER_MODE(trigger));
 	
 	WDG->INT_CTRL_b.TRIGGER_MODE = trigger;
-	WDG->LEN = ((uint64_t)wdg_GetClock()) * ResetMicroSecond / 1000;
+	WDG->LEN = ((uint64_t)wdg_GetClock()) * ResetMillSecond / 1000;
 }
 
-void WDG_EnableInt(uint8_t Int, BOOL Enable) {
+void WDG_ITConfig(uint8_t Int, BOOL Enable) {
 	assert_param(IS_WDG_INT(Int));
 	
 	WDG->CTRL_b.INT_LEN = Int;
 	WDG->INT_CTRL_b.MASK = !Enable;
 }
 
-BOOL WDG_GetIntStatus() {
+BOOL WDG_GetITStatus() {
 	return (WDG->INT_STA_b.STA == 1) ? TRUE : FALSE;
 }
 
-void WDG_ClearInt() {
+void WDG_ClearITPendingBit() {
 	WDG->INT_STA_b.STA = 1;
 }
 
-void WDG_Enable(BOOL Enable) {
+void WDG_Cmd(BOOL Enable) {
 	WDG->CTRL_b.EN = Enable;
 }
 

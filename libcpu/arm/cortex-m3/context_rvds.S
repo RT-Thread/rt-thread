@@ -177,7 +177,6 @@ rt_hw_context_switch_to    PROC
 rt_hw_interrupt_thread_switch PROC
     EXPORT rt_hw_interrupt_thread_switch
     BX      lr
-    NOP
     ENDP
 
     IMPORT rt_hw_hard_fault_exception
@@ -203,5 +202,6 @@ HardFault_Handler    PROC
     BX      lr
     ENDP
 
-    NOP
+    ALIGN   4
+
     END

@@ -179,3 +179,78 @@ void GPIO_EnablePwm(uint8_t Channel, BOOL Enable) {
 	}
 }
 
+/**
+   xjf 20150324
+   
+**/
+void GPIO_SetBits(uint32_t mask)
+{
+  static uint32_t g_GPIO_OUT_UNMASK;
+  static uint32_t g_GPIO_OUT_DATA;
+  static uint32_t g_GPIO_OE;
+	
+	g_GPIO_OUT_UNMASK = GPIO->GPIO_OUT_UNMASK ;
+  g_GPIO_OUT_DATA   = GPIO->GPIO_OUT_DATA   ;
+	g_GPIO_OE         = GPIO->GPIO_OE ;
+  g_GPIO_OUT_UNMASK |=mask;  
+  g_GPIO_OE         |=mask;
+	g_GPIO_OUT_DATA   |=mask;
+	
+	GPIO->GPIO_OUT_UNMASK =g_GPIO_OUT_UNMASK ;
+  GPIO->GPIO_OUT_DATA   =g_GPIO_OUT_DATA ;
+	GPIO->GPIO_OE         =g_GPIO_OE       ;
+}
+
+void GPIO_clrBits(uint32_t mask)
+{
+  static uint32_t g_GPIO_OUT_UNMASK;
+  static uint32_t g_GPIO_OUT_DATA;
+  static uint32_t g_GPIO_OE;
+	
+	g_GPIO_OUT_UNMASK = GPIO->GPIO_OUT_UNMASK ;
+  g_GPIO_OUT_DATA   = GPIO->GPIO_OUT_DATA   ;
+	g_GPIO_OE         = GPIO->GPIO_OE ;
+  g_GPIO_OUT_UNMASK |=mask;  
+  g_GPIO_OE         |=mask;
+	g_GPIO_OUT_DATA   &=(~ mask);
+	
+	GPIO->GPIO_OUT_UNMASK =g_GPIO_OUT_UNMASK ;
+  GPIO->GPIO_OUT_DATA   =g_GPIO_OUT_DATA ;
+	GPIO->GPIO_OE         =g_GPIO_OE       ;
+}
+
+uint32_t GPIO_getBits(uint32_t mask)
+{
+  static uint32_t g_GPIO_OUT_UNMASK;
+  //static uint32_t g_GPIO_OUT_DATA;
+  static uint32_t g_GPIO_OE;
+	
+	uint32_t  get_delay = 0;
+	uint32_t  saved_mask;
+	
+	saved_mask=mask;
+	
+	g_GPIO_OUT_UNMASK      = GPIO->GPIO_OUT_UNMASK ;
+	g_GPIO_OE              = GPIO->GPIO_OE ;
+  g_GPIO_OUT_UNMASK     &=(~mask);  
+  g_GPIO_OE             &=(~mask);
+	GPIO->GPIO_OUT_UNMASK  =g_GPIO_OUT_UNMASK ;
+	GPIO->GPIO_OE          =g_GPIO_OE       ;
+	for(get_delay=0;get_delay<100;get_delay++)
+	  {
+    }
+	//get_delay=(GPIO->GPIO_IN)&saved_mask;
+  if(((GPIO->GPIO_IN)&saved_mask)==saved_mask)	
+	   {
+			 return(1);
+	    }		
+	else
+   	{
+			return(0);
+    }
+	
+}
+/**
+   xjf 20150324
+   
+**/

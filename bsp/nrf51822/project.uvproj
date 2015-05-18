@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_proj.xsd">
-  <SchemaVersion>1.1</SchemaVersion>
+<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_projx.xsd">
+  <SchemaVersion>2.1</SchemaVersion>
   <Header>### uVision Project, (C) Keil Software</Header>
   <Targets>
     <Target>
-      <TargetName>RT-Thread/AT91SAM7X256</TargetName>
+      <TargetName>rt-thread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
         <TargetCommonOption>
-          <Device>AT91SAM7X256</Device>
-          <Vendor>Atmel</Vendor>
-          <Cpu>IRAM(0x200000-0x20FFFF) IROM(0x100000-0x13FFFF) CLOCK(18432000) CPUTYPE(ARM7TDMI)</Cpu>
+          <Device>nRF51822_xxAA</Device>
+          <Vendor>Nordic Semiconductor</Vendor>
+          <PackID>NordicSemiconductor.nRF_DeviceFamilyPack.1.1.4</PackID>
+          <PackURL>http://developer.nordicsemi.com/nRF51_SDK/pieces/nRF_DeviceFamilyPack/</PackURL>
+          <Cpu>IROM(0x00000000,0x40000) IRAM(0x20000000,0x4000) CPUTYPE("Cortex-M0") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec />
-          <StartupFile>"STARTUP\Atmel\SAM7.s" ("Atmel AT91SAM7 Startup Code")</StartupFile>
-          <FlashDriverDll>UL2ARM(-U56240812 -O15 -S0 -C0 -FO7 -FD200000 -FC800 -FN1 -FF0AT91SAM7_256 -FS0100000 -FL040000)</FlashDriverDll>
-          <DeviceId>4081</DeviceId>
-          <RegisterFile>AT91SAM7X256.H</RegisterFile>
+          <StartupFile />
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0nrf51xxx -FS00 -FL0200000 -FP0($$Device:nRF51822_xxAA$Flash\nrf51xxx.flm))</FlashDriverDll>
+          <DeviceId>0</DeviceId>
+          <RegisterFile>$$Device:nRF51822_xxAA$Device\Include\nrf.h</RegisterFile>
           <MemoryEnv />
           <Cmp />
           <Asm />
@@ -26,13 +28,14 @@
           <SLE66CMisc />
           <SLE66AMisc />
           <SLE66LinkerMisc />
-          <SFDFile />
+          <SFDFile>$$Device:nRF51822_xxAA$SVD\nrf51.xml</SFDFile>
+          <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath />
           <IncludePath />
           <LibPath />
-          <RegisterFilePath>Atmel\SAM7X\</RegisterFilePath>
-          <DBRegisterFilePath>Atmel\SAM7X\</DBRegisterFilePath>
+          <RegisterFilePath />
+          <DBRegisterFilePath />
           <TargetStatus>
             <Error>0</Error>
             <ExitCodeStop>0</ExitCodeStop>
@@ -40,14 +43,14 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>.\objs\</OutputDirectory>
-          <OutputName>project</OutputName>
+          <OutputDirectory>.\build\</OutputDirectory>
+          <OutputName>template</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
-          <ListingPath>.\</ListingPath>
+          <ListingPath>.\build\</ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
           <CreateBatchFile>0</CreateBatchFile>
@@ -58,6 +61,8 @@
             <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
+            <nStopU1X>0</nStopU1X>
+            <nStopU2X>0</nStopU2X>
           </BeforeCompile>
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
@@ -66,6 +71,8 @@
             <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
+            <nStopB1X>0</nStopB1X>
+            <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
             <RunUserProg1>0</RunUserProg1>
@@ -92,16 +99,17 @@
           <StopOnExitCode>3</StopOnExitCode>
           <CustomArgument />
           <IncludeLibraryModules />
+          <ComprImg>1</ComprImg>
         </CommonProperty>
         <DllOption>
-          <SimDllName>SARM.DLL</SimDllName>
-          <SimDllArguments>-cAT91SAM7X</SimDllArguments>
-          <SimDlgDll>DARMATS.DLL</SimDlgDll>
-          <SimDlgDllArguments>-p91SAM7X256</SimDlgDllArguments>
-          <TargetDllName>SARM.DLL</TargetDllName>
-          <TargetDllArguments />
-          <TargetDlgDll>TARMATS.DLL</TargetDlgDll>
-          <TargetDlgDllArguments>-p91SAM7X256</TargetDlgDllArguments>
+          <SimDllName>SARMCM3.DLL</SimDllName>
+          <SimDllArguments> </SimDllArguments>
+          <SimDlgDll>DARMCM1.DLL</SimDlgDll>
+          <SimDlgDllArguments>-pCM0</SimDlgDllArguments>
+          <TargetDllName>SARMCM3.DLL</TargetDllName>
+          <TargetDllArguments> </TargetDllArguments>
+          <TargetDlgDll>TARMCM1.DLL</TargetDlgDll>
+          <TargetDlgDllArguments>-pCM0</TargetDlgDllArguments>
         </DllOption>
         <DebugOption>
           <OPTHX>
@@ -121,16 +129,19 @@
             <RestoreFunctions>1</RestoreFunctions>
             <RestoreToolbox>1</RestoreToolbox>
             <LimitSpeedToRealTime>0</LimitSpeedToRealTime>
+            <RestoreSysVw>1</RestoreSysVw>
           </Simulator>
           <Target>
             <UseTarget>1</UseTarget>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
-            <RunToMain>0</RunToMain>
+            <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
             <RestoreWatchpoints>1</RestoreWatchpoints>
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
             <RestoreFunctions>0</RestoreFunctions>
             <RestoreToolbox>1</RestoreToolbox>
+            <RestoreTracepoints>0</RestoreTracepoints>
+            <RestoreSysVw>1</RestoreSysVw>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
           <TargetSelection>6</TargetSelection>
@@ -147,7 +158,7 @@
             <PeripheralDll />
             <PeripheralDllArguments />
             <InitializationFile />
-            <Driver>Segger\JLTAgdi.dll</Driver>
+            <Driver>Segger\JL2CM3.dll</Driver>
           </TargetDlls>
         </DebugOption>
         <Utilities>
@@ -157,11 +168,16 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4098</DriverSelection>
+            <DriverSelection>4096</DriverSelection>
           </Flash1>
-          <Flash2>Segger\JLTAgdi.dll</Flash2>
+          <bUseTDR>1</bUseTDR>
+          <Flash2>BIN\UL2CM3.DLL</Flash2>
           <Flash3>"" ()</Flash3>
           <Flash4 />
+          <pFcarmOut />
+          <pFcarmGrp />
+          <pFcArmRoot />
+          <FcArmLst>0</FcArmLst>
         </Utilities>
         <TargetArmAds>
           <ArmAdsMisc>
@@ -192,7 +208,7 @@
             <AdsLsxf>1</AdsLsxf>
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
-            <AdsCpuType>ARM7TDMI</AdsCpuType>
+            <AdsCpuType>"Cortex-M0"</AdsCpuType>
             <RvctDeviceName />
             <mOS>0</mOS>
             <uocRom>0</uocRom>
@@ -260,12 +276,12 @@
               </Ocm6>
               <IRAM>
                 <Type>0</Type>
-                <StartAddress>0x200000</StartAddress>
-                <Size>0x10000</Size>
+                <StartAddress>0x20000000</StartAddress>
+                <Size>0x4000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
-                <StartAddress>0x100000</StartAddress>
+                <StartAddress>0x0</StartAddress>
                 <Size>0x40000</Size>
               </IROM>
               <XRAM>
@@ -290,7 +306,7 @@
               </OCR_RVCT3>
               <OCR_RVCT4>
                 <Type>1</Type>
-                <StartAddress>0x100000</StartAddress>
+                <StartAddress>0x0</StartAddress>
                 <Size>0x40000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
@@ -315,8 +331,8 @@
               </OCR_RVCT8>
               <OCR_RVCT9>
                 <Type>0</Type>
-                <StartAddress>0x200000</StartAddress>
-                <Size>0x10000</Size>
+                <StartAddress>0x20000000</StartAddress>
+                <Size>0x4000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -331,7 +347,7 @@
             <Optim>1</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
-            <OneElfS>0</OneElfS>
+            <OneElfS>1</OneElfS>
             <Strict>0</Strict>
             <EnumInt>0</EnumInt>
             <PlainCh>0</PlainCh>
@@ -339,11 +355,14 @@
             <Rwpi>0</Rwpi>
             <wLevel>0</wLevel>
             <uThumb>0</uThumb>
+            <uSurpInc>0</uSurpInc>
+            <uC99>0</uC99>
+            <useXO>0</useXO>
             <VariousControls>
-              <MiscControls />
-              <Define />
+              <MiscControls>--c99</MiscControls>
+              <Define>NRF51, USE_STDPERIPH_DRIVER</Define>
               <Undefine />
-              <IncludePath>applications;.;drivers;../../include;../../libcpu/arm/AT91SAM7X;../../libcpu/arm/common;../../components/finsh;../../components/net/lwip-1.4.1/src;../../components/net/lwip-1.4.1/src/include;../../components/net/lwip-1.4.1/src/include/ipv4;../../components/net/lwip-1.4.1/src/arch/include;../../components/net/lwip-1.4.1/src/include/netif</IncludePath>
+              <IncludePath>Libraries/CMSIS/Include;Libraries/nrf51822/Include;applications;.;drivers;../../include;../../libcpu/arm/cortex-m0;../../libcpu/arm/common;../../components/drivers/include;../../components/finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -354,6 +373,8 @@
             <SplitLS>0</SplitLS>
             <SwStkChk>0</SwStkChk>
             <NoWarn>0</NoWarn>
+            <uSurpInc>0</uSurpInc>
+            <useXO>0</useXO>
             <VariousControls>
               <MiscControls />
               <Define />
@@ -368,18 +389,36 @@
             <noStLib>0</noStLib>
             <RepFail>1</RepFail>
             <useFile>0</useFile>
-            <TextAddressRange>0x00100000</TextAddressRange>
-            <DataAddressRange>0x00200000</DataAddressRange>
+            <TextAddressRange>0x08000000</TextAddressRange>
+            <DataAddressRange>0x20000000</DataAddressRange>
+            <pXoBase />
             <ScatterFile />
             <IncludeLibs />
             <IncludeLibsPath />
-            <Misc> --keep *.o(FSymTab) --keep *.o(VSymTab) </Misc>
+            <Misc> --keep *.o(FSymTab)</Misc>
             <LinkerInputFile />
             <DisabledWarnings />
           </LDads>
         </TargetArmAds>
       </TargetOption>
       <Groups>
+        <Group>
+          <GroupName>Startup Code</GroupName>
+          <Files>
+            <File>
+              <FileName>system_nrf51.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries/nrf51822/Source/templates/system_nrf51.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>arm_startup_nrf51.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries/nrf51822/Source/templates/arm/arm_startup_nrf51.s</FilePath>
+            </File>
+          </Files>
+        </Group>
         <Group>
           <GroupName>Applications</GroupName>
           <Files>
@@ -408,16 +447,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>sam7x_emac.c</FileName>
+              <FileName>uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers/sam7x_emac.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>serial.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers/serial.c</FilePath>
+              <FilePath>drivers/uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -474,20 +506,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/mem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mempool.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/mempool.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../src/object.c</FilePath>
@@ -516,47 +534,19 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>AT91SAM7X</GroupName>
+          <GroupName>CORTEX-M0</GroupName>
           <Files>
             <File>
-              <FileName>cpu.c</FileName>
+              <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/AT91SAM7X/cpu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>interrupt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/AT91SAM7X/interrupt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stack.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/AT91SAM7X/stack.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>trap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/AT91SAM7X/trap.c</FilePath>
+              <FilePath>../../libcpu/arm/cortex-m0/cpuport.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
-              <FilePath>../../libcpu/arm/AT91SAM7X/context_rvds.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>start_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>../../libcpu/arm/AT91SAM7X/start_rvds.S</FilePath>
+              <FilePath>../../libcpu/arm/cortex-m0/context_rvds.S</FilePath>
             </File>
           </Files>
           <Files>
@@ -578,6 +568,37 @@
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../libcpu/arm/common/showmem.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>DeviceDrivers</GroupName>
+          <Files>
+            <File>
+              <FileName>completion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/drivers/src/completion.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>portal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/drivers/src/portal.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringbuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/drivers/src/ringbuffer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>workqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/drivers/src/workqueue.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -606,320 +627,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>finsh_compiler.c</FileName>
+              <FileName>msh_cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_compiler.c</FilePath>
+              <FilePath>../../components/finsh/msh_cmd.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>finsh_error.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_error.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_heap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_heap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_init.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_node.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_node.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_ops.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_ops.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_parser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_parser.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_var.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_var.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_vm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_vm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_token.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_token.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>LwIP</GroupName>
-          <Files>
-            <File>
-              <FileName>api_lib.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/api/api_lib.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>api_msg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/api/api_msg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>err.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/api/err.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>netbuf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/api/netbuf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>netdb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/api/netdb.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>netifapi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/api/netifapi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>sockets.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/api/sockets.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tcpip.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/api/tcpip.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>sys_arch.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/arch/sys_arch.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>def.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/def.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dhcp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/dhcp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dns.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/dns.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/init.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>memp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/memp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>netif.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/netif.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pbuf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/pbuf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>raw.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/raw.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stats.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/stats.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>sys.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/sys.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tcp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/tcp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tcp_in.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/tcp_in.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tcp_out.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/tcp_out.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>timers.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/timers.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>udp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/udp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>autoip.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/ipv4/autoip.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>icmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/ipv4/icmp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>igmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/ipv4/igmp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>inet.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/ipv4/inet.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>inet_chksum.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/ipv4/inet_chksum.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ip.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/ipv4/ip.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ip_addr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/ipv4/ip_addr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ip_frag.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/core/ipv4/ip_frag.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>etharp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/netif/etharp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ethernetif.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/netif/ethernetif.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>slipif.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-1.4.1/src/netif/slipif.c</FilePath>
+              <FilePath>../../components/finsh/msh.c</FilePath>
             </File>
           </Files>
         </Group>
