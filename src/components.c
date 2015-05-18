@@ -29,6 +29,7 @@
  *                             in some IDEs.
  */
 
+#include <rthw.h>
 #include <rtthread.h>
 
 #ifdef RT_USING_COMPONENTS_INIT
@@ -130,6 +131,8 @@ void rt_hw_board_init(void);
 
 #ifdef __CC_ARM
 extern int $Super$$main(void);
+int rtthread_startup(void);
+
 /* re-define main function */
 int $Sub$$main(void)
 {
@@ -215,7 +218,7 @@ int rtthread_startup(void)
     rt_system_scheduler_start();
 
     /* never reach here */
-    return ;
+    return 0;
 }
 #endif
 #endif
