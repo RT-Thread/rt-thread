@@ -430,7 +430,7 @@ RTM_EXPORT(rt_strncpy);
  *
  * @return the result
  */
-rt_ubase_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count)
+rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count)
 {
     register signed char __res = 0;
 
@@ -453,7 +453,7 @@ RTM_EXPORT(rt_strncmp);
  *
  * @return the result
  */
-rt_ubase_t rt_strcmp(const char *cs, const char *ct)
+rt_int32_t rt_strcmp(const char *cs, const char *ct)
 {
     while (*cs && *cs == *ct)
         cs++, ct++;
@@ -470,7 +470,7 @@ RTM_EXPORT(rt_strcmp);
  *
  * @return the length of string
  */
-rt_ubase_t rt_strlen(const char *s)
+rt_size_t rt_strlen(const char *s)
 {
     const char *sc;
 

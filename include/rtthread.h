@@ -501,9 +501,9 @@ int *_rt_errno(void);
 void *rt_memset(void *src, int c, rt_ubase_t n);
 void *rt_memcpy(void *dest, const void *src, rt_ubase_t n);
 
-rt_ubase_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count);
-rt_ubase_t rt_strcmp (const char *cs, const char *ct);
-rt_ubase_t rt_strlen (const char *src);
+rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count);
+rt_int32_t rt_strcmp (const char *cs, const char *ct);
+rt_size_t rt_strlen (const char *src);
 char *rt_strdup(const char *s);
 
 char *rt_strstr(const char *str1, const char *str2);
