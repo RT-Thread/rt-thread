@@ -895,7 +895,7 @@ rt_uint32_t gb2312tounicode(const rt_uint16_t key)
     if (key < 0x80)
         return key;
     if (key < 0xA1A1)
-        return -1;
+        return (rt_uint32_t)-1;
 
     sec = (lc >> 8) - 0xA0;
 
@@ -911,11 +911,11 @@ rt_uint32_t gb2312tounicode(const rt_uint16_t key)
                 return gb2312uni_table[key - ps->range[i].start + ps->range[i].offset];
             }
         }
-        return -1;
+        return (rt_uint32_t)-1;
     }
     else if (sec < 16) /* No code in section 10~15. */
     {
-        return -1;
+        return (rt_uint32_t)-1;
     }
     else if (sec < 88) /* Section 16~87. */
     {
@@ -926,7 +926,7 @@ rt_uint32_t gb2312tounicode(const rt_uint16_t key)
         {
             /* Section 55 only have chars up to 0xD7F9. */
             if (sec == 55 && key > 0xD7F9)
-                return -1;
+                return (rt_uint32_t)-1;
             /* There are 682 chars before section 16 in GB2312(not GBK). And all
              * these sections are full(no wholes). */
             code += 682;
@@ -941,6 +941,6 @@ rt_uint32_t gb2312tounicode(const rt_uint16_t key)
     }
     else
     {
-        return -1;
+        return (rt_uint32_t)-1;
     }
 }
