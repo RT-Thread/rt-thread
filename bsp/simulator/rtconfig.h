@@ -133,7 +133,7 @@
 /* #define RT_USING_DFS_NFS */
 
 /* DFS: UFFS nand file system options */
-//#define RT_USING_DFS_UFFS
+#define RT_USING_DFS_UFFS
 /* configuration for uffs, more to see dfs_uffs.h and uffs_config.h */
 #define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_HW_AUTO
 /* enable this ,you need provide a mark_badblock/check_block function */
