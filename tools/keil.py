@@ -75,6 +75,8 @@ def MDK4AddGroupForFN(ProjectFiles, parent, name, filename, project_path):
         obj_name = name.replace('.s', '.o')
     elif name.find('.S') != -1:
         obj_name = name.replace('.s', '.o')
+    else:
+        obj_name = name
 
     if ProjectFiles.count(obj_name):
         name = basename + '_' + name
@@ -272,6 +274,8 @@ def MDK5AddGroup(ProjectFiles, parent, name, files, project_path):
             obj_name = name.replace('.s', '.o')
         elif name.find('.S') != -1:
             obj_name = name.replace('.s', '.o')
+        else:
+            obj_name = name
 
         if ProjectFiles.count(obj_name):
             name = basename + '_' + name
