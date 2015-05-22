@@ -205,7 +205,6 @@ rt_hw_context_switch_to    PROC
     LDR     r0, =SCB_VTOR
     LDR     r0, [r0]
     LDR     r0, [r0]
-    NOP
     MSR     msp, r0
 
     ; enable interrupts at processor level
