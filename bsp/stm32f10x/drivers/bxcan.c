@@ -262,8 +262,6 @@ static void bxcan1_hw_init(void)
       GPIO_InitTypeDef  GPIO_InitStructure;
       NVIC_InitTypeDef  NVIC_InitStructure;    
 
-      RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOA, ENABLE);
-         
       GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
       GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
       GPIO_Init(GPIOA, &GPIO_InitStructure);
@@ -273,9 +271,6 @@ static void bxcan1_hw_init(void)
       GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
       GPIO_Init(GPIOA, &GPIO_InitStructure);
     
-      RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN1 , ENABLE);  
-      
-      CAN_DeInit(CAN1);
       NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
       NVIC_InitStructure.NVIC_IRQChannel = CAN1_RX0_IRQn;
       NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x1;
@@ -292,8 +287,6 @@ static void bxcan2_hw_init(void)
       GPIO_InitTypeDef  GPIO_InitStructure;
       NVIC_InitTypeDef  NVIC_InitStructure;    
 
-      RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOB, ENABLE);
-
       GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;      
       GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
       GPIO_Init(GPIOB, &GPIO_InitStructure);
@@ -302,10 +295,6 @@ static void bxcan2_hw_init(void)
       GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
       GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
       GPIO_Init(GPIOB, &GPIO_InitStructure);
-    
-      RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN2, ENABLE);  
-      
-      CAN_DeInit(CAN2);
 
       NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
       NVIC_InitStructure.NVIC_IRQChannel = CAN2_RX0_IRQn;
@@ -1371,6 +1360,9 @@ int stm32_bxcan_init(void)
 {
 
 #ifdef USING_BXCAN1
+      RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOA, ENABLE);
+      RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN1 , ENABLE);  
+      CAN_DeInit(CAN1);
       bxcan1.config.baud_rate=CAN1MBaud;
       bxcan1.config.msgboxsz=16;
       bxcan1.config.sndboxnumber=3;
@@ -1389,6 +1381,12 @@ int stm32_bxcan_init(void)
 #endif
 
 #ifdef USING_BXCAN2
+      RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOB, ENABLE);
+#ifndef USING_BXCAN1
+      RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN1 , ENABLE); 
+#endif
+      RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN2, ENABLE);  
+      CAN_DeInit(CAN2);
       bxcan2.config.baud_rate=CAN1MBaud;
       bxcan2.config.msgboxsz=16;
       bxcan2.config.sndboxnumber=3;
