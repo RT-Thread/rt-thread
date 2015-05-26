@@ -25,14 +25,10 @@
 #include <rthw.h>
 #ifdef RT_USING_RMS
 
-static rt_int16_t rt_rms_scheduler_lock_nest;
-extern volatile rt_uint8_t rt_interrupt_nest;
 struct rt_rms *rt_current_rms = RT_NULL;
-static rt_uint8_t rt_rms_current_priority;
-static float utilization = 0;
-static rt_list_t rt_rms_tablele[RT_THREAD_PRIORITY_MAX];
-static rt_list_t rt_rms_idle_table[RT_THREAD_PRIORITY_MAX];
-static rt_list_t rt_rms_zombie_table[RT_THREAD_PRIORITY_MAX];
+float utilization = 0;
+rt_list_t rt_rms_idle_table[RT_THREAD_PRIORITY_MAX];
+rt_list_t rt_rms_zombie_table[RT_THREAD_PRIORITY_MAX];
 static struct rt_rms idle_rms;
 
 #ifndef IDLE_THREAD_STACK_SIZE
@@ -41,12 +37,16 @@ static struct rt_rms idle_rms;
 ALIGN(RT_ALIGN_SIZE)
 static rt_uint8_t rt_rms_stack[IDLE_THREAD_STACK_SIZE];
 
+
+extern rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 #if RT_THREAD_PRIORITY_MAX > 32
-static rt_uint32_t rt_rms_ready_priority_group;  
-rt_uint8_t rt_rms_table[32];
+/* Maximum priority level, 256 */
+extern rt_uint32_t rt_thread_ready_priority_group;
+extern rt_uint8_t rt_thread_ready_table[32];
 #else
-static rt_uint32_t rt_rms_ready_priority_group;
-#endif  
+/* Maximum priority level, 32 */
+extern rt_uint32_t rt_thread_ready_priority_group;
+#endif
 
 void rt_rms_exit(void)
 {
@@ -77,7 +77,7 @@ void rt_rms_exit(void)
     rt_hw_interrupt_enable(level);
     
     /* switch to next task */
-    rt_rms_schedule();
+    rt_schedule();
 }
 
 static rt_err_t _rt_rms_init(struct rt_rms *rms,
@@ -135,7 +135,7 @@ rt_rms_t rt_rms_startup(rt_rms_t rms)
     if(rt_rms_self() != RT_NULL)
     {
          /* do a scheduling */
-    rt_rms_schedule();
+        rt_schedule();
     }       
     
     return RT_RMS_EOK;
@@ -159,10 +159,10 @@ rt_rms_t rt_rms_create(const char *name,
     if(rms->thread == RT_NULL)
         return RT_NULL;
     
+    /* create a thread object */
 #ifndef RT_RMS_ACCURACY
 #define RT_RMS_ACCURACY 1
 #endif	
-    /* create a thread object */
     rms->thread = rt_thread_create(name, entry, parameter, stack_size, period / RT_RMS_ACCURACY, tick);
     _rt_rms_init(rms, period, wcet);    
     
@@ -186,8 +186,11 @@ rt_err_t rt_rms_init(struct rt_rms *rms,
     RT_ASSERT(stack_start != RT_NULL);
     
     rms->thread = (struct rt_thread *)rt_object_allocate(RT_Object_Class_Thread, name);
+#ifndef RT_RMS_ACCURACY
+#define RT_RMS_ACCURACY 1
+#endif		
     RT_ASSERT(rt_thread_init(rms->thread, name, entry, parameter, stack_start, stack_size,
-                            period, tick) == RT_EOK);
+                            period / RT_RMS_ACCURACY, tick) == RT_EOK);
     return _rt_rms_init(rms, period, wcet);                 
 }
 
@@ -195,7 +198,7 @@ rt_err_t rt_rms_init(struct rt_rms *rms,
  * insert a task into the idle queue
  * when a periodic job finishes at the end of its period, it should call the rt_end_cycle() explicitly
  */
-void rt_end_cycle(void)
+void rt_rms_end_cycle(void)
 {
     register rt_base_t level;
     rt_int32_t deadline;
@@ -210,24 +213,24 @@ void rt_end_cycle(void)
     if(tick < deadline)
     {
         level = rt_hw_interrupt_disable();
-    /* remove from ready queue */       
-    rt_schedule_remove_rms(rt_current_rms);
-    rms->thread->stat = RT_RMS_IDLE;
+        /* remove from ready queue */       
+        rt_schedule_remove_rms(rt_current_rms);
+        rms->thread->stat = RT_RMS_IDLE;
 
-    /* insert into idle queue */        
-    rt_list_insert_before(&(rt_rms_idle_table[rms->thread->current_priority]),
+        /* insert into idle queue */        
+        rt_list_insert_before(&(rt_rms_idle_table[rms->thread->current_priority]),
                             &(rms->rlist));
     
-    rt_hw_interrupt_enable(level);  
+        rt_hw_interrupt_enable(level);  
     }
     else
     {
         deadline += rt_current_rms->period;
-    rt_current_rms->deadline = deadline;
-    rt_current_rms->thread->stat = RT_RMS_READY;
+        rt_current_rms->deadline = deadline;
+        rt_current_rms->thread->stat = RT_RMS_READY;
     }
 
-        rt_rms_schedule();
+    rt_schedule();
 }
 
 
@@ -248,29 +251,30 @@ void rt_rms_wakeup(void *parameter)
     {
         
         rms->deadline += rms->period;
-    rms->thread->stat = RT_RMS_READY;
-    rt_list_remove(&(rt_rms_idle_table[priority]));
+        rms->thread->stat = RT_RMS_READY;
+        
+        rt_list_remove(&(rt_rms_idle_table[priority]));
 
-    rt_schedule_insert_rms(rms);
+        rt_schedule_insert_rms(rms);
             
-    count++;
+        count++;
     }
     
     rms = rt_list_entry(rt_rms_zombie_table[priority].next, struct rt_rms, rlist);
     /* remove all zombie tasks for which their deadline is expired */
     if(rms != RT_NULL && rms->deadline <= tick && rms->thread->stat == RT_RMS_ZOMBIE)
     {
-    utilization -= rms->utilization;
-    rms->thread->stat = RT_RMS_CLOSE;
-    rt_list_remove(&(rt_rms_zombie_table[priority]));
-    rt_rms_delete(rms);
-    count ++;
+        utilization -= rms->utilization;
+        rms->thread->stat = RT_RMS_CLOSE;
+        rt_list_remove(&(rt_rms_zombie_table[priority]));
+        rt_rms_delete(rms);
+        count ++;
     }
     
     /* if at least a task has been awakened, call the scheduler */
     if(count > 0)
     {
-        rt_rms_schedule();
+        rt_schedule();
     }
 }
 
@@ -321,133 +325,7 @@ void rt_rms_wakeup(void *parameter)
     rt_hw_interrupt_enable(level);
 
     return RT_RMS_EOK;  
- } 
-  
-/**
- * This function will initialize the rm(rate monotonic) scheduler
- * Initialize the idle queue, zombie queue and utilization of CPU.
- */
-void rt_system_rms_scheduler_init(void)
-{
-    register rt_base_t offset;
-    
-    rt_rms_scheduler_lock_nest = 0;
-    /* initialize the queue for idle tasks and zombie tasks */
-    for(offset = 0; offset < RT_THREAD_PRIORITY_MAX; offset++)
-    {
-        rt_list_init(&rt_rms_tablele[offset]);
-        rt_list_init(&rt_rms_idle_table[offset]);
-        rt_list_init(&rt_rms_zombie_table[offset]);
-    }
-    
-    rt_rms_current_priority = RT_THREAD_PRIORITY_MAX - 1;
-    rt_current_rms = RT_NULL;
-    
-    /* initialize the idle, zombie priority group */
-    rt_rms_ready_priority_group = 0;
-    
-#if RT_THREAD_PRIORITY_MAX > 32
-    rt_memset(rt_rms_table, 0, sizeof(rt_rms_table));
-#endif
-    
-    /* initialize the cpu utilization */
-    utilization = 0;
-}
-
-/* This function will startup scheduler */
-void rt_system_rms_scheduler_start(void)
-{
-    register struct rt_rms *to_rms;
-    register rt_ubase_t highest_ready_priority;
-    
-#if RT_THREAD_PRIORITY_MAX > 32 
-    register rt_ubase_t number;
-    
-    number = __rt_ffs(rt_rms_ready_priority_group) - 1;
-    highest_ready_priority = (number << 3) + __rt_ffs(rt_rms_ready_priority_group[number]) - 1;
-#else
-    highest_ready_priority = __rt_ffs(rt_rms_ready_priority_group) - 1;
-#endif
-    to_rms = rt_list_entry(rt_rms_tablele[highest_ready_priority].next,
-                            struct rt_rms,
-                            rlist);
-                            
-    rt_current_rms = to_rms;
-    
-    rt_hw_context_switch_to((rt_uint32_t)&to_rms->thread->sp);  
-    
-}
-
-/**
- * This function will perform one rms schedule.
- */
-void rt_rms_schedule(void)
-{
-    rt_base_t level;
-    struct rt_rms *to_rms;
-    struct rt_rms *from_rms;
-    
-    /* disable interrupt */
-    level = rt_hw_interrupt_disable();
-    
-    if(rt_rms_scheduler_lock_nest == 0)
-    {
-        register rt_ubase_t highest_ready_priority;
-        
-#if RT_THREAD_PRIORITY_MAX <= 32
-        highest_ready_priority = __rt_ffs(rt_rms_ready_priority_group) - 1;
-#else
-        register rt_ubase_t number;
-        number = __rt_ffs(rt_rms_ready_priority_group) - 1;
-        highest_ready_priority = (number << 3) + __rt_ffs(rt_rms_tablele[number]) - 1;
-#endif
-
-        /* get switch to rms */
-        to_rms = rt_list_entry(rt_rms_tablele[highest_ready_priority].next,
-                               struct rt_rms,
-                               rlist);
-        if(to_rms != rt_current_rms)
-        {
-            rt_rms_current_priority = (rt_uint8_t)highest_ready_priority;
-            from_rms = rt_current_rms;
-            rt_current_rms = to_rms;
-            
-            /* switch to new thread */
-            RT_DEBUG_LOG(RT_DEBUG_SCHEDULER,
-                         ("[%d]switch to priority#%d "
-                          "thread:%.*s(sp:0x%p), "
-                          "from thread:%.*s(sp: 0x%p)\n",
-                          rt_interrupt_nest, highest_ready_priority,
-                          RT_NAME_MAX, to_rms->thread->name, to_rms->thread->sp,
-                          RT_NAME_MAX, from_rms->thread->name, from_rms->thread->sp));
- 
-#ifdef RT_USING_OVERFLOW_CHECK
-            _rt_scheduler_stack_check(to_rms->thread);
-#endif 
-                          
-            if(rt_interrupt_nest == 0)
-            {
-
-                    rt_hw_context_switch((rt_uint32_t)&from_rms->thread->sp,
-                                        (rt_uint32_t)&to_rms->thread->sp);
-
-            }
-            else
-            {
-                RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("switch in interrupt\n"));
-                
-
-                    rt_hw_context_switch_interrupt((rt_uint32_t)&from_rms->thread->sp,
-                                     (rt_uint32_t)&to_rms->thread->sp);
-
-            }   
-            
-        }       
-    
-    }
-    rt_hw_interrupt_enable(level);
-}
-
+ }  
 
  /**
   * This funciton will insert a rms thread to system ready queue.
@@ -462,13 +340,13 @@ void rt_rms_schedule(void)
      
      rms->thread->stat = RT_RMS_READY;
      
-     rt_list_insert_before(&(rt_rms_tablele[rms->thread->current_priority]),
+     rt_list_insert_before(&(rt_thread_priority_table[rms->thread->current_priority]),
                             &(rms->rlist));
 
 #if RT_THREAD_RIORITY_MAX > 32
      rt_thread_priority_table[rms->thread->number] |= rms->thread->high_mask;
 #endif
-     rt_rms_ready_priority_group |= rms->thread->number_mask;
+     rt_thread_ready_priority_group |= rms->thread->number_mask;
 
      rt_hw_interrupt_enable(temp);  
  }
@@ -505,18 +383,19 @@ void rt_rms_schedule(void)
      
      /* disable interrupt */
      temp = rt_hw_interrupt_disable();
-     /* remove thread from ready list */
+     
+	 /* remove thread from ready list */
      rt_list_remove(&(rms->rlist));
-     if(rt_list_isempty(&(rt_rms_tablele[rms->thread->current_priority])))
+     if(rt_list_isempty(&(rt_thread_priority_table[rms->thread->current_priority])))
      {
 #if RT_THREAD_PRIORITY_MAX > 32
-        rt_rms_ready_table[rms->thread->number] &= ~rms->thread->high_mask;
-        if(rt_rms_ready_table[rms->thread->number] == 0)
+        rt_thread_ready_table[rms->thread->number] &= ~rms->thread->high_mask;
+        if(rt_thread_ready_table[rms->thread->number] == 0)
         {
-            rt_rms_ready_priority_group &= ~rms->thread->number_mask;
+            rt_thread_ready_priority_group &= ~rms->thread->number_mask;
         }       
 #else
-        rt_rms_ready_priority_group &= ~rms->thread->number_mask;
+        rt_thread_ready_priority_group &= ~rms->thread->number_mask;
 #endif  
      }
      
