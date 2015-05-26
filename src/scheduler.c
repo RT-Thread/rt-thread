@@ -85,7 +85,7 @@ rt_scheduler_sethook(void (*hook)(struct rt_thread *from, struct rt_thread *to))
 #endif
 
 #ifdef RT_USING_OVERFLOW_CHECK
-static void _rt_scheduler_stack_check(struct rt_thread *thread)
+void _rt_scheduler_stack_check(struct rt_thread *thread)
 {
     RT_ASSERT(thread != RT_NULL);
 
@@ -409,4 +409,3 @@ rt_uint16_t rt_critical_level(void)
     return rt_scheduler_lock_nest;
 }
 /*@}*/
-

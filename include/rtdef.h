@@ -528,6 +528,41 @@ struct rt_thread
 };
 typedef struct rt_thread *rt_thread_t;
 
+#ifdef RT_USING_RMS
+/*
+ * task status
+ */
+#define RT_RMS_INIT			RT_THREAD_INIT			/* initialized status */
+#define RT_RMS_READY			RT_THREAD_READY			/* ready status */
+#define RT_RMS_SLEEP			RT_THREAD_SUSPEND		/* sleep status */
+#define RT_RMS_RUNNING			RT_THREAD_RUNNING		/* running status */
+#define RT_RMS_CLOSE			RT_THREAD_CLOSE			/* close status */
+#define RT_RMS_IDLE			RT_THREAD_CLOSE + 1		/* idle status */
+#define RT_RMS_ZOMBIE			RT_THREAD_CLOSE + 2		/* zombie status */
+
+/*
+ * error messages
+ */
+#define RT_RMS_EOK			0				/* no error */
+#define RT_RMS_TIME_OVERFLOW		1				/* missed deadline */
+#define RT_RMS_TIME_EXPIRED		2				/* lifetime reached */
+#define RT_RMS_NO_GUARANTEE		3				/* task not schedulable */
+
+/* include rtconfig header to import configuration */
+struct rt_rms
+{
+	struct rt_thread *thread;
+	
+	rt_list_t rlist;						/* list node of rms */
+	struct rt_timer rms_timer;					/* rms timer */
+	rt_int32_t deadline;						/* absolute deadline of periodic task */
+	rt_uint8_t period;						/* period of periodic task */
+	rt_uint8_t wcet;						/* worst-case execution time */
+	float utilization;						/* task utilization factor */
+};
+typedef struct rt_rms *rt_rms_t;
+#endif
+
 /*@}*/
 
 /**

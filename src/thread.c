@@ -99,12 +99,18 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
     /* stack init */
     thread->stack_addr = stack_start;
     thread->stack_size = (rt_uint16_t)stack_size;
-
     /* init thread stack */
     rt_memset(thread->stack_addr, '#', thread->stack_size);
+
+#ifndef RT_USING_RMS
     thread->sp = (void *)rt_hw_stack_init(thread->entry, thread->parameter,
         (void *)((char *)thread->stack_addr + thread->stack_size - 4),
         (void *)rt_thread_exit);
+#else
+	thread->sp = (void *)rt_hw_stack_init(thread->entry, thread->parameter,
+	(void *)((char *)thread->stack_addr + thread->stack_size - 4),
+	(void *)rt_rms_exit);
+#endif
 
     /* priority init */
     RT_ASSERT(priority < RT_THREAD_PRIORITY_MAX);
