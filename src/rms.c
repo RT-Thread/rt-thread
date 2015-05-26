@@ -159,16 +159,11 @@ rt_rms_t rt_rms_create(const char *name,
     if(rms->thread == RT_NULL)
         return RT_NULL;
     
-<<<<<<< HEAD
 #ifndef RT_RMS_ACCURACY
 #define RT_RMS_ACCURACY 1
 #endif	
     /* create a thread object */
     rms->thread = rt_thread_create(name, entry, parameter, stack_size, period / RT_RMS_ACCURACY, tick);
-=======
-    /* create a thread object */
-    rms->thread = rt_thread_create(name, entry, parameter, stack_size, period, tick);
->>>>>>> b5d64d63b4fdf48b8490807ef79ddeb64fef615e
     _rt_rms_init(rms, period, wcet);    
     
     return rms;
