@@ -91,7 +91,6 @@ static rt_err_t _rt_rms_init(struct rt_rms *rms,
     rms->period = period;
     rms->wcet = wcet;
     rms->utilization = (float)wcet / period;
-    rms->deadline = rt_tick_get() + rms->period;
     
     utilization += rms->utilization;
     RT_ASSERT(utilization <= 1);
@@ -129,7 +128,8 @@ rt_rms_t rt_rms_startup(rt_rms_t rms)
 
     /* change rms stat */
     rms->thread->stat = RT_RMS_SLEEP;
-    
+    rms->deadline = rt_tick_get() + rms->period;
+	
     /* resume rms task */
     rt_rms_resume(rms);
     if(rt_rms_self() != RT_NULL)
@@ -168,6 +168,46 @@ rt_rms_t rt_rms_create(const char *name,
     
     return rms;
 }
+
+ /**
+  * This task will delete the rms task
+  */
+ rt_err_t rt_rms_delete(rt_rms_t rms)
+ {
+     
+     RT_ASSERT(rms != RT_NULL);
+     
+     rt_timer_detach(&rms->thread->thread_timer);
+     rt_timer_detach(&rms->rms_timer);
+     
+     rms->thread->stat = RT_RMS_CLOSE;
+     rt_object_detach((rt_object_t)rms->thread);
+     rt_list_remove(&(rms->thread->tlist));
+     rt_list_remove(&(rms->rlist)); 
+     
+     return RT_RMS_EOK;
+ }
+ 
+ /**
+  * This function will add the zombie task to zombie queue, when time expired,
+  * this task will be deleted
+  */
+ rt_err_t rt_rms_detach(rt_rms_t rms)
+ {
+     rt_base_t level;
+     level = rt_hw_interrupt_disable();
+    /* remove from ready queue */       
+    rt_schedule_remove_rms(rms);
+    rms->thread->stat = RT_RMS_ZOMBIE;
+
+    /* insert into idle queue */        
+    rt_list_insert_before(&(rt_rms_zombie_table[rms->thread->current_priority]),
+                            &(rms->rlist));
+    
+    rt_hw_interrupt_enable(level);
+
+    return RT_RMS_EOK;  
+ }  
 
 /**
  * This funciton will initialize a rms thread
@@ -208,8 +248,11 @@ void rt_rms_end_cycle(void)
     rms = rt_current_rms;
     deadline = rt_current_rms->deadline;
     tick = rt_tick_get();
-    
-    RT_ASSERT(rt_current_rms->deadline >= tick);
+    if(rt_current_rms->deadline < tick)
+    {
+        rt_kprintf("rms task(%s) miss its deadline at current_tick:%d\n", rt_current_rms->thread->name, rt_tick_get());
+        rt_rms_detach(rt_current_rms);
+    }
     if(tick < deadline)
     {
         level = rt_hw_interrupt_disable();
@@ -287,45 +330,6 @@ void rt_rms_wakeup(void *parameter)
      
  }
 
- /**
-  * This task will delete the rms task
-  */
- rt_err_t rt_rms_delete(rt_rms_t rms)
- {
-     
-     RT_ASSERT(rms != RT_NULL);
-     
-     rt_timer_detach(&rms->thread->thread_timer);
-     rt_timer_detach(&rms->rms_timer);
-     
-     rms->thread->stat = RT_RMS_CLOSE;
-     rt_object_detach((rt_object_t)rms->thread);
-     rt_list_remove(&(rms->thread->tlist));
-     rt_list_remove(&(rms->rlist)); 
-     
-     return RT_RMS_EOK;
- }
- 
- /**
-  * This function will add the zombie task to zombie queue, when time expired,
-  * this task will be deleted
-  */
- rt_err_t rt_rms_detach(rt_rms_t rms)
- {
-     rt_base_t level;
-     level = rt_hw_interrupt_disable();
-    /* remove from ready queue */       
-    rt_schedule_remove_rms(rms);
-    rms->thread->stat = RT_RMS_ZOMBIE;
-
-    /* insert into idle queue */        
-    rt_list_insert_before(&(rt_rms_zombie_table[rms->thread->current_priority]),
-                            &(rms->rlist));
-    
-    rt_hw_interrupt_enable(level);
-
-    return RT_RMS_EOK;  
- }  
 
  /**
   * This funciton will insert a rms thread to system ready queue.
