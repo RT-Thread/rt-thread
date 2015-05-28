@@ -60,6 +60,13 @@ rt_uint32_t rt_thread_ready_priority_group;
 
 rt_list_t rt_thread_defunct;
 
+#ifdef RT_USING_RMS
+extern rt_list_t rt_rms_idle_table[RT_THREAD_PRIORITY_MAX];
+extern rt_list_t rt_rms_zombie_table[RT_THREAD_PRIORITY_MAX];
+extern float utilization;
+extern struct rt_rms *rt_current_rms;
+#endif
+
 #ifdef RT_USING_HOOK
 static void (*rt_scheduler_hook)(struct rt_thread *from, struct rt_thread *to);
 
@@ -129,10 +136,18 @@ void rt_system_scheduler_init(void)
     for (offset = 0; offset < RT_THREAD_PRIORITY_MAX; offset ++)
     {
         rt_list_init(&rt_thread_priority_table[offset]);
+#ifdef RT_USING_RMS		
+        rt_list_init(&rt_rms_idle_table[offset]);
+		    rt_list_init(&rt_rms_zombie_table[offset]);
+#endif		
     }
 
     rt_current_priority = RT_THREAD_PRIORITY_MAX - 1;
+#ifndef RT_USING_RMS	
     rt_current_thread = RT_NULL;
+#else
+    rt_current_rms = RT_NULL;
+#endif		
 
     /* initialize ready priority group */
     rt_thread_ready_priority_group = 0;
@@ -144,6 +159,9 @@ void rt_system_scheduler_init(void)
 
     /* initialize thread defunct */
     rt_list_init(&rt_thread_defunct);
+#ifdef RT_USING_RMS
+	utilization = 0;
+#endif	
 }
 
 /**
@@ -153,7 +171,11 @@ void rt_system_scheduler_init(void)
  */
 void rt_system_scheduler_start(void)
 {
+#ifndef RT_USING_RMS	
     register struct rt_thread *to_thread;
+#else
+	register struct rt_rms *to_rms;
+#endif	
     register rt_ubase_t highest_ready_priority;
 
 #if RT_THREAD_PRIORITY_MAX > 32
@@ -165,6 +187,7 @@ void rt_system_scheduler_start(void)
     highest_ready_priority = __rt_ffs(rt_thread_ready_priority_group) - 1;
 #endif
 
+#ifndef RT_USING_RMS
     /* get switch to thread */
     to_thread = rt_list_entry(rt_thread_priority_table[highest_ready_priority].next,
                               struct rt_thread,
@@ -176,6 +199,17 @@ void rt_system_scheduler_start(void)
     rt_hw_context_switch_to((rt_uint32_t)&to_thread->sp);
 
     /* never come back */
+#else
+	/* get switch to rms */
+	to_rms = rt_list_entry(rt_thread_priority_table[highest_ready_priority].next,
+                           struct rt_rms,
+						   rlist);
+	
+    rt_current_rms = to_rms;
+	
+    rt_hw_context_switch_to((rt_uint32_t)&to_rms->thread->sp);
+    /* never come back */	
+#endif	
 }
 
 /**
@@ -191,8 +225,13 @@ void rt_system_scheduler_start(void)
 void rt_schedule(void)
 {
     rt_base_t level;
+#ifndef RT_USING_RMS	
     struct rt_thread *to_thread;
     struct rt_thread *from_thread;
+#else
+	struct rt_rms *to_rms;
+    struct rt_rms *from_rms;
+#endif	
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -211,6 +250,7 @@ void rt_schedule(void)
         highest_ready_priority = (number << 3) + __rt_ffs(rt_thread_ready_table[number]) - 1;
 #endif
 
+#ifndef RT_USING_RMS
         /* get switch to thread */
         to_thread = rt_list_entry(rt_thread_priority_table[highest_ready_priority].next,
                                   struct rt_thread,
@@ -251,6 +291,46 @@ void rt_schedule(void)
                                                (rt_uint32_t)&to_thread->sp);
             }
         }
+	#else
+		    to_rms = rt_list_entry(rt_thread_priority_table[highest_ready_priority].next,
+                               struct rt_rms,
+                               rlist);
+        if(to_rms != rt_current_rms)
+        {
+            rt_current_priority = (rt_uint8_t)highest_ready_priority;
+            from_rms = rt_current_rms;
+            rt_current_rms = to_rms;
+            
+            /* switch to new rms thread */
+            RT_DEBUG_LOG(RT_DEBUG_SCHEDULER,
+                         ("[%d]switch to priority#%d "
+                          "thread:%.*s(sp:0x%p), "
+                          "from thread:%.*s(sp: 0x%p)\n",
+                          rt_interrupt_nest, highest_ready_priority,
+                          RT_NAME_MAX, to_rms->thread->name, to_rms->thread->sp,
+                          RT_NAME_MAX, from_rms->thread->name, from_rms->thread->sp));
+ 
+#ifdef RT_USING_OVERFLOW_CHECK
+            _rt_scheduler_stack_check(to_rms->thread);
+#endif 
+                          
+            if(rt_interrupt_nest == 0)
+            {
+
+                rt_hw_context_switch((rt_uint32_t)&from_rms->thread->sp,
+                                        (rt_uint32_t)&to_rms->thread->sp);
+
+            }
+            else
+            {
+                RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("switch in interrupt\n"));
+                
+                rt_hw_context_switch_interrupt((rt_uint32_t)&from_rms->thread->sp,
+                                     (rt_uint32_t)&to_rms->thread->sp);
+            }   
+            
+        }       
+#endif	
     }
 
     /* enable interrupt */
@@ -409,4 +489,3 @@ rt_uint16_t rt_critical_level(void)
     return rt_scheduler_lock_nest;
 }
 /*@}*/
-

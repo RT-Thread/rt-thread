@@ -180,6 +180,34 @@ rt_uint16_t rt_critical_level(void);
 void rt_scheduler_sethook(void (*hook)(rt_thread_t from, rt_thread_t to));
 #endif
 
+#ifdef RT_USING_RMS
+void rt_rms_exit(void);
+rt_rms_t rt_rms_create(const char *name, void(*entry)(void *parameter),
+			void *parameter, rt_uint32_t stack_size, rt_uint32_t tick,
+			rt_uint8_t period, rt_uint8_t wcet);
+rt_rms_t rt_rms_startup(struct rt_rms *rms);
+rt_err_t rt_rms_init(struct rt_rms *rms,
+		     const char *name,
+		     void (*entry)(void *parameter),
+		     void *parameter,
+		     void *stack_start,
+		     rt_uint32_t stack_size,
+		     rt_uint8_t period,
+		     rt_uint32_t tick,
+		     rt_uint8_t wcet);
+void rt_rms_end_cycle(void);
+void rt_rms_wakeup(void *parameter);
+void rt_system_rms_init(void);
+rt_rms_t rt_rms_self(void);
+rt_err_t rt_rms_delete(rt_rms_t rms);
+
+rt_err_t rt_rms_resume(rt_rms_t rms);
+void rt_schedule_insert_rms(struct rt_rms *rms);
+void rt_schedule_remove_rms(struct rt_rms *rms);
+void rt_rms_idle_init(void);
+						
+#endif
+
 /*@}*/
 
 /**
