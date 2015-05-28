@@ -347,8 +347,8 @@ void rt_rms_wakeup(void *parameter)
      rt_list_insert_before(&(rt_thread_priority_table[rms->thread->current_priority]),
                             &(rms->rlist));
 
-#if RT_THREAD_RIORITY_MAX > 32
-     rt_thread_priority_table[rms->thread->number] |= rms->thread->high_mask;
+#if RT_THREAD_PRIORITY_MAX > 32
+     rt_thread_ready_table[rms->thread->number] |= rms->thread->high_mask;
 #endif
      rt_thread_ready_priority_group |= rms->thread->number_mask;
 
