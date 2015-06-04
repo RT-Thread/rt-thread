@@ -93,6 +93,12 @@ SYS_STACK_START
     EXPORT SVC_STACK_START
 SVC_STACK_START
 Stack_Top
+__initial_sp
+
+__heap_base
+Heap_Mem        SPACE   Heap_Size
+__heap_limit
+
     PRESERVE8
 ;--------------Jump vector table------------------------------------------------
     EXPORT Entry_Point
@@ -292,4 +298,31 @@ rt_hw_context_switch_interrupt_do PROC
 
     LDMFD   SP!, {R0-R12,LR,PC}^    ; pop new task's R0-R12,LR & PC SPSR to CPSR
     ENDP
+
+;*******************************************************************************
+; User Stack and Heap initialization
+;*******************************************************************************
+                 IF      :DEF:__MICROLIB
+                
+                 EXPORT  __initial_sp
+                 EXPORT  __heap_base
+                 EXPORT  __heap_limit
+                
+                 ELSE
+                
+                 IMPORT  __use_two_region_memory
+                 EXPORT  __user_initial_stackheap
+                 
+__user_initial_stackheap
+
+                 LDR     R0, = Heap_Mem                         ; heap base
+                 LDR     R1, = SVC_STACK_START                  ; stack base (top-address)
+                 LDR     R2, = (Heap_Mem +  Heap_Size)          ; heap limit
+                 LDR     R3, = (SVC_STACK_START - SVC_STK_SIZE) ; stack limit (low-address)
+                 BX      LR
+
+                 ALIGN
+
+                 ENDIF
+
     END
