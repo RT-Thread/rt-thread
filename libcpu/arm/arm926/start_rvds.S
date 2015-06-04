@@ -22,6 +22,7 @@
 ; * 2011-08-14     weety      first version
 ; * 2015-04-15     ArdaFu     Split from AT91SAM9260 BSP
 ; * 2015-04-21     ArdaFu     Remove remap code. Using mmu to map vector table
+; * 2015-06-04     aozima     Align stack address to 8 byte.
 ; */
 
 S_FRAME_SIZE    EQU     (18*4)   ;72
@@ -60,38 +61,44 @@ NOINT           EQU     0xC0
     GET rt_low_level_keil.inc
     
 ;----------------------- Stack and Heap Definitions ----------------------------
-    AREA    STACK, NOINIT, READWRITE, ALIGN=2
+    AREA    STACK, NOINIT, READWRITE, ALIGN=3
 Stack_Mem
 
     SPACE   UND_STK_SIZE
     EXPORT UND_STACK_START
 UND_STACK_START
 
-    ALIGN 4
+    ALIGN 8
     SPACE   ABT_STK_SIZE
     EXPORT ABT_STACK_START
 ABT_STACK_START
 
-    ALIGN 4
+    ALIGN 8
     SPACE   FIQ_STK_SIZE
     EXPORT FIQ_STACK_START
 FIQ_STACK_START
 
-    ALIGN 4
+    ALIGN 8
     SPACE   IRQ_STK_SIZE
     EXPORT IRQ_STACK_START
 IRQ_STACK_START
 
-    ALIGN 4
+    ALIGN 8
     SPACE   SYS_STK_SIZE
     EXPORT SYS_STACK_START
 SYS_STACK_START
 
-    ALIGN 4
+    ALIGN 8
     SPACE   SVC_STK_SIZE
     EXPORT SVC_STACK_START
 SVC_STACK_START
 Stack_Top
+__initial_sp
+
+__heap_base
+Heap_Mem        SPACE   Heap_Size
+__heap_limit
+
     PRESERVE8
 ;--------------Jump vector table------------------------------------------------
     EXPORT Entry_Point
@@ -291,4 +298,31 @@ rt_hw_context_switch_interrupt_do PROC
 
     LDMFD   SP!, {R0-R12,LR,PC}^    ; pop new task's R0-R12,LR & PC SPSR to CPSR
     ENDP
+
+;*******************************************************************************
+; User Stack and Heap initialization
+;*******************************************************************************
+                 IF      :DEF:__MICROLIB
+                
+                 EXPORT  __initial_sp
+                 EXPORT  __heap_base
+                 EXPORT  __heap_limit
+                
+                 ELSE
+                
+                 IMPORT  __use_two_region_memory
+                 EXPORT  __user_initial_stackheap
+                 
+__user_initial_stackheap
+
+                 LDR     R0, = Heap_Mem                         ; heap base
+                 LDR     R1, = SVC_STACK_START                  ; stack base (top-address)
+                 LDR     R2, = (Heap_Mem +  Heap_Size)          ; heap limit
+                 LDR     R3, = (SVC_STACK_START - SVC_STK_SIZE) ; stack limit (low-address)
+                 BX      LR
+
+                 ALIGN
+
+                 ENDIF
+
     END

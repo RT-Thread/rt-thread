@@ -22,6 +22,7 @@
 ; * 2011-01-13     weety      first version
 ; * 2015-04-15     ArdaFu     Split from AT91SAM9260 BSP
 ; * 2015-04-21     ArdaFu     Remove remap code. Using mmu to map vector table
+; * 2015-06-04     aozima     Align stack address to 8 byte.
 ; */
  
 #define S_FRAME_SIZE    (18*4)   ;72
@@ -62,31 +63,32 @@
     SECTION .noinit:DATA:NOROOT(3)
     DATA
 
+    ALIGNRAM 3
     DS8 UND_STK_SIZE
     PUBLIC UND_STACK_START
 UND_STACK_START:
 
-    ALIGNRAM 2
+    ALIGNRAM 3
     DS8 ABT_STK_SIZE
     PUBLIC ABT_STACK_START
 ABT_STACK_START:
 
-    ALIGNRAM 2
+    ALIGNRAM 3
     DS8 FIQ_STK_SIZE
     PUBLIC FIQ_STACK_START
 FIQ_STACK_START:
 
-    ALIGNRAM 2
+    ALIGNRAM 3
     DS8 IRQ_STK_SIZE
     PUBLIC IRQ_STACK_START
 IRQ_STACK_START:
 
-    ALIGNRAM 2
+    ALIGNRAM 3
     DS8 SYS_STK_SIZE
     PUBLIC SYS_STACK_START
 SYS_STACK_START:
 
-    ALIGNRAM 2
+    ALIGNRAM 3
     DS8 SVC_STK_SIZE
     PUBLIC SVC_STACK_START
 SVC_STACK_START:
