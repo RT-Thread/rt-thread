@@ -1063,7 +1063,7 @@ static int recvmsg(struct rt_can_device *can, void* buf, rt_uint32_t boxno)
       pmsg->id = (uint32_t)0x1FFFFFFF & (pbxcan->sFIFOMailBox[boxno].RIR >> 3);
     }
 
-    pmsg->rtr = (uint8_t)0x02 & pbxcan->sFIFOMailBox[boxno].RIR;
+    pmsg->rtr = ((uint8_t)0x02 & pbxcan->sFIFOMailBox[boxno].RIR) >> 1;
     pmsg->len = (uint8_t)0x0F & pbxcan->sFIFOMailBox[boxno].RDTR;
     pmsg->data[0] = (uint8_t)0xFF & pbxcan->sFIFOMailBox[boxno].RDLR;
     pmsg->data[1] = (uint8_t)0xFF & (pbxcan->sFIFOMailBox[boxno].RDLR >> 8);
