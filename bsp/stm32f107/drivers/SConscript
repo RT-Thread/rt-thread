@@ -3,15 +3,22 @@ Import('rtconfig')
 from building import *
 
 cwd     = os.path.join(str(Dir('#')), 'drivers')
-src	= Glob('*.c')
 
-# remove no need file.
-if GetDepend('RT_USING_LWIP') == False:
-	SrcRemove(src, 'stm32_eth.c')
+# add the general drivers.
+src = Split("""
+board.c
+stm32f10x_it.c
+usart.c
+platform.c
+""")
 
-if GetDepend('RT_USING_SPI') == False:
-	SrcRemove(src, 'rt_stm32f10x_spi.c')
-	SrcRemove(src, 'msd.c')
+# add Ethernet drivers.
+if GetDepend('RT_USING_LWIP'):
+	src += ['stm32_eth.c']
+
+if GetDepend('RT_USING_SPI'):
+	src += ['rt_stm32f10x_spi.c'] 
+	src += ['msd.c']
 
 CPPPATH = [cwd]
 
