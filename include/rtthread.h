@@ -153,6 +153,20 @@ rt_err_t rt_thread_suspend(rt_thread_t thread);
 rt_err_t rt_thread_resume(rt_thread_t thread);
 void rt_thread_timeout(void *parameter);
 
+#ifdef RT_USING_RMS
+void rt_rms_init(rt_rms_t rms, const char *name);
+
+rt_rms_t rt_rms_create(const char *name);
+
+rt_err_t rt_rms_detach(rt_rms_t rms);
+
+rt_err_t rt_rms_delete(rt_rms_t rms);
+
+rt_err_t rt_rms_period(rt_rms_t rms, rt_tick_t period);
+						
+#endif
+
+
 /*
  * idle thread interface
  */
