@@ -1237,6 +1237,19 @@ int __rt_ffs(int value)
 }
 #endif
 
+#ifdef RT_DEBUG
+/* RT_ASSERT(EX)'s hook */
+void (*rt_assert_hook)(const char* ex, const char* func, rt_size_t line);
+/**
+ * This function will set a hook function to RT_ASSERT(EX). It will run when the expression is false.
+ *
+ * @param hook the hook function
+ */
+void rt_assert_set_hook(void (*hook)(const char* ex, const char* func, rt_size_t line)) {
+    rt_assert_hook = hook;
+}
+#endif /* RT_DEBUG */
+
 #if !defined (RT_USING_NEWLIB) && defined (RT_USING_MINILIBC) && defined (__GNUC__)
 #include <sys/types.h>
 void *memcpy(void *dest, const void *src, size_t n) __attribute__((weak, alias("rt_memcpy")));
