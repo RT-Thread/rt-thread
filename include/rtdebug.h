@@ -84,8 +84,13 @@ while (0)
 if (!(EX))                                                                    \
 {                                                                             \
     volatile char dummy = 0;                                                  \
-    rt_kprintf("(%s) assert failed at %s:%d \n", #EX, __FUNCTION__, __LINE__);\
-    while (dummy == 0);                                                       \
+    if (rt_assert_hook == RT_NULL)                                            \
+    {                                                                         \
+        rt_kprintf("(%s) assert failed at %s:%d \n", #EX, __FUNCTION__, __LINE__);\
+        while (dummy == 0);                                                   \
+    } else {                                                                  \
+        rt_assert_hook(#EX, __FUNCTION__, __LINE__);                          \
+    }                                                                         \
 }
 
 /* Macro to check current context */
