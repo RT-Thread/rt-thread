@@ -539,8 +539,9 @@ typedef struct rt_thread *rt_thread_t;
 struct rt_rms
 {
     struct rt_object parent;
-    rt_uint8_t rt_rms_stat;
-    rt_tick_t deadline;
+    rt_uint8_t rt_rms_stat;                            /**< status of rms task */
+    rt_tick_t period;                                  /**< period of rms task */
+    rt_tick_t deadline;                                /**< deadline of rms task */
 };
 typedef struct rt_rms *rt_rms_t;
 #endif

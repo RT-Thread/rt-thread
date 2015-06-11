@@ -27,31 +27,51 @@
 
 #ifdef RT_USING_RMS
 
-static void _rt_rms_init(rt_rms_t rms)
+static void _rt_rms_init(rt_rms_t rms, rt_tick_t period)
 {
-    rms->rt_rms_stat = RT_RMS_INACTIVE;
-    rms->deadline = 0;
+    rt_tick_t temp;
+    rt_thread_t thread;	
+	
+    rms->period = period;
+    rms->deadline = rt_tick_get() + period;
+	
+#ifndef RT_RMS_ACCURACY
+#define RT_RMS_ACCURACY    1
+#endif
+    temp = period / RT_RMS_ACCURACY;
+	thread = rt_thread_self();
+	
+    /* change priority of thread */
+    rt_thread_control(thread, RT_THREAD_CTRL_CHANGE_PRIORITY, &temp);
+    /* set the stat of rms object */	
+    rms->rt_rms_stat = RT_RMS_ACTIVE;
+
+    /* do scheduling */
+    rt_schedule();	
 }
 
 /**
  * This function will initialize a rms task
  */
-void rt_rms_init(rt_rms_t rms, const char *name)
+void rt_rms_init(rt_rms_t rms, const char *name, rt_tick_t period)
 {
     RT_ASSERT(rms != RT_NULL);
+    RT_ASSERT(period != 0);
 
     /* rms object initialization */
     rt_object_init((rt_object_t)rms, RT_Object_Class_Rms, name);
 
-    _rt_rms_init(rms);	
+    _rt_rms_init(rms, period);	
 }
 
 /**
  * This function will create the rms task
  */
-rt_rms_t rt_rms_create(const char *name)
+rt_rms_t rt_rms_create(const char *name, rt_tick_t period)
 {
     struct rt_rms *rms;
+	
+    RT_ASSERT(period != 0);
 	
     /* allocate a rms object */
     rms = (struct rt_rms *)rt_object_allocate(RT_Object_Class_Rms, name);
@@ -60,7 +80,7 @@ rt_rms_t rt_rms_create(const char *name)
         return RT_NULL;
     }	
     /* set status and deadline of rms object */
-    _rt_rms_init(rms);
+    _rt_rms_init(rms, period);
 
     return rms;
 }
@@ -96,36 +116,14 @@ rt_err_t rt_rms_delete(rt_rms_t rms)
 /**
  * This function will set the period of rms task
  */
-rt_err_t rt_rms_period(rt_rms_t rms, rt_tick_t period)
+rt_err_t rt_rms_endcycle(rt_rms_t rms)
 {
     rt_tick_t end_time;
-    rt_tick_t temp;
-    rt_thread_t thread;
-	
+
     RT_ASSERT(rms != RT_NULL);
-    RT_ASSERT(period != 0);
-	
+
     switch(rms->rt_rms_stat)
     {
-    case RT_RMS_INACTIVE:
-        rms->deadline = rt_tick_get() + period;
-#ifndef RT_RMS_ACCURACY
-#define RT_RMS_ACCURACY		1
-#endif			
-        temp = period / RT_RMS_ACCURACY;
-        thread = rt_thread_self();
-        /* change the priority of thread */
-        rt_thread_control(thread,
-                          RT_THREAD_CTRL_CHANGE_PRIORITY,
-                          &temp);
-        /* set the stat of rms object */				  
-        rms->rt_rms_stat = RT_RMS_ACTIVE;
-		
-        /* do scheduling when period ends */
-        rt_schedule();
-		
-        return RT_EOK;
-
     case RT_RMS_ACTIVE:
         end_time = rt_tick_get();
 
@@ -138,7 +136,7 @@ rt_err_t rt_rms_period(rt_rms_t rms, rt_tick_t period)
         }
          
         /* set the next period */		 
-        rms->deadline += period;
+        rms->deadline += rms->period;
         /* sleep until next period comes */
         if(end_time != 0)
         {
