@@ -139,7 +139,7 @@ static void bxcan2_filter_init(struct rt_can_device *can)
         CAN1->FMR |= FMR_FINIT;
         mask = 0x01 << (i + 0);
         off = i - BX_CAN2_FMRSTART;
-        if(i < pbxcan->fifo1filteroff) {
+        if(off < pbxcan->fifo1filteroff) {
           if(pbxcan->filtermap[0].id32mask_cnt && off < pbxcan->filtermap[0].id32mask_cnt) {
             CAN1->FS1R |= mask;
             CAN1->FM1R &= ~mask;
@@ -586,7 +586,7 @@ static rt_int32_t bxcanfindfilter(struct stm_bxcan *pbxcan,struct rt_can_filter_
                   if(pitem->rtr) {
                       thisid |= CAN_RTR_REMOTE;
                   }
-                  if((off == 0 && pfilterreg->FR1 == thisid) ||
+                  if((*off == 0 && pfilterreg->FR1 == thisid) ||
                      (*off == 1 && pfilterreg->FR2 == thisid)
                   ) {
                     found = 1;
@@ -959,14 +959,14 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
         break;
       case RT_CAN_CMD_SET_BAUD:
         argval = (rt_uint32_t) arg;
-        if(argval != CAN1MBaud ||
-           argval != CAN800kBaud ||
-           argval != CAN500kBaud ||
-           argval != CAN250kBaud ||
-           argval != CAN125kBaud ||
-           argval != CAN100kBaud ||
-           argval != CAN50kBaud  ||
-           argval != CAN20kBaud  ||
+        if(argval != CAN1MBaud &&
+           argval != CAN800kBaud &&
+           argval != CAN500kBaud &&
+           argval != CAN250kBaud &&
+           argval != CAN125kBaud &&
+           argval != CAN100kBaud &&
+           argval != CAN50kBaud  &&
+           argval != CAN20kBaud  &&
            argval != CAN10kBaud  ) {
               return RT_ERROR; 
          }
@@ -1063,7 +1063,7 @@ static int recvmsg(struct rt_can_device *can, void* buf, rt_uint32_t boxno)
       pmsg->id = (uint32_t)0x1FFFFFFF & (pbxcan->sFIFOMailBox[boxno].RIR >> 3);
     }
 
-    pmsg->rtr = (uint8_t)0x02 & pbxcan->sFIFOMailBox[boxno].RIR;
+    pmsg->rtr = (uint8_t) ((0x02 & pbxcan->sFIFOMailBox[boxno].RIR) >> 1);
     pmsg->len = (uint8_t)0x0F & pbxcan->sFIFOMailBox[boxno].RDTR;
     pmsg->data[0] = (uint8_t)0xFF & pbxcan->sFIFOMailBox[boxno].RDLR;
     pmsg->data[1] = (uint8_t)0xFF & (pbxcan->sFIFOMailBox[boxno].RDLR >> 8);
@@ -1127,7 +1127,7 @@ static struct stm_bxcan bxcan1data =
 struct rt_can_device bxcan1;
 void CAN1_RX0_IRQHandler(void)
 {
-    while(CAN1->RF0R & 0x11)
+    if(CAN1->RF0R & 0x03)
     {
       if ((CAN1->RF0R & CAN_RF0R_FOVR0) != 0)
       {
@@ -1141,7 +1141,7 @@ void CAN1_RX0_IRQHandler(void)
 }
 void CAN1_RX1_IRQHandler(void)
 {
-    while(CAN1->RF1R & 0x11)
+    if(CAN1->RF1R & 0x03)
     {
       if ((CAN1->RF1R & CAN_RF1R_FOVR1) != 0)
       {
@@ -1262,7 +1262,7 @@ static struct stm_bxcan bxcan2data =
 struct rt_can_device bxcan2;
 void CAN2_RX0_IRQHandler(void)
 {
-    while(CAN2->RF0R & 0x11)
+    if(CAN2->RF0R & 0x03)
     {
       if ((CAN2->RF0R & CAN_RF0R_FOVR0) != 0)
       {
@@ -1276,7 +1276,7 @@ void CAN2_RX0_IRQHandler(void)
 }
 void CAN2_RX1_IRQHandler(void)
 {
-    while(CAN2->RF1R & 0x11)
+    if(CAN2->RF1R & 0x03)
     {
       if ((CAN2->RF1R & CAN_RF1R_FOVR1) != 0)
       {

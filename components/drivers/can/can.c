@@ -65,7 +65,7 @@ rt_inline int _can_int_rx(struct rt_can_device *can, struct rt_can_msg *data, in
                can->hdr[hdr].msgs--;                     
              }
              listmsg->owner = RT_NULL;
-        } else
+        } else if(hdr == -1)
 #endif /*RT_CAN_USING_HDR*/
         if (!rt_list_isempty(&rx_fifo->uselist))
         {
@@ -97,6 +97,8 @@ rt_inline int _can_int_rx(struct rt_can_device *can, struct rt_can_msg *data, in
             RT_ASSERT(rx_fifo->freenumbers <= can->config.msgboxsz);
             rt_hw_interrupt_enable(level);
             listmsg = RT_NULL;
+        } else {
+            break;
         }
         data ++; msgs -= sizeof(struct rt_can_msg);
     }
