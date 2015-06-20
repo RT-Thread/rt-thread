@@ -25,6 +25,7 @@
 #include <rtthread.h>
 #include <drivers/mmcsd_core.h>
 #include <drivers/sd.h>
+#include <drivers/mmc.h>
 
 #ifndef RT_MMCSD_STACK_SIZE
 #define RT_MMCSD_STACK_SIZE 1024
@@ -60,22 +61,29 @@ void mmcsd_req_complete(struct rt_mmcsd_host *host)
 
 void mmcsd_send_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
 {
-    req->cmd->err = 0;
-    req->cmd->mrq = req;
-    if (req->data)
-    {   
-        req->cmd->data = req->data;
-        req->data->err = 0;
-        req->data->mrq = req;
-        if (req->stop)
-        {
-            req->data->stop = req->stop;
-            req->stop->err = 0;
-            req->stop->mrq = req;
-        }       
-   }
-    host->ops->request(host, req);
-    rt_sem_take(&host->sem_ack, RT_WAITING_FOREVER);
+    do {
+        req->cmd->retries--;
+        req->cmd->err = 0;
+        req->cmd->mrq = req;
+        if (req->data)
+        {   
+            req->cmd->data = req->data;
+            req->data->err = 0;
+            req->data->mrq = req;
+            if (req->stop)
+            {
+                req->data->stop = req->stop;
+                req->stop->err = 0;
+                req->stop->mrq = req;
+            }       
+        }
+        host->ops->request(host, req);
+
+        rt_sem_take(&host->sem_ack, RT_WAITING_FOREVER);
+          
+    } while(req->cmd->err && req->cmd->retries);
+
+
 }
 
 rt_int32_t mmcsd_send_cmd(struct rt_mmcsd_host *host,
@@ -86,6 +94,7 @@ rt_int32_t mmcsd_send_cmd(struct rt_mmcsd_host *host,
 
     rt_memset(&req, 0, sizeof(struct rt_mmcsd_req));
     rt_memset(cmd->resp, 0, sizeof(cmd->resp));
+    cmd->retries = retries;
 
     req.cmd = cmd;
     cmd->data = RT_NULL;
@@ -622,6 +631,18 @@ void mmcsd_detect(void *param)
                 if (!err) 
                 {
                     if (init_sd(host, ocr))
+                        mmcsd_power_off(host);
+                    mmcsd_host_unlock(host);
+                    continue;
+                }
+                
+                /*
+                 * detect mmc card
+                 */
+                err = mmc_send_op_cond(host, 0, &ocr);
+                if (!err) 
+                {
+                    if (init_mmc(host, ocr))
                         mmcsd_power_off(host);
                     mmcsd_host_unlock(host);
                     continue;
