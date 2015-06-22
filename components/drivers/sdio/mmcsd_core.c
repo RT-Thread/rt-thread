@@ -81,7 +81,7 @@ void mmcsd_send_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
 
         rt_sem_take(&host->sem_ack, RT_WAITING_FOREVER);
           
-    } while(req->cmd->err && req->cmd->retries);
+    } while(req->cmd->err && (req->cmd->retries > 0));
 
 
 }

@@ -580,7 +580,7 @@ remove_card:
     host->card = RT_NULL;
 err:
 
-    rt_kprintf("init SD card failed\n");
+    rt_kprintf("init MMC card failed\n");
 
     return err;
 }
