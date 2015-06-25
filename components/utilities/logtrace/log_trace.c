@@ -391,6 +391,7 @@ int log_trace_init(void)
 
     return 0;
 }
+INIT_DEVICE_EXPORT(log_trace_init);
 
 rt_device_t log_trace_get_device(void)
 {
