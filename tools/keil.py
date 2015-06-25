@@ -310,6 +310,7 @@ def MDK5Project(target, script):
     groups = tree.find('Targets/Target/Groups')
     if groups is None:
         groups = SubElement(tree.find('Targets/Target'), 'Groups')
+    groups.clear() # clean old groups
     for group in script:
         group_xml = MDK4AddGroup(ProjectFiles, groups, group['name'], group['src'], project_path)
 
