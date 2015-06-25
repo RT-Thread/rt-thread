@@ -16,12 +16,6 @@ for c, f in [['RT_USING_VBUS_RFS', 'utilities/rfs.c'],
     if GetDepend(c):
         src += Glob(f)
 
-with open(os.path.join(Dir('#').get_abspath(), 'vbus_local_conf.h'), 'r') as f:
-    cpp = SCons.cpp.PreProcessor()
-    cpp.process_contents(f.read())
-    if 'RT_VBUS_USING_TESTS' in cpp.cpp_namespace:
-        src += Glob('tests/*.c')
-
 CPPPATH = [cwd, os.path.join(cwd, 'share_hdr')]
 
 group = DefineGroup('VBus', src, depend = ['RT_USING_VBUS'], CPPPATH = CPPPATH)
