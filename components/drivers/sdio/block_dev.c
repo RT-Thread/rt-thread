@@ -149,7 +149,7 @@ static rt_err_t rt_mmcsd_req_blk(struct rt_mmcsd_card *card,
     }
     else
     {
-        req.stop = NULL;
+        req.stop = RT_NULL;
         r_cmd = READ_SINGLE_BLOCK;
         w_cmd = WRITE_BLOCK;
     }
@@ -408,15 +408,8 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
 
                     blk_dev->geometry.bytes_per_sector = 1<<9;
                     blk_dev->geometry.block_size = card->card_blksize;
-                    if (card->flags & CARD_FLAG_SDHC) 
-                    {
-                        blk_dev->geometry.sector_count = (card->csd.c_size + 1) * 1024;
-                    }
-                    else
-                    {
-                        blk_dev->geometry.sector_count = 
-                            card->card_capacity * 1024 / 512;
-                    }
+                    blk_dev->geometry.sector_count = 
+                        card->card_capacity * (1024 / 512);
     
                     rt_device_register(&blk_dev->dev, "sd0",
                         RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
