@@ -607,11 +607,15 @@ static rt_err_t rt_can_control(struct rt_device *dev,
  */
 static void cantimeout(void* arg)
 {
+		 #ifdef RT_CAN_USING_LED
      rt_uint32_t ledonflag = 0;
+		 #endif /*RT_CAN_USING_LED*/
      rt_can_t can = (rt_can_t)arg;
      rt_device_control((rt_device_t)can,RT_CAN_CMD_GET_STATUS,(void* )&can->status);
      if(can->timerinitflag == 1) {
-         ledonflag = 1;
+			 	 #ifdef RT_CAN_USING_LED
+				 ledonflag = 1;
+				 #endif /*RT_CAN_USING_LED*/
          can->timerinitflag = 0xFF;
      }
      #ifdef RT_CAN_USING_LED
@@ -713,17 +717,12 @@ rt_err_t rt_hw_can_register(struct rt_can_device *can,
 
     device->user_data   = data;
     can->timerinitflag = 0;
-    if(can->config.rcvled != RT_NULL ||
-       can->config.sndled != RT_NULL ||
-       can->config.errled != RT_NULL)
-    {
-        rt_timer_init(&can->timer,
-                  name,
-                  cantimeout,
-                  (void*)can,
-                  can->config.ticks,
-                  RT_TIMER_FLAG_PERIODIC);
-    }
+		rt_timer_init(&can->timer,
+							name,
+							cantimeout,
+							(void*)can,
+							can->config.ticks,
+							RT_TIMER_FLAG_PERIODIC);
     /* register a character device */
     return rt_device_register(device, name, RT_DEVICE_FLAG_RDWR);
 }
