@@ -60,6 +60,7 @@
 #define EOPNOTSUPP      95  	/* Operation not supported on transport endpoint */
 #define EAFNOSUPPORT    97  	/* Address family not supported by protocol */
 #define EADDRINUSE      98  	/* Address already in use */
+#define EADDRNOTAVAIL   99		/* Cannot assign requested address */
 #define ENETDOWN       	100  	/* Network is down */
 #define ENETUNREACH    	101  	/* Network is unreachable */
 #define ECONNABORTED   	103  	/* Software caused connection abort */
