@@ -72,6 +72,7 @@
 #define RT_USING_DEVICE_IPC
 // <bool name="RT_USING_SERIAL" description="Using Serial Device Driver Framework" default="true" />
 #define RT_USING_SERIAL
+#define RT_USING_CAN
 // <integer name="RT_UART_RX_BUFFER_SIZE" description="The buffer size for UART reception" default="64" />
 #define RT_UART_RX_BUFFER_SIZE    64
 // </section>
@@ -95,6 +96,7 @@
 #define RT_USING_COMPONENTS_INIT
 // <section name="RT_USING_FINSH" description="Using finsh as shell, which is a C-Express shell" default="true" >
 #define RT_USING_FINSH
+#define FINSH_USING_MSH
 // <bool name="FINSH_USING_SYMTAB" description="Using symbol table in finsh shell" default="true" />
 #define FINSH_USING_SYMTAB
 // <bool name="FINSH_USING_DESCRIPTION" description="Keeping description in symbol table" default="true" />
@@ -236,5 +238,6 @@
 // </section>
 
 // </RDTConfigurator>
-
+#define  RT_USING_LPCCAN1
+#define RT_USING_CPU_FFS
 #endif
