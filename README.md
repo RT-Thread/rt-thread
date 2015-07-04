@@ -12,7 +12,7 @@ RT-Thread RTOS like a traditional real-time operating system. The kernel has rea
 * Device Driver;
 * Component. 
 
-The device driver is more like a driver framework, UART, SPI, USB device/host, EMAC, MTD NAND etc. The developer can easyly add low level driver and board configuration, then he/she can use lots of features. 
+The device driver is more like a driver framework, UART, SPI, USB device/host, EMAC, MTD NAND etc. The developer can easily add low level driver and board configuration, then he/she can use lots of features. 
 
 The Component is a software concept upon RT-Thread kernel, for example a shell (finsh shell), virtual file system (FAT, YAFFS, UFFS, ROM/RAM file system etc), TCP/IP protocol stack (lwIP), POSIX interface etc. One component must be a directory under RT-Thread/Components and one component can be descripted by a SConscript file (then be compiled and linked into the system).
 
