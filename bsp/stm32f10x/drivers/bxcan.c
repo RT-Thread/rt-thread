@@ -16,7 +16,7 @@
 #include <board.h>
 #include <bxcan.h>
 #ifdef RT_USING_COMPONENTS_INIT
-#include <init/components.h>
+#include <components.h>
 #endif
 #ifdef RT_USING_CAN
 

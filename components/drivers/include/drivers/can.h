@@ -14,6 +14,8 @@
 #ifndef CAN_H_
 #define CAN_H_
 
+#include <rtthread.h>
+
 #ifndef RT_CANMSG_BOX_SZ
 #define RT_CANMSG_BOX_SZ 16
 #endif
@@ -58,8 +60,10 @@ struct rt_can_filter_item
         rt_uint32_t mode :1;
         rt_uint32_t mask;
         rt_int32_t hdr;
+#ifdef RT_CAN_USING_HDR
         rt_err_t  (*ind)(rt_device_t dev, void* args ,rt_int32_t hdr, rt_size_t size);
-        void* args;
+	      void* args;
+#endif /*RT_CAN_USING_HDR*/
 };
 #ifdef RT_CAN_USING_HDR
 #define RT_CAN_FILTER_ITEM_INIT(id,ide,rtr,mode,mask,ind,args) \
@@ -86,7 +90,7 @@ struct rt_can_filter_item
 #define RT_CAN_EXT_RMT_DATA_FILTER_INIT(id,ind,args) \
      RT_CAN_FILTER_ITEM_INIT(id,1,0,1,0xFFFFFFFF,ind,args)
 #else
-#define RT_CAN_FILTER_ITEM_INIT(id,ide,rtr,mode,mask,args) \
+#define RT_CAN_FILTER_ITEM_INIT(id,ide,rtr,mode,mask) \
      {\
          id,\
          ide,\
@@ -94,20 +98,19 @@ struct rt_can_filter_item
          mode,\
          mask,\
          -1,\
-         args,\
      }
-#define RT_CAN_FILTER_STD_INIT(id,args) \
-     RT_CAN_FILTER_ITEM_INIT(id,0,0,0,0xFFFFFFFF,args)
-#define RT_CAN_FILTER_EXT_INIT(id,args) \
-     RT_CAN_FILTER_ITEM_INIT(id,1,0,0,0xFFFFFFFF,args)
-#define RT_CAN_STD_RMT_FILTER_INIT(id,args) \
-     RT_CAN_FILTER_ITEM_INIT(id,0,1,0,0xFFFFFFFF,args)
-#define RT_CAN_EXT_RMT_FILTER_INIT(id,args) \
-     RT_CAN_FILTER_ITEM_INIT(id,1,1,0,0xFFFFFFFF,args)
-#define RT_CAN_STD_RMT_DATA_FILTER_INIT(id,args) \
-     RT_CAN_FILTER_ITEM_INIT(id,0,0,1,0xFFFFFFFF,args)
-#define RT_CAN_EXT_RMT_DATA_FILTER_INIT(id,args) \
-     RT_CAN_FILTER_ITEM_INIT(id,1,0,1,0xFFFFFFFF,args)
+#define RT_CAN_FILTER_STD_INIT(id) \
+     RT_CAN_FILTER_ITEM_INIT(id,0,0,0,0xFFFFFFFF)
+#define RT_CAN_FILTER_EXT_INIT(id) \
+     RT_CAN_FILTER_ITEM_INIT(id,1,0,0,0xFFFFFFFF)
+#define RT_CAN_STD_RMT_FILTER_INIT(id) \
+     RT_CAN_FILTER_ITEM_INIT(id,0,1,0,0xFFFFFFFF)
+#define RT_CAN_EXT_RMT_FILTER_INIT(id) \
+     RT_CAN_FILTER_ITEM_INIT(id,1,1,0,0xFFFFFFFF)
+#define RT_CAN_STD_RMT_DATA_FILTER_INIT(id) \
+     RT_CAN_FILTER_ITEM_INIT(id,0,0,1,0xFFFFFFFF)
+#define RT_CAN_EXT_RMT_DATA_FILTER_INIT(id) \
+     RT_CAN_FILTER_ITEM_INIT(id,1,0,1,0xFFFFFFFF)
 #endif
 
 struct rt_can_filter_config

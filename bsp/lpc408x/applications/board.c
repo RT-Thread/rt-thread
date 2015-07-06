@@ -64,5 +64,5 @@ void rt_hw_board_init()
     lpc_sdram_hw_init();
     rt_kprintf("done!\n");
 #endif
-
+    rt_components_board_init();
 }
