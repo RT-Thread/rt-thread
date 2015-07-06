@@ -322,10 +322,6 @@ static rt_err_t rt_can_open(struct rt_device *dev, rt_uint16_t oflag)
             /* configure low level device */
             can->ops->control(can, RT_DEVICE_CTRL_SET_INT, (void *)RT_DEVICE_FLAG_INT_RX);
         }
-        else
-        {
-            can->can_rx = RT_NULL;
-        }
     }
 
     if (can->can_tx == RT_NULL)
@@ -355,10 +351,6 @@ static rt_err_t rt_can_open(struct rt_device *dev, rt_uint16_t oflag)
             dev->open_flag |= RT_DEVICE_FLAG_INT_TX;
             /* configure low level device */
             can->ops->control(can, RT_DEVICE_CTRL_SET_INT, (void *)RT_DEVICE_FLAG_INT_TX);
-        }
-        else
-        {
-            can->can_tx = RT_NULL;
         }
     }
 
