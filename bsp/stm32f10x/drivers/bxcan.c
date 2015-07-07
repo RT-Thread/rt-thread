@@ -1088,16 +1088,6 @@ static const struct rt_can_ops canops =
     recvmsg,
 };
 #ifdef USING_BXCAN1
-#ifdef RT_CAN_USING_LED
-static struct  rt_can_led can1rcvled =
-{
-        CANRT1,PIN_MODE_OUTPUT_OD,1,
-};
-static struct  rt_can_led can1errled =
-{
-        CANERR1,PIN_MODE_OUTPUT_OD,1,
-};
-#endif
 static struct stm_bxcan bxcan1data =
 {
     .reg = CAN1,
@@ -1222,16 +1212,6 @@ void CAN1_SCE_IRQHandler(void)
 #endif /*USING_BXCAN1*/
 
 #ifdef USING_BXCAN2
-#ifdef RT_CAN_USING_LED
-static struct  rt_can_led can2rcvled =
-{
-        CANRT2,PIN_MODE_OUTPUT_OD,1,
-};
-static struct  rt_can_led can2errled =
-{
-        CANERR2,PIN_MODE_OUTPUT_OD,1,
-};
-#endif
 static struct stm_bxcan bxcan2data =
 {
     .reg = CAN2,
@@ -1368,11 +1348,6 @@ int stm32_bxcan_init(void)
       bxcan1.config.sndboxnumber=3;
       bxcan1.config.mode=RT_CAN_MODE_NORMAL;
       bxcan1.config.privmode=0;
-      #ifdef RT_CAN_USING_LED
-      bxcan1.config.rcvled = &can1rcvled;
-      bxcan1.config.sndled = RT_NULL;
-      bxcan1.config.errled = &can1errled;
-      #endif
       bxcan1.config.ticks = 50;
 #ifdef RT_CAN_USING_HDR
       bxcan1.config.maxhdr = BX_CAN2_FMRSTART * 4;
@@ -1392,11 +1367,6 @@ int stm32_bxcan_init(void)
       bxcan2.config.sndboxnumber=3;
       bxcan2.config.mode=RT_CAN_MODE_NORMAL;
       bxcan2.config.privmode=0;
-      #ifdef RT_CAN_USING_LED
-      bxcan2.config.rcvled = &can2rcvled;
-      bxcan2.config.sndled = RT_NULL;
-      bxcan2.config.errled = &can2errled;
-      #endif
       bxcan2.config.ticks = 50;
 #ifdef RT_CAN_USING_HDR
       bxcan2.config.maxhdr = (BX_CAN_FMRNUMBER - BX_CAN2_FMRSTART) * 4;
