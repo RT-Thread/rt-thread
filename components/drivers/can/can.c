@@ -56,7 +56,6 @@ rt_inline int _can_int_rx(struct rt_can_device *can, struct rt_can_msg *data, in
 {
     int size;
     struct rt_can_rx_fifo *rx_fifo;
-
     RT_ASSERT(can != RT_NULL);
     size = msgs;
 
@@ -67,6 +66,9 @@ rt_inline int _can_int_rx(struct rt_can_device *can, struct rt_can_msg *data, in
     while (msgs)
     {
         rt_base_t level;
+#ifdef RT_CAN_USING_HDR
+        rt_int32_t hdr;
+#endif /*RT_CAN_USING_HDR*/
         struct rt_can_msg_list *listmsg = RT_NULL;
 
         /* disable interrupt */
