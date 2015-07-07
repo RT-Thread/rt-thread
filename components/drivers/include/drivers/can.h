@@ -139,6 +139,7 @@ struct rt_can_ops;
 #define RT_CAN_CMD_SET_PRIV         0x16
 #define RT_CAN_CMD_GET_STATUS       0x17
 #define RT_CAN_CMD_SET_STATUS_IND   0x18
+#define RT_CAN_CMD_SET_BUS_HOOK     0x19
 
 #define RT_DEVICE_CAN_INT_ERR       0x1000
 
@@ -195,7 +196,7 @@ typedef struct rt_can_status_ind_type
     rt_canstatus_ind ind;
     void *args;
 } *rt_can_status_ind_type_t;
-
+typedef void (*rt_can_bus_hook)(struct rt_can_device *);
 struct rt_can_device
 {
     struct rt_device parent;
@@ -211,7 +212,9 @@ struct rt_can_device
 #ifdef RT_CAN_USING_HDR
     struct rt_can_hdr *hdr;
 #endif
-
+#ifdef RT_CAN_USING_BUS_HOOK
+    rt_can_bus_hook bus_hook;
+#endif /*RT_CAN_USING_BUS_HOOK*/
     struct rt_mutex lock;
     void *can_rx;
     void *can_tx;

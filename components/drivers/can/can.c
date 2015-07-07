@@ -645,7 +645,11 @@ static rt_err_t rt_can_control(struct rt_device *dev,
         }
         break;
 #endif /*RT_CAN_USING_HDR*/
-
+#ifdef RT_CAN_USING_BUS_HOOK
+    case RT_CAN_CMD_SET_BUS_HOOK:
+        can->bus_hook = (rt_can_bus_hook) args;
+        break;
+#endif /*RT_CAN_USING_BUS_HOOK*/
     default :
         /* control device */
         if (can->ops->control != RT_NULL)
@@ -666,14 +670,20 @@ static void cantimeout(void *arg)
     rt_can_t can = (rt_can_t)arg;
 
     rt_device_control((rt_device_t)can, RT_CAN_CMD_GET_STATUS, (void *)&can->status);
-    if (can->timerinitflag == 1)
-    {
-        can->timerinitflag = 0xFF;
-    }
 
     if (can->status_indicate.ind != RT_NULL)
     {
         can->status_indicate.ind(can, can->status_indicate.args);
+    }
+#ifdef RT_CAN_USING_BUS_HOOK
+    if(can->bus_hook)
+    {
+        can->bus_hook(can);
+    }
+#endif /*RT_CAN_USING_BUS_HOOK*/
+    if (can->timerinitflag == 1)
+    {
+        can->timerinitflag = 0xFF;
     }
 }
 
@@ -699,7 +709,9 @@ rt_err_t rt_hw_can_register(struct rt_can_device *can,
     can->can_rx         = RT_NULL;
     can->can_tx         = RT_NULL;
     rt_mutex_init(&(can->lock), "can", RT_IPC_FLAG_PRIO);
-
+#ifdef RT_CAN_USING_BUS_HOOK
+    can->bus_hook       = RT_NULL;
+#endif /*RT_CAN_USING_BUS_HOOK*/
     device->init        = rt_can_init;
     device->open        = rt_can_open;
     device->close       = rt_can_close;
