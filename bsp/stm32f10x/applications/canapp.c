@@ -12,10 +12,99 @@
  * 2015-05-14     aubrcool@qq.com 	first version
  */
 
-#ifdef RT_USING_CAN
 #include <board.h>
 #include <rtthread.h>
 #include <rtdevice.h>
+#ifdef RT_USING_CAN
+#define CANRT1   8
+#define CANERR1  9
+#define CANRT2   37
+#define CANERR2  38
+static struct canledtype
+{
+  struct stm32_hw_pin_userdata rtd;
+  struct stm32_hw_pin_userdata err;
+} canled[] =
+{
+#ifdef USING_BXCAN1
+  {
+    {CANRT1, PIN_MODE_OUTPUT_OD,},
+    {CANERR1, PIN_MODE_OUTPUT_OD,},
+  },
+#endif /*USING_BXCAN1*/
+#ifdef USING_BXCAN2
+  {
+    {CANRT2, PIN_MODE_OUTPUT_OD,},
+    {CANERR2, PIN_MODE_OUTPUT_OD,},
+  },
+#endif /*USING_BXCAN2*/
+};
+void can_bus_hook(struct rt_can_device * can, struct canledtype* led)
+{
+    if(can->timerinitflag == 1) {
+         rt_pin_write(led->rtd.pin, 0);
+    } else {
+        if(can->status.rcvchange == 1 || can->status.sndchange == 1)
+        {
+            can->status.rcvchange = 0;
+            can->status.sndchange = 0;
+            rt_pin_write(led->rtd.pin,rt_pin_read(led->rtd.pin)?0:1);
+        } else {
+            rt_pin_write(led->rtd.pin,1);
+        }
+    }
+   if(can->timerinitflag == 1) {
+         rt_pin_write(led->err.pin, 0);
+   } else {
+         if(can->status.errcode) {
+             rt_pin_write(led->err.pin,0);
+         } else {
+             rt_pin_write(led->err.pin,1);
+         }
+   }
+}
+#ifdef USING_BXCAN1
+void can1_bus_hook(struct rt_can_device * can)
+{
+    static rt_int32_t inited = 0;
+    if(!inited)
+    {
+      inited = 1;
+      rt_pin_mode(canled[0].rtd.pin, canled[0].rtd.mode);
+      rt_pin_mode(canled[0].err.pin, canled[0].err.mode);
+    }
+    can_bus_hook(can, &canled[0]);
+}
+#endif /*USING_BXCAN1*/
+#ifdef USING_BXCAN2
+void can2_bus_hook(struct rt_can_device * can)
+{
+    static rt_int32_t inited = 0;
+    if(!inited)
+    {
+      inited = 1;
+      rt_pin_mode(canled[1].rtd.pin, canled[1].rtd.mode);
+      rt_pin_mode(canled[1].err.pin, canled[1].err.mode);
+    }
+    can_bus_hook(can, &canled[1]);
+}
+#endif /*USING_BXCAN2*/
+int can_bus_hook_init(void)
+{
+    rt_device_t candev;
+#ifdef USING_BXCAN1
+    candev = rt_device_find("bxcan1");
+    RT_ASSERT(candev);
+    rt_device_control(candev,RT_CAN_CMD_SET_BUS_HOOK,(void*)can1_bus_hook);
+#endif /*USING_BXCAN1*/
+#ifdef USING_BXCAN2
+    candev = rt_device_find("bxcan2");
+    RT_ASSERT(candev);
+    rt_device_control(candev,RT_CAN_CMD_SET_BUS_HOOK,(void*)can2_bus_hook);
+#endif /*USING_BXCAN2*/
+    return RT_EOK;
+}
+INIT_DEVICE_EXPORT(can_bus_hook_init);
 struct can_app_struct
 {
     const char* name;
