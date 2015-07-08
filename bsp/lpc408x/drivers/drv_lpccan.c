@@ -32,19 +32,6 @@ struct lpccandata
     en_CAN_unitId id;
 };
 
-static const rt_uint32_t LPCBAUDTAB[] =
-{
-    1000000,
-    800000,
-    500000,
-    250000,
-    125000,
-    100000,
-    50000,
-    20000,
-    10000,
-};
-
 static LPC_CAN_TypeDef*  lcpcan_get_reg_base(rt_uint32_t id)
 {
     LPC_CAN_TypeDef* pCan;
@@ -84,7 +71,7 @@ static void lpccan_irqstate_init(rt_uint32_t id)
     pCan->MOD = 0;// Return Normal operating
 }
 
-static void lpccan_baud_set(rt_uint32_t id, rt_uint32_t baud)
+static rt_err_t lpccan_baud_set(rt_uint32_t id, rt_uint32_t baud)
 {
     uint32_t result = 0;
     uint8_t NT, TSEG1, TSEG2;
@@ -93,7 +80,8 @@ static void lpccan_baud_set(rt_uint32_t id, rt_uint32_t baud)
     LPC_CAN_TypeDef* pCan = lcpcan_get_reg_base(id);
 
     CANPclk = CLKPWR_GetCLK(CLKPWR_CLKTYPE_PER);
-    result = CANPclk / LPCBAUDTAB[baud];
+    result = CANPclk / baud;
+
     /* Calculate suitable nominal time value
      * NT (nominal time) = (TSEG1 + TSEG2 + 3)
      * NT <= 24
@@ -101,7 +89,7 @@ static void lpccan_baud_set(rt_uint32_t id, rt_uint32_t baud)
      */
     for(NT = 24; NT > 0; NT = NT-2)
     {
-        if ((result%NT) == 0)
+        if ((result % NT) == 0)
         {
             BRP = result / NT - 1;
             NT--;
@@ -110,6 +98,7 @@ static void lpccan_baud_set(rt_uint32_t id, rt_uint32_t baud)
             break;
         }
     }
+
     /* Enter reset mode */
     pCan->MOD = 0x01;
     /* Set bit timing
@@ -119,6 +108,8 @@ static void lpccan_baud_set(rt_uint32_t id, rt_uint32_t baud)
     pCan->BTR = (TSEG2 << 20) | (TSEG1 << 16) | (3 << 14) | BRP;
     /* Return to normal operating */
     pCan->MOD = 0;
+
+    return RT_EOK;
 }
 
 static void lpccan_init_alut_ram(void)
@@ -183,7 +174,7 @@ static void lpccan2_filter_init(struct rt_can_device *can)
 {
 }
 
-static void lpccan2_hw_init(enum CANBAUD baud,  CAN_MODE_Type mode)
+static void lpccan2_hw_init(uint32_t baud,  CAN_MODE_Type mode)
 {
     if(mode != CAN_SELFTEST_MODE)
     {
@@ -539,8 +530,10 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
     struct lpccandata* plpccan;
     rt_uint32_t argval;
     CAN_MODE_Type mode;
+
     plpccan = (struct lpccandata* )  can->parent.user_data;
     RT_ASSERT(plpccan != RT_NULL);
+
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
@@ -561,6 +554,7 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
             CAN_IRQCmd(plpccan->id, CANINT_EIE, DISABLE);
         }
         break;
+
     case RT_DEVICE_CTRL_SET_INT:
         argval = (rt_uint32_t) arg;
         if(argval == RT_DEVICE_FLAG_INT_RX)
@@ -579,8 +573,10 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
             CAN_IRQCmd(plpccan->id, CANINT_EIE, ENABLE);
         }
         break;
+
     case RT_CAN_CMD_SET_FILTER:
         return setfilter(plpccan, (struct rt_can_filter_config*) arg);
+
     case RT_CAN_CMD_SET_MODE:
         argval = (rt_uint32_t) arg;
         if(argval != RT_CAN_MODE_NORMAL ||
@@ -613,26 +609,16 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
             }
         }
         break;
+
     case RT_CAN_CMD_SET_BAUD:
         argval = (rt_uint32_t) arg;
-        if(argval != CAN1MBaud &&
-                argval != CAN800kBaud &&
-                argval != CAN500kBaud &&
-                argval != CAN250kBaud &&
-                argval != CAN125kBaud &&
-                argval != CAN100kBaud &&
-                argval != CAN50kBaud  &&
-                argval != CAN20kBaud  &&
-                argval != CAN10kBaud  )
-        {
-            return RT_ERROR;
-        }
         if(argval != can->config.baud_rate)
         {
             can->config.baud_rate = argval;
-            lpccan_baud_set(plpccan->id, (rt_uint32_t) arg);
+            return lpccan_baud_set(plpccan->id, (rt_uint32_t) arg);
         }
         break;
+
     case RT_CAN_CMD_SET_PRIV:
         argval = (rt_uint32_t) arg;
         if(argval != RT_CAN_MODE_PRIV ||
@@ -646,6 +632,7 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
             CAN_ModeConfig(plpccan->id, CAN_TXPRIORITY_MODE, ENABLE);
         }
         break;
+
     case RT_CAN_CMD_GET_STATUS:
     {
         can->status.rcverrcnt = 0;
@@ -657,6 +644,7 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
         }
     }
     break;
+
     }
     return RT_EOK;
 }
