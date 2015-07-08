@@ -67,6 +67,7 @@ static LPC_CAN_TypeDef*  lcpcan_get_reg_base(rt_uint32_t id)
 static void lpccan_irqstate_init(rt_uint32_t id)
 {
     LPC_CAN_TypeDef* pCan = lcpcan_get_reg_base(id);
+    volatile rt_int32_t i;
 
     pCan->MOD = 1; // Enter Reset Mode
     pCan->IER = 0; // Disable All CAN Interrupts
@@ -77,7 +78,9 @@ static void lpccan_irqstate_init(rt_uint32_t id)
     pCan->CMR = (1 << 1) | (1 << 2) | (1 << 3);
 
     /* Read to clear interrupt pending in interrupt capture register */
-    rt_int32_t i = pCan->ICR;
+    i = pCan->ICR;
+    i = i;
+
     pCan->MOD = 0;// Return Normal operating
 }
 
@@ -209,6 +212,8 @@ static void lpccan2_hw_init(enum CANBAUD baud,  CAN_MODE_Type mode)
 static rt_err_t configure(struct rt_can_device *can, struct can_configure *cfg)
 {
     CAN_MODE_Type mode;
+    rt_uint32_t canid;
+
     switch(cfg->mode)
     {
     case RT_CAN_MODE_NORMAL:
@@ -223,7 +228,7 @@ static rt_err_t configure(struct rt_can_device *can, struct can_configure *cfg)
     default:
         return RT_EIO;
     }
-    rt_uint32_t canid;
+
     canid = ((struct lpccandata  *) can->parent.user_data)->id;
 #ifdef RT_USING_LPCCAN1
     if(canid == CAN_1)
@@ -643,7 +648,6 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
         break;
     case RT_CAN_CMD_GET_STATUS:
     {
-        rt_uint32_t errtype;
         can->status.rcverrcnt = 0;
         can->status.snderrcnt = 0;
         can->status.errcode = 0;
@@ -660,25 +664,35 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
 static int sendmsg(struct rt_can_device *can, const void* buf, rt_uint32_t boxno)
 {
     struct lpccandata* plpccan;
+    LPC_CAN_TypeDef* pCan;
+    struct rt_can_msg* pmsg;
+    rt_uint32_t SR_Mask;
+    rt_uint32_t CMRMsk;
+
     plpccan = (struct lpccandata* )  can->parent.user_data;
     RT_ASSERT(plpccan != RT_NULL);
-    LPC_CAN_TypeDef* pCan = lcpcan_get_reg_base(plpccan->id);
+
+    pCan = lcpcan_get_reg_base(plpccan->id);
     RT_ASSERT(pCan != RT_NULL);
-    struct rt_can_msg* pmsg = (struct rt_can_msg*) buf;
-    rt_uint32_t SR_Mask;
+
+    pmsg = (struct rt_can_msg*) buf;
+
     if(boxno > 2)
     {
         return RT_ERROR;
     }
-    rt_uint32_t CMRMsk = 0x01 | (0x01 << (boxno + 5));
+
+    CMRMsk = 0x01 | (0x01 << (boxno + 5));
     SR_Mask = 0x01 <<(boxno * 8 + 2);
-    volatile unsigned int  *pTFI = (&pCan->TFI1 + 0 + 4 * boxno);
-    volatile unsigned int  *pTID = (&pCan->TFI1 + 1 + 4 * boxno);
-    volatile unsigned int  *pTDA = (&pCan->TFI1 + 2 + 4 * boxno);
-    volatile unsigned int  *pTDB = (&pCan->TFI1 + 3 + 4 * boxno);
-    rt_uint32_t data;
+
     if(pCan->SR & SR_Mask)
     {
+    	volatile unsigned int  *pTFI = (&pCan->TFI1 + 0 + 4 * boxno);
+    	volatile unsigned int  *pTID = (&pCan->TFI1 + 1 + 4 * boxno);
+    	volatile unsigned int  *pTDA = (&pCan->TFI1 + 2 + 4 * boxno);
+    	volatile unsigned int  *pTDB = (&pCan->TFI1 + 3 + 4 * boxno);
+	    rt_uint32_t data;
+
         /* Transmit Channel 1 is available */
         /* Write frame informations and frame data into its CANxTFI1,
          * CANxTID1, CANxTDA1, CANxTDB1 register */
@@ -727,16 +741,20 @@ static int sendmsg(struct rt_can_device *can, const void* buf, rt_uint32_t boxno
 static int recvmsg(struct rt_can_device *can, void* buf, rt_uint32_t boxno)
 {
     struct lpccandata* plpccan;
+    LPC_CAN_TypeDef* pCan;
+
     plpccan = (struct lpccandata* )  can->parent.user_data;
     RT_ASSERT(plpccan != RT_NULL);
-    LPC_CAN_TypeDef* pCan = lcpcan_get_reg_base(plpccan->id);
+    pCan = lcpcan_get_reg_base(plpccan->id);
     RT_ASSERT(pCan != RT_NULL);
+
     //CAN_ReceiveMsg
-    uint32_t data;
-    struct rt_can_msg* pmsg = (struct rt_can_msg*) buf;
     //check status of Receive Buffer
     if((pCan->SR &0x00000001))
     {
+	    uint32_t data;
+    	struct rt_can_msg* pmsg = (struct rt_can_msg*) buf;
+
         /* Receive message is available */
         /* Read frame informations */
         pmsg->ide = (uint8_t)(((pCan->RFS) & 0x80000000) >> 31);
@@ -844,6 +862,8 @@ void CAN_IRQHandler(void)
     if((IntStatus >> 2) & 0x01)
     {
         rt_uint32_t errtype;
+        rt_uint32_t state;
+
         errtype = (IntStatus >> 16);
         if(errtype & 0x1F && lpccan1.status.lasterrtype == (errtype & 0x1F))
         {
@@ -881,7 +901,7 @@ void CAN_IRQHandler(void)
             }
             lpccan1.status.lasterrtype = errtype & 0x1F;
         }
-        rt_uint32_t state = 0;
+
         state = CAN_GetCTRLStatus(CAN_1, CANCTRL_GLOBAL_STS);
         lpccan1.status.rcverrcnt = (state >> 16) & 0xFF;
         lpccan1.status.snderrcnt = (state >> 24) & 0xFF;
@@ -943,6 +963,7 @@ void CAN_IRQHandler(void)
             rt_hw_can_isr(&lpccan1,RT_CAN_EVENT_TX_FAIL | 0<<8);
         }
     }
+
     //check Error Warning Interrupt
     if((IntStatus >> 2) & 0x01)
     {
@@ -990,11 +1011,13 @@ void CAN_IRQHandler(void)
         lpccan2.status.snderrcnt = (state >> 24) & 0xFF;
         lpccan2.status.errcode = (state >> 5) & 0x06;
     }
+
     //check Data Overrun Interrupt Interrupt
     if((IntStatus >> 3) & 0x01)
     {
         rt_hw_can_isr(&lpccan1,RT_CAN_EVENT_RXOF_IND | 0<<8);
     }
+
     //check Transmit Interrupt  interrupt2
     if((IntStatus >> 9) & 0x01)
     {
@@ -1009,6 +1032,7 @@ void CAN_IRQHandler(void)
             rt_hw_can_isr(&lpccan1,RT_CAN_EVENT_TX_FAIL | 1<<8);
         }
     }
+
     //check Transmit Interrupt  interrupt3
     if((IntStatus >> 10) & 0x01)
     {
@@ -1034,15 +1058,19 @@ int lpc_can_init(void)
     lpccan1.config.sndboxnumber=3;
     lpccan1.config.mode=RT_CAN_MODE_NORMAL;
     lpccan1.config.privmode=0;
+
 #ifdef RT_CAN_USING_LED
 #endif
+
     lpccan1.config.ticks = 50;
+
 #ifdef RT_CAN_USING_HDR
 #endif
+
     //Enable CAN Interrupt
     NVIC_EnableIRQ(CAN_IRQn);
     rt_hw_can_register(&lpccan1, "lpccan1", &canops, &lpccandata1);
-#endif
+#endif /*RT_USING_LPCCAN1*/
 
 #ifdef RT_USING_LPCCAN2
     lpccan2.config.baud_rate=CAN1MBaud;
@@ -1050,19 +1078,24 @@ int lpc_can_init(void)
     lpccan2.config.sndboxnumber=3;
     lpccan2.config.mode=RT_CAN_MODE_NORMAL;
     lpccan2.config.privmode=0;
+
 #ifdef RT_CAN_USING_LED
 #endif
+
     lpccan2.config.ticks = 50;
+
 #ifdef RT_CAN_USING_HDR
 #endif
-#ifndef RT_USING_LPCCAN1
+
     //Enable CAN Interrupt
     NVIC_EnableIRQ(CAN_IRQn);
-#endif
+
 #ifdef RT_CAN_USING_HDR
 #endif
+
     rt_hw_can_register(&lpccan2, "lpccan2", &canops, &lpccandata2);
-#endif
+#endif /*RT_USING_LPCCAN2*/
+
     return RT_EOK;
 }
 INIT_BOARD_EXPORT(lpc_can_init);
