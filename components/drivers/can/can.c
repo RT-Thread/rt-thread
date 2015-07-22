@@ -433,7 +433,7 @@ static rt_err_t rt_can_close(struct rt_device *dev)
     {
         struct rt_can_tx_fifo *tx_fifo;
 
-        tx_fifo = (struct rt_can_tx_fifo *)can->can_rx;
+        tx_fifo = (struct rt_can_tx_fifo *)can->can_tx;
         RT_ASSERT(tx_fifo != RT_NULL);
 
         rt_free(tx_fifo);
