@@ -14,7 +14,7 @@ if  CROSS_TOOL == 'gcc':
 	PLATFORM    = 'gcc'
 	EXEC_PATH   = '/opt/opt/gcc-4.3-ls232/bin'
 else:
-    print '================ERROR============================'
+    print '================ERROR==========================='
     print 'Not support %s yet!' % CROSS_TOOL
     print '================================================='
     exit(0)
@@ -24,7 +24,7 @@ if os.getenv('RTT_EXEC_PATH'):
 
 BUILD       = 'debug'
 
-PREFIX = 'mipsel-linux-'
+PREFIX = 'mips-sde-elf-'
 CC = PREFIX + 'gcc'
 AS = PREFIX + 'gcc'
 AR = PREFIX + 'ar'
