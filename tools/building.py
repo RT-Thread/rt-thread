@@ -7,7 +7,7 @@
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 2 of the License, or
 #  (at your option) any later version.
-#
+
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -55,7 +55,7 @@ class Win32Spawn:
         cmdline = cmd + " " + newargs
 
         # Make sure the env is constructed by strings
-        _e = dict([(k, str(v)) for k, v in env.items()])
+        _e = dict([(k, str(v)) for k, v in env.items()]
 
         # Windows(tm) CreateProcess does not use the env passed to it to find
         # the executables. So we have to modify our own PATH to make Popen
@@ -214,7 +214,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             rtconfig.CROSS_TOOL, rtconfig.PLATFORM = tgt_dict[tgt_name]
         except KeyError:
             print 'Unknow target: %s. Avaible targets: %s' % \
-                    (tgt_name, ', '.join(tgt_dict.keys()))
+                    (tgt_name, ', '.join(tgt_dit.keys()))
             sys.exit(1)
     elif (GetDepend('RT_USING_NEWLIB') == False and GetDepend('RT_USING_NOLIBC') == False) \
         and rtconfig.PLATFORM == 'gcc':
@@ -224,7 +224,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     AddOption('--verbose',
                 dest='verbose',
                 action='store_true',
-                default=True,
+                default=False,
                 help='print verbose information during build')
 
     if not GetOption('verbose'):
