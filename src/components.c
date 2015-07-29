@@ -25,8 +25,9 @@
  * 2013-06-23     Bernard      Add the init_call for components initialization.
  * 2013-07-05     Bernard      Remove initialization feature for MS VC++ compiler
  * 2015-02-06     Bernard      Remove the MS VC++ support and move to the kernel
- * 2015-0504      Bernard      Rename it to components.c because compiling issue 
+ * 2015-05-04     Bernard      Rename it to components.c because compiling issue
  *                             in some IDEs.
+ * 2015-07-29     Arda.Fu      Add support to use RT_USING_USER_MAIN with IAR
  */
 
 #include <rthw.h>
@@ -128,23 +129,42 @@ void rt_components_init(void)
 
 void rt_application_init(void);
 void rt_hw_board_init(void);
-
-#ifdef __CC_ARM
-extern int $Super$$main(void);
 int rtthread_startup(void);
 
+#if defined (__CC_ARM)
+extern int $Super$$main(void);
 /* re-define main function */
 int $Sub$$main(void)
 {
     rt_hw_interrupt_disable();
     rtthread_startup();
-    
+    return 0;
+}
+#elif defined(__ICCARM__)
+extern int main(void);
+/* __low_level_init will auto called by IAR cstartup */
+extern void __iar_data_init3( void );
+int __low_level_init(void)
+{
+	// call IAR table copy function.
+	__iar_data_init3();
+    rt_hw_interrupt_disable();
+    rtthread_startup();
+    return 0;
+}
+#elif defined(__GNUC__)
+extern int main(void);
+/* Add -eentry to arm-none-eabi-gcc argument */
+int entry(void)
+{
+    rt_hw_interrupt_disable();
+    rtthread_startup();
     return 0;
 }
 #endif
 
 #ifndef RT_USING_HEAP
-/* if there is not enble heap, we should use static thread and stack. */
+/* if there is not enable heap, we should use static thread and stack. */
 ALIGN(8)
 static rt_uint8_t main_stack[2048];
 struct rt_thread main_thread;
@@ -160,9 +180,9 @@ void main_thread_entry(void *parameter)
     rt_components_init();
 
     /* invoke system main function */
-#ifdef __CC_ARM
+#if defined (__CC_ARM)
     $Super$$main(); /* for ARMCC. */
-#else
+#elif defined(__ICCARM__) || defined(__GNUC__)
     main();
 #endif
 }
