@@ -794,6 +794,11 @@ static const struct rt_can_ops canops =
     control,
     sendmsg,
     recvmsg,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
 };
 
 #ifdef RT_USING_LPCCAN1
