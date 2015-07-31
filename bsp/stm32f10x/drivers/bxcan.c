@@ -251,6 +251,10 @@ static void bxcan_init(CAN_TypeDef* pcan, rt_uint32_t baud, rt_uint32_t mode)
         CAN_InitStructure.CAN_Mode = CAN_Mode_Silent_LoopBack;
       break;
       }
+      if(baud < 0)
+      {
+	baud = 0;
+      }
       CAN_InitStructure.CAN_SJW = BAUD_DATA(SJW,baud);
       CAN_InitStructure.CAN_BS1 = BAUD_DATA(BS1,baud);
       CAN_InitStructure.CAN_BS2 = BAUD_DATA(BS2,baud);
@@ -891,6 +895,43 @@ static rt_err_t setfilter(struct stm_bxcan *pbxcan, rt_int32_t maxhdr,
     }
     return RT_EOK;
 }
+static rt_int32_t baudval2index(CANBAUD baudval)
+{
+    rt_int32_t index;
+    switch(baudval)
+    {
+    case CAN1MBaud   :
+	 index = 0;
+	 break;
+    case CAN800kBaud :
+	 index = 1;
+	 break;
+    case CAN500kBaud :
+	 index = 2;
+	 break;
+    case CAN250kBaud :
+	 index = 3;
+	 break;
+    case CAN125kBaud :
+	 index = 4;
+	 break;
+    case CAN100kBaud :
+	 index = 5;
+	 break;
+    case CAN50kBaud  :
+	 index = 6;
+	 break;
+    case CAN20kBaud  :
+	 index = 7;
+	 break;
+    case CAN10kBaud  :
+	 index = 8;
+	 break;
+    default:
+	 index = -1;
+    }
+    return index;
+}
 static rt_err_t configure(struct rt_can_device *can, struct can_configure *cfg)
 {
     CAN_TypeDef* pbxcan;
@@ -900,11 +941,11 @@ static rt_err_t configure(struct rt_can_device *can, struct can_configure *cfg)
     if(pbxcan == CAN1)
     {
         bxcan1_hw_init();
-	bxcan_init(pbxcan,cfg->baud_rate,can->config.mode);
+	bxcan_init(pbxcan, baudval2index(cfg->baud_rate), can->config.mode);
         bxcan1_filter_init(can);
     } else {
         bxcan2_hw_init();
-	bxcan_init(pbxcan,cfg->baud_rate,can->config.mode);
+	bxcan_init(pbxcan, baudval2index(cfg->baud_rate), can->config.mode);
         bxcan2_filter_init(can);
     }
     return RT_EOK;
@@ -1013,7 +1054,7 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
 	 if(argval != can->config.baud_rate)
 	 {
 	   can->config.baud_rate = argval;
-	   return bxcan_set_baud_rate(pbxcan->reg, argval);
+	   return bxcan_set_baud_rate(pbxcan->reg, baudval2index(argval));
 	 }
         break;
       case RT_CAN_CMD_SET_PRIV:
