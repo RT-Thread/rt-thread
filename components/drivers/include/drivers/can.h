@@ -209,9 +209,6 @@ struct rt_can_device
     struct rt_timer timer;
 
     struct rt_can_status_ind_type status_indicate;
-#ifdef RT_CAN_USING_HDR
-    struct rt_can_hdr *hdr;
-#endif
 #ifdef RT_CAN_USING_BUS_HOOK
     rt_can_bus_hook bus_hook;
 #endif /*RT_CAN_USING_BUS_HOOK*/
@@ -290,6 +287,13 @@ struct rt_can_ops
     rt_err_t (*control)(struct rt_can_device *can, int cmd, void *arg);
     int (*sendmsg)(struct rt_can_device *can, const void *buf, rt_uint32_t boxno);
     int (*recvmsg)(struct rt_can_device *can, void *buf, rt_uint32_t boxno);
+#ifdef RT_CAN_USING_HDR
+    int (*insertothdrlist)(struct rt_can_device *can, struct rt_can_msg_list* msglist);
+    struct rt_can_msg_list* (*getfromhdrlist)(struct rt_can_device *can, rt_int32_t hdr);
+    int (*dettachhdrlist)(struct rt_can_device *can, struct rt_can_msg_list* msglist);
+    int (*indicatehdrlist)(struct rt_can_device *can, struct rt_can_msg_list* msglist);
+    int (*inithdrlist)(struct rt_can_device *can,  struct rt_can_msg_list* msglist);
+#endif
 };
 
 rt_err_t rt_hw_can_register(struct rt_can_device *can,
@@ -298,4 +302,3 @@ rt_err_t rt_hw_can_register(struct rt_can_device *can,
                             void                    *data);
 void rt_hw_can_isr(struct rt_can_device *can, int event);
 #endif /*_CAN_H*/
-
