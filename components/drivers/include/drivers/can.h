@@ -288,11 +288,11 @@ struct rt_can_ops
     int (*sendmsg)(struct rt_can_device *can, const void *buf, rt_uint32_t boxno);
     int (*recvmsg)(struct rt_can_device *can, void *buf, rt_uint32_t boxno);
 #ifdef RT_CAN_USING_HDR
-    int (*insertothdrlist)(struct rt_can_device *can, struct rt_can_msg_list* msglist);
-    struct rt_can_msg_list* (*getfromhdrlist)(struct rt_can_device *can, rt_int32_t hdr);
-    int (*dettachhdrlist)(struct rt_can_device *can, struct rt_can_msg_list* msglist);
-    int (*indicatehdrlist)(struct rt_can_device *can, struct rt_can_msg_list* msglist);
-    int (*inithdrlist)(struct rt_can_device *can,  struct rt_can_msg_list* msglist);
+    int (*insertothdrlist)(struct rt_can_device *can, struct rt_can_msg_list *msglist);
+    struct rt_can_msg_list *(*getfromhdrlist)(struct rt_can_device *can, rt_int32_t hdr);
+    int (*dettachhdrlist)(struct rt_can_device *can, struct rt_can_msg_list *msglist);
+    int (*indicatehdrlist)(struct rt_can_device *can, struct rt_can_msg_list *msglist);
+    int (*inithdrlist)(struct rt_can_device *can,  struct rt_can_msg_list *msglist);
 #endif
 };
 

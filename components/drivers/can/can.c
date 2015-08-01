@@ -71,7 +71,7 @@ rt_inline int _can_int_rx(struct rt_can_device *can, struct rt_can_msg *data, in
         /* disable interrupt */
         level = rt_hw_interrupt_disable();
 #ifdef RT_CAN_USING_HDR
-	if(can->ops->getfromhdrlist && (listmsg = can->ops->getfromhdrlist(can, data->hdr)) != RT_NULL)
+	if (can->ops->getfromhdrlist && (listmsg = can->ops->getfromhdrlist(can, data->hdr)) != RT_NULL)
         {
             rt_list_remove(&listmsg->list);
         }
@@ -83,7 +83,8 @@ rt_inline int _can_int_rx(struct rt_can_device *can, struct rt_can_msg *data, in
                 listmsg = rt_list_entry(rx_fifo->uselist.next, struct rt_can_msg_list, list);
                 rt_list_remove(&listmsg->list);
 #ifdef RT_CAN_USING_HDR
-		if(can->ops->dettachhdrlist) {
+		if (can->ops->dettachhdrlist)
+		{
 		    can->ops->dettachhdrlist(can, listmsg);
                 }
 #endif /*RT_CAN_USING_HDR*/
@@ -293,9 +294,9 @@ static rt_err_t rt_can_open(struct rt_device *dev, rt_uint16_t oflag)
             {
                 rt_list_insert_before(&rx_fifo->freelist, &rx_fifo->buffer[i].list);
 #ifdef RT_CAN_USING_HDR
-		if(can->ops->inithdrlist)
+		if (can->ops->inithdrlist)
 		{
-		     can->ops->inithdrlist(can, &rx_fifo->buffer[i]);
+		    can->ops->inithdrlist(can, &rx_fifo->buffer[i]);
 		}
 #endif
             }
@@ -562,7 +563,7 @@ static void cantimeout(void *arg)
         can->status_indicate.ind(can, can->status_indicate.args);
     }
 #ifdef RT_CAN_USING_BUS_HOOK
-    if(can->bus_hook)
+    if (can->bus_hook)
     {
         can->bus_hook(can);
     }
@@ -659,9 +660,9 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
             listmsg = rt_list_entry(rx_fifo->freelist.next, struct rt_can_msg_list, list);
             rt_list_remove(&listmsg->list);
 #ifdef RT_CAN_USING_HDR
-	    if(can->ops->dettachhdrlist)
+	    if (can->ops->dettachhdrlist)
             {
-		 can->ops->dettachhdrlist(can, listmsg);
+		can->ops->dettachhdrlist(can, listmsg);
             }
 #endif /*RT_CAN_USING_HDR*/
 	    RT_ASSERT(rx_fifo->freenumbers > 0)
@@ -673,9 +674,9 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
             can->status.dropedrcvpkg++;
             rt_list_remove(&listmsg->list);
 #ifdef RT_CAN_USING_HDR
-	    if(can->ops->dettachhdrlist)
+	    if (can->ops->dettachhdrlist)
             {
-		 can->ops->dettachhdrlist(can, listmsg);
+		can->ops->dettachhdrlist(can, listmsg);
             }
 #endif
         }
@@ -688,7 +689,7 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
             level = rt_hw_interrupt_disable();
             rt_list_insert_before(&rx_fifo->uselist, &listmsg->list);
 #ifdef RT_CAN_USING_HDR
-	    if(can->ops->insertothdrlist)
+	    if (can->ops->insertothdrlist)
             {
 		can->ops->insertothdrlist(can, listmsg);
             }
@@ -699,7 +700,7 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
         /* invoke callback */
 #ifdef RT_CAN_USING_HDR
 	if (can->ops->indicatehdrlist &&
-	    can->ops->indicatehdrlist(can, listmsg) == RT_EOK)
+		can->ops->indicatehdrlist(can, listmsg) == RT_EOK)
         {
         }
         else
