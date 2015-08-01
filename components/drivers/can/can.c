@@ -635,10 +635,8 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
     }
     case RT_CAN_EVENT_RX_IND:
     {
-        struct rt_can_msg tmpmsg;
         struct rt_can_rx_fifo *rx_fifo;
         struct rt_can_msg_list *listmsg = RT_NULL;
-        int ch = -1;
         rt_base_t level;
         rt_uint32_t no;
 
@@ -647,9 +645,6 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
         /* interrupt mode receive */
         RT_ASSERT(can->parent.open_flag & RT_DEVICE_FLAG_INT_RX);
 
-        no = event >> 8;
-        ch = can->ops->recvmsg(can, &tmpmsg, no);
-        if (ch == -1) break;
 
         /* disable interrupt */
         level = rt_hw_interrupt_disable();
@@ -680,24 +675,22 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
             }
 #endif
         }
-        /* enable interrupt */
-        rt_hw_interrupt_enable(level);
+	/* enable interrupt */
+	rt_hw_interrupt_enable(level);
 
-        if (listmsg != RT_NULL)
-        {
-            rt_memcpy(&listmsg->data, &tmpmsg, sizeof(struct rt_can_msg));
-            level = rt_hw_interrupt_disable();
-            rt_list_insert_before(&rx_fifo->uselist, &listmsg->list);
+	no = event >> 8;
+	can->ops->recvmsg(can, &listmsg->data, no);
+	level = rt_hw_interrupt_disable();
+	rt_list_insert_before(&rx_fifo->uselist, &listmsg->list);
 #ifdef RT_CAN_USING_HDR
-	    if (can->ops->insertothdrlist)
-            {
-		can->ops->insertothdrlist(can, listmsg);
-            }
+	if (can->ops->insertothdrlist)
+	{
+	    can->ops->insertothdrlist(can, listmsg);
+	}
 #endif
-            rt_hw_interrupt_enable(level);
-        }
+	rt_hw_interrupt_enable(level);
 
-        /* invoke callback */
+	/* invoke callback */
 #ifdef RT_CAN_USING_HDR
 	if (can->ops->indicatehdrlist &&
 		can->ops->indicatehdrlist(can, listmsg) == RT_EOK)
