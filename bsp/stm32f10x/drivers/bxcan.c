@@ -1432,7 +1432,7 @@ static struct stm_bxcan bxcan1data =
 struct rt_can_device bxcan1;
 void CAN1_RX0_IRQHandler(void)
 {
-    if (CAN1->RF0R & 0x03)
+    while (CAN1->RF0R & 0x03)
     {
 	if ((CAN1->RF0R & CAN_RF0R_FOVR0) != 0)
 	{
@@ -1448,7 +1448,7 @@ void CAN1_RX0_IRQHandler(void)
 }
 void CAN1_RX1_IRQHandler(void)
 {
-    if (CAN1->RF1R & 0x03)
+    while (CAN1->RF1R & 0x03)
     {
 	if ((CAN1->RF1R & CAN_RF1R_FOVR1) != 0)
 	{
@@ -1576,7 +1576,7 @@ static struct stm_bxcan bxcan2data =
 struct rt_can_device bxcan2;
 void CAN2_RX0_IRQHandler(void)
 {
-    if (CAN2->RF0R & 0x03)
+    while (CAN2->RF0R & 0x03)
     {
 	if ((CAN2->RF0R & CAN_RF0R_FOVR0) != 0)
 	{
@@ -1592,7 +1592,7 @@ void CAN2_RX0_IRQHandler(void)
 }
 void CAN2_RX1_IRQHandler(void)
 {
-    if (CAN2->RF1R & 0x03)
+    while (CAN2->RF1R & 0x03)
     {
 	if ((CAN2->RF1R & CAN_RF1R_FOVR1) != 0)
 	{
