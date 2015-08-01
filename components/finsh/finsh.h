@@ -347,8 +347,11 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
 #ifdef FINSH_USING_MSH
 #define MSH_CMD_EXPORT(command, desc)   \
     FINSH_FUNCTION_EXPORT_CMD(command, __cmd_##command, desc)
+#define MSH_CMD_EXPORT_ALIAS(command, alias, desc)  \
+    FINSH_FUNCTION_EXPORT_ALIAS(command, __cmd_##alias, desc)
 #else
 #define MSH_CMD_EXPORT(command, desc)
+#define MSH_CMD_EXPORT_ALIAS(command, alias, desc)
 #endif
 
 struct finsh_token
