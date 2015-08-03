@@ -518,6 +518,8 @@ void rt_show_version(void);
 #ifdef RT_DEBUG
 extern void (*rt_assert_hook)(const char* ex, const char* func, rt_size_t line);
 void rt_assert_set_hook(void (*hook)(const char* ex, const char* func, rt_size_t line));
+
+void rt_assert_handler(const char* ex, const char* func, rt_size_t line);
 #endif /* RT_DEBUG */
 
 /*@}*/

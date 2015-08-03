@@ -30,6 +30,7 @@
  * 2012-12-22     Bernard      fix rt_kprintf issue, which found by Grissiom.
  * 2013-06-24     Bernard      remove rt_kprintf if RT_USING_CONSOLE is not defined.
  * 2013-09-24     aozima       make sure the device is in STREAM mode when used by rt_kprintf.
+ * 2015-07-06     Bernard      Add rt_assert_handler routine.
  */
 
 #include <rtthread.h>
@@ -1248,6 +1249,42 @@ void (*rt_assert_hook)(const char* ex, const char* func, rt_size_t line);
 void rt_assert_set_hook(void (*hook)(const char* ex, const char* func, rt_size_t line)) {
     rt_assert_hook = hook;
 }
+
+/**
+ * The RT_ASSERT function.
+ *
+ * @param ex the assertion condition string
+ * @param func the function name when assertion.
+ * @param line the file line number when assertion.
+ */
+void rt_assert_handler(const char* ex_string, const char* func, rt_size_t line)
+{
+    volatile char dummy = 0;
+
+    if (rt_assert_hook == RT_NULL)
+    {
+#ifdef RT_USING_MODULE
+		if (rt_module_self() != RT_NULL)
+		{
+			/* unload assertion module */
+			rt_module_unload(rt_module_self());
+
+			/* re-schedule */
+			rt_schedule();
+		}
+		else
+#endif
+		{
+	        rt_kprintf("(%s) assertion failed at function:%s, line number:%d \n", ex_string, func, line);
+	        while (dummy == 0);
+		}
+    }
+	else
+	{
+        rt_assert_hook(ex_string, func, line);
+    }                                                                     
+}
+RTM_EXPORT(rt_assert_handler);
 #endif /* RT_DEBUG */
 
 #if !defined (RT_USING_NEWLIB) && defined (RT_USING_MINILIBC) && defined (__GNUC__)
