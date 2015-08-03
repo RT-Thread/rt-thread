@@ -401,8 +401,8 @@ rt_bool_t rt_object_is_systemobject(rt_object_t object)
  */
 rt_object_t rt_object_find(const char *name, rt_uint8_t type)
 {
-    struct rt_object *object;
-    struct rt_list_node *node;
+    struct rt_object *object = RT_NULL;
+    struct rt_list_node *node = RT_NULL;
     struct rt_object_information *information = RT_NULL;
 
     /* parameter check */
