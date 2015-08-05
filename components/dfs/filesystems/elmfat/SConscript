@@ -1,0 +1,26 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+CPPPATH = [cwd]
+
+if GetDepend('RT_DFS_ELM_USE_LFN'):
+    if GetDepend('RT_DFS_ELM_CODE_PAGE_FILE'):
+        src += ['option/ccfile.c']
+    else:
+        if GetConfigValue('RT_DFS_ELM_CODE_PAGE') == 932:
+            src += ['option/cc932.c']
+        elif GetConfigValue('RT_DFS_ELM_CODE_PAGE') == 936:
+            src += ['option/cc936.c']
+        elif GetConfigValue('RT_DFS_ELM_CODE_PAGE') == 949:
+            src += ['option/cc949.c']
+        elif GetConfigValue('RT_DFS_ELM_CODE_PAGE') == 950:
+            src += ['option/cc950.c']
+        else:
+            src += ['option/ccsbcs.c']
+
+group = DefineGroup('Filesystem', src, depend = ['RT_USING_DFS', 'RT_USING_DFS_ELMFAT'], CPPPATH = CPPPATH)
+
+Return('group')

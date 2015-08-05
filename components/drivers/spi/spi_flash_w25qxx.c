@@ -13,6 +13,7 @@
  * 2012-05-06     aozima       can page write.
  * 2012-08-23     aozima       add flash lock.
  * 2012-08-24     aozima       fixed write status register BUG.
+ * 2015-05-13     bernard      add GD25Q flash ID.
  */
 
 #include <stdint.h>
@@ -28,8 +29,10 @@
 
 #define PAGE_SIZE           4096
 
-/* JEDEC Manufacturer¡¯s ID */
+/* JEDEC Manufacturerï¿½ï¿½s ID */
 #define MF_ID           (0xEF)
+#define GD_ID           (0xC8)
+
 /* JEDEC Device ID: Memory type and Capacity */
 #define MTC_W25Q16_BV_CL_CV   (0x4015) /* W25Q16BV W25Q16CL W25Q16CV  */
 #define MTC_W25Q16_DW         (0x6015) /* W25Q16DW  */
@@ -297,7 +300,7 @@ rt_err_t w25qxx_init(const char * flash_device_name, const char * spi_device_nam
 
         flash_unlock(&spi_flash_device);
 
-        if(id_recv[0] != MF_ID)
+        if(id_recv[0] != MF_ID && id_recv[0] != GD_ID)
         {
             FLASH_TRACE("Manufacturers ID error!\r\n");
             FLASH_TRACE("JEDEC Read-ID Data : %02X %02X %02X\r\n", id_recv[0], id_recv[1], id_recv[2]);

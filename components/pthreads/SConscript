@@ -3,6 +3,6 @@ from building import *
 
 src	= Glob('*.c')
 CPPPATH = [RTT_ROOT + '/components/pthreads']
-group = DefineGroup('pthreads', src, depend = ['RT_USING_PTHREADS'], CPPPATH = CPPPATH)
+group = DefineGroup('pthreads', src, depend = ['RT_USING_PTHREADS', 'RT_USING_LIBC'], CPPPATH = CPPPATH)
 
 Return('group')

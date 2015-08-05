@@ -58,6 +58,11 @@
 /* SECTION: Device System */
 /* Using Device System */
 #define RT_USING_DEVICE
+// <bool name="RT_USING_DEVICE_IPC" description="Using device communication" default="true" />
+#define RT_USING_DEVICE_IPC
+// <bool name="RT_USING_SERIAL" description="Using Serial" default="true" />
+#define RT_USING_SERIAL
+
 #define RT_USING_SPI
 
 /* SECTION: Console options */

@@ -217,6 +217,7 @@ typedef int (*init_fn_t)(void);
 #define FINSH_VAR_EXPORT(name, type, desc)
 
 #define MSH_CMD_EXPORT(command, desc)
+#define MSH_CMD_EXPORT_ALIAS(command, alias, desc)
 #elif !defined(FINSH_USING_SYMTAB)
 #define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)
 #endif
@@ -776,6 +777,11 @@ enum rt_device_class_type
 #define RT_DEVICE_FLAG_SUSPENDED        0x020           /**< device is suspended */
 #define RT_DEVICE_FLAG_STREAM           0x040           /**< stream mode */
 
+#define RT_DEVICE_CTRL_CONFIG           0x03    	/* configure device */
+#define RT_DEVICE_CTRL_SET_INT          0x10    	/* enable receive irq */
+#define RT_DEVICE_CTRL_CLR_INT          0x11    	/* disable receive irq */
+#define RT_DEVICE_CTRL_GET_INT          0x12
+
 #define RT_DEVICE_FLAG_INT_RX           0x100           /**< INT mode on Rx */
 #define RT_DEVICE_FLAG_DMA_RX           0x200           /**< DMA mode on Rx */
 #define RT_DEVICE_FLAG_INT_TX           0x400           /**< INT mode on Tx */
@@ -886,7 +892,8 @@ enum
     RTGRAPHIC_PIXEL_FORMAT_BGR565 = RTGRAPHIC_PIXEL_FORMAT_RGB565P,
     RTGRAPHIC_PIXEL_FORMAT_RGB666,
     RTGRAPHIC_PIXEL_FORMAT_RGB888,
-    RTGRAPHIC_PIXEL_FORMAT_ARGB888
+    RTGRAPHIC_PIXEL_FORMAT_ARGB888,
+    RTGRAPHIC_PIXEL_FORMAT_ABGR888,
 };
 
 /**
@@ -959,6 +966,8 @@ struct rt_module
 {
     struct rt_object             parent;                /**< inherit from object */
 
+    rt_uint32_t                  vstart_addr;            /**< VMA base address for the
+                                                          first LOAD segment. */
     rt_uint8_t                  *module_space;          /**< module memory space */
 
     void                        *module_entry;          /**< the entry address of module */

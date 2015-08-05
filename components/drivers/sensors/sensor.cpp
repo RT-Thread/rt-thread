@@ -58,7 +58,7 @@ int SensorBase::getConfig(SensorConfig *config)
     return 0;
 }
 
-int SensorBase::subscribe(SensorEventHandler_t *handler, void *user_data)
+int SensorBase::subscribe(SensorEventHandler_t handler, void *user_data)
 {
     this->evtHandler = handler;
     this->userData = user_data;
@@ -66,12 +66,12 @@ int SensorBase::subscribe(SensorEventHandler_t *handler, void *user_data)
     return 0;
 }
 
-int SensorBase::publish(sensors_event_t *event)
+int SensorBase::publish(void)
 {
     if (this->evtHandler != NULL)
     {
         /* invoke subscribed handler */
-        (*evtHandler)(event, this->userData);
+        (*evtHandler)(this->userData);
     }
 
     return 0;
@@ -151,7 +151,7 @@ SensorBase *SensorManager::getDefaultSensor(int type)
     return NULL;
 }
 
-int SensorManager::subscribe(int type, SensorEventHandler_t *handler, void *user_data)
+int SensorManager::subscribe(int type, SensorEventHandler_t handler, void *user_data)
 {
     SensorBase *sensor;
 
@@ -194,7 +194,7 @@ rt_sensor_t rt_sensor_get_default(int type)
     return (rt_sensor_t)SensorManager::getDefaultSensor(type);
 }
 
-int rt_sensor_subscribe(rt_sensor_t sensor, SensorEventHandler_t *handler, void *user_data)
+int rt_sensor_subscribe(rt_sensor_t sensor, SensorEventHandler_t handler, void *user_data)
 {
     SensorBase *sensor_base;
     if (sensor == NULL) return -1;

@@ -437,6 +437,11 @@ void rt_module_unload_sethook(void (*hook)(rt_module_t module));
 void rt_module_init_object_container(struct rt_module *module);
 rt_err_t rt_module_destroy(rt_module_t module);
 
+/*
+ * application module system initialization
+ */
+int rt_system_module_init(void);
+
 /*@}*/
 #endif
 
@@ -455,10 +460,10 @@ void rt_interrupt_leave(void);
  */
 rt_uint8_t rt_interrupt_get_nest(void);
 
-/**
- * application module
- */
-int rt_system_module_init(void);
+#ifdef RT_USING_COMPONENTS_INIT
+void rt_components_init(void);
+void rt_components_board_init(void);
+#endif
 
 /**
  * @addtogroup KernelService
@@ -496,9 +501,9 @@ int *_rt_errno(void);
 void *rt_memset(void *src, int c, rt_ubase_t n);
 void *rt_memcpy(void *dest, const void *src, rt_ubase_t n);
 
-rt_ubase_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count);
-rt_ubase_t rt_strcmp (const char *cs, const char *ct);
-rt_ubase_t rt_strlen (const char *src);
+rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count);
+rt_int32_t rt_strcmp (const char *cs, const char *ct);
+rt_size_t rt_strlen (const char *src);
 char *rt_strdup(const char *s);
 
 char *rt_strstr(const char *str1, const char *str2);
@@ -509,6 +514,13 @@ rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count);
 rt_uint32_t rt_strcasecmp(const char *a, const char *b);
 
 void rt_show_version(void);
+
+#ifdef RT_DEBUG
+extern void (*rt_assert_hook)(const char* ex, const char* func, rt_size_t line);
+void rt_assert_set_hook(void (*hook)(const char* ex, const char* func, rt_size_t line));
+
+void rt_assert_handler(const char* ex, const char* func, rt_size_t line);
+#endif /* RT_DEBUG */
 
 /*@}*/
 

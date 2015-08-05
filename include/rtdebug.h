@@ -83,9 +83,7 @@ while (0)
 #define RT_ASSERT(EX)                                                         \
 if (!(EX))                                                                    \
 {                                                                             \
-    volatile char dummy = 0;                                                  \
-    rt_kprintf("(%s) assert failed at %s:%d \n", #EX, __FUNCTION__, __LINE__);\
-    while (dummy == 0);                                                       \
+    rt_assert_handler(#EX, __FUNCTION__, __LINE__);                           \
 }
 
 /* Macro to check current context */

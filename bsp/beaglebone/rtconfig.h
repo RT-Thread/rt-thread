@@ -91,6 +91,8 @@
 #define RT_USING_UART4
 // <bool name="RT_USING_UART5" description="Using uart5" default="true" >
 #define RT_USING_UART5
+// <bool name="RT_USING_PIN" description="Using GPIO Device Driver Framework" default="true" >
+#define RT_USING_PIN
 // <integer name="RT_UART_RX_BUFFER_SIZE" description="The buffer size for UART reception" default="64" />
 #define RT_UART_RX_BUFFER_SIZE    64
 // <bool name=RT_USING_INTERRUPT_INFO description="Using interrupt information description" default="true" />
@@ -122,8 +124,8 @@
 // </section>
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
-// <bool name="RT_USING_NEWLIB" description="Using newlib library, only available under GNU GCC" default="true" />
-//#define RT_USING_NEWLIB
+// <bool name="RT_USING_LIBC" description="Using C library" default="true" />
+#define RT_USING_LIBC
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
 #define RT_USING_PTHREADS
 // </section>

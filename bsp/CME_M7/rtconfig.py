@@ -24,7 +24,7 @@ if os.getenv('RTT_EXEC_PATH'):
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
 else:
-    RTT_ROOT = os.path.normpath(os.getcwd())
+    RTT_ROOT = os.path.normpath(os.getcwd() + '/../..')
 
 BUILD = 'debug'
 

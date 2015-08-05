@@ -20,7 +20,7 @@
 #include <lwip/sys.h>
 #include <lwip/api.h>
 #include <netif/ethernetif.h>
-#include "stm32_eth.h"
+#include "stm32f4xx_eth.h"
 #endif
 
 #ifdef RT_USING_GDB

@@ -7,6 +7,6 @@ lodepng.c
 
 CPPPATH = [cwd]
 
-group = DefineGroup('RTGUI', src, depend = ['RT_USING_RTGUI', 'RTGUI_IMAGE_LODEPNG'], CPPPATH = CPPPATH)
+group = DefineGroup('RTGUI', src, depend = ['RT_USING_RTGUI', 'RTGUI_IMAGE_LODEPNG', 'RT_USING_LIBC'], CPPPATH = CPPPATH)
 
 Return('group')

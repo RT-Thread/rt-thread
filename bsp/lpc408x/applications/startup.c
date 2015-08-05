@@ -39,7 +39,6 @@ void rtthread_startup(void)
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
 #endif
-
     /* initialize scheduler system */
     rt_system_scheduler_init();
     /* initialize system timer*/

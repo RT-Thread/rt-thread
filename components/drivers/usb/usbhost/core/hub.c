@@ -43,7 +43,7 @@ static struct uclass_driver hub_driver;
 rt_err_t rt_usbh_hub_get_descriptor(struct uinstance* device, rt_uint8_t *buffer, 
     rt_size_t nbytes)
 {
-    struct ureqest setup;
+    struct urequest setup;
     int timeout = 100;
         
     /* parameter check */
@@ -72,7 +72,7 @@ rt_err_t rt_usbh_hub_get_descriptor(struct uinstance* device, rt_uint8_t *buffer
  */
 rt_err_t rt_usbh_hub_get_status(struct uinstance* device, rt_uint8_t* buffer)
 {
-    struct ureqest setup;
+    struct urequest setup;
     int timeout = 100;
     int length = 4;
     
@@ -104,7 +104,7 @@ rt_err_t rt_usbh_hub_get_status(struct uinstance* device, rt_uint8_t* buffer)
 rt_err_t rt_usbh_hub_get_port_status(uhub_t hub, rt_uint16_t port, 
     rt_uint8_t* buffer)
 {
-    struct ureqest setup;
+    struct urequest setup;
     int timeout = 100;
     int length = 4;
     
@@ -144,7 +144,7 @@ rt_err_t rt_usbh_hub_get_port_status(uhub_t hub, rt_uint16_t port,
 rt_err_t rt_usbh_hub_clear_port_feature(uhub_t hub, rt_uint16_t port, 
     rt_uint16_t feature)
 {
-    struct ureqest setup;
+    struct urequest setup;
     int timeout = 100;
         
     /* parameter check */
@@ -183,7 +183,7 @@ rt_err_t rt_usbh_hub_clear_port_feature(uhub_t hub, rt_uint16_t port,
 rt_err_t rt_usbh_hub_set_port_feature(uhub_t hub, rt_uint16_t port, 
     rt_uint16_t feature)
 {
-    struct ureqest setup;
+    struct urequest setup;
     int timeout = 100;
         
     /* parameter check */

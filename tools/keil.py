@@ -66,9 +66,21 @@ def MDK4AddGroupForFN(ProjectFiles, parent, name, filename, project_path):
     file = SubElement(files, 'File')
     file_name = SubElement(file, 'FileName')
     name = os.path.basename(path)
-    if ProjectFiles.count(name):
+
+    if name.find('.cpp') != -1:
+        obj_name = name.replace('.cpp', '.o')
+    elif name.find('.c') != -1:
+        obj_name = name.replace('.c', '.o')
+    elif name.find('.s') != -1:
+        obj_name = name.replace('.s', '.o')
+    elif name.find('.S') != -1:
+        obj_name = name.replace('.s', '.o')
+    else:
+        obj_name = name
+
+    if ProjectFiles.count(obj_name):
         name = basename + '_' + name
-    ProjectFiles.append(name)
+    ProjectFiles.append(obj_name)
     file_name.text = name.decode(fs_encoding)
     file_type = SubElement(file, 'FileType')
     file_type.text = '%d' % _get_filetype(name)
@@ -98,9 +110,19 @@ def MDK4AddGroup(ProjectFiles, parent, name, files, project_path):
         file = SubElement(files, 'File')
         file_name = SubElement(file, 'FileName')
         name = os.path.basename(path)
-        if ProjectFiles.count(name):
+
+        if name.find('.cpp') != -1:
+            obj_name = name.replace('.cpp', '.o')
+        elif name.find('.c') != -1:
+            obj_name = name.replace('.c', '.o')
+        elif name.find('.s') != -1:
+            obj_name = name.replace('.s', '.o')
+        elif name.find('.S') != -1:
+            obj_name = name.replace('.s', '.o')
+
+        if ProjectFiles.count(obj_name):
             name = basename + '_' + name
-        ProjectFiles.append(name)
+        ProjectFiles.append(obj_name)
         file_name.text = name.decode(fs_encoding)
         file_type = SubElement(file, 'FileType')
         file_type.text = '%d' % _get_filetype(name)
@@ -201,9 +223,19 @@ def MDK5AddGroupForFN(ProjectFiles, parent, name, filename, project_path):
     file = SubElement(files, 'File')
     file_name = SubElement(file, 'FileName')
     name = os.path.basename(path)
-    if ProjectFiles.count(name):
+
+    if name.find('.cpp') != -1:
+        obj_name = name.replace('.cpp', '.o')
+    elif name.find('.c') != -1:
+        obj_name = name.replace('.c', '.o')
+    elif name.find('.s') != -1:
+        obj_name = name.replace('.s', '.o')
+    elif name.find('.S') != -1:
+        obj_name = name.replace('.s', '.o')
+
+    if ProjectFiles.count(obj_name):
         name = basename + '_' + name
-    ProjectFiles.append(name)
+    ProjectFiles.append(obj_name)
     file_name.text = name.decode(fs_encoding)
     file_type = SubElement(file, 'FileType')
     file_type.text = '%d' % _get_filetype(name)
@@ -233,9 +265,21 @@ def MDK5AddGroup(ProjectFiles, parent, name, files, project_path):
         file = SubElement(files, 'File')
         file_name = SubElement(file, 'FileName')
         name = os.path.basename(path)
-        if ProjectFiles.count(name):
+
+        if name.find('.cpp') != -1:
+            obj_name = name.replace('.cpp', '.o')
+        elif name.find('.c') != -1:
+            obj_name = name.replace('.c', '.o')
+        elif name.find('.s') != -1:
+            obj_name = name.replace('.s', '.o')
+        elif name.find('.S') != -1:
+            obj_name = name.replace('.s', '.o')
+        else:
+            obj_name = name
+
+        if ProjectFiles.count(obj_name):
             name = basename + '_' + name
-        ProjectFiles.append(name)
+        ProjectFiles.append(obj_name)
         file_name.text = name.decode(fs_encoding)
         file_type = SubElement(file, 'FileType')
         file_type.text = '%d' % _get_filetype(name)
@@ -266,6 +310,7 @@ def MDK5Project(target, script):
     groups = tree.find('Targets/Target/Groups')
     if groups is None:
         groups = SubElement(tree.find('Targets/Target'), 'Groups')
+    groups.clear() # clean old groups
     for group in script:
         group_xml = MDK4AddGroup(ProjectFiles, groups, group['name'], group['src'], project_path)
 

@@ -89,7 +89,7 @@ struct log_trace_session
 };
 
 /** initialize the log_trace system */
-void log_trace_init(void);
+int log_trace_init(void);
 
 /** register a session.
  *

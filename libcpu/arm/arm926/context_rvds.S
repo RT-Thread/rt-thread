@@ -1,117 +1,105 @@
 ;/*
-; * File      : context_rvds.S
-; * This file is part of RT-Thread RTOS
-; * COPYRIGHT (C) 2006, RT-Thread Development Team
+; * file      : context_rvds.s
+; * this file is part of rt-thread rtos
+; * copyright (c) 2006, rt-thread development team
 ; *
-; *  This program is free software; you can redistribute it and/or modify
-; *  it under the terms of the GNU General Public License as published by
-; *  the Free Software Foundation; either version 2 of the License, or
+; *  this program is free software; you can redistribute it and/or modify
+; *  it under the terms of the gnu general public license as published by
+; *  the free software foundation; either version 2 of the license, or
 ; *  (at your option) any later version.
 ; *
-; *  This program is distributed in the hope that it will be useful,
-; *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-; *  GNU General Public License for more details.
+; *  this program is distributed in the hope that it will be useful,
+; *  but without any warranty; without even the implied warranty of
+; *  merchantability or fitness for a particular purpose.  see the
+; *  gnu general public license for more details.
 ; *
-; *  You should have received a copy of the GNU General Public License along
-; *  with this program; if not, write to the Free Software Foundation, Inc.,
-; *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+; *  you should have received a copy of the gnu general public license along
+; *  with this program; if not, write to the free software foundation, inc.,
+; *  51 franklin street, fifth floor, boston, ma 02110-1301 usa.
 ; *
-; * Change Logs:
-; * Date           Author       Notes
+; * change logs:
+; * date           author       notes
 ; * 2011-08-14     weety    copy from mini2440
 ; */
 
-NOINT	EQU		0xc0	; disable interrupt in psr
+NOINT    EQU        0XC0    ; disable interrupt in psr
 
-	AREA |.text|, CODE, READONLY, ALIGN=2
-	ARM
-	REQUIRE8
-	PRESERVE8
+    AREA |.TEXT|, CODE, READONLY, ALIGN=2
+    ARM
+    REQUIRE8
+    PRESERVE8
 
 ;/*
 ; * rt_base_t rt_hw_interrupt_disable();
 ; */
-rt_hw_interrupt_disable	PROC
-	EXPORT rt_hw_interrupt_disable
-	MRS r0, cpsr
-	ORR r1, r0, #NOINT
-	MSR cpsr_c, r1
-	BX	lr
-	ENDP
+rt_hw_interrupt_disable    PROC
+    EXPORT rt_hw_interrupt_disable
+    MRS     R0, CPSR
+    ORR     R1, R0, #NOINT
+    MSR     CPSR_C, R1
+    BX      LR
+    ENDP
 
 ;/*
 ; * void rt_hw_interrupt_enable(rt_base_t level);
 ; */
-rt_hw_interrupt_enable	PROC
-	EXPORT rt_hw_interrupt_enable
-	MSR cpsr_c, r0
-	BX	lr
-	ENDP
+rt_hw_interrupt_enable    proc
+    export rt_hw_interrupt_enable
+    msr     cpsr_c, r0
+    bx      lr
+    endp
 
 ;/*
 ; * void rt_hw_context_switch(rt_uint32 from, rt_uint32 to);
 ; * r0 --> from
 ; * r1 --> to
 ; */
-rt_hw_context_switch	PROC
-	EXPORT rt_hw_context_switch
-	STMFD	sp!, {lr}			; push pc (lr should be pushed in place of PC)
-	STMFD	sp!, {r0-r12, lr}	; push lr & register file
-
-	MRS		r4, cpsr
-	STMFD	sp!, {r4}			; push cpsr
-	MRS		r4, spsr
-	STMFD	sp!, {r4}			; push spsr
-
-	STR	sp, [r0]				; store sp in preempted tasks TCB
-	LDR	sp, [r1]				; get new task stack pointer
-
-	LDMFD	sp!, {r4}			; pop new task spsr
-	MSR	spsr_cxsf, r4
-	LDMFD	sp!, {r4}			; pop new task cpsr
-	MSR	spsr_cxsf, r4
-
-	LDMFD	sp!, {r0-r12, lr, pc}^	; pop new task r0-r12, lr & pc
-	ENDP
+rt_hw_context_switch    proc
+    export rt_hw_context_switch
+    stmfd   sp!, {lr}           ; push pc (lr should be pushed in place of pc)
+    stmfd   sp!, {r0-r12, lr}       ; push lr & register file
+    mrs     r4, cpsr
+    stmfd   sp!, {r4}               ; push cpsr
+    str     sp, [r0]                ; store sp in preempted tasks tcb
+    ldr     sp, [r1]                ; get new task stack pointer
+    ldmfd   sp!, {r4}               ; pop new task spsr
+    msr     spsr_cxsf, r4
+    ldmfd   sp!, {r0-r12, lr, pc}^  ; pop new task r0-r12, lr & pc
+    endp
 
 ;/*
 ; * void rt_hw_context_switch_to(rt_uint32 to);
 ; * r0 --> to
 ; */
-rt_hw_context_switch_to	PROC
-	EXPORT rt_hw_context_switch_to
-	LDR	sp, [r0]				; get new task stack pointer
-
-	LDMFD	sp!, {r4}			; pop new task spsr
-	MSR	spsr_cxsf, r4
-	LDMFD	sp!, {r4}			; pop new task cpsr
-	MSR	cpsr_cxsf, r4
-
-	LDMFD	sp!, {r0-r12, lr, pc}	; pop new task r0-r12, lr & pc
-	ENDP
+rt_hw_context_switch_to    proc
+    export rt_hw_context_switch_to
+    ldr     sp, [r0]                ; get new task stack pointer
+    ldmfd   sp!, {r4}               ; pop new task spsr
+    msr     spsr_cxsf, r4
+    ldmfd   sp!, {r0-r12, lr, pc}^   ; pop new task r0-r12, lr & pc
+    endp
 
 ;/*
 ; * void rt_hw_context_switch_interrupt(rt_uint32 from, rt_uint32 to);
 ; */
-	IMPORT rt_thread_switch_interrupt_flag
-	IMPORT rt_interrupt_from_thread
-	IMPORT rt_interrupt_to_thread
+    import rt_thread_switch_interrupt_flag
+    import rt_interrupt_from_thread
+    import rt_interrupt_to_thread
 
-rt_hw_context_switch_interrupt	PROC
-	EXPORT rt_hw_context_switch_interrupt
-	LDR r2, =rt_thread_switch_interrupt_flag
-	LDR r3, [r2]
-	CMP r3, #1
-	BEQ _reswitch
-	MOV r3, #1							; set rt_thread_switch_interrupt_flag to 1
-	STR r3, [r2]
-	LDR r2, =rt_interrupt_from_thread	; set rt_interrupt_from_thread
-	STR r0, [r2]
+rt_hw_context_switch_interrupt    proc
+    export rt_hw_context_switch_interrupt
+    ldr     r2, =rt_thread_switch_interrupt_flag
+    ldr     r3, [r2]
+    cmp     r3, #1
+    beq     _reswitch
+    mov     r3, #1                          ; set flag to 1
+    str     r3, [r2]
+    ldr     r2, =rt_interrupt_from_thread   ; set rt_interrupt_from_thread
+    str     r0, [r2]
 _reswitch
-	LDR r2, =rt_interrupt_to_thread		; set rt_interrupt_to_thread
-	STR r1, [r2]
-	BX	lr
-	ENDP
+    ldr     r2, =rt_interrupt_to_thread     ; set rt_interrupt_to_thread
+    str     r1, [r2]
+    bx      lr
+    endp
 
-	END
+    end

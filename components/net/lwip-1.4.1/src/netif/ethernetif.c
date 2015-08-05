@@ -67,6 +67,12 @@
 #define netifapi_netif_set_link_up(n)      netifapi_netif_common(n, netif_set_link_up, NULL)
 #define netifapi_netif_set_link_down(n)    netifapi_netif_common(n, netif_set_link_down, NULL)
 
+#ifndef RT_LWIP_ETHTHREAD_PRIORITY
+#define RT_ETHERNETIF_THREAD_PREORITY	0x90
+#else
+#define RT_ETHERNETIF_THREAD_PREORITY	RT_LWIP_ETHTHREAD_PRIORITY
+#endif
+
 #ifndef LWIP_NO_TX_THREAD
 /**
  * Tx message structure for Ethernet interface
@@ -79,7 +85,7 @@ struct eth_tx_msg
 
 static struct rt_mailbox eth_tx_thread_mb;
 static struct rt_thread eth_tx_thread;
-#ifndef RT_LWIP_ETHTHREAD_PRIORITY
+#ifndef RT_LWIP_ETHTHREAD_MBOX_SIZE
 static char eth_tx_thread_mb_pool[32 * 4];
 static char eth_tx_thread_stack[512];
 #else
@@ -91,12 +97,10 @@ static char eth_tx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
 #ifndef LWIP_NO_RX_THREAD
 static struct rt_mailbox eth_rx_thread_mb;
 static struct rt_thread eth_rx_thread;
-#ifndef RT_LWIP_ETHTHREAD_PRIORITY
-#define RT_ETHERNETIF_THREAD_PREORITY	0x90
+#ifndef RT_LWIP_ETHTHREAD_MBOX_SIZE
 static char eth_rx_thread_mb_pool[48 * 4];
 static char eth_rx_thread_stack[1024];
 #else
-#define RT_ETHERNETIF_THREAD_PREORITY	RT_LWIP_ETHTHREAD_PRIORITY
 static char eth_rx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * 4];
 static char eth_rx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
 #endif
@@ -318,7 +322,7 @@ static void eth_tx_thread_entry(void* parameter)
                 /* call driver's interface */
                 if (enetif->eth_tx(&(enetif->parent), msg->buf) != RT_EOK)
                 {
-                    rt_kprintf("transmit eth packet failed\n");
+                    /* transmit eth packet failed */
                 }
             }
 
@@ -397,7 +401,7 @@ int eth_system_device_init(void)
 
     result = rt_thread_init(&eth_rx_thread, "erx", eth_rx_thread_entry, RT_NULL,
                             &eth_rx_thread_stack[0], sizeof(eth_rx_thread_stack),
-                            RT_LWIP_ETHTHREAD_PRIORITY, 16);
+                            RT_ETHERNETIF_THREAD_PREORITY, 16);
     RT_ASSERT(result == RT_EOK);
     result = rt_thread_startup(&eth_rx_thread);
     RT_ASSERT(result == RT_EOK);

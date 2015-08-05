@@ -67,7 +67,7 @@ RTM_EXPORT(rt_usbh_adk_set_string);
 */
 static rt_err_t rt_usbh_adk_get_protocol(struct uintf* intf, rt_uint16_t *protocol)
 {
-    struct ureqest setup;
+    struct urequest setup;
     uinst_t device;    
     int timeout = 100;
             
@@ -101,7 +101,7 @@ static rt_err_t rt_usbh_adk_get_protocol(struct uintf* intf, rt_uint16_t *protoc
 static rt_err_t rt_usbh_adk_send_string(struct uintf* intf, rt_uint16_t index, 
     const char* str)
 {
-    struct ureqest setup;
+    struct urequest setup;
     uinst_t device;    
     int timeout = 100;
             
@@ -134,7 +134,7 @@ static rt_err_t rt_usbh_adk_send_string(struct uintf* intf, rt_uint16_t index,
 */
 static rt_err_t rt_usbh_adk_start(struct uintf* intf)
 {
-    struct ureqest setup;
+    struct urequest setup;
     uinst_t device;    
     int timeout = 100;
             

@@ -98,9 +98,6 @@
 #define RT_CONSOLEBUF_SIZE	128
 #define RT_CONSOLE_DEVICE_NAME	"sci0"
 
-/* SECTION: component options */
-#define RT_USING_COMPONENTS_INIT
-
 /* SECTION: APP MODULE  */
 /* #define RT_USING_MODULE */
 

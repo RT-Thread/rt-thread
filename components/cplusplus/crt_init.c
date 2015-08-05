@@ -1,7 +1,7 @@
 /*
 * File      : crt_init.c
 * This file is part of Device File System in RT-Thread RTOS
-* COPYRIGHT (C) 2008-2011, RT-Thread Development Team
+* COPYRIGHT (C) 2008-2015, RT-Thread Development Team
 *
 *  This program is free software; you can redistribute it and/or modify
 *  it under the terms of the GNU General Public License as published by
