@@ -658,13 +658,13 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
 	    if (can->ops->dettachhdrlist)
             {
 		can->ops->dettachhdrlist(can, listmsg);
-            }
+	    }
 #endif /*RT_CAN_USING_HDR*/
 	    RT_ASSERT(rx_fifo->freenumbers > 0)
 	    rx_fifo->freenumbers--;
-        }
-        else if (!rt_list_isempty(&rx_fifo->uselist))
-        {
+	}
+	else if (!rt_list_isempty(&rx_fifo->uselist))
+	{
             listmsg = rt_list_entry(rx_fifo->uselist.next, struct rt_can_msg_list, list);
             can->status.dropedrcvpkg++;
             rt_list_remove(&listmsg->list);
@@ -678,40 +678,49 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
 	/* enable interrupt */
 	rt_hw_interrupt_enable(level);
 
-	no = event >> 8;
-	can->ops->recvmsg(can, &listmsg->data, no);
-	level = rt_hw_interrupt_disable();
-	rt_list_insert_before(&rx_fifo->uselist, &listmsg->list);
-#ifdef RT_CAN_USING_HDR
-	if (can->ops->insertothdrlist)
+	if (listmsg != RT_NULL)
 	{
-	    can->ops->insertothdrlist(can, listmsg);
-	}
-#endif
-	rt_hw_interrupt_enable(level);
-
-	/* invoke callback */
+	    no = event >> 8;
+	    can->ops->recvmsg(can, &listmsg->data, no);
+	    level = rt_hw_interrupt_disable();
+	    rt_list_insert_before(&rx_fifo->uselist, &listmsg->list);
+	    rt_hw_interrupt_enable(level);
 #ifdef RT_CAN_USING_HDR
-	if (can->ops->indicatehdrlist &&
-		can->ops->indicatehdrlist(can, listmsg) == RT_EOK)
-        {
-        }
-        else
+	    if (can->ops->insertothdrlist)
+	    {
+		can->ops->insertothdrlist(can, listmsg);
+	    }
 #endif
-        {
-            if (can->parent.rx_indicate != RT_NULL)
-            {
-                rt_size_t rx_length;
 
-                level = rt_hw_interrupt_disable();
-                /* get rx length */
-                rx_length = rx_fifo->freenumbers * sizeof(struct rt_can_msg);
-                rt_hw_interrupt_enable(level);
+	    /* invoke callback */
+#ifdef RT_CAN_USING_HDR
+	    if (can->ops->indicatehdrlist &&
+		    can->ops->indicatehdrlist(can, listmsg) == RT_EOK)
+	    {
+	    }
+	    else
+#endif
+	    {
+		if (can->parent.rx_indicate != RT_NULL)
+		{
+		    rt_size_t rx_length;
 
-                can->parent.rx_indicate(&can->parent, rx_length);
-            }
-        }
-        break;
+		    level = rt_hw_interrupt_disable();
+		    /* get rx length */
+		    rx_length = rx_fifo->freenumbers * sizeof(struct rt_can_msg);
+		    rt_hw_interrupt_enable(level);
+
+		    can->parent.rx_indicate(&can->parent, rx_length);
+		}
+	    }
+	}
+	else
+	{
+	    level = rt_hw_interrupt_disable();
+	    can->status.dropedrcvpkg++;
+	    rt_hw_interrupt_enable(level);
+	}
+	break;
     }
 
     case RT_CAN_EVENT_TX_DONE:
