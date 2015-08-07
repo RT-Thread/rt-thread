@@ -1367,7 +1367,7 @@ static int indicatehdrlist(struct rt_can_device *can,  struct rt_can_msg_list *m
     struct rt_can_hdr *phdrhead = ((struct stm_bxcan *) can->parent.user_data)->hdrhead;
     rt_int32_t hdr = msglist->data.hdr;
     rt_base_t level;
-    RT_ASSERT(msglist->hdr < can->config.maxhdr && msglist->hdr >= 0);
+    RT_ASSERT(msglist->data.hdr < can->config.maxhdr && msglist->data.hdr >= 0);
     if (phdrhead[hdr].connected && phdrhead[hdr].filter.ind)
     {
 	rt_size_t rx_length;
