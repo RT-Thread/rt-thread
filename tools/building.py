@@ -480,6 +480,19 @@ def BuildLibInstallAction(target, source, env):
             break
 
 def DoBuilding(target, objects):
+
+    # merge all objects into one list
+    def one_list(l):
+        lst = []
+        for item in l:
+            if type(item) == type([]):
+                lst += one_list(item)
+            else:
+                lst.append(item)
+        return lst
+
+    objects = one_list(objects)
+
     # remove source files with local flags setting
     for group in Projects:
         if group.has_key('LOCAL_CCFLAGS') or group.has_key('LOCAL_CPPPATH') or group.has_key('LOCAL_CPPDEFINES'):

@@ -217,6 +217,7 @@ typedef int (*init_fn_t)(void);
 #define FINSH_VAR_EXPORT(name, type, desc)
 
 #define MSH_CMD_EXPORT(command, desc)
+#define MSH_CMD_EXPORT_ALIAS(command, alias, desc)
 #elif !defined(FINSH_USING_SYMTAB)
 #define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)
 #endif
@@ -891,7 +892,8 @@ enum
     RTGRAPHIC_PIXEL_FORMAT_BGR565 = RTGRAPHIC_PIXEL_FORMAT_RGB565P,
     RTGRAPHIC_PIXEL_FORMAT_RGB666,
     RTGRAPHIC_PIXEL_FORMAT_RGB888,
-    RTGRAPHIC_PIXEL_FORMAT_ARGB888
+    RTGRAPHIC_PIXEL_FORMAT_ARGB888,
+    RTGRAPHIC_PIXEL_FORMAT_ABGR888,
 };
 
 /**
@@ -964,6 +966,8 @@ struct rt_module
 {
     struct rt_object             parent;                /**< inherit from object */
 
+    rt_uint32_t                  vstart_addr;            /**< VMA base address for the
+                                                          first LOAD segment. */
     rt_uint8_t                  *module_space;          /**< module memory space */
 
     void                        *module_entry;          /**< the entry address of module */

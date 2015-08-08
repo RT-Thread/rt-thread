@@ -1,5 +1,5 @@
 /*
- * File      : ls1b_ram.lds
+ * File      : ls1c_ram.lds
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2011, RT-Thread Development Team
  *
@@ -53,6 +53,13 @@ SECTIONS
           __rt_init_end = .;
          . = ALIGN(4);
     }
+    
+    .eh_frame_hdr : 
+    { 
+         *(.eh_frame_hdr) 
+         *(.eh_frame_entry)
+    }
+    .eh_frame : ONLY_IF_RO { KEEP (*(.eh_frame)) }
 
     . = ALIGN(4);
     .data : 

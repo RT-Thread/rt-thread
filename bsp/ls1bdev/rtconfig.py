@@ -12,7 +12,7 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM    = 'gcc'
-	EXEC_PATH   = 'C:/Program Files/CodeSourcery/Sourcery_CodeBench_Lite_for_MIPS_ELF/bin'
+	EXEC_PATH   = r'C:\Program Files\CodeSourcery\Sourcery G++ Lite For MIPS ELF\bin'
 else:
     print '================ERROR============================'
     print 'Not support %s yet!' % CROSS_TOOL
