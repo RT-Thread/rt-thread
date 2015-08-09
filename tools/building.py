@@ -224,7 +224,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     AddOption('--verbose',
                 dest='verbose',
                 action='store_true',
-                default=True,
+                default=False,
                 help='print verbose information during build')
 
     if not GetOption('verbose'):

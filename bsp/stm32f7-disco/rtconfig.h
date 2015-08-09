@@ -97,7 +97,7 @@
 // </section>
 
 // <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
-//#define RT_USING_COMPONENTS_INIT
+#define RT_USING_COMPONENTS_INIT
 // <section name="RT_USING_FINSH" description="Using finsh as shell, which is a C-Express shell" default="true" >
 #define RT_USING_FINSH
 #define FINSH_THREAD_PRIORITY 0xa
@@ -113,8 +113,8 @@
 // </section>
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
-// <bool name="RT_USING_NEWLIB" description="Using newlib library, only available under GNU GCC" default="true" />
-//#define RT_USING_NEWLIB
+// <bool name="RT_USING_LIBC" description="Using libc library" default="true" />
+#define RT_USING_NEWLIB
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
 //#define RT_USING_PTHREADS
 // </section>

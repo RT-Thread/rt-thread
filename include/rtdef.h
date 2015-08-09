@@ -94,8 +94,8 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #ifdef __CC_ARM                         /* ARM Compiler */
     #include <stdarg.h>
     #define SECTION(x)                  __attribute__((section(x)))
-    #define UNUSED                      __attribute__((unused))
-    #define USED                        __attribute__((used))
+    #define RT_UNUSED                   __attribute__((unused))
+    #define RT_USED                     __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
     #define WEAK						__weak
     #define rt_inline                   static __inline
@@ -109,8 +109,8 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #elif defined (__IAR_SYSTEMS_ICC__)     /* for IAR Compiler */
     #include <stdarg.h>
     #define SECTION(x)                  @ x
-    #define UNUSED
-    #define USED
+    #define RT_UNUSED
+    #define RT_USED
     #define PRAGMA(x)                   _Pragma(#x)
     #define ALIGN(n)                    PRAGMA(data_alignment=n)
     #define WEAK                        __weak
@@ -130,17 +130,17 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #endif
 
     #define SECTION(x)                  __attribute__((section(x)))
-    #define UNUSED                      __attribute__((unused))
-    #define USED                        __attribute__((used))
+    #define RT_UNUSED                   __attribute__((unused))
+    #define RT_USED                     __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
-    #define WEAK						__attribute__((weak))
+    #define WEAK                        __attribute__((weak))
     #define rt_inline                   static __inline
     #define RTT_API
 #elif defined (__ADSPBLACKFIN__)        /* for VisualDSP++ Compiler */
     #include <stdarg.h>
     #define SECTION(x)                  __attribute__((section(x)))
-    #define UNUSED                      __attribute__((unused))
-    #define USED                        __attribute__((used))
+    #define RT_UNUSED                   __attribute__((unused))
+    #define RT_USED                     __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
 	#define WEAK                        __attribute__((weak))
     #define rt_inline                   static inline
@@ -148,8 +148,8 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #elif defined (_MSC_VER)
     #include <stdarg.h>
     #define SECTION(x)
-    #define UNUSED
-    #define USED
+    #define RT_UNUSED
+    #define RT_USED
     #define ALIGN(n)                    __declspec(align(n))
 	#define WEAK
     #define rt_inline                   static __inline
@@ -160,11 +160,11 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
      * GCC and MDK) compilers. See ARM Optimizing C/C++ Compiler 5.9.3 for more
      * details. */
     #define SECTION(x)
-    #define UNUSED
-    #define USED
-	#define PRAGMA(x)					_Pragma(#x)
+    #define RT_UNUSED
+    #define RT_USED
+    #define PRAGMA(x)                   _Pragma(#x)
     #define ALIGN(n)
-	#define WEAK
+    #define WEAK
     #define rt_inline                   static inline
     #define RTT_API
 #else

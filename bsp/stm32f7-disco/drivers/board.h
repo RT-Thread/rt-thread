@@ -24,15 +24,15 @@
 #define RT_USING_UART3
 
 // <o> SDCard Driver <1=>SDIO sdcard <0=>SPI MMC card
-// 	<i>Default: 1
-#define STM32_USE_SDIO			0
+//  <i>Default: 1
+#define STM32_USE_SDIO          0
 
 /* whether use board external SDRAM memory */
 // <e>Use external SDRAM memory on the board
-//	<o>Begin Address of External SDRAM
+//  <o>Begin Address of External SDRAM
 #define EXT_SDRAM_BEGIN    0xC0000000
 #define EXT_SDRAM_SIZE     (0x800000)
-//	<o>End Address of External SDRAM
+//  <o>End Address of External SDRAM
 #define EXT_SDRAM_END      (EXT_SDRAM_BEGIN + EXT_SDRAM_SIZE)
 // </e>
 
@@ -48,7 +48,7 @@ extern int __bss_end;
 #endif
 
 // <o> Internal SRAM memory size[Kbytes] <8-64>
-//	<i>Default: 64
+//  <i>Default: 64
 #define STM32_SRAM_SIZE   (256 * 1024)
 #define HEAP_END          (0x20010000 + STM32_SRAM_SIZE)
 

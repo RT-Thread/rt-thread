@@ -20,6 +20,7 @@
 #include "drv_sdram.h"
 #include "sram.h"
 #endif
+
 /**
  * @addtogroup STM32
  */
@@ -27,11 +28,6 @@
 /*@{*/
 
 extern int  rt_application_init(void);
-#ifdef RT_USING_FINSH
-extern void finsh_system_init(void);
-extern void finsh_set_device(const char* device);
-#endif
-
 
 #ifdef USE_FULL_ASSERT
 /**
@@ -90,12 +86,6 @@ void rtthread_startup(void)
 
     /* init application */
     rt_application_init();
-
-#ifdef RT_USING_FINSH
-    /* init finsh */
-    finsh_system_init();
-    finsh_set_device(RT_CONSOLE_DEVICE_NAME);
-#endif
 
     /* init timer thread */
     rt_system_timer_thread_init();
