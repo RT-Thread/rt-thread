@@ -66,7 +66,7 @@ void rt_hw_serial_init(void);
 
 void rt_hw_uart_isr(struct rt_lpcserial* lpc_serial)
 {
-	UNUSED rt_uint32_t iir;
+	RT_UNUSED rt_uint32_t iir;
 
 	RT_ASSERT(lpc_serial != RT_NULL)
 
