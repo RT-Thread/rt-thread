@@ -181,6 +181,12 @@ rt_int32_t sdio_io_rw_extended(struct rt_mmcsd_card *card,
                                rt_uint8_t           *buf,
                                rt_uint32_t           blocks,
                                rt_uint32_t           blksize);
+rt_int32_t sdio_io_rw_extended_block(struct rt_sdio_function *func,
+                              rt_int32_t               rw,
+                              rt_uint32_t              addr,
+                              rt_int32_t               op_code,
+                              rt_uint8_t              *buf,
+                              rt_uint32_t              len);
 rt_uint8_t sdio_io_readb(struct rt_sdio_function *func, 
                          rt_uint32_t              reg,
                          rt_int32_t              *err);

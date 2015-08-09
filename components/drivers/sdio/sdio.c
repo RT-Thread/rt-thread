@@ -244,7 +244,7 @@ rt_inline rt_uint32_t sdio_max_block_size(struct rt_sdio_function *func)
     return MIN(size, 512u); /* maximum size for byte mode */
 }
 
-static rt_int32_t sdio_io_rw_extended_block(struct rt_sdio_function *func,
+rt_int32_t sdio_io_rw_extended_block(struct rt_sdio_function *func,
                                             rt_int32_t               rw,
                                             rt_uint32_t              addr,
                                             rt_int32_t               op_code,
@@ -1325,6 +1325,7 @@ rt_int32_t sdio_register_driver(struct rt_sdio_driver *driver)
         return -RT_ENOMEM;
     }
 
+    sd->drv = driver;
     rt_list_insert_after(&sdio_drivers, &sd->list);
 
     if (!rt_list_isempty(&sdio_cards))
