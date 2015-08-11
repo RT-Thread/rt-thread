@@ -75,76 +75,76 @@ static void bxcan1_filter_init(struct rt_can_device *can)
     {
         CAN1->FMR |= FMR_FINIT;
         mask = 0x01 << (i + 0);
-	if (i < pbxcan->fifo1filteroff)
-	{
-	    if (pbxcan->filtermap[0].id32mask_cnt && i < pbxcan->filtermap[0].id32mask_cnt)
-	    {
-		CAN1->FS1R |= mask;
-		CAN1->FM1R &= ~mask;
-		CAN1->FFA1R &= ~mask;
-	    }
-	    else if (pbxcan->filtermap[0].id32bit_cnt &&
-		     i < pbxcan->filtermap[0].id32mask_cnt + pbxcan->filtermap[0].id32bit_cnt / 2)
-	    {
-		CAN1->FS1R |= mask;
-		CAN1->FM1R |= mask;
-		CAN1->FFA1R &= ~mask;
-	    }
-	    else if (pbxcan->filtermap[0].id16mask_cnt &&
-		     i < pbxcan->filtermap[0].id32mask_cnt + pbxcan->filtermap[0].id32bit_cnt / 2
-		     + pbxcan->filtermap[0].id16mask_cnt / 2)
-	    {
-		CAN1->FS1R &= ~mask;
-		CAN1->FM1R &= ~mask;
-		CAN1->FFA1R &= ~mask;
-	    }
-	    else if (pbxcan->filtermap[0].id16bit_cnt &&
-		     i < pbxcan->filtermap[0].id32mask_cnt + pbxcan->filtermap[0].id32bit_cnt / 2
-		     + pbxcan->filtermap[0].id16mask_cnt / 2 + pbxcan->filtermap[0].id16bit_cnt / 4
-		    )
-	    {
-		CAN1->FS1R &= ~mask;
-		CAN1->FM1R |= mask;
-		CAN1->FFA1R &= ~mask;
-	    }
-	}
-	else
-	{
-	    if (pbxcan->filtermap[1].id32mask_cnt &&
-		    i < pbxcan->filtermap[1].id32mask_cnt + pbxcan->fifo1filteroff)
-	    {
-		CAN1->FS1R |= mask;
-		CAN1->FM1R &= ~mask;
-		CAN1->FFA1R |= mask;
-	    }
-	    else if (pbxcan->filtermap[1].id32bit_cnt &&
-		     i < pbxcan->filtermap[1].id32mask_cnt + pbxcan->filtermap[1].id32bit_cnt / 2
-		     + pbxcan->fifo1filteroff)
-	    {
-		CAN1->FS1R |= mask;
-		CAN1->FM1R |= mask;
-		CAN1->FFA1R |= mask;
-	    }
-	    else if (pbxcan->filtermap[1].id16mask_cnt &&
-		     i < pbxcan->filtermap[1].id32mask_cnt + pbxcan->filtermap[1].id32bit_cnt / 2
-		     + pbxcan->filtermap[1].id16mask_cnt / 2 + pbxcan->fifo1filteroff)
-	    {
-		CAN1->FS1R &= ~mask;
-		CAN1->FM1R &= ~mask;
-		CAN1->FFA1R |= mask;
-	    }
-	    else if (pbxcan->filtermap[1].id16bit_cnt &&
-		     i < pbxcan->filtermap[1].id32mask_cnt + pbxcan->filtermap[1].id32bit_cnt / 2
-		     + pbxcan->filtermap[1].id16mask_cnt / 2 + pbxcan->filtermap[1].id16bit_cnt / 4
-		     + pbxcan->fifo1filteroff)
-	    {
-		CAN1->FS1R &= ~mask;
-		CAN1->FM1R |= mask;
-		CAN1->FFA1R |= mask;
-	    }
+        if (i < pbxcan->fifo1filteroff)
+        {
+            if (pbxcan->filtermap[0].id32mask_cnt && i < pbxcan->filtermap[0].id32mask_cnt)
+            {
+                CAN1->FS1R |= mask;
+                CAN1->FM1R &= ~mask;
+                CAN1->FFA1R &= ~mask;
+            }
+            else if (pbxcan->filtermap[0].id32bit_cnt &&
+                     i < pbxcan->filtermap[0].id32mask_cnt + pbxcan->filtermap[0].id32bit_cnt / 2)
+            {
+                CAN1->FS1R |= mask;
+                CAN1->FM1R |= mask;
+                CAN1->FFA1R &= ~mask;
+            }
+            else if (pbxcan->filtermap[0].id16mask_cnt &&
+                     i < pbxcan->filtermap[0].id32mask_cnt + pbxcan->filtermap[0].id32bit_cnt / 2
+                     + pbxcan->filtermap[0].id16mask_cnt / 2)
+            {
+                CAN1->FS1R &= ~mask;
+                CAN1->FM1R &= ~mask;
+                CAN1->FFA1R &= ~mask;
+            }
+            else if (pbxcan->filtermap[0].id16bit_cnt &&
+                     i < pbxcan->filtermap[0].id32mask_cnt + pbxcan->filtermap[0].id32bit_cnt / 2
+                     + pbxcan->filtermap[0].id16mask_cnt / 2 + pbxcan->filtermap[0].id16bit_cnt / 4
+                    )
+            {
+                CAN1->FS1R &= ~mask;
+                CAN1->FM1R |= mask;
+                CAN1->FFA1R &= ~mask;
+            }
         }
-	CAN1->sFilterRegister[i].FR1 = 0xFFFFFFFF;
-	CAN1->sFilterRegister[i].FR2 = 0xFFFFFFFF;
+        else
+        {
+            if (pbxcan->filtermap[1].id32mask_cnt &&
+                    i < pbxcan->filtermap[1].id32mask_cnt + pbxcan->fifo1filteroff)
+            {
+                CAN1->FS1R |= mask;
+                CAN1->FM1R &= ~mask;
+                CAN1->FFA1R |= mask;
+            }
+            else if (pbxcan->filtermap[1].id32bit_cnt &&
+                     i < pbxcan->filtermap[1].id32mask_cnt + pbxcan->filtermap[1].id32bit_cnt / 2
+                     + pbxcan->fifo1filteroff)
+            {
+                CAN1->FS1R |= mask;
+                CAN1->FM1R |= mask;
+                CAN1->FFA1R |= mask;
+            }
+            else if (pbxcan->filtermap[1].id16mask_cnt &&
+                     i < pbxcan->filtermap[1].id32mask_cnt + pbxcan->filtermap[1].id32bit_cnt / 2
+                     + pbxcan->filtermap[1].id16mask_cnt / 2 + pbxcan->fifo1filteroff)
+            {
+                CAN1->FS1R &= ~mask;
+                CAN1->FM1R &= ~mask;
+                CAN1->FFA1R |= mask;
+            }
+            else if (pbxcan->filtermap[1].id16bit_cnt &&
+                     i < pbxcan->filtermap[1].id32mask_cnt + pbxcan->filtermap[1].id32bit_cnt / 2
+                     + pbxcan->filtermap[1].id16mask_cnt / 2 + pbxcan->filtermap[1].id16bit_cnt / 4
+                     + pbxcan->fifo1filteroff)
+            {
+                CAN1->FS1R &= ~mask;
+                CAN1->FM1R |= mask;
+                CAN1->FFA1R |= mask;
+            }
+        }
+        CAN1->sFilterRegister[i].FR1 = 0xFFFFFFFF;
+        CAN1->sFilterRegister[i].FR2 = 0xFFFFFFFF;
         CAN1->FMR &= ~FMR_FINIT;
     }
     calcfiltermasks(pbxcan);
@@ -161,76 +161,76 @@ static void bxcan2_filter_init(struct rt_can_device *can)
         CAN1->FMR |= FMR_FINIT;
         mask = 0x01 << (i + 0);
         off = i - BX_CAN2_FMRSTART;
-	if (off < pbxcan->fifo1filteroff)
-	{
-	    if (pbxcan->filtermap[0].id32mask_cnt && off < pbxcan->filtermap[0].id32mask_cnt)
-	    {
-		CAN1->FS1R |= mask;
-		CAN1->FM1R &= ~mask;
-		CAN1->FFA1R &= ~mask;
-	    }
-	    else if (pbxcan->filtermap[0].id32bit_cnt &&
-		     off < pbxcan->filtermap[0].id32mask_cnt + pbxcan->filtermap[0].id32bit_cnt / 2)
-	    {
-		CAN1->FS1R |= mask;
-		CAN1->FM1R |= mask;
-		CAN1->FFA1R &= ~mask;
-	    }
-	    else if (pbxcan->filtermap[0].id16mask_cnt &&
-		     off < pbxcan->filtermap[0].id32mask_cnt + pbxcan->filtermap[0].id32bit_cnt / 2
-		     + pbxcan->filtermap[0].id16mask_cnt / 2)
-	    {
-		CAN1->FS1R &= ~mask;
-		CAN1->FM1R &= ~mask;
-		CAN1->FFA1R &= ~mask;
-	    }
-	    else if (pbxcan->filtermap[0].id16bit_cnt &&
-		     off < pbxcan->filtermap[0].id32mask_cnt + pbxcan->filtermap[0].id32bit_cnt / 2
-		     + pbxcan->filtermap[0].id16mask_cnt / 2 + pbxcan->filtermap[0].id16bit_cnt / 4
-		    )
-	    {
-		CAN1->FS1R &= ~mask;
-		CAN1->FM1R |= mask;
-		CAN1->FFA1R &= ~mask;
-	    }
+        if (off < pbxcan->fifo1filteroff)
+        {
+            if (pbxcan->filtermap[0].id32mask_cnt && off < pbxcan->filtermap[0].id32mask_cnt)
+            {
+                CAN1->FS1R |= mask;
+                CAN1->FM1R &= ~mask;
+                CAN1->FFA1R &= ~mask;
+            }
+            else if (pbxcan->filtermap[0].id32bit_cnt &&
+                     off < pbxcan->filtermap[0].id32mask_cnt + pbxcan->filtermap[0].id32bit_cnt / 2)
+            {
+                CAN1->FS1R |= mask;
+                CAN1->FM1R |= mask;
+                CAN1->FFA1R &= ~mask;
+            }
+            else if (pbxcan->filtermap[0].id16mask_cnt &&
+                     off < pbxcan->filtermap[0].id32mask_cnt + pbxcan->filtermap[0].id32bit_cnt / 2
+                     + pbxcan->filtermap[0].id16mask_cnt / 2)
+            {
+                CAN1->FS1R &= ~mask;
+                CAN1->FM1R &= ~mask;
+                CAN1->FFA1R &= ~mask;
+            }
+            else if (pbxcan->filtermap[0].id16bit_cnt &&
+                     off < pbxcan->filtermap[0].id32mask_cnt + pbxcan->filtermap[0].id32bit_cnt / 2
+                     + pbxcan->filtermap[0].id16mask_cnt / 2 + pbxcan->filtermap[0].id16bit_cnt / 4
+                    )
+            {
+                CAN1->FS1R &= ~mask;
+                CAN1->FM1R |= mask;
+                CAN1->FFA1R &= ~mask;
+            }
         }
-	else
-	{
-	    if (pbxcan->filtermap[1].id32mask_cnt &&
-		    off < pbxcan->filtermap[1].id32mask_cnt + pbxcan->fifo1filteroff)
-	    {
-		CAN1->FS1R |= mask;
-		CAN1->FM1R &= ~mask;
-		CAN1->FFA1R |= mask;
-	    }
-	    else if (pbxcan->filtermap[1].id32bit_cnt &&
-		     off < pbxcan->filtermap[1].id32mask_cnt + pbxcan->filtermap[1].id32bit_cnt / 2
-		     + pbxcan->fifo1filteroff)
-	    {
-		CAN1->FS1R |= mask;
-		CAN1->FM1R |= mask;
-		CAN1->FFA1R |= mask;
-	    }
-	    else if (pbxcan->filtermap[1].id16mask_cnt &&
-		     off < pbxcan->filtermap[1].id32mask_cnt + pbxcan->filtermap[1].id32bit_cnt / 2
-		     + pbxcan->filtermap[1].id16mask_cnt / 2 + pbxcan->fifo1filteroff)
-	    {
-		CAN1->FS1R &= ~mask;
-		CAN1->FM1R &= ~mask;
-		CAN1->FFA1R |= mask;
-	    }
-	    else if (pbxcan->filtermap[1].id16bit_cnt &&
-		     off < pbxcan->filtermap[1].id32mask_cnt + pbxcan->filtermap[1].id32bit_cnt / 2
-		     + pbxcan->filtermap[1].id16mask_cnt / 2 + pbxcan->filtermap[1].id16bit_cnt / 4
-		     + pbxcan->fifo1filteroff)
-	    {
-		CAN1->FS1R &= ~mask;
-		CAN1->FM1R |= mask;
-		CAN1->FFA1R |= mask;
-	    }
-	}
-	CAN1->sFilterRegister[i].FR1 = 0xFFFFFFFF;
-	CAN1->sFilterRegister[i].FR2 = 0xFFFFFFFF;
+        else
+        {
+            if (pbxcan->filtermap[1].id32mask_cnt &&
+                    off < pbxcan->filtermap[1].id32mask_cnt + pbxcan->fifo1filteroff)
+            {
+                CAN1->FS1R |= mask;
+                CAN1->FM1R &= ~mask;
+                CAN1->FFA1R |= mask;
+            }
+            else if (pbxcan->filtermap[1].id32bit_cnt &&
+                     off < pbxcan->filtermap[1].id32mask_cnt + pbxcan->filtermap[1].id32bit_cnt / 2
+                     + pbxcan->fifo1filteroff)
+            {
+                CAN1->FS1R |= mask;
+                CAN1->FM1R |= mask;
+                CAN1->FFA1R |= mask;
+            }
+            else if (pbxcan->filtermap[1].id16mask_cnt &&
+                     off < pbxcan->filtermap[1].id32mask_cnt + pbxcan->filtermap[1].id32bit_cnt / 2
+                     + pbxcan->filtermap[1].id16mask_cnt / 2 + pbxcan->fifo1filteroff)
+            {
+                CAN1->FS1R &= ~mask;
+                CAN1->FM1R &= ~mask;
+                CAN1->FFA1R |= mask;
+            }
+            else if (pbxcan->filtermap[1].id16bit_cnt &&
+                     off < pbxcan->filtermap[1].id32mask_cnt + pbxcan->filtermap[1].id32bit_cnt / 2
+                     + pbxcan->filtermap[1].id16mask_cnt / 2 + pbxcan->filtermap[1].id16bit_cnt / 4
+                     + pbxcan->fifo1filteroff)
+            {
+                CAN1->FS1R &= ~mask;
+                CAN1->FM1R |= mask;
+                CAN1->FFA1R |= mask;
+            }
+        }
+        CAN1->sFilterRegister[i].FR1 = 0xFFFFFFFF;
+        CAN1->sFilterRegister[i].FR2 = 0xFFFFFFFF;
         CAN1->FMR &= ~FMR_FINIT;
     }
     calcfiltermasks(pbxcan);
@@ -252,13 +252,13 @@ static const rt_uint32_t bxcan_baud_rate_tab[] =
     // 48 M
     MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 3),
     MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_6tq, CAN_BS2_3tq, 6),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 5),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 11),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 23),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 29),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 59),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_14tq, CAN_BS2_3tq, 149),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_16tq, CAN_BS2_8tq, 199),
+    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 6),
+    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 12),
+    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 24),
+    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 30),
+    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 60),
+    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 150),
+    MK_BKCAN_BAUD(CAN_SJW_4tq, CAN_BS1_15tq, CAN_BS2_8tq, 200),
 };
 
 #define BAUD_DATA(TYPE,NO) \
@@ -277,21 +277,21 @@ static void bxcan_init(CAN_TypeDef *pcan, rt_uint32_t baud, rt_uint32_t mode)
     switch (mode)
     {
     case RT_CAN_MODE_NORMAL:
-	CAN_InitStructure.CAN_Mode = CAN_Mode_Normal;
-	break;
+        CAN_InitStructure.CAN_Mode = CAN_Mode_Normal;
+        break;
     case RT_CAN_MODE_LISEN:
-	CAN_InitStructure.CAN_Mode = CAN_Mode_Silent;
-	break;
+        CAN_InitStructure.CAN_Mode = CAN_Mode_Silent;
+        break;
     case RT_CAN_MODE_LOOPBACK:
-	CAN_InitStructure.CAN_Mode = CAN_Mode_LoopBack;
-	break;
+        CAN_InitStructure.CAN_Mode = CAN_Mode_LoopBack;
+        break;
     case RT_CAN_MODE_LOOPBACKANLISEN:
-	CAN_InitStructure.CAN_Mode = CAN_Mode_Silent_LoopBack;
-	break;
+        CAN_InitStructure.CAN_Mode = CAN_Mode_Silent_LoopBack;
+        break;
     }
     if (baud < 0)
     {
-	baud = 0;
+        baud = 0;
     }
     CAN_InitStructure.CAN_SJW = BAUD_DATA(SJW, baud);
     CAN_InitStructure.CAN_BS1 = BAUD_DATA(BS1, baud);
@@ -358,11 +358,11 @@ static inline rt_err_t bxcan_enter_init(CAN_TypeDef *pcan)
 
     while (((pcan->MSR & CAN_MSR_INAK) != CAN_MSR_INAK) && (wait_ack != INAK_TIMEOUT))
     {
-	wait_ack++;
+        wait_ack++;
     }
     if ((pcan->MSR & CAN_MSR_INAK) != CAN_MSR_INAK)
     {
-	return RT_ERROR;
+        return RT_ERROR;
     }
     return RT_EOK;
 }
@@ -374,11 +374,11 @@ static inline rt_err_t bxcan_exit_init(CAN_TypeDef *pcan)
 
     while (((pcan->MSR & CAN_MSR_INAK) == CAN_MSR_INAK) && (wait_ack != INAK_TIMEOUT))
     {
-	wait_ack++;
+        wait_ack++;
     }
     if ((pcan->MSR & CAN_MSR_INAK) != CAN_MSR_INAK)
     {
-	return RT_ERROR;
+        return RT_ERROR;
     }
     return RT_EOK;
 }
@@ -386,28 +386,28 @@ static rt_err_t bxcan_set_mode(CAN_TypeDef *pcan, rt_uint32_t mode)
 {
     if (bxcan_enter_init(pcan) != RT_EOK)
     {
-	return RT_ERROR;
+        return RT_ERROR;
     }
     pcan->BTR &= ~(uint32_t)((uint32_t)0x03 << 30);
     switch (mode)
     {
     case RT_CAN_MODE_NORMAL:
-	mode = CAN_Mode_Normal;
-	break;
+        mode = CAN_Mode_Normal;
+        break;
     case RT_CAN_MODE_LISEN:
-	mode = CAN_Mode_Silent;
-	break;
+        mode = CAN_Mode_Silent;
+        break;
     case RT_CAN_MODE_LOOPBACK:
-	mode = CAN_Mode_LoopBack;
-	break;
+        mode = CAN_Mode_LoopBack;
+        break;
     case RT_CAN_MODE_LOOPBACKANLISEN:
-	mode = CAN_Mode_Silent_LoopBack;
-	break;
+        mode = CAN_Mode_Silent_LoopBack;
+        break;
     }
     pcan->BTR |= ~(uint32_t)(mode << 30);
     if (bxcan_exit_init(pcan) != RT_EOK)
     {
-	return RT_ERROR;
+        return RT_ERROR;
     }
     return RT_EOK;
 }
@@ -415,19 +415,19 @@ static rt_err_t bxcan_set_privmode(CAN_TypeDef *pcan, rt_uint32_t mode)
 {
     if (bxcan_enter_init(pcan) != RT_EOK)
     {
-	return RT_ERROR;
+        return RT_ERROR;
     }
     if (mode == ENABLE)
     {
-	pcan->MCR |= CAN_MCR_TXFP;
+        pcan->MCR |= CAN_MCR_TXFP;
     }
     else
     {
-	pcan->MCR &= ~(uint32_t)CAN_MCR_TXFP;
+        pcan->MCR &= ~(uint32_t)CAN_MCR_TXFP;
     }
     if (bxcan_exit_init(pcan) != RT_EOK)
     {
-	return RT_ERROR;
+        return RT_ERROR;
     }
     return RT_EOK;
 }
@@ -436,23 +436,23 @@ static rt_err_t bxcan_set_baud_rate(CAN_TypeDef *pcan, rt_uint32_t baud)
     rt_uint32_t mode;
     if (bxcan_enter_init(pcan) != RT_EOK)
     {
-	return RT_ERROR;
+        return RT_ERROR;
     }
     pcan->BTR = 0;
     mode = pcan->BTR & ((rt_uint32_t)0x03 << 30);
     pcan->BTR = (mode                         | \
-		 ((BAUD_DATA(SJW, baud)) << 24) | \
-		 ((BAUD_DATA(BS1, baud)) << 16) | \
-		 ((BAUD_DATA(BS2, baud)) << 20) | \
-		 (BAUD_DATA(RRESCL, baud)));
+                 ((BAUD_DATA(SJW, baud)) << 24) | \
+                 ((BAUD_DATA(BS1, baud)) << 16) | \
+                 ((BAUD_DATA(BS2, baud)) << 20) | \
+                 (BAUD_DATA(RRESCL, baud)) - 1);
     if (bxcan_exit_init(pcan) != RT_EOK)
     {
-	return RT_ERROR;
+        return RT_ERROR;
     }
     return RT_EOK;
 }
 static rt_err_t bxcancalcbaseoff(struct stm_bxcan *pbxcan, rt_int32_t hdr,
-				 rt_int32_t *pbase, rt_int32_t   *poff)
+                                 rt_int32_t *pbase, rt_int32_t   *poff)
 {
     rt_uint32_t fifo0start, fifo0end;
     rt_uint32_t fifo1start, fifo1end;
@@ -464,66 +464,66 @@ static rt_err_t bxcancalcbaseoff(struct stm_bxcan *pbxcan, rt_int32_t hdr,
                + pbxcan->filtermap[0].id16bit_cnt ;
     fifo1start = pbxcan->fifo1filteroff * 4;
     fifo1end = pbxcan->filtermap[1].id32mask_cnt
-	       + pbxcan->filtermap[1].id32bit_cnt
-	       + pbxcan->filtermap[1].id16mask_cnt
-	       + pbxcan->filtermap[1].id16bit_cnt ;
+               + pbxcan->filtermap[1].id32bit_cnt
+               + pbxcan->filtermap[1].id16mask_cnt
+               + pbxcan->filtermap[1].id16bit_cnt ;
     if (hdr >= fifo0start && hdr < fifo0end)
     {
-	*pbase = 0;
-	ptr = 0;
+        *pbase = 0;
+        ptr = 0;
     }
     else if (hdr >= fifo1start && hdr < fifo1end)
     {
-	*pbase = pbxcan->fifo1filteroff;
-	ptr = 1;
+        *pbase = pbxcan->fifo1filteroff;
+        ptr = 1;
     }
     else
     {
-	return RT_ERROR;
+        return RT_ERROR;
     }
     ptr = 0;
     if (hdr > pbxcan->filtermap[ptr].id32mask_cnt)
     {
-	hdr -= pbxcan->filtermap[ptr].id32mask_cnt;
-	*pbase += pbxcan->filtermap[ptr].id32mask_cnt;
+        hdr -= pbxcan->filtermap[ptr].id32mask_cnt;
+        *pbase += pbxcan->filtermap[ptr].id32mask_cnt;
     }
     else
     {
-	*pbase += hdr;
-	*poff = 0;
-	return RT_EOK;
+        *pbase += hdr;
+        *poff = 0;
+        return RT_EOK;
     }
     if (hdr > pbxcan->filtermap[ptr].id32bit_cnt)
     {
-	hdr -= pbxcan->filtermap[ptr].id32bit_cnt;
-	*pbase += pbxcan->filtermap[ptr].id32bit_cnt / 2;
+        hdr -= pbxcan->filtermap[ptr].id32bit_cnt;
+        *pbase += pbxcan->filtermap[ptr].id32bit_cnt / 2;
     }
     else
     {
-	*pbase += hdr / 2;
-	*poff = hdr % 2;
-	return RT_EOK;
+        *pbase += hdr / 2;
+        *poff = hdr % 2;
+        return RT_EOK;
     }
     if (hdr > pbxcan->filtermap[ptr].id16mask_cnt)
     {
-	hdr -= pbxcan->filtermap[ptr].id16mask_cnt;
-	*pbase += pbxcan->filtermap[ptr].id16mask_cnt / 2;
+        hdr -= pbxcan->filtermap[ptr].id16mask_cnt;
+        *pbase += pbxcan->filtermap[ptr].id16mask_cnt / 2;
     }
     else
     {
-	*pbase += hdr / 2;
-	*poff = hdr % 2;
-	return RT_EOK;
+        *pbase += hdr / 2;
+        *poff = hdr % 2;
+        return RT_EOK;
     }
     if (hdr > pbxcan->filtermap[ptr].id16bit_cnt)
     {
-	return RT_ERROR;
+        return RT_ERROR;
     }
     else
     {
-	*pbase += hdr / 4;
-	*poff = hdr % 4;
-	return RT_EOK;
+        *pbase += hdr / 4;
+        *poff = hdr % 4;
+        return RT_EOK;
     }
 }
 static void calcandormask(rt_uint32_t *pmask, rt_uint32_t shift, rt_int32_t count)
@@ -534,26 +534,26 @@ static void calcandormask(rt_uint32_t *pmask, rt_uint32_t shift, rt_int32_t coun
     i = 0;
     while (count > 0)
     {
-	if (i >= 32)
-	{
-	    tmpmaskarray[i] = 0xFFFFFFFF;
-	}
-	else
-	{
-	    tmpmaskarray[i] = (0x01 << count) - 1;
-	}
-	count -= 32;
-	i++;
+        if (i >= 32)
+        {
+            tmpmaskarray[i] = 0xFFFFFFFF;
+        }
+        else
+        {
+            tmpmaskarray[i] = (0x01 << count) - 1;
+        }
+        count -= 32;
+        i++;
     };
     count = i;
     for (i = 0; i < count && i < BX_CAN_FILTER_MAX_ARRAY_SIZE; i++)
     {
-	tmpmask = tmpmaskarray[i];
-	pmask[i] |= (rt_uint32_t)(tmpmask << shift);
-	if (i < BX_CAN_FILTER_MAX_ARRAY_SIZE - 1)
-	{
-	    pmask[i + 1] |= (rt_uint32_t)(tmpmask >> (32 - shift));
-	}
+        tmpmask = tmpmaskarray[i];
+        pmask[i] |= (rt_uint32_t)(tmpmask << shift);
+        if (i < BX_CAN_FILTER_MAX_ARRAY_SIZE - 1)
+        {
+            pmask[i + 1] |= (rt_uint32_t)(tmpmask >> (32 - shift));
+        }
     }
 }
 static void calcfiltermasks(struct stm_bxcan *pbxcan)
@@ -562,60 +562,60 @@ static void calcfiltermasks(struct stm_bxcan *pbxcan)
     pbxcan->filtermask.id32maskshift[0] = 0;
     if (pbxcan->filtermap[0].id32mask_cnt)
     {
-	calcandormask(pbxcan->filtermask.id32maskm, pbxcan->filtermask.id32maskshift[0],
-		      pbxcan->filtermap[0].id32mask_cnt);
+        calcandormask(pbxcan->filtermask.id32maskm, pbxcan->filtermask.id32maskshift[0],
+                      pbxcan->filtermap[0].id32mask_cnt);
     }
     pbxcan->filtermask.id32maskshift[1] = pbxcan->fifo1filteroff * 4;
     if (pbxcan->filtermap[1].id32mask_cnt)
     {
-	calcandormask(pbxcan->filtermask.id32maskm, pbxcan->filtermask.id32maskshift[1],
-		      pbxcan->filtermap[1].id32mask_cnt);
+        calcandormask(pbxcan->filtermask.id32maskm, pbxcan->filtermask.id32maskshift[1],
+                      pbxcan->filtermap[1].id32mask_cnt);
     }
     pbxcan->filtermask.id32bitshift[0] = pbxcan->filtermask.id32maskshift[0] +
-					 pbxcan->filtermap[0].id32mask_cnt;
+                                         pbxcan->filtermap[0].id32mask_cnt;
     if (pbxcan->filtermap[0].id32bit_cnt)
     {
-	calcandormask(pbxcan->filtermask.id32bitm, pbxcan->filtermask.id32bitshift[0],
-		      pbxcan->filtermap[0].id32bit_cnt);
+        calcandormask(pbxcan->filtermask.id32bitm, pbxcan->filtermask.id32bitshift[0],
+                      pbxcan->filtermap[0].id32bit_cnt);
     }
     pbxcan->filtermask.id32bitshift[1] = pbxcan->filtermask.id32maskshift[1] +
-					 pbxcan->filtermap[1].id32mask_cnt;
+                                         pbxcan->filtermap[1].id32mask_cnt;
     if (pbxcan->filtermap[1].id32bit_cnt)
     {
-	calcandormask(pbxcan->filtermask.id32bitm, pbxcan->filtermask.id32bitshift[1],
-		      pbxcan->filtermap[1].id32bit_cnt);
+        calcandormask(pbxcan->filtermask.id32bitm, pbxcan->filtermask.id32bitshift[1],
+                      pbxcan->filtermap[1].id32bit_cnt);
     }
     pbxcan->filtermask.id16maskshift[0] = pbxcan->filtermask.id32bitshift[0] +
-					  pbxcan->filtermap[0].id32bit_cnt;
+                                          pbxcan->filtermap[0].id32bit_cnt;
     if (pbxcan->filtermap[0].id16mask_cnt)
     {
-	calcandormask(pbxcan->filtermask.id16maskm, pbxcan->filtermask.id16maskshift[0],
-		      pbxcan->filtermap[0].id16mask_cnt);
+        calcandormask(pbxcan->filtermask.id16maskm, pbxcan->filtermask.id16maskshift[0],
+                      pbxcan->filtermap[0].id16mask_cnt);
     }
     pbxcan->filtermask.id16maskshift[1] = pbxcan->filtermask.id32bitshift[1] +
-					  pbxcan->filtermap[1].id32bit_cnt;
+                                          pbxcan->filtermap[1].id32bit_cnt;
     if (pbxcan->filtermap[1].id16mask_cnt)
     {
-	calcandormask(pbxcan->filtermask.id16maskm, pbxcan->filtermask.id16maskshift[1],
-		      pbxcan->filtermap[1].id16mask_cnt);
+        calcandormask(pbxcan->filtermask.id16maskm, pbxcan->filtermask.id16maskshift[1],
+                      pbxcan->filtermap[1].id16mask_cnt);
     }
     pbxcan->filtermask.id16bitshift[0] = pbxcan->filtermask.id16maskshift[0] +
-					 pbxcan->filtermap[0].id16mask_cnt;
+                                         pbxcan->filtermap[0].id16mask_cnt;
     if (pbxcan->filtermap[0].id16bit_cnt)
     {
-	calcandormask(pbxcan->filtermask.id16bitm, pbxcan->filtermask.id16bitshift[0],
-		      pbxcan->filtermap[0].id16bit_cnt);
+        calcandormask(pbxcan->filtermask.id16bitm, pbxcan->filtermask.id16bitshift[0],
+                      pbxcan->filtermap[0].id16bit_cnt);
     }
     pbxcan->filtermask.id16bitshift[1] = pbxcan->filtermask.id16maskshift[1] +
-					 pbxcan->filtermap[1].id16mask_cnt;
+                                         pbxcan->filtermap[1].id16mask_cnt;
     if (pbxcan->filtermap[1].id16bit_cnt)
     {
-	calcandormask(pbxcan->filtermask.id16bitm, pbxcan->filtermask.id16bitshift[1],
-		      pbxcan->filtermap[1].id16bit_cnt);
+        calcandormask(pbxcan->filtermask.id16bitm, pbxcan->filtermask.id16bitshift[1],
+                      pbxcan->filtermap[1].id16bit_cnt);
     }
 }
 static rt_int32_t bxcanfindfilter(struct stm_bxcan *pbxcan, struct rt_can_filter_item *pitem,
-				  rt_int32_t type, rt_int32_t *base, rt_int32_t *off)
+                                  rt_int32_t type, rt_int32_t *base, rt_int32_t *off)
 {
     rt_int32_t i;
     rt_uint32_t bits, thisid, thismask, shift, found;
@@ -624,171 +624,171 @@ static rt_int32_t bxcanfindfilter(struct stm_bxcan *pbxcan, struct rt_can_filter
     switch (type)
     {
     case 3:
-	shift = 3;
-	for (i = 0; i < BX_CAN_MAX_FILTERS; i++)
-	{
-	    bits = 0x01 << (i & 0x1F);
-	    if (bits & (pbxcan->filtermask.id32maskm[i >> 5] & pbxcan->alocmask[i >> 5]))
-	    {
-		bxcancalcbaseoff(pbxcan, i, base, off);
-		pfilterreg = &((CAN_FilterRegister_TypeDef *)pbxcan->mfrbase)[*base];
-		thisid = (rt_uint32_t)pitem->id << shift;
-		thismask = (rt_uint32_t)pitem->mask << shift;
-		if (pitem->ide)
-		{
-		    thisid |= CAN_ID_EXT;
-		    thismask |= CAN_ID_EXT;
-		}
-		if (pitem->rtr)
-		{
-		    thisid |= CAN_RTR_REMOTE;
-		    thismask |= CAN_RTR_REMOTE;
-		}
-		if (pfilterreg->FR1 == thisid && pfilterreg->FR2 == thismask)
-		{
-		    found = 1;
-		    break;
-		}
-	    }
-	}
-	break;
+        shift = 3;
+        for (i = 0; i < BX_CAN_MAX_FILTERS; i++)
+        {
+            bits = 0x01 << (i & 0x1F);
+            if (bits & (pbxcan->filtermask.id32maskm[i >> 5] & pbxcan->alocmask[i >> 5]))
+            {
+                bxcancalcbaseoff(pbxcan, i, base, off);
+                pfilterreg = &((CAN_FilterRegister_TypeDef *)pbxcan->mfrbase)[*base];
+                thisid = (rt_uint32_t)pitem->id << shift;
+                thismask = (rt_uint32_t)pitem->mask << shift;
+                if (pitem->ide)
+                {
+                    thisid |= CAN_ID_EXT;
+                    thismask |= CAN_ID_EXT;
+                }
+                if (pitem->rtr)
+                {
+                    thisid |= CAN_RTR_REMOTE;
+                    thismask |= CAN_RTR_REMOTE;
+                }
+                if (pfilterreg->FR1 == thisid && pfilterreg->FR2 == thismask)
+                {
+                    found = 1;
+                    break;
+                }
+            }
+        }
+        break;
     case 2:
-	shift = 3;
-	for (i = 0; i < BX_CAN_MAX_FILTERS; i++)
-	{
-	    bits = 0x01 << (i % 32);
-	    if (bits & (pbxcan->filtermask.id32bitm[i >> 5] & pbxcan->alocmask[i >> 5]))
-	    {
-		bxcancalcbaseoff(pbxcan, i, base, off);
-		pfilterreg = &((CAN_FilterRegister_TypeDef *)pbxcan->mfrbase)[*base];
-		thisid = (rt_uint32_t)pitem->id << shift;
-		if (pitem->ide)
-		{
-		    thisid |= CAN_ID_EXT;
-		}
-		if (pitem->rtr)
-		{
-		    thisid |= CAN_RTR_REMOTE;
-		}
-		if ((*off == 0 && pfilterreg->FR1 == thisid) ||
-			(*off == 1 && pfilterreg->FR2 == thisid)
-		   )
-		{
-		    found = 1;
-		    break;
-		}
-	    }
-	}
-	break;
+        shift = 3;
+        for (i = 0; i < BX_CAN_MAX_FILTERS; i++)
+        {
+            bits = 0x01 << (i % 32);
+            if (bits & (pbxcan->filtermask.id32bitm[i >> 5] & pbxcan->alocmask[i >> 5]))
+            {
+                bxcancalcbaseoff(pbxcan, i, base, off);
+                pfilterreg = &((CAN_FilterRegister_TypeDef *)pbxcan->mfrbase)[*base];
+                thisid = (rt_uint32_t)pitem->id << shift;
+                if (pitem->ide)
+                {
+                    thisid |= CAN_ID_EXT;
+                }
+                if (pitem->rtr)
+                {
+                    thisid |= CAN_RTR_REMOTE;
+                }
+                if ((*off == 0 && pfilterreg->FR1 == thisid) ||
+                        (*off == 1 && pfilterreg->FR2 == thisid)
+                   )
+                {
+                    found = 1;
+                    break;
+                }
+            }
+        }
+        break;
     case 1:
-	shift = 5;
-	for (i = 0; i < BX_CAN_MAX_FILTERS; i++)
-	{
-	    bits = 0x01 << (i % 32);
-	    if (bits & (pbxcan->filtermask.id16maskm[i >> 5] & pbxcan->alocmask[i >> 5]))
-	    {
-		bxcancalcbaseoff(pbxcan, i, base, off);
-		pfilterreg = &((CAN_FilterRegister_TypeDef *)pbxcan->mfrbase)[*base];
-		thisid = pitem->id << shift;
-		if (pitem->rtr)
-		{
-		    thisid |= CAN_RTR_REMOTE << (shift - 2);
-		}
-		thismask = pitem->mask << shift;
-		if (pitem->rtr)
-		{
-		    thismask |= CAN_RTR_REMOTE << (shift - 2);
-		}
-		if (*off == 0 && pfilterreg->FR1 == ((thisid & 0x0000FFFF) | ((thismask & 0x0000FFFF) << 16)) ||
-			*off == 1 && pfilterreg->FR2 == ((thisid & 0x0000FFFF) | ((thismask & 0x0000FFFF) << 16))
-		   )
-		{
-		    found = 1;
-		    break;
-		}
-	    }
-	}
-	break;
+        shift = 5;
+        for (i = 0; i < BX_CAN_MAX_FILTERS; i++)
+        {
+            bits = 0x01 << (i % 32);
+            if (bits & (pbxcan->filtermask.id16maskm[i >> 5] & pbxcan->alocmask[i >> 5]))
+            {
+                bxcancalcbaseoff(pbxcan, i, base, off);
+                pfilterreg = &((CAN_FilterRegister_TypeDef *)pbxcan->mfrbase)[*base];
+                thisid = pitem->id << shift;
+                if (pitem->rtr)
+                {
+                    thisid |= CAN_RTR_REMOTE << (shift - 2);
+                }
+                thismask = pitem->mask << shift;
+                if (pitem->rtr)
+                {
+                    thismask |= CAN_RTR_REMOTE << (shift - 2);
+                }
+                if (*off == 0 && pfilterreg->FR1 == ((thisid & 0x0000FFFF) | ((thismask & 0x0000FFFF) << 16)) ||
+                        *off == 1 && pfilterreg->FR2 == ((thisid & 0x0000FFFF) | ((thismask & 0x0000FFFF) << 16))
+                   )
+                {
+                    found = 1;
+                    break;
+                }
+            }
+        }
+        break;
     case 0:
-	shift = 5;
-	for (i = 0; i < BX_CAN_MAX_FILTERS; i++)
-	{
-	    bits = 0x01 << (i % 32);
-	    if (bits & (pbxcan->filtermask.id16bitm[i >> 5] & pbxcan->alocmask[i >> 5]))
-	    {
-		bxcancalcbaseoff(pbxcan, i, base, off);
-		pfilterreg = &((CAN_FilterRegister_TypeDef *)pbxcan->mfrbase)[*base];
-		thisid = pitem->id << shift;
-		if (pitem->rtr)
-		{
-		    thisid |= CAN_RTR_REMOTE << (shift - 2);
-		}
-		if (*off < 2 && ((rt_uint16_t *)&pfilterreg->FR1)[*off & 0x01] == thisid ||
-			*off >= 2 && ((rt_uint16_t *)&pfilterreg->FR2)[*off & 0x01] == thisid)
-		{
-		    found = 1;
-		    break;
-		}
-	    }
-	}
-	break;
+        shift = 5;
+        for (i = 0; i < BX_CAN_MAX_FILTERS; i++)
+        {
+            bits = 0x01 << (i % 32);
+            if (bits & (pbxcan->filtermask.id16bitm[i >> 5] & pbxcan->alocmask[i >> 5]))
+            {
+                bxcancalcbaseoff(pbxcan, i, base, off);
+                pfilterreg = &((CAN_FilterRegister_TypeDef *)pbxcan->mfrbase)[*base];
+                thisid = pitem->id << shift;
+                if (pitem->rtr)
+                {
+                    thisid |= CAN_RTR_REMOTE << (shift - 2);
+                }
+                if (*off < 2 && ((rt_uint16_t *)&pfilterreg->FR1)[*off & 0x01] == thisid ||
+                        *off >= 2 && ((rt_uint16_t *)&pfilterreg->FR2)[*off & 0x01] == thisid)
+                {
+                    found = 1;
+                    break;
+                }
+            }
+        }
+        break;
     }
     if (found)
     {
-	return i;
+        return i;
     }
     return -1;
 }
 extern int __rt_ffs(int value);
 static rt_err_t bxcanallocfilter(rt_uint32_t *pmask, rt_uint32_t *palocmask,
-				 rt_uint32_t count, rt_int32_t *hdr)
+                                 rt_uint32_t count, rt_int32_t *hdr)
 {
     rt_int32_t i;
     for (i = 0; i < count; i++)
     {
-	rt_enter_critical();
-	if ((pmask[i] & ~palocmask[i]) != 0)
-	{
-	    *hdr = __rt_ffs(pmask[i] & ~palocmask[i]) - 1 + i * 32;
-	    palocmask[i] |= 0x01 << (*hdr % 0x1F);
-	    rt_exit_critical();
-	    return RT_EOK;
-	}
-	rt_exit_critical();
+        rt_enter_critical();
+        if ((pmask[i] & ~palocmask[i]) != 0)
+        {
+            *hdr = __rt_ffs(pmask[i] & ~palocmask[i]) - 1 + i * 32;
+            palocmask[i] |= 0x01 << (*hdr % 0x1F);
+            rt_exit_critical();
+            return RT_EOK;
+        }
+        rt_exit_critical();
     }
     if (i >= count)
     {
-	return RT_ENOMEM;
+        return RT_ENOMEM;
     }
     return RT_EOK;
 }
 static rt_err_t bxcanallocnewfilter(struct stm_bxcan *pbxcan, rt_int32_t actived,
-				    rt_int32_t type, rt_int32_t *hdr, rt_int32_t *base, rt_int32_t *off)
+                                    rt_int32_t type, rt_int32_t *hdr, rt_int32_t *base, rt_int32_t *off)
 {
     rt_err_t res;
     *hdr = -1;
     switch (type)
     {
     case 0x03:
-	res = bxcanallocfilter(pbxcan->filtermask.id32maskm, pbxcan->alocmask,
-			       BX_CAN_FILTER_MAX_ARRAY_SIZE, hdr);
-	break;
+        res = bxcanallocfilter(pbxcan->filtermask.id32maskm, pbxcan->alocmask,
+                               BX_CAN_FILTER_MAX_ARRAY_SIZE, hdr);
+        break;
     case 0x02:
-	res = bxcanallocfilter(pbxcan->filtermask.id32bitm, pbxcan->alocmask,
-			       BX_CAN_FILTER_MAX_ARRAY_SIZE, hdr);
-	break;
+        res = bxcanallocfilter(pbxcan->filtermask.id32bitm, pbxcan->alocmask,
+                               BX_CAN_FILTER_MAX_ARRAY_SIZE, hdr);
+        break;
     case 0x01:
-	res = bxcanallocfilter(pbxcan->filtermask.id16maskm, pbxcan->alocmask,
-			       BX_CAN_FILTER_MAX_ARRAY_SIZE, hdr);
-	break;
+        res = bxcanallocfilter(pbxcan->filtermask.id16maskm, pbxcan->alocmask,
+                               BX_CAN_FILTER_MAX_ARRAY_SIZE, hdr);
+        break;
     case 0x00:
-	res = bxcanallocfilter(pbxcan->filtermask.id16bitm, pbxcan->alocmask,
-			       BX_CAN_FILTER_MAX_ARRAY_SIZE, hdr);
-	break;
+        res = bxcanallocfilter(pbxcan->filtermask.id16bitm, pbxcan->alocmask,
+                               BX_CAN_FILTER_MAX_ARRAY_SIZE, hdr);
+        break;
     }
     if (res != RT_EOK  || *hdr < 0)
     {
-	return RT_ENOMEM;
+        return RT_ENOMEM;
     }
     bxcancalcbaseoff(pbxcan, *hdr, base, off);
     return RT_EOK;
@@ -803,45 +803,45 @@ static rt_err_t bxmodifyfilter(struct stm_bxcan *pbxcan, struct rt_can_filter_it
     hdr = bxcanfindfilter(pbxcan, pitem, fcase, &fbase, &foff);
     if (hdr < 0)
     {
-	if (!actived)
-	{
-	    return RT_EOK;
-	}
-	else if (pitem->hdr == -1)
-	{
-	    res = bxcanallocnewfilter(pbxcan, actived, fcase, &hdr, &fbase, &foff);
-	    if (res != RT_EOK)
-	    {
-		return res;
-	    }
-	}
-	else if (pitem->hdr >= 0)
-	{
-	    rt_enter_critical();
-	    res = bxcancalcbaseoff(pbxcan, pitem->hdr, &fbase, &foff);
-	    if (res != RT_EOK)
-	    {
-		return res;
-	    }
-	    hdr = pitem->hdr;
-	    if (actived)
-	    {
-		pbxcan->alocmask[hdr >> 5] |= 0x01 << (hdr % 0x1F);
-	    }
-	    rt_exit_critical();
-	}
+        if (!actived)
+        {
+            return RT_EOK;
+        }
+        else if (pitem->hdr == -1)
+        {
+            res = bxcanallocnewfilter(pbxcan, actived, fcase, &hdr, &fbase, &foff);
+            if (res != RT_EOK)
+            {
+                return res;
+            }
+        }
+        else if (pitem->hdr >= 0)
+        {
+            rt_enter_critical();
+            res = bxcancalcbaseoff(pbxcan, pitem->hdr, &fbase, &foff);
+            if (res != RT_EOK)
+            {
+                return res;
+            }
+            hdr = pitem->hdr;
+            if (actived)
+            {
+                pbxcan->alocmask[hdr >> 5] |= 0x01 << (hdr % 0x1F);
+            }
+            rt_exit_critical();
+        }
     }
     else
     {
-	if (!actived)
-	{
-	    pitem->hdr = hdr;
-	}
-	else if (hdr >= 0 && (pitem->hdr >= 0 || pitem->hdr == -1))
-	{
-	    pitem->hdr = hdr;
-	    return RT_EBUSY;
-	}
+        if (!actived)
+        {
+            pitem->hdr = hdr;
+        }
+        else if (hdr >= 0 && (pitem->hdr >= 0 || pitem->hdr == -1))
+        {
+            pitem->hdr = hdr;
+            return RT_EBUSY;
+        }
     }
     rt_uint32_t ID[2];
     rt_uint32_t shift;
@@ -856,104 +856,104 @@ static rt_err_t bxmodifyfilter(struct stm_bxcan *pbxcan, struct rt_can_filter_it
     CAN_FilterInitStructure.CAN_FilterNumber = (pfilterreg - &CAN1->sFilterRegister[0]);
     if (pitem->mode)
     {
-	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdMask;
+        CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdMask;
     }
     else
     {
-	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
+        CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
     }
     if (pitem->ide)
     {
-	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
+        CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
     }
     else
     {
-	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
+        CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
     }
     switch (fcase)
     {
     case 0x03:
-	if (actived)
-	{
-	    shift = 3;
-	    thisid = (rt_uint32_t)pitem->id << shift;
-	    thismask = (rt_uint32_t)pitem->mask << shift;
-	    if (pitem->ide)
-	    {
-		thisid |= CAN_ID_EXT;
-		thismask |= CAN_ID_EXT;
-	    }
-	    if (pitem->rtr)
-	    {
-		thisid |= CAN_RTR_REMOTE;
-		thismask |= CAN_RTR_REMOTE;
-	    }
-	    ID[0] = thisid;
-	    ID[1] = thismask;
-	}
-	else
-	{
-	    ID[0] = 0xFFFFFFFF;
-	    ID[1] = 0xFFFFFFFF;
-	}
-	break;
+        if (actived)
+        {
+            shift = 3;
+            thisid = (rt_uint32_t)pitem->id << shift;
+            thismask = (rt_uint32_t)pitem->mask << shift;
+            if (pitem->ide)
+            {
+                thisid |= CAN_ID_EXT;
+                thismask |= CAN_ID_EXT;
+            }
+            if (pitem->rtr)
+            {
+                thisid |= CAN_RTR_REMOTE;
+                thismask |= CAN_RTR_REMOTE;
+            }
+            ID[0] = thisid;
+            ID[1] = thismask;
+        }
+        else
+        {
+            ID[0] = 0xFFFFFFFF;
+            ID[1] = 0xFFFFFFFF;
+        }
+        break;
     case 0x02:
-	if (actived)
-	{
-	    shift = 3;
-	    thisid = (rt_uint32_t)pitem->id << shift;
-	    if (pitem->ide)
-	    {
-		thisid |= CAN_ID_EXT;
-	    }
-	    if (pitem->rtr)
-	    {
-		thisid |= CAN_RTR_REMOTE;
-	    }
-	    ID[foff] = thisid;
-	}
-	else
-	{
-	    ID[foff] = 0xFFFFFFFF;
-	}
-	break;
+        if (actived)
+        {
+            shift = 3;
+            thisid = (rt_uint32_t)pitem->id << shift;
+            if (pitem->ide)
+            {
+                thisid |= CAN_ID_EXT;
+            }
+            if (pitem->rtr)
+            {
+                thisid |= CAN_RTR_REMOTE;
+            }
+            ID[foff] = thisid;
+        }
+        else
+        {
+            ID[foff] = 0xFFFFFFFF;
+        }
+        break;
     case 0x01:
-	if (actived)
-	{
-	    shift = 5;
-	    thisid = pitem->id << shift;
-	    if (pitem->rtr)
-	    {
-		thisid |= CAN_RTR_REMOTE << (shift - 2);
-	    }
-	    thismask = pitem->mask << shift;
-	    if (pitem->rtr)
-	    {
-		thismask |= CAN_RTR_REMOTE << (shift - 2);
-	    }
-	    ID[foff] = (thisid & 0x0000FFFF) | ((thismask & 0x0000FFFF) << 16);
-	}
-	else
-	{
-	    ID[foff] = 0xFFFFFFFF;
-	}
-	break;
+        if (actived)
+        {
+            shift = 5;
+            thisid = pitem->id << shift;
+            if (pitem->rtr)
+            {
+                thisid |= CAN_RTR_REMOTE << (shift - 2);
+            }
+            thismask = pitem->mask << shift;
+            if (pitem->rtr)
+            {
+                thismask |= CAN_RTR_REMOTE << (shift - 2);
+            }
+            ID[foff] = (thisid & 0x0000FFFF) | ((thismask & 0x0000FFFF) << 16);
+        }
+        else
+        {
+            ID[foff] = 0xFFFFFFFF;
+        }
+        break;
     case 0x00:
-	if (actived)
-	{
-	    shift = 5;
-	    thisid = pitem->id << shift;
-	    if (pitem->rtr)
-	    {
-		thisid |= CAN_RTR_REMOTE << (shift - 2);
-	    }
-	    ((rt_uint16_t *) ID)[foff] = thisid;
-	}
-	else
-	{
-	    ((rt_uint16_t *) ID)[foff] = 0xFFFF;
-	}
-	break;
+        if (actived)
+        {
+            shift = 5;
+            thisid = pitem->id << shift;
+            if (pitem->rtr)
+            {
+                thisid |= CAN_RTR_REMOTE << (shift - 2);
+            }
+            ((rt_uint16_t *) ID)[foff] = thisid;
+        }
+        else
+        {
+            ((rt_uint16_t *) ID)[foff] = 0xFFFF;
+        }
+        break;
     }
     CAN_FilterInitStructure.CAN_FilterIdHigh = ((ID[1]) & 0x0000FFFF);
     CAN_FilterInitStructure.CAN_FilterIdLow = ID[0] & 0x0000FFFF;
@@ -961,31 +961,31 @@ static rt_err_t bxmodifyfilter(struct stm_bxcan *pbxcan, struct rt_can_filter_it
     CAN_FilterInitStructure.CAN_FilterMaskIdLow = (ID[0] & 0xFFFF0000) >> 16;
     if (fbase >= pbxcan->fifo1filteroff)
     {
-	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = 1;
+        CAN_FilterInitStructure.CAN_FilterFIFOAssignment = 1;
     }
     else
     {
-	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = 0;
+        CAN_FilterInitStructure.CAN_FilterFIFOAssignment = 0;
     }
     if (ID[0] != 0xFFFFFFFF || ID[1] != 0xFFFFFFFF)
     {
-	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
+        CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
     }
     else
     {
-	CAN_FilterInitStructure.CAN_FilterActivation = DISABLE;
+        CAN_FilterInitStructure.CAN_FilterActivation = DISABLE;
     }
     if (!actived)
     {
-	rt_enter_critical();
-	pbxcan->alocmask[hdr >> 5] &= ~(0x01 << (hdr % 0x1F));
-	rt_exit_critical();
+        rt_enter_critical();
+        pbxcan->alocmask[hdr >> 5] &= ~(0x01 << (hdr % 0x1F));
+        rt_exit_critical();
     }
     CAN_FilterInit(&CAN_FilterInitStructure);
     return RT_EOK;
 }
 static rt_err_t setfilter(struct stm_bxcan *pbxcan, rt_int32_t maxhdr,
-			  struct rt_can_filter_config *pconfig)
+                          struct rt_can_filter_config *pconfig)
 {
     struct rt_can_filter_item *pitem = pconfig->items;
     struct rt_can_hdr *phdrhead = pbxcan->hdrhead;
@@ -994,89 +994,89 @@ static rt_err_t setfilter(struct stm_bxcan *pbxcan, rt_int32_t maxhdr,
     rt_base_t level;
     while (count)
     {
-	res = bxmodifyfilter(pbxcan, pitem, pconfig->actived);
-	if (res != RT_EOK)
-	{
-	    return res;
-	}
-	if (pitem->hdr >= maxhdr || pitem->hdr < 0);
-	else
-	{
-	    if (pconfig->actived)
-	    {
-		level = rt_hw_interrupt_disable();
-		if (!phdrhead[pitem->hdr].connected)
-		{
-		    rt_hw_interrupt_enable(level);
-		    rt_memcpy(&phdrhead[pitem->hdr].filter, pitem,
-			      sizeof(struct rt_can_filter_item));
-		    level = rt_hw_interrupt_disable();
-		    phdrhead[pitem->hdr].connected = 1;
-		    phdrhead[pitem->hdr].msgs = 0;
-		    rt_list_init(&phdrhead[pitem->hdr].list);
-		}
-		rt_hw_interrupt_enable(level);
-	    }
-	    else
-	    {
-		rt_base_t level = rt_hw_interrupt_disable();
-		if (phdrhead[pitem->hdr].connected)
-		{
-		    phdrhead[pitem->hdr].connected = 0;
-		    phdrhead[pitem->hdr].msgs = 0;
-		    if (!rt_list_isempty(&phdrhead[pitem->hdr].list))
-		    {
-			rt_list_remove(phdrhead[pitem->hdr].list.next);
-		    }
-		    rt_hw_interrupt_enable(level);
-		    rt_memset(&phdrhead[pitem->hdr].filter, 0,
-			      sizeof(struct rt_can_filter_item));
-		}
-		else
-		{
-		    rt_hw_interrupt_enable(level);
-		}
-	    }
-	}
-	pitem++;
-	count--;
+        res = bxmodifyfilter(pbxcan, pitem, pconfig->actived);
+        if (res != RT_EOK)
+        {
+            return res;
+        }
+        if (pitem->hdr >= maxhdr || pitem->hdr < 0);
+        else
+        {
+            if (pconfig->actived)
+            {
+                level = rt_hw_interrupt_disable();
+                if (!phdrhead[pitem->hdr].connected)
+                {
+                    rt_hw_interrupt_enable(level);
+                    rt_memcpy(&phdrhead[pitem->hdr].filter, pitem,
+                              sizeof(struct rt_can_filter_item));
+                    level = rt_hw_interrupt_disable();
+                    phdrhead[pitem->hdr].connected = 1;
+                    phdrhead[pitem->hdr].msgs = 0;
+                    rt_list_init(&phdrhead[pitem->hdr].list);
+                }
+                rt_hw_interrupt_enable(level);
+            }
+            else
+            {
+                rt_base_t level = rt_hw_interrupt_disable();
+                if (phdrhead[pitem->hdr].connected)
+                {
+                    phdrhead[pitem->hdr].connected = 0;
+                    phdrhead[pitem->hdr].msgs = 0;
+                    if (!rt_list_isempty(&phdrhead[pitem->hdr].list))
+                    {
+                        rt_list_remove(phdrhead[pitem->hdr].list.next);
+                    }
+                    rt_hw_interrupt_enable(level);
+                    rt_memset(&phdrhead[pitem->hdr].filter, 0,
+                              sizeof(struct rt_can_filter_item));
+                }
+                else
+                {
+                    rt_hw_interrupt_enable(level);
+                }
+            }
+        }
+        pitem++;
+        count--;
     }
     return RT_EOK;
 }
-static rt_int32_t baudval2index(CANBAUD baudval)
+static rt_int32_t baudval2index(enum CANBAUD baudval)
 {
     rt_int32_t index;
     switch (baudval)
     {
     case CAN1MBaud   :
-	index = 0;
-	break;
+        index = 0;
+        break;
     case CAN800kBaud :
-	index = 1;
-	break;
+        index = 1;
+        break;
     case CAN500kBaud :
-	index = 2;
-	break;
+        index = 2;
+        break;
     case CAN250kBaud :
-	index = 3;
-	break;
+        index = 3;
+        break;
     case CAN125kBaud :
-	index = 4;
-	break;
+        index = 4;
+        break;
     case CAN100kBaud :
-	index = 5;
-	break;
+        index = 5;
+        break;
     case CAN50kBaud  :
-	index = 6;
-	break;
+        index = 6;
+        break;
     case CAN20kBaud  :
-	index = 7;
-	break;
+        index = 7;
+        break;
     case CAN10kBaud  :
-	index = 8;
-	break;
+        index = 8;
+        break;
     default:
-	index = -1;
+        index = -1;
     }
     return index;
 }
@@ -1088,15 +1088,15 @@ static rt_err_t configure(struct rt_can_device *can, struct can_configure *cfg)
     assert_param(IS_CAN_ALL_PERIPH(pbxcan));
     if (pbxcan == CAN1)
     {
-	bxcan1_hw_init();
-	bxcan_init(pbxcan, baudval2index(cfg->baud_rate), can->config.mode);
-	bxcan1_filter_init(can);
+        bxcan1_hw_init();
+        bxcan_init(pbxcan, baudval2index(cfg->baud_rate), can->config.mode);
+        bxcan1_filter_init(can);
     }
     else
     {
-	bxcan2_hw_init();
-	bxcan_init(pbxcan, baudval2index(cfg->baud_rate), can->config.mode);
-	bxcan2_filter_init(can);
+        bxcan2_hw_init();
+        bxcan_init(pbxcan, baudval2index(cfg->baud_rate), can->config.mode);
+        bxcan2_filter_init(can);
     }
     return RT_EOK;
 }
@@ -1104,6 +1104,7 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
 {
     struct stm_bxcan *pbxcan;
     rt_uint32_t argval;
+    rt_base_t level;
     NVIC_InitTypeDef  NVIC_InitStructure;
 
     pbxcan = (struct stm_bxcan *) can->parent.user_data;
@@ -1112,133 +1113,139 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
-	argval = (rt_uint32_t) arg;
-	if (argval == RT_DEVICE_FLAG_INT_RX)
-	{
-	    NVIC_DisableIRQ(pbxcan->rcvirq0);
-	    NVIC_DisableIRQ(pbxcan->rcvirq1);
-	    CAN_ITConfig(pbxcan->reg, CAN_IT_FMP0 , DISABLE);
-	    CAN_ITConfig(pbxcan->reg, CAN_IT_FF0 , DISABLE);
-	    CAN_ITConfig(pbxcan->reg, CAN_IT_FOV0 , DISABLE);
-	    CAN_ITConfig(pbxcan->reg, CAN_IT_FMP1 , DISABLE);
-	    CAN_ITConfig(pbxcan->reg, CAN_IT_FF1 , DISABLE);
-	    CAN_ITConfig(pbxcan->reg, CAN_IT_FOV1 , DISABLE);
-	}
-	else if (argval == RT_DEVICE_FLAG_INT_TX)
-	{
-	    NVIC_DisableIRQ(pbxcan->sndirq);
-	    CAN_ITConfig(pbxcan->reg, CAN_IT_TME, DISABLE);
-	}
-	else if (argval == RT_DEVICE_CAN_INT_ERR)
-	{
-	    CAN_ITConfig(pbxcan->reg, CAN_IT_BOF , DISABLE);
-	    CAN_ITConfig(pbxcan->reg, CAN_IT_LEC , DISABLE);
-	    CAN_ITConfig(pbxcan->reg, CAN_IT_ERR , DISABLE);
-	    NVIC_DisableIRQ(pbxcan->errirq);
-	}
-	break;
+        argval = (rt_uint32_t) arg;
+        if (argval == RT_DEVICE_FLAG_INT_RX)
+        {
+            NVIC_DisableIRQ(pbxcan->rcvirq0);
+            NVIC_DisableIRQ(pbxcan->rcvirq1);
+            CAN_ITConfig(pbxcan->reg, CAN_IT_FMP0 , DISABLE);
+            CAN_ITConfig(pbxcan->reg, CAN_IT_FF0 , DISABLE);
+            CAN_ITConfig(pbxcan->reg, CAN_IT_FOV0 , DISABLE);
+            CAN_ITConfig(pbxcan->reg, CAN_IT_FMP1 , DISABLE);
+            CAN_ITConfig(pbxcan->reg, CAN_IT_FF1 , DISABLE);
+            CAN_ITConfig(pbxcan->reg, CAN_IT_FOV1 , DISABLE);
+        }
+        else if (argval == RT_DEVICE_FLAG_INT_TX)
+        {
+            NVIC_DisableIRQ(pbxcan->sndirq);
+            CAN_ITConfig(pbxcan->reg, CAN_IT_TME, DISABLE);
+        }
+        else if (argval == RT_DEVICE_CAN_INT_ERR)
+        {
+            CAN_ITConfig(pbxcan->reg, CAN_IT_BOF , DISABLE);
+            CAN_ITConfig(pbxcan->reg, CAN_IT_LEC , DISABLE);
+            CAN_ITConfig(pbxcan->reg, CAN_IT_ERR , DISABLE);
+            NVIC_DisableIRQ(pbxcan->errirq);
+        }
+        break;
     case RT_DEVICE_CTRL_SET_INT:
-	argval = (rt_uint32_t) arg;
-	if (argval == RT_DEVICE_FLAG_INT_RX)
-	{
-	    CAN_ITConfig(pbxcan->reg, CAN_IT_FMP0 , ENABLE);
-	    CAN_ITConfig(pbxcan->reg, CAN_IT_FF0 , ENABLE);
-	    CAN_ITConfig(pbxcan->reg, CAN_IT_FOV0 , ENABLE);
-	    CAN_ITConfig(pbxcan->reg, CAN_IT_FMP1 , ENABLE);
-	    CAN_ITConfig(pbxcan->reg, CAN_IT_FF1 , ENABLE);
-	    CAN_ITConfig(pbxcan->reg, CAN_IT_FOV1 , ENABLE);
-	    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x1;
-	    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0;
-	    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	    NVIC_InitStructure.NVIC_IRQChannel = pbxcan->rcvirq0;
-	    NVIC_Init(&NVIC_InitStructure);
-	    NVIC_InitStructure.NVIC_IRQChannel = pbxcan->rcvirq1;
-	    NVIC_Init(&NVIC_InitStructure);
-	}
-	else if (argval == RT_DEVICE_FLAG_INT_TX)
-	{
-	    CAN_ITConfig(pbxcan->reg, CAN_IT_TME, ENABLE);
-	    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x1;
-	    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0;
-	    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	    NVIC_InitStructure.NVIC_IRQChannel = pbxcan->sndirq;
-	    NVIC_Init(&NVIC_InitStructure);
-	}
-	else if (argval == RT_DEVICE_CAN_INT_ERR)
-	{
-	    CAN_ITConfig(pbxcan->reg, CAN_IT_BOF , ENABLE);
-	    CAN_ITConfig(pbxcan->reg, CAN_IT_LEC , ENABLE);
-	    CAN_ITConfig(pbxcan->reg, CAN_IT_ERR , ENABLE);
-	    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x1;
-	    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0;
-	    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	    NVIC_InitStructure.NVIC_IRQChannel = pbxcan->errirq;
-	    NVIC_Init(&NVIC_InitStructure);
-	}
-	break;
+        argval = (rt_uint32_t) arg;
+        if (argval == RT_DEVICE_FLAG_INT_RX)
+        {
+            CAN_ITConfig(pbxcan->reg, CAN_IT_FMP0 , ENABLE);
+            CAN_ITConfig(pbxcan->reg, CAN_IT_FF0 , ENABLE);
+            CAN_ITConfig(pbxcan->reg, CAN_IT_FOV0 , ENABLE);
+            CAN_ITConfig(pbxcan->reg, CAN_IT_FMP1 , ENABLE);
+            CAN_ITConfig(pbxcan->reg, CAN_IT_FF1 , ENABLE);
+            CAN_ITConfig(pbxcan->reg, CAN_IT_FOV1 , ENABLE);
+            NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x1;
+            NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0;
+            NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+            NVIC_InitStructure.NVIC_IRQChannel = pbxcan->rcvirq0;
+            NVIC_Init(&NVIC_InitStructure);
+            NVIC_InitStructure.NVIC_IRQChannel = pbxcan->rcvirq1;
+            NVIC_Init(&NVIC_InitStructure);
+        }
+        else if (argval == RT_DEVICE_FLAG_INT_TX)
+        {
+            CAN_ITConfig(pbxcan->reg, CAN_IT_TME, ENABLE);
+            NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x1;
+            NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0;
+            NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+            NVIC_InitStructure.NVIC_IRQChannel = pbxcan->sndirq;
+            NVIC_Init(&NVIC_InitStructure);
+        }
+        else if (argval == RT_DEVICE_CAN_INT_ERR)
+        {
+            CAN_ITConfig(pbxcan->reg, CAN_IT_BOF , ENABLE);
+            CAN_ITConfig(pbxcan->reg, CAN_IT_LEC , ENABLE);
+            CAN_ITConfig(pbxcan->reg, CAN_IT_ERR , ENABLE);
+            NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x1;
+            NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0;
+            NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+            NVIC_InitStructure.NVIC_IRQChannel = pbxcan->errirq;
+            NVIC_Init(&NVIC_InitStructure);
+        }
+        break;
     case RT_CAN_CMD_SET_FILTER:
-	return setfilter(pbxcan, can->config.maxhdr,
-			 (struct rt_can_filter_config *) arg);
-	break;
+        return setfilter(pbxcan, can->config.maxhdr,
+                         (struct rt_can_filter_config *) arg);
+        break;
     case RT_CAN_CMD_SET_MODE:
-	argval = (rt_uint32_t) arg;
-	if (argval != RT_CAN_MODE_NORMAL ||
-		argval != RT_CAN_MODE_LISEN ||
-		argval != RT_CAN_MODE_LOOPBACK ||
-		argval != RT_CAN_MODE_LOOPBACKANLISEN)
-	{
-	    return RT_ERROR;
-	}
-	if (argval != can->config.mode)
-	{
-	    can->config.mode = argval;
-	    return bxcan_set_mode(pbxcan->reg, argval);
-	}
-	break;
+        argval = (rt_uint32_t) arg;
+        if (argval != RT_CAN_MODE_NORMAL ||
+                argval != RT_CAN_MODE_LISEN ||
+                argval != RT_CAN_MODE_LOOPBACK ||
+                argval != RT_CAN_MODE_LOOPBACKANLISEN)
+        {
+            return RT_ERROR;
+        }
+        if (argval != can->config.mode)
+        {
+            can->config.mode = argval;
+            return bxcan_set_mode(pbxcan->reg, argval);
+        }
+        break;
     case RT_CAN_CMD_SET_BAUD:
-	argval = (rt_uint32_t) arg;
-	if (argval != CAN1MBaud &&
-		argval != CAN800kBaud &&
-		argval != CAN500kBaud &&
-		argval != CAN250kBaud &&
-		argval != CAN125kBaud &&
-		argval != CAN100kBaud &&
-		argval != CAN50kBaud  &&
-		argval != CAN20kBaud  &&
-		argval != CAN10kBaud)
-	{
-	    return RT_ERROR;
-	}
-	if (argval != can->config.baud_rate)
-	{
-	    can->config.baud_rate = argval;
-	    return bxcan_set_baud_rate(pbxcan->reg, baudval2index(argval));
-	}
-	break;
+        argval = (rt_uint32_t) arg;
+        if (argval != CAN1MBaud &&
+                argval != CAN800kBaud &&
+                argval != CAN500kBaud &&
+                argval != CAN250kBaud &&
+                argval != CAN125kBaud &&
+                argval != CAN100kBaud &&
+                argval != CAN50kBaud  &&
+                argval != CAN20kBaud  &&
+                argval != CAN10kBaud)
+        {
+            return RT_ERROR;
+        }
+        if (argval != can->config.baud_rate)
+        {
+            can->config.baud_rate = argval;
+            level = rt_hw_interrupt_disable();
+            if (can->parent.ref_count)
+            {
+                rt_hw_interrupt_enable(level);
+                return bxcan_set_baud_rate(pbxcan->reg, baudval2index(argval));
+            }
+            rt_hw_interrupt_enable(level);
+        }
+        break;
     case RT_CAN_CMD_SET_PRIV:
-	argval = (rt_uint32_t) arg;
-	if (argval != RT_CAN_MODE_PRIV ||
-		argval != RT_CAN_MODE_NOPRIV)
-	{
-	    return RT_ERROR;
-	}
-	if (argval != can->config.privmode)
-	{
-	    can->config.privmode = argval;
-	    return bxcan_set_privmode(pbxcan->reg, argval);
-	}
-	break;
+        argval = (rt_uint32_t) arg;
+        if (argval != RT_CAN_MODE_PRIV ||
+                argval != RT_CAN_MODE_NOPRIV)
+        {
+            return RT_ERROR;
+        }
+        if (argval != can->config.privmode)
+        {
+            can->config.privmode = argval;
+            return bxcan_set_privmode(pbxcan->reg, argval);
+        }
+        break;
     case RT_CAN_CMD_GET_STATUS:
     {
-	rt_uint32_t errtype;
-	errtype = pbxcan->reg->ESR;
-	can->status.rcverrcnt = errtype >> 24;
-	can->status.snderrcnt = (errtype >> 16 & 0xFF);
-	can->status.errcode = errtype & 0x07;
-	if (arg != &can->status)
-	{
-	    rt_memcpy(arg, &can->status, sizeof(can->status));
-	}
+        rt_uint32_t errtype;
+        errtype = pbxcan->reg->ESR;
+        can->status.rcverrcnt = errtype >> 24;
+        can->status.snderrcnt = (errtype >> 16 & 0xFF);
+        can->status.errcode = errtype & 0x07;
+        if (arg != &can->status)
+        {
+            rt_memcpy(arg, &can->status, sizeof(can->status));
+        }
     }
     break;
     }
@@ -1256,16 +1263,16 @@ static int sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno
     pbxcan->sTxMailBox[boxno].TIR &= TMIDxR_TXRQ;
     if (pmsg->ide == RT_CAN_STDID)
     {
-	assert_param(IS_CAN_STDID(pmsg->id));
-	pbxcan->sTxMailBox[boxno].TIR |= ((pmsg->id << 21) | \
-					  pmsg->rtr);
+        assert_param(IS_CAN_STDID(pmsg->id));
+        pbxcan->sTxMailBox[boxno].TIR |= ((pmsg->id << 21) | \
+                                          pmsg->rtr);
     }
     else
     {
-	assert_param(IS_CAN_EXTID(pmsg->id));
-	pbxcan->sTxMailBox[boxno].TIR |= ((pmsg->id << 3) | \
-					  pmsg->ide << 2 | \
-					  pmsg->rtr);
+        assert_param(IS_CAN_EXTID(pmsg->id));
+        pbxcan->sTxMailBox[boxno].TIR |= ((pmsg->id << 3) | \
+                                          pmsg->ide << 2 | \
+                                          pmsg->rtr);
     }
 
     pmsg->len &= (uint8_t)0x0000000F;
@@ -1273,15 +1280,15 @@ static int sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno
     pbxcan->sTxMailBox[boxno].TDTR |= pmsg->len;
 
     pbxcan->sTxMailBox[boxno].TDLR = (((uint32_t)pmsg->data[3] << 24) |
-				      ((uint32_t)pmsg->data[2] << 16) |
-				      ((uint32_t)pmsg->data[1] << 8) |
-				      ((uint32_t)pmsg->data[0]));
+                                      ((uint32_t)pmsg->data[2] << 16) |
+                                      ((uint32_t)pmsg->data[1] << 8) |
+                                      ((uint32_t)pmsg->data[0]));
     if (pmsg->len > 4)
     {
-	pbxcan->sTxMailBox[boxno].TDHR = (((uint32_t)pmsg->data[7] << 24) |
-					  ((uint32_t)pmsg->data[6] << 16) |
-					  ((uint32_t)pmsg->data[5] << 8) |
-					  ((uint32_t)pmsg->data[4]));
+        pbxcan->sTxMailBox[boxno].TDHR = (((uint32_t)pmsg->data[7] << 24) |
+                                          ((uint32_t)pmsg->data[6] << 16) |
+                                          ((uint32_t)pmsg->data[5] << 8) |
+                                          ((uint32_t)pmsg->data[4]));
     }
     pbxcan->sTxMailBox[boxno].TIR |= TMIDxR_TXRQ;
 
@@ -1298,11 +1305,11 @@ static int recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxno)
     pmsg->ide = ((uint8_t)0x04 & pbxcan->sFIFOMailBox[boxno].RIR) >> 2;
     if (pmsg->ide == CAN_Id_Standard)
     {
-	pmsg->id = (uint32_t)0x000007FF & (pbxcan->sFIFOMailBox[boxno].RIR >> 21);
+        pmsg->id = (uint32_t)0x000007FF & (pbxcan->sFIFOMailBox[boxno].RIR >> 21);
     }
     else
     {
-	pmsg->id = (uint32_t)0x1FFFFFFF & (pbxcan->sFIFOMailBox[boxno].RIR >> 3);
+        pmsg->id = (uint32_t)0x1FFFFFFF & (pbxcan->sFIFOMailBox[boxno].RIR >> 3);
     }
 
     pmsg->rtr = (uint8_t)((0x02 & pbxcan->sFIFOMailBox[boxno].RIR) >> 1);
@@ -1313,10 +1320,10 @@ static int recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxno)
     pmsg->data[3] = (uint8_t)0xFF & (pbxcan->sFIFOMailBox[boxno].RDLR >> 24);
     if (pmsg->len > 4)
     {
-	pmsg->data[4] = (uint8_t)0xFF & pbxcan->sFIFOMailBox[boxno].RDHR;
-	pmsg->data[5] = (uint8_t)0xFF & (pbxcan->sFIFOMailBox[boxno].RDHR >> 8);
-	pmsg->data[6] = (uint8_t)0xFF & (pbxcan->sFIFOMailBox[boxno].RDHR >> 16);
-	pmsg->data[7] = (uint8_t)0xFF & (pbxcan->sFIFOMailBox[boxno].RDHR >> 24);
+        pmsg->data[4] = (uint8_t)0xFF & pbxcan->sFIFOMailBox[boxno].RDHR;
+        pmsg->data[5] = (uint8_t)0xFF & (pbxcan->sFIFOMailBox[boxno].RDHR >> 8);
+        pmsg->data[6] = (uint8_t)0xFF & (pbxcan->sFIFOMailBox[boxno].RDHR >> 16);
+        pmsg->data[7] = (uint8_t)0xFF & (pbxcan->sFIFOMailBox[boxno].RDHR >> 24);
     }
     pmsg->hdr = (uint8_t)0xFF & (pbxcan->sFIFOMailBox[boxno].RDTR >> 8);
     if (boxno) pmsg->hdr += ((struct stm_bxcan *) can->parent.user_data)->fifo1filteroff * 4;
@@ -1329,9 +1336,9 @@ static int insertothdrlist(struct rt_can_device *can, struct rt_can_msg_list *ms
     RT_ASSERT(hdr < can->config.maxhdr && hdr >= 0);
     if (phdrhead[hdr].connected)
     {
-	rt_list_insert_before(&phdrhead[hdr].list, &msglist->hdrlist);
-	msglist->owner = &phdrhead[hdr];
-	phdrhead[hdr].msgs++;
+        rt_list_insert_before(&phdrhead[hdr].list, &msglist->hdrlist);
+        msglist->owner = &phdrhead[hdr];
+        phdrhead[hdr].msgs++;
     }
     return RT_EOK;
 }
@@ -1341,14 +1348,14 @@ static struct rt_can_msg_list *getfromhdrlist(struct rt_can_device *can, rt_int3
     struct rt_can_hdr *phdrhead = ((struct stm_bxcan *) can->parent.user_data)->hdrhead;
     if (hdr >= 0 && hdr < can->config.maxhdr && !rt_list_isempty(&phdrhead[hdr].list))
     {
-	listmsg = rt_list_entry(phdrhead[hdr].list.next, struct rt_can_msg_list, hdrlist);
-	rt_list_remove(&listmsg->hdrlist);
-	if (phdrhead[hdr].msgs)
-	{
-	    phdrhead[hdr].msgs--;
-	}
-	listmsg->owner = RT_NULL;
-	return listmsg;
+        listmsg = rt_list_entry(phdrhead[hdr].list.next, struct rt_can_msg_list, hdrlist);
+        rt_list_remove(&listmsg->hdrlist);
+        if (phdrhead[hdr].msgs)
+        {
+            phdrhead[hdr].msgs--;
+        }
+        listmsg->owner = RT_NULL;
+        return listmsg;
     }
     return RT_NULL;
 }
@@ -1357,7 +1364,7 @@ static int dettachhdrlist(struct rt_can_device *can,  struct rt_can_msg_list *ms
     rt_list_remove(&msglist->hdrlist);
     if (msglist->owner != RT_NULL && msglist->owner->msgs)
     {
-	msglist->owner->msgs--;
+        msglist->owner->msgs--;
     }
     msglist->owner = RT_NULL;
     return RT_EOK;
@@ -1367,14 +1374,14 @@ static int indicatehdrlist(struct rt_can_device *can,  struct rt_can_msg_list *m
     struct rt_can_hdr *phdrhead = ((struct stm_bxcan *) can->parent.user_data)->hdrhead;
     rt_int32_t hdr = msglist->data.hdr;
     rt_base_t level;
-    RT_ASSERT(msglist->data.hdr < can->config.maxhdr && msglist->data.hdr >= 0);
+    RT_ASSERT(msglist->hdr < can->config.maxhdr && msglist->hdr >= 0);
     if (phdrhead[hdr].connected && phdrhead[hdr].filter.ind)
     {
-	rt_size_t rx_length;
-	level = rt_hw_interrupt_disable();
-	rx_length = phdrhead[hdr].msgs * sizeof(struct rt_can_msg);
-	rt_hw_interrupt_enable(level);
-	phdrhead[hdr].filter.ind(&can->parent, phdrhead[hdr].filter.args, hdr, rx_length);
+        rt_size_t rx_length;
+        level = rt_hw_interrupt_disable();
+        rx_length = phdrhead[hdr].msgs * sizeof(struct rt_can_msg);
+        rt_hw_interrupt_enable(level);
+        phdrhead[hdr].filter.ind(&can->parent, phdrhead[hdr].filter.args, hdr, rx_length);
     }
     return RT_EOK;
 }
@@ -1414,18 +1421,18 @@ static struct stm_bxcan bxcan1data =
     .filtercnt = BX_CAN2_FMRSTART,
     .fifo1filteroff = 7,
     .filtermap = {
-	[0] = {
-	    .id32mask_cnt = 0,
-	    .id32bit_cnt = 0,
-	    .id16mask_cnt = 2,
-	    .id16bit_cnt = 24,
-	},
-	[1] = {
-	    .id32mask_cnt = 0,
-	    .id32bit_cnt = 0,
-	    .id16mask_cnt = 2,
-	    .id16bit_cnt = 24,
-	},
+        [0] = {
+            .id32mask_cnt = 0,
+            .id32bit_cnt = 0,
+            .id16mask_cnt = 2,
+            .id16bit_cnt = 24,
+        },
+        [1] = {
+            .id32mask_cnt = 0,
+            .id32bit_cnt = 0,
+            .id16mask_cnt = 2,
+            .id16bit_cnt = 24,
+        },
     },
     .hdrhead = bxcan1hdr,
 };
@@ -1434,32 +1441,32 @@ void CAN1_RX0_IRQHandler(void)
 {
     while (CAN1->RF0R & 0x03)
     {
-	if ((CAN1->RF0R & CAN_RF0R_FOVR0) != 0)
-	{
-	    CAN1->RF0R = CAN_RF0R_FOVR0;
-	    rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_RXOF_IND | 0 << 8);
-	}
-	else
-	{
-	    rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_RX_IND | 0 << 8);
-	}
-	CAN1->RF0R |= CAN_RF0R_RFOM0;
+        if ((CAN1->RF0R & CAN_RF0R_FOVR0) != 0)
+        {
+            CAN1->RF0R = CAN_RF0R_FOVR0;
+            rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_RXOF_IND | 0 << 8);
+        }
+        else
+        {
+            rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_RX_IND | 0 << 8);
+        }
+        CAN1->RF0R |= CAN_RF0R_RFOM0;
     }
 }
 void CAN1_RX1_IRQHandler(void)
 {
     while (CAN1->RF1R & 0x03)
     {
-	if ((CAN1->RF1R & CAN_RF1R_FOVR1) != 0)
-	{
-	    CAN1->RF1R = CAN_RF1R_FOVR1;
-	    rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_RXOF_IND | 1 << 8);
-	}
-	else
-	{
-	    rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_RX_IND | 1 << 8);
-	}
-	CAN1->RF1R |= CAN_RF1R_RFOM1;
+        if ((CAN1->RF1R & CAN_RF1R_FOVR1) != 0)
+        {
+            CAN1->RF1R = CAN_RF1R_FOVR1;
+            rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_RXOF_IND | 1 << 8);
+        }
+        else
+        {
+            rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_RX_IND | 1 << 8);
+        }
+        CAN1->RF1R |= CAN_RF1R_RFOM1;
     }
 }
 void CAN1_TX_IRQHandler(void)
@@ -1467,41 +1474,41 @@ void CAN1_TX_IRQHandler(void)
     rt_uint32_t state;
     if (CAN1->TSR & (CAN_TSR_RQCP0))
     {
-	state =  CAN1->TSR & (CAN_TSR_RQCP0 | CAN_TSR_TXOK0 | CAN_TSR_TME0);
+        state =  CAN1->TSR & (CAN_TSR_RQCP0 | CAN_TSR_TXOK0 | CAN_TSR_TME0);
         CAN1->TSR |= CAN_TSR_RQCP0;
-	if (state == (CAN_TSR_RQCP0 | CAN_TSR_TXOK0 | CAN_TSR_TME0))
+        if (state == (CAN_TSR_RQCP0 | CAN_TSR_TXOK0 | CAN_TSR_TME0))
         {
-	    rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_TX_DONE | 0 << 8);
-	}
-	else
-	{
-	    rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_TX_FAIL | 0 << 8);
+            rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_TX_DONE | 0 << 8);
+        }
+        else
+        {
+            rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_TX_FAIL | 0 << 8);
         }
     }
     if (CAN1->TSR & (CAN_TSR_RQCP1))
     {
-	state =  CAN1->TSR & (CAN_TSR_RQCP1 | CAN_TSR_TXOK1 | CAN_TSR_TME1);
-	CAN1->TSR |= CAN_TSR_RQCP1;
-	if (state == (CAN_TSR_RQCP1 | CAN_TSR_TXOK1 | CAN_TSR_TME1))
-	{
-	    rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_TX_DONE | 1 << 8);
-	}
-	else
+        state =  CAN1->TSR & (CAN_TSR_RQCP1 | CAN_TSR_TXOK1 | CAN_TSR_TME1);
+        CAN1->TSR |= CAN_TSR_RQCP1;
+        if (state == (CAN_TSR_RQCP1 | CAN_TSR_TXOK1 | CAN_TSR_TME1))
         {
-	    rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_TX_FAIL | 1 << 8);
+            rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_TX_DONE | 1 << 8);
+        }
+        else
+        {
+            rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_TX_FAIL | 1 << 8);
         }
     }
     if (CAN1->TSR & (CAN_TSR_RQCP2))
     {
-	state =  CAN1->TSR & (CAN_TSR_RQCP2 | CAN_TSR_TXOK2 | CAN_TSR_TME2);
-	CAN1->TSR |= CAN_TSR_RQCP2;
-	if (state == (CAN_TSR_RQCP2 | CAN_TSR_TXOK2 | CAN_TSR_TME2))
-	{
-	    rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_TX_DONE | 2 << 8);
-	}
-	else
+        state =  CAN1->TSR & (CAN_TSR_RQCP2 | CAN_TSR_TXOK2 | CAN_TSR_TME2);
+        CAN1->TSR |= CAN_TSR_RQCP2;
+        if (state == (CAN_TSR_RQCP2 | CAN_TSR_TXOK2 | CAN_TSR_TME2))
         {
-	    rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_TX_FAIL | 2 << 8);
+            rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_TX_DONE | 2 << 8);
+        }
+        else
+        {
+            rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_TX_FAIL | 2 << 8);
         }
     }
 }
@@ -1511,27 +1518,27 @@ void CAN1_SCE_IRQHandler(void)
     errtype = CAN1->ESR;
     if (errtype & 0x70 && bxcan1.status.lasterrtype == (errtype & 0x70))
     {
-	switch ((errtype & 0x70) >> 4)
-	{
-	case RT_CAN_BUS_BIT_PAD_ERR:
-	    bxcan1.status.bitpaderrcnt++;
-	    break;
-	case RT_CAN_BUS_FORMAT_ERR:
-	    bxcan1.status.formaterrcnt++;
-	    break;
-	case RT_CAN_BUS_ACK_ERR:
-	    bxcan1.status.ackerrcnt++;
-	    break;
-	case RT_CAN_BUS_IMPLICIT_BIT_ERR:
-	case RT_CAN_BUS_EXPLICIT_BIT_ERR:
-	    bxcan1.status.biterrcnt++;
-	    break;
-	case RT_CAN_BUS_CRC_ERR:
-	    bxcan1.status.crcerrcnt++;
-	    break;
-	}
-	bxcan1.status.lasterrtype = errtype & 0x70;
-	CAN1->ESR &= ~0x70;
+        switch ((errtype & 0x70) >> 4)
+        {
+        case RT_CAN_BUS_BIT_PAD_ERR:
+            bxcan1.status.bitpaderrcnt++;
+            break;
+        case RT_CAN_BUS_FORMAT_ERR:
+            bxcan1.status.formaterrcnt++;
+            break;
+        case RT_CAN_BUS_ACK_ERR:
+            bxcan1.status.ackerrcnt++;
+            break;
+        case RT_CAN_BUS_IMPLICIT_BIT_ERR:
+        case RT_CAN_BUS_EXPLICIT_BIT_ERR:
+            bxcan1.status.biterrcnt++;
+            break;
+        case RT_CAN_BUS_CRC_ERR:
+            bxcan1.status.crcerrcnt++;
+            break;
+        }
+        bxcan1.status.lasterrtype = errtype & 0x70;
+        CAN1->ESR &= ~0x70;
     }
     bxcan1.status.rcverrcnt = errtype >> 24;
     bxcan1.status.snderrcnt = (errtype >> 16 & 0xFF);
@@ -1557,18 +1564,18 @@ static struct stm_bxcan bxcan2data =
     .filtercnt = BX_CAN_FMRNUMBER - BX_CAN2_FMRSTART,
     .fifo1filteroff = 7,
     .filtermap = {
-	[0] = {
-	    .id32mask_cnt = 0,
-	    .id32bit_cnt = 0,
-	    .id16mask_cnt = 2,
-	    .id16bit_cnt = 24,
-	},
-	[1] = {
-	    .id32mask_cnt = 0,
-	    .id32bit_cnt = 0,
-	    .id16mask_cnt = 2,
-	    .id16bit_cnt = 24,
-	},
+        [0] = {
+            .id32mask_cnt = 0,
+            .id32bit_cnt = 0,
+            .id16mask_cnt = 2,
+            .id16bit_cnt = 24,
+        },
+        [1] = {
+            .id32mask_cnt = 0,
+            .id32bit_cnt = 0,
+            .id16mask_cnt = 2,
+            .id16bit_cnt = 24,
+        },
     },
     .hdrhead = bxcan2hdr,
 };
@@ -1578,32 +1585,32 @@ void CAN2_RX0_IRQHandler(void)
 {
     while (CAN2->RF0R & 0x03)
     {
-	if ((CAN2->RF0R & CAN_RF0R_FOVR0) != 0)
-	{
-	    CAN2->RF0R = CAN_RF0R_FOVR0;
-	    rt_hw_can_isr(&bxcan2, RT_CAN_EVENT_RXOF_IND | 0 << 8);
-	}
-	else
-	{
-	    rt_hw_can_isr(&bxcan2, RT_CAN_EVENT_RX_IND | 0 << 8);
-	}
-	CAN2->RF0R |= CAN_RF0R_RFOM0;
+        if ((CAN2->RF0R & CAN_RF0R_FOVR0) != 0)
+        {
+            CAN2->RF0R = CAN_RF0R_FOVR0;
+            rt_hw_can_isr(&bxcan2, RT_CAN_EVENT_RXOF_IND | 0 << 8);
+        }
+        else
+        {
+            rt_hw_can_isr(&bxcan2, RT_CAN_EVENT_RX_IND | 0 << 8);
+        }
+        CAN2->RF0R |= CAN_RF0R_RFOM0;
     }
 }
 void CAN2_RX1_IRQHandler(void)
 {
     while (CAN2->RF1R & 0x03)
     {
-	if ((CAN2->RF1R & CAN_RF1R_FOVR1) != 0)
-	{
-	    CAN2->RF1R = CAN_RF1R_FOVR1;
-	    rt_hw_can_isr(&bxcan2, RT_CAN_EVENT_RXOF_IND | 1 << 8);
-	}
-	else
-	{
-	    rt_hw_can_isr(&bxcan2, RT_CAN_EVENT_RX_IND | 1 << 8);
-	}
-	CAN2->RF1R |= CAN_RF1R_RFOM1;
+        if ((CAN2->RF1R & CAN_RF1R_FOVR1) != 0)
+        {
+            CAN2->RF1R = CAN_RF1R_FOVR1;
+            rt_hw_can_isr(&bxcan2, RT_CAN_EVENT_RXOF_IND | 1 << 8);
+        }
+        else
+        {
+            rt_hw_can_isr(&bxcan2, RT_CAN_EVENT_RX_IND | 1 << 8);
+        }
+        CAN2->RF1R |= CAN_RF1R_RFOM1;
     }
 }
 void CAN2_TX_IRQHandler(void)
@@ -1611,41 +1618,41 @@ void CAN2_TX_IRQHandler(void)
     rt_uint32_t state;
     if (CAN2->TSR & (CAN_TSR_RQCP0))
     {
-	state =  CAN2->TSR & (CAN_TSR_RQCP0 | CAN_TSR_TXOK0 | CAN_TSR_TME0);
+        state =  CAN2->TSR & (CAN_TSR_RQCP0 | CAN_TSR_TXOK0 | CAN_TSR_TME0);
         CAN2->TSR |= CAN_TSR_RQCP0;
-	if (state == (CAN_TSR_RQCP0 | CAN_TSR_TXOK0 | CAN_TSR_TME0))
-	{
-	    rt_hw_can_isr(&bxcan2, RT_CAN_EVENT_TX_DONE | 0 << 8);
-	}
-	else
+        if (state == (CAN_TSR_RQCP0 | CAN_TSR_TXOK0 | CAN_TSR_TME0))
         {
-	    rt_hw_can_isr(&bxcan2, RT_CAN_EVENT_TX_FAIL | 0 << 8);
+            rt_hw_can_isr(&bxcan2, RT_CAN_EVENT_TX_DONE | 0 << 8);
+        }
+        else
+        {
+            rt_hw_can_isr(&bxcan2, RT_CAN_EVENT_TX_FAIL | 0 << 8);
         }
     }
     if (CAN2->TSR & (CAN_TSR_RQCP1))
     {
-	state =  CAN2->TSR & (CAN_TSR_RQCP1 | CAN_TSR_TXOK1 | CAN_TSR_TME1);
-	CAN2->TSR |= CAN_TSR_RQCP1;
-	if (state == (CAN_TSR_RQCP1 | CAN_TSR_TXOK1 | CAN_TSR_TME1))
-	{
-	    rt_hw_can_isr(&bxcan2, RT_CAN_EVENT_TX_DONE | 1 << 8);
-	}
-	else
+        state =  CAN2->TSR & (CAN_TSR_RQCP1 | CAN_TSR_TXOK1 | CAN_TSR_TME1);
+        CAN2->TSR |= CAN_TSR_RQCP1;
+        if (state == (CAN_TSR_RQCP1 | CAN_TSR_TXOK1 | CAN_TSR_TME1))
         {
-	    rt_hw_can_isr(&bxcan2, RT_CAN_EVENT_TX_FAIL | 1 << 8);
+            rt_hw_can_isr(&bxcan2, RT_CAN_EVENT_TX_DONE | 1 << 8);
+        }
+        else
+        {
+            rt_hw_can_isr(&bxcan2, RT_CAN_EVENT_TX_FAIL | 1 << 8);
         }
     }
     if (CAN2->TSR & (CAN_TSR_RQCP2))
     {
-	state =  CAN2->TSR & (CAN_TSR_RQCP2 | CAN_TSR_TXOK2 | CAN_TSR_TME2);
-	CAN2->TSR |= CAN_TSR_RQCP2;
-	if (state == (CAN_TSR_RQCP2 | CAN_TSR_TXOK2 | CAN_TSR_TME2))
+        state =  CAN2->TSR & (CAN_TSR_RQCP2 | CAN_TSR_TXOK2 | CAN_TSR_TME2);
+        CAN2->TSR |= CAN_TSR_RQCP2;
+        if (state == (CAN_TSR_RQCP2 | CAN_TSR_TXOK2 | CAN_TSR_TME2))
         {
-	    rt_hw_can_isr(&bxcan2, RT_CAN_EVENT_TX_DONE | 2 << 8);
-	}
-	else
-	{
-	    rt_hw_can_isr(&bxcan2, RT_CAN_EVENT_TX_FAIL | 2 << 8);
+            rt_hw_can_isr(&bxcan2, RT_CAN_EVENT_TX_DONE | 2 << 8);
+        }
+        else
+        {
+            rt_hw_can_isr(&bxcan2, RT_CAN_EVENT_TX_FAIL | 2 << 8);
         }
     }
 }
@@ -1655,24 +1662,24 @@ void CAN2_SCE_IRQHandler(void)
     errtype = CAN2->ESR;
     if (errtype & 0x70 && bxcan2.status.lasterrtype == (errtype & 0x70))
     {
-	switch ((errtype & 0x70) >> 4)
-	{
+        switch ((errtype & 0x70) >> 4)
+        {
         case RT_CAN_BUS_BIT_PAD_ERR:
-	    bxcan2.status.bitpaderrcnt++;
-	    break;
+            bxcan2.status.bitpaderrcnt++;
+            break;
         case RT_CAN_BUS_FORMAT_ERR:
-	    bxcan2.status.formaterrcnt++;
-	    break;
+            bxcan2.status.formaterrcnt++;
+            break;
         case RT_CAN_BUS_ACK_ERR:
-	    bxcan2.status.ackerrcnt++;
-	    break;
+            bxcan2.status.ackerrcnt++;
+            break;
         case RT_CAN_BUS_IMPLICIT_BIT_ERR:
         case RT_CAN_BUS_EXPLICIT_BIT_ERR:
-	    bxcan2.status.biterrcnt++;
-	    break;
+            bxcan2.status.biterrcnt++;
+            break;
         case RT_CAN_BUS_CRC_ERR:
-	    bxcan2.status.crcerrcnt++;
-	    break;
+            bxcan2.status.crcerrcnt++;
+            break;
         }
         bxcan2.status.lasterrtype = errtype & 0x70;
         CAN2->ESR &= ~0x70;
