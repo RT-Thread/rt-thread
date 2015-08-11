@@ -529,6 +529,7 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
 {
     struct lpccandata* plpccan;
     rt_uint32_t argval;
+    rt_base_t level;
     CAN_MODE_Type mode;
 
     plpccan = (struct lpccandata* )  can->parent.user_data;
@@ -615,7 +616,13 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
         if(argval != can->config.baud_rate)
         {
             can->config.baud_rate = argval;
-            return lpccan_baud_set(plpccan->id, (rt_uint32_t) arg);
+            level = rt_hw_interrupt_disable();
+            if (can->parent.ref_count)
+            {
+                rt_hw_interrupt_enable(level);
+            	return lpccan_baud_set(plpccan->id, (rt_uint32_t) arg);
+            }
+            rt_hw_interrupt_enable(level);
         }
         break;
 
