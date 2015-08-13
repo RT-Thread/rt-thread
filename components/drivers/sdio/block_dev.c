@@ -149,7 +149,7 @@ static rt_err_t rt_mmcsd_req_blk(struct rt_mmcsd_card *card,
     }
     else
     {
-        req.stop = NULL;
+        req.stop = RT_NULL;
         r_cmd = READ_SINGLE_BLOCK;
         w_cmd = WRITE_BLOCK;
     }
