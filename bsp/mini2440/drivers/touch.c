@@ -384,7 +384,7 @@ static rt_err_t rtgui_touch_init(rt_device_t dev)
 
 	ADCTSC = WAIT4INT(0);
 
-	rt_hw_interrupt_install(INTADC, rt_touch_handler, RT_NULL);
+	rt_hw_interrupt_install(INTADC, rt_touch_handler, RT_NULL , "INTADC");
 	rt_hw_interrupt_umask(INTADC);
 
 	/* clear interrupt */
