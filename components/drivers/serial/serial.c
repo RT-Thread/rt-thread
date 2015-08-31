@@ -27,6 +27,8 @@
  *                             the size of ring buffer.
  * 2014-07-10     bernard      rewrite serial framework
  * 2014-12-31     bernard      use open_flag for poll_tx stream mode.
+ * 2015-05-19     Quintin      fix DMA tx mod tx_dma->activated flag !=RT_FALSE BUG 
+ *                             in open function.
  */
 
 #include <rthw.h>
@@ -302,6 +304,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
 
             tx_dma = (struct rt_serial_tx_dma*) rt_malloc (sizeof(struct rt_serial_tx_dma));
             RT_ASSERT(tx_dma != RT_NULL);
+            tx_dma->activated = RT_FALSE;
             
             rt_data_queue_init(&(tx_dma->data_queue), 8, 4, RT_NULL);
             serial->serial_tx = tx_dma;
