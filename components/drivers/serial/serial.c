@@ -27,6 +27,8 @@
  *                             the size of ring buffer.
  * 2014-07-10     bernard      rewrite serial framework
  * 2014-12-31     bernard      use open_flag for poll_tx stream mode.
+ * 2015-05-19     Quintin      fix DMA tx mod tx_dma->activated flag !=RT_FALSE BUG 
+ *                             in open function.
  */
 
 #include <rthw.h>
@@ -266,6 +268,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
 
             rx_dma = (struct rt_serial_rx_dma*) rt_malloc (sizeof(struct rt_serial_rx_dma));
             RT_ASSERT(rx_dma != RT_NULL);
+            
             rx_dma->activated = RT_FALSE;
 
             serial->serial_rx = rx_dma;
@@ -279,7 +282,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
                 serial->config.bufsz);
             RT_ASSERT(rx_fifo != RT_NULL);
             rx_fifo->buffer = (rt_uint8_t*) (rx_fifo + 1);
-            rt_memset(rx_fifo->buffer, 0, serial->config.bufsz);
+            rt_memset(rx_fifo->buffer, 0, RT_SERIAL_RB_BUFSZ);
             rx_fifo->put_index = 0;
             rx_fifo->get_index = 0;
 
@@ -303,6 +306,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
             tx_dma = (struct rt_serial_tx_dma*) rt_malloc (sizeof(struct rt_serial_tx_dma));
             RT_ASSERT(tx_dma != RT_NULL);
             
+            tx_dma->activated = RT_FALSE;
             rt_data_queue_init(&(tx_dma->data_queue), 8, 4, RT_NULL);
             serial->serial_tx = tx_dma;
 
