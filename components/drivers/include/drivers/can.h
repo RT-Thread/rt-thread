@@ -232,8 +232,7 @@ struct rt_can_msg
     rt_uint32_t rsv : 1;
     rt_uint32_t len : 8;
     rt_uint32_t priv : 8;
-    rt_uint32_t hdr : 8;
-    rt_uint32_t reserved : 8;
+    rt_int32_t hdr;
     rt_uint8_t data[8];
 };
 typedef struct rt_can_msg *rt_can_msg_t;
