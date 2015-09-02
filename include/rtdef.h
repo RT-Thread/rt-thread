@@ -759,7 +759,8 @@ enum rt_device_class_type
     RT_Device_Class_Pipe,                               /**< Pipe device */
     RT_Device_Class_Portal,                             /**< Portal device */
     RT_Device_Class_Miscellaneous,                      /**< Miscellaneous device */
-    RT_Device_Class_Unknown                             /**< unknown device */
+    RT_Device_Class_HwTimer,                            /**< Hardware timer device */
+	RT_Device_Class_Unknown                             /**< unknown device */
 };
 
 /**
