@@ -20,6 +20,7 @@
  * Change Logs:
  * Date           Author        Notes
  * 2012-04-25     weety         first version
+ * 2015-07-07     Quintin       add rt_i2c_master_send_then_recv function.
  */
 
 #include <rtdevice.h>
@@ -67,9 +68,9 @@ rt_size_t rt_i2c_transfer(struct rt_i2c_bus_device *bus,
 #ifdef RT_I2C_DEBUG
         for (ret = 0; ret < num; ret++)
         {
-            i2c_dbg("msgs[%d] %c, addr=0x%02x, len=%d%s\n", ret,
+            i2c_dbg("msgs[%d] %c, addr=0x%02x, len=%d by %s \r\n", ret,
                     (msgs[ret].flags & RT_I2C_RD) ? 'R' : 'W',
-                    msgs[ret].addr, msgs[ret].len);
+                    msgs[ret].addr, msgs[ret].len,bus->parent.parent.name);
         }
 #endif
 
@@ -127,6 +128,33 @@ rt_size_t rt_i2c_master_recv(struct rt_i2c_bus_device *bus,
     return (ret > 0) ? count : ret;
 }
 
+rt_err_t rt_i2c_master_send_then_recv(struct rt_i2c_bus_device *bus,
+                                     rt_uint16_t              addr,
+                                     rt_uint16_t              flags,
+                                     rt_uint8_t               *send_buf,
+                                     rt_size_t                send_length,
+                                     rt_uint8_t               *recv_buf,
+                                     rt_size_t                recv_length)
+{
+    rt_size_t ret;
+    struct rt_i2c_msg msgs[2];
+    RT_ASSERT(bus != RT_NULL);
+	
+    msgs[0].addr   = addr;
+    msgs[0].flags  = flags & RT_I2C_ADDR_10BIT;
+    msgs[0].len    = send_length;
+    msgs[0].buf    = send_buf;
+	
+	msgs[1].addr   = addr;
+    msgs[1].flags  = flags & RT_I2C_ADDR_10BIT;
+    msgs[1].flags  |= RT_I2C_RD;
+	msgs[1].len    = recv_length;
+    msgs[1].buf    = recv_buf;	
+
+    ret = rt_i2c_transfer(bus, msgs, 2);
+
+    return (ret > 0) ? recv_length : ret;	
+}
 int rt_i2c_core_init(void)
 {
     return 0;
