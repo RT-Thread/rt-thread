@@ -242,6 +242,11 @@ int cmd_mkfs(int argc, char** argv)
         rt_kprintf("Usage: mkfs [-t type] device\n");
         return 0;
     }
+    
+    if (result != RT_EOK)
+    {
+        rt_kprintf("mkfs failed, result=%d\n", result);
+    }
 
     return 0;
 }
