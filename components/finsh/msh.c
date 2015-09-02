@@ -253,6 +253,7 @@ int system(const char *command)
 {
     return msh_exec_module(command, rt_strlen(command));
 }
+RTM_EXPORT(system);
 #endif
 
 static int _msh_exec_cmd(char* cmd, rt_size_t length, int *retp)
