@@ -1,3 +1,4 @@
+import os
 # toolchains options
 ARCH     = 'arm'
 CPU      = 'dm36x'

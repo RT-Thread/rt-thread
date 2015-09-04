@@ -126,7 +126,6 @@ void rt_init_thread_entry(void* parameter)
 	{
 		rt_i2c_core_init();
 		davinci_i2c_init("I2C1");
-		pcf8563_init("I2C1", 0x51);
 	}
 #endif
 
@@ -139,9 +138,7 @@ void rt_init_thread_entry(void* parameter)
 #ifdef RT_USING_SDIO
 	rt_mmcsd_core_init();
 	rt_mmcsd_blk_init();
-	#if 1
-	//rt_hw_mmcsd_init();
-	spi_sd_init("spi10");
+	rt_hw_mmcsd_init();
 	rt_thread_delay(RT_TICK_PER_SECOND*2);
 	/* mount sd card fat partition 1 as root directory */
 		if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
@@ -150,7 +147,6 @@ void rt_init_thread_entry(void* parameter)
 		}
 		else
 			rt_kprintf("File System initialzation failed!%d\n", rt_get_errno());
-	#endif
 #endif
 	}
 #endif
