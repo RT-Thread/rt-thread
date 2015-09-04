@@ -1,0 +1,31 @@
+Import('RTT_ROOT')
+from building import *
+
+cwd = GetCurrentDir()
+#src_drv = ['']
+
+# The set of source files associated with this SConscript file.
+path = [cwd]
+
+src = Split("""
+davinci_serial.c
+""")
+
+if GetDepend('RT_USING_GPIO'):
+	src += ['gpio.c']
+
+if GetDepend('RT_USING_I2C'):
+	src += ['i2c-davinci.c']
+
+if GetDepend('RT_USING_SDIO'):
+	src += ['mmcsd.c']
+
+if GetDepend('RT_USING_SPI'):
+	src += ['spi-davinci.c']
+
+if GetDepend('RT_USING_LWIP'):
+	src += ['davinci_emac.c']
+
+group = DefineGroup('Startup', src, depend = [''], CPPPATH = path)
+
+Return('group')
