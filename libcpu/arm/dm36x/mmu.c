@@ -515,21 +515,6 @@ static void build_pte_mem_desc(struct mem_desc *mdesc, rt_uint32_t size)
     }
 }
 
-#if 0
-void mmu_setmtt(rt_uint32_t vaddrStart, rt_uint32_t vaddrEnd, rt_uint32_t paddrStart, rt_uint32_t attr)
-{
-    volatile rt_uint32_t *pTT;
-    volatile int i,nSec;
-    pTT=(rt_uint32_t *)_page_table+(vaddrStart>>20);
-    nSec=(vaddrEnd>>20)-(vaddrStart>>20);
-    for(i=0;i<=nSec;i++)
-    {
-		*pTT = attr |(((paddrStart>>20)+i)<<20);
-		pTT++;
-    }
-}
-#endif
-
 void rt_hw_mmu_init(struct mem_desc *mdesc, rt_uint32_t size)
 {
 	/* disable I/D cache */

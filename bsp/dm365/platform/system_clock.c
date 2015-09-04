@@ -1,16 +1,27 @@
 /*
- * File      : clock.c
+ * File      : system_clock.c
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
- * Date           Author       Notes
- * 2008-04-25     Yi.qiu       first version
+ * Date           Author		Notes
+ * 2010-11-13     weety		first version
  */
+
 
 #include <rtthread.h>
 #include "dm36x.h"
@@ -21,9 +32,6 @@
  */
 void rt_hw_clock_init(void)
 {
-	//LOCKTIME = 0xFFFFFFFF;	//u-boot already init system clock
-	//rt_hw_set_mpll_clock(MPL_SDIV, MPL_PDIV, MPL_MIDV);
-	//rt_hw_set_upll_clock(UPL_SDIV, UPL_PDIV, UPL_MDIV);
-	//rt_hw_set_divider(HDIVN, PDIVN);
+
 }
 

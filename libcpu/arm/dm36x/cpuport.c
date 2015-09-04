@@ -19,7 +19,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2011-01-13     weety      modified from mini2440
+ * 2011-01-13     weety      first version
  */
 
 #include <rthw.h>

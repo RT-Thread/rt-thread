@@ -5,6 +5,9 @@ TextBase = '0x80000000'
 
 CROSS_TOOL 	= 'gcc'
 
+if os.getenv('RTT_CC'):
+	CROSS_TOOL = os.getenv('RTT_CC')
+
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
 	#EXEC_PATH 	= '/opt/arm-2010q1/bin'
