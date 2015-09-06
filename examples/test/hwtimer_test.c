@@ -13,15 +13,15 @@ static rt_err_t timer_timeout_cb(rt_device_t dev, rt_size_t size)
     return 0;
 }
 
-int hwtimer(int freq, int t)
+int hwtimer(void)
 {
     rt_err_t err;
     rt_hwtimerval_t val;
     rt_device_t dev = RT_NULL;
     rt_tick_t tick;
     rt_hwtimer_mode_t mode;
-
-    t = (t <= 0)? 5 : t;
+    int freq = 10000;
+    int t = 5;
 
     if ((dev = rt_device_find(TIMER)) == RT_NULL)
     {
@@ -32,7 +32,7 @@ int hwtimer(int freq, int t)
     if (rt_device_open(dev, RT_DEVICE_OFLAG_RDWR) != RT_EOK)
     {
         rt_kprintf("Open %s Fail\n", TIMER);
-		return -1;
+        return -1;
     }
 
     rt_device_set_rx_indicate(dev, timer_timeout_cb);
@@ -44,7 +44,13 @@ int hwtimer(int freq, int t)
         goto EXIT;
     }
 
-    /* 设置定时器超时值 */
+    /* 周期模式 */
+    mode = HWTIMER_MODE_PERIOD;
+    err = rt_device_control(dev, HWTIMER_CTRL_MODE_SET, &mode);
+
+    tick = rt_tick_get();
+    rt_kprintf("Start Timer> Tick: %d\n", tick);
+    /* 设置定时器超时值并启动定时器 */
     val.sec = t;
     val.usec = 0;
     rt_kprintf("SetTime: Sec %d, Usec %d\n", val.sec, val.usec);
@@ -53,14 +59,6 @@ int hwtimer(int freq, int t)
         rt_kprintf("SetTime Fail\n");
         goto EXIT;
     }
-
-    /* 周期模式 */
-    mode = HWTIMER_MODE_PERIOD;
-    err = rt_device_control(dev, HWTIMER_CTRL_MODE_SET, &mode);
-    /* 启动定时器 */
-    tick = rt_tick_get();
-    err = rt_device_control(dev, HWTIMER_CTRL_START, RT_NULL);
-    rt_kprintf("Start Timer> Tick: %d\n", tick);
     rt_kprintf("Sleep %d sec\n", t);
     rt_thread_delay(t*RT_TICK_PER_SECOND);
 

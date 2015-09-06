@@ -25,9 +25,8 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-rt_inline rt_err_t timeout_set(rt_hwtimer_t *timer, rt_hwtimerval_t *tv)
+rt_inline rt_uint32_t timeout_calc(rt_hwtimer_t *timer, rt_hwtimerval_t *tv)
 {
-    rt_err_t err;
     float overflow;
     float timeout;
     rt_uint32_t counter;
@@ -35,15 +34,6 @@ rt_inline rt_err_t timeout_set(rt_hwtimer_t *timer, rt_hwtimerval_t *tv)
     float tv_sec;
     float devi_min = 1;
     float devi;
-
-    if (timer->ops->stop != RT_NULL)
-    {
-        timer->ops->stop(timer);
-    }
-    else
-    {
-        return -RT_ENOSYS;
-    }
 
     /* 把定时器溢出时间和定时时间换算成秒 */
     overflow = timer->info->maxcnt/(float)timer->freq;
@@ -90,12 +80,7 @@ rt_inline rt_err_t timeout_set(rt_hwtimer_t *timer, rt_hwtimerval_t *tv)
     timer->period_sec = timeout;
     counter = timeout*timer->freq;
 
-    if (timer->ops->timeout_set != RT_NULL)
-    {
-        err = timer->ops->timeout_set(timer, counter);
-    }
-
-    return err;
+    return counter;
 }
 
 static rt_err_t rt_hwtimer_init(struct rt_device *dev)
@@ -115,10 +100,11 @@ static rt_err_t rt_hwtimer_init(struct rt_device *dev)
     }
     timer->mode = HWTIMER_MODE_ONESHOT;
     timer->cycles = 0;
+    timer->overflow = 0;
 
     if (timer->ops->init)
     {
-        timer->ops->init(timer);
+        timer->ops->init(timer, 1);
     }
     else
     {
@@ -152,9 +138,9 @@ static rt_err_t rt_hwtimer_close(struct rt_device *dev)
     rt_hwtimer_t *timer;
 
     timer = (rt_hwtimer_t*)dev;
-    if (timer->ops->deinit != RT_NULL)
+    if (timer->ops->init != RT_NULL)
     {
-        timer->ops->deinit(timer);
+        timer->ops->init(timer, 0);
     }
     else
     {
@@ -195,21 +181,29 @@ static rt_size_t rt_hwtimer_read(struct rt_device *dev, rt_off_t pos, void *buff
 
 static rt_size_t rt_hwtimer_write(struct rt_device *dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
-    rt_size_t len = 0;
-    rt_hwtimerval_t *t;
-    rt_err_t err;
+    rt_uint32_t t;
+    rt_hwtimer_mode_t opm = HWTIMER_MODE_PERIOD;
+    rt_hwtimer_t *timer;
 
-    if (size == sizeof(rt_hwtimerval_t))
+    timer = (rt_hwtimer_t *)dev;
+    if ((timer->ops->start == RT_NULL) || (timer->ops->stop == RT_NULL))
+        return 0;
+
+    if (size != sizeof(rt_hwtimerval_t))
+        return 0;
+
+    if ((timer->cycles <= 1) && (timer->mode == HWTIMER_MODE_ONESHOT))
     {
-        t = (rt_hwtimerval_t*)buffer;
-        err = timeout_set((rt_hwtimer_t*)dev, t);
-        if (err == RT_EOK)
-        {
-            len = size;
-        }
+        opm = HWTIMER_MODE_ONESHOT;
     }
+    timer->ops->stop(timer);
+    timer->overflow = 0;
 
-    return len;
+    t = timeout_calc(timer, (rt_hwtimerval_t*)buffer);
+    if (timer->ops->start(timer, t, opm) != RT_EOK)
+        size = 0;
+
+    return size;
 }
 
 static rt_err_t rt_hwtimer_control(struct rt_device *dev, rt_uint8_t cmd, void *args)
@@ -221,31 +215,6 @@ static rt_err_t rt_hwtimer_control(struct rt_device *dev, rt_uint8_t cmd, void *
 
     switch (cmd)
     {
-    case HWTIMER_CTRL_START:
-    {
-        if (timer->ops->start != RT_NULL)
-        {
-            rt_hwtimer_mode_t opm;
-
-            if ((timer->cycles <= 1) && (timer->mode == HWTIMER_MODE_ONESHOT))
-            {
-                opm = HWTIMER_MODE_ONESHOT;
-            }
-            else
-            {
-                opm = HWTIMER_MODE_PERIOD;
-            }
-
-            timer->overflow = 0;
-
-            timer->ops->start(timer, opm);
-        }
-        else
-        {
-            result = -RT_ENOSYS;
-        }
-    }
-    break;
     case HWTIMER_CTRL_STOP:
     {
         if (timer->ops->stop != RT_NULL)
@@ -256,17 +225,6 @@ static rt_err_t rt_hwtimer_control(struct rt_device *dev, rt_uint8_t cmd, void *
         {
             result = -RT_ENOSYS;
         }
-    }
-    break;
-    case HWTIMER_CTRL_TIMEOUT_SET:
-    {
-        if (args == RT_NULL)
-        {
-            result = -RT_EEMPTY;
-            break;
-        }
-
-        result = timeout_set(timer, (rt_hwtimerval_t*)args);
     }
     break;
     case HWTIMER_CTRL_FREQ_SET:
@@ -381,7 +339,7 @@ rt_err_t rt_device_hwtimer_register(rt_hwtimer_t *timer, const char *name, void 
 
     device = &(timer->parent);
 
-    device->type        = RT_Device_Class_HwTimer;
+    device->type        = RT_Device_Class_Timer;
     device->rx_indicate = RT_NULL;
     device->tx_complete = RT_NULL;
 

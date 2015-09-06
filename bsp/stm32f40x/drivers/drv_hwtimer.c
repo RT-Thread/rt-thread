@@ -1,5 +1,5 @@
 /*
- * File      : gpio.c
+ * File      : drv_hwtimer.c
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2015, RT-Thread Development Team
  *
@@ -31,35 +31,34 @@ static void NVIC_Configuration(void)
     NVIC_Init(&NVIC_InitStructure);
 }
 
-static void timer_init(rt_hwtimer_t *timer)
+static void timer_init(rt_hwtimer_t *timer, rt_uint32_t state)
 {
     TIM_TypeDef *tim;
 
     tim = (TIM_TypeDef *)timer->parent.user_data;
 
     TIM_DeInit(tim);
-    NVIC_Configuration();
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
-    TIM_CounterModeConfig(tim, TIM_CounterMode_Up);
+
+    if (state == 1)
+    {
+        NVIC_Configuration();
+        RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+        TIM_CounterModeConfig(tim, TIM_CounterMode_Up);
+    }
 }
 
-static void timer_deinit(rt_hwtimer_t *timer)
-{
-    TIM_TypeDef *tim;
-
-    tim = (TIM_TypeDef *)timer->parent.user_data;
-    TIM_DeInit(tim);
-}
-
-static void timer_start(rt_hwtimer_t *timer, rt_hwtimer_mode_t opmode)
+static rt_err_t timer_start(rt_hwtimer_t *timer, rt_uint32_t t, rt_hwtimer_mode_t opmode)
 {
     TIM_TypeDef *tim;
     uint16_t m;
 
     tim = (TIM_TypeDef *)timer->parent.user_data;
+    TIM_SetAutoreload(tim, t);
     m = (opmode == HWTIMER_MODE_ONESHOT)? TIM_OPMode_Single : TIM_OPMode_Repetitive;
     TIM_SelectOnePulseMode(tim, m);
     TIM_Cmd(tim, ENABLE);
+
+    return RT_EOK;
 }
 
 static void timer_stop(rt_hwtimer_t *timer)
@@ -90,11 +89,11 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
         freq = *((rt_uint32_t*)arg);
         clk.PCLK1_Frequency *= 2;
         val = clk.PCLK1_Frequency/freq;
-        
-		TIM_ITConfig(tim, TIM_IT_Update, DISABLE);
+
+        TIM_ITConfig(tim, TIM_IT_Update, DISABLE);
         TIM_PrescalerConfig(tim, val - 1, TIM_PSCReloadMode_Immediate);
-		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
-		TIM_ITConfig(tim, TIM_IT_Update, ENABLE);
+        TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+        TIM_ITConfig(tim, TIM_IT_Update, ENABLE);
     }
     break;
     default:
@@ -116,31 +115,19 @@ static rt_uint32_t timer_counter_get(rt_hwtimer_t *timer)
     return TIM_GetCounter(tim);
 }
 
-static rt_err_t timer_timeout_set(rt_hwtimer_t *timer, rt_uint32_t t)
-{
-    TIM_TypeDef *tim;
-
-    tim = (TIM_TypeDef *)timer->parent.user_data;
-    TIM_SetAutoreload(tim, t);
-
-    return RT_EOK;
-}
-
 static const struct rt_hwtimer_info _info =
 {
-    1000000,           /* 可设置的最大计数时钟 */
-    2000,              /* 可设置的最小计数时钟 */
-    0xFFFF,            /* 最大超时值 */
-    HWTIMER_CNTMODE_UP,/* 递增计数方式 */
+    1000000,           /* the maximum count frequency can be set */
+    2000,              /* the minimum count frequency can be set */
+    0xFFFF,            /* the maximum counter value */
+    HWTIMER_CNTMODE_UP,/* Increment or Decreasing count mode */
 };
 
 static const struct rt_hwtimer_ops _ops =
 {
     timer_init,
-    timer_deinit,
     timer_start,
     timer_stop,
-    timer_timeout_set,
     timer_counter_get,
     timer_ctrl,
 };
