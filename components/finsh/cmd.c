@@ -467,8 +467,8 @@ static long _list_device(struct rt_list_node *list)
 		"PM Pseudo Device",
         "Pipe",
         "Portal Device",
+		"Timer Device",
 		"Miscellaneous Device",
-		"Hardware Timer Device",
         "Unknown"
     };
 
