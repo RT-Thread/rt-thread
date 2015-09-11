@@ -230,6 +230,7 @@ off_t lseek(int fd, off_t offset, int whence)
         break;
 
     default:
+        fd_put(d);
         rt_set_errno(-DFS_STATUS_EINVAL);
 
         return -1;
@@ -237,6 +238,7 @@ off_t lseek(int fd, off_t offset, int whence)
 
     if (offset < 0)
     {
+        fd_put(d);
         rt_set_errno(-DFS_STATUS_EINVAL);
 
         return -1;
@@ -458,12 +460,14 @@ int mkdir(const char *path, mode_t mode)
     if (result < 0)
     {
         fd_put(d);
+        fd_put(d);
         rt_set_errno(result);
 
         return -1;
     }
 
     dfs_file_close(d);
+    fd_put(d);
     fd_put(d);
 
     return 0;
