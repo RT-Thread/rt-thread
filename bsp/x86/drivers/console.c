@@ -214,19 +214,14 @@ static rt_size_t rt_console_read(rt_device_t dev, rt_off_t pos, void* buffer, rt
     return (rt_uint32_t)ptr - (rt_uint32_t)buffer;
 }
 
-static void rt_console_isr(int vector)
+static void rt_console_isr(int vector, void* param)
 {
-//    rt_kprintf("rt_console_isr\r\n");
-//    RT_ASSERT(INTKEYBOARD == vector);
-//	finsh_notify();
-
     char c;
     rt_base_t level;
 
     while(1)
     {
         c = rt_keyboard_getc();
-//        rt_kprintf(" %x", c);
 
         if(c == 0)
         {
@@ -285,11 +280,9 @@ static void rt_console_isr(int vector)
 void rt_hw_console_init(void)
 {
     rt_cga_init();
-//    rt_serial_init();
-
 
     /* install  keyboard isr */
-    rt_hw_interrupt_install(INTKEYBOARD, rt_console_isr, RT_NULL);
+    rt_hw_interrupt_install(INTKEYBOARD, rt_console_isr, RT_NULL, "kbd");
     rt_hw_interrupt_umask(INTKEYBOARD);
 
     console_device.type 		= RT_Device_Class_Char;
@@ -320,8 +313,6 @@ void rt_hw_console_init(void)
  *	the name is change to rt_hw_console_output in the v0.3.0
  *
  */
-
-//void rt_console_puts(const char* str)
 void rt_hw_console_output(const char* str)
 {
     while (*str)
@@ -329,50 +320,5 @@ void rt_hw_console_output(const char* str)
         rt_console_putc (*str++);
     }
 }
-
-//#define BY2CONS 512
-//
-//static struct
-//{
-//    rt_uint8_t buf[BY2CONS];
-//    rt_uint32_t rpos;
-//    rt_uint32_t wpos;
-//} cons;
-//
-//static void rt_console_intr(char (*proc)(void))
-//{
-//    int c;
-//
-//    while ((c = (*proc)()) != -1)
-//    {
-//        if (c == 0)
-//            continue;
-//        cons.buf[cons.wpos++] = c;
-//        if (cons.wpos == BY2CONS)
-//            cons.wpos = 0;
-//    }
-//}
-
-///**
-// * return the next input character from the console,either from serial,
-// * or keyboard
-// *
-// */
-//int rt_console_getc(void)
-//{
-//    int c;
-//
-//    rt_console_intr(rt_serial_getc);
-//    rt_console_intr(rt_keyboard_getc);
-//
-//    if (cons.rpos != cons.wpos)
-//    {
-//        c = cons.buf[cons.rpos++];
-//        if (cons.rpos == BY2CONS)
-//            cons.rpos = 0;
-//        return c;
-//    }
-//    return 0;
-//}
 
 /*@}*/
