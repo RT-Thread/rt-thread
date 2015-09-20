@@ -69,16 +69,18 @@ static void SystemClock_Config(void)
     RCC_OscInitStruct.PLL.PLLM = 25;
     RCC_OscInitStruct.PLL.PLLN = 400;
     RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-    HAL_RCC_OscConfig(&RCC_OscInitStruct);
+    RCC_OscInitStruct.PLL.PLLQ = 8;
+    
+    ret = HAL_RCC_OscConfig(&RCC_OscInitStruct);
+    if(ret != HAL_OK)
+    {
+        while(1) { ; }
+    }
 
     ret = HAL_PWREx_EnableOverDrive();
-
     if (ret != HAL_OK)
     {
-        while (1)
-        {
-            ;
-        }
+        while (1) { ; }
     }
 
     /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2
@@ -88,7 +90,11 @@ static void SystemClock_Config(void)
     RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
     RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
     RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
-    HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_6);
+    ret = HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_6);
+    if (ret != HAL_OK)
+    {
+        while (1) { ; }
+    }
 }
 
 /**
@@ -115,16 +121,44 @@ static void CPU_CACHE_Enable(void)
  */
 void SysTick_Handler(void)
 {
-    /* tick for HAL Library */
-    HAL_IncTick();
-
     /* enter interrupt */
     rt_interrupt_enter();
+
+    /* tick for HAL Library */
+    HAL_IncTick();
 
     rt_tick_increase();
 
     /* leave interrupt */
     rt_interrupt_leave();
+}
+
+/* re-implementat tick interface for STM32 HAL */
+HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
+{
+    /*Configure the SysTick to have interrupt in 1ms time basis*/
+    HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/RT_TICK_PER_SECOND);
+
+    /*Configure the SysTick IRQ priority */
+    HAL_NVIC_SetPriority(SysTick_IRQn, TickPriority ,0);
+
+    /* Return function status */
+    return HAL_OK;
+}
+
+void HAL_Delay(__IO uint32_t Delay)
+{
+    rt_thread_delay(Delay);
+}
+
+void HAL_SuspendTick(void)
+{
+    /* we should not suspend tick */
+}
+
+void HAL_ResumeTick(void)
+{
+    /* we should not resume tick */
 }
 
 /**
