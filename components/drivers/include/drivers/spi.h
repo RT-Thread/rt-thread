@@ -59,6 +59,11 @@ extern "C"{
 
 #define RT_SPI_MODE_MASK    (RT_SPI_CPHA | RT_SPI_CPOL | RT_SPI_MSB)
 
+#define RT_SPI_CS_HIGH  (1<<4)                             /* Chipselect active high */
+#define RT_SPI_NO_CS    (1<<5)                             /* No chipselect */
+#define RT_SPI_3WIRE    (1<<6)                             /* SI/SO pin shared */
+#define RT_SPI_READY    (1<<7)                             /* Slave pulls low to pause */
+
 /**
  * SPI message structure
  */
