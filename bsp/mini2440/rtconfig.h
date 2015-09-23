@@ -212,7 +212,7 @@
 // <bool name="RTGUI_IMAGE_JPEG" description="Using jpeg image in RTGUI" default="true" />
 #define RTGUI_IMAGE_JPEG
 // <bool name="RTGUI_IMAGE_PNG" description="Using png image in RTGUI" default="true" />
-#define RTGUI_IMAGE_PNG
+//#define RTGUI_IMAGE_PNG
 // <bool name="RTGUI_IMAGE_BMP" description="Using bmp image in RTGUI" default="true" />
 #define RTGUI_IMAGE_BMP
 // </section>

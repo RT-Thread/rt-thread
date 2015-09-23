@@ -129,7 +129,7 @@ static void key_init(void)
 	/* install key isr */
 	INTSUBMSK &= ~(BIT_SUB_RXD1);
 
-	rt_hw_interrupt_install(INTUART1, rt_key_handler, RT_NULL);
+	rt_hw_interrupt_install(INTUART1, rt_key_handler, RT_NULL , "INTUART1");
 	rt_hw_interrupt_umask(INTUART1);
 }
 

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_proj.xsd">
+
   <SchemaVersion>1.1</SchemaVersion>
+
   <Header>### uVision Project, (C) Keil Software</Header>
+
   <Targets>
     <Target>
       <TargetName>rt-thread</TargetName>
@@ -12,25 +15,25 @@
           <Device>STM32F051R8</Device>
           <Vendor>STMicroelectronics</Vendor>
           <Cpu>IRAM(0x20000000-0x20001FFF) IROM(0x8000000-0x800FFFF) CLOCK(8000000) CPUTYPE("Cortex-M0")</Cpu>
-          <FlashUtilSpec />
+          <FlashUtilSpec></FlashUtilSpec>
           <StartupFile>"Startup\ST\STM32F0xx\startup_stm32f0xx.s" ("STM32F0xx Startup Code")</StartupFile>
           <FlashDriverDll>UL2CM3(-O207 -S0 -C0 -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F05x_64 -FS08000000 -FL010000)</FlashDriverDll>
           <DeviceId>6188</DeviceId>
           <RegisterFile>stm32f0xx.h</RegisterFile>
-          <MemoryEnv />
-          <Cmp />
-          <Asm />
-          <Linker />
-          <OHString />
-          <InfinionOptionDll />
-          <SLE66CMisc />
-          <SLE66AMisc />
-          <SLE66LinkerMisc />
+          <MemoryEnv></MemoryEnv>
+          <Cmp></Cmp>
+          <Asm></Asm>
+          <Linker></Linker>
+          <OHString></OHString>
+          <InfinionOptionDll></InfinionOptionDll>
+          <SLE66CMisc></SLE66CMisc>
+          <SLE66AMisc></SLE66AMisc>
+          <SLE66LinkerMisc></SLE66LinkerMisc>
           <SFDFile>SFD\ST\STM32F0xx\STM32F051xx.sfr</SFDFile>
           <UseEnv>0</UseEnv>
-          <BinPath />
-          <IncludePath />
-          <LibPath />
+          <BinPath></BinPath>
+          <IncludePath></IncludePath>
+          <LibPath></LibPath>
           <RegisterFilePath>ST\STM32F0xx\</RegisterFilePath>
           <DBRegisterFilePath>ST\STM32F0xx\</DBRegisterFilePath>
           <TargetStatus>
@@ -54,8 +57,8 @@
           <BeforeCompile>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name />
-            <UserProg2Name />
+            <UserProg1Name></UserProg1Name>
+            <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopU1X>0</nStopU1X>
@@ -64,21 +67,21 @@
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name />
-            <UserProg2Name />
+            <UserProg1Name></UserProg1Name>
+            <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
           </BeforeMake>
           <AfterMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name />
-            <UserProg2Name />
+            <UserProg1Name></UserProg1Name>
+            <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
           </AfterMake>
           <SelectedForBatchBuild>0</SelectedForBatchBuild>
-          <SVCSIdString />
+          <SVCSIdString></SVCSIdString>
         </TargetCommonOption>
         <CommonProperty>
           <UseCPPCompiler>0</UseCPPCompiler>
@@ -92,16 +95,16 @@
           <AssembleAssemblyFile>0</AssembleAssemblyFile>
           <PublicsOnly>0</PublicsOnly>
           <StopOnExitCode>3</StopOnExitCode>
-          <CustomArgument />
-          <IncludeLibraryModules />
+          <CustomArgument></CustomArgument>
+          <IncludeLibraryModules></IncludeLibraryModules>
         </CommonProperty>
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
-          <SimDllArguments />
+          <SimDllArguments></SimDllArguments>
           <SimDlgDll>DARMCM1.DLL</SimDlgDll>
           <SimDlgDllArguments>-pCM0</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
-          <TargetDllArguments />
+          <TargetDllArguments></TargetDllArguments>
           <TargetDlgDll>TARMCM1.DLL</TargetDlgDll>
           <TargetDlgDllArguments>-pCM0</TargetDlgDllArguments>
         </DllOption>
@@ -133,22 +136,23 @@
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
             <RestoreFunctions>0</RestoreFunctions>
             <RestoreToolbox>1</RestoreToolbox>
+            <RestoreTracepoints>0</RestoreTracepoints>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
           <TargetSelection>13</TargetSelection>
           <SimDlls>
-            <CpuDll />
-            <CpuDllArguments />
-            <PeripheralDll />
-            <PeripheralDllArguments />
-            <InitializationFile />
+            <CpuDll></CpuDll>
+            <CpuDllArguments></CpuDllArguments>
+            <PeripheralDll></PeripheralDll>
+            <PeripheralDllArguments></PeripheralDllArguments>
+            <InitializationFile></InitializationFile>
           </SimDlls>
           <TargetDlls>
-            <CpuDll />
-            <CpuDllArguments />
-            <PeripheralDll />
-            <PeripheralDllArguments />
-            <InitializationFile />
+            <CpuDll></CpuDll>
+            <CpuDllArguments></CpuDllArguments>
+            <PeripheralDll></PeripheralDll>
+            <PeripheralDllArguments></PeripheralDllArguments>
+            <InitializationFile></InitializationFile>
             <Driver>STLink\ST-LINKIII-KEIL_SWO.dll</Driver>
           </TargetDlls>
         </DebugOption>
@@ -161,9 +165,10 @@
             <Capability>1</Capability>
             <DriverSelection>4104</DriverSelection>
           </Flash1>
+          <bUseTDR>0</bUseTDR>
           <Flash2>STLink\ST-LINKIII-KEIL_SWO.dll</Flash2>
           <Flash3>"" ()</Flash3>
-          <Flash4 />
+          <Flash4></Flash4>
         </Utilities>
         <TargetArmAds>
           <ArmAdsMisc>
@@ -195,7 +200,7 @@
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
             <AdsCpuType>"Cortex-M0"</AdsCpuType>
-            <RvctDeviceName />
+            <RvctDeviceName></RvctDeviceName>
             <mOS>0</mOS>
             <uocRom>0</uocRom>
             <uocRam>0</uocRam>
@@ -326,7 +331,7 @@
                 <Size>0x0</Size>
               </OCR_RVCT10>
             </OnChipMemories>
-            <RvctStartVector />
+            <RvctStartVector></RvctStartVector>
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
@@ -341,11 +346,12 @@
             <Rwpi>0</Rwpi>
             <wLevel>0</wLevel>
             <uThumb>0</uThumb>
+            <uSurpInc>0</uSurpInc>
             <VariousControls>
-              <MiscControls />
-              <Define>RT_USING_ARM_LIBC, USE_STDPERIPH_DRIVER</Define>
-              <Undefine />
-              <IncludePath>Libraries/STM32F0xx_StdPeriph_Driver/inc;Libraries/CMSIS/ST/STM32F0xx/Include;Libraries/CMSIS/Include;applications;.;drivers;../../include;../../libcpu/arm/cortex-m0;../../libcpu/arm/common;../../components/libc/armlibc;../../components/drivers/include;../../components/drivers/include;../../components/finsh</IncludePath>
+              <MiscControls></MiscControls>
+              <Define>USE_STDPERIPH_DRIVER</Define>
+              <Undefine></Undefine>
+              <IncludePath>Libraries\STM32F0xx_StdPeriph_Driver\inc;Libraries\CMSIS\ST\STM32F0xx\Include;Libraries\CMSIS\Include;applications;.;drivers;..\..\include;..\..\libcpu\arm\cortex-m0;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -356,11 +362,12 @@
             <SplitLS>0</SplitLS>
             <SwStkChk>0</SwStkChk>
             <NoWarn>0</NoWarn>
+            <uSurpInc>0</uSurpInc>
             <VariousControls>
-              <MiscControls />
-              <Define />
-              <Undefine />
-              <IncludePath />
+              <MiscControls></MiscControls>
+              <Define></Define>
+              <Undefine></Undefine>
+              <IncludePath></IncludePath>
             </VariousControls>
           </Aads>
           <LDads>
@@ -372,12 +379,12 @@
             <useFile>0</useFile>
             <TextAddressRange>0x08000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
-            <ScatterFile />
-            <IncludeLibs />
-            <IncludeLibsPath />
-            <Misc> --keep *.o(.rti_fn.*)   --keep *.o(FSymTab) --keep *.o(VSymTab) </Misc>
-            <LinkerInputFile />
-            <DisabledWarnings />
+            <ScatterFile></ScatterFile>
+            <IncludeLibs></IncludeLibs>
+            <IncludeLibsPath></IncludeLibsPath>
+            <Misc> --keep *.o(.rti_fn.*)   --keep *.o(FSymTab)</Misc>
+            <LinkerInputFile></LinkerInputFile>
+            <DisabledWarnings></DisabledWarnings>
           </LDads>
         </TargetArmAds>
       </TargetOption>
@@ -388,161 +395,117 @@
             <File>
               <FileName>system_stm32f0xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/CMSIS/ST/STM32F0xx/Source/Templates/system_stm32f0xx.c</FilePath>
+              <FilePath>Libraries\CMSIS\ST\STM32F0xx\Source\Templates\system_stm32f0xx.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f0xx_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_adc.c</FilePath>
+              <FilePath>Libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_adc.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f0xx_cec.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_cec.c</FilePath>
+              <FilePath>Libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_cec.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f0xx_comp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_comp.c</FilePath>
+              <FilePath>Libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_comp.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f0xx_crc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_crc.c</FilePath>
+              <FilePath>Libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_crc.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f0xx_dac.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_dac.c</FilePath>
+              <FilePath>Libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_dac.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f0xx_dbgmcu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_dbgmcu.c</FilePath>
+              <FilePath>Libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_dbgmcu.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f0xx_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_dma.c</FilePath>
+              <FilePath>Libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_dma.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f0xx_exti.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_exti.c</FilePath>
+              <FilePath>Libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_exti.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f0xx_flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_flash.c</FilePath>
+              <FilePath>Libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_flash.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f0xx_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_gpio.c</FilePath>
+              <FilePath>Libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_gpio.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f0xx_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_i2c.c</FilePath>
+              <FilePath>Libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_i2c.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f0xx_iwdg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_iwdg.c</FilePath>
+              <FilePath>Libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_iwdg.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f0xx_misc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_misc.c</FilePath>
+              <FilePath>Libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_misc.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f0xx_pwr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_pwr.c</FilePath>
+              <FilePath>Libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_pwr.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f0xx_rcc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_rcc.c</FilePath>
+              <FilePath>Libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_rcc.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f0xx_rtc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_rtc.c</FilePath>
+              <FilePath>Libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_rtc.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f0xx_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_spi.c</FilePath>
+              <FilePath>Libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_spi.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f0xx_syscfg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_syscfg.c</FilePath>
+              <FilePath>Libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_syscfg.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f0xx_tim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_tim.c</FilePath>
+              <FilePath>Libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_tim.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f0xx_usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_usart.c</FilePath>
+              <FilePath>Libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_usart.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f0xx_wwdg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_wwdg.c</FilePath>
+              <FilePath>Libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_wwdg.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>startup_stm32f0xx.s</FileName>
               <FileType>2</FileType>
-              <FilePath>Libraries/CMSIS/ST/STM32F0xx/Source/Templates/arm/startup_stm32f0xx.s</FilePath>
+              <FilePath>Libraries\CMSIS\ST\STM32F0xx\Source\Templates\arm\startup_stm32f0xx.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -552,14 +515,12 @@
             <File>
               <FileName>application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications/application.c</FilePath>
+              <FilePath>applications\application.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications/startup.c</FilePath>
+              <FilePath>applications\startup.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -569,28 +530,22 @@
             <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers/board.c</FilePath>
+              <FilePath>drivers\board.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers/led.c</FilePath>
+              <FilePath>drivers\led.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32f0xx_it.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers/stm32f0xx_it.c</FilePath>
+              <FilePath>drivers\stm32f0xx_it.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers/usart.c</FilePath>
+              <FilePath>drivers\usart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -600,84 +555,62 @@
             <File>
               <FileName>clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../src/clock.c</FilePath>
+              <FilePath>..\..\src\clock.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>components.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../src/components.c</FilePath>
+              <FilePath>..\..\src\components.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../src/device.c</FilePath>
+              <FilePath>..\..\src\device.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../src/idle.c</FilePath>
+              <FilePath>..\..\src\idle.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>ipc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../src/ipc.c</FilePath>
+              <FilePath>..\..\src\ipc.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../src/irq.c</FilePath>
+              <FilePath>..\..\src\irq.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>kservice.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../src/kservice.c</FilePath>
+              <FilePath>..\..\src\kservice.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../src/mem.c</FilePath>
+              <FilePath>..\..\src\mem.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../src/object.c</FilePath>
+              <FilePath>..\..\src\object.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../src/scheduler.c</FilePath>
+              <FilePath>..\..\src\scheduler.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../src/thread.c</FilePath>
+              <FilePath>..\..\src\thread.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../src/timer.c</FilePath>
+              <FilePath>..\..\src\timer.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -687,52 +620,27 @@
             <File>
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/cortex-m0/cpuport.c</FilePath>
+              <FilePath>..\..\libcpu\arm\cortex-m0\cpuport.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
-              <FilePath>../../libcpu/arm/cortex-m0/context_rvds.S</FilePath>
+              <FilePath>..\..\libcpu\arm\cortex-m0\context_rvds.S</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>backtrace.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/common/backtrace.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/common/div0.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/common/showmem.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>libc</GroupName>
-          <Files>
-            <File>
-              <FileName>mem_std.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/libc/armlibc/mem_std.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stubs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/libc/armlibc/stubs.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -742,49 +650,37 @@
             <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/serial/serial.c</FilePath>
+              <FilePath>..\..\components\drivers\serial\serial.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/completion.c</FilePath>
+              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/dataqueue.c</FilePath>
+              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>pipe.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/pipe.c</FilePath>
+              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>portal.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/portal.c</FilePath>
+              <FilePath>..\..\components\drivers\src\portal.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/ringbuffer.c</FilePath>
+              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/workqueue.c</FilePath>
+              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -794,95 +690,32 @@
             <File>
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/finsh/shell.c</FilePath>
+              <FilePath>..\..\components\finsh\shell.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>symbol.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/finsh/symbol.c</FilePath>
+              <FilePath>..\..\components\finsh\symbol.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/finsh/cmd.c</FilePath>
+              <FilePath>..\..\components\finsh\cmd.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
-              <FileName>finsh_compiler.c</FileName>
+              <FileName>msh_cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_compiler.c</FilePath>
+              <FilePath>..\..\components\finsh\msh_cmd.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
-              <FileName>finsh_error.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_error.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_heap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_heap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_init.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_node.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_node.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_ops.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_ops.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_parser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_parser.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_var.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_var.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_vm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_vm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_token.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_token.c</FilePath>
+              <FilePath>..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
         </Group>
       </Groups>
     </Target>
   </Targets>
+
 </Project>

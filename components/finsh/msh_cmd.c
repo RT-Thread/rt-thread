@@ -1,7 +1,7 @@
 /*
  *  internal commands for RT-Thread module shell
  *
- * COPYRIGHT (C) 2013, Shanghai Real-Thread Technology Co., Ltd
+ * COPYRIGHT (C) 2013-2015, Shanghai Real-Thread Technology Co., Ltd
  *
  *  This file is part of RT-Thread (http://www.rt-thread.org)
  *  Maintainer: bernard.xiong <bernard.xiong at gmail.com>
@@ -25,6 +25,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2013-03-30     Bernard      the first verion for FinSH
+ * 2015-08-28     Bernard      Add mkfs command.
  */
 
 #include <rtthread.h>
@@ -218,6 +219,38 @@ int cmd_mkdir(int argc, char** argv)
 	return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_mkdir, __cmd_mkdir, Create the DIRECTORY.);
+
+int cmd_mkfs(int argc, char** argv)
+{
+    int result = 0;
+    char* type="elm"; /* use the default file system type as 'fatfs' */
+
+    if (argc == 2)
+    {
+        result = dfs_mkfs(type, argv[1]);
+    }
+    else if (argc == 4)
+    {
+        if (strcmp(argv[1], "-t") == 0)
+        {
+            type = argv[2];
+            result = dfs_mkfs(type, argv[1]);
+        }
+    }
+    else
+    {
+        rt_kprintf("Usage: mkfs [-t type] device\n");
+        return 0;
+    }
+    
+    if (result != RT_EOK)
+    {
+        rt_kprintf("mkfs failed, result=%d\n", result);
+    }
+
+    return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_mkfs, __cmd_mkfs, format disk with file system);
 
 #endif
 
