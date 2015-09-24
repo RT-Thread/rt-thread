@@ -178,6 +178,7 @@ rt_module_t rt_module_self(void)
     /* return current module */
     return (rt_module_t)tid->module_id;
 }
+RTM_EXPORT(rt_module_self);
 
 static int rt_module_arm_relocate(struct rt_module *module,
                                   Elf32_Rel        *rel,
@@ -1563,6 +1564,7 @@ rt_module_t rt_module_find(const char *name)
     /* not found */
     return RT_NULL;
 }
+RTM_EXPORT(rt_module_find);
 
 #ifdef RT_USING_SLAB
 /*
