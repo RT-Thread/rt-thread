@@ -27,6 +27,8 @@
 
 #ifdef RT_USING_LWIP
 
+#include "dfs_lwip.h"
+
 int
 select(int maxfdp1, fd_set *readset, fd_set *writeset, fd_set *exceptset,
             struct timeval *timeout)
@@ -70,7 +72,7 @@ select(int maxfdp1, fd_set *readset, fd_set *writeset, fd_set *exceptset,
     if (maxfd == 0) return -EBADF;
     maxfd += 1;
     
-    result = lwip_selscan(maxfd, &sock_readset, &sock_writeset, &sock_exceptset, timeout);
+    result = lwip_select(maxfd, &sock_readset, &sock_writeset, &sock_exceptset, timeout);
     
     if (readset)   FD_ZERO(readset);
     if (writeset)  FD_ZERO(writeset);
