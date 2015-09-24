@@ -69,6 +69,9 @@
 /* Using GPIO pin framework */
 #define RT_USING_PIN
 
+/* Using Hardware Timer framework */
+//#define RT_USING_HWTIMER
+
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
 /* the buffer size of console*/

@@ -44,11 +44,6 @@ void rt_hw_idt_init(void)
 	extern void Xdefault;
 	int i, j, func;
 
-	for(i=0; i<MAX_HANDLERS; i++)
-	{
-		isr_table[i] = rt_hw_interrupt_handle;
-	}
-
 	// install a default handler
 	for (i = 0; i < sizeof(idt)/sizeof(idt[0]); i++)
 		SETGATE(idt[i], 0, GD_KT, &Xdefault, 0);
