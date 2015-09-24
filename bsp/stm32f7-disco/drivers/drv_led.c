@@ -21,8 +21,21 @@
  * Date           Author       Notes
  * 2015-08-01     xiaonong     the first version
  */
-
+#include <rtthread.h>
 #include <board.h>
+
+#include "drv_led.h"
+
+static void led_thread_entry(void *parameter)
+{
+    while (1)
+    {
+        led_on();
+        rt_thread_delay(RT_TICK_PER_SECOND);
+        led_off();
+        rt_thread_delay(RT_TICK_PER_SECOND);
+    }
+}
 
 int led_hw_init(void)
 {
@@ -39,5 +52,19 @@ int led_hw_init(void)
   HAL_GPIO_Init(GPIOI, &GPIO_InitStruct);
   return 0;
 }
+INIT_BOARD_EXPORT(led_hw_init);
 
+int led_init(void)
+{
+    rt_thread_t tid;
 
+    tid = rt_thread_create("led",
+                           led_thread_entry, RT_NULL,
+                           512, 12, 5);
+
+    if (tid != RT_NULL)
+        rt_thread_startup(tid);
+
+    return 0;
+}
+INIT_APP_EXPORT(led_init);
