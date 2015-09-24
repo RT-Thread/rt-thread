@@ -242,6 +242,11 @@ int cmd_mkfs(int argc, char** argv)
         rt_kprintf("Usage: mkfs [-t type] device\n");
         return 0;
     }
+    
+    if (result != RT_EOK)
+    {
+        rt_kprintf("mkfs failed, result=%d\n", result);
+    }
 
     return 0;
 }
@@ -292,8 +297,14 @@ FINSH_FUNCTION_EXPORT_ALIAS(cmd_netstat, __cmd_netstat, list the information of 
 int cmd_ps(int argc, char** argv)
 {
     extern long list_thread(void);
-
-    list_thread();
+    extern int list_module(void);
+    
+#ifdef RT_USING_MODULE
+    if ((argc == 2) && (strcmp(argv[1], "-m") == 0))
+        list_module();
+    else
+#endif
+        list_thread();
     return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_ps, __cmd_ps, List threads in the system.);
