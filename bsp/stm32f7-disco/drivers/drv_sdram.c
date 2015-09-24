@@ -24,11 +24,9 @@
 
 #include "drv_sdram.h"
 
-
 static SDRAM_HandleTypeDef sdramHandle;
 static FMC_SDRAM_TimingTypeDef Timing;
 static FMC_SDRAM_CommandTypeDef Command;
-
 
 /**
   * @brief  Initializes SDRAM MSP.
@@ -162,8 +160,11 @@ static void SDRAM_InitializationSequence(uint32_t RefreshCount)
 
   /* Step 2: Insert 100 us minimum delay */ 
   /* Inserted delay is equal to 1 ms due to systick time base unit (ms) */
-  HAL_Delay(1);
-    
+  // HAL_Delay(1);
+	/* interrupt is not enable, just to delay some time. */
+	for (tmpmrd = 0; tmpmrd < 0xfffff; tmpmrd ++)
+		;
+
   /* Step 3: Configure a PALL (precharge all) command */ 
   Command.CommandMode            = FMC_SDRAM_CMD_PALL;
   Command.CommandTarget          = FMC_SDRAM_CMD_TARGET_BANK1;
@@ -361,94 +362,3 @@ void SDRAM_DMA_IRQHandler(void)
 {
   HAL_DMA_IRQHandler(sdramHandle.hdma); 
 }
-
-
-
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-int sdram_test(void)
-{
-    uint32_t i;
-    volatile uint32_t *wr_ptr;
-    volatile uint8_t *char_wr_ptr;
-    volatile uint16_t *short_wr_ptr;
-
-    /* initialize memory */
-    rt_kprintf("SDRAM初始化...\r\n");
-
-    wr_ptr = (uint32_t *)SDRAM_DEVICE_ADDR;
-    char_wr_ptr = (uint8_t *)wr_ptr;
-    /* 进行8位数据写测试前先清除数据*/
-    rt_kprintf("清除SDRAM数据...\r\n");
-    for (i = 0; i < SDRAM_DEVICE_SIZE / 4; i++)
-    {
-        *wr_ptr++ = 0x00;                      //写入0x00
-    }
-
-    /* 8 bit write */
-    rt_kprintf("写入8位数据...\r\n");
-    for (i = 0; i < SDRAM_DEVICE_SIZE / 4; i++)
-    {
-        *char_wr_ptr++ = 0x11;
-        *char_wr_ptr++ = 0x22;
-        *char_wr_ptr++ = 0x33;
-        *char_wr_ptr++ = 0x44;
-    }
-
-    /* 校验写入的数据*/
-    rt_kprintf("校验数据...\r\n");
-    wr_ptr = (uint32_t *)SDRAM_DEVICE_ADDR;
-    for (i = 0; i < SDRAM_DEVICE_SIZE / 8; i++)
-    {
-        if (*wr_ptr != 0x44332211)   /* be aware of endianess */
-        {
-            /* byte comparison failure */
-            rt_kprintf("校验失败，测试完毕!\r\n");
-            return 1;   /* fatal error */
-        }
-        wr_ptr++;
-    }
-
-    /* byte comparison succeed. */
-    rt_kprintf("继续测试16位数据写入...\r\n");
-    wr_ptr = (uint32_t *)SDRAM_DEVICE_ADDR;
-    short_wr_ptr = (uint16_t *)wr_ptr;
-
-    /* Clear content before 16 bit access test */
-    rt_kprintf("清除SDRAM中的数据...\r\n");
-    for (i = 0; i < SDRAM_DEVICE_SIZE / 4; i++)
-    {
-        *wr_ptr++ = 0;
-    }
-
-    /* 16 bit write */
-    rt_kprintf("写入16位数据...\r\n");
-    for (i = 0; i < (SDRAM_DEVICE_SIZE / 4); i++)
-    {
-        *short_wr_ptr++ = 0x5AA5;
-        *short_wr_ptr++ = 0xAA55;
-    }
-
-    /* Verifying */
-    wr_ptr = (uint32_t *)SDRAM_DEVICE_ADDR;
-
-    //wr_ptr -= SDRAM_BASE_ADDR/4;
-    for (i = 0; i < SDRAM_DEVICE_SIZE / 4; i++)
-    {
-        if (*wr_ptr != 0xAA555AA5)   /* be aware of endianess */
-        {
-            /* 16-bit half word failure */
-            rt_kprintf("校验失败，测试完毕!\r\n");
-            return 1;   /* fatal error */
-        }
-        wr_ptr++;
-    }
-
-    /* 16-bit half word comparison succeed. */
-
-    rt_kprintf("校验成功，测试完毕！\r\n");
-    return 0;
-}
-
-FINSH_FUNCTION_EXPORT(sdram_test, SDRAM read write test)
-#endif

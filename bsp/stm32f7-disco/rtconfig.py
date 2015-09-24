@@ -3,10 +3,12 @@ import os
 # toolchains options
 ARCH='arm'
 CPU='cortex-m7'
-CROSS_TOOL='keil'
+CROSS_TOOL='gcc'
 
 if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
+if os.getenv('RTT_ROOT'):
+    RTT_ROOT = os.getenv('RTT_ROOT')
 
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
@@ -23,7 +25,7 @@ elif CROSS_TOOL == 'iar':
     exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):
-	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
 STM32_TYPE = 'STM32F756xx'
@@ -32,6 +34,7 @@ if PLATFORM == 'gcc':
     # toolchains
     PREFIX = 'arm-none-eabi-'
     CC = PREFIX + 'gcc'
+    CXX = PREFIX + 'g++'
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
@@ -39,6 +42,7 @@ if PLATFORM == 'gcc':
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
+    STRIP = PREFIX + 'strip'
 
     DEVICE = '  -mcpu=cortex-m7 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -g -Wall -DSTM32F756xx -DUSE_HAL_DRIVER -D__ASSEMBLY__ -D__FPU_USED'
@@ -52,13 +56,22 @@ if PLATFORM == 'gcc':
         CFLAGS += ' -O0 -gdwarf-2'
         AFLAGS += ' -gdwarf-2'
     else:
-        CFLAGS += ' -O2'
+        CFLAGS += ' -O2 -Os'
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
+
+    # module setting 
+    CXXFLAGS = ' -Woverloaded-virtual -fno-exceptions -fno-rtti '
+    M_CFLAGS = CFLAGS + ' -mlong-calls -fPIC '
+    M_CXXFLAGS = CXXFLAGS + ' -mlong-calls -fPIC'
+    M_LFLAGS = DEVICE + CXXFLAGS + ' -Wl,--gc-sections,-z,max-page-size=0x4' +\
+                                    ' -shared -fPIC -nostartfiles -static-libgcc'
+    M_POST_ACTION = STRIP + ' -R .hash $TARGET\n' + SIZE + ' $TARGET \n'
 
 elif PLATFORM == 'armcc':
     # toolchains
     CC = 'armcc'
+    CXX = 'armcc'
     AS = 'armasm'
     AR = 'armar'
     LINK = 'armlink'
@@ -78,8 +91,9 @@ elif PLATFORM == 'armcc':
         CFLAGS += ' -g -O0'
         AFLAGS += ' -g'
     else:
-        CFLAGS += ' -O2'
+        CFLAGS += ' -O2 -Otime'
 
+    CXXFLAGS = CFLAGS
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
 elif PLATFORM == 'iar':

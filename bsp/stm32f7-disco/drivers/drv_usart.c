@@ -44,8 +44,6 @@
 #define USART1_RX_GPIO_PORT              GPIOB
 #define USART1_RX_AF                     GPIO_AF7_USART1
 
-
-
 /* STM32 uart driver */
 struct stm32_uart
 {
@@ -291,12 +289,10 @@ int stm32_hw_usart_init(void)
     serial1.config = config;
 
     /* register UART1 device */
-    rt_hw_serial_register(&serial1,
-                          "uart1",
+    rt_hw_serial_register(&serial1, "uart1",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
 #endif /* RT_USING_UART1 */
-
 
     return 0;
 }

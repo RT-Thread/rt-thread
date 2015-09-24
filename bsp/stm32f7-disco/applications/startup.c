@@ -26,6 +26,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include "board.h"
+
 #ifdef RT_USING_EXT_SDRAM
 #include "drv_sdram.h"
 #include "sram.h"
@@ -61,8 +62,8 @@ void assert_failed(uint8_t* file, uint32_t line)
   while (1)
   {}
 }
-
 #endif
+
 /**
  * This function will startup RT-Thread RTOS.
  */
@@ -113,7 +114,7 @@ void rtthread_startup(void)
 int main(void)
 {
     /* disable interrupt first */
-    //rt_hw_interrupt_disable();
+    rt_hw_interrupt_disable();
 
     /* startup RT-Thread RTOS */
     rtthread_startup();
