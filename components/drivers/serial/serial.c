@@ -522,12 +522,10 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
             rt_base_t level;
             struct rt_serial_rx_fifo* rx_fifo;
 
+            /* interrupt mode receive */
             rx_fifo = (struct rt_serial_rx_fifo*)serial->serial_rx;
             RT_ASSERT(rx_fifo != RT_NULL);
-            
-            /* interrupt mode receive */
-            RT_ASSERT(serial->parent.open_flag & RT_DEVICE_FLAG_INT_RX);
-            
+
             while (1)
             {
                 ch = serial->ops->getc(serial);
