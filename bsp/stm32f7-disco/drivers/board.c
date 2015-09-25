@@ -22,13 +22,10 @@
  * 2009-01-05     Bernard      first implementation
  */
 
-#include <rthw.h>
 #include <rtthread.h>
-#include <components.h>
-
 #include "board.h"
-#include "drv_usart.h"
-#include "drv_mpu.h"
+#include "sram.h"
+
 
 /**
  * @addtogroup STM32
@@ -70,11 +67,11 @@ static void SystemClock_Config(void)
     RCC_OscInitStruct.PLL.PLLN = 400;
     RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
     RCC_OscInitStruct.PLL.PLLQ = 8;
-    
+
     ret = HAL_RCC_OscConfig(&RCC_OscInitStruct);
     if(ret != HAL_OK)
     {
-        while(1) { ; }
+        while (1) { ; }
     }
 
     ret = HAL_PWREx_EnableOverDrive();
@@ -85,7 +82,8 @@ static void SystemClock_Config(void)
 
     /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2
        clocks dividers */
-    RCC_ClkInitStruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
+    RCC_ClkInitStruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK |\
+                                   RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
     RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
     RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
     RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
@@ -167,7 +165,7 @@ void HAL_ResumeTick(void)
 void rt_hw_board_init()
 {
     /* Configure the MPU attributes as Write Through */
-    mpu_init();
+    //mpu_init();
 
     /* Enable the CPU Cache */
     CPU_CACHE_Enable();
@@ -186,7 +184,16 @@ void rt_hw_board_init()
     /* set pend exception priority */
     NVIC_SetPriority(PendSV_IRQn, (1 << __NVIC_PRIO_BITS) - 1);
 
+#ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
+#endif
+
+#ifdef RT_USING_EXT_SDRAM
+    rt_system_heap_init((void*)EXT_SDRAM_BEGIN, (void*)EXT_SDRAM_END);
+    sram_init();
+#else
+    rt_system_heap_init((void*)HEAP_BEGIN, (void*)HEAP_END);
+#endif
 
 #ifdef RT_USING_CONSOLE
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
