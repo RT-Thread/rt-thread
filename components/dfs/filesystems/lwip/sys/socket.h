@@ -31,6 +31,14 @@ extern "C" {
 
 #include <lwip/sockets.h>
 
+typedef uint16_t sa_family_t;
+
+struct sockaddr_storage
+{
+    sa_family_t ss_family;       /* Address family */
+    char        ss_data[14];     /* 14-bytes of address data */
+};
+
 int accept(int s, struct sockaddr *addr, socklen_t *addrlen);
 int bind(int s, const struct sockaddr *name, socklen_t namelen);
 int shutdown(int s, int how);
