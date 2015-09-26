@@ -1,5 +1,5 @@
 /*
- * File      : application.c
+ * File      : main.c
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2015, RT-Thread Development Team
  *
@@ -25,20 +25,9 @@
 
 #include <rtthread.h>
 
-void rt_init_thread_entry(void *parameter)
-{
-    //rt_components_init();
-}
-
-//int rt_application_init()
 int main(void)
 {
-    rt_thread_t tid;
-
-    tid = rt_thread_create("init",
-                           rt_init_thread_entry, RT_NULL,
-                           2048, RT_THREAD_PRIORITY_MAX / 3, 20);
-    if (tid != RT_NULL) rt_thread_startup(tid);
-
+    /* put user application code here */
     return 0;
 }
+
