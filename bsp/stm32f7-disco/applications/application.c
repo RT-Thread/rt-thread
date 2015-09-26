@@ -24,14 +24,14 @@
  */
 
 #include <rtthread.h>
-#include <components.h>
 
 void rt_init_thread_entry(void *parameter)
 {
-    rt_components_init();
+    //rt_components_init();
 }
 
-int rt_application_init()
+//int rt_application_init()
+int main(void)
 {
     rt_thread_t tid;
 
