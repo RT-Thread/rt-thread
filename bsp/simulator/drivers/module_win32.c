@@ -350,8 +350,67 @@ FINSH_FUNCTION_EXPORT_ALIAS(rt_module_open, exec, exec module from a file);
 
 #endif
 
+#define RT_MODULE_ARG_MAX    8
+static int _rt_module_split_arg(char* cmd, rt_size_t length, char* argv[])
+{
+	int argc = 0;
+	char *ptr = cmd;
+
+	while ((ptr - cmd) < length)
+	{
+		/* strip bank and tab */
+		while ((*ptr == ' ' || *ptr == '\t') && (ptr -cmd)< length)
+			*ptr++ = '\0';
+		/* check whether it's the end of line */
+		if ((ptr - cmd)>= length) break;
+
+		/* handle string with quote */
+		if (*ptr == '"')
+		{
+			argv[argc++] = ++ptr;
+
+			/* skip this string */
+			while (*ptr != '"' && (ptr-cmd) < length)
+				if (*ptr ++ == '\\')  ptr ++;
+			if ((ptr - cmd) >= length) break;
+
+			/* skip '"' */
+			*ptr ++ = '\0';
+		}
+		else
+		{
+			argv[argc++] = ptr;
+			while ((*ptr != ' ' && *ptr != '\t') && (ptr - cmd) < length)
+				ptr ++;
+		}
+
+		if (argc >= RT_MODULE_ARG_MAX) break;
+	}
+
+	return argc;
+}
+
+/* module main thread entry */
+static void module_main_entry(void* parameter)
+{
+	int argc;
+	char *argv[RT_MODULE_ARG_MAX];
+	typedef int (*main_func_t)(int argc, char** argv);
+
+	rt_module_t module = (rt_module_t) parameter;
+	if (module == RT_NULL || module->module_cmd_line == RT_NULL) return;
+
+	rt_memset(argv, 0x00, sizeof(argv));
+	argc = _rt_module_split_arg((char*)module->module_cmd_line, module->module_cmd_size, argv);
+	if (argc == 0) return ;
+
+	/* do the main function */
+	((main_func_t)module->module_entry)(argc, argv);
+	return;
+}
+
 /**
- * This function will do a excutable program with main function and parameters.
+ * This function will do a executable program with main function and parameters.
  *
  * @param path the full path of application module
  * @param cmd_line the command line of program
@@ -455,14 +514,10 @@ rt_module_t rt_module_exec_cmd(const char *path, const char* cmd_line, int line_
         module->page_cnt = 0;
 #endif
 
-        /* create module thread */
-        module->module_thread =
-            rt_thread_create(name,
-            (void(*)(void *))module->module_entry, RT_NULL,
-            2048, RT_THREAD_PRIORITY_MAX - 2, 10);
-
-        RT_DEBUG_LOG(RT_DEBUG_MODULE, ("thread entry 0x%x\n",
-            module->module_entry));
+		/* create module thread */
+		module->module_thread =	rt_thread_create(name,
+			module_main_entry, module,
+			2048, RT_THREAD_PRIORITY_MAX - 2, 10);
 
         /* set module id */
         module->module_thread->module_id = (void *)module;
@@ -500,4 +555,10 @@ rt_err_t rt_module_destroy(rt_module_t module)
 {
     return 0;
 }
+
+rt_err_t rt_module_unload(rt_module_t module)
+{
+    return 0;
+}
+
 #endif
