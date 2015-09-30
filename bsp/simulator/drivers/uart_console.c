@@ -5,8 +5,6 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#include <cpu_port.h>
-
 /* uart driver */
 struct console_uart
 {
@@ -110,10 +108,10 @@ static void * ThreadforKeyGet(void * lpParam)
 #endif /* not _WIN32*/
 {
  /*
- * left  key(¡û)£º 0xe04b
- * up    key(¡ü)£º 0xe048
- * right key(¡ú)£º 0xe04d
- * down  key(¡ý)£º 0xe050
+ * left  key(ï¿½ï¿½)ï¿½ï¿½ 0xe04b
+ * up    key(ï¿½ï¿½)ï¿½ï¿½ 0xe048
+ * right key(ï¿½ï¿½)ï¿½ï¿½ 0xe04d
+ * down  key(ï¿½ï¿½)ï¿½ï¿½ 0xe050
  */
     unsigned char key;
 

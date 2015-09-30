@@ -17,7 +17,7 @@
 #include <rtm.h>
 
 #ifdef RT_USING_MODULE
-static void rt_module_init_object_container(struct rt_module *module)
+void rt_module_init_object_container(struct rt_module *module)
 {
     RT_ASSERT(module != RT_NULL);
 
