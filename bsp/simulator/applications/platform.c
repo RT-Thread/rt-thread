@@ -1,8 +1,16 @@
 #include <rtthread.h>
 #include "board.h"
 
-void rt_platform_init(void)
+void platform_init(void)
 {
+#ifdef RT_USING_LWIP
+#ifdef RT_USING_TAPNETIF
+    tap_netif_hw_init();
+#else
+    pcap_netif_hw_init();
+#endif
+#endif
+
 #ifdef RT_USING_DFS
     /* initialize sd card */
     rt_hw_sdcard_init();
@@ -16,9 +24,5 @@ void rt_platform_init(void)
 #endif
 
 #endif /* RT_USING_DFS */
-
-#ifdef _WIN32
-    rt_thread_idle_sethook(rt_hw_win32_low_cpu);
-#endif
 }
 
