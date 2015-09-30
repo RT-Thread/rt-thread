@@ -79,8 +79,6 @@
 #define RT_CONSOLE_DEVICE_NAME	"console"
 // </section>
 
-// <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
-// #define RT_USING_COMPONENTS_INIT
 // <section name="RT_USING_FINSH" description="Using finsh as shell, which is a C-Express shell" default="true" >
 #define RT_USING_FINSH
 // <bool name="FINSH_USING_SYMTAB" description="Using symbol table in finsh shell" default="true" />
@@ -89,6 +87,10 @@
 #define FINSH_USING_DESCRIPTION
 // <integer name="FINSH_THREAD_STACK_SIZE" description="The stack size for finsh thread" default="4096" />
 #define FINSH_THREAD_STACK_SIZE	4096
+// <bool name="FINSH_USING_MSH" description="Enable module shell feature" />
+#define FINSH_USING_MSH
+// <bool name="FINSH_USING_MSH_DEFAULT" description="Use module shell as the default shell" />
+#define FINSH_USING_MSH_DEFAULT
 // </section>
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
@@ -99,9 +101,9 @@
 // </section>
 
 // <section name="RT_USING_DFS" description="Device file system" default="true" >
-// #define RT_USING_DFS
+#define RT_USING_DFS
 // <bool name="DFS_USING_WORKDIR" description="Using working directory" default="true" />
-// #define DFS_USING_WORKDIR
+#define DFS_USING_WORKDIR
 // <integer name="DFS_FILESYSTEMS_MAX" description="The maximal number of mounted file system" default="4" />
 #define DFS_FILESYSTEMS_MAX	2
 // <integer name="DFS_FD_MAX" description="The maximal number of opened files" default="4" />
@@ -232,10 +234,10 @@
 #define _NO_OLDNAMES   /* to ignore: mode_t in sys/type.h */
 #endif /* end of __MINGW32__ */
 
+#endif /* end of _MSC_VER */
+
 #ifdef _WIN32
 #define RT_USING_DFS_WINSHAREDIR
 #endif
-
-#endif /* end of _MSC_VER */
 
 #endif
