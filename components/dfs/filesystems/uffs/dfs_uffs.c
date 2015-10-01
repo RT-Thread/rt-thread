@@ -347,7 +347,7 @@ static int dfs_uffs_open(struct dfs_fd* file)
 		return uffs_result_to_dfs(uffs_get_error());
 	}
 
-	/* save this pointer, it will be used when calling read()£¬write(),
+	/* save this pointer, it will be used when calling read()ï¿½ï¿½write(),
 	 * flush(), seek(), and will be free when calling close()*/
 
 	file->data = (void *)fd;
@@ -619,7 +619,6 @@ static int dfs_uffs_stat(struct dfs_filesystem* fs, const char *path, struct sta
 	st->st_mtime = s.st_mtime;
 
 	mtd = RT_MTD_NAND_DEVICE(fs->dev_id);
-	st->st_blksize = mtd->page_size;
 
 	return 0;
 }
