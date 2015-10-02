@@ -97,7 +97,7 @@ static void set_stty(void)
     tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 }
 
-static void restore_stty(void)
+void restore_stty(void)
 {
    /* recover terminal's attribute */
    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
