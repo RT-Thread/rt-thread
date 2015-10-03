@@ -45,6 +45,7 @@
  * 2012-10-22     Bernard      add MS VC++ patch.
  */
 
+#include <rthw.h>
 #include <rtthread.h>
 #include "finsh.h"
 
@@ -86,6 +87,7 @@ static long _list_thread(struct rt_list_node *list)
     struct rt_thread *thread;
     struct rt_list_node *node;
     rt_uint8_t *ptr;
+    register rt_ubase_t level;
 
     rt_kprintf(" thread  pri  status      sp     stack size max used   left tick  error\n");
     rt_kprintf("-------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
@@ -109,7 +111,6 @@ static long _list_thread(struct rt_list_node *list)
             thread->remaining_tick,
             thread->error);
     }
-	
     return 0;
 }
 
@@ -124,7 +125,9 @@ static void show_wait_queue(struct rt_list_node *list)
 {
     struct rt_thread *thread;
     struct rt_list_node *node;
+    register rt_ubase_t level;
 
+    level = rt_hw_interrupt_disable();
     for (node = list->next; node != list; node = node->next)
     {
         thread = rt_list_entry(node, struct rt_thread, tlist);
@@ -133,6 +136,7 @@ static void show_wait_queue(struct rt_list_node *list)
         if (node->next != list)
             rt_kprintf("/");
     }
+    rt_hw_interrupt_enable(level);
 }
 
 #ifdef RT_USING_SEMAPHORE
