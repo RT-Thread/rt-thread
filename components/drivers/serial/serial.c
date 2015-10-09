@@ -279,7 +279,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
                 serial->config.bufsz);
             RT_ASSERT(rx_fifo != RT_NULL);
             rx_fifo->buffer = (rt_uint8_t*) (rx_fifo + 1);
-            rt_memset(rx_fifo->buffer, 0, RT_SERIAL_RB_BUFSZ);
+            rt_memset(rx_fifo->buffer, 0, serial->config.bufsz);
             rx_fifo->put_index = 0;
             rx_fifo->get_index = 0;
 
@@ -302,6 +302,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
 
             tx_dma = (struct rt_serial_tx_dma*) rt_malloc (sizeof(struct rt_serial_tx_dma));
             RT_ASSERT(tx_dma != RT_NULL);
+            tx_dma->activated = RT_FALSE;
             
             rt_data_queue_init(&(tx_dma->data_queue), 8, 4, RT_NULL);
             serial->serial_tx = tx_dma;
@@ -519,12 +520,10 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
             rt_base_t level;
             struct rt_serial_rx_fifo* rx_fifo;
 
+            /* interrupt mode receive */
             rx_fifo = (struct rt_serial_rx_fifo*)serial->serial_rx;
             RT_ASSERT(rx_fifo != RT_NULL);
-            
-            /* interrupt mode receive */
-            RT_ASSERT(serial->parent.open_flag & RT_DEVICE_FLAG_INT_RX);
-            
+
             while (1)
             {
                 ch = serial->ops->getc(serial);

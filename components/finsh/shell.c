@@ -123,6 +123,10 @@ void finsh_set_device(const char *device_name)
             rt_device_set_rx_indicate(shell->device, RT_NULL);
         }
 
+        /* clear line buffer before switch to new device */
+        memset(shell->line, 0, sizeof(shell->line));
+        shell->line_curpos = shell->line_position = 0;
+
         shell->device = dev;
         rt_device_set_rx_indicate(dev, finsh_rx_ind);
     }

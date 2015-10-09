@@ -230,6 +230,7 @@ off_t lseek(int fd, off_t offset, int whence)
         break;
 
     default:
+        fd_put(d);
         rt_set_errno(-DFS_STATUS_EINVAL);
 
         return -1;
@@ -237,6 +238,7 @@ off_t lseek(int fd, off_t offset, int whence)
 
     if (offset < 0)
     {
+        fd_put(d);
         rt_set_errno(-DFS_STATUS_EINVAL);
 
         return -1;
@@ -375,6 +377,36 @@ int fstat(int fildes, struct stat *buf)
 RTM_EXPORT(fstat);
 
 /**
+ * this function is a POSIX compliant version, which shall request that all data 
+ * for the open file descriptor named by fildes is to be transferred to the storage 
+ * device associated with the file described by fildes.
+ *
+ * @param fildes the file description
+ *
+ * @return 0 on successful completion. Otherwise, -1 shall be returned and errno 
+ * set to indicate the error. 
+ */
+int fsync(int fildes)
+{
+    int ret;
+    struct dfs_fd *d;
+
+    /* get the fd */
+    d = fd_get(fildes);
+    if (d == RT_NULL)
+    {
+        rt_set_errno(-DFS_STATUS_EBADF);
+        return -1;
+    }
+
+    ret = dfs_file_flush(d);
+
+    fd_put(d);
+    return ret;
+}
+RTM_EXPORT(fsync);
+
+/**
  * this function is a POSIX compliant version, which will return the 
  * information about a mounted file system.
  * 
@@ -428,12 +460,14 @@ int mkdir(const char *path, mode_t mode)
     if (result < 0)
     {
         fd_put(d);
+        fd_put(d);
         rt_set_errno(result);
 
         return -1;
     }
 
     dfs_file_close(d);
+    fd_put(d);
     fd_put(d);
 
     return 0;

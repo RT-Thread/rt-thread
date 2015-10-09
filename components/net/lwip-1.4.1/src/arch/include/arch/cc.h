@@ -103,5 +103,9 @@ void sys_arch_assert(const char* file, int line);
 
 #include "string.h"
 
+#define SYS_ARCH_DECL_PROTECT(level)	
+#define SYS_ARCH_PROTECT(level)		rt_enter_critical()
+#define SYS_ARCH_UNPROTECT(level) 	rt_exit_critical()
+
 #endif /* __ARCH_CC_H__ */
 

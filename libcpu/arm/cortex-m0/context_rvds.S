@@ -183,13 +183,11 @@ rt_hw_context_switch_to    PROC
     LDR     r0, =NVIC_INT_CTRL
     LDR     r1, =NVIC_PENDSVSET
     STR     r1, [r0]
-    NOP
 
     ; restore MSP
     LDR     r0, =SCB_VTOR
     LDR     r0, [r0]
     LDR     r0, [r0]
-    NOP
     MSR     msp, r0
 
     ; enable interrupts at processor level
@@ -215,5 +213,7 @@ HardFault_Handler    PROC
     BL      rt_hw_hard_fault_exception
     POP     {pc}
     ENDP
+
+    ALIGN   4
 
     END

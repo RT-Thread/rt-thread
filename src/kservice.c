@@ -1072,8 +1072,8 @@ rt_device_t rt_console_set_device(const char *name)
         }
 
         /* set new console device */
+        rt_device_open(new, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_STREAM);
         _console_device = new;
-        rt_device_open(_console_device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_STREAM);
     }
 
     return old;

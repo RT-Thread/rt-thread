@@ -40,7 +40,7 @@ SConscript_com = '''# RT-Thread building script for component
 from building import *
 
 cwd = GetCurrentDir()
-src = Glob('*.c')
+src = Glob('*.c') + Glob('*.cpp')
 CPPPATH = [cwd]
 
 group = DefineGroup('COMPONENT_NAME', src, depend = [''], CPPPATH = CPPPATH)

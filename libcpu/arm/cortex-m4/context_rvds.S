@@ -205,7 +205,6 @@ rt_hw_context_switch_to    PROC
     LDR     r0, =SCB_VTOR
     LDR     r0, [r0]
     LDR     r0, [r0]
-    NOP
     MSR     msp, r0
 
     ; enable interrupts at processor level
@@ -218,7 +217,6 @@ rt_hw_context_switch_to    PROC
 rt_hw_interrupt_thread_switch PROC
     EXPORT rt_hw_interrupt_thread_switch
     BX      lr
-    NOP
     ENDP
 
     IMPORT rt_hw_hard_fault_exception
@@ -234,5 +232,7 @@ HardFault_Handler    PROC
     ORR     lr, lr, #0x04
     BX      lr
     ENDP
+
+    ALIGN   4
 
     END
