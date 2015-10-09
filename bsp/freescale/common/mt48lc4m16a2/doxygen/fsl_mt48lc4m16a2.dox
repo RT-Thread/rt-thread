@@ -1,0 +1,6 @@
+/*!
+
+@defgroup mt48lc4m16 MT48LC4M16A2
+@brief MT48LC4M16A2 sdram driver
+
+*/

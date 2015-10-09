@@ -1,0 +1,12 @@
+/*!
+@defgroup fxos FXOS8700CQ
+@brief FXOS8700CQ driver
+
+@defgroup fxos_common FXOS8700CQ COMMON
+@ingroup fxos
+@brief FXOS8700CQ driver common framework
+
+@defgroup fxos_module FXOS8700CQ Module
+@ingroup fxos_common
+@brief FXOS8700CQ module functions.
+*/

@@ -1,0 +1,29 @@
+ -B 
+
+"--endian=little" 
+
+"--cpu=Cortex-M0+" 
+
+"--fpu=None" 
+
+"-p" 
+
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2_3\arm\CONFIG\debugger\Freescale\MKW40Z160xxx4.ddf" 
+
+"--semihosting" 
+
+"--device=MKW40Z160xxx4" 
+
+"--drv_mtb_regbase=0xF0000000" 
+
+"--drv_mtb_dwtregbase=0xF0001000" 
+
+"--drv_mtb_minramaddr=0x20000000" 
+
+"--drv_mtb_maxramaddr=0x20003FFF" 
+
+"--multicore_nr_of_cores=1" 
+
+
+
+

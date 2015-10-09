@@ -1,0 +1,337 @@
+"C:\Users\b20222\Documents\GitHub\rt-thread\bsp\freescale\platform\drivers\src\cmp\fsl_cmp_common.c"
+-std=c99
+-ferror-limit=100
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\lib\ksdk_platform_lib\KsdkPlatformLib\iar/../../../../bsp/freescale/platform/osa/inc
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\lib\ksdk_platform_lib\KsdkPlatformLib\iar/../../../../bsp/freescale/platform/CMSIS/Include
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\lib\ksdk_platform_lib\KsdkPlatformLib\iar/../../../../bsp/freescale/platform/devices
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\lib\ksdk_platform_lib\KsdkPlatformLib\iar/../../../../bsp/freescale/platform/devices/MK64F12/include
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\lib\ksdk_platform_lib\KsdkPlatformLib\iar/../../../../bsp/freescale/platform/devices/MK64F12/startup
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\lib\ksdk_platform_lib\KsdkPlatformLib\iar/../../../../bsp/freescale/platform/utilities/inc
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\lib\ksdk_platform_lib\KsdkPlatformLib\iar/../../../../bsp/freescale/platform/hal/inc
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\lib\ksdk_platform_lib\KsdkPlatformLib\iar/../../../../bsp/freescale/platform/drivers/inc
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\lib\ksdk_platform_lib\KsdkPlatformLib\iar/../../../../bsp/freescale/platform/system/inc
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\lib\ksdk_platform_lib\KsdkPlatformLib\iar/../../../../components/drivers/include/drivers
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\lib\ksdk_platform_lib\KsdkPlatformLib\iar/../../../../components/drivers/include
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\lib\ksdk_platform_lib\KsdkPlatformLib\iar/../../../../bsp/freescale/driver_wrapper/inc
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\lib\ksdk_platform_lib\KsdkPlatformLib\iar/../../../../components/finsh
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\lib\ksdk_platform_lib\KsdkPlatformLib\iar/../../../../include
+-I
+C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2_3\arm\inc
+-I
+C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2_3\arm\inc\c
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\bsp\freescale\platform\osa\inc
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\bsp\freescale\platform\CMSIS\Include
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\bsp\freescale\platform\devices
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\bsp\freescale\platform\devices\MK64F12\include
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\bsp\freescale\platform\devices\MK64F12\startup
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\bsp\freescale\platform\utilities\inc
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\bsp\freescale\platform\hal\inc
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\bsp\freescale\platform\drivers\inc
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\bsp\freescale\platform\system\inc
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\components\drivers\include\drivers
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\components\drivers\include
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\bsp\freescale\driver_wrapper\inc
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\components\finsh
+-I
+C:\Users\b20222\Documents\GitHub\rt-thread\include
+-DDEBUG=1
+-DCPU_MK64FN1M0VMD12=1
+-D__CHAR_BITS__=8
+-D__CHAR_MAX__=0xff
+-D__CHAR_MIN__=0
+-D__CHAR_SIZE__=1
+-D__UNSIGNED_CHAR_MAX__=0xff
+-D__SIGNED_CHAR_MAX__=127
+-D__SIGNED_CHAR_MIN__=(-__SIGNED_CHAR_MAX__-1)
+-D__CHAR_ALIGN__=1
+-D__SHORT_SIZE__=2
+-D__UNSIGNED_SHORT_MAX__=0xffff
+-D__SIGNED_SHORT_MAX__=32767
+-D__SIGNED_SHORT_MIN__=(-__SIGNED_SHORT_MAX__-1)
+-D__SHORT_ALIGN__=2
+-D__INT_SIZE__=4
+-D__UNSIGNED_INT_MAX__=0xffffffffU
+-D__SIGNED_INT_MAX__=2147483647
+-D__SIGNED_INT_MIN__=(-__SIGNED_INT_MAX__-1)
+-D__INT_ALIGN__=4
+-D__LONG_SIZE__=4
+-D__UNSIGNED_LONG_MAX__=0xffffffffUL
+-D__SIGNED_LONG_MAX__=2147483647L
+-D__SIGNED_LONG_MIN__=(-__SIGNED_LONG_MAX__-1)
+-D__LONG_ALIGN__=4
+-D__LONG_LONG_SIZE__=8
+-D__UNSIGNED_LONG_LONG_MAX__=0xffffffffffffffffULL
+-D__SIGNED_LONG_LONG_MAX__=9223372036854775807LL
+-D__SIGNED_LONG_LONG_MIN__=(-__SIGNED_LONG_LONG_MAX__-1)
+-D__LONG_LONG_ALIGN__=8
+-D__INT8_T_TYPE__=signed char
+-D__INT8_T_MAX__=127
+-D__INT8_T_MIN__=(-__INT8_T_MAX__-1)
+-D__UINT8_T_TYPE__=unsigned char
+-D__UINT8_T_MAX__=0xff
+-D__INT8_SIZE_PREFIX__="hh"
+-D__INT16_T_TYPE__=signed short int
+-D__INT16_T_MAX__=32767
+-D__INT16_T_MIN__=(-__INT16_T_MAX__-1)
+-D__UINT16_T_TYPE__=unsigned short int
+-D__UINT16_T_MAX__=0xffff
+-D__INT16_SIZE_PREFIX__="h"
+-D__INT32_T_TYPE__=signed int
+-D__INT32_T_MAX__=2147483647
+-D__INT32_T_MIN__=(-__INT32_T_MAX__-1)
+-D__UINT32_T_TYPE__=unsigned int
+-D__UINT32_T_MAX__=0xffffffffU
+-D__INT32_SIZE_PREFIX__=""
+-D__INT64_T_TYPE__=signed long long int
+-D__INT64_T_MAX__=9223372036854775807LL
+-D__INT64_T_MIN__=(-__INT64_T_MAX__-1)
+-D__UINT64_T_TYPE__=unsigned long long int
+-D__UINT64_T_MAX__=0xffffffffffffffffULL
+-D__INT64_SIZE_PREFIX__="ll"
+-D__INT_LEAST8_T_TYPE__=signed char
+-D__INT_LEAST8_T_MAX__=127
+-D__INT_LEAST8_T_MIN__=(-__INT_LEAST8_T_MAX__-1)
+-D__UINT_LEAST8_T_TYPE__=unsigned char
+-D__UINT_LEAST8_T_MAX__=0xff
+-D__INT8_C_SUFFIX__=
+-D__UINT8_C_SUFFIX__=
+-D__INT_LEAST8_SIZE_PREFIX__="hh"
+-D__INT_LEAST16_T_TYPE__=signed short int
+-D__INT_LEAST16_T_MAX__=32767
+-D__INT_LEAST16_T_MIN__=(-__INT_LEAST16_T_MAX__-1)
+-D__UINT_LEAST16_T_TYPE__=unsigned short int
+-D__UINT_LEAST16_T_MAX__=0xffff
+-D__INT16_C_SUFFIX__=
+-D__UINT16_C_SUFFIX__=
+-D__INT_LEAST16_SIZE_PREFIX__="h"
+-D__INT_LEAST32_T_TYPE__=signed int
+-D__INT_LEAST32_T_MAX__=2147483647
+-D__INT_LEAST32_T_MIN__=(-__INT_LEAST32_T_MAX__-1)
+-D__UINT_LEAST32_T_TYPE__=unsigned int
+-D__UINT_LEAST32_T_MAX__=0xffffffffU
+-D__INT32_C_SUFFIX__=
+-D__UINT32_C_SUFFIX__=U
+-D__INT_LEAST32_SIZE_PREFIX__=""
+-D__INT_LEAST64_T_TYPE__=signed long long int
+-D__INT_LEAST64_T_MAX__=9223372036854775807LL
+-D__INT_LEAST64_T_MIN__=(-__INT_LEAST64_T_MAX__-1)
+-D__UINT_LEAST64_T_TYPE__=unsigned long long int
+-D__UINT_LEAST64_T_MAX__=0xffffffffffffffffULL
+-D__INT64_C_SUFFIX__=LL
+-D__UINT64_C_SUFFIX__=ULL
+-D__INT_LEAST64_SIZE_PREFIX__="ll"
+-D__INT_FAST8_T_TYPE__=signed int
+-D__INT_FAST8_T_MAX__=2147483647
+-D__INT_FAST8_T_MIN__=(-__INT_FAST8_T_MAX__-1)
+-D__UINT_FAST8_T_TYPE__=unsigned int
+-D__UINT_FAST8_T_MAX__=0xffffffffU
+-D__INT_FAST8_SIZE_PREFIX__=""
+-D__INT_FAST16_T_TYPE__=signed int
+-D__INT_FAST16_T_MAX__=2147483647
+-D__INT_FAST16_T_MIN__=(-__INT_FAST16_T_MAX__-1)
+-D__UINT_FAST16_T_TYPE__=unsigned int
+-D__UINT_FAST16_T_MAX__=0xffffffffU
+-D__INT_FAST16_SIZE_PREFIX__=""
+-D__INT_FAST32_T_TYPE__=signed int
+-D__INT_FAST32_T_MAX__=2147483647
+-D__INT_FAST32_T_MIN__=(-__INT_FAST32_T_MAX__-1)
+-D__UINT_FAST32_T_TYPE__=unsigned int
+-D__UINT_FAST32_T_MAX__=0xffffffffU
+-D__INT_FAST32_SIZE_PREFIX__=""
+-D__INT_FAST64_T_TYPE__=signed long long int
+-D__INT_FAST64_T_MAX__=9223372036854775807LL
+-D__INT_FAST64_T_MIN__=(-__INT_FAST64_T_MAX__-1)
+-D__UINT_FAST64_T_TYPE__=unsigned long long int
+-D__UINT_FAST64_T_MAX__=0xffffffffffffffffULL
+-D__INT_FAST64_SIZE_PREFIX__="ll"
+-D__INTMAX_T_TYPE__=signed long long int
+-D__INTMAX_T_MAX__=9223372036854775807LL
+-D__INTMAX_T_MIN__=(-__INTMAX_T_MAX__-1)
+-D__UINTMAX_T_TYPE__=unsigned long long int
+-D__UINTMAX_T_MAX__=0xffffffffffffffffULL
+-D__INTMAX_C_SUFFIX__=LL
+-D__UINTMAX_C_SUFFIX__=ULL
+-D__INTMAX_SIZE_PREFIX__="ll"
+-D__FLOAT_SIZE__=4
+-D__FLOAT_ALIGN__=4
+-D__DOUBLE_SIZE__=8
+-D__DOUBLE_ALIGN__=8
+-D__LONG_DOUBLE_SIZE__=8
+-D__LONG_DOUBLE_ALIGN__=8
+-D__NAN_HAS_HIGH_MANTISSA_BIT_SET__=0
+-D__SUBNORMAL_FLOATING_POINTS__=1
+-D__SIZE_T_TYPE__=unsigned int
+-D__SIZE_T_MAX__=0xffffffffU
+-D__PTRDIFF_T_TYPE__=signed int
+-D__PTRDIFF_T_MAX__=2147483647
+-D__PTRDIFF_T_MIN__=(-__PTRDIFF_T_MAX__-1)
+-D__INTPTR_T_TYPE__=signed long int
+-D__INTPTR_T_MAX__=2147483647L
+-D__INTPTR_T_MIN__=(-__INTPTR_T_MAX__-1)
+-D__UINTPTR_T_TYPE__=unsigned long int
+-D__UINTPTR_T_MAX__=0xffffffffUL
+-D__INTPTR_SIZE_PREFIX__="l"
+-D__JMP_BUF_ELEMENT_TYPE__=unsigned long long int
+-D__JMP_BUF_NUM_ELEMENTS__=16
+-D__TID__=0xcf60
+-D__VER__=7040003
+-D__BUILD_NUMBER__=8902
+-D__IAR_SYSTEMS_ICC__=8
+-D__LITTLE_ENDIAN__=1
+-D__BOOL_TYPE__=unsigned char
+-D__BOOL_SIZE__=1
+-D__WCHAR_T_TYPE__=unsigned short int
+-D__WCHAR_T_SIZE__=2
+-D__WCHAR_T_MAX__=0xffff
+-D__DEF_PTR_MEM__=__data
+-D__DEF_PTR_SIZE__=4
+-D__CODE_MEMORY_LIST3__(_P1,_P2)=__CODE_MEM_HELPER3__(__code, 0, _P1, _P2)
+-D__DATA_MEMORY_LIST3__(_P1,_P2)=__DATA_MEM_HELPER3__(__data, 0, _P1, _P2)
+-D__DATA_MEM0__=__data
+-D__DATA_MEM0_POINTER_OK__=1
+-D__DATA_MEM0_UNIQUE_POINTER__=1
+-D__DATA_MEM0_VAR_OK__=1
+-D__DATA_MEM0_INTPTR_TYPE__=int
+-D__DATA_MEM0_UINTPTR_TYPE__=unsigned int
+-D__DATA_MEM0_INTPTR_SIZE_PREFIX__=""
+-D__DATA_MEM0_MAX_SIZE__=0x7fffffff
+-D__DATA_MEM0_HEAP_SEGMENT__="HEAP"
+-D__DATA_MEM0_PAGE_SIZE__=0
+-D__DATA_MEM0_HEAP__=0
+-D__CODE_MEM0__=__code
+-D__CODE_MEM0_POINTER_OK__=1
+-D__CODE_MEM0_UNIQUE_POINTER__=1
+-D__CODE_MEM0_VAR_OK__=1
+-D__CODE_PTR_MEMORY_LIST3__(_P1,_P2)=__CODE_PTR_MEM_HELPER3__(__code, 0, _P1, _P2)
+-D__DATA_PTR_MEMORY_LIST3__(_P1,_P2)=__DATA_PTR_MEM_HELPER3__(__data, 0, _P1, _P2)
+-D__VAR_MEMORY_LIST3__(_P1,_P2)=__VAR_MEM_HELPER3__(__data, 0, _P1, _P2)
+-D__HEAP_MEM0__=0
+-D__HEAP_MEMORY_LIST3__(_P1,_P2)=__HEAP_MEM_HELPER3__(__data, 0, _P1, _P2)
+-D__MULTIPLE_HEAPS__=0
+-D__TOPM_DATA_MEMORY_LIST3__(_P1,_P2)=
+-D__TOPP_DATA_MEMORY_LIST3__(_P1,_P2)=__TOPP_DATA_MEM_HELPER3__(__data, 0, _P1, _P2)
+-D__DEF_HEAP_MEM__=__data
+-D__PRAGMA_PACK_ON__=1
+-D__MULTIPLE_INHERITANCE__=1
+-D__AAPCS_VFP__=1
+-D__ARM4TM__=4
+-D__ARM5TM__=5
+-D__ARM5T__=5
+-D__ARM5__=5
+-D__ARM6MEDIA__=6
+-D__ARM6M__=11
+-D__ARM6SM__=12
+-D__ARM6T2__=6
+-D__ARM6__=6
+-D__ARM7EM__=13
+-D__ARM7__=7
+-D__ARMVFPV1__=1
+-D__ARMVFPV2__=2
+-D__ARMVFPV3_D16__=1
+-D__ARMVFPV3_FP16__=1
+-D__ARMVFPV3__=3
+-D__ARMVFPV4__=4
+-D__ARMVFP_D16__=1
+-D__ARMVFP_FP16__=1
+-D__ARMVFP_SP__=1
+-D__ARMVFP__=__ARMVFPV4__
+-D__ARM_MEDIA__=1
+-D__ARM_PROFILE_M__=1
+-D__CORE__=__ARM7EM__
+-D__CPU_MODE__=1
+-D__ICCARM__=1
+-D__INTERWORKING__=1
+-D__PLAIN_INT_BITFIELD_IS_SIGNED__=0
+-D__HAS_WEAK__=1
+-D__HAS_PACKED__=1
+-D__HAS_JOINED_TYPES__=1
+-D__HAS_LOCATED_DECLARATION__=1
+-D__HAS_LOCATED_WITH_INIT__=1
+-D__IAR_COMPILERBASE__=594439
+-D__STDC__=1
+-D__STDC_VERSION__=199901L
+-D__STDC_HOSTED__=1
+-D__STDC_NO_VLA__=1
+-D__STDC_NO_ATOMICS__=1
+-D__EDG_IA64_ABI=1
+-D__EDG_IA64_ABI_VARIANT_CTORS_AND_DTORS_RETURN_THIS=1
+-D__EDG_IA64_ABI_USE_INT_STATIC_INIT_GUARD=1
+-D__EDG_TYPE_TRAITS_ENABLED=1
+-D__EDG__=1
+-D__EDG_VERSION__=409
+-D__EDG_SIZE_TYPE__=unsigned int
+-D__EDG_PTRDIFF_TYPE__=int
+-D__EDG_DELTA_TYPE=int
+-D__EDG_IA64_VTABLE_ENTRY_TYPE=int
+-D__EDG_VIRTUAL_FUNCTION_INDEX_TYPE=unsigned short
+-D__EDG_LOWER_VARIABLE_LENGTH_ARRAYS=1
+-D__EDG_IA64_ABI_USE_VARIANT_ARRAY_COOKIES=1
+-D__EDG_ABI_COMPATIBILITY_VERSION=9999
+-D__EDG_ABI_CHANGES_FOR_RTTI=1
+-D__EDG_ABI_CHANGES_FOR_ARRAY_NEW_AND_DELETE=1
+-D__EDG_ABI_CHANGES_FOR_PLACEMENT_DELETE=1
+-D__EDG_BSD=0
+-D__EDG_SYSV=0
+-D__EDG_ANSIC=1
+-D__EDG_CPP11_IL_EXTENSIONS_SUPPORTED=1
+-D_DLIB_CONFIG_FILE_HEADER_NAME="DLib_Config_Normal.h"
+-D_DLIB_CONFIG_FILE_STRING="DLib_Config_Normal.h"
+-D__VERSION__="IAR ANSI C/C++ Compiler V7.40.3.8902/W32 for ARM"
+-D_VA_DEFINED=
+-D__CODE_MEMORY_LIST1__()=__CODE_MEM_HELPER1__(__code, 0 )
+-D__CODE_MEMORY_LIST2__(_P1)=__CODE_MEM_HELPER2__(__code, 0 ,  _P1 )
+-D__CODE_MEMORY_LIST3__(_P1, _P2)=__CODE_MEM_HELPER3__(__code, 0 ,  _P1 ,  _P2 )
+-D__DATA_MEMORY_LIST1__()=__DATA_MEM_HELPER1__(__data, 0 )
+-D__DATA_MEMORY_LIST2__(_P1)=__DATA_MEM_HELPER2__(__data, 0 ,  _P1 )
+-D__DATA_MEMORY_LIST3__(_P1, _P2)=__DATA_MEM_HELPER3__(__data, 0 ,  _P1 ,  _P2 )
+-D__CODE_PTR_MEMORY_LIST1__()=__CODE_PTR_MEM_HELPER1__(__code, 0 )
+-D__CODE_PTR_MEMORY_LIST2__(_P1)=__CODE_PTR_MEM_HELPER2__(__code, 0 ,  _P1 )
+-D__CODE_PTR_MEMORY_LIST3__(_P1, _P2)=__CODE_PTR_MEM_HELPER3__(__code, 0 ,  _P1 ,  _P2 )
+-D__DATA_PTR_MEMORY_LIST1__()=__DATA_PTR_MEM_HELPER1__(__data, 0 )
+-D__DATA_PTR_MEMORY_LIST2__(_P1)=__DATA_PTR_MEM_HELPER2__(__data, 0 ,  _P1 )
+-D__DATA_PTR_MEMORY_LIST3__(_P1, _P2)=__DATA_PTR_MEM_HELPER3__(__data, 0 ,  _P1 ,  _P2 )
+-D__VAR_MEMORY_LIST1__()=__VAR_MEM_HELPER1__(__data, 0 )
+-D__VAR_MEMORY_LIST2__(_P1)=__VAR_MEM_HELPER2__(__data, 0 ,  _P1 )
+-D__VAR_MEMORY_LIST3__(_P1, _P2)=__VAR_MEM_HELPER3__(__data, 0 ,  _P1 ,  _P2 )
+-D__VARD_MEMORY_LIST1__()=__VARD_MEM_HELPER1__(__data, 0, _ )
+-D__HEAP_MEMORY_LIST1__()=__HEAP_MEM_HELPER1__(__data, 0 )
+-D__HEAP_MEMORY_LIST2__(_P1)=__HEAP_MEM_HELPER2__(__data, 0 ,  _P1 )
+-D__HEAP_MEMORY_LIST3__(_P1, _P2)=__HEAP_MEM_HELPER3__(__data, 0 ,  _P1 ,  _P2 )
+-D__HVAR_MEMORY_LIST1__()=__HVAR_MEM_HELPER1__(__data, 0 )
+-D__HEAPD_MEMORY_LIST1__()=__HEAPD_MEM_HELPER1__(__data, 0, _ )
+-D__HEAPU_MEMORY_LIST1__()=__HEAPU_MEM_HELPER1__(__data, 0 )
+-D__TOPM_DATA_MEMORY_LIST1__()=
+-D__TOPM_DATA_MEMORY_LIST2__(_P1)=
+-D__TOPM_DATA_MEMORY_LIST3__(_P1, _P2)=
+-D__TOPP_DATA_MEMORY_LIST1__()=__TOPP_DATA_MEM_HELPER1__(__data, 0 )
+-D__TOPP_DATA_MEMORY_LIST2__(_P1)=__TOPP_DATA_MEM_HELPER2__(__data, 0 ,  _P1 )
+-D__TOPP_DATA_MEMORY_LIST3__(_P1, _P2)=__TOPP_DATA_MEM_HELPER3__(__data, 0 ,  _P1 ,  _P2 )
+-D__DATA_MEM0_SIZE_TYPE__=unsigned int
+-D__DATA_MEM0_INDEX_TYPE__=signed int
