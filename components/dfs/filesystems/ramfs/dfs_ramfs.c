@@ -292,7 +292,6 @@ int dfs_ramfs_stat(struct dfs_filesystem *fs,
 
     st->st_size = dirent->size;
     st->st_mtime = 0;
-    st->st_blksize = 512;
 
     return DFS_STATUS_OK;
 }

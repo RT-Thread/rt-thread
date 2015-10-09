@@ -261,7 +261,6 @@ struct stat
     rt_uint16_t st_mode;
     rt_uint32_t st_size;
     rt_time_t   st_mtime;
-    rt_uint32_t st_blksize;
 };
 
 struct statfs

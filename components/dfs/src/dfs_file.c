@@ -392,7 +392,6 @@ int dfs_file_stat(const char *path, struct stat *buf)
 
         buf->st_size    = 0;
         buf->st_mtime   = 0;
-        buf->st_blksize = 512;
 
         /* release full path */
         rt_free(fullpath);

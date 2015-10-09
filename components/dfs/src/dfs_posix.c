@@ -368,7 +368,6 @@ int fstat(int fildes, struct stat *buf)
 
     buf->st_size    = d->size;
     buf->st_mtime   = 0;
-    buf->st_blksize = 512;
 
     fd_put(d);
 

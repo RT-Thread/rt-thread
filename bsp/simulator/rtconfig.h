@@ -99,7 +99,7 @@
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
 // #define RT_USING_PTHREADS
 // <bool name="RT_USING_MODULE" description="Enable Moudle Application" default="true" />
-#define RT_USING_MODULE
+// #define RT_USING_MODULE
 // </section>
 
 // <section name="RT_USING_DFS" description="Device file system" default="true" >
