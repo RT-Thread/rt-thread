@@ -21,6 +21,7 @@
  * Date           Author       Notes
  * 2005-02-22     Bernard      The first version.
  * 2011-12-08     Bernard      Merges rename patch from iamcacy.
+ * 2015-05-27     Bernard      Fix the fd clear issue.
  */
 
 #include <dfs.h>
@@ -97,7 +98,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
     {
         /* clear fd */
         rt_free(fd->path);
-        rt_memset(fd, 0, sizeof(*fd));
+        fd->path = RT_NULL;
 
         return -DFS_STATUS_ENOSYS;
     }
@@ -106,7 +107,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
     {
         /* clear fd */
         rt_free(fd->path);
-        rt_memset(fd, 0, sizeof(*fd));
+        fd->path = RT_NULL;
 
         dfs_log(DFS_DEBUG_INFO, ("open failed"));
 
@@ -143,7 +144,7 @@ int dfs_file_close(struct dfs_fd *fd)
         return result;
 
     rt_free(fd->path);
-    rt_memset(fd, 0, sizeof(struct dfs_fd));
+    fd->path = RT_NULL;
 
     return result;
 }
@@ -165,7 +166,7 @@ int dfs_file_ioctl(struct dfs_fd *fd, int cmd, void *args)
         return -DFS_STATUS_EINVAL;
 
     fs = fd->fs;
-    if (fs->ops->ioctl != RT_NULL) 
+    if (fs->ops->ioctl != RT_NULL)
         return fs->ops->ioctl(fd, cmd, args);
 
     return -DFS_STATUS_ENOSYS;
@@ -652,7 +653,6 @@ static void copyfile(const char *src, const char *dst)
 extern int mkdir(const char *path, mode_t mode);
 static void copydir(const char * src, const char * dst)
 {
-    struct dfs_fd fd;
     struct dirent dirent;
     struct stat stat;
     int length;
