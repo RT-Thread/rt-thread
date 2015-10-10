@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<workspace xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="workingsets.xsd">
+  <projects>
+  <project><name>KsdkPlatformLib</name><path>../../../../lib/ksdk_platform_lib/KsdkPlatformLib</path><open>true</open><activeconfig>debug</activeconfig><buildreferences config="debug">false</buildreferences><activeconfig>release</activeconfig><buildreferences config="release">false</buildreferences></project><project><name>rt_thread_demo_frdmkl43z</name><path>.</path><open>true</open><activeconfig>debug</activeconfig><buildreferences config="debug">false</buildreferences><activeconfig>release</activeconfig><buildreferences config="release">false</buildreferences></project></projects>
+  <workingsets>
+  <workingSet editPageId="org.eclipse.cdt.ui.CElementWorkingSetPage" id="1323268527287_1" label="rt_thread_demo" name="rt_thread_demo"><item factoryID="org.eclipse.cdt.ui.PersistableCElementFactory" path="/KsdkPlatformLib" type="4"/><item factoryID="org.eclipse.cdt.ui.PersistableCElementFactory" path="/rt_thread_demo_frdmkl43z" type="4"/></workingSet></workingsets>
+  <cdtconfigurations>
+  <workingSet name="rt_thread_demo"><config name="debug"><project config="com.freescale.arm.cdt.toolchain.config.arm.release.695495605" name="KsdkPlatformLib" configName="debug"/><project config="com.freescale.arm.cdt.toolchain.config.arm.release.695495605" name="rt_thread_demo_frdmkl43z" configName="debug"/></config><config name="release"><project config="com.freescale.arm.cdt.toolchain.config.arm.release.695495605" name="KsdkPlatformLib" configName="release"/><project config="com.freescale.arm.cdt.toolchain.config.arm.release.695495605" name="rt_thread_demo_frdmkl43z" configName="release"/></config></workingSet></cdtconfigurations>
+</workspace>
