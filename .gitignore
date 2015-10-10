@@ -9,7 +9,6 @@
 *.pdb
 *.idb
 *.ilk
-build
 *~
 *.o
 *.obj
