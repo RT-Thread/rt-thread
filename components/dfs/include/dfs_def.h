@@ -255,6 +255,9 @@
 #define DFS_S_IWOTH              00002
 #define DFS_S_IXOTH              00001
 
+#ifdef _MSC_VER
+#include <wchar.h>
+#else
 struct stat
 {
     rt_device_t st_dev;
@@ -262,6 +265,7 @@ struct stat
     rt_uint32_t st_size;
     rt_time_t   st_mtime;
 };
+#endif
 
 struct statfs
 {
