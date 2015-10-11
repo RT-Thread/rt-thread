@@ -22,8 +22,9 @@ finsh_token.c
 ''')
 
 msh_src = Split('''
-msh_cmd.c
 msh.c
+msh_cmd.c
+msh_file.c
 ''')
 
 CPPPATH = [cwd]
