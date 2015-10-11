@@ -29,9 +29,11 @@
 extern "C" {
 #endif
 
+#include <inttypes.h>
 #include <lwip/sockets.h>
 
 typedef uint16_t sa_family_t;
+typedef uint16_t in_port_t;
 
 struct sockaddr_storage
 {
