@@ -234,7 +234,7 @@ int cmd_mkfs(int argc, char **argv)
         if (strcmp(argv[1], "-t") == 0)
         {
             type = argv[2];
-            result = dfs_mkfs(type, argv[1]);
+            result = dfs_mkfs(type, argv[3]);
         }
     }
     else
