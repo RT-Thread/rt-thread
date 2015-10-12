@@ -29,6 +29,7 @@ struct hostent *gethostbyname(const char *name)
 {
     return lwip_gethostbyname(name);
 }
+RTM_EXPORT(gethostbyname);
 
 int gethostbyname_r(const char *name, struct hostent *ret, char *buf,
                 size_t buflen, struct hostent **result, int *h_errnop)
@@ -40,6 +41,7 @@ void freeaddrinfo(struct addrinfo *ai)
 {
     lwip_freeaddrinfo(ai);
 }
+RTM_EXPORT(freeaddrinfo);
 
 int getaddrinfo(const char *nodename,
        const char *servname,
@@ -48,3 +50,4 @@ int getaddrinfo(const char *nodename,
 {
     return lwip_getaddrinfo(nodename, servname, hints, res);
 }
+RTM_EXPORT(getaddrinfo);

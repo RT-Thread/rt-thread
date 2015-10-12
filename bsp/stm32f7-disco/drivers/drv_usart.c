@@ -1,11 +1,21 @@
 /*
- * File      : usart.c
+ * File      : drv_usart.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * COPYRIGHT (C) 2015, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -33,8 +43,6 @@
 #define USART1_RX_PIN                    GPIO_PIN_7
 #define USART1_RX_GPIO_PORT              GPIOB
 #define USART1_RX_AF                     GPIO_AF7_USART1
-
-
 
 /* STM32 uart driver */
 struct stm32_uart
@@ -281,12 +289,10 @@ int stm32_hw_usart_init(void)
     serial1.config = config;
 
     /* register UART1 device */
-    rt_hw_serial_register(&serial1,
-                          "uart1",
+    rt_hw_serial_register(&serial1, "uart1",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
 #endif /* RT_USING_UART1 */
-
 
     return 0;
 }

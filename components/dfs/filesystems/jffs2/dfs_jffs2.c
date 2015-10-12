@@ -331,7 +331,7 @@ static int dfs_jffs2_open(struct dfs_fd* file)
 		return jffs2_result_to_dfs(result);
     }
 	
-	/* save this pointer, it will be used when calling read()£¬write(), 
+	/* save this pointer, it will be used when calling read()ï¿½ï¿½write(), 
 	flush(), lessk(), and will be rt_free when calling close()*/
 	file->data = jffs2_file;
 	file->pos = jffs2_file->f_offset; 
@@ -686,7 +686,6 @@ static int dfs_jffs2_stat(struct dfs_filesystem* fs, const char *path, struct st
 	st->st_dev  = 0;
 	st->st_size = s.st_size;
 	st->st_mtime = s.st_mtime;
-	st->st_blksize = 1;//fixme: what's this field?
 
 	return 0;
 }

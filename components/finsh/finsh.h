@@ -229,8 +229,8 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
             
         #else
             #define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)      \
-                const char __fsym_##cmd##_name[] = #cmd;            \
-                const char __fsym_##cmd##_desc[] = #desc;           \
+                const char __fsym_##cmd##_name[] SECTION(".rodata.name") = #cmd;   \
+                const char __fsym_##cmd##_desc[] SECTION(".rodata.name") = #desc;  \
                 const struct finsh_syscall __fsym_##cmd SECTION("FSymTab")= \
                 {                           \
                     __fsym_##cmd##_name,    \
@@ -239,8 +239,8 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
                 };
 
             #define FINSH_VAR_EXPORT(name, type, desc)              \
-                const char __vsym_##name##_name[] = #name;          \
-                const char __vsym_##name##_desc[] = #desc;          \
+                const char __vsym_##name##_name[] SECTION(".rodata.name") = #name; \
+                const char __vsym_##name##_desc[] SECTION(".rodata.name") = #desc; \
                 const struct finsh_sysvar __vsym_##name SECTION("VSymTab")= \
                 {                           \
                     __vsym_##name##_name,   \

@@ -34,6 +34,7 @@
 #define GD_ID           (0xC8)
 
 /* JEDEC Device ID: Memory type and Capacity */
+#define MTC_W25Q80_BV         (0x4014) /* W25Q80BV */
 #define MTC_W25Q16_BV_CL_CV   (0x4015) /* W25Q16BV W25Q16CL W25Q16CV  */
 #define MTC_W25Q16_DW         (0x6015) /* W25Q16DW  */
 #define MTC_W25Q32_BV         (0x4016) /* W25Q32BV */
@@ -348,6 +349,11 @@ rt_err_t w25qxx_init(const char * flash_device_name, const char * spi_device_nam
         {
             FLASH_TRACE("W25Q16DW detection\r\n");
             spi_flash_device.geometry.sector_count = 512;
+        }
+        else if(memory_type_capacity == MTC_W25Q80_BV)
+        {
+            FLASH_TRACE("W25Q80BV detection\r\n");
+            spi_flash_device.geometry.sector_count = 256;
         }
         else
         {

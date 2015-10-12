@@ -245,7 +245,6 @@ int dfs_romfs_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
 
 	st->st_size = dirent->size;
 	st->st_mtime = 0;
-	st->st_blksize = 512;
 
 	return DFS_STATUS_OK;
 }

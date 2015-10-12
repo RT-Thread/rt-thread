@@ -267,6 +267,12 @@ def PrepareModuleBuilding(env, root_directory, bsp_directory):
     global Env
     global Rtt_Root
 
+    # patch for win32 spawn
+    if env['PLATFORM'] == 'win32':
+        win32_spawn = Win32Spawn()
+        win32_spawn.env = env
+        env['SPAWN'] = win32_spawn.spawn
+
     Env = env
     Rtt_Root = root_directory
 

@@ -9,7 +9,6 @@
 // #define SD_TRACE     rt_kprintf
 #define SD_TRACE(...)
 
-//#define SDCARD_SIM  "F:\\Project\\tools\\SDCARD"
 #define SDCARD_SIM  "sd.bin"
 #define SDCARD_SIZE (16*1024*1024)  //16M
 

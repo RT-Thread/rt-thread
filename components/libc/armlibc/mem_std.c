@@ -22,18 +22,22 @@ void *malloc(int n)
 {
     return rt_malloc(n);
 }
+RTM_EXPORT(malloc);
 
 void *realloc(void *rmem, rt_size_t newsize)
 {
     return rt_realloc(rmem, newsize);
 }
+RTM_EXPORT(realloc);
 
 void *calloc(rt_size_t nelem, rt_size_t elsize)
 {
 	return rt_calloc(nelem, elsize);
 }
+RTM_EXPORT(calloc);
 
 void free(void *rmem)
 {
     rt_free(rmem);
 }
+RTM_EXPORT(free);

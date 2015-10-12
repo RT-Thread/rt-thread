@@ -99,17 +99,17 @@ static long _list_thread(struct rt_list_node *list)
         else if (thread->stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
         else if (thread->stat == RT_THREAD_CLOSE)   rt_kprintf(" close  ");
 
-        ptr = (rt_uint8_t*)thread->stack_addr;
+        ptr = (rt_uint8_t *)thread->stack_addr;
         while (*ptr == '#')ptr ++;
 
         rt_kprintf(" 0x%08x 0x%08x 0x%08x 0x%08x %03d\n",
-            thread->stack_size + ((rt_uint32_t)thread->stack_addr - (rt_uint32_t)thread->sp),
-            thread->stack_size,
-            thread->stack_size - ((rt_uint32_t) ptr - (rt_uint32_t)thread->stack_addr),
-            thread->remaining_tick,
-            thread->error);
+                   thread->stack_size + ((rt_uint32_t)thread->stack_addr - (rt_uint32_t)thread->sp),
+                   thread->stack_size,
+                   thread->stack_size - ((rt_uint32_t) ptr - (rt_uint32_t)thread->stack_addr),
+                   thread->remaining_tick,
+                   thread->error);
     }
-	
+
     return 0;
 }
 
@@ -148,7 +148,7 @@ static long _list_sem(struct rt_list_node *list)
         sem = (struct rt_semaphore *)(rt_list_entry(node, struct rt_object, list));
         if (!rt_list_isempty(&sem->parent.suspend_thread))
         {
-            rt_kprintf("%-8.*s  %03d %d:", 
+            rt_kprintf("%-8.*s  %03d %d:",
                        RT_NAME_MAX,
                        sem->parent.parent.name,
                        sem->value,
@@ -448,7 +448,7 @@ static long _list_device(struct rt_list_node *list)
 {
     struct rt_device *device;
     struct rt_list_node *node;
-    char * const device_type_str[] =
+    char *const device_type_str[] =
     {
         "Character Device",
         "Block Device",
@@ -464,10 +464,11 @@ static long _list_device(struct rt_list_node *list)
         "SPI Bus",
         "SPI Device",
         "SDIO Bus",
-		"PM Pseudo Device",
+        "PM Pseudo Device",
         "Pipe",
         "Portal Device",
-		"Miscellaneous Device",
+        "Timer Device",
+        "Miscellaneous Device",
         "Unknown"
     };
 
@@ -506,13 +507,13 @@ int list_module(void)
 
     list = &rt_object_container[RT_Object_Class_Module].object_list;
 
-    rt_kprintf("module name     ref\n");
-    rt_kprintf("------------ --------\n");
+    rt_kprintf("module name     ref      address \n");
+    rt_kprintf("------------ -------- ------------\n");
     for (node = list->next; node != list; node = node->next)
     {
         module = (struct rt_module *)(rt_list_entry(node, struct rt_object, list));
-        rt_kprintf("%-16.*s %-04d\n",
-                   RT_NAME_MAX, module->parent.name, module->nref);
+        rt_kprintf("%-16.*s %-04d  0x%08x\n",
+                   RT_NAME_MAX, module->parent.name, module->nref, module->module_space);
     }
 
     return 0;
@@ -524,13 +525,13 @@ int list_mod_detail(const char *name)
 {
     int i;
     struct rt_module *module;
-    
+
     /* find module */
     if ((module = rt_module_find(name)) != RT_NULL)
     {
         /* module has entry point */
         if (!(module->parent.flag & RT_MODULE_FLAG_WITHOUTENTRY))
-        {   
+        {
             struct rt_thread *thread;
             struct rt_list_node *tlist;
             rt_uint8_t *ptr;
@@ -547,15 +548,15 @@ int list_mod_detail(const char *name)
                 else if (thread->stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
                 else if (thread->stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
 
-                ptr = (rt_uint8_t*)thread->stack_addr;
+                ptr = (rt_uint8_t *)thread->stack_addr;
                 while (*ptr == '#')ptr ++;
 
                 rt_kprintf(" 0x%08x 0x%08x 0x%08x 0x%08x %03d\n",
-                    thread->stack_size + ((rt_uint32_t)thread->stack_addr - (rt_uint32_t)thread->sp),
-                    thread->stack_size,
-                    thread->stack_size - ((rt_uint32_t) ptr - (rt_uint32_t)thread->stack_addr),
-                    thread->remaining_tick,
-                    thread->error);
+                           thread->stack_size + ((rt_uint32_t)thread->stack_addr - (rt_uint32_t)thread->sp),
+                           thread->stack_size,
+                           thread->stack_size - ((rt_uint32_t) ptr - (rt_uint32_t)thread->stack_addr),
+                           thread->remaining_tick,
+                           thread->error);
             }
 
             /* list sub thread in module */
@@ -606,18 +607,18 @@ int list_mod_detail(const char *name)
             if (!rt_list_isempty(tlist)) _list_timer(tlist);
         }
 
-		if (module->nsym > 0)
-		{
-	        rt_kprintf("symbol    address   \n");
-	        rt_kprintf("-------- ----------\n");
-	    
-	        /* list module export symbols */
-	        for (i=0; i<module->nsym; i++)
-	        {
-	            rt_kprintf("%s 0x%x\n",
-	                       module->symtab[i].name, module->symtab[i].addr);
-	        }
-		}
+        if (module->nsym > 0)
+        {
+            rt_kprintf("symbol    address   \n");
+            rt_kprintf("-------- ----------\n");
+
+            /* list module export symbols */
+            for (i = 0; i < module->nsym; i++)
+            {
+                rt_kprintf("%s 0x%x\n",
+                           module->symtab[i].name, module->symtab[i].addr);
+            }
+        }
     }
 
     return 0;
@@ -631,16 +632,16 @@ long list(void)
     struct finsh_syscall_item *syscall_item;
     struct finsh_sysvar_item *sysvar_item;
 #endif
-	
+
     rt_kprintf("--Function List:\n");
     {
         struct finsh_syscall *index;
         for (index = _syscall_table_begin;
-             index < _syscall_table_end;
-             FINSH_NEXT_SYSCALL(index))
+                index < _syscall_table_end;
+                FINSH_NEXT_SYSCALL(index))
         {
-			/* skip the internal command */
-			if (strncmp((char*)index->name, "__", 2) == 0) continue;
+            /* skip the internal command */
+            if (strncmp((char *)index->name, "__", 2) == 0) continue;
 
 #ifdef FINSH_USING_DESCRIPTION
             rt_kprintf("%-16s -- %s\n", index->name, index->desc);
@@ -663,8 +664,8 @@ long list(void)
     {
         struct finsh_sysvar *index;
         for (index = _sysvar_table_begin;
-             index < _sysvar_table_end;
-             FINSH_NEXT_SYSVAR(index))
+                index < _sysvar_table_end;
+                FINSH_NEXT_SYSVAR(index))
         {
 #ifdef FINSH_USING_DESCRIPTION
             rt_kprintf("%-16s -- %s\n", index->name, index->desc);
@@ -681,7 +682,7 @@ long list(void)
         sysvar_item = sysvar_item->next;
     }
 #endif
-	
+
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list, list all symbol in system)
@@ -731,12 +732,12 @@ void list_prefix(char *prefix)
     {
         struct finsh_syscall *index;
         for (index = _syscall_table_begin;
-             index < _syscall_table_end;
-             FINSH_NEXT_SYSCALL(index))
+                index < _syscall_table_end;
+                FINSH_NEXT_SYSCALL(index))
         {
-			/* skip internal command */
-			if (str_is_prefix("__", index->name) == 0) continue;
-			
+            /* skip internal command */
+            if (str_is_prefix("__", index->name) == 0) continue;
+
             if (str_is_prefix(prefix, index->name) == 0)
             {
                 if (func_cnt == 0)
@@ -806,10 +807,10 @@ void list_prefix(char *prefix)
 
     /* checks in system variable */
     {
-        struct finsh_sysvar* index;
+        struct finsh_sysvar *index;
         for (index = _sysvar_table_begin;
-             index < _sysvar_table_end;
-             FINSH_NEXT_SYSVAR(index))
+                index < _sysvar_table_end;
+                FINSH_NEXT_SYSVAR(index))
         {
             if (str_is_prefix(prefix, index->name) == 0)
             {

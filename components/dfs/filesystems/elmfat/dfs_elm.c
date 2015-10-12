@@ -738,7 +738,6 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
             st->st_mode &= ~(DFS_S_IWUSR | DFS_S_IWGRP | DFS_S_IWOTH);
 
         st->st_size  = file_info.fsize;
-        st->st_blksize = 512;
 
         /* get st_mtime. */
         {

@@ -370,6 +370,10 @@ rt_inline void rt_work_init(struct rt_work* work, void (*work_func)(struct rt_wo
 #include "drivers/can.h"
 #endif
 
+#ifdef RT_USING_HWTIMER
+#include "drivers/hwtimer.h"
+#endif
+
 #ifdef __cplusplus
 }
 #endif

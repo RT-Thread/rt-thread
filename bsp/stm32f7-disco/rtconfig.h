@@ -14,7 +14,7 @@
 // <item description="256">256</item>
 // </integer>
 #define RT_THREAD_PRIORITY_MAX	32
-// <integer name="RT_TICK_PER_SECOND" description="OS tick per second" default="100" />
+// <integer name="RT_TICK_PER_SECOND" description="OS tick per second" default="1000" />
 #define RT_TICK_PER_SECOND	1000
 // <integer name="IDLE_THREAD_STACK_SIZE" description="The stack size of idle thread" default="512" />
 #define IDLE_THREAD_STACK_SIZE	512
@@ -114,9 +114,9 @@
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
 // <bool name="RT_USING_LIBC" description="Using libc library" default="true" />
-#define RT_USING_NEWLIB
+#define RT_USING_LIBC
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
-//#define RT_USING_PTHREADS
+#define RT_USING_PTHREADS
 // </section>
 
 // <section name="RT_USING_DFS" description="Device file system" default="true" >
@@ -141,16 +141,16 @@
 // <item description="LFN with dynamic LFN working buffer on the heap">3</item>
 // </integer>
 #define RT_DFS_ELM_USE_LFN	3
-// <integer name="RT_DFS_ELM_CODE_PAGE" description="OEM code page" default="936">
-#define RT_DFS_ELM_CODE_PAGE	936
+// <integer name="RT_DFS_ELM_CODE_PAGE" description="OEM code page" default="437">
+#define RT_DFS_ELM_CODE_PAGE	437
 // <bool name="RT_DFS_ELM_CODE_PAGE_FILE" description="Using OEM code page file" default="false" />
-#define RT_DFS_ELM_CODE_PAGE_FILE
+// #define RT_DFS_ELM_CODE_PAGE_FILE
 // <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="256" />
 #define RT_DFS_ELM_MAX_LFN	256
 // <integer name="RT_DFS_ELM_MAX_SECTOR_SIZE" description="Maximal size of sector" default="512" />
 #define RT_DFS_ELM_MAX_SECTOR_SIZE  4096
 // <bool name="RT_DFS_ELM_USE_ERASE" description="Enable erase feature for flash" default="true" />
-#define RT_DFS_ELM_USE_ERASE
+// #define RT_DFS_ELM_USE_ERASE
 // <bool name="RT_USING_DFS_YAFFS2" description="Using YAFFS2" default="false" />
 // #define RT_USING_DFS_YAFFS2
 // <bool name="RT_USING_DFS_UFFS" description="Using UFFS" default="false" />
@@ -160,7 +160,7 @@
 // <bool name="RT_USING_DFS_ROMFS" description="Using ROMFS" default="false" />
 //#define RT_USING_DFS_ROMFS
 // <bool name="RT_USING_DFS_NFS" description="Using NFS" default="false" />
-#define RT_USING_DFS_NFS
+// #define RT_USING_DFS_NFS
 // <string name="RT_NFS_HOST_EXPORT" description="The exported NFS host path" default="192.168.1.10:/" />
 #define RT_NFS_HOST_EXPORT	"192.168.137.1:/"
 // </section>
@@ -223,7 +223,11 @@
 // </section>
 
 // </RDTConfigurator>
+
 /* enable SDRAM */
 #define RT_USING_EXT_SDRAM
+
+#define RT_USING_COMPONENTS_INIT
+#define RT_USING_USER_MAIN
 
 #endif

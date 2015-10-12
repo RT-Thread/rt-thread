@@ -114,8 +114,8 @@ elif PLATFORM == 'cl':
         CFLAGS += ' /MT'
         LFLAGS += ''
 
-    CFLAGS += ' /ZI /Od /W 3 /WL '
-    LFLAGS += ' /SUBSYSTEM:CONSOLE /MACHINE:X86 '
+    CFLAGS += ' /Zi /Od /W 3 /WL '
+    LFLAGS += ' /SUBSYSTEM:CONSOLE /MACHINE:X86 /INCREMENTAL:NO'
 
     CPATH = ''
     LPATH = ''

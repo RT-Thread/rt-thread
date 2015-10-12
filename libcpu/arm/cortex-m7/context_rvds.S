@@ -221,7 +221,9 @@ rt_hw_interrupt_thread_switch PROC
 
     IMPORT rt_hw_hard_fault_exception
     EXPORT HardFault_Handler
+    EXPORT MemManage_Handler
 HardFault_Handler    PROC
+MemManage_Handler
 
     ; get current context
     MRS     r0, psp                 ; get fault thread stack pointer

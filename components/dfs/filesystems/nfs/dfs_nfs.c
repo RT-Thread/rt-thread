@@ -850,7 +850,6 @@ int nfs_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
 
     st->st_size  = info->size;
     st->st_mtime = info->mtime.seconds;
-    st->st_blksize = 512;
 
     xdr_free((xdrproc_t)xdr_GETATTR3res, (char *)&res);
     xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)handle);

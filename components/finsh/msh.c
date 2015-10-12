@@ -37,7 +37,7 @@
 #endif
 
 #define RT_FINSH_ARG_MAX    10
-typedef int (*cmd_function_t)(int argc, char** argv);
+typedef int (*cmd_function_t)(int argc, char **argv);
 
 #ifdef FINSH_USING_MSH
 #ifdef FINSH_USING_MSH_ONLY
@@ -56,7 +56,7 @@ rt_bool_t msh_is_used(void)
     return __msh_state;
 }
 
-static int msh_exit(int argc, char** argv)
+static int msh_exit(int argc, char **argv)
 {
     /* return to finsh shell mode */
     __msh_state = RT_FALSE;
@@ -74,15 +74,15 @@ static int msh_enter(void)
 FINSH_FUNCTION_EXPORT_ALIAS(msh_enter, msh, use module shell);
 #endif
 
-int msh_help(int argc, char** argv)
+int msh_help(int argc, char **argv)
 {
     rt_kprintf("RT-Thread shell commands:\n");
     {
         struct finsh_syscall *index;
 
         for (index = _syscall_table_begin;
-            index < _syscall_table_end;
-            FINSH_NEXT_SYSCALL(index))
+                index < _syscall_table_end;
+                FINSH_NEXT_SYSCALL(index))
         {
             if (strncmp(index->name, "__cmd_", 6) != 0) continue;
 #if defined(FINSH_USING_DESCRIPTION) && defined(FINSH_USING_SYMTAB)
@@ -98,7 +98,7 @@ int msh_help(int argc, char** argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(msh_help, __cmd_help, RT-Thread shell help.);
 
-static int msh_split(char* cmd, rt_size_t length, char* argv[RT_FINSH_ARG_MAX])
+static int msh_split(char *cmd, rt_size_t length, char *argv[RT_FINSH_ARG_MAX])
 {
     char *ptr;
     rt_size_t position;
@@ -161,13 +161,13 @@ static cmd_function_t msh_get_cmd(char *cmd, int size)
     cmd_function_t cmd_func = RT_NULL;
 
     for (index = _syscall_table_begin;
-        index < _syscall_table_end;
-        FINSH_NEXT_SYSCALL(index))
+            index < _syscall_table_end;
+            FINSH_NEXT_SYSCALL(index))
     {
         if (strncmp(index->name, "__cmd_", 6) != 0) continue;
-        
+
         if (strncmp(&index->name[6], cmd, size) == 0 &&
-			index->name[6 + size] == '\0')
+                index->name[6 + size] == '\0')
         {
             cmd_func = (cmd_function_t)index->func;
             break;
@@ -180,7 +180,7 @@ static cmd_function_t msh_get_cmd(char *cmd, int size)
 #if defined(RT_USING_MODULE) && defined(RT_USING_DFS)
 /* Return 0 on module executed. Other value indicate error.
  */
-int msh_exec_module(const char* cmd_line, int size)
+int msh_exec_module(const char *cmd_line, int size)
 {
     int ret;
     int fd = -1;
@@ -197,7 +197,7 @@ int msh_exec_module(const char* cmd_line, int size)
     length = cmd_length + 32;
 
     /* allocate program name memory */
-    pg_name = (char*) rt_malloc(length);
+    pg_name = (char *) rt_malloc(length);
     if (pg_name == RT_NULL)
         return -RT_ENOMEM;
 
@@ -251,11 +251,21 @@ int msh_exec_module(const char* cmd_line, int size)
 
 int system(const char *command)
 {
-    return msh_exec_module(command, rt_strlen(command));
+    int ret = -RT_ENOMEM;
+    char *cmd = rt_strdup(command);
+
+    if (cmd)
+    {
+        ret = msh_exec(cmd, rt_strlen(cmd));
+        rt_free(cmd);
+    }
+
+    return ret;
 }
+RTM_EXPORT(system);
 #endif
 
-static int _msh_exec_cmd(char* cmd, rt_size_t length, int *retp)
+static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
 {
     int argc;
     int cmd0_size = 0;
@@ -286,12 +296,12 @@ static int _msh_exec_cmd(char* cmd, rt_size_t length, int *retp)
     return 0;
 }
 
-int msh_exec(char* cmd, rt_size_t length)
+int msh_exec(char *cmd, rt_size_t length)
 {
     int cmd_ret;
 
-	/* strim the beginning of command */
-    while(*cmd  == ' ' || *cmd == '\t')
+    /* strim the beginning of command */
+    while (*cmd  == ' ' || *cmd == '\t')
     {
         cmd++;
         length--;
@@ -317,7 +327,12 @@ int msh_exec(char* cmd, rt_size_t length)
 #endif
 
 #if defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)
-	/* change to this directory */
+    if (msh_exec_script(cmd, length) == 0)
+    {
+        return 0;
+    }
+
+    /* change to this directory */
     if (chdir(cmd) == 0)
     {
         return 0;
@@ -328,7 +343,7 @@ int msh_exec(char* cmd, rt_size_t length)
     {
         char *tcmd;
         tcmd = cmd;
-        while(*tcmd != ' ' && *tcmd != '\0')
+        while (*tcmd != ' ' && *tcmd != '\0')
         {
             tcmd++;
         }
@@ -354,14 +369,14 @@ static int str_common(const char *str1, const char *str2)
 #ifdef RT_USING_DFS
 void msh_auto_complete_path(char *path)
 {
-    DIR* dir = RT_NULL;
+    DIR *dir = RT_NULL;
     struct dirent *dirent = RT_NULL;
     char *full_path, *ptr, *index;
 
     if (!path)
         return;
 
-    full_path = (char*)rt_malloc(256);
+    full_path = (char *)rt_malloc(256);
     if (full_path == RT_NULL) return; /* out of memory */
 
     if (*path != '/')
@@ -433,9 +448,9 @@ void msh_auto_complete_path(char *path)
                     /* save dirent name */
                     strcpy(full_path, dirent->d_name);
                 }
-                
+
                 length = str_common(dirent->d_name, full_path);
-                
+
                 if (length < min_length)
                 {
                     min_length = length;
@@ -459,7 +474,7 @@ void msh_auto_complete_path(char *path)
                         rt_kprintf("%s\n", dirent->d_name);
                 }
             }
-            
+
             length = index - path;
             memcpy(index, full_path, min_length);
             path[length + min_length] = '\0';
@@ -480,7 +495,7 @@ void msh_auto_complete(char *prefix)
     min_length = 0;
     name_ptr = RT_NULL;
 
-    if (*prefix == '\0') 
+    if (*prefix == '\0')
     {
         msh_help(0, RT_NULL);
         return;
@@ -521,7 +536,7 @@ void msh_auto_complete(char *prefix)
             /* skip finsh shell function */
             if (strncmp(index->name, "__cmd_", 6) != 0) continue;
 
-            cmd_name = (const char*) &index->name[6];
+            cmd_name = (const char *) &index->name[6];
             if (strncmp(prefix, cmd_name, strlen(prefix)) == 0)
             {
                 if (min_length == 0)

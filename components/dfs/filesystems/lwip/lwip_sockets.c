@@ -32,154 +32,167 @@
 
 int accept(int s, struct sockaddr *addr, socklen_t *addrlen)
 {
-	int new_client = -1;
+    int new_client = -1;
     int sock = dfs_lwip_getsocket(s);
 
     new_client = lwip_accept(sock, addr, addrlen);
-	if (new_client != -1)
-	{
-		/* this is a new socket, create it in file system fd */
-		int fd;
-		struct dfs_fd *d;
-		
-		/* allocate a fd */
-		fd = fd_new();
-		if (fd < 0)
-		{
-			rt_set_errno(-DFS_STATUS_ENOMEM);
-			lwip_close(sock);
+    if (new_client != -1)
+    {
+        /* this is a new socket, create it in file system fd */
+        int fd;
+        struct dfs_fd *d;
 
-            printf("no fd yet!\n");
-			return -1;
-		}
-		d = fd_get(fd);
+        /* allocate a fd */
+        fd = fd_new();
+        if (fd < 0)
+        {
+            rt_set_errno(-DFS_STATUS_ENOMEM);
+            lwip_close(sock);
 
-		/* this is a socket fd */
-		d->type = FT_SOCKET;
-		d->path = RT_NULL;
-		
-		d->fs = dfs_lwip_get_fs();
-		
-		d->flags = DFS_O_RDWR; /* set flags as read and write */
-		d->size = 0;
-		d->pos	= 0;
+            rt_kprintf("no fd yet!\n");
+            return -1;
+        }
+        d = fd_get(fd);
 
-		/* set socket to the data of dfs_fd */
-		d->data = (void*) new_client;
+        /* this is a socket fd */
+        d->type = FT_SOCKET;
+        d->path = RT_NULL;
 
-	    /* release the ref-count of fd */
-	    fd_put(d);
-        
+        d->fs = dfs_lwip_get_fs();
+
+        d->flags = DFS_O_RDWR; /* set flags as read and write */
+        d->size = 0;
+        d->pos  = 0;
+
+        /* set socket to the data of dfs_fd */
+        d->data = (void *) new_client;
+
+        /* release the ref-count of fd */
+        fd_put(d);
+
         return fd;
-	}
+    }
 
-	return new_client;
+    return new_client;
 }
+RTM_EXPORT(accept);
 
 int bind(int s, const struct sockaddr *name, socklen_t namelen)
 {
     int sock = dfs_lwip_getsocket(s);
-    
+
     return lwip_bind(sock, name, namelen);
 }
+RTM_EXPORT(bind);
 
 int shutdown(int s, int how)
 {
     int sock;
-	struct dfs_fd *d;
+    struct dfs_fd *d;
 
-	d = fd_get(s);
-	if (d == RT_NULL)
-	{
-		rt_set_errno(-DFS_STATUS_EBADF);
-		
-		return -1;
-	}
-
-	sock = dfs_lwip_getsocket(s);
-    if (lwip_shutdown(sock, how) == 0)
+    d = fd_get(s);
+    if (d == RT_NULL)
     {
-    	/* socket has been closed, delete it from file system fd */
-		fd_put(d);
-		fd_put(d);
-		
-		return 0;
+        rt_set_errno(-DFS_STATUS_EBADF);
+
+        return -1;
     }
 
-	return -1;
-}
+    sock = dfs_lwip_getsocket(s);
+    if (lwip_shutdown(sock, how) == 0)
+    {
+        /* socket has been closed, delete it from file system fd */
+        fd_put(d);
+        fd_put(d);
 
-int getpeername (int s, struct sockaddr *name, socklen_t *namelen)
+        return 0;
+    }
+
+    return -1;
+}
+RTM_EXPORT(shutdown);
+
+int getpeername(int s, struct sockaddr *name, socklen_t *namelen)
 {
     int sock = dfs_lwip_getsocket(s);
 
     return lwip_getpeername(sock, name, namelen);
 }
+RTM_EXPORT(getpeername);
 
-int getsockname (int s, struct sockaddr *name, socklen_t *namelen)
+int getsockname(int s, struct sockaddr *name, socklen_t *namelen)
 {
     int sock = dfs_lwip_getsocket(s);
-    
+
     return lwip_getsockname(sock, name, namelen);
 }
+RTM_EXPORT(getsockname);
 
-int getsockopt (int s, int level, int optname, void *optval, socklen_t *optlen)
+int getsockopt(int s, int level, int optname, void *optval, socklen_t *optlen)
 {
     int sock = dfs_lwip_getsocket(s);
-    
+
     return lwip_getsockopt(sock, level, optname, optval, optlen);
 }
+RTM_EXPORT(getsockopt);
 
-int setsockopt (int s, int level, int optname, const void *optval, socklen_t optlen)
+int setsockopt(int s, int level, int optname, const void *optval, socklen_t optlen)
 {
     int sock = dfs_lwip_getsocket(s);
-    
+
     return lwip_setsockopt(sock, level, optname, optval, optlen);
 }
+RTM_EXPORT(setsockopt);
 
 int connect(int s, const struct sockaddr *name, socklen_t namelen)
 {
     int sock = dfs_lwip_getsocket(s);
-    
+
     return lwip_connect(sock, name, namelen);
 }
+RTM_EXPORT(connect);
 
 int listen(int s, int backlog)
 {
     int sock = dfs_lwip_getsocket(s);
-    
+
     return lwip_listen(sock, backlog);
 }
+RTM_EXPORT(listen);
 
 int recv(int s, void *mem, size_t len, int flags)
 {
     int sock = dfs_lwip_getsocket(s);
-    
+
     return lwip_recv(sock, mem, len, flags);
 }
+RTM_EXPORT(recv);
 
 int recvfrom(int s, void *mem, size_t len, int flags,
-      struct sockaddr *from, socklen_t *fromlen)
+             struct sockaddr *from, socklen_t *fromlen)
 {
     int sock = dfs_lwip_getsocket(s);
-    
+
     return lwip_recvfrom(sock, mem, len, flags, from, fromlen);
 }
+RTM_EXPORT(recvfrom);
 
 int send(int s, const void *dataptr, size_t size, int flags)
 {
     int sock = dfs_lwip_getsocket(s);
-    
+
     return lwip_send(sock, dataptr, size, flags);
 }
+RTM_EXPORT(send);
 
 int sendto(int s, const void *dataptr, size_t size, int flags,
-    const struct sockaddr *to, socklen_t tolen)
+           const struct sockaddr *to, socklen_t tolen)
 {
     int sock = dfs_lwip_getsocket(s);
-    
+
     return lwip_sendto(sock, dataptr, size, flags, to, tolen);
 }
+RTM_EXPORT(sendto);
 
 int socket(int domain, int type, int protocol)
 {
@@ -207,13 +220,13 @@ int socket(int domain, int type, int protocol)
         d->path = RT_NULL;
 
         d->fs = dfs_lwip_get_fs();
-        
+
         d->flags = DFS_O_RDWR; /* set flags as read and write */
         d->size = 0;
         d->pos  = 0;
-        
+
         /* set socket to the data of dfs_fd */
-        d->data = (void*) sock;
+        d->data = (void *) sock;
     }
 
     /* release the ref-count of fd */
@@ -221,4 +234,4 @@ int socket(int domain, int type, int protocol)
 
     return fd;
 }
-
+RTM_EXPORT(socket);
