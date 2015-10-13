@@ -81,4 +81,4 @@ int mpu_init(void)
   HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
 	return 0;
 }
-INIT_BOARD_EXPORT(mpu_init);
+//INIT_BOARD_EXPORT(mpu_init);
