@@ -41,7 +41,7 @@
 extern char working_directory[];
 #endif
 
-int cmd_ls(int argc, char** argv)
+int cmd_ls(int argc, char **argv)
 {
     extern void ls(const char *pathname);
 
@@ -53,7 +53,7 @@ int cmd_ls(int argc, char** argv)
         ls("/");
 #endif
     }
-    else 
+    else
     {
         ls(argv[1]);
     }
@@ -62,7 +62,7 @@ int cmd_ls(int argc, char** argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_ls, __cmd_ls, List information about the FILEs.);
 
-int cmd_cp(int argc, char** argv)
+int cmd_cp(int argc, char **argv)
 {
     void copy(const char *src, const char *dst);
 
@@ -80,7 +80,7 @@ int cmd_cp(int argc, char** argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_cp, __cmd_cp, Copy SOURCE to DEST.);
 
-int cmd_mv(int argc, char** argv)
+int cmd_mv(int argc, char **argv)
 {
     if (argc != 3)
     {
@@ -89,66 +89,66 @@ int cmd_mv(int argc, char** argv)
     }
     else
     {
-		int fd;
-		char *dest = RT_NULL;
+        int fd;
+        char *dest = RT_NULL;
 
         rt_kprintf("%s => %s\n", argv[1], argv[2]);
 
-		fd = open(argv[2], O_DIRECTORY, 0);
-		if (fd >= 0)
-		{
-			char *src;
-			
-			close(fd);
+        fd = open(argv[2], O_DIRECTORY, 0);
+        if (fd >= 0)
+        {
+            char *src;
 
-			/* it's a directory */			
-			dest = (char*)rt_malloc(DFS_PATH_MAX);
-			if (dest == RT_NULL)
-			{
-				rt_kprintf("out of memory\n");
-				return -RT_ENOMEM;
-			}
+            close(fd);
 
-			src = argv[1] + rt_strlen(argv[1]);
-			while (src != argv[1]) 
-			{
-				if (*src == '/') break;
-				src --;
-			}
+            /* it's a directory */
+            dest = (char *)rt_malloc(DFS_PATH_MAX);
+            if (dest == RT_NULL)
+            {
+                rt_kprintf("out of memory\n");
+                return -RT_ENOMEM;
+            }
 
-			rt_snprintf(dest, DFS_PATH_MAX - 1, "%s/%s", argv[2], src);
-		}
-		else
-		{
-			fd = open(argv[2], O_RDONLY, 0);
-			if (fd >= 0)
-			{
-				close(fd);
-				
-				unlink(argv[2]);
-			}
+            src = argv[1] + rt_strlen(argv[1]);
+            while (src != argv[1])
+            {
+                if (*src == '/') break;
+                src --;
+            }
 
-			dest = argv[2];
-		}
+            rt_snprintf(dest, DFS_PATH_MAX - 1, "%s/%s", argv[2], src);
+        }
+        else
+        {
+            fd = open(argv[2], O_RDONLY, 0);
+            if (fd >= 0)
+            {
+                close(fd);
 
-		rename(argv[1], dest);
-		if (dest != RT_NULL && dest != argv[2]) rt_free(dest);
+                unlink(argv[2]);
+            }
+
+            dest = argv[2];
+        }
+
+        rename(argv[1], dest);
+        if (dest != RT_NULL && dest != argv[2]) rt_free(dest);
     }
 
     return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_mv, __cmd_mv, Rename SOURCE to DEST.);
 
-int cmd_cat(int argc, char** argv)
+int cmd_cat(int argc, char **argv)
 {
     int index;
-    extern void cat(const char* filename);
+    extern void cat(const char *filename);
 
     if (argc == 1)
     {
         rt_kprintf("Usage: cat [FILE]...\n");
         rt_kprintf("Concatenate FILE(s)\n");
-		return 0;
+        return 0;
     }
 
     for (index = 1; index < argc; index ++)
@@ -160,7 +160,7 @@ int cmd_cat(int argc, char** argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_cat, __cmd_cat, Concatenate FILE(s));
 
-int cmd_rm(int argc, char** argv)
+int cmd_rm(int argc, char **argv)
 {
     int index;
 
@@ -168,7 +168,7 @@ int cmd_rm(int argc, char** argv)
     {
         rt_kprintf("Usage: rm FILE...\n");
         rt_kprintf("Remove (unlink) the FILE(s).\n");
-		return 0;
+        return 0;
     }
 
     for (index = 1; index < argc; index ++)
@@ -178,10 +178,10 @@ int cmd_rm(int argc, char** argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_rm, __cmd_rm, Remove (unlink) the FILE(s).);
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_rm, __cmd_rm, Remove(unlink) the FILE(s).);
 
 #ifdef DFS_USING_WORKDIR
-int cmd_cd(int argc, char** argv)
+int cmd_cd(int argc, char **argv)
 {
     if (argc == 1)
     {
@@ -196,34 +196,34 @@ int cmd_cd(int argc, char** argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_cd, __cmd_cd, Change the shell working directory.);
 
-int cmd_pwd(int argc, char** argv)
+int cmd_pwd(int argc, char **argv)
 {
-	rt_kprintf("%s\n", working_directory);
-	return 0;
+    rt_kprintf("%s\n", working_directory);
+    return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_pwd, __cmd_pwd, Print the name of the current working directory.);
 #endif
 
-int cmd_mkdir(int argc, char** argv)
+int cmd_mkdir(int argc, char **argv)
 {
-	if (argc == 1)
-	{
-		rt_kprintf("Usage: mkdir [OPTION] DIRECTORY\n");
-		rt_kprintf("Create the DIRECTORY, if they do not already exist.\n");
-	}
-	else
-	{
-		mkdir(argv[1], 0);
-	}
+    if (argc == 1)
+    {
+        rt_kprintf("Usage: mkdir [OPTION] DIRECTORY\n");
+        rt_kprintf("Create the DIRECTORY, if they do not already exist.\n");
+    }
+    else
+    {
+        mkdir(argv[1], 0);
+    }
 
-	return 0;
+    return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_mkdir, __cmd_mkdir, Create the DIRECTORY.);
 
-int cmd_mkfs(int argc, char** argv)
+int cmd_mkfs(int argc, char **argv)
 {
     int result = 0;
-    char* type="elm"; /* use the default file system type as 'fatfs' */
+    char *type = "elm"; /* use the default file system type as 'fatfs' */
 
     if (argc == 2)
     {
@@ -234,7 +234,7 @@ int cmd_mkfs(int argc, char** argv)
         if (strcmp(argv[1], "-t") == 0)
         {
             type = argv[2];
-            result = dfs_mkfs(type, argv[1]);
+            result = dfs_mkfs(type, argv[3]);
         }
     }
     else
@@ -242,7 +242,7 @@ int cmd_mkfs(int argc, char** argv)
         rt_kprintf("Usage: mkfs [-t type] device\n");
         return 0;
     }
-    
+
     if (result != RT_EOK)
     {
         rt_kprintf("mkfs failed, result=%d\n", result);
@@ -255,17 +255,17 @@ FINSH_FUNCTION_EXPORT_ALIAS(cmd_mkfs, __cmd_mkfs, format disk with file system);
 #endif
 
 #ifdef RT_USING_LWIP
-int cmd_ifconfig(int argc, char** argv)
+int cmd_ifconfig(int argc, char **argv)
 {
     extern void list_if(void);
-    extern void set_if(char* netif_name, char* ip_addr, char* gw_addr, char* nm_addr);
+    extern void set_if(char *netif_name, char *ip_addr, char *gw_addr, char *nm_addr);
 
 
-    if(argc == 1)
+    if (argc == 1)
     {
         list_if();
     }
-    else if(argc == 5)
+    else if (argc == 5)
     {
         rt_kprintf("config : %s\n", argv[1]);
         rt_kprintf("IP addr: %s\n", argv[2]);
@@ -283,22 +283,22 @@ int cmd_ifconfig(int argc, char** argv)
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_ifconfig, __cmd_ifconfig, list the information of network interfaces);
 
 #ifdef RT_LWIP_TCP
-int cmd_netstat(int argc, char** argv)
+int cmd_netstat(int argc, char **argv)
 {
- 	extern void list_tcps(void);
+    extern void list_tcps(void);
 
-	list_tcps();
-	return 0;
+    list_tcps();
+    return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_netstat, __cmd_netstat, list the information of TCP/IP);
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_netstat, __cmd_netstat, list the information of TCP / IP);
 #endif
 #endif /* RT_USING_LWIP */
 
-int cmd_ps(int argc, char** argv)
+int cmd_ps(int argc, char **argv)
 {
     extern long list_thread(void);
     extern int list_module(void);
-    
+
 #ifdef RT_USING_MODULE
     if ((argc == 2) && (strcmp(argv[1], "-m") == 0))
         list_module();
@@ -309,14 +309,14 @@ int cmd_ps(int argc, char** argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_ps, __cmd_ps, List threads in the system.);
 
-int cmd_time(int argc, char** argv)
+int cmd_time(int argc, char **argv)
 {
     return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_time, __cmd_time, Execute command with time.);
 
 #ifdef RT_USING_HEAP
-int cmd_free(int argc, char** argv)
+int cmd_free(int argc, char **argv)
 {
     extern void list_mem(void);
     extern void list_memheap(void);
