@@ -77,12 +77,6 @@ void rtthread_startup(void)
     /* init application */
     rt_application_init();
 
-   /* init finsh*/
-   #ifdef RT_USING_FINSH
-   finsh_system_init();
-   finsh_set_device("uart2");
-   #endif
-
     /* start scheduler */
     rt_system_scheduler_start();
 
