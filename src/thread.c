@@ -331,7 +331,7 @@ RTM_EXPORT(rt_thread_create);
 
 /**
  * This function will delete a thread. The thread object will be removed from
- * thread queue and detached/deleted from system object management.
+ * thread queue and deleted from system object management in the idle thread.
  *
  * @param thread the thread to be deleted
  *
