@@ -23,6 +23,8 @@
 #define RT_USING_OVERFLOW_CHECK
 // <bool name="RT_USING_INTERRUPT_INFO" description="Show more interrupt description" default="true" />
 #define RT_USING_INTERRUPT_INFO
+// <integer name="IDLE_THREAD_STACK_SIZE" description="The stack size of idle thread" default="1024" />
+#define IDLE_THREAD_STACK_SIZE	1024
 // </section>
 
 // <bool name="RT_USING_HOOK" description="Using hook functions" default="true" />
@@ -91,15 +93,16 @@
 #define FINSH_USING_DESCRIPTION
 // <integer name="FINSH_THREAD_STACK_SIZE" description="The stack size for finsh thread" default="4096" />
 #define FINSH_THREAD_STACK_SIZE	4096
+// <bool name="FINSH_USING_MSH" description="Using module shell" default="true" />
+#define FINSH_USING_MSH
+// <bool name="FINSH_USING_MSH_DEFAULT" description="Using module shell as the default shell" default="true" />
+#define FINSH_USING_MSH_DEFAULT
 // </section>
-
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
 #define RT_USING_LIBC
-// <bool name="RT_USING_NEWLIB" description="Using newlib library, only available under GNU GCC" default="true" />
-// #define RT_USING_NEWLIB
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
-// #define RT_USING_PTHREADS
+#define RT_USING_PTHREADS
 // </section>
 
 // <section name="RT_USING_DFS" description="Device file system" default="true" >

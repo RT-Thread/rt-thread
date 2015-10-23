@@ -96,7 +96,8 @@ struct romfs_dirent *dfs_romfs_lookup(struct romfs_dirent *root_dirent, const ch
 		{
             if (check_dirent(&dirent[index]) != 0)
                 return RT_NULL;
-			if (rt_strncmp(dirent[index].name, subpath, (subpath_end - subpath)) == 0)
+			if (rt_strlen(dirent[index].name) == (subpath_end - subpath) &&
+					rt_strncmp(dirent[index].name, subpath, (subpath_end - subpath)) == 0)
 			{
 				dirent_size = dirent[index].size;
 
@@ -245,7 +246,6 @@ int dfs_romfs_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
 
 	st->st_size = dirent->size;
 	st->st_mtime = 0;
-	st->st_blksize = 512;
 
 	return DFS_STATUS_OK;
 }

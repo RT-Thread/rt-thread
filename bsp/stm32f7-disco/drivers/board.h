@@ -31,8 +31,8 @@
 // <e>Use external SDRAM memory on the board
 //  <o>Begin Address of External SDRAM
 #define EXT_SDRAM_BEGIN    0xC0000000
+//  <o>Size of External SDRAM
 #define EXT_SDRAM_SIZE     (0x800000)
-//  <o>End Address of External SDRAM
 #define EXT_SDRAM_END      (EXT_SDRAM_BEGIN + EXT_SDRAM_SIZE)
 // </e>
 

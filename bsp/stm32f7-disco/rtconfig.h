@@ -227,4 +227,7 @@
 /* enable SDRAM */
 #define RT_USING_EXT_SDRAM
 
+#define RT_USING_COMPONENTS_INIT
+#define RT_USING_USER_MAIN
+
 #endif

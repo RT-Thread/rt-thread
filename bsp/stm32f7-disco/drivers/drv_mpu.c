@@ -23,9 +23,9 @@
  */ 
 
 #include "drv_mpu.h"
-
-
-void mpu_init(void)
+#include <rtthread.h>
+#include "stm32f7xx.h"
+int mpu_init(void)
 {
   MPU_Region_InitTypeDef MPU_InitStruct;
   
@@ -79,5 +79,6 @@ void mpu_init(void)
     
   /* Enable the MPU */
   HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
+	return 0;
 }
-
+//INIT_BOARD_EXPORT(mpu_init);

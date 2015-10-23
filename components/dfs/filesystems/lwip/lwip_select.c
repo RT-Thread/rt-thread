@@ -118,5 +118,6 @@ select(int maxfdp1, fd_set *readset, fd_set *writeset, fd_set *exceptset,
     
     return result;
 }
+RTM_EXPORT(select);
 
 #endif

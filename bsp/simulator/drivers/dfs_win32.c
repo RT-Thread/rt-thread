@@ -505,8 +505,6 @@ static int dfs_win32_stat(struct dfs_filesystem *fs, const char *path, struct st
         st->st_mtime = time_tmp.QuadPart;
     }
 
-    st->st_blksize = 0;
-
     FindClose(hFind);
 
     return 0;

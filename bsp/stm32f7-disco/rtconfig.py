@@ -19,10 +19,8 @@ elif CROSS_TOOL == 'keil':
     PLATFORM 	= 'armcc'
     EXEC_PATH 	= r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
-    print '================ERROR============================'
-    print 'Not support iar yet!'
-    print '================================================='
-    exit(0)
+	PLATFORM 	= 'iar'
+	IAR_PATH 	= 'C:/Program Files (x86)/IAR Systems/Embedded Workbench 7.2'
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -45,7 +43,7 @@ if PLATFORM == 'gcc':
     STRIP = PREFIX + 'strip'
 
     DEVICE = '  -mcpu=cortex-m7 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -g -Wall -DSTM32F756xx -DUSE_HAL_DRIVER -D__ASSEMBLY__ -D__FPU_USED'
+    CFLAGS = DEVICE + ' -g -Wall -DSTM32F756xx -DUSE_HAL_DRIVER -D__ASSEMBLY__ -D__FPU_USED -eentry'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread_stm32f7xx.map,-cref,-u,Reset_Handler -T rtthread-stm32f7xx.ld'
 
@@ -99,6 +97,7 @@ elif PLATFORM == 'armcc':
 elif PLATFORM == 'iar':
     # toolchains
     CC = 'iccarm'
+    CXX = 'iccarm'
     AS = 'iasmarm'
     AR = 'iarchive'
     LINK = 'ilinkarm'
@@ -123,18 +122,23 @@ elif PLATFORM == 'iar':
     CFLAGS += ' --dlib_config "' + IAR_PATH + '/arm/INC/c/DLib_Config_Normal.h"'    
     CFLAGS += ' -Ol'    
     CFLAGS += ' --use_c++_inline'
-        
+    CFLAGS += ' --silent'
+    
     AFLAGS = ''
     AFLAGS += ' -s+' 
     AFLAGS += ' -w+' 
     AFLAGS += ' -r' 
     AFLAGS += ' --cpu Cortex-M7' 
     AFLAGS += ' --fpu None' 
-
+    AFLAGS += ' -S' 
+    
     LFLAGS = ' --config rtthread-stm32f7xx.icf'
     LFLAGS += ' --redirect _Printf=_PrintfTiny' 
     LFLAGS += ' --redirect _Scanf=_ScanfSmall' 
     LFLAGS += ' --entry __iar_program_start'    
+    LFLAGS += ' --silent'
+
+    CXXFLAGS = CFLAGS
 
     EXEC_PATH = IAR_PATH + '/arm/bin/'
     POST_ACTION = ''

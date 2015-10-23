@@ -267,6 +267,12 @@ def PrepareModuleBuilding(env, root_directory, bsp_directory):
     global Env
     global Rtt_Root
 
+    # patch for win32 spawn
+    if env['PLATFORM'] == 'win32':
+        win32_spawn = Win32Spawn()
+        win32_spawn.env = env
+        env['SPAWN'] = win32_spawn.spawn
+
     Env = env
     Rtt_Root = root_directory
 
@@ -491,37 +497,35 @@ def DoBuilding(target, objects):
                 lst.append(item)
         return lst
 
-    objects = one_list(objects)
-
-    # remove source files with local flags setting
-    for group in Projects:
-        if group.has_key('LOCAL_CCFLAGS') or group.has_key('LOCAL_CPPPATH') or group.has_key('LOCAL_CPPDEFINES'):
-            for source in group['src']:
-                for obj in objects:
-                    if source.abspath == obj.abspath or (len(obj.sources) > 0 and source.abspath == obj.sources[0].abspath):
-                        objects.remove(obj)
-
-    # re-add the source files to the objects
-    for group in Projects:
+    # handle local group
+    def local_group(group, objects):
         if group.has_key('LOCAL_CCFLAGS') or group.has_key('LOCAL_CPPPATH') or group.has_key('LOCAL_CPPDEFINES'):
             CCFLAGS = Env.get('CCFLAGS', '') + group.get('LOCAL_CCFLAGS', '')
             CPPPATH = Env.get('CPPPATH', ['']) + group.get('LOCAL_CPPPATH', [''])
             CPPDEFINES = Env.get('CPPDEFINES', ['']) + group.get('LOCAL_CPPDEFINES', [''])
 
             for source in group['src']:
-                objects += Env.Object(source, CCFLAGS = CCFLAGS,
-                    CPPPATH = CPPPATH,
-                    CPPDEFINES = CPPDEFINES)
+                objects.append(Env.Object(source, CCFLAGS = CCFLAGS,
+                    CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES))
+
+            return True
+
+        return False
+
+    objects = one_list(objects)
 
     program = None
     # check whether special buildlib option
     lib_name = GetOption('buildlib')
     if lib_name:
+        objects = [] # remove all of objects
         # build library with special component
         for Group in Projects:
             if Group['name'] == lib_name:
                 lib_name = GroupLibName(Group['name'], Env)
-                objects = Env.Object(Group['src'])
+                if not local_group(Group, objects):
+                    objects = Env.Object(Group['src'])
+
                 program = Env.Library(lib_name, objects)
 
                 # add library copy action
@@ -529,6 +533,18 @@ def DoBuilding(target, objects):
 
                 break
     else:
+        # remove source files with local flags setting
+        for group in Projects:
+            if group.has_key('LOCAL_CCFLAGS') or group.has_key('LOCAL_CPPPATH') or group.has_key('LOCAL_CPPDEFINES'):
+                for source in group['src']:
+                    for obj in objects:
+                        if source.abspath == obj.abspath or (len(obj.sources) > 0 and source.abspath == obj.sources[0].abspath):
+                            objects.remove(obj)
+
+        # re-add the source files to the objects
+        for group in Projects:
+            local_group(group, objects)
+
         program = Env.Program(target, objects)
 
     EndBuilding(target, program)
