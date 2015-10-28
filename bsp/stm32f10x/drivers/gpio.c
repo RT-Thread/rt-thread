@@ -15,6 +15,7 @@
 #include <rthw.h>
 #include <rtdevice.h>
 #include <board.h>
+#include <gpio.h>
 
 #ifdef RT_USING_PIN
 
