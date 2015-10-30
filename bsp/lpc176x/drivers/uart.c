@@ -89,6 +89,9 @@ void UART0_IRQHandler(void)
 
             uart->parent.rx_indicate(&uart->parent, length);
 		}
+	}else if(iir == IIR_RLS)
+	{
+		iir = LPC_Uart->LSR;	//oe pe fe oe read for clear interrupt	
 	}
 
 	return;
