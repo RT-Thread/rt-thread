@@ -282,6 +282,37 @@ int cmd_ifconfig(int argc, char **argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_ifconfig, __cmd_ifconfig, list the information of network interfaces);
 
+#ifdef RT_LWIP_DNS
+#include <lwip/api.h>
+#include <lwip/dns.h>
+int cmd_dns(int argc, char **argv)
+{
+    extern void set_dns(char* dns_server);
+
+    if (argc == 1)
+    {
+        int index;
+        struct ip_addr ip_addr;
+        for(index=0; index<DNS_MAX_SERVERS; index++)
+        {
+            ip_addr = dns_getserver(index);
+            rt_kprintf("dns server #%d: %s\n", index, ipaddr_ntoa(&(ip_addr)));
+        }
+    }
+    else if (argc == 2)
+    {
+        rt_kprintf("dns : %s\n", argv[1]);
+        set_dns(argv[1]);
+    }
+    else
+    {
+        rt_kprintf("bad parameter! e.g: dns 114.114.114.114\n");
+    }
+    return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_dns, __cmd_dns, list the information of dns);
+#endif
+
 #ifdef RT_LWIP_TCP
 int cmd_netstat(int argc, char **argv)
 {
