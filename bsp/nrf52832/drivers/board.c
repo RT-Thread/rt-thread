@@ -23,7 +23,6 @@
  */
 
 /** @brief: Function for handling the Systick interrupts.
- *  Triggered every 1ms.
  */
 void SysTick_Handler(void)
 {
