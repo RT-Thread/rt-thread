@@ -1,12 +1,15 @@
 /*
  * File      : board.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 RT-Thread Develop Team
+ * COPYRIGHT (C) 2015 RT-Thread Develop Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
  * http://www.rt-thread.org/license/LICENSE
  *
+ * Change Logs:
+ * Date           Author		Notes
+ * 2015-11-11     Xue Liu		Initial for nRF52
  */
 
 #include <rthw.h>
@@ -37,7 +40,7 @@ void SysTick_Handler(void)
 
 
 /**
- * This function will initial NRF51822 board.
+ * This function will initial NRF52832 board.
  */
 void rt_hw_board_init()
 {

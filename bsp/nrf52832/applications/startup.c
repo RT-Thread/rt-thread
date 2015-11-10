@@ -19,7 +19,7 @@
 #include "board.h"
 
 /**
- * @addtogroup NRF51822
+ * @addtogroup NRF52832
  */
 
 /*@{*/
