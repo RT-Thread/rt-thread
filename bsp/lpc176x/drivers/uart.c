@@ -67,6 +67,9 @@ void UART0_IRQHandler(void)
     iir >>= 1;              /* skip pending bit in IIR */
     iir &= 0x07;            /* check bit 1~3, interrupt identification */
 
+	/* enter interrupt */ 
+ 	rt_interrupt_enter(); 
+
     if (iir == IIR_RDA)     /* Receive Data Available */
     {
         /* Receive Data Available */
@@ -94,7 +97,8 @@ void UART0_IRQHandler(void)
     {
         iir = LPC_UART->LSR;    //oe pe fe oe read for clear interrupt
     }
-
+	/* left interrupt */ 
+ 	rt_interrupt_left();
     return;
 }
 
