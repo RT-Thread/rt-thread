@@ -19,8 +19,8 @@
 
 #include <am33xx.h>
 #include <interrupt.h>
-#include "serial.h"
-#include "serial_reg.h"
+#include "uart.h"
+#include "uart_reg.h"
 
 struct am33xx_uart
 {
