@@ -1185,14 +1185,14 @@ static int sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno
     {
         assert_param(IS_CAN_STDID(pmsg->id));
         pbxcan->sTxMailBox[boxno].TIR |= ((pmsg->id << 21) | \
-                                          pmsg->rtr);
+                                          (pmsg->rtr << 1));
     }
     else
     {
         assert_param(IS_CAN_EXTID(pmsg->id));
         pbxcan->sTxMailBox[boxno].TIR |= ((pmsg->id << 3) | \
-                                          pmsg->ide << 2 | \
-                                          pmsg->rtr);
+                                          (pmsg->ide << 2) | \
+                                          (pmsg->rtr << 1));
     }
 
     pmsg->len &= (uint8_t)0x0000000F;
