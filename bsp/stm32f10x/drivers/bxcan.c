@@ -63,6 +63,7 @@ struct stm_bxcan
     const rt_uint32_t filtercnt;
     const rt_uint32_t fifo1filteroff;
     const struct stm_bxcanfiltermap filtermap[2];
+    struct rt_can_hdr *hdrhead;
 };
 static void calcfiltermasks(struct stm_bxcan *pbxcan);
 static void bxcan1_filter_init(struct rt_can_device *can)
@@ -251,13 +252,13 @@ static const rt_uint32_t bxcan_baud_rate_tab[] =
     // 48 M
     MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 3),
     MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_6tq, CAN_BS2_3tq, 6),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 5),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 11),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 23),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 29),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 59),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_14tq, CAN_BS2_3tq, 149),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_16tq, CAN_BS2_8tq, 199),
+    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 6),
+    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 12),
+    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 24),
+    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 30),
+    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 60),
+    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 150),
+    MK_BKCAN_BAUD(CAN_SJW_4tq, CAN_BS1_15tq, CAN_BS2_8tq, 200),
 };
 
 #define BAUD_DATA(TYPE,NO) \
@@ -287,6 +288,10 @@ static void bxcan_init(CAN_TypeDef *pcan, rt_uint32_t baud, rt_uint32_t mode)
     case RT_CAN_MODE_LOOPBACKANLISEN:
         CAN_InitStructure.CAN_Mode = CAN_Mode_Silent_LoopBack;
         break;
+    }
+    if (baud < 0)
+    {
+        baud = 0;
     }
     CAN_InitStructure.CAN_SJW = BAUD_DATA(SJW, baud);
     CAN_InitStructure.CAN_BS1 = BAUD_DATA(BS1, baud);
@@ -439,7 +444,7 @@ static rt_err_t bxcan_set_baud_rate(CAN_TypeDef *pcan, rt_uint32_t baud)
                  ((BAUD_DATA(SJW, baud)) << 24) | \
                  ((BAUD_DATA(BS1, baud)) << 16) | \
                  ((BAUD_DATA(BS2, baud)) << 20) | \
-                 (BAUD_DATA(RRESCL, baud)));
+                 (BAUD_DATA(RRESCL, baud)) - 1);
     if (bxcan_exit_init(pcan) != RT_EOK)
     {
         return RT_ERROR;
@@ -979,11 +984,14 @@ static rt_err_t bxmodifyfilter(struct stm_bxcan *pbxcan, struct rt_can_filter_it
     CAN_FilterInit(&CAN_FilterInitStructure);
     return RT_EOK;
 }
-static rt_err_t setfilter(struct stm_bxcan *pbxcan, struct rt_can_filter_config *pconfig)
+static rt_err_t setfilter(struct stm_bxcan *pbxcan, rt_int32_t maxhdr,
+                          struct rt_can_filter_config *pconfig)
 {
     struct rt_can_filter_item *pitem = pconfig->items;
+    struct rt_can_hdr *phdrhead = pbxcan->hdrhead;
     rt_uint32_t count = pconfig->count;
     rt_err_t res;
+    rt_base_t level;
     while (count)
     {
         res = bxmodifyfilter(pbxcan, pitem, pconfig->actived);
@@ -991,10 +999,86 @@ static rt_err_t setfilter(struct stm_bxcan *pbxcan, struct rt_can_filter_config 
         {
             return res;
         }
+        if (pitem->hdr >= maxhdr || pitem->hdr < 0);
+        else
+        {
+            if (pconfig->actived)
+            {
+                level = rt_hw_interrupt_disable();
+                if (!phdrhead[pitem->hdr].connected)
+                {
+                    rt_hw_interrupt_enable(level);
+                    rt_memcpy(&phdrhead[pitem->hdr].filter, pitem,
+                              sizeof(struct rt_can_filter_item));
+                    level = rt_hw_interrupt_disable();
+                    phdrhead[pitem->hdr].connected = 1;
+                    phdrhead[pitem->hdr].msgs = 0;
+                    rt_list_init(&phdrhead[pitem->hdr].list);
+                }
+                rt_hw_interrupt_enable(level);
+            }
+            else
+            {
+                rt_base_t level = rt_hw_interrupt_disable();
+                if (phdrhead[pitem->hdr].connected)
+                {
+                    phdrhead[pitem->hdr].connected = 0;
+                    phdrhead[pitem->hdr].msgs = 0;
+                    if (!rt_list_isempty(&phdrhead[pitem->hdr].list))
+                    {
+                        rt_list_remove(phdrhead[pitem->hdr].list.next);
+                    }
+                    rt_hw_interrupt_enable(level);
+                    rt_memset(&phdrhead[pitem->hdr].filter, 0,
+                              sizeof(struct rt_can_filter_item));
+                }
+                else
+                {
+                    rt_hw_interrupt_enable(level);
+                }
+            }
+        }
         pitem++;
         count--;
     }
     return RT_EOK;
+}
+static rt_int32_t baudval2index(enum CANBAUD baudval)
+{
+    rt_int32_t index;
+    switch (baudval)
+    {
+    case CAN1MBaud   :
+        index = 0;
+        break;
+    case CAN800kBaud :
+        index = 1;
+        break;
+    case CAN500kBaud :
+        index = 2;
+        break;
+    case CAN250kBaud :
+        index = 3;
+        break;
+    case CAN125kBaud :
+        index = 4;
+        break;
+    case CAN100kBaud :
+        index = 5;
+        break;
+    case CAN50kBaud  :
+        index = 6;
+        break;
+    case CAN20kBaud  :
+        index = 7;
+        break;
+    case CAN10kBaud  :
+        index = 8;
+        break;
+    default:
+        index = -1;
+    }
+    return index;
 }
 static rt_err_t configure(struct rt_can_device *can, struct can_configure *cfg)
 {
@@ -1005,13 +1089,13 @@ static rt_err_t configure(struct rt_can_device *can, struct can_configure *cfg)
     if (pbxcan == CAN1)
     {
         bxcan1_hw_init();
-        bxcan_init(pbxcan, cfg->baud_rate, can->config.mode);
+        bxcan_init(pbxcan, baudval2index(cfg->baud_rate), can->config.mode);
         bxcan1_filter_init(can);
     }
     else
     {
         bxcan2_hw_init();
-        bxcan_init(pbxcan, cfg->baud_rate, can->config.mode);
+        bxcan_init(pbxcan, baudval2index(cfg->baud_rate), can->config.mode);
         bxcan2_filter_init(can);
     }
     return RT_EOK;
@@ -1020,6 +1104,7 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
 {
     struct stm_bxcan *pbxcan;
     rt_uint32_t argval;
+    rt_base_t level;
     NVIC_InitTypeDef  NVIC_InitStructure;
 
     pbxcan = (struct stm_bxcan *) can->parent.user_data;
@@ -1093,7 +1178,8 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_SET_FILTER:
-        return setfilter(pbxcan, (struct rt_can_filter_config *) arg);
+        return setfilter(pbxcan, can->config.maxhdr,
+                         (struct rt_can_filter_config *) arg);
         break;
     case RT_CAN_CMD_SET_MODE:
         argval = (rt_uint32_t) arg;
@@ -1127,7 +1213,13 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
         if (argval != can->config.baud_rate)
         {
             can->config.baud_rate = argval;
-            return bxcan_set_baud_rate(pbxcan->reg, argval);
+            level = rt_hw_interrupt_disable();
+            if (can->parent.ref_count)
+            {
+                rt_hw_interrupt_enable(level);
+                return bxcan_set_baud_rate(pbxcan->reg, baudval2index(argval));
+            }
+            rt_hw_interrupt_enable(level);
         }
         break;
     case RT_CAN_CMD_SET_PRIV:
@@ -1237,15 +1329,86 @@ static int recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxno)
     if (boxno) pmsg->hdr += ((struct stm_bxcan *) can->parent.user_data)->fifo1filteroff * 4;
     return RT_EOK;
 }
-
+static int insertothdrlist(struct rt_can_device *can, struct rt_can_msg_list *msglist)
+{
+    struct rt_can_hdr *phdrhead = ((struct stm_bxcan *) can->parent.user_data)->hdrhead;
+    rt_int32_t hdr = msglist->data.hdr;
+    RT_ASSERT(hdr < can->config.maxhdr && hdr >= 0);
+    if (phdrhead[hdr].connected)
+    {
+        rt_list_insert_before(&phdrhead[hdr].list, &msglist->hdrlist);
+        msglist->owner = &phdrhead[hdr];
+        phdrhead[hdr].msgs++;
+    }
+    return RT_EOK;
+}
+static struct rt_can_msg_list *getfromhdrlist(struct rt_can_device *can, rt_int32_t hdr)
+{
+    struct rt_can_msg_list *listmsg = RT_NULL;
+    struct rt_can_hdr *phdrhead = ((struct stm_bxcan *) can->parent.user_data)->hdrhead;
+    if (hdr >= 0 && hdr < can->config.maxhdr && !rt_list_isempty(&phdrhead[hdr].list))
+    {
+        listmsg = rt_list_entry(phdrhead[hdr].list.next, struct rt_can_msg_list, hdrlist);
+        rt_list_remove(&listmsg->hdrlist);
+        if (phdrhead[hdr].msgs)
+        {
+            phdrhead[hdr].msgs--;
+        }
+        listmsg->owner = RT_NULL;
+        return listmsg;
+    }
+    return RT_NULL;
+}
+static int dettachhdrlist(struct rt_can_device *can,  struct rt_can_msg_list *msglist)
+{
+    rt_list_remove(&msglist->hdrlist);
+    if (msglist->owner != RT_NULL && msglist->owner->msgs)
+    {
+        msglist->owner->msgs--;
+    }
+    msglist->owner = RT_NULL;
+    return RT_EOK;
+}
+static int indicatehdrlist(struct rt_can_device *can,  struct rt_can_msg_list *msglist)
+{
+    struct rt_can_hdr *phdrhead = ((struct stm_bxcan *) can->parent.user_data)->hdrhead;
+    rt_int32_t hdr = msglist->data.hdr;
+    rt_base_t level;
+    RT_ASSERT(msglist->hdr < can->config.maxhdr && msglist->hdr >= 0);
+    if (phdrhead[hdr].connected && phdrhead[hdr].filter.ind)
+    {
+        rt_size_t rx_length;
+        level = rt_hw_interrupt_disable();
+        rx_length = phdrhead[hdr].msgs * sizeof(struct rt_can_msg);
+        rt_hw_interrupt_enable(level);
+        phdrhead[hdr].filter.ind(&can->parent, phdrhead[hdr].filter.args, hdr, rx_length);
+    }
+    return RT_EOK;
+}
+static int inithdrlist(struct rt_can_device *can,  struct rt_can_msg_list *msglist)
+{
+    RT_ASSERT(msglist != RT_NULL);
+    rt_list_init(&msglist->hdrlist);
+    msglist->owner = RT_NULL;
+    return RT_EOK;
+}
 static const struct rt_can_ops canops =
 {
     configure,
     control,
     sendmsg,
     recvmsg,
+    insertothdrlist,
+    getfromhdrlist,
+    dettachhdrlist,
+    indicatehdrlist,
+    inithdrlist,
 };
 #ifdef USING_BXCAN1
+static struct rt_can_hdr bxcan1hdr[BX_CAN2_FMRSTART * 4] =
+{
+    {0,},
+};
 static struct stm_bxcan bxcan1data =
 {
     .reg = CAN1,
@@ -1271,11 +1434,12 @@ static struct stm_bxcan bxcan1data =
             .id16bit_cnt = 24,
         },
     },
+    .hdrhead = bxcan1hdr,
 };
 struct rt_can_device bxcan1;
 void CAN1_RX0_IRQHandler(void)
 {
-    if (CAN1->RF0R & 0x03)
+    while (CAN1->RF0R & 0x03)
     {
         if ((CAN1->RF0R & CAN_RF0R_FOVR0) != 0)
         {
@@ -1291,7 +1455,7 @@ void CAN1_RX0_IRQHandler(void)
 }
 void CAN1_RX1_IRQHandler(void)
 {
-    if (CAN1->RF1R & 0x03)
+    while (CAN1->RF1R & 0x03)
     {
         if ((CAN1->RF1R & CAN_RF1R_FOVR1) != 0)
         {
@@ -1384,6 +1548,10 @@ void CAN1_SCE_IRQHandler(void)
 #endif /*USING_BXCAN1*/
 
 #ifdef USING_BXCAN2
+static struct rt_can_hdr bxcan2hdr[(BX_CAN_FMRNUMBER - BX_CAN2_FMRSTART) * 4] =
+{
+    {0,},
+};
 static struct stm_bxcan bxcan2data =
 {
     .reg = CAN2,
@@ -1409,12 +1577,13 @@ static struct stm_bxcan bxcan2data =
             .id16bit_cnt = 24,
         },
     },
+    .hdrhead = bxcan2hdr,
 };
 
 struct rt_can_device bxcan2;
 void CAN2_RX0_IRQHandler(void)
 {
-    if (CAN2->RF0R & 0x03)
+    while (CAN2->RF0R & 0x03)
     {
         if ((CAN2->RF0R & CAN_RF0R_FOVR0) != 0)
         {
@@ -1430,7 +1599,7 @@ void CAN2_RX0_IRQHandler(void)
 }
 void CAN2_RX1_IRQHandler(void)
 {
-    if (CAN2->RF1R & 0x03)
+    while (CAN2->RF1R & 0x03)
     {
         if ((CAN2->RF1R & CAN_RF1R_FOVR1) != 0)
         {
@@ -1534,7 +1703,7 @@ int stm32_bxcan_init(void)
     bxcan1.config.sndboxnumber = 3;
     bxcan1.config.mode = RT_CAN_MODE_NORMAL;
     bxcan1.config.privmode = 0;
-    bxcan1.config.ticks = 50;
+    bxcan1.config.ticks = 500;
 #ifdef RT_CAN_USING_HDR
     bxcan1.config.maxhdr = BX_CAN2_FMRSTART * 4;
 #endif
@@ -1553,7 +1722,7 @@ int stm32_bxcan_init(void)
     bxcan2.config.sndboxnumber = 3;
     bxcan2.config.mode = RT_CAN_MODE_NORMAL;
     bxcan2.config.privmode = 0;
-    bxcan2.config.ticks = 50;
+    bxcan2.config.ticks = 500;
 #ifdef RT_CAN_USING_HDR
     bxcan2.config.maxhdr = (BX_CAN_FMRNUMBER - BX_CAN2_FMRSTART) * 4;
 #endif

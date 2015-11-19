@@ -17,13 +17,24 @@
 #include <rthw.h>
 #include <rtdevice.h>
 
+#ifndef RT_CAN_USING_HDR
 #define LPC_CAN_AF_STD_INIT(id) \
-     RT_CAN_FILTER_ITEM_INIT(id,0,0,0,0xFFFFFFFF)
+          RT_CAN_FILTER_ITEM_INIT(id, 0, 0, 0, 0xFFFFFFFF)
 #define LPC_CAN_AF_EXT_INIT(id) \
-     RT_CAN_FILTER_ITEM_INIT(id,1,0,0,0xFFFFFFFF)
-#define LPC_CAN_AF_STD_GRP_INIT(id1,id2) \
-     RT_CAN_FILTER_ITEM_INIT(id1,0,0,1,id2)
-#define LPC_CAN_AF_EXT_GRP_INIT(id1,id2) \
-     RT_CAN_FILTER_ITEM_INIT(id1,1,0,1,id2)
+          RT_CAN_FILTER_ITEM_INIT(id, 1, 0, 0, 0xFFFFFFFF)
+#define LPC_CAN_AF_STD_GRP_INIT(id1, id2) \
+          RT_CAN_FILTER_ITEM_INIT(id1, 0, 0, 1, id2)
+#define LPC_CAN_AF_EXT_GRP_INIT(id1, id2) \
+          RT_CAN_FILTER_ITEM_INIT(id1, 1, 0, 1, id2)
+#else
+#define LPC_CAN_AF_STD_INIT(id, ind, args) \
+          RT_CAN_FILTER_ITEM_INIT(id, 0, 0, 0, 0xFFFFFFFF, ind, args)
+#define LPC_CAN_AF_EXT_INIT(id, ind, args) \
+          RT_CAN_FILTER_ITEM_INIT(id, 1, 0, 0, 0xFFFFFFFF, ind, args)
+#define LPC_CAN_AF_STD_GRP_INIT(id1, id2, ind, args) \
+          RT_CAN_FILTER_ITEM_INIT(id1, 0, 0, 1, id2, ind, args)
+#define LPC_CAN_AF_EXT_GRP_INIT(id1, id2, ind, args) \
+          RT_CAN_FILTER_ITEM_INIT(id1, 1, 0, 1, id2, ind, args)
+#endif
 
 #endif /*DRV_LPCCAN_H_*/

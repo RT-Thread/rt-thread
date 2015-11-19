@@ -15,11 +15,18 @@
 #include <board.h>
 #include <rtthread.h>
 #include <rtdevice.h>
+#include "gpio.h"
 #ifdef RT_USING_CAN
 #define CANRT1   8
 #define CANERR1  9
 #define CANRT2   37
 #define CANERR2  38
+
+struct stm32_hw_pin_userdata
+{
+    int pin;
+    uint32_t mode;
+}
 static struct canledtype
 {
     struct stm32_hw_pin_userdata rtd;
@@ -28,14 +35,14 @@ static struct canledtype
 {
 #ifdef USING_BXCAN1
     {
-        {CANRT1, PIN_MODE_OUTPUT_OD,},
-        {CANERR1, PIN_MODE_OUTPUT_OD,},
+	{CANRT1, PIN_MODE_OUTPUT_OD,},
+	{CANERR1, PIN_MODE_OUTPUT_OD,},
     },
 #endif /*USING_BXCAN1*/
 #ifdef USING_BXCAN2
     {
-        {CANRT2, PIN_MODE_OUTPUT_OD,},
-        {CANERR2, PIN_MODE_OUTPUT_OD,},
+	{CANRT2, PIN_MODE_OUTPUT_OD,},
+	{CANERR2, PIN_MODE_OUTPUT_OD,},
     },
 #endif /*USING_BXCAN2*/
 };
@@ -43,34 +50,34 @@ void can_bus_hook(struct rt_can_device *can, struct canledtype *led)
 {
     if (can->timerinitflag == 1)
     {
-        rt_pin_write(led->rtd.pin, 0);
+	rt_pin_write(led->rtd.pin, 0);
     }
     else
     {
-        if (can->status.rcvchange == 1 || can->status.sndchange == 1)
+	if (can->status.rcvchange == 1 || can->status.sndchange == 1)
         {
             can->status.rcvchange = 0;
             can->status.sndchange = 0;
-            rt_pin_write(led->rtd.pin, rt_pin_read(led->rtd.pin) ? 0 : 1);
-        }
-        else
-        {
-            rt_pin_write(led->rtd.pin, 1);
-        }
+	    rt_pin_write(led->rtd.pin, rt_pin_read(led->rtd.pin) ? 0 : 1);
+	}
+	else
+	{
+	    rt_pin_write(led->rtd.pin, 1);
+	}
     }
     if (can->timerinitflag == 1)
     {
-        rt_pin_write(led->err.pin, 0);
+	rt_pin_write(led->err.pin, 0);
     }
     else
     {
-        if (can->status.errcode)
-        {
-            rt_pin_write(led->err.pin, 0);
-        }
-        else
-        {
-            rt_pin_write(led->err.pin, 1);
+	if (can->status.errcode)
+	{
+	    rt_pin_write(led->err.pin, 0);
+	}
+	else
+	{
+	    rt_pin_write(led->err.pin, 1);
         }
     }
 }
@@ -80,9 +87,9 @@ void can1_bus_hook(struct rt_can_device *can)
     static rt_int32_t inited = 0;
     if (!inited)
     {
-        inited = 1;
-        rt_pin_mode(canled[0].rtd.pin, canled[0].rtd.mode);
-        rt_pin_mode(canled[0].err.pin, canled[0].err.mode);
+	inited = 1;
+	rt_pin_mode(canled[0].rtd.pin, canled[0].rtd.mode);
+	rt_pin_mode(canled[0].err.pin, canled[0].err.mode);
     }
     can_bus_hook(can, &canled[0]);
 }
@@ -93,9 +100,9 @@ void can2_bus_hook(struct rt_can_device *can)
     static rt_int32_t inited = 0;
     if (!inited)
     {
-        inited = 1;
-        rt_pin_mode(canled[1].rtd.pin, canled[1].rtd.mode);
-        rt_pin_mode(canled[1].err.pin, canled[1].err.mode);
+	inited = 1;
+	rt_pin_mode(canled[1].rtd.pin, canled[1].rtd.mode);
+	rt_pin_mode(canled[1].err.pin, canled[1].err.mode);
     }
     can_bus_hook(can, &canled[1]);
 }
@@ -165,14 +172,14 @@ struct rt_can_filter_config filter2 =
 static struct can_app_struct can_data[2] =
 {
     {
-        .name = "bxcan1",
-        .filter = &filter1,
-        .eventopt = RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
+	.name = "bxcan1",
+	.filter = &filter1,
+	.eventopt = RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
     },
     {
-        .name = "bxcan2",
-        .filter = &filter2,
-        .eventopt = RT_EVENT_FLAG_AND | RT_EVENT_FLAG_CLEAR,
+	.name = "bxcan2",
+	.filter = &filter2,
+	.eventopt = RT_EVENT_FLAG_AND | RT_EVENT_FLAG_CLEAR,
     },
 };
 void rt_can_thread_entry(void *parameter)
@@ -189,50 +196,50 @@ void rt_can_thread_entry(void *parameter)
     rt_device_control(candev, RT_CAN_CMD_SET_FILTER, canpara->filter);
     while (1)
     {
-        if (
-            rt_event_recv(&canpara->event,
-                          ((1 << canpara->filter->items[0].hdr)  |
-                           (1 << canpara->filter->items[1].hdr) |
-                           (1 << canpara->filter->items[2].hdr) |
-                           (1 << canpara->filter->items[3].hdr)),
-                          canpara->eventopt,
-                          RT_WAITING_FOREVER, &e) != RT_EOK
-        )
-        {
-            continue;
-        }
-        if (e & (1 << canpara->filter->items[0].hdr))
-        {
-            msg.hdr = canpara->filter->items[0].hdr;
-            while (rt_device_read(candev, 0, &msg, sizeof(msg)) == sizeof(msg))
-            {
-                rt_device_write(candev, 0, &msg, sizeof(msg));
-            }
-        }
-        if (e & (1 << canpara->filter->items[1].hdr))
-        {
-            msg.hdr = canpara->filter->items[1].hdr;
-            while (rt_device_read(candev, 0, &msg, sizeof(msg)) == sizeof(msg))
-            {
-                rt_device_write(candev, 0, &msg, sizeof(msg));
-            }
-        }
-        if (e & (1 << canpara->filter->items[2].hdr))
-        {
-            msg.hdr = canpara->filter->items[2].hdr;
-            while (rt_device_read(candev, 0, &msg, sizeof(msg)) == sizeof(msg))
-            {
-                rt_device_write(candev, 0, &msg, sizeof(msg));
-            }
-        }
-        if (e & (1 << canpara->filter->items[3].hdr))
-        {
-            msg.hdr = canpara->filter->items[3].hdr;
-            while (rt_device_read(candev, 0, &msg, sizeof(msg)) == sizeof(msg))
-            {
-                rt_device_write(candev, 0, &msg, sizeof(msg));
-            }
-        }
+	if (
+	    rt_event_recv(&canpara->event,
+			  ((1 << canpara->filter->items[0].hdr)  |
+			   (1 << canpara->filter->items[1].hdr) |
+			   (1 << canpara->filter->items[2].hdr) |
+			   (1 << canpara->filter->items[3].hdr)),
+			  canpara->eventopt,
+			  RT_WAITING_FOREVER, &e) != RT_EOK
+	)
+	{
+	    continue;
+	}
+	if (e & (1 << canpara->filter->items[0].hdr))
+	{
+	    msg.hdr = canpara->filter->items[0].hdr;
+	    while (rt_device_read(candev, 0, &msg, sizeof(msg)) == sizeof(msg))
+	    {
+		rt_device_write(candev, 0, &msg, sizeof(msg));
+	    }
+	}
+	if (e & (1 << canpara->filter->items[1].hdr))
+	{
+	    msg.hdr = canpara->filter->items[1].hdr;
+	    while (rt_device_read(candev, 0, &msg, sizeof(msg)) == sizeof(msg))
+	    {
+		rt_device_write(candev, 0, &msg, sizeof(msg));
+	    }
+	}
+	if (e & (1 << canpara->filter->items[2].hdr))
+	{
+	    msg.hdr = canpara->filter->items[2].hdr;
+	    while (rt_device_read(candev, 0, &msg, sizeof(msg)) == sizeof(msg))
+	    {
+		rt_device_write(candev, 0, &msg, sizeof(msg));
+	    }
+	}
+	if (e & (1 << canpara->filter->items[3].hdr))
+	{
+	    msg.hdr = canpara->filter->items[3].hdr;
+	    while (rt_device_read(candev, 0, &msg, sizeof(msg)) == sizeof(msg))
+	    {
+		rt_device_write(candev, 0, &msg, sizeof(msg));
+	    }
+	}
     }
 }
 int rt_can_app_init(void)
@@ -240,13 +247,13 @@ int rt_can_app_init(void)
     rt_thread_t tid;
 
     tid = rt_thread_create("canapp1",
-                           rt_can_thread_entry, &can_data[0],
-                           512, RT_THREAD_PRIORITY_MAX / 3 - 1, 20);
+			   rt_can_thread_entry, &can_data[0],
+			   512, RT_THREAD_PRIORITY_MAX / 3 - 1, 20);
     if (tid != RT_NULL) rt_thread_startup(tid);
 
     tid = rt_thread_create("canapp2",
-                           rt_can_thread_entry, &can_data[1],
-                           512, RT_THREAD_PRIORITY_MAX / 3 - 1, 20);
+			   rt_can_thread_entry, &can_data[1],
+			   512, RT_THREAD_PRIORITY_MAX / 3 - 1, 20);
     if (tid != RT_NULL) rt_thread_startup(tid);
 
     return 0;
