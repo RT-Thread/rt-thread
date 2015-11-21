@@ -63,6 +63,12 @@ static int rti_start(void)
 }
 INIT_EXPORT(rti_start, "0");
 
+static int rti_board_start(void)
+{
+    return 0;
+}
+INIT_EXPORT(rti_board_start, "0.end");
+
 static int rti_board_end(void)
 {
     return 0;
@@ -83,7 +89,7 @@ void rt_components_board_init(void)
 #if RT_DEBUG_INIT
     int result;
     const struct rt_init_desc *desc;
-    for (desc = &__rt_init_desc_rti_start; desc < &__rt_init_desc_rti_board_end; desc ++)
+    for (desc = &__rt_init_desc_rti_board_start; desc < &__rt_init_desc_rti_board_end; desc ++)
     {
         rt_kprintf("initialize %s", desc->fn_name);
         result = desc->fn();
@@ -92,7 +98,7 @@ void rt_components_board_init(void)
 #else
     const init_fn_t *fn_ptr;
 
-    for (fn_ptr = &__rt_init_rti_start; fn_ptr < &__rt_init_rti_board_end; fn_ptr++)
+    for (fn_ptr = &__rt_init_rti_board_start; fn_ptr < &__rt_init_rti_board_end; fn_ptr++)
     {
         (*fn_ptr)();
     }

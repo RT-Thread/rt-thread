@@ -1,7 +1,0 @@
-import rtconfig
-Import('RTT_ROOT')
-from building import *
-
-src	= Glob('*.c')
-group = DefineGroup('', src, depend = [''])
-Return('group')

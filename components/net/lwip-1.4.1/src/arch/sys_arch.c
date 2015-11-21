@@ -115,9 +115,10 @@ static void tcpip_init_done_callback(void *arg)
                 netif_set_up(ethif->netif);
             }
 
-#if LWIP_NETIF_LINK_CALLBACK
-            netif_set_link_up(ethif->netif);
-#endif
+            if (!(ethif->flags & ETHIF_LINK_PHYUP))
+            {
+                netif_set_link_up(ethif->netif);
+            }
 
             /* enter critical */
             rt_enter_critical();

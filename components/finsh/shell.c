@@ -425,7 +425,7 @@ void finsh_thread_entry(void *parameter)
 
                 if (rt_device_read(shell->device, 0, &next, 1) == 1)
                 {
-                    if (next == '\0') ch = 'r'; /* linux telnet will issue '\0' */
+                    if (next == '\0') ch = '\r'; /* linux telnet will issue '\0' */
                     else ch = next;
                 }
                 else ch = '\r';

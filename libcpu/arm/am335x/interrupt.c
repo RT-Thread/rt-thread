@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2013-07-06     Bernard      first version
+ * 2015-11-06     zchong       support iar compiler
  */
 
 #include <rthw.h>
@@ -53,13 +54,22 @@ void rt_dump_aintc(void)
 
 const unsigned int AM335X_VECTOR_BASE = 0x4030FC00;
 extern void rt_cpu_vector_set_base(unsigned int addr);
+#ifdef __ICCARM__
+extern int __vector;
+#else
 extern int system_vectors;
+#endif
 
 static void rt_hw_vector_init(void)
 {
     unsigned int *dest = (unsigned int *)AM335X_VECTOR_BASE;
+    
+#ifdef __ICCARM__
+    unsigned int *src =  (unsigned int *)&__vector;
+#else
     unsigned int *src =  (unsigned int *)&system_vectors;
-
+#endif
+    
     rt_memcpy(dest, src, 16 * 4);
     rt_cpu_vector_set_base(AM335X_VECTOR_BASE);
 }
@@ -203,3 +213,5 @@ void rt_dump_isr_table(void)
     }
 }
 /*@}*/
+
+

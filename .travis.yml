@@ -13,8 +13,6 @@ before_script:
   - "[ $RTT_TOOL_CHAIN = 'atmel-avr32' ] && curl -s http://www.atmel.com/images/avr32-gnu-toolchain-3.4.1.348-linux.any.x86.tar.gz | sudo tar xzf - -C /opt && export RTT_EXEC_PATH=/opt/avr32-gnu-toolchain-linux_x86/bin && /opt/avr32-gnu-toolchain-linux_x86/bin/avr32-gcc --version && curl -sO http://www.atmel.com/images/avr-headers-3.2.3.970.zip && unzip -qq avr-headers-3.2.3.970.zip -d bsp/$RTT_BSP || true"
   - export RTT_ROOT=`pwd`
   - "[ x$RTT_CC == x ] && export RTT_CC='gcc' || true"
-  - git clone --depth 1 https://github.com/RT-Thread/RTGUI.git $HOME/RTGUI
-  - export RTT_RTGUI=$HOME/RTGUI/components/rtgui
 
 script:
   - scons -C bsp/$RTT_BSP
