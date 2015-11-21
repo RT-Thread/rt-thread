@@ -1139,7 +1139,8 @@ rt_err_t rt_event_recv(rt_event_t   event,
     if (status == RT_EOK)
     {
         /* set received event */
-        *recved = (event->set & set);
+        if (recved)
+        	*recved = (event->set & set);
 
         /* received event */
         if (option & RT_EVENT_FLAG_CLEAR)
