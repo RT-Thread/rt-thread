@@ -27,11 +27,13 @@ RTM_EXPORT(memchr);
 RTM_EXPORT(toupper);
 RTM_EXPORT(atoi);
 
+#ifdef RT_USING_RTC
 RTM_EXPORT(localtime);
 RTM_EXPORT(time);
+#endif
 
 /* import the full stdio for printf */
-#ifdef __MICROLIB
+#if defined(RT_USING_MODULE) && defined(__MICROLIB)
 #error "[RT_USING_LIBC] Please use standard libc but not microlib."
 #endif
 
