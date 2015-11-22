@@ -19,7 +19,7 @@
 #include "board.h"
 
 /**
- * @addtogroup NRF51822
+ * @addtogroup NRF52832
  */
 
 /*@{*/
@@ -28,13 +28,13 @@ extern int  rt_application_init(void);
 
 #ifdef __CC_ARM
 extern int Image$$RW_IRAM1$$ZI$$Limit;
-#define NRF_HEAP_BEGIN    (&Image$$RW_IRAM1$$ZI$$Limit)
+#define NRF_SRAM_BEGIN    (&Image$$RW_IRAM1$$ZI$$Limit)
 #elif __ICCARM__
 #pragma section="HEAP"
-#define NRF_HEAP_BEGIN    (__segment_end("HEAP"))
+#define NRF_SRAM_BEGIN    (__segment_end("HEAP"))
 #else
 extern int __bss_end;
-#define NRF_HEAP_BEGIN    (&__bss_end)
+#define NRF_SRAM_BEGIN    (&__bss_end)
 #endif
 
 /**
@@ -58,7 +58,7 @@ void rtthread_startup(void)
     rt_system_timer_init();
 
 #ifdef RT_USING_HEAP
-    rt_system_heap_init((void*)NRF_HEAP_BEGIN, (void*)NRF_SRAM_END);
+    rt_system_heap_init((void*)NRF_SRAM_BEGIN, (void*)NRF_SRAM_END);
 #endif
 
     /* init scheduler system */
