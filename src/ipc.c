@@ -1188,7 +1188,8 @@ rt_err_t rt_event_recv(rt_event_t   event,
         level = rt_hw_interrupt_disable();
 
         /* set received event */
-        *recved = thread->event_set;
+        if (recved)
+            *recved = thread->event_set;
     }
 
     /* enable interrupt */
