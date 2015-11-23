@@ -27,7 +27,12 @@
 #define BX_CAN_FMRNUMBER 28
 #define BX_CAN2_FMRSTART 14
 #endif
+#ifdef STM32F10X_HD
+#undef USING_BXCAN2
 
+#define CAN1_RX0_IRQn USB_LP_CAN1_RX0_IRQn
+#define CAN1_TX_IRQn USB_HP_CAN1_TX_IRQn
+#endif
 #define BX_CAN_MAX_FILTERS (BX_CAN_FMRNUMBER * 4)
 #define BX_CAN_MAX_FILTER_MASKS BX_CAN_MAX_FILTERS
 #define BX_CAN_FILTER_MAX_ARRAY_SIZE ((BX_CAN_MAX_FILTERS + 32 - 1) / 32)
@@ -148,6 +153,7 @@ static void bxcan1_filter_init(struct rt_can_device *can)
     }
     calcfiltermasks(pbxcan);
 }
+#ifdef USING_BXCAN2
 static void bxcan2_filter_init(struct rt_can_device *can)
 {
     rt_uint32_t i;
@@ -234,6 +240,8 @@ static void bxcan2_filter_init(struct rt_can_device *can)
     }
     calcfiltermasks(pbxcan);
 }
+#endif
+
 #define BS1SHIFT 16
 #define BS2SHIFT 20
 #define RRESCLSHIFT 0
@@ -320,6 +328,7 @@ static void bxcan1_hw_init(void)
     NVIC_InitStructure.NVIC_IRQChannel = CAN1_TX_IRQn;
     NVIC_Init(&NVIC_InitStructure);
 }
+#ifdef USING_BXCAN2
 static void bxcan2_hw_init(void)
 {
     GPIO_InitTypeDef  GPIO_InitStructure;
@@ -345,6 +354,7 @@ static void bxcan2_hw_init(void)
     NVIC_InitStructure.NVIC_IRQChannel = CAN2_TX_IRQn;
     NVIC_Init(&NVIC_InitStructure);
 }
+#endif
 static inline rt_err_t bxcan_enter_init(CAN_TypeDef *pcan)
 {
     uint32_t wait_ack = 0x00000000;
@@ -1010,9 +1020,11 @@ static rt_err_t configure(struct rt_can_device *can, struct can_configure *cfg)
     }
     else
     {
+#ifdef USING_BXCAN2
         bxcan2_hw_init();
         bxcan_init(pbxcan, cfg->baud_rate, can->config.mode);
         bxcan2_filter_init(can);
+#endif
     }
     return RT_EOK;
 }
@@ -1173,14 +1185,14 @@ static int sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno
     {
         assert_param(IS_CAN_STDID(pmsg->id));
         pbxcan->sTxMailBox[boxno].TIR |= ((pmsg->id << 21) | \
-                                          pmsg->rtr);
+                                          (pmsg->rtr << 1));
     }
     else
     {
         assert_param(IS_CAN_EXTID(pmsg->id));
         pbxcan->sTxMailBox[boxno].TIR |= ((pmsg->id << 3) | \
-                                          pmsg->ide << 2 | \
-                                          pmsg->rtr);
+                                          (pmsg->ide << 2) | \
+                                          (pmsg->rtr << 1));
     }
 
     pmsg->len &= (uint8_t)0x0000000F;
