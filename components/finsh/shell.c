@@ -200,7 +200,8 @@ void finsh_run_line(struct finsh_parser *parser, const char *line)
 {
     const char *err_str;
 
-    rt_kprintf("\n");
+    if(shell->echo_mode)
+        rt_kprintf("\n");
     finsh_parser_run(parser, (unsigned char *)line);
 
     /* compile node root */
@@ -489,7 +490,8 @@ void finsh_thread_entry(void *parameter)
 #ifdef FINSH_USING_MSH
                 if (msh_is_used() == RT_TRUE)
                 {
-                    rt_kprintf("\n");
+                    if (shell->echo_mode)
+                        rt_kprintf("\n");
                     msh_exec(shell->line, shell->line_position);
                 }
                 else
@@ -500,7 +502,8 @@ void finsh_thread_entry(void *parameter)
                     shell->line[shell->line_position] = ';';
 
                     if (shell->line_position != 0) finsh_run_line(&shell->parser, shell->line);
-                    else rt_kprintf("\n");
+                    else
+                        if (shell->echo_mode) rt_kprintf("\n");
 #endif
                 }
 
