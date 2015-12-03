@@ -344,6 +344,7 @@ static rt_int32_t rt_telnet_srv_tcp_init(const rt_int16_t local_port ,
     }
 
     addr_len = sizeof(struct sockaddr_in);
+    
     FD_ZERO(&readset);
     
     while(1)
@@ -392,7 +393,8 @@ static rt_int32_t rt_telnet_srv_tcp_init(const rt_int16_t local_port ,
 
                 rt_thread_delay(1);
             }
-
+            
+            FD_CLR(sock_conn , &readset);
             closesocket(sock_conn);
             sock_conn = -1;
         }
