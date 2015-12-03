@@ -22,6 +22,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2015-12-03     pangwei      porting to RT-Thread
  */
 
 #ifndef TELNET_SERVER_H__
@@ -30,7 +31,7 @@
 #include <rtdevice.h>
 #include <rtthread.h>
 
-rt_err_t rtu_telnet_init(void);
+rt_err_t rt_telnet_init(void);
 
 #endif
 
