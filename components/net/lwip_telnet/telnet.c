@@ -22,6 +22,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2015-12-03     pangwei      porting to RT-Thread
  */
 #include "lwip/sockets.h"
 #include <finsh.h>
@@ -293,7 +294,7 @@ static void telnet_process_rx(struct telnet_session* telnet, rt_uint8_t *data,
     return;
 }
 
-static rt_int32_t rtu_telnet_srv_tcp_init(const rt_int16_t local_port ,
+static rt_int32_t rt_telnet_srv_tcp_init(const rt_int16_t local_port ,
                                    rt_int32_t nb_connection)
 {
     rt_uint8_t data_buffer[MAX_CMD_LENS] = {0};
@@ -309,8 +310,9 @@ static rt_int32_t rtu_telnet_srv_tcp_init(const rt_int16_t local_port ,
     fd_set readset;
     struct timeval timeout;
 
+    /*make select function do not block*/
     timeout.tv_sec = 0;         // second.
-    timeout.tv_usec = 50 * 1000; //wait micro second.
+    timeout.tv_usec = 0;        //wait micro second.
 
     sock_fd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -403,19 +405,19 @@ static rt_int32_t rtu_telnet_srv_tcp_init(const rt_int16_t local_port ,
 }
 
 
-static void rtu_telnet_thread_entry(void* parm)
+static void rt_telnet_thread_entry(void* parm)
 {
-    rtu_telnet_srv_tcp_init(TELNET_PORT , 1);
+    rt_telnet_srv_tcp_init(TELNET_PORT , 1);
 }
 
-rt_err_t rtu_telnet_init(void)
+rt_err_t rt_telnet_init(void)
 {
     rt_thread_t tid = RT_NULL;
 
     telnet_device_init();
 
     tid = rt_thread_create("telnet",
-                           rtu_telnet_thread_entry, RT_NULL,
+                           rt_telnet_thread_entry, RT_NULL,
                            1024, 24 , 20);
 
     if (tid != RT_NULL)
@@ -428,5 +430,5 @@ rt_err_t rtu_telnet_init(void)
 
 #ifdef FINSH_USING_MSH
 #include <finsh.h>
-MSH_CMD_EXPORT(rtu_telnet_init               , rtu_telnet_init.);
+MSH_CMD_EXPORT(rt_telnet_init               , rt_telnet_init.);
 #endif
