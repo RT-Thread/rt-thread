@@ -344,7 +344,8 @@ static rt_int32_t rt_telnet_srv_tcp_init(const rt_int16_t local_port ,
     }
 
     addr_len = sizeof(struct sockaddr_in);
-
+    FD_ZERO(&readset);
+    
     while(1)
     {
         sock_conn = accept(sock_fd, (struct sockaddr *)&conn_addr, &addr_len);
@@ -363,13 +364,12 @@ static rt_int32_t rt_telnet_srv_tcp_init(const rt_int16_t local_port ,
             finsh_set_echo(1);
 
             telnet->echo_mode = finsh_get_echo();
-
+            
+            FD_SET(sock_conn , &readset);
+            
             while (1)
             {
                 telnet_process_tx(telnet , sock_conn);
-
-                FD_ZERO(&readset);
-                FD_SET(sock_conn , &readset);
 
                 if( (rc = lwip_select(sock_conn + 1 , &readset , NULL , 0 , &timeout)) == 0 )
                     continue;
