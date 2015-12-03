@@ -321,9 +321,6 @@ static rt_int32_t rt_telnet_srv_tcp_init(const rt_int16_t local_port ,
         return -RT_ERROR;
     }
 
-    setsockopt(sock_fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
-    setsockopt(sock_fd, SOL_SOCKET , SO_KEEPALIVE, &optval, sizeof(optval));
-
     rt_memset(&server_addr, 0, sizeof(server_addr));
 
     server_addr.sin_family = AF_INET;
