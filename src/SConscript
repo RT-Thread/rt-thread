@@ -24,6 +24,7 @@ if GetDepend('RT_USING_MEMPOOL') == False:
 
 if GetDepend('RT_USING_MEMHEAP') == False:
     SrcRemove(src, ['memheap.c'])
+else:    
     if GetDepend('RT_USING_MEMHEAP_AS_HEAP'):
         SrcRemove(src, ['mem.c'])
 
