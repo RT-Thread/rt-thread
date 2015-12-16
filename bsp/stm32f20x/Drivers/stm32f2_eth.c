@@ -247,7 +247,7 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
 	u16_t len;
 	uint32_t l=0,i =0;
 	FrameTypeDef frame;
-	static framecnt = 1;
+	static int framecnt = 1;
 	u8 *buffer;
 	__IO ETH_DMADESCTypeDef *DMARxNextDesc;
 	
