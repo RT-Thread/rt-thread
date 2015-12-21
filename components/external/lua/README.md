@@ -24,8 +24,7 @@ RT-Thread中的Lua修改自[eLua](http://www.eluaproject.net/)的Lua-5.1.4版本
     3.更多的配置项可以在luaconf.h中找到
 
 ## 开发相关
-    - 采用gcc工具链时，依赖于newlib，需在rtconfig.h中定义RT_USING_NEWLIB  
-      采用keil工具链时，依赖于arm的标准c库，需在rtconfig.h中定义RT_USING_ARM_LIBC
+    - lua组件依赖于libc，需要在rtconfig.h中定义RT_USING_LIBC
     - 开启编译器对C99的支持，如MDK中，在C/C++选项的Misc Controls输入框中添加--c99
     - 使用gcc时，需要在链接脚本中定义_stext和_etext，.ordata*放在两者之间。用于判断数据是read-only和writable  
       使用keil时，需要在分散加载文件中把rodata放在ER_IROM1区
