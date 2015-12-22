@@ -119,19 +119,28 @@ struct stat;
 /* file api*/
 int open(const char *file, int flags, int mode);
 int close(int d);
+#ifdef RT_USING_NEWLIB
+_READ_WRITE_RETURN_TYPE _EXFUN(read, (int __fd, void *__buf, size_t __nbyte));
+_READ_WRITE_RETURN_TYPE _EXFUN(write, (int __fd, const void *__buf, size_t __nbyte));
+#else
 int read(int fd, void *buf, size_t len);
 int write(int fd, const void *buf, size_t len);
+#endif
 off_t lseek(int fd, off_t offset, int whence);
 int rename(const char *from, const char *to);
 int unlink(const char *pathname);
 int stat(const char *file, struct stat *buf);
 int fstat(int fildes, struct stat *buf);
-int statfs(const char *path, struct statfs *buf);
+int fsync(int fildes);
+int ioctl(int fildes, unsigned long cmd, void *data);
 
 /* directory api*/
 int rmdir(const char *path);
 int chdir(const char *path);
 char *getcwd(char *buf, size_t size);
+
+/* file system api */
+int statfs(const char *path, struct statfs *buf);
 
 #ifdef __cplusplus
 }
