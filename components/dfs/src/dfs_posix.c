@@ -123,7 +123,11 @@ RTM_EXPORT(close);
  * @return the actual read data buffer length. If the returned value is 0, it
  * may be reach the end of file, please check errno.
  */
+#ifdef RT_USING_NEWLIB
+_READ_WRITE_RETURN_TYPE _EXFUN(read, (int fd, void *buf, size_t len))
+#else
 int read(int fd, void *buf, size_t len)
+#endif
 {
     int result;
     struct dfs_fd *d;
@@ -163,7 +167,11 @@ RTM_EXPORT(read);
  *
  * @return the actual written data buffer length.
  */
+#ifdef RT_USING_NEWLIB
+_READ_WRITE_RETURN_TYPE _EXFUN(write, (int fd, const void *buf, size_t len))
+#else
 int write(int fd, const void *buf, size_t len)
+#endif
 {
     int result;
     struct dfs_fd *d;
@@ -404,6 +412,43 @@ int fsync(int fildes)
     return ret;
 }
 RTM_EXPORT(fsync);
+
+/**
+ * this function is a POSIX compliant version, which shall perform a variety of 
+ * control functions on devices. 
+ *
+ * @param fildes the file description
+ * @param cmd the specified command
+ * @param data represents the additional information that is needed by this 
+ * specific device to perform the requested function.
+ *
+ * @return 0 on successful completion. Otherwise, -1 shall be returned and errno 
+ * set to indicate the error. 
+ */
+int ioctl(int fildes, unsigned long cmd, void *data)
+{
+	int ret;
+    struct dfs_fd *d;
+
+    /* get the fd */
+    d = fd_get(fildes);
+    if (d == RT_NULL)
+    {
+        rt_set_errno(-DFS_STATUS_EBADF);
+        return -1;
+    }
+
+	ret = dfs_file_ioctl(d, cmd, data);
+	if (ret != DFS_STATUS_OK)
+	{
+		rt_set_errno(ret);
+		ret = -1;
+	}
+    fd_put(d);
+
+	return ret;
+}
+RTM_EXPORT(ioctl);
 
 /**
  * this function is a POSIX compliant version, which will return the 
