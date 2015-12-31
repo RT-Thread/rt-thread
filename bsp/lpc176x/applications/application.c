@@ -14,6 +14,7 @@
  * 2010-05-02     Aozima       add led function
  * 2010-05-24     Bernard      add filesystem initialization and move led function to led.c
  * 2012-04-15     Bernard      enable components_init.
+ * 2015-12-31     Yuht         fixed warning: #223-D: function "xxx" declared implicitly
  */
 
 #include <rtthread.h>
@@ -33,6 +34,14 @@ extern int lwip_system_init(void);
 #ifdef RT_USING_FINSH
 #include <shell.h>
 #include <finsh.h>
+#endif
+
+#ifdef RT_USING_DFS
+extern int dfs_init(void);  // rt-thread-master\components\dfs\src\dfs.c  : int dfs_init(void)
+#endif 
+
+#ifdef RT_USING_DFS_ELMFAT
+extern int elm_init(void);	// rt-thread-master\components\dfs\filesystems\elmfat\dfs_elm.c  : int elm_init(void)
 #endif
 
 /* thread phase init */
