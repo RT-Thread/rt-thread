@@ -110,6 +110,36 @@
 // <item description="LFN1">1</item>
 // <item description="LFN1">2</item>
 // </integer>
+#define RT_DFS_ELM_CODE_PAGE 936
+//  The RT_DFS_ELM_CODE_PAGE specifies the OEM code page to be used on the target system.
+//  Incorrect setting of the code page can cause a file open failure.
+//
+//   932  - Japanese Shift-JIS (DBCS, OEM, Windows)
+//   936  - Simplified Chinese GBK (DBCS, OEM, Windows)
+//   949  - Korean (DBCS, OEM, Windows)
+//   950  - Traditional Chinese Big5 (DBCS, OEM, Windows)
+//   1250 - Central Europe (Windows)
+//   1251 - Cyrillic (Windows)
+//   1252 - Latin 1 (Windows)
+//   1253 - Greek (Windows)
+//   1254 - Turkish (Windows)
+//   1255 - Hebrew (Windows)
+//   1256 - Arabic (Windows)
+//   1257 - Baltic (Windows)
+//   1258 - Vietnam (OEM, Windows)
+//   437  - U.S. (OEM)
+//   720  - Arabic (OEM)
+//   737  - Greek (OEM)
+//   775  - Baltic (OEM)
+//   850  - Multilingual Latin 1 (OEM)
+//   858  - Multilingual Latin 1 + Euro (OEM)
+//   852  - Latin 2 (OEM)
+//   855  - Cyrillic (OEM)
+//   866  - Russian (OEM)
+//   857  - Turkish (OEM)
+//   862  - Hebrew (OEM)
+//   874  - Thai (OEM, Windows)
+//	  1    - ASCII only (Valid for non LFN cfg.)
 #define RT_DFS_ELM_USE_LFN	1
 // <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="256" />
 #define RT_DFS_ELM_MAX_LFN	64
