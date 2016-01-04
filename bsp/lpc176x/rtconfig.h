@@ -121,6 +121,36 @@
 // #define RT_USING_DFS_DEVFS
 // <bool name="RT_USING_DFS_NFS" description="Using NFS v3 client file system" default="false" />
 // #define RT_USING_DFS_NFS
+#define RT_DFS_ELM_USE_LFN	1
+// <integer name="RT_DFS_ELM_CODE_PAGE" description="specifies the OEM code page to be used on the target system" default="936">
+// <item description="Japanese Shift-JIS (DBCS, OEM, Windows)">932</item>
+// <item description="Simplified Chinese GBK (DBCS, OEM, Windows)">936</item>
+// <item description="Korean (DBCS, OEM, Windows)">949</item>
+// <item description="Traditional Chinese Big5 (DBCS, OEM, Windows)">950</item>
+// <item description="Central Europe (Windows)">1250</item>
+// <item description="Cyrillic (Windows)">1251</item>
+// <item description="Latin 1 (Windows)">1252</item>
+// <item description="Greek (Windows)">1253</item>
+// <item description="Turkish (Windows)">1254</item>
+// <item description="Hebrew (Windows)">1255</item>
+// <item description="Arabic (Windows)">1256</item>
+// <item description="Baltic (Windows)">1257</item>
+// <item description="Vietnam (OEM, Windows)">1258</item>
+// <item description="U.S. (OEM)">437</item>
+// <item description="Arabic (OEM)">720</item>
+// <item description="Greek (OEM)">737</item>
+// <item description="Baltic (OEM)">775</item>
+// <item description="Multilingual Latin 1 (OEM)">850</item>
+// <item description="Multilingual Latin 1 + Euro (OEM)">858</item>
+// <item description="Latin 2 (OEM)">852</item>
+// <item description="Cyrillic (OEM)">855</item>
+// <item description="Russian (OEM)">866</item>
+// <item description="Turkish (OEM)">857</item>
+// <item description="Hebrew (OEM)">862</item>
+// <item description="Thai (OEM, Windows)">874</item>
+// <item description="ASCII only (Valid for non LFN cfg.)">1</item>
+// </integer>
+#RT_DFS_ELM_CODE_PAGE 936
 // <string name="RT_NFS_HOST_EXPORT" description="NFSv3 host export" default="192.168.1.5:/" />
 #define RT_NFS_HOST_EXPORT	"192.168.1.5:/"
 // </section>
