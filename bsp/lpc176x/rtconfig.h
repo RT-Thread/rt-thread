@@ -99,7 +99,7 @@
 // <section name="RT_USING_DFS" description="Device file system" default="true" >
 // #define RT_USING_DFS
 // <bool name="DFS_USING_WORKDIR" description="Using working directory" default="true" />
-// #define DFS_USING_WORKDIR
+#define DFS_USING_WORKDIR
 // <integer name="DFS_FILESYSTEMS_MAX" description="The maximal number of mounted file system" default="4" />
 #define DFS_FILESYSTEMS_MAX	2
 // <integer name="DFS_FD_MAX" description="The maximal number of opened files" default="4" />
@@ -110,6 +110,7 @@
 // <item description="LFN1">1</item>
 // <item description="LFN1">2</item>
 // </integer>
+#define RT_DFS_ELM_USE_LFN	1
 // <integer name="RT_DFS_ELM_CODE_PAGE" description="specifies the OEM code page to be used on the target system" default="936">
 // <item description="Japanese Shift-JIS (DBCS, OEM, Windows)">932</item>
 // <item description="Simplified Chinese GBK (DBCS, OEM, Windows)">936</item>
@@ -138,8 +139,7 @@
 // <item description="Thai (OEM, Windows)">874</item>
 // <item description="ASCII only (Valid for non LFN cfg.)">1</item>
 // </integer>
-#define RT_DFS_ELM_CODE_PAGE 936
-#define RT_DFS_ELM_USE_LFN	1
+#define RT_DFS_ELM_CODE_PAGE 437
 // <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="256" />
 #define RT_DFS_ELM_MAX_LFN	64
 // <bool name="RT_USING_DFS_YAFFS2" description="Using YAFFS2" default="false" />
