@@ -35,6 +35,7 @@
 
 #define is_alpha(ch)	((ch | 0x20) - 'a') < 26u
 #define is_digit(ch)	((ch) >= '0' && (ch) <= '9')
+#define is_xdigit(ch)	(((ch) >= '0' && (ch) <= '9') || (((ch | 0x20) - 'a') < 6u))
 #define is_separator(ch) !(((ch) >= 'a' && (ch) <= 'z') \
      || ((ch) >= 'A' && (ch) <= 'Z') || ((ch) >= '0' && (ch) <= '9') || ((ch) == '_'))
 #define is_eof(self) (self)->eof
@@ -439,12 +440,16 @@ static int token_proc_escape(struct finsh_token* self)
 	case 'a':
 		result = '\007';
 		break;
+	case '"':
+		result = '"';
+		break;
 	case 'x':
+	case 'X':
 		result = 0;
 		ch  = token_next_char(self);
-		while ( (ch - '0')<16u )
+		while (is_xdigit(ch))
 		{
-			result = result*16 + ch - '0';
+			result = result * 16 + ((ch < 'A') ? (ch - '0') : (ch | 0x20) - 'a' + 10);
 			ch = token_next_char(self);
 		}
 		token_prev_char(self);
