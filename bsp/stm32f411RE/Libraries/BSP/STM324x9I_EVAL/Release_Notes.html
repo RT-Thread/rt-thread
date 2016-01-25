@@ -1,0 +1,813 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+  
+  <link rel="File-List" href="Library_files/filelist.xml">
+
+  
+  <link rel="Edit-Time-Data" href="Library_files/editdata.mso"><!--[if !mso]> <style> v\:* {behavior:url(#default#VML);} o\:* {behavior:url(#default#VML);} w\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style> <![endif]--><title>Release Notes for STM324x9I_EVAL Evaluation Board Drivers</title><!--[if gte mso 9]><xml> <o:DocumentProperties> <o:Author>STMicroelectronics</o:Author> <o:LastAuthor>STMicroelectronics</o:LastAuthor> <o:Revision>37</o:Revision> <o:TotalTime>136</o:TotalTime> <o:Created>2009-02-27T19:26:00Z</o:Created> <o:LastSaved>2009-03-01T17:56:00Z</o:LastSaved> <o:Pages>1</o:Pages> <o:Words>522</o:Words> <o:Characters>2977</o:Characters> <o:Company>STMicroelectronics</o:Company> <o:Lines>24</o:Lines> <o:Paragraphs>6</o:Paragraphs> <o:CharactersWithSpaces>3493</o:CharactersWithSpaces> <o:Version>11.6568</o:Version> </o:DocumentProperties> </xml><![endif]--><!--[if gte mso 9]><xml> <w:WordDocument> <w:Zoom>110</w:Zoom> <w:ValidateAgainstSchemas/> <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid> <w:IgnoreMixedContent>false</w:IgnoreMixedContent> <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText> <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel> </w:WordDocument> </xml><![endif]--><!--[if gte mso 9]><xml> <w:LatentStyles DefLockedState="false" LatentStyleCount="156"> </w:LatentStyles> </xml><![endif]-->
+
+
+  
+
+  
+
+  
+  <style>
+<!--
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+{mso-style-parent:"";
+margin:0in;
+margin-bottom:.0001pt;
+mso-pagination:widow-orphan;
+font-size:12.0pt;
+font-family:"Times New Roman";
+mso-fareast-font-family:"Times New Roman";}
+h2
+{mso-style-next:Normal;
+margin-top:12.0pt;
+margin-right:0in;
+margin-bottom:3.0pt;
+margin-left:0in;
+mso-pagination:widow-orphan;
+page-break-after:avoid;
+mso-outline-level:2;
+font-size:14.0pt;
+font-family:Arial;
+font-weight:bold;
+font-style:italic;}
+a:link, span.MsoHyperlink
+{color:blue;
+text-decoration:underline;
+text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+{color:blue;
+text-decoration:underline;
+text-underline:single;}
+p
+{mso-margin-top-alt:auto;
+margin-right:0in;
+mso-margin-bottom-alt:auto;
+margin-left:0in;
+mso-pagination:widow-orphan;
+font-size:12.0pt;
+font-family:"Times New Roman";
+mso-fareast-font-family:"Times New Roman";}
+@page Section1
+{size:8.5in 11.0in;
+margin:1.0in 1.25in 1.0in 1.25in;
+mso-header-margin:.5in;
+mso-footer-margin:.5in;
+mso-paper-source:0;}
+div.Section1
+{page:Section1;}
+-->
+  </style><!--[if gte mso 10]> <style> /* Style Definitions */ table.MsoNormalTable {mso-style-name:"Table Normal"; mso-tstyle-rowband-size:0; mso-tstyle-colband-size:0; mso-style-noshow:yes; mso-style-parent:""; mso-padding-alt:0in 5.4pt 0in 5.4pt; mso-para-margin:0in; mso-para-margin-bottom:.0001pt; mso-pagination:widow-orphan; font-size:10.0pt; font-family:"Times New Roman"; mso-ansi-language:#0400; mso-fareast-language:#0400; mso-bidi-language:#0400;} </style> <![endif]--><!--[if gte mso 9]><xml> <o:shapedefaults v:ext="edit" spidmax="5122"/> </xml><![endif]--><!--[if gte mso 9]><xml> <o:shapelayout v:ext="edit"> <o:idmap v:ext="edit" data="1"/> </o:shapelayout></xml><![endif]-->
+  <meta content="MCD Application Team" name="author"></head>
+<body link="blue" vlink="blue">
+<div class="Section1">
+<p class="MsoNormal"><span style="font-family: Arial;"><o:p><br>
+</o:p></span></p>
+<div align="center">
+<table class="MsoNormalTable" style="width: 675pt;" border="0" cellpadding="0" cellspacing="0" width="900">
+  <tbody>
+    <tr>
+      <td style="padding: 0cm;" valign="top">
+      <table class="MsoNormalTable" style="width: 675pt;" border="0" cellpadding="0" cellspacing="0" width="900">
+        <tbody>
+          <tr>
+            <td style="vertical-align: top;">
+            <p class="MsoNormal"><span style="font-size: 8pt; font-family: Arial; color: blue;"><a href="../../../Release_Notes.html">Back to Release page</a><o:p></o:p></span></p>
+            </td>
+          </tr>
+          <tr style="">
+            <td style="padding: 1.5pt;">
+            <h1 style="margin-bottom: 18pt; text-align: center;" align="center"><span style="font-size: 20pt; font-family: Verdana; color: rgb(51, 102, 255);">Release
+Notes for STM324x9I_EVAL Evaluation Board Drivers</span><span style="font-size: 20pt; font-family: Verdana;"><o:p></o:p></span></h1>
+            <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-size: 10pt; font-family: Arial; color: black;">Copyright
+2015 STMicroelectronics</span><span style="color: black;"><u1:p></u1:p><o:p></o:p></span></p>
+            <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-size: 10pt; font-family: Arial; color: black;"><img alt="" id="_x0000_i1025" src="../../../_htmresc/st_logo.png" style="border: 0px solid ; width: 86px; height: 65px;"></span><span style="font-size: 10pt;"><o:p></o:p></span></p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="MsoNormal"><span style="font-family: Arial; display: none;"><o:p>&nbsp;</o:p></span></p>
+      <table class="MsoNormalTable" style="width: 675pt;" border="0" cellpadding="0" width="900">
+        <tbody>
+          <tr style="">
+            <td style="padding: 0cm;" valign="top">
+            <span style="font-family: &quot;Times New Roman&quot;;">
+            </span>
+            <h2 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;"><a name="History"></a><span style="font-size: 12pt; color: white;">Update History</span></h2>
+            <h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V2.2.1 / 07-October-2015 <o:p></o:p></span></h3><p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+
+
+            
+            
+            <ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval.c/.h</span></li><ul><li><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;">Rework LCD <span class="SpellE">initialization</span><span class="SpellE"></span><span class="SpellE"></span><span class="SpellE"></span> to <span class="SpellE">ensure</span> <span class="SpellE">refresh</span> rate of 60Hz.</span></li><ul><li><span class="SpellE"><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;">Add</span></span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;"> new API</span><span style="color: rgb(31, 73, 125);">&nbsp;</span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;">"BSP_LCD_InitEx(uint32_t PclkConfig)"</span><span style="color: rgb(0, 112, 192);" lang="EN-US"> </span><span class="SpellE"><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;">to propoerly manage&nbsp;</span></span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;"><span class="SpellE"></span>LTCD pixel <span class="SpellE">clock</span>    configuration</span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;">.</span></li><li><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;"><span class="SpellE">Update</span></span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;">&nbsp;</span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;">"BSP_LCD_Init"</span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;"> to call new API&nbsp;</span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;"><span class="SpellE">BSP_LCD_InitEx().</span></span></li><li><span class="SpellE"><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;">Add</span></span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;">&nbsp;<span class="SpellE"></span></span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;">LCD_MAX_PCLK<span>/</span></span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;">LCD_MIN_PCLK<span> </span></span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;"><span class="SpellE">defines</span>.</span></li><li><span class="SpellE"><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;">Add</span></span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;">&nbsp;<span class="SpellE"></span></span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;"><span></span><span class="SpellE">BSP_LCD_<span class="GramE">InitEx() function prototype.</span></span></span></li></ul><li><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;"><span class="SpellE">Update VBP and HBP values used to calculate AccumulatedActiveH and AccumulatedActiveW for AMPIRE 480x272</span></span></li></ul></ul><ul><li><span style="font-family: Verdana; font-size: 10pt;">stm324x9i_eval_ts.c:</span>&nbsp;</li><ul><li><span class="SpellE"><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;">Update BSP_TS_<span class="GramE">GetState</span></span></span><span class="GramE"><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;">(</span></span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;">)<span class="SpellE"></span> to return correct values of <span class="SpellE">Touch</span>     <span class="SpellE">Screen</span> <span class="SpellE">status</span> and    positions.</span></li></ul></ul><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; font-size: 10pt;"></span><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V2.2.0 / 14-August-2015 <o:p></o:p></span></h3><p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+
+
+            
+            
+            <ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval.c</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman'; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add AUDIO_IO_DeInit() function to align with Common V4.0.0</span></li></ul><span style="font-family: Verdana;"></span><li><span style="font-size: 10pt; font-family: Verdana;">stm324x9i _eval_audio.c</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">Remove </span><span style="font-size: 10pt; font-family: Verdana;">CODEC_Reset() </span><span style="font-size: 10pt; font-family: Verdana;">function&nbsp;</span><span style="font-size: 11pt; font-family: &quot;Calibri&quot;,sans-serif;" lang="EN-US"></span></li></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V2.1.0 / 26-June-2015 <o:p></o:p></span></h3><p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+
+
+            
+            
+            <ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval.c/.h</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">Update to support new 5.7" </span><span style="font-size: 10pt; font-family: Verdana;">VGA LCD </span><span style="font-size: 11pt; font-family: &quot;Calibri&quot;,sans-serif;" lang="EN-US">(AM640480FTNQW-T07H-A)</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 11pt; font-family: &quot;Calibri&quot;,sans-serif;" lang="EN-US">Update I2Cx_ReadMultiple() API &nbsp;to considers&nbsp; the multiple read of the exc7200 touch screen position<br></span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 11pt; font-family: &quot;Calibri&quot;,sans-serif;" lang="EN-US"></span><span style="font-size: 10pt; font-family: Verdana;">Add BSP_TS3510_IsDetected() API to detect which LCD is mounted on the board</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">In header file, add new&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">defines for ts3510 and exc7200 touch screen components I2C addresses</span></li></ul></ul><span style="font-family: Verdana;"></span><li><span style="font-size: 10pt; font-family: Verdana;">stm324x9i _eval_ts.c/.h</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">Update to support new 5.7" </span><span style="font-size: 10pt; font-family: Verdana;">VGA LCD </span><span style="font-size: 11pt; font-family: &quot;Calibri&quot;,sans-serif;" lang="EN-US">(AM640480FTNQW-T07H-A)</span></li></ul><ul><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Update BSP_TS_Init() API to initialize the connected LCD device</span><span style="font-size: 11pt; font-family: &quot;Calibri&quot;,sans-serif;" lang="EN-US"></span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 11pt; font-family: &quot;Calibri&quot;,sans-serif;" lang="EN-US"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Update BSP_TS_GetState() API to calculate the (x,y) position for the mounted LCD device</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">In header file,&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">update to include the new touch screen component driver (exc7200)</span></li></ul></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">stm324x9i _eval_sdram.c/.h</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">Update
+BSP_SDRAM_Init() API to set the right column bits number configuration
+according to the&nbsp;IS42S32800(ISSI) component available on
+the&nbsp;board&nbsp;</span><span style="color: rgb(51, 51, 51); font-family: helvetica,arial,sans-serif; font-size: small; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 20px; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; display: inline ! important; float: none; background-color: rgb(255, 255, 255);"></span></li></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V2.0.4 / 03-March-2015 <o:p></o:p></span></h3><p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+
+
+            
+            
+            <ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval.c/.h</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">Align to STM32F4xx HAL Driver V1.3.0 for __HAL_RCC_PPP_CLK_ENABLE()<br></span></li></ul><li><span style="font-size: 10pt; font-family: Verdana;">stm324x9i _eval_audio.c/.h</span></li><ul><li><span style="font-size: 10pt; font-family: Verdana;">BSP_AUDIO_OUT_Play()/BSP_AUDIO_OUT_ChangeBuffer() add cast </span><span style="font-size: 10pt; font-family: Verdana;">uint8_t </span><span style="font-size: 10pt; font-family: Verdana;">on
+data pointer:&nbsp;update according to the HAL SAI &nbsp;driver update
+to support companding mode which works only with data type on 8-bits.</span></li></ul><li><span style="font-size: 10pt; font-family: Verdana;">stm324x9i _eval_lcd.c</span></li><ul><li><span style="font-size: 10pt; font-family: Verdana;">BSP_LCD_Init() update to check if&nbsp;</span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;"><span style="font-style: italic;">DATA_IN_ExtSDRAM</span></span><span style="font-size: 10pt; font-family: Verdana;"> is enabled or not to avoid the re-initialization for SDRAM interface.<br></span></li></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V2.0.3 / 10-December-2014 <o:p></o:p></span></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+            
+            
+            
+            
+            
+            
+            
+
+
+
+
+
+
+
+
+            
+            
+            
+            
+            
+            
+            
+            <ul style="list-style-type: square;">
+<li><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval.c/.h</span></li>
+              <ul>
+                <li><span style="font-size: 10pt; font-family: Verdana;">Change I2C_SPEED used define by BSP_I2C_SPEED</span></li>
+              </ul>
+              <li><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval_camera.c</span></li>
+              <ul>
+                <li><span style="font-size: 10pt; font-family: Verdana;">BSP_CAMERA_Init():
+Update the Initialization and Stop APIs to set and reset the STANDBY
+pin (to avoid conflict with SDCard detect pin)<br>
+                  </span></li>
+              </ul>
+              <li><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval_camera.h,
+stm324x9i_eval_audio.h, stm324x9i_eval_eeprom.h, stm324x9i_eval_io.h,
+stm324x9i_eval_ts.h and stm324x9i_eval_lcd.c/.h<br>
+                </span></li>
+              <ul>
+                <li><span style="font-size: 10pt; font-family: Verdana;">Change "\" by "/" in the include path to fix compilation issue under Linux</span></li>
+              </ul>
+              <li><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval_nor.c/.h <br>
+                </span></li>
+              <ul>
+                <li><span style="font-size: 10pt; font-family: Verdana;">Change NOR status definition NOR_OK and NOR_ERROR by NOR_STATUS_OK and NOR_STATUS_ERROR, respectively<br>
+                  </span></li>
+              </ul>
+              <li><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval_sdram.c</span></li>
+              <ul>
+                <li><span style="font-size: 10pt; font-family: Verdana;">BSP_SDRAM_Initialization_sequence(): Fix wrong configuration of the burst length</span></li>
+              </ul>
+              <li><span style="font-size: 10pt; font-family: Verdana;">Miscellaneous comments update</span></li>
+            </ul>
+
+            <h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V2.0.2 / 19-June-2014 <o:p></o:p></span></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+            
+            
+            
+            
+            
+
+
+
+
+
+
+            
+            
+            
+            
+            
+            <ul style="list-style-type: square;">
+<li><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval.c/.h</span></li>
+              <ul>
+                <li><span style="font-size: 10pt; font-family: Verdana;">Add protection for double initialization of IO_Init within LCD_IO_Init()</span></li>
+              </ul>
+              <ul>
+                <li><span style="font-size: 10pt; font-family: Verdana;">Enhance BSP_PB_Init() function by removing the call of __SYSCFG_CLK_ENABLE() already enabled in the HAL_GPIO_Init()</span></li>
+              </ul>
+              <li><span style="font-size: 10pt; font-family: Verdana;">stm324x9i _eval_audio.c/.h</span></li>
+              <ul>
+                <li><span style="font-size: 10pt; font-family: Verdana;">Add note that only the audio stereo format is supported</span></li>
+              </ul>
+              <li><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval_sd.c/.h</span></li>
+              <ul>
+                <li><span style="font-size: 10pt; font-family: Verdana;">Ensure
+compatibility with the updated version of FatFs sd_diskio driver (i.e.
+FatFs R0.10 ST modified 20140422) supporting SDIO/SPI to interface uSD</span></li>
+              </ul>
+              <li><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval_lcd.c/.h</span></li>
+              <ul>
+                <li><span style="font-size: 10pt; font-family: Verdana;">Update LCD clock configuration of 5.7" screen to avoid flicker effect within BSP_LCD_Init()</span></li>
+              </ul>
+              <ul>
+                <li><span style="font-size: 10pt; font-family: Verdana;">Comments clean up and typo corrections</span></li>
+              </ul>
+            </ul>
+
+            
+            <h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V2.0.1 / 26-February-2014 <o:p></o:p></span></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            
+            
+            
+            
+            
+            
+            
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+
+
+
+
+
+
+
+
+
+
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+            
+            
+            
+            
+
+
+
+
+
+            
+            
+            
+            
+            <ul style="list-style-type: square;">
+<li><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval_sd.c/.h</span></li>
+              <ul>
+                <li><span style="font-size: 10pt; font-family: Verdana;">Update SD_DATATIMEOUT value</span></li>
+              </ul>
+              
+              <li><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval_eeprom.c/.h</span></li>
+              <ul>
+                <li><span style="font-size: 10pt; font-family: Verdana;">Update usage of BSP_EEPROM_TIMEOUT_UserCallback() function</span></li>
+              </ul>
+            </ul>
+
+
+            <h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V2.0.0 / 18-February-2014 <o:p></o:p></span></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            
+            
+            
+            
+            
+            
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+
+
+
+
+
+
+
+
+
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+            
+            
+            
+
+
+
+
+            
+            
+            
+            <ul style="list-style-type: square;">
+<li><span style="font-size: 10pt; font-family: Verdana;">Major update
+based on STM32Cube specification: drivers architecture and APIs
+modified vs. V1.0.3, and thus the 2 versions are not compatible.<br>
+</span></li><li style="font-weight: bold;"><span style="font-size: 10pt; font-family: Verdana;">This version has to be used only with </span><span style="font-size: 10pt; font-family: Verdana;">STM32CubeF4</span><span style="font-size: 10pt; font-family: Verdana;"> based development</span></li>
+            </ul>
+<ul style="margin-top: 0cm;" type="square">
+
+            
+            </ul><span style="font-family: &quot;Times New Roman&quot;;"></span>
+            <h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 200px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.0.3 / 13-November-2013</span></h3>
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            <ul style="margin-top: 0cm;" type="square">
+<li class="MsoNormal"><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval_ioe8.c/.h</span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span></li><ul><li class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">Enhance the Touch panel detection in <span style="font-style: italic;">IOE_TS_GetState()</span> function : Add a check on FIFO Threshold value before&nbsp;reading&nbsp;X and Y position</span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"> <o:p></o:p></span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span></li></ul>
+            </ul>
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 23px; width: 868px;"><b><u><span style="font-size: 10pt; color: black; font-family: Verdana;">Known 
+Limitations<o:p></o:p></span></u></b></p>
+
+            <ul style="margin-top: 0cm; text-align: justify;" type="square">
+<li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval_audio_codec.c/.h</span></li><ul><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-size: 10pt; font-family: Verdana;">If
+2 audio streams are played in TDM format (the first stream is
+configured in codec SLOT0 and second stream in codec SLOT1) the
+Pause/Resume, Volume Control and Mute action will apply on both streams.</span></li></ul>
+            </ul>
+<span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic; font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic; font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic; font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic; font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic; font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"></span>
+            <h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 200px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.0.2 / 08-November-2013</span></h3>
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+
+            
+            <ul style="margin-top: 0cm;" type="square">
+<li class="MsoNormal"><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval_lcd.c</span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span></li><ul><li class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">Update &nbsp;BUFFER_OFFSET define
+value from </span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"><span style="font-style: italic;">0x130000 </span>to </span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"><span style="font-style: italic;">0x12C000 </span>and comment to explain how to compute this value<span style="font-style: italic;"></span><o:p></o:p></span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span></li><li class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">LCD_DeInit() function: remove SDRAM pins configuration, this is done in SDRAM driver<o:p></o:p></span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span></li><li class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"><span style="font-style: italic;">LCD_Init()</span> function: in case where AMPIRE 640x480 LCD is used, add a call to <span style="font-style: italic;">LCD_I2C_Config()</span> to initialize I2C for touch panel usage<o:p></o:p></span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span></li><li class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">Update and optimize <span style="font-style: italic;">LCD_Clear()</span> function<o:p></o:p></span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span></li><li class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">Update and optimize <span style="font-style: italic;">putPixel()</span> function:
+write directly to the SDRAM instead of the use of <span style="font-style: italic;">LCD_DrawLine()</span> function<o:p></o:p></span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span></li><li class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"><span style="font-style: italic;">GetPosition()</span> function: add more comments in the header about the format of the data returned by this function<o:p></o:p></span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span></li><li class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"><span style="font-style: italic;">GetPosition()</span> </span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"> function:</span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"> remove the I2C configuration </span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">(it's already done in LCD_Init() function)<o:p></o:p></span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span></li><li class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"><span style="font-style: italic;">LCD_CheckDevice()</span> function: </span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">replace <span style="font-style: italic;">LCD_I2C_Config()</span> by
+<span style="font-style: italic;">IOE_Config()</span><span style="font-style: italic;"></span><o:p></o:p></span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span></li><li class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"><span style="font-style: italic;">LCD_I2C_Config() </span>function: add a test, if I2C is already configured, then there is no need to reconfigure it again <o:p></o:p></span></li></ul>
+            </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            <ul style="margin-top: 0cm;" type="square">
+<li class="MsoNormal"><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval_ioe8.c/.h</span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span></li><ul><li class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">Remove EXTI line </span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">configuration </span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">macros&nbsp;<o:p></o:p></span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span></li><li class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">Remove
+<span style="font-style: italic;">VERIFY_WRITTENDATA</span> macro, and remove verify written data block from <span style="font-style: italic;">I2C_WriteDeviceRegister()</span> </span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">function</span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"><o:p></o:p></span></li></ul>
+            </ul>
+
+
+
+
+
+
+            <ul style="margin-top: 0cm;" type="square">
+<li class="MsoNormal"><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval_ioe16.c/.h</span></li><ul><li class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">Remove
+<span style="font-style: italic;">VERIFY_WRITTENDATA</span> macro, and remove verify written data block from <span style="font-style: italic;">IOE16_I2C_WriteDeviceRegister()</span> </span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">function</span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span></li></ul>
+            </ul>
+            <ul style="margin-top: 0cm;" type="square">
+<li class="MsoNormal"><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval_audio_codec.c/.h</span></li><ul><li class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">In <span style="font-style: italic;">Audio_MAL_IRQHandler()</span> </span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">Remove
+local variables <span style="font-style: italic;">pAddr</span> and <span style="font-style: italic;">Size</span> and replace them by existing global variables
+<span style="font-style: italic;">CurrentPos</span> and <span style="font-style: italic;">AudioRemSize</span></span></li></ul>
+            </ul>
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 23px; width: 868px;"><b><u><span style="font-size: 10pt; color: black; font-family: Verdana;">Known 
+Limitations<o:p></o:p></span></u></b></p>
+
+            <ul style="margin-top: 0cm; text-align: justify;" type="square">
+<li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval_audio_codec.c/.h</span></li><ul><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-size: 10pt; font-family: Verdana;">If
+2 audio streams are played in TDM format (the first stream is
+configured in codec SLOT0 and second stream in codec SLOT1) the
+Pause/Resume, Volume Control and Mute action will apply on both streams.</span></li></ul>
+            </ul>
+            <h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 200px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.0.1 / 11-October-2013</span></h3>
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+
+            
+            <ul style="margin-top: 0cm;" type="square">
+<li class="MsoNormal"><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval_lcd.c</span></li><ul><li class="MsoNormal"><span style="font-size: 10pt; font-family: Verdana;">Update
+LCD_DisplayOff() function : Remove GPIO PA8 and PC6 configuration in
+low level, as we don't need to configure any more these GPIO w/
+STM32x9I-EVAL Boards RevB</span></li><li class="MsoNormal"><span style="font-size: 10pt; font-family: Verdana;">Add comments for LCD_GetPosition() and &nbsp;LCD_CheckDevice function&nbsp;&nbsp;</span></li></ul><li class="MsoNormal"><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval_ioe8.c/.h</span></li><ul><li class="MsoNormal"><span style="font-size: 10pt; font-family: Verdana;">Update&nbsp;<span style="font-style: italic;">IOE_TS_GetState()</span> function : Enhance the TS detection algorithm</span></li><li class="MsoNormal"><span style="font-size: 10pt; font-family: Verdana;">Update&nbsp;<span style="font-style: italic;">IOE_TS_Config()</span>
+function&nbsp;: Update IOE FIFO threshold register value to 0x01
+instead of 0x0F and update touch screen operation mode register value
+to 0x01 instead of 0x03</span></li><li class="MsoNormal"><span style="font-size: 10pt; font-family: Verdana;">Add condition in&nbsp;<span style="font-style: italic;">IOE_GPIO_Config() </span>and&nbsp;<span style="font-style: italic;">IOE_I2C_Config() </span>functions to prevent I2C and its GPIOs reconfiguration</span></li><li class="MsoNormal"><span style="font-size: 10pt; font-family: Verdana;">Update&nbsp;<span style="font-style: italic;">I2C_ReadDataBuffer()</span> function: remove check at "I2C_FLAG_BUSY" in the beginning of the function</span></li></ul><li class="MsoNormal"><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval_ioe16.c/.h</span></li><ul><li class="MsoNormal"><span style="font-size: 10pt; font-family: Verdana;">Add condition in&nbsp;<span style="font-style: italic;">IOE16_GPIO_Config() </span>and&nbsp;<span style="font-style: italic;">IOE16_I2C_Config() </span>functions to prevent I2C and its GPIOs reconfiguration</span></li></ul>
+            </ul>
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 23px; width: 868px;"><b><u><span style="font-size: 10pt; color: black; font-family: Verdana;">Known 
+Limitations<o:p></o:p></span></u></b></p>
+
+            <ul style="margin-top: 0cm; text-align: justify;" type="square">
+<li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval_audio_codec.c/.h</span></li><ul><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-size: 10pt; font-family: Verdana;">If
+2 audio streams are played in TDM format (the first stream is
+configured in codec SLOT0 and second stream in codec SLOT1) the
+Pause/Resume, Volume Control and Mute action will apply on both streams.</span></li></ul>
+            </ul>
+            <h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 200px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.0.0 / 19-September-2013</span></h3>
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+
+            
+            <ul style="margin-top: 0cm;" type="square">
+<li class="MsoNormal"><span style="font-size: 10pt; font-family: Verdana;">First official release&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold; font-style: italic;"></span></span><span style="font-size: 10pt; font-family: Verdana;">for&nbsp;<span style="font-weight: bold; font-style: italic;">STM324x9I_EVAL</span> board drivers.</span></li>
+            </ul>
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 23px; width: 868px;"><b><u><span style="font-size: 10pt; color: black; font-family: Verdana;">Known 
+Limitations<o:p></o:p></span></u></b></p>
+
+            <ul style="margin-top: 0cm; text-align: justify;" type="square">
+<li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm324x9i_eval_audio_codec.c/.h</span></li><ul><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-size: 10pt; font-family: Verdana;">If
+2 audio streams are played in TDM format (the first stream is
+configured in codec SLOT0 and second stream in codec SLOT1) the
+Pause/Resume, Volume Control and Mute action will apply on both streams.</span></li></ul>
+            </ul>
+            <h2 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;"><span style="font-size: 12pt; color: white;">License<o:p></o:p></span></h2>
+
+            <div style="text-align: justify;">
+            <div style="text-align: justify;"><font size="-1"><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:</span><br>
+            </font>
+            <ol><li><font size="-1"><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span></font></li><li><font size="-1"><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">Redistributions
+in binary form must reproduce the above copyright notice, this list of
+conditions and the following disclaimer in </span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">the documentation and/or other materials provided with the distribution.</span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span></font></li><li><font size="-1"><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">Neither the name of STMicroelectronics nor the names of its contributors may be used to endorse or promote products derived </span><br>
+                </font>
+              </li></ol>
+            <font size="-1"><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; from this software without specific prior written permission.</span><br>
+            <span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span><br>
+            <span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED</span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"> WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A </span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY </span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, </span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER</span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"> CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR </span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</span></font>
+            
+            </div>
+<span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span></div>
+<span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; color: black;"></span> <b><span style="font-size: 10pt; font-family: Verdana; color: black;"></span></b>
+            
+            <div class="MsoNormal" style="text-align: center;" align="center"><span style="color: black;">
+            <hr align="center" size="2" width="100%"></span></div>
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt; text-align: center;" align="center"><span style="font-size: 10pt; font-family: Verdana; color: black;">For
+complete documentation on </span><span style="font-size: 10pt; font-family: Verdana;">STM32<span style="color: black;">&nbsp;Microcontrollers
+visit </span><u><span style="color: blue;"><a href="http://www.st.com/internet/mcu/class/1734.jsp" target="_blank">www.st.com/STM32</a></span></u></span><span style="font-size: 10pt; font-family: Verdana;"><a target="_blank" href="http://www.st.com/internet/mcu/family/141.jsp"><u><span style="color: blue;"></span></u></a></span><span style="font-size: 10pt; font-family: Verdana;"><u><span style="color: blue;"></span></u></span><span style="color: black;"><o:p></o:p></span></p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="MsoNormal"><span style="font-size: 10pt;"><o:p></o:p></span></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p class="MsoNormal"><o:p>&nbsp;</o:p></p>
+</div>
+
+</body></html>
