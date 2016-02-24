@@ -63,8 +63,8 @@
 #ifdef RT_USING_DFS_YAFFS2
 #include <dfs_yaffs2.h>
 #endif
-#ifdef RT_USING_DFS_ROMFS
-#include <dfs_romfs.h>
+#ifdef RT_USING_DFS_RAMFS
+#include <dfs_ramfs.h>
 #endif
 #endif
 

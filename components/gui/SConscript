@@ -1,0 +1,52 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd = GetCurrentDir()
+src = Split('''
+src/asc12font.c
+src/asc16font.c
+src/blit.c
+src/box.c
+src/color.c
+src/container.c
+src/dc.c
+src/dc_blend.c
+src/dc_buffer.c
+src/dc_client.c
+src/dc_hw.c
+src/dc_rotozoom.c
+src/dc_trans.c
+src/filerw.c
+src/font.c
+src/font_bmp.c
+src/font_fnt.c
+src/font_freetype.c
+src/font_hz_bmp.c
+src/font_hz_file.c
+src/hz12font.c
+src/hz16font.c
+src/image.c
+src/image_bmp.c
+src/image_hdc.c
+src/image_jpg.c
+src/image_png.c
+src/image_xpm.c
+src/matrix.c
+src/mouse.c
+src/region.c
+src/rtgui_app.c
+src/rtgui_driver.c
+src/rtgui_object.c
+src/rtgui_system.c
+src/server.c
+src/title.c
+src/topwin.c
+src/widget.c
+src/window.c
+''')
+CPPPATH = [cwd + '/include']
+
+group = DefineGroup('GUIEngine', src, depend = ['RT_USING_GUIENGINE'], CPPPATH = CPPPATH)
+
+Return('group')

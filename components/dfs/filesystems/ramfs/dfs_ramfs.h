@@ -23,8 +23,8 @@
  * 2013-05-05     Bernard      remove CRC for ramfs persistence
  */
 
-#ifndef __DFS_ROMFS_H__
-#define __DFS_ROMFS_H__
+#ifndef __DFS_RAMFS_H__
+#define __DFS_RAMFS_H__
 
 #include <rtthread.h>
 #include <rtservice.h>

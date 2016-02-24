@@ -273,3 +273,19 @@ int system(const char *string)
     for (;;);
 }
 #endif
+
+#ifdef __MICROLIB
+#include <stdio.h>
+
+int fputc(int c, FILE *f) 
+{
+    char ch = c;
+
+    rt_kprintf(&ch);
+    return 1;
+}
+
+int fgetc(FILE *f) {
+  return -1;
+}
+#endif
