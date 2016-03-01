@@ -24,6 +24,7 @@
 
 #include <drivers/mmcsd_core.h>
 #include <drivers/sdio.h>
+#include <drivers/sd.h>
 
 #ifndef RT_SDIO_STACK_SIZE
 #define RT_SDIO_STACK_SIZE 512
