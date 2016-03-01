@@ -367,7 +367,7 @@ struct finsh_token
 		int int_value;
 		long long_value;
 	} value;
-	u_char string[128];
+	u_char string[FINSH_STRING_MAX];
 
 	u_char* line;
 };

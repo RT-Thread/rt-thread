@@ -26,6 +26,7 @@
 #include <drivers/mmcsd_core.h>
 #include <drivers/sd.h>
 #include <drivers/mmc.h>
+#include <drivers/sdio.h>
 
 #ifndef RT_MMCSD_STACK_SIZE
 #define RT_MMCSD_STACK_SIZE 1024
@@ -520,6 +521,7 @@ void mmcsd_set_data_timeout(struct rt_mmcsd_data       *data,
 rt_uint32_t mmcsd_select_voltage(struct rt_mmcsd_host *host, rt_uint32_t ocr)
 {
     int bit;
+    extern int __rt_ffs(int value);
 
     ocr &= host->valid_ocr;
 

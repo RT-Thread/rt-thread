@@ -543,7 +543,7 @@ void finsh_thread_entry(void *parameter)
             ch = 0;
             shell->line_position ++;
             shell->line_curpos++;
-            if (shell->line_position >= 80)
+            if (shell->line_position >= FINSH_CMD_SIZE)
             {
                 /* clear command line */
                 shell->line_position = 0;
