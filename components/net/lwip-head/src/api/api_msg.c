@@ -1261,6 +1261,7 @@ lwip_netconn_do_writemore(struct netconn *conn)
       /* partial write */
       err = ERR_OK;
       conn->current_msg->msg.w.len = conn->write_offset;
+      conn->write_offset = 0;
     }
   } else
 #endif /* LWIP_SO_SNDTIMEO */
