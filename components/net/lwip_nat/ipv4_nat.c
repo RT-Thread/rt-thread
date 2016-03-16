@@ -622,7 +622,7 @@ ip_nat_tmr(void)
   }
 }
 
-/** Vheck if we want to perform NAT with this packet. If so, send it out on
+/** Check if we want to perform NAT with this packet. If so, send it out on
  * the correct interface.
  *
  * @param p the packet to test/send
