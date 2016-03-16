@@ -229,7 +229,7 @@ nat_timer(void *arg)
   LWIP_DEBUGF(TIMERS_DEBUG, ("tcpip: nat_timer()\n"));
 
   ip_nat_tmr();
-  sys_timeout(LWIP_NAT_TMR_INTERVAL_SEC, nat_timer, NULL);
+  sys_timeout(LWIP_NAT_TMR_INTERVAL_SEC * 1000, nat_timer, NULL);
 }
 
 /** Initialize this module */
@@ -255,7 +255,7 @@ ip_nat_init(void)
   rt_enter_critical();
 
   /* add a lwip timer for NAT */
-  sys_timeout(LWIP_NAT_TMR_INTERVAL_SEC, nat_timer, NULL);
+  sys_timeout(LWIP_NAT_TMR_INTERVAL_SEC * 1000, nat_timer, NULL);
 
   /* un-protect */
   rt_exit_critical();
