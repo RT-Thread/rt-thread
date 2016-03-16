@@ -370,12 +370,12 @@ ip_nat_reset_state(ip_nat_conf_t *cfg)
     }
   }
   for (i = 0; i < LWIP_NAT_DEFAULT_STATE_TABLES_TCP; i++) {
-    if(ip_nat_icmp_table[i].common.cfg == cfg) {
+    if(ip_nat_tcp_table[i].common.cfg == cfg) {
       IPNAT_ENTRY_RESET(&ip_nat_tcp_table[i].common);
     }
   }
   for (i = 0; i < LWIP_NAT_DEFAULT_STATE_TABLES_UDP; i++) {
-    if(ip_nat_icmp_table[i].common.cfg == cfg) {
+    if(ip_nat_udp_table[i].common.cfg == cfg) {
       IPNAT_ENTRY_RESET(&ip_nat_udp_table[i].common);
     }
   }
