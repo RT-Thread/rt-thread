@@ -12,6 +12,10 @@ led.c
 usart.c
 """)
 
+# add canbus driver.
+if GetDepend('RT_USING_CAN'):
+    src += ['bxcan.c']
+
 # add Ethernet drivers.
 if GetDepend('RT_USING_LWIP'):
     src += ['dm9000a.c']
