@@ -651,6 +651,23 @@ void mmcsd_detect(void *param)
                 }
                 mmcsd_host_unlock(host);
             }
+            else
+            {
+            	/* card removed */
+            	mmcsd_host_lock(host);
+            	if (host->card->sdio_function_num != 0)
+            	{
+            		rt_kprintf("unsupport sdio card plug out!\n");
+            	}
+            	else
+            	{
+            		rt_mmcsd_blk_remove(host->card);
+            		rt_free(host->card);
+
+            		host->card = RT_NULL;
+            	}
+            	mmcsd_host_unlock(host);
+            }
         }
     }
 }
@@ -691,8 +708,8 @@ void rt_mmcsd_core_init(void)
 {
     rt_err_t ret;
 
-    /* init detect sd cart thread */
-    /* init mailbox and create detect sd card thread */
+    /* initialize detect SD cart thread */
+    /* initialize mailbox and create detect SD card thread */
     ret = rt_mb_init(&mmcsd_detect_mb, "mmcsdmb",
         &mmcsd_detect_mb_pool[0], sizeof(mmcsd_detect_mb_pool),
         RT_IPC_FLAG_FIFO);
@@ -707,3 +724,4 @@ void rt_mmcsd_core_init(void)
 
     rt_sdio_init();
 }
+
