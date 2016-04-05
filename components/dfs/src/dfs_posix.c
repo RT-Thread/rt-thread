@@ -62,7 +62,7 @@ int open(const char *file, int flags, int mode)
         /* release the ref-count of fd */
         fd_put(d);
         fd_put(d);
-        
+
         rt_set_errno(result);
 
         return -1;
@@ -115,7 +115,7 @@ RTM_EXPORT(close);
 /**
  * this function is a POSIX compliant version, which will read specified data
  * buffer length for an open file descriptor.
- * 
+ *
  * @param fd the file descriptor.
  * @param buf the buffer to save the read data.
  * @param len the maximal length of data buffer
@@ -295,9 +295,9 @@ int rename(const char *old, const char *new)
 RTM_EXPORT(rename);
 
 /**
- * this function is a POSIX compliant version, which will unlink (remove) a 
+ * this function is a POSIX compliant version, which will unlink (remove) a
  * specified path file from file system.
- * 
+ *
  * @param pathname the specified path name to be unlinked.
  *
  * @return 0 on successful, -1 on failed.
@@ -318,9 +318,10 @@ int unlink(const char *pathname)
 }
 RTM_EXPORT(unlink);
 
+#ifndef _WIN32 /* we can not implement these functions */
 /**
  * this function is a POSIX compliant version, which will get file information.
- * 
+ *
  * @param file the file name
  * @param buf the data buffer to save stat description.
  *
@@ -382,16 +383,17 @@ int fstat(int fildes, struct stat *buf)
     return DFS_STATUS_OK;
 }
 RTM_EXPORT(fstat);
+#endif
 
 /**
- * this function is a POSIX compliant version, which shall request that all data 
- * for the open file descriptor named by fildes is to be transferred to the storage 
+ * this function is a POSIX compliant version, which shall request that all data
+ * for the open file descriptor named by fildes is to be transferred to the storage
  * device associated with the file described by fildes.
  *
  * @param fildes the file description
  *
- * @return 0 on successful completion. Otherwise, -1 shall be returned and errno 
- * set to indicate the error. 
+ * @return 0 on successful completion. Otherwise, -1 shall be returned and errno
+ * set to indicate the error.
  */
 int fsync(int fildes)
 {
@@ -414,16 +416,16 @@ int fsync(int fildes)
 RTM_EXPORT(fsync);
 
 /**
- * this function is a POSIX compliant version, which shall perform a variety of 
- * control functions on devices. 
+ * this function is a POSIX compliant version, which shall perform a variety of
+ * control functions on devices.
  *
  * @param fildes the file description
  * @param cmd the specified command
- * @param data represents the additional information that is needed by this 
+ * @param data represents the additional information that is needed by this
  * specific device to perform the requested function.
  *
- * @return 0 on successful completion. Otherwise, -1 shall be returned and errno 
- * set to indicate the error. 
+ * @return 0 on successful completion. Otherwise, -1 shall be returned and errno
+ * set to indicate the error.
  */
 int ioctl(int fildes, unsigned long cmd, void *data)
 {
@@ -451,9 +453,9 @@ int ioctl(int fildes, unsigned long cmd, void *data)
 RTM_EXPORT(ioctl);
 
 /**
- * this function is a POSIX compliant version, which will return the 
+ * this function is a POSIX compliant version, which will return the
  * information about a mounted file system.
- * 
+ *
  * @param path the path which mounted file system.
  * @param buf the buffer to save the returned information.
  *
@@ -479,7 +481,7 @@ RTM_EXPORT(statfs);
  * this function is a POSIX compliant version, which will make a directory
  *
  * @param path the directory path to be made.
- * @param mode 
+ * @param mode
  *
  * @return 0 on successful, others on failed.
  */
@@ -527,7 +529,7 @@ FINSH_FUNCTION_EXPORT(mkdir, create a directory);
  * this function is a POSIX compliant version, which will remove a directory.
  *
  * @param pathname the path name to be removed.
- * 
+ *
  * @return 0 on successful, others on failed.
  */
 int rmdir(const char *pathname)
@@ -601,8 +603,8 @@ DIR *opendir(const char *name)
 RTM_EXPORT(opendir);
 
 /**
- * this function is a POSIX compliant version, which will return a pointer 
- * to a dirent structure representing the next directory entry in the 
+ * this function is a POSIX compliant version, which will return a pointer
+ * to a dirent structure representing the next directory entry in the
  * directory stream.
  *
  * @param d the directory stream pointer.
@@ -653,9 +655,9 @@ struct dirent *readdir(DIR *d)
 RTM_EXPORT(readdir);
 
 /**
- * this function is a POSIX compliant version, which will return current 
+ * this function is a POSIX compliant version, which will return current
  * location in directory stream.
- * 
+ *
  * @param d the directory stream pointer.
  *
  * @return the current location in directory stream.
@@ -681,7 +683,7 @@ long telldir(DIR *d)
 RTM_EXPORT(telldir);
 
 /**
- * this function is a POSIX compliant version, which will set position of 
+ * this function is a POSIX compliant version, which will set position of
  * next directory structure in the directory stream.
  *
  * @param d the directory stream.
@@ -732,9 +734,9 @@ void rewinddir(DIR *d)
 RTM_EXPORT(rewinddir);
 
 /**
- * this function is a POSIX compliant version, which will close a directory 
+ * this function is a POSIX compliant version, which will close a directory
  * stream.
- * 
+ *
  * @param d the directory stream.
  *
  * @return 0 on successful, -1 on failed.
@@ -773,7 +775,7 @@ RTM_EXPORT(closedir);
 /**
  * this function is a POSIX compliant version, which will change working
  * directory.
- * 
+ *
  * @param path the path name to be changed to.
  *
  * @return 0 on successful, -1 on failed.
@@ -838,7 +840,7 @@ FINSH_FUNCTION_EXPORT_ALIAS(chdir, cd, change current working directory);
 #endif
 
 /**
- * this function is a POSIX compliant version, which will return current 
+ * this function is a POSIX compliant version, which will return current
  * working directory.
  *
  * @param buf the returned current directory.
