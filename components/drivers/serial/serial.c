@@ -75,11 +75,13 @@ rt_inline int _serial_poll_tx(struct rt_serial_device *serial, const rt_uint8_t 
          */
         if (*data == '\n' && (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM))
         {
-            serial->ops->putc(serial, '\r');
+            if(serial->ops->putc(serial, '\r') == -1)
+				continue;
         }
     
-        serial->ops->putc(serial, *data);
-    
+        if(serial->ops->putc(serial, *data) == -1);
+			continue;
+	
         ++ data;
         -- length;
     }
@@ -145,7 +147,16 @@ rt_inline int _serial_int_tx(struct rt_serial_device *serial, const rt_uint8_t *
 
     while (length)
     {
-        if (serial->ops->putc(serial, *(char*)data) == -1)
+        if (*data == '\n' && (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM))
+        {
+            if(serial->ops->putc(serial, '\r') == -1)
+			{
+				rt_completion_wait(&(tx->completion), RT_WAITING_FOREVER);
+				continue;
+			}
+        }
+		
+		if (serial->ops->putc(serial, *(char*)data) == -1)
         {
             rt_completion_wait(&(tx->completion), RT_WAITING_FOREVER);
             continue;
@@ -275,6 +286,8 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
 
             serial->serial_rx = rx_dma;
             dev->open_flag |= RT_DEVICE_FLAG_DMA_RX;
+			/* configure low level device */
+            serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void *)RT_DEVICE_FLAG_DMA_RX);
         }
         else if (oflag & RT_DEVICE_FLAG_INT_RX)
         {
@@ -313,6 +326,8 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
             serial->serial_tx = tx_dma;
 
             dev->open_flag |= RT_DEVICE_FLAG_DMA_TX;
+			/* configure low level device */
+            serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void *)RT_DEVICE_FLAG_DMA_TX);
         }
         else if (oflag & RT_DEVICE_FLAG_INT_TX)
         {
