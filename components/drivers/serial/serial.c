@@ -275,6 +275,8 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
 
             serial->serial_rx = rx_dma;
             dev->open_flag |= RT_DEVICE_FLAG_DMA_RX;
+            /* configure low level device */
+            serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void *)RT_DEVICE_FLAG_DMA_RX);
         }
         else if (oflag & RT_DEVICE_FLAG_INT_RX)
         {
@@ -313,6 +315,8 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
             serial->serial_tx = tx_dma;
 
             dev->open_flag |= RT_DEVICE_FLAG_DMA_TX;
+            /* configure low level device */
+            serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void *)RT_DEVICE_FLAG_DMA_TX);
         }
         else if (oflag & RT_DEVICE_FLAG_INT_TX)
         {
@@ -370,6 +374,8 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
         rt_free(rx_dma);
         serial->serial_rx = RT_NULL;
         dev->open_flag &= ~RT_DEVICE_FLAG_DMA_RX;
+        /* configure low level device */
+        serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void*)RT_DEVICE_FLAG_DMA_RX);
     }
 
     if (dev->open_flag & RT_DEVICE_FLAG_INT_TX)
@@ -395,6 +401,8 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
         rt_free(tx_dma);
         serial->serial_tx = RT_NULL;
         dev->open_flag &= ~RT_DEVICE_FLAG_DMA_TX;
+        /* configure low level device */
+        serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void*)RT_DEVICE_FLAG_DMA_TX);
     }
 
     return RT_EOK;
