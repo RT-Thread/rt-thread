@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-10-04     Bernard      first version
+ * 2016-03-23     Bernard      fix the default font initialization issue. 
  */
 
 #include <rtgui/rtgui.h>
@@ -20,7 +21,6 @@
 #include <rtgui/rtgui_server.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/widgets/window.h>
-//#include <rtgui/rtgui_theme.h>
 
 #ifdef _WIN32_NATIVE
 #define RTGUI_MEM_TRACE
@@ -39,14 +39,6 @@ int rtgui_system_server_init(void)
 {
     rt_mutex_init(&_screen_lock, "screen", RT_IPC_FLAG_FIFO);
 
-#if RTGUI_DEFAULT_FONT_SIZE == 16
-    rtgui_font_set_defaut(&rtgui_font_asc16);
-#elif RTGUI_DEFAULT_FONT_SIZE == 12
-    rtgui_font_set_defaut(&rtgui_font_asc12);
-#else
-    rtgui_font_set_defaut(&rtgui_font_asc12);
-#endif
-
     /* init image */
     rtgui_system_image_init();
     /* init font */
@@ -59,8 +51,15 @@ int rtgui_system_server_init(void)
     /* use driver rect for main window */
     rtgui_graphic_driver_get_rect(rtgui_graphic_driver_get_default(), &_mainwin_rect);
 
-    /* init theme */
-//    rtgui_system_theme_init();
+    /* set the default font */
+#if RTGUI_DEFAULT_FONT_SIZE == 16
+    rtgui_font_set_defaut(&rtgui_font_asc16);
+#elif RTGUI_DEFAULT_FONT_SIZE == 12
+    rtgui_font_set_defaut(&rtgui_font_asc12);
+#else
+    rtgui_font_set_defaut(&rtgui_font_asc12);
+#endif
+
     return 0;
 }
 INIT_APP_EXPORT(rtgui_system_server_init);

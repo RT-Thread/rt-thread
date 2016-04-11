@@ -229,7 +229,7 @@ nat_timer(void *arg)
   LWIP_DEBUGF(TIMERS_DEBUG, ("tcpip: nat_timer()\n"));
 
   ip_nat_tmr();
-  sys_timeout(LWIP_NAT_TMR_INTERVAL_SEC, nat_timer, NULL);
+  sys_timeout(LWIP_NAT_TMR_INTERVAL_SEC * 1000, nat_timer, NULL);
 }
 
 /** Initialize this module */
@@ -255,7 +255,7 @@ ip_nat_init(void)
   rt_enter_critical();
 
   /* add a lwip timer for NAT */
-  sys_timeout(LWIP_NAT_TMR_INTERVAL_SEC, nat_timer, NULL);
+  sys_timeout(LWIP_NAT_TMR_INTERVAL_SEC * 1000, nat_timer, NULL);
 
   /* un-protect */
   rt_exit_critical();
@@ -370,12 +370,12 @@ ip_nat_reset_state(ip_nat_conf_t *cfg)
     }
   }
   for (i = 0; i < LWIP_NAT_DEFAULT_STATE_TABLES_TCP; i++) {
-    if(ip_nat_icmp_table[i].common.cfg == cfg) {
+    if(ip_nat_tcp_table[i].common.cfg == cfg) {
       IPNAT_ENTRY_RESET(&ip_nat_tcp_table[i].common);
     }
   }
   for (i = 0; i < LWIP_NAT_DEFAULT_STATE_TABLES_UDP; i++) {
-    if(ip_nat_icmp_table[i].common.cfg == cfg) {
+    if(ip_nat_udp_table[i].common.cfg == cfg) {
       IPNAT_ENTRY_RESET(&ip_nat_udp_table[i].common);
     }
   }
@@ -622,7 +622,7 @@ ip_nat_tmr(void)
   }
 }
 
-/** Vheck if we want to perform NAT with this packet. If so, send it out on
+/** Check if we want to perform NAT with this packet. If so, send it out on
  * the correct interface.
  *
  * @param p the packet to test/send

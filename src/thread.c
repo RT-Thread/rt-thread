@@ -44,7 +44,7 @@ extern rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 extern struct rt_thread *rt_current_thread;
 extern rt_list_t rt_thread_defunct;
 
-static void rt_thread_exit(void)
+void rt_thread_exit(void)
 {
     struct rt_thread *thread;
     register rt_base_t level;

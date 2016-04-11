@@ -67,7 +67,7 @@
 #include "lwip/opt.h"
 
 /** Timer interval at which to call ip_nat_tmr() */
-#define LWIP_NAT_TMR_INTERVAL_SEC        (30*1000)
+#define LWIP_NAT_TMR_INTERVAL_SEC        (30)
 
 #ifdef __cplusplus
 extern "C" {

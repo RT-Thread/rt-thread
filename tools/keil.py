@@ -34,11 +34,11 @@ from utils import xml_indent
 fs_encoding = sys.getfilesystemencoding()
 
 def _get_filetype(fn):
+    if fn.rfind('.cpp') != -1 or fn.rfind('.cxx') != -1:
+        return 8
+
     if fn.rfind('.c') != -1 or fn.rfind('.C') != -1:
         return 1
-
-	if fn.rfind('.cpp') != -1 or fn.rfined('.cxx') != -1:
-		return 8
 
     # assemble file type
     if fn.rfind('.s') != -1 or fn.rfind('.S') != -1:

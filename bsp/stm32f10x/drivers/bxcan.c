@@ -1575,4 +1575,4 @@ int stm32_bxcan_init(void)
 }
 INIT_BOARD_EXPORT(stm32_bxcan_init);
 
-#endif /*RT_USING_CAN2*/
+#endif /*RT_USING_CAN*/
