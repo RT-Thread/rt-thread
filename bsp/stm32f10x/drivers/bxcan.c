@@ -69,6 +69,11 @@ struct stm_bxcan
     const rt_uint32_t fifo1filteroff;
     const struct stm_bxcanfiltermap filtermap[2];
 };
+struct stm_baud_rate_tab
+{
+	rt_uint32_t baud_rate;
+	rt_uint32_t confdata;
+};
 static void calcfiltermasks(struct stm_bxcan *pbxcan);
 static void bxcan1_filter_init(struct rt_can_device *can)
 {
@@ -254,26 +259,64 @@ static void bxcan2_filter_init(struct rt_can_device *can)
 #define MK_BKCAN_BAUD(SJW,BS1,BS2,PRES) \
     ((SJW << SJWSHIFT) | (BS1 << BS1SHIFT) | (BS2 << BS2SHIFT) | (PRES << RRESCLSHIFT))
 
-static const rt_uint32_t bxcan_baud_rate_tab[] =
+static const struct stm_baud_rate_tab bxcan_baud_rate_tab[] =
 {
+#ifdef STM32F10X_CL
     // 48 M
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 3),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_6tq, CAN_BS2_3tq, 6),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 5),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 11),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 23),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 29),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 59),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_14tq, CAN_BS2_3tq, 149),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_16tq, CAN_BS2_8tq, 199),
+    {1000UL * 1000, MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 3)},
+    {1000UL * 800,  MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_6tq,  CAN_BS2_3tq, 6)},
+    {1000UL * 500,  MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 5)},
+    {1000UL * 250,  MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 11)},//1
+    {1000UL * 125,  MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 23)},
+    {1000UL * 100,  MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 29)},
+    {1000UL * 50,   MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 59)},
+    {1000UL * 20,   MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_14tq, CAN_BS2_3tq, 149)},
+    {1000UL * 10,   MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_16tq, CAN_BS2_8tq, 199)}
+#else
+	// 36 M
+	{1000UL * 1000, MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_8tq,  CAN_BS2_3tq, 3)},
+	{1000UL * 800,	MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_11tq, CAN_BS2_3tq, 3)},
+	{1000UL * 500,	MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_9tq,  CAN_BS2_2tq, 6)},
+	{1000UL * 250,	MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_13tq, CAN_BS2_2tq, 9)},//1
+	{1000UL * 125,	MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_13tq, CAN_BS2_2tq, 18)},
+	{1000UL * 100,	MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_9tq,  CAN_BS2_2tq, 30)},
+	{1000UL * 50,	MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_13tq, CAN_BS2_2tq, 45)},
+	{1000UL * 20,	MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_14tq, CAN_BS2_3tq, 100)},
+	{1000UL * 10,	MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_14tq, CAN_BS2_3tq, 200)}
+#endif
 };
 
 #define BAUD_DATA(TYPE,NO) \
-    ((bxcan_baud_rate_tab[NO] & TYPE##MASK) >> TYPE##SHIFT)
+    ((bxcan_baud_rate_tab[NO].confdata & TYPE##MASK) >> TYPE##SHIFT)
+
+static rt_uint32_t bxcan_get_baud_index(rt_uint32_t baud)
+{
+	rt_uint32_t len, index, default_index;
+	
+	len = sizeof(bxcan_baud_rate_tab)/sizeof(bxcan_baud_rate_tab[0]);
+	default_index = len;
+
+	for(index = 0; index < len; index++)
+	{
+		if(bxcan_baud_rate_tab[index].baud_rate == baud)
+			return index;
+
+		if(bxcan_baud_rate_tab[index].baud_rate == 1000UL * 250)
+			default_index = index;
+	}
+
+	if(default_index != len)
+		return default_index;
+
+	return 0;	
+}
+
 
 static void bxcan_init(CAN_TypeDef *pcan, rt_uint32_t baud, rt_uint32_t mode)
 {
     CAN_InitTypeDef        CAN_InitStructure;
+	
+	rt_uint32_t baud_index = bxcan_get_baud_index(baud);
 
     CAN_InitStructure.CAN_TTCM = DISABLE;
     CAN_InitStructure.CAN_ABOM = ENABLE;
@@ -296,10 +339,10 @@ static void bxcan_init(CAN_TypeDef *pcan, rt_uint32_t baud, rt_uint32_t mode)
         CAN_InitStructure.CAN_Mode = CAN_Mode_Silent_LoopBack;
         break;
     }
-    CAN_InitStructure.CAN_SJW = BAUD_DATA(SJW, baud);
-    CAN_InitStructure.CAN_BS1 = BAUD_DATA(BS1, baud);
-    CAN_InitStructure.CAN_BS2 = BAUD_DATA(BS2, baud);
-    CAN_InitStructure.CAN_Prescaler = BAUD_DATA(RRESCL, baud);
+    CAN_InitStructure.CAN_SJW = BAUD_DATA(SJW, baud_index);
+    CAN_InitStructure.CAN_BS1 = BAUD_DATA(BS1, baud_index);
+    CAN_InitStructure.CAN_BS2 = BAUD_DATA(BS2, baud_index);
+    CAN_InitStructure.CAN_Prescaler = BAUD_DATA(RRESCL, baud_index);
 
     CAN_Init(pcan, &CAN_InitStructure);
 }
@@ -439,6 +482,9 @@ static rt_err_t bxcan_set_privmode(CAN_TypeDef *pcan, rt_uint32_t mode)
 static rt_err_t bxcan_set_baud_rate(CAN_TypeDef *pcan, rt_uint32_t baud)
 {
     rt_uint32_t mode;
+
+	rt_uint32_t baud_index = bxcan_get_baud_index(baud);
+	
     if (bxcan_enter_init(pcan) != RT_EOK)
     {
         return RT_ERROR;
@@ -446,10 +492,10 @@ static rt_err_t bxcan_set_baud_rate(CAN_TypeDef *pcan, rt_uint32_t baud)
     pcan->BTR = 0;
     mode = pcan->BTR & ((rt_uint32_t)0x03 << 30);
     pcan->BTR = (mode                         | \
-                 ((BAUD_DATA(SJW, baud)) << 24) | \
-                 ((BAUD_DATA(BS1, baud)) << 16) | \
-                 ((BAUD_DATA(BS2, baud)) << 20) | \
-                 (BAUD_DATA(RRESCL, baud)));
+                 ((BAUD_DATA(SJW, baud_index)) << 24) | \
+                 ((BAUD_DATA(BS1, baud_index)) << 16) | \
+                 ((BAUD_DATA(BS2, baud_index)) << 20) | \
+                 (BAUD_DATA(RRESCL, baud_index)));
     if (bxcan_exit_init(pcan) != RT_EOK)
     {
         return RT_ERROR;
