@@ -36,7 +36,14 @@ rt_hw_interrupt_disable:
  */
     .globl rt_hw_interrupt_enable
 rt_hw_interrupt_enable:
+    ori     a0, 0x00000800   
     mtc0    a0, CP0_STATUS
+    ehb
+    mfc0    v0, CP0_CAUSE
+    ehb
+    or      v1, v0, 0x800000                 //EBASE + 0x200                                                                                                 
+    mtc0    v1, CP0_CAUSE
+    ehb
     jr      ra
     nop
 
