@@ -252,6 +252,35 @@ int cmd_mkfs(int argc, char **argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_mkfs, __cmd_mkfs, format disk with file system);
 
+int cmd_echo(int argc, char** argv)
+{
+	if (argc == 2)
+	{
+		rt_kprintf("%s\n", argv[1]);
+	}
+	else if (argc == 3)
+	{
+		int fd;
+
+		fd = open(argv[2], O_RDWR | O_APPEND | O_CREAT, 0);
+		if (fd >= 0)
+		{
+			write (fd, argv[1], strlen(argv[1]));
+			close(fd);
+		}
+		else
+		{
+			rt_kprintf("open file:%s failed!\n", argv[2]);
+		}
+	}
+	else
+	{
+		rt_kprintf("Usage: echo \"string\" [filename]\n");
+	}
+
+	return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_echo, __cmd_echo, echo string to file);
 #endif
 
 #ifdef RT_USING_LWIP

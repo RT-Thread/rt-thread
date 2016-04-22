@@ -12,6 +12,9 @@ led.c
 usart.c
 """)
 
+if GetDepend(['RT_USING_PIN']):
+    src += ['gpio.c']
+
 # add canbus driver.
 if GetDepend('RT_USING_CAN'):
     src += ['bxcan.c']
