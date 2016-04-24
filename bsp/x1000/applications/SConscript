@@ -1,0 +1,13 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+
+CPPPATH = [cwd, str(Dir('#'))]
+
+if not GetDepend("RT_USING_DFS_ROMFS"):
+    SrcRemove(src, "romfs.c")
+
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
