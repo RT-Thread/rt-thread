@@ -27,7 +27,7 @@
 #ifndef MMC_H_
 #define MMC_H_
 
-#include "Libraries/inc/fh_driverlib.h"
+#include "libraries/inc/fh_driverlib.h"
 #define MMC_FEQ_MIN 100000
 #define MMC_FEQ_MAX 50000000
 

@@ -26,7 +26,7 @@
 
 #include "fh_def.h"
 #include "gpio.h"
-#include "Libraries/inc/fh_gpio.h"
+#include "libraries/inc/fh_gpio.h"
 #include "interrupt.h"
 #include "board_info.h"
 #include <rtdevice.h>
