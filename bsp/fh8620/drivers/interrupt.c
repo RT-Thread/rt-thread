@@ -32,7 +32,7 @@
 #include "interrupt.h"
 #include "fh_def.h"
 #include "fh_arch.h"
-#include "Libraries/inc/fh_ictl.h"
+#include "libraries/inc/fh_ictl.h"
 
 /*****************************************************************************
  * Define section
