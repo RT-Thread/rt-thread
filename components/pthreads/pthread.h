@@ -142,6 +142,20 @@ typedef struct pthread_barrier pthread_barrier_t;
 /* pthread thread interface */
 int pthread_attr_destroy(pthread_attr_t *attr);
 int pthread_attr_init(pthread_attr_t *attr);
+int pthread_attr_setdetachstate(pthread_attr_t *attr, int state);
+int pthread_attr_getdetachstate(pthread_attr_t const *attr, int *state);
+int pthread_attr_setschedpolicy(pthread_attr_t *attr, int policy);
+int pthread_attr_getschedpolicy(pthread_attr_t const *attr, int *policy);
+int pthread_attr_setstacksize(pthread_attr_t *attr, size_t stack_size);
+int pthread_attr_getstacksize(pthread_attr_t const *attr, size_t *stack_size);
+int pthread_attr_setstackaddr(pthread_attr_t *attr, void *stack_addr);
+int pthread_attr_getstackaddr(pthread_attr_t const *attr, void **stack_addr);
+int pthread_attr_setstack(pthread_attr_t *attr,
+                          void           *stack_base,
+                          size_t          stack_size);
+int pthread_attr_getstack(pthread_attr_t const *attr,
+                          void                **stack_base,
+                          size_t               *stack_size);
 
 int pthread_system_init(void);
 int pthread_create (pthread_t *tid, const pthread_attr_t *attr, 
