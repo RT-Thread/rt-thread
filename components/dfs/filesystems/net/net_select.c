@@ -27,7 +27,7 @@
 
 #ifdef RT_USING_LWIP
 
-#include "dfs_lwip.h"
+#include "dfs_net.h"
 
 int
 select(int maxfdp1, fd_set *readset, fd_set *writeset, fd_set *exceptset,
@@ -48,7 +48,7 @@ select(int maxfdp1, fd_set *readset, fd_set *writeset, fd_set *exceptset,
     for (index = 0; index < maxfdp1; index ++)
     {
         /* convert fd to sock */
-        sock = dfs_lwip_getsocket(index);
+        sock = dfs_net_getsocket(index);
         if (sock == -1) continue;
 
         if (sock > maxfd) maxfd = sock;

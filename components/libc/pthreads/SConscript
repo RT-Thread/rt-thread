@@ -1,8 +1,9 @@
-Import('RTT_ROOT')
 from building import *
 
+cwd = GetCurrentDir()
 src	= Glob('*.c')
-CPPPATH = [RTT_ROOT + '/components/pthreads']
+CPPPATH = [cwd]
+
 group = DefineGroup('pthreads', src, depend = ['RT_USING_PTHREADS', 'RT_USING_LIBC'], CPPPATH = CPPPATH)
 
 Return('group')

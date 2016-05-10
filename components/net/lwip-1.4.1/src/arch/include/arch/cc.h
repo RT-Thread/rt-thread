@@ -76,7 +76,7 @@ typedef rt_uint32_t	mem_ptr_t;
 #define LWIP_TIMEVAL_PRIVATE	   1
 #endif
 
-#if defined(RT_USING_DFS_LWIP)
+#if defined(RT_USING_DFS_NET)
 #define LWIP_COMPAT_SOCKETS        0
 #endif
 

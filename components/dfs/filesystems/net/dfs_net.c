@@ -1,7 +1,7 @@
 /*
- * File      : dfs_lwip.c
+ * File      : dfs_net.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * COPYRIGHT (C) 2015-2016, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,15 +20,16 @@
  * Change Logs:
  * Date           Author       Notes
  * 2015-02-17     Bernard      First version
+ * 2016-05-07     Bernard      Rename dfs_lwip to dfs_net
  */
 
 #include <rtthread.h>
 #include <dfs.h>
 #include <dfs_fs.h>
 
-#include "dfs_lwip.h"
+#include "dfs_net.h"
 
-int dfs_lwip_getsocket(int fd)
+int dfs_net_getsocket(int fd)
 {
     struct dfs_fd *_dfs_fd; 
     
@@ -40,12 +41,12 @@ int dfs_lwip_getsocket(int fd)
     return (int)_dfs_fd->data;
 }
 
-int dfs_lwip_ioctl(struct dfs_fd* file, int cmd, void* args)
+int dfs_net_ioctl(struct dfs_fd* file, int cmd, void* args)
 {
     return -DFS_STATUS_EIO;
 }
 
-int dfs_lwip_read(struct dfs_fd* file, void *buf, rt_size_t count)
+int dfs_net_read(struct dfs_fd* file, void *buf, rt_size_t count)
 {
     int sock;
 
@@ -55,7 +56,7 @@ int dfs_lwip_read(struct dfs_fd* file, void *buf, rt_size_t count)
     return count;
 }
 
-int dfs_lwip_write(struct dfs_fd *file, const void *buf, rt_size_t count)
+int dfs_net_write(struct dfs_fd *file, const void *buf, rt_size_t count)
 {
     int sock;
     
@@ -65,7 +66,7 @@ int dfs_lwip_write(struct dfs_fd *file, const void *buf, rt_size_t count)
     return count;
 }
 
-int dfs_lwip_close(struct dfs_fd* file)
+int dfs_net_close(struct dfs_fd* file)
 {
     int sock;
     int result;
@@ -78,9 +79,9 @@ int dfs_lwip_close(struct dfs_fd* file)
     return -result;
 }
 
-static const struct dfs_filesystem_operation _lwip_fs_ops = 
+static const struct dfs_filesystem_operation _net_fs_ops = 
 {
-    "lwip",
+    "net",
     DFS_FS_FLAG_DEFAULT,
     RT_NULL,    /* mount    */
     RT_NULL,    /* unmont   */
@@ -88,10 +89,10 @@ static const struct dfs_filesystem_operation _lwip_fs_ops =
     RT_NULL,    /* statfs   */
 
     RT_NULL,    /* open     */
-    dfs_lwip_close,
-    dfs_lwip_ioctl,
-    dfs_lwip_read,
-    dfs_lwip_write,
+    dfs_net_close,
+    dfs_net_ioctl,
+    dfs_net_read,
+    dfs_net_write,
     RT_NULL,
     RT_NULL,    /* lseek    */
     RT_NULL,    /* getdents */
@@ -100,28 +101,28 @@ static const struct dfs_filesystem_operation _lwip_fs_ops =
     RT_NULL,    /* rename   */
 };
 
-static struct dfs_filesystem _lwip_fs = 
+static struct dfs_filesystem _net_fs = 
 {
     0,              /* dev_id */
     RT_NULL,        /* path */
-    &_lwip_fs_ops,
+    &_net_fs_ops,
     RT_NULL         /* data */
 };
 
-struct dfs_filesystem* dfs_lwip_get_fs(void)
+struct dfs_filesystem* dfs_net_get_fs(void)
 {
-    return &_lwip_fs;
+    return &_net_fs;
 }
 
 /*
 NOTE: Beause we don't need to mount lwIP file system, the filesystem_ops is not 
 registered to the system. 
 
-int dfs_lwip_system_init(void)
+int dfs_net_system_init(void)
 {
-    dfs_register(&_lwip_fs_ops);
+    dfs_register(&_net_fs_ops);
     
     return 0;
 }
-INIT_FS_EXPORT(dfs_lwip_system_init);
+INIT_FS_EXPORT(dfs_net_system_init);
 */

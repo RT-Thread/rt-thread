@@ -1,7 +1,7 @@
 /*
- * File      : dfs_lwip.h
+ * File      : dfs_net.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * COPYRIGHT (C) 2015-2016, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,10 +20,11 @@
  * Change Logs:
  * Date           Author       Notes
  * 2015-02-17     Bernard      First version
+ * 2016-05-05     Bernard      rename dfs_lwip to dfs_net.
  */
 
-#ifndef DFS_LWIP_H__
-#define DFS_LWIP_H__
+#ifndef DFS_NET_H__
+#define DFS_NET_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,10 +32,10 @@ extern "C" {
 
 #include <lwip/sockets.h>
 
-struct dfs_filesystem* dfs_lwip_get_fs(void);
-int dfs_lwip_getsocket(int fd);
+struct dfs_filesystem* dfs_net_get_fs(void);
+int dfs_net_getsocket(int fd);
 
-int dfs_lwip_system_init(void);
+int dfs_net_system_init(void);
 
 #ifdef __cplusplus
 }
