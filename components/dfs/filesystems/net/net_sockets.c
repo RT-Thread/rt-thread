@@ -219,7 +219,7 @@ int socket(int domain, int type, int protocol)
         d->type = FT_SOCKET;
         d->path = RT_NULL;
 
-        d->fs = dfs_lwip_get_fs();
+        d->fs = dfs_net_get_fs();
 
         d->flags = DFS_O_RDWR; /* set flags as read and write */
         d->size = 0;
