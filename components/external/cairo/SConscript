@@ -1,11 +1,9 @@
-Import('RTT_ROOT')
-Import('rtconfig')
-
 from building import *
 import os
 
 CAIRO_VERSION = '1.10.2'
 CAIRO_PATH = 'cairo-' + CAIRO_VERSION
+cwd = GetCurrentDir()
 
 if GetDepend('RT_USING_CAIRO') and not os.path.exists(CAIRO_PATH):
     print '================ERROR============================'
@@ -99,7 +97,7 @@ cairo.c
 for item in range(len(src)):
     src[item] = CAIRO_PATH + '/src/' + src[item]
 
-CPPPATH = [RTT_ROOT + '/components/external/cairo/' + CAIRO_PATH + '/src', RTT_ROOT + '/components/external/cairo/']
+CPPPATH = [cwd + '/' + CAIRO_PATH + '/src', cwd]
 group = DefineGroup('cairo', src, depend = ['RT_USING_CAIRO', 'RT_USING_NEWLIB', 'RTGUI_IMAGE_PNG', 'RT_USING_PTHREADS'], CPPPATH = CPPPATH)
 
 Return('group')

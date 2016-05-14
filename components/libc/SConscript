@@ -14,7 +14,10 @@ if GetDepend('RT_USING_LIBC'):
     elif rtconfig.PLATFORM == 'iar':
         objs = objs + SConscript('dlib/SConscript')
 else:
-    if rtconfig.PLATFORM == 'gcc':
+    if rtconfig.PLATFORM == 'gcc' and rtconfig.ARCH != 'sim':
         objs = objs + SConscript('minilibc/SConscript')
+
+objs = objs + SConscript('pthreads/SConscript')
+objs = objs + SConscript('libdl/SConscript')
 
 Return('objs')

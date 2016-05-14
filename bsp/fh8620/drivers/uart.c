@@ -27,7 +27,7 @@
 #include <board.h>
 #include <rtdevice.h>
 #include "fh_arch.h"
-#include "Libraries/inc/fh_uart.h"
+#include "libraries/inc/fh_uart.h"
 
 
 void rt_fh_uart_handler(int vector, void *param)

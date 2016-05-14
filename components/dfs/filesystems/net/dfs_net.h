@@ -1,8 +1,7 @@
 /*
- *  This file is part of FH8620 BSP for RT-Thread distribution.
- *
- *	Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd. 
- *	All rights reserved
+ * File      : dfs_net.h
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2015-2016, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,34 +17,28 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *	Visit http://www.fullhan.com to get contact with Fullhan.
- *
  * Change Logs:
  * Date           Author       Notes
+ * 2015-02-17     Bernard      First version
+ * 2016-05-05     Bernard      rename dfs_lwip to dfs_net.
  */
 
-#ifndef MMC_H_
-#define MMC_H_
+#ifndef DFS_NET_H__
+#define DFS_NET_H__
 
-#include "libraries/inc/fh_driverlib.h"
-#define MMC_FEQ_MIN 100000
-#define MMC_FEQ_MAX 50000000
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#define CARD_UNPLUGED   1
-#define CARD_PLUGED     0
+#include <lwip/sockets.h>
 
-struct mmc_driver
-{
-    MMC_DMA_Descriptors* dma_descriptors;
-    rt_uint32_t max_desc;
-    struct rt_mmcsd_host *host;
-    struct rt_mmcsd_req *req;
-    struct rt_mmcsd_data *data;
-    struct rt_mmcsd_cmd *cmd;
-    struct rt_completion transfer_completion;
-    void*  priv;
-};
+struct dfs_filesystem* dfs_net_get_fs(void);
+int dfs_net_getsocket(int fd);
 
-void rt_hw_mmc_init(void);
+int dfs_net_system_init(void);
 
-#endif /* MMC_H_ */
+#ifdef __cplusplus
+}
+#endif
+
+#endif

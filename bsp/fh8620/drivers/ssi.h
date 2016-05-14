@@ -26,7 +26,7 @@
  
 #ifndef SSI_H_
 #define SSI_H_
-#include "Libraries/inc/fh_driverlib.h"
+#include "libraries/inc/fh_driverlib.h"
 #include <drivers/spi.h>
 #include <rtdevice.h>
 #include "fh_dma.h"

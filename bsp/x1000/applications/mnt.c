@@ -1,8 +1,7 @@
 /*
- *  This file is part of FH8620 BSP for RT-Thread distribution.
- *
- *	Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd. 
- *	All rights reserved
+ * File      : mnt.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2008 - 2016, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,34 +17,34 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *	Visit http://www.fullhan.com to get contact with Fullhan.
- *
  * Change Logs:
  * Date           Author       Notes
+ * 2015-11-19     Urey         the first version
  */
 
-#ifndef MMC_H_
-#define MMC_H_
+#include <rtthread.h>
+#include <rtdevice.h>
 
-#include "libraries/inc/fh_driverlib.h"
-#define MMC_FEQ_MIN 100000
-#define MMC_FEQ_MAX 50000000
+#include <dfs_fs.h>
 
-#define CARD_UNPLUGED   1
-#define CARD_PLUGED     0
-
-struct mmc_driver
+int mnt_init(void)
 {
-    MMC_DMA_Descriptors* dma_descriptors;
-    rt_uint32_t max_desc;
-    struct rt_mmcsd_host *host;
-    struct rt_mmcsd_req *req;
-    struct rt_mmcsd_data *data;
-    struct rt_mmcsd_cmd *cmd;
-    struct rt_completion transfer_completion;
-    void*  priv;
-};
+#ifdef RT_USING_SDIO
+    rt_mmcsd_core_init();
+    rt_mmcsd_blk_init();
 
-void rt_hw_mmc_init(void);
+    jz47xx_sdio_init();
+    rt_thread_delay(RT_TICK_PER_SECOND * 1);
 
-#endif /* MMC_H_ */
+    /* mount sd card fat partition 1 as root directory */
+    if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
+    {
+        rt_kprintf("File System initialized!\n");
+    }
+    else
+    {
+        rt_kprintf("File System initialzation failed!\n");
+    }
+#endif
+}
+INIT_ENV_EXPORT(mnt_init);

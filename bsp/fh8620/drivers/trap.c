@@ -28,7 +28,7 @@
 #include <armv6.h>
 #include "fh_arch.h"
 #include "interrupt.h"
-#include "Libraries/inc/fh_ictl.h"
+#include "libraries/inc/fh_ictl.h"
 /**
  * @addtogroup FH81
  */

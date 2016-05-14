@@ -27,7 +27,7 @@
 #include "timer.h"
 #include <rtdevice.h>
 #include "fh_arch.h"
-#include "Libraries/inc/fh_timer.h"
+#include "libraries/inc/fh_timer.h"
 //#include "fh_pmu.h"
 //#include "chip_reg.h"
 //NEED_CAUTION.
