@@ -21,6 +21,9 @@ if GetDepend('RT_USING_AT45DBXX'):
 if GetDepend('RT_USING_SST25VFXX'):
     src_device += ['spi_flash_sst25vfxx.c']
 
+if GetDepend('RT_USING_GD'):
+    src_device += ['spi_flash_gd.c']
+
 src += src_device
 
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SPI'], CPPPATH = CPPPATH)
