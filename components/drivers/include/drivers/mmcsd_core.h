@@ -220,6 +220,10 @@ rt_inline rt_uint32_t fls(rt_uint32_t val)
 	return bit;
 }
 
+#define MMCSD_HOST_PLUGED       0
+#define MMCSD_HOST_UNPLUGED     1
+
+int mmcsd_wait_cd_changed(rt_int32_t timeout);
 void mmcsd_host_lock(struct rt_mmcsd_host *host);
 void mmcsd_host_unlock(struct rt_mmcsd_host *host);
 void mmcsd_req_complete(struct rt_mmcsd_host *host);
