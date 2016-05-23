@@ -8,8 +8,9 @@
  * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
- * Date           Author       Notes
- * 2015-03-24     Bright      the first version
+ * Date           Author            Notes
+ * 2015-03-24     Bright            the first version
+ * 2016-05-23     Margguo@gmail.com   Add  48 pins IC define
  */
 
 #include <rthw.h>
@@ -19,7 +20,7 @@
 
 #ifdef RT_USING_PIN
 
-#define STM32F10X_PIN_NUMBERS 100 //[ 64, 100, 144 ]
+#define STM32F10X_PIN_NUMBERS 48 //[48, 64, 100, 144 ]
 
 #define __STM32_PIN(index, rcc, gpio, gpio_index) { 0, RCC_##rcc##Periph_GPIO##gpio, GPIO##gpio, GPIO_Pin_##gpio_index}
 #define __STM32_PIN_DEFAULT {-1, 0, 0, 0}
@@ -35,6 +36,58 @@ struct pin_index
 
 static const struct pin_index pins[] =
 {
+#if (STM32F10X_PIN_NUMBERS == 48)
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN(2, APB2, C, 13),
+    __STM32_PIN(3, APB2, C, 14),
+    __STM32_PIN(4, APB2, C, 15),
+    __STM32_PIN(3, APB2, C, 14),
+    __STM32_PIN(4, APB2, C, 15),
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN(10, APB2, A, 0),
+    __STM32_PIN(11, APB2, A, 1),
+    __STM32_PIN(11, APB2, A, 2),
+    __STM32_PIN(11, APB2, A, 3),
+    __STM32_PIN(14, APB2, A, 4),
+    __STM32_PIN(15, APB2, A, 5),
+    __STM32_PIN(16, APB2, A, 6),
+    __STM32_PIN(17, APB2, A, 7),
+    __STM32_PIN(18, APB2, B, 0),
+    __STM32_PIN(19, APB2, B, 1),
+    __STM32_PIN(20, APB2, B, 2),
+    __STM32_PIN(21, APB2, B, 10),
+    __STM32_PIN(22, APB2, B, 11),
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN(25, APB2, B, 12),
+    __STM32_PIN(26, APB2, B, 13),
+    __STM32_PIN(27, APB2, B, 14),
+    __STM32_PIN(28, APB2, B, 15),
+    __STM32_PIN(29, APB2, A, 8),
+    __STM32_PIN(30, APB2, A, 9),
+    __STM32_PIN(31, APB2, A, 10),
+    __STM32_PIN(32, APB2, A, 11),
+    __STM32_PIN(33, APB2, A, 12),
+    __STM32_PIN(34, APB2, A, 13),
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN(37, APB2, A, 14),
+    __STM32_PIN(38, APB2, A, 15),
+    __STM32_PIN(39, APB2, B, 3),
+    __STM32_PIN(40, APB2, B, 4),
+    __STM32_PIN(41, APB2, B, 5),
+    __STM32_PIN(42, APB2, B, 6),
+    __STM32_PIN(43, APB2, B, 7),
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN(45, APB2, B, 8),
+    __STM32_PIN(46, APB2, B, 9),
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN_DEFAULT,
+
+#endif
 #if (STM32F10X_PIN_NUMBERS == 64)
     __STM32_PIN_DEFAULT,
     __STM32_PIN_DEFAULT,
@@ -216,7 +269,7 @@ static const struct pin_index pins[] =
     __STM32_PIN(7, APB2, C, 13),
     __STM32_PIN(8, APB2, C, 14),
     __STM32_PIN(9, APB2, C, 15),
-    
+
     __STM32_PIN(10, APB2, F, 0),
     __STM32_PIN(11, APB2, F, 1),
     __STM32_PIN(12, APB2, F, 2),
@@ -472,7 +525,7 @@ const static struct rt_pin_ops _stm32_pin_ops =
 int stm32_hw_pin_init(void)
 {
     int result;
-    
+
     result = rt_device_pin_register("pin", &_stm32_pin_ops, RT_NULL);
     return result;
 }
