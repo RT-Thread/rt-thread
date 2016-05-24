@@ -130,13 +130,8 @@ __check_vfp_instruction:
 	mov pc,	lr				@ CP7
 	mov pc,	lr				@ CP8
 	mov pc,	lr				@ CP9
-#ifdef RT_USING_VFP
-	b	vfp_entry			@ CP10 VFP
-	b	vfp_entry			@ CP11 VFP
-#else
 	mov pc,	lr				@ CP10 VFP
 	mov pc,	lr				@ CP11 VFP
-#endif
 	mov pc,	lr				@ CP12
 	mov pc,	lr				@ CP13
 	mov pc,	lr				@ CP14 DEBUG

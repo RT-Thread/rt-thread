@@ -675,7 +675,7 @@ static struct pbuf *enc28j60_rx(rt_device_t dev)
         else
         {
             /* allocation pbuf */
-            p = pbuf_alloc(PBUF_LINK, len, PBUF_RAM);
+            p = pbuf_alloc(PBUF_LINK, len, PBUF_POOL);
             if (p != RT_NULL)
             {
                 struct pbuf* q;
