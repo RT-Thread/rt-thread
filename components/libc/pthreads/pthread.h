@@ -87,7 +87,7 @@ enum
 struct pthread_attr
 {
     void*       stack_base;
-    rt_uint16_t stack_size;     /* stack size of thread */
+    rt_uint32_t stack_size;     /* stack size of thread */
 
     rt_uint8_t priority;        /* priority of thread */
     rt_uint8_t detachstate;     /* detach state */
