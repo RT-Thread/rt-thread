@@ -70,12 +70,6 @@ rt_hw_context_switch:
 
     ldmfd sp!, {r4}         @ pop new task cpsr to spsr
     msr spsr_cxsf, r4
-#ifdef RT_USING_VFP
-    vmrs    r0, fpexc
-    bic     r0, r0, #FPEXC_EN    @ always disable VFP so we can 
-                                 @ lazily save/restore the old state.
-    vmsr    fpexc, r0
-#endif
 _do_switch:
     ldmfd sp!, {r0-r12, lr, pc}^  @ pop new task r0-r12, lr & pc, copy spsr to cpsr
 
@@ -92,12 +86,6 @@ rt_hw_context_switch_to:
 
     bic r4, r4, #0x20       @ must be ARM mode
     msr cpsr_cxsf, r4
-#ifdef RT_USING_VFP
-    vmrs    r0, fpexc
-    bic     r0, r0, #FPEXC_EN    @ always disable VFP so we can 
-                                 @ lazily save/restore the old state.
-    vmsr    fpexc, r0
-#endif
     ldmfd sp!, {r0-r12, lr, pc}^   @ pop new task r0-r12, lr & pc
 
 /*

@@ -33,12 +33,15 @@
 #define BAUD_RATE_2400                  2400
 #define BAUD_RATE_4800                  4800
 #define BAUD_RATE_9600                  9600
+#define BAUD_RATE_19200                 19200
 #define BAUD_RATE_38400                 38400
 #define BAUD_RATE_57600                 57600
 #define BAUD_RATE_115200                115200
 #define BAUD_RATE_230400                230400
 #define BAUD_RATE_460800                460800
 #define BAUD_RATE_921600                921600
+#define BAUD_RATE_2000000               2000000
+#define BAUD_RATE_3000000               3000000
 
 #define DATA_BITS_5                     5
 #define DATA_BITS_6                     6
@@ -106,7 +109,7 @@ struct serial_configure
     rt_uint32_t parity                  :2;
     rt_uint32_t bit_order               :1;
     rt_uint32_t invert                  :1;
-	rt_uint32_t bufsz					:16;
+    rt_uint32_t bufsz                   :16;
     rt_uint32_t reserved                :4;
 };
 
@@ -115,15 +118,15 @@ struct serial_configure
  */
 struct rt_serial_rx_fifo
 {
-	/* software fifo */
-	rt_uint8_t *buffer;
+    /* software fifo */
+    rt_uint8_t *buffer;
 
-	rt_uint16_t put_index, get_index;
+    rt_uint16_t put_index, get_index;
 };
 
 struct rt_serial_tx_fifo
 {
-	struct rt_completion completion;
+    struct rt_completion completion;
 };
 
 /* 
@@ -131,13 +134,13 @@ struct rt_serial_tx_fifo
  */
 struct rt_serial_rx_dma
 {
-	rt_bool_t activated;
+    rt_bool_t activated;
 };
 
 struct rt_serial_tx_dma
 {
-	rt_bool_t activated;
-	struct rt_data_queue data_queue;
+    rt_bool_t activated;
+    struct rt_data_queue data_queue;
 };
 
 struct rt_serial_device
@@ -147,8 +150,8 @@ struct rt_serial_device
     const struct rt_uart_ops *ops;
     struct serial_configure   config;
 
-	void *serial_rx;
-	void *serial_tx;
+    void *serial_rx;
+    void *serial_tx;
 };
 typedef struct rt_serial_device rt_serial_t;
 
@@ -163,7 +166,7 @@ struct rt_uart_ops
     int (*putc)(struct rt_serial_device *serial, char c);
     int (*getc)(struct rt_serial_device *serial);
 
-    rt_size_t (*dma_transmit)(struct rt_serial_device *serial, const rt_uint8_t *buf, rt_size_t size, int direction);
+    rt_size_t (*dma_transmit)(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction);
 };
 
 void rt_hw_serial_isr(struct rt_serial_device *serial, int event);
@@ -174,4 +177,3 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
                                void                    *data);
 
 #endif
-

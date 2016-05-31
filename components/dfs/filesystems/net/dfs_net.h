@@ -1,7 +1,7 @@
 /*
- * File      : spi_flash_at45dbxx.h
+ * File      : dfs_net.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2011, RT-Thread Development Team
+ * COPYRIGHT (C) 2015-2016, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,23 +19,26 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2011-12-16     aozima       the first version
+ * 2015-02-17     Bernard      First version
+ * 2016-05-05     Bernard      rename dfs_lwip to dfs_net.
  */
 
-#ifndef SPI_FLASH_AT45DBXX_H_INCLUDED
-#define SPI_FLASH_AT45DBXX_H_INCLUDED
+#ifndef DFS_NET_H__
+#define DFS_NET_H__
 
-#include <rtthread.h>
-#include <drivers/spi.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-struct spi_flash_at45dbxx
-{
-    struct rt_device                flash_device;
-    struct rt_device_blk_geometry   geometry;
-    struct rt_spi_device *          rt_spi_device;
-};
+#include <lwip/sockets.h>
 
-extern rt_err_t at45dbxx_init(const char * flash_device_name, const char * spi_device_name);
+struct dfs_filesystem* dfs_net_get_fs(void);
+int dfs_net_getsocket(int fd);
 
+int dfs_net_system_init(void);
 
-#endif // SPI_FLASH_AT45DBXX_H_INCLUDED
+#ifdef __cplusplus
+}
+#endif
+
+#endif

@@ -1,9 +1,0 @@
-Import('RTT_ROOT')
-Import('rtconfig')
-from building import *
-
-src	= Glob('*.c')
-CPPPATH = [RTT_ROOT + '/components/libdl']
-group = DefineGroup('libdl', src, depend = ['RT_USING_MODULE', 'RT_USING_LIBDL'], CPPPATH = CPPPATH)
-
-Return('group')

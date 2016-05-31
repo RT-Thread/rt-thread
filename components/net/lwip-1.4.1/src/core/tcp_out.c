@@ -1248,6 +1248,12 @@ tcp_rexmit_rto(struct tcp_pcb *pcb)
   for (seg = pcb->unacked; seg->next != NULL; seg = seg->next);
   /* concatenate unsent queue after unacked queue */
   seg->next = pcb->unsent;
+  #if TCP_OVERSIZE && TCP_OVERSIZE_DBGCHECK
+  /* if last unsent changed, we need to update unsent_oversize */
+  if (pcb->unsent == NULL) {
+	pcb->unsent_oversize = seg->oversize_left;
+  }
+  #endif /* TCP_OVERSIZE && TCP_OVERSIZE_DBGCHECK*/
   /* unsent queue is the concatenated queue (of unacked, unsent) */
   pcb->unsent = pcb->unacked;
   /* unacked queue is now empty */
