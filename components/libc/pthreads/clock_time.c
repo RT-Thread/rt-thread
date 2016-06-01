@@ -112,7 +112,7 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
     tick = rt_tick_get();
 
     tp->tv_sec = _timevalue.tv_sec + tick / RT_TICK_PER_SECOND;
-    tp->tv_nsec = (_timevalue.tv_usec + (tick % RT_TICK_PER_SECOND) * NANOSECOND_PER_TICK) * 1000;
+    tp->tv_nsec = (_timevalue.tv_usec + (tick % RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK) * 1000;
     
     return 0;
 }
