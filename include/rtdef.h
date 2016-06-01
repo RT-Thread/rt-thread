@@ -496,7 +496,7 @@ struct rt_thread
     void       *entry;                                  /**< entry */
     void       *parameter;                              /**< parameter */
     void       *stack_addr;                             /**< stack address */
-    rt_uint16_t stack_size;                             /**< stack size */
+    rt_uint32_t stack_size;                             /**< stack size */
 
     /* error code */
     rt_err_t    error;                                  /**< error code */
