@@ -122,12 +122,12 @@ static long _list_thread(struct rt_list_node *list)
     thread_header[cur_max_name_len] = '\0';
     thread_split[cur_max_name_len] = '\0';
 
-    rt_kprintf("%s pri  status      sp     stack size max used left tick  error\n", thread_header);
-    rt_kprintf("%s ---- ------- ---------- ----------    ---   ---------- ---\n", thread_split);
+    rt_kprintf("%s pri status      sp     stack size max used left tick  error\n", thread_header);
+    rt_kprintf("%s --  ------- ---------- ----------    ---   ---------- ---\n", thread_split);
     for (node = list->next; node != list; node = node->next)
     {
         thread = rt_list_entry(node, struct rt_thread, list);
-        rt_kprintf("%-*.*s  %02d ", cur_max_name_len, cur_max_name_len, thread->name, thread->current_priority);
+        rt_kprintf("%-*.*s %02d ", cur_max_name_len, cur_max_name_len, thread->name, thread->current_priority);
 
         if (thread->stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
         else if (thread->stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
