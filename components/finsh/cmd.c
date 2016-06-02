@@ -43,6 +43,7 @@
  * 2012-04-29     goprife      improve the command line auto-complete feature.
  * 2012-06-02     lgnq         add list_memheap
  * 2012-10-22     Bernard      add MS VC++ patch.
+ * 2016-06-02     armink       beautify the list_thread command
  */
 
 #include <rtthread.h>
@@ -85,14 +86,48 @@ static long _list_thread(struct rt_list_node *list)
 {
     struct rt_thread *thread;
     struct rt_list_node *node;
-    rt_uint8_t *ptr;
+    rt_uint8_t *ptr, cur_max_name_len = 0, cur_thread_name_len;
+    char thread_header[RT_NAME_MAX], thread_split[RT_NAME_MAX];
+    const char * thread_str = "thread";
+    rt_size_t i, thread_str_len = rt_strlen(thread_str), thread_str_index;
 
-    rt_kprintf(" thread  pri  status      sp     stack size max used   left tick  error\n");
-    rt_kprintf("-------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
+    /* calculate the maximum thread name length */
+    for (node = list->next; node != list; node = node->next) {
+        thread = rt_list_entry(node, struct rt_thread, list);
+        cur_thread_name_len = rt_strlen(thread->name);
+        if(cur_max_name_len < cur_thread_name_len) {
+            cur_max_name_len = cur_thread_name_len;
+        }
+    }
+
+    if (cur_max_name_len < thread_str_len) {
+        cur_max_name_len = thread_str_len;
+    }
+    /* calculate the "thread" string in header index */
+    thread_str_index = (cur_max_name_len - thread_str_len) / 2;
+
+    for (i = 0; i < cur_max_name_len; i ++) {
+        thread_split[i] = '-';
+        if (thread_str_len < cur_max_name_len) {
+            if (i < thread_str_index) {
+                thread_header[i] = ' ';
+                thread_header[cur_max_name_len - i - 1] = ' ';
+            } else if (i < thread_str_index + thread_str_len) {
+                thread_header[i] = thread_str[i - thread_str_index];
+            } else {
+                thread_header[i] = ' ';
+            }
+        }
+    }
+    thread_header[cur_max_name_len] = '\0';
+    thread_split[cur_max_name_len] = '\0';
+
+    rt_kprintf("%s pri  status      sp     stack size max used left tick  error\n", thread_header);
+    rt_kprintf("%s ---- ------- ---------- ----------    ---   ---------- ---\n", thread_split);
     for (node = list->next; node != list; node = node->next)
     {
         thread = rt_list_entry(node, struct rt_thread, list);
-        rt_kprintf("%-8.*s 0x%02x", RT_NAME_MAX, thread->name, thread->current_priority);
+        rt_kprintf("%-*.*s  %02d ", cur_max_name_len, cur_max_name_len, thread->name, thread->current_priority);
 
         if (thread->stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
         else if (thread->stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
@@ -102,10 +137,11 @@ static long _list_thread(struct rt_list_node *list)
         ptr = (rt_uint8_t *)thread->stack_addr;
         while (*ptr == '#')ptr ++;
 
-        rt_kprintf(" 0x%08x 0x%08x 0x%08x 0x%08x %03d\n",
+        rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
                    thread->stack_size + ((rt_uint32_t)thread->stack_addr - (rt_uint32_t)thread->sp),
                    thread->stack_size,
-                   thread->stack_size - ((rt_uint32_t) ptr - (rt_uint32_t)thread->stack_addr),
+                   (thread->stack_size - ((rt_uint32_t) ptr - (rt_uint32_t) thread->stack_addr)) * 100
+                        / thread->stack_size,
                    thread->remaining_tick,
                    thread->error);
     }
