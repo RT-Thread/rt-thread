@@ -603,8 +603,18 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             break;
 
         case RT_DEVICE_CTRL_CONFIG:
-            /* configure device */
-            serial->ops->configure(serial, (struct serial_configure *)args);
+			if (args)
+			{
+				/* set serial configure */
+				serial->config = *(struct serial_configure *)args;
+
+				if (dev->ref_count)
+				{
+		            /* serial device has been opened, to configure it */
+		            serial->ops->configure(serial, (struct serial_configure *)args);
+				}
+			}
+			
             break;
 
         default :
