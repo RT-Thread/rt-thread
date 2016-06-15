@@ -32,6 +32,9 @@ extern int rt_application_init(void);
 extern void tlb_refill_exception(void);
 extern void general_exception(void);
 extern void irq_exception(void);
+extern void rt_hw_cache_init(void);
+extern void invalidate_writeback_dcache_all(void);
+extern void invalidate_icache_all(void);
 
 /**
  * This function will startup RT-Thread RTOS.
