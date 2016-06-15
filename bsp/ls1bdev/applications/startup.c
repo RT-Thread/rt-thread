@@ -54,6 +54,9 @@ void rtthread_startup(void)
     rt_memcpy((void *)(A_K0BASE + 0x180), general_exception, 0x20);
     rt_memcpy((void *)(A_K0BASE + 0x200), irq_exception, 0x20);
 
+    invalidate_writeback_dcache_all();
+    invalidate_icache_all();
+
     /* init board */
     rt_hw_board_init();
 
