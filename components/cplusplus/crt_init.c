@@ -21,6 +21,7 @@
 * Date           Author       Notes
 * 2014-12-03     Bernard      Add copyright header.
 * 2014-12-29     Bernard      Add cplusplus initialization for ARMCC.
+* 2016-06-28     Bernard      Add _init/_fini routines for GCC.
 */
 
 #include <rtthread.h>
@@ -31,6 +32,14 @@ extern void $Super$$__cpp_initialize__aeabi_(void);
 void $Sub$$__cpp_initialize__aeabi_(void)
 {
 	/* empty */
+}
+#elif defined(__GNUC__)
+void _init()
+{
+}
+
+void _fini() 
+{
 }
 #endif
 
