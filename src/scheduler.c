@@ -89,7 +89,8 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
 {
     RT_ASSERT(thread != RT_NULL);
 
-    if ((rt_uint32_t)thread->sp <= (rt_uint32_t)thread->stack_addr ||
+    if (*((rt_uint8_t *)thread->stack_addr) != '#' ||
+	(rt_uint32_t)thread->sp <= (rt_uint32_t)thread->stack_addr ||
         (rt_uint32_t)thread->sp >
         (rt_uint32_t)thread->stack_addr + (rt_uint32_t)thread->stack_size)
     {

@@ -356,15 +356,14 @@
    ---------- Socket options ----------
    ------------------------------------
 */
-/**
-/**
+/*
  * LWIP_SOCKET==1: Enable Socket API (require to use sockets.c)
  */
 #ifndef LWIP_SOCKET
 #define LWIP_SOCKET                     1
 #endif
 
-/**
+/*
  * LWIP_COMPAT_SOCKETS==1: Enable BSD-style sockets functions names.
  * (only used if you use sockets.c)
  */

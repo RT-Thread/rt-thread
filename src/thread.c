@@ -98,7 +98,7 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
 
     /* stack init */
     thread->stack_addr = stack_start;
-    thread->stack_size = (rt_uint16_t)stack_size;
+    thread->stack_size = stack_size;
 
     /* init thread stack */
     rt_memset(thread->stack_addr, '#', thread->stack_size);

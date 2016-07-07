@@ -14,6 +14,7 @@
  * 2015-07-08     chinesebear   modified for loongson 1c
  */
  
+#include <rtthread.h>
 #include "../common/mipsregs.h"
 
 #define K0BASE			0x80000000
@@ -24,6 +25,7 @@ extern void Invalidate_Icache_Ls1c(unsigned int);
 extern void Invalidate_Dcache_ClearTag_Ls1c(unsigned int);
 extern void Invalidate_Dcache_Fill_Ls1c(unsigned int);
 extern void Writeback_Invalidate_Dcache(unsigned int);
+extern void enable_cpu_cache(void);
 
 typedef struct cacheinfo_t 
 {
@@ -152,7 +154,7 @@ void invalidate_dcache_all(void)
 	unsigned int end  = (start + pcacheinfo->dcache_size);
 	while (start <end)
 	{
-		Invalidate_Dcache_Fill_Gc3210I(start);
+		Invalidate_Dcache_Fill_Ls1c(start);
 		start += pcacheinfo->icacheline_size;
 	}
 }
