@@ -439,8 +439,9 @@ struct rt_timer
     void (*timeout_func)(void *parameter);              /**< timeout function */
     void            *parameter;                         /**< timeout function's parameter */
 
-    rt_tick_t        init_tick;                         /**< timer timeout tick */
-    rt_tick_t        timeout_tick;                      /**< timeout tick */
+    rt_tick_t        init_tick;                         /**< timer tick count */
+    rt_tick_t        startup_tick;                      /**< start tick */
+    rt_tick_t        timeout_tick;                      /**< end tick */
 };
 typedef struct rt_timer *rt_timer_t;
 
