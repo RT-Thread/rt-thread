@@ -31,14 +31,15 @@ extern void $Super$$__cpp_initialize__aeabi_(void);
 /* we need to change the cpp_initialize order */
 void $Sub$$__cpp_initialize__aeabi_(void)
 {
-	/* empty */
+    /* empty */
 }
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) && !defined(__CS_SOURCERYGXX_MAJ__)
+/* The _init()/_fini() routines has been defined in codesourcery g++ lite */
 void _init()
 {
 }
 
-void _fini() 
+void _fini()
 {
 }
 #endif
@@ -67,7 +68,7 @@ int cplusplus_system_init(void)
     typedef void PROC();
     extern const unsigned long SHT$$INIT_ARRAY$$Base[];
     extern const unsigned long SHT$$INIT_ARRAY$$Limit[];
-    
+
     const unsigned long *base = SHT$$INIT_ARRAY$$Base;
     const unsigned long *lim  = SHT$$INIT_ARRAY$$Limit;
 
