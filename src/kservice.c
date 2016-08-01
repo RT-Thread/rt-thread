@@ -1221,7 +1221,7 @@ const rt_uint8_t __lowest_bit_bitmap[] =
  * @return return the index of the first bit set. If value is 0, then this function
  * shall return 0.
  */
-int __rt_ffs(int value)
+rt_ubase_t __rt_ffs(rt_ubase_t value)
 {
     if (value == 0) return 0;
 
@@ -1282,7 +1282,7 @@ void rt_assert_handler(const char* ex_string, const char* func, rt_size_t line)
 	else
 	{
         rt_assert_hook(ex_string, func, line);
-    }                                                                     
+    }
 }
 RTM_EXPORT(rt_assert_handler);
 #endif /* RT_DEBUG */
