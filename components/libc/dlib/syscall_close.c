@@ -36,7 +36,7 @@ int __close(int handle)
         return _LLIO_ERROR;
 
 #ifdef RT_USING_DFS
-    return close(handle);
+    return close(handle - _LLIO_STDERR - 1);
 #else
     return 0;
 #endif

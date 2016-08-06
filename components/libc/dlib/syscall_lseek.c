@@ -36,7 +36,7 @@ long __lseek(int handle, long offset, int whence)
         return _LLIO_ERROR;
 
 #ifdef RT_USING_DFS
-    return lseek(handle, offset, whence);
+    return lseek(handle - _LLIO_STDERR - 1, offset, whence);
 #else
     return _LLIO_ERROR;
 #endif
