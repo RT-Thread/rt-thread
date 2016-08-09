@@ -1,8 +1,8 @@
-##How to use the Segger SystemView trace componment
+##How to use the Segger SystemView trace component
 
 ### 1. Copy description file
 Copy the '.\SystemView_Src_Vxxx\Description\SYSVIEW_RTThread.txt' to folder '%SystemView_Install_Folder%\Description\'.
-### 2. Enable trace componment
+### 2. Enable trace component
 Enable `RT_USING_HOOK` and add `RT_USING_TRACE` define in your bsp's rtconfig.h
 ```c
 // <bool name="RT_USING_TRACE" description="Enable trace" default="true" />
@@ -20,4 +20,4 @@ Segger SystemView only support Segger J-Link and Segger J-Link OB. If you using 
 ### 4. Intergration (Porting) limitation
 
 * Can only trace thread, scheduler and interrupt. 
-* Tracing RT-Thread IPC componment is not supported.
+* Tracing RT-Thread IPC component is not supported.
