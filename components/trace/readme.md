@@ -3,7 +3,7 @@
 ### 1. Copy description file
 Copy the '.\SystemView_Src_Vxxx\Description\SYSVIEW_RTThread.txt' to folder '%SystemView_Install_Folder%\Description\'.
 ### 2. Enable trace componment
-Add `RT_USING_TRACE` define in your bsp's rtconfig.h
+Enable `RT_USING_HOOK` and add `RT_USING_TRACE` define in your bsp's rtconfig.h
 ```c
 // <bool name="RT_USING_TRACE" description="Enable trace" default="true" />
 #define RT_USING_TRACE
