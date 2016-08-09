@@ -1,0 +1,15 @@
+# RT-Thread building script for trace component
+
+from building import *
+
+trace_module_folder = 'SystemView_Src_V240'
+
+cwd = GetCurrentDir()
+src = Glob(trace_module_folder +'/Config/*.c')
+src += Glob(trace_module_folder +'/SEGGER/*.c')
+
+CPPPATH = [cwd, os.path.join(cwd, trace_module_folder+'/Config')]
+CPPPATH += [cwd, os.path.join(cwd, trace_module_folder+'/SEGGER')]
+group = DefineGroup('trace', src, depend = ['RT_USING_HOOK','RT_USING_TRACE'], CPPPATH = CPPPATH)
+
+Return('group')

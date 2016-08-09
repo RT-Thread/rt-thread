@@ -1,0 +1,152 @@
+#
+# OS Options
+#
+
+#
+# Types for parameter formatters
+#
+NamedType ResetMode 0=OS_EVENT_RESET_MODE_SEMIAUTO 1=OS_EVENT_RESET_MODE_MANUAL 2=OS_EVENT_RESET_MODE_AUTO
+NamedType Bool      0=false 1=true
+#
+# Task States
+#
+TaskState 0xFC 0=Ready, 8=Wait for event, 16=Wait for sema zero, 24=Waiting, 32=Wait for sema not zero, 48=Wait for Queue not empty, 56=Wait for mailbox not full, 64=Wait for mailbox not empty, 72=Wait for event object, 80=Wait for Queue not full, 160=Wait for Memory pool, 4=Wait for timeout, 12=Wait for event with timeout, 20=Wait for sema zero with timeout, 28=Waiting with timeout, 36=Wait for sema not zero with timeout, 52=Wait for Queue not empty with timeout, 60=Wait for mailbox not full with timeout, 68=Wait for mailbox not empty with timeout, 76=Wait for event object with timeout, 84=Wait for Queue not full with timeout, 164=Wait for Memory pool with timeout
+#
+# API Functions
+#
+35        OS_CheckTimer             pGlobal=%p
+42        OS_Delay                  Delay=%u
+43        OS_DelayUntil             Time=%u
+44        OS_SetPriority            Task=%t Pri=%u
+45        OS_WakeTask               Task=%t
+46        OS_CreateTask             Task=%t Pri=%u Stack=%p Size=%u
+47        OS_TerminateTask          Task=%t
+48        OS_Suspend                Task=%t
+49        OS_Resume                 Task=%t
+50        OS_CreateTaskEx           Task=%t Pri=%u Stack=%p Size=%u Context=%p
+51        OS_Yield
+52        OS_WaitEvent              EventMask=%b                                | Returns %b
+53        OS_WaitEventTimed         EventMask=%b Timeout=%u                     | Returns %b
+54        OS_SignalEvent            Task=%t EventMask=%b
+55        OS_ClearEvents            Task=%t                                     | Returns %b
+62        OS_CreateMB               MB=%p MsgSize=%u Max=%u Addr=%p
+63        OS_ClearMB                MB=%p
+64        OS_DeleteMB               MB=%p
+65        OS_PutMail                MB=%p Mail=%p
+66        OS_GetMail                MB=%p Dest=%p
+67        OS_PutMailCond            MB=%p Mail=%p                               | Returns %u
+68        OS_GetMailCond            MB=%p Dest=%p                               | Returns %u
+70        OS_GetMailTimed           MB=%p Dest=%p Timeout=%u                    | Returns %u
+71        OS_WaitMail               MB=%p
+72        OS_PutMail1               MB=%p Data=%u
+73        OS_GetMail1               MB=%p Dest=%p
+74        OS_PutMailCond1           MB=%p Data=%u                               | Returns %u
+75        OS_GetMailCond1           MB=%p Data=%p                               | Returns %u
+78        OS_PutMailFront           MB=%p Mail=%p
+79        OS_PutMailFront1          MB=%p Data=%u
+80        OS_PutMailFrontCond       MB=%p Mail=%p                               | Returns %u
+81        OS_PutMailFrontCond1      MB=%p Data=%c                               | Returns %u
+82        OS_CreateRSema            Sema=%p
+83        OS_Use                    Sema=%I                                     | Returns %u
+84        OS_Unuse                  Sema=%I
+85        OS_Request                Sema=%p                                     | Returns %u
+86        OS_GetSemaValue           Sema=%p                                     | Returns %u
+87        OS_DeleteRSema            Sema=%p
+91        OS_WaitMailTimed          MB=%p Timeout=%u                            | Returns %u
+92        OS_CreateCSema            Sema=%p Init=%u
+93        OS_DeleteCSema            Sema=%p
+94        OS_SignalCSema            Sema=%p
+95        OS_WaitCSema              Sema=%p
+96        OS_WaitCSemaTimed         Sema=%p Timeout=%u                          | Returns %Bool
+97        OS_SignalCSemaMax         Sema=%p MaxValue=%u
+98        OS_SetCSemaValue          Sema=%p Value=%u                            | Returns %u
+99        OS_CSemaRequest           Sema=%p                                     | Returns %Bool
+102       OS_CreateTimer            Timer=%p Callback=%p Timeout=%u
+103       OS_DeleteTimer            Timer=%p
+104       OS_StartTimer             Timer=%p
+105       OS_StopTimer              Timer=%p
+106       OS_RetriggerTimer         Timer=%p
+107       OS_SetTimerPeriod         Timer=%p Period=%u
+108       OS_CreateTimerEx          Timer=%p Callback=%p Timeout=%u Data=%p
+112       OS_malloc                 Size=%u                                     | Returns %p
+113       OS_free                   Block=%p
+114       OS_realloc                Block=%p NewSize=%u                         | Returns %p
+122       OS_MEMF_Create            MEMF=%p Pool=%p NumBlocks=%u BlockSize=%u
+123       OS_MEMF_Delete            MEMF=%p
+124       OS_MEMF_Alloc             MEMF=%p Purpose=%u                          | Returns %p
+163       OS_Delayus                Delay=%u
+164       OS_SuspendAllTasks
+165       OS_ResumeAllSuspendedTasks
+166       OS_WaitSingleEvent        EventMask=%b                                | Returns %b
+167       OS_WaitSingleEventTimed   EventMask=%b Timeout=%u                     | Returns %b
+168       OS_EVENT_Pulse            Event=%I
+169       OS_EVENT_Reset            Event=%I
+170       OS_EVENT_Set              Event=%I
+171       OS_EVENT_Wait             Event=%I
+172       OS_EVENT_WaitTimed        Event=%I Timeout=%u                         | Returns %u
+173       OS_EVENT_Create           Event=%I
+174       OS_EVENT_CreateEx         Event=%I ResetMode=%u
+175       OS_EVENT_Delete           Event=%I
+176       OS_PeekMail               MB=%p Dest=%p                               | Returns %u
+177       OS_Q_Create               Queue=%p Size=%u
+178       OS_Q_Delete               Queue=%p
+179       OS_Q_Clear                Queue=%p
+180       OS_Q_PutBlocked           Queue=%p Src=%p Size=%u
+181       OS_Q_Put                  Queue=%p Src=%p Size=%u                     | Returns %u
+182       OS_Q_PutTimed             Queue=%p Src=%p Size=%u Timeout=%u          | Returns %u
+183       OS_Q_GetPtr               Queue=%p pData=%p                           | Returns %u
+184       OS_Q_GetPtrCond           Queue=%p pData=%p                           | Returns %u
+185       OS_Q_GetPtrTimed          Queue=%p pData=%p Timeout=%u                | Returns %u
+186       OS_Q_PeekPtr              Queue=%p pData=%p                           | Returns %u
+187       OS_Q_Purge                Queue=%p
+188       OS_MEMF_AllocTimed        MEMF=%p Timeout=%u Purpose=%u               | Returns %p
+189       OS_MEMF_FreeBlock         MemBlock=%p
+190       OS_MEMF_Release           MEMF=%p MemBlock=%p
+191       OS_MEMF_Request           MEMF=%p Purpose=%u                          | Returns %p
+195       OS_UseTimed               Sema=%I Timeout=%u                          | Returns %u
+199       OS_SetTaskName            Task=%t sName=%p
+200       OS_AdjustTime             Time=%u
+201       OS_EVENT_Get              Event=%p                                    | Returns %b
+202       OS_EVENT_GetResetMode     Event=%p                                    | Returns %ResetMode
+203       OS_EVENT_SetResetMode     Event=%p ResetMode=%ResetMode
+204       OS_GetNumIdleTicks                                                    | Returns %u
+205       OS_GetNumTasks                                                        | Returns %u
+206       OS_GetPriority            Task=%t                                     | Returns %u
+207       OS_GetSuspendCnt          Task=%t                                     | Returns %u
+208       OS_Mail_GetPtr            pMB=%p pDest=%p                             | Returns %u
+209       OS_POWER_UsageInc         Index=%u
+210       OS_POWER_UsageDec         Index=%u
+211       OS_POWER_GetMask                                                      | Returns %u
+212       OS_SetInitialSuspendCnt   SuspendCnt=%u
+213       OS_GetTime_us                                                         | Returns %u
+214       OS_GetTime_us64                                                       | Returns %u
+216       OS_TICK_HandleNoHook
+217       OS_TICK_AddHook           Hook=%p pfUser=%p
+218       OS_TICK_RemoveHook        Hook=%p
+219       OS_StartTicklessMode      Time=%u Callback=%p
+220       OS_StopTicklessMode
+221       OS_GetCSemaValue          Sema=%p                                     | Returns %u
+222       OS_GetEventsOccurred      Task=%t                                     | Returns %b
+223       OS_IsTask                 Task=%t                                     | Returns %Bool
+224       OS_Q_GetMessageCnt        Queue=%p                                    | Returns %u
+225       OS_Q_GetMessageSize       Queue=%p                                    | Returns %u
+226       OS_Q_IsInUse              Queue=%p                                    | Returns %Bool
+227       OS_SetTimeSlice           Task=%t Timeslice=%u                        | Returns %u
+228       OS_GetResourceOwner       Sema=%p                                     | Returns %t
+229       OS_GetTimerPeriod         Timer=%p                                    | Returns %u
+230       OS_GetTimerStatus         Timer=%p                                    | Returns %Bool
+231       OS_GetTimervalue          Timer=%p                                    | Returns %u
+232       OS_Timing_Start           pCycle=%p
+233       OS_Timing_End             pCycle=%p
+234       OS_Timing_Getus           pCycle=%p                                   | Returns %u
+235       OS_Mail_GetPtrCond        pMB=%p pDest=%p
+236       OS_Mail_Purge             pMB=%p
+237       OS_Q_PutBlockedEx         Queue=%p Src=%p NumSrc=%u
+238       OS_Q_PutEx                Queue=%p Src=%p NumSrc=%u                   | Returns %u
+239       OS_Q_PutTimedEx           Queue=%p Src=%p NumSrc=%u                   | Returns %u
+240       OS_SPINLOCK_Create        Spinlock=%p
+241       OS_SPINLOCK_SW_Create     Spinlock=%p
+242       OS_SPINLOCK_Lock          Spinlock=%p
+243       OS_SPINLOCK_SW_Lock       Spinlock=%p Id=%u
+244       OS_SPINLOCK_Unlock        Spinlock=%p
+245       OS_SPINLOCK_SW_Unlock     Spinlock=%p Id=%u

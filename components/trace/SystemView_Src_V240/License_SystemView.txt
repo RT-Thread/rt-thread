@@ -1,0 +1,33 @@
+Important - Read carefully:
+
+This is a legal agreement between YOU as an individual and SEGGER Microcontroller GmbH & Co. KG ( hereafter called SEGGER).
+All IP rights, title and interest in SystemView Utility is and shall at all times remain with SEGGER.
+By downloading and/or using SystemView, YOU agree to be bound by the terms of this agreement.
+
+
+1. License Grant
+The SystemView Utility is provided in executable code form only.
+YOU may use SystemView for personal or for commercial purposes. 
+
+2. RESTRICTIONS
+YOU may not:
+(a) decompile, disassemble, reverse engineer, or otherwise attempt to derive the source code of SystemView, 
+(b) redistribute, encumber, sell, rent, lease, sublicense, or otherwise transfer rights to SystemView,
+(c) remove or alter any trademark, logo, copyright or other proprietary notices, legends, symbols or label in SystemView.
+Without prejudice to any other rights, SEGGER may terminate this agreement if YOU fail to comply with foregoing restrictions.
+
+3. FEES
+SystemView can be used free of charge without purchasing a license.
+
+4. DISCLAIMER OF WARRANTY
+SystemView is provided on an "as is" basis, without warranty of any kind, including without limitation the warranties that it is free of defects, merchantable, fit for a particular purpose or non-infringing. This disclaimer of warranty constitutes an essential part of this agreement. No use of SystemView is authorized hereunder except under this disclaimer.
+
+5. LIMITATION OF LIABILITY
+To the maximum extent permitted by applicable law, in no event will SEGGER be liable for any indirect, special, incidental or consequential damages arising out of the use of or inability to use SystemView, including, without limitation, damages for loss of goodwill, work stoppage, computer failure or malfunction, or any and all other damages or losses, even if advised of the possibility thereof, and regardless of the legal or equitable theory (contract, tort or otherwise) upon which the claim is based.  Some jurisdictions do not allow the exclusion or limitation of incidental or consequential damages, so this exclusion and limitation may not be applicable. In any case, SEGGER's entire liability shall not exceed in aggregate the sum of the fees YOU paid for SystemView (if any).
+
+6. MISCELLANEOUS
+(a) This agreement shall be governed by the laws of the Federal Republic of Germany. This agreement constitutes the entire agreement between the parties concerning the subject matter hereof. 
+(b) If any provision in this agreement should be held illegal or unenforceable by a court having jurisdiction, such provision shall be modified to the extent necessary to render it enforceable without losing its intent, or severed from this agreement if no such modification is possible, and other provisions of this agreement shall remain in full force and effect.This agreement may be changed only by an amendment in writing, signed by both parties.
+(c) If any SEGGER  professional services are being provided, then such professional services are provided pursuant to the terms of a separate agreement.
+
+(c) 2004-2015 SEGGER Microcontroller GmbH & Co. KG
