@@ -24,6 +24,7 @@
  * 2012-12-29     Bernard      fix compiling warning.
  * 2013-12-21     Grissiom     let rt_thread_idle_excute loop until there is no
  *                             dead thread.
+ * 2016-08-09     ArdaFu       add method to get the handler of the idle thread.
  */
 
 #include <rthw.h>
@@ -178,11 +179,7 @@ static void rt_thread_idle_entry(void *parameter)
 {
     while (1)
     {
-        #ifdef RT_USING_HOOK
-        if (rt_thread_idle_hook != RT_NULL)
-            rt_thread_idle_hook();
-        #endif
-
+        RT_OBJECT_HOOK_CALL(rt_thread_idle_hook,());
         rt_thread_idle_excute();
     }
 }
@@ -208,4 +205,15 @@ void rt_thread_idle_init(void)
 
     /* startup */
     rt_thread_startup(&idle);
+}
+
+/**
+ * @ingroup Thread
+ *
+ * This function will get the handler of the idle thread.
+ *
+ */
+rt_thread_t rt_thread_idle_gethandler(void)
+{
+    return (rt_thread_t)(&idle);
 }

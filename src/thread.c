@@ -35,6 +35,7 @@
  *                             thread preempted, which reported by Jiaxing Lee.
  * 2011-09-08     Bernard      fixed the scheduling issue in rt_thread_startup.
  * 2012-12-29     Bernard      fixed compiling warning.
+ * 2016-08-09     ArdaFu       add thread suspend and resume hook.
  */
 
 #include <rtthread.h>
@@ -43,6 +44,36 @@
 extern rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 extern struct rt_thread *rt_current_thread;
 extern rt_list_t rt_thread_defunct;
+
+#ifdef RT_USING_HOOK
+
+static void (*rt_thread_suspend_hook)(rt_thread_t thread);
+static void (*rt_thread_resume_hook)(rt_thread_t thread);
+/**
+ * @ingroup Hook
+ * This function sets a hook function when the system suspend a thread. 
+ *
+ * @param hook the specified hook function
+ *
+ * @note the hook function must be simple and never be blocked or suspend.
+ */
+void rt_thread_suspend_sethook(void (*hook)(rt_thread_t thread))
+{
+    rt_thread_suspend_hook = hook;
+}
+/**
+ * @ingroup Hook
+ * This function sets a hook function when the system resume a thread. 
+ *
+ * @param hook the specified hook function
+ *
+ * @note the hook function must be simple and never be blocked or suspend.
+ */
+void rt_thread_resume_sethook(void (*hook)(rt_thread_t thread))
+{
+    rt_thread_resume_hook = hook;
+}
+#endif
 
 void rt_thread_exit(void)
 {
@@ -581,6 +612,7 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
     /* enable interrupt */
     rt_hw_interrupt_enable(temp);
 
+    RT_OBJECT_HOOK_CALL(rt_thread_suspend_hook,(thread));
     return RT_EOK;
 }
 RTM_EXPORT(rt_thread_suspend);
@@ -623,6 +655,7 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
     /* insert to schedule ready list */
     rt_schedule_insert_thread(thread);
 
+    RT_OBJECT_HOOK_CALL(rt_thread_resume_hook,(thread));
     return RT_EOK;
 }
 RTM_EXPORT(rt_thread_resume);
