@@ -370,6 +370,9 @@ enum rt_object_class_type
 #ifdef RT_USING_MODULE
     RT_Object_Class_Module,                             /**< The object is a module. */
 #endif
+#ifdef RT_USING_RMS
+    RT_Object_Class_Rms,                                /**< The object is a rms */
+#endif
     RT_Object_Class_Unknown,                            /**< The object is unknown. */
     RT_Object_Class_Static = 0x80                       /**< The object is a static object. */
 };
@@ -528,6 +531,21 @@ struct rt_thread
     rt_uint32_t user_data;                              /**< private user data beyond this thread */
 };
 typedef struct rt_thread *rt_thread_t;
+
+#ifdef RT_USING_RMS
+
+#define RT_RMS_INACTIVE    0
+#define RT_RMS_ACTIVE      1
+
+struct rt_rms
+{
+    struct rt_object parent;
+    rt_uint8_t rt_rms_stat;                            /**< status of rms task */
+    rt_tick_t period;                                  /**< period of rms task */
+    rt_tick_t deadline;                                /**< deadline of rms task */
+};
+typedef struct rt_rms *rt_rms_t;
+#endif
 
 /*@}*/
 

@@ -74,6 +74,9 @@ struct rt_object_information rt_object_container[RT_Object_Class_Unknown] =
     /* initialize object container - module */
     {RT_Object_Class_Module, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Module), sizeof(struct rt_module)},
 #endif
+#ifdef RT_USING_RMS
+    {RT_Object_Class_Rms, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Rms), sizeof(struct rt_rms)},
+#endif
 };
 
 #ifdef RT_USING_HOOK
