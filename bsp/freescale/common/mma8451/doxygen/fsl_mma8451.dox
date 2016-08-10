@@ -1,0 +1,6 @@
+/*!
+
+@defgroup mma8451 MMA8451
+@brief MMA8451 accelerometer driver
+
+*/

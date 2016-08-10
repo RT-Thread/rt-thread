@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<flash_board>
+  <pass>
+    <loader>$TOOLKIT_DIR$\config\flashloader\Freescale\FlashKLxx256KROM.flash</loader>
+    <range>CODE 0x0 0x3ffff</range>
+    <args>--enable_config_write</args>
+  </pass>
+</flash_board>
+
+

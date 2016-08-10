@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ProjectWorkspace xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_mpw.xsd">
+  <SchemaVersion>2.1</SchemaVersion>
+  <Header>### uVision Project, (C) Keil Software</Header>
+  <WorkspaceName>WorkSpace</WorkspaceName>
+<project><PathAndName>../../../../lib/ksdk_platform_lib/KsdkPlatformLib/mdk/KsdkPlatformLib_K64F12.uvprojx</PathAndName><NodeIsActive>0</NodeIsActive></project><project><PathAndName>rt_thread_demo_frdmk64f.uvprojx</PathAndName><NodeIsActive>1</NodeIsActive></project></ProjectWorkspace>

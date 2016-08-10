@@ -1,0 +1,95 @@
+/*
+** ###################################################################
+**     Processors:          MK64FX512VDC12
+**                          MK64FX512VLL12
+**                          MK64FX512VLQ12
+**                          MK64FX512VMD12
+**
+**     Compiler:            IAR ANSI C/C++ Compiler for ARM
+**     Reference manual:    K64P144M120SF5RM, Rev.2, January 2014
+**     Version:             rev. 2.8, 2015-02-19
+**     Build:               b150629
+**
+**     Abstract:
+**         Linker file for the IAR ANSI C/C++ Compiler for ARM
+**
+**     Copyright (c) 2015 Freescale Semiconductor, Inc.
+**     All rights reserved.
+**
+**     Redistribution and use in source and binary forms, with or without modification,
+**     are permitted provided that the following conditions are met:
+**
+**     o Redistributions of source code must retain the above copyright notice, this list
+**       of conditions and the following disclaimer.
+**
+**     o Redistributions in binary form must reproduce the above copyright notice, this
+**       list of conditions and the following disclaimer in the documentation and/or
+**       other materials provided with the distribution.
+**
+**     o Neither the name of Freescale Semiconductor, Inc. nor the names of its
+**       contributors may be used to endorse or promote products derived from this
+**       software without specific prior written permission.
+**
+**     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+**     ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+**     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+**     DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+**     ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+**     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+**     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+**     ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+**     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+**     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+**
+**     http:                 www.freescale.com
+**     mail:                 support@freescale.com
+**
+** ###################################################################
+*/
+
+define symbol m_interrupts_start       = 0x1FFF0000;
+define symbol m_interrupts_end         = 0x1FFF03FF;
+
+define symbol m_data_start             = 0x1FFF0400;
+define symbol m_data_end               = 0x1FFFFFFF;
+
+define symbol m_text_start             = 0x20000000;
+define symbol m_text_end               = 0x2001FFFF;
+
+/* Sizes */
+if (isdefinedsymbol(__stack_size__)) {
+  define symbol __size_cstack__        = __stack_size__;
+} else {
+  define symbol __size_cstack__        = 0x0400;
+}
+
+if (isdefinedsymbol(__heap_size__)) {
+  define symbol __size_heap__          = __heap_size__;
+} else {
+  define symbol __size_heap__          = 0x0400;
+}
+
+define exported symbol __VECTOR_TABLE  = m_interrupts_start;
+define exported symbol __VECTOR_RAM    = m_interrupts_start;
+define exported symbol __RAM_VECTOR_TABLE_SIZE = 0x0;
+
+define memory mem with size = 4G;
+define region TEXT_region = mem:[from m_interrupts_start to m_interrupts_end]
+                          | mem:[from m_text_start to m_text_end];
+define region DATA_region = mem:[from m_data_start to m_data_end-__size_cstack__];
+define region CSTACK_region = mem:[from m_data_end-__size_cstack__+1 to m_data_end];
+
+define block CSTACK    with alignment = 8, size = __size_cstack__   { };
+define block HEAP      with alignment = 8, size = __size_heap__     { };
+define block RW        { readwrite };
+define block ZI        { zi };
+
+do not initialize  { section .noinit };
+
+place at address mem: m_interrupts_start    { readonly section .intvec };
+place in TEXT_region                        { readonly };
+place in DATA_region                        { block RW };
+place in DATA_region                        { block ZI };
+place in DATA_region                        { last block HEAP };
+place in CSTACK_region                      { block CSTACK };
+

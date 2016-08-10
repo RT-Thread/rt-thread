@@ -1,0 +1,62 @@
+#ifndef _MMCAU_H_
+#define _MMCAU_H_
+
+    .equ    TL,0
+    .equ    TS,0
+    .equ    CASR,0
+    .equ    CAA,1
+    .equ    CA0,2
+    .equ    CA1,3
+    .equ    CA2,4
+    .equ    CA3,5
+    .equ    CA4,6
+    .equ    CA5,7
+    .equ    CA6,8
+    .equ    CA7,9
+    .equ    CA8,10
+    .equ    CNOP,0x000
+    .equ    LDR,0x010
+    .equ    STR,0x020
+    .equ    ADR,0x030
+    .equ    RADR,0x040
+    .equ    ADRA,0x050
+    .equ    XOR,0x060
+    .equ    ROTL,0x070
+    .equ    MVRA,0x080
+    .equ    MVAR,0x090
+    .equ    AESS,0x0a0
+    .equ    AESIS,0x0b0
+    .equ    AESC,0x0c0
+    .equ    AESIC,0x0d0
+    .equ    AESR,0x0e0
+    .equ    AESIR,0x0f0
+    .equ    DESR,0x100
+    .equ    DESK,0x110
+    .equ    HASH,0x120
+    .equ    SHS,0x130
+    .equ    MDS,0x140
+    .equ    SHS2,0x150
+    .equ    ILL,0x1f0
+    .equ    IP,8
+    .equ    FP,4
+    .equ    DC,1
+    .equ    CP,2
+    .equ    KSL1,0
+    .equ    KSL2,1
+    .equ    KSR1,2
+    .equ    KSR2,3
+    .equ    HFF,0
+    .equ    HFG,1
+    .equ    HFH,2
+    .equ    HFI,3
+    .equ    HFP,2
+    .equ    HFC,4
+    .equ    HFM,5
+    .equ    HF2C,6
+    .equ    HF2M,7
+    .equ    HF2S,8
+    .equ    HF2T,9
+    .equ    HF2U,10
+    .equ    HF2V,11
+
+#endif
