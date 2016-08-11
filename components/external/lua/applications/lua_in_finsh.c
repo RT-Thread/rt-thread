@@ -21,7 +21,7 @@ rt_err_t lua_rx_ind(rt_device_t dev, rt_size_t size)
     return RT_EOK;
 }
 
-void finsh_lua(void *parameter)
+void finsh_lua(int argc, char **argv)
 {
     rt_err_t (*rx_indicate)(rt_device_t dev, rt_size_t size);
 
@@ -34,9 +34,6 @@ void finsh_lua(void *parameter)
     rt_device_set_rx_indicate(dev4lua.device, lua_rx_ind);
 
     {
-        int argc = 1;
-        char *argv[] = {"lua", NULL};
-
         /* run lua interpreter */
         lua_main(argc, argv);
     }
@@ -45,9 +42,8 @@ void finsh_lua(void *parameter)
     rt_device_set_rx_indicate(dev4lua.device, rx_indicate);
 }
 
-static void lua(void)
+static void lua(void *parameters)
 {
-    rt_thread_t lua_thread;
     const char* device_name = finsh_get_device();
     rt_device_t device = rt_device_find(device_name);
     if (device == RT_NULL)
@@ -56,6 +52,7 @@ static void lua(void)
         return;
     }
     dev4lua.device = device;
+    char *argv[] = {"lua", parameters, NULL};
 
 #if 0
     /* Run lua interpreter in separate thread */
@@ -71,10 +68,35 @@ static void lua(void)
     }
 #else
     /* Directly run lua interpreter in finsh */
-    finsh_lua(0);
+    finsh_lua(2, argv);
 #endif
 }
-FINSH_FUNCTION_EXPORT(lua, lua interpreter)
+FINSH_FUNCTION_EXPORT(lua, lua interpreter);
+
+static  void lua_msh(int argc, char **argv)
+{
+	const char* device_name = finsh_get_device();
+	rt_device_t device = rt_device_find(device_name);
+	if (device == RT_NULL)
+	{
+		rt_kprintf("%s not find\n", device_name);
+		return;
+	}
+	dev4lua.device = device;
+
+	/*prepare parameters*/
+	int i;
+	char **arg = rt_malloc((argc+1)*sizeof(char*));
+	for (i=0; i<argc; i++){
+		arg[i] = argv[i];
+	}
+	arg[argc] = NULL;
+
+	finsh_lua(argc, arg);
+	rt_free(arg);
+	return;
+}
+MSH_CMD_EXPORT(lua_msh, lua in msh);
 
 int readline4lua(const char *prompt, char *buffer, int buffer_size)
 {
