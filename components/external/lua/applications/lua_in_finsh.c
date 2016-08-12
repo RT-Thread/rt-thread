@@ -20,8 +20,12 @@ rt_err_t lua_rx_ind(rt_device_t dev, rt_size_t size)
 
     return RT_EOK;
 }
+struct para{
+	int argc;
+	char *argv[3];
+};
 
-void finsh_lua(int argc, char **argv)
+void finsh_lua(struct para *parameters)
 {
     rt_err_t (*rx_indicate)(rt_device_t dev, rt_size_t size);
 
@@ -31,12 +35,21 @@ void finsh_lua(int argc, char **argv)
     rx_indicate = dev4lua.device->rx_indicate;
 
     /* set new rx_indicate */
-    rt_device_set_rx_indicate(dev4lua.device, lua_rx_ind);
+    //rt_device_set_rx_indicate(dev4lua.device, lua_rx_ind);
 
     {
-        /* run lua interpreter */
-        lua_main(argc, argv);
+	    int argc = parameters->argc;
+	    char **argv = parameters->argv;
+	    /*
+	    rt_kprintf("argc =%d, argv[1] =%d\n", argc, argv[1]);
+	    while(1);
+	    */
+	    /* run lua interpreter */
+	    lua_main(argc, argv);
     }
+    if (parameters->argc > 1)
+	    rt_free(parameters->argv[1]);
+    rt_free(parameters);
 
     /* recover old rx_indicate */
     rt_device_set_rx_indicate(dev4lua.device, rx_indicate);
@@ -44,6 +57,7 @@ void finsh_lua(int argc, char **argv)
 
 static void lua(void *parameters)
 {
+    rt_thread_t lua_thread;
     const char* device_name = finsh_get_device();
     rt_device_t device = rt_device_find(device_name);
     if (device == RT_NULL)
@@ -52,29 +66,49 @@ static void lua(void *parameters)
         return;
     }
     dev4lua.device = device;
-    char *argv[] = {"lua", parameters, NULL};
 
-#if 0
+    /*prepare parameters*/
+    struct para *lua_parameters = rt_malloc(sizeof(struct para));
+    if ( lua_parameters == NULL ){
+	    rt_kprintf("malloc failed at file: %s,line: %d", __FILE__, __LINE__);
+	    return;
+    }
+    lua_parameters->argc = 2;
+    char **arg = lua_parameters->argv;
+
+    arg[0] = "lua";
+    if (parameters != NULL){
+	    rt_size_t len = strnlen(parameters, 50);
+	    arg[1] = rt_malloc(len + 1);
+	    if (arg[1] == NULL ){
+		    rt_kprintf("malloc failed at file: %s,line: %d", __FILE__, __LINE__);
+		    return;
+	    }
+	    rt_memset(arg[1], 0, len+1);
+	    strncpy(arg[1], parameters, len);
+    }else{
+	    arg[1] = NULL;
+    }
+    arg[2] = NULL;
+
     /* Run lua interpreter in separate thread */
     lua_thread = rt_thread_create("lua",
-                                  finsh_lua,
-                                  0,
-                                  2048,
+                                  (void (*)(void *))finsh_lua,
+                                  (void*)lua_parameters,
+                                  10240,
                                   rt_thread_self()->current_priority + 1,
                                   20);
     if (lua_thread != RT_NULL)
     {
         rt_thread_startup(lua_thread);
     }
-#else
-    /* Directly run lua interpreter in finsh */
-    finsh_lua(2, argv);
-#endif
+    return;
 }
 FINSH_FUNCTION_EXPORT(lua, lua interpreter);
 
 static  void lua_msh(int argc, char **argv)
 {
+	rt_thread_t lua_thread;
 	const char* device_name = finsh_get_device();
 	rt_device_t device = rt_device_find(device_name);
 	if (device == RT_NULL)
@@ -85,15 +119,42 @@ static  void lua_msh(int argc, char **argv)
 	dev4lua.device = device;
 
 	/*prepare parameters*/
-	int i;
-	char **arg = rt_malloc((argc+1)*sizeof(char*));
-	for (i=0; i<argc; i++){
-		arg[i] = argv[i];
+	struct para *parameters = rt_malloc(sizeof(struct para));
+	if ( parameters == NULL ){
+		rt_kprintf("malloc failed at file: %s,line: %d", __FILE__, __LINE__);
+		return;
 	}
-	arg[argc] = NULL;
+	//parameters->argc = 2;
+	parameters->argc = argc;
+	char **arg = parameters->argv;
 
-	finsh_lua(argc, arg);
-	rt_free(arg);
+	arg[0] = "lua";
+	if (argc > 1){
+		rt_size_t len = strnlen(argv[1], 50);
+		arg[1] = rt_malloc(len + 1);
+		if (arg[1] == NULL ){
+			rt_kprintf("malloc failed at file: %s,line: %d", __FILE__, __LINE__);
+			return;
+		}
+		rt_memset(arg[1], 0, len+1);
+		strncpy(arg[1], argv[1], len);
+	}else{
+		arg[1] = NULL;
+	}
+	arg[2] = NULL;
+
+	
+	/* Run lua interpreter in separate thread */
+	lua_thread = rt_thread_create("lua_msh",
+			(void (*)(void *))(finsh_lua),
+			(void*)parameters,
+			10240,
+			rt_thread_self()->current_priority - 1,
+			20);
+	if (lua_thread != RT_NULL)
+	{
+		rt_thread_startup(lua_thread);
+	}
 	return;
 }
 MSH_CMD_EXPORT(lua_msh, lua in msh);
