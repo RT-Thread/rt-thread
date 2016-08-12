@@ -35,7 +35,7 @@ void finsh_lua(struct para *parameters)
     rx_indicate = dev4lua.device->rx_indicate;
 
     /* set new rx_indicate */
-    //rt_device_set_rx_indicate(dev4lua.device, lua_rx_ind);
+    rt_device_set_rx_indicate(dev4lua.device, lua_rx_ind);
 
     {
 	    int argc = parameters->argc;
@@ -149,7 +149,7 @@ static  void lua_msh(int argc, char **argv)
 			(void (*)(void *))(finsh_lua),
 			(void*)parameters,
 			10240,
-			rt_thread_self()->current_priority - 1,
+			rt_thread_self()->current_priority + 1,
 			20);
 	if (lua_thread != RT_NULL)
 	{
