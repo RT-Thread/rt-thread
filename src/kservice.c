@@ -43,7 +43,7 @@
  * @addtogroup KernelService
  */
 
-/*@{*/
+/**@{*/
 
 /* global errno in RT-Thread */
 static volatile int _errno;
@@ -1328,4 +1328,4 @@ int vsprintf(char *buf, const char *format, va_list arg_ptr) __attribute__((weak
 
 #endif
 
-/*@}*/
+/**@}*/
