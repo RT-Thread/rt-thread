@@ -169,7 +169,7 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
  * @addtogroup Thread
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * This function will initialize a thread, normally it's used to initialize a
@@ -737,4 +737,4 @@ rt_thread_t rt_thread_find(char *name)
 }
 RTM_EXPORT(rt_thread_find);
 
-/*@}*/
+/**@}*/
