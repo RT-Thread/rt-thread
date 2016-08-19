@@ -155,14 +155,6 @@
 /* TCP receive window. */
 #define RT_LWIP_TCP_WND		8192
 
-#define CHECKSUM_CHECK_TCP              0
-#define CHECKSUM_CHECK_IP               0
-#define CHECKSUM_CHECK_UDP              0
-
-#define CHECKSUM_GEN_TCP                0
-#define CHECKSUM_GEN_IP                 0
-#define CHECKSUM_GEN_UDP                0
-
 /* RT_GDB_STUB */
 //#define RT_USING_GDB
 
