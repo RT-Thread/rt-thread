@@ -366,7 +366,7 @@ static void (*rt_module_unload_hook)(rt_module_t module);
  * @addtogroup Hook
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * This function will set a hook function, which will be invoked when module
@@ -390,7 +390,7 @@ void rt_module_unload_sethook(void (*hook)(rt_module_t module))
     rt_module_unload_hook = hook;
 }
 
-/*@}*/
+/**@}*/
 #endif
 
 static struct rt_module *_load_shared_object(const char *name,
