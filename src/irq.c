@@ -60,7 +60,7 @@ void rt_interrupt_leave_sethook(void (*hook)(void))
  * @addtogroup Kernel
  */
 
-/*@{*/
+/**@{*/
 
 volatile rt_uint8_t rt_interrupt_nest;
 
@@ -123,5 +123,5 @@ RTM_EXPORT(rt_interrupt_get_nest);
 RTM_EXPORT(rt_hw_interrupt_disable);
 RTM_EXPORT(rt_hw_interrupt_enable);
 
-/*@}*/
+/**@}*/
 
