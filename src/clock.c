@@ -50,7 +50,7 @@ void rt_system_tick_init(void)
  * @addtogroup Clock
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * This function will return current tick from operating system startup
@@ -118,5 +118,5 @@ rt_tick_t rt_tick_from_millisecond(rt_uint32_t ms)
 }
 RTM_EXPORT(rt_tick_from_millisecond);
 
-/*@}*/
+/**@}*/
 
