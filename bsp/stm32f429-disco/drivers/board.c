@@ -19,7 +19,6 @@
 #include "board.h"
 #include "usart.h"
 #include "gpio.h"
-#include "sram.h"
 
 /**
  * @addtogroup STM32
@@ -101,12 +100,7 @@ void rt_hw_board_init()
     stm32_hw_pin_init();
 #endif
 
-#ifdef RT_USING_EXT_SDRAM
-    rt_system_heap_init((void*)EXT_SDRAM_BEGIN, (void*)EXT_SDRAM_END);
-    sram_init();
-#else
-    rt_system_heap_init((void*)HEAP_BEGIN, (void*)HEAP_END);
-#endif
+
 
 #ifdef RT_USING_CONSOLE
     rt_console_set_device(CONSOLE_DEVICE);

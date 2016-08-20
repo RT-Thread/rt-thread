@@ -17,6 +17,7 @@
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
 #define RT_DEBUG
+#define RT_DEBUG_INIT    1
 #define RT_USING_OVERFLOW_CHECK
 
 /* Using Hook */
@@ -51,9 +52,13 @@
 
 /* Using Dynamic Heap Management */
 #define RT_USING_HEAP
-
+#define RT_USING_MEMHEAP
 /* Using Small MM */
 #define RT_USING_SMALL_MEM
+
+#define RT_USING_COMPONENTS_INIT
+
+#define RT_USING_EXT_SDRAM
 
 /* SECTION: Device System */
 /* Using Device System */

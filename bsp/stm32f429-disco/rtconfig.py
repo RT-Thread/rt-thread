@@ -12,7 +12,7 @@ if os.getenv('RTT_CC'):
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 if  CROSS_TOOL == 'gcc':
     PLATFORM 	= 'gcc'
-    EXEC_PATH 	= r'/home/zhuoyixu/gcc-arm-none-eabi-5_4-2016q2/bin'
+    EXEC_PATH 	= r'/opt/gcc-arm-none-eabi-5_4-2016q2/bin'
 elif CROSS_TOOL == 'keil':
     PLATFORM 	= 'armcc'
     EXEC_PATH 	= r'C:/Keil'
@@ -41,7 +41,7 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = '  -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -g -Wall -DSTM32F429ZI -DSTM32F4XX -DUSE_STDPERIPH_DRIVER -D__ASSEMBLY__ -D__FPU_USED'
+    CFLAGS = DEVICE + ' -g -Wall -DSTM32F429ZI -DSTM32F429_439xx -DUSE_STDPERIPH_DRIVER -D__ASSEMBLY__ -D__FPU_USED'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread-stm32.map,-cref,-u,Reset_Handler -T stm32_rom.ld'
 
@@ -65,7 +65,7 @@ elif PLATFORM == 'armcc':
     TARGET_EXT = 'axf'
 
     DEVICE = ' --cpu=cortex-m4.fp'
-    CFLAGS = DEVICE + ' --apcs=interwork -DUSE_STDPERIPH_DRIVER -DSTM32F40_41xxx'
+    CFLAGS = DEVICE + ' --apcs=interwork -DUSE_STDPERIPH_DRIVER -DSTM32F429_439xx'
     AFLAGS = DEVICE
     LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-stm32.map --scatter stm32_rom.sct'
 

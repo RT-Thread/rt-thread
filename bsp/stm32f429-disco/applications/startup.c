@@ -80,7 +80,11 @@ void rtthread_startup(void)
     /* init timer system */
     rt_system_timer_init();
 
-    rt_system_heap_init((void*)STM32_SRAM_BEGIN, (void*)STM32_SRAM_END);
+#ifdef RT_USING_EXT_SDRAM
+    rt_system_heap_init((void*)EXT_SDRAM_BEGIN, (void*)EXT_SDRAM_END);
+#else
+    rt_system_heap_init((void*)HEAP_BEGIN, (void*)HEAP_END);
+#endif
 
     /* init scheduler system */
     rt_system_scheduler_init();
