@@ -2,21 +2,27 @@
   ******************************************************************************
   * @file    stm32f4xx_i2c.h
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    30-September-2011
+  * @version V1.3.0
+  * @date    08-November-2013
   * @brief   This file contains all the functions prototypes for the I2C firmware 
   *          library.
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************  
   */ 
 
@@ -76,6 +82,17 @@ typedef struct
 #define IS_I2C_ALL_PERIPH(PERIPH) (((PERIPH) == I2C1) || \
                                    ((PERIPH) == I2C2) || \
                                    ((PERIPH) == I2C3))
+
+/** @defgroup I2C_Digital_Filter
+  * @{
+  */
+
+#define IS_I2C_DIGITAL_FILTER(FILTER)   ((FILTER) <= 0x0000000F)
+/**
+  * @}
+  */
+
+
 /** @defgroup I2C_mode 
   * @{
   */
@@ -534,6 +551,8 @@ void I2C_DeInit(I2C_TypeDef* I2Cx);
 void I2C_Init(I2C_TypeDef* I2Cx, I2C_InitTypeDef* I2C_InitStruct);
 void I2C_StructInit(I2C_InitTypeDef* I2C_InitStruct);
 void I2C_Cmd(I2C_TypeDef* I2Cx, FunctionalState NewState);
+void I2C_DigitalFilterConfig(I2C_TypeDef* I2Cx, uint16_t I2C_DigitalFilter);
+void I2C_AnalogFilterCmd(I2C_TypeDef* I2Cx, FunctionalState NewState);
 void I2C_GenerateSTART(I2C_TypeDef* I2Cx, FunctionalState NewState);
 void I2C_GenerateSTOP(I2C_TypeDef* I2Cx, FunctionalState NewState);
 void I2C_Send7bitAddress(I2C_TypeDef* I2Cx, uint8_t Address, uint8_t I2C_Direction);
@@ -689,4 +708,4 @@ void I2C_ClearITPendingBit(I2C_TypeDef* I2Cx, uint32_t I2C_IT);
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

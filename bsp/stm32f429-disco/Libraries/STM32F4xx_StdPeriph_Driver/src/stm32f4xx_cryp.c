@@ -2,156 +2,161 @@
   ******************************************************************************
   * @file    stm32f4xx_cryp.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    30-September-2011
+  * @version V1.3.0
+  * @date    08-November-2013
   * @brief   This file provides firmware functions to manage the following 
   *          functionalities of the  Cryptographic processor (CRYP) peripheral:           
-  *           - Initialization and Configuration functions
-  *           - Data treatment functions 
-  *           - Context swapping functions     
-  *           - DMA interface function       
-  *           - Interrupts and flags management       
+  *           + Initialization and Configuration functions
+  *           + Data treatment functions 
+  *           + Context swapping functions     
+  *           + DMA interface function       
+  *           + Interrupts and flags management       
   *
-  *  @verbatim
-  *                               
-  *          ===================================================================      
-  *                                 How to use this driver
-  *          =================================================================== 
-  *          1. Enable the CRYP controller clock using 
-  *              RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_CRYP, ENABLE); function.
-  *
-  *          2. Initialise the CRYP using CRYP_Init(), CRYP_KeyInit() and if 
-  *             needed CRYP_IVInit(). 
-  *
-  *          3. Flush the IN and OUT FIFOs by using CRYP_FIFOFlush() function.
-  *
-  *          4. Enable the CRYP controller using the CRYP_Cmd() function. 
-  *
-  *          5. If using DMA for Data input and output transfer, 
-  *             Activate the needed DMA Requests using CRYP_DMACmd() function 
+@verbatim
+ ===================================================================      
+                 ##### How to use this driver #####
+ =================================================================== 
+ [..]
+   (#) Enable the CRYP controller clock using 
+       RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_CRYP, ENABLE); function.
   
-  *          6. If DMA is not used for data transfer, use CRYP_DataIn() and 
-  *             CRYP_DataOut() functions to enter data to IN FIFO and get result
-  *             from OUT FIFO.
-  *
-  *          7. To control CRYP events you can use one of the following 
-  *              two methods:
-  *               - Check on CRYP flags using the CRYP_GetFlagStatus() function.  
-  *               - Use CRYP interrupts through the function CRYP_ITConfig() at 
-  *                 initialization phase and CRYP_GetITStatus() function into 
-  *                 interrupt routines in processing phase.
-  *       
-  *          8. Save and restore Cryptographic processor context using  
-  *             CRYP_SaveContext() and CRYP_RestoreContext() functions.     
-  *
-  *
-  *          ===================================================================  
-  *                Procedure to perform an encryption or a decryption
-  *          ===================================================================  
-  *
-  *      Initialization
-  *      ===============  
-  *     1. Initialize the peripheral using CRYP_Init(), CRYP_KeyInit() and 
-  *        CRYP_IVInit functions:
-  *        - Configure the key size (128-, 192- or 256-bit, in the AES only) 
-  *        - Enter the symmetric key 
-  *        - Configure the data type
-  *        - In case of decryption in AES-ECB or AES-CBC, you must prepare 
-  *          the key: configure the key preparation mode. Then Enable the CRYP 
-  *          peripheral using CRYP_Cmd() function: the BUSY flag is set. 
-  *          Wait until BUSY flag is reset : the key is prepared for decryption
-  *       - Configure the algorithm and chaining (the DES/TDES in ECB/CBC, the 
-  *          AES in ECB/CBC/CTR) 
-  *       - Configure the direction (encryption/decryption).
-  *       - Write the initialization vectors (in CBC or CTR modes only)
-  *
-  *    2. Flush the IN and OUT FIFOs using the CRYP_FIFOFlush() function
-  *
-  *
-  *    Basic Processing mode (polling mode) 
-  *    ====================================  
-  *    1. Enable the cryptographic processor using CRYP_Cmd() function.
-  *
-  *    2. Write the first blocks in the input FIFO (2 to 8 words) using 
-  *       CRYP_DataIn() function.
-  *
-  *    3. Repeat the following sequence until the complete message has been 
-  *       processed:
-  *
-  *       a) Wait for flag CRYP_FLAG_OFNE occurs (using CRYP_GetFlagStatus() 
-  *          function), then read the OUT-FIFO using CRYP_DataOut() function
-  *          (1 block or until the FIFO is empty)
-  *
-  *       b) Wait for flag CRYP_FLAG_IFNF occurs, (using CRYP_GetFlagStatus() 
-  *          function then write the IN FIFO using CRYP_DataIn() function 
-  *          (1 block or until the FIFO is full)
-  *
-  *    4. At the end of the processing, CRYP_FLAG_BUSY flag will be reset and 
-  *        both FIFOs are empty (CRYP_FLAG_IFEM is set and CRYP_FLAG_OFNE is 
-  *        reset). You can disable the peripheral using CRYP_Cmd() function.
-  *
-  *    Interrupts Processing mode 
-  *    ===========================
-  *    In this mode, Processing is done when the data are transferred by the 
-  *    CPU during interrupts.
-  *
-  *    1. Enable the interrupts CRYP_IT_INI and CRYP_IT_OUTI using 
-  *       CRYP_ITConfig() function.
-  *
-  *    2. Enable the cryptographic processor using CRYP_Cmd() function.
-  *
-  *    3. In the CRYP_IT_INI interrupt handler : load the input message into the 
-  *       IN FIFO using CRYP_DataIn() function . You can load 2 or 4 words at a 
-  *       time, or load data until the IN FIFO is full. When the last word of
-  *       the message has been entered into the IN FIFO, disable the CRYP_IT_INI 
-  *       interrupt (using CRYP_ITConfig() function).
-  *
-  *    4. In the CRYP_IT_OUTI interrupt handler : read the output message from 
-  *       the OUT FIFO using CRYP_DataOut() function. You can read 1 block (2 or 
-  *       4 words) at a time or read data until the FIFO is empty.
-  *       When the last word has been read, INIM=0, BUSY=0 and both FIFOs are 
-  *       empty (CRYP_FLAG_IFEM is set and CRYP_FLAG_OFNE is reset). 
-  *       You can disable the CRYP_IT_OUTI interrupt (using CRYP_ITConfig() 
-  *       function) and you can disable the peripheral using CRYP_Cmd() function.
-  *
-  *    DMA Processing mode 
-  *    ====================
-  *    In this mode, Processing is done when the DMA is used to transfer the 
-  *    data from/to the memory.
-  *
-  *    1. Configure the DMA controller to transfer the input data from the 
-  *       memory using DMA_Init() function. 
-  *       The transfer length is the length of the message. 
-  *       As message padding is not managed by the peripheral, the message 
-  *       length must be an entire number of blocks. The data are transferred 
-  *       in burst mode. The burst length is 4 words in the AES and 2 or 4 
-  *       words in the DES/TDES. The DMA should be configured to set an 
-  *       interrupt on transfer completion of the output data to indicate that 
-  *       the processing is finished. 
-  *       Refer to DMA peripheral driver for more details.  
-  *
-  *    2. Enable the cryptographic processor using CRYP_Cmd() function. 
-  *       Enable the DMA requests CRYP_DMAReq_DataIN and CRYP_DMAReq_DataOUT 
-  *       using CRYP_DMACmd() function.
-  *
-  *    3. All the transfers and processing are managed by the DMA and the 
-  *       cryptographic processor. The DMA transfer complete interrupt indicates 
-  *       that the processing is complete. Both FIFOs are normally empty and 
-  *       CRYP_FLAG_BUSY flag is reset.
-  *
-  *  @endverbatim
+   (#) Initialise the CRYP using CRYP_Init(), CRYP_KeyInit() and if needed 
+       CRYP_IVInit(). 
+  
+   (#) Flush the IN and OUT FIFOs by using CRYP_FIFOFlush() function.
+  
+   (#) Enable the CRYP controller using the CRYP_Cmd() function. 
+  
+   (#) If using DMA for Data input and output transfer, activate the needed DMA 
+       Requests using CRYP_DMACmd() function 
+  
+   (#) If DMA is not used for data transfer, use CRYP_DataIn() and  CRYP_DataOut() 
+       functions to enter data to IN FIFO and get result from OUT FIFO.
+  
+   (#) To control CRYP events you can use one of the following two methods:
+       (++) Check on CRYP flags using the CRYP_GetFlagStatus() function.  
+       (++) Use CRYP interrupts through the function CRYP_ITConfig() at 
+            initialization phase and CRYP_GetITStatus() function into interrupt 
+            routines in processing phase.
+         
+   (#) Save and restore Cryptographic processor context using CRYP_SaveContext() 
+       and CRYP_RestoreContext() functions.     
+  
+  
+ *** Procedure to perform an encryption or a decryption ***
+ ========================================================== 
+  
+ *** Initialization ***
+ ====================== 
+ [..] 
+   (#) Initialize the peripheral using CRYP_Init(), CRYP_KeyInit() and CRYP_IVInit 
+       functions:
+       (++) Configure the key size (128-, 192- or 256-bit, in the AES only) 
+       (++) Enter the symmetric key 
+       (++) Configure the data type
+       (++) In case of decryption in AES-ECB or AES-CBC, you must prepare 
+            the key: configure the key preparation mode. Then Enable the CRYP 
+            peripheral using CRYP_Cmd() function: the BUSY flag is set. 
+            Wait until BUSY flag is reset : the key is prepared for decryption
+       (++) Configure the algorithm and chaining (the DES/TDES in ECB/CBC, the 
+            AES in ECB/CBC/CTR) 
+       (++) Configure the direction (encryption/decryption).
+       (++) Write the initialization vectors (in CBC or CTR modes only)
+  
+   (#) Flush the IN and OUT FIFOs using the CRYP_FIFOFlush() function
+  
+  
+  *** Basic Processing mode (polling mode) *** 
+  ============================================  
+  [..]
+    (#) Enable the cryptographic processor using CRYP_Cmd() function.
+  
+    (#) Write the first blocks in the input FIFO (2 to 8 words) using 
+        CRYP_DataIn() function.
+  
+    (#) Repeat the following sequence until the complete message has been 
+        processed:
+  
+        (++) Wait for flag CRYP_FLAG_OFNE occurs (using CRYP_GetFlagStatus() 
+            function), then read the OUT-FIFO using CRYP_DataOut() function
+            (1 block or until the FIFO is empty)
+  
+         (++) Wait for flag CRYP_FLAG_IFNF occurs, (using CRYP_GetFlagStatus() 
+            function then write the IN FIFO using CRYP_DataIn() function 
+            (1 block or until the FIFO is full)
+  
+    (#) At the end of the processing, CRYP_FLAG_BUSY flag will be reset and 
+          both FIFOs are empty (CRYP_FLAG_IFEM is set and CRYP_FLAG_OFNE is 
+          reset). You can disable the peripheral using CRYP_Cmd() function.
+  
+ *** Interrupts Processing mode *** 
+ ==================================
+ [..] In this mode, Processing is done when the data are transferred by the 
+      CPU during interrupts.
+  
+    (#) Enable the interrupts CRYP_IT_INI and CRYP_IT_OUTI using CRYP_ITConfig()
+        function.
+  
+    (#) Enable the cryptographic processor using CRYP_Cmd() function.
+  
+    (#) In the CRYP_IT_INI interrupt handler : load the input message into the 
+         IN FIFO using CRYP_DataIn() function . You can load 2 or 4 words at a 
+         time, or load data until the IN FIFO is full. When the last word of
+         the message has been entered into the IN FIFO, disable the CRYP_IT_INI 
+         interrupt (using CRYP_ITConfig() function).
+  
+    (#) In the CRYP_IT_OUTI interrupt handler : read the output message from 
+         the OUT FIFO using CRYP_DataOut() function. You can read 1 block (2 or 
+         4 words) at a time or read data until the FIFO is empty.
+         When the last word has been read, INIM=0, BUSY=0 and both FIFOs are 
+         empty (CRYP_FLAG_IFEM is set and CRYP_FLAG_OFNE is reset). 
+         You can disable the CRYP_IT_OUTI interrupt (using CRYP_ITConfig() 
+         function) and you can disable the peripheral using CRYP_Cmd() function.
+  
+ *** DMA Processing mode *** 
+ ===========================
+ [..] In this mode, Processing is done when the DMA is used to transfer the 
+      data from/to the memory.
+  
+    (#) Configure the DMA controller to transfer the input data from the 
+         memory using DMA_Init() function. 
+         The transfer length is the length of the message. 
+         As message padding is not managed by the peripheral, the message 
+         length must be an entire number of blocks. The data are transferred 
+         in burst mode. The burst length is 4 words in the AES and 2 or 4 
+         words in the DES/TDES. The DMA should be configured to set an 
+         interrupt on transfer completion of the output data to indicate that 
+         the processing is finished. 
+         Refer to DMA peripheral driver for more details.  
+  
+     (#) Enable the cryptographic processor using CRYP_Cmd() function. 
+         Enable the DMA requests CRYP_DMAReq_DataIN and CRYP_DMAReq_DataOUT 
+         using CRYP_DMACmd() function.
+  
+     (#) All the transfers and processing are managed by the DMA and the 
+         cryptographic processor. The DMA transfer complete interrupt indicates 
+         that the processing is complete. Both FIFOs are normally empty and 
+         CRYP_FLAG_BUSY flag is reset.
+  
+    @endverbatim
   *
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************  
   */
 
@@ -187,23 +192,22 @@
  *
 @verbatim    
  ===============================================================================
-                      Initialization and Configuration functions
+             ##### Initialization and Configuration functions #####
  ===============================================================================  
-  This section provides functions allowing to 
-   - Initialize the cryptographic Processor using CRYP_Init() function 
-      -  Encrypt or Decrypt 
-      -  mode : TDES-ECB, TDES-CBC, 
-                DES-ECB, DES-CBC, 
-                AES-ECB, AES-CBC, AES-CTR, AES-Key 
-      - DataType :  32-bit data, 16-bit data, bit data or bit-string
-      - Key Size (only in AES modes)
-   - Configure the Encrypt or Decrypt Key using CRYP_KeyInit() function 
-   - Configure the Initialization Vectors(IV) for CBC and CTR modes using 
-     CRYP_IVInit() function.  
-   - Flushes the IN and OUT FIFOs : using CRYP_FIFOFlush() function.                         
-   - Enable or disable the CRYP Processor using CRYP_Cmd() function 
-    
-   
+ [..] This section provides functions allowing to 
+   (+) Initialize the cryptographic Processor using CRYP_Init() function 
+       (++)  Encrypt or Decrypt 
+       (++)  mode : TDES-ECB, TDES-CBC, 
+                    DES-ECB, DES-CBC, 
+                    AES-ECB, AES-CBC, AES-CTR, AES-Key, AES-GCM, AES-CCM 
+       (++) DataType :  32-bit data, 16-bit data, bit data or bit-string
+       (++) Key Size (only in AES modes)
+   (+) Configure the Encrypt or Decrypt Key using CRYP_KeyInit() function 
+   (+) Configure the Initialization Vectors(IV) for CBC and CTR modes using 
+       CRYP_IVInit() function.  
+   (+) Flushes the IN and OUT FIFOs : using CRYP_FIFOFlush() function.                         
+   (+) Enable or disable the CRYP Processor using CRYP_Cmd() function 
+       
 @endverbatim
   * @{
   */
@@ -244,10 +248,10 @@ void CRYP_Init(CRYP_InitTypeDef* CRYP_InitStruct)
   CRYP->CR |= CRYP_InitStruct->CRYP_DataType;
 
   /* select Key size (used only with AES algorithm) */
-  if ((CRYP_InitStruct->CRYP_AlgoMode == CRYP_AlgoMode_AES_ECB) ||
-      (CRYP_InitStruct->CRYP_AlgoMode == CRYP_AlgoMode_AES_CBC) ||
-      (CRYP_InitStruct->CRYP_AlgoMode == CRYP_AlgoMode_AES_CTR) ||
-      (CRYP_InitStruct->CRYP_AlgoMode == CRYP_AlgoMode_AES_Key))
+  if ((CRYP_InitStruct->CRYP_AlgoMode != CRYP_AlgoMode_TDES_ECB) &&
+      (CRYP_InitStruct->CRYP_AlgoMode != CRYP_AlgoMode_TDES_CBC) &&
+      (CRYP_InitStruct->CRYP_AlgoMode != CRYP_AlgoMode_DES_ECB) &&
+      (CRYP_InitStruct->CRYP_AlgoMode != CRYP_AlgoMode_DES_CBC))
   {
     assert_param(IS_CRYP_KEYSIZE(CRYP_InitStruct->CRYP_KeySize));
     CRYP->CR &= ~CRYP_CR_KEYSIZE;
@@ -349,6 +353,35 @@ void CRYP_IVStructInit(CRYP_IVInitTypeDef* CRYP_IVInitStruct)
 }
 
 /**
+  * @brief  Configures the AES-CCM and AES-GCM phases
+  * @note   This function is used only with AES-CCM or AES-GCM Algorithms  
+  * @param  CRYP_Phase: specifies the CRYP AES-CCM and AES-GCM phase to be configured.
+  *           This parameter can be one of the following values:
+  *            @arg CRYP_Phase_Init: Initialization phase
+  *            @arg CRYP_Phase_Header: Header phase
+  *            @arg CRYP_Phase_Payload: Payload phase
+  *            @arg CRYP_Phase_Final: Final phase 
+  * @retval None
+  */
+void CRYP_PhaseConfig(uint32_t CRYP_Phase)
+{ uint32_t tempcr = 0;
+
+  /* Check the parameter */
+  assert_param(IS_CRYP_PHASE(CRYP_Phase));
+
+  /* Get the CR register */
+  tempcr = CRYP->CR;
+  
+  /* Reset the phase configuration bits: GCMP_CCMPH */
+  tempcr &= (uint32_t)(~CRYP_CR_GCM_CCMPH);
+  /* Set the selected phase */
+  tempcr |= (uint32_t)CRYP_Phase;
+
+  /* Set the CR register */ 
+  CRYP->CR = tempcr;    
+}
+
+/**
   * @brief  Flushes the IN and OUT FIFOs (that is read and write pointers of the 
   *         FIFOs are reset)
   * @note   The FIFOs must be flushed only when BUSY flag is reset.  
@@ -392,12 +425,12 @@ void CRYP_Cmd(FunctionalState NewState)
  *
 @verbatim    
  ===============================================================================
-                      CRYP Data processing functions
+                    ##### CRYP Data processing functions #####
  ===============================================================================  
-  This section provides functions allowing the encryption and decryption 
-  operations: 
-  - Enter data to be treated in the IN FIFO : using CRYP_DataIn() function.
-  - Get the data result from the OUT FIFO : using CRYP_DataOut() function.
+ [..] This section provides functions allowing the encryption and decryption 
+      operations: 
+   (+) Enter data to be treated in the IN FIFO : using CRYP_DataIn() function.
+   (+) Get the data result from the OUT FIFO : using CRYP_DataOut() function.
 
 @endverbatim
   * @{
@@ -433,20 +466,18 @@ uint32_t CRYP_DataOut(void)
  *
 @verbatim   
  ===============================================================================
-                             Context swapping functions
+                      ##### Context swapping functions #####
  ===============================================================================  
+ [..] This section provides functions allowing to save and store CRYP Context
 
-  This section provides functions allowing to save and store CRYP Context
-
-  It is possible to interrupt an encryption/ decryption/ key generation process 
-  to perform another processing with a higher priority, and to complete the 
-  interrupted process later on, when the higher-priority task is complete. To do 
-  so, the context of the interrupted task must be saved from the CRYP registers 
-  to memory, and then be restored from memory to the CRYP registers.
+ [..] It is possible to interrupt an encryption/ decryption/ key generation process 
+      to perform another processing with a higher priority, and to complete the 
+      interrupted process later on, when the higher-priority task is complete. To do 
+      so, the context of the interrupted task must be saved from the CRYP registers 
+      to memory, and then be restored from memory to the CRYP registers.
    
-  1. To save the current context, use CRYP_SaveContext() function
-  2. To restore the saved context, use CRYP_RestoreContext() function 
-
+   (#) To save the current context, use CRYP_SaveContext() function
+   (#) To restore the saved context, use CRYP_RestoreContext() function 
 
 @endverbatim
   * @{
@@ -506,11 +537,12 @@ ErrorStatus CRYP_SaveContext(CRYP_Context* CRYP_ContextSave,
     CRYP->DMACR &= ~(uint32_t)CRYP_DMACR_DOEN;
     CRYP->CR &= ~(uint32_t)CRYP_CR_CRYPEN;
 
-    /* Save the current configuration (bits [9:2] in the CRYP_CR register) */
-    CRYP_ContextSave->CR_bits9to2  = CRYP->CR & (CRYP_CR_KEYSIZE  | 
-                                                 CRYP_CR_DATATYPE | 
-                                                 CRYP_CR_ALGOMODE |
-                                                 CRYP_CR_ALGODIR); 
+    /* Save the current configuration (bit 19, bit[17:16] and bits [9:2] in the CRYP_CR register) */
+    CRYP_ContextSave->CR_CurrentConfig  = CRYP->CR & (CRYP_CR_GCM_CCMPH |
+                                                      CRYP_CR_KEYSIZE  |
+                                                      CRYP_CR_DATATYPE |
+                                                      CRYP_CR_ALGOMODE |
+                                                      CRYP_CR_ALGODIR);
 
     /* and, if not in ECB mode, the initialization vectors. */
     CRYP_ContextSave->CRYP_IV0LR = CRYP->IV0LR;
@@ -528,6 +560,25 @@ ErrorStatus CRYP_SaveContext(CRYP_Context* CRYP_ContextSave,
     CRYP_ContextSave->CRYP_K3LR = CRYP_KeyInitStruct->CRYP_Key3Left; 
     CRYP_ContextSave->CRYP_K3RR = CRYP_KeyInitStruct->CRYP_Key3Right; 
 
+    /* Save the content of context swap registers */
+    CRYP_ContextSave->CRYP_CSGCMCCMR[0] = CRYP->CSGCMCCM0R;
+    CRYP_ContextSave->CRYP_CSGCMCCMR[1] = CRYP->CSGCMCCM1R;
+    CRYP_ContextSave->CRYP_CSGCMCCMR[2] = CRYP->CSGCMCCM2R;
+    CRYP_ContextSave->CRYP_CSGCMCCMR[3] = CRYP->CSGCMCCM3R;
+    CRYP_ContextSave->CRYP_CSGCMCCMR[4] = CRYP->CSGCMCCM4R;
+    CRYP_ContextSave->CRYP_CSGCMCCMR[5] = CRYP->CSGCMCCM5R;
+    CRYP_ContextSave->CRYP_CSGCMCCMR[6] = CRYP->CSGCMCCM6R;
+    CRYP_ContextSave->CRYP_CSGCMCCMR[7] = CRYP->CSGCMCCM7R;
+    
+    CRYP_ContextSave->CRYP_CSGCMR[0] = CRYP->CSGCM0R;
+    CRYP_ContextSave->CRYP_CSGCMR[1] = CRYP->CSGCM1R;
+    CRYP_ContextSave->CRYP_CSGCMR[2] = CRYP->CSGCM2R;
+    CRYP_ContextSave->CRYP_CSGCMR[3] = CRYP->CSGCM3R;
+    CRYP_ContextSave->CRYP_CSGCMR[4] = CRYP->CSGCM4R;
+    CRYP_ContextSave->CRYP_CSGCMR[5] = CRYP->CSGCM5R;
+    CRYP_ContextSave->CRYP_CSGCMR[6] = CRYP->CSGCM6R;
+    CRYP_ContextSave->CRYP_CSGCMR[7] = CRYP->CSGCM7R;
+    
    /* When needed, save the DMA status (pointers for IN and OUT messages, 
       number of remaining bytes, etc.) */
      
@@ -552,7 +603,7 @@ void CRYP_RestoreContext(CRYP_Context* CRYP_ContextRestore)
 {
 
   /* Configure the processor with the saved configuration */
-  CRYP->CR = CRYP_ContextRestore->CR_bits9to2;
+  CRYP->CR = CRYP_ContextRestore->CR_CurrentConfig;
 
   /* restore The key value */
   CRYP->K0LR = CRYP_ContextRestore->CRYP_K0LR; 
@@ -570,6 +621,25 @@ void CRYP_RestoreContext(CRYP_Context* CRYP_ContextRestore)
   CRYP->IV1LR = CRYP_ContextRestore->CRYP_IV1LR;
   CRYP->IV1RR = CRYP_ContextRestore->CRYP_IV1RR;
 
+  /* Restore the content of context swap registers */
+  CRYP->CSGCMCCM0R = CRYP_ContextRestore->CRYP_CSGCMCCMR[0];
+  CRYP->CSGCMCCM1R = CRYP_ContextRestore->CRYP_CSGCMCCMR[1];
+  CRYP->CSGCMCCM2R = CRYP_ContextRestore->CRYP_CSGCMCCMR[2];
+  CRYP->CSGCMCCM3R = CRYP_ContextRestore->CRYP_CSGCMCCMR[3];
+  CRYP->CSGCMCCM4R = CRYP_ContextRestore->CRYP_CSGCMCCMR[4];
+  CRYP->CSGCMCCM5R = CRYP_ContextRestore->CRYP_CSGCMCCMR[5];
+  CRYP->CSGCMCCM6R = CRYP_ContextRestore->CRYP_CSGCMCCMR[6];
+  CRYP->CSGCMCCM7R = CRYP_ContextRestore->CRYP_CSGCMCCMR[7];
+  
+  CRYP->CSGCM0R = CRYP_ContextRestore->CRYP_CSGCMR[0];
+  CRYP->CSGCM1R = CRYP_ContextRestore->CRYP_CSGCMR[1];
+  CRYP->CSGCM2R = CRYP_ContextRestore->CRYP_CSGCMR[2];
+  CRYP->CSGCM3R = CRYP_ContextRestore->CRYP_CSGCMR[3];
+  CRYP->CSGCM4R = CRYP_ContextRestore->CRYP_CSGCMR[4];
+  CRYP->CSGCM5R = CRYP_ContextRestore->CRYP_CSGCMR[5];
+  CRYP->CSGCM6R = CRYP_ContextRestore->CRYP_CSGCMR[6];
+  CRYP->CSGCM7R = CRYP_ContextRestore->CRYP_CSGCMR[7];
+  
   /* Enable the cryptographic processor */
   CRYP->CR |= CRYP_CR_CRYPEN;
 }
@@ -582,18 +652,17 @@ void CRYP_RestoreContext(CRYP_Context* CRYP_ContextRestore)
  *
 @verbatim   
  ===============================================================================
-                   CRYP's DMA interface Configuration function
+             ##### CRYP's DMA interface Configuration function #####
  ===============================================================================  
-
-  This section provides functions allowing to configure the DMA interface for 
-  CRYP data input and output transfer.
+ [..] This section provides functions allowing to configure the DMA interface for 
+      CRYP data input and output transfer.
    
-  When the DMA mode is enabled (using the CRYP_DMACmd() function), data can be 
-  transferred:
-  - From memory to the CRYP IN FIFO using the DMA peripheral by enabling 
-    the CRYP_DMAReq_DataIN request.
-  - From the CRYP OUT FIFO to the memory using the DMA peripheral by enabling 
-    the CRYP_DMAReq_DataOUT request.
+ [..] When the DMA mode is enabled (using the CRYP_DMACmd() function), data can be 
+      transferred:
+   (+) From memory to the CRYP IN FIFO using the DMA peripheral by enabling 
+       the CRYP_DMAReq_DataIN request.
+   (+) From the CRYP OUT FIFO to the memory using the DMA peripheral by enabling 
+       the CRYP_DMAReq_DataOUT request.
 
 @endverbatim
   * @{
@@ -635,90 +704,83 @@ void CRYP_DMACmd(uint8_t CRYP_DMAReq, FunctionalState NewState)
  *
 @verbatim   
  ===============================================================================
-                   Interrupts and flags management functions
+              ##### Interrupts and flags management functions #####
  ===============================================================================  
+ 
+ [..] This section provides functions allowing to configure the CRYP Interrupts and 
+      to get the status and Interrupts pending bits.
 
-  This section provides functions allowing to configure the CRYP Interrupts and 
-  to get the status and Interrupts pending bits.
+ [..] The CRYP provides 2 Interrupts sources and 7 Flags:
 
-  The CRYP provides 2 Interrupts sources and 7 Flags:
-
-  Flags :
-  ------- 
-                          
-     1. CRYP_FLAG_IFEM :  Set when Input FIFO is empty.
-                          This Flag is cleared only by hardware.
+ *** Flags : ***
+ ===============
+ [..] 
+   (#) CRYP_FLAG_IFEM :  Set when Input FIFO is empty. This Flag is cleared only
+       by hardware.
       
-     2. CRYP_FLAG_IFNF :  Set when Input FIFO is not full.
-                          This Flag is cleared only by hardware.
+   (#) CRYP_FLAG_IFNF :  Set when Input FIFO is not full. This Flag is cleared 
+       only by hardware.
 
 
-     3. CRYP_FLAG_INRIS  : Set when Input FIFO Raw interrupt is pending 
-                           it gives the raw interrupt state prior to masking 
-                           of the input FIFO service interrupt.
-                           This Flag is cleared only by hardware.
+   (#) CRYP_FLAG_INRIS  : Set when Input FIFO Raw interrupt is pending it gives 
+       the raw interrupt state prior to masking of the input FIFO service interrupt.
+       This Flag is cleared only by hardware.
      
-     4. CRYP_FLAG_OFNE   : Set when Output FIFO not empty.
-                           This Flag is cleared only by hardware.
+   (#) CRYP_FLAG_OFNE   : Set when Output FIFO not empty. This Flag is cleared 
+       only by hardware.
         
-     5. CRYP_FLAG_OFFU   : Set when Output FIFO is full.
-                           This Flag is cleared only by hardware.
+   (#) CRYP_FLAG_OFFU   : Set when Output FIFO is full. This Flag is cleared only 
+       by hardware.
                            
-     6. CRYP_FLAG_OUTRIS : Set when Output FIFO Raw interrupt is pending 
-                           it gives the raw interrupt state prior to masking 
-                           of the output FIFO service interrupt.
-                           This Flag is cleared only by hardware.
+   (#) CRYP_FLAG_OUTRIS : Set when Output FIFO Raw interrupt is pending it gives 
+       the raw interrupt state prior to masking of the output FIFO service interrupt.
+       This Flag is cleared only by hardware.
                                
-     7. CRYP_FLAG_BUSY   : Set when the CRYP core is currently processing a 
-                           block of data or a key preparation (for AES 
-                           decryption).
-                           This Flag is cleared only by hardware.
-                           To clear it, the CRYP core must be disabled and the 
-                           last processing has completed. 
+   (#) CRYP_FLAG_BUSY   : Set when the CRYP core is currently processing a block 
+       of data or a key preparation (for AES decryption). This Flag is cleared 
+       only by hardware. To clear it, the CRYP core must be disabled and the last
+       processing has completed. 
 
-  Interrupts :
-  ------------
+ *** Interrupts : ***
+ ====================
+ [..]
+   (#) CRYP_IT_INI   : The input FIFO service interrupt is asserted when there 
+      are less than 4 words in the input FIFO. This interrupt is associated to 
+      CRYP_FLAG_INRIS flag.
 
-   1. CRYP_IT_INI   : The input FIFO service interrupt is asserted when there 
-                      are less than 4 words in the input FIFO.
-                      This interrupt is associated to CRYP_FLAG_INRIS flag.
-
-                @note This interrupt is cleared by performing write operations 
-                      to the input FIFO until it holds 4 or more words. The 
-                      input FIFO service interrupt INMIS is enabled with the 
-                      CRYP enable bit. Consequently, when CRYP is disabled, the 
-                      INMIS signal is low even if the input FIFO is empty.
+      -@- This interrupt is cleared by performing write operations to the input FIFO 
+          until it holds 4 or more words. The input FIFO service interrupt INMIS is 
+          enabled with the CRYP enable bit. Consequently, when CRYP is disabled, the 
+          INMIS signal is low even if the input FIFO is empty.
 
 
 
-   2. CRYP_IT_OUTI  : The output FIFO service interrupt is asserted when there 
-                      is one or more (32-bit word) data items in the output FIFO.
-                      This interrupt is associated to CRYP_FLAG_OUTRIS flag.
+   (#) CRYP_IT_OUTI  : The output FIFO service interrupt is asserted when there 
+       is one or more (32-bit word) data items in the output FIFO. This interrupt 
+       is associated to CRYP_FLAG_OUTRIS flag.
 
-                @note This interrupt is cleared by reading data from the output 
-                      FIFO until there is no valid (32-bit) word left (that is, 
-                      the interrupt follows the state of the OFNE (output FIFO 
-                      not empty) flag).
+       -@- This interrupt is cleared by reading data from the output FIFO until there 
+           is no valid (32-bit) word left (that is, the interrupt follows the state 
+           of the OFNE (output FIFO not empty) flag).
 
+ *** Managing the CRYP controller events : ***
+ =============================================
+ [..] The user should identify which mode will be used in his application to manage 
+      the CRYP controller events: Polling mode or Interrupt mode.
 
-  Managing the CRYP controller events :
-  ------------------------------------ 
-  The user should identify which mode will be used in his application to manage 
-  the CRYP controller events: Polling mode or Interrupt mode.
+   (#) In the Polling Mode it is advised to use the following functions:
+       (++) CRYP_GetFlagStatus() : to check if flags events occur. 
 
-  1.  In the Polling Mode it is advised to use the following functions:
-      - CRYP_GetFlagStatus() : to check if flags events occur. 
-
-  @note  The CRYPT flags do not need to be cleared since they are cleared as 
-         soon as the associated event are reset.   
+       -@@- The CRYPT flags do not need to be cleared since they are cleared as 
+            soon as the associated event are reset.   
 
 
-  2.  In the Interrupt Mode it is advised to use the following functions:
-      - CRYP_ITConfig()       : to enable or disable the interrupt source.
-      - CRYP_GetITStatus()    : to check if Interrupt occurs.
+   (#) In the Interrupt Mode it is advised to use the following functions:
+       (++) CRYP_ITConfig()       : to enable or disable the interrupt source.
+       (++) CRYP_GetITStatus()    : to check if Interrupt occurs.
 
-  @note  The CRYPT interrupts have no pending bits, the interrupt is cleared as 
-         soon as the associated event is reset. 
+       -@@- The CRYPT interrupts have no pending bits, the interrupt is cleared as 
+             soon as the associated event is reset. 
 
 @endverbatim
   * @{
@@ -781,6 +843,28 @@ ITStatus CRYP_GetITStatus(uint8_t CRYP_IT)
   }
   /* Return the CRYP_IT status */
   return bitstatus;
+}
+
+/**
+  * @brief  Returns whether CRYP peripheral is enabled or disabled.
+  * @param  none.
+  * @retval Current state of the CRYP peripheral (ENABLE or DISABLE).
+  */
+FunctionalState CRYP_GetCmdStatus(void)
+{
+  FunctionalState state = DISABLE;
+
+  if ((CRYP->CR & CRYP_CR_CRYPEN) != 0)
+  {
+    /* CRYPEN bit is set */
+    state = ENABLE;
+  }
+  else
+  {
+    /* CRYPEN bit is reset */
+    state = DISABLE;
+  }
+  return state;
 }
 
 /**
@@ -847,4 +931,4 @@ FlagStatus CRYP_GetFlagStatus(uint8_t CRYP_FLAG)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

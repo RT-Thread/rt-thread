@@ -2,111 +2,116 @@
   ******************************************************************************
   * @file    stm32f4xx_tim.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    30-September-2011
+  * @version V1.3.0
+  * @date    08-November-2013
   * @brief   This file provides firmware functions to manage the following 
   *          functionalities of the TIM peripheral:
-  *            - TimeBase management
-  *            - Output Compare management
-  *            - Input Capture management
-  *            - Advanced-control timers (TIM1 and TIM8) specific features  
-  *            - Interrupts, DMA and flags management
-  *            - Clocks management
-  *            - Synchronization management
-  *            - Specific interface management
-  *            - Specific remapping management      
+  *            + TimeBase management
+  *            + Output Compare management
+  *            + Input Capture management
+  *            + Advanced-control timers (TIM1 and TIM8) specific features  
+  *            + Interrupts, DMA and flags management
+  *            + Clocks management
+  *            + Synchronization management
+  *            + Specific interface management
+  *            + Specific remapping management      
   *              
-  *  @verbatim
-  *  
-  *          ===================================================================
-  *                                 How to use this driver
-  *          ===================================================================
-  *          This driver provides functions to configure and program the TIM 
-  *          of all STM32F4xx devices.
-  *          These functions are split in 9 groups: 
-  *   
-  *          1. TIM TimeBase management: this group includes all needed functions 
-  *             to configure the TM Timebase unit:
-  *                   - Set/Get Prescaler
-  *                   - Set/Get Autoreload  
-  *                   - Counter modes configuration
-  *                   - Set Clock division  
-  *                   - Select the One Pulse mode
-  *                   - Update Request Configuration
-  *                   - Update Disable Configuration
-  *                   - Auto-Preload Configuration 
-  *                   - Enable/Disable the counter     
-  *                 
-  *          2. TIM Output Compare management: this group includes all needed 
-  *             functions to configure the Capture/Compare unit used in Output 
-  *             compare mode: 
-  *                   - Configure each channel, independently, in Output Compare mode
-  *                   - Select the output compare modes
-  *                   - Select the Polarities of each channel
-  *                   - Set/Get the Capture/Compare register values
-  *                   - Select the Output Compare Fast mode 
-  *                   - Select the Output Compare Forced mode  
-  *                   - Output Compare-Preload Configuration 
-  *                   - Clear Output Compare Reference
-  *                   - Select the OCREF Clear signal
-  *                   - Enable/Disable the Capture/Compare Channels    
-  *                   
-  *          3. TIM Input Capture management: this group includes all needed 
-  *             functions to configure the Capture/Compare unit used in 
-  *             Input Capture mode:
-  *                   - Configure each channel in input capture mode
-  *                   - Configure Channel1/2 in PWM Input mode
-  *                   - Set the Input Capture Prescaler
-  *                   - Get the Capture/Compare values      
-  *                   
-  *          4. Advanced-control timers (TIM1 and TIM8) specific features
-  *                   - Configures the Break input, dead time, Lock level, the OSSI,
-  *                      the OSSR State and the AOE(automatic output enable)
-  *                   - Enable/Disable the TIM peripheral Main Outputs
-  *                   - Select the Commutation event
-  *                   - Set/Reset the Capture Compare Preload Control bit
-  *                              
-  *          5. TIM interrupts, DMA and flags management
-  *                   - Enable/Disable interrupt sources
-  *                   - Get flags status
-  *                   - Clear flags/ Pending bits
-  *                   - Enable/Disable DMA requests 
-  *                   - Configure DMA burst mode
-  *                   - Select CaptureCompare DMA request  
-  *              
-  *          6. TIM clocks management: this group includes all needed functions 
-  *             to configure the clock controller unit:
-  *                   - Select internal/External clock
-  *                   - Select the external clock mode: ETR(Mode1/Mode2), TIx or ITRx
-  *         
-  *          7. TIM synchronization management: this group includes all needed 
-  *             functions to configure the Synchronization unit:
-  *                   - Select Input Trigger  
-  *                   - Select Output Trigger  
-  *                   - Select Master Slave Mode 
-  *                   - ETR Configuration when used as external trigger   
-  *     
-  *          8. TIM specific interface management, this group includes all 
-  *             needed functions to use the specific TIM interface:
-  *                   - Encoder Interface Configuration
-  *                   - Select Hall Sensor   
-  *         
-  *          9. TIM specific remapping management includes the Remapping 
-  *             configuration of specific timers               
-  *   
-  *  @endverbatim
-  *    
+  @verbatim   
+ ===============================================================================
+                   #####  How to use this driver #####
+ ===============================================================================
+    [..]
+    This driver provides functions to configure and program the TIM 
+    of all STM32F4xx devices.
+    These functions are split in 9 groups: 
+     
+      (#) TIM TimeBase management: this group includes all needed functions 
+          to configure the TM Timebase unit:
+        (++) Set/Get Prescaler
+        (++) Set/Get Autoreload  
+        (++) Counter modes configuration
+        (++) Set Clock division  
+        (++) Select the One Pulse mode
+        (++) Update Request Configuration
+        (++) Update Disable Configuration
+        (++) Auto-Preload Configuration 
+        (++) Enable/Disable the counter     
+                   
+      (#) TIM Output Compare management: this group includes all needed 
+          functions to configure the Capture/Compare unit used in Output 
+          compare mode: 
+        (++) Configure each channel, independently, in Output Compare mode
+        (++) Select the output compare modes
+        (++) Select the Polarities of each channel
+        (++) Set/Get the Capture/Compare register values
+        (++) Select the Output Compare Fast mode 
+        (++) Select the Output Compare Forced mode  
+        (++) Output Compare-Preload Configuration 
+        (++) Clear Output Compare Reference
+        (++) Select the OCREF Clear signal
+        (++) Enable/Disable the Capture/Compare Channels    
+                     
+      (#) TIM Input Capture management: this group includes all needed 
+          functions to configure the Capture/Compare unit used in 
+          Input Capture mode:
+        (++) Configure each channel in input capture mode
+        (++) Configure Channel1/2 in PWM Input mode
+        (++) Set the Input Capture Prescaler
+        (++) Get the Capture/Compare values      
+                     
+      (#) Advanced-control timers (TIM1 and TIM8) specific features
+        (++) Configures the Break input, dead time, Lock level, the OSSI,
+             the OSSR State and the AOE(automatic output enable)
+        (++) Enable/Disable the TIM peripheral Main Outputs
+        (++) Select the Commutation event
+        (++) Set/Reset the Capture Compare Preload Control bit
+                                
+      (#) TIM interrupts, DMA and flags management
+        (++) Enable/Disable interrupt sources
+        (++) Get flags status
+        (++) Clear flags/ Pending bits
+        (++) Enable/Disable DMA requests 
+        (++) Configure DMA burst mode
+        (++) Select CaptureCompare DMA request  
+                
+      (#) TIM clocks management: this group includes all needed functions 
+          to configure the clock controller unit:
+        (++) Select internal/External clock
+        (++) Select the external clock mode: ETR(Mode1/Mode2), TIx or ITRx
+           
+      (#) TIM synchronization management: this group includes all needed 
+          functions to configure the Synchronization unit:
+        (++) Select Input Trigger  
+        (++) Select Output Trigger  
+        (++) Select Master Slave Mode 
+        (++) ETR Configuration when used as external trigger   
+       
+      (#) TIM specific interface management, this group includes all 
+          needed functions to use the specific TIM interface:
+        (++) Encoder Interface Configuration
+        (++) Select Hall Sensor   
+           
+      (#) TIM specific remapping management includes the Remapping 
+          configuration of specific timers               
+     
+  @endverbatim    
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */
 
@@ -157,29 +162,30 @@ static void TI4_Config(TIM_TypeDef* TIMx, uint16_t TIM_ICPolarity, uint16_t TIM_
  *
 @verbatim   
  ===============================================================================
-                       TimeBase management functions
+                     ##### TimeBase management functions #####
  ===============================================================================  
   
-       ===================================================================      
-              TIM Driver: how to use it in Timing(Time base) Mode
-       =================================================================== 
-       To use the Timer in Timing(Time base) mode, the following steps are mandatory:
+     
+            ##### TIM Driver: how to use it in Timing(Time base) Mode #####
+ ===============================================================================
+    [..] 
+    To use the Timer in Timing(Time base) mode, the following steps are mandatory:
        
-       1. Enable TIM clock using RCC_APBxPeriphClockCmd(RCC_APBxPeriph_TIMx, ENABLE) function
+      (#) Enable TIM clock using RCC_APBxPeriphClockCmd(RCC_APBxPeriph_TIMx, ENABLE) function
                     
-       2. Fill the TIM_TimeBaseInitStruct with the desired parameters.
+      (#) Fill the TIM_TimeBaseInitStruct with the desired parameters.
        
-       3. Call TIM_TimeBaseInit(TIMx, &TIM_TimeBaseInitStruct) to configure the Time Base unit
+      (#) Call TIM_TimeBaseInit(TIMx, &TIM_TimeBaseInitStruct) to configure the Time Base unit
           with the corresponding configuration
           
-       4. Enable the NVIC if you need to generate the update interrupt. 
+      (#) Enable the NVIC if you need to generate the update interrupt. 
           
-       5. Enable the corresponding interrupt using the function TIM_ITConfig(TIMx, TIM_IT_Update) 
+      (#) Enable the corresponding interrupt using the function TIM_ITConfig(TIMx, TIM_IT_Update) 
        
-       6. Call the TIM_Cmd(ENABLE) function to enable the TIM counter.
+      (#) Call the TIM_Cmd(ENABLE) function to enable the TIM counter.
              
-       Note1: All other functions can be used separately to modify, if needed,
-          a specific feature of the Timer. 
+       -@- All other functions can be used separately to modify, if needed,
+           a specific feature of the Timer. 
 
 @endverbatim
   * @{
@@ -609,46 +615,48 @@ void TIM_Cmd(TIM_TypeDef* TIMx, FunctionalState NewState)
  *
 @verbatim   
  ===============================================================================
-                        Output Compare management functions
+              ##### Output Compare management functions #####
  ===============================================================================  
    
-       ===================================================================      
-              TIM Driver: how to use it in Output Compare Mode
-       =================================================================== 
-       To use the Timer in Output Compare mode, the following steps are mandatory:
+      
+        ##### TIM Driver: how to use it in Output Compare Mode #####
+ ===============================================================================
+    [..] 
+    To use the Timer in Output Compare mode, the following steps are mandatory:
        
-       1. Enable TIM clock using RCC_APBxPeriphClockCmd(RCC_APBxPeriph_TIMx, ENABLE) function
+      (#) Enable TIM clock using RCC_APBxPeriphClockCmd(RCC_APBxPeriph_TIMx, ENABLE) 
+          function
        
-       2. Configure the TIM pins by configuring the corresponding GPIO pins
+      (#) Configure the TIM pins by configuring the corresponding GPIO pins
        
-       2. Configure the Time base unit as described in the first part of this driver, 
-          if needed, else the Timer will run with the default configuration:
-          - Autoreload value = 0xFFFF
-          - Prescaler value = 0x0000
-          - Counter mode = Up counting
-          - Clock Division = TIM_CKD_DIV1
+      (#) Configure the Time base unit as described in the first part of this driver, 
+        (++) if needed, else the Timer will run with the default configuration:
+            Autoreload value = 0xFFFF
+        (++) Prescaler value = 0x0000
+        (++) Counter mode = Up counting
+        (++) Clock Division = TIM_CKD_DIV1
           
-       3. Fill the TIM_OCInitStruct with the desired parameters including:
-          - The TIM Output Compare mode: TIM_OCMode
-          - TIM Output State: TIM_OutputState
-          - TIM Pulse value: TIM_Pulse
-          - TIM Output Compare Polarity : TIM_OCPolarity
+      (#) Fill the TIM_OCInitStruct with the desired parameters including:
+        (++) The TIM Output Compare mode: TIM_OCMode
+        (++) TIM Output State: TIM_OutputState
+        (++) TIM Pulse value: TIM_Pulse
+        (++) TIM Output Compare Polarity : TIM_OCPolarity
        
-       4. Call TIM_OCxInit(TIMx, &TIM_OCInitStruct) to configure the desired channel with the 
-          corresponding configuration
+      (#) Call TIM_OCxInit(TIMx, &TIM_OCInitStruct) to configure the desired 
+          channel with the corresponding configuration
        
-       5. Call the TIM_Cmd(ENABLE) function to enable the TIM counter.
+      (#) Call the TIM_Cmd(ENABLE) function to enable the TIM counter.
        
-       Note1: All other functions can be used separately to modify, if needed,
-              a specific feature of the Timer. 
+      -@- All other functions can be used separately to modify, if needed,
+          a specific feature of the Timer. 
           
-       Note2: In case of PWM mode, this function is mandatory:
-              TIM_OCxPreloadConfig(TIMx, TIM_OCPreload_ENABLE); 
+      -@- In case of PWM mode, this function is mandatory:
+          TIM_OCxPreloadConfig(TIMx, TIM_OCPreload_ENABLE); 
               
-       Note3: If the corresponding interrupt or DMA request are needed, the user should:
-                1. Enable the NVIC (or the DMA) to use the TIM interrupts (or DMA requests). 
-                2. Enable the corresponding interrupt (or DMA request) using the function 
-                   TIM_ITConfig(TIMx, TIM_IT_CCx) (or TIM_DMA_Cmd(TIMx, TIM_DMA_CCx))   
+      -@- If the corresponding interrupt or DMA request are needed, the user should:
+        (+@) Enable the NVIC (or the DMA) to use the TIM interrupts (or DMA requests). 
+        (+@) Enable the corresponding interrupt (or DMA request) using the function 
+             TIM_ITConfig(TIMx, TIM_IT_CCx) (or TIM_DMA_Cmd(TIMx, TIM_DMA_CCx))   
 
 @endverbatim
   * @{
@@ -1831,49 +1839,51 @@ void TIM_CCxNCmd(TIM_TypeDef* TIMx, uint16_t TIM_Channel, uint16_t TIM_CCxN)
  *
 @verbatim   
  ===============================================================================
-                      Input Capture management functions
+                  ##### Input Capture management functions #####
  ===============================================================================  
-   
-       ===================================================================      
-              TIM Driver: how to use it in Input Capture Mode
-       =================================================================== 
-       To use the Timer in Input Capture mode, the following steps are mandatory:
+         
+            ##### TIM Driver: how to use it in Input Capture Mode #####
+ ===============================================================================
+    [..]    
+    To use the Timer in Input Capture mode, the following steps are mandatory:
        
-       1. Enable TIM clock using RCC_APBxPeriphClockCmd(RCC_APBxPeriph_TIMx, ENABLE) function
+      (#) Enable TIM clock using RCC_APBxPeriphClockCmd(RCC_APBxPeriph_TIMx, ENABLE) 
+          function
        
-       2. Configure the TIM pins by configuring the corresponding GPIO pins
+      (#) Configure the TIM pins by configuring the corresponding GPIO pins
        
-       2. Configure the Time base unit as described in the first part of this driver,
+      (#) Configure the Time base unit as described in the first part of this driver,
           if needed, else the Timer will run with the default configuration:
-          - Autoreload value = 0xFFFF
-          - Prescaler value = 0x0000
-          - Counter mode = Up counting
-          - Clock Division = TIM_CKD_DIV1
+        (++) Autoreload value = 0xFFFF
+        (++) Prescaler value = 0x0000
+        (++) Counter mode = Up counting
+        (++) Clock Division = TIM_CKD_DIV1
           
-       3. Fill the TIM_ICInitStruct with the desired parameters including:
-          - TIM Channel: TIM_Channel
-          - TIM Input Capture polarity: TIM_ICPolarity
-          - TIM Input Capture selection: TIM_ICSelection
-          - TIM Input Capture Prescaler: TIM_ICPrescaler
-          - TIM Input CApture filter value: TIM_ICFilter
+      (#) Fill the TIM_ICInitStruct with the desired parameters including:
+        (++) TIM Channel: TIM_Channel
+        (++) TIM Input Capture polarity: TIM_ICPolarity
+        (++) TIM Input Capture selection: TIM_ICSelection
+        (++) TIM Input Capture Prescaler: TIM_ICPrescaler
+        (++) TIM Input CApture filter value: TIM_ICFilter
        
-       4. Call TIM_ICInit(TIMx, &TIM_ICInitStruct) to configure the desired channel with the 
-          corresponding configuration and to measure only frequency or duty cycle of the input signal,
-          or,
-          Call TIM_PWMIConfig(TIMx, &TIM_ICInitStruct) to configure the desired channels with the 
-          corresponding configuration and to measure the frequency and the duty cycle of the input signal
+      (#) Call TIM_ICInit(TIMx, &TIM_ICInitStruct) to configure the desired channel 
+          with the corresponding configuration and to measure only frequency 
+          or duty cycle of the input signal, or, Call TIM_PWMIConfig(TIMx, &TIM_ICInitStruct) 
+          to configure the desired channels with the corresponding configuration 
+          and to measure the frequency and the duty cycle of the input signal
           
-       5. Enable the NVIC or the DMA to read the measured frequency. 
+      (#) Enable the NVIC or the DMA to read the measured frequency. 
           
-       6. Enable the corresponding interrupt (or DMA request) to read the Captured value,
-          using the function TIM_ITConfig(TIMx, TIM_IT_CCx) (or TIM_DMA_Cmd(TIMx, TIM_DMA_CCx)) 
+      (#) Enable the corresponding interrupt (or DMA request) to read the Captured 
+          value, using the function TIM_ITConfig(TIMx, TIM_IT_CCx) 
+          (or TIM_DMA_Cmd(TIMx, TIM_DMA_CCx)) 
        
-       7. Call the TIM_Cmd(ENABLE) function to enable the TIM counter.
+      (#) Call the TIM_Cmd(ENABLE) function to enable the TIM counter.
        
-       8. Use TIM_GetCapturex(TIMx); to read the captured value.
+      (#) Use TIM_GetCapturex(TIMx); to read the captured value.
        
-       Note1: All other functions can be used separately to modify, if needed,
-              a specific feature of the Timer. 
+      -@- All other functions can be used separately to modify, if needed,
+          a specific feature of the Timer. 
 
 @endverbatim
   * @{
@@ -2176,23 +2186,23 @@ void TIM_SetIC4Prescaler(TIM_TypeDef* TIMx, uint16_t TIM_ICPSC)
  *
 @verbatim   
  ===============================================================================
-          Advanced-control timers (TIM1 and TIM8) specific features
+      ##### Advanced-control timers (TIM1 and TIM8) specific features #####
  ===============================================================================  
-  
-       ===================================================================      
-              TIM Driver: how to use the Break feature
-       =================================================================== 
-       After configuring the Timer channel(s) in the appropriate Output Compare mode: 
+        
+             ##### TIM Driver: how to use the Break feature #####
+ ===============================================================================
+    [..] 
+    After configuring the Timer channel(s) in the appropriate Output Compare mode: 
                          
-       1. Fill the TIM_BDTRInitStruct with the desired parameters for the Timer
+      (#) Fill the TIM_BDTRInitStruct with the desired parameters for the Timer
           Break Polarity, dead time, Lock level, the OSSI/OSSR State and the 
           AOE(automatic output enable).
                
-       2. Call TIM_BDTRConfig(TIMx, &TIM_BDTRInitStruct) to configure the Timer
+      (#) Call TIM_BDTRConfig(TIMx, &TIM_BDTRInitStruct) to configure the Timer
           
-       3. Enable the Main Output using TIM_CtrlPWMOutputs(TIM1, ENABLE) 
+      (#) Enable the Main Output using TIM_CtrlPWMOutputs(TIM1, ENABLE) 
           
-       4. Once the break even occurs, the Timer's output signals are put in reset
+      (#) Once the break even occurs, the Timer's output signals are put in reset
           state or in a known state (according to the configuration made in
           TIM_BDTRConfig() function).
 
@@ -2327,7 +2337,7 @@ void TIM_CCPreloadControl(TIM_TypeDef* TIMx, FunctionalState NewState)
  *
 @verbatim   
  ===============================================================================
-                 Interrupts, DMA and flags management functions
+          ##### Interrupts, DMA and flags management functions #####
  ===============================================================================  
 
 @endverbatim
@@ -2657,7 +2667,7 @@ void TIM_SelectCCDMA(TIM_TypeDef* TIMx, FunctionalState NewState)
  *
 @verbatim   
  ===============================================================================
-                         Clocks management functions
+                  ##### Clocks management functions #####
  ===============================================================================  
 
 @endverbatim
@@ -2832,29 +2842,32 @@ void TIM_ETRClockMode2Config(TIM_TypeDef* TIMx, uint16_t TIM_ExtTRGPrescaler,
  *
 @verbatim   
  ===============================================================================
-                       Synchronization management functions
+                ##### Synchronization management functions #####
  ===============================================================================  
-                   
-       ===================================================================      
-              TIM Driver: how to use it in synchronization Mode
-       =================================================================== 
-       Case of two/several Timers
-       **************************
-       1. Configure the Master Timers using the following functions:
-          - void TIM_SelectOutputTrigger(TIM_TypeDef* TIMx, uint16_t TIM_TRGOSource); 
-          - void TIM_SelectMasterSlaveMode(TIM_TypeDef* TIMx, uint16_t TIM_MasterSlaveMode);  
-       2. Configure the Slave Timers using the following functions: 
-          - void TIM_SelectInputTrigger(TIM_TypeDef* TIMx, uint16_t TIM_InputTriggerSource);  
-          - void TIM_SelectSlaveMode(TIM_TypeDef* TIMx, uint16_t TIM_SlaveMode); 
+                         
+          ##### TIM Driver: how to use it in synchronization Mode #####
+ ===============================================================================
+    [..] 
+    
+    *** Case of two/several Timers ***
+    ==================================
+    [..]
+      (#) Configure the Master Timers using the following functions:
+        (++) void TIM_SelectOutputTrigger(TIM_TypeDef* TIMx, uint16_t TIM_TRGOSource); 
+        (++) void TIM_SelectMasterSlaveMode(TIM_TypeDef* TIMx, uint16_t TIM_MasterSlaveMode);  
+      (#) Configure the Slave Timers using the following functions: 
+        (++) void TIM_SelectInputTrigger(TIM_TypeDef* TIMx, uint16_t TIM_InputTriggerSource);  
+        (++) void TIM_SelectSlaveMode(TIM_TypeDef* TIMx, uint16_t TIM_SlaveMode); 
           
-       Case of Timers and external trigger(ETR pin)
-       ********************************************       
-       1. Configure the External trigger using this function:
-          - void TIM_ETRConfig(TIM_TypeDef* TIMx, uint16_t TIM_ExtTRGPrescaler, uint16_t TIM_ExtTRGPolarity,
+    *** Case of Timers and external trigger(ETR pin) ***
+    ====================================================
+    [..]           
+      (#) Configure the External trigger using this function:
+        (++) void TIM_ETRConfig(TIM_TypeDef* TIMx, uint16_t TIM_ExtTRGPrescaler, uint16_t TIM_ExtTRGPolarity,
                                uint16_t ExtTRGFilter);
-       2. Configure the Slave Timers using the following functions: 
-          - void TIM_SelectInputTrigger(TIM_TypeDef* TIMx, uint16_t TIM_InputTriggerSource);  
-          - void TIM_SelectSlaveMode(TIM_TypeDef* TIMx, uint16_t TIM_SlaveMode); 
+      (#) Configure the Slave Timers using the following functions: 
+        (++) void TIM_SelectInputTrigger(TIM_TypeDef* TIMx, uint16_t TIM_InputTriggerSource);  
+        (++) void TIM_SelectSlaveMode(TIM_TypeDef* TIMx, uint16_t TIM_SlaveMode); 
 
 @endverbatim
   * @{
@@ -3027,7 +3040,7 @@ void TIM_ETRConfig(TIM_TypeDef* TIMx, uint16_t TIM_ExtTRGPrescaler,
  *
 @verbatim   
  ===============================================================================
-                    Specific interface management functions
+            ##### Specific interface management functions #####
  ===============================================================================  
 
 @endverbatim
@@ -3132,7 +3145,7 @@ void TIM_SelectHallSensor(TIM_TypeDef* TIMx, FunctionalState NewState)
  *
 @verbatim   
  ===============================================================================
-                     Specific remapping management function
+              ##### Specific remapping management function #####
  ===============================================================================  
 
 @endverbatim
@@ -3349,4 +3362,4 @@ static void TI4_Config(TIM_TypeDef* TIMx, uint16_t TIM_ICPolarity, uint16_t TIM_
   * @}
   */
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

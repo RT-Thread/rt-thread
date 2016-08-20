@@ -2,48 +2,53 @@
   ******************************************************************************
   * @file    stm32f4xx_rng.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    30-September-2011
-    * @brief This file provides firmware functions to manage the following 
+  * @version V1.3.0
+  * @date    08-November-2013
+  * @brief This file provides firmware functions to manage the following 
   *          functionalities of the Random Number Generator (RNG) peripheral:           
-  *           - Initialization and Configuration 
-  *           - Get 32 bit Random number      
-  *           - Interrupts and flags management       
+  *           + Initialization and Configuration 
+  *           + Get 32 bit Random number      
+  *           + Interrupts and flags management       
   *         
-  *  @verbatim
-  *                               
-  *          ===================================================================      
-  *                                   How to use this driver
-  *          ===================================================================          
-  *          1. Enable The RNG controller clock using 
-  *            RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_RNG, ENABLE) function.
-  *              
-  *          2. Activate the RNG peripheral using RNG_Cmd() function.
-  *          
-  *          3. Wait until the 32 bit Random number Generator contains a valid 
-  *            random data (using polling/interrupt mode). For more details, 
-  *            refer to "Interrupts and flags management functions" module 
-  *            description.
-  *           
-  *          4. Get the 32 bit Random number using RNG_GetRandomNumber() function
-  *          
-  *          5. To get another 32 bit Random number, go to step 3.       
-  *
-  *         
-  *              
-  *  @endverbatim
+@verbatim
+                                 
+ ===================================================================      
+                 ##### How to use this driver #####
+ ===================================================================          
+ [..]
+   (#) Enable The RNG controller clock using 
+       RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_RNG, ENABLE) function.
+                
+   (#) Activate the RNG peripheral using RNG_Cmd() function.
+            
+   (#) Wait until the 32 bit Random number Generator contains a valid  random data
+      (using polling/interrupt mode). For more details, refer to "Interrupts and 
+      flags management functions" module description.
+             
+   (#) Get the 32 bit Random number using RNG_GetRandomNumber() function
+            
+   (#) To get another 32 bit Random number, go to step 3.       
+         
+                
+@endverbatim
   *         
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************  
   */
 
@@ -76,18 +81,18 @@
  *
 @verbatim    
  ===============================================================================
-                      Initialization and Configuration functions
+             ##### Initialization and Configuration functions #####
  ===============================================================================  
-  This section provides functions allowing to 
-   - Initialize the RNG peripheral
-   - Enable or disable the RNG peripheral
+ [..] This section provides functions allowing to 
+   (+) Initialize the RNG peripheral
+   (+) Enable or disable the RNG peripheral
    
 @endverbatim
   * @{
   */
 
 /**
-  * @brief  Deinitializes the RNG peripheral registers to their default reset values.
+  * @brief  De-initializes the RNG peripheral registers to their default reset values.
   * @param  None
   * @retval None
   */
@@ -132,12 +137,12 @@ void RNG_Cmd(FunctionalState NewState)
 
 @verbatim    
  ===============================================================================
-                      Get 32 bit Random number function
+                 ##### Get 32 bit Random number function #####
  ===============================================================================  
-  This section provides a function allowing to get the 32 bit Random number  
+ [..] This section provides a function allowing to get the 32 bit Random number  
   
-  @note  Before to call this function you have to wait till DRDY flag is set,
-         using RNG_GetFlagStatus(RNG_FLAG_DRDY) function. 
+   (@)  Before to call this function you have to wait till DRDY flag is set,
+        using RNG_GetFlagStatus(RNG_FLAG_DRDY) function. 
    
 @endverbatim
   * @{
@@ -184,69 +189,63 @@ uint32_t RNG_GetRandomNumber(void)
  *
 @verbatim   
  ===============================================================================
-                   Interrupts and flags management functions
+             ##### Interrupts and flags management functions #####
  ===============================================================================  
 
-  This section provides functions allowing to configure the RNG Interrupts and 
-  to get the status and clear flags and Interrupts pending bits.
+ [..] This section provides functions allowing to configure the RNG Interrupts and 
+      to get the status and clear flags and Interrupts pending bits.
   
-  The RNG provides 3 Interrupts sources and 3 Flags:
+ [..] The RNG provides 3 Interrupts sources and 3 Flags:
   
-  Flags :
-  ---------- 
-     1. RNG_FLAG_DRDY :  In the case of the RNG_DR register contains valid 
-                         random data. it is cleared by reading the valid data 
-                         (using RNG_GetRandomNumber() function).
+ *** Flags : ***
+ ===============
+ [..] 
+    (#) RNG_FLAG_DRDY :  In the case of the RNG_DR register contains valid 
+        random data. it is cleared by reading the valid data(using 
+        RNG_GetRandomNumber() function).
 
-     2. RNG_FLAG_CECS : In the case of a seed error detection. 
+    (#) RNG_FLAG_CECS : In the case of a seed error detection. 
       
-     3. RNG_FLAG_SECS : In the case of a clock error detection.
+    (#) RNG_FLAG_SECS : In the case of a clock error detection.
               
-
-  Interrupts :
-  ------------
-   if enabled, an RNG interrupt is pending :
+ *** Interrupts ***
+ ==================
+ [..] If enabled, an RNG interrupt is pending :
     
-   1.  In the case of the RNG_DR register contains valid random data. 
+   (#) In the case of the RNG_DR register contains valid random data. 
        This interrupt source is cleared once the RNG_DR register has been read 
        (using RNG_GetRandomNumber() function) until a new valid value is 
-       computed. 
-   
-   or 
-   2. In the case of a seed error : One of the following faulty sequences has 
-      been detected:
-      - More than 64 consecutive bits at the same value (0 or 1)
-      - More than 32 consecutive alternance of 0 and 1 (0101010101...01)
-      This interrupt source is cleared using RNG_ClearITPendingBit(RNG_IT_SEI)
-      function.
-   
-   or
-   3. In the case of a clock error : the PLL48CLK (RNG peripheral clock source) 
-      was not correctly detected (fPLL48CLK< fHCLK/16).
-      This interrupt source is cleared using RNG_ClearITPendingBit(RNG_IT_CEI)
-      function.
-      @note In this case, User have to check that the clock controller is 
-            correctly configured to provide the RNG clock. 
+       computed; or 
+   (#) In the case of a seed error : One of the following faulty sequences has 
+       been detected:
+       (++) More than 64 consecutive bits at the same value (0 or 1)
+       (++) More than 32 consecutive alternance of 0 and 1 (0101010101...01)
+       This interrupt source is cleared using RNG_ClearITPendingBit(RNG_IT_SEI)
+       function; or
+   (#) In the case of a clock error : the PLL48CLK (RNG peripheral clock source) 
+       was not correctly detected (fPLL48CLK< fHCLK/16). This interrupt source is
+       cleared using RNG_ClearITPendingBit(RNG_IT_CEI) function.
+       -@- note In this case, User have to check that the clock controller is 
+           correctly configured to provide the RNG clock. 
 
-  Managing the RNG controller events :
-  ------------------------------------ 
-  The user should identify which mode will be used in his application to manage 
-  the RNG controller events: Polling mode or Interrupt mode.
+ *** Managing the RNG controller events : ***
+ ============================================
+ [..] The user should identify which mode will be used in his application to manage 
+      the RNG controller events: Polling mode or Interrupt mode.
   
-  1.  In the Polling Mode it is advised to use the following functions:
-      - RNG_GetFlagStatus() : to check if flags events occur. 
-      - RNG_ClearFlag()     : to clear the flags events.
+   (#) In the Polling Mode it is advised to use the following functions:
+       (++) RNG_GetFlagStatus() : to check if flags events occur. 
+       (++) RNG_ClearFlag()     : to clear the flags events.
   
-  @note RNG_FLAG_DRDY can not be cleared by RNG_ClearFlag(). it is cleared only 
-        by reading the Random number data.      
+       -@@- RNG_FLAG_DRDY can not be cleared by RNG_ClearFlag(). it is cleared only 
+            by reading the Random number data.      
   
-  2.  In the Interrupt Mode it is advised to use the following functions:
-      - RNG_ITConfig()       : to enable or disable the interrupt source.
-      - RNG_GetITStatus()    : to check if Interrupt occurs.
-      - RNG_ClearITPendingBit() : to clear the Interrupt pending Bit 
-                                (corresponding Flag). 
+   (#)  In the Interrupt Mode it is advised to use the following functions:
+        (++) RNG_ITConfig()       : to enable or disable the interrupt source.
+        (++) RNG_GetITStatus()    : to check if Interrupt occurs.
+        (++) RNG_ClearITPendingBit() : to clear the Interrupt pending Bit 
+             (corresponding Flag). 
   
-
 @endverbatim
   * @{
   */ 
@@ -390,10 +389,9 @@ void RNG_ClearITPendingBit(uint8_t RNG_IT)
   * @}
   */ 
 
-
 /**
   * @}
   */ 
 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

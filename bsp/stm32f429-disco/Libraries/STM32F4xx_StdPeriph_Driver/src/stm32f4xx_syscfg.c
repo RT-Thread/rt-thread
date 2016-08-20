@@ -2,40 +2,47 @@
   ******************************************************************************
   * @file    stm32f4xx_syscfg.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    30-September-2011
+  * @version V1.3.0
+  * @date    08-November-2013
   * @brief   This file provides firmware functions to manage the SYSCFG peripheral.
   *
-  *  @verbatim
-  *  
-  *          ===================================================================
-  *                                 How to use this driver
-  *          ===================================================================
-  *                  
-  *          This driver provides functions for:
-  *          
-  *          1. Remapping the memory accessible in the code area using SYSCFG_MemoryRemapConfig()
-  *              
-  *          2. Manage the EXTI lines connection to the GPIOs using SYSCFG_EXTILineConfig()
-  *            
-  *          3. Select the ETHERNET media interface (RMII/RII) using SYSCFG_ETH_MediaInterfaceConfig()
-  *
-  *  @note  SYSCFG APB clock must be enabled to get write access to SYSCFG registers,
-  *         using RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
-  *                 
-  *  @endverbatim
-  *      
+ @verbatim
+    
+ ===============================================================================
+                     ##### How to use this driver #####
+ ===============================================================================
+    [..] This driver provides functions for:
+            
+       (#) Remapping the memory accessible in the code area using SYSCFG_MemoryRemapConfig()
+            
+       (#) Swapping the internal flash Bank1 and Bank2 this features is only visible for 
+           STM32F42xxx/43xxx devices Devices. 
+                
+       (#) Manage the EXTI lines connection to the GPIOs using SYSCFG_EXTILineConfig()
+              
+       (#) Select the ETHERNET media interface (RMII/RII) using SYSCFG_ETH_MediaInterfaceConfig()
+  
+       -@- SYSCFG APB clock must be enabled to get write access to SYSCFG registers,
+           using RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
+                   
+ @endverbatim      
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */
 
@@ -56,6 +63,13 @@
 /* Private define ------------------------------------------------------------*/
 /* ------------ RCC registers bit address in the alias region ----------- */
 #define SYSCFG_OFFSET             (SYSCFG_BASE - PERIPH_BASE)
+/* ---  MEMRMP Register ---*/ 
+/* Alias word address of UFB_MODE bit */ 
+#define MEMRMP_OFFSET             SYSCFG_OFFSET 
+#define UFB_MODE_BitNumber        ((uint8_t)0x8) 
+#define UFB_MODE_BB               (PERIPH_BB_BASE + (MEMRMP_OFFSET * 32) + (UFB_MODE_BitNumber * 4)) 
+
+
 /* ---  PMC Register ---*/ 
 /* Alias word address of MII_RMII_SEL bit */ 
 #define PMC_OFFSET                (SYSCFG_OFFSET + 0x04) 
@@ -95,8 +109,10 @@ void SYSCFG_DeInit(void)
   *         This parameter can be one of the following values:
   *            @arg SYSCFG_MemoryRemap_Flash:       Main Flash memory mapped at 0x00000000  
   *            @arg SYSCFG_MemoryRemap_SystemFlash: System Flash memory mapped at 0x00000000
-  *            @arg SYSCFG_MemoryRemap_FSMC:        FSMC (Bank1 (NOR/PSRAM 1 and 2) mapped at 0x00000000
+  *            @arg SYSCFG_MemoryRemap_FSMC:        FSMC (Bank1 (NOR/PSRAM 1 and 2) mapped at 0x00000000 for STM32F405xx/407xx and STM32F415xx/417xx devices. 
+  *            @arg SYSCFG_MemoryRemap_FMC:         FMC (Bank1 (NOR/PSRAM 1 and 2) mapped at 0x00000000 for STM32F42xxx/43xxx devices.  
   *            @arg SYSCFG_MemoryRemap_SRAM:        Embedded SRAM (112kB) mapped at 0x00000000
+  *            @arg SYSCFG_MemoryRemap_SDRAM:       FMC (External SDRAM)  mapped at 0x00000000 for STM32F42xxx/43xxx devices.            
   * @retval None
   */
 void SYSCFG_MemoryRemapConfig(uint8_t SYSCFG_MemoryRemap)
@@ -108,12 +124,39 @@ void SYSCFG_MemoryRemapConfig(uint8_t SYSCFG_MemoryRemap)
 }
 
 /**
+  * @brief  Enables or disables the Interal FLASH Bank Swapping.
+  *   
+  * @note   This function can be used only for STM32F42xxx/43xxx devices. 
+  *
+  * @param  NewState: new state of Interal FLASH Bank swapping.
+  *          This parameter can be one of the following values:
+  *            @arg ENABLE: Flash Bank2 mapped at 0x08000000 (and aliased @0x00000000) 
+  *                         and Flash Bank1 mapped at 0x08100000 (and aliased at 0x00100000)   
+  *            @arg DISABLE:(the default state) Flash Bank1 mapped at 0x08000000 (and aliased @0x0000 0000) 
+                            and Flash Bank2 mapped at 0x08100000 (and aliased at 0x00100000)  
+  * @retval None
+  */
+void SYSCFG_MemorySwappingBank(FunctionalState NewState)
+{
+  /* Check the parameters */
+  assert_param(IS_FUNCTIONAL_STATE(NewState));
+
+  *(__IO uint32_t *) UFB_MODE_BB = (uint32_t)NewState;
+}
+
+/**
   * @brief  Selects the GPIO pin used as EXTI Line.
   * @param  EXTI_PortSourceGPIOx : selects the GPIO port to be used as source for
-  *          EXTI lines where x can be (A..I).
+  *          EXTI lines where x can be (A..K) for STM32F42xxx/43xxx devices, (A..I) 
+  *          for STM32F405xx/407xx and STM32F415xx/417xx devices or (A, B, C, D and H)
+  *          for STM32401xx devices.  
+  *            
   * @param  EXTI_PinSourcex: specifies the EXTI line to be configured.
   *           This parameter can be EXTI_PinSourcex where x can be (0..15, except
-  *           for EXTI_PortSourceGPIOI x can be (0..11).
+  *           for EXTI_PortSourceGPIOI x can be (0..11) for STM32F405xx/407xx
+  *           and STM32F405xx/407xx devices and for EXTI_PortSourceGPIOK x can   
+  *           be (0..7) for STM32F42xxx/43xxx devices. 
+  *             
   * @retval None
   */
 void SYSCFG_EXTILineConfig(uint8_t EXTI_PortSourceGPIOx, uint8_t EXTI_PinSourcex)
@@ -194,4 +237,4 @@ FlagStatus SYSCFG_GetCompensationCellStatus(void)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/   
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/   

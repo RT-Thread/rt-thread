@@ -2,280 +2,287 @@
   ******************************************************************************
   * @file    stm32f4xx_rtc.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    30-September-2011
+  * @version V1.3.0
+  * @date    08-November-2013
   * @brief   This file provides firmware functions to manage the following 
   *          functionalities of the Real-Time Clock (RTC) peripheral:
-  *           - Initialization
-  *           - Calendar (Time and Date) configuration
-  *           - Alarms (Alarm A and Alarm B) configuration
-  *           - WakeUp Timer configuration
-  *           - Daylight Saving configuration
-  *           - Output pin Configuration
-  *           - Coarse digital Calibration configuration
-  *           - Smooth digital Calibration configuration
-  *           - TimeStamp configuration
-  *           - Tampers configuration
-  *           - Backup Data Registers configuration
-  *           - Shift control synchronisation    
-  *           - RTC Tamper and TimeStamp Pins Selection and Output Type Config configuration
-  *           - Interrupts and flags management
+  *           + Initialization
+  *           + Calendar (Time and Date) configuration
+  *           + Alarms (Alarm A and Alarm B) configuration
+  *           + WakeUp Timer configuration
+  *           + Daylight Saving configuration
+  *           + Output pin Configuration
+  *           + Coarse digital Calibration configuration
+  *           + Smooth digital Calibration configuration
+  *           + TimeStamp configuration
+  *           + Tampers configuration
+  *           + Backup Data Registers configuration
+  *           + Shift control synchronisation    
+  *           + RTC Tamper and TimeStamp Pins Selection and Output Type Config configuration
+  *           + Interrupts and flags management
   *
-  *  @verbatim
-  *
-  *          ===================================================================
-  *                               Backup Domain Operating Condition
-  *          ===================================================================
-  *          The real-time clock (RTC), the RTC backup registers, and the backup 
-  *          SRAM (BKP SRAM) can be powered from the VBAT voltage when the main 
-  *          VDD supply is powered off.
-  *          To retain the content of the RTC backup registers, backup SRAM, 
-  *          and supply the RTC when VDD is turned off, VBAT pin can be connected 
-  *          to an optional standby voltage supplied by a battery or by another 
-  *          source.
-  *
-  *          To allow the RTC to operate even when the main digital supply (VDD) 
-  *          is turned off, the VBAT pin powers the following blocks:
-  *            1 - The RTC
-  *            2 - The LSE oscillator
-  *            3 - The backup SRAM when the low power backup regulator is enabled
-  *            4 - PC13 to PC15 I/Os, plus PI8 I/O (when available)
-  *
-  *          When the backup domain is supplied by VDD (analog switch connected 
-  *          to VDD), the following functions are available:
-  *            1 - PC14 and PC15 can be used as either GPIO or LSE pins
-  *            2 - PC13 can be used as a GPIO or as the RTC_AF1 pin
-  *            3 - PI8 can be used as a GPIO or as the RTC_AF2 pin
-  *
-  *          When the backup domain is supplied by VBAT (analog switch connected 
-  *          to VBAT because VDD is not present), the following functions are available:
-  *            1 - PC14 and PC15 can be used as LSE pins only
-  *            2 - PC13 can be used as the RTC_AF1 pin 
-  *            3 - PI8 can be used as the RTC_AF2 pin
-  *
-  *          ===================================================================
-  *                                    Backup Domain Reset
-  *          ===================================================================
-  *          The backup domain reset sets all RTC registers and the RCC_BDCR 
-  *          register to their reset values. The BKPSRAM is not affected by this
-  *          reset. The only way of resetting the BKPSRAM is through the Flash 
-  *          interface by requesting a protection level change from 1 to 0.
-  *          A backup domain reset is generated when one of the following events
-  *          occurs:
-  *            1 - Software reset, triggered by setting the BDRST bit in the 
-  *                RCC Backup domain control register (RCC_BDCR). You can use the
-  *                RCC_BackupResetCmd().
-  *            2 - VDD or VBAT power on, if both supplies have previously been
-  *                powered off.
-  *
-  *          ===================================================================
-  *                                   Backup Domain Access
-  *          ===================================================================
-  *          After reset, the backup domain (RTC registers, RTC backup data 
-  *          registers and backup SRAM) is protected against possible unwanted 
-  *          write accesses. 
-  *          To enable access to the RTC Domain and RTC registers, proceed as follows:
-  *            - Enable the Power Controller (PWR) APB1 interface clock using the
-  *              RCC_APB1PeriphClockCmd() function.
-  *            - Enable access to RTC domain using the PWR_BackupAccessCmd() function.
-  *            - Select the RTC clock source using the RCC_RTCCLKConfig() function.
-  *            - Enable RTC Clock using the RCC_RTCCLKCmd() function.
-  *
-  *          ===================================================================
-  *                                   RTC Driver: how to use it
-  *          ===================================================================
-  *            - Enable the RTC domain access (see description in the section above)
-  *            - Configure the RTC Prescaler (Asynchronous and Synchronous) and
-  *              RTC hour format using the RTC_Init() function.
-  *
-  *          Time and Date configuration
-  *          ===========================
-  *            - To configure the RTC Calendar (Time and Date) use the RTC_SetTime()
-  *              and RTC_SetDate() functions.
-  *            - To read the RTC Calendar, use the RTC_GetTime() and RTC_GetDate()
-  *              functions.
-  *            - Use the RTC_DayLightSavingConfig() function to add or sub one
-  *              hour to the RTC Calendar.    
-  *
-  *          Alarm configuration
-  *          ===================
-  *            - To configure the RTC Alarm use the RTC_SetAlarm() function.
-  *            - Enable the selected RTC Alarm using the RTC_AlarmCmd() function
-  *            - To read the RTC Alarm, use the RTC_GetAlarm() function.
-  *            - To read the RTC alarm SubSecond, use the RTC_GetAlarmSubSecond() function.
-  *
-  *          RTC Wakeup configuration
-  *          ========================
-  *            - Configure the RTC Wakeup Clock source use the RTC_WakeUpClockConfig()
-  *              function.
-  *            - Configure the RTC WakeUp Counter using the RTC_SetWakeUpCounter() 
-  *              function  
-  *            - Enable the RTC WakeUp using the RTC_WakeUpCmd() function  
-  *            - To read the RTC WakeUp Counter register, use the RTC_GetWakeUpCounter() 
-  *              function.
-  *
-  *          Outputs configuration
-  *          =====================
-  *          The RTC has 2 different outputs:
-  *            - AFO_ALARM: this output is used to manage the RTC Alarm A, Alarm B
-  *              and WaKeUp signals.          
-  *              To output the selected RTC signal on RTC_AF1 pin, use the 
-  *              RTC_OutputConfig() function.                
-  *            - AFO_CALIB: this output is 512Hz signal or 1Hz .  
-  *              To output the RTC Clock on RTC_AF1 pin, use the RTC_CalibOutputCmd()
-  *              function.
-  *
-  *          Smooth digital Calibration configuration
-  *          =================================    
-  *            - Configure the RTC Original Digital Calibration Value and the corresponding
-  *              calibration cycle period (32s,16s and 8s) using the RTC_SmoothCalibConfig() 
-  *              function.
-  *
-  *          Coarse digital Calibration configuration
-  *          =================================
-  *            - Configure the RTC Coarse Calibration Value and the corresponding
-  *              sign using the RTC_CoarseCalibConfig() function.
-  *            - Enable the RTC Coarse Calibration using the RTC_CoarseCalibCmd() 
-  *              function  
-  *
-  *          TimeStamp configuration
-  *          =======================
-  *            - Configure the RTC_AF1 trigger and enables the RTC TimeStamp 
-  *              using the RTC_TimeStampCmd() function.
-  *            - To read the RTC TimeStamp Time and Date register, use the 
-  *              RTC_GetTimeStamp() function.
-  *            - To read the RTC TimeStamp SubSecond register, use the 
-  *              RTC_GetTimeStampSubSecond() function.
-  *            - The TAMPER1 alternate function can be mapped either to RTC_AF1(PC13)
-  *              or RTC_AF2 (PI8) depending on the value of TAMP1INSEL bit in 
-  *              RTC_TAFCR register. You can use the  RTC_TamperPinSelection()
-  *              function to select the corresponding pin.     
-  *
-  *          Tamper configuration
-  *          ====================
-  *            - Enable the RTC Tamper using the RTC_TamperCmd() function.
-  *             - Configure the Tamper filter count using RTC_TamperFilterConfig()
-  *              function. 
-  *            - Configure the RTC Tamper trigger Edge or Level according to the Tamper 
-  *              filter (if equal to 0 Edge else Level) value using the RTC_TamperConfig() function.
-  *            - Configure the Tamper sampling frequency using RTC_TamperSamplingFreqConfig()
-  *              function.
-  *            - Configure the Tamper precharge or discharge duration using 
-  *              RTC_TamperPinsPrechargeDuration() function.
-  *            - Enable the Tamper Pull-UP using RTC_TamperPullUpDisableCmd() function.
-  *            - Enable the Time stamp on Tamper detection event using  
-  *              RTC_TSOnTamperDetecCmd() function.
-  *            - The TIMESTAMP alternate function can be mapped to either RTC_AF1 
-  *              or RTC_AF2 depending on the value of the TSINSEL bit in the 
-  *              RTC_TAFCR register. You can use the  RTC_TimeStampPinSelection()
-  *              function to select the corresponding pin. 
-  *
-  *          Backup Data Registers configuration
-  *          ===================================
-  *            - To write to the RTC Backup Data registers, use the RTC_WriteBackupRegister()
-  *              function.  
-  *            - To read the RTC Backup Data registers, use the RTC_ReadBackupRegister()
-  *              function.
-  * 
-  *          ===================================================================
-  *                                  RTC and low power modes
-  *          ===================================================================
-  *           The MCU can be woken up from a low power mode by an RTC alternate 
-  *           function.
-  *           The RTC alternate functions are the RTC alarms (Alarm A and Alarm B), 
-  *           RTC wakeup, RTC tamper event detection and RTC time stamp event detection.
-  *           These RTC alternate functions can wake up the system from the Stop 
-  *           and Standby lowpower modes.
-  *           The system can also wake up from low power modes without depending 
-  *           on an external interrupt (Auto-wakeup mode), by using the RTC alarm 
-  *           or the RTC wakeup events.
-  *           The RTC provides a programmable time base for waking up from the 
-  *           Stop or Standby mode at regular intervals.
-  *           Wakeup from STOP and Standby modes is possible only when the RTC 
-  *           clock source is LSE or LSI.
-  *
-  *          ===================================================================
-  *                            Selection of RTC_AF1 alternate functions
-  *          ===================================================================
-  *          The RTC_AF1 pin (PC13) can be used for the following purposes:
-  *            - AFO_ALARM output
-  *            - AFO_CALIB output
-  *            - AFI_TAMPER
-  *            - AFI_TIMESTAMP
-  *
-  * +-------------------------------------------------------------------------------------------------------------+
-  * |     Pin         |AFO_ALARM |AFO_CALIB |AFI_TAMPER |AFI_TIMESTAMP | TAMP1INSEL |   TSINSEL    |ALARMOUTTYPE  |
-  * |  configuration  | ENABLED  | ENABLED  |  ENABLED  |   ENABLED    |TAMPER1 pin |TIMESTAMP pin |  AFO_ALARM   |
-  * |  and function   |          |          |           |              | selection  |  selection   |Configuration |
-  * |-----------------|----------|----------|-----------|--------------|------------|--------------|--------------|
-  * |   Alarm out     |          |          |           |              |    Don't   |     Don't    |              |
-  * |   output OD     |     1    |Don't care|Don't care | Don't care   |    care    |     care     |      0       |
-  * |-----------------|----------|----------|-----------|--------------|------------|--------------|--------------|
-  * |   Alarm out     |          |          |           |              |    Don't   |     Don't    |              |
-  * |   output PP     |     1    |Don't care|Don't care | Don't care   |    care    |     care     |      1       |
-  * |-----------------|----------|----------|-----------|--------------|------------|--------------|--------------|
-  * | Calibration out |          |          |           |              |    Don't   |     Don't    |              |
-  * |   output PP     |     0    |    1     |Don't care | Don't care   |    care    |     care     |  Don't care  |
-  * |-----------------|----------|----------|-----------|--------------|------------|--------------|--------------|
-  * |  TAMPER input   |          |          |           |              |            |     Don't    |              |
-  * |   floating      |     0    |    0     |     1     |      0       |      0     |     care     |  Don't care  |
-  * |-----------------|----------|----------|-----------|--------------|------------|--------------|--------------|
-  * |  TIMESTAMP and  |          |          |           |              |            |              |              |
-  * |  TAMPER input   |     0    |    0     |     1     |      1       |      0     |      0       |  Don't care  |
-  * |   floating      |          |          |           |              |            |              |              |
-  * |-----------------|----------|----------|-----------|--------------|------------|--------------|--------------|
-  * | TIMESTAMP input |          |          |           |              |    Don't   |              |              |
-  * |    floating     |     0    |    0     |     0     |      1       |    care    |      0       |  Don't care  |
-  * |-----------------|----------|----------|-----------|--------------|------------|--------------|--------------|
-  * |  Standard GPIO  |     0    |    0     |     0     |      0       | Don't care |  Don't care  |  Don't care  |
-  * +-------------------------------------------------------------------------------------------------------------+
-  *
-  *
-  *          ===================================================================
-  *                            Selection of RTC_AF2 alternate functions
-  *          ===================================================================
-  *          The RTC_AF2 pin (PI8) can be used for the following purposes:
-  *            - AFI_TAMPER
-  *            - AFI_TIMESTAMP
-  *
-  * +---------------------------------------------------------------------------------------+
-  * |     Pin         |AFI_TAMPER |AFI_TIMESTAMP | TAMP1INSEL |   TSINSEL    |ALARMOUTTYPE  |
-  * |  configuration  |  ENABLED  |   ENABLED    |TAMPER1 pin |TIMESTAMP pin |  AFO_ALARM   |
-  * |  and function   |           |              | selection  |  selection   |Configuration |
-  * |-----------------|-----------|--------------|------------|--------------|--------------|
-  * |  TAMPER input   |           |              |            |     Don't    |              |
-  * |   floating      |     1     |      0       |      1     |     care     |  Don't care  |
-  * |-----------------|-----------|--------------|------------|--------------|--------------|
-  * |  TIMESTAMP and  |           |              |            |              |              |
-  * |  TAMPER input   |     1     |      1       |      1     |      1       |  Don't care  |
-  * |   floating      |           |              |            |              |              |
-  * |-----------------|-----------|--------------|------------|--------------|--------------|
-  * | TIMESTAMP input |           |              |    Don't   |              |              |
-  * |    floating     |     0     |      1       |    care    |      1       |  Don't care  |
-  * |-----------------|-----------|--------------|------------|--------------|--------------|
-  * |  Standard GPIO  |     0     |      0       | Don't care |  Don't care  |  Don't care  |
-  * +---------------------------------------------------------------------------------------+
-  * 
-  *
-  *  @endverbatim
-  *
+@verbatim
+
+ ===================================================================
+              ##### Backup Domain Operating Condition #####
+ ===================================================================
+ [..] The real-time clock (RTC), the RTC backup registers, and the backup 
+      SRAM (BKP SRAM) can be powered from the VBAT voltage when the main 
+      VDD supply is powered off.
+      To retain the content of the RTC backup registers, backup SRAM, and supply 
+      the RTC when VDD is turned off, VBAT pin can be connected to an optional 
+      standby voltage supplied by a battery or by another source.
+
+ [..] To allow the RTC to operate even when the main digital supply (VDD) is turned
+      off, the VBAT pin powers the following blocks:
+   (#) The RTC
+   (#) The LSE oscillator
+   (#) The backup SRAM when the low power backup regulator is enabled
+   (#) PC13 to PC15 I/Os, plus PI8 I/O (when available)
+  
+ [..] When the backup domain is supplied by VDD (analog switch connected to VDD),
+      the following functions are available:
+   (#) PC14 and PC15 can be used as either GPIO or LSE pins
+   (#) PC13 can be used as a GPIO or as the RTC_AF1 pin
+   (#) PI8 can be used as a GPIO or as the RTC_AF2 pin
+  
+ [..] When the backup domain is supplied by VBAT (analog switch connected to VBAT 
+      because VDD is not present), the following functions are available:
+   (#) PC14 and PC15 can be used as LSE pins only
+   (#) PC13 can be used as the RTC_AF1 pin 
+   (#) PI8 can be used as the RTC_AF2 pin
+  
+            
+                   ##### Backup Domain Reset #####
+ ===================================================================
+ [..] The backup domain reset sets all RTC registers and the RCC_BDCR register 
+      to their reset values. The BKPSRAM is not affected by this reset. The only
+      way of resetting the BKPSRAM is through the Flash interface by requesting 
+      a protection level change from 1 to 0.
+ [..] A backup domain reset is generated when one of the following events occurs:
+   (#) Software reset, triggered by setting the BDRST bit in the 
+       RCC Backup domain control register (RCC_BDCR). You can use the
+       RCC_BackupResetCmd().
+   (#) VDD or VBAT power on, if both supplies have previously been powered off.
+  
+
+                   ##### Backup Domain Access #####
+ ===================================================================
+ [..] After reset, the backup domain (RTC registers, RTC backup data 
+      registers and backup SRAM) is protected against possible unwanted write 
+      accesses. 
+ [..] To enable access to the RTC Domain and RTC registers, proceed as follows:
+   (+) Enable the Power Controller (PWR) APB1 interface clock using the
+       RCC_APB1PeriphClockCmd() function.
+   (+) Enable access to RTC domain using the PWR_BackupAccessCmd() function.
+   (+) Select the RTC clock source using the RCC_RTCCLKConfig() function.
+   (+) Enable RTC Clock using the RCC_RTCCLKCmd() function.
+  
+  
+                  ##### How to use RTC Driver #####
+ ===================================================================
+ [..] 
+   (+) Enable the RTC domain access (see description in the section above)
+   (+) Configure the RTC Prescaler (Asynchronous and Synchronous) and RTC hour 
+       format using the RTC_Init() function.
+  
+ *** Time and Date configuration ***
+ ===================================
+ [..] 
+   (+) To configure the RTC Calendar (Time and Date) use the RTC_SetTime()
+       and RTC_SetDate() functions.
+   (+) To read the RTC Calendar, use the RTC_GetTime() and RTC_GetDate() functions.
+   (+) Use the RTC_DayLightSavingConfig() function to add or sub one
+       hour to the RTC Calendar.    
+  
+ *** Alarm configuration ***
+ ===========================
+ [..]
+   (+) To configure the RTC Alarm use the RTC_SetAlarm() function.
+   (+) Enable the selected RTC Alarm using the RTC_AlarmCmd() function
+   (+) To read the RTC Alarm, use the RTC_GetAlarm() function.
+   (+) To read the RTC alarm SubSecond, use the RTC_GetAlarmSubSecond() function.
+  
+ *** RTC Wakeup configuration ***
+ ================================
+ [..] 
+   (+) Configure the RTC Wakeup Clock source use the RTC_WakeUpClockConfig()
+       function.
+   (+) Configure the RTC WakeUp Counter using the RTC_SetWakeUpCounter() function  
+   (+) Enable the RTC WakeUp using the RTC_WakeUpCmd() function  
+   (+) To read the RTC WakeUp Counter register, use the RTC_GetWakeUpCounter() 
+       function.
+  
+ *** Outputs configuration ***
+ =============================
+ [..] The RTC has 2 different outputs:
+   (+) AFO_ALARM: this output is used to manage the RTC Alarm A, Alarm B
+       and WaKeUp signals. To output the selected RTC signal on RTC_AF1 pin, use the 
+       RTC_OutputConfig() function.                
+   (+) AFO_CALIB: this output is 512Hz signal or 1Hz. To output the RTC Clock on 
+       RTC_AF1 pin, use the RTC_CalibOutputCmd() function.
+  
+ *** Smooth digital Calibration configuration ***
+ ================================================    
+ [..]
+   (+) Configure the RTC Original Digital Calibration Value and the corresponding
+       calibration cycle period (32s,16s and 8s) using the RTC_SmoothCalibConfig() 
+       function.
+  
+ *** Coarse digital Calibration configuration ***
+ ================================================
+ [..]
+   (+) Configure the RTC Coarse Calibration Value and the corresponding
+       sign using the RTC_CoarseCalibConfig() function.
+   (+) Enable the RTC Coarse Calibration using the RTC_CoarseCalibCmd() function  
+  
+ *** TimeStamp configuration ***
+ ===============================
+ [..]
+   (+) Configure the RTC_AF1 trigger and enables the RTC TimeStamp using the RTC
+      _TimeStampCmd() function.
+   (+) To read the RTC TimeStamp Time and Date register, use the RTC_GetTimeStamp()
+       function.
+   (+) To read the RTC TimeStamp SubSecond register, use the 
+       RTC_GetTimeStampSubSecond() function.
+   (+) The TAMPER1 alternate function can be mapped either to RTC_AF1(PC13)
+       or RTC_AF2 (PI8) depending on the value of TAMP1INSEL bit in 
+       RTC_TAFCR register. You can use the  RTC_TamperPinSelection() function to
+       select the corresponding pin.     
+  
+ *** Tamper configuration ***
+ ============================
+ [..]
+   (+) Enable the RTC Tamper using the RTC_TamperCmd() function.
+   (+) Configure the Tamper filter count using RTC_TamperFilterConfig()
+       function. 
+   (+) Configure the RTC Tamper trigger Edge or Level according to the Tamper 
+       filter (if equal to 0 Edge else Level) value using the RTC_TamperConfig() 
+       function.
+   (+) Configure the Tamper sampling frequency using RTC_TamperSamplingFreqConfig()
+       function.
+   (+) Configure the Tamper precharge or discharge duration using 
+       RTC_TamperPinsPrechargeDuration() function.
+   (+) Enable the Tamper Pull-UP using RTC_TamperPullUpDisableCmd() function.
+   (+) Enable the Time stamp on Tamper detection event using  
+       TC_TSOnTamperDetecCmd() function.
+   (+) The TIMESTAMP alternate function can be mapped to either RTC_AF1 
+       or RTC_AF2 depending on the value of the TSINSEL bit in the RTC_TAFCR 
+       register. You can use the  RTC_TimeStampPinSelection() function to select 
+       the corresponding pin. 
+  
+ *** Backup Data Registers configuration ***
+ ===========================================
+ [..]
+   (+) To write to the RTC Backup Data registers, use the RTC_WriteBackupRegister()
+       function.  
+   (+) To read the RTC Backup Data registers, use the RTC_ReadBackupRegister()
+       function.
+   
+
+                  ##### RTC and low power modes #####
+ ===================================================================
+ [..] The MCU can be woken up from a low power mode by an RTC alternate 
+      function.
+ [..] The RTC alternate functions are the RTC alarms (Alarm A and Alarm B), 
+      RTC wakeup, RTC tamper event detection and RTC time stamp event detection.
+      These RTC alternate functions can wake up the system from the Stop and 
+      Standby lowpower modes.
+ [..] The system can also wake up from low power modes without depending 
+      on an external interrupt (Auto-wakeup mode), by using the RTC alarm 
+      or the RTC wakeup events.
+ [..] The RTC provides a programmable time base for waking up from the 
+      Stop or Standby mode at regular intervals.
+      Wakeup from STOP and Standby modes is possible only when the RTC clock source
+      is LSE or LSI.
+  
+
+          ##### Selection of RTC_AF1 alternate functions #####
+ ===================================================================
+ [..] The RTC_AF1 pin (PC13) can be used for the following purposes:
+   (+) AFO_ALARM output
+   (+) AFO_CALIB output
+   (+) AFI_TAMPER
+   (+) AFI_TIMESTAMP
+ 
+ [..]   
+   +-------------------------------------------------------------------------------------------------------------+
+   |     Pin         |AFO_ALARM |AFO_CALIB |AFI_TAMPER |AFI_TIMESTAMP | TAMP1INSEL |   TSINSEL    |ALARMOUTTYPE  |
+   |  configuration  | ENABLED  | ENABLED  |  ENABLED  |   ENABLED    |TAMPER1 pin |TIMESTAMP pin |  AFO_ALARM   |
+   |  and function   |          |          |           |              | selection  |  selection   |Configuration |
+   |-----------------|----------|----------|-----------|--------------|------------|--------------|--------------|
+   |   Alarm out     |          |          |           |              |    Don't   |     Don't    |              |
+   |   output OD     |     1    |Don't care|Don't care | Don't care   |    care    |     care     |      0       |
+   |-----------------|----------|----------|-----------|--------------|------------|--------------|--------------|
+   |   Alarm out     |          |          |           |              |    Don't   |     Don't    |              |
+   |   output PP     |     1    |Don't care|Don't care | Don't care   |    care    |     care     |      1       |
+   |-----------------|----------|----------|-----------|--------------|------------|--------------|--------------|
+   | Calibration out |          |          |           |              |    Don't   |     Don't    |              |
+   |   output PP     |     0    |    1     |Don't care | Don't care   |    care    |     care     |  Don't care  |
+   |-----------------|----------|----------|-----------|--------------|------------|--------------|--------------|
+   |  TAMPER input   |          |          |           |              |            |     Don't    |              |
+   |   floating      |     0    |    0     |     1     |      0       |      0     |     care     |  Don't care  |
+   |-----------------|----------|----------|-----------|--------------|------------|--------------|--------------|
+   |  TIMESTAMP and  |          |          |           |              |            |              |              |
+   |  TAMPER input   |     0    |    0     |     1     |      1       |      0     |      0       |  Don't care  |
+   |   floating      |          |          |           |              |            |              |              |
+   |-----------------|----------|----------|-----------|--------------|------------|--------------|--------------|
+   | TIMESTAMP input |          |          |           |              |    Don't   |              |              |
+   |    floating     |     0    |    0     |     0     |      1       |    care    |      0       |  Don't care  |
+   |-----------------|----------|----------|-----------|--------------|------------|--------------|--------------|
+   |  Standard GPIO  |     0    |    0     |     0     |      0       | Don't care |  Don't care  |  Don't care  |
+   +-------------------------------------------------------------------------------------------------------------+
+
+            
+        #####  Selection of RTC_AF2 alternate functions #####
+ ===================================================================
+ [..] The RTC_AF2 pin (PI8) can be used for the following purposes:
+   (+) AFI_TAMPER
+   (+) AFI_TIMESTAMP
+ [..]
+   +---------------------------------------------------------------------------------------+
+   |     Pin         |AFI_TAMPER |AFI_TIMESTAMP | TAMP1INSEL |   TSINSEL    |ALARMOUTTYPE  |
+   |  configuration  |  ENABLED  |   ENABLED    |TAMPER1 pin |TIMESTAMP pin |  AFO_ALARM   |
+   |  and function   |           |              | selection  |  selection   |Configuration |
+   |-----------------|-----------|--------------|------------|--------------|--------------|
+   |  TAMPER input   |           |              |            |     Don't    |              |
+   |   floating      |     1     |      0       |      1     |     care     |  Don't care  |
+   |-----------------|-----------|--------------|------------|--------------|--------------|
+   |  TIMESTAMP and  |           |              |            |              |              |
+   |  TAMPER input   |     1     |      1       |      1     |      1       |  Don't care  |
+   |   floating      |           |              |            |              |              |
+   |-----------------|-----------|--------------|------------|--------------|--------------|
+   | TIMESTAMP input |           |              |    Don't   |              |              |
+   |    floating     |     0     |      1       |    care    |      1       |  Don't care  |
+   |-----------------|-----------|--------------|------------|--------------|--------------|
+   |  Standard GPIO  |     0     |      0       | Don't care |  Don't care  |  Don't care  |
+   +---------------------------------------------------------------------------------------+   
+ 
+     
+@endverbatim
+  
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */ 
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_rtc.h"
-#include "stm32f4xx_rcc.h"
 
 /** @addtogroup STM32F4xx_StdPeriph_Driver
   * @{
@@ -297,7 +304,8 @@
 #define RTC_FLAGS_MASK          ((uint32_t)(RTC_FLAG_TSOVF | RTC_FLAG_TSF | RTC_FLAG_WUTF | \
                                             RTC_FLAG_ALRBF | RTC_FLAG_ALRAF | RTC_FLAG_INITF | \
                                             RTC_FLAG_RSF | RTC_FLAG_INITS | RTC_FLAG_WUTWF | \
-                                            RTC_FLAG_ALRBWF | RTC_FLAG_ALRAWF | RTC_FLAG_TAMP1F ))
+                                            RTC_FLAG_ALRBWF | RTC_FLAG_ALRAWF | RTC_FLAG_TAMP1F | \
+                                            RTC_FLAG_RECALPF | RTC_FLAG_SHPF))
 
 #define INITMODE_TIMEOUT         ((uint32_t) 0x00010000)
 #define SYNCHRO_TIMEOUT          ((uint32_t) 0x00020000)
@@ -321,35 +329,35 @@ static uint8_t RTC_Bcd2ToByte(uint8_t Value);
  *
 @verbatim   
  ===============================================================================
-                 Initialization and Configuration functions
+             ##### Initialization and Configuration functions #####
  ===============================================================================
-
-  This section provide functions allowing to initialize and configure the RTC
-  Prescaler (Synchronous and Asynchronous), RTC Hour format, disable RTC registers
-  Write protection, enter and exit the RTC initialization mode, RTC registers
-  synchronization check and reference clock detection enable.
+ 
+ [..] This section provide functions allowing to initialize and configure the RTC
+      Prescaler (Synchronous and Asynchronous), RTC Hour format, disable RTC registers
+      Write protection, enter and exit the RTC initialization mode, RTC registers
+      synchronization check and reference clock detection enable.
   
-  1. The RTC Prescaler is programmed to generate the RTC 1Hz time base. It is
-     split into 2 programmable prescalers to minimize power consumption.
-     - A 7-bit asynchronous prescaler and A 13-bit synchronous prescaler.
-     - When both prescalers are used, it is recommended to configure the asynchronous
-       prescaler to a high value to minimize consumption.
+   (#) The RTC Prescaler is programmed to generate the RTC 1Hz time base. It is
+       split into 2 programmable prescalers to minimize power consumption.
+       (++) A 7-bit asynchronous prescaler and A 13-bit synchronous prescaler.
+       (++) When both prescalers are used, it is recommended to configure the 
+            asynchronous prescaler to a high value to minimize consumption.
 
-  2. All RTC registers are Write protected. Writing to the RTC registers
-     is enabled by writing a key into the Write Protection register, RTC_WPR.
+   (#) All RTC registers are Write protected. Writing to the RTC registers
+       is enabled by writing a key into the Write Protection register, RTC_WPR.
 
-  3. To Configure the RTC Calendar, user application should enter initialization
-     mode. In this mode, the calendar counter is stopped and its value can be 
-     updated. When the initialization sequence is complete, the calendar restarts 
-     counting after 4 RTCCLK cycles.
+   (#) To Configure the RTC Calendar, user application should enter initialization
+       mode. In this mode, the calendar counter is stopped and its value can be 
+       updated. When the initialization sequence is complete, the calendar restarts 
+       counting after 4 RTCCLK cycles.
 
-  4. To read the calendar through the shadow registers after Calendar initialization,
-     calendar update or after wakeup from low power modes the software must first 
-     clear the RSF flag. The software must then wait until it is set again before 
-     reading the calendar, which means that the calendar registers have been 
-     correctly copied into the RTC_TR and RTC_DR shadow registers.
-     The RTC_WaitForSynchro() function implements the above software sequence 
-     (RSF clear and RSF check).
+   (#) To read the calendar through the shadow registers after Calendar initialization,
+       calendar update or after wakeup from low power modes the software must first 
+       clear the RSF flag. The software must then wait until it is set again before 
+       reading the calendar, which means that the calendar registers have been 
+       correctly copied into the RTC_TR and RTC_DR shadow registers.
+       The RTC_WaitForSynchro() function implements the above software sequence 
+       (RSF clear and RSF check).
 
 @endverbatim
   * @{
@@ -407,6 +415,10 @@ ErrorStatus RTC_DeInit(void)
       RTC->CALIBR = (uint32_t)0x00000000;
       RTC->ALRMAR = (uint32_t)0x00000000;        
       RTC->ALRMBR = (uint32_t)0x00000000;
+      RTC->SHIFTR = (uint32_t)0x00000000;
+      RTC->CALR = (uint32_t)0x00000000;
+      RTC->ALRMASSR = (uint32_t)0x00000000;
+      RTC->ALRMBSSR = (uint32_t)0x00000000;
       
       /* Reset ISR register and exit initialization mode */
       RTC->ISR = (uint32_t)0x00000000;
@@ -728,11 +740,11 @@ void RTC_BypassShadowCmd(FunctionalState NewState)
  *
 @verbatim   
  ===============================================================================
-                   Time and Date configuration functions
+                 ##### Time and Date configuration functions #####
  ===============================================================================  
-
-  This section provide functions allowing to program and read the RTC Calendar
-  (Time and Date).
+ 
+ [..] This section provide functions allowing to program and read the RTC Calendar
+      (Time and Date).
 
 @endverbatim
   * @{
@@ -823,6 +835,9 @@ ErrorStatus RTC_SetTime(uint32_t RTC_Format, RTC_TimeTypeDef* RTC_TimeStruct)
     /* Exit Initialization mode */
     RTC_ExitInitMode(); 
 
+    /* If  RTC_CR_BYPSHAD bit = 0, wait for synchro else this check is not needed */
+    if ((RTC->CR & RTC_CR_BYPSHAD) == RESET)
+    {
     if(RTC_WaitForSynchro() == ERROR)
     {
       status = ERROR;
@@ -831,7 +846,11 @@ ErrorStatus RTC_SetTime(uint32_t RTC_Format, RTC_TimeTypeDef* RTC_TimeStruct)
     {
       status = SUCCESS;
     }
-  
+  }
+    else
+    {
+      status = SUCCESS;
+    }
   }
   /* Enable the write protection for RTC registers */
   RTC->WPR = 0xFF; 
@@ -892,17 +911,17 @@ void RTC_GetTime(uint32_t RTC_Format, RTC_TimeTypeDef* RTC_TimeStruct)
 }
 
 /**
-  * @brief  Gets the RTC current Calendar Subseconds value.
+  * @brief  Gets the RTC current Calendar Sub seconds value.
   * @note   This function freeze the Time and Date registers after reading the 
   *         SSR register.
   * @param  None
-  * @retval RTC current Calendar Subseconds value.
+  * @retval RTC current Calendar Sub seconds value.
   */
 uint32_t RTC_GetSubSecond(void)
 {
   uint32_t tmpreg = 0;
   
-  /* Get subseconds values from the correspondent registers*/
+  /* Get sub seconds values from the correspondent registers*/
   tmpreg = (uint32_t)(RTC->SSR);
   
   /* Read DR register to unfroze calendar registers */
@@ -984,10 +1003,18 @@ ErrorStatus RTC_SetDate(uint32_t RTC_Format, RTC_DateTypeDef* RTC_DateStruct)
     /* Exit Initialization mode */
     RTC_ExitInitMode(); 
 
+    /* If  RTC_CR_BYPSHAD bit = 0, wait for synchro else this check is not needed */
+    if ((RTC->CR & RTC_CR_BYPSHAD) == RESET)
+    {
     if(RTC_WaitForSynchro() == ERROR)
     {
       status = ERROR;
     }
+    else
+    {
+      status = SUCCESS;
+    }
+  }
     else
     {
       status = SUCCESS;
@@ -1060,10 +1087,10 @@ void RTC_GetDate(uint32_t RTC_Format, RTC_DateTypeDef* RTC_DateStruct)
  *
 @verbatim   
  ===============================================================================
-              Alarms (Alarm A and Alarm B) configuration functions
+         ##### Alarms A and B configuration functions #####
  ===============================================================================  
-
-  This section provide functions allowing to program and read the RTC Alarms.
+ 
+ [..] This section provide functions allowing to program and read the RTC Alarms.
 
 @endverbatim
   * @{
@@ -1330,15 +1357,15 @@ ErrorStatus RTC_AlarmCmd(uint32_t RTC_Alarm, FunctionalState NewState)
 }
 
 /**
-  * @brief  Configure the RTC AlarmA/B Subseconds value and mask.*
+  * @brief  Configure the RTC AlarmA/B Sub seconds value and mask.*
   * @note   This function is performed only when the Alarm is disabled. 
   * @param  RTC_Alarm: specifies the alarm to be configured.
   *   This parameter can be one of the following values:
   *     @arg RTC_Alarm_A: to select Alarm A
   *     @arg RTC_Alarm_B: to select Alarm B
-  * @param  RTC_AlarmSubSecondValue: specifies the Subseconds value.
+  * @param  RTC_AlarmSubSecondValue: specifies the Sub seconds value.
   *   This parameter can be a value from 0 to 0x00007FFF.
-  * @param  RTC_AlarmSubSecondMask:  specifies the Subseconds Mask.
+  * @param  RTC_AlarmSubSecondMask:  specifies the Sub seconds Mask.
   *   This parameter can be any combination of the following values:
   *     @arg RTC_AlarmSubSecondMask_All    : All Alarm SS fields are masked.
   *                                          There is no comparison on sub seconds for Alarm.
@@ -1387,17 +1414,17 @@ void RTC_AlarmSubSecondConfig(uint32_t RTC_Alarm, uint32_t RTC_AlarmSubSecondVal
   RTC->WPR = 0xCA;
   RTC->WPR = 0x53;
   
-  /* Configure the Alarm A or Alarm B SubSecond registers */
+  /* Configure the Alarm A or Alarm B Sub Second registers */
   tmpreg = (uint32_t) (uint32_t)(RTC_AlarmSubSecondValue) | (uint32_t)(RTC_AlarmSubSecondMask);
   
   if (RTC_Alarm == RTC_Alarm_A)
   {
-    /* Configure the AlarmA SubSecond register */
+    /* Configure the Alarm A Sub Second register */
     RTC->ALRMASSR = tmpreg;
   }
   else
   {
-    /* Configure the Alarm B SubSecond register */
+    /* Configure the Alarm B Sub Second register */
     RTC->ALRMBSSR = tmpreg;
   }
 
@@ -1407,13 +1434,13 @@ void RTC_AlarmSubSecondConfig(uint32_t RTC_Alarm, uint32_t RTC_AlarmSubSecondVal
 }
 
 /**
-  * @brief  Gets the RTC Alarm Subseconds value.
+  * @brief  Gets the RTC Alarm Sub seconds value.
   * @param  RTC_Alarm: specifies the alarm to be read.
   *   This parameter can be one of the following values:
   *     @arg RTC_Alarm_A: to select Alarm A
   *     @arg RTC_Alarm_B: to select Alarm B
   * @param  None
-  * @retval RTC Alarm Subseconds value.
+  * @retval RTC Alarm Sub seconds value.
   */
 uint32_t RTC_GetAlarmSubSecond(uint32_t RTC_Alarm)
 {
@@ -1441,10 +1468,10 @@ uint32_t RTC_GetAlarmSubSecond(uint32_t RTC_Alarm)
  *
 @verbatim   
  ===============================================================================
-                     WakeUp Timer configuration functions
+                 ##### WakeUp Timer configuration functions #####
  ===============================================================================  
 
-  This section provide functions allowing to program and read the RTC WakeUp.
+ [..] This section provide functions allowing to program and read the RTC WakeUp.
 
 @endverbatim
   * @{
@@ -1579,10 +1606,10 @@ ErrorStatus RTC_WakeUpCmd(FunctionalState NewState)
  *
 @verbatim   
  ===============================================================================
-                    Daylight Saving configuration functions
+              ##### Daylight Saving configuration functions #####
  ===============================================================================  
 
-  This section provide functions allowing to configure the RTC DayLight Saving.
+ [..] This section provide functions allowing to configure the RTC DayLight Saving.
 
 @endverbatim
   * @{
@@ -1642,10 +1669,10 @@ uint32_t RTC_GetStoreOperation(void)
  *
 @verbatim   
  ===============================================================================
-                         Output pin Configuration function
+                 ##### Output pin Configuration function #####
  ===============================================================================  
 
-  This section provide functions allowing to configure the RTC Output source.
+ [..] This section provide functions allowing to configure the RTC Output source.
 
 @endverbatim
   * @{
@@ -1696,7 +1723,7 @@ void RTC_OutputConfig(uint32_t RTC_Output, uint32_t RTC_OutputPolarity)
  *
 @verbatim   
  ===============================================================================
-                  Digital Calibration configuration functions
+              ##### Digital Calibration configuration functions #####
  ===============================================================================  
 
 @endverbatim
@@ -1849,7 +1876,7 @@ void RTC_CalibOutputConfig(uint32_t RTC_CalibOutput)
   RTC->WPR = 0xCA;
   RTC->WPR = 0x53;
   
-  /*clear flags before config*/
+  /*clear flags before configuration */
   RTC->CR &= (uint32_t)~(RTC_CR_COSEL);
 
   /* Configure the RTC_CR register */
@@ -1863,9 +1890,9 @@ void RTC_CalibOutputConfig(uint32_t RTC_CalibOutput)
   * @brief  Configures the Smooth Calibration Settings.
   * @param  RTC_SmoothCalibPeriod : Select the Smooth Calibration Period.
   *   This parameter can be can be one of the following values:
-  *     @arg RTC_SmoothCalibPeriod_32sec : The smooth calibration periode is 32s.
-  *     @arg RTC_SmoothCalibPeriod_16sec : The smooth calibration periode is 16s.
-  *     @arg RTC_SmoothCalibPeriod_8sec  : The smooth calibartion periode is 8s.
+  *     @arg RTC_SmoothCalibPeriod_32sec : The smooth calibration period is 32s.
+  *     @arg RTC_SmoothCalibPeriod_16sec : The smooth calibration period is 16s.
+  *     @arg RTC_SmoothCalibPeriod_8sec  : The smooth calibartion period is 8s.
   * @param  RTC_SmoothCalibPlusPulses : Select to Set or reset the CALP bit.
   *   This parameter can be one of the following values:
   *     @arg RTC_SmoothCalibPlusPulses_Set  : Add one RTCCLK puls every 2**11 pulses.
@@ -1931,7 +1958,7 @@ ErrorStatus RTC_SmoothCalibConfig(uint32_t RTC_SmoothCalibPeriod,
  *
 @verbatim   
  ===============================================================================
-                       TimeStamp configuration functions
+                 ##### TimeStamp configuration functions #####
  ===============================================================================  
 
 @endverbatim
@@ -2036,13 +2063,13 @@ void RTC_GetTimeStamp(uint32_t RTC_Format, RTC_TimeTypeDef* RTC_StampTimeStruct,
 }
 
 /**
-  * @brief  Get the RTC timestamp Subseconds value.
+  * @brief  Get the RTC timestamp Sub seconds value.
   * @param  None
-  * @retval RTC current timestamp Subseconds value.
+  * @retval RTC current timestamp Sub seconds value.
   */
 uint32_t RTC_GetTimeStampSubSecond(void)
 {
-  /* Get timestamp subseconds values from the correspondent registers */
+  /* Get timestamp sub seconds values from the correspondent registers */
   return (uint32_t)(RTC->TSSSR);
 }
 
@@ -2055,7 +2082,7 @@ uint32_t RTC_GetTimeStampSubSecond(void)
  *
 @verbatim   
  ===============================================================================
-                       Tampers configuration functions
+                 ##### Tampers configuration functions #####
  ===============================================================================  
 
 @endverbatim
@@ -2183,10 +2210,10 @@ void RTC_TamperSamplingFreqConfig(uint32_t RTC_TamperSamplingFreq)
   * @param  RTC_TamperPrechargeDuration: Specifies the Tampers Pins input
   *         Precharge Duration.
   *   This parameter can be one of the following values:
-  *     @arg RTC_TamperPrechargeDuration_1RTCCLK: Tamper pins are pre-charged before sampling during 1 RTCCLK cycle
-  *     @arg RTC_TamperPrechargeDuration_2RTCCLK: Tamper pins are pre-charged before sampling during 2 RTCCLK cycle
-  *     @arg RTC_TamperPrechargeDuration_4RTCCLK: Tamper pins are pre-charged before sampling during 4 RTCCLK cycle    
-  *     @arg RTC_TamperPrechargeDuration_8RTCCLK: Tamper pins are pre-charged before sampling during 8 RTCCLK cycle
+  *     @arg RTC_TamperPrechargeDuration_1RTCCLK: Tamper pins are precharged before sampling during 1 RTCCLK cycle
+  *     @arg RTC_TamperPrechargeDuration_2RTCCLK: Tamper pins are precharged before sampling during 2 RTCCLK cycle
+  *     @arg RTC_TamperPrechargeDuration_4RTCCLK: Tamper pins are precharged before sampling during 4 RTCCLK cycle    
+  *     @arg RTC_TamperPrechargeDuration_8RTCCLK: Tamper pins are precharged before sampling during 8 RTCCLK cycle
   * @retval None
   */
 void RTC_TamperPinsPrechargeDuration(uint32_t RTC_TamperPrechargeDuration)
@@ -2258,7 +2285,7 @@ void RTC_TamperPullUpCmd(FunctionalState NewState)
  *
 @verbatim   
  ===============================================================================
-                       Backup Data Registers configuration functions 
+             ##### Backup Data Registers configuration functions ##### 
  ===============================================================================  
 
 @endverbatim
@@ -2317,10 +2344,9 @@ uint32_t RTC_ReadBackupRegister(uint32_t RTC_BKP_DR)
  *           configuration functions  
  *
 @verbatim   
- ===============================================================================
-  RTC Tamper and TimeStamp Pins Selection and Output Type Config configuration 
-  functions 
- ===============================================================================  
+ ==================================================================================================
+ ##### RTC Tamper and TimeStamp Pins Selection and Output Type Config configuration functions ##### 
+ ==================================================================================================  
 
 @endverbatim
   * @{
@@ -2388,7 +2414,7 @@ void RTC_OutputTypeConfig(uint32_t RTC_OutputType)
  *
 @verbatim   
  ===============================================================================
-                   Shift control synchronisation functions
+              ##### Shift control synchronisation functions #####
  ===============================================================================  
 
 @endverbatim
@@ -2474,41 +2500,42 @@ ErrorStatus RTC_SynchroShiftConfig(uint32_t RTC_ShiftAdd1S, uint32_t RTC_ShiftSu
  *
 @verbatim   
  ===============================================================================
-                       Interrupts and flags management functions
+              ##### Interrupts and flags management functions #####
  ===============================================================================  
- All RTC interrupts are connected to the EXTI controller.
+ [..] All RTC interrupts are connected to the EXTI controller.
  
- - To enable the RTC Alarm interrupt, the following sequence is required:
-   - Configure and enable the EXTI Line 17 in interrupt mode and select the rising 
-     edge sensitivity using the EXTI_Init() function.
-   - Configure and enable the RTC_Alarm IRQ channel in the NVIC using the NVIC_Init()
-     function.
-   - Configure the RTC to generate RTC alarms (Alarm A and/or Alarm B) using
-     the RTC_SetAlarm() and RTC_AlarmCmd() functions.
+   (+) To enable the RTC Alarm interrupt, the following sequence is required:
+       (++) Configure and enable the EXTI Line 17 in interrupt mode and select 
+            the rising edge sensitivity using the EXTI_Init() function.
+       (++) Configure and enable the RTC_Alarm IRQ channel in the NVIC using the 
+            NVIC_Init() function.
+       (++) Configure the RTC to generate RTC alarms (Alarm A and/or Alarm B) using
+            the RTC_SetAlarm() and RTC_AlarmCmd() functions.
 
- - To enable the RTC Wakeup interrupt, the following sequence is required:
-   - Configure and enable the EXTI Line 22 in interrupt mode and select the rising 
-     edge sensitivity using the EXTI_Init() function.
-   - Configure and enable the RTC_WKUP IRQ channel in the NVIC using the NVIC_Init()
-     function.
-   - Configure the RTC to generate the RTC wakeup timer event using the 
-     RTC_WakeUpClockConfig(), RTC_SetWakeUpCounter() and RTC_WakeUpCmd() functions.
+   (+) To enable the RTC Wakeup interrupt, the following sequence is required:
+       (++) Configure and enable the EXTI Line 22 in interrupt mode and select the
+            rising edge sensitivity using the EXTI_Init() function.
+       (++) Configure and enable the RTC_WKUP IRQ channel in the NVIC using the 
+            NVIC_Init() function.
+       (++) Configure the RTC to generate the RTC wakeup timer event using the 
+            RTC_WakeUpClockConfig(), RTC_SetWakeUpCounter() and RTC_WakeUpCmd() 
+            functions.
 
- - To enable the RTC Tamper interrupt, the following sequence is required:
-   - Configure and enable the EXTI Line 21 in interrupt mode and select the rising 
-     edge sensitivity using the EXTI_Init() function.
-   - Configure and enable the TAMP_STAMP IRQ channel in the NVIC using the NVIC_Init()
-     function.
-   - Configure the RTC to detect the RTC tamper event using the 
-     RTC_TamperTriggerConfig() and RTC_TamperCmd() functions.
+   (+) To enable the RTC Tamper interrupt, the following sequence is required:
+       (++) Configure and enable the EXTI Line 21 in interrupt mode and select 
+            the rising edge sensitivity using the EXTI_Init() function.
+       (++) Configure and enable the TAMP_STAMP IRQ channel in the NVIC using the
+            NVIC_Init() function.
+       (++) Configure the RTC to detect the RTC tamper event using the 
+            RTC_TamperTriggerConfig() and RTC_TamperCmd() functions.
 
- - To enable the RTC TimeStamp interrupt, the following sequence is required:
-   - Configure and enable the EXTI Line 21 in interrupt mode and select the rising 
-     edge sensitivity using the EXTI_Init() function.
-   - Configure and enable the TAMP_STAMP IRQ channel in the NVIC using the NVIC_Init()
-     function.
-   - Configure the RTC to detect the RTC time-stamp event using the 
-     RTC_TimeStampCmd() functions.
+   (+) To enable the RTC TimeStamp interrupt, the following sequence is required:
+       (++) Configure and enable the EXTI Line 21 in interrupt mode and select the
+            rising edge sensitivity using the EXTI_Init() function.
+       (++) Configure and enable the TAMP_STAMP IRQ channel in the NVIC using the 
+            NVIC_Init() function.
+       (++) Configure the RTC to detect the RTC time stamp event using the 
+            RTC_TimeStampCmd() functions.
 
 @endverbatim
   * @{
@@ -2559,6 +2586,7 @@ void RTC_ITConfig(uint32_t RTC_IT, FunctionalState NewState)
   * @brief  Checks whether the specified RTC flag is set or not.
   * @param  RTC_FLAG: specifies the flag to check.
   *          This parameter can be one of the following values:
+  *            @arg RTC_FLAG_RECALPF: RECALPF event flag.
   *            @arg RTC_FLAG_TAMP1F: Tamper 1 event flag
   *            @arg RTC_FLAG_TSOVF: Time Stamp OverFlow flag
   *            @arg RTC_FLAG_TSF: Time Stamp event flag
@@ -2568,6 +2596,7 @@ void RTC_ITConfig(uint32_t RTC_IT, FunctionalState NewState)
   *            @arg RTC_FLAG_INITF: Initialization mode flag
   *            @arg RTC_FLAG_RSF: Registers Synchronized flag
   *            @arg RTC_FLAG_INITS: Registers Configured flag
+  *            @arg RTC_FLAG_SHPF: Shift operation pending flag.
   *            @arg RTC_FLAG_WUTWF: WakeUp Timer Write flag
   *            @arg RTC_FLAG_ALRBWF: Alarm B Write flag
   *            @arg RTC_FLAG_ALRAWF: Alarm A write flag
@@ -2729,4 +2758,4 @@ static uint8_t RTC_Bcd2ToByte(uint8_t Value)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

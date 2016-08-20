@@ -2,146 +2,153 @@
   ******************************************************************************
   * @file    stm32f4xx_sdio.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    30-September-2011
+  * @version V1.3.0
+  * @date    08-November-2013
   * @brief   This file provides firmware functions to manage the following 
   *          functionalities of the Secure digital input/output interface (SDIO) 
   *          peripheral:
-  *           - Initialization and Configuration
-  *           - Command path state machine (CPSM) management
-  *           - Data path state machine (DPSM) management
-  *           - SDIO IO Cards mode management
-  *           - CE-ATA mode management
-  *           - DMA transfers management
-  *           - Interrupts and flags management
+  *           + Initialization and Configuration
+  *           + Command path state machine (CPSM) management
+  *           + Data path state machine (DPSM) management
+  *           + SDIO IO Cards mode management
+  *           + CE-ATA mode management
+  *           + DMA transfers management
+  *           + Interrupts and flags management
   *
-  *  @verbatim
-  *
-  *
-  *          ===================================================================
-  *                                 How to use this driver
-  *          ===================================================================
-  *          1. The SDIO clock (SDIOCLK = 48 MHz) is coming from a specific output
-  *             of PLL (PLL48CLK). Before to start working with SDIO peripheral
-  *             make sure that the PLL is well configured.
-  *          The SDIO peripheral uses two clock signals:
-  *              - SDIO adapter clock (SDIOCLK = 48 MHz)
-  *              - APB2 bus clock (PCLK2)
-  *          PCLK2 and SDIO_CK clock frequencies must respect the following condition:
-  *                   Frequenc(PCLK2) >= (3 / 8 x Frequency(SDIO_CK))
-  *
-  *          2. Enable peripheral clock using RCC_APB2PeriphClockCmd(RCC_APB2Periph_SDIO, ENABLE).
-  *
-  *          3.  According to the SDIO mode, enable the GPIO clocks using 
-  *              RCC_AHB1PeriphClockCmd() function. 
-  *              The I/O can be one of the following configurations:
-  *                 - 1-bit data length: SDIO_CMD, SDIO_CK and D0.
-  *                 - 4-bit data length: SDIO_CMD, SDIO_CK and D[3:0].
-  *                 - 8-bit data length: SDIO_CMD, SDIO_CK and D[7:0].      
-  *
-  *          4. Peripheral's alternate function: 
-  *                 - Connect the pin to the desired peripherals' Alternate 
-  *                   Function (AF) using GPIO_PinAFConfig() function
-  *                 - Configure the desired pin in alternate function by:
-  *                   GPIO_InitStruct->GPIO_Mode = GPIO_Mode_AF
-  *                 - Select the type, pull-up/pull-down and output speed via 
-  *                   GPIO_PuPd, GPIO_OType and GPIO_Speed members
-  *                 - Call GPIO_Init() function
-  *
-  *          5. Program the Clock Edge, Clock Bypass, Clock Power Save, Bus Wide, 
-  *             hardware, flow control and the Clock Divider using the SDIO_Init()
-  *             function.
-  *
-  *          6. Enable the Power ON State using the SDIO_SetPowerState(SDIO_PowerState_ON) 
-  *             function.
-  *              
-  *          7. Enable the clock using the SDIO_ClockCmd() function.
-  *
-  *          8. Enable the NVIC and the corresponding interrupt using the function 
-  *             SDIO_ITConfig() if you need to use interrupt mode. 
-  *
-  *          9. When using the DMA mode 
-  *                   - Configure the DMA using DMA_Init() function
-  *                   - Active the needed channel Request using SDIO_DMACmd() function
-  *
-  *          10. Enable the DMA using the DMA_Cmd() function, when using DMA mode. 
-  *
-  *          11. To control the CPSM (Command Path State Machine) and send 
-  *              commands to the card use the SDIO_SendCommand(), 
-  *              SDIO_GetCommandResponse() and SDIO_GetResponse() functions.     
-  *              First, user has to fill the command structure (pointer to
-  *              SDIO_CmdInitTypeDef) according to the selected command to be sent.
-  *                 The parameters that should be filled are:
-  *                   - Command Argument
-  *                   - Command Index
-  *                   - Command Response type
-  *                   - Command Wait
-  *                   - CPSM Status (Enable or Disable)
-  *
-  *              To check if the command is well received, read the SDIO_CMDRESP
-  *              register using the SDIO_GetCommandResponse().
-  *              The SDIO responses registers (SDIO_RESP1 to SDIO_RESP2), use the
-  *              SDIO_GetResponse() function.
-  *
-  *          12. To control the DPSM (Data Path State Machine) and send/receive 
-  *              data to/from the card use the SDIO_DataConfig(), SDIO_GetDataCounter(), 
-  *              SDIO_ReadData(), SDIO_WriteData() and SDIO_GetFIFOCount() functions.
-  *
-  *              Read Operations
-  *              ---------------
-  *              a) First, user has to fill the data structure (pointer to
-  *                 SDIO_DataInitTypeDef) according to the selected data type to
-  *                 be received.
-  *                 The parameters that should be filled are:
-  *                   - Data TimeOut
-  *                   - Data Length
-  *                   - Data Block size
-  *                   - Data Transfer direction: should be from card (To SDIO)
-  *                   - Data Transfer mode
-  *                   - DPSM Status (Enable or Disable)
-  *                                   
-  *              b) Configure the SDIO resources to receive the data from the card
-  *                 according to selected transfer mode (Refer to Step 8, 9 and 10).
-  *
-  *              c) Send the selected Read command (refer to step 11).
-  *                  
-  *              d) Use the SDIO flags/interrupts to check the transfer status.
-  *
-  *              Write Operations
-  *              ---------------
-  *              a) First, user has to fill the data structure (pointer to
-  *                 SDIO_DataInitTypeDef) according to the selected data type to
-  *                 be received.
-  *                 The parameters that should be filled are:
-  *                   - Data TimeOut
-  *                   - Data Length
-  *                   - Data Block size
-  *                   - Data Transfer direction:  should be to card (To CARD)
-  *                   - Data Transfer mode
-  *                   - DPSM Status (Enable or Disable)
-  *
-  *              b) Configure the SDIO resources to send the data to the card
-  *                 according to selected transfer mode (Refer to Step 8, 9 and 10).
-  *                   
-  *              c) Send the selected Write command (refer to step 11).
-  *                  
-  *              d) Use the SDIO flags/interrupts to check the transfer status.
-  *
-  *
-  *  @endverbatim
+@verbatim
+
+ ===================================================================
+                 ##### How to use this driver #####
+ ===================================================================
+ [..]
+   (#) The SDIO clock (SDIOCLK = 48 MHz) is coming from a specific output of PLL 
+       (PLL48CLK). Before to start working with SDIO peripheral make sure that the
+       PLL is well configured.
+       The SDIO peripheral uses two clock signals:
+       (++) SDIO adapter clock (SDIOCLK = 48 MHz)
+       (++) APB2 bus clock (PCLK2)
+       
+       -@@- PCLK2 and SDIO_CK clock frequencies must respect the following condition:
+           Frequency(PCLK2) >= (3 / 8 x Frequency(SDIO_CK))
+  
+   (#) Enable peripheral clock using RCC_APB2PeriphClockCmd(RCC_APB2Periph_SDIO, ENABLE).
+  
+   (#) According to the SDIO mode, enable the GPIO clocks using 
+       RCC_AHB1PeriphClockCmd() function. 
+       The I/O can be one of the following configurations:
+       (++) 1-bit data length: SDIO_CMD, SDIO_CK and D0.
+       (++) 4-bit data length: SDIO_CMD, SDIO_CK and D[3:0].
+       (++) 8-bit data length: SDIO_CMD, SDIO_CK and D[7:0].      
+  
+   (#) Peripheral alternate function: 
+       (++) Connect the pin to the desired peripherals' Alternate Function (AF) 
+           using GPIO_PinAFConfig() function
+       (++) Configure the desired pin in alternate function by: 
+           GPIO_InitStruct->GPIO_Mode = GPIO_Mode_AF
+       (++) Select the type, pull-up/pull-down and output speed via GPIO_PuPd, 
+           GPIO_OType and GPIO_Speed members
+       (++) Call GPIO_Init() function
+  
+   (#) Program the Clock Edge, Clock Bypass, Clock Power Save, Bus Wide, 
+       hardware, flow control and the Clock Divider using the SDIO_Init()
+       function.
+  
+   (#) Enable the Power ON State using the SDIO_SetPowerState(SDIO_PowerState_ON) 
+       function.
+                
+   (#) Enable the clock using the SDIO_ClockCmd() function.
+  
+   (#) Enable the NVIC and the corresponding interrupt using the function 
+       SDIO_ITConfig() if you need to use interrupt mode. 
+  
+   (#) When using the DMA mode 
+       (++) Configure the DMA using DMA_Init() function
+       (++) Active the needed channel Request using SDIO_DMACmd() function
+  
+   (#) Enable the DMA using the DMA_Cmd() function, when using DMA mode. 
+  
+   (#) To control the CPSM (Command Path State Machine) and send 
+       commands to the card use the SDIO_SendCommand(), 
+       SDIO_GetCommandResponse() and SDIO_GetResponse() functions. First, user has
+       to fill the command structure (pointer to SDIO_CmdInitTypeDef) according 
+       to the selected command to be sent.
+       The parameters that should be filled are:
+       (++) Command Argument
+       (++) Command Index
+       (++) Command Response type
+       (++) Command Wait
+       (++) CPSM Status (Enable or Disable).
+  
+       -@@- To check if the command is well received, read the SDIO_CMDRESP
+           register using the SDIO_GetCommandResponse().
+           The SDIO responses registers (SDIO_RESP1 to SDIO_RESP2), use the
+           SDIO_GetResponse() function.
+  
+   (#) To control the DPSM (Data Path State Machine) and send/receive 
+       data to/from the card use the SDIO_DataConfig(), SDIO_GetDataCounter(), 
+       SDIO_ReadData(), SDIO_WriteData() and SDIO_GetFIFOCount() functions.
+  
+ *** Read Operations ***
+ =======================
+ [..]
+   (#) First, user has to fill the data structure (pointer to
+       SDIO_DataInitTypeDef) according to the selected data type to be received.
+       The parameters that should be filled are:
+       (++) Data TimeOut
+       (++) Data Length
+       (++) Data Block size
+       (++) Data Transfer direction: should be from card (To SDIO)
+       (++) Data Transfer mode
+       (++) DPSM Status (Enable or Disable)
+                                     
+   (#) Configure the SDIO resources to receive the data from the card
+       according to selected transfer mode (Refer to Step 8, 9 and 10).
+  
+   (#)  Send the selected Read command (refer to step 11).
+                    
+   (#) Use the SDIO flags/interrupts to check the transfer status.
+  
+ *** Write Operations ***
+ ========================
+ [..]
+   (#) First, user has to fill the data structure (pointer to
+       SDIO_DataInitTypeDef) according to the selected data type to be received.
+       The parameters that should be filled are:
+       (++) Data TimeOut
+       (++) Data Length
+       (++) Data Block size
+       (++) Data Transfer direction:  should be to card (To CARD)
+       (++) Data Transfer mode
+       (++) DPSM Status (Enable or Disable)
+  
+   (#) Configure the SDIO resources to send the data to the card according to 
+       selected transfer mode (Refer to Step 8, 9 and 10).
+                     
+   (#) Send the selected Write command (refer to step 11).
+                    
+   (#) Use the SDIO flags/interrupts to check the transfer status.
+  
+  
+@endverbatim
   *
   *
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */
 
@@ -244,7 +251,7 @@
  *
 @verbatim   
  ===============================================================================
-                 Initialization and Configuration functions
+              ##### Initialization and Configuration functions #####
  ===============================================================================
 
 @endverbatim
@@ -371,7 +378,7 @@ uint32_t SDIO_GetPowerState(void)
  *
 @verbatim   
  ===============================================================================
-              Command path state machine (CPSM) management functions
+        ##### Command path state machine (CPSM) management functions #####
  ===============================================================================  
 
   This section provide functions allowing to program and read the Command path 
@@ -476,7 +483,7 @@ uint32_t SDIO_GetResponse(uint32_t SDIO_RESP)
  *
 @verbatim   
  ===============================================================================
-              Data path state machine (DPSM) management functions
+         ##### Data path state machine (DPSM) management functions #####
  ===============================================================================  
 
   This section provide functions allowing to program and read the Data path 
@@ -594,7 +601,7 @@ uint32_t SDIO_GetFIFOCount(void)
  *
 @verbatim   
  ===============================================================================
-              SDIO IO Cards mode management functions
+               ##### SDIO IO Cards mode management functions #####
  ===============================================================================  
 
   This section provide functions allowing to program and read the SDIO IO Cards.
@@ -684,7 +691,7 @@ void SDIO_SendSDIOSuspendCmd(FunctionalState NewState)
  *
 @verbatim   
  ===============================================================================
-              CE-ATA mode management functions
+                  ##### CE-ATA mode management functions #####
  ===============================================================================  
 
   This section provide functions allowing to program and read the CE-ATA card.
@@ -744,7 +751,7 @@ void SDIO_SendCEATACmd(FunctionalState NewState)
  *
 @verbatim   
  ===============================================================================
-              DMA transfers management functions
+                  ##### DMA transfers management functions #####
  ===============================================================================  
 
   This section provide functions allowing to program SDIO DMA transfer.
@@ -776,7 +783,7 @@ void SDIO_DMACmd(FunctionalState NewState)
  *
 @verbatim   
  ===============================================================================
-                       Interrupts and flags management functions
+              ##### Interrupts and flags management functions #####
  ===============================================================================  
 
 
@@ -1001,4 +1008,4 @@ void SDIO_ClearITPendingBit(uint32_t SDIO_IT)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

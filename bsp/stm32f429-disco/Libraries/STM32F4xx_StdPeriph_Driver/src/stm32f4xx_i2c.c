@@ -2,84 +2,89 @@
   ******************************************************************************
   * @file    stm32f4xx_i2c.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    30-September-2011
+  * @version V1.3.0
+  * @date    08-November-2013
   * @brief   This file provides firmware functions to manage the following 
   *          functionalities of the Inter-integrated circuit (I2C)
-  *           - Initialization and Configuration
-  *           - Data transfers
-  *           - PEC management
-  *           - DMA transfers management
-  *           - Interrupts, events and flags management 
+  *           + Initialization and Configuration
+  *           + Data transfers
+  *           + PEC management
+  *           + DMA transfers management
+  *           + Interrupts, events and flags management 
   *           
-  *  @verbatim
-  *    
-  *          ===================================================================
-  *                                 How to use this driver
-  *          ===================================================================
-  *          1. Enable peripheral clock using RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2Cx, ENABLE)
-  *             function for I2C1, I2C2 or I2C3.
-  *
-  *          2. Enable SDA, SCL  and SMBA (when used) GPIO clocks using 
-  *             RCC_AHBPeriphClockCmd() function. 
-  *
-  *          3. Peripherals alternate function: 
-  *                 - Connect the pin to the desired peripherals' Alternate 
-  *                   Function (AF) using GPIO_PinAFConfig() function
-  *                 - Configure the desired pin in alternate function by:
-  *                   GPIO_InitStruct->GPIO_Mode = GPIO_Mode_AF
-  *                 - Select the type, pull-up/pull-down and output speed via 
-  *                   GPIO_PuPd, GPIO_OType and GPIO_Speed members
-  *                 - Call GPIO_Init() function
-  *                 Recommended configuration is Push-Pull, Pull-up, Open-Drain.
-  *                 Add an external pull up if necessary (typically 4.7 KOhm).      
-  *        
-  *          4. Program the Mode, duty cycle , Own address, Ack, Speed and Acknowledged
-  *             Address using the I2C_Init() function.
-  *
-  *          5. Optionally you can enable/configure the following parameters without
-  *             re-initialization (i.e there is no need to call again I2C_Init() function):
-  *              - Enable the acknowledge feature using I2C_AcknowledgeConfig() function
-  *              - Enable the dual addressing mode using I2C_DualAddressCmd() function
-  *              - Enable the general call using the I2C_GeneralCallCmd() function
-  *              - Enable the clock stretching using I2C_StretchClockCmd() function
-  *              - Enable the fast mode duty cycle using the I2C_FastModeDutyCycleConfig()
-  *                function.
-  *              - Configure the NACK position for Master Receiver mode in case of 
-  *                2 bytes reception using the function I2C_NACKPositionConfig().  
-  *              - Enable the PEC Calculation using I2C_CalculatePEC() function
-  *              - For SMBus Mode: 
-  *                   - Enable the Address Resolution Protocol (ARP) using I2C_ARPCmd() function
-  *                   - Configure the SMBusAlert pin using I2C_SMBusAlertConfig() function
-  *
-  *          6. Enable the NVIC and the corresponding interrupt using the function 
-  *             I2C_ITConfig() if you need to use interrupt mode. 
-  *
-  *          7. When using the DMA mode 
-  *                   - Configure the DMA using DMA_Init() function
-  *                   - Active the needed channel Request using I2C_DMACmd() or
-  *                     I2C_DMALastTransferCmd() function.
-  *              @note When using DMA mode, I2C interrupts may be used at the same time to
-  *                    control the communication flow (Start/Stop/Ack... events and errors).
-  * 
-  *          8. Enable the I2C using the I2C_Cmd() function.
-  * 
-  *          9. Enable the DMA using the DMA_Cmd() function when using DMA mode in the 
-  *             transfers. 
-  *
-  *  @endverbatim
-  *  
+    @verbatim    
+ ===============================================================================
+                    ##### How to use this driver #####
+ ===============================================================================
+    [..]
+      (#) Enable peripheral clock using RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2Cx, ENABLE)
+          function for I2C1, I2C2 or I2C3.
+  
+      (#) Enable SDA, SCL  and SMBA (when used) GPIO clocks using 
+          RCC_AHBPeriphClockCmd() function. 
+  
+      (#) Peripherals alternate function: 
+        (++) Connect the pin to the desired peripherals' Alternate 
+             Function (AF) using GPIO_PinAFConfig() function
+        (++) Configure the desired pin in alternate function by:
+             GPIO_InitStruct->GPIO_Mode = GPIO_Mode_AF
+        (++) Select the type, pull-up/pull-down and output speed via 
+             GPIO_PuPd, GPIO_OType and GPIO_Speed members
+        (++) Call GPIO_Init() function
+             Recommended configuration is Push-Pull, Pull-up, Open-Drain.
+             Add an external pull up if necessary (typically 4.7 KOhm).      
+          
+      (#) Program the Mode, duty cycle , Own address, Ack, Speed and Acknowledged
+          Address using the I2C_Init() function.
+  
+      (#) Optionally you can enable/configure the following parameters without
+          re-initialization (i.e there is no need to call again I2C_Init() function):
+        (++) Enable the acknowledge feature using I2C_AcknowledgeConfig() function
+        (++) Enable the dual addressing mode using I2C_DualAddressCmd() function
+        (++) Enable the general call using the I2C_GeneralCallCmd() function
+        (++) Enable the clock stretching using I2C_StretchClockCmd() function
+        (++) Enable the fast mode duty cycle using the I2C_FastModeDutyCycleConfig()
+             function.
+        (++) Configure the NACK position for Master Receiver mode in case of 
+             2 bytes reception using the function I2C_NACKPositionConfig().  
+        (++) Enable the PEC Calculation using I2C_CalculatePEC() function
+        (++) For SMBus Mode: 
+          (+++) Enable the Address Resolution Protocol (ARP) using I2C_ARPCmd() function
+          (+++) Configure the SMBusAlert pin using I2C_SMBusAlertConfig() function
+  
+      (#) Enable the NVIC and the corresponding interrupt using the function 
+          I2C_ITConfig() if you need to use interrupt mode. 
+  
+      (#) When using the DMA mode 
+        (++) Configure the DMA using DMA_Init() function
+        (++) Active the needed channel Request using I2C_DMACmd() or
+             I2C_DMALastTransferCmd() function.
+        -@@- When using DMA mode, I2C interrupts may be used at the same time to
+             control the communication flow (Start/Stop/Ack... events and errors).
+   
+      (#) Enable the I2C using the I2C_Cmd() function.
+   
+      (#) Enable the DMA using the DMA_Cmd() function when using DMA mode in the 
+          transfers. 
+  
+    @endverbatim  
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************  
   */ 
 
@@ -117,7 +122,7 @@
  *
 @verbatim   
  ===============================================================================
-                   Initialization and Configuration functions
+            ##### Initialization and Configuration functions #####
  ===============================================================================  
 
 @endverbatim
@@ -320,6 +325,68 @@ void I2C_Cmd(I2C_TypeDef* I2Cx, FunctionalState NewState)
     /* Disable the selected I2C peripheral */
     I2Cx->CR1 &= (uint16_t)~((uint16_t)I2C_CR1_PE);
   }
+}
+
+/**
+  * @brief  Enables or disables the Analog filter of I2C peripheral.
+  * 
+  * @note   This function can be used only for STM32F42xxx/STM3243xxx and STM32F401xx devices.
+  *        
+  * @param  I2Cx: where x can be 1, 2 or 3 to select the I2C peripheral.
+  * @param  NewState: new state of the Analog filter. 
+  *          This parameter can be: ENABLE or DISABLE.
+  * @note   This function should be called before initializing and enabling
+            the I2C Peripheral.
+  * @retval None
+  */
+void I2C_AnalogFilterCmd(I2C_TypeDef* I2Cx, FunctionalState NewState)
+{
+  /* Check the parameters */
+  assert_param(IS_I2C_ALL_PERIPH(I2Cx));
+  assert_param(IS_FUNCTIONAL_STATE(NewState));
+  if (NewState != DISABLE)
+  {
+    /* Enable the analog filter */
+    I2Cx->FLTR &= (uint16_t)~((uint16_t)I2C_FLTR_ANOFF);    
+  }
+  else
+  {
+    /* Disable the analog filter */
+    I2Cx->FLTR |= I2C_FLTR_ANOFF;
+  }
+}
+
+/**
+  * @brief  Configures the Digital noise filter of I2C peripheral.
+  * 
+  * @note   This function can be used only for STM32F42xxx/STM3243xxx and STM32F401xx devices.
+  *       
+  * @param  I2Cx: where x can be 1, 2 or 3 to select the I2C peripheral.
+  * @param  I2C_DigitalFilter: Coefficient of digital noise filter. 
+  *          This parameter can be a number between 0x00 and 0x0F.
+  * @note   This function should be called before initializing and enabling
+            the I2C Peripheral.
+  * @retval None
+  */
+void I2C_DigitalFilterConfig(I2C_TypeDef* I2Cx, uint16_t I2C_DigitalFilter)
+{
+  uint16_t tmpreg = 0;
+  
+  /* Check the parameters */
+  assert_param(IS_I2C_ALL_PERIPH(I2Cx));
+  assert_param(IS_I2C_DIGITAL_FILTER(I2C_DigitalFilter));
+  
+  /* Get the old register value */
+  tmpreg = I2Cx->FLTR;
+  
+  /* Reset I2Cx DNF bit [3:0] */
+  tmpreg &= (uint16_t)~((uint16_t)I2C_FLTR_DNF);
+  
+  /* Set I2Cx DNF coefficient */
+  tmpreg |= (uint16_t)((uint16_t)I2C_DigitalFilter & I2C_FLTR_DNF);
+  
+  /* Store the new register value */
+  I2Cx->FLTR = tmpreg;
 }
 
 /**
@@ -673,7 +740,7 @@ void I2C_ARPCmd(I2C_TypeDef* I2Cx, FunctionalState NewState)
  *
 @verbatim   
  ===============================================================================
-                        Data transfers functions
+                  ##### Data transfers functions #####
  ===============================================================================  
 
 @endverbatim
@@ -716,7 +783,7 @@ uint8_t I2C_ReceiveData(I2C_TypeDef* I2Cx)
  *
 @verbatim   
  ===============================================================================
-                         PEC management functions
+                  ##### PEC management functions #####
  ===============================================================================  
 
 @endverbatim
@@ -824,7 +891,7 @@ uint8_t I2C_GetPEC(I2C_TypeDef* I2Cx)
  *
 @verbatim   
  ===============================================================================
-                         DMA transfers management functions
+                ##### DMA transfers management functions #####
  ===============================================================================  
   This section provides functions allowing to configure the I2C DMA channels 
   requests.
@@ -890,94 +957,94 @@ void I2C_DMALastTransferCmd(I2C_TypeDef* I2Cx, FunctionalState NewState)
  *
 @verbatim   
  ===============================================================================
-                Interrupts, events and flags management functions
- ===============================================================================  
-  This section provides functions allowing to configure the I2C Interrupts 
-  sources and check or clear the flags or pending bits status.
-  The user should identify which mode will be used in his application to manage 
-  the communication: Polling mode, Interrupt mode or DMA mode. 
-
+          ##### Interrupts, events and flags management functions #####
  ===============================================================================
-                          I2C State Monitoring Functions                    
- ===============================================================================   
-  This I2C driver provides three different ways for I2C state monitoring
-  depending on the application requirements and constraints:
+    [..]
+    This section provides functions allowing to configure the I2C Interrupts 
+    sources and check or clear the flags or pending bits status.
+    The user should identify which mode will be used in his application to manage 
+    the communication: Polling mode, Interrupt mode or DMA mode. 
+
+
+                ##### I2C State Monitoring Functions #####                   
+ =============================================================================== 
+    [..]  
+    This I2C driver provides three different ways for I2C state monitoring
+    depending on the application requirements and constraints:
          
    
-     1. Basic state monitoring (Using I2C_CheckEvent() function)
-     -----------------------------------------------------------
+     (#) Basic state monitoring (Using I2C_CheckEvent() function)
+     
         It compares the status registers (SR1 and SR2) content to a given event
         (can be the combination of one or more flags).
         It returns SUCCESS if the current status includes the given flags 
         and returns ERROR if one or more flags are missing in the current status.
 
-          - When to use
-             - This function is suitable for most applications as well as for startup 
+          (++) When to use
+             (+++) This function is suitable for most applications as well as for startup 
                activity since the events are fully described in the product reference 
                manual (RM0090).
-             - It is also suitable for users who need to define their own events.
+             (+++) It is also suitable for users who need to define their own events.
 
-          - Limitations
-             - If an error occurs (ie. error flags are set besides to the monitored 
+          (++) Limitations
+               If an error occurs (ie. error flags are set besides to the monitored 
                flags), the I2C_CheckEvent() function may return SUCCESS despite 
                the communication hold or corrupted real state. 
                In this case, it is advised to use error interrupts to monitor 
                the error events and handle them in the interrupt IRQ handler.
          
-     @note 
-         For error management, it is advised to use the following functions:
-           - I2C_ITConfig() to configure and enable the error interrupts (I2C_IT_ERR).
-           - I2Cx_ER_IRQHandler() which is called when the error interrupt occurs.
-             Where x is the peripheral instance (I2C1, I2C2 ...)
-           - I2C_GetFlagStatus() or I2C_GetITStatus()  to be called into the 
-             I2Cx_ER_IRQHandler() function in order to determine which error occurred.
-           - I2C_ClearFlag() or I2C_ClearITPendingBit() and/or I2C_SoftwareResetCmd() 
-             and/or I2C_GenerateStop() in order to clear the error flag and source 
-             and return to correct  communication status.
+     -@@- For error management, it is advised to use the following functions:
+        (+@@) I2C_ITConfig() to configure and enable the error interrupts (I2C_IT_ERR).
+        (+@@) I2Cx_ER_IRQHandler() which is called when the error interrupt occurs.
+              Where x is the peripheral instance (I2C1, I2C2 ...)
+        (+@@) I2C_GetFlagStatus() or I2C_GetITStatus()  to be called into the 
+              I2Cx_ER_IRQHandler() function in order to determine which error occurred.
+        (+@@) I2C_ClearFlag() or I2C_ClearITPendingBit() and/or I2C_SoftwareResetCmd() 
+              and/or I2C_GenerateStop() in order to clear the error flag and source 
+              and return to correct  communication status.
              
  
-     2. Advanced state monitoring (Using the function I2C_GetLastEvent())
-     -------------------------------------------------------------------- 
+     (#) Advanced state monitoring (Using the function I2C_GetLastEvent())
+
         Using the function I2C_GetLastEvent() which returns the image of both status 
         registers in a single word (uint32_t) (Status Register 2 value is shifted left 
         by 16 bits and concatenated to Status Register 1).
 
-          - When to use
-             - This function is suitable for the same applications above but it 
+          (++) When to use
+             (+++) This function is suitable for the same applications above but it 
                allows to overcome the mentioned limitation of I2C_GetFlagStatus() 
                function.
-             - The returned value could be compared to events already defined in 
+             (+++) The returned value could be compared to events already defined in 
                the library (stm32f4xx_i2c.h) or to custom values defined by user.
                This function is suitable when multiple flags are monitored at the 
                same time.
-             - At the opposite of I2C_CheckEvent() function, this function allows 
+             (+++) At the opposite of I2C_CheckEvent() function, this function allows 
                user to choose when an event is accepted (when all events flags are 
                set and no other flags are set or just when the needed flags are set 
                like I2C_CheckEvent() function.
 
-          - Limitations
-             - User may need to define his own events.
-             - Same remark concerning the error management is applicable for this 
+          (++) Limitations
+             (+++) User may need to define his own events.
+             (+++) Same remark concerning the error management is applicable for this 
                function if user decides to check only regular communication flags 
                (and ignores error flags).
       
  
-     3. Flag-based state monitoring (Using the function I2C_GetFlagStatus())
-     -----------------------------------------------------------------------
+     (#) Flag-based state monitoring (Using the function I2C_GetFlagStatus())
      
       Using the function I2C_GetFlagStatus() which simply returns the status of 
       one single flag (ie. I2C_FLAG_RXNE ...). 
 
-          - When to use
-             - This function could be used for specific applications or in debug 
+          (++) When to use
+             (+++) This function could be used for specific applications or in debug 
                phase.
-             - It is suitable when only one flag checking is needed (most I2C 
+             (+++) It is suitable when only one flag checking is needed (most I2C 
                events are monitored through multiple flags).
-          - Limitations: 
-             - When calling this function, the Status register is accessed. 
+          (++) Limitations: 
+             (+++) When calling this function, the Status register is accessed. 
                Some flags are cleared when the status register is accessed. 
                So checking the status of one Flag, may clear other ones.
-             - Function may need to be called twice or more in order to monitor 
+             (+++) Function may need to be called twice or more in order to monitor 
                one single event.
  
    For detailed description of Events, please refer to section I2C_Events in 
@@ -1392,4 +1459,4 @@ void I2C_ClearITPendingBit(I2C_TypeDef* I2Cx, uint32_t I2C_IT)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

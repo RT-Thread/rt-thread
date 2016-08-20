@@ -2,95 +2,103 @@
   ******************************************************************************
   * @file    stm32f4xx_adc.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    30-September-2011
+  * @version V1.3.0
+  * @date    08-November-2013
   * @brief   This file provides firmware functions to manage the following 
   *          functionalities of the Analog to Digital Convertor (ADC) peripheral:
-  *           - Initialization and Configuration (in addition to ADC multi mode 
+  *           + Initialization and Configuration (in addition to ADC multi mode 
   *             selection)
-  *           - Analog Watchdog configuration
-  *           - Temperature Sensor & Vrefint (Voltage Reference internal) & VBAT
+  *           + Analog Watchdog configuration
+  *           + Temperature Sensor & Vrefint (Voltage Reference internal) & VBAT
   *             management 
-  *           - Regular Channels Configuration
-  *           - Regular Channels DMA Configuration
-  *           - Injected channels Configuration
-  *           - Interrupts and flags management
+  *           + Regular Channels Configuration
+  *           + Regular Channels DMA Configuration
+  *           + Injected channels Configuration
+  *           + Interrupts and flags management
   *         
-  *  @verbatim
-  *
-  *          ===================================================================
-  *                                   How to use this driver
-  *          ===================================================================
-
-  *          1.  Enable the ADC interface clock using 
-  *                  RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADCx, ENABLE); 
-  *     
-  *          2. ADC pins configuration
-  *               - Enable the clock for the ADC GPIOs using the following function:
-  *                   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOx, ENABLE);   
-  *                - Configure these ADC pins in analog mode using GPIO_Init();  
-  *
-  *          3. Configure the ADC Prescaler, conversion resolution and data 
-  *              alignment using the ADC_Init() function.
-  *          4. Activate the ADC peripheral using ADC_Cmd() function.
-  *
-  *          Regular channels group configuration
-  *          ====================================    
-  *            - To configure the ADC regular channels group features, use 
-  *              ADC_Init() and ADC_RegularChannelConfig() functions.
-  *            - To activate the continuous mode, use the ADC_continuousModeCmd()
-  *              function.
-  *            - To configurate and activate the Discontinuous mode, use the 
-  *              ADC_DiscModeChannelCountConfig() and ADC_DiscModeCmd() functions.
-  *            - To read the ADC converted values, use the ADC_GetConversionValue()
-  *              function.
-  *
-  *          Multi mode ADCs Regular channels configuration
-  *          ===============================================
-  *            - Refer to "Regular channels group configuration" description to
-  *              configure the ADC1, ADC2 and ADC3 regular channels.        
-  *            - Select the Multi mode ADC regular channels features (dual or 
-  *              triple mode) using ADC_CommonInit() function and configure 
-  *              the DMA mode using ADC_MultiModeDMARequestAfterLastTransferCmd() 
-  *              functions.        
-  *            - Read the ADCs converted values using the 
-  *              ADC_GetMultiModeConversionValue() function.
-  *
-  *          DMA for Regular channels group features configuration
-  *          ====================================================== 
-  *           - To enable the DMA mode for regular channels group, use the 
-  *             ADC_DMACmd() function.
-  *           - To enable the generation of DMA requests continuously at the end
-  *             of the last DMA transfer, use the ADC_DMARequestAfterLastTransferCmd() 
-  *             function.
-  *
-  *          Injected channels group configuration
-  *          =====================================    
-  *            - To configure the ADC Injected channels group features, use 
-  *              ADC_InjectedChannelConfig() and  ADC_InjectedSequencerLengthConfig()
-  *              functions.
-  *            - To activate the continuous mode, use the ADC_continuousModeCmd()
-  *              function.
-  *            - To activate the Injected Discontinuous mode, use the 
-  *              ADC_InjectedDiscModeCmd() function.  
-  *            - To activate the AutoInjected mode, use the ADC_AutoInjectedConvCmd() 
-  *              function.        
-  *            - To read the ADC converted values, use the ADC_GetInjectedConversionValue() 
-  *              function.
-  *
-  *  @endverbatim
-  *
+  @verbatim
+ ===============================================================================
+                     ##### How to use this driver #####
+ ===============================================================================
+    [..]
+    (#) Enable the ADC interface clock using 
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADCx, ENABLE); 
+       
+    (#) ADC pins configuration
+         (++) Enable the clock for the ADC GPIOs using the following function:
+             RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOx, ENABLE);   
+         (++) Configure these ADC pins in analog mode using GPIO_Init();  
+  
+     (#) Configure the ADC Prescaler, conversion resolution and data 
+         alignment using the ADC_Init() function.
+     (#) Activate the ADC peripheral using ADC_Cmd() function.
+  
+     *** Regular channels group configuration ***
+     ============================================
+     [..]    
+       (+) To configure the ADC regular channels group features, use 
+           ADC_Init() and ADC_RegularChannelConfig() functions.
+       (+) To activate the continuous mode, use the ADC_continuousModeCmd()
+           function.
+       (+) To configurate and activate the Discontinuous mode, use the 
+           ADC_DiscModeChannelCountConfig() and ADC_DiscModeCmd() functions.
+       (+) To read the ADC converted values, use the ADC_GetConversionValue()
+           function.
+  
+     *** Multi mode ADCs Regular channels configuration ***
+     ======================================================
+     [..]
+       (+) Refer to "Regular channels group configuration" description to
+           configure the ADC1, ADC2 and ADC3 regular channels.        
+       (+) Select the Multi mode ADC regular channels features (dual or 
+           triple mode) using ADC_CommonInit() function and configure 
+           the DMA mode using ADC_MultiModeDMARequestAfterLastTransferCmd() 
+           functions.        
+       (+) Read the ADCs converted values using the 
+           ADC_GetMultiModeConversionValue() function.
+  
+     *** DMA for Regular channels group features configuration ***
+     ============================================================= 
+     [..]
+       (+) To enable the DMA mode for regular channels group, use the 
+           ADC_DMACmd() function.
+       (+) To enable the generation of DMA requests continuously at the end
+           of the last DMA transfer, use the ADC_DMARequestAfterLastTransferCmd() 
+           function.
+  
+     *** Injected channels group configuration ***
+     =============================================    
+     [..]
+       (+) To configure the ADC Injected channels group features, use 
+           ADC_InjectedChannelConfig() and  ADC_InjectedSequencerLengthConfig()
+           functions.
+       (+) To activate the continuous mode, use the ADC_continuousModeCmd()
+           function.
+       (+) To activate the Injected Discontinuous mode, use the 
+           ADC_InjectedDiscModeCmd() function.  
+       (+) To activate the AutoInjected mode, use the ADC_AutoInjectedConvCmd() 
+           function.        
+       (+) To read the ADC converted values, use the ADC_GetInjectedConversionValue() 
+           function.
+  
+    @endverbatim
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************  
   */ 
 
@@ -176,23 +184,22 @@
  *
 @verbatim    
  ===============================================================================
-                      Initialization and Configuration functions
- ===============================================================================  
-  This section provides functions allowing to:
-   - Initialize and configure the ADC Prescaler
-   - ADC Conversion Resolution (12bit..6bit)
-   - Scan Conversion Mode (multichannels or one channel) for regular group
-   - ADC Continuous Conversion Mode (Continuous or Single conversion) for 
-     regular group
-   - External trigger Edge and source of regular group, 
-   - Converted data alignment (left or right)
-   - The number of ADC conversions that will be done using the sequencer for 
-     regular channel group
-   - Multi ADC mode selection
-   - Direct memory access mode selection for multi ADC mode  
-   - Delay between 2 sampling phases (used in dual or triple interleaved modes)
-   - Enable or disable the ADC peripheral
-   
+              ##### Initialization and Configuration functions #####
+ ===============================================================================
+    [..]  This section provides functions allowing to:
+      (+) Initialize and configure the ADC Prescaler
+      (+) ADC Conversion Resolution (12bit..6bit)
+      (+) Scan Conversion Mode (multichannel or one channel) for regular group
+      (+) ADC Continuous Conversion Mode (Continuous or Single conversion) for 
+          regular group
+      (+) External trigger Edge and source of regular group, 
+      (+) Converted data alignment (left or right)
+      (+) The number of ADC conversions that will be done using the sequencer for 
+          regular channel group
+      (+) Multi ADC mode selection
+      (+) Direct memory access mode selection for multi ADC mode  
+      (+) Delay between 2 sampling phases (used in dual or triple interleaved modes)
+      (+) Enable or disable the ADC peripheral   
 @endverbatim
   * @{
   */
@@ -414,20 +421,18 @@ void ADC_Cmd(ADC_TypeDef* ADCx, FunctionalState NewState)
  *
 @verbatim   
  ===============================================================================
-                    Analog Watchdog configuration functions
+             ##### Analog Watchdog configuration functions #####
  ===============================================================================  
-
-  This section provides functions allowing to configure the Analog Watchdog
-  (AWD) feature in the ADC.
+    [..] This section provides functions allowing to configure the Analog Watchdog
+         (AWD) feature in the ADC.
   
-  A typical configuration Analog Watchdog is done following these steps :
-   1. the ADC guarded channel(s) is (are) selected using the 
-      ADC_AnalogWatchdogSingleChannelConfig() function.
-   2. The Analog watchdog lower and higher threshold are configured using the  
-     ADC_AnalogWatchdogThresholdsConfig() function.
-   3. The Analog watchdog is enabled and configured to enable the check, on one
-      or more channels, using the  ADC_AnalogWatchdogCmd() function.
-
+    [..] A typical configuration Analog Watchdog is done following these steps :
+      (#) the ADC guarded channel(s) is (are) selected using the 
+          ADC_AnalogWatchdogSingleChannelConfig() function.
+      (#) The Analog watchdog lower and higher threshold are configured using the  
+          ADC_AnalogWatchdogThresholdsConfig() function.
+      (#) The Analog watchdog is enabled and configured to enable the check, on one
+          or more channels, using the  ADC_AnalogWatchdogCmd() function.
 @endverbatim
   * @{
   */
@@ -546,30 +551,29 @@ void ADC_AnalogWatchdogSingleChannelConfig(ADC_TypeDef* ADCx, uint8_t ADC_Channe
  *
 @verbatim   
  ===============================================================================
-               Temperature Sensor, Vrefint and VBAT management functions
+      ##### Temperature Sensor, Vrefint and VBAT management functions #####
  ===============================================================================  
-
-  This section provides functions allowing to enable/ disable the internal 
-  connections between the ADC and the Temperature Sensor, the Vrefint and the
-  Vbat sources.
+    [..] This section provides functions allowing to enable/ disable the internal 
+         connections between the ADC and the Temperature Sensor, the Vrefint and 
+         the Vbat sources.
      
-  A typical configuration to get the Temperature sensor and Vrefint channels 
-  voltages is done following these steps :
-   1. Enable the internal connection of Temperature sensor and Vrefint sources 
-      with the ADC channels using ADC_TempSensorVrefintCmd() function. 
-   2. Select the ADC_Channel_TempSensor and/or ADC_Channel_Vrefint using 
-      ADC_RegularChannelConfig() or  ADC_InjectedChannelConfig() functions 
-   3. Get the voltage values, using ADC_GetConversionValue() or  
-      ADC_GetInjectedConversionValue().
+    [..] A typical configuration to get the Temperature sensor and Vrefint channels 
+         voltages is done following these steps :
+      (#) Enable the internal connection of Temperature sensor and Vrefint sources 
+          with the ADC channels using ADC_TempSensorVrefintCmd() function. 
+      (#) Select the ADC_Channel_TempSensor and/or ADC_Channel_Vrefint using 
+          ADC_RegularChannelConfig() or  ADC_InjectedChannelConfig() functions 
+      (#) Get the voltage values, using ADC_GetConversionValue() or  
+          ADC_GetInjectedConversionValue().
 
-  A typical configuration to get the VBAT channel voltage is done following 
-  these steps :
-   1. Enable the internal connection of VBAT source with the ADC channel using 
-      ADC_VBATCmd() function. 
-   2. Select the ADC_Channel_Vbat using ADC_RegularChannelConfig() or  
-      ADC_InjectedChannelConfig() functions 
-   3. Get the voltage value, using ADC_GetConversionValue() or  
-      ADC_GetInjectedConversionValue().
+    [..] A typical configuration to get the VBAT channel voltage is done following 
+         these steps :
+      (#) Enable the internal connection of VBAT source with the ADC channel using 
+          ADC_VBATCmd() function. 
+      (#) Select the ADC_Channel_Vbat using ADC_RegularChannelConfig() or  
+          ADC_InjectedChannelConfig() functions 
+      (#) Get the voltage value, using ADC_GetConversionValue() or  
+          ADC_GetInjectedConversionValue().
  
 @endverbatim
   * @{
@@ -600,6 +604,10 @@ void ADC_TempSensorVrefintCmd(FunctionalState NewState)
 
 /**
   * @brief  Enables or disables the VBAT (Voltage Battery) channel.
+  * 
+  * @note   the Battery voltage measured is equal to VBAT/2 on STM32F40xx and 
+  *         STM32F41xx devices and equal to VBAT/4 on STM32F42xx and STM32F43xx devices 
+  *              
   * @param  NewState: new state of the VBAT channel.
   *          This parameter can be: ENABLE or DISABLE.
   * @retval None
@@ -629,40 +637,39 @@ void ADC_VBATCmd(FunctionalState NewState)
  *
 @verbatim   
  ===============================================================================
-                  Regular Channels Configuration functions
+             ##### Regular Channels Configuration functions #####
  ===============================================================================  
 
-  This section provides functions allowing to manage the ADC's regular channels,
-  it is composed of 2 sub sections : 
+    [..] This section provides functions allowing to manage the ADC's regular channels,
+         it is composed of 2 sub sections : 
   
-  1. Configuration and management functions for regular channels: This subsection 
-     provides functions allowing to configure the ADC regular channels :    
-          - Configure the rank in the regular group sequencer for each channel
-          - Configure the sampling time for each channel
-          - select the conversion Trigger for regular channels
-          - select the desired EOC event behavior configuration
-          - Activate the continuous Mode  (*)
-          - Activate the Discontinuous Mode 
-     Please Note that the following features for regular channels are configurated
-     using the ADC_Init() function : 
-          - scan mode activation 
-          - continuous mode activation (**) 
-          - External trigger source  
-          - External trigger edge 
-          - number of conversion in the regular channels group sequencer.
+      (#) Configuration and management functions for regular channels: This subsection 
+          provides functions allowing to configure the ADC regular channels :    
+         (++) Configure the rank in the regular group sequencer for each channel
+         (++) Configure the sampling time for each channel
+         (++) select the conversion Trigger for regular channels
+         (++) select the desired EOC event behavior configuration
+         (++) Activate the continuous Mode  (*)
+         (++) Activate the Discontinuous Mode 
+         -@@- Please Note that the following features for regular channels 
+             are configurated using the ADC_Init() function : 
+           (+@@) scan mode activation 
+           (+@@) continuous mode activation (**) 
+           (+@@) External trigger source  
+           (+@@) External trigger edge 
+           (+@@) number of conversion in the regular channels group sequencer.
      
-     @note (*) and (**) are performing the same configuration
+         -@@- (*) and (**) are performing the same configuration
      
-  2. Get the conversion data: This subsection provides an important function in 
-     the ADC peripheral since it returns the converted data of the current 
-     regular channel. When the Conversion value is read, the EOC Flag is 
-     automatically cleared.
+      (#) Get the conversion data: This subsection provides an important function in 
+          the ADC peripheral since it returns the converted data of the current 
+          regular channel. When the Conversion value is read, the EOC Flag is 
+          automatically cleared.
      
-     @note For multi ADC mode, the last ADC1, ADC2 and ADC3 regular conversions 
-           results data (in the selected multi mode) can be returned in the same 
-           time using ADC_GetMultiModeConversionValue() function. 
-       
-  
+          -@- For multi ADC mode, the last ADC1, ADC2 and ADC3 regular conversions 
+              results data (in the selected multi mode) can be returned in the same 
+              time using ADC_GetMultiModeConversionValue() function. 
+         
 @endverbatim
   * @{
   */
@@ -846,7 +853,7 @@ FlagStatus ADC_GetSoftwareStartConvStatus(ADC_TypeDef* ADCx)
   assert_param(IS_ADC_ALL_PERIPH(ADCx));
   
   /* Check the status of SWSTART bit */
-  if ((ADCx->CR2 & ADC_CR2_JSWSTART) != (uint32_t)RESET)
+  if ((ADCx->CR2 & ADC_CR2_SWSTART) != (uint32_t)RESET)
   {
     /* SWSTART bit is set */
     bitstatus = SET;
@@ -1010,29 +1017,26 @@ uint32_t ADC_GetMultiModeConversionValue(void)
  *
 @verbatim   
  ===============================================================================
-                   Regular Channels DMA Configuration functions
+            ##### Regular Channels DMA Configuration functions #####
  ===============================================================================  
-
-  This section provides functions allowing to configure the DMA for ADC regular 
-  channels.
-  Since converted regular channel values are stored into a unique data register, 
-  it is useful to use DMA for conversion of more than one regular channel. This 
-  avoids the loss of the data already stored in the ADC Data register. 
-  
-  When the DMA mode is enabled (using the ADC_DMACmd() function), after each
-  conversion of a regular channel, a DMA request is generated.
-  
-  Depending on the "DMA disable selection for Independent ADC mode" 
-  configuration (using the ADC_DMARequestAfterLastTransferCmd() function), 
-  at the end of the last DMA transfer, two possibilities are allowed:
-  - No new DMA request is issued to the DMA controller (feature DISABLED) 
-  - Requests can continue to be generated (feature ENABLED).
-  
-  Depending on the "DMA disable selection for multi ADC mode" configuration 
-  (using the void ADC_MultiModeDMARequestAfterLastTransferCmd() function), 
-  at the end of the last DMA transfer, two possibilities are allowed:
-  - No new DMA request is issued to the DMA controller (feature DISABLED) 
-  - Requests can continue to be generated (feature ENABLED).
+    [..] This section provides functions allowing to configure the DMA for ADC 
+         regular channels.
+         Since converted regular channel values are stored into a unique data 
+         register, it is useful to use DMA for conversion of more than one regular 
+         channel. This avoids the loss of the data already stored in the ADC 
+         Data register.   
+         When the DMA mode is enabled (using the ADC_DMACmd() function), after each
+         conversion of a regular channel, a DMA request is generated.
+    [..] Depending on the "DMA disable selection for Independent ADC mode" 
+         configuration (using the ADC_DMARequestAfterLastTransferCmd() function), 
+         at the end of the last DMA transfer, two possibilities are allowed:
+      (+) No new DMA request is issued to the DMA controller (feature DISABLED) 
+      (+) Requests can continue to be generated (feature ENABLED).  
+    [..] Depending on the "DMA disable selection for multi ADC mode" configuration 
+         (using the void ADC_MultiModeDMARequestAfterLastTransferCmd() function), 
+         at the end of the last DMA transfer, two possibilities are allowed:
+        (+) No new DMA request is issued to the DMA controller (feature DISABLED) 
+        (+) Requests can continue to be generated (feature ENABLED).
 
 @endverbatim
   * @{
@@ -1120,26 +1124,26 @@ void ADC_MultiModeDMARequestAfterLastTransferCmd(FunctionalState NewState)
  *
 @verbatim   
  ===============================================================================
-                     Injected channels Configuration functions
+              ##### Injected channels Configuration functions #####
  ===============================================================================  
 
-  This section provide functions allowing to configure the ADC Injected channels,
-  it is composed of 2 sub sections : 
+    [..] This section provide functions allowing to configure the ADC Injected channels,
+         it is composed of 2 sub sections : 
     
-  1. Configuration functions for Injected channels: This subsection provides 
-     functions allowing to configure the ADC injected channels :    
-    - Configure the rank in the injected group sequencer for each channel
-    - Configure the sampling time for each channel    
-    - Activate the Auto injected Mode  
-    - Activate the Discontinuous Mode 
-    - scan mode activation  
-    - External/software trigger source   
-    - External trigger edge 
-    - injected channels sequencer.
+      (#) Configuration functions for Injected channels: This subsection provides 
+          functions allowing to configure the ADC injected channels :    
+        (++) Configure the rank in the injected group sequencer for each channel
+        (++) Configure the sampling time for each channel    
+        (++) Activate the Auto injected Mode  
+        (++) Activate the Discontinuous Mode 
+        (++) scan mode activation  
+        (++) External/software trigger source   
+        (++) External trigger edge 
+        (++) injected channels sequencer.
     
-   2. Get the Specified Injected channel conversion data: This subsection 
-      provides an important function in the ADC peripheral since it returns the 
-      converted data of the specific injected channel.
+      (#) Get the Specified Injected channel conversion data: This subsection 
+          provides an important function in the ADC peripheral since it returns the 
+          converted data of the specific injected channel.
 
 @endverbatim
   * @{
@@ -1493,75 +1497,74 @@ uint16_t ADC_GetInjectedConversionValue(ADC_TypeDef* ADCx, uint8_t ADC_InjectedC
  *
 @verbatim   
  ===============================================================================
-                   Interrupts and flags management functions
+            ##### Interrupts and flags management functions #####
  ===============================================================================  
 
-  This section provides functions allowing to configure the ADC Interrupts and 
-  to get the status and clear flags and Interrupts pending bits.
+    [..] This section provides functions allowing to configure the ADC Interrupts 
+         and to get the status and clear flags and Interrupts pending bits.
   
-  Each ADC provides 4 Interrupts sources and 6 Flags which can be divided into 
-  3 groups:
+    [..] Each ADC provides 4 Interrupts sources and 6 Flags which can be divided
+        into 3 groups:
   
-  I. Flags and Interrupts for ADC regular channels
-  =================================================
-  Flags :
-  ---------- 
-     1. ADC_FLAG_OVR : Overrun detection when regular converted data are lost
+  *** Flags and Interrupts for ADC regular channels ***
+  =====================================================
+    [..]
+      (+) Flags :
+        (##) ADC_FLAG_OVR : Overrun detection when regular converted data are lost
 
-     2. ADC_FLAG_EOC : Regular channel end of conversion ==> to indicate (depending 
-              on EOCS bit, managed by ADC_EOCOnEachRegularChannelCmd() ) the end of:
-               ==> a regular CHANNEL conversion 
-               ==> sequence of regular GROUP conversions .
+        (##) ADC_FLAG_EOC : Regular channel end of conversion ==> to indicate 
+             (depending on EOCS bit, managed by ADC_EOCOnEachRegularChannelCmd() )
+             the end of:
+             (+++) a regular CHANNEL conversion 
+             (+++) sequence of regular GROUP conversions .
 
-     3. ADC_FLAG_STRT: Regular channel start ==> to indicate when regular CHANNEL 
-              conversion starts.
-
-  Interrupts :
-  ------------
-     1. ADC_IT_OVR : specifies the interrupt source for Overrun detection event.  
-     2. ADC_IT_EOC : specifies the interrupt source for Regular channel end of 
-                     conversion event.
+        (##) ADC_FLAG_STRT: Regular channel start ==> to indicate when regular 
+             CHANNEL conversion starts.
+    [..]
+      (+) Interrupts :
+        (##) ADC_IT_OVR : specifies the interrupt source for Overrun detection 
+             event.  
+        (##) ADC_IT_EOC : specifies the interrupt source for Regular channel end
+             of conversion event.
   
   
-  II. Flags and Interrupts for ADC Injected channels
-  =================================================
-  Flags :
-  ---------- 
-     1. ADC_FLAG_JEOC : Injected channel end of conversion ==> to indicate at 
-               the end of injected GROUP conversion  
+  *** Flags and Interrupts for ADC Injected channels ***
+  ======================================================
+    [..]
+      (+) Flags :
+        (##) ADC_FLAG_JEOC : Injected channel end of conversion ==> to indicate 
+             at the end of injected GROUP conversion  
               
-     2. ADC_FLAG_JSTRT: Injected channel start ==> to indicate hardware when 
-               injected GROUP conversion starts.
+        (##) ADC_FLAG_JSTRT: Injected channel start ==> to indicate hardware when 
+             injected GROUP conversion starts.
+    [..]
+      (+) Interrupts :
+        (##) ADC_IT_JEOC : specifies the interrupt source for Injected channel 
+             end of conversion event.     
 
-  Interrupts :
-  ------------
-     1. ADC_IT_JEOC : specifies the interrupt source for Injected channel end of 
-                      conversion event.     
-
-  III. General Flags and Interrupts for the ADC
-  ================================================= 
-  Flags :
-  ---------- 
-     1. ADC_FLAG_AWD: Analog watchdog ==> to indicate if the converted voltage 
-              crosses the programmed thresholds values.
-              
-  Interrupts :
-  ------------
-     1. ADC_IT_AWD : specifies the interrupt source for Analog watchdog event. 
+  *** General Flags and Interrupts for the ADC ***
+  ================================================ 
+    [..]
+      (+)Flags :
+        (##) ADC_FLAG_AWD: Analog watchdog ==> to indicate if the converted voltage 
+             crosses the programmed thresholds values.
+    [..]          
+      (+) Interrupts :
+        (##) ADC_IT_AWD : specifies the interrupt source for Analog watchdog event. 
 
   
-  The user should identify which mode will be used in his application to manage 
-  the ADC controller events: Polling mode or Interrupt mode.
+    [..] The user should identify which mode will be used in his application to 
+         manage the ADC controller events: Polling mode or Interrupt mode.
   
-  In the Polling Mode it is advised to use the following functions:
-      - ADC_GetFlagStatus() : to check if flags events occur. 
-      - ADC_ClearFlag()     : to clear the flags events.
+    [..] In the Polling Mode it is advised to use the following functions:
+      (+) ADC_GetFlagStatus() : to check if flags events occur. 
+      (+) ADC_ClearFlag()     : to clear the flags events.
       
-  In the Interrupt Mode it is advised to use the following functions:
-     - ADC_ITConfig()          : to enable or disable the interrupt source.
-     - ADC_GetITStatus()       : to check if Interrupt occurs.
-     - ADC_ClearITPendingBit() : to clear the Interrupt pending Bit 
-                                 (corresponding Flag). 
+    [..] In the Interrupt Mode it is advised to use the following functions:
+      (+) ADC_ITConfig()          : to enable or disable the interrupt source.
+      (+) ADC_GetITStatus()       : to check if Interrupt occurs.
+      (+) ADC_ClearITPendingBit() : to clear the Interrupt pending Bit 
+                                   (corresponding Flag). 
 @endverbatim
   * @{
   */ 
@@ -1739,4 +1742,4 @@ void ADC_ClearITPendingBit(ADC_TypeDef* ADCx, uint16_t ADC_IT)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

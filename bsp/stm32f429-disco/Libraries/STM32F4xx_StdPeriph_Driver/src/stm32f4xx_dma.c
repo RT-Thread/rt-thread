@@ -2,113 +2,121 @@
   ******************************************************************************
   * @file    stm32f4xx_dma.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    30-September-2011
+  * @version V1.3.0
+  * @date    08-November-2013
   * @brief   This file provides firmware functions to manage the following 
   *          functionalities of the Direct Memory Access controller (DMA):           
-  *           - Initialization and Configuration
-  *           - Data Counter
-  *           - Double Buffer mode configuration and command  
-  *           - Interrupts and flags management
+  *           + Initialization and Configuration
+  *           + Data Counter
+  *           + Double Buffer mode configuration and command  
+  *           + Interrupts and flags management
   *           
-  *  @verbatim
-  *      
-  *          ===================================================================      
-  *                                 How to use this driver
-  *          =================================================================== 
-  *          1. Enable The DMA controller clock using RCC_AHB1PeriphResetCmd(RCC_AHB1Periph_DMA1, ENABLE)
-  *             function for DMA1 or using RCC_AHB1PeriphResetCmd(RCC_AHB1Periph_DMA2, ENABLE)
-  *             function for DMA2.
-  *
-  *          2. Enable and configure the peripheral to be connected to the DMA Stream
-  *             (except for internal SRAM / FLASH memories: no initialization is 
-  *             necessary). 
-  *        
-  *          3. For a given Stream, program the required configuration through following parameters:   
-  *             Source and Destination addresses, Transfer Direction, Transfer size, Source and Destination 
-  *             data formats, Circular or Normal mode, Stream Priority level, Source and Destination 
-  *             Incrementation mode, FIFO mode and its Threshold (if needed), Burst mode for Source and/or 
-  *             Destination (if needed) using the DMA_Init() function.
-  *             To avoid filling un-nesecessary fields, you can call DMA_StructInit() function
-  *             to initialize a given structure with default values (reset values), the modify
-  *             only necessary fields (ie. Source and Destination addresses, Transfer size and Data Formats).
-  *
-  *          4. Enable the NVIC and the corresponding interrupt(s) using the function 
-  *             DMA_ITConfig() if you need to use DMA interrupts. 
-  *
-  *          5. Optionally, if the Circular mode is enabled, you can use the Double buffer mode by configuring 
-  *             the second Memory address and the first Memory to be used through the function 
-  *             DMA_DoubleBufferModeConfig(). Then enable the Double buffer mode through the function
-  *             DMA_DoubleBufferModeCmd(). These operations must be done before step 6.
-  *    
-  *          6. Enable the DMA stream using the DMA_Cmd() function. 
-  *                
-  *          7. Activate the needed Stream Request using PPP_DMACmd() function for
-  *             any PPP peripheral except internal SRAM and FLASH (ie. SPI, USART ...)
-  *             The function allowing this operation is provided in each PPP peripheral
-  *             driver (ie. SPI_DMACmd for SPI peripheral).
-  *             Once the Stream is enabled, it is not possible to modify its configuration
-  *             unless the stream is stopped and disabled.
-  *             After enabling the Stream, it is advised to monitor the EN bit status using
-  *             the function DMA_GetCmdStatus(). In case of configuration errors or bus errors
-  *             this bit will remain reset and all transfers on this Stream will remain on hold.      
-  *
-  *          8. Optionally, you can configure the number of data to be transferred
-  *             when the Stream is disabled (ie. after each Transfer Complete event
-  *             or when a Transfer Error occurs) using the function DMA_SetCurrDataCounter().
-  *             And you can get the number of remaining data to be transferred using 
-  *             the function DMA_GetCurrDataCounter() at run time (when the DMA Stream is
-  *             enabled and running).  
-  *                   
-  *          9. To control DMA events you can use one of the following 
-  *              two methods:
-  *               a- Check on DMA Stream flags using the function DMA_GetFlagStatus().  
-  *               b- Use DMA interrupts through the function DMA_ITConfig() at initialization
-  *                  phase and DMA_GetITStatus() function into interrupt routines in
-  *                  communication phase.  
-  *              After checking on a flag you should clear it using DMA_ClearFlag()
-  *              function. And after checking on an interrupt event you should 
-  *              clear it using DMA_ClearITPendingBit() function.    
-  *              
-  *          10. Optionally, if Circular mode and Double Buffer mode are enabled, you can modify
-  *              the Memory Addresses using the function DMA_MemoryTargetConfig(). Make sure that
-  *              the Memory Address to be modified is not the one currently in use by DMA Stream.
-  *              This condition can be monitored using the function DMA_GetCurrentMemoryTarget().
-  *              
-  *          11. Optionally, Pause-Resume operations may be performed:
-  *              The DMA_Cmd() function may be used to perform Pause-Resume operation. When a 
-  *              transfer is ongoing, calling this function to disable the Stream will cause the 
-  *              transfer to be paused. All configuration registers and the number of remaining 
-  *              data will be preserved. When calling again this function to re-enable the Stream, 
-  *              the transfer will be resumed from the point where it was paused.          
-  *                 
-  * @note   Memory-to-Memory transfer is possible by setting the address of the memory into
-  *         the Peripheral registers. In this mode, Circular mode and Double Buffer mode
-  *         are not allowed.
-  *  
-  * @note   The FIFO is used mainly to reduce bus usage and to allow data packing/unpacking: it is
-  *         possible to set different Data Sizes for the Peripheral and the Memory (ie. you can set
-  *         Half-Word data size for the peripheral to access its data register and set Word data size
-  *         for the Memory to gain in access time. Each two Half-words will be packed and written in
-  *         a single access to a Word in the Memory).
-  *    
-  * @note  When FIFO is disabled, it is not allowed to configure different Data Sizes for Source
-  *        and Destination. In this case the Peripheral Data Size will be applied to both Source
-  *        and Destination.               
-  *
-  *  @endverbatim
-  *                                  
+  @verbatim      
+ ===============================================================================      
+                       ##### How to use this driver #####
+ ===============================================================================
+    [..] 
+      (#) Enable The DMA controller clock using RCC_AHB1PeriphResetCmd(RCC_AHB1Periph_DMA1, ENABLE)
+          function for DMA1 or using RCC_AHB1PeriphResetCmd(RCC_AHB1Periph_DMA2, ENABLE)
+          function for DMA2.
+  
+      (#) Enable and configure the peripheral to be connected to the DMA Stream
+          (except for internal SRAM / FLASH memories: no initialization is 
+          necessary). 
+          
+      (#) For a given Stream, program the required configuration through following parameters:   
+          Source and Destination addresses, Transfer Direction, Transfer size, Source and Destination 
+          data formats, Circular or Normal mode, Stream Priority level, Source and Destination 
+          Incrementation mode, FIFO mode and its Threshold (if needed), Burst 
+          mode for Source and/or Destination (if needed) using the DMA_Init() function.
+          To avoid filling unneccessary fields, you can call DMA_StructInit() function
+          to initialize a given structure with default values (reset values), the modify
+          only necessary fields 
+          (ie. Source and Destination addresses, Transfer size and Data Formats).
+  
+      (#) Enable the NVIC and the corresponding interrupt(s) using the function 
+          DMA_ITConfig() if you need to use DMA interrupts. 
+  
+      (#) Optionally, if the Circular mode is enabled, you can use the Double buffer mode by configuring 
+          the second Memory address and the first Memory to be used through the function 
+          DMA_DoubleBufferModeConfig(). Then enable the Double buffer mode through the function
+          DMA_DoubleBufferModeCmd(). These operations must be done before step 6.
+      
+      (#) Enable the DMA stream using the DMA_Cmd() function. 
+                  
+      (#) Activate the needed Stream Request using PPP_DMACmd() function for
+          any PPP peripheral except internal SRAM and FLASH (ie. SPI, USART ...)
+          The function allowing this operation is provided in each PPP peripheral
+          driver (ie. SPI_DMACmd for SPI peripheral).
+          Once the Stream is enabled, it is not possible to modify its configuration
+          unless the stream is stopped and disabled.
+          After enabling the Stream, it is advised to monitor the EN bit status using
+          the function DMA_GetCmdStatus(). In case of configuration errors or bus errors
+          this bit will remain reset and all transfers on this Stream will remain on hold.      
+  
+      (#) Optionally, you can configure the number of data to be transferred
+          when the Stream is disabled (ie. after each Transfer Complete event
+          or when a Transfer Error occurs) using the function DMA_SetCurrDataCounter().
+          And you can get the number of remaining data to be transferred using 
+          the function DMA_GetCurrDataCounter() at run time (when the DMA Stream is
+          enabled and running).  
+                     
+      (#) To control DMA events you can use one of the following two methods:
+        (##) Check on DMA Stream flags using the function DMA_GetFlagStatus().  
+        (##) Use DMA interrupts through the function DMA_ITConfig() at initialization
+             phase and DMA_GetITStatus() function into interrupt routines in
+             communication phase.
+    [..]     
+          After checking on a flag you should clear it using DMA_ClearFlag()
+          function. And after checking on an interrupt event you should 
+          clear it using DMA_ClearITPendingBit() function.    
+                
+      (#) Optionally, if Circular mode and Double Buffer mode are enabled, you can modify
+          the Memory Addresses using the function DMA_MemoryTargetConfig(). Make sure that
+          the Memory Address to be modified is not the one currently in use by DMA Stream.
+          This condition can be monitored using the function DMA_GetCurrentMemoryTarget().
+                
+      (#) Optionally, Pause-Resume operations may be performed:
+          The DMA_Cmd() function may be used to perform Pause-Resume operation. 
+          When a transfer is ongoing, calling this function to disable the 
+          Stream will cause the transfer to be paused. All configuration registers 
+          and the number of remaining data will be preserved. When calling again 
+          this function to re-enable the Stream, the transfer will be resumed from 
+          the point where it was paused.          
+                   
+      -@- Memory-to-Memory transfer is possible by setting the address of the memory into
+           the Peripheral registers. In this mode, Circular mode and Double Buffer mode
+           are not allowed.
+    
+      -@- The FIFO is used mainly to reduce bus usage and to allow data 
+           packing/unpacking: it is possible to set different Data Sizes for 
+           the Peripheral and the Memory (ie. you can set Half-Word data size 
+           for the peripheral to access its data register and set Word data size
+           for the Memory to gain in access time. Each two Half-words will be 
+           packed and written in a single access to a Word in the Memory).
+      
+      -@- When FIFO is disabled, it is not allowed to configure different 
+           Data Sizes for Source and Destination. In this case the Peripheral 
+           Data Size will be applied to both Source and Destination.               
+  
+  @endverbatim                                 
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************  
   */ 
 
@@ -162,18 +170,18 @@
  *
 @verbatim   
  ===============================================================================
-                 Initialization and Configuration functions
+                ##### Initialization and Configuration functions #####
  ===============================================================================  
-
-  This subsection provides functions allowing to initialize the DMA Stream source
-  and destination addresses, incrementation and data sizes, transfer direction, 
-  buffer size, circular/normal mode selection, memory-to-memory mode selection 
-  and Stream priority value.
-  
-  The DMA_Init() function follows the DMA configuration procedures as described in
-  reference manual (RM0090) except the first point: waiting on EN bit to be reset.
-  This condition should be checked by user application using the function DMA_GetCmdStatus()
-  before calling the DMA_Init() function.
+    [..]
+    This subsection provides functions allowing to initialize the DMA Stream source
+    and destination addresses, incrementation and data sizes, transfer direction, 
+    buffer size, circular/normal mode selection, memory-to-memory mode selection 
+    and Stream priority value.
+    [..]
+    The DMA_Init() function follows the DMA configuration procedures as described in
+    reference manual (RM0090) except the first point: waiting on EN bit to be reset.
+    This condition should be checked by user application using the function DMA_GetCmdStatus()
+    before calling the DMA_Init() function.
 
 @endverbatim
   * @{
@@ -566,37 +574,35 @@ void DMA_FlowControllerConfig(DMA_Stream_TypeDef* DMAy_Streamx, uint32_t DMA_Flo
  *
 @verbatim   
  ===============================================================================
-                           Data Counter functions
+                      ##### Data Counter functions #####
  ===============================================================================  
-
-  This subsection provides function allowing to configure and read the buffer size
-  (number of data to be transferred). 
-
-  The DMA data counter can be written only when the DMA Stream is disabled 
-  (ie. after transfer complete event).
-
-  The following function can be used to write the Stream data counter value:
-    - void DMA_SetCurrDataCounter(DMA_Stream_TypeDef* DMAy_Streamx, uint16_t Counter);
-
-@note It is advised to use this function rather than DMA_Init() in situations where
-      only the Data buffer needs to be reloaded.
-
-@note If the Source and Destination Data Sizes are different, then the value written in
-      data counter, expressing the number of transfers, is relative to the number of 
-      transfers from the Peripheral point of view.
-      ie. If Memory data size is Word, Peripheral data size is Half-Words, then the value
-      to be configured in the data counter is the number of Half-Words to be transferred
-      from/to the peripheral.
-
-  The DMA data counter can be read to indicate the number of remaining transfers for
-  the relative DMA Stream. This counter is decremented at the end of each data 
-  transfer and when the transfer is complete: 
-   - If Normal mode is selected: the counter is set to 0.
-   - If Circular mode is selected: the counter is reloaded with the initial value
-     (configured before enabling the DMA Stream)
-   
-  The following function can be used to read the Stream data counter value:
-     - uint16_t DMA_GetCurrDataCounter(DMA_Stream_TypeDef* DMAy_Streamx);
+    [..]
+    This subsection provides function allowing to configure and read the buffer size
+    (number of data to be transferred). 
+    [..]
+    The DMA data counter can be written only when the DMA Stream is disabled 
+    (ie. after transfer complete event).
+    [..]
+    The following function can be used to write the Stream data counter value:
+      (+) void DMA_SetCurrDataCounter(DMA_Stream_TypeDef* DMAy_Streamx, uint16_t Counter);
+      -@- It is advised to use this function rather than DMA_Init() in situations 
+          where only the Data buffer needs to be reloaded.
+      -@- If the Source and Destination Data Sizes are different, then the value 
+          written in data counter, expressing the number of transfers, is relative 
+          to the number of transfers from the Peripheral point of view.
+          ie. If Memory data size is Word, Peripheral data size is Half-Words, 
+          then the value to be configured in the data counter is the number 
+          of Half-Words to be transferred from/to the peripheral.
+    [..]
+    The DMA data counter can be read to indicate the number of remaining transfers for
+    the relative DMA Stream. This counter is decremented at the end of each data 
+    transfer and when the transfer is complete: 
+      (+) If Normal mode is selected: the counter is set to 0.
+      (+) If Circular mode is selected: the counter is reloaded with the initial value
+          (configured before enabling the DMA Stream)
+     [..]
+     The following function can be used to read the Stream data counter value:
+       (+) uint16_t DMA_GetCurrDataCounter(DMA_Stream_TypeDef* DMAy_Streamx);
 
 @endverbatim
   * @{
@@ -655,45 +661,51 @@ uint16_t DMA_GetCurrDataCounter(DMA_Stream_TypeDef* DMAy_Streamx)
  *
 @verbatim   
  ===============================================================================
-                         Double Buffer mode functions
+                    ##### Double Buffer mode functions #####
  ===============================================================================  
-
-  This subsection provides function allowing to configure and control the double 
-  buffer mode parameters.
+    [..]
+    This subsection provides function allowing to configure and control the double 
+    buffer mode parameters.
+    
+    [..]
+    The Double Buffer mode can be used only when Circular mode is enabled.
+    The Double Buffer mode cannot be used when transferring data from Memory to Memory.
+    
+    [..]
+    The Double Buffer mode allows to set two different Memory addresses from/to which
+    the DMA controller will access alternatively (after completing transfer to/from 
+    target memory 0, it will start transfer to/from target memory 1).
+    This allows to reduce software overhead for double buffering and reduce the CPU
+    access time.
+    
+    [..]
+    Two functions must be called before calling the DMA_Init() function:
+      (+) void DMA_DoubleBufferModeConfig(DMA_Stream_TypeDef* DMAy_Streamx, 
+          uint32_t Memory1BaseAddr, uint32_t DMA_CurrentMemory);
+      (+) void DMA_DoubleBufferModeCmd(DMA_Stream_TypeDef* DMAy_Streamx, FunctionalState NewState);
+      
+    [..]
+    DMA_DoubleBufferModeConfig() is called to configure the Memory 1 base address 
+    and the first Memory target from/to which the transfer will start after 
+    enabling the DMA Stream. Then DMA_DoubleBufferModeCmd() must be called 
+    to enable the Double Buffer mode (or disable it when it should not be used).
   
-  The Double Buffer mode can be used only when Circular mode is enabled.
-  The Double Buffer mode cannot be used when transferring data from Memory to Memory.
-  
-  The Double Buffer mode allows to set two different Memory addresses from/to which
-  the DMA controller will access alternatively (after completing transfer to/from target
-  memory 0, it will start transfer to/from target memory 1).
-  This allows to reduce software overhead for double buffering and reduce the CPU
-  access time.
-
-  Two functions must be called before calling the DMA_Init() function:
-   - void DMA_DoubleBufferModeConfig(DMA_Stream_TypeDef* DMAy_Streamx, uint32_t Memory1BaseAddr,
-                                uint32_t DMA_CurrentMemory);
-   - void DMA_DoubleBufferModeCmd(DMA_Stream_TypeDef* DMAy_Streamx, FunctionalState NewState);
-   
-  DMA_DoubleBufferModeConfig() is called to configure the Memory 1 base address and the first
-  Memory target from/to which the transfer will start after enabling the DMA Stream.
-  Then DMA_DoubleBufferModeCmd() must be called to enable the Double Buffer mode (or disable 
-  it when it should not be used).
-  
-   
-  Two functions can be called dynamically when the transfer is ongoing (or when the DMA Stream is 
-  stopped) to modify on of the target Memories addresses or to check wich Memory target is currently
-   used:
-    - void DMA_MemoryTargetConfig(DMA_Stream_TypeDef* DMAy_Streamx, uint32_t MemoryBaseAddr,
-                            uint32_t DMA_MemoryTarget);
-    - uint32_t DMA_GetCurrentMemoryTarget(DMA_Stream_TypeDef* DMAy_Streamx);
-
-  DMA_MemoryTargetConfig() can be called to modify the base address of one of the two target Memories.
-  The Memory of which the base address will be modified must not be currently be used by the DMA Stream
-  (ie. if the DMA Stream is currently transferring from Memory 1 then you can only modify base address
-  of target Memory 0 and vice versa).
-  To check this condition, it is recommended to use the function DMA_GetCurrentMemoryTarget() which
-  returns the index of the Memory target currently in use by the DMA Stream.
+    [..]
+    Two functions can be called dynamically when the transfer is ongoing (or when the DMA Stream is 
+    stopped) to modify on of the target Memories addresses or to check wich Memory target is currently
+    used:
+      (+) void DMA_MemoryTargetConfig(DMA_Stream_TypeDef* DMAy_Streamx, 
+                uint32_t MemoryBaseAddr, uint32_t DMA_MemoryTarget);
+      (+) uint32_t DMA_GetCurrentMemoryTarget(DMA_Stream_TypeDef* DMAy_Streamx);
+      
+    [..]
+    DMA_MemoryTargetConfig() can be called to modify the base address of one of 
+    the two target Memories.
+    The Memory of which the base address will be modified must not be currently 
+    be used by the DMA Stream (ie. if the DMA Stream is currently transferring 
+    from Memory 1 then you can only modify base address of target Memory 0 and vice versa).
+    To check this condition, it is recommended to use the function DMA_GetCurrentMemoryTarget() which
+    returns the index of the Memory target currently in use by the DMA Stream.
 
 @endverbatim
   * @{
@@ -842,64 +854,70 @@ uint32_t DMA_GetCurrentMemoryTarget(DMA_Stream_TypeDef* DMAy_Streamx)
  *
 @verbatim   
  ===============================================================================
-                  Interrupts and flags management functions
+              ##### Interrupts and flags management functions #####
  ===============================================================================  
-
-  This subsection provides functions allowing to
-   - Check the DMA enable status
-   - Check the FIFO status 
-   - Configure the DMA Interrupts sources and check or clear the flags or pending bits status.   
-   
- 1. DMA Enable status:
-   After configuring the DMA Stream (DMA_Init() function) and enabling the stream,
-   it is recommended to check (or wait until) the DMA Stream is effectively enabled.
-   A Stream may remain disabled if a configuration parameter is wrong.
-   After disabling a DMA Stream, it is also recommended to check (or wait until) the DMA
-   Stream is effectively disabled. If a Stream is disabled while a data transfer is ongoing, 
-   the current data will be transferred and the Stream will be effectively disabled only after
-   this data transfer completion.
-   To monitor this state it is possible to use the following function:
-     - FunctionalState DMA_GetCmdStatus(DMA_Stream_TypeDef* DMAy_Streamx); 
+    [..]
+    This subsection provides functions allowing to
+      (+) Check the DMA enable status
+      (+) Check the FIFO status 
+      (+) Configure the DMA Interrupts sources and check or clear the flags or 
+          pending bits status.  
+           
+    [..]
+      (#) DMA Enable status:
+          After configuring the DMA Stream (DMA_Init() function) and enabling 
+          the stream, it is recommended to check (or wait until) the DMA Stream 
+          is effectively enabled. A Stream may remain disabled if a configuration 
+          parameter is wrong. After disabling a DMA Stream, it is also recommended 
+          to check (or wait until) the DMA Stream is effectively disabled. 
+          If a Stream is disabled while a data transfer is ongoing, the current 
+          data will be transferred and the Stream will be effectively disabled 
+          only after this data transfer completion.
+          To monitor this state it is possible to use the following function:
+        (++) FunctionalState DMA_GetCmdStatus(DMA_Stream_TypeDef* DMAy_Streamx); 
  
- 2. FIFO Status:
-   It is possible to monitor the FIFO status when a transfer is ongoing using the following 
-   function:
-     - uint32_t DMA_GetFIFOStatus(DMA_Stream_TypeDef* DMAy_Streamx); 
+      (#) FIFO Status:
+          It is possible to monitor the FIFO status when a transfer is ongoing 
+          using the following function:
+        (++) uint32_t DMA_GetFIFOStatus(DMA_Stream_TypeDef* DMAy_Streamx); 
  
- 3. DMA Interrupts and Flags:
-  The user should identify which mode will be used in his application to manage the
-  DMA controller events: Polling mode or Interrupt mode. 
+      (#) DMA Interrupts and Flags:
+          The user should identify which mode will be used in his application 
+          to manage the DMA controller events: Polling mode or Interrupt mode. 
     
-  Polling Mode
-  =============
+    *** Polling Mode ***
+    ====================
+    [..]
     Each DMA stream can be managed through 4 event Flags:
     (x : DMA Stream number )
-       1. DMA_FLAG_FEIFx  : to indicate that a FIFO Mode Transfer Error event occurred.
-       2. DMA_FLAG_DMEIFx : to indicate that a Direct Mode Transfer Error event occurred.
-       3. DMA_FLAG_TEIFx  : to indicate that a Transfer Error event occurred.
-       4. DMA_FLAG_HTIFx  : to indicate that a Half-Transfer Complete event occurred.
-       5. DMA_FLAG_TCIFx  : to indicate that a Transfer Complete event occurred .       
+      (#) DMA_FLAG_FEIFx  : to indicate that a FIFO Mode Transfer Error event occurred.
+      (#) DMA_FLAG_DMEIFx : to indicate that a Direct Mode Transfer Error event occurred.
+      (#) DMA_FLAG_TEIFx  : to indicate that a Transfer Error event occurred.
+      (#) DMA_FLAG_HTIFx  : to indicate that a Half-Transfer Complete event occurred.
+      (#) DMA_FLAG_TCIFx  : to indicate that a Transfer Complete event occurred .       
+    [..]
+    In this Mode it is advised to use the following functions:
+      (+) FlagStatus DMA_GetFlagStatus(DMA_Stream_TypeDef* DMAy_Streamx, uint32_t DMA_FLAG);
+      (+) void DMA_ClearFlag(DMA_Stream_TypeDef* DMAy_Streamx, uint32_t DMA_FLAG);
 
-   In this Mode it is advised to use the following functions:
-      - FlagStatus DMA_GetFlagStatus(DMA_Stream_TypeDef* DMAy_Streamx, uint32_t DMA_FLAG);
-      - void DMA_ClearFlag(DMA_Stream_TypeDef* DMAy_Streamx, uint32_t DMA_FLAG);
-
-  Interrupt Mode
-  ===============
+    *** Interrupt Mode ***
+    ======================
+    [..]
     Each DMA Stream can be managed through 4 Interrupts:
 
-    Interrupt Source
-    ----------------
-       1. DMA_IT_FEIFx  : specifies the interrupt source for the  FIFO Mode Transfer Error event.
-       2. DMA_IT_DMEIFx : specifies the interrupt source for the Direct Mode Transfer Error event.
-       3. DMA_IT_TEIFx  : specifies the interrupt source for the Transfer Error event.
-       4. DMA_IT_HTIFx  : specifies the interrupt source for the Half-Transfer Complete event.
-       5. DMA_IT_TCIFx  : specifies the interrupt source for the a Transfer Complete event. 
-     
-  In this Mode it is advised to use the following functions:
-     - void DMA_ITConfig(DMA_Stream_TypeDef* DMAy_Streamx, uint32_t DMA_IT, FunctionalState NewState);
-     - ITStatus DMA_GetITStatus(DMA_Stream_TypeDef* DMAy_Streamx, uint32_t DMA_IT);
-     - void DMA_ClearITPendingBit(DMA_Stream_TypeDef* DMAy_Streamx, uint32_t DMA_IT);
+    *** Interrupt Source ***
+    ========================
+    [..]
+      (#) DMA_IT_FEIFx  : specifies the interrupt source for the  FIFO Mode Transfer Error event.
+      (#) DMA_IT_DMEIFx : specifies the interrupt source for the Direct Mode Transfer Error event.
+      (#) DMA_IT_TEIFx  : specifies the interrupt source for the Transfer Error event.
+      (#) DMA_IT_HTIFx  : specifies the interrupt source for the Half-Transfer Complete event.
+      (#) DMA_IT_TCIFx  : specifies the interrupt source for the a Transfer Complete event. 
+    [..]
+    In this Mode it is advised to use the following functions:
+      (+) void DMA_ITConfig(DMA_Stream_TypeDef* DMAy_Streamx, uint32_t DMA_IT, FunctionalState NewState);
+      (+) ITStatus DMA_GetITStatus(DMA_Stream_TypeDef* DMAy_Streamx, uint32_t DMA_IT);
+      (+) void DMA_ClearITPendingBit(DMA_Stream_TypeDef* DMAy_Streamx, uint32_t DMA_IT);
 
 @endverbatim
   * @{
@@ -1280,4 +1298,4 @@ void DMA_ClearITPendingBit(DMA_Stream_TypeDef* DMAy_Streamx, uint32_t DMA_IT)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

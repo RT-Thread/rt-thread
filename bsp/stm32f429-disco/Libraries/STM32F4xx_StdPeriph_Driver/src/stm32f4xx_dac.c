@@ -2,114 +2,127 @@
   ******************************************************************************
   * @file    stm32f4xx_dac.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    30-September-2011
+  * @version V1.3.0
+  * @date    08-November-2013
    * @brief   This file provides firmware functions to manage the following 
   *          functionalities of the Digital-to-Analog Converter (DAC) peripheral: 
-  *           - DAC channels configuration: trigger, output buffer, data format
-  *           - DMA management      
-  *           - Interrupts and flags management
+  *           + DAC channels configuration: trigger, output buffer, data format
+  *           + DMA management      
+  *           + Interrupts and flags management
   *
-  *  @verbatim
-  *    
-  *          ===================================================================
-  *                             DAC Peripheral features
-  *          ===================================================================
-  *          
-  *          DAC Channels
-  *          =============  
-  *          The device integrates two 12-bit Digital Analog Converters that can 
-  *          be used independently or simultaneously (dual mode):
-  *            1- DAC channel1 with DAC_OUT1 (PA4) as output
-  *            1- DAC channel2 with DAC_OUT2 (PA5) as output
-  *
-  *          DAC Triggers
-  *          =============
-  *          Digital to Analog conversion can be non-triggered using DAC_Trigger_None
-  *          and DAC_OUT1/DAC_OUT2 is available once writing to DHRx register 
-  *          using DAC_SetChannel1Data() / DAC_SetChannel2Data() functions.
-  *   
-  *         Digital to Analog conversion can be triggered by:
-  *             1- External event: EXTI Line 9 (any GPIOx_Pin9) using DAC_Trigger_Ext_IT9.
-  *                The used pin (GPIOx_Pin9) must be configured in input mode.
-  *
-  *             2- Timers TRGO: TIM2, TIM4, TIM5, TIM6, TIM7 and TIM8 
-  *                (DAC_Trigger_T2_TRGO, DAC_Trigger_T4_TRGO...)
-  *                The timer TRGO event should be selected using TIM_SelectOutputTrigger()
-  *
-  *             3- Software using DAC_Trigger_Software
-  *
-  *          DAC Buffer mode feature
-  *          ========================  
-  *          Each DAC channel integrates an output buffer that can be used to 
-  *          reduce the output impedance, and to drive external loads directly
-  *          without having to add an external operational amplifier.
-  *          To enable, the output buffer use  
-  *              DAC_InitStructure.DAC_OutputBuffer = DAC_OutputBuffer_Enable;
-  *          
-  *          Refer to the device datasheet for more details about output 
-  *          impedance value with and without output buffer.
-  *          
-  *          DAC wave generation feature
-  *          =============================      
-  *          Both DAC channels can be used to generate
-  *             1- Noise wave using DAC_WaveGeneration_Noise
-  *             2- Triangle wave using DAC_WaveGeneration_Triangle
-  *        
-  *          Wave generation can be disabled using DAC_WaveGeneration_None
-  *
-  *          DAC data format
-  *          ================   
-  *          The DAC data format can be:
-  *             1- 8-bit right alignment using DAC_Align_8b_R
-  *             2- 12-bit left alignment using DAC_Align_12b_L
-  *             3- 12-bit right alignment using DAC_Align_12b_R
-  *
-  *          DAC data value to voltage correspondence  
-  *          ========================================  
-  *          The analog output voltage on each DAC channel pin is determined
-  *          by the following equation: 
-  *          DAC_OUTx = VREF+ * DOR / 4095
-  *          with  DOR is the Data Output Register
-  *                VEF+ is the input voltage reference (refer to the device datasheet)
-  *          e.g. To set DAC_OUT1 to 0.7V, use
-  *            DAC_SetChannel1Data(DAC_Align_12b_R, 868);
-  *          Assuming that VREF+ = 3.3V, DAC_OUT1 = (3.3 * 868) / 4095 = 0.7V
-  *
-  *          DMA requests 
-  *          =============    
-  *          A DMA1 request can be generated when an external trigger (but not
-  *          a software trigger) occurs if DMA1 requests are enabled using
-  *          DAC_DMACmd()
-  *          DMA1 requests are mapped as following:
-  *             1- DAC channel1 : mapped on DMA1 Stream5 channel7 which must be 
-  *                               already configured
-  *             2- DAC channel2 : mapped on DMA1 Stream6 channel7 which must be 
-  *                               already configured
-  *
-  *          ===================================================================      
-  *                              How to use this driver 
-  *          ===================================================================          
-  *            - DAC APB clock must be enabled to get write access to DAC
-  *              registers using
-  *              RCC_APB1PeriphClockCmd(RCC_APB1Periph_DAC, ENABLE)
-  *            - Configure DAC_OUTx (DAC_OUT1: PA4, DAC_OUT2: PA5) in analog mode.
-  *            - Configure the DAC channel using DAC_Init() function
-  *            - Enable the DAC channel using DAC_Cmd() function
-  * 
-  *  @endverbatim
-  *    
+ @verbatim      
+ ===============================================================================
+                      ##### DAC Peripheral features #####
+ ===============================================================================
+    [..]        
+      *** DAC Channels ***
+      ====================  
+    [..]  
+    The device integrates two 12-bit Digital Analog Converters that can 
+    be used independently or simultaneously (dual mode):
+      (#) DAC channel1 with DAC_OUT1 (PA4) as output
+      (#) DAC channel2 with DAC_OUT2 (PA5) as output
+  
+      *** DAC Triggers ***
+      ====================
+    [..]
+    Digital to Analog conversion can be non-triggered using DAC_Trigger_None
+    and DAC_OUT1/DAC_OUT2 is available once writing to DHRx register 
+    using DAC_SetChannel1Data() / DAC_SetChannel2Data() functions.
+    [..] 
+    Digital to Analog conversion can be triggered by:
+      (#) External event: EXTI Line 9 (any GPIOx_Pin9) using DAC_Trigger_Ext_IT9.
+          The used pin (GPIOx_Pin9) must be configured in input mode.
+  
+      (#) Timers TRGO: TIM2, TIM4, TIM5, TIM6, TIM7 and TIM8 
+          (DAC_Trigger_T2_TRGO, DAC_Trigger_T4_TRGO...)
+          The timer TRGO event should be selected using TIM_SelectOutputTrigger()
+  
+      (#) Software using DAC_Trigger_Software
+  
+      *** DAC Buffer mode feature ***
+      =============================== 
+      [..] 
+      Each DAC channel integrates an output buffer that can be used to 
+      reduce the output impedance, and to drive external loads directly
+      without having to add an external operational amplifier.
+      To enable, the output buffer use  
+      DAC_InitStructure.DAC_OutputBuffer = DAC_OutputBuffer_Enable;
+      [..]           
+      (@) Refer to the device datasheet for more details about output 
+          impedance value with and without output buffer.
+            
+       *** DAC wave generation feature ***
+       =================================== 
+       [..]     
+       Both DAC channels can be used to generate
+         (#) Noise wave using DAC_WaveGeneration_Noise
+         (#) Triangle wave using DAC_WaveGeneration_Triangle
+          
+          -@-  Wave generation can be disabled using DAC_WaveGeneration_None
+  
+       *** DAC data format ***
+       =======================
+       [..]   
+       The DAC data format can be:
+         (#) 8-bit right alignment using DAC_Align_8b_R
+         (#) 12-bit left alignment using DAC_Align_12b_L
+         (#) 12-bit right alignment using DAC_Align_12b_R
+  
+       *** DAC data value to voltage correspondence ***  
+       ================================================ 
+       [..] 
+       The analog output voltage on each DAC channel pin is determined
+       by the following equation: 
+       DAC_OUTx = VREF+ * DOR / 4095
+       with  DOR is the Data Output Register
+          VEF+ is the input voltage reference (refer to the device datasheet)
+        e.g. To set DAC_OUT1 to 0.7V, use
+          DAC_SetChannel1Data(DAC_Align_12b_R, 868);
+          Assuming that VREF+ = 3.3V, DAC_OUT1 = (3.3 * 868) / 4095 = 0.7V
+  
+       *** DMA requests  ***
+       =====================
+       [..]    
+       A DMA1 request can be generated when an external trigger (but not
+       a software trigger) occurs if DMA1 requests are enabled using
+       DAC_DMACmd()
+       [..]
+       DMA1 requests are mapped as following:
+         (#) DAC channel1 : mapped on DMA1 Stream5 channel7 which must be 
+             already configured
+         (#) DAC channel2 : mapped on DMA1 Stream6 channel7 which must be 
+             already configured
+  
+      
+                      ##### How to use this driver #####
+ ===============================================================================
+    [..]          
+      (+) DAC APB clock must be enabled to get write access to DAC
+          registers using
+          RCC_APB1PeriphClockCmd(RCC_APB1Periph_DAC, ENABLE)
+      (+) Configure DAC_OUTx (DAC_OUT1: PA4, DAC_OUT2: PA5) in analog mode.
+      (+) Configure the DAC channel using DAC_Init() function
+      (+) Enable the DAC channel using DAC_Cmd() function
+   
+ @endverbatim    
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************  
   */ 
 
@@ -159,7 +172,7 @@
  *
 @verbatim   
  ===============================================================================
-          DAC channels configuration: trigger, output buffer, data format
+   ##### DAC channels configuration: trigger, output buffer, data format #####
  ===============================================================================  
 
 @endverbatim
@@ -471,7 +484,7 @@ uint16_t DAC_GetDataOutputValue(uint32_t DAC_Channel)
  *
 @verbatim   
  ===============================================================================
-                          DMA management functions
+                       ##### DMA management functions #####
  ===============================================================================  
 
 @endverbatim
@@ -520,7 +533,7 @@ void DAC_DMACmd(uint32_t DAC_Channel, FunctionalState NewState)
  *
 @verbatim   
  ===============================================================================
-                   Interrupts and flags management functions
+             ##### Interrupts and flags management functions #####
  ===============================================================================  
 
 @endverbatim
@@ -698,4 +711,4 @@ void DAC_ClearITPendingBit(uint32_t DAC_Channel, uint32_t DAC_IT)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

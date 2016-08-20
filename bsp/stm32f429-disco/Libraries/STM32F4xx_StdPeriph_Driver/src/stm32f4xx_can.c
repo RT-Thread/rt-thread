@@ -2,77 +2,82 @@
   ******************************************************************************
   * @file    stm32f4xx_can.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    30-September-2011
+  * @version V1.3.0
+  * @date    08-November-2013
   * @brief   This file provides firmware functions to manage the following 
   *          functionalities of the Controller area network (CAN) peripheral:           
-  *           - Initialization and Configuration 
-  *           - CAN Frames Transmission 
-  *           - CAN Frames Reception    
-  *           - Operation modes switch  
-  *           - Error management          
-  *           - Interrupts and flags        
+  *           + Initialization and Configuration 
+  *           + CAN Frames Transmission 
+  *           + CAN Frames Reception    
+  *           + Operation modes switch  
+  *           + Error management          
+  *           + Interrupts and flags        
   *         
-  *  @verbatim
-  *                               
-  *          ===================================================================      
-  *                                   How to use this driver
-  *          ===================================================================
+@verbatim                                 
+ ===============================================================================      
+                        ##### How to use this driver #####
+ ===============================================================================
+    [..]            
+      (#) Enable the CAN controller interface clock using 
+          RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN1, ENABLE); for CAN1 
+          and RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN2, ENABLE); for CAN2
+      -@- In case you are using CAN2 only, you have to enable the CAN1 clock.
+       
+      (#) CAN pins configuration
+        (++) Enable the clock for the CAN GPIOs using the following function:
+             RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOx, ENABLE);   
+        (++) Connect the involved CAN pins to AF9 using the following function 
+             GPIO_PinAFConfig(GPIOx, GPIO_PinSourcex, GPIO_AF_CANx); 
+        (++) Configure these CAN pins in alternate function mode by calling
+             the function  GPIO_Init();
+      
+      (#) Initialise and configure the CAN using CAN_Init() and 
+          CAN_FilterInit() functions.   
+                 
+      (#) Transmit the desired CAN frame using CAN_Transmit() function.
+           
+      (#) Check the transmission of a CAN frame using CAN_TransmitStatus()
+          function.
+                 
+      (#) Cancel the transmission of a CAN frame using CAN_CancelTransmit()
+          function.  
+              
+      (#) Receive a CAN frame using CAN_Recieve() function.
+           
+      (#) Release the receive FIFOs using CAN_FIFORelease() function.
+                 
+      (#) Return the number of pending received frames using 
+          CAN_MessagePending() function.            
+                     
+      (#) To control CAN events you can use one of the following two methods:
+        (++) Check on CAN flags using the CAN_GetFlagStatus() function.  
+        (++) Use CAN interrupts through the function CAN_ITConfig() at 
+             initialization phase and CAN_GetITStatus() function into 
+             interrupt routines to check if the event has occurred or not.
+             After checking on a flag you should clear it using CAN_ClearFlag()
+             function. And after checking on an interrupt event you should 
+             clear it using CAN_ClearITPendingBit() function.            
+                 
                 
-  *          1.  Enable the CAN controller interface clock using 
-  *                  RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN1, ENABLE); for CAN1 
-  *              and RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN2, ENABLE); for CAN2
-  *  @note   In case you are using CAN2 only, you have to enable the CAN1 clock.
-  *     
-  *          2. CAN pins configuration
-  *               - Enable the clock for the CAN GPIOs using the following function:
-  *                   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOx, ENABLE);   
-  *               - Connect the involved CAN pins to AF9 using the following function 
-  *                   GPIO_PinAFConfig(GPIOx, GPIO_PinSourcex, GPIO_AF_CANx); 
-  *                - Configure these CAN pins in alternate function mode by calling
-  *                  the function  GPIO_Init();
-  *    
-  *          3.  Initialise and configure the CAN using CAN_Init() and 
-  *               CAN_FilterInit() functions.   
-  *               
-  *          4.  Transmit the desired CAN frame using CAN_Transmit() function.
-  *         
-  *          5.  Check the transmission of a CAN frame using CAN_TransmitStatus()
-  *              function.
-  *               
-  *          6.  Cancel the transmission of a CAN frame using CAN_CancelTransmit()
-  *              function.  
-  *            
-  *          7.  Receive a CAN frame using CAN_Recieve() function.
-  *         
-  *          8.  Release the receive FIFOs using CAN_FIFORelease() function.
-  *               
-  *          9. Return the number of pending received frames using 
-  *              CAN_MessagePending() function.            
-  *                   
-  *          10. To control CAN events you can use one of the following two methods:
-  *               - Check on CAN flags using the CAN_GetFlagStatus() function.  
-  *               - Use CAN interrupts through the function CAN_ITConfig() at 
-  *                 initialization phase and CAN_GetITStatus() function into 
-  *                 interrupt routines to check if the event has occurred or not.
-  *             After checking on a flag you should clear it using CAN_ClearFlag()
-  *             function. And after checking on an interrupt event you should 
-  *             clear it using CAN_ClearITPendingBit() function.            
-  *               
-  *              
-  *  @endverbatim
-  *         
+@endverbatim
+           
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************  
   */
 
@@ -138,17 +143,17 @@ static ITStatus CheckITStatus(uint32_t CAN_Reg, uint32_t It_Bit);
  *
 @verbatim    
  ===============================================================================
-                      Initialization and Configuration functions
+              ##### Initialization and Configuration functions #####
  ===============================================================================  
-  This section provides functions allowing to 
-   - Initialize the CAN peripherals : Prescaler, operating mode, the maximum number 
-     of time quanta to perform resynchronization, the number of time quanta in
-     Bit Segment 1 and 2 and many other modes. 
-     Refer to  @ref CAN_InitTypeDef  for more details.
-   - Configures the CAN reception filter.                                      
-   - Select the start bank filter for slave CAN.
-   - Enables or disables the Debug Freeze mode for CAN
-   - Enables or disables the CAN Time Trigger Operation communication mode
+    [..] This section provides functions allowing to 
+      (+) Initialize the CAN peripherals : Prescaler, operating mode, the maximum 
+          number of time quanta to perform resynchronization, the number of time 
+          quanta in Bit Segment 1 and 2 and many other modes. 
+          Refer to  @ref CAN_InitTypeDef  for more details.
+      (+) Configures the CAN reception filter.                                      
+      (+) Select the start bank filter for slave CAN.
+      (+) Enables or disables the Debug Freeze mode for CAN
+      (+)Enables or disables the CAN Time Trigger Operation communication mode
    
 @endverbatim
   * @{
@@ -551,12 +556,12 @@ void CAN_TTComModeCmd(CAN_TypeDef* CANx, FunctionalState NewState)
  *
 @verbatim    
  ===============================================================================
-                      CAN Frames Transmission functions
+                ##### CAN Frames Transmission functions #####
  ===============================================================================  
-  This section provides functions allowing to 
-   - Initiate and transmit a CAN frame message (if there is an empty mailbox).
-   - Check the transmission status of a CAN Frame
-   - Cancel a transmit request
+    [..] This section provides functions allowing to 
+      (+) Initiate and transmit a CAN frame message (if there is an empty mailbox).
+      (+) Check the transmission status of a CAN Frame
+      (+) Cancel a transmit request
    
 @endverbatim
   * @{
@@ -723,12 +728,12 @@ void CAN_CancelTransmit(CAN_TypeDef* CANx, uint8_t Mailbox)
  *
 @verbatim    
  ===============================================================================
-                      CAN Frames Reception functions
+                ##### CAN Frames Reception functions #####
  ===============================================================================  
-  This section provides functions allowing to 
-   -  Receive a correct CAN frame
-   -  Release a specified receive FIFO (2 FIFOs are available)
-   -  Return the number of the pending received CAN frames
+    [..] This section provides functions allowing to 
+      (+) Receive a correct CAN frame
+      (+) Release a specified receive FIFO (2 FIFOs are available)
+      (+) Return the number of the pending received CAN frames
    
 @endverbatim
   * @{
@@ -844,12 +849,12 @@ uint8_t CAN_MessagePending(CAN_TypeDef* CANx, uint8_t FIFONumber)
  *
 @verbatim    
  ===============================================================================
-                      CAN Operation modes functions
+                    ##### CAN Operation modes functions #####
  ===============================================================================  
-  This section provides functions allowing to select the CAN Operation modes
-  - sleep mode
-  - normal mode 
-  - initialization mode
+    [..] This section provides functions allowing to select the CAN Operation modes
+      (+) sleep mode
+      (+) normal mode 
+      (+) initialization mode
    
 @endverbatim
   * @{
@@ -1004,16 +1009,16 @@ uint8_t CAN_WakeUp(CAN_TypeDef* CANx)
  *
 @verbatim    
  ===============================================================================
-                      CAN Bus Error management functions
+                ##### CAN Bus Error management functions #####
  ===============================================================================  
-  This section provides functions allowing to 
-   -  Return the CANx's last error code (LEC)
-   -  Return the CANx Receive Error Counter (REC)
-   -  Return the LSB of the 9-bit CANx Transmit Error Counter(TEC).
+    [..] This section provides functions allowing to 
+      (+) Return the CANx's last error code (LEC)
+      (+) Return the CANx Receive Error Counter (REC)
+      (+) Return the LSB of the 9-bit CANx Transmit Error Counter(TEC).
    
-   @note If TEC is greater than 255, The CAN is in bus-off state.
-   @note if REC or TEC are greater than 96, an Error warning flag occurs.
-   @note if REC or TEC are greater than 127, an Error Passive Flag occurs.
+      -@- If TEC is greater than 255, The CAN is in bus-off state.
+      -@- if REC or TEC are greater than 96, an Error warning flag occurs.
+      -@- if REC or TEC are greater than 127, an Error Passive Flag occurs.
                         
 @endverbatim
   * @{
@@ -1099,163 +1104,161 @@ uint8_t CAN_GetLSBTransmitErrorCounter(CAN_TypeDef* CANx)
  *
 @verbatim   
  ===============================================================================
-                   Interrupts and flags management functions
+              ##### Interrupts and flags management functions #####
  ===============================================================================  
 
-  This section provides functions allowing to configure the CAN Interrupts and 
-  to get the status and clear flags and Interrupts pending bits.
+     [..] This section provides functions allowing to configure the CAN Interrupts 
+          and to get the status and clear flags and Interrupts pending bits.
   
-  The CAN provides 14 Interrupts sources and 15 Flags:
+          The CAN provides 14 Interrupts sources and 15 Flags:
 
-  ===============  
-      Flags :
-  ===============
-  The 15 flags can be divided on 4 groups: 
+   
+  *** Flags ***
+  =============
+    [..] The 15 flags can be divided on 4 groups: 
 
-   A. Transmit Flags
-  -----------------------
-        CAN_FLAG_RQCP0, 
-        CAN_FLAG_RQCP1, 
-        CAN_FLAG_RQCP2  : Request completed MailBoxes 0, 1 and 2  Flags
-                          Set when when the last request (transmit or abort) has 
-                          been performed. 
+      (+) Transmit Flags
+        (++) CAN_FLAG_RQCP0, 
+        (++) CAN_FLAG_RQCP1, 
+        (++) CAN_FLAG_RQCP2  : Request completed MailBoxes 0, 1 and 2  Flags
+                               Set when when the last request (transmit or abort)
+                               has been performed. 
 
-  B. Receive Flags
-  -----------------------
+      (+) Receive Flags
 
-        CAN_FLAG_FMP0,
-        CAN_FLAG_FMP1   : FIFO 0 and 1 Message Pending Flags 
-                          set to signal that messages are pending in the receive 
-                          FIFO.
-                          These Flags are cleared only by hardware. 
 
-        CAN_FLAG_FF0,
-        CAN_FLAG_FF1    : FIFO 0 and 1 Full Flags
-                          set when three messages are stored in the selected 
-                          FIFO.                        
+        (++) CAN_FLAG_FMP0,
+        (++) CAN_FLAG_FMP1   : FIFO 0 and 1 Message Pending Flags 
+                               set to signal that messages are pending in the receive 
+                               FIFO.
+                               These Flags are cleared only by hardware. 
 
-        CAN_FLAG_FOV0              
-        CAN_FLAG_FOV1   : FIFO 0 and 1 Overrun Flags
-                          set when a new message has been received and passed 
-                          the filter while the FIFO was full.         
+        (++) CAN_FLAG_FF0,
+        (++) CAN_FLAG_FF1    : FIFO 0 and 1 Full Flags
+                               set when three messages are stored in the selected 
+                               FIFO.                        
 
-  C. Operating Mode Flags
-  ----------------------- 
-        CAN_FLAG_WKU    : Wake up Flag
-                          set to signal that a SOF bit has been detected while 
-                          the CAN hardware was in Sleep mode. 
+        (++) CAN_FLAG_FOV0              
+        (++) CAN_FLAG_FOV1   : FIFO 0 and 1 Overrun Flags
+                               set when a new message has been received and passed 
+                               the filter while the FIFO was full.         
+
+      (+) Operating Mode Flags
+
+        (++) CAN_FLAG_WKU    : Wake up Flag
+                               set to signal that a SOF bit has been detected while 
+                               the CAN hardware was in Sleep mode. 
         
-        CAN_FLAG_SLAK   : Sleep acknowledge Flag
-                          Set to signal that the CAN has entered Sleep Mode. 
+        (++) CAN_FLAG_SLAK   : Sleep acknowledge Flag
+                               Set to signal that the CAN has entered Sleep Mode. 
     
-  D. Error Flags
-  ----------------------- 
-        CAN_FLAG_EWG    : Error Warning Flag
-                          Set when the warning limit has been reached (Receive 
-                          Error Counter or Transmit Error Counter greater than 96). 
-                          This Flag is cleared only by hardware.
+      (+) Error Flags
+
+        (++) CAN_FLAG_EWG    : Error Warning Flag
+                               Set when the warning limit has been reached (Receive 
+                               Error Counter or Transmit Error Counter greater than 96). 
+                               This Flag is cleared only by hardware.
                             
-        CAN_FLAG_EPV    : Error Passive Flag
-                          Set when the Error Passive limit has been reached 
-                          (Receive Error Counter or Transmit Error Counter 
-                          greater than 127).
-                          This Flag is cleared only by hardware.
+        (++) CAN_FLAG_EPV    : Error Passive Flag
+                               Set when the Error Passive limit has been reached 
+                               (Receive Error Counter or Transmit Error Counter 
+                               greater than 127).
+                               This Flag is cleared only by hardware.
                              
-        CAN_FLAG_BOF    : Bus-Off Flag
-                          set when CAN enters the bus-off state. The bus-off 
-                          state is entered on TEC overflow, greater than 255.
-                          This Flag is cleared only by hardware.
+        (++) CAN_FLAG_BOF    : Bus-Off Flag
+                               set when CAN enters the bus-off state. The bus-off 
+                               state is entered on TEC overflow, greater than 255.
+                               This Flag is cleared only by hardware.
                                    
-        CAN_FLAG_LEC    : Last error code Flag
-                          set If a message has been transferred (reception or
-                          transmission) with error, and the error code is hold.              
-                          
-  ===============  
-   Interrupts :
-  ===============
-  The 14 interrupts can be divided on 4 groups: 
+        (++) CAN_FLAG_LEC    : Last error code Flag
+                               set If a message has been transferred (reception or
+                               transmission) with error, and the error code is hold.              
+                           
+  *** Interrupts ***
+  ==================
+    [..] The 14 interrupts can be divided on 4 groups: 
   
-   A. Transmit interrupt
-  -----------------------   
-          CAN_IT_TME   :  Transmit mailbox empty Interrupt
-                          if enabled, this interrupt source is pending when 
-                          no transmit request are pending for Tx mailboxes.      
+      (+) Transmit interrupt
+  
+        (++) CAN_IT_TME   :  Transmit mailbox empty Interrupt
+                             if enabled, this interrupt source is pending when 
+                             no transmit request are pending for Tx mailboxes.      
 
-   B. Receive Interrupts
-  -----------------------          
-        CAN_IT_FMP0,
-        CAN_IT_FMP1    :  FIFO 0 and FIFO1 message pending Interrupts
-                          if enabled, these interrupt sources are pending when 
-                          messages are pending in the receive FIFO.
-                          The corresponding interrupt pending bits are cleared 
-                          only by hardware.
+      (+) Receive Interrupts
+         
+        (++) CAN_IT_FMP0,
+        (++) CAN_IT_FMP1    :  FIFO 0 and FIFO1 message pending Interrupts
+                               if enabled, these interrupt sources are pending 
+                               when messages are pending in the receive FIFO.
+                               The corresponding interrupt pending bits are cleared 
+                               only by hardware.
                 
-        CAN_IT_FF0,              
-        CAN_IT_FF1     :  FIFO 0 and FIFO1 full Interrupts
-                          if enabled, these interrupt sources are pending when
-                          three messages are stored in the selected FIFO.
+        (++) CAN_IT_FF0,              
+        (++) CAN_IT_FF1     :  FIFO 0 and FIFO1 full Interrupts
+                               if enabled, these interrupt sources are pending 
+                               when three messages are stored in the selected FIFO.
         
-        CAN_IT_FOV0,        
-        CAN_IT_FOV1    :  FIFO 0 and FIFO1 overrun Interrupts        
-                          if enabled, these interrupt sources are pending when
-                          a new message has been received and passed the filter
-                          while the FIFO was full.
+        (++) CAN_IT_FOV0,        
+        (++) CAN_IT_FOV1    :  FIFO 0 and FIFO1 overrun Interrupts        
+                               if enabled, these interrupt sources are pending 
+                               when a new message has been received and passed 
+                               the filter while the FIFO was full.
 
-   C. Operating Mode Interrupts
-  -------------------------------          
-        CAN_IT_WKU     :  Wake-up Interrupt
-                          if enabled, this interrupt source is pending when 
-                          a SOF bit has been detected while the CAN hardware was 
-                          in Sleep mode.
+      (+) Operating Mode Interrupts
+         
+        (++) CAN_IT_WKU     :  Wake-up Interrupt
+                               if enabled, this interrupt source is pending when 
+                               a SOF bit has been detected while the CAN hardware 
+                               was in Sleep mode.
                                   
-        CAN_IT_SLK     :  Sleep acknowledge Interrupt
-                          if enabled, this interrupt source is pending when 
-                          the CAN has entered Sleep Mode.       
+        (++) CAN_IT_SLK     :  Sleep acknowledge Interrupt
+                               if enabled, this interrupt source is pending when 
+                               the CAN has entered Sleep Mode.       
 
-   D. Error Interrupts 
-  -----------------------         
-        CAN_IT_EWG     :  Error warning Interrupt 
-                          if enabled, this interrupt source is pending when
-                          the warning limit has been reached (Receive Error 
-                          Counter or Transmit Error Counter=96). 
+      (+) Error Interrupts 
+        
+        (++) CAN_IT_EWG     :  Error warning Interrupt 
+                               if enabled, this interrupt source is pending when
+                               the warning limit has been reached (Receive Error 
+                               Counter or Transmit Error Counter=96). 
                                
-        CAN_IT_EPV     :  Error passive Interrupt        
-                          if enabled, this interrupt source is pending when
-                          the Error Passive limit has been reached (Receive 
-                          Error Counter or Transmit Error Counter>127).
+        (++) CAN_IT_EPV     :  Error passive Interrupt        
+                               if enabled, this interrupt source is pending when
+                               the Error Passive limit has been reached (Receive 
+                               Error Counter or Transmit Error Counter>127).
                           
-        CAN_IT_BOF     :  Bus-off Interrupt
-                          if enabled, this interrupt source is pending when
-                          CAN enters the bus-off state. The bus-off state is 
-                          entered on TEC overflow, greater than 255.
-                          This Flag is cleared only by hardware.
+        (++) CAN_IT_BOF     :  Bus-off Interrupt
+                               if enabled, this interrupt source is pending when
+                               CAN enters the bus-off state. The bus-off state is 
+                               entered on TEC overflow, greater than 255.
+                               This Flag is cleared only by hardware.
                                   
-        CAN_IT_LEC     :  Last error code Interrupt        
-                          if enabled, this interrupt source is pending  when
-                          a message has been transferred (reception or
-                          transmission) with error, and the error code is hold.
+        (++) CAN_IT_LEC     :  Last error code Interrupt        
+                               if enabled, this interrupt source is pending  when
+                               a message has been transferred (reception or
+                               transmission) with error, and the error code is hold.
                           
-        CAN_IT_ERR     :  Error Interrupt
-                          if enabled, this interrupt source is pending when 
-                          an error condition is pending.      
+        (++) CAN_IT_ERR     :  Error Interrupt
+                               if enabled, this interrupt source is pending when 
+                               an error condition is pending.      
                       
+    [..] Managing the CAN controller events :
+ 
+         The user should identify which mode will be used in his application to 
+         manage the CAN controller events: Polling mode or Interrupt mode.
+  
+      (#) In the Polling Mode it is advised to use the following functions:
+        (++) CAN_GetFlagStatus() : to check if flags events occur. 
+        (++) CAN_ClearFlag()     : to clear the flags events.
+  
 
-  Managing the CAN controller events :
-  ------------------------------------ 
-  The user should identify which mode will be used in his application to manage 
-  the CAN controller events: Polling mode or Interrupt mode.
   
-  1.  In the Polling Mode it is advised to use the following functions:
-      - CAN_GetFlagStatus() : to check if flags events occur. 
-      - CAN_ClearFlag()     : to clear the flags events.
-  
-
-  
-  2.  In the Interrupt Mode it is advised to use the following functions:
-      - CAN_ITConfig()       : to enable or disable the interrupt source.
-      - CAN_GetITStatus()    : to check if Interrupt occurs.
-      - CAN_ClearITPendingBit() : to clear the Interrupt pending Bit (corresponding Flag).
-      @note  This function has no impact on CAN_IT_FMP0 and CAN_IT_FMP1 Interrupts 
+      (#) In the Interrupt Mode it is advised to use the following functions:
+        (++) CAN_ITConfig()       : to enable or disable the interrupt source.
+        (++) CAN_GetITStatus()    : to check if Interrupt occurs.
+        (++) CAN_ClearITPendingBit() : to clear the Interrupt pending Bit 
+            (corresponding Flag).
+        -@@-  This function has no impact on CAN_IT_FMP0 and CAN_IT_FMP1 Interrupts 
              pending bits since there are cleared only by hardware. 
   
 @endverbatim
@@ -1695,4 +1698,4 @@ static ITStatus CheckITStatus(uint32_t CAN_Reg, uint32_t It_Bit)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

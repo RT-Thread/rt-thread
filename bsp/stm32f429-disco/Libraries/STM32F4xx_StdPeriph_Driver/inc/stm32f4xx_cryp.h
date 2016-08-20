@@ -2,21 +2,27 @@
   ******************************************************************************
   * @file    stm32f4xx_cryp.h
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    30-September-2011
+  * @version V1.3.0
+  * @date    08-November-2013
   * @brief   This file contains all the functions prototypes for the Cryptographic
   *          processor(CRYP) firmware library.
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */
 
@@ -46,14 +52,14 @@
   */ 
 typedef struct
 {
-  uint16_t CRYP_AlgoDir;   /*!< Encrypt or Decrypt. This parameter can be a 
+  uint32_t CRYP_AlgoDir;   /*!< Encrypt or Decrypt. This parameter can be a 
                                 value of @ref CRYP_Algorithm_Direction */
-  uint16_t CRYP_AlgoMode;  /*!< TDES-ECB, TDES-CBC, DES-ECB, DES-CBC, AES-ECB, 
-                                AES-CBC, AES-CTR, AES-Key. This parameter can be
-                                a value of @ref CRYP_Algorithm_Mode */
-  uint16_t CRYP_DataType;  /*!< 32-bit data, 16-bit data, bit data or bit-string.
+  uint32_t CRYP_AlgoMode;  /*!< TDES-ECB, TDES-CBC, DES-ECB, DES-CBC, AES-ECB, 
+                                AES-CBC, AES-CTR, AES-Key, AES-GCM and AES-CCM.
+                                This parameter can be a value of @ref CRYP_Algorithm_Mode */
+  uint32_t CRYP_DataType;  /*!< 32-bit data, 16-bit data, bit data or bit string.
                                 This parameter can be a value of @ref CRYP_Data_Type */ 
-  uint16_t CRYP_KeySize;   /*!< Used only in AES mode only : 128, 192 or 256 bit 
+  uint32_t CRYP_KeySize;   /*!< Used only in AES mode only : 128, 192 or 256 bit 
                                 key length. This parameter can be a value of 
                                 @ref CRYP_Key_Size_for_AES_only */
 }CRYP_InitTypeDef;
@@ -88,14 +94,14 @@ typedef struct
   */ 
 typedef struct
 {
-  /*!< Configuration */
-  uint32_t CR_bits9to2;
-  /*!< KEY */
+  /*!< Current Configuration */
+  uint32_t CR_CurrentConfig;
+  /*!< IV */
   uint32_t CRYP_IV0LR;
   uint32_t CRYP_IV0RR;
   uint32_t CRYP_IV1LR;
   uint32_t CRYP_IV1RR;
-  /*!< IV */
+  /*!< KEY */
   uint32_t CRYP_K0LR;
   uint32_t CRYP_K0RR;
   uint32_t CRYP_K1LR;
@@ -104,6 +110,8 @@ typedef struct
   uint32_t CRYP_K2RR;
   uint32_t CRYP_K3LR;
   uint32_t CRYP_K3RR;
+  uint32_t CRYP_CSGCMCCMR[8];
+  uint32_t CRYP_CSGCMR[8];
 }CRYP_Context;
 
 
@@ -130,31 +138,54 @@ typedef struct
   */
 
 /*!< TDES Modes */
-#define CRYP_AlgoMode_TDES_ECB    ((uint16_t)0x0000)
-#define CRYP_AlgoMode_TDES_CBC    ((uint16_t)0x0008)
+#define CRYP_AlgoMode_TDES_ECB    ((uint32_t)0x00000000)
+#define CRYP_AlgoMode_TDES_CBC    ((uint32_t)0x00000008)
 
 /*!< DES Modes */
-#define CRYP_AlgoMode_DES_ECB     ((uint16_t)0x0010)
-#define CRYP_AlgoMode_DES_CBC     ((uint16_t)0x0018)
+#define CRYP_AlgoMode_DES_ECB     ((uint32_t)0x00000010)
+#define CRYP_AlgoMode_DES_CBC     ((uint32_t)0x00000018)
 
 /*!< AES Modes */
-#define CRYP_AlgoMode_AES_ECB     ((uint16_t)0x0020)
-#define CRYP_AlgoMode_AES_CBC     ((uint16_t)0x0028)
-#define CRYP_AlgoMode_AES_CTR     ((uint16_t)0x0030)
-#define CRYP_AlgoMode_AES_Key     ((uint16_t)0x0038)
+#define CRYP_AlgoMode_AES_ECB     ((uint32_t)0x00000020)
+#define CRYP_AlgoMode_AES_CBC     ((uint32_t)0x00000028)
+#define CRYP_AlgoMode_AES_CTR     ((uint32_t)0x00000030)
+#define CRYP_AlgoMode_AES_Key     ((uint32_t)0x00000038)
+#define CRYP_AlgoMode_AES_GCM     ((uint32_t)0x00080000)
+#define CRYP_AlgoMode_AES_CCM     ((uint32_t)0x00080008)
 
 #define IS_CRYP_ALGOMODE(ALGOMODE) (((ALGOMODE) == CRYP_AlgoMode_TDES_ECB) || \
                                    ((ALGOMODE) == CRYP_AlgoMode_TDES_CBC)|| \
-                                   ((ALGOMODE) == CRYP_AlgoMode_DES_ECB)|| \
+                                   ((ALGOMODE) == CRYP_AlgoMode_DES_ECB) || \
                                    ((ALGOMODE) == CRYP_AlgoMode_DES_CBC) || \
                                    ((ALGOMODE) == CRYP_AlgoMode_AES_ECB) || \
                                    ((ALGOMODE) == CRYP_AlgoMode_AES_CBC) || \
                                    ((ALGOMODE) == CRYP_AlgoMode_AES_CTR) || \
-                                   ((ALGOMODE) == CRYP_AlgoMode_AES_Key))
+                                   ((ALGOMODE) == CRYP_AlgoMode_AES_Key) || \
+                                   ((ALGOMODE) == CRYP_AlgoMode_AES_GCM) || \
+                                   ((ALGOMODE) == CRYP_AlgoMode_AES_CCM))
 /**
   * @}
   */ 
- 
+
+/** @defgroup CRYP_Phase 
+  * @{
+  */
+
+/*!< The phases are valid only for AES-GCM and AES-CCM modes */
+#define CRYP_Phase_Init           ((uint32_t)0x00000000)
+#define CRYP_Phase_Header         CRYP_CR_GCM_CCMPH_0
+#define CRYP_Phase_Payload        CRYP_CR_GCM_CCMPH_1
+#define CRYP_Phase_Final          CRYP_CR_GCM_CCMPH
+
+#define IS_CRYP_PHASE(PHASE) (((PHASE) == CRYP_Phase_Init)    || \
+                              ((PHASE) == CRYP_Phase_Header)  || \
+                              ((PHASE) == CRYP_Phase_Payload) || \
+                              ((PHASE) == CRYP_Phase_Final))
+
+/**
+  * @}
+  */ 
+
 /** @defgroup CRYP_Data_Type 
   * @{
   */
@@ -260,23 +291,24 @@ void CRYP_KeyStructInit(CRYP_KeyInitTypeDef* CRYP_KeyInitStruct);
 void CRYP_IVInit(CRYP_IVInitTypeDef* CRYP_IVInitStruct);
 void CRYP_IVStructInit(CRYP_IVInitTypeDef* CRYP_IVInitStruct);
 void CRYP_Cmd(FunctionalState NewState);
-
+void CRYP_PhaseConfig(uint32_t CRYP_Phase);
+void CRYP_FIFOFlush(void);
 /* CRYP Data processing functions *********************************************/
 void CRYP_DataIn(uint32_t Data);
 uint32_t CRYP_DataOut(void);
-void CRYP_FIFOFlush(void);
 
 /* CRYP Context swapping functions ********************************************/
 ErrorStatus CRYP_SaveContext(CRYP_Context* CRYP_ContextSave,
                              CRYP_KeyInitTypeDef* CRYP_KeyInitStruct);
 void CRYP_RestoreContext(CRYP_Context* CRYP_ContextRestore);
 
-/* CRYP's DMA interface function **********************************************/
+/* CRYP DMA interface function ************************************************/
 void CRYP_DMACmd(uint8_t CRYP_DMAReq, FunctionalState NewState);
 
 /* Interrupts and flags management functions **********************************/
 void CRYP_ITConfig(uint8_t CRYP_IT, FunctionalState NewState);
 ITStatus CRYP_GetITStatus(uint8_t CRYP_IT);
+FunctionalState CRYP_GetCmdStatus(void);
 FlagStatus CRYP_GetFlagStatus(uint8_t CRYP_FLAG);
 
 /* High Level AES functions **************************************************/
@@ -296,6 +328,20 @@ ErrorStatus CRYP_AES_CTR(uint8_t Mode,
                          uint8_t *Key, uint16_t Keysize,
                          uint8_t *Input, uint32_t Ilength,
                          uint8_t *Output);
+
+ErrorStatus CRYP_AES_GCM(uint8_t Mode, uint8_t InitVectors[16],
+                         uint8_t *Key, uint16_t Keysize,
+                         uint8_t *Input, uint32_t ILength,
+                         uint8_t *Header, uint32_t HLength,
+                         uint8_t *Output, uint8_t *AuthTAG);
+
+ErrorStatus CRYP_AES_CCM(uint8_t Mode, 
+                         uint8_t* Nonce, uint32_t NonceSize,
+                         uint8_t* Key, uint16_t Keysize,
+                         uint8_t* Input, uint32_t ILength,
+                         uint8_t* Header, uint32_t HLength, uint8_t *HBuffer,
+                         uint8_t* Output,
+                         uint8_t* AuthTAG, uint32_t TAGSize);
 
 /* High Level TDES functions **************************************************/
 ErrorStatus CRYP_TDES_ECB(uint8_t Mode,
@@ -335,4 +381,4 @@ ErrorStatus CRYP_DES_CBC(uint8_t Mode,
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

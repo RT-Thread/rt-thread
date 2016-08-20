@@ -14,6 +14,12 @@
 #ifndef GPIO_H__
 #define GPIO_H__
 
+struct stm32_gpio_dsc {
+	GPIO_TypeDef *	port;
+	uint32_t	pin;
+  uint8_t pin_source;
+};
+
 int stm32_hw_pin_init(void);
 
 #endif

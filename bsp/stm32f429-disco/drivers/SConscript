@@ -9,6 +9,7 @@ src = Split("""
 board.c
 stm32f4xx_it.c
 usart.c
+drv_sdram.c
 """)
 
 # add Ethernet drivers.
@@ -24,4 +25,3 @@ CPPPATH = [cwd]
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
-
