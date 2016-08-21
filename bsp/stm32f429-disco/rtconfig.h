@@ -72,7 +72,7 @@
 #define RT_USING_UART3
 
 /* Using GPIO pin framework */
-#define RT_USING_PIN
+//#define RT_USING_PIN
 
 /* Using Hardware Timer framework */
 //#define RT_USING_HWTIMER

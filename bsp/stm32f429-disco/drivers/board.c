@@ -18,53 +18,75 @@
 #include "stm32f4xx.h"
 #include "board.h"
 #include "usart.h"
-#include "gpio.h"
+#include "stm32f4xx_hal.h"
 
 /**
- * @addtogroup STM32
- */
-
-/*@{*/
-
-/*******************************************************************************
-* Function Name  : NVIC_Configuration
-* Description    : Configures Vector Table base location.
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
-void NVIC_Configuration(void)
+  * @brief  This function is executed in case of error occurrence.
+  * @param  None
+  * @retval None
+  */
+void Error_Handler(void)
 {
-#ifdef  VECT_TAB_RAM
-    /* Set the Vector Table base location at 0x20000000 */
-    NVIC_SetVectorTable(NVIC_VectTab_RAM, 0x0);
-#else  /* VECT_TAB_FLASH  */
-    /* Set the Vector Table base location at 0x08000000 */
-    NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);
-#endif
-
-    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+  /* USER CODE BEGIN Error_Handler */
+  /* User can add his own implementation to report the HAL error return state */
+  while(1)
+  {
+  }
+  /* USER CODE END Error_Handler */
 }
 
-/*******************************************************************************
- * Function Name  : SysTick_Configuration
- * Description    : Configures the SysTick for OS tick.
- * Input          : None
- * Output         : None
- * Return         : None
- *******************************************************************************/
-void  SysTick_Configuration(void)
+/** System Clock Configuration
+*/
+void SystemClock_Config(void)
 {
-    RCC_ClocksTypeDef  rcc_clocks;
-    rt_uint32_t         cnts;
 
-    RCC_GetClocksFreq(&rcc_clocks);
+  RCC_OscInitTypeDef RCC_OscInitStruct;
+  RCC_ClkInitTypeDef RCC_ClkInitStruct;
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct;
 
-    cnts = (rt_uint32_t)rcc_clocks.HCLK_Frequency / RT_TICK_PER_SECOND;
-    cnts = cnts / 8;
+  __HAL_RCC_PWR_CLK_ENABLE();
 
-    SysTick_Config(cnts);
-    SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK_Div8);
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLM = 8;
+  RCC_OscInitStruct.PLL.PLLN = 336;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+  RCC_OscInitStruct.PLL.PLLQ = 7;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
+  PeriphClkInitStruct.PLLSAI.PLLSAIN = 260;
+  PeriphClkInitStruct.PLLSAI.PLLSAIR = 2;
+  PeriphClkInitStruct.PLLSAIDivR = RCC_PLLSAIDIVR_2;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
+
+  HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
+
+  /* SysTick_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 }
 
 /**
@@ -75,11 +97,30 @@ void SysTick_Handler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-
+    /* tick for HAL Library */
+    HAL_IncTick();
     rt_tick_increase();
 
     /* leave interrupt */
     rt_interrupt_leave();
+}
+
+/* re-implementat tick interface for STM32 HAL */
+HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
+{
+    /*Configure the SysTick to have interrupt in 1ms time basis*/
+    HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/RT_TICK_PER_SECOND);
+
+    /*Configure the SysTick IRQ priority */
+    HAL_NVIC_SetPriority(SysTick_IRQn, TickPriority ,0);
+
+    /* Return function status */
+    return HAL_OK;
+}
+
+void HAL_Delay(__IO uint32_t Delay)
+{
+    rt_thread_delay(Delay);
 }
 
 /**
@@ -87,17 +128,14 @@ void SysTick_Handler(void)
  */
 void rt_hw_board_init()
 {
-    /* NVIC Configuration */
-    NVIC_Configuration();
+    HAL_Init();
 
-    /* Configure the SysTick */
-    SysTick_Configuration();
+    SystemClock_Config();
 
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #else
     stm32_hw_usart_init();
-    stm32_hw_pin_init();
 #endif
 
 
