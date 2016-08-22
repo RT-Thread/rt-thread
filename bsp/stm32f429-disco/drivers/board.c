@@ -20,6 +20,11 @@
 #include "usart.h"
 #include "stm32f4xx_hal.h"
 
+void _init(void)
+{
+
+}
+
 /**
   * @brief  This function is executed in case of error occurrence.
   * @param  None

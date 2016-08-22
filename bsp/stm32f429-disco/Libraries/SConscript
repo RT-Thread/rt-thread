@@ -17,9 +17,9 @@ src += Glob('STM32F4xx_HAL_Driver/Src/*.c')
 if rtconfig.CROSS_TOOL == 'gcc':
      src = src + ['CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc/startup_stm32f429xx.s']
 elif rtconfig.CROSS_TOOL == 'keil':
-     src = src + ['CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f4xx.s']
+     src = src + ['CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f429xx.s']
 elif rtconfig.CROSS_TOOL == 'iar':
-    src = src + ['CMSIS/Device/ST/STM32F4xx/Source/Templates/iar/startup_stm32f4xx.s']
+    src = src + ['CMSIS/Device/ST/STM32F4xx/Source/Templates/iar/startup_stm32f429xx.s']
 
 path = [cwd + '/STM32F4xx_HAL_Driver/Inc',
     cwd + '/CMSIS/Device/ST/STM32F4xx/Include',

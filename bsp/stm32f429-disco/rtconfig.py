@@ -41,9 +41,9 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = '  -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -g -Wall -DSTM32F429ZI -DSTM32F429_439xx -DUSE_STDPERIPH_DRIVER -D__ASSEMBLY__'
+    CFLAGS = DEVICE + ' -g -Wall -DSTM32F429ZI -DSTM32F429_439xx -D__ASSEMBLY__'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -Wl,--gc-sections,-Map=rtthread-stm32.map,-cref,-u,Reset_Handler -T stm32_rom.ld'
+    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread-stm32.map,-cref,-u,Reset_Handler -T stm32_rom.ld'
 
     CPATH = ''
     LPATH = ''
@@ -65,7 +65,7 @@ elif PLATFORM == 'armcc':
     TARGET_EXT = 'axf'
 
     DEVICE = ' --cpu=cortex-m4.fp'
-    CFLAGS = DEVICE + ' --apcs=interwork -DUSE_STDPERIPH_DRIVER -DSTM32F429_439xx'
+    CFLAGS = DEVICE + ' --apcs=interwork -DSTM32F429_439xx'
     AFLAGS = DEVICE
     LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-stm32.map --scatter stm32_rom.sct'
 
