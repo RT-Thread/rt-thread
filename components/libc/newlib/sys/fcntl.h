@@ -2,6 +2,21 @@
 #define __RTT_FCNTL_H__
 
 /* Operation flags */
+#ifdef RT_USING_NEWLIB
+
+#define O_RDONLY        0x0000000
+#define O_WRONLY        0x0000001
+#define O_RDWR          0x0000002
+#define O_ACCMODE       (O_RDONLY|O_WRONLY|O_RDWR)
+#define O_CREAT         0x0200
+#define O_EXCL          0x0800
+#define O_TRUNC         0x0400
+#define O_APPEND        0x0008
+#define O_DIRECTORY     0x200000
+#define O_BINARY        0x10000
+
+#else
+    
 #define O_RDONLY        0x0000000
 #define O_WRONLY        0x0000001
 #define O_RDWR          0x0000002
@@ -12,5 +27,7 @@
 #define O_APPEND        0x0002000
 #define O_DIRECTORY     0x0200000
 #define O_BINARY        0x0008000
+
+#endif
 
 #endif
