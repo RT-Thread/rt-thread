@@ -293,12 +293,12 @@ static long _list_mailbox(struct rt_list_node *list)
     int maxlen;
     struct rt_mailbox *m;
     struct rt_list_node *node;
-	int item_title_len;
-	const char *item_title = "mailbox";
+    int item_title_len;
+    const char *item_title = "mailbox";
 
-	item_title_len = rt_strlen(item_title);
+    item_title_len = rt_strlen(item_title);
     maxlen = object_name_maxlen(list);
-	if(maxlen < item_title_len) maxlen = item_title_len;
+    if(maxlen < item_title_len) maxlen = item_title_len;
 
     rt_kprintf("%-*.s entry size suspend thread\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(     " ----  ---- --------------\n");
@@ -344,12 +344,12 @@ static long _list_msgqueue(struct rt_list_node *list)
     int maxlen;
     struct rt_messagequeue *m;
     struct rt_list_node *node;
-	int item_title_len;
-	const char *item_title = "msgqueue";
+    int item_title_len;
+    const char *item_title = "msgqueue";
 
-	item_title_len = rt_strlen(item_title);
+    item_title_len = rt_strlen(item_title);
     maxlen = object_name_maxlen(list);
-	if(maxlen < item_title_len) maxlen = item_title_len;
+    if(maxlen < item_title_len) maxlen = item_title_len;
 
     rt_kprintf("%-*.s entry suspend thread\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(     " ----  --------------\n");
@@ -535,12 +535,12 @@ static long _list_device(struct rt_list_node *list)
         "Miscellaneous Device",
         "Unknown"
     };
-	int item_title_len;
-	const char *item_title = "device";
-	
-	item_title_len = rt_strlen(item_title);
+    int item_title_len;
+    const char *item_title = "device";
+
+    item_title_len = rt_strlen(item_title);
     maxlen = object_name_maxlen(list);
-	if(maxlen < item_title_len) maxlen = item_title_len;
+    if(maxlen < item_title_len) maxlen = item_title_len;
 
     rt_kprintf("%-*.s         type         ref count\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(     " -------------------- ----------\n");
