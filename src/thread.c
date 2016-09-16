@@ -248,6 +248,15 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
 #else
     thread->number_mask = 1L << thread->current_priority;
 #endif
+    /* initialize  variables for profiling */
+#ifdef RT_USING_PROFILE
+	thread->cpu_usage        = 0;
+	thread->cpu_usage_max    = 0;
+	thread->ticks_delta      = 0;
+	thread->ticks_total      = 0;
+	thread->ticks_start      = rt_tick_get();
+	thread->tick_profile     = thread->ticks_start;
+#endif
 
     RT_DEBUG_LOG(RT_DEBUG_THREAD, ("startup a thread:%s with priority:%d\n",
                                    thread->name, thread->init_priority));
@@ -257,6 +266,7 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
     rt_thread_resume(thread);
     if (rt_thread_self() != RT_NULL)
     {
+		
         /* do a scheduling */
         rt_schedule();
     }

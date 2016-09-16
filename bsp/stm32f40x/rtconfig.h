@@ -72,6 +72,9 @@
 /* Using Hardware Timer framework */
 //#define RT_USING_HWTIMER
 
+/* Using profile */
+#define RT_USING_PROFILE
+
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
 /* the buffer size of console*/
