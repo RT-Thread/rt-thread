@@ -26,6 +26,7 @@
  * 2007-03-03     Bernard      clean up the definitions to rtdef.h
  * 2010-04-11     yi.qiu       add module feature
  * 2013-06-24     Bernard      add rt_kprintf re-define when not use RT_USING_CONSOLE.
+ * 2016-08-09     ArdaFu       add new thread and interrupt hook.
  */
 
 #ifndef __RT_THREAD_H__
@@ -153,6 +154,11 @@ rt_err_t rt_thread_suspend(rt_thread_t thread);
 rt_err_t rt_thread_resume(rt_thread_t thread);
 void rt_thread_timeout(void *parameter);
 
+#ifdef RT_USING_HOOK
+void rt_thread_suspend_sethook(void (*hook)(rt_thread_t thread));
+void rt_thread_resume_sethook(void (*hook)(rt_thread_t thread));
+#endif
+
 /*
  * idle thread interface
  */
@@ -161,6 +167,7 @@ void rt_thread_idle_init(void);
 void rt_thread_idle_sethook(void (*hook)(void));
 #endif
 void rt_thread_idle_excute(void);
+rt_thread_t rt_thread_idle_gethandler(void);
 
 /*
  * schedule service
@@ -459,6 +466,11 @@ void rt_interrupt_leave(void);
  * the number of nested interrupts.
  */
 rt_uint8_t rt_interrupt_get_nest(void);
+
+#ifdef RT_USING_HOOK
+void rt_interrupt_enter_sethook(void (*hook)(void));
+void rt_interrupt_leave_sethook(void (*hook)(void));
+#endif
 
 #ifdef RT_USING_COMPONENTS_INIT
 void rt_components_init(void);

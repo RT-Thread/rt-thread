@@ -17,7 +17,10 @@ else:
     if rtconfig.PLATFORM == 'gcc' and rtconfig.ARCH != 'sim':
         objs = objs + SConscript('minilibc/SConscript')
 
-objs = objs + SConscript('pthreads/SConscript')
-objs = objs + SConscript('libdl/SConscript')
+if GetDepend('RT_USING_LIBC') and GetDepend('RT_USING_PTHREADS'):
+	objs = objs + SConscript('pthreads/SConscript')
+	
+if GetDepend('RT_USING_MODULE') and GetDepend('RT_USING_LIBDL'):
+	objs = objs + SConscript('libdl/SConscript')
 
 Return('objs')
