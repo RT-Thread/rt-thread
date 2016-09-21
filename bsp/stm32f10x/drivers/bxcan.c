@@ -20,6 +20,7 @@
 #endif
 #ifdef RT_USING_CAN
 
+#define inline __inline
 #ifndef STM32F10X_CL
 #define BX_CAN_FMRNUMBER 14
 #define BX_CAN2_FMRSTART 7
@@ -849,6 +850,12 @@ static rt_err_t bxmodifyfilter(struct stm_bxcan *pbxcan, struct rt_can_filter_it
     rt_int32_t fcase;
     rt_err_t res;
     rt_int32_t hdr, fbase, foff;
+    rt_uint32_t ID[2];
+    rt_uint32_t shift;
+    rt_uint32_t thisid;
+    rt_uint32_t thismask;
+    CAN_FilterInitTypeDef  CAN_FilterInitStructure;
+    CAN_FilterRegister_TypeDef *pfilterreg;
 
     fcase = (pitem->mode | (pitem->ide << 1));
     hdr = bxcanfindfilter(pbxcan, pitem, fcase, &fbase, &foff);
@@ -894,14 +901,9 @@ static rt_err_t bxmodifyfilter(struct stm_bxcan *pbxcan, struct rt_can_filter_it
             return RT_EBUSY;
         }
     }
-    rt_uint32_t ID[2];
-    rt_uint32_t shift;
-    rt_uint32_t thisid;
-    rt_uint32_t thismask;
-    CAN_FilterInitTypeDef  CAN_FilterInitStructure;
 
     pitem->hdr =  hdr;
-    CAN_FilterRegister_TypeDef *pfilterreg = &((CAN_FilterRegister_TypeDef *)pbxcan->mfrbase)[fbase];
+    pfilterreg = &((CAN_FilterRegister_TypeDef *)pbxcan->mfrbase)[fbase];
     ID[0] = pfilterreg->FR1;
     ID[1] = pfilterreg->FR2;
     CAN_FilterInitStructure.CAN_FilterNumber = (pfilterreg - &CAN1->sFilterRegister[0]);
@@ -1152,7 +1154,6 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
         break;
     case RT_CAN_CMD_SET_FILTER:
         return setfilter(pbxcan, (struct rt_can_filter_config *) arg);
-        break;
     case RT_CAN_CMD_SET_MODE:
         argval = (rt_uint32_t) arg;
         if (argval != RT_CAN_MODE_NORMAL ||
@@ -1306,27 +1307,30 @@ static const struct rt_can_ops canops =
 #ifdef USING_BXCAN1
 static struct stm_bxcan bxcan1data =
 {
-    .reg = CAN1,
-    .mfrbase = (void *) &CAN1->sFilterRegister[0],
-    .sndirq = CAN1_TX_IRQn,
-    .rcvirq0 = CAN1_RX0_IRQn,
-    .rcvirq1 = CAN1_RX1_IRQn,
-    .errirq =  CAN1_SCE_IRQn,
-    .alocmask = {0, 0},
-    .filtercnt = BX_CAN2_FMRSTART,
-    .fifo1filteroff = 7,
-    .filtermap = {
-        [0] = {
-            .id32mask_cnt = 0,
-            .id32bit_cnt = 0,
-            .id16mask_cnt = 2,
-            .id16bit_cnt = 24,
+    CAN1,
+    (void *) &CAN1->sFilterRegister[0],
+    CAN1_TX_IRQn,
+    CAN1_RX0_IRQn,
+    CAN1_RX1_IRQn,
+    CAN1_SCE_IRQn,
+    {
+        0,
+    },
+    {0, 0},
+    BX_CAN2_FMRSTART,
+    7,
+    {
+        {
+            0,
+            0,
+            2,
+            24,
         },
-        [1] = {
-            .id32mask_cnt = 0,
-            .id32bit_cnt = 0,
-            .id16mask_cnt = 2,
-            .id16bit_cnt = 24,
+        {
+            0,
+            0,
+            2,
+            24,
         },
     },
 };
@@ -1444,27 +1448,30 @@ void CAN1_SCE_IRQHandler(void)
 #ifdef USING_BXCAN2
 static struct stm_bxcan bxcan2data =
 {
-    .reg = CAN2,
-    .mfrbase = (void *) &CAN1->sFilterRegister[BX_CAN2_FMRSTART],
-    .sndirq = CAN2_TX_IRQn,
-    .rcvirq0 = CAN2_RX0_IRQn,
-    .rcvirq1 = CAN2_RX1_IRQn,
-    .errirq =  CAN2_SCE_IRQn,
-    .alocmask = {0, 0},
-    .filtercnt = BX_CAN_FMRNUMBER - BX_CAN2_FMRSTART,
-    .fifo1filteroff = 7,
-    .filtermap = {
-        [0] = {
-            .id32mask_cnt = 0,
-            .id32bit_cnt = 0,
-            .id16mask_cnt = 2,
-            .id16bit_cnt = 24,
+    CAN2,
+    (void *) &CAN1->sFilterRegister[BX_CAN2_FMRSTART],
+    CAN2_TX_IRQn,
+    CAN2_RX0_IRQn,
+    CAN2_RX1_IRQn,
+    CAN2_SCE_IRQn,
+    {
+        0,
+    }
+    {0, 0},
+    BX_CAN_FMRNUMBER - BX_CAN2_FMRSTART,
+    7,
+    {
+        {
+            0,
+            0,
+            2,
+            24,
         },
-        [1] = {
-            .id32mask_cnt = 0,
-            .id32bit_cnt = 0,
-            .id16mask_cnt = 2,
-            .id16bit_cnt = 24,
+        {
+            0,
+            0,
+            2,
+            24,
         },
     },
 };
