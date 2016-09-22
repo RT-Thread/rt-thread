@@ -83,6 +83,7 @@ INIT_BOARD_EXPORT(rt_hw_timer_init);
 void rt_hw_board_init()
 {
     rt_components_board_init();
+    rt_hw_uart_init();
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 }
 
