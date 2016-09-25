@@ -61,7 +61,7 @@ extern void (*rt_object_put_hook)(struct rt_object *object);
  * @addtogroup IPC
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * This function will initialize an IPC object
@@ -2281,4 +2281,4 @@ rt_err_t rt_mq_control(rt_mq_t mq, rt_uint8_t cmd, void *arg)
 RTM_EXPORT(rt_mq_control);
 #endif /* end of RT_USING_MESSAGEQUEUE */
 
-/*@}*/
+/**@}*/

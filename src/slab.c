@@ -81,7 +81,7 @@ static void (*rt_free_hook)(void *ptr);
  * @addtogroup Hook
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * This function will set a hook function, which will be invoked when a memory
@@ -107,7 +107,7 @@ void rt_free_sethook(void (*hook)(void *ptr))
 }
 RTM_EXPORT(rt_free_sethook);
 
-/*@}*/
+/**@}*/
 
 #endif
 
@@ -472,7 +472,7 @@ rt_inline int zoneindex(rt_uint32_t *bytes)
  * @addtogroup MM
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * This function will allocate a block from system heap memory.
@@ -963,6 +963,6 @@ FINSH_FUNCTION_EXPORT(list_mem, list memory usage information)
 #endif
 #endif
 
-/*@}*/
+/**@}*/
 
 #endif

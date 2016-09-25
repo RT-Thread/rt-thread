@@ -43,7 +43,7 @@ static void (*rt_mp_free_hook)(struct rt_mempool *mp, void *block);
  * @addtogroup Hook
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * This function will set a hook function, which will be invoked when a memory
@@ -67,14 +67,14 @@ void rt_mp_free_sethook(void (*hook)(struct rt_mempool *mp, void *block))
     rt_mp_free_hook = hook;
 }
 
-/*@}*/
+/**@}*/
 #endif
 
 /**
  * @addtogroup MM
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * This function will initialize a memory pool object, normally which is used
@@ -465,7 +465,7 @@ void rt_mp_free(void *block)
 }
 RTM_EXPORT(rt_mp_free);
 
-/*@}*/
+/**@}*/
 
 #endif
 
