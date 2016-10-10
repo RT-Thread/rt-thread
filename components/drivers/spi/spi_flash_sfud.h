@@ -1,5 +1,5 @@
 /*
- * File      : spi_flash.h
+ * File      : spi_flash_sfud.h
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2016, RT-Thread Development Team
  *
@@ -19,21 +19,32 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2016/5/20      bernard      the first version
+ * 2016-09-28     armink       first version.
  */
 
-#ifndef SPI_FLASH_H__
-#define SPI_FLASH_H__
+#ifndef _SPI_FLASH_SFUD_H_
+#define _SPI_FLASH_SFUD_H_
 
-struct spi_flash_device
-{
-    struct rt_device                flash_device;
-    struct rt_device_blk_geometry   geometry;
-    struct rt_spi_device *          rt_spi_device;
-    struct rt_mutex                 lock;
-    void *                          user_data;
-};
+#include <rtthread.h>
+#include "./sfud/inc/sfud.h"
 
-typedef struct spi_flash_device *rt_spi_flash_device_t;
+/**
+ * Probe SPI flash by SFUD(Serial Flash Universal Driver) driver library and though SPI device.
+ *
+ * @param spi_flash_dev_name the name which will create SPI flash device
+ * @param spi_dev_name using SPI device name
+ *
+ * @return probed SPI flash device, probe failed will return RT_NULL
+ */
+rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const char *spi_dev_name);
 
-#endif
+/**
+ * Delete SPI flash device
+ *
+ * @param spi_flash_dev SPI flash device
+ *
+ * @return the operation status, RT_EOK on successful
+ */
+rt_err_t rt_sfud_flash_delete(rt_spi_flash_device_t spi_flash_dev);
+
+#endif /* _SPI_FLASH_SFUD_H_ */
