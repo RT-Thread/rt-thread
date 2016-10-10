@@ -52,27 +52,11 @@
 #define SFUD_USING_FLASH_INFO_TABLE
 #endif
 
-/**
- * User defined flash device table.
- * e.g.
- * enum {
- *     SFUD_W25Q64_DEVICE_INDEX = 0,
- *     SFUD_SST25VF016B_DEVICE_INDEX = 1,
- * };
- * #define RT_SFUD_FLASH_DEVICE_TABLE                                                  \
- * {                                                                                   \
- *     [SFUD_W25Q64_DEVICE_INDEX] = {.name = "W25Q64", .spi.name = "spi10"},           \
- *     [SFUD_SST25VF016B_DEVICE_INDEX] = {.name = "SST25VF016B", .spi.name = "spi30"}, \
- * }
- */
-#ifndef RT_SFUD_FLASH_DEVICE_TABLE
-#error "Please configure the flash device information table in (in rtconfig.h)."
-#else
-#define SFUD_FLASH_DEVICE_TABLE RT_SFUD_FLASH_DEVICE_TABLE
-#endif
 
 #if !defined(RT_SFUD_USING_SFDP) && !defined(RT_SFUD_USING_FLASH_INFO_TABLE)
 #error "Please configure RT_SFUD_USING_SFDP or RT_SFUD_USING_FLASH_INFO_TABLE at least one kind of mode (in rtconfig.h)."
 #endif
+
+#define SFUD_FLASH_DEVICE_TABLE NULL
 
 #endif /* _SFUD_CFG_H_ */

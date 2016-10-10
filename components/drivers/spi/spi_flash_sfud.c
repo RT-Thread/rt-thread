@@ -30,9 +30,9 @@
 #ifdef RT_USING_SFUD
 
 #if RT_DEBUG_SFUD
-#define SFUD_TRACE         rt_kprintf
+#define DEBUG_TRACE         rt_kprintf("[SFUD] "); rt_kprintf
 #else
-#define SFUD_TRACE(...)
+#define DEBUG_TRACE(...)
 #endif /* RT_DEBUG_SFUD */
 
 #ifndef RT_SFUD_DEFAULT_SPI_CFG
@@ -231,64 +231,118 @@ sfud_err sfud_spi_port_init(sfud_flash *flash) {
 }
 
 /**
- * SPI Flash device initialize by SFUD(Serial Flash Universal Driver) library
+ * Probe SPI flash by SFUD(Serial Flash Universal Driver) driver library and though SPI device.
  *
- * @param rtt_dev the static RT-Thread's flash device object
- * @param sfud_dev the static SFUD's flash device object
+ * @param spi_flash_dev_name the name which will create SPI flash device
+ * @param spi_dev_name using SPI device name
  *
- * @return result
+ * @return probed SPI flash device, probe failed will return RT_NULL
  */
-rt_err_t rt_sfud_init(struct spi_flash_device *rtt_dev, sfud_flash *sfud_dev) {
+rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const char *spi_dev_name) {
+    rt_spi_flash_device_t rtt_dev = RT_NULL;
+    sfud_flash *sfud_dev = RT_NULL;
+    char *spi_flash_dev_name_bak = RT_NULL, *spi_dev_name_bak = RT_NULL;
     extern sfud_err sfud_device_init(sfud_flash *flash);
 
-    RT_ASSERT(rtt_dev);
-    RT_ASSERT(sfud_dev);
+    RT_ASSERT(spi_flash_dev_name);
+    RT_ASSERT(spi_dev_name);
 
-    rt_memset(rtt_dev, 0, sizeof(struct spi_flash_device));
+    rtt_dev = (rt_spi_flash_device_t) rt_malloc(sizeof(struct spi_flash_device));
+    sfud_dev = (sfud_flash_t) rt_malloc(sizeof(sfud_flash));
+    spi_flash_dev_name_bak = (char *) rt_malloc(rt_strlen(spi_flash_dev_name) + 1);
+    spi_dev_name_bak = (char *) rt_malloc(rt_strlen(spi_dev_name) + 1);
 
-    /* SPI configure */
-    {
-        /* RT-Thread SPI device initialize */
-        rtt_dev->rt_spi_device = (struct rt_spi_device *) rt_device_find(sfud_dev->spi.name);
-        if (rtt_dev->rt_spi_device == RT_NULL) {
-            SFUD_TRACE("spi device %s not found!\r\n", sfud_dev->spi.name);
-            return -RT_ENOSYS;
+    if (rtt_dev && sfud_dev && spi_flash_dev_name_bak && spi_dev_name_bak) {
+        rt_memset(rtt_dev, 0, sizeof(struct spi_flash_device));
+        rt_memset(sfud_dev, 0, sizeof(sfud_flash));
+        rt_strncpy(spi_flash_dev_name_bak, spi_flash_dev_name, rt_strlen(spi_flash_dev_name));
+        rt_strncpy(spi_dev_name_bak, spi_dev_name, rt_strlen(spi_dev_name));
+        /* make string end sign */
+        spi_flash_dev_name_bak[rt_strlen(spi_flash_dev_name)] = '\0';
+        spi_dev_name_bak[rt_strlen(spi_dev_name)] = '\0';
+        /* SPI configure */
+        {
+            /* RT-Thread SPI device initialize */
+            rtt_dev->rt_spi_device = (struct rt_spi_device *) rt_device_find(spi_dev_name);
+            if (rtt_dev->rt_spi_device == RT_NULL) {
+                rt_kprintf("ERROR: SPI device %s not found!\n", spi_dev_name);
+                goto error;
+            }
+            sfud_dev->spi.name = spi_dev_name_bak;
+            /* using default flash SPI configuration for initialize SPI Flash
+             * @note you also can change the SPI to other configuration after initialized finish */
+            struct rt_spi_configuration cfg = RT_SFUD_DEFAULT_SPI_CFG;
+            rt_spi_configure(rtt_dev->rt_spi_device, &cfg);
+            /* initialize lock */
+            rt_mutex_init(&(rtt_dev->lock), spi_flash_dev_name, RT_IPC_FLAG_FIFO);
         }
-        /* using default flash SPI configuration for initialize SPI Flash
-         * @note you also can change the SPI to other configuration after initialized finish */
-        struct rt_spi_configuration cfg = RT_SFUD_DEFAULT_SPI_CFG;
-        rt_spi_configure(rtt_dev->rt_spi_device, &cfg);
-        /* initialize lock */
-        rt_mutex_init(&(rtt_dev->lock), sfud_dev->name, RT_IPC_FLAG_FIFO);
+        /* SFUD flash device initialize */
+        {
+            sfud_dev->name = spi_flash_dev_name_bak;
+            /* accessed each other */
+            rtt_dev->user_data = sfud_dev;
+            rtt_dev->flash_device.user_data = rtt_dev;
+            sfud_dev->user_data = rtt_dev;
+            /* initialize SFUD device */
+            if (sfud_device_init(sfud_dev) != SFUD_SUCCESS) {
+                rt_kprintf("ERROR: SPI flash probe failed by SPI device %s.\n", spi_dev_name);
+                goto error;
+            }
+            /* when initialize success, then copy SFUD flash device's geometry to RT-Thread SPI flash device */
+            rtt_dev->geometry.sector_count = sfud_dev->chip.capacity / sfud_dev->chip.erase_gran;
+            rtt_dev->geometry.bytes_per_sector = sfud_dev->chip.erase_gran;
+            rtt_dev->geometry.block_size = sfud_dev->chip.erase_gran;
+        }
+
+        /* register device */
+        rtt_dev->flash_device.type = RT_Device_Class_Block;
+        rtt_dev->flash_device.init = RT_NULL;
+        rtt_dev->flash_device.open = RT_NULL;
+        rtt_dev->flash_device.close = RT_NULL;
+        rtt_dev->flash_device.read = rt_sfud_read;
+        rtt_dev->flash_device.write = rt_sfud_write;
+        rtt_dev->flash_device.control = rt_sfud_control;
+
+        rt_device_register(&(rtt_dev->flash_device), spi_flash_dev_name, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STANDALONE);
+
+        DEBUG_TRACE("Probe SPI flash %s by SPI device %s success.\n",spi_flash_dev_name, spi_dev_name);
+        return rtt_dev;
+    } else {
+        rt_kprintf("ERROR: Low memory.\n");
+        goto error;
     }
 
+error:
+    /* may be one of objects memory was malloc success, so need free all */
+    rt_free(rtt_dev);
+    rt_free(sfud_dev);
+    rt_free(spi_flash_dev_name_bak);
+    rt_free(spi_dev_name_bak);
 
-    /* SFUD flash device initialize */
-    {
-        /* accessed each other */
-        rtt_dev->user_data = sfud_dev;
-        rtt_dev->flash_device.user_data = rtt_dev;
-        sfud_dev->user_data = rtt_dev;
-        /* initialize SFUD device */
-        if (sfud_device_init(sfud_dev) != SFUD_SUCCESS) {
-            return -RT_EIO;
-        }
-        /* when initialize success, then copy SFUD flash device's geometry to RT-Thread SPI flash device */
-        rtt_dev->geometry.sector_count = sfud_dev->chip.capacity / sfud_dev->chip.erase_gran;
-        rtt_dev->geometry.bytes_per_sector = sfud_dev->chip.erase_gran;
-        rtt_dev->geometry.block_size = sfud_dev->chip.erase_gran;
-    }
+    return RT_NULL;
+}
 
-    /* register device */
-    rtt_dev->flash_device.type      = RT_Device_Class_Block;
-    rtt_dev->flash_device.init      = RT_NULL;
-    rtt_dev->flash_device.open      = RT_NULL;
-    rtt_dev->flash_device.close     = RT_NULL;
-    rtt_dev->flash_device.read      = rt_sfud_read;
-    rtt_dev->flash_device.write     = rt_sfud_write;
-    rtt_dev->flash_device.control   = rt_sfud_control;
+/**
+ * Delete SPI flash device
+ *
+ * @param spi_flash_dev SPI flash device
+ *
+ * @return the operation status, RT_EOK on successful
+ */
+rt_err_t rt_sfud_flash_delete(rt_spi_flash_device_t spi_flash_dev) {
+    sfud_flash *sfud_flash_dev = (sfud_flash *) (spi_flash_dev->user_data);
 
-    rt_device_register(&(rtt_dev->flash_device), sfud_dev->name, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STANDALONE);
+    RT_ASSERT(spi_flash_dev);
+    RT_ASSERT(sfud_flash_dev);
+
+    rt_device_unregister(&(spi_flash_dev->flash_device));
+
+    rt_mutex_detach(&(spi_flash_dev->lock));
+
+    rt_free(sfud_flash_dev->spi.name);
+    rt_free(sfud_flash_dev->name);
+    rt_free(sfud_flash_dev);
+    rt_free(spi_flash_dev);
 
     return RT_EOK;
 }
@@ -307,16 +361,17 @@ static void sf(uint8_t argc, char **argv) {
 #define CMD_BENCH_INDEX               5
 
     sfud_err result = SFUD_SUCCESS;
-    const static sfud_flash *flash = NULL;
+    static const sfud_flash *sfud_dev = NULL;
+    static rt_spi_flash_device_t rtt_dev = NULL, rtt_dev_bak = NULL;
     size_t i = 0;
 
     const char* sf_help_info[] = {
-            [CMD_SETECT_INDEX]    = "sf select [index]               - select a flash chip with device's index",
+            [CMD_SETECT_INDEX]    = "sf probe [spi_device]           - probe and init SPI flash by given 'spi_device'",
             [CMD_READ_INDEX]      = "sf read addr size               - read 'size' bytes starting at 'addr'",
             [CMD_WRITE_INDEX]     = "sf write addr data1 ... dataN   - write some bytes 'data' to flash starting at 'addr'",
             [CMD_ERASE_INDEX]     = "sf erase addr size              - erase 'size' bytes starting at 'addr'",
             [CMD_RW_STATUS_INDEX] = "sf status [<volatile> <status>] - read or write '1:volatile|0:non-volatile' 'status'",
-            [CMD_BENCH_INDEX]     = "sf bench                        - full chip benchmark. DANGER: it will erase full chip!",
+            [CMD_BENCH_INDEX]     = "sf bench                        - full chip benchmark. DANGER: It will erase full chip!",
     };
 
     if (argc < 2) {
@@ -329,48 +384,31 @@ static void sf(uint8_t argc, char **argv) {
         const char *operator = argv[1];
         uint32_t addr, size;
 
-        if (!strcmp(operator, "select")) {
+        if (!strcmp(operator, "probe")) {
             if (argc < 3) {
                 rt_kprintf("Usage: %s.\n", sf_help_info[CMD_SETECT_INDEX]);
-                if (sfud_get_device_num() > 0) {
-                    for (i = 0; i < sfud_get_device_num(); i++) {
-                        if (sfud_get_device(i)->init_ok) {
-                            rt_kprintf("The index %d flash device name is %s, ", i, sfud_get_device(i)->name);
-                            if (sfud_get_device(i)->chip.capacity < 1024 * 1024) {
-                                rt_kprintf("total is %d KB", sfud_get_device(i)->chip.capacity / 1024);
-                            } else {
-                                rt_kprintf("total is %d MB", sfud_get_device(i)->chip.capacity / 1024 / 1024);
-                            }
-                            if (sfud_get_device(i)->chip.name != NULL) {
-                                rt_kprintf(", type is %s", sfud_get_device(i)->chip.name);
-                            }
-                            rt_kprintf(".\n");
-                        }
-                    }
-                } else {
-                    rt_kprintf("There is no flash device in device table.\n");
-                }
             } else {
-                size_t device_index = atol(argv[2]);
-                if (device_index >= sfud_get_device_num()) {
-                    rt_kprintf("Flash device index out bound[0:%d].\n", sfud_get_device_num() - 1);
+                char *spi_dev_name = argv[2];
+                rtt_dev_bak = rtt_dev;
+                rtt_dev = rt_sfud_flash_probe("sf_cmd", spi_dev_name);
+                if (!rtt_dev) {
                     return;
                 }
-                if (!sfud_get_device(device_index)->init_ok) {
-                    rt_kprintf("Flash %s isn't initialize OK.\n", sfud_get_device(device_index)->name);
-                    return;
+                /* already probe then delete the old SPI flash device */
+                if(rtt_dev_bak) {
+                    rt_sfud_flash_delete(rtt_dev_bak);
                 }
-                flash = sfud_get_device(device_index);
-                if (flash->chip.capacity < 1024 * 1024) {
-                    rt_kprintf("%d KB %s is current selected device.\n", flash->chip.capacity / 1024, flash->name);
+                sfud_dev = (sfud_flash_t)rtt_dev->user_data;
+                if (sfud_dev->chip.capacity < 1024 * 1024) {
+                    rt_kprintf("%d KB %s is current selected device.\n", sfud_dev->chip.capacity / 1024, sfud_dev->name);
                 } else {
-                    rt_kprintf("%d MB %s is current selected device.\n", flash->chip.capacity / 1024 / 1024,
-                            flash->name);
+                    rt_kprintf("%d MB %s is current selected device.\n", sfud_dev->chip.capacity / 1024 / 1024,
+                            sfud_dev->name);
                 }
             }
         } else {
-            if (!flash) {
-                rt_kprintf("No flash device selected. Please run 'sf select'.\n");
+            if (!sfud_dev) {
+                rt_kprintf("No flash device selected. Please run 'sf probe'.\n");
                 return;
             }
             if (!rt_strcmp(operator, "read")) {
@@ -382,10 +420,10 @@ static void sf(uint8_t argc, char **argv) {
                     size = atol(argv[3]);
                     uint8_t *data = rt_malloc(size);
                     if (data) {
-                        result = sfud_read(flash, addr, size, data);
+                        result = sfud_read(sfud_dev, addr, size, data);
                         if (result == SFUD_SUCCESS) {
                             rt_kprintf("Read the %s flash data success. Start from 0x%08X, size is %ld. The data is:\n",
-                                    flash->name, addr, size);
+                                    sfud_dev->name, addr, size);
                             rt_kprintf("Offset (h) 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F\n");
                             for (i = 0; i < size; i++) {
                                 if (i % 16 == 0) {
@@ -415,10 +453,10 @@ static void sf(uint8_t argc, char **argv) {
                         for (i = 0; i < size; i++) {
                             data[i] = atoi(argv[3 + i]);
                         }
-                        result = sfud_write(flash, addr, size, data);
+                        result = sfud_write(sfud_dev, addr, size, data);
                         if (result == SFUD_SUCCESS) {
                             rt_kprintf("Write the %s flash data success. Start from 0x%08X, size is %ld.\n",
-                                    flash->name, addr, size);
+                                    sfud_dev->name, addr, size);
                             rt_kprintf("Write data: ");
                             for (i = 0; i < size; i++) {
                                 rt_kprintf("%d ", data[i]);
@@ -437,34 +475,38 @@ static void sf(uint8_t argc, char **argv) {
                 } else {
                     addr = atol(argv[2]);
                     size = atol(argv[3]);
-                    result = sfud_erase(flash, addr, size);
+                    result = sfud_erase(sfud_dev, addr, size);
                     if (result == SFUD_SUCCESS) {
-                        rt_kprintf("Erase the %s flash data success. Start from 0x%08X, size is %ld.\n", flash->name,
+                        rt_kprintf("Erase the %s flash data success. Start from 0x%08X, size is %ld.\n", sfud_dev->name,
                                 addr, size);
                     }
                 }
             } else if (!rt_strcmp(operator, "status")) {
                 if (argc < 3) {
                     uint8_t status;
-                    result = sfud_read_status(flash, &status);
+                    result = sfud_read_status(sfud_dev, &status);
                     if (result == SFUD_SUCCESS) {
-                        rt_kprintf("The %s flash status register current value is 0x%02X.\n", flash->name, status);
+                        rt_kprintf("The %s flash status register current value is 0x%02X.\n", sfud_dev->name, status);
                     }
                 } else if (argc == 4) {
                     bool is_volatile = atoi(argv[2]);
                     uint8_t status = atoi(argv[3]);
-                    result = sfud_write_status(flash, is_volatile, status);
+                    result = sfud_write_status(sfud_dev, is_volatile, status);
                     if (result == SFUD_SUCCESS) {
-                        rt_kprintf("Write the %s flash status register to 0x%02X success.\n", flash->name, status);
+                        rt_kprintf("Write the %s flash status register to 0x%02X success.\n", sfud_dev->name, status);
                     }
                 } else {
                     rt_kprintf("Usage: %s.\n", sf_help_info[CMD_RW_STATUS_INDEX]);
                     return;
                 }
             } else if (!rt_strcmp(operator, "bench")) {
+                if ((argc > 2 && rt_strcmp(argv[2], "yes")) || argc < 3) {
+                    rt_kprintf("DANGER: It will erase full chip! Please run 'sf bench yes'.");
+                    return;
+                }
                 /* full chip benchmark test */
                 addr = 0;
-                size = flash->chip.capacity;
+                size = sfud_dev->chip.capacity;
                 uint32_t start_time, time_cast;
                 rt_uint32_t total_mem, used_mem, max_uesd_mem;
                 rt_memory_info(&total_mem, &used_mem, &max_uesd_mem);
@@ -479,9 +521,9 @@ static void sf(uint8_t argc, char **argv) {
                 if (write_data && read_data) {
                     rt_memset(write_data, 0x55, write_size);
                     /* benchmark testing */
-                    rt_kprintf("Erasing the %s %ld bytes data, waiting...\n", flash->name, size);
+                    rt_kprintf("Erasing the %s %ld bytes data, waiting...\n", sfud_dev->name, size);
                     start_time = rt_tick_get();
-                    result = sfud_erase(flash, addr, size);
+                    result = sfud_erase(sfud_dev, addr, size);
                     if (result == SFUD_SUCCESS) {
                         time_cast = rt_tick_get() - start_time;
                         rt_kprintf("Erase benchmark success, total time: %d.%03dS.\n", time_cast / RT_TICK_PER_SECOND,
@@ -490,10 +532,10 @@ static void sf(uint8_t argc, char **argv) {
                         rt_kprintf("Erase benchmark has an error. Error code: %d.\n", result);
                     }
                     /* write test */
-                    rt_kprintf("Writing the %s %ld bytes data, waiting...\n", flash->name, size);
+                    rt_kprintf("Writing the %s %ld bytes data, waiting...\n", sfud_dev->name, size);
                     start_time = rt_tick_get();
                     for (i = 0; i < size; i += write_size) {
-                        result = sfud_write(flash, addr + i, write_size, write_data);
+                        result = sfud_write(sfud_dev, addr + i, write_size, write_data);
                         if (result != SFUD_SUCCESS) {
                             break;
                         }
@@ -506,13 +548,13 @@ static void sf(uint8_t argc, char **argv) {
                         rt_kprintf("Write benchmark has an error. Error code: %d.\n", result);
                     }
                     /* read test */
-                    rt_kprintf("Reading the %s %ld bytes data, waiting...\n", flash->name, size);
+                    rt_kprintf("Reading the %s %ld bytes data, waiting...\n", sfud_dev->name, size);
                     start_time = rt_tick_get();
                     for (i = 0; i < size; i += read_size) {
                         if (i + read_size <= size) {
-                            result = sfud_read(flash, addr + i, read_size, read_data);
+                            result = sfud_read(sfud_dev, addr + i, read_size, read_data);
                         } else {
-                            result = sfud_read(flash, addr + i, size - i, read_data);
+                            result = sfud_read(sfud_dev, addr + i, size - i, read_data);
                         }
                         if (result != SFUD_SUCCESS) {
                             break;

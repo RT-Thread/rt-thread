@@ -29,13 +29,22 @@
 #include "./sfud/inc/sfud.h"
 
 /**
- * SPI Flash device initialize by SFUD(Serial Flash Universal Driver) library
+ * Probe SPI flash by SFUD(Serial Flash Universal Driver) driver library and though SPI device.
  *
- * @param rtt_dev the static RT-Thread's flash device object
- * @param sfud_dev the static SFUD's flash device object
+ * @param spi_flash_dev_name the name which will create SPI flash device
+ * @param spi_dev_name using SPI device name
  *
- * @return result
+ * @return probed SPI flash device, probe failed will return RT_NULL
  */
-extern rt_err_t rt_sfud_init(struct spi_flash_device *rtt_flash, sfud_flash *sfud_flash);
+rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const char *spi_dev_name);
+
+/**
+ * Delete SPI flash device
+ *
+ * @param spi_flash_dev SPI flash device
+ *
+ * @return the operation status, RT_EOK on successful
+ */
+rt_err_t rt_sfud_flash_delete(rt_spi_flash_device_t spi_flash_dev);
 
 #endif /* _SPI_FLASH_SFUD_H_ */
