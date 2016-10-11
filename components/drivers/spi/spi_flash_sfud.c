@@ -501,7 +501,7 @@ static void sf(uint8_t argc, char **argv) {
                 }
             } else if (!rt_strcmp(operator, "bench")) {
                 if ((argc > 2 && rt_strcmp(argv[2], "yes")) || argc < 3) {
-                    rt_kprintf("DANGER: It will erase full chip! Please run 'sf bench yes'.");
+                    rt_kprintf("DANGER: It will erase full chip! Please run 'sf bench yes'.\n");
                     return;
                 }
                 /* full chip benchmark test */
