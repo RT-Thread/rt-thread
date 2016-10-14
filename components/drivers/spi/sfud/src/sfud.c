@@ -354,7 +354,7 @@ sfud_err sfud_chip_erase(const sfud_flash *flash) {
     /* set the flash write enable */
     result = set_write_enabled(flash, true);
     if (result != SFUD_SUCCESS) {
-        goto exit;
+        goto __exit;
     }
 
     cmd_data[0] = SFUD_CMD_ERASE_CHIP;
@@ -369,11 +369,13 @@ sfud_err sfud_chip_erase(const sfud_flash *flash) {
     }
     if (result != SFUD_SUCCESS) {
         SFUD_INFO("Error: Flash chip erase SPI communicate error.");
-        goto exit;
+        goto __exit;
     }
     result = wait_busy(flash);
 
-exit:
+__exit:
+    /* set the flash write disable */
+    set_write_enabled(flash, false);
     /* unlock SPI */
     if (spi->unlock) {
         spi->unlock(spi);
@@ -438,7 +440,7 @@ sfud_err sfud_erase(const sfud_flash *flash, uint32_t addr, size_t size) {
         /* set the flash write enable */
         result = set_write_enabled(flash, true);
         if (result != SFUD_SUCCESS) {
-            break;
+            goto __exit;
         }
 
         cmd_data[0] = cur_erase_cmd;
@@ -447,11 +449,11 @@ sfud_err sfud_erase(const sfud_flash *flash, uint32_t addr, size_t size) {
         result = spi->wr(spi, cmd_data, cmd_size, NULL, 0);
         if (result != SFUD_SUCCESS) {
             SFUD_INFO("Error: Flash erase SPI communicate error.");
-            break;
+            goto __exit;
         }
         result = wait_busy(flash);
         if (result != SFUD_SUCCESS) {
-            break;
+            goto __exit;
         }
         /* make erase align and calculate next erase address */
         if (addr % cur_erase_size != 0) {
@@ -459,18 +461,21 @@ sfud_err sfud_erase(const sfud_flash *flash, uint32_t addr, size_t size) {
                 size -= cur_erase_size - (addr % cur_erase_size);
                 addr += cur_erase_size - (addr % cur_erase_size);
             } else {
-                break;
+                goto __exit;
             }
         } else {
             if (size > cur_erase_size) {
                 size -= cur_erase_size;
                 addr += cur_erase_size;
             } else {
-                break;
+                goto __exit;
             }
         }
     }
 
+__exit:
+    /* set the flash write disable */
+    set_write_enabled(flash, false);
     /* unlock SPI */
     if (spi->unlock) {
         spi->unlock(spi);
@@ -517,7 +522,7 @@ static sfud_err page256_or_1_byte_write(const sfud_flash *flash, uint32_t addr, 
         /* set the flash write enable */
         result = set_write_enabled(flash, true);
         if (result != SFUD_SUCCESS) {
-            break;
+            goto __exit;
         }
         cmd_data[0] = SFUD_CMD_PAGE_PROGRAM;
         make_adress_byte_array(flash, addr, &cmd_data[1]);
@@ -545,15 +550,18 @@ static sfud_err page256_or_1_byte_write(const sfud_flash *flash, uint32_t addr, 
         result = spi->wr(spi, cmd_data, cmd_size + data_size, NULL, 0);
         if (result != SFUD_SUCCESS) {
             SFUD_INFO("Error: Flash write SPI communicate error.");
-            break;
+            goto __exit;
         }
         result = wait_busy(flash);
         if (result != SFUD_SUCCESS) {
-            break;
+            goto __exit;
         }
         data += data_size;
     }
 
+__exit:
+    /* set the flash write disable */
+    set_write_enabled(flash, false);
     /* unlock SPI */
     if (spi->unlock) {
         spi->unlock(spi);
@@ -599,7 +607,7 @@ static sfud_err aai_write(const sfud_flash *flash, uint32_t addr, size_t size, c
     /* set the flash write enable */
     result = set_write_enabled(flash, true);
     if (result != SFUD_SUCCESS) {
-        goto exit;
+        goto __exit;
     }
     /* loop write operate. write unit is write granularity */
     cmd_data[0] = SFUD_CMD_AAI_WORD_PROGRAM;
@@ -632,21 +640,21 @@ static sfud_err aai_write(const sfud_flash *flash, uint32_t addr, size_t size, c
         result = spi->wr(spi, cmd_data, cmd_size + data_size, NULL, 0);
         if (result != SFUD_SUCCESS) {
             SFUD_INFO("Error: Flash write SPI communicate error.");
-            goto exit;
+            goto __exit;
         }
 
         result = wait_busy(flash);
         if (result != SFUD_SUCCESS) {
-            goto exit;
+            goto __exit;
         }
 
         size -= 2;
         data += data_size;
     }
-    /* set the flash write disable */
-    result = set_write_enabled(flash, false);
 
-    exit:
+__exit:
+    /* set the flash write disable for exist AAI mode */
+    set_write_enabled(flash, false);
     /* unlock SPI */
     if (spi->unlock) {
         spi->unlock(spi);

@@ -105,8 +105,6 @@ static bool read_sfdp_header(sfud_flash *flash) {
     uint32_t header_addr = 0;
     /* each parameter header being 2 DWORDs (64-bit) */
     uint8_t header[2 * 4] = { 0 };
-    /* number of parameter headers */
-    uint8_t npn = 0;
 
     SFUD_ASSERT(flash);
 
@@ -126,12 +124,12 @@ static bool read_sfdp_header(sfud_flash *flash) {
     }
     sfdp->minor_rev = header[4];
     sfdp->major_rev = header[5];
-    npn = header[6];
     if (sfdp->major_rev > SUPPORT_MAX_SFDP_MAJOR_REV) {
         SFUD_INFO("Error: This reversion(V%d.%d) SFDP is not supported.", sfdp->major_rev, sfdp->minor_rev);
         return false;
     }
-    SFUD_DEBUG("Check SFDP header is OK. The reversion is V%d.%d, NPN is %d.", sfdp->major_rev, sfdp->minor_rev, npn);
+    SFUD_DEBUG("Check SFDP header is OK. The reversion is V%d.%d, NPN is %d.", sfdp->major_rev, sfdp->minor_rev,
+            header[6]);
 
     return true;
 }
