@@ -264,7 +264,7 @@ rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const 
         {
             /* RT-Thread SPI device initialize */
             rtt_dev->rt_spi_device = (struct rt_spi_device *) rt_device_find(spi_dev_name);
-            if (rtt_dev->rt_spi_device == RT_NULL) {
+            if (rtt_dev->rt_spi_device == RT_NULL || rtt_dev->rt_spi_device->parent.type != RT_Device_Class_SPIDevice) {
                 rt_kprintf("ERROR: SPI device %s not found!\n", spi_dev_name);
                 goto error;
             }
