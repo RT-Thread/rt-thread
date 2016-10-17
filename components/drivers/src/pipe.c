@@ -134,7 +134,7 @@ static rt_size_t rt_pipe_write(rt_device_t dev,
     rt_uint32_t level;
     rt_thread_t thread;
     struct rt_pipe_device *pipe;
-    rt_size_t write_nbytes;
+    rt_size_t write_nbytes = 0;
 
     pipe = PIPE_DEVICE(dev);
     RT_ASSERT(pipe != RT_NULL);
@@ -165,8 +165,8 @@ static rt_size_t rt_pipe_write(rt_device_t dev,
 
     do {
         level = rt_hw_interrupt_disable();
-        write_nbytes = rt_ringbuffer_put(&(pipe->ringbuffer), buffer, size);
-        if (write_nbytes == 0)
+        write_nbytes += rt_ringbuffer_put(&(pipe->ringbuffer), (rt_uint8_t *)buffer + write_nbytes, size - write_nbytes);
+        if (size - write_nbytes > 0)
         {
             /* pipe full, waiting on suspended write list */
             rt_thread_suspend(thread);
@@ -183,7 +183,7 @@ static rt_size_t rt_pipe_write(rt_device_t dev,
             rt_hw_interrupt_enable(level);
             break;
         }
-    } while (write_nbytes == 0);
+    } while (size - write_nbytes > 0);
 
     return write_nbytes;
 }
