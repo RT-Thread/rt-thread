@@ -67,7 +67,6 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
                             rt_size_t data_size,
                             rt_int32_t timeout)
 {
-    rt_uint16_t mask;
     rt_ubase_t  level;
     rt_thread_t thread;
     rt_err_t    result;
@@ -76,7 +75,6 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
 
     result = RT_EOK;
     thread = rt_thread_self();
-    mask = queue->size - 1;
 
     level = rt_hw_interrupt_disable();
     while (queue->put_index - queue->get_index == queue->size)
@@ -126,8 +124,8 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
         }
     }
 
-    queue->queue[queue->put_index & mask].data_ptr  = data_ptr;
-    queue->queue[queue->put_index & mask].data_size = data_size;
+    queue->queue[queue->put_index % queue->size].data_ptr  = data_ptr;
+    queue->queue[queue->put_index % queue->size].data_size = data_size;
     queue->put_index += 1;
 
     if (!rt_list_isempty(&(queue->suspended_pop_list)))
@@ -168,7 +166,6 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
     rt_ubase_t  level;
     rt_thread_t thread;
     rt_err_t    result;
-    rt_uint16_t mask;
 
     RT_ASSERT(queue != RT_NULL);
     RT_ASSERT(data_ptr != RT_NULL);
@@ -176,7 +173,6 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
 
     result = RT_EOK;
     thread = rt_thread_self();
-    mask   = queue->size - 1;
 
     level = rt_hw_interrupt_disable();
     while (queue->get_index == queue->put_index)
@@ -220,8 +216,8 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
             goto __exit;
     }
 
-    *data_ptr = queue->queue[queue->get_index & mask].data_ptr;
-    *size     = queue->queue[queue->get_index & mask].data_size;
+    *data_ptr = queue->queue[queue->get_index % queue->size].data_ptr;
+    *size     = queue->queue[queue->get_index % queue->size].data_size;
 
     queue->get_index += 1;
 
@@ -271,11 +267,8 @@ rt_err_t rt_data_queue_peak(struct rt_data_queue *queue,
                             rt_size_t *size)
 {
     rt_ubase_t  level;
-    rt_uint16_t mask;
 
     RT_ASSERT(queue != RT_NULL);
-
-    mask = queue->size - 1;
 
     level = rt_hw_interrupt_disable();
 
@@ -286,8 +279,8 @@ rt_err_t rt_data_queue_peak(struct rt_data_queue *queue,
         return -RT_EEMPTY;
     }
 
-    *data_ptr = queue->queue[queue->get_index & mask].data_ptr;
-    *size     = queue->queue[queue->get_index & mask].data_size;
+    *data_ptr = queue->queue[queue->get_index % queue->size].data_ptr;
+    *size     = queue->queue[queue->get_index % queue->size].data_size;
 
     rt_hw_interrupt_enable(level);
 
