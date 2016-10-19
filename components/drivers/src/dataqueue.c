@@ -119,7 +119,11 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
         /* thread is waked up */
         result = thread->error;
         level = rt_hw_interrupt_disable();
-        if (result != RT_EOK) goto __exit;
+        if (result != RT_EOK)
+        {
+            queue->waiting_lwm = RT_FALSE;
+            goto __exit;
+        }
     }
 
     queue->queue[queue->put_index & mask].data_ptr  = data_ptr;
