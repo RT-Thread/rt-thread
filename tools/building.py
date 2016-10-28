@@ -279,7 +279,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     # we need to seperate the variant_dir for BSPs and the kernels. BSPs could
     # have their own components etc. If they point to the same folder, SCons
     # would find the wrong source code to compile.
-    bsp_vdir = 'build/bsp'
+    bsp_vdir = 'build'
     kernel_vdir = 'build/kernel'
     # board build script
     objs = SConscript('SConscript', variant_dir=bsp_vdir, duplicate=0)
@@ -357,6 +357,39 @@ def GetDepend(depend):
     for item in depend:
         if item != '':
             if not BuildOptions.has_key(item) or BuildOptions[item] == 0:
+                building = False
+
+    return building
+
+def LocalOptions(config_filename):
+    from SCons.Script import SCons
+
+    # parse wiced_config.h to get used component
+    PreProcessor = SCons.cpp.PreProcessor()
+
+    f = file(config_filename, 'r')
+    contents = f.read()
+    f.close()
+
+    PreProcessor.process_contents(contents)
+    local_options = PreProcessor.cpp_namespace
+
+    return local_options
+
+def GetLocalDepend(options, depend):
+    building = True
+    if type(depend) == type('str'):
+        if not options.has_key(depend) or options[depend] == 0:
+            building = False
+        elif options[depend] != '':
+            return options[depend]
+
+        return building
+
+    # for list type depend
+    for item in depend:
+        if item != '':
+            if not options.has_key(item) or options[item] == 0:
                 building = False
 
     return building
