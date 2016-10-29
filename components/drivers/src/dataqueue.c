@@ -117,11 +117,7 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
         /* thread is waked up */
         result = thread->error;
         level = rt_hw_interrupt_disable();
-        if (result != RT_EOK)
-        {
-            queue->waiting_lwm = RT_FALSE;
-            goto __exit;
-        }
+        if (result != RT_EOK) goto __exit;
     }
 
     queue->queue[queue->put_index % queue->size].data_ptr  = data_ptr;
@@ -243,6 +239,10 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
 
             /* perform a schedule */
             rt_schedule();
+        }
+        else
+        {
+            rt_hw_interrupt_enable(level);
         }
 
         if (queue->evt_notify != RT_NULL)
