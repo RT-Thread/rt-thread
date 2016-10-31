@@ -20,6 +20,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2012-09-30     Bernard      first version.
+ * 2016-10-31     armink       fix some resume push and pop thread bugs
  */
 
 #include <rtthread.h>
@@ -220,8 +221,6 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
     if ((queue->waiting_lwm == RT_TRUE) && 
         (queue->put_index - queue->get_index) <= queue->lwm)
     {
-        queue->waiting_lwm = RT_FALSE;
-
         /*
          * there is at least one thread in suspended list
          * and less than low water mark
@@ -242,6 +241,7 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
         }
         else
         {
+            queue->waiting_lwm = RT_FALSE;
             rt_hw_interrupt_enable(level);
         }
 
