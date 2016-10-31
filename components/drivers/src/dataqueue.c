@@ -45,7 +45,6 @@ rt_data_queue_init(struct rt_data_queue *queue,
 
     queue->size = size;
     queue->lwm = lwm;
-    queue->waiting_lwm = RT_FALSE;
 
     queue->get_index = 0;
     queue->put_index = 0;
@@ -80,8 +79,6 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
     level = rt_hw_interrupt_disable();
     while (queue->put_index - queue->get_index == queue->size)
     {
-        queue->waiting_lwm = RT_TRUE;
-
         /* queue is full */
         if (timeout == 0)
         {
@@ -218,8 +215,7 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
 
     queue->get_index += 1;
 
-    if ((queue->waiting_lwm == RT_TRUE) && 
-        (queue->put_index - queue->get_index) <= queue->lwm)
+    if ((queue->put_index - queue->get_index) <= queue->lwm)
     {
         /*
          * there is at least one thread in suspended list
@@ -241,7 +237,6 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
         }
         else
         {
-            queue->waiting_lwm = RT_FALSE;
             rt_hw_interrupt_enable(level);
         }
 
