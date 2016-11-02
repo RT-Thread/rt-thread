@@ -122,10 +122,9 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
     queue->queue[queue->put_index % queue->size].data_size = data_size;
     queue->put_index += 1;
 
+    /* there is at least one thread in suspended list */
     if (!rt_list_isempty(&(queue->suspended_pop_list)))
     {
-        /* there is at least one thread in suspended list */
-
         /* get thread entry */
         thread = rt_list_entry(queue->suspended_pop_list.next,
                                struct rt_thread,
@@ -217,10 +216,7 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
 
     if ((queue->put_index - queue->get_index) <= queue->lwm)
     {
-        /*
-         * there is at least one thread in suspended list
-         * and less than low water mark
-         */
+        /* there is at least one thread in suspended list */
         if (!rt_list_isempty(&(queue->suspended_push_list)))
         {
             /* get thread entry */
