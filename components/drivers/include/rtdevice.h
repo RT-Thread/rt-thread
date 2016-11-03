@@ -134,7 +134,6 @@ struct rt_data_queue
 {
     rt_uint16_t size;
     rt_uint16_t lwm;
-    rt_bool_t   waiting_lwm;
 
     rt_uint16_t get_index;
     rt_uint16_t put_index;
