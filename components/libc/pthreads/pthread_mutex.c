@@ -232,6 +232,7 @@ RTM_EXPORT(pthread_mutex_unlock);
 int pthread_mutex_trylock(pthread_mutex_t *mutex)
 {
     rt_err_t result;
+    int mtype;
 
     if (!mutex)
         return EINVAL;
@@ -241,11 +242,20 @@ int pthread_mutex_trylock(pthread_mutex_t *mutex)
         pthread_mutex_init(mutex, RT_NULL);
     }
 
+    mtype = mutex->attr & MUTEXATTR_TYPE_MASK;
+    rt_enter_critical();
+    if (mutex->lock.owner == rt_thread_self() &&
+        mtype != PTHREAD_MUTEX_RECURSIVE)
+    {
+        rt_exit_critical();
+
+        return EDEADLK;
+    }
+    rt_exit_critical();
+
     result = rt_mutex_take(&(mutex->lock), 0);
-    if (result == RT_EOK)
-        return 0;
+    if (result == RT_EOK) return 0;
 
     return EBUSY;
 }
 RTM_EXPORT(pthread_mutex_trylock);
-
