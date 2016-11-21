@@ -31,6 +31,9 @@ struct spi_flash_device
     struct rt_device_blk_geometry   geometry;
     struct rt_spi_device *          rt_spi_device;
     struct rt_mutex                 lock;
+    void *                          user_data;
 };
+
+typedef struct spi_flash_device *rt_spi_flash_device_t;
 
 #endif

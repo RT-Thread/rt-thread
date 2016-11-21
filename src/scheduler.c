@@ -67,7 +67,7 @@ static void (*rt_scheduler_hook)(struct rt_thread *from, struct rt_thread *to);
  * @addtogroup Hook
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * This function will set a hook function, which will be invoked when thread
@@ -81,7 +81,7 @@ rt_scheduler_sethook(void (*hook)(struct rt_thread *from, struct rt_thread *to))
     rt_scheduler_hook = hook;
 }
 
-/*@}*/
+/**@}*/
 #endif
 
 #ifdef RT_USING_OVERFLOW_CHECK
@@ -183,7 +183,7 @@ void rt_system_scheduler_start(void)
  * @addtogroup Thread
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * This function will perform one schedule. It will select one thread
@@ -412,5 +412,5 @@ rt_uint16_t rt_critical_level(void)
     return rt_scheduler_lock_nest;
 }
 RTM_EXPORT(rt_critical_level);
-/*@}*/
+/**@}*/
 

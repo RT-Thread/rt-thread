@@ -35,7 +35,7 @@
 /* STM32F ETH dirver options */
 #define RMII_MODE                       /* MII_MODE or RMII_MODE */
 #define RMII_TX_GPIO_GROUP        2     /* 1:GPIOB or 2:GPIOG */
-#define CHECKSUM_BY_HARDWARE
+//#define CHECKSUM_BY_HARDWARE          /* don't ues hardware checksum. */
 
 /** @addtogroup STM32F4XX_ETH_Driver
   * @brief ETH driver modules

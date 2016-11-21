@@ -238,7 +238,7 @@
 
 #endif /* end of _MSC_VER */
 
-#ifdef _WIN32
+#ifdef _Win32
 #define RT_USING_DFS_WINSHAREDIR
 #endif
 
