@@ -33,6 +33,7 @@
  * 2010-04-01     Bernard      add prompt output when start and remove the empty history
  * 2011-02-23     Bernard      fix variable section end issue of finsh shell
  *                             initialization when use GNU GCC compiler.
+ * 2016-11-26     armink       add password authentication
  */
 
 #include <rthw.h>
@@ -174,6 +175,93 @@ rt_uint32_t finsh_get_echo()
     return shell->echo_mode;
 }
 
+#ifdef FINSH_USING_AUTH
+/**
+ * set a new password for finsh
+ *
+ * @param password new password
+ *
+ * @return result, RT_EOK on OK, -RT_ERROR on the new password length is less than
+ *  FINSH_PASSWORD_MIN or greater than FINSH_PASSWORD_MAX
+ */
+rt_err_t finsh_set_password(const char *password) {
+    rt_ubase_t level;
+    rt_size_t pw_len = rt_strlen(password);
+
+    if (pw_len < FINSH_PASSWORD_MIN || pw_len > FINSH_PASSWORD_MAX)
+        return -RT_ERROR;
+
+    level = rt_hw_interrupt_disable();
+    rt_strncpy(shell->password, password, FINSH_PASSWORD_MAX);
+    rt_hw_interrupt_enable(level);
+
+    return RT_EOK;
+}
+
+/**
+ * get the finsh password
+ *
+ * @return password
+ */
+const char *finsh_get_password(void)
+{
+    return shell->password;
+}
+
+static void finsh_wait_auth(void)
+{
+    char ch;
+    rt_bool_t input_finish = RT_FALSE;
+    char password[FINSH_PASSWORD_MAX] = { 0 };
+    rt_size_t cur_pos = 0;
+    while (1)
+    {
+        rt_kprintf("Password for finsh: ");
+        while (!input_finish)
+        {
+            /* wait receive */
+            if (rt_sem_take(&shell->rx_sem, RT_WAITING_FOREVER) != RT_EOK) continue;
+
+            /* read one character from device */
+            while (rt_device_read(shell->device, 0, &ch, 1) == 1)
+            {
+                if (ch >= ' ' && ch <= '~' && cur_pos < FINSH_PASSWORD_MAX)
+                {
+                    /* change the printable characters to '*' */
+                    rt_kprintf("*");
+                    password[cur_pos++] = ch;
+                }
+                else if (ch == '\b' && cur_pos > 0)
+                {
+                    /* backspace */
+                    password[cur_pos] = '\0';
+                    cur_pos--;
+                    rt_kprintf("\b \b");
+                }
+                else if (ch == '\r' || ch == '\n')
+                {
+                    rt_kprintf("\n");
+                    input_finish = RT_TRUE;
+                    break;
+                }
+            }
+        }
+        if (!rt_strncmp(shell->password, password, FINSH_PASSWORD_MAX)) return;
+        else
+        {
+            /* authentication failed, delay 2S for retry */
+            rt_thread_delay(2 * RT_TICK_PER_SECOND);
+            rt_kprintf("Sorry, try again.\n");
+            cur_pos = 0;
+            input_finish = RT_FALSE;
+            rt_memset(password, '\0', FINSH_PASSWORD_MAX);
+            /* read all last dirty data */
+            while (rt_device_read(shell->device, 0, &ch, 1) == 1);
+        }
+    }
+}
+#endif /* FINSH_USING_AUTH */
+
 static void shell_auto_complete(char *prefix)
 {
 
@@ -305,7 +393,6 @@ void finsh_thread_entry(void *parameter)
 #ifndef FINSH_USING_MSH_ONLY
     finsh_init(&shell->parser);
 #endif
-    rt_kprintf(FINSH_PROMPT);
 
     /* set console device as shell device */
     if (shell->device == RT_NULL)
@@ -319,6 +406,16 @@ void finsh_thread_entry(void *parameter)
         RT_ASSERT(shell->device);
 #endif
     }
+
+#ifdef FINSH_USING_AUTH
+    /* set the default password when the password isn't setting */
+    if (rt_strlen(finsh_get_password()) == 0)
+        RT_ASSERT(finsh_set_password(FINSH_DEFAULT_PASSWORD) == RT_EOK);
+    /* waiting authenticate success */
+    finsh_wait_auth();
+#endif
+
+    rt_kprintf(FINSH_PROMPT);
 
     while (1)
     {
