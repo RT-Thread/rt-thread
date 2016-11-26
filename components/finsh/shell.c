@@ -33,6 +33,7 @@
  * 2010-04-01     Bernard      add prompt output when start and remove the empty history
  * 2011-02-23     Bernard      fix variable section end issue of finsh shell
  *                             initialization when use GNU GCC compiler.
+ * 2016-11-26     armink       add password authentication
  */
 
 #include <rthw.h>
@@ -180,12 +181,14 @@ rt_uint32_t finsh_get_echo()
  *
  * @param password new password
  *
- * @return result, RT_EOK on OK, -RT_ERROR on the new password length is less than FINSH_PASSWORD_MIN
+ * @return result, RT_EOK on OK, -RT_ERROR on the new password length is less than
+ *  FINSH_PASSWORD_MIN or greater than FINSH_PASSWORD_MAX
  */
 rt_err_t finsh_set_password(const char *password) {
     rt_ubase_t level;
+    rt_size_t pw_len = rt_strlen(password);
 
-    if (rt_strlen(password) < FINSH_PASSWORD_MIN)
+    if (pw_len < FINSH_PASSWORD_MIN || pw_len > FINSH_PASSWORD_MAX)
         return -RT_ERROR;
 
     level = rt_hw_interrupt_disable();
@@ -407,7 +410,7 @@ void finsh_thread_entry(void *parameter)
 #ifdef FINSH_USING_AUTH
     /* set the default password when the password isn't setting */
     if (rt_strlen(finsh_get_password()) == 0)
-        finsh_set_password(FINSH_DEFAULT_PASSWORD);
+        RT_ASSERT(finsh_set_password(FINSH_DEFAULT_PASSWORD) == RT_EOK);
     /* waiting authenticate success */
     finsh_wait_auth();
 #endif
