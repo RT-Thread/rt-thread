@@ -10,6 +10,7 @@
       <TargetName>rt-thread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
+      <pCCUsed>5060061::V5.06 update 1 (build 61)::ARMCC</pCCUsed>
       <TargetOption>
         <TargetCommonOption>
           <Device>M453VG6AE</Device>
@@ -391,7 +392,7 @@
             </VariousControls>
           </Aads>
           <LDads>
-            <umfTarg>0</umfTarg>
+            <umfTarg>1</umfTarg>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
             <noStLib>0</noStLib>
@@ -412,9 +413,38 @@
       <Groups>
         <Group>
           <GroupName>Applications</GroupName>
+          <Files>
+            <File>
+              <FileName>application.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\application.c</FilePath>
+            </File>
+            <File>
+              <FileName>startup.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\startup.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>Drivers</GroupName>
+          <Files>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\drivers\board.c</FilePath>
+            </File>
+            <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\drivers\led.c</FilePath>
+            </File>
+            <File>
+              <FileName>usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\drivers\usart.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>CMSIS</GroupName>
@@ -498,11 +528,6 @@
               <FileName>pwm.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Libraries\StdDriver\src\pwm.c</FilePath>
-            </File>
-            <File>
-              <FileName>retarget.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Libraries\StdDriver\src\retarget.c</FilePath>
             </File>
             <File>
               <FileName>rtc.c</FileName>
