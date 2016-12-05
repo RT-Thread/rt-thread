@@ -87,6 +87,11 @@ void rtthread_startup(void)
 
 	/* init application */
 	rt_application_init();
+    
+/* Set finsh device */
+#ifdef  RT_USING_FINSH
+    finsh_system_init();
+#endif  /* RT_USING_FINSH */
 
     /* init timer thread */
     rt_system_timer_thread_init();

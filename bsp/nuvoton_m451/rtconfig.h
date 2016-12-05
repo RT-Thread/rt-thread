@@ -10,18 +10,18 @@
 
 /* PRIORITY_MAX */
 #define RT_THREAD_PRIORITY_MAX	32
-#define IDLE_THREAD_STACK_SIZE 128
+//#define IDLE_THREAD_STACK_SIZE 128
 /* Tick per Second */
-#define RT_TICK_PER_SECOND	100
+#define RT_TICK_PER_SECOND	1000
 
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
-//#define RT_DEBUG
-//#define RT_DEBUG_INIT 1
-//#define RT_USING_OVERFLOW_CHECK
+#define RT_DEBUG
+#define RT_DEBUG_INIT 1
+#define RT_USING_OVERFLOW_CHECK
 
 /* Using Hook */
-/* #define RT_USING_HOOK */
+#define RT_USING_HOOK
 
 /* Using Software Timer */
 /* #define RT_USING_TIMER_SOFT */
@@ -34,20 +34,20 @@
 #define RT_USING_SEMAPHORE
 
 /* Using Mutex */
-/* #define RT_USING_MUTEX */
+#define RT_USING_MUTEX
 
 /* Using Event */
-/* #define RT_USING_EVENT */
+#define RT_USING_EVENT
 
 /* Using MailBox */
-/* #define RT_USING_MAILBOX */
+#define RT_USING_MAILBOX
 
 /* Using Message Queue */
-/* #define RT_USING_MESSAGEQUEUE */
+#define RT_USING_MESSAGEQUEUE
 
 /* SECTION: Memory Management */
 /* Using Memory Pool Management*/
-/* #define RT_USING_MEMPOOL */
+#define RT_USING_MEMPOOL
 
 /* Using Dynamic Heap Management */
 #define RT_USING_HEAP
@@ -69,7 +69,7 @@
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
 /* the buffer size of console*/
-#define RT_CONSOLEBUF_SIZE	64
+#define RT_CONSOLEBUF_SIZE	128
 // <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console" default="uart1" />
 #define RT_CONSOLE_DEVICE_NAME	    "uart0"
 
@@ -78,10 +78,12 @@
 /* SECTION: finsh, a C-Express shell */
 #define RT_USING_FINSH
 /* configure finsh parameters */
+/*
 #define FINSH_THREAD_PRIORITY 25
-#define FINSH_THREAD_STACK_SIZE	512
+#define FINSH_THREAD_STACK_SIZE	1024
 #define FINSH_USING_HISTORY 0
 #define FINSH_HISTORY_LINES	1
+*/
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION

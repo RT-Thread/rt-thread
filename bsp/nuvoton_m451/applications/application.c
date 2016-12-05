@@ -30,6 +30,7 @@
 /* led thread entry */
 static void led_thread_entry(void* parameter)
 {
+    rt_hw_led_init();
 	while(1)
 	{
         rt_hw_led_on();
@@ -56,7 +57,7 @@ static void rt_init_thread_entry(void* parameter)
     /* Create led thread */
     led_thread = rt_thread_create("led",
     		led_thread_entry, RT_NULL,
-    		128, 20, 20);
+    		256, 20, 20);
     if(led_thread != RT_NULL)
     	rt_thread_startup(led_thread);
 }

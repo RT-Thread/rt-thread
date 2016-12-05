@@ -21,5 +21,6 @@
 
 void rt_hw_led_on(void); 
 void rt_hw_led_off(void);
+int rt_hw_led_init(void);
 
 #endif
