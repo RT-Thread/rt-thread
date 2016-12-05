@@ -1,9 +1,8 @@
-# RT-Thread building script for bridge
-
+# for module compiling
 import os
-from building import *
+Import('RTT_ROOT')
 
-cwd = GetCurrentDir()
+cwd = str(Dir('#'))
 objs = []
 list = os.listdir(cwd)
 
