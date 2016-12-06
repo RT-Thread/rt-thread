@@ -13,12 +13,16 @@ if os.getenv('RTT_CC'):
 if  CROSS_TOOL == 'iar': # not support gcc
 	PLATFORM 	= 'iar'
 	EXEC_PATH 	= 'C:/IAR'
+	print('Not Supported')
+	exit(0)
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'C:/Keil'
 elif CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
 	EXEC_PATH 	= 'C:/GCC'
+	print('Not Supported')
+	exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
