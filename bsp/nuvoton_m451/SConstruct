@@ -10,7 +10,7 @@ else:
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 from building import *
 
-TARGET = 'rtthread-nuvotan_m05x.' + rtconfig.TARGET_EXT
+TARGET = 'rtthread-nuvotan_m451.' + rtconfig.TARGET_EXT
 
 env = Environment(tools = ['mingw'],
 	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,

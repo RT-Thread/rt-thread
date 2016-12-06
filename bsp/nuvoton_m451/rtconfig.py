@@ -37,10 +37,10 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -mcpu=cortex-m0 -mthumb -ffunction-sections -fdata-sections'
+    DEVICE = ' -mcpu=cortex-m4 -mthumb -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -std=gnu9x'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-nuvoton_m05x.map,-cref,-u,Reset_Handler -T nuvoton_m05x.ld'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-nuvoton_m451.map,-cref,-u,Reset_Handler -T nuvoton_m451.ld'
 
     CPATH = ''
     LPATH = ''
@@ -51,7 +51,7 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS += ' -O2'
 
-    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread-nuvoton_m05x.bin\n' + OBJCPY + ' -O ihex $TARGET rtthread-nuvoton_m05x.hex\n' + SIZE + ' $TARGET \n'
+    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread-nuvoton_m451.bin\n' + OBJCPY + ' -O ihex $TARGET rtthread-nuvoton_m451.hex\n' + SIZE + ' $TARGET \n'
 
 elif PLATFORM == 'armcc':
     # toolchains
@@ -64,7 +64,7 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --device DARMSTM'
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-nuvoton_m05x.map --scatter nuvoton_m05x.sct'
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-nuvoton_m451.map --scatter nuvoton_m451.sct'
 
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCC/include'
     LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/ARMCC/lib'
@@ -77,7 +77,7 @@ elif PLATFORM == 'armcc':
     else:
         CFLAGS += ' -O2'
 
-    POST_ACTION = 'fromelf --bin $TARGET --output rtthread-nuvoton_m05x.bin \nfromelf -z $TARGET'
+    POST_ACTION = 'fromelf --bin $TARGET --output rtthread-nuvoton_m451.bin \nfromelf -z $TARGET'
 
 elif PLATFORM == 'iar':
     # toolchains
@@ -100,7 +100,7 @@ elif PLATFORM == 'iar':
     CFLAGS += ' --no_scheduling' 
     CFLAGS += ' --debug' 
     CFLAGS += ' --endian=little' 
-    CFLAGS += ' --cpu=Cortex-M0' 
+    CFLAGS += ' --cpu=Cortex-M4' 
     CFLAGS += ' -e' 
     CFLAGS += ' --fpu=None'
     CFLAGS += ' --dlib_config "' + IAR_PATH + '/arm/INC/c/DLib_Config_Normal.h"'    
@@ -111,7 +111,7 @@ elif PLATFORM == 'iar':
     AFLAGS += ' -s+' 
     AFLAGS += ' -w+' 
     AFLAGS += ' -r' 
-    AFLAGS += ' --cpu Cortex-M0' 
+    AFLAGS += ' --cpu Cortex-M4' 
     AFLAGS += ' --fpu None' 
 
     LFLAGS = ' --config stm32f0xx_flash.icf'

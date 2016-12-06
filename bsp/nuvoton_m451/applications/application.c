@@ -49,11 +49,6 @@ static void rt_init_thread_entry(void* parameter)
     rt_components_init();
 #endif
 
-/* Set finsh device */
-#ifdef  RT_USING_FINSH
-    finsh_set_device(RT_CONSOLE_DEVICE_NAME);
-#endif  /* RT_USING_FINSH */
-
     /* Create led thread */
     led_thread = rt_thread_create("led",
     		led_thread_entry, RT_NULL,

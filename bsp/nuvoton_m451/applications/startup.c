@@ -91,6 +91,7 @@ void rtthread_startup(void)
 /* Set finsh device */
 #ifdef  RT_USING_FINSH
     finsh_system_init();
+    finsh_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif  /* RT_USING_FINSH */
 
     /* init timer thread */

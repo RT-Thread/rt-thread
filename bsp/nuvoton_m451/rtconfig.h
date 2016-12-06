@@ -21,7 +21,7 @@
 #define RT_USING_OVERFLOW_CHECK
 
 /* Using Hook */
-#define RT_USING_HOOK
+//#define RT_USING_HOOK
 
 /* Using Software Timer */
 /* #define RT_USING_TIMER_SOFT */
@@ -56,7 +56,7 @@
 #define RT_USING_SMALL_MEM
 
 // <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
-#define RT_USING_COMPONENTS_INIT
+//#define RT_USING_COMPONENTS_INIT
 
 /* SECTION: Device System */
 /* Using Device System */
