@@ -165,11 +165,6 @@ static void spi_unlock(const sfud_spi *spi) {
     rt_mutex_release(&(rtt_dev->lock));
 }
 
-static void retry_delay_ms(void) {
-    /* millisecond delay */
-    rt_tick_from_millisecond(1);
-}
-
 static void retry_delay_100us(void) {
     /* 100 microsecond delay */
     rt_thread_delay((RT_TICK_PER_SECOND * 1 + 9999) / 10000);
@@ -242,6 +237,9 @@ rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const 
     rt_spi_flash_device_t rtt_dev = RT_NULL;
     sfud_flash *sfud_dev = RT_NULL;
     char *spi_flash_dev_name_bak = RT_NULL, *spi_dev_name_bak = RT_NULL;
+    /* using default flash SPI configuration for initialize SPI Flash
+     * @note you also can change the SPI to other configuration after initialized finish */
+    struct rt_spi_configuration cfg = RT_SFUD_DEFAULT_SPI_CFG;
     extern sfud_err sfud_device_init(sfud_flash *flash);
 
     RT_ASSERT(spi_flash_dev_name);
@@ -269,9 +267,6 @@ rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const 
                 goto error;
             }
             sfud_dev->spi.name = spi_dev_name_bak;
-            /* using default flash SPI configuration for initialize SPI Flash
-             * @note you also can change the SPI to other configuration after initialized finish */
-            struct rt_spi_configuration cfg = RT_SFUD_DEFAULT_SPI_CFG;
             rt_spi_configure(rtt_dev->rt_spi_device, &cfg);
             /* initialize lock */
             rt_mutex_init(&(rtt_dev->lock), spi_flash_dev_name, RT_IPC_FLAG_FIFO);
