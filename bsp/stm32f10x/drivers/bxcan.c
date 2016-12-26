@@ -1008,10 +1008,20 @@ static rt_err_t bxmodifyfilter(struct stm_bxcan *pbxcan, struct rt_can_filter_it
         }
         break;
     }
-    CAN_FilterInitStructure.CAN_FilterIdHigh = ((ID[1]) & 0x0000FFFF);
-    CAN_FilterInitStructure.CAN_FilterIdLow = ID[0] & 0x0000FFFF;
-    CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (ID[1] & 0xFFFF0000) >> 16;
-    CAN_FilterInitStructure.CAN_FilterMaskIdLow = (ID[0] & 0xFFFF0000) >> 16;
+    if(pitem->ide)
+    {
+        CAN_FilterInitStructure.CAN_FilterIdHigh = (ID[0] & 0xFFFF0000) >> 16;
+        CAN_FilterInitStructure.CAN_FilterIdLow = ID[0] & 0x0000FFFF;
+        CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (ID[1] & 0xFFFF0000) >> 16;
+        CAN_FilterInitStructure.CAN_FilterMaskIdLow = ((ID[1]) & 0x0000FFFF);
+    }
+    else
+    {
+        CAN_FilterInitStructure.CAN_FilterIdHigh = ((ID[1]) & 0x0000FFFF);
+        CAN_FilterInitStructure.CAN_FilterIdLow = ID[0] & 0x0000FFFF;
+        CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (ID[1] & 0xFFFF0000) >> 16;
+        CAN_FilterInitStructure.CAN_FilterMaskIdLow = (ID[0] & 0xFFFF0000) >> 16;
+    }
     if (fbase >= pbxcan->fifo1filteroff)
     {
         CAN_FilterInitStructure.CAN_FilterFIFOAssignment = 1;
