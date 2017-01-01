@@ -206,7 +206,7 @@ void rt_application_init(void)
 
     tid = &main_thread;
     result = rt_thread_init(tid, "main", main_thread_entry, RT_NULL,
-                            2048, RT_THREAD_PRIORITY_MAX / 3, 20);
+                            main_stack, 2048, RT_THREAD_PRIORITY_MAX / 3, 20);
     RT_ASSERT(result != RT_EOK);
 #endif
 
