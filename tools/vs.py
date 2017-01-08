@@ -108,7 +108,14 @@ def VSProject(target, script, program):
 
     # write cppdefinitons flags
     if building.Env.has_key('CPPDEFINES'):
-        definitions = ';'.join(building.Env['CPPDEFINES'])
+        CPPDEFINES = building.Env['CPPDEFINES']
+        definitions = []
+        if type(CPPDEFINES[0]) == type(()):
+            for item in CPPDEFINES:
+                definitions += [i for i in item]
+            definitions = ';'.join(definitions)
+        else:
+            definitions = ';'.join(building.Env['CPPDEFINES'])
         elem.set('PreprocessorDefinitions', definitions)
     # write link flags
 
