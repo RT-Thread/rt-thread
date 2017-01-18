@@ -1347,6 +1347,7 @@ static struct stm_bxcan bxcan1data =
 struct rt_can_device bxcan1;
 void CAN1_RX0_IRQHandler(void)
 {
+    rt_interrupt_enter();
     if (CAN1->RF0R & 0x03)
     {
         if ((CAN1->RF0R & CAN_RF0R_FOVR0) != 0)
@@ -1360,9 +1361,11 @@ void CAN1_RX0_IRQHandler(void)
         }
         CAN1->RF0R |= CAN_RF0R_RFOM0;
     }
+    rt_interrupt_leave();
 }
 void CAN1_RX1_IRQHandler(void)
 {
+    rt_interrupt_enter();
     if (CAN1->RF1R & 0x03)
     {
         if ((CAN1->RF1R & CAN_RF1R_FOVR1) != 0)
@@ -1376,10 +1379,12 @@ void CAN1_RX1_IRQHandler(void)
         }
         CAN1->RF1R |= CAN_RF1R_RFOM1;
     }
+    rt_interrupt_leave();
 }
 void CAN1_TX_IRQHandler(void)
 {
     rt_uint32_t state;
+    rt_interrupt_enter();
     if (CAN1->TSR & (CAN_TSR_RQCP0))
     {
         state =  CAN1->TSR & (CAN_TSR_RQCP0 | CAN_TSR_TXOK0 | CAN_TSR_TME0);
@@ -1419,11 +1424,13 @@ void CAN1_TX_IRQHandler(void)
             rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_TX_FAIL | 2 << 8);
         }
     }
+    rt_interrupt_leave();
 }
 void CAN1_SCE_IRQHandler(void)
 {
     rt_uint32_t errtype;
     errtype = CAN1->ESR;
+    rt_interrupt_enter();
     if (errtype & 0x70 && bxcan1.status.lasterrtype == (errtype & 0x70))
     {
         switch ((errtype & 0x70) >> 4)
@@ -1452,6 +1459,7 @@ void CAN1_SCE_IRQHandler(void)
     bxcan1.status.snderrcnt = (errtype >> 16 & 0xFF);
     bxcan1.status.errcode = errtype & 0x07;
     CAN1->MSR |= CAN_MSR_ERRI;
+    rt_interrupt_leave();
 }
 #endif /*USING_BXCAN1*/
 
@@ -1489,6 +1497,7 @@ static struct stm_bxcan bxcan2data =
 struct rt_can_device bxcan2;
 void CAN2_RX0_IRQHandler(void)
 {
+    rt_interrupt_enter();
     if (CAN2->RF0R & 0x03)
     {
         if ((CAN2->RF0R & CAN_RF0R_FOVR0) != 0)
@@ -1502,9 +1511,11 @@ void CAN2_RX0_IRQHandler(void)
         }
         CAN2->RF0R |= CAN_RF0R_RFOM0;
     }
+    rt_interrupt_leave();
 }
 void CAN2_RX1_IRQHandler(void)
 {
+    rt_interrupt_enter();
     if (CAN2->RF1R & 0x03)
     {
         if ((CAN2->RF1R & CAN_RF1R_FOVR1) != 0)
@@ -1518,10 +1529,12 @@ void CAN2_RX1_IRQHandler(void)
         }
         CAN2->RF1R |= CAN_RF1R_RFOM1;
     }
+    rt_interrupt_leave();
 }
 void CAN2_TX_IRQHandler(void)
 {
     rt_uint32_t state;
+    rt_interrupt_enter();
     if (CAN2->TSR & (CAN_TSR_RQCP0))
     {
         state =  CAN2->TSR & (CAN_TSR_RQCP0 | CAN_TSR_TXOK0 | CAN_TSR_TME0);
@@ -1561,11 +1574,13 @@ void CAN2_TX_IRQHandler(void)
             rt_hw_can_isr(&bxcan2, RT_CAN_EVENT_TX_FAIL | 2 << 8);
         }
     }
+    rt_interrupt_leave();
 }
 void CAN2_SCE_IRQHandler(void)
 {
     rt_uint32_t errtype;
     errtype = CAN2->ESR;
+    rt_interrupt_enter();
     if (errtype & 0x70 && bxcan2.status.lasterrtype == (errtype & 0x70))
     {
         switch ((errtype & 0x70) >> 4)
@@ -1594,6 +1609,7 @@ void CAN2_SCE_IRQHandler(void)
     bxcan2.status.snderrcnt = (errtype >> 16 & 0xFF);
     bxcan2.status.errcode = errtype & 0x07;
     CAN2->MSR |= CAN_MSR_ERRI;
+    rt_interrupt_leave();
 }
 #endif /*USING_BXCAN2*/
 
