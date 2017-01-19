@@ -31,6 +31,7 @@
  *                             in open function.
  * 2015-11-10     bernard      fix the poll rx issue when there is no data.
  * 2016-05-10     armink       add fifo mode to DMA rx when serial->config.bufsz != 0.
+ * 2017-01-19     aubr.cool    prevent change serial rx bufsz when serial is opened.
  */
 
 #include <rthw.h>
@@ -603,17 +604,22 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             break;
 
         case RT_DEVICE_CTRL_CONFIG:
-			if (args)
-			{
-				/* set serial configure */
-				serial->config = *(struct serial_configure *)args;
-
-				if (dev->ref_count)
-				{
-		            /* serial device has been opened, to configure it */
-		            serial->ops->configure(serial, (struct serial_configure *)args);
-				}
-			}
+            if (args)
+            {
+                struct serial_configure *pconfig = (struct serial_configure *) args;
+                if(pconfig->bufsz != serial->config.bufsz && serial->parent.ref_count)
+                {
+                    /*can not change buffer size*/
+                    return RT_EBUSY;
+                }
+                /* set serial configure */
+                serial->config = *pconfig;
+		if(serial->parent.ref_count)
+                {
+                    /* serial device has been opened, to configure it */
+                    serial->ops->configure(serial, (struct serial_configure *)args);
+                }
+            }
 			
             break;
 

@@ -14,6 +14,7 @@
  * 2013-05-13     aozima       update for kehong-lingtai.
  * 2015-01-31     armink       make sure the serial transmit complete in putc()
  * 2016-05-13     armink       add DMA Rx mode
+ * 2017-01-19     aubr.cool    add interrupt Tx mode
  */
 
 #include "stm32f10x.h"
@@ -144,8 +145,21 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
     RT_ASSERT(serial != RT_NULL);
     uart = (struct stm32_uart *)serial->parent.user_data;
 
-    uart->uart_device->DR = c;
-    while (!(uart->uart_device->SR & USART_FLAG_TC));
+    if(serial->parent.open_flag & RT_DEVICE_FLAG_INT_TX)
+    {
+          if(!(uart->uart_device->SR & USART_FLAG_TXE))
+          {
+              USART_ITConfig(uart->uart_device, USART_IT_TC, ENABLE);
+              return -1;
+          }
+          uart->uart_device->DR = c;
+          USART_ITConfig(uart->uart_device, USART_IT_TC, ENABLE);
+    }
+    else
+    {
+        uart->uart_device->DR = c;
+        while (!(uart->uart_device->SR & USART_FLAG_TC));
+    }
 
     return 1;
 }
@@ -244,6 +258,11 @@ static void uart_isr(struct rt_serial_device *serial) {
     if (USART_GetITStatus(uart->uart_device, USART_IT_TC) != RESET)
     {
         /* clear interrupt */
+        if(serial->parent.open_flag & RT_DEVICE_FLAG_INT_TX)
+        {
+            rt_hw_serial_isr(serial, RT_SERIAL_EVENT_TX_DONE);
+        }
+        USART_ITConfig(uart->uart_device, USART_IT_RXNE, DISABLE);
         USART_ClearITPendingBit(uart->uart_device, USART_IT_TC);
     }
     if (USART_GetFlagStatus(uart->uart_device, USART_FLAG_ORE) == SET)
@@ -561,7 +580,8 @@ void rt_hw_usart_init(void)
 
     /* register UART1 device */
     rt_hw_serial_register(&serial1, "uart1",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_DMA_RX,
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX |
+                          RT_DEVICE_FLAG_INT_TX |   RT_DEVICE_FLAG_DMA_RX,
                           uart);
 #endif /* RT_USING_UART1 */
 
@@ -576,7 +596,8 @@ void rt_hw_usart_init(void)
 
     /* register UART2 device */
     rt_hw_serial_register(&serial2, "uart2",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_DMA_RX,
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX |
+                          RT_DEVICE_FLAG_INT_TX |   RT_DEVICE_FLAG_DMA_RX,
                           uart);
 #endif /* RT_USING_UART2 */
 
@@ -592,7 +613,8 @@ void rt_hw_usart_init(void)
 
     /* register UART3 device */
     rt_hw_serial_register(&serial3, "uart3",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_DMA_RX,
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX |
+                          RT_DEVICE_FLAG_INT_TX |   RT_DEVICE_FLAG_DMA_RX,
                           uart);
 #endif /* RT_USING_UART3 */
 
@@ -608,7 +630,8 @@ void rt_hw_usart_init(void)
 
     /* register UART4 device */
     rt_hw_serial_register(&serial4, "uart4",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_DMA_RX,
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX |
+                          RT_DEVICE_FLAG_INT_TX |   RT_DEVICE_FLAG_DMA_RX,
                           uart);
 #endif /* RT_USING_UART4 */
 }
