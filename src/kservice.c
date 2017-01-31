@@ -1108,6 +1108,31 @@ WEAK void rt_hw_console_output(const char *str)
 RTM_EXPORT(rt_hw_console_output);
 
 /**
+ * This function will put string to the console.
+ *
+ * @param str the string output to the console.
+ */
+void rt_kputs(const char *str)
+{
+#ifdef RT_USING_DEVICE
+    if (_console_device == RT_NULL)
+    {
+        rt_hw_console_output(str);
+    }
+    else
+    {
+        rt_uint16_t old_flag = _console_device->open_flag;
+
+        _console_device->open_flag |= RT_DEVICE_FLAG_STREAM;
+        rt_device_write(_console_device, 0, str, rt_strlen(str));
+        _console_device->open_flag = old_flag;
+    }
+#else
+    rt_hw_console_output(str);
+#endif
+}
+
+/**
  * This function will print a formatted string on system console
  *
  * @param fmt the format
