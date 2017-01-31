@@ -37,6 +37,11 @@
 #include <netif/etharp.h>
 #include <netif/ethernetif.h>
 #include <lwip/ip.h>
+#include <lwip/init.h>
+
+#if (LWIP_VERSION) >= 0x02000000U
+#include <lwip/prot/dhcp.h>
+#endif
 
 /* DHCP server option */
 
