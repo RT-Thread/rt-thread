@@ -86,6 +86,28 @@ rt_err_t rt_workqueue_dowork(struct rt_workqueue* queue, struct rt_work* work)
 	return RT_EOK;
 }
 
+rt_err_t rt_workqueue_critical_work(struct rt_workqueue* queue, struct rt_work* work)
+{
+	RT_ASSERT(queue != RT_NULL);
+	RT_ASSERT(work != RT_NULL);
+
+	rt_enter_critical();
+	/* NOTE: the work MUST be initialized firstly */
+	rt_list_remove(&(work->list));
+
+	rt_list_insert_after(queue->work_list.prev, &(work->list));
+	if (queue->work_thread->stat != RT_THREAD_READY)
+	{
+		rt_exit_critical();
+		/* resume work thread */
+		rt_thread_resume(queue->work_thread);
+		rt_schedule();
+	}
+	else rt_exit_critical();
+
+	return RT_EOK;
+}
+
 rt_err_t rt_workqueue_cancel_work(struct rt_workqueue* queue, struct rt_work* work)
 {
 	RT_ASSERT(queue != RT_NULL);
@@ -93,6 +115,22 @@ rt_err_t rt_workqueue_cancel_work(struct rt_workqueue* queue, struct rt_work* wo
 
 	rt_enter_critical();
 	rt_list_remove(&(work->list));
+	rt_exit_critical();
+
+	return RT_EOK;
+}
+
+rt_err_t rt_workqueue_cancel_all_work(struct rt_workqueue* queue)
+{
+	struct rt_list_node *node, *next;
+	RT_ASSERT(queue != RT_NULL);
+
+	rt_enter_critical();
+	for (node = queue->work_list.next; node != &(queue->work_list); node = next)
+	{
+		next = node->next;
+		rt_list_remove(node);
+	}
 	rt_exit_critical();
 
 	return RT_EOK;
