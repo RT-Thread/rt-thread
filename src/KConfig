@@ -1,4 +1,4 @@
-menu "Real-time Kernel"
+menu "RT-Thread Kernel"
 
 config RT_NAME_MAX
     int "The maximal size of kernel object name"
