@@ -1,0 +1,13 @@
+menu "RT-Thread Components"
+
+source "$RTT_DIR/components/finsh/KConfig"
+
+source "$RTT_DIR/components/dfs/KConfig"
+
+source "$RTT_DIR/components/drivers/KConfig"
+
+source "$RTT_DIR/components/libc/KConfig"
+
+source "$RTT_DIR/components/net/KConfig"
+
+endmenu

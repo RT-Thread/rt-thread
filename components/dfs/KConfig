@@ -1,0 +1,77 @@
+menu "Device virtual file system"
+
+config RT_USING_DFS
+    bool "Using device virtual file system"
+    default y
+    help
+        The device file system is a light weight virtual file system.
+
+if RT_USING_DFS
+    config DFS_USING_WORKDIR
+        bool "Using working directory"
+        default y
+
+    config DFS_FILESYSTEMS_MAX
+        int "The maximal number of mounted file system"
+        default 2
+    
+    config DFS_FD_MAX
+        int "The maximal number of opened files"
+        default 4
+    
+    config RT_USING_DFS_ELMFAT
+        bool "Enable elm-chan fatfs"
+        default y
+        help
+            FatFs is a generic FAT/exFAT file system module for small embedded systems.
+    if RT_USING_DFS_ELMFAT
+        config RT_DFS_ELM_CODE_PAGE
+            int "OEM code page"
+            default 437
+        
+        config RT_DFS_ELM_MAX_LFN
+            int "Maximal size of file name length"
+            default 256
+        
+        config RT_DFS_ELM_DRIVES
+            int "Number of volumes (logical drives) to be used."
+            default 2
+        
+        config RT_DFS_ELM_MAX_SECTOR_SIZE
+            int "Maximum sector size to be handled."
+            default 512
+            help
+                if you use some spi nor flash for fatfs, please set this the erase sector size, for example 4096.
+
+        config RT_DFS_ELM_USE_ERASE
+            bool "Enable sector erase feature"
+            default n
+        
+        config RT_DFS_ELM_REENTRANT
+            bool "Enable the reentrancy (thread safe) of the FatFs module"
+            default y
+    endif
+
+    config RT_USING_DFS_DEVFS
+        bool "Using devfs for device objects"
+        default y
+    
+    config RT_USING_DFS_NET
+        bool "Enable BSD socket operated by file system API"
+        default n
+        help
+            Let BSD socket operated by file system API, such as read/write and involveed in select/poll POSIX APIs.
+
+    config RT_USING_DFS_NFS
+        bool "Using NFS v3 client file system"
+        default n
+
+    if RT_USING_DFS_NFS
+        config RT_NFS_HOST_EXPORT
+            string "NFSv3 host export"
+            default "192.168.1.5:/"
+    endif
+
+endif
+
+endmenu
