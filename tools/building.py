@@ -276,6 +276,16 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             LINKCOMSTR = 'LINK $TARGET'
         )
 
+    AddOption('--menuconfig',
+                      dest='menuconfig',
+                      action='store_true',
+                      default=False,
+                      help='do the system configuration')
+
+    if GetOption('menuconfig'):
+        from menuconfig import config
+        config()
+
     # we need to seperate the variant_dir for BSPs and the kernels. BSPs could
     # have their own components etc. If they point to the same folder, SCons
     # would find the wrong source code to compile.
