@@ -31,8 +31,7 @@
 #define EXT_SDRAM_BEGIN    SDRAM_BANK_ADDR /* the begining address of external SDRAM */
 //	<o>End Address of External SRAM
 //		<i>Default: 0xD0800000
-#define EXT_SDRAM_END      SDRAM_BANK_ADDR + IS42S16400J_SIZE /* the end address of external SDRAM */
-// </e>
+#define EXT_SDRAM_END      (SDRAM_BANK_ADDR + IS42S16400J_SIZE) /* the end address of external SDRAM */
 
 // <o> Internal SRAM memory size[Kbytes] <8-64>
 //	<i>Default: 64
