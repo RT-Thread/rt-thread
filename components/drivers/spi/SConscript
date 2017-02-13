@@ -11,7 +11,10 @@ if GetDepend('RT_USING_SPI_WIFI'):
 
 if GetDepend('RT_USING_W25QXX'):
     src_device += ['spi_flash_w25qxx.c']
-
+    
+if GetDepend('RT_USING_W25QXX_MTD'):
+    src_device += ['spi_flash_w25qxx_mtd.c']    
+    
 if GetDepend('RT_USING_ENC28J60'):
     src_device += ['enc28j60.c']
 
