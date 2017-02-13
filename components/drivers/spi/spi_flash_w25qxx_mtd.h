@@ -1,7 +1,7 @@
 /*
- * File      : spi_flash.h
+ * File      : spi_flash_w25qxx.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2016, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2011, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,31 +19,16 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2016/5/20      bernard      the first version
+ * 2011-12-16     aozima      the first version
+ * 2012-08-23     aozima       add flash lock.
+ * 2017-02-11     urey				add mtd fucntion
  */
 
-#ifndef SPI_FLASH_H__
-#define SPI_FLASH_H__
+#ifndef SPI_FLASH_W25QXX_H_INCLUDED
+#define SPI_FLASH_W25QXX_H_INCLUDED
 
-struct spi_flash_device
-{
-    struct rt_device                flash_device;
-    struct rt_device_blk_geometry   geometry;
-    struct rt_spi_device *          rt_spi_device;
-    struct rt_mutex                 lock;
-    void *                          user_data;
-};
+#include <rtthread.h>
 
-typedef struct spi_flash_device *rt_spi_flash_device_t;
+extern rt_err_t w25qxx_mtd_init(const char *mtd_name,const char * spi_device_name);
 
-#ifdef RT_USING_MTD_NOR
-struct spi_flash_mtd
-{
-    struct rt_mtd_nor_device 			mtd_device;
-    struct rt_spi_device *     			rt_spi_device;
-    struct rt_mutex            			lock;
-    void *                     			user_data;
-};
-#endif
-
-#endif
+#endif // SPI_FLASH_W25QXX_H_INCLUDED
