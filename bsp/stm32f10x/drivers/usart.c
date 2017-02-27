@@ -262,7 +262,7 @@ static void uart_isr(struct rt_serial_device *serial) {
         {
             rt_hw_serial_isr(serial, RT_SERIAL_EVENT_TX_DONE);
         }
-        USART_ITConfig(uart->uart_device, USART_IT_RXNE, DISABLE);
+        USART_ITConfig(uart->uart_device, USART_IT_TC, DISABLE);
         USART_ClearITPendingBit(uart->uart_device, USART_IT_TC);
     }
     if (USART_GetFlagStatus(uart->uart_device, USART_FLAG_ORE) == SET)
