@@ -653,7 +653,8 @@ rt_err_t stm32_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
  
     return RT_EOK;
 }
-rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin)
+rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
+                                                  rt_uint32_t enabled)
 {
     const struct pin_index *index;
     const struct pin_irq_map *irqmap;
@@ -668,74 +669,70 @@ rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin)
     {
         return RT_ENOSYS;
     }
-    irqindex = bit2bitno(index->pin);
-    if(irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
+    if(enabled == PIN_IRQ_ENABLE)
     {
-        return RT_ENOSYS;
-    }
+        irqindex = bit2bitno(index->pin);
+        if(irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
+        {
+            return RT_ENOSYS;
+        }
+        level = rt_hw_interrupt_disable();
+        if(pin_irq_hdr_tab[irqindex].pin == -1)
+        {
+            rt_hw_interrupt_enable(level);
+            return RT_ENOSYS;
+        }
+        irqmap = &pin_irq_map[irqindex];
+        /* GPIO Periph clock enable */
+        RCC_APB2PeriphClockCmd(index->rcc, ENABLE);
+        /* Configure GPIO_InitStructure */
+        GPIO_InitStructure.GPIO_Pin     = index->pin;
+        GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IPU;
+        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+        GPIO_Init(index->gpio, &GPIO_InitStructure);
 
-    level = rt_hw_interrupt_disable();
-    if(pin_irq_hdr_tab[irqindex].pin == -1)
-    {
+        NVIC_InitStructure.NVIC_IRQChannel= irqmap->irqno;
+        NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority= 2;  
+        NVIC_InitStructure.NVIC_IRQChannelSubPriority= 2; 
+        NVIC_InitStructure.NVIC_IRQChannelCmd=ENABLE;
+        NVIC_Init(&NVIC_InitStructure);
+
+        EXTI_InitStructure.EXTI_Line = irqmap->irqbit;  
+        EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+        switch(pin_irq_hdr_tab[irqindex].mode)
+        {
+        case PIN_IRQ_MODE_RISING:
+          EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
+          break;
+        case PIN_IRQ_MODE_FALLING:
+          EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
+          break;
+        case PIN_IRQ_MODE_RISING_FALLING:
+          EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
+          break;
+        }
+        EXTI_InitStructure.EXTI_LineCmd = ENABLE;  
+        EXTI_Init(&EXTI_InitStructure);
         rt_hw_interrupt_enable(level);
-        return RT_ENOSYS;
     }
-    irqmap = &pin_irq_map[irqindex];
-    /* GPIO Periph clock enable */
-    RCC_APB2PeriphClockCmd(index->rcc, ENABLE);
-    /* Configure GPIO_InitStructure */
-    GPIO_InitStructure.GPIO_Pin     = index->pin;
-    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IPU;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init(index->gpio, &GPIO_InitStructure);
-
-    NVIC_InitStructure.NVIC_IRQChannel= irqmap->irqno;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority= 2;  
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority= 2; 
-    NVIC_InitStructure.NVIC_IRQChannelCmd=ENABLE;
-    NVIC_Init(&NVIC_InitStructure);
-
-    EXTI_InitStructure.EXTI_Line = irqmap->irqbit;  
-    EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-    switch(pin_irq_hdr_tab[irqindex].mode)
+    else if(enabled == PIN_IRQ_DISABLE)
     {
-    case PIN_IRQ_MODE_RISING:
-      EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
-      break;
-    case PIN_IRQ_MODE_FALLING:
-      EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
-      break;
-    case PIN_IRQ_MODE_RISING_FALLING:
-      EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
-      break;
+        irqmap = get_pin_irq_map(index->pin);
+        if(irqmap == RT_NULL)
+        {
+            return RT_ENOSYS;
+        }
+        EXTI_InitStructure.EXTI_Line = irqmap->irqbit;  
+        EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+        EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
+        EXTI_InitStructure.EXTI_LineCmd = DISABLE;  
+        EXTI_Init(&EXTI_InitStructure);
     }
-    EXTI_InitStructure.EXTI_LineCmd = ENABLE;  
-    EXTI_Init(&EXTI_InitStructure);
-    rt_hw_interrupt_enable(level);
-
-    return RT_EOK;
-}
-rt_err_t stm32_pin_irq_disable(struct rt_device *device, rt_base_t pin)
-{
-    const struct pin_index *index;
-    const struct pin_irq_map *irqmap;
-    EXTI_InitTypeDef EXTI_InitStructure;
-
-    index = get_pin(pin);
-    if (index == RT_NULL)
+    else
     {
         return RT_ENOSYS;
     }
-    irqmap = get_pin_irq_map(index->pin);
-    if(irqmap == RT_NULL)
-    {
-        return RT_ENOSYS;
-    }
-    EXTI_InitStructure.EXTI_Line = irqmap->irqbit;  
-    EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-    EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
-    EXTI_InitStructure.EXTI_LineCmd = DISABLE;  
-    EXTI_Init(&EXTI_InitStructure);
+
     return RT_EOK;
 }
 const static struct rt_pin_ops _stm32_pin_ops =
@@ -746,7 +743,6 @@ const static struct rt_pin_ops _stm32_pin_ops =
     stm32_pin_attach_irq,
     stm32_pin_dettach_irq,
     stm32_pin_irq_enable,
-    stm32_pin_irq_disable
 };
 
 int stm32_hw_pin_init(void)

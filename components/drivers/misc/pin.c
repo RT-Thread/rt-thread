@@ -117,21 +117,12 @@ rt_err_t rt_pin_dettach_irq(rt_int32_t pin)
     }
     return RT_ENOSYS;
 }
-rt_err_t pin_irq_enable(rt_base_t pin)
+rt_err_t pin_irq_enable(rt_base_t pin, rt_uint32_t enabled)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     if(_hw_pin.ops->pin_irq_enable)
     {
-        return _hw_pin.ops->pin_irq_enable(&_hw_pin.parent, pin);
-    }
-    return RT_ENOSYS;
-}
-rt_err_t pin_irq_disable(rt_base_t pin)
-{
-    RT_ASSERT(_hw_pin.ops != RT_NULL);
-    if(_hw_pin.ops->pin_irq_disable)
-    {
-        return _hw_pin.ops->pin_irq_disable(&_hw_pin.parent, pin);
+        return _hw_pin.ops->pin_irq_enable(&_hw_pin.parent, pin, enabled);
     }
     return RT_ENOSYS;
 }
