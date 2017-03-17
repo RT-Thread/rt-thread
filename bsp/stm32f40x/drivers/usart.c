@@ -70,7 +70,8 @@ struct stm32_uart
 {
     USART_TypeDef *uart_device;
     IRQn_Type irq;
-    struct stm32_uart_dma {
+    struct stm32_uart_dma
+    {
         /* dma stream */
         DMA_Stream_TypeDef *rx_stream;
         /* dma channel */
@@ -200,7 +201,8 @@ static int stm32_getc(struct rt_serial_device *serial)
  * @param mem_base_addr memory 0 base address for DMA stream
  */
 static void dma_uart_config(struct rt_serial_device *serial, uint32_t setting_recv_len,
-        void *mem_base_addr) {
+        void *mem_base_addr)
+{
     struct stm32_uart *uart = (struct stm32_uart *) serial->parent.user_data;
     DMA_InitTypeDef DMA_InitStructure;
 
@@ -234,16 +236,26 @@ static void dma_uart_config(struct rt_serial_device *serial, uint32_t setting_re
 static void dma_uart_rx_idle_isr(struct rt_serial_device *serial) {
     struct stm32_uart *uart = (struct stm32_uart *) serial->parent.user_data;
     rt_size_t recv_total_index, recv_len;
+    rt_base_t level;
+
+    /* disable interrupt */
+    level = rt_hw_interrupt_disable();
 
     recv_total_index = uart->dma.setting_recv_len - DMA_GetCurrDataCounter(uart->dma.rx_stream);
-    if (recv_total_index >= uart->dma.last_recv_index) {
+    if (recv_total_index >= uart->dma.last_recv_index)
+    {
         recv_len = recv_total_index - uart->dma.last_recv_index;
-    } else {
+    }
+    else
+    {
         recv_len = uart->dma.setting_recv_len - uart->dma.last_recv_index + recv_total_index;
     }
-    uart->dma.last_recv_index = recv_total_index;
 
-    rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
+    uart->dma.last_recv_index = recv_total_index;
+    /* enable interrupt */
+    rt_hw_interrupt_enable(level);
+
+    if (recv_len) rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
 
     /* read a data for clear receive idle interrupt flag */
     USART_ReceiveData(uart->uart_device);
@@ -254,28 +266,35 @@ static void dma_uart_rx_idle_isr(struct rt_serial_device *serial) {
  *
  * @param serial serial device
  */
-static void dma_rx_done_isr(struct rt_serial_device *serial) {
+static void dma_rx_done_isr(struct rt_serial_device *serial)
+{
     struct stm32_uart *uart = (struct stm32_uart *) serial->parent.user_data;
     rt_size_t recv_total_index, recv_len;
+    rt_base_t level;
 
-    if (DMA_GetFlagStatus(uart->dma.rx_stream, uart->dma.rx_flag) != RESET) {
-        /* disable dma, stop receive data */
-        DMA_Cmd(uart->dma.rx_stream, DISABLE);
+    if (DMA_GetFlagStatus(uart->dma.rx_stream, uart->dma.rx_flag) != RESET)
+    {
+        /* disable interrupt */
+        level = rt_hw_interrupt_disable();
 
         recv_total_index = uart->dma.setting_recv_len - DMA_GetCurrDataCounter(uart->dma.rx_stream);
-        if (recv_total_index >= uart->dma.last_recv_index) {
+        if (recv_total_index >= uart->dma.last_recv_index)
+        {
             recv_len = recv_total_index - uart->dma.last_recv_index;
-        } else {
-            recv_len = uart->dma.setting_recv_len - uart->dma.last_recv_index + recv_total_index;
-            uart->dma.last_recv_index = recv_total_index;
         }
-        uart->dma.last_recv_index = recv_total_index;
+        else
+        {
+            recv_len = uart->dma.setting_recv_len - uart->dma.last_recv_index + recv_total_index;
+        }
 
-        rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
+        uart->dma.last_recv_index = recv_total_index;
+        /* enable interrupt */
+        rt_hw_interrupt_enable(level);
+
+        if (recv_len) rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
 
         /* start receive data */
         DMA_ClearFlag(uart->dma.rx_stream, uart->dma.rx_flag);
-        DMA_Cmd(uart->dma.rx_stream, ENABLE);
     }
 }
 
@@ -284,7 +303,8 @@ static void dma_rx_done_isr(struct rt_serial_device *serial) {
  *
  * @param serial serial device
  */
-static void uart_isr(struct rt_serial_device *serial) {
+static void uart_isr(struct rt_serial_device *serial)
+{
     struct stm32_uart *uart = (struct stm32_uart *) serial->parent.user_data;
 
     RT_ASSERT(uart != RT_NULL);
