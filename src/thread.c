@@ -48,7 +48,9 @@ extern rt_list_t rt_thread_defunct;
 #ifdef RT_USING_HOOK
 
 static void (*rt_thread_suspend_hook)(rt_thread_t thread);
-static void (*rt_thread_resume_hook)(rt_thread_t thread);
+static void (*rt_thread_resume_hook) (rt_thread_t thread);
+static void (*rt_thread_inited_hook) (rt_thread_t thread);
+
 /**
  * @ingroup Hook
  * This function sets a hook function when the system suspend a thread. 
@@ -61,6 +63,7 @@ void rt_thread_suspend_sethook(void (*hook)(rt_thread_t thread))
 {
     rt_thread_suspend_hook = hook;
 }
+
 /**
  * @ingroup Hook
  * This function sets a hook function when the system resume a thread. 
@@ -73,6 +76,18 @@ void rt_thread_resume_sethook(void (*hook)(rt_thread_t thread))
 {
     rt_thread_resume_hook = hook;
 }
+
+/**
+ * @ingroup Hook
+ * This function sets a hook function when a thread is initialized. 
+ *
+ * @param hook the specified hook function
+ */
+void rt_thread_inited_sethook(void (*hook)(rt_thread_t thread))
+{
+	rt_thread_inited_hook = hook;
+}
+
 #endif
 
 void rt_thread_exit(void)
@@ -161,6 +176,8 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
                   thread,
                   0,
                   RT_TIMER_FLAG_ONE_SHOT);
+
+    RT_OBJECT_HOOK_CALL(rt_thread_inited_hook,(thread));
 
     return RT_EOK;
 }
