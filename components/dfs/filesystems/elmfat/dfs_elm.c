@@ -27,6 +27,7 @@
  * 2013-03-01     aozima       fixed the stat(st_mtime) issue.
  * 2014-01-26     Bernard      Check the sector size before mount.
  * 2017-02-13     Hichard      Update Fatfs version to 0.12b, support exFAT.
+ * 2017-04-11     Bernard      fix the st_blksize issue.
  */
 
 #include <rtthread.h>
@@ -112,7 +113,7 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
     FATFS *fat;
     FRESULT result;
     int index;
-	struct rt_device_blk_geometry geometry;
+    struct rt_device_blk_geometry geometry;
 
     /* get an empty position */
     index = get_disk(RT_NULL);
@@ -121,16 +122,16 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
 
     /* save device */
     disk[index] = fs->dev_id;
-	/* check sector size */
-	if (rt_device_control(fs->dev_id, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry) == RT_EOK)
-	{
-		if (geometry.bytes_per_sector > _MAX_SS) 
-		{
-			rt_kprintf("The sector size of device is greater than the sector size of FAT.\n");
-			return -DFS_STATUS_EINVAL;
-		}
-	}
-	
+    /* check sector size */
+    if (rt_device_control(fs->dev_id, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry) == RT_EOK)
+    {
+        if (geometry.bytes_per_sector > _MAX_SS)
+        {
+            rt_kprintf("The sector size of device is greater than the sector size of FAT.\n");
+            return -DFS_STATUS_EINVAL;
+        }
+    }
+
     fat = (FATFS *)rt_malloc(sizeof(FATFS));
     if (fat == RT_NULL)
     {
@@ -208,12 +209,12 @@ int dfs_elm_mkfs(rt_device_t dev_id)
     int flag;
     FRESULT result;
     int index;
-    
+
     work = rt_malloc(_MAX_SS);
     if(RT_NULL == work) {
         return -DFS_STATUS_ENOMEM;
     }
-    
+
     if (dev_id == RT_NULL)
         return -DFS_STATUS_EINVAL;
 
@@ -733,7 +734,6 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
             st->st_mode &= ~(DFS_S_IWUSR | DFS_S_IWGRP | DFS_S_IWOTH);
 
         st->st_size  = file_info.fsize;
-        st->st_blksize = 512;
 
         /* get st_mtime. */
         {
