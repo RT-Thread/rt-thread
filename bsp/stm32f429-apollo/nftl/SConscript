@@ -1,0 +1,10 @@
+from building import *
+Import('rtconfig')
+
+cwd     = GetCurrentDir()
+src     = Glob('*.c')
+CPPPATH = [cwd]
+
+group   = DefineGroup('nftl', src, depend = ['RT_USING_NFTL', 'RT_USING_MTD_NAND', 'RT_USING_DFS', 'RT_USING_DFS_ELMFAT'], CPPPATH = CPPPATH)
+
+Return('group')
