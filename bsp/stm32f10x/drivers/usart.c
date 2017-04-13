@@ -15,6 +15,7 @@
  * 2015-01-31     armink       make sure the serial transmit complete in putc()
  * 2016-05-13     armink       add DMA Rx mode
  * 2017-01-19     aubr.cool    add interrupt Tx mode
+ * 2017-04-13     aubr.cool    correct Rx parity err
  */
 
 #include "stm32f10x.h"
@@ -262,7 +263,10 @@ static void uart_isr(struct rt_serial_device *serial) {
 
     if(USART_GetITStatus(uart->uart_device, USART_IT_RXNE) != RESET)
     {
-        rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
+        if(USART_GetFlagStatus(uart->uart_device, USART_FLAG_PE) == RESET)
+        {
+            rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
+        }
         /* clear interrupt */
         USART_ClearITPendingBit(uart->uart_device, USART_IT_RXNE);
     }
