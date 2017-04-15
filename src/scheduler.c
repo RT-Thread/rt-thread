@@ -52,7 +52,7 @@ rt_uint8_t rt_current_priority;
 #if RT_THREAD_PRIORITY_MAX > 32
 /* Maximum priority level, 256 */
 rt_uint32_t rt_thread_ready_priority_group;
-rt_uint8_t rt_thread_ready_table[32];
+rt_uint8_t rt_thread_ready_table[(RT_THREAD_PRIORITY_MAX -1)/8 + 1];
 #else
 /* Maximum priority level, 32 */
 rt_uint32_t rt_thread_ready_priority_group;
