@@ -64,7 +64,7 @@ __heap_limit
 
 		IMPORT PendSV_Handler
 		IMPORT rt_hw_timer_handler
-		IMPORT rt_hw_uart_isr_1
+		;IMPORT rt_hw_uart_isr_1
 		IMPORT rt_hw_eth_handler
 		IMPORT HardFault_Handler
 
@@ -111,7 +111,7 @@ __Vectors
         DCD     IntDefaultHandler           ; GPIO Port C
         DCD     IntDefaultHandler           ; GPIO Port D
         DCD     IntDefaultHandler           ; GPIO Port E
-        DCD     rt_hw_uart_isr_1           	; UART0
+        DCD     IntDefaultHandler           	; UART0
         DCD     IntDefaultHandler           ; UART1
         DCD     IntDefaultHandler           ; SSI
         DCD     IntDefaultHandler           ; I2C

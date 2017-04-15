@@ -1,0 +1,34 @@
+mini web server
+
+作者：云*飞扬
+版本：v1.1
+许可：LGPL
+
+特点
+适用RT-thread系统和lwip
+代码可裁剪
+支持用户认证
+支持CGI
+支持POST
+支持Upload
+
+
+
+makefsfile.exe -i web -o webdata.h
+说明:
+-i 输入目录
+-o 输出文件
+
+*.cgi文件说明
+# 注释 不处理
+i 包含文件
+c 命令 交由cgi方法处理
+t 不处理，直接输出
+. 文件结束
+
+*.inc
+被cgi包含的文件,直接输出内容
+
+当前目录，存放HTTPD核心代码
+webfile目录存放网页文件
+interface目录存放3个接口文件

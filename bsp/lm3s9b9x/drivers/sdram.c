@@ -186,10 +186,10 @@ void rt_hw_sdram_init(void)
     GPIOPinConfigure(GPIO_PJ0_EPI0S16);
     GPIOPinConfigure(GPIO_PJ1_EPI0S17);
     GPIOPinConfigure(GPIO_PJ2_EPI0S18);
-    GPIOPinConfigure(GPIO_PJ3_EPI0S19);
-    GPIOPinConfigure(GPIO_PJ4_EPI0S28);
-    GPIOPinConfigure(GPIO_PJ5_EPI0S29);
-    GPIOPinConfigure(GPIO_PJ6_EPI0S30);
+//    GPIOPinConfigure(GPIO_PJ3_EPI0S19);
+//    GPIOPinConfigure(GPIO_PJ4_EPI0S28);
+//    GPIOPinConfigure(GPIO_PJ5_EPI0S29);
+//    GPIOPinConfigure(GPIO_PJ6_EPI0S30);
     GPIOPinConfigure(GPIO_PG7_EPI0S31);
 
     //

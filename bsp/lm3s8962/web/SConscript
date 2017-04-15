@@ -1,0 +1,22 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+import copy
+
+cwd      = os.path.join(str(Dir('#')), 'web')
+src_http = ['httpd.c']
+CPPPATH  = [cwd]
+
+if GetDepend('RT_USING_DFS') == False:
+	src_http += ['fs.c']
+
+if GetDepend('RT_HTTP_USE_CGI') :
+	src_http += ['interface\cgi.c']
+if GetDepend('RT_HTTP_USE_CGI') :
+	src_http += ['interface\post.c']
+if GetDepend('RT_HTTP_USE_CGI') :
+	src_http += ['interface\upload.c']
+
+group = DefineGroup('web', src_http, depend = ['RT_USING_LWIP'], CPPPATH = CPPPATH)
+
+Return('group')

@@ -1,0 +1,4 @@
+makefsfile.exe -i web -o filedata.h
+说明:
+-i 输入目录
+-o 输出文件

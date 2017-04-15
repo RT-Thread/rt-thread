@@ -114,7 +114,7 @@
 #define RT_LWIP_ETH_PAD_SIZE 2
 
 /* TCP sender buffer space*/
-#define RT_LWIP_TCP_SND_BUF	1024*8
+#define RT_LWIP_TCP_SND_BUF	1024*4
 /* Enable SNMP protocol*/
 #define RT_LWIP_SNMP
 
@@ -126,13 +126,13 @@
 /* ip address of target*/
 #define RT_LWIP_IPADDR0	192
 #define RT_LWIP_IPADDR1	168
-#define RT_LWIP_IPADDR2	1
+#define RT_LWIP_IPADDR2	2
 #define RT_LWIP_IPADDR3	30
 
 /* gateway address of target*/
 #define RT_LWIP_GWADDR0	192
 #define RT_LWIP_GWADDR1	168
-#define RT_LWIP_GWADDR2	1
+#define RT_LWIP_GWADDR2	2
 #define RT_LWIP_GWADDR3	1
 
 /* mask address of target*/

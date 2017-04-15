@@ -1,0 +1,14 @@
+makefsfile.exe -i web -o webdata.h
+说明:
+-i 输入目录
+-o 输出文件
+
+*.cgi文件说明
+# 注释 不处理
+i 包含文件
+c 命令 交由cgi方法处理
+t 不处理，直接输出
+. 文件结束
+
+*.inc
+被cgi包含的文件,直接输出内容
