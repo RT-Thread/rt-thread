@@ -43,6 +43,11 @@ def generate(env):
     env['ENV']['CCC_CXX'] = 'clang++'
 
     # setup the output dir and format
+    checkerplugins = ['core', 'unix', 'security', 'alpha.security.ArrayBound',
+                      'alpha.security.ArrayBoundV2', 'alpha.security.MallocOverflow',
+                      'alpha.unix.MallocWithAnnotations']
+    env['ENV']['CCC_ANALYZER_ANALYSIS'] = ' '.join(['-analyzer-checker ' + i
+                                                        for i in checkerplugins])
     env['ENV']['CCC_ANALYZER_HTML'] = './build/'
     env['ENV']['CCC_ANALYZER_OUTPUT_FORMAT'] = 'html'
 

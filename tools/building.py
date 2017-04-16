@@ -212,6 +212,9 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         # remove the POST_ACTION as it will cause meaningless errors(file not
         # found or something like that).
         rtconfig.POST_ACTION = ''
+        # Subsequent scripts can realize whether we are analyzing by Clang or
+        # not by CROSS_TOOL.
+        rtconfig.CROSS_TOOL = 'clang-analyze'
 
     # add build library option
     AddOption('--buildlib',
