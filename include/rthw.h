@@ -23,6 +23,7 @@
  * 2006-04-25     Bernard      add rt_hw_context_switch_interrupt declaration
  * 2006-09-24     Bernard      add rt_hw_context_switch_to declaration
  * 2012-12-29     Bernard      add rt_hw_exception_install declaration
+ * 2014-12-23     yangwc       Fix interrupt interface defects.
  */
 
 #ifndef __RT_HW_H__
@@ -74,6 +75,7 @@ void rt_hw_interrupt_init(void);
 void rt_hw_interrupt_mask(int vector);
 void rt_hw_interrupt_umask(int vector);
 rt_isr_handler_t rt_hw_interrupt_install(int              vector,
+                                         int              priority,
                                          rt_isr_handler_t handler,
                                          void            *param,
                                          char            *name);
