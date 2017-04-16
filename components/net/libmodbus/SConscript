@@ -1,0 +1,11 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+src	= Glob('*.c')
+include_path = [cwd]
+
+group = DefineGroup('libmodbus', src, depend = ['RT_USING_LIBMODBUS'], CPPPATH = include_path)
+
+Return('group')
