@@ -43,7 +43,7 @@
  */
 rt_inline int _serial_poll_rx(struct rt_serial_device *serial, rt_uint8_t *data, int length)
 {
-    int ch;
+    int ch = -1;
     int size;
 
     RT_ASSERT(serial != RT_NULL);
