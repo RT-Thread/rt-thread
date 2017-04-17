@@ -353,7 +353,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
              * So insert the new timer to the end the the some-timeout timer
              * list.
              */
-            if ((t->timeout_tick - timer->timeout_tick) == 0)
+            if (((t->timeout_tick - timer->timeout_tick) == 0) && (timer->init_tick >= t->init_tick))
             {
                 continue;
             }
