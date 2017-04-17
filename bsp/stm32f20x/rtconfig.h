@@ -60,6 +60,7 @@
 /* Using Device System */
 #define RT_USING_DEVICE
 #define RT_USING_UART1
+#define RT_USING_DEVICE_IPC
 
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
@@ -88,7 +89,7 @@
 #define DFS_FD_MAX					4
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
-/* #define RT_USING_LWIP */
+ #define RT_USING_LWIP 
 /* LwIP uses RT-Thread Memory Management */
 #define RT_LWIP_USING_RT_MEM
 /* Enable ICMP protocol*/
@@ -137,5 +138,7 @@
 #define RT_USING_RTT_CMSIS
 // <bool name="RT_USING_BSP_CMSIS" description="Using CMSIS in BSP" default="true" />
 // #define RT_USING_BSP_CMSIS
+
+#define RT_USING_SERIAL
 
 #endif
