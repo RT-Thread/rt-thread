@@ -362,7 +362,26 @@ char *rt_strstr(const char *s1, const char *s2)
     return RT_NULL;
 }
 RTM_EXPORT(rt_strstr);
+/**
+ * This function will return the first occurrence of a char.
+ *
+ * @param s1 the source string
+ * @param ch the find char
+ *
+ * @return the first occurrence of a ch in s1, or RT_NULL if no found.
+ */
+char *rt_strchr(const char *s1, const char ch)
+{
+    while (*s1)
+    {
+        if (*s1 == ch)
+            return (char *)s1;
+        s1 ++;
+    }
 
+    return RT_NULL;
+}
+RTM_EXPORT(rt_strchr);
 /**
  * This function will compare two strings while ignoring differences in case
  *
@@ -1340,6 +1359,7 @@ int   memcmp(const void *s1, const void *s2, size_t n) __attribute__((weak, alia
 
 size_t strlen(const char *s) __attribute__((weak, alias("rt_strlen")));
 char *strstr(const char *s1,const char *s2) __attribute__((weak, alias("rt_strstr")));
+char *rt_strchr(const char *s1, const char ch) __attribute__((weak, alias("rt_strchr")));
 int strcasecmp(const char *a, const char *b) __attribute__((weak, alias("rt_strcasecmp")));
 char *strncpy(char *dest, const char *src, size_t n) __attribute__((weak, alias("rt_strncpy")));
 int strncmp(const char *cs, const char *ct, size_t count) __attribute__((weak, alias("rt_strncmp")));
