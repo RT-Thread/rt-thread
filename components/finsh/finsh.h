@@ -321,8 +321,14 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
  * @param name the name of function.
  * @param desc the description of function, which will show in help.
  */
+#ifdef RT_USING_FINSH                
 #define FINSH_FUNCTION_EXPORT(name, desc)   \
     FINSH_FUNCTION_EXPORT_CMD(name, name, desc)
+#else
+#if !defined(FINSH_FUNCTION_EXPORT)
+#define FINSH_FUNCTION_EXPORT(name, desc)
+#endif
+#endif
 
 /**
  * @ingroup finsh
@@ -333,8 +339,14 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
  * @param alias the alias name of function.
  * @param desc the description of function, which will show in help.
  */
+#ifdef RT_USING_FINSH
 #define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)  \
         FINSH_FUNCTION_EXPORT_CMD(name, alias, desc)
+#else
+#if !defined(FINSH_FUNCTION_EXPORT_ALIAS)
+#define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)
+#endif
+#endif
 
 /**
  * @ingroup finsh
