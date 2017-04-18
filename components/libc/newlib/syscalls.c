@@ -205,7 +205,11 @@ _wait_r(struct _reent *ptr, int *status)
 _ssize_t
 _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 {
-	if (fd < 3)
+#ifndef RT_USING_NEWLIB
+    if (fd < 3)
+#else
+    if (0)
+#endif
 	{
 #ifdef RT_USING_CONSOLE
 		rt_device_t console_device;

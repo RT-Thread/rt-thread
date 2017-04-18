@@ -28,6 +28,7 @@ int libc_system_init(void)
 #error Please enable devfs by defining RT_USING_DFS_DEVFS in rtconfig.h
 #endif
 
+#ifndef RT_USING_NEWLIB
     console_dev = rt_console_get_device();
     if (console_dev)
     {
@@ -42,6 +43,8 @@ int libc_system_init(void)
         /* skip warning */
         fd = fd;
     }
+#endif
+
 #endif
 
     /* set PATH and HOME */
