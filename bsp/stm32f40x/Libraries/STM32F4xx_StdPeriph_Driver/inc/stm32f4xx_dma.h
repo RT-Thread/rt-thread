@@ -393,7 +393,7 @@ typedef struct
 #define DMA_FLAG_TCIF7                    ((uint32_t)0x28000000)
 
 #define IS_DMA_CLEAR_FLAG(FLAG) ((((FLAG) & 0x30000000) != 0x30000000) && (((FLAG) & 0x30000000) != 0) && \
-                                 (((FLAG) & 0xC082F082) == 0x00) && ((FLAG) != 0x00))
+                                     (((FLAG) & 0xC002F082) == 0x00) && ((FLAG) != 0x00))
 
 #define IS_DMA_GET_FLAG(FLAG) (((FLAG) == DMA_FLAG_TCIF0)  || ((FLAG) == DMA_FLAG_HTIF0)  || \
                                ((FLAG) == DMA_FLAG_TEIF0)  || ((FLAG) == DMA_FLAG_DMEIF0) || \
