@@ -11,13 +11,14 @@
  * Date           Author       Notes
  * 2011-06-15     aozima       the first version for lpc214x
  * 2013-03-29     aozima       Modify the interrupt interface implementations.
+ * 2014-12-23     yangwc       Fix interrupt interface defects.
  */
 
 #include <rtthread.h>
 #include <rthw.h>
 #include "lpc214x.h"
 
-#define MAX_HANDLERS	32
+#define MAX_HANDLERS	16
 #define SVCMODE		    0x13
 
 extern rt_uint32_t rt_interrupt_nest;
@@ -140,23 +141,23 @@ void rt_hw_interrupt_umask(int vector)
  * @param name the interrupt name
  * @return old handler
  */
-rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
+rt_isr_handler_t rt_hw_interrupt_install(int vector, int priority, rt_isr_handler_t handler,
                                          void *param, char *name)
 {
     rt_isr_handler_t old_handler = RT_NULL;
 
-    if(vector >= 0 && vector < MAX_HANDLERS)
+    if(priority >= 0 && priority < MAX_HANDLERS)
     {
-        rt_uint32_t* vect_ctl 	= (rt_uint32_t *)(VIC_BASE_ADDR + 0x200 + (vector << 2));
+        rt_uint32_t* vect_ctl 	= (rt_uint32_t *)(VIC_BASE_ADDR + 0x200 + (priority << 2));
 
         /* assign IRQ slot and enable this slot */
         *vect_ctl = 0x20 | (vector & 0x1F);
 
-        old_handler = irq_desc[vector].handler;
+        old_handler = irq_desc[priority].handler;
 		if (handler != RT_NULL)
 		{
-			irq_desc[vector].handler = handler;
-			irq_desc[vector].param = param;
+			irq_desc[priority].handler = handler;
+			irq_desc[priority].param = param;
 		}
     }
 
