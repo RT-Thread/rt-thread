@@ -1169,7 +1169,8 @@ rt_int32_t sdio_detach_irq(struct rt_sdio_function *func)
 
 void sdio_irq_wakeup(struct rt_mmcsd_host *host)
 {
-    host->ops->enable_sdio_irq(host, 0);
+    if (host->flags & MMCSD_SUP_SDIO_IRQ)
+        host->ops->enable_sdio_irq(host, 0);
     rt_sem_release(host->sdio_irq_sem);
 }
 
@@ -1197,7 +1198,7 @@ rt_int32_t sdio_enable_func(struct rt_sdio_function *func)
     if (ret)
         goto err;
 
-    timeout = rt_tick_get() + func->enable_timeout_val * 1000 / RT_TICK_PER_SECOND;
+    timeout = rt_tick_get() + func->enable_timeout_val * RT_TICK_PER_SECOND / 1000;
 
     while (1) 
     {
@@ -1287,7 +1288,7 @@ rt_inline rt_int32_t sdio_match_card(struct rt_mmcsd_card           *card,
         (id->manufacturer != card->cis.manufacturer))
         return 0;
     if ((id->product != SDIO_ANY_PROD_ID) && 
-        (id->product != card->cis.product))
+        (id->product != (card->cis.product | 1)))
         return 0;
 
     return 1;
@@ -1334,11 +1335,11 @@ rt_int32_t sdio_register_driver(struct rt_sdio_driver *driver)
         card = sdio_match_driver(driver->id);
         if (card != RT_NULL)
         {
-            driver->probe(card);
+            return driver->probe(card);
         }
     }
 
-    return 0;
+    return -RT_EEMPTY;
 }
 
 rt_int32_t sdio_unregister_driver(struct rt_sdio_driver *driver)
