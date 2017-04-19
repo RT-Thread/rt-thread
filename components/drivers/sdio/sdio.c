@@ -1347,9 +1347,6 @@ rt_int32_t sdio_unregister_driver(struct rt_sdio_driver *driver)
     struct sdio_driver *sd = RT_NULL;
     struct rt_mmcsd_card *card;
 
-
-    rt_list_insert_after(&sdio_drivers, &sd->list);
-
     for (l = (&sdio_drivers)->next; l != &sdio_drivers; l = l->next)
     {
         sd = (struct sdio_driver *)rt_list_entry(l, struct sdio_driver, list);
