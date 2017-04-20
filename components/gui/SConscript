@@ -47,6 +47,6 @@ src/window.c
 ''')
 CPPPATH = [cwd + '/include']
 
-group = DefineGroup('GUIEngine', src, depend = ['RT_USING_GUIENGINE'], CPPPATH = CPPPATH)
+group = DefineGroup('GUIEngine', src, depend = ['RT_USING_RTGUI'], CPPPATH = CPPPATH)
 
 Return('group')
