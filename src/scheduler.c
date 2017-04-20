@@ -194,7 +194,10 @@ void rt_schedule(void)
     rt_base_t level;
     struct rt_thread *to_thread;
     struct rt_thread *from_thread;
-
+#ifdef RT_USING_PROFILE
+	rt_tick_t tick;	
+	rt_tick_t profile_cycle;
+#endif
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
@@ -239,6 +242,26 @@ void rt_schedule(void)
             _rt_scheduler_stack_check(to_thread);
 #endif
 
+#ifdef RT_USING_PROFILE
+			tick = rt_tick_get();
+			from_thread->ticks_delta  = tick - from_thread->ticks_start;
+			from_thread->ticks_total += from_thread->ticks_delta;
+			to_thread->ticks_start    = tick;
+			
+			profile_cycle = tick - from_thread->tick_profile;
+			/* calculate cpu usage per second */
+			if(profile_cycle >= RT_TICK_PER_SECOND){
+				from_thread->cpu_usage = from_thread->ticks_total * 10000 / profile_cycle;
+				from_thread->ticks_total = 0;
+				if(from_thread->cpu_usage > 10000){
+						from_thread->cpu_usage = 10000;
+				}
+				if(from_thread->cpu_usage > from_thread->cpu_usage_max){
+					from_thread->cpu_usage_max = from_thread->cpu_usage;
+				}
+				from_thread->tick_profile = tick;
+			}
+#endif
             if (rt_interrupt_nest == 0)
             {
                 rt_hw_context_switch((rt_uint32_t)&from_thread->sp,

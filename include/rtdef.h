@@ -518,6 +518,15 @@ struct rt_thread
     rt_uint8_t  event_info;
 #endif
 
+#ifdef RT_USING_PROFILE
+	rt_uint16_t cpu_usage;                              /**< thread's cpu usage */ 
+	rt_uint16_t cpu_usage_max;                          /**< the maximum of thread's cpu usage */ 
+	rt_tick_t   ticks_delta;
+	rt_tick_t   ticks_start;
+	rt_tick_t   ticks_total;
+	rt_tick_t   tick_profile;  
+#endif
+
     rt_ubase_t  init_tick;                              /**< thread's initialized tick */
     rt_ubase_t  remaining_tick;                         /**< remaining tick */
 
