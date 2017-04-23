@@ -39,7 +39,7 @@
 #define LWIP_HAVE_LOOPIF            0
 
 #define LWIP_PLATFORM_BYTESWAP      0
-#define BYTE_ORDER                  LITTLE_ENDIAN
+//#define BYTE_ORDER                  LITTLE_ENDIAN
 
 /* #define RT_LWIP_DEBUG */
 
@@ -52,9 +52,9 @@
 #define SYS_DEBUG                   LWIP_DBG_OFF
 #define ETHARP_DEBUG                LWIP_DBG_OFF
 #define PPP_DEBUG                   LWIP_DBG_OFF
-#define MEM_DEBUG                   LWIP_DBG_ON
-#define MEMP_DEBUG                  LWIP_DBG_ON
-#define PBUF_DEBUG                  LWIP_DBG_ON
+#define MEM_DEBUG                   LWIP_DBG_OFF
+#define MEMP_DEBUG                  LWIP_DBG_OFF
+#define PBUF_DEBUG                  LWIP_DBG_OFF
 #define API_LIB_DEBUG               LWIP_DBG_OFF
 #define API_MSG_DEBUG               LWIP_DBG_OFF
 #define TCPIP_DEBUG                 LWIP_DBG_OFF
@@ -86,9 +86,9 @@
 #define MEMP_OVERFLOW_CHECK         1 ////
 #define LWIP_ALLOW_MEM_FREE_FROM_OTHER_CONTEXT 1 ////
 //#define MEM_LIBC_MALLOC             1
-#define MEM_USE_POOLS               1
-#define MEMP_USE_CUSTOM_POOLS       1
-#define MEM_SIZE                    (1024*64)
+//#define MEM_USE_POOLS               1
+//#define MEMP_USE_CUSTOM_POOLS       1
+//#define MEM_SIZE                    (1024*64)
 
 #ifdef RT_LWIP_USING_RT_MEM
 #define MEMP_MEM_MALLOC             1
@@ -99,7 +99,7 @@
 /* MEMP_NUM_PBUF: the number of memp struct pbufs. If the application
    sends a lot of data out of ROM (or other static memory), this
    should be set high. */
-#define MEMP_NUM_PBUF               64 //16
+#define MEMP_NUM_PBUF               32 //16
 
 /* the number of UDP protocol control blocks. One per active RAW "connection". */
 #ifdef RT_LWIP_RAW_PCB_NUM

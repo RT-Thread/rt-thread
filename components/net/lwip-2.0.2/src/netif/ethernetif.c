@@ -506,11 +506,11 @@ FINSH_FUNCTION_EXPORT(set_if, set network interface address);
 #include <lwip/dns.h>
 void set_dns(char* dns_server)
 {
-    ip_addr_t *addr;
+    ip_addr_t addr;
 
-    if ((dns_server != RT_NULL) && ipaddr_aton(dns_server, addr))
+    if ((dns_server != RT_NULL) && ipaddr_aton(dns_server, &addr))
     {
-        dns_setserver(0, addr);
+        dns_setserver(0, &addr);
     }
 }
 FINSH_FUNCTION_EXPORT(set_dns, set DNS server address);

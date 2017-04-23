@@ -17,6 +17,9 @@ config RT_USING_LWIP
 
 			config RT_USING_LWIP200
 				bool "lwIP v2.0.0"
+
+			config RT_USING_LWIP202
+				bool "lwIP v2.0.2"
 		endchoice
 
 		config RT_LWIP_IGMP

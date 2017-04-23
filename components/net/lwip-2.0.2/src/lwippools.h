@@ -5,6 +5,6 @@
  LWIP_MALLOC_MEMPOOL((unsigned char)128, 1024)
  LWIP_MALLOC_MEMPOOL((unsigned char)128, 1514)
  LWIP_MALLOC_MEMPOOL((unsigned char)128, 1536)
-  LWIP_MALLOC_MEMPOOL((unsigned char)128, 4096)
+ LWIP_MALLOC_MEMPOOL((unsigned char)128, 4096)
  LWIP_MALLOC_MEMPOOL_END
 #endif
