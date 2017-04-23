@@ -261,12 +261,9 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
 
     /* calculate priority attribute */
 #if RT_THREAD_PRIORITY_MAX > 32
-    thread->number      = thread->current_priority >> 3;            /* 5bit */
-    thread->number_mask = 1L << thread->number;
-    thread->high_mask   = 1L << (thread->current_priority & 0x07);  /* 3bit */
-#else
-    thread->number_mask = 1L << thread->current_priority;
+    thread->priority_group = thread->current_priority >> 5;             /* 3bit */
 #endif
+    thread->priority_mask  = 1UL << (thread->current_priority & 0x1f);  /* 5bit */
 
     RT_DEBUG_LOG(RT_DEBUG_THREAD, ("startup a thread:%s with priority:%d\n",
                                    thread->name, thread->init_priority));
@@ -553,12 +550,9 @@ rt_err_t rt_thread_control(rt_thread_t thread, rt_uint8_t cmd, void *arg)
 
             /* recalculate priority attribute */
 #if RT_THREAD_PRIORITY_MAX > 32
-            thread->number      = thread->current_priority >> 3;            /* 5bit */
-            thread->number_mask = 1 << thread->number;
-            thread->high_mask   = 1 << (thread->current_priority & 0x07);   /* 3bit */
-#else
-            thread->number_mask = 1 << thread->current_priority;
+            thread->priority_group = thread->current_priority >> 5;             /* 3bit */
 #endif
+            thread->priority_mask  = 1UL << (thread->current_priority & 0x1f);  /* 5bit */
 
             /* insert thread to schedule queue again */
             rt_schedule_insert_thread(thread);
@@ -569,12 +563,9 @@ rt_err_t rt_thread_control(rt_thread_t thread, rt_uint8_t cmd, void *arg)
 
             /* recalculate priority attribute */
 #if RT_THREAD_PRIORITY_MAX > 32
-            thread->number      = thread->current_priority >> 3;            /* 5bit */
-            thread->number_mask = 1 << thread->number;
-            thread->high_mask   = 1 << (thread->current_priority & 0x07);   /* 3bit */
-#else
-            thread->number_mask = 1 << thread->current_priority;
+            thread->priority_group = thread->current_priority >> 5;             /* 3bit */
 #endif
+            thread->priority_mask  = 1UL << (thread->current_priority & 0x1f);  /* 5bit */
         }
 
         /* enable interrupt */
