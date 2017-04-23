@@ -39,7 +39,10 @@
 #define LWIP_HAVE_LOOPIF            0
 
 #define LWIP_PLATFORM_BYTESWAP      0
-//#define BYTE_ORDER                  LITTLE_ENDIAN
+
+#ifndef BYTE_ORDER
+#define BYTE_ORDER                  LITTLE_ENDIAN
+#endif
 
 /* #define RT_LWIP_DEBUG */
 
