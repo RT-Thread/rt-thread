@@ -39,6 +39,14 @@ extern int lwip_system_init(void);
 #include <finsh.h>
 #endif
 
+#ifdef RT_USING_DFS
+#include "dfs.h"        // int dfs_init(void)
+#endif 
+
+#ifdef RT_USING_DFS_ELMFAT
+#include "dfs_elm.h"    // int elm_init(void)
+#endif
+
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
 {
