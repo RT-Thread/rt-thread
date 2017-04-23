@@ -36,6 +36,7 @@
 #define BAUD_RATE_19200                 19200
 #define BAUD_RATE_38400                 38400
 #define BAUD_RATE_57600                 57600
+#define BAUD_RATE_100000                100000
 #define BAUD_RATE_115200                115200
 #define BAUD_RATE_230400                230400
 #define BAUD_RATE_460800                460800
@@ -99,6 +100,19 @@
     RT_SERIAL_RB_BUFSZ, /* Buffer size */  \
     0                                      \
 }
+/* Sbus config for serial_configure structure */
+#define RT_SERIAL_CONFIG_SBUS           \
+{                                          \
+    BAUD_RATE_100000, /* 100000 bits/s */  \
+    DATA_BITS_8,      /* 8 databits */     \
+    STOP_BITS_2,      /* 1 stopbit */      \
+    PARITY_EVEN,      /* No parity  */     \
+    BIT_ORDER_LSB,    /* LSB first sent */ \
+    NRZ_NORMAL,       /* Normal mode */    \
+    RT_SERIAL_RB_BUFSZ, /* Buffer size */  \
+    0                                      \
+}
+
 
 struct serial_configure
 {
