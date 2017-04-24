@@ -22,6 +22,7 @@
 #include "arch/sys_arch.h"
 #include "lwip/debug.h"
 #include "lwip/netif.h"
+#include "lwip/netifapi.h"
 #include "lwip/tcpip.h"
 #include "netif/ethernetif.h"
 #include "lwip/sio.h"
@@ -601,7 +602,6 @@ u32_t sys_now(void)
 }
 
 
-#if 0
 WEAK
 void mem_init(void)
 {
@@ -628,7 +628,6 @@ void  mem_free(void *mem)
 {
     rt_free(mem);
 }
-#endif
 
 #ifdef RT_LWIP_PPP
 u32_t sio_read(sio_fd_t fd, u8_t *buf, u32_t size)
