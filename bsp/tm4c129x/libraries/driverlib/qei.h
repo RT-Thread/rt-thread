@@ -2,7 +2,7 @@
 //
 // qei.h - Prototypes for the Quadrature Encoder Driver.
 //
-// Copyright (c) 2005-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 2.1.0.12573 of the Tiva Peripheral Driver Library.
+// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -64,6 +64,29 @@ extern "C"
 #define QEI_CONFIG_CLOCK_DIR    0x00000004  // ChA and ChB are clock and dir
 #define QEI_CONFIG_NO_SWAP      0x00000000  // Do not swap ChA and ChB
 #define QEI_CONFIG_SWAP         0x00000002  // Swap ChA and ChB
+
+//*****************************************************************************
+//
+// Values that can be passed to QEIFilterConfigure as the ui32PreDiv
+// parameter.
+//
+//*****************************************************************************
+#define QEI_FILTCNT_2           0x00000000  // Filter Count of 2 System Clocks
+#define QEI_FILTCNT_3           0x00010000  // Filter Count of 3 System Clocks
+#define QEI_FILTCNT_4           0x00020000  // Filter Count of 4 System Clocks
+#define QEI_FILTCNT_5           0x00030000  // Filter Count of 5 System Clocks
+#define QEI_FILTCNT_6           0x00040000  // Filter Count of 6 System Clocks
+#define QEI_FILTCNT_7           0x00050000  // Filter Count of 7 System Clocks
+#define QEI_FILTCNT_8           0x00060000  // Filter Count of 8 System Clocks
+#define QEI_FILTCNT_9           0x00070000  // Filter Count of 9 System Clocks
+#define QEI_FILTCNT_10          0x00080000  // Filter Count of 10 System Clocks
+#define QEI_FILTCNT_11          0x00090000  // Filter Count of 11 System Clocks
+#define QEI_FILTCNT_12          0x000A0000  // Filter Count of 12 System Clocks
+#define QEI_FILTCNT_13          0x000B0000  // Filter Count of 13 System Clocks
+#define QEI_FILTCNT_14          0x000C0000  // Filter Count of 14 System Clocks
+#define QEI_FILTCNT_15          0x000D0000  // Filter Count of 15 System Clocks
+#define QEI_FILTCNT_16          0x000E0000  // Filter Count of 16 System Clocks
+#define QEI_FILTCNT_17          0x000F0000  // Filter Count of 17 System Clocks
 
 //*****************************************************************************
 //
@@ -104,6 +127,9 @@ extern uint32_t QEIPositionGet(uint32_t ui32Base);
 extern void QEIPositionSet(uint32_t ui32Base, uint32_t ui32Position);
 extern int32_t QEIDirectionGet(uint32_t ui32Base);
 extern bool QEIErrorGet(uint32_t ui32Base);
+extern void QEIFilterEnable(uint32_t ui32Base);
+extern void QEIFilterDisable(uint32_t ui32Base);
+extern void QEIFilterConfigure(uint32_t ui32Base, uint32_t ui32FiltCnt);
 extern void QEIVelocityEnable(uint32_t ui32Base);
 extern void QEIVelocityDisable(uint32_t ui32Base);
 extern void QEIVelocityConfigure(uint32_t ui32Base, uint32_t ui32PreDiv,

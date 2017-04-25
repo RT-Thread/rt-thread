@@ -2,7 +2,7 @@
 //
 // i2c.h - Prototypes for the I2C Driver.
 //
-// Copyright (c) 2005-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 2.1.0.12573 of the Tiva Peripheral Driver Library.
+// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -281,7 +281,7 @@ extern "C"
 // Prototypes for the APIs.
 //
 //*****************************************************************************
-extern void I2CIntRegister(uint32_t ui32Base, void(pfnHandler)(void));
+extern void I2CIntRegister(uint32_t ui32Base, void(*pfnHandler)(void));
 extern void I2CIntUnregister(uint32_t ui32Base);
 extern void I2CTxFIFOConfigSet(uint32_t ui32Base, uint32_t ui32Config);
 extern void I2CTxFIFOFlush(uint32_t ui32Base);
@@ -348,6 +348,7 @@ extern bool I2CSlaveIntStatus(uint32_t ui32Base, bool bMasked);
 extern uint32_t I2CSlaveIntStatusEx(uint32_t ui32Base,
                                       bool bMasked);
 extern uint32_t I2CSlaveStatus(uint32_t ui32Base);
+extern void I2CLoopbackEnable(uint32_t ui32Base);
 
 //*****************************************************************************
 //

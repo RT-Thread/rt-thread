@@ -3,7 +3,7 @@
 // emac.c - Driver for the Integrated Ethernet Controller on Snowflake-class
 //          Tiva devices.
 //
-// Copyright (c) 2013-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2013-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 2.1.0.12573 of the Tiva Peripheral Driver Library.
+// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -161,7 +161,8 @@
 // masked (or enabled) via the DMAIM register.
 //
 //*****************************************************************************
-#define EMAC_NON_MASKED_INTS    (EMAC_DMARIS_TT |                             \
+#define EMAC_NON_MASKED_INTS    (EMAC_DMARIS_LPI |                            \
+                                 EMAC_DMARIS_TT |                             \
                                  EMAC_DMARIS_PMT |                            \
                                  EMAC_DMARIS_MMC)
 
@@ -206,6 +207,14 @@ g_pi16MIIClockDiv[] =
 //*****************************************************************************
 #define NUM_CLOCK_DIVISORS      (sizeof(g_pi16MIIClockDiv) /                  \
                                  sizeof(g_pi16MIIClockDiv[0]))
+
+//*****************************************************************************
+//
+// The define for accessing PHY registers in the MMD address space.
+//
+//*****************************************************************************
+#define DEV_ADDR(x) ((x & 0xF000) >> 12)
+#define REG_ADDR(x) ((x & 0x0FFF))
 
 //*****************************************************************************
 //
@@ -2917,7 +2926,6 @@ EMACPHYRead(uint32_t ui32Base, uint8_t ui8PhyAddr, uint8_t ui8RegAddr)
     //
     HWREG(ui32Base + EMAC_O_MIIADDR) =
         ((HWREG(ui32Base + EMAC_O_MIIADDR) & EMAC_MIIADDR_CR_M) |
-					EMAC_MIIADDR_CR_100_150 |
          (ui8RegAddr << EMAC_MIIADDR_MII_S) |
          (ui8PhyAddr << EMAC_MIIADDR_PLA_S) | EMAC_MIIADDR_MIIB);
 
@@ -4680,6 +4688,291 @@ EMACPowerManagementStatusGet(uint32_t ui32Base)
     return(HWREG(ui32Base + EMAC_O_PMTCTLSTAT) &
            (EMAC_PMTCTLSTAT_WUPRX | EMAC_PMTCTLSTAT_MGKPRX |
             EMAC_PMTCTLSTAT_PWRDWN));
+}
+
+//*****************************************************************************
+//
+//! Enables the wake-on-LAN feature of the MAC controller.
+//!
+//! \param ui32Base is the base address of the controller.
+//!
+//! This function is used to enable the wake-on-LAN feature of the MAC
+//! controller. It is done by first checking if the transmit path is idle and
+//! disabling the trasnmitter and the transmit DMA controller. Then it checks
+//! if any data from the network is being actively received and if not then it
+//! disables the receive DMA controller.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+EMACWoLEnter(uint32_t ui32Base)
+{
+    //
+    // Parameter sanity check.
+    //
+    ASSERT(ui32Base == EMAC0_BASE);
+
+    //
+    // Check if the Transmit interrupt bit is clear.
+    //
+    while(HWREG(ui32Base + EMAC_O_DMARIS) == EMAC_DMARIS_TI)
+    {
+    }
+
+    //
+    // Disable transmission in the MAC configuration register.
+    //
+    HWREG(ui32Base + EMAC_O_CFG) &= ~EMAC_CFG_TE;
+
+    //
+    // Disable the MAC transmit path in the opmode register.
+    //
+    HWREG(ui32Base + EMAC_O_DMAOPMODE) &= ~EMAC_DMAOPMODE_ST;
+
+    //
+    // Check if the Receive FIFO is empty.
+    //
+    while((HWREG(ui32Base + EMAC_O_STATUS) & EMAC_STATUS_RX_FIFO_LEVEL_MASK) ==
+          EMAC_STATUS_RX_FIFO_EMPTY)
+    {
+    }
+
+    //
+    // Disable the MAC receive path.
+    //
+    HWREG(ui32Base + EMAC_O_DMAOPMODE) &= ~EMAC_DMAOPMODE_SR;
+}
+
+//*****************************************************************************
+//
+//! Configures the LPI timers and control register.
+//!
+//! \param ui32Base is the base address of the controller.
+//! \param bLPIConfig is state of LPI trasnmit automate bit.
+//! \param ui16LPILSTimer is the value of LS timer in milli-seconds.
+//! \param ui16LPITWTimer is the value of TW timer in micro-seconds.
+//!
+//! This function is used to configure the LPI timer and control registers when
+//! the link is established as EEE mode or when the link is lost. When the link
+//! is established as EEE, then \e ui16LPILSTimer is programmed as the link
+//! status timer value and \e ui16LPITWTimer is programmed as the transmit wait 
+//! timer value. The parameter \e bLPIConfig is used to decide if the transmit
+//! path must be automated or should be under user control.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+EMACLPIConfig(uint32_t ui32Base, bool bLPIConfig, uint16_t ui16LPILSTimer,
+              uint16_t ui16LPITWTimer)
+{
+    uint32_t ui32TimerValue;
+
+    //
+    // Parameter sanity check.
+    //
+    ASSERT(ui32Base == EMAC0_BASE);
+    
+    ui32TimerValue = ((ui16LPILSTimer << EMAC_LPITIMERCTL_LST_S) &
+                       EMAC_LPITIMERCTL_LST_M);
+    ui32TimerValue |= ui16LPITWTimer & EMAC_LPITIMERCTL_TWT_M;
+
+    //
+    // Update the LPI Timer.
+    //
+    HWREG(ui32Base + EMAC_O_LPITIMERCTL) = ui32TimerValue;
+
+    //
+    // Configure the LPI Control registers.
+    //
+    if(bLPIConfig)
+    {
+        HWREG(ui32Base + EMAC_O_LPICTLSTAT) |= EMAC_LPICTLSTAT_LPITXA;
+    }
+    else
+    {
+        HWREG(ui32Base + EMAC_O_LPICTLSTAT) = 0x0;
+    }
+}
+
+//*****************************************************************************
+//
+//! Enables the transmit path for LPI mode entry.
+//!
+//! \param ui32Base is the base address of the controller.
+//!
+//! This function is used to enable the transmit path in LPI mode when there
+//! is no more data to be transmitted by the MAC controller.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+EMACLPIEnter(uint32_t ui32Base)
+{
+    //
+    // Parameter sanity check.
+    //
+    ASSERT(ui32Base == EMAC0_BASE);
+
+    HWREG(ui32Base + EMAC_O_LPICTLSTAT) |= EMAC_LPICTLSTAT_LPIEN;
+}
+
+//*****************************************************************************
+//
+//! Returns the status of the LPI link.
+//!
+//! \param ui32Base is the base address of the controller.
+//!
+//! This function may be used to read the status of the transmit and receive
+//! path when the link is configured in LPI mode.
+//!
+//! \return Returns the lower 16 bits of the LPI Control and Status register.
+//
+//*****************************************************************************
+uint16_t
+EMACLPIStatus(uint32_t ui32Base)
+{
+    //
+    // Parameter sanity check.
+    //
+    ASSERT(ui32Base == EMAC0_BASE);
+
+    //
+    // Configure the LPI Control registers.
+    //
+    return(HWREG(ui32Base + EMAC_O_LPICTLSTAT) & 0xFFFF);
+}
+
+//*****************************************************************************
+//
+//! Sets the link status of the external PHY.
+//!
+//! \param ui32Base is the base address of the controller.
+//!
+//! This function is used to set the link status of the external PHY when the
+//! link is established in EEE mode.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+EMACLPILinkSet(uint32_t ui32Base)
+{
+    //
+    // Parameter sanity check.
+    //
+    ASSERT(ui32Base == EMAC0_BASE);
+
+    //
+    // Configure the LPI Control registers.
+    //
+    HWREG(ui32Base + EMAC_O_LPICTLSTAT) |= EMAC_LPICTLSTAT_PLS;
+}
+
+//*****************************************************************************
+//
+//! Clears the link status of the external PHY.
+//!
+//! \param ui32Base is the base address of the controller.
+//!
+//! This function is used to clear the link status of the external PHY when the
+//! link is lost due to a disconnect or EEE mode link is not established.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+EMACLPILinkClear(uint32_t ui32Base)
+{
+    //
+    // Parameter sanity check.
+    //
+    ASSERT(ui32Base == EMAC0_BASE);
+
+    //
+    // Configure the LPI Control registers.
+    //
+    HWREG(ui32Base + EMAC_O_LPICTLSTAT) &= ~(EMAC_LPICTLSTAT_PLS);
+}
+
+//*****************************************************************************
+//
+//! Writes a value to an extended PHY register in MMD address space.
+//!
+//! \param ui32Base is the base address of the controller.
+//! \param ui8PhyAddr is the physical address of the PHY to access.
+//! \param ui16RegAddr is the address of the PHY extended register to be
+//! accessed.
+//! \param ui16Value is the value to write to the register.
+//!
+//! When uhen connected to an external PHY supporting extended registers in MMD
+//! address space, this function allows a value to be written to the MMD
+//! register specified by \e ui16RegAddr.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+EMACPHYMMDWrite(uint32_t ui32Base, uint8_t ui8PhyAddr, uint16_t ui16RegAddr,
+                uint16_t ui16Data)
+{
+    //
+    // Parameter sanity check.
+    //
+    ASSERT(ui8PhyAddr < 32);
+
+    //
+    // Set the address of the register we're about to write.
+    //
+    EMACPHYWrite(ui32Base, ui8PhyAddr, EPHY_REGCTL, DEV_ADDR(ui16RegAddr));
+    EMACPHYWrite(ui32Base, ui8PhyAddr, EPHY_ADDAR,  REG_ADDR(ui16RegAddr));
+
+    //
+    // Write the extended register value.
+    //
+    EMACPHYWrite(ui32Base, ui8PhyAddr, EPHY_REGCTL, 
+                 (0x4000 | DEV_ADDR(ui16RegAddr)));
+    EMACPHYWrite(ui32Base, ui8PhyAddr, EPHY_REGCTL, ui16Data);
+}
+
+//*****************************************************************************
+//
+//! Reads from an extended PHY register in MMD address space.
+//!
+//! \param ui32Base is the base address of the controller.
+//! \param ui8PhyAddr is the physical address of the PHY to access.
+//! \param ui16RegAddr is the address of the PHY extended register to be
+//! accessed.
+//!
+//! When connected to an external PHY supporting extended registers, this
+//! this function returns the contents of the MMD register specified by
+//! \e ui16RegAddr.
+//!
+//! \return Returns the 16-bit value read from the PHY.
+//
+//*****************************************************************************
+uint16_t
+EMACPHYMMDRead(uint32_t ui32Base, uint8_t ui8PhyAddr, uint16_t ui16RegAddr)
+{
+    //
+    // Parameter sanity check.
+    //
+    ASSERT(ui8PhyAddr < 32);
+
+    //
+    // Set the address of the register we're about to read.
+    //
+    EMACPHYWrite(ui32Base, ui8PhyAddr, EPHY_REGCTL, DEV_ADDR(ui16RegAddr));
+    EMACPHYWrite(ui32Base, ui8PhyAddr, EPHY_ADDAR,  REG_ADDR(ui16RegAddr));
+
+    //
+    // Read the extended register value.
+    //
+    EMACPHYWrite(ui32Base, ui8PhyAddr, EPHY_REGCTL, 
+                 (0x4000 | DEV_ADDR(ui16RegAddr)));
+    return(EMACPHYRead(ui32Base, ui8PhyAddr, EPHY_ADDAR));
 }
 
 //*****************************************************************************
