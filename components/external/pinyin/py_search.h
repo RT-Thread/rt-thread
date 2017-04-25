@@ -11,17 +11,17 @@ extern "C" {
 
 typedef struct _py_mb
 {
-    const char *msg; // Æ´Òô´®
+    const char *msg; // pinyin string
 #ifdef PY_LIST_2
-    uint8_t wlen; // ×Ö´Ê³¤¶È
+    uint8_t wlen; // world length
 #endif
-    const char *mb; // Âë±í
+    const char *mb; // world table
 }py_mb_t;
 
 typedef struct _py_num
 {
-    const char *msg; // Êı×Ö´®
-    uint16_t index; // Âë±íĞòºÅ
+    const char *msg; // number string
+    uint16_t index; // table index
 }py_num_t;
 
 uint8_t py_mb_search(const char *msg, const py_mb_t **list, uint8_t size);

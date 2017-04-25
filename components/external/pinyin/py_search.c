@@ -42,7 +42,7 @@ static void best_search(const char *msg, const char *const *first_msg, uint16_t 
     uint16_t low = 0, high = count - 1;
     uint16_t test;
 
-    // 二分法查找
+    // binary search
     test = (low + high) >> 1;
     while (low < test)
     {
@@ -58,7 +58,7 @@ static void best_search(const char *msg, const char *const *first_msg, uint16_t 
     {
         test = high;
 
-        // 不全匹配则找最佳匹配
+        // find the best match
         if (_strcmp(msg_list_item(first_msg, offset, test), msg))
         {
             uint8_t m = _match(msg_list_item(first_msg, offset, low), msg);
@@ -68,7 +68,7 @@ static void best_search(const char *msg, const char *const *first_msg, uint16_t 
                 {
                     uint16_t n = 1;
 
-                    // 二进制指数下查
+                    // 2^n search down
                     while (low > 0)
                     {
                         high = low;
@@ -82,7 +82,7 @@ static void best_search(const char *msg, const char *const *first_msg, uint16_t 
                     }
                     else
                     {
-                        // 二分法查找
+                        // binary search
                         test = (low + high) >> 1;
                         while (low < test)
                         {
@@ -105,13 +105,13 @@ static void best_search(const char *msg, const char *const *first_msg, uint16_t 
         }
     }
 
-    // 查找所有匹配串
+    // find all item
     low = high = test;
     if (high < count - 1)
     {
         uint16_t m = low, n = 1;
 
-        // 二进制指数上查
+        // 2^n search up
         while (high < count - 1)
         {
             low = high;
@@ -120,7 +120,7 @@ static void best_search(const char *msg, const char *const *first_msg, uint16_t 
             n <<= 1;
         }
 
-        // 二分法查找
+        // binary search
         test = (low + high) >> 1;
         while (low < test)
         {
@@ -147,7 +147,6 @@ uint8_t py_mb_search(const char *msg, const py_mb_t **list, uint8_t size)
 
     best_search(msg, &py_mb_list[0].msg, sizeof(py_mb_list[0]), sizeof(py_mb_list) / sizeof(py_mb_list[0]), &low, &high);
 
-    // 输出所有匹配串
     while (low <= high)
     {
         if (count >= size) break;
@@ -164,7 +163,6 @@ uint8_t py_num_search(const char *msg, const py_mb_t **list, uint8_t size)
 
     best_search(msg, &py_num_list[0].msg, sizeof(py_num_list[0]), sizeof(py_num_list) / sizeof(py_num_list[0]), &low, &high);
 
-    // 输出所有匹配串
     while (low <= high)
     {
         if (count >= size) break;
