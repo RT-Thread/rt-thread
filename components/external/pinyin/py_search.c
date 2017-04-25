@@ -7,7 +7,7 @@
 #include "py_mb_list_2.h"
 #include "py_num_list_2.h"
 #endif
-
+ 
 #define msg_list_item(first_msg, offset, index) (*(const char *const *)((const char *)(first_msg) + (offset) * (index)))
 
 static int8_t _strcmp(const char *str1, const char *str2)
