@@ -2,7 +2,7 @@
 //
 // udma.c - Driver for the micro-DMA controller.
 //
-// Copyright (c) 2007-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2007-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 2.1.0.12573 of the Tiva Peripheral Driver Library.
+// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -1072,9 +1072,9 @@ uDMAChannelModeGet(uint32_t ui32ChannelStructIndex)
 //! controller generates an interrupt.  The \e ui32IntChannel parameter should
 //! be one of the following:
 //!
-//! - \b UDMA_INT_SW to register an interrupt handler to process interrupts
+//! - \b INT_UDMA to register an interrupt handler to process interrupts
 //!   from the uDMA software channel (UDMA_CHANNEL_SW)
-//! - \b UDMA_INT_ERR to register an interrupt handler to process uDMA error
+//! - \b INT_UDMAERR to register an interrupt handler to process uDMA error
 //!   interrupts
 //!
 //! \sa IntRegister() for important information about registering interrupt
@@ -1095,8 +1095,6 @@ uDMAIntRegister(uint32_t ui32IntChannel, void (*pfnHandler)(void))
     // Check the arguments.
     //
     ASSERT(pfnHandler);
-    ASSERT((ui32IntChannel == UDMA_INT_SW) ||
-           (ui32IntChannel == UDMA_INT_ERR));
 
     //
     // Register the interrupt handler.
@@ -1117,7 +1115,7 @@ uDMAIntRegister(uint32_t ui32IntChannel, void (*pfnHandler)(void))
 //!
 //! This function disables and unregisters the handler to be called for the
 //! specified uDMA interrupt.  The \e ui32IntChannel parameter should be one of
-//! \b UDMA_INT_SW or \b UDMA_INT_ERR as documented for the function
+//! \b INT_UDMA or \b INT_UDMAERR as documented for the function
 //! uDMAIntRegister().
 //!
 //! \sa IntRegister() for important information about registering interrupt
@@ -1230,7 +1228,7 @@ uDMAChannelAssign(uint32_t ui32Mapping)
     //
     // Check the parameters
     //
-    ASSERT((ui32Mapping & 0xffffff00) < 0x00050000);
+    ASSERT((ui32Mapping & 0xffffff00) < 0x00090000);
 
     //
     // Extract the channel number and map encoding value from the parameter.

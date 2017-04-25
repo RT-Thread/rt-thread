@@ -2,7 +2,7 @@
 //
 // tm4c1294ncpdt.h - TM4C1294NCPDT Register Definitions
 //
-// Copyright (c) 2013-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2013-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 2.1.0.12573 of the Tiva Firmware Development Package.
+// This is part of revision 2.1.4.178 of the Tiva Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -6075,7 +6075,6 @@
 // The following are defines for the bit fields in the ADC_O_CTL register.
 //
 //*****************************************************************************
-#define ADC_CTL_DITHER          0x00000040  // Dither Mode Enable
 #define ADC_CTL_VREF_M          0x00000001  // Voltage Reference Select
 #define ADC_CTL_VREF_INTERNAL   0x00000000  // VDDA and GNDA are the voltage
                                             // references
@@ -12084,7 +12083,6 @@
 //*****************************************************************************
 #define SYSCTL_RESC_MOSCFAIL    0x00010000  // MOSC Failure Reset
 #define SYSCTL_RESC_HSSR        0x00001000  // HSSR Reset
-#define SYSCTL_RESC_HIB         0x00000040  // HIB Reset
 #define SYSCTL_RESC_WDT1        0x00000020  // Watchdog Timer 1 Reset
 #define SYSCTL_RESC_SW          0x00000010  // Software Reset
 #define SYSCTL_RESC_WDT0        0x00000008  // Watchdog Timer 0 Reset

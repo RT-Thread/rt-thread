@@ -2,7 +2,7 @@
 //
 // timer.c - Driver for the timer module.
 //
-// Copyright (c) 2005-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 2.1.0.12573 of the Tiva Peripheral Driver Library.
+// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -121,6 +121,7 @@ _TimerBaseValid(uint32_t ui32Base)
     return((ui32Base == TIMER0_BASE) || (ui32Base == TIMER1_BASE) ||
            (ui32Base == TIMER2_BASE) || (ui32Base == TIMER3_BASE) ||
            (ui32Base == TIMER4_BASE) || (ui32Base == TIMER5_BASE) ||
+           (ui32Base == TIMER6_BASE) || (ui32Base == TIMER7_BASE) ||
            (ui32Base == WTIMER0_BASE) || (ui32Base == WTIMER1_BASE) ||
            (ui32Base == WTIMER2_BASE) || (ui32Base == WTIMER3_BASE) ||
            (ui32Base == WTIMER4_BASE) || (ui32Base == WTIMER5_BASE));
@@ -362,7 +363,9 @@ TimerConfigure(uint32_t ui32Base, uint32_t ui32Config)
              ((ui32Config & 0x000000ff) == TIMER_CFG_A_PERIODIC) ||
              ((ui32Config & 0x000000ff) == TIMER_CFG_A_PERIODIC_UP) ||
              ((ui32Config & 0x000000ff) == TIMER_CFG_A_CAP_COUNT) ||
+             ((ui32Config & 0x000000ff) == TIMER_CFG_A_CAP_COUNT_UP) ||
              ((ui32Config & 0x000000ff) == TIMER_CFG_A_CAP_TIME) ||
+             ((ui32Config & 0x000000ff) == TIMER_CFG_A_CAP_TIME_UP) ||
              ((ui32Config & 0x000000ff) == TIMER_CFG_A_PWM)) &&
             (((ui32Config & 0x0000ff00) == TIMER_CFG_B_ONE_SHOT) ||
              ((ui32Config & 0x0000ff00) == TIMER_CFG_B_ONE_SHOT_UP) ||

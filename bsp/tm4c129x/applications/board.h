@@ -35,14 +35,14 @@ extern uint32_t SysClock;
 // </RDTConfigurator>
 
 #ifdef __CC_ARM
-extern int Image$$RW_IRAM1$$ZI$$Limit;
-#define HEAP_BEGIN  ((void *)&Image$$RW_IRAM1$$ZI$$Limit)
+extern int Image$$RW_IRAM$$ZI$$Limit;
+#define HEAP_BEGIN  ((void *)&Image$$RW_IRAM$$ZI$$Limit)
 #elif __ICCARM__
 #pragma section="HEAP"
 #define HEAP_BEGIN  (__segment_end("HEAP"))
 #else
-extern int __bss_end;
-#define HEAP_BEGIN  ((void *)&__bss_end)
+extern int _ebss;
+#define HEAP_BEGIN  ((void *)&_ebss)
 #endif
 #define HEAP_END    (0x20000000 + 256*1024)
 
