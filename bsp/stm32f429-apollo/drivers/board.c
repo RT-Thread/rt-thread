@@ -143,7 +143,7 @@ void rt_hw_board_init()
     SCB->VTOR  = (0x10000000 & NVIC_VTOR_MASK);
 #else  /* VECT_TAB_FLASH  */
     /* Set the Vector Table base location at 0x00000000 */
-    SCB->VTOR  = (0x00000000 & NVIC_VTOR_MASK);
+    SCB->VTOR  = (0x08000000 & NVIC_VTOR_MASK);
 #endif
     HAL_Init();
 
