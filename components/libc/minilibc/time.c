@@ -217,3 +217,13 @@ int gettimeofday(struct timeval *tp, void *ignore)
 	return 0;
 }
 #endif
+
+#ifndef _gettimeofday
+/* Dummy function when hardware do not have RTC */
+int _gettimeofday( struct timeval *tv, void *ignore)
+{
+    tv->tv_sec = 0;  // convert to seconds
+    tv->tv_usec = 0;  // get remaining microseconds
+    return 0;  // return non-zero for error
+}
+#endif
