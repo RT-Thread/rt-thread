@@ -252,6 +252,10 @@ void rt_schedule(void)
                                                (rt_uint32_t)&to_thread->sp);
             }
         }
+	}
+	else
+	{
+		rt_current_thread->error = RT_ESCHED_LOCKED;
     }
 
     /* enable interrupt */
