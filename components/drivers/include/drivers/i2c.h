@@ -20,6 +20,7 @@
  * Change Logs:
  * Date           Author        Notes
  * 2012-04-25     weety         first version
+ * 2015-07-07     Quintin       add rt_i2c_master_send_then_recv function.
  */
 
 #ifndef __I2C_H__
@@ -96,6 +97,13 @@ rt_size_t rt_i2c_master_recv(struct rt_i2c_bus_device *bus,
                              rt_uint16_t               flags,
                              rt_uint8_t               *buf,
                              rt_uint32_t               count);
+rt_err_t rt_i2c_master_send_then_recv(struct rt_i2c_bus_device *bus,
+                                     rt_uint16_t              addr,
+                                     rt_uint16_t              flags,
+                                     rt_uint8_t               *send_buf,
+                                     rt_size_t                send_length,
+                                     rt_uint8_t               *recv_buf,
+                                     rt_size_t                recv_length);
 int rt_i2c_core_init(void);
 
 #ifdef __cplusplus
