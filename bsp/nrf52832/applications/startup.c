@@ -58,7 +58,7 @@ void rtthread_startup(void)
     rt_system_timer_init();
 
 #ifdef RT_USING_HEAP
-    rt_system_heap_init((void*)NRF_SRAM_BEGIN, (void*)NRF_SRAM_END);
+    rt_system_heap_init((void*)NRF_SRAM_BEGIN, (void*)CHIP_SRAM_END);
 #endif
 
     /* init scheduler system */
@@ -83,7 +83,7 @@ void rtthread_startup(void)
 int main(void)
 {
     /* disable interrupt first */
-    rt_hw_interrupt_disable();
+    // rt_hw_interrupt_disable();
 
     /* startup RT-Thread RTOS */
     rtthread_startup();
