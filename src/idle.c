@@ -32,7 +32,7 @@
 
 #if defined (RT_USING_HOOK)
 #ifndef RT_USING_IDLE_HOOK
-#deifne RT_USING_IDLE_HOOK 1
+#define RT_USING_IDLE_HOOK 1
 #endif
 #endif
 
