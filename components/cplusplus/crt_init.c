@@ -43,6 +43,9 @@ void _init()
 void _fini()
 {
 }
+
+WEAK void *__dso_handle = 0;
+
 #endif
 
 WEAK
