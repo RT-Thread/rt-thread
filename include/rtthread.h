@@ -164,7 +164,7 @@ void rt_thread_inited_sethook (void (*hook)(rt_thread_t thread));
  * idle thread interface
  */
 void rt_thread_idle_init(void);
-#ifdef RT_USING_HOOK
+#if defined(RT_USING_HOOK) || defined(RT_USING_IDLE_HOOK)
 void rt_thread_idle_sethook(void (*hook)(void));
 #endif
 void rt_thread_idle_excute(void);
