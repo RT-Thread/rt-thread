@@ -185,7 +185,13 @@ static void rt_thread_idle_entry(void *parameter)
 {
     while (1)
     {
-        RT_OBJECT_HOOK_CALL(rt_thread_idle_hook,());
+    #if defined(RT_USING_IDLE_HOOK) && (RT_USING_IDLE_HOOK == 1)
+        if (rt_thread_idle_hook != RT_NULL)
+        {
+            rt_thread_idle_hook();
+        }
+    #endif
+
         rt_thread_idle_excute();
     }
 }
