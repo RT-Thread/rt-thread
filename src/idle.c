@@ -185,7 +185,7 @@ static void rt_thread_idle_entry(void *parameter)
 {
     while (1)
     {
-    #if defined(RT_USING_IDLE_HOOK) && (RT_USING_IDLE_HOOK == 1)
+    #ifdef RT_USING_IDLE_HOOK
         if (rt_thread_idle_hook != RT_NULL)
         {
             rt_thread_idle_hook();
