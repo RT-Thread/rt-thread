@@ -27,7 +27,8 @@
 
 void rt_init_thread_entry(void* parameter)
 {
-    
+    rt_os_ready();
+    ble_init();
 }
 
 int rt_application_init(void)
