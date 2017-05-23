@@ -30,8 +30,14 @@
 #include <rthw.h>
 #include <rtthread.h>
 
+#if defined (RT_USING_HOOK)
+#ifndef RT_USING_IDLE_HOOK
+#define RT_USING_IDLE_HOOK 1
+#endif
+#endif
+
 #ifndef IDLE_THREAD_STACK_SIZE
-#if defined (RT_USING_HOOK) || defined(RT_USING_HEAP)
+#if defined (RT_USING_IDLE_HOOK) || defined(RT_USING_HEAP)
 #define IDLE_THREAD_STACK_SIZE  256
 #else
 #define IDLE_THREAD_STACK_SIZE  128
@@ -44,7 +50,7 @@ static rt_uint8_t rt_thread_stack[IDLE_THREAD_STACK_SIZE];
 
 extern rt_list_t rt_thread_defunct;
 
-#ifdef RT_USING_HOOK
+#ifdef RT_USING_IDLE_HOOK
 static void (*rt_thread_idle_hook)();
 
 /**
@@ -179,7 +185,13 @@ static void rt_thread_idle_entry(void *parameter)
 {
     while (1)
     {
-        RT_OBJECT_HOOK_CALL(rt_thread_idle_hook,());
+    #ifdef RT_USING_IDLE_HOOK
+        if (rt_thread_idle_hook != RT_NULL)
+        {
+            rt_thread_idle_hook();
+        }
+    #endif
+
         rt_thread_idle_excute();
     }
 }
