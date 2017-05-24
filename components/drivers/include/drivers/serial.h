@@ -122,6 +122,8 @@ struct rt_serial_rx_fifo
     rt_uint8_t *buffer;
 
     rt_uint16_t put_index, get_index;
+
+    rt_bool_t is_full;
 };
 
 struct rt_serial_tx_fifo
