@@ -168,14 +168,21 @@ rt_inline int _serial_int_tx(struct rt_serial_device *serial, const rt_uint8_t *
  */
 static rt_size_t rt_dma_calc_recved_len(struct rt_serial_device *serial)
 {
-    rt_size_t rx_length;
     struct rt_serial_rx_fifo *rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
 
     RT_ASSERT(rx_fifo != RT_NULL);
 
-    rx_length = (rx_fifo->put_index >= rx_fifo->get_index) ? (rx_fifo->put_index - rx_fifo->get_index):
-                    (serial->config.bufsz - (rx_fifo->get_index - rx_fifo->put_index));
-    return rx_length;
+    if (rx_fifo->put_index > rx_fifo->get_index)
+        return rx_fifo->put_index - rx_fifo->get_index;
+    else if (rx_fifo->put_index < rx_fifo->get_index)
+        return serial->config.bufsz - (rx_fifo->get_index - rx_fifo->put_index);
+    else
+    {
+        if (rx_fifo->is_full)
+            return serial->config.bufsz;
+        else
+            return 0;
+    }
 }
 
 /**
@@ -191,10 +198,12 @@ static void rt_dma_recv_update_get_index(struct rt_serial_device *serial, rt_siz
     RT_ASSERT(rx_fifo != RT_NULL);
     RT_ASSERT(len <= rt_dma_calc_recved_len(serial));
 
+    if (rx_fifo->is_full && len != 0) rx_fifo->is_full = RT_FALSE;
+
     rx_fifo->get_index += len;
     if (rx_fifo->get_index > serial->config.bufsz)
     {
-        rx_fifo->get_index -= serial->config.bufsz;
+        rx_fifo->get_index %= serial->config.bufsz;
     }
 }
 
@@ -220,7 +229,8 @@ static void rt_dma_recv_update_put_index(struct rt_serial_device *serial, rt_siz
             /* force overwrite get index */
             if (rx_fifo->put_index >= rx_fifo->get_index)
             {
-                rx_fifo->get_index = rx_fifo->put_index + 1;
+                rx_fifo->get_index = rx_fifo->put_index;
+                rx_fifo->is_full = RT_TRUE;
             }
         }
     }
@@ -235,7 +245,8 @@ static void rt_dma_recv_update_put_index(struct rt_serial_device *serial, rt_siz
                 rx_fifo->put_index %= serial->config.bufsz;
             }
             /* force overwrite get index */
-            rx_fifo->get_index = rx_fifo->put_index + 1;
+            rx_fifo->get_index = rx_fifo->put_index;
+            rx_fifo->is_full = RT_TRUE;
         }
     }
     if (rx_fifo->get_index >= serial->config.bufsz) rx_fifo->get_index = 0;
@@ -252,7 +263,8 @@ rt_inline int _serial_dma_rx(struct rt_serial_device *serial, rt_uint8_t *data, 
 
     level = rt_hw_interrupt_disable();
 
-    if (serial->config.bufsz == 0) {
+    if (serial->config.bufsz == 0)
+    {
         int result = RT_EOK;
         struct rt_serial_rx_dma *rx_dma;
 
@@ -272,21 +284,23 @@ rt_inline int _serial_dma_rx(struct rt_serial_device *serial, rt_uint8_t *data, 
 
         rt_set_errno(result);
         return 0;
-    } else {
+    }
+    else
+    {
         struct rt_serial_rx_fifo *rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
         rt_size_t recv_len = 0, fifo_recved_len = rt_dma_calc_recved_len(serial);
 
         RT_ASSERT(rx_fifo != RT_NULL);
 
-        if (length < fifo_recved_len) {
+        if (length < fifo_recved_len)
             recv_len = length;
-        } else {
+        else
             recv_len = fifo_recved_len;
-        }
 
-        if (rx_fifo->get_index + recv_len < serial->config.bufsz) {
+        if (rx_fifo->get_index + recv_len < serial->config.bufsz)
             rt_memcpy(data, rx_fifo->buffer + rx_fifo->get_index, recv_len);
-        } else {
+        else
+        {
             rt_memcpy(data, rx_fifo->buffer + rx_fifo->get_index,
                     serial->config.bufsz - rx_fifo->get_index);
             rt_memcpy(data + serial->config.bufsz - rx_fifo->get_index, rx_fifo->buffer,
@@ -398,6 +412,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
                 rt_memset(rx_fifo->buffer, 0, serial->config.bufsz);
                 rx_fifo->put_index = 0;
                 rx_fifo->get_index = 0;
+                rx_fifo->is_full = RT_FALSE;
                 serial->serial_rx = rx_fifo;
                 /* configure fifo address and length to low level device */
                 serial->ops->control(serial, RT_DEVICE_CTRL_CONFIG, (void *) RT_DEVICE_FLAG_DMA_RX);
