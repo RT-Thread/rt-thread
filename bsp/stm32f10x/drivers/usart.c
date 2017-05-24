@@ -199,15 +199,7 @@ static void dma_uart_rx_idle_isr(struct rt_serial_device *serial) {
     level = rt_hw_interrupt_disable();
 
     recv_total_index = uart->dma.setting_recv_len - DMA_GetCurrDataCounter(uart->dma.rx_ch);
-    if (recv_total_index >= uart->dma.last_recv_index)
-    {
-        recv_len = recv_total_index - uart->dma.last_recv_index;
-    }
-    else
-    {
-        recv_len = uart->dma.setting_recv_len - uart->dma.last_recv_index + recv_total_index;
-    }
-
+    recv_len = recv_total_index - uart->dma.last_recv_index;
     uart->dma.last_recv_index = recv_total_index;
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
@@ -226,23 +218,15 @@ static void dma_uart_rx_idle_isr(struct rt_serial_device *serial) {
  */
 static void dma_rx_done_isr(struct rt_serial_device *serial) {
     struct stm32_uart *uart = (struct stm32_uart *) serial->parent.user_data;
-    rt_size_t recv_total_index, recv_len;
+    rt_size_t recv_len;
     rt_base_t level;
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
-    recv_total_index = uart->dma.setting_recv_len - DMA_GetCurrDataCounter(uart->dma.rx_ch);
-    if (recv_total_index >= uart->dma.last_recv_index)
-    {
-        recv_len = recv_total_index - uart->dma.last_recv_index;
-    }
-    else
-    {
-        recv_len = uart->dma.setting_recv_len - uart->dma.last_recv_index + recv_total_index;
-    }
-
-    uart->dma.last_recv_index = recv_total_index;
+    recv_len = uart->dma.setting_recv_len - uart->dma.last_recv_index;
+    /* reset last recv index */
+    uart->dma.last_recv_index = 0;
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
 
@@ -535,7 +519,7 @@ static void NVIC_Configuration(struct stm32_uart* uart)
     /* Enable the USART1 Interrupt */
     NVIC_InitStructure.NVIC_IRQChannel = uart->irq;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
 }
@@ -577,7 +561,7 @@ static void DMA_Configuration(struct rt_serial_device *serial) {
     /* rx dma interrupt config */
     NVIC_InitStructure.NVIC_IRQChannel = uart->dma.rx_irq_ch;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
 }
