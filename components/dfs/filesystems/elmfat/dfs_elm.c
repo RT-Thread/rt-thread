@@ -43,7 +43,7 @@
 #include <dfs_fs.h>
 #include <dfs_def.h>
 
-volatile static rt_device_t disk[_VOLUMES] = {0};
+static rt_device_t disk[_VOLUMES] = {0};
 
 static int elm_result_to_dfs(FRESULT result)
 {
