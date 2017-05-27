@@ -10,8 +10,7 @@
 #include "nrf_gpio.h"
 
 #include <rtthread.h>
-
-static rt_bool_t osready = RT_FALSE;
+#include <rthw.h>
 
 #if 0
 
@@ -39,7 +38,7 @@ void  SysTick_Configuration(void)
 
 void SysTick_Handler(void)
 {
-    if (osready)
+    if (rt_thread_self() != RT_NULL)
     {
     	/* enter interrupt */
     	rt_interrupt_enter();
@@ -84,7 +83,7 @@ void SysTick_Configuration(void)
     NVIC_EnableIRQ(NRF_RTC_IRQn);
 }
 
-void OSTick_Handler( void )
+static rt_tick_t _tick_distance(void)
 {
     nrf_rtc_event_clear(NRF_RTC_REG, NRF_RTC_EVENT_COMPARE_0);
 
@@ -98,40 +97,71 @@ void OSTick_Handler( void )
         m_tick_overflow_count++;
     }
 
+    return ((m_tick_overflow_count << NRF_RTC_BITWIDTH) + systick_counter) - rt_tick_get();
+}
+
+void OSTick_Handler( void )
+{
+    uint32_t diff;
+
+    diff = _tick_distance();
+
+    while((diff--) > 0)
     {
-        uint32_t diff;
-        diff = ((m_tick_overflow_count << NRF_RTC_BITWIDTH) + systick_counter) - rt_tick_get();
-
-        while((diff--) > 0)
+        if (rt_thread_self() != RT_NULL)
         {
-            if (osready)
-            {
-            	/* enter interrupt */
-            	rt_interrupt_enter();
+        	/* enter interrupt */
+        	rt_interrupt_enter();
 
-            	rt_tick_increase();
+        	rt_tick_increase();
 
-            	/* leave interrupt */
-            	rt_interrupt_leave();
-            }
+        	/* leave interrupt */
+        	rt_interrupt_leave();
         }
     }
 }
 
+static void _wakeup_tick_adjust(void)
+{
+    uint32_t diff;
+    uint32_t level;
+
+    level = rt_hw_interrupt_disable();
+
+    diff = _tick_distance();
+
+    rt_tick_set(rt_tick_get() + diff);
+
+    if (rt_thread_self() != RT_NULL)
+    {
+    	struct rt_thread *thread;
+
+        /* check time slice */
+        thread = rt_thread_self();
+
+        if (thread->remaining_tick <= diff)
+        {
+            /* change to initialized tick */
+            thread->remaining_tick = thread->init_tick;
+
+            /* yield */
+            rt_thread_yield();
+        }
+        else
+        {
+            thread->remaining_tick -= diff;
+        }
+
+        /* check timer */
+        rt_timer_check();
+    }
+
+    rt_hw_interrupt_enable(level);
+}
+
 static void _sleep_ongo( uint32_t sleep_tick )
 {
-    /*
-     * Implementation note:
-     *
-     * To help debugging the option configUSE_TICKLESS_IDLE_SIMPLE_DEBUG was presented.
-     * This option would make sure that even if program execution was stopped inside
-     * this function no more than expected number of ticks would be skipped.
-     *
-     * Normally RTC works all the time even if firmware execution was stopped
-     * and that may lead to skipping too much of ticks.
-     */
     uint32_t enterTime;
-
     uint32_t entry_tick;
 
     /* Make sure the SysTick reload value does not overflow the counter. */
@@ -144,7 +174,6 @@ static void _sleep_ongo( uint32_t sleep_tick )
 
     enterTime = nrf_rtc_counter_get(NRF_RTC_REG);
 
-    // if ( eTaskConfirmSleepModeStatus() != eAbortSleep )
     {
         uint32_t wakeupTime = (enterTime + sleep_tick) & NRF_RTC_MAXTICKS;
 
@@ -183,6 +212,8 @@ static void _sleep_ongo( uint32_t sleep_tick )
         nrf_rtc_int_disable(NRF_RTC_REG, NRF_RTC_INT_COMPARE0_MASK);
         nrf_rtc_event_clear(NRF_RTC_REG, NRF_RTC_EVENT_COMPARE_0);
 
+        _wakeup_tick_adjust();
+
         /* Correct the system ticks */
         {
 
@@ -199,11 +230,6 @@ static void _sleep_ongo( uint32_t sleep_tick )
 }
 
 #endif
-
-void rt_os_ready(void)
-{
-    osready = 1;
-}
 
 void rt_hw_system_powersave(void)
 {
