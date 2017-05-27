@@ -27,7 +27,8 @@
 
 void rt_init_thread_entry(void* parameter)
 {
-    rt_os_ready();
+    extern rt_err_t ble_init(void);
+
     ble_init();
 }
 
@@ -39,7 +40,7 @@ int rt_application_init(void)
                             RT_THREAD_PRIORITY_MAX / 3, 20);
     if (tid != RT_NULL)
         rt_thread_startup(tid);
-		
+
     return 0;
 }
 

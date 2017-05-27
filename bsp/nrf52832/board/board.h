@@ -9,7 +9,5 @@
 
 void rt_hw_board_init(void);
 
-void rt_os_ready(void);
-
 #endif
 

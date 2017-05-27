@@ -592,7 +592,7 @@ static rt_bool_t _stack_init(void)
 static void _stack_thread(void *parameter)
 {
     rt_tick_t next_timeout = (rt_tick_t)RT_WAITING_FOREVER;
-    
+
     FAST_ADV();
     // Enter main loop.
     for (;;)
