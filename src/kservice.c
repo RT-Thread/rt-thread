@@ -1051,6 +1051,896 @@ rt_int32_t rt_sprintf(char *buf, const char *format, ...)
 }
 RTM_EXPORT(rt_sprintf);
 
+
+#define isxdigit(c) \
+  (((c) >= '0' && (c) <= '9') || \
+   ((c) >= 'a' && (c) <= 'f') || \
+   ((c) >= 'A' && (c) <= 'F'))
+
+#define toupper(c) \
+  (((c) >= 'a' && (c) <= 'z') ? ((c) - 'a' + 'A') : (c))
+
+/**
+ * rt_simple_strtoul - convert a string to an unsigned long
+ * @param cp: The start of the string
+ * @param endp: A pointer to the end of the parsed string will be placed here
+ * @param base: The number base to use
+ */
+unsigned long rt_simple_strtoul(const char *cp,char **endp,unsigned int base)
+{
+	unsigned long result = 0,value;
+
+	if (!base) {
+		base = 10;
+		if (*cp == '0') {
+			base = 8;
+			cp++;
+			if ((toupper(*cp) == 'X') && isxdigit(cp[1])) {
+				cp++;
+				base = 16;
+			}
+		}
+	} else if (base == 16) {
+		if (cp[0] == '0' && toupper(cp[1]) == 'X')
+			cp += 2;
+	}
+	while (isxdigit(*cp) &&
+	       (value = isdigit(*cp) ? *cp-'0' : toupper(*cp)-'A'+10) < base) {
+		result = result * base + value;
+		cp++;
+	}
+	if (endp)
+		*endp = (char *)cp;
+	return result;
+}
+
+/**
+ * rt_simple_strtol - convert a string to a signed long
+ * @param cp: The start of the string
+ * @param endp: A pointer to the end of the parsed string will be placed here
+ * @param base: The number base to use
+ */
+long rt_simple_strtol(const char *cp,char **endp,unsigned int base)
+{
+	if(*cp=='-')
+		return -rt_simple_strtoul(cp+1,endp,base);
+	return rt_simple_strtoul(cp,endp,base);
+}
+
+long rt_strtol(const char *str, char **endptr, int base)
+{
+    return rt_simple_strtol(str, endptr, base);
+}
+
+char *rt_strchr(const char *s1, int i)
+{
+	const unsigned char *s = (const unsigned char *)s1;
+	unsigned char c = (unsigned int)i;
+
+	while (*s && *s != c)
+	{
+		s++;
+	}
+
+	if (*s != c)
+	{
+		s = RT_NULL;
+	}
+
+	return (char *) s;
+}
+
+int rt_atoi(const char* s)
+{
+	long int v = 0;
+	int sign = 1;
+	while ( *s == ' '  ||  (unsigned int)(*s - 9) < 5u) s++;
+	switch (*s)
+	{
+	case '-':
+		sign=-1;
+	case '+':
+		++s;
+	}
+	while ((unsigned int) (*s - '0') < 10u)
+	{
+		v = v * 10 + *s - '0';
+		++s;
+	}
+	return sign == -1?-v:v;
+}
+
+rt_size_t rt_strcspn(const char *s, const char *reject)
+{
+	rt_size_t l = 0;
+	int a = 1, i, al = rt_strlen(reject);
+
+	while((a) && (*s))
+	{
+		for(i = 0; (a) && (i < al); i++)
+			if (*s == reject[i]) a = 0;
+		if (a) l++;
+		s++;
+	}
+	return l;
+}
+
+
+#define rt_isspace(c) \
+  ((c) == ' '  || (c) == '\t' || (c) == '\n' || \
+   (c) == '\r' || (c) == '\f' || c== '\v')
+
+static const char spaces[] = " \t\n\r\f\v";
+
+static int rt_findwidth(const char *buf, const char *fmt)
+{
+    const char *next = fmt + 1;
+    
+    /* No... is there a space after the format? Or does the format string end
+    * here?
+    */
+    
+    if (rt_isspace(*next) || *next == 0)
+    {
+        /* Use the input up until the first white space is encountered. */
+        
+        return rt_strcspn(buf, spaces);
+    }
+    
+    /* No.. Another possibility is the the format character is followed by
+    * some recognizable delimiting value.
+    */
+    
+    if (*next != '%')
+    {
+        /* If so we will say that the string ends there if we can find that
+        * delimiter in the input string.
+        */
+        
+        const char *ptr = rt_strchr(buf, *next);
+        if (ptr)
+        {
+            return (int)(ptr - buf);
+        }
+    }
+    
+    /* No... the format has not delimiter and is back-to-back with the next
+    * formats (or no is following by a delimiter that does not exist in the
+    * input string).  At this point we just bail and Use the input up until
+    * the first white space is encountered.
+    *
+    * NOTE:  This means that values from the following format may be
+    * concatenated with the first. This is a bug.  We have no generic way of
+    * determining the width of the data if there is no fieldwith, no space
+    * separating the input, and no usable delimiter character.
+    */
+    
+    return rt_strcspn(buf, spaces);
+}
+
+#ifdef RT_SSCANF_USING_FLOATPOINT
+
+#define __DBL_MIN_EXP__ (-1021)
+#define __DBL_MAX_EXP__ (1024)
+
+static inline int is_real(double x)
+{
+  const double infinite = 1.0/0.0;
+  return (x < infinite) && (x >= -infinite);
+}
+
+double rt_strtod(const char *str, char **endptr)
+{
+    double number;
+    int exponent;
+    int negative;
+    char *p = (char *) str;
+    double p10;
+    int n;
+    int num_digits;
+    int num_decimals;
+    const double infinite = 1.0/0.0;
+    
+    /* Skip leading whitespace */
+    
+    while (rt_isspace(*p))
+    {
+        p++;
+    }
+    
+    /* Handle optional sign */
+    
+    negative = 0;
+    switch (*p)
+    {
+        case '-':
+            negative = 1; /* Fall through to increment position */
+        case '+':
+            p++;
+    }
+    
+    number       = 0.;
+    exponent     = 0;
+    num_digits   = 0;
+    num_decimals = 0;
+    
+    /* Process string of digits */
+    
+    while (isdigit(*p))
+    {
+        number = number * 10. + (*p - '0');
+        p++;
+        num_digits++;
+    }
+    
+    /* Process decimal part */
+    
+    if (*p == '.')
+    {
+        p++;
+        
+        while (isdigit(*p))
+        {
+            number = number * 10. + (*p - '0');
+            p++;
+            num_digits++;
+            num_decimals++;
+        }
+        
+        exponent -= num_decimals;
+    }
+    
+    if (num_digits == 0)
+    {
+        rt_set_errno(RT_ERROR);
+        return 0.0;
+    }
+    
+    /* Correct for sign */
+    
+    if (negative)
+    {
+        number = -number;
+    }
+    
+    /* Process an exponent string */
+    
+    if (*p == 'e' || *p == 'E')
+    {
+        /* Handle optional sign */
+        
+        negative = 0;
+        switch(*++p)
+        {
+            case '-':
+                negative = 1;   /* Fall through to increment pos */
+            case '+':
+                p++;
+        }
+        
+        /* Process string of digits */
+        
+        n = 0;
+        while (isdigit(*p))
+        {
+            n = n * 10 + (*p - '0');
+            p++;
+        }
+        
+        if (negative)
+        {
+            exponent -= n;
+        }
+        else
+        {
+            exponent += n;
+        }
+    }
+    
+    if (exponent < __DBL_MIN_EXP__ ||
+        exponent > __DBL_MAX_EXP__)
+    {
+        rt_set_errno(RT_ERROR);
+        return infinite;
+    }
+    
+    /* Scale the result */
+    
+    p10 = 10.;
+    n = exponent;
+    if (n < 0) n = -n;
+    while (n)
+    {
+        if (n & 1)
+        {
+            if (exponent < 0)
+            {
+                number /= p10;
+            }
+            else
+            {
+                number *= p10;
+            }
+        }
+        n >>= 1;
+        p10 *= p10;
+    }
+    
+    if (!is_real(number))
+    {
+        rt_set_errno(RT_ERROR);
+    }
+    
+    if (endptr)
+    {
+        *endptr = p;
+    }
+    
+    return number;
+}
+#endif
+
+#ifndef RT_SSCANFBUF_SIZE
+#define RT_SSCANFBUF_SIZE 128
+#endif
+
+/**
+ * rt_vsscanf - Unformat a buffer into a list of arguments
+ * @param buf:	input buffer
+ * @param fmt:	format of buffer
+ * @param ap :	arguments
+ */
+rt_int32_t rt_vsscanf(char *buf, const char *fmt, va_list ap)
+{
+    char        *bufstart;
+    char        *tv;
+    const char  *tc;
+    long        *pclong;
+    int         *pcint;
+    rt_bool_t   lflag;
+    rt_bool_t   noassign;
+    rt_bool_t   data_invalid;
+    int         count;
+    int         fmtcount;
+    int         width;
+    int         base = 10;
+    char        tmp[RT_SSCANFBUF_SIZE];
+    
+    /* Remember the start of the input buffer.  We will need this for %n
+        * calculations.
+        */
+    
+    bufstart = buf;
+    
+    /* Parse the format, extracting values from the input buffer as needed */
+    
+    pclong   = RT_NULL;
+    pcint    = RT_NULL;
+    count    = 0;
+    fmtcount = 0;
+    width    = 0;
+    noassign = RT_FALSE;
+    lflag    = RT_FALSE;
+    data_invalid = RT_FALSE;
+    
+    /* Loop until all characters in the fmt string have been processed.  We
+        * may have to continue loop after reaching the end the input data in
+        * order to handle trailing %n format specifiers.
+        */
+    
+    while (*fmt)
+    {
+        /* Skip over white space */
+        
+        while (rt_isspace(*fmt))
+        {
+            fmt++;
+        }
+        
+        /* Check for a conversion specifier */
+        
+        if (*fmt == '%')
+        {
+            
+            /* Check for qualifiers on the conversion specifier */
+            
+            fmt++;
+            for (; *fmt; fmt++)
+            {
+                if (rt_strchr("dibouxcsefgn%", *fmt))
+                {
+                    break;
+                }
+                
+                if (*fmt == '*')
+                {
+                    noassign = RT_TRUE;
+                }
+                else if (*fmt == 'l' || *fmt == 'L')
+                {
+                    /* NOTE: Missing check for long long ('ll') */
+                
+                    lflag = RT_TRUE;
+                }
+                else if (*fmt >= '1' && *fmt <= '9')
+                {
+                    for (tc = fmt; isdigit(*fmt); fmt++);
+                    rt_strncpy(tmp, tc, fmt - tc);
+                    tmp[fmt - tc] = '\0';
+                    width = rt_atoi(tmp);
+                    fmt--;
+                }
+            }
+            
+            /* Process %s:  String conversion */
+            
+            if (*fmt == 's')
+            {
+                fmtcount++;
+                
+                /* Get a pointer to the char * value.  We need to do this even
+                        * if we have reached the end of the input data in order to
+                        * update the 'ap' variable.
+                        */
+                
+                tv = RT_NULL;	  /* To avoid warnings about beign uninitialized */
+                if (!noassign)
+                {
+                    tv	= va_arg(ap, char*);
+                    tv[0] = '\0';
+                }
+                
+                /* But we only perform the data conversion is we still have
+                         * bytes remaining in the input data stream.
+                         */
+                
+                /* Skip over any white space before the string */
+                
+                while (*buf && rt_isspace(*buf))
+                {
+                    buf++;
+                }
+                
+                if (*buf)
+                {
+                    
+                    /* Was a fieldwidth specified? */
+                    
+                    if (!width)
+                    {
+                        /* No... Guess a field width using some heuristics */
+                        
+                        width = rt_findwidth(buf, fmt);
+                    }
+                    
+                    /* Copy the string (if we are making an assignment) */
+                    
+                    if (!noassign)
+                    {
+                        rt_strncpy(tv, buf, width);
+                        tv[width] = '\0';
+                    }
+                    
+                    /* Update the buffer pointer past the string in the input */
+                    
+                    buf += width;
+                }
+                else
+                {
+                    noassign = RT_TRUE;
+                }
+            }
+            
+            /* Process %c:  Character conversion */
+            
+            else if (*fmt == 'c')
+            {
+                fmtcount++;
+                
+                /* Get a pointer to the char * value.  We need to do this even
+                * if we have reached the end of the input data in order to
+                * update the 'ap' variable.
+                */
+                
+                tv = RT_NULL;	  /* To avoid warnings about beign uninitialized */
+                if (!noassign)
+                {
+                    tv	= va_arg(ap, char*);
+                    tv[0] = '\0';
+                }
+                
+                /* But we only perform the data conversion is we still have
+                * bytes remaining in the input data stream.
+                */
+                
+                if (*buf)
+                {
+                    /* Was a fieldwidth specified? */
+                    
+                    if (!width)
+                    {
+                        /* No, then width is this one single character */
+                        
+                        width = 1;
+                    }
+                    
+                    /* Copy the character(s) (if we are making an assignment) */
+                    
+                    if (!noassign)
+                    {
+                        rt_strncpy(tv, buf, width);
+                        tv[width] = '\0';
+                    }
+                    
+                    /* Update the buffer pointer past the character(s) in the
+                               * input
+                               */
+                    
+                    buf += width;
+                }
+                else
+                {
+                    noassign = RT_TRUE;
+                }
+            }
+            
+            /* Process %d, %o, %b, %x, %u:  Various integer conversions */
+            
+            else if (rt_strchr("dobxu", *fmt))
+            {
+                fmtcount++;
+                
+                /* Get a pointer to the integer value.  We need to do this even
+                * if we have reached the end of the input data in order to
+                * update the 'ap' variable.
+                */
+                
+                long *plong = RT_NULL;
+                int  *pint  = RT_NULL;
+                if (!noassign)
+                {
+                    /* We have to check whether we need to return a long or an
+                                * int.
+                                */
+                    
+                    if (lflag)
+                    {
+                        plong = va_arg(ap, long*);
+                        *plong = 0;
+                    }
+                    else
+                    {
+                        pint = va_arg(ap, int*);
+                        *pint = 0;
+                    }
+                }
+                
+                /* But we only perform the data conversion is we still have
+                          * bytes remaining in the input data stream.
+                          */
+                
+                /* Skip over any white space before the integer string */
+                
+                while (*buf && rt_isspace(*buf))
+                {
+                    buf++;
+                }
+                
+                if (*buf)
+                {
+                    
+                    /* The base of the integer conversion depends on the
+                                  * specific conversion specification.
+                                  */
+                    
+                    if (*fmt == 'd' || *fmt == 'u')
+                    {
+                        base = 10;
+                    }
+                    else if (*fmt == 'x')
+                    {
+                        base = 16;
+                    }
+                    else if (*fmt == 'o')
+                    {
+                        base = 8;
+                    }
+                    else if (*fmt == 'b')
+                    {
+                        base = 2;
+                    }
+                    
+                    /* Was a fieldwidth specified? */
+                    
+                    if (!width)
+                    {
+                        /* No... Guess a field width using some heuristics */
+                        
+                        width = rt_findwidth(buf, fmt);
+                    }
+                    
+                    /* Copy the numeric string into a temporary working
+                                  * buffer.
+                                  */
+                    
+                    rt_strncpy(tmp, buf, width);
+                    tmp[width] = '\0';
+                    
+                    /* Ignore anything after the first non-digit character */
+                    
+                    int c_count;
+                    for (c_count = 0; c_count < width; c_count++)
+                    {
+                        if ((tmp[c_count] < '0' || tmp[c_count] > '9') && !(tmp[c_count] == '-' ||
+                             tmp[c_count] == '+' ||
+                             tmp[c_count] == 'x' ||
+                             tmp[c_count] == 'X' ||
+                             tmp[c_count] == 'b' ||
+                             tmp[c_count] == 'B'))
+                        {
+                            tmp[c_count] = '\0';
+                            width = c_count;
+                            data_invalid = RT_TRUE;
+                            break;
+                        }
+                    }
+                    
+                    /* Perform the integer conversion */
+                    
+                    buf += width;
+                    if (!noassign)
+                    {
+                        long tmplong = rt_strtol(tmp, RT_NULL, base);
+
+                        /* We have to check whether we need to return a long
+                                        * or an int.
+                                        */
+                        
+                        if (lflag)
+                        {
+                            *plong = tmplong;
+                        }
+                        else
+                        {
+                            *pint = (int)tmplong;
+                        }
+                    }
+                }
+                else
+                {
+                    noassign = RT_TRUE;
+                }
+            }
+            
+            /* Process %f:  Floating point conversion */
+            
+            else if (*fmt == 'f')
+            {
+                fmtcount++;
+                
+                /* Get a pointer to the double value.  We need to do this even
+                           * if we have reached the end of the input data in order to
+                           * update the 'ap' variable.
+                           */
+                
+            #ifdef RT_SSCANF_USING_DOUBLE
+                double *pd = RT_NULL;
+            #endif
+                float *pf = RT_NULL;
+                if (!noassign)
+                {
+                    /* We have to check whether we need to return a float or a
+                               * double.
+                               */
+                    
+            #ifdef RT_SSCANF_USING_DOUBLE
+                    if (lflag)
+                    {
+                        pd  = va_arg(ap, double*);
+                        *pd = 0.0;
+                    }
+                    else
+            #endif
+                    {
+                        pf  = va_arg(ap, float*);
+                        *pf = 0.0;
+                    }
+                }
+                
+            #ifdef RT_SSCANF_USING_FLOATPOINT
+                /* But we only perform the data conversion is we still have
+                           * bytes remaining in the input data stream.
+                           */
+                
+                /* Skip over any white space before the real string */
+                
+                while (*buf && rt_isspace(*buf))
+                {
+                    buf++;
+                }
+                
+                if (*buf)
+                {
+                    
+                    /* Was a fieldwidth specified? */
+                    
+                    if (!width)
+                    {
+                        /* No... Guess a field width using some heuristics */
+                        
+                        width = rt_findwidth(buf, fmt);
+                    }
+                    
+                    /* Copy the real string into a temporary working buffer. */
+                    
+                    rt_strncpy(tmp, buf, width);
+                    tmp[width] = '\0';
+                    
+                    /* Ignore anything after the first non-digit character */
+                    
+                    int c_count;
+                    for (c_count = 0; c_count < width; c_count++)
+                    {
+                        if ((tmp[c_count] < '0' || tmp[c_count] > '9') && !(tmp[c_count] == '.' ||
+                             tmp[c_count] == '-' ||
+                             tmp[c_count] == '+' ||
+                             tmp[c_count] == 'x' ||
+                             tmp[c_count] == 'X'))
+                        {
+                            tmp[c_count] = '\0';
+                            width = c_count;
+                            data_invalid = RT_TRUE;
+                            break;
+                        }
+                    }
+                    
+                    buf += width;
+                    
+                    /* Perform the floating point conversion */
+                    
+                    if (!noassign)
+                    {
+                        /* strtod always returns a double */
+                        double dvalue = rt_strtod(tmp, RT_NULL);
+
+                        /* We have to check whether we need to return a float
+                                        * or a double.
+                                        */
+                        
+                #ifdef RT_SSCANF_USING_DOUBLE
+                        if (lflag)
+                        {
+                            *pd = dvalue;
+                        }
+                        else
+                #endif
+                        {
+                            *pf = (float)dvalue;
+                        }
+                    }
+                }
+                else
+                {
+                    noassign = RT_TRUE;
+                }
+            #endif
+            }
+            
+            /* Process %n:  Character count */
+            
+            else if (*fmt == 'n')
+            {
+                if (lflag)
+                {
+                    pclong = va_arg(ap, long*);
+                }
+                else
+                {
+                    pcint = va_arg(ap, int*);
+                }
+            }
+            else
+            {
+                /* None of the format specifiers matched */
+                noassign = RT_TRUE;
+            }
+            
+            /* Note %n does not count as a conversion */
+            
+            if (!noassign && *fmt != 'n')
+            {
+                count++;
+            }
+            
+            width = 0;
+            
+            if (data_invalid)
+            {
+                noassign = RT_TRUE;
+            }
+            else
+            {
+                noassign = RT_FALSE;
+            }
+            
+            lflag = RT_FALSE;
+            
+            fmt++;
+        }
+        
+        /* Its is not a conversion specifier */
+        
+        else if (*buf)
+        {
+            /* Skip over any leading spaces in the input buffer */
+            
+            while (rt_isspace(*buf))
+            {
+                buf++;
+            }
+            
+            /* Skip over matching characters in the buffer and format */
+            
+            if (*fmt != *buf)
+            {
+                break;
+            }
+            else
+            {
+                fmt++;
+                buf++;
+            }
+        }
+        else 
+		{
+            /* it is not a format specifier, and buf is empty. Stop matching */
+            break;
+        }
+    }
+    
+    /* Clean up - read whitespaces */
+    while (*buf && rt_isspace(*buf))
+    {
+        buf++;
+    }
+    
+    /* Get character count if requested */
+    
+    if (pclong || pcint)
+    {
+        
+        rt_size_t nchars = (rt_size_t)(buf - bufstart);
+        
+        if (pclong)
+        {
+            *pclong = (long)nchars;
+        }
+        else if (pcint)
+        {
+            *pcint = (int)nchars;
+        }
+    }
+    
+    return count;
+}
+
+/**
+ * rt_sscanf - Unformat a buffer into a list of arguments
+ * @param buf:	input buffer
+ * @param fmt:	formatting of buffer
+ * @param ...:	resulting arguments
+ */
+rt_int32_t rt_sscanf(const char *buf, const char *fmt, ...)
+{
+    va_list arg_ptr;
+    rt_int32_t count;
+    
+    va_start(arg_ptr, fmt);
+    count = rt_vsscanf((char*)buf, fmt, arg_ptr);
+    va_end(arg_ptr);
+    return count;
+}
+
 #ifdef RT_USING_CONSOLE
 
 #ifdef RT_USING_DEVICE
