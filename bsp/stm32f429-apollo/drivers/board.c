@@ -89,7 +89,7 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 
-  HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
+  HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/RT_TICK_PER_SECOND);
 
   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
@@ -105,30 +105,35 @@ void SysTick_Handler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    /* tick for HAL Library */
-    HAL_IncTick();
+
     rt_tick_increase();
 
     /* leave interrupt */
     rt_interrupt_leave();
 }
 
-/* re-implementat tick interface for STM32 HAL */
+/* re-implement tick interface for STM32 HAL */
 HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 {
-    /*Configure the SysTick to have interrupt in 1ms time basis*/
-    HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/RT_TICK_PER_SECOND);
-
-    /*Configure the SysTick IRQ priority */
-    HAL_NVIC_SetPriority(SysTick_IRQn, TickPriority ,0);
-
     /* Return function status */
     return HAL_OK;
 }
 
+uint32_t HAL_GetTick(void)
+{
+  return rt_tick_get() * 1000 / RT_TICK_PER_SECOND;
+}
+
+void HAL_SuspendTick(void)
+{
+}
+
+void HAL_ResumeTick(void)
+{
+}
+
 void HAL_Delay(__IO uint32_t Delay)
 {
-//    rt_thread_delay(Delay);
 }
 
 /**
@@ -142,7 +147,7 @@ void rt_hw_board_init()
     /* Set the Vector Table base location at 0x10000000 */
     SCB->VTOR  = (0x10000000 & NVIC_VTOR_MASK);
 #else  /* VECT_TAB_FLASH  */
-    /* Set the Vector Table base location at 0x00000000 */
+    /* Set the Vector Table base location at 0x08000000 */
     SCB->VTOR  = (0x08000000 & NVIC_VTOR_MASK);
 #endif
     HAL_Init();
@@ -161,10 +166,6 @@ void rt_hw_board_init()
     mpu_init();
 #endif
 
-
-    
-    
-//    nand_hy27uf_hw_init();
 }
 
 /*@}*/
