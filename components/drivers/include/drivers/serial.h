@@ -54,9 +54,13 @@
 #define STOP_BITS_3                     2
 #define STOP_BITS_4                     3
 
+#ifdef _WIN32
+#include <windows.h>
+#else
 #define PARITY_NONE                     0
 #define PARITY_ODD                      1
 #define PARITY_EVEN                     2
+#endif
 
 #define BIT_ORDER_LSB                   0
 #define BIT_ORDER_MSB                   1
