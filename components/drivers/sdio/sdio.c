@@ -430,7 +430,7 @@ static rt_int32_t sdio_read_cccr(struct rt_mmcsd_card *card)
 
     cccr_version = data & 0x0f;
 
-    if (cccr_version > SDIO_CCCR_REV_1_20) 
+    if (cccr_version > SDIO_CCCR_REV_3_00) 
     {
         rt_kprintf("unrecognised CCCR structure version %d\n", cccr_version);
 
