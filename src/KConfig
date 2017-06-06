@@ -118,14 +118,11 @@ menu "Memory Management"
 
     if RT_USING_HEAP
 
-        choice USING_HEAP
-
         config RT_USING_SMALL_MEM
             bool "The memory management for small memory"
 
         config RT_USING_SLAB
             bool "Using SLAB memory management for large memory"
-        endchoice
 
     endif
 
@@ -152,5 +149,9 @@ menu "Kernel Device Object"
     endif
 
 endmenu
+
+config RT_USING_MODULE
+    bool "The dynamic module feature"
+    default n
 
 endmenu
