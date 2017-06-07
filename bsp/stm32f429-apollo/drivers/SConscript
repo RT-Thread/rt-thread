@@ -24,6 +24,14 @@ if GetDepend('RT_USING_LWIP'):
 if GetDepend('RT_USING_PIN'):
     src += ['gpio.c']
 
+# add spi drivers.
+if GetDepend('RT_USING_SPI'):
+    src += ['drv_spi.c']
+
+# add spi flash drivers.
+if GetDepend('RT_USING_SFUD'):
+    src += ['drv_spi_flash.c']
+
 CPPPATH = [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)

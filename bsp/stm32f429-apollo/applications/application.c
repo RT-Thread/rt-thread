@@ -77,9 +77,16 @@ void rt_init_thread_entry(void* parameter)
             rt_kprintf("File System initialzation failed!\n");
         }
             
+        /* mount sd card fat partition 0 as root directory */
+        if (dfs_mount("W25Q256", "/spi", "elm", 0, 0) == 0)
+        {
+            rt_kprintf("spi flash mount to /spi !\n");
+        }
+        else
+        {
+            rt_kprintf("spi flash mount to /spi failed!\n");
+        }
     #endif /* RT_USING_DFS_ELMFAT */
-//    module_ptr = rt_module_open("/hello.mo");
-    
         
 #endif /* DFS */
     /* LwIP Initialization */

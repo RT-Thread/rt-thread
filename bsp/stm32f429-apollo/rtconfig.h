@@ -135,7 +135,7 @@
 #define RT_DFS_ELM_CODE_PAGE        437
 #define RT_DFS_ELM_MAX_LFN			255
 /* Maximum sector size to be handled. */
-#define RT_DFS_ELM_MAX_SECTOR_SIZE  512
+#define RT_DFS_ELM_MAX_SECTOR_SIZE  4096
 
 
 /* DFS: UFFS nand file system options */
@@ -209,5 +209,16 @@
 
 /* RT_GDB_STUB */
 //#define RT_USING_GDB
+
+/* spi driver */
+#define RT_USING_SPI
+#define RT_USING_SPI5
+
+/* Serial Flash Universal Driver */
+#define RT_USING_SFUD
+/* Enable SFUD debug output */
+//#define RT_DEBUG_SFUD					1
+/* serial flash discoverable parameters by JEDEC standard */
+#define RT_SFUD_USING_SFDP
 
 #endif
