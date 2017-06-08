@@ -66,6 +66,29 @@
 #define RT_USING_DEVICE
 #define RT_USING_DEVICE_IPC
 
+/* SECTION: RTGUI support */
+/* using RTGUI support */
+#define RT_USING_GUIENGINE
+
+/* name length of RTGUI object */
+#define RTGUI_NAME_MAX		16
+/* support 16 weight font */
+#define RTGUI_USING_FONT16
+/* support 16 weight font */
+#define RTGUI_USING_FONT12
+/* support Chinese font */
+#define RTGUI_USING_FONTHZ
+/* use DFS as file interface */
+#define RTGUI_USING_DFS_FILERW
+/* use font file as Chinese font */
+/* #define RTGUI_USING_HZ_FILE */
+/* use Chinese bitmap font */
+#define RTGUI_USING_HZ_BMP
+/* use small size in RTGUI */
+/* #define RTGUI_USING_SMALL_SIZE */
+/* use mouse cursor */
+/* #define RTGUI_USING_MOUSE_CURSOR */
+
 
 /* Using serial framework */
 #define RT_USING_SERIAL
@@ -151,7 +174,7 @@
 // #define RT_USING_DFS_ROMFS
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
-/* #define RT_USING_LWIP */
+#define RT_USING_LWIP
 /* LwIP uses RT-Thread Memory Management */
 #define RT_LWIP_USING_RT_MEM
 /* Enable ICMP protocol*/
@@ -162,6 +185,8 @@
 #define RT_LWIP_TCP
 /* Enable DNS */
 #define RT_LWIP_DNS
+/* Enable DHCP */
+//#define RT_LWIP_DHCP
 
 /* the number of simulatenously active TCP connections*/
 #define RT_LWIP_TCP_PCB_NUM	5

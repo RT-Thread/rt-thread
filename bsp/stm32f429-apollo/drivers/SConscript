@@ -18,7 +18,7 @@ drv_mpu.c
 
 # add Ethernet drivers.
 if GetDepend('RT_USING_LWIP'):
-    src += ['stm32f4xx_eth.c']
+    src += ['drv_eth.c']
 
 # add gpio drivers.
 if GetDepend('RT_USING_PIN'):
@@ -31,6 +31,10 @@ if GetDepend('RT_USING_SPI'):
 # add spi flash drivers.
 if GetDepend('RT_USING_SFUD'):
     src += ['drv_spi_flash.c']
+
+# add lcd drivers.
+if GetDepend('RT_USING_GUIENGINE'):
+    src += ['drv_lcd.c']
 
 CPPPATH = [cwd]
 

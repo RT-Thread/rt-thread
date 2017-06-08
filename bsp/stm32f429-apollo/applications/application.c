@@ -32,12 +32,18 @@
 #include <lwip/sys.h>
 #include <lwip/api.h>
 #include <netif/ethernetif.h>
-#include "stm32f4xx_eth.h"
+#include "drv_eth.h"
 #endif
 
 #ifdef RT_USING_GDB
 #include <gdb_stub.h>
 #endif
+
+#ifdef RT_USING_GUIENGINE
+#include "rtgui_demo.h"
+#include <rtgui/driver.h>
+#endif
+
 //rt_module_t module_ptr;
 #define DATA_PATH "/Data"
 void rt_init_thread_entry(void* parameter)
@@ -89,20 +95,17 @@ void rt_init_thread_entry(void* parameter)
     #endif /* RT_USING_DFS_ELMFAT */
         
 #endif /* DFS */
-    /* LwIP Initialization */
-#ifdef RT_USING_LWIP
-    {
-        extern void lwip_sys_init(void);
+        
+#ifdef RT_USING_GUIENGINE
+	{
+		rt_device_t device;
 
-        /* register ethernetif device */
-        eth_system_device_init();
-
-        rt_hw_stm32_eth_init();
-
-        /* init lwip system */
-        lwip_sys_init();
-        rt_kprintf("TCP/IP initialized!\n");
-    }
+		device = rt_device_find("lcd");
+		/* re-set graphic device */
+		rtgui_graphic_set_device(device);
+        
+        rt_gui_demo_init();
+	}
 #endif
 }
 int rt_application_init()
