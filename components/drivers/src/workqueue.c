@@ -53,7 +53,7 @@ static void _workqueue_thread_entry(void* parameter)
         rt_hw_interrupt_enable(level);
 
         /* do work */
-        work->work_func(work, work->work_data);
+        work->work_func(work);
         level = rt_hw_interrupt_disable();
         /* clean current work */
         queue->work_current = RT_NULL;

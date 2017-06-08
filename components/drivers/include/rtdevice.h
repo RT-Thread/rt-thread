@@ -159,7 +159,7 @@ struct rt_work
 {
 	rt_list_t list;
 
-	void (*work_func)(struct rt_work* work, void* work_data);
+	void (*work_func)(struct rt_work* work);
 	void *work_data;
 };
 
@@ -303,7 +303,7 @@ rt_err_t rt_workqueue_destroy(struct rt_workqueue* queue);
 rt_err_t rt_workqueue_dowork(struct rt_workqueue* queue, struct rt_work* work);
 rt_err_t rt_workqueue_cancel_work(struct rt_workqueue* queue, struct rt_work* work);
 
-rt_inline void rt_work_init(struct rt_work* work, void (*work_func)(struct rt_work* work, void* work_data),
+rt_inline void rt_work_init(struct rt_work* work, void (*work_func)(struct rt_work* work),
     void* work_data)
 {
     rt_list_init(&(work->list));
