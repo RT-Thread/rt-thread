@@ -66,6 +66,29 @@
 #define RT_USING_DEVICE
 #define RT_USING_DEVICE_IPC
 
+/* SECTION: RTGUI support */
+/* using RTGUI support */
+#define RT_USING_GUIENGINE
+
+/* name length of RTGUI object */
+#define RTGUI_NAME_MAX		16
+/* support 16 weight font */
+#define RTGUI_USING_FONT16
+/* support 16 weight font */
+#define RTGUI_USING_FONT12
+/* support Chinese font */
+#define RTGUI_USING_FONTHZ
+/* use DFS as file interface */
+#define RTGUI_USING_DFS_FILERW
+/* use font file as Chinese font */
+/* #define RTGUI_USING_HZ_FILE */
+/* use Chinese bitmap font */
+#define RTGUI_USING_HZ_BMP
+/* use small size in RTGUI */
+/* #define RTGUI_USING_SMALL_SIZE */
+/* use mouse cursor */
+/* #define RTGUI_USING_MOUSE_CURSOR */
+
 
 /* Using serial framework */
 #define RT_USING_SERIAL
@@ -135,7 +158,7 @@
 #define RT_DFS_ELM_CODE_PAGE        437
 #define RT_DFS_ELM_MAX_LFN			255
 /* Maximum sector size to be handled. */
-#define RT_DFS_ELM_MAX_SECTOR_SIZE  512
+#define RT_DFS_ELM_MAX_SECTOR_SIZE  4096
 
 
 /* DFS: UFFS nand file system options */
@@ -151,7 +174,7 @@
 // #define RT_USING_DFS_ROMFS
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
-/* #define RT_USING_LWIP */
+#define RT_USING_LWIP
 /* LwIP uses RT-Thread Memory Management */
 #define RT_LWIP_USING_RT_MEM
 /* Enable ICMP protocol*/
@@ -162,6 +185,10 @@
 #define RT_LWIP_TCP
 /* Enable DNS */
 #define RT_LWIP_DNS
+/* Enable DHCP */
+#define RT_LWIP_DHCP
+/* Enable DEBUG */
+//#define RT_LWIP_DEBUG
 
 /* the number of simulatenously active TCP connections*/
 #define RT_LWIP_TCP_PCB_NUM	5
@@ -203,11 +230,25 @@
 #define CHECKSUM_CHECK_IP               0
 #define CHECKSUM_CHECK_UDP              0
 
-#define CHECKSUM_GEN_TCP                0
-#define CHECKSUM_GEN_IP                 0
-#define CHECKSUM_GEN_UDP                0
+//#define CHECKSUM_GEN_TCP                0
+//#define CHECKSUM_GEN_IP                 0
+//#define CHECKSUM_GEN_UDP                0
 
 /* RT_GDB_STUB */
 //#define RT_USING_GDB
+
+/* spi driver */
+#define RT_USING_SPI
+#define RT_USING_SPI5
+
+/* Serial Flash Universal Driver */
+#define RT_USING_SFUD
+/* Enable SFUD debug output */
+//#define RT_DEBUG_SFUD					1
+/* serial flash discoverable parameters by JEDEC standard */
+#define RT_SFUD_USING_SFDP
+
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 
 #endif
