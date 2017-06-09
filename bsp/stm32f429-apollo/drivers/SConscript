@@ -18,7 +18,7 @@ drv_mpu.c
 
 # add Ethernet drivers.
 if GetDepend('RT_USING_LWIP'):
-    src += ['drv_eth.c']
+    src += ['drv_eth.c', 'drv_iic.c', 'drv_pcf8574.c']
 
 # add gpio drivers.
 if GetDepend('RT_USING_PIN'):

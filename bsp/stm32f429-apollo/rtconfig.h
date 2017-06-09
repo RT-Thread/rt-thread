@@ -186,7 +186,9 @@
 /* Enable DNS */
 #define RT_LWIP_DNS
 /* Enable DHCP */
-//#define RT_LWIP_DHCP
+#define RT_LWIP_DHCP
+/* Enable DEBUG */
+//#define RT_LWIP_DEBUG
 
 /* the number of simulatenously active TCP connections*/
 #define RT_LWIP_TCP_PCB_NUM	5
@@ -228,9 +230,9 @@
 #define CHECKSUM_CHECK_IP               0
 #define CHECKSUM_CHECK_UDP              0
 
-#define CHECKSUM_GEN_TCP                0
-#define CHECKSUM_GEN_IP                 0
-#define CHECKSUM_GEN_UDP                0
+//#define CHECKSUM_GEN_TCP                0
+//#define CHECKSUM_GEN_IP                 0
+//#define CHECKSUM_GEN_UDP                0
 
 /* RT_GDB_STUB */
 //#define RT_USING_GDB
@@ -245,5 +247,8 @@
 //#define RT_DEBUG_SFUD					1
 /* serial flash discoverable parameters by JEDEC standard */
 #define RT_SFUD_USING_SFDP
+
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 
 #endif
