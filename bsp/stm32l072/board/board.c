@@ -40,18 +40,10 @@ void NVIC_Configuration(void)
 //    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 }
 
-/**
-* @brief  Inserts a delay time.
-* @param  nCount: specifies the delay time length.
-* @retval None
-*/
-static void Delay(__IO uint32_t nCount)
+void error_handler(void)
 {
-	/* Decrement nCount value */
-	while (nCount != 0)
-	{
-		nCount--;
-	}
+    rt_kprintf("error_handler\n");
+    while(1);
 }
 
 /**
@@ -63,32 +55,36 @@ static void Delay(__IO uint32_t nCount)
  */
 static void RCC_Configuration(void)
 {
-
-    RCC_OscInitTypeDef OscInit;
+    RCC_ClkInitTypeDef ClkInit = {0};
+    RCC_OscInitTypeDef OscInit = {0};
+	
 	HAL_RCC_DeInit();
+	
+    /* Enable HSI Oscillator and Activate PLL with HSI as source */
     OscInit.OscillatorType = RCC_OSCILLATORTYPE_HSI;
     OscInit.HSIState = RCC_HSI_ON;
+	OscInit.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
     OscInit.PLL.PLLState = RCC_PLL_ON;
     OscInit.PLL.PLLDIV = RCC_PLLDIV_2;
     OscInit.PLL.PLLMUL = RCC_PLLMUL_4;
     OscInit.PLL.PLLSource = RCC_PLLSOURCE_HSI;
     HAL_RCC_OscConfig(&OscInit);
 
-    RCC_ClkInitTypeDef ClkInit;
+    /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2
+    clocks dividers */
     ClkInit.ClockType = RCC_CLOCKTYPE_SYSCLK |
                         RCC_CLOCKTYPE_HCLK |
                         RCC_CLOCKTYPE_PCLK1 |
                         RCC_CLOCKTYPE_PCLK2;
 
     ClkInit.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-    ClkInit.AHBCLKDivider = 0;
-    ClkInit.APB1CLKDivider = 0;
-    ClkInit.APB2CLKDivider = 0;
-    HAL_RCC_ClockConfig(&ClkInit, 1);
-
-	Delay(0x3FFFF);
-	/* Update SystemCoreClock value from RCC configure */
-	SystemCoreClockUpdate();
+    ClkInit.AHBCLKDivider = RCC_SYSCLK_DIV1;
+    ClkInit.APB1CLKDivider = RCC_HCLK_DIV1;
+    ClkInit.APB2CLKDivider = RCC_HCLK_DIV1;
+    if (HAL_RCC_ClockConfig(&ClkInit, FLASH_LATENCY_1) != HAL_OK)
+    {
+        error_handler();
+    }
 }
 
 #ifdef PRINT_RCC_FREQ_INFO
