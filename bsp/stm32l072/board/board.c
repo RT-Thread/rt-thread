@@ -68,10 +68,7 @@ static void RCC_Configuration(void)
     OscInit.PLL.PLLDIV = RCC_PLLDIV_2;
     OscInit.PLL.PLLMUL = RCC_PLLMUL_4;
     OscInit.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-    if (HAL_RCC_OscConfig(&OscInit) != HAL_OK)
-    {
-        RT_ASSERT(RT_NULL);
-    }
+    HAL_RCC_OscConfig(&OscInit);
 
     /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2
     clocks dividers */
@@ -84,10 +81,7 @@ static void RCC_Configuration(void)
     ClkInit.AHBCLKDivider = RCC_SYSCLK_DIV1;
     ClkInit.APB1CLKDivider = RCC_HCLK_DIV1;
     ClkInit.APB2CLKDivider = RCC_HCLK_DIV1;
-    if (HAL_RCC_ClockConfig(&ClkInit, FLASH_LATENCY_1) != HAL_OK)
-    {
-        RT_ASSERT(RT_NULL);
-    }
+    HAL_RCC_ClockConfig(&ClkInit, FLASH_LATENCY_1);
 }
 
 #ifdef PRINT_RCC_FREQ_INFO
