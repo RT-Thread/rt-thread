@@ -159,6 +159,12 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
     thread->init_priority    = priority;
     thread->current_priority = priority;
 
+    thread->number_mask = 0;
+#if RT_THREAD_PRIORITY_MAX > 32
+    thread->number = 0;
+    therad->high_mask = 0;
+#endif
+
     /* tick init */
     thread->init_tick      = tick;
     thread->remaining_tick = tick;
