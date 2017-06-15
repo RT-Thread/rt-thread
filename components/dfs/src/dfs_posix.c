@@ -427,7 +427,7 @@ RTM_EXPORT(fsync);
  * @return 0 on successful completion. Otherwise, -1 shall be returned and errno
  * set to indicate the error.
  */
-int ioctl(int fildes, unsigned long cmd, void *data)
+int ioctl(int fildes, long cmd, void *data)
 {
 	int ret;
     struct dfs_fd *d;

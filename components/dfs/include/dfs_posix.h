@@ -134,7 +134,7 @@ int unlink(const char *pathname);
 int stat(const char *file, struct stat *buf);
 int fstat(int fildes, struct stat *buf);
 int fsync(int fildes);
-int ioctl(int fildes, unsigned long cmd, void *data);
+int ioctl(int fildes, long cmd, void *data);
 
 /* directory api*/
 int rmdir(const char *path);
