@@ -5,21 +5,22 @@ Import('rtconfig')
 from building import *
 
 objs = []
+cwd  = GetCurrentDir()
 
 if GetDepend('RT_USING_LIBC'):
-    if rtconfig.PLATFORM == 'gcc':
+    if os.path.isfile(os.path.join(cwd, 'newlib/SConscript')) and rtconfig.PLATFORM == 'gcc':
         objs = objs + SConscript('newlib/SConscript')
-    elif rtconfig.PLATFORM == 'armcc':
+    elif os.path.isfile(os.path.join(cwd, 'armlibc/SConscript')) and rtconfig.PLATFORM == 'armcc':
         objs = objs + SConscript('armlibc/SConscript')
-    elif rtconfig.PLATFORM == 'iar':
+    elif os.path.isfile(os.path.join(cwd, 'dlib/SConscript')) and rtconfig.PLATFORM == 'iar':
         objs = objs + SConscript('dlib/SConscript')
 else:
-    if rtconfig.PLATFORM == 'gcc' and rtconfig.ARCH != 'sim':
+    if os.path.isfile(os.path.join(cwd, 'minilibc/SConscript')) and rtconfig.PLATFORM == 'gcc' and rtconfig.ARCH != 'sim':
         objs = objs + SConscript('minilibc/SConscript')
 
 if GetDepend('RT_USING_LIBC') and GetDepend('RT_USING_PTHREADS'):
 	objs = objs + SConscript('pthreads/SConscript')
-	
+
 if GetDepend('RT_USING_MODULE') and GetDepend('RT_USING_LIBDL'):
 	objs = objs + SConscript('libdl/SConscript')
 
