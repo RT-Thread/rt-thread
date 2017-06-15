@@ -189,7 +189,10 @@ int cmd_cd(int argc, char **argv)
     }
     else if (argc == 2)
     {
-        chdir(argv[1]);
+        if (chdir(argv[1]) != 0)
+        {
+        	rt_kprintf("No such directory: %s\n", argv[1]);
+        }
     }
 
     return 0;
