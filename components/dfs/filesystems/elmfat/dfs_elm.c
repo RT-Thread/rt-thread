@@ -143,7 +143,7 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
     }
 
     /* mount fatfs, always 0 logic driver */
-    result = f_mount(fat,(const TCHAR*)logic_nbr, 1);
+    result = f_mount(fat, (const TCHAR*)logic_nbr, 1);
     if (result == FR_OK)
     {
         char drive[8];
@@ -153,7 +153,7 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
         dir = (DIR *)rt_malloc(sizeof(DIR));
         if (dir == RT_NULL)
         {
-            f_mount(RT_NULL,(const TCHAR*)logic_nbr,1);
+            f_mount(RT_NULL, (const TCHAR*)logic_nbr, 1);
             disk[index] = RT_NULL;
             rt_free(fat);
             return -DFS_STATUS_ENOMEM;
@@ -919,8 +919,8 @@ DWORD get_fattime(void)
     /* unlock scheduler. */
     rt_exit_critical();
 
-    fat_time =  (DWORD)(tm_now.tm_year - 80) << 25 | 
-                (DWORD)(tm_now.tm_mon + 1)   << 21 | 
+    fat_time =  (DWORD)(tm_now.tm_year - 80) << 25 |
+                (DWORD)(tm_now.tm_mon + 1)   << 21 |
                 (DWORD)tm_now.tm_mday        << 16 |
                 (DWORD)tm_now.tm_hour        << 11 |
                 (DWORD)tm_now.tm_min         <<  5 |
