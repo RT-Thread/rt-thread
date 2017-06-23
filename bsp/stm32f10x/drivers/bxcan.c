@@ -20,7 +20,6 @@
 #endif
 #ifdef RT_USING_CAN
 
-#define inline __inline
 #ifndef STM32F10X_CL
 #define BX_CAN_FMRNUMBER 14
 #define BX_CAN2_FMRSTART 7
@@ -399,7 +398,7 @@ static void bxcan2_hw_init(void)
     NVIC_Init(&NVIC_InitStructure);
 }
 #endif
-static inline rt_err_t bxcan_enter_init(CAN_TypeDef *pcan)
+rt_inline rt_err_t bxcan_enter_init(CAN_TypeDef *pcan)
 {
     uint32_t wait_ack = 0x00000000;
 
@@ -415,7 +414,7 @@ static inline rt_err_t bxcan_enter_init(CAN_TypeDef *pcan)
     }
     return RT_EOK;
 }
-static inline rt_err_t bxcan_exit_init(CAN_TypeDef *pcan)
+rt_inline rt_err_t bxcan_exit_init(CAN_TypeDef *pcan)
 {
     uint32_t wait_ack = 0x00000000;
 
