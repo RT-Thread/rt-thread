@@ -20,7 +20,9 @@
 #endif
 #ifdef RT_USING_CAN
 
+#ifdef __CC_ARM
 #define inline __inline
+#endif
 #ifndef STM32F10X_CL
 #define BX_CAN_FMRNUMBER 14
 #define BX_CAN2_FMRSTART 7
