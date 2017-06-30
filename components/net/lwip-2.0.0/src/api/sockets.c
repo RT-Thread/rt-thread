@@ -291,7 +291,7 @@ static volatile int select_cb_ctr;
 
 #if LWIP_SOCKET_SET_ERRNO
 #ifndef set_errno
-#define set_errno(err) do { if (err) { errno = (err); } } while(0)
+#define set_errno(err) do { errno = (err); } while(0)
 #endif
 #else /* LWIP_SOCKET_SET_ERRNO */
 #define set_errno(err)
