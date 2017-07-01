@@ -1,6 +1,7 @@
 /*
- * Copyright (c) 2014 - 2016, Freescale Semiconductor, Inc.
- * Copyright 2016 - 2017 NXP
+ * Copyright (c) 2015, Freescale Semiconductor, Inc.
+ * Copyright 2016-2017 NXP
+ *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
  *
@@ -25,34 +26,28 @@
  * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
  */
 
-#ifndef __FSL_DEVICE_REGISTERS_H__
-#define __FSL_DEVICE_REGISTERS_H__
-
-/*
- * Include the cpu specific register header files.
- *
- * The CPU macro should be declared in the project or makefile.
- */
-#if (defined(CPU_MK64FN1M0CAJ12) || defined(CPU_MK64FN1M0VDC12) || defined(CPU_MK64FN1M0VLL12) || \
-    defined(CPU_MK64FN1M0VLQ12) || defined(CPU_MK64FN1M0VMD12) || defined(CPU_MK64FX512VDC12) || \
-    defined(CPU_MK64FX512VLL12) || defined(CPU_MK64FX512VLQ12) || defined(CPU_MK64FX512VMD12))
-
-#define K64F12_SERIES
-
-/* CMSIS-style register definitions */
-#include "MK64F12.h"
-/* CPU specific feature definitions */
-#include "MK64F12_features.h"
-
-#else
-    #error "No valid CPU defined!"
-#endif
-
-#endif /* __FSL_DEVICE_REGISTERS_H__ */
+#include "fsl_sim.h"
 
 /*******************************************************************************
- * EOF
+ * Codes
  ******************************************************************************/
+#if (defined(FSL_FEATURE_SIM_OPT_HAS_USB_VOLTAGE_REGULATOR) && FSL_FEATURE_SIM_OPT_HAS_USB_VOLTAGE_REGULATOR)
+void SIM_SetUsbVoltRegulatorEnableMode(uint32_t mask)
+{
+    SIM->SOPT1CFG |= (SIM_SOPT1CFG_URWE_MASK | SIM_SOPT1CFG_UVSWE_MASK | SIM_SOPT1CFG_USSWE_MASK);
+
+    SIM->SOPT1 = (SIM->SOPT1 & ~kSIM_UsbVoltRegEnableInAllModes) | mask;
+}
+#endif /* FSL_FEATURE_SIM_OPT_HAS_USB_VOLTAGE_REGULATOR */
+
+void SIM_GetUniqueId(sim_uid_t *uid)
+{
+#if defined(SIM_UIDH)
+    uid->H = SIM->UIDH;
+#endif
+    uid->MH = SIM->UIDMH;
+    uid->ML = SIM->UIDML;
+    uid->L = SIM->UIDL;
+}

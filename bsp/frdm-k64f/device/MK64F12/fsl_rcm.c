@@ -1,6 +1,7 @@
 /*
- * Copyright (c) 2014 - 2016, Freescale Semiconductor, Inc.
- * Copyright 2016 - 2017 NXP
+ * Copyright (c) 2015, Freescale Semiconductor, Inc.
+ * Copyright 2016-2017 NXP
+ *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
  *
@@ -25,34 +26,40 @@
  * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
  */
 
-#ifndef __FSL_DEVICE_REGISTERS_H__
-#define __FSL_DEVICE_REGISTERS_H__
+#include "fsl_rcm.h"
 
-/*
- * Include the cpu specific register header files.
- *
- * The CPU macro should be declared in the project or makefile.
- */
-#if (defined(CPU_MK64FN1M0CAJ12) || defined(CPU_MK64FN1M0VDC12) || defined(CPU_MK64FN1M0VLL12) || \
-    defined(CPU_MK64FN1M0VLQ12) || defined(CPU_MK64FN1M0VMD12) || defined(CPU_MK64FX512VDC12) || \
-    defined(CPU_MK64FX512VLL12) || defined(CPU_MK64FX512VLQ12) || defined(CPU_MK64FX512VMD12))
+void RCM_ConfigureResetPinFilter(RCM_Type *base, const rcm_reset_pin_filter_config_t *config)
+{
+    assert(config);
 
-#define K64F12_SERIES
+#if (defined(FSL_FEATURE_RCM_REG_WIDTH) && (FSL_FEATURE_RCM_REG_WIDTH == 32))
+    uint32_t reg;
 
-/* CMSIS-style register definitions */
-#include "MK64F12.h"
-/* CPU specific feature definitions */
-#include "MK64F12_features.h"
-
+    reg = (((uint32_t)config->enableFilterInStop << RCM_RPC_RSTFLTSS_SHIFT) | (uint32_t)config->filterInRunWait);
+    if (config->filterInRunWait == kRCM_FilterBusClock)
+    {
+        reg |= ((uint32_t)config->busClockFilterCount << RCM_RPC_RSTFLTSEL_SHIFT);
+    }
+    base->RPC = reg;
 #else
-    #error "No valid CPU defined!"
-#endif
+    base->RPFC = ((uint8_t)(config->enableFilterInStop << RCM_RPFC_RSTFLTSS_SHIFT) | (uint8_t)config->filterInRunWait);
+    if (config->filterInRunWait == kRCM_FilterBusClock)
+    {
+        base->RPFW = config->busClockFilterCount;
+    }
+#endif /* FSL_FEATURE_RCM_REG_WIDTH */
+}
 
-#endif /* __FSL_DEVICE_REGISTERS_H__ */
+#if (defined(FSL_FEATURE_RCM_HAS_BOOTROM) && FSL_FEATURE_RCM_HAS_BOOTROM)
+void RCM_SetForceBootRomSource(RCM_Type *base, rcm_boot_rom_config_t config)
+{
+    uint32_t reg;
 
-/*******************************************************************************
- * EOF
- ******************************************************************************/
+    reg = base->FM;
+    reg &= ~RCM_FM_FORCEROM_MASK;
+    reg |= ((uint32_t)config << RCM_FM_FORCEROM_SHIFT);
+    base->FM = reg;
+}
+#endif /* #if FSL_FEATURE_RCM_HAS_BOOTROM */
