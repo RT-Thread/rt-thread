@@ -29,32 +29,14 @@
 #include <lwip/sys.h>
 #include <lwip/api.h>
 #include <netif/ethernetif.h>
-#include "stm32_eth.h"
 #endif
 
 void rt_init_thread_entry(void* parameter)
 {
-    /* LwIP Initialization */
-#ifdef RT_USING_LWIP
-    {
-        extern void lwip_sys_init(void);
-
-        /* register ethernetif device */
-        eth_system_device_init();
-
-        rt_hw_stm32_eth_init();
-        /* re-init device driver */
-        rt_device_init_all();
-
-        /* init lwip system */
-        lwip_sys_init();
-        rt_kprintf("TCP/IP initialized!\n");
-    }
+#ifdef RT_USING_COMPONENTS_INIT
+    /* initialization RT-Thread Components */
+    rt_components_init();
 #endif
-
-//FS
-
-//GUI
 }
 
 float f_var1;

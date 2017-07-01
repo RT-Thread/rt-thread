@@ -64,6 +64,9 @@
 /* Using Serial Device Driver Framework" default="true" */
 #define RT_USING_SERIAL
 
+// <section name="RT_USING_COMPONENTS_INIT" description="Using components init" default="false" >
+#define RT_USING_COMPONENTS_INIT
+// </section>
 
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
