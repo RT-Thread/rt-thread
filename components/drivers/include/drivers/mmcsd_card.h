@@ -135,6 +135,8 @@ struct rt_sdio_function {
 	rt_uint32_t		enable_timeout_val; /* max enable timeout in msec */
 
 	struct rt_sdio_function_tuple *tuples;
+    
+    void            *priv;
 };
 
 #define SDIO_MAX_FUNCTIONS		7
