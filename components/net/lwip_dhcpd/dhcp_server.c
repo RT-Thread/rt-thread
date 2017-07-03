@@ -45,8 +45,20 @@
 
 /* DHCP server option */
 
-#ifndef DHCPD_ADDR_CACHE_MAX
-#define DHCPD_ADDR_CACHE_MAX       5
+/* allocated client ip range */
+#ifndef DHCPD_CLIENT_IP_MIN
+#define DHCPD_CLIENT_IP_MIN     2
+#endif
+#ifndef DHCPD_CLIENT_IP_MAX
+#define DHCPD_CLIENT_IP_MAX     254
+#endif
+
+/* the DHCP server address */
+#ifndef DHCPD_SERVER_IPADDR0
+#define DHCPD_SERVER_IPADDR0      192UL
+#define DHCPD_SERVER_IPADDR1      168UL
+#define DHCPD_SERVER_IPADDR2      169UL
+#define DHCPD_SERVER_IPADDR3      1UL
 #endif
 
 //#define DHCP_DEBUG_PRINTF
@@ -65,81 +77,7 @@
 /* buffer size for receive DHCP packet */
 #define BUFSZ               1024
 
-/* unique 6-byte MAC address */
-typedef struct mac_addr
-{
-    uint8_t octet[6];
-}mac_addr_t;
-
-static mac_addr_t cached_mac_addr[DHCPD_ADDR_CACHE_MAX];
-static ip_addr_t  cached_ip_addr [DHCPD_ADDR_CACHE_MAX];
-
-static rt_err_t get_client_addr_form_cache(const mac_addr_t *mac_addr, 
-                                            ip_addr_t *ip_addr)
-{
-    rt_uint32_t i;
-
-    /* Check whether device is already cached */
-    for (i = 0; i < DHCPD_ADDR_CACHE_MAX; i ++)
-    {
-        if (memcmp(&cached_mac_addr[i], mac_addr, sizeof(*mac_addr)) == 0)
-        {
-            *ip_addr = cached_ip_addr[i];
-            return RT_EOK;
-        }
-    }
-
-    return -RT_EEMPTY;
-}
-
-static rt_err_t add_client_addr_to_cache(const mac_addr_t *mac_addr, 
-                                            const ip_addr_t *ip_addr)
-{
-    rt_uint32_t i;
-    rt_uint32_t first_empty_slot = DHCPD_ADDR_CACHE_MAX;
-    rt_uint32_t cached_slot = DHCPD_ADDR_CACHE_MAX;
-
-    static const mac_addr_t zero_mac_addr = {0};
-
-    /* Search for empty slot in cache */
-    for (i = 0; i < DHCPD_ADDR_CACHE_MAX; i ++)
-    {
-        /* Check for matching MAC address */
-        if (memcmp(&cached_mac_addr[i], mac_addr, sizeof(*mac_addr)) == 0)
-        {
-            /* Cached device found */
-            cached_slot = i;
-            break;
-        }
-        else if (first_empty_slot == DHCPD_ADDR_CACHE_MAX && 
-                !memcmp(&cached_mac_addr[i], &zero_mac_addr, 6))
-        {
-            /* Device not found in cache. Return the first empty slot */
-            first_empty_slot = i;
-        }
-    }
-
-    if (cached_slot != DHCPD_ADDR_CACHE_MAX)
-    {
-        /* Update IP address of cached device */
-        cached_ip_addr[cached_slot] = *ip_addr;
-    }
-    else if (first_empty_slot != DHCPD_ADDR_CACHE_MAX)
-    {
-        /* Add device to the first empty slot */
-        cached_mac_addr[first_empty_slot] = *mac_addr;
-        cached_ip_addr [first_empty_slot] = *ip_addr;
-    }
-    else
-    {
-        /* Cache is full. Add device to slot 0 */
-        cached_mac_addr[0] = *mac_addr;
-        cached_ip_addr [0] = *ip_addr;
-    }
-
-    return RT_EOK;
-}
-
+static uint8_t next_client_ip = DHCPD_CLIENT_IP_MIN;
 static rt_err_t _low_level_dhcp_send(struct netif *netif,
                                      const void *buffer,
                                      rt_size_t size)
@@ -192,14 +130,6 @@ static rt_err_t _low_level_dhcp_send(struct netif *netif,
 
 static void dhcpd_thread_entry(void *parameter)
 {
-    uint32_t dhcpd_ip_addr;
-    uint32_t dhcpd_netmask;
-    uint32_t subnet;
-    uint32_t ip_mask;
-    uint32_t first_ip_addr;
-    uint32_t final_ip_addr;
-    uint32_t next_ip_addr;
-
     struct netif *netif = RT_NULL;
     int sock;
     int bytes_read;
@@ -212,31 +142,14 @@ static void dhcpd_thread_entry(void *parameter)
     /* get ethernet interface. */
     netif = (struct netif*) parameter;
     RT_ASSERT(netif != RT_NULL);
-    
-    memset(cached_ip_addr, 0, sizeof(cached_ip_addr));
-    memset(cached_mac_addr, 0, sizeof(cached_mac_addr));
-
-    /* save local IP address and netmask to be sent in DHCP packets */
-    dhcpd_ip_addr = ip4_addr_get_u32(&netif->ip_addr);
-    dhcpd_netmask = ip4_addr_get_u32(&netif->netmask);
-
-    /* calculate the first available IP address which will be served */
-    subnet = dhcpd_ip_addr & dhcpd_netmask;
-    ip_mask = ~dhcpd_netmask;
-    first_ip_addr = subnet | ((dhcpd_ip_addr + htonl(1UL)) & ip_mask);
-    final_ip_addr = subnet | (ip_mask - htonl(1UL));
-    next_ip_addr = first_ip_addr;
 
     /* our DHCP server information */
-    DEBUG_PRINTF("DHCP server IP: %d.%d.%d.%d\n",
-                ((uint8_t *)&dhcpd_ip_addr)[0], ((uint8_t *)&dhcpd_ip_addr)[1],
-                ((uint8_t *)&dhcpd_ip_addr)[2], ((uint8_t *)&dhcpd_ip_addr)[3]);
-    DEBUG_PRINTF("DHCP client IP: %d.%d.%d.%d - %d.%d.%d.%d\n",
-                ((uint8_t *)&first_ip_addr)[0], ((uint8_t *)&first_ip_addr)[1],
-                ((uint8_t *)&first_ip_addr)[2], ((uint8_t *)&first_ip_addr)[3],
-                ((uint8_t *)&final_ip_addr)[0], ((uint8_t *)&final_ip_addr)[1],
-                ((uint8_t *)&final_ip_addr)[2], ((uint8_t *)&final_ip_addr)[3]);
-    
+    DEBUG_PRINTF("DHCP server IP: %d.%d.%d.%d  client IP: %d.%d.%d.%d-%d\n",
+                 DHCPD_SERVER_IPADDR0, DHCPD_SERVER_IPADDR1,
+                 DHCPD_SERVER_IPADDR2, DHCPD_SERVER_IPADDR3,
+                 DHCPD_SERVER_IPADDR0, DHCPD_SERVER_IPADDR1,
+                 DHCPD_SERVER_IPADDR2, DHCPD_CLIENT_IP_MIN, DHCPD_CLIENT_IP_MAX);
+
     /* allocate buffer for receive */
     recv_data = rt_malloc(BUFSZ);
     if (recv_data == RT_NULL)
@@ -256,16 +169,12 @@ static void dhcpd_thread_entry(void *parameter)
 
     /* set to receive broadcast packet */
     setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &optval, sizeof(optval));
-    
-    /* set receive timeout value: 1s */
-    optval = 1000;
-    setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &optval, sizeof(optval));
 
     /* initialize server address */
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(DHCP_SERVER_PORT);
     server_addr.sin_addr.s_addr = INADDR_ANY;
-    memset(&(server_addr.sin_zero), 0, sizeof(server_addr.sin_zero));
+    rt_memset(&(server_addr.sin_zero), 0, sizeof(server_addr.sin_zero));
 
     /* bind socket to the server address */
     if (bind(sock, (struct sockaddr *)&server_addr,
@@ -280,7 +189,7 @@ static void dhcpd_thread_entry(void *parameter)
     addr_len = sizeof(struct sockaddr);
     DEBUG_PRINTF("DHCP server listen on port %d...\n", DHCP_SERVER_PORT);
 
-    while (rt_thread_self()->user_data == RT_TRUE)
+    while (1)
     {
         bytes_read = recvfrom(sock, recv_data, BUFSZ - 1, 0,
                               (struct sockaddr *)&client_addr, &addr_len);
@@ -305,15 +214,9 @@ static void dhcpd_thread_entry(void *parameter)
 
             uint8_t message_type = 0;
             uint8_t finished = 0;
+            uint32_t request_ip  = 0;
 
-            ip_addr_t request_ip_addr;
-            ip_addr_t given_ip_addr;
-            ip_addr_t reply_ip_addr;
-            
-            /* record client MAC address */
-            mac_addr_t client_mac_addr = *(mac_addr_t *)msg->chaddr;
-            
-            dhcp_opt = msg->options;
+            dhcp_opt = (uint8_t *)msg + DHCP_OPTIONS_OFS;
             while (finished == 0)
             {
                 option = *dhcp_opt;
@@ -322,8 +225,8 @@ static void dhcpd_thread_entry(void *parameter)
                 switch (option)
                 {
                 case DHCP_OPTION_REQUESTED_IP:
-                    /* keep requested IP address */
-                    request_ip_addr = *(ip_addr_t *)(dhcp_opt + 2);
+                    request_ip = *(dhcp_opt + 2) << 24 | *(dhcp_opt + 3) << 16
+                                 | *(dhcp_opt + 4) << 8 | *(dhcp_opt + 5);
                     break;
 
                 case DHCP_OPTION_END:
@@ -342,23 +245,40 @@ static void dhcpd_thread_entry(void *parameter)
             }
 
             /* reply. */
-            dhcp_opt = msg->options;
+            dhcp_opt = (uint8_t *)msg + DHCP_OPTIONS_OFS;
+
+            /* check. */
+            if (request_ip)
+            {
+                uint32_t client_ip = DHCPD_SERVER_IPADDR0 << 24 | DHCPD_SERVER_IPADDR1 << 16
+                                     | DHCPD_SERVER_IPADDR2 << 8 | (next_client_ip);
+
+                if (request_ip != client_ip)
+                {
+                    *dhcp_opt++ = DHCP_OPTION_MESSAGE_TYPE;
+                    *dhcp_opt++ = DHCP_OPTION_MESSAGE_TYPE_LEN;
+                    *dhcp_opt++ = DHCP_NAK;
+                    *dhcp_opt++ = DHCP_OPTION_END;
+
+                    DEBUG_PRINTF("requested IP invalid, reply DHCP_NAK\n");
+                    if (netif != RT_NULL)
+                    {
+                        int send_byte = (dhcp_opt - (uint8_t *)msg);
+                        _low_level_dhcp_send(netif, msg, send_byte);
+                        DEBUG_PRINTF("DHCP server send %d byte\n", send_byte);
+                    }
+                    next_client_ip++;
+                    if (next_client_ip > DHCPD_CLIENT_IP_MAX)
+                        next_client_ip = DHCPD_CLIENT_IP_MIN;
+                    continue;
+                }
+            }
+
             if (message_type == DHCP_DISCOVER)
             {
                 DEBUG_PRINTF("request DHCP_DISCOVER\n");
                 DEBUG_PRINTF("reply   DHCP_OFFER\n");
-                
-                /* check whether device is already cached */
-                if (get_client_addr_form_cache(&client_mac_addr, 
-                                                &reply_ip_addr) != RT_EOK)
-                {
-                    /* address not found and use next available IP address */
-                    reply_ip_addr = *(ip_addr_t *)&next_ip_addr;
-                }
 
-                /* create the IP address for the offer */
-                memcpy(&msg->yiaddr, &reply_ip_addr, sizeof(ip_addr_t));
-                
                 // DHCP_OPTION_MESSAGE_TYPE
                 *dhcp_opt++ = DHCP_OPTION_MESSAGE_TYPE;
                 *dhcp_opt++ = DHCP_OPTION_MESSAGE_TYPE_LEN;
@@ -367,10 +287,10 @@ static void dhcpd_thread_entry(void *parameter)
                 // DHCP_OPTION_SERVER_ID
                 *dhcp_opt++ = DHCP_OPTION_SERVER_ID;
                 *dhcp_opt++ = 4;
-                *dhcp_opt++ = ((uint8_t *)&dhcpd_ip_addr)[0];
-                *dhcp_opt++ = ((uint8_t *)&dhcpd_ip_addr)[1];
-                *dhcp_opt++ = ((uint8_t *)&dhcpd_ip_addr)[2];
-                *dhcp_opt++ = ((uint8_t *)&dhcpd_ip_addr)[3];
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR0;
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR1;
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR2;
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR3;
 
                 // DHCP_OPTION_LEASE_TIME
                 *dhcp_opt++ = DHCP_OPTION_LEASE_TIME;
@@ -382,69 +302,8 @@ static void dhcpd_thread_entry(void *parameter)
             }
             else if (message_type == DHCP_REQUEST)
             {
-                rt_bool_t next_ip_addr_used = RT_FALSE;
-
                 DEBUG_PRINTF("request DHCP_REQUEST\n");
                 DEBUG_PRINTF("reply   DHCP_ACK\n");
-
-                /* check if device is cached, if so, give the previous IP address */
-                if (get_client_addr_form_cache(&client_mac_addr, 
-                                                &given_ip_addr) != RT_EOK)
-                {
-                    /* address not found and use next available IP address */
-                    given_ip_addr = *(ip_addr_t *)&next_ip_addr;
-                    next_ip_addr_used = RT_TRUE;
-                }
-                
-                /* check if the requested IP address matches one we have assigned */
-                if (!memcmp(&request_ip_addr, &given_ip_addr, sizeof(ip_addr_t)))
-                {
-                    /* Request is for next available IP */
-                    /* create the IP address for the offer */
-                    memcpy(&msg->yiaddr, &given_ip_addr, sizeof(ip_addr_t));
-
-                    if (next_ip_addr_used == RT_TRUE)
-                    {
-                        /* increment next available IP address only if not found in cache */
-                        do {
-                            next_ip_addr = subnet | ((next_ip_addr + htonl(1UL)) & ip_mask);
-                        }while(ntohl(final_ip_addr) < ntohl(next_ip_addr) && 
-                                ntohl(first_ip_addr) > ntohl(next_ip_addr));
-                    }
-
-                    /* cache client */
-                    add_client_addr_to_cache(&client_mac_addr, &given_ip_addr);
-                }
-                else
-                {
-                    /* Request is not for the assigned IP */
-                    /* clear IP address */
-                    memset(&msg->yiaddr, 0, sizeof(msg->yiaddr));
-
-                    // DHCP_OPTION_SERVER_ID
-                    *dhcp_opt++ = DHCP_OPTION_SERVER_ID;
-                    *dhcp_opt++ = 4;
-                    *dhcp_opt++ = ((uint8_t *)&dhcpd_ip_addr)[0];
-                    *dhcp_opt++ = ((uint8_t *)&dhcpd_ip_addr)[1];
-                    *dhcp_opt++ = ((uint8_t *)&dhcpd_ip_addr)[2];
-                    *dhcp_opt++ = ((uint8_t *)&dhcpd_ip_addr)[3];
-
-                    // DHCP_OPTION_MESSAGE_TYPE
-                    *dhcp_opt++ = DHCP_OPTION_MESSAGE_TYPE;
-                    *dhcp_opt++ = DHCP_OPTION_MESSAGE_TYPE_LEN;
-                    *dhcp_opt++ = DHCP_NAK;
-                    *dhcp_opt++ = DHCP_OPTION_END;
-                    
-                    /* force client to take next available IP by sending NAK */
-                    DEBUG_PRINTF("requested IP invalid, reply DHCP_NAK\n");
-                    if (netif != RT_NULL)
-                    {
-                        int send_byte = (dhcp_opt - (rt_uint8_t *)msg);
-                        _low_level_dhcp_send(netif, msg, send_byte);
-                        DEBUG_PRINTF("DHCP server send %d byte\n", send_byte);
-                    }
-                    continue;
-                }
 
                 // DHCP_OPTION_MESSAGE_TYPE
                 *dhcp_opt++ = DHCP_OPTION_MESSAGE_TYPE;
@@ -454,26 +313,26 @@ static void dhcpd_thread_entry(void *parameter)
                 // DHCP_OPTION_SERVER_ID
                 *dhcp_opt++ = DHCP_OPTION_SERVER_ID;
                 *dhcp_opt++ = 4;
-                *dhcp_opt++ = ((uint8_t *)&dhcpd_ip_addr)[0];
-                *dhcp_opt++ = ((uint8_t *)&dhcpd_ip_addr)[1];
-                *dhcp_opt++ = ((uint8_t *)&dhcpd_ip_addr)[2];
-                *dhcp_opt++ = ((uint8_t *)&dhcpd_ip_addr)[3];
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR0;
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR1;
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR2;
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR3;
 
                 // DHCP_OPTION_SUBNET_MASK
                 *dhcp_opt++ = DHCP_OPTION_SUBNET_MASK;
                 *dhcp_opt++ = 4;
-                *dhcp_opt++ = ((uint8_t *)&dhcpd_netmask)[0];
-                *dhcp_opt++ = ((uint8_t *)&dhcpd_netmask)[1];
-                *dhcp_opt++ = ((uint8_t *)&dhcpd_netmask)[2];
-                *dhcp_opt++ = ((uint8_t *)&dhcpd_netmask)[3];
+                *dhcp_opt++ = 0xFF;
+                *dhcp_opt++ = 0xFF;
+                *dhcp_opt++ = 0xFF;
+                *dhcp_opt++ = 0x00;
 
 #ifdef DHCPD_USING_ROUTER
                 // DHCP_OPTION_ROUTER
                 *dhcp_opt++ = DHCP_OPTION_ROUTER;
                 *dhcp_opt++ = 4;
-                *dhcp_opt++ = ((uint8_t *)&dhcpd_ip_addr)[0];
-                *dhcp_opt++ = ((uint8_t *)&dhcpd_ip_addr)[1];
-                *dhcp_opt++ = ((uint8_t *)&dhcpd_ip_addr)[2];
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR0;
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR1;
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR2;
                 *dhcp_opt++ = 1;
 #endif
 
@@ -492,12 +351,6 @@ static void dhcpd_thread_entry(void *parameter)
                 *dhcp_opt++ = 0x01;
                 *dhcp_opt++ = 0x51;
                 *dhcp_opt++ = 0x80;
-
-                // DHCP_OPTION_MTU
-                *dhcp_opt++ = DHCP_OPTION_MTU;
-                *dhcp_opt++ = 2;
-                *dhcp_opt++ = ETHERNET_MTU >> 8;
-                *dhcp_opt++ = ETHERNET_MTU & 0xff;
             }
             else
             {
@@ -511,7 +364,10 @@ static void dhcpd_thread_entry(void *parameter)
             if ((message_type == DHCP_DISCOVER) || (message_type == DHCP_REQUEST))
             {
                 msg->op = DHCP_BOOTREPLY;
-                
+                IP4_ADDR(&msg->yiaddr,
+                         DHCPD_SERVER_IPADDR0, DHCPD_SERVER_IPADDR1,
+                         DHCPD_SERVER_IPADDR2, next_client_ip);
+
                 client_addr.sin_addr.s_addr = INADDR_BROADCAST;
 
                 if (netif != RT_NULL)
@@ -523,25 +379,18 @@ static void dhcpd_thread_entry(void *parameter)
             }
         } /* handler. */
     }
-    
-    /* clean up */
-    {
-        closesocket(sock);
-        rt_free(recv_data);
-        DEBUG_PRINTF("DHCP server closed\n");
-    }
 }
 
 void dhcpd_start(char* netif_name)
 {
     rt_thread_t thread;
     struct netif *netif = netif_list;
-    
-//    if(strlen(netif_name) > sizeof(netif->name))
-//    {
-//        rt_kprintf("network interface name too long!\r\n");
-//        return;
-//    }
+
+    if(strlen(netif_name) > sizeof(netif->name))
+    {
+        rt_kprintf("network interface name too long!\r\n");
+        return;
+    }
     while(netif != RT_NULL)
     {
         if(strncmp(netif_name, netif->name, sizeof(netif->name)) == 0)
@@ -562,18 +411,7 @@ void dhcpd_start(char* netif_name)
                               2);
     if (thread != RT_NULL)
     {
-        thread->user_data = RT_TRUE;
         rt_thread_startup(thread);
     }
 }
 
-void dhcpd_stop(void)
-{
-    rt_thread_t thread;
-    
-    thread = rt_thread_find("dhcpd");
-    if (thread != RT_NULL)
-    {
-        thread->user_data = RT_FALSE;
-    }
-}
