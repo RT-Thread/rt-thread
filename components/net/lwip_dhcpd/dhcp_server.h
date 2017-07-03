@@ -31,7 +31,6 @@
 #define DHCPV4_SERVER_H__
 
 void dhcpd_start(char* netif_name);
-void dhcpd_stop(void);
 
 #endif
 
