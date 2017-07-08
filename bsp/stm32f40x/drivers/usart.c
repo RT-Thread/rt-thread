@@ -61,7 +61,7 @@
 #define UART5_RX_PIN_SOURCE GPIO_PinSource2
 #define UART5_TX            GPIOC
 #define UART5_RX            GPIOD
-#define UART5_GPIO_RCC_TX   RCC_AHB1Periph_GPIOB
+#define UART5_GPIO_RCC_TX   RCC_AHB1Periph_GPIOC
 #define UART5_GPIO_RCC_RX   RCC_AHB1Periph_GPIOD
 #define RCC_APBPeriph_UART5 RCC_APB1Periph_UART5
 
