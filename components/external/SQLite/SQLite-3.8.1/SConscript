@@ -1,0 +1,14 @@
+Import('rtconfig')
+import os
+from building import *
+
+cwd = GetCurrentDir() + str(r'/SQLiteLib/')
+src = Split("""
+SQLiteLib/sqlite3.c
+SQLiteLib/test/test10.c
+""")
+CPPPATH = [cwd, str(Dir('#'))]
+
+group = DefineGroup('sqlite', src, depend = ['RT_USING_SQLITE'], CPPPATH = CPPPATH)
+
+Return('group')
