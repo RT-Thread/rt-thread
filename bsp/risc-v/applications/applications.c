@@ -6,6 +6,7 @@ static void rt_init_thread_entry(void* parameter)
     /* initialization RT-Thread Components */
     rt_components_init();
 #endif
+    rt_thread_delay( RT_TIMER_TICK_PER_SECOND*2 ); /* sleep 0.5 second and switch to other thread */
 }
 static void led_thread_entry(void* parameter)
 {

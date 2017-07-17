@@ -58,10 +58,10 @@
 #define RT_USING_HEAP
 
 /* Using Small MM */
-/* #define RT_USING_SMALL_MEM */
+ #define RT_USING_SMALL_MEM 
 
 /* Using SLAB Allocator */
-#define RT_USING_SLAB
+/*#define RT_USING_SLAB*/
 
 /* SECTION: the runtime libc library */
 /* the runtime libc library */
