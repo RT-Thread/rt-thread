@@ -22,6 +22,8 @@
 ; * 2017-07-16     zhangjun    for hifive1
 ; */
 
+#include "encoding.h"
+#include "sifive/bits.h"
 
 /*
  * rt_base_t rt_hw_interrupt_disable();
@@ -44,112 +46,129 @@ rt_hw_interrupt_enable:
  */
     .globl rt_hw_context_switch
 rt_hw_context_switch:
-	addi sp, sp, -120
-	sw sp, (a0)
-	sw gp, (sp)
-	sw tp, 4(sp)
-	sw t6, 8(sp)
-	sw t5, 12(sp)
-	sw t4, 16(sp)
-	sw t3, 20(sp)
-	sw t2, 24(sp)
-	sw t1, 28(sp)
-	sw t0, 32(sp)
-	sw s11,36(sp)
-	sw s10,40(sp)
-	sw s9, 44(sp)
-	sw s8, 48(sp)
-	sw s7, 52(sp)
-	sw s6, 56(sp)
-	sw s5, 60(sp)
-	sw s4, 64(sp)
-	sw s3, 68(sp)
-	sw s2, 72(sp)
-	sw s1, 76(sp)
-	sw s0, 80(sp)
-	sw a7, 84(sp)
-	sw a6, 88(sp)
-	sw a5, 92(sp)
-	sw a4, 96(sp)
-	sw a3, 100(sp)
-	sw a2, 104(sp)
-	sw a1, 108(sp)
-	sw ra, 120(sp)
-	sw a0, 112(sp)
+  addi sp, sp, -32*REGBYTES
 
-	lw sp, (a1)
-	lw gp, (sp)
-	lw tp, 4(sp)
-	lw t6, 8(sp)
-	lw t5, 12(sp)
-	lw t4, 16(sp)
-	lw t3, 20(sp)
-	lw t2, 24(sp)
-	lw t1, 28(sp)
-	lw t0, 32(sp)
-	lw s11,36(sp)
-	lw s10,40(sp)
-	lw s9, 44(sp)
-	lw s8, 48(sp)
-	lw s7, 52(sp)
-	lw s6, 56(sp)
-	lw s5, 60(sp)
-	lw s4, 64(sp)
-	lw s3, 68(sp)
-	lw s2, 72(sp)
-	lw s1, 76(sp)
-	lw s0, 80(sp)
-	lw a7, 84(sp)
-	lw a6, 88(sp)
-	lw a5, 92(sp)
-	lw a4, 96(sp)
-	lw a3, 100(sp)
-	lw a2, 104(sp)
-	lw a1, 108(sp)
-	lw a0, 112(sp)
-	lw ra, 120(sp)
-	addi sp, sp, 120
-	ret
+  STORE sp, (a0)
+  STORE x30, 1*REGBYTES(sp)
+  STORE x31, 2*REGBYTES(sp)
+  STORE x3, 3*REGBYTES(sp)
+  STORE x4, 4*REGBYTES(sp)
+  STORE x5, 5*REGBYTES(sp)
+  STORE x6, 6*REGBYTES(sp)
+  STORE x7, 7*REGBYTES(sp)
+  STORE x8, 8*REGBYTES(sp)
+  STORE x9, 9*REGBYTES(sp)
+  STORE x10, 10*REGBYTES(sp)
+  STORE x11, 11*REGBYTES(sp)
+  STORE x12, 12*REGBYTES(sp)
+  STORE x13, 13*REGBYTES(sp)
+  STORE x14, 14*REGBYTES(sp)
+  STORE x15, 15*REGBYTES(sp)
+  STORE x16, 16*REGBYTES(sp)
+  STORE x17, 17*REGBYTES(sp)
+  STORE x18, 18*REGBYTES(sp)
+  STORE x19, 19*REGBYTES(sp)
+  STORE x20, 20*REGBYTES(sp)
+  STORE x21, 21*REGBYTES(sp)
+  STORE x22, 22*REGBYTES(sp)
+  STORE x23, 23*REGBYTES(sp)
+  STORE x24, 24*REGBYTES(sp)
+  STORE x25, 25*REGBYTES(sp)
+  STORE x26, 26*REGBYTES(sp)
+  STORE x27, 27*REGBYTES(sp)
+  STORE x28, 28*REGBYTES(sp)
+  STORE x1, 31*REGBYTES(sp)
+  STORE x10, 29*REGBYTES(sp)
+  STORE x1, 30*REGBYTES(sp)
 
+  csrr a0, mcause
+
+  # Remain in M-mode after mret
+  li t0, MSTATUS_MPP
+  csrs mstatus, t0
+
+  LOAD sp, (a1)
+  LOAD x30, 1*REGBYTES(sp)
+  LOAD x31, 2*REGBYTES(sp)
+  LOAD x3,  3*REGBYTES(sp)
+  LOAD x4,  4*REGBYTES(sp)
+  LOAD x5,  5*REGBYTES(sp)
+  LOAD x6,  6*REGBYTES(sp)
+  LOAD x7,  7*REGBYTES(sp)
+  LOAD x8,  8*REGBYTES(sp)
+  LOAD x9,  9*REGBYTES(sp)
+  LOAD x29, 10*REGBYTES(sp)
+  LOAD x11, 11*REGBYTES(sp)
+  LOAD x12, 12*REGBYTES(sp)
+  LOAD x13, 13*REGBYTES(sp)
+  LOAD x14, 14*REGBYTES(sp)
+  LOAD x15, 15*REGBYTES(sp)
+  LOAD x16, 16*REGBYTES(sp)
+  LOAD x17, 17*REGBYTES(sp)
+  LOAD x18, 18*REGBYTES(sp)
+  LOAD x19, 19*REGBYTES(sp)
+  LOAD x20, 20*REGBYTES(sp)
+  LOAD x21, 21*REGBYTES(sp)
+  LOAD x22, 22*REGBYTES(sp)
+  LOAD x23, 23*REGBYTES(sp)
+  LOAD x24, 24*REGBYTES(sp)
+  LOAD x25, 25*REGBYTES(sp)
+  LOAD x26, 26*REGBYTES(sp)
+  LOAD x27, 27*REGBYTES(sp)
+  LOAD x28, 28*REGBYTES(sp)
+  LOAD x10, 31*REGBYTES(sp)
+  csrw mepc, a0
+  LOAD x10, 29*REGBYTES(sp)
+  LOAD x1,  30*REGBYTES(sp)
+  
+
+  addi sp, sp, 32*REGBYTES
+  mret
+	
 /*
  * void rt_hw_context_switch_to(rt_uint32 to);
  * a0 --> to
  */
     .globl rt_hw_context_switch_to
 rt_hw_context_switch_to:
-	lw sp, (a0)
-	lw gp, (sp)
-	lw tp, 4(sp)
-	lw t6, 8(sp)
-	lw t5, 12(sp)
-	lw t4, 16(sp)
-	lw t3, 20(sp)
-	lw t2, 24(sp)
-	lw t1, 28(sp)
-	lw t0, 32(sp)
-	lw s11,36(sp)
-	lw s10,40(sp)
-	lw s9, 44(sp)
-	lw s8, 48(sp)
-	lw s7, 52(sp)
-	lw s6, 56(sp)
-	lw s5, 60(sp)
-	lw s4, 64(sp)
-	lw s3, 68(sp)
-	lw s2, 72(sp)
-	lw s1, 76(sp)
-	lw s0, 80(sp)
-	lw a7, 84(sp)
-	lw a6, 88(sp)
-	lw a5, 92(sp)
-	lw a4, 96(sp)
-	lw a3, 100(sp)
-	lw a2, 104(sp)
-	lw a1, 108(sp)
-	lw a0, 112(sp)
-	lw ra, 120(sp)
-	addi sp, sp, 120
-	ret
+  LOAD sp, (a0)
+  LOAD x30, 1*REGBYTES(sp)
+  LOAD x31, 2*REGBYTES(sp)
+  LOAD x3,  3*REGBYTES(sp)
+  LOAD x4,  4*REGBYTES(sp)
+  LOAD x5,  5*REGBYTES(sp)
+  LOAD x6,  6*REGBYTES(sp)
+  LOAD x7,  7*REGBYTES(sp)
+  LOAD x8,  8*REGBYTES(sp)
+  LOAD x9,  9*REGBYTES(sp)
+  LOAD x29, 10*REGBYTES(sp)
+  LOAD x11, 11*REGBYTES(sp)
+  LOAD x12, 12*REGBYTES(sp)
+  LOAD x13, 13*REGBYTES(sp)
+  LOAD x14, 14*REGBYTES(sp)
+  LOAD x15, 15*REGBYTES(sp)
+  LOAD x16, 16*REGBYTES(sp)
+  LOAD x17, 17*REGBYTES(sp)
+  LOAD x18, 18*REGBYTES(sp)
+  LOAD x19, 19*REGBYTES(sp)
+  LOAD x20, 20*REGBYTES(sp)
+  LOAD x21, 21*REGBYTES(sp)
+  LOAD x22, 22*REGBYTES(sp)
+  LOAD x23, 23*REGBYTES(sp)
+  LOAD x24, 24*REGBYTES(sp)
+  LOAD x25, 25*REGBYTES(sp)
+  LOAD x26, 26*REGBYTES(sp)
+  LOAD x27, 27*REGBYTES(sp)
+  LOAD x28, 28*REGBYTES(sp)
+  LOAD x10, 31*REGBYTES(sp)
+  csrw mepc, a0
+  LOAD x10, 29*REGBYTES(sp)
+  LOAD x1,  30*REGBYTES(sp)
+  
+
+  addi sp, sp, 32*REGBYTES
+  mret
+	
 
 /*
  * void rt_hw_context_switch_interrupt(rt_uint32 from, rt_uint32 to);

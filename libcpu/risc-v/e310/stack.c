@@ -88,5 +88,5 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
     *(--stk) = 0xffffffff;          	    /* gp */
 //    *(--stk) = (rt_uint32_t)parameter;      /* r0 : argument */
     /* return task's current stack address */
-    return (rt_uint8_t *)stk;
+    return (rt_uint8_t *)--stk;
 }
