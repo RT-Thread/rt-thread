@@ -77,6 +77,11 @@
 #define LS1C_NR_IRQS    (32*5)
 
 
+// GPIO编号和中断号之间的互相转换
+#define LS1C_GPIO_TO_IRQ(GPIOn)     (LS1C_GPIO_FIRST_IRQ + (GPIOn))
+#define LS1C_IRQ_TO_GPIO(IRQn)      ((IRQn) - LS1C_GPIO_FIRST_IRQ)
+
+
 struct ls1c_intc_regs
 {
 	volatile unsigned int int_isr;

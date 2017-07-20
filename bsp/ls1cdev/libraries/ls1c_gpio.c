@@ -204,4 +204,63 @@ unsigned int gpio_get(unsigned int gpio)
 }
 
 
+/**
+ * 设置中断类型
+ * @gpio gpio引脚
+ * @type 触发中断的条件。高电平触发、低电平触发、上升沿触发 or 下降沿触发
+ */
+void gpio_set_irq_type(unsigned int gpio, gpio_irq_type_t type)
+{
+    volatile unsigned int *int_pol;     // 中断极性选择寄存器
+    volatile unsigned int *int_edge;    // 中断边沿选择寄存器
+    unsigned int port = GPIO_GET_PORT(gpio);
+    unsigned int pin  = GPIO_GET_PIN(gpio);
+
+    // 获取寄存器地址
+    switch (port)
+    {
+        case 0:     // GPIO[31:0]
+            int_pol     = (volatile unsigned int *)LS1C_INT2_POL;
+            int_edge    = (volatile unsigned int *)LS1C_INT2_EDGE;
+            break;
+
+        case 1:     // GPIO[63:32]
+            int_pol     = (volatile unsigned int *)LS1C_INT3_POL;
+            int_edge    = (volatile unsigned int *)LS1C_INT3_EDGE;
+            break;
+
+        case 2:     // GPIO[95:64]
+            int_pol     = (volatile unsigned int *)LS1C_INT4_POL;
+            int_edge    = (volatile unsigned int *)LS1C_INT4_EDGE;
+            break;
+    }
+
+    // 设置中断类型
+    switch (type)
+    {
+        case IRQ_TYPE_EDGE_RISING:
+            *int_pol    |= (1 << pin);
+            *int_edge   |= (1 << pin);
+            break;
+
+        case IRQ_TYPE_EDGE_FALLING:
+            *int_pol    &= ~(1 << pin);
+            *int_edge   |= (1 << pin);
+            break;
+
+        case IRQ_TYPE_LEVEL_HIGH:
+            *int_pol    |= (1 << pin);
+            *int_edge   &= ~(1 << pin);
+            break;
+
+        case IRQ_TYPE_LEVEL_LOW:
+            *int_pol    &= ~(1 << pin);
+            *int_edge   &= ~(1 << pin);
+            break;
+    }
+
+    return ;
+}
+
+
     
