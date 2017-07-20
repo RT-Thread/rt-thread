@@ -29,6 +29,19 @@ typedef enum{
 }gpio_level_t;
 
 
+typedef enum {
+    // 上升沿触发
+	IRQ_TYPE_EDGE_RISING	= 0x00000001,
+	// 下降沿触发
+	IRQ_TYPE_EDGE_FALLING	= 0x00000002,
+	IRQ_TYPE_EDGE_BOTH	= (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING),
+	// 高电平触发
+	IRQ_TYPE_LEVEL_HIGH	= 0x00000004,
+	// 低电平触发
+	IRQ_TYPE_LEVEL_LOW	= 0x00000008,
+	IRQ_TYPE_LEVEL_MASK	= (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH),	
+}gpio_irq_type_t;
+
 
 
 /*
@@ -72,6 +85,13 @@ void gpio_set(unsigned int gpio, gpio_level_t level);
 unsigned int gpio_get(unsigned int gpio);
 
 
+
+/**
+ * 设置中断类型
+ * @gpio gpio引脚
+ * @type 触发中断的条件。高电平触发、低电平触发、上升沿触发 or 下降沿触发
+ */
+void gpio_set_irq_type(unsigned int gpio, gpio_irq_type_t type);
 
 
 

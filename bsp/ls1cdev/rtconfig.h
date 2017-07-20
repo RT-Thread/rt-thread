@@ -6,7 +6,7 @@
 // <integer name="RT_NAME_MAX" description="Maximal size of kernel object name length" default="6" />
 #define RT_NAME_MAX	10
 // <integer name="RT_ALIGN_SIZE" description="Alignment size for CPU architecture data access" default="4" />
-#define RT_ALIGN_SIZE	4
+#define RT_ALIGN_SIZE	8
 // <integer name="RT_THREAD_PRIORITY_MAX" description="Maximal level of thread priority" default="32">
 // <item description="8">8</item>
 // <item description="32">32</item>
@@ -14,7 +14,7 @@
 // </integer>
 #define RT_THREAD_PRIORITY_MAX	32
 // <integer name="RT_TICK_PER_SECOND" description="OS tick per second" default="100" />
-#define RT_TICK_PER_SECOND	100
+#define RT_TICK_PER_SECOND	1000
 // <section name="RT_DEBUG" description="Kernel Debug Configuration" default="true" >
 #define RT_DEBUG
 // <bool name="RT_THREAD_DEBUG" description="Thread debug enable" default="false" />

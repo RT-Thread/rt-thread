@@ -74,13 +74,41 @@
 
 
 
+// ÷–∂œ≈‰÷√ºƒ¥Ê∆˜
+#define LS1C_INT0_SR                        (0xbfd01040)
+#define LS1C_INT0_EN                        (0xbfd01044)
+#define LS1C_INT0_SET                       (0xbfd01048)
+#define LS1C_INT0_CLR                       (0xbfd0104c)
+#define LS1C_INT0_POL                       (0xbfd01050)
+#define LS1C_INT0_EDGE                      (0xbfd01054)
 
+#define LS1c_INT1_SR                        (0xbfd01058)
+#define LS1C_INT1_EN                        (0xbfd0105c)
+#define LS1C_INT1_SET                       (0xbfd01060)
+#define LS1C_INT1_CLR                       (0xbfd01064)
+#define LS1C_INT1_POL                       (0xbfd01068)
+#define LS1C_INT1_EDGE                      (0xbfd0106c)
 
+#define LS1C_INT2_SR                        (0xbfd01070)
+#define LS1C_INT2_EN                        (0xbfd01074)
+#define LS1C_INT2_SET                       (0xbfd01078)
+#define LS1C_INT2_CLR                       (0xbfd0107c)
+#define LS1C_INT2_POL                       (0xbfd01080)
+#define LS1C_INT2_EDGE                      (0xbfd01084)
 
+#define LS1C_INT3_SR                        (0xbfd01088)
+#define LS1C_INT3_EN                        (0xbfd0108c)
+#define LS1C_INT3_SET                       (0xbfd01090)
+#define LS1C_INT3_CLR                       (0xbfd01094)
+#define LS1C_INT3_POL                       (0xbfd01098)
+#define LS1C_INT3_EDGE                      (0xbfd0109c)
 
-
-
-
+#define LS1C_INT4_SR                        (0xbfd010a0)
+#define LS1C_INT4_EN                        (0xbfd010a4)
+#define LS1C_INT4_SET                       (0xbfd010a8)
+#define LS1C_INT4_CLR                       (0xbfd010ac)
+#define LS1C_INT4_POL                       (0xbfd010b0)
+#define LS1C_INT4_EDGE                      (0xbfd010b4)
 
 
 

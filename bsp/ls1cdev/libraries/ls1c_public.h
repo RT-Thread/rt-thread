@@ -73,6 +73,12 @@ void reg_write_32(unsigned int data, volatile unsigned int *addr);
 unsigned int reg_read_32(volatile unsigned int *addr);
 
 
+/**
+ * ffs - find first bit set
+ * @x: the word to search
+ */
+int ls1c_ffs(int x);
+
 
 #endif
 
