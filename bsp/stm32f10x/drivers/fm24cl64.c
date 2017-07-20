@@ -18,7 +18,7 @@
 
 const struct fm24clxx_config fm24cl64_cfg =
 {
-    .size  = 64 * 1024,
+    .size  = 8 * 1024,
     .addr  = 0x50,
     .flags = 0,
 };
