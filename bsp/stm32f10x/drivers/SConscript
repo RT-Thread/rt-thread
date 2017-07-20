@@ -39,6 +39,10 @@ if GetDepend('RT_USING_RTGUI'):
     elif rtconfig.RT_USING_LCD_TYPE == 'SSD1289':
         src += ['ssd1289.c']
 
+# add wdt driver.
+if GetDepend('RT_USING_WDT'):
+    src += ['stm32f1_wdg.c']
+
     
 CPPPATH = [cwd]
 
