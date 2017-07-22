@@ -400,11 +400,6 @@
               <FilePath>drivers\board.c</FilePath>
             </File>
             <File>
-              <FileName>stm32l4xx_nucleo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\stm32l4xx_nucleo.c</FilePath>
-            </File>
-            <File>
               <FileName>usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\usart.c</FilePath>
