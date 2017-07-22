@@ -7,8 +7,6 @@ cwd     = os.path.join(str(Dir('#')), 'drivers')
 # add the general drivers.
 src = Split("""
 board.c
-stm32l4xx_it.c
-stm32l4xx_nucleo.c
 usart.c
 """)
 
