@@ -35,7 +35,7 @@
 
 #ifdef RT_USING_USER_MAIN
 #ifndef RT_MAIN_THREAD_STACK_SIZE
-#define RT_MAIN_THREAD_STACK_SIZE     512
+#define RT_MAIN_THREAD_STACK_SIZE     2048
 #endif
 #endif
 
