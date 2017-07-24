@@ -135,7 +135,7 @@ RTM_EXPORT(_rt_errno);
  */
 void *rt_memset(void *s, int c, rt_ubase_t count)
 {
-#ifdef RT_TINY_SIZE
+#ifdef RT_USING_TINY_SIZE
     char *xs = (char *)s;
 
     while (count--)
@@ -218,7 +218,7 @@ RTM_EXPORT(rt_memset);
  */
 void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 {
-#ifdef RT_TINY_SIZE
+#ifdef RT_USING_TINY_SIZE
     char *tmp = (char *)dst, *s = (char *)src;
 
     while (count--)
