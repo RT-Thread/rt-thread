@@ -30,14 +30,26 @@
  */
     .globl rt_hw_interrupt_disable
 rt_hw_interrupt_disable:
-	ret
+  addi sp, sp, -12
+  sw a5, (sp)
+  csrrc a5, mie, MIP_MEIP|MIP_MTIP|MIP_MSIP
+/*  csrrc a5, mstatus, MSTATUS_MIE*/
+  lw a5, (sp)
+  addi sp, sp, 12
+  ret
 
 /*
  * void rt_hw_interrupt_enable(rt_base_t level);
  */
     .globl rt_hw_interrupt_enable
 rt_hw_interrupt_enable:
-	ret
+  addi sp, sp, -12
+  sw a5, (sp)
+  csrrs a5, mie, MIP_MEIP|MIP_MTIP|MIP_MSIP
+/*  csrrsi a5, mstatus, MSTATUS_MIE*/
+  lw a5, (sp)
+  addi sp, sp, 12
+  ret
 
 /*
  * void rt_hw_context_switch(rt_uint32 from, rt_uint32 to);
@@ -178,5 +190,22 @@ rt_hw_context_switch_to:
     .globl rt_interrupt_to_thread
     .globl rt_hw_context_switch_interrupt
 rt_hw_context_switch_interrupt:
+  addi sp, sp, -16
+  sw s0, 12(sp)
+  sw a0, 8(sp)
+  sw a5, 4(sp)
+  la a0, rt_thread_switch_interrupt_flag
+  beqz a5, _reswitch
+  li a5, 1
+  sw a5, (a0)
+  la a5, rt_interrupt_from_thread
+  lw a0, 8(sp)
+  sw a0, (a5)
 _reswitch:
-	ret
+  la a5, rt_interrupt_to_thread
+  sw a1, (a5)
+  lw a5, 4(sp)
+  lw a0, 8(sp)
+  lw s0, 12(sp)
+  addi sp, sp, 16
+  ret

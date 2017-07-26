@@ -29,16 +29,17 @@ static void rtthread_startup(void)
 	/* initialize idle thread */
 	rt_thread_idle_init();
 
+	while(1);
 	/* start scheduler */
 	rt_system_scheduler_start();
 
 	/* never reach here */
 	return;
 }
-
+#include "encoding.h"
+#include <platform.h>
 int main(void)
 {
-
 	rtthread_startup();
 	return 0;
 }

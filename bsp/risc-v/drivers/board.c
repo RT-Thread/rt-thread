@@ -1,5 +1,6 @@
 #include <interrupt.h>
 #include <rthw.h>
+#include <platform.h>
 #if 0
 static struct mem_desc hw_mem_desc[] =
 {
@@ -18,8 +19,23 @@ static void rt_systick_handler(int vector, void *param)
         rt_tick_increase();
 	return;
 }
+#include <encoding.h>
 static void rt_hw_timer_init(void)
 {
+	GPIO_REG(GPIO_INPUT_EN)    &= ~((0x1<< RED_LED_OFFSET) | (0x1<< GREEN_LED_OFFSET) | (0x1 << BLUE_LED_OFFSET)) ;
+	GPIO_REG(GPIO_OUTPUT_EN)   |=  ((0x1<< RED_LED_OFFSET)| (0x1<< GREEN_LED_OFFSET) | (0x1 << BLUE_LED_OFFSET)) ;
+	GPIO_REG(GPIO_OUTPUT_VAL)  |=   (0x1 << BLUE_LED_OFFSET) ;
+	GPIO_REG(GPIO_OUTPUT_VAL)  &=  ~((0x1<< RED_LED_OFFSET) | (0x1<< GREEN_LED_OFFSET)) ;
+	rt_hw_interrupt_enable(1);
+/*	enable timer intrrupt*/
+	set_csr(mie, MIP_MTIP);
+
+	CLINT_REG(CLINT_MTIME) = 0x0;
+	//CLINT_REG(CLINT_MTIMECMP) = 0x10000;
+	set_csr(mie, MIP_MTIP);
+/*	set_csr(mstatus, MSTATUS_MIE);*/
+	volatile uint64_t * mtimecmp    = (uint64_t*) (CLINT_CTRL_ADDR + CLINT_MTIMECMP);
+	*mtimecmp = 0x20000;
 	return;
 }
 void rt_hw_board_init(void)
@@ -31,7 +47,7 @@ void rt_hw_board_init(void)
 
 	/* initialize the system clock */
 	//rt_hw_clock_init(); //set each pll etc.
-
+	
 	/* initialize uart */
 	rt_hw_uart_init();
 	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);

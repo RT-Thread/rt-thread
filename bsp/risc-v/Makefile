@@ -104,19 +104,22 @@ DEBUG_INTERFACE = jlink
 #DEBUG_INTERFACE = stlink-v2
 #DEBUG_INTERFACE = ftdi/openjtag
 
+GDB_CMD = -ex "tar ext 127.0.0.1:3333" 
+GDB_CMD += -ex "monitor reset halt" 
+#GDB_CMD += -ex "monitor step 0x20400000" 
+GDB_CMD += --command=.gdbinit
 
 run:
 	setsid ${OPENOCD}   > /dev/null 2>&1 &
 #	(sleep 1 && echo -e "halt" && sleep 1) | telnet 127.0.0.1 4444
-	${GDB} ${TARGET}.axf -ex "tar ext 127.0.0.1:3333" -ex "monitor reset halt" \
-		 -ex "monitor step 0x20400000"
+	${GDB} ${TARGET}.axf  ${GDB_CMD}
 #	arm-none-eabi-gdb ${TARGET} -ex "tar ext 127.0.0.1:3333" -ex "b main" -ex "lay n" -ex "lay n" -ex "lay n"
-	pid=`ps -C openocd -o pid --noheader` && kill -9 $$pid
+	killall -9 openocd
 
 programe:
 	setsid ${OPENOCD}   > /dev/null 2>&1 &
-	${GDB} ${TARGET}.axf -ex "tar ext 127.0.0.1:3333" -ex "load ${TARGET}.axf"  
-	pid=`ps -C openocd -o pid --noheader` && kill -9 $$pid
+	${GDB} ${TARGET}.axf -ex "tar ext 127.0.0.1:3333" -ex "load ${TARGET}.axf"
+	killall -9 openocd
 
 clean:
 	-cd "${BUILD_DIR}" && rm *

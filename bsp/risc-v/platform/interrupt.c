@@ -1,4 +1,5 @@
 #include <rthw.h>
+#include "platform.h"
 
 #define MAX_HANDLERS    (128)
 extern rt_uint32_t rt_interrupt_nest;
@@ -35,7 +36,10 @@ void rt_hw_interrupt_init(void)
 {
 	int idx;
 /*	config interrupt vector*/
-
+	asm volatile(
+		"la t0, trap_entry\n"
+		"csrw mtvec, t0"
+	);
 /*	enable interrupt*/
 
 	/* init exceptions table */
