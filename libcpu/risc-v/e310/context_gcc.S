@@ -32,7 +32,8 @@
 rt_hw_interrupt_disable:
   addi sp, sp, -12
   sw a5, (sp)
-  csrrc a5, mie, MIP_MEIP|MIP_MTIP|MIP_MSIP
+  li a5, MIP_MEIP|MIP_MTIP|MIP_MSIP
+  csrrc a5, mie, a5
 /*  csrrc a5, mstatus, MSTATUS_MIE*/
   lw a5, (sp)
   addi sp, sp, 12
@@ -45,7 +46,8 @@ rt_hw_interrupt_disable:
 rt_hw_interrupt_enable:
   addi sp, sp, -12
   sw a5, (sp)
-  csrrs a5, mie, MIP_MEIP|MIP_MTIP|MIP_MSIP
+  li a5, MIP_MEIP|MIP_MTIP|MIP_MSIP
+  csrrs a5, mie, a5
 /*  csrrsi a5, mstatus, MSTATUS_MIE*/
   lw a5, (sp)
   addi sp, sp, 12
