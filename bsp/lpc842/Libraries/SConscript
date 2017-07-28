@@ -1,0 +1,26 @@
+# RT-Thread building script for component
+
+Import('rtconfig')
+Import('RTT_ROOT')
+from building import *
+
+cwd = GetCurrentDir()
+
+src  = Glob('peri_driver/*/*.c')
+src += Glob('common/board/*.c')
+src += Glob('common/chip/*.c')
+src += [cwd + '/common/startup/keil_startup_lpc82x.s']
+
+CPPPATH = [ cwd + '/peri_driver', cwd + '/common/board', 
+			cwd + '/common/chip', cwd + '/common/CMSIS']
+			
+if GetDepend(['RT_USING_BSP_CMSIS']):
+    CPPPATH += [cwd + '/common/CMSIS/']
+elif GetDepend(['RT_USING_RTT_CMSIS']):
+    CPPPATH += [RTT_ROOT + '/components/CMSIS/Include']
+			
+CPPDEFINES = ['CORE_M0PLUS']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
+
+Return('group')
