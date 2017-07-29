@@ -258,4 +258,6 @@
  */
 //#define RT_USING_CPU_FFS
 #define RT_USING_COMPONENTS_INIT
+
+#define IDLE_THREAD_STACK_SIZE 512
 #endif

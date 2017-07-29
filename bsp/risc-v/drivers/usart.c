@@ -1,13 +1,18 @@
 #include <rtdevice.h>
 #include "usart.h"
+#include <encoding.h>
+#include <platform.h>
 /**
  * @brief set uartdbg buard 
  *
  * @param buard
  */
-static usart_init(int buard)
+static void usart_init(int buard)
 {
-	return;
+	GPIO_REG(GPIO_IOF_SEL) &= ~IOF0_UART0_MASK;
+	GPIO_REG(GPIO_IOF_EN) |= IOF0_UART0_MASK;
+	UART0_REG(UART_REG_DIV) = get_cpu_freq() / buard - 1;
+	UART0_REG(UART_REG_TXCTRL) |= UART_TXEN;
 }
 static void usart_handler(int vector, void *param)
 {
@@ -17,6 +22,10 @@ static void usart_handler(int vector, void *param)
 static rt_err_t usart_configure(struct rt_serial_device *serial,
                                 struct serial_configure *cfg)
 {
+	GPIO_REG(GPIO_IOF_SEL) &= ~IOF0_UART0_MASK;
+	GPIO_REG(GPIO_IOF_EN) |= IOF0_UART0_MASK;
+	UART0_REG(UART_REG_DIV) = get_cpu_freq() / 115200 - 1;
+	UART0_REG(UART_REG_TXCTRL) |= UART_TXEN;
 		return RT_EOK;
 }
 static rt_err_t usart_control(struct rt_serial_device *serial,
@@ -33,6 +42,8 @@ static rt_err_t usart_control(struct rt_serial_device *serial,
 }
 static int usart_putc(struct rt_serial_device *serial, char c)
 {
+	while (UART0_REG(UART_REG_TXFIFO) & 0x80000000) ;
+	UART0_REG(UART_REG_TXFIFO) = c;
 	return 0;
 }
 static int usart_getc(struct rt_serial_device *serial)

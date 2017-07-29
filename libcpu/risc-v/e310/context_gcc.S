@@ -32,6 +32,7 @@
 rt_hw_interrupt_disable:
   addi sp, sp, -12
   sw a5, (sp)
+  csrr a0, mie
   li a5, MIP_MEIP|MIP_MTIP|MIP_MSIP
   csrrc a5, mie, a5
 /*  csrrc a5, mstatus, MSTATUS_MIE*/
@@ -60,18 +61,18 @@ rt_hw_interrupt_enable:
  */
     .globl rt_hw_context_switch
 rt_hw_context_switch:
-  addi sp, sp, -32*REGBYTES
+  addi  sp,  sp, -32*REGBYTES
 
-  STORE sp, (a0)
+  STORE sp,  (a0)
   STORE x30, 1*REGBYTES(sp)
   STORE x31, 2*REGBYTES(sp)
-  STORE x3, 3*REGBYTES(sp)
-  STORE x4, 4*REGBYTES(sp)
-  STORE x5, 5*REGBYTES(sp)
-  STORE x6, 6*REGBYTES(sp)
-  STORE x7, 7*REGBYTES(sp)
-  STORE x8, 8*REGBYTES(sp)
-  STORE x9, 9*REGBYTES(sp)
+  STORE x3,  3*REGBYTES(sp)
+  STORE x4,  4*REGBYTES(sp)
+  STORE x5,  5*REGBYTES(sp)
+  STORE x6,  6*REGBYTES(sp)
+  STORE x7,  7*REGBYTES(sp)
+  STORE x8,  8*REGBYTES(sp)
+  STORE x9,  9*REGBYTES(sp)
   STORE x10, 10*REGBYTES(sp)
   STORE x11, 11*REGBYTES(sp)
   STORE x12, 12*REGBYTES(sp)
@@ -91,17 +92,15 @@ rt_hw_context_switch:
   STORE x26, 26*REGBYTES(sp)
   STORE x27, 27*REGBYTES(sp)
   STORE x28, 28*REGBYTES(sp)
-  STORE x1, 31*REGBYTES(sp)
+  STORE x1,  31*REGBYTES(sp)
   STORE x10, 29*REGBYTES(sp)
-  STORE x1, 30*REGBYTES(sp)
-
-  csrr a0, mcause
+  STORE x1,  30*REGBYTES(sp)
 
   # Remain in M-mode after mret
   li t0, MSTATUS_MPP
   csrs mstatus, t0
 
-  LOAD sp, (a1)
+  LOAD sp,  (a1)
   LOAD x30, 1*REGBYTES(sp)
   LOAD x31, 2*REGBYTES(sp)
   LOAD x3,  3*REGBYTES(sp)
@@ -131,12 +130,11 @@ rt_hw_context_switch:
   LOAD x27, 27*REGBYTES(sp)
   LOAD x28, 28*REGBYTES(sp)
   LOAD x10, 31*REGBYTES(sp)
-  csrw mepc, a0
+  csrw mepc,a0
   LOAD x10, 29*REGBYTES(sp)
   LOAD x1,  30*REGBYTES(sp)
   
-
-  addi sp, sp, 32*REGBYTES
+  addi sp,  sp, 32*REGBYTES
   mret
 	
 /*
@@ -145,7 +143,7 @@ rt_hw_context_switch:
  */
     .globl rt_hw_context_switch_to
 rt_hw_context_switch_to:
-  LOAD sp, (a0)
+  LOAD sp,  (a0)
   LOAD x30, 1*REGBYTES(sp)
   LOAD x31, 2*REGBYTES(sp)
   LOAD x3,  3*REGBYTES(sp)
@@ -175,12 +173,12 @@ rt_hw_context_switch_to:
   LOAD x27, 27*REGBYTES(sp)
   LOAD x28, 28*REGBYTES(sp)
   LOAD x10, 31*REGBYTES(sp)
-  csrw mepc, a0
+  csrw mepc,a0
   LOAD x10, 29*REGBYTES(sp)
   LOAD x1,  30*REGBYTES(sp)
   
 
-  addi sp, sp, 32*REGBYTES
+  addi sp,  sp, 32*REGBYTES
   mret
 	
 
@@ -193,21 +191,21 @@ rt_hw_context_switch_to:
     .globl rt_hw_context_switch_interrupt
 rt_hw_context_switch_interrupt:
   addi sp, sp, -16
-  sw s0, 12(sp)
-  sw a0, 8(sp)
-  sw a5, 4(sp)
-  la a0, rt_thread_switch_interrupt_flag
+  sw   s0, 12(sp)
+  sw   a0, 8(sp)
+  sw   a5, 4(sp)
+  la   a0, rt_thread_switch_interrupt_flag
   beqz a5, _reswitch
-  li a5, 1
-  sw a5, (a0)
-  la a5, rt_interrupt_from_thread
-  lw a0, 8(sp)
-  sw a0, (a5)
+  li   a5, 1
+  sw   a5, (a0)
+  la   a5, rt_interrupt_from_thread
+  lw   a0, 8(sp)
+  sw   a0, (a5)
 _reswitch:
-  la a5, rt_interrupt_to_thread
-  sw a1, (a5)
-  lw a5, 4(sp)
-  lw a0, 8(sp)
-  lw s0, 12(sp)
+  la   a5, rt_interrupt_to_thread
+  sw   a1, (a5)
+  lw   a5, 4(sp)
+  lw   a0, 8(sp)
+  lw   s0, 12(sp)
   addi sp, sp, 16
   ret

@@ -17,8 +17,7 @@ _start:
 	la gp, __global_pointer$
 .option pop
 	la sp, _sp
-/*disable all interrupt*/
-	csrw mie, 0
+	csrrsi a5, mstatus, 0
 
 #if defined(ENABLE_SMP)
 	smp_pause(t0, t1)
@@ -124,13 +123,13 @@ trap_entry:
 
   STORE x30, 1*REGBYTES(sp)
   STORE x31, 2*REGBYTES(sp)
-  STORE x3, 3*REGBYTES(sp)
-  STORE x4, 4*REGBYTES(sp)
-  STORE x5, 5*REGBYTES(sp)
-  STORE x6, 6*REGBYTES(sp)
-  STORE x7, 7*REGBYTES(sp)
-  STORE x8, 8*REGBYTES(sp)
-  STORE x9, 9*REGBYTES(sp)
+  STORE x3,  3*REGBYTES(sp)
+  STORE x4,  4*REGBYTES(sp)
+  STORE x5,  5*REGBYTES(sp)
+  STORE x6,  6*REGBYTES(sp)
+  STORE x7,  7*REGBYTES(sp)
+  STORE x8,  8*REGBYTES(sp)
+  STORE x9,  9*REGBYTES(sp)
   STORE x10, 10*REGBYTES(sp)
   STORE x11, 11*REGBYTES(sp)
   STORE x12, 12*REGBYTES(sp)
@@ -150,13 +149,11 @@ trap_entry:
   STORE x26, 26*REGBYTES(sp)
   STORE x27, 27*REGBYTES(sp)
   STORE x28, 28*REGBYTES(sp)
-  STORE x1, 31*REGBYTES(sp)
   STORE x10, 29*REGBYTES(sp)
-  STORE x1, 30*REGBYTES(sp)
+  STORE x1,  30*REGBYTES(sp)
+  csrr  x1,  mepc
+  STORE x1,  31*REGBYTES(sp)
 
-  csrr a0, mcause
-  csrr a1, mepc
-  csrw mepc, a0
 
   call rt_interrupt_enter
   call rt_hw_trap_irq
@@ -167,7 +164,6 @@ trap_entry:
   lw a1, (a0)
   beqz a1, rt_hw_context_switch_interrupt_do
 
-  csrw mepc, a0
   # Remain in M-mode after mret
   li t0, MSTATUS_MPP
   csrs mstatus, t0
