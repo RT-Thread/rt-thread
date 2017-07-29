@@ -23,7 +23,7 @@
 extern void rt_hw_interrupt_init(void);
 extern int  rt_application_init(void);
 #ifdef RT_USING_FINSH
-extern void finsh_system_init(void);
+extern int finsh_system_init(void);
 extern void finsh_set_device(const char* device);
 #endif
 
