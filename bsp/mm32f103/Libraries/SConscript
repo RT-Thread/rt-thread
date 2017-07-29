@@ -1,0 +1,35 @@
+# RT-Thread building script for component
+
+Import('rtconfig')
+Import('RTT_ROOT')
+from building import *
+
+cwd = GetCurrentDir()
+
+src  = Glob('MM32x103/HAL_lib/src/*.c')
+src += [cwd + '/MM32x103/Source/system_MM32x103.c']
+
+# add for startup script 
+if rtconfig.CROSS_TOOL == 'gcc':
+    print "not gcc startup file"
+    exit(0)
+elif rtconfig.CROSS_TOOL == 'keil':
+    src += [cwd + '/MM32x103/Source/KEIL_StartAsm/startup_MM32x103_md.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += [cwd + '/MM32x103/Source/IAR_StartAsm/startup_mm32f10x_md.s']
+
+CPPPATH = [cwd + '/MM32x103/Include', cwd + '/MM32x103/HAL_lib/inc']
+			
+if GetDepend(['RT_USING_BSP_CMSIS']):
+    if rtconfig.CROSS_TOOL == 'keil':
+        CPPPATH += [cwd + '/CMSIS/KEIL_CORE']
+    elif rtconfig.CROSS_TOOL == 'iar':
+        CPPPATH += [cwd + '/CMSIS/IAR_CORE']
+elif GetDepend(['RT_USING_RTT_CMSIS']):
+    CPPPATH += [RTT_ROOT + '/components/CMSIS/Include']
+			
+CPPDEFINES = ['USE_STDPERIPH_DRIVER']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
+
+Return('group')
