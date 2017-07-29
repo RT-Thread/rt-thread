@@ -10,7 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2006-08-31     Bernard      first implementation
- * 2011-06-05     Bernard      modify for STM32F107 version
+ * 2017-07-29     Tanek        modify for LPC8xx version
  */
 
 #include <stdint.h>
@@ -20,7 +20,7 @@
 #include "board.h"
 
 /**
- * @addtogroup STM32
+ * @addtogroup LPC8xx
  */
 
 /*@{*/

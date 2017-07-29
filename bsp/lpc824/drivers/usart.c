@@ -24,8 +24,8 @@
 
 #define UART_RX_BUFSZ 8
 
-/* STM32 uart driver */
-struct stm32_uart
+/* LPC8XX uart driver */
+struct lpc8xx_uart
 {
     struct rt_device parent;
     struct rt_ringbuffer rx_rb;
@@ -35,18 +35,18 @@ struct stm32_uart
     
 };
 #ifdef RT_USING_UART0
-struct stm32_uart uart0_device;
+struct lpc8xx_uart uart0_device;
 #endif
 
 #ifdef RT_USING_UART1
-struct stm32_uart uart1_device;
+struct lpc8xx_uart uart1_device;
 #endif
 
 #ifdef RT_USING_UART2
-struct stm32_uart uart2_device;
+struct lpc8xx_uart uart2_device;
 #endif
 
-void uart_irq_handler(struct stm32_uart* uart)
+void uart_irq_handler(struct lpc8xx_uart* uart)
 {
     uint32_t status;
     
@@ -147,9 +147,9 @@ static void uart_ll_init(LPC_USART_T * uart)
 
 static rt_err_t rt_uart_init (rt_device_t dev)
 {
-    struct stm32_uart* uart;
+    struct lpc8xx_uart* uart;
     RT_ASSERT(dev != RT_NULL);
-    uart = (struct stm32_uart *)dev;
+    uart = (struct lpc8xx_uart *)dev;
     
     uart1_io_init(uart->uart_base);
     uart_ll_init(uart->uart_base);
@@ -159,9 +159,9 @@ static rt_err_t rt_uart_init (rt_device_t dev)
 
 static rt_err_t rt_uart_open(rt_device_t dev, rt_uint16_t oflag)
 {
-    struct stm32_uart* uart;
+    struct lpc8xx_uart* uart;
     RT_ASSERT(dev != RT_NULL);
-    uart = (struct stm32_uart *)dev;
+    uart = (struct lpc8xx_uart *)dev;
 
     if (dev->flag & RT_DEVICE_FLAG_INT_RX)
     {
@@ -174,9 +174,9 @@ static rt_err_t rt_uart_open(rt_device_t dev, rt_uint16_t oflag)
 
 static rt_err_t rt_uart_close(rt_device_t dev)
 {
-    struct stm32_uart* uart;
+    struct lpc8xx_uart* uart;
     RT_ASSERT(dev != RT_NULL);
-    uart = (struct stm32_uart *)dev;
+    uart = (struct lpc8xx_uart *)dev;
 
     if (dev->flag & RT_DEVICE_FLAG_INT_RX)
     {
@@ -193,9 +193,9 @@ static rt_size_t rt_uart_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_si
     rt_base_t level;
 
     rt_size_t length;
-    struct stm32_uart* uart;
+    struct lpc8xx_uart* uart;
     RT_ASSERT(serial != RT_NULL);
-    uart = (struct stm32_uart *)dev;
+    uart = (struct lpc8xx_uart *)dev;
 
 
     RT_ASSERT(uart != RT_NULL);
@@ -212,9 +212,9 @@ static rt_size_t rt_uart_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_si
 static rt_size_t rt_uart_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
     char *ptr = (char*) buffer;
-    struct stm32_uart* uart;
+    struct lpc8xx_uart* uart;
     RT_ASSERT(serial != RT_NULL);
-    uart = (struct stm32_uart *)dev;
+    uart = (struct lpc8xx_uart *)dev;
 
     if (dev->open_flag & RT_DEVICE_FLAG_STREAM)
     {
@@ -253,7 +253,7 @@ int rt_hw_usart_init(void)
 {
 #ifdef RT_USING_UART0
     {
-        struct stm32_uart* uart;
+        struct lpc8xx_uart* uart;
 
         /* get uart device */
         uart = &uart1_device;
@@ -280,7 +280,7 @@ int rt_hw_usart_init(void)
     
 #ifdef RT_USING_UART1
     {
-        struct stm32_uart* uart;
+        struct lpc8xx_uart* uart;
 
         /* get uart device */
         uart = &uart1_device;
@@ -307,7 +307,7 @@ int rt_hw_usart_init(void)
 
 #ifdef RT_USING_UART2
     {
-        struct stm32_uart* uart;
+        struct lpc8xx_uart* uart;
 
         /* get uart device */
         uart = &uart2_device;
