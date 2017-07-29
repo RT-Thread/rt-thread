@@ -61,7 +61,7 @@ extern struct rt_device uart2_device;
 #endif
 
 #ifdef RT_USING_FINSH
-extern void finsh_system_init(void);
+extern int finsh_system_init(void);
 #endif
 
 /**

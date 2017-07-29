@@ -35,7 +35,7 @@ extern int __bss_end;
 #endif
 
 #ifdef RT_USING_FINSH
-extern void finsh_system_init(void);
+extern int finsh_system_init(void);
 #endif
 extern int  rt_application_init(void);
 
