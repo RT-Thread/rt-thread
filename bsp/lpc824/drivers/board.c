@@ -54,10 +54,9 @@ void SysTick_Handler(void)
     rt_interrupt_leave();
 }
 
-/* re-implement tick interface for STM32 HAL */
 
 /**
- * This function will initial STM32 board.
+ * This function will initial LPC8XX board.
  */
 void rt_hw_board_init()
 {
