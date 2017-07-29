@@ -9,7 +9,15 @@ cwd = GetCurrentDir()
 src  = Glob('peri_driver/*/*.c')
 src += Glob('common/board/*.c')
 src += Glob('common/chip/*.c')
-src += [cwd + '/common/startup/keil_startup_lpc82x.s']
+
+# add for startup script 
+if rtconfig.CROSS_TOOL == 'gcc':
+    print "not gcc startup file"
+    exit(0)
+elif rtconfig.CROSS_TOOL == 'keil':
+    src += [cwd + '/common/startup/keil_startup_lpc82x.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += [cwd + '/common/startup/iar_startup_lpc82x.s']
 
 CPPPATH = [ cwd + '/peri_driver', cwd + '/common/board', 
 			cwd + '/common/chip', cwd + '/common/CMSIS']

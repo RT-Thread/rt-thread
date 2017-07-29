@@ -16,16 +16,6 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
-// <o> Internal SRAM memory size[Kbytes] <8-64>
-//	<i>Default: 64
-#ifdef __ICCARM__
-// Use *.icf ram symbal, to avoid hardcode.
-extern char __ICFEDIT_region_RAM_end__;
-#define LPC824_SRAM_END          &__ICFEDIT_region_RAM_end__
-#else
-#define STM32_SRAM_SIZE         8
-#define LPC824_SRAM_END         (0x10000000 + STM32_SRAM_SIZE * 1024)
-#endif
 
 #ifdef __CC_ARM
 extern int Image$$RW_IRAM1$$ZI$$Limit;
@@ -37,6 +27,9 @@ extern int Image$$RW_IRAM1$$ZI$$Limit;
 extern int __bss_end;
 #define HEAP_BEGIN    (&__bss_end)
 #endif
+
+#define LPC824_SRAM_SIZE         8
+#define LPC824_SRAM_END         (0x10000000 + LPC824_SRAM_SIZE * 1024)
 
 #define HEAP_END          LPC824_SRAM_END
 

@@ -18,10 +18,8 @@ elif CROSS_TOOL == 'keil':
     PLATFORM 	= 'armcc'
     EXEC_PATH 	= 'C:/keil_v5'
 elif CROSS_TOOL == 'iar':
-    print '================ERROR============================'
-    print 'Not support iar yet!'
-    print '================================================='
-    exit(0)
+    PLATFORM 	= 'iar'
+    IAR_PATH    = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
 
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -79,6 +77,7 @@ elif PLATFORM == 'armcc':
         AFLAGS += ' -g'
     else:
         CFLAGS += ' -O2'
+        CFLAGS += ' --split_sections'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
@@ -117,7 +116,7 @@ elif PLATFORM == 'iar':
     AFLAGS += ' --cpu Cortex-M0'
     AFLAGS += ' --fpu None'
 
-    LFLAGS = ' --config lpc824l0xx_flash.icf'
+    LFLAGS = ' --config lpc824_rom.icf'
     LFLAGS += ' --redirect _Printf=_PrintfTiny'
     LFLAGS += ' --redirect _Scanf=_ScanfSmall'
     LFLAGS += ' --entry __iar_program_start'

@@ -31,16 +31,6 @@ extern void finsh_system_init(void);
 extern void finsh_set_device(const char* device);
 #endif
 
-#ifdef __CC_ARM
-extern int Image$$RW_IRAM1$$ZI$$Limit;
-#define HEAP_BEGIN    (&Image$$RW_IRAM1$$ZI$$Limit)
-#elif __ICCARM__
-#pragma section="HEAP"
-#define HEAP_BEGIN    (__segment_end("HEAP"))
-#else
-extern int __bss_end;
-#define HEAP_BEGIN    (&__bss_end)
-#endif
 
 /*******************************************************************************
 * Function Name  : assert_failed

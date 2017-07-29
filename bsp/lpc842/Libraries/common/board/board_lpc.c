@@ -33,9 +33,9 @@
 // Must define _BOARD_C_ before ANY include
 #define _BOARD_C_
 
-#include "board.h"
+#include "board_lpc.h"
 #include "string.h"
-#include "retarget.h"
+#include <stdint.h>
 /*****************************************************************************
  * Private types/enumerations/variables
  ****************************************************************************/
