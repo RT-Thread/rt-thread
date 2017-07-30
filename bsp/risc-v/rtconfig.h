@@ -17,10 +17,10 @@
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
 #define RT_DEBUG
-#define RT_DEBUG_TIMER 1
+#define RT_DEBUG_TIMER 0
 /*#define RT_DEBUG_IRQ 1*/
-#define RT_DEBUG_SCHEDULER 1
-#define RT_DEBUG_THREAD 1
+#define RT_DEBUG_SCHEDULER 0
+#define RT_DEBUG_THREAD 0
 
 #define RT_USING_OVERFLOW_CHECK
 
@@ -32,8 +32,8 @@
 /* Using Software Timer */
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO		8
-#define RT_TIMER_THREAD_STACK_SIZE	1024
-#define RT_TIMER_TICK_PER_SECOND	10
+#define RT_TIMER_THREAD_STACK_SIZE	512
+#define RT_TIMER_TICK_PER_SECOND	50
 
 /* SECTION: IPC */
 /* Using Semaphore */
@@ -88,7 +88,7 @@
 
 /* SECTION: finsh, a C-Express shell */
 /* Using FinSH as Shell*/
-/*#define RT_USING_FINSH*/
+#define RT_USING_FINSH
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION

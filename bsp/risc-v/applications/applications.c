@@ -15,7 +15,7 @@ static void led_thread_entry(void* parameter)
     unsigned int count=0;
 
     rt_hw_led_init();
-    while (1)
+    while (0)
     {
         /* led1 on */
 #ifndef RT_USING_FINSH
@@ -57,8 +57,11 @@ void rt_application_init()
 	}
 
 	init_thread = rt_thread_create("init",
-			rt_init_thread_entry, RT_NULL,
-			2048, 8, 20);
+			rt_init_thread_entry,
+		       	RT_NULL,
+			512,
+		       	8,
+		       	20);
 	if (init_thread != RT_NULL)
 		rt_thread_startup(init_thread);
 	return;

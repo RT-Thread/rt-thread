@@ -51,7 +51,6 @@ void rt_hw_board_init(void)
 	rt_components_board_init();
 #endif
 
-/*	HW_ICOLL_CTRL_SET(BM_ICOLL_CTRL_IRQ_FINAL_ENABLE);*/
 	return;
 }
 

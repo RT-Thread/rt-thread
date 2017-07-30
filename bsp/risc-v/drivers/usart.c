@@ -17,6 +17,7 @@ static void usart_init(int buard)
 static void usart_handler(int vector, void *param)
 {
 	rt_hw_serial_isr((struct rt_serial_device*)param, RT_SERIAL_EVENT_RX_IND);
+	UART0_REG(UART_REG_IP) = 0;
 	return;
 }
 static rt_err_t usart_configure(struct rt_serial_device *serial,
@@ -26,6 +27,8 @@ static rt_err_t usart_configure(struct rt_serial_device *serial,
 	GPIO_REG(GPIO_IOF_EN) |= IOF0_UART0_MASK;
 	UART0_REG(UART_REG_DIV) = get_cpu_freq() / 115200 - 1;
 	UART0_REG(UART_REG_TXCTRL) |= UART_TXEN;
+	UART0_REG(UART_REG_RXCTRL) |= UART_RXEN;
+	UART0_REG(UART_REG_IE) = UART_IP_RXWM;
 		return RT_EOK;
 }
 static rt_err_t usart_control(struct rt_serial_device *serial,
@@ -48,8 +51,11 @@ static int usart_putc(struct rt_serial_device *serial, char c)
 }
 static int usart_getc(struct rt_serial_device *serial)
 {
-	rt_uint8_t val = (rt_uint8_t) UART0_REG(UART_REG_RXFIFO);
-	return val;
+	rt_int32_t val = UART0_REG(UART_REG_RXFIFO);
+	if (val > 0)
+		return (rt_uint8_t)val;
+	else
+		return -1;
 }
 static struct rt_uart_ops ops = {
 	usart_configure,
@@ -69,7 +75,17 @@ static struct rt_serial_device serial = {
 };
 void rt_hw_uart_init(void)
 {
-	rt_hw_serial_register(&serial, "dusart", RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_RDWR
+	rt_hw_serial_register(
+			&serial, 
+			"dusart", 
+			RT_DEVICE_FLAG_STREAM
+		       	| RT_DEVICE_FLAG_RDWR
 			| RT_DEVICE_FLAG_INT_RX, RT_NULL);
+	rt_hw_interrupt_install(
+			INT_UART0_BASE,
+		       	usart_handler,
+		       	(void*)&(serial.parent),
+		       	"uart interrupt");
+	rt_hw_interrupt_unmask(INT_UART0_BASE);
 	return;
 }
