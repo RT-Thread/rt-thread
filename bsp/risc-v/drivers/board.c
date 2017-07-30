@@ -14,11 +14,6 @@ static struct mem_desc hw_mem_desc[] =
 };
 #endif
 
-static void rt_systick_handler(int vector, void *param)
-{
-        rt_tick_increase();
-	return;
-}
 #include <encoding.h>
 static void rt_hw_timer_init(void)
 {
@@ -26,11 +21,12 @@ static void rt_hw_timer_init(void)
 	GPIO_REG(GPIO_OUTPUT_EN)   |=  ((0x1<< RED_LED_OFFSET)| (0x1<< GREEN_LED_OFFSET) | (0x1 << BLUE_LED_OFFSET)) ;
 	GPIO_REG(GPIO_OUTPUT_VAL)  |=   (0x1 << BLUE_LED_OFFSET) ;
 	GPIO_REG(GPIO_OUTPUT_VAL)  &=  ~((0x1<< RED_LED_OFFSET) | (0x1<< GREEN_LED_OFFSET)) ;
-	rt_hw_interrupt_enable(1);
-
-	CLINT_REG(CLINT_MTIME) = 0x0;
-	CLINT_REG(CLINT_MTIMECMP) = 0x10000;
+	
+/*	enable timer interrupt*/
+ 	set_csr(mie, MIP_MTIP);	
 	volatile uint64_t * mtimecmp    = (uint64_t*) (CLINT_CTRL_ADDR + CLINT_MTIMECMP);
+	CLINT_REG(CLINT_MTIME) = 0x0;
+/*	CLINT_REG(CLINT_MTIMECMP) = 0x10000;*/
 	*mtimecmp = 0x20000;
 	return;
 }

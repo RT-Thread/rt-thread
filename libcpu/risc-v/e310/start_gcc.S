@@ -36,7 +36,10 @@ _start:
 	la gp, __global_pointer$
 .option pop
 	la sp, _sp
-	csrrsi a5, mstatus, 0
+/*
+ *disable all interrupt at startup
+ */
+	csrrc a5, mstatus, 0xb
 
 #if defined(ENABLE_SMP)
 	smp_pause(t0, t1)
@@ -69,6 +72,7 @@ _start:
 	la a0, __libc_fini_array
 	call atexit
 	call __libc_init_array
+	/*call _init directly in rt-thread*/
         call _init
 
 #ifndef __riscv_float_abi_soft
@@ -175,17 +179,31 @@ trap_entry:
 
 
   call rt_interrupt_enter
+  csrr a0, mcause
+  lui  a5, 0x80000 
+  not  a5, a5
+  and  a5, a5, a0
+  li   a4, 11
+  mv   s1, a1
+  /*Machine external interrupt*/
+  bne  a5, a4, 1f
   call rt_hw_trap_irq
-  call handle_m_time_interrupt
+1:
+  /*Machine software interrupt*/
+  li   a4, 7
+  bne  a5, a4, 2f
+  call rt_systick_handler
+2:
   call rt_interrupt_leave
 
-  la a0, rt_thread_switch_interrupt_flag
-  lw a1, (a0)
+  # Remain in M-mode after mret
+  li    t0, 136
+  csrrs t0, mstatus, t0
+
+  la   a0, rt_thread_switch_interrupt_flag
+  lw   a1, (a0)
   bnez a1, rt_hw_context_switch_interrupt_do
 
-  # Remain in M-mode after mret
-  li t0, MSTATUS_MPP
-  csrs mstatus, t0
 
   LOAD x30, 1*REGBYTES(sp)
   LOAD x31, 2*REGBYTES(sp)
@@ -225,12 +243,13 @@ trap_entry:
   mret
 
 rt_hw_context_switch_interrupt_do:
-
+  /*clear rt_thread_switch_interrupt_flag*/
   la   a0, rt_thread_switch_interrupt_flag
-  lw   a5, (a0)
   li   a5, 0
   sw   a5, (a0)
 
+  LOAD a0,  rt_interrupt_from_thread
+  STORE sp,  (a0)
   LOAD a0,  rt_interrupt_to_thread
   LOAD sp,  (a0)
   LOAD x30, 1*REGBYTES(sp)

@@ -32,9 +32,21 @@
 rt_hw_interrupt_disable:
   addi sp, sp, -12
   sw a5, (sp)
+  li a5, 0x800
   csrr a0, mie
-  li a5, MIP_MEIP|MIP_MTIP|MIP_MSIP
-/*  csrrc a5, mstatus, MSTATUS_MIE*/
+  blt a0, a5, 1f
+/*  interrupt is enable before disable it*/
+  addi a0, a0, 1
+
+  li a5, 0x1
+  addi a5, a5, -2048
+  csrrc a5, mie, a5
+/*  csrrc a5, mie, 128*/
+  j 2f
+/*  interrupt is disabled before disable it*/
+1:
+  li a0, 0
+2:
   lw a5, (sp)
   addi sp, sp, 12
   ret
@@ -46,9 +58,12 @@ rt_hw_interrupt_disable:
 rt_hw_interrupt_enable:
   addi sp, sp, -12
   sw a5, (sp)
-  li a5, MIP_MEIP|MIP_MTIP|MIP_MSIP
+  beqz a0, 1f
+  li a5, 0x1
+  addi a5, a5, -2048
   csrrs a5, mie, a5
-/*  csrrsi a5, mstatus, MSTATUS_MIE*/
+/*  csrrs a5, mie, 128*/
+1:
   lw a5, (sp)
   addi sp, sp, 12
   ret
@@ -98,8 +113,8 @@ rt_hw_context_switch:
  *Remain in M-mode after mret
  *enable interrupt in M-mode
  */
-  li t0, MSTATUS_MPIE|MSTATUS_MPP
-  csrs mstatus, t0
+  li t0, 136
+  csrrs t0, mstatus, t0
 
   LOAD sp,  (a1)
   LOAD x30, 1*REGBYTES(sp)
