@@ -2,74 +2,8 @@ void rt_hw_led_init(void)
 {
 	return;
 }
-// See LICENSE for license details.
-
-// This is the program which ships on the HiFive1
-// board, executing out of SPI Flash at 0x20400000.
-
 #include <stdint.h>
 #include "platform.h"
-
-#ifndef _SIFIVE_HIFIVE1_H
-#error "'led_fade' is designed to run on HiFive1 and/or E300 Arty Dev Kit."
-#endif
-
-static const char led_msg[] = "\a\n\r\n\r\
-55555555555555555555555555555555555555555555555\n\r\
-5555555 Are the LEDs Changing? [y/n]  555555555\n\r\
-55555555555555555555555555555555555555555555555\n\r";
-
-static const char sifive_msg[] = "\n\r\
-\n\r\
-                SIFIVE, INC.\n\r\
-\n\r\
-         5555555555555555555555555\n\r\
-        5555                   5555\n\r\
-       5555                     5555\n\r\
-      5555                       5555\n\r\
-     5555       5555555555555555555555\n\r\
-    5555       555555555555555555555555\n\r\
-   5555                             5555\n\r\
-  5555                               5555\n\r\
- 5555                                 5555\n\r\
-5555555555555555555555555555          55555\n\r\
- 55555           555555555           55555\n\r\
-   55555           55555           55555\n\r\
-     55555           5           55555\n\r\
-       55555                   55555\n\r\
-         55555               55555\n\r\
-           55555           55555\n\r\
-             55555       55555\n\r\
-               55555   55555\n\r\
-                 555555555\n\r\
-                   55555\n\r\
-                     5\n\r\
-\n\r\
-               'led_fade' Demo \n\r\
-\n\r";
-
-static void _putc(char c) {
-  while ((int32_t) UART0_REG(UART_REG_TXFIFO) < 0);
-  UART0_REG(UART_REG_TXFIFO) = c;
-}
-
-int _getc(char * c){
-  int32_t val = (int32_t) UART0_REG(UART_REG_RXFIFO);
-  if (val > 0) {
-    *c =  val & 0xFF;
-    return 1;
-  }
-  return 0;
-}
-
-
-static void _puts(const char * s) {
-  while (*s != '\0'){
-    _putc(*s++);
-  }
-}
-
-
 
 void rt_hw_led_on(int led)
 {
@@ -94,11 +28,6 @@ void rt_hw_led_on(int led)
 	volatile int i=0;
 	while(i < 10000){i++;}
 
-	_puts(sifive_msg);
-	//_puts("Config String:\n\r");
-	//_puts(*((const char **) 0x100C));
-	//_puts("\n\r");
-	_puts(led_msg);
 	uint16_t r=0xFF;
 	uint16_t g=0;
 	uint16_t b=0;
@@ -137,20 +66,6 @@ void rt_hw_led_on(int led)
 	PWM1_REG(PWM_CMP1)  = G << 4;            // PWM is low on the left, GPIO is low on the left side, LED is ON on the left.
 	PWM1_REG(PWM_CMP2)  = (B << 1) << 4;     // PWM is high on the middle, GPIO is low in the middle, LED is ON in the middle.
 	PWM1_REG(PWM_CMP3)  = 0xFFFF - (R << 4); // PWM is low on the left, GPIO is low on the right, LED is on on the right.
-
-	// Check for user input
-	if (c == 0){
-		if (_getc(&c) != 0){
-			_putc(c);
-			_puts("\n\r");
-
-			if ((c == 'y') || (c == 'Y')){
-				_puts("PASS\n\r");
-			} else{
-				_puts("FAIL\n\r");
-			}
-		}
-	}
 	return;
 }
 void rt_hw_led_off(int led)

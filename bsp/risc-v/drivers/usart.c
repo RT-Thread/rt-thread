@@ -48,7 +48,8 @@ static int usart_putc(struct rt_serial_device *serial, char c)
 }
 static int usart_getc(struct rt_serial_device *serial)
 {
-	return 0;
+	rt_uint8_t val = (rt_uint8_t) UART0_REG(UART_REG_RXFIFO);
+	return val;
 }
 static struct rt_uart_ops ops = {
 	usart_configure,
