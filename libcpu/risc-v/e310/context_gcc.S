@@ -1,5 +1,5 @@
 ;/*
-; * File      : context_iar.S
+; * File      : context_gcc.S
 ; * This file is part of RT-Thread RTOS
 ; * COPYRIGHT (C) 2006, RT-Thread Development Team
 ; *
@@ -34,7 +34,6 @@ rt_hw_interrupt_disable:
   sw a5, (sp)
   csrr a0, mie
   li a5, MIP_MEIP|MIP_MTIP|MIP_MSIP
-  csrrc a5, mie, a5
 /*  csrrc a5, mstatus, MSTATUS_MIE*/
   lw a5, (sp)
   addi sp, sp, 12
@@ -95,9 +94,11 @@ rt_hw_context_switch:
   STORE x1,  31*REGBYTES(sp)
   STORE x10, 29*REGBYTES(sp)
   STORE x1,  30*REGBYTES(sp)
-
-  # Remain in M-mode after mret
-  li t0, MSTATUS_MPP
+/*
+ *Remain in M-mode after mret
+ *enable interrupt in M-mode
+ */
+  li t0, MSTATUS_MPIE|MSTATUS_MPP
   csrs mstatus, t0
 
   LOAD sp,  (a1)
@@ -130,7 +131,7 @@ rt_hw_context_switch:
   LOAD x27, 27*REGBYTES(sp)
   LOAD x28, 28*REGBYTES(sp)
   LOAD x10, 31*REGBYTES(sp)
-  csrw mepc,a0
+  csrw mepc,x10
   LOAD x10, 29*REGBYTES(sp)
   LOAD x1,  30*REGBYTES(sp)
   
@@ -194,16 +195,21 @@ rt_hw_context_switch_interrupt:
   sw   s0, 12(sp)
   sw   a0, 8(sp)
   sw   a5, 4(sp)
+
   la   a0, rt_thread_switch_interrupt_flag
-  beqz a5, _reswitch
+  lw   a5, (a0)
+  bnez a5, _reswitch
   li   a5, 1
   sw   a5, (a0)
+
   la   a5, rt_interrupt_from_thread
   lw   a0, 8(sp)
   sw   a0, (a5)
+
 _reswitch:
   la   a5, rt_interrupt_to_thread
   sw   a1, (a5)
+
   lw   a5, 4(sp)
   lw   a0, 8(sp)
   lw   s0, 12(sp)

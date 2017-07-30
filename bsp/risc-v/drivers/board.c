@@ -31,7 +31,6 @@ static void rt_hw_timer_init(void)
 	CLINT_REG(CLINT_MTIME) = 0x0;
 	CLINT_REG(CLINT_MTIMECMP) = 0x10000;
 	volatile uint64_t * mtimecmp    = (uint64_t*) (CLINT_CTRL_ADDR + CLINT_MTIMECMP);
-	set_csr(mstatus, MSTATUS_MIE);
 	*mtimecmp = 0x20000;
 	return;
 }

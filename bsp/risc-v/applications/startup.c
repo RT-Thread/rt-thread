@@ -30,7 +30,6 @@ static void rtthread_startup(void)
 	rt_thread_idle_init();
 
 	/* start scheduler */
-	while(1);
 	rt_system_scheduler_start();
 
 	/* never reach here */

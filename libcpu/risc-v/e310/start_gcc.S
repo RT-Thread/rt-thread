@@ -1,13 +1,32 @@
-// See LICENSE for license details.
+;/*
+; * File      : start_gcc.S
+; * This file is part of RT-Thread RTOS
+; * COPYRIGHT (C) 2006, RT-Thread Development Team
+; *
+; *  This program is free software; you can redistribute it and/or modify
+; *  it under the terms of the GNU General Public License as published by
+; *  the Free Software Foundation; either version 2 of the License, or
+; *  (at your option) any later version.
+; *
+; *  This program is distributed in the hope that it will be useful,
+; *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+; *  GNU General Public License for more details.
+; *
+; *  You should have received a copy of the GNU General Public License along
+; *  with this program; if not, write to the Free Software Foundation, Inc.,
+; *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+; *
+; * Change Logs:
+; * Date           Author       Notes
+; * 2017-07-16     zhangjun    for hifive1
+; */
 #include <sifive/smp.h>
-
-/* This is defined in sifive/platform.h, but that can't be included from
- * assembly. */
 #define CLINT_CTRL_ADDR 0x02000000
 
-	.section .init
-	.globl _start
-	.type _start,@function
+.section .init
+.globl _start
+.type _start,@function
 
 _start:
 	.cfi_startproc
@@ -119,7 +138,7 @@ _start:
   .align 2
   .global trap_entry
 trap_entry:
-  addi sp, sp, -32*REGBYTES
+  addi  sp,  sp, -32*REGBYTES
 
   STORE x30, 1*REGBYTES(sp)
   STORE x31, 2*REGBYTES(sp)
@@ -151,8 +170,8 @@ trap_entry:
   STORE x28, 28*REGBYTES(sp)
   STORE x10, 29*REGBYTES(sp)
   STORE x1,  30*REGBYTES(sp)
-  csrr  x1,  mepc
-  STORE x1,  31*REGBYTES(sp)
+  csrr  x10, mepc
+  STORE x10, 31*REGBYTES(sp)
 
 
   call rt_interrupt_enter
@@ -162,7 +181,7 @@ trap_entry:
 
   la a0, rt_thread_switch_interrupt_flag
   lw a1, (a0)
-  beqz a1, rt_hw_context_switch_interrupt_do
+  bnez a1, rt_hw_context_switch_interrupt_do
 
   # Remain in M-mode after mret
   li t0, MSTATUS_MPP
@@ -197,17 +216,23 @@ trap_entry:
   LOAD x27, 27*REGBYTES(sp)
   LOAD x28, 28*REGBYTES(sp)
   LOAD x10, 31*REGBYTES(sp)
-  csrw mepc, a0
+  csrw mepc,x10
   LOAD x10, 29*REGBYTES(sp)
   LOAD x1,  30*REGBYTES(sp)
   
 
-  addi sp, sp, 32*REGBYTES
+  addi sp,  sp, 32*REGBYTES
   mret
 
 rt_hw_context_switch_interrupt_do:
-  LOAD a0, rt_interrupt_to_thread
-  LOAD sp, (a0)
+
+  la   a0, rt_thread_switch_interrupt_flag
+  lw   a5, (a0)
+  li   a5, 0
+  sw   a5, (a0)
+
+  LOAD a0,  rt_interrupt_to_thread
+  LOAD sp,  (a0)
   LOAD x30, 1*REGBYTES(sp)
   LOAD x31, 2*REGBYTES(sp)
   LOAD x3,  3*REGBYTES(sp)
@@ -237,10 +262,9 @@ rt_hw_context_switch_interrupt_do:
   LOAD x27, 27*REGBYTES(sp)
   LOAD x28, 28*REGBYTES(sp)
   LOAD x10, 31*REGBYTES(sp)
-  csrw mepc, a0
+  csrw mepc,x10
   LOAD x10, 29*REGBYTES(sp)
   LOAD x1,  30*REGBYTES(sp)
   
-
   addi sp, sp, 32*REGBYTES
   mret

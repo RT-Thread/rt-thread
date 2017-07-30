@@ -15,13 +15,7 @@ static void led_thread_entry(void* parameter)
     unsigned int count=0;
 
     rt_hw_led_init();
-
-	rt_hw_interrupt_enable(0x888);
-	set_csr(mstatus, MSTATUS_MIE);
-	asm(
-			"csrr a5, mie"
-	   );
-	rt_kprintf("core freq at %d Hz\n", get_cpu_freq());
+    rt_kprintf("core freq at %d Hz\n", get_cpu_freq());
     while (1)
     {
         /* led1 on */
@@ -29,7 +23,8 @@ static void led_thread_entry(void* parameter)
 /*        rt_kprintf("led on, count : %d\r\n",count);*/
 #endif
         count++;
-        rt_thread_delay( RT_TIMER_TICK_PER_SECOND*2 ); /* sleep 0.5 second and switch to other thread */
+        rt_thread_delay( RT_TIMER_TICK_PER_SECOND/2 ); /* sleep 0.5 second and switch to other thread */
+    while(1);
         rt_hw_led_on(0);
 
         /* led1 off */
@@ -41,7 +36,7 @@ static void led_thread_entry(void* parameter)
         rt_thread_delay( RT_TIMER_TICK_PER_SECOND*2);
     }
 }
-static rt_uint8_t led_stack[ 512 ];
+static rt_uint8_t led_stack[ 2048 ];
 static struct rt_thread led_thread;
 void rt_application_init()
 {

@@ -17,9 +17,10 @@
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
 #define RT_DEBUG
+#define RT_DEBUG_TIMER 1
 /*#define RT_DEBUG_IRQ 1*/
-//#define SCHEDULER_DEBUG
-/* #define RT_THREAD_DEBUG */
+#define RT_DEBUG_SCHEDULER 1
+#define RT_DEBUG_THREAD 1
 
 #define RT_USING_OVERFLOW_CHECK
 
@@ -31,7 +32,7 @@
 /* Using Software Timer */
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO		8
-#define RT_TIMER_THREAD_STACK_SIZE	512
+#define RT_TIMER_THREAD_STACK_SIZE	1024
 #define RT_TIMER_TICK_PER_SECOND	10
 
 /* SECTION: IPC */
@@ -91,7 +92,7 @@
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
-#define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_THREAD_STACK_SIZE 1024
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_ONLY
 
@@ -259,5 +260,5 @@
 //#define RT_USING_CPU_FFS
 #define RT_USING_COMPONENTS_INIT
 
-#define IDLE_THREAD_STACK_SIZE 512
+#define IDLE_THREAD_STACK_SIZE 1024
 #endif

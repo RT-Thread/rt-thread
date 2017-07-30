@@ -63,7 +63,7 @@ rt_uint32_t rt_hw_interrupt_get_active(rt_uint32_t fiq_irq)
 {
 	//volatile rt_uint32_t irqstat;
 	rt_uint32_t id;
-	return id;
+	return 0;
 }
 void rt_hw_interrupt_ack(rt_uint32_t fiq_irq, rt_uint32_t id)
 {

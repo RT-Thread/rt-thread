@@ -74,6 +74,7 @@ static void _puts(const char * s) {
 void rt_hw_led_on(int led)
 {
 
+	/*
   // Make sure the HFROSC is on before the next line:
   PRCI_REG(PRCI_HFROSCCFG) |= ROSC_EN(1);
   // Run off 16 MHz Crystal for accuracy. Note that the
@@ -82,17 +83,8 @@ void rt_hw_led_on(int led)
   PRCI_REG(PRCI_PLLCFG) |= (PLL_SEL(1));
   // Turn off HFROSC to save power
   PRCI_REG(PRCI_HFROSCCFG) &= ~(ROSC_EN(1));
+  */
   
-  // Configure UART to print
-  GPIO_REG(GPIO_OUTPUT_VAL) |= IOF0_UART0_MASK;
-  GPIO_REG(GPIO_OUTPUT_EN)  |= IOF0_UART0_MASK;
-  GPIO_REG(GPIO_IOF_SEL)    &= ~IOF0_UART0_MASK;
-  GPIO_REG(GPIO_IOF_EN)     |= IOF0_UART0_MASK;
-
-  // 115200 Baud Rate
-  UART0_REG(UART_REG_DIV) = 138;
-  UART0_REG(UART_REG_TXCTRL) = UART_TXEN;
-  UART0_REG(UART_REG_RXCTRL) = UART_RXEN;
 
   // Wait a bit to avoid corruption on the UART.
   // (In some cases, switching to the IOF can lead
@@ -107,7 +99,6 @@ void rt_hw_led_on(int led)
   //_puts(*((const char **) 0x100C));
   //_puts("\n\r");
   _puts(led_msg);
-  
   uint16_t r=0xFF;
   uint16_t g=0;
   uint16_t b=0;
@@ -115,6 +106,7 @@ void rt_hw_led_on(int led)
   
   // Set up RGB PWM
   
+ /* 
   PWM1_REG(PWM_CFG)   = 0;
   // To balance the power consumption, make one left, one right, and one center aligned.
   PWM1_REG(PWM_CFG)   = (PWM_CFG_ENALWAYS) | (PWM_CFG_CMP2CENTER);
@@ -124,16 +116,10 @@ void rt_hw_led_on(int led)
   // the LEDs are intentionally left somewhat dim, 
   // as the full brightness can be painful to look at.
   PWM1_REG(PWM_CMP0)  = 0;
+  */
 
-  GPIO_REG(GPIO_IOF_SEL)    |= ( (1 << GREEN_LED_OFFSET) | (1 << BLUE_LED_OFFSET) | (1 << RED_LED_OFFSET));
-  GPIO_REG(GPIO_IOF_EN )    |= ( (1 << GREEN_LED_OFFSET) | (1 << BLUE_LED_OFFSET) | (1 << RED_LED_OFFSET));
-  GPIO_REG(GPIO_OUTPUT_XOR) &= ~( (1 << GREEN_LED_OFFSET) | (1 << BLUE_LED_OFFSET));
-  GPIO_REG(GPIO_OUTPUT_XOR) |= (1 << RED_LED_OFFSET);
 
   while(1){
-    volatile uint64_t *  now = (volatile uint64_t*)(CLINT_CTRL_ADDR + CLINT_MTIME);
-    volatile uint64_t then = *now + 100;
-    while (*now < then) { }
   
     if(r > 0 && b == 0){
       r--;
