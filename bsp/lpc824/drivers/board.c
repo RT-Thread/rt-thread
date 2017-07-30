@@ -60,6 +60,7 @@ void SysTick_Handler(void)
  */
 void rt_hw_board_init()
 {
+    SystemCoreClockUpdate();
     SysTick_Config(SystemCoreClock / RT_TIMER_TICK_PER_SECOND);
 
 #ifdef RT_USING_COMPONENTS_INIT
