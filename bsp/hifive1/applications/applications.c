@@ -17,22 +17,13 @@ static void led_thread_entry(void* parameter)
     rt_hw_led_init();
     while (0)
     {
-        /* led1 on */
-#ifndef RT_USING_FINSH
-/*        rt_kprintf("led on, count : %d\r\n",count);*/
-#endif
-	    rt_kprintf("core freq at %d Hz\n", get_cpu_freq());
-        count++;
-        rt_thread_delay( RT_TIMER_TICK_PER_SECOND/2 ); /* sleep 0.5 second and switch to other thread */
 /*        rt_hw_led_on(0);*/
+        rt_thread_delay( RT_TIMER_TICK_PER_SECOND/2 ); /* sleep 0.5 second and switch to other thread */
 
         /* led1 off */
-#ifndef RT_USING_FINSH
-/*        rt_kprintf("led off\r\n");*/
-#endif
         rt_hw_led_off(0);
 
-/*        rt_thread_delay( RT_TIMER_TICK_PER_SECOND*2);*/
+        rt_thread_delay( RT_TIMER_TICK_PER_SECOND*2);
     }
 }
 static rt_uint8_t led_stack[ 1024];
