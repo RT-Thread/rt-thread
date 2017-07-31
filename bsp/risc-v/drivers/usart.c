@@ -17,7 +17,6 @@ static void usart_init(int buard)
 static void usart_handler(int vector, void *param)
 {
 	rt_hw_serial_isr((struct rt_serial_device*)param, RT_SERIAL_EVENT_RX_IND);
-	UART0_REG(UART_REG_IP) = 0;
 	return;
 }
 static rt_err_t usart_configure(struct rt_serial_device *serial,

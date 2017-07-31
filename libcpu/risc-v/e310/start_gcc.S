@@ -176,7 +176,16 @@ trap_entry:
   STORE x1,  30*REGBYTES(sp)
   csrr  x10, mepc
   STORE x10, 31*REGBYTES(sp)
+  csrr  x10, mie
+  STORE x10, 0*REGBYTES(sp)
 
+
+/*
+ *Remain in M-mode after mret
+ *enable interrupt in M-mode
+ */
+  li    t0, MSTATUS_MPP
+  csrrs t0, mstatus, t0
 
   call rt_interrupt_enter
   csrr a0, mcause
@@ -189,16 +198,12 @@ trap_entry:
   bne  a5, a4, 1f
   call rt_hw_trap_irq
 1:
-  /*Machine software interrupt*/
+  /*Machine timer interrupt*/
   li   a4, 7
   bne  a5, a4, 2f
   call rt_systick_handler
 2:
   call rt_interrupt_leave
-
-  # Remain in M-mode after mret
-  li    t0, 136
-  csrrs t0, mstatus, t0
 
   la   a0, rt_thread_switch_interrupt_flag
   lw   a1, (a0)
@@ -235,9 +240,10 @@ trap_entry:
   LOAD x28, 28*REGBYTES(sp)
   LOAD x10, 31*REGBYTES(sp)
   csrw mepc,x10
+  LOAD x10, 0*REGBYTES(sp)
+  csrw mie, x10
   LOAD x10, 29*REGBYTES(sp)
   LOAD x1,  30*REGBYTES(sp)
-  
 
   addi sp,  sp, 32*REGBYTES
   mret
@@ -282,6 +288,8 @@ rt_hw_context_switch_interrupt_do:
   LOAD x28, 28*REGBYTES(sp)
   LOAD x10, 31*REGBYTES(sp)
   csrw mepc,x10
+  LOAD x10, 0*REGBYTES(sp)
+  csrw mie, x10
   LOAD x10, 29*REGBYTES(sp)
   LOAD x1,  30*REGBYTES(sp)
   

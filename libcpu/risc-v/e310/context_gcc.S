@@ -106,9 +106,11 @@ rt_hw_context_switch:
   STORE x26, 26*REGBYTES(sp)
   STORE x27, 27*REGBYTES(sp)
   STORE x28, 28*REGBYTES(sp)
-  STORE x1,  31*REGBYTES(sp)
   STORE x10, 29*REGBYTES(sp)
   STORE x1,  30*REGBYTES(sp)
+  STORE x1,  31*REGBYTES(sp)
+  csrr  x10, mie
+  STORE x10, 0*REGBYTES(sp)
 /*
  *Remain in M-mode after mret
  *enable interrupt in M-mode
@@ -147,6 +149,8 @@ rt_hw_context_switch:
   LOAD x28, 28*REGBYTES(sp)
   LOAD x10, 31*REGBYTES(sp)
   csrw mepc,x10
+  LOAD x10, 0*REGBYTES(sp)
+  csrw mie, x10
   LOAD x10, 29*REGBYTES(sp)
   LOAD x1,  30*REGBYTES(sp)
   

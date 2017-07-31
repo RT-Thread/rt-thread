@@ -11,7 +11,7 @@ struct rt_irq_desc irq_desc[MAX_HANDLERS];
 rt_uint32_t rt_interrupt_from_thread;
 rt_uint32_t rt_interrupt_to_thread;
 rt_uint32_t rt_thread_switch_interrupt_flag;
-plic_instance_t g_plic;
+volatile plic_instance_t g_plic;
 /**
  * This function will mask a interrupt.
  * @param vector the interrupt number
