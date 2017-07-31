@@ -8,25 +8,6 @@ void rt_hw_led_init(void)
 void rt_hw_led_on(int led)
 {
 
-	/*
-	// Make sure the HFROSC is on before the next line:
-	PRCI_REG(PRCI_HFROSCCFG) |= ROSC_EN(1);
-	// Run off 16 MHz Crystal for accuracy. Note that the
-	// first line is 
-	PRCI_REG(PRCI_PLLCFG) = (PLL_REFSEL(1) | PLL_BYPASS(1));
-	PRCI_REG(PRCI_PLLCFG) |= (PLL_SEL(1));
-	// Turn off HFROSC to save power
-	PRCI_REG(PRCI_HFROSCCFG) &= ~(ROSC_EN(1));
-	*/
-
-
-	// Wait a bit to avoid corruption on the UART.
-	// (In some cases, switching to the IOF can lead
-	// to output glitches, so need to let the UART
-	// reciever time out and resynchronize to the real 
-	// start of the stream.
-	volatile int i=0;
-	while(i < 10000){i++;}
 
 	uint16_t r=0xFF;
 	uint16_t g=0;
