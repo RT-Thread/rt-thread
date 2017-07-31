@@ -183,7 +183,6 @@ void rt_thread_idle_excute(void)
 
 static void rt_thread_idle_entry(void *parameter)
 {
-    rt_hw_interrupt_enable(0x888);
     while (1)
     {
     #ifdef RT_USING_IDLE_HOOK

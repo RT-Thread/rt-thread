@@ -19,21 +19,9 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2011-01-13     weety      copy from mini2440
+ * 2017-07-31     zhangjun      copy from mini2440
  */
 #include <rtthread.h>
-
-/*****************************/
-/* CPU Mode                  */
-/*****************************/
-#define USERMODE        0x10
-#define FIQMODE         0x11
-#define IRQMODE         0x12
-#define SVCMODE         0x13
-#define ABORTMODE       0x17
-#define UNDEFMODE       0x1b
-#define MODEMASK        0x1f
-#define NOINT           0xc0
 
 /**
  * This function will initialize thread stack
@@ -86,7 +74,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
     *(--stk) = 0xffffffff;          	    /* t6 */
     *(--stk) = 0xffffffff;          	    /* tp */
     *(--stk) = 0xffffffff;          	    /* gp */
-    *(--stk) = 0x880;          	    /* mie */
+    *(--stk) = 0x880;          	            /* mie */
 //    *(--stk) = (rt_uint32_t)parameter;      /* r0 : argument */
     /* return task's current stack address */
     return (rt_uint8_t *)stk;

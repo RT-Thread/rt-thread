@@ -7,7 +7,7 @@ static rt_uint32_t idle_begin = 0,idle_count = 0;
 static rt_uint32_t run_begin = 0,run_count = 0;
 static rt_uint32_t update_tick = 0;
 static wtdog_count = 0;
-#define jiffies 0
+#define jiffies rt_tick_get()
 
 void cpu_usage_idle_hook()
 {
