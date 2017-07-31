@@ -18,8 +18,10 @@
 #include <rtthread.h>
 #include <rthw.h>
 #include "ls1c.h"
+#include "ls1c_public.h"
 
-#define MAX_INTR 32
+
+#define MAX_INTR            (LS1C_NR_IRQS)
 
 extern rt_uint32_t rt_interrupt_nest;
 rt_uint32_t rt_interrupt_from_thread;
@@ -50,13 +52,26 @@ static void rt_hw_interrupt_handler(int vector, void *param)
 void rt_hw_interrupt_init(void)
 {
     rt_int32_t idx;
+    rt_int32_t i;
+    rt_uint32_t c0_status = 0;
 
-    /* pci active low */
-    ls1c_hw0_icregs->int_pol = -1;	   //must be done here 20110802 lgnq
-    /* make all interrupts level triggered */
-    (ls1c_hw0_icregs+0)->int_edge = 0x0000e000;
-    /* mask all interrupts */
-    (ls1c_hw0_icregs+0)->int_clr = 0xffffffff;
+    // 设置协处理器0的状态寄存器SR的IM7-2，允许中断
+    c0_status = read_c0_status();
+    c0_status |= 0xFC00;
+    write_c0_status(c0_status);
+
+    // 龙芯1c的中断分为五组
+    for (i=0; i<5; i++)
+    {
+        /* disable */
+        (ls1c_hw0_icregs+i)->int_en = 0x0;
+        /* pci active low */
+        (ls1c_hw0_icregs+i)->int_pol = -1;	   //must be done here 20110802 lgnq
+        /* make all interrupts level triggered */
+        (ls1c_hw0_icregs+i)->int_edge = 0x00000000;
+        /* mask all interrupts */
+        (ls1c_hw0_icregs+i)->int_clr = 0xffffffff;
+    }
 
     rt_memset(irq_handle_table, 0x00, sizeof(irq_handle_table));
     for (idx = 0; idx < MAX_INTR; idx ++)
@@ -115,6 +130,51 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
     return old_handler;
 }
 
+
+/**
+ * 执行中断处理函数
+ * @IRQn 中断号
+ */
+void ls1c_do_IRQ(int IRQn)
+{
+    rt_isr_handler_t irq_func;
+    void *param;
+
+    // 找到中断处理函数
+    irq_func = irq_handle_table[IRQn].handler;
+    param    = irq_handle_table[IRQn].param;
+
+    // 执行中断处理函数
+    irq_func(IRQn, param);
+    
+#ifdef RT_USING_INTERRUPT_INFO
+    irq_handle_table[IRQn].counter++;
+#endif
+
+    return ;
+}
+
+
+void ls1c_irq_dispatch(int n)
+{
+    rt_uint32_t intstatus, irq;
+
+    /* Receive interrupt signal, compute the irq */
+    intstatus = (ls1c_hw0_icregs+n)->int_isr & (ls1c_hw0_icregs+n)->int_en;
+    if (0 == intstatus)
+        return ;
+
+    // 执行中断处理函数
+    irq = ls1c_ffs(intstatus) - 1;
+    ls1c_do_IRQ((n<<5) + irq);
+
+    /* ack interrupt */
+    (ls1c_hw0_icregs+n)->int_clr |= (1 << irq);
+
+    return ;
+}
+
+
 void rt_interrupt_dispatch(void *ptreg)
 {
     int irq;
@@ -139,50 +199,25 @@ void rt_interrupt_dispatch(void *ptreg)
     {
         rt_hw_timer_handler();
     }
-
-    if (pending_im & CAUSEF_IP2)
+    else if (pending_im & CAUSEF_IP2)
     {
-        /* the hardware interrupt */
-        status = ls1c_hw0_icregs->int_isr;
-        if (!status)
-            return;
-
-        for (irq = MAX_INTR; irq > 0; --irq)
-        {
-            if ((status & (1 << irq)))
-            {
-                status &= ~(1 << irq);
-
-                irq_func = irq_handle_table[irq].handler;
-                param = irq_handle_table[irq].param;
-
-                /* do interrupt */
-                irq_func(irq, param);
-
-#ifdef RT_USING_INTERRUPT_INFO
-                irq_handle_table[irq].counter++;
-#endif /* RT_USING_INTERRUPT_INFO */
-
-                /* ack interrupt */
-                ls1c_hw0_icregs->int_clr |= (1 << irq);
-            }
-        }
+        ls1c_irq_dispatch(0);
     }
     else if (pending_im & CAUSEF_IP3)
     {
-        rt_kprintf("%s %d\r\n", __FUNCTION__, __LINE__);
+        ls1c_irq_dispatch(1);
     }
     else if (pending_im & CAUSEF_IP4)
     {
-        rt_kprintf("%s %d\r\n", __FUNCTION__, __LINE__);
+        ls1c_irq_dispatch(2);
     }
     else if (pending_im & CAUSEF_IP5)
     {
-        rt_kprintf("%s %d\r\n", __FUNCTION__, __LINE__);
+        ls1c_irq_dispatch(3);
     }
     else if (pending_im & CAUSEF_IP6)
     {
-        rt_kprintf("%s %d\r\n", __FUNCTION__, __LINE__);
+        ls1c_irq_dispatch(4);
     }
 }
 

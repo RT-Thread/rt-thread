@@ -468,7 +468,7 @@ void finsh_system_var_init(const void* begin, const void* end)
  *
  * This function will initialize finsh shell
  */
-void finsh_system_init(void)
+int finsh_system_init(void)
 {
 	rt_err_t result;
 

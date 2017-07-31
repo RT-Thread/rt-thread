@@ -42,7 +42,7 @@
 
 static rt_int16_t rt_scheduler_lock_nest;
 extern volatile rt_uint8_t rt_interrupt_nest;
-extern int __rt_ffs(int value);
+extern rt_ubase_t __rt_ffs(rt_ubase_t value);
 
 rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 struct rt_thread *rt_current_thread;
