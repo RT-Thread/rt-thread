@@ -180,7 +180,7 @@ static err_t eth_netif_device_init(struct netif *netif)
         netif_set_up(ethif->netif);
 #endif
 
-        if (!(ethif->flags & ETHIF_LINK_PHYUP))
+        if (ethif->flags & ETHIF_LINK_PHYUP)
         {
             /* set link_up for this netif */
             netif_set_link_up(ethif->netif);
