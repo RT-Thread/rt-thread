@@ -114,7 +114,7 @@ static void tcpip_init_done_callback(void *arg)
             netif_set_up(ethif->netif);
 #endif
 
-            if (!(ethif->flags & ETHIF_LINK_PHYUP))
+            if (ethif->flags & ETHIF_LINK_PHYUP)
             {
                 netif_set_link_up(ethif->netif);
             }
