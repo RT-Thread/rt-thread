@@ -116,7 +116,7 @@ int rt_system_module_init(void)
     _rt_module_symtab_end   = (struct rt_module_symtab *)&RTMSymTab$$Limit;
 #elif defined (__IAR_SYSTEMS_ICC__)
     _rt_module_symtab_begin = __section_begin("RTMSymTab");
-    _rt_module_symtab_end   = __section_begin("RTMSymTab");
+    _rt_module_symtab_end   = __section_end("RTMSymTab");
 #endif
 
 #ifdef RT_USING_SLAB
