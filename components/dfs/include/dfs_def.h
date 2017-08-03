@@ -203,7 +203,7 @@
 #define DFS_F_ERR                0x08000000
 
 /* Seek flags */
-#ifdef __CC_ARM
+#if (defined(__CC_ARM) || defined(__IAR_SYSTEMS_ICC__))
 #include <stdio.h>
 #define DFS_SEEK_SET             SEEK_SET
 #define DFS_SEEK_CUR             SEEK_CUR
