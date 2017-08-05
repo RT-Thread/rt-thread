@@ -419,8 +419,9 @@ rt_err_t stm32_spi_register(SPI_TypeDef * SPI,
 {
     rt_err_t res = RT_EOK;
     NVIC_InitTypeDef NVIC_InitStructure;
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
     rt_uint32_t flags = 0;
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+
     if(SPI == SPI1)
     {
     	stm32_spi->SPI = SPI1;
