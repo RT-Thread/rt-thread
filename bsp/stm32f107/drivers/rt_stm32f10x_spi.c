@@ -144,7 +144,7 @@ void DMA1_Channel4_IRQHandler(void) {
     /* enter interrupt */
     rt_interrupt_enter();
     rt_event_send(&dma2.event, SPI_DMA_TX_DONE);
-    DMA_ClearFlag(dma2.tx_gl_flag);
+    DMA_ClearFlag(dma2.priv_data->tx_gl_flag);
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -418,7 +418,9 @@ rt_err_t stm32_spi_register(SPI_TypeDef * SPI,
                             const char * spi_bus_name)
 {
     rt_err_t res = RT_EOK;
+//#ifdef SPI_USE_DMA
     NVIC_InitTypeDef NVIC_InitStructure;
+//#endif
     rt_uint32_t flags = 0;
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
 
