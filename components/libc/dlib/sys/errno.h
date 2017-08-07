@@ -50,6 +50,7 @@
 #define	EPERM			1		/* Not super-user */
 #define	ESRCH			3		/* No such process */
 #define	EINTR			4		/* Interrupted system call */
+#define EACCES          13      /* Permission denied */
 #define EFAULT       	14  	/* Bad address */
 #define	ENFILE			23		/* Too many open files in system */
 #define ERANGE			34		/* Math result not representable */
@@ -60,11 +61,13 @@
 #define EOPNOTSUPP      95  	/* Operation not supported on transport endpoint */
 #define EAFNOSUPPORT    97  	/* Address family not supported by protocol */
 #define EADDRINUSE      98  	/* Address already in use */
+#define EADDRNOTAVAIL   99      /* Cannot assign requested address */
 #define ENETDOWN       	100  	/* Network is down */
 #define ENETUNREACH    	101  	/* Network is unreachable */
 #define ECONNABORTED   	103  	/* Software caused connection abort */
 #define ECONNRESET     	104  	/* Connection reset by peer */
 #define ENOBUFS     	105  	/* No buffer space available */
+#define EISCONN         106     /* Transport endpoint is already connected */
 #define ENOTCONN       	107  	/* Transport endpoint is not connected */
 #define EINPROGRESS    	115  	/* Operation now in progress */
 #define ETIMEDOUT		116		/* Connection timed out */
