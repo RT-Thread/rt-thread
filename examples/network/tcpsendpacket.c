@@ -51,7 +51,11 @@ void tcp_senddata(const char* url, int port, int length)
 				rt_kprintf("TCP Socket error:%d\n",sock);
 			err = connect(sock, (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
 			rt_kprintf("TCP thread connect error code: %d\n", err);
-		}
+		}else if (result == 0)
+		{
+			/* 打印send函数返回值为0的警告信息 */
+            rt_kprintf("\n Send warning,send function return 0.\r\n");						
+		}	
 	}
 }
 
