@@ -74,18 +74,19 @@ void tcpserv(void* parameter)
        {
            /* 发送数据到connected socket */
            ret = send(connected, send_data, strlen(send_data), 0);
-		   if (ret < 0)
-		   {
-				/* 接收失败，关闭这个连接 */
-				lwip_close(sock);
-				rt_kprintf("\nsend error,close the socket.\r\n");		
-				break;
-		   }else if (ret == 0)
-		   {
-				/* 打印send函数返回值为0的警告信息 */
-				rt_kprintf("\n Send warning,send function return 0.\r\n");						
-		   }		
-		   
+           if (ret < 0)
+           {
+                /* 发送失败，关闭这个连接 */
+                lwip_close(connected);
+                rt_kprintf("\nsend error,close the socket.\r\n");
+                break;
+           }
+           else if (ret == 0)
+           {
+                /* 打印send函数返回值为0的警告信息 */
+                rt_kprintf("\n Send warning,send function return 0.\r\n");
+           }
+
            /* 从connected socket中接收数据，接收buffer是1024大小，但并不一定能够收到1024大小的数据 */
            bytes_received = recv(connected,recv_data, 1024, 0);
            if (bytes_received < 0)
@@ -93,11 +94,13 @@ void tcpserv(void* parameter)
                /* 接收失败，关闭这个connected socket */
                lwip_close(connected);
                break;
-           }else if (bytes_received == 0)
-		   {
-			   /* 打印recv函数返回值为0的警告信息 */
-			   rt_kprintf("\nReceived warning,recv function return 0.\r\n");						
-		   }
+           }
+           else if (bytes_received == 0)
+           {
+               /* 打印recv函数返回值为0的警告信息 */
+               rt_kprintf("\nReceived warning,recv function return 0.\r\n");
+               continue;
+           }
 
            /* 有接收到数据，把末端清零 */
            recv_data[bytes_received] = '\0';
