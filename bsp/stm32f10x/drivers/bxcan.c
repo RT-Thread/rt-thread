@@ -16,6 +16,10 @@
 #include <board.h>
 #include <bxcan.h>
 
+#if (defined (STM32F10X_LD_VL)) || (defined (STM32F10X_MD_VL)) || (defined (STM32F10X_HD_VL))
+#undef RT_USING_CAN
+#endif
+
 #ifdef RT_USING_COMPONENTS_INIT
 #include <components.h>
 #endif
