@@ -15,9 +15,11 @@
 #include <rtdevice.h>
 #include <board.h>
 #include <bxcan.h>
+
 #ifdef RT_USING_COMPONENTS_INIT
 #include <components.h>
 #endif
+
 #ifdef RT_USING_CAN
 
 #ifndef STM32F10X_CL
@@ -27,12 +29,13 @@
 #define BX_CAN_FMRNUMBER 28
 #define BX_CAN2_FMRSTART 14
 #endif
-#ifdef STM32F10X_HD
-#undef USING_BXCAN2
 
+#if (defined (STM32F10X_LD)) || (defined (STM32F10X_MD)) || (defined (STM32F10X_HD)) || (defined (STM32F10X_XL))
+#undef USING_BXCAN2
 #define CAN1_RX0_IRQn USB_LP_CAN1_RX0_IRQn
 #define CAN1_TX_IRQn USB_HP_CAN1_TX_IRQn
 #endif
+
 #define BX_CAN_MAX_FILTERS (BX_CAN_FMRNUMBER * 4)
 #define BX_CAN_MAX_FILTER_MASKS BX_CAN_MAX_FILTERS
 #define BX_CAN_FILTER_MAX_ARRAY_SIZE ((BX_CAN_MAX_FILTERS + 32 - 1) / 32)
