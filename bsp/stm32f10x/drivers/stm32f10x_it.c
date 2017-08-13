@@ -145,19 +145,23 @@ void EXTI4_IRQHandler(void)
 }
 #endif /* RT_USING_LWIP */
 
-#if (defined (RT_USING_CAN)) && !(defined (STM32F10X_CL))
+#ifndef STM32F10X_CL
 /* CAN and USB IRQ for stm32 none connectivity line devices
- * change to USB IRQ, if you want to use USB
  */
 void USB_LP_CAN1_RX0_IRQHandler(void)
 {
+#ifdef RT_USING_CAN
     CAN1_RX0_IRQHandler();
+#endif
 }
 void USB_HP_CAN1_TX_IRQHandler(void)
 {
+#ifdef RT_USING_CAN
     CAN1_TX_IRQHandler();
+#endif
 }
 #endif
+
 
 /**
   * @}
