@@ -25,6 +25,7 @@
 #include "stm32f10x_it.h"
 #include <board.h>
 #include <rtthread.h>
+#include "bxcan.h"
 
 /** @addtogroup Template_Project
   * @{
@@ -143,6 +144,20 @@ void EXTI4_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif /* RT_USING_LWIP */
+
+#if (defined (RT_USING_CAN)) && !(defined (STM32F10X_CL))
+/* CAN and USB IRQ for stm32 none connectivity line devices
+ * change to USB IRQ, if you want to use USB
+ */
+void USB_LP_CAN1_RX0_IRQHandler(void)
+{
+    CAN1_RX0_IRQHandler();
+}
+void USB_HP_CAN1_TX_IRQHandler(void)
+{
+    CAN1_TX_IRQHandler();
+}
+#endif
 
 /**
   * @}
