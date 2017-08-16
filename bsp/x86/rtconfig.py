@@ -32,20 +32,20 @@ BUILD = 'debug'
 
 if PLATFORM == 'gcc':
     # toolchains
-    PREFIX = 'i686-elf-'
-    CC = PREFIX + 'gcc'
-    AS = PREFIX + 'gcc'
+    PREFIX = ''
+    CC = PREFIX + 'gcc -m32 -fno-builtin -fno-stack-protector'
+    AS = PREFIX + 'gcc -m32'
     AR = PREFIX + 'ar'
-    LINK = PREFIX + 'gcc'
+    LINK = PREFIX + 'ld -melf_i386'
     TARGET_EXT = 'elf'
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -mtune=generic'
+    DEVICE = ''
     CFLAGS = DEVICE + ' -Wall'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-ia32.map,-cref,-u,_start -T x86_ram.lds -nostdlib'
+    LFLAGS = DEVICE + ' -Map rtthread-ia32.map -T x86_ram.lds -nostdlib'
 
     CPATH = ''
     LPATH = ''
