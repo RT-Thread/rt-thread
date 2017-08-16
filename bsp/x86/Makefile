@@ -8,6 +8,7 @@ all:floppy.img
 
 clean:
 	scons -c clean
+	rm -fr build rtthread*
 
 floppy.img:
 	wget https://github.com/bajdcc/tinix/raw/master/floppy.img
