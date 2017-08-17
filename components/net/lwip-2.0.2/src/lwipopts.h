@@ -287,6 +287,12 @@
 #define DEFAULT_UDP_RECVMBOX_SIZE   1
 
 /* ---------- RAW options ---------- */
+#ifdef RT_LWIP_RAW
+#define LWIP_RAW                    1
+#else
+#define LWIP_RAW                    0
+#endif
+
 #define DEFAULT_RAW_RECVMBOX_SIZE   1
 #define DEFAULT_ACCEPTMBOX_SIZE     10
 
@@ -348,9 +354,30 @@
 
 #endif /* PPP_SUPPORT */
 
-/* no read/write/close for socket */
-#define LWIP_POSIX_SOCKETS_IO_NAMES 0
-#define LWIP_NETIF_API  1
+/**
+ * LWIP_POSIX_SOCKETS_IO_NAMES==1: Enable POSIX-style sockets functions names.
+ * Disable this option if you use a POSIX operating system that uses the same
+ * names (read, write & close). (only used if you use sockets.c)
+ */
+#ifndef LWIP_POSIX_SOCKETS_IO_NAMES
+#define LWIP_POSIX_SOCKETS_IO_NAMES     0
+#endif
+
+/**
+ * LWIP_TCP_KEEPALIVE==1: Enable TCP_KEEPIDLE, TCP_KEEPINTVL and TCP_KEEPCNT
+ * options processing. Note that TCP_KEEPIDLE and TCP_KEEPINTVL have to be set
+ * in seconds. (does not require sockets.c, and will affect tcp.c)
+ */
+#ifndef LWIP_TCP_KEEPALIVE
+#define LWIP_TCP_KEEPALIVE              1
+#endif
+
+/**
+ * LWIP_NETIF_API==1: Support netif api (in netifapi.c)
+ */
+#ifndef LWIP_NETIF_API
+#define LWIP_NETIF_API                  1
+#endif
 
 /* MEMP_NUM_SYS_TIMEOUT: the number of simulateously active timeouts. */
 #define MEMP_NUM_SYS_TIMEOUT       (LWIP_TCP + IP_REASSEMBLY + LWIP_ARP + (2*LWIP_DHCP) + LWIP_AUTOIP + LWIP_IGMP + LWIP_DNS + PPP_SUPPORT)
