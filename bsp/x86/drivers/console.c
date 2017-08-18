@@ -25,6 +25,10 @@ extern void init_keyboard();
 extern void rt_keyboard_isr(void);
 extern rt_bool_t rt_keyboard_getc(char* c);
 
+extern void rt_serial_init(void);
+extern char rt_serial_getc(void);
+extern void rt_serial_putc(const char c);
+
 static void rt_console_putc(int c);
 
 /**
@@ -126,7 +130,7 @@ static void rt_cga_putc(int c)
 static void rt_console_putc(int c)
 {
     rt_cga_putc(c);
-//    rt_serial_putc(c);
+    rt_serial_putc(c);
 }
 
 /* RT-Thread Device Interface */
@@ -217,9 +221,18 @@ static void rt_console_isr(int vector, void* param)
 	rt_bool_t ret;
     rt_base_t level;
 
-	rt_keyboard_isr();
+	if(INTUART0_RX == vector)
+	{
+		c = rt_serial_getc();
+		ret = RT_TRUE;
+	}
+	else
+	{
+		rt_keyboard_isr();
 
-	ret = rt_keyboard_getc(&c);
+		ret = rt_keyboard_getc(&c);
+	}
+
 	if(ret == RT_FALSE)
 	{
 		/* do nothing */
@@ -275,11 +288,15 @@ static void rt_console_isr(int vector, void* param)
 void rt_hw_console_init(void)
 {
     rt_cga_init();
+	rt_serial_init();
 	init_keyboard();
 
     /* install  keyboard isr */
     rt_hw_interrupt_install(INTKEYBOARD, rt_console_isr, RT_NULL, "kbd");
     rt_hw_interrupt_umask(INTKEYBOARD);
+
+    rt_hw_interrupt_install(INTUART0_RX, rt_console_isr, RT_NULL, "COM1");
+    rt_hw_interrupt_umask(INTUART0_RX);
 
     console_device.type 		= RT_Device_Class_Char;
     console_device.rx_indicate  = RT_NULL;

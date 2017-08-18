@@ -14,4 +14,4 @@ floppy.img:
 	wget https://github.com/bajdcc/tinix/raw/master/floppy.img
 
 run:
-	qemu-system-i386 -fda floppy.img -boot a -m 64M
+	qemu-system-i386 -fda floppy.img -boot a -m 64M -serial stdio
