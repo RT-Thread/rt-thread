@@ -74,7 +74,16 @@ extern "C" {
 #define INTTIMER0			0
 #define INTKEYBOARD			1
 #define INTUART0_RX			4
-
+#define	CLOCK_IRQ	0
+#define	KEYBOARD_IRQ	1
+#define	CASCADE_IRQ	2	/* cascade enable for 2nd AT controller */
+#define	ETHER_IRQ	3	/* default ethernet interrupt vector */
+#define	SECONDARY_IRQ	3	/* RS232 interrupt vector for port 2 */
+#define	RS232_IRQ	4	/* RS232 interrupt vector for port 1 */
+#define	XT_WINI_IRQ	5	/* xt winchester */
+#define	FLOPPY_IRQ	6	/* floppy disk */
+#define	PRINTER_IRQ	7
+#define	AT_WINI_IRQ	14	/* at winchester */
 /* I/O Addresses of the two 8259A programmable interrupt controllers */
 #define IO_PIC1 			0x20 	/* Master(IRQs 0-7) */
 #define IO_PIC2 			0xa0	/* Slave(IRQs 8-15) */
