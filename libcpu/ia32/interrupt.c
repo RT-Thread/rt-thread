@@ -50,14 +50,19 @@ void rt_hw_interrupt_handle(int vector, void* param);
  */
 void rt_hw_pic_init()
 {
+	/* Master PIC Init */
 	outb(IO_PIC1, 0x11);
+	/* IR0-7 mapped to 0x20-0x27 (master) */
 	outb(IO_PIC1+1, IRQ_OFFSET);
 	outb(IO_PIC1+1, 1<<IRQ_SLAVE);
 	outb(IO_PIC1+1, 0x3);
 	outb(IO_PIC1+1, 0xff);
 	outb(IO_PIC1, 0x68);
 	outb(IO_PIC1, 0x0a);
+
+	/* Slave PIC Init */
 	outb(IO_PIC2, 0x11);
+	/* IR0-7 mapped to 0x28-0x2f (slave) */
 	outb(IO_PIC2+1, IRQ_OFFSET + 8);
 	outb(IO_PIC2+1, IRQ_SLAVE);
 	outb(IO_PIC2+1, 0x3);
@@ -65,11 +70,8 @@ void rt_hw_pic_init()
 	outb(IO_PIC2, 0x68);
 	outb(IO_PIC2, 0x0a);
 
-	if (irq_mask_8259A != 0xFFFF)
-	{
-		outb(IO_PIC1+1, (char)irq_mask_8259A);
-		outb(IO_PIC2+1, (char)(irq_mask_8259A >> 8));
-	}
+	outb(IO_PIC1+1, (unsigned char)irq_mask_8259A);
+	outb(IO_PIC2+1, (unsigned char)(irq_mask_8259A >> 8));
 
 	/* init interrupt nest, and context */
 	rt_interrupt_nest = 0;
@@ -117,15 +119,15 @@ void rt_hw_interrupt_init(void)
 void rt_hw_interrupt_umask(int vector)
 {
 	irq_mask_8259A = irq_mask_8259A&~(1<<vector);
-	outb(IO_PIC1+1, (char)irq_mask_8259A);
-	outb(IO_PIC2+1, (char)(irq_mask_8259A >> 8));
+	outb(IO_PIC1+1, (unsigned char)irq_mask_8259A);
+	outb(IO_PIC2+1, (unsigned char)(irq_mask_8259A >> 8));
 }
 
 void rt_hw_interrupt_mask(int vector)
 {
 	irq_mask_8259A = irq_mask_8259A | (1<<vector);
-	outb(IO_PIC1+1, (char)irq_mask_8259A);
-	outb(IO_PIC2+1, (char)(irq_mask_8259A >> 8));
+	outb(IO_PIC1+1, (unsigned char)irq_mask_8259A);
+	outb(IO_PIC2+1, (unsigned char)(irq_mask_8259A >> 8));
 }
 
 rt_isr_handler_t rt_hw_interrupt_install(int              vector,
@@ -163,6 +165,64 @@ rt_base_t rt_hw_interrupt_disable(void)
 void rt_hw_interrupt_enable(rt_base_t level)
 {
 	__asm__ __volatile__("pushl %0 ; popfl": :"g" (level):"memory", "cc");
+}
+
+rt_bool_t rt_hw_irq_set_edge_trigger(int irq_num)
+{
+    rt_uint8_t ret;
+
+    if (irq_num <= 7) {
+        if (irq_num == 1 || irq_num == 2) {
+            return RT_TRUE;
+        }
+        ret = inb(ELCR1);
+
+        ret &= ~(0x1 << irq_num);
+        outb(ELCR1, ret);
+    } else {
+        if (irq_num == 13 || irq_num == 8) {
+            return RT_FALSE;
+        }
+        ret = inb(ELCR2);
+
+        ret &= ~(0x1 << irq_num);
+		outb(ELCR2, ret);
+    }
+
+    delay(2);
+
+    return RT_TRUE;
+
+}
+
+rt_bool_t rt_hw_irq_set_level_trigger(int irq_num)
+{
+    rt_uint8_t ret;
+
+    if(irq_num <= 7){
+        if(irq_num==1 || irq_num==2){
+            return RT_FALSE;
+        }
+        ret = inb(ELCR1);
+
+        ret |= (0x1 << irq_num);
+        outb(ELCR1, ret);
+
+    } else {
+        if (irq_num == 13 || irq_num == 8) {
+            return RT_FALSE;
+        }
+        ret = inb(ELCR2);
+
+        ret |= (0x1 << irq_num);
+        outb(ELCR2, ret);
+
+    }
+
+    delay(2);
+
+    return RT_TRUE;
+
 }
 
 /*@}*/

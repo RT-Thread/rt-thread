@@ -13,5 +13,6 @@ clean:
 floppy.img:
 	wget https://github.com/bajdcc/tinix/raw/master/floppy.img
 
+# https://en.wikibooks.org/wiki/QEMU/Devices/Network
 run:
-	qemu-system-i386 -fda floppy.img -boot a -m 64M -serial stdio
+	qemu-system-i386 -fda floppy.img -boot a -m 64M -serial stdio -net nic,model=ne2k_pci

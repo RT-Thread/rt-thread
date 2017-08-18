@@ -29,9 +29,13 @@
 #include "floppy.h"
 #endif
 
+extern void init_dp8390(void);
+extern void pci_search_all_device(void);
 /* components initialization for simulator */
 void components_init(void)
 {
+	pci_search_all_device();
+	init_dp8390();
 #ifdef RT_USING_DFS
 	rt_floppy_init();
 	/* initialize the device file system */
