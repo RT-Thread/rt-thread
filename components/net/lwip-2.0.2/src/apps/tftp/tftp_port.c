@@ -1,5 +1,5 @@
 /*
- * File      : tftp_server.c
+ * File      : tftp_port.c
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
@@ -59,7 +59,7 @@ static int tftp_write(void* handle, struct pbuf* p)
     return write(fd, p->payload, p->len);
 }
 
-#if defined(RT_USING_FINSH) && defined(FINSH_USING_MSH)
+#if defined(RT_USING_FINSH)
 #include <finsh.h>
 
 static void tftp_server(uint8_t argc, char **argv)
@@ -78,6 +78,10 @@ static void tftp_server(uint8_t argc, char **argv)
         rt_kprintf("TFTP server start failed.\n");
     }
 }
-MSH_CMD_EXPORT(tftp_server, start tftp server.);
+FINSH_FUNCTION_EXPORT(tftp_server, start tftp server.);
 
-#endif /* defined(RT_USING_FINSH) && defined(FINSH_USING_MSH) */
+#if defined(FINSH_USING_MSH)
+MSH_CMD_EXPORT(tftp_server, start tftp server.);
+#endif /* defined(FINSH_USING_MSH) */
+
+#endif /* defined(RT_USING_FINSH) */

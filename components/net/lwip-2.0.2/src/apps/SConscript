@@ -1,0 +1,13 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('tftp/*.c')
+
+if GetDepend(['RT_LWIP_ICMP', 'RT_LWIP_RAW']):
+    src += Glob('ping/*.c')
+
+CPPPATH = [cwd]
+
+group = DefineGroup('LwIP', src, depend = ['RT_USING_NETUTILS', 'RT_USING_LWIP202'], CPPPATH = CPPPATH)
+
+Return('group')
