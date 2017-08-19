@@ -821,8 +821,12 @@ static struct rt_module* _load_relocated_object(const char *name,
             else
             {
                 Elf32_Addr addr;
-
-                if (ELF32_R_TYPE(rel->r_info) != R_ARM_V4BX)
+				
+				if(0 == rt_strcmp((const char *)(strtab + sym->st_name),"_GLOBAL_OFFSET_TABLE_"))
+				{
+					rt_kprintf("FIXME: module PIC GOT table,type is %d\n",ELF32_R_TYPE(rel->r_info));
+				}
+                else if (ELF32_R_TYPE(rel->r_info) != R_ARM_V4BX)
                 {
                     RT_DEBUG_LOG(RT_DEBUG_MODULE, ("relocate symbol: %s\n",
                                                    strtab + sym->st_name));
