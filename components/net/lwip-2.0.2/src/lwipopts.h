@@ -446,4 +446,22 @@
 #define SO_REUSE                        0
 #endif
 
+/*
+   ------------------------------------
+   ------- Applications options -------
+   ------------------------------------
+*/
+
+/**
+ * Max. length of TFTP filename
+ */
+#ifdef RT_LWIP_TFTP_MAX_FILENAME_LEN
+#define TFTP_MAX_FILENAME_LEN           RT_LWIP_TFTP_MAX_FILENAME_LEN
+#elif defined(RT_DFS_ELM_MAX_LFN)
+#define TFTP_MAX_FILENAME_LEN           RT_DFS_ELM_MAX_LFN
+#else
+#define TFTP_MAX_FILENAME_LEN           64
+#endif
+
+
 #endif /* __LWIPOPTS_H__ */
