@@ -37,6 +37,10 @@
 #ifdef RT_USING_DFS
 #include <dfs_posix.h>
 
+#if defined(RT_USING_LIBDL) && defined(RT_USING_MODULE)
+#include "dlfcn.h"
+#endif
+
 #ifdef DFS_USING_WORKDIR
 extern char working_directory[];
 #endif
@@ -405,6 +409,47 @@ int cmd_free(int argc, char **argv)
     return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_free, __cmd_free, Show the memory usage in the system.);
+#endif
+
+#ifdef RT_USING_DFS
+typedef int (*mainfcn_t)(int argc, char** argv);
+int cmd_exec(int argc, char **argv)
+{
+	if(argc < 2)
+	{
+		rt_kprintf("Usage: exec /path/to/executable\n");
+	}
+	else
+	{
+		int rv;
+		void* so = dlopen(argv[1], RTLD_NOW);
+		if(so != RT_NULL)
+		{
+			mainfcn_t pfmain = (mainfcn_t)dlsym(so,"main");
+			if(RT_NULL != pfmain)
+			{
+				rt_kprintf("exec main(0x%p)\n",pfmain);
+				rv = pfmain(argc-1, &argv[1]);
+				rt_kprintf("moudle '%s' exit with code %d(%08xh)\n", argv[1], rv, rv);
+			}
+			else
+			{
+				rt_kprintf("module '%s' has no main entry symbol\n", argv[1]);
+			}
+		}
+		else
+		{
+			rt_kprintf("load module '%s' failed\n", argv[1]);
+		}
+
+		if(RT_NULL != so)
+		{
+			dlclose(so);
+		}
+	}
+	return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_exec, __cmd_exec, Execute a runnable on the file system.);
 #endif
 
 #endif

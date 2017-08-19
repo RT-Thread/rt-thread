@@ -29,7 +29,7 @@ extern void rt_serial_init(void);
 extern char rt_serial_getc(void);
 extern void rt_serial_putc(const char c);
 
-static void rt_console_putc(int c);
+void rt_console_putc(int c);
 
 /**
  * @addtogroup QEMU
@@ -127,7 +127,7 @@ static void rt_cga_putc(int c)
  *
  * @param c the char to write
  */
-static void rt_console_putc(int c)
+void rt_console_putc(int c)
 {
     rt_cga_putc(c);
     rt_serial_putc(c);
