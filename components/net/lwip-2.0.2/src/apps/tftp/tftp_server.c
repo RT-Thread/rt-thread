@@ -226,7 +226,7 @@ recv(void *arg, struct udp_pcb *upcb, struct pbuf *p, const ip_addr_t *addr, u16
     case PP_HTONS(TFTP_WRQ):
     {
       const char tftp_null = 0;
-      char filename[TFTP_MAX_FILENAME_LEN] = { 0 };
+      char filename[TFTP_MAX_FILENAME_LEN + 1] = { 0 };
       char mode[TFTP_MAX_MODE_LEN] = { 0 };
       u16_t filename_end_offset;
       u16_t mode_end_offset;
