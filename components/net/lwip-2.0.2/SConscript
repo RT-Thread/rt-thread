@@ -29,7 +29,6 @@ src/core/udp.c
 src/netif/ethernet.c
 src/netif/ethernetif.c
 src/netif/lowpan6.c
-src/netif/slipif.c
 """)
 
 ipv4_src = Split("""
