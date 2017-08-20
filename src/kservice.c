@@ -39,6 +39,8 @@
 /* use precision */
 #define RT_PRINTF_PRECISION
 
+#define isprint(a) ( ((a)>=' ') && ((a)<='~') )
+
 /**
  * @addtogroup KernelService
  */
@@ -1171,6 +1173,47 @@ void rt_kprintf(const char *fmt, ...)
     va_end(args);
 }
 RTM_EXPORT(rt_kprintf);
+
+void rt_hexdump(const char* prefix, void* address, rt_size_t size)
+{
+	rt_uint32_t i,j;
+	rt_uint8_t *src;
+	src = (rt_uint8_t*)address;
+
+	rt_kprintf("%8s :: 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F\n", prefix);
+
+	for(i=0; i<(size+15)/16; i++)
+	{
+		rt_uint32_t a = (rt_uint32_t)src+i*16;
+		rt_kprintf("%08X ::", (rt_uint32_t)a);
+
+		for(j=0; j<16; j++)
+		{
+			if((i*16+j)<size)
+			{
+				rt_kprintf(" %02X", src[i*16+j]);
+			}
+			else
+			{
+				rt_kprintf("   ");
+			}
+		}
+		rt_kprintf("\t");
+		for(j=0; j<16; j++)
+		{
+			if(((i*16+j)<size) && isprint(src[i*16+j]))
+			{
+				rt_kprintf("%c", src[i*16+j]);
+			}
+			else
+			{
+				rt_kprintf(".");
+			}
+		}
+		rt_kprintf("\n");
+	}
+}
+RTM_EXPORT(rt_hexdump);
 #endif
 
 #ifdef RT_USING_HEAP
