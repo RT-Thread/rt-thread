@@ -67,7 +67,7 @@ rt_size_t rt_i2c_transfer(struct rt_i2c_bus_device *bus,
 #ifdef RT_I2C_DEBUG
         for (ret = 0; ret < num; ret++)
         {
-            i2c_dbg("msgs[%d] %c, addr=0x%02x, len=%d%s\n", ret,
+            i2c_dbg("msgs[%d] %c, addr=0x%02x, len=%d\n", ret,
                     (msgs[ret].flags & RT_I2C_RD) ? 'R' : 'W',
                     msgs[ret].addr, msgs[ret].len);
         }
