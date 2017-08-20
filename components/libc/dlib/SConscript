@@ -6,7 +6,7 @@ cwd = GetCurrentDir()
 group = []
 
 CPPPATH = [cwd]
-CPPDEFINES = ['RT_USING_DLIBC']
+CPPDEFINES = []
 
 if rtconfig.PLATFORM == 'iar':
 
