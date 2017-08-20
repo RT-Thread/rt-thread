@@ -23,7 +23,12 @@ out:
 	mkdir -p out
 
 dll: obj out
-	$(CC) -shared -fPIC -Isrc src/hello.c -o out/hello.so
+	$(CC) -shared -s -fPIC -Isrc src/hello.c -o out/hello.so
+
+disasm: obj out
+	$(CC) -shared -S -fPIC -Isrc src/hello.c -o obj/hello.s
+	cat obj/hello.s
+	objdump --disassemble out/hello.so
 
 exe: obj out
 

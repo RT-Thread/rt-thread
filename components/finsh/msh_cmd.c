@@ -412,6 +412,7 @@ FINSH_FUNCTION_EXPORT_ALIAS(cmd_free, __cmd_free, Show the memory usage in the s
 #endif
 
 #ifdef RT_USING_DFS
+#if defined(RT_USING_LIBDL) && defined(RT_USING_MODULE)
 typedef int (*mainfcn_t)(int argc, char** argv);
 int cmd_exec(int argc, char **argv)
 {
@@ -450,6 +451,7 @@ int cmd_exec(int argc, char **argv)
 	return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_exec, __cmd_exec, Execute a runnable on the file system.);
+#endif
 #endif
 
 #endif
