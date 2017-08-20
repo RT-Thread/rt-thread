@@ -26,7 +26,6 @@ struct Pseudodesc idt_pd =
 };
 
 /* exception and interrupt handler table */
-extern rt_isr_handler_t isr_table[];
 extern rt_isr_handler_t trap_func[];
 extern rt_isr_handler_t hdinterrupt_func[];
 

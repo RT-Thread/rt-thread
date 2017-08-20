@@ -59,6 +59,14 @@ static __inline void outb_p(char value, unsigned short port)
 						  ::"a" ((char) value),"d" ((unsigned short) port));
 }
 
+static __inline void outl(unsigned short dest_port, unsigned int input_data)
+{
+	asm volatile (
+        "outl       %%eax, %%dx"
+		:: "d" (dest_port), "a"((unsigned int)input_data));
+}
+
+
 static __inline void outw(int port, unsigned short data)
 {
 	__asm __volatile("outw %0,%w1" : : "a" (data), "d" (port));
@@ -68,6 +76,14 @@ static __inline unsigned char readcmos(int reg)
 {
 	outb(0x70,reg);
 	return (unsigned char) inb(0x71);
+}
+
+static __inline void delay(int n)
+{
+	int i = 0;
+	for( ; i < n ; i++) {
+		inb(0x80);
+	}
 }
 
 #define io_delay()  \

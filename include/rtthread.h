@@ -490,9 +490,11 @@ void rt_components_board_init(void);
 #ifndef RT_USING_CONSOLE
 #define rt_kprintf(...)
 #define rt_kputs(str)
+#define rt_hexdump(prefix, address, size)
 #else
 void rt_kprintf(const char *fmt, ...);
 void rt_kputs(const char *str);
+void rt_hexdump(const char* prefix, void* addrress, rt_size_t size);
 #endif
 rt_int32_t rt_vsprintf(char *dest, const char *format, va_list arg_ptr);
 rt_int32_t rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args);

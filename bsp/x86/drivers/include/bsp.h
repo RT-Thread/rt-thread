@@ -71,6 +71,9 @@ extern "C" {
 #define T_MCHK				18		/* machine check */
 #define T_DEFAULT			500		/* catchall */
 
+#define         ELCR1       0x4d0
+#define         ELCR2       0x4d1
+
 #define INTTIMER0			0
 #define INTKEYBOARD			1
 #define INTUART0_RX			4

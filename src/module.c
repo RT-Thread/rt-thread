@@ -191,6 +191,7 @@ static int rt_module_arm_relocate(struct rt_module *module,
     where = (Elf32_Addr *)((rt_uint8_t *)module->module_space
                            + rel->r_offset
                            - module->vstart_addr);
+
     switch (ELF32_R_TYPE(rel->r_info))
     {
     case R_ARM_NONE:
@@ -223,6 +224,8 @@ static int rt_module_arm_relocate(struct rt_module *module,
         *where &= 0xf000000f;
         *where |= 0x01a0f000;
         break;
+    case R_386_GLOB_DAT:
+    case R_386_JUMP_SLOT:
     case R_ARM_GLOB_DAT:
     case R_ARM_JUMP_SLOT:
         *where = (Elf32_Addr)sym_val;
@@ -237,6 +240,7 @@ static int rt_module_arm_relocate(struct rt_module *module,
                                        where, *where, sym_val));
         break;
 #endif
+    case R_386_RELATIVE:
     case R_ARM_RELATIVE:
         *where = (Elf32_Addr)sym_val + *where;
         RT_DEBUG_LOG(RT_DEBUG_MODULE, ("R_ARM_RELATIVE: 0x%x -> 0x%x 0x%x\n",
@@ -281,6 +285,7 @@ static int rt_module_arm_relocate(struct rt_module *module,
         lower = *(rt_uint16_t *)((Elf32_Addr)where + 2);
         break;
     default:
+		rt_kprintf("Module: unsupported relocation type %d sym %d offset %xh\n", ELF32_R_TYPE(rel->r_info), ELF32_R_SYM(rel->r_info), rel->r_offset);
         return -1;
     }
 
@@ -538,12 +543,14 @@ static struct rt_module *_load_shared_object(const char *name,
         {
             Elf32_Sym *sym = &symtab[ELF32_R_SYM(rel->r_info)];
 
-            RT_DEBUG_LOG(RT_DEBUG_MODULE, ("relocate symbol %s shndx %d\n",
+            RT_DEBUG_LOG(RT_DEBUG_MODULE, ("relocate symbol '%s' shndx %d st_info %d\n",
                                            strtab + sym->st_name,
-                                           sym->st_shndx));
+                                           sym->st_shndx,
+										   ELF_ST_BIND(sym->st_info)));
 
             if ((sym->st_shndx != SHT_NULL) ||
-                (ELF_ST_BIND(sym->st_info) == STB_LOCAL))
+                (ELF_ST_BIND(sym->st_info) == STB_LOCAL) ||
+                ( (ELF_ST_BIND(sym->st_info) == STB_GLOBAL) && (ELF_ST_TYPE(sym->st_info) == STT_OBJECT) ))
             {
                 rt_module_arm_relocate(module, rel,
                                        (Elf32_Addr)(module->module_space
@@ -568,6 +575,7 @@ static struct rt_module *_load_shared_object(const char *name,
                 else
                     rt_module_arm_relocate(module, rel, addr);
             }
+
             rel ++;
         }
 
@@ -821,7 +829,7 @@ static struct rt_module* _load_relocated_object(const char *name,
             else
             {
                 Elf32_Addr addr;
-
+				
                 if (ELF32_R_TYPE(rel->r_info) != R_ARM_V4BX)
                 {
                     RT_DEBUG_LOG(RT_DEBUG_MODULE, ("relocate symbol: %s\n",
