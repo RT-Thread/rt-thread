@@ -33,7 +33,7 @@ BUILD = 'debug'
 if PLATFORM == 'gcc':
     # toolchains
     PREFIX = ''
-    CC = PREFIX + 'gcc -m32 -fno-builtin -fno-stack-protector'
+    CC = PREFIX + 'gcc -m32 -fno-builtin -fno-stack-protector -nostdinc'
     AS = PREFIX + 'gcc -m32'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'ld -melf_i386'

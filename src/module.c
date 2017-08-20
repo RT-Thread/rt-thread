@@ -27,6 +27,7 @@
  * 2012-11-23     Bernard      using RT_DEBUG_LOG instead of rt_kprintf.
  * 2012-11-28     Bernard      remove rt_current_module and user
  *                             can use rt_module_unload to remove a module.
+ * 2017-08-20     parai        support intel 386 machine
  */
 
 #include <rthw.h>
@@ -223,6 +224,10 @@ static int rt_module_arm_relocate(struct rt_module *module,
         *where &= 0xf000000f;
         *where |= 0x01a0f000;
         break;
+#ifdef MODULE_USING_386
+    case R_386_GLOB_DAT:
+    case R_386_JUMP_SLOT:
+#endif
     case R_ARM_GLOB_DAT:
     case R_ARM_JUMP_SLOT:
         *where = (Elf32_Addr)sym_val;
@@ -236,6 +241,9 @@ static int rt_module_arm_relocate(struct rt_module *module,
         RT_DEBUG_LOG(RT_DEBUG_MODULE, ("R_ARM_GOT_BREL: 0x%x -> 0x%x 0x%x\n",
                                        where, *where, sym_val));
         break;
+#endif
+#ifdef MODULE_USING_386
+    case R_386_RELATIVE:
 #endif
     case R_ARM_RELATIVE:
         *where = (Elf32_Addr)sym_val + *where;
@@ -543,7 +551,11 @@ static struct rt_module *_load_shared_object(const char *name,
                                            sym->st_shndx));
 
             if ((sym->st_shndx != SHT_NULL) ||
-                (ELF_ST_BIND(sym->st_info) == STB_LOCAL))
+                (ELF_ST_BIND(sym->st_info) == STB_LOCAL)
+#ifdef MODULE_USING_386
+                || ( (ELF_ST_BIND(sym->st_info) == STB_GLOBAL) && (ELF_ST_TYPE(sym->st_info) == STT_OBJECT) )
+#endif
+				)
             {
                 rt_module_arm_relocate(module, rel,
                                        (Elf32_Addr)(module->module_space

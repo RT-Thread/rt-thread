@@ -208,6 +208,13 @@ typedef struct
 #define R_ARM_THM_JUMP24        30
 #define R_ARM_V4BX              40
 
+/*
+ * Relocation type for arm
+ */
+#define R_386_GLOB_DAT          6
+#define R_386_JUMP_SLOT         7
+#define R_386_RELATIVE          8
+
 /* Program Header */
 typedef struct
 {
