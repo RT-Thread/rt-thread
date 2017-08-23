@@ -18,12 +18,9 @@
 
 #include <gd32f4xx.h>
 
-//	<o>Begin Address of External SDRAM
-//		<i>Default: 0xD0000000
-#define EXT_SDRAM_BEGIN    SDRAM_BANK_ADDR /* the begining address of external SDRAM */
-//	<o>End Address of External SRAM
-//		<i>Default: 0xD0800000
-#define EXT_SDRAM_END      (SDRAM_BANK_ADDR + W9825G6KH_SIZE) /* the end address of external SDRAM */
+
+#define EXT_SDRAM_BEGIN    (0xC0000000U) /* the begining address of external SDRAM */
+#define EXT_SDRAM_END      (EXT_SDRAM_BEGIN + (32U * 1024 * 1024)) /* the end address of external SDRAM */
 
 // <o> Internal SRAM memory size[Kbytes] <8-64>
 //	<i>Default: 64

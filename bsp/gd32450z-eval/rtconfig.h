@@ -59,8 +59,6 @@
 
 #define RT_USING_COMPONENTS_INIT
 
-//#define RT_USING_EXT_SDRAM
-
 /* SECTION: Device System */
 /* Using Device System */
 #define RT_USING_DEVICE
@@ -68,7 +66,7 @@
 
 /* SECTION: RTGUI support */
 /* using RTGUI support */
-//#define RT_USING_GUIENGINE
+#define RT_USING_GUIENGINE
 
 /* name length of RTGUI object */
 #define RTGUI_NAME_MAX		16
@@ -89,19 +87,25 @@
 /* use mouse cursor */
 /* #define RTGUI_USING_MOUSE_CURSOR */
 
-
 /* Using serial framework */
 #define RT_USING_SERIAL
 
-#define RT_USING_UART1
-#define RT_USING_UART2
+#define RT_USING_USART0
+#define RT_USING_USART1
+#define RT_USING_USART2
 #define RT_USING_UART3
+#define RT_USING_UART4
+#define RT_USING_USART5
+#define RT_USING_UART6
+#define RT_USING_UART7
 
 /* Using GPIO pin framework */
 //#define RT_USING_PIN
 
 /* Using Hardware Timer framework */
 //#define RT_USING_HWTIMER
+
+#define RT_USING_EXT_SDRAM
 
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
@@ -231,5 +235,7 @@
 
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
+
+#define RT_USING_CPU_FFS
 
 #endif

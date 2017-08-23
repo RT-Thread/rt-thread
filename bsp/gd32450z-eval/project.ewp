@@ -32,11 +32,11 @@
                 </option>
                 <option>
                     <name>Input description</name>
-                    <state>Automatic choice of formatter, without multibyte support.</state>
+                    <state>Automatic choice of formatter.</state>
                 </option>
                 <option>
                     <name>Output description</name>
-                    <state>Automatic choice of formatter, without multibyte support.</state>
+                    <state>Automatic choice of formatter.</state>
                 </option>
                 <option>
                     <name>GOutputBinary</name>
@@ -342,6 +342,7 @@
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\libcpu\arm\cortex-m4</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\include</state>
                     <state>$PROJ_DIR$\drivers</state>
+                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\include</state>
                     <state>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Include</state>
                     <state>$PROJ_DIR$\.</state>
                     <state>$PROJ_DIR$\applications</state>
@@ -974,7 +975,7 @@
                 </option>
                 <option>
                     <name>IlinkLogCallGraph</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>IlinkIcfFile_AltDefault</name>
@@ -1369,6 +1370,7 @@
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\libcpu\arm\cortex-m4</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\include</state>
                     <state>$PROJ_DIR$\drivers</state>
+                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\include</state>
                     <state>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Include</state>
                     <state>$PROJ_DIR$\.</state>
                     <state>$PROJ_DIR$\applications</state>
@@ -2062,6 +2064,18 @@
             <name>$PROJ_DIR$\applications\application.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\applications\benchmark.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\applications\device_test.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\applications\mem_test.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\applications\rtgui_demo.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\applications\startup.c</name>
         </file>
     </group>
@@ -2128,10 +2142,16 @@
             <name>$PROJ_DIR$\drivers\board.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\drivers\drv_exmc_sdram.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\drivers\drv_lcd.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\drivers\drv_usart.c</name>
-            <excluded>
-                <configuration>Debug</configuration>
-            </excluded>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\drivers\gd32f450z_lcd_eval.c</name>
         </file>
     </group>
     <group>
@@ -2270,6 +2290,129 @@
         </file>
         <file>
             <name>$PROJ_DIR$\Libraries\CMSIS\GD\GD32F4xx\Source\system_gd32f4xx.c</name>
+        </file>
+    </group>
+    <group>
+        <name>GUIEngine</name>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\asc12font.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\asc16font.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\blit.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\box.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\color.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\container.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\dc.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\dc_blend.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\dc_buffer.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\dc_client.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\dc_hw.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\dc_rotozoom.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\dc_trans.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\filerw.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\font.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\font_bmp.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\font_fnt.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\font_freetype.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\font_hz_bmp.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\font_hz_file.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\hz12font.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\hz16font.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\image.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\image_bmp.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\image_hdc.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\image_jpg.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\image_png.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\image_xpm.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\matrix.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\mouse.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\region.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\rtgui_app.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\rtgui_driver.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\rtgui_object.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\rtgui_system.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\server.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\title.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\topwin.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\widget.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\window.c</name>
         </file>
     </group>
     <group>

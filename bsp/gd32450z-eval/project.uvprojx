@@ -10,7 +10,6 @@
       <TargetName>rt-thread_gd32f4xx</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060422::V5.06 update 4 (build 422)::ARMCC</pCCUsed>
       <TargetOption>
         <TargetCommonOption>
           <Device>GD32F450ZK</Device>
@@ -53,7 +52,7 @@
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
-          <BrowseInformation>1</BrowseInformation>
+          <BrowseInformation>0</BrowseInformation>
           <ListingPath>.\build\</ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -333,9 +332,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>GD32F4XX, USE_STDPERIPH_DRIVER,GD32F450</Define>
+              <Define>GD32F4XX, USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;.;drivers;Libraries\CMSIS;Libraries\CMSIS\GD\GD32F4xx\Include;Libraries\GD32F4xx_standard_peripheral\Include;..\..\..\git\rt-thread\include;..\..\..\git\rt-thread\libcpu\arm\cortex-m4;..\..\..\git\rt-thread\libcpu\arm\common;..\..\..\git\rt-thread\components\drivers\include;..\..\..\git\rt-thread\components\drivers\include;..\..\..\git\rt-thread\components\drivers\spi;..\..\..\git\rt-thread\components\drivers\include;..\..\..\git\rt-thread\components\drivers\include;..\..\..\git\rt-thread\components\finsh</IncludePath>
+              <IncludePath>applications;.;drivers;Libraries\CMSIS\GD\GD32F4xx\Include;Libraries\CMSIS;Libraries\GD32F4xx_standard_peripheral\Include;..\..\..\git\rt-thread\include;..\..\..\git\rt-thread\libcpu\arm\cortex-m4;..\..\..\git\rt-thread\libcpu\arm\common;..\..\..\git\rt-thread\components\drivers\include;..\..\..\git\rt-thread\components\drivers\include;..\..\..\git\rt-thread\components\drivers\spi;..\..\..\git\rt-thread\components\drivers\include;..\..\..\git\rt-thread\components\drivers\include;..\..\..\git\rt-thread\components\finsh;..\..\..\git\rt-thread\components\gui\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -385,6 +384,21 @@
               <FilePath>applications\application.c</FilePath>
             </File>
             <File>
+              <FileName>benchmark.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\benchmark.c</FilePath>
+            </File>
+            <File>
+              <FileName>device_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\device_test.c</FilePath>
+            </File>
+            <File>
+              <FileName>mem_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\mem_test.c</FilePath>
+            </File>
+            <File>
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\startup.c</FilePath>
@@ -400,59 +414,24 @@
               <FilePath>drivers\board.c</FilePath>
             </File>
             <File>
+              <FileName>drv_exmc_sdram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_exmc_sdram.c</FilePath>
+            </File>
+            <File>
               <FileName>drv_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_usart.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>2</AlwaysBuild>
-                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
-                  <PublicsOnly>2</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
-                <FileArmAds>
-                  <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
+            </File>
+            <File>
+              <FileName>gd32f450z_lcd_eval.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\gd32f450z_lcd_eval.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_lcd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -861,13 +840,228 @@
             </File>
           </Files>
         </Group>
+        <Group>
+          <GroupName>GUIEngine</GroupName>
+          <Files>
+            <File>
+              <FileName>asc12font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\asc12font.c</FilePath>
+            </File>
+            <File>
+              <FileName>asc16font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\asc16font.c</FilePath>
+            </File>
+            <File>
+              <FileName>blit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\blit.c</FilePath>
+            </File>
+            <File>
+              <FileName>box.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\box.c</FilePath>
+            </File>
+            <File>
+              <FileName>color.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\color.c</FilePath>
+            </File>
+            <File>
+              <FileName>container.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\container.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\dc.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc_blend.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\dc_blend.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc_buffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\dc_buffer.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc_client.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\dc_client.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc_hw.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\dc_hw.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc_rotozoom.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\dc_rotozoom.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc_trans.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\dc_trans.c</FilePath>
+            </File>
+            <File>
+              <FileName>filerw.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\filerw.c</FilePath>
+            </File>
+            <File>
+              <FileName>font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\font.c</FilePath>
+            </File>
+            <File>
+              <FileName>font_bmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\font_bmp.c</FilePath>
+            </File>
+            <File>
+              <FileName>font_fnt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\font_fnt.c</FilePath>
+            </File>
+            <File>
+              <FileName>font_freetype.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\font_freetype.c</FilePath>
+            </File>
+            <File>
+              <FileName>font_hz_bmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\font_hz_bmp.c</FilePath>
+            </File>
+            <File>
+              <FileName>font_hz_file.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\font_hz_file.c</FilePath>
+            </File>
+            <File>
+              <FileName>hz12font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\hz12font.c</FilePath>
+            </File>
+            <File>
+              <FileName>hz16font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\hz16font.c</FilePath>
+            </File>
+            <File>
+              <FileName>image.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\image.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_bmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\image_bmp.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_hdc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\image_hdc.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_jpg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\image_jpg.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_png.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\image_png.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_xpm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\image_xpm.c</FilePath>
+            </File>
+            <File>
+              <FileName>matrix.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\matrix.c</FilePath>
+            </File>
+            <File>
+              <FileName>mouse.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\mouse.c</FilePath>
+            </File>
+            <File>
+              <FileName>region.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\region.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtgui_app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\rtgui_app.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtgui_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\rtgui_driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtgui_object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\rtgui_object.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtgui_system.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\rtgui_system.c</FilePath>
+            </File>
+            <File>
+              <FileName>server.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\server.c</FilePath>
+            </File>
+            <File>
+              <FileName>title.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\title.c</FilePath>
+            </File>
+            <File>
+              <FileName>topwin.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\topwin.c</FilePath>
+            </File>
+            <File>
+              <FileName>widget.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\widget.c</FilePath>
+            </File>
+            <File>
+              <FileName>window.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\gui\src\window.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>::CMSIS</GroupName>
+        </Group>
       </Groups>
     </Target>
   </Targets>
 
   <RTE>
     <apis/>
-    <components/>
+    <components>
+      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.0.1" condition="ARMv6_7_8-M Device">
+        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.0.1"/>
+        <targetInfos>
+          <targetInfo name="rt-thread_gd32f4xx"/>
+        </targetInfos>
+      </component>
+    </components>
     <files/>
   </RTE>
 
