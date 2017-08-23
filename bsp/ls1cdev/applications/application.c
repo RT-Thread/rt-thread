@@ -16,11 +16,15 @@
 
 #include <rtthread.h>
 #include <components.h>
+#include "net/synopGMAC.h"
+#include <lwip/api.h>
 
 void rt_init_thread_entry(void *parameter)
 {
+	
 	/* initialization RT-Thread Components */
 	rt_components_init();
+	rt_hw_eth_init();
 }
 
 int rt_application_init(void)
