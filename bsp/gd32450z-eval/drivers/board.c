@@ -122,18 +122,13 @@ void rt_hw_board_init()
     
     SystemClock_Config();
     
+#ifdef RT_USING_COMPONENTS_INIT
+    rt_components_board_init();
+#endif
+
 #ifdef RT_USING_CONSOLE
     rt_console_set_device(CONSOLE_DEVICE);
 #endif
-    
-#ifdef RT_USING_COMPONENTS_INIT
-    rt_components_board_init();
-
-#else
-    SDRAM_Init();
-    mpu_init();
-#endif
-
 }
 
 /*@}*/
