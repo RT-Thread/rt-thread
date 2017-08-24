@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) chinesebear
+ */
+
+
 #include <rtthread.h>
 #include <components.h>
 #include <rtdef.h>

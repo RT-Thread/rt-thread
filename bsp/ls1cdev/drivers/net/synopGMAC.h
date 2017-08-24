@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) chinesebear
+ */
+
 #ifndef __SYNOPGMAC__H
 #define __SYNOPGMAC__H
 

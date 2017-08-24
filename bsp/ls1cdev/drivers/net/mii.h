@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) chinesebear
+ */
+
+
 #ifndef __MII_H__
 #define __MII_H__
 /* Generic MII registers. */

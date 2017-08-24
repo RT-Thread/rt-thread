@@ -1,6 +1,11 @@
+/*
+ * Copyright (C) chinesebear
+ */
+
+
 #include "mii.h"
 
-#if 1
+
 static inline unsigned int mii_nway_result (unsigned int negotiated)
 {
 	unsigned int ret;
@@ -122,4 +127,4 @@ static int mii_link_ok (struct mii_if_info *mii)
 		return 1;
 	return 0;
 }
-#endif
+

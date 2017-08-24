@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) chinesebear
+ */
+
+
 #ifndef __TYPES__H
 #define __TYPES__H
 
