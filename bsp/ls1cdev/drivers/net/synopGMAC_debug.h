@@ -1,5 +1,5 @@
 /*
- * File      : synopGMAC.h
+ * File      : synopGMAC_debug.h
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) chinesebear
  *
@@ -22,16 +22,16 @@
  * 2017-08-24     chinesebear  first version
  */
 
-#ifndef __SYNOPGMAC__H
-#define __SYNOPGMAC__H
 
-#include "synopGMAC_network_interface.h"
-#include "synopGMAC_Host.h"
-#include "synopGMAC_Dev.h"
-#include "synopGMAC_plat.h"
-#include "mii.h"
-#include "synopGMAC_types.h"
+#ifndef __DEBUG_H__
+#define __DEBUG_H__
 
-void rt_hw_eth_init(void);
+//#define GMAC_DEBUG
+#include <rtthread.h>
+#ifdef GMAC_DEBUG	
+#define DEBUG_MES	rt_kprintf
+#else
+#define DEBUG_MES(...)
+#endif
 
-#endif	/*__SYNOPGMAC__H*/
+#endif /*__DEBUG_H__*/

@@ -9,6 +9,32 @@
  * ------------------------REVISION HISTORY---------------------------------
  * Synopsys                 01/Aug/2007                              Created
  */
+
+/*
+ * File      : synopGMAC_Dev.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) chinesebear
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2017-08-24     chinesebear  first version
+ */
+ 
+
 #include "synopGMAC_Dev.h"
 #include <rthw.h>
 #include <rtthread.h>
@@ -100,32 +126,32 @@ s32 synopGMAC_read_phy_reg(u32 RegBase,u32 PhyBase, u32 RegOffset, u16 * data )
   */
 s32 synopGMAC_write_phy_reg(u32 RegBase, u32 PhyBase, u32 RegOffset, u16 data)
 {
-u32 addr;
-u32 loop_variable;
+    u32 addr;
+    u32 loop_variable;
 
-synopGMACWriteReg(RegBase,GmacGmiiData,data); // write the data in to GmacGmiiData register of synopGMAC ip
+    synopGMACWriteReg(RegBase,GmacGmiiData,data); // write the data in to GmacGmiiData register of synopGMAC ip
 
-addr = ((PhyBase << GmiiDevShift) & GmiiDevMask) | ((RegOffset << GmiiRegShift) & GmiiRegMask) | GmiiWrite | GmiiCsrClk3;	//sw: add GmiiCsrclk
+    addr = ((PhyBase << GmiiDevShift) & GmiiDevMask) | ((RegOffset << GmiiRegShift) & GmiiRegMask) | GmiiWrite | GmiiCsrClk3;	//sw: add GmiiCsrclk
 
-addr = addr | GmiiBusy ; //set Gmii clk to 20-35 Mhz and Gmii busy bit
- 
-synopGMACWriteReg(RegBase,GmacGmiiAddr,addr);
-        for(loop_variable = 0; loop_variable < DEFAULT_LOOP_VARIABLE; loop_variable++){
-                if (!(synopGMACReadReg(RegBase,GmacGmiiAddr) & GmiiBusy)){
-                	break;
-                }
+    addr = addr | GmiiBusy ; //set Gmii clk to 20-35 Mhz and Gmii busy bit
+
+    synopGMACWriteReg(RegBase,GmacGmiiAddr,addr);
+    for(loop_variable = 0; loop_variable < DEFAULT_LOOP_VARIABLE; loop_variable++){
+        if (!(synopGMACReadReg(RegBase,GmacGmiiAddr) & GmiiBusy)){
+        	break;
+        }
         plat_delay(DEFAULT_DELAY_VARIABLE);
-        }
+    }
 
-        if(loop_variable < DEFAULT_LOOP_VARIABLE){
-	return -ESYNOPGMACNOERR;
-	}
-        else{
+    if(loop_variable < DEFAULT_LOOP_VARIABLE){
+        return -ESYNOPGMACNOERR;
+    }
+    else{
         TR("Error::: PHY not responding Busy bit didnot get cleared !!!!!!\n");
-	return -ESYNOPGMACPHYERR;
-        }
+        return -ESYNOPGMACPHYERR;
+    }
 #if SYNOP_REG_DEBUG
-	printf("write phy reg: offset = 0x%x\tdata = 0x%x",RegOffset,data);
+    printf("write phy reg: offset = 0x%x\tdata = 0x%x",RegOffset,data);
 #endif
 }
 
@@ -1850,44 +1876,13 @@ s32 synopGMAC_get_tx_qptr(synopGMACdevice * gmacdev, u32 * Status, u32 * Buffer1
 	printf("\n==%02d %08x %08x %08x %08x %08x %08x %08x\n",txover,(u32)txdesc,txdesc->status,txdesc->length,txdesc->buffer1,txdesc->buffer2,txdesc->data1,txdesc->data2);
 #endif
 	if(synopGMAC_is_desc_owned_by_dma(txdesc))
-	{	
-#if 0
-		printf("synopGMAC_get_tx_qptr:TX desc is owned by dma!\n");
-#endif
+	{
 		return -1;
 	}
-#if 0
-	for(i=0;i<500000;i++)
-	{
-	if(synopGMAC_is_desc_empty(txdesc))
-	{	
-#if SYNOP_TX_DEBUG
-	//	printf("==desc owned by dma\n");
-#endif
-	//	return -1;
-		continue;
-	}
-	else
-		break;
-	}
-
-	if(i>=500000)
-	{
-		printf("i=%d\n",i);
-		return -1;
-	}
-	do
-	{
-		;
-	}while(synopGMAC_is_desc_empty(txdesc));
-#endif
 //	gmacdev->TxBusy     = synopGMAC_is_last_tx_desc(gmacdev,txdesc) ? 0 : txover + 1;
 //	gmacdev->TxBusyDesc = synopGMAC_is_last_tx_desc(gmacdev,txdesc) ? gmacdev->TxDesc : (txdesc + 1);
 	if(synopGMAC_is_desc_empty(txdesc))
 	{
-#if 0
-		printf("synopGMAC_get_tx_qptr:Tx Desc Empty!\n");
-#endif
 		return -1;
 	}
 	(gmacdev->BusyTxDesc)--; //busy tx descriptor is reduced by one as it will be handed over to Processor now
@@ -2025,10 +2020,8 @@ s32 synopGMAC_set_tx_qptr(synopGMACdevice * gmacdev, u32 Buffer1, u32 Length1, u
 		txdesc->status = DescOwnByDma;
 		#endif
 
-#if 1
 		gmacdev->TxNext = synopGMAC_is_last_tx_desc(gmacdev,txdesc) ? 0 : txnext + 1;
 		gmacdev->TxNextDesc = synopGMAC_is_last_tx_desc(gmacdev,txdesc) ? gmacdev->TxDesc : (txdesc + 1);
-#endif
 	}
 
 

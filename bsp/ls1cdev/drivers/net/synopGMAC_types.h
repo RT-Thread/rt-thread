@@ -1,5 +1,5 @@
 /*
- * File      : synopGMAC.h
+ * File      : synopGMAC_types.h
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) chinesebear
  *
@@ -22,16 +22,18 @@
  * 2017-08-24     chinesebear  first version
  */
 
-#ifndef __SYNOPGMAC__H
-#define __SYNOPGMAC__H
 
-#include "synopGMAC_network_interface.h"
-#include "synopGMAC_Host.h"
-#include "synopGMAC_Dev.h"
-#include "synopGMAC_plat.h"
-#include "mii.h"
-#include "synopGMAC_types.h"
 
-void rt_hw_eth_init(void);
+#ifndef __TYPES__H
+#define __TYPES__H
 
-#endif	/*__SYNOPGMAC__H*/
+typedef unsigned char uint8_t;
+typedef unsigned long long  u64;
+typedef unsigned int u32;
+typedef unsigned short u16;
+typedef unsigned char u8;
+typedef signed int s32;
+
+typedef u32 dma_addr_t;
+
+#endif	/*__TYPES__H*/

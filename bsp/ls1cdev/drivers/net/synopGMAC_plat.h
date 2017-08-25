@@ -9,6 +9,31 @@
  * -------------------------------------REVISION HISTORY---------------------------
  * Synopsys 				01/Aug/2007		 	   Created
  */
+
+/*
+ * File      : synopGMAC_plat.h
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) chinesebear
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2017-08-24     chinesebear  first version
+ */
+
  
  
 #ifndef SYNOP_GMAC_PLAT_H
@@ -21,8 +46,8 @@
 #include <linux/slab.h>
 #include <linux/pci.h>
 */
-#include "types.h"
-#include "debug.h"
+#include "synopGMAC_types.h"
+#include "synopGMAC_debug.h"
 //#include "mii.h"
 //#include "GMAC_Pmon.h"
 //#include "synopGMAC_Host.h"
@@ -151,35 +176,17 @@ void   plat_delay(u32);
  */
 static u32  synopGMACReadReg(u32 RegBase, u32 RegOffset)
 {
+    u32 addr;
+    u32 data;
 
-  u32 addr;
-  u32 data;
-
-		  addr = RegBase + (u32)RegOffset;
-
-#if 0 //__mips >= 3 && __mips != 32
-	__asm __volatile(
-			".set\tnoreorder\n\t"
-			".set\tmips3\n\t"
-			"ld $8,%1\n\t"
-			"lw $9,0x0($8)\n\t"
-			"nop\n\t"
-			"nop\n\t"
-			"sw $9,%0\n\t"
-			".set\tmips0\n\t"
-			:"=m"(data)
-			:"m"(addr)
-			:"memory","$8","$9"
-			);
-#else
-	data = *(volatile u32 *)addr;
-#endif
+    addr = RegBase + (u32)RegOffset;
+    data = *(volatile u32 *)addr;
 
 #if SYNOP_REG_DEBUG
-  TR("%s RegBase = 0x%08x RegOffset = 0x%08x RegData = 0x%08x\n", __FUNCTION__, (u32)RegBase, RegOffset, data );
+    TR("%s RegBase = 0x%08x RegOffset = 0x%08x RegData = 0x%08x\n", __FUNCTION__, (u32)RegBase, RegOffset, data );
 #endif
-//  rt_kprintf("%s RegBase = 0x%08x RegOffset = 0x%08x RegData = 0x%08x\n", __FUNCTION__, (u32)RegBase, RegOffset, data );
-  return data;
+    //  rt_kprintf("%s RegBase = 0x%08x RegOffset = 0x%08x RegData = 0x%08x\n", __FUNCTION__, (u32)RegBase, RegOffset, data );
+    return data;
 
 }
 
@@ -201,23 +208,8 @@ static void synopGMACWriteReg(u32 RegBase, u32 RegOffset, u32 RegData )
 #if SYNOP_REG_DEBUG
   TR("%s RegBase = 0x%08x RegOffset = 0x%08x RegData = 0x%08x\n", __FUNCTION__,(u32) RegBase, RegOffset, RegData );
 #endif
-//  writel(RegData,(void *)addr);
-  //printf("GMAC addr = 0x%lx \n",addr);
-#if 0 //__mips >= 3 && __mips != 32
-	__asm __volatile(
-			".set\tnoreorder\n\t"
-			".set\tmips3\n\t"
-			"lw $9,%0\n\t"
-			"ld $8,%1\n\t"
-			"sw $9,0x0($8)\n\t"
-			".set\tmips0\n\t"
-			:
-			:"m"(RegData),"m"(addr)
-			:"memory","$8","$9"
-			);
-#else
 	*(volatile u32 *)addr = RegData;
-#endif
+
 	if(addr == 0xbfe1100c)
 		DEBUG_MES("regdata = %08x\n", RegData);
   return;
