@@ -90,21 +90,21 @@ void rt_init_thread_entry(void* parameter)
 #endif /* #ifdef RT_USING_RTGUI */
 }
 
-#include "debug.h"
-
-rt_thread_t test_thread[2];
-
-void rt_test_thread_entry(void *parameter)
-{
-	uint32_t num = (uint32_t)parameter;
-	uint32_t schedule_times = 0;
-
-	while (1)
-	{
-		DEBUG(1, 0, "%d:%d\r\n", num, schedule_times++);
-		rt_thread_delay(1);
-	}
-}
+//#include "debug.h"
+//
+//rt_thread_t test_thread[2];
+//
+//void rt_test_thread_entry(void *parameter)
+//{
+//	uint32_t num = (uint32_t)parameter;
+//	uint32_t schedule_times = 0;
+//
+//	while (1)
+//	{
+//		DEBUG(1, 0, "%d:%d\r\n", num, schedule_times++);
+//		rt_thread_delay(1);
+//	}
+//}
 
 int rt_application_init(void)
 {

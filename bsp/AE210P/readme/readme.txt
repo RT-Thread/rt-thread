@@ -5,7 +5,7 @@ E-Mail : Archer Zhang <archer.zhang@wh-mx.com>
 ******************************
 [1] 在bsp目录下，添加AE210P目录，这是Andes AE210P EVB（N1068A）的主目录；
 [2] 在libcpu目录下，添加nds32目录，这是Andes N10系列Core的体系目录；
-[3] 由于编译器和Libc的原因（我们使用的Libc位于AE210P/libc），修改了finsh.h文件的Line：74～75，如下
+[3] 由于编译器的原因，修改了finsh.h文件的Line：74～75，如下
 	#if !(defined(__GNUC__) && defined(__x86_64__))
 	//typedef unsigned int size_t; // 注释这个typedef
 	#include <stddef.h> // 添加两个头文件包含

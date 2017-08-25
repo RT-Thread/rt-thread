@@ -38,7 +38,7 @@ PLATFORM_PATH     := $(BSP_PATH)/AE210P
 ARCH_SEL_PATH	  := $(ARCH_PATH)/nds32
 CONFIG_PATH		  := $(PLATFORM_PATH)
 BOARD_PATH		  := $(PLATFORM_PATH)/board
-LIBC_PATH	      := $(PLATFORM_PATH)/libc
+#LIBC_PATH	      := $(PLATFORM_PATH)/libc
 LDSCRIPT          := $(BOARD_PATH)/ae210p.ld
 CONFIG_H          := $(CONFIG_PATH)/config.h
 PLATFORM_DEF	  := -DAE210P
@@ -63,8 +63,6 @@ INCLUDE_PATH := \
 	-I$(BOARD_PATH) \
 	-I$(DRIVERS_PATH) \
 	-I$(CLI_PATH) \
-	-I$(LIBC_PATH) \
-	-I${PLATFORM_PATH}/include \
 	-I$(COMPONENTS_DRVINC_PATH) \
 	-I$(COMPONENTS_DRVINC_DRV_PATH) \
 	-I$(COMPONENTS_INIT_PATH) 
@@ -86,7 +84,7 @@ CFLAGS := \
 	$(PLATFORM_DEF) \
 	$(OS_DEF) \
 	$(SMALL_HEAP_DEF) \
-	-fno-builtin -fomit-frame-pointer -funroll-loops -nostdlib \
+	-fno-builtin -fomit-frame-pointer -funroll-loops \
 	-fno-strict-aliasing -ffunction-sections \
 	$(CMODEL) \
 	$(OPTIM) \
@@ -213,25 +211,25 @@ DRIVER_SRC	:= \
 	$(COMPONENTS_DRV_PATH)/serial/serial.c 
 #	$(PLATFORM_PATH)/driver/dma/dmad.c 
 
-LIBC_SRC := \
-	$(LIBC_PATH)/stdio/fgets.c \
-	$(LIBC_PATH)/stdio/fputs.c \
-	$(LIBC_PATH)/stdio/fprintf.c \
-	$(LIBC_PATH)/stdio/do_printf.c \
-	$(LIBC_PATH)/stdio/printf.c \
-	$(LIBC_PATH)/string/memcpy.c \
-	$(LIBC_PATH)/string/memmove.c \
-	$(LIBC_PATH)/string/memset.c \
-	$(LIBC_PATH)/string/strcat.c \
-	$(LIBC_PATH)/string/strcasecmp.c \
-	$(LIBC_PATH)/string/strcmp.c \
-	$(LIBC_PATH)/string/strcpy.c \
-	$(LIBC_PATH)/string/strdup.c \
-	$(LIBC_PATH)/string/strlen.c \
-	$(LIBC_PATH)/string/strstr.c \
-	$(LIBC_PATH)/string/strupr.c \
-	$(LIBC_PATH)/string/wchar.c \
-	$(LIBC_PATH)/stdlib/qsort.c
+#LIBC_SRC := \
+#	$(LIBC_PATH)/stdio/fgets.c \
+#	$(LIBC_PATH)/stdio/fputs.c \
+#	$(LIBC_PATH)/stdio/fprintf.c \
+#	$(LIBC_PATH)/stdio/do_printf.c \
+#	$(LIBC_PATH)/stdio/printf.c \
+#	$(LIBC_PATH)/string/memcpy.c \
+#	$(LIBC_PATH)/string/memmove.c \
+#	$(LIBC_PATH)/string/memset.c \
+#	$(LIBC_PATH)/string/strcat.c \
+#	$(LIBC_PATH)/string/strcasecmp.c \
+#	$(LIBC_PATH)/string/strcmp.c \
+#	$(LIBC_PATH)/string/strcpy.c \
+#	$(LIBC_PATH)/string/strdup.c \
+#	$(LIBC_PATH)/string/strlen.c \
+#	$(LIBC_PATH)/string/strstr.c \
+#	$(LIBC_PATH)/string/strupr.c \
+#	$(LIBC_PATH)/string/wchar.c \
+#	$(LIBC_PATH)/stdlib/qsort.c
 
 #LIBC_FILE_SRC := \
 #	$(LIBC_PATH)/stdio/file.c \
@@ -251,8 +249,8 @@ SRCS := \
 	${RTOS_SRC} \
 	${DRIVER_SRC} \
 	${CLI_SRC} \
-	${APP_SRCS} \
-	${LIBC_SRC} 
+	${APP_SRCS} #\
+#	${LIBC_SRC} 
 
 ALL_C_SRCS	:= ${SRCS} 
 ALL_AS_SRCS	+= ${BOOT_SRC} 
