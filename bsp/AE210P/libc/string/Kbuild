@@ -1,0 +1,12 @@
+lib-y	+= memcpy.o
+lib-y	+= memmove.o
+lib-y	+= memset.o
+lib-y	+= strcat.o
+lib-y	+= strcasecmp.o
+lib-y	+= strcmp.o
+lib-y	+= strdup.o
+lib-y	+= strlen.o
+lib-y	+= strstr.o
+lib-y	+= strtoul.o
+lib-y	+= strupr.o
+lib-y	+= wchar.o

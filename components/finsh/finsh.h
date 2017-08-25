@@ -72,7 +72,9 @@ typedef unsigned long  u_long;
 /* only for GNU GCC */
 
 #if !(defined(__GNUC__) && defined(__x86_64__))
-typedef unsigned int size_t;
+//typedef unsigned int size_t;
+#include <stddef.h>
+#include <string.h>
 #else
 #include <stdio.h>
 #endif

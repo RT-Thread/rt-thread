@@ -1,0 +1,6 @@
+lib-y		+= do_printf.o
+lib-y		+= fgets.o
+lib-y		+= file.o
+lib-y		+= fprintf.o
+lib-y		+= fputs.o
+lib-y		+= printf.o

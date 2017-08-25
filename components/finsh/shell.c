@@ -311,10 +311,11 @@ void finsh_thread_entry(void *parameter)
     if (shell->device == RT_NULL)
     {
 #ifdef RT_USING_CONSOLE
-        shell->device = rt_console_get_device();
-        RT_ASSERT(shell->device);
-        rt_device_set_rx_indicate(shell->device, finsh_rx_ind);
-        rt_device_open(shell->device, (RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_INT_RX));
+		shell->device = rt_console_get_device();
+		RT_ASSERT(shell->device);
+//		rt_device_set_rx_indicate(shell->device, finsh_rx_ind);
+//		rt_device_open(shell->device, (RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_INT_RX));
+		rt_device_open(shell->device, (RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_STREAM));
 #else
         RT_ASSERT(shell->device);
 #endif
@@ -323,7 +324,7 @@ void finsh_thread_entry(void *parameter)
     while (1)
     {
         /* wait receive */
-        if (rt_sem_take(&shell->rx_sem, RT_WAITING_FOREVER) != RT_EOK) continue;
+//      if (rt_sem_take(&shell->rx_sem, RT_WAITING_FOREVER) != RT_EOK) continue;
 
         /* read one character from device */
         while (rt_device_read(shell->device, 0, &ch, 1) == 1)
@@ -550,6 +551,8 @@ void finsh_thread_entry(void *parameter)
                 shell->line_curpos = 0;
             }
         } /* end of device read */
+
+        rt_thread_delay(1);
     }
 }
 
