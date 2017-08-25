@@ -11,6 +11,7 @@ drv_exmc_sdram.c
 drv_usart.c
 gd32f450z_lcd_eval.c
 drv_lcd.c
+drv_enet.c
 """)
 
 CPPPATH = [cwd]

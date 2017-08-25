@@ -66,7 +66,7 @@
 
 /* SECTION: RTGUI support */
 /* using RTGUI support */
-#define RT_USING_GUIENGINE
+//#define RT_USING_GUIENGINE
 
 /* name length of RTGUI object */
 #define RTGUI_NAME_MAX		16
@@ -159,7 +159,7 @@
 // #define RT_USING_DFS_ROMFS
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
-//#define RT_USING_LWIP
+#define RT_USING_LWIP
 /* LwIP uses RT-Thread Memory Management */
 #define RT_LWIP_USING_RT_MEM
 /* Enable ICMP protocol*/
@@ -173,7 +173,7 @@
 /* Enable DHCP */
 #define RT_LWIP_DHCP
 /* Enable DEBUG */
-//#define RT_LWIP_DEBUG
+#define RT_LWIP_DEBUG
 
 /* the number of simulatenously active TCP connections*/
 #define RT_LWIP_TCP_PCB_NUM	5
@@ -181,13 +181,13 @@
 /* ip address of target*/
 #define RT_LWIP_IPADDR0	192
 #define RT_LWIP_IPADDR1	168
-#define RT_LWIP_IPADDR2	1
-#define RT_LWIP_IPADDR3	201
+#define RT_LWIP_IPADDR2	10
+#define RT_LWIP_IPADDR3	222
 
 /* gateway address of target*/
 #define RT_LWIP_GWADDR0	192
 #define RT_LWIP_GWADDR1	168
-#define RT_LWIP_GWADDR2	1
+#define RT_LWIP_GWADDR2	10
 #define RT_LWIP_GWADDR3	1
 
 /* mask address of target*/

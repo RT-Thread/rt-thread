@@ -12,15 +12,7 @@
  */
 
 #include <rtthread.h>
-#include <rtgui/rtgui.h>
-#include <rtgui/rtgui_system.h>
-#include <rtgui/rtgui_app.h>
-
-#include <rtgui/widgets/window.h>
-#include <rtgui/dc.h>
-#include <rtgui/dc_hw.h>
-
-#include "finsh.h"
+#include <finsh.h>
 #include "rtgui_demo.h"
 
 #define DEBUG
@@ -32,6 +24,14 @@
 #endif
 
 #ifdef RT_USING_GUIENGINE
+
+#include <rtgui/rtgui.h>
+#include <rtgui/rtgui_system.h>
+#include <rtgui/rtgui_app.h>
+
+#include <rtgui/widgets/window.h>
+#include <rtgui/dc.h>
+#include <rtgui/dc_hw.h>
 
 struct rtgui_win *main_win;
 rt_bool_t dc_event_handler(struct rtgui_object *object, rtgui_event_t *event);

@@ -9,7 +9,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2009-01-05     Tanek        the first version
+ * 2017-08-23     Tanek        the first version
  */
 
 #include "gd32f450z_lcd_eval.h"

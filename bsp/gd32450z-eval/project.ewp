@@ -339,10 +339,14 @@
                 </option>
                 <option>
                     <name>CCIncludePath2</name>
+                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\libcpu\arm\cortex-m4</state>
+                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\include</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\include</state>
+                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\arch\include</state>
                     <state>$PROJ_DIR$\drivers</state>
-                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\include</state>
+                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\include\ipv4</state>
+                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\include\netif</state>
                     <state>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Include</state>
                     <state>$PROJ_DIR$\.</state>
                     <state>$PROJ_DIR$\applications</state>
@@ -1367,10 +1371,14 @@
                 </option>
                 <option>
                     <name>CCIncludePath2</name>
+                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\libcpu\arm\cortex-m4</state>
+                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\include</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\include</state>
+                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\arch\include</state>
                     <state>$PROJ_DIR$\drivers</state>
-                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\include</state>
+                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\include\ipv4</state>
+                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\include\netif</state>
                     <state>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Include</state>
                     <state>$PROJ_DIR$\.</state>
                     <state>$PROJ_DIR$\applications</state>
@@ -2073,6 +2081,9 @@
             <name>$PROJ_DIR$\applications\mem_test.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\apps\ping\ping.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\applications\rtgui_demo.c</name>
         </file>
         <file>
@@ -2142,6 +2153,9 @@
             <name>$PROJ_DIR$\drivers\board.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\drivers\drv_enet.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\drivers\drv_exmc_sdram.c</name>
         </file>
         <file>
@@ -2152,6 +2166,9 @@
         </file>
         <file>
             <name>$PROJ_DIR$\drivers\gd32f450z_lcd_eval.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\drivers\synopsys_emac.c</name>
         </file>
     </group>
     <group>
@@ -2293,129 +2310,6 @@
         </file>
     </group>
     <group>
-        <name>GUIEngine</name>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\asc12font.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\asc16font.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\blit.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\box.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\color.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\container.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\dc.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\dc_blend.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\dc_buffer.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\dc_client.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\dc_hw.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\dc_rotozoom.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\dc_trans.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\filerw.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\font.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\font_bmp.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\font_fnt.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\font_freetype.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\font_hz_bmp.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\font_hz_file.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\hz12font.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\hz16font.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\image.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\image_bmp.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\image_hdc.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\image_jpg.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\image_png.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\image_xpm.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\matrix.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\mouse.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\region.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\rtgui_app.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\rtgui_driver.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\rtgui_object.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\rtgui_system.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\server.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\title.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\topwin.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\widget.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\gui\src\window.c</name>
-        </file>
-    </group>
-    <group>
         <name>Kernel</name>
         <file>
             <name>$PROJ_DIR$\..\..\..\git\rt-thread\src\clock.c</name>
@@ -2461,6 +2355,114 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\git\rt-thread\src\timer.c</name>
+        </file>
+    </group>
+    <group>
+        <name>LwIP</name>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\api_lib.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\api_msg.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\autoip.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\def.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\dhcp.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\dns.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\err.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\netif\etharp.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\netif\ethernetif.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\icmp.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\igmp.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\inet.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\inet_chksum.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\init.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\ip.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\ip_addr.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\ip_frag.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\memp.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\netbuf.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\netdb.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\netif.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\netifapi.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\pbuf.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\raw.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\netif\slipif.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\sockets.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\stats.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\sys.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\arch\sys_arch.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\tcp.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\tcp_in.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\tcp_out.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\tcpip.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\timers.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\udp.c</name>
         </file>
     </group>
 </project>
