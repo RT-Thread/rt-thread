@@ -567,53 +567,53 @@ static void GPIO_Configuration(void)
 #ifdef RT_USING_UART1
     /* Configure USART1 Rx/tx PIN */
     GPIO_InitStructure.GPIO_Pin = UART1_GPIO_RX | UART1_GPIO_TX;
-    GPIO_Init(UART1_GPIO, &GPIO_InitStructure);
-
-    /* Connect alternate function */
+     /* Connect alternate function */
     GPIO_PinAFConfig(UART1_GPIO, UART1_TX_PIN_SOURCE, GPIO_AF_USART1);
-    GPIO_PinAFConfig(UART1_GPIO, UART1_RX_PIN_SOURCE, GPIO_AF_USART1);
+    GPIO_PinAFConfig(UART1_GPIO, UART1_RX_PIN_SOURCE, GPIO_AF_USART1);    
+    
+    GPIO_Init(UART1_GPIO, &GPIO_InitStructure);
 #endif /* RT_USING_UART1 */
 
 #ifdef RT_USING_UART2
     /* Configure USART2 Rx/tx PIN */
     GPIO_InitStructure.GPIO_Pin = UART2_GPIO_RX | UART2_GPIO_TX;
-    GPIO_Init(UART2_GPIO, &GPIO_InitStructure);
-
     /* Connect alternate function */
     GPIO_PinAFConfig(UART2_GPIO, UART2_TX_PIN_SOURCE, GPIO_AF_USART2);
     GPIO_PinAFConfig(UART2_GPIO, UART2_RX_PIN_SOURCE, GPIO_AF_USART2);
+    
+    GPIO_Init(UART2_GPIO, &GPIO_InitStructure);
 #endif /* RT_USING_UART2 */
 
 #ifdef RT_USING_UART3
     /* Configure USART3 Rx/tx PIN */
     GPIO_InitStructure.GPIO_Pin = UART3_GPIO_TX | UART3_GPIO_RX;
-    GPIO_Init(UART3_GPIO, &GPIO_InitStructure);
-
     /* Connect alternate function */
     GPIO_PinAFConfig(UART3_GPIO, UART3_TX_PIN_SOURCE, GPIO_AF_USART3);
     GPIO_PinAFConfig(UART3_GPIO, UART3_RX_PIN_SOURCE, GPIO_AF_USART3);
+    
+    GPIO_Init(UART3_GPIO, &GPIO_InitStructure);
 #endif /* RT_USING_UART3 */
 
 #ifdef RT_USING_UART4
     /* Configure USART4 Rx/tx PIN */
     GPIO_InitStructure.GPIO_Pin = UART4_GPIO_TX | UART4_GPIO_RX;
-    GPIO_Init(UART4_GPIO, &GPIO_InitStructure);
-
     /* Connect alternate function */
     GPIO_PinAFConfig(UART4_GPIO, UART4_TX_PIN_SOURCE, GPIO_AF_UART4);
     GPIO_PinAFConfig(UART4_GPIO, UART4_RX_PIN_SOURCE, GPIO_AF_UART4);
+    
+    GPIO_Init(UART4_GPIO, &GPIO_InitStructure);
 #endif /* RT_USING_UART4 */
 
 #ifdef RT_USING_UART5
     /* Configure USART5 Rx/tx PIN */
     GPIO_InitStructure.GPIO_Pin = UART5_GPIO_TX;
+ /* Connect alternate function */
+    GPIO_PinAFConfig(UART5_TX, UART5_TX_PIN_SOURCE, GPIO_AF_UART5); 
     GPIO_Init(UART5_TX, &GPIO_InitStructure);
+    
     GPIO_InitStructure.GPIO_Pin = UART5_GPIO_RX;
-    GPIO_Init(UART5_RX, &GPIO_InitStructure);
-
-    /* Connect alternate function */
-    GPIO_PinAFConfig(UART5_TX, UART5_TX_PIN_SOURCE, GPIO_AF_UART5);
     GPIO_PinAFConfig(UART5_RX, UART5_RX_PIN_SOURCE, GPIO_AF_UART5);
+    GPIO_Init(UART5_RX, &GPIO_InitStructure);
 #endif /* RT_USING_UART5 */
 }
 
