@@ -16,8 +16,10 @@
 #include <gd32f4xx.h>
 #include <drv_usart.h>
 #include <board.h>
-
 #include <finsh.h>
+
+#ifdef RT_USING_GUIENGINE
+
 
 #define RT_HW_LCD_WIDTH                ((uint16_t)320)     /* LCD PIXEL WIDTH            */
 #define RT_HW_LCD_HEIGHT               ((uint16_t)480)     /* LCD PIXEL HEIGHT           */
@@ -67,7 +69,7 @@ static void tli_gpio_config(void)
     
     gpio_af_set(GPIOB,GPIO_AF_9,GPIO_PIN_0);  
     gpio_af_set(GPIOB,GPIO_AF_14,GPIO_PIN_10);     
-    gpio_af_set(GPIOB,GPIO_AF_14,GPIO_PIN_11);
+    //gpio_af_set(GPIOB,GPIO_AF_14,GPIO_PIN_11);
     gpio_af_set(GPIOB,GPIO_AF_14,GPIO_PIN_8);     
     gpio_af_set(GPIOB,GPIO_AF_14,GPIO_PIN_9);
     
@@ -90,9 +92,9 @@ static void tli_gpio_config(void)
     |GPIO_PIN_6|GPIO_PIN_8|GPIO_PIN_11|GPIO_PIN_12);
 
     gpio_mode_set(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO_PIN_0|GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10
-    |GPIO_PIN_11);
+    /*|GPIO_PIN_11*/);
     gpio_output_options_set(GPIOB, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_0|GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10
-    |GPIO_PIN_11);
+    /*|GPIO_PIN_11*/);
 
     gpio_mode_set(GPIOC, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO_PIN_6|GPIO_PIN_7);
     gpio_output_options_set(GPIOC, GPIO_OTYPE_PP,GPIO_OSPEED_50MHZ, GPIO_PIN_6|GPIO_PIN_7);
@@ -144,7 +146,6 @@ static void tli_config(void)
     tli_layer_parameter_struct         tli_layer_init_struct;
  
     rcu_periph_clock_enable(RCU_TLI);
-    tli_gpio_config();
 
     /* configure the PLLSAI clock to generate lcd clock */
     if(ERROR == rcu_pllsai_config(192, 2, 3, 3)){
@@ -264,3 +265,4 @@ int gd32_hw_lcd_init(void)
     return 0;
 }
 INIT_DEVICE_EXPORT(gd32_hw_lcd_init);
+#endif

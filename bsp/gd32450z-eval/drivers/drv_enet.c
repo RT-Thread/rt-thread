@@ -30,7 +30,6 @@
 
 #define ETHERNET_MAC0    ((struct rt_synopsys_eth *)(0x40020000U + 0x00008000U))
 
-
 //#define EMAC_DEBUG
 //#define EMAC_RX_DUMP
 //#define EMAC_TX_DUMP
@@ -62,7 +61,6 @@ struct gd32_emac
     IRQn_Type ETHER_MAC_IRQ;
 
     ALIGN(RT_ALIGN_SIZE)
-    PRAGMA(data_alignment=RT_ALIGN_SIZE)
     EMAC_DMADESCTypeDef  DMARxDscrTab[EMAC_RXBUFNB], DMATxDscrTab[EMAC_TXBUFNB];
     ALIGN(RT_ALIGN_SIZE)
     rt_uint8_t Rx_Buff[EMAC_RXBUFNB][EMAC_MAX_PACKET_SIZE];
@@ -520,33 +518,6 @@ struct pbuf * gd32_emac_rx(rt_device_t dev)
     return p;
 }
 
-/*
-GPIO               RMII0               RMII1                MII
-PC0/E_RXER0_RXDV1                      ch. 1 CRS_DV         ch. 0 RX_ER
-PC1/E_RX03_RX11                        ch. 1 RXD [1]        ch. 0 RXD [3]
-PC2/E_RX02_RX10                        ch. 1 RXD [0]        ch. 0 RXD [2]
-PC3/E_RX01         ch. 0 RXD [1]                            ch. 0 RXD [1]
-PC4/E_RX00         ch. 0 RXD [0]                            ch. 0 RXD [0]
-PC5/E_RXDV0        ch. 0 CRS_DV                             ch. 0 RX_DV
-PC6/E_MDIO0        ch. 0 MDIO                               ch. 0 MDIO
-PC7/E_MDC0         ch. 0 MDC                                ch. 0 MDC
-PC8/E_RXCK0_REFCK  ch. 0 REF_CLK       ch. 1 REF_CLK        ch. 0 RX_CLK
-
-PC9/E_COL0                                                  ch. 0 COL
-PCA/E_CRS0                                                  ch. 0 CRS
-PCB/E_COUT         REF_CLK output(??).
-
-PCC/E_MDIO1                            ch. 1 MDIO
-PCD/E_TCK0_MDC1                        ch. 1 MDC            ch. 0 TX_CLK
-PCE/E_TXER0_TXEN1                      ch. 1 TX_EN          ch. 0 TX_ER
-PCF/E_TX03_TX11                        ch. 1 TXD [1]        ch. 0 TXD [3]
-PD0/E_TX02_TX10                        ch. 1 TXD [0]        ch. 0 TXD [2]
-PD1/E_TX01         ch. 0 TXD [1]                            ch. 0 TXD [1]
-PD2/E_TX00         ch. 0 TXD [0]                            ch. 0 TXD [0]
-PD3/E_TXEN0        ch. 0 TX_EN                              ch. 0 TX_EN
-*/
-
-
 /*!
     \brief      configures the nested vectored interrupt controller
     \param[in]  none
@@ -650,7 +621,6 @@ int rt_hw_gd32_eth_init(void)
   
     /* configure the GPIO ports for ethernet pins */
     enet_gpio_config();
-    
     
     /* set autonegotiation mode */
     gd32_emac_device0.phy_mode = EMAC_PHY_AUTO;

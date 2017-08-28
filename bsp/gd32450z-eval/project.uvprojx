@@ -322,7 +322,7 @@
             <wLevel>0</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
-            <uC99>0</uC99>
+            <uC99>1</uC99>
             <useXO>0</useXO>
             <v6Lang>1</v6Lang>
             <v6LangP>1</v6LangP>
@@ -335,7 +335,7 @@
               <MiscControls></MiscControls>
               <Define>GD32F4XX, USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;.;drivers;Libraries\CMSIS\GD\GD32F4xx\Include;Libraries\CMSIS;Libraries\GD32F4xx_standard_peripheral\Include;..\..\..\git\rt-thread\include;..\..\..\git\rt-thread\libcpu\arm\cortex-m4;..\..\..\git\rt-thread\libcpu\arm\common;..\..\..\git\rt-thread\components\drivers\include;..\..\..\git\rt-thread\components\drivers\include;..\..\..\git\rt-thread\components\drivers\spi;..\..\..\git\rt-thread\components\drivers\include;..\..\..\git\rt-thread\components\drivers\include;..\..\..\git\rt-thread\components\finsh;..\..\..\git\rt-thread\components\gui\include</IncludePath>
+              <IncludePath>applications;.;drivers;Libraries\CMSIS\GD\GD32F4xx\Include;Libraries\CMSIS;Libraries\GD32F4xx_standard_peripheral\Include;..\..\..\git\rt-thread\include;..\..\..\git\rt-thread\libcpu\arm\cortex-m4;..\..\..\git\rt-thread\libcpu\arm\common;..\..\..\git\rt-thread\components\drivers\include;..\..\..\git\rt-thread\components\drivers\include;..\..\..\git\rt-thread\components\drivers\spi;..\..\..\git\rt-thread\components\drivers\include;..\..\..\git\rt-thread\components\drivers\include;..\..\..\git\rt-thread\components\finsh;..\..\..\git\rt-thread\components\net\lwip-1.4.1\src;..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\include;..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\include\ipv4;..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\arch\include;..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\include\netif;..\..\..\git\rt-thread\components\trace;..\..\..\git\rt-thread\components\trace\SystemView_Src_V240\Config;..\..\..\git\rt-thread\components\trace;..\..\..\git\rt-thread\components\trace\SystemView_Src_V240\SEGGER</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -400,14 +400,19 @@
               <FilePath>applications\mem_test.c</FilePath>
             </File>
             <File>
-              <FileName>startup.c</FileName>
+              <FileName>ping.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\startup.c</FilePath>
+              <FilePath>applications\ping.c</FilePath>
             </File>
             <File>
               <FileName>rtgui_demo.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\applications\rtgui_demo.c</FilePath>
+              <FilePath>applications\rtgui_demo.c</FilePath>
+            </File>
+            <File>
+              <FileName>startup.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\startup.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -438,6 +443,16 @@
               <FileName>drv_lcd.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_lcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_enet.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_enet.c</FilePath>
+            </File>
+            <File>
+              <FileName>synopsys_emac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\synopsys_emac.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -847,207 +862,207 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>GUIEngine</GroupName>
+          <GroupName>LwIP</GroupName>
           <Files>
             <File>
-              <FileName>asc12font.c</FileName>
+              <FileName>api_lib.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\asc12font.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\api_lib.c</FilePath>
             </File>
             <File>
-              <FileName>asc16font.c</FileName>
+              <FileName>api_msg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\asc16font.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\api_msg.c</FilePath>
             </File>
             <File>
-              <FileName>blit.c</FileName>
+              <FileName>err.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\blit.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\err.c</FilePath>
             </File>
             <File>
-              <FileName>box.c</FileName>
+              <FileName>netbuf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\box.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\netbuf.c</FilePath>
             </File>
             <File>
-              <FileName>color.c</FileName>
+              <FileName>netdb.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\color.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\netdb.c</FilePath>
             </File>
             <File>
-              <FileName>container.c</FileName>
+              <FileName>netifapi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\container.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\netifapi.c</FilePath>
             </File>
             <File>
-              <FileName>dc.c</FileName>
+              <FileName>sockets.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\dc.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\sockets.c</FilePath>
             </File>
             <File>
-              <FileName>dc_blend.c</FileName>
+              <FileName>tcpip.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\dc_blend.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\tcpip.c</FilePath>
             </File>
             <File>
-              <FileName>dc_buffer.c</FileName>
+              <FileName>sys_arch.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\dc_buffer.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\arch\sys_arch.c</FilePath>
             </File>
             <File>
-              <FileName>dc_client.c</FileName>
+              <FileName>def.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\dc_client.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\def.c</FilePath>
             </File>
             <File>
-              <FileName>dc_hw.c</FileName>
+              <FileName>dhcp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\dc_hw.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\dhcp.c</FilePath>
             </File>
             <File>
-              <FileName>dc_rotozoom.c</FileName>
+              <FileName>dns.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\dc_rotozoom.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\dns.c</FilePath>
             </File>
             <File>
-              <FileName>dc_trans.c</FileName>
+              <FileName>init.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\dc_trans.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\init.c</FilePath>
             </File>
             <File>
-              <FileName>filerw.c</FileName>
+              <FileName>memp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\filerw.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\memp.c</FilePath>
             </File>
             <File>
-              <FileName>font.c</FileName>
+              <FileName>netif.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\font.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\netif.c</FilePath>
             </File>
             <File>
-              <FileName>font_bmp.c</FileName>
+              <FileName>pbuf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\font_bmp.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\pbuf.c</FilePath>
             </File>
             <File>
-              <FileName>font_fnt.c</FileName>
+              <FileName>raw.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\font_fnt.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\raw.c</FilePath>
             </File>
             <File>
-              <FileName>font_freetype.c</FileName>
+              <FileName>stats.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\font_freetype.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\stats.c</FilePath>
             </File>
             <File>
-              <FileName>font_hz_bmp.c</FileName>
+              <FileName>sys.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\font_hz_bmp.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\sys.c</FilePath>
             </File>
             <File>
-              <FileName>font_hz_file.c</FileName>
+              <FileName>tcp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\font_hz_file.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\tcp.c</FilePath>
             </File>
             <File>
-              <FileName>hz12font.c</FileName>
+              <FileName>tcp_in.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\hz12font.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\tcp_in.c</FilePath>
             </File>
             <File>
-              <FileName>hz16font.c</FileName>
+              <FileName>tcp_out.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\hz16font.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\tcp_out.c</FilePath>
             </File>
             <File>
-              <FileName>image.c</FileName>
+              <FileName>timers.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\image.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\timers.c</FilePath>
             </File>
             <File>
-              <FileName>image_bmp.c</FileName>
+              <FileName>udp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\image_bmp.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\udp.c</FilePath>
             </File>
             <File>
-              <FileName>image_hdc.c</FileName>
+              <FileName>autoip.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\image_hdc.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\autoip.c</FilePath>
             </File>
             <File>
-              <FileName>image_jpg.c</FileName>
+              <FileName>icmp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\image_jpg.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\icmp.c</FilePath>
             </File>
             <File>
-              <FileName>image_png.c</FileName>
+              <FileName>igmp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\image_png.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\igmp.c</FilePath>
             </File>
             <File>
-              <FileName>image_xpm.c</FileName>
+              <FileName>inet.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\image_xpm.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\inet.c</FilePath>
             </File>
             <File>
-              <FileName>matrix.c</FileName>
+              <FileName>inet_chksum.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\matrix.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\inet_chksum.c</FilePath>
             </File>
             <File>
-              <FileName>mouse.c</FileName>
+              <FileName>ip.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\mouse.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\ip.c</FilePath>
             </File>
             <File>
-              <FileName>region.c</FileName>
+              <FileName>ip_addr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\region.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\ip_addr.c</FilePath>
             </File>
             <File>
-              <FileName>rtgui_app.c</FileName>
+              <FileName>ip_frag.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\rtgui_app.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\ip_frag.c</FilePath>
             </File>
             <File>
-              <FileName>rtgui_driver.c</FileName>
+              <FileName>etharp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\rtgui_driver.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\netif\etharp.c</FilePath>
             </File>
             <File>
-              <FileName>rtgui_object.c</FileName>
+              <FileName>ethernetif.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\rtgui_object.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\netif\ethernetif.c</FilePath>
             </File>
             <File>
-              <FileName>rtgui_system.c</FileName>
+              <FileName>slipif.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\rtgui_system.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\netif\slipif.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>trace</GroupName>
+          <Files>
+            <File>
+              <FileName>SEGGER_SYSVIEW_Config_RTThread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\git\rt-thread\components\trace\SystemView_Src_V240\Config\SEGGER_SYSVIEW_Config_RTThread.c</FilePath>
             </File>
             <File>
-              <FileName>server.c</FileName>
+              <FileName>SEGGER_SYSVIEW_RTThread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\server.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\trace\SystemView_Src_V240\Config\SEGGER_SYSVIEW_RTThread.c</FilePath>
             </File>
             <File>
-              <FileName>title.c</FileName>
+              <FileName>SEGGER_RTT.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\title.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\trace\SystemView_Src_V240\SEGGER\SEGGER_RTT.c</FilePath>
             </File>
             <File>
-              <FileName>topwin.c</FileName>
+              <FileName>SEGGER_SYSVIEW.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\topwin.c</FilePath>
-            </File>
-            <File>
-              <FileName>widget.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\widget.c</FilePath>
-            </File>
-            <File>
-              <FileName>window.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\window.c</FilePath>
+              <FilePath>..\..\..\git\rt-thread\components\trace\SystemView_Src_V240\SEGGER\SEGGER_SYSVIEW.c</FilePath>
             </File>
           </Files>
         </Group>

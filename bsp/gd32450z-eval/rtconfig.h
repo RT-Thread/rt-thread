@@ -22,6 +22,7 @@
 
 /* Using Hook */
 #define RT_USING_HOOK
+#define RT_USING_TRACE
 
 #define IDLE_THREAD_STACK_SIZE     1024
 
@@ -182,7 +183,7 @@
 #define RT_LWIP_IPADDR0	192
 #define RT_LWIP_IPADDR1	168
 #define RT_LWIP_IPADDR2	10
-#define RT_LWIP_IPADDR3	222
+#define RT_LWIP_IPADDR3	241
 
 /* gateway address of target*/
 #define RT_LWIP_GWADDR0	192
@@ -236,6 +237,6 @@
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 
-#define RT_USING_CPU_FFS
+//#define RT_USING_CPU_FFS
 
 #endif
