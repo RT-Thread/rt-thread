@@ -22,6 +22,16 @@
 #include <rtgui/driver.h>
 #endif
 
+#ifdef RT_USING_DFS
+/* dfs init */
+#include <dfs_init.h>
+/* dfs filesystem:ELM filesystem init */
+#include <dfs_elm.h>
+/* dfs Filesystem APIs */
+#include <dfs_fs.h>
+#include <dfs_posix.h>
+#endif
+
 #include <gd32f4xx.h>
 
 void  gd_eval_led_init (void)
@@ -55,6 +65,22 @@ void rt_init_thread_entry(void* parameter)
         rt_gui_demo_init();
 	}
 #endif
+    
+#ifdef RT_USING_DFS  
+    #ifdef RT_USING_DFS_ELMFAT
+        /* mount sd card fat partition 0 as root directory */
+        if (dfs_mount("gd25q16", "/", "elm", 0, 0) == 0)
+        {
+            rt_kprintf("spi flash mount to / !\n");
+        }
+        else
+        {
+            rt_kprintf("spi flash mount to / failed!\n");
+        }
+    #endif /* RT_USING_DFS_ELMFAT */
+        
+#endif /* DFS */
+
     
     while(1)
     {

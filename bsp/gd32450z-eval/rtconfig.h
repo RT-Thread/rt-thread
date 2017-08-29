@@ -120,44 +120,39 @@
 #define FINSH_USING_DESCRIPTION
 //#define FINSH_USING_MSH
 
+#define RT_USING_RTC
+#ifdef RT_USING_RTC
+#define RT_RTC_NAME 				"rtc"
+#endif
+
+// <section name="LIBC" description="C Runtime library setting" default="always" >
+// <bool name="RT_USING_LIBC" description="Using libc library" default="true" />
+#define RT_USING_LIBC
+
 /* SECTION: device filesystem */
 /* Using Device file system */
-//#define RT_USING_DFS /**/
+#define RT_USING_DFS /**/
 // <bool name="RT_USING_DFS_DEVFS" description="Using devfs for device objects" default="true" />
 #define RT_USING_DFS_DEVFS
-// <integer name="DFS_FILESYSTEM_TYPES_MAX" description="The maximal number of the supported file system type" default="4" />
-#define DFS_FILESYSTEM_TYPES_MAX  4
+//// <integer name="DFS_FILESYSTEM_TYPES_MAX" description="The maximal number of the supported file system type" default="4" />
+//#define DFS_FILESYSTEM_TYPES_MAX    2
 /* the max number of mounted filesystem */
-#define DFS_FILESYSTEMS_MAX			4
+#define DFS_FILESYSTEMS_MAX			2
 /* the max number of opened files 		*/
-#define DFS_FD_MAX					16
+#define DFS_FD_MAX					4
 //#define DFS_USING_WORKDIR
 
 /* Using ELM FATFS */
 #define RT_USING_DFS_ELMFAT
-#define RT_DFS_ELM_WORD_ACCESS
-/* Reentrancy (thread safe) of the FatFs module.  */
-#define RT_DFS_ELM_REENTRANT
-/* Number of volumes (logical drives) to be used. */
+////#define RT_DFS_ELM_WORD_ACCESS
+///* Reentrancy (thread safe) of the FatFs module.  */
+//#define RT_DFS_ELM_REENTRANT
+///* Number of volumes (logical drives) to be used. */
 #define RT_DFS_ELM_DRIVES			2
-#define RT_DFS_ELM_USE_LFN			3 /* */
-#define RT_DFS_ELM_CODE_PAGE        437
+//#define RT_DFS_ELM_USE_LFN			3 /* */
 #define RT_DFS_ELM_MAX_LFN			255
-/* Maximum sector size to be handled. */
+///* Maximum sector size to be handled. */
 #define RT_DFS_ELM_MAX_SECTOR_SIZE  4096
-
-
-/* DFS: UFFS nand file system options */
-#define RT_USING_DFS_UFFS
-/* configuration for uffs, more to see dfs_uffs.h and uffs_config.h */
-#define RT_CONFIG_UFFS_ECC_MODE    UFFS_ECC_HW_AUTO
-                                 //UFFS_ECC_SOFT
-                                 //UFFS_ECC_HW_AUTO
-                                 
-/* enable this ,you need provide a mark_badblock/check_block function */
-/* #define RT_UFFS_USE_CHECK_MARK_FUNCITON */
-/* Using ROM file system */
-// #define RT_USING_DFS_ROMFS
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 #define RT_USING_LWIP
@@ -225,14 +220,18 @@
 
 /* spi driver */
 #define RT_USING_SPI
+#define RT_USING_SPI0
+#define RT_USING_SPI1
+#define RT_USING_SPI2
+#define RT_USING_SPI3
+#define RT_USING_SPI4
 #define RT_USING_SPI5
+//#define RT_USING_W25QXX
+//#define FLASH_DEBUG
 
-/* Serial Flash Universal Driver */
-//#define RT_USING_SFUD
-/* Enable SFUD debug output */
-//#define RT_DEBUG_SFUD					1
-/* serial flash discoverable parameters by JEDEC standard */
-#define RT_SFUD_USING_SFDP
+#define RT_USING_SFUD
+//#define RT_SFUD_USING_SFDP
+#define RT_SFUD_USING_FLASH_INFO_TABLE
 
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
