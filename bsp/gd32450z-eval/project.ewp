@@ -198,7 +198,7 @@
                 </option>
                 <option>
                     <name>DSPExtension</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
             </data>
         </settings>
@@ -2513,21 +2513,6 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\udp.c</name>
-        </file>
-    </group>
-    <group>
-        <name>trace</name>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\trace\SystemView_Src_V240\SEGGER\SEGGER_RTT.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\trace\SystemView_Src_V240\SEGGER\SEGGER_SYSVIEW.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\trace\SystemView_Src_V240\Config\SEGGER_SYSVIEW_Config_RTThread.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\trace\SystemView_Src_V240\Config\SEGGER_SYSVIEW_RTThread.c</name>
         </file>
     </group>
 </project>

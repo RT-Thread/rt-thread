@@ -26,7 +26,7 @@
     !defined(RT_USING_USART2) && !defined(RT_USING_UART3)  && \
     !defined(RT_USING_UART4) && !defined(RT_USING_USART5)  && \
     !defined(RT_USING_UART6) && !defined(RT_USING_UART7)
-#error "Please define "
+#error "Please define at least one UARTx"
 
 #endif
 
@@ -57,18 +57,6 @@ static void uart_isr(struct rt_serial_device *serial);
 #if defined(RT_USING_USART0)
 struct rt_serial_device serial0;
 
-/* UART1 device driver structure */
-const struct gd32_uart usart0 =
-{
-    USART0,                                 // uart peripheral index
-    USART0_IRQn,                            // uart iqrn
-    RCU_USART0, RCU_GPIOA, RCU_GPIOA,       // periph clock, tx gpio clock, rt gpio clock
-    GPIOA, GPIO_AF_7, GPIO_PIN_9,           // tx port, tx alternate, tx pin
-    GPIOA, GPIO_AF_7, GPIO_PIN_10,          // rx port, rx alternate, rx pin
-    &serial0,
-    "uart0",
-};
-
 void USART0_IRQHandler(void)
 {
     /* enter interrupt */
@@ -84,17 +72,6 @@ void USART0_IRQHandler(void)
 
 #if defined(RT_USING_USART1)
 struct rt_serial_device serial1;
-/* UART1 device driver structure */
-const struct gd32_uart usart1 =
-{
-    USART1,                                 // uart peripheral index
-    USART1_IRQn,                            // uart iqrn
-    RCU_USART1, RCU_GPIOA, RCU_GPIOA,       // periph clock, tx gpio clock, rt gpio clock
-    GPIOA, GPIO_AF_7, GPIO_PIN_2,           // tx port, tx alternate, tx pin
-    GPIOA, GPIO_AF_7, GPIO_PIN_3,           // rx port, rx alternate, rx pin
-    &serial1,
-    "uart1",
-};
 
 void USART1_IRQHandler(void)
 {
@@ -111,17 +88,6 @@ void USART1_IRQHandler(void)
 
 #if defined(RT_USING_USART2)
 struct rt_serial_device serial2;
-/* UART2 device driver structure */
-const struct gd32_uart usart2 =
-{
-    USART2,                                 // uart peripheral index
-    USART2_IRQn,                            // uart iqrn
-    RCU_USART2, RCU_GPIOB, RCU_GPIOB,       // periph clock, tx gpio clock, rt gpio clock
-    GPIOB, GPIO_AF_7, GPIO_PIN_10,          // tx port, tx alternate, tx pin
-    GPIOB, GPIO_AF_7, GPIO_PIN_11,          // rx port, rx alternate, rx pin
-    &serial2,
-    "uart2",
-};
 
 void USART2_IRQHandler(void)
 {
@@ -138,17 +104,6 @@ void USART2_IRQHandler(void)
 
 #if defined(RT_USING_UART3)
 struct rt_serial_device serial3;
-/* UART3 device driver structure */
-const struct gd32_uart uart3 =
-{
-    UART3,                                 // uart peripheral index
-    UART3_IRQn,                            // uart iqrn
-    RCU_UART3, RCU_GPIOC, RCU_GPIOC,       // periph clock, tx gpio clock, rt gpio clock
-    GPIOC, GPIO_AF_8, GPIO_PIN_10,         // tx port, tx alternate, tx pin
-    GPIOC, GPIO_AF_8, GPIO_PIN_11,         // rx port, rx alternate, rx pin
-    &serial3,
-    "uart3",
-};
 
 void UART3_IRQHandler(void)
 {
@@ -165,17 +120,6 @@ void UART3_IRQHandler(void)
 
 #if defined(RT_USING_UART4)
 struct rt_serial_device serial4;
-/* UART4 device driver structure */
-const struct gd32_uart uart4 =
-{
-    UART4,                                 // uart peripheral index
-    UART4_IRQn,                            // uart iqrn
-    RCU_UART4, RCU_GPIOC, RCU_GPIOD,       // periph clock, tx gpio clock, rt gpio clock
-    GPIOC, GPIO_AF_8, GPIO_PIN_12,         // tx port, tx alternate, tx pin
-    GPIOD, GPIO_AF_8, GPIO_PIN_2,          // rx port, rx alternate, rx pin
-    &serial4,
-    "uart4",
-};
 
 void UART4_IRQHandler(void)
 {
@@ -191,17 +135,6 @@ void UART4_IRQHandler(void)
 
 #if defined(RT_USING_USART5)
 struct rt_serial_device serial5;
-/* UART5 device driver structure */
-const struct gd32_uart usart5 =
-{
-    USART5,                                 // uart peripheral index
-    USART5_IRQn,                            // uart iqrn
-    RCU_USART5, RCU_GPIOC, RCU_GPIOC,       // periph clock, tx gpio clock, rt gpio clock
-    GPIOC, GPIO_AF_8, GPIO_PIN_6,           // tx port, tx alternate, tx pin
-    GPIOC, GPIO_AF_8, GPIO_PIN_7,           // rx port, rx alternate, rx pin
-    &serial5,
-    "uart5",
-};
 
 void USART5_IRQHandler(void)
 {
@@ -218,17 +151,6 @@ void USART5_IRQHandler(void)
 
 #if defined(RT_USING_UART6)
 struct rt_serial_device serial6;
-/* UART6 device driver structure */
-const struct gd32_uart uart6 =
-{
-    UART6,                                 // uart peripheral index
-    UART6_IRQn,                            // uart iqrn
-    RCU_UART6, RCU_GPIOE, RCU_GPIOE,       // periph clock, tx gpio clock, rt gpio clock
-    GPIOE, GPIO_AF_8, GPIO_PIN_7,          // tx port, tx alternate, tx pin
-    GPIOE, GPIO_AF_8, GPIO_PIN_8,          // rx port, rx alternate, rx pin
-    &serial6,
-    "uart6",
-};
 
 void UART6_IRQHandler(void)
 {
@@ -245,17 +167,6 @@ void UART6_IRQHandler(void)
 
 #if defined(RT_USING_UART7)
 struct rt_serial_device serial7;
-/* UART7 device driver structure */
-const struct gd32_uart uart7 =
-{
-    UART7,                                 // uart peripheral index
-    UART7_IRQn,                            // uart iqrn
-    RCU_UART7, RCU_GPIOE, RCU_GPIOE,       // periph clock, tx gpio clock, rt gpio clock
-    GPIOE, GPIO_AF_8, GPIO_PIN_0,          // tx port, tx alternate, tx pin
-    GPIOE, GPIO_AF_8, GPIO_PIN_1,          // rx port, rx alternate, rx pin
-    &serial7,
-    "uart7",
-};
 
 void UART7_IRQHandler(void)
 {
@@ -269,6 +180,104 @@ void UART7_IRQHandler(void)
 }
 
 #endif /* RT_USING_UART7 */
+
+static const struct gd32_uart uarts[] = {
+    #ifdef RT_USING_USART0
+    {
+        USART0,                                 // uart peripheral index
+        USART0_IRQn,                            // uart iqrn
+        RCU_USART0, RCU_GPIOA, RCU_GPIOA,       // periph clock, tx gpio clock, rt gpio clock
+        GPIOA, GPIO_AF_7, GPIO_PIN_9,           // tx port, tx alternate, tx pin
+        GPIOA, GPIO_AF_7, GPIO_PIN_10,          // rx port, rx alternate, rx pin
+        &serial0,
+        "uart0",
+    },
+    #endif
+    
+    #ifdef RT_USING_USART1
+    {
+        USART1,                                 // uart peripheral index
+        USART1_IRQn,                            // uart iqrn
+        RCU_USART1, RCU_GPIOA, RCU_GPIOA,       // periph clock, tx gpio clock, rt gpio clock
+        GPIOA, GPIO_AF_7, GPIO_PIN_2,           // tx port, tx alternate, tx pin
+        GPIOA, GPIO_AF_7, GPIO_PIN_3,           // rx port, rx alternate, rx pin
+        &serial1,
+        "uart1",
+    },
+    #endif
+    
+    #ifdef RT_USING_USART2
+    {
+        USART2,                                 // uart peripheral index
+        USART2_IRQn,                            // uart iqrn
+        RCU_USART2, RCU_GPIOB, RCU_GPIOB,       // periph clock, tx gpio clock, rt gpio clock
+        GPIOB, GPIO_AF_7, GPIO_PIN_10,          // tx port, tx alternate, tx pin
+        GPIOB, GPIO_AF_7, GPIO_PIN_11,          // rx port, rx alternate, rx pin
+        &serial2,
+        "uart2",
+    },
+    #endif
+    
+    #ifdef RT_USING_UART3
+    {
+        UART3,                                 // uart peripheral index
+        UART3_IRQn,                            // uart iqrn
+        RCU_UART3, RCU_GPIOC, RCU_GPIOC,       // periph clock, tx gpio clock, rt gpio clock
+        GPIOC, GPIO_AF_8, GPIO_PIN_10,         // tx port, tx alternate, tx pin
+        GPIOC, GPIO_AF_8, GPIO_PIN_11,         // rx port, rx alternate, rx pin
+        &serial3,
+        "uart3",
+    },
+    #endif
+    
+    #ifdef RT_USING_UART4
+    {
+        UART4,                                 // uart peripheral index
+        UART4_IRQn,                            // uart iqrn
+        RCU_UART4, RCU_GPIOC, RCU_GPIOD,       // periph clock, tx gpio clock, rt gpio clock
+        GPIOC, GPIO_AF_8, GPIO_PIN_12,         // tx port, tx alternate, tx pin
+        GPIOD, GPIO_AF_8, GPIO_PIN_2,          // rx port, rx alternate, rx pin
+        &serial4,
+        "uart4",
+    },
+    #endif
+
+    #ifdef RT_USING_USART5
+    {
+        USART5,                                 // uart peripheral index
+        USART5_IRQn,                            // uart iqrn
+        RCU_USART5, RCU_GPIOC, RCU_GPIOC,       // periph clock, tx gpio clock, rt gpio clock
+        GPIOC, GPIO_AF_8, GPIO_PIN_6,           // tx port, tx alternate, tx pin
+        GPIOC, GPIO_AF_8, GPIO_PIN_7,           // rx port, rx alternate, rx pin
+        &serial5,
+        "uart5",
+    },
+    #endif
+    
+    #ifdef RT_USING_UART6
+    {
+        UART6,                                 // uart peripheral index
+        UART6_IRQn,                            // uart iqrn
+        RCU_UART6, RCU_GPIOE, RCU_GPIOE,       // periph clock, tx gpio clock, rt gpio clock
+        GPIOE, GPIO_AF_8, GPIO_PIN_7,          // tx port, tx alternate, tx pin
+        GPIOE, GPIO_AF_8, GPIO_PIN_8,          // rx port, rx alternate, rx pin
+        &serial6,
+        "uart6",
+    },
+    #endif
+
+    #ifdef RT_USING_UART7
+    {
+        UART7,                                 // uart peripheral index
+        UART7_IRQn,                            // uart iqrn
+        RCU_UART7, RCU_GPIOE, RCU_GPIOE,       // periph clock, tx gpio clock, rt gpio clock
+        GPIOE, GPIO_AF_8, GPIO_PIN_0,          // tx port, tx alternate, tx pin
+        GPIOE, GPIO_AF_8, GPIO_PIN_1,          // rx port, rx alternate, rx pin
+        &serial7,
+        "uart7",
+    },
+    #endif
+};
 
 
 /**
@@ -446,50 +455,18 @@ int gd32_hw_usart_init(void)
 {
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     int i;
-    static const struct gd32_uart * uarts[] = {
-        #ifdef RT_USING_USART0
-            &usart0,
-        #endif
-        
-        #ifdef RT_USING_USART1
-            &usart1,
-        #endif
-        
-        #ifdef RT_USING_USART2
-            &usart2,
-        #endif
-        
-        #ifdef RT_USING_UART3
-            &uart3,
-        #endif
-        
-        #ifdef RT_USING_UART4
-            &uart4,
-        #endif
 
-        #ifdef RT_USING_USART5
-            &usart5,
-        #endif
-        
-        #ifdef RT_USING_UART6
-            &uart6,
-        #endif
-
-        #ifdef RT_USING_UART7
-            &uart7,
-        #endif
-    };
     
     for (i = 0; i < sizeof(uarts) / sizeof(uarts[0]); i++)
     {
-        uarts[i]->serial->ops    = &gd32_uart_ops;
-        uarts[i]->serial->config = config;
+        uarts[i].serial->ops    = &gd32_uart_ops;
+        uarts[i].serial->config = config;
 
         /* register UART1 device */
-        rt_hw_serial_register(uarts[i]->serial,
-                              uarts[i]->device_name,
+        rt_hw_serial_register(uarts[i].serial,
+                              uarts[i].device_name,
                               RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-                              (void *)uarts[i]);
+                              (void *)&uarts[i]);
     }
 
     return 0;

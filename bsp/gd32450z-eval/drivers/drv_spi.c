@@ -17,6 +17,14 @@
 #include <board.h>
 #include <finsh.h>
 
+#ifdef RT_USING_SPI
+
+#if !defined(RT_USING_SPI0) && !defined(RT_USING_SPI1) && \
+    !defined(RT_USING_SPI2) && !defined(RT_USING_SPI3)  && \
+    !defined(RT_USING_SPI4) && !defined(RT_USING_SPI5)
+#error "Please define at least one SPIx"
+#endif
+
 //#define DEBUG
 
 #define ARR_LEN(__N)      (sizeof(__N) / sizeof(__N[0]))
@@ -345,3 +353,4 @@ rt_err_t stm32_spi_bus_register(uint32_t spi_periph,
     p_spi_bus->hdma_rx.Init.PeriphBurst         = DMA_PBURST_INC4;
 #endif
 }
+#endif
