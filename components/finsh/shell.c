@@ -214,6 +214,9 @@ static void finsh_wait_auth(void)
     rt_bool_t input_finish = RT_FALSE;
     char password[FINSH_PASSWORD_MAX] = { 0 };
     rt_size_t cur_pos = 0;
+    /* password not set */
+    if (rt_strlen(finsh_get_password()) == 0) return;
+    
     while (1)
     {
         rt_kprintf("Password for finsh: ");
@@ -410,7 +413,12 @@ void finsh_thread_entry(void *parameter)
 #ifdef FINSH_USING_AUTH
     /* set the default password when the password isn't setting */
     if (rt_strlen(finsh_get_password()) == 0)
-        RT_ASSERT(finsh_set_password(FINSH_DEFAULT_PASSWORD) == RT_EOK);
+    {
+        if (finsh_set_password(FINSH_DEFAULT_PASSWORD) != RT_EOK)
+        {
+            rt_kprintf("Finsh password set failed.\n");
+        }
+    }
     /* waiting authenticate success */
     finsh_wait_auth();
 #endif
