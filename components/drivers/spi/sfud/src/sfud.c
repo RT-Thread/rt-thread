@@ -110,7 +110,7 @@ sfud_err sfud_init(void) {
         cur_flash_result = sfud_device_init(&flash_table[i]);
 
         if (cur_flash_result != SFUD_SUCCESS) {
-            cur_flash_result = cur_flash_result;
+            all_flash_result = cur_flash_result;
         }
     }
 
@@ -587,12 +587,9 @@ static sfud_err aai_write(const sfud_flash *flash, uint32_t addr, size_t size, c
     sfud_err result = SFUD_SUCCESS;
     const sfud_spi *spi = &flash->spi;
     uint8_t cmd_data[6], cmd_size;
-    const size_t data_size = 2;
     bool first_write = true;
 
     SFUD_ASSERT(flash);
-    SFUD_ASSERT(size >= 2);
-    /* must be call this function after initialize OK */
     SFUD_ASSERT(flash->init_ok);
     /* check the flash address bound */
     if (addr + size > flash->chip.capacity) {
@@ -603,41 +600,35 @@ static sfud_err aai_write(const sfud_flash *flash, uint32_t addr, size_t size, c
     if (spi->lock) {
         spi->lock(spi);
     }
-
+    /* The address must be even for AAI write mode. So it must write one byte first when address is odd. */
+    if (addr % 2 != 0) {
+        result = page256_or_1_byte_write(flash, addr++, 1, 1, data++);
+        if (result != SFUD_SUCCESS) {
+            goto __exit;
+        }
+        size--;
+    }
     /* set the flash write enable */
     result = set_write_enabled(flash, true);
     if (result != SFUD_SUCCESS) {
         goto __exit;
     }
-    /* loop write operate. write unit is write granularity */
+    /* loop write operate. */
     cmd_data[0] = SFUD_CMD_AAI_WORD_PROGRAM;
-    while (size) {
+    while (size >= 2) {
         if (first_write) {
             make_adress_byte_array(flash, addr, &cmd_data[1]);
             cmd_size = flash->addr_in_4_byte ? 5 : 4;
-            if (addr % 2 == 0) {
-                cmd_data[cmd_size] = *data;
-                cmd_data[cmd_size + 1] = *(data + 1);
-            } else {
-                cmd_data[cmd_size] = 0xFF;
-                cmd_data[cmd_size + 1] = *data;
-                size++;
-                data--;
-            }
+            cmd_data[cmd_size] = *data;
+            cmd_data[cmd_size + 1] = *(data + 1);
             first_write = false;
         } else {
             cmd_size = 1;
-            if (size != 1) {
-                cmd_data[1] = *data;
-                cmd_data[2] = *(data + 1);
-            } else {
-                cmd_data[1] = *data;
-                cmd_data[2] = 0xFF;
-                size++;
-            }
+            cmd_data[1] = *data;
+            cmd_data[2] = *(data + 1);
         }
 
-        result = spi->wr(spi, cmd_data, cmd_size + data_size, NULL, 0);
+        result = spi->wr(spi, cmd_data, cmd_size + 2, NULL, 0);
         if (result != SFUD_SUCCESS) {
             SFUD_INFO("Error: Flash write SPI communicate error.");
             goto __exit;
@@ -649,12 +640,20 @@ static sfud_err aai_write(const sfud_flash *flash, uint32_t addr, size_t size, c
         }
 
         size -= 2;
-        data += data_size;
+        addr += 2;
+        data += 2;
+    }
+    /* set the flash write disable for exit AAI mode */
+    result = set_write_enabled(flash, false);
+    /* write last one byte data when origin write size is odd */
+    if (result == SFUD_SUCCESS && size == 1) {
+        result = page256_or_1_byte_write(flash, addr, 1, 1, data);
     }
 
 __exit:
-    /* set the flash write disable for exist AAI mode */
-    set_write_enabled(flash, false);
+    if (result != SFUD_SUCCESS) {
+        set_write_enabled(flash, false);
+    }
     /* unlock SPI */
     if (spi->unlock) {
         spi->unlock(spi);
