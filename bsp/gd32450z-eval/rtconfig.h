@@ -127,7 +127,7 @@
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
 // <bool name="RT_USING_LIBC" description="Using libc library" default="true" />
-#define RT_USING_LIBC
+//#define RT_USING_LIBC
 
 /* SECTION: device filesystem */
 /* Using Device file system */

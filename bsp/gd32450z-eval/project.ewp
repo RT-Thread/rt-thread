@@ -198,7 +198,7 @@
                 </option>
                 <option>
                     <name>DSPExtension</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
             </data>
         </settings>
@@ -215,6 +215,9 @@
                     <state>GD32F4XX</state>
                     <state>USE_STDPERIPH_DRIVER</state>
                     <state>GD32F4XX</state>
+                    <state>RT_USING_DLIBC</state>
+                    <state>_DLIB_FILE_DESCRIPTOR</state>
+                    <state>_DLIB_THREAD_SUPPORT</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -342,22 +345,20 @@
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\libcpu\arm\cortex-m4</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\arch\include</state>
-                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\src\inc</state>
                     <state>$PROJ_DIR$\Libraries\CMSIS\GD\GD32F4xx\Include</state>
                     <state>$PROJ_DIR$\drivers</state>
                     <state>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Include</state>
                     <state>$PROJ_DIR$\.</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\finsh</state>
-                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\drivers\include</state>
-                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\drivers\spi</state>
                     <state>$PROJ_DIR$\Libraries\CMSIS</state>
-                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\trace</state>
+                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\drivers\spi</state>
+                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\drivers\include</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\include\netif</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\trace\SystemView_Src_V240\SEGGER</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\include\ipv4</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\include</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\include</state>
-                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs</state>
+                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\trace</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\libcpu\arm\common</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\include</state>
                     <state>$PROJ_DIR$\applications</state>
@@ -365,6 +366,7 @@
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\trace\SystemView_Src_V240\Config</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\drivers\spi\sfud\inc</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\elmfat</state>
+                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\libc\dlib</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -1256,6 +1258,9 @@
                     <state>NDEBUG</state>
                     <state>USE_STDPERIPH_DRIVER</state>
                     <state>GD32F4XX</state>
+                    <state>RT_USING_DLIBC</state>
+                    <state>_DLIB_FILE_DESCRIPTOR</state>
+                    <state>_DLIB_THREAD_SUPPORT</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -1383,22 +1388,20 @@
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\libcpu\arm\cortex-m4</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\arch\include</state>
-                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\src\inc</state>
                     <state>$PROJ_DIR$\Libraries\CMSIS\GD\GD32F4xx\Include</state>
                     <state>$PROJ_DIR$\drivers</state>
                     <state>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Include</state>
                     <state>$PROJ_DIR$\.</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\finsh</state>
-                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\drivers\include</state>
-                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\drivers\spi</state>
                     <state>$PROJ_DIR$\Libraries\CMSIS</state>
-                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\trace</state>
+                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\drivers\spi</state>
+                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\drivers\include</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\include\netif</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\trace\SystemView_Src_V240\SEGGER</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\include\ipv4</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\include</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\include</state>
-                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs</state>
+                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\trace</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\libcpu\arm\common</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\include</state>
                     <state>$PROJ_DIR$\applications</state>
@@ -1406,6 +1409,7 @@
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\trace\SystemView_Src_V240\Config</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\drivers\spi\sfud\inc</state>
                     <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\elmfat</state>
+                    <state>$PROJ_DIR$\..\..\..\git\rt-thread\components\libc\dlib</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -2153,6 +2157,9 @@
             <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\drivers\src\ringbuffer.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\drivers\rtc\rtc.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\drivers\serial\serial.c</name>
         </file>
         <file>
@@ -2169,6 +2176,36 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\drivers\src\workqueue.c</name>
+        </file>
+    </group>
+    <group>
+        <name>dlib</name>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\libc\dlib\environ.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\libc\dlib\rmtx.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\libc\dlib\syscall_close.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\libc\dlib\syscall_lseek.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\libc\dlib\syscall_mem.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\libc\dlib\syscall_open.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\libc\dlib\syscall_read.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\libc\dlib\syscall_remove.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\libc\dlib\syscall_write.c</name>
         </file>
     </group>
     <group>
@@ -2198,9 +2235,6 @@
     <group>
         <name>Filesystem</name>
         <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\elmfat\option\ccsbcs.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\devfs\console.c</name>
         </file>
         <file>
@@ -2222,73 +2256,7 @@
             <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\src\dfs_posix.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\dfs_uffs.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\elmfat\ff.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\src\uffs\uffs_badblock.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\src\uffs\uffs_blockinfo.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\src\uffs\uffs_buf.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\src\uffs\uffs_crc.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\src\uffs\uffs_debug.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\src\uffs\uffs_device.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\src\uffs\uffs_ecc.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\src\uffs\uffs_fd.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\src\uffs\uffs_find.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\src\uffs\uffs_flash.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\src\uffs\uffs_fs.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\src\uffs\uffs_init.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\src\uffs\uffs_mem.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\src\uffs\uffs_mtb.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\uffs_nandif.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\src\uffs\uffs_pool.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\src\uffs\uffs_public.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\uffs_rtthread.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\src\uffs\uffs_tree.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\src\uffs\uffs_utils.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\git\rt-thread\components\dfs\filesystems\uffs\src\uffs\uffs_version.c</name>
         </file>
     </group>
     <group>
