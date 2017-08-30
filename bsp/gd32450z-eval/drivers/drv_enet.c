@@ -59,16 +59,18 @@ struct gd32_emac
 
     struct rt_synopsys_eth * ETHERNET_MAC;
     IRQn_Type ETHER_MAC_IRQ;
-
-    ALIGN(RT_ALIGN_SIZE)
-    EMAC_DMADESCTypeDef  DMARxDscrTab[EMAC_RXBUFNB], DMATxDscrTab[EMAC_TXBUFNB];
-    ALIGN(RT_ALIGN_SIZE)
-    rt_uint8_t Rx_Buff[EMAC_RXBUFNB][EMAC_MAX_PACKET_SIZE];
-    ALIGN(RT_ALIGN_SIZE)
-    rt_uint8_t Tx_Buff[EMAC_TXBUFNB][EMAC_MAX_PACKET_SIZE];
-
+    
     EMAC_DMADESCTypeDef  *DMATxDescToSet;
     EMAC_DMADESCTypeDef  *DMARxDescToGet;
+    
+#pragma pack(4)
+    EMAC_DMADESCTypeDef DMARxDscrTab[EMAC_RXBUFNB];
+#pragma pack(4)
+    EMAC_DMADESCTypeDef DMATxDscrTab[EMAC_TXBUFNB];
+#pragma pack(4)
+    rt_uint8_t Rx_Buff[EMAC_RXBUFNB][EMAC_MAX_PACKET_SIZE];
+#pragma pack(4)
+    rt_uint8_t Tx_Buff[EMAC_TXBUFNB][EMAC_MAX_PACKET_SIZE];
     
     struct rt_semaphore tx_buf_free;
 };
