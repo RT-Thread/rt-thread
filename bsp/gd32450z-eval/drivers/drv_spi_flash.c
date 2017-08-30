@@ -1,5 +1,5 @@
 /*
- * File      : stm32f20x_40x_spi.c
+ * File      : gd32f20x_40x_spi.c
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2009 RT-Thread Develop Team
  *
@@ -50,7 +50,7 @@ static int rt_hw_spi5_init(void)
         gpio_mode_set(GPIOG, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO_PIN_10|GPIO_PIN_11| GPIO_PIN_12|GPIO_PIN_13| GPIO_PIN_14);
         gpio_output_options_set(GPIOG, GPIO_OTYPE_PP, GPIO_OSPEED_200MHZ, GPIO_PIN_10|GPIO_PIN_11| GPIO_PIN_12|GPIO_PIN_13| GPIO_PIN_14);
 
-		result = stm32_spi_bus_register(SPI5, SPI_BUS_NAME);
+		result = gd32_spi_bus_register(SPI5, SPI_BUS_NAME);
         if (result != RT_EOK)
 		{
 			return result;
@@ -60,7 +60,7 @@ static int rt_hw_spi5_init(void)
     /* attach cs */
     {
         static struct rt_spi_device spi_device;
-        static struct stm32_spi_cs  spi_cs;
+        static struct gd32_spi_cs  spi_cs;
 		rt_err_t result;
         
         spi_cs.GPIOx = GPIOG;

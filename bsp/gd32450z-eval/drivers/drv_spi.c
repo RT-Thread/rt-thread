@@ -39,7 +39,7 @@
 static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configuration* configuration);
 static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* message);
 
-static struct rt_spi_ops stm32_spi_ops =
+static struct rt_spi_ops gd32_spi_ops =
 {
     configure,
     xfer
@@ -49,7 +49,7 @@ static rt_err_t configure(struct rt_spi_device* device,
                           struct rt_spi_configuration* configuration)
 {
     struct rt_spi_bus * spi_bus = (struct rt_spi_bus *)device->bus;	
-    struct stm32f4_spi *f4_spi = (struct stm32f4_spi *)spi_bus->parent.user_data;
+    struct gd32f4_spi *f4_spi = (struct gd32f4_spi *)spi_bus->parent.user_data;
     
     spi_parameter_struct spi_init_struct;
 
@@ -172,10 +172,10 @@ static rt_err_t configure(struct rt_spi_device* device,
 
 static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* message)
 {
-    struct rt_spi_bus * stm32_spi_bus = (struct rt_spi_bus *)device->bus;
-    struct stm32f4_spi *f4_spi = (struct stm32f4_spi *)stm32_spi_bus->parent.user_data;
+    struct rt_spi_bus * gd32_spi_bus = (struct rt_spi_bus *)device->bus;
+    struct gd32f4_spi *f4_spi = (struct gd32f4_spi *)gd32_spi_bus->parent.user_data;
     struct rt_spi_configuration * config = &device->config;
-    struct stm32_spi_cs * stm32_spi_cs = device->parent.user_data;
+    struct gd32_spi_cs * gd32_spi_cs = device->parent.user_data;
     uint32_t spi_periph = f4_spi->spi_periph;
 
 	RT_ASSERT(device != NULL);
@@ -184,7 +184,7 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
     /* take CS */
     if(message->cs_take)
     {
-        gpio_bit_reset(stm32_spi_cs->GPIOx, stm32_spi_cs->GPIO_Pin);
+        gpio_bit_reset(gd32_spi_cs->GPIOx, gd32_spi_cs->GPIO_Pin);
         DEBUG_PRINTF("spi take cs\n");
     }
 
@@ -206,7 +206,7 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
                     data = *send_ptr++;
                 }
                 
-                // Todo: replace register read/write by stm32f4 lib
+                // Todo: replace register read/write by gd32f4 lib
                 //Wait until the transmit buffer is empty
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_TBE));
                 // Send the byte
@@ -260,7 +260,7 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
     /* release CS */
     if(message->cs_release)
     {
-		gpio_bit_set(stm32_spi_cs->GPIOx, stm32_spi_cs->GPIO_Pin);
+		gpio_bit_set(gd32_spi_cs->GPIOx, gd32_spi_cs->GPIO_Pin);
         DEBUG_PRINTF("spi release cs\n");
     }
 
@@ -270,7 +270,7 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
 
 static struct rt_spi_bus spi_bus[];
 
-static const struct stm32f4_spi spis[] = {
+static const struct gd32f4_spi spis[] = {
 #ifdef RT_USING_SPI0
     {SPI0, RCU_SPI0, &spi_bus[0]},
 #endif
@@ -298,15 +298,15 @@ static const struct stm32f4_spi spis[] = {
 
 static struct rt_spi_bus spi_bus[ARR_LEN(spis)];
 
-/** \brief init and register stm32 spi bus.
+/** \brief init and register gd32 spi bus.
  *
- * \param SPI: STM32 SPI, e.g: SPI1,SPI2,SPI3.
+ * \param SPI: gd32 SPI, e.g: SPI1,SPI2,SPI3.
  * \param spi_bus_name: spi bus name, e.g: "spi1"
  * \return
  *
  */
-rt_err_t stm32_spi_bus_register(uint32_t spi_periph,
-                            //struct stm32_spi_bus * stm32_spi,
+rt_err_t gd32_spi_bus_register(uint32_t spi_periph,
+                            //struct gd32_spi_bus * gd32_spi,
                             const char * spi_bus_name)
 {
     int i;
@@ -319,38 +319,11 @@ rt_err_t stm32_spi_bus_register(uint32_t spi_periph,
         {
             rcu_periph_clock_enable(spis[i].spi_clk);
             spis[i].spi_bus->parent.user_data = (void *)&spis[i];
-            rt_spi_bus_register(spis[i].spi_bus, spi_bus_name, &stm32_spi_ops);
+            rt_spi_bus_register(spis[i].spi_bus, spi_bus_name, &gd32_spi_ops);
             return RT_EOK;
         }
     }
     
     return RT_ERROR;
- 
-#ifdef SPI_USE_DMA
-    /* Configure the DMA handler for Transmission process */
-    p_spi_bus->hdma_tx.Init.Direction           = DMA_MEMORY_TO_PERIPH;
-    p_spi_bus->hdma_tx.Init.PeriphInc           = DMA_PINC_DISABLE;
-    //p_spi_bus->hdma_tx.Init.MemInc              = DMA_MINC_ENABLE;
-    p_spi_bus->hdma_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    p_spi_bus->hdma_tx.Init.MemDataAlignment    = DMA_MDATAALIGN_BYTE;
-    p_spi_bus->hdma_tx.Init.Mode                = DMA_NORMAL;
-    p_spi_bus->hdma_tx.Init.Priority            = DMA_PRIORITY_LOW;
-    p_spi_bus->hdma_tx.Init.FIFOMode            = DMA_FIFOMODE_DISABLE;         
-    p_spi_bus->hdma_tx.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
-    p_spi_bus->hdma_tx.Init.MemBurst            = DMA_MBURST_INC4;
-    p_spi_bus->hdma_tx.Init.PeriphBurst         = DMA_PBURST_INC4;
-    
-    p_spi_bus->hdma_rx.Init.Direction           = DMA_PERIPH_TO_MEMORY;
-    p_spi_bus->hdma_rx.Init.PeriphInc           = DMA_PINC_DISABLE;
-    //p_spi_bus->hdma_rx.Init.MemInc              = DMA_MINC_ENABLE;
-    p_spi_bus->hdma_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    p_spi_bus->hdma_rx.Init.MemDataAlignment    = DMA_MDATAALIGN_BYTE;
-    p_spi_bus->hdma_rx.Init.Mode                = DMA_NORMAL;
-    p_spi_bus->hdma_rx.Init.Priority            = DMA_PRIORITY_HIGH;
-    p_spi_bus->hdma_rx.Init.FIFOMode            = DMA_FIFOMODE_DISABLE;         
-    p_spi_bus->hdma_rx.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
-    p_spi_bus->hdma_rx.Init.MemBurst            = DMA_MBURST_INC4;
-    p_spi_bus->hdma_rx.Init.PeriphBurst         = DMA_PBURST_INC4;
-#endif
 }
 #endif
