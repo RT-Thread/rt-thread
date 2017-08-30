@@ -1,0 +1,6 @@
+<workspace>
+	<batchBuild></batchBuild>
+	<project>
+		<path>$WS_DIR$\at25dfx_quick_start_basic_flash.ewp</path>
+	</project>
+</workspace>

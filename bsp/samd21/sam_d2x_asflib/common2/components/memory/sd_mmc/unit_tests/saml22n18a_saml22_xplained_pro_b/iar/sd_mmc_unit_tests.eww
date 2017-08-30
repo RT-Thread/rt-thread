@@ -1,0 +1,6 @@
+<workspace>
+	<batchBuild></batchBuild>
+	<project>
+		<path>$WS_DIR$\sd_mmc_unit_tests_flash.ewp</path>
+	</project>
+</workspace>
