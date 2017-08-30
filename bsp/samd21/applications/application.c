@@ -87,7 +87,7 @@ void rt_init_thread_entry(void* parameter)
     configure_extint_channel();
     configure_extint_callbacks();
 
-#if defined(TEST_UART_RX)
+#ifndef TEST_UART_RX
 
     sleep_timer_init();
 	// sleep_timer_start(1500);
