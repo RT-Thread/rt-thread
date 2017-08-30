@@ -22,7 +22,7 @@
 
 /* Using Hook */
 #define RT_USING_HOOK
-#define RT_USING_TRACE
+//#define RT_USING_TRACE
 
 #define IDLE_THREAD_STACK_SIZE     1024
 
@@ -67,7 +67,7 @@
 
 /* SECTION: RTGUI support */
 /* using RTGUI support */
-//#define RT_USING_GUIENGINE
+#define RT_USING_GUIENGINE
 
 /* name length of RTGUI object */
 #define RTGUI_NAME_MAX		16
