@@ -83,6 +83,13 @@ void rt_init_thread_entry(void* parameter)
     rt_device_t dev;
 
     rt_kprintf("SYSTEM running at %uhz\n", SystemCoreClock);
+
+#ifdef RT_USING_FINSH
+    /* init finsh */
+    finsh_system_init();
+    finsh_set_device("uart1");
+#endif
+
     LED_Init();
     configure_extint_channel();
     configure_extint_callbacks();
@@ -90,7 +97,7 @@ void rt_init_thread_entry(void* parameter)
 #ifndef TEST_UART_RX
 
     sleep_timer_init();
-	// sleep_timer_start(1500);
+    // sleep_timer_start(1500);
 
     while (1)
     {
