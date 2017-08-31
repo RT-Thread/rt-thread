@@ -71,8 +71,9 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --device DARMSTM'
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-SAM_D2x.map --strict --scatter SAM_D2X_RTT.scf'
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-SAM_D2x.map --strict --scatter SAM_D2X_RTT.sct'
 
+    CFLAGS += ' --c99'
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
     LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
 
