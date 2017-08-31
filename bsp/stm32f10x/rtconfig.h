@@ -194,4 +194,6 @@
 /* nanopb support */
 /* #define RT_USING_NANOPB */
 
+#define RT_USING_CPU_FFS
+
 #endif
