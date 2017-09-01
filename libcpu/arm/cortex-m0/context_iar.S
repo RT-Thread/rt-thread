@@ -188,7 +188,6 @@ rt_hw_context_switch_to:
     MSR     msp, r0
 
     ; enable interrupts at processor level
-    CPSIE   F
     CPSIE   I
 
     ; never reach here!
