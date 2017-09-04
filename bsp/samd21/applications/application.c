@@ -94,8 +94,6 @@ void rt_init_thread_entry(void* parameter)
     configure_extint_channel();
     configure_extint_callbacks();
 
-#ifndef TEST_UART_RX
-
     sleep_timer_init();
     // sleep_timer_start(1500);
 
@@ -104,36 +102,6 @@ void rt_init_thread_entry(void* parameter)
         rt_kprintf("init thread running tick:%u\n", rt_tick_get());
         rt_thread_delay(2*RT_TICK_PER_SECOND);
     }
-
-#else
-
-    dev = rt_device_find("uart3");
-    if (dev != RT_NULL)
-    {
-        rt_sem_init(&_rx_sem, "rxsem", 0, RT_IPC_FLAG_FIFO);
-        rt_device_set_rx_indicate(dev, _rx_ind);
-        rt_device_open(dev, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX);
-    }
-
-    while (1)
-    {
-        rt_size_t r_size;
-        rt_uint8_t r_buf[1];
-
-        rt_sem_take(&_rx_sem, RT_WAITING_FOREVER);
-        while ((r_size = rt_device_read(dev, 0, r_buf, 1)) > 0)
-        {
-            rt_device_write(dev, 0, r_buf, r_size);
-            if (r_buf[0] == '\r')
-            {
-                r_buf[0] = '\n';
-                rt_device_write(dev, 0, r_buf, r_size);
-            }
-        }
-    }
-
-#endif
-
 }
 
 int rt_application_init(void)
