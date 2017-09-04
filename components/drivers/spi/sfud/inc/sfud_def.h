@@ -41,12 +41,16 @@ extern "C" {
 
 /* debug print function. Must be implement by user. */
 #ifdef SFUD_DEBUG_MODE
+#ifndef SFUD_DEBUG
 #define SFUD_DEBUG(...) sfud_log_debug(__FILE__, __LINE__, __VA_ARGS__)
+#endif /* SFUD_DEBUG */
 #else
 #define SFUD_DEBUG(...)
-#endif
+#endif /* SFUD_DEBUG_MODE */
 
+#ifndef SFUD_INFO
 #define SFUD_INFO(...)  sfud_log_info(__VA_ARGS__)
+#endif
 
 /* assert for developer. */
 #ifdef SFUD_DEBUG_MODE
@@ -73,7 +77,7 @@ if (!(EXPR))                                                                   \
     else {if (__delay_temp) {__delay_temp();} retry --;}
 
 /* software version number */
-#define SFUD_SW_VERSION                           "0.10.14"
+#define SFUD_SW_VERSION                             "1.0.1"
 /*
  * all defined supported command
  */
