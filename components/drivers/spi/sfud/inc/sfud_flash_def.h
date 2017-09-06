@@ -1,7 +1,7 @@
 /*
  * This file is part of the Serial Flash Universal Driver Library.
  *
- * Copyright (c) 2016, Armink, <armink.ztl@gmail.com>
+ * Copyright (c) 2016-2017, Armink, <armink.ztl@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -103,8 +103,8 @@ typedef struct {
 
 #ifdef SFUD_USING_FLASH_INFO_TABLE
 /* SFUD supported flash chip information table. If the flash not support JEDEC JESD216 standard,
- * then the SFUD will find the flash chip information by this table. Developer can add other flash to here.
- * The configuration information name and index reference the sfud_flash_chip structure.
+ * then the SFUD will find the flash chip information by this table. You can add other flash to here then
+ *  notice me for update it. The configuration information name and index reference the sfud_flash_chip structure.
  * | name | mf_id | type_id | capacity_id | capacity | write_mode | erase_gran | erase_gran_cmd |
  */
 #define SFUD_FLASH_CHIP_TABLE                                                                                    \
@@ -115,6 +115,7 @@ typedef struct {
     {"M25P32", SFUD_MF_ID_MICRON, 0x20, 0x16, 4*1024*1024, SFUD_WM_PAGE_256B, 64*1024, 0xD8},                    \
     {"EN25Q32B", SFUD_MF_ID_EON, 0x30, 0x16, 4*1024*1024, SFUD_WM_PAGE_256B, 4096, 0x20},                        \
     {"GD25Q64B", SFUD_MF_ID_GIGADEVICE, 0x40, 0x17, 8*1024*1024, SFUD_WM_PAGE_256B, 4096, 0x20},                 \
+    {"GD25Q16B", SFUD_MF_ID_GIGADEVICE, 0x40, 0x15, 2*1024*1024, SFUD_WM_PAGE_256B, 4096, 0x20},                 \
     {"S25FL216K", SFUD_MF_ID_CYPRESS, 0x40, 0x15, 2*1024*1024, SFUD_WM_PAGE_256B, 4096, 0x20},                   \
     {"A25L080", SFUD_MF_ID_AMIC, 0x30, 0x14, 1*1024*1024, SFUD_WM_PAGE_256B, 4096, 0x20},                        \
     {"F25L004", SFUD_MF_ID_ESMT, 0x20, 0x13, 512*1024, SFUD_WM_BYTE|SFUD_WM_AAI, 4096, 0x20},                    \

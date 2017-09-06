@@ -154,20 +154,11 @@ rt_inline int _can_int_tx(struct rt_can_device *can, const struct rt_can_msg *da
         rt_uint32_t result;
         struct rt_can_sndbxinx_list *tx_tosnd = RT_NULL;
 
+        rt_sem_take(&(tx_fifo->sem), RT_WAITING_FOREVER);
         level = rt_hw_interrupt_disable();
-        if (!rt_list_isempty(&tx_fifo->freelist))
-        {
-            tx_tosnd = rt_list_entry(tx_fifo->freelist.next, struct rt_can_sndbxinx_list, list);
-            RT_ASSERT(tx_tosnd != RT_NULL);
-            rt_list_remove(&tx_tosnd->list);
-        }
-        else
-        {
-            rt_hw_interrupt_enable(level);
-
-            rt_completion_wait(&(tx_fifo->completion), RT_WAITING_FOREVER);
-            continue;
-        }
+        tx_tosnd = rt_list_entry(tx_fifo->freelist.next, struct rt_can_sndbxinx_list, list);
+        RT_ASSERT(tx_tosnd != RT_NULL);
+        rt_list_remove(&tx_tosnd->list);
         rt_hw_interrupt_enable(level);
 
         no = ((rt_uint32_t)tx_tosnd - (rt_uint32_t)tx_fifo->buffer) / sizeof(struct rt_can_sndbxinx_list);
@@ -178,6 +169,7 @@ rt_inline int _can_int_tx(struct rt_can_device *can, const struct rt_can_msg *da
             level = rt_hw_interrupt_disable();
             rt_list_insert_after(&tx_fifo->freelist, &tx_tosnd->list);
             rt_hw_interrupt_enable(level);
+            rt_sem_release(&(tx_fifo->sem));
             continue;
         }
 
@@ -191,8 +183,8 @@ rt_inline int _can_int_tx(struct rt_can_device *can, const struct rt_can_msg *da
             rt_list_remove(&tx_tosnd->list);
         }
         rt_list_insert_before(&tx_fifo->freelist, &tx_tosnd->list);
-        rt_completion_done(&(tx_fifo->completion));
         rt_hw_interrupt_enable(level);
+        rt_sem_release(&(tx_fifo->sem));
 
         if (result == RT_CAN_SND_RESULT_OK)
         {
@@ -280,7 +272,7 @@ rt_inline int _can_int_tx_priv(struct rt_can_device *can, const struct rt_can_ms
 static rt_err_t rt_can_open(struct rt_device *dev, rt_uint16_t oflag)
 {
     struct rt_can_device *can;
-
+    char tmpname[16];
     RT_ASSERT(dev != RT_NULL);
     can = (struct rt_can_device *)dev;
 
@@ -341,7 +333,9 @@ static rt_err_t rt_can_open(struct rt_device *dev, rt_uint16_t oflag)
                 rt_completion_init(&(tx_fifo->buffer[i].completion));
                 tx_fifo->buffer[i].result = RT_CAN_SND_RESULT_OK;
             }
-            rt_completion_init(&(tx_fifo->completion));
+
+            rt_sprintf(tmpname, "%stl", dev->parent.name);
+            rt_sem_init(&(tx_fifo->sem), tmpname, can->config.sndboxnumber, RT_IPC_FLAG_FIFO);
             can->can_tx = tx_fifo;
 
             dev->open_flag |= RT_DEVICE_FLAG_INT_TX;
@@ -535,14 +529,20 @@ static rt_err_t rt_can_control(struct rt_device *dev,
             tx_fifo = (struct rt_can_tx_fifo *) can->can_tx;
             if (can->config.privmode)
             {
-                rt_completion_done(&(tx_fifo->completion));
-
                 for (i = 0;  i < can->config.sndboxnumber; i++)
                 {
-		    level = rt_hw_interrupt_disable();
-                    rt_list_remove(&tx_fifo->buffer[i].list);
+                    level = rt_hw_interrupt_disable();
+                    if(rt_list_isempty(&tx_fifo->buffer[i].list))
+                    {
+                      rt_sem_release(&(tx_fifo->sem));
+                    }
+                    else
+                    {
+                      rt_list_remove(&tx_fifo->buffer[i].list);
+                    }
                     rt_hw_interrupt_enable(level);
                 }
+
             }
             else
             {
