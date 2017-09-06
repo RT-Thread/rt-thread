@@ -451,7 +451,7 @@ int eth_system_device_init(void)
 
     return (int)result;
 }
-//INIT_DEVICE_EXPORT(eth_system_device_init);
+INIT_DEVICE_EXPORT(eth_system_device_init);
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>

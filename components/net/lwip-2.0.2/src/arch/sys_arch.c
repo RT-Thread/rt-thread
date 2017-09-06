@@ -177,7 +177,7 @@ int lwip_system_init(void)
 
 	return 0;
 }
-//INIT_COMPONENT_EXPORT(lwip_system_init);
+INIT_COMPONENT_EXPORT(lwip_system_init);
 
 void sys_init(void)
 {
