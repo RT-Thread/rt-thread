@@ -211,8 +211,8 @@ unsigned int gpio_get(unsigned int gpio)
  */
 void gpio_set_irq_type(unsigned int gpio, gpio_irq_type_t type)
 {
-    volatile unsigned int *int_pol;     // ÖÐ¶Ï¼«ÐÔÑ¡Ôñ¼Ä´æÆ÷
-    volatile unsigned int *int_edge;    // ÖÐ¶Ï±ßÑØÑ¡Ôñ¼Ä´æÆ÷
+    volatile unsigned int *int_pol = NULL;     // ÖÐ¶Ï¼«ÐÔÑ¡Ôñ¼Ä´æÆ÷
+    volatile unsigned int *int_edge = NULL;    // ÖÐ¶Ï±ßÑØÑ¡Ôñ¼Ä´æÆ÷
     unsigned int port = GPIO_GET_PORT(gpio);
     unsigned int pin  = GPIO_GET_PIN(gpio);
 
@@ -256,6 +256,9 @@ void gpio_set_irq_type(unsigned int gpio, gpio_irq_type_t type)
         case IRQ_TYPE_LEVEL_LOW:
             *int_pol    &= ~(1 << pin);
             *int_edge   &= ~(1 << pin);
+            break;
+
+        default:
             break;
     }
 

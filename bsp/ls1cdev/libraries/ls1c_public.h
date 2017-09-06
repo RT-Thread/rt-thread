@@ -58,6 +58,22 @@ unsigned int reg_get_bit(volatile unsigned int *reg, unsigned int bit);
 
 
 /*
+ * 向寄存器中写入8bit(一个字节)数据
+ * @data 待写入的数据
+ * @addr 寄存器地址
+ */
+void reg_write_8(unsigned char data, volatile unsigned char *addr);
+
+
+/*
+ * 从寄存器读出8bit(一个字节)数据
+ * @addr 寄存器地址
+ * @ret 读出的数据
+ */
+unsigned char reg_read_8(volatile unsigned char *addr);
+
+
+/*
  * 向寄存器中写一个32bit的数据
  * @data 待写入的数据
  * @addr 寄存器地址

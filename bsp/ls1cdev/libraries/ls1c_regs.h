@@ -111,6 +111,11 @@
 #define LS1C_INT4_EDGE                      (0xbfd010b4)
 
 
+// I2C¼Ä´æÆ÷
+#define LS1C_I2C0_BASE                      (0xbfe58000)
+#define LS1C_I2C1_BASE                      (0xbfe68000)
+#define LS1C_I2C2_BASE                      (0xbfe70000)
+
 
 #endif
 
