@@ -27,7 +27,7 @@
 
 #include <drivers/mmcsd_core.h>
 
-static rt_list_t blk_devices;
+static rt_list_t blk_devices = RT_LIST_OBJECT_INIT(blk_devices);
 
 struct mmcsd_blk_device
 {
@@ -149,7 +149,7 @@ static rt_err_t rt_mmcsd_req_blk(struct rt_mmcsd_card *card,
     }
     else
     {
-        req.stop = NULL;
+        req.stop = RT_NULL;
         r_cmd = READ_SINGLE_BLOCK;
         w_cmd = WRITE_BLOCK;
     }
@@ -336,6 +336,8 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
         return err;
     }
 
+    rt_kprintf("probe mmcsd block device!\n");
+
     /* get the first sector to read partition table */
     sector = (rt_uint8_t *)rt_malloc(SECTOR_SIZE);
     if (sector == RT_NULL)
@@ -350,13 +352,13 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
     {
         for (i = 0; i < RT_MMCSD_MAX_PARTITION; i++)
         {
-            blk_dev = rt_malloc(sizeof(struct mmcsd_blk_device));
+            blk_dev = rt_calloc(1, sizeof(struct mmcsd_blk_device));
             if (!blk_dev) 
             {
-                rt_kprintf("mmcsd:malloc mem failde\n");
+                rt_kprintf("mmcsd:malloc memory failed!\n");
                 break;
             }
-            rt_memset((void *)blk_dev, 0, sizeof(struct mmcsd_blk_device));
+
             /* get the first partition */
             status = dfs_filesystem_get_partition(&blk_dev->part, sector, i);
             if (status == RT_EOK)
@@ -408,15 +410,8 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
 
                     blk_dev->geometry.bytes_per_sector = 1<<9;
                     blk_dev->geometry.block_size = card->card_blksize;
-                    if (card->flags & CARD_FLAG_SDHC) 
-                    {
-                        blk_dev->geometry.sector_count = (card->csd.c_size + 1) * 1024;
-                    }
-                    else
-                    {
-                        blk_dev->geometry.sector_count = 
-                            card->card_capacity * 1024 / 512;
-                    }
+                    blk_dev->geometry.sector_count = 
+                        card->card_capacity * (1024 / 512);
     
                     rt_device_register(&blk_dev->dev, "sd0",
                         RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
@@ -431,6 +426,15 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
                     break;
                 }
             }
+
+#ifdef RT_USING_DFS_MNTTABLE
+            if (0) // if (blk_dev)
+            {
+            	rt_kprintf("try to mount file system!\n");
+            	/* try to mount file system on this block device */
+            	dfs_mount_device(&(blk_dev->dev));
+            }
+#endif
         }
     }
     else
@@ -447,14 +451,21 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
 
 void rt_mmcsd_blk_remove(struct rt_mmcsd_card *card)
 {
-    rt_list_t *l;
+    rt_list_t *l, *n;
     struct mmcsd_blk_device *blk_dev;
-    
-    for (l = (&blk_devices)->next; l != &blk_devices; l = l->next)
+
+    for (l = (&blk_devices)->next, n = l->next; l != &blk_devices; l = n)
     {
         blk_dev = (struct mmcsd_blk_device *)rt_list_entry(l, struct mmcsd_blk_device, list);
         if (blk_dev->card == card) 
         {
+        	/* unmount file system */
+        	const char * mounted_path = dfs_filesystem_get_mounted_path(&(blk_dev->dev));
+        	if (mounted_path)
+        	{
+        		dfs_unmount(mounted_path);
+        	}
+
             rt_device_unregister(&blk_dev->dev);
             rt_list_remove(&blk_dev->list);
             rt_free(blk_dev);
@@ -462,7 +473,13 @@ void rt_mmcsd_blk_remove(struct rt_mmcsd_card *card)
     }
 }
 
+/*
+ * This function will initialize block device on the mmc/sd.
+ *
+ * @deprecated since 2.1.0, this function does not need to be invoked
+ * in the system initialization.
+ */
 void rt_mmcsd_blk_init(void)
 {
-    rt_list_init(&blk_devices);
+	/* nothing */
 }

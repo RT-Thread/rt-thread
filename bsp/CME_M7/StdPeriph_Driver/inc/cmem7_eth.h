@@ -86,7 +86,6 @@
 /**
   * @}
   */
-
 /**
   * @brief  EFUSE receive filter structure
 	*/
@@ -105,15 +104,15 @@ typedef struct
 	*/ 
 typedef struct
 {
-  BOOL ETH_LinkUp;                   /*!< If ETH is linked up and it can be retrieved from PHY */																	  
+    BOOL ETH_LinkUp;                   /*!< If ETH is linked up and it can be retrieved from PHY */																	  
 	uint8_t ETH_Speed;                 /*!< speed of ETH, refer as @ref ETH_SPEED                */
-  uint8_t ETH_Duplex;                /*!< duplex mode of ETH, refer as @ref ETH_DUPLEX				 */
+    uint8_t ETH_Duplex;                /*!< duplex mode of ETH, refer as @ref ETH_DUPLEX				 */
 	BOOL ETH_RxEn;                     /*!< Rx enable                                            */
 	BOOL ETH_TxEn;                     /*!< Tx enable                                            */
 	BOOL ETH_ChecksumOffload;          /*!< Checksum offload enable                              */
 	BOOL ETH_JumboFrame;               /*!< Jumbo Frame Enable                                   */
 	uint8_t ETH_MacAddr[6];            /*!< MAC address                                          */ 
-  ETH_FrameFilter *ETH_Filter;       /*!< Received frame address filter, receive all if null   */
+    ETH_FrameFilter *ETH_Filter;       /*!< Received frame address filter, receive all if null   */
 } ETH_InitTypeDef;
 
 /**
@@ -173,14 +172,14 @@ typedef struct {
 			uint32_t CRC_ERR        :  1; 	 /*!< [OUT] CRC error while last segment                		*/
 			uint32_t 								:  5;
 			uint32_t TTSE           :  1; 	 /*!< timestamp available while last segment                */
-			uint32_t LS           	:  1; 	 /*!< last segment flag                                     */
-			uint32_t FS           	:  1; 	 /*!< first segment flag                                    */
+			uint32_t LS           	:  1; 	 /*!< [OUT] last segment flag                               */
+			uint32_t FS           	:  1; 	 /*!< [OUT] first segment flag                              */
 			uint32_t 								:  1;
 			uint32_t OVERFLOW_ERR   :  1; 	 /*!< [OUT] FIFO overflow while last segment                */
 			uint32_t LENGTH_ERR     :  1; 	 /*!< [OUT] length error while last segment                	*/
 			uint32_t 								:  2;
 			uint32_t ERR_SUM        :  1; 	 /*!< [OUT] Error summary while last segment              	*/
-			uint32_t FL           	: 14; 	 /*!< frame length while last segment                       */
+			uint32_t FL           	: 14; 	 /*!< [OUT] frame length while last segment                 */
 			uint32_t 		           	:  2;
 		} RX0_b;
 	} RX_0;
@@ -216,7 +215,13 @@ uint32_t ETH_PhyRead(uint32_t phyAddr, uint32_t phyReg);
   * @retval None
 	*/
 void ETH_PhyWrite(uint32_t phyAddr, uint32_t phyReg, uint32_t data);
-
+/**
+  * @brief  Fills each ETH_InitStruct member with its default value.
+  * @param ETH_InitStruct: pointer to a ETH_InitTypeDef structure
+  *   which will be initialized.
+  * @retval : None
+  */
+void ETH_StructInit(ETH_InitTypeDef* init);
 /**
   * @brief  Ethernet initialization
   * @note   This function should be called at first before any other interfaces.
@@ -231,21 +236,21 @@ BOOL ETH_Init(ETH_InitTypeDef *init);
 	* @param[in] Enable The bit indicates if specific interrupts are enable or not
   * @retval None
 	*/ 
-void ETH_EnableInt(uint32_t Int, BOOL enable);
+void ETH_ITConfig(uint32_t Int, BOOL enable);
 
 /**
   * @brief  Check specific interrupts are set or not 
 	* @param[in] Int interrupt mask bits, which can be the combination of @ref ETH_INT
   * @retval BOOL The bit indicates if specific interrupts are set or not
 	*/
-BOOL ETH_GetIntStatus(uint32_t Int);
+BOOL ETH_GetITStatus(uint32_t Int);
 
 /**
   * @brief  Clear specific interrupts
 	* @param[in] Int interrupt mask bits, which can be the combination of @ref ETH_INT
   * @retval None
 	*/
-void ETH_ClearInt(uint32_t Int);
+void ETH_ClearITPendingBit(uint32_t Int);
 
 /**
   * @brief  Get ethernte MAC address
@@ -299,7 +304,7 @@ ETH_TX_DESC *ETH_AcquireFreeTxDesc(void);
 
 /**
   * @brief  Check if a transmission descriptor is free or not
-	* @param	desc A pointer of a transmission descriptor
+	* @param[in] desc A pointer of a transmission descriptor
   * @retval BOOL True if the transmission descriptor is free, or flase.
 	*/
 BOOL ETH_IsFreeTxDesc(ETH_TX_DESC *desc);
@@ -309,10 +314,25 @@ BOOL ETH_IsFreeTxDesc(ETH_TX_DESC *desc);
 	*					After users prepared data in the buffer of a free descriptor,
 	*					They must call this function to change ownership of the 
 	*					descriptor to hardware.
-	* @param	desc A pointer of a transmission descriptor
+	* @param[in] desc A pointer of a transmission descriptor
   * @retval None
 	*/
 void ETH_ReleaseTxDesc(ETH_TX_DESC *desc);
+
+/**
+  * @brief  Set buffer address of the specific TX descriptor
+	* @param[in] desc A pointer of a transmission descriptor
+  * @param[in] bufAddr buffer address to be sent
+  * @retval None
+	*/
+void ETH_SetTxDescBufAddr(ETH_TX_DESC *desc, uint32_t bufAddr);
+
+/**
+  * @brief  Get buffer address of the specific TX descriptor
+	* @param[in] desc A pointer of a transmission descriptor
+  * @retval uint32_t buffer address to be gotten
+	*/
+uint32_t ETH_GetTxDescBufAddr(ETH_TX_DESC *desc);
 
 /**
   * @brief  Set ethernet receive descriptor ring
@@ -359,7 +379,7 @@ ETH_RX_DESC *ETH_AcquireFreeRxDesc(void);
 
 /**
   * @brief  Check if a receive descriptor is free or not
-	* @param	desc A pointer of a receive descriptor
+	* @param[in] desc A pointer of a receive descriptor
   * @retval BOOL True if the receive descriptor is free, or flase.
 	*/
 BOOL ETH_IsFreeRxDesc(ETH_RX_DESC *desc);
@@ -369,10 +389,25 @@ BOOL ETH_IsFreeRxDesc(ETH_RX_DESC *desc);
 	*					After users handled data in the buffer of a free descriptor,
 	*					They must call this function to change ownership of the 
 	*					descriptor to hardware.
-	* @param	desc A pointer of a transmission descriptor
+	* @param[in] desc A pointer of a transmission descriptor
   * @retval None
 	*/
 void ETH_ReleaseRxDesc(ETH_RX_DESC *desc);
+
+/**
+  * @brief  Set buffer address of the specific RX descriptor
+	* @param[in] desc A pointer of a receive descriptor
+  * @param[in] bufAddr buffer address to be received
+  * @retval None
+	*/
+void ETH_SetRxDescBufAddr(ETH_RX_DESC *desc, uint32_t bufAddr);
+
+/**
+  * @brief  Get buffer address of the specific RX descriptor
+	* @param[in] desc A pointer of a receive descriptor
+  * @retval uint32_t buffer address to be gotten
+	*/
+uint32_t ETH_GetRxDescBufAddr(ETH_RX_DESC *desc);
 
 #ifdef __cplusplus
 }

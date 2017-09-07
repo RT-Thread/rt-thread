@@ -19,6 +19,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2015.03.27     Bernard      Add author information.
  */
 
 #include <rtthread.h>
@@ -76,6 +77,9 @@ void rt_console_init(const char* device_name)
 {
 	rt_device_t device;
 	/* register to device framework */
+
+	device = rt_device_find("console");
+	if (device) return; /* not register a same name device */
 
 	device = rt_device_find(device_name);
 	if (device != RT_NULL)

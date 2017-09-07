@@ -22,6 +22,7 @@
  * 2011-10-22     prife        the first version
  * 2012-03-28     prife        use mtd device interface
  * 2012-04-05     prife        update uffs with official repo and use uffs_UnMount/Mount
+ * 2017-04-12     lizhen9880   fix the f_bsize and f_blocks issue in function dfs_uffs_statfs
  */
 
 #include <rtthread.h>
@@ -278,10 +279,9 @@ static int dfs_uffs_statfs(struct dfs_filesystem* fs,
 	if (index == UFFS_DEVICE_MAX)
 		return -DFS_STATUS_ENOENT;
 	
-	buf->f_bsize = mtd->page_size;
-	buf->f_blocks = mtd->pages_per_block*
-	                (mtd->block_end - mtd->block_start + 1);
-	buf->f_bfree = uffs_GetDeviceFree(&nand_part[index].uffs_dev) / mtd->page_size;
+	buf->f_bsize = mtd->page_size*mtd->pages_per_block;
+	buf->f_blocks = (mtd->block_end - mtd->block_start + 1);
+	buf->f_bfree = uffs_GetDeviceFree(&nand_part[index].uffs_dev)/buf->f_bsize ;
 	
 	return 0;
 }
@@ -347,7 +347,7 @@ static int dfs_uffs_open(struct dfs_fd* file)
 		return uffs_result_to_dfs(uffs_get_error());
 	}
 
-	/* save this pointer, it will be used when calling read()£¬write(),
+	/* save this pointer, it will be used when calling read()ï¿½ï¿½write(),
 	 * flush(), seek(), and will be free when calling close()*/
 
 	file->data = (void *)fd;
@@ -619,7 +619,6 @@ static int dfs_uffs_stat(struct dfs_filesystem* fs, const char *path, struct sta
 	st->st_mtime = s.st_mtime;
 
 	mtd = RT_MTD_NAND_DEVICE(fs->dev_id);
-	st->st_blksize = mtd->page_size;
 
 	return 0;
 }

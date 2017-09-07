@@ -53,7 +53,10 @@ typedef rt_uint32_t	mem_ptr_t;
 #define S32_F "ld"
 #define X32_F "lx"
 
-#ifdef RT_USING_NEWLIB
+#ifdef RT_USING_LIBC
+#if defined(__CC_ARM) || defined(__IAR_SYSTEMS_ICC__)
+#include <sys/errno.h>
+#else
 #include <errno.h>
 /* some errno not defined in newlib */
 #define ENSRNOTFOUND 163  /* Domain name not found */
@@ -61,16 +64,20 @@ typedef rt_uint32_t	mem_ptr_t;
 			180 here because the number "108" which is used
 			in arch.h has been assigned to another error code. */
 #define ESHUTDOWN 180
-#elif RT_USING_MINILIBC
-#include <errno.h>
-#define  EADDRNOTAVAIL  99  /* Cannot assign requested address */
+#endif /* __CC_ARM/__IAR_SYSTEMS_ICC__ */
 #else
 #define LWIP_PROVIDE_ERRNO
 #endif
 
-#ifdef RT_USING_MINILIBC
-#include <time.h>
-#define LWIP_TIMEVAL_PRIVATE 0
+#ifdef RT_USING_LIBC
+#include <sys/time.h>
+#define LWIP_TIMEVAL_PRIVATE	   0
+#else
+#define LWIP_TIMEVAL_PRIVATE	   1
+#endif
+
+#if defined(RT_USING_DFS_NET)
+#define LWIP_COMPAT_SOCKETS        0
 #endif
 
 #if defined(__CC_ARM)   /* ARMCC compiler */
@@ -100,8 +107,11 @@ void sys_arch_assert(const char* file, int line);
 #define LWIP_PLATFORM_DIAG(x)	do {rt_kprintf x;} while(0)
 #define LWIP_PLATFORM_ASSERT(x) do {rt_kprintf(x); sys_arch_assert(__FILE__, __LINE__);}while(0)
 
-
 #include "string.h"
+
+#define SYS_ARCH_DECL_PROTECT(level)	
+#define SYS_ARCH_PROTECT(level)		rt_enter_critical()
+#define SYS_ARCH_UNPROTECT(level) 	rt_exit_critical()
 
 #endif /* __ARCH_CC_H__ */
 

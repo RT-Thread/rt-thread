@@ -1,0 +1,19 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('DeviceSupport/*.c')
+
+CPPPATH = [cwd + '/Include', cwd + '/DeviceSupport']
+
+# add for startup script 
+if rtconfig.CROSS_TOOL == 'keil':
+    src += ['DeviceSupport/arm/startup_mb9bf56xr.s']
+
+if rtconfig.CROSS_TOOL == 'gcc':
+    src += ['DeviceSupport/gcc/startup_mb9bf56xr.S']
+
+group = DefineGroup('CMSIS', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

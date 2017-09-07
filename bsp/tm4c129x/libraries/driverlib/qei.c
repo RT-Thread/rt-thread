@@ -2,7 +2,7 @@
 //
 // qei.c - Driver for the Quadrature Encoder with Index.
 //
-// Copyright (c) 2005-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 2.1.0.12573 of the Tiva Peripheral Driver Library.
+// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -272,6 +272,96 @@ QEIErrorGet(uint32_t ui32Base)
     // Return the error indicator.
     //
     return((HWREG(ui32Base + QEI_O_STAT) & QEI_STAT_ERROR) ? true : false);
+}
+
+//*****************************************************************************
+//
+//! Enables the input filter.
+//!
+//! \param ui32Base is the base address of the quadrature encoder module.
+//!
+//! This function enables operation of the input filter in the quadrature
+//! encoder module.  The module must be configured before input filter is
+//! enabled.
+//!
+//! \sa QEIFilterConfigure() and QEIEnable()
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+QEIFilterEnable(uint32_t ui32Base)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT((ui32Base == QEI0_BASE) || (ui32Base == QEI1_BASE));
+
+    //
+    // Enable the input filter.
+    //
+    HWREG(ui32Base + QEI_O_CTL) |= QEI_CTL_FILTEN;
+}
+
+//*****************************************************************************
+//
+//! Disables the input filter.
+//!
+//! \param ui32Base is the base address of the quadrature encoder module.
+//!
+//! This function disables operation of the input filter in the quadrature
+//! encoder module.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+QEIFilterDisable(uint32_t ui32Base)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT((ui32Base == QEI0_BASE) || (ui32Base == QEI1_BASE));
+
+    //
+    // Disable the input filter.
+    //
+    HWREG(ui32Base + QEI_O_CTL) &= ~(QEI_CTL_FILTEN);
+}
+
+//*****************************************************************************
+//
+//! Configures the input filter.
+//!
+//! \param ui32Base is the base address of the quadrature encoder module.
+//! \param ui32FiltCnt specifies the filter count applied to the input quadrature
+//! signal before it is counted; can be one of \b QEI_FILTCNT_2,
+//! \b QEI_FILTCNT_3, \b QEI_FILTCNT_4, \b QEI_FILTCNT_5, \b QEI_FILTCNT_6,
+//! \b QEI_FILTCNT_7, \b QEI_FILTCNT_8, \b QEI_FILTCNT_9, \b QEI_FILTCNT_10,
+//! \b QEI_FILTCNT_11, \b QEI_FILTCNT_12, \b QEI_FILTCNT_13, \b QEI_FILTCNT_14,
+//! \b QEI_FILTCNT_15, \b QEI_FILTCNT_16 or \b QEI_FILTCNT_17
+//!
+//! This function configures the operation of the input filter prescale count.
+//! as specified by \e ui32FiltCnt before the input signals are sent to the
+//! quadrature encoder module.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+QEIFilterConfigure(uint32_t ui32Base, uint32_t ui32FiltCnt)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT((ui32Base == QEI0_BASE) || (ui32Base == QEI1_BASE));
+    ASSERT(!(ui32FiltCnt & ~(QEI_CTL_FILTCNT_M)));
+
+    //
+    // Set the input filter prescale count.
+    //
+    HWREG(ui32Base + QEI_O_CTL) = ((HWREG(ui32Base + QEI_O_CTL) &
+                                    ~(QEI_CTL_FILTCNT_M)) | ui32FiltCnt);
 }
 
 //*****************************************************************************

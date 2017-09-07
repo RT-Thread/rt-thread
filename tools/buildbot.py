@@ -19,6 +19,17 @@ elif sys.argv[1] == 'clean':
     command = ' -c'
 elif sys.argv[1] == 'project':
     command = ' --target=mdk -s'
+    
+    projects = os.listdir(BSP_ROOT)
+    for item in projects:
+        project_dir = os.path.join(BSP_ROOT, item)
+        
+        if os.path.isfile(os.path.join(project_dir, 'template.uvproj')):
+            print ('prepare MDK project file on ' + project_dir)
+
+            os.system('scons --directory=' + project_dir + command)
+    
+    sys.exit(0)
 else:
     usage()
     sys.exit(0)

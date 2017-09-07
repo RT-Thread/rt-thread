@@ -2,7 +2,7 @@
 //
 // onewire.c - Driver for OneWire master module.
 //
-// Copyright (c) 2012-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2012-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 2.1.0.12573 of the Tiva Peripheral Driver Library.
+// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -454,10 +454,6 @@ _OneWireIntNumberGet(uint32_t ui32Base)
     //
     // Find the valid interrupt number for the 1-Wire module.
     //
-    if(CLASS_IS_TM4E111)
-    {
-        ui32Int = INT_ONEWIRE0_TM4E111;
-    }
     if(CLASS_IS_TM4C129)
     {
         ui32Int = INT_ONEWIRE0_TM4C129;

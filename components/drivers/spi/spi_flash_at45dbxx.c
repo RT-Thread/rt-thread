@@ -1,11 +1,21 @@
 /*
- * File      : rtdef.h
+ * File      : spi_flash_at45dbxx.c
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2011, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -130,12 +140,12 @@ static rt_size_t AT45DB_flash_read_page_256(rt_device_t dev, rt_off_t pos, void*
 {
     uint32_t index, nr;
     uint8_t * read_buffer = buffer;
+    uint32_t  page = pos;
 
     nr = size;
 
     for (index = 0; index < nr; index++)
     {
-        uint32_t  page = pos;
         uint8_t send_buffer[8];
         uint32_t i;
 
@@ -160,12 +170,12 @@ static rt_size_t AT45DB_flash_read_page_512(rt_device_t dev, rt_off_t pos, void*
 {
     uint32_t index, nr;
     uint8_t * read_buffer = buffer;
+    uint32_t  page = pos;
 
     nr = size;
 
     for (index = 0; index < nr; index++)
     {
-        uint32_t  page = pos;
         uint8_t send_buffer[8];
         uint32_t i;
 
@@ -190,12 +200,12 @@ static rt_size_t AT45DB_flash_read_page_1024(rt_device_t dev, rt_off_t pos, void
 {
     uint32_t index, nr;
     uint8_t * read_buffer = buffer;
+    uint32_t  page = pos;
 
     nr = size;
 
     for (index = 0; index < nr; index++)
     {
-        uint32_t  page = pos;
         uint8_t send_buffer[8];
         uint32_t i;
 
@@ -220,12 +230,12 @@ static rt_size_t AT45DB_flash_write_page_256(rt_device_t dev, rt_off_t pos, cons
 {
     rt_uint32_t index, nr;
     const uint8_t * write_buffer = buffer;
+    uint32_t  page = pos;
 
     nr = size;
 
     for (index = 0; index < nr; index++)
     {
-        uint32_t  page = pos;
         uint8_t send_buffer[4];
 
         send_buffer[0] = AT45DB_MM_PAGE_PROG_THRU_BUFFER1;
@@ -248,12 +258,12 @@ static rt_size_t AT45DB_flash_write_page_512(rt_device_t dev, rt_off_t pos, cons
 {
     rt_uint32_t index, nr;
     const uint8_t * write_buffer = buffer;
+    uint32_t  page = pos;
 
     nr = size;
 
     for (index = 0; index < nr; index++)
     {
-        uint32_t  page = pos;
         uint8_t send_buffer[4];
 
         send_buffer[0] = AT45DB_MM_PAGE_PROG_THRU_BUFFER1;
@@ -276,12 +286,12 @@ static rt_size_t AT45DB_flash_write_page_1024(rt_device_t dev, rt_off_t pos, con
 {
     rt_uint32_t index, nr;
     const uint8_t * write_buffer = buffer;
+    uint32_t  page = pos;
 
     nr = size;
 
     for (index = 0; index < nr; index++)
     {
-        uint32_t  page = pos;
         uint8_t send_buffer[4];
 
         send_buffer[0] = AT45DB_MM_PAGE_PROG_THRU_BUFFER1;

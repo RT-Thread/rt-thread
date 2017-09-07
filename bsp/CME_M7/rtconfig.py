@@ -24,7 +24,7 @@ if os.getenv('RTT_EXEC_PATH'):
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
 else:
-    RTT_ROOT = os.path.normpath(os.getcwd())
+    RTT_ROOT = os.path.normpath(os.getcwd() + '/../..')
 
 BUILD = 'debug'
 
@@ -35,15 +35,15 @@ if PLATFORM == 'gcc':
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
-    TARGET_EXT = 'elf'
+    TARGET_EXT = 'axf'
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=softfp  -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -g -Wall  -D__FPU_USED'
+    DEVICE = ' -mcpu=cortex-m3 -mthumb -ffunction-sections -fdata-sections'
+    CFLAGS = DEVICE + ' -g -Wall '
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles  -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T nuc472_flash.ld'
+    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles  -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T CME_M7.ld'
 
     CPATH = ''
     LPATH = ''
@@ -64,7 +64,7 @@ elif PLATFORM == 'armcc':
     LINK = 'armlink'
     TARGET_EXT = 'axf'
 
-    DEVICE = ' --cortex-m4.fp'
+    DEVICE = ' --cortex-m3'
     CFLAGS = DEVICE + ' --c99 --apcs=interwork'
     AFLAGS = DEVICE
     LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread.map --scatter nuc472_flash.sct'
@@ -113,10 +113,10 @@ elif PLATFORM == 'iar':
     AFLAGS += ' -s+' 
     AFLAGS += ' -w+' 
     AFLAGS += ' -r' 
-    AFLAGS += ' --cpu Cortex-M4' 
+    AFLAGS += ' --cpu Cortex-M3' 
     AFLAGS += ' --fpu None' 
 
-    LFLAGS = ' --config nuc472_flash.icf'
+    LFLAGS = ' --config CME_M7.icf'
     LFLAGS += ' --semihosting' 
     LFLAGS += ' --entry __iar_program_start'    
 

@@ -24,6 +24,7 @@
 #define RT_DEBUG
 // <bool name="RT_DEBUG_INIT" description="debug init enable" default=0 />
 #define RT_DEBUG_INIT   0
+//#define RT_DEBUG_SCHEDULER             1
 // <bool name="RT_THREAD_DEBUG" description="Thread debug enable" default="false" />
 // #define RT_THREAD_DEBUG
 // <bool name="RT_USING_OVERFLOW_CHECK" description="Thread stack over flow detect" default="true" />
@@ -33,7 +34,7 @@
 // <bool name="RT_USING_HOOK" description="Using hook functions" default="true" />
 #define RT_USING_HOOK
 // <section name="RT_USING_TIMER_SOFT" description="Using software timer which will start a thread to handle soft-timer" default="true" >
-#define RT_USING_TIMER_SOFT
+//#define RT_USING_TIMER_SOFT
 // <integer name="RT_TIMER_THREAD_PRIO" description="The priority level of timer thread" default="4" />
 #define RT_TIMER_THREAD_PRIO    4
 // <integer name="RT_TIMER_THREAD_STACK_SIZE" description="The stack size of timer thread" default="512" />
@@ -96,6 +97,7 @@
 #define RT_CONSOLEBUF_SIZE  128
 // <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console" default="uart" />
 #define RT_CONSOLE_DEVICE_NAME  "uart0"
+#define RT_USING_UART0
 // </section>
 
 // <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
@@ -145,8 +147,8 @@
 #define RT_DFS_ELM_CODE_PAGE    936
 // <bool name="RT_DFS_ELM_CODE_PAGE_FILE" description="Using OEM code page file" default="false" />
 #define RT_DFS_ELM_CODE_PAGE_FILE
-// <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="256" />
-#define RT_DFS_ELM_MAX_LFN  256
+// <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="255" />
+#define RT_DFS_ELM_MAX_LFN  255
 // <integer name="RT_DFS_ELM_MAX_SECTOR_SIZE" description="Maximal size of sector" default="512" />
 #define RT_DFS_ELM_MAX_SECTOR_SIZE  4096
 // <bool name="RT_DFS_ELM_USE_ERASE" description="Enable erase feature for flash" default="true" />
@@ -222,7 +224,8 @@
 #define RT_LWIP_MSKADDR3 0
 // </section>
 
-
+#define RT_USING_VBUS
+#define RT_USING_LOGTRACE
 
 // </RDTConfigurator>
 

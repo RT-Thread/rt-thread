@@ -145,8 +145,8 @@
 #define RT_DFS_ELM_CODE_PAGE    936
 // <bool name="RT_DFS_ELM_CODE_PAGE_FILE" description="Using OEM code page file" default="false" />
 #define RT_DFS_ELM_CODE_PAGE_FILE
-// <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="256" />
-#define RT_DFS_ELM_MAX_LFN  256
+// <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="255" />
+#define RT_DFS_ELM_MAX_LFN  255
 // <integer name="RT_DFS_ELM_MAX_SECTOR_SIZE" description="Maximal size of sector" default="512" />
 #define RT_DFS_ELM_MAX_SECTOR_SIZE  4096
 // <bool name="RT_DFS_ELM_USE_ERASE" description="Enable erase feature for flash" default="true" />
@@ -180,19 +180,19 @@
 // <bool name="RT_LWIP_DNS" description="Enable DNS protocol" default="true" />
 #define RT_LWIP_DNS
 // <integer name="RT_LWIP_PBUF_NUM" description="Maximal number of buffers in the pbuf pool" default="4" />
-#define RT_LWIP_PBUF_NUM    4
+#define RT_LWIP_PBUF_NUM    8
 // <integer name="RT_LWIP_TCP_PCB_NUM" description="Maximal number of simultaneously active TCP connections" default="5" />
-#define RT_LWIP_TCP_PCB_NUM 3
+#define RT_LWIP_TCP_PCB_NUM 5
 // <integer name="RT_LWIP_TCP_SND_BUF" description="TCP sender buffer size" default="8192" />
-#define RT_LWIP_TCP_SND_BUF 4086
+#define RT_LWIP_TCP_SND_BUF 8192
 // <integer name="RT_LWIP_TCP_WND" description="TCP receive window" default="8192" />
-#define RT_LWIP_TCP_WND 2048
+#define RT_LWIP_TCP_WND 8192
 // <bool name="RT_LWIP_SNMP" description="Enable SNMP protocol" default="false" />
 // #define RT_LWIP_SNMP
 // <bool name="RT_LWIP_DHCP" description="Enable DHCP client to get IP address" default="false" />
-// #define RT_LWIP_DHCP
+ #define RT_LWIP_DHCP
 // <integer name="RT_LWIP_TCP_SEG_NUM" description="the number of simultaneously queued TCP" default="4" />
-#define RT_LWIP_TCP_SEG_NUM 12
+#define RT_LWIP_TCP_SEG_NUM 24
 // <integer name="RT_LWIP_TCPTHREAD_PRIORITY" description="the thread priority of TCP thread" default="128" />
 #define RT_LWIP_TCPTHREAD_PRIORITY  12
 // <integer name="RT_LWIP_TCPTHREAD_MBOX_SIZE" description="the mail box size of TCP thread to wait for" default="32" />

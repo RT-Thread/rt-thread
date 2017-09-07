@@ -67,6 +67,12 @@
 #define netifapi_netif_set_link_up(n)      netifapi_netif_common(n, netif_set_link_up, NULL)
 #define netifapi_netif_set_link_down(n)    netifapi_netif_common(n, netif_set_link_down, NULL)
 
+#ifndef RT_LWIP_ETHTHREAD_PRIORITY
+#define RT_ETHERNETIF_THREAD_PREORITY	0x90
+#else
+#define RT_ETHERNETIF_THREAD_PREORITY	RT_LWIP_ETHTHREAD_PRIORITY
+#endif
+
 #ifndef LWIP_NO_TX_THREAD
 /**
  * Tx message structure for Ethernet interface
@@ -79,7 +85,7 @@ struct eth_tx_msg
 
 static struct rt_mailbox eth_tx_thread_mb;
 static struct rt_thread eth_tx_thread;
-#ifndef RT_LWIP_ETHTHREAD_PRIORITY
+#ifndef RT_LWIP_ETHTHREAD_MBOX_SIZE
 static char eth_tx_thread_mb_pool[32 * 4];
 static char eth_tx_thread_stack[512];
 #else
@@ -91,12 +97,10 @@ static char eth_tx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
 #ifndef LWIP_NO_RX_THREAD
 static struct rt_mailbox eth_rx_thread_mb;
 static struct rt_thread eth_rx_thread;
-#ifndef RT_LWIP_ETHTHREAD_PRIORITY
-#define RT_ETHERNETIF_THREAD_PREORITY	0x90
+#ifndef RT_LWIP_ETHTHREAD_MBOX_SIZE
 static char eth_rx_thread_mb_pool[48 * 4];
 static char eth_rx_thread_stack[1024];
 #else
-#define RT_ETHERNETIF_THREAD_PREORITY	RT_LWIP_ETHTHREAD_PRIORITY
 static char eth_rx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * 4];
 static char eth_rx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
 #endif
@@ -150,7 +154,7 @@ static err_t eth_netif_device_init(struct netif *netif)
         }
 
         /* copy device flags to netif flags */
-        netif->flags = ethif->flags;
+        netif->flags = (ethif->flags & 0xff);
 
         /* set default netif */
         if (netif_default == RT_NULL)
@@ -169,9 +173,11 @@ static err_t eth_netif_device_init(struct netif *netif)
             netif_set_up(ethif->netif);
         }
 
-#ifdef LWIP_NETIF_LINK_CALLBACK
-        netif_set_link_up(ethif->netif);
-#endif
+        if (!(ethif->flags & ETHIF_LINK_PHYUP))
+        {
+            /* set link_up for this netif */
+            netif_set_link_up(ethif->netif);
+        }
 
         return ERR_OK;
     }
@@ -180,7 +186,7 @@ static err_t eth_netif_device_init(struct netif *netif)
 }
 
 /* Keep old drivers compatible in RT-Thread */
-rt_err_t eth_device_init_with_flag(struct eth_device *dev, char *name, rt_uint8_t flags)
+rt_err_t eth_device_init_with_flag(struct eth_device *dev, char *name, rt_uint16_t flags)
 {
     struct netif* netif;
 
@@ -224,15 +230,20 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, char *name, rt_uint8_
     {
         struct ip_addr ipaddr, netmask, gw;
 
-#if !LWIP_DHCP
-        IP4_ADDR(&ipaddr, RT_LWIP_IPADDR0, RT_LWIP_IPADDR1, RT_LWIP_IPADDR2, RT_LWIP_IPADDR3);
-        IP4_ADDR(&gw, RT_LWIP_GWADDR0, RT_LWIP_GWADDR1, RT_LWIP_GWADDR2, RT_LWIP_GWADDR3);
-        IP4_ADDR(&netmask, RT_LWIP_MSKADDR0, RT_LWIP_MSKADDR1, RT_LWIP_MSKADDR2, RT_LWIP_MSKADDR3);
-#else
-        IP4_ADDR(&ipaddr, 0, 0, 0, 0);
-        IP4_ADDR(&gw, 0, 0, 0, 0);
-        IP4_ADDR(&netmask, 0, 0, 0, 0);
-#endif
+    #if LWIP_DHCP
+        if (dev->flags & NETIF_FLAG_DHCP)
+        {
+            IP4_ADDR(&ipaddr, 0, 0, 0, 0);
+            IP4_ADDR(&gw, 0, 0, 0, 0);
+            IP4_ADDR(&netmask, 0, 0, 0, 0);
+        }
+        else
+    #endif
+        {
+            IP4_ADDR(&ipaddr, RT_LWIP_IPADDR0, RT_LWIP_IPADDR1, RT_LWIP_IPADDR2, RT_LWIP_IPADDR3);
+            IP4_ADDR(&gw, RT_LWIP_GWADDR0, RT_LWIP_GWADDR1, RT_LWIP_GWADDR2, RT_LWIP_GWADDR3);
+            IP4_ADDR(&netmask, RT_LWIP_MSKADDR0, RT_LWIP_MSKADDR1, RT_LWIP_MSKADDR2, RT_LWIP_MSKADDR3);
+        }
 
         netifapi_netif_add(netif, &ipaddr, &netmask, &gw, dev, eth_netif_device_init, tcpip_input);
     }
@@ -242,7 +253,7 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, char *name, rt_uint8_
 
 rt_err_t eth_device_init(struct eth_device * dev, char *name)
 {
-    rt_uint8_t flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP;
+    rt_uint16_t flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP;
 
 #if LWIP_DHCP
     /* DHCP support */
@@ -318,7 +329,7 @@ static void eth_tx_thread_entry(void* parameter)
                 /* call driver's interface */
                 if (enetif->eth_tx(&(enetif->parent), msg->buf) != RT_EOK)
                 {
-                    rt_kprintf("transmit eth packet failed\n");
+                    /* transmit eth packet failed */
                 }
             }
 
@@ -361,6 +372,8 @@ static void eth_rx_thread_entry(void* parameter)
             /* receive all of buffer */
             while (1)
             {
+            	if(device->eth_rx == RT_NULL) break;
+            	
                 p = device->eth_rx(&(device->parent));
                 if (p != RT_NULL)
                 {
@@ -397,7 +410,7 @@ int eth_system_device_init(void)
 
     result = rt_thread_init(&eth_rx_thread, "erx", eth_rx_thread_entry, RT_NULL,
                             &eth_rx_thread_stack[0], sizeof(eth_rx_thread_stack),
-                            RT_LWIP_ETHTHREAD_PRIORITY, 16);
+                            RT_ETHERNETIF_THREAD_PREORITY, 16);
     RT_ASSERT(result == RT_EOK);
     result = rt_thread_startup(&eth_rx_thread);
     RT_ASSERT(result == RT_EOK);

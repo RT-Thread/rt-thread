@@ -107,8 +107,8 @@
 // </section>
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
-// <bool name="RT_USING_NEWLIB" description="Using newlib library, only available under GNU GCC" default="true" />
-#define RT_USING_NEWLIB
+// <bool name="RT_USING_LIBC" description="Using libc library" default="true" />
+#define RT_USING_LIBC
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
 #define RT_USING_PTHREADS
 // </section>
@@ -128,7 +128,7 @@
 // <item description="LFN1">2</item>
 // </integer>
 #define RT_DFS_ELM_USE_LFN	1
-// <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="256" />
+// <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="255" />
 #define RT_DFS_ELM_MAX_LFN	64
 // <bool name="RT_USING_DFS_YAFFS2" description="Using YAFFS2" default="false" />
 // #define RT_USING_DFS_YAFFS2
@@ -147,7 +147,7 @@
 #define RT_USING_LOGTRACE
 
 // <section name="RT_USING_VMM" description="Enable RT-Thread hypervisor" default="true" >
-#define RT_USING_VMM
+// #define RT_USING_VMM
 // </section>
 
 #endif

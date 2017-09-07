@@ -21,6 +21,7 @@
  * Date           Author       Notes
  * 2005-02-22     Bernard      The first version.
  * 2011-12-08     Bernard      Merges rename patch from iamcacy.
+ * 2015-05-27     Bernard      Fix the fd clear issue.
  */
 
 #include <dfs.h>
@@ -97,7 +98,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
     {
         /* clear fd */
         rt_free(fd->path);
-        rt_memset(fd, 0, sizeof(*fd));
+        fd->path = RT_NULL;
 
         return -DFS_STATUS_ENOSYS;
     }
@@ -106,7 +107,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
     {
         /* clear fd */
         rt_free(fd->path);
-        rt_memset(fd, 0, sizeof(*fd));
+        fd->path = RT_NULL;
 
         dfs_log(DFS_DEBUG_INFO, ("open failed"));
 
@@ -135,6 +136,9 @@ int dfs_file_close(struct dfs_fd *fd)
 {
     int result = 0;
 
+    if (fd == RT_NULL)
+        return -DFS_STATUS_ENXIO;
+
     if (fd != RT_NULL && fd->fs->ops->close != RT_NULL)
         result = fd->fs->ops->close(fd);
 
@@ -143,7 +147,7 @@ int dfs_file_close(struct dfs_fd *fd)
         return result;
 
     rt_free(fd->path);
-    rt_memset(fd, 0, sizeof(struct dfs_fd));
+    fd->path = RT_NULL;
 
     return result;
 }
@@ -165,7 +169,7 @@ int dfs_file_ioctl(struct dfs_fd *fd, int cmd, void *args)
         return -DFS_STATUS_EINVAL;
 
     fs = fd->fs;
-    if (fs->ops->ioctl != RT_NULL) 
+    if (fs->ops->ioctl != RT_NULL)
         return fs->ops->ioctl(fd, cmd, args);
 
     return -DFS_STATUS_ENOSYS;
@@ -186,11 +190,11 @@ int dfs_file_read(struct dfs_fd *fd, void *buf, rt_size_t len)
     struct dfs_filesystem *fs;
     int result = 0;
 
-    if (fd == RT_NULL) 
+    if (fd == RT_NULL)
         return -DFS_STATUS_EINVAL;
 
     fs = (struct dfs_filesystem *)fd->fs;
-    if (fs->ops->read == RT_NULL) 
+    if (fs->ops->read == RT_NULL)
         return -DFS_STATUS_ENOSYS;
 
     if ((result = fs->ops->read(fd, buf, len)) < 0)
@@ -213,7 +217,7 @@ int dfs_file_getdents(struct dfs_fd *fd, struct dirent *dirp, rt_size_t nbytes)
     struct dfs_filesystem *fs;
 
     /* parameter check */
-    if (fd == RT_NULL || fd->type != FT_DIRECTORY) 
+    if (fd == RT_NULL || fd->type != FT_DIRECTORY)
         return -DFS_STATUS_EINVAL;
 
     fs = (struct dfs_filesystem *)fd->fs;
@@ -267,7 +271,7 @@ int dfs_file_unlink(const char *path)
                 result = fs->ops->unlink(fs, dfs_subdir(fs->path, fullpath));
         }
         else
-            result = fs->ops->unlink(fs, fullpath);             
+            result = fs->ops->unlink(fs, fullpath);
     }
     else result = -DFS_STATUS_ENOSYS;
 
@@ -391,7 +395,6 @@ int dfs_file_stat(const char *path, struct stat *buf)
 
         buf->st_size    = 0;
         buf->st_mtime   = 0;
-        buf->st_blksize = 512;
 
         /* release full path */
         rt_free(fullpath);
@@ -528,7 +531,7 @@ void ls(const char *pathname)
 
                 /* build full path for each file */
                 fullpath = dfs_normalize_path(path, dirent.d_name);
-                if (fullpath == RT_NULL) 
+                if (fullpath == RT_NULL)
                     break;
 
                 if (dfs_file_stat(fullpath, &stat) == 0)
@@ -555,7 +558,7 @@ void ls(const char *pathname)
     {
         rt_kprintf("No such directory\n");
     }
-    if (pathname == RT_NULL) 
+    if (pathname == RT_NULL)
         rt_free(path);
 }
 FINSH_FUNCTION_EXPORT(ls, list directory contents);
@@ -632,15 +635,15 @@ static void copyfile(const char *src, const char *dst)
         read_bytes = dfs_file_read(&src_fd, block_ptr, BUF_SZ);
         if (read_bytes > 0)
         {
-			int length;
-			
+            int length;
+
             length = dfs_file_write(&fd, block_ptr, read_bytes);
-			if (length != read_bytes)
-			{
-				/* write failed. */
-				rt_kprintf("Write file data failed, errno=%d\n", length);
-				break;
-			}
+            if (length != read_bytes)
+            {
+                /* write failed. */
+                rt_kprintf("Write file data failed, errno=%d\n", length);
+                break;
+            }
         }
     } while (read_bytes > 0);
 
@@ -652,12 +655,11 @@ static void copyfile(const char *src, const char *dst)
 extern int mkdir(const char *path, mode_t mode);
 static void copydir(const char * src, const char * dst)
 {
-    struct dfs_fd fd;
     struct dirent dirent;
     struct stat stat;
     int length;
-
-    if (dfs_file_open(&fd, src, DFS_O_DIRECTORY) < 0)
+    struct dfs_fd cpfd;
+    if (dfs_file_open(&cpfd, src, DFS_O_DIRECTORY) < 0)
     {
         rt_kprintf("open %s failed\n", src);
         return ;
@@ -666,7 +668,7 @@ static void copydir(const char * src, const char * dst)
     do
     {
         rt_memset(&dirent, 0, sizeof(struct dirent));
-        length = dfs_file_getdents(&fd, &dirent, sizeof(struct dirent));
+        length = dfs_file_getdents(&cpfd, &dirent, sizeof(struct dirent));
         if (length > 0)
         {
             char * src_entry_full = RT_NULL;
@@ -709,7 +711,7 @@ static void copydir(const char * src, const char * dst)
         }
     }while(length > 0);
 
-    dfs_file_close(&fd);
+    dfs_file_close(&cpfd);
 }
 
 static const char *_get_path_lastname(const char *path)

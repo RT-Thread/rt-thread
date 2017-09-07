@@ -15,7 +15,7 @@
 #include <rtthread.h>
 #include "am33xx.h"
 
-#define DESC_SEC		(0x2|(1<<4))
+#define DESC_SEC		(0x2)
 #define CB				(3<<2)  //cache_on, write_back
 #define CNB				(2<<2)  //cache_on, write_through
 #define NCB				(1<<2)  //cache_off,WR_BUF on

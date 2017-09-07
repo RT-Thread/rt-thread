@@ -42,7 +42,7 @@ __declspec(allocate("RTMSymTab$f"))const char __rtmsym_##symbol##_name[] = "__vs
 
 #else
 #define RTM_EXPORT(symbol)                                            \
-const char __rtmsym_##symbol##_name[] = #symbol;                      \
+const char __rtmsym_##symbol##_name[] SECTION(".rodata.name") = #symbol;     \
 const struct rt_module_symtab __rtmsym_##symbol SECTION("RTMSymTab")= \
 {                                                                     \
     (void *)&symbol,                                                  \

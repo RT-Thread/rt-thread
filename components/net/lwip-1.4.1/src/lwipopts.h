@@ -38,10 +38,6 @@
 #define LWIP_PLATFORM_BYTESWAP      0
 #define BYTE_ORDER                  LITTLE_ENDIAN
 
-/* Enable SO_RCVTIMEO/LWIP_SO_SNDTIMEO processing.   */
-#define LWIP_SO_RCVTIMEO            1
-#define LWIP_SO_SNDTIMEO            1
-
 /* #define RT_LWIP_DEBUG */
 
 #ifdef RT_LWIP_DEBUG
@@ -123,17 +119,20 @@
 #define MEMP_NUM_TCP_SEG            TCP_SND_QUEUELEN
 #endif
 
-/* The following four are used only with the sequential API and can be
-   set to 0 if the application only will use the raw API. */
+/*
+ * You can re-define following setting in rtcofnig.h to overwrite the default 
+ * setting in the lwip opts.h 
+ */
 /* MEMP_NUM_NETBUF: the number of struct netbufs. */
-#define MEMP_NUM_NETBUF             2
+// #define MEMP_NUM_NETBUF             2
 /* MEMP_NUM_NETCONN: the number of struct netconns. */
-#define MEMP_NUM_NETCONN            4
+// #define MEMP_NUM_NETCONN            4
+
 /* MEMP_NUM_TCPIP_MSG_*: the number of struct tcpip_msg, which is used
    for sequential API communication and incoming packets. Used in
    src/api/tcpip.c. */
-#define MEMP_NUM_TCPIP_MSG_API      16
-#define MEMP_NUM_TCPIP_MSG_INPKT    16
+// #define MEMP_NUM_TCPIP_MSG_API      16
+// #define MEMP_NUM_TCPIP_MSG_INPKT    16
 
 /* ---------- Pbuf options ---------- */
 /* PBUF_POOL_SIZE: the number of buffers in the pbuf pool. */
@@ -160,6 +159,12 @@
  * allocation and deallocation.
  */
 #define SYS_LIGHTWEIGHT_PROT        (NO_SYS==0)
+
+#ifdef LWIP_USING_NAT
+#define IP_NAT                      1
+#else
+#define IP_NAT                      0
+#endif
 
 /* ---------- TCP options ---------- */
 #ifdef RT_LWIP_TCP
@@ -345,6 +350,63 @@
 #ifdef LWIP_IGMP
 #include <stdlib.h>
 #define LWIP_RAND                  rand
+#endif
+/*
+   ------------------------------------
+   ---------- Socket options ----------
+   ------------------------------------
+*/
+/*
+ * LWIP_SOCKET==1: Enable Socket API (require to use sockets.c)
+ */
+#ifndef LWIP_SOCKET
+#define LWIP_SOCKET                     1
+#endif
+
+/*
+ * LWIP_COMPAT_SOCKETS==1: Enable BSD-style sockets functions names.
+ * (only used if you use sockets.c)
+ */
+#ifndef LWIP_COMPAT_SOCKETS
+#define LWIP_COMPAT_SOCKETS             1
+#endif
+
+
+/**
+ * LWIP_SO_SNDTIMEO==1: Enable send timeout for sockets/netconns and
+ * SO_SNDTIMEO processing.
+ */
+#ifndef LWIP_SO_SNDTIMEO
+#define LWIP_SO_SNDTIMEO                1
+#endif
+
+/**
+ * LWIP_SO_RCVTIMEO==1: Enable receive timeout for sockets/netconns and
+ * SO_RCVTIMEO processing.
+ */
+#ifndef LWIP_SO_RCVTIMEO
+#define LWIP_SO_RCVTIMEO                1
+#endif
+
+/**
+ * LWIP_SO_RCVBUF==1: Enable SO_RCVBUF processing.
+ */
+#ifndef LWIP_SO_RCVBUF
+#define LWIP_SO_RCVBUF                  1
+#endif
+
+/**
+ * If LWIP_SO_RCVBUF is used, this is the default value for recv_bufsize.
+ */
+#ifndef RECV_BUFSIZE_DEFAULT
+#define RECV_BUFSIZE_DEFAULT            8192
+#endif
+
+/**
+ * SO_REUSE==1: Enable SO_REUSEADDR option.
+ */
+#ifndef SO_REUSE
+#define SO_REUSE                        0
 #endif
 
 #endif /* __LWIPOPTS_H__ */

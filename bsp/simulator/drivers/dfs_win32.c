@@ -50,6 +50,14 @@
 
 #define WIN32_DIRDISK_ROOT  "." /* "F:\\Project\\svn\\rtt\\trunk\\bsp\\simulator_test" */
 
+typedef struct {
+    HANDLE handle;
+    char *start;
+    char *end;
+    char *curr;
+    struct _finddata_t finddata;
+} WINDIR;
+
 /* There are so many error codes in windows, you'd better google for details.
  * google  "System Error Codes (Windows)"
  * http://msdn.microsoft.com/ZH-CN/library/windows/desktop/ms681381(v=vs.85).aspx
@@ -166,8 +174,8 @@ static int dfs_win32_open(struct dfs_fd *file)
     oflag = file->flags;
     if (oflag & DFS_O_DIRECTORY)   /* operations about dir */
     {
-        struct _finddata_t  dir;
-        int handle;
+        WINDIR *wdirp;
+        HANDLE handle;
         int len;
 
         file_path = winpath_dirdup(WIN32_DIRDISK_ROOT, file->path);
@@ -191,14 +199,24 @@ static int dfs_win32_open(struct dfs_fd *file)
 
         strcat(file_path, "*.*");
         /* _findfirst will get '.' */
-        if ((handle = _findfirst(file_path, &dir)) == -1)
+        /* save this pointer,will used by  dfs_win32_getdents*/
+        wdirp = rt_malloc(sizeof(WINDIR));
+        RT_ASSERT(wdirp != NULL);
+        if ((handle = _findfirst(file_path, &wdirp->finddata)) == -1)
         {
+            rt_free(wdirp);
             rt_free(file_path);
             goto __err;
         }
+        len = strlen(wdirp->finddata.name) + 1;
+        wdirp->handle = handle;
+        //wdirp->nfiles = 1;
+        wdirp->start = malloc(len); //not rt_malloc!
+        wdirp->end = wdirp->curr = wdirp->start;
+        wdirp->end += len;
+        strncpy(wdirp->curr, wdirp->finddata.name, len);
 
-        /* save this pointer,will used by  dfs_win32_getdents*/
-        file->data = (void *)handle;
+        file->data = (void *)wdirp;
         rt_free(file_path);
         return DFS_STATUS_OK;
     }
@@ -243,25 +261,22 @@ __err:
 
 static int dfs_win32_close(struct dfs_fd *file)
 {
-    int oflag;
-
-    oflag = file->flags;
-    if (oflag & DFS_O_DIRECTORY)
+    if (file->flags & DFS_O_DIRECTORY)
     {
-        /* operations about dir */
-        if (_findclose((intptr_t)file->data) < 0)
-            goto __err;
-
-        return 0;
+        WINDIR *wdirp = (WINDIR*)(file->data);
+        RT_ASSERT(wdirp != RT_NULL);
+        if (_findclose((intptr_t)wdirp->handle) == 0) {
+            free(wdirp->start); //NOTE: here we don't use rt_free!
+            rt_free(wdirp);
+            return 0;
+        }
+    }
+    else /* regular file operations */
+    {
+        if (_close((int)(file->data)) == 0)
+            return 0;
     }
 
-    /* regular file operations */
-    if (_close((int)(file->data)) < 0)
-        goto __err;
-
-    return 0;
-
-__err:
     return win32_result_to_dfs(GetLastError());
 }
 
@@ -316,16 +331,19 @@ static int dfs_win32_seek(struct dfs_fd *file,
     /* set offset as current offset */
     if (file->type == FT_DIRECTORY)
     {
-        return -DFS_STATUS_ENOSYS;
+        WINDIR* wdirp = (WINDIR*)(file->data);
+        RT_ASSERT(wdirp != RT_NULL);
+        wdirp->curr = wdirp->start + offset;
+        return offset;
     }
-    else if (file->type == FT_REGULAR)
+    else //file->type == FT_REGULAR)
     {
         result = _lseek((int)(file->data), offset, SEEK_SET);
         if (result >= 0)
             return offset;
+        else
+            return win32_result_to_dfs(GetLastError());
     }
-
-    return win32_result_to_dfs(GetLastError());
 }
 
 /* return the size of struct dirent*/
@@ -334,53 +352,52 @@ static int dfs_win32_getdents(
     struct dirent *dirp,
     rt_uint32_t count)
 {
-    rt_uint32_t index;
-    struct dirent *d;
-    struct _finddata_t  fileinfo;
-    int handle;
+    WINDIR *wdirp;
+    struct dirent *d = dirp;
     int result;
 
-    handle = (int)(file->data);
-    RT_ASSERT(handle != RT_NULL);
+    /* make integer count */
+    if (count / sizeof(struct dirent) != 1)
+        return -DFS_STATUS_EINVAL;
 
-    /* round count, count is always 1 */
-    count = (count / sizeof(struct dirent)) * sizeof(struct dirent);
-    if (count == 0) return -DFS_STATUS_EINVAL;
-
-    index = 0;
-    /* usually, the while loop should only be looped only once! */
-    while (1)
-    {
-        d = dirp + index;
-        if (_findnext(handle, &fileinfo) != 0) //-1 failed
-            goto __err;
-
-        if (fileinfo.attrib & _A_SUBDIR)
-            d->d_type = DFS_DT_DIR;  /* directory */
-        else
-            d->d_type = DFS_DT_REG;
-
-        /* write the rest arguments of struct dirent* dirp  */
-        d->d_namlen = strlen(fileinfo.name);
-        d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
-        strcpy(d->d_name, fileinfo.name);
-
-        index ++;
-        if (index * sizeof(struct dirent) >= count)
-            break;
-    }
-    if (index == 0)
+    wdirp = (WINDIR*)(file->data);
+    RT_ASSERT(wdirp != RT_NULL);
+    if (wdirp->curr == NULL) //no more entries in this directory
         return 0;
 
-    file->pos += index * sizeof(struct dirent);
-
-    return index * sizeof(struct dirent);
-
-__err:
-    if ((result = GetLastError()) == ERROR_NO_MORE_FILES)
-        return 0;
+    /* get the current entry */
+    if (wdirp->finddata.attrib & _A_SUBDIR)
+        d->d_type = DFS_DT_DIR;
     else
-        return win32_result_to_dfs(result);
+        d->d_type = DFS_DT_REG;
+    d->d_namlen = strlen(wdirp->curr);
+    strncpy(d->d_name, wdirp->curr, DFS_PATH_MAX);
+    d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
+    wdirp->curr += (strlen(wdirp->curr) + 1);
+    file->pos = wdirp->curr - wdirp->start + sizeof(struct dirent);//NOTE!
+
+    /* now set up for the next call to readdir */
+    if (wdirp->curr >= wdirp->end)
+    {
+        if (_findnext(wdirp->handle, &wdirp->finddata) == 0)
+        {
+            char* old_start = wdirp->start;
+            long name_len = strlen(wdirp->finddata.name) + 1;
+            wdirp->start = realloc(wdirp->start, wdirp->end - wdirp->start + name_len);
+            wdirp->curr = wdirp->start + (wdirp->curr - old_start);
+            wdirp->end = wdirp->curr + name_len;
+            strcpy(wdirp->curr, wdirp->finddata.name);
+        }
+        else
+        {
+            if ((result = GetLastError()) == ERROR_NO_MORE_FILES)
+                wdirp->curr = NULL;
+            else
+                return win32_result_to_dfs(result);
+        }
+    }
+
+    return sizeof(struct dirent);
 }
 
 static int dfs_win32_unlink(struct dfs_filesystem *fs, const char *path)
@@ -487,8 +504,6 @@ static int dfs_win32_stat(struct dfs_filesystem *fs, const char *path, struct st
 
         st->st_mtime = time_tmp.QuadPart;
     }
-
-    st->st_blksize = 0;
 
     FindClose(hFind);
 

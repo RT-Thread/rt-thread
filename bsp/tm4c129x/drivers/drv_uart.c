@@ -18,7 +18,7 @@
 #include <rtdevice.h>
 
 #include "board.h"
-//#include <components.h>
+#include <components.h>
 
 #include "inc/hw_memmap.h"
 #include "driverlib/sysctl.h"
@@ -220,4 +220,4 @@ int rt_hw_uart_init(void)
 #endif
 	return 0;
 }
-//INIT_BOARD_EXPORT(rt_hw_uart_init);
+INIT_BOARD_EXPORT(rt_hw_uart_init);

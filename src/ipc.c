@@ -61,7 +61,7 @@ extern void (*rt_object_put_hook)(struct rt_object *object);
  * @addtogroup IPC
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * This function will initialize an IPC object
@@ -1086,7 +1086,7 @@ RTM_EXPORT(rt_event_send);
  * @param option the receive option, either RT_EVENT_FLAG_AND or
  *        RT_EVENT_FLAG_OR should be set.
  * @param timeout the waiting time
- * @param recved the received event
+ * @param recved the received event, if you don't care, RT_NULL can be set.
  *
  * @return the error code
  */
@@ -1139,7 +1139,8 @@ rt_err_t rt_event_recv(rt_event_t   event,
     if (status == RT_EOK)
     {
         /* set received event */
-        *recved = (event->set & set);
+        if (recved)
+            *recved = (event->set & set);
 
         /* received event */
         if (option & RT_EVENT_FLAG_CLEAR)
@@ -1187,7 +1188,8 @@ rt_err_t rt_event_recv(rt_event_t   event,
         level = rt_hw_interrupt_disable();
 
         /* set received event */
-        *recved = thread->event_set;
+        if (recved)
+            *recved = thread->event_set;
     }
 
     /* enable interrupt */
@@ -2279,4 +2281,4 @@ rt_err_t rt_mq_control(rt_mq_t mq, rt_uint8_t cmd, void *arg)
 RTM_EXPORT(rt_mq_control);
 #endif /* end of RT_USING_MESSAGEQUEUE */
 
-/*@}*/
+/**@}*/

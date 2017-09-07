@@ -30,7 +30,7 @@ extern void rt_hw_serial_init(void);
 
 /*@{*/
 #ifdef RT_USING_FINSH
-extern void finsh_system_init(void);
+extern int finsh_system_init(void);
 extern void finsh_set_device(char* device);
 #endif
 
@@ -142,10 +142,8 @@ void rtthread_startup(void)
 
 int main(void)
 {
-	rt_uint32_t level UNUSED;
-
 	/* disable interrupt first */
-	level = rt_hw_interrupt_disable();
+	rt_hw_interrupt_disable();
 	rtthread_startup();
 	
 	return 0;

@@ -27,11 +27,16 @@
  * 2012-11-23     Bernard      using RT_DEBUG_LOG instead of rt_kprintf.
  * 2012-11-28     Bernard      remove rt_current_module and user
  *                             can use rt_module_unload to remove a module.
+ * 2017-08-20     parai        support intel 386 machine
  */
 
 #include <rthw.h>
 #include <rtthread.h>
 #include <rtm.h>
+
+#ifdef RT_USING_FINSH
+#include <finsh.h>
+#endif
 
 #ifdef RT_USING_MODULE
 #include "module.h"
@@ -47,6 +52,18 @@
 #define IS_ALLOC(s)       (s.sh_flags == SHF_ALLOC)
 #define IS_AX(s)          ((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_EXECINSTR))
 #define IS_AW(s)          ((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_WRITE))
+
+#ifdef RT_USING_MODULE_STKSZ
+#undef RT_USING_MODULE_STKSZ
+#endif
+
+#ifndef RT_USING_MODULE_STKSZ
+#define RT_USING_MODULE_STKSZ (4096 * 2)
+#endif
+
+#ifndef RT_USING_MODULE_PRIO
+#define RT_USING_MODULE_PRIO (RT_THREAD_PRIORITY_MAX - 2)
+#endif
 
 #ifdef RT_USING_SLAB
 #define PAGE_COUNT_MAX    256
@@ -75,6 +92,10 @@ static struct rt_semaphore mod_sem;
 static struct rt_module_symtab *_rt_module_symtab_begin = RT_NULL;
 static struct rt_module_symtab *_rt_module_symtab_end   = RT_NULL;
 
+#if defined(__IAR_SYSTEMS_ICC__) /* for IAR compiler */
+    #pragma section="RTMSymTab"
+#endif
+
 /**
  * @ingroup SystemInit
  *
@@ -82,7 +103,7 @@ static struct rt_module_symtab *_rt_module_symtab_end   = RT_NULL;
  */
 int rt_system_module_init(void)
 {
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__CC_ARM)
     extern int __rtmsymtab_start;
     extern int __rtmsymtab_end;
 
@@ -94,15 +115,37 @@ int rt_system_module_init(void)
 
     _rt_module_symtab_begin = (struct rt_module_symtab *)&RTMSymTab$$Base;
     _rt_module_symtab_end   = (struct rt_module_symtab *)&RTMSymTab$$Limit;
+#elif defined (__IAR_SYSTEMS_ICC__)
+    _rt_module_symtab_begin = __section_begin("RTMSymTab");
+    _rt_module_symtab_end   = __section_end("RTMSymTab");
 #endif
 
 #ifdef RT_USING_SLAB
     /* initialize heap semaphore */
     rt_sem_init(&mod_sem, "module", 1, RT_IPC_FLAG_FIFO);
 #endif
-	return 0;
+    return 0;
 }
 INIT_COMPONENT_EXPORT(rt_system_module_init);
+
+#ifdef RT_USING_FINSH
+void list_symbol(void)
+{
+    /* find in kernel symbol table */
+    struct rt_module_symtab *index;
+
+    for (index = _rt_module_symtab_begin;
+         index != _rt_module_symtab_end;
+         index ++)
+    {
+    	rt_kprintf("%s\n", index->name);
+    }
+
+    return ;
+}
+FINSH_FUNCTION_EXPORT(list_symbol, list symbol for module);
+MSH_CMD_EXPORT(list_symbol, list symbol for module);
+#endif
 
 static rt_uint32_t rt_module_symbol_find(const char *sym_str)
 {
@@ -136,6 +179,7 @@ rt_module_t rt_module_self(void)
     /* return current module */
     return (rt_module_t)tid->module_id;
 }
+RTM_EXPORT(rt_module_self);
 
 static int rt_module_arm_relocate(struct rt_module *module,
                                   Elf32_Rel        *rel,
@@ -145,7 +189,9 @@ static int rt_module_arm_relocate(struct rt_module *module,
     Elf32_Sword addend, offset;
     rt_uint32_t upper, lower, sign, j1, j2;
 
-    where = (Elf32_Addr *)((rt_uint8_t *)module->module_space + rel->r_offset);
+    where = (Elf32_Addr *)((rt_uint8_t *)module->module_space
+                           + rel->r_offset
+                           - module->vstart_addr);
     switch (ELF32_R_TYPE(rel->r_info))
     {
     case R_ARM_NONE:
@@ -178,6 +224,10 @@ static int rt_module_arm_relocate(struct rt_module *module,
         *where &= 0xf000000f;
         *where |= 0x01a0f000;
         break;
+#ifdef MODULE_USING_386
+    case R_386_GLOB_DAT:
+    case R_386_JUMP_SLOT:
+#endif
     case R_ARM_GLOB_DAT:
     case R_ARM_JUMP_SLOT:
         *where = (Elf32_Addr)sym_val;
@@ -191,6 +241,9 @@ static int rt_module_arm_relocate(struct rt_module *module,
         RT_DEBUG_LOG(RT_DEBUG_MODULE, ("R_ARM_GOT_BREL: 0x%x -> 0x%x 0x%x\n",
                                        where, *where, sym_val));
         break;
+#endif
+#ifdef MODULE_USING_386
+    case R_386_RELATIVE:
 #endif
     case R_ARM_RELATIVE:
         *where = (Elf32_Addr)sym_val + *where;
@@ -206,10 +259,10 @@ static int rt_module_arm_relocate(struct rt_module *module,
         j1     = (lower >> 13) & 1;
         j2     = (lower >> 11) & 1;
         offset = (sign << 24) |
-                 ((~(j1 ^ sign) & 1) << 23) |
-                 ((~(j2 ^ sign) & 1) << 22) |
-                 ((upper & 0x03ff) << 12) |
-                 ((lower & 0x07ff) << 1);
+            ((~(j1 ^ sign) & 1) << 23) |
+            ((~(j2 ^ sign) & 1) << 22) |
+            ((upper & 0x03ff) << 12) |
+            ((lower & 0x07ff) << 1);
         if (offset & 0x01000000)
             offset -= 0x02000000;
         offset += sym_val - (Elf32_Addr)where;
@@ -227,11 +280,11 @@ static int rt_module_arm_relocate(struct rt_module *module,
         j1   = sign ^ (~(offset >> 23) & 1);
         j2   = sign ^ (~(offset >> 22) & 1);
         *(rt_uint16_t *)where = (rt_uint16_t)((upper & 0xf800) |
-                                (sign << 10) |
-                                ((offset >> 12) & 0x03ff));
+                                              (sign << 10) |
+                                              ((offset >> 12) & 0x03ff));
         *(rt_uint16_t *)(where + 2) = (rt_uint16_t)((lower & 0xd000) |
-                                      (j1 << 13) | (j2 << 11) |
-                                      ((offset >> 1) & 0x07ff));
+                                                    (j1 << 13) | (j2 << 11) |
+                                                    ((offset >> 1) & 0x07ff));
         upper = *(rt_uint16_t *)where;
         lower = *(rt_uint16_t *)((Elf32_Addr)where + 2);
         break;
@@ -321,7 +374,7 @@ static void (*rt_module_unload_hook)(rt_module_t module);
  * @addtogroup Hook
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * This function will set a hook function, which will be invoked when module
@@ -345,16 +398,17 @@ void rt_module_unload_sethook(void (*hook)(rt_module_t module))
     rt_module_unload_hook = hook;
 }
 
-/*@}*/
+/**@}*/
 #endif
 
 static struct rt_module *_load_shared_object(const char *name,
                                              void       *module_ptr)
 {
-    rt_uint8_t *ptr    = RT_NULL;
     rt_module_t module = RT_NULL;
     rt_bool_t linked   = RT_FALSE;
     rt_uint32_t index, module_size = 0;
+    Elf32_Addr vstart_addr, vend_addr;
+    rt_bool_t has_vstart;
 
     RT_ASSERT(module_ptr != RT_NULL);
 
@@ -365,11 +419,61 @@ static struct rt_module *_load_shared_object(const char *name,
     }
 
     /* get the ELF image size */
+    has_vstart = RT_FALSE;
+    vstart_addr = vend_addr = RT_NULL;
     for (index = 0; index < elf_module->e_phnum; index++)
     {
-        if (phdr[index].p_type == PT_LOAD)
-            module_size += phdr[index].p_memsz;
+        if (phdr[index].p_type != PT_LOAD)
+            continue;
+
+        RT_DEBUG_LOG(RT_DEBUG_MODULE, ("LOAD segment: %d, 0x%p, 0x%08x\n",
+                                       index, phdr[index].p_vaddr, phdr[index].p_memsz));
+
+        if (phdr[index].p_memsz < phdr[index].p_filesz)
+        {
+            rt_kprintf("invalid elf: segment %d: p_memsz: %d, p_filesz: %d\n",
+                       index, phdr[index].p_memsz, phdr[index].p_filesz);
+            return RT_NULL;
+        }
+        if (!has_vstart)
+        {
+            vstart_addr = phdr[index].p_vaddr;
+            vend_addr = phdr[index].p_vaddr + phdr[index].p_memsz;
+            has_vstart = RT_TRUE;
+            if (vend_addr < vstart_addr)
+            {
+                rt_kprintf("invalid elf: segment %d: p_vaddr: %d, p_memsz: %d\n",
+                           index, phdr[index].p_vaddr, phdr[index].p_memsz);
+                return RT_NULL;
+            }
+        }
+        else
+        {
+            if (phdr[index].p_vaddr < vend_addr)
+            {
+                rt_kprintf("invalid elf: segment should be sorted and not overlapped\n");
+                return RT_NULL;
+            }
+            if (phdr[index].p_vaddr > vend_addr + 16)
+            {
+                /* There should not be too much padding in the object files. */
+                rt_kprintf("warning: too much padding before segment %d\n", index);
+            }
+
+            vend_addr = phdr[index].p_vaddr + phdr[index].p_memsz;
+            if (vend_addr < phdr[index].p_vaddr)
+            {
+                rt_kprintf("invalid elf: "
+                           "segment %d address overflow\n", index);
+                return RT_NULL;
+            }
+        }
     }
+
+    module_size = vend_addr - vstart_addr;
+
+    RT_DEBUG_LOG(RT_DEBUG_MODULE, ("module size: %d, vstart_addr: 0x%p\n",
+                                   module_size, vstart_addr));
 
     if (module_size == 0)
     {
@@ -384,6 +488,8 @@ static struct rt_module *_load_shared_object(const char *name,
     if (!module)
         return RT_NULL;
 
+    module->vstart_addr = vstart_addr;
+
     module->nref = 0;
 
     /* allocate module space */
@@ -397,21 +503,21 @@ static struct rt_module *_load_shared_object(const char *name,
     }
 
     /* zero all space */
-    ptr = module->module_space;
-    rt_memset(ptr, 0, module_size);
+    rt_memset(module->module_space, 0, module_size);
 
     for (index = 0; index < elf_module->e_phnum; index++)
     {
         if (phdr[index].p_type == PT_LOAD)
         {
-            rt_memcpy(ptr + phdr[index].p_paddr,
+            rt_memcpy(module->module_space + phdr[index].p_vaddr - vstart_addr,
                       (rt_uint8_t *)elf_module + phdr[index].p_offset,
                       phdr[index].p_filesz);
         }
     }
 
     /* set module entry */
-    module->module_entry = module->module_space + elf_module->e_entry;
+    module->module_entry = module->module_space
+        + elf_module->e_entry - vstart_addr;
 
     /* handle relocation section */
     for (index = 0; index < elf_module->e_shnum; index ++)
@@ -432,7 +538,7 @@ static struct rt_module *_load_shared_object(const char *name,
         symtab = (Elf32_Sym *)((rt_uint8_t *)module_ptr +
                                shdr[shdr[index].sh_link].sh_offset);
         strtab = (rt_uint8_t *)module_ptr +
-                 shdr[shdr[shdr[index].sh_link].sh_link].sh_offset;
+            shdr[shdr[shdr[index].sh_link].sh_link].sh_offset;
         nr_reloc = (rt_uint32_t)(shdr[index].sh_size / sizeof(Elf32_Rel));
 
         /* relocate every items */
@@ -445,10 +551,16 @@ static struct rt_module *_load_shared_object(const char *name,
                                            sym->st_shndx));
 
             if ((sym->st_shndx != SHT_NULL) ||
-                (ELF_ST_BIND(sym->st_info) == STB_LOCAL))
+                (ELF_ST_BIND(sym->st_info) == STB_LOCAL)
+#ifdef MODULE_USING_386
+                || ( (ELF_ST_BIND(sym->st_info) == STB_GLOBAL) && (ELF_ST_TYPE(sym->st_info) == STT_OBJECT) )
+#endif
+				)
             {
                 rt_module_arm_relocate(module, rel,
-                           (Elf32_Addr)(module->module_space + sym->st_value));
+                                       (Elf32_Addr)(module->module_space
+                                                    + sym->st_value
+                                                    - vstart_addr));
             }
             else if (!linked)
             {
@@ -485,7 +597,7 @@ static struct rt_module *_load_shared_object(const char *name,
         /* find .dynsym section */
         rt_uint8_t *shstrab;
         shstrab = (rt_uint8_t *)module_ptr +
-                  shdr[elf_module->e_shstrndx].sh_offset;
+            shdr[elf_module->e_shstrndx].sh_offset;
         if (rt_strcmp((const char *)(shstrab + shdr[index].sh_name), ELF_DYNSYM) == 0)
             break;
     }
@@ -500,7 +612,7 @@ static struct rt_module *_load_shared_object(const char *name,
         symtab =(Elf32_Sym *)((rt_uint8_t *)module_ptr + shdr[index].sh_offset);
         strtab = (rt_uint8_t *)module_ptr + shdr[shdr[index].sh_link].sh_offset;
 
-        for (i=0; i<shdr[index].sh_size/sizeof(Elf32_Sym); i++)
+        for (i = 0; i < shdr[index].sh_size/sizeof(Elf32_Sym); i++)
         {
             if ((ELF_ST_BIND(symtab[i].st_info) == STB_GLOBAL) &&
                 (ELF_ST_TYPE(symtab[i].st_info) == STT_FUNC))
@@ -508,9 +620,9 @@ static struct rt_module *_load_shared_object(const char *name,
         }
 
         module->symtab = (struct rt_module_symtab *)rt_malloc
-                         (count * sizeof(struct rt_module_symtab));
+            (count * sizeof(struct rt_module_symtab));
         module->nsym = count;
-        for (i=0, count=0; i<shdr[index].sh_size/sizeof(Elf32_Sym); i++)
+        for (i = 0, count = 0; i < shdr[index].sh_size/sizeof(Elf32_Sym); i++)
         {
             rt_size_t length;
 
@@ -574,9 +686,11 @@ static struct rt_module* _load_relocated_object(const char *name,
 
     /* allocate module */
     module = (struct rt_module *)
-             rt_object_allocate(RT_Object_Class_Module, (const char *)name);
+        rt_object_allocate(RT_Object_Class_Module, (const char *)name);
     if (module == RT_NULL)
         return RT_NULL;
+
+    module->vstart_addr = 0;
 
     /* allocate module space */
     module->module_space = rt_malloc(module_size);
@@ -661,11 +775,11 @@ static struct rt_module* _load_relocated_object(const char *name,
 
         /* locate .dynsym and .dynstr */
         symtab   = (Elf32_Sym *)((rt_uint8_t *)module_ptr +
-                   shdr[shdr[index].sh_link].sh_offset);
+                                 shdr[shdr[index].sh_link].sh_offset);
         strtab   = (rt_uint8_t *)module_ptr +
-                   shdr[shdr[shdr[index].sh_link].sh_link].sh_offset;
+            shdr[shdr[shdr[index].sh_link].sh_link].sh_offset;
         shstrab  = (rt_uint8_t *)module_ptr +
-                   shdr[elf_module->e_shstrndx].sh_offset;
+            shdr[elf_module->e_shstrndx].sh_offset;
         nr_reloc = (rt_uint32_t)(shdr[index].sh_size / sizeof(Elf32_Rel));
 
         /* relocate every items */
@@ -682,7 +796,7 @@ static struct rt_module* _load_relocated_object(const char *name,
                     (ELF_ST_TYPE(sym->st_info) == STT_OBJECT))
                 {
                     if (rt_strncmp((const char *)(shstrab +
-                        shdr[sym->st_shndx].sh_name), ELF_RODATA, 8) == 0)
+                                                  shdr[sym->st_shndx].sh_name), ELF_RODATA, 8) == 0)
                     {
                         /* relocate rodata section */
                         RT_DEBUG_LOG(RT_DEBUG_MODULE, ("rodata\n"));
@@ -690,7 +804,7 @@ static struct rt_module* _load_relocated_object(const char *name,
                                                (Elf32_Addr)(rodata_addr + sym->st_value));
                     }
                     else if (rt_strncmp((const char*)
-                             (shstrab + shdr[sym->st_shndx].sh_name), ELF_BSS, 5) == 0)
+                                        (shstrab + shdr[sym->st_shndx].sh_name), ELF_BSS, 5) == 0)
                     {
                         /* relocate bss section */
                         RT_DEBUG_LOG(RT_DEBUG_MODULE, ("bss\n"));
@@ -698,7 +812,7 @@ static struct rt_module* _load_relocated_object(const char *name,
                                                (Elf32_Addr)bss_addr + sym->st_value);
                     }
                     else if (rt_strncmp((const char *)(shstrab + shdr[sym->st_shndx].sh_name),
-                             ELF_DATA, 6) == 0)
+                                        ELF_DATA, 6) == 0)
                     {
                         /* relocate data section */
                         RT_DEBUG_LOG(RT_DEBUG_MODULE, ("data\n"));
@@ -710,8 +824,11 @@ static struct rt_module* _load_relocated_object(const char *name,
             else if (ELF_ST_TYPE(sym->st_info) == STT_FUNC)
             {
                 /* relocate function */
-                rt_module_arm_relocate(module, rel, (Elf32_Addr)((rt_uint8_t *)
-                    module->module_space - module_addr + sym->st_value));
+                rt_module_arm_relocate(module, rel,
+                                       (Elf32_Addr)((rt_uint8_t *)
+                                                    module->module_space
+                                                    - module_addr
+                                                    + sym->st_value));
             }
             else
             {
@@ -736,8 +853,11 @@ static struct rt_module* _load_relocated_object(const char *name,
                 }
                 else
                 {
-                    rt_module_arm_relocate(module, rel, (Elf32_Addr)((rt_uint8_t*)
-                        module->module_space - module_addr + sym->st_value));
+                    rt_module_arm_relocate(module, rel,
+                                           (Elf32_Addr)((rt_uint8_t*)
+                                                        module->module_space
+                                                        - module_addr
+                                                        + sym->st_value));
                 }
             }
             rel ++;
@@ -747,21 +867,107 @@ static struct rt_module* _load_relocated_object(const char *name,
     return module;
 }
 
+#define RT_MODULE_ARG_MAX    8
+static int _rt_module_split_arg(char* cmd, rt_size_t length, char* argv[])
+{
+    int argc = 0;
+    char *ptr = cmd;
+
+    while ((ptr - cmd) < length)
+    {
+        /* strip bank and tab */
+        while ((*ptr == ' ' || *ptr == '\t') && (ptr -cmd)< length)
+            *ptr++ = '\0';
+        /* check whether it's the end of line */
+        if ((ptr - cmd)>= length) break;
+
+        /* handle string with quote */
+        if (*ptr == '"')
+        {
+            argv[argc++] = ++ptr;
+
+            /* skip this string */
+            while (*ptr != '"' && (ptr-cmd) < length)
+                if (*ptr ++ == '\\')  ptr ++;
+            if ((ptr - cmd) >= length) break;
+
+            /* skip '"' */
+            *ptr ++ = '\0';
+        }
+        else
+        {
+            argv[argc++] = ptr;
+            while ((*ptr != ' ' && *ptr != '\t') && (ptr - cmd) < length)
+                ptr ++;
+        }
+
+        if (argc >= RT_MODULE_ARG_MAX) break;
+    }
+
+    return argc;
+}
+
+/* module main thread entry */
+static void module_main_entry(void* parameter)
+{
+    int argc;
+    char *argv[RT_MODULE_ARG_MAX];
+    typedef int (*main_func_t)(int argc, char** argv);
+
+    rt_module_t module = (rt_module_t) parameter;
+    if (module == RT_NULL)
+        return;
+
+    if (module->module_cmd_line == RT_NULL && module->module_cmd_size != 0)
+        /* malloc for module_cmd_line failed. */
+        return;
+
+    /* FIXME: we should run some C++ initialize code before jump into the
+     * entry. */
+
+    if (module->module_cmd_line == RT_NULL)
+    {
+        RT_DEBUG_LOG(RT_DEBUG_MODULE, ("run bare entry: 0x%p\n",
+                                       module->module_entry));
+        ((main_func_t)module->module_entry)(0, RT_NULL);
+        return;
+    }
+
+    rt_memset(argv, 0x00, sizeof(argv));
+    argc = _rt_module_split_arg((char*)module->module_cmd_line,
+                                module->module_cmd_size, argv);
+    if (argc == 0)
+        return;
+
+    RT_DEBUG_LOG(RT_DEBUG_MODULE, ("run main entry: 0x%p with %s\n",
+                                   module->module_entry,
+                                   module->module_cmd_line));
+    /* do the main function */
+    ((main_func_t)module->module_entry)(argc, argv);
+    return;
+}
+
 /**
- * This function will load a module from memory and create a thread for it
+ * This function will load a module with a main function from memory and create a 
+ * main thread for it
  *
  * @param name the name of module, which shall be unique
  * @param module_ptr the memory address of module image
+ * @argc the count of argument
+ * @argd the argument data, which should be a 
  *
  * @return the module object
  */
-rt_module_t rt_module_load(const char *name, void *module_ptr)
+rt_module_t rt_module_do_main(const char *name,
+                              void *module_ptr,
+                              const char* cmd_line,
+                              int line_size)
 {
     rt_module_t module;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
-    RT_DEBUG_LOG(RT_DEBUG_MODULE, ("rt_module_load: %s ,", name));
+    RT_DEBUG_LOG(RT_DEBUG_MODULE, ("rt_module_load: %s\n", name));
 
     /* check ELF header */
     if (rt_memcmp(elf_module->e_ident, RTMMAG, SELFMAG) != 0 &&
@@ -801,10 +1007,24 @@ rt_module_t rt_module_load(const char *name, void *module_ptr)
     /* init module object container */
     rt_module_init_object_container(module);
 
-	/* initialize an empty command */
-	module->module_cmd_line = RT_NULL;
-	module->module_cmd_size = 0;
-	
+    if (line_size && cmd_line)
+    {
+        /* set module argument */
+        module->module_cmd_line = (rt_uint8_t*)rt_malloc(line_size + 1);
+        if (module->module_cmd_line)
+        {
+            rt_memcpy(module->module_cmd_line, cmd_line, line_size);
+            module->module_cmd_line[line_size] = '\0';
+        }
+        module->module_cmd_size = line_size;
+    }
+    else
+    {
+        /* initialize an empty command */
+        module->module_cmd_line = RT_NULL;
+        module->module_cmd_size = 0;
+    }
+
     /* increase module reference count */
     module->nref ++;
 
@@ -822,8 +1042,9 @@ rt_module_t rt_module_load(const char *name, void *module_ptr)
 
         /* create module thread */
         module->module_thread = rt_thread_create(name,
-                             (void(*)(void *))module->module_entry, RT_NULL,
-                             2048, RT_THREAD_PRIORITY_MAX - 2, 10);
+                                                 module_main_entry, module,
+                                                 RT_USING_MODULE_STKSZ,
+                                                 RT_USING_MODULE_PRIO, 10);
 
         RT_DEBUG_LOG(RT_DEBUG_MODULE, ("thread entry 0x%x\n",
                                        module->module_entry));
@@ -851,166 +1072,17 @@ rt_module_t rt_module_load(const char *name, void *module_ptr)
     return module;
 }
 
-#define RT_MODULE_ARG_MAX    8
-static int _rt_module_split_arg(char* cmd, rt_size_t length, char* argv[])
-{
-	int argc = 0;
-	char *ptr = cmd;
-
-	while ((ptr - cmd) < length)
-	{
-		/* strip bank and tab */
-		while ((*ptr == ' ' || *ptr == '\t') && (ptr -cmd)< length)
-			*ptr++ = '\0';
-		/* check whether it's the end of line */
-		if ((ptr - cmd)>= length) break;
-
-		/* handle string with quote */
-		if (*ptr == '"')
-		{
-			argv[argc++] = ++ptr;
-
-			/* skip this string */
-			while (*ptr != '"' && (ptr-cmd) < length)
-				if (*ptr ++ == '\\')  ptr ++;
-			if ((ptr - cmd) >= length) break;
-
-			/* skip '"' */
-			*ptr ++ = '\0';
-		}
-		else
-		{
-			argv[argc++] = ptr;
-			while ((*ptr != ' ' && *ptr != '\t') && (ptr - cmd) < length)
-				ptr ++;
-		}
-
-		if (argc >= RT_MODULE_ARG_MAX) break;
-	}
-
-	return argc;
-}
-/* module main thread entry */
-static void module_main_entry(void* parameter)
-{
-    int argc;
-    char *argv[RT_MODULE_ARG_MAX];
-	typedef int (*main_func_t)(int argc, char** argv);
-
-	rt_module_t module = (rt_module_t) parameter;
-	if (module == RT_NULL || module->module_cmd_line == RT_NULL) return;
-
-    rt_memset(argv, 0x00, sizeof(argv));
-    argc = _rt_module_split_arg((char*)module->module_cmd_line, module->module_cmd_size, argv);
-    if (argc == 0) return ;
-
-	/* do the main function */
-	((main_func_t)module->module_entry)(argc, argv);
-	return;
-}
-
 /**
- * This function will load a module with a main function from memory and create a 
- * main thread for it
+ * This function will load a module from memory and create a thread for it
  *
  * @param name the name of module, which shall be unique
  * @param module_ptr the memory address of module image
- * @argc the count of argument
- * @argd the argument data, which should be a 
  *
  * @return the module object
  */
-rt_module_t rt_module_do_main(const char *name, void *module_ptr, const char* cmd_line, int line_size)
+rt_module_t rt_module_load(const char *name, void *module_ptr)
 {
-	rt_module_t module;
-
-	RT_DEBUG_NOT_IN_INTERRUPT;
-
-	RT_DEBUG_LOG(RT_DEBUG_MODULE, ("rt_module_load: %s ,", name));
-
-	/* check ELF header */
-	if (rt_memcmp(elf_module->e_ident, RTMMAG, SELFMAG) != 0 &&
-		rt_memcmp(elf_module->e_ident, ELFMAG, SELFMAG) != 0)
-	{
-		rt_kprintf("Module: magic error\n");
-
-		return RT_NULL;
-	}
-
-	/* check ELF class */
-	if (elf_module->e_ident[EI_CLASS] != ELFCLASS32)
-	{
-		rt_kprintf("Module: ELF class error\n");
-		return RT_NULL;
-	}
-
-	if (elf_module->e_type == ET_REL)
-	{
-		module = _load_relocated_object(name, module_ptr);
-	}
-	else if (elf_module->e_type == ET_DYN)
-	{
-		module = _load_shared_object(name, module_ptr);
-	}
-	else
-	{
-		rt_kprintf("Module: unsupported excutable program\n");
-		return RT_NULL;
-	}
-
-	if (module == RT_NULL)
-		return RT_NULL;
-
-	/* init module object container */
-	rt_module_init_object_container(module);
-
-	/* increase module reference count */
-	module->nref ++;
-
-	if (elf_module->e_entry != 0)
-	{
-#ifdef RT_USING_SLAB
-		/* init module memory allocator */
-		module->mem_list = RT_NULL;
-
-		/* create page array */
-		module->page_array =
-			(void *)rt_malloc(PAGE_COUNT_MAX * sizeof(struct rt_page_info));
-		module->page_cnt = 0;
-#endif
-
-		/* set module argument */
-		module->module_cmd_line = (rt_uint8_t*)rt_malloc(line_size + 1);
-		rt_memcpy(module->module_cmd_line, cmd_line, line_size);
-		module->module_cmd_line[line_size] = '\0';
-		module->module_cmd_size = line_size;
-
-		/* create module thread */
-		module->module_thread =	rt_thread_create(name,
-							 module_main_entry, module,
-							 2048, RT_THREAD_PRIORITY_MAX - 2, 10);
-
-		/* set module id */
-		module->module_thread->module_id = (void *)module;
-		module->parent.flag = RT_MODULE_FLAG_WITHENTRY;
-
-		/* startup main thread */
-		rt_thread_startup(module->module_thread);
-	}
-	else
-	{
-		/* without entry point */
-		module->parent.flag |= RT_MODULE_FLAG_WITHOUTENTRY;
-	}
-
-#ifdef RT_USING_HOOK
-	if (rt_module_load_hook != RT_NULL)
-	{
-		rt_module_load_hook(module);
-	}
-#endif
-
-	return module;
+    return rt_module_do_main(name, module_ptr, RT_NULL, 0);
 }
 
 #ifdef RT_USING_DFS
@@ -1132,33 +1204,33 @@ rt_module_t rt_module_exec_cmd(const char *path, const char* cmd_line, int size)
     char *name, *buffer, *offset_ptr;
     struct rt_module *module = RT_NULL;
 
-	name = buffer = RT_NULL;
+    name = buffer = RT_NULL;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
     /* check parameters */
     RT_ASSERT(path != RT_NULL);
 
-	/* get file size */
+    /* get file size */
     if (stat(path, &s) !=0)
     {
         rt_kprintf("Module: access %s failed\n", path);
         goto __exit;
     }
 
-	/* allocate buffer to save program */
+    /* allocate buffer to save program */
     offset_ptr = buffer = (char *)rt_malloc(s.st_size);
     if (buffer == RT_NULL)
     {
         rt_kprintf("Module: out of memory\n");
-		goto __exit;
+        goto __exit;
     }
 
     fd = open(path, O_RDONLY, 0);
     if (fd < 0)
     {
         rt_kprintf("Module: open %s failed\n", path);
-		goto __exit;
+        goto __exit;
     }
 
     do
@@ -1175,12 +1247,12 @@ rt_module_t rt_module_exec_cmd(const char *path, const char* cmd_line, int size)
     if ((rt_uint32_t)offset_ptr - (rt_uint32_t)buffer != s.st_size)
     {
         rt_kprintf("Module: read file failed\n");
-		goto __exit;
+        goto __exit;
     }
 
-	/* get module */
+    /* get module */
     name   = _module_name(path);
-	/* execute module */
+    /* execute module */
     module = rt_module_do_main(name, (void *)buffer, cmd_line, size);
 
 __exit:
@@ -1224,7 +1296,7 @@ rt_err_t rt_module_destroy(rt_module_t module)
     {
 #ifdef RT_USING_SEMAPHORE
         /* delete semaphores */
-        list = &module->module_object[RT_Object_Class_Thread].object_list;
+        list = &module->module_object[RT_Object_Class_Semaphore].object_list;
         while (list->next != list)
         {
             object = rt_list_entry(list->next, struct rt_object, list);
@@ -1362,12 +1434,12 @@ rt_err_t rt_module_destroy(rt_module_t module)
                 rt_timer_delete((rt_timer_t)object);
             }
         }
-		
-		/* delete command line */
-		if (module->module_cmd_line != RT_NULL)
-		{
-			rt_free(module->module_cmd_line);
-		}
+
+        /* delete command line */
+        if (module->module_cmd_line != RT_NULL)
+        {
+            rt_free(module->module_cmd_line);
+        }
     }
 
 #ifdef RT_USING_SLAB
@@ -1504,6 +1576,7 @@ rt_module_t rt_module_find(const char *name)
     /* not found */
     return RT_NULL;
 }
+RTM_EXPORT(rt_module_find);
 
 #ifdef RT_USING_SLAB
 /*
@@ -1615,8 +1688,8 @@ void *rt_module_malloc(rt_size_t size)
     RT_DEBUG_NOT_IN_INTERRUPT;
 
     nunits = (size + sizeof(struct rt_mem_head) - 1) /
-             sizeof(struct rt_mem_head)
-             + 1;
+        sizeof(struct rt_mem_head)
+        + 1;
 
     RT_ASSERT(size != 0);
     RT_ASSERT(nunits != 0);
@@ -1659,7 +1732,7 @@ void *rt_module_malloc(rt_size_t size)
 
     /* allocate pages from system heap */
     npage = (size + sizeof(struct rt_mem_head) + RT_MM_PAGE_SIZE - 1) /
-            RT_MM_PAGE_SIZE;
+        RT_MM_PAGE_SIZE;
     if ((up = (struct rt_mem_head *)rt_module_malloc_page(npage)) == RT_NULL)
         return RT_NULL;
 
@@ -1725,8 +1798,8 @@ void rt_module_free(rt_module_t module, void *addr)
                     if ((b->size * sizeof(struct rt_page_info) % RT_MM_PAGE_SIZE) != 0)
                     {
                         rt_size_t nunits = npage *
-                                           RT_MM_PAGE_SIZE /
-                                           sizeof(struct rt_mem_head);
+                            RT_MM_PAGE_SIZE /
+                            sizeof(struct rt_mem_head);
                         /* split memory */
                         r       = b + nunits;
                         r->next = b->next;
@@ -1762,8 +1835,8 @@ void rt_module_free(rt_module_t module, void *addr)
                     if ((n->size * sizeof(struct rt_page_info) % RT_MM_PAGE_SIZE) != 0)
                     {
                         rt_size_t nunits = npage *
-                                           RT_MM_PAGE_SIZE /
-                                           sizeof(struct rt_mem_head);
+                            RT_MM_PAGE_SIZE /
+                            sizeof(struct rt_mem_head);
                         /* split memory */
                         r       = n + nunits;
                         r->next = n->next;
@@ -1848,8 +1921,8 @@ void *rt_module_realloc(void *ptr, rt_size_t size)
     }
 
     nunits = (size + sizeof(struct rt_mem_head) - 1) /
-             sizeof(struct rt_mem_head)
-             +1;
+        sizeof(struct rt_mem_head)
+        +1;
     b = (struct rt_mem_head *)ptr - 1;
 
     if (nunits <= b->size)
@@ -1959,8 +2032,8 @@ void list_mempage(const char *name)
     }
 }
 FINSH_FUNCTION_EXPORT(list_mempage, list module using memory page information)
-#endif
+#endif /* RT_USING_FINSH */
 
-#endif
+#endif /* RT_USING_SLAB */
 
 #endif

@@ -14,9 +14,14 @@
 
 #include <rtthread.h>
 
-#include <board.h>
-#include <components.h>
+#ifdef RT_USING_FINSH
+#include <shell.h>
+#include <finsh.h>
+#endif
 
+#ifdef RT_USING_COMPONENTS_INIT
+#include <components.h>
+#endif
 
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
@@ -24,12 +29,8 @@ void rt_init_thread_entry(void *parameter)
     /* Initialization RT-Thread Components */
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_init();
-#endif
-
-#ifdef RT_USING_FINSH
-    /* initialize finsh */
+#elif defined(RT_USING_FINSH)
     finsh_system_init();
-    finsh_set_device(FINSH_DEVICE_NAME);
 #endif
 }
 

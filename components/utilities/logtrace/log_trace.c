@@ -368,7 +368,7 @@ static rt_err_t _log_control(rt_device_t dev, rt_uint8_t cmd, void *arg)
     return rt_device_control(_traceout_device, cmd, arg);
 }
 
-void log_trace_init(void)
+int log_trace_init(void)
 {
     rt_memset(&_log_device, 0x00, sizeof(_log_device));
 
@@ -385,8 +385,13 @@ void log_trace_init(void)
     _log_device.tx_complete = RT_NULL;
 
     rt_device_register(&_log_device, "log", RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_RDWR);
-    return ;
+
+	/* set console as default device */
+	_traceout_device = rt_console_get_device();
+
+    return 0;
 }
+INIT_DEVICE_EXPORT(log_trace_init);
 
 rt_device_t log_trace_get_device(void)
 {

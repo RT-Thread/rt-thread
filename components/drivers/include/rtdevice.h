@@ -28,6 +28,10 @@
 
 #include <rtthread.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define RT_DEVICE(device)            ((rt_device_t)device)
 
 /* completion flag */
@@ -130,7 +134,6 @@ struct rt_data_queue
 {
     rt_uint16_t size;
     rt_uint16_t lwm;
-    rt_bool_t   waiting_lwm;
 
     rt_uint16_t get_index;
     rt_uint16_t put_index;
@@ -147,8 +150,9 @@ struct rt_data_queue
 /* workqueue implementation */
 struct rt_workqueue
 {
-	rt_list_t   work_list;
-	rt_thread_t work_thread;
+	rt_list_t      work_list;
+	struct rt_work *work_current; /* current work */
+	rt_thread_t    work_thread;
 };
 
 struct rt_work
@@ -299,7 +303,7 @@ rt_err_t rt_workqueue_destroy(struct rt_workqueue* queue);
 rt_err_t rt_workqueue_dowork(struct rt_workqueue* queue, struct rt_work* work);
 rt_err_t rt_workqueue_cancel_work(struct rt_workqueue* queue, struct rt_work* work);
 
-rt_inline void rt_work_init(struct rt_work* work, void (*work_func)(struct rt_work* work, void* work_data), 
+rt_inline void rt_work_init(struct rt_work* work, void (*work_func)(struct rt_work* work, void* work_data),
     void* work_data)
 {
     rt_list_init(&(work->list));
@@ -356,6 +360,26 @@ rt_inline void rt_work_init(struct rt_work* work, void (*work_func)(struct rt_wo
 
 #ifdef RT_USING_WDT
 #include "drivers/watchdog.h"
+#endif
+
+#ifdef RT_USING_PIN
+#include "drivers/pin.h"
+#endif
+
+#ifdef RT_USING_CAN
+#include "drivers/can.h"
+#endif
+
+#ifdef RT_USING_HWTIMER
+#include "drivers/hwtimer.h"
+#endif
+
+#ifdef RT_USING_AUDIO
+#include "drivers/audio.h"
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* __RT_DEVICE_H__ */

@@ -33,7 +33,7 @@
  */
 /*@{*/
 
-
+extern void rt_hw_interrupt_init(void);
 extern void rt_hw_clock_init(void);
 
 extern void rt_hw_get_clock(void);
@@ -143,6 +143,10 @@ static void at91sam926x_pit_init(void)
  */
 void rt_hw_board_init()
 {
+	/* initialize mmu */
+	rt_hw_mmu_init(at91_mem_desc, sizeof(at91_mem_desc)/sizeof(at91_mem_desc[0]));
+		/* initialize hardware interrupt */
+	rt_hw_interrupt_init();
 	/* initialize the system clock */
 	rt_hw_clock_init();
 
@@ -150,8 +154,7 @@ void rt_hw_board_init()
 	rt_hw_uart_init();
 	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 
-	/* initialize mmu */
-	rt_hw_mmu_init(at91_mem_desc, sizeof(at91_mem_desc)/sizeof(at91_mem_desc[0]));
+
 
 	/* initialize timer0 */
 	rt_hw_timer_init();

@@ -8,4 +8,5 @@ if rtconfig.EFM32_BOARD == 'EFM32GG_DK3750':
     group = DefineGroup('EFM32GG_DK3750', src, depend = [''], CPPPATH = CPPPATH)
     Return('group')
 else:
-    Return('')
+    empty = []
+    Return('empty')

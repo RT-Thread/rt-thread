@@ -13,7 +13,7 @@
  * Date           Author       Notes
  * 2012-11-23     Yihui        The first version
  * 2013-11-24     aozima       fixed _sys_read()/_sys_write() issues.
- * 2014-08-03     bernard      If using msh, use system() implementation 
+ * 2014-08-03     bernard      If using msh, use system() implementation
  *                             in msh.
  */
 
@@ -48,10 +48,11 @@ const char __stderr_name[] = "STDERR";
  */
 FILEHANDLE _sys_open(const char *name, int openmode)
 {
-#ifdef RT_USING_DFS    
+#ifdef RT_USING_DFS
     int fd;
+    int mode = O_RDONLY;
 #endif
-    
+
     /* Register standard Input Output devices. */
     if (strcmp(name, __stdin_name) == 0)
         return (STDIN);
@@ -63,9 +64,34 @@ FILEHANDLE _sys_open(const char *name, int openmode)
 #ifndef RT_USING_DFS
     return -1;
 #else
-    /* TODO: adjust open file mode */
-    fd = open(name, openmode, 0);
-    if(fd < 0)
+    /* Correct openmode from fopen to open */
+    if (openmode & OPEN_PLUS)
+    {
+        if (openmode & OPEN_W)
+        {
+            mode |= (O_RDWR | O_TRUNC | O_CREAT);
+        }
+        else if (openmode & OPEN_A)
+        {
+            mode |= (O_RDWR | O_APPEND | O_CREAT);
+        }
+        else
+            mode |= O_RDWR;
+    }
+    else
+    {
+        if (openmode & OPEN_W)
+        {
+            mode |= (O_WRONLY | O_TRUNC | O_CREAT);
+        }
+        else if (openmode & OPEN_A)
+        {
+            mode |= (O_WRONLY | O_APPEND | O_CREAT);
+        }
+    }
+
+    fd = open(name, mode, 0);
+    if (fd < 0)
         return -1;
     else
         return fd + STDERR + 1;
@@ -95,10 +121,10 @@ int _sys_close(FILEHANDLE fh)
  */
 int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
 {
-#ifdef RT_USING_DFS    
+#ifdef RT_USING_DFS
     int size;
 #endif
-    
+
     if (fh == STDIN)
     {
         /* TODO */
@@ -112,7 +138,7 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
     return 0;
 #else
     size = read(fh - STDERR - 1, buf, len);
-    if(size >= 0)
+    if (size >= 0)
         return len - size;
     else
         return -1;
@@ -133,29 +159,29 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 #ifdef RT_USING_DFS
     int size;
 #endif
-    
+
     if ((fh == STDOUT) || (fh == STDERR))
     {
 #ifndef RT_USING_CONSOLE
         return 0;
 #else
         rt_device_t console_device;
-        extern rt_device_t rt_console_get_device(void);
 
         console_device = rt_console_get_device();
         if (console_device != 0) rt_device_write(console_device, 0, buf, len);
-        return len;
+
+        return 0;
 #endif
     }
 
-    if(fh == STDIN)
+    if (fh == STDIN)
         return -1;
 
 #ifndef RT_USING_DFS
     return 0;
 #else
     size = write(fh - STDERR - 1, buf, len);
-    if(size >= 0)
+    if (size >= 0)
         return len - size;
     else
         return -1;
@@ -199,10 +225,12 @@ char *_sys_command_string(char *cmd, int len)
 /* This function writes a character to the console. */
 void _ttywrch(int ch)
 {
+#ifdef RT_USING_CONSOLE
     char c;
 
     c = (char)ch;
     rt_kprintf(&c);
+#endif
 }
 
 void _sys_exit(int return_code)
@@ -227,7 +255,6 @@ int _sys_istty(FILEHANDLE fh)
     return 0;
 }
 
-
 int remove(const char *filename)
 {
 #ifndef RT_USING_DFS
@@ -238,11 +265,27 @@ int remove(const char *filename)
 }
 
 #if defined(RT_USING_FINSH) && defined(FINSH_USING_MSH) && defined(RT_USING_MODULE) && defined(RT_USING_DFS)
-/* use system implementation in the msh */
+/* use system(const char *string) implementation in the msh */
 #else
 int system(const char *string)
 {
     RT_ASSERT(0);
-    for(;;);
+    for (;;);
+}
+#endif
+
+#ifdef __MICROLIB
+#include <stdio.h>
+
+int fputc(int c, FILE *f) 
+{
+    char ch = c;
+
+    rt_kprintf(&ch);
+    return 1;
+}
+
+int fgetc(FILE *f) {
+  return -1;
 }
 #endif

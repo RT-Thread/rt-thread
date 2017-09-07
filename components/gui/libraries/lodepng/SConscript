@@ -1,0 +1,16 @@
+from building import *
+import rtconfig
+
+cwd = GetCurrentDir()
+src = Split('''
+lodepng.c
+''')
+
+CPPPATH = [cwd]
+
+if rtconfig.ARCH == 'sim':
+	group = DefineGroup('RTGUI', src, depend = ['RT_USING_RTGUI', 'RTGUI_IMAGE_LODEPNG'], CPPPATH = CPPPATH)
+else:
+	group = DefineGroup('RTGUI', src, depend = ['RT_USING_RTGUI', 'RTGUI_IMAGE_LODEPNG', 'RT_USING_LIBC'], CPPPATH = CPPPATH)
+
+Return('group')

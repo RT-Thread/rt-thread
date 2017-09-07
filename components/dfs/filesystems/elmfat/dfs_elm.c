@@ -26,6 +26,9 @@
  * 2012-12-19     Bernard      fixed the O_APPEND and lseek issue.
  * 2013-03-01     aozima       fixed the stat(st_mtime) issue.
  * 2014-01-26     Bernard      Check the sector size before mount.
+ * 2017-02-13     Hichard      Update Fatfs version to 0.12b, support exFAT.
+ * 2017-04-11     Bernard      fix the st_blksize issue.
+ * 2017-05-26     Urey         fix f_mount error when mount more fats
  */
 
 #include <rtthread.h>
@@ -111,25 +114,27 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
     FATFS *fat;
     FRESULT result;
     int index;
-	struct rt_device_blk_geometry geometry;
+    struct rt_device_blk_geometry geometry;
+    char logic_nbr[2] = {'0',':'};
 
     /* get an empty position */
     index = get_disk(RT_NULL);
     if (index == -1)
         return -DFS_STATUS_ENOENT;
+    logic_nbr[0] = '0' + index;
 
     /* save device */
     disk[index] = fs->dev_id;
-	/* check sector size */
-	if (rt_device_control(fs->dev_id, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry) == RT_EOK)
-	{
-		if (geometry.bytes_per_sector > _MAX_SS) 
-		{
-			rt_kprintf("The sector size of device is greater than the sector size of FAT.\n");
-			return -DFS_STATUS_EINVAL;
-		}
-	}
-	
+    /* check sector size */
+    if (rt_device_control(fs->dev_id, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry) == RT_EOK)
+    {
+        if (geometry.bytes_per_sector > _MAX_SS)
+        {
+            rt_kprintf("The sector size of device is greater than the sector size of FAT.\n");
+            return -DFS_STATUS_EINVAL;
+        }
+    }
+
     fat = (FATFS *)rt_malloc(sizeof(FATFS));
     if (fat == RT_NULL)
     {
@@ -138,7 +143,7 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
     }
 
     /* mount fatfs, always 0 logic driver */
-    result = f_mount((BYTE)index, fat);
+    result = f_mount(fat, (const TCHAR*)logic_nbr, 1);
     if (result == FR_OK)
     {
         char drive[8];
@@ -148,7 +153,7 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
         dir = (DIR *)rt_malloc(sizeof(DIR));
         if (dir == RT_NULL)
         {
-            f_mount((BYTE)index, RT_NULL);
+            f_mount(RT_NULL, (const TCHAR*)logic_nbr, 1);
             disk[index] = RT_NULL;
             rt_free(fat);
             return -DFS_STATUS_ENOMEM;
@@ -166,7 +171,7 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
     }
 
 __err:
-    f_mount((BYTE)index, RT_NULL);
+    f_mount(RT_NULL, (const TCHAR*)logic_nbr, 1);
     disk[index] = RT_NULL;
     rt_free(fat);
     return elm_result_to_dfs(result);
@@ -187,7 +192,7 @@ int dfs_elm_unmount(struct dfs_filesystem *fs)
     if (index == -1) /* not found */
         return -DFS_STATUS_ENOENT;
 
-    result = f_mount((BYTE)index, RT_NULL);
+    result = f_mount(RT_NULL, "", (BYTE)index);
     if (result != FR_OK)
         return elm_result_to_dfs(result);
 
@@ -203,9 +208,15 @@ int dfs_elm_mkfs(rt_device_t dev_id)
 #define FSM_STATUS_INIT            0
 #define FSM_STATUS_USE_TEMP_DRIVER 1
     FATFS *fat = RT_NULL;
+    BYTE *work;
     int flag;
     FRESULT result;
     int index;
+
+    work = rt_malloc(_MAX_SS);
+    if(RT_NULL == work) {
+        return -DFS_STATUS_ENOMEM;
+    }
 
     if (dev_id == RT_NULL)
         return -DFS_STATUS_EINVAL;
@@ -244,19 +255,23 @@ int dfs_elm_mkfs(rt_device_t dev_id)
              * on the disk, you will get a failure. so we need f_mount here,
              * just fill the FatFS[index] in elm fatfs to make mkfs work.
              */
-            f_mount((BYTE)index, fat);
+            f_mount(fat, "", (BYTE)index);
         }
     }
 
-    /* 1: no partition table */
-    /* 0: auto selection of cluster size */
-    result = f_mkfs((BYTE)index, 1, 0);
+    /* [IN] Logical drive number */
+    /* [IN] Format options */
+    /* [IN] Size of the allocation unit */
+    /* [-]  Working buffer */
+    /* [IN] Size of working buffer */
+    result = f_mkfs("", FM_ANY, 0, work, _MAX_SS);
+    rt_free(work);
 
     /* check flag status, we need clear the temp driver stored in disk[] */
     if (flag == FSM_STATUS_USE_TEMP_DRIVER)
     {
         rt_free(fat);
-        f_mount((BYTE)index, RT_NULL);
+        f_mount(RT_NULL, "",(BYTE)index);
         disk[index] = RT_NULL;
         /* close device */
         rt_device_close(dev_id);
@@ -401,13 +416,13 @@ int dfs_elm_open(struct dfs_fd *file)
         if (result == FR_OK)
         {
             file->pos  = fd->fptr;
-            file->size = fd->fsize;
+            file->size = f_size(fd);
             file->data = fd;
 
             if (file->flags & DFS_O_APPEND)
             {
                 /* seek to the end of file */
-                f_lseek(fd, fd->fsize);
+                f_lseek(fd, f_size(fd));
                 file->pos = fd->fptr;
             }
         }
@@ -499,7 +514,7 @@ int dfs_elm_write(struct dfs_fd *file, const void *buf, rt_size_t len)
     result = f_write(fd, buf, len, &byte_write);
     /* update position and file size */
     file->pos  = fd->fptr;
-    file->size = fd->fsize;
+    file->size = f_size(fd);
     if (result == FR_OK)
         return byte_write;
 
@@ -573,12 +588,6 @@ int dfs_elm_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint32_t count
     if (count == 0)
         return -DFS_STATUS_EINVAL;
 
-#if _USE_LFN
-    /* allocate long file name */
-    fno.lfname = rt_malloc(256);
-    fno.lfsize = 256;
-#endif
-
     index = 0;
     while (1)
     {
@@ -591,7 +600,7 @@ int dfs_elm_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint32_t count
             break;
 
 #if _USE_LFN
-        fn = *fno.lfname ? fno.lfname : fno.fname;
+        fn = *fno.fname ? fno.fname : fno.altname;
 #else
         fn = fno.fname;
 #endif
@@ -610,10 +619,6 @@ int dfs_elm_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint32_t count
         if (index * sizeof(struct dirent) >= count)
             break;
     }
-
-#if _USE_LFN
-    rt_free(fno.lfname);
-#endif
 
     if (index == 0)
         return elm_result_to_dfs(result);
@@ -712,12 +717,6 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
     drivers_fn = path;
 #endif
 
-#if _USE_LFN
-    /* allocate long file name */
-    file_info.lfname = rt_malloc(256);
-    file_info.lfsize = 256;
-#endif
-
     result = f_stat(drivers_fn, &file_info);
 #if _VOLUMES > 1
     rt_free(drivers_fn);
@@ -738,7 +737,6 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
             st->st_mode &= ~(DFS_S_IWUSR | DFS_S_IWGRP | DFS_S_IWOTH);
 
         st->st_size  = file_info.fsize;
-        st->st_blksize = 512;
 
         /* get st_mtime. */
         {
@@ -771,10 +769,6 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
             st->st_mtime = mktime(&tm_file);
         } /* get st_mtime. */
     }
-
-#if _USE_LFN
-    rt_free(file_info.lfname);
-#endif
 
     return elm_result_to_dfs(result);
 }
@@ -828,7 +822,7 @@ DSTATUS disk_status(BYTE drv)
 }
 
 /* Read Sector(s) */
-DRESULT disk_read(BYTE drv, BYTE *buff, DWORD sector, BYTE count)
+DRESULT disk_read (BYTE drv, BYTE* buff, DWORD sector, UINT count)
 {
     rt_size_t result;
     rt_device_t device = disk[drv];
@@ -843,7 +837,7 @@ DRESULT disk_read(BYTE drv, BYTE *buff, DWORD sector, BYTE count)
 }
 
 /* Write Sector(s) */
-DRESULT disk_write(BYTE drv, const BYTE *buff, DWORD sector, BYTE count)
+DRESULT disk_write (BYTE drv, const BYTE* buff, DWORD sector, UINT count)
 {
     rt_size_t result;
     rt_device_t device = disk[drv];
@@ -898,7 +892,7 @@ DRESULT disk_ioctl(BYTE drv, BYTE ctrl, void *buff)
     {
         rt_device_control(device, RT_DEVICE_CTRL_BLK_SYNC, RT_NULL);
     }
-    else if (ctrl == CTRL_ERASE_SECTOR)
+    else if (ctrl == CTRL_TRIM)
     {
         rt_device_control(device, RT_DEVICE_CTRL_BLK_ERASE, buff);
     }
@@ -906,9 +900,33 @@ DRESULT disk_ioctl(BYTE drv, BYTE ctrl, void *buff)
     return RES_OK;
 }
 
-rt_time_t get_fattime(void)
+DWORD get_fattime(void)
 {
-    return 0;
+    time_t now;
+    struct tm *p_tm;
+    struct tm tm_now;
+    DWORD fat_time;
+
+    /* get current time */
+    now = time(RT_NULL);
+
+    /* lock scheduler. */
+    rt_enter_critical();
+    /* converts calendar time time into local time. */
+    p_tm = localtime(&now);
+    /* copy the statically located variable */
+    memcpy(&tm_now, p_tm, sizeof(struct tm));
+    /* unlock scheduler. */
+    rt_exit_critical();
+
+    fat_time =  (DWORD)(tm_now.tm_year - 80) << 25 |
+                (DWORD)(tm_now.tm_mon + 1)   << 21 |
+                (DWORD)tm_now.tm_mday        << 16 |
+                (DWORD)tm_now.tm_hour        << 11 |
+                (DWORD)tm_now.tm_min         <<  5 |
+                (DWORD)tm_now.tm_sec / 2 ;
+
+    return fat_time;
 }
 
 #if _FS_REENTRANT

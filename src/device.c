@@ -25,6 +25,7 @@
  *                             provided by Rob <rdent@iinet.net.au>
  * 2012-12-25     Bernard      return RT_EOK if the device interface not exist.
  * 2013-07-09     Grissiom     add ref_count support
+ * 2016-04-02     Bernard      fix the open_flag initialization issue.
  */
 
 #include <rtthread.h>
@@ -53,6 +54,7 @@ rt_err_t rt_device_register(rt_device_t dev,
     rt_object_init(&(dev->parent), RT_Object_Class_Device, name);
     dev->flag = flags;
     dev->ref_count = 0;
+    dev->open_flag = 0;
 
     return RT_EOK;
 }
@@ -80,7 +82,7 @@ RTM_EXPORT(rt_device_unregister);
  *
  * @return the error code, RT_EOK on successfully.
  *
- * @deprecated since 1.2.x, this function is not needed because the initialization 
+ * @deprecated since 1.2.x, this function is not needed because the initialization
  *             of a device is performed when applicaiton opens it.
  */
 rt_err_t rt_device_init_all(void)

@@ -1,0 +1,43 @@
+menu "Command shell"
+
+config RT_USING_FINSH
+    bool "finsh shell"
+    default y
+
+if RT_USING_FINSH
+
+config FINSH_USING_SYMTAB
+    bool "Using symbol table for commands"
+    default y
+
+config FINSH_USING_DESCRIPTION
+    bool "Keeping description in symbol table"
+    default y
+
+config FINSH_THREAD_STACK_SIZE
+    int "The stack size for finsh thread"
+    default 4096
+
+config FINSH_USING_AUTH
+    bool "shell support authentication"
+    default n
+   
+config FINSH_DEFAULT_PASSWORD
+    string "The default password for shell authentication"
+    default "rtthread"
+
+config FINSH_USING_MSH
+    bool "Using module shell"
+    default y
+
+config FINSH_USING_MSH_DEFAULT
+    bool "Using module shell in default"
+    default y
+
+config FINSH_USING_MSH_ONLY
+    bool "Only using module shell"
+    default n
+
+endif
+
+endmenu

@@ -23,7 +23,7 @@
 #include "stm32f10x_rcc.h"
 
 /* STM32F107 ETH dirver options */
-#define CHECKSUM_BY_HARDWARE    1       /* 0: disable.  1: use hardware checksum. */
+#define CHECKSUM_BY_HARDWARE    0       /* don't ues hardware checksum. */
 #define RMII_MODE               0       /* 0: MII MODE, 1: RMII MODE. */
 #define STM32_ETH_IO_REMAP      1       /* 0: default,  1: remap RXD to PDx. */
 #define USE_MCO                 1       /* 0: disable,  1: PA8(MCO) out 25Mhz(MII) or 50Mhz(RMII). */

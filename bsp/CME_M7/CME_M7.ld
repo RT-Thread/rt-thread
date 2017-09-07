@@ -1,17 +1,17 @@
 /******************************************************************************
  *
- * nuc472_flash.ld - Linker configuration file for project.
+ * CME_M7.ld - Linker configuration file for project.
  *
  * Change Logs:
  * Date           Author       Notes
- * 2014-08-24     aozima       first implementation
+ * 2014-11-02     aozima       first implementation
  *
  *****************************************************************************/
 
 /* Program Entry, set to mark it as "used" and avoid gc */
 MEMORY
 {
-    FLASH (rx) : ORIGIN = 0x00000000, LENGTH = 512K
+    FLASH (rx) : ORIGIN = 0x00000000, LENGTH = 256K /* !!! real 128K, up to 256K for linker. */
     SRAM (rwx) : ORIGIN = 0x20000000, LENGTH = 64K
 }
 

@@ -3,9 +3,19 @@
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2011, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -16,6 +26,9 @@
  */
 
 #include <stdint.h>
+#include <rtdevice.h>
+
+#include "spi_flash.h"
 #include "spi_flash_w25qxx.h"
 
 #define FLASH_DEBUG
@@ -28,9 +41,11 @@
 
 #define PAGE_SIZE           4096
 
-/* JEDEC Manufacturer¡¯s ID */
+/* JEDEC Manufacturerï¿½ï¿½s ID */
 #define MF_ID           (0xEF)
+
 /* JEDEC Device ID: Memory type and Capacity */
+#define MTC_W25Q80_BV         (0x4014) /* W25Q80BV */
 #define MTC_W25Q16_BV_CL_CV   (0x4015) /* W25Q16BV W25Q16CL W25Q16CV  */
 #define MTC_W25Q16_DW         (0x6015) /* W25Q16DW  */
 #define MTC_W25Q32_BV         (0x4016) /* W25Q32BV */
@@ -345,6 +360,11 @@ rt_err_t w25qxx_init(const char * flash_device_name, const char * spi_device_nam
         {
             FLASH_TRACE("W25Q16DW detection\r\n");
             spi_flash_device.geometry.sector_count = 512;
+        }
+        else if(memory_type_capacity == MTC_W25Q80_BV)
+        {
+            FLASH_TRACE("W25Q80BV detection\r\n");
+            spi_flash_device.geometry.sector_count = 256;
         }
         else
         {

@@ -24,8 +24,6 @@
 
 #include <rtdevice.h>
 
-static struct rt_mutex i2c_core_lock;
-
 rt_err_t rt_i2c_bus_device_register(struct rt_i2c_bus_device *bus,
                                     const char               *bus_name)
 {
@@ -33,16 +31,11 @@ rt_err_t rt_i2c_bus_device_register(struct rt_i2c_bus_device *bus,
 
     rt_mutex_init(&bus->lock, "i2c_bus_lock", RT_IPC_FLAG_FIFO);
 
-    rt_mutex_take(&i2c_core_lock, RT_WAITING_FOREVER);
-
-    if (bus->timeout == 0)
-        bus->timeout = RT_TICK_PER_SECOND;
+    if (bus->timeout == 0) bus->timeout = RT_TICK_PER_SECOND;
 
     res = rt_i2c_bus_device_device_init(bus, bus_name);
 
     i2c_dbg("I2C bus [%s] registered\n", bus_name);
-
-    rt_mutex_release(&i2c_core_lock);
 
     return res;
 }
@@ -74,7 +67,7 @@ rt_size_t rt_i2c_transfer(struct rt_i2c_bus_device *bus,
 #ifdef RT_I2C_DEBUG
         for (ret = 0; ret < num; ret++)
         {
-            i2c_dbg("msgs[%d] %c, addr=0x%02x, len=%d%s\n", ret,
+            i2c_dbg("msgs[%d] %c, addr=0x%02x, len=%d\n", ret,
                     (msgs[ret].flags & RT_I2C_RD) ? 'R' : 'W',
                     msgs[ret].addr, msgs[ret].len);
         }
@@ -100,7 +93,7 @@ rt_size_t rt_i2c_master_send(struct rt_i2c_bus_device *bus,
                              const rt_uint8_t         *buf,
                              rt_uint32_t               count)
 {
-    rt_size_t ret;
+    rt_err_t ret;
     struct rt_i2c_msg msg;
 
     msg.addr  = addr;
@@ -119,7 +112,7 @@ rt_size_t rt_i2c_master_recv(struct rt_i2c_bus_device *bus,
                              rt_uint8_t               *buf,
                              rt_uint32_t               count)
 {
-    rt_size_t ret;
+    rt_err_t ret;
     struct rt_i2c_msg msg;
     RT_ASSERT(bus != RT_NULL);
 
@@ -136,6 +129,6 @@ rt_size_t rt_i2c_master_recv(struct rt_i2c_bus_device *bus,
 
 int rt_i2c_core_init(void)
 {
-    return rt_mutex_init(&i2c_core_lock, "i2c_core_lock", RT_IPC_FLAG_FIFO);
+    return 0;
 }
 INIT_COMPONENT_EXPORT(rt_i2c_core_init);

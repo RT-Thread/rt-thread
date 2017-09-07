@@ -24,7 +24,7 @@
 
 #include <rthw.h>
 #include "at91sam926x.h"
-
+#include "interrupt.h"
 #define MAX_HANDLERS    (AIC_IRQS + PIN_IRQS)
 
 extern rt_uint32_t rt_interrupt_nest;
@@ -146,7 +146,7 @@ void at91_aic_init(rt_uint32_t *priority)
      */
     for (i = 0; i < AIC_IRQS; i++) {
         /* Put irq number in Source Vector Register: */
-        at91_sys_write(AT91_AIC_SVR(i), i);
+        at91_sys_write(AT91_AIC_SVR(i), i); // no-used
         /* Active Low interrupt, with the specified priority */
         at91_sys_write(AT91_AIC_SMR(i), AT91_AIC_SRCTYPE_LOW | priority[i]);
         //AT91_AIC_SRCTYPE_FALLING
@@ -201,12 +201,11 @@ static void at91_gpio_irq_init()
  */
 void rt_hw_interrupt_init(void)
 {
-    rt_int32_t i;
     register rt_uint32_t idx;
     rt_uint32_t *priority = at91sam9260_default_irq_priority;
     
-    at91_extern_irq = (1 << AT91SAM9260_ID_IRQ0) | (1 << AT91SAM9260_ID_IRQ1)
-            | (1 << AT91SAM9260_ID_IRQ2);
+    at91_extern_irq = (1UL << AT91SAM9260_ID_IRQ0) | (1UL << AT91SAM9260_ID_IRQ1)
+            | (1UL << AT91SAM9260_ID_IRQ2);
 
     /* Initialize the AIC interrupt controller */
     at91_aic_init(priority);
@@ -341,7 +340,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
 
 /*@}*/
 
-
+/*
 static int at91_aic_set_type(unsigned irq, unsigned type)
 {
     unsigned int smr, srctype;
@@ -354,13 +353,15 @@ static int at91_aic_set_type(unsigned irq, unsigned type)
         srctype = AT91_AIC_SRCTYPE_RISING;
         break;
     case IRQ_TYPE_LEVEL_LOW:
-        if ((irq == AT91_ID_FIQ) || is_extern_irq(irq))     /* only supported on external interrupts */
+        // only supported on external interrupts 
+        if ((irq == AT91_ID_FIQ) || is_extern_irq(irq))     
             srctype = AT91_AIC_SRCTYPE_LOW;
         else
             return -1;
         break;
     case IRQ_TYPE_EDGE_FALLING:
-        if ((irq == AT91_ID_FIQ) || is_extern_irq(irq))     /* only supported on external interrupts */
+        // only supported on external interrupts 
+        if ((irq == AT91_ID_FIQ) || is_extern_irq(irq))     
             srctype = AT91_AIC_SRCTYPE_FALLING;
         else
             return -1;
@@ -372,6 +373,35 @@ static int at91_aic_set_type(unsigned irq, unsigned type)
     smr = at91_sys_read(AT91_AIC_SMR(irq)) & ~AT91_AIC_SRCTYPE;
     at91_sys_write(AT91_AIC_SMR(irq), smr | srctype);
     return 0;
+}
+*/
+rt_uint32_t rt_hw_interrupt_get_active(rt_uint32_t fiq_irq)
+{
+
+    //volatile rt_uint32_t irqstat;
+    rt_uint32_t id;
+    if (fiq_irq == INT_FIQ)
+        return 0;
+
+    //IRQ
+    /* AIC need this dummy read */
+    at91_sys_read(AT91_AIC_IVR);
+    /* clear pending register */
+    id = at91_sys_read(AT91_AIC_ISR);
+
+    return id;
+}
+
+void rt_hw_interrupt_ack(rt_uint32_t fiq_irq, rt_uint32_t id)
+{
+    /* new FIQ generation */
+    if (fiq_irq == INT_FIQ)
+        return;
+
+    /* new IRQ generation */
+    // EIOCR must be write any value after interrupt,
+    // or else can't response next interrupt
+    at91_sys_write(AT91_AIC_EOICR, 0x0);
 }
 
 #ifdef RT_USING_FINSH

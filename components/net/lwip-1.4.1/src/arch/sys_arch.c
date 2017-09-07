@@ -115,9 +115,10 @@ static void tcpip_init_done_callback(void *arg)
                 netif_set_up(ethif->netif);
             }
 
-#if LWIP_NETIF_LINK_CALLBACK
-            netif_set_link_up(ethif->netif);
-#endif
+            if (!(ethif->flags & ETHIF_LINK_PHYUP))
+            {
+                netif_set_link_up(ethif->netif);
+            }
 
             /* enter critical */
             rt_enter_critical();
@@ -695,3 +696,17 @@ RTM_EXPORT(dhcp_stop);
 #include <lwip/netifapi.h>
 RTM_EXPORT(netifapi_netif_set_addr);
 #endif
+
+#if LWIP_NETIF_LINK_CALLBACK
+RTM_EXPORT(netif_set_link_callback);
+#endif
+
+#if LWIP_NETIF_STATUS_CALLBACK
+RTM_EXPORT(netif_set_status_callback);
+#endif
+
+RTM_EXPORT(netif_find);
+RTM_EXPORT(netif_set_addr);
+RTM_EXPORT(netif_set_ipaddr);
+RTM_EXPORT(netif_set_gw);
+RTM_EXPORT(netif_set_netmask);

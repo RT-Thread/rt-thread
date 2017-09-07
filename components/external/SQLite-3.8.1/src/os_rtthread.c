@@ -1728,7 +1728,7 @@ static int fcntlSizeHint(rtthreadFile *pFile, i64 nByte){
       ** is the same technique used by glibc to implement posix_fallocate()
       ** on systems that do not have a real fallocate() system call.
       */
-      int nBlk = buf.st_blksize;  /* File-system block size */
+      int nBlk = 4096; // no blksize in RT-Thread, use 4096. /* File-system block size */
       i64 iWrite;                 /* Next offset to write to */
 
       if( robust_ftruncate(pFile->h, nSize) ){

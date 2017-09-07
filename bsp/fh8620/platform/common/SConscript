@@ -1,0 +1,8 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+
+group = DefineGroup('Platform', src, depend = [''])
+
+Return('group')

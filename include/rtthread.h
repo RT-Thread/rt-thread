@@ -26,6 +26,7 @@
  * 2007-03-03     Bernard      clean up the definitions to rtdef.h
  * 2010-04-11     yi.qiu       add module feature
  * 2013-06-24     Bernard      add rt_kprintf re-define when not use RT_USING_CONSOLE.
+ * 2016-08-09     ArdaFu       add new thread and interrupt hook.
  */
 
 #ifndef __RT_THREAD_H__
@@ -45,7 +46,7 @@ extern "C" {
  * @addtogroup KernelObject
  */
 
-/*@{*/
+/**@{*/
 
 /*
  * kernel object interface
@@ -71,13 +72,13 @@ void rt_object_take_sethook(void (*hook)(struct rt_object *object));
 void rt_object_put_sethook(void (*hook)(struct rt_object *object));
 #endif
 
-/*@}*/
+/**@}*/
 
 /**
  * @addtogroup Clock
  */
 
-/*@{*/
+/**@{*/
 
 /*
  * clock & timer interface
@@ -115,13 +116,13 @@ void rt_timer_check(void);
 void rt_timer_timeout_sethook(void (*hook)(struct rt_timer *timer));
 #endif
 
-/*@}*/
+/**@}*/
 
 /**
  * @addtogroup Thread
  */
 
-/*@{*/
+/**@{*/
 
 /*
  * thread interface
@@ -153,14 +154,21 @@ rt_err_t rt_thread_suspend(rt_thread_t thread);
 rt_err_t rt_thread_resume(rt_thread_t thread);
 void rt_thread_timeout(void *parameter);
 
+#ifdef RT_USING_HOOK
+void rt_thread_suspend_sethook(void (*hook)(rt_thread_t thread));
+void rt_thread_resume_sethook (void (*hook)(rt_thread_t thread));
+void rt_thread_inited_sethook (void (*hook)(rt_thread_t thread));
+#endif
+
 /*
  * idle thread interface
  */
 void rt_thread_idle_init(void);
-#ifdef RT_USING_HOOK
+#if defined(RT_USING_HOOK) || defined(RT_USING_IDLE_HOOK)
 void rt_thread_idle_sethook(void (*hook)(void));
 #endif
 void rt_thread_idle_excute(void);
+rt_thread_t rt_thread_idle_gethandler(void);
 
 /*
  * schedule service
@@ -180,13 +188,13 @@ rt_uint16_t rt_critical_level(void);
 void rt_scheduler_sethook(void (*hook)(rt_thread_t from, rt_thread_t to));
 #endif
 
-/*@}*/
+/**@}*/
 
 /**
  * @addtogroup MM
  */
 
-/*@{*/
+/**@{*/
 
 /*
  * memory management interface
@@ -259,13 +267,13 @@ void *rt_memheap_realloc(struct rt_memheap* heap, void* ptr, rt_size_t newsize);
 void rt_memheap_free(void *ptr);
 #endif
 
-/*@}*/
+/**@}*/
 
 /**
  * @addtogroup IPC
  */
 
-/*@{*/
+/**@{*/
 
 #ifdef RT_USING_SEMAPHORE
 /*
@@ -364,14 +372,14 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
 rt_err_t rt_mq_control(rt_mq_t mq, rt_uint8_t cmd, void *arg);
 #endif
 
-/*@}*/
+/**@}*/
 
 #ifdef RT_USING_DEVICE
 /**
  * @addtogroup Device
  */
 
-/*@{*/
+/**@{*/
 
 /*
  * device (I/O) system interface
@@ -404,7 +412,7 @@ rt_size_t rt_device_write(rt_device_t dev,
                           rt_size_t   size);
 rt_err_t  rt_device_control(rt_device_t dev, rt_uint8_t cmd, void *arg);
 
-/*@}*/
+/**@}*/
 #endif
 
 #ifdef RT_USING_MODULE
@@ -412,7 +420,7 @@ rt_err_t  rt_device_control(rt_device_t dev, rt_uint8_t cmd, void *arg);
  * @addtogroup Module
  */
 
-/*@{*/
+/**@{*/
 
 /*
  * module interface
@@ -437,7 +445,12 @@ void rt_module_unload_sethook(void (*hook)(rt_module_t module));
 void rt_module_init_object_container(struct rt_module *module);
 rt_err_t rt_module_destroy(rt_module_t module);
 
-/*@}*/
+/*
+ * application module system initialization
+ */
+int rt_system_module_init(void);
+
+/**@}*/
 #endif
 
 /*
@@ -455,24 +468,31 @@ void rt_interrupt_leave(void);
  */
 rt_uint8_t rt_interrupt_get_nest(void);
 
-/**
- * application module
- */
-int rt_system_module_init(void);
+#ifdef RT_USING_HOOK
+void rt_interrupt_enter_sethook(void (*hook)(void));
+void rt_interrupt_leave_sethook(void (*hook)(void));
+#endif
+
+#ifdef RT_USING_COMPONENTS_INIT
+void rt_components_init(void);
+void rt_components_board_init(void);
+#endif
 
 /**
  * @addtogroup KernelService
  */
 
-/*@{*/
+/**@{*/
 
 /*
  * general kernel service
  */
 #ifndef RT_USING_CONSOLE
 #define rt_kprintf(...)
+#define rt_kputs(str)
 #else
 void rt_kprintf(const char *fmt, ...);
+void rt_kputs(const char *str);
 #endif
 rt_int32_t rt_vsprintf(char *dest, const char *format, va_list arg_ptr);
 rt_int32_t rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args);
@@ -487,7 +507,7 @@ rt_device_t rt_console_get_device(void);
 rt_err_t rt_get_errno(void);
 void rt_set_errno(rt_err_t no);
 int *_rt_errno(void);
-#ifndef RT_USING_NEWLIB
+#if !defined(RT_USING_NEWLIB) && !defined(_WIN32)
 #ifndef errno
 #define errno    *_rt_errno()
 #endif
@@ -496,9 +516,9 @@ int *_rt_errno(void);
 void *rt_memset(void *src, int c, rt_ubase_t n);
 void *rt_memcpy(void *dest, const void *src, rt_ubase_t n);
 
-rt_ubase_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count);
-rt_ubase_t rt_strcmp (const char *cs, const char *ct);
-rt_ubase_t rt_strlen (const char *src);
+rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count);
+rt_int32_t rt_strcmp (const char *cs, const char *ct);
+rt_size_t rt_strlen (const char *src);
 char *rt_strdup(const char *s);
 
 char *rt_strstr(const char *str1, const char *str2);
@@ -510,7 +530,14 @@ rt_uint32_t rt_strcasecmp(const char *a, const char *b);
 
 void rt_show_version(void);
 
-/*@}*/
+#ifdef RT_DEBUG
+extern void (*rt_assert_hook)(const char* ex, const char* func, rt_size_t line);
+void rt_assert_set_hook(void (*hook)(const char* ex, const char* func, rt_size_t line));
+
+void rt_assert_handler(const char* ex, const char* func, rt_size_t line);
+#endif /* RT_DEBUG */
+
+/**@}*/
 
 #ifdef __cplusplus
 }

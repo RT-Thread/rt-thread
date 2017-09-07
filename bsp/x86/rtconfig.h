@@ -2,10 +2,6 @@
 #ifndef __RTTHREAD_CFG_H__
 #define __RTTHREAD_CFG_H__
 
-#define RT_USING_NEWLIB
-//#define RT_USING_PTHREADS
-#define RT_USING_DFS_DEVFS
-
 /* RT_NAME_MAX*/
 #define RT_NAME_MAX	    8
 
@@ -21,7 +17,7 @@
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
 #define RT_DEBUG
-#define RT_THREAD_DEBUG
+#define RT_DEBUG_MODULE 0
 
 #define RT_USING_OVERFLOW_CHECK
 
@@ -73,9 +69,14 @@
 
 /* SECTION: finsh, a C-Express shell */
 #define RT_USING_FINSH
+#define FINSH_USING_MSH
+#define FINSH_USING_MSH_ONLY
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
+
+// #define RT_USING_LIBC
+// #define RT_USING_PTHREADS
 
 /* SECTION: device filesystem */
  #define RT_USING_DFS
@@ -95,6 +96,8 @@
 #define DFS_FILESYSTEMS_MAX			2
 /* the max number of opened files 		*/
 #define DFS_FD_MAX					4
+
+#define RT_USING_DFS_DEVFS
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 //#define RT_USING_LWIP
@@ -174,4 +177,7 @@
 /* #define RTGUI_IMAGE_XPM */
 /* #define RTGUI_IMAGE_BMP */
 
+#define RT_USING_LIBDL
+#define RT_USING_MODULE
+#define MODULE_USING_386
 #endif

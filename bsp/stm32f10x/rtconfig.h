@@ -80,6 +80,13 @@
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
 
+#define RT_USING_PIN
+
+#define RT_USING_CAN
+
+#define RT_CAN_USING_BUS_HOOK
+
+#define RT_CAN_USING_HDR
 /* SECTION: device filesystem */
 /* #define RT_USING_DFS */
 
@@ -183,5 +190,10 @@
 #define RT_USING_RTT_CMSIS
 // <bool name="RT_USING_BSP_CMSIS" description="Using CMSIS in BSP" default="true" />
 // #define RT_USING_BSP_CMSIS
+
+/* nanopb support */
+/* #define RT_USING_NANOPB */
+
+#define RT_USING_CPU_FFS
 
 #endif

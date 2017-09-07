@@ -1,0 +1,1 @@
+scons --target=iar -s

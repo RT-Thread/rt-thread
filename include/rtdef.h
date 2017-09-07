@@ -1,7 +1,7 @@
 /*
  * File      : rtdef.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  *                             RT_USING_MEMHEAP condition.
  * 2012-12-30     Bernard      add more control command for graphic.
  * 2013-01-09     Bernard      change version number.
+ * 2015-02-01     Bernard      change version number to v2.1.0
  */
 
 #ifndef __RT_DEF_H__
@@ -49,7 +50,7 @@ extern "C" {
 
 /* RT-Thread version information */
 #define RT_VERSION                      2L              /**< major version number */
-#define RT_SUBVERSION                   0L              /**< minor version number */
+#define RT_SUBVERSION                   1L              /**< minor version number */
 #define RT_REVISION                     0L              /**< revise version number */
 
 /* RT-Thread version */
@@ -93,8 +94,8 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #ifdef __CC_ARM                         /* ARM Compiler */
     #include <stdarg.h>
     #define SECTION(x)                  __attribute__((section(x)))
-    #define UNUSED                      __attribute__((unused))
-    #define USED                        __attribute__((used))
+    #define RT_UNUSED                   __attribute__((unused))
+    #define RT_USED                     __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
     #define WEAK						__weak
     #define rt_inline                   static __inline
@@ -108,8 +109,8 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #elif defined (__IAR_SYSTEMS_ICC__)     /* for IAR Compiler */
     #include <stdarg.h>
     #define SECTION(x)                  @ x
-    #define UNUSED
-    #define USED
+    #define RT_UNUSED
+    #define RT_USED                     __root
     #define PRAGMA(x)                   _Pragma(#x)
     #define ALIGN(n)                    PRAGMA(data_alignment=n)
     #define WEAK                        __weak
@@ -129,17 +130,17 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #endif
 
     #define SECTION(x)                  __attribute__((section(x)))
-    #define UNUSED                      __attribute__((unused))
-    #define USED                        __attribute__((used))
+    #define RT_UNUSED                   __attribute__((unused))
+    #define RT_USED                     __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
-    #define WEAK						__attribute__((weak))
+    #define WEAK                        __attribute__((weak))
     #define rt_inline                   static __inline
     #define RTT_API
 #elif defined (__ADSPBLACKFIN__)        /* for VisualDSP++ Compiler */
     #include <stdarg.h>
     #define SECTION(x)                  __attribute__((section(x)))
-    #define UNUSED                      __attribute__((unused))
-    #define USED                        __attribute__((used))
+    #define RT_UNUSED                   __attribute__((unused))
+    #define RT_USED                     __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
 	#define WEAK                        __attribute__((weak))
     #define rt_inline                   static inline
@@ -147,8 +148,8 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #elif defined (_MSC_VER)
     #include <stdarg.h>
     #define SECTION(x)
-    #define UNUSED
-    #define USED
+    #define RT_UNUSED
+    #define RT_USED
     #define ALIGN(n)                    __declspec(align(n))
 	#define WEAK
     #define rt_inline                   static __inline
@@ -159,11 +160,11 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
      * GCC and MDK) compilers. See ARM Optimizing C/C++ Compiler 5.9.3 for more
      * details. */
     #define SECTION(x)
-    #define UNUSED
-    #define USED
-	#define PRAGMA(x)					_Pragma(#x)
+    #define RT_UNUSED
+    #define RT_USED
+    #define PRAGMA(x)                   _Pragma(#x)
     #define ALIGN(n)
-	#define WEAK
+    #define WEAK
     #define rt_inline                   static inline
     #define RTT_API
 #else
@@ -216,6 +217,7 @@ typedef int (*init_fn_t)(void);
 #define FINSH_VAR_EXPORT(name, type, desc)
 
 #define MSH_CMD_EXPORT(command, desc)
+#define MSH_CMD_EXPORT_ALIAS(command, alias, desc)
 #elif !defined(FINSH_USING_SYMTAB)
 #define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)
 #endif
@@ -494,7 +496,7 @@ struct rt_thread
     void       *entry;                                  /**< entry */
     void       *parameter;                              /**< parameter */
     void       *stack_addr;                             /**< stack address */
-    rt_uint16_t stack_size;                             /**< stack size */
+    rt_uint32_t stack_size;                             /**< stack size */
 
     /* error code */
     rt_err_t    error;                                  /**< error code */
@@ -756,8 +758,9 @@ enum rt_device_class_type
     RT_Device_Class_PM,                                 /**< PM pseudo device */
     RT_Device_Class_Pipe,                               /**< Pipe device */
     RT_Device_Class_Portal,                             /**< Portal device */
-    RT_Device_Class_Miscellaneous,                      /**< Miscellaneous device */
-    RT_Device_Class_Unknown                             /**< unknown device */
+    RT_Device_Class_Timer,                              /**< Timer device */
+	RT_Device_Class_Miscellaneous,                      /**< Miscellaneous device */
+	RT_Device_Class_Unknown                             /**< unknown device */
 };
 
 /**
@@ -774,6 +777,11 @@ enum rt_device_class_type
 #define RT_DEVICE_FLAG_ACTIVATED        0x010           /**< device is activated */
 #define RT_DEVICE_FLAG_SUSPENDED        0x020           /**< device is suspended */
 #define RT_DEVICE_FLAG_STREAM           0x040           /**< stream mode */
+
+#define RT_DEVICE_CTRL_CONFIG           0x03    	/* configure device */
+#define RT_DEVICE_CTRL_SET_INT          0x10    	/* enable receive irq */
+#define RT_DEVICE_CTRL_CLR_INT          0x11    	/* disable receive irq */
+#define RT_DEVICE_CTRL_GET_INT          0x12
 
 #define RT_DEVICE_FLAG_INT_RX           0x100           /**< INT mode on Rx */
 #define RT_DEVICE_FLAG_DMA_RX           0x200           /**< DMA mode on Rx */
@@ -844,7 +852,7 @@ struct rt_device_blk_geometry
 {
     rt_uint32_t sector_count;                           /**< count of sectors */
     rt_uint32_t bytes_per_sector;                       /**< number of bytes per sector */
-    rt_uint32_t block_size;                             /**< size to erase one block */
+    rt_uint32_t block_size;                             /**< number of bytes to erase one block */
 };
 
 /**
@@ -885,7 +893,10 @@ enum
     RTGRAPHIC_PIXEL_FORMAT_BGR565 = RTGRAPHIC_PIXEL_FORMAT_RGB565P,
     RTGRAPHIC_PIXEL_FORMAT_RGB666,
     RTGRAPHIC_PIXEL_FORMAT_RGB888,
-    RTGRAPHIC_PIXEL_FORMAT_ARGB888
+    RTGRAPHIC_PIXEL_FORMAT_ARGB888,
+    RTGRAPHIC_PIXEL_FORMAT_ABGR888,
+    RTGRAPHIC_PIXEL_FORMAT_ARGB565,
+    RTGRAPHIC_PIXEL_FORMAT_ALPHA,
 };
 
 /**
@@ -958,6 +969,8 @@ struct rt_module
 {
     struct rt_object             parent;                /**< inherit from object */
 
+    rt_uint32_t                  vstart_addr;            /**< VMA base address for the
+                                                          first LOAD segment. */
     rt_uint8_t                  *module_space;          /**< module memory space */
 
     void                        *module_entry;          /**< the entry address of module */

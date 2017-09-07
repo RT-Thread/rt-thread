@@ -135,6 +135,8 @@ struct rt_sdio_function {
 	rt_uint32_t		enable_timeout_val; /* max enable timeout in msec */
 
 	struct rt_sdio_function_tuple *tuples;
+    
+    void            *priv;
 };
 
 #define SDIO_MAX_FUNCTIONS		7
@@ -153,6 +155,7 @@ struct rt_mmcsd_card {
 	rt_uint32_t	max_data_rate;	/* max data transfer rate */
 	rt_uint32_t	card_capacity;	/* card capacity, unit:KB */
 	rt_uint32_t	card_blksize;	/* card block size */
+	rt_uint32_t	erase_size;	/* erase size in sectors */
 	rt_uint16_t	card_type;
 #define CARD_TYPE_MMC                   0 /* MMC card */
 #define CARD_TYPE_SD                    1 /* SD card */

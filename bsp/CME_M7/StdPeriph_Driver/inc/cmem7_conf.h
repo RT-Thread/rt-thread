@@ -45,6 +45,11 @@
 #define _USB
 #define _WDG
 
+//#define _MARVELL
+//#define _IP1826D
+#define _M7NORFLASH
+#define _ME_6095_F
+
 #define USE_FULL_ASSERT    1 
 
 #ifdef  USE_FULL_ASSERT
@@ -71,7 +76,9 @@ typedef enum _BOOL {FALSE = 0, TRUE = 1} BOOL;
 /**
   * System clock frequency, unit is Hz.
   */
-#define SYSTEM_CLOCK_FREQ         200000000
+#define SYSTEM_CLOCK_FREQ        300000000 
+//250000000
+//300000000
 
 /**
   * @brief  usecond delay 

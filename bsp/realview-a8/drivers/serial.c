@@ -32,7 +32,7 @@
 
 #include "serial.h"
 #ifdef RT_USING_VMM
- #include <vmm.h>
+#include <vmm.h>
 #endif
 
 struct hw_uart_device
@@ -165,8 +165,8 @@ int rt_hw_uart_init(void)
     config.parity    = PARITY_NONE;
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
-	config.bufsz     = RT_SERIAL_RB_BUFSZ;
-	
+    config.bufsz     = RT_SERIAL_RB_BUFSZ;
+
 #ifdef RT_USING_UART0
     uart = &_uart0_device;
 #ifdef RT_USING_VMM
@@ -194,7 +194,7 @@ int rt_hw_uart_init(void)
 
     /* register UART1 device */
     rt_hw_serial_register(&_serial1, "uart1",
-        RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX, uart);
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX, uart);
     /* enable Rx and Tx of UART */
     UART_CR(uart->hw_base) = (1 << 0) | (1 << 8) | (1 << 9);
 #endif

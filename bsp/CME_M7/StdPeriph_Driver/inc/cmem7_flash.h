@@ -202,6 +202,14 @@ void FLASH_Read(uint8_t ReadMode, uint32_t addr, uint16_t size, uint8_t* data);
 	*/
 void FLASH_Write(uint32_t addr, uint16_t size, uint8_t* data);
 
+
+void flash_WaitInWritting(void) ;
+
+void flash_WaitReadFifoNotEmpty(void);
+
+uint16_t flash_ReadFifo(uint16_t size, uint8_t* data) ;
+
+
 #ifdef __cplusplus
 }
 #endif

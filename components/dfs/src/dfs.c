@@ -234,7 +234,11 @@ int fd_is_open(const char *pathname)
             mountpath = fullpath + strlen(fs->path);
 
         dfs_lock();
+#ifdef DFS_USING_STDIO
+        for (index = 3; index < DFS_FD_MAX+3; index++)
+#else
         for (index = 0; index < DFS_FD_MAX; index++)
+#endif
         {
             fd = &(fd_table[index]);
             if (fd->fs == RT_NULL)
@@ -280,6 +284,7 @@ const char *dfs_subdir(const char *directory, const char *filename)
 
     return dir;
 }
+RTM_EXPORT(dfs_subdir);
 
 /**
  * this function will normalize a path according to specified parent directory
@@ -406,5 +411,7 @@ up_one:
 
     return fullpath;
 }
+RTM_EXPORT(dfs_normalize_path);
+
 /*@}*/
 

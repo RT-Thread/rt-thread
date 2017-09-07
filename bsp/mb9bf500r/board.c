@@ -48,7 +48,7 @@ void SysTick_Handler(void)
 void rt_hw_board_init()
 {
     /* init systick */
-    SysTick_Config(SystemFrequency/RT_TICK_PER_SECOND - 1);
+    SysTick_Config(SystemFrequency/RT_TICK_PER_SECOND);
 }
 
 /*@}*/

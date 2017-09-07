@@ -87,7 +87,7 @@ void (*rt_object_put_hook)(struct rt_object *object);
  * @addtogroup Hook
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * This function will set a hook function, which will be invoked when object
@@ -159,7 +159,7 @@ void rt_object_put_sethook(void (*hook)(struct rt_object *object))
     rt_object_put_hook = hook;
 }
 
-/*@}*/
+/**@}*/
 #endif
 
 /**
@@ -178,7 +178,7 @@ void rt_system_object_init(void)
  * @addtogroup KernelObject
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * This function will return the specified type of object information.
@@ -401,8 +401,8 @@ rt_bool_t rt_object_is_systemobject(rt_object_t object)
  */
 rt_object_t rt_object_find(const char *name, rt_uint8_t type)
 {
-    struct rt_object *object;
-    struct rt_list_node *node;
+    struct rt_object *object = RT_NULL;
+    struct rt_list_node *node = RT_NULL;
     struct rt_object_information *information = RT_NULL;
 
     /* parameter check */
@@ -417,7 +417,7 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
     {
         const char *name_ptr;
         int module_name_length;
-        
+
         name_ptr = name;
         while ((*name_ptr != '\0') && (*name_ptr != '/'))
             name_ptr ++;
@@ -434,13 +434,13 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
 
             /* find module */
             information = &rt_object_container[RT_Object_Class_Module];
-            for (node = information->object_list.next; 
+            for (node = information->object_list.next;
                 node != &(information->object_list);
                 node  = node->next)
             {
                 object = rt_list_entry(node, struct rt_object, list);
                 if ((rt_strncmp(object->name, name, module_name_length) == 0) &&
-                    module_name_length == RT_NAME_MAX || object->name[module_name_length] == '\0')
+                    (module_name_length == RT_NAME_MAX || object->name[module_name_length] == '\0'))
                 {
                     /* get module */
                     module = (struct rt_module*)object;
@@ -450,7 +450,7 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
             rt_exit_critical();
 
             /* there is no this module inside the system */
-            if (module == RT_NULL) return RT_NULL; 
+            if (module == RT_NULL) return RT_NULL;
 
             /* get the object pool of module */
             information = &(module->module_object[type]);
@@ -494,4 +494,4 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
     return RT_NULL;
 }
 
-/*@}*/
+/**@}*/

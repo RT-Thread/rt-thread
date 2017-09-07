@@ -293,7 +293,7 @@ int libc_get_time(struct timespec *time)
 	tick = rt_tick_get();
 
 	time->tv_sec = _timevalue.tv_sec + tick / RT_TICK_PER_SECOND;
-	time->tv_nsec = (_timevalue.tv_usec + (tick % RT_TICK_PER_SECOND) * NANOSECOND_PER_TICK) * 1000;
+	time->tv_nsec = (_timevalue.tv_usec + (tick % RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK) * 1000;
 
 	return 0;
 }
@@ -308,7 +308,7 @@ _gettimeofday_r(struct _reent *ptr, struct timeval *__tp, void *__tzp)
 		if (__tp != RT_NULL)
 		{
 			__tp->tv_sec  = tp.tv_sec;
-			__tp->tv_usec = tp.tv_nsec * 1000UL;
+			__tp->tv_usec = tp.tv_nsec / 1000UL;
 		}
 
 		return tp.tv_sec;
@@ -331,7 +331,7 @@ _gettimeofday_r(struct _reent *ptr, struct timeval *__tp, void *__tzp)
 		if (__tp != RT_NULL)
 		{
 			__tp->tv_sec  = tp.tv_sec;
-			__tp->tv_usec = tp.tv_nsec * 1000UL;
+			__tp->tv_usec = tp.tv_nsec / 1000UL;
 		}
 
 		return tp.tv_sec;
@@ -441,4 +441,24 @@ _system(const char *s)
 {
     /* not support this call */
     return;
+}
+
+void __libc_init_array(void)
+{
+	/* we not use __libc init_aray to initialize C++ objects */
+}
+
+void abort(void)
+{
+    if (rt_thread_self())
+    {
+        rt_thread_t self = rt_thread_self();
+
+        rt_kprintf("thread:%-8.*s abort!\n", RT_NAME_MAX, self->name);
+        rt_thread_suspend(self);
+
+        rt_schedule();
+    }
+
+	while (1);
 }

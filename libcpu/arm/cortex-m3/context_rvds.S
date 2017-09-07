@@ -168,6 +168,7 @@ rt_hw_context_switch_to    PROC
     MSR     msp, r0
 
     ; enable interrupts at processor level
+    CPSIE   F
     CPSIE   I
 
     ; never reach here!
@@ -177,7 +178,6 @@ rt_hw_context_switch_to    PROC
 rt_hw_interrupt_thread_switch PROC
     EXPORT rt_hw_interrupt_thread_switch
     BX      lr
-    NOP
     ENDP
 
     IMPORT rt_hw_hard_fault_exception
@@ -202,5 +202,7 @@ HardFault_Handler    PROC
     ORR     lr, lr, #0x04
     BX      lr
     ENDP
+
+    ALIGN   4
 
     END

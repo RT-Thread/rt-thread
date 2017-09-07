@@ -30,7 +30,11 @@
 #include <dfs_file.h>
 #include <dfs_def.h>
 
-#ifndef RT_USING_NEWLIB
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#if !defined(RT_USING_NEWLIB)
 #define O_RDONLY    DFS_O_RDONLY
 #define O_WRONLY    DFS_O_WRONLY
 #define O_RDWR      DFS_O_RDWR
@@ -42,6 +46,7 @@
 #define O_BINARY    DFS_O_BINARY
 #define O_DIRECTORY DFS_O_DIRECTORY
 
+#if !defined(_WIN32)
 #define S_IFMT      DFS_S_IFMT
 #define S_IFSOCK    DFS_S_IFSOCK
 #define S_IFLNK     DFS_S_IFLNK 
@@ -76,9 +81,11 @@
 #define S_IROTH     DFS_S_IROTH
 #define S_IWOTH     DFS_S_IWOTH
 #define S_IXOTH     DFS_S_IXOTH
+#endif
 
 #if defined(__CC_ARM)
 #include <stdio.h>
+#include <stdlib.h>
 #elif defined(_MSC_VER)
 #include <stdio.h>
 #else
@@ -109,22 +116,36 @@ int closedir(DIR* d);
 #include <sys/stat.h>
 #endif
 
+struct stat;
+
 /* file api*/
 int open(const char *file, int flags, int mode);
 int close(int d);
+#ifdef RT_USING_NEWLIB
+_READ_WRITE_RETURN_TYPE _EXFUN(read, (int __fd, void *__buf, size_t __nbyte));
+_READ_WRITE_RETURN_TYPE _EXFUN(write, (int __fd, const void *__buf, size_t __nbyte));
+#else
 int read(int fd, void *buf, size_t len);
 int write(int fd, const void *buf, size_t len);
+#endif
 off_t lseek(int fd, off_t offset, int whence);
 int rename(const char *from, const char *to);
 int unlink(const char *pathname);
 int stat(const char *file, struct stat *buf);
 int fstat(int fildes, struct stat *buf);
-int statfs(const char *path, struct statfs *buf);
+int fsync(int fildes);
+int ioctl(int fildes, long cmd, void *data);
 
 /* directory api*/
 int rmdir(const char *path);
 int chdir(const char *path);
 char *getcwd(char *buf, size_t size);
 
+/* file system api */
+int statfs(const char *path, struct statfs *buf);
+
+#ifdef __cplusplus
+}
 #endif
 
+#endif

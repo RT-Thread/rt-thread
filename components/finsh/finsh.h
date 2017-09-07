@@ -229,8 +229,8 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
             
         #else
             #define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)      \
-                const char __fsym_##cmd##_name[] = #cmd;            \
-                const char __fsym_##cmd##_desc[] = #desc;           \
+                const char __fsym_##cmd##_name[] SECTION(".rodata.name") = #cmd;   \
+                const char __fsym_##cmd##_desc[] SECTION(".rodata.name") = #desc;  \
                 const struct finsh_syscall __fsym_##cmd SECTION("FSymTab")= \
                 {                           \
                     __fsym_##cmd##_name,    \
@@ -239,8 +239,8 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
                 };
 
             #define FINSH_VAR_EXPORT(name, type, desc)              \
-                const char __vsym_##name##_name[] = #name;          \
-                const char __vsym_##name##_desc[] = #desc;          \
+                const char __vsym_##name##_name[] SECTION(".rodata.name") = #name; \
+                const char __vsym_##name##_desc[] SECTION(".rodata.name") = #desc; \
                 const struct finsh_sysvar __vsym_##name SECTION("VSymTab")= \
                 {                           \
                     __vsym_##name##_name,   \
@@ -347,8 +347,11 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
 #ifdef FINSH_USING_MSH
 #define MSH_CMD_EXPORT(command, desc)   \
     FINSH_FUNCTION_EXPORT_CMD(command, __cmd_##command, desc)
+#define MSH_CMD_EXPORT_ALIAS(command, alias, desc)  \
+    FINSH_FUNCTION_EXPORT_ALIAS(command, __cmd_##alias, desc)
 #else
 #define MSH_CMD_EXPORT(command, desc)
+#define MSH_CMD_EXPORT_ALIAS(command, alias, desc)
 #endif
 
 struct finsh_token
@@ -364,7 +367,7 @@ struct finsh_token
 		int int_value;
 		long long_value;
 	} value;
-	u_char string[128];
+	u_char string[FINSH_STRING_MAX];
 
 	u_char* line;
 };

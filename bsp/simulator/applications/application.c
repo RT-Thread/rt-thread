@@ -1,11 +1,21 @@
 /*
  * File      : application.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -16,29 +26,15 @@
 #include <stdio.h>
 #include <board.h>
 
-#include <components.h>
+#ifdef RT_USING_DFS
+#include <dfs_fs.h>
+#endif
 
+#include "init.h"
 
 void rt_init_thread_entry(void *parameter)
 {
-#ifdef RT_USING_LWIP
-#ifdef RT_USING_TAPNETIF
-    tap_netif_hw_init();
-#else
-    pcap_netif_hw_init();
-#endif
-#endif
-
-    rt_platform_init();
-
-    /* initialization RT-Thread Components */
-    rt_components_init();
-
-#ifdef RT_USING_RTGUI
-    /* start sdl thread to simulate an LCD. SDL may depend on DFS and should be
-     * called after rt_components_init. */
-    rt_hw_sdl_start();
-#endif /* RT_USING_RTGUI */
+    components_init();
 
     /* File system Initialization */
 #ifdef RT_USING_DFS
@@ -103,5 +99,3 @@ int rt_application_init()
 
     return 0;
 }
-
-/*@}*/

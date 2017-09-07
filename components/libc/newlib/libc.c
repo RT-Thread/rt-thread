@@ -9,29 +9,48 @@
 #include <pthread.h>
 #endif
 
-void libc_system_init(const char* tty_name)
+#ifdef RT_USING_DFS
+#include <dfs_posix.h>
+
+#ifdef RT_USING_DFS_DEVFS
+#include <devfs.h>
+#endif
+
+#endif
+
+int libc_system_init(void)
 {
 #ifdef RT_USING_DFS
-	int fd;
+    int fd;
+    struct rt_device *console_dev;
 
 #ifndef RT_USING_DFS_DEVFS
 #error Please enable devfs by defining RT_USING_DFS_DEVFS in rtconfig.h
 #endif
 
-	/* init console device */
-	rt_console_init(tty_name);
+    console_dev = rt_console_get_device();
+    if (console_dev)
+    {
+        /* initialize console device */
+        rt_console_init(console_dev->parent.name);
 
-	/* open console as stdin/stdout/stderr */
-	fd = open("/dev/console", O_RDONLY, 0);	/* for stdin */
-	fd = open("/dev/console", O_WRONLY, 0);	/* for stdout */
-	fd = open("/dev/console", O_WRONLY, 0);	/* for stderr */
+        /* open console as stdin/stdout/stderr */
+        fd = open("/dev/console", O_RDONLY, 0); /* for stdin */
+        fd = open("/dev/console", O_WRONLY, 0); /* for stdout */
+        fd = open("/dev/console", O_WRONLY, 0); /* for stderr */
+
+        /* skip warning */
+        fd = fd;
+    }
 #endif
 
-	/* set PATH and HOME */
-	putenv("PATH=/");
-	putenv("HOME=/");
-
-#ifdef RT_USING_PTHREADS
-	pthread_system_init();
+    /* set PATH and HOME */
+    putenv("PATH=/bin");
+    putenv("HOME=/home");
+#if defined RT_USING_PTHREADS && !defined RT_USING_COMPONENTS_INIT
+    pthread_system_init();
 #endif
+
+    return 0;
 }
+INIT_COMPONENT_EXPORT(libc_system_init);

@@ -1,0 +1,9 @@
+from building import *
+
+src	= Glob('*.c')
+cwd = GetCurrentDir()
+CPPPATH = [cwd]
+
+group = DefineGroup('libdl', src, depend = ['RT_USING_MODULE', 'RT_USING_LIBDL'], CPPPATH = CPPPATH)
+
+Return('group')

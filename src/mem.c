@@ -24,6 +24,7 @@
  *                             fix memory check in rt_realloc function
  * 2010-07-13     Bernard      fix RT_ALIGN issue found by kuronca
  * 2010-10-14     Bernard      fix rt_realloc issue when realloc a NULL pointer.
+ * 2017-07-14     armink       fix rt_realloc issue when new size is 0
  */
 
 /*
@@ -76,7 +77,7 @@ static void (*rt_free_hook)(void *ptr);
  * @addtogroup Hook
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * This function will set a hook function, which will be invoked when a memory
@@ -100,7 +101,7 @@ void rt_free_sethook(void (*hook)(void *ptr))
     rt_free_hook = hook;
 }
 
-/*@}*/
+/**@}*/
 
 #endif
 
@@ -234,7 +235,7 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
  * @addtogroup MM
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * Allocate a block of memory with a minimum of 'size' bytes.
@@ -304,6 +305,7 @@ void *rt_malloc(rt_size_t size)
 
                 /* create mem2 struct */
                 mem2       = (struct heap_mem *)&heap_ptr[ptr2];
+                mem2->magic = HEAP_MAGIC;
                 mem2->used = 0;
                 mem2->next = mem->next;
                 mem2->prev = ptr;
@@ -397,6 +399,11 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
     {
         RT_DEBUG_LOG(RT_DEBUG_MEM, ("realloc: out of memory\n"));
 
+        return RT_NULL;
+    }
+    else if (newsize == 0)
+    {
+        rt_free(rmem);
         return RT_NULL;
     }
 
@@ -540,7 +547,7 @@ void rt_free(void *rmem)
     RT_ASSERT(mem->magic == HEAP_MAGIC);
     /* ... and is now unused. */
     mem->used  = 0;
-    mem->magic = 0;
+    mem->magic = HEAP_MAGIC;
 
     if (mem < lfree)
     {
@@ -584,8 +591,7 @@ FINSH_FUNCTION_EXPORT(list_mem, list memory usage information)
 #endif
 #endif
 
-/*@}*/
+/**@}*/
 
 #endif /* end of RT_USING_HEAP */
 #endif /* end of RT_USING_MEMHEAP_AS_HEAP */
-

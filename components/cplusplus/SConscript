@@ -1,0 +1,12 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.cpp') + Glob('*.c')
+
+CPPPATH = [cwd]
+
+group = DefineGroup('CPlusPlus', src, depend = ['RT_USING_CPLUSPLUS'], CPPPATH = CPPPATH)
+
+Return('group')
