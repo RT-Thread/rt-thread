@@ -1,6 +1,0 @@
-<workspace>
-	<batchBuild></batchBuild>
-	<project>
-		<path>$WS_DIR$\at25dfx_unit_test_flash.ewp</path>
-	</project>
-</workspace>
