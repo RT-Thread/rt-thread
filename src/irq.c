@@ -34,7 +34,7 @@ static void (*rt_interrupt_leave_hook)(void);
 
 /**
  * @ingroup Hook
- * This function set a hook function when the system enter a interrupt 
+ * This function set a hook function when the system enter a interrupt
  *
  * @note the hook function must be simple and never be blocked or suspend.
  */
@@ -44,7 +44,7 @@ void rt_interrupt_enter_sethook(void (*hook)(void))
 }
 /**
  * @ingroup Hook
- * This function set a hook function when the system exit a interrupt. 
+ * This function set a hook function when the system exit a interrupt.
  *
  * @note the hook function must be simple and never be blocked or suspend.
  */
@@ -80,7 +80,7 @@ void rt_interrupt_enter(void)
 
     level = rt_hw_interrupt_disable();
     rt_interrupt_nest ++;
-    RT_OBJECT_HOOK_CALL(rt_interrupt_enter_hook,());
+    RT_OBJECT_HOOK_CALL(rt_interrupt_enter_hook, ());
     rt_hw_interrupt_enable(level);
 }
 RTM_EXPORT(rt_interrupt_enter);
@@ -101,7 +101,7 @@ void rt_interrupt_leave(void)
 
     level = rt_hw_interrupt_disable();
     rt_interrupt_nest --;
-    RT_OBJECT_HOOK_CALL(rt_interrupt_leave_hook,());
+    RT_OBJECT_HOOK_CALL(rt_interrupt_leave_hook, ());
     rt_hw_interrupt_enable(level);
 }
 RTM_EXPORT(rt_interrupt_leave);
