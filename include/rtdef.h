@@ -92,105 +92,105 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
 /* Compiler Related Definitions */
 #ifdef __CC_ARM                         /* ARM Compiler */
-    #include <stdarg.h>
-    #define SECTION(x)                  __attribute__((section(x)))
-    #define RT_UNUSED                   __attribute__((unused))
-    #define RT_USED                     __attribute__((used))
-    #define ALIGN(n)                    __attribute__((aligned(n)))
-    #define WEAK						__weak
-    #define rt_inline                   static __inline
-    /* module compiling */
-    #ifdef RT_USING_MODULE
-        #define RTT_API                 __declspec(dllimport)
-    #else
-        #define RTT_API                 __declspec(dllexport)
-    #endif
+#include <stdarg.h>
+#define SECTION(x)                  __attribute__((section(x)))
+#define RT_UNUSED                   __attribute__((unused))
+#define RT_USED                     __attribute__((used))
+#define ALIGN(n)                    __attribute__((aligned(n)))
+#define WEAK                        __weak
+#define rt_inline                   static __inline
+/* module compiling */
+#ifdef RT_USING_MODULE
+#define RTT_API                 __declspec(dllimport)
+#else
+#define RTT_API                 __declspec(dllexport)
+#endif
 
 #elif defined (__IAR_SYSTEMS_ICC__)     /* for IAR Compiler */
-    #include <stdarg.h>
-    #define SECTION(x)                  @ x
-    #define RT_UNUSED
-    #define RT_USED                     __root
-    #define PRAGMA(x)                   _Pragma(#x)
-    #define ALIGN(n)                    PRAGMA(data_alignment=n)
-    #define WEAK                        __weak
-    #define rt_inline                   static inline
-    #define RTT_API
+#include <stdarg.h>
+#define SECTION(x)                  @ x
+#define RT_UNUSED
+#define RT_USED                     __root
+#define PRAGMA(x)                   _Pragma(#x)
+#define ALIGN(n)                    PRAGMA(data_alignment=n)
+#define WEAK                        __weak
+#define rt_inline                   static inline
+#define RTT_API
 
 #elif defined (__GNUC__)                /* GNU GCC Compiler */
-    #ifdef RT_USING_NEWLIB
-        #include <stdarg.h>
-    #else
-		/* the version of GNU GCC must be greater than 4.x */
-        typedef __builtin_va_list   __gnuc_va_list;
-        typedef __gnuc_va_list      va_list;
-        #define va_start(v,l)       __builtin_va_start(v,l)
-        #define va_end(v)           __builtin_va_end(v)
-        #define va_arg(v,l)         __builtin_va_arg(v,l)
-    #endif
-
-    #define SECTION(x)                  __attribute__((section(x)))
-    #define RT_UNUSED                   __attribute__((unused))
-    #define RT_USED                     __attribute__((used))
-    #define ALIGN(n)                    __attribute__((aligned(n)))
-    #define WEAK                        __attribute__((weak))
-    #define rt_inline                   static __inline
-    #define RTT_API
-#elif defined (__ADSPBLACKFIN__)        /* for VisualDSP++ Compiler */
-    #include <stdarg.h>
-    #define SECTION(x)                  __attribute__((section(x)))
-    #define RT_UNUSED                   __attribute__((unused))
-    #define RT_USED                     __attribute__((used))
-    #define ALIGN(n)                    __attribute__((aligned(n)))
-	#define WEAK                        __attribute__((weak))
-    #define rt_inline                   static inline
-    #define RTT_API
-#elif defined (_MSC_VER)
-    #include <stdarg.h>
-    #define SECTION(x)
-    #define RT_UNUSED
-    #define RT_USED
-    #define ALIGN(n)                    __declspec(align(n))
-	#define WEAK
-    #define rt_inline                   static __inline
-    #define RTT_API
-#elif defined (__TI_COMPILER_VERSION__)
-    #include <stdarg.h>
-    /* The way that TI compiler set section is different from other(at least
-     * GCC and MDK) compilers. See ARM Optimizing C/C++ Compiler 5.9.3 for more
-     * details. */
-    #define SECTION(x)
-    #define RT_UNUSED
-    #define RT_USED
-    #define PRAGMA(x)                   _Pragma(#x)
-    #define ALIGN(n)
-    #define WEAK
-    #define rt_inline                   static inline
-    #define RTT_API
+#ifdef RT_USING_NEWLIB
+#include <stdarg.h>
 #else
-    #error not supported tool chain
+/* the version of GNU GCC must be greater than 4.x */
+typedef __builtin_va_list   __gnuc_va_list;
+typedef __gnuc_va_list      va_list;
+#define va_start(v,l)       __builtin_va_start(v,l)
+#define va_end(v)           __builtin_va_end(v)
+#define va_arg(v,l)         __builtin_va_arg(v,l)
+#endif
+
+#define SECTION(x)                  __attribute__((section(x)))
+#define RT_UNUSED                   __attribute__((unused))
+#define RT_USED                     __attribute__((used))
+#define ALIGN(n)                    __attribute__((aligned(n)))
+#define WEAK                        __attribute__((weak))
+#define rt_inline                   static __inline
+#define RTT_API
+#elif defined (__ADSPBLACKFIN__)        /* for VisualDSP++ Compiler */
+#include <stdarg.h>
+#define SECTION(x)                  __attribute__((section(x)))
+#define RT_UNUSED                   __attribute__((unused))
+#define RT_USED                     __attribute__((used))
+#define ALIGN(n)                    __attribute__((aligned(n)))
+#define WEAK                        __attribute__((weak))
+#define rt_inline                   static inline
+#define RTT_API
+#elif defined (_MSC_VER)
+#include <stdarg.h>
+#define SECTION(x)
+#define RT_UNUSED
+#define RT_USED
+#define ALIGN(n)                    __declspec(align(n))
+#define WEAK
+#define rt_inline                   static __inline
+#define RTT_API
+#elif defined (__TI_COMPILER_VERSION__)
+#include <stdarg.h>
+/* The way that TI compiler set section is different from other(at least
+ * GCC and MDK) compilers. See ARM Optimizing C/C++ Compiler 5.9.3 for more
+ * details. */
+#define SECTION(x)
+#define RT_UNUSED
+#define RT_USED
+#define PRAGMA(x)                   _Pragma(#x)
+#define ALIGN(n)
+#define WEAK
+#define rt_inline                   static inline
+#define RTT_API
+#else
+#error not supported tool chain
 #endif
 
 /* initialization export */
 #ifdef RT_USING_COMPONENTS_INIT
 typedef int (*init_fn_t)(void);
 #ifdef _MSC_VER /* we do not support MS VC++ compiler */
-    #define INIT_EXPORT(fn, level)
+#define INIT_EXPORT(fn, level)
 #else
-	#if RT_DEBUG_INIT
-		struct rt_init_desc
-		{
-			const char* fn_name;
-			const init_fn_t fn;
-		};
-		#define INIT_EXPORT(fn, level)  		\
-			const char __rti_##fn##_name[] = #fn; \
-			const struct rt_init_desc __rt_init_desc_##fn SECTION(".rti_fn."level) = \
-			{ __rti_##fn##_name, fn};
-	#else
-    	#define INIT_EXPORT(fn, level)  \
-        	const init_fn_t __rt_init_##fn SECTION(".rti_fn."level) = fn
-	#endif
+#if RT_DEBUG_INIT
+struct rt_init_desc
+{
+    const char *fn_name;
+    const init_fn_t fn;
+};
+#define INIT_EXPORT(fn, level)          \
+          const char __rti_##fn##_name[] = #fn; \
+          const struct rt_init_desc __rt_init_desc_##fn SECTION(".rti_fn."level) = \
+          { __rti_##fn##_name, fn};
+#else
+#define INIT_EXPORT(fn, level)  \
+         const init_fn_t __rt_init_##fn SECTION(".rti_fn."level) = fn
+#endif
 #endif
 #else
 #define INIT_EXPORT(fn, level)
@@ -206,7 +206,7 @@ typedef int (*init_fn_t)(void);
 /* file system initialization (dfs-elm, dfs-rom, ...) */
 #define INIT_FS_EXPORT(fn)              INIT_EXPORT(fn, "4")
 /* environment initialization (mount disk, ...) */
-#define INIT_ENV_EXPORT(fn)				INIT_EXPORT(fn, "5")
+#define INIT_ENV_EXPORT(fn)             INIT_EXPORT(fn, "5")
 /* appliation initialization (rtgui application etc ...) */
 #define INIT_APP_EXPORT(fn)             INIT_EXPORT(fn, "6")
 
@@ -759,8 +759,8 @@ enum rt_device_class_type
     RT_Device_Class_Pipe,                               /**< Pipe device */
     RT_Device_Class_Portal,                             /**< Portal device */
     RT_Device_Class_Timer,                              /**< Timer device */
-	RT_Device_Class_Miscellaneous,                      /**< Miscellaneous device */
-	RT_Device_Class_Unknown                             /**< unknown device */
+    RT_Device_Class_Miscellaneous,                      /**< Miscellaneous device */
+    RT_Device_Class_Unknown                             /**< unknown device */
 };
 
 /**
@@ -778,9 +778,9 @@ enum rt_device_class_type
 #define RT_DEVICE_FLAG_SUSPENDED        0x020           /**< device is suspended */
 #define RT_DEVICE_FLAG_STREAM           0x040           /**< stream mode */
 
-#define RT_DEVICE_CTRL_CONFIG           0x03    	/* configure device */
-#define RT_DEVICE_CTRL_SET_INT          0x10    	/* enable receive irq */
-#define RT_DEVICE_CTRL_CLR_INT          0x11    	/* disable receive irq */
+#define RT_DEVICE_CTRL_CONFIG           0x03            /* configure device */
+#define RT_DEVICE_CTRL_SET_INT          0x10            /* enable receive irq */
+#define RT_DEVICE_CTRL_CLR_INT          0x11            /* disable receive irq */
 #define RT_DEVICE_CTRL_GET_INT          0x12
 
 #define RT_DEVICE_FLAG_INT_RX           0x100           /**< INT mode on Rx */
@@ -835,12 +835,12 @@ struct rt_device
     rt_err_t (*tx_complete)(rt_device_t dev, void *buffer);
 
     /* common device interface */
-    rt_err_t  (*init)   (rt_device_t dev);
-    rt_err_t  (*open)   (rt_device_t dev, rt_uint16_t oflag);
-    rt_err_t  (*close)  (rt_device_t dev);
-    rt_size_t (*read)   (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
-    rt_size_t (*write)  (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
-    rt_err_t  (*control)(rt_device_t dev, rt_uint8_t cmd, void *args);
+    rt_err_t (*init)(rt_device_t dev);
+    rt_err_t (*open)(rt_device_t dev, rt_uint16_t oflag);
+    rt_err_t (*close)(rt_device_t dev);
+    rt_size_t (*read)(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
+    rt_size_t (*write)(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
+    rt_err_t (*control)(rt_device_t dev, rt_uint8_t cmd, void *args);
 
     void                     *user_data;                /**< device private data */
 };
@@ -935,13 +935,13 @@ struct rt_device_rect_info
  */
 struct rt_device_graphic_ops
 {
-    void (*set_pixel) (const char *pixel, int x, int y);
-    void (*get_pixel) (char *pixel, int x, int y);
+    void (*set_pixel)(const char *pixel, int x, int y);
+    void (*get_pixel)(char *pixel, int x, int y);
 
     void (*draw_hline)(const char *pixel, int x1, int x2, int y);
     void (*draw_vline)(const char *pixel, int x, int y1, int y2);
 
-    void (*blit_line) (const char *pixel, int x, int y, rt_size_t size);
+    void (*blit_line)(const char *pixel, int x, int y, rt_size_t size);
 };
 #define rt_graphix_ops(device)          ((struct rt_device_graphic_ops *)(device->user_data))
 
@@ -976,8 +976,8 @@ struct rt_module
     void                        *module_entry;          /**< the entry address of module */
     rt_thread_t                  module_thread;         /**< the main thread of module */
 
-	rt_uint8_t*                  module_cmd_line;		/**< module command line */
-	rt_uint32_t                  module_cmd_size;		/**< the size of module command line */
+    rt_uint8_t                  *module_cmd_line;       /**< module command line */
+    rt_uint32_t                  module_cmd_size;       /**< the size of module command line */
 
 #ifdef RT_USING_SLAB
     /* module memory allocator */
