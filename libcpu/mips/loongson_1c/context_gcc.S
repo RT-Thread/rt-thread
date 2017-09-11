@@ -57,12 +57,16 @@ rt_hw_interrupt_enable:
 rt_hw_context_switch:
     mtc0    ra, CP0_EPC
     SAVE_ALL
+#ifdef RT_USING_FPU
     SAVE_FPU
+#endif
 
     sw      sp, 0(a0)       /* store sp in preempted tasks TCB */
     lw      sp, 0(a1)       /* get new task stack pointer */
 
+#ifdef RT_USING_FPU
     RESTORE_FPU
+#endif
     RESTORE_ALL_AND_RET
 
 /*
@@ -73,7 +77,9 @@ rt_hw_context_switch:
 rt_hw_context_switch_to:
     lw      sp, 0(a0)       /* get new task stack pointer */
 
+#ifdef RT_USING_FPU
     RESTORE_FPU
+#endif
     RESTORE_ALL_AND_RET
 
 /*
@@ -107,7 +113,9 @@ _reswitch:
     .globl mips_irq_handle
 mips_irq_handle:
     SAVE_ALL
+#ifdef RT_USING_FPU
     SAVE_FPU
+#endif
 
     mfc0    t0, CP0_CAUSE
     and     t1, t0, 0xff
@@ -156,7 +164,9 @@ mips_irq_handle:
     nop
 
 spurious_interrupt:
+#ifdef RT_USING_FPU
     RESTORE_FPU
+#endif
     RESTORE_ALL_AND_RET
 
     .set reorder
