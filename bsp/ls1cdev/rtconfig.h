@@ -75,6 +75,8 @@
 #define RT_UART_RX_BUFFER_SIZE	64
 // </section>
 
+#define RT_USING_FPU
+
 // <section name="RT_USING_CONSOLE" description="Using console" default="true" >
 #define RT_USING_CONSOLE
 // <integer name="RT_CONSOLEBUF_SIZE" description="The buffer size for console output" default="128" />
