@@ -1,0 +1,25 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd     = os.path.join(str(Dir('#')), 'drivers')
+
+# add the general drivers.
+src = Split("""
+board.c
+usart.c
+drv_sdram.c
+drv_eth.c
+drv_lcd.c
+drv_i2c.c
+drv_ft5x06.c
+drv_spi.c
+drv_spi_flash.c
+drv_sdio_sd.c
+""")
+
+CPPPATH = [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
