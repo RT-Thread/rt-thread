@@ -94,8 +94,10 @@ void rt_hw_board_init(void)
 	/* init operating system timer */
 	rt_hw_timer_init();
 
+#ifdef RT_USING_FPU
     /* init hardware fpu */
     rt_hw_fpu_init();
+#endif
 
 	rt_kprintf("current sr: 0x%08x\n", read_c0_status());
 }
