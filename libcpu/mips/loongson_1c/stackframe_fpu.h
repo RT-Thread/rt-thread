@@ -37,6 +37,7 @@
     .macro SAVE_FPU
     .set push
     .set noreorder
+#ifdef RT_USING_FPU
     move k1, sp                     /* 保存现场 */
     and k0, k1, 0xFFFFFFF8          /* 8字节对齐 */    
     PTR_SUBU sp, k0, PT_FPU_SIZE    /* 计算栈底 */
@@ -57,6 +58,7 @@
     s.d $f28, PT_FPU_R28(sp)
     s.d $f30, PT_FPU_R30(sp)
     move sp, k1                     /* 恢复现场 */
+#endif
     .set reorder
     .set pop
     .endm
@@ -65,6 +67,7 @@
     .macro RESTORE_FPU
     .set push
     .set noreorder
+#ifdef RT_USING_FPU
     move k1, sp                     /* 保存现场 */
     and k0, k1, 0xFFFFFFF8          /* 8字节对齐 */
     PTR_SUBU sp, k0, PT_FPU_SIZE    /* 计算栈底*/
@@ -85,6 +88,7 @@
     l.d $f28, PT_FPU_R28(sp)
     l.d $f30, PT_FPU_R30(sp)
     move sp, k1                     /* 恢复现场 */
+#endif
     .set reorder
     .set pop
     .endm
