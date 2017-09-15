@@ -55,7 +55,7 @@ static void (*rt_thread_inited_hook) (rt_thread_t thread);
 
 /**
  * @ingroup Hook
- * This function sets a hook function when the system suspend a thread. 
+ * This function sets a hook function when the system suspend a thread.
  *
  * @param hook the specified hook function
  *
@@ -68,7 +68,7 @@ void rt_thread_suspend_sethook(void (*hook)(rt_thread_t thread))
 
 /**
  * @ingroup Hook
- * This function sets a hook function when the system resume a thread. 
+ * This function sets a hook function when the system resume a thread.
  *
  * @param hook the specified hook function
  *
@@ -81,13 +81,13 @@ void rt_thread_resume_sethook(void (*hook)(rt_thread_t thread))
 
 /**
  * @ingroup Hook
- * This function sets a hook function when a thread is initialized. 
+ * This function sets a hook function when a thread is initialized.
  *
  * @param hook the specified hook function
  */
 void rt_thread_inited_sethook(void (*hook)(rt_thread_t thread))
 {
-	rt_thread_inited_hook = hook;
+    rt_thread_inited_hook = hook;
 }
 
 #endif
@@ -151,8 +151,8 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
     /* init thread stack */
     rt_memset(thread->stack_addr, '#', thread->stack_size);
     thread->sp = (void *)rt_hw_stack_init(thread->entry, thread->parameter,
-        (void *)((char *)thread->stack_addr + thread->stack_size - 4),
-        (void *)rt_thread_exit);
+                                          (void *)((char *)thread->stack_addr + thread->stack_size - 4),
+                                          (void *)rt_thread_exit);
 
     /* priority init */
     RT_ASSERT(priority < RT_THREAD_PRIORITY_MAX);
@@ -185,7 +185,7 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
                   0,
                   RT_TIMER_FLAG_ONE_SHOT);
 
-    RT_OBJECT_HOOK_CALL(rt_thread_inited_hook,(thread));
+    RT_OBJECT_HOOK_CALL(rt_thread_inited_hook, (thread));
 
     return RT_EOK;
 }
@@ -643,7 +643,7 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
     /* enable interrupt */
     rt_hw_interrupt_enable(temp);
 
-    RT_OBJECT_HOOK_CALL(rt_thread_suspend_hook,(thread));
+    RT_OBJECT_HOOK_CALL(rt_thread_suspend_hook, (thread));
     return RT_EOK;
 }
 RTM_EXPORT(rt_thread_suspend);
@@ -686,7 +686,7 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
     /* insert to schedule ready list */
     rt_schedule_insert_thread(thread);
 
-    RT_OBJECT_HOOK_CALL(rt_thread_resume_hook,(thread));
+    RT_OBJECT_HOOK_CALL(rt_thread_resume_hook, (thread));
     return RT_EOK;
 }
 RTM_EXPORT(rt_thread_resume);
