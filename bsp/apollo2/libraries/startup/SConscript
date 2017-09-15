@@ -1,0 +1,26 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+src = Split("""
+
+""")
+
+# add for startup script 
+if rtconfig.CROSS_TOOL == 'gcc':
+    src = src + ['gcc_ride7/' + 'startup_gcc.c']
+elif rtconfig.CROSS_TOOL == 'keil':
+    src = src + ['arm/' + 'startup_keil.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src = src + ['iar/' + 'startup_iar.c']
+
+path = [cwd]
+
+CPPDEFINES = ['AM_PACKAGE_BGA', 'AM_PART_APOLLO2', 'keil']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')
