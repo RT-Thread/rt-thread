@@ -602,7 +602,7 @@ u32_t sys_now(void)
 }
 
 
-WEAK
+RT_WEAK
 void mem_init(void)
 {
 }
