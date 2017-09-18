@@ -1101,7 +1101,7 @@ rt_device_t rt_console_set_device(const char *name)
 RTM_EXPORT(rt_console_set_device);
 #endif
 
-WEAK void rt_hw_console_output(const char *str)
+RT_WEAK void rt_hw_console_output(const char *str)
 {
     /* empty console output */
 }

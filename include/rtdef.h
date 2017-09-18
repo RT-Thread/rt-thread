@@ -97,7 +97,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define RT_UNUSED                   __attribute__((unused))
     #define RT_USED                     __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
-    #define WEAK                        __weak
+    #define RT_WEAK                     __weak
     #define rt_inline                   static __inline
     /* module compiling */
     #ifdef RT_USING_MODULE
@@ -113,7 +113,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define RT_USED                     __root
     #define PRAGMA(x)                   _Pragma(#x)
     #define ALIGN(n)                    PRAGMA(data_alignment=n)
-    #define WEAK                        __weak
+    #define RT_WEAK                     __weak
     #define rt_inline                   static inline
     #define RTT_API
 
@@ -133,7 +133,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define RT_UNUSED                   __attribute__((unused))
     #define RT_USED                     __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
-    #define WEAK                        __attribute__((weak))
+    #define RT_WEAK                     __attribute__((weak))
     #define rt_inline                   static __inline
     #define RTT_API
 #elif defined (__ADSPBLACKFIN__)        /* for VisualDSP++ Compiler */
@@ -142,7 +142,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define RT_UNUSED                   __attribute__((unused))
     #define RT_USED                     __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
-    #define WEAK                        __attribute__((weak))
+    #define RT_WEAK                     __attribute__((weak))
     #define rt_inline                   static inline
     #define RTT_API
 #elif defined (_MSC_VER)
@@ -151,7 +151,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define RT_UNUSED
     #define RT_USED
     #define ALIGN(n)                    __declspec(align(n))
-    #define WEAK
+    #define RT_WEAK
     #define rt_inline                   static __inline
     #define RTT_API
 #elif defined (__TI_COMPILER_VERSION__)
@@ -164,7 +164,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define RT_USED
     #define PRAGMA(x)                   _Pragma(#x)
     #define ALIGN(n)
-    #define WEAK
+    #define RT_WEAK
     #define rt_inline                   static inline
     #define RTT_API
 #else
