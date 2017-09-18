@@ -97,7 +97,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define RT_UNUSED                   __attribute__((unused))
     #define RT_USED                     __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
-    #define RT_WEAK						          __weak
+    #define RT_WEAK                     __weak
     #define rt_inline                   static __inline
     /* module compiling */
     #ifdef RT_USING_MODULE
