@@ -211,7 +211,7 @@ void rt_object_init(struct rt_object         *object,
 #ifdef RT_USING_MODULE
     /* get module object information */
     information = (rt_module_self() != RT_NULL) ?
-        &rt_module_self()->module_object[type] : &rt_object_container[type];
+                  &rt_module_self()->module_object[type] : &rt_object_container[type];
 #else
     /* get object information */
     information = &rt_object_container[type];
@@ -362,8 +362,8 @@ void rt_object_delete(rt_object_t object)
     else
 #endif
 
-    /* free the memory of object */
-    RT_KERNEL_FREE(object);
+        /* free the memory of object */
+        RT_KERNEL_FREE(object);
 }
 #endif
 
@@ -424,7 +424,7 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
 
         if (*name_ptr == '/')
         {
-            struct rt_module* module = RT_NULL;
+            struct rt_module *module = RT_NULL;
 
             /* get the name length of module */
             module_name_length = name_ptr - name;
@@ -435,15 +435,15 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
             /* find module */
             information = &rt_object_container[RT_Object_Class_Module];
             for (node = information->object_list.next;
-                node != &(information->object_list);
-                node  = node->next)
+                 node != &(information->object_list);
+                 node  = node->next)
             {
                 object = rt_list_entry(node, struct rt_object, list);
                 if ((rt_strncmp(object->name, name, module_name_length) == 0) &&
                     (module_name_length == RT_NAME_MAX || object->name[module_name_length] == '\0'))
                 {
                     /* get module */
-                    module = (struct rt_module*)object;
+                    module = (struct rt_module *)object;
                     break;
                 }
             }

@@ -96,7 +96,7 @@ rt_err_t rt_memheap_init(struct rt_memheap *memheap,
     item->prev_free = item;
 
     item->next = (struct rt_memheap_item *)
-        ((rt_uint8_t *)item + memheap->available_size + RT_MEMHEAP_SIZE);
+                 ((rt_uint8_t *)item + memheap->available_size + RT_MEMHEAP_SIZE);
     item->prev = item->next;
 
     /* block list header */
@@ -315,10 +315,10 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
     header_ptr = (struct rt_memheap_item *)
                  ((rt_uint8_t *)ptr - RT_MEMHEAP_SIZE);
     oldsize = MEMITEM_SIZE(header_ptr);
-     /* re-allocate memory */
+    /* re-allocate memory */
     if (newsize > oldsize)
     {
-        void* new_ptr;
+        void *new_ptr;
         struct rt_memheap_item *next_ptr;
 
         /* lock memheap */
@@ -371,7 +371,7 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
                 next_ptr->prev->next = next_ptr->next;
 
                 /* build a new one on the right place */
-                next_ptr = (struct rt_memheap_item*)((char*)ptr + newsize);
+                next_ptr = (struct rt_memheap_item *)((char *)ptr + newsize);
 
                 RT_DEBUG_LOG(RT_DEBUG_MEMHEAP,
                              ("new free block: block[0x%08x] nextm[0x%08x] prevm[0x%08x]",
@@ -410,7 +410,7 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
         rt_sem_release(&(heap->lock));
 
         /* re-allocate a memory block */
-        new_ptr = (void*)rt_memheap_alloc(heap, newsize);
+        new_ptr = (void *)rt_memheap_alloc(heap, newsize);
         if (new_ptr != RT_NULL)
         {
             rt_memcpy(new_ptr, ptr, oldsize < newsize ? oldsize : newsize);
@@ -503,8 +503,8 @@ void rt_memheap_free(void *ptr)
     struct rt_memheap_item *header_ptr, *new_ptr;
     rt_uint32_t insert_header;
 
-	/* NULL check */
-	if (ptr == RT_NULL) return;
+    /* NULL check */
+    if (ptr == RT_NULL) return;
 
     /* set initial status as OK */
     insert_header = 1;
@@ -610,7 +610,7 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
 
 void *rt_malloc(rt_size_t size)
 {
-    void* ptr;
+    void *ptr;
 
     /* try to allocate in system heap */
     ptr = rt_memheap_alloc(&_heap, size);
