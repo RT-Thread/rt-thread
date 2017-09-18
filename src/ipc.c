@@ -1382,8 +1382,8 @@ rt_err_t rt_mb_delete(rt_mailbox_t mb)
     else
 #endif
 
-    /* free mailbox pool */
-    RT_KERNEL_FREE(mb->msg_pool);
+        /* free mailbox pool */
+        RT_KERNEL_FREE(mb->msg_pool);
 
     /* delete mailbox object */
     rt_object_delete(&(mb->parent.parent));
@@ -1775,7 +1775,7 @@ rt_err_t rt_mq_init(rt_mq_t     mq,
     for (temp = 0; temp < mq->max_msgs; temp ++)
     {
         head = (struct rt_mq_message *)((rt_uint8_t *)mq->msg_pool +
-            temp * (mq->msg_size + sizeof(struct rt_mq_message)));
+                                        temp * (mq->msg_size + sizeof(struct rt_mq_message)));
         head->next = mq->msg_queue_free;
         mq->msg_queue_free = head;
     }
@@ -1849,7 +1849,7 @@ rt_mq_t rt_mq_create(const char *name,
     mq->max_msgs = max_msgs;
 
     /* allocate message pool */
-    mq->msg_pool = RT_KERNEL_MALLOC((mq->msg_size + sizeof(struct rt_mq_message))* mq->max_msgs);
+    mq->msg_pool = RT_KERNEL_MALLOC((mq->msg_size + sizeof(struct rt_mq_message)) * mq->max_msgs);
     if (mq->msg_pool == RT_NULL)
     {
         rt_mq_delete(mq);
@@ -1866,7 +1866,7 @@ rt_mq_t rt_mq_create(const char *name,
     for (temp = 0; temp < mq->max_msgs; temp ++)
     {
         head = (struct rt_mq_message *)((rt_uint8_t *)mq->msg_pool +
-               temp * (mq->msg_size + sizeof(struct rt_mq_message)));
+                                        temp * (mq->msg_size + sizeof(struct rt_mq_message)));
         head->next = mq->msg_queue_free;
         mq->msg_queue_free = head;
     }
@@ -1902,8 +1902,8 @@ rt_err_t rt_mq_delete(rt_mq_t mq)
     else
 #endif
 
-    /* free message queue pool */
-    RT_KERNEL_FREE(mq->msg_pool);
+        /* free message queue pool */
+        RT_KERNEL_FREE(mq->msg_pool);
 
     /* delete message queue object */
     rt_object_delete(&(mq->parent.parent));
@@ -1942,7 +1942,7 @@ rt_err_t rt_mq_send(rt_mq_t mq, void *buffer, rt_size_t size)
     temp = rt_hw_interrupt_disable();
 
     /* get a free list, there must be an empty item */
-    msg = (struct rt_mq_message*)mq->msg_queue_free;
+    msg = (struct rt_mq_message *)mq->msg_queue_free;
     /* message queue is full */
     if (msg == RT_NULL)
     {
