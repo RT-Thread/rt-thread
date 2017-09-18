@@ -1,21 +1,26 @@
 /*
  * File      : application.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
  * 2017-09-14     Haley        the first version
  */
-
-/**
- * @addtogroup APOLLO2
- */
-/*@{*/
 
 #include <rtthread.h>
 #include <stdint.h>
@@ -24,9 +29,8 @@
 #include <shell.h>
 #endif
 
-#include "hw_led.h"
+#include "led.h"
 
-ALIGN(RT_ALIGN_SIZE)
 static rt_uint8_t led_stack[ 512 ];
 static struct rt_thread led_thread;
 
@@ -34,9 +38,6 @@ static void led_thread_entry(void* parameter)
 {
     unsigned int count=0;
 
-		rt_hw_led_init(0);
-		rt_hw_led_init(1);
-	
     while (1)
     {
         /* led1 on */
@@ -56,18 +57,8 @@ static void led_thread_entry(void* parameter)
     }
 }
 
-void rt_init_thread_entry(void* parameter)
+int main(void)
 {
-		#ifdef RT_USING_COMPONENTS_INIT
-		/* initialization RT-Thread Components */
-		rt_components_init();
-		#endif	
-}
-
-int rt_application_init(void)
-{
-    rt_thread_t init_thread;
-
     rt_err_t result;
 
     /* init led thread */
@@ -77,17 +68,12 @@ int rt_application_init(void)
                             RT_NULL,
                             (rt_uint8_t*)&led_stack[0],
                             sizeof(led_stack),
-                            7,
+                            RT_THREAD_PRIORITY_MAX/3,
                             5);
     if (result == RT_EOK)
     {
         rt_thread_startup(&led_thread);
     }
-		
-    init_thread = rt_thread_create("init", rt_init_thread_entry, RT_NULL, 1024,
-                            RT_THREAD_PRIORITY_MAX / 3, 20);
-    if (init_thread != RT_NULL)
-        rt_thread_startup(init_thread);
 
     return 0;
 }
