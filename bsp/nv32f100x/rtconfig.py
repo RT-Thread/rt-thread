@@ -29,7 +29,7 @@ if os.getenv('RTT_EXEC_PATH'):
 
 #BUILD = 'debug'
 BUILD = 'release'
-STM32_TYPE = 'STM32L0XX'
+NV32_TYPE = 'NV32F100X'
 
 if PLATFORM == 'gcc':
     # toolchains
@@ -44,9 +44,9 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -mcpu=cortex-m0 -mthumb -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE  + ' -DSTM32L072xx' + ' -DNULL=0'
+    CFLAGS = DEVICE  + ' -DNV32F100X' + ' -DNULL=0'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-stm32.map,-cref,-u,Reset_Handler -T stm32_rom.ld'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-nv32.map,-cref,-u,Reset_Handler -T nv32_rom.ld'
 
     CPATH = ''
     LPATH = ''
@@ -70,7 +70,7 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --device DARMSTM'
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-stm32.map --scatter stm32_rom.sct'
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-nv32.map --scatter nv32_rom.sct'
 
     CFLAGS += ' -I./'
 
@@ -91,8 +91,6 @@ elif PLATFORM == 'iar':
     AR = 'iarchive'
     LINK = 'ilinkarm'
     TARGET_EXT = 'out'
-
-    DEVICE = ' -D USE_STDPERIPH_DRIVER' + ' -D STM32F10X_HD'
 
     CFLAGS = DEVICE
     CFLAGS += ' --diag_suppress Pa050'
@@ -119,7 +117,7 @@ elif PLATFORM == 'iar':
     AFLAGS += ' --cpu Cortex-M0'
     AFLAGS += ' --fpu None'
 
-    LFLAGS = ' --config stm32l0xx_flash.icf'
+    LFLAGS = ' --config nv32f100x_flash.icf'
     LFLAGS += ' --redirect _Printf=_PrintfTiny'
     LFLAGS += ' --redirect _Scanf=_ScanfSmall'
     LFLAGS += ' --entry __iar_program_start'

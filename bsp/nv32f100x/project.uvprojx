@@ -378,19 +378,14 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>application.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>app\src\application.c</FilePath>
+              <FilePath>.\app\src\main.c</FilePath>
             </File>
             <File>
               <FileName>ledapp.c</FileName>
               <FileType>1</FileType>
               <FilePath>app\src\ledapp.c</FilePath>
-            </File>
-            <File>
-              <FileName>startup.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>app\src\startup.c</FilePath>
             </File>
           </Files>
         </Group>

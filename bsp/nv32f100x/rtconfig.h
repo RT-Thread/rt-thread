@@ -96,4 +96,6 @@
 
 #define RT_USING_UART0
 
+#define RT_USING_USER_MAIN
+
 #endif
