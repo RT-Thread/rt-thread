@@ -57,18 +57,18 @@
 //*****************************************************************************
 const am_hal_cachectrl_config_t am_hal_cachectrl_defaults =
 {
-    .ui32EnableCache = 1,
-    .ui32LRU = 0,
-    .ui32EnableNCregions = 0,
-    .ui32Config = AM_HAL_CACHECTRL_CACHECFG_CONFIG_2WAY_512,
-    .ui32SerialCacheMode = 0,
-    .ui32FlashCachingEnables = 3,
-    .ui32EnableCacheClockGating = 1,
-    .ui32EnableLightSleep = 0,
-    .ui32Dly = 1,
-    .ui32SMDly = 1,
-    .ui32EnableDataClockGating = 1,
-    .ui32EnableCacheMonitoring = 0,
+    1, // ui32EnableCache
+    0, // ui32LRU
+    0, // ui32EnableNCregions
+    AM_HAL_CACHECTRL_CACHECFG_CONFIG_2WAY_512, // ui32Config
+    0, // ui32SerialCacheMode
+    3, // ui32FlashCachingEnables
+    1, // ui32EnableCacheClockGating
+    0, // ui32EnableLightSleep
+    1, // ui32Dly
+    1, // ui32SMDly
+    1, // ui32EnableDataClockGating
+    0, // ui32EnableCacheMonitoring
 };
 
 //*****************************************************************************

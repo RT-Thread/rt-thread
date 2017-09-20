@@ -55,11 +55,11 @@ struct am_uart
  */
 am_hal_uart_config_t g_sUartConfig =
 {
-    .ui32BaudRate = 115200,
-    .ui32DataBits = AM_HAL_UART_DATA_BITS_8,
-    .bTwoStopBits = false,
-    .ui32Parity   = AM_HAL_UART_PARITY_NONE,
-    .ui32FlowCtrl = AM_HAL_UART_FLOW_CTRL_NONE,
+    115200, // ui32BaudRate
+    AM_HAL_UART_DATA_BITS_8, // ui32DataBits
+    false, // bTwoStopBits
+    AM_HAL_UART_PARITY_NONE, // ui32Parity
+    AM_HAL_UART_FLOW_CTRL_NONE, // ui32FlowCtrl
 };
 
 /**
@@ -246,9 +246,10 @@ static int am_getc(struct rt_serial_device *serial)
 static void uart_isr(struct rt_serial_device *serial)
 {
     uint32_t status;
+    struct am_uart* uart;
 
     RT_ASSERT(serial != RT_NULL);
-    struct am_uart *uart = (struct am_uart *) serial->parent.user_data;
+    uart = (struct am_uart *) serial->parent.user_data;
 
     RT_ASSERT(uart != RT_NULL);
 
