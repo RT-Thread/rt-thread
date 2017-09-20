@@ -16,14 +16,14 @@
 
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
-#define RT_DEBUG
+//#define RT_DEBUG
 //#define RT_DEBUG_INIT 1
-#define RT_USING_OVERFLOW_CHECK
+//#define RT_USING_OVERFLOW_CHECK
 
 /* Using Hook */
 //#define RT_USING_HOOK
 
-//#define RT_USING_IDLE_HOOK
+#define RT_USING_IDLE_HOOK
 
 #define IDLE_THREAD_STACK_SIZE	384
 
@@ -60,6 +60,9 @@
 #define RT_USING_SMALL_MEM
 #define RT_USING_TINY_SIZE
 
+/* Using USER MAIN */
+#define RT_USING_USER_MAIN
+
 // <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
 #define RT_USING_COMPONENTS_INIT
 
@@ -78,13 +81,16 @@
 // <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console" default="uart1" />
 #define RT_CONSOLE_DEVICE_NAME	    "uart0"
 
+/* Using GPIO pin framework */
+#define RT_USING_PIN
+
 // #define RT_USING_SPI
 
 /* SECTION: finsh, a C-Express shell */
 #define RT_USING_FINSH
 /* configure finsh parameters */
 #define FINSH_THREAD_PRIORITY 6
-#define FINSH_THREAD_STACK_SIZE	512
+#define FINSH_THREAD_STACK_SIZE	1024
 #define FINSH_HISTORY_LINES	1
 /* Using symbol table */
 #define FINSH_USING_SYMTAB

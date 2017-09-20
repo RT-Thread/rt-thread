@@ -1,11 +1,21 @@
 /*
  * File      : board.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 RT-Thread Develop Team
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -19,11 +29,23 @@
 #include "am_mcu_apollo.h"
 #include "hal/am_hal_clkgen.h"
 #include "hal/am_hal_cachectrl.h"
-#include "hw_uart.h"
+#include "uart.h"
+#include "led.h"
+
+#ifdef __CC_ARM
+extern int Image$$RW_IRAM1$$ZI$$Limit;
+#define AM_SRAM_BEGIN    (&Image$$RW_IRAM1$$ZI$$Limit)
+#elif __ICCARM__
+#pragma section="HEAP"
+#define AM_SRAM_BEGIN    (__segment_end("HEAP"))
+#else
+extern int __bss_end;
+#define NRF_SRAM_BEGIN    (&__bss_end)
+#endif
 
 #define TICK_RATE_HZ  RT_TICK_PER_SECOND
 #define SYSTICK_CLOCK_HZ  ( 32768UL )
-#define WAKE_INTERVAL ( (uint32_t) ((SYSTICK_CLOCK_HZ / TICK_RATE_HZ)) )
+#define WAKE_INTERVAL ( (uint32_t) ((SYSTICK_CLOCK_HZ / TICK_RATE_HZ)))
 
 /**
  * This is the timer interrupt service routine.
@@ -34,16 +56,16 @@ void am_stimer_cmpr0_isr(void)
     /* Check the timer interrupt status */
     am_hal_stimer_int_clear(AM_HAL_STIMER_INT_COMPAREA);
     am_hal_stimer_compare_delta_set(0, WAKE_INTERVAL);
-	
+
     if (rt_thread_self() != RT_NULL)
     {
-    	/* enter interrupt */
-    	rt_interrupt_enter();
+        /* enter interrupt */
+        rt_interrupt_enter();
 
-    	rt_tick_increase();
+        rt_tick_increase();
 
-    	/* leave interrupt */
-    	rt_interrupt_leave();
+        /* leave interrupt */
+        rt_interrupt_leave();
     }
 }
 
@@ -53,13 +75,10 @@ void am_stimer_cmpr0_isr(void)
  */
 void SysTick_Configuration(void)
 {
-		/* Set the main clk */
-    am_hal_clkgen_sysclk_select(AM_HAL_CLKGEN_SYSCLK_MAX);
-	
     /* Enable compare A interrupt in STIMER */
     am_hal_stimer_int_enable(AM_HAL_STIMER_INT_COMPAREA);
 
-    /* Enable the timer interrupt in the NVIC */
+    /* Enable the timer interrupt in the NVIC, making sure to use the appropriate priority level */
     am_hal_interrupt_enable(AM_HAL_INTERRUPT_STIMER_CMPR0);
 
     /* Configure the STIMER and run */
@@ -67,15 +86,6 @@ void SysTick_Configuration(void)
     am_hal_stimer_compare_delta_set(0, WAKE_INTERVAL);
     am_hal_stimer_config(AM_HAL_STIMER_XTAL_32KHZ |
                          AM_HAL_STIMER_CFG_COMPARE_A_ENABLE);
-}
-
-/**
- * This is the CacheCtrl Enable.
- *
- */
-void CacheCtrl_Enable(void)
-{
-    am_hal_cachectrl_enable(&am_hal_cachectrl_defaults);
 }
 
 /**
@@ -100,7 +110,7 @@ void am_low_power_init(void)
 
     /* Stop the XT and LFRC */
     am_hal_clkgen_osc_stop(AM_HAL_CLKGEN_OSC_XT);
-    // am_hal_clkgen_osc_stop(AM_HAL_CLKGEN_OSC_LFRC);
+    am_hal_clkgen_osc_stop(AM_HAL_CLKGEN_OSC_LFRC);
 
     /* Disable the RTC */
     am_hal_rtc_osc_disable();
@@ -112,7 +122,11 @@ void am_low_power_init(void)
  */
 void deep_power_save(void)
 {
-		am_hal_sysctrl_sleep(AM_HAL_SYSCTRL_SLEEP_DEEP);
+    am_hal_interrupt_master_disable();
+
+    am_hal_sysctrl_sleep(AM_HAL_SYSCTRL_SLEEP_DEEP);
+
+    am_hal_interrupt_master_enable();
 }
 
 /**
@@ -120,26 +134,47 @@ void deep_power_save(void)
  */
 void rt_hw_board_init(void)
 {
-		/* Set the clock frequency */
-    SysTick_Configuration();
-	
-		/* Set the default cache configuration */
-		CacheCtrl_Enable();
+    /* Set the system clock to maximum frequency */
+    am_hal_clkgen_sysclk_select(AM_HAL_CLKGEN_SYSCLK_MAX);
+
+    /* Set the default cache configuration */
+    am_hal_cachectrl_enable(&am_hal_cachectrl_defaults);
 
     /* Configure the board for low power operation */
-    //am_low_power_init();
-	
-#ifdef RT_USING_IDLE_HOOK	
-    rt_thread_idle_sethook(deep_power_save);  
+    am_low_power_init();
+
+    /* Config SysTick */
+    SysTick_Configuration();
+
+#ifdef RT_USING_IDLE_HOOK
+    /* Set sleep deep mode */
+    rt_thread_idle_sethook(deep_power_save);
+
+#ifndef NO_FPU
+    /* Enable the floating point module, and configure the core for lazy stacking */
+    am_hal_sysctrl_fpu_enable();
+    am_hal_sysctrl_fpu_stacking_enable(true);
+#else
+    am_hal_sysctrl_fpu_disable();
 #endif
-	
+
+    /* Turn off unused Flash & SRAM */
+    am_hal_pwrctrl_memory_enable(AM_HAL_PWRCTRL_MEMEN_FLASH512K);
+    am_hal_pwrctrl_memory_enable(AM_HAL_PWRCTRL_MEMEN_SRAM32K);
+
+#endif
+
 #ifdef RT_USING_CONSOLE
-		rt_hw_uart_init();
+    rt_hw_uart_init();
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
+#endif
+
+#ifdef RT_USING_HEAP
+    rt_system_heap_init((void*)AM_SRAM_BEGIN, (void*)AM_SRAM_END);
 #endif
 }
 

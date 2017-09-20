@@ -43,6 +43,7 @@
  */
 void rt_hw_led_on(rt_uint8_t LEDNum)
 {
+#ifdef RT_USING_PIN
     if(LEDNum == 0)
         rt_pin_write(AM_GPIO_LED0, PIN_LOW);
 
@@ -54,6 +55,7 @@ void rt_hw_led_on(rt_uint8_t LEDNum)
 
     else if(LEDNum == 3)
         rt_pin_write(AM_GPIO_LED3, PIN_LOW);
+#endif
 }
 
 /**
@@ -67,6 +69,7 @@ void rt_hw_led_on(rt_uint8_t LEDNum)
  */
 void rt_hw_led_off(rt_uint8_t LEDNum)
 {
+#ifdef RT_USING_PIN
     if(LEDNum == 0)
         rt_pin_write(AM_GPIO_LED0, PIN_HIGH);
 
@@ -78,6 +81,7 @@ void rt_hw_led_off(rt_uint8_t LEDNum)
 
     else if(LEDNum == 3)
         rt_pin_write(AM_GPIO_LED3, PIN_HIGH);
+#endif
 }
 
 /**
@@ -91,6 +95,7 @@ void rt_hw_led_off(rt_uint8_t LEDNum)
  */
 int rt_hw_led_init(void)
 {
+#ifdef RT_USING_PIN
 #if defined(RT_USING_LED0)
     /* config led */
     rt_pin_mode(AM_GPIO_LED0, PIN_MODE_OUTPUT);
@@ -122,10 +127,10 @@ int rt_hw_led_init(void)
     /* turns off the led */
     rt_hw_led_off(3);
 #endif /* RT_USING_LED1 */
-
+#endif
     return 0;
 }
-#ifdef RT_USING_PIN
+#ifdef RT_USING_COMPONENTS_INIT
 INIT_BOARD_EXPORT(rt_hw_led_init);
 #endif
 

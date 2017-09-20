@@ -1,5 +1,5 @@
 /*
- * File      : application.c
+ * File      : main.c
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
@@ -23,7 +23,7 @@
  */
 
 #include <rtthread.h>
-#include <stdint.h>
+
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 #include <shell.h>
