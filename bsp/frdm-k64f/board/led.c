@@ -19,8 +19,8 @@ const rt_uint32_t led_mask[] = {1 << 21, 1 << 22, 1 << 26};
 
 void rt_hw_led_init(void)
 {
-    SIM_SCGC5 |= (1 << SIM_SCGC5_PORTB_SHIFT);
-    SIM_SCGC5 |= (1 << SIM_SCGC5_PORTE_SHIFT);
+    SIM->SCGC5 |= (1 << SIM_SCGC5_PORTB_SHIFT);
+    SIM->SCGC5 |= (1 << SIM_SCGC5_PORTE_SHIFT);
 
     PORTB->PCR[21] &= ~PORT_PCR_MUX_MASK;
     PORTB->PCR[21] |= PORT_PCR_MUX(1);   //PTB21 is GPIO pin

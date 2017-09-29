@@ -51,9 +51,9 @@ void rtthread_startup(void)
     rt_hw_interrupt_init();
 
     /* copy vector */
-    rt_memcpy((void *)A_K0BASE, tlb_refill_exception, 0x20);
-    rt_memcpy((void *)(A_K0BASE + 0x180), general_exception, 0x20);
-    rt_memcpy((void *)(A_K0BASE + 0x200), irq_exception, 0x20);
+    rt_memcpy((void *)A_K0BASE, tlb_refill_exception, 0x80);
+    rt_memcpy((void *)(A_K0BASE + 0x180), general_exception, 0x80);
+    rt_memcpy((void *)(A_K0BASE + 0x200), irq_exception, 0x80);
 
     invalidate_writeback_dcache_all();
     invalidate_icache_all();

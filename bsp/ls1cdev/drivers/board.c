@@ -51,6 +51,31 @@ void rt_hw_timer_init(void)
 	write_c0_count(0);
 }
 
+
+/**
+ * init hardware FPU
+ */
+void rt_hw_fpu_init(void)
+{
+    rt_uint32_t c0_status = 0;
+    rt_uint32_t c1_status = 0;
+
+    // 使能协处理器1--FPU
+    c0_status = read_c0_status();
+    c0_status |= (ST0_CU1 | ST0_FR);
+    write_c0_status(c0_status);
+
+    // 配置FPU
+    c1_status = read_c1_status();
+    c1_status |= (FPU_CSR_FS | FPU_CSR_FO | FPU_CSR_FN);    // set FS, FO, FN
+    c1_status &= ~(FPU_CSR_ALL_E);                          // disable exception
+    c1_status = (c1_status & (~FPU_CSR_RM)) | FPU_CSR_RN;   // set RN
+    write_c1_status(c1_status);
+
+    return ;
+}
+
+
 /**
  * This function will initial sam7s64 board.
  */
@@ -68,6 +93,11 @@ void rt_hw_board_init(void)
 
 	/* init operating system timer */
 	rt_hw_timer_init();
+
+#ifdef RT_USING_FPU
+    /* init hardware fpu */
+    rt_hw_fpu_init();
+#endif
 
 	rt_kprintf("current sr: 0x%08x\n", read_c0_status());
 }

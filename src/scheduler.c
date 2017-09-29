@@ -42,7 +42,7 @@
 
 static rt_int16_t rt_scheduler_lock_nest;
 extern volatile rt_uint8_t rt_interrupt_nest;
-extern int __rt_ffs(int value);
+extern rt_ubase_t __rt_ffs(rt_ubase_t value);
 
 rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 struct rt_thread *rt_current_thread;
@@ -90,19 +90,19 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
     RT_ASSERT(thread != RT_NULL);
 
     if (*((rt_uint8_t *)thread->stack_addr) != '#' ||
-	(rt_uint32_t)thread->sp <= (rt_uint32_t)thread->stack_addr ||
+        (rt_uint32_t)thread->sp <= (rt_uint32_t)thread->stack_addr ||
         (rt_uint32_t)thread->sp >
         (rt_uint32_t)thread->stack_addr + (rt_uint32_t)thread->stack_size)
     {
         rt_uint32_t level;
 
         rt_kprintf("thread:%s stack overflow\n", thread->name);
-        #ifdef RT_USING_FINSH
+#ifdef RT_USING_FINSH
         {
             extern long list_thread(void);
             list_thread();
         }
-        #endif
+#endif
         level = rt_hw_interrupt_disable();
         while (level);
     }

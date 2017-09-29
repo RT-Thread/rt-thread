@@ -26,6 +26,7 @@
  * Date           Author       Notes
  * 2013-03-30     Bernard      the first verion for finsh
  * 2014-01-03     Bernard      msh can execute module.
+ * 2017-07-19     Aubr.Cool    limit argc to RT_FINSH_ARG_MAX
  */
 
 #include "msh.h"
@@ -103,6 +104,7 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[RT_FINSH_ARG_MAX])
     char *ptr;
     rt_size_t position;
     rt_size_t argc;
+    rt_size_t i;
 
     ptr = cmd;
     position = 0; argc = 0;
@@ -115,6 +117,18 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[RT_FINSH_ARG_MAX])
             *ptr = '\0';
             ptr ++; position ++;
         }
+
+        if(argc >= RT_FINSH_ARG_MAX)
+        {
+            rt_kprintf("Too many args ! We only Use:\n");
+            for(i = 0; i < argc; i++)
+            {
+                rt_kprintf("%s ", argv[i]);
+            }
+            rt_kprintf("\n");
+            break;
+        }
+
         if (position >= length) break;
 
         /* handle string */

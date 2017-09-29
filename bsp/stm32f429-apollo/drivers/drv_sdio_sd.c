@@ -242,10 +242,10 @@ static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_
     {
         /* non-aligned. */
         uint32_t i;
-        rt_size_t sector_adr;
+        uint64_t sector_adr;
         uint8_t* copy_buffer;
 
-        sector_adr = pos*SECTOR_SIZE;
+        sector_adr = (uint64_t)pos*SECTOR_SIZE;
         copy_buffer = (uint8_t*)buffer;
 
         for(i=0; i<size; i++)
@@ -263,9 +263,9 @@ static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_
     else
     {
         #if (SD_DMA_MODE==1) 
-        status=SD_ReadBlocks_DMA(buffer,pos*SECTOR_SIZE,size);//通过DMA写SD卡一个扇区
+        status=SD_ReadBlocks_DMA(buffer,(uint64_t)pos*SECTOR_SIZE,size);//通过DMA写SD卡一个扇区
         #else
-        SD_ReadBlocks(buffer,pos*SECTOR_SIZE,size);
+        SD_ReadBlocks(buffer,(uint64_t)pos*SECTOR_SIZE,size);
         #endif
     }
 
@@ -286,10 +286,10 @@ static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buf
     {
         /* non-aligned. */
         uint32_t i;
-        rt_size_t sector_adr;
+        uint64_t sector_adr;
         uint8_t* copy_buffer;
 
-        sector_adr = pos*SECTOR_SIZE;
+        sector_adr = (uint64_t)pos*SECTOR_SIZE;
         copy_buffer = (uint8_t*)buffer;
 
         for(i=0; i<size; i++)
@@ -308,9 +308,9 @@ static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buf
     else
     {
         #if (SD_DMA_MODE==1)   
-        status=SD_WriteBlocks_DMA((uint32_t*)buffer,pos*SECTOR_SIZE,size);
+        status=SD_WriteBlocks_DMA((uint32_t*)buffer,(uint64_t)pos*SECTOR_SIZE,size);
         #else
-        status=SD_WriteBlocks((uint32_t*)buffer,pos*SECTOR_SIZE,size);
+        status=SD_WriteBlocks((uint32_t*)buffer,(uint64_t)pos*SECTOR_SIZE,size);
         #endif
     }
 	// }

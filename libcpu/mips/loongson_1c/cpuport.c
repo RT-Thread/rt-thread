@@ -121,5 +121,41 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_ad
 	return (rt_uint8_t *)stk;
 }
 
+#define cache_op(op,addr)                       \
+	    __asm__ __volatile__(                       \
+				    "   .set    push                    \n" \
+				    "   .set    noreorder               \n" \
+				    "   .set    mips3\n\t               \n" \
+				    "   cache   %0, %1                  \n" \
+				    "   .set    pop                 \n" \
+				    :                               \
+				    : "i" (op), "R" (*(unsigned char *)(addr)))
+
+#if defined(CONFIG_CPU_LOONGSON2)
+#define Hit_Invalidate_I    0x00
+#else
+#define Hit_Invalidate_I    0x10
+#endif
+#define Hit_Invalidate_D    0x11
+#define CONFIG_SYS_CACHELINE_SIZE   32
+#define Hit_Writeback_Inv_D 0x15
+
+
+void flush_cache(unsigned long start_addr, unsigned long size)
+{
+	unsigned long lsize = CONFIG_SYS_CACHELINE_SIZE;
+	unsigned long addr = start_addr & ~(lsize - 1); 
+	unsigned long aend = (start_addr + size - 1) & ~(lsize - 1); 
+
+	while (1) {
+		cache_op(Hit_Writeback_Inv_D, addr);
+		cache_op(Hit_Invalidate_I, addr);
+		if (addr == aend)
+			break;
+		addr += lsize;
+	}   
+}
+
+
 /*@}*/
 

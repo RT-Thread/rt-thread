@@ -49,12 +49,12 @@ static rt_uint32_t mmcsd_hotpluge_mb_pool[4];
 
 void mmcsd_host_lock(struct rt_mmcsd_host *host)
 {
-    rt_sem_take(&host->bus_lock, RT_WAITING_FOREVER);
+    rt_mutex_take(&host->bus_lock, RT_WAITING_FOREVER);
 }
 
 void mmcsd_host_unlock(struct rt_mmcsd_host *host)
 {
-    rt_sem_release(&host->bus_lock);
+    rt_mutex_release(&host->bus_lock);
 }
 
 void mmcsd_req_complete(struct rt_mmcsd_host *host)
@@ -713,7 +713,7 @@ struct rt_mmcsd_host *mmcsd_alloc_host(void)
     host->max_blk_size = 512;
     host->max_blk_count = 4096;
 
-    rt_sem_init(&host->bus_lock, "sd_bus_lock", 1, RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&host->bus_lock, "sd_bus_lock", RT_IPC_FLAG_FIFO);
     rt_sem_init(&host->sem_ack, "sd_ack", 0, RT_IPC_FLAG_FIFO);
 
     return host;
@@ -721,7 +721,7 @@ struct rt_mmcsd_host *mmcsd_alloc_host(void)
 
 void mmcsd_free_host(struct rt_mmcsd_host *host)
 {
-    rt_sem_detach(&host->bus_lock);
+    rt_mutex_detach(&host->bus_lock);
     rt_sem_detach(&host->sem_ack);
     rt_free(host);
 }

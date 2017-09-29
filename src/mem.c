@@ -24,6 +24,7 @@
  *                             fix memory check in rt_realloc function
  * 2010-07-13     Bernard      fix RT_ALIGN issue found by kuronca
  * 2010-10-14     Bernard      fix rt_realloc issue when realloc a NULL pointer.
+ * 2017-07-14     armink       fix rt_realloc issue when new size is 0
  */
 
 /*
@@ -334,7 +335,7 @@ void *rt_malloc(rt_size_t size)
                  */
                 mem->used = 1;
 #ifdef RT_MEM_STATS
-                used_mem += mem->next - ((rt_uint8_t*)mem - heap_ptr);
+                used_mem += mem->next - ((rt_uint8_t *)mem - heap_ptr);
                 if (max_mem < used_mem)
                     max_mem = used_mem;
 #endif
@@ -354,7 +355,7 @@ void *rt_malloc(rt_size_t size)
             rt_sem_release(&heap_sem);
             RT_ASSERT((rt_uint32_t)mem + SIZEOF_STRUCT_MEM + size <= (rt_uint32_t)heap_end);
             RT_ASSERT((rt_uint32_t)((rt_uint8_t *)mem + SIZEOF_STRUCT_MEM) % RT_ALIGN_SIZE == 0);
-            RT_ASSERT((((rt_uint32_t)mem) & (RT_ALIGN_SIZE-1)) == 0);
+            RT_ASSERT((((rt_uint32_t)mem) & (RT_ALIGN_SIZE - 1)) == 0);
 
             RT_DEBUG_LOG(RT_DEBUG_MEM,
                          ("allocate memory at 0x%x, size: %d\n",
@@ -400,6 +401,11 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 
         return RT_NULL;
     }
+    else if (newsize == 0)
+    {
+        rt_free(rmem);
+        return RT_NULL;
+    }
 
     /* allocate a new memory block */
     if (rmem == RT_NULL)
@@ -437,7 +443,7 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 
         ptr2 = ptr + SIZEOF_STRUCT_MEM + newsize;
         mem2 = (struct heap_mem *)&heap_ptr[ptr2];
-        mem2->magic= HEAP_MAGIC;
+        mem2->magic = HEAP_MAGIC;
         mem2->used = 0;
         mem2->next = mem->next;
         mem2->prev = ptr;
@@ -510,7 +516,7 @@ void rt_free(void *rmem)
 
     if (rmem == RT_NULL)
         return;
-    RT_ASSERT((((rt_uint32_t)rmem) & (RT_ALIGN_SIZE-1)) == 0);
+    RT_ASSERT((((rt_uint32_t)rmem) & (RT_ALIGN_SIZE - 1)) == 0);
     RT_ASSERT((rt_uint8_t *)rmem >= (rt_uint8_t *)heap_ptr &&
               (rt_uint8_t *)rmem < (rt_uint8_t *)heap_end);
 
@@ -550,7 +556,7 @@ void rt_free(void *rmem)
     }
 
 #ifdef RT_MEM_STATS
-    used_mem -= (mem->next - ((rt_uint8_t*)mem - heap_ptr));
+    used_mem -= (mem->next - ((rt_uint8_t *)mem - heap_ptr));
 #endif
 
     /* finally, see if prev or next are free also */
@@ -589,4 +595,3 @@ FINSH_FUNCTION_EXPORT(list_mem, list memory usage information)
 
 #endif /* end of RT_USING_HEAP */
 #endif /* end of RT_USING_MEMHEAP_AS_HEAP */
-

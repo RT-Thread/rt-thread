@@ -600,7 +600,7 @@ u32_t sys_now(void)
     return rt_tick_get() * (1000 / RT_TICK_PER_SECOND);
 }
 
-WEAK
+RT_WEAK
 void mem_init(void)
 {
 }

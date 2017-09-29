@@ -33,9 +33,15 @@
 #include <rthw.h>
 #include <rtthread.h>
 
+#ifdef RT_USING_USER_MAIN
+#ifndef RT_MAIN_THREAD_STACK_SIZE
+#define RT_MAIN_THREAD_STACK_SIZE     2048
+#endif
+#endif
+
 #ifdef RT_USING_COMPONENTS_INIT
 /*
- * Components Initialization will initialize some driver and components as following 
+ * Components Initialization will initialize some driver and components as following
  * order:
  * rti_start         --> 0
  * BOARD_EXPORT      --> 1
@@ -45,17 +51,17 @@
  * COMPONENT_EXPORT  --> 3
  * FS_EXPORT         --> 4
  * ENV_EXPORT        --> 5
- * APP_EXPORT        --> 6 
- * 
+ * APP_EXPORT        --> 6
+ *
  * rti_end           --> 6.end
  *
- * These automatically initializaiton, the driver or component initial function must 
+ * These automatically initializaiton, the driver or component initial function must
  * be defined with:
  * INIT_BOARD_EXPORT(fn);
  * INIT_DEVICE_EXPORT(fn);
  * ...
  * INIT_APP_EXPORT(fn);
- * etc. 
+ * etc.
  */
 static int rti_start(void)
 {
@@ -149,11 +155,11 @@ int $Sub$$main(void)
 #elif defined(__ICCARM__)
 extern int main(void);
 /* __low_level_init will auto called by IAR cstartup */
-extern void __iar_data_init3( void );
+extern void __iar_data_init3(void);
 int __low_level_init(void)
 {
-	// call IAR table copy function.
-	__iar_data_init3();
+    // call IAR table copy function.
+    __iar_data_init3();
     rt_hw_interrupt_disable();
     rtthread_startup();
     return 0;
@@ -172,7 +178,7 @@ int entry(void)
 #ifndef RT_USING_HEAP
 /* if there is not enable heap, we should use static thread and stack. */
 ALIGN(8)
-static rt_uint8_t main_stack[2048];
+static rt_uint8_t main_stack[RT_MAIN_THREAD_STACK_SIZE];
 struct rt_thread main_thread;
 #endif
 
@@ -199,7 +205,7 @@ void rt_application_init(void)
 
 #ifdef RT_USING_HEAP
     tid = rt_thread_create("main", main_thread_entry, RT_NULL,
-                           2048, RT_THREAD_PRIORITY_MAX / 3, 20);
+                           RT_MAIN_THREAD_STACK_SIZE, RT_THREAD_PRIORITY_MAX / 3, 20);
     RT_ASSERT(tid != RT_NULL);
 #else
     rt_err_t result;
@@ -215,7 +221,7 @@ void rt_application_init(void)
 
 int rtthread_startup(void)
 {
-	rt_hw_interrupt_disable();
+    rt_hw_interrupt_disable();
 
     /* board level initalization
      * NOTE: please initialize heap inside board initialization.

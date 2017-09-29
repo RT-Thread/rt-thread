@@ -10,7 +10,7 @@
 - 资源占用
   - 标准占用：RAM:0.2KB ROM:5.5KB
   - 最小占用：RAM:0.1KB ROM:3.6KB
-- 设计思路：这里要首先跟大家介绍一个标准： **SFDP** ，它是 JEDEC （固态技术协会）制定的串行 Flash 功能的参数表标准，最新版 V1.6B （[点击这里查看](https://www.jedec.org/standards-documents/docs/jesd216b)）。该标准规定了，每个 Flash 中会存在一个参数表，该表中会存放 Flash 容量、写粗粒度、擦除命令、地址模式等 Flash 规格参数。目前，除了部分厂家旧款 Flash 型号会不支持该标准，其他绝大多数新出厂的 Flash 均已支持 SFDP 标准。所以该库在初始化时会优先读取 SFDP 表参数，如果该 Flash 不支持 SFDP，则查询配置文件 ( `/sfud/inc/sfud_flash_def.h` ) 中提供的 **Flash 参数信息表** 中是否支持该款 Flash。如果不支持，则可以在配置文件中添加该款 Flash 的参数信息（添加方法详细见 [2.5 添加库目前不支持的 Flash](#25-添加库目前不支持的-flash)）。获取到了 Flash 的规格参数后，就可以实现对 Flash 的全部操作。
+- 设计思路：这里要首先跟大家介绍一个标准： **SFDP** ，它是 JEDEC （固态技术协会）制定的串行 Flash 功能的参数表标准，最新版 V1.6B （[点击这里查看](https://www.jedec.org/standards-documents/docs/jesd216b)）。该标准规定了，每个 Flash 中会存在一个参数表，该表中会存放 Flash 容量、写粒度、擦除命令、地址模式等 Flash 规格参数。目前，除了部分厂家旧款 Flash 型号会不支持该标准，其他绝大多数新出厂的 Flash 均已支持 SFDP 标准。所以该库在初始化时会优先读取 SFDP 表参数，如果该 Flash 不支持 SFDP，则查询配置文件 ( [`/sfud/inc/sfud_flash_def.h`](https://github.com/armink/SFUD/blob/master/sfud/inc/sfud_flash_def.h#L110-L122) ) 中提供的 **Flash 参数信息表** 中是否支持该款 Flash。如果不支持，则可以在配置文件中添加该款 Flash 的参数信息（添加方法详细见 [2.5 添加库目前不支持的 Flash](#25-添加库目前不支持的-flash)）。获取到了 Flash 的规格参数后，就可以实现对 Flash 的全部操作。
 
 ## 1、为什么选择 SFUD
 
@@ -25,7 +25,7 @@
 
 下表为所有在 Demo 平台上进行过真机测试的 Flash。目前 SFUD 提供的 **Flash 参数信息表** 只包括下表中 **不支持** SFDP 标准的 Flash，其他不支持 SFDP 标准的 Flash 需要大家以后 **共同来完善和维护**  **([Github](https://github.com/armink/SFUD)|[OSChina](http://git.oschina.net/armink/SFUD)|[Coding](https://coding.net/u/armink/p/SFUD/git))** 。如果觉得这个开源项目很赞，可以点击 [项目主页](https://github.com/armink/SFUD) 右上角的 **Star** ，同时把它推荐给更多有需要的朋友。
 
-|型号|制造商|容量|最高速度|SFDP|备注|
+|型号|制造商|容量|最高速度|SFDP  标准|备注|
 |:--:|:----:|:--:|:--:|:--:|:--:|
 |[W25Q40BV](http://microchip.ua/esp8266/W25Q40BV(EOL).pdf)|Winbond|4Mb|50Mhz|不支持|已停产|
 |[W25Q80DV](http://www.winbond.com/resource-files/w25q80dv_revg_07212015.pdf)|Winbond|8Mb|104Mhz|支持||
@@ -39,7 +39,8 @@
 |[SST25VF016B](http://ww1.microchip.com/downloads/en/DeviceDoc/20005044C.pdf)|Microchip|16Mb|50MHz|不支持| SST 已被 Microchip 收购|
 |[M25P32](https://www.micron.com/~/media/documents/products/data-sheet/nor-flash/serial-nor/m25p/m25p32.pdf)|Micron|32Mb|75Mhz|不支持||
 |[EN25Q32B](http://www.kean.com.au/oshw/WR703N/teardown/EN25Q32B%2032Mbit%20SPI%20Flash.pdf)|EON|32Mb|104MHz|不支持||
-|[GD25Q64B](http://www.gigadevice.com/product/download/24.html)|GigaDevice|64Mb|120Mhz|不支持||
+|[GD25Q64B](http://www.gigadevice.com/product/detail/5/364.html)|GigaDevice|64Mb|120Mhz|不支持||
+|[GD25Q16B](http://www.gigadevice.com/product/detail/5/410.html)|GigaDevice|16Mb|120Mhz|不支持| by [TanekLiang](https://github.com/TanekLiang) |
 |[S25FL216K](http://www.cypress.com/file/197346/download)|Cypress|16Mb|65Mhz|不支持||
 |[S25FL164K](http://www.cypress.com/file/196886/download)|Cypress|64Mb|108Mhz|支持||
 |[A25LQ64](http://www.amictechnology.com/datasheets/A25LQ64.pdf)|AMIC|64Mb|104Mhz|支持||
@@ -50,7 +51,11 @@
 
 ### 2.2 API 说明
 
+先说明下本库主要使用的一个结构体 `sfud_flash` 。其定义位于 `/sfud/inc/sfud_def.h`。每个 SPI Flash 会对应一个该结构体，该结构体指针下面统称为 Flash 设备对象。初始化成功后在 `sfud_flash->chip` 结构体中会存放 SPI Flash  的常见参数。如果  SPI Flash  还支持 SFDP ，还可以通过  `sfud_flash->sfdp` 看到更加全面的参数信息。以下很多函数都将使用 Flash 设备对象作为第一个入参，实现对指定 SPI Flash 的操作。
+
 #### 2.2.1 初始化 SFUD 库
+
+> 注意：初始化完的 SPI Flash 默认都 **已取消写保护** 状态，如需开启写保护，请使用 sfud_write_status 函数修改 SPI Flash 状态。
 
 ```C
 sfud_err sfud_init(void)
@@ -92,10 +97,12 @@ sfud_err sfud_read(const sfud_flash *flash, uint32_t addr, size_t size, uint8_t 
 |:-----                                  |:----|
 |flash                                   |Flash 设备对象|
 |addr                                    |起始地址|
-|size                                    |读取数据的大小|
+|size                                    |从起始地址开始读取数据的总大小|
 |data                                    |读取到的数据|
 
 #### 2.2.6 擦除 Flash 数据
+
+> 注意：擦除操作将会按照 Flash 芯片的擦除粒度（详见 Flash 数据手册，一般为 block 大小。初始化完成后，可以通过 `sfud_flash->chip.erase_gran` 查看）对齐，请注意保证起始地址和擦除数据大小按照 Flash 芯片的擦除粒度对齐，否则执行擦除操作后，将会导致其他数据丢失。
 
 ```C
 sfud_err sfud_erase(const sfud_flash *flash, uint32_t addr, size_t size)
@@ -105,7 +112,7 @@ sfud_err sfud_erase(const sfud_flash *flash, uint32_t addr, size_t size)
 |:-----                                  |:----|
 |flash                                   |Flash 设备对象|
 |addr                                    |起始地址|
-|size                                    |擦除数据的大小|
+|size                                    |从起始地址开始擦除数据的总大小|
 
 #### 2.2.7 擦除 Flash 全部数据
 
@@ -127,10 +134,12 @@ sfud_err sfud_write(const sfud_flash *flash, uint32_t addr, size_t size, const u
 |:-----                                  |:----|
 |flash                                   |Flash 设备对象|
 |addr                                    |起始地址|
-|size                                    |写数据的大小|
+|size                                    |从起始地址开始写入数据的总大小|
 |data                                    |待写入的数据|
 
 #### 2.2.9 先擦除再往 Flash 写数据
+
+> 注意：擦除操作将会按照 Flash 芯片的擦除粒度（详见 Flash 数据手册，一般为 block 大小。初始化完成后，可以通过 `sfud_flash->chip.erase_gran` 查看）对齐，请注意保证起始地址和擦除数据大小按照 Flash 芯片的擦除粒度对齐，否则执行擦除操作后，将会导致其他数据丢失。
 
 ```C
 sfud_err sfud_erase_write(const sfud_flash *flash, uint32_t addr, size_t size, const uint8_t *data)
@@ -140,7 +149,7 @@ sfud_err sfud_erase_write(const sfud_flash *flash, uint32_t addr, size_t size, c
 |:-----                                  |:----|
 |flash                                   |Flash 设备对象|
 |addr                                    |起始地址|
-|size                                    |写数据的大小|
+|size                                    |从起始地址开始写入数据的总大小|
 |data                                    |待写入的数据|
 
 #### 2.2.10 读取 Flash 状态
@@ -211,7 +220,7 @@ enum {
 
 ### 2.5 添加库目前不支持的 Flash 
 
-这里需要修改 `/sfud/inc/sfdu_flash_def.h` ，所有已经支持的 Flash 见 `SFUD_FLASH_CHIP_TABLE` 宏定义，需要提前准备的 Flash 参数内容分别为：| 名称 | 制造商 ID | 类型 ID | 容量 ID | 容量 | 写模式  | 擦除粗粒度（擦除的最小单位） | 擦除粗粒度对应的命令 | 。这里以添加 兆易创新 ( GigaDevice ) 的 `GD25Q64B` Flash 来举例。
+这里需要修改 `/sfud/inc/sfdu_flash_def.h` ，所有已经支持的 Flash 见 `SFUD_FLASH_CHIP_TABLE` 宏定义，需要提前准备的 Flash 参数内容分别为：| 名称 | 制造商 ID | 类型 ID | 容量 ID | 容量 | 写模式  | 擦除粒度（擦除的最小单位） | 擦除粒度对应的命令 | 。这里以添加 兆易创新 ( GigaDevice ) 的 `GD25Q64B` Flash 来举例。
 
 此款 Flash 为兆易创新的早期生产的型号，所以不支持 SFDP 标准。首先需要下载其数据手册，找到 0x9F 命令返回的 3 种 ID， 这里需要最后面两字节 ID ，即 `type id` 及 `capacity id` 。 `GD25Q64B` 对应这两个 ID 分别为 `0x40` 及 `0x17` 。上面要求的其他 Flash 参数都可以在数据手册中找到，这里要重点说明下 **写模式** 这个参数，库本身提供的写模式共计有 4 种，详见文件顶部的 `sfud_write_mode` 枚举类型，同一款 Flash 可以同时支持多种写模式，视情况而定。对于 `GD25Q64B` 而言，其支持的写模式应该为 `SFUD_WM_PAGE_256B` ，即写 1-256 字节每页。结合上述 `GD25Q64B` 的 Flash 参数应如下：
 

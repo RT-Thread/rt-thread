@@ -3,8 +3,19 @@ Import('rtconfig')
 from building import *
 
 cwd     = os.path.join(str(Dir('#')), 'board')
-src	= Glob('*.c')
-src	+= Glob('*.s')
+
+# add the general drivers.
+src = Split("""
+board.c
+clock_config.c
+drv_uart.c
+led.c
+""")
+
+# add Ethernet drivers.
+if GetDepend('RT_USING_LWIP'):
+    src += ['drv_emac.c', 'fsl_phy.c']
+
 CPPPATH = [cwd]
 
 group = DefineGroup('Board', src, depend = [''], CPPPATH = CPPPATH)

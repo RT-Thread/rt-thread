@@ -29,7 +29,6 @@ src/core/udp.c
 src/netif/ethernet.c
 src/netif/ethernetif.c
 src/netif/lowpan6.c
-src/netif/slipif.c
 """)
 
 ipv4_src = Split("""
@@ -75,7 +74,7 @@ if GetDepend(['RT_LWIP_SNMP']):
 if GetDepend(['RT_LWIP_PPP']):
     src += ppp_src
     path += [GetCurrentDir() + '/src/netif/ppp']
-
+    
 group = DefineGroup('lwIP', src, depend = ['RT_USING_LWIP', 'RT_USING_LWIP202'], CPPPATH = path)
 
 Return('group')

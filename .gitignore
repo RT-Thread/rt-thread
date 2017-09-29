@@ -9,6 +9,7 @@
 *.pdb
 *.idb
 *.ilk
+*.old
 build
 Debug
 documentation/html

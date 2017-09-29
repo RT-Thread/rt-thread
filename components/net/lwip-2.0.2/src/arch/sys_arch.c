@@ -114,7 +114,7 @@ static void tcpip_init_done_callback(void *arg)
             netif_set_up(ethif->netif);
 #endif
 
-            if (!(ethif->flags & ETHIF_LINK_PHYUP))
+            if (ethif->flags & ETHIF_LINK_PHYUP)
             {
                 netif_set_link_up(ethif->netif);
             }
@@ -177,7 +177,7 @@ int lwip_system_init(void)
 
 	return 0;
 }
-//INIT_COMPONENT_EXPORT(lwip_system_init);
+INIT_COMPONENT_EXPORT(lwip_system_init);
 
 void sys_init(void)
 {
@@ -602,7 +602,7 @@ u32_t sys_now(void)
 }
 
 
-WEAK
+RT_WEAK
 void mem_init(void)
 {
 }

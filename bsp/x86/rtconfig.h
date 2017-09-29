@@ -17,7 +17,7 @@
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
 #define RT_DEBUG
-#define RT_THREAD_DEBUG
+#define RT_DEBUG_MODULE 0
 
 #define RT_USING_OVERFLOW_CHECK
 
@@ -69,6 +69,8 @@
 
 /* SECTION: finsh, a C-Express shell */
 #define RT_USING_FINSH
+#define FINSH_USING_MSH
+#define FINSH_USING_MSH_ONLY
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
@@ -175,4 +177,7 @@
 /* #define RTGUI_IMAGE_XPM */
 /* #define RTGUI_IMAGE_BMP */
 
+#define RT_USING_LIBDL
+#define RT_USING_MODULE
+#define MODULE_USING_386
 #endif
