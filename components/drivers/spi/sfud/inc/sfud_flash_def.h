@@ -113,6 +113,8 @@ typedef struct {
     {"W25Q40BV", SFUD_MF_ID_WINBOND, 0x40, 0x13, 512*1024, SFUD_WM_PAGE_256B, 4096, 0x20},                       \
     {"SST25VF016B", SFUD_MF_ID_SST, 0x25, 0x41, 2*1024*1024, SFUD_WM_BYTE|SFUD_WM_AAI, 4096, 0x20},              \
     {"M25P32", SFUD_MF_ID_MICRON, 0x20, 0x16, 4*1024*1024, SFUD_WM_PAGE_256B, 64*1024, 0xD8},                    \
+    {"M25P80", SFUD_MF_ID_MICRON, 0x20, 0x14, 1*1024*1024, SFUD_WM_PAGE_256B, 64*1024, 0xD8},                    \
+    {"M25P40", SFUD_MF_ID_MICRON, 0x20, 0x13, 512*1024, SFUD_WM_PAGE_256B, 64*1024, 0xD8},                       \
     {"EN25Q32B", SFUD_MF_ID_EON, 0x30, 0x16, 4*1024*1024, SFUD_WM_PAGE_256B, 4096, 0x20},                        \
     {"GD25Q64B", SFUD_MF_ID_GIGADEVICE, 0x40, 0x17, 8*1024*1024, SFUD_WM_PAGE_256B, 4096, 0x20},                 \
     {"GD25Q16B", SFUD_MF_ID_GIGADEVICE, 0x40, 0x15, 2*1024*1024, SFUD_WM_PAGE_256B, 4096, 0x20},                 \
