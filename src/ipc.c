@@ -644,16 +644,17 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
     register rt_base_t temp;
     struct rt_thread *thread;
 
-    /* this function must not be used in interrupt even if time = 0 */
-    RT_DEBUG_IN_THREAD_CONTEXT;
-
     RT_ASSERT(mutex != RT_NULL);
-
-    /* disable interrupt */
-    temp = rt_hw_interrupt_disable();
 
     /* get current thread */
     thread = rt_thread_self();
+    if (!thread) return RT_EOK; /* return directory if scheduler not started */
+
+    /* this function must not be used in interrupt even if time = 0 */
+    RT_DEBUG_IN_THREAD_CONTEXT;
+
+    /* disable interrupt */
+    temp = rt_hw_interrupt_disable();
 
     RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(mutex->parent.parent)));
 
@@ -777,11 +778,12 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 
     need_schedule = RT_FALSE;
 
-    /* only thread could release mutex because we need test the ownership */
-    RT_DEBUG_IN_THREAD_CONTEXT;
-
     /* get current thread */
     thread = rt_thread_self();
+    if (!thread) return RT_EOK;
+
+    /* only thread could release mutex because we need test the ownership */
+    RT_DEBUG_IN_THREAD_CONTEXT;
 
     /* disable interrupt */
     temp = rt_hw_interrupt_disable();
