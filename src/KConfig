@@ -38,8 +38,8 @@ config RT_USING_OVERFLOW_CHECK
         Enable thread stack overflow checking. The stack overflow is checking when each thread switch.
 
 config RT_DEBUG_INIT
-    bool "Enable system initialization informat print"
-    default n
+    int "Enable system initialization informat print"
+    default 1
     help
         print the procedure name of initialization
 
