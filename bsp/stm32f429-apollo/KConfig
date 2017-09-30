@@ -1,0 +1,188 @@
+mainmenu "RT-Thread Configuration"
+
+config $BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "."
+
+config $RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "../.."
+
+config $PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+source "$RTT_DIR/KConfig"
+source "$PKGS_DIR/KConfig"
+
+menu "RT_GUI CONFIG"
+
+config RT_USING_GUIENGINE
+    bool "RT_USING_GUIENGINE"
+    default y
+    
+config RTGUI_NAME_MAX
+    int "The RTGUI_NAME_MAX"
+    default 16    
+
+config RTGUI_USING_FONT16
+    bool "Using RTGUI_USING_FONT16"
+    default y
+
+config RTGUI_USING_FONT12
+    bool "Using RTGUI_USING_FONT12"
+    default y
+
+config RTGUI_USING_FONTHZ
+    bool "Using RTGUI_USING_FONTHZ"
+    default y
+    
+config RTGUI_USING_DFS_FILERW
+    bool "Using RTGUI_USING_DFS_FILERW"
+    default y    
+    
+config RTGUI_USING_HZ_BMP
+    bool "Using RTGUI_USING_HZ_BMP"
+    default y  
+
+endmenu
+
+menu "BSP_UASRT CONFIG"
+
+config RT_RTC_NAME
+    string "RT_RTC_NAME"
+    default rtc
+    
+config RT_USING_EXT_SDRAM
+    bool "Using RT_USING_EXT_SDRAM"
+    default y
+
+config RT_USING_I2C_BITOPS
+    bool "Using RT_USING_I2C_BITOPS"
+    default y    
+
+config RT_USING_UART1
+    bool "Using RT_USING_UART1"
+    default y    
+    
+config RT_USING_UART2
+    bool "Using RT_USING_UART2"
+    default y    
+    
+config RT_USING_UART3
+    bool "Using RT_USING_UART3"
+    default y    
+
+endmenu
+menu "BSP_LWIP CONFIG"
+
+config RT_LWIP_IPADDR0
+    int "RT_LWIP_IPADDR0"
+    default 192 
+    
+config RT_LWIP_IPADDR1
+    int "RT_LWIP_IPADDR1"
+    default 168 
+    
+config RT_LWIP_IPADDR2
+    int "RT_LWIP_IPADDR2"
+    default 1 
+    
+config RT_LWIP_IPADDR3
+    int "RT_LWIP_IPADDR3"
+    default 201 
+    
+config RT_LWIP_GWADDR0
+    int "RT_LWIP_GWADDR0"
+    default 192 
+    
+config RT_LWIP_GWADDR1
+    int "RT_LWIP_GWADDR1"
+    default 168 
+    
+config RT_LWIP_GWADDR2
+    int "RT_LWIP_GWADDR2"
+    default 1 
+    
+config RT_LWIP_GWADDR3
+    int "RT_LWIP_GWADDR3"
+    default 1 
+
+config RT_LWIP_MSKADDR0
+    int "RT_LWIP_MSKADDR0"
+    default 255 
+    
+config RT_LWIP_MSKADDR1
+    int "RT_LWIP_MSKADDR1"
+    default 255 
+    
+config RT_LWIP_MSKADDR2
+    int "RT_LWIP_MSKADDR2"
+    default 255 
+    
+config RT_LWIP_MSKADDR3
+    int "RT_LWIP_MSKADDR3"
+    default 0 
+    
+config CHECKSUM_CHECK_TCP
+    int "CHECKSUM_CHECK_TCP"
+    default 0 
+    
+config CHECKSUM_CHECK_IP
+    int "The CHECKSUM_CHECK_IP"
+    default 0 
+    
+config CHECKSUM_CHECK_UDP
+    int "The CHECKSUM_CHECK_UDP"
+    default 0 
+    
+endmenu
+
+menu "BSP_SPECIAL CONFIG"
+
+config IDLE_THREAD_STACK_SIZE
+    int "The stack size of timer thread"
+    default 1024   
+ 
+config RT_DFS_ELM_WORD_ACCESS
+    bool "Using RT_DFS_ELM_WORD_ACCESS"
+    default y   
+  
+config RT_USING_SPI5
+    bool "Using RT_USING_SPI5"
+    default y     
+    
+config RT_USING_DFS_UFFS
+    bool "Using RT_USING_DFS_UFFS"
+    default y   
+ 
+config FINSH_DEFAULT_PASSWORD
+    string "The default password for shell authentication"
+    default "rtthread"
+      
+config RT_MTD_NAND_DEBUG
+    bool "Using RT_MTD_NAND_DEBUG"
+    default y    
+    
+config RT_LWIP_USING_RT_MEM
+    bool "Using RT_LWIP_USING_RT_MEM"
+    default y       
+       
+    
+config DFS_FILESYSTEM_TYPES_MAX
+    int "The DFS_FILESYSTEM_TYPES_MAX"
+    default 4  
+    
+config RT_DFS_ELM_USE_LFN
+    int "The RT_DFS_ELM_USE_LFN"
+    default 3  
+
+endmenu
+
+
+
+    
+    
