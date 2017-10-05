@@ -29,6 +29,16 @@ if RT_USING_DFS
             int "OEM code page"
             default 437
         
+        config RT_DFS_ELM_USE_LFN
+            int "Support long file name"
+            default 0
+            range 0 3
+            help
+                0: LFN disable
+                1: LFN with static LFN working buffer
+                2: LFN with dynamic LFN working buffer on the stack
+                3: LFN with dynamic LFN working buffer on the heap
+        
         config RT_DFS_ELM_MAX_LFN
             int "Maximal size of file name length"
             default 256
