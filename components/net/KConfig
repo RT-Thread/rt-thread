@@ -1,6 +1,6 @@
 menu "Network stack"
 
-menu "light weight TCP/IP stack"
+menu "Light weight TCP/IP stack"
 config RT_USING_LWIP
     bool "Enable lwIP stack"
     default n
@@ -65,6 +65,10 @@ config RT_USING_LWIP
         config RT_LWIP_TCP
             bool "TCP protocol"
             default y
+        
+        config RT_LWIP_RAW
+            bool "RAW protocol"
+            default n
 
         config RT_LWIP_PPP
             bool "PPP protocol"
@@ -78,6 +82,10 @@ config RT_USING_LWIP
             bool "PPPoS protocol"
             default n
 
+        config RT_LWIP_USING_RT_MEM
+            bool "Using RT-Thread Memory Management for LWIP"
+            default y
+        
         config RT_LWIP_PBUF_NUM
             int "the number of PBUF"
             default 16
@@ -160,5 +168,9 @@ config RT_USING_LWIP
 endmenu
 
 source "$RTT_DIR/components/net/freemodbus/KConfig"
+
+config RT_USING_NETUTILS
+    bool "Enable net utils"
+    default n
 
 endmenu
