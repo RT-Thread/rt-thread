@@ -1,20 +1,22 @@
 /*
  * File      : cpuport.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date         Author      Notes
- * 2009-01-05   Bernard     first version
- * 2011-02-14   onelife     Modify for EFM32
- * 2011-06-17   onelife     Merge all of the C source code into cpuport.c
- * 2012-12-23   aozima      stack addr align to 8byte.
- * 2012-12-29   Bernard     Add exception hook.
- * 2013-07-09   aozima      enhancement hard fault exception handler.
+ * 2017-08-25   Archer      first version
  */
 
 #include <rtthread.h>
@@ -29,7 +31,7 @@
  *
  *
  * Stack Layout:
- *		          High  |-----------------|
+ *                High  |-----------------|
  *                      |       $R5       |
  *                      |-----------------|
  *                      |        .        |
@@ -82,17 +84,17 @@ static rt_err_t (*rt_exception_hook)(void *context) = RT_NULL;
 
 rt_base_t rt_hw_interrupt_disable(void)
 {
-	rt_base_t level = __nds32__mfsr(NDS32_SR_PSW);
+    rt_base_t level = __nds32__mfsr(NDS32_SR_PSW);
 
-	GIE_DISABLE();
+    GIE_DISABLE();
 
-	return level;
+    return level;
 }
 
 void rt_hw_interrupt_enable(rt_base_t level)
 {
-	if (level & PSW_mskGIE)
-		GIE_ENABLE();
+    if (level & PSW_mskGIE)
+        GIE_ENABLE();
 }
 
 /* For relax support, must initial $gp at task init*/
@@ -113,60 +115,60 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
                              rt_uint8_t *stack_addr,
                              void       *texit)
 {
-	rt_int32_t i;
-	rt_uint32_t *pxTopOfStack;
+    rt_int32_t i;
+    rt_uint32_t *pxTopOfStack;
 
-	pxTopOfStack = (rt_uint32_t *)RT_ALIGN_DOWN((rt_uint32_t)stack_addr, 4);
+    pxTopOfStack = (rt_uint32_t *)RT_ALIGN_DOWN((rt_uint32_t)stack_addr, 4);
 
-	/* Simulate the stack frame as it would be created by a context switch */
-	/* R0 ~ R5 registers */
-	for (i = 5; i >= 1; i--)                         /* R5, R4, R3, R2 and R1. */
-		*--pxTopOfStack = (rt_uint32_t)0x01010101UL * i;
-	*--pxTopOfStack = (rt_uint32_t)parameter;        /* R0 : Argument */
+    /* Simulate the stack frame as it would be created by a context switch */
+    /* R0 ~ R5 registers */
+    for (i = 5; i >= 1; i--)                         /* R5, R4, R3, R2 and R1. */
+        *--pxTopOfStack = (rt_uint32_t)0x01010101UL * i;
+    *--pxTopOfStack = (rt_uint32_t)parameter;        /* R0 : Argument */
 
-	/* R6 ~ R30 registers */
-	*--pxTopOfStack = (rt_uint32_t)texit;   /* R30: $LP */
-	*--pxTopOfStack = (rt_uint32_t)&_SDA_BASE_;         /* R29: $GP */
-	*--pxTopOfStack = (rt_uint32_t)0x2828282828;        /* R28: $FP */
+    /* R6 ~ R30 registers */
+    *--pxTopOfStack = (rt_uint32_t)texit;   /* R30: $LP */
+    *--pxTopOfStack = (rt_uint32_t)&_SDA_BASE_;         /* R29: $GP */
+    *--pxTopOfStack = (rt_uint32_t)0x2828282828;        /* R28: $FP */
 #ifdef __NDS32_REDUCE_REGS__
-	*--pxTopOfStack = (rt_uint32_t)0x1515151515;        /* R15 */
-	for (i = 10; i >= 6; i--)                           /* R10 ~ R6 */
-		*--pxTopOfStack = (rt_uint32_t)0x01010101UL * i;
+    *--pxTopOfStack = (rt_uint32_t)0x1515151515;        /* R15 */
+    for (i = 10; i >= 6; i--)                           /* R10 ~ R6 */
+        *--pxTopOfStack = (rt_uint32_t)0x01010101UL * i;
 #else
-	for (i = 27; i >= 6; i--)                           /* R27 ~ R6 */
-		*--pxTopOfStack = (rt_uint32_t)0x01010101UL * i;
+    for (i = 27; i >= 6; i--)                           /* R27 ~ R6 */
+        *--pxTopOfStack = (rt_uint32_t)0x01010101UL * i;
 #endif
 
-	/* IFC system register */
+    /* IFC system register */
 #ifdef __TARGET_IFC_EXT
-	*--pxTopOfStack = (rt_uint32_t)0x0;                 /* $IFC_LP */
+    *--pxTopOfStack = (rt_uint32_t)0x0;                 /* $IFC_LP */
 #endif
 
-	/* ZOL system registers */
+    /* ZOL system registers */
 #ifdef __TARGET_ZOL_EXT
-	*--pxTopOfStack = (rt_uint32_t)0x0;                 /* $LC */
-	*--pxTopOfStack = (rt_uint32_t)0x0;                 /* $LE */
-	*--pxTopOfStack = (rt_uint32_t)0x0;                 /* $LB */
+    *--pxTopOfStack = (rt_uint32_t)0x0;                 /* $LC */
+    *--pxTopOfStack = (rt_uint32_t)0x0;                 /* $LE */
+    *--pxTopOfStack = (rt_uint32_t)0x0;                 /* $LB */
 #endif
 
-	/* IPSW and IPC system registers */
-	/* Default IPSW: enable GIE, set CPL to 7, clear IFCON */
-	i = (__nds32__mfsr(NDS32_SR_PSW) | PSW_mskGIE | PSW_mskCPL) & ~PSW_mskIFCON;
-	*--pxTopOfStack = (rt_uint32_t)i;                /* $IPSW */
-	*--pxTopOfStack = (rt_uint32_t)tentry;           /* $IPC */
+    /* IPSW and IPC system registers */
+    /* Default IPSW: enable GIE, set CPL to 7, clear IFCON */
+    i = (__nds32__mfsr(NDS32_SR_PSW) | PSW_mskGIE | PSW_mskCPL) & ~PSW_mskIFCON;
+    *--pxTopOfStack = (rt_uint32_t)i;                /* $IPSW */
+    *--pxTopOfStack = (rt_uint32_t)tentry;           /* $IPC */
 
-	/* Dummy word for 8-byte stack alignment */
+    /* Dummy word for 8-byte stack alignment */
 #if defined(__TARGET_IFC_EXT) && defined(__TARGET_ZOL_EXT)
-	*--pxTopOfStack = (rt_uint32_t)0xFFFFFFFF;          /* Dummy */
+    *--pxTopOfStack = (rt_uint32_t)0xFFFFFFFF;          /* Dummy */
 #endif
 
-	/* FPU registers */
+    /* FPU registers */
 #ifdef __TARGET_FPU_EXT
-	for (i = 0; i < FPU_REGS; i++)
-		*--pxTopOfStack = (rt_uint32_t)0x0;         /* FPU */
+    for (i = 0; i < FPU_REGS; i++)
+        *--pxTopOfStack = (rt_uint32_t)0x0;         /* FPU */
 #endif
 
-	return (rt_uint8_t *)pxTopOfStack;
+    return (rt_uint8_t *)pxTopOfStack;
 }
 
 /**
@@ -190,28 +192,7 @@ void rt_hw_exception_install(rt_err_t (*exception_handle)(void* context))
  * @return return the index of the first bit set. If value is 0, then this function
  * shall return 0.
  */
-#if defined(__CC_ARM)
-__asm int __rt_ffs(int value)
-{
-    CMP     r0, #0x00
-    BEQ     exit
-    RBIT    r0, r0
-    CLZ     r0, r0
-    ADDS    r0, r0, #0x01
-
-    exit
-    BX      lr
-}
-#elif defined(__IAR_SYSTEMS_ICC__)
-int __rt_ffs(int value)
-{
-    if (value == 0) return value;
-
-    __ASM("RBIT r0, r0");
-    __ASM("CLZ  r0, r0");
-    __ASM("ADDS r0, r0, #0x01");
-}
-#elif defined(__GNUC__)
+#if defined(__GNUC__)
 int __rt_ffs(int value)
 {
     return __builtin_ffs(value);
