@@ -1,11 +1,14 @@
-Apollo2 MCUÊÇ»ùÓÚAmbiq MicroµÄApollo MCU²úÆ·ÏµÁĞµÄµÚ¶ş´ú¿ØÖÆÆ÷¡£
-AmbiqÊ¹ÓÃ×¨ÀûÑÇãĞÖµ¹¦ÂÊÓÅ»¯¼¼Êõ£¨Subthreshold Power Optimized Technology£¬ SPOT£©Æ½Ì¨À´ÊµÏÖ¾ªÈËµÄ¹¦ºÄ½µµÍ£¬Æä¹¦ºÄÍ¨³£±ÈĞÔÄÜÏà½üµÄÆäËüMCU²úÆ·½µµÍ5ÖÁ10±¶¡£
-Apollo2 MCU²ÉÓÃ32Î»ARM Cortex-M4FÎ¢¿ØÖÆÆ÷£¬¼¯³ÉÁË¸ß´ï1 MBµÄÉÁ´æºÍ256 KBµÄRAM£¬ÒÔÊÊÓ¦ÎŞÏßµçºÍ´«¸ĞÆ÷¿ªÏú£¬Í¬Ê±ÈÔÁôÓĞ×ã¹»µÄÓ¦ÓÃ´úÂë¿Õ¼ä¡£¸ÃÎ¢¿ØÖÆÆ÷»¹°üÀ¨´®ĞĞÖ÷»úºÍUART¶Ë¿Ú£¬ÓÃÓÚÓëÎŞÏßµçºÍ´«¸ĞÆ÷Í¨ĞÅ£¬°üÀ¨¼ÓËÙ¶È¼Æ£¬ÍÓÂİÒÇºÍ´ÅÁ¦¼Æ¡£
+Apollo2 MCUæ˜¯åŸºäºAmbiq Microçš„Apollo MCUäº§å“ç³»åˆ—çš„ç¬¬äºŒä»£æ§åˆ¶å™¨ã€‚
 
+Ambiqä½¿ç”¨ä¸“åˆ©äºšé˜ˆå€¼åŠŸç‡ä¼˜åŒ–æŠ€æœ¯ï¼ˆSubthreshold Power Optimized Technologyï¼Œ SPOTï¼‰å¹³å°æ¥å®ç°æƒŠäººçš„åŠŸè€—é™ä½ï¼Œå…¶åŠŸè€—é€šå¸¸æ¯”æ€§èƒ½ç›¸è¿‘çš„å…¶å®ƒMCUäº§å“é™ä½5è‡³10å€ã€‚
+
+Apollo2 MCUé‡‡ç”¨32ä½ARM Cortex-M4Få¾®æ§åˆ¶å™¨ï¼Œé›†æˆäº†é«˜è¾¾1 MBçš„é—ªå­˜å’Œ256 KBçš„RAMï¼Œä»¥é€‚åº”æ— çº¿ç”µå’Œä¼ æ„Ÿå™¨å¼€é”€ï¼ŒåŒæ—¶ä»ç•™æœ‰è¶³å¤Ÿçš„åº”ç”¨ä»£ç ç©ºé—´ã€‚è¯¥å¾®æ§åˆ¶å™¨è¿˜åŒ…æ‹¬ä¸²è¡Œä¸»æœºå’ŒUARTç«¯å£ï¼Œç”¨äºä¸æ— çº¿ç”µå’Œä¼ æ„Ÿå™¨é€šä¿¡ï¼ŒåŒ…æ‹¬åŠ é€Ÿåº¦è®¡ï¼Œé™€èºä»ªå’Œç£åŠ›è®¡ã€‚
+
+```
 Features
 Ultra-low supply current
-    10 ¦ÌA/MHz executing from flash at 3.3 V
-    10 ¦ÌA/MHz executing from RAM at 3.3 V
+    10 Î¼A/MHz executing from flash at 3.3 V
+    10 Î¼A/MHz executing from RAM at 3.3 V
 
 High-performance ARM Cortex-M4 Processor
     Up to 48 MHz clock frequency
@@ -31,15 +34,16 @@ Flexible serial peripherals:
 
 Rich set of clock sources:
     32.768 kHz XTAL oscillator
-    Low frequency RC oscillator ¨C 1.024 kHz
-    High frequency RC oscillator ¨C 48 MHz
-    RTC based on Ambiq¡¯s AM08X5/18X5 families
+    Low frequency RC oscillator â€“ 1.024 kHz
+    High frequency RC oscillator â€“ 48 MHz
+    RTC based on Ambiqâ€™s AM08X5/18X5 families
 
-Wide operating range: 1.8-3.6 V, ¨C40 to 85¡ãC
+Wide operating range: 1.8-3.6 V, â€“40 to 85Â°C
 
 Compact package options:
     2.5 x 2.5 mm 49-pin CSP with 34 GPIO
     4.5 x 4.5 mm 64-pin BGA with 50 GPIO
 
 Board info
-    Apollo2 Evaluation Board£¨http://ambiqmicro.com/apollo-ultra-low-power-mcu/apollo2-mcu-20170703/£©
+    Apollo2 Evaluation Boardï¼ˆhttp://ambiqmicro.com/apollo-ultra-low-power-mcu/apollo2-mcu-20170703/ï¼‰
+```
