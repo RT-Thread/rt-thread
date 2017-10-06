@@ -1,4 +1,4 @@
-Andes Maintainer:  ** It's a very early and draft porting yet. **
+Andes Maintainer:  **It's a very early and draft porting yet.**
 
 E-Mail : Archer Zhang <archer.zhang@wh-mx.com>
 
