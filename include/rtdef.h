@@ -97,7 +97,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define RT_UNUSED                   __attribute__((unused))
     #define RT_USED                     __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
-    #define WEAK						__weak
+    #define RT_WEAK                     __weak
     #define rt_inline                   static __inline
     /* module compiling */
     #ifdef RT_USING_MODULE
@@ -113,7 +113,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define RT_USED                     __root
     #define PRAGMA(x)                   _Pragma(#x)
     #define ALIGN(n)                    PRAGMA(data_alignment=n)
-    #define WEAK                        __weak
+    #define RT_WEAK                     __weak
     #define rt_inline                   static inline
     #define RTT_API
 
@@ -121,7 +121,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #ifdef RT_USING_NEWLIB
         #include <stdarg.h>
     #else
-		/* the version of GNU GCC must be greater than 4.x */
+        /* the version of GNU GCC must be greater than 4.x */
         typedef __builtin_va_list   __gnuc_va_list;
         typedef __gnuc_va_list      va_list;
         #define va_start(v,l)       __builtin_va_start(v,l)
@@ -133,7 +133,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define RT_UNUSED                   __attribute__((unused))
     #define RT_USED                     __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
-    #define WEAK                        __attribute__((weak))
+    #define RT_WEAK                     __attribute__((weak))
     #define rt_inline                   static __inline
     #define RTT_API
 #elif defined (__ADSPBLACKFIN__)        /* for VisualDSP++ Compiler */
@@ -142,7 +142,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define RT_UNUSED                   __attribute__((unused))
     #define RT_USED                     __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
-	#define WEAK                        __attribute__((weak))
+    #define RT_WEAK                     __attribute__((weak))
     #define rt_inline                   static inline
     #define RTT_API
 #elif defined (_MSC_VER)
@@ -151,7 +151,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define RT_UNUSED
     #define RT_USED
     #define ALIGN(n)                    __declspec(align(n))
-	#define WEAK
+    #define RT_WEAK
     #define rt_inline                   static __inline
     #define RTT_API
 #elif defined (__TI_COMPILER_VERSION__)
@@ -164,7 +164,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define RT_USED
     #define PRAGMA(x)                   _Pragma(#x)
     #define ALIGN(n)
-    #define WEAK
+    #define RT_WEAK
     #define rt_inline                   static inline
     #define RTT_API
 #else
@@ -177,20 +177,20 @@ typedef int (*init_fn_t)(void);
 #ifdef _MSC_VER /* we do not support MS VC++ compiler */
     #define INIT_EXPORT(fn, level)
 #else
-	#if RT_DEBUG_INIT
-		struct rt_init_desc
-		{
-			const char* fn_name;
-			const init_fn_t fn;
-		};
-		#define INIT_EXPORT(fn, level)  		\
-			const char __rti_##fn##_name[] = #fn; \
-			const struct rt_init_desc __rt_init_desc_##fn SECTION(".rti_fn."level) = \
-			{ __rti_##fn##_name, fn};
-	#else
-    	#define INIT_EXPORT(fn, level)  \
-        	const init_fn_t __rt_init_##fn SECTION(".rti_fn."level) = fn
-	#endif
+    #if RT_DEBUG_INIT
+        struct rt_init_desc
+        {
+            const char* fn_name;
+            const init_fn_t fn;
+        };
+        #define INIT_EXPORT(fn, level)          \
+            const char __rti_##fn##_name[] = #fn; \
+            const struct rt_init_desc __rt_init_desc_##fn SECTION(".rti_fn."level) = \
+            { __rti_##fn##_name, fn};
+    #else
+        #define INIT_EXPORT(fn, level)  \
+            const init_fn_t __rt_init_##fn SECTION(".rti_fn."level) = fn
+    #endif
 #endif
 #else
 #define INIT_EXPORT(fn, level)
@@ -206,7 +206,7 @@ typedef int (*init_fn_t)(void);
 /* file system initialization (dfs-elm, dfs-rom, ...) */
 #define INIT_FS_EXPORT(fn)              INIT_EXPORT(fn, "4")
 /* environment initialization (mount disk, ...) */
-#define INIT_ENV_EXPORT(fn)				INIT_EXPORT(fn, "5")
+#define INIT_ENV_EXPORT(fn)             INIT_EXPORT(fn, "5")
 /* appliation initialization (rtgui application etc ...) */
 #define INIT_APP_EXPORT(fn)             INIT_EXPORT(fn, "6")
 
@@ -759,8 +759,8 @@ enum rt_device_class_type
     RT_Device_Class_Pipe,                               /**< Pipe device */
     RT_Device_Class_Portal,                             /**< Portal device */
     RT_Device_Class_Timer,                              /**< Timer device */
-	RT_Device_Class_Miscellaneous,                      /**< Miscellaneous device */
-	RT_Device_Class_Unknown                             /**< unknown device */
+    RT_Device_Class_Miscellaneous,                      /**< Miscellaneous device */
+    RT_Device_Class_Unknown                             /**< unknown device */
 };
 
 /**
@@ -778,9 +778,9 @@ enum rt_device_class_type
 #define RT_DEVICE_FLAG_SUSPENDED        0x020           /**< device is suspended */
 #define RT_DEVICE_FLAG_STREAM           0x040           /**< stream mode */
 
-#define RT_DEVICE_CTRL_CONFIG           0x03    	/* configure device */
-#define RT_DEVICE_CTRL_SET_INT          0x10    	/* enable receive irq */
-#define RT_DEVICE_CTRL_CLR_INT          0x11    	/* disable receive irq */
+#define RT_DEVICE_CTRL_CONFIG           0x03            /* configure device */
+#define RT_DEVICE_CTRL_SET_INT          0x10            /* enable receive irq */
+#define RT_DEVICE_CTRL_CLR_INT          0x11            /* disable receive irq */
 #define RT_DEVICE_CTRL_GET_INT          0x12
 
 #define RT_DEVICE_FLAG_INT_RX           0x100           /**< INT mode on Rx */
@@ -969,15 +969,15 @@ struct rt_module
 {
     struct rt_object             parent;                /**< inherit from object */
 
-    rt_uint32_t                  vstart_addr;            /**< VMA base address for the
+    rt_uint32_t                  vstart_addr;           /**< VMA base address for the
                                                           first LOAD segment. */
     rt_uint8_t                  *module_space;          /**< module memory space */
 
     void                        *module_entry;          /**< the entry address of module */
     rt_thread_t                  module_thread;         /**< the main thread of module */
 
-	rt_uint8_t*                  module_cmd_line;		/**< module command line */
-	rt_uint32_t                  module_cmd_size;		/**< the size of module command line */
+    rt_uint8_t                  *module_cmd_line;       /**< module command line */
+    rt_uint32_t                  module_cmd_size;       /**< the size of module command line */
 
 #ifdef RT_USING_SLAB
     /* module memory allocator */

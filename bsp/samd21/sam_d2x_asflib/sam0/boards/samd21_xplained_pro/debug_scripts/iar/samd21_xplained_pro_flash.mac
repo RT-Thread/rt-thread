@@ -1,0 +1,50 @@
+/*********************************************************************
+*
+*       execUserReset()
+*/
+execUserReset()
+{
+    __message "------------------------------ execUserReset ---------------------------------";
+
+    // Hardware Reset: CPU is automatically halted after the reset
+    __hwReset(0);
+
+}
+
+/*********************************************************************
+*
+*       execUserPreload()
+*/
+execUserPreload()
+{
+    __message "------------------------------ execUserPreload ---------------------------------";
+
+	// Hardware Reset: CPU is automatically halted after the reset
+    __hwReset(0);
+
+}
+
+/*********************************************************************
+*
+*       execUserFlashInit()
+*/
+execUserFlashInit()
+{
+    __message "------------------------------ execUserFlashInit ---------------------------------";
+
+   //Watch dog disable
+   __writeMemory32(0x000000000,0x40001000,"Memory");
+
+}
+
+/*********************************************************************
+*
+*       execUserFlashExit()
+*/
+ /**
+ * Support and FAQ: visit <a href="http://www.atmel.com/design-support/">Atmel Support</a>
+ */
+execUserFlashExit()
+{
+    __message "------------------------------ execUserFlashExit ---------------------------------";
+}

@@ -90,19 +90,19 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
     RT_ASSERT(thread != RT_NULL);
 
     if (*((rt_uint8_t *)thread->stack_addr) != '#' ||
-	(rt_uint32_t)thread->sp <= (rt_uint32_t)thread->stack_addr ||
+        (rt_uint32_t)thread->sp <= (rt_uint32_t)thread->stack_addr ||
         (rt_uint32_t)thread->sp >
         (rt_uint32_t)thread->stack_addr + (rt_uint32_t)thread->stack_size)
     {
         rt_uint32_t level;
 
         rt_kprintf("thread:%s stack overflow\n", thread->name);
-        #ifdef RT_USING_FINSH
+#ifdef RT_USING_FINSH
         {
             extern long list_thread(void);
             list_thread();
         }
-        #endif
+#endif
         level = rt_hw_interrupt_disable();
         while (level);
     }

@@ -262,8 +262,8 @@ rt_err_t rt_memheap_init(struct rt_memheap *memheap,
                          void              *start_addr,
                          rt_uint32_t        size);
 rt_err_t rt_memheap_detach(struct rt_memheap *heap);
-void* rt_memheap_alloc(struct rt_memheap *heap, rt_uint32_t size);
-void *rt_memheap_realloc(struct rt_memheap* heap, void* ptr, rt_size_t newsize);
+void *rt_memheap_alloc(struct rt_memheap *heap, rt_uint32_t size);
+void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize);
 void rt_memheap_free(void *ptr);
 #endif
 
@@ -429,7 +429,7 @@ rt_module_t rt_module_load(const char *name, void *module_ptr);
 rt_err_t rt_module_unload(rt_module_t module);
 #ifdef RT_USING_DFS
 rt_module_t rt_module_open(const char *filename);
-rt_module_t rt_module_exec_cmd(const char *path, const char* cmd_line, int size);
+rt_module_t rt_module_exec_cmd(const char *path, const char *cmd_line, int size);
 #endif
 void *rt_module_malloc(rt_size_t size);
 void *rt_module_realloc(void *ptr, rt_size_t size);
@@ -496,7 +496,7 @@ void rt_kputs(const char *str);
 #endif
 rt_int32_t rt_vsprintf(char *dest, const char *format, va_list arg_ptr);
 rt_int32_t rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args);
-rt_int32_t rt_sprintf(char *buf ,const char *format, ...);
+rt_int32_t rt_sprintf(char *buf, const char *format, ...);
 rt_int32_t rt_snprintf(char *buf, rt_size_t size, const char *format, ...);
 
 #if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
@@ -517,8 +517,8 @@ void *rt_memset(void *src, int c, rt_ubase_t n);
 void *rt_memcpy(void *dest, const void *src, rt_ubase_t n);
 
 rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count);
-rt_int32_t rt_strcmp (const char *cs, const char *ct);
-rt_size_t rt_strlen (const char *src);
+rt_int32_t rt_strcmp(const char *cs, const char *ct);
+rt_size_t rt_strlen(const char *src);
 char *rt_strdup(const char *s);
 
 char *rt_strstr(const char *str1, const char *str2);
@@ -531,10 +531,10 @@ rt_uint32_t rt_strcasecmp(const char *a, const char *b);
 void rt_show_version(void);
 
 #ifdef RT_DEBUG
-extern void (*rt_assert_hook)(const char* ex, const char* func, rt_size_t line);
-void rt_assert_set_hook(void (*hook)(const char* ex, const char* func, rt_size_t line));
+extern void (*rt_assert_hook)(const char *ex, const char *func, rt_size_t line);
+void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t line));
 
-void rt_assert_handler(const char* ex, const char* func, rt_size_t line);
+void rt_assert_handler(const char *ex, const char *func, rt_size_t line);
 #endif /* RT_DEBUG */
 
 /**@}*/

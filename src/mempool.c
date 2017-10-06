@@ -299,8 +299,8 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
     else
 #endif
 
-    /* release allocated room */
-    rt_free(mp->start_address);
+        /* release allocated room */
+        rt_free(mp->start_address);
 
     /* detach object */
     rt_object_delete(&(mp->parent));

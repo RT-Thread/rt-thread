@@ -45,6 +45,23 @@ config RT_USING_SPI
     default n
 
     if RT_USING_SPI
+        config RT_USING_SFUD
+            bool "Using Serial Flash Universal Driver"
+            default n
+            if RT_USING_SFUD            
+                config RT_SFUD_USING_SFDP
+                bool "Using auto probe flash JEDEC SFDP parameter"
+                default y
+                
+                config RT_SFUD_USING_FLASH_INFO_TABLE
+                bool "Using defined supported flash chip information table"
+                default y
+                
+                config RT_SFUD_DEBUG
+                bool "Show more SFUD debug information"
+                default n
+            endif
+    
         config RT_USING_W25QXX
             bool "Using W25QXX SPI NorFlash"
             default n
