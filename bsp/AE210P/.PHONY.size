@@ -1,2 +1,0 @@
-   text (code + rodata)	   data	    bss	    dec	    hex	filename
-  67240 (58320 +   8920)	    408	  10168	  77816	  12ff8	rtthread.elf
