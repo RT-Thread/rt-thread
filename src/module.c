@@ -1656,8 +1656,6 @@ static void rt_module_free_page(rt_module_t module,
                 }
                 page[module->page_cnt - 1].page_ptr = RT_NULL;
                 page[module->page_cnt - 1].npage    = 0;
-
-                module->page_cnt --;
             }
             else
                 RT_ASSERT(RT_FALSE);
