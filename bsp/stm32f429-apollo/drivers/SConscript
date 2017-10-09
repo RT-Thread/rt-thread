@@ -1,8 +1,6 @@
-Import('RTT_ROOT')
-Import('rtconfig')
 from building import *
 
-cwd     = os.path.join(str(Dir('#')), 'drivers')
+cwd = GetCurrentDir()
 
 # add the general drivers.
 src = Split("""
@@ -15,7 +13,9 @@ drv_nand.c
 drv_mpu.c
 """)
 
-#drv_sdio_sd.c
+# add sdio driver
+if GetDepend('RT_USING_DFS'):
+    src += ['drv_sdio_sd.c']
 
 # add Ethernet drivers.
 if GetDepend('RT_USING_LWIP'):

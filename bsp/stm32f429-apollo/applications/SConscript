@@ -1,20 +1,15 @@
-Import('RTT_ROOT')
-Import('rtconfig')
 from building import *
 
-cwd     = os.path.join(str(Dir('#')), 'applications')
-#src	= Glob('*.c')
+cwd     = GetCurrentDir()
 CPPPATH = [cwd, str(Dir('#'))]
-
-src = Split("""
+src     = Split("""
 application.c
 startup.c
 """)
 
-# add gpio drivers.
+# add UI engine demo.
 if GetDepend('RT_USING_GUIENGINE'):
     src += ['rtgui_demo.c']
-
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 
