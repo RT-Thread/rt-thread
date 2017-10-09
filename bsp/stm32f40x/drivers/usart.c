@@ -141,23 +141,34 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
 
     switch (cmd)
     {
+        /* disable interrupt */
     case RT_DEVICE_CTRL_CLR_INT:
         /* disable rx irq */
         UART_DISABLE_IRQ(uart->irq);
-        /* disable interrupt */
-        USART_ITConfig(uart->uart_device, USART_IT_RXNE, DISABLE);
+        if (ctrl_arg == RT_DEVICE_FLAG_INT_RX){
+            /* disable interrupt */
+            USART_ITConfig(uart->uart_device, USART_IT_RXNE, DISABLE);
+        }
         break;
+        /* enable interrupt */
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
         UART_ENABLE_IRQ(uart->irq);
-        /* enable interrupt */
-        USART_ITConfig(uart->uart_device, USART_IT_RXNE, ENABLE);
+        if (ctrl_arg == RT_DEVICE_FLAG_INT_RX){
+            /* enable interrupt */
+            USART_ITConfig(uart->uart_device, USART_IT_RXNE, ENABLE);
+        }
         break;
         /* USART config */
     case RT_DEVICE_CTRL_CONFIG :
         if (ctrl_arg == RT_DEVICE_FLAG_DMA_RX) {
+            uart->dma.last_recv_index = 0;
+            uart->dma.setting_recv_len = 0;
             DMA_Configuration(serial);
+            /* enable rx irq */
+            UART_ENABLE_IRQ(uart->irq);
         }
+        break;
     }
 
     return RT_EOK;
@@ -623,8 +634,8 @@ static void NVIC_Configuration(struct stm32_uart *uart)
 
     /* Enable the USART1 Interrupt */
     NVIC_InitStructure.NVIC_IRQChannel = uart->irq;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
 }
