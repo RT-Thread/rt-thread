@@ -10,6 +10,10 @@ if RT_USING_DFS
     config DFS_USING_WORKDIR
         bool "Using working directory"
         default y
+        
+    config RT_DFS_ELM_WORD_ACCESS
+        bool "Using RT_DFS_ELM_WORD_ACCESS"
+        default y   
 
     config DFS_FILESYSTEMS_MAX
         int "The maximal number of mounted file system"
