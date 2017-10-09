@@ -56,6 +56,10 @@ config RT_USING_HOOK
     default y
     help
         Enable the hook function when system running, such as idle thread hook, thread context switch etc.
+        
+config IDLE_THREAD_STACK_SIZE
+    int "The stack size of IDLE thread"
+    default 1024  
 
 config RT_USING_TIMER_SOFT
     bool "Enable software timer with a timer thread"
