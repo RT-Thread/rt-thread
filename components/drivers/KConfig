@@ -19,6 +19,12 @@ config RT_USING_HWTIMER
 config RT_USING_I2C
     bool "Using I2C device drivers"
     default n
+    
+if RT_USING_I2C
+    config RT_USING_I2C_BITOPS
+        bool "Using I2C device BITOPS "
+        default y
+endif
 
 config RT_USING_PIN
     bool "Using generic GPIO device drivers"
@@ -31,6 +37,10 @@ config RT_USING_MTD_NOR
 config RT_USING_MTD_NAND
     bool "Using MTD Nand Flash device drivers"
     default n
+    
+config RT_MTD_NAND_DEBUG
+    bool "Using MTD NAND Flash DEBUG"
+    default n   
 
 config RT_USING_RTC
     bool "Using RTC device drivers"

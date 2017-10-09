@@ -170,6 +170,6 @@ config RT_USING_NETUTILS
     bool "Enable net utils"
     default n
 
-#endif
+endif
 
 endmenu
