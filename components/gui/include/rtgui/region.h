@@ -1,11 +1,21 @@
 /*
  * File      : region.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -90,6 +100,7 @@ int rtgui_region_is_flat(rtgui_region_t *region);
 extern rtgui_rect_t rtgui_empty_rect;
 
 void rtgui_rect_moveto(rtgui_rect_t *rect, int x, int y);
+void rtgui_rect_moveto_point(rtgui_rect_t *rect, int x, int y);
 void rtgui_rect_moveto_align(const rtgui_rect_t *rect, rtgui_rect_t *to, int align);
 void rtgui_rect_inflate(rtgui_rect_t *rect, int d);
 void rtgui_rect_intersect(rtgui_rect_t *src, rtgui_rect_t *dest);
@@ -98,11 +109,14 @@ int  rtgui_rect_is_intersect(const rtgui_rect_t *rect1, const rtgui_rect_t *rect
 int  rtgui_rect_is_equal(const rtgui_rect_t *rect1, const rtgui_rect_t *rect2);
 rtgui_rect_t *rtgui_rect_set(rtgui_rect_t *rect, int x, int y, int w, int h);
 rt_bool_t rtgui_rect_is_empty(const rtgui_rect_t *rect);
+void rtgui_rect_union(rtgui_rect_t *src, rtgui_rect_t *dest);
 
 rt_inline void rtgui_rect_init(rtgui_rect_t* rect, int x, int y, int width, int height)
 {
-	rect->x1 = x; rect->y1 = y;
-	rect->x2 = x + width; rect->y2 = y + height;
+    rect->x1 = x;
+    rect->y1 = y;
+    rect->x2 = x + width;
+    rect->y2 = y + height;
 }
 
 #define RTGUI_RECT(rect, x, y, w, h)	\

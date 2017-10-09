@@ -1,5 +1,5 @@
 /*
- * File      : title.h
+ * File      : image_container.h
  * This file is part of RT-Thread GUI Engine
  * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
@@ -19,30 +19,40 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2009-10-16     Bernard      first version
+ * 2010-04-10     Bernard      first version
  */
-#ifndef __RTGUI_TITLE__
-#define __RTGUI_TITLE__
 
-#include <rtgui/widgets/widget.h>
+#ifndef __RTGUI_IMAGE_CONTAINER_H__
+#define __RTGUI_IMAGE_CONTAINER_H__
 
-DECLARE_CLASS_TYPE(wintitle);
-/** Gets the type of a title */
-#define RTGUI_WINTITLE_TYPE       (RTGUI_TYPE(wintitle))
-/** Casts the object to an rtgui_wintitle */
-#define RTGUI_WINTITLE(obj)       (RTGUI_OBJECT_CAST((obj), RTGUI_WINTITLE_TYPE, rtgui_wintitle_t))
-/** Checks if the object is an rtgui_wintitle */
-#define RTGUI_IS_WINTITLE(obj)    (RTGUI_OBJECT_CHECK_TYPE((obj), RTGUI_WINTITLE_TYPE))
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-struct rtgui_wintitle
+#include <rtgui/rtgui.h>
+#include <rtgui/image.h>
+
+#if defined(RTGUI_IMAGE_CONTAINER)
+/* image item in image container */
+struct rtgui_image_item
 {
-    struct rtgui_widget parent;
+    rtgui_image_t *image;
+    char *filename;
+
+    rt_uint32_t refcount;
 };
-typedef struct rtgui_wintitle rtgui_wintitle_t;
+typedef struct rtgui_image_item rtgui_image_item_t;
 
-rtgui_wintitle_t *rtgui_wintitle_create(struct rtgui_win *window);
-void rtgui_wintitle_destroy(rtgui_wintitle_t *wintitle);
+void rtgui_system_image_container_init(void);
 
-rt_bool_t rtgui_wintile_event_handler(struct rtgui_object *object, rtgui_event_t *event);
+struct rtgui_image_item *rtgui_image_container_get(const char *filename);
+void rtgui_image_container_put(struct rtgui_image_item *item);
 
 #endif
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
+

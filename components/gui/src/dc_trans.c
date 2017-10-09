@@ -1,3 +1,27 @@
+/*
+ * File      : dc_trans.c
+ * This file is part of RT-Thread GUI
+ * COPYRIGHT (C) 2006 - 2014, RT-Thread Development Team
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2014-03-15     Grissom      The first version
+ */
+
 #include <rtgui/rtgui.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/dc.h>
@@ -91,7 +115,7 @@ void rtgui_dc_trans_get_new_wh(struct rtgui_dc_trans *dct,
                                   &dct->m);
     /* Transform result of (w, 0). */
     rtgui_matrix_mul_point_nomove(&bottomright,
-                                   rect.x2, 0, &dct->m);
+                                  rect.x2, 0, &dct->m);
     /* Transform result of (0, 0) is always (0, 0). */
 
 #define NORMALIZE(x) do { if (x < 0) x = 0; } while (0)
@@ -105,7 +129,7 @@ void rtgui_dc_trans_get_new_wh(struct rtgui_dc_trans *dct,
         NORMALIZE(bottomright.x);
 
         neww = _UI_MAX(topright.x, _UI_ABS(topleft.x - bottomright.x))
-            + dct->m.m[4];
+               + dct->m.m[4];
         NORMALIZE(neww);
 
         *new_wp = neww;
@@ -119,7 +143,7 @@ void rtgui_dc_trans_get_new_wh(struct rtgui_dc_trans *dct,
         NORMALIZE(bottomright.y);
 
         newh = _UI_MAX(topright.y, _UI_ABS(topleft.y - bottomright.y))
-            + dct->m.m[5];
+               + dct->m.m[5];
         NORMALIZE(newh);
 
         *new_hp = newh;
@@ -444,9 +468,9 @@ static void _blit_rotate_FR2FR_SF4B_AA(struct _fb_rect* RTGUI_RESTRICT src,
 
 /* FrameRect to FrameRect, from ARGB8888 to RGB565. */
 static void _blit_rotate_FR2FR_ARGB2RGB565(struct _fb_rect* RTGUI_RESTRICT src,
-                                           const struct rtgui_point *dc_point,
-                                           struct _fb_rect* RTGUI_RESTRICT dst,
-                                           const struct rtgui_matrix *invm)
+        const struct rtgui_point *dc_point,
+        struct _fb_rect* RTGUI_RESTRICT dst,
+        const struct rtgui_matrix *invm)
 {
     rt_uint32_t* RTGUI_RESTRICT srcp = (rt_uint32_t*)src->fb;
     rt_uint16_t* RTGUI_RESTRICT dstp = (rt_uint16_t*)dst->fb;
@@ -505,7 +529,7 @@ static void _blit_rotate_FR2FR_ARGB2RGB565(struct _fb_rect* RTGUI_RESTRICT src,
                  * and blend all components at the same time
                  */
                 op = ((op & 0xfc00) << 11) + (op >> 8 & 0xf800)
-                    + (op >> 3 & 0x1f);
+                     + (op >> 3 & 0x1f);
                 d = (d | d << 16) & 0x07e0f81f;
                 d += (op - d) * alpha >> 5;
                 d &= 0x07e0f81f;
@@ -518,9 +542,9 @@ static void _blit_rotate_FR2FR_ARGB2RGB565(struct _fb_rect* RTGUI_RESTRICT src,
 
 /* FrameRect to FrameRect, from ARGB8888 to RGB565. */
 static void _blit_rotate_FR2FR_ARGB2RGB565_AA(struct _fb_rect* RTGUI_RESTRICT src,
-                                              const struct rtgui_point *dc_point,
-                                              struct _fb_rect* RTGUI_RESTRICT dst,
-                                              const struct rtgui_matrix *invm)
+        const struct rtgui_point *dc_point,
+        struct _fb_rect* RTGUI_RESTRICT dst,
+        const struct rtgui_matrix *invm)
 {
     rt_uint32_t* RTGUI_RESTRICT srcp = (rt_uint32_t*)src->fb;
     rt_uint16_t* RTGUI_RESTRICT dstp = (rt_uint16_t*)dst->fb;
@@ -646,7 +670,8 @@ static void _blit_rotate_B2B(struct rtgui_dc_trans *dct,
 
     if (dc->pixel_format == dest->pixel_format)
     {
-        switch (rtgui_color_get_bpp(dest->pixel_format)) {
+        switch (rtgui_color_get_bpp(dest->pixel_format))
+        {
         case 2:
             if (dct->use_aa)
                 _blit_rotate_FR2FR_SF2B_AA(&srcfb, dc_point,
@@ -724,7 +749,8 @@ static void _blit_rotate_B2H(struct rtgui_dc_trans *dct,
 
     if (dc->pixel_format == dest->hw_driver->pixel_format)
     {
-        switch (rtgui_color_get_bpp(dest->hw_driver->pixel_format)) {
+        switch (rtgui_color_get_bpp(dest->hw_driver->pixel_format))
+        {
         case 2:
             if (dct->use_aa)
                 _blit_rotate_FR2FR_SF2B_AA(&srcfb, dc_point,
@@ -820,13 +846,13 @@ void rtgui_dc_trans_blit(struct rtgui_dc_trans *dct,
     if (dct->owner->type == RTGUI_DC_BUFFER)
     {
         if (dest->type == RTGUI_DC_BUFFER)
-                _blit_rotate_B2B(dct, dc_point,
-                                 (struct rtgui_dc_buffer*)dest,
-                                 rect, &invm, neww, newh);
+            _blit_rotate_B2B(dct, dc_point,
+                             (struct rtgui_dc_buffer*)dest,
+                             rect, &invm, neww, newh);
         else if (dest->type == RTGUI_DC_HW)
-                _blit_rotate_B2H(dct, dc_point,
-                                 (struct rtgui_dc_hw*)dest,
-                                 rect, &invm, neww, newh);
+            _blit_rotate_B2H(dct, dc_point,
+                             (struct rtgui_dc_hw*)dest,
+                             rect, &invm, neww, newh);
         else if (dest->type == RTGUI_DC_CLIENT)
             // TODO:
             ;

@@ -28,6 +28,7 @@ src/hz12font.c
 src/hz16font.c
 src/image.c
 src/image_bmp.c
+src/image_container.c
 src/image_hdc.c
 src/image_jpg.c
 src/image_png.c

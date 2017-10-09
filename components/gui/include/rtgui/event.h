@@ -1,11 +1,21 @@
 /*
  * File      : event.h
- * This file is part of RTGUI in RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -41,6 +51,7 @@ enum _rtgui_event_type
     RTGUI_EVENT_WIN_CLOSE,             /* close a window        */
     RTGUI_EVENT_WIN_MOVE,              /* move a window         */
     RTGUI_EVENT_WIN_RESIZE,            /* resize a window       */
+    RTGUI_EVENT_WIN_UPDATE_END,        /* update done for window */
     RTGUI_EVENT_WIN_MODAL_ENTER,       /* the window is entering modal mode.
                                           This event should be sent after the
                                           window got setup and before the
@@ -169,6 +180,13 @@ struct rtgui_event_win_resize
     rtgui_rect_t rect;
 };
 
+struct rtgui_event_win_update_end
+{
+    _RTGUI_EVENT_WIN_ELEMENTS
+
+    rtgui_rect_t rect;
+};
+
 #define rtgui_event_win_destroy      rtgui_event_win
 #define rtgui_event_win_show         rtgui_event_win
 #define rtgui_event_win_hide         rtgui_event_win
@@ -187,6 +205,7 @@ struct rtgui_event_win_resize
 #define RTGUI_EVENT_WIN_CLOSE_INIT(e)       RTGUI_EVENT_INIT(&((e)->parent), RTGUI_EVENT_WIN_CLOSE)
 #define RTGUI_EVENT_WIN_MOVE_INIT(e)        RTGUI_EVENT_INIT(&((e)->parent), RTGUI_EVENT_WIN_MOVE)
 #define RTGUI_EVENT_WIN_RESIZE_INIT(e)      RTGUI_EVENT_INIT(&((e)->parent), RTGUI_EVENT_WIN_RESIZE)
+#define RTGUI_EVENT_WIN_UPDATE_END_INIT(e)  RTGUI_EVENT_INIT(&((e)->parent), RTGUI_EVENT_WIN_UPDATE_END)
 #define RTGUI_EVENT_WIN_MODAL_ENTER_INIT(e) RTGUI_EVENT_INIT(&((e)->parent), RTGUI_EVENT_WIN_MODAL_ENTER)
 
 /*
@@ -375,7 +394,7 @@ struct rtgui_event_kbd
 #define RTGUI_EVENT_KBD_INIT(e)             RTGUI_EVENT_INIT(&((e)->parent), RTGUI_EVENT_KBD)
 
 /**
- * RTGUI Touch Event 
+ * RTGUI Touch Event
  * NOTE: There is not touch event to user applications, it's handled by server.
  */
 struct rtgui_event_touch

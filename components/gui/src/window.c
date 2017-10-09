@@ -1,11 +1,21 @@
 /*
  * File      : window.c
- * This file is part of RTGUI in RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -132,9 +142,9 @@ DEFINE_CLASS_TYPE(win, "win",
                   sizeof(struct rtgui_win));
 
 int rtgui_win_init(struct rtgui_win *win, struct rtgui_win *parent_window,
-                              const char *title,
-                              rtgui_rect_t *rect,
-                              rt_uint16_t style)
+                   const char *title,
+                   rtgui_rect_t *rect,
+                   rt_uint16_t style)
 {
     if (win == RT_NULL) return -1;
 
@@ -425,7 +435,7 @@ RTM_EXPORT(rtgui_win_do_show);
 
 rt_base_t rtgui_win_show(struct rtgui_win *win, rt_bool_t is_modal)
 {
-	RTGUI_WIDGET_UNHIDE(win);
+    RTGUI_WIDGET_UNHIDE(win);
 
     if (is_modal)
         win->flag |= RTGUI_WIN_FLAG_MODAL;
@@ -557,7 +567,7 @@ static rt_bool_t rtgui_win_ondraw(struct rtgui_win *win)
     /* fill area */
     rtgui_dc_fill_rect(dc, &rect);
 
-    rtgui_widget_onpaint(RTGUI_OBJECT(win), RT_NULL);
+    /* widget drawing */
 
     /* paint each widget */
     RTGUI_EVENT_PAINT_INIT(&event);
@@ -565,7 +575,7 @@ static rt_bool_t rtgui_win_ondraw(struct rtgui_win *win)
     rtgui_container_dispatch_event(RTGUI_CONTAINER(win),
                                    (rtgui_event_t *)&event);
 
-    rtgui_dc_end_drawing(dc);
+    rtgui_dc_end_drawing(dc, 1);
 
     return RT_FALSE;
 }
@@ -623,11 +633,11 @@ static rt_bool_t _win_handle_mouse_btn(struct rtgui_win *win, struct rtgui_event
      * widgets). If not, it will receive two mouse up events.
      */
     if (((struct rtgui_event_mouse *)eve)->button & RTGUI_MOUSE_BUTTON_UP
-        && win->last_mevent_widget != RT_NULL)
+            && win->last_mevent_widget != RT_NULL)
     {
         if (RTGUI_OBJECT(win->last_mevent_widget)->event_handler(
-                                                                 RTGUI_OBJECT(win->last_mevent_widget),
-                                                                 eve) == RT_TRUE)
+                    RTGUI_OBJECT(win->last_mevent_widget),
+                    eve) == RT_TRUE)
         {
             /* clean last mouse event handled widget */
             win->last_mevent_widget = RT_NULL;
@@ -643,7 +653,7 @@ static rt_bool_t _win_handle_mouse_btn(struct rtgui_win *win, struct rtgui_event
      * TODO: add it in the doc
      */
     return rtgui_container_dispatch_mouse_event(RTGUI_CONTAINER(win),
-                                               (struct rtgui_event_mouse *)eve);
+            (struct rtgui_event_mouse *)eve);
 }
 
 rt_bool_t rtgui_win_event_handler(struct rtgui_object *object, struct rtgui_event *event)
@@ -681,7 +691,7 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_object *object, struct rtgui_even
 
     case RTGUI_EVENT_WIN_ACTIVATE:
         if (win->flag & RTGUI_WIN_FLAG_UNDER_MODAL ||
-            RTGUI_WIDGET_IS_HIDE(win))
+                RTGUI_WIDGET_IS_HIDE(win))
         {
             /* activate a hide window */
             return RT_TRUE;
@@ -713,6 +723,9 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_object *object, struct rtgui_even
 
         break;
 
+    case RTGUI_EVENT_WIN_UPDATE_END:
+        break;
+
     case RTGUI_EVENT_CLIP_INFO:
         /* update win clip */
         rtgui_win_update_clip(win);
@@ -725,22 +738,23 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_object *object, struct rtgui_even
         break;
 
 #ifdef RTGUI_USING_VFRAMEBUFFER
-	case RTGUI_EVENT_VPAINT_REQ:
-	{
+    case RTGUI_EVENT_VPAINT_REQ:
+    {
         struct rtgui_event_vpaint_req *req = (struct rtgui_event_vpaint_req *)event;
-		struct rtgui_dc *dc;
+        struct rtgui_dc *dc;
 
-		/* get drawing dc */
-		dc = rtgui_win_get_drawing(win);
+        /* get drawing dc */
+        dc = rtgui_win_get_drawing(win);
 
         req->sender->buffer = dc;
         rt_completion_done(req->sender->cmp);
 
-		break;
-	}
+        break;
+    }
 #endif
 
-    case RTGUI_EVENT_MOUSE_BUTTON: {
+    case RTGUI_EVENT_MOUSE_BUTTON:
+    {
         struct rtgui_event_mouse *emouse = (struct rtgui_event_mouse*)event;
 
         if (rtgui_rect_contains_point(&RTGUI_WIDGET(win)->extent,
@@ -757,7 +771,7 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_object *object, struct rtgui_even
 
     case RTGUI_EVENT_MOUSE_MOTION:
         return rtgui_container_dispatch_mouse_event(RTGUI_CONTAINER(win),
-                                                    (struct rtgui_event_mouse *)event);
+                (struct rtgui_event_mouse *)event);
 
     case RTGUI_EVENT_KBD:
         /* we should dispatch key event firstly */
@@ -974,7 +988,8 @@ struct rtgui_dc *rtgui_win_get_drawing(rtgui_win_t * win)
 RTM_EXPORT(rtgui_win_get_drawing);
 #endif
 
-static const rt_uint8_t close_byte[14] = {
+static const rt_uint8_t close_byte[14] =
+{
     0x06, 0x18, 0x03, 0x30, 0x01, 0xE0, 0x00,
     0xC0, 0x01, 0xE0, 0x03, 0x30, 0x06, 0x18
 };
@@ -1053,8 +1068,8 @@ void rtgui_theme_draw_win(struct rtgui_wintitle *wint)
         for (index = rect.x1; index < rect.x2 + 1; index ++)
         {
             RTGUI_WIDGET_FOREGROUND(win->_title_wgt) = RTGUI_RGB((r>>RGB_FACTOR),
-                                                                 (g>>RGB_FACTOR),
-                                                                 (b>>RGB_FACTOR));
+                    (g>>RGB_FACTOR),
+                    (b>>RGB_FACTOR));
             rtgui_dc_draw_vline(dc, index, rect.y1, rect.y2);
             r += delta;
             g += delta;
@@ -1101,5 +1116,5 @@ void rtgui_theme_draw_win(struct rtgui_wintitle *wint)
         }
     }
 
-    rtgui_dc_end_drawing(dc);
+    rtgui_dc_end_drawing(dc, 1);
 }

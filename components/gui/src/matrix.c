@@ -1,3 +1,26 @@
+/*
+ * File      : matrix.c
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2009-10-16     Grissiom      first version
+ */
 #include <rtgui/rtgui.h>
 #include <rtgui/matrix.h>
 
@@ -12,7 +35,7 @@
  * this software and associated documentation files (the "Software"),  to deal in
  * the Software without restriction,  including without limitation the rights to
  * use,  copy,  modify,  merge,  publish,  distribute,  sublicense,  and/or sell copies of
- * the Software,  and to permit persons to whom the Software is furnished to do so, 
+ * the Software,  and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in all
@@ -91,7 +114,8 @@ int rtgui_matrix_inverse(const struct rtgui_matrix *mm, struct rtgui_matrix *mo)
 /* @dd is the degree range in 0~512 */
 rt_inline int icost(int dd)
 {
-    static const short t[COS_TABLE_SZ] = {
+    static const short t[COS_TABLE_SZ] =
+    {
         2048, 2048, 2047, 2047, 2046, 2044, 2042, 2040, 2038, 2036, 2033, 2029, 2026,
         2022, 2018, 2013, 2009, 2004, 1998, 1993, 1987, 1980, 1974, 1967, 1960, 1952,
         1945, 1937, 1928, 1920, 1911, 1902, 1892, 1882, 1872, 1862, 1851, 1840, 1829,
@@ -137,61 +161,61 @@ rt_inline int icost(int dd)
 
     dd &= COS_TABLE_SZ - 1;
 
-	return t[dd];
+    return t[dd];
 }
 
 rt_inline int icosd(int d)
 {
-	int dd = d;
-	return icost(dd);
+    int dd = d;
+    return icost(dd);
 }
 
 rt_inline int isind(int d)
 {
-	int dd = COS_TABLE_SZ / 4 - d;
-	return icost(dd);
+    int dd = COS_TABLE_SZ / 4 - d;
+    return icost(dd);
 }
 
 rt_inline void rot_mat(int *m, int d)
 {
-	int cosd = icosd(d);
-	int sind = isind(d);
+    int cosd = icosd(d);
+    int sind = isind(d);
 
-	int m0_cosd = m[0] * cosd;
-	int m0_sind = m[0] * sind;
-	int m1_cosd = m[1] * cosd;
-	int m1_sind = m[1] * sind;
-	int m2_cosd = m[2] * cosd;
-	int m2_sind = m[2] * sind;
-	int m3_cosd = m[3] * cosd;
-	int m3_sind = m[3] * sind;
-	int m4_cosd = m[4] * cosd;
-	int m4_sind = m[4] * sind;
-	int m5_cosd = m[5] * cosd;
-	int m5_sind = m[5] * sind;
+    int m0_cosd = m[0] * cosd;
+    int m0_sind = m[0] * sind;
+    int m1_cosd = m[1] * cosd;
+    int m1_sind = m[1] * sind;
+    int m2_cosd = m[2] * cosd;
+    int m2_sind = m[2] * sind;
+    int m3_cosd = m[3] * cosd;
+    int m3_sind = m[3] * sind;
+    int m4_cosd = m[4] * cosd;
+    int m4_sind = m[4] * sind;
+    int m5_cosd = m[5] * cosd;
+    int m5_sind = m[5] * sind;
 
-	m[0] = _rtgui_matrix_round_div32(m0_cosd - m1_sind, RTGUI_MATRIX_FRAC);
-	m[1] = _rtgui_matrix_round_div32(m0_sind + m1_cosd, RTGUI_MATRIX_FRAC);
-	m[2] = _rtgui_matrix_round_div32(m2_cosd - m3_sind, RTGUI_MATRIX_FRAC);
-	m[3] = _rtgui_matrix_round_div32(m2_sind + m3_cosd, RTGUI_MATRIX_FRAC);
-	m[4] = _rtgui_matrix_round_div32(m4_cosd - m5_sind, RTGUI_MATRIX_FRAC);
-	m[5] = _rtgui_matrix_round_div32(m4_sind + m5_cosd, RTGUI_MATRIX_FRAC);
+    m[0] = _rtgui_matrix_round_div32(m0_cosd - m1_sind, RTGUI_MATRIX_FRAC);
+    m[1] = _rtgui_matrix_round_div32(m0_sind + m1_cosd, RTGUI_MATRIX_FRAC);
+    m[2] = _rtgui_matrix_round_div32(m2_cosd - m3_sind, RTGUI_MATRIX_FRAC);
+    m[3] = _rtgui_matrix_round_div32(m2_sind + m3_cosd, RTGUI_MATRIX_FRAC);
+    m[4] = _rtgui_matrix_round_div32(m4_cosd - m5_sind, RTGUI_MATRIX_FRAC);
+    m[5] = _rtgui_matrix_round_div32(m4_sind + m5_cosd, RTGUI_MATRIX_FRAC);
 }
 
 rt_inline void scale_mat(int *m, int sx, int sy)
 {
-	if (sx != RTGUI_MATRIX_FRAC)
+    if (sx != RTGUI_MATRIX_FRAC)
     {
-		m[0] = _rtgui_matrix_round_div32(m[0] * sx, RTGUI_MATRIX_FRAC);
-		m[2] = _rtgui_matrix_round_div32(m[2] * sx, RTGUI_MATRIX_FRAC);
-		m[4] = _rtgui_matrix_round_div32(m[4] * sx, RTGUI_MATRIX_FRAC);
-	}
-	if (sy != RTGUI_MATRIX_FRAC)
+        m[0] = _rtgui_matrix_round_div32(m[0] * sx, RTGUI_MATRIX_FRAC);
+        m[2] = _rtgui_matrix_round_div32(m[2] * sx, RTGUI_MATRIX_FRAC);
+        m[4] = _rtgui_matrix_round_div32(m[4] * sx, RTGUI_MATRIX_FRAC);
+    }
+    if (sy != RTGUI_MATRIX_FRAC)
     {
-		m[1] = _rtgui_matrix_round_div32(m[1] * sy, RTGUI_MATRIX_FRAC);
-		m[3] = _rtgui_matrix_round_div32(m[3] * sy, RTGUI_MATRIX_FRAC);
-		m[5] = _rtgui_matrix_round_div32(m[5] * sy, RTGUI_MATRIX_FRAC);
-	}
+        m[1] = _rtgui_matrix_round_div32(m[1] * sy, RTGUI_MATRIX_FRAC);
+        m[3] = _rtgui_matrix_round_div32(m[3] * sy, RTGUI_MATRIX_FRAC);
+        m[5] = _rtgui_matrix_round_div32(m[5] * sy, RTGUI_MATRIX_FRAC);
+    }
 }
 
 void rtgui_matrix_rotate(struct rtgui_matrix *m, int rot)
@@ -203,18 +227,18 @@ RTM_EXPORT(rtgui_matrix_rotate);
 
 void rtgui_matrix_scale(struct rtgui_matrix *m, int sx, int sy)
 {
-	scale_mat(m->m, sx, sy);
+    scale_mat(m->m, sx, sy);
 }
 
 void rtgui_matrix_move(struct rtgui_matrix *m, int dx, int dy)
 {
-	m->m[4] += dx;
-	m->m[5] += dy;
+    m->m[4] += dx;
+    m->m[5] += dy;
 }
 
 void rtgui_matrix_dump(const struct rtgui_matrix *m)
 {
-	const int *mm = m->m;
+    const int *mm = m->m;
     rt_kprintf("|%6d, %6d, %6d|\n", mm[0], mm[1], 0);
     rt_kprintf("|%6d, %6d, %6d|\n", mm[2], mm[3], 0);
     rt_kprintf("|%6d, %6d, %6d|\n", mm[4], mm[5], 1);

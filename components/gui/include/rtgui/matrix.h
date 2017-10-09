@@ -1,3 +1,27 @@
+/*
+ * File      : matrix.h
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2010-04-10     Grissiom     The first version
+ */
+
 #ifndef __MATRIX_H__
 #define __MATRIX_H__
 
@@ -12,7 +36,7 @@
  * this software and associated documentation files (the "Software"),  to deal in
  * the Software without restriction,  including without limitation the rights to
  * use,  copy,  modify,  merge,  publish,  distribute,  sublicense,  and/or sell copies of
- * the Software,  and to permit persons to whom the Software is furnished to do so, 
+ * the Software,  and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in all
@@ -60,7 +84,7 @@ struct rtgui_matrix
      * fraction(m/RTGUI_MATRIX_FRAC). While the unit of m[4-5] is pixel.
      *
      */
-	int m[6];
+    int m[6];
 };
 
 rt_inline int32_t _rtgui_matrix_round_div32(int32_t n, int32_t d)
@@ -100,22 +124,22 @@ rt_inline void rtgui_matrix_mul(struct rtgui_matrix *mm,
                                 const struct rtgui_matrix *mm1,
                                 const struct rtgui_matrix *mm2)
 {
-	int *m = mm->m;
-	const int *m1 = mm1->m;
-	const int *m2 = mm2->m;
+    int *m = mm->m;
+    const int *m1 = mm1->m;
+    const int *m2 = mm2->m;
 
-	m[0] = _rtgui_matrix_round_div32(m1[0] * m2[0] + m1[1] * m2[2], RTGUI_MATRIX_FRAC);
-	m[1] = _rtgui_matrix_round_div32(m1[0] * m2[1] + m1[1] * m2[3], RTGUI_MATRIX_FRAC);
-	m[2] = _rtgui_matrix_round_div32(m1[2] * m2[0] + m1[3] * m2[2], RTGUI_MATRIX_FRAC);
-	m[3] = _rtgui_matrix_round_div32(m1[2] * m2[1] + m1[3] * m2[3], RTGUI_MATRIX_FRAC);
-	m[4] = _rtgui_matrix_round_div32(m1[4] * m2[0] + m1[5] * m2[2], RTGUI_MATRIX_FRAC) + m2[4];
-	m[5] = _rtgui_matrix_round_div32(m1[4] * m2[1] + m1[5] * m2[3], RTGUI_MATRIX_FRAC) + m2[5];
+    m[0] = _rtgui_matrix_round_div32(m1[0] * m2[0] + m1[1] * m2[2], RTGUI_MATRIX_FRAC);
+    m[1] = _rtgui_matrix_round_div32(m1[0] * m2[1] + m1[1] * m2[3], RTGUI_MATRIX_FRAC);
+    m[2] = _rtgui_matrix_round_div32(m1[2] * m2[0] + m1[3] * m2[2], RTGUI_MATRIX_FRAC);
+    m[3] = _rtgui_matrix_round_div32(m1[2] * m2[1] + m1[3] * m2[3], RTGUI_MATRIX_FRAC);
+    m[4] = _rtgui_matrix_round_div32(m1[4] * m2[0] + m1[5] * m2[2], RTGUI_MATRIX_FRAC) + m2[4];
+    m[5] = _rtgui_matrix_round_div32(m1[4] * m2[1] + m1[5] * m2[3], RTGUI_MATRIX_FRAC) + m2[5];
 }
 
 /* Matrix multiply point[(p) = (x, y) * m], ignore the movement components. */
 rt_inline void rtgui_matrix_mul_point_nomove(struct rtgui_point *p,
-                                             int x, int y,
-                                             struct rtgui_matrix *m)
+        int x, int y,
+        struct rtgui_matrix *m)
 {
     int *mm = m->m;
 
@@ -137,13 +161,13 @@ rt_inline void rtgui_matrix_mul_point(struct rtgui_point *p,
 /** Set @mm to an identity matrix. */
 rt_inline void rtgu_matrix_identity(struct rtgui_matrix *mm)
 {
-	int *mat = mm->m;
-	mat[0] = RTGUI_MATRIX_FRAC;
-	mat[1] = 0;
-	mat[2] = 0;
-	mat[3] = RTGUI_MATRIX_FRAC;
-	mat[4] = 0;
-	mat[5] = 0;
+    int *mat = mm->m;
+    mat[0] = RTGUI_MATRIX_FRAC;
+    mat[1] = 0;
+    mat[2] = 0;
+    mat[3] = RTGUI_MATRIX_FRAC;
+    mat[4] = 0;
+    mat[5] = 0;
 }
 
 /** Save the inversed matrix of @mm to @mo.
