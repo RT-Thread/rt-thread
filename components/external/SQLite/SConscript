@@ -1,0 +1,11 @@
+# for network related component
+import os
+Import('RTT_ROOT')
+from building import *
+
+cwd  = GetCurrentDir()
+objs = []
+
+objs = SConscript(os.path.join(cwd, 'SQLite-3.19.3/SConscript'))
+
+Return('objs')
