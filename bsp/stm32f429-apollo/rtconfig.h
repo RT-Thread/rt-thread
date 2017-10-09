@@ -65,7 +65,26 @@
 
 /* Device virtual file system */
 
-/* RT_USING_DFS is not set */
+#define RT_USING_DFS
+/* DFS_USING_WORKDIR is not set */
+#define DFS_FILESYSTEMS_MAX 4
+#define DFS_FD_MAX 16
+#define RT_USING_DFS_ELMFAT
+#define RT_DFS_ELM_CODE_PAGE 437
+#define RT_DFS_ELM_WORD_ACCESS
+/* RT_DFS_ELM_USE_LFN_0 is not set */
+/* RT_DFS_ELM_USE_LFN_1 is not set */
+/* RT_DFS_ELM_USE_LFN_2 is not set */
+#define RT_DFS_ELM_USE_LFN_3
+#define RT_DFS_ELM_USE_LFN 3
+#define RT_DFS_ELM_MAX_LFN 255
+#define RT_DFS_ELM_DRIVES 2
+#define RT_DFS_ELM_MAX_SECTOR_SIZE 4096
+/* RT_DFS_ELM_USE_ERASE is not set */
+#define RT_DFS_ELM_REENTRANT
+#define RT_USING_DFS_DEVFS
+/* RT_USING_DFS_NET is not set */
+/* RT_USING_DFS_NFS is not set */
 
 /* Device Drivers */
 
@@ -80,9 +99,12 @@
 #define RT_USING_MTD_NAND
 #define RT_MTD_NAND_DEBUG
 #define RT_USING_RTC
-/* RT_USING_SDIO is not set */
+#define RT_USING_SDIO
 #define RT_USING_SPI
-/* RT_USING_SFUD is not set */
+#define RT_USING_SFUD
+#define RT_SFUD_USING_SFDP
+#define RT_SFUD_USING_FLASH_INFO_TABLE
+#define RT_SFUD_DEBUG
 /* RT_USING_W25QXX is not set */
 /* RT_USING_GD is not set */
 /* RT_USING_ENC28J60 is not set */

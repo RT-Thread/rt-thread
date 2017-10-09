@@ -108,7 +108,7 @@ uint8_t NAND_ModeSet(uint8_t mode);
 uint32_t NAND_ReadID(void);
 uint8_t NAND_ReadStatus(void);
 uint8_t NAND_WaitForReady(void);
-static rt_uint8_t nand_reset(void);
+//static rt_uint8_t nand_reset(void);
 uint8_t NAND_WaitRB(__IO uint8_t rb);
 void NAND_Delay(volatile rt_uint32_t i);
 uint8_t NAND_ReadPage(uint32_t PageNum,uint16_t ColNum,uint8_t *pBuffer,uint16_t NumByteToRead);
