@@ -61,7 +61,7 @@ static struct finsh_node* proc_postfix_expr(struct finsh_parser* self);
 static struct finsh_node* proc_primary_expr(struct finsh_parser* self);
 static struct finsh_node* proc_param_list(struct finsh_parser* self);
 static struct finsh_node* proc_expr_statement(struct finsh_parser* self);
-static struct finsh_node* make_sys_node(u_char type, struct finsh_node* node1,
+static struct finsh_node* make_sys_node(uint8_t type, struct finsh_node* node1,
 	struct finsh_node* node2);
 
 /* check token */
@@ -894,7 +894,7 @@ node1__
        \
        node2
 */
-static struct finsh_node* make_sys_node(u_char type, struct finsh_node* node1, struct finsh_node* node2)
+static struct finsh_node* make_sys_node(uint8_t type, struct finsh_node* node1, struct finsh_node* node2)
 {
 	struct finsh_node* node;
 
@@ -913,7 +913,7 @@ static struct finsh_node* make_sys_node(u_char type, struct finsh_node* node1, s
 /*
 start -> statement_expr | decl_variable
 */
-void finsh_parser_run(struct finsh_parser* self, const u_char* string)
+void finsh_parser_run(struct finsh_parser* self, const uint8_t* string)
 {
 	enum finsh_token_type token;
 	struct finsh_node *node;
@@ -921,7 +921,7 @@ void finsh_parser_run(struct finsh_parser* self, const u_char* string)
     node = NULL;
 
 	/* init parser */
-	self->parser_string = (u_char*)string;
+	self->parser_string = (uint8_t*)string;
 
 	/* init token */
 	finsh_token_init(&(self->token), self->parser_string);
