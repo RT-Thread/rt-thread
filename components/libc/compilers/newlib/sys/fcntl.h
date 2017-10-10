@@ -13,4 +13,6 @@
 #define O_DIRECTORY     0x0200000
 #define O_BINARY        0x0008000
 
+#include <unistd.h>
+
 #endif
