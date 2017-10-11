@@ -1,11 +1,21 @@
 /*
  * File      : driver.c
- * This file is part of RTGUI in RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -107,8 +117,8 @@ rtgui_graphic_driver_get_rect_buffer(const struct rtgui_graphic_driver *driver,
 
     /* get source pixel */
     pixel = (rt_uint8_t*)driver->framebuffer
-        + rect.y1 * driver->pitch
-        + rect.x1 * rtgui_color_get_bpp(driver->pixel_format);
+            + rect.y1 * driver->pitch
+            + rect.x1 * rtgui_color_get_bpp(driver->pixel_format);
 
     dst = buffer->pixel;
 
@@ -276,7 +286,7 @@ static void _rgb565_get_pixel(rtgui_color_t *c, int x, int y)
 
 static void _rgb565_draw_hline(rtgui_color_t *c, int x1, int x2, int y)
 {
-    rt_ubase_t index;
+    int index;
     rt_uint16_t pixel;
     rt_uint16_t *pixel_ptr;
 
@@ -298,7 +308,7 @@ static void _rgb565_draw_vline(rtgui_color_t *c, int x , int y1, int y2)
     struct rtgui_graphic_driver *drv;
     rt_uint8_t *dst;
     rt_uint16_t pixel;
-    rt_ubase_t index;
+    int index;
 
     drv = rtgui_graphic_get_device();
     pixel = rtgui_color_to_565(*c);
@@ -327,7 +337,7 @@ static void _rgb565p_get_pixel(rtgui_color_t *c, int x, int y)
 
 static void _rgb565p_draw_hline(rtgui_color_t *c, int x1, int x2, int y)
 {
-    rt_ubase_t index;
+    int index;
     rt_uint16_t pixel;
     rt_uint16_t *pixel_ptr;
 
@@ -349,7 +359,7 @@ static void _rgb565p_draw_vline(rtgui_color_t *c, int x , int y1, int y2)
     struct rtgui_graphic_driver *drv;
     rt_uint8_t *dst;
     rt_uint16_t pixel;
-    rt_ubase_t index;
+    int index;
 
     drv = rtgui_graphic_get_device();
     pixel = rtgui_color_to_565p(*c);
@@ -358,6 +368,46 @@ static void _rgb565p_draw_vline(rtgui_color_t *c, int x , int y1, int y2)
     {
         *(rt_uint16_t *)dst = pixel;
         dst += drv->pitch;
+    }
+}
+
+static void _argb888_set_pixel(rtgui_color_t *c, int x, int y)
+{
+    *GET_PIXEL(rtgui_graphic_get_device(), x, y, rtgui_color_t) = *c;
+}
+
+static void _argb888_get_pixel(rtgui_color_t *c, int x, int y)
+{
+    *c = (rtgui_color_t)*GET_PIXEL(rtgui_graphic_get_device(), x, y, rtgui_color_t);
+}
+
+static void _argb888_draw_hline(rtgui_color_t *c, int x1, int x2, int y)
+{
+    int index;
+    rtgui_color_t *pixel_ptr;
+
+    /* get pixel pointer in framebuffer */
+    pixel_ptr = GET_PIXEL(rtgui_graphic_get_device(), x1, y, rtgui_color_t);
+
+    for (index = x1; index < x2; index++)
+    {
+        *pixel_ptr = *c;
+        pixel_ptr++;
+    }
+}
+
+static void _argb888_draw_vline(rtgui_color_t *c, int x, int y1, int y2)
+{
+    struct rtgui_graphic_driver *drv;
+    rtgui_color_t *dst;
+    int index;
+
+    drv = rtgui_graphic_get_device();
+    dst = GET_PIXEL(drv, x, y1, rtgui_color_t);
+    for (index = y1; index < y2; index++)
+    {
+        *dst = *c;
+        dst += drv->width;
     }
 }
 
@@ -391,6 +441,15 @@ const struct rtgui_graphic_driver_ops _framebuffer_rgb565p_ops =
     framebuffer_draw_raw_hline,
 };
 
+const struct rtgui_graphic_driver_ops _framebuffer_argb888_ops =
+{
+    _argb888_set_pixel,
+    _argb888_get_pixel,
+    _argb888_draw_hline,
+    _argb888_draw_vline,
+    framebuffer_draw_raw_hline,
+};
+
 #define FRAMEBUFFER (drv->framebuffer)
 #define MONO_PIXEL(framebuffer, x, y) \
     ((rt_uint8_t**)(framebuffer))[y/8][x]
@@ -417,8 +476,8 @@ static void _mono_get_pixel(rtgui_color_t *c, int x, int y)
 
 static void _mono_draw_hline(rtgui_color_t *c, int x1, int x2, int y)
 {
+    int index;
     struct rtgui_graphic_driver *drv = rtgui_graphic_get_device();
-    rt_ubase_t index;
 
     if (*c == white)
         for (index = x1; index < x2; index ++)
@@ -435,7 +494,7 @@ static void _mono_draw_hline(rtgui_color_t *c, int x1, int x2, int y)
 static void _mono_draw_vline(rtgui_color_t *c, int x , int y1, int y2)
 {
     struct rtgui_graphic_driver *drv = rtgui_graphic_get_device();
-    rt_ubase_t index;
+    int index;
 
     if (*c == white)
         for (index = y1; index < y2; index ++)
@@ -453,7 +512,7 @@ static void _mono_draw_vline(rtgui_color_t *c, int x , int y1, int y2)
 static void _mono_draw_raw_hline(rt_uint8_t *pixels, int x1, int x2, int y)
 {
     struct rtgui_graphic_driver *drv = rtgui_graphic_get_device();
-    rt_ubase_t index;
+    int index;
 
     for (index = x1; index < x2; index ++)
     {
@@ -487,6 +546,8 @@ const struct rtgui_graphic_driver_ops *rtgui_framebuffer_get_ops(int pixel_forma
         return &_framebuffer_rgb565_ops;
     case RTGRAPHIC_PIXEL_FORMAT_RGB565P:
         return &_framebuffer_rgb565p_ops;
+    case RTGRAPHIC_PIXEL_FORMAT_ARGB888:
+        return &_framebuffer_argb888_ops;
     default:
         RT_ASSERT(0);
         break;

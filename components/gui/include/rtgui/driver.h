@@ -1,11 +1,21 @@
 /*
  * File      : driver.h
- * This file is part of RTGUI in RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -34,17 +44,17 @@ struct rtgui_graphic_driver_ops
 /* graphic extension operations */
 struct rtgui_graphic_ext_ops
 {
-	/* some 2D operations */
-	void (*draw_line)(rtgui_color_t *c, int x1, int y1, int x2, int y2);
+    /* some 2D operations */
+    void (*draw_line)(rtgui_color_t *c, int x1, int y1, int x2, int y2);
 
-	void (*draw_rect)(rtgui_color_t *c, int x1, int y1, int x2, int y2);
-	void (*fill_rect)(rtgui_color_t *c, int x1, int y1, int x2, int y2);
+    void (*draw_rect)(rtgui_color_t *c, int x1, int y1, int x2, int y2);
+    void (*fill_rect)(rtgui_color_t *c, int x1, int y1, int x2, int y2);
 
-	void (*draw_circle)(rtgui_color_t *c, int x, int y, int r);
-	void (*fill_circle)(rtgui_color_t *c, int x, int y, int r);
+    void (*draw_circle)(rtgui_color_t *c, int x, int y, int r);
+    void (*fill_circle)(rtgui_color_t *c, int x, int y, int r);
 
-	void (*draw_ellipse)(rtgui_color_t *c, int x, int y, int rx, int ry);
-	void (*fill_ellipse)(rtgui_color_t *c, int x, int y, int rx, int ry);
+    void (*draw_ellipse)(rtgui_color_t *c, int x, int y, int rx, int ry);
+    void (*fill_ellipse)(rtgui_color_t *c, int x, int y, int rx, int ry);
 };
 
 struct rtgui_graphic_driver
@@ -63,7 +73,7 @@ struct rtgui_graphic_driver
     struct rt_device* device;
 
     const struct rtgui_graphic_driver_ops *ops;
-	const struct rtgui_graphic_ext_ops *ext_ops;
+    const struct rtgui_graphic_ext_ops *ext_ops;
 };
 
 struct rtgui_graphic_driver *rtgui_graphic_driver_get_default(void);
@@ -77,7 +87,7 @@ void rtgui_graphic_driver_set_framebuffer(void *fb);
 
 rt_inline struct rtgui_graphic_driver *rtgui_graphic_get_device()
 {
-	return rtgui_graphic_driver_get_default();
+    return rtgui_graphic_driver_get_default();
 }
 
 #ifdef RTGUI_USING_HW_CURSOR
@@ -86,8 +96,8 @@ rt_inline struct rtgui_graphic_driver *rtgui_graphic_get_device()
  */
 enum rtgui_cursor_type
 {
-	RTGUI_CURSOR_ARROW,
-	RTGUI_CURSOR_HAND,
+    RTGUI_CURSOR_ARROW,
+    RTGUI_CURSOR_HAND,
 };
 
 void rtgui_cursor_set_device(const char* device_name);

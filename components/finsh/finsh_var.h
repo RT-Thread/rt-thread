@@ -39,7 +39,7 @@ struct finsh_var
 {
 	char name[FINSH_NAME_MAX + 1];	/* the name of variable */
 
-	u_char type;					/* the type of variable */
+	uint8_t type;					/* the type of variable */
 
 	/* variable value */
 	union {

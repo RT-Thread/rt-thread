@@ -1,11 +1,21 @@
 /*
  * File      : dc.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -19,8 +29,6 @@
 #include <math.h>
 
 #include <rtgui/dc.h>
-#include <rtgui/dc_hw.h>
-#include <rtgui/dc_client.h>
 
 #include <rtgui/rtgui_system.h>
 #include <rtgui/rtgui_server.h>
@@ -690,20 +698,19 @@ void rtgui_dc_draw_arc(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16
 
     /*
      * Draw arc
+     * Octant labelling
+     *
+     *  \ 5 | 6 /
+     *   \  |  /
+     *  4 \ | / 7
+     *     \|/
+     *------+------ +x
+     *     /|\
+     *  3 / | \ 0
+     *   /  |  \
+     *  / 2 | 1 \
+     *      +y
      */
-
-    // Octant labelling
-    //
-    //  \ 5 | 6 /
-    //   \  |  /
-    //  4 \ | / 7
-    //     \|/
-    //------+------ +x
-    //     /|\
-    //  3 / | \ 0
-    //   /  |  \
-    //  / 2 | 1 \
-    //      +y
 
     drawoct = 0; // 0x00000000
     // whether or not to keep drawing a given octant.
@@ -1319,18 +1326,20 @@ void rtgui_dc_draw_pie(struct rtgui_dc *dc, rt_int16_t x, rt_int16_t y, rt_int16
 }
 RTM_EXPORT(rtgui_dc_draw_pie);
 
-// Octant labelling
-//
-//  \ 5 | 6 /
-//   \  |  /
-//  4 \ | / 7
-//     \|/
-//------+------ +x
-//     /|\
-//  3 / | \ 0
-//   /  |  \
-//  / 2 | 1 \
-//      +y
+/*
+ * Octant labelling
+ *
+ *  \ 5 | 6 /
+ *   \  |  /
+ *  4 \ | / 7
+ *     \|/
+ *------+------ +x
+ *     /|\
+ *  3 / | \ 0
+ *   /  |  \
+ *  / 2 | 1 \
+ *      +y
+ */
 static void _draw_octant(struct rtgui_dc *dc,
                          rt_int16_t ox, rt_int16_t oy,
                          rt_int16_t y1, rt_int16_t y2, rt_int16_t x, int oct)
@@ -1814,6 +1823,10 @@ struct rtgui_dc *rtgui_dc_begin_drawing(rtgui_widget_t *owner)
         return RT_NULL;
 
     /* increase drawing count */
+    if (win->drawing == 0)
+    {
+        memset(&(win->drawing_rect), 0x0, sizeof(struct rtgui_rect));
+    }
     win->drawing ++;
 
     /* always drawing on the virtual mode */
@@ -1873,7 +1886,7 @@ struct rtgui_dc *rtgui_dc_begin_drawing(rtgui_widget_t *owner)
 }
 RTM_EXPORT(rtgui_dc_begin_drawing);
 
-void rtgui_dc_end_drawing(struct rtgui_dc *dc)
+void rtgui_dc_end_drawing(struct rtgui_dc *dc, rt_bool_t update)
 {
     struct rtgui_widget *owner;
     struct rtgui_win *win;
@@ -1889,30 +1902,47 @@ void rtgui_dc_end_drawing(struct rtgui_dc *dc)
     /* get window */
     win = owner->toplevel;
 
+    /* union drawing rect */
+    rtgui_rect_union(&(owner->extent_visiable), &(win->drawing_rect));
     /* decrease drawing counter */
-    win->drawing --;
-    if (win->drawing == 0 && rtgui_graphic_driver_is_vmode() == RT_FALSE)
+    win->drawing--;
+
+    if (win->drawing == 0)
     {
+        /* notify window to handle window update done */
+        if (RTGUI_OBJECT(win)->event_handler)
+        {
+            struct rtgui_event_win_update_end ewin_update;
+
+            RTGUI_EVENT_WIN_UPDATE_END_INIT(&(ewin_update));
+            ewin_update.rect = win->drawing_rect;
+
+            RTGUI_OBJECT(win)->event_handler(RTGUI_OBJECT(win), (struct rtgui_event *)&ewin_update);
+        }
+
+        if (rtgui_graphic_driver_is_vmode() == RT_FALSE && update)
+        {
 #ifdef RTGUI_USING_MOUSE_CURSOR
-        rt_mutex_release(&cursor_mutex);
-        /* show cursor */
-        rtgui_mouse_show_cursor();
+            rt_mutex_release(&cursor_mutex);
+            /* show cursor */
+            rtgui_mouse_show_cursor();
 #endif
 
-        if (RTGUI_IS_WINTITLE(win))
-        {
-            /* update screen */
-            rtgui_graphic_driver_screen_update(rtgui_graphic_driver_get_default(),
-                                               &(owner->extent));
-        }
-        else
-        {
-            /* send to server for window update */
-            struct rtgui_event_update_end eupdate;
-            RTGUI_EVENT_UPDATE_END_INIT(&(eupdate));
-            eupdate.rect = owner->extent;
+            if (RTGUI_IS_WINTITLE(win))
+            {
+                /* update screen */
+                rtgui_graphic_driver_screen_update(rtgui_graphic_driver_get_default(),
+                                                   &(owner->extent));
+            }
+            else
+            {
+                /* send to server for window update */
+                struct rtgui_event_update_end eupdate;
+                RTGUI_EVENT_UPDATE_END_INIT(&(eupdate));
+                eupdate.rect = owner->extent;
 
-            rtgui_server_post_event((struct rtgui_event *)&eupdate, sizeof(eupdate));
+                rtgui_server_post_event((struct rtgui_event *)&eupdate, sizeof(eupdate));
+            }
         }
     }
 
@@ -1920,4 +1950,3 @@ void rtgui_dc_end_drawing(struct rtgui_dc *dc)
     rtgui_screen_unlock();
 }
 RTM_EXPORT(rtgui_dc_end_drawing);
-

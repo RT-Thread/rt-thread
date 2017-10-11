@@ -1,11 +1,21 @@
 /*
  * File      : title.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -75,7 +85,8 @@ rt_bool_t rtgui_wintile_event_handler(struct rtgui_object *obj, rtgui_event_t *e
         rtgui_theme_draw_win(wint);
         return RT_FALSE;
 
-    case RTGUI_EVENT_MOUSE_BUTTON: {
+    case RTGUI_EVENT_MOUSE_BUTTON:
+    {
         struct rtgui_event_mouse *emou = (struct rtgui_event_mouse *)eve;
 
         if (win->style & RTGUI_WIN_STYLE_CLOSEBOX)
@@ -107,8 +118,8 @@ rt_bool_t rtgui_wintile_event_handler(struct rtgui_object *obj, rtgui_event_t *e
                 else if (emou->button & RTGUI_MOUSE_BUTTON_UP)
                 {
                     if (win->flag & RTGUI_WIN_FLAG_CB_PRESSED &&
-                        rtgui_rect_contains_point(&rect,
-                                                  emou->x, emou->y) == RT_EOK)
+                            rtgui_rect_contains_point(&rect,
+                                                      emou->x, emou->y) == RT_EOK)
                     {
                         rtgui_win_close(win);
                         return RT_TRUE;
@@ -130,7 +141,7 @@ rt_bool_t rtgui_wintile_event_handler(struct rtgui_object *obj, rtgui_event_t *e
 #endif
         }
     }
-        return RT_TRUE;
+    return RT_TRUE;
     default:
         return rtgui_widget_event_handler(obj, eve);
     }

@@ -1,11 +1,21 @@
 /*
  * File      : image.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -18,6 +28,7 @@
 
 #include <rtgui/image_hdc.h>
 #include <rtgui/rtgui_system.h>
+#include <rtgui/image_container.h>
 
 #include <string.h>
 #ifdef _WIN32
@@ -25,17 +36,18 @@
 #endif
 
 #ifdef RTGUI_IMAGE_XPM
-#include <rtgui/image_xpm.h>
+extern void rtgui_image_xpm_init(void);
 #endif
 
 #ifdef RTGUI_IMAGE_BMP
 #include <rtgui/image_bmp.h>
 #endif
+
 #if (defined(RTGUI_IMAGE_JPEG) || defined(RTGUI_IMAGE_TJPGD))
-#include <rtgui/image_jpeg.h>
+extern void rtgui_image_jpeg_init(void);
 #endif
 #if defined(RTGUI_IMAGE_PNG) || defined(RTGUI_IMAGE_LODEPNG)
-#include <rtgui/image_png.h>
+extern void rtgui_image_png_init(void);
 #endif
 
 static rtgui_list_t _rtgui_system_image_list = {RT_NULL};
@@ -60,6 +72,11 @@ void rtgui_system_image_init(void)
 
 #if defined(RTGUI_IMAGE_PNG) || defined(RTGUI_IMAGE_LODEPNG)
     rtgui_image_png_init();
+#endif
+
+#ifdef RTGUI_IMAGE_CONTAINER
+    /* initialize image container */
+    rtgui_system_image_container_init();
 #endif
 }
 
@@ -166,7 +183,7 @@ struct rtgui_image *rtgui_image_create(const char *filename, rt_bool_t load)
 
     /* create filerw context */
     filerw = rtgui_filerw_create_file(filename, "rb");
-    if (filerw == RT_NULL) 
+    if (filerw == RT_NULL)
     {
         rt_kprintf("create filerw failed!\n");
         return RT_NULL;
@@ -287,18 +304,18 @@ RTM_EXPORT(rtgui_image_register_engine);
 
 void rtgui_image_blit(struct rtgui_image *image, struct rtgui_dc *dc, struct rtgui_rect *rect)
 {
-	struct rtgui_rect r;
+    struct rtgui_rect r;
     RT_ASSERT(dc    != RT_NULL);
 
     if (rtgui_dc_get_visible(dc) != RT_TRUE) return;
 
     rtgui_dc_get_rect(dc, &r);
 
-	/* use rect of DC */
-	if (rect == RT_NULL)
-	{
-		rect = &r;
-	}
+    /* use rect of DC */
+    if (rect == RT_NULL)
+    {
+        rect = &r;
+    }
     else
     {
         /* Don't modify x1, y1, they are handled in engine->image_blit. */

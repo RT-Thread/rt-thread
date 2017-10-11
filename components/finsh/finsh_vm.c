@@ -35,10 +35,10 @@
 /* stack */
 union finsh_value	finsh_vm_stack[FINSH_STACK_MAX];
 /* text segment */
-u_char				text_segment[FINSH_TEXT_MAX];
+uint8_t				text_segment[FINSH_TEXT_MAX];
 
 union finsh_value*	finsh_sp;		/* stack pointer */
-u_char*				finsh_pc;		/* PC */
+uint8_t*			finsh_pc;		/* PC */
 
 /* syscall list, for dynamic system call register */
 struct finsh_syscall_item* global_syscall_list = NULL;
@@ -46,7 +46,7 @@ struct finsh_syscall_item* global_syscall_list = NULL;
 // #define FINSH_VM_DISASSEMBLE
 void finsh_vm_run()
 {
-	u_char op;
+	uint8_t op;
 
 	/* if you want to disassemble the byte code, please define FINSH_VM_DISASSEMBLE */
 #ifdef FINSH_VM_DISASSEMBLE
@@ -148,7 +148,7 @@ struct finsh_syscall* finsh_syscall_lookup(const char* name)
 #ifdef FINSH_VM_DISASSEMBLE
 void finsh_disassemble()
 {
-	u_char *pc, op;
+	uint8_t *pc, op;
 
 	pc = &text_segment[0];
 	while (*pc != 0)

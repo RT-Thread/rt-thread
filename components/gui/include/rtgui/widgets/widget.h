@@ -1,7 +1,7 @@
 /*
  * File      : widget.h
- * This file is part of RT-Thread GUI
- * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -110,6 +110,10 @@ struct rtgui_widget
 
     /* the widget extent */
     rtgui_rect_t extent;
+    /* the visiable extent (includes the rectangles of children) */
+    rtgui_rect_t extent_visiable;
+    /* the rect clip information */
+    rtgui_region_t clip;
 
     /* minimal width and height of widget */
     rt_int16_t min_width, min_height;
@@ -117,13 +121,10 @@ struct rtgui_widget
     rt_int32_t align;
     rt_uint16_t border;
     rt_uint16_t border_style;
-    /* the rect clip */
-    rtgui_region_t clip;
 
     /* call back */
     rt_bool_t (*on_focus_in)(struct rtgui_object *widget, struct rtgui_event *event);
     rt_bool_t (*on_focus_out)(struct rtgui_object *widget, struct rtgui_event *event);
-    rt_bool_t (*on_paint)(struct rtgui_object *widget, struct rtgui_event *event);
 
     /* user private data */
     rt_uint32_t user_data;
@@ -142,7 +143,6 @@ void rtgui_widget_unfocus(rtgui_widget_t *widget);
 /* event handler for each command */
 void rtgui_widget_set_onfocus(rtgui_widget_t *widget, rtgui_event_handler_ptr handler);
 void rtgui_widget_set_onunfocus(rtgui_widget_t *widget, rtgui_event_handler_ptr handler);
-void rtgui_widget_set_onpaint(rtgui_widget_t *widget, rtgui_event_handler_ptr handler);
 
 /* get and set rect of widget */
 void rtgui_widget_get_rect(rtgui_widget_t *widget, rtgui_rect_t *rect);

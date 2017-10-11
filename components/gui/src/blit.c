@@ -1,7 +1,7 @@
 /*
  * File      : blit.h
- * This file is part of RT-Thread GUI
- * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -48,62 +48,74 @@
 #include <rtgui/rtgui.h>
 #include <rtgui/blit.h>
 #include <rtgui/color.h>
+#include <rtgui/region.h>
+#include <rtgui/dc.h>
 
 /* Lookup tables to expand partial bytes to the full 0..255 range */
 
-static const rt_uint8_t lookup_0[] = {
-0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95,
-96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121,
-122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
-147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171,
-172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196,
-197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221,
-222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246,
-247, 248, 249, 250, 251, 252, 253, 254, 255
+static const rt_uint8_t lookup_0[] =
+{
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+    32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+    64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95,
+    96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121,
+    122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+    147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171,
+    172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196,
+    197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221,
+    222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246,
+    247, 248, 249, 250, 251, 252, 253, 254, 255
 };
 
-static const rt_uint8_t lookup_1[] = {
-0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62,
-64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 100, 102, 104, 106, 108, 110, 112, 114, 116, 118,
-120, 122, 124, 126, 128, 130, 132, 134, 136, 138, 140, 142, 144, 146, 148, 150, 152, 154, 156, 158, 160, 162, 164, 166,
-168, 170, 172, 174, 176, 178, 180, 182, 184, 186, 188, 190, 192, 194, 196, 198, 200, 202, 204, 206, 208, 210, 212, 214,
-216, 218, 220, 222, 224, 226, 228, 230, 232, 234, 236, 238, 240, 242, 244, 246, 248, 250, 252, 255
+static const rt_uint8_t lookup_1[] =
+{
+    0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62,
+    64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 100, 102, 104, 106, 108, 110, 112, 114, 116, 118,
+    120, 122, 124, 126, 128, 130, 132, 134, 136, 138, 140, 142, 144, 146, 148, 150, 152, 154, 156, 158, 160, 162, 164, 166,
+    168, 170, 172, 174, 176, 178, 180, 182, 184, 186, 188, 190, 192, 194, 196, 198, 200, 202, 204, 206, 208, 210, 212, 214,
+    216, 218, 220, 222, 224, 226, 228, 230, 232, 234, 236, 238, 240, 242, 244, 246, 248, 250, 252, 255
 };
 
-static const rt_uint8_t lookup_2[] = {
-0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 85, 89, 93, 97, 101, 105, 109, 113, 117,
-121, 125, 129, 133, 137, 141, 145, 149, 153, 157, 161, 165, 170, 174, 178, 182, 186, 190, 194, 198, 202, 206, 210, 214, 218,
-222, 226, 230, 234, 238, 242, 246, 250, 255
+static const rt_uint8_t lookup_2[] =
+{
+    0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 85, 89, 93, 97, 101, 105, 109, 113, 117,
+    121, 125, 129, 133, 137, 141, 145, 149, 153, 157, 161, 165, 170, 174, 178, 182, 186, 190, 194, 198, 202, 206, 210, 214, 218,
+    222, 226, 230, 234, 238, 242, 246, 250, 255
 };
 
-static const rt_uint8_t lookup_3[] = {
-0, 8, 16, 24, 32, 41, 49, 57, 65, 74, 82, 90, 98, 106, 115, 123, 131, 139, 148, 156, 164, 172, 180, 189, 197, 205, 213, 222,
-230, 238, 246, 255
+static const rt_uint8_t lookup_3[] =
+{
+    0, 8, 16, 24, 32, 41, 49, 57, 65, 74, 82, 90, 98, 106, 115, 123, 131, 139, 148, 156, 164, 172, 180, 189, 197, 205, 213, 222,
+    230, 238, 246, 255
 };
 
-static const rt_uint8_t lookup_4[] = {
-0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255
+static const rt_uint8_t lookup_4[] =
+{
+    0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255
 };
 
-static const rt_uint8_t lookup_5[] = {
-0, 36, 72, 109, 145, 182, 218, 255
+static const rt_uint8_t lookup_5[] =
+{
+    0, 36, 72, 109, 145, 182, 218, 255
 };
 
-static const rt_uint8_t lookup_6[] = {
-0, 85, 170, 255
+static const rt_uint8_t lookup_6[] =
+{
+    0, 85, 170, 255
 };
 
-static const rt_uint8_t lookup_7[] = {
-0, 255
+static const rt_uint8_t lookup_7[] =
+{
+    0, 255
 };
 
-static const rt_uint8_t lookup_8[] = {
-255
+static const rt_uint8_t lookup_8[] =
+{
+    255
 };
 
-const rt_uint8_t* rtgui_blit_expand_byte[9] = {
+const rt_uint8_t* rtgui_blit_expand_byte[9] =
+{
     lookup_0,
     lookup_1,
     lookup_2,
@@ -190,34 +202,39 @@ static void rtgui_blit_line_4_2(rt_uint8_t *dst_ptr, rt_uint8_t *src_ptr, int li
     rt_uint32_t *srcp = (rt_uint32_t *) src_ptr;
     rt_uint16_t *dstp = (rt_uint16_t *) dst_ptr;
 
-	/* *INDENT-OFF* */
-	DUFFS_LOOP4({
-	rt_uint32_t s = *srcp;
-	unsigned alpha = s >> 27; /* downscale alpha to 5 bits */
-	/* FIXME: Here we special-case opaque alpha since the
-	   compositioning used (>>8 instead of /255) doesn't handle
-	   it correctly. Also special-case alpha=0 for speed?
-	   Benchmark this! */
-	if(alpha) {
-	  if(alpha == (255 >> 3)) {
-		*dstp = (rt_uint16_t)((s >> 8 & 0xf800) + (s >> 5 & 0x7e0) + (s >> 3  & 0x1f));
-	  } else {
-		rt_uint32_t d = *dstp;
-		/*
-		 * convert source and destination to G0RAB65565
-		 * and blend all components at the same time
-		 */
-		s = ((s & 0xfc00) << 11) + (s >> 8 & 0xf800)
-		  + (s >> 3 & 0x1f);
-		d = (d | d << 16) & 0x07e0f81f;
-		d += (s - d) * alpha >> 5;
-		d &= 0x07e0f81f;
-		*dstp = (rt_uint16_t)(d | d >> 16);
-	  }
-	}
-	srcp++;
-	dstp++;
-	}, width);
+    /* *INDENT-OFF* */
+    DUFFS_LOOP4(
+    {
+        rt_uint32_t s = *srcp;
+        unsigned alpha = s >> 27; /* downscale alpha to 5 bits */
+        /* FIXME: Here we special-case opaque alpha since the
+           compositioning used (>>8 instead of /255) doesn't handle
+           it correctly. Also special-case alpha=0 for speed?
+           Benchmark this! */
+        if(alpha)
+        {
+            if(alpha == (255 >> 3))
+            {
+                *dstp = (rt_uint16_t)((s >> 8 & 0xf800) + (s >> 5 & 0x7e0) + (s >> 3  & 0x1f));
+            }
+            else
+            {
+                rt_uint32_t d = *dstp;
+                /*
+                 * convert source and destination to G0RAB65565
+                 * and blend all components at the same time
+                 */
+                s = ((s & 0xfc00) << 11) + (s >> 8 & 0xf800)
+                    + (s >> 3 & 0x1f);
+                d = (d | d << 16) & 0x07e0f81f;
+                d += (s - d) * alpha >> 5;
+                d &= 0x07e0f81f;
+                *dstp = (rt_uint16_t)(d | d >> 16);
+            }
+        }
+        srcp++;
+        dstp++;
+    }, width);
 }
 
 static void rtgui_blit_line_1_3(rt_uint8_t *dst_ptr, rt_uint8_t *src_ptr, int line)
@@ -362,7 +379,8 @@ static const rt_uint32_t RGB565_RGBA8888_LUT[512] =
 };
 
 /* Special optimized blit for RGB 5-6-5 --> ARGB 8-8-8-8 */
-static const rt_uint32_t RGB565_ARGB8888_LUT[512] = {
+static const rt_uint32_t RGB565_ARGB8888_LUT[512] =
+{
     0x00000000, 0xff000000, 0x00000008, 0xff002000,
     0x00000010, 0xff004000, 0x00000018, 0xff006100,
     0x00000020, 0xff008100, 0x00000029, 0xff00a100,
@@ -635,13 +653,13 @@ rtgui_blit_line_func rtgui_blit_line_get_inv(int dst_bpp, int src_bpp)
 
 /* 16bpp special case for per-surface alpha=50%: blend 2 pixels in parallel */
 /* blend a single 16 bit pixel at 50% */
-#define BLEND16_50(d, s, mask)						\
-	((((s & mask) + (d & mask)) >> 1) + (s & d & (~mask & 0xffff)))
+#define BLEND16_50(d, s, mask)                      \
+    ((((s & mask) + (d & mask)) >> 1) + (s & d & (~mask & 0xffff)))
 
 /* blend two 16 bit pixels at 50% */
-#define BLEND2x16_50(d, s, mask)					     \
-	(((s & (mask | mask << 16)) >> 1) + ((d & (mask | mask << 16)) >> 1) \
-	 + (s & d & (~(mask | mask << 16))))
+#define BLEND2x16_50(d, s, mask)                         \
+    (((s & (mask | mask << 16)) >> 1) + ((d & (mask | mask << 16)) >> 1) \
+     + (s & d & (~(mask | mask << 16))))
 
 static void
 Blit16to16SurfaceAlpha128(struct rtgui_blit_info * info, rt_uint16_t mask)
@@ -653,8 +671,10 @@ Blit16to16SurfaceAlpha128(struct rtgui_blit_info * info, rt_uint16_t mask)
     rt_uint16_t *dstp = (rt_uint16_t *) info->dst;
     int dstskip = info->dst_skip >> 1;
 
-    while (height--) {
-        if (((unsigned int) srcp ^ (unsigned int) dstp) & 2) {
+    while (height--)
+    {
+        if (((unsigned int) srcp ^ (unsigned int) dstp) & 2)
+        {
             /*
              * Source and destination not aligned, pipeline it.
              * This is mostly a win for big blits but no loss for
@@ -664,7 +684,8 @@ Blit16to16SurfaceAlpha128(struct rtgui_blit_info * info, rt_uint16_t mask)
             int w = width;
 
             /* handle odd destination */
-            if ((unsigned int) dstp & 2) {
+            if ((unsigned int) dstp & 2)
+            {
                 rt_uint16_t d = *dstp, s = *srcp;
                 *dstp = BLEND16_50(d, s, mask);
                 dstp++;
@@ -676,7 +697,8 @@ Blit16to16SurfaceAlpha128(struct rtgui_blit_info * info, rt_uint16_t mask)
             /* bootstrap pipeline with first halfword */
             prev_sw = ((rt_uint32_t *) srcp)[-1];
 
-            while (w > 1) {
+            while (w > 1)
+            {
                 rt_uint32_t sw, dw, s;
                 sw = *(rt_uint32_t *) srcp;
                 dw = *(rt_uint32_t *) dstp;
@@ -689,7 +711,8 @@ Blit16to16SurfaceAlpha128(struct rtgui_blit_info * info, rt_uint16_t mask)
             }
 
             /* final pixel if any */
-            if (w) {
+            if (w)
+            {
                 rt_uint16_t d = *dstp, s;
                 s = (rt_uint16_t) (prev_sw >> 16);
                 *dstp = BLEND16_50(d, s, mask);
@@ -698,12 +721,15 @@ Blit16to16SurfaceAlpha128(struct rtgui_blit_info * info, rt_uint16_t mask)
             }
             srcp += srcskip - 1;
             dstp += dstskip;
-        } else {
+        }
+        else
+        {
             /* source and destination are aligned */
             int w = width;
 
             /* first odd pixel? */
-            if ((unsigned int) srcp & 2) {
+            if ((unsigned int) srcp & 2)
+            {
                 rt_uint16_t d = *dstp, s = *srcp;
                 *dstp = BLEND16_50(d, s, mask);
                 srcp++;
@@ -712,7 +738,8 @@ Blit16to16SurfaceAlpha128(struct rtgui_blit_info * info, rt_uint16_t mask)
             }
             /* srcp and dstp are now 32-bit aligned */
 
-            while (w > 1) {
+            while (w > 1)
+            {
                 rt_uint32_t sw = *(rt_uint32_t *) srcp;
                 rt_uint32_t dw = *(rt_uint32_t *) dstp;
                 *(rt_uint32_t *) dstp = BLEND2x16_50(dw, sw, mask);
@@ -722,7 +749,8 @@ Blit16to16SurfaceAlpha128(struct rtgui_blit_info * info, rt_uint16_t mask)
             }
 
             /* last odd pixel? */
-            if (w) {
+            if (w)
+            {
                 rt_uint16_t d = *dstp, s = *srcp;
                 *dstp = BLEND16_50(d, s, mask);
                 srcp++;
@@ -774,7 +802,8 @@ Blit565to565PixelAlpha(struct rtgui_blit_info * info)
         rt_uint32_t *srcp = (rt_uint32_t *) info->src;
         rt_uint32_t *dstp = (rt_uint32_t *) info->dst;
 
-        while (height--) {
+        while (height--)
+        {
             DUFFS_LOOP4(
             {
                 rt_uint32_t s = *srcp++;
@@ -814,62 +843,140 @@ Blit565to565PixelAlpha(struct rtgui_blit_info * info)
 /* fast RGB888->(A)RGB888 blending with surface alpha=128 special case */
 static void BlitRGBtoRGBSurfaceAlpha128(struct rtgui_blit_info *info)
 {
-	int width = info->dst_w;
-	int height = info->dst_h;
-	rt_uint32_t *srcp = (rt_uint32_t *)info->src;
-	int srcskip = info->src_skip >> 2;
-	rt_uint32_t *dstp = (rt_uint32_t *)info->dst;
-	int dstskip = info->dst_skip >> 2;
+    int width = info->dst_w;
+    int height = info->dst_h;
+    rt_uint32_t *srcp = (rt_uint32_t *)info->src;
+    int srcskip = info->src_skip >> 2;
+    rt_uint32_t *dstp = (rt_uint32_t *)info->dst;
+    int dstskip = info->dst_skip >> 2;
 
-	while(height--) {
-	    DUFFS_LOOP4({
-		    rt_uint32_t s = *srcp++;
-		    rt_uint32_t d = *dstp;
-		    *dstp++ = ((((s & 0x00fefefe) + (d & 0x00fefefe)) >> 1)
-			       + (s & d & 0x00010101)) | 0xff000000;
-	    }, width);
-	    srcp += srcskip;
-	    dstp += dstskip;
-	}
+    while(height--)
+    {
+        DUFFS_LOOP4(
+        {
+            rt_uint32_t s = *srcp++;
+            rt_uint32_t d = *dstp;
+            *dstp++ = ((((s & 0x00fefefe) + (d & 0x00fefefe)) >> 1)
+            + (s & d & 0x00010101)) | 0xff000000;
+        }, width);
+        srcp += srcskip;
+        dstp += dstskip;
+    }
 }
 
 /* fast RGB888->(A)RGB888 blending with surface alpha */
 static void BlitRGBtoRGBSurfaceAlpha(struct rtgui_blit_info *info)
 {
-	unsigned int alpha = info->a;
-	if(alpha == 128) {
-		BlitRGBtoRGBSurfaceAlpha128(info);
-	} else {
-		int width = info->dst_w;
-		int height = info->dst_h;
-		rt_uint32_t *srcp = (rt_uint32_t *)info->src;
-		int srcskip = info->src_skip >> 2;
-		rt_uint32_t *dstp = (rt_uint32_t *)info->dst;
-		int dstskip = info->dst_skip >> 2;
+    unsigned int alpha = info->a;
+    if(alpha == 128)
+    {
+        BlitRGBtoRGBSurfaceAlpha128(info);
+    }
+    else
+    {
+        int width = info->dst_w;
+        int height = info->dst_h;
+        rt_uint32_t *srcp = (rt_uint32_t *)info->src;
+        int srcskip = info->src_skip >> 2;
+        rt_uint32_t *dstp = (rt_uint32_t *)info->dst;
+        int dstskip = info->dst_skip >> 2;
 
-		while(height--) {
-			DUFFS_LOOP4({
-				rt_uint32_t s;
-				rt_uint32_t d;
-				rt_uint32_t s1;
-				rt_uint32_t d1;
-				s = *srcp;
-				d = *dstp;
-				s1 = s & 0xff00ff;
-				d1 = d & 0xff00ff;
-				d1 = (d1 + ((s1 - d1) * alpha >> 8))
-				     & 0xff00ff;
-				s &= 0xff00;
-				d &= 0xff00;
-				d = (d + ((s - d) * alpha >> 8)) & 0xff00;
-				*dstp = d1 | d | 0xff000000;
-				++srcp;
-				++dstp;
-			}, width);
-			srcp += srcskip;
-			dstp += dstskip;
-		}
-	}
+        while(height--)
+        {
+            DUFFS_LOOP4(
+            {
+                rt_uint32_t s;
+                rt_uint32_t d;
+                rt_uint32_t s1;
+                rt_uint32_t d1;
+                s = *srcp;
+                d = *dstp;
+                s1 = s & 0xff00ff;
+                d1 = d & 0xff00ff;
+                d1 = (d1 + ((s1 - d1) * alpha >> 8))
+                & 0xff00ff;
+                s &= 0xff00;
+                d &= 0xff00;
+                d = (d + ((s - d) * alpha >> 8)) & 0xff00;
+                *dstp = d1 | d | 0xff000000;
+                ++srcp;
+                ++dstp;
+            }, width);
+            srcp += srcskip;
+            dstp += dstskip;
+        }
+    }
+}
+
+/* fast alpha -> RGB565 blending with pixel alpha */
+static void BlitAlphato565PixelAlpha(struct rtgui_blit_info * info)
+{
+    rt_uint32_t srcpixel, dstpixel;
+    rt_uint32_t srcR, srcG, srcB, srcA;
+
+
+    srcR = info->r;
+    srcG = info->g;
+    srcB = info->b;
+
+    while (info->dst_h--)
+    {
+        rt_uint8_t *src = (rt_uint8_t *)info->src;
+        rt_uint16_t *dst = (rt_uint16_t *)info->dst;
+        int n = info->dst_w;
+        while (n--)
+        {
+            srcA = (rt_uint8_t)(*src);
+            ARGB8888_FROM_RGBA(srcpixel, srcR, srcG, srcB, srcA);
+
+            /* not do alpha blend */
+            if (srcA == 255)
+            {
+                dstpixel = srcpixel;
+            }
+            else if (srcA >> 3 == 0)
+            {
+                /* keep original pixel data */
+            }
+            else
+            {
+                dstpixel = ((rt_uint32_t)srcA << 24) | ((rt_uint32_t)srcR << 16) | ((rt_uint32_t)srcG << 8) | srcB;
+            }
+
+            if (srcA >> 3 != 0)
+            {
+                rt_uint32_t s = dstpixel;
+                unsigned alpha = s >> 27;
+                if (alpha)
+                {
+                    if (alpha == (255 >> 3))
+                    {
+                        *dst = (rt_uint16_t)((s >> 8 & 0xf800) + (s >> 5 & 0x7e0) + (s >> 3 & 0x1f));
+                    }
+                    else
+                    {
+                        rt_uint32_t d = *dst;
+                        /*
+                        * convert source and destination to G0RAB65565
+                        * and blend all components at the same time
+                        */
+                        s = ((s & 0xfc00) << 11) + (s >> 8 & 0xf800)
+                            + (s >> 3 & 0x1f);
+                        d = (d | d << 16) & 0x07e0f81f;
+                        d += (s - d) * alpha >> 5;
+                        d &= 0x07e0f81f;
+                        *dst = (rt_uint16_t)(d | d >> 16);
+                    }
+                }
+            }
+
+            ++src;
+            ++dst;
+        }
+
+        info->src += info->src_pitch;
+        info->dst += info->dst_pitch;
+    }
 }
 
 /* fast ARGB8888->RGB565 blending with pixel alpha */
@@ -882,36 +989,42 @@ static void BlitARGBto565PixelAlpha(struct rtgui_blit_info * info)
     rt_uint16_t *dstp = (rt_uint16_t *) info->dst;
     int dstskip = info->dst_skip >> 1;
 
-    while (height--) {
-	    /* *INDENT-OFF* */
-	    DUFFS_LOOP4({
-		rt_uint32_t s = *srcp;
-		unsigned alpha = s >> 27; /* downscale alpha to 5 bits */
-		/* FIXME: Here we special-case opaque alpha since the
-		   compositioning used (>>8 instead of /255) doesn't handle
-		   it correctly. Also special-case alpha=0 for speed?
-		   Benchmark this! */
-		if(alpha) {
-		  if(alpha == (255 >> 3)) {
-		    *dstp = (rt_uint16_t)((s >> 8 & 0xf800) + (s >> 5 & 0x7e0) + (s >> 3  & 0x1f));
-		  } else {
-		    rt_uint32_t d = *dstp;
-		    /*
-		     * convert source and destination to G0RAB65565
-		     * and blend all components at the same time
-		     */
-		    s = ((s & 0xfc00) << 11) + (s >> 8 & 0xf800)
-		      + (s >> 3 & 0x1f);
-		    d = (d | d << 16) & 0x07e0f81f;
-		    d += (s - d) * alpha >> 5;
-		    d &= 0x07e0f81f;
-		    *dstp = (rt_uint16_t)(d | d >> 16);
-		  }
-		}
-		srcp++;
-		dstp++;
-	    }, width);
-	    /* *INDENT-ON* */
+    while (height--)
+    {
+        /* *INDENT-OFF* */
+        DUFFS_LOOP4(
+        {
+            rt_uint32_t s = *srcp;
+            unsigned alpha = s >> 27; /* downscale alpha to 5 bits */
+            /* FIXME: Here we special-case opaque alpha since the
+               compositioning used (>>8 instead of /255) doesn't handle
+               it correctly. Also special-case alpha=0 for speed?
+               Benchmark this! */
+            if(alpha)
+            {
+                if(alpha == (255 >> 3))
+                {
+                    *dstp = (rt_uint16_t)((s >> 8 & 0xf800) + (s >> 5 & 0x7e0) + (s >> 3  & 0x1f));
+                }
+                else
+                {
+                    rt_uint32_t d = *dstp;
+                    /*
+                     * convert source and destination to G0RAB65565
+                     * and blend all components at the same time
+                     */
+                    s = ((s & 0xfc00) << 11) + (s >> 8 & 0xf800)
+                        + (s >> 3 & 0x1f);
+                    d = (d | d << 16) & 0x07e0f81f;
+                    d += (s - d) * alpha >> 5;
+                    d &= 0x07e0f81f;
+                    *dstp = (rt_uint16_t)(d | d >> 16);
+                }
+            }
+            srcp++;
+            dstp++;
+        }, width);
+        /* *INDENT-ON* */
         srcp += srcskip;
         dstp += dstskip;
     }
@@ -920,49 +1033,120 @@ static void BlitARGBto565PixelAlpha(struct rtgui_blit_info * info)
 /* fast ARGB888->(A)RGB888 blending with pixel alpha */
 static void BlitRGBtoRGBPixelAlpha(struct rtgui_blit_info *info)
 {
-	int width = info->dst_w;
-	int height = info->dst_h;
-	rt_uint32_t *srcp = (rt_uint32_t *)info->src;
-	int srcskip = info->src_skip >> 2;
-	rt_uint32_t *dstp = (rt_uint32_t *)info->dst;
-	int dstskip = info->dst_skip >> 2;
+    int width = info->dst_w;
+    int height = info->dst_h;
+    rt_uint32_t *srcp = (rt_uint32_t *)info->src;
+    int srcskip = info->src_skip >> 2;
+    rt_uint32_t *dstp = (rt_uint32_t *)info->dst;
+    int dstskip = info->dst_skip >> 2;
 
-	while(height--) {
-	    DUFFS_LOOP4({
-		rt_uint32_t dalpha;
-		rt_uint32_t d;
-		rt_uint32_t s1;
-		rt_uint32_t d1;
-		rt_uint32_t s = *srcp;
-		rt_uint32_t alpha = s >> 24;
-            
-		/* FIXME: Here we special-case opaque alpha since the
-		   compositioning used (>>8 instead of /255) doesn't handle
-		   it correctly. Also special-case alpha=0 for speed?
-		   Benchmark this! */
-		if(alpha == 255) {
-		    *dstp = (s & 0x00ffffff) | (*dstp & 0xff000000);
-		} else {
-		    /*
-		     * take out the middle component (green), and process
-		     * the other two in parallel. One multiply less.
-		     */
-		    d = *dstp;
-		    dalpha = d & 0xff000000;
-		    s1 = s & 0xff00ff;
-		    d1 = d & 0xff00ff;
-		    d1 = (d1 + ((s1 - d1) * alpha >> 8)) & 0xff00ff;
-		    s &= 0xff00;
-		    d &= 0xff00;
-		    d = (d + ((s - d) * alpha >> 8)) & 0xff00;
-		    *dstp = d1 | d | dalpha;
-		}
-		++srcp;
-		++dstp;
-	    }, width);
-	    srcp += srcskip;
-	    dstp += dstskip;
-	}
+    while(height--)
+    {
+        DUFFS_LOOP4(
+        {
+            rt_uint32_t dalpha;
+            rt_uint32_t d;
+            rt_uint32_t s1;
+            rt_uint32_t d1;
+            rt_uint32_t s = *srcp;
+            rt_uint32_t alpha = s >> 24;
+
+            /* FIXME: Here we special-case opaque alpha since the
+               compositioning used (>>8 instead of /255) doesn't handle
+               it correctly. Also special-case alpha=0 for speed?
+               Benchmark this! */
+            if(alpha == 255)
+            {
+                *dstp = (s & 0x00ffffff) | (*dstp & 0xff000000);
+            }
+            else {
+                /*
+                 * take out the middle component (green), and process
+                 * the other two in parallel. One multiply less.
+                 */
+                d = *dstp;
+                dalpha = d & 0xff000000;
+                s1 = s & 0xff00ff;
+                d1 = d & 0xff00ff;
+                d1 = (d1 + ((s1 - d1) * alpha >> 8)) & 0xff00ff;
+                s &= 0xff00;
+                d &= 0xff00;
+                d = (d + ((s - d) * alpha >> 8)) & 0xff00;
+                *dstp = d1 | d | dalpha;
+            }
+            ++srcp;
+            ++dstp;
+        }, width);
+        srcp += srcskip;
+        dstp += dstskip;
+    }
+}
+
+static void BlitAlphatoARGB8888PixelAlpha(struct rtgui_blit_info *info)
+{
+    rt_uint32_t srcpixel;
+    rt_uint32_t srcR, srcG, srcB, srcA;
+    rt_uint32_t dstpixel;
+    rt_uint32_t dstR, dstG, dstB, dstA;
+
+    srcR = info->r;
+    srcG = info->g;
+    srcB = info->b;
+
+    while (info->dst_h--)
+    {
+        rt_uint8_t *src = (rt_uint8_t *)info->src;
+        rt_uint32_t *dst = (rt_uint32_t *)info->dst;
+        int n = info->dst_w;
+        while (n--)
+        {
+            srcA = (rt_uint8_t)(*src);
+            ARGB8888_FROM_RGBA(srcpixel, srcR, srcG, srcB, srcA);
+
+            /* not do alpha blend */
+            if (srcA == 255)
+            {
+                *dst = srcpixel;
+            }
+            else if (srcA >> 3 == 0)
+            {
+                /* keep original pixel data */
+            }
+            else
+            {
+                dstpixel = *dst;
+                dstA = (rt_uint8_t)(dstpixel >> 24);
+                dstR = (rt_uint8_t)(dstpixel >> 16);
+                dstG = (rt_uint8_t)(dstpixel >> 8);
+                dstB = (rt_uint8_t)dstpixel;
+
+                if (dstA)
+                {
+                    int alpha = srcA + 1;
+                    int inverse_alpha = 257 - alpha;
+
+                    dstR = ((srcR * alpha) + (inverse_alpha * dstR)) >> 8;
+                    dstG = ((srcG * alpha) + (inverse_alpha * dstG)) >> 8;
+                    dstB = ((srcB * alpha) + (inverse_alpha * dstB)) >> 8;
+                    dstA = srcA + ((255 - srcA) * dstA) / 255;
+
+                    dstpixel = ((rt_uint32_t)dstA << 24) | ((rt_uint32_t)dstR << 16) | ((rt_uint32_t)dstG << 8) | dstB;
+                }
+                else
+                {
+                    dstpixel = ((rt_uint32_t)srcA << 24) | ((rt_uint32_t)srcR << 16) | ((rt_uint32_t)srcG << 8) | srcB;
+                }
+
+                *dst = dstpixel;
+            }
+
+            ++src;
+            ++dst;
+        }
+
+        info->src += info->src_pitch;
+        info->dst += info->dst_pitch;
+    }
 }
 
 static void BlitARGB8888toARGB8888PixelAlpha(struct rtgui_blit_info *info)
@@ -972,23 +1156,50 @@ static void BlitARGB8888toARGB8888PixelAlpha(struct rtgui_blit_info *info)
     rt_uint32_t dstpixel;
     rt_uint32_t dstR, dstG, dstB, dstA;
 
-    while (info->dst_h--) {
+    while (info->dst_h--)
+    {
         rt_uint32_t *src = (rt_uint32_t *)info->src;
         rt_uint32_t *dst = (rt_uint32_t *)info->dst;
         int n = info->dst_w;
-        while (n--) {
+        while (n--)
+        {
             srcpixel = *src;
-            srcA = (rt_uint8_t)(srcpixel >> 24); srcR = (rt_uint8_t)(srcpixel >> 16); srcG = (rt_uint8_t)(srcpixel >> 8); srcB = (rt_uint8_t)srcpixel;
-            dstpixel = *dst;
-            dstA = (rt_uint8_t)(dstpixel >> 24); dstR = (rt_uint8_t)(dstpixel >> 16); dstG = (rt_uint8_t)(dstpixel >> 8); dstB = (rt_uint8_t)dstpixel;
+            srcA = (rt_uint8_t)(srcpixel >> 24);
 
-            dstR = srcR + ((255 - srcA) * dstR) / 255;
-            dstG = srcG + ((255 - srcA) * dstG) / 255;
-            dstB = srcB + ((255 - srcA) * dstB) / 255;
-            dstA = srcA + ((255 - srcA) * dstA) / 255;
+            /* not do alpha blend */
+            if (srcA == 255)
+            {
+                *dst = srcpixel;
+            }
+            else if (srcA == 0)
+            {
+                /* keep original pixel data */
+            }
+            else
+            {
+                srcR = (rt_uint8_t)(srcpixel >> 16);
+                srcG = (rt_uint8_t)(srcpixel >> 8);
+                srcB = (rt_uint8_t)srcpixel;
+                dstpixel = *dst;
+                dstA = (rt_uint8_t)(dstpixel >> 24);
+                dstR = (rt_uint8_t)(dstpixel >> 16);
+                dstG = (rt_uint8_t)(dstpixel >> 8);
+                dstB = (rt_uint8_t)dstpixel;
 
-            dstpixel = ((rt_uint32_t)dstA << 24) | ((rt_uint32_t)dstR << 16) | ((rt_uint32_t)dstG << 8) | dstB;
-            *dst = dstpixel;
+                {
+                    int alpha = srcA + 1;
+                    int inverse_alpha = 257 - alpha;
+
+                    dstR = ((srcR * alpha) + (inverse_alpha * dstR)) >> 8;
+                    dstG = ((srcG * alpha) + (inverse_alpha * dstG)) >> 8;
+                    dstB = ((srcB * alpha) + (inverse_alpha * dstB)) >> 8;
+                    dstA = srcA + ((255 - srcA) * dstA) / 255;
+                }
+
+                dstpixel = ((rt_uint32_t)dstA << 24) | ((rt_uint32_t)dstR << 16) | ((rt_uint32_t)dstG << 8) | dstB;
+                *dst = dstpixel;
+            }
+
             ++src;
             ++dst;
         }
@@ -1015,7 +1226,8 @@ BlitRGB565to32(struct rtgui_blit_info * info, const rt_uint32_t* map)
     dst = (rt_uint32_t *) info->dst;
     dstskip = info->dst_skip / 4;
 
-    while (height--) {
+    while (height--)
+    {
         /* *INDENT-OFF* */
         DUFFS_LOOP(
         {
@@ -1049,7 +1261,7 @@ void rtgui_blit(struct rtgui_blit_info * info)
     {
         info->dst_w = info->src_w;
         info->dst_skip  = info->dst_pitch - info->dst_w *
-                         rtgui_color_get_bpp(info->dst_fmt);
+                          rtgui_color_get_bpp(info->dst_fmt);
     }
     else if (info->src_w > info->dst_w)
     {
@@ -1060,64 +1272,175 @@ void rtgui_blit(struct rtgui_blit_info * info)
     if (info->src_h < info->dst_h)
         info->dst_h = info->src_h;
 
-	if (info->src_fmt == RTGRAPHIC_PIXEL_FORMAT_RGB565)
-	{
-		if (info->dst_fmt == RTGRAPHIC_PIXEL_FORMAT_RGB565)
-			Blit565to565PixelAlpha(info);
-		else if (info->dst_fmt == RTGRAPHIC_PIXEL_FORMAT_ARGB888)
-			BlitRGB565toARGB8888(info);
-	}
-	else if (info->src_fmt == RTGRAPHIC_PIXEL_FORMAT_ARGB888)
-	{
-		if (info->dst_fmt == RTGRAPHIC_PIXEL_FORMAT_RGB565)
-			BlitARGBto565PixelAlpha(info);
-		else if (info->dst_fmt == RTGRAPHIC_PIXEL_FORMAT_RGB888)
-			BlitRGBtoRGBPixelAlpha(info);
-		else if (info->dst_fmt == RTGRAPHIC_PIXEL_FORMAT_ARGB888)
-			BlitARGB8888toARGB8888PixelAlpha(info);
-	}
+    if (info->src_fmt == RTGRAPHIC_PIXEL_FORMAT_RGB565)
+    {
+        if (info->dst_fmt == RTGRAPHIC_PIXEL_FORMAT_RGB565)
+            Blit565to565PixelAlpha(info);
+        else if (info->dst_fmt == RTGRAPHIC_PIXEL_FORMAT_ARGB888)
+            BlitRGB565toARGB8888(info);
+    }
+    else if (info->src_fmt == RTGRAPHIC_PIXEL_FORMAT_ARGB888)
+    {
+        switch (info->dst_fmt)
+        {
+        case RTGRAPHIC_PIXEL_FORMAT_RGB565:
+            BlitARGBto565PixelAlpha(info);
+            break;
+        case RTGRAPHIC_PIXEL_FORMAT_RGB888:
+            BlitRGBtoRGBPixelAlpha(info);
+            break;
+        case RTGRAPHIC_PIXEL_FORMAT_ARGB888:
+            BlitARGB8888toARGB8888PixelAlpha(info);
+            break;
+        }
+    }
     else if (info->src_fmt == RTGRAPHIC_PIXEL_FORMAT_RGB888)
     {
         if (info->dst_fmt == RTGRAPHIC_PIXEL_FORMAT_ARGB888)
             BlitRGBtoRGBSurfaceAlpha(info);
     }
+    else if (info->src_fmt == RTGRAPHIC_PIXEL_FORMAT_ALPHA)
+    {
+        switch (info->dst_fmt)
+        {
+        case RTGRAPHIC_PIXEL_FORMAT_RGB565:
+            BlitAlphato565PixelAlpha(info);
+            break;
+        case RTGRAPHIC_PIXEL_FORMAT_RGB888:
+            break;
+        case RTGRAPHIC_PIXEL_FORMAT_ARGB888:
+            BlitAlphatoARGB8888PixelAlpha(info);
+            break;
+        }
+    }
 }
 RTM_EXPORT(rtgui_blit);
 
-#if 0
-void rtgui_blit_client(rtgui_blit_info_src* src, struct rtgui_dc* client, struct rtgui_rect *dc_rect)
+void rtgui_image_info_blit(struct rtgui_image_info* image, struct rtgui_dc* dc, struct rtgui_rect *dc_rect)
 {
-	int index;
-	struct rtgui_widget* widget;
-	rtgui_region_t clip_region;
-	rtgui_rect_t rect;
+    rt_uint8_t bpp, hw_bpp;
+    struct rtgui_widget *owner;
+    struct rtgui_blit_info info;
+    struct rtgui_rect dest_extent;
+    struct rtgui_graphic_driver *hw_driver;
 
-	/* get owner widget */
-    widget = RTGUI_CONTAINER_OF(client, struct rtgui_widget, dc_type);
-	/* get rect information */
-	if (dc_rect == NULL) rtgui_dc_get_rect(client, &rect);
-	else rect = *dc_rect;
+    hw_driver = rtgui_graphic_driver_get_default();
+    dest_extent = *dc_rect;
 
-	/* to device */
-	rtgui_rect_moveto(&rect, widget->extent.x1, widget->extent.y1);
-	/* get the clipped region */
-    rtgui_region_intersect_rect(&clip_region, &widget->clip, &rect);
+    if (dc->type == RTGUI_DC_CLIENT && hw_driver->framebuffer)
+    {
+        int index, num_rects;
+        struct rtgui_rect *rects;
+        struct rtgui_region dest_region;
 
-	/* only 1 rect in extant */
-	if (clip_region.data == RT_NULL)
-	{
-		struct rtgui_blit_info info;
-	}
-	else
-	{
-		/* blit on each rect */
-	    for (index = 0; index < clip_region.data.numRects; index ++)
-	    {
-	    }
-	}
+        bpp = rtgui_color_get_bpp(image->src_fmt);
+        hw_bpp = rtgui_color_get_bpp(hw_driver->pixel_format);
 
-    rtgui_region_fini(&clip_region);
+        owner = RTGUI_CONTAINER_OF(dc, struct rtgui_widget, dc_type);
+        rtgui_widget_rect_to_device(owner, &dest_extent);
+
+        /* get intersect region clip */
+        rtgui_region_init_with_extents(&dest_region, &dest_extent);
+        rtgui_region_intersect_rect(&dest_region, &(owner->clip), &dest_extent);
+
+        num_rects = rtgui_region_num_rects(&dest_region);
+        rects = rtgui_region_rects(&dest_region);
+
+        /* fill common info */
+        info.a = image->a;
+        info.src_fmt = image->src_fmt;
+        info.src_pitch = image->src_pitch;
+
+        info.dst_fmt = hw_driver->pixel_format;
+        info.dst_pitch = hw_driver->pitch;
+
+        for (index = 0; index < num_rects; index ++)
+        {
+            struct rtgui_rect *r = &rects[index];
+
+            /* blit source */
+            info.src = image->pixels + (r->x1 - dest_extent.x1) * bpp + (r->y1 - dest_extent.y1) * image->src_pitch;
+            info.src_h = rtgui_rect_height(*r);
+            info.src_w = rtgui_rect_width(*r);
+            info.src_skip = info.src_pitch - info.src_w * bpp;
+
+            /* blit destination */
+            info.dst = (rt_uint8_t*)hw_driver->framebuffer + r->y1 * hw_driver->pitch +
+                       r->x1 * hw_bpp;
+            info.dst_h = rtgui_rect_height(*r);
+            info.dst_w = rtgui_rect_width(*r);
+            info.dst_skip = info.dst_pitch - info.dst_w * hw_bpp;
+
+            rtgui_blit(&info);
+        }
+
+        rtgui_region_fini(&dest_region);
+    }
+    else if (dc->type == RTGUI_DC_HW && hw_driver->framebuffer)
+    {
+        struct rtgui_dc_hw *hw = (struct rtgui_dc_hw *)dc;
+        struct rtgui_rect *r;
+
+        bpp = rtgui_color_get_bpp(image->src_fmt);
+        hw_bpp = rtgui_color_get_bpp(hw_driver->pixel_format);
+
+        owner = hw->owner;
+        rtgui_widget_rect_to_device(owner, &dest_extent);
+        r = &dest_extent;
+
+        /* fill common info */
+        info.a = image->a;
+        info.src_fmt = image->src_fmt;
+        info.src_pitch = image->src_pitch;
+
+        info.dst_fmt = hw_driver->pixel_format;
+        info.dst_pitch = hw_driver->pitch;
+
+        /* blit source */
+        info.src = image->pixels;
+        info.src_h = rtgui_rect_height(*r);
+        info.src_w = rtgui_rect_width(*r);
+        info.src_skip = info.src_pitch - info.src_w * bpp;
+
+        /* blit destination */
+        info.dst = (rt_uint8_t*)hw_driver->framebuffer + r->y1 * hw_driver->pitch + r->x1 * hw_bpp;
+        info.dst_h = rtgui_rect_height(*r);
+        info.dst_w = rtgui_rect_width(*r);
+        info.dst_skip = info.dst_pitch - info.dst_w * hw_bpp;
+
+        rtgui_blit(&info);
+    }
+    else if (dc->type == RTGUI_DC_BUFFER)
+    {
+        struct rtgui_rect *r;
+        struct rtgui_dc_buffer *dc_buffer = (struct rtgui_dc_buffer*)dc;
+
+        bpp = rtgui_color_get_bpp(image->src_fmt);
+        hw_bpp = rtgui_color_get_bpp(dc_buffer->pixel_format);
+
+        r = &dest_extent;
+
+        /* fill common info */
+        info.a = image->a;
+        info.src_fmt = image->src_fmt;
+        info.src_pitch = image->src_pitch;
+
+        info.dst_fmt = dc_buffer->pixel_format;
+        info.dst_pitch = dc_buffer->pitch;
+
+        /* blit source */
+        info.src = image->pixels;
+        info.src_w = rtgui_rect_width(*r);
+        info.src_h = rtgui_rect_height(*r);
+        info.src_skip = info.src_pitch - info.src_w * bpp;
+
+        /* blit destination */
+        info.dst = (rt_uint8_t*)dc_buffer->pixel + r->y1 * dc_buffer->pitch + r->x1 * hw_bpp;
+        info.dst_w = rtgui_rect_width(*r);
+        info.dst_h = rtgui_rect_height(*r);
+        info.dst_skip = info.dst_pitch - info.dst_w * hw_bpp;
+
+        rtgui_blit(&info);
+    }
 }
-RTM_EXPORT(rtgui_blit_client);
-#endif
-
+RTM_EXPORT(rtgui_image_info_blit);

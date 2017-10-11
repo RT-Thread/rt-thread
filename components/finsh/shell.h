@@ -33,15 +33,8 @@
 #include <rtthread.h>
 #include "finsh.h"
 
-/* For historical reasons, users don't define FINSH_USING_HISTORY in rtconfig.h
- * but expect the history feature. So you sould define FINSH_USING_HISTORY to 0
- * to disable it from the rtconfig.h. */
-#ifdef FINSH_USING_HISTORY
-#    if FINSH_USING_HISTORY == 0
-#        undef FINSH_USING_HISTORY
-#    endif
-#else
-#    define FINSH_USING_HISTORY
+#ifndef FINSH_USING_HISTORY
+#define FINSH_USING_HISTORY
 #endif
 
 #ifndef FINSH_THREAD_PRIORITY
@@ -109,7 +102,9 @@ struct finsh_shell
 	rt_uint8_t line_position;
 	rt_uint8_t line_curpos;
 
+#ifndef RT_USING_DFS
 	rt_device_t device;
+#endif
 
 #ifdef FINSH_USING_AUTH
 	char password[FINSH_PASSWORD_MAX];

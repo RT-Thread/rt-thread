@@ -1,18 +1,27 @@
 /*
  * File      : dc_hw.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
  * 2009-10-16     Bernard      first version
  */
 #include <rtgui/dc.h>
-#include <rtgui/dc_hw.h>
 #include <rtgui/driver.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/rtgui_app.h>
@@ -54,17 +63,17 @@ struct rtgui_dc *rtgui_dc_hw_create(rtgui_widget_t *owner)
 
     /* create DC */
     dc = (struct rtgui_dc_hw *) rtgui_malloc(sizeof(struct rtgui_dc_hw));
-	if (dc)
-	{
-		dc->parent.type = RTGUI_DC_HW;
-		dc->parent.engine = &dc_hw_engine;
-		dc->owner = owner;
-		dc->hw_driver = rtgui_graphic_driver_get_default();
+    if (dc)
+    {
+        dc->parent.type = RTGUI_DC_HW;
+        dc->parent.engine = &dc_hw_engine;
+        dc->owner = owner;
+        dc->hw_driver = rtgui_graphic_driver_get_default();
 
-		return &(dc->parent);
-	}
+        return &(dc->parent);
+    }
 
-	return RT_NULL;
+    return RT_NULL;
 }
 
 static rt_bool_t rtgui_dc_hw_fini(struct rtgui_dc *dc)

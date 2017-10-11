@@ -1,16 +1,26 @@
 /*
  * File      : topwin.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
  * 2009-10-16     Bernard      first version
- * 2012-02-25     Grissiom     rewrite topwin implementation 
+ * 2012-02-25     Grissiom     rewrite topwin implementation
  */
 #include "topwin.h"
 #include "mouse.h"
@@ -25,7 +35,7 @@
 #include <rtgui/widgets/container.h>
 
 /*
- * windows tree in the server side. 
+ * windows tree in the server side.
  *
  * This list is divided into two parts. The first part is the shown list, in
  * which all the windows have the WINTITLE_SHOWN flag set. Second part is the
@@ -224,7 +234,7 @@ static struct rtgui_topwin* _rtgui_topwin_get_next_shown(struct rtgui_topwin *to
     if (top->parent == RT_NULL)
     {
         if (top->list.next != &_rtgui_topwin_list &&
-            get_topwin_from_list(top->list.next)->flag & WINTITLE_SHOWN)
+                get_topwin_from_list(top->list.next)->flag & WINTITLE_SHOWN)
             top = _rtgui_topwin_get_topmost_child_shown(get_topwin_from_list(top->list.next));
         else
             return RT_NULL;
@@ -605,7 +615,7 @@ rt_inline void _rtgui_topwin_preorder_map(struct rtgui_topwin *topwin, void (*fu
     func(topwin);
 
     rt_list_foreach(child, &topwin->child_list, next)
-        _rtgui_topwin_preorder_map(get_topwin_from_list(child), func);
+    _rtgui_topwin_preorder_map(get_topwin_from_list(child), func);
 }
 
 rt_inline void _rtgui_topwin_mark_hidden(struct rtgui_topwin *topwin)
@@ -743,7 +753,7 @@ rt_err_t rtgui_topwin_move(struct rtgui_event_win_move *event)
     /* find in show list */
     topwin = rtgui_topwin_search_in_list(event->wid, &_rtgui_topwin_list);
     if (topwin == RT_NULL ||
-        !(topwin->flag & WINTITLE_SHOWN))
+            !(topwin->flag & WINTITLE_SHOWN))
     {
         return -RT_ERROR;
     }
@@ -886,7 +896,7 @@ struct rtgui_topwin *rtgui_topwin_get_wnd_no_modaled(int x, int y)
 
 /* clip region from topwin, and the windows beneath it. */
 rt_inline void _rtgui_topwin_clip_to_region(struct rtgui_topwin *topwin,
-                                            struct rtgui_region *region)
+        struct rtgui_region *region)
 {
     RT_ASSERT(region != RT_NULL);
     RT_ASSERT(topwin != RT_NULL);
@@ -905,7 +915,7 @@ static void rtgui_topwin_update_clip(void)
     struct rtgui_region region_available;
 
     if (rt_list_isempty(&_rtgui_topwin_list) ||
-        !(get_topwin_from_list(_rtgui_topwin_list.next)->flag & WINTITLE_SHOWN))
+            !(get_topwin_from_list(_rtgui_topwin_list.next)->flag & WINTITLE_SHOWN))
         return;
 
     RTGUI_EVENT_CLIP_INFO_INIT(&eclip);
@@ -1004,7 +1014,8 @@ rt_err_t rtgui_topwin_modal_enter(struct rtgui_event_win_modal_enter *event)
     /* modal window should be on top already */
     RT_ASSERT(get_topwin_from_list(parent_top->child_list.next) == topwin);
 
-    do {
+    do
+    {
         rt_list_foreach(node, &parent_top->child_list, next)
         {
             get_topwin_from_list(node)->flag |= WINTITLE_MODALED;
@@ -1057,8 +1068,8 @@ void rtgui_topwin_remove_monitor_rect(struct rtgui_win *wid, rtgui_rect_t *rect)
 }
 
 static struct rtgui_object* _get_obj_in_topwin(struct rtgui_topwin *topwin,
-                                               struct rtgui_app *app,
-                                               rt_uint32_t id)
+        struct rtgui_app *app,
+        rt_uint32_t id)
 {
     struct rtgui_object *object;
     struct rt_list_node *node;
@@ -1124,7 +1135,7 @@ static void _rtgui_topwin_dump(struct rtgui_topwin *topwin)
                topwin, topwin->wid->title, topwin->flag,
                topwin->flag & WINTITLE_SHOWN ? 'S' : 'H',
                topwin->flag & WINTITLE_MODALED ? 'm' :
-                  topwin->flag & WINTITLE_MODALING ? 'M' : ' ');
+               topwin->flag & WINTITLE_MODALING ? 'M' : ' ');
 }
 
 static void _rtgui_topwin_dump_tree(struct rtgui_topwin *topwin)

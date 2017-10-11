@@ -28,7 +28,11 @@ if RT_USING_DFS
         config RT_DFS_ELM_CODE_PAGE
             int "OEM code page"
             default 437
-        
+
+        config RT_DFS_ELM_WORD_ACCESS
+            bool "Using RT_DFS_ELM_WORD_ACCESS"
+            default y   
+
         choice 
             prompt "Support long file name"
             default RT_DFS_ELM_USE_LFN_0

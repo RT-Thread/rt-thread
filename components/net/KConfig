@@ -15,9 +15,6 @@ config RT_USING_LWIP
             config RT_USING_LWIP141
                 bool "lwIP v1.4.1"
 
-            config RT_USING_LWIP200
-                bool "lwIP v2.0.0"
-
             config RT_USING_LWIP202
                 bool "lwIP v2.0.2"
         endchoice
@@ -170,6 +167,6 @@ config RT_USING_NETUTILS
     bool "Enable net utils"
     default n
 
-#endif
+endif
 
 endmenu

@@ -118,7 +118,7 @@ def IARProject(target, script):
         if name.text == 'CCIncludePath2' or name.text == 'newCCIncludePaths':
             for path in paths:
                 state = SubElement(option, 'state')
-                if os.path.isabs(path):
+                if os.path.isabs(path) or path.startswith('$'):
                     state.text = path
                 else:
                     state.text = '$PROJ_DIR$\\' + path
