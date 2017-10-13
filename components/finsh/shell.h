@@ -102,7 +102,7 @@ struct finsh_shell
 	rt_uint8_t line_position;
 	rt_uint8_t line_curpos;
 
-#ifndef RT_USING_DFS
+#ifndef RT_USING_POSIX_STDIN
 	rt_device_t device;
 #endif
 
@@ -124,3 +124,4 @@ const char *finsh_get_password(void);
 #endif
 
 #endif
+
