@@ -66,7 +66,7 @@ static rt_size_t i2c_bus_device_write(rt_device_t dev,
 }
 
 static rt_err_t i2c_bus_device_control(rt_device_t dev,
-                                       rt_uint8_t  cmd,
+                                       int         cmd,
                                        void       *args)
 {
     rt_err_t ret;

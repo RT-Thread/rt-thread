@@ -173,7 +173,7 @@ static rt_err_t sst25vfxx_flash_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_err_t sst25vfxx_flash_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t sst25vfxx_flash_control(rt_device_t dev, int cmd, void *args)
 {
     struct spi_flash_sst25vfxx * spi_flash;
 

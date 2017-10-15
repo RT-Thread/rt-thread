@@ -60,7 +60,7 @@ static rt_size_t _pin_write(rt_device_t dev, rt_off_t pos, const void *buffer, r
     return size;
 }
 
-static rt_err_t  _pin_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t  _pin_control(rt_device_t dev, int cmd, void *args)
 {
     struct rt_device_pin_mode *mode;
     struct rt_device_pin *pin = (struct rt_device_pin *)dev;

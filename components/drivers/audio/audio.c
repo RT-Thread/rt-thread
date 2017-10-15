@@ -293,7 +293,7 @@ static rt_size_t _audio_dev_write(struct rt_device *dev, rt_off_t pos, const voi
     return size;
 }
 
-static rt_err_t _audio_dev_control(struct rt_device *dev, rt_uint8_t cmd, void *args)
+static rt_err_t _audio_dev_control(struct rt_device *dev, int cmd, void *args)
 {
     rt_err_t result = RT_EOK;
     struct rt_audio_device *audio;
