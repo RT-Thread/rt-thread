@@ -108,13 +108,23 @@ void rt_tick_increase(void)
  * This function will calculate the tick from millisecond.
  *
  * @param ms the specified millisecond
+ *           - Negative Number wait forever
+ *           - Zero not wait
+ *           - Max 0x7fffffff
  *
  * @return the calculated tick
  */
-rt_tick_t rt_tick_from_millisecond(rt_uint32_t ms)
+int rt_tick_from_millisecond(rt_int32_t ms)
 {
+    int tick;
+
+    if (ms < 0)
+        tick = RT_WAITING_FOREVER;
+    else
+        tick = (RT_TICK_PER_SECOND * ms + 999) / 1000;
+
     /* return the calculated tick */
-    return (RT_TICK_PER_SECOND * ms + 999) / 1000;
+    return tick;
 }
 RTM_EXPORT(rt_tick_from_millisecond);
 

@@ -42,7 +42,6 @@
 
 static rt_int16_t rt_scheduler_lock_nest;
 extern volatile rt_uint8_t rt_interrupt_nest;
-extern rt_ubase_t __rt_ffs(rt_ubase_t value);
 
 rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 struct rt_thread *rt_current_thread;
@@ -241,8 +240,18 @@ void rt_schedule(void)
 
             if (rt_interrupt_nest == 0)
             {
+                extern void rt_thread_handle_sig(rt_bool_t clean_state);
+
                 rt_hw_context_switch((rt_uint32_t)&from_thread->sp,
                                      (rt_uint32_t)&to_thread->sp);
+
+                /* enable interrupt */
+                rt_hw_interrupt_enable(level);
+
+#ifdef RT_USING_SIGNALS
+                /* check signal status */
+                rt_thread_handle_sig(RT_TRUE);
+#endif
             }
             else
             {
@@ -250,12 +259,16 @@ void rt_schedule(void)
 
                 rt_hw_context_switch_interrupt((rt_uint32_t)&from_thread->sp,
                                                (rt_uint32_t)&to_thread->sp);
+                /* enable interrupt */
+                rt_hw_interrupt_enable(level);
             }
         }
+        else 
+        {
+            /* enable interrupt */
+            rt_hw_interrupt_enable(level);
+        }
     }
-
-    /* enable interrupt */
-    rt_hw_interrupt_enable(level);
 }
 
 /*

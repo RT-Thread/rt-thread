@@ -39,7 +39,7 @@ config RT_USING_OVERFLOW_CHECK
 
 config RT_DEBUG_INIT
     int "Enable system initialization informat print"
-    default 1
+    default 0
     help
         print the procedure name of initialization
 
@@ -100,6 +100,13 @@ config RT_USING_MESSAGEQUEUE
     bool "Enable message queue"
     default y
 
+config RT_USING_SIGNALS
+    bool "Enable signals"
+    select RT_USING_MEMPOOL
+    default n
+    help
+        A signal is an asynchronous notification sent to a specific thread 
+        in order to notify it of an event that occurred.
 endmenu
 
 menu "Memory Management"

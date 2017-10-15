@@ -451,7 +451,7 @@ RTM_EXPORT(rt_timer_stop);
  *
  * @return RT_EOK
  */
-rt_err_t rt_timer_control(rt_timer_t timer, rt_uint8_t cmd, void *arg)
+rt_err_t rt_timer_control(rt_timer_t timer, int cmd, void *arg)
 {
     /* timer check */
     RT_ASSERT(timer != RT_NULL);

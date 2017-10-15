@@ -237,6 +237,11 @@ int rtthread_startup(void)
     /* scheduler system initialization */
     rt_system_scheduler_init();
 
+#ifdef RT_USING_SIGNALS
+    /* signal system initialization */
+    rt_system_signal_init();
+#endif
+
     /* create init_thread */
     rt_application_init();
 
