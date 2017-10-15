@@ -25,22 +25,6 @@
 #ifndef SELECT_H__
 #define SELECT_H__
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/* select API */
-#ifdef RT_USING_LWIP
-/* we use lwIP's structure definitions. */
-#include <lwip/sockets.h>
-
-int
-select(int maxfdp1, fd_set *readset, fd_set *writeset, fd_set *exceptset,
-            struct timeval *timeout);
-#endif
-
-#ifdef __cplusplus
-}
-#endif
+#include <dfs_select.h>
 
 #endif

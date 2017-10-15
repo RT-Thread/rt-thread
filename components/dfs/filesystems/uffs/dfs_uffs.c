@@ -67,37 +67,37 @@ static int uffs_result_to_dfs(int result)
 		break;
 	case UEACCES:/** Tried to open read-only file for writing, or files sharing mode
 				   does not allow specified operations, or given path is directory */
-		status = -DFS_STATUS_EINVAL;
+		status = -EINVAL;
 		break;/* no suitable */
 	case UEEXIST:   /** _O_CREAT and _O_EXCL flags specified, but filename already exists */
-		status = -DFS_STATUS_EEXIST;
+		status = -EEXIST;
 		break;
 	case UEINVAL:  /** Invalid oflag or pmode argument */
-		status = -DFS_STATUS_EINVAL;
+		status = -EINVAL;
 		break;
 	case UEMFILE: /** No more file handles available(too many open files)  */
 		status = -1;
 		break;
 	case UENOENT: /** file or path not found */
-		status = -DFS_STATUS_ENOENT;
+		status = -ENOENT;
 		break;
 	case UETIME: /** can't set file time */
 		status = -1;
 		break;
 	case UEBADF: /** invalid file handle */
-		status = -DFS_STATUS_EBADF;
+		status = -EBADF;
 		break;
 	case UENOMEM:/** no enough memory */
-		status = -DFS_STATUS_ENOSPC;
+		status = -ENOSPC;
 		break;
 	case UEIOERR: /** I/O error from lower level flash operation */
-		status = -DFS_STATUS_EIO;
+		status = -EIO;
 		break;
 	case UENOTDIR: /** Not a directory */
-		status = -DFS_STATUS_ENOTDIR;
+		status = -ENOTDIR;
 		break;
 	case UEISDIR: /** Is a directory */
-		status = -DFS_STATUS_EISDIR;
+		status = -EISDIR;
 		break;
 	case UEUNKNOWN_ERR:
 	default:
@@ -172,7 +172,7 @@ static int dfs_uffs_mount(
 			break;
 	}
 	if (index == UFFS_DEVICE_MAX)
-		return -DFS_STATUS_ENOENT;
+		return -ENOENT;
 
 	/*2. fill partition structure */
 	nand_part[index].dev = dev;
@@ -216,7 +216,7 @@ static int dfs_uffs_unmount(struct dfs_filesystem* fs)
 			return (result == U_SUCC) ? DFS_STATUS_OK : -1;
 		}
 	}
-	return -DFS_STATUS_ENOENT;
+	return -ENOENT;
 }
 
 static int dfs_uffs_mkfs(rt_device_t dev_id)
@@ -235,7 +235,7 @@ static int dfs_uffs_mkfs(rt_device_t dev_id)
 	if (index == UFFS_DEVICE_MAX)
 	{
 		/* can't find device driver */
-		return -DFS_STATUS_ENOENT;
+		return -ENOENT;
 	}
 
 	/*2. then unmount the partition */
@@ -277,7 +277,7 @@ static int dfs_uffs_statfs(struct dfs_filesystem* fs,
 			break;
 	}
 	if (index == UFFS_DEVICE_MAX)
-		return -DFS_STATUS_ENOENT;
+		return -ENOENT;
 	
 	buf->f_bsize = mtd->page_size*mtd->pages_per_block;
 	buf->f_blocks = (mtd->block_end - mtd->block_start + 1);
@@ -293,11 +293,11 @@ static int dfs_uffs_open(struct dfs_fd* file)
 	char * file_path;
 
 	oflag = file->flags;
-	if (oflag & DFS_O_DIRECTORY)   /* operations about dir */
+	if (oflag & O_DIRECTORY)   /* operations about dir */
 	{
 		uffs_DIR * dir;
 
-		if (oflag & DFS_O_CREAT)   /* create a dir*/
+		if (oflag & O_CREAT)   /* create a dir*/
 		{
 			if (uffs_mkdir(file->path) < 0)
 				return uffs_result_to_dfs(uffs_get_error());
@@ -305,7 +305,7 @@ static int dfs_uffs_open(struct dfs_fd* file)
 		/* open dir */
 		file_path = rt_malloc(FILE_PATH_MAX);
 		if(file_path == RT_NULL)
-			return -DFS_STATUS_ENOMEM;			
+			return -ENOMEM;			
 
 		if (file->path[0] == '/' && !(file->path[1] == 0))
 			rt_snprintf(file_path, FILE_PATH_MAX, "%s/", file->path);
@@ -331,15 +331,15 @@ static int dfs_uffs_open(struct dfs_fd* file)
 	/* int uffs_open(const char *name, int oflag, ...); what is this?
 	 * uffs_open can open dir!!  **/
 	mode = 0;
-	if (oflag & DFS_O_RDONLY) mode |= UO_RDONLY;
-	if (oflag & DFS_O_WRONLY) mode |= UO_WRONLY;
-	if (oflag & DFS_O_RDWR)   mode |= UO_RDWR;
+	if (oflag & O_RDONLY) mode |= UO_RDONLY;
+	if (oflag & O_WRONLY) mode |= UO_WRONLY;
+	if (oflag & O_RDWR)   mode |= UO_RDWR;
 	/* Opens the file, if it is existing. If not, a new file is created. */
-	if (oflag & DFS_O_CREAT) mode |= UO_CREATE;
+	if (oflag & O_CREAT) mode |= UO_CREATE;
 	/* Creates a new file. If the file is existing, it is truncated and overwritten. */
-	if (oflag & DFS_O_TRUNC) mode |= UO_TRUNC;
+	if (oflag & O_TRUNC) mode |= UO_TRUNC;
 	/* Creates a new file. The function fails if the file is already existing. */
-	if (oflag & DFS_O_EXCL) mode |= UO_EXCL;
+	if (oflag & O_EXCL) mode |= UO_EXCL;
 
 	fd = uffs_open(file->path, mode);
 	if (fd < 0)
@@ -355,7 +355,7 @@ static int dfs_uffs_open(struct dfs_fd* file)
 	file->size = uffs_seek(fd, 0, USEEK_END);
 	uffs_seek(fd, file->pos, USEEK_SET);
 
-	if (oflag & DFS_O_APPEND)
+	if (oflag & O_APPEND)
 	{
 		file->pos = uffs_seek(fd, 0, USEEK_END);
 	}
@@ -368,7 +368,7 @@ static int dfs_uffs_close(struct dfs_fd* file)
 	int fd;
 
 	oflag = file->flags;
-	if (oflag & DFS_O_DIRECTORY)
+	if (oflag & O_DIRECTORY)
 	{
 		/* operations about dir */
 		if (uffs_closedir((uffs_DIR *)(file->data)) < 0)
@@ -387,7 +387,7 @@ static int dfs_uffs_close(struct dfs_fd* file)
 
 static int dfs_uffs_ioctl(struct dfs_fd * file, int cmd, void* args)
 {
-	return -DFS_STATUS_ENOSYS;
+	return -ENOSYS;
 }
 
 static int dfs_uffs_read(struct dfs_fd * file, void* buf, rt_size_t len)
@@ -493,12 +493,12 @@ static int dfs_uffs_getdents(
 	
 	/* round count, count is always 1 */
 	count = (count / sizeof(struct dirent)) * sizeof(struct dirent);
-	if (count == 0) return -DFS_STATUS_EINVAL;
+	if (count == 0) return -EINVAL;
 
 	/* allocate file name */
 	file_path = rt_malloc(FILE_PATH_MAX);
 	if (file_path == RT_NULL)
-		return -DFS_STATUS_ENOMEM;
+		return -ENOMEM;
 		
 	index = 0;
 	/* usually, the while loop should only be looped only once! */
@@ -623,19 +623,8 @@ static int dfs_uffs_stat(struct dfs_filesystem* fs, const char *path, struct sta
 	return 0;
 }
 
-static const struct dfs_filesystem_operation dfs_uffs_ops =
+static const struct dfs_file_ops dfs_uffs_fops = 
 {
-	"uffs", /* file system type: uffs */
-#if RTTHREAD_VERSION >= 10100
-	DFS_FS_FLAG_FULLPATH,
-#else
-#error "uffs can only work with rtthread whose version should >= 1.01\n"
-#endif
-	dfs_uffs_mount,
-	dfs_uffs_unmount,
-	dfs_uffs_mkfs,
-	dfs_uffs_statfs,
-
 	dfs_uffs_open,
 	dfs_uffs_close,
 	dfs_uffs_ioctl,
@@ -644,6 +633,23 @@ static const struct dfs_filesystem_operation dfs_uffs_ops =
 	dfs_uffs_flush,
 	dfs_uffs_seek,
 	dfs_uffs_getdents,
+};
+
+static const struct dfs_filesystem_ops dfs_uffs_ops =
+{
+	"uffs", /* file system type: uffs */
+#if RTTHREAD_VERSION >= 10100
+	DFS_FS_FLAG_FULLPATH,
+#else
+#error "uffs can only work with rtthread whose version should >= 1.01\n"
+#endif
+	&dfs_uffs_fops,
+
+	dfs_uffs_mount,
+	dfs_uffs_unmount,
+	dfs_uffs_mkfs,
+	dfs_uffs_statfs,
+
 	dfs_uffs_unlink,
 	dfs_uffs_stat,
 	dfs_uffs_rename,
