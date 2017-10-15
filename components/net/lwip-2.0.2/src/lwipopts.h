@@ -93,11 +93,7 @@
 //#define MEMP_USE_CUSTOM_POOLS       1
 //#define MEM_SIZE                    (1024*64)
 
-#ifdef RT_LWIP_USING_RT_MEM
-#define MEMP_MEM_MALLOC             1
-#else
 #define MEMP_MEM_MALLOC             0
-#endif
 
 /* MEMP_NUM_PBUF: the number of memp struct pbufs. If the application
    sends a lot of data out of ROM (or other static memory), this

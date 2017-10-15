@@ -232,7 +232,7 @@ static rt_size_t telnet_write (rt_device_t dev, rt_off_t pos, const void* buffer
     return (rt_uint32_t) ptr - (rt_uint32_t) buffer;
 }
 
-static rt_err_t telnet_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t telnet_control(rt_device_t dev, int cmd, void *args)
 {
     return RT_EOK;
 }
