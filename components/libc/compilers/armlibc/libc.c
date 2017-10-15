@@ -1,7 +1,9 @@
 /*
- * File      : syscall_mem.c
+ * File     : libc.c
+ * Brief    : armcc libc initialization
+ *
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,26 +21,39 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2015-01-28     Bernard      first version
+ * 2017/10/15     bernard      the first version
  */
+#include <stdio.h>
+#include <stdlib.h>
+
 #include <rtthread.h>
 
-void *malloc(rt_size_t n)
-{
-    return rt_malloc(n);
-}
+#include "libc.h"
 
-void *realloc(void *rmem, rt_size_t newsize)
-{
-    return rt_realloc(rmem, newsize);
-}
+#ifdef RT_USING_PTHREADS
+#include <pthread.h>
+#endif
 
-void *calloc(rt_size_t nelem, rt_size_t elsize)
+int libc_system_init(void)
 {
-    return rt_calloc(nelem, elsize);
-}
+#if defined(RT_USING_DFS) & defined(RT_USING_DFS_DEVFS)
+    rt_device_t dev_console;
 
-void free(void *rmem)
-{
-    rt_free(rmem);
+    dev_console = rt_console_get_device();
+    if (dev_console)
+    {
+    #if defined(RT_USING_POSIX_STDIN)
+        libc_stdio_set_console(dev_console->parent.name, O_RDWR);
+    #else
+        libc_stdio_set_console(dev_console->parent.name, O_WRONLY);
+    #endif
+    }
+#endif
+
+#if defined RT_USING_PTHREADS && !defined RT_USING_COMPONENTS_INIT
+    pthread_system_init();
+#endif
+
+    return 0;
 }
+INIT_COMPONENT_EXPORT(libc_system_init);

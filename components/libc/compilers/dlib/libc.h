@@ -1,7 +1,9 @@
 /*
- * File      : syscall_mem.c
+ * File     : libc.h
+ * Brief    : iar dlib header file
+ *
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,26 +21,18 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2015-01-28     Bernard      first version
+ * 2017/10/15     bernard      the first version
  */
-#include <rtthread.h>
 
-void *malloc(rt_size_t n)
-{
-    return rt_malloc(n);
-}
+#ifndef __RTT_LIBC_H__
+#define __RTT_LIBC_H__
 
-void *realloc(void *rmem, rt_size_t newsize)
-{
-    return rt_realloc(rmem, newsize);
-}
+#include <stddef.h>
 
-void *calloc(rt_size_t nelem, rt_size_t elsize)
-{
-    return rt_calloc(nelem, elsize);
-}
+int libc_system_init(void);
 
-void free(void *rmem)
-{
-    rt_free(rmem);
-}
+int libc_stdio_set_console(const char* device_name, int mode);
+int libc_stdio_read (void *buffer, size_t size);
+int libc_stdio_write(const void *buffer, size_t size);
+
+#endif

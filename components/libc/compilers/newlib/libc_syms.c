@@ -1,6 +1,6 @@
 /*
- * File     : libc.h
- * Brief    : gcc libc header file
+ * File     : libc_syms.c
+ * Brief    : exported symbols for libc.
  *
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
@@ -23,25 +23,50 @@
  * Date           Author       Notes
  * 2017/10/15     bernard      the first version
  */
-#ifndef __RTT_LIBC_H__
-#define __RTT_LIBC_H__
+#include <rtthread.h>
+#include <rtm.h>
 
-#include <sys/time.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-#define MILLISECOND_PER_SECOND  1000UL
-#define MICROSECOND_PER_SECOND  1000000UL
-#define NANOSECOND_PER_SECOND   1000000000UL
+RTM_EXPORT(strcpy);
+RTM_EXPORT(strncpy);
+RTM_EXPORT(strlen);
+RTM_EXPORT(strcat);
+RTM_EXPORT(strstr);
+RTM_EXPORT(strchr);
+RTM_EXPORT(strcmp);
+RTM_EXPORT(strtol);
+RTM_EXPORT(strtoul);
+RTM_EXPORT(strncmp);
 
-#define MILLISECOND_PER_TICK    (MILLISECOND_PER_SECOND / RT_TICK_PER_SECOND)
-#define MICROSECOND_PER_TICK    (MICROSECOND_PER_SECOND / RT_TICK_PER_SECOND)
-#define NANOSECOND_PER_TICK     (NANOSECOND_PER_SECOND  / RT_TICK_PER_SECOND)
+RTM_EXPORT(memcpy);
+RTM_EXPORT(memcmp);
+RTM_EXPORT(memmove);
+RTM_EXPORT(memset);
+RTM_EXPORT(memchr);
 
-int libc_system_init(void);
-int libc_stdio_set_console(const char* device_name, int mode);
+RTM_EXPORT(putchar);
+RTM_EXPORT(puts);
+RTM_EXPORT(printf);
+RTM_EXPORT(sprintf);
+RTM_EXPORT(snprintf);
 
-/* some time related function */
-int libc_set_time(const struct timespec *time);
-int libc_get_time(struct timespec *time);
-int libc_time_to_tick(const struct timespec *time);
+RTM_EXPORT(fwrite);
 
-#endif
+#include <time.h>
+RTM_EXPORT(localtime);
+RTM_EXPORT(time);
+
+#include <setjmp.h>
+RTM_EXPORT(longjmp);
+RTM_EXPORT(setjmp);
+
+RTM_EXPORT(exit);
+RTM_EXPORT(abort);
+
+RTM_EXPORT(rand);
+
+#include <assert.h>
+RTM_EXPORT(__assert_func);

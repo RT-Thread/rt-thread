@@ -1,6 +1,6 @@
 /*
- * File     : libc.c
- * Brief    : gcc libc header file
+ * File     : stdio.c
+ * Brief    : stdio/console
  *
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
@@ -21,44 +21,50 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017/10/15     bernard      the first version
+ * 2017/10/15     bernard      implement stdio for IAR dlib.
  */
-#include <rtthread.h>
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <fcntl.h>
-#include <sys/time.h>
+#include <string.h>
 
+#include <rtthread.h>
 #include "libc.h"
 
-#ifdef RT_USING_PTHREADS
-#include <pthread.h>
-#endif
+#if defined(RT_USING_DFS) && defined(RT_USING_DFS_DEVFS)
+#include <dfs_posix.h>
 
-int libc_system_init(void)
+#define STDIO_DEVICE_NAME_MAX   32
+
+static int std_fd = -1;
+int libc_stdio_set_console(const char* device_name, int mode)
 {
-#ifdef RT_USING_DFS
-    rt_device_t dev_console;
+    int fd;
+    char name[STDIO_DEVICE_NAME_MAX];
 
-    dev_console = rt_console_get_device();
-    if (dev_console)
+    snprintf(name, sizeof(name) - 1, "/dev/%s", device_name);
+    name[STDIO_DEVICE_NAME_MAX - 1] = '\0';
+
+    fd = open(name, mode, 0);
+    if (fd >= 0)
     {
-    #if defined(RT_USING_DFS_DEVFS) && defined(RT_USING_POSIX_STDIN)
-        libc_stdio_set_console(dev_console->parent.name, O_RDWR);
-    #else
-        libc_stdio_set_console(dev_console->parent.name, O_WRONLY);
-    #endif
+        if (std_fd >= 0)
+        {
+            close(std_fd);
+        }
+        std_fd = fd;
     }
-#endif
 
-    /* set PATH and HOME */
-    putenv("PATH=/bin");
-    putenv("HOME=/home");
-
-#if defined RT_USING_PTHREADS && !defined RT_USING_COMPONENTS_INIT
-    pthread_system_init();
-#endif
-
-    return 0;
+    return std_fd;
 }
-INIT_COMPONENT_EXPORT(libc_system_init);
+
+int libc_stdio_read(void *buffer, size_t size)
+{
+    return read(std_fd, buffer, size);
+}
+
+int libc_stdio_write(const void *buffer, size_t size)
+{
+    return write(std_fd, buffer, size);
+}
+#endif

@@ -2,12 +2,22 @@
  * File     : stubs.c
  * Brief    : reimplement some basic functions of arm standard c library
  *
- * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2012, RT-Thread Development Team
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE.
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -28,10 +38,10 @@
 
 #pragma import(__use_no_semihosting_swi)
 
-/* TODO: Standard IO device handles. */
-#define STDIN       1
-#define STDOUT      2
-#define STDERR      3
+/* Standard IO device handles. */
+#define STDIN       0
+#define STDOUT      1
+#define STDERR      2
 
 /* Standard IO device name defines. */
 const char __stdin_name[]  = "STDIN";
@@ -94,7 +104,7 @@ FILEHANDLE _sys_open(const char *name, int openmode)
     if (fd < 0)
         return -1;
     else
-        return fd + STDERR + 1;
+        return fd;
 #endif
 }
 
@@ -103,21 +113,36 @@ int _sys_close(FILEHANDLE fh)
 #ifndef RT_USING_DFS
     return 0;
 #else
-    if (fh < STDERR)
-        return 0;
+    if (fh <= STDERR) return 0;
 
-    return close(fh - STDERR - 1);
+    return close(fh);
 #endif
 }
 
-/**
- * read data
+/*
+ * Read from a file. Can return:
+ *  - zero if the read was completely successful
+ *  - the number of bytes _not_ read, if the read was partially successful
+ *  - the number of bytes not read, plus the top bit set (0x80000000), if
+ *    the read was partially successful due to end of file
+ *  - -1 if some error other than EOF occurred
  *
- * @param fh - file handle
- * @param buf - buffer to save read data
- * @param len - max length of data buffer
- * @param mode - useless, for historical reasons
- * @return The number of bytes not read.
+ * It is also legal to signal EOF by returning no data but
+ * signalling no error (i.e. the top-bit-set mechanism need never
+ * be used).
+ *
+ * So if (for example) the user is trying to read 8 bytes at a time
+ * from a file in which only 5 remain, this routine can do three
+ * equally valid things:
+ *
+ *  - it can return 0x80000003 (3 bytes not read due to EOF)
+ *  - OR it can return 3 (3 bytes not read), and then return
+ *    0x80000008 (8 bytes not read due to EOF) on the next attempt
+ *  - OR it can return 3 (3 bytes not read), and then return
+ *    8 (8 bytes not read, meaning 0 read, meaning EOF) on the next
+ *    attempt
+ *
+ * `mode' exists for historical reasons and must be ignored.
  */
 int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
 {
@@ -127,8 +152,13 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
 
     if (fh == STDIN)
     {
-        /* TODO */
-        return 0;
+#ifdef RT_USING_POSIX_STDIN
+        size = libc_stdio_read(buf, len);
+        return len - size;
+#else
+        /* no stdin */
+        return -1;
+#endif
     }
 
     if ((fh == STDOUT) || (fh == STDERR))
@@ -137,7 +167,7 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
 #ifndef RT_USING_DFS
     return 0;
 #else
-    size = read(fh - STDERR - 1, buf, len);
+    size = read(fh, buf, len);
     if (size >= 0)
         return len - size;
     else
@@ -145,14 +175,10 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
 #endif
 }
 
-/**
- * write data
- *
- * @param fh - file handle
- * @param buf - data buffer
- * @param len - buffer length
- * @param mode - useless, for historical reasons
- * @return a positive number representing the number of characters not written.
+/*
+ * Write to a file. Returns 0 on success, negative on error, and
+ * the number of characters _not_ written on partial success.
+ * `mode' exists for historical reasons and must be ignored.
  */
 int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 {
@@ -165,22 +191,27 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 #ifndef RT_USING_CONSOLE
         return 0;
 #else
-        rt_device_t console_device;
+#ifdef RT_USING_POSIX_STDIN
+        size = libc_stdio_write(buf, len);
+        return len - size;
+#else
+        if (rt_console_get_device())
+        {
+            rt_device_write(rt_console_get_device(), -1, buf, len);
+            return 0;
+        }
 
-        console_device = rt_console_get_device();
-        if (console_device != 0) rt_device_write(console_device, 0, buf, len);
-
-        return 0;
+        return -1;
+#endif
 #endif
     }
 
-    if (fh == STDIN)
-        return -1;
+    if (fh == STDIN) return -1;
 
 #ifndef RT_USING_DFS
     return 0;
 #else
-    size = write(fh - STDERR - 1, buf, len);
+    size = write(fh, buf, len);
     if (size >= 0)
         return len - size;
     else
@@ -188,11 +219,9 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 #endif
 }
 
-/**
- * put he file pointer at offset pos from the beginning of the file.
- *
- * @param pos - offset
- * @return the current file position, or -1 on failed
+/*
+ * Move the file position to a given offset from the file start.
+ * Returns >=0 on success, <0 on failure.
  */
 int _sys_seek(FILEHANDLE fh, long pos)
 {
@@ -204,7 +233,7 @@ int _sys_seek(FILEHANDLE fh, long pos)
 #else
 
     /* position is relative to the start of file fh */
-    return lseek(fh - STDERR - 1, pos, 0);
+    return lseek(fh, pos, 0);
 #endif
 }
 
@@ -285,7 +314,15 @@ int fputc(int c, FILE *f)
     return 1;
 }
 
-int fgetc(FILE *f) {
-  return -1;
+int fgetc(FILE *f) 
+{
+    char ch;
+
+#ifdef RT_USING_POSIX_STDIN
+    if (libc_stdio_read(&ch, 1) == 1)
+        return ch;
+#endif
+
+    return -1;
 }
 #endif
