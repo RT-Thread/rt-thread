@@ -216,7 +216,7 @@ static rt_size_t gd32_emac_write (rt_device_t dev, rt_off_t pos, const void* buf
     return 0;
 }
 
-static rt_err_t gd32_emac_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t gd32_emac_control(rt_device_t dev, int cmd, void *args)
 {
     struct gd32_emac * gd32_emac_device = (struct gd32_emac *)dev;
 

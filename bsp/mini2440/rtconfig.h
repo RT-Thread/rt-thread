@@ -64,6 +64,7 @@
 
 // <section name="RT_USING_DEVICE" description="Using Device Driver Framework" default="true" >
 #define RT_USING_DEVICE
+#define RT_USING_DEVICE_IPC
 // <bool name="RT_USING_UART0" description="Using UART0" default="true" />
 #define RT_USING_UART0
 // <integer name="RT_UART_RX_BUFFER_SIZE" description="The buffer size for UART reception" default="64" />
@@ -128,8 +129,6 @@
 
 // <section name="RT_USING_LWIP" description="lwip, a lightweight TCP/IP protocol stack" default="true" >
 #define RT_USING_LWIP
-// <bool name="RT_LWIP_USING_RT_MEM" description="Using RT-Thread memory management for LwIP" default="true" />
-#define RT_LWIP_USING_RT_MEM
 // <bool name="RT_LWIP_ICMP" description="Enable ICMP protocol" default="true" />
 #define RT_LWIP_ICMP
 // <bool name="RT_LWIP_IGMP" description="Enable IGMP protocol" default="false" />

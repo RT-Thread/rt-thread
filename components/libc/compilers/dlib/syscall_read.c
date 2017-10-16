@@ -27,6 +27,7 @@
 #include <dfs_posix.h>
 #endif
 #include <yfuns.h>
+#include "libc.h"
 
 #pragma module_name = "?__read"
 size_t __read(int handle, unsigned char *buf, size_t len)
@@ -37,8 +38,11 @@ size_t __read(int handle, unsigned char *buf, size_t len)
 
     if (handle == _LLIO_STDIN)
     {
-        /* TODO */
-        return 0;
+#ifdef RT_USING_POSIX_STDIN
+        return libc_stdio_read(buf, len);
+#else
+        return _LLIO_ERROR;
+#endif
     }
 
     if ((handle == _LLIO_STDOUT) || (handle == _LLIO_STDERR))
@@ -47,7 +51,7 @@ size_t __read(int handle, unsigned char *buf, size_t len)
 #ifndef RT_USING_DFS
     return _LLIO_ERROR;
 #else
-    size = read(handle - _LLIO_STDERR - 1, buf, len);
+    size = read(handle, buf, len);
     return size;
 #endif
 }

@@ -222,7 +222,7 @@ static rt_err_t rt_mmcsd_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_err_t rt_mmcsd_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_mmcsd_control(rt_device_t dev, int cmd, void *args)
 {
     struct mmcsd_blk_device *blk_dev = (struct mmcsd_blk_device *)dev->user_data;
     switch (cmd)
@@ -247,7 +247,7 @@ static rt_size_t rt_mmcsd_read(rt_device_t dev,
 
     if (dev == RT_NULL)
     {
-        rt_set_errno(-DFS_STATUS_EINVAL);
+        rt_set_errno(-EINVAL);
 
         return 0;
     }
@@ -259,7 +259,7 @@ static rt_size_t rt_mmcsd_read(rt_device_t dev,
     /* the length of reading must align to SECTOR SIZE */
     if (err) 
     {
-        rt_set_errno(-DFS_STATUS_EIO);
+        rt_set_errno(-EIO);
         return 0;
     }
     return size;
@@ -276,7 +276,7 @@ static rt_size_t rt_mmcsd_write(rt_device_t dev,
 
     if (dev == RT_NULL)
     {
-        rt_set_errno(-DFS_STATUS_EINVAL);
+        rt_set_errno(-EINVAL);
 
         return 0;
     }
@@ -288,7 +288,7 @@ static rt_size_t rt_mmcsd_write(rt_device_t dev,
     /* the length of reading must align to SECTOR SIZE */
     if (err) 
     {
-        rt_set_errno(-DFS_STATUS_EIO);
+        rt_set_errno(-EIO);
 
         return 0;
     }

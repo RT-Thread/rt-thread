@@ -56,6 +56,11 @@ rt_err_t rt_device_register(rt_device_t dev,
     dev->ref_count = 0;
     dev->open_flag = 0;
 
+#if defined(RT_USING_DFS) && defined(RT_USING_DFS_DEVFS)
+    dev->fops = RT_NULL;
+    rt_list_init(&(dev->wait_queue));
+#endif
+
     return RT_EOK;
 }
 RTM_EXPORT(rt_device_register);
@@ -213,11 +218,16 @@ rt_err_t rt_device_open(rt_device_t dev, rt_uint16_t oflag)
     {
         result = dev->open(dev, oflag);
     }
+    else
+    {
+        /* set open flag */
+        dev->open_flag = (oflag & RT_DEVICE_OFLAG_MASK);
+    }
 
     /* set open flag */
     if (result == RT_EOK || result == -RT_ENOSYS)
     {
-        dev->open_flag = oflag | RT_DEVICE_OFLAG_OPEN;
+        dev->open_flag |= RT_DEVICE_OFLAG_OPEN;
 
         dev->ref_count++;
         /* don't let bad things happen silently. If you are bitten by this assert,
@@ -349,7 +359,7 @@ RTM_EXPORT(rt_device_write);
  *
  * @return the result
  */
-rt_err_t rt_device_control(rt_device_t dev, rt_uint8_t cmd, void *arg)
+rt_err_t rt_device_control(rt_device_t dev, int cmd, void *arg)
 {
     RT_ASSERT(dev != RT_NULL);
 
@@ -359,7 +369,7 @@ rt_err_t rt_device_control(rt_device_t dev, rt_uint8_t cmd, void *arg)
         return dev->control(dev, cmd, arg);
     }
 
-    return RT_EOK;
+    return -RT_ENOSYS;
 }
 RTM_EXPORT(rt_device_control);
 

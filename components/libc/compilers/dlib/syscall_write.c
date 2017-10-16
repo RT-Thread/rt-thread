@@ -27,6 +27,7 @@
 #include <dfs_posix.h>
 #endif
 #include <yfuns.h>
+#include "libc.h"
 
 #pragma module_name = "?__write"
 
@@ -41,6 +42,10 @@ size_t __write(int handle, const unsigned char *buf, size_t len)
 #ifndef RT_USING_CONSOLE
         return _LLIO_ERROR;
 #else
+
+#ifdef RT_USING_POSIX_STDIN
+        return libc_stdio_write((void*)buf, len);
+#else
         rt_device_t console_device;
 
         console_device = rt_console_get_device();
@@ -48,14 +53,15 @@ size_t __write(int handle, const unsigned char *buf, size_t len)
 
         return len;
 #endif
+#endif
     }
 
-    if (handle == _LLIO_STDIN) return -1;
+    if (handle == _LLIO_STDIN) return _LLIO_ERROR;
 
 #ifndef RT_USING_DFS
     return _LLIO_ERROR;
 #else
-    size = write(handle - _LLIO_STDERR - 1, buf, len);
+    size = write(handle, buf, len);
     return size;
 #endif
 }

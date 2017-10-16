@@ -86,7 +86,7 @@ static char finsh_getchar(void)
 {
     RT_ASSERT(shell != RT_NULL);
 
-#ifdef RT_USING_DFS
+#ifdef RT_USING_POSIX_STDIN
     return getchar();
 #else
     char ch;
@@ -98,7 +98,7 @@ static char finsh_getchar(void)
 #endif
 }
 
-#ifndef RT_USING_DFS
+#ifndef RT_USING_POSIX_STDIN
 static rt_err_t finsh_rx_ind(rt_device_t dev, rt_size_t size)
 {
     RT_ASSERT(shell != RT_NULL);
@@ -372,26 +372,35 @@ static void shell_push_history(struct finsh_shell *shell)
         /* push history */
         if (shell->history_count >= FINSH_HISTORY_LINES)
         {
-            /* move history */
-            int index;
-            for (index = 0; index < FINSH_HISTORY_LINES - 1; index ++)
+            /* if current cmd is same as last cmd, don't push */
+            if (memcmp(&shell->cmd_history[FINSH_HISTORY_LINES - 1], shell->line, shell->line_position))
             {
-                memcpy(&shell->cmd_history[index][0],
-                       &shell->cmd_history[index + 1][0], FINSH_CMD_SIZE);
-            }
-            memset(&shell->cmd_history[index][0], 0, FINSH_CMD_SIZE);
-            memcpy(&shell->cmd_history[index][0], shell->line, shell->line_position);
+                /* move history */
+                int index;
+                for (index = 0; index < FINSH_HISTORY_LINES - 1; index ++)
+                {
+                    memcpy(&shell->cmd_history[index][0],
+                           &shell->cmd_history[index + 1][0], FINSH_CMD_SIZE);
+                }
+                memset(&shell->cmd_history[index][0], 0, FINSH_CMD_SIZE);
+                memcpy(&shell->cmd_history[index][0], shell->line, shell->line_position);
 
-            /* it's the maximum history */
-            shell->history_count = FINSH_HISTORY_LINES;
+                /* it's the maximum history */
+                shell->history_count = FINSH_HISTORY_LINES;
+            }
         }
         else
         {
-            memset(&shell->cmd_history[shell->history_count][0], 0, FINSH_CMD_SIZE);
-            memcpy(&shell->cmd_history[shell->history_count][0], shell->line, shell->line_position);
+            /* if current cmd is same as last cmd, don't push */
+            if (shell->history_count == 0 || memcmp(&shell->cmd_history[shell->history_count - 1], shell->line, shell->line_position))
+            {
+                shell->current_history = shell->history_count;
+                memset(&shell->cmd_history[shell->history_count][0], 0, FINSH_CMD_SIZE);
+                memcpy(&shell->cmd_history[shell->history_count][0], shell->line, shell->line_position);
 
-            /* increase count and set current history position */
-            shell->history_count ++;
+                /* increase count and set current history position */
+                shell->history_count ++;
+            }
         }
     }
     shell->current_history = shell->history_count;
@@ -412,7 +421,7 @@ void finsh_thread_entry(void *parameter)
     finsh_init(&shell->parser);
 #endif
 
-#ifndef RT_USING_DFS
+#ifndef RT_USING_POSIX_STDIN
     /* set console device as shell device */
     if (shell->device == RT_NULL)
     {

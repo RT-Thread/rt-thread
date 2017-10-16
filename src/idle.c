@@ -127,6 +127,10 @@ void rt_thread_idle_excute(void)
             if (thread->cleanup != RT_NULL)
                 thread->cleanup(thread);
 
+#ifdef RT_USING_SIGNALS
+            rt_thread_free_sig(thread);
+#endif
+
             /* if it's a system object, not delete it */
             if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
             {

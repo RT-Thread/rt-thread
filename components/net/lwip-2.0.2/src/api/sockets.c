@@ -196,6 +196,11 @@ static void sockaddr_to_ipaddr_port(const struct sockaddr* sockaddr, ip_addr_t* 
 #define SELWAIT_T u8_t
 #endif
 
+#include <rtthread.h>
+#ifdef RT_USING_DFS_NET
+#include <ipc/waitqueue.h>
+#endif
+
 /** Contains all internal pointers and states used for a socket */
 struct lwip_sock {
   /** sockets currently are built on netconns, each socket has one netconn */
@@ -216,6 +221,10 @@ struct lwip_sock {
   u8_t err;
   /** counter of how many threads are waiting for this socket using select */
   SELWAIT_T select_waiting;
+
+#ifdef RT_USING_DFS_NET
+  rt_wqueue_t wait_head;
+#endif
 };
 
 #if LWIP_NETCONN_SEM_PER_THREAD
@@ -521,7 +530,7 @@ lwip_accept(int s, struct sockaddr *addr, socklen_t *addrlen)
     return -1;
   }
   LWIP_ASSERT("invalid socket index", (newsock >= LWIP_SOCKET_OFFSET) && (newsock < NUM_SOCKETS + LWIP_SOCKET_OFFSET));
-  LWIP_ASSERT("newconn->callback == event_callback", newconn->callback == event_callback);
+  // LWIP_ASSERT("newconn->callback == event_callback", newconn->callback == event_callback);
   nsock = &sockets[newsock - LWIP_SOCKET_OFFSET];
 
   /* See event_callback: If data comes in right away after an accept, even

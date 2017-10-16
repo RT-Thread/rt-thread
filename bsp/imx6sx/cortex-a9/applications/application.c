@@ -13,7 +13,6 @@
  */
 
 #include <rtthread.h>
-#include <components.h>
 
 #include <sdk.h>
 #include <core/ccm_pll.h>

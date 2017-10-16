@@ -67,7 +67,7 @@ static rt_err_t rt_watchdog_close(struct rt_device *dev)
 }
 
 static rt_err_t rt_watchdog_control(struct rt_device *dev,
-                                    rt_uint8_t        cmd,
+                                    int              cmd,
                                     void             *args)
 {
     rt_watchdog_t *wtd;

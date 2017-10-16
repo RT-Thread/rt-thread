@@ -18,10 +18,6 @@
 #include "board.h"
 #include <rtthread.h>
 
-#ifdef  RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif  /* RT_USING_COMPONENTS_INIT */
-
 #include "gpio.h"
 
 

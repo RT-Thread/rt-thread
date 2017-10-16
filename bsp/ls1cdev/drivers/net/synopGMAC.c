@@ -24,7 +24,6 @@
 
 
 #include <rtthread.h>
-#include <components.h>
 #include <rtdef.h>
 //#include <lwip/pbuf.h>
 
@@ -417,7 +416,7 @@ static rt_size_t eth_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt
 	return 0;   
 }
 
-static rt_err_t eth_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t eth_control(rt_device_t dev, int cmd, void *args)
 {
 	switch (cmd)
 	{

@@ -10,7 +10,7 @@ DMA_HandleTypeDef SDTxDMAHandler,SDRxDMAHandler;    //SD卡DMA发送和接收句柄
 
 //SD卡初始化
 //返回值:0 初始化正确；其他值，初始化错误
- rt_uint8_t SD_Init(void)
+rt_uint8_t SD_Init(void)
 {
     rt_uint8_t SD_Error;
     
@@ -320,7 +320,7 @@ static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buf
 	return 0;
 }
 
-static rt_err_t rt_sdcard_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_sdcard_control(rt_device_t dev, int cmd, void *args)
 {
     RT_ASSERT(dev != RT_NULL);
 

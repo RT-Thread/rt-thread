@@ -1630,7 +1630,7 @@ _exit:
     return size;
 }
 
-static rt_err_t rt_msd_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_msd_control(rt_device_t dev, int cmd, void *args)
 {
     struct msd_device * msd = (struct msd_device *)dev;
 

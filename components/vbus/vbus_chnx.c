@@ -174,7 +174,7 @@ static rt_size_t _write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_si
     return size;
 }
 
-rt_err_t  _control(rt_device_t dev, rt_uint8_t cmd, void *args)
+rt_err_t  _control(rt_device_t dev, int cmd, void *args)
 {
     RT_ASSERT(dev);
 

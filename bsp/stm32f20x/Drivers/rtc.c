@@ -77,7 +77,7 @@ static rt_size_t rt_rtc_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_siz
     return 0;
 }
 
-static rt_err_t rt_rtc_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_rtc_control(rt_device_t dev, int cmd, void *args)
 {
     time_t *time;
 	struct tm ti,*to;

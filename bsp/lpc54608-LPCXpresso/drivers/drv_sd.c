@@ -116,7 +116,7 @@ static rt_size_t rt_mci_write(rt_device_t dev, rt_off_t pos, const void *buffer,
     return 0;
 }
 
-static rt_err_t rt_mci_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_mci_control(rt_device_t dev, int cmd, void *args)
 {
     struct mci_device *mci = (struct mci_device *)dev;
 

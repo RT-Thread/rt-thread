@@ -19,12 +19,6 @@
 #include "drv_uart.h"
 #include "nv32.h"
 
-/* RT_USING_COMPONENTS_INIT */
-#ifdef  RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif
-
-
 #define portNVIC_SYSTICK_CTRL           ( ( volatile uint32_t *) 0xe000e010 )
 #define portNVIC_SYSTICK_LOAD           ( ( volatile uint32_t *) 0xe000e014 )
 #define portNVIC_INT_CTRL               ( ( volatile uint32_t *) 0xe000ed04 )

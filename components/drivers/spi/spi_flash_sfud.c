@@ -49,7 +49,7 @@ static char log_buf[RT_CONSOLEBUF_SIZE];
 
 void sfud_log_debug(const char *file, const long line, const char *format, ...);
 
-static rt_err_t rt_sfud_control(rt_device_t dev, rt_uint8_t cmd, void *args) {
+static rt_err_t rt_sfud_control(rt_device_t dev, int cmd, void *args) {
     RT_ASSERT(dev != RT_NULL);
 
     switch (cmd) {

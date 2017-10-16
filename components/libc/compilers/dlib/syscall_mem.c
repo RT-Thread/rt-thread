@@ -35,7 +35,7 @@ void *realloc(void *rmem, rt_size_t newsize)
 
 void *calloc(rt_size_t nelem, rt_size_t elsize)
 {
-	return rt_calloc(nelem, elsize);
+    return rt_calloc(nelem, elsize);
 }
 
 void free(void *rmem)

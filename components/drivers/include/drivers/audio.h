@@ -159,7 +159,7 @@ struct rt_audio_ops
     rt_err_t    (*suspend)      (struct rt_audio_device *audio,int stream);
     rt_err_t    (*resume)       (struct rt_audio_device *audio,int stream);
 
-    rt_err_t    (*control)      (struct rt_audio_device *audio, rt_uint8_t cmd, void *arg);
+    rt_err_t    (*control)      (struct rt_audio_device *audio, int cmd, void *arg);
     rt_size_t   (*transmit)     (struct rt_audio_device *audio, const void *writeBuf,void *readBuf, rt_size_t size);
 
     //get page size of codec or private buffer's info

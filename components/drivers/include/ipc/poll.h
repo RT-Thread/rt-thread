@@ -1,7 +1,7 @@
 /*
- * File      : dfs_init.h
+ * File      : poll.h
  * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2012, RT-Thread Development Team
+ * COPYRIGHT (C) 2006-2017, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,18 +19,32 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2005-02-21     Bernard      The first version.
+ * 2016-09-19     Heyuanjie    The first version.
+ * 2016-12-26     Bernard      Update poll interface
  */
-
-#ifndef __DFS_INIT_H__
-#define __DFS_INIT_H__
+#ifndef IPC_POLL_H__
+#define IPC_POLL_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* Initialization of dfs */
-int dfs_init(void);
+struct rt_pollreq;
+typedef void (*poll_queue_proc)(rt_wqueue_t *, struct rt_pollreq *);
+
+typedef struct rt_pollreq
+{
+    poll_queue_proc _proc;
+    short _key;
+} rt_pollreq_t;
+
+rt_inline void rt_poll_add(rt_wqueue_t *wq, rt_pollreq_t *req)
+{
+    if (req && req->_proc && wq)
+    {
+        req->_proc(wq, req);
+    }
+}
 
 #ifdef __cplusplus
 }

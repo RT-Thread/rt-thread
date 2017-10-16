@@ -1114,6 +1114,8 @@ RTM_EXPORT(rt_hw_console_output);
  */
 void rt_kputs(const char *str)
 {
+    if (!str) return;
+
 #ifdef RT_USING_DEVICE
     if (_console_device == RT_NULL)
     {
@@ -1265,7 +1267,7 @@ const rt_uint8_t __lowest_bit_bitmap[] =
  * @return return the index of the first bit set. If value is 0, then this function
  * shall return 0.
  */
-rt_ubase_t __rt_ffs(rt_ubase_t value)
+int __rt_ffs(int value)
 {
     if (value == 0) return 0;
 

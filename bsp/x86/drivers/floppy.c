@@ -303,7 +303,7 @@ static rt_size_t rt_floppy_write(rt_device_t device, rt_off_t position, const vo
     return size;
 }
 
-static rt_err_t rt_floppy_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_floppy_control(rt_device_t dev, int cmd, void *args)
 {
     RT_ASSERT(dev != RT_NULL);
 

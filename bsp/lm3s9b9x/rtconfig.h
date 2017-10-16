@@ -93,8 +93,6 @@
 /* Trace LwIP protocol*/
 /* #define RT_LWIP_DEBUG */
 
-#define RT_LWIP_USING_RT_MEM
-
 /* Enable ICMP protocol*/
 #define RT_LWIP_ICMP
 
@@ -114,7 +112,7 @@
 #define RT_LWIP_ETH_PAD_SIZE 2
 
 /* Enable SNMP protocol*/
-#define RT_LWIP_SNMP
+//#define RT_LWIP_SNMP
 
 /* Using DHCP*/
 /* #define RT_LWIP_DHCP */

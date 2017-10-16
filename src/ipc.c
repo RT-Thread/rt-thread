@@ -478,7 +478,7 @@ RTM_EXPORT(rt_sem_release);
  *
  * @return the error code
  */
-rt_err_t rt_sem_control(rt_sem_t sem, rt_uint8_t cmd, void *arg)
+rt_err_t rt_sem_control(rt_sem_t sem, int cmd, void *arg)
 {
     rt_ubase_t level;
     RT_ASSERT(sem != RT_NULL);
@@ -644,14 +644,13 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
     register rt_base_t temp;
     struct rt_thread *thread;
 
+    /* this function must not be used in interrupt even if time = 0 */
+    RT_DEBUG_IN_THREAD_CONTEXT;
+
     RT_ASSERT(mutex != RT_NULL);
 
     /* get current thread */
     thread = rt_thread_self();
-    if (!thread) return RT_EOK; /* return directory if scheduler not started */
-
-    /* this function must not be used in interrupt even if time = 0 */
-    RT_DEBUG_IN_THREAD_CONTEXT;
 
     /* disable interrupt */
     temp = rt_hw_interrupt_disable();
@@ -672,6 +671,7 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
     }
     else
     {
+__again:
         /* The value of mutex is 1 in initial status. Therefore, if the
          * value is great than 0, it indicates the mutex is avaible.
          */
@@ -740,6 +740,9 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
 
                 if (thread->error != RT_EOK)
                 {
+                	/* interrupt by signal, try it again */
+                	if (thread->error == -RT_EINTR) goto __again;
+
                     /* return error */
                     return thread->error;
                 }
@@ -778,12 +781,11 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 
     need_schedule = RT_FALSE;
 
-    /* get current thread */
-    thread = rt_thread_self();
-    if (!thread) return RT_EOK;
-
     /* only thread could release mutex because we need test the ownership */
     RT_DEBUG_IN_THREAD_CONTEXT;
+
+    /* get current thread */
+    thread = rt_thread_self();
 
     /* disable interrupt */
     temp = rt_hw_interrupt_disable();
@@ -870,7 +872,7 @@ RTM_EXPORT(rt_mutex_release);
  *
  * @return the error code
  */
-rt_err_t rt_mutex_control(rt_mutex_t mutex, rt_uint8_t cmd, void *arg)
+rt_err_t rt_mutex_control(rt_mutex_t mutex, int cmd, void *arg)
 {
     return -RT_ERROR;
 }
@@ -1212,7 +1214,7 @@ RTM_EXPORT(rt_event_recv);
  *
  * @return the error code
  */
-rt_err_t rt_event_control(rt_event_t event, rt_uint8_t cmd, void *arg)
+rt_err_t rt_event_control(rt_event_t event, int cmd, void *arg)
 {
     rt_ubase_t level;
     RT_ASSERT(event != RT_NULL);
@@ -1687,7 +1689,7 @@ RTM_EXPORT(rt_mb_recv);
  *
  * @return the error code
  */
-rt_err_t rt_mb_control(rt_mailbox_t mb, rt_uint8_t cmd, void *arg)
+rt_err_t rt_mb_control(rt_mailbox_t mb, int cmd, void *arg)
 {
     rt_ubase_t level;
     RT_ASSERT(mb != RT_NULL);
@@ -2235,7 +2237,7 @@ RTM_EXPORT(rt_mq_recv);
  *
  * @return the error code
  */
-rt_err_t rt_mq_control(rt_mq_t mq, rt_uint8_t cmd, void *arg)
+rt_err_t rt_mq_control(rt_mq_t mq, int cmd, void *arg)
 {
     rt_ubase_t level;
     struct rt_mq_message *msg;

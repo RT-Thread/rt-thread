@@ -3,9 +3,7 @@
 #include <rtdevice.h>
 #include "board.h"
 #include <rtthread.h>
-#ifdef  RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif  /* RT_USING_COMPONENTS_INIT */
+
 /* led thread entry */
 #define PINRX 22
 #define PINTX 21

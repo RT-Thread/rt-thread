@@ -1,8 +1,8 @@
 from building import *
-import rtconfig
+Import('rtconfig')
 
-src = Glob('*.c')
-cwd = GetCurrentDir()
+src   = Glob('*.c')
+cwd   = GetCurrentDir()
 group = []
 
 CPPPATH = [cwd]

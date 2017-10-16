@@ -57,6 +57,7 @@
 /* SECTION: Device System */
 /* Using Device System*/
 #define RT_USING_DEVICE
+#define RT_USING_DEVICE_IPC
 
 #define RT_USING_UART1
 // #define RT_USING_UART2
@@ -92,8 +93,6 @@
 
 /* Trace LwIP protocol*/
 /* #define RT_LWIP_DEBUG */
-
-#define RT_LWIP_USING_RT_MEM
 
 /* Enable ICMP protocol*/
 #define RT_LWIP_ICMP

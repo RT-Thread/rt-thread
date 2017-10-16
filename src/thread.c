@@ -185,6 +185,16 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
                   0,
                   RT_TIMER_FLAG_ONE_SHOT);
 
+    /* initialize signal */
+#ifdef RT_USING_SIGNALS
+    thread->sig_mask    = 0x00;
+    thread->sig_pending = 0x00;
+
+    thread->sig_ret     = RT_NULL;
+    thread->sig_vectors = RT_NULL;
+    thread->si_list     = RT_NULL;
+#endif
+
     RT_OBJECT_HOOK_CALL(rt_thread_inited_hook, (thread));
 
     return RT_EOK;
@@ -260,7 +270,7 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
 {
     /* thread check */
     RT_ASSERT(thread != RT_NULL);
-    RT_ASSERT(thread->stat == RT_THREAD_INIT);
+    RT_ASSERT((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_INIT);
 
     /* set current priority to init priority */
     thread->current_priority = thread->init_priority;
@@ -305,7 +315,7 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
     /* thread check */
     RT_ASSERT(thread != RT_NULL);
 
-    if (thread->stat != RT_THREAD_INIT)
+    if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_INIT)
     {
         /* remove from schedule */
         rt_schedule_remove_thread(thread);
@@ -403,7 +413,7 @@ rt_err_t rt_thread_delete(rt_thread_t thread)
     /* thread check */
     RT_ASSERT(thread != RT_NULL);
 
-    if (thread->stat != RT_THREAD_INIT)
+    if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_INIT)
     {
         /* remove from schedule */
         rt_schedule_remove_thread(thread);
@@ -448,7 +458,7 @@ rt_err_t rt_thread_yield(void)
     thread = rt_current_thread;
 
     /* if the thread stat is READY and on ready queue list */
-    if (thread->stat == RT_THREAD_READY &&
+    if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_READY &&
         thread->tlist.next != thread->tlist.prev)
     {
         /* remove thread from thread list */
@@ -535,7 +545,7 @@ RTM_EXPORT(rt_thread_delay);
  *
  * @return RT_EOK
  */
-rt_err_t rt_thread_control(rt_thread_t thread, rt_uint8_t cmd, void *arg)
+rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
 {
     register rt_base_t temp;
 
@@ -549,7 +559,7 @@ rt_err_t rt_thread_control(rt_thread_t thread, rt_uint8_t cmd, void *arg)
         temp = rt_hw_interrupt_disable();
 
         /* for ready thread, change queue */
-        if (thread->stat == RT_THREAD_READY)
+        if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_READY)
         {
             /* remove thread from schedule queue first */
             rt_schedule_remove_thread(thread);
@@ -622,7 +632,7 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
 
     RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread suspend:  %s\n", thread->name));
 
-    if (thread->stat != RT_THREAD_READY)
+    if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_READY)
     {
         RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread suspend: thread disorder, %d\n",
                                        thread->stat));
@@ -664,7 +674,7 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
 
     RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread resume:  %s\n", thread->name));
 
-    if (thread->stat != RT_THREAD_SUSPEND)
+    if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_SUSPEND)
     {
         RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread resume: thread disorder, %d\n",
                                        thread->stat));
@@ -705,7 +715,7 @@ void rt_thread_timeout(void *parameter)
 
     /* thread check */
     RT_ASSERT(thread != RT_NULL);
-    RT_ASSERT(thread->stat == RT_THREAD_SUSPEND);
+    RT_ASSERT((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND);
 
     /* set error number */
     thread->error = -RT_ETIMEOUT;

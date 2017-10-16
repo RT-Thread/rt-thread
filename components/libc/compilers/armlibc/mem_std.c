@@ -32,7 +32,7 @@ RTM_EXPORT(realloc);
 
 void *calloc(rt_size_t nelem, rt_size_t elsize)
 {
-	return rt_calloc(nelem, elsize);
+    return rt_calloc(nelem, elsize);
 }
 RTM_EXPORT(calloc);
 

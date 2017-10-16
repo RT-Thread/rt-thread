@@ -13,7 +13,6 @@
  */
 
 #include <rtthread.h>
-#include <components.h>
 
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)

@@ -59,12 +59,13 @@ if RT_USING_DFS
         
         config RT_DFS_ELM_MAX_LFN
             int "Maximal size of file name length"
-            default 256
-        
+            range 12 255
+            default 255
+
         config RT_DFS_ELM_DRIVES
             int "Number of volumes (logical drives) to be used."
             default 2
-        
+
         config RT_DFS_ELM_MAX_SECTOR_SIZE
             int "Maximum sector size to be handled."
             default 512
@@ -86,12 +87,14 @@ if RT_USING_DFS
     
     config RT_USING_DFS_NET
         bool "Enable BSD socket operated by file system API"
+        depends on RT_USING_LWIP
         default n
         help
             Let BSD socket operated by file system API, such as read/write and involveed in select/poll POSIX APIs.
 
     config RT_USING_DFS_NFS
         bool "Using NFS v3 client file system"
+        depends on RT_USING_LWIP
         default n
 
     if RT_USING_DFS_NFS

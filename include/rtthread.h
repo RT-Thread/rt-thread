@@ -87,7 +87,7 @@ void rt_system_tick_init(void);
 rt_tick_t rt_tick_get(void);
 void rt_tick_set(rt_tick_t tick);
 void rt_tick_increase(void);
-rt_tick_t rt_tick_from_millisecond(rt_uint32_t ms);
+int  rt_tick_from_millisecond(rt_int32_t ms);
 
 void rt_system_timer_init(void);
 void rt_system_timer_thread_init(void);
@@ -107,7 +107,7 @@ rt_timer_t rt_timer_create(const char *name,
 rt_err_t rt_timer_delete(rt_timer_t timer);
 rt_err_t rt_timer_start(rt_timer_t timer);
 rt_err_t rt_timer_stop(rt_timer_t timer);
-rt_err_t rt_timer_control(rt_timer_t timer, rt_uint8_t cmd, void *arg);
+rt_err_t rt_timer_control(rt_timer_t timer, int cmd, void *arg);
 
 rt_tick_t rt_timer_next_timeout_tick(void);
 void rt_timer_check(void);
@@ -149,10 +149,16 @@ rt_err_t rt_thread_delete(rt_thread_t thread);
 
 rt_err_t rt_thread_yield(void);
 rt_err_t rt_thread_delay(rt_tick_t tick);
-rt_err_t rt_thread_control(rt_thread_t thread, rt_uint8_t cmd, void *arg);
+rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg);
 rt_err_t rt_thread_suspend(rt_thread_t thread);
 rt_err_t rt_thread_resume(rt_thread_t thread);
 void rt_thread_timeout(void *parameter);
+
+#ifdef RT_USING_SIGNALS
+void rt_thread_alloc_sig(rt_thread_t tid);
+void rt_thread_free_sig(rt_thread_t tid);
+int  rt_thread_kill(rt_thread_t tid, int sig);
+#endif
 
 #ifdef RT_USING_HOOK
 void rt_thread_suspend_sethook(void (*hook)(rt_thread_t thread));
@@ -189,6 +195,19 @@ void rt_scheduler_sethook(void (*hook)(rt_thread_t from, rt_thread_t to));
 #endif
 
 /**@}*/
+
+/**
+ * @addtogroup Signals
+ * @{
+ */
+#ifdef RT_USING_SIGNALS
+void rt_signal_mask(int signo);
+void rt_signal_unmask(int signo);
+rt_sighandler_t rt_signal_install(int signo, rt_sighandler_t handler);
+
+int rt_system_signal_init(void);
+#endif
+/*@}*/
 
 /**
  * @addtogroup MM
@@ -290,7 +309,7 @@ rt_err_t rt_sem_delete(rt_sem_t sem);
 rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time);
 rt_err_t rt_sem_trytake(rt_sem_t sem);
 rt_err_t rt_sem_release(rt_sem_t sem);
-rt_err_t rt_sem_control(rt_sem_t sem, rt_uint8_t cmd, void *arg);
+rt_err_t rt_sem_control(rt_sem_t sem, int cmd, void *arg);
 #endif
 
 #ifdef RT_USING_MUTEX
@@ -304,7 +323,7 @@ rt_err_t rt_mutex_delete(rt_mutex_t mutex);
 
 rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time);
 rt_err_t rt_mutex_release(rt_mutex_t mutex);
-rt_err_t rt_mutex_control(rt_mutex_t mutex, rt_uint8_t cmd, void *arg);
+rt_err_t rt_mutex_control(rt_mutex_t mutex, int cmd, void *arg);
 #endif
 
 #ifdef RT_USING_EVENT
@@ -322,7 +341,7 @@ rt_err_t rt_event_recv(rt_event_t   event,
                        rt_uint8_t   opt,
                        rt_int32_t   timeout,
                        rt_uint32_t *recved);
-rt_err_t rt_event_control(rt_event_t event, rt_uint8_t cmd, void *arg);
+rt_err_t rt_event_control(rt_event_t event, int cmd, void *arg);
 #endif
 
 #ifdef RT_USING_MAILBOX
@@ -343,7 +362,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
                          rt_uint32_t  value,
                          rt_int32_t   timeout);
 rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_uint32_t *value, rt_int32_t timeout);
-rt_err_t rt_mb_control(rt_mailbox_t mb, rt_uint8_t cmd, void *arg);
+rt_err_t rt_mb_control(rt_mailbox_t mb, int cmd, void *arg);
 #endif
 
 #ifdef RT_USING_MESSAGEQUEUE
@@ -369,7 +388,7 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
                     void      *buffer,
                     rt_size_t  size,
                     rt_int32_t timeout);
-rt_err_t rt_mq_control(rt_mq_t mq, rt_uint8_t cmd, void *arg);
+rt_err_t rt_mq_control(rt_mq_t mq, int cmd, void *arg);
 #endif
 
 /**@}*/
@@ -410,7 +429,7 @@ rt_size_t rt_device_write(rt_device_t dev,
                           rt_off_t    pos,
                           const void *buffer,
                           rt_size_t   size);
-rt_err_t  rt_device_control(rt_device_t dev, rt_uint8_t cmd, void *arg);
+rt_err_t  rt_device_control(rt_device_t dev, int cmd, void *arg);
 
 /**@}*/
 #endif
@@ -512,6 +531,8 @@ int *_rt_errno(void);
 #define errno    *_rt_errno()
 #endif
 #endif
+
+int __rt_ffs(int value);
 
 void *rt_memset(void *src, int c, rt_ubase_t n);
 void *rt_memcpy(void *dest, const void *src, rt_ubase_t n);

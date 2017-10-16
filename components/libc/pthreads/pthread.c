@@ -194,7 +194,7 @@ int pthread_detach(pthread_t thread)
 
     ptd = _pthread_get_data(thread);
 
-    if (thread->stat == RT_THREAD_CLOSE)
+    if ((thread->stat & RT_THREAD_STAT_MASK)== RT_THREAD_CLOSE)
     {
         /* delete joinable semaphore */
         if (ptd->joinable_sem != RT_NULL)
@@ -354,9 +354,20 @@ RTM_EXPORT(pthread_atfork);
 
 int pthread_kill(pthread_t thread, int sig)
 {
-    return EOPNOTSUPP;
+#ifdef RT_USING_SIGNALS
+    return rt_thread_kill(thread, sig);
+#else
+	return ENOSYS;
+#endif
 }
 RTM_EXPORT(pthread_kill);
+
+#ifdef RT_USING_SIGNALS
+int pthread_sigmask(int how, const sigset_t *set, sigset_t *oset)
+{
+	return sigprocmask(how, set, oset);
+}
+#endif
 
 void pthread_cleanup_pop(int execute)
 {

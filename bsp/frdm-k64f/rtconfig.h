@@ -103,8 +103,6 @@
 #define RT_USING_LWIP
 /* Enable LwIP debug output */
 //#define RT_LWIP_DEBUG
-/* LwIP uses RT-Thread Memory Management */
-#define RT_LWIP_USING_RT_MEM
 /* Enable ICMP protocol*/
 #define RT_LWIP_ICMP
 /* Enable UDP protocol*/

@@ -16,10 +16,6 @@
 #include <rtthread.h>
 #include <ls1b.h>
 
-#ifdef RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif
-
 #ifdef RT_USING_RTGUI
 #include <rtgui/rtgui.h>
 extern void rt_hw_dc_init(void);
