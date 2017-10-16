@@ -22,7 +22,6 @@
 
 #ifdef RT_USING_DFS
 #include <dfs_fs.h>
-#include <dfs_init.h>
 #include <dfs_elm.h>
 #endif
 

@@ -112,7 +112,7 @@
 #define RT_LWIP_ETH_PAD_SIZE 2
 
 /* Enable SNMP protocol*/
-#define RT_LWIP_SNMP
+//#define RT_LWIP_SNMP
 
 /* Using DHCP*/
 /* #define RT_LWIP_DHCP */
