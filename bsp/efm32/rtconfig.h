@@ -293,8 +293,6 @@
 //#define RT_USING_LWIP
 //#define RT_USING_NETUTILS
 //#define RT_LWIP_DHCP
-/* LwIP uses RT-Thread Memory Management */
-#define RT_LWIP_USING_RT_MEM
 /* Enable ICMP protocol*/
 #define RT_LWIP_ICMP
 /* Enable ICMP protocol*/

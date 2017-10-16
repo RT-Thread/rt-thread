@@ -141,8 +141,6 @@
 #define RT_USING_GMAC_INT_MODE
 #define RT_USING_LWIP141
 //#define RT_LWIP_DEBUG
-#define RT_LWIP_USING_RT_MEM
-
 
 // <bool name="RT_LWIP_ICMP" description="Enable ICMP protocol" default="true" />
 #define RT_LWIP_ICMP

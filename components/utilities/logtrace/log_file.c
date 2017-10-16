@@ -93,7 +93,7 @@ static rt_size_t fdevice_write(rt_device_t dev, rt_off_t pos, const void *buffer
     return write(fdev->fd, buffer, size);
 }
 
-static rt_err_t fdevice_control(rt_device_t dev, rt_uint8_t cmd, void *arg)
+static rt_err_t fdevice_control(rt_device_t dev, int cmd, void *arg)
 {
     struct file_device *fdev = (struct file_device *)dev;
 

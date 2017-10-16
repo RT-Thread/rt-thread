@@ -154,7 +154,6 @@
 /* Trace LwIP protocol */
 /* #define RT_LWIP_DEBUG */
 
-//#define RT_LWIP_USING_RT_MEM
 //#define RT_LWIP_REASSEMBLY_FRAG
 
 #define SO_REUSE 1

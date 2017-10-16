@@ -1320,7 +1320,7 @@ static rt_err_t eth_dev_init(rt_device_t device)
 }
 
 /* control the interface */
-static rt_err_t eth_dev_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t eth_dev_control(rt_device_t dev, int cmd, void *args)
 {
 	switch(cmd)
 	{

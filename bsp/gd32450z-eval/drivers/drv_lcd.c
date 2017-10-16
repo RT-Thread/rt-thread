@@ -205,7 +205,7 @@ static void tli_config(void)
     tli_layer_init(LAYER0, &tli_layer_init_struct);
 }
 
-static rt_err_t rt_lcd_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_lcd_control(rt_device_t dev, int cmd, void *args)
 {
     switch (cmd)
     {
