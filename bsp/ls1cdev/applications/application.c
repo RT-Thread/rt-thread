@@ -15,7 +15,6 @@
  */
 
 #include <rtthread.h>
-#include <components.h>
 #include "net/synopGMAC.h"
 #include <lwip/api.h>
 

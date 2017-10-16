@@ -15,9 +15,6 @@
 #include <rtdevice.h>
 #include <board.h>
 #include <drv_lpccan.h>
-#ifdef RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif
 
 #ifdef RT_USING_CAN
 

@@ -20,10 +20,6 @@
 #undef RT_USING_CAN
 #endif
 
-#ifdef RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif
-
 #ifdef RT_USING_CAN
 
 #ifndef STM32F10X_CL

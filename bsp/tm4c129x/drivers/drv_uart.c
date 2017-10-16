@@ -18,7 +18,6 @@
 #include <rtdevice.h>
 
 #include "board.h"
-#include <components.h>
 
 #include "inc/hw_memmap.h"
 #include "driverlib/sysctl.h"

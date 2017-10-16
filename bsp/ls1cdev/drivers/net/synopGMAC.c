@@ -24,7 +24,6 @@
 
 
 #include <rtthread.h>
-#include <components.h>
 #include <rtdef.h>
 //#include <lwip/pbuf.h>
 

@@ -23,10 +23,6 @@
 #include "drv_uart.h"
 #include "drv_sdram.h"
 
-#ifdef RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif
-
 /**
  * This is the timer interrupt service routine.
  *

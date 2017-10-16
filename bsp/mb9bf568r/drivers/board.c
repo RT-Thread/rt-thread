@@ -19,10 +19,6 @@
 
 #include "serial.h"
 
-#ifdef  RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif  /* RT_USING_COMPONENTS_INIT */
-
 /**
  * @addtogroup FM4
  */

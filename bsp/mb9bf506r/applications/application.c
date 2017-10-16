@@ -22,10 +22,6 @@
 #include "board.h"
 #include "led.h"
 
-#ifdef RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif
-
 #ifdef RT_USING_DFS
 /* dfs init */
 #include <dfs_init.h>
