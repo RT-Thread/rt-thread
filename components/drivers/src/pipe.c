@@ -23,8 +23,10 @@
  */
 #include <rthw.h>
 #include <rtdevice.h>
+#if defined(RT_USING_DFS)
 #include <dfs_file.h>
 #include <dfs_posix.h>
+#endif
 
 #if defined(RT_USING_DFS) && defined(RT_USING_DFS_DEVFS)
 static int pipe_open(struct dfs_fd *fd)

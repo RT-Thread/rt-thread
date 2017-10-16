@@ -48,6 +48,7 @@
 #include <posix_termios.h>
 #endif
 
+#ifdef RT_USING_DFS
 #ifdef RT_USING_DFS_DEVFS
 #include <dfs_posix.h>
 
@@ -209,7 +210,7 @@ const static struct dfs_file_ops _serial_fops =
     serial_fops_poll,
 };
 #endif
-
+#endif
 /*
  * Serial poll routines
  */
