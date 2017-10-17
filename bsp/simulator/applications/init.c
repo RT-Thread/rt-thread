@@ -38,7 +38,7 @@ extern void lwip_system_init(void);
 #endif
 
 #ifdef RT_USING_DFS
-#include <dfs_init.h>
+#include <dfs.h>
 #include <dfs_fs.h>
 #ifdef RT_USING_DFS_ELMFAT
 #include <dfs_elm.h>
