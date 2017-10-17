@@ -84,13 +84,12 @@ const char *finsh_get_prompt()
 
 static char finsh_getchar(void)
 {
-    RT_ASSERT(shell != RT_NULL);
-
 #ifdef RT_USING_POSIX_STDIN
     return getchar();
 #else
     char ch;
 
+    RT_ASSERT(shell != RT_NULL);
     while (rt_device_read(shell->device, -1, &ch, 1) != 1)
         rt_sem_take(&shell->rx_sem, RT_WAITING_FOREVER);
 
