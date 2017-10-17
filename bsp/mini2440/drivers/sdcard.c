@@ -398,7 +398,7 @@ static rt_size_t rt_sdcard_read(rt_device_t dev,
 
     if (dev == RT_NULL)
     {
-        rt_set_errno(-DFS_STATUS_EINVAL);
+        rt_set_errno(-EINVAL);
 
         return 0;
     }
@@ -429,7 +429,7 @@ static rt_size_t rt_sdcard_write(rt_device_t dev,
 
     if (dev == RT_NULL)
     {
-        rt_set_errno(-DFS_STATUS_EINVAL);
+        rt_set_errno(-EINVAL);
 
         return 0;
     }
