@@ -153,4 +153,6 @@
 /* the size of each pbuf in the pbuf pool. */
 #define RT_LWIP_PBUF_POOL_BUFSIZE		1500
 
+#define RT_USING_LIBC
+#define RT_USING_LWIP141
 #endif
