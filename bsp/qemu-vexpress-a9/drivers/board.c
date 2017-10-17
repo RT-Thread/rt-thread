@@ -14,7 +14,6 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include <components.h>
 
 #include "board.h"
 
@@ -89,3 +88,4 @@ void rt_hw_board_init(void)
 
     rt_thread_idle_sethook(idle_wfi);
 }
+
