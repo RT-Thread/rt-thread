@@ -52,7 +52,7 @@ config RT_USING_LWIP
 
                 config LWIP_USING_DHCPD
                     bool "Enable DHCP server"
-                    default y
+                    default n
             endif
 
         config RT_LWIP_UDP
