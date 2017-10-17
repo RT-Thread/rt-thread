@@ -8,6 +8,8 @@ struct rt_workqueue
 {
     rt_list_t      work_list;
     struct rt_work *work_current; /* current work */
+
+    struct rt_semaphore sem; 
     rt_thread_t    work_thread;
 };
 
@@ -27,6 +29,7 @@ struct rt_workqueue *rt_workqueue_create(const char* name, rt_uint16_t stack_siz
 rt_err_t rt_workqueue_destroy(struct rt_workqueue* queue);
 rt_err_t rt_workqueue_dowork(struct rt_workqueue* queue, struct rt_work* work);
 rt_err_t rt_workqueue_cancel_work(struct rt_workqueue* queue, struct rt_work* work);
+rt_err_t rt_workqueue_cancel_work_sync(struct rt_workqueue* queue, struct rt_work* work);
 
 rt_inline void rt_work_init(struct rt_work* work, void (*work_func)(struct rt_work* work, void* work_data),
     void* work_data)
