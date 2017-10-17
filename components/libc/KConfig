@@ -1,4 +1,4 @@
-menu "libc"
+menu "POSIX layer and C standard library"
 
 config RT_USING_LIBC
     bool "Enable libc APIs from toolchain"
@@ -9,12 +9,13 @@ config RT_USING_PTHREADS
     default n
 
 if RT_USING_LIBC
-    config RT_USING_POSIX_STDIN
-        bool "Enable stdin"
+    config RT_USING_POSIX
+        bool "Enable POSIX layer for poll/select, stdin etc"
         select RT_USING_DFS
         select RT_USING_DFS_DEVFS
         default y
 
+    if RT_USING_POSIX
     config RT_USING_POSIX_MMAP
         bool "Enable mmap() api"
         default n
@@ -22,6 +23,7 @@ if RT_USING_LIBC
     config RT_USING_POSIX_TERMIOS
         bool "Enable termios feature"
         default n
+    endif
 endif
 
 endmenu

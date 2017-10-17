@@ -84,7 +84,7 @@ const char *finsh_get_prompt()
 
 static char finsh_getchar(void)
 {
-#ifdef RT_USING_POSIX_STDIN
+#ifdef RT_USING_POSIX
     return getchar();
 #else
     char ch;
@@ -97,7 +97,7 @@ static char finsh_getchar(void)
 #endif
 }
 
-#ifndef RT_USING_POSIX_STDIN
+#ifndef RT_USING_POSIX
 static rt_err_t finsh_rx_ind(rt_device_t dev, rt_size_t size)
 {
     RT_ASSERT(shell != RT_NULL);
@@ -420,7 +420,7 @@ void finsh_thread_entry(void *parameter)
     finsh_init(&shell->parser);
 #endif
 
-#ifndef RT_USING_POSIX_STDIN
+#ifndef RT_USING_POSIX
     /* set console device as shell device */
     if (shell->device == RT_NULL)
     {

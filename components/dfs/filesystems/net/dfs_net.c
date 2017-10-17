@@ -32,6 +32,7 @@
 #include <rtdevice.h>
 #include <sys/socket.h>
 
+#include <dfs_poll.h>
 #include "dfs_net.h"
 
 int dfs_net_getsocket(int fd)

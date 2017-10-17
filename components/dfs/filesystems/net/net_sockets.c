@@ -24,6 +24,7 @@
 
 #include <dfs.h>
 #include <dfs_posix.h>
+#include <dfs_poll.h>
 #include <sys/socket.h>
 
 #include "dfs_net.h"

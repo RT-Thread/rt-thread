@@ -44,13 +44,13 @@
 #define DEBUG_COLOR
 #include <rtdbg.h>
 
+#ifdef RT_USING_POSIX
+#include <dfs_posix.h>
+#include <dfs_poll.h>
+
 #ifdef RT_USING_POSIX_TERMIOS
 #include <posix_termios.h>
 #endif
-
-#ifdef RT_USING_DFS
-#ifdef RT_USING_DFS_DEVFS
-#include <dfs_posix.h>
 
 /* it's possible the 'getc/putc' is defined by stdio.h in gcc/newlib. */
 #ifdef getc
@@ -97,7 +97,8 @@ static int serial_fops_open(struct dfs_fd *fd)
         break;
     }
 
-    rt_device_set_rx_indicate(device, serial_fops_rx_ind);
+    if ((fd->flags & O_ACCMODE) != O_WRONLY)
+        rt_device_set_rx_indicate(device, serial_fops_rx_ind);
     ret = rt_device_open(device, flags);
     if (ret == RT_EOK) return 0;
 
@@ -210,7 +211,7 @@ const static struct dfs_file_ops _serial_fops =
     serial_fops_poll,
 };
 #endif
-#endif
+
 /*
  * Serial poll routines
  */
@@ -993,7 +994,7 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
     /* register a character device */
     ret = rt_device_register(device, name, flag);
 
-#if defined(RT_USING_DFS) && defined(RT_USING_DFS_DEVFS)
+#if defined(RT_USING_POSIX)
     /* set fops */
     device->fops        = &_serial_fops;
 #endif

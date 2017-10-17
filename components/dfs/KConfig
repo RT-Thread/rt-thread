@@ -87,7 +87,8 @@ if RT_USING_DFS
     
     config RT_USING_DFS_NET
         bool "Enable BSD socket operated by file system API"
-        depends on RT_USING_LWIP
+        select RT_USING_LWIP
+        select RT_USING_POSIX
         default n
         help
             Let BSD socket operated by file system API, such as read/write and involveed in select/poll POSIX APIs.

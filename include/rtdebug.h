@@ -23,6 +23,19 @@
 
 #include <rtconfig.h>
 
+/* settings depend check */
+#ifdef RT_USING_POSIX
+#if !defined(RT_USING_DFS) || !defined(RT_USING_DFS_DEVFS)
+#error "POSIX poll/select, stdin need file system(RT_USING_DFS) and device file system(RT_USING_DFS_DEVFS)"
+#endif
+#endif
+
+#ifdef RT_USING_POSIX_TERMIOS
+#if !defined(RT_USING_POSIX)
+#error "termios need POSIX layer(RT_USING_POSIX)"
+#endif
+#endif
+
 /* Using this macro to control all kernel debug features. */
 #ifdef RT_DEBUG
 

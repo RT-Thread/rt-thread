@@ -23,11 +23,14 @@
  */
 #include <stdint.h>
 
+#include <rthw.h>
 #include <rtdevice.h>
+#include <rtthread.h>
 
 #include <dfs.h>
 #include <dfs_file.h>
 #include <dfs_posix.h>
+#include <dfs_poll.h>
 
 struct rt_poll_node;
 

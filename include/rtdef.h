@@ -885,7 +885,7 @@ struct rt_device
     rt_size_t (*write)  (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
     rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
 
-#if defined(RT_USING_DFS) && defined(RT_USING_DFS_DEVFS)
+#if defined(RT_USING_POSIX)
     const struct dfs_file_ops *fops;
     rt_list_t wait_queue;
 #endif
