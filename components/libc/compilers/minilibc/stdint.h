@@ -11,8 +11,8 @@ typedef	rt_int32_t		int32_t;
 typedef	rt_uint32_t		uint32_t;
 typedef long long		int64_t;
 typedef unsigned long long uint64_t;
-typedef signed long intptr_t;
-typedef unsigned long uintptr_t;
+typedef signed long     intptr_t;
+typedef unsigned long   uintptr_t;
 
 /*
  * 7.18.2 Limits of specified-width integer types.
