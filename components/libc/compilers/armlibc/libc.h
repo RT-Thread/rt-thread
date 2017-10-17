@@ -32,6 +32,6 @@ int libc_system_init(void);
 
 int libc_stdio_set_console(const char* device_name, int mode);
 int libc_stdio_read (void *buffer, size_t size);
-int libc_stdio_write(void *buffer, size_t size);
+int libc_stdio_write(const void *buffer, size_t size);
 
 #endif

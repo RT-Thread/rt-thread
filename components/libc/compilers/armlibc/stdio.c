@@ -63,7 +63,7 @@ int libc_stdio_read(void *buffer, size_t size)
     return read(std_fd, buffer, size);
 }
 
-int libc_stdio_write(void *buffer, size_t size)
+int libc_stdio_write(const void *buffer, size_t size)
 {
     return write(std_fd, buffer, size);
 }
