@@ -5,7 +5,7 @@ ARCH='sim'
 #CROSS_TOOL='msvc' or 'gcc' or 'mingw'
 #'msvc' and 'mingw' are both for windows
 # 'gcc' is for linux
-CROSS_TOOL='msvc'
+CROSS_TOOL='mingw'
 
 if os.getenv('RTT_CC'):
 	CROSS_TOOL = os.getenv('RTT_CC')
@@ -80,7 +80,7 @@ elif PLATFORM == 'mingw':
 
     DEVICE = ' -ffunction-sections -fdata-sections'
     DEVICE = '  '
-    CFLAGS = DEVICE
+    CFLAGS = DEVICE + ' -DNO_OLDNAMES'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
     DEFFILE_LFLAGS = DEVICE + ' -Wl,-Map=rtthread-win32.map,--output-def,rtthread.def -T mingw.ld '
     LFLAGS = DEVICE + ' -Wl,-Map=rtthread-win32.map -T mingw.ld '

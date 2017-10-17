@@ -16,6 +16,9 @@ else:
         LIBPATH.append(os.path.abspath(os.path.join(cwd, '../SDL/lib/x86')))
         CPPPATH.append(os.path.abspath(os.path.join(cwd, '../SDL/include')))
 
+if GetDepend('RT_USING_DFS_WINSHAREDIR'):
+	print "WINSH aa"
+
 if GetDepend('RT_USING_DFS') == False or GetDepend('RT_USING_DFS_ELMFAT') == False:
     SrcRemove(src, 'sd_sim.c')
 if GetDepend('RT_USING_DFS') == False or GetDepend('RT_USING_MTD_NAND') == False:

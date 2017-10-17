@@ -1,7 +1,7 @@
 #include <rtthread.h>
 #include "board.h"
 
-void platform_init(void)
+int platform_init(void)
 {
 #ifdef RT_USING_LWIP
 #ifdef RT_USING_TAPNETIF
@@ -12,6 +12,7 @@ void platform_init(void)
 #endif
 
 #ifdef RT_USING_DFS
+
     /* initialize sd card */
     rt_hw_sdcard_init();
 
@@ -24,5 +25,7 @@ void platform_init(void)
 #endif
 
 #endif /* RT_USING_DFS */
-}
 
+    return 0;
+}
+INIT_DEVICE_EXPORT(platform_init);

@@ -100,6 +100,9 @@
 // #define RT_USING_PTHREADS
 // <bool name="RT_USING_MODULE" description="Enable Moudle Application" default="true" />
 // #define RT_USING_MODULE
+
+// <bool name="RT_USING_COMPONENTS_INIT" description="Using automatically component initialization." default="true" />
+#define RT_USING_COMPONENTS_INIT
 // </section>
 
 // <section name="RT_USING_DFS" description="Device file system" default="true" >
@@ -107,7 +110,8 @@
 // <bool name="DFS_USING_WORKDIR" description="Using working directory" default="true" />
 #define DFS_USING_WORKDIR
 // <integer name="DFS_FILESYSTEMS_MAX" description="The maximal number of mounted file system" default="4" />
-#define DFS_FILESYSTEMS_MAX	2
+#define DFS_FILESYSTEMS_MAX         4
+#define DFS_FILESYSTEM_TYPES_MAX    4
 // <integer name="DFS_FD_MAX" description="The maximal number of opened files" default="4" />
 #define DFS_FD_MAX	4
 // <bool name="RT_USING_DFS_ELMFAT" description="Using ELM FatFs" default="true" />
@@ -132,6 +136,8 @@
 // #define RT_USING_DFS_NFS
 // <string name="RT_NFS_HOST_EXPORT" description="NFSv3 host export" default="192.168.1.5:/" />
 #define RT_NFS_HOST_EXPORT	"192.168.1.5:/"
+
+#define RT_USING_DFS_WINSHAREDIR
 // </section>
 
 // <section name="RT_USING_LWIP" description="lwip, a lightweight TCP/IP protocol stack" default="true" >
@@ -237,9 +243,5 @@
 #endif /* end of __MINGW32__ */
 
 #endif /* end of _MSC_VER */
-
-#ifdef _Win32
-#define RT_USING_DFS_WINSHAREDIR
-#endif
 
 #endif
