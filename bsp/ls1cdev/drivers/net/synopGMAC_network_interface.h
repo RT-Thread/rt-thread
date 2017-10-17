@@ -35,6 +35,9 @@
 #ifndef SYNOP_GMAC_NETWORK_INTERFACE_H
 #define SYNOP_GMAC_NETWORK_INTERFACE_H 1
 
+
+#include <lwip/sys.h>
+#include <netif/ethernetif.h>
 #include "synopGMAC_plat.h"
 #include "synopGMAC_Host.h"
 #include "synopGMAC_Dev.h"
