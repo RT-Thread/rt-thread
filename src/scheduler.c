@@ -269,6 +269,11 @@ void rt_schedule(void)
             rt_hw_interrupt_enable(level);
         }
     }
+    else
+    {
+        /* enable interrupt */
+        rt_hw_interrupt_enable(level);
+    }
 }
 
 /*
