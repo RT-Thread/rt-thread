@@ -42,7 +42,7 @@ int libc_system_init(void)
     dev_console = rt_console_get_device();
     if (dev_console)
     {
-    #if defined(RT_USING_POSIX_STDIN)
+    #if defined(RT_USING_POSIX)
         libc_stdio_set_console(dev_console->parent.name, O_RDWR);
     #else
         libc_stdio_set_console(dev_console->parent.name, O_WRONLY);
