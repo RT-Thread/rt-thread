@@ -219,8 +219,6 @@ rt_err_t rt_workqueue_cancel_work_sync(struct rt_workqueue* queue, struct rt_wor
     level = rt_hw_interrupt_disable();
     if (queue->work_current == work) /* it's current work in the queue */
     {
-        rt_uint32_t recv;
-        
         /* wait for work completion */
         rt_sem_take(&(queue->sem), RT_WAITING_FOREVER);
     }
