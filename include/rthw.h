@@ -23,6 +23,7 @@
  * 2006-04-25     Bernard      add rt_hw_context_switch_interrupt declaration
  * 2006-09-24     Bernard      add rt_hw_context_switch_to declaration
  * 2012-12-29     Bernard      add rt_hw_exception_install declaration
+ * 2017-10-17     Hichard      add some micros
  */
 
 #ifndef __RT_HW_H__
@@ -32,6 +33,19 @@
 
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+/*
+ * Some macros define
+ */
+#ifndef HWREG32
+#define HWREG32(x)          (*((volatile rt_uint32_t *)(x)))
+#endif
+#ifndef HWREG16
+#define HWREG16(x)          (*((volatile rt_uint16_t *)(x)))
+#endif
+#ifndef HWREG8
+#define HWREG8(x)           (*((volatile rt_uint8_t *)(x)))
 #endif
 
 /*
@@ -97,6 +111,11 @@ void rt_hw_show_memory(rt_uint32_t addr, rt_uint32_t size);
  * Exception interfaces
  */
 void rt_hw_exception_install(rt_err_t (*exception_handle)(void *context));
+
+/*
+ * delay interfaces
+ */
+void rt_hw_us_delay(rt_uint32_t us);
 
 #ifdef __cplusplus
 }
