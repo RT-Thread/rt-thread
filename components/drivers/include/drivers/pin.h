@@ -49,7 +49,9 @@ struct rt_device_pin
 #define PIN_IRQ_MODE_RISING             0x00
 #define PIN_IRQ_MODE_FALLING            0x01
 #define PIN_IRQ_MODE_RISING_FALLING     0x02
-
+#define PIN_MODE_INPUT_PULLDOWN         0x03
+#define PIN_MODE_OUTPUT_OD              0x04
+    
 #define PIN_IRQ_DISABLE                 0x00
 #define PIN_IRQ_ENABLE                  0x01
 
