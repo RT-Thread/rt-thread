@@ -49,19 +49,6 @@
 #include <rtthread.h>
 #include "finsh.h"
 
-rt_inline unsigned int rt_list_len(const rt_list_t *l)
-{
-    unsigned int len = 0;
-    const rt_list_t *p = l;
-    while (p->next != l)
-    {
-        p = p->next;
-        len ++;
-    }
-
-    return len;
-}
-
 long hello(void)
 {
     rt_kprintf("Hello RT-Thread!\n");

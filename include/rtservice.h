@@ -105,6 +105,23 @@ rt_inline int rt_list_isempty(const rt_list_t *l)
 }
 
 /**
+ * @brief get the list length
+ * @param l the list to get.
+ */
+rt_inline unsigned int rt_list_len(const rt_list_t *l)
+{
+    unsigned int len = 0;
+    const rt_list_t *p = l;
+    while (p->next != l)
+    {
+        p = p->next;
+        len ++;
+    }
+
+    return len;
+}
+
+/**
  * @brief get the struct for this entry
  * @param node the entry point
  * @param type the type of structure
@@ -175,6 +192,19 @@ rt_inline rt_slist_t *rt_slist_remove(rt_slist_t *l, rt_slist_t *n)
     if (node->next != (rt_slist_t *)0) node->next = node->next->next;
 
     return l;
+}
+
+rt_inline unsigned int rt_slist_len(const rt_slist_t *l)
+{
+    unsigned int len = 0;
+    const rt_slist_t *list = l->next;
+    while (list != RT_NULL)
+    {
+        list = list->next;
+        len ++;
+    }
+
+    return len;
 }
 
 /**
