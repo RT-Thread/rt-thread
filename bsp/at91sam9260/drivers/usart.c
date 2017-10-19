@@ -326,7 +326,7 @@ void at91_usart_gpio_init(void)
 /**
  * This function will handle init uart
  */
-void rt_hw_uart_init(void)
+int rt_hw_uart_init(void)
 {
 	at91_usart_gpio_init();
 
@@ -422,7 +422,11 @@ void rt_hw_uart_init(void)
 							(void *)&(serial3.parent), "UART3");
 	rt_hw_interrupt_umask(uart3.irq);
 #endif
+
+	return 0;
 }
+
+INIT_BOARD_EXPORT(rt_hw_uart_init);
 
 #ifdef RT_USING_DBGU
 void rt_dbgu_isr(void)

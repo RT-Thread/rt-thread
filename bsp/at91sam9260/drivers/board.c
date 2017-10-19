@@ -32,6 +32,18 @@
  * @addtogroup at91sam9260
  */
 /*@{*/
+#if defined(__CC_ARM)
+extern int Image$$ER_ZI$$ZI$$Limit;
+#define HEAP_BEGIN  (&Image$$ER_ZI$$ZI$$Limit)
+#elif (defined (__GNUC__))
+extern unsigned char __bss_end__;
+#define HEAP_BEGIN  (&__bss_end__)
+#elif (defined (__ICCARM__))
+#pragma section=".noinit"
+#define HEAP_BEGIN  (__section_end(".noinit"))
+#endif
+
+#define HEAP_END    (0x24000000)
 
 extern void rt_hw_interrupt_init(void);
 extern void rt_hw_clock_init(void);
@@ -150,14 +162,20 @@ void rt_hw_board_init()
 	/* initialize the system clock */
 	rt_hw_clock_init();
 
-	/* initialize uart */
-	rt_hw_uart_init();
+	/* initialize early device */
+#ifdef RT_USING_COMPONENTS_INIT
+	rt_components_board_init();
+#endif
+#ifdef RT_USING_CONSOLE
 	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
-
-
-
+#endif
 	/* initialize timer0 */
 	rt_hw_timer_init();
+
+/* initialize board */
+#ifdef RT_USING_HEAP
+	rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
+#endif
 
 }
 

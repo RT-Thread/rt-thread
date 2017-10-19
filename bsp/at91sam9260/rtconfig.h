@@ -91,6 +91,7 @@
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
 #define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_USING_MSH
 
 /* SECTION: C++ support */
 /* Using C++ support */
@@ -255,5 +256,8 @@
  * And the maximal length must great than 64
  * #define RT_DFS_ELM_MAX_LFN	128
  */
+
+#define RT_USING_COMPONENTS_INIT
+#define RT_USING_USER_MAIN
 
 #endif
