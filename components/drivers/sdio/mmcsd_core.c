@@ -655,6 +655,7 @@ void mmcsd_detect(void *param)
                     if (init_sd(host, ocr))
                         mmcsd_power_off(host);
                     mmcsd_host_unlock(host);
+					rt_mb_send(&mmcsd_hotpluge_mb, (rt_uint32_t)host);
                     continue;
                 }
                 
@@ -726,7 +727,7 @@ void mmcsd_free_host(struct rt_mmcsd_host *host)
     rt_free(host);
 }
 
-void rt_mmcsd_core_init(void)
+int rt_mmcsd_core_init(void)
 {
     rt_err_t ret;
 
@@ -749,5 +750,9 @@ void rt_mmcsd_core_init(void)
     }
 
     rt_sdio_init();
+
+	return 0;
 }
+
+INIT_PREV_EXPORT(rt_mmcsd_core_init);
 

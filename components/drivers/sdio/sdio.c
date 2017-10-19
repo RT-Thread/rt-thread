@@ -33,8 +33,8 @@
 #define RT_SDIO_THREAD_PRIORITY  0x40
 #endif
 
-static rt_list_t sdio_cards;
-static rt_list_t sdio_drivers;
+static rt_list_t sdio_cards = RT_LIST_OBJECT_INIT(sdio_cards);
+static rt_list_t sdio_drivers = RT_LIST_OBJECT_INIT(sdio_drivers);
 
 struct sdio_card
 {
@@ -1397,7 +1397,6 @@ rt_int32_t sdio_unregister_driver(struct rt_sdio_driver *driver)
 
 void rt_sdio_init(void)
 {
-    rt_list_init(&sdio_cards);
-    rt_list_init(&sdio_drivers);
+
 }
 

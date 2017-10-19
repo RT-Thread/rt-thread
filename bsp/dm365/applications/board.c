@@ -32,6 +32,19 @@
  * @addtogroup dm365
  */
 /*@{*/
+#if defined(__CC_ARM)
+	extern int Image$$ER_ZI$$ZI$$Base;
+	extern int Image$$ER_ZI$$ZI$$Length;
+	extern int Image$$ER_ZI$$ZI$$Limit;
+#elif (defined (__GNUC__))
+	rt_uint8_t _irq_stack_start[1024];
+	rt_uint8_t _fiq_stack_start[1024];
+	rt_uint8_t _undefined_stack_start[512];
+	rt_uint8_t _abort_stack_start[512];
+	rt_uint8_t _svc_stack_start[1024] SECTION(".nobss");
+	extern unsigned char __bss_start;
+	extern unsigned char __bss_end;
+#endif
 
 extern void rt_hw_clock_init(void);
 extern void rt_hw_uart_init(void);
@@ -99,14 +112,23 @@ void rt_hw_board_init()
 	//rt_hw_clock_init();
 	davinci_clk_init();
 
-	/* initialize uart */
-	rt_hw_uart_init();
+	/* initialize early device */
+#ifdef RT_USING_COMPONENTS_INIT
+	rt_components_board_init();
+#endif
 #ifdef RT_USING_CONSOLE
 	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
 	/* initialize mmu */
 	rt_hw_mmu_init(dm365_mem_desc, sizeof(dm365_mem_desc)/sizeof(dm365_mem_desc[0]));
+
+		/* initialize heap memory system */
+#ifdef __CC_ARM
+		rt_system_heap_init((void*)&Image$$ER_ZI$$ZI$$Limit, (void*)0x88000000);
+#else
+		rt_system_heap_init((void*)&__bss_end, (void*)0x88000000);
+#endif
 
 	/* initialize timer0 */
 	rt_hw_timer_init();

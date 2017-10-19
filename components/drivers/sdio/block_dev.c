@@ -479,7 +479,11 @@ void rt_mmcsd_blk_remove(struct rt_mmcsd_card *card)
  * @deprecated since 2.1.0, this function does not need to be invoked
  * in the system initialization.
  */
-void rt_mmcsd_blk_init(void)
+int rt_mmcsd_blk_init(void)
 {
 	/* nothing */
+	return 0;
 }
+
+INIT_PREV_EXPORT(rt_mmcsd_blk_init);
+
