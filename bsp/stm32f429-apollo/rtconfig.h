@@ -206,7 +206,4 @@
 #define RT_USING_UART3
 #define RT_USING_SPI5
 
-/* BSP_LWIP CONFIG */
-
-
 #endif
