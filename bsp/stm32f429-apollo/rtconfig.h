@@ -172,7 +172,7 @@
 /* IoT - internet of things */
 
 /* PKG_USING_CJSON is not set */
-#define PKG_USING_PAHOMQTT
+/* PKG_USING_PAHOMQTT is not set */
 /* PKG_USING_WEBCLIENT is not set */
 /* PKG_USING_MONGOOSE is not set */
 /* PKG_USING_WEBTERMINAL is not set */
