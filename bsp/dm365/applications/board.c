@@ -75,6 +75,9 @@ void rt_timer_handler(int vector, void *param)
 	volatile timer_regs_t *regs =
 		(volatile timer_regs_t*)DAVINCI_TIMER1_BASE;//DAVINCI_TIMER0_BASE;
 
+	psc_change_state(DAVINCI_DM365_LPSC_TIMER0, 3);
+	psc_change_state(DAVINCI_DM365_LPSC_TIMER1, 3);
+
 	/*disable timer*/
 	regs->tcr &= ~(0x3UL << 6);
 
@@ -101,16 +104,101 @@ void rt_timer_handler(int vector, void *param)
 
  }
 
+#define LSR_DR		0x01		/* Data ready */
+#define LSR_THRE	0x20		/* Xmit holding register empty */
+#define BPS			115200	/* serial baudrate */
+
+typedef struct uartport
+{
+	volatile rt_uint32_t rbr;
+	volatile rt_uint32_t ier;
+	volatile rt_uint32_t fcr;
+	volatile rt_uint32_t lcr;
+	volatile rt_uint32_t mcr;
+	volatile rt_uint32_t lsr;
+	volatile rt_uint32_t msr;
+	volatile rt_uint32_t scr;
+	volatile rt_uint32_t dll;
+	volatile rt_uint32_t dlh;
+	
+	volatile rt_uint32_t res[2];
+	volatile rt_uint32_t pwremu_mgmt;
+	volatile rt_uint32_t mdr;
+}uartport;
+
+#define thr rbr
+#define iir fcr
+
+#define UART0	((struct uartport *)DAVINCI_UART0_BASE)
+
+static void davinci_uart_putc(char c)
+{
+    while (!(UART0->lsr & LSR_THRE));
+	UART0->thr = c;
+}
+
+/**
+ * This function is used to display a string on console, normally, it's
+ * invoked by rt_kprintf
+ *
+ * @param str the displayed string
+ */
+void rt_hw_console_output(const char* str)
+{
+	while (*str)
+	{
+		if (*str=='\n')
+		{
+			davinci_uart_putc('\r');
+		}
+
+		davinci_uart_putc(*str++);
+	}
+}
+
+static void rt_hw_console_init(void)
+{
+	rt_uint32_t divisor;
+	
+	divisor = (24000000 + (BPS * (16 / 2))) / (16 * BPS);
+	UART0->ier = 0;
+	UART0->lcr = 0x83; //8N1
+	UART0->dll = 0;
+	UART0->dlh = 0;
+	UART0->lcr = 0x03;
+	UART0->mcr = 0x03; //RTS,CTS
+	UART0->fcr = 0x07; //FIFO
+	UART0->lcr = 0x83;
+	UART0->dll = divisor & 0xff;
+	UART0->dlh = (divisor >> 8) & 0xff;
+	UART0->lcr = 0x03;
+	UART0->mdr = 0; //16x over-sampling
+	UART0->pwremu_mgmt = 0x6000;
+}
+
 /**
  * This function will init dm365 board
  */
 void rt_hw_board_init()
 {
-	psc_change_state(DAVINCI_DM365_LPSC_TIMER0, 3);
-	psc_change_state(DAVINCI_DM365_LPSC_TIMER1, 3);
+	/* initialize console */
+	rt_hw_console_init();
+
+	/* initialize mmu */
+	rt_hw_mmu_init(dm365_mem_desc, sizeof(dm365_mem_desc)/sizeof(dm365_mem_desc[0]));
+
+	/* initialize hardware interrupt */
+	rt_hw_interrupt_init();
+
 	/* initialize the system clock */
-	//rt_hw_clock_init();
-	davinci_clk_init();
+	rt_hw_clock_init();
+
+	/* initialize heap memory system */
+#ifdef __CC_ARM
+	rt_system_heap_init((void*)&Image$$ER_ZI$$ZI$$Limit, (void*)0x88000000);
+#else
+	rt_system_heap_init((void*)&__bss_end, (void*)0x88000000);
+#endif
 
 	/* initialize early device */
 #ifdef RT_USING_COMPONENTS_INIT
@@ -118,16 +206,6 @@ void rt_hw_board_init()
 #endif
 #ifdef RT_USING_CONSOLE
 	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
-#endif
-
-	/* initialize mmu */
-	rt_hw_mmu_init(dm365_mem_desc, sizeof(dm365_mem_desc)/sizeof(dm365_mem_desc[0]));
-
-		/* initialize heap memory system */
-#ifdef __CC_ARM
-		rt_system_heap_init((void*)&Image$$ER_ZI$$ZI$$Limit, (void*)0x88000000);
-#else
-		rt_system_heap_init((void*)&__bss_end, (void*)0x88000000);
 #endif
 
 	/* initialize timer0 */

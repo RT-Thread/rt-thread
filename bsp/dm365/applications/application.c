@@ -39,14 +39,10 @@
 #include <drivers/mmcsd_core.h>
 #endif
 
-#ifdef RT_USING_SPI
-#include <spi-davinci.h>
-#endif
-
 int main(void)
 {
-	platform_init();
-	
+	int timeout = 0;
+
 /* Filesystem Initialization */
 #ifdef RT_USING_DFS
 	{
@@ -70,15 +66,17 @@ int main(void)
 	}
 #endif
 
-#ifdef RT_USING_SPI
-	{
-		rt_hw_spi_init();
-	}
-#endif
-
 #ifdef RT_USING_SDIO
+	rt_mmcsd_core_init();
+	rt_mmcsd_blk_init();
 	rt_hw_mmcsd_init();
-	if (MMCSD_HOST_PLUGED == mmcsd_wait_cd_changed(RT_TICK_PER_SECOND*2))
+	timeout = 0;
+	while ((rt_device_find("sd0") == RT_NULL) && (timeout++ < RT_TICK_PER_SECOND*2))
+	{
+		rt_thread_delay(1);
+	}
+
+	if (timeout < RT_TICK_PER_SECOND*2)
 	{
 		/* mount sd card fat partition 1 as root directory */
 		if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
@@ -87,7 +85,11 @@ int main(void)
 		}
 		else
 			rt_kprintf("File System initialzation failed!%d\n", rt_get_errno());
-	}	
+	}
+	else
+	{
+		rt_kprintf("No SD card found.\n");
+	}
 #endif
 	}
 #endif
