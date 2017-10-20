@@ -1,4 +1,5 @@
 import os
+import scons_config
 
 # toolchains options
 ARCH='arm'
