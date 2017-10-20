@@ -125,7 +125,7 @@ static void delay_ms(rt_uint32_t ms)
 	} 
 	else 
 	{
-		rt_thread_delay(ms/(1000 / RT_TICK_PER_SECOND));
+		rt_thread_delay(rt_tick_from_millisecond(ms));
 	}
 }
 

@@ -48,65 +48,7 @@ endmenu
 
 menu "BSP_LWIP CONFIG"
 
-config RT_LWIP_IPADDR0
-    int "RT_LWIP_IPADDR0"
-    default 192 
-    
-config RT_LWIP_IPADDR1
-    int "RT_LWIP_IPADDR1"
-    default 168 
-    
-config RT_LWIP_IPADDR2
-    int "RT_LWIP_IPADDR2"
-    default 1 
-    
-config RT_LWIP_IPADDR3
-    int "RT_LWIP_IPADDR3"
-    default 201 
-    
-config RT_LWIP_GWADDR0
-    int "RT_LWIP_GWADDR0"
-    default 192 
-    
-config RT_LWIP_GWADDR1
-    int "RT_LWIP_GWADDR1"
-    default 168 
-    
-config RT_LWIP_GWADDR2
-    int "RT_LWIP_GWADDR2"
-    default 1 
-    
-config RT_LWIP_GWADDR3
-    int "RT_LWIP_GWADDR3"
-    default 1 
 
-config RT_LWIP_MSKADDR0
-    int "RT_LWIP_MSKADDR0"
-    default 255 
-    
-config RT_LWIP_MSKADDR1
-    int "RT_LWIP_MSKADDR1"
-    default 255 
-    
-config RT_LWIP_MSKADDR2
-    int "RT_LWIP_MSKADDR2"
-    default 255 
-    
-config RT_LWIP_MSKADDR3
-    int "RT_LWIP_MSKADDR3"
-    default 0 
-    
-config CHECKSUM_CHECK_TCP
-    int "CHECKSUM_CHECK_TCP"
-    default 0 
-    
-config CHECKSUM_CHECK_IP
-    int "The CHECKSUM_CHECK_IP"
-    default 0 
-    
-config CHECKSUM_CHECK_UDP
-    int "The CHECKSUM_CHECK_UDP"
-    default 0 
     
 endmenu
 

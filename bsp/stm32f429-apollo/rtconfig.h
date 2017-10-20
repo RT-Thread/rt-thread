@@ -117,8 +117,8 @@
 /* light weight TCP/IP stack */
 
 #define RT_USING_LWIP
-#define RT_USING_LWIP141
-/* RT_USING_LWIP202 is not set */
+/* RT_USING_LWIP141 is not set */
+#define RT_USING_LWIP202
 /* RT_LWIP_IGMP is not set */
 #define RT_LWIP_ICMP
 /* RT_LWIP_SNMP is not set */
@@ -171,11 +171,12 @@
 
 /* IoT - internet of things */
 
-/* PKG_USING_CJSON is not set */
 /* PKG_USING_PAHOMQTT is not set */
 /* PKG_USING_WEBCLIENT is not set */
 /* PKG_USING_MONGOOSE is not set */
 /* PKG_USING_WEBTERMINAL is not set */
+/* PKG_USING_CJSON is not set */
+/* PKG_USING_EZXML is not set */
 
 /* security packages */
 
@@ -207,20 +208,5 @@
 
 /* BSP_LWIP CONFIG */
 
-#define RT_LWIP_IPADDR0 192
-#define RT_LWIP_IPADDR1 168
-#define RT_LWIP_IPADDR2 1
-#define RT_LWIP_IPADDR3 201
-#define RT_LWIP_GWADDR0 192
-#define RT_LWIP_GWADDR1 168
-#define RT_LWIP_GWADDR2 1
-#define RT_LWIP_GWADDR3 1
-#define RT_LWIP_MSKADDR0 255
-#define RT_LWIP_MSKADDR1 255
-#define RT_LWIP_MSKADDR2 255
-#define RT_LWIP_MSKADDR3 0
-#define CHECKSUM_CHECK_TCP 0
-#define CHECKSUM_CHECK_IP 0
-#define CHECKSUM_CHECK_UDP 0
 
 #endif
