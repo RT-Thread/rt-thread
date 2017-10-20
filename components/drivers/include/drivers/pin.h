@@ -20,6 +20,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2015-01-20     Bernard      the first version
+ * 2017-10-20      ZYH          add mode open drain and input pull down
  */
 
 #ifndef PIN_H__
