@@ -223,7 +223,7 @@ void davinci_uart1_init(void)
 /**
  * This function will handle init uart
  */
-void rt_hw_uart_init(void)
+int rt_hw_uart_init(void)
 {
 	davinci_serial_dev0.ops = &davinci_uart_ops;
     //davinci_serial_dev0.config = RT_SERIAL_CONFIG_DEFAULT;
@@ -257,5 +257,8 @@ void rt_hw_uart_init(void)
                           UART1);
 	davinci_uart1_init();
 
+	return 0;
 }
+
+INIT_BOARD_EXPORT(rt_hw_uart_init);
 

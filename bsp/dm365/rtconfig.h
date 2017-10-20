@@ -267,4 +267,7 @@
  * #define RT_DFS_ELM_MAX_LFN	128
  */
 
+#define RT_USING_COMPONENTS_INIT
+#define RT_USING_USER_MAIN
+
 #endif

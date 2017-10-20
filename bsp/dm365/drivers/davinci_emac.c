@@ -1698,6 +1698,8 @@ void rt_hw_davinci_emac_init()
 	
 }
 
+INIT_DEVICE_EXPORT(rt_hw_davinci_emac_init);
+
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
