@@ -98,6 +98,8 @@
 // #define RT_USING_LIBC
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
 // #define RT_USING_PTHREADS
+// <bool name="RT_USING_COMPONENTS_INIT" description="Using automatically component initialization." default="true" />
+#define RT_USING_COMPONENTS_INIT
 // <bool name="RT_USING_MODULE" description="Enable Moudle Application" default="true" />
 // #define RT_USING_MODULE
 // </section>
@@ -131,7 +133,9 @@
 // <bool name="RT_USING_DFS_NFS" description="Using NFS v3 client file system" default="false" />
 // #define RT_USING_DFS_NFS
 // <string name="RT_NFS_HOST_EXPORT" description="NFSv3 host export" default="192.168.1.5:/" />
-#define RT_NFS_HOST_EXPORT	"192.168.1.5:/"
+#define RT_NFS_HOST_EXPORT  "192.168.1.5:/"
+// <bool name="RT_USING_DFS_WINSHAREDIR" description="shared windows file to rtt" default="false" />
+#define RT_USING_DFS_WINSHAREDIR
 // </section>
 
 // <section name="RT_USING_LWIP" description="lwip, a lightweight TCP/IP protocol stack" default="true" >
@@ -232,14 +236,6 @@
 #elif defined(__GNUC__)
 #define RT_USING_NOLIBC
 
-#if defined(__MINGW32__)
-#define _NO_OLDNAMES   /* to ignore: mode_t in sys/type.h */
-#endif /* end of __MINGW32__ */
-
 #endif /* end of _MSC_VER */
-
-#ifdef _Win32
-#define RT_USING_DFS_WINSHAREDIR
-#endif
 
 #endif
