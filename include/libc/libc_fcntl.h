@@ -25,6 +25,7 @@
 #define O_DSYNC      010000
 #define O_SYNC     04010000
 #define O_RSYNC    04010000
+#define O_BINARY    0100000
 #define O_DIRECTORY 0200000
 #define O_NOFOLLOW  0400000
 #define O_CLOEXEC  02000000

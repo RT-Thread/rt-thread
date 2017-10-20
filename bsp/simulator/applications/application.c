@@ -26,64 +26,13 @@
 #include <stdio.h>
 #include <board.h>
 
-#ifdef RT_USING_DFS
-#include <dfs_fs.h>
-#endif
-
-#include "init.h"
-
 void rt_init_thread_entry(void *parameter)
 {
-    components_init();
-
-    /* File system Initialization */
-#ifdef RT_USING_DFS
-    {
-#ifdef RT_USING_DFS_WINSHAREDIR
-        {
-            extern rt_err_t rt_win_sharedir_init(const char *name);
-            extern int dfs_win32_init(void);
-
-            rt_win_sharedir_init("wdd");
-            dfs_win32_init();
-
-            if (dfs_mount("wdd", "/", "wdir", 0, 0) == 0)
-                rt_kprintf("win32 share directory initialized!\n");
-            else
-                rt_kprintf("win32 share directory initialized failed!\n");
-        }
+#ifdef RT_USING_COMPONENTS_INIT
+    rt_components_init();
 #endif
 
-#ifdef RT_USING_DFS_ELMFAT
-        /* mount sd card fatfs as root directory */
-#ifdef _WIN32
-        if (dfs_mount("sd0", "/disk/sd", "elm", 0, 0) == 0)
-#else
-        if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
-#endif
-            rt_kprintf("fatfs initialized!\n");
-        else
-            rt_kprintf("fatfs initialization failed!\n");
-#endif
-
-#ifdef RT_USING_DFS_UFFS
-        /* mount uffs as the nand flash file system */
-        if (dfs_mount("nand0", "/disk/nand", "uffs", 0, 0) == 0)
-            rt_kprintf("uffs initialized!\n");
-        else
-            rt_kprintf("uffs initialization failed!\n");
-#endif
-
-#ifdef RT_USING_DFS_JFFS2
-        /* mount jffs2 as the nor flash file system */
-        if (dfs_mount("nor", "/disk/nor", "jffs2", 0, 0) == 0)
-            rt_kprintf("jffs2 initialized!\n");
-        else
-            rt_kprintf("jffs2 initialization failed!\n");
-#endif
-
-    }
-#endif
+    rt_kprintf("Hello RT-Thread!\n");
 }
 
 int rt_application_init()

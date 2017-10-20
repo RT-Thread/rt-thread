@@ -25,4 +25,4 @@ void platform_init(void)
 
 #endif /* RT_USING_DFS */
 }
-
+INIT_DEVICE_EXPORT(platform_init);
