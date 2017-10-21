@@ -12,9 +12,10 @@
 #define RT_TICK_PER_SECOND 100
 #define RT_DEBUG
 #define RT_USING_OVERFLOW_CHECK
-/* RT_DEBUG_INIT is not set */
+#define RT_DEBUG_INIT 1
 /* RT_DEBUG_THREAD is not set */
 #define RT_USING_HOOK
+#define IDLE_THREAD_STACK_SIZE 256
 /* RT_USING_TIMER_SOFT is not set */
 
 /* Inter-Thread communication */
@@ -24,6 +25,7 @@
 #define RT_USING_EVENT
 #define RT_USING_MAILBOX
 #define RT_USING_MESSAGEQUEUE
+/* RT_USING_SIGNALS is not set */
 
 /* Memory Management */
 
@@ -53,11 +55,13 @@
 /* Command shell */
 
 #define RT_USING_FINSH
+#define FINSH_USING_HISTORY
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
+#define FINSH_THREAD_PRIORITY 20
 #define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_CMD_SIZE 80
 /* FINSH_USING_AUTH is not set */
-#define FINSH_DEFAULT_PASSWORD "rtthread"
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_DEFAULT
 /* FINSH_USING_MSH_ONLY is not set */
@@ -70,14 +74,19 @@
 #define DFS_FD_MAX 4
 #define RT_USING_DFS_ELMFAT
 #define RT_DFS_ELM_CODE_PAGE 437
-#define RT_DFS_ELM_MAX_LFN 256
+#define RT_DFS_ELM_WORD_ACCESS
+#define RT_DFS_ELM_USE_LFN_0
+/* RT_DFS_ELM_USE_LFN_1 is not set */
+/* RT_DFS_ELM_USE_LFN_2 is not set */
+/* RT_DFS_ELM_USE_LFN_3 is not set */
+#define RT_DFS_ELM_USE_LFN 0
+#define RT_DFS_ELM_MAX_LFN 255
 #define RT_DFS_ELM_DRIVES 2
 #define RT_DFS_ELM_MAX_SECTOR_SIZE 512
 /* RT_DFS_ELM_USE_ERASE is not set */
 #define RT_DFS_ELM_REENTRANT
 #define RT_USING_DFS_DEVFS
 /* RT_USING_DFS_NET is not set */
-/* RT_USING_DFS_NFS is not set */
 
 /* Device Drivers */
 
@@ -96,10 +105,13 @@
 /* RT_USING_USB_HOST is not set */
 /* RT_USING_USB_DEVICE is not set */
 
-/* libc */
+/* POSIX layer and C standard library */
 
 #define RT_USING_LIBC
 #define RT_USING_PTHREADS
+#define RT_USING_POSIX
+/* RT_USING_POSIX_MMAP is not set */
+#define RT_USING_POSIX_TERMIOS
 
 /* Network stack */
 
@@ -111,24 +123,57 @@
 
 /* RT_USING_MODBUS is not set */
 
+/* RT-Thread UI Engine */
+
+#define RT_USING_GUIENGINE
+#define RTGUI_NAME_MAX 16
+/* RTGUI_USING_TTF is not set */
+#define RTGUI_USING_FONT16
+#define RTGUI_USING_FONT12
+/* RTGUI_USING_FONTHZ is not set */
+/* RTGUI_IMAGE_XPM is not set */
+/* RTGUI_IMAGE_JPEG is not set */
+/* RTGUI_IMAGE_TJPGD is not set */
+/* RTGUI_IMAGE_PNG is not set */
+/* RTGUI_IMAGE_LODEPNG is not set */
+/* RTGUI_IMAGE_BMP is not set */
+
 /* RT-Thread online packages */
+
+/* system packages */
+
+/* PKG_USING_PARTITION is not set */
+/* PKG_USING_SQLITE is not set */
 
 /* IoT - internet of things */
 
+/* PKG_USING_PAHOMQTT is not set */
+/* PKG_USING_WEBCLIENT is not set */
+/* PKG_USING_MONGOOSE is not set */
+/* PKG_USING_WEBTERMINAL is not set */
+/* PKG_USING_CJSON is not set */
+/* PKG_USING_EZXML is not set */
+
+/* security packages */
+
+/* PKG_USING_MBEDTLS is not set */
+
 /* language packages */
+
+/* PKG_USING_JERRYSCRIPT is not set */
+
+/* multimedia packages */
+
+/* tools packages */
+
+/* PKG_USING_CMBACKTRACE is not set */
+/* PKG_USING_EASYLOGGER is not set */
 
 /* miscellaneous packages */
 
 #define PKG_USING_HELLO
-
-/* multimedia packages */
-
-/* security packages */
-
-/* system packages */
-
-/* PKG_USING_CMBACKTRACE is not set */
 #define RT_USING_UART0
 #define RT_USING_UART1
+#define BSP_DRV_CLCD
 
 #endif
