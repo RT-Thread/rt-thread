@@ -483,3 +483,4 @@ void rt_mmcsd_blk_init(void)
 {
 	/* nothing */
 }
+

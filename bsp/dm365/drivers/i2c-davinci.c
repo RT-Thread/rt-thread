@@ -647,4 +647,10 @@ err:
 	return r;
 }
 
+int rt_hw_iic_init(void)
+{
+	davinci_i2c_init("I2C1");
+}
+
+INIT_DEVICE_EXPORT(rt_hw_iic_init);
 

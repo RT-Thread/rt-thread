@@ -117,6 +117,17 @@ void HAL_ETH_ErrorCallback(ETH_HandleTypeDef *heth)
 {
     rt_kprintf("eth err\n");
 }
+static void delay_ms(rt_uint32_t ms)
+{
+	if (ms < 1000 / RT_TICK_PER_SECOND) 
+	{
+		rt_thread_delay(1);
+	} 
+	else 
+	{
+		rt_thread_delay(rt_tick_from_millisecond(ms));
+	}
+}
 
 static void phy_pin_reset(void)
 {

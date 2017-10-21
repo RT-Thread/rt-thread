@@ -38,5 +38,10 @@
 typedef signed long off_t;
 #endif
 
+#if defined(__MINGW32__)
+typedef signed long off_t;
+typedef int mode_t;
+#endif
+
 #endif
 
