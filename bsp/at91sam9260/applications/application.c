@@ -48,6 +48,8 @@ static int rt_led_app_init(void);
 
 int main(void)
 {
+	int timeout = 0;
+
 /* Filesystem Initialization */
 #ifdef RT_USING_DFS
 	{
@@ -74,21 +76,27 @@ int main(void)
 	rt_mmcsd_core_init();
 	rt_mmcsd_blk_init();
 	at91_mci_init();
-	rt_thread_delay(RT_TICK_PER_SECOND*2);
-	/* mount sd card fat partition 1 as root directory */
+	timeout = 0;
+	while ((rt_device_find("sd0") == RT_NULL) && (timeout++ < RT_TICK_PER_SECOND*2))
+	{
+		rt_thread_delay(1);
+	}
+
+	if (timeout < RT_TICK_PER_SECOND*2)
+	{
+		/* mount sd card fat partition 1 as root directory */
 		if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
 		{
 			rt_kprintf("File System initialized!\n");
 		}
 		else
-			rt_kprintf("File System initialzation failed!\n");
-#endif
+			rt_kprintf("File System initialzation failed!%d\n", rt_get_errno());
+	}
+	else
+	{
+		rt_kprintf("No SD card found.\n");
 	}
 #endif
-
-#ifdef RT_USING_I2C
-	{
-		rt_i2c_core_init();
 	}
 #endif
 
