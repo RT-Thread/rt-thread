@@ -1,11 +1,9 @@
-#include <rtthread.h>
-#include <dfs.h>
-
 #include <stdio.h>
 #include <string.h>
-#ifdef _WIN32
 #include <stdlib.h>
-#endif
+
+#include <rtthread.h>
+#include <dfs.h>
 
 #ifdef DEBUG
 #  define SD_TRACE     rt_kprintf
