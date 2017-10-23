@@ -12,6 +12,7 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM    = 'gcc'
+#	EXEC_PATH   = "/opt/mips-2015.05/bin"
 	EXEC_PATH   = r'D:\mgc\embedded\codebench\bin'
 else:
     print '================ERROR==========================='

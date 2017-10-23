@@ -26,6 +26,8 @@ extern struct callvectors *callvec;
 #define MIN(a, b)           ((a) > (b) ? (b) : (a))
 #define MAX(a, b)           ((a) > (b) ? (a) : (b))
 
+#define DIV_ROUND_UP(n, d)      (((n) + (d) - 1) / (d))
+
 typedef enum
 {
     FALSE=0, 
@@ -94,6 +96,15 @@ unsigned int reg_read_32(volatile unsigned int *addr);
  * @x: the word to search
  */
 int ls1c_ffs(int x);
+
+/*
+ * fls - find last (most-significant) bit set
+ * @x: the word to search
+ *
+ * This is defined the same way as ffs.
+ * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
+ */
+int ls1c_fls(int x);
 
 
 #endif
