@@ -117,5 +117,16 @@
 #define LS1C_I2C2_BASE                      (0xbfe70000)
 
 
+// SPI¼Ä´æÆ÷
+#define LS1C_SPI0_BASE                      (0xbfe80000)
+#define LS1C_SPI1_BASE                      (0xbfec0000)
+
+
+// ´®¿Ú¼Ä´æÆ÷
+#define LS1C_UART0_BASE                     (0xbfe40000)
+#define LS1C_UART1_BASE                     (0xbfe44000)
+#define LS1C_UART2_BASE                     (0xbfe48000)
+
+
 #endif
 

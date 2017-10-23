@@ -172,7 +172,7 @@ unsigned long timer_get_time_ns(timer_info_t *timer_info)
      */
     timer_clk = clk_get_apb_rate();
     time_ns = (cntr * 1000 ) / (timer_clk /1000000);
-//    myprintf("[%s] time_us=%lu, cntr=%d, timer_clk=%d\n", __FUNCTION__, time_ns, cntr, timer_clk);
+//    rt_kprintf("[%s] time_us=%lu, cntr=%d, timer_clk=%d\n", __FUNCTION__, time_ns, cntr, timer_clk);
 
     return time_ns;
 }
@@ -188,7 +188,7 @@ void timer_print_regs(timer_info_t *timer_info)
     unsigned int timer_reg_base = 0;
 
     timer_reg_base = timer_get_reg_base(timer_info->timer);
-    myprintf("CNTR=0x%x, HRC=0x%x, LRC=0x%x, CTRL=0x%x\n",
+    rt_kprintf("CNTR=0x%x, HRC=0x%x, LRC=0x%x, CTRL=0x%x\n",
               reg_read_32((volatile unsigned int *)(timer_reg_base + LS1C_PWM_CNTR)),
               reg_read_32((volatile unsigned int *)(timer_reg_base + LS1C_PWM_HRC)),
               reg_read_32((volatile unsigned int *)(timer_reg_base + LS1C_PWM_LRC)),
