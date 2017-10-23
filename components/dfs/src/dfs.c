@@ -128,7 +128,7 @@ int fd_new(void)
     /* can't find an empty fd entry */
     if (idx == DFS_FD_MAX)
     {
-        idx = -1;
+        idx = -(1 + DFS_FD_OFFSET);
         goto __result;
     }
 
