@@ -695,15 +695,13 @@ def SrcRemove(src, remove):
     if not src:
         return
 
-    if type(src[0]) == type('str'):
-        for item in src:
+    for item in src:
+        if type(item) == type('str'):
             if os.path.basename(item) in remove:
                 src.remove(item)
-        return
-
-    for item in src:
-        if os.path.basename(item.rstr()) in remove:
-            src.remove(item)
+        else:
+            if os.path.basename(item.rstr()) in remove:
+                src.remove(item)
 
 def GetVersion():
     import SCons.cpp
