@@ -209,17 +209,17 @@ struct fh_i2c_obj
 };
 
 void I2C_Init(struct fh_i2c_obj *i2c_obj);
-inline void I2C_Enable(struct fh_i2c_obj *i2c_obj, int enable);
-inline void I2C_SetSlaveAddress(struct fh_i2c_obj *i2c_obj, rt_uint16_t addr);
-inline UINT32 I2C_GetTransmitFifoLevel(struct fh_i2c_obj *i2c_obj);
-inline UINT32 I2C_GetReceiveFifoLevel(struct fh_i2c_obj *i2c_obj);
-inline UINT32 I2C_SetTransmitThreshold(struct fh_i2c_obj *i2c_obj, int txtl);
+void I2C_Enable(struct fh_i2c_obj *i2c_obj, int enable);
+void I2C_SetSlaveAddress(struct fh_i2c_obj *i2c_obj, rt_uint16_t addr);
+UINT32 I2C_GetTransmitFifoLevel(struct fh_i2c_obj *i2c_obj);
+UINT32 I2C_GetReceiveFifoLevel(struct fh_i2c_obj *i2c_obj);
+UINT32 I2C_SetTransmitThreshold(struct fh_i2c_obj *i2c_obj, int txtl);
 int I2C_HandleTxAbort(struct fh_i2c_obj *i2c_obj);
 UINT32 I2C_ClearAndGetInterrupts(struct fh_i2c_obj *i2c_obj);
-inline void I2C_SetInterruptMask(struct fh_i2c_obj *i2c_obj, UINT32 mask);
-inline UINT32 I2C_GetInterruptMask(struct fh_i2c_obj *i2c_obj);
-inline void I2C_SetDataCmd(struct fh_i2c_obj *i2c_obj, UINT32 reg);
-inline UINT8 I2C_GetData(struct fh_i2c_obj *i2c_obj);
+void I2C_SetInterruptMask(struct fh_i2c_obj *i2c_obj, UINT32 mask);
+UINT32 I2C_GetInterruptMask(struct fh_i2c_obj *i2c_obj);
+void I2C_SetDataCmd(struct fh_i2c_obj *i2c_obj, UINT32 reg);
+UINT8 I2C_GetData(struct fh_i2c_obj *i2c_obj);
 int I2C_WaitMasterIdle(struct fh_i2c_obj *i2c_obj);
 int I2C_WaitDeviceIdle(struct fh_i2c_obj *i2c_obj);
 
