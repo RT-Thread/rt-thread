@@ -5,6 +5,7 @@ from building import *
 src = Glob('*.c')
 
 CPPPATH = [RTT_ROOT + '/include']
+CPPPATH += [RTT_ROOT + '/include/libc']
 if rtconfig.CROSS_TOOL == 'keil':
     # add more link flags for module and components_init.
     LINKFLAGS = ''
