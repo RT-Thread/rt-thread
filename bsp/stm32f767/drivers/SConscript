@@ -1,0 +1,18 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Split("""
+board.c
+stm32f7xx_it.c
+stm32f7xx_hal_msp.c
+""")
+
+if GetDepend(['RT_USING_SERIAL']):
+    src += ['stm32f7xx_uart.c'] + ['HAL_BSP/usart.c']
+
+CPPPATH = [cwd]
+CPPPATH += [cwd + '/HAL_BSP']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

@@ -22,3 +22,4 @@ documentation/html
 *.a
 *.i
 *.d
+*.dbgconf
