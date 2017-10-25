@@ -12,7 +12,10 @@ all: rtthread rtsym exe dll floppy.img
 
 QEMU ?= as/release/download/qemu/i386-softmmu
 
-qemu:
+as:
+	@git clone https://github.com/parai/as.git
+
+qemu:as
 	@(cd as/release/ascore; make asqemu)
 
 rtthread:
