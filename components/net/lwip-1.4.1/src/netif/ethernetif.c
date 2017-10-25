@@ -240,9 +240,9 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, char *name, rt_uint16
         else
     #endif
         {
-            IP4_ADDR(&ipaddr, RT_LWIP_IPADDR0, RT_LWIP_IPADDR1, RT_LWIP_IPADDR2, RT_LWIP_IPADDR3);
-            IP4_ADDR(&gw, RT_LWIP_GWADDR0, RT_LWIP_GWADDR1, RT_LWIP_GWADDR2, RT_LWIP_GWADDR3);
-            IP4_ADDR(&netmask, RT_LWIP_MSKADDR0, RT_LWIP_MSKADDR1, RT_LWIP_MSKADDR2, RT_LWIP_MSKADDR3);
+            ipaddr.addr = inet_addr(RT_LWIP_IPADDR);
+            gw.addr = inet_addr(RT_LWIP_GWADDR);
+            netmask.addr = inet_addr(RT_LWIP_MSKADDR);
         }
 
         netifapi_netif_add(netif, &ipaddr, &netmask, &gw, dev, eth_netif_device_init, tcpip_input);
