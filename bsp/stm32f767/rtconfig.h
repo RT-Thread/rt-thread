@@ -72,6 +72,7 @@
 #define RT_USING_DEVICE_IPC
 // <bool name="RT_USING_SERIAL" description="Using Serial Device Driver Framework" default="true" />
 #define RT_USING_SERIAL
+#define RT_USING_UART3
 // <integer name="RT_UART_RX_BUFFER_SIZE" description="The buffer size for UART reception" default="64" />
 #define RT_SERIAL_RB_BUFSZ    64
 // <bool name="RT_USING_MTD_NAND" description="Using MTD NAND Framework" default="true" />
@@ -93,7 +94,7 @@
 // <integer name="RT_CONSOLEBUF_SIZE" description="The buffer size for console output" default="128" />
 #define RT_CONSOLEBUF_SIZE	128
 // <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console" default="uart" />
-#define RT_CONSOLE_DEVICE_NAME	"uart1"
+#define RT_CONSOLE_DEVICE_NAME	"uart3"
 // </section>
 
 // <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
@@ -229,4 +230,7 @@
 
 #define RT_USING_COMPONENTS_INIT
 //#define RT_USING_USER_MAIN
+
+// #define RT_USING_RTT_CMSIS
+// #define RT_USING_CPU_FFS
 #endif

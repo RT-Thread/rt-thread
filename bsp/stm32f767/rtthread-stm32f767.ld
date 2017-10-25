@@ -6,8 +6,8 @@
 /* Program Entry, set to mark it as "used" and avoid gc */
 MEMORY
 {
-    CODE (rx) : ORIGIN = 0x00200000, LENGTH = 1024k /* 1024KB flash */
-    DATA (rw) : ORIGIN = 0x20010000, LENGTH =  256k /* 256K sram */
+    CODE (rx) : ORIGIN = 0x00200000, LENGTH = 2048k /* 2048KB flash */
+    DATA (rw) : ORIGIN = 0x20000000, LENGTH =  512k /* 512K sram */
 }
 ENTRY(Reset_Handler)
 _system_stack_size = 0x200;

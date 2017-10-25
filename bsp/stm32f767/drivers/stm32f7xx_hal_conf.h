@@ -58,7 +58,7 @@
 // #define HAL_CRYP_MODULE_ENABLED  
 // #define HAL_DAC_MODULE_ENABLED  
 // #define HAL_DCMI_MODULE_ENABLED 
-// #define HAL_DMA_MODULE_ENABLED
+#define HAL_DMA_MODULE_ENABLED
 // #define HAL_DMA2D_MODULE_ENABLED 
 // #define HAL_ETH_MODULE_ENABLED 
 // #define HAL_FLASH_MODULE_ENABLED 
@@ -111,7 +111,9 @@
 #endif
 #define HAL_CORTEX_MODULE_ENABLED
 
-
+#ifndef NULL
+#define NULL RT_NULL
+#endif
 
 /* ########################## HSE/HSI Values adaptation ##################### */
 /**

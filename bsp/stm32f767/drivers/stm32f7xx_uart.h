@@ -27,7 +27,7 @@
 #include <board.h>
 
 
-
+extern int rt_hw_usart_init(void);
 
 
 

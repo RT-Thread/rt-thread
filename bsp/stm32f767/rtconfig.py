@@ -3,7 +3,7 @@ import os
 # toolchains options
 ARCH='arm'
 CPU='cortex-m7'
-CROSS_TOOL='keil'
+CROSS_TOOL='gcc'
 
 if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
@@ -14,7 +14,7 @@ if os.getenv('RTT_ROOT'):
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 if  CROSS_TOOL == 'gcc':
     PLATFORM 	= 'gcc'
-    EXEC_PATH 	= r'C:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
+    EXEC_PATH 	= '/usr/local/gcc-arm-none-eabi-5_4-2016q3/bin/'
 elif CROSS_TOOL == 'keil':
     PLATFORM 	= 'armcc'
     EXEC_PATH 	= r'C:/Keil_v5'
@@ -41,18 +41,20 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
     STRIP = PREFIX + 'strip'
+    
 
-    DEVICE = '  -mcpu=cortex-m7 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -g -Wall -DSTM32F756xx -DUSE_HAL_DRIVER -D__ASSEMBLY__ -D__FPU_USED -eentry'
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread_stm32f7xx.map,-cref,-u,Reset_Handler -T rtthread-stm32f7xx.ld'
+    DEVICE = ' -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
+    CFLAGS = DEVICE + ' -g -Wall -D' + STM32_TYPE + ' -DUSE_HAL_DRIVER  -Og'
+    AFLAGS = ' -c' + DEVICE + ' -Wall -Wa,-mimplicit-it=thumb -x assembler-with-cpp -Og'
+    LFLAGS = DEVICE + ' -lm  -lc -lnosys' + ' -specs=nano.specs -nostartfiles -Wl,--gc-sections,-Map=rtthread_stm32f767.map,-cref,-u,Reset_Handler -T rtthread-stm32f767.ld'
+
 
     CPATH = ''
     LPATH = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O0 -gdwarf-2'
-        AFLAGS += ' -gdwarf-2'
+        CFLAGS += ' -gdwarf-2'
+        AFLAGS += ' -g -gdwarf-2'
     else:
         CFLAGS += ' -O2 -Os'
 
@@ -75,10 +77,10 @@ elif PLATFORM == 'armcc':
     LINK = 'armlink'
     TARGET_EXT = 'axf'
 
-    DEVICE = ' --cpu Cortex-M7.fp.sp --fpu=FPv4-SP'
+    DEVICE = ' --cpu Cortex-M7.fp.sp --fpu=FPv5-SP'
     CFLAGS = DEVICE + ' --apcs=interwork -DUSE_HAL_DRIVER -D' + STM32_TYPE
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-stm32f7xx.map --scatter rtthread-stm32f7xx.sct'
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-stm32f767.map --scatter rtthread-stm32f767.sct'
 
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
     LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
@@ -132,7 +134,7 @@ elif PLATFORM == 'iar':
     AFLAGS += ' --fpu None' 
     AFLAGS += ' -S' 
     
-    LFLAGS = ' --config rtthread-stm32f7xx.icf'
+    LFLAGS = ' --config rtthread-stm32f767.icf'
     LFLAGS += ' --redirect _Printf=_PrintfTiny' 
     LFLAGS += ' --redirect _Scanf=_ScanfSmall' 
     LFLAGS += ' --entry __iar_program_start'    
