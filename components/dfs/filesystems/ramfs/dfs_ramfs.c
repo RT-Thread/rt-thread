@@ -27,6 +27,8 @@
 #include <rtthread.h>
 #include <dfs.h>
 #include <dfs_fs.h>
+#include <dfs_file.h>
+
 #include "dfs_ramfs.h"
 
 int dfs_ramfs_mount(struct dfs_filesystem *fs,
@@ -131,10 +133,11 @@ int dfs_ramfs_write(struct dfs_fd *fd, const void *buf, size_t count)
     struct ramfs_dirent *dirent;
     struct dfs_ramfs *ramfs;
 
-    ramfs = (struct dfs_ramfs*)fd->fs->data;
-    RT_ASSERT(ramfs != NULL);
     dirent = (struct ramfs_dirent*)fd->data;
     RT_ASSERT(dirent != NULL);
+
+    ramfs = dirent->fs;
+    RT_ASSERT(ramfs != NULL);
 
     if (count + fd->pos > fd->size)
     {
@@ -187,7 +190,7 @@ int dfs_ramfs_open(struct dfs_fd *file)
     struct dfs_ramfs *ramfs;
     struct ramfs_dirent *dirent;
 
-    ramfs = (struct dfs_ramfs *)file->fs->data;
+    ramfs = (struct dfs_ramfs *)file->data;
     RT_ASSERT(ramfs != NULL);
 
     if (file->flags & O_DIRECTORY)
@@ -241,6 +244,8 @@ int dfs_ramfs_open(struct dfs_fd *file)
                 rt_list_init(&(dirent->list));
                 dirent->data = NULL;
                 dirent->size = 0;
+                dirent->fs = ramfs;
+
                 /* add to the root directory */
                 rt_list_insert_after(&(ramfs->root.list), &(dirent->list));
             }
@@ -264,10 +269,10 @@ int dfs_ramfs_open(struct dfs_fd *file)
 
     file->data = dirent;
     file->size = dirent->size;
-	if (file->flags & O_APPEND)
-		file->pos = file->size;
-	else 
-		file->pos = 0;
+    if (file->flags & O_APPEND)
+        file->pos = file->size;
+    else 
+        file->pos = 0;
 
     return 0;
 }
@@ -305,10 +310,12 @@ int dfs_ramfs_getdents(struct dfs_fd *file,
     struct ramfs_dirent *dirent;
     struct dfs_ramfs *ramfs;
 
-    ramfs  = (struct dfs_ramfs *)file->fs->data;
     dirent = (struct ramfs_dirent *)file->data;
     if (dirent != &(ramfs->root))
         return -EINVAL;
+
+    ramfs  = dirent->fs;
+    RT_ASSERT(ramfs != RT_NULL);
 
     /* make integer count */
     count = (count / sizeof(struct dirent));
@@ -325,7 +332,7 @@ int dfs_ramfs_getdents(struct dfs_fd *file,
         if (index >= (rt_size_t)file->pos)
         {
             d = dirp + count;
-            d->d_type = DFS_DT_REG;
+            d->d_type = DT_REG;
             d->d_namlen = RT_NAME_MAX;
             d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
             rt_strncpy(d->d_name, dirent->name, RAMFS_NAME_MAX);
@@ -451,3 +458,4 @@ struct dfs_ramfs* dfs_ramfs_create(rt_uint8_t *pool, rt_size_t size)
 
     return ramfs;
 }
+
