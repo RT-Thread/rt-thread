@@ -117,6 +117,10 @@ static rt_err_t tap_netif_init(rt_device_t dev)
 	tap_netif_device.dev_addr[4] = (val>>0)&0xFF;
 	tap_netif_device.dev_addr[5] = (val>>8)&0xFF;
 
+	RT_ASSERT(tap_netif_device.parent.netif != RT_NULL);
+	memcpy(tap_netif_device.parent.netif->hwaddr,
+		   tap_netif_device.dev_addr, 6);
+
 	/* create recv thread */
 	tid = rt_thread_create("tap", tap_asnet_thread_entry, RT_NULL, 
 		2048, RT_THREAD_PRIORITY_MAX - 1, 10);
@@ -241,14 +245,6 @@ struct pbuf *tap_netif_rx(rt_device_t dev)
 void tap_netif_hw_init(void)
 {
 	rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
-
-	tap_netif_device.dev_addr[0] = 0x00;
-	tap_netif_device.dev_addr[1] = 0x60;
-	tap_netif_device.dev_addr[2] = 0x37;
-	/* set mac address: (only for test) */
-	tap_netif_device.dev_addr[3] = 0x12;
-	tap_netif_device.dev_addr[4] = 0x34;
-	tap_netif_device.dev_addr[5] = 0x56;
 
 	tap_netif_device.parent.parent.init		= tap_netif_init;
 	tap_netif_device.parent.parent.open		= tap_netif_open;
