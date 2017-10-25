@@ -33,7 +33,7 @@ BUILD = 'debug'
 if PLATFORM == 'gcc':
     # toolchains
     PREFIX = ''
-    CC = PREFIX + 'gcc -m32 -fno-builtin -fno-stack-protector -nostdinc'
+    CC = PREFIX + 'gcc -m32 -fno-builtin -fno-stack-protector'
     AS = PREFIX + 'gcc -m32'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'ld -melf_i386'
@@ -43,7 +43,7 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ''
-    CFLAGS = DEVICE + ' -Wall'
+    CFLAGS = DEVICE + ' -Wall' + ' -DUSE_PCI -D__X86__'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
     LFLAGS = DEVICE + ' -Map rtthread-ia32.map -T x86_ram.lds -nostdlib'
 

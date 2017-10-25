@@ -34,6 +34,16 @@
 extern int elm_init(void);
 #endif
 
+#ifdef USE_PCI
+#ifdef RT_USING_LWIP
+#include <lwip/sys.h>
+#include <netif/ethernetif.h>
+extern void lwip_system_init(void);
+#endif
+#include "pci_core.h"
+extern void tap_netif_hw_init(void);
+#endif
+
 /* components initialization for simulator */
 void components_init(void)
 {
@@ -45,6 +55,19 @@ void components_init(void)
 #ifdef RT_USING_DFS_ELMFAT
 	/* initialize the elm chan FatFS file system*/
 	elm_init();
+#endif
+
+#ifdef USE_PCI
+	pci_search_all_device();
+#ifdef RT_USING_LWIP
+	/* initialize lwip stack */
+	/* register ethernetif device */
+	tap_netif_hw_init();
+
+	/* initialize lwip system */
+	lwip_system_init();
+	rt_kprintf("TCP/IP initialized!\n");
+#endif
 #endif
 
 #ifdef RT_USING_MODULE
