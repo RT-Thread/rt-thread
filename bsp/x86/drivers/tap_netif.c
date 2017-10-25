@@ -35,7 +35,6 @@ enum{
 static pci_dev *pdev = NULL;
 static void* __iobase= NULL;
 static char pkbuf[1514];
-static volatile u16_t pklen;
 /************************************************************************/
 /* RT-Thread Network Interface                                          */
 /************************************************************************/
@@ -54,30 +53,21 @@ static struct rt_semaphore sem_lock;
 static void tap_asnet_thread_entry(void* param)
 {
 	struct eth_device* eth;
+	uint32 flag;
 	eth = (struct eth_device*) &tap_netif_device;
 
-	struct pbuf *p, *q;
-	u16_t len,pos;
-	char *bufptr;
+	rt_kprintf("tap eth server on-line\n");
 
 	for(;;)
 	{
-		if (RT_NULL == __iobase) rt_thread_exit();		
+		if (RT_NULL == __iobase) {
+			rt_kprintf("tap eth server exit\n");
+			rt_thread_exit();
+		}
 
-		if(pklen) continue; /* there is a request to rx */
-
-		pklen = len = readl(__iobase+REG_LENGTH);
-
-		if(pklen > 0)
+		flag = readl(__iobase+REG_NETSTATUS);
+		if(flag&FLG_RX)
 		{
-			pos = 0;
-			while(len > 0)
-			{
-				pkbuf[pos] = readl(__iobase+REG_DATA);
-				pos ++;
-				len --;
-			}
-
 			/* notify eth rx thread to receive packet */
 			eth_device_ready(eth);
 		}
@@ -223,13 +213,22 @@ rt_err_t tap_netif_tx( rt_device_t dev, struct pbuf* p)
 struct pbuf *tap_netif_rx(rt_device_t dev)
 {
 	struct pbuf* p = RT_NULL;
-
-	int max_size = 4096;
 	int size;
+	u16_t len,pos;
 
 	if(RT_NULL == __iobase) return RT_NULL;
 
-	size = pklen;
+	size = len = readl(__iobase+REG_LENGTH);
+	if(size > 0)
+	{
+		pos = 0;
+		while(len > 0)
+		{
+			pkbuf[pos] = readl(__iobase+REG_DATA);
+			pos ++;
+			len --;
+		}
+	}
 
 	if (size > 0) {
 		p = pbuf_alloc(PBUF_LINK, size, PBUF_RAM);

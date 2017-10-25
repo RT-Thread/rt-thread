@@ -63,7 +63,9 @@ void components_init(void)
 	/* initialize lwip stack */
 	/* register ethernetif device */
 	tap_netif_hw_init();
-
+    
+	/* register ethernetif device */
+	eth_system_device_init();
 	/* initialize lwip system */
 	lwip_system_init();
 	rt_kprintf("TCP/IP initialized!\n");
