@@ -1,5 +1,5 @@
 /*
- * File      : board.c
+ * File      : stm32f7xx_uart.c
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2015, RT-Thread Development Team
  *
@@ -39,6 +39,7 @@ typedef struct stm32_uart_dma
     uint32_t Channel;
     IRQn_Type irq;
     void (*rcc)(void);
+		DMA_HandleTypeDef hdma;
 } *stm32_uart_dma_t;
 
 typedef struct stm32_uart
@@ -53,42 +54,53 @@ typedef struct stm32_uart
 static void stm32_uart_dma_config(struct rt_serial_device *serial,
                                   rt_uint32_t ctrl_arg)
 {
-    DMA_HandleTypeDef hdma;
+    DMA_HandleTypeDef * hdma;
     stm32_uart_t stm32_uart;
     stm32_uart = (stm32_uart_t)serial->parent.user_data;
-
-    hdma.Init.PeriphInc = DMA_PINC_DISABLE;
-    hdma.Init.MemInc = DMA_MINC_ENABLE;
-    hdma.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    hdma.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    hdma.Init.Priority = DMA_PRIORITY_LOW;
-    hdma.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
     switch (ctrl_arg)
     {
     case RT_DEVICE_FLAG_DMA_RX:
-        stm32_uart->dma_rx.rcc();
+				stm32_uart->dma_rx.rcc();
         HAL_NVIC_SetPriority(stm32_uart->dma_rx.irq, 5, 0);
         HAL_NVIC_EnableIRQ(stm32_uart->dma_rx.irq);
-        hdma.Instance = stm32_uart->dma_rx.Instance;
-        hdma.Init.Channel = stm32_uart->dma_rx.Channel;
-        hdma.Init.Direction = DMA_PERIPH_TO_MEMORY;
-        hdma.Init.Mode = DMA_CIRCULAR;
-        HAL_DMA_Init(&hdma);
-        __HAL_LINKDMA(stm32_uart->huart, hdmatx, hdma);
+				hdma = &stm32_uart->dma_rx.hdma;
+        hdma->Instance = stm32_uart->dma_rx.Instance;
+        hdma->Init.Channel = stm32_uart->dma_rx.Channel;
+        hdma->Init.Direction = DMA_PERIPH_TO_MEMORY;
+        hdma->Init.Mode = DMA_CIRCULAR;
+				hdma->Init.PeriphInc = DMA_PINC_DISABLE;
+				hdma->Init.MemInc = DMA_MINC_ENABLE;
+				hdma->Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+				hdma->Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+				hdma->Init.Priority = DMA_PRIORITY_LOW;
+				hdma->Init.FIFOMode = DMA_FIFOMODE_DISABLE;
+				HAL_DMA_Init(hdma);
+				
+        __HAL_LINKDMA(stm32_uart->huart, hdmarx, (*hdma));
         break;
     case RT_DEVICE_FLAG_DMA_TX:
         /* USART3_TX Init */
-        stm32_uart->dma_tx.rcc();
+				stm32_uart->dma_tx.rcc();
         HAL_NVIC_SetPriority(stm32_uart->dma_tx.irq, 0, 0);
         HAL_NVIC_EnableIRQ(stm32_uart->dma_tx.irq);
-        hdma.Instance = stm32_uart->dma_tx.Instance;
-        hdma.Init.Channel = stm32_uart->dma_tx.Channel;
-        hdma.Init.Direction = DMA_MEMORY_TO_PERIPH;
-        hdma.Init.Mode = DMA_NORMAL;
-        HAL_DMA_Init(&hdma);
-        __HAL_LINKDMA(stm32_uart->huart, hdmatx, hdma);
+				hdma = &stm32_uart->dma_tx.hdma;
+        hdma->Instance = stm32_uart->dma_tx.Instance;
+        hdma->Init.Channel = stm32_uart->dma_tx.Channel;
+        hdma->Init.Direction = DMA_MEMORY_TO_PERIPH;
+        hdma->Init.Mode = DMA_NORMAL;//DMA_NORMAL
+				hdma->Init.PeriphInc = DMA_PINC_DISABLE;
+				hdma->Init.MemInc = DMA_MINC_ENABLE;
+				hdma->Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+				hdma->Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+				hdma->Init.Priority = DMA_PRIORITY_LOW;
+				hdma->Init.FIFOMode = DMA_FIFOMODE_DISABLE;
+				HAL_DMA_Init(hdma);
+        __HAL_LINKDMA(stm32_uart->huart, hdmatx, (*hdma));
+				HAL_NVIC_SetPriority(stm32_uart->irq, 5, 0);
+        HAL_NVIC_EnableIRQ(stm32_uart->irq);
         break;
     }
+		
 }
 
 static rt_err_t stm32_uart_configure(struct rt_serial_device *serial,
@@ -160,11 +172,13 @@ static rt_err_t stm32_uart_control(struct rt_serial_device *serial, int cmd,
     case RT_DEVICE_CTRL_CLR_INT:
         /* disable rx irq */
         HAL_NVIC_DisableIRQ(stm32_uart->irq);
+				__HAL_UART_DISABLE_IT(stm32_uart->huart, UART_IT_RXNE);
         break;
     /* enable interrupt */
     case RT_DEVICE_CTRL_SET_INT:
         HAL_NVIC_SetPriority(stm32_uart->irq, 5, 0);
         HAL_NVIC_EnableIRQ(stm32_uart->irq);
+				__HAL_UART_ENABLE_IT(stm32_uart->huart, UART_IT_RXNE);
         break;
     /* USART config */
     case RT_DEVICE_CTRL_CONFIG:
@@ -175,11 +189,31 @@ static rt_err_t stm32_uart_control(struct rt_serial_device *serial, int cmd,
 }
 static int stm32_uart_putc(struct rt_serial_device *serial, char c)
 {
-    return 0;
+		stm32_uart_t stm32_uart;
+    stm32_uart = (stm32_uart_t)serial->parent.user_data;
+		if (serial->parent.open_flag & RT_DEVICE_FLAG_INT_TX)
+    {
+			return HAL_UART_Transmit_IT(stm32_uart->huart, (uint8_t *)&c, 1) == HAL_OK ?1:-1;
+		}
+		else
+		{
+			while((__HAL_UART_GET_FLAG(stm32_uart->huart, UART_FLAG_TXE) == RESET));
+			HAL_UART_Transmit(stm32_uart->huart, (uint8_t *)&c, 1,0xff);
+		}
+		
+    return 1;
 }
 static int stm32_uart_getc(struct rt_serial_device *serial)
 {
-    return 0;
+		int ch;
+		stm32_uart_t stm32_uart;
+    stm32_uart = (stm32_uart_t)serial->parent.user_data;
+	  ch = -1;
+    if (stm32_uart->huart->Instance->ISR & UART_FLAG_RXNE)
+    {
+        ch = stm32_uart->huart->Instance->RDR & 0xff;
+    }
+    return ch;
 }
 static rt_size_t stm32_uart_dma_transmit(struct rt_serial_device *serial,
         rt_uint8_t *buf, rt_size_t size,
@@ -193,6 +227,7 @@ static rt_size_t stm32_uart_dma_transmit(struct rt_serial_device *serial,
         HAL_UART_Receive_DMA(stm32_uart->huart, buf, size);
         break;
     case RT_SERIAL_DMA_TX:
+				SCB_CleanDCache();
         HAL_UART_Transmit_DMA(stm32_uart->huart, buf, size);
         break;
     }
@@ -241,13 +276,11 @@ static void MX_USART3_UART_Init(void)
 void DMA1_Stream1_IRQHandler(void)
 {
     /* USER CODE BEGIN DMA1_Stream1_IRQn 0 */
-
+rt_interrupt_enter();
     /* USER CODE END DMA1_Stream1_IRQn 0 */
-    stm32_uart_t stm32_uart;
-    stm32_uart = (stm32_uart_t)serial3.parent.user_data;
-    HAL_DMA_IRQHandler(stm32_uart->huart->hdmatx);
+    HAL_DMA_IRQHandler(huart3.hdmarx);
     /* USER CODE BEGIN DMA1_Stream1_IRQn 1 */
-
+ rt_interrupt_leave();
     /* USER CODE END DMA1_Stream1_IRQn 1 */
 }
 
@@ -257,13 +290,11 @@ void DMA1_Stream1_IRQHandler(void)
 void DMA1_Stream4_IRQHandler(void)
 {
     /* USER CODE BEGIN DMA1_Stream4_IRQn 0 */
-
+rt_interrupt_enter();
     /* USER CODE END DMA1_Stream4_IRQn 0 */
-    stm32_uart_t stm32_uart;
-    stm32_uart = (stm32_uart_t)serial3.parent.user_data;
-    HAL_DMA_IRQHandler(stm32_uart->huart->hdmarx);
+    HAL_DMA_IRQHandler(huart3.hdmatx);
     /* USER CODE BEGIN DMA1_Stream4_IRQn 1 */
-
+ rt_interrupt_leave();
     /* USER CODE END DMA1_Stream4_IRQn 1 */
 }
 
@@ -273,13 +304,20 @@ void DMA1_Stream4_IRQHandler(void)
 void USART3_IRQHandler(void)
 {
     /* USER CODE BEGIN USART3_IRQn 0 */
-
-    /* USER CODE END USART3_IRQn 0 */
-    stm32_uart_t stm32_uart;
+rt_interrupt_enter();
+		stm32_uart_t stm32_uart;
     stm32_uart = (stm32_uart_t)serial3.parent.user_data;
-    HAL_UART_IRQHandler(stm32_uart->huart);
+    /* USER CODE END USART3_IRQn 0 */
+		if ((__HAL_UART_GET_IT(stm32_uart->huart, UART_IT_RXNE) != RESET) && (__HAL_UART_GET_IT_SOURCE(stm32_uart->huart, UART_IT_RXNE) != RESET))
+    {
+        rt_hw_serial_isr(&serial3, RT_SERIAL_EVENT_RX_IND);
+        /* Clear RXNE interrupt flag */
+        __HAL_UART_SEND_REQ(stm32_uart->huart, UART_RXDATA_FLUSH_REQUEST);
+    }else{
+			HAL_UART_IRQHandler(stm32_uart->huart);
+		}
     /* USER CODE BEGIN USART3_IRQn 1 */
-
+ rt_interrupt_leave();
     /* USER CODE END USART3_IRQn 1 */
 }
 #endif
@@ -288,14 +326,14 @@ int rt_hw_usart_init(void)
 {
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     config.baud_rate = BAUD_RATE_115200;
-    config.bufsz = 0;
+    //config.bufsz = 0;
 #ifdef RT_USING_UART3
     MX_USART3_UART_Init();
     serial3.ops = &stm32_uart_ops;
     serial3.config = config;
     rt_hw_serial_register(&serial3, "uart3",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_DMA_RX |
-                          RT_DEVICE_FLAG_DMA_TX,
+                          RT_DEVICE_FLAG_DMA_TX | RT_DEVICE_FLAG_INT_RX |RT_DEVICE_FLAG_INT_TX,
                           &uart3);
 #endif
     return 0;
@@ -308,7 +346,12 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
     if (huart->Instance == USART3)
     {
 #ifdef RT_USING_UART3
-        rt_hw_serial_isr(&serial3, RT_SERIAL_EVENT_TX_DMADONE);
+		if(serial3.parent.open_flag & RT_DEVICE_FLAG_DMA_TX)
+		{
+			rt_hw_serial_isr(&serial3, RT_SERIAL_EVENT_TX_DMADONE);
+		}else if(serial3.parent.open_flag & RT_DEVICE_FLAG_INT_TX){
+			rt_hw_serial_isr(&serial3, RT_SERIAL_EVENT_TX_DONE);
+		}
 #endif
     }
 }
@@ -317,7 +360,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     if (huart->Instance == USART3)
     {
 #ifdef RT_USING_UART3
-        rt_hw_serial_isr(&serial3, RT_SERIAL_EVENT_RX_DMADONE);
+			if(serial3.parent.open_flag & RT_DEVICE_FLAG_DMA_RX)
+			{
+				rt_hw_serial_isr(&serial3, RT_SERIAL_EVENT_RX_DMADONE);
+			}
+        
 #endif
     }
 }

@@ -1,5 +1,5 @@
 /*
- * File      : board.c
+ * File      : stm32f7xx_uart.h
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2015, RT-Thread Development Team
  *
@@ -21,42 +21,29 @@
  * Date           Author       Notes
  * 2017-10-25     ZYH      first implementation
  */
+ 
+ #ifndef __STM32F7XX_RTC_H__
+ #define __STM32F7XX_RTC_H__
+ #include "stm32f7xx_hal.h"
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ #endif
 
-#include <board.h>
-#include <rtthread.h>
 
 
 
-void rt_init_thread_entry(void* parameter)
-{
-#ifdef RT_USING_COMPONENTS_INIT
-    /* initialization RT-Thread Components */
-    rt_components_init();
-#endif
-
-}
-
-
-
-int rt_application_init(void)
-{
-    rt_thread_t init_thread;
-
-#if (RT_THREAD_PRIORITY_MAX == 32)
-    init_thread = rt_thread_create("init",
-                                   rt_init_thread_entry, RT_NULL,
-                                   2048, 8, 20);
-#else
-    init_thread = rt_thread_create("init",
-                                   rt_init_thread_entry, RT_NULL,
-                                   2048, 80, 20);
-#endif
-
-    if (init_thread != RT_NULL)
-        rt_thread_startup(init_thread);
-
-    return 0;
-}
 
 
 
