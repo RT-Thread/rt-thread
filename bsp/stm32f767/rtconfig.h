@@ -86,7 +86,7 @@
 // <bool name="RT_USING_I2C" description="Using I2C Device Driver Framework" default="true" />
 //#define RT_USING_I2C
 // <bool name="RT_USING_RTC" description="Using RTC Device Driver Framework" default="true" />
-//#define RT_USING_RTC
+#define RT_USING_RTC
 // <integer name="RT_MMCSD_THREAD_PREORITY" description="The prority of mmcsd thread" default="15" />
 #define RT_MMCSD_THREAD_PREORITY	15
 // <section name="RT_USING_CONSOLE" description="Using console" default="true" >

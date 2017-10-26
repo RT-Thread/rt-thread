@@ -59,6 +59,7 @@ extern void _Error_Handler(char *, int);
 void HAL_MspInit(void)
 {
   /* USER CODE BEGIN MspInit 0 */
+	__HAL_RCC_GPIOC_CLK_ENABLE();
 	__HAL_RCC_GPIOH_CLK_ENABLE();
 	__HAL_RCC_GPIOA_CLK_ENABLE();
   /* USER CODE END MspInit 0 */

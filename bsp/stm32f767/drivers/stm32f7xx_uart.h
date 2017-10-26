@@ -1,5 +1,5 @@
 /*
- * File      : board.c
+ * File      : stm32f7xx_uart.h
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2015, RT-Thread Development Team
  *

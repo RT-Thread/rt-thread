@@ -1,5 +1,5 @@
 /*
- * File      : board.h
+ * File      : stm32f7xx_uart.h
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2015, RT-Thread Development Team
  *
@@ -21,20 +21,32 @@
  * Date           Author       Notes
  * 2017-10-25     ZYH      first implementation
  */
-#ifndef __BOARD_H__
-#define __BOARD_H__
+ 
+ #ifndef __STM32F7XX_RTC_H__
+ #define __STM32F7XX_RTC_H__
+ #include "stm32f7xx_hal.h"
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ #endif
 
-#include <stm32f7xx_hal.h>
-
-#define STM32_SRAM_SIZE         512
-#define STM32_SRAM_END          (0x20000000 + STM32_SRAM_SIZE * 1024)
-
-void rt_hw_board_init(void);
 
 
 
 
-#endif
+
+
 
 
 

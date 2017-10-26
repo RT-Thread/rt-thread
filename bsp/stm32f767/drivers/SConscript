@@ -10,6 +10,9 @@ stm32f7xx_hal_msp.c
 if GetDepend(['RT_USING_SERIAL']):
     src += ['stm32f7xx_uart.c']
 
+if GetDepend(['RT_USING_RTC']):
+    src += ['stm32f7xx_rtc.c']
+
 CPPPATH = [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
