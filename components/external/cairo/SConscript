@@ -6,9 +6,9 @@ CAIRO_PATH = 'cairo-' + CAIRO_VERSION
 cwd = GetCurrentDir()
 
 if GetDepend('RT_USING_CAIRO') and not os.path.exists(CAIRO_PATH):
-    print '================ERROR============================'
-    print 'Please get cairo dist and put them under cairo folder'
-    print '================================================='
+    print('================ERROR============================')
+    print('Please get cairo dist and put them under cairo folder')
+    print('=================================================')
     exit(0)
 
 # source files 
