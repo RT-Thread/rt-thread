@@ -21,42 +21,42 @@
  * Date           Author       Notes
  * 2017-10-25     ZYH      first implementation
  */
-
 #include <board.h>
 #include <rtthread.h>
-
-
-
-void rt_init_thread_entry(void* parameter)
+#include <rtdevice.h>
+#include <finsh.h>
+#define UART_TEST_DEVICE "uart3"
+int test_uart(void)
 {
-#ifdef RT_USING_COMPONENTS_INIT
-    /* initialization RT-Thread Components */
-    rt_components_init();
-#endif
-
+	rt_device_t uart_device;
+	rt_uint16_t old_flag; 
+	uart_device = rt_device_find(UART_TEST_DEVICE);
+	
+	if(uart_device == RT_NULL)
+	{
+		rt_kprintf("No device : %s\n",UART_TEST_DEVICE);
+		return -1;
+	}
+	rt_kprintf("Found device : %s\n",UART_TEST_DEVICE);
+	old_flag = uart_device->open_flag;
+	if(rt_device_open(uart_device, RT_DEVICE_FLAG_STREAM|RT_DEVICE_FLAG_DMA_TX) != RT_EOK)
+	{
+		rt_kprintf("Can not open device : %s\n",UART_TEST_DEVICE);
+		return -1;
+	}
+	rt_kprintf("Open device : %s\n",UART_TEST_DEVICE);
+	
+	
+	
+	
+	
+	
+	
+  return 0;
 }
+MSH_CMD_EXPORT(test_uart, my command test);
 
 
-
-int rt_application_init(void)
-{
-    rt_thread_t init_thread;
-
-#if (RT_THREAD_PRIORITY_MAX == 32)
-    init_thread = rt_thread_create("init",
-                                   rt_init_thread_entry, RT_NULL,
-                                   2048, 8, 20);
-#else
-    init_thread = rt_thread_create("init",
-                                   rt_init_thread_entry, RT_NULL,
-                                   2048, 80, 20);
-#endif
-
-    if (init_thread != RT_NULL)
-        rt_thread_startup(init_thread);
-
-    return 0;
-}
 
 
 

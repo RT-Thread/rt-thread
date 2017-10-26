@@ -73,12 +73,14 @@ void SystemClock_Config(void)
     _Error_Handler(__FILE__, __LINE__);
   }
 
-  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_CLK48;
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USART3|RCC_PERIPHCLK_CLK48;
+  PeriphClkInitStruct.Usart3ClockSelection = RCC_USART3CLKSOURCE_PCLK1;
   PeriphClkInitStruct.Clk48ClockSelection = RCC_CLK48SOURCE_PLL;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
+
 
     /**Configure the Systick interrupt time 
     */
@@ -91,9 +93,24 @@ void SystemClock_Config(void)
   /* SysTick_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
 }
+static void CPU_CACHE_Enable(void)
+{
+    /* Enable branch prediction */
+    SCB->CCR |= (1 << 18);
+    __DSB();
+
+    /* Enable I-Cache */
+    SCB_EnableICache();
+
+    /* Enable D-Cache */
+    SCB_EnableDCache();
+}
 
 void rt_hw_board_init(void)
 {
+	CPU_CACHE_Enable();
+	HAL_Init();
+	SystemClock_Config();
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
@@ -105,14 +122,7 @@ void rt_hw_board_init(void)
 }
 
 
-static int stm32_board_init(void)
-{
-	HAL_Init();
-	SystemClock_Config();
-	return 0;
-}
 
-INIT_BOARD_EXPORT(stm32_board_init);
 
 extern void assert_failed(rt_uint8_t * file, rt_uint32_t line);
 void _Error_Handler(char * file, int line)

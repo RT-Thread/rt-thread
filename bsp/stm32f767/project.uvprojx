@@ -54,7 +54,7 @@
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
-          <BrowseInformation>1</BrowseInformation>
+          <BrowseInformation>0</BrowseInformation>
           <ListingPath>.\build\</ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F767xx, USE_HAL_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;.;drivers;drivers\HAL_BSP;Libraries\CMSIS\Device\ST\STM32F7xx\Include;Libraries\CMSIS\Include;Libraries\STM32F7xx_HAL_Driver\Inc;..\..\include;..\..\libcpu\arm\cortex-m7;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh</IncludePath>
+              <IncludePath>applications;.;drivers;Libraries\CMSIS\Device\ST\STM32F7xx\Include;Libraries\CMSIS\Include;Libraries\STM32F7xx_HAL_Driver\Inc;..\..\include;..\..\libcpu\arm\cortex-m7;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -390,6 +390,11 @@
               <FileType>1</FileType>
               <FilePath>applications\startup.c</FilePath>
             </File>
+            <File>
+              <FileName>unit_test_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\unit_test_uart.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -414,11 +419,6 @@
               <FileName>stm32f7xx_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\stm32f7xx_uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\HAL_BSP\usart.c</FilePath>
             </File>
           </Files>
         </Group>
