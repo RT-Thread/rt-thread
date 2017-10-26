@@ -1,0 +1,101 @@
+/*
+** ###################################################################
+**     Processors:          MIMXRT1052CVL5A
+**                          MIMXRT1052DVL6A
+**
+**     Compiler:            IAR ANSI C/C++ Compiler for ARM
+**     Reference manual:    IMXRT1050RM Rev.C, 08/2017
+**     Version:             rev. 0.1, 2017-01-10
+**     Build:               b170927
+**
+**     Abstract:
+**         Linker file for the IAR ANSI C/C++ Compiler for ARM
+**
+**     Copyright 2016 Freescale Semiconductor, Inc.
+**     Copyright 2016-2017 NXP
+**     Redistribution and use in source and binary forms, with or without modification,
+**     are permitted provided that the following conditions are met:
+**
+**     1. Redistributions of source code must retain the above copyright notice, this list
+**       of conditions and the following disclaimer.
+**
+**     2. Redistributions in binary form must reproduce the above copyright notice, this
+**       list of conditions and the following disclaimer in the documentation and/or
+**       other materials provided with the distribution.
+**
+**     3. Neither the name of the copyright holder nor the names of its
+**       contributors may be used to endorse or promote products derived from this
+**       software without specific prior written permission.
+**
+**     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+**     ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+**     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+**     DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+**     ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+**     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+**     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+**     ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+**     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+**     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+**
+**     http:                 www.nxp.com
+**     mail:                 support@nxp.com
+**
+** ###################################################################
+*/
+
+define symbol m_interrupts_start       = 0x60002000;
+define symbol m_interrupts_end         = 0x600023FF;
+
+define symbol m_text_start             = 0x60002400;
+define symbol m_text_end               = 0x7F7FFFFF;
+
+define symbol m_data_start             = 0x20000000;
+define symbol m_data_end               = 0x2001FFFF;
+
+define symbol m_data2_start            = 0x20200000;
+define symbol m_data2_end              = 0x2023FFFF;
+
+/* Sizes */
+if (isdefinedsymbol(__stack_size__)) {
+  define symbol __size_cstack__        = __stack_size__;
+} else {
+  define symbol __size_cstack__        = 0x0400;
+}
+
+if (isdefinedsymbol(__heap_size__)) {
+  define symbol __size_heap__          = __heap_size__;
+} else {
+  define symbol __size_heap__          = 0x0400;
+}
+
+define exported symbol __VECTOR_TABLE  = m_interrupts_start;
+define exported symbol __VECTOR_RAM    = m_interrupts_start;
+define exported symbol __RAM_VECTOR_TABLE_SIZE = 0x0;
+
+define memory mem with size = 4G;
+define region TEXT_region = mem:[from m_interrupts_start to m_interrupts_end]
+                          | mem:[from m_text_start to m_text_end];
+
+define region DATA_region = mem:[from m_data_start to m_data_end-__size_cstack__];
+define region DATA2_region = mem:[from m_data2_start to m_data2_end];
+define region CSTACK_region = mem:[from m_data_end-__size_cstack__+1 to m_data_end];
+
+define block CSTACK    with alignment = 8, size = __size_cstack__   { };
+define block HEAP      with alignment = 8, size = __size_heap__     { };
+define block RW        { readwrite };
+define block ZI        { zi };
+define block NCACHE_VAR    { section NonCacheable , section NonCacheable.init };
+
+initialize by copy { readwrite, section .textrw };
+do not initialize  { section .noinit };
+
+place at address mem: m_interrupts_start    { readonly section .intvec };
+
+place in TEXT_region                        { readonly };
+place in DATA_region                        { block RW };
+place in DATA_region                        { block ZI };
+place in DATA_region                        { last block HEAP };
+place in DATA_region                        { block NCACHE_VAR };
+place in CSTACK_region                      { block CSTACK };
+
