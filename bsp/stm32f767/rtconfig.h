@@ -5,19 +5,19 @@
 // <RDTConfigurator URL="http://www.rt-thread.com/eclipse">
 
 // <integer name="RT_NAME_MAX" description="Maximal size of kernel object name length" default="6" />
-#define RT_NAME_MAX	8
+#define RT_NAME_MAX 8
 // <integer name="RT_ALIGN_SIZE" description="Alignment size for CPU architecture data access" default="4" />
-#define RT_ALIGN_SIZE	4
+#define RT_ALIGN_SIZE   4
 // <integer name="RT_THREAD_PRIORITY_MAX" description="Maximal level of thread priority" default="32">
 // <item description="8">8</item>
 // <item description="32">32</item>
 // <item description="256">256</item>
 // </integer>
-#define RT_THREAD_PRIORITY_MAX	32
+#define RT_THREAD_PRIORITY_MAX  32
 // <integer name="RT_TICK_PER_SECOND" description="OS tick per second" default="1000" />
-#define RT_TICK_PER_SECOND	1000
+#define RT_TICK_PER_SECOND  1000
 // <integer name="IDLE_THREAD_STACK_SIZE" description="The stack size of idle thread" default="512" />
-#define IDLE_THREAD_STACK_SIZE	512
+#define IDLE_THREAD_STACK_SIZE  512
 // <bool name="RT_USING_MODULE" description="Using Application Module" default="true" />
 //#define RT_USING_MODULE
 // <section name="RT_DEBUG" description="Kernel Debug Configuration" default="true" >
@@ -33,11 +33,11 @@
 // <section name="RT_USING_TIMER_SOFT" description="Using software timer which will start a thread to handle soft-timer" default="true" >
 #define RT_USING_TIMER_SOFT
 // <integer name="RT_TIMER_THREAD_PRIO" description="The priority level of timer thread" default="4" />
-#define RT_TIMER_THREAD_PRIO	4
+#define RT_TIMER_THREAD_PRIO    4
 // <integer name="RT_TIMER_THREAD_STACK_SIZE" description="The stack size of timer thread" default="512" />
-#define RT_TIMER_THREAD_STACK_SIZE	512
+#define RT_TIMER_THREAD_STACK_SIZE  512
 // <integer name="RT_TIMER_TICK_PER_SECOND" description="The soft-timer tick per second" default="10" />
-#define RT_TIMER_TICK_PER_SECOND	200
+#define RT_TIMER_TICK_PER_SECOND    200
 // </section>
 
 // <section name="IPC" description="Inter-Thread communication" default="always" >
@@ -88,13 +88,13 @@
 // <bool name="RT_USING_RTC" description="Using RTC Device Driver Framework" default="true" />
 #define RT_USING_RTC
 // <integer name="RT_MMCSD_THREAD_PREORITY" description="The prority of mmcsd thread" default="15" />
-#define RT_MMCSD_THREAD_PREORITY	15
+#define RT_MMCSD_THREAD_PREORITY    15
 // <section name="RT_USING_CONSOLE" description="Using console" default="true" >
 #define RT_USING_CONSOLE
 // <integer name="RT_CONSOLEBUF_SIZE" description="The buffer size for console output" default="128" />
-#define RT_CONSOLEBUF_SIZE	128
+#define RT_CONSOLEBUF_SIZE  128
 // <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console" default="uart" />
-#define RT_CONSOLE_DEVICE_NAME	"uart3"
+#define RT_CONSOLE_DEVICE_NAME  "uart3"
 // </section>
 
 // <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
@@ -107,7 +107,7 @@
 // <bool name="FINSH_USING_DESCRIPTION" description="Keeping description in symbol table" default="true" />
 #define FINSH_USING_DESCRIPTION
 // <integer name="FINSH_THREAD_STACK_SIZE" description="The stack size for finsh thread" default="4096" />
-#define FINSH_THREAD_STACK_SIZE	4096
+#define FINSH_THREAD_STACK_SIZE 4096
 // <bool name="FINSH_USING_MSH" description="Using module shell in finsh" default="true" />
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_DEFAULT
@@ -127,9 +127,9 @@
 // <integer name="DFS_FILESYSTEM_TYPES_MAX" description="The maximal number of the supported file system type" default="4" />
 #define DFS_FILESYSTEM_TYPES_MAX  4
 // <integer name="DFS_FILESYSTEMS_MAX" description="The maximal number of mounted file system" default="4" />
-#define DFS_FILESYSTEMS_MAX	4
+#define DFS_FILESYSTEMS_MAX 4
 // <integer name="DFS_FD_MAX" description="The maximal number of opened files" default="4" />
-#define DFS_FD_MAX	         32
+#define DFS_FD_MAX           32
 // <bool name="RT_USING_DFS_ELMFAT" description="Using ELM FatFs" default="true" />
 #define RT_USING_DFS_ELMFAT
 // <integer name="RT_DFS_ELM_DRIVES" description="The maximal number of drives of FatFs" default="4" />
@@ -141,13 +141,13 @@
 // <item description="LFN with dynamic LFN working buffer on the stack">2</item>
 // <item description="LFN with dynamic LFN working buffer on the heap">3</item>
 // </integer>
-#define RT_DFS_ELM_USE_LFN	3
+#define RT_DFS_ELM_USE_LFN  3
 // <integer name="RT_DFS_ELM_CODE_PAGE" description="OEM code page" default="437">
-#define RT_DFS_ELM_CODE_PAGE	437
+#define RT_DFS_ELM_CODE_PAGE    437
 // <bool name="RT_DFS_ELM_CODE_PAGE_FILE" description="Using OEM code page file" default="false" />
 // #define RT_DFS_ELM_CODE_PAGE_FILE
 // <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="255" />
-#define RT_DFS_ELM_MAX_LFN	255
+#define RT_DFS_ELM_MAX_LFN  255
 // <integer name="RT_DFS_ELM_MAX_SECTOR_SIZE" description="Maximal size of sector" default="512" />
 #define RT_DFS_ELM_MAX_SECTOR_SIZE  4096
 // <bool name="RT_DFS_ELM_USE_ERASE" description="Enable erase feature for flash" default="true" />
@@ -163,7 +163,7 @@
 // <bool name="RT_USING_DFS_NFS" description="Using NFS" default="false" />
 // #define RT_USING_DFS_NFS
 // <string name="RT_NFS_HOST_EXPORT" description="The exported NFS host path" default="192.168.1.10:/" />
-#define RT_NFS_HOST_EXPORT	"192.168.137.1:/"
+#define RT_NFS_HOST_EXPORT  "192.168.137.1:/"
 // </section>
 
 // <section name="RT_USING_LWIP" description="lwip, a lightweight TCP/IP protocol stack" default="true" >
@@ -181,31 +181,31 @@
 // <bool name="RT_LWIP_DNS" description="Enable DNS protocol" default="true" />
 #define RT_LWIP_DNS
 // <integer name="RT_LWIP_PBUF_NUM" description="Maximal number of buffers in the pbuf pool" default="4" />
-#define RT_LWIP_PBUF_NUM	8
+#define RT_LWIP_PBUF_NUM    8
 // <integer name="RT_LWIP_TCP_PCB_NUM" description="Maximal number of simultaneously active TCP connections" default="5" />
-#define RT_LWIP_TCP_PCB_NUM	8
+#define RT_LWIP_TCP_PCB_NUM 8
 // <integer name="RT_LWIP_TCP_SND_BUF" description="TCP sender buffer size" default="8192" />
-#define RT_LWIP_TCP_SND_BUF	8192
+#define RT_LWIP_TCP_SND_BUF 8192
 // <integer name="RT_LWIP_TCP_WND" description="TCP receive window" default="8192" />
-#define RT_LWIP_TCP_WND	8192
+#define RT_LWIP_TCP_WND 8192
 // <bool name="RT_LWIP_SNMP" description="Enable SNMP protocol" default="false" />
 // #define RT_LWIP_SNMP
 // <bool name="RT_LWIP_DHCP" description="Enable DHCP client to get IP address" default="false" />
 #define RT_LWIP_DHCP
 // <integer name="RT_LWIP_TCP_SEG_NUM" description="the number of simultaneously queued TCP" default="4" />
-//#define RT_LWIP_TCP_SEG_NUM	8
+//#define RT_LWIP_TCP_SEG_NUM   8
 // <integer name="RT_LWIP_TCPTHREAD_PRIORITY" description="the thread priority of TCP thread" default="128" />
-#define RT_LWIP_TCPTHREAD_PRIORITY	12
+#define RT_LWIP_TCPTHREAD_PRIORITY  12
 // <integer name="RT_LWIP_TCPTHREAD_MBOX_SIZE" description="the mail box size of TCP thread to wait for" default="32" />
-#define RT_LWIP_TCPTHREAD_MBOX_SIZE	8
+#define RT_LWIP_TCPTHREAD_MBOX_SIZE 8
 // <integer name="RT_LWIP_TCPTHREAD_STACKSIZE" description="the thread stack size of TCP thread" default="4096" />
-#define RT_LWIP_TCPTHREAD_STACKSIZE	4096
+#define RT_LWIP_TCPTHREAD_STACKSIZE 4096
 // <integer name="RT_LWIP_ETHTHREAD_PRIORITY" description="the thread priority of ethnetif thread" default="144" />
-#define RT_LWIP_ETHTHREAD_PRIORITY	14
+#define RT_LWIP_ETHTHREAD_PRIORITY  14
 // <integer name="RT_LWIP_ETHTHREAD_MBOX_SIZE" description="the mail box size of ethnetif thread to wait for" default="8" />
-#define RT_LWIP_ETHTHREAD_MBOX_SIZE	8
+#define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
 // <integer name="RT_LWIP_ETHTHREAD_STACKSIZE" description="the stack size of ethnetif thread" default="512" />
-#define RT_LWIP_ETHTHREAD_STACKSIZE	512
+#define RT_LWIP_ETHTHREAD_STACKSIZE 512
 // <ipaddr name="RT_LWIP_IPADDR" description="IP address of device" default="192.168.1.30" />
 #define RT_LWIP_IPADDR0 192
 #define RT_LWIP_IPADDR1 168

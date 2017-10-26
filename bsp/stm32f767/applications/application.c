@@ -27,7 +27,7 @@
 
 
 
-void rt_init_thread_entry(void* parameter)
+void rt_init_thread_entry(void *parameter)
 {
 #ifdef RT_USING_COMPONENTS_INIT
     /* initialization RT-Thread Components */

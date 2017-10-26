@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    stm32f7xx_hal_conf_template.h
+  * @file    stm32f7xx_hal_conf_.h
   * @author  MCD Application Team
   * @brief   HAL configuration template file. 
   *          This file should be copied to the application folder and renamed

@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    stm32f7xx_hal_timebase_rtc_alarm_template.c 
+  * @file    stm32f7xx_hal_timebase_rtc_alarm.c 
   * @author  MCD Application Team
   * @brief   HAL time base based on the hardware RTC_ALARM Template.
   *

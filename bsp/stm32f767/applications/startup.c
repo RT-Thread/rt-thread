@@ -40,7 +40,7 @@ extern int Image$$RW_IRAM1$$ZI$$Limit;
 extern int __bss_end;
 #endif
 
-void assert_failed(rt_uint8_t * file, rt_uint32_t line)
+void assert_failed(rt_uint8_t *file, rt_uint32_t line)
 {
     rt_kprintf("\n\r Wrong parameter value detected on\r\n");
     rt_kprintf("       file  %s\r\n", file);
@@ -58,15 +58,15 @@ void rtthread_startup(void)
 
 #ifdef RT_USING_HEAP
 #if STM32_EXT_SRAM
-    rt_system_heap_init((void*)STM32_EXT_SRAM_BEGIN, (void*)STM32_EXT_SRAM_END);
+    rt_system_heap_init((void *)STM32_EXT_SRAM_BEGIN, (void *)STM32_EXT_SRAM_END);
 #else
 #ifdef __CC_ARM
-    rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)STM32_SRAM_END);
+    rt_system_heap_init((void *)&Image$$RW_IRAM1$$ZI$$Limit, (void *)STM32_SRAM_END);
 #elif __ICCARM__
-    rt_system_heap_init(__segment_end("HEAP"), (void*)STM32_SRAM_END);
+    rt_system_heap_init(__segment_end("HEAP"), (void *)STM32_SRAM_END);
 #else
     /* init memory system */
-    rt_system_heap_init((void*)&__bss_end, (void*)STM32_SRAM_END);
+    rt_system_heap_init((void *)&__bss_end, (void *)STM32_SRAM_END);
 #endif
 #endif  /* STM32_EXT_SRAM */
 #endif /* RT_USING_HEAP */

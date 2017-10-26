@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    stm32f7xx_hal_timebase_rtc_wakeup_template.c 
+  * @file    stm32f7xx_hal_timebase_rtc_wakeupc 
   * @author  MCD Application Team
   * @brief   HAL time base based on the hardware RTC_WAKEUP Template.
   *    

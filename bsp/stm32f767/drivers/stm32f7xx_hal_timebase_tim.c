@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    stm32f7xx_hal_timebase_tim_template.c 
+  * @file    stm32f7xx_hal_timebase_tim.c 
   * @author  MCD Application Team
   * @brief   HAL time base based on the hardware TIM Template.
   *    
