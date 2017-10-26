@@ -1,0 +1,311 @@
+/*********************************************************************
+*              SEGGER MICROCONTROLLER GmbH & Co. K.G.                *
+*        Solutions for real time microcontroller applications        *
+**********************************************************************
+*                                                                    *
+*        (c) 2011-2015 SEGGER Microcontroller GmbH & Co. KG          *
+*                                                                    *
+* Internet: www.segger.com Support: support@segger.com               *
+*                                                                    *
+**********************************************************************
+----------------------------------------------------------------------
+Purpose : 
+---------------------------END-OF-HEADER------------------------------
+*/
+
+void Clock_Init() {
+  // Enable all clocks
+  MEM_WriteU32(0x400FC068,0xffffffff);
+  MEM_WriteU32(0x400FC06C,0xffffffff);
+  MEM_WriteU32(0x400FC070,0xffffffff);
+  MEM_WriteU32(0x400FC074,0xffffffff);
+  MEM_WriteU32(0x400FC078,0xffffffff);
+  MEM_WriteU32(0x400FC07C,0xffffffff);
+  MEM_WriteU32(0x400FC080,0xffffffff);
+
+  MEM_WriteU32(0x400D8030,0x00002001);
+  MEM_WriteU32(0x400D8100,0x00100000);
+  MEM_WriteU32(0x400FC014,0x00050D40);
+
+  Report("Clock Init Done");
+}
+
+void SDRAM_WaitIpCmdDone(void) 
+{
+  unsigned int reg;
+  do
+  {
+      reg = MEM_ReadU32(0x402F003C);
+  }while((reg & 0x3) == 0);
+}
+
+void SDRAM_Init() {
+  // Config IOMUX for SDRAM
+  MEM_WriteU32(0x401F8014,0x00000000);
+  MEM_WriteU32(0x401F8018,0x00000000);
+  MEM_WriteU32(0x401F801C,0x00000000);
+  MEM_WriteU32(0x401F8020,0x00000000);
+  MEM_WriteU32(0x401F8024,0x00000000);
+  MEM_WriteU32(0x401F8028,0x00000000);
+  MEM_WriteU32(0x401F802C,0x00000000);
+  MEM_WriteU32(0x401F8030,0x00000000);
+  MEM_WriteU32(0x401F8034,0x00000000);
+  MEM_WriteU32(0x401F8038,0x00000000);
+  MEM_WriteU32(0x401F803C,0x00000000);
+  MEM_WriteU32(0x401F8040,0x00000000);
+  MEM_WriteU32(0x401F8044,0x00000000);
+  MEM_WriteU32(0x401F8048,0x00000000);
+  MEM_WriteU32(0x401F804C,0x00000000);
+  MEM_WriteU32(0x401F8050,0x00000000);
+  MEM_WriteU32(0x401F8054,0x00000000);
+  MEM_WriteU32(0x401F8058,0x00000000);
+  MEM_WriteU32(0x401F805C,0x00000000);
+  MEM_WriteU32(0x401F8060,0x00000000);
+  MEM_WriteU32(0x401F8064,0x00000000);
+  MEM_WriteU32(0x401F8068,0x00000000);
+  MEM_WriteU32(0x401F806C,0x00000000);
+  MEM_WriteU32(0x401F8070,0x00000000);
+  MEM_WriteU32(0x401F8074,0x00000000);
+  MEM_WriteU32(0x401F8078,0x00000000);
+  MEM_WriteU32(0x401F807C,0x00000000);
+  MEM_WriteU32(0x401F8080,0x00000000);
+  MEM_WriteU32(0x401F8084,0x00000000);
+  MEM_WriteU32(0x401F8088,0x00000000);
+  MEM_WriteU32(0x401F808C,0x00000000);
+  MEM_WriteU32(0x401F8090,0x00000000);
+  MEM_WriteU32(0x401F8094,0x00000000);
+  MEM_WriteU32(0x401F8098,0x00000000);
+  MEM_WriteU32(0x401F809C,0x00000000);
+  MEM_WriteU32(0x401F80A0,0x00000000);
+  MEM_WriteU32(0x401F80A4,0x00000000);
+  MEM_WriteU32(0x401F80A8,0x00000000);
+  MEM_WriteU32(0x401F80AC,0x00000000);
+  MEM_WriteU32(0x401F80B0,0x00000000);
+  MEM_WriteU32(0x401F80B4,0x00000000);
+  MEM_WriteU32(0x401F80B8,0x00000000);
+  
+  // PAD ctrl
+  MEM_WriteU32(0x401F8204,0x000000F1);
+  MEM_WriteU32(0x401F8208,0x000000F1);
+  MEM_WriteU32(0x401F820C,0x000000F1);
+  MEM_WriteU32(0x401F8210,0x000000F1);
+  MEM_WriteU32(0x401F8214,0x000000F1);
+  MEM_WriteU32(0x401F8218,0x000000F1);
+  MEM_WriteU32(0x401F821C,0x000000F1);
+  MEM_WriteU32(0x401F8220,0x000000F1);
+  MEM_WriteU32(0x401F8224,0x000000F1);
+  MEM_WriteU32(0x401F8228,0x000000F1);
+  MEM_WriteU32(0x401F822C,0x000000F1);
+  MEM_WriteU32(0x401F8230,0x000000F1);
+  MEM_WriteU32(0x401F8234,0x000000F1);
+  MEM_WriteU32(0x401F8238,0x000000F1);
+  MEM_WriteU32(0x401F823C,0x000000F1);
+  MEM_WriteU32(0x401F8240,0x000000F1);
+  MEM_WriteU32(0x401F8244,0x000000F1);
+  MEM_WriteU32(0x401F8248,0x000000F1);
+  MEM_WriteU32(0x401F824C,0x000000F1);
+  MEM_WriteU32(0x401F8250,0x000000F1);
+  MEM_WriteU32(0x401F8254,0x000000F1);
+  MEM_WriteU32(0x401F8258,0x000000F1);
+  MEM_WriteU32(0x401F825C,0x000000F1);
+  MEM_WriteU32(0x401F8260,0x000000F1);
+  MEM_WriteU32(0x401F8264,0x000000F1);
+  MEM_WriteU32(0x401F8268,0x000000F1);
+  MEM_WriteU32(0x401F826C,0x000000F1);
+  MEM_WriteU32(0x401F8270,0x000000F1);
+  MEM_WriteU32(0x401F8274,0x000000F1);
+  MEM_WriteU32(0x401F8278,0x000000F1);
+  MEM_WriteU32(0x401F827C,0x000000F1);
+  MEM_WriteU32(0x401F8280,0x000000F1);
+  MEM_WriteU32(0x401F8284,0x000000F1);
+  MEM_WriteU32(0x401F8288,0x000000F1);
+  MEM_WriteU32(0x401F828C,0x000000F1);
+  MEM_WriteU32(0x401F8290,0x000000F1);
+  MEM_WriteU32(0x401F8294,0x000000F1);
+  MEM_WriteU32(0x401F8298,0x000000F1);
+  MEM_WriteU32(0x401F829C,0x000000F1);
+  MEM_WriteU32(0x401F82A0,0x000000F1);
+  MEM_WriteU32(0x401F82A4,0x000000F1);
+  MEM_WriteU32(0x401F82A8,0x000000F1);
+
+  // Config SEMC
+  MEM_WriteU32(0x402F0000,0x1000E000);
+  MEM_WriteU32(0x402F0008,0x00030524);
+  MEM_WriteU32(0x402F000C,0x06030524);
+  MEM_WriteU32(0x402F0010,0x8000001B);
+  MEM_WriteU32(0x402F0014,0x90000021);
+  MEM_WriteU32(0x402F0004,0x00000008);
+  MEM_WriteU32(0x402F0040,0x00000B27);
+  MEM_WriteU32(0x402F0044,0x00100100);
+  MEM_WriteU32(0x402F0048,0x00020201);
+  MEM_WriteU32(0x402F004C,0x08193D0E);
+  MEM_WriteU32(0x402F0080,0x00000021);
+  MEM_WriteU32(0x402F0084,0x00888888);
+  MEM_WriteU32(0x402F0094,0x00000002);
+  MEM_WriteU32(0x402F0098,0x00000000);
+
+  MEM_WriteU32(0x402F0090,0x80000000);
+  MEM_WriteU32(0x402F009C,0xA55A000F);
+  SDRAM_WaitIpCmdDone();
+  MEM_WriteU32(0x402F0090,0x80000000);
+  MEM_WriteU32(0x402F009C,0xA55A000C);
+  SDRAM_WaitIpCmdDone();
+  MEM_WriteU32(0x402F0090,0x80000000);
+  MEM_WriteU32(0x402F009C,0xA55A000C);
+  SDRAM_WaitIpCmdDone();
+  MEM_WriteU32(0x402F00A0,0x00000022);
+  MEM_WriteU32(0x402F0090,0x80000000);
+  MEM_WriteU32(0x402F009C,0xA55A000A);
+  SDRAM_WaitIpCmdDone();
+    
+  Report("SDRAM Init Done");
+}
+
+/* MPU configuration */
+void MPU_Init()
+{
+    unsigned int rbar0;
+    unsigned int rbar1;
+    unsigned int rbar2;
+	unsigned int rbar3;
+    unsigned int rbar4;
+    unsigned int rbar5;
+	unsigned int rbar6;
+    unsigned int rasr0;
+    unsigned int rasr1;
+    unsigned int rasr2;
+    unsigned int rasr3;
+    unsigned int rasr4;
+    unsigned int rasr5;
+    unsigned int rasr6;
+    unsigned int ctrl;
+
+    rbar0 = ((0xC0000000 & ((0x7FFFFFF << 5))) | (1 << 4) | (0 << 0));
+    rbar1 = ((0x80000000 & ((0x7FFFFFF << 5))) | (1 << 4) | (1 << 0));
+    rbar2 = ((0x60000000 & ((0x7FFFFFF << 5))) | (1 << 4) | (2 << 0));
+    rbar3 = ((0x10000000 & ((0x7FFFFFF << 5))) | (1 << 4) | (3 << 0));
+    rbar4 = ((0x08000000 & ((0x7FFFFFF << 5))) | (1 << 4) | (4 << 0));
+    rbar5 = ((0x80000000 & ((0x7FFFFFF << 5))) | (1 << 4) | (5 << 0));
+    rbar6 = ((0x81E00000 & ((0x7FFFFFF << 5))) | (1 << 4) | (6 << 0));	
+      
+    rasr0  = (0x3 << 24) | (2 << 19) | (0xC0 << 8) | (28 << 1) | (1 << 0);
+    rasr1  = (0x3 << 24) | (2 << 19) | (0xC0 << 8) | (29 << 1) | (1 << 0);
+    rasr2  = (0x3 << 24) | (2 << 19) | (0xC0 << 8) | (28 << 1) | (1 << 0);
+    rasr3  = (0x3 << 24) | (2 << 19) | (0xC0 << 8) | (27 << 1) | (1 << 0);
+    rasr4  = (0x3 << 24) | (2 << 19) | (0xC0 << 8) | (26 << 1) | (1 << 0);
+    rasr5  = (0x3 << 24) | (3 << 16) | (0xC0 << 8) | (25 << 1) | (1 << 0);
+    rasr6  = (0x3 << 24) | (1 << 19) | (0xC0 << 8) | (20 << 1) | (1 << 0);	
+
+    ctrl  = (0x1 << 0) | (1 << 2);
+
+    /* MPU_CTRL. */
+    MEM_WriteU32(0xE000ED94, 0x0);
+    
+	/* MPU_RBAR. */
+    MEM_WriteU32(0xE000ED9C, rbar6);
+    /* MPU_RASR. */
+    MEM_WriteU32(0xE000EDA0, rasr6);
+	
+    /* MPU_RBAR. */
+    MEM_WriteU32(0xE000ED9C, rbar5);
+    /* MPU_RASR. */
+    MEM_WriteU32(0xE000EDA0, rasr5);
+    
+    /* MPU_RBAR. */
+    MEM_WriteU32(0xE000ED9C, rbar4);
+    /* MPU_RASR. */
+    MEM_WriteU32(0xE000EDA0, rasr4);
+
+    /* MPU_RBAR. */
+    MEM_WriteU32(0xE000ED9C, rbar3);
+    /* MPU_RASR. */
+    MEM_WriteU32(0xE000EDA0, rasr3);
+
+    /* MPU_RBAR. */
+    MEM_WriteU32(0xE000ED9C, rbar2);
+    /* MPU_RASR. */
+    MEM_WriteU32(0xE000EDA0, rasr2);
+    
+    /* MPU_RBAR. */
+    MEM_WriteU32(0xE000ED9C, rbar1);
+    /* MPU_RASR. */
+    MEM_WriteU32(0xE000EDA0, rasr1);
+
+    /* MPU_RBAR. */
+    MEM_WriteU32(0xE000ED9C, rbar0);
+    /* MPU_RASR. */
+    MEM_WriteU32(0xE000EDA0, rasr0);
+    
+    /* MPU_CTRL. */
+    MEM_WriteU32(0xE000ED94, ctrl);
+}
+
+void flexram_init(void)
+{
+    Report("flexram init\n");
+    MEM_WriteU32(0x400AC040, 0x80000000);      //IOMUXC_GPR_GPR16
+    
+    //MEM_WriteU32(0x400AC044, 0xFFFFAA55);      //IOMUXC_GPR_GPR17: 256K ITCM, 128K DTCM, 128K OCRAM
+    MEM_WriteU32(0x400AC044, 0xFFFFFFFF);      //IOMUXC_GPR_GPR17: 512K ITCM
+    
+    MEM_WriteU32(0x400AC038, 0x00890000);      //IOMUXC_GPR_GPR14
+    MEM_WriteU32(0x400AC040, 0x80000007);      //IOMUXC_GPR_GPR16
+}
+
+/* ConfigTarget */
+void ConfigTargetSettings(void)
+{
+  Report("Config JTAG Speed to 4000kHz");
+  JTAG_Speed = 4000;
+}
+
+/* SetupTarget */
+void SetupTarget(void) {
+
+  Report("Enabling i.MXRT SDRAM");
+  Clock_Init();
+  flexram_init();
+  SDRAM_Init();
+  MPU_Init();
+}
+
+/* ResetTarget */
+void ResetTarget(void) {
+  unsigned int v;
+  unsigned int Tmp;
+  //
+  // J-Link DLL expects CPU to be reset and halted when leaving this function
+  //
+  Report("J-Link script: ResetTarget()");
+  //issue a software reset
+  //Tmp = MEM_ReadU32(0xE000ED0C);
+  //Tmp = (Tmp&0x0000ffff)|0x05fa0000|(1<<2);
+  //MEM_WriteU32(0xE000ED0C,Tmp);  
+  //SYS_Sleep(10);
+  // Read IDCODE
+  v=JLINK_CORESIGHT_ReadDP(0);
+  Report1("DP0: ", v);
+
+  // Power up Debugger
+  JLINK_CORESIGHT_WriteDP(1, 0x50000000);
+  v=JLINK_CORESIGHT_ReadDP(1);
+  Report1("DP1: ", v);
+
+
+  JLINK_CORESIGHT_WriteAP(0, 0x23000042);
+  v=JLINK_CORESIGHT_ReadAP(0);
+  Report1("AHB-AP0: ", v);  
+
+  JLINK_CORESIGHT_WriteAP(1, 0xE000EDF0);
+  v=JLINK_CORESIGHT_ReadAP(1);
+  Report1("AHB-AP1: ", v); 
+  v=JLINK_CORESIGHT_ReadAP(3);
+  Report1("AHB-AP3: ", v); 
+  JLINK_CORESIGHT_WriteAP(3, 0xa05f0003);
+  v=JLINK_CORESIGHT_ReadAP(3);
+  Report1("AHB-AP3: ", v);
+
+  Clock_Init();
+  SDRAM_Init();
+  MPU_Init();
+}
