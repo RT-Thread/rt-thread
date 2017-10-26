@@ -22,8 +22,8 @@
  * 2017-10-25     ZYH      first implementation
  */
 
+#include "stm32f7xx_uart.h"
 #include <rtdevice.h>
-#include <stm32f7xx_hal.h>
 static void RCC_DMA1_CLK_ENABLE(void)
 {
     __HAL_RCC_DMA1_CLK_ENABLE();
