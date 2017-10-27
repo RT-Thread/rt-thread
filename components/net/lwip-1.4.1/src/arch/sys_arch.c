@@ -26,6 +26,7 @@
 #include "netif/ethernetif.h"
 #include "lwip/sio.h"
 #include <lwip/init.h>
+#include "lwip/inet.h"
 
 #include <string.h>
 
