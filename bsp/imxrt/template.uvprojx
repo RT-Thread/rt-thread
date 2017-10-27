@@ -365,7 +365,7 @@
             <TextAddressRange>0x00000000</TextAddressRange>
             <DataAddressRange>0x10000000</DataAddressRange>
             <pXoBase></pXoBase>
-            <ScatterFile>F:\git\rt-thread\bsp\imxrt\imxrt1052_sdram.sct</ScatterFile>
+            <ScatterFile>.\imxrt1052_sdram.sct</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
             <Misc></Misc>
