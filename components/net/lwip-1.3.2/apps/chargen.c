@@ -1,6 +1,9 @@
 #include <rtthread.h>
+#include <sys/socket.h> 
+#include <sys/select.h>
+#include "netdb.h"
+#include <dfs_posix.h> 
 
-#include "lwip/sockets.h"
 #define MAX_SERV                 32         /* Maximum number of chargen services. Don't need too many */
 #define CHARGEN_THREAD_NAME      "chargen"
 #if RT_THREAD_PRIORITY_MAX == 32
@@ -21,6 +24,7 @@ struct charcb
 static struct charcb *charcb_list = 0;
 static int do_read(struct charcb *p_charcb);
 static void close_chargen(struct charcb *p_charcb);
+extern int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
 
 /**************************************************************
  * void chargen_thread(void *arg)
@@ -39,20 +43,20 @@ static void chargen_thread(void *arg)
     struct charcb *p_charcb;
 
     /* First acquire our socket for listening for connections */
-    listenfd = lwip_socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
+    listenfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     LWIP_ASSERT("chargen_thread(): Socket create failed.", listenfd >= 0);
     memset(&chargen_saddr, 0, sizeof(chargen_saddr));
     chargen_saddr.sin_family = AF_INET;
     chargen_saddr.sin_addr.s_addr = htonl(INADDR_ANY);
     chargen_saddr.sin_port = htons(19);     // Chargen server port
 
-    if (lwip_bind(listenfd, (struct sockaddr *) &chargen_saddr, sizeof(chargen_saddr)) == -1)
+    if (bind(listenfd, (struct sockaddr *) &chargen_saddr, sizeof(chargen_saddr)) == -1)
         LWIP_ASSERT("chargen_thread(): Socket bind failed.", 0);
-
+	
     /* Put socket into listening mode */
-    if (lwip_listen(listenfd, MAX_SERV) == -1)
+    if (listen(listenfd, MAX_SERV) == -1)
         LWIP_ASSERT("chargen_thread(): Listen failed.", 0);
+	
 
     /* Wait forever for network input: This could be connections or data */
     for (;;)
@@ -72,9 +76,9 @@ static void chargen_thread(void *arg)
         }
 
         /* Wait for data or a new connection */
-        i = lwip_select(maxfdp1, &readset, &writeset, 0, 0);
+        i = select(maxfdp1, &readset, &writeset, 0, 0);
 
-        if (i == 0) continue;
+          if (i == 0) continue;
 
         /* At least one descriptor is ready */
         if (FD_ISSET(listenfd, &readset))
@@ -84,7 +88,7 @@ static void chargen_thread(void *arg)
             p_charcb = (struct charcb *)rt_calloc(1, sizeof(struct charcb));
             if (p_charcb)
             {
-                p_charcb->socket = lwip_accept(listenfd,
+                p_charcb->socket = accept(listenfd,
                                         (struct sockaddr *) &p_charcb->cliaddr,
                                         &p_charcb->clilen);
                 if (p_charcb->socket < 0)
@@ -104,9 +108,9 @@ static void chargen_thread(void *arg)
                 struct sockaddr cliaddr;
                 socklen_t clilen;
 
-                sock = lwip_accept(listenfd, &cliaddr, &clilen);
+                sock = accept(listenfd, &cliaddr, &clilen);
                 if (sock >= 0)
-                    lwip_close(sock);
+                    closesocket(sock);
             }
         }
         /* Go through list of connected clients and process data */
@@ -133,7 +137,7 @@ static void chargen_thread(void *arg)
                 }
                 line[i] = 0;
                 strcat(line, "\n\r");
-                if (lwip_write(p_charcb->socket, line, strlen(line)) < 0)
+                if (write(p_charcb->socket, line, strlen(line)) < 0)
                 {
                     close_chargen(p_charcb);
                     break;
@@ -156,7 +160,7 @@ static void close_chargen(struct charcb *p_charcb)
 
     /* Either an error or tcp connection closed on other
      * end. Close here */
-    lwip_close(p_charcb->socket);
+    closesocket(p_charcb->socket);
 
     /* Free charcb */
     if (charcb_list == p_charcb)
@@ -187,7 +191,7 @@ static int do_read(struct charcb *p_charcb)
     int readcount;
 
     /* Read some data */
-    readcount = lwip_read(p_charcb->socket, &buffer, 80);
+    readcount = read(p_charcb->socket, &buffer, 80);
     if (readcount <= 0)
     {
         close_chargen(p_charcb);
