@@ -1,8 +1,8 @@
 #include <rtthread.h>
 #include <sys/socket.h> 
 #include <sys/select.h>
-#include "netdb.h"
 #include <dfs_posix.h> 
+#include "netdb.h"
 
 #define MAX_SERV                 32         /* Maximum number of chargen services. Don't need too many */
 #define CHARGEN_THREAD_NAME      "chargen"
