@@ -1,0 +1,249 @@
+/*****************************************************************************/
+
+
+SDRAM_WaitIpCmdDone()
+{
+  __var reg;
+  do
+  {
+    reg = __readMemory32(0x402F003C, "Memory");
+  }while((reg & 0x3) == 0);
+}
+
+_clock_init()
+{
+  // Enable all clocks
+  __writeMemory32(0xffffffff, 0x400FC068, "Memory");
+  __writeMemory32(0xffffffff, 0x400FC06C, "Memory");
+  __writeMemory32(0xffffffff, 0x400FC070, "Memory");
+  __writeMemory32(0xffffffff, 0x400FC074, "Memory");
+  __writeMemory32(0xffffffff, 0x400FC078, "Memory");
+  __writeMemory32(0xffffffff, 0x400FC07C, "Memory");
+  __writeMemory32(0xffffffff, 0x400FC080, "Memory");
+
+  __writeMemory32(0x00002001, 0x400D8030, "Memory");
+  __writeMemory32(0x00100000, 0x400D8100, "Memory");
+  __writeMemory32(0x00050D40, 0x400FC014, "Memory");
+}
+
+_sdr_Init()
+{
+  // Config IOMUX
+  __writeMemory32(0x00000000, 0x401F8014, "Memory");
+  __writeMemory32(0x00000000, 0x401F8018, "Memory");
+  __writeMemory32(0x00000000, 0x401F801C, "Memory");
+  __writeMemory32(0x00000000, 0x401F8020, "Memory");
+  __writeMemory32(0x00000000, 0x401F8024, "Memory");
+  __writeMemory32(0x00000000, 0x401F8028, "Memory");
+  __writeMemory32(0x00000000, 0x401F802C, "Memory");
+  __writeMemory32(0x00000000, 0x401F8030, "Memory");
+  __writeMemory32(0x00000000, 0x401F8034, "Memory");
+  __writeMemory32(0x00000000, 0x401F8038, "Memory");
+  __writeMemory32(0x00000000, 0x401F803C, "Memory");
+  __writeMemory32(0x00000000, 0x401F8040, "Memory");
+  __writeMemory32(0x00000000, 0x401F8044, "Memory");
+  __writeMemory32(0x00000000, 0x401F8048, "Memory");
+  __writeMemory32(0x00000000, 0x401F804C, "Memory");
+  __writeMemory32(0x00000000, 0x401F8050, "Memory");
+  __writeMemory32(0x00000000, 0x401F8054, "Memory");
+  __writeMemory32(0x00000000, 0x401F8058, "Memory");
+  __writeMemory32(0x00000000, 0x401F805C, "Memory");
+  __writeMemory32(0x00000000, 0x401F8060, "Memory");
+  __writeMemory32(0x00000000, 0x401F8064, "Memory");
+  __writeMemory32(0x00000000, 0x401F8068, "Memory");
+  __writeMemory32(0x00000000, 0x401F806C, "Memory");
+  __writeMemory32(0x00000000, 0x401F8070, "Memory");
+  __writeMemory32(0x00000000, 0x401F8074, "Memory");
+  __writeMemory32(0x00000000, 0x401F8078, "Memory");
+  __writeMemory32(0x00000000, 0x401F807C, "Memory");
+  __writeMemory32(0x00000000, 0x401F8080, "Memory");
+  __writeMemory32(0x00000000, 0x401F8084, "Memory");
+  __writeMemory32(0x00000000, 0x401F8088, "Memory");
+  __writeMemory32(0x00000000, 0x401F808C, "Memory");
+  __writeMemory32(0x00000000, 0x401F8090, "Memory");
+  __writeMemory32(0x00000000, 0x401F8094, "Memory");
+  __writeMemory32(0x00000000, 0x401F8098, "Memory");
+  __writeMemory32(0x00000000, 0x401F809C, "Memory");
+  __writeMemory32(0x00000000, 0x401F80A0, "Memory");
+  __writeMemory32(0x00000000, 0x401F80A4, "Memory");
+  __writeMemory32(0x00000000, 0x401F80A8, "Memory");
+  __writeMemory32(0x00000000, 0x401F80AC, "Memory");
+  __writeMemory32(0x00000000, 0x401F80B0, "Memory");
+  __writeMemory32(0x00000000, 0x401F80B4, "Memory");
+  __writeMemory32(0x00000000, 0x401F80B8, "Memory");
+
+  // PAD ctrl
+  __writeMemory32(0x000000F1, 0x401F8204, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8208, "Memory");
+  __writeMemory32(0x000000F1, 0x401F820C, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8210, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8214, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8218, "Memory");
+  __writeMemory32(0x000000F1, 0x401F821C, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8220, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8224, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8228, "Memory");
+  __writeMemory32(0x000000F1, 0x401F822C, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8230, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8234, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8238, "Memory");
+  __writeMemory32(0x000000F1, 0x401F823C, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8240, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8244, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8248, "Memory");
+  __writeMemory32(0x000000F1, 0x401F824C, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8250, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8254, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8258, "Memory");
+  __writeMemory32(0x000000F1, 0x401F825C, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8260, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8264, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8268, "Memory");
+  __writeMemory32(0x000000F1, 0x401F826C, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8270, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8274, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8278, "Memory");
+  __writeMemory32(0x000000F1, 0x401F827C, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8280, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8284, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8288, "Memory");
+  __writeMemory32(0x000000F1, 0x401F828C, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8290, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8294, "Memory");
+  __writeMemory32(0x000000F1, 0x401F8298, "Memory");
+  __writeMemory32(0x000000F1, 0x401F829C, "Memory");
+  __writeMemory32(0x000000F1, 0x401F82A0, "Memory");
+  __writeMemory32(0x000000F1, 0x401F82A4, "Memory");
+  __writeMemory32(0x000000F1, 0x401F82A8, "Memory");
+
+  __writeMemory32(0x1000E000, 0x402F0000, "Memory");
+  __writeMemory32(0x00030524, 0x402F0008, "Memory");
+  __writeMemory32(0x06030524, 0x402F000C, "Memory");
+  __writeMemory32(0x8000001B, 0x402F0010, "Memory");
+  __writeMemory32(0x90000021, 0x402F0014, "Memory");
+  __writeMemory32(0x00000008, 0x402F0004, "Memory");
+  __writeMemory32(0x00000B27, 0x402F0040, "Memory");
+  __writeMemory32(0x00100100, 0x402F0044, "Memory");
+  __writeMemory32(0x00020201, 0x402F0048, "Memory");
+  __writeMemory32(0x08193D0E, 0x402F004C, "Memory");
+  __writeMemory32(0x00000021, 0x402F0080, "Memory");
+  __writeMemory32(0x00888888, 0x402F0084, "Memory");
+  __writeMemory32(0x00000002, 0x402F0094, "Memory");
+  __writeMemory32(0x00000000, 0x402F0098, "Memory");
+
+  __writeMemory32(0x80000000, 0x402F0090, "Memory");
+  __writeMemory32(0xA55A000F, 0x402F009C, "Memory");
+  SDRAM_WaitIpCmdDone();
+  __writeMemory32(0x80000000, 0x402F0090, "Memory");
+  __writeMemory32(0xA55A000C, 0x402F009C, "Memory");
+  SDRAM_WaitIpCmdDone();
+  __writeMemory32(0x80000000, 0x402F0090, "Memory");
+  __writeMemory32(0xA55A000C, 0x402F009C, "Memory");
+  SDRAM_WaitIpCmdDone();
+  __writeMemory32(0x00000022, 0x402F00A0, "Memory");
+  __writeMemory32(0x80000000, 0x402F0090, "Memory");
+  __writeMemory32(0xA55A000A, 0x402F009C, "Memory");
+  SDRAM_WaitIpCmdDone();
+  __message "SDRAM init done\n";
+}
+
+_mpu_Init()
+{
+  __var rbar0, rbar1, rbar2, rbar3, rbar4, rbar5, rbar6;
+  rbar0 = ((0xC0000000U & ((0x7FFFFFFUL << 5U))) | (1UL << 4U) | (0U << 0U));
+  rbar1 = ((0x80000000U & ((0x7FFFFFFUL << 5U))) | (1UL << 4U) | (1U << 0U));
+  rbar2 = ((0x60000000U & ((0x7FFFFFFUL << 5U))) | (1UL << 4U) | (2U << 0U));
+  rbar3 = ((0x10000000U & ((0x7FFFFFFUL << 5U))) | (1UL << 4U) | (3U << 0U));
+  rbar4 = ((0x08000000U & ((0x7FFFFFFUL << 5U))) | (1UL << 4U) | (4U << 0U));
+  rbar5 = ((0x80000000U & ((0x7FFFFFFUL << 5U))) | (1UL << 4U) | (5U << 0U));
+  rbar6 = ((0x81E00000U & ((0x7FFFFFFUL << 5U))) | (1UL << 4U) | (6U << 0U));
+  
+  __var rasr0, rasr1, rasr2, rasr3, rasr4, rasr5, rasr6;
+  rasr0  = (0x3U << 24U) | (2UL << 19U) | (0xC0U << 8U) | (28U << 1U) | (1U << 0U);
+  rasr1  = (0x3U << 24U) | (2UL << 19U) | (0xC0U << 8U) | (29U << 1U) | (1U << 0U);
+  rasr2  = (0x3U << 24U) | (2UL << 19U) | (0xC0U << 8U) | (28U << 1U) | (1U << 0U);
+  rasr3  = (0x3U << 24U) | (2UL << 19U) | (0xC0U << 8U) | (27U << 1U) | (1U << 0U);
+  rasr4  = (0x3U << 24U) | (2UL << 19U) | (0xC0U << 8U) | (26U << 1U) | (1U << 0U);
+  rasr5  = (0x3U << 24U) | (3UL << 16U) | (0xC0U << 8U) | (25U << 1U) | (1U << 0U); 
+  rasr6  = (0x3U << 24U) | (1UL << 19U) | (0xC0U << 8U) | (20U << 1U) | (1U << 0U);
+  
+  /* Enable Privileged default memory map and the MPU. */
+  __var ctrl;
+  ctrl  = (0x1U << 0) | (1U << 2U);
+  
+  /* MPU_CTRL. */
+  __writeMemory32(0x0,  0xE000ED94, "Memory");
+  
+    /* MPU_RBAR. */
+  __writeMemory32(rbar6, 0xE000ED9C, "Memory");
+  /* MPU_RASR. */
+  __writeMemory32(rasr6, 0xE000EDA0, "Memory");
+  
+  /* MPU_RBAR. */
+  __writeMemory32(rbar5, 0xE000ED9C, "Memory");
+  /* MPU_RASR. */
+  __writeMemory32(rasr5, 0xE000EDA0, "Memory");
+  
+  /* MPU_RBAR. */
+  __writeMemory32(rbar4, 0xE000ED9C, "Memory");
+  /* MPU_RASR. */
+  __writeMemory32(rasr4, 0xE000EDA0, "Memory");
+  
+  /* MPU_RBAR. */
+  __writeMemory32(rbar3, 0xE000ED9C, "Memory");
+  /* MPU_RASR. */
+  __writeMemory32(rasr3, 0xE000EDA0, "Memory");
+  
+  /* MPU_RBAR. */
+  __writeMemory32(rbar2, 0xE000ED9C, "Memory");
+  /* MPU_RASR. */
+  __writeMemory32(rasr2, 0xE000EDA0, "Memory");
+  
+  /* MPU_RBAR. */
+  __writeMemory32(rbar1, 0xE000ED9C, "Memory");
+  /* MPU_RASR. */
+  __writeMemory32(rasr1, 0xE000EDA0, "Memory");
+
+  /* MPU_RBAR. */
+  __writeMemory32(rbar0, 0xE000ED9C, "Memory");
+  /* MPU_RASR. */
+  __writeMemory32(rasr0, 0xE000EDA0, "Memory");
+  
+  /* MPU_CTRL. */
+  __writeMemory32(ctrl, 0xE000ED94, "Memory");
+}
+
+_flexram_init()
+{
+    __message "flexram init\n";
+    __writeMemory32(0x80000000, 0x400AC040, "Memory");      //IOMUXC_GPR_GPR16
+    //__writeMemory32(0xFFFFAA55, 0x400AC044, "Memory");      //IOMUXC_GPR_GPR17
+    __writeMemory32(0xFFFFFFFF, 0x400AC044, "Memory");      //IOMUXC_GPR_GPR17
+    __writeMemory32(0x00890000, 0x400AC038, "Memory");      //IOMUXC_GPR_GPR14
+    __writeMemory32(0x80000007, 0x400AC040, "Memory");      //IOMUXC_GPR_GPR16
+}
+
+execUserPreload()
+{
+  __message "execUserPreload() start.\n";
+  
+  _clock_init();
+  _flexram_init();
+  _sdr_Init();
+  _mpu_Init();
+  
+  __message "execUserPreload() done.\n";
+}
+
+execUserReset()
+{
+  __message "execUserReset() start.\n";
+
+  _clock_init();
+  _flexram_init();
+  _sdr_Init();
+  _mpu_Init();
+  
+  __message "execUserReset() done.\n";
+}
+

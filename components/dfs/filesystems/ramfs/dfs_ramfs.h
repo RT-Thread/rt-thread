@@ -30,15 +30,17 @@
 #include <rtservice.h>
 
 #define RAMFS_NAME_MAX  32
-#define RAMFS_MAGIC		0x0A0A0A0A
+#define RAMFS_MAGIC     0x0A0A0A0A
 
 struct ramfs_dirent
 {
     rt_list_t list;
-    char name[RAMFS_NAME_MAX];	/* dirent name */
+    struct dfs_ramfs *fs;       /* file system ref */
+
+    char name[RAMFS_NAME_MAX];  /* dirent name */
     rt_uint8_t* data;
 
-    rt_size_t size;	/* file size */
+    rt_size_t size;             /* file size */
 };
 
 /**
@@ -56,3 +58,4 @@ int dfs_ramfs_init(void);
 struct dfs_ramfs* dfs_ramfs_create(rt_uint8_t* pool, rt_size_t size);
 
 #endif
+

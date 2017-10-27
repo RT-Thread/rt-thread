@@ -222,7 +222,7 @@ int poll(struct pollfd *fds, nfds_t nfds, int timeout)
     poll_table_init(&table);
 
     num = poll_do(fds, nfds, &table, timeout);
-	
+
     poll_teardown(&table);
 
     return num;
