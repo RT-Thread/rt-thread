@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F767xx, USE_HAL_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;.;drivers;Libraries\CMSIS\Device\ST\STM32F7xx\Include;Libraries\CMSIS\Include;Libraries\STM32F7xx_HAL_Driver\Inc;..\..\include;..\..\libcpu\arm\cortex-m7;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh</IncludePath>
+              <IncludePath>applications;.;drivers;Libraries\CMSIS\Device\ST\STM32F7xx\Include;Libraries\CMSIS\Include;Libraries\STM32F7xx_HAL_Driver\Inc;..\..\include;..\..\libcpu\arm\cortex-m7;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -429,6 +429,11 @@
               <FileName>stm32f7xx_rtc.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\stm32f7xx_rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f7xx_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\stm32f7xx_spi.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -999,6 +1004,21 @@
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\serial\serial.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\spi\spi_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi_dev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\spi\spi_dev.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi_flash_w25qxx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\spi\spi_flash_w25qxx.c</FilePath>
             </File>
             <File>
               <FileName>completion.c</FileName>

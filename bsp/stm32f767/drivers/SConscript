@@ -16,6 +16,12 @@ if GetDepend(['RT_USING_PIN']):
 if GetDepend(['RT_USING_RTC']):
     src += ['stm32f7xx_rtc.c']
 
+if GetDepend(['RT_USING_I2C']):
+    src += ['stm32f7xx_i2c.c']
+
+if GetDepend(['RT_USING_SPI']):
+    src += ['stm32f7xx_spi.c']
+
 CPPPATH = [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)

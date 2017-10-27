@@ -82,7 +82,7 @@
 // <bool name="RT_USING_NFTL" description="Using NFTL layer" default="true" />
 //#define RT_USING_NFTL
 // <bool name="RT_USING_SPI" description="Using SPI Device Driver Framework" default="true" />
-//#define RT_USING_SPI
+#define RT_USING_SPI
 // <bool name="RT_USING_I2C" description="Using I2C Device Driver Framework" default="true" />
 //#define RT_USING_I2C
 // <bool name="RT_USING_RTC" description="Using RTC Device Driver Framework" default="true" />
@@ -231,7 +231,7 @@
 
 #define RT_USING_COMPONENTS_INIT
 //#define RT_USING_USER_MAIN
-
+#define RT_USING_W25QXX
 // #define RT_USING_RTT_CMSIS
 // #define RT_USING_CPU_FFS
 #endif
