@@ -602,6 +602,9 @@ static int rt_hw_stm32_eth_init(void)
     {
         STM32_ETH_PRINTF("eth_device_init faild: %d\r\n", state);
     }
+	
+	eth_device_linkchange(&stm32_eth_device.parent, RT_TRUE);   //linkup the e0 for lwip to check
+	
     return state;
 }
 INIT_DEVICE_EXPORT(rt_hw_stm32_eth_init);
