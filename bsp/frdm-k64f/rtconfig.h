@@ -115,23 +115,14 @@
 /* the number of simulatenously active TCP connections*/
 #define RT_LWIP_TCP_PCB_NUM	5
 
-/* ip address of target*/
-#define RT_LWIP_IPADDR0	192
-#define RT_LWIP_IPADDR1	168
-#define RT_LWIP_IPADDR2	1
-#define RT_LWIP_IPADDR3	201
+/* ip address of target */
+#define RT_LWIP_IPADDR "192.168.1.201"
 
-/* gateway address of target*/
-#define RT_LWIP_GWADDR0	192
-#define RT_LWIP_GWADDR1	168
-#define RT_LWIP_GWADDR2	1
-#define RT_LWIP_GWADDR3	1
+/* gateway address of target */
+#define RT_LWIP_GWADDR  "192.168.1.1"
 
-/* mask address of target*/
-#define RT_LWIP_MSKADDR0	255
-#define RT_LWIP_MSKADDR1	255
-#define RT_LWIP_MSKADDR2	255
-#define RT_LWIP_MSKADDR3	0
+/* mask address of target */
+#define RT_LWIP_MSKADDR  "255.255.255.0"
 
 /* tcp thread options */
 #define RT_LWIP_TCPTHREAD_PRIORITY		12

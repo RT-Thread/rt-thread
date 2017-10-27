@@ -63,6 +63,7 @@
 
 #include "netif/etharp.h"
 #include "netif/ethernetif.h"
+#include "lwip/inet.h"
 
 #define netifapi_netif_set_link_up(n)      netifapi_netif_common(n, netif_set_link_up, NULL)
 #define netifapi_netif_set_link_down(n)    netifapi_netif_common(n, netif_set_link_down, NULL)
