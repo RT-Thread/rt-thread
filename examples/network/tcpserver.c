@@ -1,5 +1,8 @@
 #include <rtthread.h>
-#include <lwip/sockets.h> /* 使用BSD Socket接口必须包含sockets.h这个头文件 */
+
+//#include <lwip/sockets.h> /* 使用BSD Socket接口必须包含sockets.h这个头文件 */
+#include <sys/socket.h> /* 使用BSD socket，需要包含sockets.h头文件 */
+#include "netdb.h"
 
 static const char send_data[] = "This is TCP Server from RT-Thread."; /* 发送用到的数据 */
 void tcpserv(void* parameter)
@@ -77,7 +80,7 @@ void tcpserv(void* parameter)
            if (ret < 0)
            {
                 /* 发送失败，关闭这个连接 */
-                lwip_close(connected);
+                closesocket(connected);
                 rt_kprintf("\nsend error,close the socket.\r\n");
                 break;
            }
@@ -92,7 +95,7 @@ void tcpserv(void* parameter)
            if (bytes_received < 0)
            {
                /* 接收失败，关闭这个connected socket */
-               lwip_close(connected);
+               closesocket(connected);
                break;
            }
            else if (bytes_received == 0)
@@ -107,13 +110,13 @@ void tcpserv(void* parameter)
            if (strcmp(recv_data , "q") == 0 || strcmp(recv_data , "Q") == 0)
            {
                /* 如果是首字母是q或Q，关闭这个连接 */
-               lwip_close(connected);
+               closesocket(connected);
                break;
            }
            else if (strcmp(recv_data, "exit") == 0)
            {
                /* 如果接收的是exit，则关闭整个服务端 */
-               lwip_close(connected);
+               closesocket(connected);
                stop = RT_TRUE;
                break;
            }
@@ -126,7 +129,7 @@ void tcpserv(void* parameter)
    }
 
    /* 退出服务 */
-   lwip_close(sock);
+   closesocket(sock);
 
    /* 释放接收缓冲 */
    rt_free(recv_data);
