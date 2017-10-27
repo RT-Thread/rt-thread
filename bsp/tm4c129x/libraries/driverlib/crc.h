@@ -2,7 +2,7 @@
 //
 // crc.h - Defines and Macros for CRC module.
 //
-// Copyright (c) 2012-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2012-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 2.1.0.12573 of the Tiva Peripheral Driver Library.
+// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -65,7 +65,7 @@ extern "C"
 #define CRC_CFG_RESINV          0x00000200  // Result Inverse Enable
 #define CRC_CFG_OBR             0x00000100  // Output Reverse Enable
 #define CRC_CFG_IBR             0x00000080  // Bit reverse enable
-#define CRC_CFG_ENDIAN_SBHW     0x00000000  // Swap byte in half-word
+#define CRC_CFG_ENDIAN_SBHW     0x00000020  // Swap byte in half-word
 #define CRC_CFG_ENDIAN_SHW      0x00000010  // Swap half-word
 #define CRC_CFG_TYPE_P8005      0x00000000  // Polynomial 0x8005
 #define CRC_CFG_TYPE_P1021      0x00000001  // Polynomial 0x1021

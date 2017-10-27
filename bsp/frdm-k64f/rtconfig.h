@@ -64,6 +64,9 @@
 /* Using Serial Device Driver Framework" default="true" */
 #define RT_USING_SERIAL
 
+// <section name="RT_USING_COMPONENTS_INIT" description="Using components init" default="false" >
+#define RT_USING_COMPONENTS_INIT
+// </section>
 
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
@@ -97,7 +100,9 @@
 #define DFS_FD_MAX					4
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
-/* #define RT_USING_LWIP */
+#define RT_USING_LWIP
+/* Enable LwIP debug output */
+//#define RT_LWIP_DEBUG
 /* LwIP uses RT-Thread Memory Management */
 #define RT_LWIP_USING_RT_MEM
 /* Enable ICMP protocol*/
@@ -149,8 +154,8 @@
 #define CHECKSUM_CHECK_IP               0
 #define CHECKSUM_CHECK_UDP              0
 
-#define CHECKSUM_GEN_TCP                0
-#define CHECKSUM_GEN_IP                 0
-#define CHECKSUM_GEN_UDP                0
+#define CHECKSUM_GEN_TCP                1
+#define CHECKSUM_GEN_IP                 1
+#define CHECKSUM_GEN_UDP                1
 
 #endif

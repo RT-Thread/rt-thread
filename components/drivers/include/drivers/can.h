@@ -280,7 +280,7 @@ struct rt_can_sndbxinx_list
 struct rt_can_tx_fifo
 {
     struct rt_can_sndbxinx_list *buffer;
-    struct rt_completion completion;
+    struct rt_semaphore sem;
     struct rt_list_node freelist;
 };
 

@@ -3,7 +3,7 @@
 ;
 ; startup_rvmdk.S - Startup code for use with Keil's uVision.
 ;
-; Copyright (c) 2013-2014 Texas Instruments Incorporated.  All rights reserved.
+; Copyright (c) 2013-2017 Texas Instruments Incorporated.  All rights reserved.
 ; Software License Agreement
 ; 
 ; Texas Instruments (TI) is supplying this software for use solely and
@@ -19,7 +19,7 @@
 ; CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 ; DAMAGES, FOR ANY REASON WHATSOEVER.
 ; 
-; This is part of revision 2.1.0.12573 of the DK-TM4C129X Firmware Package.
+; This is part of revision 2.1.4.178 of the DK-TM4C129X Firmware Package.
 ;
 ;******************************************************************************
 
@@ -28,7 +28,7 @@
 ; <o> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ;
 ;******************************************************************************
-Stack   EQU     0x00000100
+Stack   EQU     0x00000200
 
 ;******************************************************************************
 ;

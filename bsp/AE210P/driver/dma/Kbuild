@@ -1,0 +1,2 @@
+lib-y		:=
+lib-y		+= dmad.o

@@ -16,10 +16,15 @@
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
-/* RT_NAME_MAX*/
+/* EFM32_BOARD */
+//#define EFM32_G8XX_STK
+//#define EFM32_GXXX_DK
+#define EFM32GG_DK3750
+
+/* RT_NAME_MAX */
 #define RT_NAME_MAX					(8)
 
-/* RT_ALIGN_SIZE*/
+/* RT_ALIGN_SIZE */
 #define RT_ALIGN_SIZE				(4)
 
 /* PRIORITY_MAX */

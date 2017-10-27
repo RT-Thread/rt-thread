@@ -1,11 +1,21 @@
 /*
  * File      : dc_client.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -16,8 +26,6 @@
  * 2010-09-14     Bernard      fix vline and hline coordinate issue
  */
 #include <rtgui/dc.h>
-#include <rtgui/dc_hw.h>
-#include <rtgui/dc_client.h>
 
 #include <rtgui/driver.h>
 #include <rtgui/rtgui_system.h>
@@ -88,7 +96,7 @@ static void rtgui_dc_client_draw_point(struct rtgui_dc *self, int x, int y)
     rtgui_widget_t *owner;
 
     if (self == RT_NULL) return;
-	if (!rtgui_dc_get_visible(self)) return;
+    if (!rtgui_dc_get_visible(self)) return;
 
     /* get owner */
     owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
@@ -109,7 +117,7 @@ static void rtgui_dc_client_draw_color_point(struct rtgui_dc *self, int x, int y
     rtgui_widget_t *owner;
 
     if (self == RT_NULL) return;
-	if (!rtgui_dc_get_visible(self)) return;
+    if (!rtgui_dc_get_visible(self)) return;
 
     /* get owner */
     owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
@@ -133,7 +141,7 @@ static void rtgui_dc_client_draw_vline(struct rtgui_dc *self, int x, int y1, int
     rtgui_widget_t *owner;
 
     if (self == RT_NULL) return;
-	if (!rtgui_dc_get_visible(self)) return;
+    if (!rtgui_dc_get_visible(self)) return;
 
     /* get owner */
     owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
@@ -160,26 +168,26 @@ static void rtgui_dc_client_draw_vline(struct rtgui_dc *self, int x, int y1, int
         hw_driver->ops->draw_vline(&(owner->gc.foreground), x, y1, y2);
     }
     else
-	{
-		for (index = 0; index < rtgui_region_num_rects(&(owner->clip)); index ++)
-    	{
-	        rtgui_rect_t *prect;
-	        register rt_base_t draw_y1, draw_y2;
+    {
+        for (index = 0; index < rtgui_region_num_rects(&(owner->clip)); index ++)
+        {
+            rtgui_rect_t *prect;
+            register rt_base_t draw_y1, draw_y2;
 
-	        prect = ((rtgui_rect_t *)(owner->clip.data + index + 1));
-	        draw_y1 = y1;
-	        draw_y2 = y2;
+            prect = ((rtgui_rect_t *)(owner->clip.data + index + 1));
+            draw_y1 = y1;
+            draw_y2 = y2;
 
-	        /* calculate vline clip */
-	        if (prect->x1 > x   || prect->x2 <= x) continue;
-	        if (prect->y2 <= y1 || prect->y1 > y2) continue;
+            /* calculate vline clip */
+            if (prect->x1 > x   || prect->x2 <= x) continue;
+            if (prect->y2 <= y1 || prect->y1 > y2) continue;
 
-	        if (prect->y1 > y1) draw_y1 = prect->y1;
-	        if (prect->y2 < y2) draw_y2 = prect->y2;
+            if (prect->y1 > y1) draw_y1 = prect->y1;
+            if (prect->y2 < y2) draw_y2 = prect->y2;
 
-	        /* draw vline */
-	        hw_driver->ops->draw_vline(&(owner->gc.foreground), x, draw_y1, draw_y2);
-	    }
+            /* draw vline */
+            hw_driver->ops->draw_vline(&(owner->gc.foreground), x, draw_y1, draw_y2);
+        }
     }
 }
 
@@ -192,7 +200,7 @@ static void rtgui_dc_client_draw_hline(struct rtgui_dc *self, int x1, int x2, in
     rtgui_widget_t *owner;
 
     if (self == RT_NULL) return;
-	if (!rtgui_dc_get_visible(self)) return;
+    if (!rtgui_dc_get_visible(self)) return;
 
     /* get owner */
     owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
@@ -220,8 +228,8 @@ static void rtgui_dc_client_draw_hline(struct rtgui_dc *self, int x1, int x2, in
         hw_driver->ops->draw_hline(&(owner->gc.foreground), x1, x2, y);
     }
     else
-	{
-		for (index = 0; index < rtgui_region_num_rects(&(owner->clip)); index ++)
+    {
+        for (index = 0; index < rtgui_region_num_rects(&(owner->clip)); index ++)
         {
             rtgui_rect_t *prect;
             register rt_base_t draw_x1, draw_x2;
@@ -252,7 +260,7 @@ static void rtgui_dc_client_fill_rect(struct rtgui_dc *self, struct rtgui_rect *
     RT_ASSERT(self);
     RT_ASSERT(rect);
 
-	if (!rtgui_dc_get_visible(self)) return;
+    if (!rtgui_dc_get_visible(self)) return;
 
     /* get owner */
     owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
@@ -279,7 +287,7 @@ static void rtgui_dc_client_blit_line(struct rtgui_dc *self, int x1, int x2, int
     rtgui_widget_t *owner;
 
     if (self == RT_NULL) return;
-	if (!rtgui_dc_get_visible(self)) return;
+    if (!rtgui_dc_get_visible(self)) return;
 
     /* get owner */
     owner = RTGUI_CONTAINER_OF(self, struct rtgui_widget, dc_type);
@@ -312,8 +320,8 @@ static void rtgui_dc_client_blit_line(struct rtgui_dc *self, int x1, int x2, int
         hw_driver->ops->draw_raw_hline(line_data + offset, x1, x2, y);
     }
     else
-	{
-		for (index = 0; index < rtgui_region_num_rects(&(owner->clip)); index ++)
+    {
+        for (index = 0; index < rtgui_region_num_rects(&(owner->clip)); index ++)
         {
             rtgui_rect_t *prect;
             register rt_base_t draw_x1, draw_x2;

@@ -37,6 +37,11 @@
 #include <netif/etharp.h>
 #include <netif/ethernetif.h>
 #include <lwip/ip.h>
+#include <lwip/init.h>
+
+#if (LWIP_VERSION) >= 0x02000000U
+#include <lwip/prot/dhcp.h>
+#endif
 
 /* DHCP server option */
 
@@ -117,7 +122,10 @@ static rt_err_t _low_level_dhcp_send(struct netif *netif,
     memcpy((char *)udphdr + sizeof(struct udp_hdr),
            buffer, size);
 
-    return netif->linkoutput(netif, p);
+    netif->linkoutput(netif, p);
+    pbuf_free(p);
+    
+    return RT_EOK;
 }
 
 static void dhcpd_thread_entry(void *parameter)

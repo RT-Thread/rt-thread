@@ -1,11 +1,21 @@
 /*
  * File      : font.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2010, RT-Thread Development Team
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -34,15 +44,15 @@ void rtgui_bitmap_font_draw_char(struct rtgui_font_bitmap *font, struct rtgui_dc
     const rt_uint8_t *font_ptr;
     int x, y, w, h, style;
     register rt_base_t i, j, /*k,*/ word_bytes;
-	struct rtgui_rect dc_rect;
-	
+    struct rtgui_rect dc_rect;
+
     /* check first and last char */
     if (ch < font->first_char || ch > font->last_char) return;
 
     /* get text style */
     style = rtgui_dc_get_gc(dc)->textstyle;
     bc = rtgui_dc_get_gc(dc)->background;
-	rtgui_dc_get_rect(dc, &dc_rect);
+    rtgui_dc_get_rect(dc, &dc_rect);
 
     x = rect->x1;
     y = rect->y1;
@@ -65,8 +75,8 @@ void rtgui_bitmap_font_draw_char(struct rtgui_font_bitmap *font, struct rtgui_dc
         rt_uint8_t chr = 0;
         const rt_uint8_t *ptr = font_ptr + i * word_bytes;
 
-		if ((i + y) >= dc_rect.y2) continue;
-		if ((i + y) < 0) continue;
+        if ((i + y) >= dc_rect.y2) continue;
+        if ((i + y) < 0) continue;
 
         for (j = 0; j < w; j++)
         {
@@ -92,7 +102,7 @@ static void rtgui_bitmap_font_draw_text(struct rtgui_font *font, struct rtgui_dc
 
     RT_ASSERT(bmp_font != RT_NULL);
 
-	/* parameter check */
+    /* parameter check */
     if (rect->y1 > rect->y2) return;
 
 #ifdef RTGUI_USING_FONTHZ

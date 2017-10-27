@@ -47,8 +47,7 @@ int libc_system_init(void)
     /* set PATH and HOME */
     putenv("PATH=/bin");
     putenv("HOME=/home");
-
-#ifdef RT_USING_PTHREADS
+#if defined RT_USING_PTHREADS && !defined RT_USING_COMPONENTS_INIT
     pthread_system_init();
 #endif
 

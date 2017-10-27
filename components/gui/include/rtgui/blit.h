@@ -1,7 +1,7 @@
 /*
  * File      : blit.h
- * This file is part of RT-Thread GUI
- * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@
 #define __RTGUI_BLIT_H__
 
 #include <rtgui/rtgui.h>
+#include <rtgui/dc.h>
 
 /* Assemble R-G-B values into a specified pixel format and store them */
 #define RGB565_FROM_RGB(Pixel, r, g, b)                                 \
@@ -201,13 +202,13 @@ struct rtgui_blit_info
     rt_uint8_t r, g, b, a;
 };
 
-struct rtgui_blit_info_src
+struct rtgui_image_info
 {
-	rt_uint8_t *src;
-	int src_w, src_h;
-	int src_skip;
+    rt_uint8_t *pixels;
+    int src_pitch;
 
-	rt_uint8_t src_fmt;
+    rt_uint8_t src_fmt;
+    rt_uint8_t a;
 };
 
 extern const rt_uint8_t* rtgui_blit_expand_byte[9];
@@ -217,6 +218,7 @@ rtgui_blit_line_func rtgui_blit_line_get(int dst_bpp, int src_bpp);
 rtgui_blit_line_func rtgui_blit_line_get_inv(int dst_bpp, int src_bpp);
 
 void rtgui_blit(struct rtgui_blit_info * info);
+void rtgui_image_info_blit(struct rtgui_image_info* image, struct rtgui_dc* dc, struct rtgui_rect *dc_rect);
 
 #endif
 

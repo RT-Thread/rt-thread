@@ -1,0 +1,11 @@
+menu "libc"
+
+config RT_USING_LIBC
+	bool "Enable libc APIs from toolchain"
+	default y
+
+config RT_USING_PTHREADS
+	bool "Enable pthreads APIs"
+	default y
+
+endmenu

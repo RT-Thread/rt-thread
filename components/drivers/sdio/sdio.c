@@ -29,8 +29,8 @@
 #ifndef RT_SDIO_STACK_SIZE
 #define RT_SDIO_STACK_SIZE 512
 #endif
-#ifndef RT_SDIO_THREAD_PREORITY
-#define RT_SDIO_THREAD_PREORITY  0x40
+#ifndef RT_SDIO_THREAD_PRIORITY
+#define RT_SDIO_THREAD_PRIORITY  0x40
 #endif
 
 static rt_list_t sdio_cards;
@@ -430,7 +430,7 @@ static rt_int32_t sdio_read_cccr(struct rt_mmcsd_card *card)
 
     cccr_version = data & 0x0f;
 
-    if (cccr_version > SDIO_CCCR_REV_1_20) 
+    if (cccr_version > SDIO_CCCR_REV_3_00) 
     {
         rt_kprintf("unrecognised CCCR structure version %d\n", cccr_version);
 
@@ -1059,7 +1059,7 @@ static rt_int32_t sdio_irq_thread_create(struct rt_mmcsd_card *card)
         RT_ASSERT(host->sdio_irq_sem != RT_NULL);
 
         host->sdio_irq_thread = rt_thread_create("sdio_irq", sdio_irq_thread, host, 
-                             RT_SDIO_STACK_SIZE, RT_SDIO_THREAD_PREORITY, 20);
+                             RT_SDIO_STACK_SIZE, RT_SDIO_THREAD_PRIORITY, 20);
         if (host->sdio_irq_thread != RT_NULL) 
         {
             rt_thread_startup(host->sdio_irq_thread);
@@ -1079,7 +1079,7 @@ static rt_int32_t sdio_irq_thread_delete(struct rt_mmcsd_card *card)
     if (!host->sdio_irq_num) 
     {
         if (host->flags & MMCSD_SUP_SDIO_IRQ)
-                host->ops->enable_sdio_irq(host, 0);
+            host->ops->enable_sdio_irq(host, 0);
         rt_sem_delete(host->sdio_irq_sem);
         host->sdio_irq_sem = RT_NULL;
         rt_thread_delete(host->sdio_irq_thread);
@@ -1169,7 +1169,8 @@ rt_int32_t sdio_detach_irq(struct rt_sdio_function *func)
 
 void sdio_irq_wakeup(struct rt_mmcsd_host *host)
 {
-    host->ops->enable_sdio_irq(host, 0);
+    if (host->flags & MMCSD_SUP_SDIO_IRQ)
+        host->ops->enable_sdio_irq(host, 0);
     rt_sem_release(host->sdio_irq_sem);
 }
 
@@ -1197,7 +1198,7 @@ rt_int32_t sdio_enable_func(struct rt_sdio_function *func)
     if (ret)
         goto err;
 
-    timeout = rt_tick_get() + func->enable_timeout_val * 1000 / RT_TICK_PER_SECOND;
+    timeout = rt_tick_get() + func->enable_timeout_val * RT_TICK_PER_SECOND / 1000;
 
     while (1) 
     {
@@ -1252,6 +1253,16 @@ err:
     return -RT_EIO;
 }
 
+void sdio_set_drvdata(struct rt_sdio_function *func, void *data)
+{
+    func->priv = data;
+}
+
+void* sdio_get_drvdata(struct rt_sdio_function *func)
+{
+    return func->priv;
+}
+
 rt_int32_t sdio_set_block_size(struct rt_sdio_function *func,
                                rt_uint32_t              blksize)
 {
@@ -1283,15 +1294,23 @@ rt_int32_t sdio_set_block_size(struct rt_sdio_function *func,
 rt_inline rt_int32_t sdio_match_card(struct rt_mmcsd_card           *card,
                                      const struct rt_sdio_device_id *id)
 {
+    rt_uint8_t num = 1;
+    
     if ((id->manufacturer != SDIO_ANY_MAN_ID) && 
         (id->manufacturer != card->cis.manufacturer))
         return 0;
-    if ((id->product != SDIO_ANY_PROD_ID) && 
-        (id->product != card->cis.product))
-        return 0;
+    
+    while (num <= card->sdio_function_num)
+    {
+        if ((id->product != SDIO_ANY_PROD_ID) && 
+            (id->product == card->sdio_function[num]->product))
+            return 1;
+        num++;
+    }
 
-    return 1;
+    return 0;
 }
+
 
 static struct rt_mmcsd_card *sdio_match_driver(struct rt_sdio_device_id *id)
 {
@@ -1334,11 +1353,11 @@ rt_int32_t sdio_register_driver(struct rt_sdio_driver *driver)
         card = sdio_match_driver(driver->id);
         if (card != RT_NULL)
         {
-            driver->probe(card);
+            return driver->probe(card);
         }
     }
 
-    return 0;
+    return -RT_EEMPTY;
 }
 
 rt_int32_t sdio_unregister_driver(struct rt_sdio_driver *driver)
@@ -1346,9 +1365,6 @@ rt_int32_t sdio_unregister_driver(struct rt_sdio_driver *driver)
     rt_list_t *l;
     struct sdio_driver *sd = RT_NULL;
     struct rt_mmcsd_card *card;
-
-
-    rt_list_insert_after(&sdio_drivers, &sd->list);
 
     for (l = (&sdio_drivers)->next; l != &sdio_drivers; l = l->next)
     {

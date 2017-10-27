@@ -136,6 +136,9 @@ int dfs_file_close(struct dfs_fd *fd)
 {
     int result = 0;
 
+    if (fd == RT_NULL)
+        return -DFS_STATUS_ENXIO;
+
     if (fd != RT_NULL && fd->fs->ops->close != RT_NULL)
         result = fd->fs->ops->close(fd);
 
@@ -655,8 +658,8 @@ static void copydir(const char * src, const char * dst)
     struct dirent dirent;
     struct stat stat;
     int length;
-
-    if (dfs_file_open(&fd, src, DFS_O_DIRECTORY) < 0)
+    struct dfs_fd cpfd;
+    if (dfs_file_open(&cpfd, src, DFS_O_DIRECTORY) < 0)
     {
         rt_kprintf("open %s failed\n", src);
         return ;
@@ -665,7 +668,7 @@ static void copydir(const char * src, const char * dst)
     do
     {
         rt_memset(&dirent, 0, sizeof(struct dirent));
-        length = dfs_file_getdents(&fd, &dirent, sizeof(struct dirent));
+        length = dfs_file_getdents(&cpfd, &dirent, sizeof(struct dirent));
         if (length > 0)
         {
             char * src_entry_full = RT_NULL;
@@ -708,7 +711,7 @@ static void copydir(const char * src, const char * dst)
         }
     }while(length > 0);
 
-    dfs_file_close(&fd);
+    dfs_file_close(&cpfd);
 }
 
 static const char *_get_path_lastname(const char *path)

@@ -189,7 +189,10 @@ int cmd_cd(int argc, char **argv)
     }
     else if (argc == 2)
     {
-        chdir(argv[1]);
+        if (chdir(argv[1]) != 0)
+        {
+        	rt_kprintf("No such directory: %s\n", argv[1]);
+        }
     }
 
     return 0;
@@ -314,6 +317,9 @@ FINSH_FUNCTION_EXPORT_ALIAS(cmd_ifconfig, __cmd_ifconfig, list the information o
 #ifdef RT_LWIP_DNS
 #include <lwip/api.h>
 #include <lwip/dns.h>
+#include <lwip/ip_addr.h>
+#include <lwip/init.h>
+
 int cmd_dns(int argc, char **argv)
 {
     extern void set_dns(char* dns_server);
@@ -321,12 +327,22 @@ int cmd_dns(int argc, char **argv)
     if (argc == 1)
     {
         int index;
-        struct ip_addr ip_addr;
+
+#if (LWIP_VERSION) < 0x02000000U
+        ip_addr_t ip_addr;
         for(index=0; index<DNS_MAX_SERVERS; index++)
         {
             ip_addr = dns_getserver(index);
-            rt_kprintf("dns server #%d: %s\n", index, ipaddr_ntoa(&(ip_addr)));
+            rt_kprintf("dns server #%d: %s\n", index, ipaddr_ntoa(&ip_addr));
         }
+#else
+        const ip_addr_t *ip_addr;
+        for(index=0; index<DNS_MAX_SERVERS; index++)
+        {
+            ip_addr = dns_getserver(index);
+            rt_kprintf("dns server #%d: %s\n", index, ipaddr_ntoa(ip_addr));
+        }
+#endif
     }
     else if (argc == 2)
     {

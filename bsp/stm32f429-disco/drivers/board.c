@@ -11,7 +11,7 @@
  * Date           Author       Notes
  * 2009-01-05     Bernard      first implementation
  */
-
+#include <stdint.h>
 #include <rthw.h>
 #include <rtthread.h>
 
@@ -142,8 +142,6 @@ void rt_hw_board_init()
 #else
     stm32_hw_usart_init();
 #endif
-
-
 
 #ifdef RT_USING_CONSOLE
     rt_console_set_device(CONSOLE_DEVICE);

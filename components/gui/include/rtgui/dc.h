@@ -1,11 +1,21 @@
 /*
  * File      : dc.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -23,7 +33,7 @@ extern "C" {
 #include <rtgui/driver.h>
 #include <rtgui/widgets/widget.h>
 
-#define RTGUI_DC(dc)		((struct rtgui_dc*)(dc))
+#define RTGUI_DC(dc)        ((struct rtgui_dc*)(dc))
 
 #ifndef M_PI
 #define M_PI    3.14159265358979323846
@@ -51,10 +61,10 @@ struct rtgui_dc_engine
 };
 
 /*
- * The abstract device context 
+ * The abstract device context
  *
  * Normally, a DC is a drawable canvas, user can draw point/line/cycle etc
- * on the DC. 
+ * on the DC.
  *
  * There are several kinds of DC:
  * - Hardware DC;
@@ -70,44 +80,49 @@ struct rtgui_dc
     const struct rtgui_dc_engine *engine;
 };
 
-/* 
- * The hardware device context 
+/*
+ * The hardware device context
  *
- * The hardware DC is a context based on hardware device, for examle the 
+ * The hardware DC is a context based on hardware device, for examle the
  * LCD device. The operations on the hardware DC are reflected to the real
- * hardware. 
- * 
+ * hardware.
+ *
  */
 struct rtgui_dc_hw
 {
-	struct rtgui_dc parent;
-	rtgui_widget_t *owner;
-	const struct rtgui_graphic_driver *hw_driver;
+    struct rtgui_dc parent;
+    rtgui_widget_t *owner;
+    const struct rtgui_graphic_driver *hw_driver;
 };
 
 /**
- * The buffer dc is a device context with memory buffer. 
+ * The buffer dc is a device context with memory buffer.
  *
  * All the operations on this device context is reflected to the memory buffer.
  */
 struct rtgui_dc_buffer
 {
-	struct rtgui_dc parent;
+    struct rtgui_dc parent;
 
-	/* graphic context */
-	rtgui_gc_t gc;
+    /* graphic context */
+    rtgui_gc_t gc;
 
-	/* pixel format */
-	rt_uint8_t pixel_format;
-	rt_uint8_t blend_mode;		/* RTGUI_BLENDMODE: None/Blend/Add/Mod */
+    /* pixel format */
+    rt_uint8_t pixel_format;
+    rt_uint8_t blend_mode;		/* RTGUI_BLENDMODE: None/Blend/Add/Mod */
 
-	/* width and height */
-	rt_uint16_t width, height;
-	/* pitch */
-	rt_uint16_t pitch;
+    /* width and height */
+    rt_uint16_t width, height;
+    /* pitch */
+    rt_uint16_t pitch;
 
-	/* pixel data */
-	rt_uint8_t *pixel;
+#ifdef RTGUI_IMAGE_CONTAINER
+    /* image dc */
+    struct rtgui_image_item *image_item;
+#endif
+
+    /* pixel data */
+    rt_uint8_t *pixel;
 };
 
 #define RTGUI_DC_FC(dc)         (rtgui_dc_get_gc(RTGUI_DC(dc))->foreground)
@@ -118,6 +133,10 @@ struct rtgui_dc_buffer
 /* create a buffer dc */
 struct rtgui_dc *rtgui_dc_buffer_create(int width, int height);
 struct rtgui_dc *rtgui_dc_buffer_create_pixformat(rt_uint8_t pixel_format, int w, int h);
+#ifdef RTGUI_IMAGE_CONTAINER
+struct rtgui_dc *rtgui_img_dc_create_pixformat(rt_uint8_t pixel_format, rt_uint8_t *pixel, 
+    struct rtgui_image_item *image_item);
+#endif
 struct rtgui_dc *rtgui_dc_buffer_create_from_dc(struct rtgui_dc* dc);
 
 /* create a widget dc */
@@ -125,10 +144,17 @@ struct rtgui_dc *rtgui_dc_widget_create(struct rtgui_widget * owner);
 
 /* begin and end a drawing */
 struct rtgui_dc *rtgui_dc_begin_drawing(rtgui_widget_t *owner);
-void rtgui_dc_end_drawing(struct rtgui_dc *dc);
+void rtgui_dc_end_drawing(struct rtgui_dc *dc, rt_bool_t update);
 
 /* destroy a dc */
 void rtgui_dc_destory(struct rtgui_dc *dc);
+
+/* create a hardware dc */
+struct rtgui_dc *rtgui_dc_hw_create(rtgui_widget_t *owner);
+
+/* create a client dc */
+struct rtgui_dc *rtgui_dc_client_create(rtgui_widget_t *owner);
+void rtgui_dc_client_init(rtgui_widget_t *owner);
 
 rt_uint8_t *rtgui_dc_buffer_get_pixel(struct rtgui_dc *dc);
 
@@ -258,6 +284,9 @@ void rtgui_dc_rect_to_device(struct rtgui_dc* dc, struct rtgui_rect* rect);
 struct rtgui_dc *rtgui_dc_shrink(struct rtgui_dc *dc, int factorx, int factory);
 struct rtgui_dc *rtgui_dc_zoom(struct rtgui_dc *dc, double zoomx, double zoomy, int smooth);
 struct rtgui_dc *rtgui_dc_rotozoom(struct rtgui_dc *dc, double angle, double zoomx, double zoomy, int smooth);
+
+/* dc buffer dump to file */
+void rtgui_dc_buffer_dump(struct rtgui_dc *self, char *fn);
 
 #ifdef __cplusplus
 }

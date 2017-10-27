@@ -43,6 +43,7 @@ extern "C" {
 #define  SDIO_CCCR_REV_1_00 0   /* CCCR/FBR Version 1.00 */
 #define  SDIO_CCCR_REV_1_10 1   /* CCCR/FBR Version 1.10 */
 #define  SDIO_CCCR_REV_1_20 2   /* CCCR/FBR Version 1.20 */
+#define  SDIO_CCCR_REV_3_00 3   /* CCCR/FBR Version 2.00 */
 
 #define  SDIO_SDIO_REV_1_00 0   /* SDIO Spec Version 1.00 */
 #define  SDIO_SDIO_REV_1_10 1   /* SDIO Spec Version 1.10 */
@@ -228,6 +229,8 @@ rt_int32_t sdio_detach_irq(struct rt_sdio_function *func);
 void sdio_irq_wakeup(struct rt_mmcsd_host *host);
 rt_int32_t sdio_enable_func(struct rt_sdio_function *func);
 rt_int32_t sdio_disable_func(struct rt_sdio_function *func);
+void sdio_set_drvdata(struct rt_sdio_function *func, void *data);
+void* sdio_get_drvdata(struct rt_sdio_function *func);
 rt_int32_t sdio_set_block_size(struct rt_sdio_function *func,
                                rt_uint32_t              blksize);
 rt_int32_t sdio_register_driver(struct rt_sdio_driver *driver);

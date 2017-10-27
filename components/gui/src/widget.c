@@ -1,7 +1,7 @@
 /*
  * File      : widget.c
- * This file is part of RT-Thread GUI
- * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,14 +24,12 @@
  * 2013-10-07     Bernard      remove the win_check in update_clip.
  */
 
-#include <rtgui/dc_client.h>
+#include <string.h>
+#include <rtgui/dc.h>
 #include <rtgui/rtgui_app.h>
 #include <rtgui/widgets/widget.h>
 #include <rtgui/widgets/window.h>
 #include <rtgui/widgets/container.h>
-#ifdef RTGUI_USING_NOTEBOOK
-#include <rtgui/widgets/notebook.h>
-#endif
 
 static void _rtgui_widget_constructor(rtgui_widget_t *widget)
 {
@@ -52,8 +50,8 @@ static void _rtgui_widget_constructor(rtgui_widget_t *widget)
     widget->align = RTGUI_ALIGN_LEFT | RTGUI_ALIGN_TOP;
 
     /* clear the garbage value of extent and clip */
-    widget->extent.x1 = widget->extent.y1 = 0;
-    widget->extent.x2 = widget->extent.y2 = 0;
+    memset(&(widget->extent), 0x0, sizeof(widget->extent));
+    memset(&(widget->extent_visiable), 0x0, sizeof(widget->extent_visiable));
     widget->min_width = widget->min_height = 0;
     rtgui_region_init_with_extents(&widget->clip, &widget->extent);
 
@@ -64,16 +62,12 @@ static void _rtgui_widget_constructor(rtgui_widget_t *widget)
     /* some common event handler */
     widget->on_focus_in   = RT_NULL;
     widget->on_focus_out  = RT_NULL;
-    widget->on_paint      = RT_NULL;
 
     /* set default event handler */
     rtgui_object_set_event_handler(RTGUI_OBJECT(widget), rtgui_widget_event_handler);
 
     /* init user data private to 0 */
     widget->user_data = 0;
-
-    /* init clip information */
-    rtgui_region_init(&(widget->clip));
 
     /* init hardware dc */
     rtgui_dc_client_init(widget);
@@ -127,6 +121,8 @@ void rtgui_widget_set_rect(rtgui_widget_t *widget, const rtgui_rect_t *rect)
 
     /* update extent rectangle */
     widget->extent = *rect;
+    /* set the visiable extern as extern */
+    widget->extent_visiable = *rect;
     if (RTGUI_IS_CONTAINER(widget))
     {
         /* re-do layout */
@@ -166,7 +162,6 @@ void rtgui_widget_set_rect(rtgui_widget_t *widget, const rtgui_rect_t *rect)
 
         rtgui_widget_move_to_logic(widget, delta_x, delta_y);
     }
-
 }
 RTM_EXPORT(rtgui_widget_set_rect);
 
@@ -226,9 +221,18 @@ RTM_EXPORT(rtgui_widget_set_minheight);
 static void _widget_moveto(struct rtgui_widget* widget, int dx, int dy)
 {
     struct rtgui_list_node *node;
-    rtgui_widget_t *child;
+    rtgui_widget_t *child, *parent;
 
     rtgui_rect_moveto(&(widget->extent), dx, dy);
+
+    /* handle visiable extent */
+    widget->extent_visiable = widget->extent;
+    parent = widget->parent;
+    /* we should find out the none-transparent parent */
+    while (parent != RT_NULL && parent->flag & RTGUI_WIDGET_FLAG_TRANSPARENT) parent = parent->parent;
+    if (widget->parent)
+        rtgui_rect_intersect(&(widget->parent->extent_visiable), &(widget->extent_visiable));
+
     /* reset clip info */
     rtgui_region_init_with_extents(&(widget->clip), &(widget->extent));
 
@@ -260,7 +264,7 @@ void rtgui_widget_move_to_logic(rtgui_widget_t *widget, int dx, int dy)
     if (parent != RT_NULL)
     {
         /* get the parent rect, even if it's a transparent parent. */
-        rect = parent->clip.extents;
+        rect = parent->extent_visiable;
     }
 
     /* we should find out the none-transparent parent */
@@ -270,7 +274,6 @@ void rtgui_widget_move_to_logic(rtgui_widget_t *widget, int dx, int dy)
         /* reset clip info */
         rtgui_region_init_with_extents(&(widget->clip), &(widget->extent));
         rtgui_region_intersect_rect(&(widget->clip), &(widget->clip), &rect);
-        rtgui_region_intersect_rect(&(widget->clip), &(widget->clip), &(parent->extent));
 
         /* give back the extent */
         rtgui_region_union(&(parent->clip), &(parent->clip), &(widget->clip));
@@ -343,14 +346,6 @@ void rtgui_widget_set_onunfocus(rtgui_widget_t *widget, rtgui_event_handler_ptr 
     widget->on_focus_out = handler;
 }
 RTM_EXPORT(rtgui_widget_set_onunfocus);
-
-void rtgui_widget_set_onpaint(rtgui_widget_t *widget, rtgui_event_handler_ptr handler)
-{
-    RT_ASSERT(widget != RT_NULL);
-
-    widget->on_paint = handler;
-}
-RTM_EXPORT(rtgui_widget_set_onpaint);
 
 /**
  * @brief Focuses the widget. The focused widget is the widget which can receive the keyboard events
@@ -511,15 +506,6 @@ rt_bool_t rtgui_widget_onupdate_toplvl(struct rtgui_object *object, struct rtgui
 }
 RTM_EXPORT(rtgui_widget_onupdate_toplvl);
 
-rt_bool_t rtgui_widget_onpaint(struct rtgui_object *object, struct rtgui_event *event)
-{
-    if (RTGUI_WIDGET(object)->on_paint)
-        return RTGUI_WIDGET(object)->on_paint(object, event);
-    else
-        return RT_FALSE;
-}
-RTM_EXPORT(rtgui_widget_onpaint);
-
 rt_bool_t rtgui_widget_event_handler(struct rtgui_object *object, rtgui_event_t *event)
 {
     RTGUI_WIDGET_EVENT_HANDLER_PREPARE;
@@ -527,7 +513,7 @@ rt_bool_t rtgui_widget_event_handler(struct rtgui_object *object, rtgui_event_t 
     switch (event->type)
     {
     case RTGUI_EVENT_PAINT:
-        return rtgui_widget_onpaint(object, event);
+        break;
     case RTGUI_EVENT_SHOW:
         return rtgui_widget_onshow(object, event);
     case RTGUI_EVENT_HIDE:
@@ -556,7 +542,11 @@ void rtgui_widget_update_clip(rtgui_widget_t *widget)
         return;
 
     parent = widget->parent;
-    rect = parent->clip.extents;
+    /* reset visiable extent */
+    widget->extent_visiable = widget->extent;
+    rtgui_rect_intersect(&(parent->extent_visiable), &(widget->extent_visiable));
+
+    rect = parent->extent_visiable;
     /* reset clip to extent */
     rtgui_region_reset(&(widget->clip), &(widget->extent));
     /* limit widget extent in parent extent */
@@ -575,7 +565,7 @@ void rtgui_widget_update_clip(rtgui_widget_t *widget)
         /* subtract widget clip in parent clip */
         if (!(widget->flag & RTGUI_WIDGET_FLAG_TRANSPARENT) && RTGUI_IS_CONTAINER(parent))
         {
-            rtgui_region_subtract_rect(&(parent->clip), &(parent->clip), &(widget->extent));
+            rtgui_region_subtract_rect(&(parent->clip), &(parent->clip), &(widget->extent_visiable));
         }
     }
 
@@ -628,7 +618,6 @@ void rtgui_widget_hide(struct rtgui_widget *widget)
     if (RTGUI_WIDGET_IS_HIDE(widget))
         return;
 
-    RTGUI_WIDGET_HIDE(widget);
     if (widget->toplevel != RT_NULL)
     {
         RTGUI_EVENT_HIDE_INIT(&ehide);
@@ -639,6 +628,8 @@ void rtgui_widget_hide(struct rtgui_widget *widget)
                 &ehide);
         }
     }
+
+    RTGUI_WIDGET_HIDE(widget);
 }
 RTM_EXPORT(rtgui_widget_hide);
 
@@ -648,7 +639,7 @@ rt_bool_t rtgui_widget_onshow(struct rtgui_object *object, struct rtgui_event *e
 
     if (RTGUI_WIDGET_IS_HIDE(object)) return RT_FALSE;
 
-    if (widget->parent != RT_NULL)
+    if (widget->parent != RT_NULL && !(RTGUI_WIDGET_FLAG(widget) & RTGUI_WIDGET_FLAG_TRANSPARENT))
     {
         rtgui_widget_clip_parent(widget);
     }
@@ -742,7 +733,7 @@ void rtgui_widget_update(rtgui_widget_t *widget)
     RT_ASSERT(widget != RT_NULL);
 
     if (RTGUI_OBJECT(widget)->event_handler != RT_NULL &&
-        !(RTGUI_WIDGET_FLAG(widget) & RTGUI_WIDGET_FLAG_IN_ANIM))
+            !(RTGUI_WIDGET_FLAG(widget) & RTGUI_WIDGET_FLAG_IN_ANIM))
     {
         RTGUI_OBJECT(widget)->event_handler(RTGUI_OBJECT(widget),
                                             &paint.parent);

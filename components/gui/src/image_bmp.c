@@ -1,4 +1,22 @@
 /*
+ * File      : image_bmp.c
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2012-01-24     onelife      Reimplement to improve efficiency and add
@@ -6,7 +24,7 @@
  *  provides scaledown function.
  */
 #include <rtthread.h>
-#include <rtgui/dc_hw.h>
+#include <rtgui/dc.h>
 #include <rtgui/image.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/image_bmp.h>
@@ -127,7 +145,7 @@ static struct rtgui_image_palette *rtgui_image_bmp_load_palette(
         return RT_NULL;
     }
 
-	palette->ncolors = colorsUsed;
+    palette->ncolors = colorsUsed;
     if (alpha)
     {
         rt_uint8_t temp[4];
@@ -506,7 +524,7 @@ static void rtgui_image_bmp_blit(struct rtgui_image *image, struct rtgui_dc *dc,
 
     bytePerPixel = _UI_BITBYTES(bmp->bit_per_pixel);
 
-	imageWidth = image->w * bytePerPixel;       /* Scaled width in byte */
+    imageWidth = image->w * bytePerPixel;       /* Scaled width in byte */
     error = RT_FALSE;
 
     do
@@ -515,8 +533,8 @@ static void rtgui_image_bmp_blit(struct rtgui_image *image, struct rtgui_dc *dc,
         if (rtgui_dc_get_visible(dc) != RT_TRUE) break;
 
         /* the minimum rect */
-		w = _UI_MIN(image->w, rtgui_rect_width(*dst_rect));
-		h = _UI_MIN(image->h, rtgui_rect_height(*dst_rect));
+        w = _UI_MIN(image->w, rtgui_rect_width(*dst_rect));
+        h = _UI_MIN(image->h, rtgui_rect_height(*dst_rect));
 
         if (!bmp->is_loaded)
         {
@@ -744,53 +762,53 @@ static void rtgui_image_bmp_blit(struct rtgui_image *image, struct rtgui_dc *dc,
             rt_uint16_t x, y;
             rt_uint8_t *ptr;
 
-			if (bmp->bit_per_pixel <= 8)
-			{
-				rtgui_color_t color;
+            if (bmp->bit_per_pixel <= 8)
+            {
+                rtgui_color_t color;
 
-				/* 1bpp, and using palette */
-				for (y = 0; y < h; y ++)
-				{
+                /* 1bpp, and using palette */
+                for (y = 0; y < h; y ++)
+                {
                     ptr = bmp->pixels + (y * imageWidth);
-					for (x = 0; x < w; x ++)
-					{
-						color = image->palette->colors[*(ptr++)];
-						rtgui_dc_draw_color_point(dc,
-							dst_rect->x1 + x, dst_rect->y1 + y,
-							color);
-					}
-				}
-			}
-			else
-			{
-				rtgui_blit_line_func blit_line;
-				rt_uint8_t hw_bytePerPixel = _UI_BITBYTES(hw_driver->bits_per_pixel);
-				rt_uint8_t *line_data;
+                    for (x = 0; x < w; x ++)
+                    {
+                        color = image->palette->colors[*(ptr++)];
+                        rtgui_dc_draw_color_point(dc,
+                                                  dst_rect->x1 + x, dst_rect->y1 + y,
+                                                  color);
+                    }
+                }
+            }
+            else
+            {
+                rtgui_blit_line_func blit_line;
+                rt_uint8_t hw_bytePerPixel = _UI_BITBYTES(hw_driver->bits_per_pixel);
+                rt_uint8_t *line_data;
 
-				if (hw_driver->pixel_format == RTGRAPHIC_PIXEL_FORMAT_BGR565)
-				{
-					blit_line = rtgui_blit_line_get_inv(hw_bytePerPixel, bytePerPixel);
-				}
-				else
-				{
-					blit_line = rtgui_blit_line_get(hw_bytePerPixel, bytePerPixel);
-				}
+                if (hw_driver->pixel_format == RTGRAPHIC_PIXEL_FORMAT_BGR565)
+                {
+                    blit_line = rtgui_blit_line_get_inv(hw_bytePerPixel, bytePerPixel);
+                }
+                else
+                {
+                    blit_line = rtgui_blit_line_get(hw_bytePerPixel, bytePerPixel);
+                }
 
-				line_data = (rt_uint8_t *)rtgui_malloc(w * rtgui_color_get_bpp(hw_driver->pixel_format));
-				if (line_data == RT_NULL) break; /* out of memory */
+                line_data = (rt_uint8_t *)rtgui_malloc(w * rtgui_color_get_bpp(hw_driver->pixel_format));
+                if (line_data == RT_NULL) break; /* out of memory */
 
-				ptr = bmp->pixels;
-				for (y = 0; y < h; y ++)
-				{
-					blit_line(line_data, ptr, bytePerPixel * w);
-					ptr += imageWidth;
+                ptr = bmp->pixels;
+                for (y = 0; y < h; y ++)
+                {
+                    blit_line(line_data, ptr, bytePerPixel * w);
+                    ptr += imageWidth;
 
-					dc->engine->blit_line(dc, dst_rect->x1, dst_rect->x1 + w,
-						dst_rect->y1 + y, line_data);
-				}
+                    dc->engine->blit_line(dc, dst_rect->x1, dst_rect->x1 + w,
+                                          dst_rect->y1 + y, line_data);
+                }
 
-				rtgui_free(line_data);
-			}
+                rtgui_free(line_data);
+            }
         }
     } while (0);
 }

@@ -26,7 +26,7 @@ if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
-STM32_TYPE = 'STM32F4XX'
+STM32_TYPE = 'STM32F429xx'
 
 if PLATFORM == 'gcc':
     # toolchains

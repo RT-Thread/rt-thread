@@ -2,7 +2,7 @@
 //
 // flash.h - Prototypes for the flash driver.
 //
-// Copyright (c) 2005-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 2.1.0.12573 of the Tiva Peripheral Driver Library.
+// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -93,7 +93,16 @@ extern int32_t FlashProtectSet(uint32_t ui32Address,
 extern int32_t FlashProtectSave(void);
 extern int32_t FlashUserGet(uint32_t *pui32User0, uint32_t *pui32User1);
 extern int32_t FlashUserSet(uint32_t ui32User0, uint32_t ui32User1);
+extern int32_t FlashAllUserRegisterGet(uint32_t *pui32User0,
+                                       uint32_t *pui32User1,
+                                       uint32_t *pui32User2,
+                                       uint32_t *pui32User3);
+extern int32_t FlashAllUserRegisterSet(uint32_t ui32User0,
+                                       uint32_t ui32User1,
+                                       uint32_t ui32User2,
+                                       uint32_t ui32User3);
 extern int32_t FlashUserSave(void);
+extern int32_t FlashAllUserRegisterSave(void);
 extern void FlashIntRegister(void (*pfnHandler)(void));
 extern void FlashIntUnregister(void);
 extern void FlashIntEnable(uint32_t ui32IntFlags);

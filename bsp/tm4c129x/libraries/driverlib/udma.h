@@ -2,7 +2,7 @@
 //
 // udma.h - Prototypes and macros for the uDMA controller.
 //
-// Copyright (c) 2007-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2007-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 2.1.0.12573 of the Tiva Peripheral Driver Library.
+// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -289,15 +289,6 @@ tDMAControlTable;
 //*****************************************************************************
 #define UDMA_PRI_SELECT         0x00000000
 #define UDMA_ALT_SELECT         0x00000020
-
-//*****************************************************************************
-//
-// uDMA interrupt sources, to be passed to uDMAIntRegister() and
-// uDMAIntUnregister().
-//
-//*****************************************************************************
-#define UDMA_INT_SW             62
-#define UDMA_INT_ERR            63
 
 //*****************************************************************************
 //

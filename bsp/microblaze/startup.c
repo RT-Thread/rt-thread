@@ -20,7 +20,7 @@
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-extern void finsh_system_init(void);
+extern int finsh_system_init(void);
 #endif
 
 extern void rt_hw_led_flash(void);

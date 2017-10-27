@@ -34,7 +34,7 @@
 extern "C" {
 #endif
 
-#ifndef RT_USING_NEWLIB
+#if !defined(RT_USING_NEWLIB)
 #define O_RDONLY    DFS_O_RDONLY
 #define O_WRONLY    DFS_O_WRONLY
 #define O_RDWR      DFS_O_RDWR
@@ -46,6 +46,7 @@ extern "C" {
 #define O_BINARY    DFS_O_BINARY
 #define O_DIRECTORY DFS_O_DIRECTORY
 
+#if !defined(_WIN32)
 #define S_IFMT      DFS_S_IFMT
 #define S_IFSOCK    DFS_S_IFSOCK
 #define S_IFLNK     DFS_S_IFLNK 
@@ -80,6 +81,7 @@ extern "C" {
 #define S_IROTH     DFS_S_IROTH
 #define S_IWOTH     DFS_S_IWOTH
 #define S_IXOTH     DFS_S_IXOTH
+#endif
 
 #if defined(__CC_ARM)
 #include <stdio.h>
@@ -132,7 +134,7 @@ int unlink(const char *pathname);
 int stat(const char *file, struct stat *buf);
 int fstat(int fildes, struct stat *buf);
 int fsync(int fildes);
-int ioctl(int fildes, unsigned long cmd, void *data);
+int ioctl(int fildes, long cmd, void *data);
 
 /* directory api*/
 int rmdir(const char *path);

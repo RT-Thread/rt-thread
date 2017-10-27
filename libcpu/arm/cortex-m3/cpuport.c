@@ -368,11 +368,12 @@ __asm int __rt_ffs(int value)
 {
     CMP     r0, #0x00
     BEQ     exit
+
     RBIT    r0, r0
     CLZ     r0, r0
     ADDS    r0, r0, #0x01
 
-    exit
+exit
     BX      lr
 }
 #elif defined(__IAR_SYSTEMS_ICC__)
@@ -380,9 +381,11 @@ int __rt_ffs(int value)
 {
     if (value == 0) return value;
 
-    __ASM("RBIT r0, r0");
-    __ASM("CLZ  r0, r0");
-    __ASM("ADDS r0, r0, #0x01");
+    asm("RBIT %0, %1" : "=r"(value) : "r"(value));
+    asm("CLZ  %0, %1" : "=r"(value) : "r"(value));
+    asm("ADDS %0, %1, #0x01" : "=r"(value) : "r"(value));
+
+    return value;
 }
 #elif defined(__GNUC__)
 int __rt_ffs(int value)

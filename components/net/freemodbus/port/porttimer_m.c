@@ -46,7 +46,7 @@ BOOL xMBMasterPortTimersInit(USHORT usTimeOut50us)
     rt_timer_init(&timer, "master timer",
                    timer_timeout_ind, /* bind timeout callback function */
                    RT_NULL,
-                   (50 * usT35TimeOut50us) / (1000 * 1000 / RT_TICK_PER_SECOND),
+                   (50 * usT35TimeOut50us) / (1000 * 1000 / RT_TICK_PER_SECOND) + 1,
                    RT_TIMER_FLAG_ONE_SHOT); /* one shot */
 
     return TRUE;
