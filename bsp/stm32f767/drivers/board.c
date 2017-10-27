@@ -114,7 +114,7 @@ static void CPU_CACHE_Enable(void)
     SCB_EnableDCache();
 }
 
-int mpu_init(void)
+static int mpu_init(void)
 {
   MPU_Region_InitTypeDef MPU_InitStruct;
   

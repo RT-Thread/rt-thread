@@ -23,9 +23,8 @@
  */
 #ifndef __STM32F7XX_GPIO_H__
 #define __STM32F7XX_GPIO_H__
-#include <board.h>
 
-
+int rt_hw_pin_init(void);
 
 
 

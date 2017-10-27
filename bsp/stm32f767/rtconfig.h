@@ -95,6 +95,7 @@
 #define RT_CONSOLEBUF_SIZE  128
 // <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console" default="uart" />
 #define RT_CONSOLE_DEVICE_NAME  "uart3"
+#define RT_USING_PIN
 // </section>
 
 // <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
