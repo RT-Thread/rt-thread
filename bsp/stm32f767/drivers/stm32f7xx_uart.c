@@ -227,7 +227,7 @@ static rt_size_t stm32_uart_dma_transmit(struct rt_serial_device *serial,
         HAL_UART_Receive_DMA(stm32_uart->huart, buf, size);
         break;
     case RT_SERIAL_DMA_TX:
-        SCB_CleanDCache();
+				SCB_CleanDCache();//refresh cache to ram
         HAL_UART_Transmit_DMA(stm32_uart->huart, buf, size);
         break;
     }
@@ -366,6 +366,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 #ifdef RT_USING_UART3
         if (serial3.parent.open_flag & RT_DEVICE_FLAG_DMA_RX)
         {
+						SCB_InvalidateDCache();//refresh cache from ram
             rt_hw_serial_isr(&serial3, RT_SERIAL_EVENT_RX_DMADONE);
         }
 

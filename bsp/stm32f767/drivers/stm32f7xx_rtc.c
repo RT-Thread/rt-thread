@@ -24,6 +24,7 @@
 #include "stm32f7xx_rtc.h"
 #include <board.h>
 #include <rtdevice.h>
+#include <string.h>
 #include <time.h>
 RTC_HandleTypeDef hrtc;
 
@@ -103,30 +104,38 @@ static rt_err_t stm32_rtc_control(struct rt_device *dev,
                                   void             *args)
 {
     SCB_CleanDCache();
-    struct tm *now = localtime((const time_t *) args);
+    struct tm *tm_now;
+		struct tm now;
     RTC_TimeTypeDef sTime;
     RTC_DateTypeDef sDate;
+	
+		rt_enter_critical();
+    /* converts calendar time time into local time. */
+    tm_now = localtime((const time_t *) args);
+    /* copy the statically located variable */
+    memcpy(&now, tm_now, sizeof(struct tm));
+    /* unlock scheduler. */
+    rt_exit_critical();
     switch (cmd)
     {
     case RT_DEVICE_CTRL_RTC_GET_TIME:
         HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
         HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-        now->tm_hour = sTime.Hours;
-        now->tm_min = sTime.Minutes;
-        now->tm_sec = sTime.Seconds;
-        now->tm_year = sDate.Year + 100;
-        now->tm_mon = sDate.Month - 1;
-        now->tm_mday = sDate.Date;
-        *((time_t *)args) = mktime(now);
+        now.tm_hour = sTime.Hours;
+        now.tm_min = sTime.Minutes;
+        now.tm_sec = sTime.Seconds;
+        now.tm_year = sDate.Year + 100;
+        now.tm_mon = sDate.Month - 1;
+        now.tm_mday = sDate.Date;
+        *((time_t *)args) = mktime(&now);
         break;
     case RT_DEVICE_CTRL_RTC_SET_TIME:
-        sTime.Hours = now->tm_hour;
-        sTime.Minutes = now->tm_min;
-        sTime.Seconds = now->tm_sec;
-        sDate.Year = now->tm_year - 100;
-        sDate.Month = now->tm_mon + 1;
-        sDate.Date = now->tm_mday;
-        SCB_CleanDCache();
+        sTime.Hours = now.tm_hour;
+        sTime.Minutes = now.tm_min;
+        sTime.Seconds = now.tm_sec;
+        sDate.Year = now.tm_year - 100;
+        sDate.Month = now.tm_mon + 1;
+        sDate.Date = now.tm_mday;
         HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
         HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
         break;

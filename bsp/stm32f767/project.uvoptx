@@ -150,9 +150,25 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
+          <LineNumber>128</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134269328</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>.\drivers\stm32f7xx_rtc.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\rtthread_stm32f7xx\drivers/stm32f7xx_rtc.c\128</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
           <LineNumber>127</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134268790</Address>
+          <Address>134269318</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -164,9 +180,25 @@
           <Expression>\\rtthread_stm32f7xx\drivers/stm32f7xx_rtc.c\127</Expression>
         </Bp>
         <Bp>
-          <Number>1</Number>
+          <Number>2</Number>
           <Type>0</Type>
-          <LineNumber>129</LineNumber>
+          <LineNumber>137</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>0</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>0</BreakIfRCount>
+          <Filename>.\drivers\stm32f7xx_rtc.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
+        </Bp>
+        <Bp>
+          <Number>3</Number>
+          <Type>0</Type>
+          <LineNumber>138</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -185,6 +217,11 @@
           <count>0</count>
           <WinNumber>1</WinNumber>
           <ItemText>now-&gt;tm_year,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>1</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>now-&gt;tm_mday,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>
