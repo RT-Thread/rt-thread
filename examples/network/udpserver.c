@@ -1,5 +1,8 @@
 #include <rtthread.h>
-#include <lwip/sockets.h> /* 使用BSD socket，需要包含sockets.h头文件 */
+//#include <lwip/sockets.h> /* 使用BSD socket，需要包含sockets.h头文件 */
+#include <sys/socket.h> /* 使用BSD socket，需要包含sockets.h头文件 */
+#include "netdb.h"
+
 
 #define BUFSZ	1024
 
@@ -68,7 +71,7 @@ void udpserv(void* paramemter)
        /* 如果接收数据是exit，退出 */
        if (strcmp(recv_data, "exit") == 0)
        {
-           lwip_close(sock);
+           closesocket(sock);
 
            /* 释放接收用的数据缓冲 */
            rt_free(recv_data);
