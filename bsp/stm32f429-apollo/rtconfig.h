@@ -84,7 +84,7 @@
 /* RT_DFS_ELM_USE_ERASE is not set */
 #define RT_DFS_ELM_REENTRANT
 #define RT_USING_DFS_DEVFS
-/* RT_USING_DFS_NET is not set */
+#define RT_USING_DFS_NET
 /* RT_USING_DFS_NFS is not set */
 
 /* Device Drivers */
@@ -110,7 +110,9 @@
 
 #define RT_USING_LIBC
 /* RT_USING_PTHREADS is not set */
-/* RT_USING_POSIX is not set */
+#define RT_USING_POSIX
+/* RT_USING_POSIX_MMAP is not set */
+/* RT_USING_POSIX_TERMIOS is not set */
 
 /* Network stack */
 
