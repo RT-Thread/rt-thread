@@ -142,7 +142,35 @@ static rt_err_t stm32_rtc_control(struct rt_device *dev,
     }
     return RT_EOK;
 }
+static rt_err_t stm32_rtc_init(struct rt_device *dev)
+{
+	return RT_EOK;
+}
+static rt_err_t stm32_rtc_open(struct rt_device *dev, rt_uint16_t oflag)
+{
+	return RT_EOK;
+}
+static rt_err_t stm32_rtc_close(struct rt_device *dev)
+{
+	return RT_EOK;
+}
+static rt_size_t stm32_rtc_read(struct rt_device *dev,
+                                rt_off_t          pos,
+                                void             *buffer,
+                                rt_size_t         size)
+{
+	stm32_rtc_control(dev,RT_DEVICE_CTRL_RTC_GET_TIME,buffer);
+	return size;
+}
 
+static rt_size_t stm32_rtc_write(struct rt_device *dev,
+                                 rt_off_t          pos,
+                                 const void       *buffer,
+                                 rt_size_t         size)
+{
+	stm32_rtc_control(dev,RT_DEVICE_CTRL_RTC_SET_TIME,(void *)buffer);
+	return size;
+}
 struct rt_device rtc_device;
 
 int rt_hw_rtc_init(void)
@@ -153,11 +181,11 @@ int rt_hw_rtc_init(void)
     rtc_device.rx_indicate = RT_NULL;
     rtc_device.tx_complete = RT_NULL;
 
-    rtc_device.init        = RT_NULL;
-    rtc_device.open        = RT_NULL;
-    rtc_device.close       = RT_NULL;
-    rtc_device.read        = RT_NULL;
-    rtc_device.write       = RT_NULL;
+    rtc_device.init        = stm32_rtc_init;
+    rtc_device.open        = stm32_rtc_open;
+    rtc_device.close       = stm32_rtc_close;
+    rtc_device.read        = stm32_rtc_read;
+    rtc_device.write       = stm32_rtc_write;
     rtc_device.control     = stm32_rtc_control;
     rtc_device.user_data   = RT_NULL;
 
