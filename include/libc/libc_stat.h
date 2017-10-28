@@ -48,5 +48,5 @@ struct stat
     uint32_t st_blksize;
 };
 
-#endif
+#endif  /*__LIBC_STAT_H__ */
 

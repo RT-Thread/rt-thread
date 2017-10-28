@@ -4,4 +4,4 @@
 #include <libc/libc_stat.h>
 
 
-#endif /*__STAT_H */
+#endif /*__STAT_H__ */
