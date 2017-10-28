@@ -12,7 +12,7 @@
 #define RT_TICK_PER_SECOND 100
 #define RT_DEBUG
 #define RT_USING_OVERFLOW_CHECK
-#define RT_DEBUG_INIT 0
+#define RT_DEBUG_INIT 1
 /* RT_DEBUG_THREAD is not set */
 #define RT_USING_HOOK
 #define IDLE_THREAD_STACK_SIZE 256
@@ -63,7 +63,7 @@
 #define FINSH_CMD_SIZE 80
 /* FINSH_USING_AUTH is not set */
 #define FINSH_USING_MSH
-#define FINSH_USING_MSH_DEFAULT
+//#define FINSH_USING_MSH_DEFAULT
 //#define FINSH_USING_MSH_ONLY
 
 /* Device virtual file system */
@@ -86,7 +86,7 @@
 /* RT_DFS_ELM_USE_ERASE is not set */
 #define RT_DFS_ELM_REENTRANT
 #define RT_USING_DFS_DEVFS
-//#define RT_USING_DFS_NET
+#define RT_USING_DFS_NET
 /* RT_USING_DFS_NFS is not set */
 
 /* Device Drivers */
@@ -119,8 +119,9 @@
 
 /* light weight TCP/IP stack */
 
-//#define RT_USING_LWIP
-#define RT_USING_LWIP141
+#define RT_USING_LWIP
+#define RT_USING_LWIP202
+//#define RT_LWIP_DEBUG
 /* RT_USING_LWIP202 is not set */
 /* RT_LWIP_IGMP is not set */
 #define RT_LWIP_ICMP
@@ -157,11 +158,11 @@
 #define LWIP_SO_RCVBUF 1
 #define RT_LWIP_IPADDR0 192
 #define RT_LWIP_IPADDR1 168
-#define RT_LWIP_IPADDR2 1
+#define RT_LWIP_IPADDR2 10
 #define RT_LWIP_IPADDR3 30
 #define RT_LWIP_GWADDR0 192
 #define RT_LWIP_GWADDR1 168
-#define RT_LWIP_GWADDR2 1
+#define RT_LWIP_GWADDR2 10
 #define RT_LWIP_GWADDR3 1
 #define RT_LWIP_MSKADDR0 255
 #define RT_LWIP_MSKADDR1 255
