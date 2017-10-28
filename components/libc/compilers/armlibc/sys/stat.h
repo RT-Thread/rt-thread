@@ -1,5 +1,5 @@
-#ifndef __STAT_H
-#define __STAT_H
+#ifndef __STAT_H__
+#define __STAT_H__
 
 #include <libc/libc_stat.h>
 
