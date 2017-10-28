@@ -13,6 +13,10 @@ usart.c
 CPPPATH = [cwd]
 CPPDEFINES = []
 
+if GetDepend('RT_USING_LWIP'):
+    src += ['drv_eth.c', 'fsl_phy.c']
+    CPPDEFINES += ['FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE']
+    
 if GetDepend('RT_USING_SDIO'):
     src += ['drv_sdio.c']
 
