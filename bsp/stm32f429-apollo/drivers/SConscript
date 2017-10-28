@@ -9,13 +9,15 @@ stm32f4xx_it.c
 usart.c
 drv_sdram.c
 drv_rtc.c
-drv_nand.c
 drv_mpu.c
 """)
 
 # add sdio driver
 if GetDepend('RT_USING_DFS'):
     src += ['drv_sdio_sd.c']
+
+if GetDepend('RT_USING_MTD_NAND'):
+    src += ['drv_nand.c']
 
 # add Ethernet drivers.
 if GetDepend('RT_USING_LWIP'):

@@ -1,6 +1,8 @@
 #include <rtthread.h>
-#include <lwip/netdb.h> /* 为了解析主机名，需要包含netdb.h头文件 */
-#include <lwip/sockets.h> /* 使用BSD socket，需要包含sockets.h头文件 */
+//#include <lwip/netdb.h> /* 为了解析主机名，需要包含netdb.h头文件 */
+//#include <lwip/sockets.h> /* 使用BSD socket，需要包含sockets.h头文件 */
+#include <sys/socket.h> /* 使用BSD socket，需要包含sockets.h头文件 */
+#include "netdb.h"
 
 const char send_data[] = "This is UDP Client from RT-Thread.\n"; /* 发送用到的数据 */
 void udpclient(const char* url, int port, int count)
@@ -40,7 +42,7 @@ void udpclient(const char* url, int port, int count)
    }
 
    /* 关闭这个socket */
-   lwip_close(sock);
+   closesocket(sock);
 }
 
 #ifdef RT_USING_FINSH

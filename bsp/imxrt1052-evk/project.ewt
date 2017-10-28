@@ -2427,7 +2427,13 @@
             <name>$PROJ_DIR$\drivers\board.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\drivers\drv_eth.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\drivers\drv_sdio.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\drivers\fsl_phy.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\drivers\usart.c</name>
@@ -2451,10 +2457,19 @@
             <name>$PROJ_DIR$\..\..\components\dfs\src\dfs_fs.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\..\components\dfs\filesystems\net\dfs_net.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\components\dfs\src\dfs_posix.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat\ff.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\dfs\filesystems\net\net_netdb.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\dfs\filesystems\net\net_sockets.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\components\dfs\src\poll.c</name>
@@ -2740,6 +2755,117 @@
         </file>
         <file>
             <name>$PROJ_DIR$\Libraries\system_MIMXRT1052.c</name>
+        </file>
+    </group>
+    <group>
+        <name>lwIP</name>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\api\api_lib.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\api\api_msg.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\ipv4\autoip.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\def.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\ipv4\dhcp.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\dns.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\api\err.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\ipv4\etharp.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\netif\ethernet.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\netif\ethernetif.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\ipv4\icmp.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\ipv4\igmp.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\inet_chksum.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\init.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\ip.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\ipv4\ip4.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\ipv4\ip4_addr.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\ipv4\ip4_frag.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\netif\lowpan6.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\memp.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\api\netbuf.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\api\netdb.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\netif.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\api\netifapi.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\pbuf.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\raw.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\api\sockets.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\stats.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\sys.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\arch\sys_arch.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\tcp.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\tcp_in.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\tcp_out.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\api\tcpip.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\timeouts.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\udp.c</name>
         </file>
     </group>
     <group>

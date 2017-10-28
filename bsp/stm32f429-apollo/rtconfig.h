@@ -71,6 +71,9 @@
 #define DFS_FILESYSTEMS_MAX 2
 #define DFS_FD_MAX 4
 #define RT_USING_DFS_ELMFAT
+
+/* elm-chan's FatFs, Generic FAT Filesystem Module */
+
 #define RT_DFS_ELM_CODE_PAGE 437
 #define RT_DFS_ELM_WORD_ACCESS
 #define RT_DFS_ELM_USE_LFN_0
@@ -85,6 +88,9 @@
 #define RT_DFS_ELM_REENTRANT
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_NET
+/* RT_USING_DFS_ROMFS is not set */
+/* RT_USING_DFS_RAMFS is not set */
+/* RT_USING_DFS_UFFS is not set */
 /* RT_USING_DFS_NFS is not set */
 
 /* Device Drivers */
@@ -198,14 +204,11 @@
 /* miscellaneous packages */
 
 /* PKG_USING_HELLO is not set */
-
-/* BSP_SPECIAL CONFIG */
-
-#define RT_RTC_NAME "rtc"
 #define RT_USING_EXT_SDRAM
 #define RT_USING_UART1
 #define RT_USING_UART2
 #define RT_USING_UART3
 #define RT_USING_SPI5
+#define RT_RTC_NAME "rtc"
 
 #endif
