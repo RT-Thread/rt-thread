@@ -1,5 +1,8 @@
-#ifndef LIBC_STAT_H__
-#define LIBC_STAT_H__
+#ifndef __LIBC_STAT_H__
+#define __LIBC_STAT_H__
+
+#include <stdint.h>
+#include <time.h>
 
 #define S_IFMT               00170000
 #define S_IFSOCK             0140000
@@ -36,5 +39,14 @@
 #define S_IWOTH              00002
 #define S_IXOTH              00001
 
-#endif
+struct stat
+{
+    struct rt_device* st_dev;
+    uint16_t st_mode;
+    uint32_t st_size;
+    time_t   st_mtime;
+    uint32_t st_blksize;
+};
+
+#endif  /*__LIBC_STAT_H__ */
 
