@@ -22,3 +22,8 @@ documentation/html
 *.a
 *.i
 *.d
+*.dbgconf
+*/.DS_Store
+.DS_Store
+bsp/stm32f767/build.sh
+.vscode

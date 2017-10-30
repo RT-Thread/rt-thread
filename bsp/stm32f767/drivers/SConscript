@@ -1,0 +1,29 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Split("""
+board.c
+stm32f7xx_it.c
+stm32f7xx_hal_msp.c
+""")
+
+if GetDepend(['RT_USING_SERIAL']):
+    src += ['stm32f7xx_uart.c']
+
+if GetDepend(['RT_USING_PIN']):
+    src += ['stm32f7xx_gpio.c']
+    
+if GetDepend(['RT_USING_RTC']):
+    src += ['stm32f7xx_rtc.c']
+
+if GetDepend(['RT_USING_I2C']):
+    src += ['stm32f7xx_i2c.c']
+
+if GetDepend(['RT_USING_SPI']):
+    src += ['stm32f7xx_spi.c']
+
+CPPPATH = [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
