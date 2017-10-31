@@ -21,7 +21,7 @@
 
 #ifdef RT_USING_DFS
 /* dfs init */
-#include <dfs_init.h>
+#include <dfs.h>
 /* dfs filesystem:FAT filesystem init */
 #include <dfs_fat.h>
 /* dfs filesystem:EFS filesystem init */
