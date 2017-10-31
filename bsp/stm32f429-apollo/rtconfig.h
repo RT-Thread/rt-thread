@@ -4,6 +4,8 @@
 /* Automatically generated file; DO NOT EDIT. */
 /* RT-Thread Configuration */
 
+#define BOARD_STM32F429_APPOLO
+
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
@@ -42,6 +44,9 @@
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart"
 /* RT_USING_MODULE is not set */
+#define ARCH_ARM
+#define ARCH_ARM_CORTEX_M
+#define ARCH_ARM_CORTEX_M4
 
 /* RT-Thread Components */
 
@@ -185,6 +190,10 @@
 /* PKG_USING_WEBTERMINAL is not set */
 /* PKG_USING_CJSON is not set */
 /* PKG_USING_EZXML is not set */
+
+/* Marvell WiFi */
+
+/* PKG_USING_MARVELLWIFI is not set */
 
 /* security packages */
 
