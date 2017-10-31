@@ -10,23 +10,16 @@ SrcRemove(src, 'drivers/dataqueue.c')
 src += Glob('common/chip/*.c')
 src += [cwd + '/system_MIMXRT1052.c']
 
-CPPPATH = [ cwd, cwd + '/drivers', cwd + '/utilities', cwd + '/CMSIS/include']
+CPPPATH = [ cwd, cwd + '/drivers', cwd + '/utilities', cwd + '/CMSIS/Include']
 CPPDEFINES = ['CPU_MIMXRT1052DVL6A', 'SKIP_SYSCLK_INIT', 'EVK_MCIMXRM', 'FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1']
-# CPPDEFINES = ['CPU_MIMXRT1052DVL6A', 'EVK_MCIMXRM']
 
 # add for startup script 
 if rtconfig.CROSS_TOOL == 'gcc':
-    src += [cwd + '/gcc/startup_MIMXRT1052.s']
+    src += [cwd + '/gcc/startup_MIMXRT1052.S']
 elif rtconfig.CROSS_TOOL == 'keil':
     src += [cwd + '/arm/startup_MIMXRT1052.s']
 elif rtconfig.CROSS_TOOL == 'iar':
     src += [cwd + '/iar/startup_MIMXRT1052.s']
-    
-# if GetDepend('RT_USING_IMX_MID_SDMMC'):
-    # src += Glob('middleware/sdmmc/src/*.c')
-    # CPPPATH += [cwd + '/middleware/sdmmc/inc']
-    # CPPPATH += [cwd + '/middleware/sdmmc/port']
-    # CPPPATH += [cwd + '/middleware/sdmmc/port/usdhc/polling']
 
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
 
