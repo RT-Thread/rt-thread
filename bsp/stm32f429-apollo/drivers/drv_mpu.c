@@ -20,7 +20,7 @@
 
 
 
-void mpu_init(void)
+int mpu_init(void)
 {
     /* Disable MPU */
     MPU->CTRL &= ~MPU_CTRL_ENABLE_Msk;
@@ -32,7 +32,7 @@ void mpu_init(void)
     MPU->RNR = 0;//indicate MPU region 0
     MPU->RBAR = 0x00000000; // update the base address for the region 0
     MPU->RASR = MPU_RASR_ACCESS_PERMISSION(MPU_FULL_ACCESS)     //full access
-                | MPU_RASR_REGION_SIZE(MPU_REGION_SIZE_1MB)   //512Kb size
+                | MPU_RASR_REGION_SIZE(MPU_REGION_SIZE_1MB)     //512Kb size
                 | MPU_REGION_ENABLE;                            //region enable
 
     /* - Region 1:0x20000000 - 0x20007FFF --- on chip SRAM
@@ -92,5 +92,7 @@ void mpu_init(void)
 
     /* Enable MPU */
     MPU->CTRL |= MPU_CTRL_PRIVDEFENA_Msk | MPU_CTRL_ENABLE_Msk;
+	
+	return 0;
 }
 INIT_BOARD_EXPORT(mpu_init);
