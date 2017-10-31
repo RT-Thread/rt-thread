@@ -55,6 +55,20 @@ config RT_USING_LWIP
                     default n
             endif
 
+            if !RT_LWIP_DHCP
+                config RT_LWIP_IPADDR
+                    string "IPv4: IP address"
+                    default 192.168.1.30
+
+                config RT_LWIP_GWADDR
+                    string "IPv4: Gateway address"
+                    default 192.168.1.1
+                
+                config RT_LWIP_MSKADDR
+                    string "IPv4: Mask address"
+                    default 255.255.255.0
+            endif
+
         config RT_LWIP_UDP
             bool "UDP protocol"
             default y
