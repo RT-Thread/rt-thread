@@ -2,6 +2,7 @@
 #define _SYS_TIME_H_
 
 #include <sys/types.h>
+typedef long time_t;
 
 /*
  * Structure returned by gettimeofday(2) system call,

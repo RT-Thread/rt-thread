@@ -40,6 +40,10 @@
 #define FD_SETSIZE      DFS_FD_MAX
 #endif
 
+#  ifndef	FD_SETSIZE
+#	define	FD_SETSIZE	32
+#  endif
+
 #  define	NBBY	8		/* number of bits in a byte */
 
 typedef	long	fd_mask;
