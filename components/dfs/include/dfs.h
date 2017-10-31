@@ -80,15 +80,6 @@
 extern "C" {
 #endif
 
-struct stat
-{
-    struct rt_device* st_dev;
-    uint16_t st_mode;
-    uint32_t st_size;
-    time_t   st_mtime;
-    uint32_t st_blksize;
-};
-
 struct statfs
 {
     size_t f_bsize;   /* block size */
