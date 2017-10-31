@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_projx.xsd">
-
   <SchemaVersion>2.1</SchemaVersion>
-
   <Header>### uVision Project, (C) Keil Software</Header>
-
   <Targets>
     <Target>
       <TargetName>RT-Thread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060422::V5.06 update 4 (build 422)::ARMCC</pCCUsed>
       <TargetOption>
         <TargetCommonOption>
           <Device>ATSAMD21J18A</Device>
@@ -18,28 +14,28 @@
           <PackID>Keil.SAMD21_DFP.1.2.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x00008000) IROM(0x00000000,0x00040000) CPUTYPE("Cortex-M0+") CLOCK(12000000) ELITTLE</Cpu>
-          <FlashUtilSpec></FlashUtilSpec>
-          <StartupFile></StartupFile>
+          <FlashUtilSpec />
+          <StartupFile />
           <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0ATSAMD21_256 -FS00 -FL040000 -FP0($$Device:ATSAMD21J18A$Flash\ATSAMD21_256.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
           <RegisterFile>$$Device:ATSAMD21J18A$Device\SAMD21\Include\samd21.h</RegisterFile>
-          <MemoryEnv></MemoryEnv>
-          <Cmp></Cmp>
-          <Asm></Asm>
-          <Linker></Linker>
-          <OHString></OHString>
-          <InfinionOptionDll></InfinionOptionDll>
-          <SLE66CMisc></SLE66CMisc>
-          <SLE66AMisc></SLE66AMisc>
-          <SLE66LinkerMisc></SLE66LinkerMisc>
+          <MemoryEnv />
+          <Cmp />
+          <Asm />
+          <Linker />
+          <OHString />
+          <InfinionOptionDll />
+          <SLE66CMisc />
+          <SLE66AMisc />
+          <SLE66LinkerMisc />
           <SFDFile>$$Device:ATSAMD21J18A$SVD\SAMD21\ATSAMD21J18A.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
-          <BinPath></BinPath>
-          <IncludePath></IncludePath>
-          <LibPath></LibPath>
-          <RegisterFilePath></RegisterFilePath>
-          <DBRegisterFilePath></DBRegisterFilePath>
+          <BinPath />
+          <IncludePath />
+          <LibPath />
+          <RegisterFilePath />
+          <DBRegisterFilePath />
           <TargetStatus>
             <Error>0</Error>
             <ExitCodeStop>0</ExitCodeStop>
@@ -61,8 +57,8 @@
           <BeforeCompile>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name />
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopU1X>0</nStopU1X>
@@ -71,8 +67,8 @@
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name />
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopB1X>0</nStopB1X>
@@ -82,14 +78,14 @@
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>fromelf --bin !L --output rtthread.bin</UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopA1X>0</nStopA1X>
             <nStopA2X>0</nStopA2X>
           </AfterMake>
           <SelectedForBatchBuild>0</SelectedForBatchBuild>
-          <SVCSIdString></SVCSIdString>
+          <SVCSIdString />
         </TargetCommonOption>
         <CommonProperty>
           <UseCPPCompiler>0</UseCPPCompiler>
@@ -103,8 +99,8 @@
           <AssembleAssemblyFile>0</AssembleAssemblyFile>
           <PublicsOnly>0</PublicsOnly>
           <StopOnExitCode>3</StopOnExitCode>
-          <CustomArgument></CustomArgument>
-          <IncludeLibraryModules></IncludeLibraryModules>
+          <CustomArgument />
+          <IncludeLibraryModules />
           <ComprImg>1</ComprImg>
         </CommonProperty>
         <DllOption>
@@ -138,10 +134,10 @@
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
           <Flash3>"" ()</Flash3>
-          <Flash4></Flash4>
-          <pFcarmOut></pFcarmOut>
-          <pFcarmGrp></pFcarmGrp>
-          <pFcArmRoot></pFcArmRoot>
+          <Flash4 />
+          <pFcarmOut />
+          <pFcarmGrp />
+          <pFcArmRoot />
           <FcArmLst>0</FcArmLst>
         </Utilities>
         <TargetArmAds>
@@ -174,7 +170,7 @@
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
             <AdsCpuType>"Cortex-M0+"</AdsCpuType>
-            <RvctDeviceName></RvctDeviceName>
+            <RvctDeviceName />
             <mOS>0</mOS>
             <uocRom>0</uocRom>
             <uocRam>0</uocRam>
@@ -306,7 +302,7 @@
                 <Size>0x0</Size>
               </OCR_RVCT10>
             </OnChipMemories>
-            <RvctStartVector></RvctStartVector>
+            <RvctStartVector />
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
@@ -332,9 +328,9 @@
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls></MiscControls>
+              <MiscControls />
               <Define>__SAMD21J18A__, DEBUG, EXTINT_CALLBACK_MODE=true, RTC_COUNT_ASYNC=true, USART_CALLBACK_MODE=false</Define>
-              <Undefine></Undefine>
+              <Undefine />
               <IncludePath>applications;.;board;asflib_config;asflib_config\clock_samd21_r21_da_ha1;sam_d2x_asflib\CMSIS\Include;sam_d2x_asflib\common\utils;sam_d2x_asflib\common\utils\interrupt;sam_d2x_asflib\common\boards;sam_d2x_asflib\common2\services\delay;sam_d2x_asflib\common2\services\delay\sam0;sam_d2x_asflib\sam0;sam_d2x_asflib\sam0\utils;sam_d2x_asflib\sam0\utils\preprocessor;sam_d2x_asflib\sam0\utils\header_files;sam_d2x_asflib\sam0\utils\cmsis\samd21\include;sam_d2x_asflib\sam0\utils\cmsis\samd21\source;sam_d2x_asflib\sam0\drivers\system;sam_d2x_asflib\sam0\drivers\system\pinmux;sam_d2x_asflib\sam0\drivers\system\power\power_sam_d_r_h;sam_d2x_asflib\sam0\drivers\system\reset\reset_sam_d_r_h;sam_d2x_asflib\sam0\drivers\system\clock;sam_d2x_asflib\sam0\drivers\system\interrupt;sam_d2x_asflib\sam0\drivers\system\interrupt\system_interrupt_samd21;sam_d2x_asflib\sam0\drivers\system\clock\clock_samd21_r21_da_ha1;sam_d2x_asflib\sam0\drivers\sercom;sam_d2x_asflib\sam0\drivers\sercom\usart;sam_d2x_asflib\sam0\drivers\port;sam_d2x_asflib\sam0\drivers\rtc;sam_d2x_asflib\sam0\drivers\extint;sam_d2x_asflib\sam0\drivers\extint\extint_sam_d_r_h;..\..\include;..\..\libcpu\arm\cortex-m0;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
@@ -350,10 +346,10 @@
             <useXO>0</useXO>
             <uClangAs>0</uClangAs>
             <VariousControls>
-              <MiscControls></MiscControls>
-              <Define></Define>
-              <Undefine></Undefine>
-              <IncludePath></IncludePath>
+              <MiscControls />
+              <Define />
+              <Undefine />
+              <IncludePath />
             </VariousControls>
           </Aads>
           <LDads>
@@ -365,13 +361,13 @@
             <useFile>0</useFile>
             <TextAddressRange>0x00000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
-            <pXoBase></pXoBase>
-            <ScatterFile></ScatterFile>
-            <IncludeLibs></IncludeLibs>
-            <IncludeLibsPath></IncludeLibsPath>
-            <Misc></Misc>
-            <LinkerInputFile></LinkerInputFile>
-            <DisabledWarnings></DisabledWarnings>
+            <pXoBase />
+            <ScatterFile />
+            <IncludeLibs />
+            <IncludeLibsPath />
+            <Misc />
+            <LinkerInputFile />
+            <DisabledWarnings />
           </LDads>
         </TargetArmAds>
       </TargetOption>
@@ -384,6 +380,8 @@
               <FileType>1</FileType>
               <FilePath>applications\application.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
@@ -399,11 +397,15 @@
               <FileType>1</FileType>
               <FilePath>board\board.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>sleep_timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\sleep_timer.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
@@ -419,71 +421,99 @@
               <FileType>1</FileType>
               <FilePath>sam_d2x_asflib\common\utils\interrupt\interrupt_sam_nvic.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>system_samd21.c</FileName>
               <FileType>1</FileType>
               <FilePath>sam_d2x_asflib\sam0\utils\cmsis\samd21\source\system_samd21.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>startup_SAMD21.s</FileName>
               <FileType>2</FileType>
               <FilePath>sam_d2x_asflib\sam0\utils\cmsis\samd21\source\arm\startup_SAMD21.s</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>system.c</FileName>
               <FileType>1</FileType>
               <FilePath>sam_d2x_asflib\sam0\drivers\system\system.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>pinmux.c</FileName>
               <FileType>1</FileType>
               <FilePath>sam_d2x_asflib\sam0\drivers\system\pinmux\pinmux.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>system_interrupt.c</FileName>
               <FileType>1</FileType>
               <FilePath>sam_d2x_asflib\sam0\drivers\system\interrupt\system_interrupt.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>clock.c</FileName>
               <FileType>1</FileType>
               <FilePath>sam_d2x_asflib\sam0\drivers\system\clock\clock_samd21_r21_da_ha1\clock.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gclk.c</FileName>
               <FileType>1</FileType>
               <FilePath>sam_d2x_asflib\sam0\drivers\system\clock\clock_samd21_r21_da_ha1\gclk.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>sercom.c</FileName>
               <FileType>1</FileType>
               <FilePath>sam_d2x_asflib\sam0\drivers\sercom\sercom.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>sam_d2x_asflib\sam0\drivers\sercom\usart\usart.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>port.c</FileName>
               <FileType>1</FileType>
               <FilePath>sam_d2x_asflib\sam0\drivers\port\port.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>rtc_count.c</FileName>
               <FileType>1</FileType>
               <FilePath>sam_d2x_asflib\sam0\drivers\rtc\rtc_sam_d_r_h\rtc_count.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>rtc_count_interrupt.c</FileName>
               <FileType>1</FileType>
               <FilePath>sam_d2x_asflib\sam0\drivers\rtc\rtc_sam_d_r_h\rtc_count_interrupt.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>extint_callback.c</FileName>
               <FileType>1</FileType>
               <FilePath>sam_d2x_asflib\sam0\drivers\extint\extint_callback.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>extint.c</FileName>
               <FileType>1</FileType>
@@ -499,51 +529,78 @@
               <FileType>1</FileType>
               <FilePath>..\..\src\clock.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>device.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\device.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\idle.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ipc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\ipc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\irq.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>kservice.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\kservice.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>mem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\mem.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\object.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\scheduler.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>signal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\signal.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\thread.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
@@ -559,21 +616,29 @@
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\cortex-m0\cpuport.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\libcpu\arm\cortex-m0\context_rvds.S</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>backtrace.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
@@ -589,31 +654,43 @@
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\serial\serial.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\completion.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>pipe.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
             </File>
-            <File>
-              <FileName>portal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\portal.c</FilePath>
-            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>waitqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
@@ -624,11 +701,9 @@
       </Groups>
     </Target>
   </Targets>
-
   <RTE>
-    <apis/>
-    <components/>
-    <files/>
+    <apis />
+    <components />
+    <files />
   </RTE>
-
 </Project>
