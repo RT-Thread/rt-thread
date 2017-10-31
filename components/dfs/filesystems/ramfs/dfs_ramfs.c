@@ -311,11 +311,12 @@ int dfs_ramfs_getdents(struct dfs_fd *file,
     struct dfs_ramfs *ramfs;
 
     dirent = (struct ramfs_dirent *)file->data;
-    if (dirent != &(ramfs->root))
-        return -EINVAL;
 
     ramfs  = dirent->fs;
     RT_ASSERT(ramfs != RT_NULL);
+
+    if (dirent != &(ramfs->root))
+        return -EINVAL;
 
     /* make integer count */
     count = (count / sizeof(struct dirent));
