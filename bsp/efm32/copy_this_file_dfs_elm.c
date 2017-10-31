@@ -22,7 +22,7 @@
 #define HAVE_DIR_STRUCTURE
 
 #include <dfs_fs.h>
-#include <dfs_def.h>
+#include <dfs.h>
 
 #ifdef DFS_ELMFAT_INTERFACE_EFM
 #include "diskio.h"

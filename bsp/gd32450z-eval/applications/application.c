@@ -24,7 +24,7 @@
 
 #ifdef RT_USING_DFS
 /* dfs init */
-#include <dfs_init.h>
+#include <dfs.h>
 /* dfs filesystem:ELM filesystem init */
 #include <dfs_elm.h>
 /* dfs Filesystem APIs */
