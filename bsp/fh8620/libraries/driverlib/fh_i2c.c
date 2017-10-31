@@ -67,7 +67,7 @@ int I2C_WaitDeviceIdle(struct fh_i2c_obj *i2c_obj)
 }
 
 
-static inline UINT32 I2C_CalcSclHcnt(UINT32 ic_clk, UINT32 tSYMBOL, UINT32 tf, int cond, int offset)
+static UINT32 I2C_CalcSclHcnt(UINT32 ic_clk, UINT32 tSYMBOL, UINT32 tf, int cond, int offset)
 {
     /*
      * DesignWare I2C core doesn't seem to have solid strategy to meet
@@ -105,7 +105,7 @@ static inline UINT32 I2C_CalcSclHcnt(UINT32 ic_clk, UINT32 tSYMBOL, UINT32 tf, i
         return (ic_clk * (tSYMBOL + tf) + 5000) / 10000 - 3 + offset;
 }
 
-static inline UINT32 I2C_CalcSclLcnt(UINT32 ic_clk, UINT32 tLOW, UINT32 tf, int offset)
+static UINT32 I2C_CalcSclLcnt(UINT32 ic_clk, UINT32 tLOW, UINT32 tf, int offset)
 {
     /*
      * Conditional expression:
@@ -157,22 +157,22 @@ static int I2C_SetSpeedCount(struct fh_i2c_obj *i2c_obj)
     return 0;
 }
 
-inline UINT8 I2C_GetData(struct fh_i2c_obj *i2c_obj)
+UINT8 I2C_GetData(struct fh_i2c_obj *i2c_obj)
 {
     return GET_REG(i2c_obj->base + OFFSET_I2C_DATA_CMD) & 0xff;
 }
 
-inline void I2C_SetDataCmd(struct fh_i2c_obj *i2c_obj, UINT32 reg)
+void I2C_SetDataCmd(struct fh_i2c_obj *i2c_obj, UINT32 reg)
 {
     SET_REG(i2c_obj->base + OFFSET_I2C_DATA_CMD, reg);
 }
 
-inline void I2C_SetInterruptMask(struct fh_i2c_obj *i2c_obj, UINT32 mask)
+void I2C_SetInterruptMask(struct fh_i2c_obj *i2c_obj, UINT32 mask)
 {
     SET_REG(i2c_obj->base + OFFSET_I2C_INTR_MASK, mask);
 }
 
-inline UINT32 I2C_GetInterruptMask(struct fh_i2c_obj *i2c_obj)
+UINT32 I2C_GetInterruptMask(struct fh_i2c_obj *i2c_obj)
 {
     return GET_REG(i2c_obj->base + OFFSET_I2C_INTR_MASK);
 }
@@ -256,23 +256,23 @@ int I2C_HandleTxAbort(struct fh_i2c_obj *i2c_obj)
         return 0;
 }
 
-inline UINT32 I2C_SetTransmitThreshold(struct fh_i2c_obj *i2c_obj, int txtl)
+UINT32 I2C_SetTransmitThreshold(struct fh_i2c_obj *i2c_obj, int txtl)
 {
     return SET_REG(i2c_obj->base + OFFSET_I2C_TX_TL, txtl);
 }
 
 
-inline UINT32 I2C_GetReceiveFifoLevel(struct fh_i2c_obj *i2c_obj)
+UINT32 I2C_GetReceiveFifoLevel(struct fh_i2c_obj *i2c_obj)
 {
     return GET_REG(i2c_obj->base + OFFSET_I2C_RXFLR);
 }
 
-inline UINT32 I2C_GetTransmitFifoLevel(struct fh_i2c_obj *i2c_obj)
+UINT32 I2C_GetTransmitFifoLevel(struct fh_i2c_obj *i2c_obj)
 {
     return GET_REG(i2c_obj->base + OFFSET_I2C_TXFLR);
 }
 
-inline void I2C_SetSlaveAddress(struct fh_i2c_obj *i2c_obj, rt_uint16_t addr)
+void I2C_SetSlaveAddress(struct fh_i2c_obj *i2c_obj, rt_uint16_t addr)
 {
     UINT32 reg;
     reg = GET_REG(i2c_obj->base + OFFSET_I2C_TAR);
@@ -281,7 +281,7 @@ inline void I2C_SetSlaveAddress(struct fh_i2c_obj *i2c_obj, rt_uint16_t addr)
     SET_REG(i2c_obj->base + OFFSET_I2C_TAR, reg);
 }
 
-inline void I2C_Enable(struct fh_i2c_obj *i2c_obj, int enable)
+void I2C_Enable(struct fh_i2c_obj *i2c_obj, int enable)
 {
     SET_REG(i2c_obj->base + OFFSET_I2C_ENABLE, enable);
 }
