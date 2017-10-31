@@ -2325,6 +2325,9 @@
             <name>$PROJ_DIR$\applications\mem_test.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\applications\rtgui_demo.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\applications\sdio_test.c</name>
         </file>
     </group>
@@ -2430,6 +2433,9 @@
             <name>$PROJ_DIR$\drivers\drv_eth.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\drivers\drv_lcd.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\drivers\drv_sdio.c</name>
         </file>
         <file>
@@ -2527,6 +2533,132 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\components\finsh\symbol.c</name>
+        </file>
+    </group>
+    <group>
+        <name>GUIEngine</name>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\asc12font.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\asc16font.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\blit.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\box.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\color.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\container.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\dc.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\dc_blend.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\dc_buffer.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\dc_client.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\dc_hw.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\dc_rotozoom.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\dc_trans.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\filerw.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\font.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\font_bmp.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\font_fnt.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\font_freetype.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\font_hz_bmp.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\font_hz_file.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\hz12font.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\hz16font.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\image.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\image_bmp.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\image_container.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\image_hdc.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\image_jpg.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\image_png.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\image_xpm.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\matrix.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\mouse.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\region.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\rtgui_app.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\rtgui_driver.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\rtgui_object.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\rtgui_system.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\server.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\title.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\topwin.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\widget.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\gui\src\window.c</name>
         </file>
     </group>
     <group>

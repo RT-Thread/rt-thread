@@ -101,7 +101,6 @@
 /* RT_USING_MTD_NAND is not set */
 /* RT_USING_RTC is not set */
 #define RT_USING_SDIO
-//#define RT_MMCSD_DBG
 /* RT_USING_SPI is not set */
 /* RT_USING_WDT is not set */
 /* RT_USING_USB_HOST is not set */
@@ -156,18 +155,6 @@
 #define LWIP_SO_RCVTIMEO 1
 #define LWIP_SO_SNDTIMEO 1
 #define LWIP_SO_RCVBUF 1
-#define RT_LWIP_IPADDR0 192
-#define RT_LWIP_IPADDR1 168
-#define RT_LWIP_IPADDR2 10
-#define RT_LWIP_IPADDR3 30
-#define RT_LWIP_GWADDR0 192
-#define RT_LWIP_GWADDR1 168
-#define RT_LWIP_GWADDR2 10
-#define RT_LWIP_GWADDR3 1
-#define RT_LWIP_MSKADDR0 255
-#define RT_LWIP_MSKADDR1 255
-#define RT_LWIP_MSKADDR2 255
-#define RT_LWIP_MSKADDR3 0
 
 /* Modbus master and slave stack */
 
@@ -176,7 +163,18 @@
 
 /* RT-Thread UI Engine */
 
-/* RT_USING_GUIENGINE is not set */
+#define RT_USING_GUIENGINE
+#define RTGUI_NAME_MAX 16
+/* RTGUI_USING_TTF is not set */
+#define RTGUI_USING_FONT16
+#define RTGUI_USING_FONT12
+/* RTGUI_USING_FONTHZ is not set */
+/* RTGUI_IMAGE_XPM is not set */
+/* RTGUI_IMAGE_JPEG is not set */
+/* RTGUI_IMAGE_TJPGD is not set */
+/* RTGUI_IMAGE_PNG is not set */
+/* RTGUI_IMAGE_LODEPNG is not set */
+/* RTGUI_IMAGE_BMP is not set */
 
 /* RT-Thread online packages */
 
