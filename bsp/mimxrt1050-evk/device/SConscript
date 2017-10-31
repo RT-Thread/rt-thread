@@ -1,0 +1,30 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+path = [cwd, cwd + '/MIMXRT1052']
+src = Glob('MIMXRT1052/*.c')
+
+path = [cwd, cwd + '/MIMXRT1052']
+src = Glob('MIMXRT1052/*.c')
+
+src += ['system_MIMXRT1052.c']
+
+#add for startup script 
+if rtconfig.CROSS_TOOL == 'gcc':
+     src = src + ['gcc/startup_MIMXRT1052.S']
+     path += [cwd + 'gcc']
+elif rtconfig.CROSS_TOOL == 'keil':
+     src = src + ['arm/startup_MIMXRT1052.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src = src + ['iar/startup_MIMXRT1052.s']
+
+CPPDEFINES = ['CPU_MIMXRT1052DVL6A']
+
+group = DefineGroup('Device', src, depend = [''], CPPPATH = path, CPPDEFINES=CPPDEFINES)
+#CPPDEFINES = CPPDEFINES)
+
+Return('group')

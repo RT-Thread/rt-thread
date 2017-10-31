@@ -1,0 +1,38 @@
+mainmenu "RT-Thread Configuration"
+
+config $BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "."
+
+config $RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "../.."
+
+config $PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+source "$RTT_DIR/KConfig"
+source "$PKGS_DIR/KConfig"
+
+menu "BSP_SPECIAL CONFIG"
+
+config RT_USING_UART
+    bool "Using RT_USING_UART"
+    default y
+
+if RT_USING_UART
+config RT_USING_UART1
+    bool "Using RT_USING_UART1"
+    default y      
+endif
+    
+endmenu
+
+
+
+    
+    
