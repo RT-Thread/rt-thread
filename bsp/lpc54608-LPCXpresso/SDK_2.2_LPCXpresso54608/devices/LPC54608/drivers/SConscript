@@ -2,9 +2,9 @@ Import('RTT_ROOT')
 Import('rtconfig')
 from building import *
 
-cwd = GetCurrentDir()
+cwd     = GetCurrentDir()
 CPPPATH = [cwd]
-src	= Glob('*.c')
+src     = Glob('*.c')
 
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH)
 
