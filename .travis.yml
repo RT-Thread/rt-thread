@@ -41,7 +41,7 @@ env:
   - RTT_BSP='lpc43xx/M4' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='lpc408x' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='lpc5410x' RTT_TOOL_CHAIN='sourcery-arm'
-  - RTT_BSP='lpc54608-LPCXpresso' RTT_TOOL_CHAIN='sourcery-arm'
+#  - RTT_BSP='lpc54608-LPCXpresso' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='ls1bdev' RTT_TOOL_CHAIN='sourcery-mips'
   - RTT_BSP='ls1cdev' RTT_TOOL_CHAIN='sourcery-mips'
   - RTT_BSP='imx6sx/cortex-a9' RTT_TOOL_CHAIN='sourcery-arm' 
