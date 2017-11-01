@@ -1,13 +1,12 @@
-Import('RTT_ROOT')
-Import('rtconfig')
 from building import *
 
+cwd = GetCurrentDir()
 src	= Split('''
 pb_common.c
 pb_decode.c
 pb_encode.c
 ''')
-CPPPATH = [RTT_ROOT + '/components/external/nanopb']
+CPPPATH = [cwd]
 
 group = DefineGroup('Nanopb', src, depend = ['RT_USING_NANOPB'], CPPPATH = CPPPATH)
 

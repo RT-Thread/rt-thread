@@ -26,6 +26,7 @@
 #include "netif/ethernetif.h"
 #include "lwip/sio.h"
 #include <lwip/init.h>
+#include "lwip/inet.h"
 
 #include <string.h>
 
@@ -115,9 +116,10 @@ static void tcpip_init_done_callback(void *arg)
                 netif_set_up(ethif->netif);
             }
 
-#if LWIP_NETIF_LINK_CALLBACK
-            netif_set_link_up(ethif->netif);
-#endif
+            if (!(ethif->flags & ETHIF_LINK_PHYUP))
+            {
+                netif_set_link_up(ethif->netif);
+            }
 
             /* enter critical */
             rt_enter_critical();
@@ -166,9 +168,9 @@ int lwip_system_init(void)
     {
         struct ip_addr ipaddr, netmask, gw;
 
-        IP4_ADDR(&ipaddr, RT_LWIP_IPADDR0, RT_LWIP_IPADDR1, RT_LWIP_IPADDR2, RT_LWIP_IPADDR3);
-        IP4_ADDR(&gw, RT_LWIP_GWADDR0, RT_LWIP_GWADDR1, RT_LWIP_GWADDR2, RT_LWIP_GWADDR3);
-        IP4_ADDR(&netmask, RT_LWIP_MSKADDR0, RT_LWIP_MSKADDR1, RT_LWIP_MSKADDR2, RT_LWIP_MSKADDR3);
+        ipaddr.addr = inet_addr(RT_LWIP_IPADDR);
+        gw.addr = inet_addr(RT_LWIP_GWADDR);
+        netmask.addr = inet_addr(RT_LWIP_MSKADDR);
 
         netifapi_netif_set_addr(netif_default, &ipaddr, &netmask, &gw);
     }
@@ -695,3 +697,17 @@ RTM_EXPORT(dhcp_stop);
 #include <lwip/netifapi.h>
 RTM_EXPORT(netifapi_netif_set_addr);
 #endif
+
+#if LWIP_NETIF_LINK_CALLBACK
+RTM_EXPORT(netif_set_link_callback);
+#endif
+
+#if LWIP_NETIF_STATUS_CALLBACK
+RTM_EXPORT(netif_set_status_callback);
+#endif
+
+RTM_EXPORT(netif_find);
+RTM_EXPORT(netif_set_addr);
+RTM_EXPORT(netif_set_ipaddr);
+RTM_EXPORT(netif_set_gw);
+RTM_EXPORT(netif_set_netmask);

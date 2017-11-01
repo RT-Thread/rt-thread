@@ -99,7 +99,7 @@
 // <section name="RT_USING_DFS" description="Device file system" default="true" >
 // #define RT_USING_DFS
 // <bool name="DFS_USING_WORKDIR" description="Using working directory" default="true" />
-// #define DFS_USING_WORKDIR
+#define DFS_USING_WORKDIR
 // <integer name="DFS_FILESYSTEMS_MAX" description="The maximal number of mounted file system" default="4" />
 #define DFS_FILESYSTEMS_MAX	2
 // <integer name="DFS_FD_MAX" description="The maximal number of opened files" default="4" />
@@ -111,7 +111,36 @@
 // <item description="LFN1">2</item>
 // </integer>
 #define RT_DFS_ELM_USE_LFN	1
-// <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="256" />
+// <integer name="RT_DFS_ELM_CODE_PAGE" description="specifies the OEM code page to be used on the target system" default="936">
+// <item description="Japanese Shift-JIS (DBCS, OEM, Windows)">932</item>
+// <item description="Simplified Chinese GBK (DBCS, OEM, Windows)">936</item>
+// <item description="Korean (DBCS, OEM, Windows)">949</item>
+// <item description="Traditional Chinese Big5 (DBCS, OEM, Windows)">950</item>
+// <item description="Central Europe (Windows)">1250</item>
+// <item description="Cyrillic (Windows)">1251</item>
+// <item description="Latin 1 (Windows)">1252</item>
+// <item description="Greek (Windows)">1253</item>
+// <item description="Turkish (Windows)">1254</item>
+// <item description="Hebrew (Windows)">1255</item>
+// <item description="Arabic (Windows)">1256</item>
+// <item description="Baltic (Windows)">1257</item>
+// <item description="Vietnam (OEM, Windows)">1258</item>
+// <item description="U.S. (OEM)">437</item>
+// <item description="Arabic (OEM)">720</item>
+// <item description="Greek (OEM)">737</item>
+// <item description="Baltic (OEM)">775</item>
+// <item description="Multilingual Latin 1 (OEM)">850</item>
+// <item description="Multilingual Latin 1 + Euro (OEM)">858</item>
+// <item description="Latin 2 (OEM)">852</item>
+// <item description="Cyrillic (OEM)">855</item>
+// <item description="Russian (OEM)">866</item>
+// <item description="Turkish (OEM)">857</item>
+// <item description="Hebrew (OEM)">862</item>
+// <item description="Thai (OEM, Windows)">874</item>
+// <item description="ASCII only (Valid for non LFN cfg.)">1</item>
+// </integer>
+#define RT_DFS_ELM_CODE_PAGE 437
+// <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="255" />
 #define RT_DFS_ELM_MAX_LFN	64
 // <bool name="RT_USING_DFS_YAFFS2" description="Using YAFFS2" default="false" />
 // #define RT_USING_DFS_YAFFS2
@@ -162,20 +191,11 @@
 // <integer name="RT_LWIP_ETHTHREAD_STACKSIZE" description="the stack size of ethnetif thread" default="512" />
 #define RT_LWIP_ETHTHREAD_STACKSIZE	512
 // <ipaddr name="RT_LWIP_IPADDR" description="IP address of device" default="192.168.1.30" />
-#define RT_LWIP_IPADDR0 192
-#define RT_LWIP_IPADDR1 168
-#define RT_LWIP_IPADDR2 1
-#define RT_LWIP_IPADDR3 30
+#define RT_LWIP_IPADDR "192.168.1.30"
 // <ipaddr name="RT_LWIP_GWADDR" description="Gateway address of device" default="192.168.1.1" />
-#define RT_LWIP_GWADDR0 192
-#define RT_LWIP_GWADDR1 168
-#define RT_LWIP_GWADDR2 1
-#define RT_LWIP_GWADDR3 1
+#define RT_LWIP_GWADDR  "192.168.1.1"
 // <ipaddr name="RT_LWIP_MSKADDR" description="Mask address of device" default="255.255.255.0" />
-#define RT_LWIP_MSKADDR0 255
-#define RT_LWIP_MSKADDR1 255
-#define RT_LWIP_MSKADDR2 255
-#define RT_LWIP_MSKADDR3 0
+#define RT_LWIP_MSKADDR  "255.255.255.0"
 // </section>
 
 // <bool name="RT_USING_CMSIS_OS" description="Using CMSIS OS API" default="true" />

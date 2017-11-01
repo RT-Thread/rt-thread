@@ -17,18 +17,19 @@
 
 #include <bsp.h>
 
-
-//#include "serial.h"
-
 static unsigned addr_6845;
 static rt_uint16_t *crt_buf;
 static rt_int16_t  crt_pos;
 
-//extern void rt_serial_init(void);
-extern char rt_keyboard_getc(void);
-//extern char rt_serial_getc(void);
+extern void init_keyboard();
+extern void rt_keyboard_isr(void);
+extern rt_bool_t rt_keyboard_getc(char* c);
 
-static void rt_console_putc(int c);
+extern void rt_serial_init(void);
+extern char rt_serial_getc(void);
+extern void rt_serial_putc(const char c);
+
+void rt_console_putc(int c);
 
 /**
  * @addtogroup QEMU
@@ -126,10 +127,10 @@ static void rt_cga_putc(int c)
  *
  * @param c the char to write
  */
-static void rt_console_putc(int c)
+void rt_console_putc(int c)
 {
     rt_cga_putc(c);
-//    rt_serial_putc(c);
+    rt_serial_putc(c);
 }
 
 /* RT-Thread Device Interface */
@@ -153,7 +154,7 @@ static rt_err_t rt_console_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_err_t rt_console_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_console_control(rt_device_t dev, int cmd, void *args)
 {
     return RT_EOK;
 }
@@ -214,47 +215,50 @@ static rt_size_t rt_console_read(rt_device_t dev, rt_off_t pos, void* buffer, rt
     return (rt_uint32_t)ptr - (rt_uint32_t)buffer;
 }
 
-static void rt_console_isr(int vector)
+static void rt_console_isr(int vector, void* param)
 {
-//    rt_kprintf("rt_console_isr\r\n");
-//    RT_ASSERT(INTKEYBOARD == vector);
-//	finsh_notify();
-
     char c;
+	rt_bool_t ret;
     rt_base_t level;
 
-    while(1)
-    {
-        c = rt_keyboard_getc();
-//        rt_kprintf(" %x", c);
+	if(INTUART0_RX == vector)
+	{
+		c = rt_serial_getc();
+		ret = RT_TRUE;
+	}
+	else
+	{
+		rt_keyboard_isr();
 
-        if(c == 0)
-        {
-            break;
-        }
-        else if(c > 0)
-        {
-            /* disable interrupt */
-            level = rt_hw_interrupt_disable();
+		ret = rt_keyboard_getc(&c);
+	}
 
-            /* save character */
-            rx_buffer[save_index] = c;
-            save_index ++;
-            if (save_index >= CONSOLE_RX_BUFFER_SIZE)
-                save_index = 0;
+	if(ret == RT_FALSE)
+	{
+		/* do nothing */
+	}
+	else
+	{
+		/* disable interrupt */
+		level = rt_hw_interrupt_disable();
 
-            /* if the next position is read index, discard this 'read char' */
-            if (save_index == read_index)
-            {
-                read_index ++;
-                if (read_index >= CONSOLE_RX_BUFFER_SIZE)
-                    read_index = 0;
-            }
+		/* save character */
+		rx_buffer[save_index] = c;
+		save_index ++;
+		if (save_index >= CONSOLE_RX_BUFFER_SIZE)
+			save_index = 0;
 
-            /* enable interrupt */
-            rt_hw_interrupt_enable(level);
-        }
-    }
+		/* if the next position is read index, discard this 'read char' */
+		if (save_index == read_index)
+		{
+			read_index ++;
+			if (read_index >= CONSOLE_RX_BUFFER_SIZE)
+				read_index = 0;
+		}
+
+		/* enable interrupt */
+		rt_hw_interrupt_enable(level);
+	}
 
     /* invoke callback */
     if (console_device.rx_indicate != RT_NULL)
@@ -263,10 +267,9 @@ static void rt_console_isr(int vector)
 
         /* get rx length */
         rx_length = read_index > save_index ?
-                    CONSOLE_RX_BUFFER_SIZE - read_index + save_index :
-                    save_index - read_index;
+			CONSOLE_RX_BUFFER_SIZE - read_index + save_index :
+			save_index - read_index;
 
-//        rt_kprintf("\r\nrx_length %d\r\n", rx_length);
         if(rx_length > 0)
         {
             console_device.rx_indicate(&console_device, rx_length);
@@ -274,7 +277,7 @@ static void rt_console_isr(int vector)
     }
     else
     {
-//        rt_kprintf("\r\nconsole_device.rx_indicate == RT_NULL\r\n");
+
     }
 }
 
@@ -285,12 +288,15 @@ static void rt_console_isr(int vector)
 void rt_hw_console_init(void)
 {
     rt_cga_init();
-//    rt_serial_init();
-
+	rt_serial_init();
+	init_keyboard();
 
     /* install  keyboard isr */
-    rt_hw_interrupt_install(INTKEYBOARD, rt_console_isr, RT_NULL);
+    rt_hw_interrupt_install(INTKEYBOARD, rt_console_isr, RT_NULL, "kbd");
     rt_hw_interrupt_umask(INTKEYBOARD);
+
+    rt_hw_interrupt_install(INTUART0_RX, rt_console_isr, RT_NULL, "COM1");
+    rt_hw_interrupt_umask(INTUART0_RX);
 
     console_device.type 		= RT_Device_Class_Char;
     console_device.rx_indicate  = RT_NULL;
@@ -320,8 +326,6 @@ void rt_hw_console_init(void)
  *	the name is change to rt_hw_console_output in the v0.3.0
  *
  */
-
-//void rt_console_puts(const char* str)
 void rt_hw_console_output(const char* str)
 {
     while (*str)
@@ -329,50 +333,5 @@ void rt_hw_console_output(const char* str)
         rt_console_putc (*str++);
     }
 }
-
-//#define BY2CONS 512
-//
-//static struct
-//{
-//    rt_uint8_t buf[BY2CONS];
-//    rt_uint32_t rpos;
-//    rt_uint32_t wpos;
-//} cons;
-//
-//static void rt_console_intr(char (*proc)(void))
-//{
-//    int c;
-//
-//    while ((c = (*proc)()) != -1)
-//    {
-//        if (c == 0)
-//            continue;
-//        cons.buf[cons.wpos++] = c;
-//        if (cons.wpos == BY2CONS)
-//            cons.wpos = 0;
-//    }
-//}
-
-///**
-// * return the next input character from the console,either from serial,
-// * or keyboard
-// *
-// */
-//int rt_console_getc(void)
-//{
-//    int c;
-//
-//    rt_console_intr(rt_serial_getc);
-//    rt_console_intr(rt_keyboard_getc);
-//
-//    if (cons.rpos != cons.wpos)
-//    {
-//        c = cons.buf[cons.rpos++];
-//        if (cons.rpos == BY2CONS)
-//            cons.rpos = 0;
-//        return c;
-//    }
-//    return 0;
-//}
 
 /*@}*/

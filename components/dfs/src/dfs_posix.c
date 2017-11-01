@@ -24,6 +24,7 @@
 
 #include <dfs.h>
 #include <dfs_posix.h>
+#include "dfs_private.h"
 
 /**
  * @addtogroup FsPosixApi
@@ -50,7 +51,7 @@ int open(const char *file, int flags, int mode)
     fd = fd_new();
     if (fd < 0)
     {
-        rt_set_errno(-DFS_STATUS_ENOMEM);
+        rt_set_errno(-ENOMEM);
 
         return -1;
     }
@@ -62,7 +63,7 @@ int open(const char *file, int flags, int mode)
         /* release the ref-count of fd */
         fd_put(d);
         fd_put(d);
-        
+
         rt_set_errno(result);
 
         return -1;
@@ -89,9 +90,9 @@ int close(int fd)
     struct dfs_fd *d;
 
     d = fd_get(fd);
-    if (d == RT_NULL)
+    if (d == NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
+        rt_set_errno(-EBADF);
 
         return -1;
     }
@@ -115,7 +116,7 @@ RTM_EXPORT(close);
 /**
  * this function is a POSIX compliant version, which will read specified data
  * buffer length for an open file descriptor.
- * 
+ *
  * @param fd the file descriptor.
  * @param buf the buffer to save the read data.
  * @param len the maximal length of data buffer
@@ -123,16 +124,20 @@ RTM_EXPORT(close);
  * @return the actual read data buffer length. If the returned value is 0, it
  * may be reach the end of file, please check errno.
  */
+#ifdef RT_USING_NEWLIB
+_READ_WRITE_RETURN_TYPE _EXFUN(read, (int fd, void *buf, size_t len))
+#else
 int read(int fd, void *buf, size_t len)
+#endif
 {
     int result;
     struct dfs_fd *d;
 
     /* get the fd */
     d = fd_get(fd);
-    if (d == RT_NULL)
+    if (d == NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
+        rt_set_errno(-EBADF);
 
         return -1;
     }
@@ -163,16 +168,20 @@ RTM_EXPORT(read);
  *
  * @return the actual written data buffer length.
  */
+#ifdef RT_USING_NEWLIB
+_READ_WRITE_RETURN_TYPE _EXFUN(write, (int fd, const void *buf, size_t len))
+#else
 int write(int fd, const void *buf, size_t len)
+#endif
 {
     int result;
     struct dfs_fd *d;
 
     /* get the fd */
     d = fd_get(fd);
-    if (d == RT_NULL)
+    if (d == NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
+        rt_set_errno(-EBADF);
 
         return -1;
     }
@@ -209,35 +218,37 @@ off_t lseek(int fd, off_t offset, int whence)
     struct dfs_fd *d;
 
     d = fd_get(fd);
-    if (d == RT_NULL)
+    if (d == NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
+        rt_set_errno(-EBADF);
 
         return -1;
     }
 
     switch (whence)
     {
-    case DFS_SEEK_SET:
+    case SEEK_SET:
         break;
 
-    case DFS_SEEK_CUR:
+    case SEEK_CUR:
         offset += d->pos;
         break;
 
-    case DFS_SEEK_END:
+    case SEEK_END:
         offset += d->size;
         break;
 
     default:
-        rt_set_errno(-DFS_STATUS_EINVAL);
+        fd_put(d);
+        rt_set_errno(-EINVAL);
 
         return -1;
     }
 
     if (offset < 0)
     {
-        rt_set_errno(-DFS_STATUS_EINVAL);
+        fd_put(d);
+        rt_set_errno(-EINVAL);
 
         return -1;
     }
@@ -285,9 +296,9 @@ int rename(const char *old, const char *new)
 RTM_EXPORT(rename);
 
 /**
- * this function is a POSIX compliant version, which will unlink (remove) a 
+ * this function is a POSIX compliant version, which will unlink (remove) a
  * specified path file from file system.
- * 
+ *
  * @param pathname the specified path name to be unlinked.
  *
  * @return 0 on successful, -1 on failed.
@@ -308,9 +319,10 @@ int unlink(const char *pathname)
 }
 RTM_EXPORT(unlink);
 
+#ifndef _WIN32 /* we can not implement these functions */
 /**
  * this function is a POSIX compliant version, which will get file information.
- * 
+ *
  * @param file the file name
  * @param buf the data buffer to save stat description.
  *
@@ -346,9 +358,9 @@ int fstat(int fildes, struct stat *buf)
 
     /* get the fd */
     d = fd_get(fildes);
-    if (d == RT_NULL)
+    if (d == NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
+        rt_set_errno(-EBADF);
 
         return -1;
     }
@@ -356,33 +368,33 @@ int fstat(int fildes, struct stat *buf)
     /* it's the root directory */
     buf->st_dev = 0;
 
-    buf->st_mode = DFS_S_IFREG | DFS_S_IRUSR | DFS_S_IRGRP | DFS_S_IROTH |
-                   DFS_S_IWUSR | DFS_S_IWGRP | DFS_S_IWOTH;
+    buf->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
+                   S_IWUSR | S_IWGRP | S_IWOTH;
     if (d->type == FT_DIRECTORY)
     {
-        buf->st_mode &= ~DFS_S_IFREG;
-        buf->st_mode |= DFS_S_IFDIR | DFS_S_IXUSR | DFS_S_IXGRP | DFS_S_IXOTH;
+        buf->st_mode &= ~S_IFREG;
+        buf->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
     }
 
     buf->st_size    = d->size;
     buf->st_mtime   = 0;
-    buf->st_blksize = 512;
 
     fd_put(d);
 
-    return DFS_STATUS_OK;
+    return RT_EOK;
 }
 RTM_EXPORT(fstat);
+#endif
 
 /**
- * this function is a POSIX compliant version, which shall request that all data 
- * for the open file descriptor named by fildes is to be transferred to the storage 
+ * this function is a POSIX compliant version, which shall request that all data
+ * for the open file descriptor named by fildes is to be transferred to the storage
  * device associated with the file described by fildes.
  *
  * @param fildes the file description
  *
- * @return 0 on successful completion. Otherwise, -1 shall be returned and errno 
- * set to indicate the error. 
+ * @return 0 on successful completion. Otherwise, -1 shall be returned and errno
+ * set to indicate the error.
  */
 int fsync(int fildes)
 {
@@ -391,9 +403,9 @@ int fsync(int fildes)
 
     /* get the fd */
     d = fd_get(fildes);
-    if (d == RT_NULL)
+    if (d == NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
+        rt_set_errno(-EBADF);
         return -1;
     }
 
@@ -405,9 +417,46 @@ int fsync(int fildes)
 RTM_EXPORT(fsync);
 
 /**
- * this function is a POSIX compliant version, which will return the 
+ * this function is a POSIX compliant version, which shall perform a variety of
+ * control functions on devices.
+ *
+ * @param fildes the file description
+ * @param cmd the specified command
+ * @param data represents the additional information that is needed by this
+ * specific device to perform the requested function.
+ *
+ * @return 0 on successful completion. Otherwise, -1 shall be returned and errno
+ * set to indicate the error.
+ */
+int ioctl(int fildes, int cmd, void *data)
+{
+    int ret;
+    struct dfs_fd *d;
+
+    /* get the fd */
+    d = fd_get(fildes);
+    if (d == NULL)
+    {
+        rt_set_errno(-EBADF);
+        return -1;
+    }
+
+    ret = dfs_file_ioctl(d, cmd, data);
+    if (ret != 0)
+    {
+        rt_set_errno(ret);
+        ret = -1;
+    }
+    fd_put(d);
+
+    return ret;
+}
+RTM_EXPORT(ioctl);
+
+/**
+ * this function is a POSIX compliant version, which will return the
  * information about a mounted file system.
- * 
+ *
  * @param path the path which mounted file system.
  * @param buf the buffer to save the returned information.
  *
@@ -433,7 +482,7 @@ RTM_EXPORT(statfs);
  * this function is a POSIX compliant version, which will make a directory
  *
  * @param path the directory path to be made.
- * @param mode 
+ * @param mode
  *
  * @return 0 on successful, others on failed.
  */
@@ -446,17 +495,18 @@ int mkdir(const char *path, mode_t mode)
     fd = fd_new();
     if (fd == -1)
     {
-        rt_set_errno(-DFS_STATUS_ENOMEM);
+        rt_set_errno(-ENOMEM);
 
         return -1;
     }
 
     d = fd_get(fd);
 
-    result = dfs_file_open(d, path, DFS_O_DIRECTORY | DFS_O_CREAT);
+    result = dfs_file_open(d, path, O_DIRECTORY | O_CREAT);
 
     if (result < 0)
     {
+        fd_put(d);
         fd_put(d);
         rt_set_errno(result);
 
@@ -464,6 +514,7 @@ int mkdir(const char *path, mode_t mode)
     }
 
     dfs_file_close(d);
+    fd_put(d);
     fd_put(d);
 
     return 0;
@@ -479,7 +530,7 @@ FINSH_FUNCTION_EXPORT(mkdir, create a directory);
  * this function is a POSIX compliant version, which will remove a directory.
  *
  * @param pathname the path name to be removed.
- * 
+ *
  * @return 0 on successful, others on failed.
  */
 int rmdir(const char *pathname)
@@ -511,31 +562,32 @@ DIR *opendir(const char *name)
     int fd, result;
     DIR *t;
 
-    t = RT_NULL;
+    t = NULL;
 
     /* allocate a fd */
     fd = fd_new();
     if (fd == -1)
     {
-        rt_set_errno(-DFS_STATUS_ENOMEM);
+        rt_set_errno(-ENOMEM);
 
-        return RT_NULL;
+        return NULL;
     }
     d = fd_get(fd);
 
-    result = dfs_file_open(d, name, DFS_O_RDONLY | DFS_O_DIRECTORY);
+    result = dfs_file_open(d, name, O_RDONLY | O_DIRECTORY);
     if (result >= 0)
     {
         /* open successfully */
         t = (DIR *) rt_malloc(sizeof(DIR));
-        if (t == RT_NULL)
+        if (t == NULL)
         {
             dfs_file_close(d);
             fd_put(d);
         }
         else
         {
-            rt_memset(t, 0, sizeof(DIR));
+            memset(t, 0, sizeof(DIR));
+
             t->fd = fd;
         }
         fd_put(d);
@@ -548,13 +600,13 @@ DIR *opendir(const char *name)
     fd_put(d);
     rt_set_errno(result);
 
-    return RT_NULL;
+    return NULL;
 }
 RTM_EXPORT(opendir);
 
 /**
- * this function is a POSIX compliant version, which will return a pointer 
- * to a dirent structure representing the next directory entry in the 
+ * this function is a POSIX compliant version, which will return a pointer
+ * to a dirent structure representing the next directory entry in the
  * directory stream.
  *
  * @param d the directory stream pointer.
@@ -567,10 +619,10 @@ struct dirent *readdir(DIR *d)
     struct dfs_fd *fd;
 
     fd = fd_get(d->fd);
-    if (fd == RT_NULL)
+    if (fd == NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
-        return RT_NULL;
+        rt_set_errno(-EBADF);
+        return NULL;
     }
 
     if (d->num)
@@ -591,7 +643,7 @@ struct dirent *readdir(DIR *d)
             fd_put(fd);
             rt_set_errno(result);
 
-            return RT_NULL;
+            return NULL;
         }
 
         d->num = result;
@@ -605,9 +657,9 @@ struct dirent *readdir(DIR *d)
 RTM_EXPORT(readdir);
 
 /**
- * this function is a POSIX compliant version, which will return current 
+ * this function is a POSIX compliant version, which will return current
  * location in directory stream.
- * 
+ *
  * @param d the directory stream pointer.
  *
  * @return the current location in directory stream.
@@ -618,9 +670,9 @@ long telldir(DIR *d)
     long result;
 
     fd = fd_get(d->fd);
-    if (fd == RT_NULL)
+    if (fd == NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
+        rt_set_errno(-EBADF);
 
         return 0;
     }
@@ -633,7 +685,7 @@ long telldir(DIR *d)
 RTM_EXPORT(telldir);
 
 /**
- * this function is a POSIX compliant version, which will set position of 
+ * this function is a POSIX compliant version, which will set position of
  * next directory structure in the directory stream.
  *
  * @param d the directory stream.
@@ -644,9 +696,9 @@ void seekdir(DIR *d, off_t offset)
     struct dfs_fd *fd;
 
     fd = fd_get(d->fd);
-    if (fd == RT_NULL)
+    if (fd == NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
+        rt_set_errno(-EBADF);
 
         return ;
     }
@@ -669,9 +721,9 @@ void rewinddir(DIR *d)
     struct dfs_fd *fd;
 
     fd = fd_get(d->fd);
-    if (fd == RT_NULL)
+    if (fd == NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
+        rt_set_errno(-EBADF);
 
         return ;
     }
@@ -684,9 +736,9 @@ void rewinddir(DIR *d)
 RTM_EXPORT(rewinddir);
 
 /**
- * this function is a POSIX compliant version, which will close a directory 
+ * this function is a POSIX compliant version, which will close a directory
  * stream.
- * 
+ *
  * @param d the directory stream.
  *
  * @return 0 on successful, -1 on failed.
@@ -697,9 +749,9 @@ int closedir(DIR *d)
     struct dfs_fd *fd;
 
     fd = fd_get(d->fd);
-    if (fd == RT_NULL)
+    if (fd == NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
+        rt_set_errno(-EBADF);
 
         return -1;
     }
@@ -725,7 +777,7 @@ RTM_EXPORT(closedir);
 /**
  * this function is a POSIX compliant version, which will change working
  * directory.
- * 
+ *
  * @param path the path name to be changed to.
  *
  * @return 0 on successful, -1 on failed.
@@ -735,7 +787,7 @@ int chdir(const char *path)
     char *fullpath;
     DIR *d;
 
-    if (path == RT_NULL)
+    if (path == NULL)
     {
         dfs_lock();
         rt_kprintf("%s\n", working_directory);
@@ -744,24 +796,24 @@ int chdir(const char *path)
         return 0;
     }
 
-    if (rt_strlen(path) > DFS_PATH_MAX)
+    if (strlen(path) > DFS_PATH_MAX)
     {
-        rt_set_errno(-DFS_STATUS_ENOTDIR);
+        rt_set_errno(-ENOTDIR);
 
         return -1;
     }
 
     fullpath = dfs_normalize_path(NULL, path);
-    if (fullpath == RT_NULL)
+    if (fullpath == NULL)
     {
-        rt_set_errno(-DFS_STATUS_ENOTDIR);
+        rt_set_errno(-ENOTDIR);
 
         return -1; /* build path failed */
     }
 
     dfs_lock();
     d = opendir(fullpath);
-    if (d == RT_NULL)
+    if (d == NULL)
     {
         rt_free(fullpath);
         /* this is a not exist directory */
@@ -790,7 +842,26 @@ FINSH_FUNCTION_EXPORT_ALIAS(chdir, cd, change current working directory);
 #endif
 
 /**
- * this function is a POSIX compliant version, which will return current 
+ * this function is a POSIX compliant version, which shall check the file named
+ * by the pathname pointed to by the path argument for accessibility according
+ * to the bit pattern contained in amode.
+ *
+ * @param path the specified file/dir path.
+ * @param amode the value is either the bitwise-inclusive OR of the access
+ * permissions to be checked (R_OK, W_OK, X_OK) or the existence test (F_OK).
+ */
+int access(const char *path, int amode)
+{
+    struct stat sb;
+    if (stat(path, &sb) < 0)
+        return -1; /* already sets errno */
+
+    /* ignore R_OK,W_OK,X_OK condition */
+    return 0;
+}
+
+/**
+ * this function is a POSIX compliant version, which will return current
  * working directory.
  *
  * @param buf the returned current directory.
@@ -802,7 +873,7 @@ char *getcwd(char *buf, size_t size)
 {
 #ifdef DFS_USING_WORKDIR
     rt_enter_critical();
-    rt_strncpy(buf, working_directory, size);
+    strncpy(buf, working_directory, size);
     rt_exit_critical();
 #else
     rt_kprintf(NO_WORKING_DIR);

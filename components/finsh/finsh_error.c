@@ -28,7 +28,7 @@
  */
 #include "finsh_error.h"
 
-u_char global_errno;
+uint8_t global_errno;
 
 static const char * finsh_error_string_table[] =
 {
@@ -56,19 +56,19 @@ int finsh_error_init()
 	return 0;
 }
 
-int finsh_error_set(u_char type)
+int finsh_error_set(uint8_t type)
 {
 	global_errno = type;
 
 	return 0;
 }
 
-u_char finsh_errno()
+uint8_t finsh_errno()
 {
 	return global_errno;
 }
 
-const char* finsh_error_string(u_char type)
+const char* finsh_error_string(uint8_t type)
 {
 	return finsh_error_string_table[type];
 }

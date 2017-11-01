@@ -18,7 +18,7 @@
 #include "board.h"
 
 #include "drv_uart.h"
-
+#include "clock_config.h"
 
 /**
  * @addtogroup K64
@@ -73,6 +73,8 @@ void rt_hw_board_init()
 {
     /* NVIC Configuration */
     NVIC_Configuration();
+    
+    BOARD_BootClockRUN();
 
     /* Configure the SysTick */
     SysTick_Configuration();

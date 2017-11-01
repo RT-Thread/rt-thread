@@ -21,10 +21,38 @@
  * Date           Author       Notes
  * 2006-02-24     Bernard      first version
  * 2006-05-03     Bernard      add IRQ_DEBUG
+ * 2016-08-09     ArdaFu       add interrupt enter and leave hook.
  */
 
 #include <rthw.h>
 #include <rtthread.h>
+
+#ifdef RT_USING_HOOK
+
+static void (*rt_interrupt_enter_hook)(void);
+static void (*rt_interrupt_leave_hook)(void);
+
+/**
+ * @ingroup Hook
+ * This function set a hook function when the system enter a interrupt 
+ *
+ * @note the hook function must be simple and never be blocked or suspend.
+ */
+void rt_interrupt_enter_sethook(void (*hook)(void))
+{
+    rt_interrupt_enter_hook = hook;
+}
+/**
+ * @ingroup Hook
+ * This function set a hook function when the system exit a interrupt. 
+ *
+ * @note the hook function must be simple and never be blocked or suspend.
+ */
+void rt_interrupt_leave_sethook(void (*hook)(void))
+{
+    rt_interrupt_leave_hook = hook;
+}
+#endif
 
 /* #define IRQ_DEBUG */
 
@@ -32,7 +60,7 @@
  * @addtogroup Kernel
  */
 
-/*@{*/
+/**@{*/
 
 volatile rt_uint8_t rt_interrupt_nest;
 
@@ -52,6 +80,7 @@ void rt_interrupt_enter(void)
 
     level = rt_hw_interrupt_disable();
     rt_interrupt_nest ++;
+    RT_OBJECT_HOOK_CALL(rt_interrupt_enter_hook,());
     rt_hw_interrupt_enable(level);
 }
 RTM_EXPORT(rt_interrupt_enter);
@@ -72,6 +101,7 @@ void rt_interrupt_leave(void)
 
     level = rt_hw_interrupt_disable();
     rt_interrupt_nest --;
+    RT_OBJECT_HOOK_CALL(rt_interrupt_leave_hook,());
     rt_hw_interrupt_enable(level);
 }
 RTM_EXPORT(rt_interrupt_leave);
@@ -93,5 +123,5 @@ RTM_EXPORT(rt_interrupt_get_nest);
 RTM_EXPORT(rt_hw_interrupt_disable);
 RTM_EXPORT(rt_hw_interrupt_enable);
 
-/*@}*/
+/**@}*/
 

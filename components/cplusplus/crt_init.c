@@ -21,6 +21,8 @@
 * Date           Author       Notes
 * 2014-12-03     Bernard      Add copyright header.
 * 2014-12-29     Bernard      Add cplusplus initialization for ARMCC.
+* 2016-06-28     Bernard      Add _init/_fini routines for GCC.
+* 2016-10-02     Bernard      Add WEAK for cplusplus_system_init routine.
 */
 
 #include <rtthread.h>
@@ -30,26 +32,34 @@ extern void $Super$$__cpp_initialize__aeabi_(void);
 /* we need to change the cpp_initialize order */
 void $Sub$$__cpp_initialize__aeabi_(void)
 {
-	/* empty */
+    /* empty */
 }
+#elif defined(__GNUC__) && !defined(__CS_SOURCERYGXX_MAJ__)
+/* The _init()/_fini() routines has been defined in codesourcery g++ lite */
+void _init()
+{
+}
+
+void _fini()
+{
+}
+
+RT_WEAK void *__dso_handle = 0;
+
 #endif
 
+RT_WEAK
 int cplusplus_system_init(void)
 {
 #if defined(__GNUC__) && !defined(__CC_ARM)
-    extern unsigned char __ctors_start__;
-    extern unsigned char __ctors_end__;
-    typedef void (*func)(void);
+    typedef void (*pfunc) ();
+    extern pfunc __ctors_start__[];
+    extern pfunc __ctors_end__[];
+    pfunc *p;
 
-    /* .ctors initalization */
-    func *ctors_func;
+    for (p = __ctors_start__; p < __ctors_end__; p++)
+        (*p)();
 
-    for (ctors_func = (func *)&__ctors_start__;
-         ctors_func < (func *)&__ctors_end__;
-         ctors_func ++)
-    {
-        (*ctors_func)();
-    }
 #elif defined(__CC_ARM)
     /* If there is no SHT$$INIT_ARRAY, calling
      * $Super$$__cpp_initialize__aeabi_() will cause fault. At least until Keil5.12
@@ -58,7 +68,7 @@ int cplusplus_system_init(void)
     typedef void PROC();
     extern const unsigned long SHT$$INIT_ARRAY$$Base[];
     extern const unsigned long SHT$$INIT_ARRAY$$Limit[];
-    
+
     const unsigned long *base = SHT$$INIT_ARRAY$$Base;
     const unsigned long *lim  = SHT$$INIT_ARRAY$$Limit;
 
@@ -72,3 +82,4 @@ int cplusplus_system_init(void)
     return 0;
 }
 INIT_COMPONENT_EXPORT(cplusplus_system_init);
+

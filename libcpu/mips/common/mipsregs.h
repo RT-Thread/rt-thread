@@ -116,6 +116,70 @@
 #define CP1_REVISION   		$0
 #define CP1_STATUS     		$31
 
+/*
+ * FPU Status Register Values
+ */
+/*
+ * Status Register Values
+ */
+
+#define FPU_CSR_FLUSH   0x01000000      /* flush denormalised results to 0 */
+#define FPU_CSR_COND    0x00800000      /* $fcc0 */
+#define FPU_CSR_COND0   0x00800000      /* $fcc0 */
+#define FPU_CSR_COND1   0x02000000      /* $fcc1 */
+#define FPU_CSR_COND2   0x04000000      /* $fcc2 */
+#define FPU_CSR_COND3   0x08000000      /* $fcc3 */
+#define FPU_CSR_COND4   0x10000000      /* $fcc4 */
+#define FPU_CSR_COND5   0x20000000      /* $fcc5 */
+#define FPU_CSR_COND6   0x40000000      /* $fcc6 */
+#define FPU_CSR_COND7   0x80000000      /* $fcc7 */
+
+
+/* FS/FO/FN */
+#define FPU_CSR_FS      0x01000000
+#define FPU_CSR_FO      0x00400000
+#define FPU_CSR_FN      0x00200000
+
+/*
+ * Bits 18 - 20 of the FPU Status Register will be read as 0,
+ * and should be written as zero.
+ */
+#define FPU_CSR_RSVD	0x001c0000
+
+/*
+ * X the exception cause indicator
+ * E the exception enable
+ * S the sticky/flag bit
+*/
+#define FPU_CSR_ALL_X   0x0003f000
+#define FPU_CSR_UNI_X   0x00020000
+#define FPU_CSR_INV_X   0x00010000
+#define FPU_CSR_DIV_X   0x00008000
+#define FPU_CSR_OVF_X   0x00004000
+#define FPU_CSR_UDF_X   0x00002000
+#define FPU_CSR_INE_X   0x00001000
+
+#define FPU_CSR_ALL_E   0x00000f80
+#define FPU_CSR_INV_E   0x00000800
+#define FPU_CSR_DIV_E   0x00000400
+#define FPU_CSR_OVF_E   0x00000200
+#define FPU_CSR_UDF_E   0x00000100
+#define FPU_CSR_INE_E   0x00000080
+
+#define FPU_CSR_ALL_S   0x0000007c
+#define FPU_CSR_INV_S   0x00000040
+#define FPU_CSR_DIV_S   0x00000020
+#define FPU_CSR_OVF_S   0x00000010
+#define FPU_CSR_UDF_S   0x00000008
+#define FPU_CSR_INE_S   0x00000004
+
+/* Bits 0 and 1 of FPU Status Register specify the rounding mode */
+#define FPU_CSR_RM	0x00000003
+#define FPU_CSR_RN      0x0     /* nearest */
+#define FPU_CSR_RZ      0x1     /* towards zero */
+#define FPU_CSR_RU      0x2     /* towards +Infinity */
+#define FPU_CSR_RD      0x3     /* towards -Infinity */
+
 
 /*
  * R4x00 interrupt enable / cause bits
@@ -608,6 +672,32 @@ do {									\
 #define write_c0_config1(val)	__write_32bit_c0_register($16, 1, val)
 #define write_c0_config2(val)	__write_32bit_c0_register($16, 2, val)
 #define write_c0_config3(val)	__write_32bit_c0_register($16, 3, val)
+
+
+/*
+ * Macros to access the floating point coprocessor control registers
+ */
+#define read_32bit_cp1_register(source)                         \
+({ int __res;                                                   \
+	__asm__ __volatile__(                                   \
+	".set\tpush\n\t"					\
+	".set\treorder\n\t"					\
+	/* gas fails to assemble cfc1 for some archs (octeon).*/ \
+	".set\tmips1\n\t"					\
+        "cfc1\t%0,"STR(source)"\n\t"                            \
+	".set\tpop"						\
+        : "=r" (__res));                                        \
+        __res;})
+#define write_32bit_cp1_register(register, value)   \
+do {                                        \
+    __asm__ __volatile__(                   \
+        "ctc1\t%z0, "STR(register)"\n\t"      \
+        : : "Jr" ((unsigned int)(value)));  \
+} while (0)
+        
+#define read_c1_status()            read_32bit_cp1_register(CP1_STATUS)
+#define read_c1_revision()          read_32bit_cp1_register(CP1_REVISION);
+#define write_c1_status(val)        write_32bit_cp1_register(CP1_STATUS, val)
 
 
 #endif /* end of __ASSEMBLY__ */

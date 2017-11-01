@@ -20,10 +20,10 @@ File 3,1,<..\..\src\ipc.c><ipc.c>
 File 3,1,<..\..\src\irq.c><irq.c>
 File 3,1,<..\..\src\kservice.c><kservice.c>
 File 3,1,<..\..\src\mem.c><mem.c>
-File 3,1,<..\..\src\memheap.c><memheap.c>
 File 3,1,<..\..\src\mempool.c><mempool.c>
 File 3,1,<..\..\src\object.c><object.c>
 File 3,1,<..\..\src\scheduler.c><scheduler.c>
+File 3,1,<..\..\src\signal.c><signal.c>
 File 3,1,<..\..\src\thread.c><thread.c>
 File 3,1,<..\..\src\timer.c><timer.c>
 File 4,1,<..\..\libcpu\arm\lpc214x\cpuport.c><cpuport.c>
@@ -32,6 +32,8 @@ File 4,2,<..\..\libcpu\arm\lpc214x\start_rvds.S><start_rvds.S>
 File 4,1,<..\..\libcpu\arm\common\backtrace.c><backtrace.c>
 File 4,1,<..\..\libcpu\arm\common\div0.c><div0.c>
 File 4,1,<..\..\libcpu\arm\common\showmem.c><showmem.c>
+File 5,1,<..\..\components\finsh\shell.c><shell.c>
+File 5,1,<..\..\components\finsh\symbol.c><symbol.c>
 File 5,1,<..\..\components\finsh\cmd.c><cmd.c>
 File 5,1,<..\..\components\finsh\finsh_compiler.c><finsh_compiler.c>
 File 5,1,<..\..\components\finsh\finsh_error.c><finsh_error.c>
@@ -40,11 +42,9 @@ File 5,1,<..\..\components\finsh\finsh_init.c><finsh_init.c>
 File 5,1,<..\..\components\finsh\finsh_node.c><finsh_node.c>
 File 5,1,<..\..\components\finsh\finsh_ops.c><finsh_ops.c>
 File 5,1,<..\..\components\finsh\finsh_parser.c><finsh_parser.c>
-File 5,1,<..\..\components\finsh\finsh_token.c><finsh_token.c>
 File 5,1,<..\..\components\finsh\finsh_var.c><finsh_var.c>
 File 5,1,<..\..\components\finsh\finsh_vm.c><finsh_vm.c>
-File 5,1,<..\..\components\finsh\shell.c><shell.c>
-File 5,1,<..\..\components\finsh\symbol.c><symbol.c>
+File 5,1,<..\..\components\finsh\finsh_token.c><finsh_token.c>
 
 
 
@@ -128,7 +128,7 @@ Options 1,0,0  // Target 'rtthread-lpc2148'
  ADSLDSC ()
  ADSLDIB ()
  ADSLDIC ()
- ADSLDMC ( --keep __fsym_* --keep __vsym_* )
+ ADSLDMC ( --keep *.o(FSymTab) --keep *.o(VSymTab) )
  ADSLDIF ()
  ADSLDDW ()
   OPTDL (SARM.DLL)(-cLPC2100)(DARMP.DLL)(-pLPC2148)(SARM.DLL)()(TARMP.DLL)(-pLPC2148)

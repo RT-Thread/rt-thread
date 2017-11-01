@@ -208,6 +208,7 @@ rt_hw_context_switch_to    PROC
     MSR     msp, r0
 
     ; enable interrupts at processor level
+    CPSIE   F
     CPSIE   I
 
     ; never reach here!
@@ -221,7 +222,9 @@ rt_hw_interrupt_thread_switch PROC
 
     IMPORT rt_hw_hard_fault_exception
     EXPORT HardFault_Handler
+    EXPORT MemManage_Handler
 HardFault_Handler    PROC
+MemManage_Handler
 
     ; get current context
     MRS     r0, psp                 ; get fault thread stack pointer

@@ -74,9 +74,9 @@ enum finsh_token_type
 #define finsh_token_position(self) (self)->position
 #define finsh_token_replay(self) (self)->replay = 1
 
-void finsh_token_init(struct finsh_token* self, u_char* script);
+void finsh_token_init(struct finsh_token* self, uint8_t* script);
 
 enum finsh_token_type finsh_token_token(struct finsh_token* self);
-void finsh_token_get_token(struct finsh_token* self, u_char* token);
+void finsh_token_get_token(struct finsh_token* self, uint8_t* token);
 
 #endif

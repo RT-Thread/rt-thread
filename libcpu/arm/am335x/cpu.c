@@ -92,6 +92,8 @@ rt_inline void cache_disable(rt_uint32_t bit)
 }
 #endif
 
+
+#if defined(__CC_ARM)|(__GNUC__)
 /**
  * enable I-Cache
  *
@@ -145,6 +147,7 @@ rt_base_t rt_hw_cpu_dcache_status()
 {
 	return (cp15_rd() & DCACHE_MASK);
 }
+#endif
 
 /**
  *  shutdown CPU

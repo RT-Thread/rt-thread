@@ -22,7 +22,7 @@
 #define HAVE_DIR_STRUCTURE
 
 #include <dfs_fs.h>
-#include <dfs_def.h>
+#include <dfs.h>
 
 #ifdef DFS_ELMFAT_INTERFACE_EFM
 #include "diskio.h"
@@ -641,7 +641,6 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
 
 		st->st_size  = file_info.fsize;
 		st->st_mtime = file_info.ftime;
-		st->st_blksize = 512;
 	}
 
 #if _USE_LFN

@@ -74,7 +74,7 @@
 
 int finsh_node_init(void);
 
-struct finsh_node* finsh_node_allocate(u_char type);
+struct finsh_node* finsh_node_allocate(uint8_t type);
 struct finsh_node* finsh_node_new_id(char* id);
 struct finsh_node* finsh_node_new_char(char c);
 struct finsh_node* finsh_node_new_int(int i);

@@ -25,6 +25,7 @@
  *                             provided by Rob <rdent@iinet.net.au>
  * 2012-12-25     Bernard      return RT_EOK if the device interface not exist.
  * 2013-07-09     Grissiom     add ref_count support
+ * 2016-04-02     Bernard      fix the open_flag initialization issue.
  */
 
 #include <rtthread.h>
@@ -53,6 +54,12 @@ rt_err_t rt_device_register(rt_device_t dev,
     rt_object_init(&(dev->parent), RT_Object_Class_Device, name);
     dev->flag = flags;
     dev->ref_count = 0;
+    dev->open_flag = 0;
+
+#if defined(RT_USING_POSIX)
+    dev->fops = RT_NULL;
+    rt_list_init(&(dev->wait_queue));
+#endif
 
     return RT_EOK;
 }
@@ -80,7 +87,7 @@ RTM_EXPORT(rt_device_unregister);
  *
  * @return the error code, RT_EOK on successfully.
  *
- * @deprecated since 1.2.x, this function is not needed because the initialization 
+ * @deprecated since 1.2.x, this function is not needed because the initialization
  *             of a device is performed when applicaiton opens it.
  */
 rt_err_t rt_device_init_all(void)
@@ -211,11 +218,16 @@ rt_err_t rt_device_open(rt_device_t dev, rt_uint16_t oflag)
     {
         result = dev->open(dev, oflag);
     }
+    else
+    {
+        /* set open flag */
+        dev->open_flag = (oflag & RT_DEVICE_OFLAG_MASK);
+    }
 
     /* set open flag */
     if (result == RT_EOK || result == -RT_ENOSYS)
     {
-        dev->open_flag = oflag | RT_DEVICE_OFLAG_OPEN;
+        dev->open_flag |= RT_DEVICE_OFLAG_OPEN;
 
         dev->ref_count++;
         /* don't let bad things happen silently. If you are bitten by this assert,
@@ -347,7 +359,7 @@ RTM_EXPORT(rt_device_write);
  *
  * @return the result
  */
-rt_err_t rt_device_control(rt_device_t dev, rt_uint8_t cmd, void *arg)
+rt_err_t rt_device_control(rt_device_t dev, int cmd, void *arg)
 {
     RT_ASSERT(dev != RT_NULL);
 
@@ -357,7 +369,7 @@ rt_err_t rt_device_control(rt_device_t dev, rt_uint8_t cmd, void *arg)
         return dev->control(dev, cmd, arg);
     }
 
-    return RT_EOK;
+    return -RT_ENOSYS;
 }
 RTM_EXPORT(rt_device_control);
 

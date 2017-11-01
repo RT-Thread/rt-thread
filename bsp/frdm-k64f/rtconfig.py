@@ -74,7 +74,7 @@ elif PLATFORM == 'armcc':
     EXEC_PATH += '/arm/bin40/'
 
     if BUILD == 'debug':
-        CFLAGS += ' -g -O0'
+        CFLAGS += ' --c99 -g -O0'
         AFLAGS += ' -g'
     else:
         CFLAGS += ' -O2'

@@ -405,23 +405,34 @@ void rt_hw_interrupt_ack(rt_uint32_t fiq_irq, rt_uint32_t id)
 }
 
 #ifdef RT_USING_FINSH
+#ifdef RT_USING_INTERRUPT_INFO
 void list_irq(void)
 {
-    int irq;
-    
-    rt_kprintf("number\tcount\tname\n");
-    for (irq = 0; irq < MAX_HANDLERS; irq++)
-    {
-        if (rt_strncmp(irq_desc[irq].name, "default", sizeof("default")))
-        {
-            rt_kprintf("%02ld: %10ld  %s\n", irq, irq_desc[irq].counter, irq_desc[irq].name);
-        }
-    }
+	int irq;
+	
+	rt_kprintf("number\tcount\tname\n");
+	for (irq = 0; irq < MAX_HANDLERS; irq++)
+	{
+		if (rt_strncmp(irq_desc[irq].name, "default", sizeof("default")))
+		{
+			rt_kprintf("%02ld: %10ld  %s\n", irq, irq_desc[irq].counter, irq_desc[irq].name);
+		}
+	}
 }
 
 #include <finsh.h>
 FINSH_FUNCTION_EXPORT(list_irq, list system irq);
 
+#ifdef FINSH_USING_MSH
+int cmd_list_irq(int argc, char** argv)
+{
+    list_irq();
+    return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_list_irq, __cmd_list_irq, list system irq.);
+
+#endif
+#endif
 #endif
 
 

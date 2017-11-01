@@ -76,7 +76,7 @@ struct rt_alarm_container
 
 rt_alarm_t rt_alarm_create(rt_alarm_callback_t    callback,
                            struct rt_alarm_setup *setup);
-rt_err_t rt_alarm_control(rt_alarm_t alarm, rt_uint8_t cmd, void *arg);
+rt_err_t rt_alarm_control(rt_alarm_t alarm, int cmd, void *arg);
 void rt_alarm_update(rt_device_t dev, rt_uint32_t event);
 rt_err_t rt_alarm_delete(rt_alarm_t alarm);
 rt_err_t rt_alarm_start(rt_alarm_t alarm);

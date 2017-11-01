@@ -56,38 +56,12 @@
 
 /* -- the end of option -- */
 
-#if defined(RT_USING_NEWLIB) || defined (RT_USING_MINILIBC)
-#include <sys/types.h>
-#include <string.h>
-#else
-typedef unsigned char  u_char;
-typedef unsigned short u_short;
-typedef unsigned long  u_long;
-
-#if !defined(__CC_ARM)             && \
-    !defined(__IAR_SYSTEMS_ICC__)  && \
-    !defined(__ADSPBLACKFIN__)     && \
-    !defined(_MSC_VER)
-
-/* only for GNU GCC */
-
-#if !(defined(__GNUC__) && defined(__x86_64__))
-typedef unsigned int size_t;
-#else
+/* std header file */
 #include <stdio.h>
-#endif
-
-#ifndef NULL
-#define NULL RT_NULL
-#endif
-
-#else
-/* use libc of armcc */
 #include <ctype.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
-#endif
-#endif
 
 #define FINSH_VERSION_MAJOR			1
 #define FINSH_VERSION_MINOR			0
@@ -144,7 +118,7 @@ struct finsh_sysvar
 #if defined(FINSH_USING_DESCRIPTION) && defined(FINSH_USING_SYMTAB)
 	const char* 	desc;		/* description of system variable */
 #endif
-	u_char		 type;		/* the type of variable */
+	uint8_t		 type;		/* the type of variable */
 	void*		 var ;		/* the address of variable */
 };
 
@@ -229,8 +203,8 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
             
         #else
             #define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)      \
-                const char __fsym_##cmd##_name[] = #cmd;            \
-                const char __fsym_##cmd##_desc[] = #desc;           \
+                const char __fsym_##cmd##_name[] SECTION(".rodata.name") = #cmd;   \
+                const char __fsym_##cmd##_desc[] SECTION(".rodata.name") = #desc;  \
                 const struct finsh_syscall __fsym_##cmd SECTION("FSymTab")= \
                 {                           \
                     __fsym_##cmd##_name,    \
@@ -239,8 +213,8 @@ struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
                 };
 
             #define FINSH_VAR_EXPORT(name, type, desc)              \
-                const char __vsym_##name##_name[] = #name;          \
-                const char __vsym_##name##_desc[] = #desc;          \
+                const char __vsym_##name##_name[] SECTION(".rodata.name") = #name; \
+                const char __vsym_##name##_desc[] SECTION(".rodata.name") = #desc; \
                 const struct finsh_sysvar __vsym_##name SECTION("VSymTab")= \
                 {                           \
                     __vsym_##name##_name,   \
@@ -360,16 +334,16 @@ struct finsh_token
 	char replay;
 
 	int  position;
-	u_char current_token;
+	uint8_t current_token;
 
 	union {
 		char char_value;
 		int int_value;
 		long long_value;
 	} value;
-	u_char string[128];
+	uint8_t string[FINSH_STRING_MAX];
 
-	u_char* line;
+	uint8_t* line;
 };
 
 #define FINSH_IDTYPE_VAR		0x01
@@ -378,9 +352,9 @@ struct finsh_token
 #define FINSH_IDTYPE_ADDRESS	0x08
 struct finsh_node
 {
-	u_char node_type;	/* node node_type */
-	u_char data_type;	/* node data node_type */
-	u_char idtype;		/* id node information */
+	uint8_t node_type;	/* node node_type */
+	uint8_t data_type;	/* node data node_type */
+	uint8_t idtype;		/* id node information */
 
 	union {			/* value node */
 		char 	char_value;
@@ -403,7 +377,7 @@ struct finsh_node
 
 struct finsh_parser
 {
-	u_char* parser_string;
+	uint8_t* parser_string;
 
     struct finsh_token token;
 	struct finsh_node* root;
@@ -455,9 +429,9 @@ struct finsh_var* finsh_var_lookup(const char* name);
 long finsh_stack_bottom(void);
 
 /* get error number of finsh */
-u_char finsh_errno(void);
+uint8_t finsh_errno(void);
 /* get error string */
-const char* finsh_error_string(u_char type);
+const char* finsh_error_string(uint8_t type);
 
 #ifdef RT_USING_HEAP
 /**
@@ -477,6 +451,6 @@ void finsh_syscall_append(const char* name, syscall_func func);
  * @param type the data type of system variable
  * @param addr the address of system variable
  */
-void finsh_sysvar_append(const char* name, u_char type, void* addr);
+void finsh_sysvar_append(const char* name, uint8_t type, void* addr);
 #endif
 #endif

@@ -42,7 +42,6 @@
 
 static rt_int16_t rt_scheduler_lock_nest;
 extern volatile rt_uint8_t rt_interrupt_nest;
-extern int __rt_ffs(int value);
 
 rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 struct rt_thread *rt_current_thread;
@@ -67,7 +66,7 @@ static void (*rt_scheduler_hook)(struct rt_thread *from, struct rt_thread *to);
  * @addtogroup Hook
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * This function will set a hook function, which will be invoked when thread
@@ -81,7 +80,7 @@ rt_scheduler_sethook(void (*hook)(struct rt_thread *from, struct rt_thread *to))
     rt_scheduler_hook = hook;
 }
 
-/*@}*/
+/**@}*/
 #endif
 
 #ifdef RT_USING_OVERFLOW_CHECK
@@ -89,19 +88,20 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
 {
     RT_ASSERT(thread != RT_NULL);
 
-    if ((rt_uint32_t)thread->sp <= (rt_uint32_t)thread->stack_addr ||
+    if (*((rt_uint8_t *)thread->stack_addr) != '#' ||
+        (rt_uint32_t)thread->sp <= (rt_uint32_t)thread->stack_addr ||
         (rt_uint32_t)thread->sp >
         (rt_uint32_t)thread->stack_addr + (rt_uint32_t)thread->stack_size)
     {
         rt_uint32_t level;
 
         rt_kprintf("thread:%s stack overflow\n", thread->name);
-        #ifdef RT_USING_FINSH
+#ifdef RT_USING_FINSH
         {
             extern long list_thread(void);
             list_thread();
         }
-        #endif
+#endif
         level = rt_hw_interrupt_disable();
         while (level);
     }
@@ -182,7 +182,7 @@ void rt_system_scheduler_start(void)
  * @addtogroup Thread
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * This function will perform one schedule. It will select one thread
@@ -240,8 +240,18 @@ void rt_schedule(void)
 
             if (rt_interrupt_nest == 0)
             {
+                extern void rt_thread_handle_sig(rt_bool_t clean_state);
+
                 rt_hw_context_switch((rt_uint32_t)&from_thread->sp,
                                      (rt_uint32_t)&to_thread->sp);
+
+                /* enable interrupt */
+                rt_hw_interrupt_enable(level);
+
+#ifdef RT_USING_SIGNALS
+                /* check signal status */
+                rt_thread_handle_sig(RT_TRUE);
+#endif
             }
             else
             {
@@ -249,12 +259,21 @@ void rt_schedule(void)
 
                 rt_hw_context_switch_interrupt((rt_uint32_t)&from_thread->sp,
                                                (rt_uint32_t)&to_thread->sp);
+                /* enable interrupt */
+                rt_hw_interrupt_enable(level);
             }
         }
+        else 
+        {
+            /* enable interrupt */
+            rt_hw_interrupt_enable(level);
+        }
     }
-
-    /* enable interrupt */
-    rt_hw_interrupt_enable(level);
+    else
+    {
+        /* enable interrupt */
+        rt_hw_interrupt_enable(level);
+    }
 }
 
 /*
@@ -411,5 +430,5 @@ rt_uint16_t rt_critical_level(void)
     return rt_scheduler_lock_nest;
 }
 RTM_EXPORT(rt_critical_level);
-/*@}*/
+/**@}*/
 

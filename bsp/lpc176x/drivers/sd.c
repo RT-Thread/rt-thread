@@ -454,18 +454,20 @@ static rt_size_t rt_sdcard_write(rt_device_t dev, rt_off_t pos, const void *buff
     return 0;
 }
 
-static rt_err_t rt_sdcard_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_sdcard_control(rt_device_t dev, int cmd, void *args)
 {
     if (cmd == RT_DEVICE_CTRL_BLK_GETGEOME)
     {
         struct rt_device_blk_geometry *geometry;
         
         geometry = (struct rt_device_blk_geometry *)args;
+        
         if (geometry == RT_NULL) return -RT_ERROR;
-
-        geometry->bytes_per_sector = SDCfg.sectorsize;
-        geometry->block_size = SDCfg.blocksize;
-        geometry->sector_count = SDCfg.sectorcnt;
+        if (dev->user_data == RT_NULL) return -RT_ERROR;
+        
+        geometry->bytes_per_sector = ((SDCFG *)dev->user_data)->sectorsize;
+        geometry->block_size = ((SDCFG *)dev->user_data)->blocksize;
+        geometry->sector_count = ((SDCFG *)dev->user_data)->sectorcnt;
     }
 
     return RT_EOK;

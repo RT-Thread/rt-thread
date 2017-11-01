@@ -35,7 +35,7 @@
 /* STM32F ETH dirver options */
 #define RMII_MODE                       /* MII_MODE or RMII_MODE */
 #define RMII_TX_GPIO_GROUP        2     /* 1:GPIOB or 2:GPIOG */
-#define CHECKSUM_BY_HARDWARE
+//#define CHECKSUM_BY_HARDWARE          /* don't ues hardware checksum. */
 
 /** @addtogroup STM32F4XX_ETH_Driver
   * @brief ETH driver modules
@@ -3511,7 +3511,7 @@ static rt_size_t rt_stm32_eth_write (rt_device_t dev, rt_off_t pos, const void* 
 	return 0;
 }
 
-static rt_err_t rt_stm32_eth_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_stm32_eth_control(rt_device_t dev, int cmd, void *args)
 {
 	switch(cmd)
 	{

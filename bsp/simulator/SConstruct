@@ -88,7 +88,7 @@ def ObjRemove(objs, remove):
 # build program  -shared
 if GetDepend('RT_USING_MODULE'):
     # Remove module.c in $RTT_ROOT/src
-    ObjRemove(objs, ['module.obj', 'module.o'])
+    ObjRemove(objs, ['module.obj', 'module.o', 'module.c'])
 
     AddOption('--def',
       dest='def',
@@ -99,7 +99,7 @@ if GetDepend('RT_USING_MODULE'):
         if rtconfig.PLATFORM == 'mingw':
             env['LINKFLAGS'] = rtconfig.DEFFILE_LFLAGS
         else:
-            rtconfig.POST_ACTION = 'createdef.py $TARGET rtthread.def'
+            rtconfig.POST_ACTION = 'python createdef.py $TARGET rtthread.def'
 
         program = env.Program(TARGET, objs)
     else:

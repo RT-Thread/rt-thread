@@ -21,10 +21,6 @@
 #include "board.h"
 #include "usart.h"
 
-#ifdef  RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif  /* RT_USING_COMPONENTS_INIT */
-
 /**
  * @addtogroup STM32
  */

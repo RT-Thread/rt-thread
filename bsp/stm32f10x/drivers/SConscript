@@ -12,6 +12,13 @@ led.c
 usart.c
 """)
 
+if GetDepend(['RT_USING_PIN']):
+    src += ['gpio.c']
+
+# add canbus driver.
+if GetDepend('RT_USING_CAN'):
+    src += ['bxcan.c']
+
 # add Ethernet drivers.
 if GetDepend('RT_USING_LWIP'):
     src += ['dm9000a.c']
@@ -31,6 +38,10 @@ if GetDepend('RT_USING_RTGUI'):
         src += ['ili_lcd_general.c']
     elif rtconfig.RT_USING_LCD_TYPE == 'SSD1289':
         src += ['ssd1289.c']
+
+# add wdt driver.
+if GetDepend('RT_USING_WDT'):
+    src += ['stm32f1_wdg.c']
 
     
 CPPPATH = [cwd]

@@ -15,6 +15,7 @@
 #include <board.h>
 #include <rtthread.h>
 #include <rtdevice.h>
+#include "gpio.h"
 #ifdef RT_USING_CAN
 #define CANRT1   8
 #define CANERR1  9
@@ -28,8 +29,8 @@ static struct canledtype
 {
 #ifdef USING_BXCAN1
     {
-        {CANRT1, PIN_MODE_OUTPUT_OD,},
-        {CANERR1, PIN_MODE_OUTPUT_OD,},
+        {CANRT1, PIN_MODE_OUTPUT,},
+        {CANERR1, PIN_MODE_OUTPUT,},
     },
 #endif /*USING_BXCAN1*/
 #ifdef USING_BXCAN2
@@ -119,9 +120,9 @@ INIT_DEVICE_EXPORT(can_bus_hook_init);
 struct can_app_struct
 {
     const char *name;
-    struct rt_event event;
     struct rt_can_filter_config *filter;
     rt_uint8_t eventopt;
+    struct rt_event event;
 };
 static struct can_app_struct can_data[2];
 static rt_err_t  can1ind(rt_device_t dev,  void *args, rt_int32_t hdr, rt_size_t size)
@@ -152,27 +153,27 @@ struct rt_can_filter_item filter2item[4] =
 };
 struct rt_can_filter_config filter1 =
 {
-    .count = 4,
-    .actived = 1,
-    .items = filter1item,
+    4,
+    1,
+    filter1item,
 };
 struct rt_can_filter_config filter2 =
 {
-    .count = 4,
-    .actived = 1,
-    .items = filter2item,
+    4,
+    1,
+    filter2item,
 };
 static struct can_app_struct can_data[2] =
 {
     {
-        .name = "bxcan1",
-        .filter = &filter1,
-        .eventopt = RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
+        "bxcan1",
+        &filter1,
+        RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
     },
     {
-        .name = "bxcan2",
-        .filter = &filter2,
-        .eventopt = RT_EVENT_FLAG_AND | RT_EVENT_FLAG_CLEAR,
+        "bxcan2",
+        &filter2,
+        RT_EVENT_FLAG_AND | RT_EVENT_FLAG_CLEAR,
     },
 };
 void rt_can_thread_entry(void *parameter)
@@ -244,10 +245,12 @@ int rt_can_app_init(void)
                            512, RT_THREAD_PRIORITY_MAX / 3 - 1, 20);
     if (tid != RT_NULL) rt_thread_startup(tid);
 
+#ifdef USING_BXCAN2
     tid = rt_thread_create("canapp2",
                            rt_can_thread_entry, &can_data[1],
                            512, RT_THREAD_PRIORITY_MAX / 3 - 1, 20);
     if (tid != RT_NULL) rt_thread_startup(tid);
+#endif
 
     return 0;
 }

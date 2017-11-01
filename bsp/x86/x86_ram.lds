@@ -21,10 +21,13 @@ SECTIONS
 		KEEP(*(VSymTab))
 		__vsymtab_end = .;
 		. = ALIGN(4);	
+		__rtmsymtab_start = .;
+		KEEP(*(RTMSymTab));
+		__rtmsymtab_end = .;
 	  }
 	
 	. = ALIGN(4);
-	.rodata : { *(.rodata) }
+	.rodata : { *(.rodata*) }
 
 	. = ALIGN(4);
 	.data : { *(.data) }

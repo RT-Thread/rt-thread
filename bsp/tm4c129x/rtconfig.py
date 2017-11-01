@@ -19,7 +19,7 @@ if  CROSS_TOOL == 'gcc':
 	EXEC_PATH 	= r'D:\ArdaArmTools\Sourcery_Lite\bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
-	EXEC_PATH 	= r'C:\Keil_v5'
+	EXEC_PATH 	= r'D:\Keil_v5'
 elif CROSS_TOOL == 'iar':
     print '================ERROR============================'
     print 'Not support iar yet!'

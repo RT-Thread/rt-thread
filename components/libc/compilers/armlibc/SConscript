@@ -1,0 +1,15 @@
+from building import *
+Import('rtconfig')
+
+src   = Glob('*.c') + Glob('*.cpp')
+cwd   = GetCurrentDir()
+group = []
+
+CPPPATH = [cwd]
+CPPDEFINES = ['RT_USING_ARM_LIBC']
+
+if rtconfig.PLATFORM == 'armcc':
+    group = DefineGroup('libc', src, depend = ['RT_USING_LIBC'], 
+        CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+
+Return('group')

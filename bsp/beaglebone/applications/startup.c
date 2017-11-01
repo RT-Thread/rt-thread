@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2012-12-05     Bernard      the first version
+ * 2015-11-11     zchong     support iar compiler
  */
 
 #include <rthw.h>
@@ -18,7 +19,9 @@
 #include <board.h>
 
 extern int  rt_application_init(void);
-
+#ifdef __ICCARM__
+#pragma section="HEAP"
+#endif
 /**
  * This function will startup RT-Thread RTOS.
  */
@@ -34,7 +37,11 @@ void rtthread_startup(void)
 
 	/* initialize memory system */
 #ifdef RT_USING_HEAP
+#ifdef __ICCARM__
+rt_system_heap_init(__segment_end("HEAP"), (void*)0x8FFFFFFF);
+#else
     rt_system_heap_init(HEAP_BEGIN, HEAP_END);
+#endif
 #endif
 
 	/* initialize scheduler system */

@@ -33,6 +33,9 @@ extern int rt_application_init(void);
 extern void tlb_refill_exception(void);
 extern void general_exception(void);
 extern void irq_exception(void);
+extern void rt_hw_cache_init(void);
+extern void invalidate_writeback_dcache_all(void);
+extern void invalidate_icache_all(void);
 
 /**
  * This function will startup RT-Thread RTOS.
@@ -48,9 +51,12 @@ void rtthread_startup(void)
     rt_hw_interrupt_init();
 
     /* copy vector */
-    rt_memcpy((void *)A_K0BASE, tlb_refill_exception, 0x20);
-    rt_memcpy((void *)(A_K0BASE + 0x180), general_exception, 0x20);
-    rt_memcpy((void *)(A_K0BASE + 0x200), irq_exception, 0x20);
+    rt_memcpy((void *)A_K0BASE, tlb_refill_exception, 0x80);
+    rt_memcpy((void *)(A_K0BASE + 0x180), general_exception, 0x80);
+    rt_memcpy((void *)(A_K0BASE + 0x200), irq_exception, 0x80);
+
+    invalidate_writeback_dcache_all();
+    invalidate_icache_all();
 
     /* init board */
     rt_hw_board_init();
@@ -76,12 +82,6 @@ void rtthread_startup(void)
 
     /* init application */
     rt_application_init();
-
-   /* init finsh*/
-   #ifdef RT_USING_FINSH
-   finsh_system_init();
-   finsh_set_device("uart2");
-   #endif
 
     /* start scheduler */
     rt_system_scheduler_start();

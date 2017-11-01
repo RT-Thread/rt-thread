@@ -38,10 +38,6 @@
 #define LWIP_PLATFORM_BYTESWAP      0
 #define BYTE_ORDER                  LITTLE_ENDIAN
 
-/* Enable SO_RCVTIMEO/LWIP_SO_SNDTIMEO processing.   */
-#define LWIP_SO_RCVTIMEO            1
-#define LWIP_SO_SNDTIMEO            1
-
 /* #define RT_LWIP_DEBUG */
 
 #ifdef RT_LWIP_DEBUG
@@ -90,11 +86,7 @@
 #define mem_free                    rt_free
 #define mem_calloc                  rt_calloc
 
-#ifdef RT_LWIP_USING_RT_MEM
-#define MEMP_MEM_MALLOC             1
-#else
 #define MEMP_MEM_MALLOC             0
-#endif
 
 /* MEMP_NUM_PBUF: the number of memp struct pbufs. If the application
    sends a lot of data out of ROM (or other static memory), this
@@ -354,6 +346,63 @@
 #ifdef LWIP_IGMP
 #include <stdlib.h>
 #define LWIP_RAND                  rand
+#endif
+/*
+   ------------------------------------
+   ---------- Socket options ----------
+   ------------------------------------
+*/
+/*
+ * LWIP_SOCKET==1: Enable Socket API (require to use sockets.c)
+ */
+#ifndef LWIP_SOCKET
+#define LWIP_SOCKET                     1
+#endif
+
+/*
+ * LWIP_COMPAT_SOCKETS==1: Enable BSD-style sockets functions names.
+ * (only used if you use sockets.c)
+ */
+#ifndef LWIP_COMPAT_SOCKETS
+#define LWIP_COMPAT_SOCKETS             1
+#endif
+
+
+/**
+ * LWIP_SO_SNDTIMEO==1: Enable send timeout for sockets/netconns and
+ * SO_SNDTIMEO processing.
+ */
+#ifndef LWIP_SO_SNDTIMEO
+#define LWIP_SO_SNDTIMEO                1
+#endif
+
+/**
+ * LWIP_SO_RCVTIMEO==1: Enable receive timeout for sockets/netconns and
+ * SO_RCVTIMEO processing.
+ */
+#ifndef LWIP_SO_RCVTIMEO
+#define LWIP_SO_RCVTIMEO                1
+#endif
+
+/**
+ * LWIP_SO_RCVBUF==1: Enable SO_RCVBUF processing.
+ */
+#ifndef LWIP_SO_RCVBUF
+#define LWIP_SO_RCVBUF                  1
+#endif
+
+/**
+ * If LWIP_SO_RCVBUF is used, this is the default value for recv_bufsize.
+ */
+#ifndef RECV_BUFSIZE_DEFAULT
+#define RECV_BUFSIZE_DEFAULT            8192
+#endif
+
+/**
+ * SO_REUSE==1: Enable SO_REUSEADDR option.
+ */
+#ifndef SO_REUSE
+#define SO_REUSE                        0
 #endif
 
 #endif /* __LWIPOPTS_H__ */

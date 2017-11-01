@@ -15,9 +15,11 @@
 #include <rtdevice.h>
 #include <board.h>
 #include <bxcan.h>
-#ifdef RT_USING_COMPONENTS_INIT
-#include <components.h>
+
+#if (defined (STM32F10X_LD_VL)) || (defined (STM32F10X_MD_VL)) || (defined (STM32F10X_HD_VL))
+#undef RT_USING_CAN
 #endif
+
 #ifdef RT_USING_CAN
 
 #ifndef STM32F10X_CL
@@ -26,6 +28,12 @@
 #else
 #define BX_CAN_FMRNUMBER 28
 #define BX_CAN2_FMRSTART 14
+#endif
+
+#if (defined (STM32F10X_LD)) || (defined (STM32F10X_MD)) || (defined (STM32F10X_HD)) || (defined (STM32F10X_XL))
+#undef USING_BXCAN2
+#define CAN1_RX0_IRQn USB_LP_CAN1_RX0_IRQn
+#define CAN1_TX_IRQn USB_HP_CAN1_TX_IRQn
 #endif
 
 #define BX_CAN_MAX_FILTERS (BX_CAN_FMRNUMBER * 4)
@@ -63,6 +71,11 @@ struct stm_bxcan
     const rt_uint32_t filtercnt;
     const rt_uint32_t fifo1filteroff;
     const struct stm_bxcanfiltermap filtermap[2];
+};
+struct stm_baud_rate_tab
+{
+	rt_uint32_t baud_rate;
+	rt_uint32_t confdata;
 };
 static void calcfiltermasks(struct stm_bxcan *pbxcan);
 static void bxcan1_filter_init(struct rt_can_device *can)
@@ -148,6 +161,7 @@ static void bxcan1_filter_init(struct rt_can_device *can)
     }
     calcfiltermasks(pbxcan);
 }
+#ifdef USING_BXCAN2
 static void bxcan2_filter_init(struct rt_can_device *can)
 {
     rt_uint32_t i;
@@ -234,6 +248,8 @@ static void bxcan2_filter_init(struct rt_can_device *can)
     }
     calcfiltermasks(pbxcan);
 }
+#endif
+
 #define BS1SHIFT 16
 #define BS2SHIFT 20
 #define RRESCLSHIFT 0
@@ -246,26 +262,64 @@ static void bxcan2_filter_init(struct rt_can_device *can)
 #define MK_BKCAN_BAUD(SJW,BS1,BS2,PRES) \
     ((SJW << SJWSHIFT) | (BS1 << BS1SHIFT) | (BS2 << BS2SHIFT) | (PRES << RRESCLSHIFT))
 
-static const rt_uint32_t bxcan_baud_rate_tab[] =
+static const struct stm_baud_rate_tab bxcan_baud_rate_tab[] =
 {
+#ifdef STM32F10X_CL
     // 48 M
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 3),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_6tq, CAN_BS2_3tq, 6),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 5),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 11),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 23),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 29),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 59),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_14tq, CAN_BS2_3tq, 149),
-    MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_16tq, CAN_BS2_8tq, 199),
+    {1000UL * 1000, MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 3)},
+    {1000UL * 800,  MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_6tq,  CAN_BS2_3tq, 6)},
+    {1000UL * 500,  MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 5)},
+    {1000UL * 250,  MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 11)},//1
+    {1000UL * 125,  MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 23)},
+    {1000UL * 100,  MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 29)},
+    {1000UL * 50,   MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_12tq, CAN_BS2_3tq, 59)},
+    {1000UL * 20,   MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_14tq, CAN_BS2_3tq, 149)},
+    {1000UL * 10,   MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_16tq, CAN_BS2_8tq, 199)}
+#else
+	// 36 M
+	{1000UL * 1000, MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_8tq,  CAN_BS2_3tq, 3)},
+	{1000UL * 800,	MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_11tq, CAN_BS2_3tq, 3)},
+	{1000UL * 500,	MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_9tq,  CAN_BS2_2tq, 6)},
+	{1000UL * 250,	MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_13tq, CAN_BS2_2tq, 9)},//1
+	{1000UL * 125,	MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_13tq, CAN_BS2_2tq, 18)},
+	{1000UL * 100,	MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_9tq,  CAN_BS2_2tq, 30)},
+	{1000UL * 50,	MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_13tq, CAN_BS2_2tq, 45)},
+	{1000UL * 20,	MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_14tq, CAN_BS2_3tq, 100)},
+	{1000UL * 10,	MK_BKCAN_BAUD(CAN_SJW_2tq, CAN_BS1_14tq, CAN_BS2_3tq, 200)}
+#endif
 };
 
 #define BAUD_DATA(TYPE,NO) \
-    ((bxcan_baud_rate_tab[NO] & TYPE##MASK) >> TYPE##SHIFT)
+    ((bxcan_baud_rate_tab[NO].confdata & TYPE##MASK) >> TYPE##SHIFT)
+
+static rt_uint32_t bxcan_get_baud_index(rt_uint32_t baud)
+{
+	rt_uint32_t len, index, default_index;
+	
+	len = sizeof(bxcan_baud_rate_tab)/sizeof(bxcan_baud_rate_tab[0]);
+	default_index = len;
+
+	for(index = 0; index < len; index++)
+	{
+		if(bxcan_baud_rate_tab[index].baud_rate == baud)
+			return index;
+
+		if(bxcan_baud_rate_tab[index].baud_rate == 1000UL * 250)
+			default_index = index;
+	}
+
+	if(default_index != len)
+		return default_index;
+
+	return 0;	
+}
+
 
 static void bxcan_init(CAN_TypeDef *pcan, rt_uint32_t baud, rt_uint32_t mode)
 {
     CAN_InitTypeDef        CAN_InitStructure;
+	
+	rt_uint32_t baud_index = bxcan_get_baud_index(baud);
 
     CAN_InitStructure.CAN_TTCM = DISABLE;
     CAN_InitStructure.CAN_ABOM = ENABLE;
@@ -288,10 +342,10 @@ static void bxcan_init(CAN_TypeDef *pcan, rt_uint32_t baud, rt_uint32_t mode)
         CAN_InitStructure.CAN_Mode = CAN_Mode_Silent_LoopBack;
         break;
     }
-    CAN_InitStructure.CAN_SJW = BAUD_DATA(SJW, baud);
-    CAN_InitStructure.CAN_BS1 = BAUD_DATA(BS1, baud);
-    CAN_InitStructure.CAN_BS2 = BAUD_DATA(BS2, baud);
-    CAN_InitStructure.CAN_Prescaler = BAUD_DATA(RRESCL, baud);
+    CAN_InitStructure.CAN_SJW = BAUD_DATA(SJW, baud_index);
+    CAN_InitStructure.CAN_BS1 = BAUD_DATA(BS1, baud_index);
+    CAN_InitStructure.CAN_BS2 = BAUD_DATA(BS2, baud_index);
+    CAN_InitStructure.CAN_Prescaler = BAUD_DATA(RRESCL, baud_index);
 
     CAN_Init(pcan, &CAN_InitStructure);
 }
@@ -320,6 +374,7 @@ static void bxcan1_hw_init(void)
     NVIC_InitStructure.NVIC_IRQChannel = CAN1_TX_IRQn;
     NVIC_Init(&NVIC_InitStructure);
 }
+#ifdef USING_BXCAN2
 static void bxcan2_hw_init(void)
 {
     GPIO_InitTypeDef  GPIO_InitStructure;
@@ -345,7 +400,8 @@ static void bxcan2_hw_init(void)
     NVIC_InitStructure.NVIC_IRQChannel = CAN2_TX_IRQn;
     NVIC_Init(&NVIC_InitStructure);
 }
-static inline rt_err_t bxcan_enter_init(CAN_TypeDef *pcan)
+#endif
+rt_inline rt_err_t bxcan_enter_init(CAN_TypeDef *pcan)
 {
     uint32_t wait_ack = 0x00000000;
 
@@ -361,7 +417,7 @@ static inline rt_err_t bxcan_enter_init(CAN_TypeDef *pcan)
     }
     return RT_EOK;
 }
-static inline rt_err_t bxcan_exit_init(CAN_TypeDef *pcan)
+rt_inline rt_err_t bxcan_exit_init(CAN_TypeDef *pcan)
 {
     uint32_t wait_ack = 0x00000000;
 
@@ -429,6 +485,9 @@ static rt_err_t bxcan_set_privmode(CAN_TypeDef *pcan, rt_uint32_t mode)
 static rt_err_t bxcan_set_baud_rate(CAN_TypeDef *pcan, rt_uint32_t baud)
 {
     rt_uint32_t mode;
+
+	rt_uint32_t baud_index = bxcan_get_baud_index(baud);
+	
     if (bxcan_enter_init(pcan) != RT_EOK)
     {
         return RT_ERROR;
@@ -436,10 +495,10 @@ static rt_err_t bxcan_set_baud_rate(CAN_TypeDef *pcan, rt_uint32_t baud)
     pcan->BTR = 0;
     mode = pcan->BTR & ((rt_uint32_t)0x03 << 30);
     pcan->BTR = (mode                         | \
-                 ((BAUD_DATA(SJW, baud)) << 24) | \
-                 ((BAUD_DATA(BS1, baud)) << 16) | \
-                 ((BAUD_DATA(BS2, baud)) << 20) | \
-                 (BAUD_DATA(RRESCL, baud)));
+                 ((BAUD_DATA(SJW, baud_index)) << 24) | \
+                 ((BAUD_DATA(BS1, baud_index)) << 16) | \
+                 ((BAUD_DATA(BS2, baud_index)) << 20) | \
+                 (BAUD_DATA(RRESCL, baud_index)));
     if (bxcan_exit_init(pcan) != RT_EOK)
     {
         return RT_ERROR;
@@ -793,6 +852,12 @@ static rt_err_t bxmodifyfilter(struct stm_bxcan *pbxcan, struct rt_can_filter_it
     rt_int32_t fcase;
     rt_err_t res;
     rt_int32_t hdr, fbase, foff;
+    rt_uint32_t ID[2];
+    rt_uint32_t shift;
+    rt_uint32_t thisid;
+    rt_uint32_t thismask;
+    CAN_FilterInitTypeDef  CAN_FilterInitStructure;
+    CAN_FilterRegister_TypeDef *pfilterreg;
 
     fcase = (pitem->mode | (pitem->ide << 1));
     hdr = bxcanfindfilter(pbxcan, pitem, fcase, &fbase, &foff);
@@ -838,14 +903,9 @@ static rt_err_t bxmodifyfilter(struct stm_bxcan *pbxcan, struct rt_can_filter_it
             return RT_EBUSY;
         }
     }
-    rt_uint32_t ID[2];
-    rt_uint32_t shift;
-    rt_uint32_t thisid;
-    rt_uint32_t thismask;
-    CAN_FilterInitTypeDef  CAN_FilterInitStructure;
 
     pitem->hdr =  hdr;
-    CAN_FilterRegister_TypeDef *pfilterreg = &((CAN_FilterRegister_TypeDef *)pbxcan->mfrbase)[fbase];
+    pfilterreg = &((CAN_FilterRegister_TypeDef *)pbxcan->mfrbase)[fbase];
     ID[0] = pfilterreg->FR1;
     ID[1] = pfilterreg->FR2;
     CAN_FilterInitStructure.CAN_FilterNumber = (pfilterreg - &CAN1->sFilterRegister[0]);
@@ -950,10 +1010,20 @@ static rt_err_t bxmodifyfilter(struct stm_bxcan *pbxcan, struct rt_can_filter_it
         }
         break;
     }
-    CAN_FilterInitStructure.CAN_FilterIdHigh = ((ID[1]) & 0x0000FFFF);
-    CAN_FilterInitStructure.CAN_FilterIdLow = ID[0] & 0x0000FFFF;
-    CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (ID[1] & 0xFFFF0000) >> 16;
-    CAN_FilterInitStructure.CAN_FilterMaskIdLow = (ID[0] & 0xFFFF0000) >> 16;
+    if(pitem->ide)
+    {
+        CAN_FilterInitStructure.CAN_FilterIdHigh = (ID[0] & 0xFFFF0000) >> 16;
+        CAN_FilterInitStructure.CAN_FilterIdLow = ID[0] & 0x0000FFFF;
+        CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (ID[1] & 0xFFFF0000) >> 16;
+        CAN_FilterInitStructure.CAN_FilterMaskIdLow = ((ID[1]) & 0x0000FFFF);
+    }
+    else
+    {
+        CAN_FilterInitStructure.CAN_FilterIdHigh = ((ID[1]) & 0x0000FFFF);
+        CAN_FilterInitStructure.CAN_FilterIdLow = ID[0] & 0x0000FFFF;
+        CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (ID[1] & 0xFFFF0000) >> 16;
+        CAN_FilterInitStructure.CAN_FilterMaskIdLow = (ID[0] & 0xFFFF0000) >> 16;
+    }
     if (fbase >= pbxcan->fifo1filteroff)
     {
         CAN_FilterInitStructure.CAN_FilterFIFOAssignment = 1;
@@ -1010,9 +1080,11 @@ static rt_err_t configure(struct rt_can_device *can, struct can_configure *cfg)
     }
     else
     {
+#ifdef USING_BXCAN2
         bxcan2_hw_init();
         bxcan_init(pbxcan, cfg->baud_rate, can->config.mode);
         bxcan2_filter_init(can);
+#endif
     }
     return RT_EOK;
 }
@@ -1094,7 +1166,6 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
         break;
     case RT_CAN_CMD_SET_FILTER:
         return setfilter(pbxcan, (struct rt_can_filter_config *) arg);
-        break;
     case RT_CAN_CMD_SET_MODE:
         argval = (rt_uint32_t) arg;
         if (argval != RT_CAN_MODE_NORMAL ||
@@ -1173,14 +1244,14 @@ static int sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno
     {
         assert_param(IS_CAN_STDID(pmsg->id));
         pbxcan->sTxMailBox[boxno].TIR |= ((pmsg->id << 21) | \
-                                          pmsg->rtr);
+                                          (pmsg->rtr << 1));
     }
     else
     {
         assert_param(IS_CAN_EXTID(pmsg->id));
         pbxcan->sTxMailBox[boxno].TIR |= ((pmsg->id << 3) | \
-                                          pmsg->ide << 2 | \
-                                          pmsg->rtr);
+                                          (pmsg->ide << 2) | \
+                                          (pmsg->rtr << 1));
     }
 
     pmsg->len &= (uint8_t)0x0000000F;
@@ -1248,33 +1319,37 @@ static const struct rt_can_ops canops =
 #ifdef USING_BXCAN1
 static struct stm_bxcan bxcan1data =
 {
-    .reg = CAN1,
-    .mfrbase = (void *) &CAN1->sFilterRegister[0],
-    .sndirq = CAN1_TX_IRQn,
-    .rcvirq0 = CAN1_RX0_IRQn,
-    .rcvirq1 = CAN1_RX1_IRQn,
-    .errirq =  CAN1_SCE_IRQn,
-    .alocmask = {0, 0},
-    .filtercnt = BX_CAN2_FMRSTART,
-    .fifo1filteroff = 7,
-    .filtermap = {
-        [0] = {
-            .id32mask_cnt = 0,
-            .id32bit_cnt = 0,
-            .id16mask_cnt = 2,
-            .id16bit_cnt = 24,
+    CAN1,
+    (void *) &CAN1->sFilterRegister[0],
+    CAN1_TX_IRQn,
+    CAN1_RX0_IRQn,
+    CAN1_RX1_IRQn,
+    CAN1_SCE_IRQn,
+    {
+        0,
+    },
+    {0, 0},
+    BX_CAN2_FMRSTART,
+    7,
+    {
+        {
+            0,
+            0,
+            2,
+            24,
         },
-        [1] = {
-            .id32mask_cnt = 0,
-            .id32bit_cnt = 0,
-            .id16mask_cnt = 2,
-            .id16bit_cnt = 24,
+        {
+            0,
+            0,
+            2,
+            24,
         },
     },
 };
 struct rt_can_device bxcan1;
 void CAN1_RX0_IRQHandler(void)
 {
+    rt_interrupt_enter();
     if (CAN1->RF0R & 0x03)
     {
         if ((CAN1->RF0R & CAN_RF0R_FOVR0) != 0)
@@ -1288,9 +1363,11 @@ void CAN1_RX0_IRQHandler(void)
         }
         CAN1->RF0R |= CAN_RF0R_RFOM0;
     }
+    rt_interrupt_leave();
 }
 void CAN1_RX1_IRQHandler(void)
 {
+    rt_interrupt_enter();
     if (CAN1->RF1R & 0x03)
     {
         if ((CAN1->RF1R & CAN_RF1R_FOVR1) != 0)
@@ -1304,10 +1381,12 @@ void CAN1_RX1_IRQHandler(void)
         }
         CAN1->RF1R |= CAN_RF1R_RFOM1;
     }
+    rt_interrupt_leave();
 }
 void CAN1_TX_IRQHandler(void)
 {
     rt_uint32_t state;
+    rt_interrupt_enter();
     if (CAN1->TSR & (CAN_TSR_RQCP0))
     {
         state =  CAN1->TSR & (CAN_TSR_RQCP0 | CAN_TSR_TXOK0 | CAN_TSR_TME0);
@@ -1347,11 +1426,13 @@ void CAN1_TX_IRQHandler(void)
             rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_TX_FAIL | 2 << 8);
         }
     }
+    rt_interrupt_leave();
 }
 void CAN1_SCE_IRQHandler(void)
 {
     rt_uint32_t errtype;
     errtype = CAN1->ESR;
+    rt_interrupt_enter();
     if (errtype & 0x70 && bxcan1.status.lasterrtype == (errtype & 0x70))
     {
         switch ((errtype & 0x70) >> 4)
@@ -1380,33 +1461,37 @@ void CAN1_SCE_IRQHandler(void)
     bxcan1.status.snderrcnt = (errtype >> 16 & 0xFF);
     bxcan1.status.errcode = errtype & 0x07;
     CAN1->MSR |= CAN_MSR_ERRI;
+    rt_interrupt_leave();
 }
 #endif /*USING_BXCAN1*/
 
 #ifdef USING_BXCAN2
 static struct stm_bxcan bxcan2data =
 {
-    .reg = CAN2,
-    .mfrbase = (void *) &CAN1->sFilterRegister[BX_CAN2_FMRSTART],
-    .sndirq = CAN2_TX_IRQn,
-    .rcvirq0 = CAN2_RX0_IRQn,
-    .rcvirq1 = CAN2_RX1_IRQn,
-    .errirq =  CAN2_SCE_IRQn,
-    .alocmask = {0, 0},
-    .filtercnt = BX_CAN_FMRNUMBER - BX_CAN2_FMRSTART,
-    .fifo1filteroff = 7,
-    .filtermap = {
-        [0] = {
-            .id32mask_cnt = 0,
-            .id32bit_cnt = 0,
-            .id16mask_cnt = 2,
-            .id16bit_cnt = 24,
+    CAN2,
+    (void *) &CAN1->sFilterRegister[BX_CAN2_FMRSTART],
+    CAN2_TX_IRQn,
+    CAN2_RX0_IRQn,
+    CAN2_RX1_IRQn,
+    CAN2_SCE_IRQn,
+    {
+        0,
+    }
+    {0, 0},
+    BX_CAN_FMRNUMBER - BX_CAN2_FMRSTART,
+    7,
+    {
+        {
+            0,
+            0,
+            2,
+            24,
         },
-        [1] = {
-            .id32mask_cnt = 0,
-            .id32bit_cnt = 0,
-            .id16mask_cnt = 2,
-            .id16bit_cnt = 24,
+        {
+            0,
+            0,
+            2,
+            24,
         },
     },
 };
@@ -1414,6 +1499,7 @@ static struct stm_bxcan bxcan2data =
 struct rt_can_device bxcan2;
 void CAN2_RX0_IRQHandler(void)
 {
+    rt_interrupt_enter();
     if (CAN2->RF0R & 0x03)
     {
         if ((CAN2->RF0R & CAN_RF0R_FOVR0) != 0)
@@ -1427,9 +1513,11 @@ void CAN2_RX0_IRQHandler(void)
         }
         CAN2->RF0R |= CAN_RF0R_RFOM0;
     }
+    rt_interrupt_leave();
 }
 void CAN2_RX1_IRQHandler(void)
 {
+    rt_interrupt_enter();
     if (CAN2->RF1R & 0x03)
     {
         if ((CAN2->RF1R & CAN_RF1R_FOVR1) != 0)
@@ -1443,10 +1531,12 @@ void CAN2_RX1_IRQHandler(void)
         }
         CAN2->RF1R |= CAN_RF1R_RFOM1;
     }
+    rt_interrupt_leave();
 }
 void CAN2_TX_IRQHandler(void)
 {
     rt_uint32_t state;
+    rt_interrupt_enter();
     if (CAN2->TSR & (CAN_TSR_RQCP0))
     {
         state =  CAN2->TSR & (CAN_TSR_RQCP0 | CAN_TSR_TXOK0 | CAN_TSR_TME0);
@@ -1486,11 +1576,13 @@ void CAN2_TX_IRQHandler(void)
             rt_hw_can_isr(&bxcan2, RT_CAN_EVENT_TX_FAIL | 2 << 8);
         }
     }
+    rt_interrupt_leave();
 }
 void CAN2_SCE_IRQHandler(void)
 {
     rt_uint32_t errtype;
     errtype = CAN2->ESR;
+    rt_interrupt_enter();
     if (errtype & 0x70 && bxcan2.status.lasterrtype == (errtype & 0x70))
     {
         switch ((errtype & 0x70) >> 4)
@@ -1519,6 +1611,7 @@ void CAN2_SCE_IRQHandler(void)
     bxcan2.status.snderrcnt = (errtype >> 16 & 0xFF);
     bxcan2.status.errcode = errtype & 0x07;
     CAN2->MSR |= CAN_MSR_ERRI;
+    rt_interrupt_leave();
 }
 #endif /*USING_BXCAN2*/
 
@@ -1563,4 +1656,4 @@ int stm32_bxcan_init(void)
 }
 INIT_BOARD_EXPORT(stm32_bxcan_init);
 
-#endif /*RT_USING_CAN2*/
+#endif /*RT_USING_CAN*/

@@ -35,6 +35,7 @@
 
 #define is_alpha(ch)	((ch | 0x20) - 'a') < 26u
 #define is_digit(ch)	((ch) >= '0' && (ch) <= '9')
+#define is_xdigit(ch)	(((ch) >= '0' && (ch) <= '9') || (((ch | 0x20) - 'a') < 6u))
 #define is_separator(ch) !(((ch) >= 'a' && (ch) <= 'z') \
      || ((ch) >= 'A' && (ch) <= 'Z') || ((ch) >= '0' && (ch) <= '9') || ((ch) == '_'))
 #define is_eof(self) (self)->eof
@@ -65,12 +66,12 @@ static long token_spec_number(char* string, int length, int b);
 static void token_run(struct finsh_token* self);
 static int  token_match_name(struct finsh_token* self, const char* str);
 static void token_proc_number(struct finsh_token* self);
-static u_char* token_proc_string(struct finsh_token* self);
+static uint8_t* token_proc_string(struct finsh_token* self);
 static void token_trim_space(struct finsh_token* self);
 static char token_proc_char(struct finsh_token* self);
 static int token_proc_escape(struct finsh_token* self);
 
-void finsh_token_init(struct finsh_token* self, u_char* line)
+void finsh_token_init(struct finsh_token* self, uint8_t* line)
 {
 	memset(self, 0, sizeof(struct finsh_token));
 
@@ -85,12 +86,12 @@ enum finsh_token_type finsh_token_token(struct finsh_token* self)
 	return (enum finsh_token_type)self->current_token;
 }
 
-void finsh_token_get_token(struct finsh_token* self, u_char* token)
+void finsh_token_get_token(struct finsh_token* self, uint8_t* token)
 {
 	strncpy((char*)token, (char*)self->string, FINSH_NAME_MAX);
 }
 
-int token_get_string(struct finsh_token* self, u_char* str)
+int token_get_string(struct finsh_token* self, uint8_t* str)
 {
 	unsigned char *p=str;
 	char ch;
@@ -381,9 +382,9 @@ static char token_proc_char(struct finsh_token* self)
 	return ch;
 }
 
-static u_char* token_proc_string(struct finsh_token* self)
+static uint8_t* token_proc_string(struct finsh_token* self)
 {
-	u_char* p;
+	uint8_t* p;
 
 	for ( p = &self->string[0]; p - &(self->string[0]) < FINSH_STRING_MAX; )
 	{
@@ -439,12 +440,16 @@ static int token_proc_escape(struct finsh_token* self)
 	case 'a':
 		result = '\007';
 		break;
+	case '"':
+		result = '"';
+		break;
 	case 'x':
+	case 'X':
 		result = 0;
 		ch  = token_next_char(self);
-		while ( (ch - '0')<16u )
+		while (is_xdigit(ch))
 		{
-			result = result*16 + ch - '0';
+			result = result * 16 + ((ch < 'A') ? (ch - '0') : (ch | 0x20) - 'a' + 10);
 			ch = token_next_char(self);
 		}
 		token_prev_char(self);

@@ -145,8 +145,8 @@
 #define RT_DFS_ELM_CODE_PAGE    936
 // <bool name="RT_DFS_ELM_CODE_PAGE_FILE" description="Using OEM code page file" default="false" />
 #define RT_DFS_ELM_CODE_PAGE_FILE
-// <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="256" />
-#define RT_DFS_ELM_MAX_LFN  256
+// <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="255" />
+#define RT_DFS_ELM_MAX_LFN  255
 // <integer name="RT_DFS_ELM_MAX_SECTOR_SIZE" description="Maximal size of sector" default="512" />
 #define RT_DFS_ELM_MAX_SECTOR_SIZE  4096
 // <bool name="RT_DFS_ELM_USE_ERASE" description="Enable erase feature for flash" default="true" />

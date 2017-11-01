@@ -41,12 +41,12 @@ union finsh_value {
 };
 
 extern union finsh_value*	finsh_sp;		/* stack pointer */
-extern u_char*				finsh_pc;		/* PC */
+extern uint8_t*				finsh_pc;		/* PC */
 
 /* stack */
 extern union finsh_value	finsh_vm_stack[FINSH_STACK_MAX];
 /* text segment */
-extern u_char				text_segment[FINSH_TEXT_MAX];
+extern uint8_t				text_segment[FINSH_TEXT_MAX];
 
 void finsh_vm_run(void);
 //void finsh_disassemble(void);

@@ -104,7 +104,7 @@ struct finsh_var* finsh_var_lookup(const char* name)
 }
 
 #ifdef RT_USING_HEAP
-void finsh_sysvar_append(const char* name, u_char type, void* var_addr)
+void finsh_sysvar_append(const char* name, uint8_t type, void* var_addr)
 {
 	/* create a sysvar */
 	struct finsh_sysvar_item* item;
