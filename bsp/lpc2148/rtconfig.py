@@ -39,9 +39,9 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -mcpu=arm7tdmi-s'
-    CFLAGS = DEVICE + ' -DRT_USING_MINILIBC'
+    CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc214x.map,-cref,-u,_start -T lpc2148_rom.ld'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc214x.map,-cref,-u,_start -T lpc2148_rom.ld -nostartfiles'
 
     CPATH = ''
     LPATH = ''
