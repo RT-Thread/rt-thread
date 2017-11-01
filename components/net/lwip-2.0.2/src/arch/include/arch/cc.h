@@ -61,7 +61,7 @@
 #define LWIP_PROVIDE_ERRNO
 #endif
 
-#ifdef RT_USING_LIBC
+#if defined(RT_USING_LIBC) || defined(RT_USING_MINILIBC)
 #include <sys/time.h>
 #define LWIP_TIMEVAL_PRIVATE	   0
 #else
