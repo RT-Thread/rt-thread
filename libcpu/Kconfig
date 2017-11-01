@@ -33,21 +33,25 @@ config ARCH_ARM_MMU
     bool
     depends on ARCH_ARM
 
-config ARCH_ARM_CORTEX_A5
+config ARCH_ARM_CORTEX_A
     bool
     select ARCH_ARM
+
+config ARCH_ARM_CORTEX_A5
+    bool
+    select ARCH_ARM_CORTEX_A
 
 config ARCH_ARM_CORTEX_A7
     bool
-    select ARCH_ARM
+    select ARCH_ARM_CORTEX_A
 
 config ARCH_ARM_CORTEX_A8
     bool
-    select ARCH_ARM
+    select ARCH_ARM_CORTEX_A
 
 config ARCH_ARM_CORTEX_A9
     bool
-    select ARCH_ARM
+    select ARCH_ARM_CORTEX_A
 
 config ARCH_MIPS
     bool
