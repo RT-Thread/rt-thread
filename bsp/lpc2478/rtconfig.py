@@ -39,9 +39,9 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -mcpu=arm7tdmi-s'
-    CFLAGS = DEVICE + ' -DRT_USING_MINILIBC'
+    CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc2478.map,-cref,-u,Reset_Handler -T lpc2478_rom.lds'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc2478.map,-cref,-u,Reset_Handler -nostartfiles -T lpc2478_rom.lds'
 
     CPATH = ''
     LPATH = ''
