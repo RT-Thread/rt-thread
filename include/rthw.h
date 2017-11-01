@@ -48,15 +48,29 @@ extern "C" {
 #define HWREG8(x)           (*((volatile rt_uint8_t *)(x)))
 #endif
 
+#ifndef RT_CPU_CACHE_LINE_SZ
+#define RT_CPU_CACHE_LINE_SZ	32
+#endif
+
+enum RT_HW_CACHE_OPS
+{
+    RT_HW_CACHE_FLUSH      = 0x01,
+    RT_HW_CACHE_INVALIDATE = 0x02,
+};
+
 /*
  * CPU interfaces
  */
 void rt_hw_cpu_icache_enable(void);
 void rt_hw_cpu_icache_disable(void);
 rt_base_t rt_hw_cpu_icache_status(void);
+void rt_hw_cpu_icache_ops(int ops, void* addr, int size);
+
 void rt_hw_cpu_dcache_enable(void);
 void rt_hw_cpu_dcache_disable(void);
 rt_base_t rt_hw_cpu_dcache_status(void);
+void rt_hw_cpu_dcache_ops(int ops, void* addr, int size);
+
 void rt_hw_cpu_reset(void);
 void rt_hw_cpu_shutdown(void);
 
