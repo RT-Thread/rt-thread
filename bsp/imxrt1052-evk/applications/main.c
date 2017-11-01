@@ -29,8 +29,17 @@
 #ifdef RT_USING_DFS
 #include <dfs_file.h>
 #endif
+     
+#ifdef RT_USING_GUIENGINE
+#include "rtgui_demo.h"
+#include <rtgui/driver.h>
+#endif
 
 #include <board.h>
+
+#define DEBUG
+
+#ifdef DEBUG
 
 RT_USED MPU_Type *mpu = MPU;
 RT_USED IOMUXC_GPR_Type *iomuxc_gpr = IOMUXC_GPR;
@@ -73,12 +82,18 @@ void dump_tcm(void)
     DUMP_REG(IOMUXC_GPR->GPR17);
 }
 
+#endif
+
 int main(void)
 {
-    //dump_clock();
-    //dump_tcm();
+#ifdef DEBUG
+    dump_clock();
+    dump_tcm();
+#endif  
     
     rt_thread_delay(RT_TICK_PER_SECOND * 2);
+    
+    rt_gui_demo_init();
     
     /* mount sd card fat partition 1 as root directory */
     if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
