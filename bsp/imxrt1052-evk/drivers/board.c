@@ -106,9 +106,6 @@ void rt_hw_board_init()
     BOARD_BootClockRUN();
     
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
-
-    extern int imxrt_hw_usart_init(void);
-    imxrt_hw_usart_init();
     
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
