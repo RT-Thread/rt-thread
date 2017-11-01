@@ -36,6 +36,9 @@ extern int __data_end__;
 
 void rt_hw_board_init(void);
 
+#define RT_HW_LCD_WIDTH     ((uint16_t)480)     /* LCD PIXEL WIDTH            */
+#define RT_HW_LCD_HEIGHT    ((uint16_t)272)     /* LCD PIXEL HEIGHT           */
+
 #endif
 
 //*** <<< end of configuration section >>>    ***

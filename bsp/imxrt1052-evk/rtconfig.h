@@ -63,8 +63,8 @@
 #define FINSH_CMD_SIZE 80
 /* FINSH_USING_AUTH is not set */
 #define FINSH_USING_MSH
-//#define FINSH_USING_MSH_DEFAULT
-//#define FINSH_USING_MSH_ONLY
+#define FINSH_USING_MSH_DEFAULT
+/* FINSH_USING_MSH_ONLY is not set */
 
 /* Device virtual file system */
 
@@ -95,7 +95,10 @@
 #define RT_USING_SERIAL
 /* RT_USING_CAN is not set */
 /* RT_USING_HWTIMER is not set */
-/* RT_USING_I2C is not set */
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
+//#define RT_I2C_DEBUG
+//#define RT_I2C_BIT_DEBUG
 /* RT_USING_PIN is not set */
 /* RT_USING_MTD_NOR is not set */
 /* RT_USING_MTD_NAND is not set */
@@ -119,9 +122,8 @@
 /* light weight TCP/IP stack */
 
 #define RT_USING_LWIP
+/* RT_USING_LWIP141 is not set */
 #define RT_USING_LWIP202
-//#define RT_LWIP_DEBUG
-/* RT_USING_LWIP202 is not set */
 /* RT_LWIP_IGMP is not set */
 #define RT_LWIP_ICMP
 /* RT_LWIP_SNMP is not set */

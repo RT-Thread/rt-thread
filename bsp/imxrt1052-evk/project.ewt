@@ -2361,6 +2361,15 @@
             <name>$PROJ_DIR$\..\..\components\drivers\src\dataqueue.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\..\components\drivers\i2c\i2c-bit-ops.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\drivers\i2c\i2c_core.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\components\drivers\i2c\i2c_dev.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\components\drivers\sdio\mmc.c</name>
         </file>
         <file>
@@ -2431,6 +2440,12 @@
         </file>
         <file>
             <name>$PROJ_DIR$\drivers\drv_eth.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\drivers\drv_ft5406.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\drivers\drv_i2c.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\drivers\drv_lcd.c</name>

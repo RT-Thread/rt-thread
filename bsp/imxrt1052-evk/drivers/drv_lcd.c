@@ -23,9 +23,6 @@
 
 #ifdef RT_USING_GUIENGINE
 
-#define RT_HW_LCD_WIDTH     ((uint16_t)480)     /* LCD PIXEL WIDTH            */
-#define RT_HW_LCD_HEIGHT    ((uint16_t)272)     /* LCD PIXEL HEIGHT           */
-
 #define APP_HSW 41
 #define APP_HFP 4
 #define APP_HBP 8
