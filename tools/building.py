@@ -258,6 +258,16 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         and rtconfig.PLATFORM == 'gcc':
         AddDepend('RT_USING_MINILIBC')
 
+    AddOption('--genconfig', 
+                dest = 'genconfig',
+                action = 'store_true',
+                default = False, 
+                help = 'Generate .config from rtconfig.h')
+    if GetOption('genconfig'):
+        from genconf import genconfig
+        genconfig()
+        exit(0)
+
     # add comstr option
     AddOption('--verbose',
                 dest='verbose',
