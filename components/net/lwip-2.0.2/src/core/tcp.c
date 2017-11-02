@@ -358,7 +358,6 @@ tcp_close_shutdown_fin(struct tcp_pcb *pcb)
   default:
     /* Has already been closed, do nothing. */
     return ERR_OK;
-    break;
   }
 
   if (err == ERR_OK) {
