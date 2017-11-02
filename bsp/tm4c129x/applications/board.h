@@ -23,16 +23,6 @@
 #include <stdint.h>
 
 extern uint32_t SysClock;
-// <RDTConfigurator URL="http://www.rt-thread.com/eclipse">
-
-// <bool name="RT_USING_UART0" description="Using UART0" default="true" />
-#define RT_USING_UART0
-// <bool name="RT_USING_UART1" description="Using UART1" default="true" />
-//#define RT_USING_UART1
-// <bool name="RT_USING_UART2" description="Using UART2" default="true" />
-//#define RT_USING_UART2
-
-// </RDTConfigurator>
 
 #ifdef __CC_ARM
 extern int Image$$RW_IRAM$$ZI$$Limit;
