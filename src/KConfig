@@ -44,16 +44,11 @@ config RT_DEBUG_INIT
         print the procedure name of initialization
 
 config RT_DEBUG_THREAD
-    bool "Enable thread switch information dump"
-    default n
+    int "Enable thread switch information dump"
+    default 0
     help
         print the switch to/from thread name when each thread context switch
 
-config RT_USING_INTERRUPT_INFO
-    bool "Enable additional interrupt trace information"
-    default n
-    help
-		Add name and counter information for interrupt trace.
 endif
 
 config RT_USING_HOOK
@@ -149,6 +144,12 @@ menu "Kernel Device Object"
     config RT_USING_DEVICE
         bool "Using device object"
         default y
+
+    config RT_USING_INTERRUPT_INFO
+        bool "Enable additional interrupt trace information"
+        default n
+        help
+            Add name and counter information for interrupt trace.
 
     config RT_USING_CONSOLE
         bool "Using console for rt_kprintf"
