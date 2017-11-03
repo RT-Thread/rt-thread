@@ -27,6 +27,20 @@
 
 #include <asm9260t.h>
 
-void rt_hw_board_init(void);
+#if defined(__CC_ARM)
+extern int Image$$ER_ZI$$ZI$$Limit;
+#define HEAP_BEGIN (&Image$$ER_ZI$$ZI$$Limit)
+#elif(defined(__GNUC__))
+extern unsigned char __bss_end__;
+#define HEAP_BEGIN (&__bss_end__)
+#elif(defined(__ICCARM__))
+#pragma section = ".noinit"
+#define HEAP_BEGIN (__section_end(".noinit"))
+#endif
+
+#define HEAP_END (0x22000000)
+
+
+extern void rt_hw_board_init(void);
 
 #endif
