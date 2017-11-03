@@ -1,0 +1,23 @@
+menu "VBUS(Virtual Software BUS)"
+
+config RT_USING_VBUS
+    bool "Enable VBUS"
+    default n
+
+if RT_USING_VBUS
+    config RT_USING_VBUS_RFS
+        bool "Enable Remote File System on VBUS"
+        default n
+        help
+            When enable remote file system, the application can visit the remote file system
+            through VBUS with POSIX file I/O. 
+    
+    config RT_USING_VBUS_RSHELL
+        bool "Enable Remote Shell on VBUS"
+        default n
+        help
+            When enable remote shell, the finsh/msh of RT-Thread can be operated from another
+            Operating System.
+endif
+
+endmenu
