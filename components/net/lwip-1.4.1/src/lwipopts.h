@@ -363,8 +363,12 @@
  * LWIP_COMPAT_SOCKETS==1: Enable BSD-style sockets functions names.
  * (only used if you use sockets.c)
  */
+#ifdef RT_USING_DFS_NET
+#define LWIP_COMPAT_SOCKETS             0
+#else
 #ifndef LWIP_COMPAT_SOCKETS
 #define LWIP_COMPAT_SOCKETS             1
+#endif
 #endif
 
 
