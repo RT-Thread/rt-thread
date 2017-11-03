@@ -391,6 +391,8 @@ static void eth_rx_thread_entry(void* parameter)
             /* receive all of buffer */
             while (1)
             {
+                if(device->eth_rx == RT_NULL) break;
+                
                 p = device->eth_rx(&(device->parent));
                 if (p != RT_NULL)
                 {
