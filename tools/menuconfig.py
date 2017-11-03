@@ -33,7 +33,7 @@ def mk_rtconfig(filename):
             empty_line = 0
         else:
             empty_line = 0
-            setting = line.split('=')
+            setting = line.split('=', 1)
             if len(setting) >= 2:
                 if setting[0].startswith('CONFIG_'):
                     setting[0] = setting[0][7:]
