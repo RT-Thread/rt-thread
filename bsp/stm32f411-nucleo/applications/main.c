@@ -1,19 +1,20 @@
-//------------------------------------------------------------------------------
-//  Copyright(C) ASRC, 2013-2016. All rights reserved.
-//------------------------------------------------------------------------------
-//  Project    : TBD
-//  Description: DRMP Application Entry
-//  Author     : Fu Pengfei
-//------------------------------------------------------------------------------
-//  Change Logs:
-//  Date         Notes
-//  2015-07-29   first implementation
-//------------------------------------------------------------------------------
-//  $Id:: main.c 1119 2015-10-07 09:11:14Z arda                                $
-//------------------------------------------------------------------------------
+/*
+ * File      : main.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2009, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2015-07-29     Arda.Fu      first implementation
+ */
 #include <rtthread.h>
 
 int main(void)
 {
   /* user app entry */
+  return 0;
 }
