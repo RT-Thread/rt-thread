@@ -404,7 +404,7 @@ int wifi(int argc, char** argv)
     wlan = (struct rt_wlan_device*)rt_device_find(argv[1]);
     if (!wlan)
     {
-        rt_kprintf("no wlan:%s device\n");
+        rt_kprintf("no wlan:%s device\n", argv[1]);
         return 0;
     }
 
@@ -480,6 +480,7 @@ int wifi(int argc, char** argv)
             rt_wlan_info_init(info, WIFI_AP, SECURITY_OPEN, argv[3]);
             info->channel = 11;
 
+            result =rt_wlan_init(wlan, WIFI_AP);
             /* start soft ap */
             result = rt_wlan_softap(wlan, info, NULL);
         }
@@ -489,6 +490,7 @@ int wifi(int argc, char** argv)
             rt_wlan_info_init(info, WIFI_AP, SECURITY_WPA2_AES_PSK, argv[3]);
             info->channel = 11;
 
+            result =rt_wlan_init(wlan, WIFI_AP);
             /* start soft ap */
             result = rt_wlan_softap(wlan, info, argv[4]);
         }
