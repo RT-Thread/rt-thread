@@ -199,15 +199,14 @@ typedef int (*init_fn_t)(void);
 
 /* board init routines will be called in board_init() function */
 #define INIT_BOARD_EXPORT(fn)           INIT_EXPORT(fn, "1")
-/* device/component/fs/app init routines will be called in init_thread */
-/* device initialization */
-#define INIT_DEVICE_EXPORT(fn)          INIT_EXPORT(fn, "2")
+
+/* pre/device/component/env/app init routines will be called in init_thread */
 /* components pre-initialization (pure software initilization) */
 #define INIT_PREV_EXPORT(fn)            INIT_EXPORT(fn, "2")
+/* device initialization */
+#define INIT_DEVICE_EXPORT(fn)          INIT_EXPORT(fn, "3")
 /* components initialization (dfs, lwip, ...) */
-#define INIT_COMPONENT_EXPORT(fn)       INIT_EXPORT(fn, "3")
-/* file system initialization (dfs-elm, dfs-rom, ...) */
-#define INIT_FS_EXPORT(fn)              INIT_EXPORT(fn, "4")
+#define INIT_COMPONENT_EXPORT(fn)       INIT_EXPORT(fn, "4")
 /* environment initialization (mount disk, ...) */
 #define INIT_ENV_EXPORT(fn)             INIT_EXPORT(fn, "5")
 /* appliation initialization (rtgui application etc ...) */

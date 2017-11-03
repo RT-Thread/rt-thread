@@ -330,5 +330,5 @@ int dfs_romfs_init(void)
     dfs_register(&_romfs);
     return 0;
 }
-INIT_FS_EXPORT(dfs_romfs_init);
+INIT_COMPONENT_EXPORT(dfs_romfs_init);
 
