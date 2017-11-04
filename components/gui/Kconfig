@@ -56,6 +56,10 @@ config RTGUI_IMAGE_BMP
     bool "Support BMP image format"
     default n
 
+config RTGUI_IMAGE_CONTAINER
+    bool "Use image container"
+    default n
+    
 endif
 
 endmenu
