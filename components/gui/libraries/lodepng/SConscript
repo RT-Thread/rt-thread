@@ -9,8 +9,8 @@ lodepng.c
 CPPPATH = [cwd]
 
 if rtconfig.ARCH == 'sim':
-	group = DefineGroup('RTGUI', src, depend = ['RT_USING_RTGUI', 'RTGUI_IMAGE_LODEPNG'], CPPPATH = CPPPATH)
+	group = DefineGroup('RTGUI', src, depend = ['RT_USING_GUIENGINE', 'RTGUI_IMAGE_LODEPNG'], CPPPATH = CPPPATH)
 else:
-	group = DefineGroup('RTGUI', src, depend = ['RT_USING_RTGUI', 'RTGUI_IMAGE_LODEPNG', 'RT_USING_LIBC'], CPPPATH = CPPPATH)
+	group = DefineGroup('RTGUI', src, depend = ['RT_USING_GUIENGINE', 'RTGUI_IMAGE_LODEPNG', 'RT_USING_LIBC'], CPPPATH = CPPPATH)
 
 Return('group')
