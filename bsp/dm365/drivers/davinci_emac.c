@@ -38,12 +38,12 @@ extern void mmu_invalidate_dcache(rt_uint32_t buffer, rt_uint32_t size);
 /* EMAC internal utility function */
 static inline rt_uint32_t emac_virt_to_phys(void *addr)
 {
-	return addr;
+	return (rt_uint32_t)addr;
 }
 
 static inline rt_uint32_t virt_to_phys(void *addr)
 {
-	return addr;
+	return (rt_uint32_t)addr;
 }
 
 /* Cache macros - Packet buffers would be from pbuf pool which is cached */
@@ -1448,7 +1448,7 @@ static int emac_hw_enable(struct emac_priv *priv)
 		emac_write(EMAC_RXINTMASKSET, BIT(ch));
 		rxch->queue_active = 1;
 		emac_write(EMAC_RXHDP(ch),
-			   rxch->active_queue_head); /* physcal addr */
+			   (unsigned int)(rxch->active_queue_head)); /* physcal addr */
 	}
 
 	/* Enable MII */
@@ -1643,7 +1643,7 @@ void dm365_emac_gpio_init(void)
 	davinci_writel(arm_intmux, DM365_ARM_INTMUX);
 }
 
-void rt_hw_davinci_emac_init()
+int rt_hw_davinci_emac_init()
 {
 	struct emac_priv *priv = &davinci_emac_device;
 	struct clk  *emac_clk;
@@ -1652,11 +1652,11 @@ void rt_hw_davinci_emac_init()
 	psc_change_state(DAVINCI_DM365_LPSC_CPGMAC, PSC_ENABLE);
 	dm365_emac_gpio_init();
 	rt_memset(&davinci_emac_device, 0, sizeof(davinci_emac_device));
-	davinci_emac_device.emac_base = DM365_EMAC_CNTRL_BASE;
-	davinci_emac_device.ctrl_base = DM365_EMAC_WRAP_CNTRL_BASE;
+	davinci_emac_device.emac_base = (void __iomem *)DM365_EMAC_CNTRL_BASE;
+	davinci_emac_device.ctrl_base = (void __iomem *)DM365_EMAC_WRAP_CNTRL_BASE;
 	davinci_emac_device.ctrl_ram_size = DM365_EMAC_CNTRL_RAM_SIZE;
-	davinci_emac_device.emac_ctrl_ram = DM365_EMAC_WRAP_RAM_BASE;
-	davinci_emac_device.mdio_base = DM365_EMAC_MDIO_BASE;
+	davinci_emac_device.emac_ctrl_ram = (void __iomem *)DM365_EMAC_WRAP_RAM_BASE;
+	davinci_emac_device.mdio_base = (void __iomem *)DM365_EMAC_MDIO_BASE;
 	davinci_emac_device.version = EMAC_VERSION_2;
 	davinci_emac_device.rmii_en = 0;
 	davinci_emac_device.phy_addr = 0x09;
