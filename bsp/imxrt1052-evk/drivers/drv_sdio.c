@@ -554,9 +554,6 @@ err:
 
 int imxrt_mci_init(void)
 {
-    
-    rt_mmcsd_core_init();
-	rt_mmcsd_blk_init();
     /* initilize sd card */
     _imxrt_mci_init();
     
