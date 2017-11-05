@@ -67,9 +67,6 @@ int main(void)
 #endif
 
 #ifdef RT_USING_SDIO
-	rt_mmcsd_core_init();
-	rt_mmcsd_blk_init();
-	rt_hw_mmcsd_init();
 	timeout = 0;
 	while ((rt_device_find("sd0") == RT_NULL) && (timeout++ < RT_TICK_PER_SECOND*2))
 	{
