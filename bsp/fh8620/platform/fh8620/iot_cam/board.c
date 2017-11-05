@@ -584,10 +584,6 @@ void rt_board_driver_init(){
 
 #ifdef RT_USING_SDIO
 #ifndef RT_USING_WIFI_MARVEL
-    rt_mmcsd_core_init();
-	rt_kprintf("MMC CORE initialized!\n");
-    rt_mmcsd_blk_init();
-	rt_kprintf("MMC BLK initialized!\n");
     rt_hw_mmc_init();
 	rt_kprintf("MMC initialized!\n");
     rt_thread_delay(RT_TICK_PER_SECOND*2);
