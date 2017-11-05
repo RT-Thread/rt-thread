@@ -726,7 +726,7 @@ void mmcsd_free_host(struct rt_mmcsd_host *host)
     rt_free(host);
 }
 
-void rt_mmcsd_core_init(void)
+int rt_mmcsd_core_init(void)
 {
     rt_err_t ret;
 
@@ -750,4 +750,6 @@ void rt_mmcsd_core_init(void)
 
     rt_sdio_init();
 }
+
+INIT_PREV_EXPORT(rt_mmcsd_core_init);
 

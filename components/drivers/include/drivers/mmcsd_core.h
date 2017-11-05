@@ -247,9 +247,9 @@ void mmcsd_change(struct rt_mmcsd_host *host);
 void mmcsd_detect(void *param);
 struct rt_mmcsd_host *mmcsd_alloc_host(void);
 void mmcsd_free_host(struct rt_mmcsd_host *host);
-void rt_mmcsd_core_init(void);
+int rt_mmcsd_core_init(void);
 
-void rt_mmcsd_blk_init(void);
+int rt_mmcsd_blk_init(void);
 rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card);
 void rt_mmcsd_blk_remove(struct rt_mmcsd_card *card);
 

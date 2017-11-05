@@ -834,7 +834,7 @@ static void mci_gpio_init()
 #endif
 }
 
-rt_int32_t at91_mci_init(void)
+int at91_mci_init(void)
 {
 	struct rt_mmcsd_host *host;
 	struct at91_mci *mci;
@@ -903,6 +903,7 @@ err:
 	return -RT_ENOMEM;
 }
 
+INIT_DEVICE_EXPORT(at91_mci_init);
 
 #include "finsh.h"
 FINSH_FUNCTION_EXPORT(at91_mci_init, at91sam9260 sd init);
