@@ -24,6 +24,7 @@
  */
 #include <rtthread.h>
 #include <rtgui/rtgui.h>
+#include <rtgui/image.h>
 
 #ifdef RTGUI_IMAGE_JPEG
 #include <stdio.h>
