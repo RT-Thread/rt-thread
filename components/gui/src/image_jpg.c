@@ -611,7 +611,6 @@ static rt_bool_t rtgui_image_jpeg_check(struct rtgui_filerw *file)
 #include <rtgui/rtgui_system.h>
 #include <rtgui/filerw.h>
 #include <rtgui/blit.h>
-#include <rtgui/image_jpeg.h>
 
 #ifdef RTGUI_USING_DFS_FILERW
 #include <dfs_posix.h>
