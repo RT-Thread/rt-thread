@@ -22,8 +22,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-extern uint32_t SysClock;
-
+extern uint32_t SystemCoreClock;
 #ifdef __CC_ARM
 extern int Image$$RW_IRAM$$ZI$$Limit;
 #define HEAP_BEGIN  ((void *)&Image$$RW_IRAM$$ZI$$Limit)
