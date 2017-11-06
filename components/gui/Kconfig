@@ -36,21 +36,33 @@ config RTGUI_IMAGE_XPM
     bool "Support XPM image format"
     default n
 
-config RTGUI_IMAGE_JPEG
-    bool "Support JPEG image format"
-    default n
+choice
+    prompt "JPEG image format"
+    default RTGUI_IMAGE_JPEG_NONE
 
-config RTGUI_IMAGE_TJPGD
-    bool "Use TJPGD for JPEG image"
-    default n
+    config RTGUI_IMAGE_JPEG_NONE
+        bool "No PNG image format"
 
-config RTGUI_IMAGE_PNG
-    bool "Support PNG image format"
-    default n
+    config RTGUI_IMAGE_JPEG
+        bool "Use libjpeg"
 
-config RTGUI_IMAGE_LODEPNG
-    bool "Use lodepng for PNG image"
-    default n
+    config RTGUI_IMAGE_TJPGD
+        bool "Use TJPGD"
+endchoice
+
+choice
+    prompt "PNG image format"
+    default RTGUI_IMAGE_PNG_NONE
+
+    config RTGUI_IMAGE_PNG_NONE
+        bool "No PNG image format"
+
+    config RTGUI_IMAGE_PNG
+        bool "Use libpng"
+
+    config RTGUI_IMAGE_LODEPNG
+        bool "Use lodepng"
+endchoice
 
 config RTGUI_IMAGE_BMP
     bool "Support BMP image format"
