@@ -22,10 +22,11 @@
  * 2010-09-15     Bernard      first version
  */
 
- #include <rtthread.h>
+#include <rtthread.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/blit.h>
 #include <rtgui/driver.h>
+#include <rtgui/image.h>
 
 #ifdef RTGUI_IMAGE_PNG
 #include "png.h"
@@ -424,7 +425,6 @@ void rtgui_image_png_init()
 
 #elif defined(RTGUI_IMAGE_LODEPNG)
 #include "lodepng.h"
-#include <rtgui/image.h>
 
 static rt_bool_t rtgui_image_png_check(struct rtgui_filerw *file);
 static rt_bool_t rtgui_image_png_load(struct rtgui_image *image, struct rtgui_filerw *file, rt_bool_t load);
