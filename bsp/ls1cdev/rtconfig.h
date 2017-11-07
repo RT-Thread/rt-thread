@@ -227,6 +227,11 @@
 #define RTGUI_IMAGE_BMP
 // </section>
 
+#define RT_USING_SPI
+#define RT_USING_SPI0
+#define RT_USING_SPI1
+
+
 // </RDTConfigurator>
 
 #endif
