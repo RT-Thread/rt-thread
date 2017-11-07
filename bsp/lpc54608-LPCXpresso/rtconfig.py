@@ -4,17 +4,17 @@ import os
 ARCH='arm'
 CPU='cortex-m4'
 CROSS_TOOL='gcc'
-BOARD_NAME = 'lpc5410x'
+BOARD_NAME = 'lpcxpresso'
 
 if os.getenv('RTT_CC'):
-	CROSS_TOOL = os.getenv('RTT_CC')
+    CROSS_TOOL = os.getenv('RTT_CC')
 
 if  CROSS_TOOL == 'gcc':
-	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= r'D:/Program Files/CodeSourcery/Sourcery_CodeBench_Lite_for_ARM_EABI/bin'
+    PLATFORM    = 'gcc'
+    EXEC_PATH   = r'D:/Program Files/CodeSourcery/Sourcery_CodeBench_Lite_for_ARM_EABI/bin'
 elif CROSS_TOOL == 'keil':
-	PLATFORM 	= 'armcc'
-	EXEC_PATH 	= 'D:/Keil_v5'
+    PLATFORM    = 'armcc'
+    EXEC_PATH   = 'D:/Keil_v5'
 elif CROSS_TOOL == 'iar':
     print '================ERROR============================'
     print 'Not support iar yet!'
@@ -22,7 +22,7 @@ elif CROSS_TOOL == 'iar':
     exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):
-	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
 
@@ -39,10 +39,10 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -mcpu=cortex-m4 -mthumb -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -g -Wall '
+    DEVICE = ' -mcpu=cortex-m4 -mthumb -ffunction-sections -fdata-sections -mfpu=fpv4-sp-d16 -mfloat-abi=hard'
+    CFLAGS = DEVICE + ' -g -Wall -std=c99'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles  -Wl,--gc-sections,-Map=rtthread-' + BOARD_NAME +'.map,-cref,-u,Reset_Handler -T rtthread-' + BOARD_NAME + '.ld'
+    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles  -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,ResetISR -T link.lds'
 
     CPATH = ''
     LPATH = ''

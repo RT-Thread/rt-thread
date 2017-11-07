@@ -1,7 +1,10 @@
 #include <rtthread.h>
 
-#include <lwip/netdb.h>   /* 为了解析主机名，需要包含netdb.h头文件 */
-#include <lwip/sockets.h> /* 使用BSD socket，需要包含sockets.h头文件 */
+//#include <lwip/netdb.h>   /* 为了解析主机名，需要包含netdb.h头文件 */
+//#include <lwip/sockets.h> /* 使用BSD socket，需要包含sockets.h头文件 */
+
+#include <sys/socket.h> /* 使用BSD socket，需要包含sockets.h头文件 */
+#include "netdb.h"
 
 #define BUFSZ   1024
 
@@ -47,7 +50,7 @@ void tcpclient(const char* url, int port)
     {
         /* 连接失败 */
         rt_kprintf("Connect fail!\n");
-        lwip_close(sock);
+        closesocket(sock);
 
         /*释放接收缓冲 */
         rt_free(recv_data);
@@ -61,7 +64,7 @@ void tcpclient(const char* url, int port)
         if (bytes_received < 0)
         {
             /* 接收失败，关闭这个连接 */
-            lwip_close(sock);
+            closesocket(sock);
             rt_kprintf("\nreceived error,close the socket.\r\n");
 
             /* 释放接收缓冲 */
@@ -81,7 +84,7 @@ void tcpclient(const char* url, int port)
         if (strcmp(recv_data , "q") == 0 || strcmp(recv_data , "Q") == 0)
         {
             /* 如果是首字母是q或Q，关闭这个连接 */
-            lwip_close(sock);
+            closesocket(sock);
             rt_kprintf("\n got a 'q' or 'Q',close the socket.\r\n");
 
             /* 释放接收缓冲 */
@@ -99,7 +102,7 @@ void tcpclient(const char* url, int port)
         if (ret < 0)
         {
             /* 接收失败，关闭这个连接 */
-            lwip_close(sock);
+            closesocket(sock);
             rt_kprintf("\nsend error,close the socket.\r\n");
 
             rt_free(recv_data);

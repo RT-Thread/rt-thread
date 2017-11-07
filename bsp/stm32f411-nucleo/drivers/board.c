@@ -1,17 +1,17 @@
-//------------------------------------------------------------------------------
-//  Copyright(C) ASRC, 2013-2015. All rights reserved.
-//------------------------------------------------------------------------------
-//  Project    : TBD
-//  Description: DRMP Board Init
-//  Author     : Fu Pengfei
-//------------------------------------------------------------------------------
-//  Change Logs:
-//  Date         Notes
-//  2015-07-29   first implementation
-//------------------------------------------------------------------------------
-//  $Id:: board.c 1076 2015-07-29 09:40:39Z arda                               $
-//------------------------------------------------------------------------------
-
+/*
+ * File      : board.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2009, RT-Thread Development Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2009-09-22     Bernard      add board.h to this bsp
+ */
+ 
 #include <rtthread.h>
 #include "board.h"
 
@@ -156,7 +156,7 @@ void rt_hw_board_init()
 #endif
     
 #ifdef RT_USING_CONSOLE
-    rt_console_set_device(CONSOLE_DEVICE);
+    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
 }

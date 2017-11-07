@@ -32,6 +32,7 @@
  * 2015-11-10     bernard      fix the poll rx issue when there is no data.
  * 2016-05-10     armink       add fifo mode to DMA rx when serial->config.bufsz != 0.
  * 2017-01-19     aubr.cool    prevent change serial rx bufsz when serial is opened.
+ * 2017-11-07     JasonJia     fix data bits error issue when using tcsetattr.
  */
 
 #include <rthw.h>
@@ -44,13 +45,13 @@
 #define DEBUG_COLOR
 #include <rtdbg.h>
 
+#ifdef RT_USING_POSIX
+#include <dfs_posix.h>
+#include <dfs_poll.h>
+
 #ifdef RT_USING_POSIX_TERMIOS
 #include <posix_termios.h>
 #endif
-
-#ifdef RT_USING_DFS
-#ifdef RT_USING_DFS_DEVFS
-#include <dfs_posix.h>
 
 /* it's possible the 'getc/putc' is defined by stdio.h in gcc/newlib. */
 #ifdef getc
@@ -97,7 +98,8 @@ static int serial_fops_open(struct dfs_fd *fd)
         break;
     }
 
-    rt_device_set_rx_indicate(device, serial_fops_rx_ind);
+    if ((fd->flags & O_ACCMODE) != O_WRONLY)
+        rt_device_set_rx_indicate(device, serial_fops_rx_ind);
     ret = rt_device_open(device, flags);
     if (ret == RT_EOK) return 0;
 
@@ -210,7 +212,7 @@ const static struct dfs_file_ops _serial_fops =
     serial_fops_poll,
 };
 #endif
-#endif
+
 /*
  * Serial poll routines
  */
@@ -931,13 +933,24 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 baudrate = _get_baudrate(cfgetospeed(tio));
                 config.baud_rate = baudrate;
 
-                if (tio->c_cflag & CS6) config.data_bits = DATA_BITS_6;
-                else if (tio->c_cflag & CS7) config.data_bits = DATA_BITS_7;
-                else if (tio->c_cflag & CS8) config.data_bits = DATA_BITS_8;
-                else config.data_bits = DATA_BITS_5;
+                switch (tio->c_cflag & CSIZE)
+                {
+                case CS5:
+                    config.data_bits = DATA_BITS_5;
+                    break;
+                case CS6:
+                    config.data_bits = DATA_BITS_6;
+                    break;
+                case CS7:
+                    config.data_bits = DATA_BITS_7;
+                    break;
+                default:
+                    config.data_bits = DATA_BITS_8;
+                    break;
+                }
 
-                if (tio->c_cflag & CSTOPB) config.data_bits = STOP_BITS_2;
-                else config.data_bits = STOP_BITS_1;
+                if (tio->c_cflag & CSTOPB) config.stop_bits = STOP_BITS_2;
+                else config.stop_bits = STOP_BITS_1;
 
                 if (tio->c_cflag & PARENB)
                 {
@@ -993,7 +1006,7 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
     /* register a character device */
     ret = rt_device_register(device, name, flag);
 
-#if defined(RT_USING_DFS) && defined(RT_USING_DFS_DEVFS)
+#if defined(RT_USING_POSIX)
     /* set fops */
     device->fops        = &_serial_fops;
 #endif

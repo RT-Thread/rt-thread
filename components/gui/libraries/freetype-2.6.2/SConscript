@@ -1,0 +1,21 @@
+# RT-Thread building script for bridge
+
+import os
+from building import *
+
+cwd = GetCurrentDir()
+src = Split('''
+''')
+list = os.listdir(cwd)
+GroupPath = cwd
+CPPDEFINES = ['FT2_BUILD_LIBRARY']
+
+group = DefineGroup('freetype', src, depend = ['RTGUI_USING_TTF'], CPPDEFINES=CPPDEFINES, GroupPath = GroupPath)
+
+if GetDepend('RTGUI_USING_TTF'):
+    for d in list:
+        path = os.path.join(cwd, d)
+        if os.path.isfile(os.path.join(path, 'SConscript')):
+            group = group + SConscript(os.path.join(d, 'SConscript'))
+
+Return('group')

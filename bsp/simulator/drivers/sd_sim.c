@@ -1,14 +1,15 @@
 #include <stdio.h>
 #include <string.h>
-#ifdef _WIN32
 #include <stdlib.h>
-#endif
 
 #include <rtthread.h>
-#include <dfs_def.h>
+#include <dfs.h>
 
-// #define SD_TRACE     rt_kprintf
-#define SD_TRACE(...)
+#ifdef DEBUG
+#  define SD_TRACE     rt_kprintf
+#else
+#  define SD_TRACE(...)
+#endif
 
 #define SDCARD_SIM  "sd.bin"
 #define SDCARD_SIZE (16*1024*1024)  //16M

@@ -140,6 +140,6 @@ typedef struct {
 	volatile rt_uint32_t MMCFIFOCTL;
 }mmcsd_regs_t;
 
-extern rt_int32_t rt_hw_mmcsd_init(void);
+extern int rt_hw_mmcsd_init(void);
 
 #endif

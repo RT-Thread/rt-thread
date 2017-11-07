@@ -32,7 +32,7 @@
 
 int tcgetattr(int fd, struct termios *tio)
 {
-	/* Get the current serial port settings. */
+    /* Get the current serial port settings. */
     if (ioctl(fd, TCGETA, tio))
         return -1;
 
@@ -41,27 +41,27 @@ int tcgetattr(int fd, struct termios *tio)
 
 int tcsetattr(int fd, int act, const struct termios *tio)
 {
-	switch (act) 
-	{
-	case TCSANOW:
-		/* make the change immediately */
-		return (ioctl(fd, TCSETA, (void*)tio));
-	case TCSADRAIN:
-		/*
-		 * Don't make the change until all currently written data 
-		 * has been transmitted.
-		 */
-		return (ioctl(fd, TCSETAW, (void*)tio));
-	case TCSAFLUSH:
-		/* Don't make the change until all currently written data 
-		 * has been transmitted, at which point any received but 
-		 * unread data is also discarded.
-		 */
-		return (ioctl(fd, TCSETAF, (void*)tio));
-	default:
-		errno = EINVAL;
-		return (-1);
-	}
+    switch (act) 
+    {
+    case TCSANOW:
+        /* make the change immediately */
+        return (ioctl(fd, TCSETA, (void*)tio));
+    case TCSADRAIN:
+        /*
+         * Don't make the change until all currently written data 
+         * has been transmitted.
+         */
+        return (ioctl(fd, TCSETAW, (void*)tio));
+    case TCSAFLUSH:
+        /* Don't make the change until all currently written data 
+         * has been transmitted, at which point any received but 
+         * unread data is also discarded.
+         */
+        return (ioctl(fd, TCSETAF, (void*)tio));
+    default:
+        errno = EINVAL;
+        return (-1);
+    }
 }
 
 /**
@@ -106,7 +106,7 @@ int cfsetispeed(struct termios *tio, speed_t speed)
 int tcsendbreak(int fd, int dur)
 {
     /* nonzero duration is implementation-defined, so ignore it */
-	return 0;
+    return 0;
 }
 
 int tcflush(int fd, int queue)
@@ -124,14 +124,14 @@ int tcflow(int fd, int action)
  */
 int tcdrain(int fd)
 {
-	return 0;
+    return 0;
 }
 
 int isatty (int  fd)
 {
-	struct termios term;
+    struct termios term;
 
-	return tcgetattr (fd, &term) == 0;
+    return tcgetattr (fd, &term) == 0;
 }
 
 #if defined(_GNU_SOURCE) || defined(_BSD_SOURCE)

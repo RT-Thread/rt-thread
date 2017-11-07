@@ -4,6 +4,14 @@
 #ifndef LIBC_FCNTL_H__
 #define LIBC_FCNTL_H__
 
+#ifdef RT_USING_NEWLIB
+#include <fcntl.h>
+
+#ifndef O_NONBLOCK
+#define O_NONBLOCK    04000
+#endif
+
+#else
 #define O_RDONLY         00
 #define O_WRONLY         01
 #define O_RDWR           02
@@ -17,6 +25,7 @@
 #define O_DSYNC      010000
 #define O_SYNC     04010000
 #define O_RSYNC    04010000
+#define O_BINARY    0100000
 #define O_DIRECTORY 0200000
 #define O_NOFOLLOW  0400000
 #define O_CLOEXEC  02000000
@@ -53,5 +62,7 @@
 #define F_GETOWN_EX 16
 
 #define F_GETOWNER_UIDS 17
+#endif
 
 #endif
+

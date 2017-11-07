@@ -12,7 +12,7 @@ src += Glob('common/chip/*.c')
 
 # add for startup script 
 if rtconfig.CROSS_TOOL == 'gcc':
-    print "not gcc startup file"
+    print("not gcc startup file")
     exit(0)
 elif rtconfig.CROSS_TOOL == 'keil':
     src += [cwd + '/common/startup/keil_startup_lpc82x.s']

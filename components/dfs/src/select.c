@@ -25,6 +25,9 @@
 #include <dfs_fs.h>
 #include <dfs_posix.h>
 
+#include <dfs_poll.h>
+#include <dfs_select.h>
+
 int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout)
 {
     int fd;

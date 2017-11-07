@@ -128,7 +128,8 @@ static rt_bool_t rtgui_image_hdc_load(struct rtgui_image *image, struct rtgui_fi
     {
         if (header[3] == 2)
         {
-#if 0   /* TODO: add HDC with fastlz compressed */
+#ifdef PKG_USING_FASTLZ
+            /* TODO: add HDC with fastlz compressed */
             int data_length, dec_length;
             rt_uint8_t *data;
 
@@ -173,6 +174,9 @@ static rt_bool_t rtgui_image_hdc_load(struct rtgui_image *image, struct rtgui_fi
             }
             hdc->pixel_offset = 0;
             rtgui_free(data);
+#else
+            hdc->pixels = RT_NULL;
+            return RT_FALSE;
 #endif
         }
         else

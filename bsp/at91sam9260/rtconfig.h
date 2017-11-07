@@ -91,6 +91,7 @@
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
 #define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_USING_MSH
 
 /* SECTION: C++ support */
 /* Using C++ support */
@@ -176,22 +177,13 @@
 /* #define RT_LWIP_DHCP */
 
 /* ip address of target */
-#define RT_LWIP_IPADDR0	192
-#define RT_LWIP_IPADDR1	168
-#define RT_LWIP_IPADDR2	1
-#define RT_LWIP_IPADDR3	30
+#define RT_LWIP_IPADDR "192.168.1.30"
 
 /* gateway address of target */
-#define RT_LWIP_GWADDR0	192
-#define RT_LWIP_GWADDR1	168
-#define RT_LWIP_GWADDR2	1
-#define RT_LWIP_GWADDR3	1
+#define RT_LWIP_GWADDR  "192.168.1.1"
 
 /* mask address of target */
-#define RT_LWIP_MSKADDR0	255
-#define RT_LWIP_MSKADDR1	255
-#define RT_LWIP_MSKADDR2	255
-#define RT_LWIP_MSKADDR3	0
+#define RT_LWIP_MSKADDR  "255.255.255.0"
 
 /* the number of blocks for pbuf */
 #define RT_LWIP_PBUF_NUM	16
@@ -255,5 +247,8 @@
  * And the maximal length must great than 64
  * #define RT_DFS_ELM_MAX_LFN	128
  */
+
+#define RT_USING_COMPONENTS_INIT
+#define RT_USING_USER_MAIN
 
 #endif

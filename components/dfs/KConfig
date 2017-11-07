@@ -24,7 +24,9 @@ if RT_USING_DFS
         default y
         help
             FatFs is a generic FAT/exFAT file system module for small embedded systems.
+
     if RT_USING_DFS_ELMFAT
+        menu "elm-chan's FatFs, Generic FAT Filesystem Module"
         config RT_DFS_ELM_CODE_PAGE
             int "OEM code page"
             default 437
@@ -79,6 +81,7 @@ if RT_USING_DFS
         config RT_DFS_ELM_REENTRANT
             bool "Enable the reentrancy (thread safe) of the FatFs module"
             default y
+        endmenu
     endif
 
     config RT_USING_DFS_DEVFS
@@ -87,10 +90,65 @@ if RT_USING_DFS
     
     config RT_USING_DFS_NET
         bool "Enable BSD socket operated by file system API"
-        depends on RT_USING_LWIP
+        select RT_USING_LWIP
+        select RT_USING_POSIX
         default n
         help
             Let BSD socket operated by file system API, such as read/write and involveed in select/poll POSIX APIs.
+
+    if RT_USING_DFS_NET
+        config HAVE_SYS_SELECT_H
+            bool "Toolchains/libc have provided sys/select.h"
+            default n
+            help
+                Toolchains/libc have provided sys/select.h file, therefore, disable the sys/select.h in RT-Thread.
+
+        config HAVE_SYS_SOCKET_H
+            bool "Toolchains/libc have provided sys/socket.h"
+            default n
+            help
+                Toolchains/libc have provided sys/socket.h file, therefore, disable the sys/socket.h in RT-Thread.
+    endif
+
+    config RT_USING_DFS_ROMFS
+        bool "Enable ReadOnly file system on flash"
+        default n
+
+    config RT_USING_DFS_RAMFS
+        bool "Enable RAM file system"
+        default n
+
+    config RT_USING_DFS_UFFS
+        bool "Enable UFFS file system: Ultra-low-cost Flash File System"
+        select RT_USING_MTD_NAND
+        default n
+
+    if RT_USING_DFS_UFFS
+        choice 
+            prompt "UFFS ECC mode"
+            default RT_UFFS_ECC_MODE_1
+
+            config RT_UFFS_ECC_MODE_0
+                bool "0: Do not use ECC"
+
+            config RT_UFFS_ECC_MODE_1
+                bool "1: UFFS calculate the ECC"
+
+            config RT_UFFS_ECC_MODE_2
+                bool "2: Flash driver(or by hardware) calculate the ECC"
+            
+            config RT_UFFS_ECC_MODE_3
+                bool "3: Hardware calculate the ECC and automatically write to spare."
+        endchoice
+        
+        config RT_UFFS_ECC_MODE
+            int
+            default 0 if RT_UFFS_ECC_MODE_0
+            default 1 if RT_UFFS_ECC_MODE_1
+            default 2 if RT_UFFS_ECC_MODE_2
+            default 3 if RT_UFFS_ECC_MODE_3
+        
+    endif
 
     config RT_USING_DFS_NFS
         bool "Using NFS v3 client file system"

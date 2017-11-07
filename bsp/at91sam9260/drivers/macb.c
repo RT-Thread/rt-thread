@@ -866,7 +866,7 @@ err1:
 	return -RT_ENOMEM;
 }
 
-void rt_hw_macb_init()
+int rt_hw_macb_init(void)
 {
 	rt_err_t ret;
 	at91_sys_write(AT91_PMC + AT91_PMC_PCER, 1 << AT91SAM9260_ID_EMAC); //enable macb clock
@@ -903,5 +903,9 @@ void rt_hw_macb_init()
 	rt_sem_init(&macb_device.mdio_bus_lock, "mdio_bus_lock", 1, RT_IPC_FLAG_FIFO);
 
 	eth_device_init(&(macb_device.parent), "e0");
-	
+
+	return 0;
 }
+
+INIT_DEVICE_EXPORT(rt_hw_macb_init);
+

@@ -15,38 +15,12 @@ config $PKGS_DIR
     option env="PKGS_ROOT"
     default "packages"
 
+config BOARD_STM32F429_APPOLO
+    bool 
+    select ARCH_ARM_CORTEX_M4
+    default y
+
 source "$RTT_DIR/KConfig"
 source "$PKGS_DIR/KConfig"
 
-menu "BSP_SPECIAL CONFIG"
-  
-config RT_RTC_NAME
-    string "RT_RTC_NAME"
-    default rtc
-    
-config RT_USING_EXT_SDRAM
-    bool "Using RT_USING_EXT_SDRAM"
-    default y
- 
-config RT_USING_UART1
-    bool "Using RT_USING_UART1"
-    default y    
-    
-config RT_USING_UART2
-    bool "Using RT_USING_UART2"
-    default y    
-    
-config RT_USING_UART3
-    bool "Using RT_USING_UART3"
-    default y  
-    
-config RT_USING_SPI5
-    bool "Using RT_USING_SPI5"
-    default y     
-          
-endmenu
-
-
-
-    
-    
+source "$BSP_DIR/drivers/Kconfig"

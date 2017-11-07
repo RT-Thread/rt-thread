@@ -44,21 +44,21 @@
 #define FINSH_THREAD_STACK_SIZE 2048
 #endif
 #ifndef FINSH_CMD_SIZE
-#define FINSH_CMD_SIZE		80
+#define FINSH_CMD_SIZE      80
 #endif
 
-#define FINSH_OPTION_ECHO	0x01
+#define FINSH_OPTION_ECHO   0x01
 #if defined(FINSH_USING_MSH) || (defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR))
-#define FINSH_PROMPT		finsh_get_prompt()
+#define FINSH_PROMPT        finsh_get_prompt()
 const char* finsh_get_prompt(void);
 #else
-#define FINSH_PROMPT		"finsh>>"
+#define FINSH_PROMPT        "finsh>>"
 #endif
 
 #ifdef FINSH_USING_HISTORY
-	#ifndef FINSH_HISTORY_LINES
-		#define FINSH_HISTORY_LINES 5
-	#endif
+    #ifndef FINSH_HISTORY_LINES
+        #define FINSH_HISTORY_LINES 5
+    #endif
 #endif
 
 #ifdef FINSH_USING_AUTH
@@ -75,39 +75,39 @@ const char* finsh_get_prompt(void);
 
 enum input_stat
 {
-	WAIT_NORMAL,
-	WAIT_SPEC_KEY,
-	WAIT_FUNC_KEY,
+    WAIT_NORMAL,
+    WAIT_SPEC_KEY,
+    WAIT_FUNC_KEY,
 };
 struct finsh_shell
 {
-	struct rt_semaphore rx_sem;
+    struct rt_semaphore rx_sem;
 
-	enum input_stat stat;
+    enum input_stat stat;
 
-	rt_uint8_t echo_mode:1;
+    rt_uint8_t echo_mode:1;
 
 #ifdef FINSH_USING_HISTORY
-	rt_uint16_t current_history;
-	rt_uint16_t history_count;
+    rt_uint16_t current_history;
+    rt_uint16_t history_count;
 
-	char cmd_history[FINSH_HISTORY_LINES][FINSH_CMD_SIZE];
+    char cmd_history[FINSH_HISTORY_LINES][FINSH_CMD_SIZE];
 #endif
 
 #ifndef FINSH_USING_MSH_ONLY
-	struct finsh_parser parser;
+    struct finsh_parser parser;
 #endif
 
-	char line[FINSH_CMD_SIZE];
-	rt_uint8_t line_position;
-	rt_uint8_t line_curpos;
+    char line[FINSH_CMD_SIZE];
+    rt_uint8_t line_position;
+    rt_uint8_t line_curpos;
 
-#ifndef RT_USING_POSIX_STDIN
-	rt_device_t device;
+#ifndef RT_USING_POSIX
+    rt_device_t device;
 #endif
 
 #ifdef FINSH_USING_AUTH
-	char password[FINSH_PASSWORD_MAX];
+    char password[FINSH_PASSWORD_MAX];
 #endif
 };
 

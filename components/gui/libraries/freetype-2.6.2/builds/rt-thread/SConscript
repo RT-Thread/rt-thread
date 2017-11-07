@@ -1,0 +1,14 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd = GetCurrentDir()
+src = Split('''
+ftsystem.c
+gb2312tounicode.c
+''')
+CPPPATH = [cwd]
+
+group = DefineGroup('freetype', src, depend = ['RTGUI_USING_TTF'], CPPPATH = CPPPATH)
+
+Return('group')

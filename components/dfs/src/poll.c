@@ -23,11 +23,14 @@
  */
 #include <stdint.h>
 
+#include <rthw.h>
 #include <rtdevice.h>
+#include <rtthread.h>
 
 #include <dfs.h>
 #include <dfs_file.h>
 #include <dfs_posix.h>
+#include <dfs_poll.h>
 
 struct rt_poll_node;
 
@@ -219,7 +222,7 @@ int poll(struct pollfd *fds, nfds_t nfds, int timeout)
     poll_table_init(&table);
 
     num = poll_do(fds, nfds, &table, timeout);
-	
+
     poll_teardown(&table);
 
     return num;

@@ -84,7 +84,7 @@ const char *finsh_get_prompt()
 
 static char finsh_getchar(void)
 {
-#ifdef RT_USING_POSIX_STDIN
+#ifdef RT_USING_POSIX
     return getchar();
 #else
     char ch;
@@ -97,7 +97,7 @@ static char finsh_getchar(void)
 #endif
 }
 
-#ifndef RT_USING_POSIX_STDIN
+#ifndef RT_USING_POSIX
 static rt_err_t finsh_rx_ind(rt_device_t dev, rt_size_t size)
 {
     RT_ASSERT(shell != RT_NULL);
@@ -372,7 +372,7 @@ static void shell_push_history(struct finsh_shell *shell)
         if (shell->history_count >= FINSH_HISTORY_LINES)
         {
             /* if current cmd is same as last cmd, don't push */
-            if (memcmp(&shell->cmd_history[FINSH_HISTORY_LINES - 1], shell->line, shell->line_position))
+            if (memcmp(&shell->cmd_history[FINSH_HISTORY_LINES - 1], shell->line, FINSH_CMD_SIZE))
             {
                 /* move history */
                 int index;
@@ -391,7 +391,7 @@ static void shell_push_history(struct finsh_shell *shell)
         else
         {
             /* if current cmd is same as last cmd, don't push */
-            if (shell->history_count == 0 || memcmp(&shell->cmd_history[shell->history_count - 1], shell->line, shell->line_position))
+            if (shell->history_count == 0 || memcmp(&shell->cmd_history[shell->history_count - 1], shell->line, FINSH_CMD_SIZE))
             {
                 shell->current_history = shell->history_count;
                 memset(&shell->cmd_history[shell->history_count][0], 0, FINSH_CMD_SIZE);
@@ -420,7 +420,7 @@ void finsh_thread_entry(void *parameter)
     finsh_init(&shell->parser);
 #endif
 
-#ifndef RT_USING_POSIX_STDIN
+#ifndef RT_USING_POSIX
     /* set console device as shell device */
     if (shell->device == RT_NULL)
     {

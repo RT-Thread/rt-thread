@@ -38,7 +38,7 @@ size_t __read(int handle, unsigned char *buf, size_t len)
 
     if (handle == _LLIO_STDIN)
     {
-#ifdef RT_USING_POSIX_STDIN
+#ifdef RT_USING_POSIX
         return libc_stdio_read(buf, len);
 #else
         return _LLIO_ERROR;

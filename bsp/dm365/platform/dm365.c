@@ -316,11 +316,12 @@ int davinci_clk_init(void)
 	return davinci_register_clks(clk_list, num_clks);
 }
 
-void platform_init(void)
+int platform_init(void)
 {
 	edma_init(dm365_edma_info);
 }
 
+INIT_BOARD_EXPORT(platform_init);
 
 /* Reset board using the watchdog timer */
 void reset_system(void)

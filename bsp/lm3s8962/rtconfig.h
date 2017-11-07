@@ -122,23 +122,14 @@
 
 #define RT_LWIP_DNS
 
-/* ip address of target*/
-#define RT_LWIP_IPADDR0	192
-#define RT_LWIP_IPADDR1	168
-#define RT_LWIP_IPADDR2	1
-#define RT_LWIP_IPADDR3	30
+/* ip address of target */
+#define RT_LWIP_IPADDR "192.168.1.30"
 
-/* gateway address of target*/
-#define RT_LWIP_GWADDR0	192
-#define RT_LWIP_GWADDR1	168
-#define RT_LWIP_GWADDR2	1
-#define RT_LWIP_GWADDR3	1
+/* gateway address of target */
+#define RT_LWIP_GWADDR  "192.168.1.1"
 
-/* mask address of target*/
-#define RT_LWIP_MSKADDR0	255
-#define RT_LWIP_MSKADDR1	255
-#define RT_LWIP_MSKADDR2	255
-#define RT_LWIP_MSKADDR3	0
+/* mask address of target */
+#define RT_LWIP_MSKADDR  "255.255.255.0"
 
 /* tcp thread options */
 #define RT_LWIP_TCPTHREAD_PRIORITY		22
@@ -153,4 +144,6 @@
 /* the size of each pbuf in the pbuf pool. */
 #define RT_LWIP_PBUF_POOL_BUFSIZE		1500
 
+#define RT_USING_LIBC
+#define RT_USING_LWIP141
 #endif

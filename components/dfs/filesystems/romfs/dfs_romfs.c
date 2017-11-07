@@ -24,6 +24,8 @@
 #include <rtthread.h>
 #include <dfs.h>
 #include <dfs_fs.h>
+#include <dfs_file.h>
+
 #include "dfs_romfs.h"
 
 int dfs_romfs_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *data)
@@ -190,7 +192,7 @@ int dfs_romfs_open(struct dfs_fd *file)
     struct romfs_dirent *dirent;
     struct romfs_dirent *root_dirent;
 
-    root_dirent = (struct romfs_dirent *)file->fs->data;
+    root_dirent = (struct romfs_dirent *)file->data;
 
     if (check_dirent(root_dirent) != 0)
         return -EIO;
@@ -328,5 +330,5 @@ int dfs_romfs_init(void)
     dfs_register(&_romfs);
     return 0;
 }
-INIT_FS_EXPORT(dfs_romfs_init);
+INIT_COMPONENT_EXPORT(dfs_romfs_init);
 

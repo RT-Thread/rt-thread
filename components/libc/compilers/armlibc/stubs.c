@@ -153,7 +153,7 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
 
     if (fh == STDIN)
     {
-#ifdef RT_USING_POSIX_STDIN
+#ifdef RT_USING_POSIX
         size = libc_stdio_read(buf, len);
         return len - size;
 #else
@@ -192,7 +192,7 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 #ifndef RT_USING_CONSOLE
         return 0;
 #else
-#ifdef RT_USING_POSIX_STDIN
+#ifdef RT_USING_POSIX
         size = libc_stdio_write(buf, len);
         return len - size;
 #else
@@ -319,11 +319,20 @@ int fgetc(FILE *f)
 {
     char ch;
 
-#ifdef RT_USING_POSIX_STDIN
+#ifdef RT_USING_POSIX
     if (libc_stdio_read(&ch, 1) == 1)
         return ch;
 #endif
 
     return -1;
+}
+#endif
+
+#ifndef RT_USING_RTC
+time_t time(time_t *t)
+{
+	time_t time_now = 0;
+	
+	return time_now;
 }
 #endif

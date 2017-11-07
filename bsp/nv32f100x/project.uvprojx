@@ -10,7 +10,7 @@
       <TargetName>nv32f100x</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060183::V5.06 update 2 (build 183)::ARMCC</pCCUsed>
+      <pCCUsed>5060300::V5.06 update 3 (build 300)::ARMCC</pCCUsed>
       <TargetOption>
         <TargetCommonOption>
           <Device>NV32F100FS16E</Device>
@@ -54,7 +54,7 @@
           <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
-          <ListingPath>C:\Users\HF00\Documents\</ListingPath>
+          <ListingPath>.\output\</ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
           <CreateBatchFile>0</CreateBatchFile>
@@ -330,6 +330,7 @@
             <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
             <v6WtE>0</v6WtE>
+            <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define>NV32, KEIL</Define>
@@ -347,6 +348,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
+            <uClangAs>0</uClangAs>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -378,14 +380,14 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\app\src\main.c</FilePath>
-            </File>
-            <File>
               <FileName>ledapp.c</FileName>
               <FileType>1</FileType>
               <FilePath>app\src\ledapp.c</FilePath>
+            </File>
+            <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>app\src\main.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -396,11 +398,6 @@
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\src\board.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\src\drv_spi.c</FilePath>
             </File>
             <File>
               <FileName>drv_uart.c</FileName>
@@ -573,6 +570,11 @@
               <FilePath>..\..\src\scheduler.c</FilePath>
             </File>
             <File>
+              <FileName>signal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\signal.c</FilePath>
+            </File>
+            <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\thread.c</FilePath>
@@ -653,14 +655,14 @@
               <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
             </File>
             <File>
-              <FileName>portal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\portal.c</FilePath>
-            </File>
-            <File>
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
+            </File>
+            <File>
+              <FileName>waitqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
             </File>
             <File>
               <FileName>workqueue.c</FileName>

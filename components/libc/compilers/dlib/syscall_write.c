@@ -43,7 +43,7 @@ size_t __write(int handle, const unsigned char *buf, size_t len)
         return _LLIO_ERROR;
 #else
 
-#ifdef RT_USING_POSIX_STDIN
+#ifdef RT_USING_POSIX
         return libc_stdio_write((void*)buf, len);
 #else
         rt_device_t console_device;
