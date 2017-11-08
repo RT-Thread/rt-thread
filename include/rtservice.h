@@ -84,6 +84,24 @@ rt_inline void rt_list_insert_before(rt_list_t *l, rt_list_t *n)
 }
 
 /**
+ * @brief switch two adjacent node in list
+ *
+ * @param l left node in list
+ * @param r right node in list
+ */
+rt_inline void rt_list_switch(rt_list_t *l, rt_list_t *r)
+{
+    r->next->prev = l;
+    l->next = r->next;
+    
+    l->prev->next = r;
+    r->prev = l->prev;
+    
+    r->next = l;
+    l->prev = r;
+}
+
+/**
  * @brief remove node from list.
  * @param n the node to remove from the list.
  */

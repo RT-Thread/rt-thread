@@ -276,6 +276,49 @@ void rt_schedule(void)
     }
 }
 
+/**
+ * This function will perform one schedule. It will select one thread
+ * with same priority level for current thread, then switch to it.
+ */
+void rt_yield_schedule(struct rt_thread *to_thread)
+{
+    /* check the scheduler is enabled or not */
+    if (rt_scheduler_lock_nest == 0)
+    {
+        struct rt_thread *from_thread;
+
+        from_thread         = rt_current_thread;
+        rt_current_thread   = to_thread;
+
+        RT_OBJECT_HOOK_CALL(rt_scheduler_hook, (from_thread, to_thread));
+
+        /* switch to new thread */
+        RT_DEBUG_LOG(RT_DEBUG_SCHEDULER,
+                     ("[%d]thread:%.*s(sp:0x%p), "
+                      "from thread:%.*s(sp: 0x%p)\n",
+                      rt_interrupt_nest, RT_NAME_MAX, to_thread->name, to_thread->sp,
+                      RT_NAME_MAX, from_thread->name, from_thread->sp));
+
+    #ifdef RT_USING_OVERFLOW_CHECK
+        _rt_scheduler_stack_check(to_thread);
+    #endif
+
+        if (rt_interrupt_nest == 0)
+        {
+            rt_hw_context_switch((rt_uint32_t)&from_thread->sp,
+                                 (rt_uint32_t)&to_thread->sp);
+        }
+        else
+        {
+            RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("switch in interrupt\n"));
+
+            rt_hw_context_switch_interrupt((rt_uint32_t)&from_thread->sp,
+                                           (rt_uint32_t)&to_thread->sp);
+        }
+    }
+}
+
+
 /*
  * This function will insert a thread to system ready queue. The state of
  * thread will be set as READY and remove from suspend queue.
