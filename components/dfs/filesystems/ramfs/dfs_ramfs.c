@@ -311,11 +311,12 @@ int dfs_ramfs_getdents(struct dfs_fd *file,
     struct dfs_ramfs *ramfs;
 
     dirent = (struct ramfs_dirent *)file->data;
-    if (dirent != &(ramfs->root))
-        return -EINVAL;
 
     ramfs  = dirent->fs;
     RT_ASSERT(ramfs != RT_NULL);
+
+    if (dirent != &(ramfs->root))
+        return -EINVAL;
 
     /* make integer count */
     count = (count / sizeof(struct dirent));
@@ -426,7 +427,7 @@ int dfs_ramfs_init(void)
 
     return 0;
 }
-INIT_FS_EXPORT(dfs_ramfs_init);
+INIT_COMPONENT_EXPORT(dfs_ramfs_init);
 
 struct dfs_ramfs* dfs_ramfs_create(rt_uint8_t *pool, rt_size_t size)
 {

@@ -1,14 +1,13 @@
-Import('RTT_ROOT')
-Import('rtconfig')
 from building import *
+import rtconfig
 
+cwd = GetCurrentDir()
 src	= Split('''
 tjpgd.c
 ''')
 
-CPPPATH = [RTT_ROOT + '/components/external/tjpgd1a']
+CPPPATH = [cwd]
 
-group = DefineGroup('RTGUI', src, depend = ['RT_USING_RTGUI', 'RTGUI_IMAGE_TJPGD'], CPPPATH = CPPPATH)
+group = DefineGroup('RTGUI', src, depend = ['RT_USING_GUIENGINE', 'RTGUI_IMAGE_TJPGD'], CPPPATH = CPPPATH)
 
 Return('group')
-

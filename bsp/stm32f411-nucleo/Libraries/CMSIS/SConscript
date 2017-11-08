@@ -18,7 +18,7 @@ elif rtconfig.CROSS_TOOL == 'keil':
 elif rtconfig.CROSS_TOOL == 'iar':
      folder = 'iar'
 #Device/ST/STM32F4xx/Source/Templates/iar/startup_stm32f411xe.s     
-src += ['Device/ST/STM32F4xx/Source/Templates/' + folder + '/startup_' + rtconfig.PART_TYPE+ '.s']
+src += ['Device/ST/STM32F4xx/Source/Templates/' + folder + '/startup_' + rtconfig.PART_TYPE.lower() + '.s']
 
 group = DefineGroup('CMSIS', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 

@@ -22,7 +22,7 @@
  */
 
 #include <rtthread.h>
-#include <dfs_init.h>
+#include <dfs.h>
 #include <dfs_fs.h>
 
 #ifdef RT_USING_DFS_ROMFS

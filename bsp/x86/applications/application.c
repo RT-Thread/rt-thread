@@ -26,7 +26,7 @@
 
 #ifdef RT_USING_DFS
 #include <dfs_fs.h>
-#include <dfs_init.h>
+#include <dfs.h>
 #include "floppy.h"
 #ifdef RT_USING_MODULE
 #include <rtm.h>

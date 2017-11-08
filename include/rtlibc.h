@@ -33,6 +33,7 @@
 #include "libc/libc_ioctl.h"
 #include "libc/libc_dirent.h"
 #include "libc/libc_signal.h"
+#include "libc/libc_fdset.h"
 
 #if defined(__CC_ARM) || defined(__IAR_SYSTEMS_ICC__)
 typedef signed long off_t;

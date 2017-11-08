@@ -220,11 +220,20 @@ void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 {
 #ifdef RT_USING_TINY_SIZE
     char *tmp = (char *)dst, *s = (char *)src;
+    rt_ubase_t len;
+    
+    if(tmp <= s || tmp > (s + count))
+    {
+        while (count--)
+            *tmp ++ = *s ++;
+    }
+    else
+    {
+        for(len = count; len > 0; len --)
+            tmp[len -1] = s[len - 1];
+    }
 
-    while (count--)
-        *tmp++ = *s++;
-
-    return dst;
+    return dst; 
 #else
 
 #define UNALIGNED(X, Y)                                               \

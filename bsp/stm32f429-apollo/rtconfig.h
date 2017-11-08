@@ -4,6 +4,8 @@
 /* Automatically generated file; DO NOT EDIT. */
 /* RT-Thread Configuration */
 
+#define BOARD_STM32F429_APPOLO
+
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
@@ -13,7 +15,7 @@
 #define RT_DEBUG
 #define RT_USING_OVERFLOW_CHECK
 #define RT_DEBUG_INIT 1
-/* RT_DEBUG_THREAD is not set */
+#define RT_DEBUG_THREAD 0
 #define RT_USING_HOOK
 #define IDLE_THREAD_STACK_SIZE 1024
 /* RT_USING_TIMER_SOFT is not set */
@@ -38,10 +40,14 @@
 /* Kernel Device Object */
 
 #define RT_USING_DEVICE
+/* RT_USING_INTERRUPT_INFO is not set */
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart"
 /* RT_USING_MODULE is not set */
+#define ARCH_ARM
+#define ARCH_ARM_CORTEX_M
+#define ARCH_ARM_CORTEX_M4
 
 /* RT-Thread Components */
 
@@ -88,6 +94,8 @@
 #define RT_DFS_ELM_REENTRANT
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_NET
+#define HAVE_SYS_SELECT_H
+/* HAVE_SYS_SOCKET_H is not set */
 /* RT_USING_DFS_ROMFS is not set */
 /* RT_USING_DFS_RAMFS is not set */
 /* RT_USING_DFS_UFFS is not set */
@@ -134,7 +142,13 @@
 #define RT_LWIP_DHCP
 #define IP_SOF_BROADCAST 1
 #define IP_SOF_BROADCAST_RECV 1
-#define LWIP_USING_DHCPD
+/* LWIP_USING_DHCPD is not set */
+
+/* Static IPv4 Address */
+
+#define RT_LWIP_IPADDR "192.168.10.30"
+#define RT_LWIP_GWADDR "192.168.10.1"
+#define RT_LWIP_MSKADDR "255.255.255.0"
 #define RT_LWIP_UDP
 #define RT_LWIP_TCP
 /* RT_LWIP_RAW is not set */
@@ -170,6 +184,10 @@
 
 /* RT_USING_GUIENGINE is not set */
 
+/* VBUS(Virtual Software BUS) */
+
+/* RT_USING_VBUS is not set */
+
 /* RT-Thread online packages */
 
 /* system packages */
@@ -186,6 +204,10 @@
 /* PKG_USING_CJSON is not set */
 /* PKG_USING_EZXML is not set */
 
+/* Marvell WiFi */
+
+/* PKG_USING_MARVELLWIFI is not set */
+
 /* security packages */
 
 /* PKG_USING_MBEDTLS is not set */
@@ -196,10 +218,13 @@
 
 /* multimedia packages */
 
+/* PKG_USING_FASTLZ is not set */
+
 /* tools packages */
 
 /* PKG_USING_CMBACKTRACE is not set */
 /* PKG_USING_EASYLOGGER is not set */
+/* PKG_USING_SYSTEMVIEW is not set */
 
 /* miscellaneous packages */
 

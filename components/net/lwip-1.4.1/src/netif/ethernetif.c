@@ -434,9 +434,9 @@ int eth_system_device_init(void)
     RT_ASSERT(result == RT_EOK);
 #endif
 
-	return (int)result;
+    return (int)result;
 }
-INIT_DEVICE_EXPORT(eth_system_device_init);
+INIT_PREV_EXPORT(eth_system_device_init);
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>

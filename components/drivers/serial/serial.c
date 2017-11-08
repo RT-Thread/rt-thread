@@ -32,6 +32,7 @@
  * 2015-11-10     bernard      fix the poll rx issue when there is no data.
  * 2016-05-10     armink       add fifo mode to DMA rx when serial->config.bufsz != 0.
  * 2017-01-19     aubr.cool    prevent change serial rx bufsz when serial is opened.
+ * 2017-11-07     JasonJia     fix data bits error issue when using tcsetattr.
  */
 
 #include <rthw.h>
@@ -932,13 +933,24 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 baudrate = _get_baudrate(cfgetospeed(tio));
                 config.baud_rate = baudrate;
 
-                if (tio->c_cflag & CS6) config.data_bits = DATA_BITS_6;
-                else if (tio->c_cflag & CS7) config.data_bits = DATA_BITS_7;
-                else if (tio->c_cflag & CS8) config.data_bits = DATA_BITS_8;
-                else config.data_bits = DATA_BITS_5;
+                switch (tio->c_cflag & CSIZE)
+                {
+                case CS5:
+                    config.data_bits = DATA_BITS_5;
+                    break;
+                case CS6:
+                    config.data_bits = DATA_BITS_6;
+                    break;
+                case CS7:
+                    config.data_bits = DATA_BITS_7;
+                    break;
+                default:
+                    config.data_bits = DATA_BITS_8;
+                    break;
+                }
 
-                if (tio->c_cflag & CSTOPB) config.data_bits = STOP_BITS_2;
-                else config.data_bits = STOP_BITS_1;
+                if (tio->c_cflag & CSTOPB) config.stop_bits = STOP_BITS_2;
+                else config.stop_bits = STOP_BITS_1;
 
                 if (tio->c_cflag & PARENB)
                 {

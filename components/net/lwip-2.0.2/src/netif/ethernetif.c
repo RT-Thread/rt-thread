@@ -391,6 +391,8 @@ static void eth_rx_thread_entry(void* parameter)
             /* receive all of buffer */
             while (1)
             {
+                if(device->eth_rx == RT_NULL) break;
+                
                 p = device->eth_rx(&(device->parent));
                 if (p != RT_NULL)
                 {
@@ -452,7 +454,7 @@ int eth_system_device_init(void)
 
     return (int)result;
 }
-INIT_DEVICE_EXPORT(eth_system_device_init);
+INIT_PREV_EXPORT(eth_system_device_init);
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>

@@ -454,9 +454,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>startup_stm32f411xe.s</FileName>
+              <FileName>startup_STM32F411xE.s</FileName>
               <FileType>2</FileType>
-              <FilePath>Libraries\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f411xe.s</FilePath>
+              <FilePath>Libraries\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_STM32F411xE.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -1013,6 +1013,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>signal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\signal.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\thread.c</FilePath>
@@ -1096,16 +1103,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>portal.c</FileName>
+              <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\portal.c</FilePath>
+              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>ringbuffer.c</FileName>
+              <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
+              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
             </File>
           </Files>
           <Files>
