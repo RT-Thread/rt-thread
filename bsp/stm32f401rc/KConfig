@@ -1,0 +1,63 @@
+mainmenu "RT-Thread Configuration"
+
+config $BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "."
+
+config $RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "../.."
+
+config $PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+source "$RTT_DIR/KConfig"
+source "$PKGS_DIR/KConfig"
+
+menu "BSP_SPECIAL CONFIG"
+config RT_USING_UART1
+    bool "Using UART1"
+    default y    
+
+config RT_USING_UART2
+    bool "Using UART2"
+    default n    
+
+config RT_USING_UART6
+    bool "Using UART6"
+    default n   
+	
+if RT_USING_SPI
+
+config RT_USING_SPI1
+    bool "Using SPI1"
+    default y 
+
+config RT_USING_SPI2
+    bool "Using SPI2"
+    default n  
+
+config RT_USING_SPI3
+    bool "Using SPI3"
+    default n 
+
+endif
+
+if RT_USING_W25QXX
+config RT_W25QXX_CS_PIN
+    int "W25QXX CS Pin index"
+    default 0
+config RT_W25QXX_SPI_BUS_NAME
+    string "W25QXX Spi bus name"
+    default "spi1"
+endif
+endmenu
+
+
+
+    
+    
