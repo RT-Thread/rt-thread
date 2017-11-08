@@ -29,8 +29,14 @@
 #define ICACHE_MASK    (rt_uint32_t)(1 << 12)
 #define DCACHE_MASK    (rt_uint32_t)(1 << 2)
 
-extern void machine_reset(void);
-extern void machine_shutdown(void);
+RT_WEAK void machine_reset(void)
+{
+
+}
+RT_WEAK void machine_shutdown(void)
+{
+
+}
 
 #if defined(__GNUC__) || defined(__ICCARM__)
 rt_inline rt_uint32_t cp15_rd(void)
