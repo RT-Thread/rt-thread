@@ -84,3 +84,8 @@ int rt_application_init()
 
     return 0;
 }
+
+int gettimeofday(struct timeval *tp, void *ignore)
+{
+	return 0;
+}
