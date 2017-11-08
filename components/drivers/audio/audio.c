@@ -29,12 +29,17 @@
 
 #include <drivers/audio.h>
 
+#include "audio_pipe.h"
+
+
 #define AUDIO_DEBUG   0
 #if AUDIO_DEBUG
 #define AUDIO_DBG(...)     printf("[AUDIO]:"),printf(__VA_ARGS__)
 #else
 #define AUDIO_DBG(...)
 #endif
+
+static struct rt_audio_pipe audio_pipe;
 
 static rt_err_t _audio_send_replay_frame(struct rt_audio_device *audio)
 {
@@ -178,8 +183,8 @@ static rt_err_t _audio_dev_open(struct rt_device *dev, rt_uint16_t oflag)
 
                     return -RT_ENOMEM;
                 }
-
-                rt_pipe_init(&record->pipe, "recpipe", RT_PIPE_FLAG_FORCE_WR | RT_PIPE_FLAG_BLOCK_RD, buf,
+                
+                rt_audio_pipe_init(&audio_pipe, "recpipe", RT_PIPE_FLAG_FORCE_WR | RT_PIPE_FLAG_BLOCK_RD, buf,
                              CFG_AUDIO_RECORD_PIPE_SIZE);
             }
 
@@ -190,7 +195,7 @@ static rt_err_t _audio_dev_open(struct rt_device *dev, rt_uint16_t oflag)
         //open record pipe
         if (audio->record != RT_NULL)
         {
-            rt_device_open(RT_DEVICE(&audio->record->pipe), RT_DEVICE_OFLAG_RDONLY);
+            rt_device_open(RT_DEVICE(&audio_pipe), RT_DEVICE_OFLAG_RDONLY);
         }
 
         dev->open_flag |= RT_DEVICE_OFLAG_RDONLY;
@@ -236,7 +241,7 @@ static rt_err_t _audio_dev_close(struct rt_device *dev)
 
         //close record pipe
         if (audio->record != RT_NULL)
-            rt_device_close(RT_DEVICE(&audio->record->pipe));
+            rt_device_close(RT_DEVICE(&audio_pipe));
 
         dev->open_flag &= ~RT_DEVICE_OFLAG_RDONLY;
     }
@@ -252,7 +257,7 @@ static rt_size_t _audio_dev_read(struct rt_device *dev, rt_off_t pos, void *buff
     if (!(dev->open_flag & RT_DEVICE_OFLAG_RDONLY) || (audio->record == RT_NULL))
         return 0;
 
-    return rt_device_read(RT_DEVICE(&audio->record->pipe), pos, buffer, size);
+    return rt_device_read(RT_DEVICE(&audio_pipe), pos, buffer, size);
 }
 
 static rt_size_t _audio_dev_write(struct rt_device *dev, rt_off_t pos, const void *buffer, rt_size_t size)
@@ -528,7 +533,7 @@ void rt_audio_rx_done(struct rt_audio_device *audio, rt_uint8_t *pbuf, rt_size_t
     rt_err_t result = RT_EOK;
 
     //save data to record pipe
-    rt_device_write(RT_DEVICE(RT_DEVICE(&audio->record->pipe)), 0, pbuf, len);
+    rt_device_write(RT_DEVICE(RT_DEVICE(&audio_pipe)), 0, pbuf, len);
 
     /* invoke callback */
     if (audio->parent.rx_indicate != RT_NULL)
