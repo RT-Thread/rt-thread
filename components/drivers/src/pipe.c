@@ -20,6 +20,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2012-09-30     Bernard      first version.
+ * 2017-11-08     JasonJiaJie  fix memory leak issue when close a pipe.
  */
 #include <rthw.h>
 #include <rtdevice.h>
@@ -102,7 +103,7 @@ static int pipe_fops_close(struct dfs_fd *fd)
 
     if (device->ref_count == 1)
     {
-        rt_free(pipe->fifo);
+        rt_ringbuffer_destroy(pipe->fifo);
         pipe->fifo = RT_NULL;
     }
     device->ref_count --;
