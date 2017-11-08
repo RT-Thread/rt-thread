@@ -1,0 +1,37 @@
+import os
+import sys
+import rtconfig
+
+if('run' in COMMAND_LINE_TARGETS):
+    cmd = 'qemu-system-arm -kernel rtthread.elf -m 128 -M versatilepb -nographic -serial tcp:127.0.0.1:1103,server'
+    if('gdb' in COMMAND_LINE_TARGETS):
+        cmd += ' -gdb tcp::1234 -S'
+    os.system(cmd)
+    exit(0)
+
+if os.getenv('RTT_ROOT'):
+    RTT_ROOT = os.getenv('RTT_ROOT')
+else:
+    RTT_ROOT = os.path.normpath(os.getcwd() + '/../..')
+
+sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
+from building import *
+
+TARGET = 'rtthread.' + rtconfig.TARGET_EXT
+
+env = Environment(tools = ['mingw'],
+	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
+	CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
+	AR = rtconfig.AR, ARFLAGS = '-rc',
+    LIBS = rtconfig.LIBS, LIBPATH = rtconfig.LIBPATH,
+	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
+env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+
+Export('RTT_ROOT')
+Export('rtconfig')
+
+# prepare building environment
+objs = PrepareBuilding(env, RTT_ROOT)
+
+# make a building
+DoBuilding(TARGET, objs)

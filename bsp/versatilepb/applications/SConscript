@@ -4,8 +4,7 @@ from building import *
 
 cwd     = os.path.join(str(Dir('#')), 'applications')
 src	= Glob('*.c')
-drvinc=os.path.abspath('%s/../../../components/drivers/include'%(cwd))
-CPPPATH = [cwd, str(Dir('#')),drvinc]
+CPPPATH = [cwd, str(Dir('#'))]
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 
