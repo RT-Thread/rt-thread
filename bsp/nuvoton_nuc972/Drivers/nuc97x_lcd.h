@@ -226,22 +226,22 @@ uint32_t vpostMPUReadData(void);
 
 
 #ifdef LCD_AT070TN83
-const VPOST_T DEF_AT070TN83;
+extern const VPOST_T DEF_AT070TN83;
 
 #define LCD_X_MAX   800
 #define LCD_Y_MAX   480
 #endif
 
 #ifdef LCD_E50A2V1
-const VPOST_T DEF_E50A2V1;
+extern const VPOST_T DEF_E50A2V1;
 #endif
 
 #ifdef LCD_ILI9341_MPU80
-const VPOST_T DEF_ILI9341_MPU80;
+extern const VPOST_T DEF_ILI9341_MPU80;
 #endif
 
 #ifdef LCD_LSA40AT9001
-const VPOST_T DEF_LSA40AT9001;
+extern const VPOST_T DEF_LSA40AT9001;
 #endif
 
 

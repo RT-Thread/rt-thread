@@ -3,7 +3,7 @@ import os
 # toolchains options
 ARCH		='arm'
 CPU        	='arm926'
-CROSS_TOOL	='gcc'
+CROSS_TOOL	='keil'
 
 TextBase 	= '0x00000000'
 
@@ -75,7 +75,7 @@ elif PLATFORM == 'armcc':
     LFLAGS = DEVICE + ' --strict'
     LFLAGS += ' --info sizes --info totals --info unused --info veneers'
     LFLAGS += ' --list ' + MAP_FILE
-    LFLAGS += ' --scatter  ' + LINK_FILE + '.scat'
+    LFLAGS += ' --scatter  ' + LINK_FILE + '.sct'
 
     if BUILD == 'debug':
         CFLAGS += ' -g -O0'
