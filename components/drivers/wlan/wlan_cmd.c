@@ -245,7 +245,9 @@ int wifi_save_cfg(const char* filename)
 
 int wifi_save_setting(void)
 {
+    #ifdef PKG_USING_CJSON
     wifi_save_cfg(WIFI_SETTING_FN);
+    #endif
 
     return 0;
 }
@@ -304,8 +306,10 @@ int wifi_default(void)
     int result = 0;
     struct rt_wlan_device *wlan;
 
+    #ifdef PKG_USING_CJSON
     /* read default setting for wifi */
     wifi_read_cfg(WIFI_SETTING_FN);
+    #endif
 
     if (network_mode == WIFI_STATION)
     {
@@ -352,13 +356,16 @@ int wifi_default(void)
 
 static void wifi_usage(void)
 {
-    rt_kprintf("wifi wlan_dev - do the default wifi action\n");
+    rt_kprintf("wifi help     - Help information\n");
+    rt_kprintf("wifi cfg SSID PASSWORD - Setting your router AP ssid and pwd\n");
+    rt_kprintf("wifi          - Do the default wifi action\n");
+    rt_kprintf("wifi wlan_dev scan\n");
     rt_kprintf("wifi wlan_dev join SSID PASSWORD\n");
-    rt_kprintf("wifi wlan_dev ap SSID [PASSWORD]\n");
-    rt_kprintf("wifi cfg SSID PASSWORD\n");
+    rt_kprintf("wifi wlan_dev ap SSID [PASSWORD]\n");    
     rt_kprintf("wifi wlan_dev up\n");
     rt_kprintf("wifi wlan_dev down\n");
     rt_kprintf("wifi wlan_dev rssi\n");
+    rt_kprintf("wifi wlan_dev status\n");
 }
 
 int wifi(int argc, char** argv)
@@ -388,7 +395,9 @@ int wifi(int argc, char** argv)
 
         network_mode = WIFI_STATION;
 
+        #ifdef PKG_USING_CJSON
         wifi_save_cfg(WIFI_SETTING_FN);
+        #endif
 
         return 0;
     }
