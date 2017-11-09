@@ -19,11 +19,11 @@
 #define BOARD_SDRAM_SIZE            0x04000000
 /*@{*/
 #if defined(__CC_ARM)
-    extern int Image$$ER_RAM1$$ZI$$Base;
-    extern int Image$$ER_RAM1$$ZI$$Length;
-    extern int Image$$ER_RAM1$$ZI$$Limit;
+    extern int Image$$RW_RAM1$$ZI$$Base;
+    extern int Image$$RW_RAM1$$ZI$$Length;
+    extern int Image$$RW_RAM1$$ZI$$Limit;
 
-#	define BOARD_HEAP_START        (void*)&Image$$ER_RAM1$$ZI$$Limit
+#	define BOARD_HEAP_START        (void*)&Image$$RW_RAM1$$ZI$$Limit
 
 #elif (defined (__GNUC__))
 extern unsigned char 			__bss_start__;
@@ -82,8 +82,10 @@ extern unsigned char 			__bss_end__;
 #define LCD_VRAM_ADDR       (BOARD_SDRAM_SIZE - BOARD_GUI_RAM_SIZE)
 #define LCD_VRAM_SADDR      (0x80000000 | LCD_VRAM_ADDR)
 
+
 #define LCD_VFB_ADDR        (LCD_VRAM_ADDR + LCD_VRAM_SIZE)
 #define LCD_VFB_SADDR       (0x80000000 | LCD_VFB_ADDR)
+
 
 
 

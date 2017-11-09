@@ -51,7 +51,7 @@
 
 /* C++ features */
 
-#define RT_USING_CPLUSPLUS
+//#define RT_USING_CPLUSPLUS
 
 /* Command shell */
 
@@ -67,7 +67,7 @@
 
 /* Device virtual file system */
 
-#define RT_USING_DFS
+//#define RT_USING_DFS
 #define DFS_USING_WORKDIR
 #define DFS_FILESYSTEMS_MAX 4
 #define DFS_FD_MAX 4
@@ -156,9 +156,9 @@
 #define RT_USING_MTD_NAND
 #define RT_MTD_NAND_DEBUG
 #define RT_USING_RTC
-#define RT_USING_SDIO
+//#define RT_USING_SDIO
 #define RT_USING_SPI
-#define RT_USING_SFUD
+//#define RT_USING_SFUD
 #define RT_SFUD_USING_SFDP
 #define RT_SFUD_USING_FLASH_INFO_TABLE
 #define RT_SFUD_DEBUG
@@ -221,8 +221,5 @@
 /* miscellaneous packages */
 
 /* PKG_USING_HELLO is not set */
-
-/* EMWIN config */
-//#define RT_USING_EMWIN
 
 #endif
