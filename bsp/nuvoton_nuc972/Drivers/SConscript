@@ -1,0 +1,14 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c') + Glob('*.cpp')
+
+if not GetDepend('RT_USING_LWIP'):
+	SrcRemove(src,'nuc97x_ethernet.c')
+
+
+CPPPATH = [cwd, str(Dir('#'))]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
