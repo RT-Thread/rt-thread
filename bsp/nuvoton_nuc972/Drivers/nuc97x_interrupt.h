@@ -14,6 +14,8 @@
 #ifndef _NUC970_INTERRUPT_H_
 #define _NUC970_INTERRUPT_H_
 
+#include <rthw.h>
+
 /**
  * @details  Interrupt Number Definition.
  */
@@ -100,7 +102,11 @@ typedef enum IRQn {
 #define NEGATIVE_EDGE_TRIGGER      0x80
 #define POSITIVE_EDGE_TRIGGER      0xC0
 
-
+void rt_hw_interrupt_mask(int vector);
+void rt_hw_interrupt_umask(int vector);
+rt_isr_handler_t rt_hw_interrupt_install(int vector,
+										 rt_isr_handler_t handler, void *param,
+										 char *name);
 void rt_hw_interrupt_set_priority(int vector,int priority);
 void rt_hw_interrupt_set_type(int vector,int type);
 

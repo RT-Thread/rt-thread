@@ -10,80 +10,90 @@
  * Change Logs:
  * Date           Author		Notes
  * 2017/11/08     Urey			first version
+ * 2017/11/09     EvalZero  add lcd API
  */
 
 #ifndef DRIVERS_NUC97X_LCD_H_
 #define DRIVERS_NUC97X_LCD_H_
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-#define LCD_AT070TN83
-//#define LCD_E50A2V1
-//#define LCD_ILI9341_MPU80
-//#define LCD_LSA40AT9001
+/** @addtogroup NUC970_Device_Driver NUC970 Device Driver
+  @{
+*/
+
+/** @addtogroup NUC970_LCD_Driver LCD Driver
+  @{
+*/
+
+/** @addtogroup NUC970_LCD_EXPORTED_CONSTANTS LCD Exported Constants
+  @{
+*/
+/// @cond HIDDEN_SYMBOLS
 
 /* bit definition of REG_LCM_DCCS register */
-#define VPOSTB_HC_EN                (1<<31)
-#define VPOSTB_DISP_ON              (1<<25)
-#define VPOSTB_ITUEN                (1<<15)
-#define VPOSTB_OSD_SRC_YUV422       (0<<12)
-#define VPOSTB_OSD_SRC_YCBCR422     (1<<12)
-#define VPOSTB_OSD_SRC_RGB888       (2<<12)
-#define VPOSTB_OSD_SRC_RGB666       (3<<12)
-#define VPOSTB_OSD_SRC_RGB565       (4<<12)
-#define VPOSTB_OSD_SRC_RGB444_LOW   (5<<12)
-#define VPOSTB_OSD_SRC_RGB444_HIGH  (7<<12)
-#define VPOSTB_VA_SRC_YUV422        (0<<8 )
-#define VPOSTB_VA_SRC_YCBCR422      (1<<8 )
-#define VPOSTB_VA_SRC_RGB888        (2<<8 )
-#define VPOSTB_VA_SRC_RGB666        (3<<8 )
-#define VPOSTB_VA_SRC_RGB565        (4<<8 )
-#define VPOSTB_VA_SRC_RGB444_LOW    (5<<8 )
-#define VPOSTB_VA_SRC_RGB444_HIGH   (7<<8 )
-#define VPOSTB_SINGLE               (1<<7 )
-#define VPOSTB_FIELD_INTR           (1<<6 )
-#define VPOSTB_CMD_ON               (1<<5 )
-#define VPOSTB_DISP_INT_EN          (1<<4 )
-#define VPOSTB_DISP_OUT_EN          (1<<3 )
-#define VPOSTB_OSD_EN               (1<<2 )
-#define VPOSTB_VA_EN                (1<<1 )
-#define VPOSTB_ENG_RST              (1)
+#define VPOSTB_HC_EN		((UINT32)1<<31)
+#define VPOSTB_DISP_ON				(1<<25)
+#define VPOSTB_ITUEN 				(1<<15)
+#define VPOSTB_OSD_SRC_YUV422		(0<<12)
+#define VPOSTB_OSD_SRC_YCBCR422 	(1<<12)   
+#define VPOSTB_OSD_SRC_RGB888		(2<<12)   
+#define VPOSTB_OSD_SRC_RGB666		(3<<12)   
+#define VPOSTB_OSD_SRC_RGB565		(4<<12)   
+#define VPOSTB_OSD_SRC_RGB444_LOW	(5<<12)
+#define VPOSTB_OSD_SRC_RGB444_HIGH	(7<<12)
+#define VPOSTB_VA_SRC_YUV422		(0<<8 )
+#define VPOSTB_VA_SRC_YCBCR422		(1<<8 )
+#define VPOSTB_VA_SRC_RGB888		(2<<8 )
+#define VPOSTB_VA_SRC_RGB666		(3<<8 )
+#define VPOSTB_VA_SRC_RGB565		(4<<8 )
+#define VPOSTB_VA_SRC_RGB444_LOW	(5<<8 )
+#define VPOSTB_VA_SRC_RGB444_HIGH	(7<<8 )
+#define VPOSTB_SINGLE				(1<<7 )
+#define VPOSTB_FIELD_INTR			(1<<6 )
+#define VPOSTB_CMD_ON				(1<<5 )
+#define VPOSTB_DISP_INT_EN			(1<<4 )
+#define VPOSTB_DISP_OUT_EN			(1<<3 )
+#define VPOSTB_OSD_EN				(1<<2 )
+#define VPOSTB_VA_EN 				(1<<1 )
+#define VPOSTB_ENG_RST 			    (1)
 
 
 /* bit definition of REG_LCM_DEV_CTRL register */
-#define VPOSTB_CMDHIGH                  (0)
-#define VPOSTB_CMDLOW                   ((uint32_t)1<<31)
-#define VPOSTB_CM16t18LOW               (0)
-#define VPOSTB_CM16t18HIGH              ((uint32_t)1<<30)
-#define VPOSTB_CMD8                     (0)
-#define VPOSTB_CMD16                    ((uint32_t)1<<29)
-#define VPOSTB_IM256K_9or18 (0)
-#define VPOSTB_IM256K_8or16             ((uint32_t)1<<28)
-#define VPOSTB_MPU80                    (0)
-#define VPOSTB_MPU68                    (1<<27)
-#define VPOSTB_DATA8or9                 (0)
-#define VPOSTB_DATA16or18               (1<<26)
-#define VPOSTB_COLORTYPE_4K             (0)
-#define VPOSTB_COLORTYPE_64K            (1<<24)
-#define VPOSTB_COLORTYPE_256K           (2<<24)
-#define VPOSTB_COLORTYPE_16M            (3<<24)
-#define VPOSTB_LACE                     (1<<23)
-#define VPOSTB_VR_LACE                  (1<<22)
-#define VPOSTB_V_POL                    (1<<21)
-#define VPOSTB_H_POL                    (1<<20)
-#define VPOSTB_FAL_D                    (1<<19)
-#define VPOSTB_YUV2CCIR                 (1<<16)
-#define VPOSTB_DEVICE_SYNC_YUV422       (0)
+#define VPOSTB_CMDHIGH	(0)
+#define VPOSTB_CMDLOW	((UINT32)1<<31)
+#define VPOSTB_CM16t18LOW	(0) 
+#define VPOSTB_CM16t18HIGH	((UINT32)1<<30) 
+#define VPOSTB_CMD8    (0)
+#define VPOSTB_CMD16    ((UINT32)1<<29)
+#define VPOSTB_IM256K_9or18	(0)
+#define VPOSTB_IM256K_8or16	((UINT32)1<<28)
+#define VPOSTB_MPU80    (0)
+#define VPOSTB_MPU68    (1<<27)
+#define VPOSTB_DATA8or9   (0)
+#define VPOSTB_DATA16or18   (1<<26)
+#define VPOSTB_COLORTYPE_4K         (0)
+#define VPOSTB_COLORTYPE_64K		(1<<24)
+#define VPOSTB_COLORTYPE_256K		(2<<24)
+#define VPOSTB_COLORTYPE_16M		(3<<24)
+#define VPOSTB_LACE     (1<<23)
+#define VPOSTB_VR_LACE  (1<<22)
+#define VPOSTB_V_POL    (1<<21)
+#define VPOSTB_H_POL    (1<<20)
+#define VPOSTB_FAL_D    (1<<19)
+#define VPOSTB_YUV2CCIR (1<<16)
+#define VPOSTB_DEVICE_SYNC_YUV422		(0)
 #define VPOSTB_DEVICE_SYNC_UNIPAC       (4<<5)
 #define VPOSTB_DEVICE_SYNC_EPSON        (5<<5)
-#define VPOSTB_DEVICE_SYNC_HIGHCOLOR    (6<<5)
+#define VPOSTB_DEVICE_SYNC_HIGHCOLOR	(6<<5)
 #define VPOSTB_DEVICE_MPU               (7<<5)
-#define VPOSTB_SWAP_YUYV                (1<<1)
+#define VPOSTB_SWAP_YUYV	(1<<1)
 
 /* bit definition of REG_LCM_INT_CS register */
-#define VPOSTB_DISP_F_INT           (1<<31)
+#define VPOSTB_DISP_F_INT			(1<<31)
 #define VPOSTB_DISP_F_STATUS        (1<<30)
 #define VPOSTB_UNDERRUN_INT         (1<<29)
 #define VPOSTB_BUS_ERROR_INT        (1<<28)
@@ -92,58 +102,58 @@ extern "C" {
 #define VPOSTB_DISP_F_EN            (1)
 
 /* bit definition of REG_LCM_VA_FBCTRL register */
-#define VPOSTB_DB_EN                ((UINT32)1<<31)
-#define VPOSTB_FLY_EN               (1<<12)
+#define VPOSTB_DB_EN	((UINT32)1<<31)
+#define VPOSTB_FLY_EN	(1<<12)
 
 /* bit definition of REG_LCM_OSD_OVERLAY register */
-#define VPOSTB_BLI_ON               (1<<9)
-#define VPOSTB_CKEY_ON              (1<<8)
+#define VPOSTB_BLI_ON 	(1<<9)
+#define VPOSTB_CKEY_ON	(1<<8)
 
-#define DISPLAY_VIDEO               (0)
-#define DISPLAY_OSD                 (1)
-#define DISPLAY_SYNTHESIZED         (2)
+#define DISPLAY_VIDEO			(0)
+#define DISPLAY_OSD				(1)
+#define DISPLAY_SYNTHESIZED		(2)
 
 /// @endcond HIDDEN_SYMBOLS
 
-#define VA_SRC_YUV422               (0<<8 )     /*!< YUV422 format */
-#define VA_SRC_YCBCR422             (1<<8 )     /*!< YCBCR422 format */
-#define VA_SRC_RGB888               (2<<8 )     /*!< RGB888 format */
-#define VA_SRC_RGB666               (3<<8 )     /*!< RGB666 format */
-#define VA_SRC_RGB565               (4<<8 )     /*!< RGB565 format */
-#define VA_SRC_RGB444_LOW           (5<<8 )     /*!< RGB444 low nibble format */
-#define VA_SRC_RGB444_HIGH          (7<<8 )     /*!< RGB444 high nibble format */
+#define VA_SRC_YUV422		(0<<8 )     /*!< YUV422 format */
+#define VA_SRC_YCBCR422		(1<<8 )     /*!< YCBCR422 format */
+#define VA_SRC_RGB888		(2<<8 )     /*!< RGB888 format */
+#define VA_SRC_RGB666		(3<<8 )     /*!< RGB666 format */
+#define VA_SRC_RGB565		(4<<8 )     /*!< RGB565 format */
+#define VA_SRC_RGB444_LOW	(5<<8 )     /*!< RGB444 low nibble format */
+#define VA_SRC_RGB444_HIGH	(7<<8 )     /*!< RGB444 high nibble format */
 
-#define OSD_SRC_YUV422              (0<<12)     /*!< YUV422 format */
-#define OSD_SRC_YCBCR422            (1<<12)     /*!< YCBCR422 format */
-#define OSD_SRC_RGB888              (2<<12)     /*!< RGB888 format */
-#define OSD_SRC_RGB666              (3<<12)     /*!< RGB666 format */
-#define OSD_SRC_RGB565              (4<<12)     /*!< RGB565 format */
-#define OSD_SRC_RGB444_LOW          (5<<12)     /*!< RGB444 low nibble format */
-#define OSD_SRC_RGB444_HIGH         (7<<12)     /*!< RGB444 high nibble format */
-#define OSD_SRC_RGB332              (6<<12)     /*!< RGB332 format */
+#define OSD_SRC_YUV422		(0<<12)	    /*!< YUV422 format */
+#define OSD_SRC_YCBCR422    (1<<12)     /*!< YCBCR422 format */
+#define OSD_SRC_RGB888      (2<<12)     /*!< RGB888 format */
+#define OSD_SRC_RGB666      (3<<12)     /*!< RGB666 format */
+#define OSD_SRC_RGB565      (4<<12)     /*!< RGB565 format */
+#define OSD_SRC_RGB444_LOW	(5<<12)     /*!< RGB444 low nibble format */
+#define OSD_SRC_RGB444_HIGH (7<<12)     /*!< RGB444 high nibble format */
+#define OSD_SRC_RGB332      (6<<12)     /*!< RGB332 format */
 
 #define VPOST_DISPLAY_SINGLE        1   /*!< Single display mode */
 #define VPOST_DISPLAY_CONTINUOUS    0   /*!< Continuous display mode */
 
-#define VPOSTB_OSD_VUP_1X           (0<<16)     /*!< OSD vertical scale up 1x */
-#define VPOSTB_OSD_VUP_2X           (1<<16)     /*!< OSD vertical scale up 2x */
-#define VPOSTB_OSD_VUP_4X           (2<<16)     /*!< OSD vertical scale up 4x */
+#define VPOSTB_OSD_VUP_1X			(0<<16)     /*!< OSD vertical scale up 1x */
+#define VPOSTB_OSD_VUP_2X			(1<<16)     /*!< OSD vertical scale up 2x */
+#define VPOSTB_OSD_VUP_4X			(2<<16)     /*!< OSD vertical scale up 4x */
 
-#define DISPLAY_VIDEO               (0)     /*!< Display video data */
-#define DISPLAY_OSD                 (1)     /*!< Display OSD data */
-#define DISPLAY_SYNTHESIZED         (2)     /*!< Display synthesized data */
+#define DISPLAY_VIDEO			(0)     /*!< Display video data */
+#define DISPLAY_OSD				(1)     /*!< Display OSD data */
+#define DISPLAY_SYNTHESIZED		(2)     /*!< Display synthesized data */
 
-#define VA_SCALE_INTERPOLATION      (0)     /*!< Scale mode is interpolation */
-#define VA_SCALE_DUPLICATION        (1<<15) /*!< Scale mode is duplication */
+#define VA_SCALE_INTERPOLATION	(0)     /*!< Scale mode is interpolation */
+#define VA_SCALE_DUPLICATION	(1<<15) /*!< Scale mode is duplication */
 
 typedef enum va_hcmode_e
 {
-    HC_MODE0,           /*!< 32X32X2bpp 4 color */
-    HC_MODE1,           /*!< 32X32X2bpp 3 color and 1 transparent */
-    HC_MODE2,           /*!< 64X64X2bpp 4 color */
-    HC_MODE3,           /*!< 64X64X2bpp 3 color and 1 transparent */
-    HC_MODE4,           /*!< 128X128X1bpp 2 color */
-    HC_MODE5            /*!< 128X128X1bpp 1 color and 1 transparent */
+	HC_MODE0,			/*!< 32X32X2bpp 4 color */
+	HC_MODE1,			/*!< 32X32X2bpp 3 color and 1 transparent */
+	HC_MODE2,			/*!< 64X64X2bpp 4 color */
+	HC_MODE3,			/*!< 64X64X2bpp 3 color and 1 transparent */
+	HC_MODE4,			/*!< 128X128X1bpp 2 color */
+	HC_MODE5			/*!< 128X128X1bpp 1 color and 1 transparent */
 } VA_HCMODE_E;
 
 typedef struct
@@ -171,13 +181,13 @@ typedef struct
 #define DIS_LSA40AT9001         2
 typedef struct {
     uint32_t u32DevWidth;           /*!< Panel width */
-    uint32_t u32DevHeight;          /*!< Panel height */
-    uint32_t u32CmdLow;             /*!< MPU command line low indicator */
-    uint32_t u32Cmd16t18;           /*!< MPU command width */
-    uint32_t u32CmdBusWidth;        /*!< MPU bus width */
-    uint32_t u32DataBusWidth;       /*!< Display bus width */
-    uint32_t u32MPU_Mode;           /*!< MPU mode */
-    uint32_t u32DisplayColors;      /*!< Display colors */
+	uint32_t u32DevHeight;          /*!< Panel height */
+	uint32_t u32CmdLow;             /*!< MPU command line low indicator */
+	uint32_t u32Cmd16t18;           /*!< MPU command width */
+	uint32_t u32CmdBusWidth;        /*!< MPU bus width */
+	uint32_t u32DataBusWidth;       /*!< Display bus width */
+	uint32_t u32MPU_Mode;           /*!< MPU mode */
+	uint32_t u32DisplayColors;      /*!< Display colors */
     uint32_t u32DevType;            /*!< Type of display panel */
     uint32_t u32Reg_CRTCSIZE;       /*!< CRTCSIZE register value */
     uint32_t u32Reg_CRTCDEND;       /*!< CRTCDEND register value */
@@ -186,20 +196,20 @@ typedef struct {
     uint32_t u32Reg_CRTCVR;         /*!< CRTCVR register value */
 }VPOST_T;
 
-#define LCM_ERR_ID      0xFFFF0400  /*!< LCM library ID */
+#define LCM_ERR_ID		0xFFFF0400	/*!< LCM library ID */
 
 /* error code */
-#define ERR_NULL_BUF            (LCM_ERR_ID | 0x04)  /*!< error memory location */
-#define ERR_NO_DEVICE           (LCM_ERR_ID | 0x05)  /*!< error no device */
+#define ERR_NULL_BUF 			(LCM_ERR_ID | 0x04)	 /*!< error memory location */
+#define ERR_NO_DEVICE			(LCM_ERR_ID | 0x05)	 /*!< error no device */
 #define ERR_BAD_PARAMETER       (LCM_ERR_ID | 0x06)  /*!< error for bad parameter */
-#define ERR_POWER_STATE         (LCM_ERR_ID | 0x07)  /*!< error power state control */
+#define ERR_POWER_STATE			(LCM_ERR_ID | 0x07)	 /*!< error power state control */
 /*@}*/ /* end of group NUC970_LCD_EXPORTED_CONSTANTS */
 
 /** @addtogroup NUC970_LCD_EXPORTED_FUNCTIONS LCD Exported Functions
   @{
 */
 
-void vpostLCMInit(VPOST_T *pDisplayDev);
+void vpostLCMInit(uint32_t u32DisplayPanelID);
 uint8_t* vpostGetFrameBuffer(void);
 void vpostLCMDeinit(void);
 void vpostSetDisplayMode(uint8_t u8DisplayMode);
@@ -224,32 +234,15 @@ void vpostMPUWriteAddr(uint16_t uscmd);
 void vpostMPUWriteData(uint16_t usdata);
 uint32_t vpostMPUReadData(void);
 
+/*@}*/ /* end of group NUC970_LCD_EXPORTED_FUNCTIONS */
 
-#ifdef LCD_AT070TN83
-extern const VPOST_T DEF_AT070TN83;
+/*@}*/ /* end of group NUC970_LCD_Driver */
 
-#define LCD_X_MAX   800
-#define LCD_Y_MAX   480
-#endif
-
-#ifdef LCD_E50A2V1
-extern const VPOST_T DEF_E50A2V1;
-#endif
-
-#ifdef LCD_ILI9341_MPU80
-extern const VPOST_T DEF_ILI9341_MPU80;
-#endif
-
-#ifdef LCD_LSA40AT9001
-extern const VPOST_T DEF_LSA40AT9001;
-#endif
-
-
-#define LCD_VRRAM_ADDRR     LCD_VRAM_ADDR
-
+/*@}*/ /* end of group NUC970_Device_Driver */
 
 #ifdef __cplusplus
 }
 #endif
+
 
 #endif /* DRIVERS_NUC97X_LCD_H_ */

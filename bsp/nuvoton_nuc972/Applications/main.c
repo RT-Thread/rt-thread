@@ -20,12 +20,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
+extern int task_lcd_init(void);
 
 int main(void *parameter)
 {
 	printf("Hello RT-Thread !!!\n");
-
+    task_lcd_init();
 	return 0;
 }
 
