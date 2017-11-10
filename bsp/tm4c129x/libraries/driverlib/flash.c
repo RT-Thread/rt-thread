@@ -2,7 +2,7 @@
 //
 // flash.c - Driver for programming the on-chip flash.
 //
-// Copyright (c) 2005-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 2.1.0.12573 of the Tiva Peripheral Driver Library.
+// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -581,7 +581,81 @@ FlashUserSet(uint32_t ui32User0, uint32_t ui32User1)
 
 //*****************************************************************************
 //
-//! Saves the user registers.
+//! Gets all the user registers.
+//!
+//! \param pui32User0 is a pointer to the location to store USER Register 0.
+//! \param pui32User1 is a pointer to the location to store USER Register 1.
+//! \param pui32User2 is a pointer to the location to store USER Register 2.
+//! \param pui32User3 is a pointer to the location to store USER Register 3.
+//!
+//! This function reads the contents of user registers 0, 1, 2 and 3, and
+//! stores them in the specified locations.
+//!
+//! \return Returns 0 on success, or -1 if a hardware error is encountered.
+//
+//*****************************************************************************
+int32_t
+FlashAllUserRegisterGet(uint32_t *pui32User0, uint32_t *pui32User1,
+                        uint32_t *pui32User2, uint32_t *pui32User3)
+{
+    //
+    // Verify that the pointers are valid.
+    //
+    ASSERT(pui32User0 != 0);
+    ASSERT(pui32User1 != 0);
+    ASSERT(pui32User2 != 0);
+    ASSERT(pui32User3 != 0);
+
+    //
+    // Get and store the current value of the user registers.
+    //
+    *pui32User0 = HWREG(FLASH_USERREG0);
+    *pui32User1 = HWREG(FLASH_USERREG1);
+    *pui32User2 = HWREG(FLASH_USERREG2);
+    *pui32User3 = HWREG(FLASH_USERREG3);
+
+    //
+    // Success.
+    //
+    return(0);
+}
+
+//*****************************************************************************
+//
+//! Sets the user registers 0 to 3
+//!
+//! \param ui32User0 is the value to store in USER Register 0.
+//! \param ui32User1 is the value to store in USER Register 1.
+//! \param ui32User2 is the value to store in USER Register 2.
+//! \param ui32User3 is the value to store in USER Register 3.
+//!
+//! This function sets the contents of the user registers 0, 1, 2 and 3 to
+//! the specified values.
+//!
+//! \return Returns 0 on success, or -1 if a hardware error is encountered.
+//
+//*****************************************************************************
+int32_t
+FlashAllUserRegisterSet(uint32_t ui32User0, uint32_t ui32User1,
+                        uint32_t ui32User2, uint32_t ui32User3)
+{
+    //
+    // Save the new values into the user registers.
+    //
+    HWREG(FLASH_USERREG0) = ui32User0;
+    HWREG(FLASH_USERREG1) = ui32User1;
+    HWREG(FLASH_USERREG2) = ui32User2;
+    HWREG(FLASH_USERREG3) = ui32User3;
+
+    //
+    // Success.
+    //
+    return(0);
+}
+
+//*****************************************************************************
+//
+//! Saves the user registers 0 and 1.
 //!
 //! This function makes the currently programmed user register 0 and 1 settings
 //! permanent.  This operation is non-reversible; a chip reset or power cycle
@@ -620,6 +694,58 @@ FlashUserSave(void)
     //
     while(HWREG(FLASH_FMC) & FLASH_FMC_COMT)
     {
+    }
+
+    //
+    // Success.
+    //
+    return(0);
+}
+
+//*****************************************************************************
+//
+//! Saves the user registers.
+//!
+//! This function makes the currently programmed user register 0, 1, 2 and 3
+//! settings permanent.  This operation is non-reversible; a chip reset or
+//! power cycle does not change the flash protection.
+//!
+//! This function does not return until the protection has been saved.
+//!
+//! \note To ensure data integrity of the user registers, the commits should
+//! not be interrupted with a power loss.
+//!
+//! \return Returns 0 on success, or -1 if a hardware error is encountered.
+//
+//*****************************************************************************
+int32_t
+FlashAllUserRegisterSave(void)
+{
+    uint32_t ui32Index;
+
+    //
+    // Setting the MSB of FMA will trigger a permanent save of a USER Register.
+    // The 2 least signigicant bits, specify the exact User Register to save.
+    // The value of the least significant bits for
+    // USER Register 0 is 00,
+    // USER Register 1 is 01,
+    // USER Register 2 is 10 and
+    // USER Register 3 is 11.
+    //
+    for(ui32Index = 0; ui32Index < 4; ui32Index++)
+    {
+        //
+        // Tell the flash controller to commit a USER Register.
+        //
+        HWREG(FLASH_FMA) = (0x80000000 + ui32Index);
+        HWREG(FLASH_FMC) = FLASH_FMC_WRKEY | FLASH_FMC_COMT;
+
+        //
+        // Wait until the write has completed.
+        //
+        while(HWREG(FLASH_FMC) & FLASH_FMC_COMT)
+        {
+        }
     }
 
     //

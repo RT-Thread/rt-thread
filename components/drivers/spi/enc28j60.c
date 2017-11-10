@@ -343,7 +343,7 @@ static rt_err_t enc28j60_init(rt_device_t dev)
 }
 
 /* control the interface */
-static rt_err_t enc28j60_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t enc28j60_control(rt_device_t dev, int cmd, void *args)
 {
     struct net_device * enc28j60 = (struct net_device *)dev;
     switch(cmd)

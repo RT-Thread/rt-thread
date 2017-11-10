@@ -19,10 +19,6 @@
 #include <finsh.h>
 #endif
 
-#ifdef RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif
-
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
 {

@@ -397,7 +397,7 @@ void rt_alarm_update(rt_device_t dev, rt_uint32_t event)
  * \param cmd control command
  * \param arg argument
  */
-rt_err_t rt_alarm_control(rt_alarm_t alarm, rt_uint8_t cmd, void *arg)
+rt_err_t rt_alarm_control(rt_alarm_t alarm, int cmd, void *arg)
 {
     rt_err_t ret = RT_ERROR;
 

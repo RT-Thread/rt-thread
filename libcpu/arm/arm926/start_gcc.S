@@ -95,8 +95,8 @@ SVC_STACK_START:
     .section .init, "ax"
     .arm
 
-    .global entry
-entry:
+    .global start
+start:
     LDR     PC, vector_reset
     LDR     PC, vector_undef
     LDR     PC, vector_swi
@@ -204,7 +204,7 @@ ctor_loop:
 ctor_end:
 
     @; Enter the C code
-    LDR     R0, =main
+    LDR     R0, =rtthread_startup
     BLX     R0
 
 @;----------------- Exception Handler -----------------------------------------

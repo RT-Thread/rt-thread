@@ -726,5 +726,5 @@ int dfs_jffs2_init(void)
 	rt_kprintf("init jffs2 lock mutex okay\n");
 	return 0;
 }
-INIT_FS_EXPORT(dfs_jffs2_init);
+INIT_COMPONENT_EXPORT(dfs_jffs2_init);
 

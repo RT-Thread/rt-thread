@@ -27,6 +27,5 @@
 #include <rtthread.h>
 
 int devfs_init(void);
-void rt_console_init(const char* device_name);
 
 #endif

@@ -1,7 +1,7 @@
 /*
- * File      : dc_blend.c
- * This file is part of RT-Thread GUI
- * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
+ * File      : dc_draw.h
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by

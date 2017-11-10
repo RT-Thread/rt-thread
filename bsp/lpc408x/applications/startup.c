@@ -19,7 +19,7 @@
 #include "board.h"
 
 extern int rt_application_init(void);
-
+extern void sram_init(void);
 /**
  * This function will startup RT-Thread RTOS.
  */

@@ -35,6 +35,9 @@
  *                             thread preempted, which reported by Jiaxing Lee.
  * 2011-09-08     Bernard      fixed the scheduling issue in rt_thread_startup.
  * 2012-12-29     Bernard      fixed compiling warning.
+ * 2016-08-09     ArdaFu       add thread suspend and resume hook.
+ * 2017-04-10     armink       fixed the rt_thread_delete and rt_thread_detach
+                               bug when thread has not startup.
  */
 
 #include <rtthread.h>
@@ -43,6 +46,51 @@
 extern rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 extern struct rt_thread *rt_current_thread;
 extern rt_list_t rt_thread_defunct;
+
+#ifdef RT_USING_HOOK
+
+static void (*rt_thread_suspend_hook)(rt_thread_t thread);
+static void (*rt_thread_resume_hook) (rt_thread_t thread);
+static void (*rt_thread_inited_hook) (rt_thread_t thread);
+
+/**
+ * @ingroup Hook
+ * This function sets a hook function when the system suspend a thread.
+ *
+ * @param hook the specified hook function
+ *
+ * @note the hook function must be simple and never be blocked or suspend.
+ */
+void rt_thread_suspend_sethook(void (*hook)(rt_thread_t thread))
+{
+    rt_thread_suspend_hook = hook;
+}
+
+/**
+ * @ingroup Hook
+ * This function sets a hook function when the system resume a thread.
+ *
+ * @param hook the specified hook function
+ *
+ * @note the hook function must be simple and never be blocked or suspend.
+ */
+void rt_thread_resume_sethook(void (*hook)(rt_thread_t thread))
+{
+    rt_thread_resume_hook = hook;
+}
+
+/**
+ * @ingroup Hook
+ * This function sets a hook function when a thread is initialized.
+ *
+ * @param hook the specified hook function
+ */
+void rt_thread_inited_sethook(void (*hook)(rt_thread_t thread))
+{
+    rt_thread_inited_hook = hook;
+}
+
+#endif
 
 void rt_thread_exit(void)
 {
@@ -103,13 +151,19 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
     /* init thread stack */
     rt_memset(thread->stack_addr, '#', thread->stack_size);
     thread->sp = (void *)rt_hw_stack_init(thread->entry, thread->parameter,
-        (void *)((char *)thread->stack_addr + thread->stack_size - 4),
-        (void *)rt_thread_exit);
+                                          (void *)((char *)thread->stack_addr + thread->stack_size - 4),
+                                          (void *)rt_thread_exit);
 
     /* priority init */
     RT_ASSERT(priority < RT_THREAD_PRIORITY_MAX);
     thread->init_priority    = priority;
     thread->current_priority = priority;
+
+    thread->number_mask = 0;
+#if RT_THREAD_PRIORITY_MAX > 32
+    thread->number = 0;
+    thread->high_mask = 0;
+#endif
 
     /* tick init */
     thread->init_tick      = tick;
@@ -131,6 +185,18 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
                   0,
                   RT_TIMER_FLAG_ONE_SHOT);
 
+    /* initialize signal */
+#ifdef RT_USING_SIGNALS
+    thread->sig_mask    = 0x00;
+    thread->sig_pending = 0x00;
+
+    thread->sig_ret     = RT_NULL;
+    thread->sig_vectors = RT_NULL;
+    thread->si_list     = RT_NULL;
+#endif
+
+    RT_OBJECT_HOOK_CALL(rt_thread_inited_hook, (thread));
+
     return RT_EOK;
 }
 
@@ -138,7 +204,7 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
  * @addtogroup Thread
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * This function will initialize a thread, normally it's used to initialize a
@@ -204,7 +270,7 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
 {
     /* thread check */
     RT_ASSERT(thread != RT_NULL);
-    RT_ASSERT(thread->stat == RT_THREAD_INIT);
+    RT_ASSERT((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_INIT);
 
     /* set current priority to init priority */
     thread->current_priority = thread->init_priority;
@@ -249,8 +315,11 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
     /* thread check */
     RT_ASSERT(thread != RT_NULL);
 
-    /* remove from schedule */
-    rt_schedule_remove_thread(thread);
+    if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_INIT)
+    {
+        /* remove from schedule */
+        rt_schedule_remove_thread(thread);
+    }
 
     /* release thread timer */
     rt_timer_detach(&(thread->thread_timer));
@@ -344,8 +413,11 @@ rt_err_t rt_thread_delete(rt_thread_t thread)
     /* thread check */
     RT_ASSERT(thread != RT_NULL);
 
-    /* remove from schedule */
-    rt_schedule_remove_thread(thread);
+    if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_INIT)
+    {
+        /* remove from schedule */
+        rt_schedule_remove_thread(thread);
+    }
 
     /* release thread timer */
     rt_timer_detach(&(thread->thread_timer));
@@ -386,7 +458,7 @@ rt_err_t rt_thread_yield(void)
     thread = rt_current_thread;
 
     /* if the thread stat is READY and on ready queue list */
-    if (thread->stat == RT_THREAD_READY &&
+    if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_READY &&
         thread->tlist.next != thread->tlist.prev)
     {
         /* remove thread from thread list */
@@ -473,7 +545,7 @@ RTM_EXPORT(rt_thread_delay);
  *
  * @return RT_EOK
  */
-rt_err_t rt_thread_control(rt_thread_t thread, rt_uint8_t cmd, void *arg)
+rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
 {
     register rt_base_t temp;
 
@@ -487,7 +559,7 @@ rt_err_t rt_thread_control(rt_thread_t thread, rt_uint8_t cmd, void *arg)
         temp = rt_hw_interrupt_disable();
 
         /* for ready thread, change queue */
-        if (thread->stat == RT_THREAD_READY)
+        if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_READY)
         {
             /* remove thread from schedule queue first */
             rt_schedule_remove_thread(thread);
@@ -560,7 +632,7 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
 
     RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread suspend:  %s\n", thread->name));
 
-    if (thread->stat != RT_THREAD_READY)
+    if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_READY)
     {
         RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread suspend: thread disorder, %d\n",
                                        thread->stat));
@@ -581,6 +653,7 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
     /* enable interrupt */
     rt_hw_interrupt_enable(temp);
 
+    RT_OBJECT_HOOK_CALL(rt_thread_suspend_hook, (thread));
     return RT_EOK;
 }
 RTM_EXPORT(rt_thread_suspend);
@@ -601,7 +674,7 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
 
     RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread resume:  %s\n", thread->name));
 
-    if (thread->stat != RT_THREAD_SUSPEND)
+    if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_SUSPEND)
     {
         RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread resume: thread disorder, %d\n",
                                        thread->stat));
@@ -623,6 +696,7 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
     /* insert to schedule ready list */
     rt_schedule_insert_thread(thread);
 
+    RT_OBJECT_HOOK_CALL(rt_thread_resume_hook, (thread));
     return RT_EOK;
 }
 RTM_EXPORT(rt_thread_resume);
@@ -641,7 +715,7 @@ void rt_thread_timeout(void *parameter)
 
     /* thread check */
     RT_ASSERT(thread != RT_NULL);
-    RT_ASSERT(thread->stat == RT_THREAD_SUSPEND);
+    RT_ASSERT((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND);
 
     /* set error number */
     thread->error = -RT_ETIMEOUT;
@@ -704,4 +778,4 @@ rt_thread_t rt_thread_find(char *name)
 }
 RTM_EXPORT(rt_thread_find);
 
-/*@}*/
+/**@}*/

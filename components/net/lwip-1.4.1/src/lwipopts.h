@@ -86,11 +86,7 @@
 #define mem_free                    rt_free
 #define mem_calloc                  rt_calloc
 
-#ifdef RT_LWIP_USING_RT_MEM
-#define MEMP_MEM_MALLOC             1
-#else
 #define MEMP_MEM_MALLOC             0
-#endif
 
 /* MEMP_NUM_PBUF: the number of memp struct pbufs. If the application
    sends a lot of data out of ROM (or other static memory), this
@@ -367,8 +363,12 @@
  * LWIP_COMPAT_SOCKETS==1: Enable BSD-style sockets functions names.
  * (only used if you use sockets.c)
  */
+#ifdef RT_USING_DFS_NET
+#define LWIP_COMPAT_SOCKETS             0
+#else
 #ifndef LWIP_COMPAT_SOCKETS
 #define LWIP_COMPAT_SOCKETS             1
+#endif
 #endif
 
 

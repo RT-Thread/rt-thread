@@ -383,7 +383,7 @@ static rt_err_t rt_sdcard_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_err_t rt_sdcard_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_sdcard_control(rt_device_t dev, int cmd, void *args)
 {
     return RT_EOK;
 }
@@ -398,7 +398,7 @@ static rt_size_t rt_sdcard_read(rt_device_t dev,
 
     if (dev == RT_NULL)
     {
-        rt_set_errno(-DFS_STATUS_EINVAL);
+        rt_set_errno(-EINVAL);
 
         return 0;
     }
@@ -429,7 +429,7 @@ static rt_size_t rt_sdcard_write(rt_device_t dev,
 
     if (dev == RT_NULL)
     {
-        rt_set_errno(-DFS_STATUS_EINVAL);
+        rt_set_errno(-EINVAL);
 
         return 0;
     }

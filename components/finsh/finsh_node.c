@@ -42,7 +42,7 @@ int finsh_node_init()
 	return 0;
 }
 
-struct finsh_node* finsh_node_allocate(u_char type)
+struct finsh_node* finsh_node_allocate(uint8_t type)
 {
 	int i;
 
@@ -181,7 +181,7 @@ struct finsh_node* finsh_node_new_string(char* s)
 	/* make string */
 	node->value.ptr = finsh_heap_allocate(strlen(s) + 1);
 	strncpy(node->value.ptr, s, strlen(s));
-	((u_char*)node->value.ptr)[strlen(s)] = '\0';
+	((uint8_t*)node->value.ptr)[strlen(s)] = '\0';
 
 	return node;
 }

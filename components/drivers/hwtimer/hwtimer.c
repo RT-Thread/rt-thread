@@ -206,7 +206,7 @@ static rt_size_t rt_hwtimer_write(struct rt_device *dev, rt_off_t pos, const voi
     return size;
 }
 
-static rt_err_t rt_hwtimer_control(struct rt_device *dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_hwtimer_control(struct rt_device *dev, int cmd, void *args)
 {
     rt_err_t result = RT_EOK;
     rt_hwtimer_t *timer;

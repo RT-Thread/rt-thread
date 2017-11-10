@@ -47,8 +47,9 @@
 #define CAN_TXMAILBOX_1                   ((uint8_t)0x01)
 #define CAN_TXMAILBOX_2                   ((uint8_t)0x02)
 
-
-
 #define CAN_MODE_MASK              ((uint32_t) 0x00000003)
+
+void CAN1_RX0_IRQHandler(void);
+void CAN1_TX_IRQHandler(void);
 
 #endif /*BXCAN_H_*/

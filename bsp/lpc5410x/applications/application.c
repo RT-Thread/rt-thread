@@ -11,8 +11,8 @@
  * Date           Author       Notes
  * 2009-01-05     Bernard      the first version
  */
-
 #include <rtthread.h>
+
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 #include <shell.h>
@@ -23,11 +23,11 @@ extern int demo_init(void);
 
 void rt_init_thread_entry(void* parameter)
 {
-	/* initialization finsh shell Component */
+    /* initialization finsh shell Component */
     finsh_system_init();
 
-		demo_init();
-	
+    demo_init();
+
 }
 
 int rt_application_init()
@@ -39,7 +39,6 @@ int rt_application_init()
         2048, RT_THREAD_PRIORITY_MAX/3, 20);
     if (tid != RT_NULL)
         rt_thread_startup(tid);
-		
-		
+
     return 0;
 }

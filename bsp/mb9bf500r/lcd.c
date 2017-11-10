@@ -420,7 +420,7 @@ void  LCD_PutString(unsigned long x, unsigned long y, char *str)
   }
 }
 
-static rt_err_t rt_lcd_control (rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_lcd_control (rt_device_t dev, int cmd, void *args)
 {
 	switch (cmd)
 	{

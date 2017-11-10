@@ -34,7 +34,7 @@
 #define RT_USING_SEMAPHORE
 
 /* Using Mutex */
-/* #define RT_USING_MUTEX */
+#define RT_USING_MUTEX
 
 /* Using Event */
 /* #define RT_USING_EVENT */

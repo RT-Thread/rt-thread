@@ -1,0 +1,46 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split("""
+board.c
+stm32f4xx_it.c
+usart.c
+drv_sdram.c
+drv_rtc.c
+drv_mpu.c
+""")
+
+# add sdio driver
+if GetDepend('RT_USING_DFS'):
+    src += ['drv_sdio_sd.c']
+
+if GetDepend('RT_USING_MTD_NAND'):
+    src += ['drv_nand.c']
+
+# add Ethernet drivers.
+if GetDepend('RT_USING_LWIP'):
+    src += ['drv_eth.c', 'drv_iic.c', 'drv_pcf8574.c']
+
+# add gpio drivers.
+if GetDepend('RT_USING_PIN'):
+    src += ['gpio.c']
+
+# add spi drivers.
+if GetDepend('RT_USING_SPI'):
+    src += ['drv_spi.c']
+
+# add spi flash drivers.
+if GetDepend('RT_USING_SFUD'):
+    src += ['drv_spi_flash.c']
+
+# add lcd drivers.
+if GetDepend('RT_USING_GUIENGINE'):
+    src += ['drv_lcd.c']
+
+CPPPATH = [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

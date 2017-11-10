@@ -49,19 +49,6 @@
 #include <rtthread.h>
 #include "finsh.h"
 
-rt_inline unsigned int rt_list_len(const rt_list_t *l)
-{
-    unsigned int len = 0;
-    const rt_list_t *p = l;
-    while (p->next != l)
-    {
-        p = p->next;
-        len ++;
-    }
-
-    return len;
-}
-
 long hello(void)
 {
     rt_kprintf("Hello RT-Thread!\n");
@@ -121,13 +108,15 @@ static long _list_thread(struct rt_list_node *list)
     rt_kprintf(     " ---  ------- ---------- ----------  ------  ---------- ---\n");
     for (node = list->next; node != list; node = node->next)
     {
+    	rt_uint8_t stat;
         thread = rt_list_entry(node, struct rt_thread, list);
         rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->name, thread->current_priority);
 
-        if (thread->stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
-        else if (thread->stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
-        else if (thread->stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
-        else if (thread->stat == RT_THREAD_CLOSE)   rt_kprintf(" close  ");
+		stat = (thread->stat & RT_THREAD_STAT_MASK);
+        if (stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
+        else if (stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
+        else if (stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
+        else if (stat == RT_THREAD_CLOSE)   rt_kprintf(" close  ");
 
         ptr = (rt_uint8_t *)thread->stack_addr;
         while (*ptr == '#')ptr ++;
@@ -221,8 +210,8 @@ static long _list_event(struct rt_list_node *list)
 
     maxlen = object_name_maxlen(list);
 
-    rt_kprintf("%-*.s    set        suspend thread\n", maxlen, "event"); object_split(maxlen);
-    rt_kprintf(" ---------- --------------\n");
+    rt_kprintf("%-*.s      set    suspend thread\n", maxlen, "event"); object_split(maxlen);
+    rt_kprintf(     "  ---------- --------------\n");
     for (node = list->next; node != list; node = node->next)
     {
         e = (struct rt_event *)(rt_list_entry(node, struct rt_object, list));
@@ -262,8 +251,8 @@ static long _list_mutex(struct rt_list_node *list)
     struct rt_list_node *node;
 
     maxlen = object_name_maxlen(list);
-    rt_kprintf("%-*.s    owner   hold suspend thread\n", maxlen, "mutex"); object_split(maxlen);
-    rt_kprintf(       " -------- ---- --------------\n");
+    rt_kprintf("%-*.s   owner  hold suspend thread\n", maxlen, "mutex"); object_split(maxlen);
+    rt_kprintf(     " -------- ---- --------------\n");
     for (node = list->next; node != list; node = node->next)
     {
         m = (struct rt_mutex *)(rt_list_entry(node, struct rt_object, list));
@@ -293,11 +282,15 @@ static long _list_mailbox(struct rt_list_node *list)
     int maxlen;
     struct rt_mailbox *m;
     struct rt_list_node *node;
+    int item_title_len;
+    const char *item_title = "mailbox";
 
+    item_title_len = rt_strlen(item_title);
     maxlen = object_name_maxlen(list);
+    if(maxlen < item_title_len) maxlen = item_title_len;
 
-    rt_kprintf("%-*.s  entry size suspend thread\n", maxlen, "mailbox"); object_split(maxlen);
-    rt_kprintf(      " ----  ---- --------------\n");
+    rt_kprintf("%-*.s entry size suspend thread\n", maxlen, item_title); object_split(maxlen);
+    rt_kprintf(     " ----  ---- --------------\n");
     for (node = list->next; node != list; node = node->next)
     {
         m = (struct rt_mailbox *)(rt_list_entry(node, struct rt_object, list));
@@ -340,10 +333,14 @@ static long _list_msgqueue(struct rt_list_node *list)
     int maxlen;
     struct rt_messagequeue *m;
     struct rt_list_node *node;
+    int item_title_len;
+    const char *item_title = "msgqueue";
 
+    item_title_len = rt_strlen(item_title);
     maxlen = object_name_maxlen(list);
+    if(maxlen < item_title_len) maxlen = item_title_len;
 
-    rt_kprintf("%-*.s entry suspend thread\n", maxlen, "msgqueue"); object_split(maxlen);
+    rt_kprintf("%-*.s entry suspend thread\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(     " ----  --------------\n");
     for (node = list->next; node != list; node = node->next)
     {
@@ -422,8 +419,8 @@ static long _list_mempool(struct rt_list_node *list)
 
     maxlen = object_name_maxlen(list);
 
-    rt_kprintf("%-*.s  block total free suspend thread\n", maxlen, "mempool"); object_split(maxlen);
-    rt_kprintf(      " ----  ----  ---- --------------\n");
+    rt_kprintf("%-*.s block total free suspend thread\n", maxlen, "mempool"); object_split(maxlen);
+    rt_kprintf(     " ----  ----  ---- --------------\n");
     for (node = list->next; node != list; node = node->next)
     {
         mp = (struct rt_mempool *)rt_list_entry(node, struct rt_object, list);
@@ -470,8 +467,8 @@ static long _list_timer(struct rt_list_node *list)
 
     maxlen = object_name_maxlen(list);
 
-    rt_kprintf("%-*.s    periodic   timeout    flag\n", maxlen, "timer"); object_split(maxlen);
-    rt_kprintf(        " ---------- ---------- -----------\n");
+    rt_kprintf("%-*.s  periodic   timeout       flag\n", maxlen, "timer"); object_split(maxlen);
+    rt_kprintf(     " ---------- ---------- -----------\n");
     for (node = list->next; node != list; node = node->next)
     {
         timer = (struct rt_timer *)(rt_list_entry(node, struct rt_object, list));
@@ -527,11 +524,15 @@ static long _list_device(struct rt_list_node *list)
         "Miscellaneous Device",
         "Unknown"
     };
+    int item_title_len;
+    const char *item_title = "device";
 
+    item_title_len = rt_strlen(item_title);
     maxlen = object_name_maxlen(list);
+    if(maxlen < item_title_len) maxlen = item_title_len;
 
-    rt_kprintf("%-*.s   type                 ref count\n", maxlen, "device"); object_split(maxlen);
-    rt_kprintf(       " -------------------- ----------\n");
+    rt_kprintf("%-*.s         type         ref count\n", maxlen, item_title); object_split(maxlen);
+    rt_kprintf(     " -------------------- ----------\n");
     for (node = list->next; node != list; node = node->next)
     {
         device = (struct rt_device *)(rt_list_entry(node, struct rt_object, list));
@@ -601,14 +602,17 @@ int list_mod_detail(const char *name)
             /* list main thread in module */
             if (module->module_thread != RT_NULL)
             {
+            	rt_uint8_t stat;
+				
                 rt_kprintf("main thread  pri  status      sp     stack size max used   left tick  error\n");
                 rt_kprintf("------------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
                 thread = module->module_thread;
                 rt_kprintf("%-8.*s 0x%02x", RT_NAME_MAX, thread->name, thread->current_priority);
 
-                if (thread->stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
-                else if (thread->stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
-                else if (thread->stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
+				stat = (thread->stat & RT_THREAD_STAT_MASK);
+                if (stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
+                else if (stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
+                else if (stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
 
                 ptr = (rt_uint8_t *)thread->stack_addr;
                 while (*ptr == '#')ptr ++;

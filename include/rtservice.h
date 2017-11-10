@@ -105,6 +105,23 @@ rt_inline int rt_list_isempty(const rt_list_t *l)
 }
 
 /**
+ * @brief get the list length
+ * @param l the list to get.
+ */
+rt_inline unsigned int rt_list_len(const rt_list_t *l)
+{
+    unsigned int len = 0;
+    const rt_list_t *p = l;
+    while (p->next != l)
+    {
+        p = p->next;
+        len ++;
+    }
+
+    return len;
+}
+
+/**
  * @brief get the struct for this entry
  * @param node the entry point
  * @param type the type of structure
@@ -114,26 +131,119 @@ rt_inline int rt_list_isempty(const rt_list_t *l)
     ((type *)((char *)(node) - (unsigned long)(&((type *)0)->member)))
 
 /**
- * list_for_each_entry  -   iterate over list of given type
+ * rt_list_for_each_entry  -   iterate over list of given type
  * @pos:    the type * to use as a loop cursor.
  * @head:   the head for your list.
  * @member: the name of the list_struct within the struct.
  */
-#define list_for_each_entry(pos, head, member)              \
+#define rt_list_for_each_entry(pos, head, member)              \
     for (pos = rt_list_entry((head)->next, typeof(*pos), member);  \
          &pos->member != (head);    \
          pos = rt_list_entry(pos->member.next, typeof(*pos), member))
 
 /**
- * list_first_entry - get the first element from a list
+ * rt_list_for_each_entry_safe - iterate over list of given type safe against removal of list entry
+ * @pos:    the type * to use as a loop cursor.
+ * @n:      another type * to use as temporary storage
+ * @head:   the head for your list.
+ * @member: the name of the list_struct within the struct.
+ */
+#define rt_list_for_each_entry_safe(pos, n, head, member)           \
+    for (pos = rt_list_entry((head)->next, typeof(*pos), member),   \
+         n = rt_list_entry(pos->member.next, typeof(*pos), member);  \
+         &pos->member != (head);    \
+         pos = n, n = rt_list_entry(n->member.next, typeof(*n), member))
+
+/**
+ * rt_list_first_entry - get the first element from a list
  * @ptr:    the list head to take the element from.
  * @type:   the type of the struct this is embedded in.
  * @member: the name of the list_struct within the struct.
  *
  * Note, that list is expected to be not empty.
  */
-#define list_first_entry(ptr, type, member) \
+#define rt_list_first_entry(ptr, type, member) \
     rt_list_entry((ptr)->next, type, member)
+
+#define RT_SLIST_OBJECT_INIT(object) { RT_NULL }
+
+/**
+ * @brief initialize a single list
+ *
+ * @param l the single list to be initialized
+ */
+rt_inline void rt_slist_init(rt_slist_t *l)
+{
+    l->next = RT_NULL;
+}
+
+rt_inline void rt_slist_append(rt_slist_t *l, rt_slist_t *n)
+{
+    struct rt_slist_node *node;
+
+    node = l;
+    while (node->next) node = node->next;
+
+    /* append the node to the tail */
+    node->next = n;
+    n->next = RT_NULL;
+}
+
+rt_inline void rt_slist_insert(rt_slist_t *l, rt_slist_t *n)
+{
+    n->next = l->next;
+    l->next = n;
+}
+
+rt_inline rt_slist_t *rt_slist_remove(rt_slist_t *l, rt_slist_t *n)
+{
+    /* remove slist head */
+    struct rt_slist_node *node = l;
+    while (node->next && node->next != n) node = node->next;
+
+    /* remove node */
+    if (node->next != (rt_slist_t *)0) node->next = node->next->next;
+
+    return l;
+}
+
+rt_inline unsigned int rt_slist_len(const rt_slist_t *l)
+{
+    unsigned int len = 0;
+    const rt_slist_t *list = l->next;
+    while (list != RT_NULL)
+    {
+        list = list->next;
+        len ++;
+    }
+
+    return len;
+}
+
+/**
+ * @brief get the struct for this single list node
+ * @param node the entry point
+ * @param type the type of structure
+ * @param member the name of list in structure
+ */
+#define rt_slist_entry(node, type, member)    \
+    ((type *)((char*)(node)-(unsigned long)(&((type *)0)->member)))
+
+/**
+ * rt_slist_for_each_entry  -   iterate over single list of given type
+ * @node:   the type * to use as a loop cursor.
+ * @list:   the head for your single list.
+ */
+#define rt_slist_foreach(node, list)  \
+    for ((node) = (list)->next; (node) != RT_NULL; (node) = (node)->next)
+
+/**
+ * rt_container_of - return the member address of ptr, if the type of ptr is the 
+ * struct type.
+ */
+#define rt_container_of(ptr, type, member) \
+    ((type *)((char *)(ptr) - (unsigned long)(&((type *)0)->member)))
+
 /*@}*/
 
 #ifdef __cplusplus

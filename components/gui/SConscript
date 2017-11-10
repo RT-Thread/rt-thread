@@ -28,6 +28,7 @@ src/hz12font.c
 src/hz16font.c
 src/image.c
 src/image_bmp.c
+src/image_container.c
 src/image_hdc.c
 src/image_jpg.c
 src/image_png.c
@@ -47,6 +48,14 @@ src/window.c
 ''')
 CPPPATH = [cwd + '/include']
 
-group = DefineGroup('GUIEngine', src, depend = ['RT_USING_GUIENGINE'], CPPPATH = CPPPATH)
+group = []
+if GetDepend('RT_USING_GUIENGINE'):
+    group = DefineGroup('GUIEngine', src, depend = ['RT_USING_GUIENGINE'], CPPPATH = CPPPATH)
+
+    list = os.listdir(cwd)
+    for d in list:
+        path = os.path.join(cwd, d)
+        if os.path.isfile(os.path.join(path, 'SConscript')):
+            group = group + SConscript(os.path.join(d, 'SConscript'))
 
 Return('group')

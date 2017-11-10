@@ -1,7 +1,7 @@
 /*
  * File      : rtgui.h
- * This file is part of RT-Thread GUI
- * COPYRIGHT (C) 2009 - 2013, RT-Thread Development Team
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -31,19 +31,10 @@
 extern "C" {
 #endif
 
-#define RTGUI_VERSION          0L        /**< major version number */
-#define RTGUI_SUBVERSION       8L        /**< minor version number */
-#define RTGUI_REVISION         1L        /**< revise version number */
-#define RTGUI_CODENAME         "Newton"  /**< code name */
-
-#define RT_INT16_MAX        32767
-#define RT_INT16_MIN        (-RT_INT16_MAX-1)
-#define RTGUI_NOT_FOUND     (-1)
-
-#define _UI_MIN(x, y)			(((x)<(y))?(x):(y))
-#define _UI_MAX(x, y)			(((x)>(y))?(x):(y))
-#define _UI_BITBYTES(bits)		((bits + 7)/8)
-#define _UI_ABS(x)				((x)>=0? (x):-(x))
+#define _UI_MIN(x, y)           (((x)<(y))?(x):(y))
+#define _UI_MAX(x, y)           (((x)>(y))?(x):(y))
+#define _UI_BITBYTES(bits)      ((bits + 7)/8)
+#define _UI_ABS(x)              ((x)>=0? (x):-(x))
 
 /* MDK, GCC and MSVC all support __restrict keyword. */
 #define RTGUI_RESTRICT      __restrict
@@ -136,13 +127,13 @@ enum RTGUI_BORDER_STYLE
 
 /**
  * Blend mode
- */ 
+ */
 enum RTGUI_BLENDMODE
 {
-	RTGUI_BLENDMODE_NONE = 0x00, 
-	RTGUI_BLENDMODE_BLEND,
-	RTGUI_BLENDMODE_ADD,
-	RTGUI_BLENDMODE_MOD,
+    RTGUI_BLENDMODE_NONE = 0x00,
+    RTGUI_BLENDMODE_BLEND,
+    RTGUI_BLENDMODE_ADD,
+    RTGUI_BLENDMODE_MOD,
 };
 
 /**
@@ -180,7 +171,8 @@ enum RTGUI_TEXTSTYLE
 enum RTGUI_MODAL_CODE
 {
     RTGUI_MODAL_OK,
-    RTGUI_MODAL_CANCEL
+    RTGUI_MODAL_CANCEL,
+    RTGUI_MODAL_MAX = 0xFFFF,
 };
 typedef enum RTGUI_MODAL_CODE rtgui_modal_code_t;
 

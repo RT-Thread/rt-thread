@@ -27,7 +27,7 @@ void* dlopen(const char *filename, int flags)
 	/* check parameters */
 	RT_ASSERT(filename != RT_NULL);
 
-	if (filename[0] != '/') /* it's a absolute path, use it directly */
+	if (filename[0] != '/') /* it's a relative path, prefix with MODULE_ROOT_DIR */
 	{
 		fullpath = rt_malloc(strlen(def_path) + strlen(filename) + 2);
 
@@ -37,8 +37,7 @@ void* dlopen(const char *filename, int flags)
 	}
 	else
 	{
-		rt_kprintf("use absolute path\n");
-		return RT_NULL;
+		fullpath = (char*)filename; /* absolute path, use it directly */
 	}	
 
 	/* find in module list */
@@ -47,7 +46,11 @@ void* dlopen(const char *filename, int flags)
 	if(module != RT_NULL) module->nref++;
 	else module = rt_module_open(fullpath);
 
-	rt_free(fullpath);
+	if(fullpath != filename)
+	{
+		rt_free(fullpath);
+	}
+
 	return (void*)module;
 }
 

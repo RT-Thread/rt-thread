@@ -135,7 +135,7 @@ static rt_err_t fh_pwm_close(rt_device_t dev)
     return 0;
 }
 
-static rt_err_t fh_pwm_ioctl(rt_device_t dev, rt_uint8_t cmd, void *arg)
+static rt_err_t fh_pwm_ioctl(rt_device_t dev, int cmd, void *arg)
 {
     int ret = 0;
     struct pwm_device *pwm;

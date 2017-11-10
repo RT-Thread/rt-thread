@@ -1,0 +1,21 @@
+from building import *
+Import('rtconfig')
+
+src = Glob('*.c')
+cwd = GetCurrentDir()
+group = []
+
+CPPPATH = [cwd]
+CPPDEFINES = ['RT_USING_NEWLIB']
+
+# link with libc and libm:
+# libm is a frequently used lib. Newlib is compiled with -ffunction-sections in
+# recent GCC tool chains. The linker would just link in the functions that have
+# been referenced. So setting this won't result in bigger text size.
+LIBS = ['c', 'm']
+
+if rtconfig.PLATFORM == 'gcc':
+    group = DefineGroup('newlib', src, depend = ['RT_USING_LIBC'], 
+        CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, LIBS = LIBS)
+
+Return('group')

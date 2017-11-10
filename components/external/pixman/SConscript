@@ -8,9 +8,9 @@ PIXMAN_VERSION = '0.21.6'
 PIXMAN_PATH = 'pixman-' + PIXMAN_VERSION
 
 if GetDepend('RT_USING_CAIRO') and not os.path.exists(PIXMAN_PATH):
-    print '================ERROR============================'
-    print 'Please get pixman dist and put them under pixman folder'
-    print '================================================='
+    print('================ERROR============================')
+    print('Please get pixman dist and put them under pixman folder')
+    print('=================================================')
     exit(0)
 
 # core source files 

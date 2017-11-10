@@ -1,0 +1,77 @@
+menu "RT-Thread UI Engine"
+
+config RT_USING_GUIENGINE
+    bool "Enable UI Engine"
+    default n
+
+if RT_USING_GUIENGINE
+
+config RTGUI_NAME_MAX
+    int "The maximal size of name in GUI engine"
+    default 16
+
+config RTGUI_USING_TTF
+    bool "Support TrueType font"
+    default n
+
+config RTGUI_USING_FONT16
+    bool "Support 16 height font"
+    default y
+
+config RTGUI_USING_FONT12
+    bool "Support 12 height font"
+    default y
+
+config RTGUI_USING_FONTHZ
+    bool "Support Chinese font"
+    default n
+
+if RTGUI_USING_FONTHZ
+config RTGUI_USING_HZ_BMP
+    bool "Use bitmap Chinese font"
+    default n
+endif
+
+config RTGUI_IMAGE_XPM
+    bool "Support XPM image format"
+    default n
+
+choice
+    prompt "JPEG image format"
+    default RTGUI_IMAGE_JPEG_NONE
+
+    config RTGUI_IMAGE_JPEG_NONE
+        bool "No PNG image format"
+
+    config RTGUI_IMAGE_JPEG
+        bool "Use libjpeg"
+
+    config RTGUI_IMAGE_TJPGD
+        bool "Use TJPGD"
+endchoice
+
+choice
+    prompt "PNG image format"
+    default RTGUI_IMAGE_PNG_NONE
+
+    config RTGUI_IMAGE_PNG_NONE
+        bool "No PNG image format"
+
+    config RTGUI_IMAGE_PNG
+        bool "Use libpng"
+
+    config RTGUI_IMAGE_LODEPNG
+        bool "Use lodepng"
+endchoice
+
+config RTGUI_IMAGE_BMP
+    bool "Support BMP image format"
+    default n
+
+config RTGUI_IMAGE_CONTAINER
+    bool "Use image container"
+    default n
+    
+endif
+
+endmenu

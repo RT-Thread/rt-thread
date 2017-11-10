@@ -32,13 +32,12 @@ extern "C" {
 
 #include <lwip/sockets.h>
 
-struct dfs_filesystem* dfs_net_get_fs(void);
+const struct dfs_file_ops* dfs_net_get_fops(void);
 int dfs_net_getsocket(int fd);
-
-int dfs_net_system_init(void);
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif
+

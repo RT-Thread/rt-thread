@@ -1,11 +1,21 @@
 /*
  * File      : container.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2009, RT-Thread Development Team
+ * This file is part of RT-Thread GUI Engine
+ * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -49,15 +59,41 @@ rt_bool_t rtgui_container_dispatch_event(rtgui_container_t *container, rtgui_eve
 {
     /* handle in child widget */
     struct rtgui_list_node *node;
+    rtgui_event_t _event, save_event = *event;
+    rtgui_widget_t *widget = (rtgui_widget_t *)container;
 
     rtgui_list_foreach(node, &(container->children))
     {
         struct rtgui_widget *w;
         w = rtgui_list_entry(node, struct rtgui_widget, sibling);
 
+        _event = save_event;
+
+        if (RTGUI_EVENT_PAINT & _event.type)
+        {
+            if (widget->extent.x1 > w->extent.x2)
+            {
+                _event.type &= !RTGUI_EVENT_PAINT;
+            }
+            else if (widget->extent.x2 < w->extent.x1)
+            {
+                _event.type &= !RTGUI_EVENT_PAINT;
+            }
+            else if (widget->extent.y1 > w->extent.y2)
+            {
+                _event.type &= !RTGUI_EVENT_PAINT;
+            }
+            else if (widget->extent.y2 < w->extent.y1)
+            {
+                _event.type &= !RTGUI_EVENT_PAINT;
+            }
+        }
+
         if (RTGUI_OBJECT(w)->event_handler &&
-                RTGUI_OBJECT(w)->event_handler(RTGUI_OBJECT(w), event) == RT_TRUE)
+                RTGUI_OBJECT(w)->event_handler(RTGUI_OBJECT(w), &_event) == RT_TRUE)
+        {
             return RT_TRUE;
+        }
     }
 
     return RT_FALSE;
@@ -140,7 +176,7 @@ rt_bool_t rtgui_container_event_handler(struct rtgui_object *object, struct rtgu
         /* paint on each child */
         rtgui_container_dispatch_event(container, event);
 
-        rtgui_dc_end_drawing(dc);
+        rtgui_dc_end_drawing(dc, 1);
     }
     break;
 
@@ -158,8 +194,8 @@ rt_bool_t rtgui_container_event_handler(struct rtgui_object *object, struct rtgu
         rtgui_container_dispatch_event(container, event);
         break;
     case RTGUI_EVENT_HIDE:
-        rtgui_widget_onhide(RTGUI_OBJECT(container), event);
         rtgui_container_dispatch_event(container, event);
+        rtgui_widget_onhide(RTGUI_OBJECT(container), event);
         break;
     case RTGUI_EVENT_COMMAND:
         rtgui_container_dispatch_event(container, event);

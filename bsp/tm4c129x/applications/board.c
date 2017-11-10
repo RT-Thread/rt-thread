@@ -15,7 +15,6 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include <components.h>
 #include "board.h"
 
 
@@ -26,8 +25,7 @@
 #include "driverlib/rom_map.h"
 
 #define SYS_CLOCK_DEFAULT 120000000
-uint32_t SysClock;
-
+uint32_t SystemCoreClock;
 #define FAULT_NMI               2           // NMI fault
 #define FAULT_HARD              3           // Hard fault
 #define FAULT_MPU               4           // MPU fault
@@ -82,12 +80,12 @@ int rt_hw_cpu_init(void)
     // Set the clocking to run directly from the external crystal/oscillator.
     // TODO: The SYSCTL_XTAL_ value must be changed to match the value of the
     // crystal on your board.
-    SysClock = MAP_SysCtlClockFreqSet(
+    SystemCoreClock = MAP_SysCtlClockFreqSet(
                 (SYSCTL_XTAL_25MHZ | SYSCTL_OSC_MAIN | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480),
                 SYS_CLOCK_DEFAULT);
 
     MAP_SysTickDisable();
-    MAP_SysTickPeriodSet(SysClock/ RT_TICK_PER_SECOND - 1);
+    MAP_SysTickPeriodSet(SystemCoreClock/ RT_TICK_PER_SECOND - 1);
     MAP_SysTickIntEnable();
     MAP_SysTickEnable();	
 

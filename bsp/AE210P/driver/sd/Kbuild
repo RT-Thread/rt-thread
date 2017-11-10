@@ -1,0 +1,3 @@
+lib-y		+=
+lib-y		+= sdd.o
+lib-y		+= sdd_sd.o

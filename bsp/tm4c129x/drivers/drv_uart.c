@@ -18,7 +18,6 @@
 #include <rtdevice.h>
 
 #include "board.h"
-#include <components.h>
 
 #include "inc/hw_memmap.h"
 #include "driverlib/sysctl.h"
@@ -93,7 +92,7 @@ static rt_err_t hw_configure(struct rt_serial_device *serial, struct serial_conf
 	}
 	
 	// Initialize UART0 peripheral with given to corresponding parameter
-    MAP_UARTConfigSetExpClk(uart->hw_base, SysClock, cfg->baud_rate, config);
+    MAP_UARTConfigSetExpClk(uart->hw_base, SystemCoreClock, cfg->baud_rate, config);
 	MAP_UARTFIFOEnable(uart->hw_base);
 
 	// Enable the UART.

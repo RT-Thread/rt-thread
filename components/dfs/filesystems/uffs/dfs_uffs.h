@@ -29,6 +29,27 @@
 #include "uffs/uffs_public.h"
 
 /* the UFFS ECC mode opitons  */
+#ifndef RT_UFFS_ECC_MODE
+#define RT_UFFS_ECC_MODE      1
+#endif
+
+/*
+ * RT_UFFS_ECC_MODE:
+ * 0, Do not use ECC
+ * 1, UFFS calculate the ECC
+ * 2, Flash driver(or by hardware) calculate the ECC
+ * 3, Hardware calculate the ECC and automatically write to spare.
+ */
+#if RT_UFFS_ECC_MODE == 0
+#define RT_CONFIG_UFFS_ECC_MODE UFFS_ECC_NONE
+#elif RT_UFFS_ECC_MODE == 1
+#define RT_CONFIG_UFFS_ECC_MODE UFFS_ECC_SOFT
+#elif RT_UFFS_ECC_MODE == 2
+#define RT_CONFIG_UFFS_ECC_MODE UFFS_ECC_HW
+#elif RT_UFFS_ECC_MODE == 3
+#define RT_CONFIG_UFFS_ECC_MODE UFFS_ECC_HW_AUTO
+#endif
+
 /* #define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_HW_AUTO */
 /* #define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_SOFT */
 /* #define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_NONE */

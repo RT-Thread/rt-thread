@@ -16,9 +16,9 @@ if rtconfig.CROSS_TOOL == 'gcc':
 elif rtconfig.CROSS_TOOL == 'keil':
     src += ['CME_M7/startup/arm/startup_cmem7.s']
 elif rtconfig.CROSS_TOOL == 'iar':
-    print '================ERROR============================'
-    print 'Not support IAR yet!'
-    print '================================================='
+    print('================ERROR============================')
+    print('Not support IAR yet!')
+    print('=================================================')
     exit(0)
 
 path = [cwd + '/CME_M7']

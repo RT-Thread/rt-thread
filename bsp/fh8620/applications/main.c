@@ -24,7 +24,6 @@
  * Date           Author       Notes
  */
 #include <rtthread.h>
-#include <components.h>
 
 void init_thread(void *parameter)
 {

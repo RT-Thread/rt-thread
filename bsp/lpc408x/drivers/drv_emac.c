@@ -350,7 +350,7 @@ static rt_size_t lpc_emac_write(rt_device_t dev, rt_off_t pos, const void *buffe
     return 0;
 }
 
-static rt_err_t lpc_emac_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t lpc_emac_control(rt_device_t dev, int cmd, void *args)
 {
     switch (cmd)
     {
