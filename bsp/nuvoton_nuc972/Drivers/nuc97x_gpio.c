@@ -827,6 +827,8 @@ int rt_hw_led_init(void)
     GPIO_OpenBit(LED1_PORT,LED1_PIN,DIR_OUTPUT,NO_PULL_UP);
     GPIO_CloseBit(LED2_PORT,LED2_PIN);
     GPIO_OpenBit(LED2_PORT,LED2_PIN,DIR_OUTPUT,NO_PULL_UP);
+    
+    return 0;
 }
 //INIT_BOARD_EXPORT(rt_hw_led_init);
 

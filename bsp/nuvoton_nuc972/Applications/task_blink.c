@@ -19,11 +19,13 @@
 #include "nuc97x.h"
 #include "nuc97x_gpio.h"
 
+extern int rt_hw_led_init(void);
+extern void rt_hw_led_set(rt_uint8_t value);
 
 void task_blink_entry(void *parameter)
 {
     rt_uint8_t bcount = 0;
-    rt_uint8_t  bValue;
+    // rt_uint8_t  bValue;
     rt_hw_led_init();
 
     while (1)
