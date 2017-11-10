@@ -1,3 +1,4 @@
+import rtconfig
 from building import *
 
 cwd     = GetCurrentDir()
@@ -7,10 +8,16 @@ application.c
 startup.c
 """)
 
+# add for startup script 
+if rtconfig.CROSS_TOOL == 'iar':
+    CPPDEFINES = ['_TIMESPEC_DEFINED']
+else:
+    CPPDEFINES = []
+
 # add UI engine demo.
 if GetDepend('RT_USING_GUIENGINE'):
     src += ['rtgui_demo.c']
 
-group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
 
 Return('group')
