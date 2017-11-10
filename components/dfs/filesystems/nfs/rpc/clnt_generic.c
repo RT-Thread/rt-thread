@@ -50,7 +50,7 @@ CLIENT *clnt_create (const char *hostname, const unsigned long prog,
 	struct timeval tv;
 	CLIENT *client;
 
-	h = gethostbyname(hostname);
+	h = (struct hostent *)gethostbyname(hostname);
 	if (h == NULL) {
 		rt_kprintf("unknown host\n");
 		return (NULL);
