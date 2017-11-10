@@ -215,7 +215,7 @@ uint8_t* vpostGetFrameBuffer(void)
             u32BytePerPixel = 2;
     }
     
-    u8BufPtr = (uint8_t *)malloc((curDisplayDev.u32DevWidth * curDisplayDev.u32DevHeight * u32BytePerPixel)+32);
+    u8BufPtr = (uint8_t *)rt_malloc((curDisplayDev.u32DevWidth * curDisplayDev.u32DevHeight * u32BytePerPixel)+32);
     u8BufPtr = (uint8_t *)shift_pointer((uint32_t)u8BufPtr, 32);
     
     outpw(REG_LCM_VA_BADDR0, (uint32_t)((uint32_t)u8BufPtr | 0x80000000));
@@ -470,7 +470,7 @@ uint8_t* vpostGetOSDBuffer(void)
             u32BytePerPixel = 2;
     }
     
-    u8BufPtr = (uint8_t *)malloc((curOSDDev.nOSDWidth * curOSDDev.nOSDHeight * u32BytePerPixel)+32);
+    u8BufPtr = (uint8_t *)rt_malloc((curOSDDev.nOSDWidth * curOSDDev.nOSDHeight * u32BytePerPixel)+32);
     u8BufPtr = (uint8_t *)shift_pointer((uint32_t)u8BufPtr, 32);
     
 	outpw(REG_LCM_OSD_BADDR, (uint32_t)((uint32_t)u8BufPtr | 0x80000000));
@@ -692,3 +692,105 @@ uint32_t vpostMPUReadData(void)
 
 /*** (C) COPYRIGHT 2015 Nuvoton Technology Corp. ***/
 
+
+#define DISPLAY_RGB565
+
+#define RT_HW_LCD_WIDTH		800
+#define RT_HW_LCD_HEIGHT	480
+
+static struct rt_device_graphic_info _lcd_info;
+static struct rt_device  lcd;
+static rt_uint8_t * _rt_framebuffer = RT_NULL;
+
+
+/* RT-Thread Device Interface */
+static rt_err_t rt_lcd_init (rt_device_t dev)
+{
+	// Configure multi-function pin for LCD interface
+    //GPG6 (CLK), GPG7 (HSYNC)
+	outpw(REG_SYS_GPG_MFPL, (inpw(REG_SYS_GPG_MFPL)& ~0xFF000000) | 0x22000000);
+	//GPG8 (VSYNC), GPG9 (DEN)
+	outpw(REG_SYS_GPG_MFPH, (inpw(REG_SYS_GPG_MFPH)& ~0xFF) | 0x22);
+    
+	//DATA pin
+	//GPA0 ~ GPA7 (DATA0~7)
+    outpw(REG_SYS_GPA_MFPL, 0x22222222);
+	//GPA8 ~ GPA15 (DATA8~15)	
+    outpw(REG_SYS_GPA_MFPH, 0x22222222);
+	//GPD8~D15 (DATA16~23)
+    outpw(REG_SYS_GPD_MFPH, (inpw(REG_SYS_GPD_MFPH)& ~0xFFFFFFFF) | 0x22222222);
+    
+	// LCD clock is selected from UPLL and divide to 20MHz
+	outpw(REG_CLK_DIVCTL1, (inpw(REG_CLK_DIVCTL1) & ~0xff1f) | 0xe18);		
+    
+	// Init LCD interface for E50A2V1 LCD module
+	vpostLCMInit(DIS_PANEL_E50A2V1);
+	// Set scale to 1:1
+	vpostVAScalingCtrl(1, 0, 1, 0, VA_SCALE_INTERPOLATION);
+	
+	// Set display color depth
+#ifdef DISPLAY_RGB888
+	vpostSetVASrc(VA_SRC_RGB888);
+#else	
+    vpostSetVASrc(VA_SRC_RGB565);
+#endif
+
+	// Get pointer of video frame buffer
+    // Note: before get pointer of frame buffer, must set display color depth first
+	_rt_framebuffer = vpostGetFrameBuffer();
+    if(_rt_framebuffer == NULL)
+	{
+		rt_kprintf("Get frame buffer error !!\n");
+	}
+    
+    // Start video 
+    vpostVAStartTrigger();
+	return RT_EOK;
+}
+
+static rt_err_t rt_lcd_control (rt_device_t dev, int cmd, void *args)
+{
+	switch (cmd)
+	{
+	case RTGRAPHIC_CTRL_RECT_UPDATE:
+        rt_kprintf("update\n");
+		break;
+	case RTGRAPHIC_CTRL_POWERON:
+		break;
+	case RTGRAPHIC_CTRL_POWEROFF:
+		break;
+	case RTGRAPHIC_CTRL_GET_INFO:
+        /* ºóÆÚÐÞ¸Ä */
+        _lcd_info.framebuffer = (void*)_rt_framebuffer;
+		rt_memcpy(args, &_lcd_info, sizeof(_lcd_info));
+		break;
+	case RTGRAPHIC_CTRL_SET_MODE:
+		break;
+	}
+
+	return RT_EOK;
+}
+
+int rt_hw_lcd_init(void)
+{   
+	_lcd_info.bits_per_pixel = 16;
+	_lcd_info.pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB565;
+	_lcd_info.framebuffer = (void*)_rt_framebuffer;
+	_lcd_info.width = RT_HW_LCD_WIDTH;
+	_lcd_info.height = RT_HW_LCD_HEIGHT;
+
+	/* init device structure */
+	lcd.type = RT_Device_Class_Graphic;
+	lcd.init = rt_lcd_init;
+	lcd.open = RT_NULL;
+	lcd.close = RT_NULL;
+	lcd.control = rt_lcd_control;
+	lcd.user_data = (void*)&_lcd_info;
+
+	/* register lcd device to RT-Thread */
+	rt_device_register(&lcd, "lcd", RT_DEVICE_FLAG_RDWR);    
+    
+    return 0;
+    
+}
+INIT_DEVICE_EXPORT(rt_hw_lcd_init);

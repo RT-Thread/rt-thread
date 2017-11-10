@@ -175,6 +175,21 @@
 /* RT-Thread UI Engine */
 
 /* RT_USING_GUIENGINE is not set */
+#define RT_USING_GUIENGINE
+#define RTGUI_NAME_MAX 16
+/* RTGUI_USING_TTF is not set */
+#define RTGUI_USING_FONT16
+#define RTGUI_USING_FONT12
+/* RTGUI_USING_FONTHZ is not set */
+/* RTGUI_IMAGE_XPM is not set */
+#define RTGUI_IMAGE_JPEG_NONE
+/* RTGUI_IMAGE_JPEG is not set */
+/* RTGUI_IMAGE_TJPGD is not set */
+#define RTGUI_IMAGE_PNG_NONE
+/* RTGUI_IMAGE_PNG is not set */
+/* RTGUI_IMAGE_LODEPNG is not set */
+/* RTGUI_IMAGE_BMP is not set */
+/* RTGUI_IMAGE_CONTAINER is not set */
 
 /* libc */
 
