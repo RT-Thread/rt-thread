@@ -32,7 +32,7 @@
 
 #ifdef RT_USING_I2C_BITOPS
 
-struct stm32_i2c_bit_data
+struct lpc_i2c_bit_data
 {
     struct
     {
@@ -44,7 +44,7 @@ struct stm32_i2c_bit_data
 
 static void gpio_set_sda(void *data, rt_int32_t state)
 {
-    struct stm32_i2c_bit_data *bd = data;
+    struct lpc_i2c_bit_data *bd = data;
 
     if (state)
     {
@@ -59,7 +59,7 @@ static void gpio_set_sda(void *data, rt_int32_t state)
 
 static void gpio_set_scl(void *data, rt_int32_t state)
 {
-    struct stm32_i2c_bit_data *bd = data;
+    struct lpc_i2c_bit_data *bd = data;
 
     if (state)
     {
@@ -75,14 +75,14 @@ static void gpio_set_scl(void *data, rt_int32_t state)
 
 static rt_int32_t gpio_get_sda(void *data)
 {
-    struct stm32_i2c_bit_data *bd = data;
+    struct lpc_i2c_bit_data *bd = data;
 
     return GPIO_ReadPinInput(bd->sda.base, bd->sda.port, bd->sda.pin) & 0x01;
 }
 
 static rt_int32_t gpio_get_scl(void *data)
 {
-    struct stm32_i2c_bit_data *bd = data;
+    struct lpc_i2c_bit_data *bd = data;
 
     return GPIO_ReadPinInput(bd->scl.base, bd->scl.port, bd->scl.pin) & 0x01;
 }
@@ -227,7 +227,7 @@ int rt_hw_i2c_init(void)
     {
         static struct rt_i2c_bus_device i2c_device;
 
-        static const struct stm32_i2c_bit_data _i2c_bdata =
+        static const struct lpc_i2c_bit_data _i2c_bdata =
         {
             /* SCL */ {GPIO, 3, 24},
             /* SDA */ {GPIO, 3, 23},
