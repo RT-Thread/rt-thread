@@ -313,12 +313,12 @@ typedef struct uiad_descriptor* uiad_desc_t;
 
 struct uendpoint_descriptor
 {
-    rt_uint8_t bLength;
-    rt_uint8_t type;
-    rt_uint8_t bEndpointAddress;
-    rt_uint8_t bmAttributes;
+    rt_uint8_t  bLength;
+    rt_uint8_t  type;
+    rt_uint8_t  bEndpointAddress;
+    rt_uint8_t  bmAttributes;
     rt_uint16_t wMaxPacketSize;
-    rt_uint8_t bInterval;
+    rt_uint8_t  bInterval;
 };
 typedef struct uendpoint_descriptor* uep_desc_t;
 
@@ -358,33 +358,38 @@ struct usb_qualifier_descriptor
     rt_uint8_t  bRESERVED;
 } __attribute__ ((packed));
 
+#ifndef HID_SUB_DESCRIPTOR_MAX
+#define  HID_SUB_DESCRIPTOR_MAX        1
+#endif
 struct uhid_descriptor
 {
-    rt_uint8_t bLength;
-    rt_uint8_t type;
+    rt_uint8_t  bLength;
+    rt_uint8_t  type;
     rt_uint16_t bcdHID;
-    rt_uint8_t bCountryCode;
-    rt_uint8_t bNumDescriptors;
+    rt_uint8_t  bCountryCode;
+    rt_uint8_t  bNumDescriptors;
     struct hid_descriptor_list
     {
         rt_uint8_t type;
         rt_uint16_t wLength;
-    }Descriptor[1];
+    }Descriptor[HID_SUB_DESCRIPTOR_MAX];
 };
 typedef struct uhid_descriptor* uhid_desc_t;
 
 struct urequest
 {
-    rt_uint8_t request_type;
-    rt_uint8_t request;
-    rt_uint16_t value;
-    rt_uint16_t index;
-    rt_uint16_t length;
+    rt_uint8_t  request_type;
+    rt_uint8_t  bRequest;
+    rt_uint16_t wValue;
+    rt_uint16_t wIndex;
+    rt_uint16_t wLength;
 };
 typedef struct urequest* ureq_t;
 
 #ifndef MIN
 #define MIN(a, b) (a < b ? a : b)
+#endif
+#ifndef MAX
 #define MAX(a, b) (a > b ? a : b)
 #endif
 
