@@ -30,9 +30,6 @@
 int mnt_init(void)
 {
 #ifdef RT_USING_SDIO
-    rt_mmcsd_core_init();
-    rt_mmcsd_blk_init();
-
     jz47xx_sdio_init();
     rt_thread_delay(RT_TICK_PER_SECOND * 1);
 

@@ -98,16 +98,16 @@ if RT_USING_DFS
 
     if RT_USING_DFS_NET
         config HAVE_SYS_SELECT_H
-            bool "Toolchains/libc have provide sys/select.h"
+            bool "Toolchains/libc have provided sys/select.h"
             default n
             help
-                Toolchains/libc have provide sys/select.h file, therefore, disable the sys/select.h in RT-Thread.
+                Toolchains/libc have provided sys/select.h file, therefore, disable the sys/select.h in RT-Thread.
 
         config HAVE_SYS_SOCKET_H
-            bool "Toolchains/libc have provide sys/socket.h"
+            bool "Toolchains/libc have provided sys/socket.h"
             default n
             help
-                Toolchains/libc have provide sys/socket.h file, therefore, disable the sys/socket.h in RT-Thread.
+                Toolchains/libc have provided sys/socket.h file, therefore, disable the sys/socket.h in RT-Thread.
     endif
 
     config RT_USING_DFS_ROMFS

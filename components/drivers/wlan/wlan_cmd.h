@@ -13,9 +13,10 @@ int wifi_softap_setup_netif(struct netif *netif);
 
 int wifi_set_setting(const char* ssid, const char* pwd);
 
+#ifdef PKG_USING_CJSON
 int wifi_read_cfg(const char* filename);
 int wifi_save_cfg(const char* filename);
-
+#endif
 /* save wifi setting with default storage file */
 int wifi_save_setting(void);
 

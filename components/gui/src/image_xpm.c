@@ -26,6 +26,7 @@
 
 #include <rtgui/filerw.h>
 #include <rtgui/rtgui_system.h>
+#include <rtgui/image.h>
 
 #ifdef RTGUI_IMAGE_XPM
 #define XPM_MAGIC_LEN       9
