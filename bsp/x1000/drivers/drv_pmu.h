@@ -1,7 +1,7 @@
 /*
- * File      : main.c
+ * File      : drv_pmu.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2008 - 2017, RT-Thread Development Team
+ * COPYRIGHT (C) 2008 - 2012, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,12 +19,14 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-11-8      Tangyuxin    first version
+ * 2016-08-08     Urey         the first version
  */
 
-#include <rtthread.h>
+#ifndef DRIVER_DRV_PMU_H_
+#define DRIVER_DRV_PMU_H_
 
-int main(int argc, char** argv)
-{   
-    return 0;
-}
+int drv_pmu_init(void);
+void drv_pmu_power_up(void);
+void drv_pmu_power_down(void);
+int drv_pmu_get_keypwr(void);
+#endif /* DRIVER_DRV_PMU_H_ */
