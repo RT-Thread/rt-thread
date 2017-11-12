@@ -106,7 +106,7 @@ rt_bool_t dc_event_handler(struct rtgui_object *object, rtgui_event_t *event)
         rtgui_dc_draw_text_stroke(dc, __DATE__"--"__TIME__, &rect, HIGH_LIGHT, BLUE);
         
         
-		rtgui_dc_end_drawing(dc);
+		rtgui_dc_end_drawing(dc, RT_TRUE);
     }
 	return RT_FALSE;
 }
