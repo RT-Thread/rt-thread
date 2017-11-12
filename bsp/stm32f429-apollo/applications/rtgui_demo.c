@@ -18,7 +18,6 @@
 
 #include <rtgui/widgets/window.h>
 #include <rtgui/dc.h>
-#include <rtgui/dc_hw.h>
 
 #include "finsh.h"
 #include "rtgui_demo.h"

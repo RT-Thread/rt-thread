@@ -31,7 +31,6 @@
 
 #include <rtgui/widgets/window.h>
 #include <rtgui/dc.h>
-//#include <rtgui/dc_hw.h>
 
 struct rtgui_win *main_win;
 rt_bool_t dc_event_handler(struct rtgui_object *object, rtgui_event_t *event);
