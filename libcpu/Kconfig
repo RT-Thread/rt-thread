@@ -1,79 +1,101 @@
-config ARCH_ARM
-    bool
+menu "RT-Thread CPU"
 
-config ARCH_ARM_CORTEX_M
-    bool
-    select ARCH_ARM
+    choice ARCH
+        bool "Architecture"
 
-config ARCH_ARM_CORTEX_M0
-    bool
-    select ARCH_ARM_CORTEX_M
+        config ARCH_ARM
+            bool "ARM"
 
-config ARCH_ARM_CORTEX_M3
-    bool
-    select ARCH_ARM_CORTEX_M
+        config ARCH_MIPS
+            bool "MIPS"
 
-config ARCH_ARM_MPU
-    bool
-    depends on ARCH_ARM
+        config ARCH_ANDES
+            bool "ANDES"
 
-config ARCH_ARM_CORTEX_M4
-    bool
-    select ARCH_ARM_CORTEX_M
+        config ARCH_CSKY
+            bool "CSKY"
 
-config ARCH_ARM_CORTEX_M7
-    bool
-    select ARCH_ARM_CORTEX_M
+        config ARCH_POWERPC
+            bool "PowerPC"
 
-config ARCH_ARM_CORTEX_R
-    bool
-    select ARCH_ARM
+        config ARCH_RISCV
+            bool "RISCV"
 
-config ARCH_ARM_MMU
-    bool
-    depends on ARCH_ARM
+        config ARCH_IA32
+            bool "IA32"
 
-config ARCH_ARM_CORTEX_A
-    bool
-    select ARCH_ARM
+        config ARCH_HOST_SIMULATOR
+            bool "Host Simulator"
+    endchoice
 
-config ARCH_ARM_CORTEX_A5
-    bool
-    select ARCH_ARM_CORTEX_A
+    if ARCH_ARM
+        choice ARM_CORTEX
+            bool "ARM Cortex"
+            default ARCH_ARM_CORTEX_M
+            
+            config ARCH_ARM_CORTEX_M
+                bool "Cortex M"
 
-config ARCH_ARM_CORTEX_A7
-    bool
-    select ARCH_ARM_CORTEX_A
+            config ARCH_ARM_CORTEX_R
+                bool "Cortex R"
+                
+            config ARCH_ARM_CORTEX_A
+                bool "Cortex A"
+        endchoice
+        
+        if ARCH_ARM_CORTEX_M
+            choice ARCH_ARM_MCU
+                bool "MCU"
+                default ARCH_ARM_CORTEX_M4
+                
+                config ARCH_ARM_CORTEX_M0
+                    bool "ARM Cortex M0"
 
-config ARCH_ARM_CORTEX_A8
-    bool
-    select ARCH_ARM_CORTEX_A
+                config ARCH_ARM_CORTEX_M3
+                    bool "ARM Cortex M3"
+                    
+                config ARCH_ARM_CORTEX_M4
+                    bool "ARM Cortex M4"
 
-config ARCH_ARM_CORTEX_A9
-    bool
-    select ARCH_ARM_CORTEX_A
+                config ARCH_ARM_CORTEX_M7
+                    bool "ARM Cortex M7"
+            endchoice
+            
+            config ARCH_ARM_MPU
+                bool "ARM MPU Support"
+        endif
 
-config ARCH_MIPS
-    bool
 
-config ARCH_MIPS_XBURST
-    bool
-    select ARCH_MIPS
+        if ARCH_ARM_CORTEX_A
+            choice ARCH_ARM_CPU_A
+                bool "CPU"
+                default ARCH_ARM_CORTEX_A8
+                
+                config ARCH_ARM_CORTEX_A5
+                    bool "ARM Cortex A5"
 
-config ARCH_ANDES
-    bool
+                config ARCH_ARM_CORTEX_A7
+                    bool "ARM Cortex A7"
 
-config ARCH_CSKY
-    bool
+                config ARCH_ARM_CORTEX_A8
+                    bool "ARM Cortex A8"
 
-config ARCH_POWERPC
-    bool
+                config ARCH_ARM_CORTEX_A9
+                    bool "ARM Cortex A9"
+            endchoice
+        endif
 
-config ARCH_RISCV
-    bool
+        if ARCH_ARM_CORTEX_A || ARCH_ARM_CORTEX_R
+            config ARCH_ARM_MMU
+                bool "ARM MMU Support"
+                default y
+        endif
+        
+    endif
 
-config ARCH_IA32
-    bool
-
-config ARCH_HOST_SIMULATOR
-    bool
+    if ARCH_MIPS
+        config ARCH_MIPS_XBURST
+            bool "MIPS X-Burst"
+            default y
+    endif
+endmenu
