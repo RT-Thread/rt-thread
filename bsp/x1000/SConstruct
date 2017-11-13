@@ -29,5 +29,11 @@ Export('rtconfig')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
+if not GetDepend('RT_USING_HARD_FLOAT'):
+    env['CCFLAGS']   = env['CCFLAGS'].replace('-mhard-float', '-msoft-float')
+    env['ASFLAGS']   = env['ASFLAGS'].replace('-mhard-float', '-msoft-float')
+    env['CXXFLAGS']  = env['CXXFLAGS'].replace('-mhard-float', '-msoft-float')
+    env['LINKFLAGS'] = env['LINKFLAGS'].replace('-mhard-float', '-msoft-float')
+
 # make a building
 DoBuilding(TARGET, objs)
