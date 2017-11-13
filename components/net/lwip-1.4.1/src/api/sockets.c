@@ -240,9 +240,8 @@ tryget_socket(int s)
 struct lwip_sock *
 lwip_tryget_socket(int s)
 {
-	return tryget_socket(s);
+  return tryget_socket(s);
 }
-
 
 /**
  * Allocate a new socket for a given netconn.
