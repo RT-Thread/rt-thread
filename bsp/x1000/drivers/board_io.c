@@ -52,31 +52,18 @@ INIT_DEVICE_EXPORT(io_AP6212);
  */
 int io_AP6212_bt(void)
 {
-	rtc32k_enable();
+    rtc32k_enable();
 
     return 0;
 }
 INIT_DEVICE_EXPORT(io_AP6212_bt);
 #endif
 
-#if defined(BOARD_CANNA)
-int io_canna(void)
-{
-    /* PC25(1) for Audio Shutdown IO */
-    gpio_set_func(GPIO_PORT_C, GPIO_Pin_25, GPIO_FUNC_1);
-    gpio_direction_output(GPIO_PORT_C,GPIO_Pin_25, 0);
-    gpio_set_value(GPIO_PORT_C,GPIO_Pin_25, 0);
-
-    return 0;
-}
-INIT_DEVICE_EXPORT(io_canna);
-#endif
-
 #if defined(BOARD_HALLEY2)
 int io_halley2(void)
 {
 #ifdef RT_USING_EMAC
-	/* PC23 for MAC_RST_N */
+    /* PC23 for MAC_RST_N */
     gpio_set_func(GPIO_PORT_C, GPIO_Pin_23, GPIO_FUNC_0);
     gpio_direction_output(GPIO_PORT_C, GPIO_Pin_23, 0);
     rt_thread_delay(1);
@@ -133,7 +120,7 @@ int io_realboard(void)
     gpio_direction_output(GPIO_PORT_C, GPIO_Pin_23, 1);
     _delay_ms(100);
 #endif
-	return 0;
+    return 0;
 }
 INIT_BOARD_EXPORT(io_realboard);
 #endif /* BOARD_HALLEY2_REALBOARD_X1000 */

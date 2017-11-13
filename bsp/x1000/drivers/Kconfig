@@ -8,9 +8,6 @@ choice
     config BOARD_HALLEY2
         bool "Halley2 board"
 
-    config BOARD_CANNA
-        bool "CANNA board"
-
     config BOARD_HALLEY2_FIR
         bool "Fir board"
 

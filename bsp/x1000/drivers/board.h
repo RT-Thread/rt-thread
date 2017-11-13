@@ -52,10 +52,6 @@
 #include "board/phoenix/board_phoenix.h"
 #endif
 
-#ifdef BOARD_CANNA
-#include "board/canna/board_canna.h"
-#endif
-
 /*
  * Clock setting
  */
