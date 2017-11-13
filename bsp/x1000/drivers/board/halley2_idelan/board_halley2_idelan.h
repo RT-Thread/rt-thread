@@ -1,0 +1,5 @@
+#ifndef BOARD_HALLEY2_IDELAN_H__
+#define BOARD_HALLEY2_IDELAN_H__
+
+
+#endif
