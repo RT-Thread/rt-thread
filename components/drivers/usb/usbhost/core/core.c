@@ -234,10 +234,10 @@ rt_err_t rt_usbh_detach_instance(uinst_t device)
 }
 
 /**
- * This function will do USB_REQ_GET_DESCRIPTO' request for the usb device instance,
+ * This function will do USB_REQ_GET_DESCRIPTO' bRequest for the usb device instance,
  *
  * @param device the usb device instance. 
- * @param type the type of descriptor request.
+ * @param type the type of descriptor bRequest.
  * @param buffer the data buffer to save requested data
  * @param nbytes the size of buffer
  * 
@@ -253,10 +253,10 @@ rt_err_t rt_usbh_get_descriptor(uinst_t device, rt_uint8_t type, void* buffer,
 
     setup.request_type = USB_REQ_TYPE_DIR_IN | USB_REQ_TYPE_STANDARD | 
         USB_REQ_TYPE_DEVICE;
-    setup.request = USB_REQ_GET_DESCRIPTOR;
-    setup.index = 0;
-    setup.length = nbytes;
-    setup.value = type << 8;
+    setup.bRequest = USB_REQ_GET_DESCRIPTOR;
+    setup.wIndex = 0;
+    setup.wLength = nbytes;
+    setup.wValue = type << 8;
 
     if(rt_usb_hcd_control_xfer(device->hcd, device, &setup, buffer, nbytes, 
         timeout) != nbytes) return -RT_EIO;
@@ -281,10 +281,10 @@ rt_err_t rt_usbh_set_address(uinst_t device)
 
     setup.request_type = USB_REQ_TYPE_DIR_OUT | USB_REQ_TYPE_STANDARD | 
         USB_REQ_TYPE_DEVICE;
-    setup.request = USB_REQ_SET_ADDRESS;
-    setup.index = 0;
-    setup.length = 0;
-    setup.value = device->index;
+    setup.bRequest = USB_REQ_SET_ADDRESS;
+    setup.wIndex = 0;
+    setup.wLength = 0;
+    setup.wValue = device->index;
 
     if(rt_usb_hcd_control_xfer(device->hcd, device, &setup, RT_NULL, 0, 
         timeout) != 0) return -RT_EIO;
@@ -314,10 +314,10 @@ rt_err_t rt_usbh_set_configure(uinst_t device, int config)
 
     setup.request_type = USB_REQ_TYPE_DIR_OUT | USB_REQ_TYPE_STANDARD | 
         USB_REQ_TYPE_DEVICE;
-    setup.request = USB_REQ_SET_CONFIGURATION;
-    setup.index = 0;
-    setup.length = 0;
-    setup.value = config;
+    setup.bRequest = USB_REQ_SET_CONFIGURATION;
+    setup.wIndex = 0;
+    setup.wLength = 0;
+    setup.wValue = config;
 
     if(rt_usb_hcd_control_xfer(device->hcd, device, &setup, RT_NULL, 0, 
         timeout) != 0) return -RT_EIO;
@@ -343,10 +343,10 @@ rt_err_t rt_usbh_set_interface(uinst_t device, int intf)
 
     setup.request_type = USB_REQ_TYPE_DIR_OUT | USB_REQ_TYPE_STANDARD | 
         USB_REQ_TYPE_INTERFACE;
-    setup.request = USB_REQ_SET_INTERFACE;
-    setup.index = 0;
-    setup.length = 0;
-    setup.value = intf;
+    setup.bRequest = USB_REQ_SET_INTERFACE;
+    setup.wIndex = 0;
+    setup.wLength = 0;
+    setup.wValue = intf;
 
     if(rt_usb_hcd_control_xfer(device->hcd, device, &setup, RT_NULL, 0, 
         timeout) != 0) return -RT_EIO;
@@ -372,10 +372,10 @@ rt_err_t rt_usbh_clear_feature(uinst_t device, int endpoint, int feature)
 
     setup.request_type = USB_REQ_TYPE_DIR_OUT | USB_REQ_TYPE_STANDARD | 
         USB_REQ_TYPE_ENDPOINT;
-    setup.request = USB_REQ_CLEAR_FEATURE;
-    setup.index = endpoint;
-    setup.length = 0;
-    setup.value = feature;
+    setup.bRequest = USB_REQ_CLEAR_FEATURE;
+    setup.wIndex = endpoint;
+    setup.wLength = 0;
+    setup.wValue = feature;
 
     if(rt_usb_hcd_control_xfer(device->hcd, device, &setup, RT_NULL, 0, 
         timeout) != 0) return -RT_EIO;

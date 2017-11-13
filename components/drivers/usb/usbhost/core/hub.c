@@ -31,7 +31,7 @@ static struct rt_messagequeue *usb_mq;
 static struct uclass_driver hub_driver;
 
 /**
- * This function will do USB_REQ_GET_DESCRIPTOR request for the device instance 
+ * This function will do USB_REQ_GET_DESCRIPTOR bRequest for the device instance 
  * to get usb hub descriptor.
  *
  * @param intf the interface instance.
@@ -51,10 +51,10 @@ rt_err_t rt_usbh_hub_get_descriptor(struct uinstance* device, rt_uint8_t *buffer
     
     setup.request_type = USB_REQ_TYPE_DIR_IN | USB_REQ_TYPE_CLASS | 
         USB_REQ_TYPE_DEVICE;
-    setup.request = USB_REQ_GET_DESCRIPTOR;
-    setup.index = 0;
-    setup.length = nbytes;
-    setup.value = USB_DESC_TYPE_HUB << 8;
+    setup.bRequest = USB_REQ_GET_DESCRIPTOR;
+    setup.wIndex = 0;
+    setup.wLength = nbytes;
+    setup.wValue = USB_DESC_TYPE_HUB << 8;
 
     if(rt_usb_hcd_control_xfer(device->hcd, device, &setup, buffer, nbytes, 
         timeout) == nbytes) return RT_EOK;
@@ -62,7 +62,7 @@ rt_err_t rt_usbh_hub_get_descriptor(struct uinstance* device, rt_uint8_t *buffer
 }
 
 /**
- * This function will do USB_REQ_GET_STATUS request for the device instance 
+ * This function will do USB_REQ_GET_STATUS bRequest for the device instance 
  * to get usb hub status.
  *
  * @param intf the interface instance.
@@ -81,10 +81,10 @@ rt_err_t rt_usbh_hub_get_status(struct uinstance* device, rt_uint8_t* buffer)
 
     setup.request_type = USB_REQ_TYPE_DIR_IN | USB_REQ_TYPE_CLASS | 
         USB_REQ_TYPE_DEVICE;
-    setup.request = USB_REQ_GET_STATUS;
-    setup.index = 0;
-    setup.length = length;
-    setup.value = 0;
+    setup.bRequest = USB_REQ_GET_STATUS;
+    setup.wIndex = 0;
+    setup.wLength = length;
+    setup.wValue = 0;
 
     if(rt_usb_hcd_control_xfer(device->hcd, device, &setup, buffer, length, 
         timeout) == length) return RT_EOK;
@@ -92,7 +92,7 @@ rt_err_t rt_usbh_hub_get_status(struct uinstance* device, rt_uint8_t* buffer)
 }
 
 /**
- * This function will do USB_REQ_GET_STATUS request for the device instance 
+ * This function will do USB_REQ_GET_STATUS bRequest for the device instance 
  * to get hub port status.
  *
  * @param intf the interface instance.
@@ -121,10 +121,10 @@ rt_err_t rt_usbh_hub_get_port_status(uhub_t hub, rt_uint16_t port,
 
     setup.request_type = USB_REQ_TYPE_DIR_IN | USB_REQ_TYPE_CLASS | 
         USB_REQ_TYPE_OTHER;
-    setup.request = USB_REQ_GET_STATUS;
-    setup.index = port;
-    setup.length = 4;
-    setup.value = 0;
+    setup.bRequest = USB_REQ_GET_STATUS;
+    setup.wIndex = port;
+    setup.wLength = 4;
+    setup.wValue = 0;
 
     if(rt_usb_hcd_control_xfer(hub->hcd, hub->self, &setup, buffer, 
         length, timeout) == timeout) return RT_EOK;
@@ -132,7 +132,7 @@ rt_err_t rt_usbh_hub_get_port_status(uhub_t hub, rt_uint16_t port,
 }
 
 /**
- * This function will do USB_REQ_CLEAR_FEATURE request for the device instance 
+ * This function will do USB_REQ_CLEAR_FEATURE bRequest for the device instance 
  * to clear feature of the hub port.
  *
  * @param intf the interface instance.
@@ -160,10 +160,10 @@ rt_err_t rt_usbh_hub_clear_port_feature(uhub_t hub, rt_uint16_t port,
 
     setup.request_type = USB_REQ_TYPE_DIR_OUT | USB_REQ_TYPE_CLASS | 
         USB_REQ_TYPE_OTHER;
-    setup.request = USB_REQ_CLEAR_FEATURE;
-    setup.index = port;
-    setup.length = 0;
-    setup.value = feature;
+    setup.bRequest = USB_REQ_CLEAR_FEATURE;
+    setup.wIndex = port;
+    setup.wLength = 0;
+    setup.wValue = feature;
 
     if(rt_usb_hcd_control_xfer(hub->hcd, hub->self, &setup, RT_NULL, 0, 
         timeout) == 0) return RT_EOK;
@@ -171,7 +171,7 @@ rt_err_t rt_usbh_hub_clear_port_feature(uhub_t hub, rt_uint16_t port,
 }
 
 /**
- * This function will do USB_REQ_SET_FEATURE request for the device instance 
+ * This function will do USB_REQ_SET_FEATURE bRequest for the device instance 
  * to set feature of the hub port.
  *
  * @param intf the interface instance.
@@ -199,10 +199,10 @@ rt_err_t rt_usbh_hub_set_port_feature(uhub_t hub, rt_uint16_t port,
 
     setup.request_type = USB_REQ_TYPE_DIR_OUT | USB_REQ_TYPE_CLASS | 
         USB_REQ_TYPE_OTHER;
-    setup.request = USB_REQ_SET_FEATURE;
-    setup.index = port;
-    setup.length = 0;
-    setup.value = feature;
+    setup.bRequest = USB_REQ_SET_FEATURE;
+    setup.wIndex = port;
+    setup.wLength = 0;
+    setup.wValue = feature;
 
     if(rt_usb_hcd_control_xfer(hub->hcd, hub->self, &setup, RT_NULL, 0, 
         timeout) == 0) return RT_EOK;
@@ -561,7 +561,7 @@ static void rt_usbh_hub_thread_entry(void* parameter)
         if(rt_mq_recv(usb_mq, &msg, sizeof(struct uhost_msg), RT_WAITING_FOREVER) 
             != RT_EOK ) continue;
 
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("msg type %d\n", msg.type));
+        //RT_DEBUG_LOG(RT_DEBUG_USB, ("msg type %d\n", msg.type));
         
         switch (msg.type)
         {        

@@ -22,7 +22,6 @@
 #ifndef _PORT_H
 #define _PORT_H
 
-#include <stm32f10x_conf.h>
 #include "mbconfig.h"
 #include <rthw.h>
 #include <rtthread.h>
@@ -35,7 +34,7 @@
 #define PR_END_EXTERN_C             }
 
 #define ENTER_CRITICAL_SECTION()    EnterCriticalSection()
-#define EXIT_CRITICAL_SECTION()    ExitCriticalSection()
+#define EXIT_CRITICAL_SECTION()     ExitCriticalSection()
 
 typedef uint8_t BOOL;
 
