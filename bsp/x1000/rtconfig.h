@@ -7,18 +7,16 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
-#define RT_ALIGN_SIZE 8
+#define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_MAX 32
-#define RT_TICK_PER_SECOND 1000
+#define RT_TICK_PER_SECOND 100
 #define RT_DEBUG
 #define RT_USING_OVERFLOW_CHECK
 #define RT_DEBUG_INIT 0
 #define RT_DEBUG_THREAD 0
 #define RT_USING_HOOK
-#define IDLE_THREAD_STACK_SIZE 1024
-#define RT_USING_TIMER_SOFT
-#define RT_TIMER_THREAD_PRIO 4
-#define RT_TIMER_THREAD_STACK_SIZE 1024
+#define IDLE_THREAD_STACK_SIZE 256
+/* RT_USING_TIMER_SOFT is not set */
 
 /* Inter-Thread communication */
 
@@ -43,7 +41,7 @@
 /* RT_USING_INTERRUPT_INFO is not set */
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart2"
+#define RT_CONSOLE_DEVICE_NAME "uart"
 /* RT_USING_MODULE is not set */
 
 /* RT-Thread Components */
@@ -73,7 +71,7 @@
 
 #define RT_USING_DFS
 #define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 4
+#define DFS_FILESYSTEMS_MAX 2
 #define DFS_FD_MAX 4
 #define RT_USING_DFS_ELMFAT
 
@@ -81,14 +79,14 @@
 
 #define RT_DFS_ELM_CODE_PAGE 437
 #define RT_DFS_ELM_WORD_ACCESS
-/* RT_DFS_ELM_USE_LFN_0 is not set */
+#define RT_DFS_ELM_USE_LFN_0
 /* RT_DFS_ELM_USE_LFN_1 is not set */
 /* RT_DFS_ELM_USE_LFN_2 is not set */
-#define RT_DFS_ELM_USE_LFN_3
-#define RT_DFS_ELM_USE_LFN 3
+/* RT_DFS_ELM_USE_LFN_3 is not set */
+#define RT_DFS_ELM_USE_LFN 0
 #define RT_DFS_ELM_MAX_LFN 255
-#define RT_DFS_ELM_DRIVES 4
-#define RT_DFS_ELM_MAX_SECTOR_SIZE 4096
+#define RT_DFS_ELM_DRIVES 2
+#define RT_DFS_ELM_MAX_SECTOR_SIZE 512
 /* RT_DFS_ELM_USE_ERASE is not set */
 #define RT_DFS_ELM_REENTRANT
 #define RT_USING_DFS_DEVFS
@@ -103,24 +101,16 @@
 #define RT_USING_SERIAL
 /* RT_USING_CAN is not set */
 /* RT_USING_HWTIMER is not set */
-#define RT_USING_I2C
-/* RT_USING_I2C_BITOPS is not set */
+/* RT_USING_I2C is not set */
 #define RT_USING_PIN
-#define RT_USING_MTD_NOR
+/* RT_USING_MTD_NOR is not set */
 /* RT_USING_MTD_NAND is not set */
 /* RT_USING_RTC is not set */
-#define RT_USING_SDIO
-#define RT_USING_SPI
-/* RT_USING_SFUD is not set */
-/* RT_USING_W25QXX is not set */
-/* RT_USING_GD is not set */
-/* RT_USING_ENC28J60 is not set */
-/* RT_USING_SPI_WIFI is not set */
-#define RT_USING_WDT
+/* RT_USING_SDIO is not set */
+/* RT_USING_SPI is not set */
+/* RT_USING_WDT is not set */
 /* RT_USING_USB_HOST is not set */
-#define RT_USING_USB_DEVICE
-#define RT_USB_DEVICE_CDC
-/* RT_USB_DEVICE_MSTORAGE is not set */
+/* RT_USING_USB_DEVICE is not set */
 
 /* POSIX layer and C standard library */
 
@@ -142,21 +132,7 @@
 
 /* RT-Thread UI Engine */
 
-#define RT_USING_GUIENGINE
-#define RTGUI_NAME_MAX 16
-/* RTGUI_USING_TTF is not set */
-#define RTGUI_USING_FONT16
-#define RTGUI_USING_FONT12
-/* RTGUI_USING_FONTHZ is not set */
-/* RTGUI_IMAGE_XPM is not set */
-#define RTGUI_IMAGE_JPEG_NONE
-/* RTGUI_IMAGE_JPEG is not set */
-/* RTGUI_IMAGE_TJPGD is not set */
-#define RTGUI_IMAGE_PNG_NONE
-/* RTGUI_IMAGE_PNG is not set */
-/* RTGUI_IMAGE_LODEPNG is not set */
-/* RTGUI_IMAGE_BMP is not set */
-/* RTGUI_IMAGE_CONTAINER is not set */
+/* RT_USING_GUIENGINE is not set */
 
 /* VBUS(Virtual Software BUS) */
 
@@ -192,44 +168,23 @@
 
 /* multimedia packages */
 
-/* PKG_USING_FASTLZ is not set */
-
 /* tools packages */
 
 /* PKG_USING_CMBACKTRACE is not set */
 /* PKG_USING_EASYLOGGER is not set */
-/* PKG_USING_SYSTEMVIEW is not set */
 
 /* miscellaneous packages */
 
 /* PKG_USING_HELLO is not set */
-/* BOARD_HALLEY2 is not set */
 /* BOARD_PHOENIX is not set */
-/* BOARD_CANNA is not set */
+/* BOARD_HALLEY2 is not set */
 /* BOARD_HALLEY2_FIR is not set */
 /* BOARD_HALLEY2_REALBOARD is not set */
 #define BOARD_HALLEY2_REALBOARD_V2
-/* BOARD_HALLEY2_IDELAN is not set */
-#define RT_USING_UART0
-#define RT_USING_UART1
+/* RT_USING_UART0 is not set */
+/* RT_USING_UART1 is not set */
 #define RT_USING_UART2
-#define RT_USING_MSC0
-#define RT_USING_MSC1
-#define RT_MMCSD_STACK_SIZE 2048
-#define RT_USING_SLCD
-#define RT_USING_ILI9488
-/* RT_USING_ILI9341 is not set */
-/* RT_USING_OTM4802 is not set */
-/* RT_USING_TRULY_TFT240240 is not set */
-#define RT_USING_TOUCH
-#define RT_USING_GT9XX
-/* RT_USING_FT6x06 is not set */
-#define RT_TOUCH_THREAD_PRIORITY 10
-#define RT_USING_I2C0
-#define RT_USING_I2C1
-#define RT_USING_I2C2
 #define RT_USING_AUDIO
-#define RT_USING_ICODEC
 #define RT_USING_CPU_FFS
 
 #endif
