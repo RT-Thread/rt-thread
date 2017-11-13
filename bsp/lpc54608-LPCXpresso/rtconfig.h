@@ -8,7 +8,7 @@
 
 #define RT_NAME_MAX 8
 #define RT_ALIGN_SIZE 4
-#define RT_THREAD_PRIORITY_MAX 32
+#define RT_THREAD_PRIORITY_MAX 64
 #define RT_TICK_PER_SECOND 1000
 #define RT_DEBUG
 #define RT_USING_OVERFLOW_CHECK
@@ -230,6 +230,7 @@
 
 /* PKG_USING_HELLO is not set */
 #define RT_USING_UART0
-#define USE_EXT_SDRAM
+#define BSP_DRV_SDCARD
+#define BSP_DRV_SDRAM
 
 #endif
