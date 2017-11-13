@@ -109,35 +109,6 @@ int io_phoenix(void)
 INIT_DEVICE_EXPORT(io_phoenix);
 #endif
 
-#if defined(BOARD_OX)
-int io_ox(void)
-{
-    /* PB6 for Audio Shutdown IO */
-    gpio_set_func(GPIO_PORT_B, GPIO_Pin_6, GPIO_FUNC_1);
-    gpio_direction_output(GPIO_PORT_B,GPIO_Pin_6, 0);
-    gpio_set_value(GPIO_PORT_B,GPIO_Pin_6, 0);
-
-    gpio_direction_output(GPIO_PORT_C, GPIO_Pin_25, GPIO_OUTPUT0);
-    rt_thread_delay(rt_tick_from_millisecond(100));
-    gpio_direction_output(GPIO_PORT_C, GPIO_Pin_25, GPIO_OUTPUT1);
-
-    /* PB19 for LCD black light */
-    gpio_direction_output(GPIO_PORT_B,GPIO_Pin_19, GPIO_OUTPUT1);
-
-#ifdef RT_USING_EMAC
-    /* PC23 for MAC_RST_N */
-    // gpio_set_func(GPIO_PORT_C, GPIO_Pin_23, GPIO_FUNC_0);
-    gpio_direction_output(GPIO_PORT_C, GPIO_Pin_23, 0);
-    rt_thread_delay(1);
-    gpio_direction_output(GPIO_PORT_C, GPIO_Pin_23, 1);
-    rt_thread_delay(1);
-#endif
-
-    return 0;
-}
-INIT_DEVICE_EXPORT(io_ox);
-#endif
-
 #ifdef BOARD_HALLEY2_REALBOARD
 int io_realboard(void)
 {
@@ -193,7 +164,6 @@ int io_realboard_v2(void)
 }
 INIT_BOARD_EXPORT(io_realboard_v2);
 #endif /* BOARD_HALLEY2_REALBOARD_V2 */
-
 
 #ifdef BOARD_HALLEY2_FIR
 int io_halley2_fir(void)
