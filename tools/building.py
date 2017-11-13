@@ -30,6 +30,7 @@ import string
 
 from SCons.Script import *
 from utils import _make_path_relative
+from mkdist import do_copy_file
 
 BuildOptions = {}
 Projects = []
