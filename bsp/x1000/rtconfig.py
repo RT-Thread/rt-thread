@@ -18,13 +18,8 @@ else:
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
-
 # BUILD = 'debug'
-# BUILD = 'release'
-BUILD = 'release_O3'
-
-# FLOAT       = 'soft'
-FLOAT       = 'hard'
+BUILD = 'release'
 
 if PLATFORM == 'gcc':
     # toolchains
@@ -40,11 +35,7 @@ if PLATFORM == 'gcc':
     OBJCPY  = PREFIX + 'objcopy'
     STRIP   = PREFIX + 'strip'
 
-    if FLOAT == 'soft':
-        DEVICE = ' -mips32r2 -msoft-float -mfp32'
-    else:
-        DEVICE = ' -mips32r2 -mhard-float -mfp32'
-
+    DEVICE = ' -mips32r2 -msoft-float -mfp32'
     CFLAGS  = DEVICE + ' -EL -G0 -mno-abicalls -fno-pic -fno-builtin -fno-exceptions -ffunction-sections -fno-omit-frame-pointer'
     AFLAGS  = ' -c' + DEVICE + ' -EL -x assembler-with-cpp'
     LFLAGS  = DEVICE + ' -EL -Wl,--gc-sections,-Map=rtthread_x1000.map,-cref,-u,Reset_Handler -T x1000_ram.lds'
@@ -54,8 +45,6 @@ if PLATFORM == 'gcc':
     if BUILD == 'debug':
         CFLAGS += ' -O0 -gdwarf-2'
         AFLAGS += ' -gdwarf-2'
-    elif BUILD == 'release_O3':
-        CFLAGS += ' -O3'
     else:
         CFLAGS += ' -O2'
 
