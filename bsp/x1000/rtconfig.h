@@ -7,15 +7,18 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
-#define RT_ALIGN_SIZE 4
+#define RT_ALIGN_SIZE 8
+/* RT_THREAD_PRIORITY_8 is not set */
+#define RT_THREAD_PRIORITY_32
+/* RT_THREAD_PRIORITY_256 is not set */
 #define RT_THREAD_PRIORITY_MAX 32
-#define RT_TICK_PER_SECOND 100
+#define RT_TICK_PER_SECOND 1000
 #define RT_DEBUG
 #define RT_USING_OVERFLOW_CHECK
 #define RT_DEBUG_INIT 0
 #define RT_DEBUG_THREAD 0
 #define RT_USING_HOOK
-#define IDLE_THREAD_STACK_SIZE 256
+#define IDLE_THREAD_STACK_SIZE 512
 /* RT_USING_TIMER_SOFT is not set */
 
 /* Inter-Thread communication */
@@ -31,9 +34,10 @@
 
 #define RT_USING_MEMPOOL
 /* RT_USING_MEMHEAP is not set */
-#define RT_USING_HEAP
+/* RT_USING_NOHEAP is not set */
 #define RT_USING_SMALL_MEM
 /* RT_USING_SLAB is not set */
+#define RT_USING_HEAP
 
 /* Kernel Device Object */
 
@@ -41,7 +45,7 @@
 /* RT_USING_INTERRUPT_INFO is not set */
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart"
+#define RT_CONSOLE_DEVICE_NAME "uart2"
 /* RT_USING_MODULE is not set */
 #define ARCH_MIPS
 #define ARCH_MIPS_XBURST
@@ -73,7 +77,7 @@
 
 #define RT_USING_DFS
 #define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 2
+#define DFS_FILESYSTEMS_MAX 4
 #define DFS_FD_MAX 4
 #define RT_USING_DFS_ELMFAT
 
@@ -81,14 +85,14 @@
 
 #define RT_DFS_ELM_CODE_PAGE 437
 #define RT_DFS_ELM_WORD_ACCESS
-#define RT_DFS_ELM_USE_LFN_0
+/* RT_DFS_ELM_USE_LFN_0 is not set */
 /* RT_DFS_ELM_USE_LFN_1 is not set */
 /* RT_DFS_ELM_USE_LFN_2 is not set */
-/* RT_DFS_ELM_USE_LFN_3 is not set */
-#define RT_DFS_ELM_USE_LFN 0
+#define RT_DFS_ELM_USE_LFN_3
+#define RT_DFS_ELM_USE_LFN 3
 #define RT_DFS_ELM_MAX_LFN 255
-#define RT_DFS_ELM_DRIVES 2
-#define RT_DFS_ELM_MAX_SECTOR_SIZE 512
+#define RT_DFS_ELM_DRIVES 4
+#define RT_DFS_ELM_MAX_SECTOR_SIZE 4096
 /* RT_DFS_ELM_USE_ERASE is not set */
 #define RT_DFS_ELM_REENTRANT
 #define RT_USING_DFS_DEVFS
@@ -105,7 +109,7 @@
 /* RT_USING_HWTIMER is not set */
 /* RT_USING_I2C is not set */
 #define RT_USING_PIN
-/* RT_USING_MTD_NOR is not set */
+#define RT_USING_MTD_NOR
 /* RT_USING_MTD_NAND is not set */
 /* RT_USING_RTC is not set */
 /* RT_USING_SDIO is not set */
@@ -170,10 +174,13 @@
 
 /* multimedia packages */
 
+/* PKG_USING_FASTLZ is not set */
+
 /* tools packages */
 
 /* PKG_USING_CMBACKTRACE is not set */
 /* PKG_USING_EASYLOGGER is not set */
+/* PKG_USING_SYSTEMVIEW is not set */
 
 /* miscellaneous packages */
 
