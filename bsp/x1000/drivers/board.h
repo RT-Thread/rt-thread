@@ -44,10 +44,6 @@
 #include "board/halley2_realboard_v2/board_halley2_readboard_v2.h"
 #endif
 
-#ifdef BOARD_HALLEY2_IDELAN
-#include "board/halley2_idelan/board_halley2_idelan.h"
-#endif
-
 #ifdef BOARD_HALLEY2
 #include "board/halley2/board_halley2.h"
 #endif
