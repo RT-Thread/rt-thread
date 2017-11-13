@@ -46,6 +46,20 @@ if RT_USING_SDIO
         default 2048
 endif
 
+if RT_USING_I2C
+    config RT_USING_I2C0
+        bool "Using iic0 bus"
+        default y
+        
+    config RT_USING_I2C1
+        bool "Using iic1 bus"
+        default n
+
+    config RT_USING_I2C2
+        bool "Using iic2 bus"
+        default n
+endif
+
 if RT_USING_GUIENGINE
     config RT_USING_SLCD
         bool "Using LCD display"
@@ -70,9 +84,9 @@ if RT_USING_GUIENGINE
         endchoice
     endif
 
-    if RT_USING_I2C
+    if RT_USING_I2C0
         config RT_USING_TOUCH
-            bool "Using touch"
+            bool "Using LCD touch"
             default y
 
         if RT_USING_TOUCH
@@ -89,25 +103,13 @@ if RT_USING_GUIENGINE
 
             config RT_TOUCH_THREAD_PRIORITY
                 int "Set touch thread priority"
-                range 2 32
+                range 2 30
                 default 10
         endif
     endif
 endif
 
-if RT_USING_I2C
-    config RT_USING_I2C0
-        bool "Using iic0 bus"
-        default y
 
-    config RT_USING_I2C1
-        bool "Using iic1 bus"
-        default n
-
-    config RT_USING_I2C2
-        bool "Using iic2 bus"
-        default n
-endif
 
 config RT_USING_ICODEC
     default n
