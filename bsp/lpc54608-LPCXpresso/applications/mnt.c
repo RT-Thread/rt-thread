@@ -52,8 +52,10 @@ int mnt_init(void)
     }
 #endif
 
+#ifdef BSP_DRV_SDCARD
     /* initilize sd card */
      mci_hw_init("sd0");
+#endif
 
 #ifdef RT_DFS_ELM_REENTRANT    
     /* mount sd card fat partition 1 as root directory */

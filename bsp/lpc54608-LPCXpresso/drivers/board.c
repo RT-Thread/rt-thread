@@ -70,7 +70,7 @@ void rt_hw_board_init()
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
-#if LPC_EXT_SDRAM == 1
+#ifdef BSP_DRV_SDRAM
     lpc_sdram_hw_init();
 #endif
 

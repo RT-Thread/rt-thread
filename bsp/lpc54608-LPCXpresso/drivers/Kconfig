@@ -2,10 +2,10 @@ config RT_USING_UART0
     bool "Enable UART0"
     default y
 
-config RT_DFS_ELM_REENTRANT
+config BSP_DRV_SDCARD
     bool "Enable SD Card"
     default y 
 
-config USE_EXT_SDRAM
-bool "Enable SDRAM"
-default y 
+config BSP_DRV_SDRAM
+	bool "Enable SDRAM"
+	default y 

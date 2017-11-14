@@ -230,6 +230,7 @@
 
 /* PKG_USING_HELLO is not set */
 #define RT_USING_UART0
-#define USE_EXT_SDRAM
+#define BSP_DRV_SDCARD
+#define BSP_DRV_SDRAM
 
 #endif
