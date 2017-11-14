@@ -28,13 +28,13 @@
 #define  __USB_DEVICE_H__
 
 #include <rtthread.h>
-#include "usb_common.h"
+#include "drivers/usb_common.h"
 
 /* Vendor ID */
 #ifdef USB_VENDOR_ID
-#define _VENDOR_ID              USB_VENDOR_ID
+#define _VENDOR_ID                  USB_VENDOR_ID
 #else
-#define _VENDOR_ID              0x0EFF
+#define _VENDOR_ID                  0x0EFF
 #endif
 /* Product ID */
 #ifdef USB_PRODUCT_ID
@@ -76,7 +76,7 @@ typedef enum
     /* request to read full count */
     UIO_REQUEST_READ_FULL,
     /* request to read any count */
-    UIO_REQUEST_READ_MOST,  
+    UIO_REQUEST_READ_BEST,  
     /* request to write full count */
     UIO_REQUEST_WRITE,
 }UIO_REQUEST_TYPE;
@@ -99,11 +99,11 @@ struct udcd_ops
 
 struct ep_id
 {
-    rt_uint8_t addr;
-    rt_uint8_t type;
-    rt_uint8_t dir;
-    rt_uint8_t maxpacket;
-    rt_uint8_t status;
+    rt_uint8_t  addr;
+    rt_uint8_t  type;
+    rt_uint8_t  dir;
+    rt_uint16_t maxpacket;
+    rt_uint8_t  status;
 };
 
 typedef rt_err_t (*udep_handler_t)(struct ufunction* func, rt_size_t size);
@@ -238,7 +238,7 @@ struct udev_msg
     udcd_t dcd;
     union
     {
-        struct ep_msg ep_msg;
+        struct ep_msg   ep_msg;
         struct urequest setup;
     } content;
 };
@@ -295,7 +295,7 @@ rt_err_t rt_usbd_ep0_clear_stall(udevice_t device);
 rt_err_t rt_usbd_ep0_setup_handler(udcd_t dcd, struct urequest* setup);
 rt_err_t rt_usbd_ep0_in_handler(udcd_t dcd);
 rt_err_t rt_usbd_ep0_out_handler(udcd_t dcd, rt_size_t size);
-rt_err_t rt_usbd_ep_in_handler(udcd_t dcd, rt_uint8_t address);
+rt_err_t rt_usbd_ep_in_handler(udcd_t dcd, rt_uint8_t address, rt_size_t size);
 rt_err_t rt_usbd_ep_out_handler(udcd_t dcd, rt_uint8_t address, rt_size_t size);
 rt_err_t rt_usbd_reset_handler(udcd_t dcd);
 rt_err_t rt_usbd_connect_handler(udcd_t dcd);

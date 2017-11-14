@@ -302,7 +302,7 @@
           <name>CCIncludePath2</name>
           <state />
           <state>$PROJ_DIR$\..\..\components\libc\compilers\dlib</state>
-          <state>$PROJ_DIR$\..\..\components\libc\timer</state>
+          <state>$PROJ_DIR$\Libraries</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\netif</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
@@ -317,11 +317,12 @@
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m7</state>
           <state>$PROJ_DIR$\..\..\components\dfs\include</state>
           <state>$PROJ_DIR$\..\..\components\dfs\filesystems\devfs</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\filesystems\net\socket</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\Include</state>
           <state>$PROJ_DIR$\Libraries\utilities</state>
           <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\filesystems\net\select</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\Libraries</state>
           <state>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat</state>
           <state>$PROJ_DIR$\..\..\components\libc\pthreads</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\arch\include</state>
@@ -1245,7 +1246,7 @@
           <name>CCIncludePath2</name>
           <state />
           <state>$PROJ_DIR$\..\..\components\libc\compilers\dlib</state>
-          <state>$PROJ_DIR$\..\..\components\libc\timer</state>
+          <state>$PROJ_DIR$\Libraries</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\netif</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
@@ -1260,11 +1261,12 @@
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m7</state>
           <state>$PROJ_DIR$\..\..\components\dfs\include</state>
           <state>$PROJ_DIR$\..\..\components\dfs\filesystems\devfs</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\filesystems\net\socket</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\Include</state>
           <state>$PROJ_DIR$\Libraries\utilities</state>
           <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\filesystems\net\select</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\Libraries</state>
           <state>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat</state>
           <state>$PROJ_DIR$\..\..\components\libc\pthreads</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\arch\include</state>
@@ -2363,12 +2365,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\libc\pthreads\semaphore.c</name>
-    </file>
-  </group>
-  <group>
-    <name>libc</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\libc\timer\posix_sleep.c</name>
     </file>
   </group>
   <group>

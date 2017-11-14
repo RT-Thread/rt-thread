@@ -19,10 +19,8 @@ elif CROSS_TOOL == 'keil':
     PLATFORM 	= 'armcc'
     EXEC_PATH 	= r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
-    print '================ERROR============================'
-    print 'Not support iar yet!'
-    print '================================================='
-    exit(0)
+    PLATFORM    = 'iar'
+    EXEC_PATH   = "C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0"
 
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -73,7 +71,7 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --cpu=cortex-m4.fp'
     CFLAGS = DEVICE + ' --apcs=interwork -DSTM32F429_439xx'
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-stm32.map --scatter stm32_rom.sct'
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-stm32.map --scatter stm32f429_flash.sct'
 
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
     LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
@@ -112,7 +110,7 @@ elif PLATFORM == 'iar':
     CFLAGS += ' --cpu=Cortex-M4'
     CFLAGS += ' -e'
     CFLAGS += ' --fpu=None'
-    CFLAGS += ' --dlib_config "' + IAR_PATH + '/arm/INC/c/DLib_Config_Normal.h"'
+    CFLAGS += ' --dlib_config "' + EXEC_PATH + '/arm/INC/c/DLib_Config_Normal.h"'
     CFLAGS += ' -Ol'
     CFLAGS += ' --use_c++_inline'
 
@@ -123,10 +121,10 @@ elif PLATFORM == 'iar':
     AFLAGS += ' --cpu Cortex-M4'
     AFLAGS += ' --fpu None'
 
-    LFLAGS = ' --config stm32f10x_flash.icf'
+    LFLAGS = ' --config stm32f429_flash.icf'
     LFLAGS += ' --redirect _Printf=_PrintfTiny'
     LFLAGS += ' --redirect _Scanf=_ScanfSmall'
     LFLAGS += ' --entry __iar_program_start'
 
-    EXEC_PATH = IAR_PATH + '/arm/bin/'
+    EXEC_PATH = EXEC_PATH + '/arm/bin/'
     POST_ACTION = ''

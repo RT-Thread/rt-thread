@@ -27,7 +27,7 @@
 
 #include <rtthread.h>
 #include <rtservice.h>
-#include <rtdevice.h>
+#include "drivers/usb_device.h"
 #include "mstorage.h"
 
 #ifdef RT_USB_DEVICE_MSTORAGE
@@ -111,6 +111,8 @@ static struct usb_qualifier_descriptor dev_qualifier =
     0x01,
     0,
 };
+
+
 
 const static struct umass_descriptor _mass_desc =
 {

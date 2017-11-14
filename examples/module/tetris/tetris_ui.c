@@ -72,7 +72,7 @@ static rt_bool_t game_view_event_handler(struct rtgui_widget* widget, struct rtg
 		rect.y1 += 22;
 		rect.y2 = rect.y1 + 16;
 		rtgui_dc_draw_text(dc, "score", &rect);
-		rtgui_dc_end_drawing(dc);
+		rtgui_dc_end_drawing(dc, RT_TRUE);
 
 		/* start tetris game, removed later */
 	   	rt_tetris_start(g_app_info.tetris);
