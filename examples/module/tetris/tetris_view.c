@@ -95,7 +95,7 @@ static rt_err_t _rt_tetris_view_update_next_brick(rt_tetris_view_t* thiz, rt_tet
 		rtgui_dc_fill_rect(dc, &rect);
 	}
 
-	rtgui_dc_end_drawing(dc);
+	rtgui_dc_end_drawing(dc, RT_TRUE);
 
 	return RT_EOK;	
 }
@@ -125,7 +125,7 @@ static rt_err_t _rt_tetris_view_update_level(rt_tetris_view_t* thiz, rt_tetris_t
 	rtgui_dc_draw_text(dc, text, &rect);
 
 	/* Redraw panel */	
-	rtgui_dc_end_drawing(dc);
+	rtgui_dc_end_drawing(dc, RT_TRUE);
 
 	return RT_EOK;	
 }
@@ -163,7 +163,7 @@ static rt_err_t _rt_tetris_view_update_score_and_lines(rt_tetris_view_t* thiz, r
 	rtgui_dc_draw_text(dc, text, &rect);
 
 	/* Redraw panel */	
-	rtgui_dc_end_drawing(dc);
+	rtgui_dc_end_drawing(dc, RT_TRUE);
 
 	return RT_EOK;	
 }
@@ -211,7 +211,7 @@ static rt_err_t _rt_tetris_view_update(rt_tetris_view_t* thiz, rt_tetris_t* tetr
 	}
 
 	/* Redraw panel */	
-	rtgui_dc_end_drawing(dc);
+	rtgui_dc_end_drawing(dc, RT_TRUE);
 
 	return RT_EOK;	
 }

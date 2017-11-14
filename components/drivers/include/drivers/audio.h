@@ -198,7 +198,6 @@ struct rt_audio_replay
 struct rt_audio_record
 {
     rt_bool_t activated;
-    struct rt_pipe_device   pipe;
 };
 
 struct rt_audio_device

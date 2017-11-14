@@ -232,6 +232,18 @@ tryget_socket(int s)
 }
 
 /**
+ * Same as tryget_socket but a global routine.
+ *
+ * @param s externally used socket index
+ * @return struct lwip_sock for the socket or NULL if not found
+ */
+struct lwip_sock *
+lwip_tryget_socket(int s)
+{
+  return tryget_socket(s);
+}
+
+/**
  * Allocate a new socket for a given netconn.
  *
  * @param newconn the netconn for which to allocate a socket
