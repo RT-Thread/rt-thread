@@ -7,7 +7,7 @@
 MEMORY
 {
     CODE (rx) : ORIGIN = 0x00000000, LENGTH = 0x00080000
-    DATA (rw) : ORIGIN = 0x10000000, LENGTH = 0x00010000
+    DATA (rw) : ORIGIN = 0x20000000, LENGTH = 0x00028000
 }
 ENTRY(Reset_Handler)
 _system_stack_size = 0x200;
@@ -17,7 +17,7 @@ SECTIONS
     .text :
     {
         . = ALIGN(4);
-        KEEP(*(.interrupt_vector))      /* Startup code */
+        KEEP(*(.isr_vector))            /* Startup code */
         . = ALIGN(4);
         *(.text)                        /* remaining code */
         *(.text.*)                      /* remaining code */
