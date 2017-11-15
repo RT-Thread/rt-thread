@@ -1,5 +1,5 @@
 /*
- * File      : gpio.h
+ * File      : drv_gpio.h
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2015, RT-Thread Development Team
  *
@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2015-01-05     Bernard      the first version
+ * 2017-11-35     ZYH            update to 3.0.0
  */
 #ifndef GPIO_H__
 #define GPIO_H__
