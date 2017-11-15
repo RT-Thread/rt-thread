@@ -119,5 +119,8 @@ config RT_USING_USB_DEVICE
         config RT_USB_DEVICE_MSTORAGE
             bool "Enable to use device as Mass Storage device"
             default n
+        config RT_USB_DEVICE_HID
+            bool "Enable to use device as HID device"
+            default n
     endif
 endmenu
