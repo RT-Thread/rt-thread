@@ -1,0 +1,59 @@
+mainmenu "RT-Thread Configuration"
+
+config $BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "."
+
+config $RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "../.."
+
+config $PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+source "$RTT_DIR/KConfig"
+source "$PKGS_DIR/KConfig"
+
+
+if RT_USING_PIN
+
+    config STM32F10X_PIN_NUMBERS
+        int "number of stm32 pin numbers"
+        default 64
+
+endif
+
+if RT_USING_SERIAL
+
+    config RT_USING_UART1
+        bool "Using uart1"
+        default y    
+
+    config RT_USING_UART2
+        bool "Using uart2"
+        default n    
+
+    config RT_USING_UART3
+        bool "Using uart3"
+        default n   
+
+endif
+
+if RT_USING_SPI
+    config RT_USING_SPI1
+        bool "Using spi1"
+        default y
+    config RT_USING_SPI2
+        bool "Using spi2"
+        default n
+endif
+
+
+
+
+    
+    
