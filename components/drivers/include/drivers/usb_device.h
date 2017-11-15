@@ -22,6 +22,7 @@
  * 2012-10-01     Yi Qiu       first version
  * 2012-12-12     heyuanjie87  change endpoint and function handler
  * 2013-04-26     aozima       add DEVICEQUALIFIER support.
+ * 2017-11-15     ZYH          fix ep0 transform error
  */
 
 #ifndef  __USB_DEVICE_H__
@@ -137,6 +138,7 @@ struct udcd
     struct rt_device parent;
     const struct udcd_ops* ops;
     struct uendpoint ep0;
+    uep0_stage_t stage;
     struct ep_id* ep_pool;
 };
 typedef struct udcd* udcd_t;

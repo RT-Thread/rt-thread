@@ -21,6 +21,7 @@
  * Date           Author       Notes
  * 2012-10-01     Yi Qiu       first version
  * 2013-04-26     aozima       add DEVICEQUALIFIER support.
+ * 2017-11-15     ZYH          fix ep0 transform error
  */
 
 #ifndef __USB_COMMON_H__
@@ -240,6 +241,16 @@ typedef enum
     USB_STATE_CONFIGURED,
     USB_STATE_SUSPENDED
 }udevice_state_t;
+
+typedef enum
+{
+    STAGE_IDLE,
+    STAGE_SETUP,
+    STAGE_STATUS_IN,
+    STAGE_STATUS_OUT,
+    STAGE_DIN,
+    STAGE_DOUT
+} uep0_stage_t;
 
 #pragma pack(1)
 
