@@ -34,7 +34,7 @@ extern int Image$$RW_IRAM1$$ZI$$Limit;
 extern int __bss_end;
 #define HEAP_BEGIN  ((void *)&__bss_end)
 #endif
-#define HEAP_END    (0x20000000 + 128*1024)
+#define HEAP_END    STM32_SRAM_END
 
 #endif
 extern void rt_hw_board_init(void);
