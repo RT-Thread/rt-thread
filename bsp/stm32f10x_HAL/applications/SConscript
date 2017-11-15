@@ -2,17 +2,9 @@ Import('RTT_ROOT')
 Import('rtconfig')
 from building import *
 
-cwd = os.path.join(str(Dir('#')), 'applications')
-
-src = Split("""
-application.c
-startup.c
-""")
-
-if GetDepend('RT_USING_CAN'):
-    src += ['canapp.c']
-
-CPPPATH = [cwd, str(Dir('#'))]
+cwd = GetCurrentDir()
+src	= Glob('*.c')
+CPPPATH = [cwd, str(GetCurrentDir())]
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 
