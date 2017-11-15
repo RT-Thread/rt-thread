@@ -1,42 +1,30 @@
 /* ----------------------------------------------------------------------
-* Copyright (C) 2010-2014 ARM Limited. All rights reserved.
-*
-* $Date:        19. October 2015
-* $Revision: 	V.1.4.5 a
-*
-* Project: 	    CMSIS DSP Library
-* Title:	    arm_common_tables.h
-*
-* Description:	This file has extern declaration for common tables like Bitreverse, reciprocal etc which are used across different functions
-*
-* Target Processor: Cortex-M4/Cortex-M3
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions
-* are met:
-*   - Redistributions of source code must retain the above copyright
-*     notice, this list of conditions and the following disclaimer.
-*   - Redistributions in binary form must reproduce the above copyright
-*     notice, this list of conditions and the following disclaimer in
-*     the documentation and/or other materials provided with the
-*     distribution.
-*   - Neither the name of ARM LIMITED nor the names of its contributors
-*     may be used to endorse or promote products derived from this
-*     software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-* "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-* LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-* FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-* COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-* INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-* BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-* LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-* ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-* -------------------------------------------------------------------- */
+ * Project:      CMSIS DSP Library
+ * Title:        arm_common_tables.h
+ * Description:  Extern declaration for common tables
+ *
+ * $Date:        27. January 2017
+ * $Revision:    V.1.5.1
+ *
+ * Target Processor: Cortex-M cores
+ * -------------------------------------------------------------------- */
+/*
+ * Copyright (C) 2010-2017 ARM Limited or its affiliates. All rights reserved.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the License); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #ifndef _ARM_COMMON_TABLES_H
 #define _ARM_COMMON_TABLES_H
@@ -46,8 +34,6 @@
 extern const uint16_t armBitRevTable[1024];
 extern const q15_t armRecipTableQ15[64];
 extern const q31_t armRecipTableQ31[64];
-/* extern const q31_t realCoefAQ31[1024]; */
-/* extern const q31_t realCoefBQ31[1024]; */
 extern const float32_t twiddleCoef_16[32];
 extern const float32_t twiddleCoef_32[64];
 extern const float32_t twiddleCoef_64[128];
@@ -85,45 +71,44 @@ extern const float32_t twiddleCoef_rfft_1024[1024];
 extern const float32_t twiddleCoef_rfft_2048[2048];
 extern const float32_t twiddleCoef_rfft_4096[4096];
 
-
 /* floating-point bit reversal tables */
-#define ARMBITREVINDEXTABLE__16_TABLE_LENGTH ((uint16_t)20  )
-#define ARMBITREVINDEXTABLE__32_TABLE_LENGTH ((uint16_t)48  )
-#define ARMBITREVINDEXTABLE__64_TABLE_LENGTH ((uint16_t)56  )
-#define ARMBITREVINDEXTABLE_128_TABLE_LENGTH ((uint16_t)208 )
-#define ARMBITREVINDEXTABLE_256_TABLE_LENGTH ((uint16_t)440 )
-#define ARMBITREVINDEXTABLE_512_TABLE_LENGTH ((uint16_t)448 )
-#define ARMBITREVINDEXTABLE1024_TABLE_LENGTH ((uint16_t)1800)
-#define ARMBITREVINDEXTABLE2048_TABLE_LENGTH ((uint16_t)3808)
-#define ARMBITREVINDEXTABLE4096_TABLE_LENGTH ((uint16_t)4032)
+#define ARMBITREVINDEXTABLE_16_TABLE_LENGTH ((uint16_t)20)
+#define ARMBITREVINDEXTABLE_32_TABLE_LENGTH ((uint16_t)48)
+#define ARMBITREVINDEXTABLE_64_TABLE_LENGTH ((uint16_t)56)
+#define ARMBITREVINDEXTABLE_128_TABLE_LENGTH ((uint16_t)208)
+#define ARMBITREVINDEXTABLE_256_TABLE_LENGTH ((uint16_t)440)
+#define ARMBITREVINDEXTABLE_512_TABLE_LENGTH ((uint16_t)448)
+#define ARMBITREVINDEXTABLE_1024_TABLE_LENGTH ((uint16_t)1800)
+#define ARMBITREVINDEXTABLE_2048_TABLE_LENGTH ((uint16_t)3808)
+#define ARMBITREVINDEXTABLE_4096_TABLE_LENGTH ((uint16_t)4032)
 
-extern const uint16_t armBitRevIndexTable16[ARMBITREVINDEXTABLE__16_TABLE_LENGTH];
-extern const uint16_t armBitRevIndexTable32[ARMBITREVINDEXTABLE__32_TABLE_LENGTH];
-extern const uint16_t armBitRevIndexTable64[ARMBITREVINDEXTABLE__64_TABLE_LENGTH];
+extern const uint16_t armBitRevIndexTable16[ARMBITREVINDEXTABLE_16_TABLE_LENGTH];
+extern const uint16_t armBitRevIndexTable32[ARMBITREVINDEXTABLE_32_TABLE_LENGTH];
+extern const uint16_t armBitRevIndexTable64[ARMBITREVINDEXTABLE_64_TABLE_LENGTH];
 extern const uint16_t armBitRevIndexTable128[ARMBITREVINDEXTABLE_128_TABLE_LENGTH];
 extern const uint16_t armBitRevIndexTable256[ARMBITREVINDEXTABLE_256_TABLE_LENGTH];
 extern const uint16_t armBitRevIndexTable512[ARMBITREVINDEXTABLE_512_TABLE_LENGTH];
-extern const uint16_t armBitRevIndexTable1024[ARMBITREVINDEXTABLE1024_TABLE_LENGTH];
-extern const uint16_t armBitRevIndexTable2048[ARMBITREVINDEXTABLE2048_TABLE_LENGTH];
-extern const uint16_t armBitRevIndexTable4096[ARMBITREVINDEXTABLE4096_TABLE_LENGTH];
+extern const uint16_t armBitRevIndexTable1024[ARMBITREVINDEXTABLE_1024_TABLE_LENGTH];
+extern const uint16_t armBitRevIndexTable2048[ARMBITREVINDEXTABLE_2048_TABLE_LENGTH];
+extern const uint16_t armBitRevIndexTable4096[ARMBITREVINDEXTABLE_4096_TABLE_LENGTH];
 
 /* fixed-point bit reversal tables */
-#define ARMBITREVINDEXTABLE_FIXED___16_TABLE_LENGTH ((uint16_t)12  )
-#define ARMBITREVINDEXTABLE_FIXED___32_TABLE_LENGTH ((uint16_t)24  )
-#define ARMBITREVINDEXTABLE_FIXED___64_TABLE_LENGTH ((uint16_t)56  )
-#define ARMBITREVINDEXTABLE_FIXED__128_TABLE_LENGTH ((uint16_t)112 )
-#define ARMBITREVINDEXTABLE_FIXED__256_TABLE_LENGTH ((uint16_t)240 )
-#define ARMBITREVINDEXTABLE_FIXED__512_TABLE_LENGTH ((uint16_t)480 )
-#define ARMBITREVINDEXTABLE_FIXED_1024_TABLE_LENGTH ((uint16_t)992 )
+#define ARMBITREVINDEXTABLE_FIXED_16_TABLE_LENGTH ((uint16_t)12)
+#define ARMBITREVINDEXTABLE_FIXED_32_TABLE_LENGTH ((uint16_t)24)
+#define ARMBITREVINDEXTABLE_FIXED_64_TABLE_LENGTH ((uint16_t)56)
+#define ARMBITREVINDEXTABLE_FIXED_128_TABLE_LENGTH ((uint16_t)112)
+#define ARMBITREVINDEXTABLE_FIXED_256_TABLE_LENGTH ((uint16_t)240)
+#define ARMBITREVINDEXTABLE_FIXED_512_TABLE_LENGTH ((uint16_t)480)
+#define ARMBITREVINDEXTABLE_FIXED_1024_TABLE_LENGTH ((uint16_t)992)
 #define ARMBITREVINDEXTABLE_FIXED_2048_TABLE_LENGTH ((uint16_t)1984)
 #define ARMBITREVINDEXTABLE_FIXED_4096_TABLE_LENGTH ((uint16_t)4032)
 
-extern const uint16_t armBitRevIndexTable_fixed_16[ARMBITREVINDEXTABLE_FIXED___16_TABLE_LENGTH];
-extern const uint16_t armBitRevIndexTable_fixed_32[ARMBITREVINDEXTABLE_FIXED___32_TABLE_LENGTH];
-extern const uint16_t armBitRevIndexTable_fixed_64[ARMBITREVINDEXTABLE_FIXED___64_TABLE_LENGTH];
-extern const uint16_t armBitRevIndexTable_fixed_128[ARMBITREVINDEXTABLE_FIXED__128_TABLE_LENGTH];
-extern const uint16_t armBitRevIndexTable_fixed_256[ARMBITREVINDEXTABLE_FIXED__256_TABLE_LENGTH];
-extern const uint16_t armBitRevIndexTable_fixed_512[ARMBITREVINDEXTABLE_FIXED__512_TABLE_LENGTH];
+extern const uint16_t armBitRevIndexTable_fixed_16[ARMBITREVINDEXTABLE_FIXED_16_TABLE_LENGTH];
+extern const uint16_t armBitRevIndexTable_fixed_32[ARMBITREVINDEXTABLE_FIXED_32_TABLE_LENGTH];
+extern const uint16_t armBitRevIndexTable_fixed_64[ARMBITREVINDEXTABLE_FIXED_64_TABLE_LENGTH];
+extern const uint16_t armBitRevIndexTable_fixed_128[ARMBITREVINDEXTABLE_FIXED_128_TABLE_LENGTH];
+extern const uint16_t armBitRevIndexTable_fixed_256[ARMBITREVINDEXTABLE_FIXED_256_TABLE_LENGTH];
+extern const uint16_t armBitRevIndexTable_fixed_512[ARMBITREVINDEXTABLE_FIXED_512_TABLE_LENGTH];
 extern const uint16_t armBitRevIndexTable_fixed_1024[ARMBITREVINDEXTABLE_FIXED_1024_TABLE_LENGTH];
 extern const uint16_t armBitRevIndexTable_fixed_2048[ARMBITREVINDEXTABLE_FIXED_2048_TABLE_LENGTH];
 extern const uint16_t armBitRevIndexTable_fixed_4096[ARMBITREVINDEXTABLE_FIXED_4096_TABLE_LENGTH];

@@ -1,8 +1,8 @@
 /**************************************************************************//**
- * @file     cmsis_gcc.h
- * @brief    CMSIS compiler GCC header file
- * @version  V5.0.2
- * @date     13. February 2017
+ * @file     cmsis_armclang.h
+ * @brief    CMSIS compiler ARMCLANG (ARM compiler V6) header file
+ * @version  V5.0.3
+ * @date     27. March 2017
  ******************************************************************************/
 /*
  * Copyright (c) 2009-2017 ARM Limited. All rights reserved.
@@ -22,18 +22,13 @@
  * limitations under the License.
  */
 
-#ifndef __CMSIS_GCC_H
-#define __CMSIS_GCC_H
+/*lint -esym(9058, IRQn)*/ /* disable MISRA 2012 Rule 2.4 for IRQn */
 
-/* ignore some GCC warnings */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
-#pragma GCC diagnostic ignored "-Wconversion"
-#pragma GCC diagnostic ignored "-Wunused-parameter"
+#ifndef __CMSIS_ARMCLANG_H
+#define __CMSIS_ARMCLANG_H
 
-/* Fallback for __has_builtin */
-#ifndef __has_builtin
-  #define __has_builtin(x) (0)
+#ifndef __ARM_COMPAT_H
+#include <arm_compat.h>    /* Compatibility header for ARM Compiler 5 intrinsics */
 #endif
 
 /* CMSIS compiler specific defines */
@@ -41,10 +36,10 @@
   #define __ASM                                  __asm
 #endif
 #ifndef   __INLINE
-  #define __INLINE                               inline
+  #define __INLINE                               __inline
 #endif
 #ifndef   __STATIC_INLINE
-  #define __STATIC_INLINE                        static inline
+  #define __STATIC_INLINE                        static __inline
 #endif
 #ifndef   __NO_RETURN
   #define __NO_RETURN                            __attribute__((noreturn))
@@ -65,43 +60,43 @@
   #define __PACKED_UNION                         union __attribute__((packed, aligned(1)))
 #endif
 #ifndef   __UNALIGNED_UINT32        /* deprecated */
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wpacked"
-  #pragma GCC diagnostic ignored "-Wattributes"
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wpacked"
+/*lint -esym(9058, T_UINT32)*/ /* disable MISRA 2012 Rule 2.4 for T_UINT32 */
   struct __attribute__((packed)) T_UINT32 { uint32_t v; };
-  #pragma GCC diagnostic pop
+  #pragma clang diagnostic pop
   #define __UNALIGNED_UINT32(x)                  (((struct T_UINT32 *)(x))->v)
 #endif
 #ifndef   __UNALIGNED_UINT16_WRITE
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wpacked"
-  #pragma GCC diagnostic ignored "-Wattributes"
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wpacked"
+/*lint -esym(9058, T_UINT16_WRITE)*/ /* disable MISRA 2012 Rule 2.4 for T_UINT16_WRITE */
   __PACKED_STRUCT T_UINT16_WRITE { uint16_t v; };
-  #pragma GCC diagnostic pop
+  #pragma clang diagnostic pop
   #define __UNALIGNED_UINT16_WRITE(addr, val)    (void)((((struct T_UINT16_WRITE *)(void *)(addr))->v) = (val))
 #endif
 #ifndef   __UNALIGNED_UINT16_READ
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wpacked"
-  #pragma GCC diagnostic ignored "-Wattributes"
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wpacked"
+/*lint -esym(9058, T_UINT16_READ)*/ /* disable MISRA 2012 Rule 2.4 for T_UINT16_READ */
   __PACKED_STRUCT T_UINT16_READ { uint16_t v; };
-  #pragma GCC diagnostic pop
+  #pragma clang diagnostic pop
   #define __UNALIGNED_UINT16_READ(addr)          (((const struct T_UINT16_READ *)(const void *)(addr))->v)
 #endif
 #ifndef   __UNALIGNED_UINT32_WRITE
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wpacked"
-  #pragma GCC diagnostic ignored "-Wattributes"
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wpacked"
+/*lint -esym(9058, T_UINT32_WRITE)*/ /* disable MISRA 2012 Rule 2.4 for T_UINT32_WRITE */
   __PACKED_STRUCT T_UINT32_WRITE { uint32_t v; };
-  #pragma GCC diagnostic pop
+  #pragma clang diagnostic pop
   #define __UNALIGNED_UINT32_WRITE(addr, val)    (void)((((struct T_UINT32_WRITE *)(void *)(addr))->v) = (val))
 #endif
 #ifndef   __UNALIGNED_UINT32_READ
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wpacked"
-  #pragma GCC diagnostic ignored "-Wattributes"
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wpacked"
+/*lint -esym(9058, T_UINT32_READ)*/ /* disable MISRA 2012 Rule 2.4 for T_UINT32_READ */
   __PACKED_STRUCT T_UINT32_READ { uint32_t v; };
-  #pragma GCC diagnostic pop
+  #pragma clang diagnostic pop
   #define __UNALIGNED_UINT32_READ(addr)          (((const struct T_UINT32_READ *)(const void *)(addr))->v)
 #endif
 #ifndef   __ALIGNED
@@ -123,10 +118,7 @@
   \details Enables IRQ interrupts by clearing the I-bit in the CPSR.
            Can only be executed in Privileged modes.
  */
-__attribute__((always_inline)) __STATIC_INLINE void __enable_irq(void)
-{
-  __ASM volatile ("cpsie i" : : : "memory");
-}
+/* intrinsic void __enable_irq();  see arm_compat.h */
 
 
 /**
@@ -134,10 +126,7 @@ __attribute__((always_inline)) __STATIC_INLINE void __enable_irq(void)
   \details Disables IRQ interrupts by setting the I-bit in the CPSR.
            Can only be executed in Privileged modes.
  */
-__attribute__((always_inline)) __STATIC_INLINE void __disable_irq(void)
-{
-  __ASM volatile ("cpsid i" : : : "memory");
-}
+/* intrinsic void __disable_irq();  see arm_compat.h */
 
 
 /**
@@ -433,10 +422,7 @@ __attribute__((always_inline)) __STATIC_INLINE void __TZ_set_PRIMASK_NS(uint32_t
   \details Enables FIQ interrupts by clearing the F-bit in the CPSR.
            Can only be executed in Privileged modes.
  */
-__attribute__((always_inline)) __STATIC_INLINE void __enable_fault_irq(void)
-{
-  __ASM volatile ("cpsie f" : : : "memory");
-}
+#define __enable_fault_irq                __enable_fiq   /* see arm_compat.h */
 
 
 /**
@@ -444,10 +430,7 @@ __attribute__((always_inline)) __STATIC_INLINE void __enable_fault_irq(void)
   \details Disables FIQ interrupts by setting the F-bit in the CPSR.
            Can only be executed in Privileged modes.
  */
-__attribute__((always_inline)) __STATIC_INLINE void __disable_fault_irq(void)
-{
-  __ASM volatile ("cpsid f" : : : "memory");
-}
+#define __disable_fault_irq               __disable_fiq   /* see arm_compat.h */
 
 
 /**
@@ -701,19 +684,15 @@ __attribute__((always_inline)) __STATIC_INLINE void __TZ_set_MSPLIM_NS(uint32_t 
   \details Returns the current value of the Floating Point Status/Control register.
   \return               Floating Point Status/Control register value
  */
+/* #define __get_FPSCR      __builtin_arm_get_fpscr */
 __attribute__((always_inline)) __STATIC_INLINE uint32_t __get_FPSCR(void)
 {
 #if ((defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)) && \
      (defined (__FPU_USED   ) && (__FPU_USED    == 1U))     )
-#if __has_builtin(__builtin_arm_get_fpscr) || (__GNUC__ > 7) || (__GNUC__ == 7 && __GNUC_MINOR__ >= 2)
-  /* see https://gcc.gnu.org/ml/gcc-patches/2017-04/msg00443.html */
-  return __builtin_arm_get_fpscr();
-#else
   uint32_t result;
 
   __ASM volatile ("VMRS %0, fpscr" : "=r" (result) );
   return(result);
-#endif
 #else
   return(0U);
 #endif
@@ -725,16 +704,12 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __get_FPSCR(void)
   \details Assigns the given value to the Floating Point Status/Control register.
   \param [in]    fpscr  Floating Point Status/Control value to set
  */
+/* #define __set_FPSCR      __builtin_arm_set_fpscr */
 __attribute__((always_inline)) __STATIC_INLINE void __set_FPSCR(uint32_t fpscr)
 {
 #if ((defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)) && \
      (defined (__FPU_USED   ) && (__FPU_USED    == 1U))     )
-#if __has_builtin(__builtin_arm_set_fpscr) || (__GNUC__ > 7) || (__GNUC__ == 7 && __GNUC_MINOR__ >= 2)
-  /* see https://gcc.gnu.org/ml/gcc-patches/2017-04/msg00443.html */
-  __builtin_arm_set_fpscr(fpscr);
-#else
-  __ASM volatile ("VMSR fpscr, %0" : : "r" (fpscr) : "vfpcc", "memory");
-#endif
+  __ASM volatile ("VMSR fpscr, %0" : : "r" (fpscr) : "memory");
 #else
   (void)fpscr;
 #endif
@@ -759,11 +734,9 @@ __attribute__((always_inline)) __STATIC_INLINE void __set_FPSCR(uint32_t fpscr)
  * Otherwise, use general registers, specified by constraint "r" */
 #if defined (__thumb__) && !defined (__thumb2__)
 #define __CMSIS_GCC_OUT_REG(r) "=l" (r)
-#define __CMSIS_GCC_RW_REG(r) "+l" (r)
 #define __CMSIS_GCC_USE_REG(r) "l" (r)
 #else
 #define __CMSIS_GCC_OUT_REG(r) "=r" (r)
-#define __CMSIS_GCC_RW_REG(r) "+r" (r)
 #define __CMSIS_GCC_USE_REG(r) "r" (r)
 #endif
 
@@ -771,21 +744,13 @@ __attribute__((always_inline)) __STATIC_INLINE void __set_FPSCR(uint32_t fpscr)
   \brief   No Operation
   \details No Operation does nothing. This instruction can be used for code alignment purposes.
  */
-//__attribute__((always_inline)) __STATIC_INLINE void __NOP(void)
-//{
-//  __ASM volatile ("nop");
-//}
-#define __NOP()                             __ASM volatile ("nop")       /* This implementation generates debug information */
+#define __NOP          __builtin_arm_nop
 
 /**
   \brief   Wait For Interrupt
   \details Wait For Interrupt is a hint instruction that suspends execution until one of a number of events occurs.
  */
-//__attribute__((always_inline)) __STATIC_INLINE void __WFI(void)
-//{
-//  __ASM volatile ("wfi");
-//}
-#define __WFI()                             __ASM volatile ("wfi")       /* This implementation generates debug information */
+#define __WFI          __builtin_arm_wfi
 
 
 /**
@@ -793,22 +758,14 @@ __attribute__((always_inline)) __STATIC_INLINE void __set_FPSCR(uint32_t fpscr)
   \details Wait For Event is a hint instruction that permits the processor to enter
            a low-power state until one of a number of events occurs.
  */
-//__attribute__((always_inline)) __STATIC_INLINE void __WFE(void)
-//{
-//  __ASM volatile ("wfe");
-//}
-#define __WFE()                             __ASM volatile ("wfe")       /* This implementation generates debug information */
+#define __WFE          __builtin_arm_wfe
 
 
 /**
   \brief   Send Event
   \details Send Event is a hint instruction. It causes an event to be signaled to the CPU.
  */
-//__attribute__((always_inline)) __STATIC_INLINE void __SEV(void)
-//{
-//  __ASM volatile ("sev");
-//}
-#define __SEV()                             __ASM volatile ("sev")       /* This implementation generates debug information */
+#define __SEV          __builtin_arm_sev
 
 
 /**
@@ -817,21 +774,14 @@ __attribute__((always_inline)) __STATIC_INLINE void __set_FPSCR(uint32_t fpscr)
            so that all instructions following the ISB are fetched from cache or memory,
            after the instruction has been completed.
  */
-__attribute__((always_inline)) __STATIC_INLINE void __ISB(void)
-{
-  __ASM volatile ("isb 0xF":::"memory");
-}
-
+#define __ISB()        __builtin_arm_isb(0xF);
 
 /**
   \brief   Data Synchronization Barrier
   \details Acts as a special kind of Data Memory Barrier.
            It completes when all explicit memory accesses before this instruction complete.
  */
-__attribute__((always_inline)) __STATIC_INLINE void __DSB(void)
-{
-  __ASM volatile ("dsb 0xF":::"memory");
-}
+#define __DSB()        __builtin_arm_dsb(0xF);
 
 
 /**
@@ -839,10 +789,7 @@ __attribute__((always_inline)) __STATIC_INLINE void __DSB(void)
   \details Ensures the apparent order of the explicit memory operations before
            and after the instruction, without ensuring their completion.
  */
-__attribute__((always_inline)) __STATIC_INLINE void __DMB(void)
-{
-  __ASM volatile ("dmb 0xF":::"memory");
-}
+#define __DMB()        __builtin_arm_dmb(0xF);
 
 
 /**
@@ -851,17 +798,7 @@ __attribute__((always_inline)) __STATIC_INLINE void __DMB(void)
   \param [in]    value  Value to reverse
   \return               Reversed value
  */
-__attribute__((always_inline)) __STATIC_INLINE uint32_t __REV(uint32_t value)
-{
-#if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 5)
-  return __builtin_bswap32(value);
-#else
-  uint32_t result;
-
-  __ASM volatile ("rev %0, %1" : __CMSIS_GCC_OUT_REG (result) : __CMSIS_GCC_USE_REG (value) );
-  return(result);
-#endif
-}
+#define __REV          __builtin_bswap32
 
 
 /**
@@ -870,6 +807,8 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __REV(uint32_t value)
   \param [in]    value  Value to reverse
   \return               Reversed value
  */
+#define __REV16          __builtin_bswap16                /* ToDo ARMCLANG: check if __builtin_bswap16 could be used */
+#if 0
 __attribute__((always_inline)) __STATIC_INLINE uint32_t __REV16(uint32_t value)
 {
   uint32_t result;
@@ -877,6 +816,7 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __REV16(uint32_t value)
   __ASM volatile ("rev16 %0, %1" : __CMSIS_GCC_OUT_REG (result) : __CMSIS_GCC_USE_REG (value) );
   return(result);
 }
+#endif
 
 
 /**
@@ -885,16 +825,13 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __REV16(uint32_t value)
   \param [in]    value  Value to reverse
   \return               Reversed value
  */
+                                                          /* ToDo ARMCLANG: check if __builtin_bswap16 could be used */
 __attribute__((always_inline)) __STATIC_INLINE int32_t __REVSH(int32_t value)
 {
-#if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)
-  return (short)__builtin_bswap16(value);
-#else
   int32_t result;
 
   __ASM volatile ("revsh %0, %1" : __CMSIS_GCC_OUT_REG (result) : __CMSIS_GCC_USE_REG (value) );
   return(result);
-#endif
 }
 
 
@@ -927,6 +864,7 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __ROR(uint32_t op1, uint
   \param [in]    value  Value to reverse
   \return               Reversed value
  */
+                                                          /* ToDo ARMCLANG: check if __builtin_arm_rbit is supported */
 __attribute__((always_inline)) __STATIC_INLINE uint32_t __RBIT(uint32_t value)
 {
   uint32_t result;
@@ -970,20 +908,7 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __RBIT(uint32_t value)
   \param [in]    ptr  Pointer to data
   \return             value of type uint8_t at (*ptr)
  */
-__attribute__((always_inline)) __STATIC_INLINE uint8_t __LDREXB(volatile uint8_t *addr)
-{
-    uint32_t result;
-
-#if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)
-   __ASM volatile ("ldrexb %0, %1" : "=r" (result) : "Q" (*addr) );
-#else
-    /* Prior to GCC 4.8, "Q" will be expanded to [rx, #0] which is not
-       accepted by assembler. So has to use following less efficient pattern.
-    */
-   __ASM volatile ("ldrexb %0, [%1]" : "=r" (result) : "r" (addr) : "memory" );
-#endif
-   return ((uint8_t) result);    /* Add explicit type cast here */
-}
+#define __LDREXB        (uint8_t)__builtin_arm_ldrex
 
 
 /**
@@ -992,20 +917,7 @@ __attribute__((always_inline)) __STATIC_INLINE uint8_t __LDREXB(volatile uint8_t
   \param [in]    ptr  Pointer to data
   \return        value of type uint16_t at (*ptr)
  */
-__attribute__((always_inline)) __STATIC_INLINE uint16_t __LDREXH(volatile uint16_t *addr)
-{
-    uint32_t result;
-
-#if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)
-   __ASM volatile ("ldrexh %0, %1" : "=r" (result) : "Q" (*addr) );
-#else
-    /* Prior to GCC 4.8, "Q" will be expanded to [rx, #0] which is not
-       accepted by assembler. So has to use following less efficient pattern.
-    */
-   __ASM volatile ("ldrexh %0, [%1]" : "=r" (result) : "r" (addr) : "memory" );
-#endif
-   return ((uint16_t) result);    /* Add explicit type cast here */
-}
+#define __LDREXH        (uint16_t)__builtin_arm_ldrex
 
 
 /**
@@ -1014,13 +926,7 @@ __attribute__((always_inline)) __STATIC_INLINE uint16_t __LDREXH(volatile uint16
   \param [in]    ptr  Pointer to data
   \return        value of type uint32_t at (*ptr)
  */
-__attribute__((always_inline)) __STATIC_INLINE uint32_t __LDREXW(volatile uint32_t *addr)
-{
-    uint32_t result;
-
-   __ASM volatile ("ldrex %0, %1" : "=r" (result) : "Q" (*addr) );
-   return(result);
-}
+#define __LDREXW        (uint32_t)__builtin_arm_ldrex
 
 
 /**
@@ -1031,13 +937,7 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __LDREXW(volatile uint32
   \return          0  Function succeeded
   \return          1  Function failed
  */
-__attribute__((always_inline)) __STATIC_INLINE uint32_t __STREXB(uint8_t value, volatile uint8_t *addr)
-{
-   uint32_t result;
-
-   __ASM volatile ("strexb %0, %2, %1" : "=&r" (result), "=Q" (*addr) : "r" ((uint32_t)value) );
-   return(result);
-}
+#define __STREXB        (uint32_t)__builtin_arm_strex
 
 
 /**
@@ -1048,13 +948,7 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __STREXB(uint8_t value, 
   \return          0  Function succeeded
   \return          1  Function failed
  */
-__attribute__((always_inline)) __STATIC_INLINE uint32_t __STREXH(uint16_t value, volatile uint16_t *addr)
-{
-   uint32_t result;
-
-   __ASM volatile ("strexh %0, %2, %1" : "=&r" (result), "=Q" (*addr) : "r" ((uint32_t)value) );
-   return(result);
-}
+#define __STREXH        (uint32_t)__builtin_arm_strex
 
 
 /**
@@ -1065,23 +959,14 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __STREXH(uint16_t value,
   \return          0  Function succeeded
   \return          1  Function failed
  */
-__attribute__((always_inline)) __STATIC_INLINE uint32_t __STREXW(uint32_t value, volatile uint32_t *addr)
-{
-   uint32_t result;
-
-   __ASM volatile ("strex %0, %2, %1" : "=&r" (result), "=Q" (*addr) : "r" (value) );
-   return(result);
-}
+#define __STREXW        (uint32_t)__builtin_arm_strex
 
 
 /**
   \brief   Remove the exclusive lock
   \details Removes the exclusive lock which is created by LDREX.
  */
-__attribute__((always_inline)) __STATIC_INLINE void __CLREX(void)
-{
-  __ASM volatile ("clrex" ::: "memory");
-}
+#define __CLREX             __builtin_arm_clrex
 
 #endif /* ((defined (__ARM_ARCH_7M__      ) && (__ARM_ARCH_7M__      == 1)) || \
            (defined (__ARM_ARCH_7EM__     ) && (__ARM_ARCH_7EM__     == 1)) || \
@@ -1099,12 +984,7 @@ __attribute__((always_inline)) __STATIC_INLINE void __CLREX(void)
   \param [in]    sat  Bit position to saturate to (1..32)
   \return             Saturated value
  */
-#define __SSAT(ARG1,ARG2) \
-({                          \
-  int32_t __RES, __ARG1 = (ARG1); \
-  __ASM ("ssat %0, %1, %2" : "=r" (__RES) :  "I" (ARG2), "r" (__ARG1) ); \
-  __RES; \
- })
+#define __SSAT             __builtin_arm_ssat
 
 
 /**
@@ -1114,12 +994,7 @@ __attribute__((always_inline)) __STATIC_INLINE void __CLREX(void)
   \param [in]    sat  Bit position to saturate to (0..31)
   \return             Saturated value
  */
-#define __USAT(ARG1,ARG2) \
-({                          \
-  uint32_t __RES, __ARG1 = (ARG1); \
-  __ASM ("usat %0, %1, %2" : "=r" (__RES) :  "I" (ARG2), "r" (__ARG1) ); \
-  __RES; \
- })
+#define __USAT             __builtin_arm_usat
 
 
 /**
@@ -1146,17 +1021,10 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __RRX(uint32_t value)
  */
 __attribute__((always_inline)) __STATIC_INLINE uint8_t __LDRBT(volatile uint8_t *ptr)
 {
-    uint32_t result;
+  uint32_t result;
 
-#if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)
-   __ASM volatile ("ldrbt %0, %1" : "=r" (result) : "Q" (*ptr) );
-#else
-    /* Prior to GCC 4.8, "Q" will be expanded to [rx, #0] which is not
-       accepted by assembler. So has to use following less efficient pattern.
-    */
-   __ASM volatile ("ldrbt %0, [%1]" : "=r" (result) : "r" (ptr) : "memory" );
-#endif
-   return ((uint8_t) result);    /* Add explicit type cast here */
+  __ASM volatile ("ldrbt %0, %1" : "=r" (result) : "Q" (*ptr) );
+  return ((uint8_t) result);    /* Add explicit type cast here */
 }
 
 
@@ -1168,17 +1036,10 @@ __attribute__((always_inline)) __STATIC_INLINE uint8_t __LDRBT(volatile uint8_t 
  */
 __attribute__((always_inline)) __STATIC_INLINE uint16_t __LDRHT(volatile uint16_t *ptr)
 {
-    uint32_t result;
+  uint32_t result;
 
-#if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)
-   __ASM volatile ("ldrht %0, %1" : "=r" (result) : "Q" (*ptr) );
-#else
-    /* Prior to GCC 4.8, "Q" will be expanded to [rx, #0] which is not
-       accepted by assembler. So has to use following less efficient pattern.
-    */
-   __ASM volatile ("ldrht %0, [%1]" : "=r" (result) : "r" (ptr) : "memory" );
-#endif
-   return ((uint16_t) result);    /* Add explicit type cast here */
+  __ASM volatile ("ldrht %0, %1" : "=r" (result) : "Q" (*ptr) );
+  return ((uint16_t) result);    /* Add explicit type cast here */
 }
 
 
@@ -1190,10 +1051,10 @@ __attribute__((always_inline)) __STATIC_INLINE uint16_t __LDRHT(volatile uint16_
  */
 __attribute__((always_inline)) __STATIC_INLINE uint32_t __LDRT(volatile uint32_t *ptr)
 {
-    uint32_t result;
+  uint32_t result;
 
-   __ASM volatile ("ldrt %0, %1" : "=r" (result) : "Q" (*ptr) );
-   return(result);
+  __ASM volatile ("ldrt %0, %1" : "=r" (result) : "Q" (*ptr) );
+  return(result);
 }
 
 
@@ -1205,7 +1066,7 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __LDRT(volatile uint32_t
  */
 __attribute__((always_inline)) __STATIC_INLINE void __STRBT(uint8_t value, volatile uint8_t *ptr)
 {
-   __ASM volatile ("strbt %1, %0" : "=Q" (*ptr) : "r" ((uint32_t)value) );
+  __ASM volatile ("strbt %1, %0" : "=Q" (*ptr) : "r" ((uint32_t)value) );
 }
 
 
@@ -1217,7 +1078,7 @@ __attribute__((always_inline)) __STATIC_INLINE void __STRBT(uint8_t value, volat
  */
 __attribute__((always_inline)) __STATIC_INLINE void __STRHT(uint16_t value, volatile uint16_t *ptr)
 {
-   __ASM volatile ("strht %1, %0" : "=Q" (*ptr) : "r" ((uint32_t)value) );
+  __ASM volatile ("strht %1, %0" : "=Q" (*ptr) : "r" ((uint32_t)value) );
 }
 
 
@@ -1229,7 +1090,7 @@ __attribute__((always_inline)) __STATIC_INLINE void __STRHT(uint16_t value, vola
  */
 __attribute__((always_inline)) __STATIC_INLINE void __STRT(uint32_t value, volatile uint32_t *ptr)
 {
-   __ASM volatile ("strt %1, %0" : "=Q" (*ptr) : "r" (value) );
+  __ASM volatile ("strt %1, %0" : "=Q" (*ptr) : "r" (value) );
 }
 
 #endif /* ((defined (__ARM_ARCH_7M__      ) && (__ARM_ARCH_7M__      == 1)) || \
@@ -1247,10 +1108,10 @@ __attribute__((always_inline)) __STATIC_INLINE void __STRT(uint32_t value, volat
  */
 __attribute__((always_inline)) __STATIC_INLINE uint8_t __LDAB(volatile uint8_t *ptr)
 {
-    uint32_t result;
+  uint32_t result;
 
-   __ASM volatile ("ldab %0, %1" : "=r" (result) : "Q" (*ptr) );
-   return ((uint8_t) result);
+  __ASM volatile ("ldab %0, %1" : "=r" (result) : "Q" (*ptr) );
+  return ((uint8_t) result);
 }
 
 
@@ -1262,10 +1123,10 @@ __attribute__((always_inline)) __STATIC_INLINE uint8_t __LDAB(volatile uint8_t *
  */
 __attribute__((always_inline)) __STATIC_INLINE uint16_t __LDAH(volatile uint16_t *ptr)
 {
-    uint32_t result;
+  uint32_t result;
 
-   __ASM volatile ("ldah %0, %1" : "=r" (result) : "Q" (*ptr) );
-   return ((uint16_t) result);
+  __ASM volatile ("ldah %0, %1" : "=r" (result) : "Q" (*ptr) );
+  return ((uint16_t) result);
 }
 
 
@@ -1277,10 +1138,10 @@ __attribute__((always_inline)) __STATIC_INLINE uint16_t __LDAH(volatile uint16_t
  */
 __attribute__((always_inline)) __STATIC_INLINE uint32_t __LDA(volatile uint32_t *ptr)
 {
-    uint32_t result;
+  uint32_t result;
 
-   __ASM volatile ("lda %0, %1" : "=r" (result) : "Q" (*ptr) );
-   return(result);
+  __ASM volatile ("lda %0, %1" : "=r" (result) : "Q" (*ptr) );
+  return(result);
 }
 
 
@@ -1292,7 +1153,7 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __LDA(volatile uint32_t 
  */
 __attribute__((always_inline)) __STATIC_INLINE void __STLB(uint8_t value, volatile uint8_t *ptr)
 {
-   __ASM volatile ("stlb %1, %0" : "=Q" (*ptr) : "r" ((uint32_t)value) );
+  __ASM volatile ("stlb %1, %0" : "=Q" (*ptr) : "r" ((uint32_t)value) );
 }
 
 
@@ -1304,7 +1165,7 @@ __attribute__((always_inline)) __STATIC_INLINE void __STLB(uint8_t value, volati
  */
 __attribute__((always_inline)) __STATIC_INLINE void __STLH(uint16_t value, volatile uint16_t *ptr)
 {
-   __ASM volatile ("stlh %1, %0" : "=Q" (*ptr) : "r" ((uint32_t)value) );
+  __ASM volatile ("stlh %1, %0" : "=Q" (*ptr) : "r" ((uint32_t)value) );
 }
 
 
@@ -1316,7 +1177,7 @@ __attribute__((always_inline)) __STATIC_INLINE void __STLH(uint16_t value, volat
  */
 __attribute__((always_inline)) __STATIC_INLINE void __STL(uint32_t value, volatile uint32_t *ptr)
 {
-   __ASM volatile ("stl %1, %0" : "=Q" (*ptr) : "r" ((uint32_t)value) );
+  __ASM volatile ("stl %1, %0" : "=Q" (*ptr) : "r" ((uint32_t)value) );
 }
 
 
@@ -1326,13 +1187,7 @@ __attribute__((always_inline)) __STATIC_INLINE void __STL(uint32_t value, volati
   \param [in]    ptr  Pointer to data
   \return             value of type uint8_t at (*ptr)
  */
-__attribute__((always_inline)) __STATIC_INLINE uint8_t __LDAEXB(volatile uint8_t *ptr)
-{
-    uint32_t result;
-
-   __ASM volatile ("ldaexb %0, %1" : "=r" (result) : "Q" (*ptr) );
-   return ((uint8_t) result);
-}
+#define     __LDAEXB                 (uint8_t)__builtin_arm_ldaex
 
 
 /**
@@ -1341,13 +1196,7 @@ __attribute__((always_inline)) __STATIC_INLINE uint8_t __LDAEXB(volatile uint8_t
   \param [in]    ptr  Pointer to data
   \return        value of type uint16_t at (*ptr)
  */
-__attribute__((always_inline)) __STATIC_INLINE uint16_t __LDAEXH(volatile uint16_t *ptr)
-{
-    uint32_t result;
-
-   __ASM volatile ("ldaexh %0, %1" : "=r" (result) : "Q" (*ptr) );
-   return ((uint16_t) result);
-}
+#define     __LDAEXH                 (uint16_t)__builtin_arm_ldaex
 
 
 /**
@@ -1356,13 +1205,7 @@ __attribute__((always_inline)) __STATIC_INLINE uint16_t __LDAEXH(volatile uint16
   \param [in]    ptr  Pointer to data
   \return        value of type uint32_t at (*ptr)
  */
-__attribute__((always_inline)) __STATIC_INLINE uint32_t __LDAEX(volatile uint32_t *ptr)
-{
-    uint32_t result;
-
-   __ASM volatile ("ldaex %0, %1" : "=r" (result) : "Q" (*ptr) );
-   return(result);
-}
+#define     __LDAEX                  (uint32_t)__builtin_arm_ldaex
 
 
 /**
@@ -1373,13 +1216,7 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __LDAEX(volatile uint32_
   \return          0  Function succeeded
   \return          1  Function failed
  */
-__attribute__((always_inline)) __STATIC_INLINE uint32_t __STLEXB(uint8_t value, volatile uint8_t *ptr)
-{
-   uint32_t result;
-
-   __ASM volatile ("stlexb %0, %2, %1" : "=&r" (result), "=Q" (*ptr) : "r" ((uint32_t)value) );
-   return(result);
-}
+#define     __STLEXB                 (uint32_t)__builtin_arm_stlex
 
 
 /**
@@ -1390,13 +1227,7 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __STLEXB(uint8_t value, 
   \return          0  Function succeeded
   \return          1  Function failed
  */
-__attribute__((always_inline)) __STATIC_INLINE uint32_t __STLEXH(uint16_t value, volatile uint16_t *ptr)
-{
-   uint32_t result;
-
-   __ASM volatile ("stlexh %0, %2, %1" : "=&r" (result), "=Q" (*ptr) : "r" ((uint32_t)value) );
-   return(result);
-}
+#define     __STLEXH                 (uint32_t)__builtin_arm_stlex
 
 
 /**
@@ -1407,13 +1238,7 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __STLEXH(uint16_t value,
   \return          0  Function succeeded
   \return          1  Function failed
  */
-__attribute__((always_inline)) __STATIC_INLINE uint32_t __STLEX(uint32_t value, volatile uint32_t *ptr)
-{
-   uint32_t result;
-
-   __ASM volatile ("stlex %0, %2, %1" : "=&r" (result), "=Q" (*ptr) : "r" ((uint32_t)value) );
-   return(result);
-}
+#define     __STLEX                  (uint32_t)__builtin_arm_stlex
 
 #endif /* ((defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) || \
            (defined (__ARM_ARCH_8M_BASE__ ) && (__ARM_ARCH_8M_BASE__ == 1))    ) */
@@ -1427,7 +1252,7 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __STLEX(uint32_t value, 
   @{
 */
 
-#if (__ARM_FEATURE_DSP == 1)                             /* ToDo ARMCLANG: This should be ARCH >= ARMv7-M + SIMD */
+#if (defined (__ARM_FEATURE_DSP) && (__ARM_FEATURE_DSP == 1))
 
 __attribute__((always_inline)) __STATIC_INLINE uint32_t __SADD8(uint32_t op1, uint32_t op2)
 {
@@ -1964,16 +1789,14 @@ __attribute__((always_inline)) __STATIC_INLINE  int32_t __QSUB( int32_t op1,  in
 
 __attribute__((always_inline)) __STATIC_INLINE int32_t __SMMLA (int32_t op1, int32_t op2, int32_t op3)
 {
- int32_t result;
+  int32_t result;
 
- __ASM volatile ("smmla %0, %1, %2, %3" : "=r" (result): "r"  (op1), "r" (op2), "r" (op3) );
- return(result);
+  __ASM volatile ("smmla %0, %1, %2, %3" : "=r" (result): "r"  (op1), "r" (op2), "r" (op3) );
+  return(result);
 }
 
 #endif /* (__ARM_FEATURE_DSP == 1) */
 /*@} end of group CMSIS_SIMD_intrinsics */
 
 
-#pragma GCC diagnostic pop
-
-#endif /* __CMSIS_GCC_H */
+#endif /* __CMSIS_ARMCLANG_H */
