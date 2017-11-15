@@ -44,6 +44,13 @@ SECTIONS
         __rt_init_end = .;
         . = ALIGN(4);
 
+        /* section information for modules */
+        
+        __rtmsymtab_start = .;
+        KEEP(*(RTMSymTab))
+        __rtmsymtab_end = .;
+        . = ALIGN(4);
+
         PROVIDE(__ctors_start__ = .);
         /* old GCC version uses .ctors */
         KEEP(*(SORT(.ctors.*)))
@@ -52,6 +59,15 @@ SECTIONS
         KEEP (*(SORT(.init_array.*)))
         KEEP (*(.init_array))
         PROVIDE(__ctors_end__ = .);
+        . = ALIGN(4);
+
+        KEEP(*(.fini))
+        . = ALIGN(4);
+
+        __fini_array_start = .;
+        KEEP (*(.fini_array))
+        KEEP (*(SORT(.fini_array.*)))
+        __fini_array_end = .;
 
         . = ALIGN(4);
         _etext = .;
