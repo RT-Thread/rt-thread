@@ -18,15 +18,6 @@
 #define __BOARD_H__
 
 #include "stm32f1xx_hal.h"
-#ifdef RT_USING_SERIAL
-#include "usart.h"
-#endif
-#ifdef RT_USING_PIN
-#include "gpio.h"
-#endif
-#ifdef RT_USING_SPI
-#include "stm32_spi.h"
-#endif
 /* board configuration */
 
 /* whether use board external SRAM memory */
@@ -45,8 +36,17 @@
 //	<i>Default: 64
 #define STM32_SRAM_SIZE 20
 #define STM32_SRAM_END (0x20000000 + STM32_SRAM_SIZE * 1024)
-
-// <<< Use Configuration Wizard in Context Menu >>>
+#ifdef __CC_ARM
+extern int Image$$RW_IRAM1$$ZI$$Limit;
+#define HEAP_BEGIN  ((void *)&Image$$RW_IRAM1$$ZI$$Limit)
+#elif __ICCARM__
+#pragma section="HEAP"
+#define HEAP_BEGIN  (__segment_end("HEAP"))
+#else
+extern int __bss_end;
+#define HEAP_BEGIN  ((void *)&__bss_end)
+#endif
+#define HEAP_END    STM32_SRAM_END
 
 void rt_hw_board_init(void);
 
