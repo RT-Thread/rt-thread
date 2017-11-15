@@ -365,48 +365,6 @@ static rt_size_t _serial_fifo_calc_recved_len(struct rt_serial_device *serial)
     }
 }
 
-static void _serial_flush(struct rt_serial_device *serial, int queue)
-{
-    int ch = -1;
-    struct rt_serial_rx_fifo *rx_fifo = RT_NULL;
-    struct rt_device *device = RT_NULL;
-
-    RT_ASSERT(serial != RT_NULL);
-
-    device = &(serial->parent);
-    rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
-
-    switch(queue)
-    {
-        case TCIFLUSH:
-        case TCIOFLUSH:
-
-            RT_ASSERT(rx_fifo != RT_NULL);
-
-            if((device->open_flag & RT_DEVICE_FLAG_INT_RX) || (device->open_flag & RT_DEVICE_FLAG_DMA_RX))
-            {
-                RT_ASSERT(RT_NULL != rx_fifo);
-                rt_memset(rx_fifo->buffer, 0, serial->config.bufsz);
-                rx_fifo->put_index = 0;
-                rx_fifo->get_index = 0;
-                rx_fifo->is_full = RT_FALSE;
-            }
-            else
-            {
-                while (1)
-                {
-                    ch = serial->ops->getc(serial);
-                    if (ch == -1) break;
-                }
-            }
-
-            break;
-
-         case TCOFLUSH:
-            break;
-    }
-
-}
 /**
  * Calculate DMA received data length.
  *
@@ -897,6 +855,50 @@ static int _get_baudrate(speed_t speed)
 
     return 0;
 }
+
+static void _tc_flush(struct rt_serial_device *serial, int queue)
+{
+    int ch = -1;
+    struct rt_serial_rx_fifo *rx_fifo = RT_NULL;
+    struct rt_device *device = RT_NULL;
+
+    RT_ASSERT(serial != RT_NULL);
+
+    device = &(serial->parent);
+    rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
+
+    switch(queue)
+    {
+        case TCIFLUSH:
+        case TCIOFLUSH:
+
+            RT_ASSERT(rx_fifo != RT_NULL);
+
+            if((device->open_flag & RT_DEVICE_FLAG_INT_RX) || (device->open_flag & RT_DEVICE_FLAG_DMA_RX))
+            {
+                RT_ASSERT(RT_NULL != rx_fifo);
+                rt_memset(rx_fifo->buffer, 0, serial->config.bufsz);
+                rx_fifo->put_index = 0;
+                rx_fifo->get_index = 0;
+                rx_fifo->is_full = RT_FALSE;
+            }
+            else
+            {
+                while (1)
+                {
+                    ch = serial->ops->getc(serial);
+                    if (ch == -1) break;
+                }
+            }
+
+            break;
+
+         case TCOFLUSH:
+            break;
+    }
+
+}
+
 #endif
 
 static rt_err_t rt_serial_control(struct rt_device *dev,
@@ -1026,7 +1028,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             {
                 int queue = (int)args;
 
-                _serial_flush(serial, queue);
+                _tc_flush(serial, queue);
             }
 
             break;
