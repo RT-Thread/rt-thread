@@ -40,7 +40,7 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -mcpu=cortex-m4 -mthumb -ffunction-sections -fdata-sections -mfpu=fpv4-sp-d16 -mfloat-abi=hard'
-    CFLAGS = DEVICE + ' -g -Wall -std=c99'
+    CFLAGS = DEVICE + ' -g -Wall'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles  -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,ResetISR -T link.lds'
 

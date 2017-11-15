@@ -8,6 +8,9 @@
 
 #define RT_NAME_MAX 8
 #define RT_ALIGN_SIZE 4
+/* RT_THREAD_PRIORITY_8 is not set */
+#define RT_THREAD_PRIORITY_32
+/* RT_THREAD_PRIORITY_256 is not set */
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 1000
 #define RT_DEBUG
@@ -33,9 +36,11 @@
 
 #define RT_USING_MEMPOOL
 #define RT_USING_MEMHEAP
-#define RT_USING_HEAP
+/* RT_USING_NOHEAP is not set */
 #define RT_USING_SMALL_MEM
 /* RT_USING_SLAB is not set */
+/* RT_USING_MEMHEAP_AS_HEAP is not set */
+#define RT_USING_HEAP
 
 /* Kernel Device Object */
 
@@ -44,7 +49,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-/* RT_USING_MODULE is not set */
+#define RT_USING_MODULE
 
 /* RT-Thread Components */
 
@@ -53,7 +58,7 @@
 
 /* C++ features */
 
-/* RT_USING_CPLUSPLUS is not set */
+#define RT_USING_CPLUSPLUS
 
 /* Command shell */
 
@@ -133,8 +138,8 @@
 /* light weight TCP/IP stack */
 
 #define RT_USING_LWIP
-#define RT_USING_LWIP141
-/* RT_USING_LWIP202 is not set */
+/* RT_USING_LWIP141 is not set */
+#define RT_USING_LWIP202
 /* RT_LWIP_IGMP is not set */
 #define RT_LWIP_ICMP
 /* RT_LWIP_SNMP is not set */
@@ -197,20 +202,13 @@
 
 /* IoT - internet of things */
 
+/* PKG_USING_CJSON is not set */
 /* PKG_USING_PAHOMQTT is not set */
 /* PKG_USING_WEBCLIENT is not set */
 /* PKG_USING_MONGOOSE is not set */
-/* PKG_USING_WEBTERMINAL is not set */
-/* PKG_USING_CJSON is not set */
-/* PKG_USING_EZXML is not set */
-
-/* Marvell WiFi */
-
-/* PKG_USING_MARVELLWIFI is not set */
+/* PKG_USING_WEB_TERMINAL is not set */
 
 /* security packages */
-
-/* PKG_USING_MBEDTLS is not set */
 
 /* language packages */
 
@@ -218,13 +216,10 @@
 
 /* multimedia packages */
 
-/* PKG_USING_FASTLZ is not set */
-
 /* tools packages */
 
 /* PKG_USING_CMBACKTRACE is not set */
-/* PKG_USING_EASYLOGGER is not set */
-/* PKG_USING_SYSTEMVIEW is not set */
+/* PKG_USING_ELOG is not set */
 
 /* miscellaneous packages */
 
