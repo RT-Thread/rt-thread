@@ -34,8 +34,8 @@
 // </RDTConfigurator>
 
 #ifdef __CC_ARM
-extern int Image$$ARM_LIB_STACK$$ZI$$Limit;
-#define HEAP_BEGIN  ((void *)&Image$$ARM_LIB_STACK$$ZI$$Limit)
+extern int Image$$RTT_HEAP$$ZI$$Base;
+#define HEAP_BEGIN  ((void *)&Image$$RTT_HEAP$$ZI$$Base)
 #elif __ICCARM__
 #pragma section="HEAP"
 #define HEAP_BEGIN  (__segment_end("HEAP"))
