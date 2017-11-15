@@ -11,6 +11,7 @@
  * Date           Author       Notes
  * 2012-12-8      Bernard      add file header
  *                             export bsd socket symbol for RT-Thread Application Module 
+ * 2017-11-15     Bernard      add lock for init_done callback.
  */
 
 #include <rtthread.h>
@@ -96,6 +97,7 @@ static void tcpip_init_done_callback(void *arg)
 
             /* leave critical */
             rt_exit_critical();
+            LOCK_TCPIP_CORE();
 
             netif_add(ethif->netif, &ipaddr, &netmask, &gw,
                       ethif, netif_device_init, tcpip_input);
@@ -121,6 +123,7 @@ static void tcpip_init_done_callback(void *arg)
                 netif_set_link_up(ethif->netif);
             }
 
+            UNLOCK_TCPIP_CORE();
             /* enter critical */
             rt_enter_critical();
         }
