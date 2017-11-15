@@ -2,7 +2,7 @@ Import('RTT_ROOT')
 Import('rtconfig')
 from building import *
 
-cwd     = os.path.join(str(Dir('#')), 'drivers')
+cwd     = os.path.join(str(GetCurrentDir()), 'drivers')
 
 # add the general drivers.
 src = Split("""
@@ -11,11 +11,14 @@ stm32f1xx_it.c
 """)
 
 if GetDepend(['RT_USING_PIN']):
-    src += ['gpio.c']
+    src += ['drv_gpio.c']
 if GetDepend(['RT_USING_SERIAL']):
-    src += ['usart.c']
+    src += ['drv_usart.c']
 if GetDepend(['RT_USING_SPI']):
-    src += ['stm32_spi.c']
+    src += ['drv_spi.c']
+if GetDepend(['RT_USING_USB_DEVICE']):
+    src += ['drv_usb.c']
+
 
     
 CPPPATH = [cwd]
