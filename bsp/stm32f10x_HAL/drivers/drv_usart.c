@@ -242,8 +242,6 @@ int rt_hw_usart_init(void)
 {
     struct stm32_uart *uart;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
-    __HAL_RCC_GPIOD_CLK_ENABLE();
-    __HAL_RCC_GPIOA_CLK_ENABLE();
 #if defined(RT_USING_UART1)
     uart = &uart1;
     config.baud_rate = BAUD_RATE_115200;
@@ -310,7 +308,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle)
         /* USER CODE END USART1_MspInit 0 */
         /* USART1 clock enable */
         __HAL_RCC_USART1_CLK_ENABLE();
-
+        __HAL_RCC_GPIOA_CLK_ENABLE();
         /**USART1 GPIO Configuration
         PA9     ------> USART1_TX
         PA10     ------> USART1_RX
@@ -339,7 +337,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle)
         /* USER CODE END USART2_MspInit 0 */
         /* USART2 clock enable */
         __HAL_RCC_USART2_CLK_ENABLE();
-
+        __HAL_RCC_GPIOA_CLK_ENABLE();
         /**USART2 GPIO Configuration
         PA2     ------> USART2_TX
         PA3     ------> USART2_RX
@@ -368,7 +366,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle)
         /* USER CODE END USART3_MspInit 0 */
         /* USART3 clock enable */
         __HAL_RCC_USART3_CLK_ENABLE();
-
+        __HAL_RCC_GPIOB_CLK_ENABLE();
         /**USART3 GPIO Configuration
         PB10     ------> USART3_TX
         PB11     ------> USART3_RX
