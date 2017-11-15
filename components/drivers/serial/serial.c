@@ -636,7 +636,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
 
             rt_data_queue_init(&(tx_dma->data_queue), 8, 4, RT_NULL);
             serial->serial_tx = tx_dma;
-            
+
             dev->open_flag |= RT_DEVICE_FLAG_DMA_TX;
         }
         else if (oflag & RT_DEVICE_FLAG_INT_TX)
@@ -648,7 +648,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
 
             rt_completion_init(&(tx_fifo->completion));
             serial->serial_tx = tx_fifo;
-
+            
             dev->open_flag |= RT_DEVICE_FLAG_INT_TX;
             /* configure low level device */
             serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void *)RT_DEVICE_FLAG_INT_TX);
