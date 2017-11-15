@@ -23,11 +23,6 @@
 
 #include <rtthread.h>
 
-/* disable SDRAM in default */
-#ifndef USE_EXT_SDRAM
-#define LPC_EXT_SDRAM       1
-#endif
-
 // <RDTConfigurator URL="http://www.rt-thread.com/eclipse">
 
 // <integer name="LPC_EXT_SDRAM" description="Begin Address of External SDRAM" default="0xA0000000" />
