@@ -111,12 +111,12 @@ int tcsendbreak(int fd, int dur)
 
 int tcflush(int fd, int queue)
 {
-    return ioctl(fd, TCFLSH, (void*)queue);
+    return ioctl(fd, TCFLSH, (void*)&queue);
 }
 
 int tcflow(int fd, int action)
 {
-    return ioctl(fd, TCXONC, (void*)action);
+    return ioctl(fd, TCXONC, (void*)&action);
 }
 
 /**
