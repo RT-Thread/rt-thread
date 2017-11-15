@@ -53,6 +53,7 @@ void build_dump(void)
 
 void link_dump(void)
 {
+#ifdef __GNUC__
     extern unsigned int _sdata;
     extern unsigned int _edata;
     extern unsigned int _sidata;
@@ -68,6 +69,7 @@ void link_dump(void)
     DUMP_VAR(_sidata);
     DUMP_VAR(_sbss);
     DUMP_VAR(_ebss);
+#endif
 }
 
 int rt_application_init(void)
