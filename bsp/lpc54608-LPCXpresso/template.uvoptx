@@ -78,23 +78,6 @@
         <IsCurrentTarget>1</IsCurrentTarget>
       </OPTFL>
       <CpuCode>8</CpuCode>
-      <Books>
-        <Book>
-          <Number>0</Number>
-          <Title>KoalaEVM Quick Start (Koala EVM)</Title>
-          <Path>D:\Program Files\Keil_v5\ARM\PACK\Clarinox\Wireless\2.0.1\Docs\KoalaEVM_QuickStart.pdf</Path>
-        </Book>
-        <Book>
-          <Number>1</Number>
-          <Title>KoalaEVM Applications Manual (Koala EVM)</Title>
-          <Path>D:\Program Files\Keil_v5\ARM\PACK\Clarinox\Wireless\2.0.1\Docs\KoalaEVM_SoftwareApplications.pdf</Path>
-        </Book>
-        <Book>
-          <Number>2</Number>
-          <Title>KoalaEVM Web Page (Koala EVM)</Title>
-          <Path>http://www.clarinox.com/index.php?id=415</Path>
-        </Book>
-      </Books>
       <DebugOpt>
         <uSim>0</uSim>
         <uTrg>1</uTrg>
@@ -117,7 +100,8 @@
         <tRSysVw>1</tRSysVw>
         <sRunDeb>0</sRunDeb>
         <sLrtime>0</sLrtime>
-        <nTsel>12</nTsel>
+        <bEvRecOn>1</bEvRecOn>
+        <nTsel>2</nTsel>
         <sDll></sDll>
         <sDllPa></sDllPa>
         <sDlgDll></sDlgDll>
@@ -134,7 +118,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>CMSIS_AGDI</Key>
-          <Name>-X"LPC-LINK2 CMSIS-DAP V5.173" -UDRAXBQOQ -O206 -S9 -C0 -P00 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -FO15 -FD20000000 -FC8000 -FN1 -FF0LPC5460x_512.FLM -FS00 -FL080000 -FP0($$Device:LPC54607J512ET180$Flash\LPC5460x_512.FLM)</Name>
+          <Name>-X"LPC-LINK2 CMSIS-DAP V5.173" -UDRAXBQOQ -O206 -S9 -C0 -P00 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -FO15 -FD20000000 -FC8000 -FN1 -FF0LPC5460x_512.FLM -FS00 -FL080000 -FP0($$Device:LPC54608J512ET180$Flash\LPC5460x_512.FLM)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -175,6 +159,16 @@
       <LintExecutable></LintExecutable>
       <LintConfigFile></LintConfigFile>
       <bLintAuto>0</bLintAuto>
+      <bAutoGenD>0</bAutoGenD>
+      <LntExFlags>0</LntExFlags>
+      <pMisraName></pMisraName>
+      <pszMrule></pszMrule>
+      <pSingCmds></pSingCmds>
+      <pMultCmds></pMultCmds>
+      <pMisraNamep></pMisraNamep>
+      <pszMrulep></pszMrulep>
+      <pSingCmdsp></pSingCmdsp>
+      <pMultCmdsp></pMultCmdsp>
       <DebugDescription>
         <Enable>1</Enable>
         <EnableLog>0</EnableLog>
