@@ -165,3 +165,45 @@ void rt_hw_interrupt_set_type(int vector,int type)
     outpw(_mRegAddr, (inpw(_mRegAddr) & ~(0xC0 << shift)) | (type << shift));
 }
 
+/**
+ *  @brief  system AIC - Set CP15 Interrupt Type
+ *
+ *  @param[in]  state   Interrupt state. ( \ref ENABLE_IRQ / \ref ENABLE_FIQ / \ref ENABLE_FIQ_IRQ /
+ *                                             \ref DISABLE_IRQ / \ref DISABLE_FIQ / \ref DISABLE_FIQ_IRQ)
+ *
+ *  @return   0
+ */
+int32_t rt_hw_local_interrupt_set(int32_t state)
+{
+   int32_t temp;
+
+   switch (state)
+   {
+      case ENABLE_IRQ:
+      case ENABLE_FIQ:
+      case ENABLE_FIQ_IRQ:
+           __asm
+           {
+               MRS    temp, CPSR
+               AND    temp, temp, state
+               MSR    CPSR_c, temp
+           }
+           break;
+
+      case DISABLE_IRQ:
+      case DISABLE_FIQ:
+      case DISABLE_FIQ_IRQ:
+           __asm
+           {
+               MRS    temp, CPSR
+               ORR    temp, temp, state
+               MSR    CPSR_c, temp
+           }
+           break;
+
+      default:
+           ;
+   }
+   return 0;
+}
+

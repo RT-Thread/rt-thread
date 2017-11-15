@@ -102,6 +102,14 @@ typedef enum IRQn {
 #define NEGATIVE_EDGE_TRIGGER      0x80
 #define POSITIVE_EDGE_TRIGGER      0xC0
 
+/* The parameters for rt_hw_local_interrupt_set() use */
+#define ENABLE_IRQ        0x7F  /*!< Enable I-bit of CP15  */
+#define ENABLE_FIQ        0xBF  /*!< Enable F-bit of CP15  */
+#define ENABLE_FIQ_IRQ    0x3F  /*!< Enable I-bit and F-bit of CP15  */
+#define DISABLE_IRQ       0x80  /*!< Disable I-bit of CP15  */
+#define DISABLE_FIQ       0x40  /*!< Disable F-bit of CP15  */
+#define DISABLE_FIQ_IRQ   0xC0  /*!< Disable I-bit and F-bit of CP15  */
+
 void rt_hw_interrupt_mask(int vector);
 void rt_hw_interrupt_umask(int vector);
 rt_isr_handler_t rt_hw_interrupt_install(int vector,
@@ -109,5 +117,6 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector,
 										 char *name);
 void rt_hw_interrupt_set_priority(int vector,int priority);
 void rt_hw_interrupt_set_type(int vector,int type);
+int32_t rt_hw_local_interrupt_set(int32_t state);
 
 #endif /* _NUC970_INTERRUPT_H_ */

@@ -121,7 +121,7 @@ static void vpostIntHandler(void)
 {
    /* clear VPOST interrupt state */
    uint32_t uintstatus;
-   
+
    uintstatus = inpw(REG_LCM_INT_CS);
    if (uintstatus & VPOSTB_UNDERRUN_INT)
    {

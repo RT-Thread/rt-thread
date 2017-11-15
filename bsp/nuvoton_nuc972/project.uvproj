@@ -362,7 +362,7 @@
               <MiscControls></MiscControls>
               <Define>RT_USING_ARM_LIBC</Define>
               <Undefine></Undefine>
-              <IncludePath>Applications;.;Drivers;.;D;:;..\..\..\..\..;D;e;v;e;l;o;p;e;r;..\..\..\..\..;R;T;_;C;o;d;e;..\..\..\..\..;r;t;-;t;h;r;e;a;d;-;3;.;0;..\..\..\..\..;b;s;p;..\..\..\..\..;n;u;v;o;t;o;n;_;n;u;c;9;7;2;..\..\..\..\..;P;l;a;t;f;o;r;m;..\..\include;..\..\libcpu\arm\arm926;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\gui\include;..\..\components\libc\compilers\armlibc</IncludePath>
+              <IncludePath>Applications;.;Drivers;.;D;:;..\..\..\..\..;D;e;v;e;l;o;p;e;r;..\..\..\..\..;R;T;_;C;o;d;e;..\..\..\..\..;r;t;-;t;h;r;e;a;d;-;3;.;0;..\..\..\..\..;b;s;p;..\..\..\..\..;n;u;v;o;t;o;n;_;n;u;c;9;7;2;..\..\..\..\..;P;l;a;t;f;o;r;m;..\..\include;..\..\libcpu\arm\arm926;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\gui\include;..\..\components\libc\compilers\armlibc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -420,11 +420,6 @@
               <FileType>1</FileType>
               <FilePath>Applications\task_blink.c</FilePath>
             </File>
-            <File>
-              <FileName>task_lcd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Applications\task_lcd.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -434,6 +429,11 @@
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>Drivers\board.c</FilePath>
+            </File>
+            <File>
+              <FileName>nuc97x_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Drivers\nuc97x_adc.c</FilePath>
             </File>
             <File>
               <FileName>nuc97x_etimer.c</FileName>
@@ -469,6 +469,11 @@
               <FileName>nuc97x_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>Drivers\nuc97x_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>touch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Drivers\touch.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -979,6 +984,11 @@
               <FileName>stubs.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\armlibc\stubs.c</FilePath>
+            </File>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\time.c</FilePath>
             </File>
           </Files>
         </Group>
