@@ -34,8 +34,6 @@ MEMORY
 ENTRY(_start)
 SECTIONS
 {
-    . = 0x80800000 ;
-
     .start :
     {
         *(.start);
@@ -71,6 +69,12 @@ SECTIONS
         __rt_init_end = .;
         . = ALIGN(4);
 
+        /* section information for modules */
+        . = ALIGN(4);
+        __rtmsymtab_start = .;
+        KEEP(*(RTMSymTab))
+        __rtmsymtab_end = .;
+
         . = ALIGN(4);
         _etext = .;
     } > DRAM
@@ -79,10 +83,26 @@ SECTIONS
     { 
          *(.eh_frame_hdr) 
          *(.eh_frame_entry)
+         *(.eh_frame_entry.*)
     } > DRAM
     .eh_frame : ONLY_IF_RO { KEEP (*(.eh_frame)) } > DRAM
 
     . = ALIGN(4);
+    .ctors :
+    {
+        PROVIDE(__ctors_start__ = .);
+        KEEP(*(SORT(.ctors.*)))
+        KEEP(*(.ctors))
+        PROVIDE(__ctors_end__ = .);
+    } > DRAM
+
+    .dtors :
+    {
+        PROVIDE(__dtors_start__ = .);
+        KEEP(*(SORT(.dtors.*)))
+        KEEP(*(.dtors))
+        PROVIDE(__dtors_end__ = .);
+    } > DRAM
 
     .data : 
     {

@@ -89,27 +89,47 @@ rt_err_t rt_usb_device_init(void)
     cfg = rt_usbd_config_new();
 
 #ifdef RT_USB_DEVICE_MSTORAGE
-    /* create a mass storage function object */
-    func = rt_usbd_function_mstorage_create(udevice);
+    {
+        extern ufunction_t rt_usbd_function_mstorage_create(udevice_t device);
+        /* create a mass storage function object */
+        func = rt_usbd_function_mstorage_create(udevice);
 
-    /* add the function to the configuration */
-    rt_usbd_config_add_function(cfg, func);
+        /* add the function to the configuration */
+        rt_usbd_config_add_function(cfg, func);
+    }
 #endif
 
 #ifdef RT_USB_DEVICE_CDC
-    /* create a cdc function object */
-    func = rt_usbd_function_cdc_create(udevice);
+    {
+        extern ufunction_t rt_usbd_function_cdc_create(udevice_t device);
+        /* create a cdc function object */
+        func = rt_usbd_function_cdc_create(udevice);
 
-    /* add the function to the configuration */
-    rt_usbd_config_add_function(cfg, func);
+        /* add the function to the configuration */
+        rt_usbd_config_add_function(cfg, func);
+    }
+#endif
+
+#ifdef RT_USB_DEVICE_HID
+    {
+        extern ufunction_t rt_usbd_function_hid_create(udevice_t device);
+        /* create a cdc function object */
+        func = rt_usbd_function_hid_create(udevice);
+
+        /* add the function to the configuration */
+        rt_usbd_config_add_function(cfg, func);
+    }
 #endif
 
 #ifdef RT_USB_DEVICE_RNDIS
-    /* create a rndis function object */
-    func = rt_usbd_function_rndis_create(udevice);
+    {
+        extern ufunction_t rt_usbd_function_rndis_create(udevice_t device);
+        /* create a rndis function object */
+        func = rt_usbd_function_rndis_create(udevice);
 
-    /* add the function to the configuration */
-    rt_usbd_config_add_function(cfg, func);
+        /* add the function to the configuration */
+        rt_usbd_config_add_function(cfg, func);
+    }
 #endif
 
     /* set device descriptor to the device */
@@ -131,5 +151,4 @@ rt_err_t rt_usb_device_init(void)
 
     return RT_EOK;
 }
-
 #endif

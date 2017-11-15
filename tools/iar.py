@@ -86,6 +86,7 @@ def IARProject(target, script):
     CPPDEFINES = []
     LINKFLAGS = ''
     CCFLAGS = ''
+    Libs = []
     
     # add group
     for group in script:
@@ -102,19 +103,32 @@ def IARProject(target, script):
         # get each group's link flags
         if group.has_key('LINKFLAGS') and group['LINKFLAGS']:
             LINKFLAGS += group['LINKFLAGS']
-    
+            
+        if group.has_key('LIBS') and group['LIBS']:
+            for item in group['LIBS']:
+                lib_path = ''
+
+                for path_item in group['LIBPATH']:
+                    full_path = os.path.join(path_item, item + '.a')
+                    if os.path.isfile(full_path): # has this library
+                        lib_path = full_path
+
+                if lib_path != '':
+                    lib_path = _make_path_relative(project_path, lib_path)
+                    Libs += [lib_path]
+
     # make relative path 
     paths = set()
     for path in CPPPATH:
         inc = _make_path_relative(project_path, os.path.normpath(path))
         paths.add(inc) #.replace('\\', '/')
-    
+
     # setting options
     options = tree.findall('configuration/settings/data/option')
     for option in options:
         # print option.text
         name = option.find('name')
-        
+
         if name.text == 'CCIncludePath2' or name.text == 'newCCIncludePaths':
             for path in paths:
                 state = SubElement(option, 'state')
@@ -127,9 +141,18 @@ def IARProject(target, script):
             for define in CPPDEFINES:
                 state = SubElement(option, 'state')
                 state.text = define
-    
+
+        if name.text == 'IlinkAdditionalLibs':
+            for path in Libs:
+                state = SubElement(option, 'state')
+                if os.path.isabs(path) or path.startswith('$'):
+                    path = path.decode(fs_encoding)
+                else:
+                    path = ('$PROJ_DIR$\\' + path).decode(fs_encoding)
+                state.text = path
+
     xml_indent(root)
     out.write(etree.tostring(root, encoding='utf-8'))
     out.close()
-    
+
     IARWorkspace(target)

@@ -5,7 +5,8 @@ config RT_NAME_MAX
     range 2 32
     default 8
     help 
-        Each kernel object, such as thread, timer, semaphore etc, has a name, the RT_NAME_MAX is the maximal size of this object name.
+        Each kernel object, such as thread, timer, semaphore etc, has a name, 
+        the RT_NAME_MAX is the maximal size of this object name.
 
 config RT_ALIGN_SIZE
     int "Alignment size for CPU architecture data access"
@@ -13,10 +14,25 @@ config RT_ALIGN_SIZE
     help
         Alignment size for CPU architecture data access
 
+    choice 
+        prompt "The maximal level value of priority of thread"
+        default RT_THREAD_PRIORITY_32
+
+        config RT_THREAD_PRIORITY_8
+            bool "8"
+
+        config RT_THREAD_PRIORITY_32
+            bool "32"
+
+        config RT_THREAD_PRIORITY_256
+            bool "256"
+    endchoice
+
 config RT_THREAD_PRIORITY_MAX
-    int "The maximal level value of priority of thread"
-    range 8 256
-    default 32
+    int
+    default 8   if RT_THREAD_PRIORITY_8
+    default 32  if RT_THREAD_PRIORITY_32
+    default 256 if RT_THREAD_PRIORITY_256
 
 config RT_TICK_PER_SECOND
     int "Tick frequency, Hz"
@@ -35,7 +51,8 @@ config RT_USING_OVERFLOW_CHECK
     bool "Using stack overflow checking"
     default y
     help
-        Enable thread stack overflow checking. The stack overflow is checking when each thread switch.
+        Enable thread stack overflow checking. The stack overflow is checking when 
+        each thread switch.
 
 config RT_DEBUG_INIT
     int "Enable system initialization informat print"
@@ -55,7 +72,8 @@ config RT_USING_HOOK
     bool "Enable system hook"
     default y
     help
-        Enable the hook function when system running, such as idle thread hook, thread context switch etc.
+        Enable the hook function when system running, such as idle thread hook, 
+        thread context switch etc.
 
 config IDLE_THREAD_STACK_SIZE
     int "The stack size of idle thread"
@@ -65,7 +83,8 @@ config RT_USING_TIMER_SOFT
     bool "Enable software timer with a timer thread"
     default n
     help
-        the timeout function context of soft-timer is under a high priority timer thread.
+        the timeout function context of soft-timer is under a high priority timer 
+        thread.
 
 if RT_USING_TIMER_SOFT
 config RT_TIMER_THREAD_PRIO
@@ -123,19 +142,31 @@ menu "Memory Management"
         help
             Using memory heap object to manage dynamic memory heap.
 
-    config RT_USING_HEAP
-        bool "Using dynamic memory management"
-        default y
+    choice 
+        prompt "Dynamic Memory Management"
+        default RT_USING_SMALL_MEM
 
-    if RT_USING_HEAP
+        config RT_USING_NOHEAP
+            bool "Disable Heap"
 
         config RT_USING_SMALL_MEM
-            bool "The memory management for small memory"
+            bool "Small Memory Algorithm"
 
         config RT_USING_SLAB
-            bool "Using SLAB memory management for large memory"
+            bool "SLAB Algorithm for large memory"
 
-    endif
+        if RT_USING_MEMHEAP
+        config RT_USING_MEMHEAP_AS_HEAP
+            bool "Use all of memheap objects as heap"
+        endif
+    endchoice
+
+    config RT_USING_HEAP
+        bool 
+        default n if RT_USING_NOHEAP
+        default y if RT_USING_SMALL_MEM
+        default y if RT_USING_SLAB
+        default y if RT_USING_MEMHEAP_AS_HEAP
 
 endmenu
 

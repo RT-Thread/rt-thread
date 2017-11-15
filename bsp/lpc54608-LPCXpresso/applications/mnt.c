@@ -52,15 +52,19 @@ int mnt_init(void)
     }
 #endif
 
+#ifdef BSP_DRV_SDCARD
     /* initilize sd card */
-    mci_hw_init("sd0");
+     mci_hw_init("sd0");
+#endif
+
+#ifdef RT_DFS_ELM_REENTRANT    
     /* mount sd card fat partition 1 as root directory */
     if (dfs_mount("sd0", SD_ROOT, "elm", 0, 0) == 0)
         rt_kprintf("File System initialized!\n");
     else
         rt_kprintf("File System init failed!\n");
-
-
+#endif
+    
     return 0;
 }
 INIT_ENV_EXPORT(mnt_init);
