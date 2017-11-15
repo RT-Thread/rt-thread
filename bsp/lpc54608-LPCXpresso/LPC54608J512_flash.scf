@@ -61,7 +61,7 @@
 #define m_interrupts_ram_size          __ram_vector_table_size__
 
 #define m_data_start                   (m_interrupts_ram_start + m_interrupts_ram_size)
-#define m_data_size                    0x00018000/*(0x00028000 - m_interrupts_ram_size)*/
+#define m_data_size                    0x00028000/*(0x00028000 - m_interrupts_ram_size)*/
 
 #define m_usb_sram_start               0x40100000
 #define m_usb_sram_size                0x00002000
@@ -80,6 +80,8 @@
 #else
   #define Heap_Size                    0x0400
 #endif
+    
+#define RTT_HEAP_LENGTH		(m_data_size - ImageLength(RW_m_data) - ImageLength(ARM_LIB_HEAP) - ImageLength(ARM_LIB_STACK))
 
 LR_m_text m_interrupts_start m_text_start+m_text_size-m_interrupts_start { ; load region size_region
   VECTOR_ROM m_interrupts_start m_interrupts_size { ; load address = execution address
@@ -102,7 +104,9 @@ LR_m_text m_interrupts_start m_text_start+m_text_size-m_interrupts_start { ; loa
   }
   ARM_LIB_HEAP +0 EMPTY Heap_Size {    ; Heap region growing up
   }
-  ARM_LIB_STACK m_data_start+m_data_size EMPTY -Stack_Size { ; Stack region growing down
+  ARM_LIB_STACK +0 EMPTY Stack_Size { ; Stack region growing down
+  }
+  RTT_HEAP +0 EMPTY RTT_HEAP_LENGTH {
   }
 }
 
