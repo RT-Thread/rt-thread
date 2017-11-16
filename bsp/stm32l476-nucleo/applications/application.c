@@ -44,6 +44,12 @@
 #include <rtgui/driver.h>
 #endif
 
+#ifdef RT_USING_PM
+#include <drivers/pm.h>
+#endif
+
+extern void rt_hw_userled_init(void);
+
 //rt_module_t module_ptr;
 #define DATA_PATH "/Data"
 void rt_init_thread_entry(void* parameter)
@@ -52,12 +58,22 @@ void rt_init_thread_entry(void* parameter)
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_init();
 #endif
+	
+    rt_hw_userled_init();
+	
+#ifdef RT_USING_PM
+    {
+//        rt_pm_request(PM_RUNNING_MODE);
+//        rt_pm_request(PM_SLEEP_MODE);
+//        rt_pm_request(PM_TIMER_MODE);
+			rt_pm_release(PM_DEEPSHUTDOWN_MODE);
+    }
+#endif /* RT_USING_PM */
     
 }
 int rt_application_init()
 {
     rt_thread_t tid;
-
 
     tid = rt_thread_create("init",
         rt_init_thread_entry, RT_NULL,
@@ -65,8 +81,6 @@ int rt_application_init()
 
     if (tid != RT_NULL)
         rt_thread_startup(tid);
-    
-
-
+   
     return 0;
 }

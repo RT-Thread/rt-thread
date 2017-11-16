@@ -68,6 +68,7 @@ void rt_pm_enter(void)
     rt_tick_t timeout_tick;
 
     pm = &_pm;
+	
     
     /* check each low power mode to decide which mode can system sleep. */
     for (index = 0; index < PM_MODE_MAX + 1; index ++)
@@ -98,8 +99,8 @@ void rt_pm_enter(void)
                 /* set current power mode */
                 pm->pm_mode = index;
 
-				/* suspend all of devices with PM feature */
-				_pm_device_suspend();
+								/* suspend all of devices with PM feature */
+								_pm_device_suspend();
                 pm->ops->enter(pm);
             }
             /* exit from low power mode */
@@ -387,10 +388,10 @@ void rt_system_pm_init(const struct rt_pm_ops *ops,
     pm->pm_tick = 0;
 
     pm->ops = ops;
-	pm->device_pm = RT_NULL;
-	pm->device_pm_number = 0;
-	/* initialize semaphore */
-	rt_sem_init(&(pm->lock), "pm", 1, RT_IPC_FLAG_FIFO);
+		pm->device_pm = RT_NULL;
+		pm->device_pm_number = 0;
+		/* initialize semaphore */
+		rt_sem_init(&(pm->lock), "pm", 1, RT_IPC_FLAG_FIFO);
 
     /* invoke pm request in running mode */
     rt_pm_request(PM_RUNNING_MODE);
