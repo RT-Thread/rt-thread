@@ -451,21 +451,19 @@ INT adcIoctl(ADC_CMD cmd, INT32 arg1, INT32 arg2)
        case PEPOWER_ON:          //Enable Pen Power
        {
           UINT32 treg;
-#if 0           
+           
           treg = inpw(REG_ADC_IER);
           outpw(REG_ADC_IER, treg & ~(ADC_IER_PEDEIEN | ADC_IER_PEUEIEN));
-#endif
+
           reg = inpw(REG_ADC_CTL);
           reg = reg | ADC_CTL_PEDEEN;
           outpw(REG_ADC_CTL, reg);
-#if 0         
+      
          do{
           reg = (ADC_ISR_PEDEF | ADC_ISR_PEUEF);
           outpw(REG_ADC_ISR, reg);
          }while(inpw(REG_ADC_ISR)&(ADC_ISR_PEDEF | ADC_ISR_PEUEF));
-          // ÓÐbug
-         outpw(REG_ADC_IER,treg);
-#endif         
+         outpw(REG_ADC_IER,treg);    
        }
        break;
        case PEPOWER_OFF:         //Disable Pen Power
