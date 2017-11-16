@@ -17,7 +17,7 @@
 
 #include <rtthread.h>
 
-#if LPC_EXT_SDRAM
+#ifdef BSP_DRV_SDRAM
 struct rt_memheap system_heap;
 
 void sram_init(void)
