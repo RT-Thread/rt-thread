@@ -4,7 +4,8 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017Äê3ÔÂ13ÈÕ     Urey         the first version
+ * 2017-03-13     Urey         the first version
+ * 2017-11-16     ZYH          Update to common hid
  */
 
 #include <rthw.h>
@@ -21,132 +22,191 @@
 
 struct hid_s
 {
+    struct rt_device parent;
+    struct ufunction *func;
     uep_t ep_in;
     uep_t ep_out;
     int status;
-
     rt_uint16_t protocol;
-
-    rt_uint8_t  report_buf[MAX_REPORT_SIZE];
+    rt_uint8_t report_buf[MAX_REPORT_SIZE];
+    struct rt_messagequeue hid_mq;
 };
 
 /* CustomHID_ConfigDescriptor */
-const rt_uint8_t _report_desc[] __attribute__ ((packed))=
+const rt_uint8_t _report_desc[]=
 {
-    0x06, 0xFF, 0x00,      /* USAGE_PAGE (Vendor Page: 0xFF00) */
-    0x09, 0x01,            /* USAGE (Demo Kit)               */
-    0xa1, 0x01,            /* COLLECTION (Application)       */
-    /* 6 */
+#ifdef RT_USB_DEVICE_HID_KEYBOARD
+    USAGE_PAGE(1),      0x01,
+    USAGE(1),           0x06,
+    COLLECTION(1),      0x01,
+    REPORT_ID(1),       HID_REPORT_ID_KEYBOARD1,
 
-    /* Led 1 */
-    0x85, 0x01,            /*     REPORT_ID (1)          */
-    0x09, 0x01,            /*     USAGE (LED 1)              */
-    0x15, 0x00,            /*     LOGICAL_MINIMUM (0)        */
-    0x25, 0x01,            /*     LOGICAL_MAXIMUM (1)        */
-    0x75, 0x08,            /*     REPORT_SIZE (8)            */
-    0x95, 0x01,            /*     REPORT_COUNT (1)           */
-    0xB1, 0x82,             /*    FEATURE (Data,Var,Abs,Vol) */
+    USAGE_PAGE(1),      0x07,
+    USAGE_MINIMUM(1),   0xE0,
+    USAGE_MAXIMUM(1),   0xE7,
+    LOGICAL_MINIMUM(1), 0x00,
+    LOGICAL_MAXIMUM(1), 0x01,
+    REPORT_SIZE(1),     0x01,
+    REPORT_COUNT(1),    0x08,
+    INPUT(1),           0x02,
+    REPORT_COUNT(1),    0x01,
+    REPORT_SIZE(1),     0x08,
+    INPUT(1),           0x01,
 
-    0x85, 0x01,            /*     REPORT_ID (1)              */
-    0x09, 0x01,            /*     USAGE (LED 1)              */
-    0x91, 0x82,            /*     OUTPUT (Data,Var,Abs,Vol)  */
-    /* 26 */
 
-    /* Led 2 */
-    0x85, 0x02,            /*     REPORT_ID 2            */
-    0x09, 0x02,            /*     USAGE (LED 2)              */
-    0x15, 0x00,            /*     LOGICAL_MINIMUM (0)        */
-    0x25, 0x01,            /*     LOGICAL_MAXIMUM (1)        */
-    0x75, 0x08,            /*     REPORT_SIZE (8)            */
-    0x95, 0x01,            /*     REPORT_COUNT (1)           */
-    0xB1, 0x82,             /*    FEATURE (Data,Var,Abs,Vol) */
+    REPORT_COUNT(1),    0x05,
+    REPORT_SIZE(1),     0x01,
+    USAGE_PAGE(1),      0x08,
+    USAGE_MINIMUM(1),   0x01,
+    USAGE_MAXIMUM(1),   0x05,
+    OUTPUT(1),          0x02,
+    REPORT_COUNT(1),    0x01,
+    REPORT_SIZE(1),     0x03,
+    OUTPUT(1),          0x01,
 
-    0x85, 0x02,            /*     REPORT_ID (2)              */
-    0x09, 0x02,            /*     USAGE (LED 2)              */
-    0x91, 0x82,            /*     OUTPUT (Data,Var,Abs,Vol)  */
-    /* 46 */
 
-    /* Led 3 */
-    0x85, 0x03,            /*     REPORT_ID (3)          */
-    0x09, 0x03,            /*     USAGE (LED 3)              */
-    0x15, 0x00,            /*     LOGICAL_MINIMUM (0)        */
-    0x25, 0x01,            /*     LOGICAL_MAXIMUM (1)        */
-    0x75, 0x08,            /*     REPORT_SIZE (8)            */
-    0x95, 0x01,            /*     REPORT_COUNT (1)           */
-    0xB1, 0x82,             /*    FEATURE (Data,Var,Abs,Vol) */
+    REPORT_COUNT(1),    0x06,
+    REPORT_SIZE(1),     0x08,
+    LOGICAL_MINIMUM(1), 0x00,
+    LOGICAL_MAXIMUM(1), 0x65,
+    USAGE_PAGE(1),      0x07,
+    USAGE_MINIMUM(1),   0x00,
+    USAGE_MAXIMUM(1),   0x65,
+    INPUT(1),           0x00,
+    END_COLLECTION(0),
+#if RT_USB_DEVICE_HID_KEYBOARD_NUMBER>1
+    /****keyboard2*****/
+    USAGE_PAGE(1),      0x01,
+    USAGE(1),           0x06,
+    COLLECTION(1),      0x01,
+    REPORT_ID(1),       HID_REPORT_ID_KEYBOARD2,
 
-    0x85, 0x03,            /*     REPORT_ID (3)              */
-    0x09, 0x03,            /*     USAGE (LED 3)              */
-    0x91, 0x82,            /*     OUTPUT (Data,Var,Abs,Vol)  */
-    /* 66 */
+    USAGE_PAGE(1),      0x07,
+    USAGE_MINIMUM(1),   0xE0,
+    USAGE_MAXIMUM(1),   0xE7,
+    LOGICAL_MINIMUM(1), 0x00,
+    LOGICAL_MAXIMUM(1), 0x01,
+    REPORT_SIZE(1),     0x01,
+    REPORT_COUNT(1),    0x08,
+    INPUT(1),           0x02,
+    REPORT_COUNT(1),    0x01,
+    REPORT_SIZE(1),     0x08,
+    INPUT(1),           0x01,
 
-    /* Led 4 */
-    0x85, 0x04,            /*     REPORT_ID 4)           */
-    0x09, 0x04,            /*     USAGE (LED 4)              */
-    0x15, 0x00,            /*     LOGICAL_MINIMUM (0)        */
-    0x25, 0x01,            /*     LOGICAL_MAXIMUM (1)        */
-    0x75, 0x08,            /*     REPORT_SIZE (8)            */
-    0x95, 0x01,            /*     REPORT_COUNT (1)           */
-    0xB1, 0x82,            /*     FEATURE (Data,Var,Abs,Vol) */
+    REPORT_COUNT(1),    0x06,
+    REPORT_SIZE(1),     0x08,
+    LOGICAL_MINIMUM(1), 0x00,
+    LOGICAL_MAXIMUM(1), 0x65,
+    USAGE_PAGE(1),      0x07,
+    USAGE_MINIMUM(1),   0x00,
+    USAGE_MAXIMUM(1),   0x65,
+    INPUT(1),           0x00,
+    END_COLLECTION(0),
+#if RT_USB_DEVICE_HID_KEYBOARD_NUMBER>2
+    USAGE_PAGE(1),      0x01,
+    USAGE(1),           0x06,
+    COLLECTION(1),      0x01,
+    REPORT_ID(1),       HID_REPORT_ID_KEYBOARD3,
 
-    0x85, 0x04,            /*     REPORT_ID (4)              */
-    0x09, 0x04,            /*     USAGE (LED 4)              */
-    0x91, 0x82,            /*     OUTPUT (Data,Var,Abs,Vol)  */
-    /* 86 */
+    USAGE_PAGE(1),      0x07,
+    USAGE_MINIMUM(1),   0xE0,
+    USAGE_MAXIMUM(1),   0xE7,
+    LOGICAL_MINIMUM(1), 0x00,
+    LOGICAL_MAXIMUM(1), 0x01,
+    REPORT_SIZE(1),     0x01,
+    REPORT_COUNT(1),    0x08,
+    INPUT(1),           0x02,
+    REPORT_COUNT(1),    0x01,
+    REPORT_SIZE(1),     0x08,
+    INPUT(1),           0x01,
 
-    /* key Push Button */
-    0x85, 0x05,            /*     REPORT_ID (5)              */
-    0x09, 0x05,            /*     USAGE (Push Button)        */
-    0x15, 0x00,            /*     LOGICAL_MINIMUM (0)        */
-    0x25, 0x01,            /*     LOGICAL_MAXIMUM (1)        */
-    0x75, 0x01,            /*     REPORT_SIZE (1)            */
-    0x81, 0x82,            /*     INPUT (Data,Var,Abs,Vol)   */
+    REPORT_COUNT(1),    0x06,
+    REPORT_SIZE(1),     0x08,
+    LOGICAL_MINIMUM(1), 0x00,
+    LOGICAL_MAXIMUM(1), 0x65,
+    USAGE_PAGE(1),      0x07,
+    USAGE_MINIMUM(1),   0x00,
+    USAGE_MAXIMUM(1),   0x65,
+    INPUT(1),           0x00,
+    END_COLLECTION(0),
+#endif
+#endif
+#endif
+    // Media Control
+#ifdef RT_USB_DEVICE_HID_MEDIA
+    USAGE_PAGE(1),      0x0C,
+    USAGE(1),           0x01,
+    COLLECTION(1),      0x01,
+    REPORT_ID(1),       HID_REPORT_ID_MEDIA,
+    USAGE_PAGE(1),      0x0C,
+    LOGICAL_MINIMUM(1), 0x00,
+    LOGICAL_MAXIMUM(1), 0x01,
+    REPORT_SIZE(1),     0x01,
+    REPORT_COUNT(1),    0x07,
+    USAGE(1),           0xB5,             // Next Track
+    USAGE(1),           0xB6,             // Previous Track
+    USAGE(1),           0xB7,             // Stop
+    USAGE(1),           0xCD,             // Play / Pause
+    USAGE(1),           0xE2,             // Mute
+    USAGE(1),           0xE9,             // Volume Up
+    USAGE(1),           0xEA,             // Volume Down
+    INPUT(1),           0x02,             // Input (Data, Variable, Absolute)
+    REPORT_COUNT(1),    0x01,
+    INPUT(1),           0x01,
+    END_COLLECTION(0),
+#endif
 
-    0x09, 0x05,            /*     USAGE (Push Button)        */
-    0x75, 0x01,            /*     REPORT_SIZE (1)            */
-    0xb1, 0x82,            /*     FEATURE (Data,Var,Abs,Vol) */
+#ifdef RT_USB_DEVICE_HID_GENERAL
+    USAGE_PAGE(1),      0x8c,
+    USAGE(1),           0x01,
+    COLLECTION(1),      0x01,
+    REPORT_ID(1),       HID_REPORT_ID_GENERAL,
 
-    0x75, 0x07,            /*     REPORT_SIZE (7)            */
-    0x81, 0x83,            /*     INPUT (Cnst,Var,Abs,Vol)   */
-    0x85, 0x05,            /*     REPORT_ID (2)              */
+    REPORT_COUNT(1),    RT_USB_DEVICE_HID_GENERAL_IN_REPORT_LENGTH,
+    USAGE(1),           0x03,
+    REPORT_SIZE(1),     0x08,
+    LOGICAL_MINIMUM(1), 0x00,
+    LOGICAL_MAXIMUM(1), 0xFF,
+    INPUT(1),           0x02,
 
-    0x75, 0x07,            /*     REPORT_SIZE (7)            */
-    0xb1, 0x83,            /*     FEATURE (Cnst,Var,Abs,Vol) */
-    /* 114 */
-
-    /* Tamper Push Button */
-    0x85, 0x06,            /*     REPORT_ID (6)              */
-    0x09, 0x06,            /*     USAGE (Tamper Push Button) */
-    0x15, 0x00,            /*     LOGICAL_MINIMUM (0)        */
-    0x25, 0x01,            /*     LOGICAL_MAXIMUM (1)        */
-    0x75, 0x01,            /*     REPORT_SIZE (1)            */
-    0x81, 0x82,            /*     INPUT (Data,Var,Abs,Vol)   */
-
-    0x09, 0x06,            /*     USAGE (Tamper Push Button) */
-    0x75, 0x01,            /*     REPORT_SIZE (1)            */
-    0xb1, 0x82,            /*     FEATURE (Data,Var,Abs,Vol) */
-
-    0x75, 0x07,            /*     REPORT_SIZE (7)            */
-    0x81, 0x83,            /*     INPUT (Cnst,Var,Abs,Vol)   */
-    0x85, 0x06,            /*     REPORT_ID (6)              */
-
-    0x75, 0x07,            /*     REPORT_SIZE (7)            */
-    0xb1, 0x83,            /*     FEATURE (Cnst,Var,Abs,Vol) */
-    /* 142 */
-
-    /* ADC IN */
-    0x85, 0x07,            /*     REPORT_ID (7)              */
-    0x09, 0x07,            /*     USAGE (ADC IN)             */
-    0x15, 0x00,            /*     LOGICAL_MINIMUM (0)        */
-    0x26, 0xff, 0x00,      /*     LOGICAL_MAXIMUM (255)      */
-    0x75, 0x08,            /*     REPORT_SIZE (8)            */
-    0x81, 0x82,            /*     INPUT (Data,Var,Abs,Vol)   */
-    0x85, 0x07,            /*     REPORT_ID (7)              */
-    0x09, 0x07,            /*     USAGE (ADC in)             */
-    0xb1, 0x82,            /*     FEATURE (Data,Var,Abs,Vol) */
-    /* 161 */
-
-    0xc0                    /*     END_COLLECTION              */
+    REPORT_COUNT(1),    RT_USB_DEVICE_HID_GENERAL_OUT_REPORT_LENGTH,
+    USAGE(1),           0x04,
+    REPORT_SIZE(1),     0x08,
+    LOGICAL_MINIMUM(1), 0x00,
+    LOGICAL_MAXIMUM(1), 0xFF,
+    OUTPUT(1),          0x02,
+    END_COLLECTION(0),
+#endif
+#ifdef RT_USB_DEVICE_HID_MOUSE
+    USAGE_PAGE(1),      0x01,           // Generic Desktop
+    USAGE(1),           0x02,           // Mouse
+    COLLECTION(1),      0x01,           // Application
+    USAGE(1),           0x01,           // Pointer
+    COLLECTION(1),      0x00,           // Physical
+    REPORT_ID(1),       HID_REPORT_ID_MOUSE,
+    REPORT_COUNT(1),    0x03,
+    REPORT_SIZE(1),     0x01,
+    USAGE_PAGE(1),      0x09,           // Buttons
+    USAGE_MINIMUM(1),   0x1,
+    USAGE_MAXIMUM(1),   0x3,
+    LOGICAL_MINIMUM(1), 0x00,
+    LOGICAL_MAXIMUM(1), 0x01,
+    INPUT(1),           0x02,
+    REPORT_COUNT(1),    0x01,
+    REPORT_SIZE(1),     0x05,
+    INPUT(1),           0x01,
+    REPORT_COUNT(1),    0x03,
+    REPORT_SIZE(1),     0x08,
+    USAGE_PAGE(1),      0x01,
+    USAGE(1),           0x30,           // X
+    USAGE(1),           0x31,           // Y
+    USAGE(1),           0x38,           // scroll
+    LOGICAL_MINIMUM(1), 0x81,
+    LOGICAL_MAXIMUM(1), 0x7f,
+    INPUT(1),           0x06,
+    END_COLLECTION(0),
+    END_COLLECTION(0),
+#endif
 }; /* CustomHID_ReportDescriptor */
 
 static struct udevice_descriptor _dev_desc =
@@ -189,8 +249,18 @@ const static struct uhid_comm_descriptor _hid_comm_desc =
     USB_DYNAMIC,
     0x02,
     0x03,                       /* bInterfaceClass: HID */
+#if defined(RT_USB_DEVICE_HID_KEYBOARD)||defined(RT_USB_DEVICE_HID_MOUSE)
+    USB_HID_SUBCLASS_BOOT,    /* bInterfaceSubClass : 1=BOOT, 0=no boot */
+#else
     USB_HID_SUBCLASS_NOBOOT,    /* bInterfaceSubClass : 1=BOOT, 0=no boot */
+#endif
+#if !defined(RT_USB_DEVICE_HID_KEYBOARD)||!defined(RT_USB_DEVICE_HID_MOUSE)||!defined(RT_USB_DEVICE_HID_MEDIA)
     USB_HID_PROTOCOL_NONE,      /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+#elif !defined(RT_USB_DEVICE_HID_MOUSE)
+    USB_HID_PROTOCOL_KEYBOARD,  /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+#else
+    USB_HID_PROTOCOL_MOUSE,     /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+#endif
     0x00,
 #endif
 
@@ -201,8 +271,18 @@ const static struct uhid_comm_descriptor _hid_comm_desc =
     0x00,                       /* bAlternateSetting: Alternate setting */
     0x02,                       /* bNumEndpoints */
     0x03,                       /* bInterfaceClass: HID */
+#if defined(RT_USB_DEVICE_HID_KEYBOARD)||defined(RT_USB_DEVICE_HID_MOUSE)
+    USB_HID_SUBCLASS_BOOT,    /* bInterfaceSubClass : 1=BOOT, 0=no boot */
+#else
     USB_HID_SUBCLASS_NOBOOT,    /* bInterfaceSubClass : 1=BOOT, 0=no boot */
+#endif
+#if !defined(RT_USB_DEVICE_HID_KEYBOARD)||!defined(RT_USB_DEVICE_HID_MOUSE)||!defined(RT_USB_DEVICE_HID_MEDIA)
     USB_HID_PROTOCOL_NONE,      /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+#elif !defined(RT_USB_DEVICE_HID_MOUSE)
+    USB_HID_PROTOCOL_KEYBOARD,  /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+#else
+    USB_HID_PROTOCOL_MOUSE,     /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+#endif
     0,                          /* iInterface: Index of string descriptor */
 
     /* HID Descriptor */
@@ -219,16 +299,16 @@ const static struct uhid_comm_descriptor _hid_comm_desc =
     USB_DESC_TYPE_ENDPOINT,
     USB_DYNAMIC | USB_DIR_IN,
     USB_EP_ATTR_INT,
-    0x08,
-    0x20,
+    0x40,
+    0x01,
 
     /* Endpoint Descriptor OUT */
     USB_DESC_LENGTH_ENDPOINT,
     USB_DESC_TYPE_ENDPOINT,
     USB_DYNAMIC | USB_DIR_OUT,
     USB_EP_ATTR_INT,
-    0x08,
-    0x20,
+    0x40,
+    0x01,
 };
 
 
@@ -242,39 +322,40 @@ const static char* _ustring[] =
     "Interface",
 };
 
-#define __is_print(ch) ((unsigned int)((ch) - ' ') < 127u - ' ')
-static void dump_hex(const rt_uint8_t *ptr, rt_size_t buflen)
+static void dump_data(uint8_t *data, rt_size_t size)
 {
-    unsigned char *buf = (unsigned char*)ptr;
-    int i, j;
-    for (i=0; i<buflen; i+=16)
+    rt_size_t i;
+    for (i = 0; i < size; i++)
     {
-        rt_kprintf("%06x: ", i);
-        for (j=0; j<16; j++)
-            if (i+j < buflen)
-                rt_kprintf("%02x ", buf[i+j]);
-            else
-                rt_kprintf("   ");
-        rt_kprintf(" ");
-        for (j=0; j<16; j++)
-            if (i+j < buflen)
-                rt_kprintf("%c", __is_print(buf[i+j]) ? buf[i+j] : '.');
-        rt_kprintf("\n");
+        rt_kprintf("%02x ", *data++);
+        if ((i + 1) % 8 == 0)
+        {
+            rt_kprintf("\n");
+        }else if ((i + 1) % 4 == 0){
+            rt_kprintf(" ");
+        }
     }
+}
+static void dump_report(struct hid_report * report)
+{
+    rt_kprintf("\nHID Recived:");
+    rt_kprintf("\nReport ID %02x \n", report->report_id);
+    dump_data(report->report,report->size);
 }
 
 static rt_err_t _ep_out_handler(ufunction_t func, rt_size_t size)
 {
     struct hid_s *data;
+    struct hid_report report;
     RT_ASSERT(func != RT_NULL);
     RT_ASSERT(func->device != RT_NULL);
-
-    rt_kprintf("%s size = %d\n",__func__,size);
     data = (struct hid_s *) func->user_data;
 
     if(size != 0)
     {
-        dump_hex(data->ep_out->buffer,size);
+        rt_memcpy((void *)&report,(void*)data->ep_out->buffer,size);
+        report.size = size-1;
+        rt_mq_send(&data->hid_mq,(void *)&report,sizeof(report));
     }
 
     data->ep_out->request.buffer = data->ep_out->buffer;
@@ -301,8 +382,6 @@ static rt_err_t _hid_set_report_callback(udevice_t device, rt_size_t size)
 
     if(size != 0)
     {
-        rt_kprintf("HID set report callback:\n");
-        dump_hex(device->dcd->ep0.request.buffer - size,size);
     }
 
     dcd_ep0_send_status(device->dcd);
@@ -334,20 +413,15 @@ static rt_err_t _interface_handler(ufunction_t func, ureq_t setup)
     case USB_REQ_GET_DESCRIPTOR:
         if((setup->wValue >> 8) == USB_DESC_TYPE_REPORT)
         {
-            rt_kprintf("HID get report descriptor\n");
-            rt_kprintf("sizeof _report_desc = %d bytes\n",sizeof(_report_desc));
             rt_usbd_ep0_write(func->device, (void *)(&_report_desc[0]), sizeof(_report_desc));
         }
         else if((setup->wValue >> 8) == USB_DESC_TYPE_HID)
         {
-            rt_kprintf("HID get hid descriptor\n");
 
             rt_usbd_ep0_write(func->device, (void *)(&_hid_comm_desc.hid_desc), sizeof(struct uhid_descriptor));
         }
         break;
     case USB_HID_REQ_GET_REPORT:
-        rt_kprintf("HID get report \n");
-        rt_kprintf("wLength = %d\n",setup->wLength);
         if(setup->wLength == 0)
         {
             rt_usbd_ep0_set_stall(func->device);
@@ -358,17 +432,13 @@ static rt_err_t _interface_handler(ufunction_t func, ureq_t setup)
         rt_usbd_ep0_write(func->device, data->report_buf,setup->wLength);
         break;
     case USB_HID_REQ_GET_IDLE:
-        rt_kprintf("HID get idle \n");
 
         dcd_ep0_send_status(func->device->dcd);
         break;
     case USB_HID_REQ_GET_PROTOCOL:
-        rt_kprintf("HID get protocol \n");
         rt_usbd_ep0_write(func->device, &data->protocol,2);
         break;
     case USB_HID_REQ_SET_REPORT:
-        rt_kprintf("HID set report \n");
-        rt_kprintf("set report size = %d\n",setup->wLength);
 
         if((setup->wLength == 0) || (setup->wLength > MAX_REPORT_SIZE))
             rt_usbd_ep0_set_stall(func->device);
@@ -379,14 +449,11 @@ static rt_err_t _interface_handler(ufunction_t func, ureq_t setup)
     {
         int duration = (setup->wValue >> 8);
         int report_id = (setup->wValue & 0xFF);
-        rt_kprintf("HID set idle \n");
-        rt_kprintf("duration = %d,report_id = %d\n",duration,report_id);
 
         dcd_ep0_send_status(func->device->dcd);
     }
         break;
     case USB_HID_REQ_SET_PROTOCOL:
-        rt_kprintf("HID set protocol \n");
         data->protocol = setup->wValue;
 
         dcd_ep0_send_status(func->device->dcd);
@@ -416,7 +483,7 @@ static rt_err_t _function_enable(ufunction_t func)
 //
 //    _vcom_reset_state(func);
 //
-    data->ep_out->buffer = rt_malloc(HID_RX_BUFSIZE);
+    data->ep_out->buffer            = rt_malloc(HID_RX_BUFSIZE);
     data->ep_out->request.buffer    = data->ep_out->buffer;
     data->ep_out->request.size      = EP_MAXPACKET(data->ep_out);
     data->ep_out->request.req_type  = UIO_REQUEST_READ_BEST;
@@ -478,10 +545,59 @@ static rt_err_t _hid_descriptor_config(uhid_comm_desc_t hid, rt_uint8_t cintf_nr
 
     return RT_EOK;
 }
+static rt_size_t _hid_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+{
+    struct hid_s *hiddev = (struct hid_s *)dev;
+    struct hid_report report;
+    if (hiddev->func->device->state == USB_STATE_CONFIGURED)
+    {
+        report.report_id = pos;
+        rt_memcpy((void *)report.report,(void *)buffer,size);
+        report.size = size;
+        hiddev->ep_in->request.buffer = (void *)&report;
+        hiddev->ep_in->request.size = (size+1) > 64 ? 64 : size+1;
+        hiddev->ep_in->request.req_type = UIO_REQUEST_WRITE;
+        rt_usbd_io_request(hiddev->func->device, hiddev->ep_in, &hiddev->ep_in->request);
+        return size;
+    }
 
+    return 0;
+}
+RT_WEAK void HID_Report_Received(hid_report_t report)
+{
+    dump_report(report);
+}
+ALIGN(RT_ALIGN_SIZE)
+static rt_uint8_t hid_thread_stack[RT_USBD_THREAD_STACK_SZ];
+static struct rt_thread hid_thread;
+
+static void hid_thread_entry(void* parameter)
+{
+    struct hid_report report;
+    struct hid_s *hiddev;
+    hiddev = (struct hid_s *)parameter;
+	while(1)
+	{
+		if(rt_mq_recv(&hiddev->hid_mq, &report, sizeof(report),RT_WAITING_FOREVER) != RT_EOK )
+            continue;
+		HID_Report_Received(&report);
+	}
+}
+static rt_uint8_t hid_mq_pool[(sizeof(struct hid_report)+sizeof(void*))*32];
 static void rt_usb_hid_init(struct ufunction *func)
 {
-
+    struct hid_s *hiddev;
+    hiddev = (struct hid_s *)func->user_data;
+    rt_memset(&hiddev->parent, 0, sizeof(hiddev->parent));
+    hiddev->parent.write = _hid_write;
+	
+    rt_device_register(&hiddev->parent, "hidd", RT_DEVICE_FLAG_RDWR);
+    rt_mq_init(&hiddev->hid_mq, "hiddmq", hid_mq_pool, sizeof(struct hid_report),
+                            sizeof(hid_mq_pool), RT_IPC_FLAG_FIFO);
+                            
+    rt_thread_init(&hid_thread, "hidd", hid_thread_entry, hiddev,
+            hid_thread_stack, RT_USBD_THREAD_STACK_SZ, RT_USBD_THREAD_PRIO, 20);
+    rt_thread_startup(&hid_thread);
 }
 
 
@@ -516,9 +632,6 @@ ufunction_t rt_usbd_function_hid_create(udevice_t device)
     rt_memset(data, 0, sizeof(struct hid_s));
     func->user_data = (void*)data;
 
-    /* initilize hid */
-    rt_usb_hid_init(func);
-
     /* create an interface object */
     hid_intf = rt_usbd_interface_new(device, _interface_handler);
 
@@ -546,6 +659,9 @@ ufunction_t rt_usbd_function_hid_create(udevice_t device)
 
     /* add the interface to the mass storage function */
     rt_usbd_function_add_interface(func, hid_intf);
+
+    /* initilize hid */
+    rt_usb_hid_init(func);
     return func;
 }
 
