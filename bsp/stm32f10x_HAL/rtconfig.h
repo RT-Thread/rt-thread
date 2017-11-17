@@ -90,6 +90,9 @@
 /* RT_USING_SDIO is not set */
 /* RT_USING_SPI is not set */
 /* RT_USING_WDT is not set */
+
+/* Using USB */
+
 /* RT_USING_USB_HOST is not set */
 /* RT_USING_USB_DEVICE is not set */
 
@@ -149,9 +152,83 @@
 /* miscellaneous packages */
 
 /* PKG_USING_HELLO is not set */
-
-/* BSP_SPECIAL CONFIG */
-
+/* STM32F100C8 is not set */
+/* STM32F100CB is not set */
+/* STM32F100R8 is not set */
+/* STM32F100RB is not set */
+/* STM32F100RC is not set */
+/* STM32F100RD is not set */
+/* STM32F100RE is not set */
+/* STM32F100V8 is not set */
+/* STM32F100VB is not set */
+/* STM32F100VC is not set */
+/* STM32F100VD is not set */
+/* STM32F100VE is not set */
+/* STM32F100ZC is not set */
+/* STM32F100ZD is not set */
+/* STM32F100ZE is not set */
+/* STM32F101C8 is not set */
+/* STM32F101CB is not set */
+/* STM32F101R8 is not set */
+/* STM32F101RB is not set */
+/* STM32F101RC is not set */
+/* STM32F101RD is not set */
+/* STM32F101RE is not set */
+/* STM32F101RF is not set */
+/* STM32F101RG is not set */
+/* STM32F101T8 is not set */
+/* STM32F101TB is not set */
+/* STM32F101V8 is not set */
+/* STM32F101VB is not set */
+/* STM32F101VC is not set */
+/* STM32F101VD is not set */
+/* STM32F101VE is not set */
+/* STM32F101VF is not set */
+/* STM32F101VG is not set */
+/* STM32F101ZC is not set */
+/* STM32F101ZD is not set */
+/* STM32F101ZE is not set */
+/* STM32F101ZF is not set */
+/* STM32F101ZG is not set */
+/* STM32F102C8 is not set */
+/* STM32F102CB is not set */
+/* STM32F102R8 is not set */
+/* STM32F102RB is not set */
+/* STM32F103C8 is not set */
+/* STM32F103CB is not set */
+/* STM32F103R8 is not set */
+#define STM32F103RB
+/* STM32F103RC is not set */
+/* STM32F103RD is not set */
+/* STM32F103RE is not set */
+/* STM32F103RF is not set */
+/* STM32F103RG is not set */
+/* STM32F103T8 is not set */
+/* STM32F103TB is not set */
+/* STM32F103V8 is not set */
+/* STM32F103VB is not set */
+/* STM32F103VC is not set */
+/* STM32F103VD is not set */
+/* STM32F103VE is not set */
+/* STM32F103VF is not set */
+/* STM32F103VG is not set */
+/* STM32F103ZC is not set */
+/* STM32F103ZD is not set */
+/* STM32F103ZE is not set */
+/* STM32F103ZF is not set */
+/* STM32F103ZG is not set */
+/* STM32F105R8 is not set */
+/* STM32F105RB is not set */
+/* STM32F105RC is not set */
+/* STM32F105V8 is not set */
+/* STM32F105VB is not set */
+/* STM32F105VC is not set */
+/* STM32F107RB is not set */
+/* STM32F107RC is not set */
+/* STM32F107VB is not set */
+/* STM32F107VC is not set */
+/* RT_USING_HSI is not set */
+#define RT_HSE_VALUE 8000000
 #define STM32F10X_PIN_NUMBERS 64
 /* RT_USING_UART1 is not set */
 #define RT_USING_UART2
