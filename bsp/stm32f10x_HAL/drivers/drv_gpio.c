@@ -34,46 +34,50 @@ static void GPIOB_CLK_ENABLE(void)
     __HAL_RCC_GPIOB_CLK_ENABLE();
 #endif
 }
-static void GPIOC_CLK_ENABLE(void)
-{
-#ifdef __HAL_RCC_GPIOC_CLK_ENABLE
-    __HAL_RCC_GPIOC_CLK_ENABLE();
-#endif
-}
-#if (STM32F10X_PIN_NUMBERS >48)
+#if (STM32F10X_PIN_NUMBERS >36)
+    static void GPIOC_CLK_ENABLE(void)
+    {
+    #ifdef __HAL_RCC_GPIOC_CLK_ENABLE
+        __HAL_RCC_GPIOC_CLK_ENABLE();
+    #endif
+    }
+    #if (STM32F10X_PIN_NUMBERS >48)
 
-static void GPIOD_CLK_ENABLE(void)
-{
-#ifdef __HAL_RCC_GPIOD_CLK_ENABLE
-    __HAL_RCC_GPIOD_CLK_ENABLE();
-#endif
-}
-#if (STM32F10X_PIN_NUMBERS >64)
-static void GPIOE_CLK_ENABLE(void)
-{
-#ifdef __HAL_RCC_GPIOE_CLK_ENABLE
-    __HAL_RCC_GPIOE_CLK_ENABLE();
-#endif
-}
-static void GPIOF_CLK_ENABLE(void)
-{
-#ifdef __HAL_RCC_GPIOF_CLK_ENABLE
-    __HAL_RCC_GPIOF_CLK_ENABLE();
-#endif
-}
-static void GPIOG_CLK_ENABLE(void)
-{
-#ifdef __HAL_RCC_GPIOG_CLK_ENABLE
-    __HAL_RCC_GPIOG_CLK_ENABLE();
-#endif
-}
-static void GPIOH_CLK_ENABLE(void)
-{
-#ifdef __HAL_RCC_GPIOH_CLK_ENABLE
-    __HAL_RCC_GPIOH_CLK_ENABLE();
-#endif
-}
-#endif
+        static void GPIOD_CLK_ENABLE(void)
+        {
+        #ifdef __HAL_RCC_GPIOD_CLK_ENABLE
+            __HAL_RCC_GPIOD_CLK_ENABLE();
+        #endif
+        }
+        #if (STM32F10X_PIN_NUMBERS >64)
+            static void GPIOE_CLK_ENABLE(void)
+            {
+            #ifdef __HAL_RCC_GPIOE_CLK_ENABLE
+                __HAL_RCC_GPIOE_CLK_ENABLE();
+            #endif
+            }
+            #if (STM32F10X_PIN_NUMBERS >100)
+                static void GPIOF_CLK_ENABLE(void)
+                {
+                #ifdef __HAL_RCC_GPIOF_CLK_ENABLE
+                    __HAL_RCC_GPIOF_CLK_ENABLE();
+                #endif
+                }
+                static void GPIOG_CLK_ENABLE(void)
+                {
+                #ifdef __HAL_RCC_GPIOG_CLK_ENABLE
+                    __HAL_RCC_GPIOG_CLK_ENABLE();
+                #endif
+                }
+                static void GPIOH_CLK_ENABLE(void)
+                {
+                #ifdef __HAL_RCC_GPIOH_CLK_ENABLE
+                    __HAL_RCC_GPIOH_CLK_ENABLE();
+                #endif
+                }
+            #endif
+        #endif
+    #endif
 #endif
 /* STM32 GPIO driver */
 struct pin_index
@@ -86,6 +90,45 @@ struct pin_index
 
 static const struct pin_index pins[] =
 {
+#if (STM32F10X_PIN_NUMBERS == 36)
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN(7, A, 0),
+    __STM32_PIN(8, A, 1),
+    __STM32_PIN(9, A, 2),
+    __STM32_PIN(10, A, 3),
+    __STM32_PIN(11, A, 4),
+    __STM32_PIN(12, A, 5),
+    __STM32_PIN(13, A, 6),
+    __STM32_PIN(14, A, 7),
+    __STM32_PIN(15, B, 0),
+    __STM32_PIN(16, B, 1),
+    __STM32_PIN(17, B, 2),
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN(20, A, 8),
+    __STM32_PIN(21, A, 9),
+    __STM32_PIN(22, A, 10),
+    __STM32_PIN(23, A, 11),
+    __STM32_PIN(24, A, 12),
+    __STM32_PIN(25, A, 13),
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN(28, A, 14),
+    __STM32_PIN(29, A, 15),
+    __STM32_PIN(30, B, 3),
+    __STM32_PIN(31, B, 4),
+    __STM32_PIN(32, B, 5),
+    __STM32_PIN(33, B, 6),
+    __STM32_PIN(34, B, 7),
+    __STM32_PIN_DEFAULT,
+    __STM32_PIN_DEFAULT,
+#endif
 #if (STM32F10X_PIN_NUMBERS == 48)
     __STM32_PIN_DEFAULT,
     __STM32_PIN_DEFAULT,
