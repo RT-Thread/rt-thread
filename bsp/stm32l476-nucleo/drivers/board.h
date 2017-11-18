@@ -56,9 +56,26 @@ void rt_hw_board_init(void);
 #define CONSOLE_DEVICE "uart2"
 #elif STM32_CONSOLE_USART == 3
 #define CONSOLE_DEVICE "uart3"
+#elif STM32_CONSOLE_USART == 4
+#define CONSOLE_DEVICE "uart4"
+#elif STM32_CONSOLE_USART == 5
+#define CONSOLE_DEVICE "uart5"
+#elif STM32_CONSOLE_USART == 6
+#define CONSOLE_DEVICE "lpuart1"
 #endif
 
 #define FINSH_DEVICE_NAME   CONSOLE_DEVICE
+
+#define PRINT_RCC_FREQ_INFO
+#ifdef PRINT_RCC_FREQ_INFO
+void print_rcc_freq_info(void);
+#endif
+
+void system_clock_config(void);
+
+#ifdef DRV_PM_DEBUG
+void print_rcc_freq_info(void);
+#endif
 
 void Error_Handler(void);
 

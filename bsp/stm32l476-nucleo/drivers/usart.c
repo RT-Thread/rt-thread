@@ -690,6 +690,23 @@ int stm32_hw_usart_init(void)
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
 #endif /* RT_USING_UART5 */
+
+#ifdef RT_USING_LPUART1
+    uart = &lpuart1;
+    uart->UartHandle.Instance = LPUART1;
+
+    
+    serial6.ops    = &stm32_uart_ops;
+    serial6.config = config;
+    
+    serial6.config.baud_rate = BAUD_RATE_9600;
+
+    /* register UART5 device */
+    rt_hw_serial_register(&serial6,
+                          "lpuart1",
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                          uart);
+#endif /* RT_USING_LPUART1 */
     return 0;
 }
 INIT_BOARD_EXPORT(stm32_hw_usart_init);
