@@ -42,7 +42,7 @@
 #ifdef __cplusplus
  extern "C" {
 #endif
-#include "board.h"
+#include <rtthread.h>
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 
