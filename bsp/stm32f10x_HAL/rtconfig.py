@@ -8,27 +8,6 @@ CROSS_TOOL='gcc'
 if os.getenv('RTT_CC'):
 	CROSS_TOOL = os.getenv('RTT_CC')
 
-#device options
-# STM32_TYPE = 
-# 'STM32F100xB'
-# 'STM32F100xE'
-# 'STM32F101x6'
-# 'STM32F101xB'
-# 'STM32F101xE'
-# 'STM32F101xG'
-# 'STM32F102x6'
-# 'STM32F102xB'
-# 'STM32F103x6'
-# 'STM32F103xB'
-# 'STM32F103xE'
-# 'STM32F103xG'
-# 'STM32F105xC'
-# 'STM32F107xC'
-STM32_TYPE = 'STM32F103xB'
-
-# lcd panel options
-# 'FMT0371','ILI932X', 'SSD1289'
-RT_USING_LCD_TYPE = 'SSD1289'
 
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
@@ -38,7 +17,7 @@ if  CROSS_TOOL == 'gcc':
 	EXEC_PATH 	= '/usr/local/gcc-arm-none-eabi-5_4-2016q3/bin/'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
-	EXEC_PATH 	= 'C:/Keil'
+	EXEC_PATH 	= 'C:/Keilv5'
 elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
 	IAR_PATH 	= 'C:/Program Files/IAR Systems/Embedded Workbench 6.0 Evaluation'
@@ -111,7 +90,7 @@ elif PLATFORM == 'iar':
     LINK = 'ilinkarm'
     TARGET_EXT = 'out'
 
-    DEVICE = ' -D USE_STDPERIPH_DRIVER' + ' -D STM32F10X_HD'
+    DEVICE = ' -D USE_HAL_DRIVER'
 
     CFLAGS = DEVICE
     CFLAGS += ' --diag_suppress Pa050'

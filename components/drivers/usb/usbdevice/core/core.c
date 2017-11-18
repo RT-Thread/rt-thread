@@ -24,6 +24,7 @@
  * 2012-12-30     heyuanjie87  change inferface handler
  * 2013-04-26     aozima       add DEVICEQUALIFIER support.
  * 2013-07-25     Yi Qiu       update for USB CV test
+ * 2017-11-15     ZYH          fix ep0 transform error
  */
 
 #include <rtthread.h>
@@ -1815,22 +1816,41 @@ rt_err_t rt_usbd_ep0_setup_handler(udcd_t dcd, struct urequest* setup)
 
 rt_err_t rt_usbd_ep0_in_handler(udcd_t dcd)
 {
+    rt_int32_t remain, mps;
+
     RT_ASSERT(dcd != RT_NULL);
 
-    if(dcd->ep0.request.remain_size >= dcd->ep0.id->maxpacket)
+    if (dcd->stage != STAGE_DIN)
+        return RT_EOK;
+
+    mps = dcd->ep0.id->maxpacket;
+    dcd->ep0.request.remain_size -= mps;
+    remain = dcd->ep0.request.remain_size;
+
+    if (remain > 0)
     {
-        dcd_ep_write(dcd, EP0_IN_ADDR, dcd->ep0.request.buffer, dcd->ep0.id->maxpacket);
-        dcd->ep0.request.remain_size -= dcd->ep0.id->maxpacket;
-        dcd->ep0.request.buffer += dcd->ep0.id->maxpacket;
-    }
-    else if(dcd->ep0.request.remain_size > 0)
-    {
-        dcd_ep_write(dcd, EP0_IN_ADDR, dcd->ep0.request.buffer, dcd->ep0.request.remain_size);
-        dcd->ep0.request.remain_size = 0;
+        if (remain >= mps)
+        {
+            remain = mps;
+        }
+
+        dcd->ep0.request.buffer += mps;
+        dcd_ep_write(dcd, EP0_IN_ADDR, dcd->ep0.request.buffer, remain);
     }
     else
     {
-        dcd_ep_write(dcd, EP0_IN_ADDR, RT_NULL, 0);
+        /* last packet is MPS multiple, so send ZLP packet */
+        if ((remain == 0) && (dcd->ep0.request.size > 0))
+        {
+            dcd->ep0.request.size = 0;
+            dcd_ep_write(dcd, EP0_IN_ADDR, RT_NULL, 0);
+        }
+        else
+        {
+            /* receive status */
+            dcd->stage = STAGE_STATUS_OUT;
+            dcd_ep_read_prepare(dcd, EP0_OUT_ADDR, RT_NULL, 0);
+        }
     }
 
     return RT_EOK;
@@ -1935,6 +1955,7 @@ rt_err_t rt_usbd_sof_handler(udcd_t dcd)
 rt_size_t rt_usbd_ep0_write(udevice_t device, void *buffer, rt_size_t size)
 {
     uep_t ep0;
+    rt_size_t sent_size = 0;
 
     RT_ASSERT(device != RT_NULL);    
     RT_ASSERT(device->dcd != RT_NULL);
@@ -1945,20 +1966,17 @@ rt_size_t rt_usbd_ep0_write(udevice_t device, void *buffer, rt_size_t size)
     ep0->request.size = size;
     ep0->request.buffer = buffer;
     ep0->request.remain_size = size;
-
-    if(ep0->request.remain_size >= ep0->id->maxpacket)
+    if(size >= ep0->id->maxpacket)
     {
-        dcd_ep_write(device->dcd, EP0_IN_ADDR, ep0->request.buffer, ep0->id->maxpacket);
-        ep0->request.remain_size -= ep0->id->maxpacket;
-        ep0->request.buffer += ep0->id->maxpacket;
+        sent_size = ep0->id->maxpacket;
     }
     else
     {
-        dcd_ep_write(device->dcd, EP0_IN_ADDR, ep0->request.buffer, ep0->request.remain_size);
-        ep0->request.remain_size = 0;
+        sent_size = size;
     }
+    device->dcd->stage = STAGE_DIN;
 
-    return size;
+    return dcd_ep_write(device->dcd, EP0_IN_ADDR, ep0->request.buffer, sent_size);
 }
 
 rt_size_t rt_usbd_ep0_read(udevice_t device, void *buffer, rt_size_t size, 
@@ -1975,6 +1993,7 @@ rt_size_t rt_usbd_ep0_read(udevice_t device, void *buffer, rt_size_t size,
     ep0->request.buffer = buffer;    
     ep0->request.remain_size = size;
     ep0->rx_indicate = rx_ind;
+    device->dcd->stage = STAGE_DOUT;
     dcd_ep_read_prepare(device->dcd, EP0_OUT_ADDR, buffer, size);
 
     return size;

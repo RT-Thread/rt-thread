@@ -1,220 +1,237 @@
-/* RT-Thread config file */
-#ifndef __RTTHREAD_CFG_H__
-#define __RTTHREAD_CFG_H__
+#ifndef RT_CONFIG_H__
+#define RT_CONFIG_H__
 
-/* RT_NAME_MAX*/
-#define RT_NAME_MAX	8
+/* Automatically generated file; DO NOT EDIT. */
+/* RT-Thread Configuration */
 
-/* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE	4
+/* RT-Thread Kernel */
 
-/* PRIORITY_MAX */
-#define RT_THREAD_PRIORITY_MAX	32
-
-/* Tick per Second */
-#define RT_TICK_PER_SECOND	100
-
-/* SECTION: RT_DEBUG */
-/* Thread Debug */
+#define RT_NAME_MAX 8
+#define RT_ALIGN_SIZE 4
+/* RT_THREAD_PRIORITY_8 is not set */
+#define RT_THREAD_PRIORITY_32
+/* RT_THREAD_PRIORITY_256 is not set */
+#define RT_THREAD_PRIORITY_MAX 32
+#define RT_TICK_PER_SECOND 100
 #define RT_DEBUG
-#define RT_THREAD_DEBUG
-
 #define RT_USING_OVERFLOW_CHECK
-
-/* Using Hook */
+#define RT_DEBUG_INIT 0
+#define RT_DEBUG_THREAD 0
 #define RT_USING_HOOK
+#define IDLE_THREAD_STACK_SIZE 256
+/* RT_USING_TIMER_SOFT is not set */
 
-/* Using Software Timer */
-/* #define RT_USING_TIMER_SOFT */
-#define RT_TIMER_THREAD_PRIO		4
-#define RT_TIMER_THREAD_STACK_SIZE	512
-#define RT_TIMER_TICK_PER_SECOND	10
+/* Inter-Thread communication */
 
-/* SECTION: IPC */
-/* Using Semaphore*/
 #define RT_USING_SEMAPHORE
-
-/* Using Mutex */
 #define RT_USING_MUTEX
-
-/* Using Event */
 #define RT_USING_EVENT
-
-/* Using MailBox */
 #define RT_USING_MAILBOX
-
-/* Using Message Queue */
 #define RT_USING_MESSAGEQUEUE
+/* RT_USING_SIGNALS is not set */
 
-/* SECTION: Memory Management */
-/* Using Memory Pool Management*/
+/* Memory Management */
+
 #define RT_USING_MEMPOOL
-
-/* Using Dynamic Heap Management */
+#define RT_USING_MEMHEAP
+/* RT_USING_NOHEAP is not set */
+#define RT_USING_SMALL_MEM
+/* RT_USING_SLAB is not set */
+/* RT_USING_MEMHEAP_AS_HEAP is not set */
 #define RT_USING_HEAP
 
-/* Using Small MM */
-#define RT_USING_SMALL_MEM
+/* Kernel Device Object */
 
-// <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
-//#define RT_USING_COMPONENTS_INIT
-
-/* SECTION: Device System */
-/* Using Device System */
 #define RT_USING_DEVICE
-// <bool name="RT_USING_DEVICE_IPC" description="Using device communication" default="true" />
-#define RT_USING_DEVICE_IPC
-
-
-
-/* SECTION: device filesystem */
-//#define RT_USING_DFS 
-
-#define RT_USING_DFS_ELMFAT
-/* Reentrancy (thread safe) of the FatFs module.  */
-#define RT_DFS_ELM_REENTRANT
-/* Number of volumes (logical drives) to be used. */
-#define RT_DFS_ELM_DRIVES			1
-/* #define RT_DFS_ELM_USE_LFN			1 */
-/* #define RT_DFS_ELM_CODE_PAGE			936 */
-#define RT_DFS_ELM_MAX_LFN			255
-/* Maximum sector size to be handled. */
-#define RT_DFS_ELM_MAX_SECTOR_SIZE  4096
-
-/* the max number of mounted filesystem */
-#define DFS_FILESYSTEMS_MAX			1
-/* the max number of opened files 		*/
-#define DFS_FD_MAX					4
-
-/* SECTION: lwip, a lighwight TCP/IP protocol stack */
-/* #define RT_USING_LWIP */
-/* LwIP uses RT-Thread Memory Management */
-#define RT_LWIP_USING_RT_MEM
-/* Enable ICMP protocol*/
-#define RT_LWIP_ICMP
-/* Enable UDP protocol*/
-#define RT_LWIP_UDP
-/* Enable TCP protocol*/
-#define RT_LWIP_TCP
-/* Enable DNS */
-#define RT_LWIP_DNS
-
-/* the number of simulatenously active TCP connections*/
-#define RT_LWIP_TCP_PCB_NUM	5
-
-/* Using DHCP */
-/* #define RT_LWIP_DHCP */
-
-/* ip address of target*/
-#define RT_LWIP_IPADDR0	192
-#define RT_LWIP_IPADDR1	168
-#define RT_LWIP_IPADDR2	1
-#define RT_LWIP_IPADDR3	30
-
-/* gateway address of target*/
-#define RT_LWIP_GWADDR0	192
-#define RT_LWIP_GWADDR1	168
-#define RT_LWIP_GWADDR2	1
-#define RT_LWIP_GWADDR3	1
-
-/* mask address of target*/
-#define RT_LWIP_MSKADDR0	255
-#define RT_LWIP_MSKADDR1	255
-#define RT_LWIP_MSKADDR2	255
-#define RT_LWIP_MSKADDR3	0
-
-/* tcp thread options */
-#define RT_LWIP_TCPTHREAD_PRIORITY		12
-#define RT_LWIP_TCPTHREAD_MBOX_SIZE		10
-#define RT_LWIP_TCPTHREAD_STACKSIZE		1024
-
-/* ethernet if thread options */
-#define RT_LWIP_ETHTHREAD_PRIORITY		15
-#define RT_LWIP_ETHTHREAD_MBOX_SIZE		10
-#define RT_LWIP_ETHTHREAD_STACKSIZE		512
-
-/* TCP sender buffer space */
-#define RT_LWIP_TCP_SND_BUF	8192
-/* TCP receive window. */
-#define RT_LWIP_TCP_WND		8192
-
-/* image support */
-/* #define RTGUI_IMAGE_XPM */
-/* #define RTGUI_IMAGE_BMP */
-
-// <bool name="RT_USING_CMSIS_OS" description="Using CMSIS OS API" default="true" />
-// #define RT_USING_CMSIS_OS
-// <bool name="RT_USING_RTT_CMSIS" description="Using CMSIS in RTT" default="true" />
-#define RT_USING_RTT_CMSIS
-// <bool name="RT_USING_BSP_CMSIS" description="Using CMSIS in BSP" default="true" />
-// #define RT_USING_BSP_CMSIS
-
-/* nanopb support */
-/* #define RT_USING_NANOPB */
-
-#define RT_USING_CPU_FFS
-
-#define HAL_MODULE_ENABLED
-// #define HAL_ADC_MODULE_ENABLED
-// #define HAL_CAN_MODULE_ENABLED
-// #define HAL_CEC_MODULE_ENABLED
-#define HAL_CORTEX_MODULE_ENABLED
-// #define HAL_CRC_MODULE_ENABLED
-// #define HAL_DAC_MODULE_ENABLED
-#define HAL_DMA_MODULE_ENABLED
-// #define HAL_ETH_MODULE_ENABLED
-#define HAL_FLASH_MODULE_ENABLED
-#define HAL_GPIO_MODULE_ENABLED
-// #define HAL_HCD_MODULE_ENABLED
-// #define HAL_I2C_MODULE_ENABLED
-// #define HAL_I2S_MODULE_ENABLED
-// #define HAL_IRDA_MODULE_ENABLED
-// #define HAL_IWDG_MODULE_ENABLED
-// #define HAL_NAND_MODULE_ENABLED
-// #define HAL_NOR_MODULE_ENABLED
-// #define HAL_PCCARD_MODULE_ENABLED
-#define HAL_PCD_MODULE_ENABLED
-#define HAL_PWR_MODULE_ENABLED
-#define HAL_RCC_MODULE_ENABLED
-// #define HAL_RTC_MODULE_ENABLED
-// #define HAL_SD_MODULE_ENABLED
-// #define HAL_SMARTCARD_MODULE_ENABLED
-#define HAL_SPI_MODULE_ENABLED
-// #define HAL_SRAM_MODULE_ENABLED
-#define HAL_TIM_MODULE_ENABLED
-#define HAL_UART_MODULE_ENABLED
-#define HAL_USART_MODULE_ENABLED
-// #define HAL_WWDG_MODULE_ENABLED
-// #define HAL_MMC_MODULE_ENABLED
-
-
-#define RT_USING_SERIAL
-
-#define RT_USING_PIN
-
-#define RT_USING_UART1
-
-#define RT_CONSOLE_DEVICE_NAME	    "uart1"
-/* SECTION: Console options */
+/* RT_USING_INTERRUPT_INFO is not set */
 #define RT_USING_CONSOLE
-/* the buffer size of console*/
-#define RT_CONSOLEBUF_SIZE	        128
-// <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console" default="uart1" />
+#define RT_CONSOLEBUF_SIZE 128
+#define RT_CONSOLE_DEVICE_NAME "uart2"
+/* RT_USING_MODULE is not set */
 
+/* RT-Thread Components */
 
-/* SECTION: finsh, a C-Express shell */
+#define RT_USING_COMPONENTS_INIT
+#define RT_USING_USER_MAIN
+
+/* C++ features */
+
+/* RT_USING_CPLUSPLUS is not set */
+
+/* Command shell */
+
 #define RT_USING_FINSH
-
-//#define FINSH_USING_MSH
-/* Using symbol table */
+#define FINSH_USING_HISTORY
 #define FINSH_USING_SYMTAB
-
 #define FINSH_USING_DESCRIPTION
+#define FINSH_THREAD_PRIORITY 20
+#define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_CMD_SIZE 80
+/* FINSH_USING_AUTH is not set */
+#define FINSH_USING_MSH
+#define FINSH_USING_MSH_DEFAULT
+#define FINSH_USING_MSH_ONLY
 
-//#define RT_USING_SPI
+/* Device virtual file system */
 
-#define SPI_USE_DMA
+/* RT_USING_DFS is not set */
 
-#define RT_USING_W25QXX
+/* Device Drivers */
+
+#define RT_USING_DEVICE_IPC
+#define RT_USING_SERIAL
+/* RT_USING_CAN is not set */
+/* RT_USING_HWTIMER is not set */
+/* RT_USING_I2C is not set */
+#define RT_USING_PIN
+/* RT_USING_MTD_NOR is not set */
+/* RT_USING_MTD_NAND is not set */
+/* RT_USING_RTC is not set */
+/* RT_USING_SDIO is not set */
+/* RT_USING_SPI is not set */
+/* RT_USING_WDT is not set */
+
+/* Using USB */
+
+/* RT_USING_USB_HOST is not set */
+/* RT_USING_USB_DEVICE is not set */
+
+/* POSIX layer and C standard library */
+
+/* RT_USING_LIBC is not set */
+/* RT_USING_PTHREADS is not set */
+
+/* Network stack */
+
+/* light weight TCP/IP stack */
+
+/* RT_USING_LWIP is not set */
+
+/* Modbus master and slave stack */
+
+/* RT_USING_MODBUS is not set */
+
+/* RT-Thread UI Engine */
+
+/* RT_USING_GUIENGINE is not set */
+
+/* VBUS(Virtual Software BUS) */
+
+/* RT_USING_VBUS is not set */
+
+/* RT-Thread online packages */
+
+/* system packages */
+
+/* PKG_USING_PARTITION is not set */
+/* PKG_USING_SQLITE is not set */
+
+/* IoT - internet of things */
+
+/* PKG_USING_CJSON is not set */
+/* PKG_USING_PAHOMQTT is not set */
+/* PKG_USING_WEBCLIENT is not set */
+/* PKG_USING_MONGOOSE is not set */
+/* PKG_USING_WEBTERMINAL is not set */
+
+/* security packages */
+
+/* PKG_USING_MBEDTLS is not set */
+
+/* language packages */
+
+/* PKG_USING_JERRYSCRIPT is not set */
+
+/* multimedia packages */
+
+/* tools packages */
+
+/* PKG_USING_CMBACKTRACE is not set */
+/* PKG_USING_EASYLOGGER is not set */
+
+/* miscellaneous packages */
+
+/* PKG_USING_HELLO is not set */
+/* STM32F100C8 is not set */
+/* STM32F100CB is not set */
+/* STM32F100R8 is not set */
+/* STM32F100RB is not set */
+/* STM32F100RC is not set */
+/* STM32F100RD is not set */
+/* STM32F100RE is not set */
+/* STM32F100V8 is not set */
+/* STM32F100VB is not set */
+/* STM32F100VC is not set */
+/* STM32F100VD is not set */
+/* STM32F100VE is not set */
+/* STM32F100ZC is not set */
+/* STM32F100ZD is not set */
+/* STM32F100ZE is not set */
+/* STM32F101C8 is not set */
+/* STM32F101CB is not set */
+/* STM32F101R8 is not set */
+/* STM32F101RB is not set */
+/* STM32F101RC is not set */
+/* STM32F101RD is not set */
+/* STM32F101RE is not set */
+/* STM32F101RF is not set */
+/* STM32F101RG is not set */
+/* STM32F101T8 is not set */
+/* STM32F101TB is not set */
+/* STM32F101V8 is not set */
+/* STM32F101VB is not set */
+/* STM32F101VC is not set */
+/* STM32F101VD is not set */
+/* STM32F101VE is not set */
+/* STM32F101VF is not set */
+/* STM32F101VG is not set */
+/* STM32F101ZC is not set */
+/* STM32F101ZD is not set */
+/* STM32F101ZE is not set */
+/* STM32F101ZF is not set */
+/* STM32F101ZG is not set */
+/* STM32F102C8 is not set */
+/* STM32F102CB is not set */
+/* STM32F102R8 is not set */
+/* STM32F102RB is not set */
+/* STM32F103C8 is not set */
+/* STM32F103CB is not set */
+/* STM32F103R8 is not set */
+#define STM32F103RB
+/* STM32F103RC is not set */
+/* STM32F103RD is not set */
+/* STM32F103RE is not set */
+/* STM32F103RF is not set */
+/* STM32F103RG is not set */
+/* STM32F103T8 is not set */
+/* STM32F103TB is not set */
+/* STM32F103V8 is not set */
+/* STM32F103VB is not set */
+/* STM32F103VC is not set */
+/* STM32F103VD is not set */
+/* STM32F103VE is not set */
+/* STM32F103VF is not set */
+/* STM32F103VG is not set */
+/* STM32F103ZC is not set */
+/* STM32F103ZD is not set */
+/* STM32F103ZE is not set */
+/* STM32F103ZF is not set */
+/* STM32F103ZG is not set */
+/* STM32F105R8 is not set */
+/* STM32F105RB is not set */
+/* STM32F105RC is not set */
+/* STM32F105V8 is not set */
+/* STM32F105VB is not set */
+/* STM32F105VC is not set */
+/* STM32F107RB is not set */
+/* STM32F107RC is not set */
+/* STM32F107VB is not set */
+/* STM32F107VC is not set */
+/* RT_USING_HSI is not set */
+#define RT_HSE_VALUE 8000000
+#define STM32F10X_PIN_NUMBERS 64
+/* RT_USING_UART1 is not set */
+#define RT_USING_UART2
+/* RT_USING_UART3 is not set */
 
 #endif

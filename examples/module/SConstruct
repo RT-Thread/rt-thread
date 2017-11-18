@@ -63,7 +63,7 @@ env = Environment(tools = ['mingw'],
 		])
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
-PrepareModuleBuilding(env, RTT_ROOT)
+PrepareModuleBuilding(env, RTT_ROOT, RTT_ROOT + '/bsp/' + rtconfig.BSP)
 
 dir = app + '/build/' + rtconfig.BSP
 objs = SConscript(app + '/Sconscript', variant_dir=dir, duplicate=0)

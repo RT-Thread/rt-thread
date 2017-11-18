@@ -82,7 +82,7 @@ extern void SystemInit(void);
 // When the application defines a handler (with the same name), this will
 // automatically take precedence over these weak definitions
 //*****************************************************************************
-     void ResetISR(void);
+     void Reset_Handler(void);
 WEAK void NMI_Handler(void);
 WEAK void HardFault_Handler(void);
 WEAK void MemManage_Handler(void);
@@ -234,7 +234,7 @@ extern int main(void);
 //*****************************************************************************
 // External declaration for the pointer to the stack top from the Linker Script
 //*****************************************************************************
-extern void _vStackTop(void);
+extern void _estack(void);
 
 //*****************************************************************************
 // External declaration for LPC MCU vector table checksum from  Linker Script
@@ -256,8 +256,8 @@ extern void * __Vectors __attribute__ ((alias ("g_pfnVectors")));
 __attribute__ ((used, section(".isr_vector")))
 void (* const g_pfnVectors[])(void) = {
     // Core Level - CM4
-    &_vStackTop,                       // The initial stack pointer
-    ResetISR,                          // The reset handler
+    &_estack,                          // The initial stack pointer
+    Reset_Handler,                     // The reset handler
     NMI_Handler,                       // The NMI handler
     HardFault_Handler,                 // The hard fault handler
     MemManage_Handler,                 // The MPU fault handler
@@ -336,7 +336,7 @@ void (* const g_pfnVectors[])(void) = {
 //*****************************************************************************
 // Functions to carry out the initialization of RW and BSS data sections. These
 // are written as separate functions rather than being inlined within the
-// ResetISR() function in order to cope with MCUs with multiple banks of
+// Reset_Handler() function in order to cope with MCUs with multiple banks of
 // memory.
 //*****************************************************************************
 __attribute__ ((section(".after_vectors.init_data")))
@@ -363,19 +363,23 @@ void bss_init(unsigned int start, unsigned int len) {
 // contains the load address, execution address and length of each RW data
 // section and the execution and length of each BSS (zero initialized) section.
 //*****************************************************************************
-extern unsigned int __data_section_table;
-extern unsigned int __data_section_table_end;
-extern unsigned int __bss_section_table;
-extern unsigned int __bss_section_table_end;
+extern unsigned int _sdata;
+extern unsigned int _edata;
+extern unsigned int _sidata;
+
+extern unsigned int _sbss;
+extern unsigned int _ebss;
 
 //*****************************************************************************
-// Reset entry point for your code.
-// Sets up a simple runtime environment and initializes the C/C++
-// library.
+//Reset entry point for your code.
+//Sets up a simple runtime environment and initializes the C/C++
+//library.
 //*****************************************************************************
 __attribute__ ((section(".after_vectors.reset")))
-void ResetISR(void) {
-
+void Reset_Handler(void) {
+    /* Data and BSS variables */
+	unsigned int *srcdata, *dstdata, *sbss;
+    
     // Disable interrupts
     __asm volatile ("cpsid i");
 
@@ -383,36 +387,41 @@ void ResetISR(void) {
     __asm volatile ("LDR R0, =0x40000220\n\t"
                     "MOV R1, #56\n\t"
                     "STR R1, [R0]");
+                    
+    // extern void Reset_ASM_Handler();
+    // Reset_ASM_Handler();
+    
+	srcdata = &_sidata;
+	dstdata = &_sdata;
+	sbss = &_sbss;
 
+	/* Copy data */
+	while(dstdata != &_edata)
+	{
+		*(dstdata++) = *(srcdata++);
+	}
+
+	/* Clear BSS */
+	while(sbss != &_ebss)
+	{
+		*(sbss++) = '\0';
+	}
+    
 #if defined (__USE_CMSIS)
 // If __USE_CMSIS defined, then call CMSIS SystemInit code
     SystemInit();
 #endif // (__USE_CMSIS)
 
-    //
-    // Copy the data sections from flash to SRAM.
-    //
-    unsigned int LoadAddr, ExeAddr, SectionLen;
-    unsigned int *SectionTableAddr;
+    // //
+    // // Copy the data sections from flash to SRAM.
+    // //
+    // //data_init(_sidata, _sdata, _edata - _sdata);
 
-    // Load base address of Global Section Table
-    SectionTableAddr = &__data_section_table;
+    // // At this point, SectionTableAddr = &__bss_section_table;
+    // // Zero fill the bss segment
+    // //bss_init(_sbss, _ebss - _sbss);
+    //bss_init(_sbss, _ebss - _sbss);
 
-    // Copy the data sections from flash to SRAM.
-    while (SectionTableAddr < &__data_section_table_end) {
-        LoadAddr = *SectionTableAddr++;
-        ExeAddr = *SectionTableAddr++;
-        SectionLen = *SectionTableAddr++;
-        data_init(LoadAddr, ExeAddr, SectionLen);
-    }
-
-    // At this point, SectionTableAddr = &__bss_section_table;
-    // Zero fill the bss segment
-    while (SectionTableAddr < &__bss_section_table_end) {
-        ExeAddr = *SectionTableAddr++;
-        SectionLen = *SectionTableAddr++;
-        bss_init(ExeAddr, SectionLen);
-    }
 
 #if !defined (__USE_CMSIS)
 // Assume that if __USE_CMSIS defined, then CMSIS SystemInit code

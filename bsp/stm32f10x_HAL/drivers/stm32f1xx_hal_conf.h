@@ -55,18 +55,17 @@
 /**
   * @brief This is the list of modules to be used in the HAL driver 
   */
-// defined in rtconfig.h
-// #define HAL_MODULE_ENABLED
+#define HAL_MODULE_ENABLED
 // #define HAL_ADC_MODULE_ENABLED
 // #define HAL_CAN_MODULE_ENABLED
 // #define HAL_CEC_MODULE_ENABLED
-// #define HAL_CORTEX_MODULE_ENABLED
+#define HAL_CORTEX_MODULE_ENABLED
 // #define HAL_CRC_MODULE_ENABLED
 // #define HAL_DAC_MODULE_ENABLED
-// #define HAL_DMA_MODULE_ENABLED
+#define HAL_DMA_MODULE_ENABLED
 // #define HAL_ETH_MODULE_ENABLED
-// #define HAL_FLASH_MODULE_ENABLED
-// #define HAL_GPIO_MODULE_ENABLED
+#define HAL_FLASH_MODULE_ENABLED
+#define HAL_GPIO_MODULE_ENABLED
 // #define HAL_HCD_MODULE_ENABLED
 // #define HAL_I2C_MODULE_ENABLED
 // #define HAL_I2S_MODULE_ENABLED
@@ -75,17 +74,24 @@
 // #define HAL_NAND_MODULE_ENABLED
 // #define HAL_NOR_MODULE_ENABLED
 // #define HAL_PCCARD_MODULE_ENABLED
-// #define HAL_PCD_MODULE_ENABLED
-// #define HAL_PWR_MODULE_ENABLED
-// #define HAL_RCC_MODULE_ENABLED
+#ifdef RT_USING_USB_DEVICE
+  #define HAL_PCD_MODULE_ENABLED
+#endif
+#define HAL_PWR_MODULE_ENABLED
+#define HAL_RCC_MODULE_ENABLED
 // #define HAL_RTC_MODULE_ENABLED
 // #define HAL_SD_MODULE_ENABLED
 // #define HAL_SMARTCARD_MODULE_ENABLED
-// #define HAL_SPI_MODULE_ENABLED
+#ifdef RT_USING_SPI
+  #define HAL_SPI_MODULE_ENABLED
+#endif
 // #define HAL_SRAM_MODULE_ENABLED
-// #define HAL_TIM_MODULE_ENABLED
-// #define HAL_UART_MODULE_ENABLED
-// #define HAL_USART_MODULE_ENABLED
+#define HAL_TIM_MODULE_ENABLED
+#ifdef RT_USING_SERIAL
+  #define HAL_UART_MODULE_ENABLED
+  #define HAL_USART_MODULE_ENABLED
+#endif
+
 // #define HAL_WWDG_MODULE_ENABLED
 // #define HAL_MMC_MODULE_ENABLED
 
@@ -95,6 +101,8 @@
   *        This value is used by the RCC HAL module to compute the system frequency
   *        (when HSE is used as system clock source, directly or through the PLL).  
   */
+#define HSE_VALUE ((unsigned int)RT_HSE_VALUE)
+
 #if !defined  (HSE_VALUE) 
 #if defined(USE_STM3210C_EVAL)
   #define HSE_VALUE    25000000U /*!< Value of the External oscillator in Hz */
