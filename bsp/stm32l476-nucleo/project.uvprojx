@@ -53,7 +53,7 @@
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
-          <BrowseInformation>1</BrowseInformation>
+          <BrowseInformation>0</BrowseInformation>
           <ListingPath>.\build\</ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -335,7 +335,7 @@
               <MiscControls></MiscControls>
               <Define>STM32L4x6, USE_HAL_DRIVER, STM32L476xx, USE_STM32L4XX_NUCLEO</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;.;drivers;Libraries\STM32L4xx_HAL_Driver\Inc;Libraries\CMSIS\Device\ST\STM32L4xx\Include;Libraries\CMSIS\Include;..\..\include;..\..\libcpu\arm\cortex-m4;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh</IncludePath>
+              <IncludePath>applications;.;drivers;Libraries\STM32L4xx_HAL_Driver\Inc;Libraries\CMSIS\Device\ST\STM32L4xx\Include;Libraries\CMSIS\Include;..\..\include;..\..\libcpu\arm\cortex-m4;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -369,7 +369,7 @@
             <ScatterFile></ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc>--keep *.o(.rti_fn.*)   --keep *.o(FSymTab) --keep *.o(VSymTab)</Misc>
+            <Misc> --keep *.o(.rti_fn.*)   --keep *.o(FSymTab) --keep *.o(VSymTab) </Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>
@@ -385,19 +385,9 @@
               <FilePath>applications\application.c</FilePath>
             </File>
             <File>
-              <FileName>pm_debug.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\pm_debug.c</FilePath>
-            </File>
-            <File>
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\startup.c</FilePath>
-            </File>
-            <File>
-              <FileName>userled.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\userled.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -413,21 +403,6 @@
               <FileName>usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\usart.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_pm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_pm.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_led.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_pmtimer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_pmtimer.c</FilePath>
             </File>
             <File>
               <FileName>gpio.c</FileName>
@@ -993,11 +968,6 @@
               <FileName>pin.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\misc\pin.c</FilePath>
-            </File>
-            <File>
-              <FileName>pm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\pm\pm.c</FilePath>
             </File>
             <File>
               <FileName>serial.c</FileName>

@@ -58,18 +58,7 @@ void rt_init_thread_entry(void* parameter)
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_init();
 #endif
-	
-    rt_hw_userled_init();
-	
-#ifdef RT_USING_PM
-    {
-//        rt_pm_request(PM_RUNNING_MODE);
-//        rt_pm_request(PM_SLEEP_MODE);
-//        rt_pm_request(PM_TIMER_MODE);
-			rt_pm_release(PM_DEEPSHUTDOWN_MODE);
-    }
-#endif /* RT_USING_PM */
-    
+  
 }
 int rt_application_init()
 {

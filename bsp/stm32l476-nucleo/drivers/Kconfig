@@ -5,7 +5,4 @@ config RT_USING_UART2
 config RT_USING_PIN
     bool "Enable PIN"
     default y 
-	
-config RT_USING_PM
-    bool "Enable Power Management"
-    default y 	
+		

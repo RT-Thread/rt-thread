@@ -157,6 +157,5 @@
 
 /* PKG_USING_HELLO is not set */
 #define RT_USING_UART2
-#define RT_USING_PM
 
 #endif
