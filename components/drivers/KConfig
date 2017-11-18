@@ -97,6 +97,9 @@ config RT_USING_WDT
     bool "Using Watch Dog device drivers"
     default n
 
+config RT_USING_WIFI
+    bool "Using Wi-Fi network"
+    default n
 
 menu "Using USB"
     config RT_USING_USB_HOST
