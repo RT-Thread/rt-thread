@@ -86,18 +86,16 @@
 #define RT_USING_PIN
 /* RT_USING_MTD_NOR is not set */
 /* RT_USING_MTD_NAND is not set */
-/* RT_USING_RTC is not set */
+#define RT_USING_RTC
 /* RT_USING_SDIO is not set */
 /* RT_USING_SPI is not set */
 /* RT_USING_WDT is not set */
+/* RT_USING_WIFI is not set */
 
 /* Using USB */
 
 /* RT_USING_USB_HOST is not set */
 /* RT_USING_USB_DEVICE is not set */
-/* _RT_USB_DEVICE_CDC is not set */
-/* _RT_USB_DEVICE_MSTORAGE is not set */
-/* _RT_USB_DEVICE_HID is not set */
 
 /* POSIX layer and C standard library */
 
