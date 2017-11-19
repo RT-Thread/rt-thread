@@ -28,6 +28,9 @@ if GetDepend(['RT_USING_WDT']):
 if GetDepend(['RT_USING_USB_DEVICE']):
     src += ['drv_usb.c']
 
+if GetDepend(['RT_USING_RTC']):
+    src += ['drv_rtc.c']
+
 CPPPATH = [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)

@@ -75,7 +75,9 @@
 #define HAL_PWR_MODULE_ENABLED
 #define HAL_RCC_MODULE_ENABLED
 /* #define HAL_RNG_MODULE_ENABLED      */   
-/* #define HAL_RTC_MODULE_ENABLED      */
+#ifdef RT_USING_RTC
+	#define HAL_RTC_MODULE_ENABLED
+#endif
 /* #define HAL_SAI_MODULE_ENABLED      */   
 /* #define HAL_SD_MODULE_ENABLED       */
 #ifdef RT_USING_SPI
