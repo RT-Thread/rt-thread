@@ -43,12 +43,12 @@
 #ifdef __GNUC__
 void mmu_setttbase(register rt_uint32_t i)
 {
-	asm ("mcr p15, 0, %0, c2, c0, 0": :"r" (i));
+	asm volatile ("mcr p15, 0, %0, c2, c0, 0": :"r" (i));
 }
 
 void mmu_set_domain(register rt_uint32_t i)
 {
-	asm ("mcr p15,0, %0, c3, c0,  0": :"r" (i));
+	asm volatile ("mcr p15,0, %0, c3, c0,  0": :"r" (i));
 }
 
 void mmu_enable()
@@ -56,12 +56,12 @@ void mmu_enable()
 	register rt_uint32_t i;
 
 	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+	asm volatile ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
 
 	i |= 0x1;
 
 	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+	asm volatile ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
 void mmu_disable()
@@ -69,12 +69,12 @@ void mmu_disable()
 	register rt_uint32_t i;
 
 	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+	asm volatile ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
 
 	i &= ~0x1;
 
 	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+	asm volatile ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
 void mmu_enable_icache()
@@ -82,12 +82,12 @@ void mmu_enable_icache()
 	register rt_uint32_t i;
 
 	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+	asm volatile ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
 
 	i |= (1 << 12);
 
 	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+	asm volatile ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
 void mmu_enable_dcache()
@@ -95,12 +95,12 @@ void mmu_enable_dcache()
 	register rt_uint32_t i;
 
 	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+	asm volatile ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
 
 	i |= (1 << 2);
 
 	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+	asm volatile ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
 void mmu_disable_icache()
@@ -108,12 +108,12 @@ void mmu_disable_icache()
 	register rt_uint32_t i;
 
 	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+	asm volatile ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
 
 	i &= ~(1 << 12);
 
 	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+	asm volatile ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
 void mmu_disable_dcache()
@@ -121,12 +121,12 @@ void mmu_disable_dcache()
 	register rt_uint32_t i;
 
 	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+	asm volatile ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
 
 	i &= ~(1 << 2);
 
 	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+	asm volatile ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
 void mmu_enable_alignfault()
@@ -134,12 +134,12 @@ void mmu_enable_alignfault()
 	register rt_uint32_t i;
 
 	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+	asm volatile ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
 
 	i |= (1 << 1);
 
 	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+	asm volatile ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
 void mmu_disable_alignfault()
@@ -147,27 +147,27 @@ void mmu_disable_alignfault()
 	register rt_uint32_t i;
 
 	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+	asm volatile ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
 
 	i &= ~(1 << 1);
 
 	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+	asm volatile ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
 void mmu_clean_invalidated_cache_index(int index)
 {
-	asm ("mcr p15, 0, %0, c7, c14, 2": :"r" (index));
+	asm volatile ("mcr p15, 0, %0, c7, c14, 2": :"r" (index));
 }
 
 void mmu_invalidate_tlb()
 {
-	asm ("mcr p15, 0, %0, c8, c7, 0": :"r" (0));
+	asm volatile ("mcr p15, 0, %0, c8, c7, 0": :"r" (0));
 }
 
 void mmu_invalidate_icache()
 {
-	asm ("mcr p15, 0, %0, c7, c5, 0": :"r" (0));
+	asm volatile ("mcr p15, 0, %0, c7, c5, 0": :"r" (0));
 }
 #endif
 
