@@ -132,6 +132,10 @@ menu "Using USB"
                     config _RT_USB_DEVICE_HID
                         bool "Enable to use device as HID device"
                         select RT_USB_DEVICE_HID
+                    config _RT_USB_DEVICE_ECM
+                        bool "Enable to use device as ecm device"
+                        select RT_USB_DEVICE_ECM
+                        depends on RT_USING_LWIP
                 endchoice
                 if RT_USB_DEVICE_COMPOSITE
                     config RT_USB_DEVICE_CDC
@@ -143,6 +147,10 @@ menu "Using USB"
                     config RT_USB_DEVICE_HID
                         bool "Enable to use device as HID device"
                         default n
+                    config RT_USB_DEVICE_ECM
+                        bool "Enable to use device as ecm device"
+                        default n
+                        depends on RT_USING_LWIP
                 endif
 
                 if RT_USB_DEVICE_HID
