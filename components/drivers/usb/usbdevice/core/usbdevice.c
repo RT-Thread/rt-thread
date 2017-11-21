@@ -132,6 +132,17 @@ rt_err_t rt_usb_device_init(void)
     }
 #endif
 
+#ifdef RT_USB_DEVICE_ECM
+    {
+        extern ufunction_t rt_usbd_function_ecm_create(udevice_t device);
+        /* create a rndis function object */
+        func = rt_usbd_function_ecm_create(udevice);
+
+        /* add the function to the configuration */
+        rt_usbd_config_add_function(cfg, func);
+    }
+#endif
+
     /* set device descriptor to the device */
 #ifdef RT_USB_DEVICE_COMPOSITE
     rt_usbd_device_set_descriptor(udevice, &compsit_desc);
