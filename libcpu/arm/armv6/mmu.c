@@ -34,13 +34,13 @@ void mmu_setttbase(rt_uint32_t i)
 	 * set by page table entry
 	 */
 	value = 0;
-	__asm
+	__asm volatile
 	{
 		mcr p15, 0, value, c8, c7, 0
 	}
 
 	value = 0x55555555;
-	__asm
+	__asm volatile
 	{
 		mcr p15, 0, value, c3, c0, 0
 			mcr p15, 0, i, c2, c0, 0
@@ -49,7 +49,7 @@ void mmu_setttbase(rt_uint32_t i)
 
 void mmu_set_domain(rt_uint32_t i)
 {
-	__asm
+	__asm volatile
 	{
 		mcr p15,0, i, c3, c0,  0
 	}
@@ -59,7 +59,7 @@ void mmu_enable()
 {
 	register rt_uint32_t value;
 
-	__asm
+	__asm volatile
 	{
 		mrc p15, 0, value, c1, c0, 0
 			orr value, value, #0x01
@@ -71,7 +71,7 @@ void mmu_disable()
 {
 	register rt_uint32_t value;
 
-	__asm
+	__asm volatile
 	{
 		mrc p15, 0, value, c1, c0, 0
 			bic value, value, #0x01
@@ -83,7 +83,7 @@ void mmu_enable_icache()
 {
 	register rt_uint32_t value;
 
-	__asm
+	__asm volatile
 	{
 		mrc p15, 0, value, c1, c0, 0
 			orr value, value, #0x1000
@@ -95,7 +95,7 @@ void mmu_enable_dcache()
 {
 	register rt_uint32_t value;
 
-	__asm
+	__asm volatile
 	{
 		mrc p15, 0, value, c1, c0, 0
 			orr value, value, #0x04
@@ -107,7 +107,7 @@ void mmu_disable_icache()
 {
 	register rt_uint32_t value;
 
-	__asm
+	__asm volatile
 	{
 		mrc p15, 0, value, c1, c0, 0
 			bic value, value, #0x1000
@@ -119,7 +119,7 @@ void mmu_disable_dcache()
 {
 	register rt_uint32_t value;
 
-	__asm
+	__asm volatile
 	{
 		mrc p15, 0, value, c1, c0, 0
 			bic value, value, #0x04
@@ -131,7 +131,7 @@ void mmu_enable_alignfault()
 {
 	register rt_uint32_t value;
 
-	__asm
+	__asm volatile
 	{
 		mrc p15, 0, value, c1, c0, 0
 			orr value, value, #0x02
@@ -143,7 +143,7 @@ void mmu_disable_alignfault()
 {
 	register rt_uint32_t value;
 
-	__asm
+	__asm volatile
 	{
 		mrc p15, 0, value, c1, c0, 0
 			bic value, value, #0x02
@@ -153,7 +153,7 @@ void mmu_disable_alignfault()
 
 void mmu_clean_invalidated_cache_index(int index)
 {
-	__asm
+	__asm volatile
 	{
 		mcr p15, 0, index, c7, c14, 2
 	}
@@ -167,7 +167,7 @@ void mmu_clean_invalidated_dcache(rt_uint32_t buffer, rt_uint32_t size)
 
 	while(ptr < buffer + size)
 	{
-		__asm
+		__asm volatile
 		{
 			MCR p15, 0, ptr, c7, c14, 1
 		}
@@ -183,7 +183,7 @@ void mmu_clean_dcache(rt_uint32_t buffer, rt_uint32_t size)
 
 	while (ptr < buffer + size)
 	{
-		__asm
+		__asm volatile
 		{
 			MCR p15, 0, ptr, c7, c10, 1
 		}
@@ -199,7 +199,7 @@ void mmu_invalidate_dcache(rt_uint32_t buffer, rt_uint32_t size)
 
 	while (ptr < buffer + size)
 	{
-		__asm
+		__asm volatile
 		{
 			MCR p15, 0, ptr, c7, c6, 1
 		}
@@ -212,7 +212,7 @@ void mmu_invalidate_tlb()
 	register rt_uint32_t value;
 
 	value = 0;
-	__asm
+	__asm volatile
 	{
 		mcr p15, 0, value, c8, c7, 0
 	}
@@ -224,7 +224,7 @@ void mmu_invalidate_icache()
 
 	value = 0;
 
-	__asm
+	__asm volatile
 	{
 		mcr p15, 0, value, c7, c5, 0
 	}
@@ -237,7 +237,7 @@ void mmu_invalidate_dcache_all()
 
 	value = 0;
 
-	__asm
+	__asm volatile
 	{
 		mcr p15, 0, value, c7, c6, 0
 	}
