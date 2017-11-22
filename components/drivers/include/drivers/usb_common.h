@@ -125,6 +125,10 @@ extern "C" {
 #define USB_STRING_SERIAL_INDEX         0x03
 #define USB_STRING_CONFIG_INDEX         0x04
 #define USB_STRING_INTERFACE_INDEX      0x05
+#define USB_STRING_OS_INDEX             0x06
+#define USB_STRING_MAX                  USB_STRING_OS_INDEX
+
+#define USB_STRING_OS                   "MSFT100A"
 
 #define USB_PID_OUT                     0x01
 #define USB_PID_ACK                     0x02
@@ -389,6 +393,34 @@ struct usb_qualifier_descriptor
     rt_uint8_t  bNumConfigurations;
     rt_uint8_t  bRESERVED;
 } __attribute__ ((packed));
+
+struct usb_os_header_comp_id_descriptor
+{
+    rt_uint32_t dwLength;
+    rt_uint16_t bcdVersion;
+    rt_uint16_t wIndex;
+    rt_uint8_t  bCount;
+    rt_uint8_t  reserved[7];
+};
+typedef struct usb_os_header_comp_id_descriptor * usb_os_header_desc_t;
+
+struct usb_os_function_comp_id_descriptor
+{
+    rt_list_t list;
+    rt_uint8_t bFirstInterfaceNumber;
+    rt_uint8_t reserved1;
+    rt_uint8_t compatibleID[8];
+    rt_uint8_t subCompatibleID[8];
+    rt_uint8_t reserved2[6];
+};
+typedef struct usb_os_function_comp_id_descriptor * usb_os_func_comp_id_desc_t;
+
+struct usb_os_comp_id_descriptor
+{
+    struct usb_os_header_comp_id_descriptor head_desc;
+    rt_list_t func_desc;
+};
+typedef struct usb_os_comp_id_descriptor * usb_os_comp_id_desc_t;
 
 #ifndef HID_SUB_DESCRIPTOR_MAX
 #define  HID_SUB_DESCRIPTOR_MAX        1

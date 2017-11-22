@@ -247,7 +247,7 @@ const static struct uhid_comm_descriptor _hid_comm_desc =
     USB_DESC_LENGTH_IAD,
     USB_DESC_TYPE_IAD,
     USB_DYNAMIC,
-    0x02,
+    0x01,
     0x03,                       /* bInterfaceClass: HID */
 #if defined(RT_USB_DEVICE_HID_KEYBOARD)||defined(RT_USB_DEVICE_HID_MOUSE)
     USB_HID_SUBCLASS_BOOT,    /* bInterfaceSubClass : 1=BOOT, 0=no boot */

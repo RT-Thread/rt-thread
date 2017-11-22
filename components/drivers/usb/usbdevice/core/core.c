@@ -118,13 +118,18 @@ static rt_err_t _get_string_descriptor(struct udevice* device, ureq_t setup)
     str_desc.type = USB_DESC_TYPE_STRING;
     index = setup->wValue & 0xFF;
 
-    if(index > USB_STRING_INTERFACE_INDEX)
+    if(index == 0xEE)
+    {
+        index = USB_STRING_OS_INDEX;
+    }
+
+    if(index > USB_STRING_MAX)
     {
         rt_kprintf("unknown string index\n");
         rt_usbd_ep0_set_stall(device);
         return -RT_ERROR;
     }
-    if(index == 0)
+    else if(index == USB_STRING_LANGID_INDEX)
     {
         str_desc.bLength = 4;
         str_desc.String[0] = 0x09;
@@ -659,7 +664,52 @@ static rt_err_t _function_request(udevice_t device, ureq_t setup)
 
     return RT_EOK;
 }
+static rt_err_t _vendor_request(udevice_t device, ureq_t setup)
+{
+    static rt_uint8_t * usb_comp_id_desc = RT_NULL;
+    static rt_uint32_t  usb_comp_id_desc_size = 0;
+    usb_os_func_comp_id_desc_t func_comp_id_desc;
+    switch(setup->bRequest)
+    {
+        case 'A':
+        switch(setup->wIndex)
+        {
+            case 0x04:
+                if(rt_list_len(&device->os_comp_id_desc->func_desc) == 0)
+                {
+                    rt_usbd_ep0_set_stall(device);
+                    return RT_EOK;
+                }
+                if(usb_comp_id_desc == RT_NULL)
+                {
+                    rt_uint8_t * pusb_comp_id_desc;
+                    rt_list_t *p;
+                    usb_comp_id_desc_size = sizeof(struct usb_os_header_comp_id_descriptor) + 
+                    (sizeof(struct usb_os_function_comp_id_descriptor)-sizeof(rt_list_t))*rt_list_len(&device->os_comp_id_desc->func_desc);
 
+                    usb_comp_id_desc = (rt_uint8_t *)rt_malloc(usb_comp_id_desc_size);
+                    RT_ASSERT(usb_comp_id_desc != RT_NULL);
+                    device->os_comp_id_desc->head_desc.dwLength = usb_comp_id_desc_size;
+                    pusb_comp_id_desc = usb_comp_id_desc;
+                    rt_memcpy((void *)pusb_comp_id_desc,(void *)&device->os_comp_id_desc->head_desc,sizeof(struct usb_os_header_comp_id_descriptor));
+                    pusb_comp_id_desc += sizeof(struct usb_os_header_comp_id_descriptor);
+                    
+                    for (p = device->os_comp_id_desc->func_desc.next; p != &device->os_comp_id_desc->func_desc; p = p->next)
+                    {
+                        func_comp_id_desc = rt_list_entry(p,struct usb_os_function_comp_id_descriptor,list);
+                        rt_memcpy(pusb_comp_id_desc,(void *)&func_comp_id_desc->bFirstInterfaceNumber,
+                        sizeof(struct usb_os_function_comp_id_descriptor)-sizeof(rt_list_t));
+                        pusb_comp_id_desc += sizeof(struct usb_os_function_comp_id_descriptor)-sizeof(rt_list_t);
+                    }
+                }
+                rt_usbd_ep0_write(device, (void*)usb_comp_id_desc, setup->wLength);
+            break;
+        }
+            
+        break;
+    }
+    return RT_EOK;
+}
 static rt_err_t _dump_setup_packet(ureq_t setup)
 {
     RT_DEBUG_LOG(RT_DEBUG_USB, ("[\n"));
@@ -699,7 +749,7 @@ static rt_err_t _setup_request(udevice_t device, ureq_t setup)
         _function_request(device, setup);
         break;
     case USB_REQ_TYPE_VENDOR:
-        rt_kprintf("vendor type request\n");
+        _vendor_request(device, setup);
         break;
     default:
         rt_kprintf("unknown setup request type\n");
@@ -961,6 +1011,18 @@ rt_err_t rt_usbd_device_set_string(udevice_t device, const char** ustring)
     /* set string descriptor array to the device object */
     device->str = ustring;
 
+    return RT_EOK;
+}
+
+rt_err_t rt_usbd_device_set_os_comp_id_desc(udevice_t device, usb_os_comp_id_desc_t os_comp_id_desc)
+{
+    /* parameter check */
+    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(os_comp_id_desc != RT_NULL);
+
+    /* set string descriptor array to the device object */
+    device->os_comp_id_desc = os_comp_id_desc;
+    rt_list_init(&device->os_comp_id_desc->func_desc);
     return RT_EOK;
 }
 
@@ -1545,6 +1607,15 @@ rt_err_t rt_usbd_altsetting_add_endpoint(ualtsetting_t setting, uep_t ep)
     /* insert the endpoint to the list */
     rt_list_insert_before(&setting->ep_list, &ep->list);
 
+    return RT_EOK;
+}
+
+rt_err_t rt_usbd_os_comp_id_desc_add_os_func_comp_id_desc(usb_os_comp_id_desc_t os_comp_id_desc, usb_os_func_comp_id_desc_t os_func_comp_id_desc)
+{
+    RT_ASSERT(os_comp_id_desc != RT_NULL);
+    RT_ASSERT(os_func_comp_id_desc != RT_NULL);
+    rt_list_insert_before(&os_comp_id_desc->func_desc, &os_func_comp_id_desc->list);
+    os_comp_id_desc->head_desc.bCount++;
     return RT_EOK;
 }
 
