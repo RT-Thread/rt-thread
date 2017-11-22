@@ -20,6 +20,12 @@ config $PKGS_DIR
 
 source "$RTT_DIR/KConfig"
 source "$PKGS_DIR/KConfig"
+
+config SOC_LPC54608
+    bool 
+    select ARCH_ARM_CORTEX_M4
+    default y
+
 source "$BSP_DIR/drivers/Kconfig"
 
 
