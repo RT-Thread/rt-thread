@@ -136,6 +136,9 @@ menu "Using USB"
                         bool "Enable to use device as ecm device"
                         select RT_USB_DEVICE_ECM
                         depends on RT_USING_LWIP
+                    config _RT_USB_DEVICE_WINUSB
+                        bool "Enable to use device as winusb device"
+                        select RT_USB_DEVICE_WINUSB
                 endchoice
                 if RT_USB_DEVICE_COMPOSITE
                     config RT_USB_DEVICE_CDC
@@ -151,6 +154,9 @@ menu "Using USB"
                         bool "Enable to use device as ecm device"
                         default n
                         depends on RT_USING_LWIP
+                    config RT_USB_DEVICE_WINUSB
+                        bool "Enable to use device as winusb device"
+                        default n
                 endif
 
                 if RT_USB_DEVICE_HID

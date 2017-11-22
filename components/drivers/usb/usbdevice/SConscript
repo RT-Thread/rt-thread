@@ -19,6 +19,9 @@ if GetDepend('RT_USB_DEVICE_MSTORAGE'):
 if GetDepend('RT_USB_DEVICE_ECM'):
 	src += Glob('class/ecm.c')
 
+if GetDepend('RT_USB_DEVICE_WINUSB'):
+	src += Glob('class/winusb.c')
+
 CPPPATH = [cwd]
 
 group = DefineGroup('rt_usbd', src, depend = ['RT_USING_USB_DEVICE'], CPPPATH = CPPPATH)
