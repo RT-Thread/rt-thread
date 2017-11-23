@@ -25,8 +25,10 @@ static struct ep_id _ep_pool[] =
     {0x0,  USB_EP_ATTR_CONTROL,     USB_DIR_INOUT,  64, ID_ASSIGNED  },
     {0x1,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
     {0x1,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
-    {0x2,  USB_EP_ATTR_INT,         USB_DIR_OUT,    64, ID_UNASSIGNED},
     {0x2,  USB_EP_ATTR_INT,         USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x2,  USB_EP_ATTR_INT,         USB_DIR_OUT,    64, ID_UNASSIGNED},
+    {0x3,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x3,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
     {0xFF, USB_EP_ATTR_TYPE_MASK,   USB_DIR_MASK,   0,  ID_ASSIGNED  },
 };
 
@@ -74,7 +76,7 @@ void HAL_PCD_ConnectCallback(PCD_HandleTypeDef *hpcd)
 
 void HAL_PCD_SOFCallback(PCD_HandleTypeDef *hpcd)
 {
-//  rt_usbd_sof_handler(&_stm_udc);
+    rt_usbd_sof_handler(&_stm_udc);
 }
 
 void HAL_PCD_DisconnectCallback(PCD_HandleTypeDef *hpcd)
@@ -233,7 +235,7 @@ static rt_err_t _init(rt_device_t device)
     pcd = (PCD_HandleTypeDef*)device->user_data;
 
     pcd->Instance = USB_OTG_FS;
-    pcd->Init.dev_endpoints = 8;
+    pcd->Init.dev_endpoints = 4;
     pcd->Init.speed = PCD_SPEED_FULL;
     pcd->Init.dma_enable = DISABLE;
     pcd->Init.ep0_mps = DEP0CTL_MPS_64;
@@ -249,7 +251,9 @@ static rt_err_t _init(rt_device_t device)
 
     HAL_PCDEx_SetRxFiFo(pcd, 0x80);
     HAL_PCDEx_SetTxFiFo(pcd, 0, 0x40);
-    HAL_PCDEx_SetTxFiFo(pcd, 1, 0x80);
+    HAL_PCDEx_SetTxFiFo(pcd, 1, 0x40);
+    HAL_PCDEx_SetTxFiFo(pcd, 2, 0x40);
+    HAL_PCDEx_SetTxFiFo(pcd, 3, 0x40);
     HAL_PCD_Start(pcd);
 
     return RT_EOK;
