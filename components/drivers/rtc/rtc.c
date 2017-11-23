@@ -182,3 +182,134 @@ FINSH_FUNCTION_EXPORT(list_date, show date and time.)
 FINSH_FUNCTION_EXPORT(set_date, set date. e.g: set_date(2010,2,28))
 FINSH_FUNCTION_EXPORT(set_time, set time. e.g: set_time(23,59,59))
 #endif
+#ifdef FINSH_USING_MSH
+#include <finsh.h>
+static int setrtc(int argc, char **argv)
+{
+    if(rt_strcmp("--help",argv[1]) == 0 || rt_strcmp("-help",argv[1]) == 0 
+        || rt_strcmp("--h",argv[1]) == 0 || rt_strcmp("-h",argv[1]) == 0)
+    {
+        rt_kprintf("Using \"setrtc --help(-help,--h,-h,-?)\" to get help\n");
+        rt_kprintf("Using \"setrtc [--date(-data,--d,-d) y m d] [--time(-time,--t,-t) h m s]\" to set time or date\n");
+    }
+    else if(argc<5)
+    {
+        rt_kprintf("Error args\n");
+        return -1;
+    }
+    else if(rt_strcmp("--time",argv[1]) == 0 || rt_strcmp("-time",argv[1]) == 0 
+            || rt_strcmp("--t",argv[1]) == 0 || rt_strcmp("-t",argv[1]) == 0 || rt_strcmp("-?",argv[1]) == 0)
+    {
+        if(atoi(argv[2])>23 || atoi(argv[2])<0)
+        {
+            rt_kprintf("Hours is error args:%s\n",argv[2]);
+            return -1;
+        }
+        if(atoi(argv[3])>59 || atoi(argv[3])<0)
+        {
+            rt_kprintf("Minutes is error args:%s\n",argv[2]);
+            return -1;
+        }
+        if(atoi(argv[4])>59 || atoi(argv[4])<0)
+        {
+            rt_kprintf("Seconds is error args:%s\n",argv[2]);
+            return -1;
+        }
+        set_time(atoi(argv[2]),atoi(argv[3]),atoi(argv[4]));
+        if(argc > 5)
+        {
+            if(argc < 9)
+            {
+                rt_kprintf("Error args\n");
+                return -1;
+            }
+            if(rt_strcmp("--date",argv[5]) == 0 || rt_strcmp("-date",argv[5]) == 0 
+                || rt_strcmp("--d",argv[5]) == 0 || rt_strcmp("-d",argv[5]) == 0)
+            {
+                if(atoi(argv[6])>2099 || atoi(argv[6])<2000)
+                {
+                    rt_kprintf("Years is error args:%s\n",argv[6]);
+                    return -1;
+                }
+                if(atoi(argv[7])>12 || atoi(argv[7])<1)
+                {
+                    rt_kprintf("Months is error args:%s\n",argv[7]);
+                    return -1;
+                }
+                if(atoi(argv[8])>31 || atoi(argv[8])<1)
+                {
+                    rt_kprintf("Days is error args:%s\n",argv[8]);
+                    return -1;
+                }
+                set_date(atoi(argv[6]),atoi(argv[7]),atoi(argv[8]));
+            }
+        }
+    }
+    else if(rt_strcmp("--date",argv[1]) == 0 || rt_strcmp("-date",argv[1]) == 0 
+            || rt_strcmp("--d",argv[1]) == 0 || rt_strcmp("-d",argv[1]) == 0)
+    {
+        if(atoi(argv[2])>2099 || atoi(argv[2])<2000)
+        {
+            rt_kprintf("Years is error args:%s\n",argv[2]);
+            return -1;
+        }
+        if(atoi(argv[3])>12 || atoi(argv[3])<1)
+        {
+            rt_kprintf("Months is error args:%s\n",argv[2]);
+            return -1;
+        }
+        if(atoi(argv[4])>31 || atoi(argv[4])<1)
+        {
+            rt_kprintf("Days is error args:%s\n",argv[2]);
+            return -1;
+        }
+        set_date(atoi(argv[2]),atoi(argv[3]),atoi(argv[4]));
+        if(argc > 5)
+        {
+            if(argc < 9)
+            {
+                rt_kprintf("Error args\n");
+                return -1;
+            }
+            if(rt_strcmp("--time",argv[5]) == 0 || rt_strcmp("-time",argv[5]) == 0 
+                || rt_strcmp("--t",argv[5]) == 0 || rt_strcmp("-t",argv[5]) == 0)
+            {
+                if(atoi(argv[6])>23 || atoi(argv[6])<0)
+                {
+                    rt_kprintf("Hours is error args:%s\n",argv[6]);
+                    return -1;
+                }
+                if(atoi(argv[7])>59 || atoi(argv[7])<0)
+                {
+                    rt_kprintf("Minutes is error args:%s\n",argv[7]);
+                    return -1;
+                }
+                if(atoi(argv[8])>59 || atoi(argv[8])<0)
+                {
+                    rt_kprintf("Seconds is error args:%s\n",argv[8]);
+                    return -1;
+                }
+                set_time(atoi(argv[6]),atoi(argv[7]),atoi(argv[8]));
+            }
+        }
+    }
+    else
+    {
+        rt_kprintf("Error args\n");
+        rt_kprintf("Using \"setrtc --help(-help,--h,-h,-?)\" to get help\n");
+        return -1;
+    }
+    return 0;
+}
+MSH_CMD_EXPORT(setrtc, set rtc. e.g: setrtc -h);
+
+static int getrtc(void)
+{
+    time_t now;
+
+    now = time(RT_NULL);
+    rt_kprintf("%s\n", ctime(&now));
+    return 0;
+}
+MSH_CMD_EXPORT(getrtc, show time now);
+#endif
