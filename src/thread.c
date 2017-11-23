@@ -185,6 +185,10 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
                   0,
                   RT_TIMER_FLAG_ONE_SHOT);
 
+#ifdef RT_USING_MODULE
+    thread->module_id = RT_NULL;
+#endif
+
     /* initialize signal */
 #ifdef RT_USING_SIGNALS
     thread->sig_mask    = 0x00;
