@@ -33,6 +33,7 @@
 #endif
 
 #ifdef RT_USING_GUIENGINE
+#ifndef RT_USING_PERSIMMON_EXAMPLE
 
 #include <rtgui/rtgui.h>
 #include <rtgui/rtgui_system.h>
@@ -151,4 +152,5 @@ int rt_gui_demo_init(void)
     return 0;
 }
 INIT_APP_EXPORT(rt_gui_demo_init);
+#endif
 #endif /* RT_USING_GUIENGINE */
