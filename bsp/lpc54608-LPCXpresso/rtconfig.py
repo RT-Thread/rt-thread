@@ -16,9 +16,9 @@ elif CROSS_TOOL == 'keil':
     PLATFORM    = 'armcc'
     EXEC_PATH   = 'D:/Keil_v5'
 elif CROSS_TOOL == 'iar':
-    print '================ERROR============================'
-    print 'Not support iar yet!'
-    print '================================================='
+    print('================ERROR============================')
+    print('Not support iar yet!')
+    print('=================================================')
     exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):
@@ -70,12 +70,11 @@ elif PLATFORM == 'armcc':
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
     LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread_' + \
-        BOARD_NAME + '.map --scatter rtthread-' + BOARD_NAME + '.sct'
+        BOARD_NAME + '.map --scatter LPC54608J512_flash.scf'
 
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
     LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
-    CXXFLAGS = CFLAGS
-
+    
     EXEC_PATH += '/arm/bin40/'
 
     if BUILD == 'debug':
@@ -83,5 +82,8 @@ elif PLATFORM == 'armcc':
         AFLAGS += ' -g'
     else:
         CFLAGS += ' -O2'
-
+        
+    CXXFLAGS = CFLAGS
+    CFLAGS += ' --c99'
+    
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
