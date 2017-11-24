@@ -235,6 +235,9 @@
 #define RT_USING_I2C_BITOPS
 
 
+#define RT_USING_PIN
+
+
 // </RDTConfigurator>
 
 #endif
