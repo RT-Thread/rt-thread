@@ -871,6 +871,10 @@ static rt_err_t _ep0_out_notify(udevice_t device, struct ep_msg* ep_msg)
             ep0->rx_indicate(device, size);
         }        
     }
+    else
+    {
+        rt_usbd_ep0_read(device, ep0->request.buffer, ep0->request.remain_size,ep0->rx_indicate);
+    }
 
     return RT_EOK;
 }
@@ -2054,18 +2058,26 @@ rt_size_t rt_usbd_ep0_read(udevice_t device, void *buffer, rt_size_t size,
     rt_err_t (*rx_ind)(udevice_t device, rt_size_t size))
 {
     uep_t ep0;
+    rt_size_t read_size = 0;
 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->dcd != RT_NULL);
     RT_ASSERT(buffer != RT_NULL);
 
     ep0 = &device->dcd->ep0;
-    ep0->request.size = size;
     ep0->request.buffer = buffer;    
     ep0->request.remain_size = size;
     ep0->rx_indicate = rx_ind;
+    if(size >= ep0->id->maxpacket)
+    {
+        read_size = ep0->id->maxpacket;
+    }
+    else
+    {
+        read_size = size;
+    }
     device->dcd->stage = STAGE_DOUT;
-    dcd_ep_read_prepare(device->dcd, EP0_OUT_ADDR, buffer, size);
+    dcd_ep_read_prepare(device->dcd, EP0_OUT_ADDR, buffer, read_size);
 
     return size;
 }
