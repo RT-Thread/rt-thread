@@ -286,10 +286,20 @@ static rt_err_t lpc_emac_phy_init(phy_speed_t * speed, phy_duplex_t * duplex)
 {
     bool link = false;
     int32_t status;
+    
+    RT_ASSERT(speed != NULL);
+    RT_ASSERT(duplex != NULL);
 
     status = PHY_Init(lpc_emac_device.base, lpc_emac_device.phyAddr, 0);
     if (status != kStatus_Success)
     {
+        /* Half duplex. */
+        *duplex = kPHY_HalfDuplex;
+        /* 10M speed. */
+        *speed = kPHY_Speed10M;
+        
+        eth_device_linkchange(&lpc_emac_device.parent, RT_FALSE);
+        
         ETH_PRINTF("PHY_Init failed!\n");
         return RT_ERROR;
     }
@@ -306,12 +316,11 @@ static rt_err_t lpc_emac_phy_init(phy_speed_t * speed, phy_duplex_t * duplex)
         }
         PHY_GetLinkStatus(lpc_emac_device.base, lpc_emac_device.phyAddr, &link);
     }
-    
-    RT_ASSERT(speed != NULL);
-    RT_ASSERT(duplex != NULL);
-    
+
     PHY_GetLinkSpeedDuplex(lpc_emac_device.base, lpc_emac_device.phyAddr, speed, duplex);
     
+    eth_device_linkchange(&lpc_emac_device.parent, RT_TRUE);
+
     return RT_EOK;
 }
 
@@ -323,13 +332,10 @@ static rt_err_t lpc_emac_init(rt_device_t dev)
     enet_config_t config;
     enet_buffer_config_t buffCfg;
     uint32_t rxBufferStartAddr[ENET_RXBD_NUM];
-        
+
     lcp_emac_io_init();
-    
-    if (lpc_emac_phy_init(&speed, &duplex) != RT_EOK)
-    {
-        return RT_ERROR;
-    }
+
+    lpc_emac_phy_init(&speed, &duplex);
 
     /* calculate start addresses of all rx buffers */
     for (i = 0; i < ENET_RXBD_NUM; i++)
@@ -376,8 +382,6 @@ static rt_err_t lpc_emac_init(rt_device_t dev)
     
     /* Active TX/RX. */
     ENET_StartRxTx(lpc_emac_device.base, 1, 1);
-    
-    eth_device_linkchange(&lpc_emac_device.parent, RT_TRUE);
 
     return RT_EOK;
 }
@@ -455,16 +459,10 @@ rt_err_t lpc_emac_tx(rt_device_t dev, struct pbuf *p)
     lpc_emac_device.txIdx = (lpc_emac_device.txIdx + 1) / ENET_TXBD_NUM;
     
     result = ENET_SendFrame(enet_base, enet_handle, data, p->len);
-    
-    RT_ASSERT(result != kStatus_ENET_TxFrameBusy);
-    
-    if ((result == kStatus_ENET_TxFrameFail) || (result == kStatus_ENET_TxFrameOverLen))
+        
+    if ((result == kStatus_ENET_TxFrameFail) || (result == kStatus_ENET_TxFrameOverLen) || (result == kStatus_ENET_TxFrameBusy))
     {
         return RT_ERROR; 
-    }
-    else if (result == kStatus_ENET_TxFrameBusy)
-    {
-        RT_ASSERT(NULL);
     }
 
     return RT_EOK;
