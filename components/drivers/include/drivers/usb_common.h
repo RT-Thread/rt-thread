@@ -422,6 +422,53 @@ struct usb_os_comp_id_descriptor
 };
 typedef struct usb_os_comp_id_descriptor * usb_os_comp_id_desc_t;
 
+struct usb_os_property_header
+{
+    rt_uint32_t dwLength;
+    rt_uint16_t bcdVersion;
+    rt_uint16_t wIndex;
+    rt_uint16_t wCount;
+};
+typedef struct usb_os_property_header * usb_os_property_header_t;
+struct usb_os_proerty
+{
+    rt_uint32_t dwSize;
+    rt_uint32_t dwPropertyDataType;
+    rt_uint16_t wPropertyNameLength;
+    const char * bPropertyName;
+    rt_uint32_t dwPropertyDataLength;
+    const char * bPropertyData;
+};
+typedef struct usb_os_proerty * usb_os_proerty_t;
+
+// Value	Description
+//  1	    A NULL-terminated Unicode String (REG_SZ)
+//  2	    A NULL-terminated Unicode String that includes environment variables (REG_EXPAND_SZ)
+//  3	    Free-form binary (REG_BINARY)
+//  4	    A little-endian 32-bit integer (REG_DWORD_LITTLE_ENDIAN)
+//  5	    A big-endian 32-bit integer (REG_DWORD_BIG_ENDIAN)
+//  6	    A NULL-terminated Unicode string that contains a symbolic link (REG_LINK)
+//  7	    Multiple NULL-terminated Unicode strings (REG_MULTI_SZ)
+#define USB_OS_PROERTY_TYPE_REG_SZ                      0x01UL
+#define USB_OS_PROERTY_TYPE_REG_EXPAND_SZ               0x02UL
+#define USB_OS_PROERTY_TYPE_REG_BINARY                  0x03UL
+#define USB_OS_PROERTY_TYPE_REG_DWORD_LITTLE_ENDIAN     0x04UL
+#define USB_OS_PROERTY_TYPE_REG_DWORD_BIG_ENDIAN        0x05UL
+#define USB_OS_PROERTY_TYPE_REG_LINK                    0x06UL
+#define USB_OS_PROERTY_TYPE_REG_MULTI_SZ                0x07UL
+
+#define USB_OS_PROERTY_DESC(PropertyDataType,PropertyName,PropertyData) \
+{\
+    .dwSize                 = sizeof(struct usb_os_proerty)-sizeof(const char *)*2\
+                            +sizeof(PropertyName)*2+sizeof(PropertyData)*2,\
+    .dwPropertyDataType     = PropertyDataType,\
+    .wPropertyNameLength    = sizeof(PropertyName)*2,\
+    .bPropertyName          = PropertyName,\
+    .dwPropertyDataLength   = sizeof(PropertyData)*2,\
+    .bPropertyData          = PropertyData\
+}
+
+
 #ifndef HID_SUB_DESCRIPTOR_MAX
 #define  HID_SUB_DESCRIPTOR_MAX        1
 #endif

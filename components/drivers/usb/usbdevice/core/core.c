@@ -669,6 +669,8 @@ static rt_err_t _vendor_request(udevice_t device, ureq_t setup)
     static rt_uint8_t * usb_comp_id_desc = RT_NULL;
     static rt_uint32_t  usb_comp_id_desc_size = 0;
     usb_os_func_comp_id_desc_t func_comp_id_desc;
+    uintf_t intf;
+    ufunction_t func;
     switch(setup->bRequest)
     {
         case 'A':
@@ -704,6 +706,13 @@ static rt_err_t _vendor_request(udevice_t device, ureq_t setup)
                 }
                 rt_usbd_ep0_write(device, (void*)usb_comp_id_desc, setup->wLength);
             break;
+            case 0x05:
+                intf = rt_usbd_find_interface(device, setup->wValue & 0xFF, &func);
+                if(intf != RT_NULL)
+                {
+                    intf->handler(func, setup);
+                }
+                break;
         }
             
         break;
