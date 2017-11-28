@@ -435,7 +435,7 @@ rt_inline void usbd_os_proerty_descriptor_send(ufunction_t func, ureq_t setup, u
         {
             rt_memcpy((void *)pdata,(void *)&usb_os_proerty[index],10);
             pdata += 10;
-            for(i = 0;i < usb_os_proerty[index].wPropertyNameLength;i++)
+            for(i = 0;i < usb_os_proerty[index].wPropertyNameLength/2;i++)
             {
                 *pdata = usb_os_proerty[index].bPropertyName[i];
                 pdata++;
@@ -444,7 +444,7 @@ rt_inline void usbd_os_proerty_descriptor_send(ufunction_t func, ureq_t setup, u
             }
             *((rt_uint32_t *)pdata) = usb_os_proerty[index].dwPropertyDataLength;
             pdata += 4;
-            for(i = 0;i < usb_os_proerty[index].dwPropertyDataLength;i++)
+            for(i = 0;i < usb_os_proerty[index].dwPropertyDataLength/2;i++)
             {
                 *pdata = usb_os_proerty[index].bPropertyData[i];
                 pdata++;
