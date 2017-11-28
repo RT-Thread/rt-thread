@@ -20,18 +20,4 @@ struct winusb_descriptor
 };
 typedef struct winusb_descriptor* winusb_desc_t;
 
-
-struct winusb_os_header_properties_descriptor
-{
-    rt_uint32_t dwLength;
-    rt_uint16_t bcdVersion;
-    rt_uint16_t wIndex;
-    rt_uint16_t bCount;
-};
-typedef struct winusb_os_header_properties_descriptor * winusb_os_header_prop_desc_t;
-
-
-
-
-
 #endif
