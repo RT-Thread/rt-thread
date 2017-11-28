@@ -353,13 +353,13 @@
             <wLevel>0</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
-            <uC99>0</uC99>
+            <uC99>1</uC99>
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls />
               <Define>USE_HAL_DRIVER, RT_USING_ARM_LIBC, STM32F429xx</Define>
               <Undefine />
-              <IncludePath>applications;.;drivers;Libraries\STM32F4xx_HAL_Driver\Inc;Libraries\CMSIS\Device\ST\STM32F4xx\Include;Libraries\CMSIS\Include;..\..\include;..\..\libcpu\arm\cortex-m4;..\..\libcpu\arm\common;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\dfs\filesystems\elmfat;..\..\components\dfs\filesystems\net;..\..\components\dfs\filesystems\net\socket;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\armlibc;..\..\components\net\lwip-2.0.2\src;..\..\components\net\lwip-2.0.2\src\include;..\..\components\net\lwip-2.0.2\src\include\ipv4;..\..\components\net\lwip-2.0.2\src\arch\include;..\..\components\net\lwip-2.0.2\src\include\netif</IncludePath>
+              <IncludePath>applications;.;drivers;Libraries\STM32F4xx_HAL_Driver\Inc;Libraries\CMSIS\Device\ST\STM32F4xx\Include;Libraries\CMSIS\Include;..\..\include;..\..\libcpu\arm\cortex-m4;..\..\libcpu\arm\common;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\dfs\filesystems\elmfat;..\..\components\dfs\filesystems\net;..\..\components\dfs\filesystems\net\socket;..\..\components\dfs\filesystems\romfs;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\spi\sfud\inc;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\armlibc;..\..\components\net\lwip-2.0.2\src;..\..\components\net\lwip-2.0.2\src\include;..\..\components\net\lwip-2.0.2\src\include\ipv4;..\..\components\net\lwip-2.0.2\src\arch\include;..\..\components\net\lwip-2.0.2\src\include\netif</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -493,6 +493,20 @@
               <FileName>drv_pcf8574.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_pcf8574.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_spi_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_spi_flash.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1214,6 +1228,20 @@
               <FilePath>..\..\components\dfs\filesystems\net\net_sockets.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>dfs_romfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\filesystems\romfs\dfs_romfs.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>romfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\filesystems\romfs\romfs.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
@@ -1257,6 +1285,41 @@
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\serial\serial.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>spi_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\spi\spi_core.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>spi_dev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\spi\spi_dev.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>spi_flash_sfud.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\spi\spi_flash_sfud.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>sfud.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\spi\sfud\src\sfud.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>sfud_sfdp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\spi\sfud\src\sfud_sfdp.c</FilePath>
             </File>
           </Files>
           <Files>

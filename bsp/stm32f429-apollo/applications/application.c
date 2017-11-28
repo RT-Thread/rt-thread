@@ -26,6 +26,8 @@
 /* dfs Filesystem APIs */
 #include <dfs_fs.h>
 #include <dfs_posix.h>
+
+#include <dfs_romfs.h>
 #endif
 
 #ifdef RT_USING_LWIP
@@ -44,8 +46,6 @@
 #include <rtgui/driver.h>
 #endif
 
-//rt_module_t module_ptr;
-#define DATA_PATH "/Data"
 void rt_init_thread_entry(void* parameter)
 {    
      /* initialization RT-Thread Components */
@@ -58,41 +58,68 @@ void rt_init_thread_entry(void* parameter)
     gdb_set_device("uart6");
     gdb_start();
 #endif
-#ifdef RT_USING_DFS  
-    #ifdef RT_USING_DFS_UFFS
-        /* mount nand flash partition 0 as root directory */
-    if (dfs_mount("nand0", "/", "uffs", 0, 0) == 0)
+    
+#ifdef RT_USING_DFS   
+        
+#ifdef RT_USING_DFS_ELMFAT
+    
     {
-        mkdir("/sdcard",0);
-        rt_kprintf("uffs initialized!\n");
+        static const rt_uint8_t _romfs_root_readme_txt[] = {
+            0x52,0x54,0x2d,0x54,0x68,0x72,0x65,0x61,0x64,0x0d,0x0a,0x00
+        };
+
+        static const rt_uint8_t _romfs_root_sdcard_aaa_txt[] = {
+            0x52,0x54,0x2d,0x54,0x68,0x72,0x65,0x61,0x64,0x0d,0x0a,0x00
+        };
+
+        static const struct romfs_dirent _romfs_root_sdcard[] = {
+            {ROMFS_DIRENT_FILE, "aaa.txt", (rt_uint8_t *)_romfs_root_sdcard_aaa_txt, sizeof(_romfs_root_sdcard_aaa_txt)/sizeof(_romfs_root_sdcard_aaa_txt[0])}
+        };
+
+        static const rt_uint8_t _romfs_root_spi_bbb_txt[] = {
+            0x52,0x54,0x2d,0x54,0x68,0x72,0x65,0x61,0x64,0x0d,0x0a,0x00
+        };
+
+        static const struct romfs_dirent _romfs_root_spi[] = {
+            {ROMFS_DIRENT_FILE, "bbb.txt", (rt_uint8_t *)_romfs_root_spi_bbb_txt, sizeof(_romfs_root_spi_bbb_txt)/sizeof(_romfs_root_spi_bbb_txt[0])}
+        };
+
+        static const struct romfs_dirent _romfs_root[] = {
+            {ROMFS_DIRENT_FILE, "readme.txt", (rt_uint8_t *)_romfs_root_readme_txt, sizeof(_romfs_root_readme_txt)/sizeof(_romfs_root_readme_txt[0])},
+            {ROMFS_DIRENT_DIR, "sdcard", (rt_uint8_t *)_romfs_root_sdcard, sizeof(_romfs_root_sdcard)/sizeof(_romfs_root_sdcard[0])},
+            {ROMFS_DIRENT_DIR, "spi", (rt_uint8_t *)_romfs_root_spi, sizeof(_romfs_root_spi)/sizeof(_romfs_root_spi[0])}
+        };
+
+        static const struct romfs_dirent romfs_root = {
+            ROMFS_DIRENT_DIR, "/", (rt_uint8_t *)_romfs_root, sizeof(_romfs_root)/sizeof(_romfs_root[0])
+        };
+
+        if (dfs_mount(RT_NULL, "/", "rom", 0, &(romfs_root)) == 0)
+        {
+            rt_kprintf("ROM file system initializated!\n");
+        }
     }
-    else        
+    
+    /* mount sd card fat partition 0 as root directory */
+    if (dfs_mount("W25Q256", "/spi", "elm", 0, 0) == 0)
     {
-        rt_kprintf("uffs initialzation failed!\n");
+        rt_kprintf("spi flash mount to /spi !\n");
     }
-            
-    #endif /* RT_USING_DFS_UFFS */    
-    #ifdef RT_USING_DFS_ELMFAT
-        /* mount sd card fat partition 0 as root directory */
-        if (dfs_mount("sd0", "/sdcard", "elm", 0, 0) == 0)
-        {
-            rt_kprintf("File System initialized!\n");        
-        }
-        else
-        {
-            rt_kprintf("File System initialzation failed!\n");
-        }
-            
-        /* mount sd card fat partition 0 as root directory */
-        if (dfs_mount("W25Q256", "/spi", "elm", 0, 0) == 0)
-        {
-            rt_kprintf("spi flash mount to /spi !\n");
-        }
-        else
-        {
-            rt_kprintf("spi flash mount to /spi failed!\n");
-        }
-    #endif /* RT_USING_DFS_ELMFAT */
+    else
+    {
+        rt_kprintf("spi flash mount to /spi failed!\n");
+    }
+    
+    /* mount sd card fat partition 0 as root directory */
+    if (dfs_mount("sd0", "/sdcard", "elm", 0, 0) == 0)
+    {
+        rt_kprintf("sd card mount to /sdcard!\n");        
+    }
+    else
+    {
+        rt_kprintf("sd card mount to /sdcard failed!\n");
+    }
+#endif /* RT_USING_DFS_ELMFAT */
         
 #endif /* DFS */
         

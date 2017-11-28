@@ -311,10 +311,13 @@
           <state>$PROJ_DIR$\Libraries\CMSIS\Device\ST\STM32F4xx\Include</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\spi\sfud\inc</state>
           <state>$PROJ_DIR$\..\..\components\dfs\include</state>
           <state>$PROJ_DIR$\..\..\components\dfs\filesystems\devfs</state>
           <state>$PROJ_DIR$\..\..\components\dfs\filesystems\net\socket</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\filesystems\romfs</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\Include</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\spi</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat</state>
@@ -1245,10 +1248,13 @@
           <state>$PROJ_DIR$\Libraries\CMSIS\Device\ST\STM32F4xx\Include</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\spi\sfud\inc</state>
           <state>$PROJ_DIR$\..\..\components\dfs\include</state>
           <state>$PROJ_DIR$\..\..\components\dfs\filesystems\devfs</state>
           <state>$PROJ_DIR$\..\..\components\dfs\filesystems\net\socket</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\filesystems\romfs</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\Include</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\spi</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat</state>
@@ -1912,6 +1918,12 @@
     <file>
       <name>$PROJ_DIR$\drivers\drv_pcf8574.c</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\drv_spi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\drv_spi_flash.c</name>
+    </file>
   </group>
   <group>
     <name>STM32_HAL</name>
@@ -2227,6 +2239,12 @@
     <file>
       <name>$PROJ_DIR$\..\..\components\dfs\filesystems\net\net_sockets.c</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\romfs\dfs_romfs.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\romfs\romfs.c</name>
+    </file>
   </group>
   <group>
     <name>DeviceDrivers</name>
@@ -2247,6 +2265,21 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\serial\serial.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\spi\spi_core.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\spi\spi_dev.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\spi\spi_flash_sfud.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\spi\sfud\src\sfud.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\spi\sfud\src\sfud_sfdp.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\src\completion.c</name>

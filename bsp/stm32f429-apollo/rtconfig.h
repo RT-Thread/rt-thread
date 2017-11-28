@@ -10,6 +10,9 @@
 
 #define RT_NAME_MAX 8
 #define RT_ALIGN_SIZE 4
+/* RT_THREAD_PRIORITY_8 is not set */
+#define RT_THREAD_PRIORITY_32
+/* RT_THREAD_PRIORITY_256 is not set */
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 1000
 #define RT_DEBUG
@@ -33,9 +36,11 @@
 
 #define RT_USING_MEMPOOL
 #define RT_USING_MEMHEAP
-#define RT_USING_HEAP
+/* RT_USING_NOHEAP is not set */
 #define RT_USING_SMALL_MEM
 /* RT_USING_SLAB is not set */
+/* RT_USING_MEMHEAP_AS_HEAP is not set */
+#define RT_USING_HEAP
 
 /* Kernel Device Object */
 
@@ -74,7 +79,8 @@
 
 #define RT_USING_DFS
 #define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 2
+#define DFS_FILESYSTEMS_MAX 4
+#define DFS_FILESYSTEM_TYPES_MAX 4
 #define DFS_FD_MAX 4
 #define RT_USING_DFS_ELMFAT
 
@@ -89,14 +95,14 @@
 #define RT_DFS_ELM_USE_LFN 0
 #define RT_DFS_ELM_MAX_LFN 255
 #define RT_DFS_ELM_DRIVES 2
-#define RT_DFS_ELM_MAX_SECTOR_SIZE 512
+#define RT_DFS_ELM_MAX_SECTOR_SIZE 4096
 /* RT_DFS_ELM_USE_ERASE is not set */
 #define RT_DFS_ELM_REENTRANT
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_NET
 #define HAVE_SYS_SELECT_H
 /* HAVE_SYS_SOCKET_H is not set */
-/* RT_USING_DFS_ROMFS is not set */
+#define RT_USING_DFS_ROMFS
 /* RT_USING_DFS_RAMFS is not set */
 /* RT_USING_DFS_UFFS is not set */
 /* RT_USING_DFS_NFS is not set */
@@ -115,8 +121,20 @@
 /* RT_MTD_NAND_DEBUG is not set */
 #define RT_USING_RTC
 /* RT_USING_SDIO is not set */
-/* RT_USING_SPI is not set */
+#define RT_USING_SPI
+#define RT_USING_SFUD
+#define RT_SFUD_USING_SFDP
+/* RT_SFUD_USING_FLASH_INFO_TABLE is not set */
+/* RT_SFUD_DEBUG is not set */
+/* RT_USING_W25QXX is not set */
+/* RT_USING_GD is not set */
+/* RT_USING_ENC28J60 is not set */
+/* RT_USING_SPI_WIFI is not set */
 /* RT_USING_WDT is not set */
+/* RT_USING_WIFI is not set */
+
+/* Using USB */
+
 /* RT_USING_USB_HOST is not set */
 /* RT_USING_USB_DEVICE is not set */
 
@@ -194,6 +212,7 @@
 
 /* PKG_USING_PARTITION is not set */
 /* PKG_USING_SQLITE is not set */
+/* PKG_USING_RTI is not set */
 
 /* IoT - internet of things */
 
@@ -203,22 +222,19 @@
 /* PKG_USING_WEBTERMINAL is not set */
 /* PKG_USING_CJSON is not set */
 /* PKG_USING_EZXML is not set */
-
-/* Marvell WiFi */
-
-/* PKG_USING_MARVELLWIFI is not set */
+/* PKG_USING_NANOPB is not set */
 
 /* security packages */
 
 /* PKG_USING_MBEDTLS is not set */
+/* PKG_USING_libsodium is not set */
 
 /* language packages */
 
 /* PKG_USING_JERRYSCRIPT is not set */
+/* PKG_USING_MICROPYTHON is not set */
 
 /* multimedia packages */
-
-/* PKG_USING_FASTLZ is not set */
 
 /* tools packages */
 
@@ -227,6 +243,11 @@
 /* PKG_USING_SYSTEMVIEW is not set */
 
 /* miscellaneous packages */
+
+/* PKG_USING_FASTLZ is not set */
+/* PKG_USING_MINILZO is not set */
+
+/* example package: hello */
 
 /* PKG_USING_HELLO is not set */
 #define RT_USING_EXT_SDRAM
