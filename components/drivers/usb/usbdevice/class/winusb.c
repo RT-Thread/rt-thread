@@ -25,7 +25,7 @@ static struct udevice_descriptor dev_desc =
     USB_DESC_LENGTH_DEVICE,     //bLength;
     USB_DESC_TYPE_DEVICE,       //type;
     USB_BCD_VERSION,            //bcdUSB;
-    0x00,           //bDeviceClass;
+    0x00,                       //bDeviceClass;
     0x00,                       //bDeviceSubClass;
     0x00,                       //bDeviceProtocol;
     0x40,                       //bMaxPacketSize0;
@@ -100,6 +100,11 @@ const static char* _ustring[] =
     "Interface",
     USB_STRING_OS//must be
 };
+struct usb_os_proerty winusb_proerty[] = 
+{
+    USB_OS_PROERTY_DESC(USB_OS_PROERTY_TYPE_REG_SZ,"DeviceInterfaceGUID","{6860DC3C-C05F-4807-8807-1CA861CC1D66}"),
+};
+
 struct usb_os_function_comp_id_descriptor winusb_func_comp_id_desc = 
 {
     .bFirstInterfaceNumber = USB_DYNAMIC,
@@ -127,6 +132,18 @@ static rt_err_t _ep_in_handler(ufunction_t func, rt_size_t size)
 }
 static rt_err_t _interface_handler(ufunction_t func, ureq_t setup)
 {
+    switch(setup->bRequest)
+    {
+    case 'A':
+        switch(setup->wIndex)
+        {
+        case 0x05:
+            usbd_os_proerty_descriptor_send(func,setup,winusb_proerty,sizeof(winusb_proerty)/sizeof(winusb_proerty[0]));
+            break;
+        }
+        break;
+    }
+    
     return RT_EOK;
 }
 static rt_err_t _function_enable(ufunction_t func)
