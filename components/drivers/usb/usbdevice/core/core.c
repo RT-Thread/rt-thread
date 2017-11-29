@@ -840,6 +840,10 @@ static rt_err_t _data_notify(udevice_t device, struct ep_msg* ep_msg)
         {
             EP_HANDLER(ep, func, ep->request.size);
         }
+        else
+        {
+            dcd_ep_read_prepare(device->dcd, EP_ADDRESS(ep), ep->request.buffer, ep->request.remain_size > EP_MAXPACKET(ep) ? EP_MAXPACKET(ep) : ep->request.remain_size);
+        }
     }
 
     return RT_EOK;
@@ -973,7 +977,7 @@ static rt_size_t rt_usbd_ep_read_prepare(udevice_t device, uep_t ep, void *buffe
     RT_ASSERT(buffer != RT_NULL);
     RT_ASSERT(ep->ep_desc != RT_NULL);
 
-    return dcd_ep_read_prepare(device->dcd, EP_ADDRESS(ep), buffer, size);
+    return dcd_ep_read_prepare(device->dcd, EP_ADDRESS(ep), buffer, size > EP_MAXPACKET(ep) ? EP_MAXPACKET(ep) : size);
 }
 
 /**
