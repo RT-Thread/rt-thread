@@ -64,7 +64,7 @@ env:
   - RTT_BSP='stm32l072' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='stm32f107' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='stm32f10x' RTT_TOOL_CHAIN='sourcery-arm' 
-  - RTT_BSP='stm32f10x_HAL' RTT_TOOL_CHAIN='sourcery-arm' 
+  - RTT_BSP='stm32f10x-HAL' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='stm32f20x' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='stm32f40x' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='stm32f4xx-HAL' RTT_TOOL_CHAIN='sourcery-arm' 
