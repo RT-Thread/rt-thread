@@ -76,6 +76,10 @@
 
 #include "lwip/inet.h"
 
+#if LWIP_IPV6
+#include "lwip/ethip6.h"
+#endif /* LWIP_IPV6 */
+
 #define netifapi_netif_set_link_up(n)      netifapi_netif_common(n, netif_set_link_up, NULL)
 #define netifapi_netif_set_link_down(n)    netifapi_netif_common(n, netif_set_link_down, NULL)
 
@@ -168,6 +172,13 @@ static err_t eth_netif_device_init(struct netif *netif)
         /* copy device flags to netif flags */
         netif->flags = (ethif->flags & 0xff);
 
+#if LWIP_IPV6
+		netif->output_ip6 = ethip6_output;
+		netif->ip6_autoconfig_enabled = 1;
+		netif_create_ip6_linklocal_address(netif, 1);
+		netif->flags |= NETIF_FLAG_MLD6;
+#endif /* LWIP_IPV6 */
+
         /* set default netif */
         if (netif_default == RT_NULL)
             netif_set_default(ethif->netif);
@@ -232,9 +243,6 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, char *name, rt_uint16
 
     /* set output */
     netif->output       = etharp_output;
-#if LWIP_IPV6
-    netif->output_ip6   = ethip6_output;
-#endif /* LWIP_IPV6 */
     netif->linkoutput   = ethernetif_linkoutput;
 
 #if LWIP_NETIF_HOSTNAME
@@ -245,7 +253,7 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, char *name, rt_uint16
     /* if tcp thread has been started up, we add this netif to the system */
     if (rt_thread_find("tcpip") != RT_NULL)
     {
-        ip_addr_t ipaddr, netmask, gw;
+        ip4_addr_t ipaddr, netmask, gw;
 
 #if !LWIP_DHCP
         ipaddr.addr = inet_addr(RT_LWIP_IPADDR);
@@ -265,19 +273,6 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, char *name, rt_uint16
 rt_err_t eth_device_init(struct eth_device * dev, char *name)
 {
     rt_uint16_t flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP;
-
-#if LWIP_IPV6 && LWIP_IPV6_MLD
-    /*
-    * For hardware/netifs that implement MAC filtering.
-    * All-nodes link-local is handled by default, so we must let the hardware know
-    * to allow multicast packets in.
-    * Should set mld_mac_filter previously. */
-    if (netif->mld_mac_filter != NULL) {
-        ip6_addr_t ip6_allnodes_ll;
-        ip6_addr_set_allnodes_linklocal(&ip6_allnodes_ll);
-        netif->mld_mac_filter(netif, &ip6_allnodes_ll, MLD6_ADD_MAC_FILTER);
-    }
-#endif /* LWIP_IPV6 && LWIP_IPV6_MLD */
 
 #if LWIP_IGMP
     /* IGMP support */
@@ -468,8 +463,8 @@ int eth_system_device_init_private(void)
 #include <finsh.h>
 void set_if(char* netif_name, char* ip_addr, char* gw_addr, char* nm_addr)
 {
-    ip_addr_t *ip;
-    ip_addr_t addr;
+    ip4_addr_t *ip;
+    ip4_addr_t addr;
     struct netif * netif = netif_list;
 
     if(strlen(netif_name) > sizeof(netif->name))
@@ -491,22 +486,22 @@ void set_if(char* netif_name, char* ip_addr, char* gw_addr, char* nm_addr)
         }
     }
 
-    ip = (ip_addr_t *)&addr;
+    ip = (ip4_addr_t *)&addr;
 
     /* set ip address */
-    if ((ip_addr != RT_NULL) && ipaddr_aton(ip_addr, &addr))
+    if ((ip_addr != RT_NULL) && ip4addr_aton(ip_addr, &addr))
     {
         netif_set_ipaddr(netif, ip);
     }
 
     /* set gateway address */
-    if ((gw_addr != RT_NULL) && ipaddr_aton(gw_addr, &addr))
+    if ((gw_addr != RT_NULL) && ip4addr_aton(gw_addr, &addr))
     {
         netif_set_gw(netif, ip);
     }
 
     /* set netmask address */
-    if ((nm_addr != RT_NULL) && ipaddr_aton(nm_addr, &addr))
+    if ((nm_addr != RT_NULL) && ip4addr_aton(nm_addr, &addr))
     {
         netif_set_netmask(netif, ip);
     }
@@ -557,8 +552,30 @@ void list_if(void)
         rt_kprintf("ip address: %s\n", ipaddr_ntoa(&(netif->ip_addr)));
         rt_kprintf("gw address: %s\n", ipaddr_ntoa(&(netif->gw)));
         rt_kprintf("net mask  : %s\n", ipaddr_ntoa(&(netif->netmask)));
+#if LWIP_IPV6
+		{
+			ip6_addr_t *addr;
+			int addr_state;
+			int i;
+			
+			addr = (ip6_addr_t *)&netif->ip6_addr[0];
+			addr_state = netif->ip6_addr_state[0];
+			
+			rt_kprintf("\nipv6 link-local: %s state:%02X %s\n", ip6addr_ntoa(addr), 
+			addr_state, ip6_addr_isvalid(addr_state)?"VALID":"INVALID");
+			
+			for(i=1; i<LWIP_IPV6_NUM_ADDRESSES; i++)
+			{
+				addr = (ip6_addr_t *)&netif->ip6_addr[i];
+				addr_state = netif->ip6_addr_state[i];
+			
+				rt_kprintf("ipv6[%d] address: %s state:%02X %s\n", i, ip6addr_ntoa(addr), 
+				addr_state, ip6_addr_isvalid(addr_state)?"VALID":"INVALID");
+			}
+			
+		}
         rt_kprintf("\r\n");
-
+#endif /* LWIP_IPV6 */
         netif = netif->next;
     }
 
