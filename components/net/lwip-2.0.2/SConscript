@@ -74,7 +74,10 @@ if GetDepend(['RT_LWIP_SNMP']):
 if GetDepend(['RT_LWIP_PPP']):
     src += ppp_src
     path += [GetCurrentDir() + '/src/netif/ppp']
-    
+
+if GetDepend(['RT_USING_LWIP_IPV6']):
+    src += ipv6_src
+
 group = DefineGroup('lwIP', src, depend = ['RT_USING_LWIP', 'RT_USING_LWIP202'], CPPPATH = path)
 
 Return('group')
