@@ -166,7 +166,11 @@ menu "Using USB"
                         bool "Enable to use device as winusb device"
                         default n
                 endif
-
+                if RT_USB_DEVICE_MSTORAGE
+                    config RT_USB_MSTORAGE_DISK_NAME
+                    string "msc class disk name"
+                    default "flash0"
+                endif
                 if RT_USB_DEVICE_HID
                     config RT_USB_DEVICE_HID_KEYBOARD
                         bool "Use to HID device as Keyboard"
