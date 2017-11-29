@@ -69,7 +69,7 @@ static void tcpip_init_done_callback(void *arg)
 {
     rt_device_t device;
     struct eth_device *ethif;
-    ip_addr_t ipaddr, netmask, gw;
+    ip4_addr_t ipaddr, netmask, gw;
     struct rt_list_node* node;
     struct rt_object* object;
     struct rt_object_information *information;
