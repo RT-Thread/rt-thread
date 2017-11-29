@@ -415,7 +415,16 @@ static void eth_rx_thread_entry(void* parameter)
 }
 #endif
 
+/* this function does not need, 
+ * use eth_system_device_init_private() 
+ * call by lwip_system_init(). 
+ */
 int eth_system_device_init(void)
+{
+    return 0;
+}
+
+int eth_system_device_init_private(void)
 {
     rt_err_t result = RT_EOK;
 
@@ -454,7 +463,6 @@ int eth_system_device_init(void)
 
     return (int)result;
 }
-INIT_PREV_EXPORT(eth_system_device_init);
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
