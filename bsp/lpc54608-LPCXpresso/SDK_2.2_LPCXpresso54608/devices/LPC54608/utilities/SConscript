@@ -4,8 +4,10 @@ from building import *
 
 cwd = GetCurrentDir()
 CPPPATH = [cwd]
-src	= Glob('*.c')
+src	= []
 
-group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH)
+CPPDEFINES = ['SDK_DEBUGCONSOLE=0']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
 
 Return('group')
