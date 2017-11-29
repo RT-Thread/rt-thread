@@ -6,10 +6,10 @@ config RT_USING_LWIP
     default n
 
     if RT_USING_LWIP
-        choice 
+        choice
             prompt "lwIP version"
             default RT_USING_LWIP141
-            help 
+            help
                 Select the lwIP version
 
             config RT_USING_LWIP141
@@ -18,6 +18,12 @@ config RT_USING_LWIP
             config RT_USING_LWIP202
                 bool "lwIP v2.0.2"
         endchoice
+
+        if RT_USING_LWIP202
+            config RT_USING_LWIP_IPV6
+                bool "IPV6 protocol"
+                default n
+        endif
 
         config RT_LWIP_IGMP
             bool "IGMP protocol"
@@ -45,7 +51,7 @@ config RT_USING_LWIP
                 config IP_SOF_BROADCAST
                     int "SOF broadcast"
                     default 1
-                
+
                 config IP_SOF_BROADCAST_RECV
                     int "SOF broadcast recv"
                     default 1
@@ -63,7 +69,7 @@ config RT_USING_LWIP
                 config RT_LWIP_GWADDR
                     string "IPv4: Gateway address"
                     default 192.168.1.1
-                
+
                 config RT_LWIP_MSKADDR
                     string "IPv4: Mask address"
                     default 255.255.255.0
@@ -76,7 +82,7 @@ config RT_USING_LWIP
         config RT_LWIP_TCP
             bool "TCP protocol"
             default y
-        
+
         config RT_LWIP_RAW
             bool "RAW protocol"
             default n
@@ -138,11 +144,11 @@ config RT_USING_LWIP
         config RT_LWIP_ETHTHREAD_PRIORITY
             int "the priority level value of ethernet thread"
             default 12
-        
+
         config RT_LWIP_ETHTHREAD_STACKSIZE
             int "the stack size of ethernet thread"
             default 1024
-        
+
         config RT_LWIP_ETHTHREAD_MBOX_SIZE
             int "the number of mail in the ethernet thread mailbox"
             default 8
