@@ -116,6 +116,17 @@ static struct usb_qualifier_descriptor dev_qualifier =
 
 const static struct umass_descriptor _mass_desc =
 {
+#ifdef RT_USB_DEVICE_COMPOSITE
+    /* Interface Association Descriptor */
+    USB_DESC_LENGTH_IAD,
+    USB_DESC_TYPE_IAD,
+    USB_DYNAMIC,
+    0x01,
+    USB_CLASS_MASS_STORAGE,
+    0x06,
+    0x50,
+    0x00,
+#endif
     USB_DESC_LENGTH_INTERFACE,  //bLength;
     USB_DESC_TYPE_INTERFACE,    //type;
     USB_DYNAMIC,                //bInterfaceNumber;
@@ -1028,7 +1039,13 @@ static struct ufunction_ops ops =
     _function_disable,
     RT_NULL,
 };
-
+static rt_err_t _mstorage_descriptor_config(umass_desc_t desc, rt_uint8_t cintf_nr)
+{
+#ifdef RT_USB_DEVICE_COMPOSITE
+    desc->iad_desc.bFirstInterface = cintf_nr;
+#endif
+    return RT_EOK;
+}
 /**
  * This function will create a mass storage function instance.
  *
@@ -1066,7 +1083,10 @@ ufunction_t rt_usbd_function_mstorage_create(udevice_t device)
     setting = rt_usbd_altsetting_new(sizeof(struct umass_descriptor));
     
     /* config desc in alternate setting */
-    rt_usbd_altsetting_config_descriptor(setting, &_mass_desc, 0);
+    rt_usbd_altsetting_config_descriptor(setting, &_mass_desc, (rt_off_t)&((umass_desc_t)0)->intf_desc);
+
+    /* configure the msc interface descriptor */
+    _mstorage_descriptor_config(setting->desc, intf->intf_num);
 
     /* create a bulk out and a bulk in endpoint */
     mass_desc = (umass_desc_t)setting->desc;
