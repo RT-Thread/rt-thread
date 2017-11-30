@@ -27,7 +27,7 @@
 
 #include <rtconfig.h>
 
-#ifdef RT_USING_NEWLIB
+#if defined(RT_USING_NEWLIB) || defined(_WIN32)
 #include <sys/types.h>
 #else
 

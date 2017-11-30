@@ -99,7 +99,7 @@
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
 // #define RT_USING_PTHREADS
 // <bool name="RT_USING_COMPONENTS_INIT" description="Using automatically component initialization." default="true" />
-#define RT_USING_COMPONENTS_INIT
+// #define RT_USING_COMPONENTS_INIT
 // <bool name="RT_USING_MODULE" description="Enable Moudle Application" default="true" />
 // #define RT_USING_MODULE
 // </section>
