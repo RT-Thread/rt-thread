@@ -15,7 +15,8 @@ except:
     print RTT_ROOT
     exit(-1)
 
-TARGET = 'rtthread-stm32f42x.' + rtconfig.TARGET_EXT
+#keep this Folder and File name with the same to MDK setting.
+TARGET = 'build/rtthread-stm32f42x.' + rtconfig.TARGET_EXT
 
 env = Environment(tools = ['mingw'],
     AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
@@ -37,3 +38,8 @@ objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
 # make a building
 DoBuilding(TARGET, objs)
+print 'open MDK downloaded command ... ... '
+if os.system("C:/Keil/UV4/UV4.exe -f " + os.getcwd() + "/project.uvprojx") == 2:
+    print '...success!'
+else:
+    print '...failure!'
