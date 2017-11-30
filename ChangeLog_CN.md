@@ -1,3 +1,70 @@
+# RT-Thread v3.0.0 Change log
+## Platform:
+
+* Add more POSIX features, for example poll/select, signal, termios etc.
+* Add waitqueue for poll feature.
+* Use fops for file operation. There are two ways to visit device object: rt_device_* API, the file API(open/read/write/close etc).
+* Change the type of cmd from uint8_t to int in control interface.
+* Add more C++ object for RT-Thread Kernel Object.
+* Add wlan driver framework for wlan device operation.
+* Integrate SFUD into RT-Thread to unify the operations of spi flash.
+* Update lwIP to v2.0.2 version.
+
+## Tools:
+
+* Enable packages, with ENV tool.
+* menuconfig & Kconfig.
+* Add scons --dist for make a distribution for specified BSP.
+
+## BSP:
+
+* more MCU porting.
+
+## IoT:
+
+* put more IoT components as packages, for example, MQTT, CoAP, HTTP, TLS etc.
+
+# RT-Thread v2.1.0 Change log
+
+This release is the final release for RT-Thread v2.1.0 branch. This release has been delayed many time. After committed fh8620 and x1000 bsp, we are proud to announce this branch release of the official version.
+
+The change log since last stable version:
+
+## Kernel:
+
+* Move the init component to the kernel.
+* Fix the device open flag issue.
+* Add assertion hook.
+* Better application module support.
+* Does not lock scheduler when invoking soft-timer timeout function.
+
+## Board Support Package:
+
+* fh8620, which is provided by Shanghai Fullhan Microelectronics Co., Ltd. It's a IP camera chip with ARM1176, 300MHz, 16KB I-Cache and 16kB D-Cache.
+* x1000 bsp. The CPU is a XBurst CPU 1.0GHz, MIPS-based, from Ingenic Semiconductor Co.,Ltd.
+* imx6sx bsp, only the Cortex-A9 core porting in the NXP i.MX6 solox. BTW, another full Kinetis series porting was created in rt-thread_fsl, which is maintained by NXP employee.
+* lpc5410x bsp, only the Cortex-M4 core porting.
+* ls1cdev bsp for Loogson1C board.
+* dm365 bsp.
+* nRF51822/nRF52832 bsp.
+* stm32f7-disco bsp, the first ARM Cortex-M7 porting in RT-Thread.
+* stm32f411-nucleo bsp.
+* Add IAR compiler support in beaglebone bsp.
+
+## Components:
+
+* Add more socket fd operators in DFS with a virtual lwIP file system ops.
+* Add CAN/Hardware Timer device drivers.
+* Fix the SDIO issue to support sdio wifi device.
+* Add eMMC support in SD/MMC device drivers;
+* Fix the NAT configured enter reset issue in lwIP NAT.
+* RTGUI come back, but as a UI engine for blend point/line/rect and bitmap etc.
+* Add nanopb porting, a small code-size Protocol Buffers implementation;
+* Add paho-mqtt porting, the Eclipse Paho MQTT C/C++ client for Embedded platforms;
+* Update freetype to 2.5.4 version.
+* Enhance msh for file operations.
+* Split the exported commands of finsh shell to a standalone section: ".rodata.name"
+
 # RT-Thread v2.1.0 beta版本更改说明
 
 ## BSP部分
