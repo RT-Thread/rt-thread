@@ -26,13 +26,15 @@
 #include <stdio.h>
 #include <board.h>
 
+extern int platform_init(void);
+extern int mnt_init(void);
+
 void rt_init_thread_entry(void *parameter)
 {
-#ifdef RT_USING_COMPONENTS_INIT
-    rt_components_init();
-#endif
-
     rt_kprintf("Hello RT-Thread!\n");
+
+    platform_init();
+    mnt_init();
 }
 
 int rt_application_init()

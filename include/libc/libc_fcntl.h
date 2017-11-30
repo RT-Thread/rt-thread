@@ -4,11 +4,16 @@
 #ifndef LIBC_FCNTL_H__
 #define LIBC_FCNTL_H__
 
-#ifdef RT_USING_NEWLIB
+#if defined(RT_USING_NEWLIB) || defined(_WIN32)
 #include <fcntl.h>
 
 #ifndef O_NONBLOCK
 #define O_NONBLOCK    04000
+#endif
+
+#if defined(_WIN32)
+#define O_DIRECTORY 0200000
+#define O_ACCMODE   (_O_RDONLY | _O_WRONLY | _O_RDWR)
 #endif
 
 #else

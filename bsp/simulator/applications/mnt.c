@@ -15,6 +15,8 @@
 
 int mnt_init(void)
 {
+    dfs_init();
+
 #ifdef RT_USING_DFS_WINSHAREDIR
     dfs_win32_init();
     rt_win_sharedir_init("wshare");
@@ -47,7 +49,7 @@ int mnt_init(void)
     }
 #endif
 
+    return 0;
 }
-INIT_ENV_EXPORT(mnt_init);
 
 #endif
