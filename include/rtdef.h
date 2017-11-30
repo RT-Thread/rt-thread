@@ -30,7 +30,8 @@
  * 2012-12-30     Bernard      add more control command for graphic.
  * 2013-01-09     Bernard      change version number.
  * 2015-02-01     Bernard      change version number to v2.1.0
- * 2016-08-31     Bernard      change version number to v3.0.0
+ * 2017-08-31     Bernard      change version number to v3.0.0
+ * 2017-11-30     Bernard      change version number to v3.0.1
  */
 
 #ifndef __RT_DEF_H__
@@ -52,7 +53,7 @@ extern "C" {
 /* RT-Thread version information */
 #define RT_VERSION                      3L              /**< major version number */
 #define RT_SUBVERSION                   0L              /**< minor version number */
-#define RT_REVISION                     0L              /**< revise version number */
+#define RT_REVISION                     1L              /**< revise version number */
 
 /* RT-Thread version */
 #define RTTHREAD_VERSION                ((RT_VERSION * 10000) + \

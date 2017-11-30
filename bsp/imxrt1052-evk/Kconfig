@@ -15,10 +15,8 @@ config $PKGS_DIR
     option env="PKGS_ROOT"
     default "packages"
 
-source "$RTT_DIR/KConfig"
-source "$PKGS_DIR/KConfig"
-
-menu "BSP_SPECIAL CONFIG"
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
 
 config RT_USING_UART
     bool "Using RT_USING_UART"
@@ -29,10 +27,4 @@ config RT_USING_UART1
     bool "Using RT_USING_UART1"
     default y      
 endif
-    
-endmenu
-
-
-
-    
-    
+ 

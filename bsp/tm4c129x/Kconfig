@@ -15,31 +15,10 @@ config $PKGS_DIR
     option env="PKGS_ROOT"
     default "packages"
 
-source "$RTT_DIR/KConfig"
-source "$PKGS_DIR/KConfig"
-
-menu "BSP_SPECIAL CONFIG"
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
 
 config RT_USING_UART0
     bool "Using RT_USING_UART0"
-    default n    
-	
-config RT_USING_UART3
-    bool "Using RT_USING_UART3"
     default y    
-	
-config RT_USING_UART4
-    bool "Using RT_USING_UART4"
-    default n    
-	
-config RT_USING_LED
-	bool "Using RT_USING_LED"
-	default y
-	help
-		led blink demo
-endmenu
-
-
-
-    
-    
+ 

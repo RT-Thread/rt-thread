@@ -121,7 +121,7 @@ def MakeCopy(program, BSP_ROOT, RTT_ROOT, Env):
     # copy tools directory
     print("=> tools")
     do_copy_folder(os.path.join(RTT_ROOT, "tools"), os.path.join(target_path, "tools"), ignore_patterns('*.pyc'))
-    do_copy_file(os.path.join(RTT_ROOT, 'KConfig'), os.path.join(target_path, 'KConfig'))
+    do_copy_file(os.path.join(RTT_ROOT, 'Kconfig'), os.path.join(target_path, 'Kconfig'))
     do_copy_file(os.path.join(RTT_ROOT, 'AUTHORS'), os.path.join(target_path, 'AUTHORS'))
     do_copy_file(os.path.join(RTT_ROOT, 'COPYING'), os.path.join(target_path, 'COPYING'))
     do_copy_file(os.path.join(RTT_ROOT, 'README.md'), os.path.join(target_path, 'README.md'))
@@ -170,7 +170,7 @@ def MakeCopyHeader(program, BSP_ROOT, RTT_ROOT, Env):
     # copy tools directory
     print "=>  tools"
     do_copy_folder(os.path.join(RTT_ROOT, "tools"), os.path.join(target_path, "tools"), ignore_patterns('*.pyc'))
-    do_copy_file(os.path.join(RTT_ROOT, 'KConfig'), os.path.join(target_path, 'KConfig'))
+    do_copy_file(os.path.join(RTT_ROOT, 'Kconfig'), os.path.join(target_path, 'Kconfig'))
     do_copy_file(os.path.join(RTT_ROOT, 'AUTHORS'), os.path.join(target_path, 'AUTHORS'))
     do_copy_file(os.path.join(RTT_ROOT, 'COPYING'), os.path.join(target_path, 'COPYING'))
     do_copy_file(os.path.join(RTT_ROOT, 'README.md'), os.path.join(target_path, 'README.md'))
@@ -242,7 +242,7 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env):
     # copy tools directory
     print("=> tools")
     do_copy_folder(os.path.join(RTT_ROOT, "tools"), os.path.join(target_path, "tools"), ignore_patterns('*.pyc'))
-    do_copy_file(os.path.join(RTT_ROOT, 'KConfig'), os.path.join(target_path, 'KConfig'))
+    do_copy_file(os.path.join(RTT_ROOT, 'Kconfig'), os.path.join(target_path, 'Kconfig'))
     do_copy_file(os.path.join(RTT_ROOT, 'AUTHORS'), os.path.join(target_path, 'AUTHORS'))
     do_copy_file(os.path.join(RTT_ROOT, 'COPYING'), os.path.join(target_path, 'COPYING'))
     do_copy_file(os.path.join(RTT_ROOT, 'README.md'), os.path.join(target_path, 'README.md'))
@@ -265,7 +265,7 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env):
     except :
         print('')
 
-    # change RTT_ROOT in KConfig
+    # change RTT_ROOT in Kconfig
     try:
         if os.path.exists(os.path.join(BSP_ROOT, 'Kconfig')):
             Kconfig = file(os.path.join(BSP_ROOT, 'Kconfig'))
