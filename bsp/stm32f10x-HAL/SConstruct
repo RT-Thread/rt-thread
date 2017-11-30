@@ -10,7 +10,8 @@ else:
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 from building import *
 
-TARGET = 'rtthread-stm32.' + rtconfig.TARGET_EXT
+#keep this Folder and File name with the same to MDK setting.
+TARGET = 'build/rtthread-stm32f42x.' + rtconfig.TARGET_EXT
 
 env = Environment(tools = ['mingw'],
 	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
@@ -33,3 +34,12 @@ objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
 # make a building
 DoBuilding(TARGET, objs)
+print 'target file is ..'
+if os.path.exists(TARGET) == True:
+    print '...exist, now open MDK downloaded command ... ... '
+    if os.system("C:/Keil/UV4/UV4.exe -f " + os.getcwd() + "/project.uvprojx") == 2:
+        print '...success!'
+    else:
+        print '...failure!'
+else:
+    print '...Non-existent'
