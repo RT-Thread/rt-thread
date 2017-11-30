@@ -30,6 +30,7 @@
 #define _IOC_WRITE 1U
 #define _IOC_READ  2U
 
+#ifndef _WIN32
 #define _IO(a,b)    _IOC(_IOC_NONE,(a),(b),0)
 #define _IOW(a,b,c) _IOC(_IOC_WRITE,(a),(b),sizeof(c))
 #define _IOR(a,b,c) _IOC(_IOC_READ,(a),(b),sizeof(c))
@@ -39,6 +40,7 @@
 #define FIONBIO     _IOW('f', 126, int) /* set/clear non-blocking i/o */
 #define FIONWRITE   _IOR('f', 121, int) /* get # bytes outstanding
                          * in send queue. */
+#endif
 
 #define TCGETS		0x5401
 #define TCSETS		0x5402
@@ -98,7 +100,11 @@
 
 #define FIONCLEX	0x5450
 #define FIOCLEX		0x5451
+
+#ifndef _WIN32
 #define FIOASYNC	0x5452
+#endif
+
 #define TIOCSERCONFIG	0x5453
 #define TIOCSERGWILD	0x5454
 #define TIOCSERSWILD	0x5455
