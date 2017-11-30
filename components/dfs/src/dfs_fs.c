@@ -22,6 +22,7 @@
  * 2005-02-22     Bernard      The first version.
  * 2010-06-30     Bernard      Optimize for RT-Thread RTOS
  * 2011-03-12     Bernard      fix the filesystem lookup issue.
+ * 2017-11-30     Bernard      fix the filesystem_operation_table issue.
  */
 
 #include <dfs_fs.h>
@@ -252,7 +253,7 @@ int dfs_mount(const char   *device_name,
 
     for (ops = &filesystem_operation_table[0];
            ops < &filesystem_operation_table[DFS_FILESYSTEM_TYPES_MAX]; ops++)
-        if ((ops != NULL) && (strcmp((*ops)->name, filesystemtype) == 0))
+        if ((*ops != NULL) && (strcmp((*ops)->name, filesystemtype) == 0))
             break;
 
     dfs_unlock();
