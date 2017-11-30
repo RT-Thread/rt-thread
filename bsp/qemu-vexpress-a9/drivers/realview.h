@@ -35,6 +35,8 @@
 #define VEXPRESS_SRAM_BASE          0x48000000
 
 #define REALVIEW_ETH_BASE           0x4E000000  /* Ethernet */
+#define VEXPRESS_ETH_BASE           0x4E000000  /* Ethernet */
+
 #define REALVIEW_USB_BASE           0x4F000000  /* USB */
 #define REALVIEW_GIC_DIST_BASE      0x1E001000  /* Generic interrupt controller distributor */
 #define REALVIEW_LT_BASE            0xC0000000  /* Logic Tile expansion */
@@ -84,11 +86,17 @@
 #define IRQ_PBA8_TIMER0_1   (IRQ_PBA8_GIC_START + 2)    /* Timer 0/1 (default timer) */
 #define IRQ_PBA8_TIMER2_3   (IRQ_PBA8_GIC_START + 3)    /* Timer 2/3 */
 #define IRQ_PBA8_RTC        (IRQ_PBA8_GIC_START + 4)    /* Timer 2/3 */
+#define IRQ_VEXPRESS_A9_RTC (IRQ_PBA8_GIC_START + 4)
 
 #define IRQ_PBA8_UART0      (IRQ_PBA8_GIC_START + 5)    /* UART 0 on development chip */
 #define IRQ_PBA8_UART1      (IRQ_PBA8_GIC_START + 6)    /* UART 1 on development chip */
 #define IRQ_PBA8_UART2      (IRQ_PBA8_GIC_START + 7)    /* UART 2 on development chip */
 #define IRQ_PBA8_UART3      (IRQ_PBA8_GIC_START + 8)    /* UART 3 on development chip */
+
+#define IRQ_VEXPRESS_A9_KBD     (IRQ_PBA8_GIC_START + 12)
+#define IRQ_VEXPRESS_A9_MOUSE   (IRQ_PBA8_GIC_START + 13)
+#define IRQ_VEXPRESS_A9_CLCD    (IRQ_PBA8_GIC_START + 14)
+#define IRQ_VEXPRESS_A9_ETH     (IRQ_PBA8_GIC_START + 15)
 
 /* 9 reserved */
 #define IRQ_PBA8_SSP        (IRQ_PBA8_GIC_START + 11)   /* Synchronous Serial Port */
