@@ -1,8 +1,12 @@
 #include <rtthread.h>
 #include "board.h"
 
-void platform_init(void)
+#include <shell.h>
+
+int platform_init(void)
 {
+    finsh_system_init();
+
 #ifdef RT_USING_LWIP
 #ifdef RT_USING_TAPNETIF
     tap_netif_hw_init();
@@ -24,5 +28,6 @@ void platform_init(void)
 #endif
 
 #endif /* RT_USING_DFS */
+
+    return 0;
 }
-INIT_DEVICE_EXPORT(platform_init);

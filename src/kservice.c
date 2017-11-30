@@ -46,7 +46,7 @@
 /**@{*/
 
 /* global errno in RT-Thread */
-static volatile int _errno;
+static volatile int __rt_errno;
 
 #if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 static rt_device_t _console_device = RT_NULL;
@@ -64,12 +64,12 @@ rt_err_t rt_get_errno(void)
     if (rt_interrupt_get_nest() != 0)
     {
         /* it's in interrupt context */
-        return _errno;
+        return __rt_errno;
     }
 
     tid = rt_thread_self();
     if (tid == RT_NULL)
-        return _errno;
+        return __rt_errno;
 
     return tid->error;
 }
@@ -87,7 +87,7 @@ void rt_set_errno(rt_err_t error)
     if (rt_interrupt_get_nest() != 0)
     {
         /* it's in interrupt context */
-        _errno = error;
+        __rt_errno = error;
 
         return;
     }
@@ -95,7 +95,7 @@ void rt_set_errno(rt_err_t error)
     tid = rt_thread_self();
     if (tid == RT_NULL)
     {
-        _errno = error;
+        __rt_errno = error;
 
         return;
     }
@@ -114,13 +114,13 @@ int *_rt_errno(void)
     rt_thread_t tid;
 
     if (rt_interrupt_get_nest() != 0)
-        return (int *)&_errno;
+        return (int *)&__rt_errno;
 
     tid = rt_thread_self();
     if (tid != RT_NULL)
         return (int *) & (tid->error);
 
-    return (int *)&_errno;
+    return (int *)&__rt_errno;
 }
 RTM_EXPORT(_rt_errno);
 
