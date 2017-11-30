@@ -15,12 +15,12 @@ config $PKGS_DIR
     option env="PKGS_ROOT"
     default "packages"
 
-config BOARD_IMX6UL
+config BOARD_STM32F429_APPOLO
     bool 
-    select ARCH_ARM_CORTEX_A7
+    select ARCH_ARM_CORTEX_M4
     default y
 
-source "$RTT_DIR/KConfig"
-source "$PKGS_DIR/KConfig"
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
 
 source "$BSP_DIR/drivers/Kconfig"

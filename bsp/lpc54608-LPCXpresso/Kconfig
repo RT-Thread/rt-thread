@@ -18,8 +18,8 @@ config $PKGS_DIR
     option env="PKGS_ROOT"
     default "packages"
 
-source "$RTT_DIR/KConfig"
-source "$PKGS_DIR/KConfig"
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
 
 config SOC_LPC54608
     bool 
@@ -28,8 +28,3 @@ config SOC_LPC54608
 
 source "$BSP_DIR/drivers/Kconfig"
 
-
-
-
-    
-    
