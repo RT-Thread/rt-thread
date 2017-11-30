@@ -140,7 +140,7 @@
 #define RT_USING_LIBC
 #define RT_USING_PTHREADS
 #define RT_USING_POSIX
-/* RT_USING_POSIX_MMAP is not set */
+#define RT_USING_POSIX_MMAP
 #define RT_USING_POSIX_TERMIOS
 
 /* Network stack */
