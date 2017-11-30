@@ -34,8 +34,12 @@ objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
 # make a building
 DoBuilding(TARGET, objs)
-print 'open MDK downloaded command ... ... '
-if os.system("C:/Keil/UV4/UV4.exe -f " + os.getcwd() + "/project.uvprojx") == 2:
-    print '...success!'
+print 'target file is ..'
+if os.path.exists(TARGET) == True:
+    print '...exist, now open MDK downloaded command ... ... '
+    if os.system("C:/Keil/UV4/UV4.exe -f " + os.getcwd() + "/project.uvprojx") == 2:
+        print '...success!'
+    else:
+        print '...failure!'
 else:
-    print '...failure!'
+    print '...Non-existent'
