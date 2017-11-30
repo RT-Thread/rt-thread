@@ -15,8 +15,8 @@ config $PKGS_DIR
     option env="PKGS_ROOT"
     default "packages"
 
-source "$RTT_DIR/KConfig"
-source "$PKGS_DIR/KConfig"
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
 
 choice
     prompt "Device type"
@@ -182,8 +182,3 @@ if RT_USING_SPI
         default n
 endif
 
-
-
-
-    
-    
