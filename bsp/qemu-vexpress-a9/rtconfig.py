@@ -37,7 +37,7 @@ if PLATFORM == 'gcc':
     CFLAGS = DEVICE + ' -Wall'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
     LINK_SCRIPT = 'link.lds'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors'+\
+    LFLAGS = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors'+\
                       ' -T %s' % LINK_SCRIPT
 
     CPATH = ''
