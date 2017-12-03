@@ -372,7 +372,10 @@ static rt_err_t _ep_in_handler(ufunction_t func, rt_size_t size)
     RT_ASSERT(func->device != RT_NULL);
 
     data = (struct hid_s *) func->user_data;
-
+    if(data->parent.tx_complete != RT_NULL)
+    {
+        data->parent.tx_complete(&data->parent,RT_NULL);
+    }
     return RT_EOK;
 }
 
@@ -590,7 +593,7 @@ static void rt_usb_hid_init(struct ufunction *func)
     hiddev = (struct hid_s *)func->user_data;
     rt_memset(&hiddev->parent, 0, sizeof(hiddev->parent));
     hiddev->parent.write = _hid_write;
-	
+	hiddev->func = func;
     rt_device_register(&hiddev->parent, "hidd", RT_DEVICE_FLAG_RDWR);
     rt_mq_init(&hiddev->hid_mq, "hiddmq", hid_mq_pool, sizeof(struct hid_report),
                             sizeof(hid_mq_pool), RT_IPC_FLAG_FIFO);
