@@ -21,9 +21,9 @@
  * Date           Author       Notes
  * 2017-09-14     Haley        the first version
  */
- 
-#ifndef __HW_LED_H
-#define __HW_LED_H
+
+#ifndef __LED_H
+#define __LED_H
 
 #include <rtthread.h>
 
@@ -35,4 +35,4 @@ void rt_hw_led_init(void);
 void rt_hw_led_on(rt_uint8_t LEDNum);
 void rt_hw_led_off(rt_uint8_t LEDNum);
 
-#endif // __HW_LED_H
+#endif // __LED_H

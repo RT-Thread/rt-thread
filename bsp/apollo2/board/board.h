@@ -35,11 +35,31 @@
 #define RT_USING_UART0
 //#define RT_USING_UART1
 
+/* ADC driver select. */
+#define RT_USING_ADC
+
+/* I2C driver select. */
+#define RT_USING_I2C0
+//#define RT_USING_I2C2
+//#define RT_USING_I2C4
+
+/* SMBUS driver select. */
+//#define RT_USING_SMBUS
+
+/* SPI driver select. */
+#define RT_USING_SPI1
+
 /* LED driver select. */
 #define RT_USING_LED0
 //#define RT_USING_LED1
 //#define RT_USING_LED2
 //#define RT_USING_LED3
+
+/* PWM driver select. */
+//#define RT_USING_PWM
+
+/* PDM driver select. */
+//#define RT_USING_PDM
 
 void rt_hw_board_init(void);
 
