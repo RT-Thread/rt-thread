@@ -1,5 +1,5 @@
 /*
- * File      : gpio.h
+ * File      : pdm.h
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
@@ -19,16 +19,21 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-09-16     Haley        the first version
+ * 2017-12-04     Haley        the first version
  */
- 
-#ifndef __GPIO_H
-#define __GPIO_H
+
+#ifndef __PDM_H_
+#define __PDM_H_
+
+#include <rtthread.h>
 
 /**
  * @brief External function definitions
  *
  */
-int rt_hw_pin_init(void);
+int rt_hw_pdm_init(void);
+rt_uint8_t am_pdm_data_get(rt_uint8_t *buff, rt_uint16_t size);
+void am_pdm_start(void);
+void am_pdm_stop(void);
 
-#endif // __GPIO_H
+#endif // __PDM_H_

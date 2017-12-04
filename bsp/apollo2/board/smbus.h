@@ -1,5 +1,5 @@
 /*
- * File      : gpio.h
+ * File      : smbus.h
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
  *
@@ -19,16 +19,22 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-09-16     Haley        the first version
+ * 2017-12-04     Haley        the first version
  */
- 
-#ifndef __GPIO_H
-#define __GPIO_H
+
+#ifndef __SMBUS_H_
+#define __SMBUS_H_
+
+#include <rtthread.h>
 
 /**
  * @brief External function definitions
  *
  */
-int rt_hw_pin_init(void);
+int rt_hw_smbus_init(void);
+rt_uint8_t am_smbus_tx_then_tx(rt_uint8_t SlaveAddress, rt_uint8_t command, rt_uint8_t* pBuffer, rt_uint16_t bytesNumber);
+rt_uint8_t am_smbus_tx_then_rx(rt_uint8_t SlaveAddress, rt_uint8_t command, rt_uint8_t* pBuffer, rt_uint16_t bytesNumber);
+void am_smbus_scl_high(void);
+void am_smbus_scl_low(void);
 
-#endif // __GPIO_H
+#endif // __SMBUS_H_
