@@ -49,7 +49,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "am_mcu_apollo.h"
-#include "am_util_delay.h"
+//#include "am_util_delay.h"
 
 #ifdef __IAR_SYSTEMS_ICC__
 #define AM_INSTR_CLZ(n)                     __CLZ(n)
@@ -61,6 +61,22 @@
 #ifndef AM_ASSERT_INVALID_THRESHOLD
 #define AM_ASSERT_INVALID_THRESHOLD    (1)
 #endif
+
+uint32_t am_util_wait_status_change(uint32_t ui32Iterations, uint32_t ui32Address, uint32_t ui32Mask, uint32_t ui32Value)
+{
+    int i;
+		for (i = 0; i < ui32Iterations; i++)
+		{
+				// Check the status
+				if (((*(uint32_t *)ui32Address) & ui32Mask) == ui32Value)
+				{
+					return 1;
+				}
+				// Call the BOOTROM cycle delay function to get about 1 usec @ 48MHz
+				am_hal_flash_delay(16);
+		}
+		return 0;
+}
 
 //*****************************************************************************
 //
