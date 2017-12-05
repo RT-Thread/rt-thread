@@ -30,7 +30,6 @@
 #include "hal/am_hal_clkgen.h"
 #include "hal/am_hal_cachectrl.h"
 #include "uart.h"
-#include "led.h"
 
 #ifdef __CC_ARM
 extern int Image$$RW_IRAM1$$ZI$$Limit;

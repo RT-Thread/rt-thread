@@ -87,13 +87,16 @@ const static struct rt_pin_ops _am_pin_ops =
     am_pin_read,
 };
 
-int hw_pin_init(void)
+int rt_hw_pin_init(void)
 {
     rt_device_pin_register("pin", &_am_pin_ops, RT_NULL);
+
+    rt_kprintf("pin_init!\n");
+
     return 0;
 }
 
-INIT_BOARD_EXPORT(hw_pin_init);
+INIT_BOARD_EXPORT(rt_hw_pin_init);
 #endif
 
 /*@}*/
