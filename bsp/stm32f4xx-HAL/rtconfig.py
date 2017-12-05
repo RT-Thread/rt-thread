@@ -2,6 +2,9 @@
 
 import os
 
+# download options
+DOWNLOAD_COMMAND_PATH = "C:/Keil/UV4/UV4.exe"
+PARAMETER             = os.getcwd() + "/project.uvprojx"
 # toolchains options
 ARCH='arm'
 CPU='cortex-m4'
@@ -135,3 +138,5 @@ elif PLATFORM == 'iar':
 	
     EXEC_PATH = IAR_PATH + '/arm/bin/'
     POST_ACTION = ''
+
+TARGET = 'rtthread-stm32f411.' + TARGET_EXT
