@@ -571,7 +571,7 @@ RT_WEAK void HID_Report_Received(hid_report_t report)
     dump_report(report);
 }
 ALIGN(RT_ALIGN_SIZE)
-static rt_uint8_t hid_thread_stack[RT_USBD_THREAD_STACK_SZ];
+static rt_uint8_t hid_thread_stack[512];
 static struct rt_thread hid_thread;
 
 static void hid_thread_entry(void* parameter)
@@ -586,7 +586,7 @@ static void hid_thread_entry(void* parameter)
 		HID_Report_Received(&report);
 	}
 }
-static rt_uint8_t hid_mq_pool[(sizeof(struct hid_report)+sizeof(void*))*32];
+static rt_uint8_t hid_mq_pool[(sizeof(struct hid_report)+sizeof(void*))*8];
 static void rt_usb_hid_init(struct ufunction *func)
 {
     struct hid_s *hiddev;
@@ -599,7 +599,7 @@ static void rt_usb_hid_init(struct ufunction *func)
                             sizeof(hid_mq_pool), RT_IPC_FLAG_FIFO);
                             
     rt_thread_init(&hid_thread, "hidd", hid_thread_entry, hiddev,
-            hid_thread_stack, RT_USBD_THREAD_STACK_SZ, RT_USBD_THREAD_PRIO, 20);
+            hid_thread_stack, sizeof(hid_thread_stack), RT_USBD_THREAD_PRIO, 20);
     rt_thread_startup(&hid_thread);
 }
 
