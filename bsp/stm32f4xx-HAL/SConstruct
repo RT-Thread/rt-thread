@@ -15,8 +15,6 @@ except:
     print RTT_ROOT
     exit(-1)
 
-TARGET = 'rtthread-stm32f411.' + rtconfig.TARGET_EXT
-
 env = Environment(tools = ['mingw'],
 	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
 	CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
@@ -25,9 +23,9 @@ env = Environment(tools = ['mingw'],
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
 if rtconfig.PLATFORM == 'iar':
-	env.Replace(CCCOM = ['$CC $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES'])
+	env.Replace(CCCOM = ['$CC $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $rtconfig.TARGET $SOURCES'])
 	env.Replace(ARFLAGS = [''])
-	env.Replace(LINKCOM = ['$LINK $SOURCES $LINKFLAGS -o $TARGET --map project.map'])
+	env.Replace(LINKCOM = ['$LINK $SOURCES $LINKFLAGS -o $rtconfig.TARGET --map project.map'])
 
 Export('RTT_ROOT')
 Export('rtconfig')
@@ -36,4 +34,4 @@ Export('rtconfig')
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
 # make a building
-DoBuilding(TARGET, objs)
+DoBuilding(rtconfig.TARGET, objs)
