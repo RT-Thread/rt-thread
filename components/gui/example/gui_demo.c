@@ -9,7 +9,7 @@
 #include <rtgui/widgets/window.h>
 #include <rtgui/dc.h>
 
-#include "gui_demo.h"
+extern const static unsigned char _picture_png[];
 
 static rt_bool_t show_demo(struct rtgui_win *win)
 {
@@ -111,25 +111,6 @@ static void rt_gui_demo_entry(void *parameter)
 int rt_gui_demo_init(void)
 {
     rt_thread_t tid;
-    rt_device_t device;
-    rt_err_t  err;
-    
-    device = rt_device_find("lcd");
-    if (device == RT_NULL)
-    {
-        rt_kprintf("Not found LCD driver\n");
-        return RT_ERROR;
-    }
-    
-    err = rt_device_open(device, RT_DEVICE_OFLAG_RDWR);
-    if (err != RT_EOK)
-    {
-        rt_kprintf("Open LCD driver fail\n");
-        return RT_ERROR;
-    }
-    
-    /* set graphic device */
-    rtgui_graphic_set_device(device);
     
     tid = rt_thread_create("mygui",
         rt_gui_demo_entry, RT_NULL,
