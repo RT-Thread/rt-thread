@@ -28,8 +28,6 @@
 
 #include <termios.h>
 
-#include "posix_termios.h"
-
 int tcgetattr(int fd, struct termios *tio)
 {
     /* Get the current serial port settings. */
@@ -41,20 +39,20 @@ int tcgetattr(int fd, struct termios *tio)
 
 int tcsetattr(int fd, int act, const struct termios *tio)
 {
-    switch (act) 
+    switch (act)
     {
     case TCSANOW:
         /* make the change immediately */
         return (ioctl(fd, TCSETA, (void*)tio));
     case TCSADRAIN:
         /*
-         * Don't make the change until all currently written data 
+         * Don't make the change until all currently written data
          * has been transmitted.
          */
         return (ioctl(fd, TCSETAW, (void*)tio));
     case TCSAFLUSH:
-        /* Don't make the change until all currently written data 
-         * has been transmitted, at which point any received but 
+        /* Don't make the change until all currently written data
+         * has been transmitted, at which point any received but
          * unread data is also discarded.
          */
         return (ioctl(fd, TCSETAF, (void*)tio));
@@ -65,7 +63,7 @@ int tcsetattr(int fd, int act, const struct termios *tio)
 }
 
 /**
- * this function gets process group ID for session leader for controlling 
+ * this function gets process group ID for session leader for controlling
  * terminal
  *
  * @return always 0
@@ -87,7 +85,7 @@ speed_t cfgetispeed(const struct termios *tio)
 
 int cfsetospeed(struct termios *tio, speed_t speed)
 {
-    if (speed & ~CBAUD) 
+    if (speed & ~CBAUD)
     {
         errno = EINVAL;
         return -1;

@@ -29,12 +29,13 @@
  */
 
 #include "fsl_phy.h"
+#include <rtthread.h>
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
 
 /*! @brief Defines the timeout macro. */
-#define PHY_TIMEOUT_COUNT 0x3FFFFFFU
+#define PHY_TIMEOUT_COUNT 0xFFFFU
 
 /*******************************************************************************
  * Prototypes
@@ -83,14 +84,14 @@ status_t PHY_Init(ENET_Type *base, uint32_t phyAddr, uint32_t srcClock_Hz)
         PHY_Read(base, phyAddr, PHY_ID1_REG, &idReg);
         counter --;       
     }
-
+    
     if (!counter)
     {
         return kStatus_Fail;
     }
 
     /* Reset PHY. */
-    counter = PHY_TIMEOUT_COUNT;
+    counter = 6;
     result = PHY_Write(base, phyAddr, PHY_BASICCONTROL_REG, PHY_BCTL_RESET_MASK);
     if (result == kStatus_Success)
     {
@@ -136,6 +137,9 @@ status_t PHY_Init(ENET_Type *base, uint32_t phyAddr, uint32_t srcClock_Hz)
                             break;
                         }
                     }
+                    
+                    rt_kprintf("[PHY] wait autonegotiation complete...\n");
+                    rt_thread_delay(RT_TICK_PER_SECOND);
 
                     if (!counter)
                     {

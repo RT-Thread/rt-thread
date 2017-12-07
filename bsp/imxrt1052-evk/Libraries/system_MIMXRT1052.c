@@ -116,6 +116,8 @@ void SystemInit (void) {
    SCB_EnableDCache();
 #endif
 
+    extern void rt_lowlevel_init(void);
+    rt_lowlevel_init();
 }
 
 /* ----------------------------------------------------------------------------
