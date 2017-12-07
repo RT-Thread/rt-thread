@@ -690,7 +690,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$PROJ_DIR$\imxrt1052_sdram.icf</state>
+          <state>$PROJ_DIR$\Libraries\iar\MIMXRT1052xxxxx_flexspi_nor.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
