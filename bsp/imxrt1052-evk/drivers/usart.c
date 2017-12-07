@@ -27,7 +27,7 @@
 #error "Please define at least one UARTx"
 
 #endif
-        
+
 #include <rtdevice.h>
 
 /* imxrt uart driver */
@@ -130,7 +130,7 @@ static const struct imxrt_uart uarts[] = {
         "uart1",
     },
     #endif
-  
+
 };
 
 /* Get debug console frequency. */
@@ -210,9 +210,9 @@ static rt_err_t imxrt_configure(struct rt_serial_device *serial, struct serial_c
     RT_ASSERT(cfg != RT_NULL);
 
     uart = (struct imxrt_uart *)serial->parent.user_data;
-    
+
     imxrt_uart_gpio_init(uart);
-    
+
     LPUART_GetDefaultConfig(&config);
     config.baudRate_Bps = cfg->baud_rate;
 
@@ -249,13 +249,13 @@ static rt_err_t imxrt_configure(struct rt_serial_device *serial, struct serial_c
         config.parityMode = kLPUART_ParityDisabled;
         break;
     }
-    
+
     config.enableTx = true;
     config.enableRx = true;
-    
+
     LPUART_Init(uart->uart_base, &config, BOARD_DebugConsoleSrcFreq());
-    
-    
+
+
     return RT_EOK;
 }
 
@@ -273,7 +273,7 @@ static rt_err_t imxrt_control(struct rt_serial_device *serial, int cmd, void *ar
         LPUART_DisableInterrupts(uart->uart_base, kLPUART_RxDataRegFullInterruptEnable);
         /* disable rx irq */
         DisableIRQ(uart->irqn);
-        
+
         break;
     case RT_DEVICE_CTRL_SET_INT:
         /* enable interrupt */
@@ -295,7 +295,7 @@ static int imxrt_putc(struct rt_serial_device *serial, char ch)
 
     LPUART_WriteByte(uart->uart_base, ch);
     while(!(LPUART_GetStatusFlags(uart->uart_base) & kLPUART_TxDataRegEmptyFlag));
-    
+
     return 1;
 }
 
@@ -323,7 +323,7 @@ static void uart_isr(struct rt_serial_device *serial)
     struct imxrt_uart *uart = (struct imxrt_uart *) serial->parent.user_data;
 
     RT_ASSERT(uart != RT_NULL);
-    
+
     /* enter interrupt */
     rt_interrupt_enter();
 
@@ -332,7 +332,7 @@ static void uart_isr(struct rt_serial_device *serial)
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
-    
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -350,7 +350,6 @@ int imxrt_hw_usart_init(void)
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     int i;
 
-    
     for (i = 0; i < sizeof(uarts) / sizeof(uarts[0]); i++)
     {
         uarts[i].serial->ops    = &imxrt_uart_ops;
