@@ -41,16 +41,18 @@ if PLATFORM == 'gcc':
     STRIP = PREFIX + 'strip'
 
     DEVICE = ' -std=c99 -mcpu=cortex-m7 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -g -Wall -DUSE_HAL_DRIVER -D__ASSEMBLY__ -D__FPU_USED -eentry'
+    CFLAGS = DEVICE + ' -g -Wall -DUSE_HAL_DRIVER -D__ASSEMBLY__ -D__FPU_PRESENT -eentry'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=imxrt1052_sdram.map,-cref,-u,Reset_Handler -T imxrt1052_sdram.ld'
+    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=imxrt1052_sdram.map,-cref,-u,Reset_Handler -T ./Libraries/gcc/MIMXRT1052xxxxx_flexspi_nor.ld'
 
     CPATH = ''
     LPATH = ''
+    
+    CFLAGS += ' -gdwarf-2'
+    AFLAGS += ' -gdwarf-2'
 
     if BUILD == 'debug':
-        CFLAGS += ' -O0 -gdwarf-2'
-        AFLAGS += ' -gdwarf-2'
+        CFLAGS += ' -O0'
     else:
         CFLAGS += ' -O2 -Os'
 
