@@ -80,7 +80,7 @@ void rt_hw_board_init()
 #endif
 }
 
-#ifdef RT_USING_RTGUI
+#ifdef RT_USING_GUIENGINE
 #include <rtgui/driver.h>
 #include "drv_lcd.h"
 
