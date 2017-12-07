@@ -18,6 +18,8 @@
 #include "board.h"
 #include "usart.h"
 
+static struct rt_memheap system_heap;
+
 /* ARM PLL configuration for RUN mode */
 const clock_arm_pll_config_t armPllConfig = { .loopDivider = 100U };
 
@@ -83,6 +85,64 @@ static void BOARD_BootClockRUN(void)
 }
 
 
+/* MPU configuration. */
+static void BOARD_ConfigMPU(void)
+{
+    /* Disable I cache and D cache */
+    SCB_DisableICache();
+    SCB_DisableDCache();
+
+    /* Disable MPU */
+    ARM_MPU_Disable();
+
+    /* Region 0 setting */
+    MPU->RBAR = ARM_MPU_RBAR(0, 0xC0000000U);
+    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 2, 0, 0, 0, 0, ARM_MPU_REGION_SIZE_512MB);
+
+    /* Region 1 setting */
+    MPU->RBAR = ARM_MPU_RBAR(1, 0x80000000U);
+    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 2, 0, 0, 0, 0, ARM_MPU_REGION_SIZE_1GB);
+
+    /* Region 2 setting */
+    // spi flash: normal type, cacheable, no bufferable, no shareable
+    MPU->RBAR = ARM_MPU_RBAR(2, 0x60000000U);
+    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 0, 0, ARM_MPU_REGION_SIZE_512MB);
+
+    /* Region 3 setting */
+    MPU->RBAR = ARM_MPU_RBAR(3, 0x00000000U);
+    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 2, 0, 0, 0, 0, ARM_MPU_REGION_SIZE_1GB);
+
+    /* Region 4 setting */
+    MPU->RBAR = ARM_MPU_RBAR(4, 0x00000000U);
+    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 1, 0, ARM_MPU_REGION_SIZE_128KB);
+
+    /* Region 5 setting */
+    MPU->RBAR = ARM_MPU_RBAR(5, 0x20000000U);
+    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 1, 0, ARM_MPU_REGION_SIZE_128KB);
+
+    /* Region 6 setting */
+    MPU->RBAR = ARM_MPU_RBAR(6, 0x20200000U);
+    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 1, 0, ARM_MPU_REGION_SIZE_256KB);
+
+#if defined(SDRAM_MPU_INIT)
+    /* Region 7 setting */
+    MPU->RBAR = ARM_MPU_RBAR(7, 0x80000000U);
+    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 1, 0, ARM_MPU_REGION_SIZE_32MB);
+
+    /* Region 8 setting */
+    MPU->RBAR = ARM_MPU_RBAR(8, 0x81E00000U);
+    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 1, 1, 0, 0, 0, ARM_MPU_REGION_SIZE_2MB);
+#endif
+
+    /* Enable MPU */
+    ARM_MPU_Enable(MPU_CTRL_PRIVDEFENA_Msk);
+
+    /* Enable I cache and D cache */
+    SCB_EnableDCache();
+    SCB_EnableICache();
+}
+
+
 /**
  * This is the timer interrupt service routine.
  *
@@ -98,17 +158,23 @@ void SysTick_Handler(void)
     rt_interrupt_leave();
 }
 
+void rt_lowlevel_init(void)
+{
+    BOARD_ConfigMPU();
+
+    extern int imxrt_sdram_init(void);
+    imxrt_sdram_init();
+}
+
 /**
  * This function will initial LPC8XX board.
  */
 void rt_hw_board_init()
 {
     BOARD_BootClockRUN();
+
     
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
-
-    extern int imxrt_hw_usart_init(void);
-    imxrt_hw_usart_init();
     
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
@@ -119,7 +185,11 @@ void rt_hw_board_init()
 #endif
     
 #ifdef RT_USING_HEAP
-    rt_system_heap_init((void*)HEAP_BEGIN, (void*)HEAP_END);
+    rt_kprintf("sdram heap, begin: 0x%p, end: 0x%p\n", SDRAM_BEGIN, SDRAM_END);
+    rt_system_heap_init((void*)SDRAM_BEGIN, (void*)SDRAM_END);
+
+    rt_kprintf("sram heap, begin: 0x%p, end: 0x%p\n", HEAP_BEGIN, HEAP_END);
+    rt_memheap_init(&system_heap, "system", (void *)HEAP_BEGIN, HEAP_SIZE);
 #endif
 }
 

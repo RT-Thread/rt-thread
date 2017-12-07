@@ -21,18 +21,26 @@
 #include <fsl_iomuxc.h>
 
 #ifdef __CC_ARM
-extern int Image$$RW_m_data$$ZI$$Limit;
-#define HEAP_BEGIN    (&Image$$RW_m_data$$ZI$$Limit)
+extern int Image$$ARM_LIB_STACK$$ZI$$Limit;
+#define HEAP_BEGIN          (&Image$$ARM_LIB_STACK$$ZI$$Limit)
+#define HEAP_END            (0x2001FFFFu)
+
 #elif __ICCARM__
 #pragma section="HEAP"
-#define HEAP_BEGIN    (__segment_end("HEAP"))
+#define HEAP_BEGIN          (__segment_end("HEAP"))
+#define HEAP_END            (0x2001FFFFu)
+
 #else
-extern int __data_end__;
-#define HEAP_BEGIN    (&__data_end__)
+extern int heap_start;
+#define HEAP_BEGIN          (&heap_start)
+#define HEAP_END            (0x2001FFFFu)
 #endif
 
-#define HEAP_END          0x81DFFFFF
-//#define HEAP_END          0x2001FFFF
+#define HEAP_SIZE           ((uint32_t)HEAP_END - (uint32_t)HEAP_BEGIN)
+
+#define SDRAM_MPU_INIT
+#define SDRAM_BEGIN         (0x80000000u)
+#define SDRAM_END           (0x81E00000u)
 
 void rt_hw_board_init(void);
 
