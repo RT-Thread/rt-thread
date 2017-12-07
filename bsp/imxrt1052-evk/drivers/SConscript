@@ -8,6 +8,7 @@ cwd     = os.path.join(str(Dir('#')), 'drivers')
 src = Split("""
 board.c
 usart.c
+hyper_flash_boot.c
 drv_sdram.c
 """)
 
