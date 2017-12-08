@@ -23,6 +23,11 @@
 #include "stm32f4xx_eth.h"
 #endif
 
+#ifdef RT_USING_FINSH
+#include <shell.h>
+#include <finsh.h>
+#endif
+
 #ifdef RT_USING_GDB
 #include <gdb_stub.h>
 #endif
@@ -50,6 +55,11 @@ void rt_init_thread_entry(void* parameter)
         rt_kprintf("TCP/IP initialized!\n");
     }
 #endif
+
+#ifdef RT_USING_FINSH
+	/* init finsh */
+	finsh_system_init();
+#endif
 }
 
 int rt_application_init()
@@ -65,5 +75,3 @@ int rt_application_init()
 
     return 0;
 }
-
-/*@}*/

@@ -16,6 +16,11 @@
 #include <board.h>
 #include <rtthread.h>
 
+#ifdef RT_USING_FINSH
+#include <shell.h>
+#include <finsh.h>
+#endif
+
 #ifdef RT_USING_LWIP
 #include <lwip/sys.h>
 #include <lwip/api.h>
@@ -49,6 +54,10 @@ void rt_init_thread_entry(void* parameter)
         lwip_sys_init();
         rt_kprintf("TCP/IP initialized!\n");
     }
+#endif
+
+#ifdef RT_USING_FINSH
+    finsh_system_init();
 #endif
 }
 
