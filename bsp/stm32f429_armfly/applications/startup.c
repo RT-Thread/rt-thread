@@ -26,11 +26,6 @@
 /*@{*/
 
 extern int  rt_application_init(void);
-#ifdef RT_USING_FINSH
-extern int finsh_system_init(void);
-extern void finsh_set_device(const char* device);
-#endif
-
 
 /*******************************************************************************
 * Function Name  : assert_failed

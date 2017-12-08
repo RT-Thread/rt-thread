@@ -14,13 +14,23 @@
 
 #include <rtthread.h>
 
+#ifdef RT_USING_FINSH
+#include <shell.h>
+#include <finsh.h>
+#endif
+
 /**
  * @addtogroup LPC2478
  */
 /*@{*/
 int rt_application_init()
 {
-	return 0;
+#ifdef RT_USING_FINSH
+    /* init finsh */
+    finsh_system_init();
+#endif
+
+    return 0;
 }
 
 /*@}*/
