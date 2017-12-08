@@ -20,6 +20,11 @@
 #include <board.h>
 #include <rtthread.h>
 
+#ifdef RT_USING_FINSH
+#include <shell.h>
+#include <finsh.h>
+#endif
+
 #ifdef RT_USING_DFS
 /* dfs init */
 #include <dfs.h>
@@ -41,6 +46,14 @@ void rt_init_thread_entry(void* parameter)
 /* Filesystem Initialization */
 #ifdef RT_USING_DFS
 	{
+
+		/* init sdcard driver */
+#if STM32_USE_SDIO
+		rt_hw_sdcard_init();
+#else
+		rt_hw_msd_init();
+#endif
+
 		/* init the device filesystem */
 		dfs_init();
 
@@ -74,6 +87,13 @@ void rt_init_thread_entry(void* parameter)
 		lwip_sys_init();
 		rt_kprintf("TCP/IP initialized!\n");
 	}
+#endif
+
+	rt_hw_rtc_init();
+
+#ifdef RT_USING_FINSH
+	/* init finsh */
+	finsh_system_init();
 #endif
 }
 
