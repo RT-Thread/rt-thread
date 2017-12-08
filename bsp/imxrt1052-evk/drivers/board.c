@@ -189,7 +189,7 @@ void rt_hw_board_init()
     rt_system_heap_init((void*)SDRAM_BEGIN, (void*)SDRAM_END);
 
     rt_kprintf("sram heap, begin: 0x%p, end: 0x%p\n", HEAP_BEGIN, HEAP_END);
-    rt_memheap_init(&system_heap, "system", (void *)HEAP_BEGIN, HEAP_SIZE);
+    rt_memheap_init(&system_heap, "sram", (void *)HEAP_BEGIN, HEAP_SIZE);
 #endif
 }
 
