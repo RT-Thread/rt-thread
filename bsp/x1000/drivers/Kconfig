@@ -109,16 +109,31 @@ if RT_USING_GUIENGINE
     endif
 endif
 
-
-
-config RT_USING_ICODEC
-    default n
-
 config RT_USING_AUDIO
     bool "Using audio"
     select RT_USING_ICODEC
     default n
 
+if RT_USING_AUDIO
+    config RT_USING_ICODEC
+        bool "Using internal codec for audio"
+        default y if BOARD_HALLEY2_REALBOARD_V2
+        default n
+endif
+
 config RT_USING_CPU_FFS
     bool "Using CPU FFS"
     default y
+
+if PKG_USING_WLAN_WICED
+    choice
+        prompt "Broadcom Wi-Fi module"
+        default WIFI_USING_AP6212
+
+        config WIFI_USING_AP6212
+            bool "AP6212A module(bcm43438)"
+
+        config WIFI_USING_AP6181
+            bool "AP6181 module(bcm43362)"
+    endchoice
+endif
