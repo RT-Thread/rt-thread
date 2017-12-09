@@ -81,6 +81,7 @@ if (isdefinedsymbol(__heap_size__)) {
 define exported symbol __VECTOR_TABLE  = m_interrupts_start;
 define exported symbol __VECTOR_RAM    = m_interrupts_start;
 define exported symbol __RAM_VECTOR_TABLE_SIZE = 0x0;
+define exported symbol __RTT_HEAP_END = m_dtcm_end;
 
 define memory mem with size = 4G;
 define region TEXT_region = mem:[from m_interrupts_start to m_interrupts_end]
