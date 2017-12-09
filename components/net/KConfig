@@ -92,7 +92,11 @@ config RT_USING_LWIP
         config RT_LWIP_PPPOS
             bool "PPPoS protocol"
             default n
-
+            
+        config RT_MEMP_NUM_NETCONN
+            int "the number of struct netconns"
+            default 8         
+            
         config RT_LWIP_PBUF_NUM
             int "the number of PBUF"
             default 16
