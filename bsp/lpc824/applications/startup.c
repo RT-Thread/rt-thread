@@ -26,11 +26,6 @@
 /*@{*/
 
 extern int  rt_application_init(void);
-#ifdef RT_USING_FINSH
-extern int finsh_system_init(void);
-extern void finsh_set_device(const char* device);
-#endif
-
 
 /*******************************************************************************
 * Function Name  : assert_failed
@@ -87,8 +82,7 @@ void rtthread_startup(void)
     rt_thread_idle_init();
 
     /* start scheduler */
-
-rt_system_scheduler_start();
+    rt_system_scheduler_start();
 
     /* never reach here */
     return ;
