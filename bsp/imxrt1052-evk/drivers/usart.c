@@ -320,17 +320,31 @@ static int imxrt_getc(struct rt_serial_device *serial)
  */
 static void uart_isr(struct rt_serial_device *serial)
 {
-    struct imxrt_uart *uart = (struct imxrt_uart *) serial->parent.user_data;
+    struct imxrt_uart *uart;
+    LPUART_Type *base;
 
+    RT_ASSERT(serial != RT_NULL);
+    
+    uart = (struct imxrt_uart *) serial->parent.user_data;
     RT_ASSERT(uart != RT_NULL);
+    
+    base = uart->uart_base;
+    RT_ASSERT(base != RT_NULL);
 
     /* enter interrupt */
     rt_interrupt_enter();
 
     /* UART in mode Receiver -------------------------------------------------*/
-    if (LPUART_GetStatusFlags(uart->uart_base) & kLPUART_RxDataRegFullFlag)
+    if (LPUART_GetStatusFlags(base) & kLPUART_RxDataRegFullFlag)
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
+    }
+    
+    /* If RX overrun. */
+    if (LPUART_STAT_OR_MASK & base->STAT)
+    {
+        /* Clear overrun flag, otherwise the RX does not work. */
+        base->STAT = ((base->STAT & 0x3FE00000U) | LPUART_STAT_OR_MASK);
     }
 
     /* leave interrupt */
