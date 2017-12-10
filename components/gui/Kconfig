@@ -52,7 +52,7 @@ endchoice
 
 choice
     prompt "PNG image format"
-    default RTGUI_IMAGE_PNG_NONE
+    default RTGUI_IMAGE_LODEPNG
 
     config RTGUI_IMAGE_PNG_NONE
         bool "No PNG image format"
@@ -70,6 +70,10 @@ config RTGUI_IMAGE_BMP
 
 config RTGUI_IMAGE_CONTAINER
     bool "Use image container"
+    default n
+    
+config RTGUI_USING_DEMO
+    bool "Display an example of GUI"
     default n
     
 endif

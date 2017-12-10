@@ -116,6 +116,17 @@ static struct usb_qualifier_descriptor dev_qualifier =
 
 const static struct umass_descriptor _mass_desc =
 {
+#ifdef RT_USB_DEVICE_COMPOSITE
+    /* Interface Association Descriptor */
+    USB_DESC_LENGTH_IAD,
+    USB_DESC_TYPE_IAD,
+    USB_DYNAMIC,
+    0x01,
+    USB_CLASS_MASS_STORAGE,
+    0x06,
+    0x50,
+    0x00,
+#endif
     USB_DESC_LENGTH_INTERFACE,  //bLength;
     USB_DESC_TYPE_INTERFACE,    //type;
     USB_DYNAMIC,                //bInterfaceNumber;
@@ -706,7 +717,7 @@ static void _cb_len_calc(ufunction_t func, struct scsi_cmd* cmd,
     }
     else
     {
-        rt_kprintf("cmd_len error %d\n", cmd->cmd_len);      
+//        rt_kprintf("cmd_len error %d\n", cmd->cmd_len);      
     }
 }
 
@@ -722,7 +733,7 @@ static rt_bool_t _cbw_verify(ufunction_t func, struct scsi_cmd* cmd,
     data = (struct mstorage*)func->user_data;   
     if(cmd->cmd_len != cbw->cb_len)
     {
-        rt_kprintf("cb_len error\n");
+  //      rt_kprintf("cb_len error\n");
         cmd->cmd_len = cbw->cb_len;
     }
 
@@ -753,7 +764,7 @@ static rt_bool_t _cbw_verify(ufunction_t func, struct scsi_cmd* cmd,
     
     if(cbw->xfer_len < data->cb_data_size)
     {
-        rt_kprintf("xfer_len < data_size\n");
+ //       rt_kprintf("xfer_len < data_size\n");
         data->cb_data_size = cbw->xfer_len;
         data->csw_response.status = 1;
     }
@@ -769,7 +780,7 @@ static rt_size_t _cbw_handler(ufunction_t func, struct scsi_cmd* cmd,
     RT_ASSERT(func != RT_NULL);
     RT_ASSERT(cbw != RT_NULL);
     RT_ASSERT(cmd->handler != RT_NULL);
-    
+        
     data = (struct mstorage*)func->user_data;
     data->processing = cmd;
     return cmd->handler(func, cbw);
@@ -896,32 +907,32 @@ static rt_err_t _interface_handler(ufunction_t func, ureq_t setup)
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("mstorage_interface_handler\n"));
 
-    switch(setup->request)
+    switch(setup->bRequest)
     {
     case USBREQ_GET_MAX_LUN:        
         
         RT_DEBUG_LOG(RT_DEBUG_USB, ("USBREQ_GET_MAX_LUN\n"));
         
-        if(setup->value || setup->length != 1)
+        if(setup->wValue || setup->wLength != 1)
         {        
             rt_usbd_ep0_set_stall(func->device);
         }
         else
         {
-            rt_usbd_ep0_write(func->device, &lun, 1);
+            rt_usbd_ep0_write(func->device, &lun, setup->wLength);
         }
         break;
     case USBREQ_MASS_STORAGE_RESET:
 
         RT_DEBUG_LOG(RT_DEBUG_USB, ("USBREQ_MASS_STORAGE_RESET\n"));
         
-        if(setup->value || setup->length != 0)
+        if(setup->wValue || setup->wLength != 0)
         {
             rt_usbd_ep0_set_stall(func->device);
         }
         else
-        {            
-            rt_usbd_ep0_write(func->device, RT_NULL, 0);
+        {   
+            dcd_ep0_send_status(func->device->dcd);     
         }
         break;
     default:
@@ -1028,7 +1039,13 @@ static struct ufunction_ops ops =
     _function_disable,
     RT_NULL,
 };
-
+static rt_err_t _mstorage_descriptor_config(umass_desc_t desc, rt_uint8_t cintf_nr)
+{
+#ifdef RT_USB_DEVICE_COMPOSITE
+    desc->iad_desc.bFirstInterface = cintf_nr;
+#endif
+    return RT_EOK;
+}
 /**
  * This function will create a mass storage function instance.
  *
@@ -1066,7 +1083,10 @@ ufunction_t rt_usbd_function_mstorage_create(udevice_t device)
     setting = rt_usbd_altsetting_new(sizeof(struct umass_descriptor));
     
     /* config desc in alternate setting */
-    rt_usbd_altsetting_config_descriptor(setting, &_mass_desc, 0);
+    rt_usbd_altsetting_config_descriptor(setting, &_mass_desc, (rt_off_t)&((umass_desc_t)0)->intf_desc);
+
+    /* configure the msc interface descriptor */
+    _mstorage_descriptor_config(setting->desc, intf->intf_num);
 
     /* create a bulk out and a bulk in endpoint */
     mass_desc = (umass_desc_t)setting->desc;

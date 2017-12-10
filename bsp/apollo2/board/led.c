@@ -24,7 +24,6 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include "am_mcu_apollo.h"
 #include "board.h"
 
 #define AM_GPIO_LED0                46
@@ -128,14 +127,18 @@ int rt_hw_led_init(void)
     rt_hw_led_off(3);
 #endif /* RT_USING_LED1 */
 #endif
+
+    rt_kprintf("led_init!\n");
+
     return 0;
 }
 #ifdef RT_USING_COMPONENTS_INIT
-INIT_BOARD_EXPORT(rt_hw_led_init);
+INIT_DEVICE_EXPORT(rt_hw_led_init);
 #endif
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
+
 void led(rt_uint32_t led, rt_uint32_t state)
 {
     /* set led status */

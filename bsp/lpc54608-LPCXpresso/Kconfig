@@ -18,12 +18,13 @@ config $PKGS_DIR
     option env="PKGS_ROOT"
     default "packages"
 
-source "$RTT_DIR/KConfig"
-source "$PKGS_DIR/KConfig"
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
+
+config SOC_LPC54608
+    bool 
+    select ARCH_ARM_CORTEX_M4
+    default y
+
 source "$BSP_DIR/drivers/Kconfig"
 
-
-
-
-    
-    

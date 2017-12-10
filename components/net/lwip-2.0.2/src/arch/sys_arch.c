@@ -69,7 +69,7 @@ static void tcpip_init_done_callback(void *arg)
 {
     rt_device_t device;
     struct eth_device *ethif;
-    ip_addr_t ipaddr, netmask, gw;
+    ip4_addr_t ipaddr, netmask, gw;
     struct rt_list_node* node;
     struct rt_object* object;
     struct rt_object_information *information;
@@ -136,10 +136,13 @@ static void tcpip_init_done_callback(void *arg)
 /**
  * LwIP system initialization
  */
+extern int eth_system_device_init_private(void);
 int lwip_system_init(void)
 {
     rt_err_t rc;
     struct rt_semaphore done_sem;
+	
+    eth_system_device_init_private();
 
     /* set default netif to NULL */
     netif_default = RT_NULL;
@@ -181,7 +184,7 @@ int lwip_system_init(void)
 
     return 0;
 }
-INIT_COMPONENT_EXPORT(lwip_system_init);
+INIT_PREV_EXPORT(lwip_system_init);
 
 void sys_init(void)
 {

@@ -1,11 +1,21 @@
 /*
  * File      : board.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -56,6 +66,12 @@ void rt_hw_board_init(void);
 #define CONSOLE_DEVICE "uart2"
 #elif STM32_CONSOLE_USART == 3
 #define CONSOLE_DEVICE "uart3"
+#elif STM32_CONSOLE_USART == 4
+#define CONSOLE_DEVICE "uart4"
+#elif STM32_CONSOLE_USART == 5
+#define CONSOLE_DEVICE "uart5"
+#elif STM32_CONSOLE_USART == 6
+#define CONSOLE_DEVICE "lpuart1"
 #endif
 
 #define FINSH_DEVICE_NAME   CONSOLE_DEVICE

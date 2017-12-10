@@ -406,7 +406,7 @@ up_one:
     return fullpath;
 }
 RTM_EXPORT(dfs_normalize_path);
-
+#ifdef RT_USING_FINSH
 #include <finsh.h>
 int list_fd(void)
 {
@@ -438,6 +438,6 @@ int list_fd(void)
     return 0;
 }
 MSH_CMD_EXPORT(list_fd, list file descriptor);
-
+#endif
 /*@}*/
 

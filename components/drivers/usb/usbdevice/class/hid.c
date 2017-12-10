@@ -247,7 +247,7 @@ const static struct uhid_comm_descriptor _hid_comm_desc =
     USB_DESC_LENGTH_IAD,
     USB_DESC_TYPE_IAD,
     USB_DYNAMIC,
-    0x02,
+    0x01,
     0x03,                       /* bInterfaceClass: HID */
 #if defined(RT_USB_DEVICE_HID_KEYBOARD)||defined(RT_USB_DEVICE_HID_MOUSE)
     USB_HID_SUBCLASS_BOOT,    /* bInterfaceSubClass : 1=BOOT, 0=no boot */
@@ -372,7 +372,10 @@ static rt_err_t _ep_in_handler(ufunction_t func, rt_size_t size)
     RT_ASSERT(func->device != RT_NULL);
 
     data = (struct hid_s *) func->user_data;
-
+    if(data->parent.tx_complete != RT_NULL)
+    {
+        data->parent.tx_complete(&data->parent,RT_NULL);
+    }
     return RT_EOK;
 }
 
@@ -568,7 +571,7 @@ RT_WEAK void HID_Report_Received(hid_report_t report)
     dump_report(report);
 }
 ALIGN(RT_ALIGN_SIZE)
-static rt_uint8_t hid_thread_stack[RT_USBD_THREAD_STACK_SZ];
+static rt_uint8_t hid_thread_stack[512];
 static struct rt_thread hid_thread;
 
 static void hid_thread_entry(void* parameter)
@@ -583,20 +586,20 @@ static void hid_thread_entry(void* parameter)
 		HID_Report_Received(&report);
 	}
 }
-static rt_uint8_t hid_mq_pool[(sizeof(struct hid_report)+sizeof(void*))*32];
+static rt_uint8_t hid_mq_pool[(sizeof(struct hid_report)+sizeof(void*))*8];
 static void rt_usb_hid_init(struct ufunction *func)
 {
     struct hid_s *hiddev;
     hiddev = (struct hid_s *)func->user_data;
     rt_memset(&hiddev->parent, 0, sizeof(hiddev->parent));
     hiddev->parent.write = _hid_write;
-	
+	hiddev->func = func;
     rt_device_register(&hiddev->parent, "hidd", RT_DEVICE_FLAG_RDWR);
     rt_mq_init(&hiddev->hid_mq, "hiddmq", hid_mq_pool, sizeof(struct hid_report),
                             sizeof(hid_mq_pool), RT_IPC_FLAG_FIFO);
                             
     rt_thread_init(&hid_thread, "hidd", hid_thread_entry, hiddev,
-            hid_thread_stack, RT_USBD_THREAD_STACK_SZ, RT_USBD_THREAD_PRIO, 20);
+            hid_thread_stack, sizeof(hid_thread_stack), RT_USBD_THREAD_PRIO, 20);
     rt_thread_startup(&hid_thread);
 }
 

@@ -39,10 +39,9 @@ const static char* ustring[] =
     "320219198301",
     "Configuration",
     "Interface",
+    USB_STRING_OS
 };
-#endif
 
-#ifdef RT_USB_DEVICE_COMPOSITE
 static struct udevice_descriptor compsit_desc =
 {
     USB_DESC_LENGTH_DEVICE,     //bLength;
@@ -61,6 +60,16 @@ static struct udevice_descriptor compsit_desc =
     USB_DYNAMIC,                //bNumConfigurations;
 };
 #endif
+
+struct usb_os_comp_id_descriptor usb_comp_id_desc = 
+{
+    //head section
+    USB_DYNAMIC,
+    0x0100,
+    0x04,
+    USB_DYNAMIC,
+    {0x00,0x00,0x00,0x00,0x00,0x00,0x00},
+};
 
 rt_err_t rt_usb_device_init(void)
 {
@@ -87,6 +96,8 @@ rt_err_t rt_usb_device_init(void)
 
     /* create a configuration object */
     cfg = rt_usbd_config_new();
+
+    rt_usbd_device_set_os_comp_id_desc(udevice,&usb_comp_id_desc);
 
 #ifdef RT_USB_DEVICE_MSTORAGE
     {
@@ -126,6 +137,28 @@ rt_err_t rt_usb_device_init(void)
         extern ufunction_t rt_usbd_function_rndis_create(udevice_t device);
         /* create a rndis function object */
         func = rt_usbd_function_rndis_create(udevice);
+
+        /* add the function to the configuration */
+        rt_usbd_config_add_function(cfg, func);
+    }
+#endif
+
+#ifdef RT_USB_DEVICE_ECM
+    {
+        extern ufunction_t rt_usbd_function_ecm_create(udevice_t device);
+        /* create a rndis function object */
+        func = rt_usbd_function_ecm_create(udevice);
+
+        /* add the function to the configuration */
+        rt_usbd_config_add_function(cfg, func);
+    }
+#endif
+    
+#ifdef RT_USB_DEVICE_WINUSB
+    {
+        extern ufunction_t rt_usbd_function_winusb_create(udevice_t device);
+        /* create a rndis function object */
+        func = rt_usbd_function_winusb_create(udevice);
 
         /* add the function to the configuration */
         rt_usbd_config_add_function(cfg, func);

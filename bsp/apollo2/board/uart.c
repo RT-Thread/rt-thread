@@ -21,7 +21,8 @@
  * Date           Author       Notes
  * 2017-09-15     Haley        the first version
  */
- 
+
+#include <rtthread.h>
 #include <rtdevice.h>
 #include "am_mcu_apollo.h"
 #include "board.h"
@@ -42,24 +43,15 @@
 #define UART1_GPIO_TX         8
 #define UART1_GPIO_CFG_TX     AM_HAL_PIN_8_UART1TX
 
+#define UART_BUFFER_SIZE    256
+uint8_t UartRxBuffer[UART_BUFFER_SIZE];
+uint8_t UartTxBuffer[UART_BUFFER_SIZE];
+
 /* AM uart driver */
 struct am_uart
 {
     uint32_t uart_device;
     uint32_t uart_interrupt;
-};
-
-/**
- * @brief UART configuration settings
- *
- */
-am_hal_uart_config_t g_sUartConfig =
-{
-    115200, // ui32BaudRate
-    AM_HAL_UART_DATA_BITS_8, // ui32DataBits
-    false, // bTwoStopBits
-    AM_HAL_UART_PARITY_NONE, // ui32Parity
-    AM_HAL_UART_FLOW_CTRL_NONE, // ui32FlowCtrl
 };
 
 /**
@@ -81,14 +73,14 @@ static void rt_hw_uart_enable(struct am_uart* uart)
 
 #if defined(RT_USING_UART0)
     /* Make sure the UART RX and TX pins are enabled */
-    am_hal_gpio_pin_config(UART0_GPIO_TX, UART0_GPIO_CFG_TX);
-    am_hal_gpio_pin_config(UART0_GPIO_RX, UART0_GPIO_CFG_RX | AM_HAL_GPIO_PULL12K);
+    am_hal_gpio_pin_config(UART0_GPIO_TX, UART0_GPIO_CFG_TX | AM_HAL_GPIO_PULL24K);
+    am_hal_gpio_pin_config(UART0_GPIO_RX, UART0_GPIO_CFG_RX | AM_HAL_GPIO_PULL24K);
 #endif /* RT_USING_UART0 */
 
 #if defined(RT_USING_UART1)
     /* Make sure the UART RX and TX pins are enabled */
-    am_hal_gpio_pin_config(UART1_GPIO_TX, UART1_GPIO_CFG_TX);
-    am_hal_gpio_pin_config(UART1_GPIO_RX, UART1_GPIO_CFG_RX | AM_HAL_GPIO_PULL12K);
+    am_hal_gpio_pin_config(UART1_GPIO_TX, UART1_GPIO_CFG_TX | AM_HAL_GPIO_PULL24K);
+    am_hal_gpio_pin_config(UART1_GPIO_RX, UART1_GPIO_CFG_RX | AM_HAL_GPIO_PULL24K);
 #endif /* RT_USING_UART1 */
 }
 
@@ -143,9 +135,11 @@ void rt_hw_uart_send_string(char *pcString)
     while ( am_hal_uart_flags_get(AM_UART0_INST) & AM_HAL_UART_FR_BUSY );
 }
 
+//connect am drv to rt drv.
 static rt_err_t am_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
     struct am_uart* uart;
+    am_hal_uart_config_t uart_cfg;
 
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
@@ -155,22 +149,42 @@ static rt_err_t am_configure(struct rt_serial_device *serial, struct serial_conf
     RT_ASSERT(uart != RT_NULL);
 
     /* Get the configure */
-    g_sUartConfig.ui32BaudRate = cfg->baud_rate;
-    g_sUartConfig.ui32DataBits = cfg->data_bits;
+    uart_cfg.ui32BaudRate = cfg->baud_rate;
+
+    if (cfg->data_bits == DATA_BITS_5)
+        uart_cfg.ui32DataBits = AM_HAL_UART_DATA_BITS_5;
+    else if (cfg->data_bits == DATA_BITS_6)
+        uart_cfg.ui32DataBits = AM_HAL_UART_DATA_BITS_6;
+    else if (cfg->data_bits == DATA_BITS_7)
+        uart_cfg.ui32DataBits = AM_HAL_UART_DATA_BITS_7;
+    else if (cfg->data_bits == DATA_BITS_8)
+        uart_cfg.ui32DataBits = AM_HAL_UART_DATA_BITS_8;
 
     if (cfg->stop_bits == STOP_BITS_1)
-        g_sUartConfig.bTwoStopBits = false;
+        uart_cfg.bTwoStopBits = false;
     else if (cfg->stop_bits == STOP_BITS_2)
-        g_sUartConfig.bTwoStopBits = true;
+        uart_cfg.bTwoStopBits = true;
 
-    g_sUartConfig.ui32Parity = cfg->parity;
-    g_sUartConfig.ui32FlowCtrl = AM_HAL_UART_PARITY_NONE;
+    uart_cfg.ui32Parity = cfg->parity;
+    uart_cfg.ui32FlowCtrl = AM_HAL_UART_PARITY_NONE;
 
-    /* Configure the UART */
-    am_hal_uart_config(uart->uart_device, &g_sUartConfig);
+    /* UART Config */
+    am_hal_uart_config(uart->uart_device, &uart_cfg);
+
+    /* Enable the UART FIFO */
+    am_hal_uart_fifo_config(uart->uart_device, AM_HAL_UART_RX_FIFO_7_8 | AM_HAL_UART_RX_FIFO_7_8);
+
+    /* Initialize the UART queues */
+    am_hal_uart_init_buffered(uart->uart_device, UartRxBuffer, UART_BUFFER_SIZE, UartTxBuffer, UART_BUFFER_SIZE);
 
     /* Enable the UART */
     am_hal_uart_enable(uart->uart_device);
+
+    /* Enable interrupts */
+    am_hal_uart_int_enable(uart->uart_device, AM_HAL_UART_INT_RX_TMOUT | AM_HAL_UART_INT_RX | AM_HAL_UART_INT_TX);
+
+    /* Enable the uart interrupt in the NVIC */
+    am_hal_interrupt_enable(uart->uart_interrupt);
 
     return RT_EOK;
 }
@@ -205,6 +219,7 @@ static rt_err_t am_control(struct rt_serial_device *serial, int cmd, void *arg)
 
 static int am_putc(struct rt_serial_device *serial, char c)
 {
+    uint32_t rxsize, txsize;
     struct am_uart* uart;
 
     RT_ASSERT(serial != RT_NULL);
@@ -212,7 +227,14 @@ static int am_putc(struct rt_serial_device *serial, char c)
 
     RT_ASSERT(uart != RT_NULL);
 
-    am_hal_uart_char_transmit_polled(uart->uart_device, c);
+    am_hal_uart_get_status_buffered(uart->uart_device, &rxsize, &txsize);
+    //if (txsize > 0)
+    {
+        am_hal_uart_char_transmit_buffered(uart->uart_device, c);
+		}
+
+    /* Wait until busy bit clears to make sure UART fully transmitted last byte */
+    while ( am_hal_uart_flags_get(uart->uart_device) & AM_HAL_UART_FR_BUSY );
 
     return 1;
 }
@@ -221,6 +243,7 @@ static int am_getc(struct rt_serial_device *serial)
 {
     char c;
     int ch;
+    uint32_t rxsize, txsize;
     struct am_uart* uart;
 
     RT_ASSERT(serial != RT_NULL);
@@ -229,9 +252,10 @@ static int am_getc(struct rt_serial_device *serial)
     RT_ASSERT(uart != RT_NULL);
 
     ch = -1;
-    if ((am_hal_uart_flags_get(uart->uart_device) & AM_HAL_UART_FR_RX_EMPTY) == 0)
+    am_hal_uart_get_status_buffered(uart->uart_device, &rxsize, &txsize);
+    if (rxsize > 0)
     {
-        am_hal_uart_char_receive_polled(uart->uart_device, &c);
+        am_hal_uart_char_receive_buffered(uart->uart_device, &c, 1);
         ch = c & 0xff;
     }
 
@@ -261,6 +285,11 @@ static void uart_isr(struct rt_serial_device *serial)
     /* Clear the UART interrupt */
     am_hal_uart_int_clear(uart->uart_device, status);
 
+    if (status & (AM_HAL_UART_INT_RX_TMOUT | AM_HAL_UART_INT_TX | AM_HAL_UART_INT_RX))
+    {
+        am_hal_uart_service_buffered_timeout_save(uart->uart_device, status);
+    }
+
     if (status & (AM_HAL_UART_INT_RX_TMOUT))
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
@@ -273,7 +302,7 @@ static void uart_isr(struct rt_serial_device *serial)
 
     if (status & AM_HAL_UART_INT_TX)
     {
-        // rt_hw_serial_isr(serial, RT_SERIAL_EVENT_TX_DONE);
+        rt_hw_serial_isr(serial, RT_SERIAL_EVENT_TX_DONE);
     }
 }
 
@@ -331,14 +360,14 @@ static void GPIO_Configuration(void)
 {
 #if defined(RT_USING_UART0)
     /* Make sure the UART RX and TX pins are enabled */
-    am_hal_gpio_pin_config(UART0_GPIO_TX, UART0_GPIO_CFG_TX);
-    am_hal_gpio_pin_config(UART0_GPIO_RX, UART0_GPIO_CFG_RX | AM_HAL_GPIO_PULL12K);
+    am_hal_gpio_pin_config(UART0_GPIO_TX, UART0_GPIO_CFG_TX | AM_HAL_GPIO_PULL24K);
+    am_hal_gpio_pin_config(UART0_GPIO_RX, UART0_GPIO_CFG_RX | AM_HAL_GPIO_PULL24K);
 #endif /* RT_USING_UART0 */
 
 #if defined(RT_USING_UART1)
     /* Make sure the UART RX and TX pins are enabled */
-    am_hal_gpio_pin_config(UART1_GPIO_TX, UART1_GPIO_CFG_TX);
-    am_hal_gpio_pin_config(UART1_GPIO_RX, UART1_GPIO_CFG_RX | AM_HAL_GPIO_PULL12K);
+    am_hal_gpio_pin_config(UART1_GPIO_TX, UART1_GPIO_CFG_TX | AM_HAL_GPIO_PULL24K);
+    am_hal_gpio_pin_config(UART1_GPIO_RX, UART1_GPIO_CFG_RX | AM_HAL_GPIO_PULL24K);
 #endif /* RT_USING_UART1 */
 }
 
@@ -352,24 +381,6 @@ static void RCC_Configuration(struct am_uart* uart)
 
     /* Disable the UART before configuring it */
     am_hal_uart_disable(uart->uart_device);
-
-    /* Configure the UART */
-    am_hal_uart_config(uart->uart_device, &g_sUartConfig);
-
-    /* Enable the UART */
-    am_hal_uart_enable(uart->uart_device);
-
-    /* Enable the UART FIFO */
-    am_hal_uart_fifo_config(uart->uart_device, AM_HAL_UART_TX_FIFO_1_2 | AM_HAL_UART_RX_FIFO_1_2);
-}
-
-static void NVIC_Configuration(struct am_uart* uart)
-{
-    /* Enable interrupts */
-    am_hal_uart_int_enable(uart->uart_device, AM_HAL_UART_INT_RX_TMOUT | AM_HAL_UART_INT_RX);
-
-    /* Enable the uart interrupt in the NVIC */
-    am_hal_interrupt_enable(uart->uart_interrupt);
 }
 
 /**
@@ -379,7 +390,7 @@ static void NVIC_Configuration(struct am_uart* uart)
  *
  * @return None.
  */
-void rt_hw_uart_init(void)
+int rt_hw_uart_init(void)
 {
     struct am_uart* uart;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
@@ -389,14 +400,16 @@ void rt_hw_uart_init(void)
 #if defined(RT_USING_UART0)
     uart = &uart0;
     config.baud_rate = BAUD_RATE_115200;
+    config.data_bits = DATA_BITS_8;
+    config.stop_bits = STOP_BITS_1;
+    config.parity = PARITY_NONE;
 
     RCC_Configuration(uart);
-    NVIC_Configuration(uart);
 
     serial0.ops    = &am_uart_ops;
     serial0.config = config;
 
-    /* register UART1 device */
+    /* register UART0 device */
     rt_hw_serial_register(&serial0, "uart0",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX |
                           RT_DEVICE_FLAG_INT_TX, uart);
@@ -405,9 +418,11 @@ void rt_hw_uart_init(void)
 #if defined(RT_USING_UART1)
     uart = &uart1;
     config.baud_rate = BAUD_RATE_115200;
+    config.data_bits = DATA_BITS_8;
+    config.stop_bits = STOP_BITS_1;
+    config.parity = PARITY_NONE;
 
     RCC_Configuration(uart);
-    NVIC_Configuration(uart);
 
     serial1.ops    = &am_uart_ops;
     serial1.config = config;
@@ -417,6 +432,8 @@ void rt_hw_uart_init(void)
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX |
                           RT_DEVICE_FLAG_INT_TX, uart);
 #endif /* RT_USING_UART1 */
+
+    return 0;
 }
 
 /*@}*/

@@ -36,6 +36,10 @@
 /*****************************************************************************/
 /* Version: GCC for ARM Embedded Processors                                  */
 /*****************************************************************************/
+
+#define __STARTUP_INITIALIZE_NONCACHEDATA
+#define __STARTUP_CLEAR_BSS
+
     .syntax unified
     .arch armv7-m
 

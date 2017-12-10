@@ -200,6 +200,7 @@ struct udevice
     struct udevice_descriptor dev_desc;
 
     struct usb_qualifier_descriptor * dev_qualifier;
+    usb_os_comp_id_desc_t    os_comp_id_desc;
     const char** str;
 
     udevice_state_t state;
@@ -261,11 +262,13 @@ rt_err_t rt_usbd_device_set_controller(udevice_t device, udcd_t dcd);
 rt_err_t rt_usbd_device_set_descriptor(udevice_t device, udev_desc_t dev_desc);
 rt_err_t rt_usbd_device_set_string(udevice_t device, const char** ustring);
 rt_err_t rt_usbd_device_set_qualifier(udevice_t device, struct usb_qualifier_descriptor* qualifier);
+rt_err_t rt_usbd_device_set_os_comp_id_desc(udevice_t device, usb_os_comp_id_desc_t os_comp_id_desc);
 rt_err_t rt_usbd_device_add_config(udevice_t device, uconfig_t cfg);
 rt_err_t rt_usbd_config_add_function(uconfig_t cfg, ufunction_t func);
 rt_err_t rt_usbd_function_add_interface(ufunction_t func, uintf_t intf);
 rt_err_t rt_usbd_interface_add_altsetting(uintf_t intf, ualtsetting_t setting);
 rt_err_t rt_usbd_altsetting_add_endpoint(ualtsetting_t setting, uep_t ep);
+rt_err_t rt_usbd_os_comp_id_desc_add_os_func_comp_id_desc(usb_os_comp_id_desc_t os_comp_id_desc, usb_os_func_comp_id_desc_t os_func_comp_id_desc);
 rt_err_t rt_usbd_altsetting_config_descriptor(ualtsetting_t setting, const void* desc, rt_off_t intf_pos);
 rt_err_t rt_usbd_set_config(udevice_t device, rt_uint8_t value);
 rt_err_t rt_usbd_set_altsetting(uintf_t intf, rt_uint8_t value);
@@ -407,5 +410,49 @@ rt_inline rt_err_t dcd_ep_clear_stall(udcd_t dcd, rt_uint8_t address)
 
     return dcd->ops->ep_clear_stall(address);
 }
-
+rt_inline void usbd_os_proerty_descriptor_send(ufunction_t func, ureq_t setup, usb_os_proerty_t usb_os_proerty, rt_uint8_t number_of_proerty)
+{
+    struct usb_os_property_header header;
+    static rt_uint8_t * data;
+    rt_uint8_t * pdata;
+    rt_uint8_t index,i;
+    if(data == RT_NULL)
+    {
+        header.dwLength = sizeof(struct usb_os_property_header);
+        header.bcdVersion = 0x0100;
+        header.wIndex = 0x05;
+        header.wCount = number_of_proerty;
+        for(index = 0;index < number_of_proerty;index++)
+        {
+            header.dwLength += usb_os_proerty[index].dwSize;
+        }
+        data = (rt_uint8_t *)rt_malloc(header.dwLength);
+        RT_ASSERT(data != RT_NULL);
+        pdata = data;
+        rt_memcpy((void *)pdata,(void *)&header,sizeof(struct usb_os_property_header));
+        pdata += sizeof(struct usb_os_property_header);
+        for(index = 0;index < number_of_proerty;index++)
+        {
+            rt_memcpy((void *)pdata,(void *)&usb_os_proerty[index],10);
+            pdata += 10;
+            for(i = 0;i < usb_os_proerty[index].wPropertyNameLength/2;i++)
+            {
+                *pdata = usb_os_proerty[index].bPropertyName[i];
+                pdata++;
+                *pdata = 0;
+                pdata++;
+            }
+            *((rt_uint32_t *)pdata) = usb_os_proerty[index].dwPropertyDataLength;
+            pdata += 4;
+            for(i = 0;i < usb_os_proerty[index].dwPropertyDataLength/2;i++)
+            {
+                *pdata = usb_os_proerty[index].bPropertyData[i];
+                pdata++;
+                *pdata = 0;
+                pdata++;
+            }
+        }
+    }
+    rt_usbd_ep0_write(func->device, data, setup->wLength);
+}
 #endif

@@ -6,7 +6,12 @@
 #define ERRNO                       1
 
 #define LWIP_IPV4                   1
+
+#ifdef RT_USING_LWIP_IPV6
+#define LWIP_IPV6                   1
+#else
 #define LWIP_IPV6                   0
+#endif /* RT_USING_LWIP_IPV6 */
 
 #define NO_SYS                      0
 #define LWIP_SOCKET                 1
@@ -375,8 +380,6 @@
 #define LWIP_NETIF_API                  1
 #endif
 
-/* MEMP_NUM_SYS_TIMEOUT: the number of simulateously active timeouts. */
-#define MEMP_NUM_SYS_TIMEOUT       (LWIP_TCP + IP_REASSEMBLY + LWIP_ARP + (2*LWIP_DHCP) + LWIP_AUTOIP + LWIP_IGMP + LWIP_DNS + PPP_SUPPORT)
 #ifdef LWIP_IGMP
 #include <stdlib.h>
 #define LWIP_RAND                  rand

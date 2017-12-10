@@ -1,0 +1,207 @@
+menu "Device Drivers"
+
+config RT_USING_DEVICE_IPC
+    bool "Using device drivers IPC"
+    default y
+
+config RT_USING_SERIAL
+    bool "Using serial device drivers"
+    default y
+
+config RT_USING_CAN
+    bool "Using CAN device drivers"
+    default n
+
+config RT_USING_HWTIMER
+    bool "Using hardware timer device drivers"
+    default n
+
+config RT_USING_I2C
+    bool "Using I2C device drivers"
+    default n
+
+if RT_USING_I2C
+    config RT_USING_I2C_BITOPS
+        bool "Use GPIO to simulate I2C"
+        default y
+endif
+
+config RT_USING_PIN
+    bool "Using generic GPIO device drivers"
+    default y
+
+config RT_USING_MTD_NOR
+    bool "Using MTD Nor Flash device drivers"
+    default n
+
+config RT_USING_MTD_NAND
+    bool "Using MTD Nand Flash device drivers"
+    default n
+
+    if RT_USING_MTD_NAND
+    config RT_MTD_NAND_DEBUG
+        bool "Enable MTD Nand operations debug information"
+        default n
+    endif
+
+config RT_USING_RTC
+    bool "Using RTC device drivers"
+    default n
+
+config RT_USING_SDIO
+    bool "Using SD/MMC device drivers"
+    default n
+
+config RT_USING_SPI
+    bool "Using SPI Bus/Device device drivers"
+    default n
+
+    if RT_USING_SPI
+        config RT_USING_SFUD
+            bool "Using Serial Flash Universal Driver"
+            default n
+            if RT_USING_SFUD            
+                config RT_SFUD_USING_SFDP
+                bool "Using auto probe flash JEDEC SFDP parameter"
+                default y
+                
+                config RT_SFUD_USING_FLASH_INFO_TABLE
+                bool "Using defined supported flash chip information table"
+                default y
+                
+                config RT_SFUD_DEBUG
+                bool "Show more SFUD debug information"
+                default n
+            endif
+    
+        config RT_USING_W25QXX
+            bool "Using W25QXX SPI NorFlash"
+            default n
+
+        config RT_USING_GD
+            bool "Using GD SPI NorFlash"
+            default n
+
+        config RT_USING_ENC28J60
+            bool "Using ENC28J60 SPI Ethernet network interface"
+            select RT_USING_LWIP
+            default n
+
+        config RT_USING_SPI_WIFI
+            bool "Using RW009/007 SPI Wi-Fi wireless interface"
+            select RT_USING_LWIP
+            default n
+    endif
+
+config RT_USING_WDT
+    bool "Using Watch Dog device drivers"
+    default n
+
+config RT_USING_WIFI
+    bool "Using Wi-Fi network"
+    default n
+
+menu "Using USB"
+    config RT_USING_USB_HOST
+        bool "Using USB host"
+        default n
+
+        if RT_USING_USB_HOST
+            config RT_USBH_ADK
+                bool "Enable connected with Android by ADK USB"
+                default n
+        endif
+    config RT_USING_USB_DEVICE
+        bool "Using USB device"
+        default n
+
+        if RT_USING_USB_DEVICE
+            config RT_USB_DEVICE_COMPOSITE
+                bool "Enable composite device"
+                default n
+                choice
+                    prompt "Device type"
+                    default _RT_USB_DEVICE_CDC
+                    depends on !RT_USB_DEVICE_COMPOSITE
+                    config _RT_USB_DEVICE_CDC
+                        bool "Enable to use device as CDC device"
+                        select RT_USB_DEVICE_CDC
+                    config _RT_USB_DEVICE_MSTORAGE
+                        bool "Enable to use device as Mass Storage device"
+                        select RT_USB_DEVICE_MSTORAGE
+                    config _RT_USB_DEVICE_HID
+                        bool "Enable to use device as HID device"
+                        select RT_USB_DEVICE_HID
+                    config _RT_USB_DEVICE_RNDIS
+                        bool "Enable to use device as rndis device"
+                        select RT_USB_DEVICE_RNDIS
+                        depends on RT_USING_LWIP
+                    config _RT_USB_DEVICE_ECM
+                        bool "Enable to use device as ecm device"
+                        select RT_USB_DEVICE_ECM
+                        depends on RT_USING_LWIP
+                    config _RT_USB_DEVICE_WINUSB
+                        bool "Enable to use device as winusb device"
+                        select RT_USB_DEVICE_WINUSB
+                endchoice
+                if RT_USB_DEVICE_COMPOSITE
+                    config RT_USB_DEVICE_CDC
+                        bool "Enable to use device as CDC device"
+                        default y
+                    config RT_USB_DEVICE_MSTORAGE
+                        bool "Enable to use device as Mass Storage device"
+                        default n
+                    config RT_USB_DEVICE_HID
+                        bool "Enable to use device as HID device"
+                        default n
+                    config RT_USB_DEVICE_RNDIS
+                        bool "Enable to use device as rndis device"
+                        default n
+                        depends on RT_USING_LWIP
+                    config RT_USB_DEVICE_ECM
+                        bool "Enable to use device as ecm device"
+                        default n
+                        depends on RT_USING_LWIP
+                    config RT_USB_DEVICE_WINUSB
+                        bool "Enable to use device as winusb device"
+                        default n
+                endif
+                if RT_USB_DEVICE_MSTORAGE
+                    config RT_USB_MSTORAGE_DISK_NAME
+                    string "msc class disk name"
+                    default "flash0"
+                endif
+                if RT_USB_DEVICE_HID
+                    config RT_USB_DEVICE_HID_KEYBOARD
+                        bool "Use to HID device as Keyboard"
+                        default n
+                    if RT_USB_DEVICE_HID_KEYBOARD
+                        config RT_USB_DEVICE_HID_KEYBOARD_NUMBER
+                        int "Number of Keyboard(max 3)"
+                        default 1
+                        range 1 3
+                    endif
+                    config RT_USB_DEVICE_HID_MOUSE
+                        bool "Use to HID device as Mouse"
+                        default n
+                    config RT_USB_DEVICE_HID_GENERAL
+                        bool "Use to HID device as General HID device"
+                        default y
+                        if RT_USB_DEVICE_HID_GENERAL
+                            config RT_USB_DEVICE_HID_GENERAL_OUT_REPORT_LENGTH
+                                int "General HID device out report length"
+                                default 63
+                                range 0 63
+
+                            config RT_USB_DEVICE_HID_GENERAL_IN_REPORT_LENGTH
+                                int "General HID device in report length"
+                                default 63
+                                range 0 63
+                        endif
+                    config RT_USB_DEVICE_HID_MEDIA
+                        bool "Use to HID device as media keyboard"
+                        default y
+                endif
+        endif
+    endmenu
+endmenu
