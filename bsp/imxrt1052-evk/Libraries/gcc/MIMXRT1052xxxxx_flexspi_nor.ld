@@ -253,12 +253,16 @@ SECTIONS
     stack_start = .;
     . += STACK_SIZE;
     stack_end = .;
+    __StackTop = .;
+  } > m_dtcm
+  
+  .RTT_HEAP :
+  {
     heap_start = .;
+    . = ALIGN(8);
   } > m_dtcm
 
-  /* Initializes stack on the end of block */
-  __StackTop   = stack_end;
-  PROVIDE(__stack = __StackTop);
+  PROVIDE(heap_end = ORIGIN(m_dtcm) + LENGTH(m_dtcm));
 
   .ARM.attributes 0 : { *(.ARM.attributes) }
 
