@@ -67,6 +67,9 @@
   #define Heap_Size                    0x0400
 #endif
 
+#define RTT_HEAP_SIZE                   \
+    (m_data_size - ImageLength(RW_m_data) - ImageLength(ARM_LIB_HEAP) - ImageLength(ARM_LIB_STACK))
+
 LR_m_text m_text_start m_text_size {   ; load region size_region
   ER_m_text m_text_start m_text_size { ; load address = execution address
     * (RESET,+FIRST)
@@ -80,6 +83,8 @@ LR_m_text m_text_start m_text_size {   ; load region size_region
   ARM_LIB_HEAP +0 EMPTY Heap_Size {    ; Heap region growing up
   }
   ARM_LIB_STACK +0 EMPTY Stack_Size { ; Stack region growing down
+  }
+  RTT_HEAP +0 EMPTY RTT_HEAP_SIZE {
   }
 
   RW_m_ncache m_ncache_start m_ncache_size { ; ncache RW data
