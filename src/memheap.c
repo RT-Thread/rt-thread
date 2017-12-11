@@ -620,10 +620,10 @@ void *rt_malloc(rt_size_t size)
         struct rt_list_node *node;
         struct rt_memheap *heap;
         struct rt_object_information *information;
-        extern struct rt_object_information rt_object_container[];
 
         /* try to allocate on other memory heap */
-        information = &rt_object_container[RT_Object_Class_MemHeap];
+        information = rt_object_get_information(RT_Object_Class_MemHeap);
+        RT_ASSERT(information != RT_NULL);
         for (node  = information->object_list.next;
              node != &(information->object_list);
              node  = node->next)
