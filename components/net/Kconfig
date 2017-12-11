@@ -55,10 +55,6 @@ config RT_USING_LWIP
                 config IP_SOF_BROADCAST_RECV
                     int "SOF broadcast recv"
                     default 1
-
-                config LWIP_USING_DHCPD
-                    bool "Enable DHCP server"
-                    default n
             endif
 
         menu "Static IPv4 Address"
@@ -91,14 +87,16 @@ config RT_USING_LWIP
             bool "PPP protocol"
             default n
 
-        config RT_LWIP_PPPOE
-            bool "PPPoE protocol"
-            default n
-
-        config RT_LWIP_PPPOS
-            bool "PPPoS protocol"
-            default n
-
+        if RT_LWIP_PPP
+            config RT_LWIP_PPPOE
+                bool "PPPoE protocol"
+                default n
+    
+            config RT_LWIP_PPPOS
+                bool "PPPoS protocol"
+                default n
+        endif
+        
         config RT_LWIP_PBUF_NUM
             int "the number of PBUF"
             default 16
@@ -183,6 +181,11 @@ endmenu
 source "$RTT_DIR/components/net/freemodbus/Kconfig"
 
 if RT_USING_LWIP
+
+config LWIP_USING_DHCPD
+    bool "Enable DHCP server"
+    default n
+
 config RT_USING_NETUTILS
     bool "Enable net utils"
     default n
