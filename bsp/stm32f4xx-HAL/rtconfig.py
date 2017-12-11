@@ -20,7 +20,7 @@ if  CROSS_TOOL  == 'gcc':
 	EXEC_PATH 	= 'D:/ArdaArmTools/GNUARM_4.9_2015q1/bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
-	EXEC_PATH 	= 'C:/Keil_v5'
+	EXEC_PATH 	= 'C:/Keil'
 elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
 	IAR_PATH 	= 'C:/Program Files (x86)/IAR Systems/Embedded Workbench 7.2'
@@ -58,6 +58,7 @@ if PLATFORM == 'gcc':
         CFLAGS += ' -O2'
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
+    TARGET = 'rtthread-stm32f411.' + TARGET_EXT
 
 elif PLATFORM == 'armcc':
     # toolchains
@@ -78,6 +79,11 @@ elif PLATFORM == 'armcc':
     CFLAGS += ' -D__MICROLIB '
     AFLAGS += ' --pd "__MICROLIB SETA 1" '
     LFLAGS += ' --library_type=microlib '
+    # download options
+    DOWNLOAD_COMMAND_PATH = EXEC_PATH + '/UV4/UV4.exe'
+    PROJECT_PATH          = os.getcwd() + '/project.uvprojx'
+    TARGET = 'build/rtthread-stm32f4xx.' + TARGET_EXT
+
     EXEC_PATH += '/arm/armcc/bin/'
 
     if BUILD == 'debug':
@@ -135,3 +141,4 @@ elif PLATFORM == 'iar':
 	
     EXEC_PATH = IAR_PATH + '/arm/bin/'
     POST_ACTION = ''
+    TARGET = 'rtthread-stm32f411.' + TARGET_EXT
