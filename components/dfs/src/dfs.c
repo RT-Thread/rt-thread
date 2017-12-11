@@ -20,6 +20,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2005-02-22     Bernard      The first version.
+ * 2017-12-11     Bernard      Use rt_free to instead of free in fd_is_open().
  */
 
 #include <dfs.h>
@@ -219,7 +220,7 @@ int fd_is_open(const char *pathname)
         if (fs == NULL)
         {
             /* can't find mounted file system */
-            free(fullpath);
+            rt_free(fullpath);
 
             return -1;
         }
