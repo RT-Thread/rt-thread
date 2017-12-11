@@ -93,6 +93,11 @@
    should be set high. */
 #define MEMP_NUM_PBUF               16
 
+/* the number of struct netconns */
+#ifdef RT_MEMP_NUM_NETCONN
+#define MEMP_NUM_NETCONN            RT_MEMP_NUM_NETCONN
+#endif
+
 /* the number of UDP protocol control blocks. One per active RAW "connection". */
 #ifdef RT_LWIP_RAW_PCB_NUM
 #define MEMP_NUM_RAW_PCB            RT_LWIP_RAW_PCB_NUM
