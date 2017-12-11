@@ -290,6 +290,9 @@ config RT_HSE_VALUE
     int "HSE Value"
     default 8000000
     depends on !RT_USING_HSI
+config RT_HSE_HCLK
+    int "System Clock Value"
+    default 84000000
 config RT_USING_UART1
     bool "Using UART1"
     default y    
