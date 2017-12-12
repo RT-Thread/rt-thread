@@ -29,7 +29,6 @@
 #include <rtgui/rtgui_app.h>
 
 #include <rtgui/widgets/window.h>
-//#include <rtgui/widgets/button.h>
 #include <rtgui/widgets/title.h>
 
 static rt_bool_t _rtgui_win_deal_close(struct rtgui_win *win,
@@ -42,6 +41,7 @@ static void _rtgui_win_constructor(rtgui_win_t *win)
     RTGUI_WIDGET(win)->toplevel = win;
 
     /* init win property */
+	win->update = 0;
     win->drawing = 0;
 
     RTGUI_WIDGET(win)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
@@ -208,6 +208,8 @@ RTM_EXPORT(rtgui_win_init);
 
 int rtgui_win_fini(struct rtgui_win* win)
 {
+    win->magic = 0;
+
     /* close the window first if it's not. */
     if (!(win->flag & RTGUI_WIN_FLAG_CLOSED))
     {
@@ -372,6 +374,7 @@ rt_base_t rtgui_win_enter_modal(struct rtgui_win *win)
         return exit_code;
 
     win->flag |= RTGUI_WIN_FLAG_MODAL;
+    win->app_ref_count = win->app->ref_count + 1;
     exit_code = rtgui_app_run(win->app);
     win->flag &= ~RTGUI_WIN_FLAG_MODAL;
 
@@ -437,6 +440,8 @@ rt_base_t rtgui_win_show(struct rtgui_win *win, rt_bool_t is_modal)
 {
     RTGUI_WIDGET_UNHIDE(win);
 
+    win->magic = 0xA5A55A5A;
+
     if (is_modal)
         win->flag |= RTGUI_WIN_FLAG_MODAL;
     if (win->_do_show)
@@ -447,8 +452,21 @@ RTM_EXPORT(rtgui_win_show);
 
 void rtgui_win_end_modal(struct rtgui_win *win, rtgui_modal_code_t modal_code)
 {
+    int i = 0;
     if (win == RT_NULL || !(win->flag & RTGUI_WIN_FLAG_MODAL))
         return;
+
+    while (win->app_ref_count < win->app->ref_count)
+    {
+        rtgui_app_exit(win->app, 0);
+
+        i ++;
+        if (i >= 1000)
+        {
+            rt_kprintf(" =*=> rtgui_win_end_modal while (win->app_ref_count < win->app->ref_count) \n");
+            RT_ASSERT(0);
+        }
+    }
 
     rtgui_app_exit(win->app, modal_code);
 
@@ -530,7 +548,7 @@ void rtgui_win_move(struct rtgui_win *win, int x, int y)
         dy = y - wgt->extent.y1;
         rtgui_widget_move_to_logic(wgt, dx, dy);
     }
-    rtgui_rect_moveto(&win->outer_extent, dx, dy);
+	rtgui_rect_move(&win->outer_extent, dx, dy);
 
     if (win->flag & RTGUI_WIN_FLAG_CONNECTED)
     {
@@ -572,6 +590,7 @@ static rt_bool_t rtgui_win_ondraw(struct rtgui_win *win)
     /* paint each widget */
     RTGUI_EVENT_PAINT_INIT(&event);
     event.wid = RT_NULL;
+
     rtgui_container_dispatch_event(RTGUI_CONTAINER(win),
                                    (rtgui_event_t *)&event);
 
@@ -1095,7 +1114,7 @@ void rtgui_theme_draw_win(struct rtgui_wintitle *wint)
         {
             /* get close button rect */
             rtgui_rect_t box_rect = {0, 0, WINTITLE_CB_WIDTH, WINTITLE_CB_HEIGHT};
-            rtgui_rect_moveto_align(&rect, &box_rect, RTGUI_ALIGN_CENTER_VERTICAL | RTGUI_ALIGN_RIGHT);
+            rtgui_rect_move_to_align(&rect, &box_rect, RTGUI_ALIGN_CENTER_VERTICAL | RTGUI_ALIGN_RIGHT);
             box_rect.x1 -= 3;
             box_rect.x2 -= 3;
             rtgui_dc_fill_rect(dc, &box_rect);

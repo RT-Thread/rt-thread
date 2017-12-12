@@ -166,7 +166,7 @@ static int mem_read(struct rtgui_filerw *context, void *ptr, rt_size_t size, rt_
     if (total_bytes > mem_available)
         total_bytes = mem_available;
 
-    rt_memcpy(ptr, mem->mem_position, total_bytes);
+    memcpy(ptr, mem->mem_position, total_bytes);
     mem->mem_position += total_bytes;
 
     return (total_bytes / size);

@@ -329,6 +329,7 @@ enum rtgui_gesture_type
     RTGUI_GESTURE_PINCH     = 0x0002,
     RTGUI_GESTURE_DRAG      = 0x0004,
     RTGUI_GESTURE_LONGPRESS = 0x0008,
+	RTGUI_GESTURE_DRAGGED   = 0x0001 | 0x0004 | 0x0008,
     /* PINCH, DRAG finished. */
     RTGUI_GESTURE_FINISH    = 0x8000,
     /* The corresponding gesture should be canceled. */

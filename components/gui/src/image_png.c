@@ -550,7 +550,7 @@ static void rtgui_image_png_blit(struct rtgui_image *image, struct rtgui_dc *dc,
 {
     int x, y;
     int w, h;
-    struct rtgui_blit_info info;
+    struct rtgui_blit_info info = {0};
     struct rtgui_graphic_driver *hw_driver = rtgui_graphic_driver_get_default();
 
     RT_ASSERT(image != RT_NULL && dc != RT_NULL && rect != RT_NULL);
@@ -653,10 +653,10 @@ static void rtgui_image_png_blit(struct rtgui_image *image, struct rtgui_dc *dc,
     {
         int dst_x, dst_y;
 
-        info.a = 0;
+        info.a = 255;
 
         /* initialize source blit information */
-        info.src_fmt = RTGRAPHIC_PIXEL_FORMAT_ARGB888;;
+        info.src_fmt = RTGRAPHIC_PIXEL_FORMAT_ARGB888;
         info.src_h = h;
         info.src_w = w;
         info.src_pitch = image->w * rtgui_color_get_bpp(RTGRAPHIC_PIXEL_FORMAT_ARGB888);
@@ -673,6 +673,9 @@ static void rtgui_image_png_blit(struct rtgui_image *image, struct rtgui_dc *dc,
         {
             struct rtgui_dc_buffer *buffer;
             buffer = (struct rtgui_dc_buffer*)dc;
+
+            if (buffer->pixel_alpha == 0)
+                info.a = 0;
 
             info.dst = rtgui_dc_buffer_get_pixel(RTGUI_DC(buffer)) + dst_y * buffer->pitch +
                        dst_x * rtgui_color_get_bpp(buffer->pixel_format);
