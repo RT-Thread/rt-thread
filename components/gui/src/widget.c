@@ -218,12 +218,12 @@ void rtgui_widget_set_minheight(rtgui_widget_t *widget, int height)
 }
 RTM_EXPORT(rtgui_widget_set_minheight);
 
-static void _widget_moveto(struct rtgui_widget* widget, int dx, int dy)
+static void _widget_move(struct rtgui_widget* widget, int dx, int dy)
 {
     struct rtgui_list_node *node;
     rtgui_widget_t *child, *parent;
 
-    rtgui_rect_moveto(&(widget->extent), dx, dy);
+	rtgui_rect_move(&(widget->extent), dx, dy);
 
     /* handle visiable extent */
     widget->extent_visiable = widget->extent;
@@ -243,7 +243,7 @@ static void _widget_moveto(struct rtgui_widget* widget, int dx, int dy)
         {
             child = rtgui_list_entry(node, rtgui_widget_t, sibling);
 
-            _widget_moveto(child, dx, dy);
+            _widget_move(child, dx, dy);
         }
     }
 }
@@ -280,7 +280,7 @@ void rtgui_widget_move_to_logic(rtgui_widget_t *widget, int dx, int dy)
     }
 
     /* move this widget (and its children if it's a container) to destination point */
-    _widget_moveto(widget, dx, dy);
+    _widget_move(widget, dx, dy);
     /* update this widget */
     rtgui_widget_update_clip(widget);
 }

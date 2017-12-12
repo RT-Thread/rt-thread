@@ -44,9 +44,13 @@ void rtgui_fnt_font_draw_text(struct rtgui_font *font, struct rtgui_dc *dc, cons
     rt_uint32_t position;
     struct fnt_font *fnt;
     rt_uint8_t *data_ptr;
+    struct rtgui_rect text_rect;
 
     fnt = (struct fnt_font*)font->data;
     RT_ASSERT(fnt != RT_NULL);
+
+    rtgui_font_get_metrics(rtgui_dc_get_gc(dc)->font, text, &text_rect);
+    rtgui_rect_move_to_align(rect, &text_rect, RTGUI_DC_TEXTALIGN(dc));
 
     while (len)
     {
@@ -81,16 +85,16 @@ void rtgui_fnt_font_draw_text(struct rtgui_font *font, struct rtgui_dc *dc, cons
                 for (c = 0; c < (fnt->header.height + 7)/8; c ++)
                 {
                     /* check drawable region */
-                    if ((rect->x1 + i > rect->x2) || (rect->y1 + c * 8 + j > rect->y2))
+                    if ((text_rect.x1 + i > text_rect.x2) || (text_rect.y1 + c * 8 + j > text_rect.y2))
                         continue;
 
                     if (data_ptr[i + c * width] & (1 << j))
-                        rtgui_dc_draw_point(dc, rect->x1 + i, rect->y1 + c * 8 + j);
+                        rtgui_dc_draw_point(dc, text_rect.x1 + i, text_rect.y1 + c * 8 + j);
                 }
             }
         }
 
-        rect->x1 += width;
+        text_rect.x1 += width;
         text += 1;
         len -= 1;
     }

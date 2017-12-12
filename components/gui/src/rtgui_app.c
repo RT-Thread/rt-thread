@@ -26,6 +26,7 @@
 #include <rtgui/rtgui_system.h>
 #include <rtgui/rtgui_app.h>
 #include <rtgui/widgets/window.h>
+#include <topwin.h>
 
 static void _rtgui_app_constructor(struct rtgui_app *app)
 {
@@ -82,7 +83,7 @@ struct rtgui_app *rtgui_app_create(const char *title)
 
     rt_snprintf(mq_name, RT_NAME_MAX, "g%s", title);
     app->mq = rt_mq_create(mq_name,
-                           sizeof(union rtgui_event_generic), 64,
+                           sizeof(union rtgui_event_generic), 256,
                            RT_IPC_FLAG_FIFO);
     if (app->mq == RT_NULL)
     {
@@ -185,7 +186,6 @@ RTM_EXPORT(rtgui_app_set_onidle);
 
 rtgui_idle_func_t rtgui_app_get_onidle(struct rtgui_app *app)
 {
-
     _rtgui_application_check(app);
     return app->on_idle;
 }
@@ -200,6 +200,11 @@ rt_inline rt_bool_t _rtgui_application_dest_handle(
 
     if (wevent->wid == RT_NULL)
         return RT_FALSE;
+	
+	if (wevent->wid->magic != 0xA5A55A5A)
+	{
+		return RT_FALSE;
+	}
 
     /* this window has been closed. */
     if (wevent->wid != RT_NULL && wevent->wid->flag & RTGUI_WIN_FLAG_CLOSED)
@@ -276,11 +281,14 @@ rt_bool_t rtgui_app_event_handler(struct rtgui_object *object, rtgui_event_t *ev
 
     case RTGUI_EVENT_TIMER:
     {
+		rt_base_t level;
         struct rtgui_timer *timer;
         struct rtgui_event_timer *etimer = (struct rtgui_event_timer *) event;
 
         timer = etimer->timer;
+		level = rt_hw_interrupt_disable();
         timer->pending_cnt--;
+		rt_hw_interrupt_enable(level);
         RT_ASSERT(timer->pending_cnt >= 0);
         if (timer->state == RTGUI_TIMER_ST_DESTROY_PENDING)
         {
@@ -309,6 +317,21 @@ rt_bool_t rtgui_app_event_handler(struct rtgui_object *object, rtgui_event_t *ev
 
         if (ecmd->wid != RT_NULL)
             return _rtgui_application_dest_handle(app, event);
+		else
+		{
+			struct rtgui_topwin *wnd;
+
+			wnd = rtgui_topwin_get_focus();
+			if (wnd != RT_NULL)
+			{
+				RT_ASSERT(wnd->flag & WINTITLE_ACTIVATE)
+
+				/* send to focus window */
+				ecmd->wid = wnd->wid;
+
+				return _rtgui_application_dest_handle(app, event);
+			}			
+		}
     }
     default:
         return rtgui_object_event_handler(object, event);
