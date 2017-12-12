@@ -88,6 +88,9 @@ struct rtgui_win
     /* inherit from container */
     rtgui_container_t parent;
 
+	/* update count */
+	rt_base_t update;
+
     /* drawing count */
     rt_base_t drawing;
     struct rtgui_rect drawing_rect;
@@ -137,6 +140,11 @@ struct rtgui_win
 
     /* Private data. */
     rt_base_t (*_do_show)(struct rtgui_win *win);
+	
+	/* app ref_count */
+	rt_uint16_t app_ref_count;
+	/* win magic flag, magic value is 0xA5A55A5A */
+	rt_uint32_t	magic;
 };
 
 rtgui_win_t *rtgui_win_create(struct rtgui_win *parent_window, const char *title,

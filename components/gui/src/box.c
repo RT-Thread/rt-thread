@@ -117,7 +117,7 @@ static void rtgui_box_layout_vertical(struct rtgui_box *box, struct rtgui_rect *
         rtgui_rect_init(rect, 0, 0, widget->min_width, widget->min_height);
 
         /* left in default */
-        rtgui_rect_moveto(rect, next_x, next_y);
+        rtgui_rect_move(rect, next_x, next_y);
 
         if (widget->align & RTGUI_ALIGN_EXPAND)
         {
@@ -212,12 +212,12 @@ static void rtgui_box_layout_horizontal(struct rtgui_box *box, struct rtgui_rect
         rect = &(widget->extent);
 
         /* reset rect */
-        rtgui_rect_moveto(rect, -rect->x1, -rect->y1);
+        rtgui_rect_move(rect, -rect->x1, -rect->y1);
         rect->x2 = widget->min_width;
         rect->y2 = widget->min_height;
 
         /* top in default */
-        rtgui_rect_moveto(rect, next_x, next_y);
+        rtgui_rect_move(rect, next_x, next_y);
 
         if (widget->align & RTGUI_ALIGN_EXPAND)
         {

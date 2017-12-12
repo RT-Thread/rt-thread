@@ -1,4 +1,4 @@
-# RT-Thread building script for component
+# RT-Thread building script for FreeType
 
 from building import *
 
@@ -8,6 +8,6 @@ psnames.c
 ''')
 CPPPATH = [cwd]
 
-group = DefineGroup('freetype', src, depend = ['RTGUI_USING_TTF'], CPPPATH = CPPPATH)
+group = DefineGroup('FreeType', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

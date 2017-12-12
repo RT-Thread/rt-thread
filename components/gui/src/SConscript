@@ -6,6 +6,6 @@ cwd = GetCurrentDir()
 src = Glob('*.c') + Glob('*.cpp')
 CPPPATH = [cwd]
 
-group = DefineGroup('GuiEngine', src, depend = ['RTGUI_IMAGE_TJPGD'], CPPPATH = CPPPATH)
+group = DefineGroup('GuiEngine', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

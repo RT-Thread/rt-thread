@@ -30,7 +30,9 @@
 
 #define HDC_MAGIC_LEN       4
 
+#ifdef PKG_USING_FASTLZ
 extern int fastlz_decompress(const void *input, int length, void *output, int maxout);
+#endif
 
 static rt_bool_t rtgui_image_hdc_check(struct rtgui_filerw *file);
 static rt_bool_t rtgui_image_hdc_load(struct rtgui_image *image, struct rtgui_filerw *file, rt_bool_t load);

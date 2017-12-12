@@ -764,7 +764,7 @@ rt_err_t rtgui_topwin_move(struct rtgui_event_win_move *event)
 
     old_rect = topwin->extent;
     /* move window rect */
-    rtgui_rect_moveto(&(topwin->extent), dx, dy);
+	rtgui_rect_move(&(topwin->extent), dx, dy);
 
     /* move the monitor rect list */
     rtgui_list_foreach(node, &(topwin->monitor_list))
@@ -772,7 +772,7 @@ rt_err_t rtgui_topwin_move(struct rtgui_event_win_move *event)
         struct rtgui_mouse_monitor *monitor = rtgui_list_entry(node,
                                               struct rtgui_mouse_monitor,
                                               list);
-        rtgui_rect_moveto(&(monitor->rect), dx, dy);
+		rtgui_rect_move(&(monitor->rect), dx, dy);
     }
 
     /* update windows clip info */
@@ -790,6 +790,7 @@ rt_err_t rtgui_topwin_move(struct rtgui_event_win_move *event)
         struct rtgui_event_paint epaint;
         RTGUI_EVENT_PAINT_INIT(&epaint);
         epaint.wid = topwin->wid;
+
         rtgui_send(topwin->app, &(epaint.parent), sizeof(epaint));
     }
 
