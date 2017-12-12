@@ -88,6 +88,7 @@ struct rtgui_dc *rtgui_dc_buffer_create_pixformat(rt_uint8_t pixel_format, int w
         dc->gc.font = rtgui_font_default();
         dc->gc.textalign = RTGUI_ALIGN_LEFT | RTGUI_ALIGN_TOP;
         dc->pixel_format = pixel_format;
+        dc->pixel_alpha = 255;
 
         dc->width = w;
         dc->height = h;
@@ -127,6 +128,7 @@ struct rtgui_dc *rtgui_img_dc_create_pixformat(rt_uint8_t pixel_format,
         dc->gc.font = rtgui_font_default();
         dc->gc.textalign = RTGUI_ALIGN_LEFT | RTGUI_ALIGN_TOP;
         dc->pixel_format = pixel_format;
+        dc->pixel_alpha = 255;
 
         dc->width = image_item->image->w;
         dc->height = image_item->image->h;
@@ -160,7 +162,8 @@ struct rtgui_dc *rtgui_dc_buffer_create_from_dc(struct rtgui_dc* dc)
                  d->height);
         if (buffer != RT_NULL)
         {
-            rt_memcpy(buffer->pixel, d->pixel, d->pitch * d->height);
+            memcpy(buffer->pixel, d->pixel, d->pitch * d->height);
+            d->pixel_alpha = 255;
 
             return RTGUI_DC(buffer);
         }
@@ -169,6 +172,15 @@ struct rtgui_dc *rtgui_dc_buffer_create_from_dc(struct rtgui_dc* dc)
     return RT_NULL;
 }
 RTM_EXPORT(rtgui_dc_buffer_create_from_dc);
+
+void rtgui_dc_buffer_set_alpha(struct rtgui_dc* dc, rt_uint8_t pixel_alpha)
+{
+    struct rtgui_dc_buffer *d = (struct rtgui_dc_buffer*) dc;
+    if (d)
+    {
+        d->pixel_alpha = pixel_alpha;
+    }
+}
 
 rt_uint8_t *rtgui_dc_buffer_get_pixel(struct rtgui_dc *dc)
 {
@@ -465,10 +477,13 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc *self,
         {
             /* use rtgui_blit */
 
-            struct rtgui_blit_info info;
+            struct rtgui_blit_info info = { 0 };
             struct rtgui_widget *owner;
 
-            info.a = 255;
+            if (self->type == RTGUI_DC_BUFFER)
+                info.a = dc->pixel_alpha;
+            else
+                info.a = 255;
 
             /* blit source */
             info.src = _dc_get_pixel(dc, dc_point.x, dc_point.y);
@@ -496,7 +511,7 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc *self,
         {
             /* use rtgui_blit */
             rt_uint8_t bpp, hw_bpp;
-            struct rtgui_blit_info info;
+            struct rtgui_blit_info info = { 0 };
             struct rtgui_widget *owner;
             struct rtgui_region dest_region;
             struct rtgui_rect dest_extent;
@@ -518,7 +533,10 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc *self,
             rects = rtgui_region_rects(&dest_region);
 
             /* common info */
-            info.a = 255;
+            if (self->type == RTGUI_DC_BUFFER)
+                info.a = dc->pixel_alpha;
+            else
+                info.a = 255;
             info.src_fmt = dc->pixel_format;
             info.src_pitch = dc->pitch;
 
@@ -564,7 +582,7 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc *self,
                 else RT_ASSERT(0);
 
                 /* change the logic coordinate to the device coordinate */
-                rtgui_rect_moveto(dest_rect, owner->extent.x1, owner->extent.y1);
+                rtgui_rect_move(dest_rect, owner->extent.x1, owner->extent.y1);
 
                 for (index = dest_rect->y1; index < dest_rect->y1 + rect_height; index ++)
                 {
@@ -602,9 +620,12 @@ static void rtgui_dc_buffer_blit(struct rtgui_dc *self,
         struct rtgui_dc_buffer *dest_dc = (struct rtgui_dc_buffer*)dest;
 
         /* use rtgui_blit to handle buffer blit */
-        struct rtgui_blit_info info;
+        struct rtgui_blit_info info = { 0 };
 
-        info.a = 255;
+        if (self->type == RTGUI_DC_BUFFER)
+            info.a = dc->pixel_alpha;
+        else
+            info.a = 255;
 
         /* blit source */
         info.src = _dc_get_pixel(dc, dc_point.x, dc_point.y);
@@ -645,7 +666,7 @@ static void rtgui_dc_buffer_blit_line(struct rtgui_dc *self, int x1, int x2, int
         x2 = dc->width-1;
 
     pixel = _dc_get_pixel(dc,x1,y);
-    rt_memcpy(pixel, line_data, (x2 - x1) * rtgui_color_get_bpp(dc->pixel_format));
+    memcpy(pixel, line_data, (x2 - x1) * rtgui_color_get_bpp(dc->pixel_format));
 }
 
 #ifdef RT_USING_DFS

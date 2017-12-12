@@ -2077,7 +2077,7 @@ void rtgui_region_draw_clip(rtgui_region_t *region, struct rtgui_dc *dc)
 
         rect = rects[i];
 
-        rtgui_rect_moveto(&rect, -x, -y);
+		rtgui_rect_move(&rect, -x, -y);
         rtgui_dc_draw_rect(dc, &rect);
 
         rt_snprintf(text, sizeof(text) - 1, "%d", i);
@@ -2100,7 +2100,7 @@ int rtgui_region_is_flat(rtgui_region_t *region)
 }
 RTM_EXPORT(rtgui_region_is_flat);
 
-void rtgui_rect_moveto(rtgui_rect_t *rect, int x, int y)
+void rtgui_rect_move(rtgui_rect_t *rect, int x, int y)
 {
     rect->x1 += x;
     rect->x2 += x;
@@ -2108,9 +2108,9 @@ void rtgui_rect_moveto(rtgui_rect_t *rect, int x, int y)
     rect->y1 += y;
     rect->y2 += y;
 }
-RTM_EXPORT(rtgui_rect_moveto);
+RTM_EXPORT(rtgui_rect_move);
 
-void rtgui_rect_moveto_point(rtgui_rect_t *rect, int x, int y)
+void rtgui_rect_move_to_point(rtgui_rect_t *rect, int x, int y)
 {
     int mx, my;
 
@@ -2123,9 +2123,9 @@ void rtgui_rect_moveto_point(rtgui_rect_t *rect, int x, int y)
     rect->y1 += my;
     rect->y2 += my;
 }
-RTM_EXPORT(rtgui_rect_moveto_point);
+RTM_EXPORT(rtgui_rect_move_to_point);
 
-void rtgui_rect_moveto_align(const rtgui_rect_t *rect, rtgui_rect_t *to, int align)
+void rtgui_rect_move_to_align(const rtgui_rect_t *rect, rtgui_rect_t *to, int align)
 {
     int dw, dh;
     dw = 0;
@@ -2138,11 +2138,11 @@ void rtgui_rect_moveto_align(const rtgui_rect_t *rect, rtgui_rect_t *to, int ali
     if (dh < 0) dh = 0;
 
     /* move to insider of rect */
-    rtgui_rect_moveto(to, rect->x1, rect->y1);
+	rtgui_rect_move_to_point(to, rect->x1, rect->y1);
 
     /* limited the destination rect to source rect */
-    // if (dw == 0) to->x2 = rect->x2;
-    // if (dh == 0) to->y2 = rect->y2;
+     if (dw == 0) to->x2 = rect->x2;
+     if (dh == 0) to->y2 = rect->y2;
 
     /* align to right */
     if (align & RTGUI_ALIGN_RIGHT)
@@ -2150,6 +2150,12 @@ void rtgui_rect_moveto_align(const rtgui_rect_t *rect, rtgui_rect_t *to, int ali
         to->x1 += dw;
         to->x2 += dw;
     }
+	/* align to center horizontal */
+	else if (align & RTGUI_ALIGN_CENTER_HORIZONTAL)
+	{
+		to->x1 += dw >> 1;
+		to->x2 += dw >> 1;
+	}
 
     /* align to bottom */
     if (align & RTGUI_ALIGN_BOTTOM)
@@ -2157,22 +2163,14 @@ void rtgui_rect_moveto_align(const rtgui_rect_t *rect, rtgui_rect_t *to, int ali
         to->y1 += dh;
         to->y2 += dh;
     }
-
-    /* align to center horizontal */
-    if (align & RTGUI_ALIGN_CENTER_HORIZONTAL)
-    {
-        to->x1 += dw >> 1;
-        to->x2 += dw >> 1;
-    }
-
     /* align to center vertical */
-    if (align & RTGUI_ALIGN_CENTER_VERTICAL)
+    else if (align & RTGUI_ALIGN_CENTER_VERTICAL)
     {
         to->y1 += dh >> 1;
         to->y2 += dh >> 1;
     }
 }
-RTM_EXPORT(rtgui_rect_moveto_align);
+RTM_EXPORT(rtgui_rect_move_to_align);
 
 void rtgui_rect_inflate(rtgui_rect_t *rect, int d)
 {
