@@ -35,6 +35,13 @@ void rt_init_thread_entry(void *parameter)
 
     platform_init();
     mnt_init();
+
+#if defined(RT_USING_GUIENGINE) && defined(RTGUI_USING_DEMO)
+    {
+        extern int rt_gui_demo_init(void);
+        rt_gui_demo_init();
+    }
+#endif
 }
 
 int rt_application_init()
