@@ -49,7 +49,7 @@ rt_err_t rt_usb_host_init(void)
     }
 
     /* initialize usb hub */
-    rt_usbh_hub_init();
+    rt_usbh_hub_init((uhcd_t)uhc);
 
     /* initialize class driver */
     rt_usbh_class_driver_init();
