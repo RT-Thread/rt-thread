@@ -589,4 +589,4 @@ static int rt_hw_stm32_eth_init(void)
 	
     return state;
 }
-INIT_DEVICE_EXPORT(rt_hw_stm32_eth_init);
+INIT_APP_EXPORT(rt_hw_stm32_eth_init);
