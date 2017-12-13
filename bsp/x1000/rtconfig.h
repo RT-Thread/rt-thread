@@ -118,7 +118,7 @@
 #define RT_USING_SDIO
 /* RT_USING_SPI is not set */
 /* RT_USING_WDT is not set */
-#define RT_USING_WIFI
+/* RT_USING_WIFI is not set */
 
 /* Using USB */
 
@@ -146,7 +146,6 @@
 #define RT_LWIP_DHCP
 #define IP_SOF_BROADCAST 1
 #define IP_SOF_BROADCAST_RECV 1
-/* LWIP_USING_DHCPD is not set */
 
 /* Static IPv4 Address */
 
@@ -157,8 +156,7 @@
 #define RT_LWIP_TCP
 /* RT_LWIP_RAW is not set */
 /* RT_LWIP_PPP is not set */
-/* RT_LWIP_PPPOE is not set */
-/* RT_LWIP_PPPOS is not set */
+#define RT_MEMP_NUM_NETCONN 8
 #define RT_LWIP_PBUF_NUM 16
 #define RT_LWIP_RAW_PCB_NUM 4
 #define RT_LWIP_UDP_PCB_NUM 4
@@ -182,6 +180,7 @@
 /* Modbus master and slave stack */
 
 /* RT_USING_MODBUS is not set */
+/* LWIP_USING_DHCPD is not set */
 /* RT_USING_NETUTILS is not set */
 
 /* RT-Thread UI Engine */
@@ -212,6 +211,12 @@
 /* RT_USING_LOGTRACE is not set */
 /* RT_USING_RYM is not set */
 
+/* RT-Thread Senior Membership Packages */
+
+/* system packages */
+
+/* PKG_USING_FTL_SRC is not set */
+
 /* RT-Thread online packages */
 
 /* system packages */
@@ -230,16 +235,6 @@
 /* PKG_USING_CJSON is not set */
 /* PKG_USING_EZXML is not set */
 /* PKG_USING_NANOPB is not set */
-
-/* Wi-Fi */
-
-/* Marvell WiFi */
-
-/* PKG_USING_WLANMARVELL is not set */
-
-/* Wiced WiFi */
-
-#define PKG_USING_WLAN_WICED
 
 /* security packages */
 
@@ -271,16 +266,6 @@
 /* example package: hello */
 
 /* PKG_USING_HELLO is not set */
-
-/* Privated Packages of RealThread */
-
-/* PKG_USING_CODEC is not set */
-/* PKG_USING_PLAYER is not set */
-
-/* Network Utilities */
-
-/* PKG_USING_MDNS is not set */
-/* PKG_USING_UPNP is not set */
 #define BOARD_X1000_REALBOARD
 /* RT_USING_HARD_FLOAT is not set */
 /* BOARD_PHOENIX is not set */
@@ -309,7 +294,7 @@
 #define RT_USING_AUDIO
 #define RT_USING_ICODEC
 #define RT_USING_CPU_FFS
-#define WIFI_USING_AP6212
+/* WIFI_USING_AP6212 is not set */
 /* WIFI_USING_AP6181 is not set */
 
 #endif
