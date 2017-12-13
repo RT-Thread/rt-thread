@@ -103,3 +103,24 @@ def xml_indent(elem, level=0):
     else:
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = i
+
+
+source_ext = ["c", "h", "s", "S", "cpp", "xpm"]
+source_list = []
+
+def walk_children(child):
+    global source_list
+    global source_ext
+
+    # print child
+    full_path = child.rfile().abspath
+    file_type  = full_path.rsplit('.',1)[1]
+    #print file_type
+    if file_type in source_ext:
+        if full_path not in source_list:
+            source_list.append(full_path)
+
+    children = child.all_children()
+    if children != []:
+        for item in children:
+            walk_children(item)
