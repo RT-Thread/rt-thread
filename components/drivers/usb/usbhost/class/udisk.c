@@ -72,7 +72,7 @@ static rt_size_t rt_udisk_read(rt_device_t dev, rt_off_t pos, void* buffer,
     rt_size_t size)
 {
     rt_err_t ret;
-    struct uintf* intf;
+    struct uhintf* intf;
     struct ustor_data* data;
     int timeout = 500;
 
@@ -110,7 +110,7 @@ static rt_size_t rt_udisk_write (rt_device_t dev, rt_off_t pos, const void* buff
     rt_size_t size)
 {
     rt_err_t ret;
-    struct uintf* intf;
+    struct uhintf* intf;
     struct ustor_data* data;
     int timeout = 500;
 
@@ -174,7 +174,7 @@ static rt_err_t rt_udisk_control(rt_device_t dev, rt_uint8_t cmd, void *args)
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_udisk_run(struct uintf* intf)
+rt_err_t rt_udisk_run(struct uhintf* intf)
 {
     int i = 0;
     rt_err_t ret;
@@ -382,7 +382,7 @@ rt_err_t rt_udisk_run(struct uintf* intf)
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_udisk_stop(struct uintf* intf)
+rt_err_t rt_udisk_stop(struct uhintf* intf)
 {
     int i;
     ustor_t stor;    
