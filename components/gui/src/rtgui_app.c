@@ -23,10 +23,13 @@
  * 2012-07-07     Bernard      move the send/recv message to the rtgui_system.c
  */
 
+#include <rthw.h>
+#include <rtthread.h>
+
 #include <rtgui/rtgui_system.h>
 #include <rtgui/rtgui_app.h>
 #include <rtgui/widgets/window.h>
-#include <topwin.h>
+#include "topwin.h"
 
 static void _rtgui_app_constructor(struct rtgui_app *app)
 {
