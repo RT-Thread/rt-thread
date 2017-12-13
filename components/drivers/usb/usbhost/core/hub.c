@@ -40,8 +40,7 @@ static struct uclass_driver hub_driver;
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_usbh_hub_get_descriptor(struct uinstance* device, rt_uint8_t *buffer, 
-    rt_size_t nbytes)
+rt_err_t rt_usbh_hub_get_descriptor(struct uinstance* device, rt_uint8_t *buffer, rt_size_t nbytes)
 {
     struct urequest setup;
     int timeout = 100;
@@ -49,16 +48,20 @@ rt_err_t rt_usbh_hub_get_descriptor(struct uinstance* device, rt_uint8_t *buffer
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
     
-    setup.request_type = USB_REQ_TYPE_DIR_IN | USB_REQ_TYPE_CLASS | 
-        USB_REQ_TYPE_DEVICE;
+    setup.request_type = USB_REQ_TYPE_DIR_IN | USB_REQ_TYPE_CLASS | USB_REQ_TYPE_DEVICE;
     setup.bRequest = USB_REQ_GET_DESCRIPTOR;
     setup.wIndex = 0;
     setup.wLength = nbytes;
     setup.wValue = USB_DESC_TYPE_HUB << 8;
 
-    if(rt_usb_hcd_control_xfer(device->hcd, device, &setup, buffer, nbytes, 
-        timeout) == nbytes) return RT_EOK;
-    else return -RT_FALSE;    
+    if(rt_usb_hcd_setup_xfer(device->hcd, device->pipe_ep0_out, &setup, timeout) == 8)
+    {
+        if(rt_usb_hcd_pipe_xfer(device->hcd, device->pipe_ep0_in, buffer, nbytes, timeout) == nbytes)
+        {
+            return RT_EOK;
+        }
+    } 
+    return -RT_FALSE;    
 }
 
 /**
@@ -70,25 +73,27 @@ rt_err_t rt_usbh_hub_get_descriptor(struct uinstance* device, rt_uint8_t *buffer
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_usbh_hub_get_status(struct uinstance* device, rt_uint8_t* buffer)
+rt_err_t rt_usbh_hub_get_status(struct uinstance* device, rt_uint32_t* buffer)
 {
     struct urequest setup;
     int timeout = 100;
-    int length = 4;
     
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
 
-    setup.request_type = USB_REQ_TYPE_DIR_IN | USB_REQ_TYPE_CLASS | 
-        USB_REQ_TYPE_DEVICE;
+    setup.request_type = USB_REQ_TYPE_DIR_IN | USB_REQ_TYPE_CLASS | USB_REQ_TYPE_DEVICE;
     setup.bRequest = USB_REQ_GET_STATUS;
     setup.wIndex = 0;
-    setup.wLength = length;
+    setup.wLength = 4;
     setup.wValue = 0;
-
-    if(rt_usb_hcd_control_xfer(device->hcd, device, &setup, buffer, length, 
-        timeout) == length) return RT_EOK;
-    else return -RT_FALSE;    
+    if(rt_usb_hcd_setup_xfer(device->hcd, device->pipe_ep0_out, &setup, timeout) == 8)
+    {
+        if(rt_usb_hcd_pipe_xfer(device->hcd, device->pipe_ep0_in, buffer, 4, timeout) == 4)
+        {
+            return RT_EOK;
+        }
+    }
+    return -RT_FALSE;    
 }
 
 /**
@@ -101,12 +106,10 @@ rt_err_t rt_usbh_hub_get_status(struct uinstance* device, rt_uint8_t* buffer)
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_usbh_hub_get_port_status(uhub_t hub, rt_uint16_t port, 
-    rt_uint8_t* buffer)
+rt_err_t rt_usbh_hub_get_port_status(uhub_t hub, rt_uint16_t port, rt_uint32_t* buffer)
 {
     struct urequest setup;
     int timeout = 100;
-    int length = 4;
     
     /* parameter check */
     RT_ASSERT(hub != RT_NULL);
@@ -119,16 +122,20 @@ rt_err_t rt_usbh_hub_get_port_status(uhub_t hub, rt_uint16_t port,
         return RT_EOK;
     }
 
-    setup.request_type = USB_REQ_TYPE_DIR_IN | USB_REQ_TYPE_CLASS | 
-        USB_REQ_TYPE_OTHER;
+    setup.request_type = USB_REQ_TYPE_DIR_IN | USB_REQ_TYPE_CLASS | USB_REQ_TYPE_OTHER;
     setup.bRequest = USB_REQ_GET_STATUS;
     setup.wIndex = port;
     setup.wLength = 4;
     setup.wValue = 0;
 
-    if(rt_usb_hcd_control_xfer(hub->hcd, hub->self, &setup, buffer, 
-        length, timeout) == timeout) return RT_EOK;
-    else return -RT_FALSE;        
+    if(rt_usb_hcd_setup_xfer(hub->hcd, hub->self->pipe_ep0_out, &setup, timeout) == 8)
+    {
+        if(rt_usb_hcd_pipe_xfer(hub->hcd, hub->self->pipe_ep0_in, buffer, 4, timeout) == 4)
+        {
+            return RT_EOK;
+        }
+    }
+    return -RT_FALSE;        
 }
 
 /**
@@ -141,8 +148,7 @@ rt_err_t rt_usbh_hub_get_port_status(uhub_t hub, rt_uint16_t port,
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_usbh_hub_clear_port_feature(uhub_t hub, rt_uint16_t port, 
-    rt_uint16_t feature)
+rt_err_t rt_usbh_hub_clear_port_feature(uhub_t hub, rt_uint16_t port, rt_uint16_t feature)
 {
     struct urequest setup;
     int timeout = 100;
@@ -165,9 +171,11 @@ rt_err_t rt_usbh_hub_clear_port_feature(uhub_t hub, rt_uint16_t port,
     setup.wLength = 0;
     setup.wValue = feature;
 
-    if(rt_usb_hcd_control_xfer(hub->hcd, hub->self, &setup, RT_NULL, 0, 
-        timeout) == 0) return RT_EOK;
-    else return -RT_FALSE;    
+    if(rt_usb_hcd_setup_xfer(hub->hcd, hub->self->pipe_ep0_out, &setup, timeout) == 8)
+    {
+        return RT_EOK;
+    }
+    return -RT_FALSE;    
 }
 
 /**
@@ -204,8 +212,10 @@ rt_err_t rt_usbh_hub_set_port_feature(uhub_t hub, rt_uint16_t port,
     setup.wLength = 0;
     setup.wValue = feature;
 
-    if(rt_usb_hcd_control_xfer(hub->hcd, hub->self, &setup, RT_NULL, 0, 
-        timeout) == 0) return RT_EOK;
+    if(rt_usb_hcd_setup_xfer(hub->hcd, hub->self->pipe_ep0_out, &setup, timeout) == 8)
+    {
+        return RT_EOK;
+    }
     else return -RT_FALSE;        
 }
 
@@ -341,7 +351,7 @@ static rt_err_t rt_usbh_hub_port_change(uhub_t hub)
             
             /* set usb device speed */
             device->speed = (pstatus & PORT_LSDA) ? 1 : 0;
-            device->parent = hub;    
+            device->parent_hub = hub;    
             device->hcd = hub->hcd;
             hub->child[i] = device;
 
@@ -366,7 +376,7 @@ static rt_err_t rt_usbh_hub_port_change(uhub_t hub)
 static void rt_usbh_hub_irq(void* context)
 {
     upipe_t pipe; 
-    struct uintf* intf;
+    struct uhintf* intf;
     uhub_t hub;
     int timeout = 100;
     
@@ -389,8 +399,7 @@ static void rt_usbh_hub_irq(void* context)
     /* parameter check */
      RT_ASSERT(pipe->intf->device->hcd != RT_NULL);
     
-    rt_usb_hcd_int_xfer(intf->device->hcd, pipe, hub->buffer, 
-        pipe->ep.wMaxPacketSize, timeout);
+    rt_usb_hcd_pipe_xfer(intf->device->hcd, pipe, hub->buffer, pipe->ep.wMaxPacketSize, timeout);
 }
 
 /**
@@ -408,7 +417,7 @@ static rt_err_t rt_usbh_hub_enable(void *arg)
     uep_desc_t ep_desc;
     uhub_t hub;
     struct uinstance* device;
-    struct uintf* intf = (struct uintf*)arg;
+    struct uhintf* intf = (struct uhintf*)arg;
     int timeout = 300;
 
     /* paremeter check */
