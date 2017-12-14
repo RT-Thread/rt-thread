@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <WinError.h>
-#include  <windows.h>
+#include <windows.h>
 
 #if defined(__MINGW32__) && defined(_NO_OLDNAMES)
 #define O_RDONLY    _O_RDONLY
@@ -49,7 +49,7 @@
  */
 #define FILE_PATH_MAX           256  /* the longest file path */
 
-#define WIN32_DIRDISK_ROOT  "./disk" /* "F:\\Project\\svn\\rtt\\trunk\\bsp\\simulator_test" */
+#define WIN32_DIRDISK_ROOT  "./disk"
 
 typedef struct {
     HANDLE handle;
