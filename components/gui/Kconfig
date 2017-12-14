@@ -47,13 +47,13 @@ choice
     default RTGUI_IMAGE_JPEG_NONE
 
     config RTGUI_IMAGE_JPEG_NONE
-        bool "No PNG image format"
+        bool "No"
 
     config RTGUI_IMAGE_JPEG
-        bool "Use libjpeg"
+        bool "with libjpeg"
 
     config RTGUI_IMAGE_TJPGD
-        bool "Use TJPGD"
+        bool "with TJpgDec(Tiny JPEG Decompressor)"
 endchoice
 
 choice
@@ -61,13 +61,13 @@ choice
     default RTGUI_IMAGE_LODEPNG
 
     config RTGUI_IMAGE_PNG_NONE
-        bool "No PNG image format"
+        bool "No"
 
     config RTGUI_IMAGE_PNG
-        bool "Use libpng"
+        bool "with libpng"
 
     config RTGUI_IMAGE_LODEPNG
-        bool "Use lodepng"
+        bool "with LodePNG"
 endchoice
 
 config RTGUI_IMAGE_BMP
@@ -76,10 +76,10 @@ config RTGUI_IMAGE_BMP
 
 config RTGUI_IMAGE_CONTAINER
     bool "Use image container"
-    default n
+    default y
     
 config RTGUI_USING_DEMO
-    bool "Display an example of GUI"
+    bool "Enable the example of UI Engine"
     default n
     
 endif
