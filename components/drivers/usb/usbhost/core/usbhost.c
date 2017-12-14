@@ -40,9 +40,6 @@ rt_err_t rt_usb_host_init(void)
 {
     ucd_t drv;
     rt_device_t uhc;    
-#ifdef RT_USBH_HID
-    uprotocal_t protocal;
-#endif
 
     uhc = rt_device_find(USB_HOST_CONTROLLER_NAME);
     if(uhc == RT_NULL)
@@ -52,7 +49,7 @@ rt_err_t rt_usb_host_init(void)
     }
 
     /* initialize usb hub */
-    rt_usbh_hub_init();
+    rt_usbh_hub_init((uhcd_t)uhc);
 
     /* initialize class driver */
     rt_usbh_class_driver_init();
@@ -60,30 +57,6 @@ rt_err_t rt_usb_host_init(void)
 #ifdef RT_USBH_MSTORAGE
     /* register mass storage class driver */
     drv = rt_usbh_class_driver_storage();
-    rt_usbh_class_driver_register(drv);
-#endif
-
-#ifdef RT_USBH_HID
-    /* register hid class driver */
-    drv = rt_usbh_class_driver_hid();
-    rt_usbh_class_driver_register(drv);
-
-#ifdef RT_USBH_HID_KEYBOARD    
-    /* register hid keyboard protocal */
-    protocal = rt_usbh_hid_protocal_kbd();    
-    rt_usbh_hid_protocal_register(protocal);
-#endif
-
-#ifdef RT_USBH_HID_MOUSE    
-    /* register hid mouse protocal */
-    protocal = rt_usbh_hid_protocal_mouse();    
-    rt_usbh_hid_protocal_register(protocal);
-#endif    
-#endif
-
-#ifdef RT_USBH_ADK
-    /* register adk class driver */
-    drv = rt_usbh_class_driver_adk();
     rt_usbh_class_driver_register(drv);
 #endif
 

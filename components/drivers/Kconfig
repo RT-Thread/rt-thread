@@ -107,9 +107,14 @@ menu "Using USB"
         default n
 
         if RT_USING_USB_HOST
-            config RT_USBH_ADK
-                bool "Enable connected with Android by ADK USB"
+            config RT_USBH_MSTORAGE
+                bool "Enable Udisk Drivers"
                 default n
+                if RT_USBH_MSTORAGE
+                    config UDISK_MOUNTPOINT
+                    string "Udisk mount dir"
+                    default "/"
+                endif
         endif
     config RT_USING_USB_DEVICE
         bool "Using USB device"

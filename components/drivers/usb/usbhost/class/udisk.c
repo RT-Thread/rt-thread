@@ -72,7 +72,7 @@ static rt_size_t rt_udisk_read(rt_device_t dev, rt_off_t pos, void* buffer,
     rt_size_t size)
 {
     rt_err_t ret;
-    struct uintf* intf;
+    struct uhintf* intf;
     struct ustor_data* data;
     int timeout = 500;
 
@@ -110,7 +110,7 @@ static rt_size_t rt_udisk_write (rt_device_t dev, rt_off_t pos, const void* buff
     rt_size_t size)
 {
     rt_err_t ret;
-    struct uintf* intf;
+    struct uhintf* intf;
     struct ustor_data* data;
     int timeout = 500;
 
@@ -141,7 +141,7 @@ static rt_size_t rt_udisk_write (rt_device_t dev, rt_off_t pos, const void* buff
  * 
  * @return the error code, RT_EOK on successfully.
  */    
-static rt_err_t rt_udisk_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_udisk_control(rt_device_t dev, int cmd, void *args)
 {
     ustor_t stor;
     struct ustor_data* data;
@@ -174,7 +174,7 @@ static rt_err_t rt_udisk_control(rt_device_t dev, rt_uint8_t cmd, void *args)
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_udisk_run(struct uintf* intf)
+rt_err_t rt_udisk_run(struct uhintf* intf)
 {
     int i = 0;
     rt_err_t ret;
@@ -203,14 +203,21 @@ rt_err_t rt_udisk_run(struct uintf* intf)
         rt_usbh_clear_feature(intf->device, 0, USB_FEATURE_ENDPOINT_HALT);
 
     /* reset pipe in endpoint */
-    ret = rt_usbh_clear_feature(intf->device, 
+    if(stor->pipe_in->status == UPIPE_STATUS_STALL)
+    {
+        ret = rt_usbh_clear_feature(intf->device, 
         stor->pipe_in->ep.bEndpointAddress, USB_FEATURE_ENDPOINT_HALT);
-    if(ret != RT_EOK) return ret;    
+        if(ret != RT_EOK) return ret; 
+    }
+       
 
     /* reset pipe out endpoint */
-    ret = rt_usbh_clear_feature(intf->device, 
-        stor->pipe_out->ep.bEndpointAddress, USB_FEATURE_ENDPOINT_HALT);    
-    if(ret != RT_EOK) return ret;    
+    if(stor->pipe_out->status == UPIPE_STATUS_STALL)
+    {
+        ret = rt_usbh_clear_feature(intf->device, 
+        stor->pipe_out->ep.bEndpointAddress, USB_FEATURE_ENDPOINT_HALT);
+        if(ret != RT_EOK) return ret; 
+    }
 
     while((ret = rt_usbh_storage_inquiry(intf, inquiry)) != RT_EOK)
     {    
@@ -223,7 +230,7 @@ rt_err_t rt_udisk_run(struct uintf* intf)
     }
 
     i = 0;
-    
+
     /* wait device ready */
     while((ret = rt_usbh_storage_test_unit_ready(intf)) != RT_EOK)
     {
@@ -382,7 +389,7 @@ rt_err_t rt_udisk_run(struct uintf* intf)
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_udisk_stop(struct uintf* intf)
+rt_err_t rt_udisk_stop(struct uhintf* intf)
 {
     int i;
     ustor_t stor;    
