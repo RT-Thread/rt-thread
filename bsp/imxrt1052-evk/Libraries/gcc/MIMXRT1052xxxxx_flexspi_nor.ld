@@ -53,14 +53,33 @@ STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x0400;
 /* Specify the memory areas */
 MEMORY
 {
+  m_boot_data           (RX)  : ORIGIN = 0x60000000, LENGTH = 0x00000400
+  m_image_vertor_table  (RX)  : ORIGIN = 0x60001000, LENGTH = 0x00000400
+
   m_interrupts          (RX)  : ORIGIN = 0x60002000, LENGTH = 0x00000400
   m_text                (RX)  : ORIGIN = 0x60002400, LENGTH = 0x1F7FDC00
-  m_data                (RW)  : ORIGIN = 0x20000000, LENGTH = 0x00020000
+
+  m_itcm                (RW)  : ORIGIN = 0x00000000, LENGTH = 0x00020000
+  m_dtcm                (RW)  : ORIGIN = 0x20000000, LENGTH = 0x00020000
+  m_ocram               (RW)  : ORIGIN = 0x20200000, LENGTH = 0x00040000
+
+  m_sdram               (RW)  : ORIGIN = 0x80000000, LENGTH = 0x01E00000
+  m_nocache             (RW)  : ORIGIN = 0x81E00000, LENGTH = 0x00200000
 }
 
 /* Define output sections */
 SECTIONS
 {
+  .boot_data :
+  {
+    KEEP(*(.bootdata))
+  } > m_boot_data
+
+  .image_vertor_table :
+  {
+    KEEP(*(.ivt))
+  } > m_image_vertor_table
+
   /* The startup code goes first into internal RAM */
   .interrupts :
   {
@@ -87,6 +106,23 @@ SECTIONS
     KEEP (*(.init))
     KEEP (*(.fini))
     . = ALIGN(4);
+
+    /* section information for finsh shell */
+    . = ALIGN(4);
+    __fsymtab_start = .;
+    KEEP(*(FSymTab))
+    __fsymtab_end = .;
+    . = ALIGN(4);
+    __vsymtab_start = .;
+    KEEP(*(VSymTab))
+    __vsymtab_end = .;
+    . = ALIGN(4);
+
+    /* section information for initial. */
+    . = ALIGN(4);
+    __rt_init_start = .;
+    KEEP(*(SORT(.rti_fn*)))
+    __rt_init_end = .;
   } > m_text
 
   .ARM.extab :
@@ -173,7 +209,7 @@ SECTIONS
     KEEP(*(.jcr*))
     . = ALIGN(4);
     __data_end__ = .;        /* define a global symbol at data end */
-  } > m_data
+  } > m_dtcm
 
   __NDATA_ROM = __DATA_ROM + (__data_end__ - __data_start__);
   .ncache.init : AT(__NDATA_ROM)
@@ -182,14 +218,14 @@ SECTIONS
     *(NonCacheable.init)
     . = ALIGN(4);
     __noncachedata_init_end__ = .;   /* create a global symbol at initialized ncache data end */
-  } > m_data
+  } > m_dtcm
   . = __noncachedata_init_end__;
   .ncache :
   {
     *(NonCacheable)
     . = ALIGN(4);
     __noncachedata_end__ = .;     /* define a global symbol at ncache data end */
-  } > m_data
+  } > m_dtcm
 
   __DATA_END = __NDATA_ROM + (__noncachedata_init_end__ - __noncachedata_start__);
   text_end = ORIGIN(m_text) + LENGTH(m_text);
@@ -209,32 +245,26 @@ SECTIONS
     . = ALIGN(4);
     __bss_end__ = .;
     __END_BSS = .;
-  } > m_data
-
-  .heap :
-  {
-    . = ALIGN(8);
-    __end__ = .;
-    PROVIDE(end = .);
-    __HeapBase = .;
-    . += HEAP_SIZE;
-    __HeapLimit = .;
-    __heap_limit = .; /* Add for _sbrk */
-  } > m_data
+  } > m_dtcm
 
   .stack :
   {
     . = ALIGN(8);
+    stack_start = .;
     . += STACK_SIZE;
-  } > m_data
+    stack_end = .;
+    __StackTop = .;
+  } > m_dtcm
+  
+  .RTT_HEAP :
+  {
+    heap_start = .;
+    . = ALIGN(8);
+  } > m_dtcm
 
-  /* Initializes stack on the end of block */
-  __StackTop   = ORIGIN(m_data) + LENGTH(m_data);
-  __StackLimit = __StackTop - STACK_SIZE;
-  PROVIDE(__stack = __StackTop);
+  PROVIDE(heap_end = ORIGIN(m_dtcm) + LENGTH(m_dtcm));
 
   .ARM.attributes 0 : { *(.ARM.attributes) }
 
-  ASSERT(__StackLimit >= __HeapLimit, "region m_data overflowed with stack and heap")
 }
 

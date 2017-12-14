@@ -11,7 +11,7 @@
             <name>C-SPY</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>28</version>
+                <version>29</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -48,7 +48,7 @@
                 </option>
                 <option>
                     <name>RunToEnable</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>RunToName</name>
@@ -76,7 +76,7 @@
                 </option>
                 <option>
                     <name>OCDownloadVerifyAll</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>OCProductVersion</name>
@@ -84,15 +84,15 @@
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
-                    <state>ARMSIM_ID</state>
+                    <state>JLINK_ID</state>
                 </option>
                 <option>
                     <name>OCLastSavedByProductVersion</name>
-                    <state>8.11.2.13604</state>
+                    <state>8.20.1.14181</state>
                 </option>
                 <option>
                     <name>UseFlashLoader</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CLowLevel</name>
@@ -112,7 +112,7 @@
                 </option>
                 <option>
                     <name>FlashLoadersV3</name>
-                    <state>$TOOLKIT_DIR$\config\flashloader\</state>
+                    <state>$TOOLKIT_DIR$\config\flashloader\NXP\FlashIMXRT1050_EVK_FlexSPI.board</state>
                 </option>
                 <option>
                     <name>OCImagesSuppressCheck1</name>
@@ -210,6 +210,10 @@
                     <name>OCAttachSlave</name>
                     <state>0</state>
                 </option>
+                <option>
+                    <name>MassEraseBeforeFlashing</name>
+                    <state>0</state>
+                </option>
             </data>
         </settings>
         <settings>
@@ -288,7 +292,7 @@
                 <option>
                     <name>CMSISDAPResetList</name>
                     <version>1</version>
-                    <state>10</state>
+                    <state>4</state>
                 </option>
                 <option>
                     <name>CMSISDAPHWResetDuration</name>
@@ -308,7 +312,7 @@
                 </option>
                 <option>
                     <name>CMSISDAPInterfaceRadio</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CMSISDAPInterfaceCmdLine</name>
@@ -373,31 +377,31 @@
                 </option>
                 <option>
                     <name>CatchMMERR</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CatchNOCPERR</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CatchCHKERR</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CatchSTATERR</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CatchBUSERR</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CatchINTERR</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CatchHARDERR</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CatchDummy</name>
@@ -425,7 +429,7 @@
                 </option>
                 <option>
                     <name>CMSISDAPSelectedCPUBehaviour</name>
-                    <state>0</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>ICpuName</name>
@@ -721,7 +725,7 @@
                 <debug>1</debug>
                 <option>
                     <name>CCCatchSFERR</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>JLinkSpeed</name>
@@ -822,12 +826,12 @@
                 </option>
                 <option>
                     <name>CCJLinkInterfaceRadio</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCJLinkResetList</name>
                     <version>6</version>
-                    <state>5</state>
+                    <state>8</state>
                 </option>
                 <option>
                     <name>CCJLinkInterfaceCmdLine</name>
@@ -1403,6 +1407,10 @@
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
+                <file>$EW_DIR$\common\plugins\TargetAccessServer\TargetAccessServer.ENU.ewplugin</file>
+                <loadFlag>0</loadFlag>
+            </plugin>
+            <plugin>
                 <file>$EW_DIR$\common\plugins\uCProbe\uCProbePlugin.ENU.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
@@ -1418,7 +1426,7 @@
             <name>C-SPY</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>28</version>
+                <version>29</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
@@ -1617,6 +1625,10 @@
                     <name>OCAttachSlave</name>
                     <state>0</state>
                 </option>
+                <option>
+                    <name>MassEraseBeforeFlashing</name>
+                    <state>0</state>
+                </option>
             </data>
         </settings>
         <settings>
@@ -2807,6 +2819,10 @@
             </plugin>
             <plugin>
                 <file>$EW_DIR$\common\plugins\Orti\Orti.ENU.ewplugin</file>
+                <loadFlag>0</loadFlag>
+            </plugin>
+            <plugin>
+                <file>$EW_DIR$\common\plugins\TargetAccessServer\TargetAccessServer.ENU.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>

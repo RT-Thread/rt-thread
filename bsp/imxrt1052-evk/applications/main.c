@@ -30,63 +30,116 @@
 #include <dfs_file.h>
 #endif
 
+#ifdef RT_USING_DEVICE
+#include <rtdevice.h>
+#endif
+
 #include <board.h>
 
-RT_USED MPU_Type *mpu = MPU;
-RT_USED IOMUXC_GPR_Type *iomuxc_gpr = IOMUXC_GPR;
-
-
-static void dump_clock(void)
+void dump_clock(void)
 {
     rt_kprintf("CPU clock: %d\n",                   CLOCK_GetFreq(kCLOCK_CpuClk));
 	rt_kprintf("AHB clock : %d\n",                  CLOCK_GetFreq(kCLOCK_AhbClk));
 	rt_kprintf("SEMC clock : %d\n",                 CLOCK_GetFreq(kCLOCK_SemcClk));
-	rt_kprintf("IPG clock : %d\n",                  CLOCK_GetFreq(kCLOCK_IpgClk));               
-	rt_kprintf("OSC clock selected : %d\n",         CLOCK_GetFreq(kCLOCK_OscClk));               
-	rt_kprintf("RTC clock: %d\n",                   CLOCK_GetFreq(kCLOCK_RtcClk));               
-	rt_kprintf("ARMPLLCLK : %d\n",                  CLOCK_GetFreq(kCLOCK_ArmPllClk));            
-	rt_kprintf("USB1PLLCLK : %d\n",                 CLOCK_GetFreq(kCLOCK_Usb1PllClk));           
-	rt_kprintf("USB1PLLPDF0CLK : %d\n",             CLOCK_GetFreq(kCLOCK_Usb1PllPfd0Clk));       
-	rt_kprintf("USB1PLLPFD1CLK : %d\n",             CLOCK_GetFreq(kCLOCK_Usb1PllPfd1Clk));       
-	rt_kprintf("USB1PLLPFD2CLK : %d\n",             CLOCK_GetFreq(kCLOCK_Usb1PllPfd2Clk));       
-	rt_kprintf("USB1PLLPFD3CLK : %d\n",             CLOCK_GetFreq(kCLOCK_Usb1PllPfd3Clk));       
-	rt_kprintf("USB2PLLCLK : %d\n",                 CLOCK_GetFreq(kCLOCK_Usb2PllClk));           
-	rt_kprintf("SYSPLLCLK : %d\n",                  CLOCK_GetFreq(kCLOCK_SysPllClk));            
-	rt_kprintf("SYSPLLPDF0CLK : %d\n",              CLOCK_GetFreq(kCLOCK_SysPllPfd0Clk));        
-	rt_kprintf("SYSPLLPFD1CLK : %d\n",              CLOCK_GetFreq(kCLOCK_SysPllPfd1Clk));        
-	rt_kprintf("SYSPLLPFD2CLK : %d\n",              CLOCK_GetFreq(kCLOCK_SysPllPfd2Clk));        
-	rt_kprintf("SYSPLLPFD3CLK : %d\n",              CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));        
-	rt_kprintf("Enet PLLCLK ref_enetpll0 : %d\n",   CLOCK_GetFreq(kCLOCK_EnetPll0Clk));          
-	rt_kprintf("Enet PLLCLK ref_enetpll1 : %d\n",   CLOCK_GetFreq(kCLOCK_EnetPll1Clk));          
-	rt_kprintf("Enet PLLCLK ref_enetpll2 : %d\n",   CLOCK_GetFreq(kCLOCK_EnetPll2Clk));          
-	rt_kprintf("Audio PLLCLK : %d\n",               CLOCK_GetFreq(kCLOCK_AudioPllClk));          
-	rt_kprintf("Video PLLCLK : %d\n",               CLOCK_GetFreq(kCLOCK_VideoPllClk));          
+	rt_kprintf("IPG clock : %d\n",                  CLOCK_GetFreq(kCLOCK_IpgClk));
+	rt_kprintf("OSC clock selected : %d\n",         CLOCK_GetFreq(kCLOCK_OscClk));
+	rt_kprintf("RTC clock: %d\n",                   CLOCK_GetFreq(kCLOCK_RtcClk));
+	rt_kprintf("ARMPLLCLK : %d\n",                  CLOCK_GetFreq(kCLOCK_ArmPllClk));
+	rt_kprintf("USB1PLLCLK : %d\n",                 CLOCK_GetFreq(kCLOCK_Usb1PllClk));
+	rt_kprintf("USB1PLLPDF0CLK : %d\n",             CLOCK_GetFreq(kCLOCK_Usb1PllPfd0Clk));
+	rt_kprintf("USB1PLLPFD1CLK : %d\n",             CLOCK_GetFreq(kCLOCK_Usb1PllPfd1Clk));
+	rt_kprintf("USB1PLLPFD2CLK : %d\n",             CLOCK_GetFreq(kCLOCK_Usb1PllPfd2Clk));
+	rt_kprintf("USB1PLLPFD3CLK : %d\n",             CLOCK_GetFreq(kCLOCK_Usb1PllPfd3Clk));
+	rt_kprintf("USB2PLLCLK : %d\n",                 CLOCK_GetFreq(kCLOCK_Usb2PllClk));
+	rt_kprintf("SYSPLLCLK : %d\n",                  CLOCK_GetFreq(kCLOCK_SysPllClk));
+	rt_kprintf("SYSPLLPDF0CLK : %d\n",              CLOCK_GetFreq(kCLOCK_SysPllPfd0Clk));
+	rt_kprintf("SYSPLLPFD1CLK : %d\n",              CLOCK_GetFreq(kCLOCK_SysPllPfd1Clk));
+	rt_kprintf("SYSPLLPFD2CLK : %d\n",              CLOCK_GetFreq(kCLOCK_SysPllPfd2Clk));
+	rt_kprintf("SYSPLLPFD3CLK : %d\n",              CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
+	rt_kprintf("Enet PLLCLK ref_enetpll0 : %d\n",   CLOCK_GetFreq(kCLOCK_EnetPll0Clk));
+	rt_kprintf("Enet PLLCLK ref_enetpll1 : %d\n",   CLOCK_GetFreq(kCLOCK_EnetPll1Clk));
+	rt_kprintf("Enet PLLCLK ref_enetpll2 : %d\n",   CLOCK_GetFreq(kCLOCK_EnetPll2Clk));
+	rt_kprintf("Audio PLLCLK : %d\n",               CLOCK_GetFreq(kCLOCK_AudioPllClk));
+	rt_kprintf("Video PLLCLK : %d\n",               CLOCK_GetFreq(kCLOCK_VideoPllClk));
 }
 
-void dump_tcm(void)
+void dump_cc_info(void)
 {
-    #define DUMP_REG(__REG)   \
-        rt_kprintf("%s(%08p): %08x\n", #__REG, &(__REG), __REG)
-            
-    DUMP_REG(IOMUXC_GPR->GPR14);
-    DUMP_REG(IOMUXC_GPR->GPR16);
-    DUMP_REG(IOMUXC_GPR->GPR17);
+#if defined(__CC_ARM)
+    rt_kprintf("using armcc, version: %d\n", __ARMCC_VERSION);
+#elif defined(__ICCARM__)
+    rt_kprintf("using iccarm, version: %d\n", __VER__);
+#elif defined(__GNUC__)
+    rt_kprintf("using gcc, version: %d.%d\n", __GNUC__, __GNUC_MINOR__);
+#endif
+}
+
+void dump_link_info(void)
+{
+#if defined(__CC_ARM)
+
+#elif defined(__ICCARM__)
+
+#elif defined(__GNUC__)
+    #define DUMP_SYMBOL(__SYM)                  \
+        extern int __SYM;                       \
+        rt_kprintf("%s: %p\n", #__SYM, &__SYM)
+
+    DUMP_SYMBOL(__fsymtab_start);
+    DUMP_SYMBOL(__fsymtab_end);
+    DUMP_SYMBOL(__vsymtab_start);
+    DUMP_SYMBOL(__vsymtab_end);
+    DUMP_SYMBOL(__rt_init_start);
+    DUMP_SYMBOL(__rt_init_end);
+
+    DUMP_SYMBOL(__exidx_start);
+    DUMP_SYMBOL(__exidx_end);
+
+    DUMP_SYMBOL(__etext);
+
+    DUMP_SYMBOL(__data_start__);
+    DUMP_SYMBOL(__data_end__);
+
+    DUMP_SYMBOL(__noncachedata_start__);
+    DUMP_SYMBOL(__noncachedata_init_end__);
+
+    DUMP_SYMBOL(__noncachedata_end__);
+
+    DUMP_SYMBOL(__bss_start__);
+    DUMP_SYMBOL(__bss_end__);
+
+    DUMP_SYMBOL(stack_start);
+    DUMP_SYMBOL(stack_end);
+
+    DUMP_SYMBOL(heap_start);
+#endif
 }
 
 int main(void)
 {
+    rt_uint32_t result;
     //dump_clock();
-    //dump_tcm();
-    
-    rt_thread_delay(RT_TICK_PER_SECOND * 2);
-    
-    /* mount sd card fat partition 1 as root directory */
-    if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
-        rt_kprintf("File System initialized!\n");
+    dump_cc_info();
+    dump_link_info();
+
+    rt_kprintf("build time: %s %s\n", __DATE__, __TIME__);
+
+#if defined(RT_USING_DFS) && defined(RT_USING_SDIO)
+    result = mmcsd_wait_cd_changed(RT_TICK_PER_SECOND);
+    if (result == MMCSD_HOST_PLUGED)
+    {
+        /* mount sd card fat partition 1 as root directory */
+        if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
+            rt_kprintf("File System initialized!\n");
+        else
+            rt_kprintf("File System init failed!\n");
+    }
     else
-        rt_kprintf("File System init failed!\n");
-    
-    
+    {
+        rt_kprintf("sdcard init fail or timeout: %d!\n", result);
+    }
+#endif
+
     while (1)
     {
         rt_thread_delay(RT_TICK_PER_SECOND);

@@ -653,7 +653,7 @@ struct rtgui_dc* rtgui_dc_rotate_90degrees(struct rtgui_dc_buffer* src, int numC
         if (src->pitch == dst->pitch)
         {
             /* If the pitch is the same for both surfaces, the memory can be copied all at once. */
-            rt_memcpy(dst->pixel, src->pixel, (src->height * src->pitch));
+            memcpy(dst->pixel, src->pixel, (src->height * src->pitch));
         }
         else
         {
@@ -663,7 +663,7 @@ struct rtgui_dc* rtgui_dc_rotate_90degrees(struct rtgui_dc_buffer* src, int numC
 
             for (row = 0; row < src->height; row++)
             {
-                rt_memcpy(dstBuf, srcBuf, dst->width * bpp);
+                memcpy(dstBuf, srcBuf, dst->width * bpp);
                 srcBuf += src_ipr;
                 dstBuf += dst_ipr;
             } /* end for(col) */

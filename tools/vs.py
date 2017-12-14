@@ -26,6 +26,7 @@ import os
 import sys
 import string
 import building
+import utils
 
 import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import SubElement
@@ -59,14 +60,14 @@ def VS_AddGroup(ProjectFiles, parent, name, files, libs, project_path):
         File.set('RelativePath', path.decode(fs_encoding))
 
 def VS_AddHeadFilesGroup(program, elem, project_path):
-    building.source_ext = []
-    building.source_ext = ["h"]
+    utils.source_ext = []
+    utils.source_ext = ["h"]
     for item in program:
-        building.walk_children(item)    
-    building.source_list.sort()
-    # print building.source_list
+        utils.walk_children(item)    
+    utils.source_list.sort()
+    # print utils.source_list
     
-    for f in building.source_list:
+    for f in utils.source_list:
         path = _make_path_relative(project_path, f)
         File = SubElement(elem, 'File')
         File.set('RelativePath', path.decode(fs_encoding))

@@ -9,7 +9,8 @@
 #include <rtgui/widgets/window.h>
 #include <rtgui/dc.h>
 
-extern const static unsigned char _picture_png[];
+extern const unsigned char _picture_png[];
+extern int _picture_png_length_get(void);
 
 static rt_bool_t show_demo(struct rtgui_win *win)
 {
@@ -40,7 +41,7 @@ static rt_bool_t show_demo(struct rtgui_win *win)
         rtgui_rect_t draw_rect;
         struct rtgui_image *img;
 
-        img = rtgui_image_create_from_mem("png", _picture_png, sizeof(_picture_png), RT_TRUE);
+        img = rtgui_image_create_from_mem("png", _picture_png, _picture_png_length_get(), RT_TRUE);
         if (img != RT_NULL)
         {
             draw_rect.x1 = rect.x2 / 2 + (rect.x2 / 2 - img->w) / 2;
