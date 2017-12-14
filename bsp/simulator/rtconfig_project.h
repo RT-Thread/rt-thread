@@ -1,7 +1,7 @@
 #ifndef RTCONFIG_PROJECT_H__
 #define RTCONFIG_PROJECT_H__
 
-#define RT_HEAP_SIZE   (1024*1024*2)
+#define RT_HEAP_SIZE   (1024*1024*8)
 
 #if defined(_MSC_VER)
 #define NORESOURCE  //RT_VESRION in winuser.h
