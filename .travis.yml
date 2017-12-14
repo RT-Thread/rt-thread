@@ -70,6 +70,7 @@ env:
   - RTT_BSP='stm32f4xx-HAL' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='stm32f411-nucleo' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='stm32f429-apollo' RTT_TOOL_CHAIN='sourcery-arm' 
+#  - RTT_BSP='stm32f429-armfly' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='stm32f429-disco' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='stm32l475-iot-disco' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='stm32l476-nucleo' RTT_TOOL_CHAIN='sourcery-arm' 

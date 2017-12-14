@@ -91,7 +91,161 @@ static void gbk_to_unicode(rt_uint16_t *unicode, const char *text, int len)
     *unicode = '\0';
 }
 
-static void _rtgui_rect_moveto_align(const rtgui_rect_t *rect, rtgui_rect_t *to, int align)
+static rt_uint16_t _get_unicode(const char* str, int n)
+{
+    int i;
+    rt_uint16_t unicode = str[0] & ((1 << (8 - n)) - 1);
+
+    for (i = 1; i<n; i++)
+    {
+        unicode = unicode << 6 | ((rt_uint8_t)str[i] & 0x3f);
+    }
+
+    return unicode;
+}
+
+static int utf8_to_unicode_len(const char* utf8, int len)
+{
+    int index = 0, unicode_len = 0;
+    rt_uint8_t c;
+
+    if (!utf8)
+    {
+        return 0;
+    }
+
+    if (*utf8 == 0)
+    {
+        return 0;
+    }
+
+    for (index = 0; index < len;)
+    {
+        c = *utf8;
+
+        if ((c & 0x80) == 0)
+        {
+            utf8 += 1;
+            index += 1;
+            unicode_len += 1;
+        }
+        else if ((c & 0xe0) == 0xc0)
+        {
+            utf8 += 2;
+            index += 2;
+            unicode_len += 1;
+        }
+        else if ((c & 0xf0) == 0xe0)
+        {
+            utf8 += 3;
+            index += 3;
+            unicode_len += 1;
+        }
+        else if ((c & 0xf8) == 0xf0)
+        {
+            utf8 += 4;
+            index += 4;
+            unicode_len += 1;
+        }
+        else if ((c & 0xfc) == 0xf8)
+        {
+            utf8 += 5;
+            index += 5;
+            unicode_len += 1;
+        }
+        else if ((c & 0xfe) == 0xfc)
+        {
+            utf8 += 6;
+            index += 6;
+            unicode_len += 1;
+        }
+        else
+        {
+            return unicode_len;
+        }
+    }
+
+    return unicode_len;
+}
+
+static int utf8_to_unicode(rt_uint16_t* unicode, const char* utf8, int len)
+{
+    int index = 0;
+    rt_uint8_t c;
+
+    if (!utf8 || !unicode)
+    {
+        return 0;
+    }
+
+    if (*utf8 == 0)
+    {
+        return 0;
+    }
+
+    for (index = 0; index < len;)
+    {
+        c = *utf8;
+
+        if ((c & 0x80) == 0)
+        {
+            *unicode = _get_unicode(utf8, 1);
+
+            utf8 += 1;
+            unicode++;
+            index += 1;
+        }
+        else if ((c & 0xe0) == 0xc0)
+        {
+            *unicode = _get_unicode(utf8, 2);
+
+            utf8 += 2;
+            unicode++;
+            index += 2;
+        }
+        else if ((c & 0xf0) == 0xe0)
+        {
+            *unicode = _get_unicode(utf8, 3);
+
+            utf8 += 3;
+            unicode++;
+            index += 3;
+        }
+        else if ((c & 0xf8) == 0xf0)
+        {
+            *unicode = _get_unicode(utf8, 4);
+
+            utf8 += 4;
+            unicode++;
+            index += 4;
+        }
+        else if ((c & 0xfc) == 0xf8)
+        {
+            *unicode = _get_unicode(utf8, 5);
+
+            utf8 += 5;
+            unicode++;
+            index += 5;
+        }
+        else if ((c & 0xfe) == 0xfc)
+        {
+            *unicode = _get_unicode(utf8, 6);
+
+            utf8 += 6;
+            unicode++;
+            index += 6;
+        }
+        else
+        {
+            return index;
+        }
+    }
+
+    return index;
+}
+
+
+static void _rtgui_rect_move_to_align(const rtgui_rect_t *rect, rtgui_rect_t *to, rt_uint16_t height, int align)
 {
     int dw, dh;
     dw = 0;
@@ -99,16 +253,21 @@ static void _rtgui_rect_moveto_align(const rtgui_rect_t *rect, rtgui_rect_t *to,
 
     /* get delta width and height */
     dw = rtgui_rect_width(*rect) - rtgui_rect_width(*to);
-    dh = rtgui_rect_height(*rect) - rtgui_rect_height(*to);
+    if (RTGUI_ALIGN_TTF_SIZE & align)
+        dh = rtgui_rect_height(*rect) - height;
+    else
+        dh = rtgui_rect_height(*rect) - rtgui_rect_height(*to);
     if (dw < 0) dw = 0;
     if (dh < 0) dh = 0;
 
-    /* move to insider of rect */
-    rtgui_rect_moveto_point(to, rect->x1, rect->y1);
+    PINFO(" rect align =1=>  %d %d %d %d\n", to->x1, to->y1, to->x2, to->y2);
 
-    /* limited the destination rect to source rect */
-    // if (dw == 0) to->x2 = rect->x2;
-    // if (dh == 0) to->y2 = rect->y2;
+    /* move to insider of rect */
+    if (RTGUI_ALIGN_TTF_SIZE & align)
+        rtgui_rect_move_to_point(to, rect->x1, rect->y1 + height * 3 / 4 - to->y2);
+    else
+        rtgui_rect_move_to_point(to, rect->x1, rect->y1);
+    PINFO(" rect align =2=>  %d %d %d %d\n", to->x1, to->y1, to->x2, to->y2);
 
     /* align to right */
     if (align & RTGUI_ALIGN_RIGHT)
@@ -116,6 +275,12 @@ static void _rtgui_rect_moveto_align(const rtgui_rect_t *rect, rtgui_rect_t *to,
         to->x1 += dw;
         to->x2 += dw;
     }
+	/* align to center horizontal */
+	else if (align & RTGUI_ALIGN_CENTER_HORIZONTAL)
+	{
+		to->x1 += dw >> 1;
+		to->x2 += dw >> 1;
+	}
 
     /* align to bottom */
     if (align & RTGUI_ALIGN_BOTTOM)
@@ -123,20 +288,14 @@ static void _rtgui_rect_moveto_align(const rtgui_rect_t *rect, rtgui_rect_t *to,
         to->y1 += dh;
         to->y2 += dh;
     }
-
-    /* align to center horizontal */
-    if (align & RTGUI_ALIGN_CENTER_HORIZONTAL)
-    {
-        to->x1 += dw >> 1;
-        to->x2 += dw >> 1;
-    }
-
     /* align to center vertical */
-    if (align & RTGUI_ALIGN_CENTER_VERTICAL)
+    else if (align & RTGUI_ALIGN_CENTER_VERTICAL)
     {
         to->y1 += dh >> 1;
         to->y2 += dh >> 1;
     }
+
+    PINFO(" rect align =3=>  %d %d %d %d\n", to->x1, to->y1, to->x2, to->y2);
 }
 
 static void ftc_draw_text(struct rtgui_font *font,
@@ -234,17 +393,17 @@ static void _get_metrics(struct rtgui_ttf_font *ttf_font, const rt_uint16_t *tex
 static void _draw_bitmap(struct rtgui_dc *dc,
                          FTC_SBit bitmap,
                          rt_int16_t ox, rt_int16_t btm_y,
-                         rt_uint8_t r, rt_uint8_t g, rt_uint8_t b)
+                         rt_uint8_t a, rt_uint8_t r, rt_uint8_t g, rt_uint8_t b)
 {
     rt_int16_t x_start, y_start;
-    struct rtgui_blit_info info;
+    struct rtgui_blit_info info = { 0 };
     struct rtgui_dc_buffer *dest_buf;
 
 
     x_start = ox + bitmap->left;
     y_start = btm_y - bitmap->top;
 
-    info.a = 255;
+    info.a = a;
     info.r = r;
     info.g = g;
     info.b = b;
@@ -320,6 +479,7 @@ static void _draw_bitmap(struct rtgui_dc *dc,
             dest_buf = (struct rtgui_dc_buffer*)text_dc;
 
             /* blit source */
+            info.a = 0;
             info.src = (rt_uint8_t *)bitmap->buffer;
             info.src_fmt = RTGRAPHIC_PIXEL_FORMAT_ALPHA;
             info.src_w = bitmap->width;
@@ -343,6 +503,7 @@ static void _draw_bitmap(struct rtgui_dc *dc,
             text_rect.y1 = y_start;
             text_rect.y2 = text_rect.y1 + bitmap->height;
 
+            rtgui_dc_buffer_set_alpha(text_dc, a);
             rtgui_dc_blit(text_dc, &dc_point, dc, &text_rect);
 
             rtgui_dc_destory(text_dc);
@@ -354,7 +515,7 @@ static void _draw_text(struct rtgui_dc *dc,
                        struct rtgui_ttf_font *ttf_font,
                        rt_uint16_t *text_short,
                        rt_int16_t begin_x, rt_int16_t btm_y,
-                       rt_uint8_t r, rt_uint8_t g, rt_uint8_t b)
+                       rt_uint8_t a, rt_uint8_t r, rt_uint8_t g, rt_uint8_t b)
 {
     int glyphIndex;
     FTC_SBit ftcSBit = RT_NULL;
@@ -368,7 +529,9 @@ static void _draw_text(struct rtgui_dc *dc,
         if (err == 0 && ftcSBit->width != 0)
         {
             /* render font */
-            _draw_bitmap(dc, ftcSBit, begin_x, btm_y, r, g, b);
+            begin_x -= (ftcSBit->left - (abs(ftcSBit->left) + 2) / 2);
+
+            _draw_bitmap(dc, ftcSBit, begin_x, btm_y, a, r, g, b);
 
             begin_x += ftcSBit->width + ftcSBit->left;
 
@@ -399,7 +562,7 @@ static void ftc_draw_text(struct rtgui_font *font,
     struct rtgui_ttf_font *ttf_font;
     rt_int16_t begin_x, btm_y;
     rt_int16_t topy;
-    rt_uint8_t r, g, b;
+    rt_uint8_t a, r, g, b;
     rtgui_color_t fgc;
     struct rtgui_rect text_rect;
 
@@ -408,16 +571,30 @@ static void ftc_draw_text(struct rtgui_font *font,
     RT_ASSERT(ttf_font != RT_NULL);
 
     /* allocate unicode buffer */
+#ifndef UTF8_TO_UNICODE
     text_short = (rt_uint16_t *)rtgui_malloc((len + 1) * 2);
+#else
+    text_short = (rt_uint16_t *)rtgui_malloc((utf8_to_unicode_len(text, len) + 1) * 2);
+#endif
     if (text_short == RT_NULL)
         return; /* out of memory */
+#ifndef UTF8_TO_UNICODE
+    rt_memset(text_short, 0x00, (len + 1) * 2);
+#else
+    rt_memset(text_short, 0x00, (utf8_to_unicode_len(text, len) + 1) * 2);
+#endif
 
     RT_ASSERT(rect);
 
     /* convert gbk to unicode */
+#ifndef UTF8_TO_UNICODE
     gbk_to_unicode(text_short, text, len);
+#else
+    utf8_to_unicode(text_short, text, len);
+#endif
 
     fgc = RTGUI_DC_FC(dc);
+    a = RTGUI_RGB_A(fgc);
     r = RTGUI_RGB_R(fgc);
     g = RTGUI_RGB_G(fgc);
     b = RTGUI_RGB_B(fgc);
@@ -427,7 +604,7 @@ static void ftc_draw_text(struct rtgui_font *font,
 
     topy = text_rect.y1;
 
-    _rtgui_rect_moveto_align(rect, &text_rect, RTGUI_DC_TEXTALIGN(dc));
+    _rtgui_rect_move_to_align(rect, &text_rect, font->height, RTGUI_DC_TEXTALIGN(dc));
 
     btm_y = topy + text_rect.y2;
     if (btm_y <= 0)
@@ -456,7 +633,7 @@ static void ftc_draw_text(struct rtgui_font *font,
             goto _out;
     }
 
-    _draw_text(dc, ttf_font, text_short, begin_x, btm_y, r, g, b);
+    _draw_text(dc, ttf_font, text_short, begin_x, btm_y, a, r, g, b);
 
 _out:
     /* release unicode buffer */
@@ -478,10 +655,8 @@ static void _get_metrics(struct rtgui_ttf_font *ttf_font, const rt_uint16_t *tex
         err = FTC_SBitCache_Lookup(ttf_font->ttf->sbit_cache, &ttf_font->image_type_rec, glyphIndex, &ftcSBit, 0);
         if (err == 0 && ftcSBit->width != 0)
         {
-            if (w == 0)
-                w = ftcSBit->width;
-            else
-                w += ftcSBit->width + ftcSBit->left;
+            w -= (ftcSBit->left - (abs(ftcSBit->left) + 2) / 2);
+            w += ftcSBit->width + ftcSBit->left;
 
             top = top > ftcSBit->top ? top : ftcSBit->top;
             btm = (ftcSBit->top - ftcSBit->height) > btm ? btm : (ftcSBit->top - ftcSBit->height);
@@ -496,11 +671,12 @@ static void _get_metrics(struct rtgui_ttf_font *ttf_font, const rt_uint16_t *tex
                 w += ftcSBit->width;
             }
         }
-        PINFO(" bitmap:(%d, %d, %d, %d)\n", ftcSBit->left, ftcSBit->top,
-              ftcSBit->width, ftcSBit->height);
+        PINFO(" bitmap:(%d, %d, %d, %d)\n", ftcSBit->left, ftcSBit->top - ftcSBit->height, ftcSBit->width, ftcSBit->height);
 
         text_short ++;
     }
+
+    w += ftcSBit->left - (ftcSBit->left - (abs(ftcSBit->left) + 2) / 2);
 
     rect->x1 = 0;
     rect->y1 = btm;
@@ -522,18 +698,35 @@ static void ftc_get_metrics(struct rtgui_font *font, const char *text, struct rt
     RT_ASSERT(ttf_font != RT_NULL);
 
     len = strlen(text);
+	if (len == 0)
+		return;
+	
     memset(rect, 0, sizeof(struct rtgui_rect));
 
     /* allocate unicode buffer */
+#ifndef UTF8_TO_UNICODE
     text_short = (rt_uint16_t *)rtgui_malloc((len + 1) * 2);
+#else
+    text_short = (rt_uint16_t *)rtgui_malloc((utf8_to_unicode_len(text, len) + 1) * 2);
+#endif
     if (text_short == RT_NULL)
         return; /* out of memory */
 
+#ifndef UTF8_TO_UNICODE
+    rt_memset(text_short, 0x00, (len + 1) * 2);
+#else
+    rt_memset(text_short, 0x00, (utf8_to_unicode_len(text, len) + 1) * 2);
+#endif
+	
     /* convert gbk to unicode */
+#ifndef UTF8_TO_UNICODE
     gbk_to_unicode(text_short, text, len);
+#else
+    utf8_to_unicode(text_short, text, len);
+#endif
 
     _get_metrics(ttf_font, text_short, rect);
-    rtgui_rect_moveto_point(rect, 0, 0);
+    rtgui_rect_move_to_point(rect, 0, 0);
 
     PINFO(" ftc_get_metrics_kern: %d %d %d %d\n", rect->x1, rect->y1, rect->x2, rect->y2);
     /* release unicode buffer */
@@ -569,6 +762,20 @@ static struct rtgui_ttf *rtgui_ttf_load(const char *filename)
         return RT_NULL;
     }
 
+    /* chack ttf file */
+    {
+        int fd = open(filename, O_RDONLY, 0);
+        if (fd > 0)
+        {
+            close(fd);
+        }
+        else
+        {
+            PERROR("open %s failed!\n", filename);
+            return RT_NULL;
+        }
+    }
+	
     /* face_id init */
     ttf->face_id.pathname = rt_strdup(filename);
     ttf->face_id.face_index = 0;
@@ -628,14 +835,23 @@ rtgui_font_t *rtgui_freetype_font_create(const char *filename, rt_size_t size)
     ttf = rtgui_ttf_refer(filename);
     if (!ttf)
     {
-        PERROR("rtgui_ttf_refer failed!\n");
-
         ttf = rtgui_ttf_load(filename);
         if (!ttf)
         {
             PERROR("rtgui_ttf_load failed!\n");
             return RT_NULL;
         }
+    }
+    else
+    {
+        font = rtgui_font_refer(filename, size);
+        if (font)
+        {
+			if (font->height == size)
+				return font;
+			else
+				rtgui_font_derefer(font);
+        }		
     }
 
     font = (struct rtgui_font *)rtgui_malloc(sizeof(struct rtgui_font) + sizeof(struct rtgui_ttf_font));

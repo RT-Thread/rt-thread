@@ -1,8 +1,10 @@
 from building import *
+import rtconfig
 
 cwd = GetCurrentDir()
 src = ['spi_core.c', 'spi_dev.c']
 CPPPATH = [cwd, cwd + '/../include']
+LOCAL_CCFLAGS = ''
 
 src_device = []
 
@@ -32,9 +34,13 @@ if GetDepend('RT_USING_SFUD'):
     CPPPATH += [cwd + '/sfud/inc']
     if GetDepend('RT_SFUD_USING_SFDP'):
         src_device += ['sfud/src/sfud_sfdp.c']
+    if rtconfig.CROSS_TOOL == 'gcc':
+        LOCAL_CCFLAGS += ' -std=c99'
+    elif rtconfig.CROSS_TOOL == 'keil':
+        LOCAL_CCFLAGS += ' --c99'
 
 src += src_device
 
-group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SPI'], CPPPATH = CPPPATH)
+group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SPI'], CPPPATH = CPPPATH, LOCAL_CCFLAGS = LOCAL_CCFLAGS)
 
 Return('group')

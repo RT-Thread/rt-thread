@@ -427,7 +427,7 @@ static void rtgui_image_jpeg_blit(struct rtgui_image *image, struct rtgui_dc *dc
             /* blit ARGB888 to this buffered DC */
             int dst_x, dst_y;
             int w, h;
-            struct rtgui_blit_info info;
+            struct rtgui_blit_info info = { 0 };
             struct rtgui_dc_buffer *buffer = (struct rtgui_dc_buffer*)dc;
 
             w = _UI_MIN(image->w, rtgui_rect_width(*rect));
@@ -704,7 +704,7 @@ static UINT tjpgd_out_func(JDEC *jdec, void *bitmap, JRECT *rect)
         /* Left-top of destination rectangular */
         for (h = rect->top; h <= rect->bottom; h++)
         {
-            rt_memcpy(dst, src, rectWidth);
+            memcpy(dst, src, rectWidth);
             src += rectWidth;
             dst += imageWidth;           /* Next line */
         }
@@ -945,7 +945,7 @@ static void rtgui_image_jpeg_blit(struct rtgui_image *image,
         /* if the format is not match, only support DC buffer */
         else if (dc->type == RTGUI_DC_BUFFER)
         {
-            struct rtgui_blit_info info;
+            struct rtgui_blit_info info = { 0 };
             struct rtgui_dc_buffer *buffer;
 
             buffer = (struct rtgui_dc_buffer*)dc;
