@@ -59,11 +59,14 @@ static rt_err_t _pipe_check(struct uhintf* intf, upipe_t pipe)
         rt_kprintf("pipe status error\n");
         return -RT_EIO;
     }
+    if(pipe->status == UPIPE_STATUS_STALL)
+    {
+        /* clear the pipe stall status */
+        ret = rt_usbh_clear_feature(device, pipe->ep.bEndpointAddress, 
+            USB_FEATURE_ENDPOINT_HALT);
+        if(ret != RT_EOK) return ret;
+    }
     
-    /* clear the pipe stall status */
-    ret = rt_usbh_clear_feature(device, pipe->ep.bEndpointAddress, 
-        USB_FEATURE_ENDPOINT_HALT);
-    if(ret != RT_EOK) return ret;
 
     rt_thread_delay(50);
 
@@ -172,7 +175,7 @@ static rt_err_t rt_usb_bulk_only_xfer(struct uhintf* intf,
     
     if(csw.status != 0)
     {
-        rt_kprintf("csw status error:%d\n",csw.status);
+        //rt_kprintf("csw status error:%d\n",csw.status);
         return -RT_ERROR;
     }
     
@@ -211,16 +214,20 @@ rt_err_t rt_usbh_storage_get_max_lun(struct uhintf* intf, rt_uint8_t* max_lun)
         USB_REQ_TYPE_INTERFACE;
     setup.bRequest = USBREQ_GET_MAX_LUN;
     setup.wValue = intf->intf_desc->bInterfaceNumber;
-    setup.wIndex = 1;
-    setup.wLength = 0;
+    setup.wIndex = 0;
+    setup.wLength = 1;
 
     /* do control transfer request */
     if(rt_usb_hcd_setup_xfer(device->hcd, device->pipe_ep0_out, &setup, timeout) != 8)
     {
-        if(rt_usb_hcd_pipe_xfer(device->hcd, device->pipe_ep0_in, max_lun, 1, timeout) != 1)
-        {
-            return -RT_EIO;
-        }
+        return -RT_EIO;
+    }
+    if(rt_usb_hcd_pipe_xfer(device->hcd, device->pipe_ep0_in, max_lun, 1, timeout) != 1)
+    {
+        return -RT_EIO;
+    }
+    if(rt_usb_hcd_pipe_xfer(device->hcd, device->pipe_ep0_out, RT_NULL, 0, timeout) != 0)
+    {
         return -RT_EIO;
     }
     return RT_EOK;
@@ -264,7 +271,10 @@ rt_err_t rt_usbh_storage_reset(struct uhintf* intf)
     {
         return -RT_EIO;
     }
-    
+    if(rt_usb_hcd_pipe_xfer(device->hcd, device->pipe_ep0_in, RT_NULL, 0, timeout) != 0)
+    {
+        return -RT_EIO;
+    }
     return RT_EOK;
 }
 
@@ -462,7 +472,7 @@ rt_err_t rt_usbh_storage_inquiry(struct uhintf* intf, rt_uint8_t* buffer)
     cmd.xfer_len = 36;
     cmd.dflags = CBWFLAGS_DIR_IN;
     cmd.lun = 0;
-    cmd.cb_len = 12;
+    cmd.cb_len = 6;//12
     cmd.cb[0] = SCSI_INQUIRY_CMD;
     cmd.cb[4] = 36;
 
@@ -614,10 +624,6 @@ static rt_err_t rt_usbh_storage_disable(void* arg)
     
     /* free storage instance */
     if(stor != RT_NULL) rt_free(stor);
-
-    /* free interface instance */
-    if(intf != RT_NULL) rt_free(intf);
-
     return RT_EOK;
 }
 

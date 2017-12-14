@@ -25,7 +25,7 @@
 #include <rtthread.h>
 #include <drivers/usb_host.h>
 
-#define USB_THREAD_STACK_SIZE    2048
+#define USB_THREAD_STACK_SIZE    4096
 
 static struct rt_messagequeue *usb_mq;
 static struct uclass_driver hub_driver;
@@ -481,7 +481,7 @@ static void rt_usbh_hub_irq(void* context)
     
     rt_usbh_hub_port_change(hub);
 
-    rt_kprintf(RT_DEBUG_USB,("hub int xfer...\n"));
+    RT_DEBUG_LOG(RT_DEBUG_USB,("hub int xfer...\n"));
 
     /* parameter check */
      RT_ASSERT(pipe->inst->hcd != RT_NULL);

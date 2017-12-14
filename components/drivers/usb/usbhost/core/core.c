@@ -83,7 +83,7 @@ static struct uendpoint_descriptor ep0_out_desc =
     USB_DESC_TYPE_ENDPOINT,
     0x00 | USB_DIR_OUT,
     USB_EP_ATTR_CONTROL,
-    0x40,
+    0x00,
     0x00,
 };
 static struct uendpoint_descriptor ep0_in_desc = 
@@ -93,7 +93,7 @@ static struct uendpoint_descriptor ep0_in_desc =
     USB_DESC_TYPE_ENDPOINT,
     0x00 | USB_DIR_IN,
     USB_EP_ATTR_CONTROL,
-    0x40,
+    0x00,
     0x00,
 };
 rt_err_t rt_usbh_attatch_instance(uinst_t device)
@@ -112,7 +112,10 @@ rt_err_t rt_usbh_attatch_instance(uinst_t device)
     
     rt_memset(&cfg_desc, 0, sizeof(struct uconfig_descriptor));
     dev_desc = &device->dev_desc;
+    
     /* alloc address 0 ep0 pipe*/
+    ep0_out_desc.wMaxPacketSize = 8;
+    ep0_in_desc.wMaxPacketSize = 8;
     rt_usb_hcd_alloc_pipe(device->hcd, &device->pipe_ep0_out, device, &ep0_out_desc);
     rt_usb_hcd_alloc_pipe(device->hcd, &device->pipe_ep0_in, device, &ep0_in_desc);
 
@@ -125,38 +128,43 @@ rt_err_t rt_usbh_attatch_instance(uinst_t device)
         rt_kprintf("get device descriptor head failed\n");
         return ret;
     }
-    //should reset bus
+    
+    /* reset bus */
     rt_usbh_hub_reset_port(device->parent_hub, device->port);
+    rt_thread_delay(2);
+    rt_usbh_hub_clear_port_feature(device->parent_hub, i + 1, PORT_FEAT_C_CONNECTION);
     /* set device address */
     ret = rt_usbh_set_address(device);
-    /* free address 0 ep0 pipe*/
-    rt_usb_hcd_free_pipe(device->hcd,device->pipe_ep0_out);
-    rt_usb_hcd_free_pipe(device->hcd,device->pipe_ep0_in);
     if(ret != RT_EOK)
     {
         rt_kprintf("set device address failed\n");
         return ret;
     }
-    /* free true address ep0 pipe*/
+    /* free address 0 ep0 pipe*/
+    
+    rt_usb_hcd_free_pipe(device->hcd,device->pipe_ep0_out);
+    rt_usb_hcd_free_pipe(device->hcd,device->pipe_ep0_in);
+    
+    /* set device max packet size */
+    ep0_out_desc.wMaxPacketSize = device->dev_desc.bMaxPacketSize0;
+    ep0_in_desc.wMaxPacketSize = device->dev_desc.bMaxPacketSize0;
+    
+    /* alloc true address ep0 pipe*/
     rt_usb_hcd_alloc_pipe(device->hcd, &device->pipe_ep0_out, device, &ep0_out_desc);
     rt_usb_hcd_alloc_pipe(device->hcd, &device->pipe_ep0_in, device, &ep0_in_desc);
-    /* set device max packet size */
-    device->max_packet_size = device->dev_desc.bMaxPacketSize0;
-
-    RT_DEBUG_LOG(1, ("get device descriptor length %d\n",
+    RT_DEBUG_LOG(RT_DEBUG_USB, ("get device descriptor length %d\n",
                                 dev_desc->bLength));
     
     /* get full device descriptor again */
-    ret = rt_usbh_get_descriptor
-        (device, USB_DESC_TYPE_DEVICE, (void*)dev_desc, dev_desc->bLength);
+    ret = rt_usbh_get_descriptor(device, USB_DESC_TYPE_DEVICE, (void*)dev_desc, dev_desc->bLength);
     if(ret != RT_EOK)
     {
         rt_kprintf("get full device descriptor failed\n");
         return ret;
     }
 
-    RT_DEBUG_LOG(1, ("Vendor ID 0x%x\n", dev_desc->idVendor));
-    RT_DEBUG_LOG(1, ("Product ID 0x%x\n", dev_desc->idProduct));
+    RT_DEBUG_LOG(RT_DEBUG_USB, ("Vendor ID 0x%x\n", dev_desc->idVendor));
+    RT_DEBUG_LOG(RT_DEBUG_USB, ("Product ID 0x%x\n", dev_desc->idProduct));
 
     /* get configuration descriptor head */
     ret = rt_usbh_get_descriptor(device, USB_DESC_TYPE_CONFIGURATION, &cfg_desc, 18);
@@ -195,7 +203,7 @@ rt_err_t rt_usbh_attatch_instance(uinst_t device)
             return -RT_ERROR;
         }
 
-        RT_DEBUG_LOG(1, ("interface class 0x%x, subclass 0x%x\n", 
+        RT_DEBUG_LOG(RT_DEBUG_USB, ("interface class 0x%x, subclass 0x%x\n", 
                                     intf_desc->bInterfaceClass,
                                     intf_desc->bInterfaceSubClass));
         /* alloc pipe*/
@@ -275,14 +283,17 @@ rt_err_t rt_usbh_detach_instance(uinst_t device)
 
         RT_DEBUG_LOG(RT_DEBUG_USB, ("free interface instance %d\n", i));
         rt_usbh_class_driver_disable(device->intf[i]->drv, (void*)device->intf[i]);
+        rt_free(device->intf[i]);
     }
     if(device->cfg_desc) rt_free(device->cfg_desc);
     
     rt_usb_hcd_free_pipe(device->hcd,device->pipe_ep0_out);
     rt_usb_hcd_free_pipe(device->hcd,device->pipe_ep0_in);
     
-    for(l = device->pipe.next;l != &device->pipe;l = l->next)
+    while(device->pipe.next!= &device->pipe)
     {
+        l = device->pipe.next;
+        rt_list_remove(l);
         rt_usb_hcd_free_pipe(device->hcd,rt_list_entry(l,struct upipe,list));
     }
     rt_memset(device, 0, sizeof(struct uinstance));
@@ -390,7 +401,10 @@ rt_err_t rt_usbh_set_configure(uinst_t device, int config)
     {
         return RT_ERROR;
     }
-    
+    if(rt_usb_hcd_pipe_xfer(device->hcd, device->pipe_ep0_in, RT_NULL, 0, timeout) != 0)
+    {
+        return RT_ERROR;
+    }
     return RT_EOK;    
 }
 
@@ -555,12 +569,15 @@ int rt_usb_hcd_pipe_xfer(uhcd_t hcd, upipe_t pipe, void* buffer, int nbytes, int
     rt_size_t remain_size;
     rt_size_t send_size;
     remain_size = nbytes;
+    rt_uint8_t * pbuffer = (rt_uint8_t *)buffer;
     do
     {
+        RT_DEBUG_LOG(RT_DEBUG_USB,("pipe transform remain size,: %d\n", remain_size));
         send_size = (remain_size > pipe->ep.wMaxPacketSize) ? pipe->ep.wMaxPacketSize : remain_size;
-        if(hcd->ops->pipe_xfer(pipe, USBH_PID_DATA, buffer, send_size, timeout) == send_size)
+        if(hcd->ops->pipe_xfer(pipe, USBH_PID_DATA, pbuffer, send_size, timeout) == send_size)
         {
             remain_size -= send_size;
+            pbuffer += send_size;
         }
         else
         {
