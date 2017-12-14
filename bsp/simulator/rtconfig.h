@@ -54,7 +54,7 @@
 
 /* C++ features */
 
-#define RT_USING_CPLUSPLUS
+/* RT_USING_CPLUSPLUS is not set */
 
 /* Command shell */
 
@@ -168,6 +168,7 @@
 /* system packages */
 
 /* PKG_USING_PARTITION is not set */
+#define RT_USING_PERSIMMON_EXAMPLE
 /* PKG_USING_SQLITE is not set */
 /* PKG_USING_RTI is not set */
 
@@ -205,7 +206,7 @@
 
 /* miscellaneous packages */
 
-/* PKG_USING_FASTLZ is not set */
+#define PKG_USING_FASTLZ
 /* PKG_USING_MINILZO is not set */
 
 /* example package: hello */
@@ -216,6 +217,9 @@
 
 /* PKG_USING_CODEC is not set */
 /* PKG_USING_PLAYER is not set */
+#define PKG_USING_PERSIMMON_SRC
+/* PKG_USING_PERSIMMON_SRC_v1_0_0 is not set */
+#define PKG_USING_PERSIMMON_LATEST_VERSION
 
 /* Network Utilities */
 
