@@ -25,6 +25,10 @@
 #ifndef __GPIO_H
 #define __GPIO_H
 
-int hw_pin_init(void);
+/**
+ * @brief External function definitions
+ *
+ */
+int rt_hw_pin_init(void);
 
 #endif // __GPIO_H

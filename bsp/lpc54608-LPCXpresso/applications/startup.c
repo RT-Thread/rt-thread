@@ -41,7 +41,7 @@ void rtthread_startup(void)
     rt_show_version();
 
 #ifdef RT_USING_HEAP
-#if LPC_EXT_SDRAM
+#ifdef BSP_DRV_SDRAM
     rt_kprintf("      heap: [0x%08x - 0x%08x]\n", LPC_EXT_SDRAM_BEGIN, LPC_EXT_SDRAM_END);
     rt_system_heap_init((void *)LPC_EXT_SDRAM_BEGIN, (void *)LPC_EXT_SDRAM_END);
     sram_init();

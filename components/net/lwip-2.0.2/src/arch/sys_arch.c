@@ -11,6 +11,7 @@
  * Date           Author       Notes
  * 2012-12-8      Bernard      add file header
  *                             export bsd socket symbol for RT-Thread Application Module 
+ * 2017-11-15     Bernard      add lock for init_done callback.
  */
 
 #include <rtthread.h>
@@ -68,7 +69,7 @@ static void tcpip_init_done_callback(void *arg)
 {
     rt_device_t device;
     struct eth_device *ethif;
-    ip_addr_t ipaddr, netmask, gw;
+    ip4_addr_t ipaddr, netmask, gw;
     struct rt_list_node* node;
     struct rt_object* object;
     struct rt_object_information *information;
@@ -98,6 +99,7 @@ static void tcpip_init_done_callback(void *arg)
 
             /* leave critical */
             rt_exit_critical();
+			LOCK_TCPIP_CORE();
 
             netif_add(ethif->netif, &ipaddr, &netmask, &gw,
                       ethif, netif_device_init, tcpip_input);
@@ -120,6 +122,7 @@ static void tcpip_init_done_callback(void *arg)
                 netif_set_link_up(ethif->netif);
             }
 
+			UNLOCK_TCPIP_CORE();
             /* enter critical */
             rt_enter_critical();
         }
@@ -133,10 +136,13 @@ static void tcpip_init_done_callback(void *arg)
 /**
  * LwIP system initialization
  */
+extern int eth_system_device_init_private(void);
 int lwip_system_init(void)
 {
     rt_err_t rc;
     struct rt_semaphore done_sem;
+	
+    eth_system_device_init_private();
 
     /* set default netif to NULL */
     netif_default = RT_NULL;
@@ -178,7 +184,7 @@ int lwip_system_init(void)
 
     return 0;
 }
-INIT_COMPONENT_EXPORT(lwip_system_init);
+INIT_PREV_EXPORT(lwip_system_init);
 
 void sys_init(void)
 {

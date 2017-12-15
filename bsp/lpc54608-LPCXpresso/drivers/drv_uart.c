@@ -149,7 +149,8 @@ void rt_hw_uart_init(void)
     struct lpc_uart *uart;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
-
+#ifdef RT_USING_UART0
+    
     uart = &uart0;
 
     serial0.ops    = &lpc_uart_ops;
@@ -191,4 +192,5 @@ void rt_hw_uart_init(void)
     rt_hw_serial_register(&serial0, "uart0",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
                           uart);
+#endif    
 }

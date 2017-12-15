@@ -11,7 +11,7 @@
             <name>C-SPY</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>28</version>
+                <version>29</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -32,11 +32,11 @@
                 </option>
                 <option>
                     <name>MacOverride</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>MacFile</name>
-                    <state>$PROJ_DIR$/sdram_mpu_init.mac</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>MemOverride</name>
@@ -56,11 +56,11 @@
                 </option>
                 <option>
                     <name>CExtraOptionsCheck</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CExtraOptions</name>
-                    <state>--jlink_script_file=$PROJ_DIR$/sdram_init.jlinkscript</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>CFpuProcessor</name>
@@ -80,15 +80,15 @@
                 </option>
                 <option>
                     <name>OCProductVersion</name>
-                    <state>8.11.2.13604</state>
+                    <state>7.30.3.8061</state>
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
-                    <state>CMSISDAP_ID</state>
+                    <state>JLINK_ID</state>
                 </option>
                 <option>
                     <name>OCLastSavedByProductVersion</name>
-                    <state>8.11.2.13604</state>
+                    <state>8.20.1.14181</state>
                 </option>
                 <option>
                     <name>UseFlashLoader</name>
@@ -112,7 +112,7 @@
                 </option>
                 <option>
                     <name>FlashLoadersV3</name>
-                    <state>$TOOLKIT_DIR$\config\flashloader\</state>
+                    <state>$TOOLKIT_DIR$\config\flashloader\NXP\FlashIMXRT1050_EVK_FlexSPI.board</state>
                 </option>
                 <option>
                     <name>OCImagesSuppressCheck1</name>
@@ -210,6 +210,10 @@
                     <name>OCAttachSlave</name>
                     <state>0</state>
                 </option>
+                <option>
+                    <name>MassEraseBeforeFlashing</name>
+                    <state>0</state>
+                </option>
             </data>
         </settings>
         <settings>
@@ -273,6 +277,10 @@
                 <version>4</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
+                <option>
+                    <name>CatchSFERR</name>
+                    <state>1</state>
+                </option>
                 <option>
                     <name>OCDriverInfo</name>
                     <state>1</state>
@@ -369,35 +377,31 @@
                 </option>
                 <option>
                     <name>CatchMMERR</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CatchNOCPERR</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CatchCHKERR</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CatchSTATERR</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CatchBUSERR</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CatchINTERR</name>
-                    <state>1</state>
-                </option>
-                <option>
-                    <name>CatchSFERR</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CatchHARDERR</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CatchDummy</name>
@@ -490,6 +494,10 @@
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
+                    <name>CatchSFERR</name>
+                    <state>1</state>
+                </option>
+                <option>
                     <name>OCDriverInfo</name>
                     <state>1</state>
                 </option>
@@ -565,7 +573,7 @@
                 </option>
                 <option>
                     <name>IjetCpuClockEdit</name>
-                    <state></state>
+                    <state>72.0</state>
                 </option>
                 <option>
                     <name>IjetSwoPrescalerList</name>
@@ -641,10 +649,6 @@
                     <state>1</state>
                 </option>
                 <option>
-                    <name>CatchSFERR</name>
-                    <state>1</state>
-                </option>
-                <option>
                     <name>CatchHARDERR</name>
                     <state>1</state>
                 </option>
@@ -696,7 +700,7 @@
                 <option>
                     <name>IjetTraceSizeList</name>
                     <version>0</version>
-                    <state>4</state>
+                    <state>2</state>
                 </option>
                 <option>
                     <name>FlashBoardPathSlave</name>
@@ -719,6 +723,10 @@
                 <version>16</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
+                <option>
+                    <name>CCCatchSFERR</name>
+                    <state>1</state>
+                </option>
                 <option>
                     <name>JLinkSpeed</name>
                     <state>1000</state>
@@ -818,12 +826,12 @@
                 </option>
                 <option>
                     <name>CCJLinkInterfaceRadio</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCJLinkResetList</name>
                     <version>6</version>
-                    <state>5</state>
+                    <state>8</state>
                 </option>
                 <option>
                     <name>CCJLinkInterfaceCmdLine</name>
@@ -858,10 +866,6 @@
                     <state>0</state>
                 </option>
                 <option>
-                    <name>CCCatchSFERR</name>
-                    <state>0</state>
-                </option>
-                <option>
                     <name>CCCatchHARDERR</name>
                     <state>0</state>
                 </option>
@@ -888,7 +892,7 @@
                 </option>
                 <option>
                     <name>CCCpuClockEdit</name>
-                    <state></state>
+                    <state>72.0</state>
                 </option>
                 <option>
                     <name>CCSwoClockAuto</name>
@@ -996,7 +1000,7 @@
                 </option>
                 <option>
                     <name>CCCpuClockEdit</name>
-                    <state></state>
+                    <state>72.0</state>
                 </option>
                 <option>
                     <name>CCSwoClockAuto</name>
@@ -1328,7 +1332,7 @@
                 </option>
                 <option>
                     <name>CCXds100InterfaceRadio</name>
-                    <state>2</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CCXds100InterfaceCmdLine</name>
@@ -1337,7 +1341,7 @@
                 <option>
                     <name>CCXds100ProbeList</name>
                     <version>0</version>
-                    <state>2</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CCXds100SWOPortRadio</name>
@@ -1403,6 +1407,10 @@
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
+                <file>$EW_DIR$\common\plugins\TargetAccessServer\TargetAccessServer.ENU.ewplugin</file>
+                <loadFlag>0</loadFlag>
+            </plugin>
+            <plugin>
                 <file>$EW_DIR$\common\plugins\uCProbe\uCProbePlugin.ENU.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
@@ -1418,7 +1426,7 @@
             <name>C-SPY</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>28</version>
+                <version>29</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
@@ -1487,7 +1495,7 @@
                 </option>
                 <option>
                     <name>OCProductVersion</name>
-                    <state>8.11.2.13604</state>
+                    <state>7.30.3.8061</state>
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
@@ -1499,7 +1507,7 @@
                 </option>
                 <option>
                     <name>UseFlashLoader</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CLowLevel</name>
@@ -1587,7 +1595,7 @@
                 </option>
                 <option>
                     <name>OCMulticoreNrOfCores</name>
-                    <state></state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>OCMulticoreMaster</name>
@@ -1615,6 +1623,10 @@
                 </option>
                 <option>
                     <name>OCAttachSlave</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>MassEraseBeforeFlashing</name>
                     <state>0</state>
                 </option>
             </data>
@@ -1680,6 +1692,10 @@
                 <version>4</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
+                <option>
+                    <name>CatchSFERR</name>
+                    <state>1</state>
+                </option>
                 <option>
                     <name>OCDriverInfo</name>
                     <state>1</state>
@@ -1799,10 +1815,6 @@
                     <state>1</state>
                 </option>
                 <option>
-                    <name>CatchSFERR</name>
-                    <state>1</state>
-                </option>
-                <option>
                     <name>CatchHARDERR</name>
                     <state>1</state>
                 </option>
@@ -1897,6 +1909,10 @@
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
+                    <name>CatchSFERR</name>
+                    <state>1</state>
+                </option>
+                <option>
                     <name>OCDriverInfo</name>
                     <state>1</state>
                 </option>
@@ -1972,7 +1988,7 @@
                 </option>
                 <option>
                     <name>IjetCpuClockEdit</name>
-                    <state></state>
+                    <state>72.0</state>
                 </option>
                 <option>
                     <name>IjetSwoPrescalerList</name>
@@ -2048,10 +2064,6 @@
                     <state>1</state>
                 </option>
                 <option>
-                    <name>CatchSFERR</name>
-                    <state>1</state>
-                </option>
-                <option>
                     <name>CatchHARDERR</name>
                     <state>1</state>
                 </option>
@@ -2103,7 +2115,7 @@
                 <option>
                     <name>IjetTraceSizeList</name>
                     <version>0</version>
-                    <state>4</state>
+                    <state>2</state>
                 </option>
                 <option>
                     <name>FlashBoardPathSlave</name>
@@ -2126,6 +2138,10 @@
                 <version>16</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
+                <option>
+                    <name>CCCatchSFERR</name>
+                    <state>0</state>
+                </option>
                 <option>
                     <name>JLinkSpeed</name>
                     <state>1000</state>
@@ -2265,10 +2281,6 @@
                     <state>0</state>
                 </option>
                 <option>
-                    <name>CCCatchSFERR</name>
-                    <state>0</state>
-                </option>
-                <option>
                     <name>CCCatchHARDERR</name>
                     <state>0</state>
                 </option>
@@ -2295,7 +2307,7 @@
                 </option>
                 <option>
                     <name>CCCpuClockEdit</name>
-                    <state></state>
+                    <state>72.0</state>
                 </option>
                 <option>
                     <name>CCSwoClockAuto</name>
@@ -2403,7 +2415,7 @@
                 </option>
                 <option>
                     <name>CCCpuClockEdit</name>
-                    <state></state>
+                    <state>72.0</state>
                 </option>
                 <option>
                     <name>CCSwoClockAuto</name>
@@ -2735,7 +2747,7 @@
                 </option>
                 <option>
                     <name>CCXds100InterfaceRadio</name>
-                    <state>2</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CCXds100InterfaceCmdLine</name>
@@ -2744,7 +2756,7 @@
                 <option>
                     <name>CCXds100ProbeList</name>
                     <version>0</version>
-                    <state>2</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CCXds100SWOPortRadio</name>
@@ -2807,6 +2819,10 @@
             </plugin>
             <plugin>
                 <file>$EW_DIR$\common\plugins\Orti\Orti.ENU.ewplugin</file>
+                <loadFlag>0</loadFlag>
+            </plugin>
+            <plugin>
+                <file>$EW_DIR$\common\plugins\TargetAccessServer\TargetAccessServer.ENU.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>

@@ -191,8 +191,10 @@ int dfs_romfs_open(struct dfs_fd *file)
     rt_size_t size;
     struct romfs_dirent *dirent;
     struct romfs_dirent *root_dirent;
+    struct dfs_filesystem *fs;
 
-    root_dirent = (struct romfs_dirent *)file->data;
+    fs = (struct dfs_filesystem *)file->data;
+    root_dirent = (struct romfs_dirent *)fs->data;
 
     if (check_dirent(root_dirent) != 0)
         return -EIO;

@@ -1,0 +1,11 @@
+menu "Utilities"
+
+config RT_USING_LOGTRACE
+    bool "Enable log trace"
+    default n
+
+config RT_USING_RYM
+    bool "Enable Ymodem"
+    default n
+
+endmenu

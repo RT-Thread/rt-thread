@@ -1,0 +1,7 @@
+config RT_USING_UART2
+    bool "Enable UART2"
+    default y
+
+config RT_USING_PIN
+    bool "Enable PIN"
+    default y

@@ -24,7 +24,7 @@
 
 #include <rtthread.h>
 #include <rtservice.h>
-#include <rtdevice.h>
+#include <drivers/usb_host.h>
 
 static rt_list_t _driver_list;
 

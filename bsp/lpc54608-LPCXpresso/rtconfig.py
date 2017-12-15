@@ -16,9 +16,9 @@ elif CROSS_TOOL == 'keil':
     PLATFORM    = 'armcc'
     EXEC_PATH   = 'D:/Keil_v5'
 elif CROSS_TOOL == 'iar':
-    print '================ERROR============================'
-    print 'Not support iar yet!'
-    print '================================================='
+    print('================ERROR============================')
+    print('Not support iar yet!')
+    print('=================================================')
     exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):
@@ -40,7 +40,7 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -mcpu=cortex-m4 -mthumb -ffunction-sections -fdata-sections -mfpu=fpv4-sp-d16 -mfloat-abi=hard'
-    CFLAGS = DEVICE + ' -g -Wall -std=c99'
+    CFLAGS = DEVICE + ' -g -Wall'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles  -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,ResetISR -T link.lds'
 
@@ -55,7 +55,7 @@ if PLATFORM == 'gcc':
 
     CXXFLAGS = CFLAGS
 
-    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
+    POST_ACTION = OBJCPY + ' -O ihex $TARGET rtthread.hex\n' + SIZE + ' $TARGET \n'
 
 elif PLATFORM == 'armcc':
     # toolchains
@@ -70,12 +70,11 @@ elif PLATFORM == 'armcc':
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
     LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread_' + \
-        BOARD_NAME + '.map --scatter rtthread-' + BOARD_NAME + '.sct'
+        BOARD_NAME + '.map --scatter LPC54608J512_flash.scf'
 
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
     LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
-    CXXFLAGS = CFLAGS
-
+    
     EXEC_PATH += '/arm/bin40/'
 
     if BUILD == 'debug':
@@ -83,5 +82,8 @@ elif PLATFORM == 'armcc':
         AFLAGS += ' -g'
     else:
         CFLAGS += ' -O2'
-
+        
+    CXXFLAGS = CFLAGS
+    CFLAGS += ' --c99'
+    
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
