@@ -1,23 +1,22 @@
 /*
-    SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2009 Sam Lantinga
+  Simple DirectMedia Layer
+  Copyright (C) 1997-2014 Sam Lantinga <slouken@libsdl.org>
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public
-    License as published by the Free Software Foundation; either
-    version 2.1 of the License, or (at your option) any later version.
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
 
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
 
-    You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-    Sam Lantinga
-    slouken@libsdl.org
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
 */
 
 #ifndef _SDL_main_h
@@ -25,82 +24,132 @@
 
 #include "SDL_stdinc.h"
 
-/** @file SDL_main.h
- *  Redefine main() on Win32 and MacOS so that it is called by winmain.c
+/**
+ *  \file SDL_main.h
+ *
+ *  Redefine main() on some platforms so that it is called by SDL.
  */
 
-#if defined(__WIN32__) || \
-    (defined(__MWERKS__) && !defined(__BEOS__)) || \
-    defined(__MACOS__) || defined(__MACOSX__) || \
-    defined(__SYMBIAN32__) || defined(QWS)
+#ifndef SDL_MAIN_HANDLED
+#if defined(__WIN32__)
+/* On Windows SDL provides WinMain(), which parses the command line and passes
+   the arguments to your main function.
+
+   If you provide your own WinMain(), you may define SDL_MAIN_HANDLED
+ */
+#define SDL_MAIN_AVAILABLE
+
+#elif defined(__WINRT__)
+/* On WinRT, SDL provides a main function that initializes CoreApplication,
+   creating an instance of IFrameworkView in the process.
+
+   Please note that #include'ing SDL_main.h is not enough to get a main()
+   function working.  In non-XAML apps, the file,
+   src/main/winrt/SDL_WinRT_main_NonXAML.cpp, or a copy of it, must be compiled
+   into the app itself.  In XAML apps, the function, SDL_WinRTRunApp must be
+   called, with a pointer to the Direct3D-hosted XAML control passed in.
+*/
+#define SDL_MAIN_NEEDED
+
+#elif defined(__IPHONEOS__)
+/* On iOS SDL provides a main function that creates an application delegate
+   and starts the iOS application run loop.
+
+   See src/video/uikit/SDL_uikitappdelegate.m for more details.
+ */
+#define SDL_MAIN_NEEDED
+
+#elif defined(__ANDROID__)
+/* On Android SDL provides a Java class in SDLActivity.java that is the
+   main activity entry point.
+
+   See README-android.txt for more details on extending that class.
+ */
+#define SDL_MAIN_NEEDED
+
+#endif
+#endif /* SDL_MAIN_HANDLED */
 
 #ifdef __cplusplus
-#define C_LINKAGE	"C"
+#define C_LINKAGE   "C"
 #else
 #define C_LINKAGE
 #endif /* __cplusplus */
 
-/** The application's main() function must be called with C linkage,
+/**
+ *  \file SDL_main.h
+ *
+ *  The application's main() function must be called with C linkage,
  *  and should be declared like this:
- *      @code
- *      #ifdef __cplusplus
- *      extern "C"
- *      #endif
- *	int main(int argc, char *argv[])
- *	{
- *	}
- *      @endcode
+ *  \code
+ *  #ifdef __cplusplus
+ *  extern "C"
+ *  #endif
+ *  int main(int argc, char *argv[])
+ *  {
+ *  }
+ *  \endcode
  */
-#define main	SDL_main
 
-/** The prototype for the application's main() function */
+#if defined(SDL_MAIN_NEEDED) || defined(SDL_MAIN_AVAILABLE)
+#define main    SDL_main
+#endif
+
+/**
+ *  The prototype for the application's main() function
+ */
 extern C_LINKAGE int SDL_main(int argc, char *argv[]);
 
 
-/** @name From the SDL library code -- needed for registering the app on Win32 */
-/*@{*/
+#include "begin_code.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ *  This is called by the real SDL main function to let the rest of the
+ *  library know that initialization was done properly.
+ *
+ *  Calling this yourself without knowing what you're doing can cause
+ *  crashes and hard to diagnose problems with your application.
+ */
+extern DECLSPEC void SDLCALL SDL_SetMainReady(void);
+
 #ifdef __WIN32__
 
-#include "begin_code.h"
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/** This should be called from your WinMain() function, if any */
-extern DECLSPEC void SDLCALL SDL_SetModuleHandle(void *hInst);
-/** This can also be called, but is no longer necessary */
-extern DECLSPEC int SDLCALL SDL_RegisterApp(char *name, Uint32 style, void *hInst);
-/** This can also be called, but is no longer necessary (SDL_Quit calls it) */
+/**
+ *  This can be called to set the application class at startup
+ */
+extern DECLSPEC int SDLCALL SDL_RegisterApp(char *name, Uint32 style,
+                                            void *hInst);
 extern DECLSPEC void SDLCALL SDL_UnregisterApp(void);
+
+#endif /* __WIN32__ */
+
+
+#ifdef __WINRT__
+
+/**
+ *  \brief Initializes and launches an SDL/WinRT application.
+ *
+ *  \param mainFunction The SDL app's C-style main().
+ *  \param xamlBackgroundPanel An optional, XAML-based, background panel.
+ *     For Non-XAML apps, this value must be set to NULL.  For XAML apps,
+ *     pass in a pointer to a SwapChainBackgroundPanel, casted to an
+ *     IInspectable (via reinterpret_cast).
+ *  \ret 0 on success, -1 on failure.  On failure, use SDL_GetError to retrieve more
+ *      information on the failure.
+ */
+extern DECLSPEC int SDLCALL SDL_WinRTRunApp(int (*mainFunction)(int, char **), void * xamlBackgroundPanel);
+
+#endif /* __WINRT__ */
+
+
 #ifdef __cplusplus
 }
 #endif
 #include "close_code.h"
-#endif
-/*@}*/
-
-/** @name From the SDL library code -- needed for registering QuickDraw on MacOS */
-/*@{*/
-#if defined(__MACOS__)
-
-#include "begin_code.h"
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/** Forward declaration so we don't need to include QuickDraw.h */
-struct QDGlobals;
-
-/** This should be called from your main() function, if any */
-extern DECLSPEC void SDLCALL SDL_InitQuickDraw(struct QDGlobals *the_qd);
-
-#ifdef __cplusplus
-}
-#endif
-#include "close_code.h"
-#endif
-/*@}*/
-
-#endif /* Need to redefine main()? */
 
 #endif /* _SDL_main_h */
+
+/* vi: set ts=4 sw=4 expandtab: */
