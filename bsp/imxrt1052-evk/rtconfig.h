@@ -85,11 +85,11 @@
 
 #define RT_DFS_ELM_CODE_PAGE 437
 #define RT_DFS_ELM_WORD_ACCESS
-#define RT_DFS_ELM_USE_LFN_0
+/* RT_DFS_ELM_USE_LFN_0 is not set */
 /* RT_DFS_ELM_USE_LFN_1 is not set */
 /* RT_DFS_ELM_USE_LFN_2 is not set */
-/* RT_DFS_ELM_USE_LFN_3 is not set */
-#define RT_DFS_ELM_USE_LFN 0
+#define RT_DFS_ELM_USE_LFN_3
+#define RT_DFS_ELM_USE_LFN 3
 #define RT_DFS_ELM_MAX_LFN 255
 #define RT_DFS_ELM_DRIVES 2
 #define RT_DFS_ELM_MAX_SECTOR_SIZE 512
@@ -108,7 +108,8 @@
 #define RT_USING_SERIAL
 /* RT_USING_CAN is not set */
 /* RT_USING_HWTIMER is not set */
-/* RT_USING_I2C is not set */
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 /* RT_USING_PIN is not set */
 /* RT_USING_MTD_NOR is not set */
 /* RT_USING_MTD_NAND is not set */
@@ -143,7 +144,6 @@
 #define RT_LWIP_DHCP
 #define IP_SOF_BROADCAST 1
 #define IP_SOF_BROADCAST_RECV 1
-/* LWIP_USING_DHCPD is not set */
 
 /* Static IPv4 Address */
 
@@ -154,8 +154,7 @@
 #define RT_LWIP_TCP
 /* RT_LWIP_RAW is not set */
 /* RT_LWIP_PPP is not set */
-/* RT_LWIP_PPPOE is not set */
-/* RT_LWIP_PPPOS is not set */
+#define RT_MEMP_NUM_NETCONN 8
 #define RT_LWIP_PBUF_NUM 16
 #define RT_LWIP_RAW_PCB_NUM 4
 #define RT_LWIP_UDP_PCB_NUM 4
@@ -179,11 +178,28 @@
 /* Modbus master and slave stack */
 
 /* RT_USING_MODBUS is not set */
+/* LWIP_USING_DHCPD is not set */
 /* RT_USING_NETUTILS is not set */
 
 /* RT-Thread UI Engine */
 
-/* RT_USING_GUIENGINE is not set */
+#define RT_USING_GUIENGINE
+#define RTGUI_NAME_MAX 16
+#define RTGUI_USING_TTF
+#define UTF8_TO_UNICODE
+#define RTGUI_USING_FONT16
+#define RTGUI_USING_FONT12
+/* RTGUI_USING_FONTHZ is not set */
+/* RTGUI_IMAGE_XPM is not set */
+#define RTGUI_IMAGE_JPEG_NONE
+/* RTGUI_IMAGE_JPEG is not set */
+/* RTGUI_IMAGE_TJPGD is not set */
+/* RTGUI_IMAGE_PNG_NONE is not set */
+/* RTGUI_IMAGE_PNG is not set */
+#define RTGUI_IMAGE_LODEPNG
+/* RTGUI_IMAGE_BMP is not set */
+#define RTGUI_IMAGE_CONTAINER
+/* RTGUI_USING_DEMO is not set */
 
 /* VBUS(Virtual Software BUS) */
 
@@ -216,6 +232,7 @@
 
 /* PKG_USING_MBEDTLS is not set */
 /* PKG_USING_libsodium is not set */
+/* PKG_USING_TINYCRYPT is not set */
 
 /* language packages */
 
@@ -224,11 +241,14 @@
 
 /* multimedia packages */
 
+/* PKG_USING_OPENMV is not set */
+
 /* tools packages */
 
 /* PKG_USING_CMBACKTRACE is not set */
 /* PKG_USING_EASYLOGGER is not set */
 /* PKG_USING_SYSTEMVIEW is not set */
+/* PKG_USING_IPERF is not set */
 
 /* miscellaneous packages */
 
