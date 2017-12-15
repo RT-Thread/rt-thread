@@ -13,15 +13,15 @@ if RT_USING_DFS
 
     config DFS_FILESYSTEMS_MAX
         int "The maximal number of mounted file system"
-        default 2
+        default 4
 
     config DFS_FILESYSTEM_TYPES_MAX
         int "The maximal number of file system type"
-        default 2
+        default 4
 
     config DFS_FD_MAX
         int "The maximal number of opened files"
-        default 4
+        default 16
     
     config RT_USING_DFS_ELMFAT
         bool "Enable elm-chan fatfs"

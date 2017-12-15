@@ -111,7 +111,7 @@ config RT_USING_LWIP
 
         config RT_LWIP_UDP_PCB_NUM
             int "the number of UDP socket"
-            default 4
+            default 8
 
         if RT_LWIP_TCP
         config RT_LWIP_TCP_PCB_NUM
