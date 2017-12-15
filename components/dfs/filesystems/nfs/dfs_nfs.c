@@ -888,7 +888,6 @@ nfs_dir *nfs_opendir(nfs_filesystem *nfs, const char *path)
     if (handle == NULL)
     {
         rt_free(dir);
-        
         return NULL;
     }
 
