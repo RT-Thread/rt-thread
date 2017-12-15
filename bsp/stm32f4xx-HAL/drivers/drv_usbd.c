@@ -1,5 +1,5 @@
 /*
- * File      : stm32_usb.c
+ * File      : stm32_usbd.c
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2015, RT-Thread Development Team
  *
@@ -11,7 +11,7 @@
  * Date           Author            Notes
  * 2017-10-30     ZYH            the first version
  */
-#include "drv_usb.h"
+#include "drv_usbd.h"
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "board.h"

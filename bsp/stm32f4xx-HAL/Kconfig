@@ -339,6 +339,25 @@ if RT_USING_USB_DEVICE
         default 0x5750
 endif
 
+if RT_USING_USB_HOST
+menu "USB Host Config"
+    config USBH_USING_CONTROLLABLE_POWER
+        bool "using a gpio control usb power"
+        default y
+    if USBH_USING_CONTROLLABLE_POWER
+        config USBH_POWER_PIN
+            int "power control pin"
+            default 15
+        config USBH_CURRENT_PIN
+            int "current check pin"
+            default 86
+    endif
+    config USBH_USING_VBUS
+        bool "using vbus check pin"
+        default n
+endmenu
+endif
+
 
 
     
