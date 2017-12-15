@@ -333,10 +333,10 @@
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls>--library_interface=armcc --library_type=standardlib  --diag_suppress=66</MiscControls>
-              <Define>SKIP_SYSCLK_INIT, CPU_MIMXRT1052DVL6A, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1, EVK_MCIMXRM, FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE, RT_USING_ARM_LIBC</Define>
+              <MiscControls>--library_interface=armcc --library_type=standardlib --diag_suppress=66,1296,186</MiscControls>
+              <Define>SKIP_SYSCLK_INIT, FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE, RT_USING_ARM_LIBC, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1, EVK_MCIMXRM, FT2_BUILD_LIBRARY, CPU_MIMXRT1052DVL6A</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;.;drivers;Libraries;Libraries\drivers;Libraries\utilities;Libraries\CMSIS\Include;..\..\include;..\..\libcpu\arm\cortex-m7;..\..\libcpu\arm\common;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\dfs\filesystems\elmfat;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\armlibc;..\..\components\net\lwip-1.4.1\src;..\..\components\net\lwip-1.4.1\src\include;..\..\components\net\lwip-1.4.1\src\include\ipv4;..\..\components\net\lwip-1.4.1\src\arch\include;..\..\components\net\lwip-1.4.1\src\include\netif</IncludePath>
+              <IncludePath>applications;.;drivers;Libraries;Libraries\drivers;Libraries\utilities;Libraries\CMSIS\Include;..\..\include;..\..\libcpu\arm\cortex-m7;..\..\libcpu\arm\common;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\dfs\filesystems\elmfat;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\gui\include;..\..\components\gui\include\rtgui;..\..\components\gui\include\rtgui\widgets;..\..\components\gui\libraries\lodepng;..\..\components\gui\src;..\..\components\gui\libraries\freetype-2.6.2\builds\rt-thread;..\..\components\gui\libraries\freetype-2.6.2\include;..\..\components\gui\libraries\freetype-2.6.2\include\freetype;..\..\components\gui\libraries\freetype-2.6.2\include\freetype\config;..\..\components\gui\libraries\freetype-2.6.2\include\freetype\internal;..\..\components\gui\libraries\freetype-2.6.2\include\freetype\internal\services;..\..\components\gui\libraries\freetype-2.6.2\src\autofit;..\..\components\gui\libraries\freetype-2.6.2\src\base;..\..\components\gui\libraries\freetype-2.6.2\src\cache;..\..\components\gui\libraries\freetype-2.6.2\src\psnames;..\..\components\gui\libraries\freetype-2.6.2\src\sfnt;..\..\components\gui\libraries\freetype-2.6.2\src\smooth;..\..\components\gui\libraries\freetype-2.6.2\src\truetype;..\..\components\libc\compilers\armlibc;..\..\components\net\lwip-1.4.1\src;..\..\components\net\lwip-1.4.1\src\include;..\..\components\net\lwip-1.4.1\src\include\ipv4;..\..\components\net\lwip-1.4.1\src\arch\include;..\..\components\net\lwip-1.4.1\src\include\netif</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -370,7 +370,7 @@
             <ScatterFile>.\Libraries\arm\MIMXRT1052xxxxx_flexspi_nor.scf</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc>--keep *.o(.rti_fn.*)   --keep *.o(FSymTab) --keep *.o(VSymTab)</Misc>
+            <Misc> --keep *.o(.rti_fn.*)   --keep *.o(FSymTab) --keep *.o(VSymTab) </Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>
@@ -404,6 +404,11 @@
               <FileName>sdio_test.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\sdio_test.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtgui_demo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\rtgui_demo.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -444,6 +449,21 @@
               <FileName>drv_sdio.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_sdio.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_lcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_ft5406.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_ft5406.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_i2c.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -895,11 +915,31 @@
               <FileType>1</FileType>
               <FilePath>..\..\components\dfs\filesystems\elmfat\ff.c</FilePath>
             </File>
+            <File>
+              <FileName>ccsbcs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\filesystems\elmfat\option\ccsbcs.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
           <Files>
+            <File>
+              <FileName>i2c_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\i2c\i2c_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c_dev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\i2c\i2c_dev.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c-bit-ops.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\i2c\i2c-bit-ops.c</FilePath>
+            </File>
             <File>
               <FileName>block_dev.c</FileName>
               <FileType>1</FileType>
@@ -1044,6 +1084,351 @@
               <FileName>finsh_token.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_token.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>GuiEngine</GroupName>
+          <Files>
+            <File>
+              <FileName>lodepng.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\lodepng\lodepng.c</FilePath>
+            </File>
+            <File>
+              <FileName>asc12font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\asc12font.c</FilePath>
+            </File>
+            <File>
+              <FileName>asc16font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\asc16font.c</FilePath>
+            </File>
+            <File>
+              <FileName>blit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\blit.c</FilePath>
+            </File>
+            <File>
+              <FileName>box.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\box.c</FilePath>
+            </File>
+            <File>
+              <FileName>color.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\color.c</FilePath>
+            </File>
+            <File>
+              <FileName>container.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\container.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\dc.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc_blend.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\dc_blend.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc_buffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\dc_buffer.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc_client.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\dc_client.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc_hw.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\dc_hw.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc_rotozoom.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\dc_rotozoom.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc_trans.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\dc_trans.c</FilePath>
+            </File>
+            <File>
+              <FileName>filerw.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\filerw.c</FilePath>
+            </File>
+            <File>
+              <FileName>font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\font.c</FilePath>
+            </File>
+            <File>
+              <FileName>font_bmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\font_bmp.c</FilePath>
+            </File>
+            <File>
+              <FileName>font_fnt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\font_fnt.c</FilePath>
+            </File>
+            <File>
+              <FileName>font_freetype.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\font_freetype.c</FilePath>
+            </File>
+            <File>
+              <FileName>font_hz_bmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\font_hz_bmp.c</FilePath>
+            </File>
+            <File>
+              <FileName>font_hz_file.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\font_hz_file.c</FilePath>
+            </File>
+            <File>
+              <FileName>hz12font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\hz12font.c</FilePath>
+            </File>
+            <File>
+              <FileName>hz16font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\hz16font.c</FilePath>
+            </File>
+            <File>
+              <FileName>image.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\image.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_bmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\image_bmp.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_container.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\image_container.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_hdc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\image_hdc.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_jpg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\image_jpg.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_png.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\image_png.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_xpm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\image_xpm.c</FilePath>
+            </File>
+            <File>
+              <FileName>matrix.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\matrix.c</FilePath>
+            </File>
+            <File>
+              <FileName>mouse.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\mouse.c</FilePath>
+            </File>
+            <File>
+              <FileName>region.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\region.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtgui_app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\rtgui_app.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtgui_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\rtgui_driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtgui_object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\rtgui_object.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtgui_system.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\rtgui_system.c</FilePath>
+            </File>
+            <File>
+              <FileName>server.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\server.c</FilePath>
+            </File>
+            <File>
+              <FileName>title.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\title.c</FilePath>
+            </File>
+            <File>
+              <FileName>topwin.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\topwin.c</FilePath>
+            </File>
+            <File>
+              <FileName>widget.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\widget.c</FilePath>
+            </File>
+            <File>
+              <FileName>window.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\src\window.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>FreeType</GroupName>
+          <Files>
+            <File>
+              <FileName>ftsystem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\builds\rt-thread\ftsystem.c</FilePath>
+            </File>
+            <File>
+              <FileName>gb2312tounicode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\builds\rt-thread\gb2312tounicode.c</FilePath>
+            </File>
+            <File>
+              <FileName>autofit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\autofit\autofit.c</FilePath>
+            </File>
+            <File>
+              <FileName>fttype1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\base\fttype1.c</FilePath>
+            </File>
+            <File>
+              <FileName>ftbitmap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\base\ftbitmap.c</FilePath>
+            </File>
+            <File>
+              <FileName>ftbase.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\base\ftbase.c</FilePath>
+            </File>
+            <File>
+              <FileName>ftbbox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\base\ftbbox.c</FilePath>
+            </File>
+            <File>
+              <FileName>ftfstype.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\base\ftfstype.c</FilePath>
+            </File>
+            <File>
+              <FileName>ftglyph.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\base\ftglyph.c</FilePath>
+            </File>
+            <File>
+              <FileName>ftinit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\base\ftinit.c</FilePath>
+            </File>
+            <File>
+              <FileName>ftlcdfil.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\base\ftlcdfil.c</FilePath>
+            </File>
+            <File>
+              <FileName>ftmm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\base\ftmm.c</FilePath>
+            </File>
+            <File>
+              <FileName>ftpatent.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\base\ftpatent.c</FilePath>
+            </File>
+            <File>
+              <FileName>ftcbasic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\cache\ftcbasic.c</FilePath>
+            </File>
+            <File>
+              <FileName>ftccache.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\cache\ftccache.c</FilePath>
+            </File>
+            <File>
+              <FileName>ftccmap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\cache\ftccmap.c</FilePath>
+            </File>
+            <File>
+              <FileName>ftcglyph.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\cache\ftcglyph.c</FilePath>
+            </File>
+            <File>
+              <FileName>ftcimage.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\cache\ftcimage.c</FilePath>
+            </File>
+            <File>
+              <FileName>ftcmanag.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\cache\ftcmanag.c</FilePath>
+            </File>
+            <File>
+              <FileName>ftcmru.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\cache\ftcmru.c</FilePath>
+            </File>
+            <File>
+              <FileName>ftcsbits.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\cache\ftcsbits.c</FilePath>
+            </File>
+            <File>
+              <FileName>psnames.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\psnames\psnames.c</FilePath>
+            </File>
+            <File>
+              <FileName>sfnt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\sfnt\sfnt.c</FilePath>
+            </File>
+            <File>
+              <FileName>smooth.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\smooth\smooth.c</FilePath>
+            </File>
+            <File>
+              <FileName>truetype.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\gui\libraries\freetype-2.6.2\src\truetype\truetype.c</FilePath>
             </File>
           </Files>
         </Group>
