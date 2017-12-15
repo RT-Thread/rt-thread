@@ -1,5 +1,5 @@
 /*
- * File      : stm32_usb.h
+ * File      : stm32_usbd.h
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2015, RT-Thread Development Team
  *
@@ -11,8 +11,8 @@
  * Date           Author            Notes
  * 2017-10-30     ZYH            the first version
  */
-#ifndef __STM32_USB_H__
-#define __STM32_USB_H__
+#ifndef __STM32_USBD_H__
+#define __STM32_USBD_H__
 #include <rtthread.h>
 
 int stm_usbd_register(void);
