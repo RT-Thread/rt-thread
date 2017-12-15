@@ -173,7 +173,6 @@ void rt_hw_board_init()
 {
     BOARD_BootClockRUN();
 
-    
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
     
 #ifdef RT_USING_COMPONENTS_INIT
@@ -192,5 +191,25 @@ void rt_hw_board_init()
     rt_memheap_init(&system_heap, "sram", (void *)HEAP_BEGIN, HEAP_SIZE);
 #endif
 }
+
+#ifdef RT_USING_GUIENGINE
+#include <rtgui/driver.h>
+#include "drv_lcd.h"
+
+/* initialize for gui driver */
+int rtgui_lcd_init(void)
+{
+    rt_device_t device;
+
+    imxrt_hw_lcd_init();
+
+    device = rt_device_find("lcd");
+    /* set graphic device */
+    rtgui_graphic_set_device(device);
+
+    return 0;
+}
+INIT_DEVICE_EXPORT(rtgui_lcd_init);
+#endif
 
 /*@}*/
