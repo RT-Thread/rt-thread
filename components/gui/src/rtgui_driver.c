@@ -124,7 +124,7 @@ rtgui_graphic_driver_get_rect_buffer(const struct rtgui_graphic_driver *driver,
 
     while (h--)
     {
-        rt_memcpy(dst, pixel, buffer->pitch);
+        memcpy(dst, pixel, buffer->pitch);
 
         dst += buffer->pitch;
         pixel += driver->pitch;
@@ -419,7 +419,7 @@ static void framebuffer_draw_raw_hline(rt_uint8_t *pixels, int x1, int x2, int y
 
     drv = rtgui_graphic_get_device();
     dst = GET_PIXEL(drv, x1, y, rt_uint8_t);
-    rt_memcpy(dst, pixels,
+    memcpy(dst, pixels,
               (x2 - x1) * _UI_BITBYTES(drv->bits_per_pixel));
 }
 

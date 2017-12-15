@@ -46,7 +46,11 @@
 /* RT_USING_INTERRUPT_INFO is not set */
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
+<<<<<<< HEAD
 #define RT_CONSOLE_DEVICE_NAME "uart1"
+=======
+#define RT_CONSOLE_DEVICE_NAME "uart2"
+>>>>>>> upstream/master
 /* RT_USING_MODULE is not set */
 
 /* RT-Thread Components */
@@ -86,7 +90,11 @@
 #define RT_USING_PIN
 /* RT_USING_MTD_NOR is not set */
 /* RT_USING_MTD_NAND is not set */
+<<<<<<< HEAD
 #define RT_USING_RTC
+=======
+/* RT_USING_RTC is not set */
+>>>>>>> upstream/master
 /* RT_USING_SDIO is not set */
 /* RT_USING_SPI is not set */
 /* RT_USING_WDT is not set */
@@ -120,6 +128,14 @@
 
 /* RT_USING_VBUS is not set */
 
+<<<<<<< HEAD
+=======
+/* Utilities */
+
+/* RT_USING_LOGTRACE is not set */
+/* RT_USING_RYM is not set */
+
+>>>>>>> upstream/master
 /* RT-Thread online packages */
 
 /* system packages */
@@ -159,7 +175,11 @@
 /* SOC_STM32F415RG is not set */
 /* SOC_STM32F415VG is not set */
 /* SOC_STM32F415ZG is not set */
+<<<<<<< HEAD
 /* SOC_STM32F407VG is not set */
+=======
+#define SOC_STM32F407VG
+>>>>>>> upstream/master
 /* SOC_STM32F407VE is not set */
 /* SOC_STM32F407ZG is not set */
 /* SOC_STM32F407ZE is not set */
@@ -206,7 +226,11 @@
 /* SOC_STM32F401CB is not set */
 /* SOC_STM32F401CC is not set */
 /* SOC_STM32F401RB is not set */
+<<<<<<< HEAD
 #define SOC_STM32F401RC
+=======
+/* SOC_STM32F401RC is not set */
+>>>>>>> upstream/master
 /* SOC_STM32F401VB is not set */
 /* SOC_STM32F401VC is not set */
 /* SOC_STM32F401CD is not set */
@@ -285,8 +309,14 @@
 /* SOC_STM32F423ZH is not set */
 /* RT_USING_HSI is not set */
 #define RT_HSE_VALUE 8000000
+<<<<<<< HEAD
 #define RT_USING_UART1
 /* RT_USING_UART2 is not set */
+=======
+#define RT_HSE_HCLK 168000000
+/* RT_USING_UART1 is not set */
+#define RT_USING_UART2
+>>>>>>> upstream/master
 /* RT_USING_UART6 is not set */
 
 #endif

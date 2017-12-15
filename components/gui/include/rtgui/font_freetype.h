@@ -27,6 +27,7 @@
 
 #include <rtgui/dc.h>
 #include <rtgui/font.h>
+#include <rtgui/filerw.h>
 
 #ifdef __cplusplus
 extern "C" {

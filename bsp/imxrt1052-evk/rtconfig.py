@@ -77,7 +77,7 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --cpu Cortex-M7.fp.sp'
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-imxrt.map --scatter imxrt1052_sdram.sct'
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-imxrt.map --scatter ./Libraries/arm/MIMXRT1052xxxxx_flexspi_nor.scf'
 
     CFLAGS += ' --c99  --diag_suppress=66,1296,186'
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
@@ -128,7 +128,7 @@ elif PLATFORM == 'iar':
     AFLAGS += ' --cpu Cortex-M7'
     AFLAGS += ' --fpu None'
 
-    LFLAGS = ' --config imxrt1052_sdram.icf'
+    LFLAGS = ' --config ./Libraries/iar/MIMXRT1052xxxxx_flexspi_nor.icf'
     LFLAGS += ' --redirect _Printf=_PrintfTiny'
     LFLAGS += ' --redirect _Scanf=_ScanfSmall'
     LFLAGS += ' --entry __iar_program_start'

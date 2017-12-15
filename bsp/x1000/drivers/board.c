@@ -53,6 +53,36 @@ int cplusplus_system_init(void)
 }
 #endif
 
+<<<<<<< HEAD:bsp/x1000/drivers/board.c
+=======
+#ifdef RT_USING_GUIENGINE
+#include <rtgui/driver.h>
+int lcd_hw_init(void)
+{
+    rt_device_t device;
+    rt_err_t  err;
+    
+    device = rt_device_find("lcd");
+    if (device == RT_NULL)
+    {
+        rt_kprintf("Not found LCD driver\n");
+        return RT_ERROR;
+    }
+    
+    err = rt_device_open(device, RT_DEVICE_OFLAG_RDWR);
+    if (err != RT_EOK)
+    {
+        rt_kprintf("Open LCD driver fail\n");
+        return RT_ERROR;
+    }
+    
+    /* set graphic device */
+    rtgui_graphic_set_device(device);
+}
+INIT_ENV_EXPORT(lcd_hw_init);
+#endif
+
+>>>>>>> upstream/master:bsp/x1000/drivers/board.c
 void rt_hw_board_init(void)
 {
     memcpy((void*)&_iramstart, (void*)&_iramcopy, (rt_uint32_t)&_iramend - (rt_uint32_t)&_iramstart);

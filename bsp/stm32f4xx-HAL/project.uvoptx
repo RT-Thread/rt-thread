@@ -8,7 +8,11 @@
   <Extensions>
     <cExt>*.c</cExt>
     <aExt>*.s*; *.src; *.a*</aExt>
+<<<<<<< HEAD
     <oExt>*.obj; *.o</oExt>
+=======
+    <oExt>*.obj</oExt>
+>>>>>>> upstream/master
     <lExt>*.lib</lExt>
     <tExt>*.txt; *.h; *.inc</tExt>
     <pExt>*.plm</pExt>
@@ -101,7 +105,11 @@
         <sRunDeb>0</sRunDeb>
         <sLrtime>0</sLrtime>
         <bEvRecOn>1</bEvRecOn>
+<<<<<<< HEAD
         <nTsel>5</nTsel>
+=======
+        <nTsel>3</nTsel>
+>>>>>>> upstream/master
         <sDll></sDll>
         <sDllPa></sDllPa>
         <sDlgDll></sDlgDll>
@@ -112,18 +120,36 @@
         <tDlgDll></tDlgDll>
         <tDlgPa></tDlgPa>
         <tIfile></tIfile>
+<<<<<<< HEAD
         <pMon>STLink\ST-LINKIII-KEIL_SWO.dll</pMon>
+=======
+        <pMon>Segger\JL2CM3.dll</pMon>
+>>>>>>> upstream/master
       </DebugOpt>
       <TargetDriverDllRegistry>
         <SetRegEntry>
           <Number>0</Number>
+<<<<<<< HEAD
           <Key>ST-LINKIII-KEIL_SWO</Key>
           <Name>-U0664FF545449677267026033 -O206 -SF4000 -C0 -A0 -I0 -HNlocalhost -HP7184 -P2 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD20000000 -FC1000 -FN1 -FF0STM32F4xx_256.FLM -FS08000000 -FL040000 -FP0($$Device:STM32F401RCTx$CMSIS\Flash\STM32F4xx_256.FLM)</Name>
+=======
+          <Key>JL2CM3</Key>
+          <Name>-U775206746 -O78 -S2 -ZTIFSpeedSel5000 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -RST0 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO15 -FD20000000 -FC1000 -FN1 -FF0STM32F4xx_1024.FLM -FS08000000 -FL0100000 -FP0($$Device:STM32F407VGTx$CMSIS\Flash\STM32F4xx_1024.FLM)</Name>
+>>>>>>> upstream/master
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
           <Key>UL2CM3</Key>
+<<<<<<< HEAD
           <Name>UL2CM3(-S0 -C0 -P0 )  -FN1 -FC1000 -FD20000000 -FF0STM32F4xx_256 -FL040000 -FS08000000 -FP0($$Device:STM32F401RCTx$CMSIS\Flash\STM32F4xx_256.FLM)</Name>
+=======
+          <Name>UL2CM3(-S0 -C0 -P0 )  -FN1 -FC1000 -FD20000000 -FF0STM32F4xx_1024 -FL0100000 -FS08000000 -FP0($$Device:STM32F407VGTx$CMSIS\Flash\STM32F4xx_1024.FLM)</Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>ST-LINKIII-KEIL_SWO</Key>
+          <Name>-U0664FF545449677267026033 -O206 -SF4000 -C0 -A0 -I0 -HNlocalhost -HP7184 -P2 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD20000000 -FC1000 -FN1 -FF0STM32F4xx_256.FLM -FS08000000 -FL040000 -FP0($$Device:STM32F401RCTx$CMSIS\Flash\STM32F4xx_256.FLM)</Name>
+>>>>>>> upstream/master
         </SetRegEntry>
       </TargetDriverDllRegistry>
       <Breakpoint/>
@@ -252,6 +278,7 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
+<<<<<<< HEAD
     <File>
       <GroupNumber>2</GroupNumber>
       <FileNumber>6</FileNumber>
@@ -264,6 +291,8 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
+=======
+>>>>>>> upstream/master
   </Group>
 
   <Group>
@@ -274,7 +303,11 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>3</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>7</FileNumber>
+=======
+      <FileNumber>6</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -286,13 +319,22 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>8</FileNumber>
+=======
+      <FileNumber>7</FileNumber>
+>>>>>>> upstream/master
       <FileType>2</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>Libraries\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f401xc.s</PathWithFileName>
       <FilenameWithoutPath>startup_stm32f401xc.s</FilenameWithoutPath>
+=======
+      <PathWithFileName>Libraries\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f407xx.s</PathWithFileName>
+      <FilenameWithoutPath>startup_stm32f407xx.s</FilenameWithoutPath>
+>>>>>>> upstream/master
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -306,7 +348,11 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>9</FileNumber>
+=======
+      <FileNumber>8</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -318,7 +364,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>10</FileNumber>
+=======
+      <FileNumber>9</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -330,7 +380,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>11</FileNumber>
+=======
+      <FileNumber>10</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -342,7 +396,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>12</FileNumber>
+=======
+      <FileNumber>11</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -354,7 +412,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>13</FileNumber>
+=======
+      <FileNumber>12</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -366,7 +428,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>14</FileNumber>
+=======
+      <FileNumber>13</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -378,7 +444,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>15</FileNumber>
+=======
+      <FileNumber>14</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -390,7 +460,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>16</FileNumber>
+=======
+      <FileNumber>15</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -402,7 +476,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>17</FileNumber>
+=======
+      <FileNumber>16</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -414,7 +492,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>18</FileNumber>
+=======
+      <FileNumber>17</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -426,7 +508,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>19</FileNumber>
+=======
+      <FileNumber>18</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -438,7 +524,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>20</FileNumber>
+=======
+      <FileNumber>19</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -450,7 +540,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>21</FileNumber>
+=======
+      <FileNumber>20</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -462,7 +556,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>22</FileNumber>
+=======
+      <FileNumber>21</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -474,7 +572,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>23</FileNumber>
+=======
+      <FileNumber>22</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -486,7 +588,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>24</FileNumber>
+=======
+      <FileNumber>23</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -498,7 +604,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>25</FileNumber>
+=======
+      <FileNumber>24</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -510,7 +620,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>26</FileNumber>
+=======
+      <FileNumber>25</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -522,7 +636,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>27</FileNumber>
+=======
+      <FileNumber>26</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -534,7 +652,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>28</FileNumber>
+=======
+      <FileNumber>27</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -546,7 +668,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>29</FileNumber>
+=======
+      <FileNumber>28</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -558,7 +684,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>30</FileNumber>
+=======
+      <FileNumber>29</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -570,7 +700,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>31</FileNumber>
+=======
+      <FileNumber>30</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -582,7 +716,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>32</FileNumber>
+=======
+      <FileNumber>31</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -594,7 +732,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>33</FileNumber>
+=======
+      <FileNumber>32</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -606,7 +748,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>34</FileNumber>
+=======
+      <FileNumber>33</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -618,7 +764,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>35</FileNumber>
+=======
+      <FileNumber>34</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -630,7 +780,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>36</FileNumber>
+=======
+      <FileNumber>35</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -642,7 +796,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>37</FileNumber>
+=======
+      <FileNumber>36</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -654,7 +812,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>38</FileNumber>
+=======
+      <FileNumber>37</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -666,7 +828,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>39</FileNumber>
+=======
+      <FileNumber>38</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -678,7 +844,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>40</FileNumber>
+=======
+      <FileNumber>39</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -690,7 +860,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>41</FileNumber>
+=======
+      <FileNumber>40</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -702,7 +876,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>42</FileNumber>
+=======
+      <FileNumber>41</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -714,7 +892,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>43</FileNumber>
+=======
+      <FileNumber>42</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -726,7 +908,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>44</FileNumber>
+=======
+      <FileNumber>43</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -738,7 +924,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>45</FileNumber>
+=======
+      <FileNumber>44</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -750,7 +940,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>46</FileNumber>
+=======
+      <FileNumber>45</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -762,7 +956,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>47</FileNumber>
+=======
+      <FileNumber>46</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -774,7 +972,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>48</FileNumber>
+=======
+      <FileNumber>47</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -786,7 +988,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>49</FileNumber>
+=======
+      <FileNumber>48</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -798,7 +1004,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>50</FileNumber>
+=======
+      <FileNumber>49</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -810,7 +1020,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>51</FileNumber>
+=======
+      <FileNumber>50</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -822,7 +1036,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>52</FileNumber>
+=======
+      <FileNumber>51</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -834,7 +1052,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>53</FileNumber>
+=======
+      <FileNumber>52</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -846,7 +1068,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>54</FileNumber>
+=======
+      <FileNumber>53</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -858,7 +1084,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>55</FileNumber>
+=======
+      <FileNumber>54</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -870,7 +1100,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>56</FileNumber>
+=======
+      <FileNumber>55</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -882,7 +1116,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>57</FileNumber>
+=======
+      <FileNumber>56</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -894,7 +1132,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>58</FileNumber>
+=======
+      <FileNumber>57</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -906,7 +1148,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>59</FileNumber>
+=======
+      <FileNumber>58</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -918,7 +1164,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>60</FileNumber>
+=======
+      <FileNumber>59</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -930,7 +1180,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>61</FileNumber>
+=======
+      <FileNumber>60</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -942,7 +1196,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>62</FileNumber>
+=======
+      <FileNumber>61</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -954,7 +1212,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>63</FileNumber>
+=======
+      <FileNumber>62</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -966,7 +1228,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>64</FileNumber>
+=======
+      <FileNumber>63</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -978,7 +1244,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>65</FileNumber>
+=======
+      <FileNumber>64</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -990,7 +1260,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>66</FileNumber>
+=======
+      <FileNumber>65</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1002,7 +1276,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>67</FileNumber>
+=======
+      <FileNumber>66</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1014,7 +1292,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>68</FileNumber>
+=======
+      <FileNumber>67</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1026,7 +1308,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>69</FileNumber>
+=======
+      <FileNumber>68</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1038,7 +1324,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>70</FileNumber>
+=======
+      <FileNumber>69</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1050,7 +1340,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>71</FileNumber>
+=======
+      <FileNumber>70</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1062,7 +1356,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>72</FileNumber>
+=======
+      <FileNumber>71</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1074,7 +1372,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>73</FileNumber>
+=======
+      <FileNumber>72</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1086,7 +1388,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>74</FileNumber>
+=======
+      <FileNumber>73</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1098,7 +1404,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>75</FileNumber>
+=======
+      <FileNumber>74</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1110,7 +1420,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>76</FileNumber>
+=======
+      <FileNumber>75</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1122,7 +1436,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>77</FileNumber>
+=======
+      <FileNumber>76</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1134,7 +1452,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>78</FileNumber>
+=======
+      <FileNumber>77</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1146,7 +1468,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>79</FileNumber>
+=======
+      <FileNumber>78</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1158,7 +1484,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>80</FileNumber>
+=======
+      <FileNumber>79</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1170,7 +1500,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>81</FileNumber>
+=======
+      <FileNumber>80</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1182,7 +1516,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>82</FileNumber>
+=======
+      <FileNumber>81</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1194,7 +1532,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>83</FileNumber>
+=======
+      <FileNumber>82</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1206,7 +1548,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>84</FileNumber>
+=======
+      <FileNumber>83</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1218,7 +1564,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>85</FileNumber>
+=======
+      <FileNumber>84</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1230,7 +1580,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>86</FileNumber>
+=======
+      <FileNumber>85</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1242,7 +1596,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>87</FileNumber>
+=======
+      <FileNumber>86</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1254,7 +1612,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>88</FileNumber>
+=======
+      <FileNumber>87</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1266,7 +1628,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>89</FileNumber>
+=======
+      <FileNumber>88</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1278,7 +1644,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>90</FileNumber>
+=======
+      <FileNumber>89</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1290,7 +1660,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>91</FileNumber>
+=======
+      <FileNumber>90</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1302,7 +1676,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>92</FileNumber>
+=======
+      <FileNumber>91</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1314,7 +1692,11 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>93</FileNumber>
+=======
+      <FileNumber>92</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1334,180 +1716,300 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>5</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>94</FileNumber>
+=======
+      <FileNumber>93</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\src\clock.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\src\clock.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>clock.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>95</FileNumber>
+=======
+      <FileNumber>94</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\src\components.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\src\components.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>components.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>96</FileNumber>
+=======
+      <FileNumber>95</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\src\device.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\src\device.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>device.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>97</FileNumber>
+=======
+      <FileNumber>96</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\src\idle.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\src\idle.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>idle.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>98</FileNumber>
+=======
+      <FileNumber>97</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\src\ipc.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\src\ipc.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>ipc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>99</FileNumber>
+=======
+      <FileNumber>98</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\src\irq.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\src\irq.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>irq.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>100</FileNumber>
+=======
+      <FileNumber>99</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\src\kservice.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\src\kservice.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>kservice.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>101</FileNumber>
+=======
+      <FileNumber>100</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\src\mem.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\src\mem.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>mem.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>102</FileNumber>
+=======
+      <FileNumber>101</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\src\memheap.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\src\memheap.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>memheap.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>103</FileNumber>
+=======
+      <FileNumber>102</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\src\mempool.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\src\mempool.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>mempool.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>104</FileNumber>
+=======
+      <FileNumber>103</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\src\object.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\src\object.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>object.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>105</FileNumber>
+=======
+      <FileNumber>104</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\src\scheduler.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\src\scheduler.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>scheduler.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>106</FileNumber>
+=======
+      <FileNumber>105</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\src\signal.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\src\signal.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>signal.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>107</FileNumber>
+=======
+      <FileNumber>106</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\src\thread.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\src\thread.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>thread.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>108</FileNumber>
+=======
+      <FileNumber>107</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\src\timer.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\src\timer.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>timer.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1522,60 +2024,100 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>6</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>109</FileNumber>
+=======
+      <FileNumber>108</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\libcpu\arm\cortex-m4\cpuport.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\libcpu\arm\cortex-m4\cpuport.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>cpuport.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>6</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>110</FileNumber>
+=======
+      <FileNumber>109</FileNumber>
+>>>>>>> upstream/master
       <FileType>2</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\libcpu\arm\cortex-m4\context_rvds.S</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\libcpu\arm\cortex-m4\context_rvds.S</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>context_rvds.S</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>6</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>111</FileNumber>
+=======
+      <FileNumber>110</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\libcpu\arm\common\backtrace.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\libcpu\arm\common\backtrace.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>backtrace.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>6</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>112</FileNumber>
+=======
+      <FileNumber>111</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\libcpu\arm\common\div0.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\libcpu\arm\common\div0.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>div0.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>6</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>113</FileNumber>
+=======
+      <FileNumber>112</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\libcpu\arm\common\showmem.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\libcpu\arm\common\showmem.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>showmem.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1590,18 +2132,27 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>7</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>114</FileNumber>
+=======
+      <FileNumber>113</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\components\drivers\misc\pin.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\components\drivers\misc\pin.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>pin.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>7</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>115</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
@@ -1615,83 +2166,138 @@
     <File>
       <GroupNumber>7</GroupNumber>
       <FileNumber>116</FileNumber>
+=======
+      <FileNumber>114</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\components\drivers\serial\serial.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\components\drivers\serial\serial.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>serial.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>7</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>117</FileNumber>
+=======
+      <FileNumber>115</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\components\drivers\src\completion.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\components\drivers\src\completion.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>completion.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>7</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>118</FileNumber>
+=======
+      <FileNumber>116</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\components\drivers\src\dataqueue.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\components\drivers\src\dataqueue.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>dataqueue.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>7</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>119</FileNumber>
+=======
+      <FileNumber>117</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\components\drivers\src\pipe.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\components\drivers\src\pipe.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>pipe.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>7</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>120</FileNumber>
+=======
+      <FileNumber>118</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\components\drivers\src\ringbuffer.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\components\drivers\src\ringbuffer.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>ringbuffer.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>7</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>121</FileNumber>
+=======
+      <FileNumber>119</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\components\drivers\src\waitqueue.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\components\drivers\src\waitqueue.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>waitqueue.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>7</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>122</FileNumber>
+=======
+      <FileNumber>120</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\components\drivers\src\workqueue.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\components\drivers\src\workqueue.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>workqueue.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1706,72 +2312,120 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>8</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>123</FileNumber>
+=======
+      <FileNumber>121</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\components\finsh\shell.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\components\finsh\shell.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>shell.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>8</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>124</FileNumber>
+=======
+      <FileNumber>122</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\components\finsh\symbol.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\components\finsh\symbol.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>symbol.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>8</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>125</FileNumber>
+=======
+      <FileNumber>123</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\components\finsh\cmd.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\components\finsh\cmd.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>cmd.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>8</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>126</FileNumber>
+=======
+      <FileNumber>124</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\components\finsh\msh.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\components\finsh\msh.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>msh.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>8</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>127</FileNumber>
+=======
+      <FileNumber>125</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\components\finsh\msh_cmd.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\components\finsh\msh_cmd.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>msh_cmd.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>8</GroupNumber>
+<<<<<<< HEAD
       <FileNumber>128</FileNumber>
+=======
+      <FileNumber>126</FileNumber>
+>>>>>>> upstream/master
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\..\components\finsh\msh_file.c</PathWithFileName>
+=======
+      <PathWithFileName>..\rt-thread\components\finsh\msh_file.c</PathWithFileName>
+>>>>>>> upstream/master
       <FilenameWithoutPath>msh_file.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>

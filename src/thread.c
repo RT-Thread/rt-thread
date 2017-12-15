@@ -750,14 +750,13 @@ rt_thread_t rt_thread_find(char *name)
     struct rt_object *object;
     struct rt_list_node *node;
 
-    extern struct rt_object_information rt_object_container[];
-
     /* enter critical */
     if (rt_thread_self() != RT_NULL)
         rt_enter_critical();
 
     /* try to find device object */
-    information = &rt_object_container[RT_Object_Class_Thread];
+    information = rt_object_get_information(RT_Object_Class_Thread);
+    RT_ASSERT(information != RT_NULL);
     for (node  = information->object_list.next;
          node != &(information->object_list);
          node  = node->next)

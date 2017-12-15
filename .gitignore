@@ -23,3 +23,7 @@ documentation/html
 *.i
 *.d
 tools/kconfig-frontends/kconfig-mconf
+<<<<<<< HEAD
+=======
+packages
+>>>>>>> upstream/master

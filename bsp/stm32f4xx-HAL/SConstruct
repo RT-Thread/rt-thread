@@ -15,7 +15,11 @@ except:
     print RTT_ROOT
     exit(-1)
 
+<<<<<<< HEAD
 TARGET = 'rtthread-stm32f411.' + rtconfig.TARGET_EXT
+=======
+TARGET = 'rtthread-stm32f4xx.' + rtconfig.TARGET_EXT
+>>>>>>> upstream/master
 
 env = Environment(tools = ['mingw'],
 	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,

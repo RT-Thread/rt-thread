@@ -306,11 +306,11 @@ static void *sdl_loop(void *lpParam)
             break;
         }
 
-		if (quit)
-		{
-		 exit(1);
-		 break;
-		}
+        if (quit)
+        {
+            exit(1);
+            break;
+        }
             
     }
     rt_hw_exit();

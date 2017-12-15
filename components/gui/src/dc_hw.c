@@ -216,22 +216,32 @@ static void rtgui_dc_hw_fill_rect(struct rtgui_dc *self, struct rtgui_rect *rect
         return;
     if (x1 < dc->owner->extent.x1)
         x1 = dc->owner->extent.x1;
+	if (x1 < 0)
+		x1 = 0;
+
     x2 = rect->x2 + dc->owner->extent.x1;
     if (x2 < dc->owner->extent.x1)
         return;
     if (x2 > dc->owner->extent.x2)
         x2 = dc->owner->extent.x2;
+	if (x2 > dc->hw_driver->width)
+		x2 = dc->hw_driver->width;
 
     y1 = rect->y1 + dc->owner->extent.y1;
     if (y1 > dc->owner->extent.y2)
         return;
     if (y1 < dc->owner->extent.y1)
         y1 = dc->owner->extent.y1;
+	if (y1 < 0)
+		y1 = 0;
+
     y2 = rect->y2 + dc->owner->extent.y1;
     if (y2 < dc->owner->extent.y1)
         return;
     if (y2 > dc->owner->extent.y2)
         y2 = dc->owner->extent.y2;
+	if (y2 > dc->hw_driver->height)
+		y2 = dc->hw_driver->height;
 
     /* fill rect */
     for (; y1 < y2; y1++)

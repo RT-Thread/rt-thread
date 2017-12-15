@@ -260,7 +260,11 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
   {
     /* USART1 clock enable */
     __HAL_RCC_USART1_CLK_ENABLE();
+<<<<<<< HEAD
 		__HAL_RCC_GPIOA_CLK_ENABLE();
+=======
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+>>>>>>> upstream/master
     /**USART1 GPIO Configuration    
     PA9     ------> USART1_TX
     PA10     ------> USART1_RX 
@@ -276,7 +280,11 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
   {
     /* USART2 clock enable */
     __HAL_RCC_USART2_CLK_ENABLE();
+<<<<<<< HEAD
 		__HAL_RCC_GPIOA_CLK_ENABLE();
+=======
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+>>>>>>> upstream/master
     /**USART2 GPIO Configuration    
     PA2     ------> USART2_TX
     PA3     ------> USART2_RX 
@@ -292,7 +300,11 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
   {
     /* USART6 clock enable */
     __HAL_RCC_USART6_CLK_ENABLE();
+<<<<<<< HEAD
 		__HAL_RCC_GPIOC_CLK_ENABLE();
+=======
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+>>>>>>> upstream/master
     /**USART6 GPIO Configuration    
     PC6     ------> USART6_TX
     PC7     ------> USART6_RX 

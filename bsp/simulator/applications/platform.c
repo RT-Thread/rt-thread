@@ -29,5 +29,18 @@ int platform_init(void)
 
 #endif /* RT_USING_DFS */
 
+<<<<<<< HEAD
+=======
+#ifdef RT_USING_GUIENGINE
+    {
+        extern void rt_hw_sdl_start(void);
+        extern int rtgui_system_server_init(void);
+
+        rtgui_system_server_init();
+        rt_hw_sdl_start();
+    }
+#endif
+
+>>>>>>> upstream/master
     return 0;
 }

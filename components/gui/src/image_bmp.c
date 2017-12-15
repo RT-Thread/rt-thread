@@ -423,14 +423,14 @@ static rt_bool_t rtgui_image_bmp_load(struct rtgui_image *image, struct rtgui_fi
                     {
                         if (bmp->scale == 0)
                         {
-                            rt_memcpy((void *)dst, (void *)wrkBuffer, readLength);
+                            memcpy((void *)dst, (void *)wrkBuffer, readLength);
                             dst += readLength;
                         }
                         else
                         {
                             for (loadIndex = skipLength; loadIndex < readLength; loadIndex += bytePerPixel << bmp->scale)
                             {
-                                rt_memcpy((void *)dst, (void *)&wrkBuffer[loadIndex], bytePerPixel);
+                                memcpy((void *)dst, (void *)&wrkBuffer[loadIndex], bytePerPixel);
                                 dst += bytePerPixel;
                             }
                             if (readLength % (1 << bmp->scale))
