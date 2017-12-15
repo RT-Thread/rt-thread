@@ -36,8 +36,6 @@
 
 #define PHY_ADDRESS     0x02u
 
-
-
 /* debug option */
 //#define ETH_RX_DUMP
 //#define ETH_TX_DUMP
@@ -49,7 +47,6 @@
 #include <rtdbg.h>
 
 #define MAX_ADDR_LEN 6
-
 
 struct rt_imxrt_eth
 {
@@ -63,6 +60,9 @@ struct rt_imxrt_eth
 
     rt_bool_t tx_is_waiting;
     struct rt_semaphore tx_wait;
+
+    enet_mii_speed_t speed;
+    enet_mii_duplex_t duplex;
 };
 
 ALIGN(ENET_BUFF_ALIGNMENT) enet_tx_bd_struct_t g_txBuffDescrip[ENET_TXBD_NUM] SECTION("NonCacheable");
@@ -351,10 +351,6 @@ static void _enet_config(void)
 {
     enet_config_t config;
     uint32_t sysClock;
-    status_t status;
-    phy_speed_t speed;
-    phy_duplex_t duplex;
-    bool link = false;
 
     /* prepare the buffer configuration. */
     enet_buffer_config_t buffConfig = {
@@ -378,48 +374,26 @@ static void _enet_config(void)
     ENET_GetDefaultConfig(&config);
     config.interrupt = kENET_TxFrameInterrupt | kENET_RxFrameInterrupt;
     //config.interrupt = 0xFFFFFFFF;
+    config.miiSpeed = imxrt_eth_device.speed;
+    config.miiDuplex = imxrt_eth_device.duplex;
 
     /* Set SMI to get PHY link status. */
     sysClock = CLOCK_GetFreq(kCLOCK_AhbClk);
 
-    status = PHY_Init(imxrt_eth_device.enet_base, PHY_ADDRESS, sysClock);
-
-    if (status == kStatus_Success)
-    {
-        PHY_GetLinkStatus(imxrt_eth_device.enet_base, PHY_ADDRESS, &link);
-        if (link)
-        {
-            /* Get the actual PHY link speed. */
-            PHY_GetLinkSpeedDuplex(imxrt_eth_device.enet_base, PHY_ADDRESS, &speed, &duplex);
-            /* Change the MII speed and duplex for actual link status. */
-            config.miiSpeed = (enet_mii_speed_t)speed;
-            config.miiDuplex = (enet_mii_duplex_t)duplex;
-        }
-
-        dbg_log(DBG_LOG, "PHY Auto-negotiation success.\n");
-        eth_device_linkchange(&imxrt_eth_device.parent, RT_TRUE);
-    }
-    else
-    {
-        config.miiSpeed = kENET_MiiSpeed10M;
-        config.miiDuplex = kENET_MiiHalfDuplex;
-
-        dbg_log(DBG_WARNING, "PHY Auto-negotiation failed. Please check the cable connection and link partner setting.\n");
-        eth_device_linkchange(&imxrt_eth_device.parent, RT_FALSE);
-    }
-
+    dbg_log(DBG_LOG, "deinit\n");
+    ENET_Deinit(imxrt_eth_device.enet_base);
+    dbg_log(DBG_LOG, "init\n");
     ENET_Init(imxrt_eth_device.enet_base, &imxrt_eth_device.enet_handle, &config, &buffConfig, &imxrt_eth_device.dev_addr[0], sysClock);
+    dbg_log(DBG_LOG, "set call back\n");
     ENET_SetCallback(&imxrt_eth_device.enet_handle, _enet_callback, &imxrt_eth_device);
+    dbg_log(DBG_LOG, "active read\n");
     ENET_ActiveRead(imxrt_eth_device.enet_base);
 }
 
 /* initialize the interface */
 static rt_err_t rt_imxrt_eth_init(rt_device_t dev)
 {
-    _enet_io_init();
-    _enet_clk_init();
-    _enet_phy_reset_by_gpio();
-
+    dbg_log(DBG_LOG, "rt_imxrt_eth_init...\n");
     _enet_config();
 
     return RT_EOK;
@@ -576,10 +550,81 @@ struct pbuf *rt_imxrt_eth_rx(rt_device_t dev)
     return NULL;
 }
 
+static void phy_monitor_thread_entry(void *parameter)
+{
+    
+    phy_speed_t speed;
+    phy_duplex_t duplex;
+    bool link = false;
+    
+    _enet_phy_reset_by_gpio();
+
+    PHY_Init(imxrt_eth_device.enet_base, PHY_ADDRESS, CLOCK_GetFreq(kCLOCK_AhbClk));
+    
+    while (1)
+    {
+        bool new_link = false;
+        status_t status = PHY_GetLinkStatus(imxrt_eth_device.enet_base, PHY_ADDRESS, &new_link);
+        
+        if ((status == kStatus_Success) && (link != new_link))
+        {
+            link = new_link;
+            
+            if (link)   // link up
+            {
+                PHY_GetLinkSpeedDuplex(imxrt_eth_device.enet_base, PHY_ADDRESS, &speed, &duplex);
+                
+                if (kENET_MiiSpeed10M == speed)
+                {
+                    dbg_log(DBG_LOG, "10M\n");
+                }
+                else
+                {
+                    dbg_log(DBG_LOG, "100M\n");
+                }
+                
+                if (kENET_MiiHalfDuplex == duplex)
+                {
+                    dbg_log(DBG_LOG, "half dumplex\n");
+                }
+                else
+                {
+                    dbg_log(DBG_LOG, "full dumplex\n");
+                }
+                
+                if ((imxrt_eth_device.speed != speed) || (imxrt_eth_device.duplex != duplex))
+                {
+                    imxrt_eth_device.speed = (enet_mii_speed_t)speed; 
+                    imxrt_eth_device.duplex = (enet_mii_duplex_t)duplex;
+                    
+                    dbg_log(DBG_LOG, "link up, and update eth mode.\n");
+                    rt_imxrt_eth_init((rt_device_t)&imxrt_eth_device);
+                }
+                else
+                {
+                    dbg_log(DBG_LOG, "link up, eth not need re-config.\n");
+                }
+                dbg_log(DBG_LOG, "link up.\n");
+                eth_device_linkchange(&imxrt_eth_device.parent, RT_TRUE);
+            }
+            else        // link down
+            {
+                dbg_log(DBG_LOG, "link down.\n");
+                eth_device_linkchange(&imxrt_eth_device.parent, RT_FALSE);
+            }
+        }
+        
+        rt_thread_delay(RT_TICK_PER_SECOND * 2);
+    }
+}
+
 static int rt_hw_imxrt_eth_init(void)
 {
     rt_err_t state;
 
+    _enet_io_init();
+    _enet_clk_init();
+    
     /* OUI 00-80-E1 STMICROELECTRONICS. */
     imxrt_eth_device.dev_addr[0] = 0x00;
     imxrt_eth_device.dev_addr[1] = 0x80;
@@ -588,6 +633,9 @@ static int rt_hw_imxrt_eth_init(void)
     imxrt_eth_device.dev_addr[3] = 0x12;
     imxrt_eth_device.dev_addr[4] = 0x34;
     imxrt_eth_device.dev_addr[5] = 0x56;
+    
+    imxrt_eth_device.speed = kENET_MiiSpeed100M; 
+    imxrt_eth_device.duplex = kENET_MiiFullDuplex;
 
     imxrt_eth_device.enet_base = ENET;
 
@@ -617,6 +665,22 @@ static int rt_hw_imxrt_eth_init(void)
     {
         dbg_log(DBG_LOG, "eth_device_init faild: %d\r\n", state);
     }
+    
+    eth_device_linkchange(&imxrt_eth_device.parent, RT_FALSE);
+    
+    /* start phy monitor */
+    {
+        rt_thread_t tid;
+        tid = rt_thread_create("phy",
+                               phy_monitor_thread_entry,
+                               RT_NULL,
+                               512,
+                               RT_THREAD_PRIORITY_MAX - 2,
+                               2);
+        if (tid != RT_NULL)
+            rt_thread_startup(tid);
+    }
+    
     return state;
 }
 INIT_DEVICE_EXPORT(rt_hw_imxrt_eth_init);
