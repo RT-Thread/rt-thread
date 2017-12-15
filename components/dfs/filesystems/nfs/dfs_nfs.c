@@ -578,7 +578,8 @@ int nfs_read(struct dfs_fd *file, void *buf, size_t count)
 
 
     RT_ASSERT(file->data != NULL);
-    nfs = (nfs_filesystem *)((struct dfs_filesystem*)(file->data));
+    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem*)(file->data));
+	nfs = (struct nfs_filesystem *)(dfs_nfs->data);	
     fd = (nfs_file *)(nfs->data);
     RT_ASSERT(fd != NULL);
 
@@ -644,7 +645,8 @@ int nfs_write(struct dfs_fd *file, const void *buf, size_t count)
         return -EISDIR;
 
     RT_ASSERT(file->data != NULL);
-    nfs = (nfs_filesystem *)((struct dfs_filesystem*)(file->data));
+    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem*)(file->data));
+	nfs = (struct nfs_filesystem *)(dfs_nfs->data);	
     fd = (nfs_file *)(nfs->data);
     RT_ASSERT(fd != NULL);
 
@@ -704,7 +706,8 @@ int nfs_lseek(struct dfs_fd *file, off_t offset)
         return -EISDIR;
 
     RT_ASSERT(file->data != NULL);
-    nfs = (nfs_filesystem *)((struct dfs_filesystem*)(file->data));
+    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem*)(file->data));
+	nfs = (struct nfs_filesystem *)(dfs_nfs->data);	
     fd = (nfs_file *)(nfs->data);
     RT_ASSERT(fd != NULL);
 
@@ -722,7 +725,8 @@ int nfs_close(struct dfs_fd *file)
 {
     nfs_filesystem *nfs;
     RT_ASSERT(file->data != NULL);
-    nfs = (nfs_filesystem *)((struct dfs_filesystem*)(file->data));
+    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem*)(file->data));
+	nfs = (struct nfs_filesystem *)(dfs_nfs->data);	
 
     if (file->type == FT_DIRECTORY)
     {
@@ -751,7 +755,8 @@ int nfs_open(struct dfs_fd *file)
 {
     nfs_filesystem *nfs;
     RT_ASSERT(file->data != NULL);
-    nfs = (nfs_filesystem *)((struct dfs_filesystem*)(file->data));
+    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem*)(file->data));
+	nfs = (struct nfs_filesystem *)(dfs_nfs->data);	
 
 
     if (file->flags & O_DIRECTORY)
@@ -1093,7 +1098,8 @@ int nfs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t count)
 
 
     RT_ASSERT(file->data != NULL);
-    nfs = (nfs_filesystem *)((struct dfs_filesystem*)(file->data));
+    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem*)(file->data));
+	nfs = (struct nfs_filesystem *)(dfs_nfs->data);	
     dir = (nfs_dir *)(nfs->data);
     RT_ASSERT(dir != NULL);
 
