@@ -91,12 +91,12 @@ config RT_USING_LWIP
             config RT_LWIP_PPPOE
                 bool "PPPoE protocol"
                 default n
-    
+
             config RT_LWIP_PPPOS
                 bool "PPPoS protocol"
                 default n
         endif
-        
+
         config RT_MEMP_NUM_NETCONN
             int "the number of struct netconns"
             default 8
@@ -111,6 +111,7 @@ config RT_USING_LWIP
 
         config RT_LWIP_UDP_PCB_NUM
             int "the number of UDP socket"
+            default 8 if RT_USING_DFS_NFS
             default 4
 
         if RT_LWIP_TCP
