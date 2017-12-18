@@ -10,19 +10,22 @@ if RT_USING_DFS
     config DFS_USING_WORKDIR
         bool "Using working directory"
         default y
-
+     
     config DFS_FILESYSTEMS_MAX
-        int "The maximal number of mounted file system"
-        default 2
-
+        int "The maximal number of mounted file system"        
+        default 4 if RT_USING_DFS_NFS
+        default 2 
+    
     config DFS_FILESYSTEM_TYPES_MAX
         int "The maximal number of file system type"
-        default 2
-
+        default 4 if RT_USING_DFS_NFS
+        default 2 
+        
     config DFS_FD_MAX
         int "The maximal number of opened files"
+        default 16 if RT_USING_DFS_NFS
         default 4
-    
+   
     config RT_USING_DFS_ELMFAT
         bool "Enable elm-chan fatfs"
         default y
@@ -156,7 +159,7 @@ if RT_USING_DFS
 
     config RT_USING_DFS_NFS
         bool "Using NFS v3 client file system"
-        depends on RT_USING_LWIP
+        select RT_USING_LWIP
         default n
 
     if RT_USING_DFS_NFS
