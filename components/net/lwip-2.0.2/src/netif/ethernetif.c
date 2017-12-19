@@ -173,10 +173,26 @@ static err_t eth_netif_device_init(struct netif *netif)
         netif->flags = (ethif->flags & 0xff);
 
 #if LWIP_IPV6
-		netif->output_ip6 = ethip6_output;
-		netif->ip6_autoconfig_enabled = 1;
-		netif_create_ip6_linklocal_address(netif, 1);
-		netif->flags |= NETIF_FLAG_MLD6;
+        netif->output_ip6 = ethip6_output;
+        netif->ip6_autoconfig_enabled = 1;
+        netif_create_ip6_linklocal_address(netif, 1);
+
+#if LWIP_IPV6_MLD
+        netif->flags |= NETIF_FLAG_MLD6;
+
+        /*
+        * For hardware/netifs that implement MAC filtering.
+        * All-nodes link-local is handled by default, so we must let the hardware know
+        * to allow multicast packets in.
+        * Should set mld_mac_filter previously. */
+        if (netif->mld_mac_filter != NULL)
+        {
+            ip6_addr_t ip6_allnodes_ll;
+            ip6_addr_set_allnodes_linklocal(&ip6_allnodes_ll);
+            netif->mld_mac_filter(netif, &ip6_allnodes_ll, NETIF_ADD_MAC_FILTER);
+        }
+#endif /* LWIP_IPV6_MLD */
+
 #endif /* LWIP_IPV6 */
 
         /* set default netif */
