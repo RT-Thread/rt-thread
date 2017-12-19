@@ -27,7 +27,7 @@ config RT_USING_LWIP
 
         config RT_LWIP_IGMP
             bool "IGMP protocol"
-            default n
+            default y
 
         config RT_LWIP_ICMP
             bool "ICMP protocol"
