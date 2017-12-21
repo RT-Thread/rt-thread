@@ -33,6 +33,14 @@ config ARCH_ARM_MMU
     bool
     depends on ARCH_ARM
 
+config ARCH_ARM_ARM9
+    bool
+    select ARCH_ARM
+
+config ARCH_ARM_ARM11
+    bool
+    select ARCH_ARM
+
 config ARCH_ARM_CORTEX_A
     bool
     select ARCH_ARM
