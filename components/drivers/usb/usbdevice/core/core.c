@@ -2144,8 +2144,9 @@ static void rt_usbd_thread_entry(void* parameter)
             break;
         case USB_MSG_RESET:            
             RT_DEBUG_LOG(RT_DEBUG_USB, ("reset %d\n", device->state));
-            if (device->state == USB_STATE_ADDRESS)
+            if (device->state == USB_STATE_ADDRESS || device->state == USB_STATE_CONFIGURED)
                 _stop_notify(device);
+            device->state = USB_STATE_NOTATTACHED;
             break;
         case USB_MSG_PLUG_IN:
             device->state = USB_STATE_ATTACHED;
