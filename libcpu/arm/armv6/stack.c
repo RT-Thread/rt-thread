@@ -39,20 +39,20 @@
  * This function will initialize thread stack
  *
  * @param tentry the entry of thread
- * @param parameter the parameter of entry 
+ * @param parameter the parameter of entry
  * @param stack_addr the beginning stack address
  * @param texit the function will be called when thread exit
  *
  * @return stack address
  */
 rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
-    rt_uint8_t *stack_addr, void *texit)
+                             rt_uint8_t *stack_addr, void *texit)
 {
     rt_uint32_t *stk;
 
     stack_addr += sizeof(rt_uint32_t);
     stack_addr  = (rt_uint8_t *)RT_ALIGN_DOWN((rt_uint32_t)stack_addr, 8);
-    stk      = (rt_uint32_t*)stack_addr;
+    stk      = (rt_uint32_t *)stack_addr;
     *(--stk) = (rt_uint32_t)tentry;         /* entry point */
     *(--stk) = (rt_uint32_t)texit;          /* lr */
     *(--stk) = 0;                           /* r12 */
