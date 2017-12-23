@@ -45,39 +45,29 @@ CLIENT *clnt_create (const char *hostname, const unsigned long prog,
 				 const unsigned long vers, const char *proto)
 {
 	int sock;
-	struct hostent *h;
-	struct sockaddr_in sin;
+	struct sockaddr_in server;
+	struct addrinfo hint, *res = NULL;
 	struct timeval tv;
 	CLIENT *client;
-
-	h = (struct hostent *)gethostbyname(hostname);
-	if (h == NULL) {
-		rt_kprintf("unknown host\n");
-		return (NULL);
-	}
-	if (h->h_addrtype != AF_INET) {
-		rt_kprintf("unknow inet\n");
-		return (NULL);
-	}
-	memset((char*)&sin,0,sizeof(sin));
-	sin.sin_family = h->h_addrtype;
-	sin.sin_port = 0;
+	int ret;
 	
-	if (h->h_addrtype == AF_INET)
-	{
-		memmove((char *) &sin.sin_addr, h->h_addr, sizeof(sin.sin_addr)); 
-	}
-	else
-	{
-		return NULL;
-	}
+	memset(&hint, 0, sizeof(hint));
+    ret = getaddrinfo(hostname, NULL, &hint, &res);
+    if (ret != 0)
+    {
+        rt_kprintf("getaddrinfo err: %d '%s'\n", ret, hostname);
+        return NULL;
+    }
+
+    memcpy(&server, res->ai_addr, sizeof(struct sockaddr_in));
+    freeaddrinfo(res);
 
 	sock = -1;
 	if (strcmp(proto, "udp") == 0)
 	{
 		tv.tv_sec = 5;
 		tv.tv_usec = 0;
-		client = clntudp_create(&sin, prog, vers, tv, &sock);
+		client = clntudp_create(&server, prog, vers, tv, &sock);
 		if (client == NULL) return NULL;
 		tv.tv_sec = 1;
 		clnt_control(client, CLSET_TIMEOUT, (char*)&tv);
