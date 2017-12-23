@@ -307,7 +307,20 @@ struct sigevent
 #define NANOSECOND_PER_TICK     (NANOSECOND_PER_SECOND  / RT_TICK_PER_SECOND)
 
 #ifndef CLOCK_REALTIME
-#define CLOCK_REALTIME      0
+#define CLOCK_REALTIME      1
+#endif
+
+#define CLOCK_CPUTIME_ID    2
+
+#ifndef CLOCK_PROCESS_CPUTIME_ID
+#define CLOCK_PROCESS_CPUTIME_ID CLOCK_CPUTIME_ID
+#endif
+#ifndef CLOCK_THREAD_CPUTIME_ID
+#define CLOCK_THREAD_CPUTIME_ID  CLOCK_CPUTIME_ID
+#endif
+
+#ifndef CLOCK_MONOTONIC
+#define CLOCK_MONOTONIC     4
 #endif
 
 int clock_getres  (clockid_t clockid, struct timespec *res);
