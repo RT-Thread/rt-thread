@@ -25,14 +25,52 @@
  * 2006-08-03     Bernard      add hook support
  * 2007-01-28     Bernard      rename RT_OBJECT_Class_Static to RT_Object_Class_Static
  * 2010-10-26     yi.qiu       add module support in rt_object_allocate and rt_object_free
+ * 2017-12-10     Bernard      Add object_info enum.
  */
 
 #include <rtthread.h>
 #include <rthw.h>
 
+/*
+ * define object_info for the number of rt_object_container items.
+ */
+enum rt_object_info_type
+{
+    RT_Object_Info_Thread = 0,                         /**< The object is a thread. */
+#ifdef RT_USING_SEMAPHORE
+    RT_Object_Info_Semaphore,                          /**< The object is a semaphore. */
+#endif
+#ifdef RT_USING_MUTEX
+    RT_Object_Info_Mutex,                              /**< The object is a mutex. */
+#endif
+#ifdef RT_USING_EVENT
+    RT_Object_Info_Event,                              /**< The object is a event. */
+#endif
+#ifdef RT_USING_MAILBOX
+    RT_Object_Info_MailBox,                            /**< The object is a mail box. */
+#endif
+#ifdef RT_USING_MESSAGEQUEUE
+    RT_Object_Info_MessageQueue,                       /**< The object is a message queue. */
+#endif
+#ifdef RT_USING_MEMHEAP
+    RT_Object_Info_MemHeap,                            /**< The object is a memory heap */
+#endif
+#ifdef RT_USING_MEMPOOL
+    RT_Object_Info_MemPool,                            /**< The object is a memory pool. */
+#endif
+#ifdef RT_USING_DEVICE
+    RT_Object_Info_Device,                             /**< The object is a device */
+#endif
+    RT_Object_Info_Timer,                              /**< The object is a timer. */
+#ifdef RT_USING_MODULE
+    RT_Object_Info_Module,                             /**< The object is a module. */
+#endif
+    RT_Object_Info_Unknown,                            /**< The object is unknown. */
+};
+
 #define _OBJ_CONTAINER_LIST_INIT(c)     \
     {&(rt_object_container[c].object_list), &(rt_object_container[c].object_list)}
-struct rt_object_information rt_object_container[RT_Object_Class_Unknown] =
+static struct rt_object_information rt_object_container[RT_Object_Info_Unknown] =
 {
     /* initialize object container - thread */
     {RT_Object_Class_Thread, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Thread), sizeof(struct rt_thread)},
@@ -189,7 +227,12 @@ void rt_system_object_init(void)
 struct rt_object_information *
 rt_object_get_information(enum rt_object_class_type type)
 {
-    return &rt_object_container[type];
+    int index;
+    
+    for (index = 0; index < RT_Object_Info_Unknown; index ++)
+        if (rt_object_container[index].type == type) return &rt_object_container[index];
+        
+    return RT_NULL;
 }
 RTM_EXPORT(rt_object_get_information);
 
@@ -214,7 +257,8 @@ void rt_object_init(struct rt_object         *object,
                   &rt_module_self()->module_object[type] : &rt_object_container[type];
 #else
     /* get object information */
-    information = &rt_object_container[type];
+    information = rt_object_get_information(type);
+    RT_ASSERT(information != RT_NULL);
 #endif
 
     /* initialize object's parameters */
@@ -288,7 +332,8 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
                   &rt_module_self()->module_object[type] : &rt_object_container[type];
 #else
     /* get object information */
-    information = &rt_object_container[type];
+    information = rt_object_get_information(type);
+    RT_ASSERT(information != RT_NULL);
 #endif
 
     object = (struct rt_object *)RT_KERNEL_MALLOC(information->object_size);
@@ -433,7 +478,9 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
             rt_enter_critical();
 
             /* find module */
-            information = &rt_object_container[RT_Object_Class_Module];
+            information = rt_object_get_information(RT_Object_Class_Module);
+            RT_ASSERT(information != RT_NULL);
+
             for (node = information->object_list.next;
                  node != &(information->object_list);
                  node  = node->next)
@@ -473,7 +520,11 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
     rt_enter_critical();
 
     /* try to find object */
-    if (information == RT_NULL) information = &rt_object_container[type];
+    if (information == RT_NULL)
+    {
+        information = rt_object_get_information(type);
+        RT_ASSERT(information != RT_NULL);
+    }
     for (node  = information->object_list.next;
          node != &(information->object_list);
          node  = node->next)

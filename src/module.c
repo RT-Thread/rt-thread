@@ -299,66 +299,53 @@ void rt_module_init_object_container(struct rt_module *module)
 {
     RT_ASSERT(module != RT_NULL);
 
+    /* clear all of object information */
+    rt_memset(&module->module_object[0], 0x0, sizeof(module->module_object));
+
     /* initialize object container - thread */
     rt_list_init(&(module->module_object[RT_Object_Class_Thread].object_list));
     module->module_object[RT_Object_Class_Thread].object_size = sizeof(struct rt_thread);
     module->module_object[RT_Object_Class_Thread].type = RT_Object_Class_Thread;
 
-#ifdef RT_USING_SEMAPHORE
     /* initialize object container - semaphore */
     rt_list_init(&(module->module_object[RT_Object_Class_Semaphore].object_list));
     module->module_object[RT_Object_Class_Semaphore].object_size = sizeof(struct rt_semaphore);
     module->module_object[RT_Object_Class_Semaphore].type = RT_Object_Class_Semaphore;
-#endif
 
-#ifdef RT_USING_MUTEX
     /* initialize object container - mutex */
     rt_list_init(&(module->module_object[RT_Object_Class_Mutex].object_list));
     module->module_object[RT_Object_Class_Mutex].object_size = sizeof(struct rt_mutex);
     module->module_object[RT_Object_Class_Mutex].type = RT_Object_Class_Mutex;
-#endif
 
-#ifdef RT_USING_EVENT
     /* initialize object container - event */
     rt_list_init(&(module->module_object[RT_Object_Class_Event].object_list));
     module->module_object[RT_Object_Class_Event].object_size = sizeof(struct rt_event);
     module->module_object[RT_Object_Class_Event].type = RT_Object_Class_Event;
-#endif
 
-#ifdef RT_USING_MAILBOX
     /* initialize object container - mailbox */
     rt_list_init(&(module->module_object[RT_Object_Class_MailBox].object_list));
     module->module_object[RT_Object_Class_MailBox].object_size = sizeof(struct rt_mailbox);
     module->module_object[RT_Object_Class_MailBox].type = RT_Object_Class_MailBox;
-#endif
 
-#ifdef RT_USING_MESSAGEQUEUE
     /* initialize object container - message queue */
     rt_list_init(&(module->module_object[RT_Object_Class_MessageQueue].object_list));
     module->module_object[RT_Object_Class_MessageQueue].object_size = sizeof(struct rt_messagequeue);
     module->module_object[RT_Object_Class_MessageQueue].type = RT_Object_Class_MessageQueue;
-#endif
 
-#ifdef RT_USING_MEMHEAP
     /* initialize object container - memory heap */
     rt_list_init(&(module->module_object[RT_Object_Class_MemHeap].object_list));
     module->module_object[RT_Object_Class_MemHeap].object_size = sizeof(struct rt_memheap);
     module->module_object[RT_Object_Class_MemHeap].type = RT_Object_Class_MemHeap;
-#endif
 
-#ifdef RT_USING_MEMPOOL
     /* initialize object container - memory pool */
     rt_list_init(&(module->module_object[RT_Object_Class_MemPool].object_list));
     module->module_object[RT_Object_Class_MemPool].object_size = sizeof(struct rt_mempool);
     module->module_object[RT_Object_Class_MemPool].type = RT_Object_Class_MemPool;
-#endif
 
-#ifdef RT_USING_DEVICE
     /* initialize object container - device */
     rt_list_init(&(module->module_object[RT_Object_Class_Device].object_list));
     module->module_object[RT_Object_Class_Device].object_size = sizeof(struct rt_device);
     module->module_object[RT_Object_Class_Device].type = RT_Object_Class_Device;
-#endif
 
     /* initialize object container - timer */
     rt_list_init(&(module->module_object[RT_Object_Class_Timer].object_list));
@@ -1547,15 +1534,14 @@ rt_module_t rt_module_find(const char *name)
     struct rt_object *object;
     struct rt_list_node *node;
 
-    extern struct rt_object_information rt_object_container[];
-
     RT_DEBUG_NOT_IN_INTERRUPT;
 
     /* enter critical */
     rt_enter_critical();
 
     /* try to find device object */
-    information = &rt_object_container[RT_Object_Class_Module];
+    information = rt_object_get_information(RT_Object_Class_Module);
+    RT_ASSERT(information != RT_NULL);
     for (node = information->object_list.next;
          node != &(information->object_list);
          node = node->next)
