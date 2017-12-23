@@ -62,7 +62,15 @@ CLIENT *clnt_create (const char *hostname, const unsigned long prog,
 	memset((char*)&sin,0,sizeof(sin));
 	sin.sin_family = h->h_addrtype;
 	sin.sin_port = 0;
-	memmove((char *) &sin.sin_addr, h->h_addr, h->h_length);
+	
+	if (h->h_addrtype == AF_INET)
+	{
+		memmove((char *) &sin.sin_addr, h->h_addr, sizeof(sin.sin_addr)); 
+	}
+	else
+	{
+		return NULL;
+	}
 
 	sock = -1;
 	if (strcmp(proto, "udp") == 0)
