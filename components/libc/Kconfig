@@ -8,10 +8,9 @@ config RT_USING_PTHREADS
     bool "Enable pthreads APIs"
     default n
 
-if RT_USING_LIBC
+if RT_USING_LIBC && RT_USING_DFS
     config RT_USING_POSIX
         bool "Enable POSIX layer for poll/select, stdin etc"
-        select RT_USING_DFS
         select RT_USING_DFS_DEVFS
         default y
 
