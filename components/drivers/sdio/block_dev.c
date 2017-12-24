@@ -42,7 +42,7 @@ struct mmcsd_blk_device
 #define RT_MMCSD_MAX_PARTITION 16
 #endif
 
-static rt_int32_t mmcsd_num_wr_blocks(struct rt_mmcsd_card *card)
+rt_int32_t mmcsd_num_wr_blocks(struct rt_mmcsd_card *card)
 {
     rt_int32_t err;
     rt_uint32_t blocks;
@@ -109,8 +109,6 @@ static rt_err_t rt_mmcsd_req_blk(struct rt_mmcsd_card *card,
                                  rt_size_t             blks,
                                  rt_uint8_t            dir)
 {
-    void *aligned_buf;
-    
     struct rt_mmcsd_cmd  cmd, stop;
     struct rt_mmcsd_data  data;
     struct rt_mmcsd_req  req;

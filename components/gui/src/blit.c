@@ -51,6 +51,8 @@
 #include <rtgui/region.h>
 #include <rtgui/dc.h>
 
+#include <string.h>
+
 /* Lookup tables to expand partial bytes to the full 0..255 range */
 
 static const rt_uint8_t lookup_0[] =

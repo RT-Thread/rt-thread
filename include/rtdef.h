@@ -359,34 +359,16 @@ typedef struct rt_object *rt_object_t;                  /**< Type for kernel obj
 enum rt_object_class_type
 {
     RT_Object_Class_Thread = 0,                         /**< The object is a thread. */
-#ifdef RT_USING_SEMAPHORE
     RT_Object_Class_Semaphore,                          /**< The object is a semaphore. */
-#endif
-#ifdef RT_USING_MUTEX
     RT_Object_Class_Mutex,                              /**< The object is a mutex. */
-#endif
-#ifdef RT_USING_EVENT
     RT_Object_Class_Event,                              /**< The object is a event. */
-#endif
-#ifdef RT_USING_MAILBOX
     RT_Object_Class_MailBox,                            /**< The object is a mail box. */
-#endif
-#ifdef RT_USING_MESSAGEQUEUE
     RT_Object_Class_MessageQueue,                       /**< The object is a message queue. */
-#endif
-#ifdef RT_USING_MEMHEAP
     RT_Object_Class_MemHeap,                            /**< The object is a memory heap */
-#endif
-#ifdef RT_USING_MEMPOOL
     RT_Object_Class_MemPool,                            /**< The object is a memory pool. */
-#endif
-#ifdef RT_USING_DEVICE
     RT_Object_Class_Device,                             /**< The object is a device */
-#endif
     RT_Object_Class_Timer,                              /**< The object is a timer. */
-#ifdef RT_USING_MODULE
     RT_Object_Class_Module,                             /**< The object is a module. */
-#endif
     RT_Object_Class_Unknown,                            /**< The object is unknown. */
     RT_Object_Class_Static = 0x80                       /**< The object is a static object. */
 };
