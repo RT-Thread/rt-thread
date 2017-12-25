@@ -26,6 +26,7 @@
  * 2007-01-28     Bernard      rename RT_OBJECT_Class_Static to RT_Object_Class_Static
  * 2010-10-26     yi.qiu       add module support in rt_object_allocate and rt_object_free
  * 2017-12-10     Bernard      Add object_info enum.
+ * 2017-12-26     xiaofan      improving the efficiency of rt_object_get_information
  */
 
 #include <rtthread.h>
@@ -227,11 +228,49 @@ void rt_system_object_init(void)
 struct rt_object_information *
 rt_object_get_information(enum rt_object_class_type type)
 {
-    int index;
-
-    for (index = 0; index < RT_Object_Info_Unknown; index ++)
-        if (rt_object_container[index].type == type) return &rt_object_container[index];
-
+    switch(type)
+    {
+    case RT_Object_Class_Thread:
+        return &rt_object_container[RT_Object_Info_Thread];
+#ifdef RT_USING_SEMAPHORE
+    case RT_Object_Class_Semaphore:
+        return &rt_object_container[RT_Object_Info_Semaphore];
+#endif
+#ifdef RT_USING_MUTEX
+    case RT_Object_Class_Mutex:
+        return &rt_object_container[RT_Object_Info_Mutex];
+#endif
+#ifdef RT_USING_EVENT
+    case RT_Object_Class_Event:
+        return &rt_object_container[RT_Object_Info_Event];
+#endif
+#ifdef RT_USING_MAILBOX
+    case RT_Object_Class_MailBox:
+        return &rt_object_container[RT_Object_Info_MailBox];
+#endif
+#ifdef RT_USING_MESSAGEQUEUE
+    case RT_Object_Class_MessageQueue:
+        return &rt_object_container[RT_Object_Info_MessageQueue];
+#endif
+#ifdef RT_USING_MEMHEAP
+    case RT_Object_Class_MemHeap:
+        return &rt_object_container[RT_Object_Info_MemHeap];
+#endif
+#ifdef RT_USING_MEMPOOL
+    case RT_Object_Class_MemPool:
+        return &rt_object_container[RT_Object_Info_MemPool];
+#endif
+#ifdef RT_USING_DEVICE
+    case RT_Object_Class_Device:
+        return &rt_object_container[RT_Object_Info_Device];
+#endif
+    case RT_Object_Class_Timer:
+        return &rt_object_container[RT_Object_Info_Timer];
+#ifdef RT_USING_MODULE
+    case RT_Object_Class_Module: 
+        return &rt_object_container[RT_Object_Info_Module];
+#endif
+    }
     return RT_NULL;
 }
 RTM_EXPORT(rt_object_get_information);
