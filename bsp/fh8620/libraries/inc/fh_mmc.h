@@ -284,25 +284,6 @@ rt_inline rt_uint32_t MMC_IsDataStateBusy(struct fh_mmc_obj *mmc_obj)
     return (GET_REG(mmc_obj->base + OFFSET_SDC_STATUS) >> 10) & 0x1;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void MMC_Init(struct fh_mmc_obj *mmc_obj);
 int MMC_ResetFifo(struct fh_mmc_obj *mmc_obj);
 int MMC_SetCardWidth(struct fh_mmc_obj *mmc_obj, int width);
