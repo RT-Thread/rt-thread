@@ -73,44 +73,44 @@ enum rt_object_info_type
 static struct rt_object_information rt_object_container[RT_Object_Info_Unknown] =
 {
     /* initialize object container - thread */
-    {RT_Object_Class_Thread, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Thread), sizeof(struct rt_thread)},
+    {RT_Object_Class_Thread, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Thread), sizeof(struct rt_thread)},
 #ifdef RT_USING_SEMAPHORE
     /* initialize object container - semaphore */
-    {RT_Object_Class_Semaphore, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Semaphore), sizeof(struct rt_semaphore)},
+    {RT_Object_Class_Semaphore, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Semaphore), sizeof(struct rt_semaphore)},
 #endif
 #ifdef RT_USING_MUTEX
     /* initialize object container - mutex */
-    {RT_Object_Class_Mutex, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Mutex), sizeof(struct rt_mutex)},
+    {RT_Object_Class_Mutex, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Mutex), sizeof(struct rt_mutex)},
 #endif
 #ifdef RT_USING_EVENT
     /* initialize object container - event */
-    {RT_Object_Class_Event, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Event), sizeof(struct rt_event)},
+    {RT_Object_Class_Event, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Event), sizeof(struct rt_event)},
 #endif
 #ifdef RT_USING_MAILBOX
     /* initialize object container - mailbox */
-    {RT_Object_Class_MailBox, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_MailBox), sizeof(struct rt_mailbox)},
+    {RT_Object_Class_MailBox, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_MailBox), sizeof(struct rt_mailbox)},
 #endif
 #ifdef RT_USING_MESSAGEQUEUE
     /* initialize object container - message queue */
-    {RT_Object_Class_MessageQueue, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_MessageQueue), sizeof(struct rt_messagequeue)},
+    {RT_Object_Class_MessageQueue, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_MessageQueue), sizeof(struct rt_messagequeue)},
 #endif
 #ifdef RT_USING_MEMHEAP
     /* initialize object container - memory heap */
-    {RT_Object_Class_MemHeap, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_MemHeap), sizeof(struct rt_memheap)},
+    {RT_Object_Class_MemHeap, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_MemHeap), sizeof(struct rt_memheap)},
 #endif
 #ifdef RT_USING_MEMPOOL
     /* initialize object container - memory pool */
-    {RT_Object_Class_MemPool, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_MemPool), sizeof(struct rt_mempool)},
+    {RT_Object_Class_MemPool, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_MemPool), sizeof(struct rt_mempool)},
 #endif
 #ifdef RT_USING_DEVICE
     /* initialize object container - device */
-    {RT_Object_Class_Device, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Device), sizeof(struct rt_device)},
+    {RT_Object_Class_Device, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Device), sizeof(struct rt_device)},
 #endif
     /* initialize object container - timer */
-    {RT_Object_Class_Timer, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Timer), sizeof(struct rt_timer)},
+    {RT_Object_Class_Timer, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Timer), sizeof(struct rt_timer)},
 #ifdef RT_USING_MODULE
     /* initialize object container - module */
-    {RT_Object_Class_Module, _OBJ_CONTAINER_LIST_INIT(RT_Object_Class_Module), sizeof(struct rt_module)},
+    {RT_Object_Class_Module, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Module), sizeof(struct rt_module)},
 #endif
 };
 
@@ -228,10 +228,10 @@ struct rt_object_information *
 rt_object_get_information(enum rt_object_class_type type)
 {
     int index;
-    
+
     for (index = 0; index < RT_Object_Info_Unknown; index ++)
         if (rt_object_container[index].type == type) return &rt_object_container[index];
-        
+
     return RT_NULL;
 }
 RTM_EXPORT(rt_object_get_information);
@@ -482,12 +482,12 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
             RT_ASSERT(information != RT_NULL);
 
             for (node = information->object_list.next;
-                 node != &(information->object_list);
-                 node  = node->next)
+                    node != &(information->object_list);
+                    node  = node->next)
             {
                 object = rt_list_entry(node, struct rt_object, list);
                 if ((rt_strncmp(object->name, name, module_name_length) == 0) &&
-                    (module_name_length == RT_NAME_MAX || object->name[module_name_length] == '\0'))
+                        (module_name_length == RT_NAME_MAX || object->name[module_name_length] == '\0'))
                 {
                     /* get module */
                     module = (struct rt_module *)object;
@@ -526,8 +526,8 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
         RT_ASSERT(information != RT_NULL);
     }
     for (node  = information->object_list.next;
-         node != &(information->object_list);
-         node  = node->next)
+            node != &(information->object_list);
+            node  = node->next)
     {
         object = rt_list_entry(node, struct rt_object, list);
         if (rt_strncmp(object->name, name, RT_NAME_MAX) == 0)
