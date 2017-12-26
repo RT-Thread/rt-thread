@@ -90,7 +90,7 @@ def touch_env():
         os.system('git clone https://github.com/RT-Thread/env.git ~/.env/tools/scripts')
 
         env_sh = file(os.path.join(env_dir, 'env.sh'), 'w')
-        env_sh.write('export $PATH=~/.env/tools/scripts:$PATH')
+        env_sh.write('export PATH=~/.env/tools/scripts:$PATH')
 
 # menuconfig for Linux
 def menuconfig(RTT_ROOT):
