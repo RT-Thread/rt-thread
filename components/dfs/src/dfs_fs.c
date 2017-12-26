@@ -551,7 +551,7 @@ int df(const char *path)
     }
 
     cap = (unsigned long long)buffer.f_bsize * buffer.f_bfree / 1024;
-    rt_kprintf("disk free: %lu KB [ %d block, %d bytes per block ]\n",
+    rt_kprintf("disk free: %d KB [ %d block, %d bytes per block ]\n",
     (unsigned long)cap, buffer.f_bfree, buffer.f_bsize);
     return 0;
 }
