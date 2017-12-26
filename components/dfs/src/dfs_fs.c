@@ -540,7 +540,7 @@ FINSH_FUNCTION_EXPORT(mkfs, make a file system);
 int df(const char *path)
 {
     int result;
-    long long cap;
+    unsigned long cap;
     struct statfs buffer;
 
     result = dfs_statfs(path ? path : NULL, &buffer);
@@ -550,9 +550,9 @@ int df(const char *path)
         return -1;
     }
 
-    cap = (long long)buffer.f_bsize * buffer.f_bfree / 1024;
+    cap = (unsigned long long)buffer.f_bsize * buffer.f_bfree / 1024;
     rt_kprintf("disk free: %ld KB [ %d block, %d bytes per block ]\n",
-    (long long)cap, buffer.f_bfree, buffer.f_bsize);
+    (unsigned long)cap, buffer.f_bfree, buffer.f_bsize);
     return 0;
 }
 FINSH_FUNCTION_EXPORT(df, get disk free);
