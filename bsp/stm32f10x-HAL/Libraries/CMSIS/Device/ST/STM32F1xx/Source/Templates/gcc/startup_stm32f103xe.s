@@ -113,8 +113,14 @@ LoopFillZerobss:
 /* Call static constructors */
     bl __libc_init_array
 /* Call the application's entry point.*/
-  bl main
-  bx lr
+#ifdef RT_USING_USER_MAIN
+    bl entry
+    bx lr
+#else
+    bl main
+    bx lr
+#endif
+
 .size Reset_Handler, .-Reset_Handler
 
 /**

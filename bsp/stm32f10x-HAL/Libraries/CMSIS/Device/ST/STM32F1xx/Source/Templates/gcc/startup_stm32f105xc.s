@@ -109,8 +109,14 @@ LoopFillZerobss:
 /* Call the clock system intitialization function.*/
     bl  SystemInit
 /* Call the application's entry point.*/
-  bl main
-  bx lr
+#ifdef RT_USING_USER_MAIN
+    bl entry
+    bx lr
+#else
+    bl main
+    bx lr
+#endif
+
 .size Reset_Handler, .-Reset_Handler
 
 /**
