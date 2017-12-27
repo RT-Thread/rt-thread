@@ -24,7 +24,7 @@
 struct ustor_data
 {
     struct dfs_partition part;
-    struct uintf* intf;
+    struct uhintf* intf;
     int udisk_id;
     const char path;
 };
@@ -40,15 +40,15 @@ struct ustor
 };    
 typedef struct ustor* ustor_t;
 
-rt_err_t rt_usbh_storage_get_max_lun(struct uintf* intf, rt_uint8_t* max_lun);
-rt_err_t rt_usbh_storage_reset(struct uintf* intf);
-rt_err_t rt_usbh_storage_read10(struct uintf* intf, rt_uint8_t *buffer, 
+rt_err_t rt_usbh_storage_get_max_lun(struct uhintf* intf, rt_uint8_t* max_lun);
+rt_err_t rt_usbh_storage_reset(struct uhintf* intf);
+rt_err_t rt_usbh_storage_read10(struct uhintf* intf, rt_uint8_t *buffer, 
     rt_uint32_t sector, rt_size_t count, int timeout);
-rt_err_t rt_usbh_storage_write10(struct uintf* intf, rt_uint8_t *buffer, 
+rt_err_t rt_usbh_storage_write10(struct uhintf* intf, rt_uint8_t *buffer, 
     rt_uint32_t sector, rt_size_t count, int timeout);
-rt_err_t rt_usbh_storage_request_sense(struct uintf* intf, rt_uint8_t* buffer);
-rt_err_t rt_usbh_storage_test_unit_ready(struct uintf* intf);
-rt_err_t rt_usbh_storage_inquiry(struct uintf* intf, rt_uint8_t* buffer);
-rt_err_t rt_usbh_storage_get_capacity(struct uintf* intf, rt_uint8_t* buffer);
+rt_err_t rt_usbh_storage_request_sense(struct uhintf* intf, rt_uint8_t* buffer);
+rt_err_t rt_usbh_storage_test_unit_ready(struct uhintf* intf);
+rt_err_t rt_usbh_storage_inquiry(struct uhintf* intf, rt_uint8_t* buffer);
+rt_err_t rt_usbh_storage_get_capacity(struct uhintf* intf, rt_uint8_t* buffer);
 
 #endif

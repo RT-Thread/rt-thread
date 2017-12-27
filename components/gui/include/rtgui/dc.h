@@ -121,6 +121,8 @@ struct rtgui_dc_buffer
     struct rtgui_image_item *image_item;
 #endif
 
+	/* pixel alpha */
+    rt_uint8_t pixel_alpha;
     /* pixel data */
     rt_uint8_t *pixel;
 };
@@ -138,6 +140,7 @@ struct rtgui_dc *rtgui_img_dc_create_pixformat(rt_uint8_t pixel_format, rt_uint8
     struct rtgui_image_item *image_item);
 #endif
 struct rtgui_dc *rtgui_dc_buffer_create_from_dc(struct rtgui_dc* dc);
+void rtgui_dc_buffer_set_alpha(struct rtgui_dc* dc, rt_uint8_t pixel_alpha);
 
 /* create a widget dc */
 struct rtgui_dc *rtgui_dc_widget_create(struct rtgui_widget * owner);

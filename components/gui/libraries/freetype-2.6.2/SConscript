@@ -1,14 +1,15 @@
-# RT-Thread building script for bridge
+# RT-Thread building script for FreeType
 
 import os
 from building import *
 
 cwd = GetCurrentDir()
-src = Split('''
-''')
 list = os.listdir(cwd)
 GroupPath = cwd
 CPPDEFINES = ['FT2_BUILD_LIBRARY']
+
+src = []
+group = []
 
 group = DefineGroup('freetype', src, depend = ['RTGUI_USING_TTF'], CPPDEFINES=CPPDEFINES, GroupPath = GroupPath)
 

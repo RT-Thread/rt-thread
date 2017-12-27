@@ -51,6 +51,8 @@
 #include <rtgui/region.h>
 #include <rtgui/dc.h>
 
+#include <string.h>
+
 /* Lookup tables to expand partial bytes to the full 0..255 range */
 
 static const rt_uint8_t lookup_0[] =
@@ -530,7 +532,7 @@ static void rtgui_blit_line_2_3(rt_uint8_t *dst_ptr, rt_uint8_t *src_ptr, int li
 
 void rtgui_blit_line_direct(rt_uint8_t *dst_ptr, rt_uint8_t *src_ptr, int line)
 {
-    rt_memcpy(dst_ptr, src_ptr, line);
+    memcpy(dst_ptr, src_ptr, line);
 }
 
 /* convert 4bpp to 3bpp */
@@ -781,7 +783,7 @@ Blit565to565PixelAlpha(struct rtgui_blit_info * info)
 
         while (height--)
         {
-            rt_memcpy(dstp, srcp, len);
+            memcpy(dstp, srcp, len);
             dstp += info->dst_skip + len;
             srcp += info->src_skip + len;
         }
@@ -804,7 +806,7 @@ Blit565to565PixelAlpha(struct rtgui_blit_info * info)
 
         while (height--)
         {
-            DUFFS_LOOP4(
+            DUFFS_LOOP8(
             {
                 rt_uint32_t s = *srcp++;
                 rt_uint32_t d = *dstp;
@@ -927,10 +929,12 @@ static void BlitAlphato565PixelAlpha(struct rtgui_blit_info * info)
         while (n--)
         {
             srcA = (rt_uint8_t)(*src);
+            if (info->a > 0 && info->a != 255)
+                srcA = srcA * info->a / 255;
             ARGB8888_FROM_RGBA(srcpixel, srcR, srcG, srcB, srcA);
 
             /* not do alpha blend */
-            if (srcA == 255)
+            if ((srcA >> 3) == (255 >> 3) || info->a == 0)
             {
                 dstpixel = srcpixel;
             }
@@ -940,13 +944,15 @@ static void BlitAlphato565PixelAlpha(struct rtgui_blit_info * info)
             }
             else
             {
-                dstpixel = ((rt_uint32_t)srcA << 24) | ((rt_uint32_t)srcR << 16) | ((rt_uint32_t)srcG << 8) | srcB;
+                dstpixel = srcpixel;
             }
 
             if (srcA >> 3 != 0)
             {
                 rt_uint32_t s = dstpixel;
-                unsigned alpha = s >> 27;
+                unsigned alpha = s >> 24;
+                //alpha = alpha + ((255 - alpha) * alpha) / 255;
+                alpha = alpha >> 3;
                 if (alpha)
                 {
                     if (alpha == (255 >> 3))
@@ -995,14 +1001,17 @@ static void BlitARGBto565PixelAlpha(struct rtgui_blit_info * info)
         DUFFS_LOOP4(
         {
             rt_uint32_t s = *srcp;
-            unsigned alpha = s >> 27; /* downscale alpha to 5 bits */
+            unsigned alpha = s >> 24;
+            if (info->a > 0 && info->a != 255)
+                alpha = alpha * info->a / 255;
+            alpha = alpha >> 3;	/* downscale alpha to 5 bits */
             /* FIXME: Here we special-case opaque alpha since the
                compositioning used (>>8 instead of /255) doesn't handle
                it correctly. Also special-case alpha=0 for speed?
                Benchmark this! */
             if(alpha)
             {
-                if(alpha == (255 >> 3))
+                if(alpha == (255 >> 3) || info->a == 0)
                 {
                     *dstp = (rt_uint16_t)((s >> 8 & 0xf800) + (s >> 5 & 0x7e0) + (s >> 3  & 0x1f));
                 }
@@ -1031,7 +1040,7 @@ static void BlitARGBto565PixelAlpha(struct rtgui_blit_info * info)
 }
 
 /* fast ARGB888->(A)RGB888 blending with pixel alpha */
-static void BlitRGBtoRGBPixelAlpha(struct rtgui_blit_info *info)
+static void BlitARGBtoRGBPixelAlpha(struct rtgui_blit_info *info)
 {
     int width = info->dst_w;
     int height = info->dst_h;
@@ -1051,15 +1060,18 @@ static void BlitRGBtoRGBPixelAlpha(struct rtgui_blit_info *info)
             rt_uint32_t s = *srcp;
             rt_uint32_t alpha = s >> 24;
 
+            if (info->a > 0 && info->a != 255)
+                alpha = alpha * info->a / 255;
             /* FIXME: Here we special-case opaque alpha since the
                compositioning used (>>8 instead of /255) doesn't handle
                it correctly. Also special-case alpha=0 for speed?
                Benchmark this! */
-            if(alpha == 255)
+            if(alpha == 255 || info->a == 0)
             {
                 *dstp = (s & 0x00ffffff) | (*dstp & 0xff000000);
             }
-            else {
+            else
+            {
                 /*
                  * take out the middle component (green), and process
                  * the other two in parallel. One multiply less.
@@ -1101,10 +1113,12 @@ static void BlitAlphatoARGB8888PixelAlpha(struct rtgui_blit_info *info)
         while (n--)
         {
             srcA = (rt_uint8_t)(*src);
+            if (info->a > 0 && info->a != 255)
+                srcA = srcA * info->a / 255;
             ARGB8888_FROM_RGBA(srcpixel, srcR, srcG, srcB, srcA);
 
             /* not do alpha blend */
-            if (srcA == 255)
+            if (srcA == 255 || info->a == 0)
             {
                 *dst = srcpixel;
             }
@@ -1124,6 +1138,8 @@ static void BlitAlphatoARGB8888PixelAlpha(struct rtgui_blit_info *info)
                 {
                     int alpha = srcA + 1;
                     int inverse_alpha = 257 - alpha;
+
+                    //alpha = alpha + ((256 - alpha) * alpha) / 256;
 
                     dstR = ((srcR * alpha) + (inverse_alpha * dstR)) >> 8;
                     dstG = ((srcG * alpha) + (inverse_alpha * dstG)) >> 8;
@@ -1165,9 +1181,11 @@ static void BlitARGB8888toARGB8888PixelAlpha(struct rtgui_blit_info *info)
         {
             srcpixel = *src;
             srcA = (rt_uint8_t)(srcpixel >> 24);
+            if (info->a > 0 && info->a != 255)
+                srcA = srcA * info->a / 255;
 
             /* not do alpha blend */
-            if (srcA == 255)
+            if (srcA == 255 || info->a == 0)
             {
                 *dst = srcpixel;
             }
@@ -1186,6 +1204,7 @@ static void BlitARGB8888toARGB8888PixelAlpha(struct rtgui_blit_info *info)
                 dstG = (rt_uint8_t)(dstpixel >> 8);
                 dstB = (rt_uint8_t)dstpixel;
 
+                if (dstA >> 3 != 0)
                 {
                     int alpha = srcA + 1;
                     int inverse_alpha = 257 - alpha;
@@ -1194,9 +1213,14 @@ static void BlitARGB8888toARGB8888PixelAlpha(struct rtgui_blit_info *info)
                     dstG = ((srcG * alpha) + (inverse_alpha * dstG)) >> 8;
                     dstB = ((srcB * alpha) + (inverse_alpha * dstB)) >> 8;
                     dstA = srcA + ((255 - srcA) * dstA) / 255;
+
+                    dstpixel = ((rt_uint32_t)dstA << 24) | ((rt_uint32_t)dstR << 16) | ((rt_uint32_t)dstG << 8) | dstB;
+                }
+                else
+                {
+                    dstpixel = srcpixel;
                 }
 
-                dstpixel = ((rt_uint32_t)dstA << 24) | ((rt_uint32_t)dstR << 16) | ((rt_uint32_t)dstG << 8) | dstB;
                 *dst = dstpixel;
             }
 
@@ -1211,7 +1235,7 @@ static void BlitARGB8888toARGB8888PixelAlpha(struct rtgui_blit_info *info)
 /* Special optimized blit for RGB 5-6-5 --> 32-bit RGB surfaces */
 #define RGB565_32(dst, src, map) (map[src[LO]*2] + map[src[HI]*2+1])
 static void
-BlitRGB565to32(struct rtgui_blit_info * info, const rt_uint32_t* map)
+BlitRGB565to32(struct rtgui_blit_info *info, const rt_uint32_t *map)
 {
     int width, height;
     rt_uint8_t *src;
@@ -1287,7 +1311,7 @@ void rtgui_blit(struct rtgui_blit_info * info)
             BlitARGBto565PixelAlpha(info);
             break;
         case RTGRAPHIC_PIXEL_FORMAT_RGB888:
-            BlitRGBtoRGBPixelAlpha(info);
+            BlitARGBtoRGBPixelAlpha(info);
             break;
         case RTGRAPHIC_PIXEL_FORMAT_ARGB888:
             BlitARGB8888toARGB8888PixelAlpha(info);
@@ -1316,16 +1340,16 @@ void rtgui_blit(struct rtgui_blit_info * info)
 }
 RTM_EXPORT(rtgui_blit);
 
-void rtgui_image_info_blit(struct rtgui_image_info* image, struct rtgui_dc* dc, struct rtgui_rect *dc_rect)
+void rtgui_image_info_blit(struct rtgui_image_info *image, struct rtgui_dc *dc, struct rtgui_rect *dc_rect)
 {
     rt_uint8_t bpp, hw_bpp;
-    struct rtgui_widget *owner;
-    struct rtgui_blit_info info;
-    struct rtgui_rect dest_extent;
-    struct rtgui_graphic_driver *hw_driver;
+    struct rtgui_widget *owner;		//目标控件
+    struct rtgui_blit_info info = { 0 };
+    struct rtgui_rect dest_extent;	//相片大小
+    struct rtgui_graphic_driver *hw_driver;	//目标设备
 
-    hw_driver = rtgui_graphic_driver_get_default();
-    dest_extent = *dc_rect;
+    hw_driver = rtgui_graphic_driver_get_default(); //获取目标设备指针
+    dest_extent = *dc_rect;	//接收图片大小值
 
     if (dc->type == RTGUI_DC_CLIENT && hw_driver->framebuffer)
     {
@@ -1333,8 +1357,8 @@ void rtgui_image_info_blit(struct rtgui_image_info* image, struct rtgui_dc* dc, 
         struct rtgui_rect *rects;
         struct rtgui_region dest_region;
 
-        bpp = rtgui_color_get_bpp(image->src_fmt);
-        hw_bpp = rtgui_color_get_bpp(hw_driver->pixel_format);
+        bpp = rtgui_color_get_bpp(image->src_fmt);				//获取图片一个像素点数据所占的字节数
+        hw_bpp = rtgui_color_get_bpp(hw_driver->pixel_format);	//获取目标设备一个像素点数据所占的字节数
 
         owner = RTGUI_CONTAINER_OF(dc, struct rtgui_widget, dc_type);
         rtgui_widget_rect_to_device(owner, &dest_extent);

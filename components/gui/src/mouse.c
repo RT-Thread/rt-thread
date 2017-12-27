@@ -235,7 +235,7 @@ void rtgui_mouse_moveto(int x, int y)
 #endif
 
             /* move winrect */
-            rtgui_rect_moveto(&(_rtgui_cursor->win_rect), x - _rtgui_cursor->cx,
+            rtgui_rect_move(&(_rtgui_cursor->win_rect), x - _rtgui_cursor->cx,
                               y - _rtgui_cursor->cy);
             rtgui_winrect_save();
 
@@ -360,7 +360,7 @@ static void rtgui_cursor_restore()
 
     for (idx = 0; idx < height; idx ++)
     {
-        rt_memcpy(fb_ptr, cursor_ptr, cursor_pitch);
+        memcpy(fb_ptr, cursor_ptr, cursor_pitch);
 
         fb_ptr += _rtgui_cursor->screen_pitch;
         cursor_ptr += _rtgui_cursor->cursor_pitch;
@@ -387,7 +387,7 @@ static void rtgui_cursor_save()
 
     for (idx = 0; idx < height; idx ++)
     {
-        rt_memcpy(cursor_ptr, fb_ptr, cursor_pitch);
+        memcpy(cursor_ptr, fb_ptr, cursor_pitch);
 
         fb_ptr += _rtgui_cursor->screen_pitch;
         cursor_ptr += _rtgui_cursor->cursor_pitch;
@@ -407,7 +407,7 @@ static void rtgui_cursor_show()
     set_pixel = rtgui_graphic_driver_get_default()->ops->set_pixel;
 
     rtgui_mouse_get_cursor_rect(&rect);
-    rtgui_rect_moveto(&rect, _rtgui_cursor->cx, _rtgui_cursor->cy);
+    rtgui_rect_move(&rect, _rtgui_cursor->cx, _rtgui_cursor->cy);
 
     /* draw each point */
     for (y = rect.y1; y < rect.y2; y ++)
@@ -530,7 +530,7 @@ static void rtgui_winrect_show()
 #define display_direct_memcpy(src, dest, src_pitch, dest_pitch, height, len)    \
     for (idx = 0; idx < height; idx ++)     \
     {                                       \
-        rt_memcpy(dest, src, len);          \
+        memcpy(dest, src, len);             \
         src  += src_pitch;                  \
         dest += dest_pitch;                 \
     }

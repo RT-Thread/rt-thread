@@ -327,6 +327,13 @@ RTM_EXPORT(socket);
 int closesocket(int s)
 {
     int sock = dfs_net_getsocket(s);
+    struct dfs_fd *d;
+
+    d = fd_get(s);
+
+    /* socket has been closed, delete it from file system fd */
+    fd_put(d);
+    fd_put(d);
 
     return lwip_close(sock);
 }

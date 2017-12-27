@@ -409,6 +409,10 @@ rt_err_t rt_device_register(rt_device_t dev,
                             const char *name,
                             rt_uint16_t flags);
 rt_err_t rt_device_unregister(rt_device_t dev);
+
+rt_device_t rt_device_create(int type, int attach_size);
+void rt_device_destroy(rt_device_t device);
+
 rt_err_t rt_device_init_all(void);
 
 rt_err_t

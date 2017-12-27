@@ -108,6 +108,10 @@ extern "C" {
 #include "drivers/audio.h"
 #endif
 
+#ifdef RT_USING_CPUTIME
+#include "drivers/cputime.h"
+#endif
+
 #ifdef __cplusplus
 }
 #endif

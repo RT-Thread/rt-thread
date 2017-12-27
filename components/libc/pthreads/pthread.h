@@ -27,6 +27,7 @@
 
 #include <rtthread.h>
 #include <posix_types.h>
+#include <sched.h>
 
 #define PTHREAD_KEY_MAX             8
 
@@ -139,6 +140,11 @@ struct pthread_barrier
 };
 typedef struct pthread_barrier pthread_barrier_t;
 
+struct sched_param
+{
+    int sched_priority;
+};
+
 /* pthread thread interface */
 int pthread_attr_destroy(pthread_attr_t *attr);
 int pthread_attr_init(pthread_attr_t *attr);
@@ -146,6 +152,8 @@ int pthread_attr_setdetachstate(pthread_attr_t *attr, int state);
 int pthread_attr_getdetachstate(pthread_attr_t const *attr, int *state);
 int pthread_attr_setschedpolicy(pthread_attr_t *attr, int policy);
 int pthread_attr_getschedpolicy(pthread_attr_t const *attr, int *policy);
+int pthread_attr_setschedparam(pthread_attr_t *attr,struct sched_param const *param);
+int pthread_attr_getschedparam(pthread_attr_t const *attr,struct sched_param *param);
 int pthread_attr_setstacksize(pthread_attr_t *attr, size_t stack_size);
 int pthread_attr_getstacksize(pthread_attr_t const *attr, size_t *stack_size);
 int pthread_attr_setstackaddr(pthread_attr_t *attr, void *stack_addr);
@@ -156,7 +164,10 @@ int pthread_attr_setstack(pthread_attr_t *attr,
 int pthread_attr_getstack(pthread_attr_t const *attr,
                           void                **stack_base,
                           size_t               *stack_size);
-
+int pthread_attr_setguardsize(pthread_attr_t *attr, size_t guard_size);
+int pthread_attr_getguardsize(pthread_attr_t const *attr, size_t *guard_size);
+int pthread_attr_setscope(pthread_attr_t *attr, int scope);
+int pthread_attr_getscope(pthread_attr_t const *attr);
 int pthread_system_init(void);
 int pthread_create (pthread_t *tid, const pthread_attr_t *attr, 
     void *(*start) (void *), void *arg);
@@ -296,7 +307,20 @@ struct sigevent
 #define NANOSECOND_PER_TICK     (NANOSECOND_PER_SECOND  / RT_TICK_PER_SECOND)
 
 #ifndef CLOCK_REALTIME
-#define CLOCK_REALTIME      0
+#define CLOCK_REALTIME      1
+#endif
+
+#define CLOCK_CPUTIME_ID    2
+
+#ifndef CLOCK_PROCESS_CPUTIME_ID
+#define CLOCK_PROCESS_CPUTIME_ID CLOCK_CPUTIME_ID
+#endif
+#ifndef CLOCK_THREAD_CPUTIME_ID
+#define CLOCK_THREAD_CPUTIME_ID  CLOCK_CPUTIME_ID
+#endif
+
+#ifndef CLOCK_MONOTONIC
+#define CLOCK_MONOTONIC     4
 #endif
 
 int clock_getres  (clockid_t clockid, struct timespec *res);

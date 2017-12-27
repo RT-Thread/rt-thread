@@ -1651,7 +1651,7 @@ rtgui_dc_blend_fill_rect(struct rtgui_dc* dst, const rtgui_rect_t *rect,
 
             /* convert logic to device */
             draw_rect = *rect;
-            rtgui_rect_moveto(&draw_rect,owner->extent.x1, owner->extent.y1);
+            rtgui_rect_move(&draw_rect,owner->extent.x1, owner->extent.y1);
 
             /* calculate rect intersect */
             if (prect->y1 > draw_rect.y2  || prect->y2 <= draw_rect.y1) return ;
@@ -1669,7 +1669,7 @@ rtgui_dc_blend_fill_rect(struct rtgui_dc* dst, const rtgui_rect_t *rect,
                 prect = ((rtgui_rect_t *)(owner->clip.data + index + 1));
 
                 draw_rect = *rect;
-                rtgui_rect_moveto(&draw_rect,owner->extent.x1, owner->extent.y1);
+                rtgui_rect_move(&draw_rect,owner->extent.x1, owner->extent.y1);
 
                 /* calculate rect intersect */
                 if (prect->y1 > draw_rect.y2  || prect->y2 <= draw_rect.y1) continue;
@@ -1679,6 +1679,21 @@ rtgui_dc_blend_fill_rect(struct rtgui_dc* dst, const rtgui_rect_t *rect,
                 func(dst, &draw_rect, blendMode, r, g, b, a);
             }
         }
+    }
+    else if (dst->type == RTGUI_DC_HW)
+    {
+        rtgui_rect_t draw_rect = *rect;
+        struct rtgui_dc_hw *dc = (struct rtgui_dc_hw *) dst;
+
+        draw_rect.x2 = dc->owner->extent.x1 + draw_rect.x2 - draw_rect.x1;
+        draw_rect.y2 = dc->owner->extent.y1 + draw_rect.y2 - draw_rect.y1;
+
+        draw_rect.x1 = dc->owner->extent.x1 > 0 ? dc->owner->extent.x1 : 0;
+        draw_rect.y1 = dc->owner->extent.y1 > 0 ? dc->owner->extent.y1 : 0;
+		draw_rect.x2 = draw_rect.x2 > hw_driver->width ? hw_driver->width : draw_rect.x2;
+		draw_rect.y2 = draw_rect.y2 > hw_driver->height ? hw_driver->height : draw_rect.y2;
+
+        func(dst, &draw_rect, blendMode, r, g, b, a);
     }
     else
     {
@@ -1764,7 +1779,7 @@ rtgui_dc_blend_fill_rects(struct rtgui_dc * dst, const rtgui_rect_t *rects, int 
 
                 /* convert logic to device */
                 draw_rect = rect;
-                rtgui_rect_moveto(&draw_rect,owner->extent.x1, owner->extent.y1);
+                rtgui_rect_move(&draw_rect,owner->extent.x1, owner->extent.y1);
 
                 /* calculate rect intersect */
                 if (prect->y1 > draw_rect.y2  || prect->y2 <= draw_rect.y1) return ;
@@ -1782,7 +1797,7 @@ rtgui_dc_blend_fill_rects(struct rtgui_dc * dst, const rtgui_rect_t *rects, int 
                     prect = ((rtgui_rect_t *)(owner->clip.data + index + 1));
 
                     draw_rect = rect;
-                    rtgui_rect_moveto(&draw_rect,owner->extent.x1, owner->extent.y1);
+                    rtgui_rect_move(&draw_rect,owner->extent.x1, owner->extent.y1);
 
                     /* calculate rect intersect */
                     if (prect->y1 > draw_rect.y2  || prect->y2 <= draw_rect.y1) continue;

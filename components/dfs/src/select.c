@@ -52,7 +52,7 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struc
     /* Allocate the descriptor list for poll() */
     if (npfds > 0)
     {
-        pollset = (struct pollfd *)rt_malloc(npfds * sizeof(struct pollfd));
+        pollset = (struct pollfd *)rt_calloc(npfds, sizeof(struct pollfd));
         if (!pollset)
         {
             return -1;

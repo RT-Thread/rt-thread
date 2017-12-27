@@ -954,7 +954,6 @@ static rt_err_t _function_enable(ufunction_t func)
 {
     struct mstorage *data;
     RT_ASSERT(func != RT_NULL);
-
     RT_DEBUG_LOG(RT_DEBUG_USB, ("Mass storage function enabled\n"));
     data = (struct mstorage*)func->user_data;   
 
@@ -1027,7 +1026,12 @@ static rt_err_t _function_disable(ufunction_t func)
         rt_free(data->ep_out->buffer);
         data->ep_out->buffer = RT_NULL;
     }
-
+    if(data->disk != RT_NULL)
+    {
+        rt_device_close(data->disk);
+        data->disk = RT_NULL;
+    }
+    
     data->status = STAT_CBW;
     
     return RT_EOK;

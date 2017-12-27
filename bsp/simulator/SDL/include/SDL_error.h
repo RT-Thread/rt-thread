@@ -1,28 +1,28 @@
 /*
-    SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2009 Sam Lantinga
+  Simple DirectMedia Layer
+  Copyright (C) 1997-2014 Sam Lantinga <slouken@libsdl.org>
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public
-    License as published by the Free Software Foundation; either
-    version 2.1 of the License, or (at your option) any later version.
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
 
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
 
-    You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-    Sam Lantinga
-    slouken@libsdl.org
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
 */
 
 /**
- *  @file SDL_error.h
- *  Simple error message routines for SDL
+ *  \file SDL_error.h
+ *
+ *  Simple error message routines for SDL.
  */
 
 #ifndef _SDL_error_h
@@ -36,32 +36,34 @@
 extern "C" {
 #endif
 
-/** 
- *  @name Public functions
- */
-/*@{*/
-extern DECLSPEC void SDLCALL SDL_SetError(const char *fmt, ...);
-extern DECLSPEC char * SDLCALL SDL_GetError(void);
+/* Public functions */
+/* SDL_SetError() unconditionally returns -1. */
+extern DECLSPEC int SDLCALL SDL_SetError(const char *fmt, ...);
+extern DECLSPEC const char *SDLCALL SDL_GetError(void);
 extern DECLSPEC void SDLCALL SDL_ClearError(void);
-/*@}*/
 
 /**
- *  @name Private functions
- *  @internal Private error message function - used internally
+ *  \name Internal error functions
+ *
+ *  \internal
+ *  Private error reporting function - used internally.
  */
-/*@{*/
-#define SDL_OutOfMemory()	SDL_Error(SDL_ENOMEM)
-#define SDL_Unsupported()	SDL_Error(SDL_UNSUPPORTED)
-typedef enum {
-	SDL_ENOMEM,
-	SDL_EFREAD,
-	SDL_EFWRITE,
-	SDL_EFSEEK,
-	SDL_UNSUPPORTED,
-	SDL_LASTERROR
+/* @{ */
+#define SDL_OutOfMemory()   SDL_Error(SDL_ENOMEM)
+#define SDL_Unsupported()   SDL_Error(SDL_UNSUPPORTED)
+#define SDL_InvalidParamError(param)    SDL_SetError("Parameter '%s' is invalid", (param))
+typedef enum
+{
+    SDL_ENOMEM,
+    SDL_EFREAD,
+    SDL_EFWRITE,
+    SDL_EFSEEK,
+    SDL_UNSUPPORTED,
+    SDL_LASTERROR
 } SDL_errorcode;
-extern DECLSPEC void SDLCALL SDL_Error(SDL_errorcode code);
-/*@}*/
+/* SDL_Error() unconditionally returns -1. */
+extern DECLSPEC int SDLCALL SDL_Error(SDL_errorcode code);
+/* @} *//* Internal error functions */
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus
@@ -70,3 +72,5 @@ extern DECLSPEC void SDLCALL SDL_Error(SDL_errorcode code);
 #include "close_code.h"
 
 #endif /* _SDL_error_h */
+
+/* vi: set ts=4 sw=4 expandtab: */

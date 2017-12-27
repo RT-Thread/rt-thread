@@ -80,7 +80,17 @@ def touch_env():
         os.mkdir(env_dir)
         os.mkdir(os.path.join(env_dir, 'local_pkgs'))
         os.mkdir(os.path.join(env_dir, 'packages'))
+
+        os.system('git clone https://github.com/RT-Thread/packages.git ~/.env/packages/packages')
+
         kconfig = file(os.path.join(env_dir, 'packages', 'Kconfig'), 'w')
+        kconfig.write('source "$PKGS_DIR/packages/Kconfig"')
+
+        os.mkdir(os.path.join(env_dir, 'tools'))
+        os.system('git clone https://github.com/RT-Thread/env.git ~/.env/tools/scripts')
+
+        env_sh = file(os.path.join(env_dir, 'env.sh'), 'w')
+        env_sh.write('export PATH=~/.env/tools/scripts:$PATH')
 
 # menuconfig for Linux
 def menuconfig(RTT_ROOT):

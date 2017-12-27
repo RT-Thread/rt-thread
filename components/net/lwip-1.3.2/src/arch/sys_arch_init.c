@@ -41,8 +41,6 @@ static void tcpip_init_done_callback(void *arg)
 	struct rt_object* object;
 	struct rt_object_information *information;
 
-	extern struct rt_object_information rt_object_container[];
-
 	LWIP_ASSERT("invalid arg.\n",arg);
 
 	IP4_ADDR(&gw, 0,0,0,0);
@@ -53,7 +51,9 @@ static void tcpip_init_done_callback(void *arg)
 	rt_enter_critical();
 
 	/* for each network interfaces */
-	information = &rt_object_container[RT_Object_Class_Device];
+    information = rt_object_get_information(RT_Object_Class_Device);
+    RT_ASSERT(information != RT_NULL);
+
 	for (node = information->object_list.next; node != &(information->object_list); node = node->next)
 	{
 		object = rt_list_entry(node, struct rt_object, list);
