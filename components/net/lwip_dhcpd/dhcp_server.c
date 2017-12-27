@@ -124,7 +124,7 @@ static rt_err_t _low_level_dhcp_send(struct netif *netif,
 
     netif->linkoutput(netif, p);
     pbuf_free(p);
-    
+
     return RT_EOK;
 }
 
@@ -140,7 +140,7 @@ static void dhcpd_thread_entry(void *parameter)
     int optval = 1;
 
     /* get ethernet interface. */
-    netif = (struct netif*) parameter;
+    netif = (struct netif *) parameter;
     RT_ASSERT(netif != RT_NULL);
 
     /* our DHCP server information */
@@ -381,27 +381,41 @@ static void dhcpd_thread_entry(void *parameter)
     }
 }
 
-void dhcpd_start(char* netif_name)
+void dhcpd_start(char *netif_name)
 {
     rt_thread_t thread;
     struct netif *netif = netif_list;
 
-    if(strlen(netif_name) > sizeof(netif->name))
+    if (strlen(netif_name) > sizeof(netif->name))
     {
         rt_kprintf("network interface name too long!\r\n");
         return;
     }
-    while(netif != RT_NULL)
+    while (netif != RT_NULL)
     {
-        if(strncmp(netif_name, netif->name, sizeof(netif->name)) == 0)
+        if (strncmp(netif_name, netif->name, sizeof(netif->name)) == 0)
             break;
 
         netif = netif->next;
-        if( netif == RT_NULL )
+        if (netif == RT_NULL)
         {
             rt_kprintf("network interface: %s not found!\r\n", netif_name);
             return;
         }
+    }
+
+    if (1)
+    {
+        extern void set_if(char *netif_name, char *ip_addr, char *gw_addr, char *nm_addr);
+
+        char ip_str[4 * 4 + 1];
+
+        dhcp_stop(netif);
+
+        sprintf(ip_str, "%d.%d.%d.%d", DHCPD_SERVER_IPADDR0, DHCPD_SERVER_IPADDR1, DHCPD_SERVER_IPADDR2, DHCPD_SERVER_IPADDR3);
+        set_if(netif_name, ip_str, "0.0.0.0", "255.255.255.0");
+
+        netif_set_up(netif);
     }
 
     thread = rt_thread_create("dhcpd",
