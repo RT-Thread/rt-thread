@@ -540,7 +540,7 @@ FINSH_FUNCTION_EXPORT(mkfs, make a file system);
 int df(const char *path)
 {
     int result;
-    unsigned long cap;
+    long long cap;
     struct statfs buffer;
 
     result = dfs_statfs(path ? path : NULL, &buffer);
