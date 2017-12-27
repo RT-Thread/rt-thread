@@ -25,12 +25,13 @@
  * 2013-01-30     aozima       the first version
  * 2013-08-08     aozima       support different network segments.
  * 2015-01-30     bernard      release to RT-Thread RTOS.
+ * 2017-12-27     aozima       add [mac-ip] table support.
  */
 
 #ifndef DHCPV4_SERVER_H__
 #define DHCPV4_SERVER_H__
 
-void dhcpd_start(char* netif_name);
+void dhcpd_start(const char* netif_name);
 
 #endif
 
