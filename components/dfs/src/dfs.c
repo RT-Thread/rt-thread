@@ -404,6 +404,13 @@ up_one:
     if ((dst != fullpath) && (*dst == '/'))
         *dst = '\0';
 
+    /* final check fullpath is not empty, for the special path of lwext "/.." */
+    if ('\0' == fullpath[0])
+    {
+        fullpath[0] = '/';
+        fullpath[1] = '\0';
+    }
+
     return fullpath;
 }
 RTM_EXPORT(dfs_normalize_path);
