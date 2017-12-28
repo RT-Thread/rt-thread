@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-09-22     Bernard      add board.h to this bsp
+ * 2017-12-29     ZYH          Correctly generate the 48M clock
  */
 
 #include <rtthread.h>
@@ -20,12 +21,24 @@
  */
 
 /*@{*/
-
+#ifdef RT_USING_HSI
+    #error Can not using HSI on this bsp
+#endif
+#if defined(RCC_PERIPHCLK_SDIO) || defined(RCC_PERIPHCLK_CEC) || defined(RCC_PERIPHCLK_LTDC)\
+    || defined(RCC_PERIPHCLK_SPDIFRX) || defined(RCC_PERIPHCLK_FMPI2C1) || defined(RCC_PERIPHCLK_LPTIM1)
+#warning Please give priority to the correctness of the clock tree when the peripherals are abnormal
+#endif
 static void SystemClock_Config(void)
 {
+    rt_uint32_t hse_clk,sys_clk;
+#if (RT_HSE_VALVE % 1000000 != 0)
+    #error HSE must be integer of MHz
+#endif
+    hse_clk = HSE_VALUE/1000000UL;
+    sys_clk = HCLK_VALUE/1000000UL;
     RCC_OscInitTypeDef RCC_OscInitStruct;
     RCC_ClkInitTypeDef RCC_ClkInitStruct;
-#ifdef RT_USING_RTC
+#if defined(RT_USING_RTC) || defined(RCC_PERIPHCLK_CLK48)
     RCC_PeriphCLKInitTypeDef PeriphClkInitStruct;
 #endif
     /**Configure the main internal regulator output voltage 
@@ -44,10 +57,55 @@ static void SystemClock_Config(void)
     RCC_OscInitStruct.HSEState = RCC_HSE_ON;
     RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
     RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-    RCC_OscInitStruct.PLL.PLLM = (HSE_VALUE/1000000UL);//Get 1M clock
-    RCC_OscInitStruct.PLL.PLLN = (HCLK_VALUE/1000000UL)*2;//Get 2*HCLK_VALUE
-    RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;//Get HCLK_VALUE
-    RCC_OscInitStruct.PLL.PLLQ = RCC_OscInitStruct.PLL.PLLN/48;//Get 48M Clock
+    if(hse_clk % 2 == 0)
+    {
+        RCC_OscInitStruct.PLL.PLLM = hse_clk/2;//Get 2M clock
+        if((sys_clk * 2) % 48 == 0)
+        {
+            RCC_OscInitStruct.PLL.PLLN = sys_clk;//Get 2*HCLK_VALUE
+            RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;//Get HCLK_VALUE
+        }
+        else if((sys_clk * 4) % 48 == 0)
+        {
+            RCC_OscInitStruct.PLL.PLLN = sys_clk * 2;//Get 4*HCLK_VALUE
+            RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;//Get HCLK_VALUE
+        }
+        else if((sys_clk * 6) % 48 == 0)
+        {
+            RCC_OscInitStruct.PLL.PLLN = sys_clk * 3;//Get 6*HCLK_VALUE
+            RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV6;//Get HCLK_VALUE
+        }
+        else if((sys_clk * 8) % 48 == 0)
+        {
+            RCC_OscInitStruct.PLL.PLLN = sys_clk * 4;//Get 8*HCLK_VALUE
+            RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV8;//Get HCLK_VALUE
+        }
+    }
+    else
+    {
+        RCC_OscInitStruct.PLL.PLLM = hse_clk;//Get 1M clock
+        if((sys_clk * 2) % 48 == 0)
+        {
+            RCC_OscInitStruct.PLL.PLLN = sys_clk * 2;//Get 2*HCLK_VALUE
+            RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;//Get HCLK_VALUE
+        }
+        else if((sys_clk * 4) % 48 == 0)
+        {
+            RCC_OscInitStruct.PLL.PLLN = sys_clk * 4;//Get 4*HCLK_VALUE
+            RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;//Get HCLK_VALUE
+        }
+        else if((sys_clk * 6) % 48 == 0)
+        {
+            RCC_OscInitStruct.PLL.PLLN = sys_clk * 6;//Get 6*HCLK_VALUE
+            RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV6;//Get HCLK_VALUE
+        }
+        else if((sys_clk * 8) % 48 == 0)
+        {
+            RCC_OscInitStruct.PLL.PLLN = sys_clk * 8;//Get 8*HCLK_VALUE
+            RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV8;//Get HCLK_VALUE
+        }
+    }
+    RCC_OscInitStruct.PLL.PLLQ = hse_clk / RCC_OscInitStruct.PLL.PLLM * RCC_OscInitStruct.PLL.PLLN/48;//Get 48M Clock
     if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
     {
         while(1)
@@ -94,9 +152,16 @@ static void SystemClock_Config(void)
         {}
     }
 #endif
-#ifdef RT_USING_RTC
-    PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
+#if defined(RT_USING_RTC) || defined(RCC_PERIPHCLK_CLK48)
+    PeriphClkInitStruct.PeriphClockSelection = 0;
+    #ifdef RT_USING_RTC
+    PeriphClkInitStruct.PeriphClockSelection |= RCC_PERIPHCLK_RTC;
     PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
+    #endif
+    #ifdef RCC_PERIPHCLK_CLK48
+    PeriphClkInitStruct.PeriphClockSelection |= RCC_PERIPHCLK_CLK48;
+    PeriphClkInitStruct.Clk48ClockSelection = RCC_CLK48CLKSOURCE_PLLQ;
+    #endif
     if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
     {
         while(1)
