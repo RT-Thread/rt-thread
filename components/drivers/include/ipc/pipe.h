@@ -7,8 +7,6 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#if defined(RT_USING_POSIX)
-
 #ifndef RT_PIPE_BUFSZ
 #define PIPE_BUFSZ    512
 #else
@@ -21,6 +19,7 @@ struct rt_pipe_device
 
     /* ring buffer in pipe device */
     struct rt_ringbuffer *fifo;
+    rt_uint16_t bufsz;
 
     rt_uint8_t readers;
     rt_uint8_t writers;
@@ -32,7 +31,6 @@ struct rt_pipe_device
 };
 typedef struct rt_pipe_device rt_pipe_t;
 
-rt_pipe_t *rt_pipe_create(const char *name);
+rt_pipe_t *rt_pipe_create(const char *name, int bufsz);
 
-#endif /* RT_USING_POSIX */
 #endif /* PIPE_H__ */
