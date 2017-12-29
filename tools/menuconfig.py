@@ -6,7 +6,7 @@ def mk_rtconfig(filename):
     try:
         config = file(filename)
     except:
-        print 'open .config failed'
+        print('open config:%s failed' % filename)
         return
 
     rtconfig = file('rtconfig.h', 'w')
