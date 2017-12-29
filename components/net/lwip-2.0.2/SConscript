@@ -69,7 +69,6 @@ path = [GetCurrentDir() + '/src',
 
 if not GetDepend('RT_USING_POSIX') or not GetDepend('RT_USING_DFS_NET'):
     path += [GetCurrentDir() + '/src/include/posix']
-    print('include /src/include/posix')
 
 if GetDepend(['RT_LWIP_SNMP']):
     src += snmp_src
