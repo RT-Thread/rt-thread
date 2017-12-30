@@ -20,6 +20,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2016-09-28     armink       first version.
+ * 2017-12.28     tjrong       fix one bug,add (rt_mutex_detach(&rtt_dev->lock);).
  */
 
 #include <stdint.h>
@@ -93,7 +94,7 @@ static rt_err_t rt_sfud_control(rt_device_t dev, int cmd, void *args) {
 static rt_size_t rt_sfud_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size) {
     struct spi_flash_device *rtt_dev = (struct spi_flash_device *) (dev->user_data);
     sfud_flash *sfud_dev = (sfud_flash *) (rtt_dev->user_data);
-    /* change the block device¡¯s logic address to physical address */
+    /* change the block deviceÂ¡Â¯s logic address to physical address */
     rt_off_t phy_pos = pos * rtt_dev->geometry.bytes_per_sector;
     rt_size_t phy_size = size * rtt_dev->geometry.bytes_per_sector;
 
@@ -107,7 +108,7 @@ static rt_size_t rt_sfud_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_si
 static rt_size_t rt_sfud_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size) {
     struct spi_flash_device *rtt_dev = (struct spi_flash_device *) (dev->user_data);
     sfud_flash *sfud_dev = (sfud_flash *) (rtt_dev->user_data);
-    /* change the block device¡¯s logic address to physical address */
+    /* change the block deviceÂ¡Â¯s logic address to physical address */
     rt_off_t phy_pos = pos * rtt_dev->geometry.bytes_per_sector;
     rt_size_t phy_size = size * rtt_dev->geometry.bytes_per_sector;
 
@@ -309,6 +310,7 @@ rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const 
 
 error:
     /* may be one of objects memory was malloc success, so need free all */
+//    rt_mutex_detach(&rtt_dev->lock);;
     rt_free(rtt_dev);
     rt_free(sfud_dev);
     rt_free(spi_flash_dev_name_bak);
