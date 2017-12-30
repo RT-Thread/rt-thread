@@ -108,14 +108,13 @@ rt_device_t rt_device_find(const char *name)
     struct rt_list_node *node;
     struct rt_object_information *information;
 
-    extern struct rt_object_information rt_object_container[];
-
     /* enter critical */
     if (rt_thread_self() != RT_NULL)
         rt_enter_critical();
 
     /* try to find device object */
-    information = &rt_object_container[RT_Object_Class_Device];
+    information = rt_object_get_information(RT_Object_Class_Device);
+    RT_ASSERT(information != RT_NULL);
     for (node  = information->object_list.next;
          node != &(information->object_list);
          node  = node->next)
@@ -139,6 +138,50 @@ rt_device_t rt_device_find(const char *name)
     return RT_NULL;
 }
 RTM_EXPORT(rt_device_find);
+
+#ifdef RT_USING_HEAP
+/**
+ * This function creates a device object with user data size.
+ *
+ * @param type, the kind type of this device object.
+ * @param attach_size, the size of user data.
+ *
+ * @return the allocated device object, or RT_NULL when failed.
+ */
+rt_device_t rt_device_create(int type, int attach_size)
+{
+	int size;
+	rt_device_t device;
+
+	size = RT_ALIGN(sizeof(struct rt_device), RT_ALIGN_SIZE);
+	size += attach_size;
+
+	device = (rt_device_t)rt_malloc(size);
+	if (device)
+	{
+		rt_memset(device, 0x0, sizeof(struct rt_device));
+		device->type = type;
+	}
+
+	return device;
+}
+RTM_EXPORT(rt_device_create);
+
+/**
+ * This function destroy the specific device object.
+ *
+ * @param device, the specific device object.
+ */
+void rt_device_destroy(rt_device_t device)
+{
+	/* unregister device firstly */
+	rt_device_unregister(device);
+
+	/* release this device object */
+	rt_free(device);
+}
+RTM_EXPORT(rt_device_destroy);
+#endif
 
 /**
  * This function will initialize the specified device

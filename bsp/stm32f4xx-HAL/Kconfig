@@ -290,6 +290,9 @@ config RT_HSE_VALUE
     int "HSE Value"
     default 8000000
     depends on !RT_USING_HSI
+config RT_HSE_HCLK
+    int "System Clock Value"
+    default 84000000
 config RT_USING_UART1
     bool "Using UART1"
     default y    
@@ -334,6 +337,25 @@ if RT_USING_USB_DEVICE
     config USB_PRODUCT_ID
         hex "USB PID"
         default 0x5750
+endif
+
+if RT_USING_USB_HOST
+menu "USB Host Config"
+    config USBH_USING_CONTROLLABLE_POWER
+        bool "using a gpio control usb power"
+        default y
+    if USBH_USING_CONTROLLABLE_POWER
+        config USBH_POWER_PIN
+            int "power control pin"
+            default 15
+        config USBH_CURRENT_PIN
+            int "current check pin"
+            default 86
+    endif
+    config USBH_USING_VBUS
+        bool "using vbus check pin"
+        default n
+endmenu
 endif
 
 

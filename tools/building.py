@@ -285,6 +285,16 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             menuconfig(Rtt_Root)
             exit(0)
 
+    AddOption('--useconfig',
+                dest = 'useconfig',
+                type='string',
+                help = 'make rtconfig.h from config file.')
+    configfn = GetOption('useconfig')
+    if configfn:
+        from menuconfig import mk_rtconfig
+        mk_rtconfig(configfn)
+        exit(0)
+
     # add comstr option
     AddOption('--verbose',
                 dest='verbose',
@@ -302,6 +312,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             CXXCOMSTR = 'CXX $TARGET',
             LINKCOMSTR = 'LINK $TARGET'
         )
+
+    # fix the linker for C++
+    if GetDepend('RT_USING_CPLUSPLUS'):
+        if env['LINK'].find('gcc') != -1:
+            env['LINK'] = env['LINK'].replace('gcc', 'g++')
 
     # we need to seperate the variant_dir for BSPs and the kernels. BSPs could
     # have their own components etc. If they point to the same folder, SCons

@@ -164,15 +164,15 @@ rt_module_t rt_module_find(const char *name)
     struct rt_object *object;
     struct rt_list_node *node;
 
-    extern struct rt_object_information rt_object_container[];
-
     RT_DEBUG_NOT_IN_INTERRUPT;
 
     /* enter critical */
     rt_enter_critical();
 
     /* try to find device object */
-    information = &rt_object_container[RT_Object_Class_Module];
+    information = rt_object_get_information(RT_Object_Class_Module);
+    RT_ASSERT(information != RT_NULL);
+
     for (node = information->object_list.next;
         node != &(information->object_list);
         node = node->next)

@@ -12,17 +12,20 @@ if RT_USING_DFS
         default y
 
     config DFS_FILESYSTEMS_MAX
-        int "The maximal number of mounted file system"
-        default 2
+        int "The maximal number of mounted file system"        
+        default 4 if RT_USING_DFS_NFS
+        default 2 
 
     config DFS_FILESYSTEM_TYPES_MAX
         int "The maximal number of file system type"
-        default 2
+        default 4 if RT_USING_DFS_NFS
+        default 2 
 
     config DFS_FD_MAX
         int "The maximal number of opened files"
+        default 16 if RT_USING_DFS_NFS
         default 4
-    
+
     config RT_USING_DFS_ELMFAT
         bool "Enable elm-chan fatfs"
         default y
@@ -51,18 +54,18 @@ if RT_USING_DFS
 
             config RT_DFS_ELM_USE_LFN_2
                 bool "2: LFN with dynamic LFN working buffer on the stack"
-            
+
             config RT_DFS_ELM_USE_LFN_3
                 bool "3: LFN with dynamic LFN working buffer on the heap"
         endchoice
-        
+
         config RT_DFS_ELM_USE_LFN
             int
             default 0 if RT_DFS_ELM_USE_LFN_0
             default 1 if RT_DFS_ELM_USE_LFN_1
             default 2 if RT_DFS_ELM_USE_LFN_2
             default 3 if RT_DFS_ELM_USE_LFN_3
-        
+
         config RT_DFS_ELM_MAX_LFN
             int "Maximal size of file name length"
             range 12 255
@@ -81,7 +84,7 @@ if RT_USING_DFS
         config RT_DFS_ELM_USE_ERASE
             bool "Enable sector erase feature"
             default n
-        
+
         config RT_DFS_ELM_REENTRANT
             bool "Enable the reentrancy (thread safe) of the FatFs module"
             default y
@@ -91,7 +94,7 @@ if RT_USING_DFS
     config RT_USING_DFS_DEVFS
         bool "Using devfs for device objects"
         default y
-    
+
     config RT_USING_DFS_NET
         bool "Enable BSD socket operated by file system API"
         select RT_USING_LWIP
@@ -140,23 +143,28 @@ if RT_USING_DFS
 
             config RT_UFFS_ECC_MODE_2
                 bool "2: Flash driver(or by hardware) calculate the ECC"
-            
+
             config RT_UFFS_ECC_MODE_3
                 bool "3: Hardware calculate the ECC and automatically write to spare."
         endchoice
-        
+
         config RT_UFFS_ECC_MODE
             int
             default 0 if RT_UFFS_ECC_MODE_0
             default 1 if RT_UFFS_ECC_MODE_1
             default 2 if RT_UFFS_ECC_MODE_2
             default 3 if RT_UFFS_ECC_MODE_3
-        
+
     endif
+
+    config RT_USING_DFS_JFFS2
+        bool "Enable JFFS2 file system"
+        select RT_USING_MTD_NOR
+        default n
 
     config RT_USING_DFS_NFS
         bool "Using NFS v3 client file system"
-        depends on RT_USING_LWIP
+        select RT_USING_LWIP
         default n
 
     if RT_USING_DFS_NFS

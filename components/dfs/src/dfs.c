@@ -20,6 +20,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2005-02-22     Bernard      The first version.
+ * 2017-12-11     Bernard      Use rt_free to instead of free in fd_is_open().
  */
 
 #include <dfs.h>
@@ -219,7 +220,7 @@ int fd_is_open(const char *pathname)
         if (fs == NULL)
         {
             /* can't find mounted file system */
-            free(fullpath);
+            rt_free(fullpath);
 
             return -1;
         }
@@ -403,10 +404,17 @@ up_one:
     if ((dst != fullpath) && (*dst == '/'))
         *dst = '\0';
 
+    /* final check fullpath is not empty, for the special path of lwext "/.." */
+    if ('\0' == fullpath[0])
+    {
+        fullpath[0] = '/';
+        fullpath[1] = '\0';
+    }
+
     return fullpath;
 }
 RTM_EXPORT(dfs_normalize_path);
-
+#ifdef RT_USING_FINSH
 #include <finsh.h>
 int list_fd(void)
 {
@@ -438,6 +446,6 @@ int list_fd(void)
     return 0;
 }
 MSH_CMD_EXPORT(list_fd, list file descriptor);
-
+#endif
 /*@}*/
 

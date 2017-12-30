@@ -23,6 +23,7 @@
  * 2010-06-30     Bernard      Optimize for RT-Thread RTOS
  * 2011-03-12     Bernard      fix the filesystem lookup issue.
  * 2017-11-30     Bernard      fix the filesystem_operation_table issue.
+ * 2017-12-05     Bernard      fix the fs type search issue in mkfs.
  */
 
 #include <dfs_fs.h>
@@ -454,7 +455,7 @@ int dfs_mkfs(const char *fs_name, const char *device_name)
     /* lock file system */
     dfs_lock();
     /* find the file system operations */
-    for (index = 0; index < DFS_FILESYSTEM_TYPES_MAX; index ++)
+    for (index = 0; index <= DFS_FILESYSTEM_TYPES_MAX; index ++)
     {
         if (filesystem_operation_table[index] != NULL &&
             strcmp(filesystem_operation_table[index]->name, fs_name) == 0)
@@ -462,7 +463,7 @@ int dfs_mkfs(const char *fs_name, const char *device_name)
     }
     dfs_unlock();
 
-    if (index < DFS_FILESYSTEM_TYPES_MAX)
+    if (index <= DFS_FILESYSTEM_TYPES_MAX)
     {
         /* find file system operation */
         const struct dfs_filesystem_ops *ops = filesystem_operation_table[index];

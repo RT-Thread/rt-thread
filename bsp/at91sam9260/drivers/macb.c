@@ -876,7 +876,7 @@ int rt_hw_macb_init(void)
 	if (ret != RT_EOK)
 	{
 		rt_kprintf("AT91 EMAC initialized failed\n");
-		return;
+		return -1;
 	}
 	rt_sem_init(&macb_device.tx_ack, "tx_ack", 0, RT_IPC_FLAG_FIFO);
 	rt_sem_init(&macb_device.tx_lock, "tx_lock", 1, RT_IPC_FLAG_FIFO);

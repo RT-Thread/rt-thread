@@ -28,7 +28,7 @@
 
 #include <netif/ethernetif.h>
 #include "lwipopts.h"
-     
+
 #define ENET_RXBD_NUM (4)
 #define ENET_TXBD_NUM (4)
 #define ENET_RXBUFF_SIZE (ENET_FRAME_MAX_FRAMELEN)
@@ -37,31 +37,32 @@
 #define PHY_ADDRESS     0x02u
 
 /* debug option */
-//#define DEBUG
 //#define ETH_RX_DUMP
 //#define ETH_TX_DUMP
 
-#ifdef DEBUG
-#define ETH_PRINTF          rt_kprintf
-#else
-#define ETH_PRINTF(...)
-#endif
+#define DBG_ENABLE
+#define DBG_SECTION_NAME    "[ETH]"
+#define DBG_COLOR
+#define DBG_LEVEL           DBG_INFO
+#include <rtdbg.h>
 
 #define MAX_ADDR_LEN 6
-
 
 struct rt_imxrt_eth
 {
 	/* inherit from ethernet device */
 	struct eth_device parent;
-    
+
     enet_handle_t enet_handle;
     ENET_Type *enet_base;
     enet_data_error_stats_t error_statistic;
 	rt_uint8_t  dev_addr[MAX_ADDR_LEN];			/* hw address	*/
-    
+
     rt_bool_t tx_is_waiting;
     struct rt_semaphore tx_wait;
+
+    enet_mii_speed_t speed;
+    enet_mii_duplex_t duplex;
 };
 
 ALIGN(ENET_BUFF_ALIGNMENT) enet_tx_bd_struct_t g_txBuffDescrip[ENET_TXBD_NUM] SECTION("NonCacheable");
@@ -75,9 +76,9 @@ static struct rt_imxrt_eth imxrt_eth_device;
 void _enet_rx_callback(struct rt_imxrt_eth * eth)
 {
     rt_err_t result;
-    
+
     ENET_DisableInterrupts(eth->enet_base, kENET_RxFrameInterrupt);
-    
+
     result = eth_device_ready(&(eth->parent));
     if( result != RT_EOK )
         rt_kprintf("RX err =%d\n", result );
@@ -97,30 +98,30 @@ void _enet_callback(ENET_Type *base, enet_handle_t *handle, enet_event_t event, 
     switch(event)
     {
     case kENET_RxEvent:
-        
+
         _enet_rx_callback((struct rt_imxrt_eth *)userData);
         break;
-        
+
     case kENET_TxEvent:
         _enet_tx_callback((struct rt_imxrt_eth *)userData);
         break;
-        
+
     case kENET_ErrEvent:
         //rt_kprintf("kENET_ErrEvent\n");
         break;
-        
+
     case kENET_WakeUpEvent:
         //rt_kprintf("kENET_WakeUpEvent\n");
         break;
-        
+
     case kENET_TimeStampEvent:
         //rt_kprintf("kENET_TimeStampEvent\n");
         break;
-        
+
     case kENET_TimeStampAvailEvent:
         //rt_kprintf("kENET_TimeStampAvailEvent \n");
         break;
-        
+
     default:
         //rt_kprintf("unknow error\n");
         break;
@@ -314,21 +315,21 @@ static void _enet_io_init(void)
                                                  Pull Up / Down Config. Field: 100K Ohm Pull Up
                                                  Hyst. Enable Field: Hysteresis Disabled */
 
-  
+
 }
 
 static void _enet_clk_init(void)
 {
     const clock_enet_pll_config_t config = {true, false, false, 1, 1};
     CLOCK_InitEnetPll(&config);
-    
+
     IOMUXC_EnableMode(IOMUXC_GPR, kIOMUXC_GPR_ENET1TxClkOutputDir, true);
 }
 
 static void _delay(void)
 {
     volatile int i = 1000000;
-    
+
     while (i--)
         i = i;
 }
@@ -336,7 +337,7 @@ static void _delay(void)
 static void _enet_phy_reset_by_gpio(void)
 {
     gpio_pin_config_t gpio_config = {kGPIO_DigitalOutput, 0, kGPIO_NoIntmode};
-    
+
     GPIO_PinInit(GPIO1, 9, &gpio_config);
     GPIO_PinInit(GPIO1, 10, &gpio_config);
     /* pull up the ENET_INT before RESET. */
@@ -350,11 +351,7 @@ static void _enet_config(void)
 {
     enet_config_t config;
     uint32_t sysClock;
-    status_t status;
-    phy_speed_t speed;
-    phy_duplex_t duplex;
-    bool link = false;
-    
+
     /* prepare the buffer configuration. */
     enet_buffer_config_t buffConfig = {
         ENET_RXBD_NUM,
@@ -366,7 +363,7 @@ static void _enet_config(void)
         &g_rxDataBuff[0][0],
         &g_txDataBuff[0][0],
     };
-    
+
     /* Get default configuration. */
     /*
      * config.miiMode = kENET_RmiiMode;
@@ -377,38 +374,26 @@ static void _enet_config(void)
     ENET_GetDefaultConfig(&config);
     config.interrupt = kENET_TxFrameInterrupt | kENET_RxFrameInterrupt;
     //config.interrupt = 0xFFFFFFFF;
-    
+    config.miiSpeed = imxrt_eth_device.speed;
+    config.miiDuplex = imxrt_eth_device.duplex;
+
     /* Set SMI to get PHY link status. */
     sysClock = CLOCK_GetFreq(kCLOCK_AhbClk);
-    status = PHY_Init(imxrt_eth_device.enet_base, PHY_ADDRESS, sysClock);
-    while (status != kStatus_Success)
-    {
-        ETH_PRINTF("\r\nPHY Auto-negotiation failed. Please check the cable connection and link partner setting.\r\n");
-        status = PHY_Init(imxrt_eth_device.enet_base, PHY_ADDRESS, sysClock);
-    }
-    
-    PHY_GetLinkStatus(imxrt_eth_device.enet_base, PHY_ADDRESS, &link);
-    if (link)
-    {
-        /* Get the actual PHY link speed. */
-        PHY_GetLinkSpeedDuplex(imxrt_eth_device.enet_base, PHY_ADDRESS, &speed, &duplex);
-        /* Change the MII speed and duplex for actual link status. */
-        config.miiSpeed = (enet_mii_speed_t)speed;
-        config.miiDuplex = (enet_mii_duplex_t)duplex;
-    } 
-    
+
+    dbg_log(DBG_LOG, "deinit\n");
+    ENET_Deinit(imxrt_eth_device.enet_base);
+    dbg_log(DBG_LOG, "init\n");
     ENET_Init(imxrt_eth_device.enet_base, &imxrt_eth_device.enet_handle, &config, &buffConfig, &imxrt_eth_device.dev_addr[0], sysClock);
+    dbg_log(DBG_LOG, "set call back\n");
     ENET_SetCallback(&imxrt_eth_device.enet_handle, _enet_callback, &imxrt_eth_device);
+    dbg_log(DBG_LOG, "active read\n");
     ENET_ActiveRead(imxrt_eth_device.enet_base);
 }
 
 /* initialize the interface */
 static rt_err_t rt_imxrt_eth_init(rt_device_t dev)
 {
-    _enet_io_init();
-    _enet_clk_init();
-    _enet_phy_reset_by_gpio();
-    
+    dbg_log(DBG_LOG, "rt_imxrt_eth_init...\n");
     _enet_config();
 
     return RT_EOK;
@@ -416,33 +401,33 @@ static rt_err_t rt_imxrt_eth_init(rt_device_t dev)
 
 static rt_err_t rt_imxrt_eth_open(rt_device_t dev, rt_uint16_t oflag)
 {
-    ETH_PRINTF("rt_imxrt_eth_open...\n");
+    dbg_log(DBG_LOG, "rt_imxrt_eth_open...\n");
 	return RT_EOK;
 }
 
 static rt_err_t rt_imxrt_eth_close(rt_device_t dev)
 {
-    ETH_PRINTF("rt_imxrt_eth_close...\n");
+    dbg_log(DBG_LOG, "rt_imxrt_eth_close...\n");
 	return RT_EOK;
 }
 
 static rt_size_t rt_imxrt_eth_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
-    ETH_PRINTF("rt_imxrt_eth_read...\n");
+    dbg_log(DBG_LOG, "rt_imxrt_eth_read...\n");
 	rt_set_errno(-RT_ENOSYS);
 	return 0;
 }
 
 static rt_size_t rt_imxrt_eth_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
-    ETH_PRINTF("rt_imxrt_eth_write...\n");
+    dbg_log(DBG_LOG, "rt_imxrt_eth_write...\n");
 	rt_set_errno(-RT_ENOSYS);
 	return 0;
 }
 
 static rt_err_t rt_imxrt_eth_control(rt_device_t dev, int cmd, void *args)
 {
-    ETH_PRINTF("rt_imxrt_eth_control...\n");
+    dbg_log(DBG_LOG, "rt_imxrt_eth_control...\n");
 	switch(cmd)
 	{
 	case NIOCTL_GADDR:
@@ -468,7 +453,7 @@ rt_err_t rt_imxrt_eth_tx( rt_device_t dev, struct pbuf* p)
 	RT_ASSERT(p != NULL);
     RT_ASSERT(enet_handle != RT_NULL);
 
-	ETH_PRINTF("rt_imxrt_eth_tx: %d\n", p->len);
+	dbg_log(DBG_LOG, "rt_imxrt_eth_tx: %d\n", p->len);
 
 #ifdef ETH_TX_DUMP
 	{
@@ -477,11 +462,11 @@ rt_err_t rt_imxrt_eth_tx( rt_device_t dev, struct pbuf* p)
 		buf = (uint8_t *)p->payload;
 		for (i = 0; i < p->len; i++)
 		{
-			ETH_PRINTF("%02X ", buf[i]);
+			dbg_log(DBG_LOG, "%02X ", buf[i]);
 			if (i % 16 == 15)
-				ETH_PRINTF("\n");
+				dbg_log(DBG_LOG, "\n");
 		}
-		ETH_PRINTF("\n");
+		dbg_log(DBG_LOG, "\n");
 	}
 #endif
 
@@ -504,12 +489,12 @@ struct pbuf *rt_imxrt_eth_rx(rt_device_t dev)
 {
  	uint32_t length = 0;
 	status_t status;
-    
+
 	struct pbuf* p = RT_NULL;
 	enet_handle_t * enet_handle = &imxrt_eth_device.enet_handle;
     ENET_Type *enet_base = imxrt_eth_device.enet_base;
     enet_data_error_stats_t *error_statistic = &imxrt_eth_device.error_statistic;
-    
+
 	/* Get the Frame size */
 	status = ENET_GetRxFrameSize(enet_handle, &length);
 
@@ -518,7 +503,7 @@ struct pbuf *rt_imxrt_eth_rx(rt_device_t dev)
 	{
 		/* Received valid frame. Deliver the rx buffer with the size equal to length. */
 		p = pbuf_alloc(PBUF_RAW, length, PBUF_POOL);
-        
+
         if (p != NULL)
         {
             status = ENET_ReadFrame(enet_base, enet_handle, p->payload, length);
@@ -532,28 +517,28 @@ struct pbuf *rt_imxrt_eth_rx(rt_device_t dev)
                 buf = (uint8_t *)p->payload;
                 for (i = 0; i < p->len; i++)
                 {
-                    ETH_PRINTF("%02X ", buf[i]);
+                    dbg_log(DBG_LOG, "%02X ", buf[i]);
                     if (i % 16 == 15)
-                        ETH_PRINTF("\n");
+                        dbg_log(DBG_LOG, "\n");
                 }
-                ETH_PRINTF("\n");
+                dbg_log(DBG_LOG, "\n");
     #endif
                 return p;
             }
             else
             {
-                ETH_PRINTF(" A frame read failed\n");
+                dbg_log(DBG_LOG, " A frame read failed\n");
                 pbuf_free(p);
             }
         }
         else
         {
-            ETH_PRINTF(" pbuf_alloc faild\n");
+            dbg_log(DBG_LOG, " pbuf_alloc faild\n");
         }
 	}
 	else if (status == kStatus_ENET_RxFrameError)
 	{
-		ETH_PRINTF("ENET_GetRxFrameSize: kStatus_ENET_RxFrameError\n");
+		dbg_log(DBG_WARNING, "ENET_GetRxFrameSize: kStatus_ENET_RxFrameError\n");
 		/* Update the received buffer when error happened. */
 		/* Get the error information of the received g_frame. */
 		ENET_GetRxErrBeforeReadFrame(enet_handle, error_statistic);
@@ -565,10 +550,81 @@ struct pbuf *rt_imxrt_eth_rx(rt_device_t dev)
     return NULL;
 }
 
+static void phy_monitor_thread_entry(void *parameter)
+{
+    
+    phy_speed_t speed;
+    phy_duplex_t duplex;
+    bool link = false;
+    
+    _enet_phy_reset_by_gpio();
+
+    PHY_Init(imxrt_eth_device.enet_base, PHY_ADDRESS, CLOCK_GetFreq(kCLOCK_AhbClk));
+    
+    while (1)
+    {
+        bool new_link = false;
+        status_t status = PHY_GetLinkStatus(imxrt_eth_device.enet_base, PHY_ADDRESS, &new_link);
+        
+        if ((status == kStatus_Success) && (link != new_link))
+        {
+            link = new_link;
+            
+            if (link)   // link up
+            {
+                PHY_GetLinkSpeedDuplex(imxrt_eth_device.enet_base, PHY_ADDRESS, &speed, &duplex);
+                
+                if (kENET_MiiSpeed10M == speed)
+                {
+                    dbg_log(DBG_LOG, "10M\n");
+                }
+                else
+                {
+                    dbg_log(DBG_LOG, "100M\n");
+                }
+                
+                if (kENET_MiiHalfDuplex == duplex)
+                {
+                    dbg_log(DBG_LOG, "half dumplex\n");
+                }
+                else
+                {
+                    dbg_log(DBG_LOG, "full dumplex\n");
+                }
+                
+                if ((imxrt_eth_device.speed != speed) || (imxrt_eth_device.duplex != duplex))
+                {
+                    imxrt_eth_device.speed = (enet_mii_speed_t)speed; 
+                    imxrt_eth_device.duplex = (enet_mii_duplex_t)duplex;
+                    
+                    dbg_log(DBG_LOG, "link up, and update eth mode.\n");
+                    rt_imxrt_eth_init((rt_device_t)&imxrt_eth_device);
+                }
+                else
+                {
+                    dbg_log(DBG_LOG, "link up, eth not need re-config.\n");
+                }
+                dbg_log(DBG_LOG, "link up.\n");
+                eth_device_linkchange(&imxrt_eth_device.parent, RT_TRUE);
+            }
+            else        // link down
+            {
+                dbg_log(DBG_LOG, "link down.\n");
+                eth_device_linkchange(&imxrt_eth_device.parent, RT_FALSE);
+            }
+        }
+        
+        rt_thread_delay(RT_TICK_PER_SECOND * 2);
+    }
+}
+
 static int rt_hw_imxrt_eth_init(void)
 {
     rt_err_t state;
 
+    _enet_io_init();
+    _enet_clk_init();
+    
     /* OUI 00-80-E1 STMICROELECTRONICS. */
     imxrt_eth_device.dev_addr[0] = 0x00;
     imxrt_eth_device.dev_addr[1] = 0x80;
@@ -578,6 +634,9 @@ static int rt_hw_imxrt_eth_init(void)
     imxrt_eth_device.dev_addr[4] = 0x34;
     imxrt_eth_device.dev_addr[5] = 0x56;
     
+    imxrt_eth_device.speed = kENET_MiiSpeed100M; 
+    imxrt_eth_device.duplex = kENET_MiiFullDuplex;
+
     imxrt_eth_device.enet_base = ENET;
 
     imxrt_eth_device.parent.parent.init       = rt_imxrt_eth_init;
@@ -591,21 +650,37 @@ static int rt_hw_imxrt_eth_init(void)
     imxrt_eth_device.parent.eth_rx     = rt_imxrt_eth_rx;
     imxrt_eth_device.parent.eth_tx     = rt_imxrt_eth_tx;
 
-    ETH_PRINTF("sem init: tx_wait\r\n");
+    dbg_log(DBG_LOG, "sem init: tx_wait\r\n");
     /* init tx semaphore */
     rt_sem_init(&imxrt_eth_device.tx_wait, "tx_wait", 0, RT_IPC_FLAG_FIFO);
 
     /* register eth device */
-    ETH_PRINTF("eth_device_init start\r\n");
+    dbg_log(DBG_LOG, "eth_device_init start\r\n");
     state = eth_device_init(&(imxrt_eth_device.parent), "e0");
     if (RT_EOK == state)
     {
-        ETH_PRINTF("eth_device_init success\r\n");
+        dbg_log(DBG_LOG, "eth_device_init success\r\n");
     }
     else
     {
-        ETH_PRINTF("eth_device_init faild: %d\r\n", state);
+        dbg_log(DBG_LOG, "eth_device_init faild: %d\r\n", state);
     }
+    
+    eth_device_linkchange(&imxrt_eth_device.parent, RT_FALSE);
+    
+    /* start phy monitor */
+    {
+        rt_thread_t tid;
+        tid = rt_thread_create("phy",
+                               phy_monitor_thread_entry,
+                               RT_NULL,
+                               512,
+                               RT_THREAD_PRIORITY_MAX - 2,
+                               2);
+        if (tid != RT_NULL)
+            rt_thread_startup(tid);
+    }
+    
     return state;
 }
 INIT_DEVICE_EXPORT(rt_hw_imxrt_eth_init);
@@ -618,7 +693,7 @@ void phy_read(uint32_t phyReg)
 {
     uint32_t data;
     status_t status;
-        
+
     status = PHY_Read(imxrt_eth_device.enet_base, PHY_ADDRESS, phyReg, &data);
     if (kStatus_Success == status)
     {
@@ -633,7 +708,7 @@ void phy_read(uint32_t phyReg)
 void phy_write(uint32_t phyReg, uint32_t data)
 {
     status_t status;
-        
+
     status = PHY_Write(imxrt_eth_device.enet_base, PHY_ADDRESS, phyReg, data);
     if (kStatus_Success == status)
     {
@@ -649,7 +724,7 @@ void phy_dump(void)
 {
     uint32_t data;
     status_t status;
-    
+
     int i;
     for (i = 0; i < 32; i++)
     {
@@ -659,7 +734,7 @@ void phy_dump(void)
             rt_kprintf("phy_dump: %02X --> faild", i);
             break;
         }
-        
+
         if (i % 8 == 7)
         {
             rt_kprintf("%02X --> %08X ", i, data);
@@ -668,17 +743,17 @@ void phy_dump(void)
         {
             rt_kprintf("%02X --> %08X\n", i, data);
         }
-        
+
     }
 }
 
 void enet_reg_dump(void)
 {
     ENET_Type *enet_base = imxrt_eth_device.enet_base;
-    
+
 #define DUMP_REG(__REG)  \
     rt_kprintf("%s(%08X): %08X\n", #__REG, (uint32_t)&enet_base->__REG, enet_base->__REG)
-        
+
 	DUMP_REG(EIR);
 	DUMP_REG(EIMR);
 	DUMP_REG(RDAR);
@@ -785,16 +860,16 @@ void enet_nvic_tog(void)
 void enet_rx_stat(void)
 {
     enet_data_error_stats_t *error_statistic = &imxrt_eth_device.error_statistic;
-    
+
 #define DUMP_STAT(__VAR)  \
     rt_kprintf("%-25s: %08X\n", #__VAR, error_statistic->__VAR);
-    
+
     DUMP_STAT(statsRxLenGreaterErr);
     DUMP_STAT(statsRxAlignErr);
     DUMP_STAT(statsRxFcsErr);
     DUMP_STAT(statsRxOverRunErr);
     DUMP_STAT(statsRxTruncateErr);
-    
+
 #ifdef ENET_ENHANCEDBUFFERDESCRIPTOR_MODE
     DUMP_STAT(statsRxProtocolChecksumErr);
     DUMP_STAT(statsRxIpHeadChecksumErr);
@@ -808,8 +883,8 @@ void enet_rx_stat(void)
     DUMP_STAT(statsTxExcessCollisionErr);
     DUMP_STAT(statsTxUnderFlowErr);
     DUMP_STAT(statsTxTsErr);
-#endif  
-    
+#endif
+
 }
 
 void enet_buf_info(void)
@@ -818,7 +893,7 @@ void enet_buf_info(void)
     int i = 0;
     for (i = 0; i < ENET_RXBD_NUM; i++)
     {
-        rt_kprintf("%d: length: %-8d, control: %04X, buffer:%p\n", 
+        rt_kprintf("%d: length: %-8d, control: %04X, buffer:%p\n",
                     i,
                     g_rxBuffDescrip[i].length,
                     g_rxBuffDescrip[i].control,
@@ -827,7 +902,7 @@ void enet_buf_info(void)
 
     for (i = 0; i < ENET_TXBD_NUM; i++)
     {
-        rt_kprintf("%d: length: %-8d, control: %04X, buffer:%p\n", 
+        rt_kprintf("%d: length: %-8d, control: %04X, buffer:%p\n",
                     i,
                     g_txBuffDescrip[i].length,
                     g_txBuffDescrip[i].control,

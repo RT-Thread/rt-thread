@@ -49,7 +49,7 @@
 #include <stdbool.h>
 
 #include "am_mcu_apollo.h"
-#include "am_util.h"
+//#include "am_util.h"
 #include "am_hal_i2c_bit_bang.h"
 
 // Max number of clock cycles to wait for clock stretch
@@ -133,7 +133,7 @@ static am_hal_i2c_bit_bang_priv_t am_hal_i2c_bit_bang_priv;
 // Wait for any stretched clock to go high
 // If it times out - return failure
 //
-static inline bool
+static bool
 i2c_pull_and_wait_scl_hi(void)
 {
     // Maximum time to wait for clock stretching
@@ -284,7 +284,7 @@ am_hal_i2c_bit_bang_init(uint32_t sck_gpio_number,
 //! returns the byte received
 //
 //*****************************************************************************
-static inline am_hal_i2c_bit_bang_enum_t
+static am_hal_i2c_bit_bang_enum_t
 i2c_receive_byte(uint8_t *pRxByte, bool bNack)
 {
     int i;
@@ -389,7 +389,7 @@ i2c_receive_byte(uint8_t *pRxByte, bool bNack)
 //!     }
 //
 //*****************************************************************************
-static inline am_hal_i2c_bit_bang_enum_t
+static am_hal_i2c_bit_bang_enum_t
 i2c_send_byte(uint8_t one_byte)
 {
     int i;

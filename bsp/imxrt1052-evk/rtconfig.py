@@ -40,17 +40,18 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
     STRIP = PREFIX + 'strip'
 
-    DEVICE = ' -std=c99 -mcpu=cortex-m7 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -g -Wall -DUSE_HAL_DRIVER -D__ASSEMBLY__ -D__FPU_USED -eentry'
+    DEVICE = ' -mcpu=cortex-m7 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -ffunction-sections -fdata-sections'
+    CFLAGS = DEVICE + ' -std=c99 -Wall -DUSE_HAL_DRIVER -D__ASSEMBLY__ -D__FPU_PRESENT -eentry'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=imxrt1052_sdram.map,-cref,-u,Reset_Handler -T imxrt1052_sdram.ld'
+    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=imxrt1052_sdram.map,-cref,-u,Reset_Handler -T ./Libraries/gcc/MIMXRT1052xxxxx_flexspi_nor.ld'
 
     CPATH = ''
     LPATH = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O0 -gdwarf-2'
+        CFLAGS += ' -gdwarf-2'
         AFLAGS += ' -gdwarf-2'
+        CFLAGS += ' -O0'
     else:
         CFLAGS += ' -O2 -Os'
 
@@ -67,6 +68,7 @@ if PLATFORM == 'gcc':
 elif PLATFORM == 'armcc':
     # toolchains
     CC = 'armcc'
+    CXX = 'armcc'
     AS = 'armasm'
     AR = 'armar'
     LINK = 'armlink'
@@ -75,9 +77,9 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --cpu Cortex-M7.fp.sp'
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-imxrt.map --scatter imxrt1052_sdram.sct'
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-imxrt.map --scatter ./Libraries/arm/MIMXRT1052xxxxx_flexspi_nor.scf'
 
-    CFLAGS += ' --c99  --diag_suppress=66,1296,186'
+    CFLAGS += ' --diag_suppress=66,1296,186'
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
     LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
 
@@ -89,7 +91,11 @@ elif PLATFORM == 'armcc':
     else:
         CFLAGS += ' -O2'
 
-    POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
+    CXXFLAGS = CFLAGS
+    CFLAGS += ' --c99'
+
+    POST_ACTION = 'fromelf -z $TARGET'
+    # POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
 elif PLATFORM == 'iar':
     # toolchains
@@ -126,7 +132,7 @@ elif PLATFORM == 'iar':
     AFLAGS += ' --cpu Cortex-M7'
     AFLAGS += ' --fpu None'
 
-    LFLAGS = ' --config imxrt1052_sdram.icf'
+    LFLAGS = ' --config ./Libraries/iar/MIMXRT1052xxxxx_flexspi_nor.icf'
     LFLAGS += ' --redirect _Printf=_PrintfTiny'
     LFLAGS += ' --redirect _Scanf=_ScanfSmall'
     LFLAGS += ' --entry __iar_program_start'

@@ -25,6 +25,7 @@
  * 2013-01-30     aozima       the first version
  * 2013-08-08     aozima       support different network segments.
  * 2015-01-30     bernard      release to RT-Thread RTOS.
+ * 2017-12-27     aozima       add [mac-ip] table support.
  */
 
 #include <stdio.h>
@@ -77,7 +78,25 @@
 /* buffer size for receive DHCP packet */
 #define BUFSZ               1024
 
-static uint8_t next_client_ip = DHCPD_CLIENT_IP_MIN;
+#ifndef MAC_ADDR_LEN
+#define MAC_ADDR_LEN     6
+#endif
+
+#ifndef MAC_TABLE_LEN
+#define MAC_TABLE_LEN     4
+#endif
+
+struct mac_addr_t
+{
+    uint8_t add[MAC_ADDR_LEN];
+};
+
+struct mac_ip_item_t
+{
+    struct mac_addr_t mac_addr;
+    uint8_t ip_addr_3;
+};
+
 static rt_err_t _low_level_dhcp_send(struct netif *netif,
                                      const void *buffer,
                                      rt_size_t size)
@@ -124,8 +143,65 @@ static rt_err_t _low_level_dhcp_send(struct netif *netif,
 
     netif->linkoutput(netif, p);
     pbuf_free(p);
-    
+
     return RT_EOK;
+}
+
+static uint8_t get_ip(struct mac_addr_t *p_mac_addr)
+{
+    static uint8_t next_client_ip = DHCPD_CLIENT_IP_MIN;
+    static struct mac_ip_item_t mac_table[MAC_TABLE_LEN];
+    static int offset = 0;
+
+    struct mac_addr_t bad_mac;
+    int i;
+    uint8_t ip_addr_3;
+
+    rt_memset(&bad_mac, 0, sizeof(bad_mac));
+    if (!rt_memcmp(&bad_mac, p_mac_addr, sizeof(bad_mac)))
+    {
+        DEBUG_PRINTF("mac address all zero");
+        ip_addr_3 = DHCPD_CLIENT_IP_MAX;
+        goto _return;
+    }
+
+    rt_memset(&bad_mac, 0xFF, sizeof(bad_mac));
+    if (!rt_memcmp(&bad_mac, p_mac_addr, sizeof(bad_mac)))
+    {
+        DEBUG_PRINTF("mac address all one");
+        ip_addr_3 = DHCPD_CLIENT_IP_MAX;
+        goto _return;
+    }
+
+    for (i = 0; i < MAC_TABLE_LEN; i++)
+    {
+        if (!rt_memcmp(&mac_table[i].mac_addr, p_mac_addr, sizeof(bad_mac)))
+        {
+            //use old ip
+            ip_addr_3 = mac_table[i].ip_addr_3;
+            DEBUG_PRINTF("return old ip: %d\n", (int)ip_addr_3);
+            goto _return;
+        }
+    }
+
+    /* add new ip */
+    mac_table[offset].mac_addr = *p_mac_addr;
+    mac_table[offset].ip_addr_3  = next_client_ip;
+    ip_addr_3 = mac_table[offset].ip_addr_3 ;
+
+    offset++;
+    if (offset >= MAC_TABLE_LEN)
+        offset = 0;
+
+    next_client_ip++;
+    if (next_client_ip > DHCPD_CLIENT_IP_MAX)
+        next_client_ip = DHCPD_CLIENT_IP_MIN;
+
+    DEBUG_PRINTF("create new ip: %d\n", (int)ip_addr_3);
+    DEBUG_PRINTF("next_client_ip %d\n", next_client_ip);
+
+_return:
+    return ip_addr_3;
 }
 
 static void dhcpd_thread_entry(void *parameter)
@@ -138,9 +214,10 @@ static void dhcpd_thread_entry(void *parameter)
     struct sockaddr_in server_addr, client_addr;
     struct dhcp_msg *msg;
     int optval = 1;
+    struct mac_addr_t mac_addr;
 
     /* get ethernet interface. */
-    netif = (struct netif*) parameter;
+    netif = (struct netif *) parameter;
     RT_ASSERT(netif != RT_NULL);
 
     /* our DHCP server information */
@@ -206,6 +283,8 @@ static void dhcpd_thread_entry(void *parameter)
             continue;
         }
 
+        memcpy(mac_addr.add, msg->chaddr, MAC_ADDR_LEN);
+
         /* handler. */
         {
             uint8_t *dhcp_opt;
@@ -215,6 +294,10 @@ static void dhcpd_thread_entry(void *parameter)
             uint8_t message_type = 0;
             uint8_t finished = 0;
             uint32_t request_ip  = 0;
+
+            uint8_t client_ip_3;
+
+            client_ip_3 = get_ip(&mac_addr);
 
             dhcp_opt = (uint8_t *)msg + DHCP_OPTIONS_OFS;
             while (finished == 0)
@@ -251,7 +334,9 @@ static void dhcpd_thread_entry(void *parameter)
             if (request_ip)
             {
                 uint32_t client_ip = DHCPD_SERVER_IPADDR0 << 24 | DHCPD_SERVER_IPADDR1 << 16
-                                     | DHCPD_SERVER_IPADDR2 << 8 | (next_client_ip);
+                                     | DHCPD_SERVER_IPADDR2 << 8 | client_ip_3;
+
+                DEBUG_PRINTF("message_type: %d, request_ip: %08X, client_ip: %08X.\n", message_type, request_ip, client_ip);
 
                 if (request_ip != client_ip)
                 {
@@ -261,15 +346,14 @@ static void dhcpd_thread_entry(void *parameter)
                     *dhcp_opt++ = DHCP_OPTION_END;
 
                     DEBUG_PRINTF("requested IP invalid, reply DHCP_NAK\n");
+
                     if (netif != RT_NULL)
                     {
                         int send_byte = (dhcp_opt - (uint8_t *)msg);
                         _low_level_dhcp_send(netif, msg, send_byte);
                         DEBUG_PRINTF("DHCP server send %d byte\n", send_byte);
                     }
-                    next_client_ip++;
-                    if (next_client_ip > DHCPD_CLIENT_IP_MAX)
-                        next_client_ip = DHCPD_CLIENT_IP_MIN;
+
                     continue;
                 }
             }
@@ -366,7 +450,7 @@ static void dhcpd_thread_entry(void *parameter)
                 msg->op = DHCP_BOOTREPLY;
                 IP4_ADDR(&msg->yiaddr,
                          DHCPD_SERVER_IPADDR0, DHCPD_SERVER_IPADDR1,
-                         DHCPD_SERVER_IPADDR2, next_client_ip);
+                         DHCPD_SERVER_IPADDR2, client_ip_3);
 
                 client_addr.sin_addr.s_addr = INADDR_BROADCAST;
 
@@ -381,27 +465,41 @@ static void dhcpd_thread_entry(void *parameter)
     }
 }
 
-void dhcpd_start(char* netif_name)
+void dhcpd_start(const char *netif_name)
 {
     rt_thread_t thread;
     struct netif *netif = netif_list;
 
-    if(strlen(netif_name) > sizeof(netif->name))
+    if (strlen(netif_name) > sizeof(netif->name))
     {
         rt_kprintf("network interface name too long!\r\n");
         return;
     }
-    while(netif != RT_NULL)
+    while (netif != RT_NULL)
     {
-        if(strncmp(netif_name, netif->name, sizeof(netif->name)) == 0)
+        if (strncmp(netif_name, netif->name, sizeof(netif->name)) == 0)
             break;
 
         netif = netif->next;
-        if( netif == RT_NULL )
+        if (netif == RT_NULL)
         {
             rt_kprintf("network interface: %s not found!\r\n", netif_name);
             return;
         }
+    }
+
+    if (1)
+    {
+        extern void set_if(const char *netif_name, const char *ip_addr, const char *gw_addr, const char *nm_addr);
+
+        char ip_str[4 * 4 + 1];
+
+        dhcp_stop(netif);
+
+        sprintf(ip_str, "%d.%d.%d.%d", DHCPD_SERVER_IPADDR0, DHCPD_SERVER_IPADDR1, DHCPD_SERVER_IPADDR2, DHCPD_SERVER_IPADDR3);
+        set_if(netif_name, ip_str, "0.0.0.0", "255.255.255.0");
+
+        netif_set_up(netif);
     }
 
     thread = rt_thread_create("dhcpd",

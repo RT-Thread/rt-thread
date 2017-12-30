@@ -18,8 +18,8 @@
 
 #ifdef RT_USBH_MSTORAGE
 
-extern rt_err_t rt_udisk_run(struct uintf* intf);
-extern rt_err_t rt_udisk_stop(struct uintf* intf);
+extern rt_err_t rt_udisk_run(struct uhintf* intf);
+extern rt_err_t rt_udisk_stop(struct uhintf* intf);
 
 static struct uclass_driver storage_driver;
 
@@ -31,7 +31,7 @@ static struct uclass_driver storage_driver;
  * 
  * @return the error code, RT_EOK on successfully.
  */
-static rt_err_t _pipe_check(struct uintf* intf, upipe_t pipe)
+static rt_err_t _pipe_check(struct uhintf* intf, upipe_t pipe)
 {
     struct uinstance* device;        
     rt_err_t ret;
@@ -59,11 +59,14 @@ static rt_err_t _pipe_check(struct uintf* intf, upipe_t pipe)
         rt_kprintf("pipe status error\n");
         return -RT_EIO;
     }
+    if(pipe->status == UPIPE_STATUS_STALL)
+    {
+        /* clear the pipe stall status */
+        ret = rt_usbh_clear_feature(device, pipe->ep.bEndpointAddress, 
+            USB_FEATURE_ENDPOINT_HALT);
+        if(ret != RT_EOK) return ret;
+    }
     
-    /* clear the pipe stall status */
-    ret = rt_usbh_clear_feature(device, pipe->ep.bEndpointAddress, 
-        USB_FEATURE_ENDPOINT_HALT);
-    if(ret != RT_EOK) return ret;
 
     rt_thread_delay(50);
 
@@ -74,7 +77,7 @@ static rt_err_t _pipe_check(struct uintf* intf, upipe_t pipe)
     RT_DEBUG_LOG(RT_DEBUG_USB, ("clean storage in pipe stall\n"));
 
     /* it should receive csw after clear the stall feature */
-    size = rt_usb_hcd_bulk_xfer(stor->pipe_in->intf->device->hcd, 
+    size = rt_usb_hcd_pipe_xfer(stor->pipe_in->inst->hcd, 
         stor->pipe_in, &csw, SIZEOF_CSW, 100);
     if(size != SIZEOF_CSW) 
     {
@@ -93,7 +96,7 @@ static rt_err_t _pipe_check(struct uintf* intf, upipe_t pipe)
  * 
  * @return the error code, RT_EOK on successfully.
  */
-static rt_err_t rt_usb_bulk_only_xfer(struct uintf* intf, 
+static rt_err_t rt_usb_bulk_only_xfer(struct uhintf* intf, 
     ustorage_cbw_t cmd, rt_uint8_t* buffer, int timeout)
 {
     rt_size_t size;
@@ -116,7 +119,7 @@ static rt_err_t rt_usb_bulk_only_xfer(struct uintf* intf,
     do
     {
         /* send the cbw */
-        size = rt_usb_hcd_bulk_xfer(intf->device->hcd, stor->pipe_out, 
+        size = rt_usb_hcd_pipe_xfer(stor->pipe_out->inst->hcd, stor->pipe_out, 
             cmd, SIZEOF_CBW, timeout);
         if(size != SIZEOF_CBW) 
         {
@@ -127,7 +130,7 @@ static rt_err_t rt_usb_bulk_only_xfer(struct uintf* intf,
         {
             pipe = (cmd->dflags == CBWFLAGS_DIR_IN) ? stor->pipe_in :
                 stor->pipe_out;
-            size = rt_usb_hcd_bulk_xfer(intf->device->hcd, pipe, (void*)buffer, 
+            size = rt_usb_hcd_pipe_xfer(pipe->inst->hcd, pipe, (void*)buffer, 
                 cmd->xfer_len, timeout);
             if(size != cmd->xfer_len)
             {
@@ -138,7 +141,7 @@ static rt_err_t rt_usb_bulk_only_xfer(struct uintf* intf,
         }
         
         /* receive the csw */
-        size = rt_usb_hcd_bulk_xfer(intf->device->hcd, stor->pipe_in, 
+        size = rt_usb_hcd_pipe_xfer(stor->pipe_in->inst->hcd, stor->pipe_in, 
             &csw, SIZEOF_CSW, timeout);
         if(size != SIZEOF_CSW) 
         {
@@ -172,7 +175,7 @@ static rt_err_t rt_usb_bulk_only_xfer(struct uintf* intf,
     
     if(csw.status != 0)
     {
-        rt_kprintf("csw status error\n");
+        //rt_kprintf("csw status error:%d\n",csw.status);
         return -RT_ERROR;
     }
     
@@ -187,7 +190,7 @@ static rt_err_t rt_usb_bulk_only_xfer(struct uintf* intf,
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_usbh_storage_get_max_lun(struct uintf* intf, rt_uint8_t* max_lun)
+rt_err_t rt_usbh_storage_get_max_lun(struct uhintf* intf, rt_uint8_t* max_lun)
 {
     struct uinstance* device;    
     struct urequest setup;
@@ -209,15 +212,24 @@ rt_err_t rt_usbh_storage_get_max_lun(struct uintf* intf, rt_uint8_t* max_lun)
     /* construct the request */
     setup.request_type = USB_REQ_TYPE_DIR_IN | USB_REQ_TYPE_CLASS | 
         USB_REQ_TYPE_INTERFACE;
-    setup.request = USBREQ_GET_MAX_LUN;
-    setup.index = intf->intf_desc->bInterfaceNumber;
-    setup.length = 1;
-    setup.value = 0;
+    setup.bRequest = USBREQ_GET_MAX_LUN;
+    setup.wValue = intf->intf_desc->bInterfaceNumber;
+    setup.wIndex = 0;
+    setup.wLength = 1;
 
     /* do control transfer request */
-    if(rt_usb_hcd_control_xfer(device->hcd, device, &setup, max_lun, 1, 
-        timeout) != 1) return -RT_EIO;
-
+    if(rt_usb_hcd_setup_xfer(device->hcd, device->pipe_ep0_out, &setup, timeout) != 8)
+    {
+        return -RT_EIO;
+    }
+    if(rt_usb_hcd_pipe_xfer(device->hcd, device->pipe_ep0_in, max_lun, 1, timeout) != 1)
+    {
+        return -RT_EIO;
+    }
+    if(rt_usb_hcd_pipe_xfer(device->hcd, device->pipe_ep0_out, RT_NULL, 0, timeout) != 0)
+    {
+        return -RT_EIO;
+    }
     return RT_EOK;
 }
 
@@ -228,7 +240,7 @@ rt_err_t rt_usbh_storage_get_max_lun(struct uintf* intf, rt_uint8_t* max_lun)
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_usbh_storage_reset(struct uintf* intf)
+rt_err_t rt_usbh_storage_reset(struct uhintf* intf)
 {
     struct urequest setup;
     struct uinstance* device;    
@@ -250,14 +262,19 @@ rt_err_t rt_usbh_storage_reset(struct uintf* intf)
     /* construct the request */
     setup.request_type = USB_REQ_TYPE_DIR_OUT | USB_REQ_TYPE_CLASS | 
         USB_REQ_TYPE_INTERFACE;
-    setup.request = USBREQ_MASS_STORAGE_RESET;
-    setup.index = intf->intf_desc->bInterfaceNumber;
-    setup.length = 0;
-    setup.value = 0;
+    setup.bRequest = USBREQ_MASS_STORAGE_RESET;
+    setup.wIndex = intf->intf_desc->bInterfaceNumber;
+    setup.wLength = 0;
+    setup.wValue = 0;
 
-    if(rt_usb_hcd_control_xfer(device->hcd, device, &setup, RT_NULL, 0, 
-        timeout) != 0) return -RT_EIO;
-    
+    if(rt_usb_hcd_setup_xfer(device->hcd, device->pipe_ep0_out, &setup, timeout) != 8)
+    {
+        return -RT_EIO;
+    }
+    if(rt_usb_hcd_pipe_xfer(device->hcd, device->pipe_ep0_in, RT_NULL, 0, timeout) != 0)
+    {
+        return -RT_EIO;
+    }
     return RT_EOK;
 }
 
@@ -271,7 +288,7 @@ rt_err_t rt_usbh_storage_reset(struct uintf* intf)
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_usbh_storage_read10(struct uintf* intf, rt_uint8_t *buffer, 
+rt_err_t rt_usbh_storage_read10(struct uhintf* intf, rt_uint8_t *buffer, 
     rt_uint32_t sector, rt_size_t count, int timeout)
 {
     struct ustorage_cbw cmd;
@@ -317,7 +334,7 @@ rt_err_t rt_usbh_storage_read10(struct uintf* intf, rt_uint8_t *buffer,
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_usbh_storage_write10(struct uintf* intf, rt_uint8_t *buffer, 
+rt_err_t rt_usbh_storage_write10(struct uhintf* intf, rt_uint8_t *buffer, 
     rt_uint32_t sector, rt_size_t count, int timeout)
 {
     struct ustorage_cbw cmd;
@@ -361,7 +378,7 @@ rt_err_t rt_usbh_storage_write10(struct uintf* intf, rt_uint8_t *buffer,
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_usbh_storage_request_sense(struct uintf* intf, rt_uint8_t* buffer)
+rt_err_t rt_usbh_storage_request_sense(struct uhintf* intf, rt_uint8_t* buffer)
 {
     struct ustorage_cbw cmd;
     int timeout = 200;
@@ -397,7 +414,7 @@ rt_err_t rt_usbh_storage_request_sense(struct uintf* intf, rt_uint8_t* buffer)
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_usbh_storage_test_unit_ready(struct uintf* intf)
+rt_err_t rt_usbh_storage_test_unit_ready(struct uhintf* intf)
 {
     struct ustorage_cbw cmd;
     int timeout = 200;
@@ -433,7 +450,7 @@ rt_err_t rt_usbh_storage_test_unit_ready(struct uintf* intf)
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_usbh_storage_inquiry(struct uintf* intf, rt_uint8_t* buffer)
+rt_err_t rt_usbh_storage_inquiry(struct uhintf* intf, rt_uint8_t* buffer)
 {
     struct ustorage_cbw cmd;
     int timeout = 200;
@@ -455,7 +472,7 @@ rt_err_t rt_usbh_storage_inquiry(struct uintf* intf, rt_uint8_t* buffer)
     cmd.xfer_len = 36;
     cmd.dflags = CBWFLAGS_DIR_IN;
     cmd.lun = 0;
-    cmd.cb_len = 12;
+    cmd.cb_len = 6;//12
     cmd.cb[0] = SCSI_INQUIRY_CMD;
     cmd.cb[4] = 36;
 
@@ -470,7 +487,7 @@ rt_err_t rt_usbh_storage_inquiry(struct uintf* intf, rt_uint8_t* buffer)
  * 
  * @return the error code, RT_EOK on successfully.
  */
-rt_err_t rt_usbh_storage_get_capacity(struct uintf* intf, rt_uint8_t* buffer)
+rt_err_t rt_usbh_storage_get_capacity(struct uhintf* intf, rt_uint8_t* buffer)
 {
     struct ustorage_cbw cmd;
     int timeout = 200;
@@ -512,7 +529,7 @@ static rt_err_t rt_usbh_storage_enable(void* arg)
     int i = 0;
     rt_err_t ret;    
     ustor_t stor;
-    struct uintf* intf = (struct uintf*)arg;
+    struct uhintf* intf = (struct uhintf*)arg;
 
     /* parameter check */
     if(intf == RT_NULL)
@@ -556,16 +573,12 @@ static rt_err_t rt_usbh_storage_enable(void* arg)
         if(ep_desc->bEndpointAddress & USB_DIR_IN)
         {
             /* alloc an in pipe for the storage instance */
-            ret = rt_usb_hcd_alloc_pipe(intf->device->hcd, &stor->pipe_in, 
-                intf, ep_desc, RT_NULL);
-            if(ret != RT_EOK) return ret;
+            stor->pipe_in = rt_usb_instance_find_pipe(intf->device,ep_desc->bEndpointAddress);
         }
         else
         {        
             /* alloc an output pipe for the storage instance */
-            ret = rt_usb_hcd_alloc_pipe(intf->device->hcd, &stor->pipe_out, 
-                intf, ep_desc, RT_NULL);            
-            if(ret != RT_EOK) return ret;
+            stor->pipe_out = rt_usb_instance_find_pipe(intf->device,ep_desc->bEndpointAddress);
         }
     }
 
@@ -594,7 +607,7 @@ static rt_err_t rt_usbh_storage_enable(void* arg)
 static rt_err_t rt_usbh_storage_disable(void* arg)
 {
     ustor_t stor;
-    struct uintf* intf = (struct uintf*)arg;
+    struct uhintf* intf = (struct uhintf*)arg;
 
     /* parameter check */
     RT_ASSERT(intf != RT_NULL);
@@ -608,23 +621,9 @@ static rt_err_t rt_usbh_storage_disable(void* arg)
 
     rt_udisk_stop(intf);
 
-    rt_kprintf("in 0x%x, out 0x%x\n", stor->pipe_in, 
-        stor->pipe_out);
-    
-    /* free in pipe */
-    if(stor->pipe_in != RT_NULL) 
-        rt_usb_hcd_free_pipe(intf->device->hcd, stor->pipe_in);    
-
-    /* free out pipe */
-    if(stor->pipe_out != RT_NULL)     
-        rt_usb_hcd_free_pipe(intf->device->hcd, stor->pipe_out);    
     
     /* free storage instance */
     if(stor != RT_NULL) rt_free(stor);
-
-    /* free interface instance */
-    if(intf != RT_NULL) rt_free(intf);
-
     return RT_EOK;
 }
 

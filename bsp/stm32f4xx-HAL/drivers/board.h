@@ -177,13 +177,13 @@
     defined(SOC_STM32F405VG)||\
     defined(SOC_STM32F405ZG)
 //#define STM32F405xx
-#define STM32_SRAM_SIZE 192-64
+#define STM32_SRAM_SIZE (192-64)
 #elif \
     defined(SOC_STM32F415RG)||\
     defined(SOC_STM32F415VG)||\
     defined(SOC_STM32F415ZG)
 //#define STM32F415xx
-#define STM32_SRAM_SIZE 192-64
+#define STM32_SRAM_SIZE (192-64)
 #elif \
     defined(SOC_STM32F407VG)||\
     defined(SOC_STM32F407VE)||\
@@ -192,7 +192,7 @@
     defined(SOC_STM32F407IG)||\
     defined(SOC_STM32F407IE)
 //#define STM32F407xx
-#define STM32_SRAM_SIZE 192-64
+#define STM32_SRAM_SIZE (192-64)
 #elif \
     defined(SOC_STM32F417VG)||\
     defined(SOC_STM32F417VE)||\
@@ -201,7 +201,7 @@
     defined(SOC_STM32F417IG)||\
     defined(SOC_STM32F417IE)
 //#define STM32F417xx
-#define STM32_SRAM_SIZE 192-64
+#define STM32_SRAM_SIZE (192-64)
 #elif \
     defined(SOC_STM32F427VG)||\
     defined(SOC_STM32F427VI)||\
@@ -210,7 +210,7 @@
     defined(SOC_STM32F427IG)||\
     defined(SOC_STM32F427II)
 //#define STM32F427xx
-#define STM32_SRAM_SIZE 256-64
+#define STM32_SRAM_SIZE (256-64)
 #elif \
     defined(SOC_STM32F437VG)||\
     defined(SOC_STM32F437VI)||\
@@ -219,7 +219,7 @@
     defined(SOC_STM32F437IG)||\
     defined(SOC_STM32F437II)
 //#define STM32F437xx
-#define STM32_SRAM_SIZE 256-64
+#define STM32_SRAM_SIZE (256-64)
 #elif \
     defined(SOC_STM32F429VG)||\
     defined(SOC_STM32F429VI)||\
@@ -232,7 +232,7 @@
     defined(SOC_STM32F429IG)||\
     defined(SOC_STM32F429II)
 //#define STM32F429xx
-#define STM32_SRAM_SIZE 256-64
+#define STM32_SRAM_SIZE (256-64)
 #elif \
     defined(SOC_STM32F439VG)||\
     defined(SOC_STM32F439VI)||\
@@ -245,7 +245,7 @@
     defined(SOC_STM32F439IG)||\
     defined(SOC_STM32F439II)
 //#define STM32F439xx
-#define STM32_SRAM_SIZE 256-64
+#define STM32_SRAM_SIZE (256-64)
 #elif \
     defined(SOC_STM32F401CB)||\
     defined(SOC_STM32F401CC)||\
@@ -313,7 +313,7 @@
     defined(SOC_STM32F469BE)||\
     defined(SOC_STM32F469NE)
 //#define STM32F469xx
-#define STM32_SRAM_SIZE 384-64
+#define STM32_SRAM_SIZE (384-64)
 #elif \
     defined(SOC_STM32F479AI)||\
     defined(SOC_STM32F479II)||\
@@ -324,7 +324,7 @@
     defined(SOC_STM32F479BG)||\
     defined(SOC_STM32F479NG)
 //#define STM32F479xx
-#define STM32_SRAM_SIZE 384-64
+#define STM32_SRAM_SIZE (384-64)
 #elif \
     defined(SOC_STM32F412CEU)||\
     defined(SOC_STM32F412CGU)
@@ -385,7 +385,7 @@ extern int Image$$RW_IRAM1$$ZI$$Limit;
 extern int __bss_end;
 #define HEAP_BEGIN  ((void *)&__bss_end)
 #endif
-#define HEAP_END    (0x20000000 + STM32_SRAM_SIZE*1024)
+#define HEAP_END    STM32_SRAM_END
 
 #endif
 extern void rt_hw_board_init(void);

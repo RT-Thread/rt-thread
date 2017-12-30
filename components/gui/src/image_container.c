@@ -393,13 +393,18 @@ rtgui_image_item_t *rtgui_image_container_get(const char *filename)
         if (item == RT_NULL)
         {
             item = (struct rtgui_image_item *) rtgui_malloc(sizeof(struct rtgui_image_item));
-            if (item == RT_NULL) return RT_NULL;
+            if (item == RT_NULL)
+			{
+				rt_mutex_release(&_image_hash_lock);
+				return RT_NULL;
+			}
 
             /* create a image object */
             item->image = rtgui_image_create(filename, RT_TRUE);
             if (item->image == RT_NULL)
             {
                 rtgui_free(item);
+				rt_mutex_release(&_image_hash_lock);
                 return RT_NULL; /* create image failed */
             }
             item->refcount = 1;

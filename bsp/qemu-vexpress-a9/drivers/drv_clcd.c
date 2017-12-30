@@ -102,7 +102,7 @@ int drv_clcd_hw_init(void)
     plio->tim0 = 0x3F1F3C00 | ((CLCD_WIDTH/16 - 1) << 2);
     plio->tim1 = 0x080B6000 | (CLCD_HEIGHT - 1);
 
-    plio->upbase = _lcd.fb;
+    plio->upbase = (uint32_t)_lcd.fb;
     /* 16-bit 565 color */
     plio->control = 0x1921 | (0x6 << 1);
 

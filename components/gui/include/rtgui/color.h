@@ -69,6 +69,10 @@ extern const rtgui_color_t default_background;
 #define HIGH_LIGHT         RTGUI_RGB(0xfc, 0xfc, 0xfc)
 #define DARK_GREY          RTGUI_RGB(0x7f, 0x7f, 0x7f)
 #define LIGHT_GREY         RTGUI_RGB(0xc0, 0xc0, 0xc0)
+
+#ifdef  TRANSPARENT
+#undef  TRANSPARENT
+#endif
 #define TRANSPARENT        RTGUI_ARGB(0, 0, 0, 0)
 
 extern const rtgui_color_t red;
