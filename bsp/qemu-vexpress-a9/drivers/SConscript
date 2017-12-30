@@ -5,7 +5,7 @@ src     = Glob('*.c')
 CPPPATH = [cwd]
 
 if not GetDepend('BSP_DRV_EMAC'):
-    SrcRemove(src, ['drv_lan9118.c'])
+    SrcRemove(src, ['drv_smc911x.c'])
 
 if not GetDepend('BSP_DRV_CLCD'):
     SrcRemove(src, ['drv_clcd.c'])
