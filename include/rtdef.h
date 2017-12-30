@@ -476,11 +476,12 @@ typedef void (*rt_sighandler_t)(int signo);
 #define RT_THREAD_RUNNING               0x03                /**< Running status */
 #define RT_THREAD_BLOCK                 RT_THREAD_SUSPEND   /**< Blocked status */
 #define RT_THREAD_CLOSE                 0x04                /**< Closed status */
-
 #define RT_THREAD_STAT_MASK             0x0f
 
 #define RT_THREAD_STAT_SIGNAL           0x10
 #define RT_THREAD_STAT_SIGNAL_READY     (RT_THREAD_STAT_SIGNAL | RT_THREAD_READY)
+#define RT_THREAD_STAT_SIGNAL_SUSPEND   0x20
+#define RT_THREAD_STAT_SIGNAL_MASK      0xf0
 
 /**
  * thread control command definitions
@@ -535,8 +536,8 @@ struct rt_thread
 #endif
 
 #if defined(RT_USING_SIGNALS)
-    rt_sigset_t sig_pending;                            /**< the pending signals */
-    rt_sigset_t sig_mask;                               /**< the mask bits of signal */
+    rt_sigset_t     sig_pending;                        /**< the pending signals */
+    rt_sigset_t     sig_mask;                           /**< the mask bits of signal */
 
     void            *sig_ret;                           /**< the return stack pointer from signal */
     rt_sighandler_t *sig_vectors;                       /**< vectors of signal handler */
