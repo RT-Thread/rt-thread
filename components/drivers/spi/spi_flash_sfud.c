@@ -310,7 +310,7 @@ rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const 
 
 error:
     /* may be one of objects memory was malloc success, so need free all */
-    rt_mutex_detach(&rtt_dev->lock);
+//    rt_mutex_detach(&rtt_dev->lock);;
     rt_free(rtt_dev);
     rt_free(sfud_dev);
     rt_free(spi_flash_dev_name_bak);
