@@ -157,6 +157,11 @@ if RT_USING_DFS
 
     endif
 
+    config RT_USING_DFS_JFFS2
+        bool "Enable JFFS2 file system"
+        select RT_USING_MTD_NOR
+        default n
+
     config RT_USING_DFS_NFS
         bool "Using NFS v3 client file system"
         select RT_USING_LWIP
