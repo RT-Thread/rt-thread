@@ -3,6 +3,7 @@ menu "Network stack"
 menu "light weight TCP/IP stack"
 config RT_USING_LWIP
     bool "Enable lwIP stack"
+	select RT_USING_DEVICE
     default n
 
     if RT_USING_LWIP
