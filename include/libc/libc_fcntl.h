@@ -16,6 +16,13 @@
 #define O_ACCMODE   (_O_RDONLY | _O_WRONLY | _O_RDWR)
 #endif
 
+#ifndef F_GETFL
+#define F_GETFL  3
+#endif
+#ifndef F_SETFL
+#define F_SETFL  4
+#endif
+
 #else
 #define O_RDONLY         00
 #define O_WRONLY         01

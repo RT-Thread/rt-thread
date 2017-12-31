@@ -428,28 +428,46 @@ RTM_EXPORT(fsync);
  * @return 0 on successful completion. Otherwise, -1 shall be returned and errno
  * set to indicate the error.
  */
-int ioctl(int fildes, int cmd, void *data)
+int fcntl(int fildes, int cmd, void *data)
 {
-    int ret;
+    int ret = -1;
     struct dfs_fd *d;
 
     /* get the fd */
     d = fd_get(fildes);
-    if (d == NULL)
+    if (d)
     {
-        rt_set_errno(-EBADF);
-        return -1;
+        ret = dfs_file_ioctl(d, cmd, data);
+        fd_put(d);
     }
+    else ret = -EBADF;
 
-    ret = dfs_file_ioctl(d, cmd, data);
     if (ret != 0)
     {
         rt_set_errno(ret);
         ret = -1;
     }
-    fd_put(d);
 
-    return ret;
+    return 0;
+}
+RTM_EXPORT(fcntl);
+
+/**
+ * this function is a POSIX compliant version, which shall perform a variety of
+ * control functions on devices.
+ *
+ * @param fildes the file description
+ * @param cmd the specified command
+ * @param data represents the additional information that is needed by this
+ * specific device to perform the requested function.
+ *
+ * @return 0 on successful completion. Otherwise, -1 shall be returned and errno
+ * set to indicate the error.
+ */
+int ioctl(int fildes, int cmd, void *data)
+{
+    /* we use fcntl for this API. */
+    return fcntl(fildes, cmd, data);
 }
 RTM_EXPORT(ioctl);
 
