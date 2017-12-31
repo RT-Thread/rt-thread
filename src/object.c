@@ -522,7 +522,7 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
     /* try to find object */
     if (information == RT_NULL)
     {
-        information = rt_object_get_information(type);
+        information = rt_object_get_information((enum rt_object_class_type)type);
         RT_ASSERT(information != RT_NULL);
     }
     for (node  = information->object_list.next;

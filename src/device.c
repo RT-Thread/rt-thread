@@ -150,20 +150,20 @@ RTM_EXPORT(rt_device_find);
  */
 rt_device_t rt_device_create(int type, int attach_size)
 {
-	int size;
-	rt_device_t device;
+    int size;
+    rt_device_t device;
 
-	size = RT_ALIGN(sizeof(struct rt_device), RT_ALIGN_SIZE);
-	size += attach_size;
+    size = RT_ALIGN(sizeof(struct rt_device), RT_ALIGN_SIZE);
+    size += attach_size;
 
-	device = (rt_device_t)rt_malloc(size);
-	if (device)
-	{
-		rt_memset(device, 0x0, sizeof(struct rt_device));
-		device->type = type;
-	}
+    device = (rt_device_t)rt_malloc(size);
+    if (device)
+    {
+        rt_memset(device, 0x0, sizeof(struct rt_device));
+        device->type = (enum rt_device_class_type)type;
+    }
 
-	return device;
+    return device;
 }
 RTM_EXPORT(rt_device_create);
 
@@ -174,11 +174,11 @@ RTM_EXPORT(rt_device_create);
  */
 void rt_device_destroy(rt_device_t device)
 {
-	/* unregister device firstly */
-	rt_device_unregister(device);
+    /* unregister device firstly */
+    rt_device_unregister(device);
 
-	/* release this device object */
-	rt_free(device);
+    /* release this device object */
+    rt_free(device);
 }
 RTM_EXPORT(rt_device_destroy);
 #endif
