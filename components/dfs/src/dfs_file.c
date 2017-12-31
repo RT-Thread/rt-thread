@@ -173,8 +173,28 @@ int dfs_file_close(struct dfs_fd *fd)
  */
 int dfs_file_ioctl(struct dfs_fd *fd, int cmd, void *args)
 {
-    if (fd == NULL || fd->type != FT_REGULAR)
+    if (fd == NULL)
         return -EINVAL;
+
+    /* regular file system fd */
+    if (fd->type == FT_REGULAR)
+    {
+        switch (cmd)
+        {
+        case F_GETFL:
+            return fd->flags; /* return flags */
+        case F_SETFL:
+            {
+                int flags = (int)args;
+                int mask  = O_NONBLOCK | O_APPEND;
+
+                flags &= mask;
+                fd->flags &= mask;
+                fd->flags |= flags;
+            }
+            return 0;
+        }
+    }
 
     if (fd->fops->ioctl != NULL)
         return fd->fops->ioctl(fd, cmd, args);
