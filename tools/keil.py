@@ -226,7 +226,7 @@ def MDK45Project(tree, target, script):
             if CPPDEFINES:
                 CPPDEFINES += group['CPPDEFINES']
             else:
-                CPPDEFINES += group['CPPDEFINES']
+                CPPDEFINES = group['CPPDEFINES']
 
         # get each group's link flags
         if group.has_key('LINKFLAGS') and group['LINKFLAGS']:
@@ -332,9 +332,9 @@ def MDKProject(target, script):
         # get each group's definitions
         if group.has_key('CPPDEFINES') and group['CPPDEFINES']:
             if CPPDEFINES:
-                CPPDEFINES += ';' + group['CPPDEFINES']
-            else:
                 CPPDEFINES += group['CPPDEFINES']
+            else:
+                CPPDEFINES = group['CPPDEFINES']
 
         # get each group's link flags
         if group.has_key('LINKFLAGS') and group['LINKFLAGS']:
