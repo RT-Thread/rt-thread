@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_projx.xsd">
-
   <SchemaVersion>2.1</SchemaVersion>
-
   <Header>### uVision Project, (C) Keil Software</Header>
-
   <Targets>
     <Target>
       <TargetName>rt-thread_gd32f4xx</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060300::V5.06 update 3 (build 300)::ARMCC</pCCUsed>
       <TargetOption>
         <TargetCommonOption>
           <Device>GD32F450ZK</Device>
@@ -18,28 +14,28 @@
           <PackID>GigaDevice.GD32F4xx_DFP.1.0.1</PackID>
           <PackURL>http://gd32mcu.21ic.com/data/documents/yingyongruanjian/GD32F4</PackURL>
           <Cpu>IRAM(0x20000000,0x030000) IRAM2(0x10000000,0x010000) IROM(0x08000000,0x0300000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
-          <FlashUtilSpec></FlashUtilSpec>
-          <StartupFile></StartupFile>
+          <FlashUtilSpec />
+          <StartupFile />
           <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0GD32F4xx_3MB -FS08000000 -FL0300000 -FP0($$Device:GD32F450ZK$Flash\GD32F4xx_3MB.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
           <RegisterFile>$$Device:GD32F450ZK$Device\Include\gd32f4xx.h</RegisterFile>
-          <MemoryEnv></MemoryEnv>
-          <Cmp></Cmp>
-          <Asm></Asm>
-          <Linker></Linker>
-          <OHString></OHString>
-          <InfinionOptionDll></InfinionOptionDll>
-          <SLE66CMisc></SLE66CMisc>
-          <SLE66AMisc></SLE66AMisc>
-          <SLE66LinkerMisc></SLE66LinkerMisc>
+          <MemoryEnv />
+          <Cmp />
+          <Asm />
+          <Linker />
+          <OHString />
+          <InfinionOptionDll />
+          <SLE66CMisc />
+          <SLE66AMisc />
+          <SLE66LinkerMisc />
           <SFDFile>$$Device:GD32F450ZK$SVD\GD32F4xx.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
-          <BinPath></BinPath>
-          <IncludePath></IncludePath>
-          <LibPath></LibPath>
-          <RegisterFilePath></RegisterFilePath>
-          <DBRegisterFilePath></DBRegisterFilePath>
+          <BinPath />
+          <IncludePath />
+          <LibPath />
+          <RegisterFilePath />
+          <DBRegisterFilePath />
           <TargetStatus>
             <Error>0</Error>
             <ExitCodeStop>0</ExitCodeStop>
@@ -61,8 +57,8 @@
           <BeforeCompile>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name />
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopU1X>0</nStopU1X>
@@ -71,8 +67,8 @@
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name />
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopB1X>0</nStopB1X>
@@ -82,14 +78,14 @@
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>fromelf --bin !L --output rtthread.bin</UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopA1X>0</nStopA1X>
             <nStopA2X>0</nStopA2X>
           </AfterMake>
           <SelectedForBatchBuild>0</SelectedForBatchBuild>
-          <SVCSIdString></SVCSIdString>
+          <SVCSIdString />
         </TargetCommonOption>
         <CommonProperty>
           <UseCPPCompiler>0</UseCPPCompiler>
@@ -103,8 +99,8 @@
           <AssembleAssemblyFile>0</AssembleAssemblyFile>
           <PublicsOnly>0</PublicsOnly>
           <StopOnExitCode>3</StopOnExitCode>
-          <CustomArgument></CustomArgument>
-          <IncludeLibraryModules></IncludeLibraryModules>
+          <CustomArgument />
+          <IncludeLibraryModules />
           <ComprImg>1</ComprImg>
         </CommonProperty>
         <DllOption>
@@ -137,11 +133,11 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3></Flash3>
-          <Flash4></Flash4>
-          <pFcarmOut></pFcarmOut>
-          <pFcarmGrp></pFcarmGrp>
-          <pFcArmRoot></pFcArmRoot>
+          <Flash3 />
+          <Flash4 />
+          <pFcarmOut />
+          <pFcarmGrp />
+          <pFcArmRoot />
           <FcArmLst>0</FcArmLst>
         </Utilities>
         <TargetArmAds>
@@ -174,7 +170,7 @@
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
             <AdsCpuType>"Cortex-M4"</AdsCpuType>
-            <RvctDeviceName></RvctDeviceName>
+            <RvctDeviceName />
             <mOS>0</mOS>
             <uocRom>0</uocRom>
             <uocRam>0</uocRam>
@@ -306,7 +302,7 @@
                 <Size>0x10000</Size>
               </OCR_RVCT10>
             </OnChipMemories>
-            <RvctStartVector></RvctStartVector>
+            <RvctStartVector />
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
@@ -332,10 +328,10 @@
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls></MiscControls>
+              <MiscControls />
               <Define>GD32F4XX, USE_STDPERIPH_DRIVER</Define>
-              <Undefine></Undefine>
-              <IncludePath>applications;.;drivers;Libraries\CMSIS\GD\GD32F4xx\Include;Libraries\CMSIS;Libraries\GD32F4xx_standard_peripheral\Include;..\..\..\git\rt-thread\include;..\..\..\git\rt-thread\libcpu\arm\cortex-m4;..\..\..\git\rt-thread\libcpu\arm\common;..\..\..\git\rt-thread\components\dfs\include;..\..\..\git\rt-thread\components\dfs\filesystems\devfs;..\..\..\git\rt-thread\components\dfs\filesystems\elmfat;..\..\..\git\rt-thread\components\drivers\include;..\..\..\git\rt-thread\components\drivers\include;..\..\..\git\rt-thread\components\drivers\include;..\..\..\git\rt-thread\components\drivers\spi;..\..\..\git\rt-thread\components\drivers\include;..\..\..\git\rt-thread\components\drivers\spi\sfud\inc;..\..\..\git\rt-thread\components\drivers\include;..\..\..\git\rt-thread\components\finsh;..\..\..\git\rt-thread\components\gui\include;..\..\..\git\rt-thread\components\net\lwip-1.4.1\src;..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\include;..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\include\ipv4;..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\arch\include;..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\include\netif;..\..\..\git\rt-thread\components\trace;..\..\..\git\rt-thread\components\trace\SystemView_Src_V240\Config;..\..\..\git\rt-thread\components\trace;..\..\..\git\rt-thread\components\trace\SystemView_Src_V240\SEGGER</IncludePath>
+              <Undefine />
+              <IncludePath>drivers;applications;.;Libraries/CMSIS/GD/GD32F4xx/Include;Libraries/CMSIS;Libraries/GD32F4xx_standard_peripheral/Include;../../include;../../libcpu/arm/cortex-m4;../../libcpu/arm/common;../../components/drivers/include;../../components/drivers/include;../../components/drivers/include;../../components/drivers/spi;../../components/drivers/include;../../components/drivers/spi/sfud/inc;../../components/drivers/include;../../components/finsh;../../components/gui/include;../../components/gui/include/rtgui;../../components/gui/include/rtgui/widgets;../../components/gui/src;../../components/net/lwip-2.0.2/src;../../components/net/lwip-2.0.2/src/include;../../components/net/lwip-2.0.2/src/include/ipv4;../../components/net/lwip-2.0.2/src/arch/include;../../components/net/lwip-2.0.2/src/include/netif;../../components/net/lwip-2.0.2/src/include/posix;../../components/dfs/include;../../components/dfs/filesystems/devfs;../../components/dfs/filesystems/elmfat</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -350,10 +346,10 @@
             <useXO>0</useXO>
             <uClangAs>0</uClangAs>
             <VariousControls>
-              <MiscControls></MiscControls>
-              <Define></Define>
-              <Undefine></Undefine>
-              <IncludePath></IncludePath>
+              <MiscControls />
+              <Define />
+              <Undefine />
+              <IncludePath />
             </VariousControls>
           </Aads>
           <LDads>
@@ -365,84 +361,104 @@
             <useFile>0</useFile>
             <TextAddressRange>0x08000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
-            <pXoBase></pXoBase>
+            <pXoBase />
             <ScatterFile>.\gd32_rom.ld</ScatterFile>
-            <IncludeLibs></IncludeLibs>
-            <IncludeLibsPath></IncludeLibsPath>
+            <IncludeLibs />
+            <IncludeLibsPath />
             <Misc> --keep *.o(RTMSymTab)  --keep *.o(.rti_fn.*)   --keep *.o(FSymTab) --keep *.o(VSymTab) </Misc>
-            <LinkerInputFile></LinkerInputFile>
-            <DisabledWarnings></DisabledWarnings>
+            <LinkerInputFile />
+            <DisabledWarnings />
           </LDads>
         </TargetArmAds>
       </TargetOption>
       <Groups>
-        <Group>
-          <GroupName>Applications</GroupName>
-          <Files>
-            <File>
-              <FileName>application.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\application.c</FilePath>
-            </File>
-            <File>
-              <FileName>rtgui_demo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\rtgui_demo.c</FilePath>
-            </File>
-            <File>
-              <FileName>startup.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\startup.c</FilePath>
-            </File>
-          </Files>
-        </Group>
         <Group>
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\board.c</FilePath>
+              <FilePath>drivers/board.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_exmc_sdram.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_exmc_sdram.c</FilePath>
+              <FilePath>drivers/drv_exmc_sdram.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_usart.c</FilePath>
+              <FilePath>drivers/drv_usart.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_enet.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_enet.c</FilePath>
+              <FilePath>drivers/drv_enet.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>synopsys_emac.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\synopsys_emac.c</FilePath>
+              <FilePath>drivers/synopsys_emac.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_lcd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_lcd.c</FilePath>
+              <FilePath>drivers/drv_lcd.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f450z_lcd_eval.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\gd32f450z_lcd_eval.c</FilePath>
+              <FilePath>drivers/gd32f450z_lcd_eval.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_spi_flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_spi_flash.c</FilePath>
+              <FilePath>drivers/drv_spi_flash.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_spi.c</FilePath>
+              <FilePath>drivers/drv_spi.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Applications</GroupName>
+          <Files>
+            <File>
+              <FileName>application.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications/application.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rtgui_demo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications/rtgui_demo.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications/startup.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -452,157 +468,217 @@
             <File>
               <FileName>gd32f4xx_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_adc.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_adc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_can.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_can.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_can.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_crc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_crc.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_crc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_ctc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_ctc.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_ctc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_dac.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dac.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_dac.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_dbg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dbg.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_dbg.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_dci.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dci.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_dci.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dma.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_dma.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_enet.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_enet.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_enet.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_exmc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_exmc.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_exmc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_exti.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_exti.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_exti.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_fmc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_fmc.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_fmc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_fwdgt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_fwdgt.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_fwdgt.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_gpio.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_gpio.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_i2c.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_i2c.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_ipa.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_ipa.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_ipa.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_iref.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_iref.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_iref.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_misc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_misc.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_misc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_pmu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_pmu.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_pmu.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_rcu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_rcu.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_rcu.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_rtc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_rtc.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_rtc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_sdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_sdio.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_sdio.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_spi.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_spi.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_syscfg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_syscfg.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_syscfg.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_timer.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_timer.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_tli.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_tli.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_tli.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_trng.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_trng.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_trng.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_usart.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_usart.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gd32f4xx_wwdgt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_wwdgt.c</FilePath>
+              <FilePath>Libraries/GD32F4xx_standard_peripheral/Source/gd32f4xx_wwdgt.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>system_gd32f4xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\GD\GD32F4xx\Source\system_gd32f4xx.c</FilePath>
+              <FilePath>Libraries/CMSIS/GD/GD32F4xx/Source/system_gd32f4xx.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>startup_gd32f4xx.s</FileName>
               <FileType>2</FileType>
-              <FilePath>Libraries\CMSIS\GD\GD32F4xx\Source\ARM\startup_gd32f4xx.s</FilePath>
+              <FilePath>Libraries/CMSIS/GD/GD32F4xx/Source/ARM/startup_gd32f4xx.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -612,77 +688,112 @@
             <File>
               <FileName>clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\src\clock.c</FilePath>
+              <FilePath>../../src/clock.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>components.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\src\components.c</FilePath>
+              <FilePath>../../src/components.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\src\device.c</FilePath>
+              <FilePath>../../src/device.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\src\idle.c</FilePath>
+              <FilePath>../../src/idle.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ipc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\src\ipc.c</FilePath>
+              <FilePath>../../src/ipc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\src\irq.c</FilePath>
+              <FilePath>../../src/irq.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>kservice.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\src\kservice.c</FilePath>
+              <FilePath>../../src/kservice.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\src\mem.c</FilePath>
+              <FilePath>../../src/mem.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>memheap.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\src\memheap.c</FilePath>
+              <FilePath>../../src/memheap.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>mempool.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\src\mempool.c</FilePath>
+              <FilePath>../../src/mempool.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>module.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\src\module.c</FilePath>
+              <FilePath>../../src/module.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\src\object.c</FilePath>
+              <FilePath>../../src/object.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\src\scheduler.c</FilePath>
+              <FilePath>../../src/scheduler.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>signal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../src/signal.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\src\thread.c</FilePath>
+              <FilePath>../../src/thread.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\src\timer.c</FilePath>
+              <FilePath>../../src/timer.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -692,72 +803,35 @@
             <File>
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\libcpu\arm\cortex-m4\cpuport.c</FilePath>
+              <FilePath>../../libcpu/arm/cortex-m4/cpuport.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\git\rt-thread\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
+              <FilePath>../../libcpu/arm/cortex-m4/context_rvds.S</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>backtrace.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\libcpu\arm\common\backtrace.c</FilePath>
+              <FilePath>../../libcpu/arm/common/backtrace.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\libcpu\arm\common\div0.c</FilePath>
+              <FilePath>../../libcpu/arm/common/div0.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\libcpu\arm\common\showmem.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Filesystem</GroupName>
-          <Files>
-            <File>
-              <FileName>dfs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\dfs\src\dfs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_file.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\dfs\src\dfs_file.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_fs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\dfs\src\dfs_fs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_posix.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\dfs\src\dfs_posix.c</FilePath>
-            </File>
-            <File>
-              <FileName>console.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\dfs\filesystems\devfs\console.c</FilePath>
-            </File>
-            <File>
-              <FileName>devfs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\dfs\filesystems\devfs\devfs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_elm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\dfs\filesystems\elmfat\dfs_elm.c</FilePath>
-            </File>
-            <File>
-              <FileName>ff.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\dfs\filesystems\elmfat\ff.c</FilePath>
+              <FilePath>../../libcpu/arm/common/showmem.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -767,79 +841,119 @@
             <File>
               <FileName>i2c_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\drivers\i2c\i2c_core.c</FilePath>
+              <FilePath>../../components/drivers/i2c/i2c_core.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>i2c_dev.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\drivers\i2c\i2c_dev.c</FilePath>
+              <FilePath>../../components/drivers/i2c/i2c_dev.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>i2c-bit-ops.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\drivers\i2c\i2c-bit-ops.c</FilePath>
+              <FilePath>../../components/drivers/i2c/i2c-bit-ops.c</FilePath>
             </File>
-            <File>
-              <FileName>rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\drivers\rtc\rtc.c</FilePath>
-            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\drivers\serial\serial.c</FilePath>
+              <FilePath>../../components/drivers/serial/serial.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/drivers/rtc/rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>spi_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\drivers\spi\spi_core.c</FilePath>
+              <FilePath>../../components/drivers/spi/spi_core.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>spi_dev.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\drivers\spi\spi_dev.c</FilePath>
+              <FilePath>../../components/drivers/spi/spi_dev.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>spi_flash_sfud.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\drivers\spi\spi_flash_sfud.c</FilePath>
+              <FilePath>../../components/drivers/spi/spi_flash_sfud.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>sfud.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\drivers\spi\sfud\src\sfud.c</FilePath>
+              <FilePath>../../components/drivers/spi/sfud/src/sfud.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\drivers\src\completion.c</FilePath>
+              <FilePath>../../components/drivers/src/completion.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\drivers\src\dataqueue.c</FilePath>
+              <FilePath>../../components/drivers/src/dataqueue.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>pipe.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\drivers\src\pipe.c</FilePath>
+              <FilePath>../../components/drivers/src/pipe.c</FilePath>
             </File>
-            <File>
-              <FileName>portal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\drivers\src\portal.c</FilePath>
-            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\drivers\src\ringbuffer.c</FilePath>
+              <FilePath>../../components/drivers/src/ringbuffer.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>waitqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/drivers/src/waitqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\drivers\src\workqueue.c</FilePath>
+              <FilePath>../../components/drivers/src/workqueue.c</FilePath>
             </File>
           </Files>
+          <GroupOption>
+            <GroupArmAds>
+              <Cads>
+                <VariousControls>
+                  <MiscControls> --c99</MiscControls>
+                  <Define> </Define>
+                  <Undefine> </Undefine>
+                  <IncludePath> </IncludePath>
+                </VariousControls>
+              </Cads>
+            </GroupArmAds>
+          </GroupOption>
         </Group>
         <Group>
           <GroupName>finsh</GroupName>
@@ -847,498 +961,704 @@
             <File>
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\finsh\shell.c</FilePath>
+              <FilePath>../../components/finsh/shell.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>symbol.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\finsh\symbol.c</FilePath>
+              <FilePath>../../components/finsh/symbol.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\finsh\cmd.c</FilePath>
+              <FilePath>../../components/finsh/cmd.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_compiler.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\finsh\finsh_compiler.c</FilePath>
+              <FilePath>../../components/finsh/finsh_compiler.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_error.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\finsh\finsh_error.c</FilePath>
+              <FilePath>../../components/finsh/finsh_error.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_heap.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\finsh\finsh_heap.c</FilePath>
+              <FilePath>../../components/finsh/finsh_heap.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_init.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\finsh\finsh_init.c</FilePath>
+              <FilePath>../../components/finsh/finsh_init.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_node.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\finsh\finsh_node.c</FilePath>
+              <FilePath>../../components/finsh/finsh_node.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_ops.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\finsh\finsh_ops.c</FilePath>
+              <FilePath>../../components/finsh/finsh_ops.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_parser.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\finsh\finsh_parser.c</FilePath>
+              <FilePath>../../components/finsh/finsh_parser.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_var.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\finsh\finsh_var.c</FilePath>
+              <FilePath>../../components/finsh/finsh_var.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_vm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\finsh\finsh_vm.c</FilePath>
+              <FilePath>../../components/finsh/finsh_vm.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_token.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\finsh\finsh_token.c</FilePath>
+              <FilePath>../../components/finsh/finsh_token.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>GUIEngine</GroupName>
+          <GroupName>GuiEngine</GroupName>
           <Files>
             <File>
               <FileName>asc12font.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\asc12font.c</FilePath>
+              <FilePath>../../components/gui/src/asc12font.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>asc16font.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\asc16font.c</FilePath>
+              <FilePath>../../components/gui/src/asc16font.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>blit.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\blit.c</FilePath>
+              <FilePath>../../components/gui/src/blit.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>box.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\box.c</FilePath>
+              <FilePath>../../components/gui/src/box.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>color.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\color.c</FilePath>
+              <FilePath>../../components/gui/src/color.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>container.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\container.c</FilePath>
+              <FilePath>../../components/gui/src/container.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\dc.c</FilePath>
+              <FilePath>../../components/gui/src/dc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dc_blend.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\dc_blend.c</FilePath>
+              <FilePath>../../components/gui/src/dc_blend.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dc_buffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\dc_buffer.c</FilePath>
+              <FilePath>../../components/gui/src/dc_buffer.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dc_client.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\dc_client.c</FilePath>
+              <FilePath>../../components/gui/src/dc_client.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dc_hw.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\dc_hw.c</FilePath>
+              <FilePath>../../components/gui/src/dc_hw.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dc_rotozoom.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\dc_rotozoom.c</FilePath>
+              <FilePath>../../components/gui/src/dc_rotozoom.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dc_trans.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\dc_trans.c</FilePath>
+              <FilePath>../../components/gui/src/dc_trans.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>filerw.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\filerw.c</FilePath>
+              <FilePath>../../components/gui/src/filerw.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>font.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\font.c</FilePath>
+              <FilePath>../../components/gui/src/font.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>font_bmp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\font_bmp.c</FilePath>
+              <FilePath>../../components/gui/src/font_bmp.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>font_fnt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\font_fnt.c</FilePath>
+              <FilePath>../../components/gui/src/font_fnt.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>font_freetype.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\font_freetype.c</FilePath>
+              <FilePath>../../components/gui/src/font_freetype.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>font_hz_bmp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\font_hz_bmp.c</FilePath>
+              <FilePath>../../components/gui/src/font_hz_bmp.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>font_hz_file.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\font_hz_file.c</FilePath>
+              <FilePath>../../components/gui/src/font_hz_file.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hz12font.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\hz12font.c</FilePath>
+              <FilePath>../../components/gui/src/hz12font.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hz16font.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\hz16font.c</FilePath>
+              <FilePath>../../components/gui/src/hz16font.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>image.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\image.c</FilePath>
+              <FilePath>../../components/gui/src/image.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>image_bmp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\image_bmp.c</FilePath>
+              <FilePath>../../components/gui/src/image_bmp.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>image_container.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/gui/src/image_container.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>image_hdc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\image_hdc.c</FilePath>
+              <FilePath>../../components/gui/src/image_hdc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>image_jpg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\image_jpg.c</FilePath>
+              <FilePath>../../components/gui/src/image_jpg.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>image_png.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\image_png.c</FilePath>
+              <FilePath>../../components/gui/src/image_png.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>image_xpm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\image_xpm.c</FilePath>
+              <FilePath>../../components/gui/src/image_xpm.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>matrix.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\matrix.c</FilePath>
+              <FilePath>../../components/gui/src/matrix.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>mouse.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\mouse.c</FilePath>
+              <FilePath>../../components/gui/src/mouse.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>region.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\region.c</FilePath>
+              <FilePath>../../components/gui/src/region.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>rtgui_app.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\rtgui_app.c</FilePath>
+              <FilePath>../../components/gui/src/rtgui_app.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>rtgui_driver.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\rtgui_driver.c</FilePath>
+              <FilePath>../../components/gui/src/rtgui_driver.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>rtgui_object.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\rtgui_object.c</FilePath>
+              <FilePath>../../components/gui/src/rtgui_object.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>rtgui_system.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\rtgui_system.c</FilePath>
+              <FilePath>../../components/gui/src/rtgui_system.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>server.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\server.c</FilePath>
+              <FilePath>../../components/gui/src/server.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>title.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\title.c</FilePath>
+              <FilePath>../../components/gui/src/title.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>topwin.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\topwin.c</FilePath>
+              <FilePath>../../components/gui/src/topwin.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>widget.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\widget.c</FilePath>
+              <FilePath>../../components/gui/src/widget.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>window.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\gui\src\window.c</FilePath>
+              <FilePath>../../components/gui/src/window.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>LwIP</GroupName>
+          <GroupName>lwIP</GroupName>
+          <Files>
+            <File>
+              <FileName>sys_arch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/net/lwip-2.0.2/src/arch/sys_arch.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>api_lib.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\api_lib.c</FilePath>
+              <FilePath>../../components/net/lwip-2.0.2/src/api/api_lib.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>api_msg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\api_msg.c</FilePath>
+              <FilePath>../../components/net/lwip-2.0.2/src/api/api_msg.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>err.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\err.c</FilePath>
+              <FilePath>../../components/net/lwip-2.0.2/src/api/err.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>netbuf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\netbuf.c</FilePath>
+              <FilePath>../../components/net/lwip-2.0.2/src/api/netbuf.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>netdb.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\netdb.c</FilePath>
+              <FilePath>../../components/net/lwip-2.0.2/src/api/netdb.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>netifapi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\netifapi.c</FilePath>
+              <FilePath>../../components/net/lwip-2.0.2/src/api/netifapi.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>sockets.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\sockets.c</FilePath>
+              <FilePath>../../components/net/lwip-2.0.2/src/api/sockets.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>tcpip.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\api\tcpip.c</FilePath>
+              <FilePath>../../components/net/lwip-2.0.2/src/api/tcpip.c</FilePath>
             </File>
-            <File>
-              <FileName>sys_arch.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\arch\sys_arch.c</FilePath>
-            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>def.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\def.c</FilePath>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/def.c</FilePath>
             </File>
-            <File>
-              <FileName>dhcp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\dhcp.c</FilePath>
-            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dns.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\dns.c</FilePath>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/dns.c</FilePath>
             </File>
-            <File>
-              <FileName>init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\init.c</FilePath>
-            </File>
-            <File>
-              <FileName>memp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\memp.c</FilePath>
-            </File>
-            <File>
-              <FileName>netif.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\netif.c</FilePath>
-            </File>
-            <File>
-              <FileName>pbuf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\pbuf.c</FilePath>
-            </File>
-            <File>
-              <FileName>raw.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\raw.c</FilePath>
-            </File>
-            <File>
-              <FileName>stats.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\stats.c</FilePath>
-            </File>
-            <File>
-              <FileName>sys.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\sys.c</FilePath>
-            </File>
-            <File>
-              <FileName>tcp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\tcp.c</FilePath>
-            </File>
-            <File>
-              <FileName>tcp_in.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\tcp_in.c</FilePath>
-            </File>
-            <File>
-              <FileName>tcp_out.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\tcp_out.c</FilePath>
-            </File>
-            <File>
-              <FileName>timers.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\timers.c</FilePath>
-            </File>
-            <File>
-              <FileName>udp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\udp.c</FilePath>
-            </File>
-            <File>
-              <FileName>autoip.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\autoip.c</FilePath>
-            </File>
-            <File>
-              <FileName>icmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\icmp.c</FilePath>
-            </File>
-            <File>
-              <FileName>igmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\igmp.c</FilePath>
-            </File>
-            <File>
-              <FileName>inet.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\inet.c</FilePath>
-            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>inet_chksum.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\inet_chksum.c</FilePath>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/inet_chksum.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/init.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ip.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\ip.c</FilePath>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/ip.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
-              <FileName>ip_addr.c</FileName>
+              <FileName>memp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\ip_addr.c</FilePath>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/memp.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
-              <FileName>ip_frag.c</FileName>
+              <FileName>netif.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\core\ipv4\ip_frag.c</FilePath>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/netif.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
-              <FileName>etharp.c</FileName>
+              <FileName>pbuf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\netif\etharp.c</FilePath>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/pbuf.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>raw.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/raw.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stats.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/stats.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/sys.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>tcp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/tcp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>tcp_in.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/tcp_in.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>tcp_out.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/tcp_out.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>timeouts.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/timeouts.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>udp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/udp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ethernet.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/net/lwip-2.0.2/src/netif/ethernet.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ethernetif.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\netif\ethernetif.c</FilePath>
-            </File>
-            <File>
-              <FileName>slipif.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\net\lwip-1.4.1\src\netif\slipif.c</FilePath>
+              <FilePath>../../components/net/lwip-2.0.2/src/netif/ethernetif.c</FilePath>
             </File>
           </Files>
-        </Group>
-        <Group>
-          <GroupName>trace</GroupName>
           <Files>
             <File>
-              <FileName>SEGGER_SYSVIEW_Config_RTThread.c</FileName>
+              <FileName>lowpan6.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\trace\SystemView_Src_V240\Config\SEGGER_SYSVIEW_Config_RTThread.c</FilePath>
+              <FilePath>../../components/net/lwip-2.0.2/src/netif/lowpan6.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
-              <FileName>SEGGER_SYSVIEW_RTThread.c</FileName>
+              <FileName>autoip.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\trace\SystemView_Src_V240\Config\SEGGER_SYSVIEW_RTThread.c</FilePath>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/ipv4/autoip.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
-              <FileName>SEGGER_RTT.c</FileName>
+              <FileName>dhcp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\trace\SystemView_Src_V240\SEGGER\SEGGER_RTT.c</FilePath>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/ipv4/dhcp.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
-              <FileName>SEGGER_SYSVIEW.c</FileName>
+              <FileName>etharp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\git\rt-thread\components\trace\SystemView_Src_V240\SEGGER\SEGGER_SYSVIEW.c</FilePath>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/ipv4/etharp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>icmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/ipv4/icmp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>igmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/ipv4/igmp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ip4.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/ipv4/ip4.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ip4_addr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/ipv4/ip4_addr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ip4_frag.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/net/lwip-2.0.2/src/core/ipv4/ip4_frag.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>::CMSIS</GroupName>
+          <GroupName>Filesystem</GroupName>
+          <Files>
+            <File>
+              <FileName>dfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/dfs/src/dfs.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dfs_file.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/dfs/src/dfs_file.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dfs_fs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/dfs/src/dfs_fs.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dfs_posix.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/dfs/src/dfs_posix.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>devfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/dfs/filesystems/devfs/devfs.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dfs_elm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/dfs/filesystems/elmfat/dfs_elm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ff.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/dfs/filesystems/elmfat/ff.c</FilePath>
+            </File>
+          </Files>
         </Group>
       </Groups>
     </Target>
   </Targets>
-
   <RTE>
-    <apis/>
+    <apis />
     <components>
       <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.0.1" condition="ARMv6_7_8-M Device">
-        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.0.1"/>
+        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.0.1" />
         <targetInfos>
-          <targetInfo name="rt-thread_gd32f4xx"/>
+          <targetInfo name="rt-thread_gd32f4xx" />
         </targetInfos>
       </component>
     </components>
-    <files/>
+    <files />
   </RTE>
-
 </Project>

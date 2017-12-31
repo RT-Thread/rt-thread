@@ -366,7 +366,7 @@
               <MiscControls />
               <Define>USE_HAL_DRIVER, STM32L0X2</Define>
               <Undefine />
-              <IncludePath>app;.;board;Drivers\CMSIS\Device\ST\STM32L0xx\Include;Drivers\STM32L0xx_HAL_Driver\Inc;Inc;drivers;drivers..\Drivers\CMSIS\Device\ST\STM32L0xx\Include;DriversSTM32L0xx_HAL_Driver\Inc;DriversCMSIS\Device\ST\STM32L0xx\Include;Drivers\CMSIS\Include;..\..\include;..\..\libcpu\arm\cortex-m0;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh</IncludePath>
+              <IncludePath>DriversSTM32L0xx_HAL_Driver/Inc;DriversCMSIS/Device/ST/STM32L0xx/Include;Drivers/CMSIS/Include;drivers;drivers../Drivers/CMSIS/Device/ST/STM32L0xx/Include;app;.;board;Drivers/CMSIS/Device/ST/STM32L0xx/Include;Drivers/STM32L0xx_HAL_Driver/Inc;Inc;../../include;../../libcpu/arm/cortex-m0;../../libcpu/arm/common;../../components/drivers/include;../../components/drivers/include;../../components/drivers/spi;../../components/drivers/include;../../components/drivers/include;../../components/finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -407,26 +407,166 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Applications</GroupName>
+          <GroupName>STM32_HAL</GroupName>
           <Files>
             <File>
-              <FileName>application.c</FileName>
+              <FileName>system_stm32l0xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>app\application.c</FilePath>
+              <FilePath>Drivers/CMSIS/Device/ST/STM32L0xx/Source/Templates/system_stm32l0xx.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>ledapp.c</FileName>
+              <FileName>stm32l0xx_hal.c</FileName>
               <FileType>1</FileType>
-              <FilePath>app\ledapp.c</FilePath>
+              <FilePath>Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>startup.c</FileName>
+              <FileName>stm32l0xx_hal_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>app\startup.c</FilePath>
+              <FilePath>Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32l0xx_hal_adc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_adc_ex.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32l0xx_hal_cortex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_cortex.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32l0xx_hal_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32l0xx_hal_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_flash.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32l0xx_hal_flash_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_flash_ex.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32l0xx_hal_flash_ramfunc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_flash_ramfunc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32l0xx_hal_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32l0xx_hal_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32l0xx_hal_i2c_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_i2c_ex.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32l0xx_hal_pwr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_pwr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32l0xx_hal_pwr_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_pwr_ex.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32l0xx_hal_rcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_rcc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32l0xx_hal_rcc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_rcc_ex.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32l0xx_hal_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32l0xx_hal_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_tim.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32l0xx_hal_tim_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_tim_ex.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32l0xx_hal_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32l0xx_hal_uart_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_uart_ex.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32l0xx_hal_wwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_wwdg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_stm32l072xx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Drivers/CMSIS/Device/ST/STM32L0xx/Source/Templates/arm/startup_stm32l072xx.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -436,199 +576,59 @@
             <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\board.c</FilePath>
+              <FilePath>board/board.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>stm32l0xx_it.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\stm32l0xx_it.c</FilePath>
+              <FilePath>board/stm32l0xx_it.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\usart.c</FilePath>
+              <FilePath>board/usart.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\gpio.c</FilePath>
+              <FilePath>board/gpio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>drv_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\drv_spi.c</FilePath>
+              <FilePath>board/drv_spi.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>STM32_HAL</GroupName>
+          <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>system_stm32l0xx.c</FileName>
+              <FileName>application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Drivers\CMSIS\Device\ST\STM32L0xx\Source\Templates\system_stm32l0xx.c</FilePath>
+              <FilePath>app/application.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>stm32l0xx_hal.c</FileName>
+              <FileName>ledapp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal.c</FilePath>
+              <FilePath>app/ledapp.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>stm32l0xx_hal_adc.c</FileName>
+              <FileName>startup.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32l0xx_hal_adc_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_adc_ex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32l0xx_hal_cortex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_cortex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32l0xx_hal_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32l0xx_hal_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32l0xx_hal_flash_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_flash_ex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32l0xx_hal_flash_ramfunc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_flash_ramfunc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32l0xx_hal_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32l0xx_hal_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32l0xx_hal_i2c_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_i2c_ex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32l0xx_hal_pwr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_pwr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32l0xx_hal_pwr_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_pwr_ex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32l0xx_hal_rcc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_rcc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32l0xx_hal_rcc_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_rcc_ex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32l0xx_hal_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32l0xx_hal_tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_tim.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32l0xx_hal_tim_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_tim_ex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32l0xx_hal_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32l0xx_hal_uart_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_uart_ex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32l0xx_hal_wwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_wwdg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_stm32l072xx.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>Drivers\CMSIS\Device\ST\STM32L0xx\Source\Templates\arm\startup_stm32l072xx.s</FilePath>
+              <FilePath>app/startup.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -638,91 +638,91 @@
             <File>
               <FileName>clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\clock.c</FilePath>
+              <FilePath>../../src/clock.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>components.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\components.c</FilePath>
+              <FilePath>../../src/components.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\device.c</FilePath>
+              <FilePath>../../src/device.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\idle.c</FilePath>
+              <FilePath>../../src/idle.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ipc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\ipc.c</FilePath>
+              <FilePath>../../src/ipc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\irq.c</FilePath>
+              <FilePath>../../src/irq.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>kservice.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\kservice.c</FilePath>
+              <FilePath>../../src/kservice.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\mem.c</FilePath>
+              <FilePath>../../src/mem.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\object.c</FilePath>
+              <FilePath>../../src/object.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
+              <FilePath>../../src/scheduler.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>signal.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\signal.c</FilePath>
+              <FilePath>../../src/signal.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\thread.c</FilePath>
+              <FilePath>../../src/thread.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\timer.c</FilePath>
+              <FilePath>../../src/timer.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -732,35 +732,35 @@
             <File>
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m0\cpuport.c</FilePath>
+              <FilePath>../../libcpu/arm/cortex-m0/cpuport.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m0\context_rvds.S</FilePath>
+              <FilePath>../../libcpu/arm/cortex-m0/context_rvds.S</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>backtrace.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
+              <FilePath>../../libcpu/arm/common/backtrace.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
+              <FilePath>../../libcpu/arm/common/div0.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
+              <FilePath>../../libcpu/arm/common/showmem.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -770,72 +770,84 @@
             <File>
               <FileName>pin.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\misc\pin.c</FilePath>
+              <FilePath>../../components/drivers/misc/pin.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\serial\serial.c</FilePath>
+              <FilePath>../../components/drivers/serial/serial.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>spi_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\spi\spi_core.c</FilePath>
+              <FilePath>../../components/drivers/spi/spi_core.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>spi_dev.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\spi\spi_dev.c</FilePath>
+              <FilePath>../../components/drivers/spi/spi_dev.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
+              <FilePath>../../components/drivers/src/completion.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
+              <FilePath>../../components/drivers/src/dataqueue.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>pipe.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
+              <FilePath>../../components/drivers/src/pipe.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
+              <FilePath>../../components/drivers/src/ringbuffer.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
+              <FilePath>../../components/drivers/src/waitqueue.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
+              <FilePath>../../components/drivers/src/workqueue.c</FilePath>
             </File>
           </Files>
+          <GroupOption>
+            <GroupArmAds>
+              <Cads>
+                <VariousControls>
+                  <MiscControls />
+                  <Define> </Define>
+                  <Undefine> </Undefine>
+                  <IncludePath> </IncludePath>
+                </VariousControls>
+              </Cads>
+            </GroupArmAds>
+          </GroupOption>
         </Group>
         <Group>
           <GroupName>finsh</GroupName>
@@ -843,42 +855,42 @@
             <File>
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\shell.c</FilePath>
+              <FilePath>../../components/finsh/shell.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>symbol.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\symbol.c</FilePath>
+              <FilePath>../../components/finsh/symbol.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>../../components/finsh/cmd.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\msh.c</FilePath>
+              <FilePath>../../components/finsh/msh.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>msh_cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\msh_cmd.c</FilePath>
+              <FilePath>../../components/finsh/msh_cmd.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>msh_file.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\msh_file.c</FilePath>
+              <FilePath>../../components/finsh/msh_file.c</FilePath>
             </File>
           </Files>
         </Group>
