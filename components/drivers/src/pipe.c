@@ -360,7 +360,11 @@ rt_size_t rt_pipe_read   (rt_device_t device, rt_off_t pos, void *buffer, rt_siz
     int read_bytes = 0;
     rt_pipe_t *pipe = (rt_pipe_t *)device;
 
-    if (device == RT_NULL) return -EINVAL;
+    if (device == RT_NULL)
+    {
+        rt_set_errno(-EINVAL);
+        return 0;
+    }
     if (count == 0) return 0;
 
     pbuf = (uint8_t*)buffer;
@@ -384,7 +388,11 @@ rt_size_t rt_pipe_write  (rt_device_t device, rt_off_t pos, const void *buffer, 
     int write_bytes = 0;
     rt_pipe_t *pipe = (rt_pipe_t *)device;
 
-    if (device == RT_NULL) return -EINVAL;
+    if (device == RT_NULL)
+    {
+        rt_set_errno(-EINVAL);
+        return 0;
+    }
     if (count == 0) return 0;
 
     pbuf = (uint8_t*)buffer;
