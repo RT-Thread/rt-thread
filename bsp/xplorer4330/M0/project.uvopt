@@ -71,7 +71,7 @@
         <LExpSel>0</LExpSel>
       </OPTXL>
       <OPTFL>
-        <tvExp>0</tvExp>
+        <tvExp>1</tvExp>
         <tvExpOptDlg>0</tvExpOptDlg>
         <IsCurrentTarget>1</IsCurrentTarget>
       </OPTFL>
@@ -116,7 +116,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>UL2CM3</Key>
-          <Name>UL2CM3(-O975 -S0 -C0)</Name>
+          <Name>UL2CM3(-O910 -S8 -C1 -FO7 -FD10000000 -FC800 -FN0)</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
       <Breakpoint/>
@@ -410,8 +410,8 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\Device\NXP\LPC43xx\Source\Templates\ARM\startup_LPC43xx.s</PathWithFileName>
-      <FilenameWithoutPath>startup_LPC43xx.s</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\Device\NXP\LPC43xx\Source\Templates\ARM\startup_LPC43xx_M0.s</PathWithFileName>
+      <FilenameWithoutPath>startup_LPC43xx_M0.s</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -650,7 +650,7 @@
   </Group>
 
   <Group>
-    <GroupName>CORTEX-M4</GroupName>
+    <GroupName>CORTEX-M0</GroupName>
     <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
@@ -666,7 +666,7 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\libcpu\arm\cortex-m4\cpuport.c</PathWithFileName>
+      <PathWithFileName>..\..\..\libcpu\arm\cortex-m0\cpuport.c</PathWithFileName>
       <FilenameWithoutPath>cpuport.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -682,7 +682,7 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\libcpu\arm\cortex-m4\context_rvds.S</PathWithFileName>
+      <PathWithFileName>..\..\..\libcpu\arm\cortex-m0\context_rvds.S</PathWithFileName>
       <FilenameWithoutPath>context_rvds.S</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
