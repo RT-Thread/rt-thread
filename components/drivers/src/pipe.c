@@ -24,6 +24,7 @@
  */
 #include <rthw.h>
 #include <rtdevice.h>
+#include <stdint.h>
 
 #if defined(RT_USING_POSIX)
 #include <dfs_file.h>
