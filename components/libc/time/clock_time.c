@@ -24,10 +24,13 @@
  */
 
 #include <rtthread.h>
+#include <rtdevice.h>
 #include <pthread.h>
 
+#include "clock_time.h"
+
 struct timeval _timevalue;
-void clock_time_system_init()
+int clock_time_system_init()
 {
     time_t time;
     rt_tick_t tick;
@@ -46,7 +49,10 @@ void clock_time_system_init()
 
     _timevalue.tv_usec = (tick%RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK;
     _timevalue.tv_sec = time - tick/RT_TICK_PER_SECOND - 1;
+
+    return 0;
 }
+INIT_COMPONENT_EXPORT(clock_time_system_init);
 
 int clock_time_to_tick(const struct timespec *time)
 {
@@ -83,38 +89,80 @@ RTM_EXPORT(clock_time_to_tick);
 
 int clock_getres(clockid_t clockid, struct timespec *res)
 {
-    if ((clockid != CLOCK_REALTIME) || (res == RT_NULL))
+    int ret = 0;
+
+    if (res == RT_NULL)
     {
         rt_set_errno(EINVAL);
-
         return -1;
     }
 
-    res->tv_sec = 0;
-    res->tv_nsec = NANOSECOND_PER_SECOND/RT_TICK_PER_SECOND;
+    switch (clockid)
+    {
+    case CLOCK_REALTIME:
+        res->tv_sec = 0;
+        res->tv_nsec = NANOSECOND_PER_SECOND/RT_TICK_PER_SECOND;
+        break;
 
-    return 0;
+#ifdef RT_USING_CPUTIME
+    case CLOCK_CPUTIME_ID:
+        res->tv_sec  = 0;
+        res->tv_nsec = clock_cpu_getres();
+        break;
+#endif
+
+    default:
+        ret = -1;
+        rt_set_errno(EINVAL);
+        break;
+    }
+
+    return ret;
 }
 RTM_EXPORT(clock_getres);
 
 int clock_gettime(clockid_t clockid, struct timespec *tp)
 {
-    rt_tick_t tick;
+    int ret = 0;
 
-    if ((clockid != CLOCK_REALTIME) || (tp == RT_NULL))
+    if (tp == RT_NULL)
     {
         rt_set_errno(EINVAL);
-
         return -1;
     }
 
-    /* get tick */
-    tick = rt_tick_get();
+    switch (clockid)
+    {
+    case CLOCK_REALTIME:
+        {
+            /* get tick */
+            int tick = rt_tick_get();
 
-    tp->tv_sec = _timevalue.tv_sec + tick / RT_TICK_PER_SECOND;
-    tp->tv_nsec = (_timevalue.tv_usec + (tick % RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK) * 1000;
+            tp->tv_sec  = _timevalue.tv_sec + tick / RT_TICK_PER_SECOND;
+            tp->tv_nsec = (_timevalue.tv_usec + (tick % RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK) * 1000;
+        }
+        break;
     
-    return 0;
+#ifdef RT_USING_CPUTIME
+    case CLOCK_CPUTIME_ID:
+        {
+            float unit = 0;
+            long long cpu_tick;
+
+            unit = clock_cpu_getres();
+            cpu_tick = clock_cpu_gettime();
+
+            tp->tv_sec  = ((int)(cpu_tick * unit)) / NANOSECOND_PER_SECOND;
+            tp->tv_nsec = ((int)(cpu_tick * unit)) % NANOSECOND_PER_SECOND;
+        }
+        break;
+#endif
+    default:
+        rt_set_errno(EINVAL);
+        ret = -1;
+    }
+
+    return ret;
 }
 RTM_EXPORT(clock_gettime);
 

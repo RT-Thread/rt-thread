@@ -27,9 +27,6 @@
 
 int pthread_system_init(void)
 {
-    /* initialize clock and time */
-    clock_time_system_init();
-
     /* initialize key area */
     pthread_key_system_init();
     /* initialize posix mqueue */
