@@ -163,14 +163,16 @@
         <option>
           <name>CCDefines</name>
           <state />
-          <state>_TIMESPEC_DEFINED</state>
           <state>FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE</state>
+          <state>_TIMESPEC_DEFINED</state>
           <state>CPU_MIMXRT1052DVL6A</state>
           <state>SKIP_SYSCLK_INIT</state>
           <state>EVK_MCIMXRM</state>
           <state>FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1</state>
           <state>RT_USING_DLIBC</state>
           <state>_DLIB_FILE_DESCRIPTOR</state>
+          <state>_DLIB_THREAD_SUPPORT</state>
+          <state>FT2_BUILD_LIBRARY</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -300,27 +302,45 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src</state>
-          <state>$PROJ_DIR$\Libraries\CMSIS\Include</state>
-          <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\dlib</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include\netif</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m7</state>
-          <state>$PROJ_DIR$\Libraries\utilities</state>
-          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\Libraries/utilities</state>
+          <state>$PROJ_DIR$\../../libcpu/arm/cortex-m7</state>
+          <state>$PROJ_DIR$\../../components/libc/compilers/dlib</state>
+          <state>$PROJ_DIR$\../../components/dfs/filesystems/devfs</state>
           <state>$PROJ_DIR$\Libraries</state>
+          <state>$PROJ_DIR$\../../components/drivers/include</state>
+          <state>$PROJ_DIR$\../../components/finsh</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/psnames</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/truetype</state>
+          <state>$PROJ_DIR$\../../components/net/lwip-1.4.1/src</state>
+          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\../../libcpu/arm/common</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\Libraries/drivers</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/include</state>
+          <state>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/include</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/include/freetype/config</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/lodepng</state>
+          <state>$PROJ_DIR$\../../components/gui/include/rtgui/widgets</state>
+          <state>$PROJ_DIR$\../../components/gui/include/rtgui</state>
+          <state>$PROJ_DIR$\../../components/dfs/filesystems/elmfat</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/base</state>
+          <state>$PROJ_DIR$\../../components/dfs/include</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/builds/rt-thread</state>
           <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include</state>
-          <state>$PROJ_DIR$\..\..\components\dfs\include</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include\ipv4</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\arch\include</state>
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\Libraries\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\dfs\filesystems\devfs</state>
+          <state>$PROJ_DIR$\../../include</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/include/freetype</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/autofit</state>
+          <state>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/include/ipv4</state>
+          <state>$PROJ_DIR$\../../components/gui/include</state>
+          <state>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/include/netif</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/cache</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/smooth</state>
+          <state>$PROJ_DIR$\Libraries/CMSIS/Include</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/sfnt</state>
+          <state>$PROJ_DIR$\../../components/gui/src</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/include/freetype/internal/services</state>
+          <state>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/arch/include</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/include/freetype/internal</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1102,8 +1122,8 @@
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
-          <state>_TIMESPEC_DEFINED</state>
           <state>FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE</state>
+          <state>_TIMESPEC_DEFINED</state>
           <state>CPU_MIMXRT1052DVL6A</state>
           <state>SKIP_SYSCLK_INIT</state>
           <state>EVK_MCIMXRM</state>
@@ -1111,6 +1131,7 @@
           <state>RT_USING_DLIBC</state>
           <state>_DLIB_FILE_DESCRIPTOR</state>
           <state>_DLIB_THREAD_SUPPORT</state>
+          <state>FT2_BUILD_LIBRARY</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1240,27 +1261,45 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src</state>
-          <state>$PROJ_DIR$\Libraries\CMSIS\Include</state>
-          <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\dlib</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include\netif</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m7</state>
-          <state>$PROJ_DIR$\Libraries\utilities</state>
-          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\Libraries/utilities</state>
+          <state>$PROJ_DIR$\../../libcpu/arm/cortex-m7</state>
+          <state>$PROJ_DIR$\../../components/libc/compilers/dlib</state>
+          <state>$PROJ_DIR$\../../components/dfs/filesystems/devfs</state>
           <state>$PROJ_DIR$\Libraries</state>
+          <state>$PROJ_DIR$\../../components/drivers/include</state>
+          <state>$PROJ_DIR$\../../components/finsh</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/psnames</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/truetype</state>
+          <state>$PROJ_DIR$\../../components/net/lwip-1.4.1/src</state>
+          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\../../libcpu/arm/common</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\Libraries/drivers</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/include</state>
+          <state>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/include</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/include/freetype/config</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/lodepng</state>
+          <state>$PROJ_DIR$\../../components/gui/include/rtgui/widgets</state>
+          <state>$PROJ_DIR$\../../components/gui/include/rtgui</state>
+          <state>$PROJ_DIR$\../../components/dfs/filesystems/elmfat</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/base</state>
+          <state>$PROJ_DIR$\../../components/dfs/include</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/builds/rt-thread</state>
           <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include</state>
-          <state>$PROJ_DIR$\..\..\components\dfs\include</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include\ipv4</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\arch\include</state>
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\Libraries\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\dfs\filesystems\devfs</state>
+          <state>$PROJ_DIR$\../../include</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/include/freetype</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/autofit</state>
+          <state>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/include/ipv4</state>
+          <state>$PROJ_DIR$\../../components/gui/include</state>
+          <state>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/include/netif</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/cache</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/smooth</state>
+          <state>$PROJ_DIR$\Libraries/CMSIS/Include</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/sfnt</state>
+          <state>$PROJ_DIR$\../../components/gui/src</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/include/freetype/internal/services</state>
+          <state>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/arch/include</state>
+          <state>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/include/freetype/internal</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1876,549 +1915,780 @@
     </settings>
   </configuration>
   <group>
-    <name>Applications</name>
+    <name>Drivers</name>
     <file>
-      <name>$PROJ_DIR$\applications\device_test.c</name>
+      <name>$PROJ_DIR$\drivers/board.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\applications\main.c</name>
+      <name>$PROJ_DIR$\drivers/usart.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\applications\mem_dump.c</name>
+      <name>$PROJ_DIR$\drivers/hyper_flash_boot.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\applications\mem_test.c</name>
+      <name>$PROJ_DIR$\drivers/drv_sdram.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\applications\sdio_test.c</name>
+      <name>$PROJ_DIR$\drivers/drv_eth.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers/fsl_phy.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers/drv_sdio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers/drv_lcd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers/drv_ft5406.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers/drv_i2c.c</name>
     </file>
   </group>
   <group>
-    <name>Drivers</name>
+    <name>Applications</name>
     <file>
-      <name>$PROJ_DIR$\drivers\board.c</name>
+      <name>$PROJ_DIR$\applications/device_test.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\usart.c</name>
+      <name>$PROJ_DIR$\applications/main.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\hyper_flash_boot.c</name>
+      <name>$PROJ_DIR$\applications/mem_dump.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\drv_sdram.c</name>
+      <name>$PROJ_DIR$\applications/mem_test.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\drv_eth.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\fsl_phy.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\drv_sdio.c</name>
+      <name>$PROJ_DIR$\applications/sdio_test.c</name>
     </file>
   </group>
   <group>
     <name>Libraries</name>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_adc.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_adc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_adc_etc.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_adc_etc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_aipstz.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_aipstz.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_aoi.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_aoi.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_bee.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_bee.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_cache.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_cache.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_clock.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_clock.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_cmp.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_cmp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_common.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_common.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_csi.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_csi.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_dcdc.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_dcdc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_dcp.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_dcp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_dmamux.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_dmamux.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_edma.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_edma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_elcdif.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_elcdif.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_enc.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_enc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_enet.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_enet.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_ewm.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_ewm.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_flexcan.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_flexcan.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_flexio.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_flexio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_flexio_i2c_master.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_flexio_i2c_master.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_flexio_i2s.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_flexio_i2s.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_flexio_i2s_edma.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_flexio_i2s_edma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_flexio_spi.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_flexio_spi.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_flexio_spi_edma.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_flexio_spi_edma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_flexio_uart.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_flexio_uart.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_flexio_uart_edma.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_flexio_uart_edma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_flexram.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_flexram.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_flexspi.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_flexspi.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_gpc.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_gpc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_gpio.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_gpio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_gpt.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_gpt.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_kpp.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_kpp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_lpi2c.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_lpi2c.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_lpi2c_edma.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_lpi2c_edma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_lpspi.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_lpspi.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_lpspi_edma.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_lpspi_edma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_lpuart.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_lpuart.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_lpuart_edma.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_lpuart_edma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_pit.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_pit.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_pmu.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_pmu.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_pwm.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_pwm.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_pxp.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_pxp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_qtmr.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_qtmr.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_rtwdog.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_rtwdog.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_sai.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_sai.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_sai_edma.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_sai_edma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_semc.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_semc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_snvs_hp.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_snvs_hp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_snvs_lp.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_snvs_lp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_spdif.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_spdif.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_spdif_edma.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_spdif_edma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_src.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_src.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_trng.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_trng.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_tsc.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_tsc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_usdhc.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_usdhc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_wdog.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_wdog.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_xbara.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_xbara.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\drivers\fsl_xbarb.c</name>
+      <name>$PROJ_DIR$\Libraries/drivers/fsl_xbarb.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\system_MIMXRT1052.c</name>
+      <name>$PROJ_DIR$\Libraries/system_MIMXRT1052.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\iar\startup_MIMXRT1052.s</name>
+      <name>$PROJ_DIR$\Libraries/iar/startup_MIMXRT1052.s</name>
     </file>
   </group>
   <group>
     <name>Kernel</name>
     <file>
-      <name>$PROJ_DIR$\..\..\src\clock.c</name>
+      <name>$PROJ_DIR$\../../src/clock.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\components.c</name>
+      <name>$PROJ_DIR$\../../src/components.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\device.c</name>
+      <name>$PROJ_DIR$\../../src/device.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\idle.c</name>
+      <name>$PROJ_DIR$\../../src/idle.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\ipc.c</name>
+      <name>$PROJ_DIR$\../../src/ipc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\irq.c</name>
+      <name>$PROJ_DIR$\../../src/irq.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\kservice.c</name>
+      <name>$PROJ_DIR$\../../src/kservice.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\memheap.c</name>
+      <name>$PROJ_DIR$\../../src/memheap.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\object.c</name>
+      <name>$PROJ_DIR$\../../src/object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
+      <name>$PROJ_DIR$\../../src/scheduler.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\signal.c</name>
+      <name>$PROJ_DIR$\../../src/signal.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\thread.c</name>
+      <name>$PROJ_DIR$\../../src/thread.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\timer.c</name>
+      <name>$PROJ_DIR$\../../src/timer.c</name>
     </file>
   </group>
   <group>
     <name>CORTEX-M7</name>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m7\cpuport.c</name>
+      <name>$PROJ_DIR$\../../libcpu/arm/cortex-m7/cpuport.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m7\context_iar.S</name>
+      <name>$PROJ_DIR$\../../libcpu/arm/cortex-m7/context_iar.S</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
+      <name>$PROJ_DIR$\../../libcpu/arm/common/backtrace.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
+      <name>$PROJ_DIR$\../../libcpu/arm/common/div0.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\showmem.c</name>
-    </file>
-  </group>
-  <group>
-    <name>Filesystem</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\src\dfs.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\src\dfs_file.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\src\dfs_fs.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\src\dfs_posix.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\devfs\devfs.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat\dfs_elm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat\ff.c</name>
+      <name>$PROJ_DIR$\../../libcpu/arm/common/showmem.c</name>
     </file>
   </group>
   <group>
     <name>DeviceDrivers</name>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\sdio\block_dev.c</name>
+      <name>$PROJ_DIR$\../../components/drivers/i2c/i2c_core.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\sdio\mmcsd_core.c</name>
+      <name>$PROJ_DIR$\../../components/drivers/i2c/i2c_dev.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\sdio\sd.c</name>
+      <name>$PROJ_DIR$\../../components/drivers/i2c/i2c-bit-ops.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\sdio\sdio.c</name>
+      <name>$PROJ_DIR$\../../components/drivers/sdio/block_dev.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\sdio\mmc.c</name>
+      <name>$PROJ_DIR$\../../components/drivers/sdio/mmcsd_core.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\serial\serial.c</name>
+      <name>$PROJ_DIR$\../../components/drivers/sdio/sd.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\src\completion.c</name>
+      <name>$PROJ_DIR$\../../components/drivers/sdio/sdio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\src\dataqueue.c</name>
+      <name>$PROJ_DIR$\../../components/drivers/sdio/mmc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\src\pipe.c</name>
+      <name>$PROJ_DIR$\../../components/drivers/serial/serial.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\src\ringbuffer.c</name>
+      <name>$PROJ_DIR$\../../components/drivers/src/completion.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\src\waitqueue.c</name>
+      <name>$PROJ_DIR$\../../components/drivers/src/dataqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\src\workqueue.c</name>
-    </file>
-  </group>
-  <group>
-    <name>finsh</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\shell.c</name>
+      <name>$PROJ_DIR$\../../components/drivers/src/pipe.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\symbol.c</name>
+      <name>$PROJ_DIR$\../../components/drivers/src/ringbuffer.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\cmd.c</name>
+      <name>$PROJ_DIR$\../../components/drivers/src/waitqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\msh.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\msh_cmd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\msh_file.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_compiler.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_error.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_heap.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_init.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_node.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_ops.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_parser.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_var.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_vm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_token.c</name>
+      <name>$PROJ_DIR$\../../components/drivers/src/workqueue.c</name>
     </file>
   </group>
   <group>
     <name>dlib</name>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\environ.c</name>
+      <name>$PROJ_DIR$\../../components/libc/compilers/dlib/environ.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\libc.c</name>
+      <name>$PROJ_DIR$\../../components/libc/compilers/dlib/libc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\rmtx.c</name>
+      <name>$PROJ_DIR$\../../components/libc/compilers/dlib/rmtx.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\stdio.c</name>
+      <name>$PROJ_DIR$\../../components/libc/compilers/dlib/stdio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_close.c</name>
+      <name>$PROJ_DIR$\../../components/libc/compilers/dlib/syscall_close.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
+      <name>$PROJ_DIR$\../../components/libc/compilers/dlib/syscall_lseek.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
+      <name>$PROJ_DIR$\../../components/libc/compilers/dlib/syscall_mem.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_open.c</name>
+      <name>$PROJ_DIR$\../../components/libc/compilers/dlib/syscall_open.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_read.c</name>
+      <name>$PROJ_DIR$\../../components/libc/compilers/dlib/syscall_read.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
+      <name>$PROJ_DIR$\../../components/libc/compilers/dlib/syscall_remove.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_write.c</name>
+      <name>$PROJ_DIR$\../../components/libc/compilers/dlib/syscall_write.c</name>
+    </file>
+  </group>
+  <group>
+    <name>finsh</name>
+    <file>
+      <name>$PROJ_DIR$\../../components/finsh/shell.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/finsh/symbol.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/finsh/cmd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/finsh/msh.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/finsh/msh_cmd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/finsh/msh_file.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/finsh/finsh_compiler.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/finsh/finsh_error.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/finsh/finsh_heap.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/finsh/finsh_init.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/finsh/finsh_node.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/finsh/finsh_ops.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/finsh/finsh_parser.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/finsh/finsh_var.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/finsh/finsh_vm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/finsh/finsh_token.c</name>
+    </file>
+  </group>
+  <group>
+    <name>freetype</name>
+  </group>
+  <group>
+    <name>FreeType</name>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/builds/rt-thread/ftsystem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/builds/rt-thread/gb2312tounicode.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/truetype/truetype.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/base/fttype1.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/base/ftbitmap.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/base/ftbase.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/base/ftbbox.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/base/ftfstype.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/base/ftglyph.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/base/ftinit.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/base/ftlcdfil.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/base/ftmm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/base/ftpatent.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/cache/ftcbasic.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/cache/ftccache.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/cache/ftccmap.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/cache/ftcglyph.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/cache/ftcimage.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/cache/ftcmanag.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/cache/ftcmru.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/cache/ftcsbits.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/psnames/psnames.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/sfnt/sfnt.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/autofit/autofit.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/freetype-2.6.2/src/smooth/smooth.c</name>
+    </file>
+  </group>
+  <group>
+    <name>GuiEngine</name>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/libraries/lodepng/lodepng.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/asc12font.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/asc16font.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/blit.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/box.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/color.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/container.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/dc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/dc_blend.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/dc_buffer.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/dc_client.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/dc_hw.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/dc_rotozoom.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/dc_trans.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/filerw.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/font.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/font_bmp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/font_fnt.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/font_freetype.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/font_hz_bmp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/font_hz_file.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/hz12font.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/hz16font.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/image.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/image_bmp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/image_container.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/image_hdc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/image_jpg.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/image_png.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/image_xpm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/matrix.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/mouse.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/region.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/rtgui_app.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/rtgui_driver.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/rtgui_object.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/rtgui_system.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/server.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/title.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/topwin.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/widget.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/gui/src/window.c</name>
     </file>
   </group>
   <group>
     <name>LwIP</name>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\api\api_lib.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/api/api_lib.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\api\api_msg.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/api/api_msg.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\api\err.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/api/err.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\api\netbuf.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/api/netbuf.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\api\netdb.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/api/netdb.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\api\netifapi.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/api/netifapi.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\api\sockets.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/api/sockets.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\api\tcpip.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/api/tcpip.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\arch\sys_arch.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/arch/sys_arch.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\def.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/def.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\dhcp.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/dhcp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\dns.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/dns.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\init.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/init.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\memp.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/memp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\netif.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/netif.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\pbuf.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/pbuf.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\raw.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/raw.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\stats.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/stats.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\sys.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/sys.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\tcp.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/tcp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\tcp_in.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/tcp_in.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\tcp_out.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/tcp_out.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\timers.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/timers.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\udp.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/udp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\ipv4\autoip.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/ipv4/autoip.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\ipv4\icmp.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/ipv4/icmp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\ipv4\igmp.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/ipv4/igmp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\ipv4\inet.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/ipv4/inet.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\ipv4\inet_chksum.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/ipv4/inet_chksum.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\ipv4\ip.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/ipv4/ip.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\ipv4\ip_addr.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/ipv4/ip_addr.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\ipv4\ip_frag.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/core/ipv4/ip_frag.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\netif\etharp.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/netif/etharp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\netif\ethernetif.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/netif/ethernetif.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\netif\slipif.c</name>
+      <name>$PROJ_DIR$\../../components/net/lwip-1.4.1/src/netif/slipif.c</name>
+    </file>
+  </group>
+  <group>
+    <name>Filesystem</name>
+    <file>
+      <name>$PROJ_DIR$\../../components/dfs/src/dfs.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/dfs/src/dfs_file.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/dfs/src/dfs_fs.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/dfs/src/dfs_posix.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/dfs/filesystems/devfs/devfs.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/dfs/filesystems/elmfat/dfs_elm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/dfs/filesystems/elmfat/ff.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../components/dfs/filesystems/elmfat/option/ccsbcs.c</name>
     </file>
   </group>
 </project>
