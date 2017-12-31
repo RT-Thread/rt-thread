@@ -255,6 +255,29 @@ int cmd_mkfs(int argc, char **argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_mkfs, __cmd_mkfs, format disk with file system);
 
+extern int df(const char *path);
+int cmd_df(int argc, char** argv)
+{
+    if (argc != 2)
+    {
+        df("/");
+    }
+    else 
+    {
+        if ((strcmp(argv[1], "--help") == 0) || (strcmp(argv[1], "-h") == 0))
+        {
+            rt_kprintf("df [path]\n");
+        }
+        else
+        {
+            df(argv[1]);
+        }
+    }
+
+    return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_df, __cmd_df, disk free);
+
 int cmd_echo(int argc, char** argv)
 {
 	if (argc == 2)
