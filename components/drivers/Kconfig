@@ -7,7 +7,7 @@ config RT_USING_DEVICE_IPC
 config RT_USING_SERIAL
     bool "Using serial device drivers"
     select RT_USING_DEVICE_IPC
-    select RT_USING_DEVICE    
+    select RT_USING_DEVICE
     default y
 
 config RT_USING_CAN
@@ -24,13 +24,17 @@ config RT_USING_CPUTIME
     help
         When enable this option, the BSP should provide a rt_clock_cputime_ops
         for CPU time by:
-        clock_cpu_setops(const struct rt_clock_cputime_ops *ops);
+        const static struct rt_clock_cputime_ops _ops = {...};
+        clock_cpu_setops(&_ops);
 
-        Then developer can use high resolution clock counter with:
+        Then user can use high resolution clock counter with:
 
-        ts = clock_cpu_gettime(); 
-        /* The unit of clock_cpu_gettime() can be returned by */
-        unit = clock_cpu_getres(); /* number for nanosecond */
+        ts1 = clock_cpu_gettime();
+        ts2 = clock_cpu_gettime();
+
+        /* and get the ms of delta tick with API: */
+        ms_tick = clock_cpu_millisecond(t2 - t1);
+        us_tick = clock_cpu_microsecond(t2 - t1);
 
 if RT_USING_CPUTIME 
     config RT_USING_CPUTIME_CORTEXM
