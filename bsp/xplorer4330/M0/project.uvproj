@@ -12,13 +12,13 @@
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
         <TargetCommonOption>
-          <Device>LPC4330</Device>
+          <Device>LPC4330 CM0</Device>
           <Vendor>NXP (founded by Philips)</Vendor>
-          <Cpu>IRAM(0x10000000-0x1001FFFF) IRAM2(0x20000000-0x2000FFFF) CLOCK(12000000) CPUTYPE("Cortex-M4") FPU2</Cpu>
+          <Cpu>CLOCK(12000000) CPUTYPE("Cortex-M0")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
-          <StartupFile>"STARTUP\NXP\LPC43xx\startup_LPC43xx.s" ("NXP LPC43xx Startup Code")</StartupFile>
-          <FlashDriverDll>UL2CM3(-O975 -S0 -C0)</FlashDriverDll>
-          <DeviceId>6193</DeviceId>
+          <StartupFile>"STARTUP\NXP\LPC43xx\startup_LPC43xx_M0.s" ("NXP LPC43xx CM0 Startup Code")</StartupFile>
+          <FlashDriverDll>UL2CM3(-O910 -S8 -C1 -FO7 -FD10000000 -FC800 -FN0)</FlashDriverDll>
+          <DeviceId>6914</DeviceId>
           <RegisterFile>LPC43xx.H</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
@@ -102,13 +102,13 @@
         </CommonProperty>
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
-          <SimDllArguments>-MPU</SimDllArguments>
-          <SimDlgDll>DCM.DLL</SimDlgDll>
-          <SimDlgDllArguments>-pCM4</SimDlgDllArguments>
+          <SimDllArguments></SimDllArguments>
+          <SimDlgDll>TARMCM1.DLL</SimDlgDll>
+          <SimDlgDllArguments>-pCM0</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
-          <TargetDllArguments>-MPU</TargetDllArguments>
-          <TargetDlgDll>TCM.DLL</TargetDlgDll>
-          <TargetDlgDllArguments>-pCM4</TargetDlgDllArguments>
+          <TargetDllArguments></TargetDllArguments>
+          <TargetDlgDll>DARMCM1.DLL</TargetDlgDll>
+          <TargetDlgDllArguments>-pCM0</TargetDlgDllArguments>
         </DllOption>
         <DebugOption>
           <OPTHX>
@@ -208,17 +208,17 @@
             <AdsLsxf>1</AdsLsxf>
             <RvctClst>1</RvctClst>
             <GenPPlst>0</GenPPlst>
-            <AdsCpuType>"Cortex-M4"</AdsCpuType>
+            <AdsCpuType>"Cortex-M0"</AdsCpuType>
             <RvctDeviceName></RvctDeviceName>
             <mOS>0</mOS>
             <uocRom>0</uocRom>
             <uocRam>0</uocRam>
             <hadIROM>0</hadIROM>
-            <hadIRAM>1</hadIRAM>
+            <hadIRAM>0</hadIRAM>
             <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
-            <RvdsVP>2</RvdsVP>
-            <hadIRAM2>1</hadIRAM2>
+            <RvdsVP>0</RvdsVP>
+            <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>1</StupSel>
             <useUlib>1</useUlib>
@@ -332,12 +332,12 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x10000000</StartAddress>
-                <Size>0x20000</Size>
+                <Size>0x10000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
-                <StartAddress>0x20000000</StartAddress>
-                <Size>0x10000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
               </OCR_RVCT10>
             </OnChipMemories>
             <RvctStartVector></RvctStartVector>
@@ -360,9 +360,9 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_SPIFI, CORE_M4</Define>
+              <Define>CORE_M0, USE_SPIFI</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;.;..\drivers;..\Libraries\Device\NXP\LPC43xx\Include;..\Libraries\CMSIS\Include;..\..\..\include;..\..\..\libcpu\arm\cortex-m4;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh</IncludePath>
+              <IncludePath>applications;.;..\drivers;..\Libraries\Device\NXP\LPC43xx\Include;..\Libraries\CMSIS\Include;..\..\..\include;..\..\..\libcpu\arm\cortex-m0;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -446,9 +446,9 @@
               <FilePath>..\Libraries\Device\NXP\LPC43xx\Source\Templates\system_LPC43xx.c</FilePath>
             </File>
             <File>
-              <FileName>startup_LPC43xx.s</FileName>
+              <FileName>startup_LPC43xx_M0.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\Libraries\Device\NXP\LPC43xx\Source\Templates\ARM\startup_LPC43xx.s</FilePath>
+              <FilePath>..\Libraries\Device\NXP\LPC43xx\Source\Templates\ARM\startup_LPC43xx_M0.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -528,17 +528,17 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>CORTEX-M4</GroupName>
+          <GroupName>CORTEX-M0</GroupName>
           <Files>
             <File>
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\cortex-m0\cpuport.c</FilePath>
             </File>
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
+              <FilePath>..\..\..\libcpu\arm\cortex-m0\context_rvds.S</FilePath>
             </File>
             <File>
               <FileName>backtrace.c</FileName>
@@ -675,13 +675,13 @@
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
         <TargetCommonOption>
-          <Device>LPC4330</Device>
+          <Device>LPC4330 CM0</Device>
           <Vendor>NXP (founded by Philips)</Vendor>
-          <Cpu>IRAM(0x10000000-0x1001FFFF) IRAM2(0x20000000-0x2000FFFF) CLOCK(12000000) CPUTYPE("Cortex-M4") FPU2</Cpu>
+          <Cpu>CLOCK(12000000) CPUTYPE("Cortex-M0")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
-          <StartupFile>"STARTUP\NXP\LPC43xx\startup_LPC43xx.s" ("NXP LPC43xx Startup Code")</StartupFile>
-          <FlashDriverDll>UL2CM3(-O975 -S0 -C0)</FlashDriverDll>
-          <DeviceId>6193</DeviceId>
+          <StartupFile>"STARTUP\NXP\LPC43xx\startup_LPC43xx_M0.s" ("NXP LPC43xx CM0 Startup Code")</StartupFile>
+          <FlashDriverDll>UL2CM3(-O910 -S8 -C1 -FO7 -FD10000000 -FC800 -FN0)</FlashDriverDll>
+          <DeviceId>6914</DeviceId>
           <RegisterFile>LPC43xx.H</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
@@ -765,13 +765,13 @@
         </CommonProperty>
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
-          <SimDllArguments>-MPU</SimDllArguments>
-          <SimDlgDll>DCM.DLL</SimDlgDll>
-          <SimDlgDllArguments>-pCM4</SimDlgDllArguments>
+          <SimDllArguments></SimDllArguments>
+          <SimDlgDll>TARMCM1.DLL</SimDlgDll>
+          <SimDlgDllArguments>-pCM0</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
-          <TargetDllArguments>-MPU</TargetDllArguments>
-          <TargetDlgDll>TCM.DLL</TargetDlgDll>
-          <TargetDlgDllArguments>-pCM4</TargetDlgDllArguments>
+          <TargetDllArguments></TargetDllArguments>
+          <TargetDlgDll>DARMCM1.DLL</TargetDlgDll>
+          <TargetDlgDllArguments>-pCM0</TargetDlgDllArguments>
         </DllOption>
         <DebugOption>
           <OPTHX>
@@ -871,19 +871,19 @@
             <AdsLsxf>1</AdsLsxf>
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
-            <AdsCpuType>"Cortex-M4"</AdsCpuType>
+            <AdsCpuType>"Cortex-M0"</AdsCpuType>
             <RvctDeviceName></RvctDeviceName>
             <mOS>0</mOS>
             <uocRom>0</uocRom>
             <uocRam>0</uocRam>
             <hadIROM>0</hadIROM>
-            <hadIRAM>1</hadIRAM>
+            <hadIRAM>0</hadIRAM>
             <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
-            <RvdsVP>2</RvdsVP>
-            <hadIRAM2>1</hadIRAM2>
+            <RvdsVP>0</RvdsVP>
+            <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
-            <StupSel>8</StupSel>
+            <StupSel>0</StupSel>
             <useUlib>1</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
@@ -899,13 +899,13 @@
             <Ro1Chk>0</Ro1Chk>
             <Ro2Chk>0</Ro2Chk>
             <Ro3Chk>0</Ro3Chk>
-            <Ir1Chk>1</Ir1Chk>
+            <Ir1Chk>0</Ir1Chk>
             <Ir2Chk>0</Ir2Chk>
             <Ra1Chk>0</Ra1Chk>
             <Ra2Chk>0</Ra2Chk>
             <Ra3Chk>0</Ra3Chk>
-            <Im1Chk>0</Im1Chk>
-            <Im2Chk>1</Im2Chk>
+            <Im1Chk>1</Im1Chk>
+            <Im2Chk>0</Im2Chk>
             <OnChipMemories>
               <Ocm1>
                 <Type>0</Type>
@@ -995,12 +995,12 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x10000000</StartAddress>
-                <Size>0x20000</Size>
+                <Size>0x10000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
-                <StartAddress>0x20000000</StartAddress>
-                <Size>0x10000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
               </OCR_RVCT10>
             </OnChipMemories>
             <RvctStartVector></RvctStartVector>
@@ -1109,9 +1109,9 @@
               <FilePath>..\Libraries\Device\NXP\LPC43xx\Source\Templates\system_LPC43xx.c</FilePath>
             </File>
             <File>
-              <FileName>startup_LPC43xx.s</FileName>
+              <FileName>startup_LPC43xx_M0.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\Libraries\Device\NXP\LPC43xx\Source\Templates\ARM\startup_LPC43xx.s</FilePath>
+              <FilePath>..\Libraries\Device\NXP\LPC43xx\Source\Templates\ARM\startup_LPC43xx_M0.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -1191,17 +1191,17 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>CORTEX-M4</GroupName>
+          <GroupName>CORTEX-M0</GroupName>
           <Files>
             <File>
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\cortex-m0\cpuport.c</FilePath>
             </File>
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
+              <FilePath>..\..\..\libcpu\arm\cortex-m0\context_rvds.S</FilePath>
             </File>
             <File>
               <FileName>backtrace.c</FileName>
