@@ -54,6 +54,8 @@ DECLARE_CLASS_TYPE(win);
 #define RTGUI_WIN_STYLE_ONBTM               0x0080  /* window is in the bottom layer */
 #define RTGUI_WIN_STYLE_MAINWIN             0x0106  /* window is a main window       */
 
+#define RTGUI_WIN_MAGIC						0xA5A55A5A		/* win magic flag */
+
 #define RTGUI_WIN_STYLE_DEFAULT     (RTGUI_WIN_STYLE_CLOSEBOX | RTGUI_WIN_STYLE_MINIBOX)
 
 #define WINTITLE_HEIGHT         20
@@ -88,8 +90,8 @@ struct rtgui_win
     /* inherit from container */
     rtgui_container_t parent;
 
-	/* update count */
-	rt_base_t update;
+    /* update count */
+    rt_base_t update;
 
     /* drawing count */
     rt_base_t drawing;
@@ -140,11 +142,12 @@ struct rtgui_win
 
     /* Private data. */
     rt_base_t (*_do_show)(struct rtgui_win *win);
-	
-	/* app ref_count */
-	rt_uint16_t app_ref_count;
-	/* win magic flag, magic value is 0xA5A55A5A */
-	rt_uint32_t	magic;
+
+    /* app ref_count */
+    rt_uint16_t app_ref_count;
+
+    /* win magic flag, magic value is 0xA5A55A5A */
+    rt_uint32_t	magic;
 };
 
 rtgui_win_t *rtgui_win_create(struct rtgui_win *parent_window, const char *title,
