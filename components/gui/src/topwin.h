@@ -64,6 +64,9 @@ void rtgui_topwin_remove_monitor_rect(struct rtgui_win *wid, rtgui_rect_t *rect)
 /* get the topwin that is currently focused */
 struct rtgui_topwin *rtgui_topwin_get_focus(void);
 
+/* get the topwin which app I belong */
+struct rtgui_app *rtgui_topwin_app_get_focus(void);
+
 struct rtgui_topwin *rtgui_topwin_get_topmost_window_shown_all(void);
 
 #endif

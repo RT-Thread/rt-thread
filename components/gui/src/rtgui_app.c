@@ -29,7 +29,7 @@
 #include <rtgui/rtgui_system.h>
 #include <rtgui/rtgui_app.h>
 #include <rtgui/widgets/window.h>
-#include "topwin.h"
+#include <topwin.h>
 
 static void _rtgui_app_constructor(struct rtgui_app *app)
 {
@@ -43,6 +43,7 @@ static void _rtgui_app_constructor(struct rtgui_app *app)
     app->state_flag     = RTGUI_APP_FLAG_EXITED;
     app->ref_count      = 0;
     app->window_cnt     = 0;
+    app->win_acti_cnt   = 0;
     app->exit_code      = 0;
     app->tid            = RT_NULL;
     app->mq             = RT_NULL;
@@ -203,11 +204,11 @@ rt_inline rt_bool_t _rtgui_application_dest_handle(
 
     if (wevent->wid == RT_NULL)
         return RT_FALSE;
-	
-	if (wevent->wid->magic != 0xA5A55A5A)
-	{
-		return RT_FALSE;
-	}
+
+    if (wevent->wid->magic != RTGUI_WIN_MAGIC)
+    {
+        return RT_FALSE;
+    }
 
     /* this window has been closed. */
     if (wevent->wid != RT_NULL && wevent->wid->flag & RTGUI_WIN_FLAG_CLOSED)
@@ -249,19 +250,55 @@ rt_bool_t rtgui_app_event_handler(struct rtgui_object *object, rtgui_event_t *ev
 
     switch (event->type)
     {
-    case RTGUI_EVENT_PAINT:
-    case RTGUI_EVENT_VPAINT_REQ:
+    case RTGUI_EVENT_KBD:
+    {
+        struct rtgui_event_kbd *kbd = (struct rtgui_event_kbd*)event;
+
+        if (kbd->win_acti_cnt != app->win_acti_cnt)
+            break;
+
+        _rtgui_application_dest_handle(app, event);
+    }
+    break;
+
     case RTGUI_EVENT_MOUSE_BUTTON:
     case RTGUI_EVENT_MOUSE_MOTION:
-    case RTGUI_EVENT_CLIP_INFO:
+    {
+        struct rtgui_event_mouse *wevent = (struct rtgui_event_mouse *)event;
+
+        if (wevent->win_acti_cnt != app->win_acti_cnt)
+            break;
+
+        _rtgui_application_dest_handle(app, event);
+    }
+    break;
+
+    case RTGUI_EVENT_GESTURE:
+    {
+        struct rtgui_event_gesture *wevent = (struct rtgui_event_gesture *)event;
+
+        if (wevent->win_acti_cnt != app->win_acti_cnt)
+            break;
+
+        _rtgui_application_dest_handle(app, event);
+    }
+    break;
+
     case RTGUI_EVENT_WIN_ACTIVATE:
+    {
+        app->win_acti_cnt++;
+        _rtgui_application_dest_handle(app, event);
+    }
+    break;
+
+    case RTGUI_EVENT_PAINT:
+    case RTGUI_EVENT_VPAINT_REQ:
+    case RTGUI_EVENT_CLIP_INFO:
     case RTGUI_EVENT_WIN_DEACTIVATE:
     case RTGUI_EVENT_WIN_CLOSE:
     case RTGUI_EVENT_WIN_MOVE:
     case RTGUI_EVENT_WIN_SHOW:
     case RTGUI_EVENT_WIN_HIDE:
-    case RTGUI_EVENT_KBD:
-    case RTGUI_EVENT_GESTURE:
         _rtgui_application_dest_handle(app, event);
         break;
 
@@ -284,14 +321,14 @@ rt_bool_t rtgui_app_event_handler(struct rtgui_object *object, rtgui_event_t *ev
 
     case RTGUI_EVENT_TIMER:
     {
-		rt_base_t level;
+        rt_base_t level;
         struct rtgui_timer *timer;
         struct rtgui_event_timer *etimer = (struct rtgui_event_timer *) event;
 
         timer = etimer->timer;
-		level = rt_hw_interrupt_disable();
+        level = rt_hw_interrupt_disable();
         timer->pending_cnt--;
-		rt_hw_interrupt_enable(level);
+        rt_hw_interrupt_enable(level);
         RT_ASSERT(timer->pending_cnt >= 0);
         if (timer->state == RTGUI_TIMER_ST_DESTROY_PENDING)
         {
@@ -320,21 +357,21 @@ rt_bool_t rtgui_app_event_handler(struct rtgui_object *object, rtgui_event_t *ev
 
         if (ecmd->wid != RT_NULL)
             return _rtgui_application_dest_handle(app, event);
-		else
-		{
-			struct rtgui_topwin *wnd;
+        else
+        {
+            struct rtgui_topwin *wnd;
 
-			wnd = rtgui_topwin_get_focus();
-			if (wnd != RT_NULL)
-			{
-				RT_ASSERT(wnd->flag & WINTITLE_ACTIVATE)
+            wnd = rtgui_topwin_get_focus();
+            if (wnd != RT_NULL)
+            {
+                RT_ASSERT(wnd->flag & WINTITLE_ACTIVATE)
 
-				/* send to focus window */
-				ecmd->wid = wnd->wid;
+                /* send to focus window */
+                ecmd->wid = wnd->wid;
 
-				return _rtgui_application_dest_handle(app, event);
-			}			
-		}
+                return _rtgui_application_dest_handle(app, event);
+            }
+        }
     }
     default:
         return rtgui_object_event_handler(object, event);
@@ -506,4 +543,17 @@ struct rtgui_win *rtgui_app_get_main_win(struct rtgui_app *app)
     return RTGUI_WIN(app->main_object);
 }
 RTM_EXPORT(rtgui_app_get_main_win);
+
+unsigned int rtgui_app_get_win_acti_cnt(void)
+{
+    struct rtgui_app *app = rtgui_topwin_app_get_focus();
+
+    if (app)
+    {
+        return app->win_acti_cnt;
+    }
+
+    return 0;
+}
+RTM_EXPORT(rtgui_app_get_win_acti_cnt);
 

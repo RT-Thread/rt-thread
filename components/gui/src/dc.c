@@ -324,9 +324,9 @@ void rtgui_dc_draw_text(struct rtgui_dc *dc, const char *text, struct rtgui_rect
     }
 
     len = strlen((const char *)text);
-	if (len == 0)
-		return;
-	
+    if (len == 0)
+        return;
+
     rtgui_font_draw(font, dc, text, len, rect);
 }
 RTM_EXPORT(rtgui_dc_draw_text);
@@ -1689,6 +1689,13 @@ void rtgui_dc_get_rect(struct rtgui_dc *dc, rtgui_rect_t *rect)
         dc_hw = (struct rtgui_dc_hw *) dc;
         owner = dc_hw->owner;
         rtgui_widget_get_rect(owner, rect);
+
+        if (owner->extent.x1 + rect->x2 > dc_hw->hw_driver->width)
+            rect->x2 = dc_hw->hw_driver->width - owner->extent.x1;
+
+        if (owner->extent.y1 + rect->y2 > dc_hw->hw_driver->height)
+            rect->y2 = dc_hw->hw_driver->height - owner->extent.y1;
+
         break;
     }
     case RTGUI_DC_BUFFER:
@@ -1806,7 +1813,7 @@ extern void rtgui_mouse_hide_cursor(void);
 struct rtgui_dc *rtgui_dc_begin_drawing(rtgui_widget_t *owner)
 {
     struct rtgui_dc *dc;
-    struct rtgui_widget *widget;
+    struct rtgui_widget *widget, *parent;
     struct rtgui_win *win;
 
     RT_ASSERT(owner != RT_NULL);
@@ -1815,9 +1822,16 @@ struct rtgui_dc *rtgui_dc_begin_drawing(rtgui_widget_t *owner)
     if (win == RT_NULL)
         return RT_NULL;
 
+    parent = (struct rtgui_widget *)win;
+
     if (!(win->flag & RTGUI_WIN_FLAG_ACTIVATE) &&
             (win->outer_clip.extents.x1 == win->outer_clip.extents.x2 ||
              win->outer_clip.extents.y1 == win->outer_clip.extents.y2))
+        return RT_NULL;
+
+    if (!(win->flag & RTGUI_WIN_FLAG_ACTIVATE) &&
+            (parent->clip.extents.x1 == parent->clip.extents.x2 ||
+             parent->clip.extents.y1 == parent->clip.extents.y2))
         return RT_NULL;
 
     /* increase drawing count */
