@@ -275,12 +275,12 @@ static void _rtgui_rect_move_to_align(const rtgui_rect_t *rect, rtgui_rect_t *to
         to->x1 += dw;
         to->x2 += dw;
     }
-	/* align to center horizontal */
-	else if (align & RTGUI_ALIGN_CENTER_HORIZONTAL)
-	{
-		to->x1 += dw >> 1;
-		to->x2 += dw >> 1;
-	}
+    /* align to center horizontal */
+    else if (align & RTGUI_ALIGN_CENTER_HORIZONTAL)
+    {
+        to->x1 += dw >> 1;
+        to->x2 += dw >> 1;
+    }
 
     /* align to bottom */
     if (align & RTGUI_ALIGN_BOTTOM)
@@ -393,7 +393,7 @@ static void _get_metrics(struct rtgui_ttf_font *ttf_font, const rt_uint16_t *tex
 static void _draw_bitmap(struct rtgui_dc *dc,
                          FTC_SBit bitmap,
                          rt_int16_t ox, rt_int16_t btm_y,
-                         rt_uint8_t a, rt_uint8_t r, rt_uint8_t g, rt_uint8_t b)
+                         rtgui_color_t fgc, rt_uint16_t right, rt_uint16_t bottom)
 {
     rt_int16_t x_start, y_start;
     struct rtgui_blit_info info = { 0 };
@@ -403,10 +403,12 @@ static void _draw_bitmap(struct rtgui_dc *dc,
     x_start = ox + bitmap->left;
     y_start = btm_y - bitmap->top;
 
-    info.a = a;
-    info.r = r;
-    info.g = g;
-    info.b = b;
+    PINFO(" draw bitmap (x, y) -> (%d, %d)\n", x_start, y_start);
+
+    info.a = RTGUI_RGB_A(fgc);
+    info.r = RTGUI_RGB_R(fgc);
+    info.g = RTGUI_RGB_G(fgc);
+    info.b = RTGUI_RGB_B(fgc);
 
     if (dc->type == RTGUI_DC_HW)
     {
@@ -444,18 +446,22 @@ static void _draw_bitmap(struct rtgui_dc *dc,
     }
     else if (dc->type == RTGUI_DC_BUFFER)
     {
+        int max_right, max_bottom;
+
         dest_buf = (struct rtgui_dc_buffer*)dc;
+        max_right = right > dest_buf->width ? dest_buf->width : right;
+        max_bottom = bottom > dest_buf->height ? dest_buf->height : bottom;
 
         if (x_start + bitmap->width < 0 || y_start + bitmap->height < 0
-                || x_start > dest_buf->width || y_start > dest_buf->height)
+                || x_start > max_right || y_start > max_bottom)
             return;
 
         /* blit source */
         info.src = (rt_uint8_t *)bitmap->buffer;
         info.src = info.src + (y_start > 0 ? 0 : -y_start) * bitmap->width + (x_start > 0 ? 0 : -x_start);
         info.src_fmt = RTGRAPHIC_PIXEL_FORMAT_ALPHA;
-        info.src_w = bitmap->width - (x_start > 0 ? 0 : -x_start) - (x_start + bitmap->width < dest_buf->width ? 0 : x_start + bitmap->width - dest_buf->width);
-        info.src_h = bitmap->height - (y_start > 0 ? 0 : -y_start) - (y_start + bitmap->height < dest_buf->height ? 0 : y_start + bitmap->height - dest_buf->height);
+        info.src_w = bitmap->width - (x_start > 0 ? 0 : -x_start) - (x_start + bitmap->width < max_right ? 0 : x_start + bitmap->width - max_right);
+        info.src_h = bitmap->height - (y_start > 0 ? 0 : -y_start) - (y_start + bitmap->height < max_bottom ? 0 : y_start + bitmap->height - max_bottom);
         info.src_pitch = bitmap->width;
         info.src_skip = info.src_pitch - info.src_w;
 
@@ -473,7 +479,13 @@ static void _draw_bitmap(struct rtgui_dc *dc,
     {
         struct rtgui_rect text_rect;
         struct rtgui_point dc_point = { 0, 0 };
-        struct rtgui_dc *text_dc = rtgui_dc_buffer_create_pixformat(RTGRAPHIC_PIXEL_FORMAT_ARGB888, bitmap->width, bitmap->height);
+        struct rtgui_dc *text_dc;
+
+        if (x_start + bitmap->width < 0 || y_start + bitmap->height < 0
+                || x_start > right || y_start > bottom)
+            return;
+
+        text_dc = rtgui_dc_buffer_create_pixformat(RTGRAPHIC_PIXEL_FORMAT_ARGB888, bitmap->width, bitmap->height);
         if (text_dc)
         {
             dest_buf = (struct rtgui_dc_buffer*)text_dc;
@@ -503,7 +515,7 @@ static void _draw_bitmap(struct rtgui_dc *dc,
             text_rect.y1 = y_start;
             text_rect.y2 = text_rect.y1 + bitmap->height;
 
-            rtgui_dc_buffer_set_alpha(text_dc, a);
+            rtgui_dc_buffer_set_alpha(text_dc, RTGUI_RGB_A(fgc));
             rtgui_dc_blit(text_dc, &dc_point, dc, &text_rect);
 
             rtgui_dc_destory(text_dc);
@@ -515,7 +527,7 @@ static void _draw_text(struct rtgui_dc *dc,
                        struct rtgui_ttf_font *ttf_font,
                        rt_uint16_t *text_short,
                        rt_int16_t begin_x, rt_int16_t btm_y,
-                       rt_uint8_t a, rt_uint8_t r, rt_uint8_t g, rt_uint8_t b)
+                       rtgui_color_t fgc, rt_uint16_t right, rt_uint16_t bottom)
 {
     int glyphIndex;
     FTC_SBit ftcSBit = RT_NULL;
@@ -531,7 +543,7 @@ static void _draw_text(struct rtgui_dc *dc,
             /* render font */
             begin_x -= (ftcSBit->left - (abs(ftcSBit->left) + 2) / 2);
 
-            _draw_bitmap(dc, ftcSBit, begin_x, btm_y, a, r, g, b);
+            _draw_bitmap(dc, ftcSBit, begin_x, btm_y, fgc, right, bottom);
 
             begin_x += ftcSBit->width + ftcSBit->left;
 
@@ -594,10 +606,6 @@ static void ftc_draw_text(struct rtgui_font *font,
 #endif
 
     fgc = RTGUI_DC_FC(dc);
-    a = RTGUI_RGB_A(fgc);
-    r = RTGUI_RGB_R(fgc);
-    g = RTGUI_RGB_G(fgc);
-    b = RTGUI_RGB_B(fgc);
 
     /* text align */
     _get_metrics(ttf_font, text_short, &text_rect);
@@ -633,7 +641,7 @@ static void ftc_draw_text(struct rtgui_font *font,
             goto _out;
     }
 
-    _draw_text(dc, ttf_font, text_short, begin_x, btm_y, a, r, g, b);
+    _draw_text(dc, ttf_font, text_short, begin_x, btm_y, fgc, rect->x2, rect->y2);
 
 _out:
     /* release unicode buffer */
@@ -698,9 +706,9 @@ static void ftc_get_metrics(struct rtgui_font *font, const char *text, struct rt
     RT_ASSERT(ttf_font != RT_NULL);
 
     len = strlen(text);
-	if (len == 0)
-		return;
-	
+    if (len == 0)
+        return;
+
     memset(rect, 0, sizeof(struct rtgui_rect));
 
     /* allocate unicode buffer */
@@ -717,7 +725,7 @@ static void ftc_get_metrics(struct rtgui_font *font, const char *text, struct rt
 #else
     rt_memset(text_short, 0x00, (utf8_to_unicode_len(text, len) + 1) * 2);
 #endif
-	
+
     /* convert gbk to unicode */
 #ifndef UTF8_TO_UNICODE
     gbk_to_unicode(text_short, text, len);
@@ -775,7 +783,7 @@ static struct rtgui_ttf *rtgui_ttf_load(const char *filename)
             return RT_NULL;
         }
     }
-	
+
     /* face_id init */
     ttf->face_id.pathname = rt_strdup(filename);
     ttf->face_id.face_index = 0;
@@ -847,11 +855,11 @@ rtgui_font_t *rtgui_freetype_font_create(const char *filename, rt_size_t size)
         font = rtgui_font_refer(filename, size);
         if (font)
         {
-			if (font->height == size)
-				return font;
-			else
-				rtgui_font_derefer(font);
-        }		
+            if (font->height == size)
+                return font;
+            else
+                rtgui_font_derefer(font);
+        }
     }
 
     font = (struct rtgui_font *)rtgui_malloc(sizeof(struct rtgui_font) + sizeof(struct rtgui_ttf_font));
