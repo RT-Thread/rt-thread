@@ -41,7 +41,7 @@ static void _rtgui_win_constructor(rtgui_win_t *win)
     RTGUI_WIDGET(win)->toplevel = win;
 
     /* init win property */
-	win->update = 0;
+    win->update = 0;
     win->drawing = 0;
 
     RTGUI_WIDGET(win)->flag |= RTGUI_WIDGET_FLAG_FOCUSABLE;
@@ -440,7 +440,7 @@ rt_base_t rtgui_win_show(struct rtgui_win *win, rt_bool_t is_modal)
 {
     RTGUI_WIDGET_UNHIDE(win);
 
-    win->magic = 0xA5A55A5A;
+    win->magic = RTGUI_WIN_MAGIC;
 
     if (is_modal)
         win->flag |= RTGUI_WIN_FLAG_MODAL;
@@ -548,7 +548,7 @@ void rtgui_win_move(struct rtgui_win *win, int x, int y)
         dy = y - wgt->extent.y1;
         rtgui_widget_move_to_logic(wgt, dx, dy);
     }
-	rtgui_rect_move(&win->outer_extent, dx, dy);
+    rtgui_rect_move(&win->outer_extent, dx, dy);
 
     if (win->flag & RTGUI_WIN_FLAG_CONNECTED)
     {
