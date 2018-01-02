@@ -329,7 +329,7 @@ enum rtgui_gesture_type
     RTGUI_GESTURE_PINCH     = 0x0002,
     RTGUI_GESTURE_DRAG      = 0x0004,
     RTGUI_GESTURE_LONGPRESS = 0x0008,
-	RTGUI_GESTURE_DRAGGED   = 0x0001 | 0x0004 | 0x0008,
+    RTGUI_GESTURE_DRAGGED   = 0x0001 | 0x0004 | 0x0008,
     /* PINCH, DRAG finished. */
     RTGUI_GESTURE_FINISH    = 0x8000,
     /* The corresponding gesture should be canceled. */
@@ -342,6 +342,8 @@ struct rtgui_event_gesture
     _RTGUI_EVENT_WIN_ELEMENTS
 
     enum rtgui_gesture_type type;
+
+    rt_uint32_t	win_acti_cnt;		/* win id */
 };
 
 /*
@@ -359,6 +361,8 @@ struct rtgui_event_mouse
     /* id of touch session(from down to up). Different session should have
      * different id. id should never be 0. */
     rt_uint32_t id;
+
+    rt_uint32_t	win_acti_cnt;		/* win id */
 };
 #define RTGUI_MOUSE_BUTTON_LEFT         0x01
 #define RTGUI_MOUSE_BUTTON_RIGHT        0x02
@@ -378,6 +382,8 @@ struct rtgui_event_mouse
 struct rtgui_event_kbd
 {
     _RTGUI_EVENT_WIN_ELEMENTS
+
+    rt_uint32_t	win_acti_cnt;		/* win id */
 
     rt_uint16_t type;       /* key down or up */
     rt_uint16_t key;        /* current key */

@@ -764,7 +764,7 @@ rt_err_t rtgui_topwin_move(struct rtgui_event_win_move *event)
 
     old_rect = topwin->extent;
     /* move window rect */
-	rtgui_rect_move(&(topwin->extent), dx, dy);
+    rtgui_rect_move(&(topwin->extent), dx, dy);
 
     /* move the monitor rect list */
     rtgui_list_foreach(node, &(topwin->monitor_list))
@@ -772,7 +772,7 @@ rt_err_t rtgui_topwin_move(struct rtgui_event_win_move *event)
         struct rtgui_mouse_monitor *monitor = rtgui_list_entry(node,
                                               struct rtgui_mouse_monitor,
                                               list);
-		rtgui_rect_move(&(monitor->rect), dx, dy);
+        rtgui_rect_move(&(monitor->rect), dx, dy);
     }
 
     /* update windows clip info */
@@ -851,6 +851,19 @@ static struct rtgui_topwin *_rtgui_topwin_get_focus_from_list(struct rt_list_nod
 struct rtgui_topwin *rtgui_topwin_get_focus(void)
 {
     return _rtgui_topwin_get_focus_from_list(&_rtgui_topwin_list);
+}
+
+struct rtgui_app *rtgui_topwin_app_get_focus(void)
+{
+    struct rtgui_app *topwin_app = RT_NULL;
+    struct rtgui_topwin *topwin = rtgui_topwin_get_focus();
+
+    if (topwin)
+    {
+        topwin_app = topwin->app;
+    }
+
+    return topwin_app;
 }
 
 static struct rtgui_topwin *_rtgui_topwin_get_wnd_from_tree(struct rt_list_node *list,
@@ -978,7 +991,8 @@ static void _rtgui_topwin_redraw_tree(struct rt_list_node *list,
         if (rtgui_rect_is_intersect(rect, &(topwin->extent)) == RT_EOK)
         {
             epaint->wid = topwin->wid;
-            rtgui_send(topwin->app, &(epaint->parent), sizeof(*epaint));
+            // < XY do !!! >
+            //rtgui_send(topwin->app, &(epaint->parent), sizeof(*epaint));
         }
 
         _rtgui_topwin_redraw_tree(&topwin->child_list, rect, epaint);
@@ -1026,7 +1040,8 @@ rt_err_t rtgui_topwin_modal_enter(struct rtgui_event_win_modal_enter *event)
         parent_top->flag |= WINTITLE_MODALED;
         parent_top->wid->flag |= RTGUI_WIN_FLAG_UNDER_MODAL;
         parent_top = parent_top->parent;
-    } while (parent_top);
+    }
+    while (parent_top);
 
     topwin->flag &= ~WINTITLE_MODALED;
     topwin->wid->flag &= ~RTGUI_WIN_FLAG_UNDER_MODAL;

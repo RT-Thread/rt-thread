@@ -81,6 +81,8 @@ struct rtgui_app
     rtgui_idle_func_t on_idle;
 
     unsigned int window_cnt;
+    /* window activate count */
+    unsigned int win_acti_cnt;
 
     void *user_data;
 };
@@ -114,6 +116,9 @@ rt_err_t rtgui_app_set_as_wm(struct rtgui_app *app);
 
 void rtgui_app_set_main_win(struct rtgui_app *app, struct rtgui_win *win);
 struct rtgui_win* rtgui_app_get_main_win(struct rtgui_app *app);
+
+/* get the topwin belong app window activate count */
+unsigned int rtgui_app_get_win_acti_cnt(void);
 
 #ifdef __cplusplus
 }

@@ -103,7 +103,7 @@ static void rtgui_bitmap_font_draw_text(struct rtgui_font *font, struct rtgui_dc
 
     RT_ASSERT(bmp_font != RT_NULL);
 
-    rtgui_font_get_metrics(rtgui_dc_get_gc(dc)->font, text, &text_rect);
+    rtgui_font_get_metrics(font, text, &text_rect);
     rtgui_rect_move_to_align(rect, &text_rect, RTGUI_DC_TEXTALIGN(dc));
 
     /* parameter check */
