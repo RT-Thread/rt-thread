@@ -24,12 +24,11 @@
  */
 
 #include <rtthread.h>
-#include <rtdevice.h>
 #include <pthread.h>
 
 #include "clock_time.h"
 
-struct timeval _timevalue;
+static struct timeval _timevalue;
 int clock_time_system_init()
 {
     time_t time;
@@ -142,7 +141,7 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
             tp->tv_nsec = (_timevalue.tv_usec + (tick % RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK) * 1000;
         }
         break;
-    
+
 #ifdef RT_USING_CPUTIME
     case CLOCK_CPUTIME_ID:
         {
