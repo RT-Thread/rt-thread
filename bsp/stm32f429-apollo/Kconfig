@@ -14,7 +14,12 @@ config $PKGS_DIR
     string
     option env="PKGS_ROOT"
     default "packages"
-
+    
+config $ENV_DIR
+    string
+    option env="ENV_ROOT"
+    default "/"
+  
 config BOARD_STM32F429_APPOLO
     bool 
     select ARCH_ARM_CORTEX_M4
@@ -22,5 +27,6 @@ config BOARD_STM32F429_APPOLO
 
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
+source "$ENV_DIR/tools/scripts/cmds/Kconfig"
 
 source "$BSP_DIR/drivers/Kconfig"
