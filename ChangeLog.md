@@ -1,3 +1,45 @@
+# RT-Thread v3.0.2 Change log
+
+## Platform
+
+* Make sure the Object_Class to a fixed value
+* Add `rt_device_create/destroy` API
+* Add memory trace for small memory management algorithm for memory leak and overwritten.
+* Add a first version of asynchronous I/O API
+* Add cputime for high resolution counter
+* Add pipe device functions in DeviceDrivers
+* USB Host available in stm32f4 with mass storage class
+* Add 'df' command in msh
+* Update UI engine and add an example
+* Split `clock_time` from pthreads and add a new clock id: `CLOCK_CPUTIME_ID`
+* Enable IPv6 in lwIP 2.0.2 version
+* Add memlog in logtrace
+* Fix closesocket issue in dfs_net
+* Fix IPv6 issue in NFS
+* Update JFFS2 file system with new DFS API
+* Fix the issue of stat "/.." of lwext4 (parai)
+* Fix the fs type search issue in mkfs
+* Fix the select issue in dfs_net
+
+## Tools
+
+* scons: add '--useconfig' command to use an exist config file
+* scons: force to use g++ for link when enable `RT_USING_CPLUSPLUS` in GNU GCC configuration
+* Enable package feature in Linux/MacOS host
+
+## BSP
+
+* Add NUC472 bsp (bluebear)
+* Update SD/MMC driver for qemu-vexpress-A9
+* Add keyboard/mouse driver for qemu-vexpress-a9
+* Add ADC/I2C/Flash/PWM/RTC/smbus/SPI driver for apollo2 (Haleyl)
+* Add I2C/LCD/Touch driver for i.MXRT1052-EVK
+* Update SD/MMC driver for mini2440 (kuangdazzidd)
+* Update simulator to adapt VC++ compiler
+* Add USB host driver in stm32f4xx-HAL (uestczyh222)
+* Update EMAC driver for IPv6 in stm32f40x/stm32f107
+* Add stm32h743-nucleo bsp (polariss)
+
 # RT-Thread v3.0.1 Change log
 
 ## Platform:
