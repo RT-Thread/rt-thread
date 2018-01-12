@@ -776,7 +776,7 @@ int finsh_system_init(void)
 
     rt_sem_init(&(shell->rx_sem), "shrx", 0, 0);
     result = rt_thread_init(&finsh_thread,
-                            "tshell",
+                            FINSH_THREAD_NAME,
                             finsh_thread_entry, RT_NULL,
                             &finsh_thread_stack[0], sizeof(finsh_thread_stack),
                             FINSH_THREAD_PRIORITY, 10);

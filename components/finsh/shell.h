@@ -73,6 +73,10 @@ const char* finsh_get_prompt(void);
     #endif
 #endif /* FINSH_USING_AUTH */
 
+#ifndef FINSH_THREAD_NAME
+#define FINSH_THREAD_NAME   "tshell"
+#endif
+
 enum input_stat
 {
     WAIT_NORMAL,
