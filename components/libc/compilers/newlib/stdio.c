@@ -83,3 +83,10 @@ int libc_stdio_set_console(const char* device_name, int mode)
 
     return fileno(std_console);
 }
+
+int libc_stdio_get_console(void) {
+    if (std_console)
+        return fileno(std_console);
+    else
+        return -1;
+}
