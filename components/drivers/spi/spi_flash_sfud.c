@@ -252,11 +252,11 @@ rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const 
 
     /* initialize lock */
     if (rtt_dev) {
+		rt_memset(rtt_dev, 0, sizeof(struct spi_flash_device));
         rt_mutex_init(&(rtt_dev->lock), spi_flash_dev_name, RT_IPC_FLAG_FIFO);  
     }
     
-    if (rtt_dev && sfud_dev && spi_flash_dev_name_bak && spi_dev_name_bak) {
-        rt_memset(rtt_dev, 0, sizeof(struct spi_flash_device));
+    if (rtt_dev && sfud_dev && spi_flash_dev_name_bak && spi_dev_name_bak) {        
         rt_memset(sfud_dev, 0, sizeof(sfud_flash));
         rt_strncpy(spi_flash_dev_name_bak, spi_flash_dev_name, rt_strlen(spi_flash_dev_name));
         rt_strncpy(spi_dev_name_bak, spi_dev_name, rt_strlen(spi_dev_name));
