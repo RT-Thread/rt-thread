@@ -285,7 +285,7 @@ static rt_err_t stm32_sdcard_control(rt_device_t dev, int cmd, void *args)
         
         geometry = (struct rt_device_blk_geometry *)args;
 
-        geometry->bytes_per_sector = 512;
+        geometry->bytes_per_sector = sdcard_info.BlockSize;
         geometry->block_size       = sdcard_info.BlockSize;
         geometry->sector_count     = sdcard_info.BlockNbr;
     }
