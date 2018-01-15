@@ -38,6 +38,12 @@ if FINSH_USING_AUTH
 config FINSH_DEFAULT_PASSWORD
     string "The default password for shell authentication"
     default "rtthread"
+config FINSH_PASSWORD_MIN
+    int "The password min length"
+    default 6
+config FINSH_PASSWORD_MAX
+    int "The password max length"
+    default RT_NAME_MAX
 endif
 
 config FINSH_USING_MSH
