@@ -1,11 +1,21 @@
 /*
  * File      : drv_sdcard.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2018, RT-Thread Development Team
+ * COPYRIGHT (C) 2017, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author         Notes
@@ -19,45 +29,8 @@
 
 #define SD_TIMEOUT ((uint32_t)0x100000)
  
-static SD_HandleTypeDef hsdcard = 
-{
-    .Instance                 = SDIO,
-    .Init.ClockEdge           = SDIO_CLOCK_EDGE_RISING,
-    .Init.ClockBypass         = SDIO_CLOCK_BYPASS_DISABLE,
-    .Init.ClockPowerSave      = SDIO_CLOCK_POWER_SAVE_DISABLE,
-    .Init.BusWide             = SDIO_BUS_WIDE_1B,
-    .Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_ENABLE,
-    .Init.ClockDiv            = 2
-}; 
-
-#if defined(USING_SD_RX_DMA)
-static DMA_HandleTypeDef hdma = 
-{
-    .Instance                 = DMA2_Channel4, 
-    .Init.Direction           = DMA_PERIPH_TO_MEMORY,
-    .Init.PeriphInc           = DMA_PINC_DISABLE,
-    .Init.MemInc              = DMA_MINC_ENABLE,
-    .Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD,
-    .Init.MemDataAlignment    = DMA_MDATAALIGN_WORD,
-    .Init.Mode                = DMA_NORMAL,
-    .Init.Priority            = DMA_PRIORITY_HIGH
-};
-#endif
-
-#if !defined(USING_SD_RX_DMA) && defined(USING_SD_TX_DMA) 
-static DMA_HandleTypeDef hdma = 
-{
-    .Instance                 = DMA2_Channel4, 
-    .Init.Direction           = DMA_MEMORY_TO_PERIPH,
-    .Init.PeriphInc           = DMA_MINC_ENABLE,
-    .Init.MemInc              = DMA_PINC_DISABLE, 
-    .Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD,
-    .Init.MemDataAlignment    = DMA_MDATAALIGN_WORD,
-    .Init.Mode                = DMA_NORMAL,
-    .Init.Priority            = DMA_PRIORITY_HIGH
-};
-#endif
-
+static SD_HandleTypeDef hsdcard; 
+static DMA_HandleTypeDef hdma;
 static struct rt_semaphore sd_lock;
 
 void SDIO_IRQHandler(void)
@@ -76,7 +49,7 @@ void DMA2_Channel4_5_IRQHandler(void)
 }
 #endif
 
-uint8_t stm32_read_blocks(uint32_t *data, uint32_t addr, uint32_t num)
+rt_err_t stm32_read_blocks(uint32_t *data, uint32_t addr, uint32_t num)
 {
     uint32_t timeout = 0;
     HAL_SD_StateTypeDef state_return;
@@ -124,7 +97,7 @@ uint8_t stm32_read_blocks(uint32_t *data, uint32_t addr, uint32_t num)
     return RT_EOK; 
 }
 
-uint8_t stm32_write_blocks(uint32_t *data, uint32_t addr, uint32_t num)
+rt_err_t stm32_write_blocks(uint32_t *data, uint32_t addr, uint32_t num)
 {
     uint32_t timeout = 0;
     HAL_SD_StateTypeDef state_return;
@@ -195,12 +168,24 @@ static rt_err_t stm32_sdcard_init(rt_device_t dev)
     
 #if defined(USING_SD_RX_DMA) || defined(USING_SD_TX_DMA) 
     __HAL_RCC_DMA2_CLK_ENABLE();
+
+    hdma.Instance                 = DMA2_Channel4; 
+    hdma.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD; 
+    hdma.Init.MemDataAlignment    = DMA_MDATAALIGN_WORD; 
+    hdma.Init.Mode                = DMA_NORMAL; 
+    hdma.Init.Priority            = DMA_PRIORITY_HIGH; 
     
 #if defined(USING_SD_RX_DMA)
+    hdma.Init.Direction           = DMA_PERIPH_TO_MEMORY; 
+    hdma.Init.PeriphInc           = DMA_PINC_DISABLE; 
+    hdma.Init.MemInc              = DMA_MINC_ENABLE; 
     __HAL_LINKDMA(&hsdcard, hdmarx, hdma); 
 #endif
 
 #if defined(USING_SD_TX_DMA)
+    hdma.Init.Direction           = DMA_MEMORY_TO_PERIPH;
+    hdma.Init.PeriphInc           = DMA_MINC_ENABLE;
+    hdma.Init.MemInc              = DMA_PINC_DISABLE; 
     __HAL_LINKDMA(&hsdcard, hdmatx, hdma); 
 #endif
     
@@ -216,6 +201,14 @@ static rt_err_t stm32_sdcard_init(rt_device_t dev)
     HAL_NVIC_EnableIRQ(DMA2_Channel4_5_IRQn); 
     
     __HAL_RCC_SDIO_CLK_ENABLE();
+
+    hsdcard.Instance                 = SDIO; 
+    hsdcard.Init.ClockEdge           = SDIO_CLOCK_EDGE_RISING; 
+    hsdcard.Init.ClockBypass         = SDIO_CLOCK_BYPASS_DISABLE;
+    hsdcard.Init.ClockPowerSave      = SDIO_CLOCK_POWER_SAVE_DISABLE;
+    hsdcard.Init.BusWide             = SDIO_BUS_WIDE_1B;
+    hsdcard.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_ENABLE;
+    hsdcard.Init.ClockDiv            = 2;
     
     HAL_SD_DeInit(&hsdcard);
     if(HAL_SD_Init(&hsdcard) != HAL_OK)
@@ -256,7 +249,7 @@ static rt_size_t stm32_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, 
     
     if(ret != RT_EOK)
     {
-        return ret; 
+        return 0; 
     }
     
     return size; 
@@ -272,7 +265,7 @@ static rt_size_t stm32_sdcard_write(rt_device_t dev, rt_off_t pos, const void* b
     
     if(ret != RT_EOK)
     {
-        return ret; 
+        return 0; 
     }
     
     return size; 
@@ -300,21 +293,19 @@ static rt_err_t stm32_sdcard_control(rt_device_t dev, int cmd, void *args)
     return RT_EOK;
 } 
 
-static struct rt_device device = 
-{
-    .type    = RT_Device_Class_Block, 
-    .init    = stm32_sdcard_init,
-    .open    = stm32_sdcard_open, 
-    .read    = stm32_sdcard_read,
-    .write   = stm32_sdcard_write,
-    .control = stm32_sdcard_control,
-    .close   = stm32_sdcard_close
-};
+static struct rt_device device; 
 
-/* SDCARDÇý¶¯³õÊ¼»¯ */ 
 int rt_hw_sdcard_init(void)
 {
     rt_err_t ret = RT_EOK; 
+
+    device.type    = RT_Device_Class_Block;
+    device.init    = stm32_sdcard_init;
+    device.open    = stm32_sdcard_open; 
+    device.read    = stm32_sdcard_read;
+    device.write   = stm32_sdcard_write;
+    device.control = stm32_sdcard_control;
+    device.close   = stm32_sdcard_close;
     
     ret = rt_device_register(&device, "sd0", 
                              RT_DEVICE_FLAG_REMOVABLE | 
