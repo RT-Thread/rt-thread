@@ -15,11 +15,16 @@
  */
 
 #include <rtthread.h>
+#include <drivers/spi.h>
 #include <rthw.h>
 
 #include "board.h"
 #include "uart.h"
 #include "ls1c.h"
+#include "ls1c_pin.h"
+#include "ls1c_spi.h"
+#include "ls1c_spi.h"
+#include "drv_spi.h"
 
 /**
  * @addtogroup Loongson LS1B
@@ -88,8 +93,91 @@ void rt_hw_board_init(void)
 
 #ifdef RT_USING_CONSOLE
 	/* set console device */
-	rt_console_set_device("uart2");
+	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
+
+
+#ifdef RT_USING_I2C
+#ifdef RT_USING_I2C0
+/*
+	pin_set_purpose(2, PIN_PURPOSE_OTHER);
+	pin_set_purpose(3, PIN_PURPOSE_OTHER);
+	pin_set_remap(2, PIN_REMAP_SECOND);
+	pin_set_remap(3, PIN_REMAP_SECOND);
+	*/
+#endif
+#ifdef RT_USING_I2C1
+	pin_set_purpose(2, PIN_PURPOSE_OTHER);
+	pin_set_purpose(3, PIN_PURPOSE_OTHER);
+	pin_set_remap(2, PIN_REMAP_SECOND);
+	pin_set_remap(3, PIN_REMAP_SECOND);
+#endif
+#ifdef RT_USING_I2C2
+	pin_set_purpose(51, PIN_PURPOSE_OTHER);
+	pin_set_purpose(50, PIN_PURPOSE_OTHER);
+	pin_set_remap(51, PIN_REMAP_FOURTH);
+	pin_set_remap(50, PIN_REMAP_FOURTH);
+#endif
+	rt_i2c_init();
+#endif
+
+#ifdef RT_USING_SPI
+
+#ifdef RT_USING_SPI0
+	pin_set_purpose(78, PIN_PURPOSE_OTHER);
+	pin_set_purpose(79, PIN_PURPOSE_OTHER);
+	pin_set_purpose(80, PIN_PURPOSE_OTHER);
+	pin_set_purpose(83, PIN_PURPOSE_OTHER);//cs2 - SD card
+	pin_set_purpose(82, PIN_PURPOSE_OTHER);//cs1 
+	pin_set_remap(78, PIN_REMAP_FOURTH);
+	pin_set_remap(79, PIN_REMAP_FOURTH);
+	pin_set_remap(80, PIN_REMAP_FOURTH);
+	pin_set_remap(83, PIN_REMAP_FOURTH);//cs2 - SD card
+	pin_set_remap(82, PIN_REMAP_FOURTH);//cs1 
+	ls1c_spi_bus_register(LS1C_SPI_0,"spi0");
+#endif
+
+#ifdef RT_USING_SPI1
+	pin_set_purpose(46, PIN_PURPOSE_OTHER);
+	pin_set_purpose(47, PIN_PURPOSE_OTHER);
+	pin_set_purpose(48, PIN_PURPOSE_OTHER);
+	pin_set_purpose(49, PIN_PURPOSE_OTHER);//CS0 - touch screen
+	pin_set_remap(46, PIN_REMAP_THIRD);
+	pin_set_remap(47, PIN_REMAP_THIRD);
+	pin_set_remap(48, PIN_REMAP_THIRD);
+	pin_set_remap(49, PIN_REMAP_THIRD);//CS0 - touch screen
+	ls1c_spi_bus_register(LS1C_SPI_1,"spi1");
+
+#endif
+#ifdef RT_USING_SPI0
+    /* attach cs */
+    {
+        static struct rt_spi_device spi_device1;
+        static struct rt_spi_device spi_device2;
+        static struct ls1c_spi_cs  spi_cs1;
+        static struct ls1c_spi_cs  spi_cs2;
+
+        /* spi02: CS2  SD Card*/
+        spi_cs2.cs = LS1C_SPI_CS_2;
+        rt_spi_bus_attach_device(&spi_device2, "spi02", "spi0", (void*)&spi_cs2);
+        spi_cs1.cs = LS1C_SPI_CS_1;
+        rt_spi_bus_attach_device(&spi_device1, "spi01", "spi0", (void*)&spi_cs1);
+        msd_init("sd0", "spi02");
+	}
+#endif
+#ifdef RT_USING_SPI1	
+    {
+        static struct rt_spi_device spi_device;
+        static struct ls1c_spi_cs  spi_cs;
+
+        /* spi10: CS0  Touch*/
+        spi_cs.cs = LS1C_SPI_CS_0;
+       rt_spi_bus_attach_device(&spi_device, "spi10", "spi1", (void*)&spi_cs);
+	}
+#endif
+
+#endif
+
 
 	/* init operating system timer */
 	rt_hw_timer_init();
@@ -101,6 +189,34 @@ void rt_hw_board_init(void)
 
 	rt_kprintf("current sr: 0x%08x\n", read_c0_status());
 }
+
+
+#ifdef RT_USING_RTGUI
+#include <rtgui/driver.h>
+#include "display_controller.h"
+/* initialize for gui driver */
+int rtgui_lcd_init(void)
+{
+	rt_device_t dc;
+       rt_kprintf("DC initied\n");
+
+	pin_set_purpose(76, PIN_PURPOSE_OTHER);
+	pin_set_remap(76, PIN_REMAP_DEFAULT);
+	
+	/* init Display Controller */
+	rt_hw_dc_init();
+
+	/* find Display Controller device */
+	dc = rt_device_find("dc");
+
+	/* set Display Controller device as rtgui graphic driver */
+	rtgui_graphic_set_device(dc);
+
+	
+    return 0;
+}
+INIT_DEVICE_EXPORT(rtgui_lcd_init);
+#endif
 
 #define __raw_out_put(unr) \
 	while (*ptr) \

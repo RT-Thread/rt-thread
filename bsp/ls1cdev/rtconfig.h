@@ -108,7 +108,10 @@
 // </section>
 
 // <section name="RT_USING_DFS" description="Device file system" default="true" >
-// #define RT_USING_DFS
+#define RT_USING_DFS
+#define RT_DFS_ELM_REENTRANT
+#define RT_DFS_ELM_DRIVES			2
+#define RT_DFS_ELM_MAX_SECTOR_SIZE  512
 // <bool name="DFS_USING_WORKDIR" description="Using working directory" default="true" />
 // #define DFS_USING_WORKDIR
 // <integer name="DFS_FILESYSTEMS_MAX" description="The maximal number of mounted file system" default="4" />
@@ -121,9 +124,10 @@
 // <item description="LFN1">1</item>
 // <item description="LFN1">2</item>
 // </integer>
-#define RT_DFS_ELM_USE_LFN	1
+//#define RT_DFS_ELM_USE_LFN	1
 // <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="255" />
 #define RT_DFS_ELM_MAX_LFN	64
+#define RT_DFS_ELM_CODE_PAGE 936
 // <bool name="RT_USING_DFS_YAFFS2" description="Using YAFFS2" default="false" />
 // #define RT_USING_DFS_YAFFS2
 // <bool name="RT_USING_DFS_UFFS" description="Using UFFS" default="false" />
@@ -232,6 +236,8 @@
 #define RT_USING_SPI1
 
 #define RT_USING_I2C
+#define RT_USING_I2C1
+#define RT_USING_I2C2
 #define RT_USING_I2C_BITOPS
 
 
