@@ -182,3 +182,16 @@ if RT_USING_SPI
         default n
 endif
 
+if RT_USING_DEVICE_IPC && (STM32F103RC || STM32F103RD || STM32F103RE || STM32F103RF || STM32F103RG ||STM32F103VC || STM32F103VD || STM32F103VE || STM32F103VF || STM32F103VG ||STM32F103ZC || STM32F103ZD || STM32F103ZE || STM32F103ZF || STM32F103ZG)
+    config RT_USING_SDCARD
+        bool "Using sdcard with sdio"
+        default n
+    config USING_SD_RX_DMA
+        bool "SDCARD Rx Using Dma Mode"
+        default y  
+        depends on RT_USING_SDCARD
+    config USING_SD_TX_DMA
+        bool "SDCARD Tx Using Dma Mode"
+        default n  
+        depends on RT_USING_SDCARD
+endif
