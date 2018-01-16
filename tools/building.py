@@ -140,6 +140,10 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         env['LIBLINKSUFFIX']   = '.lib'
         env['LIBDIRPREFIX'] = '--userlibpath '
 
+    if rtconfig.PLATFORM == 'gcc':
+        if env['LINKFLAGS'].find('nano.specs'):
+            env.AppendUnique(CPPDEFINES = ['_REENT_SMALL'])
+
     # patch for win32 spawn
     if env['PLATFORM'] == 'win32':
         win32_spawn = Win32Spawn()
