@@ -37,23 +37,17 @@
 #ifdef RT_USB_DEVICE_CDC
 
 #define TX_TIMEOUT              1000
-
-#ifdef RT_VCOM_RX_BUFSIZE
-#define CDC_RX_BUFSIZE          RT_VCOM_RX_BUFSIZE
-#else /*!CDC_RX_BUFSIZE*/
-#define CDC_RX_BUFSIZE          2048
-#endif /*CDC_RX_BUFSIZE*/
-
+#define CDC_RX_BUFSIZE          128
 #define CDC_MAX_PACKET_SIZE     64
 #define VCOM_DEVICE             "vcom"
 
 #ifdef RT_VCOM_TASK_STK_SIZE
 #define VCOM_TASK_STK_SIZE      RT_VCOM_TASK_STK_SIZE
 #else /*!RT_VCOM_TASK_STK_SIZE*/
-#define VCOM_TASK_STK_SIZE      2048
+#define VCOM_TASK_STK_SIZE      512
 #endif /*RT_VCOM_TASK_STK_SIZE*/
 
-#ifdef RT_VXOM_TX_USE_DMA
+#ifdef RT_VCOM_TX_USE_DMA
 #define VCOM_TX_USE_DMA
 #endif /*RT_VCOM_TASK_STK_SIZE*/
 
@@ -74,7 +68,9 @@ static rt_uint8_t vcom_thread_stack[VCOM_TASK_STK_SIZE];
 static struct rt_thread vcom_thread;
 static struct ucdc_line_coding line_coding;
 
-#define CDC_TX_BUFSIZE    CDC_MAX_PACKET_SIZE
+#define CDC_TX_BUFSIZE    1024
+
+#define CDC_TX_HAS_DATE   0x01
 
 struct vcom
 {
@@ -89,10 +85,7 @@ struct vcom
     struct rt_ringbuffer rx_ringbuffer;
     rt_uint8_t tx_rbp[CDC_TX_BUFSIZE];
     struct rt_ringbuffer tx_ringbuffer;
-#ifndef VCOM_TX_USE_DMA
-    struct rt_semaphore  txsem_put;
-#endif /*VCOM_TX_USE_DMA*/
-    struct rt_semaphore  txsem_get;
+    struct rt_event  tx_event;
 };
 
 struct vcom_tx_msg
@@ -672,80 +665,85 @@ static int _vcom_getc(struct rt_serial_device *serial)
 
     return result;
 }
-
-#ifdef VCOM_TX_USE_DMA
-static rt_size_t _vcom_tx(struct rt_serial_device *serial, const char *buf, rt_size_t size,int direction)
+static rt_size_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size,int direction)
 {
     rt_uint32_t level;
+
+    struct ufunction *func;
+    struct vcom *data;
+
+    func = (struct ufunction*)serial->parent.user_data;
+    data = (struct vcom*)func->user_data;
     rt_uint32_t baksize = size;
     rt_size_t ptr = 0;
-    int empty;
-    char crlf[2] = {'\r', '\n',};
+    int empty = 0;
+    rt_uint8_t crlf[2] = {'\r', '\n',};
 
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("%s\n",__func__));
 
-    size = 0;
-    if((serial->parent.open_flag & RT_DEVICE_FLAG_STREAM))
+    if (data->connected)
     {
-        empty = 0;
-        while(ptr < baksize)
+        size = 0;
+        if((serial->parent.open_flag & RT_DEVICE_FLAG_STREAM))
         {
-            while(ptr < baksize && buf[ptr] != '\n')
+            empty = 0;
+            while(ptr < baksize)
             {
-                ptr++;
-            }
-            if(ptr < baksize)
-            {
-                level = rt_hw_interrupt_disable();
-                size += rt_ringbuffer_put(&data->tx_ringbuffer, &buf[size], ptr - size);
-                rt_hw_interrupt_enable(level);
-                if(size == ptr)
+                while(ptr < baksize && buf[ptr] != '\n')
+                {
+                    ptr++;
+                }
+                if(ptr < baksize)
                 {
                     level = rt_hw_interrupt_disable();
-                    if(rt_ringbuffer_space_len(data->tx_ringbuffer) >= 2)
-                    {
-                        rt_ringbuffer_put(&data->tx_ringbuffer, crlf, 2);
-                        size++;
-                    }
+                    size += rt_ringbuffer_put_force(&data->tx_ringbuffer, (const rt_uint8_t *)&buf[size], ptr - size);
                     rt_hw_interrupt_enable(level);
+                    if(size == ptr)
+                    {
+                        level = rt_hw_interrupt_disable();
+                        if(rt_ringbuffer_space_len(&data->tx_ringbuffer) >= 2)
+                        {
+                            rt_ringbuffer_put_force(&data->tx_ringbuffer, crlf, 2);
+                            size++;
+                        }
+                        rt_hw_interrupt_enable(level);
+                    }
+                    else
+                    {
+                        empty = 1;
+                        break;
+                    }
+                    if(size == ptr)
+                    {
+                        empty = 1;
+                        break;
+                    }
+                    ptr++;
                 }
                 else
                 {
-                    empty = 1;
                     break;
                 }
-                if(size == ptr)
-                {
-                    empty = 1;
-                    break;
-                }
-                ptr++;
-            }
-            else
-            {
-                break;
             }
         }
-    }
-    if(size < baksize && !empty)
-    {
-        level = rt_hw_interrupt_disable();
-        size += rt_ringbuffer_put(&data->tx_ringbuffer, &buf[size], baksize - size);
-        rt_hw_interrupt_enable(level);
-    }
+        if(size < baksize && !empty)
+        {
+            level = rt_hw_interrupt_disable();
+            size += rt_ringbuffer_put_force(&data->tx_ringbuffer, (rt_uint8_t *)&buf[size], baksize - size);
+            rt_hw_interrupt_enable(level);
+        }
 
 
-    if(size)
-    {
-        rt_sem_release(&data->txsem_get);
+        if(size)
+        {
+            rt_event_send(&data->tx_event, CDC_TX_HAS_DATE);
+        }
     }
-
     return size;
 }
-#else
 static int _vcom_putc(struct rt_serial_device *serial, char c)
 {
     rt_uint32_t level;
@@ -757,38 +755,31 @@ static int _vcom_putc(struct rt_serial_device *serial, char c)
 
     RT_ASSERT(serial != RT_NULL);
 
-    if(c == '\n' && (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM))
+    if (data->connected)
     {
-        rt_sem_take(&data->txsem_put, RT_WAITING_FOREVER);
+        if(c == '\n' && (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM))
+        {
+            level = rt_hw_interrupt_disable();
+            rt_ringbuffer_putchar_force(&data->tx_ringbuffer, '\r');
+            rt_hw_interrupt_enable(level);
+            rt_event_send(&data->tx_event, CDC_TX_HAS_DATE);
+        }
         level = rt_hw_interrupt_disable();
-        rt_ringbuffer_putchar(&data->tx_ringbuffer, '\r');
+        rt_ringbuffer_putchar_force(&data->tx_ringbuffer, c);
         rt_hw_interrupt_enable(level);
-        rt_sem_release(&data->txsem_get);
+        rt_event_send(&data->tx_event, CDC_TX_HAS_DATE);
     }
-    rt_sem_take(&data->txsem_put, RT_WAITING_FOREVER);
-    level = rt_hw_interrupt_disable();
-    rt_ringbuffer_putchar(&data->tx_ringbuffer, c);
-    rt_hw_interrupt_enable(level);
-    rt_sem_release(&data->txsem_get);
 
     return 1;
 }
-#endif
 
 static const struct rt_uart_ops usb_vcom_ops =
 {
     _vcom_configure,
     _vcom_control,
-#ifndef VCOM_TX_USE_DMA
     _vcom_putc,
     _vcom_getc,
-    RT_NULL
-#else
-    RT_NULL,
-    _vcom_getc,
     _vcom_tx
-#endif
-
 };
 
 /* Vcom Tx Thread */
@@ -798,80 +789,79 @@ static void vcom_tx_thread_entry(void* parameter)
     rt_uint32_t res;
     struct ufunction *func = (struct ufunction *)parameter;
     struct vcom *data = (struct vcom*)func->user_data;
-#ifndef VCOM_TX_USE_DMA
-    rt_uint8_t ch;
-#else /*!VCOM_TX_USE_DMA*/
-    rt_uint8_t *ch;
-#endif  /*VCOM_TX_USE_DMA*/
+    rt_uint8_t ch[64];
 
     while (1)
     {
-        rt_sem_take(&data->txsem_get, RT_WAITING_FOREVER);
-
-        level = rt_hw_interrupt_disable();
-#ifndef VCOM_TX_USE_DMA
-        res = rt_ringbuffer_getchar(&data->tx_ringbuffer, &ch);
-#else /*!VCOM_TX_USE_DMA*/
-        res = rt_ringbuffer_get(&data->tx_ringbuffer, ch, CDC_TX_BUFSIZE);
-#endif /*VCOM_TX_USE_DMA*/
-        rt_hw_interrupt_enable(level);
-
-#ifndef VCOM_TX_USE_DMA
-        rt_sem_release(&data->txsem_put);
-#endif /*VCOM_TX_USE_DMA*/
-        if(!res)
+        if
+        (
+            (rt_event_recv(&data->tx_event, CDC_TX_HAS_DATE,
+                    RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
+                    RT_WAITING_FOREVER, &res) != RT_EOK) ||
+                                 (!(res & CDC_TX_HAS_DATE))
+        )
         {
             continue;
         }
-        if (!data->connected)
+        if(!res & CDC_TX_HAS_DATE)
         {
+            continue;
+        }
+        while(rt_ringbuffer_data_len(&data->tx_ringbuffer))
+        {
+            level = rt_hw_interrupt_disable();
+            res = rt_ringbuffer_get(&data->tx_ringbuffer, ch, 64);
+            rt_hw_interrupt_enable(level);
+
+            if(!res)
+            {
+                continue;
+            }
+            if (!data->connected)
+            {
+                if(data->serial.parent.open_flag &
+#ifndef VCOM_TX_USE_DMA
+                         RT_DEVICE_FLAG_INT_TX
+#else
+                         RT_DEVICE_FLAG_DMA_TX
+#endif
+                )
+                {
+                /* drop msg */
+#ifndef VCOM_TX_USE_DMA
+                    rt_hw_serial_isr(&data->serial,RT_SERIAL_EVENT_TX_DONE);
+#else
+                    rt_hw_serial_isr(&data->serial,RT_SERIAL_EVENT_TX_DMADONE);
+#endif
+                }
+                continue;
+            }
+            rt_completion_init(&data->wait);
+            data->ep_in->request.buffer     = ch;
+            data->ep_in->request.size       = res;
+
+            data->ep_in->request.req_type   = UIO_REQUEST_WRITE;
+
+            rt_usbd_io_request(func->device, data->ep_in, &data->ep_in->request);
+
+            if (rt_completion_wait(&data->wait, TX_TIMEOUT) != RT_EOK)
+            {
+                RT_DEBUG_LOG(RT_DEBUG_USB, ("vcom tx timeout\n"));
+            }
             if(data->serial.parent.open_flag &
 #ifndef VCOM_TX_USE_DMA
-                     RT_DEVICE_FLAG_INT_TX
+                         RT_DEVICE_FLAG_INT_TX
 #else
-                      RT_DEVICE_FLAG_DMA_TX
+                         RT_DEVICE_FLAG_DMA_TX
 #endif
             )
             {
-            /* drop msg */
 #ifndef VCOM_TX_USE_DMA
                 rt_hw_serial_isr(&data->serial,RT_SERIAL_EVENT_TX_DONE);
 #else
                 rt_hw_serial_isr(&data->serial,RT_SERIAL_EVENT_TX_DMADONE);
 #endif
             }
-            continue;
-        }
-        rt_completion_init(&data->wait);
-#ifndef VCOM_TX_USE_DMA
-        data->ep_in->request.buffer     = &ch;
-        data->ep_in->request.size       = 1;
-#else /*!VCOM_TX_USE_DMA*/
-        data->ep_in->request.buffer     = ch;
-        data->ep_in->request.size       = res;
-#endif /*VCOM_TX_USE_DMA*/
-
-        data->ep_in->request.req_type   = UIO_REQUEST_WRITE;
-
-        rt_usbd_io_request(func->device, data->ep_in, &data->ep_in->request);
-
-        if (rt_completion_wait(&data->wait, TX_TIMEOUT) != RT_EOK)
-        {
-            rt_kprintf("vcom tx timeout\n");
-        }
-        if(data->serial.parent.open_flag &
-#ifndef VCOM_TX_USE_DMA
-                     RT_DEVICE_FLAG_INT_TX
-#else
-                      RT_DEVICE_FLAG_DMA_TX
-#endif
-        )
-        {
-#ifndef VCOM_TX_USE_DMA
-            rt_hw_serial_isr(&data->serial,RT_SERIAL_EVENT_TX_DONE);
-#else
-            rt_hw_serial_isr(&data->serial,RT_SERIAL_EVENT_TX_DMADONE);
-#endif
         }
 
     }
@@ -887,11 +877,7 @@ static void rt_usb_vcom_init(struct ufunction *func)
     rt_ringbuffer_init(&data->rx_ringbuffer, data->rx_rbp, CDC_RX_BUFSIZE);
     rt_ringbuffer_init(&data->tx_ringbuffer, data->tx_rbp, CDC_TX_BUFSIZE);
 
-#ifndef VCOM_TX_USE_DMA
-    rt_sem_init(&data->txsem_put, "vom", CDC_TX_BUFSIZE, RT_IPC_FLAG_FIFO);
-#endif /*VCOM_TX_USE_DMA*/
-
-    rt_sem_init(&data->txsem_get, "vom", 0, RT_IPC_FLAG_FIFO);
+    rt_event_init(&data->tx_event, "vom", RT_IPC_FLAG_FIFO);
 
     config.baud_rate    = BAUD_RATE_115200;
     config.data_bits    = DATA_BITS_8;
