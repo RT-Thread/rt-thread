@@ -400,6 +400,22 @@ rt_uint32_t rt_strcasecmp(const char *a, const char *b)
 RTM_EXPORT(rt_strcasecmp);
 
 /**
+ * This function will copy string
+ *
+ * @param dst the string to copy
+ * @param src the string to be copied
+ *
+ * @return the result
+ */
+char *rt_strcpy(char *dst, const char *src)
+{
+    char *d = dst;
+    while (*dst++ = *src++);
+    return d;
+}
+RTM_EXPORT(rt_strcpy);
+
+/**
  * This function will copy string no more than n bytes.
  *
  * @param dst the string to copy
