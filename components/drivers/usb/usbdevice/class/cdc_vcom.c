@@ -400,12 +400,13 @@ static rt_err_t _interface_handler(ufunction_t func, ureq_t setup)
         break;
     case CDC_SET_LINE_CODING:
         _cdc_set_line_coding(func->device, setup);
-        data->connected = RT_TRUE;        
         break;
     case CDC_GET_LINE_CODING:
         _cdc_get_line_coding(func->device, setup);
         break;
     case CDC_SET_CONTROL_LINE_STATE:
+        data->connected = (setup->wValue & 0x01) > 0?RT_TRUE:RT_FALSE;
+        RT_DEBUG_LOG(RT_DEBUG_USB, ("vcom state:%d \n", data->connected));
         dcd_ep0_send_status(func->device->dcd);
         break;
     case CDC_SEND_BREAK:
