@@ -87,6 +87,7 @@ INIT_APP_EXPORT(rtgui_system_server_init);
 /************************************************************************/
 static void rtgui_time_out(void *parameter)
 {
+    rt_err_t result;
     rtgui_timer_t *timer;
     rtgui_event_timer_t event;
     timer = (rtgui_timer_t *)parameter;
@@ -103,7 +104,11 @@ static void rtgui_time_out(void *parameter)
     event.timer = timer;
     timer->pending_cnt++;
 
-    rtgui_send(timer->app, &(event.parent), sizeof(rtgui_event_timer_t));
+    result = rtgui_send(timer->app, &(event.parent), sizeof(rtgui_event_timer_t));
+    if (result == RT_EOK)
+    {
+        timer->pending_cnt++;
+    }
 }
 
 rtgui_timer_t *rtgui_timer_create(rt_int32_t time, rt_int32_t flag, rtgui_timeout_func timeout, void *parameter)
@@ -417,7 +422,7 @@ const char *rtgui_event_string[] =
     "WIN_CLOSE",            /* close a window       */
     "WIN_MOVE",             /* move a window        */
     "WIN_RESIZE",           /* resize a window      */
-	"WIN_UPDATE_END",
+    "WIN_UPDATE_END",
     "WIN_MODAL_ENTER",          /* a window modals      */
 
     "SET_WM",               /* set window manager   */
@@ -547,8 +552,8 @@ static void rtgui_event_dump(struct rtgui_app* app, rtgui_event_t *event)
     break;
 
     case RTGUI_EVENT_WIN_ACTIVATE:
-	case RTGUI_EVENT_WIN_DESTROY:
-	case RTGUI_EVENT_WIN_CLOSE:
+    case RTGUI_EVENT_WIN_DESTROY:
+    case RTGUI_EVENT_WIN_CLOSE:
     case RTGUI_EVENT_WIN_DEACTIVATE:
     case RTGUI_EVENT_WIN_SHOW:
     case RTGUI_EVENT_WIN_HIDE:
