@@ -286,7 +286,7 @@ rt_bool_t rtgui_app_event_handler(struct rtgui_object *object, rtgui_event_t *ev
 
     case RTGUI_EVENT_WIN_ACTIVATE:
     {
-        app->win_acti_cnt++;
+        app->win_acti_cnt ++;
         _rtgui_application_dest_handle(app, event);
     }
     break;
