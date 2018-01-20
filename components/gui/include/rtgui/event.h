@@ -343,7 +343,7 @@ struct rtgui_event_gesture
 
     enum rtgui_gesture_type type;
 
-    rt_uint32_t	win_acti_cnt;		/* win id */
+    rt_uint32_t	win_acti_cnt;		/* window activate count */
 };
 
 /*
@@ -362,7 +362,7 @@ struct rtgui_event_mouse
      * different id. id should never be 0. */
     rt_uint32_t id;
 
-    rt_uint32_t	win_acti_cnt;		/* win id */
+    rt_uint32_t	win_acti_cnt;		/* window activate count */
 };
 #define RTGUI_MOUSE_BUTTON_LEFT         0x01
 #define RTGUI_MOUSE_BUTTON_RIGHT        0x02
@@ -383,7 +383,7 @@ struct rtgui_event_kbd
 {
     _RTGUI_EVENT_WIN_ELEMENTS
 
-    rt_uint32_t	win_acti_cnt;		/* win id */
+    rt_uint32_t	win_acti_cnt;		/* window activate count */
 
     rt_uint16_t type;       /* key down or up */
     rt_uint16_t key;        /* current key */
