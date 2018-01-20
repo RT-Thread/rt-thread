@@ -115,6 +115,7 @@ void rtgui_server_handle_mouse_btn(struct rtgui_event_mouse *event)
         return;
 
     event->wid = wnd->wid;
+    event->win_acti_cnt = rtgui_app_get_win_acti_cnt();
 
     /* only raise window if the button is pressed down */
     if (event->button & RTGUI_MOUSE_BUTTON_DOWN &&
@@ -124,9 +125,10 @@ void rtgui_server_handle_mouse_btn(struct rtgui_event_mouse *event)
     }
 
     /* send mouse event to thread */
-    rtgui_send(wnd->app,
-               (struct rtgui_event *)event,
-               sizeof(struct rtgui_event_mouse));
+    while (rtgui_send(wnd->app, (struct rtgui_event *)event, sizeof(struct rtgui_event_mouse)) != RT_EOK)
+    {
+        rt_thread_delay(RT_TICK_PER_SECOND / 50);
+    }
 }
 
 void rtgui_server_handle_mouse_motion(struct rtgui_event_mouse *event)
@@ -152,6 +154,8 @@ void rtgui_server_handle_mouse_motion(struct rtgui_event_mouse *event)
     if (win)
     {
         event->wid = win->wid;
+        event->win_acti_cnt = rtgui_app_get_win_acti_cnt();
+		
         rtgui_send(win->wid->app, &(event->parent), sizeof(*event));
     }
 
@@ -175,6 +179,7 @@ void rtgui_server_handle_kbd(struct rtgui_event_kbd *event)
 
         /* send to focus window */
         event->wid = wnd->wid;
+        event->win_acti_cnt = rtgui_app_get_win_acti_cnt();
 
         /* send keyboard event to thread */
         rtgui_send(wnd->app, (struct rtgui_event *)event, sizeof(struct rtgui_event_kbd));

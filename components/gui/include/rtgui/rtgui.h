@@ -173,7 +173,7 @@ enum RTGUI_MODAL_CODE
 {
     RTGUI_MODAL_OK,
     RTGUI_MODAL_CANCEL,
-    RTGUI_MODAL_MAX = 0xFFFFFFFF,
+    RTGUI_MODAL_MAX = 0xFFFF,
 };
 typedef enum RTGUI_MODAL_CODE rtgui_modal_code_t;
 
