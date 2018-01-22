@@ -62,6 +62,8 @@ extern unsigned short ff_convert(unsigned short wch, int direction);
 #define gb2312tounicode(code) ff_convert(code, 1)
 #endif
 
+#ifndef UTF8_TO_UNICODE
+
 static void gbk_to_unicode(rt_uint16_t *unicode, const char *text, int len)
 {
     int i;
@@ -90,6 +92,8 @@ static void gbk_to_unicode(rt_uint16_t *unicode, const char *text, int len)
 
     *unicode = '\0';
 }
+
+#else
 
 static rt_uint16_t _get_unicode(const char* str, int n)
 {
@@ -244,6 +248,7 @@ static int utf8_to_unicode(rt_uint16_t* unicode, const char* utf8, int len)
     return index;
 }
 
+#endif
 
 static void _rtgui_rect_move_to_align(const rtgui_rect_t *rect, rtgui_rect_t *to, rt_uint16_t height, int align)
 {
@@ -574,7 +579,6 @@ static void ftc_draw_text(struct rtgui_font *font,
     struct rtgui_ttf_font *ttf_font;
     rt_int16_t begin_x, btm_y;
     rt_int16_t topy;
-    rt_uint8_t a, r, g, b;
     rtgui_color_t fgc;
     struct rtgui_rect text_rect;
 
