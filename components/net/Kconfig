@@ -180,6 +180,15 @@ config RT_USING_LWIP
         config LWIP_SO_RCVBUF
             int "Enable SO_RCVBUF processing"
             default 1
+
+        config RT_LWIP_NETIF_LOOPBACK
+            bool "Enable netif loopback"
+            default n
+
+        config LWIP_NETIF_LOOPBACK
+        	int
+        	default 1 if RT_LWIP_NETIF_LOOPBACK
+        	default 0 if !RT_LWIP_NETIF_LOOPBACK
     endif
 
 endmenu
