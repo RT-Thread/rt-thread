@@ -58,6 +58,11 @@ int libc_stdio_set_console(const char* device_name, int mode)
     return std_fd;
 }
 
+int libc_stdio_get_console(void)
+{
+    return std_fd;
+}
+
 int libc_stdio_read(void *buffer, size_t size)
 {
     return read(std_fd, buffer, size);

@@ -1845,7 +1845,7 @@ static rt_err_t rt_usbd_ep_assign(udevice_t device, uep_t ep)
     while(device->dcd->ep_pool[i].addr != 0xFF)
     {
         if(device->dcd->ep_pool[i].status == ID_UNASSIGNED && 
-            ep->ep_desc->bmAttributes == device->dcd->ep_pool[i].type)
+            ep->ep_desc->bmAttributes == device->dcd->ep_pool[i].type && (EP_ADDRESS(ep) & 0x80) == device->dcd->ep_pool[i].dir)
         {
             EP_ADDRESS(ep) |= device->dcd->ep_pool[i].addr;
             ep->id = &device->dcd->ep_pool[i];

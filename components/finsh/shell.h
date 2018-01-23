@@ -33,10 +33,6 @@
 #include <rtthread.h>
 #include "finsh.h"
 
-#ifndef FINSH_USING_HISTORY
-#define FINSH_USING_HISTORY
-#endif
-
 #ifndef FINSH_THREAD_PRIORITY
 #define FINSH_THREAD_PRIORITY 20
 #endif
@@ -72,6 +68,10 @@ const char* finsh_get_prompt(void);
         #define FINSH_DEFAULT_PASSWORD "rtthread"
     #endif
 #endif /* FINSH_USING_AUTH */
+
+#ifndef FINSH_THREAD_NAME
+#define FINSH_THREAD_NAME   "tshell"
+#endif
 
 enum input_stat
 {
