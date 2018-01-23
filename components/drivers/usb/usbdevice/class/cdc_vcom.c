@@ -49,7 +49,7 @@
 
 #ifdef RT_VCOM_TX_USE_DMA
 #define VCOM_TX_USE_DMA
-#endif /*RT_VCOM_TASK_STK_SIZE*/
+#endif /*RT_VCOM_TX_USE_DMA*/
 
 #ifdef RT_VCOM_SERNO
 #define _SER_NO RT_VCOM_SERNO
@@ -58,9 +58,9 @@
 #endif /*RT_VCOM_SERNO*/
 
 #ifdef RT_VCOM_SER_LEN
-#define __SER_NO_LEN RT_VCOM_SER_LEN
+#define _SER_NO_LEN RT_VCOM_SER_LEN
 #else /*!RT_VCOM_SER_LEN*/
-#define __SER_NO_LEN rt_strlen("32021919830108")
+#define _SER_NO_LEN 14 /*rt_strlen("32021919830108")*/
 #endif /*RT_VCOM_SER_LEN*/
 
 ALIGN(RT_ALIGN_SIZE)
@@ -209,11 +209,14 @@ const static struct ucdc_data_descriptor _data_desc =
     0x00,
 };
 
-static char serno[_SER_NO_LEN + 1] = {'\0',};
-RT_WEAK  rt_err_t vcom_get_stored_serno(char *serno, int size)
+static char serno[_SER_NO_LEN + 1] = {'\0'};
+RT_WEAK rt_err_t vcom_get_stored_serno(char *serno, int size);
+
+rt_err_t vcom_get_stored_serno(char *serno, int size)
 {
     return RT_ERROR;
 }
+
 const static char* _ustring[] =
 {
     "Language",
@@ -544,8 +547,6 @@ ufunction_t rt_usbd_function_cdc_create(udevice_t device)
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
 
-    extern rt_err_t vcom_get_stored_serno(char *serno, int size);
-
     rt_memset(serno, 0, _SER_NO_LEN + 1);
     if(vcom_get_stored_serno(serno, _SER_NO_LEN) != RT_EOK)
     {
@@ -672,13 +673,13 @@ static rt_size_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_s
 
     struct ufunction *func;
     struct vcom *data;
-
-    func = (struct ufunction*)serial->parent.user_data;
-    data = (struct vcom*)func->user_data;
     rt_uint32_t baksize = size;
     rt_size_t ptr = 0;
     int empty = 0;
     rt_uint8_t crlf[2] = {'\r', '\n',};
+
+    func = (struct ufunction*)serial->parent.user_data;
+    data = (struct vcom*)func->user_data;
 
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
