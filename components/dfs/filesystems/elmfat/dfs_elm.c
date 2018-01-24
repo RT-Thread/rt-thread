@@ -194,7 +194,7 @@ int dfs_elm_unmount(struct dfs_filesystem *fs)
         return -ENOENT;
 
     rt_snprintf(drive, sizeof(drive), "%d:", index);
-    result = f_mount(RT_NULL, drive, (BYTE)index);
+    result = f_mount(RT_NULL, drive, (BYTE)1);
     if (result != FR_OK)
         return elm_result_to_dfs(result);
 
