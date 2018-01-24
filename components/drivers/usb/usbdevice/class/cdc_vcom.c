@@ -58,9 +58,9 @@
 #endif /*RT_VCOM_SERNO*/
 
 #ifdef RT_VCOM_SER_LEN
-#define __SER_NO_LEN RT_VCOM_SER_LEN
+#define _SER_NO_LEN RT_VCOM_SER_LEN
 #else /*!RT_VCOM_SER_LEN*/
-#define __SER_NO_LEN rt_strlen("32021919830108")
+#define _SER_NO_LEN sizeof("32021919830108")
 #endif /*RT_VCOM_SER_LEN*/
 
 ALIGN(RT_ALIGN_SIZE)
