@@ -182,6 +182,7 @@ int dfs_elm_unmount(struct dfs_filesystem *fs)
     FATFS *fat;
     FRESULT result;
     int  index;
+    char drive[5];
 
     fat = (FATFS *)fs->data;
 
@@ -192,7 +193,8 @@ int dfs_elm_unmount(struct dfs_filesystem *fs)
     if (index == -1) /* not found */
         return -ENOENT;
 
-    result = f_mount(RT_NULL, "", (BYTE)index);
+    rt_snprintf(drive, sizeof(drive), "%d:", index);
+    result = f_mount(RT_NULL, drive, (BYTE)1);
     if (result != FR_OK)
         return elm_result_to_dfs(result);
 
