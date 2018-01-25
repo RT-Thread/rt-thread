@@ -26,6 +26,7 @@
  * 2007-01-28     Bernard      rename RT_OBJECT_Class_Static to RT_Object_Class_Static
  * 2010-10-26     yi.qiu       add module support in rt_object_allocate and rt_object_free
  * 2017-12-10     Bernard      Add object_info enum.
+ * 2018-01-25     Bernard      Fix the object find issue when enable MODULE.
  */
 
 #include <rtthread.h>
@@ -254,7 +255,7 @@ void rt_object_init(struct rt_object         *object,
 #ifdef RT_USING_MODULE
     /* get module object information */
     information = (rt_module_self() != RT_NULL) ?
-                  &rt_module_self()->module_object[type] : &rt_object_container[type];
+                  &rt_module_self()->module_object[type] : rt_object_get_information(type);
 #else
     /* get object information */
     information = rt_object_get_information(type);
@@ -329,7 +330,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
      * module object should be managed by kernel object container
      */
     information = (rt_module_self() != RT_NULL && (type != RT_Object_Class_Module)) ?
-                  &rt_module_self()->module_object[type] : &rt_object_container[type];
+                  &rt_module_self()->module_object[type] : rt_object_get_information(type);
 #else
     /* get object information */
     information = rt_object_get_information(type);
