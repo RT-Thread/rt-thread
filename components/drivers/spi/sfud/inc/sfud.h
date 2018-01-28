@@ -44,6 +44,15 @@ extern "C" {
 sfud_err sfud_init(void);
 
 /**
+ * SFUD initialize by flash device
+ *
+ * @param flash flash device
+ *
+ * @return result
+ */
+sfud_err sfud_device_init(sfud_flash *flash);
+
+/**
  * get flash device by its index which in the flash information table
  *
  * @param index the index which in the flash information table  @see flash_table
