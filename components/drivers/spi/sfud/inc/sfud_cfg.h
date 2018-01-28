@@ -52,11 +52,6 @@
 #define SFUD_USING_FLASH_INFO_TABLE
 #endif
 
-
-#if !defined(RT_SFUD_USING_SFDP) && !defined(RT_SFUD_USING_FLASH_INFO_TABLE)
-#error "Please configure RT_SFUD_USING_SFDP or RT_SFUD_USING_FLASH_INFO_TABLE at least one kind of mode (in rtconfig.h)."
-#endif
-
 #define SFUD_FLASH_DEVICE_TABLE {0}
 
 #endif /* _SFUD_CFG_H_ */
