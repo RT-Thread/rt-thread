@@ -29,7 +29,9 @@
 |:--:|:----:|:--:|:--:|:--:|:--:|
 |[W25Q40BV](http://microchip.ua/esp8266/W25Q40BV(EOL).pdf)|Winbond|4Mb|50Mhz|不支持|已停产|
 |[W25Q80DV](http://www.winbond.com/resource-files/w25q80dv_revg_07212015.pdf)|Winbond|8Mb|104Mhz|支持||
+|[W25Q16BV](https://media.digikey.com/pdf/Data%20Sheets/Winbond%20PDFs/W25Q16BV.pdf)|Winbond|16Mb|104Mhz|不支持| by [slipperstree](https://github.com/slipperstree)|
 |[W25Q16CV](http://www.winbond.com/resource-files/da00-w25q16cvf1.pdf)|Winbond|16Mb|104Mhz|支持||
+|[W25Q16DV](http://www.winbond.com/resource-files/w25q16dv%20revk%2005232016%20doc.pdf)|Winbond|16Mb|104Mhz|支持| by [slipperstree](https://github.com/slipperstree)|
 |[W25Q32BV](http://www.winbond.com/resource-files/w25q32bv_revi_100413_wo_automotive.pdf)|Winbond|32Mb|104Mhz|支持||
 |[W25Q64CV](http://www.winbond.com/resource-files/w25q64cv_revh_052214[2].pdf)|Winbond|64Mb|80Mhz|支持||
 |[W25Q128BV](http://www.winbond.com/resource-files/w25q128bv_revh_100313_wo_automotive.pdf)|Winbond|128Mb|104Mhz|支持||
@@ -44,6 +46,7 @@
 |[GD25Q16B](http://www.gigadevice.com/product/detail/5/410.html)|GigaDevice|16Mb|120Mhz|不支持| by [TanekLiang](https://github.com/TanekLiang) |
 |[GD25Q64B](http://www.gigadevice.com/product/detail/5/364.html)|GigaDevice|64Mb|120Mhz|不支持||
 |[S25FL216K](http://www.cypress.com/file/197346/download)|Cypress|16Mb|65Mhz|不支持||
+|[S25FL032P](http://www.cypress.com/file/196861/download)|Cypress|32Mb|104Mhz|不支持| by [yc_911](https://gitee.com/yc_911) |
 |[S25FL164K](http://www.cypress.com/file/196886/download)|Cypress|64Mb|108Mhz|支持||
 |[A25L080](http://www.amictechnology.com/datasheets/A25L080.pdf)|AMIC|8Mb|100Mhz|不支持||
 |[A25LQ64](http://www.amictechnology.com/datasheets/A25LQ64.pdf)|AMIC|64Mb|104Mhz|支持||
@@ -57,13 +60,25 @@
 
 #### 2.2.1 初始化 SFUD 库
 
+将会调用 `sfud_device_init` ，初始化 Flash 设备表中的全部设备。如果只有一个 Flash 也可以只使用 `sfud_device_init` 进行单一初始化。
+
 > 注意：初始化完的 SPI Flash 默认都 **已取消写保护** 状态，如需开启写保护，请使用 sfud_write_status 函数修改 SPI Flash 状态。
 
 ```C
 sfud_err sfud_init(void)
 ```
 
-#### 2.2.2 获取 Flash 设备对象
+#### 2.2.2 初始化指定的 Flash 设备
+
+```C
+sfud_err sfud_device_init(sfud_flash *flash)
+```
+
+|参数                                    |描述|
+|:-----                                  |:----|
+|flash                                   |待初始化的 Flash 设备|
+
+#### 2.2.3 获取 Flash 设备对象
 
 在 SFUD 配置文件中会定义 Flash 设备表，负责存放所有将要使用的 Flash 设备对象，所以 SFUD 支持多个 Flash 设备同时驱动。设备表的配置在 `/sfud/inc/sfud_cfg.h` 中 `SFUD_FLASH_DEVICE_TABLE` 宏定义，详细配置方法参照 [2.3 配置方法 Flash](#23-配置方法)）。本方法通过 Flash 设备位于设备表中索引值来返回 Flash 设备对象，超出设备表范围返回 `NULL` 。
 
@@ -75,21 +90,7 @@ sfud_flash *sfud_get_device(size_t index)
 |:-----                                  |:----|
 |index                                   |Flash 设备位于 FLash 设备表中的索引值|
 
-#### 2.2.3 获取 Flash 设备总数
-
-返回 Flash 设备表的总长度。
-
-```C
-size_t sfud_get_device_num(void)
-```
-
-#### 2.2.4 获取 Flash 设备表
-
-```C
-const sfud_flash *sfud_get_device_table(void)
-```
-
-#### 2.2.5 读取 Flash 数据
+#### 2.2.4 读取 Flash 数据
 
 ```C
 sfud_err sfud_read(const sfud_flash *flash, uint32_t addr, size_t size, uint8_t *data)
@@ -102,7 +103,7 @@ sfud_err sfud_read(const sfud_flash *flash, uint32_t addr, size_t size, uint8_t 
 |size                                    |从起始地址开始读取数据的总大小|
 |data                                    |读取到的数据|
 
-#### 2.2.6 擦除 Flash 数据
+#### 2.2.5 擦除 Flash 数据
 
 > 注意：擦除操作将会按照 Flash 芯片的擦除粒度（详见 Flash 数据手册，一般为 block 大小。初始化完成后，可以通过 `sfud_flash->chip.erase_gran` 查看）对齐，请注意保证起始地址和擦除数据大小按照 Flash 芯片的擦除粒度对齐，否则执行擦除操作后，将会导致其他数据丢失。
 
@@ -116,7 +117,7 @@ sfud_err sfud_erase(const sfud_flash *flash, uint32_t addr, size_t size)
 |addr                                    |起始地址|
 |size                                    |从起始地址开始擦除数据的总大小|
 
-#### 2.2.7 擦除 Flash 全部数据
+#### 2.2.6 擦除 Flash 全部数据
 
 ```C
 sfud_err sfud_chip_erase(const sfud_flash *flash)
@@ -126,7 +127,7 @@ sfud_err sfud_chip_erase(const sfud_flash *flash)
 |:-----                                  |:----|
 |flash                                   |Flash 设备对象|
 
-#### 2.2.8 往 Flash 写数据
+#### 2.2.7 往 Flash 写数据
 
 ```C
 sfud_err sfud_write(const sfud_flash *flash, uint32_t addr, size_t size, const uint8_t *data)
@@ -139,7 +140,7 @@ sfud_err sfud_write(const sfud_flash *flash, uint32_t addr, size_t size, const u
 |size                                    |从起始地址开始写入数据的总大小|
 |data                                    |待写入的数据|
 
-#### 2.2.9 先擦除再往 Flash 写数据
+#### 2.2.8 先擦除再往 Flash 写数据
 
 > 注意：擦除操作将会按照 Flash 芯片的擦除粒度（详见 Flash 数据手册，一般为 block 大小。初始化完成后，可以通过 `sfud_flash->chip.erase_gran` 查看）对齐，请注意保证起始地址和擦除数据大小按照 Flash 芯片的擦除粒度对齐，否则执行擦除操作后，将会导致其他数据丢失。
 
@@ -154,7 +155,7 @@ sfud_err sfud_erase_write(const sfud_flash *flash, uint32_t addr, size_t size, c
 |size                                    |从起始地址开始写入数据的总大小|
 |data                                    |待写入的数据|
 
-#### 2.2.10 读取 Flash 状态
+#### 2.2.9 读取 Flash 状态
 
 ```C
 sfud_err sfud_read_status(const sfud_flash *flash, uint8_t *status)
@@ -165,7 +166,7 @@ sfud_err sfud_read_status(const sfud_flash *flash, uint8_t *status)
 |flash                                   |Flash 设备对象|
 |status                                  |当前状态寄存器值|
 
-#### 2.2.11 写（修改） Flash 状态
+#### 2.2.10 写（修改） Flash 状态
 
 ```C
 sfud_err sfud_write_status(const sfud_flash *flash, bool is_volatile, uint8_t status)
@@ -197,9 +198,25 @@ sfud_err sfud_write_status(const sfud_flash *flash, bool is_volatile, uint8_t st
 
 > 注意：关闭后该库只驱动支持 SFDP 规范的 Flash，也会适当的降低部分代码量。另外 2.3.2 及 2.3.3 这两个宏定义至少定义一种，也可以两种方式都选择。
 
-#### 2.3.4 Flash 设备表
+#### 2.3.4 既不使用 SFDP ，也不使用 Flash 参数信息表
 
-主要修改 `SFUD_FLASH_DEVICE_TABLE` 这个宏定义，示例如下：
+为了进一步降低代码量，`SFUD_USING_SFDP` 与 `SFUD_USING_FLASH_INFO_TABLE` 也可以 **都不定义** 。
+
+此时，只要在定义 Flash 设备时，指定好 Flash 参数，之后再调用 `sfud_device_init` 对该设备进行初始化。参考如下代码：
+
+```C
+sfud_flash sfud_norflash0 = {
+        .name = "norflash0",
+        .spi.name = "SPI1",
+        .chip = { "W25Q64FV", SFUD_MF_ID_WINBOND, 0x40, 0x17, 8L * 1024L * 1024L, SFUD_WM_PAGE_256B, 4096, 0x20 } };
+......
+sfud_device_init(&sfud_norflash0);
+......
+```
+
+#### 2.3.5 Flash 设备表
+
+如果产品中存在多个 Flash ，可以添加 Flash 设备表。修改 `SFUD_FLASH_DEVICE_TABLE` 这个宏定义，示例如下：
 
 ```C
 enum {
