@@ -176,7 +176,7 @@ const static struct ucdc_comm_descriptor _comm_desc =
     USB_DESC_TYPE_ENDPOINT,
     USB_DYNAMIC | USB_DIR_IN,
     USB_EP_ATTR_INT,
-    0x0008,
+    0x08,
     0xFF,
 };
 
