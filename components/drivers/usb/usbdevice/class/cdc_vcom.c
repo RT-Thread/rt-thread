@@ -74,14 +74,14 @@ static struct ucdc_line_coding line_coding;
 
 struct vcom
 {
-    struct rt_serial_device     serial;
+    struct rt_serial_device serial;
     uep_t ep_out;
     uep_t ep_in;
     uep_t ep_cmd;
     rt_bool_t connected;
     rt_bool_t in_sending;
     struct rt_completion wait;
-    rt_uint8_t rx_rbp[CDC_RX_BUFSIZE];    
+    rt_uint8_t rx_rbp[CDC_RX_BUFSIZE];
     struct rt_ringbuffer rx_ringbuffer;
     rt_uint8_t tx_rbp[CDC_TX_BUFSIZE];
     struct rt_ringbuffer tx_ringbuffer;
@@ -298,16 +298,20 @@ static rt_err_t _ep_out_handler(ufunction_t func, rt_size_t size)
     RT_ASSERT(func != RT_NULL);
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("_ep_out_handler %d\n", size));
-    
+
     data = (struct vcom*)func->user_data;
-    /* receive data from USB VCOM */
-    level = rt_hw_interrupt_disable();
+    /* ensure serial is active */
+    if(data->serial.parent.open_flag & RT_DEVICE_FLAG_ACTIVATED)
+    {
+        /* receive data from USB VCOM */
+        level = rt_hw_interrupt_disable();
 
-    rt_ringbuffer_put(&data->rx_ringbuffer, data->ep_out->buffer, size);
-    rt_hw_interrupt_enable(level);
+        rt_ringbuffer_put(&data->rx_ringbuffer, data->ep_out->buffer, size);
+        rt_hw_interrupt_enable(level);
 
-    /* notify receive data */
-    rt_hw_serial_isr(&data->serial,RT_SERIAL_EVENT_RX_IND);
+        /* notify receive data */
+        rt_hw_serial_isr(&data->serial,RT_SERIAL_EVENT_RX_IND);
+    }
 
     data->ep_out->request.buffer = data->ep_out->buffer;
     data->ep_out->request.size = EP_MAXPACKET(data->ep_out);
@@ -879,7 +883,7 @@ static void rt_usb_vcom_init(struct ufunction *func)
     rt_ringbuffer_init(&data->rx_ringbuffer, data->rx_rbp, CDC_RX_BUFSIZE);
     rt_ringbuffer_init(&data->tx_ringbuffer, data->tx_rbp, CDC_TX_BUFSIZE);
 
-    rt_event_init(&data->tx_event, "vom", RT_IPC_FLAG_FIFO);
+    rt_event_init(&data->tx_event, "vcom", RT_IPC_FLAG_FIFO);
 
     config.baud_rate    = BAUD_RATE_115200;
     config.data_bits    = DATA_BITS_8;
