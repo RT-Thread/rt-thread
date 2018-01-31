@@ -260,7 +260,7 @@ static rt_err_t _ep_in_handler(ufunction_t func, rt_size_t size)
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("_ep_in_handler %d\n", size));
     data = (struct vcom*)func->user_data;
-    if ((size != 0) && (size % CDC_MAX_PACKET_SIZE == 0))
+    if ((size != 0) && ((size % EP_MAXPACKET(data->ep_in)) == 0))
     {
         /* don't have data right now. Send a zero-length-packet to
          * terminate the transaction.
@@ -707,6 +707,8 @@ static rt_size_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_s
                     level = rt_hw_interrupt_disable();
                     size += rt_ringbuffer_put_force(&data->tx_ringbuffer, (const rt_uint8_t *)&buf[size], ptr - size);
                     rt_hw_interrupt_enable(level);
+
+                    /* no data was be ignored */
                     if(size == ptr)
                     {
                         level = rt_hw_interrupt_disable();
@@ -722,6 +724,8 @@ static rt_size_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_s
                         empty = 1;
                         break;
                     }
+
+                    /* ring buffer is full */
                     if(size == ptr)
                     {
                         empty = 1;
@@ -735,6 +739,7 @@ static rt_size_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_s
                 }
             }
         }
+
         if(size < baksize && !empty)
         {
             level = rt_hw_interrupt_disable();
@@ -742,12 +747,17 @@ static rt_size_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_s
             rt_hw_interrupt_enable(level);
         }
 
-
         if(size)
         {
             rt_event_send(&data->tx_event, CDC_TX_HAS_DATE);
         }
     }
+    else
+    {
+        /* recover dataqueue resources */
+        rt_hw_serial_isr(&data->serial,RT_SERIAL_EVENT_TX_DMADONE);
+    }
+
     return size;
 }
 static int _vcom_putc(struct rt_serial_device *serial, char c)
