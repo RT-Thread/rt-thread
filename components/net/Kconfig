@@ -180,6 +180,15 @@ config RT_USING_LWIP
         config LWIP_SO_RCVBUF
             int "Enable SO_RCVBUF processing"
             default 1
+
+        config RT_LWIP_NETIF_LOOPBACK
+            bool "Enable netif loopback"
+            default n
+
+        config LWIP_NETIF_LOOPBACK
+        	int
+        	default 1 if RT_LWIP_NETIF_LOOPBACK
+        	default 0 if !RT_LWIP_NETIF_LOOPBACK
     endif
 
 endmenu
@@ -192,9 +201,25 @@ config LWIP_USING_DHCPD
     bool "Enable DHCP server"
     default n
 
+   
+menu "Networking utilities"
 config RT_USING_NETUTILS
-    bool "Enable net utils"
+    bool "Enable networking utilities"
     default n
+
+    if RT_USING_NETUTILS
+    config RT_NETUTILS_USING_PING
+        bool "Enable Ping utility"
+        select RT_LWIP_ICMP
+        select RT_LWIP_RAW
+        default n
+
+    config RT_NETUTILS_USING_TFTP
+        bool "Enable TFTP(Trivial File Transfer Protocol) utility"
+        default n
+    
+    endif
+endmenu
 
 endif
 
