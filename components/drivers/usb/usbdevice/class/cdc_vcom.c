@@ -69,6 +69,7 @@ static struct rt_thread vcom_thread;
 static struct ucdc_line_coding line_coding;
 
 #define CDC_TX_BUFSIZE    1024
+#define CDC_BULKIN_MAXSIZE (CDC_TX_BUFSIZE / 8)
 
 #define CDC_TX_HAS_DATE   0x01
 
@@ -255,12 +256,14 @@ static void _vcom_reset_state(ufunction_t func)
 static rt_err_t _ep_in_handler(ufunction_t func, rt_size_t size)
 {
     struct vcom *data;
+    rt_size_t request_size;
 
     RT_ASSERT(func != RT_NULL);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("_ep_in_handler %d\n", size));
     data = (struct vcom*)func->user_data;
-    if ((size != 0) && ((size % EP_MAXPACKET(data->ep_in)) == 0))
+    request_size = data->ep_in->request.size;
+    RT_DEBUG_LOG(RT_DEBUG_USB, ("_ep_in_handler %d\n", request_size));
+    if ((request_size != 0) && ((request_size % EP_MAXPACKET(data->ep_in)) == 0))
     {
         /* don't have data right now. Send a zero-length-packet to
          * terminate the transaction.
@@ -677,13 +680,16 @@ static rt_size_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_s
 
     struct ufunction *func;
     struct vcom *data;
-    rt_uint32_t baksize = size;
+    rt_uint32_t baksize;
     rt_size_t ptr = 0;
     int empty = 0;
     rt_uint8_t crlf[2] = {'\r', '\n',};
 
     func = (struct ufunction*)serial->parent.user_data;
     data = (struct vcom*)func->user_data;
+
+    size = (size >= CDC_BULKIN_MAXSIZE) ? CDC_BULKIN_MAXSIZE : size;
+    baksize = size;
 
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
@@ -805,7 +811,7 @@ static void vcom_tx_thread_entry(void* parameter)
     rt_uint32_t res;
     struct ufunction *func = (struct ufunction *)parameter;
     struct vcom *data = (struct vcom*)func->user_data;
-    rt_uint8_t ch[64];
+    rt_uint8_t ch[CDC_BULKIN_MAXSIZE];
 
     while (1)
     {
@@ -826,7 +832,7 @@ static void vcom_tx_thread_entry(void* parameter)
         while(rt_ringbuffer_data_len(&data->tx_ringbuffer))
         {
             level = rt_hw_interrupt_disable();
-            res = rt_ringbuffer_get(&data->tx_ringbuffer, ch, 64);
+            res = rt_ringbuffer_get(&data->tx_ringbuffer, ch, CDC_BULKIN_MAXSIZE);
             rt_hw_interrupt_enable(level);
 
             if(!res)
