@@ -2077,7 +2077,7 @@ void rtgui_region_draw_clip(rtgui_region_t *region, struct rtgui_dc *dc)
 
         rect = rects[i];
 
-		rtgui_rect_move(&rect, -x, -y);
+        rtgui_rect_move(&rect, -x, -y);
         rtgui_dc_draw_rect(dc, &rect);
 
         rt_snprintf(text, sizeof(text) - 1, "%d", i);
@@ -2138,11 +2138,11 @@ void rtgui_rect_move_to_align(const rtgui_rect_t *rect, rtgui_rect_t *to, int al
     if (dh < 0) dh = 0;
 
     /* move to insider of rect */
-	rtgui_rect_move_to_point(to, rect->x1, rect->y1);
+    rtgui_rect_move_to_point(to, rect->x1, rect->y1);
 
     /* limited the destination rect to source rect */
-     if (dw == 0) to->x2 = rect->x2;
-     if (dh == 0) to->y2 = rect->y2;
+    if (dw == 0) to->x2 = rect->x2;
+    if (dh == 0) to->y2 = rect->y2;
 
     /* align to right */
     if (align & RTGUI_ALIGN_RIGHT)
@@ -2150,12 +2150,12 @@ void rtgui_rect_move_to_align(const rtgui_rect_t *rect, rtgui_rect_t *to, int al
         to->x1 += dw;
         to->x2 += dw;
     }
-	/* align to center horizontal */
-	else if (align & RTGUI_ALIGN_CENTER_HORIZONTAL)
-	{
-		to->x1 += dw >> 1;
-		to->x2 += dw >> 1;
-	}
+    /* align to center horizontal */
+    else if (align & RTGUI_ALIGN_CENTER_HORIZONTAL)
+    {
+        to->x1 += dw >> 1;
+        to->x2 += dw >> 1;
+    }
 
     /* align to bottom */
     if (align & RTGUI_ALIGN_BOTTOM)
@@ -2214,6 +2214,20 @@ int rtgui_rect_contains_point(const rtgui_rect_t *rect, int x, int y)
     return -RT_ERROR;
 }
 RTM_EXPORT(rtgui_rect_contains_point);
+
+int  rtgui_rect_contains_rect(const rtgui_rect_t *rect1, const rtgui_rect_t *rect2)
+{
+    if (INBOX(rect1, rect2->x1, rect2->y1) &&
+            INBOX(rect1, rect2->x1, rect2->y2) &&
+            INBOX(rect1, rect2->x2, rect2->y1) &&
+            INBOX(rect1, rect2->x2, rect2->y2))
+    {
+        return RT_EOK;
+    }
+
+    return -RT_ERROR;
+}
+RTM_EXPORT(rtgui_rect_contains_rect);
 
 int rtgui_rect_is_intersect(const rtgui_rect_t *rect1, const rtgui_rect_t *rect2)
 {
