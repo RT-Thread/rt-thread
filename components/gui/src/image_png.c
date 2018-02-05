@@ -609,6 +609,9 @@ static void rtgui_image_png_blit(struct rtgui_image *image, struct rtgui_dc *dc,
         {
             for (x = start_x; x < rect->x1 + w; ++x)
             {
+                if (y - rect->y1 < 0 || x - rect->x1 < 0)
+                    continue;
+
                 pixel = (rtgui_color_t*)((rt_uint8_t*)image->data + (y - rect->y1) * image->w * 4 +
                                          (x - rect->x1) * 4);
 
