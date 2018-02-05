@@ -59,7 +59,7 @@ rt_bool_t rtgui_container_dispatch_event(rtgui_container_t *container, rtgui_eve
 {
     /* handle in child widget */
     struct rtgui_list_node *node;
-    rtgui_event_t _event, save_event = *event;
+    rtgui_event_t save_event = *event;
     rtgui_widget_t *widget = (rtgui_widget_t *)container;
 
     rtgui_list_foreach(node, &(container->children))
@@ -67,30 +67,30 @@ rt_bool_t rtgui_container_dispatch_event(rtgui_container_t *container, rtgui_eve
         struct rtgui_widget *w;
         w = rtgui_list_entry(node, struct rtgui_widget, sibling);
 
-        _event = save_event;
+        event->type = save_event.type;
 
-        if (RTGUI_EVENT_PAINT & _event.type)
+        if (RTGUI_EVENT_PAINT & event->type)
         {
             if (widget->extent.x1 > w->extent.x2)
             {
-                _event.type &= !RTGUI_EVENT_PAINT;
+                event->type &= !RTGUI_EVENT_PAINT;
             }
             else if (widget->extent.x2 < w->extent.x1)
             {
-                _event.type &= !RTGUI_EVENT_PAINT;
+                event->type &= !RTGUI_EVENT_PAINT;
             }
             else if (widget->extent.y1 > w->extent.y2)
             {
-                _event.type &= !RTGUI_EVENT_PAINT;
+                event->type &= !RTGUI_EVENT_PAINT;
             }
             else if (widget->extent.y2 < w->extent.y1)
             {
-                _event.type &= !RTGUI_EVENT_PAINT;
+                event->type &= !RTGUI_EVENT_PAINT;
             }
         }
 
         if (RTGUI_OBJECT(w)->event_handler &&
-                RTGUI_OBJECT(w)->event_handler(RTGUI_OBJECT(w), &_event) == RT_TRUE)
+                RTGUI_OBJECT(w)->event_handler(RTGUI_OBJECT(w), event) == RT_TRUE)
         {
             return RT_TRUE;
         }

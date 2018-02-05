@@ -105,6 +105,7 @@ void rtgui_rect_move_to_align(const rtgui_rect_t *rect, rtgui_rect_t *to, int al
 void rtgui_rect_inflate(rtgui_rect_t *rect, int d);
 void rtgui_rect_intersect(rtgui_rect_t *src, rtgui_rect_t *dest);
 int  rtgui_rect_contains_point(const rtgui_rect_t *rect, int x, int y);
+int  rtgui_rect_contains_rect(const rtgui_rect_t *rect1, const rtgui_rect_t *rect2);
 int  rtgui_rect_is_intersect(const rtgui_rect_t *rect1, const rtgui_rect_t *rect2);
 int  rtgui_rect_is_equal(const rtgui_rect_t *rect1, const rtgui_rect_t *rect2);
 rtgui_rect_t *rtgui_rect_set(rtgui_rect_t *rect, int x, int y, int w, int h);
