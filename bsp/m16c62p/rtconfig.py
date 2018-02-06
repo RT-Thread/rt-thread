@@ -17,9 +17,9 @@ elif CROSS_TOOL == 'iar':
 	IAR_PATH = 'C:/Program Files/IAR Systems/Embedded Workbench Evaluation 6.0'
 #	EXEC_PATH 	= 'C:/Program Files/IAR Systems/Embedded Workbench Evaluation 6.0'
 elif CROSS_TOOL == 'keil':
-    print '================ERROR============================'
-    print 'Not support keil yet!'
-    print '================================================='
+    print('================ERROR============================')
+    print('Not support keil yet!')
+    print('=================================================')
     exit(0)	
 
 if os.getenv('RTT_EXEC_PATH'):

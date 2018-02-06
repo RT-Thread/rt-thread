@@ -27,7 +27,7 @@ elif  CROSS_TOOL == 'msvc':
     PLATFORM  = 'cl'
     EXEC_PATH = ''
 else:
-    print "bad CROSS TOOL!"
+    print("bad CROSS TOOL!")
     exit(1)
 
 if os.getenv('RTT_EXEC_PATH'):

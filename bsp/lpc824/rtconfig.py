@@ -11,9 +11,9 @@ if os.getenv('RTT_CC'):
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 if  CROSS_TOOL == 'gcc':
-    print '================ERROR============================'
-    print 'Not support gcc yet!'
-    print '================================================='
+    print('================ERROR============================')
+    print('Not support gcc yet!')
+    print('=================================================')
 elif CROSS_TOOL == 'keil':
     PLATFORM 	= 'armcc'
     EXEC_PATH 	= 'C:/keil_v5'
