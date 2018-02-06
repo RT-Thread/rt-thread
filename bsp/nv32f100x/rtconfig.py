@@ -14,14 +14,14 @@ if  CROSS_TOOL == 'gcc':
     PLATFORM 	= 'gcc'
     EXEC_PATH 	= 'G:/iot/camera_studio-win32-20160903/camera_studio/tools/arm-2014.05/bin'
 elif CROSS_TOOL == 'keil':
-    print '================ERROR============================'
-    print 'Not support iar yet!'
-    print '================================================='
+    print('================ERROR============================')
+    print('Not support iar yet!')
+    print('=================================================')
     exit(0)
 elif CROSS_TOOL == 'iar':
-    print '================ERROR============================'
-    print 'Not support iar yet!'
-    print '================================================='
+    print('================ERROR============================')
+    print('Not support iar yet!')
+    print('=================================================')
     exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):
