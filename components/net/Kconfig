@@ -201,7 +201,7 @@ config LWIP_USING_DHCPD
     bool "Enable DHCP server"
     default n
 
-   
+
 menu "Networking utilities"
 config RT_USING_NETUTILS
     bool "Enable networking utilities"
@@ -217,7 +217,11 @@ config RT_USING_NETUTILS
     config RT_NETUTILS_USING_TFTP
         bool "Enable TFTP(Trivial File Transfer Protocol) utility"
         default n
-    
+
+    config RT_NETUTILS_USING_TELNET
+        bool "Enable Telnet Server"
+        default n
+
     endif
 endmenu
 
