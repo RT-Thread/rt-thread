@@ -18,7 +18,7 @@
  */
 
 #include <string.h>
-#include "msd.h"
+#include "spi_msd.h"
 
 //#define MSD_TRACE
 
@@ -30,7 +30,7 @@
 
 #define DUMMY                 0xFF
 
-#define CARD_NCR_MAX          8
+#define CARD_NCR_MAX          9
 
 #define CARD_NRC              1
 #define CARD_NCR              1
