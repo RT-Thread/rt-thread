@@ -13,8 +13,8 @@
  * 2009-04-17     Bernard      first version.
  */
 
-#ifndef MSD_H_INCLUDED
-#define MSD_H_INCLUDED
+#ifndef SPI_MSD_H_INCLUDED
+#define SPI_MSD_H_INCLUDED
 
 #include <stdint.h>
 #include <drivers/spi.h>
@@ -129,4 +129,4 @@ struct msd_device
 
 extern rt_err_t msd_init(const char * sd_device_name, const char * spi_device_name);
 
-#endif // MSD_H_INCLUDED
+#endif // SPI_MSD_H_INCLUDED
