@@ -20,6 +20,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-05-27     Yi.qiu       The first version
+ * 2018-02-07     Bernard      Change the 3rd parameter of open/fcntl/ioctl to '...'
  */
 
 #include <dfs.h>
@@ -38,11 +39,10 @@
  *
  * @param file the path name of file.
  * @param flags the file open flags.
- * @param mode ignored parameter
  *
  * @return the non-negative integer on successful open, others for failed.
  */
-int open(const char *file, int flags, int mode)
+int open(const char *file, int flags, ...)
 {
     int fd, result;
     struct dfs_fd *d;
@@ -428,7 +428,7 @@ RTM_EXPORT(fsync);
  * @return 0 on successful completion. Otherwise, -1 shall be returned and errno
  * set to indicate the error.
  */
-int fcntl(int fildes, int cmd, void *data)
+int fcntl(int fildes, int cmd, ...)
 {
     int ret = -1;
     struct dfs_fd *d;
@@ -437,7 +437,14 @@ int fcntl(int fildes, int cmd, void *data)
     d = fd_get(fildes);
     if (d)
     {
-        ret = dfs_file_ioctl(d, cmd, data);
+        void* arg;
+        va_list ap;
+
+        va_start(ap, cmd);
+        arg = va_arg(ap, void*);
+        va_end(ap);
+
+        ret = dfs_file_ioctl(d, cmd, arg);
         fd_put(d);
     }
     else ret = -EBADF;
@@ -464,10 +471,17 @@ RTM_EXPORT(fcntl);
  * @return 0 on successful completion. Otherwise, -1 shall be returned and errno
  * set to indicate the error.
  */
-int ioctl(int fildes, int cmd, void *data)
+int ioctl(int fildes, int cmd, ...)
 {
+    void* arg;
+    va_list ap;
+
+    va_start(ap, cmd);
+    arg = va_arg(ap, void*);
+    va_end(ap);
+
     /* we use fcntl for this API. */
-    return fcntl(fildes, cmd, data);
+    return fcntl(fildes, cmd, arg);
 }
 RTM_EXPORT(ioctl);
 
