@@ -754,7 +754,7 @@ INIT_BOARD_EXPORT(stm32_hw_pin_init);
 
 rt_inline void pin_irq_hdr(int irqno)
 {
-    EXTI_ClearITPendingBit(pin_irq_map[irqno].irqno);
+    EXTI_ClearITPendingBit(pin_irq_map[irqno].irqbit);
     if(pin_irq_hdr_tab[irqno].hdr)
     {
        pin_irq_hdr_tab[irqno].hdr(pin_irq_hdr_tab[irqno].args);
