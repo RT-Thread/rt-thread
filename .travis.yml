@@ -27,6 +27,7 @@ env:
 #  - RTT_BSP='apollo2' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='asm9260t' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='at91sam9260' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='allwinner_tina' RTT_TOOL_CHAIN='sourcery-arm'
 #  - RTT_BSP='avr32uc3b0' RTT_TOOL_CHAIN='atmel-avr32'
 #  - RTT_BSP='bf533' # no scons
   - RTT_BSP='efm32' RTT_TOOL_CHAIN='sourcery-arm' 

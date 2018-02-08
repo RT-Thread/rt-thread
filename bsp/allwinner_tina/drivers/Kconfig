@@ -1,0 +1,16 @@
+
+
+config TINA_USING_UART0
+    bool "Using UART0"
+    select RT_USING_SERIAL
+    default n
+
+config TINA_USING_UART1
+    bool "Using UART1"
+    select RT_USING_SERIAL
+    default y
+
+config TINA_USING_UART2
+    bool "Using UART2"
+    select RT_USING_SERIAL
+    default y
