@@ -27,7 +27,7 @@
 #include <board.h>
 #include <rthw.h>
 
-#include <Drv_can.h>
+#include <drv_can.h>
 
 
 #include "ls1c.h"
