@@ -20,6 +20,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-02-07     Bernard      Add O_DIRECTORY definition in NEWLIB mode.
+ * 2018-02-09     Bernard      Add O_BINARY definition
  */
 
 #ifndef LIBC_FCNTL_H__
@@ -45,6 +46,14 @@
 
 #ifndef O_DIRECTORY
 #define O_DIRECTORY 0x200000
+#endif
+
+#ifndef O_BINARY
+#ifdef  _O_BINARY
+#define O_BINARY _O_BINARY
+#else
+#define O_BINARY	     0
+#endif
 #endif
 
 #else
