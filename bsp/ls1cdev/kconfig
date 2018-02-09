@@ -1,0 +1,84 @@
+mainmenu "RT-Thread Configuration"
+
+
+config $BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "."
+
+config $RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "F:/rt-thread/rt-thread"
+    
+# you can change the RTT_ROOT default "../.." to your rtthread_root,
+# example : default "F:/git_repositories/rt-thread"
+
+config $PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+source "$RTT_DIR/KConfig"
+source "$PKGS_DIR/KConfig"
+
+config RT_USING_UART
+    bool "Using RT_USING_UART"
+    default y
+
+if RT_USING_UART
+config RT_USING_UART2
+    bool "Using RT_USING_UART2"
+    default y      
+
+config RT_UART_RX_BUFFER_SIZE
+    int "The rx buffer size"        
+    default 64 if RT_USING_UART
+    default 64 
+endif  
+
+config RT_USING_GMAC_INT_MODE
+    bool "Using RT_USING_GMAC_INT_MODE"
+    default y
+	
+config RT_USING_FPU
+    bool "Using RT_USING_FPU"
+    default y
+	
+config RT_USING_SPI0
+    bool "Using RT_USING_SPI0"
+	select RT_USING_SPI
+    default y      
+
+config RT_USING_SPI1
+    bool "Using RT_USING_SPI1"
+	select RT_USING_SPI
+    default y      
+
+config RT_USING_I2C1
+    bool "Using RT_USING_I2C1"
+	select RT_USING_I2C
+    default y      
+
+config RT_USING_I2C2
+    bool "Using RT_USING_I2C2"
+	select RT_USING_I2C
+    default y      
+
+config RT_CAN_USING_HDR
+    bool "Using RT_CAN_USING_HDR"
+	select RT_USING_CAN
+    default y      
+
+config USING_BXCAN0
+    bool "Using USING_BXCAN0"
+	select RT_USING_CAN
+    default y      
+  
+config USING_BXCAN1
+    bool "Using USING_BXCAN1"
+	select RT_USING_CAN
+    default y      
+
+
+    
