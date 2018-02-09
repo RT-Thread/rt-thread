@@ -234,13 +234,14 @@ rt_timer + 动词短语的形式表示能够应用于 timer 对象的方法。
 ，或仅仅支持从堆中动态分配的对象。
 
 ## 14. 用 astyle 自动格式化代码
-参数：--style=allman
-      --indent=spaces=4
-      --pad-oper
-      --pad-header
-      --unpad-paren
-      --suffix=none
-      --align-pointer=name
-      --lineend=linux
-      --convert-tabs
-      --verbose
+
+    参数：--style=allman
+          --indent=spaces=4
+          --pad-oper
+          --pad-header
+          --unpad-paren
+          --suffix=none
+          --align-pointer=name
+          --lineend=linux
+          --convert-tabs
+          --verbose
