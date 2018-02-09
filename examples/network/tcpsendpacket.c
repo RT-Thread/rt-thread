@@ -1,8 +1,9 @@
 #include <rtthread.h>
-#include <lwip/netdb.h>   /* 为了解析主机名，需要包含netdb.h头文件 */
-#include <lwip/sockets.h> /* 使用BSD socket，需要包含sockets.h头文件 */
 
-void tcp_senddata(const char* url, int port, int length)
+#include <netdb.h>   /* 为了解析主机名，需要包含netdb.h头文件 */
+#include <sys/socket.h> /* 使用BSD socket，需要包含socket.h头文件 */
+
+void tcp_senddata(const char *url, int port, int length)
 {
     struct hostent *host;
     int sock, err, result, timeout, index;
@@ -27,7 +28,7 @@ void tcp_senddata(const char* url, int port, int length)
 
     timeout = 100;
     /* 设置发送超时时间100ms */
-    lwip_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
+    setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
     /* 初始化预连接的服务端地址 */
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(port);
@@ -38,20 +39,20 @@ void tcp_senddata(const char* url, int port, int length)
     err = connect(sock, (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
     rt_kprintf("TCP thread connect error code: %d\n", err);
 
-    while(1)
+    while (1)
     {
         /* 发送数据到sock连接 */
         result = send(sock, buffer_ptr, length, MSG_DONTWAIT);
-        if(result < 0) //数据发送错误处理
+        if (result < 0) //数据发送错误处理
         {
             rt_kprintf("TCP thread send error: %d\n", result);
-            lwip_close(sock);
+            closesocket(sock);
 
             /* 关闭连接，重新创建连接 */
             rt_thread_delay(10);
 
             if ((sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1)
-                rt_kprintf("TCP Socket error:%d\n",sock);
+                rt_kprintf("TCP Socket error:%d\n", sock);
 
             err = connect(sock, (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
             rt_kprintf("TCP thread connect error code: %d\n", err);

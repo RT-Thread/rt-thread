@@ -87,6 +87,11 @@ config RT_USING_SPI
     default n
 
     if RT_USING_SPI
+        config RT_USING_SPI_MSD
+            bool "Using SD/TF card driver with spi"
+            select RT_USING_DFS
+            default n
+
         config RT_USING_SFUD
             bool "Using Serial Flash Universal Driver"
             default n
