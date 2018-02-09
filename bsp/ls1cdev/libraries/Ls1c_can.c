@@ -93,7 +93,7 @@ unsigned char  set_start(CAN_TypeDef* CANx)
   return  set_normal_mode(CANx);  
 }
 
- unsigned char CAN_Init(CAN_TypeDef* CANx, CAN_InitTypeDef* CAN_InitStruct)
+unsigned char CAN_Init(CAN_TypeDef* CANx, CAN_InitTypeDef* CAN_InitStruct)
 {
   unsigned char InitStatus = CAN_InitStatus_Failed;
   unsigned long wait_ack = 0x00000000;

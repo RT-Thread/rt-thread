@@ -221,7 +221,7 @@ unsigned char CAN_Transmit(CAN_TypeDef* CANx, CanTxMsg* TxMessage);
 void CAN_Receive(CAN_TypeDef* CANx,  CanRxMsg* RxMessage);
 
 unsigned char  set_reset_mode(CAN_TypeDef* CANx);
-unsigned char  set_start(CAN_TypeDef* CANx);
+unsigned char  set_start(CAN_TypeDef* CANx); 
 
 #endif
 

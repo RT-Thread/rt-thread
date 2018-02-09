@@ -29,13 +29,12 @@
 
 #include <drv_can.h>
 
-
 #include "ls1c.h"
-#include "ls1c_public.h"
-#include "ls1c_regs.h"
-#include "ls1c_clock.h"
-#include "ls1c_can.h"
-#include "ls1c_pin.h"
+#include "../libraries/ls1c_public.h"
+#include "../libraries/ls1c_regs.h"
+#include "../libraries/ls1c_clock.h"
+#include "../libraries/ls1c_can.h"
+#include "../libraries/ls1c_pin.h"
 
 
 #ifdef RT_USING_CAN
