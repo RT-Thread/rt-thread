@@ -32,15 +32,15 @@
  * header file.
  *
  * #define DBG_SECTION_NAME    "[ MOD]"
- * #define DEBUG_ENABLE     // enable debug macro
- * #define DEBUG_LEVEL      DBG_INFO
- * #include <rtdbg.h>       // must after of DEBUG_ENABLE or some other options
+ * #define DBG_ENABLE          // enable debug macro
+ * #define DBG_LEVEL           DBG_INFO
+ * #include <rtdbg.h>          // must after of DEBUG_ENABLE or some other options
  *
  * Then in your C/C++ file, you can use dbg_log macro to print out logs:
  * dbg_log(DBG_INFO, "this is a log!\n");
  *
  * Or if you want to use different color for different kinds log, you can
- * #define DEBUG_COLOR
+ * #define DBG_COLOR
  */
 
 #ifndef RT_DBG_H__
