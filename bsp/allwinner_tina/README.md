@@ -38,7 +38,6 @@ Allwinner tina 是由全志公司推出的ARM9内核的SOC
     pushd /tmp
     git clone https://github.com/Icenowy/sunxi-tools.git
     pushd sunxi-tools
-    git checkout -b f1c100s
     git checkout -b f1c100s origin/f1c100s
     make
     sudo make install
