@@ -85,6 +85,11 @@ time_t time(time_t *t)
     return time_now;
 }
 
+RT_WEAK clock_t clock(void)
+{
+    return rt_tick_get();
+}
+
 /**
  * Set system date(time not modify).
  *
