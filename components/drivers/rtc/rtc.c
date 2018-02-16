@@ -245,4 +245,67 @@ FINSH_FUNCTION_EXPORT(list_date, show date and time.)
 FINSH_FUNCTION_EXPORT(set_date, set date. e.g: set_date(2010,2,28))
 FINSH_FUNCTION_EXPORT(set_time, set time. e.g: set_time(23,59,59))
 
+#if defined(RT_USING_FINSH)
+static void date(uint8_t argc, char **argv)
+{
+    if (argc == 1)
+    {
+        time_t now;
+        /* output current time */
+        now = time(RT_NULL);
+        rt_kprintf("%s", ctime(&now));
+    }
+    else if (argc >= 7)
+    {
+        /* set time and date */
+        uint16_t year;
+        uint8_t month, day, hour, min, sec;
+        year = atoi(argv[1]);
+        month = atoi(argv[2]);
+        day = atoi(argv[3]);
+        hour = atoi(argv[4]);
+        min = atoi(argv[5]);
+        sec = atoi(argv[6]);
+        if (year > 2099 || year < 2000)
+        {
+            rt_kprintf("year is out of range [2000-2099]\n");
+            return;
+        }
+        if (month == 0 || month > 12)
+        {
+            rt_kprintf("month is out of range [1-12]\n");
+            return;
+        }
+        if (day == 0 || day > 31)
+        {
+            rt_kprintf("day is out of range [1-31]\n");
+            return;
+        }
+        if (hour > 23)
+        {
+            rt_kprintf("hour is out of range [0-23]\n");
+            return;
+        }
+        if (min > 59)
+        {
+            rt_kprintf("minute is out of range [0-59]\n");
+            return;
+        }
+        if (sec > 59)
+        {
+            rt_kprintf("second is out of range [0-59]\n");
+            return;
+        }
+        set_time(hour, min, sec);
+        set_date(year, month, day);
+    }
+    else
+    {
+        rt_kprintf("please input: date [year month day hour min sec] or date\n");
+        rt_kprintf("e.g: date 2018 01 01 23 59 59 or date\n");
+    }
+}
+MSH_CMD_EXPORT(date, get date and time or set [year month day hour min sec]);
+#endif /* defined(RT_USING_FINSH) */
+
 #endif /* RT_USING_FINSH */
