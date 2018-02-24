@@ -427,13 +427,6 @@
               <FilePath>drivers/rt_stm32f10x_spi.c</FilePath>
             </File>
           </Files>
-          <Files>
-            <File>
-              <FileName>msd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers/msd.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>Applications</GroupName>
