@@ -541,8 +541,8 @@ void finsh_thread_entry(void *parameter)
             }
         }
 
-        /* handle CR key */
-        if (ch == '\0') continue;
+        /* received null or error */
+        if (ch == '\0' || ch == 0xFF) continue;
         /* handle tab key */
         else if (ch == '\t')
         {
