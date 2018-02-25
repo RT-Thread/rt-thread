@@ -41,7 +41,7 @@
  *
  * @return the non-negative integer on successful open, others for failed.
  */
-int open(const char *file, int flags, int mode)
+int open(const char *file, int flags, ...)
 {
     int fd, result;
     struct dfs_fd *d;

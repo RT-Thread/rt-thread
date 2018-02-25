@@ -21,7 +21,6 @@
 int libc_system_init(void)
 {
 #ifdef RT_USING_DFS
-    int fd;
     struct rt_device *console_dev;
 
 #ifndef RT_USING_DFS_DEVFS
@@ -33,14 +32,6 @@ int libc_system_init(void)
     {
         /* initialize console device */
         rt_console_init(console_dev->parent.name);
-
-        /* open console as stdin/stdout/stderr */
-        fd = open("/dev/console", O_RDONLY, 0); /* for stdin */
-        fd = open("/dev/console", O_WRONLY, 0); /* for stdout */
-        fd = open("/dev/console", O_WRONLY, 0); /* for stderr */
-
-        /* skip warning */
-        fd = fd;
     }
 #endif
 
