@@ -465,6 +465,8 @@ void abort(void)
 
 int libc_console_init(void)
 {
+#ifdef RT_USING_DFS
+
     /* open console as stdin/stdout/stderr */
     __console_fd = open("/dev/console", O_RDWR, 0); /* for stdin/stdout/stderr */
 
@@ -479,6 +481,7 @@ int libc_console_init(void)
 
 		_GLOBAL_REENT->__sdidinit = 1;
 	}
+#endif
 
     return 0;
 }
