@@ -3,6 +3,8 @@
 #include <sys/time.h>
 #include <rtthread.h>
 
+#include <stdio.h>
+
 #ifdef RT_USING_DFS
 #include <dfs_posix.h>
 #endif
@@ -12,6 +14,8 @@
 #endif
 
 /* Reentrant versions of system calls.  */
+static int __console_fd = -1;
+int dump = 0;
 
 int
 _close_r(struct _reent *ptr, int fd)
@@ -205,18 +209,14 @@ _wait_r(struct _reent *ptr, int *status)
 _ssize_t
 _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 {
-	if (fd < 3)
+	if (fd == __console_fd)
 	{
-#ifdef RT_USING_CONSOLE
 		rt_device_t console_device;
 		extern rt_device_t rt_console_get_device(void);
 
 		console_device = rt_console_get_device();
 		if (console_device != 0) rt_device_write(console_device, 0, buf, nbytes);
 		return nbytes;
-#else
-        return 0;
-#endif
 	}
 	else
 	{
@@ -462,3 +462,24 @@ void abort(void)
 
 	while (1);
 }
+
+int libc_console_init(void)
+{
+    /* open console as stdin/stdout/stderr */
+    __console_fd = open("/dev/console", O_RDWR, 0); /* for stdin/stdout/stderr */
+
+	if (__console_fd >= 0)
+	{
+		_GLOBAL_REENT->_stdin   = fdopen(__console_fd, "r");
+
+		_GLOBAL_REENT->_stdout  = fdopen(__console_fd, "w");
+		setvbuf(_GLOBAL_REENT->_stdout, NULL, _IONBF, 0);
+		_GLOBAL_REENT->_stderr  = fdopen(__console_fd, "w");
+		setvbuf(_GLOBAL_REENT->_stderr, NULL, _IONBF, 0);
+
+		_GLOBAL_REENT->__sdidinit = 1;
+	}
+
+    return 0;
+}
+INIT_APP_EXPORT(libc_console_init);
