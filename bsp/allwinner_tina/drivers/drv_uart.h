@@ -74,9 +74,9 @@ struct tina_uart
 
 typedef struct tina_uart *tina_uart_t;
 
-#define UART0 ((tina_gpio_t)UART0_BASE_ADDR)
-#define UART1 ((tina_gpio_t)UART1_BASE_ADDR)
-#define UART2 ((tina_gpio_t)UART2_BASE_ADDR)
+#define UART0 ((tina_uart_t)UART0_BASE_ADDR)
+#define UART1 ((tina_uart_t)UART1_BASE_ADDR)
+#define UART2 ((tina_uart_t)UART2_BASE_ADDR)
 
 int rt_hw_uart_init(void);
 
