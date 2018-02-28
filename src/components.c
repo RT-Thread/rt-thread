@@ -215,8 +215,8 @@ void rt_application_init(void)
                             main_stack, sizeof(main_stack), RT_THREAD_PRIORITY_MAX / 3, 20);
     RT_ASSERT(result == RT_EOK);
 	
-	/* if not define RT_USING_HEAP, using to eliminate the warning */
-	(void)result;
+    /* if not define RT_USING_HEAP, using to eliminate the warning */
+    (void)result;
 #endif
 
     rt_thread_startup(tid);
