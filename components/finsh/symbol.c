@@ -42,39 +42,39 @@ long list_mempool(void);
 long list_timer(void);
 
 #ifdef FINSH_USING_SYMTAB
-struct finsh_syscall *_syscall_table_begin 	= NULL;
-struct finsh_syscall *_syscall_table_end 	= NULL;
-struct finsh_sysvar *_sysvar_table_begin 	= NULL;
-struct finsh_sysvar *_sysvar_table_end 		= NULL;
+struct finsh_syscall *_syscall_table_begin  = NULL;
+struct finsh_syscall *_syscall_table_end    = NULL;
+struct finsh_sysvar *_sysvar_table_begin    = NULL;
+struct finsh_sysvar *_sysvar_table_end      = NULL;
 #else
 struct finsh_syscall _syscall_table[] =
 {
-	{"hello", hello},
-	{"version", version},
-	{"list", list},
-	{"list_thread", list_thread},
+    {"hello", hello},
+    {"version", version},
+    {"list", list},
+    {"list_thread", list_thread},
 #ifdef RT_USING_SEMAPHORE
-	{"list_sem", list_sem},
+    {"list_sem", list_sem},
 #endif
 #ifdef RT_USING_MUTEX
-	{"list_mutex", list_mutex},
+    {"list_mutex", list_mutex},
 #endif
 #ifdef RT_USING_FEVENT
-	{"list_fevent", list_fevent},
+    {"list_fevent", list_fevent},
 #endif
 #ifdef RT_USING_EVENT
-	{"list_event", list_event},
+    {"list_event", list_event},
 #endif
 #ifdef RT_USING_MAILBOX
-	{"list_mb", list_mailbox},
+    {"list_mb", list_mailbox},
 #endif
 #ifdef RT_USING_MESSAGEQUEUE
-	{"list_mq", list_msgqueue},
+    {"list_mq", list_msgqueue},
 #endif
 #ifdef RT_USING_MEMPOOL
-	{"list_memp", list_mempool},
+    {"list_memp", list_mempool},
 #endif
-	{"list_timer", list_timer},
+    {"list_timer", list_timer},
 };
 struct finsh_syscall *_syscall_table_begin = &_syscall_table[0];
 struct finsh_syscall *_syscall_table_end   = &_syscall_table[sizeof(_syscall_table) / sizeof(struct finsh_syscall)];
