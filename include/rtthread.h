@@ -563,6 +563,10 @@ void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t
 void rt_assert_handler(const char *ex, const char *func, rt_size_t line);
 #endif /* RT_DEBUG */
 
+#ifdef RT_USING_FINSH
+#include <finsh.h>
+#endif
+
 /**@}*/
 
 #ifdef __cplusplus
