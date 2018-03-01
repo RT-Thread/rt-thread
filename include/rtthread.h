@@ -204,6 +204,7 @@ void rt_scheduler_sethook(void (*hook)(rt_thread_t from, rt_thread_t to));
 void rt_signal_mask(int signo);
 void rt_signal_unmask(int signo);
 rt_sighandler_t rt_signal_install(int signo, rt_sighandler_t handler);
+int rt_signal_wait(const rt_sigset_t *set, rt_siginfo_t *si, rt_int32_t timeout);
 
 int rt_system_signal_init(void);
 #endif

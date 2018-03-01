@@ -451,8 +451,10 @@ typedef struct rt_timer *rt_timer_t;
  * @addtogroup Signal
  */
 #ifdef RT_USING_SIGNALS
+#include <libc/libc_signal.h>
 typedef unsigned long rt_sigset_t;
 typedef void (*rt_sighandler_t)(int signo);
+typedef siginfo_t rt_siginfo_t;
 
 #define RT_SIG_MAX          32
 #endif
@@ -481,7 +483,7 @@ typedef void (*rt_sighandler_t)(int signo);
 
 #define RT_THREAD_STAT_SIGNAL           0x10
 #define RT_THREAD_STAT_SIGNAL_READY     (RT_THREAD_STAT_SIGNAL | RT_THREAD_READY)
-#define RT_THREAD_STAT_SIGNAL_SUSPEND   0x20
+#define RT_THREAD_STAT_SIGNAL_WAIT      0x20
 #define RT_THREAD_STAT_SIGNAL_MASK      0xf0
 
 /**
