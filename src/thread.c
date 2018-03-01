@@ -638,7 +638,7 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
 
     if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_READY)
     {
-        RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread suspend: thread disorder, %d\n",
+        RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread suspend: thread disorder, 0x%2x\n",
                                        thread->stat));
 
         return -RT_ERROR;
@@ -648,7 +648,7 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
     temp = rt_hw_interrupt_disable();
 
     /* change thread stat */
-    thread->stat = RT_THREAD_SUSPEND;
+    thread->stat = RT_THREAD_SUSPEND | (thread->stat & ~RT_THREAD_STAT_MASK);
     rt_schedule_remove_thread(thread);
 
     /* stop thread timer anyway */
