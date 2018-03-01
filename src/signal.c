@@ -80,6 +80,16 @@ static void _signal_entry(void *parameter)
     rt_hw_context_switch_to((rt_uint32_t) & (tid->sp));
 }
 
+/*
+ * To deliver a signal to thread, there are cases:
+ * 1. When thread is suspended, function resumes thread and
+ * set signal stat;
+ * 2. When thread is ready:
+ *   - If function delivers a signal to self thread, just handle
+ *    it.
+ *   - If function delivers a signal to another ready thread, OS
+ *    should build a slice context to handle it.
+ */
 static void _signal_deliver(rt_thread_t tid)
 {
     rt_ubase_t level;
@@ -88,7 +98,7 @@ static void _signal_deliver(rt_thread_t tid)
     if (!(tid->sig_pending & tid->sig_mask)) return;
 
     level = rt_hw_interrupt_disable();
-    if (tid->stat == RT_THREAD_SUSPEND)
+    if ((tid->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND)
     {
         /* resume thread to handle signal */
         rt_thread_resume(tid);
@@ -106,14 +116,17 @@ static void _signal_deliver(rt_thread_t tid)
         {
             /* add signal state */
             tid->stat |= RT_THREAD_STAT_SIGNAL;
+
             rt_hw_interrupt_enable(level);
 
             /* do signal action in self thread context */
             rt_thread_handle_sig(RT_TRUE);
         }
-        else if (!(tid->stat & RT_THREAD_STAT_SIGNAL))
+        else if (!((tid->stat & RT_THREAD_STAT_MASK) & RT_THREAD_STAT_SIGNAL))
         {
+            /* add signal state */
             tid->stat |= RT_THREAD_STAT_SIGNAL;
+
             /* point to the signal handle entry */
             tid->sig_ret = tid->sp;
             tid->sp = rt_hw_stack_init((void *)_signal_entry, RT_NULL,
@@ -191,6 +204,105 @@ void rt_signal_unmask(int signo)
     }
 }
 
+int rt_signal_wait(const rt_sigset_t *set, rt_siginfo_t *si, rt_int32_t timeout)
+{
+    int ret = RT_EOK;
+    rt_base_t   level;
+    rt_thread_t tid = rt_thread_self();
+    struct siginfo_node *si_node = RT_NULL, *si_prev = RT_NULL;
+
+    /* current context checking */
+    RT_DEBUG_IN_THREAD_CONTEXT;
+
+    /* parameters check */
+    if (set == NULL || *set == 0 || si == NULL )
+    {
+        ret = -RT_EINVAL;
+        goto __done_return;
+    }
+
+    /* clear siginfo to avoid unknown value */
+    memset(si, 0x0, sizeof(rt_siginfo_t));
+
+    level = rt_hw_interrupt_disable();
+
+    /* already pending */
+    if (tid->sig_pending & *set) goto __done;
+
+    if (timeout == 0)
+    {
+        ret = -RT_ETIMEOUT;
+        goto __done_int;
+    }
+
+    /* suspend self thread */
+    rt_thread_suspend(tid);
+    /* set thread stat as waiting for signal */
+    tid->stat |= RT_THREAD_STAT_SIGNAL_WAIT;
+
+    /* start timeout timer */
+    if (timeout != RT_WAITING_FOREVER)
+    {
+        /* reset the timeout of thread timer and start it */
+        rt_timer_control(&(tid->thread_timer),
+                         RT_TIMER_CTRL_SET_TIME,
+                         &timeout);
+        rt_timer_start(&(tid->thread_timer));
+    }
+    rt_hw_interrupt_enable(level);
+
+    /* do thread scheduling */
+    rt_schedule();
+
+    level = rt_hw_interrupt_disable();
+
+    /* remove signal waiting flag */
+    tid->stat &= ~RT_THREAD_STAT_SIGNAL_WAIT;
+
+    /* check errno of thread */
+    if (tid->error == -RT_ETIMEOUT)
+    {
+        tid->error = RT_EOK;
+        rt_hw_interrupt_enable(level);
+
+        /* timer timeout */
+        ret = -RT_ETIMEOUT;
+        goto __done_return;
+    }
+
+__done:
+    /* to get the first matched pending signals */
+    si_node = (struct siginfo_node *)tid->si_list;
+    while (si_node)
+    {
+        int signo;
+
+        signo = si_node->si.si_signo;
+        if (sig_mask(signo) & *set)
+        {
+            *si  = si_node->si;
+
+            dbg_log(DBG_LOG, "sigwait: %d sig raised!\n", signo);
+            if (si_prev) si_prev->list.next = si_node->list.next;
+            else tid->si_list = si_node->list.next;
+
+            /* clear pending */
+            tid->sig_pending &= ~sig_mask(signo);
+            rt_mp_free(si_node);
+            break;
+        }
+
+        si_prev = si_node;
+        si_node = (void *)rt_slist_entry(si_node->list.next, struct siginfo_node, list);
+     }
+
+__done_int:
+    rt_hw_interrupt_enable(level);
+
+__done_return:
+    return ret;
+}
+
 void rt_thread_handle_sig(rt_bool_t clean_state)
 {
     rt_base_t level;
@@ -199,38 +311,45 @@ void rt_thread_handle_sig(rt_bool_t clean_state)
     struct siginfo_node *si_node;
 
     level = rt_hw_interrupt_disable();
-    while (tid->sig_pending & tid->sig_mask)
+    if (tid->sig_pending & tid->sig_mask)
     {
-        int signo, error;
-        rt_sighandler_t handler;
+        /* if thread is not waiting for signal */
+        if (!(tid->stat & RT_THREAD_STAT_SIGNAL_WAIT))
+        {
+            while (tid->sig_pending & tid->sig_mask)
+            {
+                int signo, error;
+                rt_sighandler_t handler;
 
-        si_node = (struct siginfo_node *)tid->si_list;
-        if (!si_node) break;
+                si_node = (struct siginfo_node *)tid->si_list;
+                if (!si_node) break;
 
-        /* remove this sig info node from list */
-        if (si_node->list.next == RT_NULL)
-            tid->si_list = RT_NULL;
-        else
-            tid->si_list = (void *)rt_slist_entry(si_node->list.next, struct siginfo_node, list);
+                /* remove this sig info node from list */
+                if (si_node->list.next == RT_NULL)
+                    tid->si_list = RT_NULL;
+                else
+                    tid->si_list = (void *)rt_slist_entry(si_node->list.next, struct siginfo_node, list);
 
-        signo   = si_node->si.si_signo;
-        handler = tid->sig_vectors[signo];
-        rt_hw_interrupt_enable(level);
+                signo   = si_node->si.si_signo;
+                handler = tid->sig_vectors[signo];
+                rt_hw_interrupt_enable(level);
 
-        dbg_log(DBG_LOG, "handle signal: %d, handler 0x%08x\n", signo, handler);
-        if (handler) handler(signo);
+                dbg_log(DBG_LOG, "handle signal: %d, handler 0x%08x\n", signo, handler);
+                if (handler) handler(signo);
 
-        level = rt_hw_interrupt_disable();
-        tid->sig_pending &= ~sig_mask(signo);
-        error = si_node->si.si_errno;
+                level = rt_hw_interrupt_disable();
+                tid->sig_pending &= ~sig_mask(signo);
+                error = si_node->si.si_errno;
 
-        rt_mp_free(si_node); /* release this siginfo node */
-        /* set errno in thread tcb */
-        tid->error = error;
+                rt_mp_free(si_node); /* release this siginfo node */
+                /* set errno in thread tcb */
+                tid->error = error;
+            }
+
+            /* whether clean signal status */
+            if (clean_state == RT_TRUE) tid->stat &= ~RT_THREAD_STAT_SIGNAL;
+        }
     }
-
-    /* whether clean signal status */
-    if (clean_state == RT_TRUE) tid->stat &= ~RT_THREAD_STAT_SIGNAL;
 
     rt_hw_interrupt_enable(level);
 }
@@ -315,7 +434,7 @@ int rt_thread_kill(rt_thread_t tid, int sig)
         node = (struct rt_slist_node *)tid->si_list;
         rt_hw_interrupt_enable(level);
 
-        /* update sig infor */
+        /* update sig info */
         rt_enter_critical();
         for (; (node) != RT_NULL; node = node->next)
         {
@@ -358,7 +477,7 @@ int rt_thread_kill(rt_thread_t tid, int sig)
     }
     else
     {
-        dbg_log(DBG_ERROR, "The allocation of signal infor node failed.\n");
+        dbg_log(DBG_ERROR, "The allocation of signal info node failed.\n");
     }
 
     /* deliver signal to this thread */
@@ -380,4 +499,3 @@ int rt_system_signal_init(void)
 }
 
 #endif
-
