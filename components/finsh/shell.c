@@ -233,7 +233,7 @@ static void finsh_wait_auth(void)
     rt_size_t cur_pos = 0;
     /* password not set */
     if (rt_strlen(finsh_get_password()) == 0) return;
-    
+
     while (1)
     {
         rt_kprintf("Password for login: ");

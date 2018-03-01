@@ -191,7 +191,7 @@ int cmd_cd(int argc, char **argv)
     {
         if (chdir(argv[1]) != 0)
         {
-        	rt_kprintf("No such directory: %s\n", argv[1]);
+            rt_kprintf("No such directory: %s\n", argv[1]);
         }
     }
 
@@ -262,7 +262,7 @@ int cmd_df(int argc, char** argv)
     {
         df("/");
     }
-    else 
+    else
     {
         if ((strcmp(argv[1], "--help") == 0) || (strcmp(argv[1], "-h") == 0))
         {
@@ -280,31 +280,31 @@ FINSH_FUNCTION_EXPORT_ALIAS(cmd_df, __cmd_df, disk free);
 
 int cmd_echo(int argc, char** argv)
 {
-	if (argc == 2)
-	{
-		rt_kprintf("%s\n", argv[1]);
-	}
-	else if (argc == 3)
-	{
-		int fd;
+    if (argc == 2)
+    {
+        rt_kprintf("%s\n", argv[1]);
+    }
+    else if (argc == 3)
+    {
+        int fd;
 
-		fd = open(argv[2], O_RDWR | O_APPEND | O_CREAT, 0);
-		if (fd >= 0)
-		{
-			write (fd, argv[1], strlen(argv[1]));
-			close(fd);
-		}
-		else
-		{
-			rt_kprintf("open file:%s failed!\n", argv[2]);
-		}
-	}
-	else
-	{
-		rt_kprintf("Usage: echo \"string\" [filename]\n");
-	}
+        fd = open(argv[2], O_RDWR | O_APPEND | O_CREAT, 0);
+        if (fd >= 0)
+        {
+            write (fd, argv[1], strlen(argv[1]));
+            close(fd);
+        }
+        else
+        {
+            rt_kprintf("open file:%s failed!\n", argv[2]);
+        }
+    }
+    else
+    {
+        rt_kprintf("Usage: echo \"string\" [filename]\n");
+    }
 
-	return 0;
+    return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_echo, __cmd_echo, echo string to file);
 #endif
