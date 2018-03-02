@@ -31,16 +31,14 @@
 
 #ifndef RT_USING_DEVICE
 #error "you must define RT_USING_DEVICE with uart device"
-#endif
-
-#ifndef RT_UART_RX_BUFFER_SIZE
-#define RT_UART_RX_BUFFER_SIZE 16
+#else
+#include <rtdevice.h>
 #endif
 
 /* uart driver */
-struct fvp_uart
+struct v2m_uart
 {
-    struct rt_device parent;
+    struct rt_serial_device serial;
     CMSDK_UART_TypeDef * uart_base;
 
     CMSDK_GPIO_TypeDef * rx_pingpio;   // Pin GPIO
@@ -49,62 +47,34 @@ struct fvp_uart
     uint8_t              tx_pinnum;
 
     IRQn_Type            uart_irq_rx;
-    IRQn_Type            uart_irq_tx;
+    //IRQn_Type            uart_irq_tx;
 
-    /* buffer for reception */
-    rt_uint8_t read_index, save_index;
-    rt_uint8_t rx_buffer[RT_UART_RX_BUFFER_SIZE];
 };
 
 #ifdef RT_USING_UART0
-struct fvp_uart uart0_device;
+struct v2m_uart uart0_device;
 #endif
 
 #ifdef RT_USING_UART1
-struct fvp_uart uart1_device;
+struct v2m_uart uart1_device;
 #endif
 
 #ifdef RT_USING_UART2
-struct fvp_uart uart2_device;
+struct v2m_uart uart2_device;
 #endif
 
-#ifdef RT_USING_UART3
-struct fvp_uart uart3_device;
-#endif
-
-static void uart_irq_handler(struct fvp_uart* uart)
+static void uart_irq_handler(struct rt_serial_device *serial)
 {
-    rt_ubase_t level;
     uint32_t status;
-    uint8_t data;
+    struct v2m_uart *uart;
 
-    status = uart->uart_base->INTSTATUS;
-    data = uart->uart_base->DATA;
+    uart = (struct v2m_uart *)serial->parent.user_data;
 
     /* enter interrupt */
     rt_interrupt_enter();
-
-    level = rt_hw_interrupt_disable();
-    uart->rx_buffer[uart->save_index] = data;
-    uart->save_index ++;
-    if (uart->save_index >= RT_UART_RX_BUFFER_SIZE)
-    {
-        uart->save_index = 0;
-    }
-    rt_hw_interrupt_enable(level);
-
-    /* invoke callback */
-    if (uart->parent.rx_indicate != RT_NULL)
-    {
-        rt_size_t length;
-        if (uart->read_index > uart->save_index)
-            length = RT_UART_RX_BUFFER_SIZE - uart->read_index + uart->save_index;
-        else
-            length = uart->save_index - uart->read_index;
-
-        uart->parent.rx_indicate(&uart->parent, length);
-    }
-
+    
+    status = uart->uart_base->INTSTATUS;
+    rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     uart->uart_base->INTCLEAR = status;
 
     /* leave interrupt */
@@ -114,223 +84,144 @@ static void uart_irq_handler(struct fvp_uart* uart)
 #ifdef RT_USING_UART0
 void UART0RX_Handler(void)
 {
-    uart_irq_handler(&uart0_device);
+    uart_irq_handler(&uart0_device.serial);
 }
 #endif
 
 #ifdef RT_USING_UART1
 void UART1RX_Handler(void)
 {
-    uart_irq_handler(&uart1_device);
+    uart_irq_handler(&uart1_device.serial);
 }
 #endif
 
 #ifdef RT_USING_UART2
 void UART2RX_Handler(void)
 {
-    uart_irq_handler(&uart2_device);
+    uart_irq_handler(&uart2_device.serial);
 }
 #endif
 
-#ifdef RT_USING_UART3
-void UART3RX_Handler(void)
+static rt_err_t v2m_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
-    uart_irq_handler(&uart3_device);
-}
-#endif
+    struct v2m_uart *uart;
 
-static rt_err_t rt_uart_init (rt_device_t dev)
-{
-    struct fvp_uart* uart;
-    RT_ASSERT(dev != RT_NULL);
-    uart = (struct fvp_uart *)dev;
+    RT_ASSERT(serial != RT_NULL);
+    RT_ASSERT(cfg != RT_NULL);
+
+    uart = (struct v2m_uart *)serial->parent.user_data;
+
+    uart->uart_base->BAUDDIV = SystemCoreClock / cfg->baud_rate;
+    uart->uart_base->CTRL = CMSDK_UART_CTRL_TXEN_Msk | CMSDK_UART_CTRL_RXEN_Msk | CMSDK_UART_CTRL_RXIRQEN_Msk;
 
     uart->rx_pingpio->ALTFUNCSET |= (1u << uart->rx_pinnum);
     uart->tx_pingpio->ALTFUNCSET |= (1u << uart->tx_pinnum);
 
-    uart->uart_base->CTRL = CMSDK_UART_CTRL_TXEN_Msk | CMSDK_UART_CTRL_RXEN_Msk | CMSDK_UART_CTRL_RXIRQEN_Msk;
-    uart->uart_base->BAUDDIV = SystemCoreClock / 115200;
-
     return RT_EOK;
 }
 
-static rt_err_t rt_uart_open(rt_device_t dev, rt_uint16_t oflag)
+static rt_err_t v2m_control(struct rt_serial_device *serial, int cmd, void *arg)
 {
-    struct fvp_uart* uart;
-    RT_ASSERT(dev != RT_NULL);
-    uart = (struct fvp_uart *)dev;
+  struct v2m_uart *uart;
 
-    if (dev->flag & RT_DEVICE_FLAG_INT_RX)
-    {
-        /* Enable the UART Interrupt */
-        NVIC_EnableIRQ(uart->uart_irq_rx);
-    }
+  RT_ASSERT(serial != RT_NULL);
+  uart = (struct v2m_uart *)serial->parent.user_data;
 
-    return RT_EOK;
+  switch (cmd)
+  {
+  case RT_DEVICE_CTRL_CLR_INT:
+      /* disable rx irq */
+      NVIC_DisableIRQ(uart->uart_irq_rx);
+      break;
+  case RT_DEVICE_CTRL_SET_INT:
+      /* enable rx irq */
+      NVIC_EnableIRQ(uart->uart_irq_rx);
+      break;
+  }
+
+  return RT_EOK;
 }
 
-static rt_err_t rt_uart_close(rt_device_t dev)
+static int v2m_putc(struct rt_serial_device *serial, char c)
 {
-    struct fvp_uart* uart;
-    RT_ASSERT(dev != RT_NULL);
-    uart = (struct fvp_uart *)dev;
+    struct v2m_uart *uart;
 
-    if (dev->flag & RT_DEVICE_FLAG_INT_RX)
-    {
-        /* Disable the UART Interrupt */
-        NVIC_DisableIRQ(uart->uart_irq_rx);
-    }
-
-    return RT_EOK;
+    RT_ASSERT(serial != RT_NULL);
+    uart = (struct v2m_uart *)serial->parent.user_data;
+    
+    while (uart->uart_base->STATE & CMSDK_UART_STATE_TXBF_Msk);
+    uart->uart_base->DATA = c;
+    
+    return 1;
 }
 
-static rt_size_t rt_uart_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
+static int v2m_getc(struct rt_serial_device *serial)
 {
-    struct fvp_uart* uart = (struct fvp_uart *)dev;
-    rt_uint8_t *ptr;
-    rt_size_t length;
+    int ch;
+    struct v2m_uart *uart;
 
-    RT_ASSERT(dev != RT_NULL);
-    RT_ASSERT(buffer != RT_NULL);
+    RT_ASSERT(serial != RT_NULL);
+    uart = (struct v2m_uart *)serial->parent.user_data;
 
-    ptr = (rt_uint8_t *) buffer;
-    while (size)
-    {
-        /* interrupt receive */
-        rt_base_t level;
-
-        /* disable interrupt */
-        level = rt_hw_interrupt_disable();
-        if (uart->read_index != uart->save_index)
-        {
-            *ptr = uart->rx_buffer[uart->read_index];
-
-            uart->read_index ++;
-            if (uart->read_index >= RT_UART_RX_BUFFER_SIZE)
-                uart->read_index = 0;
-        }
-        else
-        {
-            /* no data in rx buffer */
-
-            /* enable interrupt */
-            rt_hw_interrupt_enable(level);
-            break;
-        }
-
-        /* enable interrupt */
-        rt_hw_interrupt_enable(level);
-
-        ptr ++;
-        size --;
-    }
-
-    length = (rt_uint32_t)ptr - (rt_uint32_t)buffer;
-    return length;
+    ch = -1;
+    if (uart->uart_base->STATE & CMSDK_UART_STATE_RXBF_Msk)
+        ch = uart->uart_base->DATA & 0xff;
+    return ch;
 }
 
-static rt_size_t rt_uart_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
+static const struct rt_uart_ops v2m_uart_ops =
 {
-    char *ptr = (char*) buffer;
-    struct fvp_uart* uart = (struct fvp_uart *)dev;
-
-    RT_ASSERT(dev != RT_NULL);
-    RT_ASSERT(buffer != RT_NULL);
-
-    if (dev->open_flag & RT_DEVICE_FLAG_STREAM)
-    {
-        /* stream mode */
-        while (size)
-        {
-            if (*ptr == '\n')
-            {
-                while (uart->uart_base->STATE & CMSDK_UART_STATE_TXBF_Msk);
-                uart->uart_base->DATA = '\r';
-            }
-
-            while (uart->uart_base->STATE & CMSDK_UART_STATE_TXBF_Msk);
-            uart->uart_base->DATA = *ptr;
-
-            ptr++;
-            size--;
-        }
-    }
-    else
-    {
-        while (size)
-        {
-            while (uart->uart_base->STATE & CMSDK_UART_STATE_TXBF_Msk);
-            uart->uart_base->DATA = *ptr;
-
-            ptr++;
-            size--;
-        }
-    }
-
-    return (rt_size_t)ptr - (rt_size_t)buffer;
-}
+    v2m_configure,
+    v2m_control,
+    v2m_putc,
+    v2m_getc,
+};
 
 int rt_hw_usart_init(void)
 {
+    struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 #ifdef RT_USING_UART0
     {
-        struct fvp_uart* uart;
+        struct v2m_uart* uart;
 
         /* get uart device */
         uart = &uart0_device;
 
         /* device initialization */
-        uart->parent.type = RT_Device_Class_Char;
         uart->uart_base   = CMSDK_UART0;
         uart->uart_irq_rx = UART0RX_IRQn;
-        uart->read_index  = 0;
-        uart->save_index  = 0;
-        rt_memset(uart->rx_buffer, 0, sizeof(uart->rx_buffer));
+        
+        uart->serial.ops = &v2m_uart_ops;
+        uart->serial.config = config;
 
-        /* device interface */
-        uart->parent.init 	    = rt_uart_init;
-        uart->parent.open 	    = rt_uart_open;
-        uart->parent.close      = rt_uart_close;
-        uart->parent.read 	    = rt_uart_read;
-        uart->parent.write      = rt_uart_write;
-        uart->parent.control    = RT_NULL;
-        uart->parent.user_data  = RT_NULL;
-
-        rt_device_register(&uart->parent, "uart0", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX);
+        rt_hw_serial_register(&uart->serial,
+                          "uart0",
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                          uart);
     }
-#endif /* RT_USING_UART1 */
+#endif /* RT_USING_UART0 */
 
 #ifdef RT_USING_UART1
     {
-        struct fvp_uart* uart;
+        struct v2m_uart* uart;
 
         /* get uart device */
         uart = &uart1_device;
 
         /* device initialization */
-        uart->parent.type = RT_Device_Class_Char;
         uart->uart_base   = CMSDK_UART1;
         uart->uart_irq_rx = UART1RX_IRQn;
-        uart->read_index  = 0;
-        uart->save_index  = 0;
-        rt_memset(uart->rx_buffer, 0, sizeof(uart->rx_buffer));
 
-        /* device interface */
-        uart->parent.init 	    = rt_uart_init;
-        uart->parent.open 	    = rt_uart_open;
-        uart->parent.close      = rt_uart_close;
-        uart->parent.read 	    = rt_uart_read;
-        uart->parent.write      = rt_uart_write;
-        uart->parent.control    = RT_NULL;
-        uart->parent.user_data  = RT_NULL;
-
-        rt_device_register(&uart->parent, "uart1", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX);
+        rt_hw_serial_register(&uart->serial,
+                          "uart1",
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                          uart);
     }
 #endif /* RT_USING_UART1 */
 
 #ifdef RT_USING_UART2
     {
-        struct fvp_uart* uart;
+        struct v2m_uart* uart;
 
         /* get uart device */
         uart = &uart2_device;
@@ -338,21 +229,11 @@ int rt_hw_usart_init(void)
         /* device initialization */
         uart->uart_base   = CMSDK_UART2;
         uart->uart_irq_rx = UART2RX_IRQn;
-        uart->read_index  = 0;
-        uart->save_index  = 0;
-        rt_memset(uart->rx_buffer, 0, sizeof(uart->rx_buffer));
 
-        /* device interface */
-        uart->parent.type       = RT_Device_Class_Char;
-        uart->parent.init 	    = rt_uart_init;
-        uart->parent.open 	    = rt_uart_open;
-        uart->parent.close      = rt_uart_close;
-        uart->parent.read 	    = rt_uart_read;
-        uart->parent.write      = rt_uart_write;
-        uart->parent.control    = RT_NULL;
-        uart->parent.user_data  = RT_NULL;
-
-        rt_device_register(&uart->parent, "uart2", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX);
+        rt_hw_serial_register(&uart->serial,
+                          "uart2",
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                          uart);
     }
 #endif /* RT_USING_UART2 */
     return 0;
