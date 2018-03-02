@@ -587,13 +587,13 @@ static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buf
 	int i;
 	rt_uint8_t status;
 
-	struct dfs_partition *part = (struct dfs_partition *)dev->user_data;
-
 	if ( dev == RT_NULL )
 	{
 		rt_set_errno(-DFS_STATUS_EINVAL);
 		return 0;
 	}
+
+    struct dfs_partition *part = (struct dfs_partition *)dev->user_data;
 
 	rt_sem_take(part->lock, RT_WAITING_FOREVER);
 
