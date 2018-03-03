@@ -8,7 +8,7 @@ LIBPATH = []
 CPPPATH = [cwd]
 
 # remove no need file.
-if GetDepend('RT_USING_GUIENGINE') == False:
+if GetDepend('PKG_USING_GUIENGINE') == False:
     SrcRemove(src, 'sdl_fb.c')
 else:
     LIBS.append('SDL2')

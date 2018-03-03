@@ -25,7 +25,7 @@
 #define MOUSE_BUTTON_MOVE    (0x40)
 #define MOUSE_BUTTON_WHELL   (0x80)
 
-#ifdef RT_USING_GUIENGINE
+#ifdef PKG_USING_GUIENGINE
 
 #include <rtgui/event.h>
 #include <rtgui/rtgui_server.h>
