@@ -1,6 +1,6 @@
 #include <rtthread.h>
 
-#if defined(RT_USING_RTGUI) || defined(RT_USING_GUIENGINE)
+#if defined(RT_USING_RTGUI) || defined(PKG_USING_GUIENGINE)
 
 #include <rtgui/driver.h>
 int lcd_init(void)

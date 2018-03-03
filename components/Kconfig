@@ -28,8 +28,6 @@ source "$RTT_DIR/components/libc/Kconfig"
 
 source "$RTT_DIR/components/net/Kconfig"
 
-source "$RTT_DIR/components/gui/Kconfig"
-
 source "$RTT_DIR/components/vbus/Kconfig"
 
 source "$RTT_DIR/components/utilities/Kconfig"

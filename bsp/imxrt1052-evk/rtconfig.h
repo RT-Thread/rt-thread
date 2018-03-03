@@ -56,6 +56,7 @@
 
 #define RT_USING_COMPONENTS_INIT
 #define RT_USING_USER_MAIN
+#define RT_MAIN_THREAD_STACK_SIZE 2048
 
 /* C++ features */
 
@@ -182,32 +183,13 @@
 #define LWIP_SO_RCVTIMEO 1
 #define LWIP_SO_SNDTIMEO 1
 #define LWIP_SO_RCVBUF 1
+/* RT_LWIP_NETIF_LOOPBACK is not set */
+#define LWIP_NETIF_LOOPBACK 0
 
 /* Modbus master and slave stack */
 
 /* RT_USING_MODBUS is not set */
 /* LWIP_USING_DHCPD is not set */
-/* RT_USING_NETUTILS is not set */
-
-/* RT-Thread UI Engine */
-
-#define RT_USING_GUIENGINE
-#define RTGUI_NAME_MAX 16
-#define RTGUI_USING_TTF
-#define UTF8_TO_UNICODE
-#define RTGUI_USING_FONT16
-#define RTGUI_USING_FONT12
-/* RTGUI_USING_FONTHZ is not set */
-/* RTGUI_IMAGE_XPM is not set */
-#define RTGUI_IMAGE_JPEG_NONE
-/* RTGUI_IMAGE_JPEG is not set */
-/* RTGUI_IMAGE_TJPGD is not set */
-/* RTGUI_IMAGE_PNG_NONE is not set */
-/* RTGUI_IMAGE_PNG is not set */
-#define RTGUI_IMAGE_LODEPNG
-/* RTGUI_IMAGE_BMP is not set */
-#define RTGUI_IMAGE_CONTAINER
-/* RTGUI_USING_DEMO is not set */
 
 /* VBUS(Virtual Software BUS) */
 
@@ -227,8 +209,20 @@
 
 /* system packages */
 
-/* PKG_USING_PARTITION is not set */
+/* RT-Thread GUI Engine */
+
+/* PKG_USING_GUIENGINE is not set */
+/* GUIENGINE_IMAGE_JPEG_NONE is not set */
+/* GUIENGINE_IMAGE_JPEG is not set */
+/* GUIENGINE_IMAGE_TJPGD is not set */
+/* GUIENGINE_IMAGE_PNG_NONE is not set */
+/* GUIENGINE_IMAGE_PNG is not set */
+/* GUIENGINE_IMAGE_LODEPNG is not set */
+/* PKG_USING_GUIENGINE_V200 is not set */
+/* PKG_USING_GUIENGINE_LATEST_VERSION is not set */
 /* PKG_USING_PERSIMMON is not set */
+/* PKG_USING_LWEXT4 is not set */
+/* PKG_USING_PARTITION is not set */
 /* PKG_USING_SQLITE is not set */
 /* PKG_USING_RTI is not set */
 
@@ -254,6 +248,7 @@
 
 /* PKG_USING_WLAN_WICED is not set */
 /* PKG_USING_COAP is not set */
+/* PKG_USING_NOPOLL is not set */
 
 /* security packages */
 
@@ -281,10 +276,12 @@
 
 /* PKG_USING_FASTLZ is not set */
 /* PKG_USING_MINILZO is not set */
+/* PKG_USING_QUICKLZ is not set */
 
 /* example package: hello */
 
 /* PKG_USING_HELLO is not set */
+/* PKG_USING_MULTIBUTTON is not set */
 #define SOC_IMXRT1052
 #define RT_USING_UART
 #define RT_USING_UART1

@@ -24,7 +24,7 @@
 #define DEBUG_PRINTF(...)   
 #endif
 
-#ifdef RT_USING_GUIENGINE
+#ifdef PKG_USING_GUIENGINE
 #include <rtgui/rtgui.h>
 #include <rtgui/rtgui_system.h>
 #include <rtgui/rtgui_app.h>
@@ -123,4 +123,4 @@ int rt_gui_demo_init(void)
     
     return 0;
 }
-#endif /* RT_USING_GUIENGINE */
+#endif /* PKG_USING_GUIENGINE */
