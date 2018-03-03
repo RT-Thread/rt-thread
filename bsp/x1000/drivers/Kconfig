@@ -60,7 +60,7 @@ if RT_USING_I2C
         default n
 endif
 
-if RT_USING_GUIENGINE
+if PKG_USING_GUIENGINE
     config RT_USING_SLCD
         bool "Using LCD display"
         default y

@@ -21,7 +21,7 @@
 
 //#define LCD_DEBUG
 
-#ifdef RT_USING_GUIENGINE
+#ifdef PKG_USING_GUIENGINE
 
 #define APP_HSW 41
 #define APP_HFP 4

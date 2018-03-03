@@ -30,7 +30,7 @@
 #define DEBUG_PRINTF(...)   
 #endif
 
-#ifdef RT_USING_GUIENGINE
+#ifdef PKG_USING_GUIENGINE
 
 struct rtgui_win *main_win;
 rt_bool_t dc_event_handler(struct rtgui_object *object, rtgui_event_t *event);
@@ -125,4 +125,4 @@ int rt_gui_demo_init(void)
     
     return 0;
 }
-#endif /* RT_USING_GUIENGINE */
+#endif /* PKG_USING_GUIENGINE */
