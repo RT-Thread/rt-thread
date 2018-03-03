@@ -24,7 +24,7 @@ V2M-MPS2板级包支持MDK5（已测试MDK5.23~MDK5.25）
 - [Windows 7: Enabling Telnet Client](https://social.technet.microsoft.com/wiki/contents/articles/910.windows-7-enabling-telnet-client.aspx)
 - [Windows 10: Enabling Telnet Client](https://social.technet.microsoft.com/wiki/contents/articles/38433.windows-10-enabling-telnet-client.aspx)
 
-打开project.uvprojx，编译，点击Debug->Start/Stop Seccion就可以进入仿真了。
+打开project.uvprojx，编译，点击Debug->Start/Stop Session就可以进入仿真了。
 
 ### 3.2 如何选择其他内核 
 
@@ -54,7 +54,7 @@ finsh />
 
 | 驱动 | 支持情况  |  备注  |
 | ------ | ----  | :------:  |
-| UART | 支持 | UART0/1/2/3 |
+| UART | 支持 | UART0/1/2 |
 | GPIO | 未支持 |  |
 | LED | 未支持 |  |
 | BUTTOM | 未支持 | |
