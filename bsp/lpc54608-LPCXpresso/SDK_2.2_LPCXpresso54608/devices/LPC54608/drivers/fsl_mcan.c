@@ -415,7 +415,7 @@ void MCAN_SetSTDFilterElement(CAN_Type *base,
 {
     uint8_t *elementAddress = 0;
     elementAddress = (uint8_t *)(MCAN_GetMsgRAMBase(base) + config->address + idx * 4U);
-    memcpy(elementAddress, filter, sizeof(filter));
+    memcpy(elementAddress, filter, sizeof(*filter));
 }
 
 void MCAN_SetEXTFilterElement(CAN_Type *base,
@@ -425,7 +425,7 @@ void MCAN_SetEXTFilterElement(CAN_Type *base,
 {
     uint8_t *elementAddress = 0;
     elementAddress = (uint8_t *)(MCAN_GetMsgRAMBase(base) + config->address + idx * 8U);
-    memcpy(elementAddress, filter, sizeof(filter));
+    memcpy(elementAddress, filter, sizeof(*filter));
 }
 
 static uint32_t MCAN_GetRxFifo0ElementAddress(CAN_Type *base)
