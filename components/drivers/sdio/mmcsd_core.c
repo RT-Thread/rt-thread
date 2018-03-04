@@ -548,7 +548,7 @@ rt_uint32_t mmcsd_select_voltage(struct rt_mmcsd_host *host, rt_uint32_t ocr)
 
 static void mmcsd_power_up(struct rt_mmcsd_host *host)
 {
-    int bit = fls(host->valid_ocr) - 1;
+    int bit = __rt_fls(host->valid_ocr) - 1;
 
     host->io_cfg.vdd = bit;
     if (controller_is_spi(host))
