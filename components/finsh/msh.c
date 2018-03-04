@@ -405,7 +405,10 @@ void msh_auto_complete_path(char *path)
     ptr = path;
     for (;;)
     {
-        if (*ptr == '/') index = ptr + 1; if (!*ptr) break; ptr ++;
+        if (*ptr == '/') index = ptr + 1; 
+        if (!*ptr) break; 
+
+        ptr ++;
     }
     if (index == RT_NULL) index = path;
 
