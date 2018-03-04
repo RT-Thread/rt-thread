@@ -1,4 +1,4 @@
-# gkipc板级支持包
+﻿# gkipc板级支持包
 
 标签： bsp说明文档
 
@@ -57,3 +57,5 @@ GK7102C是针对高清IP Camera产品开发的一款低功耗高性能 SOC芯片
 ## 5. 联系人信息
 
 维护人：gokemicro < gokemicro@yeah.net >
+
+[1]: https://www.rt-thread.org/page/download.html
