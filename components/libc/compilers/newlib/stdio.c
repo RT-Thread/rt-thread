@@ -44,7 +44,7 @@ int libc_stdio_set_console(const char* device_name, int mode)
 
     if (mode == O_RDWR) file_mode = "r+";
     else if (mode == O_WRONLY) file_mode = "wb";
-    else if (mode == O_RDONLY) file_mode = "rb";
+    else file_mode = "rb";
 
     fp = fopen(name, file_mode);
     if (fp)
