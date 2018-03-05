@@ -1,3 +1,59 @@
+# RT-Thread 3.0.3 Change Log
+
+## Kernel
+
+* Add scheduler protection when do cleanup for a detached thread;
+* Fix the object_find issue when enable module feature;
+* Improve POSIX signal support and add rt_signal_wait function and POSIX sigwait interface;
+* When enable finsh shell, rtthread.h header file includes the API file of finsh. Therefore, the application code can use command export feature without finsh.h file;
+* Improve the comments of rtdbg.h file. In RT-Thread, just use following code to add debug log feature:
+
+```c
+    #define DBG_ENABLE
+
+    #define DBG_SECTION_NAME    "[ MOD]"
+    #define DBG_LEVEL           DBG_INFO
+    #define DBG_COLOR
+    #include <rtdbg.h>
+```
+
+When close the DBG_ENABLE definition, the debug log will be closed. Otherwise, the `dbg_log(level, fmt, ...)` can be used to print debug information. 
+
+DBG_SECTION_NAME - The prefix information for each log line;
+DBG_LEVEL - The debug log level;
+DBG_COLOR - Whether use color log in console.
+
+## Components
+
+* Fix the flag issue of fopen in GNU GCC;
+* Fix the pthread_detach issue when used for a detached pthread;
+* Fix the _TIMESPEC_DEFINED issue in IAR 8;
+* Add libc_stdio_get_console() interface for returns the fd of console;
+* Move UI engine component as a standalone package;
+* Add a unify TF/SD card driver on SPI device bus;
+* Add soft-RTC device, therefore device can synchronize with network time and maintains the time with OS tick later;
+* Change the open/fcntl/ioctl API to POSIX standard  interface;
+* Fix ramfs issue when update with RTT 3.0.x;
+* Fix the elm fatfs umount issue; (liu2guang)
+* ignore the O_CREAT flag when open a device file;
+* Improve VCOM class driver in USB stack; (ChunfengMu, Aubr.Cool)
+
+## BSP
+
+* Fix the potential issue when enable Cortex-M hardware FPU;
+* Add v2m-mps2 bsp, which is used in Keil MDK5 for Cortex-M4/M7/M23/M33 simulation;
+* Add sdcard driver for stm32f10x-HAL;(liu2guang)
+* Improve GNU GCC support for stm32f10x-HAL;(Xeon Xu)
+* simulator bsp can be used in Windows/Visual C++ and update SDL to v2.0.7;
+* Add gk7102 bsp by gokemicro;(gokemicro)
+* Add allwinner F1C100s ARM9 bsp;(uestczyh222)
+* Fix some issues in peripherals drive library of NXP LPC54608/i.MX RT; (Valeriy Van)
+
+## Tools
+
+* scons building script will automatically add `_REENT_SMALL` macro when enable newlib nanao;
+* Modify building script for Python 3.x and scons 3.0
+
 # RT-Thread v3.0.2 Change log
 
 ## Platform
