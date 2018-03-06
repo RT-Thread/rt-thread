@@ -59,7 +59,7 @@ C语言头文件为了避免多次重复包含，需要定义一个符号。这�
      * Date           Author       Notes
      * 2006-03-18     Bernard      the first version
      * 2006-04-26     Bernard      add semaphore APIs
-     * …
+     * ...
      */
 ```
 
@@ -125,7 +125,7 @@ C语言头文件为了避免多次重复包含，需要定义一个符号。这�
 行都采用缩进的方式，例如：
 
 ```c
-    if (condition) 
+    if (condition)
     {
         /* others */
     }
@@ -237,6 +237,7 @@ rt_timer + 动词短语的形式表示能够应用于 timer 对象的方法。
 
     参数：--style=allman
           --indent=spaces=4
+          --indent-preproc-block
           --pad-oper
           --pad-header
           --unpad-paren
