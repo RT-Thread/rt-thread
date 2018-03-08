@@ -21,7 +21,7 @@ if GetDepend('RT_USING_MTD_NAND'):
 
 # add Ethernet drivers.
 if GetDepend('RT_USING_LWIP'):
-    src += ['drv_eth.c', 'drv_iic.c', 'drv_pcf8574.c']
+    src += ['drv_eth.c', 'drv_i2c.c', 'drv_pcf8574.c']
 
 # add gpio drivers.
 if GetDepend('RT_USING_PIN'):
@@ -39,6 +39,10 @@ if GetDepend('RT_USING_SFUD'):
 if GetDepend('PKG_USING_GUIENGINE'):
     src += ['drv_lcd.c']
 
+# add i2c drivers.
+if GetDepend(['RT_USING_I2C']):
+    src += ['drv_i2c.c']
+ 
 CPPPATH = [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
