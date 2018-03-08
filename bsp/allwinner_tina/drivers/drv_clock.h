@@ -42,7 +42,6 @@
 #define CSI_GATING_DRAM         (0x1<<1)
 #define VE_GATING_DRAM          (0x1<<0)
 
-
 /*  */
 #define TCON_PLL_VIDEO_X1       (0x000)
 #define TCON_PLL_VIDEO_X2       (0x002)
@@ -218,13 +217,6 @@ typedef struct tina_ccu *tina_ccu_t;
 
 #define CCU ((tina_ccu_t) CCU_BASE_ADDR)
 
-
-
-
-
-
-
-
 int cpu_get_pll_clk(void);
 int audio_get_pll_clk(void);
 int video_get_pll_clk(void);
@@ -242,7 +234,6 @@ rt_err_t ve_set_pll_clk(int clk);
 rt_err_t periph_set_pll_clk(int clk);
 
 rt_err_t cpu_set_clk(int clk);
-
 
 rt_err_t bus_gate_clk_enalbe(enum bus_gate bus);
 rt_err_t bus_gate_clk_disalbe(enum bus_gate bus);
