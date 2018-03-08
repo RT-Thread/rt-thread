@@ -1,5 +1,5 @@
 /*
- * File      : drv_iic.c
+ * File      : drv_i2c.c
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2017 RT-Thread Develop Team
  *
@@ -12,7 +12,7 @@
  * 2017-06-05     tanek        first implementation.
  */
  
-#include "drv_iic.h"
+#include "drv_i2c.h"
 
 #include <board.h>
 #include <finsh.h>
