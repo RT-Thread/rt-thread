@@ -184,20 +184,20 @@ static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_co
     if ((rt_uint32_t)(uart->hw_base) == UART0_BASE_ADDR)
     {
         bus_gate_clk_enalbe(UART0_GATING);
-        bus_software_reset_disalbe(UART0_GATING);
         bus_software_reset_enalbe(UART0_GATING);
+        bus_software_reset_disalbe(UART0_GATING);
     }
     else if ((rt_uint32_t)(uart->hw_base) == UART1_BASE_ADDR)
     {
         bus_gate_clk_enalbe(UART1_GATING);
-        bus_software_reset_disalbe(UART1_GATING);
         bus_software_reset_enalbe(UART1_GATING);
+        bus_software_reset_disalbe(UART1_GATING);
     }
     else if ((rt_uint32_t)(uart->hw_base) == UART2_BASE_ADDR)
     {
         bus_gate_clk_enalbe(UART2_GATING);
-        bus_software_reset_disalbe(UART2_GATING);
         bus_software_reset_enalbe(UART2_GATING);
+        bus_software_reset_disalbe(UART2_GATING);
     }
     else
         RT_ASSERT(0);
