@@ -485,7 +485,7 @@ rt_err_t bus_gate_clk_disalbe(enum bus_gate bus)
     return RT_EOK;
 }
 
-rt_err_t bus_software_reset_enalbe(enum bus_gate bus)
+rt_err_t bus_software_reset_disalbe(enum bus_gate bus)
 {
     rt_uint32_t offset;
     rt_uint32_t gate_reg;
@@ -505,7 +505,7 @@ rt_err_t bus_software_reset_enalbe(enum bus_gate bus)
     return RT_EOK;
 }
 
-rt_err_t bus_software_reset_disalbe(enum bus_gate bus)
+rt_err_t bus_software_reset_enalbe(enum bus_gate bus)
 {
     rt_uint32_t offset;
     rt_uint32_t gate_reg;
