@@ -118,13 +118,13 @@ static int poll_wait_timeout(struct rt_poll_table *pt, int msec)
         rt_hw_interrupt_enable(level);
 
         rt_schedule();
-    }
-    else
-    {
-        rt_hw_interrupt_enable(level);
+        
+        level = rt_hw_interrupt_disable();
     }
 
     ret = !pt->triggered;
+    
+    rt_hw_interrupt_enable(level);
 
     return ret;
 }

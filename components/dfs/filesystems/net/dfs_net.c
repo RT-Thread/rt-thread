@@ -104,7 +104,7 @@ static int dfs_net_poll(struct dfs_fd *file, struct rt_pollreq *req)
         rt_poll_add(&sock->wait_head, req);
 
         level = rt_hw_interrupt_disable();
-        if (sock->rcvevent)
+        if (sock->lastdata || sock->rcvevent > 0)
         {
             mask |= POLLIN;
         }
