@@ -181,6 +181,13 @@ menu "Using USB"
         default n
 
         if RT_USING_USB_DEVICE
+            config CONFIG_USB_VENDOR_ID
+                hex "USB Vendor ID"
+                default 0x0FFE
+            config CONFIG_USB_PRODUCT_ID
+                hex "USB Product ID"
+                default 0x0001
+            
             config RT_USB_DEVICE_COMPOSITE
                 bool "Enable composite device"
                 default n
@@ -230,6 +237,11 @@ menu "Using USB"
                     config RT_USB_DEVICE_WINUSB
                         bool "Enable to use device as winusb device"
                         default n
+                endif
+                if RT_USB_DEVICE_WINUSB
+                    config RT_WINUSB_GUID
+                    string "Guid for winusb"
+                    default "{6860DC3C-C05F-4807-8807-1CA861CC1D66}"
                 endif
                 if RT_USB_DEVICE_MSTORAGE
                     config RT_USB_MSTORAGE_DISK_NAME
