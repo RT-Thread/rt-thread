@@ -105,7 +105,7 @@ const static char* _ustring[] =
 };
 struct usb_os_proerty winusb_proerty[] = 
 {
-    USB_OS_PROERTY_DESC(USB_OS_PROERTY_TYPE_REG_SZ,"DeviceInterfaceGUID","{6860DC3C-C05F-4807-8807-1CA861CC1D66}"),
+    USB_OS_PROERTY_DESC(USB_OS_PROERTY_TYPE_REG_SZ,"DeviceInterfaceGUID",RT_WINUSB_GUID),
 };
 
 struct usb_os_function_comp_id_descriptor winusb_func_comp_id_desc = 
