@@ -181,10 +181,10 @@ menu "Using USB"
         default n
 
         if RT_USING_USB_DEVICE
-            config CONFIG_USB_VENDOR_ID
+            config USB_VENDOR_ID
                 hex "USB Vendor ID"
                 default 0x0FFE
-            config CONFIG_USB_PRODUCT_ID
+            config USB_PRODUCT_ID
                 hex "USB Product ID"
                 default 0x0001
             
