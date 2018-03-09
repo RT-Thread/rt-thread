@@ -21,6 +21,7 @@
  * Date           Author       Notes
  * 2015-02-17     Bernard      First version
  * 2016-05-07     Bernard      Rename dfs_lwip to dfs_net
+ * 2018-03-09     Bernard      Fix the last data issue in poll.
  */
 
 #include <rtthread.h>
@@ -104,7 +105,7 @@ static int dfs_net_poll(struct dfs_fd *file, struct rt_pollreq *req)
         rt_poll_add(&sock->wait_head, req);
 
         level = rt_hw_interrupt_disable();
-        if (sock->rcvevent)
+        if (sock->lastdata || sock->rcvevent)
         {
             mask |= POLLIN;
         }
