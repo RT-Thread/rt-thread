@@ -2,7 +2,7 @@
  * File      : msd.c
  * SPI mode SD Card Driver
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -15,6 +15,7 @@
  * 2012-02-01     aozima       use new RT-Thread SPI drivers.
  * 2012-04-11     aozima       get max. data transfer rate from CSD[TRAN_SPEED].
  * 2012-05-21     aozima       update MMC card support.
+ * 2018-03-09     aozima       fixed CSD Version 2.0 sector count calc.
  */
 
 #include <string.h>
@@ -1163,8 +1164,9 @@ static rt_err_t rt_msd_init(rt_device_t dev)
 
                     /* memory capacity = (C_SIZE+1) * 512K byte */
                     card_capacity = (C_SIZE + 1) / 2; /* unit : Mbyte */
-                    msd->geometry.sector_count = card_capacity * 1024; /* 1 Mbyte = 512 byte X 2048 */
+                    msd->geometry.sector_count = (C_SIZE + 1) * 1024; /* 512KB = 1024sector */
                     MSD_DEBUG("[info] card capacity : %d.%d Gbyte\r\n", card_capacity / 1024, (card_capacity % 1024) * 100 / 1024);
+                    MSD_DEBUG("[info] sector_count : %d\r\n", msd->geometry.sector_count);
                 }
                 else
                 {
