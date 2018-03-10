@@ -106,11 +106,11 @@ static long _list_thread(struct rt_list_node *list)
     rt_kprintf(     " ---  ------- ---------- ----------  ------  ---------- ---\n");
     for (node = list->next; node != list; node = node->next)
     {
-    	rt_uint8_t stat;
+        rt_uint8_t stat;
         thread = rt_list_entry(node, struct rt_thread, list);
         rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->name, thread->current_priority);
 
-		stat = (thread->stat & RT_THREAD_STAT_MASK);
+        stat = (thread->stat & RT_THREAD_STAT_MASK);
         if (stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
         else if (stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
         else if (stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
@@ -607,7 +607,7 @@ int list_module(void)
     {
         module = (struct rt_module *)(rt_list_entry(node, struct rt_object, list));
         rt_kprintf("%-*.*s %-04d  0x%08x\n",
-                   maxlen, RT_NAME_MAX, 
+                   maxlen, RT_NAME_MAX,
                    module->parent.name, module->nref, module->module_space);
     }
 
@@ -634,14 +634,14 @@ int list_mod_detail(const char *name)
             /* list main thread in module */
             if (module->module_thread != RT_NULL)
             {
-            	rt_uint8_t stat;
-				
+                rt_uint8_t stat;
+
                 rt_kprintf("main thread  pri  status      sp     stack size max used   left tick  error\n");
                 rt_kprintf("------------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
                 thread = module->module_thread;
                 rt_kprintf("%-8.*s 0x%02x", RT_NAME_MAX, thread->name, thread->current_priority);
 
-				stat = (thread->stat & RT_THREAD_STAT_MASK);
+                stat = (thread->stat & RT_THREAD_STAT_MASK);
                 if (stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
                 else if (stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
                 else if (stat == RT_THREAD_INIT)    rt_kprintf(" init   ");

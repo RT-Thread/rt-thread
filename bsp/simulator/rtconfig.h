@@ -37,6 +37,7 @@
 /* RT_USING_NOHEAP is not set */
 #define RT_USING_SMALL_MEM
 /* RT_USING_SLAB is not set */
+/* RT_USING_MEMTRACE is not set */
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
@@ -59,7 +60,9 @@
 /* Command shell */
 
 #define RT_USING_FINSH
+#define FINSH_THREAD_NAME "tshell"
 #define FINSH_USING_HISTORY
+#define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
 #define FINSH_THREAD_PRIORITY 20
@@ -98,6 +101,8 @@
 /* RT_USING_DFS_ROMFS is not set */
 /* RT_USING_DFS_RAMFS is not set */
 /* RT_USING_DFS_UFFS is not set */
+/* RT_USING_DFS_JFFS2 is not set */
+/* RT_USING_DFS_NFS is not set */
 
 /* Device Drivers */
 
@@ -105,6 +110,7 @@
 #define RT_USING_SERIAL
 /* RT_USING_CAN is not set */
 /* RT_USING_HWTIMER is not set */
+/* RT_USING_CPUTIME is not set */
 /* RT_USING_I2C is not set */
 /* RT_USING_PIN is not set */
 /* RT_USING_MTD_NOR is not set */
@@ -135,25 +141,6 @@
 
 /* RT_USING_MODBUS is not set */
 
-/* RT-Thread UI Engine */
-
-#define RT_USING_GUIENGINE
-#define RTGUI_NAME_MAX 16
-/* RTGUI_USING_TTF is not set */
-#define RTGUI_USING_FONT16
-#define RTGUI_USING_FONT12
-/* RTGUI_USING_FONTHZ is not set */
-/* RTGUI_IMAGE_XPM is not set */
-#define RTGUI_IMAGE_JPEG_NONE
-/* RTGUI_IMAGE_JPEG is not set */
-/* RTGUI_IMAGE_TJPGD is not set */
-/* RTGUI_IMAGE_PNG_NONE is not set */
-/* RTGUI_IMAGE_PNG is not set */
-#define RTGUI_IMAGE_LODEPNG
-/* RTGUI_IMAGE_BMP is not set */
-#define RTGUI_IMAGE_CONTAINER
-#define RTGUI_USING_DEMO
-
 /* VBUS(Virtual Software BUS) */
 
 /* RT_USING_VBUS is not set */
@@ -167,8 +154,19 @@
 
 /* system packages */
 
+/* RT-Thread GUI Engine */
+
+/* PKG_USING_GUIENGINE is not set */
+/* GUIENGINE_IMAGE_JPEG_NONE is not set */
+/* GUIENGINE_IMAGE_JPEG is not set */
+/* GUIENGINE_IMAGE_TJPGD is not set */
+/* GUIENGINE_IMAGE_PNG_NONE is not set */
+/* GUIENGINE_IMAGE_PNG is not set */
+/* GUIENGINE_IMAGE_LODEPNG is not set */
+/* PKG_USING_GUIENGINE_V200 is not set */
+/* PKG_USING_GUIENGINE_LATEST_VERSION is not set */
+/* PKG_USING_LWEXT4 is not set */
 /* PKG_USING_PARTITION is not set */
-#define RT_USING_PERSIMMON_EXAMPLE
 /* PKG_USING_SQLITE is not set */
 /* PKG_USING_RTI is not set */
 
@@ -179,8 +177,22 @@
 /* PKG_USING_MONGOOSE is not set */
 /* PKG_USING_WEBTERMINAL is not set */
 /* PKG_USING_CJSON is not set */
+/* PKG_USING_LJSON is not set */
 /* PKG_USING_EZXML is not set */
 /* PKG_USING_NANOPB is not set */
+/* PKG_USING_GAGENT_CLOUD is not set */
+
+/* Wi-Fi */
+
+/* Marvell WiFi */
+
+/* PKG_USING_WLANMARVELL is not set */
+
+/* Wiced WiFi */
+
+/* PKG_USING_WLAN_WICED is not set */
+/* PKG_USING_COAP is not set */
+/* PKG_USING_NOPOLL is not set */
 
 /* security packages */
 
@@ -208,21 +220,12 @@
 
 #define PKG_USING_FASTLZ
 /* PKG_USING_MINILZO is not set */
+/* PKG_USING_QUICKLZ is not set */
 
 /* example package: hello */
 
 /* PKG_USING_HELLO is not set */
-
-/* Privated Packages of RealThread */
-
-/* PKG_USING_CODEC is not set */
-/* PKG_USING_PLAYER is not set */
-#define PKG_USING_PERSIMMON_SRC
-/* PKG_USING_PERSIMMON_SRC_v1_0_0 is not set */
-#define PKG_USING_PERSIMMON_LATEST_VERSION
-
-/* Network Utilities */
-
+/* PKG_USING_MULTIBUTTON is not set */
 #define RT_USING_DFS_WINSHAREDIR
 #include "rtconfig_project.h"
 

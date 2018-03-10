@@ -2,7 +2,7 @@ Import('RTT_ROOT')
 Import('rtconfig')
 from building import *
 
-cwd     = os.path.join(str(Dir('#')), 'drivers')
+cwd = GetCurrentDir()
 
 # add the general drivers.
 src = Split("""
@@ -11,14 +11,6 @@ stm32f4xx_it.c
 usart.c
 drv_sdram.c
 """)
-
-# add Ethernet drivers.
-if GetDepend('RT_USING_LWIP'):
-    src += ['stm32f4xx_eth.c']
-
-# add gpio drivers.
-if GetDepend('RT_USING_PIN'):
-    src += ['gpio.c']
 
 CPPPATH = [cwd]
 

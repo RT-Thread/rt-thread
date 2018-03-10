@@ -1,3 +1,101 @@
+# RT-Thread 3.0.3 Change Log
+
+## Kernel
+
+* Add scheduler protection when do cleanup for a detached thread;
+* Fix the object_find issue when enable module feature;
+* Improve POSIX signal support and add rt_signal_wait function and POSIX sigwait interface;
+* When enable finsh shell, rtthread.h header file includes the API file of finsh. Therefore, the application code can use command export feature without finsh.h file;
+* Improve the comments of rtdbg.h file. In RT-Thread, just use following code to add debug log feature:
+
+```c
+    #define DBG_ENABLE
+
+    #define DBG_SECTION_NAME    "[ MOD]"
+    #define DBG_LEVEL           DBG_INFO
+    #define DBG_COLOR
+    #include <rtdbg.h>
+```
+
+When close the DBG_ENABLE definition, the debug log will be closed. Otherwise, the `dbg_log(level, fmt, ...)` can be used to print debug information. 
+
+DBG_SECTION_NAME - The prefix information for each log line;
+DBG_LEVEL - The debug log level;
+DBG_COLOR - Whether use color log in console.
+
+## Components
+
+* Fix the flag issue of fopen in GNU GCC;
+* Fix the pthread_detach issue when used for a detached pthread;
+* Fix the _TIMESPEC_DEFINED issue in IAR 8;
+* Add libc_stdio_get_console() interface for returns the fd of console;
+* Move UI engine component as a standalone package;
+* Add a unify TF/SD card driver on SPI device bus;
+* Add soft-RTC device, therefore device can synchronize with network time and maintains the time with OS tick later;
+* Change the open/fcntl/ioctl API to POSIX standard  interface;
+* Fix ramfs issue when update with RTT 3.0.x;
+* Fix the elm fatfs umount issue; (liu2guang)
+* ignore the O_CREAT flag when open a device file;
+* Improve VCOM class driver in USB stack; (ChunfengMu, Aubr.Cool)
+
+## BSP
+
+* Fix the potential issue when enable Cortex-M hardware FPU;
+* Add v2m-mps2 bsp, which is used in Keil MDK5 for Cortex-M4/M7/M23/M33 simulation;
+* Add sdcard driver for stm32f10x-HAL;(liu2guang)
+* Improve GNU GCC support for stm32f10x-HAL;(Xeon Xu)
+* simulator bsp can be used in Windows/Visual C++ and update SDL to v2.0.7;
+* Add gk7102 bsp by gokemicro;(gokemicro)
+* Add allwinner F1C100s ARM9 bsp;(uestczyh222)
+* Fix some issues in peripherals drive library of NXP LPC54608/i.MX RT; (Valeriy Van)
+
+## Tools
+
+* scons building script will automatically add `_REENT_SMALL` macro when enable newlib nanao;
+* Modify building script for Python 3.x and scons 3.0
+
+# RT-Thread v3.0.2 Change log
+
+## Platform
+
+* Make sure the Object_Class to a fixed value
+* Add `rt_device_create/destroy` API
+* Add memory trace for small memory management algorithm for memory leak and overwritten.
+* Add a first version of asynchronous I/O API
+* Add cputime for high resolution counter
+* Add pipe device functions in DeviceDrivers
+* USB Host available in stm32f4 with mass storage class
+* Add 'df' command in msh
+* Update UI engine and add an example
+* Split `clock_time` from pthreads and add a new clock id: `CLOCK_CPUTIME_ID`
+* Enable IPv6 in lwIP 2.0.2 version
+* Add memlog in logtrace
+* Fix closesocket issue in dfs_net
+* Fix IPv6 issue in NFS
+* Update JFFS2 file system with new DFS API
+* Fix the issue of stat "/.." of lwext4 (parai)
+* Fix the fs type search issue in mkfs
+* Fix the select issue in dfs_net
+
+## Tools
+
+* scons: add '--useconfig' command to use an exist config file
+* scons: force to use g++ for link when enable `RT_USING_CPLUSPLUS` in GNU GCC configuration
+* Enable package feature in Linux/MacOS host
+
+## BSP
+
+* Add NUC472 bsp (bluebear)
+* Update SD/MMC driver for qemu-vexpress-A9
+* Add keyboard/mouse driver for qemu-vexpress-a9
+* Add ADC/I2C/Flash/PWM/RTC/smbus/SPI driver for apollo2 (Haleyl)
+* Add I2C/LCD/Touch driver for i.MXRT1052-EVK
+* Update SD/MMC driver for mini2440 (kuangdazzidd)
+* Update simulator to adapt VC++ compiler
+* Add USB host driver in stm32f4xx-HAL (uestczyh222)
+* Update EMAC driver for IPv6 in stm32f40x/stm32f107
+* Add stm32h743-nucleo bsp (polariss)
+
 # RT-Thread v3.0.1 Change log
 
 ## Platform:

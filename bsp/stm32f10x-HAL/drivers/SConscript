@@ -18,8 +18,11 @@ if GetDepend(['RT_USING_SPI']):
     src += ['drv_spi.c']
 if GetDepend(['RT_USING_USB_DEVICE']):
     src += ['drv_usb.c']
+if GetDepend(['RT_USING_SDCARD']):
+    src += ['drv_sdcard.c']
 
-
+if rtconfig.CROSS_TOOL == 'gcc':
+    src += ['gcc_startup.s']
     
 CPPPATH = [cwd]
 

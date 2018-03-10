@@ -1,7 +1,7 @@
 /*
  * File      : rtdebug.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -117,7 +117,7 @@ do                                                                            \
     level = rt_hw_interrupt_disable();                                        \
     if (rt_interrupt_get_nest() != 0)                                         \
     {                                                                         \
-        rt_kprintf("Function[%s] shall not used in ISR\n", __FUNCTION__);     \
+        rt_kprintf("Function[%s] shall not ne used in ISR\n", __FUNCTION__);  \
         RT_ASSERT(0)                                                          \
     }                                                                         \
     rt_hw_interrupt_enable(level);                                            \

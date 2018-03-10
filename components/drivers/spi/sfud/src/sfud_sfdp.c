@@ -159,7 +159,7 @@ static bool read_basic_header(const sfud_flash *flash, sfdp_para_header *basic_h
     basic_header->minor_rev = header[1];
     basic_header->major_rev = header[2];
     basic_header->len       = header[3];
-    basic_header->ptp       = header[4] | header[5] << 8 | header[6] << 16;
+    basic_header->ptp       = (long)header[4] | (long)header[5] << 8 | (long)header[6] << 16;
     /* check JEDEC basic flash parameter header */
     if (basic_header->major_rev > SUPPORT_MAX_SFDP_MAJOR_REV) {
         SFUD_INFO("Error: This reversion(V%d.%d) JEDEC basic flash parameter header is not supported.",
@@ -171,7 +171,7 @@ static bool read_basic_header(const sfud_flash *flash, sfdp_para_header *basic_h
         return false;
     }
     SFUD_DEBUG("Check JEDEC basic flash parameter header is OK. The table id is %d, reversion is V%d.%d,"
-            " length is %d, parameter table pointer is 0x%06X.", basic_header->id, basic_header->major_rev,
+            " length is %d, parameter table pointer is 0x%06lX.", basic_header->id, basic_header->major_rev,
             basic_header->minor_rev, basic_header->len, basic_header->ptp);
 
     return true;
@@ -196,7 +196,7 @@ static bool read_basic_table(sfud_flash *flash, sfdp_para_header *basic_header) 
 
     /* read JEDEC basic flash parameter table */
     if (read_sfdp_data(flash, table_addr, table, sizeof(table)) != SFUD_SUCCESS) {
-        SFUD_INFO("Error: Can't read JEDEC basic flash parameter table.");
+        SFUD_INFO("Warning: Can't read JEDEC basic flash parameter table.");
         return false;
     }
     /* print JEDEC basic flash parameter table info */
@@ -287,7 +287,7 @@ static bool read_basic_table(sfud_flash *flash, sfdp_para_header *basic_header) 
         return false;
     }
     /* get flash memory capacity */
-    uint32_t table2_temp = (table[7] << 24) | (table[6] << 16) | (table[5] << 8) | table[4];
+    uint32_t table2_temp = ((long)table[7] << 24) | ((long)table[6] << 16) | ((long)table[5] << 8) | (long)table[4];
     switch ((table[7] & (0x01 << 7)) >> 7) {
     case 0:
         sfdp->capacity = 1 + (table2_temp >> 3);
@@ -299,14 +299,14 @@ static bool read_basic_table(sfud_flash *flash, sfdp_para_header *basic_header) 
             SFUD_INFO("Error: The flash capacity is grater than 32 Gb/ 4 GB! Not Supported.");
             return false;
         }
-        sfdp->capacity = 1 << (table2_temp - 3);
+        sfdp->capacity = 1L << (table2_temp - 3);
         break;
     }
     SFUD_DEBUG("Capacity is %ld Bytes.", sfdp->capacity);
     /* get erase size and erase command  */
     for (i = 0, j = 0; i < SFUD_SFDP_ERASE_TYPE_MAX_NUM; i++) {
         if (table[28 + 2 * i] != 0x00) {
-            sfdp->eraser[j].size = 1 << table[28 + 2 * i];
+            sfdp->eraser[j].size = 1L << table[28 + 2 * i];
             sfdp->eraser[j].cmd = table[28 + 2 * i + 1];
             SFUD_DEBUG("Flash device supports %ldKB block erase. Command is 0x%02X.", sfdp->eraser[j].size / 1024,
                     sfdp->eraser[j].cmd);
@@ -344,7 +344,7 @@ static sfud_err read_sfdp_data(const sfud_flash *flash, uint32_t addr, uint8_t *
     };
 
     SFUD_ASSERT(flash);
-    SFUD_ASSERT(addr < 1 << 24);
+    SFUD_ASSERT(addr < 1L << 24);
     SFUD_ASSERT(read_buf);
     SFUD_ASSERT(flash->spi.wr);
 

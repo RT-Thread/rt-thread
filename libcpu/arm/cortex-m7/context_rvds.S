@@ -147,15 +147,15 @@ switch_to_thread
 
     MSR     psp, r1                 ; update stack pointer
 
-pendsv_exit
-    ; restore interrupt
-    MSR     PRIMASK, r2
-
     IF      {FPU} != "SoftVFP"
     ORR     lr, lr, #0x10           ; lr |=  (1 << 4), clean FPCA.
     CMP     r3,  #0                 ; if(flag_r3 != 0)
     BICNE   lr, lr, #0x10           ; lr &= ~(1 << 4), set FPCA.
     ENDIF
+
+pendsv_exit
+    ; restore interrupt
+    MSR     PRIMASK, r2
 
     ORR     lr, lr, #0x04
     BX      lr

@@ -237,9 +237,9 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
     mem->next  = mem_size_aligned + SIZEOF_STRUCT_MEM;
     mem->prev  = 0;
     mem->used  = 0;
-    #ifdef RT_USING_MEMTRACE
+#ifdef RT_USING_MEMTRACE
     rt_mem_setname(mem, "INIT");
-    #endif
+#endif
 
     /* initialize the end of the heap */
     heap_end        = (struct heap_mem *)&heap_ptr[mem->next];
@@ -247,9 +247,9 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
     heap_end->used  = 1;
     heap_end->next  = mem_size_aligned + SIZEOF_STRUCT_MEM;
     heap_end->prev  = mem_size_aligned + SIZEOF_STRUCT_MEM;
-    #ifdef RT_USING_MEMTRACE
+#ifdef RT_USING_MEMTRACE
     rt_mem_setname(heap_end, "INIT");
-    #endif
+#endif
 
     rt_sem_init(&heap_sem, "heap", 1, RT_IPC_FLAG_FIFO);
 
@@ -335,9 +335,9 @@ void *rt_malloc(rt_size_t size)
                 mem2->used = 0;
                 mem2->next = mem->next;
                 mem2->prev = ptr;
-                #ifdef RT_USING_MEMTRACE
+#ifdef RT_USING_MEMTRACE
                 rt_mem_setname(mem2, "    ");
-                #endif
+#endif
 
                 /* and insert it between mem and mem->next */
                 mem->next = ptr2;
@@ -371,12 +371,12 @@ void *rt_malloc(rt_size_t size)
             }
             /* set memory block magic */
             mem->magic = HEAP_MAGIC;
-            #ifdef RT_USING_MEMTRACE
+#ifdef RT_USING_MEMTRACE
             if (rt_thread_self())
                 rt_mem_setname(mem, rt_thread_self()->name);
             else
                 rt_mem_setname(mem, "NONE");
-            #endif
+#endif
 
             if (mem == lfree)
             {
@@ -642,7 +642,7 @@ int memcheck(void)
     rt_uint32_t level;
     struct heap_mem *mem;
     level = rt_hw_interrupt_disable();
-    for (mem = (struct heap_mem*)heap_ptr; mem != heap_end; mem = (struct heap_mem*)&heap_ptr[mem->next])
+    for (mem = (struct heap_mem *)heap_ptr; mem != heap_end; mem = (struct heap_mem *)&heap_ptr[mem->next])
     {
         position = (rt_uint32_t)mem - (rt_uint32_t)heap_ptr;
         if (position < 0) goto __exit;
@@ -665,7 +665,7 @@ __exit:
 }
 MSH_CMD_EXPORT(memcheck, check memory data);
 
-int memtrace(int argc, char** argv)
+int memtrace(int argc, char **argv)
 {
     struct heap_mem *mem;
 
@@ -677,7 +677,7 @@ int memtrace(int argc, char** argv)
     rt_kprintf("heap_end: 0x%08x\n", heap_end);
 
     rt_kprintf("\n--memory item information --\n");
-    for (mem = (struct heap_mem*)heap_ptr; mem != heap_end; mem = (struct heap_mem*)&heap_ptr[mem->next])
+    for (mem = (struct heap_mem *)heap_ptr; mem != heap_end; mem = (struct heap_mem *)&heap_ptr[mem->next])
     {
         int position = (rt_uint32_t)mem - (rt_uint32_t)heap_ptr;
         int size;
