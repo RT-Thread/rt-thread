@@ -18,7 +18,7 @@
 #include <board.h>
 #include <finsh.h>
 
-#ifdef RT_USING_GUIENGINE
+#ifdef PKG_USING_GUIENGINE
 
 
 #define RT_HW_LCD_WIDTH                ((uint16_t)320)     /* LCD PIXEL WIDTH            */

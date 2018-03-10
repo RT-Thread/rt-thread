@@ -13,14 +13,14 @@ if CROSS_TOOL == 'gcc':
     EXEC_PATH   = 'C:\Program Files (x86)\CodeSourcery\Sourcery G++ Lite\bin'
     #EXEC_PATH  = 'C:\Program Files (x86)\yagarto\bin'
 elif CROSS_TOOL == 'keil':
-    print '================ERROR============================'
-    print 'Not support keil yet!'
-    print '================================================='
+    print('================ERROR============================')
+    print('Not support keil yet!')
+    print('=================================================')
     exit(0)
 elif CROSS_TOOL == 'iar':
-    print '================ERROR============================'
-    print 'Not support iar yet!'
-    print '================================================='
+    print('================ERROR============================')
+    print('Not support iar yet!')
+    print('=================================================')
     exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):
@@ -52,7 +52,7 @@ if PLATFORM == 'gcc':
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
-    TARGET_EXT = 'axf'
+    TARGET_EXT = 'elf'
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'

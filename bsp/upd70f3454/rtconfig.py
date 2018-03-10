@@ -10,17 +10,17 @@ if os.getenv('RTT_CC'):
 	CROSS_TOOL = os.getenv('RTT_CC')
 
 if  CROSS_TOOL == 'gcc':
-    print '================ERROR============================'
-    print 'Not support gcc yet!'
-    print '================================================='
+    print('================ERROR============================')
+    print('Not support gcc yet!')
+    print('=================================================')
     exit(0)
 elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
 	IAR_PATH = 'C:/Program Files/IAR Systems/Embedded Workbench 6.0 Evaluation_0'
 elif CROSS_TOOL == 'keil':
-    print '================ERROR============================'
-    print 'Not support keil yet!'
-    print '================================================='
+    print('================ERROR============================')
+    print('Not support keil yet!')
+    print('=================================================')
     exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):

@@ -15,7 +15,7 @@
 #define KEYBOARD_ADDRESS    (0x10006000)
 #define KEYBOARD_IRQ_NUM    (IRQ_VEXPRESS_A9_KBD)
 
-#ifdef RT_USING_GUIENGINE
+#ifdef PKG_USING_GUIENGINE
 
 #include <rtgui/event.h>
 #include <rtgui/rtgui_server.h>

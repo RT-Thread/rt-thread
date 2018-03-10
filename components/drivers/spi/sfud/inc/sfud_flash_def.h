@@ -107,21 +107,23 @@ typedef struct {
  *  notice me for update it. The configuration information name and index reference the sfud_flash_chip structure.
  * | name | mf_id | type_id | capacity_id | capacity | write_mode | erase_gran | erase_gran_cmd |
  */
-#define SFUD_FLASH_CHIP_TABLE                                                                                    \
-{                                                                                                                \
-    {"AT45DB161E", SFUD_MF_ID_ATMEL, 0x26, 0x00, 2*1024*1024, SFUD_WM_BYTE|SFUD_WM_DUAL_BUFFER, 512, 0x81},      \
-    {"W25Q40BV", SFUD_MF_ID_WINBOND, 0x40, 0x13, 512*1024, SFUD_WM_PAGE_256B, 4096, 0x20},                       \
-    {"SST25VF016B", SFUD_MF_ID_SST, 0x25, 0x41, 2*1024*1024, SFUD_WM_BYTE|SFUD_WM_AAI, 4096, 0x20},              \
-    {"M25P32", SFUD_MF_ID_MICRON, 0x20, 0x16, 4*1024*1024, SFUD_WM_PAGE_256B, 64*1024, 0xD8},                    \
-    {"M25P80", SFUD_MF_ID_MICRON, 0x20, 0x14, 1*1024*1024, SFUD_WM_PAGE_256B, 64*1024, 0xD8},                    \
-    {"M25P40", SFUD_MF_ID_MICRON, 0x20, 0x13, 512*1024, SFUD_WM_PAGE_256B, 64*1024, 0xD8},                       \
-    {"EN25Q32B", SFUD_MF_ID_EON, 0x30, 0x16, 4*1024*1024, SFUD_WM_PAGE_256B, 4096, 0x20},                        \
-    {"GD25Q64B", SFUD_MF_ID_GIGADEVICE, 0x40, 0x17, 8*1024*1024, SFUD_WM_PAGE_256B, 4096, 0x20},                 \
-    {"GD25Q16B", SFUD_MF_ID_GIGADEVICE, 0x40, 0x15, 2*1024*1024, SFUD_WM_PAGE_256B, 4096, 0x20},                 \
-    {"S25FL216K", SFUD_MF_ID_CYPRESS, 0x40, 0x15, 2*1024*1024, SFUD_WM_PAGE_256B, 4096, 0x20},                   \
-    {"A25L080", SFUD_MF_ID_AMIC, 0x30, 0x14, 1*1024*1024, SFUD_WM_PAGE_256B, 4096, 0x20},                        \
-    {"F25L004", SFUD_MF_ID_ESMT, 0x20, 0x13, 512*1024, SFUD_WM_BYTE|SFUD_WM_AAI, 4096, 0x20},                    \
-    {"PCT25VF016B", SFUD_MF_ID_SST, 0x25, 0x41, 2*1024*1024, SFUD_WM_BYTE|SFUD_WM_AAI, 4096, 0x20},              \
+#define SFUD_FLASH_CHIP_TABLE                                                                                       \
+{                                                                                                                   \
+    {"AT45DB161E", SFUD_MF_ID_ATMEL, 0x26, 0x00, 2L*1024L*1024L, SFUD_WM_BYTE|SFUD_WM_DUAL_BUFFER, 512, 0x81},      \
+    {"W25Q40BV", SFUD_MF_ID_WINBOND, 0x40, 0x13, 512L*1024L, SFUD_WM_PAGE_256B, 4096, 0x20},                        \
+    {"W25Q16BV", SFUD_MF_ID_WINBOND, 0x40, 0x15, 2L*1024L*1024L, SFUD_WM_PAGE_256B, 4096, 0x20},                    \
+    {"SST25VF016B", SFUD_MF_ID_SST, 0x25, 0x41, 2L*1024L*1024L, SFUD_WM_BYTE|SFUD_WM_AAI, 4096, 0x20},              \
+    {"M25P32", SFUD_MF_ID_MICRON, 0x20, 0x16, 4L*1024L*1024L, SFUD_WM_PAGE_256B, 64L*1024L, 0xD8},                  \
+    {"M25P80", SFUD_MF_ID_MICRON, 0x20, 0x14, 1L*1024L*1024L, SFUD_WM_PAGE_256B, 64L*1024L, 0xD8},                  \
+    {"M25P40", SFUD_MF_ID_MICRON, 0x20, 0x13, 512L*1024L, SFUD_WM_PAGE_256B, 64L*1024L, 0xD8},                      \
+    {"EN25Q32B", SFUD_MF_ID_EON, 0x30, 0x16, 4L*1024L*1024L, SFUD_WM_PAGE_256B, 4096, 0x20},                        \
+    {"GD25Q64B", SFUD_MF_ID_GIGADEVICE, 0x40, 0x17, 8L*1024L*1024L, SFUD_WM_PAGE_256B, 4096, 0x20},                 \
+    {"GD25Q16B", SFUD_MF_ID_GIGADEVICE, 0x40, 0x15, 2L*1024L*1024L, SFUD_WM_PAGE_256B, 4096, 0x20},                 \
+    {"S25FL216K", SFUD_MF_ID_CYPRESS, 0x40, 0x15, 2L*1024L*1024L, SFUD_WM_PAGE_256B, 4096, 0x20},                   \
+    {"S25FL032P", SFUD_MF_ID_CYPRESS, 0x02, 0x15, 4L*1024L*1024L, SFUD_WM_PAGE_256B, 4096, 0x20},                   \
+    {"A25L080", SFUD_MF_ID_AMIC, 0x30, 0x14, 1L*1024L*1024L, SFUD_WM_PAGE_256B, 4096, 0x20},                        \
+    {"F25L004", SFUD_MF_ID_ESMT, 0x20, 0x13, 512L*1024L, SFUD_WM_BYTE|SFUD_WM_AAI, 4096, 0x20},                     \
+    {"PCT25VF016B", SFUD_MF_ID_SST, 0x25, 0x41, 2L*1024L*1024L, SFUD_WM_BYTE|SFUD_WM_AAI, 4096, 0x20},              \
 }
 #endif /* SFUD_USING_FLASH_INFO_TABLE */
 

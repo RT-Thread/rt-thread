@@ -157,7 +157,7 @@ static int ft5x06_dump(void)
     
     DEBUG_PRINTF("[FTS] Touch Chip\r\n");
         
-    for (i = 0; i <= 255; i++)
+    for (i = 0; i < UINT8_MAX; i++)
     {
         _ft5x06_read(i, &reg_value, 1);
         

@@ -8,6 +8,12 @@ if RT_USING_COMPONENTS_INIT
     config RT_USING_USER_MAIN
         bool "The main() function as user entry function"
         default y
+
+    if RT_USING_USER_MAIN
+        config RT_MAIN_THREAD_STACK_SIZE
+            int "Set main thread stack size"
+            default 2048
+    endif
 endif
 
 source "$RTT_DIR/components/cplusplus/Kconfig"
@@ -21,8 +27,6 @@ source "$RTT_DIR/components/drivers/Kconfig"
 source "$RTT_DIR/components/libc/Kconfig"
 
 source "$RTT_DIR/components/net/Kconfig"
-
-source "$RTT_DIR/components/gui/Kconfig"
 
 source "$RTT_DIR/components/vbus/Kconfig"
 

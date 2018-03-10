@@ -230,10 +230,10 @@ static rt_err_t imxrt_configure(struct rt_serial_device *serial, struct serial_c
     switch (cfg->stop_bits)
     {
     case STOP_BITS_2:
-        config.stopBitCount = kLPUART_OneStopBit;
+        config.stopBitCount = kLPUART_TwoStopBit;
         break;
     default:
-        config.stopBitCount = kLPUART_TwoStopBit;
+        config.stopBitCount = kLPUART_OneStopBit;
         break;
     }
 

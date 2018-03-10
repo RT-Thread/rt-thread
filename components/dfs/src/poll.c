@@ -20,6 +20,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2016-12-28     Bernard      first version
+ * 2018-03-09     Bernard      Add protection for pt->triggered.
  */
 #include <stdint.h>
 
@@ -118,13 +119,12 @@ static int poll_wait_timeout(struct rt_poll_table *pt, int msec)
         rt_hw_interrupt_enable(level);
 
         rt_schedule();
-    }
-    else
-    {
-        rt_hw_interrupt_enable(level);
+
+        level = rt_hw_interrupt_disable();
     }
 
     ret = !pt->triggered;
+    rt_hw_interrupt_enable(level);
 
     return ret;
 }

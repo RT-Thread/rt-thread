@@ -14,9 +14,9 @@ if  CROSS_TOOL == 'gcc':
 	PLATFORM    = 'gcc'
 	EXEC_PATH   = r'C:\Program Files\CodeSourcery\Sourcery G++ Lite For MIPS ELF\bin'
 else:
-    print '================ERROR============================'
-    print 'Not support %s yet!' % CROSS_TOOL
-    print '================================================='
+    print('================ERROR============================')
+    print('Not support %s yet!' % CROSS_TOOL)
+    print('=================================================')
     exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):

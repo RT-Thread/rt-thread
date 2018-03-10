@@ -48,7 +48,7 @@
 #include <gdb_stub.h>
 #endif
 
-#ifdef RT_USING_GUIENGINE
+#ifdef PKG_USING_GUIENGINE
 #include "rtgui_demo.h"
 #include <rtgui/driver.h>
 #endif

@@ -26,7 +26,7 @@
 #include <dfs_posix.h>
 #endif
 
-#ifdef RT_USING_GUIENGINE
+#ifdef PKG_USING_GUIENGINE
 #include "rtgui_demo.h"
 #include <rtgui/driver.h>
 #endif
@@ -63,7 +63,7 @@ void rt_init_thread_entry(void* parameter)
         
 #endif /* DFS */
     
-#ifdef RT_USING_GUIENGINE
+#ifdef PKG_USING_GUIENGINE
 	{
 		rt_device_t device;
 
