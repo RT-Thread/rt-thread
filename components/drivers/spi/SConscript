@@ -28,7 +28,10 @@ if GetDepend('RT_USING_SST25VFXX'):
 
 if GetDepend('RT_USING_GD'):
     src_device += ['spi_flash_gd.c']
-    
+
+if GetDepend('RT_USING_SPI_MSD'):
+    src_device += ['spi_msd.c']
+
 if GetDepend('RT_USING_SFUD'):
     src_device += ['spi_flash_sfud.c', 'sfud/src/sfud.c']
     CPPPATH += [cwd + '/sfud/inc']

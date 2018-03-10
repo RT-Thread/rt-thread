@@ -1,7 +1,7 @@
 /*
  * File      : rtdef.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@
  * 2017-08-31     Bernard      change version number to v3.0.0
  * 2017-11-30     Bernard      change version number to v3.0.1
  * 2017-12-27     Bernard      change version number to v3.0.2
+ * 2018-02-24     Bernard      change version number to v3.0.3
  */
 
 #ifndef __RT_DEF_H__
@@ -54,7 +55,7 @@ extern "C" {
 /* RT-Thread version information */
 #define RT_VERSION                      3L              /**< major version number */
 #define RT_SUBVERSION                   0L              /**< minor version number */
-#define RT_REVISION                     2L              /**< revise version number */
+#define RT_REVISION                     3L              /**< revise version number */
 
 /* RT-Thread version */
 #define RTTHREAD_VERSION                ((RT_VERSION * 10000) + \
@@ -450,8 +451,10 @@ typedef struct rt_timer *rt_timer_t;
  * @addtogroup Signal
  */
 #ifdef RT_USING_SIGNALS
+#include <libc/libc_signal.h>
 typedef unsigned long rt_sigset_t;
 typedef void (*rt_sighandler_t)(int signo);
+typedef siginfo_t rt_siginfo_t;
 
 #define RT_SIG_MAX          32
 #endif
@@ -480,7 +483,7 @@ typedef void (*rt_sighandler_t)(int signo);
 
 #define RT_THREAD_STAT_SIGNAL           0x10
 #define RT_THREAD_STAT_SIGNAL_READY     (RT_THREAD_STAT_SIGNAL | RT_THREAD_READY)
-#define RT_THREAD_STAT_SIGNAL_SUSPEND   0x20
+#define RT_THREAD_STAT_SIGNAL_WAIT      0x20
 #define RT_THREAD_STAT_SIGNAL_MASK      0xf0
 
 /**

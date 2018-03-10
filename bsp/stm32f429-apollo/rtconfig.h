@@ -200,7 +200,7 @@
 
 /* RT-Thread UI Engine */
 
-/* RT_USING_GUIENGINE is not set */
+/* PKG_USING_GUIENGINE is not set */
 
 /* VBUS(Virtual Software BUS) */
 

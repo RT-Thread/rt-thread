@@ -36,7 +36,7 @@
 
 int libc_system_init(void)
 {
-#if defined(RT_USING_DFS) & defined(RT_USING_DFS_DEVFS)
+#if defined(RT_USING_DFS) && defined(RT_USING_DFS_DEVFS)
     rt_device_t dev_console;
 
     dev_console = rt_console_get_device();
@@ -50,10 +50,11 @@ int libc_system_init(void)
     }
 #endif
 
-#if defined RT_USING_PTHREADS && !defined RT_USING_COMPONENTS_INIT
+#if defined (RT_USING_PTHREADS) && !defined (RT_USING_COMPONENTS_INIT)
     pthread_system_init();
 #endif
 
     return 0;
 }
 INIT_COMPONENT_EXPORT(libc_system_init);
+

@@ -53,7 +53,7 @@ int cplusplus_system_init(void)
 }
 #endif
 
-#ifdef RT_USING_GUIENGINE
+#ifdef PKG_USING_GUIENGINE
 #include <rtgui/driver.h>
 int lcd_hw_init(void)
 {

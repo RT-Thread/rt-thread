@@ -37,6 +37,7 @@
 /* RT_USING_NOHEAP is not set */
 #define RT_USING_SMALL_MEM
 /* RT_USING_SLAB is not set */
+/* RT_USING_MEMTRACE is not set */
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
@@ -54,6 +55,7 @@
 
 #define RT_USING_COMPONENTS_INIT
 #define RT_USING_USER_MAIN
+#define RT_MAIN_THREAD_STACK_SIZE 2048
 
 /* C++ features */
 
@@ -62,7 +64,9 @@
 /* Command shell */
 
 #define RT_USING_FINSH
+#define FINSH_THREAD_NAME "tshell"
 #define FINSH_USING_HISTORY
+#define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
 #define FINSH_THREAD_PRIORITY 20
@@ -101,6 +105,7 @@
 /* RT_USING_DFS_ROMFS is not set */
 /* RT_USING_DFS_RAMFS is not set */
 /* RT_USING_DFS_UFFS is not set */
+/* RT_USING_DFS_JFFS2 is not set */
 /* RT_USING_DFS_NFS is not set */
 
 /* Device Drivers */
@@ -109,6 +114,7 @@
 #define RT_USING_SERIAL
 /* RT_USING_CAN is not set */
 /* RT_USING_HWTIMER is not set */
+/* RT_USING_CPUTIME is not set */
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
@@ -176,31 +182,13 @@
 #define LWIP_SO_RCVTIMEO 1
 #define LWIP_SO_SNDTIMEO 1
 #define LWIP_SO_RCVBUF 1
+/* RT_LWIP_NETIF_LOOPBACK is not set */
+#define LWIP_NETIF_LOOPBACK 0
 
 /* Modbus master and slave stack */
 
 /* RT_USING_MODBUS is not set */
 /* LWIP_USING_DHCPD is not set */
-/* RT_USING_NETUTILS is not set */
-
-/* RT-Thread UI Engine */
-
-#define RT_USING_GUIENGINE
-#define RTGUI_NAME_MAX 16
-/* RTGUI_USING_TTF is not set */
-#define RTGUI_USING_FONT16
-#define RTGUI_USING_FONT12
-/* RTGUI_USING_FONTHZ is not set */
-/* RTGUI_IMAGE_XPM is not set */
-#define RTGUI_IMAGE_JPEG_NONE
-/* RTGUI_IMAGE_JPEG is not set */
-/* RTGUI_IMAGE_TJPGD is not set */
-/* RTGUI_IMAGE_PNG_NONE is not set */
-/* RTGUI_IMAGE_PNG is not set */
-#define RTGUI_IMAGE_LODEPNG
-/* RTGUI_IMAGE_BMP is not set */
-#define RTGUI_IMAGE_CONTAINER
-#define RTGUI_USING_DEMO
 
 /* VBUS(Virtual Software BUS) */
 
@@ -211,18 +199,24 @@
 /* RT_USING_LOGTRACE is not set */
 /* RT_USING_RYM is not set */
 
-/* RT-Thread Senior Membership Packages */
-
-/* system packages */
-
-/* PKG_USING_FTL_SRC is not set */
-
 /* RT-Thread online packages */
 
 /* system packages */
 
-/* PKG_USING_PARTITION is not set */
+/* RT-Thread GUI Engine */
+
+/* PKG_USING_GUIENGINE is not set */
+/* GUIENGINE_IMAGE_JPEG_NONE is not set */
+/* GUIENGINE_IMAGE_JPEG is not set */
+/* GUIENGINE_IMAGE_TJPGD is not set */
+/* GUIENGINE_IMAGE_PNG_NONE is not set */
+/* GUIENGINE_IMAGE_PNG is not set */
+/* GUIENGINE_IMAGE_LODEPNG is not set */
+/* PKG_USING_GUIENGINE_V200 is not set */
+/* PKG_USING_GUIENGINE_LATEST_VERSION is not set */
 /* PKG_USING_PERSIMMON is not set */
+/* PKG_USING_LWEXT4 is not set */
+/* PKG_USING_PARTITION is not set */
 /* PKG_USING_SQLITE is not set */
 /* PKG_USING_RTI is not set */
 
@@ -233,8 +227,22 @@
 /* PKG_USING_MONGOOSE is not set */
 /* PKG_USING_WEBTERMINAL is not set */
 /* PKG_USING_CJSON is not set */
+/* PKG_USING_LJSON is not set */
 /* PKG_USING_EZXML is not set */
 /* PKG_USING_NANOPB is not set */
+/* PKG_USING_GAGENT_CLOUD is not set */
+
+/* Wi-Fi */
+
+/* Marvell WiFi */
+
+/* PKG_USING_WLANMARVELL is not set */
+
+/* Wiced WiFi */
+
+/* PKG_USING_WLAN_WICED is not set */
+/* PKG_USING_COAP is not set */
+/* PKG_USING_NOPOLL is not set */
 
 /* security packages */
 
@@ -262,10 +270,12 @@
 
 /* PKG_USING_FASTLZ is not set */
 /* PKG_USING_MINILZO is not set */
+/* PKG_USING_QUICKLZ is not set */
 
 /* example package: hello */
 
 /* PKG_USING_HELLO is not set */
+/* PKG_USING_MULTIBUTTON is not set */
 #define BOARD_X1000_REALBOARD
 /* RT_USING_HARD_FLOAT is not set */
 /* BOARD_PHOENIX is not set */
@@ -282,19 +292,14 @@
 #define RT_USING_I2C0
 /* RT_USING_I2C1 is not set */
 /* RT_USING_I2C2 is not set */
-#define RT_USING_SLCD
-#define RT_USING_ILI9488
+/* RT_USING_ILI9488 is not set */
 /* RT_USING_ILI9341 is not set */
 /* RT_USING_OTM4802 is not set */
 /* RT_USING_TRULY_TFT240240 is not set */
-#define RT_USING_TOUCH
-#define RT_USING_GT9XX
+/* RT_USING_GT9XX is not set */
 /* RT_USING_FT6x06 is not set */
-#define RT_TOUCH_THREAD_PRIORITY 10
 #define RT_USING_AUDIO
 #define RT_USING_ICODEC
 #define RT_USING_CPU_FFS
-/* WIFI_USING_AP6212 is not set */
-/* WIFI_USING_AP6181 is not set */
 
 #endif

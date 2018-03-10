@@ -33,10 +33,6 @@
 #include <rtthread.h>
 #include "finsh.h"
 
-#ifndef FINSH_USING_HISTORY
-#define FINSH_USING_HISTORY
-#endif
-
 #ifndef FINSH_THREAD_PRIORITY
 #define FINSH_THREAD_PRIORITY 20
 #endif

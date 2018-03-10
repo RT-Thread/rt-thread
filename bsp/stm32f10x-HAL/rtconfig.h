@@ -38,6 +38,7 @@
 #define RT_USING_SMALL_MEM
 /* RT_USING_SLAB is not set */
 /* RT_USING_MEMHEAP_AS_HEAP is not set */
+/* RT_USING_MEMTRACE is not set */
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
@@ -46,7 +47,7 @@
 /* RT_USING_INTERRUPT_INFO is not set */
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart2"
+#define RT_CONSOLE_DEVICE_NAME "uart1"
 /* RT_USING_MODULE is not set */
 
 /* RT-Thread Components */
@@ -61,7 +62,9 @@
 /* Command shell */
 
 #define RT_USING_FINSH
+#define FINSH_THREAD_NAME "tshell"
 #define FINSH_USING_HISTORY
+#define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
 #define FINSH_THREAD_PRIORITY 20
@@ -82,6 +85,7 @@
 #define RT_USING_SERIAL
 /* RT_USING_CAN is not set */
 /* RT_USING_HWTIMER is not set */
+/* RT_USING_CPUTIME is not set */
 /* RT_USING_I2C is not set */
 #define RT_USING_PIN
 /* RT_USING_MTD_NOR is not set */
@@ -90,6 +94,7 @@
 /* RT_USING_SDIO is not set */
 /* RT_USING_SPI is not set */
 /* RT_USING_WDT is not set */
+/* RT_USING_WIFI is not set */
 
 /* Using USB */
 
@@ -98,7 +103,7 @@
 
 /* POSIX layer and C standard library */
 
-/* RT_USING_LIBC is not set */
+#define RT_USING_LIBC
 /* RT_USING_PTHREADS is not set */
 
 /* Network stack */
@@ -113,11 +118,16 @@
 
 /* RT-Thread UI Engine */
 
-/* RT_USING_GUIENGINE is not set */
+/* PKG_USING_GUIENGINE is not set */
 
 /* VBUS(Virtual Software BUS) */
 
 /* RT_USING_VBUS is not set */
+
+/* Utilities */
+
+/* RT_USING_LOGTRACE is not set */
+/* RT_USING_RYM is not set */
 
 /* RT-Thread online packages */
 
@@ -125,60 +135,79 @@
 
 /* PKG_USING_PARTITION is not set */
 /* PKG_USING_SQLITE is not set */
+/* PKG_USING_RTI is not set */
 
 /* IoT - internet of things */
 
-/* PKG_USING_CJSON is not set */
 /* PKG_USING_PAHOMQTT is not set */
 /* PKG_USING_WEBCLIENT is not set */
 /* PKG_USING_MONGOOSE is not set */
 /* PKG_USING_WEBTERMINAL is not set */
+/* PKG_USING_CJSON is not set */
+/* PKG_USING_LJSON is not set */
+/* PKG_USING_EZXML is not set */
+/* PKG_USING_NANOPB is not set */
+/* PKG_USING_GAGENT_CLOUD is not set */
+
+/* Wi-Fi */
+
+/* Marvell WiFi */
+
+/* PKG_USING_WLANMARVELL is not set */
+
+/* Wiced WiFi */
+
+/* PKG_USING_WLAN_WICED is not set */
+/* PKG_USING_COAP is not set */
+/* PKG_USING_NOPOLL is not set */
 
 /* security packages */
 
 /* PKG_USING_MBEDTLS is not set */
+/* PKG_USING_libsodium is not set */
+/* PKG_USING_TINYCRYPT is not set */
 
 /* language packages */
 
 /* PKG_USING_JERRYSCRIPT is not set */
+/* PKG_USING_MICROPYTHON is not set */
 
 /* multimedia packages */
+
+/* PKG_USING_OPENMV is not set */
 
 /* tools packages */
 
 /* PKG_USING_CMBACKTRACE is not set */
 /* PKG_USING_EASYLOGGER is not set */
+/* PKG_USING_SYSTEMVIEW is not set */
+/* PKG_USING_IPERF is not set */
 
 /* miscellaneous packages */
 
+/* PKG_USING_FASTLZ is not set */
+/* PKG_USING_MINILZO is not set */
+
+/* example package: hello */
+
 /* PKG_USING_HELLO is not set */
-/* STM32F100C8 is not set */
-/* STM32F100CB is not set */
-/* STM32F100R8 is not set */
-/* STM32F100RB is not set */
 /* STM32F100RC is not set */
 /* STM32F100RD is not set */
 /* STM32F100RE is not set */
-/* STM32F100V8 is not set */
-/* STM32F100VB is not set */
 /* STM32F100VC is not set */
 /* STM32F100VD is not set */
 /* STM32F100VE is not set */
 /* STM32F100ZC is not set */
 /* STM32F100ZD is not set */
 /* STM32F100ZE is not set */
-/* STM32F101C8 is not set */
 /* STM32F101CB is not set */
-/* STM32F101R8 is not set */
 /* STM32F101RB is not set */
 /* STM32F101RC is not set */
 /* STM32F101RD is not set */
 /* STM32F101RE is not set */
 /* STM32F101RF is not set */
 /* STM32F101RG is not set */
-/* STM32F101T8 is not set */
 /* STM32F101TB is not set */
-/* STM32F101V8 is not set */
 /* STM32F101VB is not set */
 /* STM32F101VC is not set */
 /* STM32F101VD is not set */
@@ -190,15 +219,13 @@
 /* STM32F101ZE is not set */
 /* STM32F101ZF is not set */
 /* STM32F101ZG is not set */
-/* STM32F102C8 is not set */
 /* STM32F102CB is not set */
-/* STM32F102R8 is not set */
 /* STM32F102RB is not set */
 /* STM32F103C8 is not set */
 /* STM32F103CB is not set */
 /* STM32F103R8 is not set */
-#define STM32F103RB
-/* STM32F103RC is not set */
+/* STM32F103RB is not set */
+#define STM32F103RC
 /* STM32F103RD is not set */
 /* STM32F103RE is not set */
 /* STM32F103RF is not set */
@@ -229,9 +256,9 @@
 /* STM32F107VC is not set */
 /* RT_USING_HSI is not set */
 #define RT_HSE_VALUE 8000000
-#define STM32F10X_PIN_NUMBERS 64
-/* RT_USING_UART1 is not set */
-#define RT_USING_UART2
+#define RT_USING_UART1
+/* RT_USING_UART2 is not set */
 /* RT_USING_UART3 is not set */
+/* RT_USING_SDCARD is not set */
 
 #endif

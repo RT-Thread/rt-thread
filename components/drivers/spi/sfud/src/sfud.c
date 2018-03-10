@@ -36,10 +36,6 @@
 #error "Please configure the flash device information table in (in sfud_cfg.h)."
 #endif
 
-#if !defined(SFUD_USING_SFDP) && !defined(SFUD_USING_FLASH_INFO_TABLE)
-#error "Please configure SFUD_USING_SFDP or SFUD_USING_FLASH_INFO_TABLE at least one kind of mode (in sfud_cfg.h)."
-#endif
-
 /* user configured flash device information table */
 static sfud_flash flash_table[] = SFUD_FLASH_DEVICE_TABLE;
 /* supported manufacturer information table */
@@ -251,7 +247,7 @@ static sfud_err hardware_init(sfud_flash *flash) {
         return result;
     }
 
-    /* I found when the flash read mode is supported AAI mode. The flash all blocks is protected,
+    /* I found when the flash write mode is supported AAI mode. The flash all blocks is protected,
      * so need change the flash status to unprotected before write and erase operate. */
     if (flash->chip.write_mode & SFUD_WM_AAI) {
         result = sfud_write_status(flash, true, 0x00);
@@ -261,7 +257,7 @@ static sfud_err hardware_init(sfud_flash *flash) {
     }
 
     /* if the flash is large than 16MB (256Mb) then enter in 4-Byte addressing mode */
-    if (flash->chip.capacity > (1 << 24)) {
+    if (flash->chip.capacity > (1L << 24)) {
         result = set_4_byte_address_mode(flash, true);
     } else {
         flash->addr_in_4_byte = false;
@@ -401,7 +397,7 @@ sfud_err sfud_erase(const sfud_flash *flash, uint32_t addr, size_t size) {
     sfud_err result = SFUD_SUCCESS;
     const sfud_spi *spi = &flash->spi;
     uint8_t cmd_data[5], cmd_size, cur_erase_cmd;
-    size_t eraser_index, cur_erase_size;
+    size_t cur_erase_size;
 
     SFUD_ASSERT(flash);
     /* must be call this function after initialize OK */
@@ -425,6 +421,7 @@ sfud_err sfud_erase(const sfud_flash *flash, uint32_t addr, size_t size) {
     while (size) {
         /* if this flash is support SFDP parameter, then used SFDP parameter supplies eraser */
 #ifdef SFUD_USING_SFDP
+        size_t eraser_index;
         if (flash->sfdp.available) {
             /* get the suitable eraser for erase process from SFDP parameter */
             eraser_index = sfud_sfdp_get_suitable_eraser(flash, addr, size);

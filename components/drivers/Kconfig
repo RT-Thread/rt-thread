@@ -14,6 +14,12 @@ config RT_USING_CAN
     bool "Using CAN device drivers"
     default n
 
+if RT_USING_CAN
+    config RT_CAN_USING_HDR
+        bool "Enable CAN hardware filter"
+        default y
+endif
+
 config RT_USING_HWTIMER
     bool "Using hardware timer device drivers"
     default n
@@ -78,6 +84,25 @@ config RT_USING_RTC
     bool "Using RTC device drivers"
     default n
 
+    if RT_USING_RTC
+    config RT_USING_SOFT_RTC
+        bool "Using software simulation RTC device"
+        default n
+    config RTC_SYNC_USING_NTP
+        bool "Using NTP auto sync RTC time"
+        select PKG_NETUTILS_NTP
+        default n
+        
+        if RTC_SYNC_USING_NTP
+        config RTC_NTP_FIRST_SYNC_DELAY
+            int "NTP first sync delay time(second) for network connect"
+            default 30
+        config RTC_NTP_SYNC_PERIOD
+            int "NTP auto sync period(second)"
+            default 3600
+       endif
+    endif
+
 config RT_USING_SDIO
     bool "Using SD/MMC device drivers"
     default n
@@ -87,6 +112,11 @@ config RT_USING_SPI
     default n
 
     if RT_USING_SPI
+        config RT_USING_SPI_MSD
+            bool "Using SD/TF card driver with spi"
+            select RT_USING_DFS
+            default n
+
         config RT_USING_SFUD
             bool "Using Serial Flash Universal Driver"
             default n
@@ -151,6 +181,13 @@ menu "Using USB"
         default n
 
         if RT_USING_USB_DEVICE
+            config USB_VENDOR_ID
+                hex "USB Vendor ID"
+                default 0x0FFE
+            config USB_PRODUCT_ID
+                hex "USB Product ID"
+                default 0x0001
+            
             config RT_USB_DEVICE_COMPOSITE
                 bool "Enable composite device"
                 default n
@@ -200,6 +237,11 @@ menu "Using USB"
                     config RT_USB_DEVICE_WINUSB
                         bool "Enable to use device as winusb device"
                         default n
+                endif
+                if RT_USB_DEVICE_WINUSB
+                    config RT_WINUSB_GUID
+                    string "Guid for winusb"
+                    default "{6860DC3C-C05F-4807-8807-1CA861CC1D66}"
                 endif
                 if RT_USB_DEVICE_MSTORAGE
                     config RT_USB_MSTORAGE_DISK_NAME
