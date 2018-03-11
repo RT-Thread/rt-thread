@@ -29,6 +29,11 @@ int platform_init(void)
 
 #endif /* RT_USING_DFS */
 
+    return 0;
+}
+
+int platform_post_init(void)
+{
 #ifdef PKG_USING_GUIENGINE
     {
         extern void rt_hw_sdl_start(void);
