@@ -80,7 +80,7 @@ void mem_test(uint32_t address, uint32_t size )
         for(i=0; i<size/sizeof(uint32_t); i++)
         {
             *p_uint32_t  = (uint32_t)p_uint32_t;
-            *p_uint32_t++;
+            p_uint32_t++;
         }
 
         p_uint32_t = (uint32_t *)address;
