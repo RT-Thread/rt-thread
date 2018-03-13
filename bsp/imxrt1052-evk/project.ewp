@@ -220,7 +220,6 @@
                     <state>SKIP_SYSCLK_INIT</state>
                     <state>EVK_MCIMXRM</state>
                     <state>FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1</state>
-                    <state>FT2_BUILD_LIBRARY</state>
                     <state>RT_USING_DLIBC</state>
                     <state>_DLIB_FILE_DESCRIPTOR</state>
                 </option>
@@ -354,38 +353,20 @@
                     <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
                     <state>$PROJ_DIR$\..\..\components\drivers\include</state>
                     <state>$PROJ_DIR$\Libraries\drivers</state>
-                    <state>$PROJ_DIR$\..\..\components\dfs\filesystems\devfs</state>
-                    <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src</state>
                     <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\include\freetype</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\include</state>
-                    <state>$PROJ_DIR$\drivers</state>
+                    <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src</state>
+                    <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\posix</state>
                     <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\ipv4</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\include\rtgui</state>
                     <state>$PROJ_DIR$\.</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\smooth</state>
                     <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m7</state>
                     <state>$PROJ_DIR$\..\..\components\dfs\include</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\lodepng</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\include</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\include\freetype\internal</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\include\freetype\internal\services</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\src</state>
+                    <state>$PROJ_DIR$\..\..\components\dfs\filesystems\devfs</state>
                     <state>$PROJ_DIR$\Libraries\CMSIS\Include</state>
                     <state>$PROJ_DIR$\Libraries\utilities</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\sfnt</state>
                     <state>$PROJ_DIR$\applications</state>
                     <state>$PROJ_DIR$\..\..\components\finsh</state>
                     <state>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\truetype</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\psnames</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\autofit</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\cache</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\include\freetype\config</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\include\rtgui\widgets</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\base</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\builds\rt-thread</state>
-                    <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\posix</state>
+                    <state>$PROJ_DIR$\drivers</state>
                     <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\arch\include</state>
                 </option>
                 <option>
@@ -1281,7 +1262,6 @@
                     <state>SKIP_SYSCLK_INIT</state>
                     <state>EVK_MCIMXRM</state>
                     <state>FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1</state>
-                    <state>FT2_BUILD_LIBRARY</state>
                     <state>RT_USING_DLIBC</state>
                     <state>_DLIB_FILE_DESCRIPTOR</state>
                     <state>_DLIB_THREAD_SUPPORT</state>
@@ -1416,38 +1396,20 @@
                     <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
                     <state>$PROJ_DIR$\..\..\components\drivers\include</state>
                     <state>$PROJ_DIR$\Libraries\drivers</state>
-                    <state>$PROJ_DIR$\..\..\components\dfs\filesystems\devfs</state>
-                    <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src</state>
                     <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\include\freetype</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\include</state>
-                    <state>$PROJ_DIR$\drivers</state>
+                    <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src</state>
+                    <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\posix</state>
                     <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\ipv4</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\include\rtgui</state>
                     <state>$PROJ_DIR$\.</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\smooth</state>
                     <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m7</state>
                     <state>$PROJ_DIR$\..\..\components\dfs\include</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\lodepng</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\include</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\include\freetype\internal</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\include\freetype\internal\services</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\src</state>
+                    <state>$PROJ_DIR$\..\..\components\dfs\filesystems\devfs</state>
                     <state>$PROJ_DIR$\Libraries\CMSIS\Include</state>
                     <state>$PROJ_DIR$\Libraries\utilities</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\sfnt</state>
                     <state>$PROJ_DIR$\applications</state>
                     <state>$PROJ_DIR$\..\..\components\finsh</state>
                     <state>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\truetype</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\psnames</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\autofit</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\cache</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\include\freetype\config</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\include\rtgui\widgets</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\base</state>
-                    <state>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\builds\rt-thread</state>
-                    <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\posix</state>
+                    <state>$PROJ_DIR$\drivers</state>
                     <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\arch\include</state>
                 </option>
                 <option>
@@ -2137,9 +2099,6 @@
         <file>
             <name>$PROJ_DIR$\applications\mem_test.c</name>
         </file>
-        <file>
-            <name>$PROJ_DIR$\applications\sdio_test.c</name>
-        </file>
     </group>
     <group>
         <name>CORTEX-M7</name>
@@ -2255,15 +2214,6 @@
             <name>$PROJ_DIR$\drivers\drv_eth.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\drivers\drv_ft5406.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\drivers\drv_i2c.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\drivers\drv_lcd.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\drivers\drv_sdio.c</name>
         </file>
         <file>
@@ -2355,216 +2305,6 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\components\finsh\symbol.c</name>
-        </file>
-    </group>
-    <group>
-        <name>freetype</name>
-    </group>
-    <group>
-        <name>FreeType</name>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\autofit\autofit.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\base\ftbase.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\base\ftbbox.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\base\ftbitmap.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\cache\ftcbasic.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\cache\ftccache.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\cache\ftccmap.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\cache\ftcglyph.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\cache\ftcimage.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\cache\ftcmanag.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\cache\ftcmru.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\cache\ftcsbits.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\base\ftfstype.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\base\ftglyph.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\base\ftinit.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\base\ftlcdfil.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\base\ftmm.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\base\ftpatent.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\builds\rt-thread\ftsystem.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\base\fttype1.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\builds\rt-thread\gb2312tounicode.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\psnames\psnames.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\sfnt\sfnt.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\smooth\smooth.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\freetype-2.6.2\src\truetype\truetype.c</name>
-        </file>
-    </group>
-    <group>
-        <name>GuiEngine</name>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\asc12font.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\asc16font.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\blit.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\box.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\color.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\container.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\dc.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\dc_blend.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\dc_buffer.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\dc_client.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\dc_hw.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\dc_rotozoom.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\dc_trans.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\filerw.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\font.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\font_bmp.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\font_fnt.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\font_freetype.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\font_hz_bmp.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\font_hz_file.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\hz12font.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\hz16font.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\image.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\image_bmp.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\image_container.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\image_hdc.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\image_jpg.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\image_png.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\image_xpm.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\libraries\lodepng\lodepng.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\matrix.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\mouse.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\region.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\rtgui_app.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\rtgui_driver.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\rtgui_object.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\rtgui_system.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\server.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\title.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\topwin.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\widget.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\components\gui\src\window.c</name>
         </file>
     </group>
     <group>
