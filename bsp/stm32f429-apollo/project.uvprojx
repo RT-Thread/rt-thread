@@ -460,11 +460,6 @@
               <FileType>1</FileType>
               <FilePath>drivers\drv_spi_flash.c</FilePath>
             </File>
-            <File>
-              <FileName>drivers_drv_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_i2c.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
