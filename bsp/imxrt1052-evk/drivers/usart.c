@@ -114,7 +114,7 @@ void UART7_IRQHandler(void)
 #if defined(RT_USING_UART8)
 struct rt_serial_device serial8;
 
-void UART7_IRQHandler(void)
+void UART8_IRQHandler(void)
 {
     uart_isr(&serial8);
 }
