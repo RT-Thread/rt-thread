@@ -166,7 +166,7 @@ int __low_level_init(void)
 }
 #elif defined(__GNUC__)
 extern int main(void);
-/* Add -eentry to arm-none-eabi-gcc argument */
+/* Add entry to arm-none-eabi-gcc argument */
 int entry(void)
 {
     rt_hw_interrupt_disable();
