@@ -26,6 +26,10 @@ config FINSH_USING_DESCRIPTION
     bool "Keeping description in symbol table"
     default y
 
+config FINSH_ENABLE_ECHO
+    int "Enble the command echo mode"
+    default 1
+    
 config FINSH_THREAD_PRIORITY
     int "The priority level value of finsh thread"
     default 20
