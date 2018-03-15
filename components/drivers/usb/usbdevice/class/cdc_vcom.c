@@ -304,7 +304,8 @@ static rt_err_t _ep_out_handler(ufunction_t func, rt_size_t size)
 
     data = (struct vcom*)func->user_data;
     /* ensure serial is active */
-    if(data->serial.parent.open_flag & RT_DEVICE_FLAG_ACTIVATED)
+    if((data->serial.parent.flag & RT_DEVICE_FLAG_ACTIVATED)
+        && (data->serial.parent.open_flag & RT_DEVICE_OFLAG_OPEN))
     {
         /* receive data from USB VCOM */
         level = rt_hw_interrupt_disable();
