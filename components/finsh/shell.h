@@ -57,6 +57,10 @@ const char* finsh_get_prompt(void);
     #endif
 #endif
 
+#ifndef FINSH_ENABLE_ECHO
+#define FINSH_ENABLE_ECHO 1
+#endif 
+
 #ifdef FINSH_USING_AUTH
     #ifndef FINSH_PASSWORD_MAX
         #define FINSH_PASSWORD_MAX RT_NAME_MAX
