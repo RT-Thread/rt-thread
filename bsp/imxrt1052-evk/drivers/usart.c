@@ -18,7 +18,7 @@
 #include "fsl_lpuart.h"
 #include "fsl_iomuxc.h"
 
-#ifdef RT_USING_UART
+#ifdef RT_USING_SERIAL
 
 #if !defined(RT_USING_UART0) && !defined(RT_USING_UART1) && \
     !defined(RT_USING_UART2) && !defined(RT_USING_UART3) && \
@@ -380,4 +380,4 @@ int imxrt_hw_usart_init(void)
 }
 INIT_BOARD_EXPORT(imxrt_hw_usart_init);
 
-#endif /*RT_USING_UART*/
+#endif /*RT_USING_SERIAL */

@@ -9,7 +9,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2013-11-15     bright       the first version
+ * 2017-10-10     Tanek        the first version
  */
 
 #ifndef __USART_H__
