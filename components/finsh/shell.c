@@ -414,7 +414,7 @@ void finsh_thread_entry(void *parameter)
     char ch;
 
     /* normal is echo mode */
-#ifdef FINSH_ECHO_MODE_DEFAULT
+#ifndef FINSH_ECHO_DISABLE_DEFAULT
     shell->echo_mode = 1;
 #else
     shell->echo_mode = 0;
