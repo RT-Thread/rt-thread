@@ -15,6 +15,9 @@ drv_sdram.c
 CPPPATH = [cwd]
 CPPDEFINES = []
 
+if GetDepend('RT_USING_PIN'):
+    src += ['drv_pin.c']
+
 if GetDepend('RT_USING_LWIP'):
     src += ['drv_eth.c', 'fsl_phy.c']
     CPPDEFINES += ['FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE']

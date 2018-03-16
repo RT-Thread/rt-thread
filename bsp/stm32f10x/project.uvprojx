@@ -383,7 +383,7 @@
             <ScatterFile />
             <IncludeLibs />
             <IncludeLibsPath />
-            <Misc> --keep *.o(.rti_fn.*)   --keep *.o(FSymTab) --keep *.o(VSymTab) </Misc>
+            <Misc> --keep *.o(FSymTab) --keep *.o(VSymTab) </Misc>
             <LinkerInputFile />
             <DisabledWarnings />
           </LDads>
