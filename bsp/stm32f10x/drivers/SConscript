@@ -29,7 +29,7 @@ if GetDepend('RT_USING_DFS'):
 
 # add Ethernet drivers.
 if GetDepend('RT_USING_RTC'):
-    src += ['rtc.c']
+    src += ['stm32f1_rtc.c']
 
 # add Ethernet drivers.
 if GetDepend('PKG_USING_GUIENGINE'):
