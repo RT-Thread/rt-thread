@@ -59,6 +59,20 @@ static struct udevice_descriptor compsit_desc =
     USB_STRING_SERIAL_INDEX,    //iSerialNumber;
     USB_DYNAMIC,                //bNumConfigurations;
 };
+
+//FS and HS needed
+static struct usb_qualifier_descriptor dev_qualifier =
+{
+    sizeof(dev_qualifier),          //bLength
+    USB_DESC_TYPE_DEVICEQUALIFIER,  //bDescriptorType
+    0x0200,                         //bcdUSB
+    USB_CLASS_MISC,                 //bDeviceClass
+    0x02,                           //bDeviceSubClass
+    0x01,                           //bDeviceProtocol
+    64,                             //bMaxPacketSize0
+    0x01,                           //bNumConfigurations
+    0,
+};
 #endif
 
 struct usb_os_comp_id_descriptor usb_comp_id_desc = 
@@ -169,6 +183,7 @@ rt_err_t rt_usb_device_init(void)
 #ifdef RT_USB_DEVICE_COMPOSITE
     rt_usbd_device_set_descriptor(udevice, &compsit_desc);
     rt_usbd_device_set_string(udevice, ustring);
+    rt_usbd_device_set_qualifier(device, &dev_qualifier);
 #else
     rt_usbd_device_set_descriptor(udevice, func->dev_desc);
 #endif
