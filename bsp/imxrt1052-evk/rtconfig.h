@@ -121,7 +121,9 @@
 #define RT_USING_PIN
 /* RT_USING_MTD_NOR is not set */
 /* RT_USING_MTD_NAND is not set */
-/* RT_USING_RTC is not set */
+#define RT_USING_RTC
+/* RT_USING_SOFT_RTC is not set */
+/* RTC_SYNC_USING_NTP is not set */
 #define RT_USING_SDIO
 /* RT_USING_SPI is not set */
 /* RT_USING_WDT is not set */
@@ -277,7 +279,7 @@
 /* PKG_USING_HELLO is not set */
 /* PKG_USING_MULTIBUTTON is not set */
 #define SOC_IMXRT1052
-#define RT_USING_UART
 #define RT_USING_UART1
+#define RT_USING_HP_RTC
 
 #endif

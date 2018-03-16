@@ -1,7 +1,7 @@
 /*
- * File      : usart.h
+ * File      : drv_hp_rtc.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * COPYRIGHT (C) 2006-2013, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -9,15 +9,15 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-10-10     Tanek        the first version
+ * 2018-03-15     Liuguang     the first version. 
  */
+ 
+#ifndef __DRV_RTC_H__
+#define __DRV_RTC_H__
 
-#ifndef __USART_H__
-#define __USART_H__
+#include <rtthread.h> 
+#include <rtdevice.h> 
 
-#include <rthw.h>
-#include <rtthread.h>
-
-int rt_hw_usart_init(void);
+int rt_hw_hp_rtc_init(void);
 
 #endif
