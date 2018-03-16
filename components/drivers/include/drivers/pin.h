@@ -79,7 +79,7 @@ struct rt_pin_irq_hdr
 };
 struct rt_pin_ops
 {
-    void (*pin_mode)(struct rt_device *device, rt_base_t pin, rt_base_t mode);
+    rt_err_t (*pin_mode)(struct rt_device *device, rt_base_t pin, rt_base_t mode);
     void (*pin_write)(struct rt_device *device, rt_base_t pin, rt_base_t value);
     int (*pin_read)(struct rt_device *device, rt_base_t pin);
 
@@ -92,7 +92,7 @@ struct rt_pin_ops
 
 int rt_device_pin_register(const char *name, const struct rt_pin_ops *ops, void *user_data);
 
-void rt_pin_mode(rt_base_t pin, rt_base_t mode);
+rt_err_t rt_pin_mode(rt_base_t pin, rt_base_t mode);
 void rt_pin_write(rt_base_t pin, rt_base_t value);
 int  rt_pin_read(rt_base_t pin);
 rt_err_t rt_pin_attach_irq(rt_int32_t pin, rt_uint32_t mode,

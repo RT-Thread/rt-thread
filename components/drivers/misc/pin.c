@@ -60,7 +60,7 @@ static rt_size_t _pin_write(rt_device_t dev, rt_off_t pos, const void *buffer, r
     return size;
 }
 
-static rt_err_t  _pin_control(rt_device_t dev, int cmd, void *args)
+static rt_err_t _pin_control(rt_device_t dev, int cmd, void *args)
 {
     struct rt_device_pin_mode *mode;
     struct rt_device_pin *pin = (struct rt_device_pin *)dev;
@@ -71,9 +71,7 @@ static rt_err_t  _pin_control(rt_device_t dev, int cmd, void *args)
     mode = (struct rt_device_pin_mode *) args;
     if (mode == RT_NULL) return -RT_ERROR;
 
-    pin->ops->pin_mode(dev, (rt_base_t)mode->pin, (rt_base_t)mode->mode);
-
-    return 0;
+    return pin->ops->pin_mode(dev, (rt_base_t)mode->pin, (rt_base_t)mode->mode);
 }
 
 int rt_device_pin_register(const char *name, const struct rt_pin_ops *ops, void *user_data)
@@ -127,10 +125,10 @@ rt_err_t rt_pin_irq_enable(rt_base_t pin, rt_uint32_t enabled)
     return RT_ENOSYS;
 }
 /* RT-Thread Hardware PIN APIs */
-void rt_pin_mode(rt_base_t pin, rt_base_t mode)
+rt_err_t rt_pin_mode(rt_base_t pin, rt_base_t mode)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
-    _hw_pin.ops->pin_mode(&_hw_pin.parent, pin, mode);
+    return _hw_pin.ops->pin_mode(&_hw_pin.parent, pin, mode);
 }
 FINSH_FUNCTION_EXPORT_ALIAS(rt_pin_mode, pinMode, set hardware pin mode);
 
