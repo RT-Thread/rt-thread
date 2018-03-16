@@ -166,7 +166,7 @@ static rt_err_t _get_qualifier_descriptor(struct udevice* device, ureq_t setup)
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(setup != RT_NULL);
 
-    if(device->dev_qualifier)
+    if(device->dev_qualifier && device->dcd->device_is_hs)
     {
         /* send device qualifier descriptor to endpoint 0 */
         rt_usbd_ep0_write(device, (rt_uint8_t*)device->dev_qualifier,
@@ -209,6 +209,9 @@ static rt_err_t _get_descriptor(struct udevice* device, ureq_t setup)
             break;
         case USB_DESC_TYPE_DEVICEQUALIFIER:
             _get_qualifier_descriptor(device, setup);
+            break;
+        case USB_DESC_TYPE_OTHERSPEED:
+            _get_config_descriptor(device, setup);
             break;
         default:
             rt_kprintf("unsupported descriptor request\n");
