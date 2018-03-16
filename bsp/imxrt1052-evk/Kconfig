@@ -23,13 +23,15 @@ config SOC_IMXRT1052
     select ARCH_ARM_CORTEX_M7
     default y
 
-config RT_USING_UART
-    bool "Using RT_USING_UART"
-    default y
-
-if RT_USING_UART
+if RT_USING_SERIAL
 config RT_USING_UART1
     bool "Using RT_USING_UART1"
-    default y      
+    default y 
 endif
- 
+
+if RT_USING_RTC
+config RT_USING_HP_RTC
+    bool "Using RT_USING_HP_RTC"
+    default n 
+endif
+
