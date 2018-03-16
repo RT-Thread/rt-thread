@@ -114,15 +114,17 @@ static struct udevice_descriptor dev_desc =
     USB_DYNAMIC,                //bNumConfigurations;
 };
 
+//FS and HS needed
 static struct usb_qualifier_descriptor dev_qualifier =
 {
-    sizeof(dev_qualifier),
-    USB_DESC_TYPE_DEVICEQUALIFIER,
-    0x0200,
-    USB_CLASS_CDC,
-    0x00,
-    64,
-    0x01,
+    sizeof(dev_qualifier),          //bLength
+    USB_DESC_TYPE_DEVICEQUALIFIER,  //bDescriptorType
+    0x0200,                         //bcdUSB
+    USB_CLASS_CDC,                  //bDeviceClass
+    0x00,                           //bDeviceSubClass
+    0x00,                           //bDeviceProtocol
+    64,                             //bMaxPacketSize0
+    0x01,                           //bNumConfigurations
     0,
 };
 
@@ -566,7 +568,8 @@ ufunction_t rt_usbd_function_cdc_create(udevice_t device)
     
     /* create a cdc function */
     func = rt_usbd_function_new(device, &dev_desc, &ops);
-    rt_usbd_device_set_qualifier(device, &dev_qualifier);
+    //not support HS
+    //rt_usbd_device_set_qualifier(device, &dev_qualifier);
     
     /* allocate memory for cdc vcom data */
     data = (struct vcom*)rt_malloc(sizeof(struct vcom));
