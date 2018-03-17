@@ -29,6 +29,9 @@
 #include "../../libraries/ls1c_pwm.h"
 #include "../../libraries/ls1c_public.h"
 #include "../../libraries/ls1c_gpio.h"
+#include "../../libraries/ls1c_pin.h"
+
+#ifdef RT_USING_RTGUI
 
 struct vga_struct vga_mode[] =
 {
@@ -231,3 +234,30 @@ void rt_hw_dc_init(void)
 	rt_device_init(dc);
 }
 
+#include <rtgui/driver.h>
+#include "display_controller.h"
+
+/* initialize for gui driver */
+int rtgui_lcd_init(void)
+{
+    rt_device_t dc;
+       rt_kprintf("DC initied\n");
+
+    pin_set_purpose(76, PIN_PURPOSE_OTHER);
+    pin_set_remap(76, PIN_REMAP_DEFAULT);
+    
+     /* init Display Controller */
+    rt_hw_dc_init();
+
+    /* find Display Controller device */
+    dc = rt_device_find("dc");
+
+    /* set Display Controller device as rtgui graphic driver */
+    rtgui_graphic_set_device(dc);
+    
+    return 0;
+}
+
+INIT_DEVICE_EXPORT(rtgui_lcd_init);
+
+#endif
