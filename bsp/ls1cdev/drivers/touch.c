@@ -22,6 +22,8 @@
  * 2017-12-30    Sundm75       first version
  */
  
+#include <rtthread.h>
+#include <rtdevice.h>
 #include <stdbool.h>
 #include <drivers/spi.h>
 #include "ls1c.h"
@@ -30,9 +32,9 @@
 #include "drv_spi.h"
 #include "touch.h"
 
+#ifdef RT_USING_RTGUI
+
 #include <rtgui/calibration.h>
-#include <rtthread.h>
-#include <rtdevice.h>
 #include <rtgui/event.h>
 #include <rtgui/kbddef.h>
 #include <rtgui/rtgui_server.h>
@@ -605,3 +607,5 @@ rt_err_t rtgui_touch_hw_init(const char * spi_device_name)
      rt_device_init((rt_device_t)touch);
    return RT_EOK;
 }
+
+#endif
