@@ -25,6 +25,9 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "ls1c_i2c.h"  
+#include "../libraries/ls1c_pin.h"
+
+#ifdef RT_USING_I2C
 
 struct ls1c_i2c_bus
 {
@@ -119,9 +122,31 @@ static struct ls1c_i2c_bus ls1c_i2c_bus_2 =
 };
 #endif
 
-int rt_i2c_init(void)
+int ls1c_hw_i2c_init(void)
 {
     struct ls1c_i2c_bus* ls1c_i2c;
+
+#ifdef RT_USING_I2C0
+/*
+    pin_set_purpose(2, PIN_PURPOSE_OTHER);
+    pin_set_purpose(3, PIN_PURPOSE_OTHER);
+    pin_set_remap(2, PIN_REMAP_SECOND);
+    pin_set_remap(3, PIN_REMAP_SECOND);
+    */
+#endif
+#ifdef RT_USING_I2C1
+    pin_set_purpose(2, PIN_PURPOSE_OTHER);
+    pin_set_purpose(3, PIN_PURPOSE_OTHER);
+    pin_set_remap(2, PIN_REMAP_SECOND);
+    pin_set_remap(3, PIN_REMAP_SECOND);
+#endif
+#ifdef RT_USING_I2C2
+    pin_set_purpose(51, PIN_PURPOSE_OTHER);
+    pin_set_purpose(50, PIN_PURPOSE_OTHER);
+    pin_set_remap(51, PIN_REMAP_FOURTH);
+    pin_set_remap(50, PIN_REMAP_FOURTH);
+#endif
+
 
 #ifdef RT_USING_I2C0
     ls1c_i2c = &ls1c_i2c_bus_0;
@@ -145,3 +170,7 @@ int rt_i2c_init(void)
 
     return RT_EOK;
 }
+
+INIT_BOARD_EXPORT(ls1c_hw_i2c_init);
+
+#endif
