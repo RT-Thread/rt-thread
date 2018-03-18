@@ -214,7 +214,8 @@ int dfs_elm_mkfs(rt_device_t dev_id)
     int flag;
     FRESULT result;
     int index;
-
+    char logic_nbr[2] = {'0',':'};
+    
     work = rt_malloc(_MAX_SS);
     if(RT_NULL == work) {
         return -ENOMEM;
@@ -264,7 +265,8 @@ int dfs_elm_mkfs(rt_device_t dev_id)
              * on the disk, you will get a failure. so we need f_mount here,
              * just fill the FatFS[index] in elm fatfs to make mkfs work.
              */
-            f_mount(fat, "", (BYTE)index);
+            logic_nbr[0] = '0' + index;
+            f_mount(fat, logic_nbr, (BYTE)index);
         }
     }
 
@@ -273,14 +275,14 @@ int dfs_elm_mkfs(rt_device_t dev_id)
     /* [IN] Size of the allocation unit */
     /* [-]  Working buffer */
     /* [IN] Size of working buffer */
-    result = f_mkfs("", FM_ANY, 0, work, _MAX_SS);
+    result = f_mkfs(logic_nbr, FM_ANY, 0, work, _MAX_SS);
     rt_free(work); work = RT_NULL;
 
     /* check flag status, we need clear the temp driver stored in disk[] */
     if (flag == FSM_STATUS_USE_TEMP_DRIVER)
     {
         rt_free(fat);
-        f_mount(RT_NULL, "",(BYTE)index);
+        f_mount(RT_NULL, logic_nbr,(BYTE)index);
         disk[index] = RT_NULL;
         /* close device */
         rt_device_close(dev_id);
