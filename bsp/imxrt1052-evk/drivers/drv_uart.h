@@ -12,8 +12,8 @@
  * 2017-10-10     Tanek        the first version
  */
 
-#ifndef __USART_H__
-#define __USART_H__
+#ifndef __DRV_USART_H__
+#define __DRV_USART_H__
 
 #include <rthw.h>
 #include <rtthread.h>

@@ -13,7 +13,7 @@
  * 2018-03-17     laiyiketang  Add other uart.
  */
 #include <rtthread.h>
-#include "drv_usart.h"
+#include "drv_uart.h"
 
 #include "fsl_common.h"
 #include "fsl_lpuart.h"
