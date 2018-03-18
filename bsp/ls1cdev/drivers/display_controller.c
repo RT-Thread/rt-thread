@@ -241,7 +241,7 @@ void rt_hw_dc_init(void)
 int rtgui_lcd_init(void)
 {
     rt_device_t dc;
-       rt_kprintf("DC initied\n");
+    rt_kprintf("DC initied\n");
 
     pin_set_purpose(76, PIN_PURPOSE_OTHER);
     pin_set_remap(76, PIN_REMAP_DEFAULT);
