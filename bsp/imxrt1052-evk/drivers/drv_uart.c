@@ -63,7 +63,7 @@ void LPUART1_IRQHandler(void)
 #if defined(RT_USING_UART2)
 struct rt_serial_device serial2;
 
-void USART2_IRQHandler(void)
+void LPUART2_IRQHandler(void)
 {
     uart_isr(&serial2);
 }
@@ -73,7 +73,7 @@ void USART2_IRQHandler(void)
 #if defined(RT_USING_UART3)
 struct rt_serial_device serial3;
 
-void UART3_IRQHandler(void)
+void LPUART3_IRQHandler(void)
 {
     uart_isr(&serial3);
 }
@@ -83,7 +83,7 @@ void UART3_IRQHandler(void)
 #if defined(RT_USING_UART4)
 struct rt_serial_device serial4;
 
-void UART4_IRQHandler(void)
+void LPUART4_IRQHandler(void)
 {
     uart_isr(&serial4);
 }
@@ -92,7 +92,7 @@ void UART4_IRQHandler(void)
 #if defined(RT_USING_UART5)
 struct rt_serial_device serial5;
 
-void USART5_IRQHandler(void)
+void LPUART5_IRQHandler(void)
 {
     uart_isr(&serial5);
 }
@@ -102,7 +102,7 @@ void USART5_IRQHandler(void)
 #if defined(RT_USING_UART6)
 struct rt_serial_device serial6;
 
-void UART6_IRQHandler(void)
+void LPUART6_IRQHandler(void)
 {
     uart_isr(&serial6);
 }
@@ -112,7 +112,7 @@ void UART6_IRQHandler(void)
 #if defined(RT_USING_UART7)
 struct rt_serial_device serial7;
 
-void UART7_IRQHandler(void)
+void LPUART7_IRQHandler(void)
 {
     uart_isr(&serial7);
 }
@@ -122,7 +122,7 @@ void UART7_IRQHandler(void)
 #if defined(RT_USING_UART8)
 struct rt_serial_device serial8;
 
-void UART8_IRQHandler(void)
+void LPUART8_IRQHandler(void)
 {
     uart_isr(&serial8);
 }
