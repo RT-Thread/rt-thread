@@ -2186,7 +2186,7 @@ ALIGN(RT_ALIGN_SIZE)
 static rt_uint8_t usb_thread_stack[RT_USBD_THREAD_STACK_SZ];
 static struct rt_thread usb_thread;
 #define USBD_MQ_MSG_SZ  32
-#define USBD_MQ_MAX_MSG 16
+#define USBD_MQ_MAX_MSG 32
 /* internal of the message queue: every message is associated with a pointer,
  * so in order to recveive USBD_MQ_MAX_MSG messages, we have to allocate more
  * than USBD_MQ_MSG_SZ*USBD_MQ_MAX_MSG memery. */
