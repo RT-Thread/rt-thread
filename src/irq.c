@@ -29,8 +29,8 @@
 
 #ifdef RT_USING_HOOK
 
-static void (*rt_interrupt_enter_hook)(void);
-static void (*rt_interrupt_leave_hook)(void);
+void (*rt_interrupt_enter_hook)(void);
+void (*rt_interrupt_leave_hook)(void);
 
 /**
  * @ingroup Hook
@@ -71,7 +71,7 @@ volatile rt_uint8_t rt_interrupt_nest;
  *
  * @see rt_interrupt_leave
  */
-void rt_interrupt_enter(void)
+RT_WEAK void rt_interrupt_enter(void)
 {
     rt_base_t level;
 
@@ -92,7 +92,7 @@ RTM_EXPORT(rt_interrupt_enter);
  *
  * @see rt_interrupt_enter
  */
-void rt_interrupt_leave(void)
+RT_WEAK void rt_interrupt_leave(void)
 {
     rt_base_t level;
 

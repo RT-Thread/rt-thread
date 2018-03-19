@@ -134,6 +134,43 @@ struct stack_frame_fpu
     struct exception_stack_frame_fpu exception_stack_frame;
 };
 
+extern volatile rt_uint8_t rt_interrupt_nest;
+extern void (*rt_interrupt_enter_hook)(void);
+extern void (*rt_interrupt_leave_hook)(void);
+extern rt_uint8_t rt_faab(volatile rt_uint8_t* val, rt_base_t addend);
+
+/**
+ * This function will be invoked by BSP, when enter interrupt service routine
+ *
+ * @note please don't invoke this routine in application
+ *
+ * @see rt_interrupt_leave
+ */
+void rt_interrupt_enter(void)
+{
+    RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq coming..., irq nest:%d\n",
+                                rt_interrupt_nest));
+    
+    rt_faab(&rt_interrupt_nest, 1);
+    RT_OBJECT_HOOK_CALL(rt_interrupt_enter_hook,());
+}
+
+/**
+ * This function will be invoked by BSP, when leave interrupt service routine
+ *
+ * @note please don't invoke this routine in application
+ *
+ * @see rt_interrupt_enter
+ */
+void rt_interrupt_leave(void)
+{
+    RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq leave, irq nest:%d\n",
+                                rt_interrupt_nest));
+
+    rt_faab(&rt_interrupt_nest, -1);
+    RT_OBJECT_HOOK_CALL(rt_interrupt_leave_hook,());
+}
+
 rt_uint8_t *rt_hw_stack_init(void       *tentry,
                              void       *parameter,
                              rt_uint8_t *stack_addr,
