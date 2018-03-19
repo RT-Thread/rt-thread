@@ -1,5 +1,5 @@
 /*
- * File      : usart.c
+ * File      : drv_uart.c
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006-2013, RT-Thread Development Team
  *
@@ -10,9 +10,10 @@
  * Change Logs:
  * Date           Author       Notes
  * 2017-10-10     Tanek        the first version
+ * 2018-03-17     laiyiketang  Add other uart.
  */
 #include <rtthread.h>
-#include "usart.h"
+#include "drv_uart.h"
 
 #include "fsl_common.h"
 #include "fsl_lpuart.h"
@@ -20,13 +21,20 @@
 
 #ifdef RT_USING_SERIAL
 
-#if !defined(RT_USING_UART0) && !defined(RT_USING_UART1) && \
-    !defined(RT_USING_UART2) && !defined(RT_USING_UART3) && \
-    !defined(RT_USING_UART4) && !defined(RT_USING_UART5) && \
-    !defined(RT_USING_UART6) && !defined(RT_USING_UART7)
+/* GPIO外设时钟会在LPUART_Init中自动配置, 如果定义了以下宏则不会自动配置 */
+#if defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL
+#error "Please don't define 'FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL'!"
+#endif
+
+#if !defined(RT_USING_UART1) && !defined(RT_USING_UART2) && \
+    !defined(RT_USING_UART3) && !defined(RT_USING_UART4) && \
+    !defined(RT_USING_UART5) && !defined(RT_USING_UART6) && \
+    !defined(RT_USING_UART7) && !defined(RT_USING_UART8)
 #error "Please define at least one UARTx"
 
 #endif
+
+
 
 #include <rtdevice.h>
 
@@ -55,7 +63,7 @@ void LPUART1_IRQHandler(void)
 #if defined(RT_USING_UART2)
 struct rt_serial_device serial2;
 
-void USART2_IRQHandler(void)
+void LPUART2_IRQHandler(void)
 {
     uart_isr(&serial2);
 }
@@ -65,7 +73,7 @@ void USART2_IRQHandler(void)
 #if defined(RT_USING_UART3)
 struct rt_serial_device serial3;
 
-void UART3_IRQHandler(void)
+void LPUART3_IRQHandler(void)
 {
     uart_isr(&serial3);
 }
@@ -75,7 +83,7 @@ void UART3_IRQHandler(void)
 #if defined(RT_USING_UART4)
 struct rt_serial_device serial4;
 
-void UART4_IRQHandler(void)
+void LPUART4_IRQHandler(void)
 {
     uart_isr(&serial4);
 }
@@ -84,7 +92,7 @@ void UART4_IRQHandler(void)
 #if defined(RT_USING_UART5)
 struct rt_serial_device serial5;
 
-void USART5_IRQHandler(void)
+void LPUART5_IRQHandler(void)
 {
     uart_isr(&serial5);
 }
@@ -94,7 +102,7 @@ void USART5_IRQHandler(void)
 #if defined(RT_USING_UART6)
 struct rt_serial_device serial6;
 
-void UART6_IRQHandler(void)
+void LPUART6_IRQHandler(void)
 {
     uart_isr(&serial6);
 }
@@ -104,7 +112,7 @@ void UART6_IRQHandler(void)
 #if defined(RT_USING_UART7)
 struct rt_serial_device serial7;
 
-void UART7_IRQHandler(void)
+void LPUART7_IRQHandler(void)
 {
     uart_isr(&serial7);
 }
@@ -114,7 +122,7 @@ void UART7_IRQHandler(void)
 #if defined(RT_USING_UART8)
 struct rt_serial_device serial8;
 
-void UART8_IRQHandler(void)
+void LPUART8_IRQHandler(void)
 {
     uart_isr(&serial8);
 }
@@ -122,14 +130,70 @@ void UART8_IRQHandler(void)
 #endif /* RT_USING_UART8 */
 
 static const struct imxrt_uart uarts[] = {
-    #ifdef RT_USING_UART1
+#ifdef RT_USING_UART1
     {
         LPUART1,
         LPUART1_IRQn,
         &serial1,
         "uart1",
     },
-    #endif
+#endif
+#ifdef RT_USING_UART2
+    {
+        LPUART2,
+        LPUART2_IRQn,
+        &serial2,
+        "uart2",
+    },
+#endif
+#ifdef RT_USING_UART3
+    {
+        LPUART3,
+        LPUART3_IRQn,
+        &serial3,
+        "uart3",
+    },
+#endif
+#ifdef RT_USING_UART4
+    {
+        LPUART4,
+        LPUART4_IRQn,
+        &serial4,
+        "uart4",
+    },
+#endif
+#ifdef RT_USING_UART5
+    {
+        LPUART5,
+        LPUART5_IRQn,
+        &serial5,
+        "uart5",
+    },
+#endif
+#ifdef RT_USING_UART6
+    {
+        LPUART6,
+        LPUART6_IRQn,
+        &serial6,
+        "uart6",
+    },
+#endif
+#ifdef RT_USING_UART7
+    {
+        LPUART7,
+        LPUART7_IRQn,
+        &serial7,
+        "uart7",
+    },
+#endif
+#ifdef RT_USING_UART8
+    {
+        LPUART8,
+        LPUART8_IRQn,
+        &serial8,
+        "uart8",
+    },
+#endif
 
 };
 
@@ -164,19 +228,20 @@ uint32_t BOARD_DebugConsoleSrcFreq(void)
 */
 void imxrt_uart_gpio_init(struct imxrt_uart *uart)
 {
-    if (uart->uart_base == LPUART1)
+    if (uart->uart_base != RT_NULL)
     {
-        CLOCK_EnableClock(kCLOCK_Iomuxc);          /* iomuxc clock (iomuxc_clk_enable): 0x03u */
+#ifdef RT_USING_UART1
+        CLOCK_EnableClock(kCLOCK_Iomuxc);           /* iomuxc clock (iomuxc_clk_enable): 0x03u */
 
         IOMUXC_SetPinMux(
-          IOMUXC_GPIO_AD_B0_12_LPUART1_TX,        /* GPIO_AD_B0_12 is configured as LPUART1_TX */
-          0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+            IOMUXC_GPIO_AD_B0_12_LPUART1_TX,        /* GPIO_AD_B0_12 is configured as LPUART1_TX */
+            0U);                                    /* Software Input On Field: Input Path is determined by functionality */
         IOMUXC_SetPinMux(
-          IOMUXC_GPIO_AD_B0_13_LPUART1_RX,        /* GPIO_AD_B0_13 is configured as LPUART1_RX */
-          0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+            IOMUXC_GPIO_AD_B0_13_LPUART1_RX,        /* GPIO_AD_B0_13 is configured as LPUART1_RX */
+            0U);                                    /* Software Input On Field: Input Path is determined by functionality */
         IOMUXC_SetPinConfig(
-          IOMUXC_GPIO_AD_B0_12_LPUART1_TX,        /* GPIO_AD_B0_12 PAD functional properties : */
-          0x10B0u);                               /* Slew Rate Field: Slow Slew Rate
+            IOMUXC_GPIO_AD_B0_12_LPUART1_TX,        /* GPIO_AD_B0_12 PAD functional properties : */
+            0x10B0u);                               /* Slew Rate Field: Slow Slew Rate
                                                      Drive Strength Field: R0/6
                                                      Speed Field: medium(100MHz)
                                                      Open Drain Enable Field: Open Drain Disabled
@@ -185,8 +250,8 @@ void imxrt_uart_gpio_init(struct imxrt_uart *uart)
                                                      Pull Up / Down Config. Field: 100K Ohm Pull Down
                                                      Hyst. Enable Field: Hysteresis Disabled */
         IOMUXC_SetPinConfig(
-          IOMUXC_GPIO_AD_B0_13_LPUART1_RX,        /* GPIO_AD_B0_13 PAD functional properties : */
-          0x10B0u);                               /* Slew Rate Field: Slow Slew Rate
+            IOMUXC_GPIO_AD_B0_13_LPUART1_RX,        /* GPIO_AD_B0_13 PAD functional properties : */
+            0x10B0u);                               /* Slew Rate Field: Slow Slew Rate
                                                      Drive Strength Field: R0/6
                                                      Speed Field: medium(100MHz)
                                                      Open Drain Enable Field: Open Drain Disabled
@@ -194,6 +259,128 @@ void imxrt_uart_gpio_init(struct imxrt_uart *uart)
                                                      Pull / Keep Select Field: Keeper
                                                      Pull Up / Down Config. Field: 100K Ohm Pull Down
                                                      Hyst. Enable Field: Hysteresis Disabled */
+#endif
+#ifdef RT_USING_UART2
+        CLOCK_EnableClock(kCLOCK_Iomuxc);
+
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_AD_B1_02_LPUART2_TX,
+            0U);
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_AD_B1_03_LPUART2_RX,
+            0U);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_AD_B1_02_LPUART2_TX,
+            0x10B0u);
+
+
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_AD_B1_03_LPUART2_RX,
+            0x10B0u);
+
+#endif
+#ifdef RT_USING_UART3
+        CLOCK_EnableClock(kCLOCK_Iomuxc);
+
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_AD_B1_06_LPUART3_TX,
+            0U);
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_AD_B1_07_LPUART3_RX,
+            0U);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_AD_B1_06_LPUART3_TX,
+            0x10B0u);
+
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_AD_B1_07_LPUART3_RX,
+            0x10B0u);
+#endif
+#ifdef RT_USING_UART4
+        CLOCK_EnableClock(kCLOCK_Iomuxc);
+
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_B1_00_LPUART4_TX,
+            0U);
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_B1_01_LPUART4_RX,
+            0U);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_B1_00_LPUART4_TX,
+            0x10B0u);
+
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_B1_01_LPUART4_RX,
+            0x10B0u);
+#endif
+#ifdef RT_USING_UART5
+        CLOCK_EnableClock(kCLOCK_Iomuxc);
+
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_B1_12_LPUART5_TX,
+            0U);
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_B1_13_LPUART5_RX,
+            0U);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_B1_12_LPUART5_TX,
+            0x10B0u);
+
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_B1_13_LPUART5_RX,
+            0x10B0u);
+#endif
+#ifdef RT_USING_UART6
+        CLOCK_EnableClock(kCLOCK_Iomuxc);
+
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_AD_B0_02_LPUART6_TX,
+            0U);
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_AD_B0_03_LPUART6_RX,
+            0U);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_AD_B0_02_LPUART6_TX,
+            0x10B0u);
+
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_AD_B0_03_LPUART6_RX,
+            0x10B0u);
+#endif
+#ifdef RT_USING_UART7
+        CLOCK_EnableClock(kCLOCK_Iomuxc);
+
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_EMC_31_LPUART7_TX,
+            0U);
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_EMC_32_LPUART7_RX,
+            0U);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_EMC_31_LPUART7_TX,
+            0x10B0u);
+
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_EMC_32_LPUART7_RX,
+            0x10B0u);
+#endif
+#ifdef RT_USING_UART8
+        CLOCK_EnableClock(kCLOCK_Iomuxc);
+
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_AD_B1_10_LPUART8_TX,
+            0U);
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_AD_B1_11_LPUART8_RX,
+            0U);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_AD_B1_10_LPUART8_TX,
+            0x10B0u);
+
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_AD_B1_11_LPUART8_RX,
+            0x10B0u);
+#endif
     }
     else
     {
@@ -324,10 +511,10 @@ static void uart_isr(struct rt_serial_device *serial)
     LPUART_Type *base;
 
     RT_ASSERT(serial != RT_NULL);
-    
+
     uart = (struct imxrt_uart *) serial->parent.user_data;
     RT_ASSERT(uart != RT_NULL);
-    
+
     base = uart->uart_base;
     RT_ASSERT(base != RT_NULL);
 
@@ -339,7 +526,7 @@ static void uart_isr(struct rt_serial_device *serial)
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
-    
+
     /* If RX overrun. */
     if (LPUART_STAT_OR_MASK & base->STAT)
     {
@@ -363,7 +550,6 @@ int imxrt_hw_usart_init(void)
 {
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     int i;
-
     for (i = 0; i < sizeof(uarts) / sizeof(uarts[0]); i++)
     {
         uarts[i].serial->ops    = &imxrt_uart_ops;
