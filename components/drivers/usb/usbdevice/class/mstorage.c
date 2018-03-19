@@ -723,7 +723,7 @@ static rt_bool_t _cbw_verify(ufunction_t func, struct scsi_cmd* cmd,
     if(cmd->cmd_len != cbw->cb_len)
     {
         rt_kprintf("cb_len error\n");
-        cmd->cmd_len = cbw->cb_len;
+        cbw->cb_len = cmd->cmd_len;
     }
 
     if(cbw->xfer_len > 0 && data->cb_data_size == 0)
