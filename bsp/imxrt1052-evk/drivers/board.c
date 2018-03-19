@@ -16,7 +16,7 @@
 #include <rtthread.h>
 
 #include "board.h"
-#include "usart.h"
+#include "drv_uart.h"
 
 static struct rt_memheap system_heap;
 

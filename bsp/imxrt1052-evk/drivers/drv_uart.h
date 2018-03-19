@@ -1,5 +1,5 @@
 /*
- * File      : usart.h
+ * File      : drv_uart.h
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2009, RT-Thread Development Team
  *
@@ -12,8 +12,8 @@
  * 2017-10-10     Tanek        the first version
  */
 
-#ifndef __USART_H__
-#define __USART_H__
+#ifndef __DRV_USART_H__
+#define __DRV_USART_H__
 
 #include <rthw.h>
 #include <rtthread.h>
