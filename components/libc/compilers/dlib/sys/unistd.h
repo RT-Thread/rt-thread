@@ -2,6 +2,11 @@
 #define _SYS_UNISTD_H
 
 #ifdef RT_USING_DFS
+
+#define STDIN_FILENO    0       /* standard input file descriptor */
+#define STDOUT_FILENO   1       /* standard output file descriptor */
+#define STDERR_FILENO   2       /* standard error file descriptor */
+
 #include <dfs_posix.h>
 #else
 #define	_FREAD		0x0001	/* read enabled */
