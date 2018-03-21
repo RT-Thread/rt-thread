@@ -333,7 +333,7 @@
               <MiscControls>--library_interface=armcc --library_type=standardlib --diag_suppress=66,1296,186</MiscControls>
               <Define>SKIP_SYSCLK_INIT, CPU_MIMXRT1052DVL6A, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1, EVK_MCIMXRM, FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE, RT_USING_ARM_LIBC</Define>
               <Undefine />
-              <IncludePath>applications;.;drivers;Libraries;Libraries\drivers;Libraries\utilities;Libraries\CMSIS\Include;..\..\include;..\..\libcpu\arm\cortex-m7;..\..\libcpu\arm\common;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\dfs\filesystems\elmfat;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\armlibc;..\..\components\net\lwip-2.0.2\src;..\..\components\net\lwip-2.0.2\src\include;..\..\components\net\lwip-2.0.2\src\include\ipv4;..\..\components\net\lwip-2.0.2\src\arch\include;..\..\components\net\lwip-2.0.2\src\include\netif;..\..\components\net\lwip-2.0.2\src\include\posix</IncludePath>
+              <IncludePath>applications;.;drivers;Libraries;Libraries\drivers;Libraries\utilities;Libraries\CMSIS\Include;..\..\include;..\..\libcpu\arm\cortex-m7;..\..\libcpu\arm\common;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\dfs\filesystems\elmfat;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\armlibc;..\..\components\net\lwip-2.0.2\src;..\..\components\net\lwip-2.0.2\src\include;..\..\components\net\lwip-2.0.2\src\include\ipv4;..\..\components\net\lwip-2.0.2\src\arch\include;..\..\components\net\lwip-2.0.2\src\include\netif;..\..\components\net\lwip-2.0.2\src\include\posix</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -416,9 +416,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>usart.c</FileName>
+              <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\usart.c</FilePath>
+              <FilePath>drivers\drv_uart.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -440,6 +440,13 @@
               <FileName>drv_pin.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_pin.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_hp_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_hp_rtc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1113,6 +1120,13 @@
               <FileName>pin.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\misc\pin.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\rtc\rtc.c</FilePath>
             </File>
           </Files>
           <Files>

@@ -140,6 +140,7 @@ struct udcd
     struct uendpoint ep0;
     uep0_stage_t stage;
     struct ep_id* ep_pool;
+    rt_uint8_t device_is_hs;
 };
 typedef struct udcd* udcd_t;
 
