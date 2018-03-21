@@ -88,8 +88,8 @@ static struct udevice_descriptor dev_desc =
     USB_DESC_TYPE_DEVICE,       //type;
     USB_BCD_VERSION,            //bcdUSB;
     USB_CLASS_MASS_STORAGE,     //bDeviceClass;
-    0x00,                       //bDeviceSubClass;
-    0x00,                       //bDeviceProtocol;
+    0x06,                       //bDeviceSubClass;
+    0x50,                       //bDeviceProtocol;
     0x40,                       //bMaxPacketSize0;
     _VENDOR_ID,                 //idVendor;
     _PRODUCT_ID,                //idProduct;
@@ -100,15 +100,17 @@ static struct udevice_descriptor dev_desc =
     USB_DYNAMIC,                //bNumConfigurations;
 };
 
+//FS and HS needed
 static struct usb_qualifier_descriptor dev_qualifier =
 {
-    sizeof(dev_qualifier),
-    USB_DESC_TYPE_DEVICEQUALIFIER,
-    0x0200,
-    USB_CLASS_MASS_STORAGE,
-    0x00,
-    64,
-    0x01,
+    sizeof(dev_qualifier),          //bLength
+    USB_DESC_TYPE_DEVICEQUALIFIER,  //bDescriptorType
+    0x0200,                         //bcdUSB
+    USB_CLASS_MASS_STORAGE,         //bDeviceClass
+    0x06,                           //bDeviceSubClass
+    0x50,                           //bDeviceProtocol
+    64,                             //bMaxPacketSize0
+    0x01,                           //bNumConfigurations
     0,
 };
 
@@ -141,14 +143,14 @@ const static struct umass_descriptor _mass_desc =
     USB_DESC_TYPE_ENDPOINT,     //type;
     USB_DYNAMIC | USB_DIR_OUT,  //bEndpointAddress;
     USB_EP_ATTR_BULK,           //bmAttributes;
-    0x40,                       //wMaxPacketSize;
+    USB_DYNAMIC,                //wMaxPacketSize;
     0x00,                       //bInterval;
 
     USB_DESC_LENGTH_ENDPOINT,   //bLength;
     USB_DESC_TYPE_ENDPOINT,     //type;
     USB_DYNAMIC | USB_DIR_IN,   //bEndpointAddress;
     USB_EP_ATTR_BULK,           //bmAttributes;
-    0x40,                       //wMaxPacketSize;
+    USB_DYNAMIC,                //wMaxPacketSize;
     0x00,                       //bInterval;
 };
 
@@ -1043,11 +1045,13 @@ static struct ufunction_ops ops =
     _function_disable,
     RT_NULL,
 };
-static rt_err_t _mstorage_descriptor_config(umass_desc_t desc, rt_uint8_t cintf_nr)
+static rt_err_t _mstorage_descriptor_config(umass_desc_t desc, rt_uint8_t cintf_nr, rt_uint8_t device_is_hs)
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
     desc->iad_desc.bFirstInterface = cintf_nr;
 #endif
+    desc->ep_out_desc.wMaxPacketSize = device_is_hs ? 512 : 64;
+    desc->ep_in_desc.wMaxPacketSize = device_is_hs ? 512 : 64;
     return RT_EOK;
 }
 /**
@@ -1090,7 +1094,7 @@ ufunction_t rt_usbd_function_mstorage_create(udevice_t device)
     rt_usbd_altsetting_config_descriptor(setting, &_mass_desc, (rt_off_t)&((umass_desc_t)0)->intf_desc);
 
     /* configure the msc interface descriptor */
-    _mstorage_descriptor_config(setting->desc, intf->intf_num);
+    _mstorage_descriptor_config(setting->desc, intf->intf_num, device->dcd->device_is_hs);
 
     /* create a bulk out and a bulk in endpoint */
     mass_desc = (umass_desc_t)setting->desc;

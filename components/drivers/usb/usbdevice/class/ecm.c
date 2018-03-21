@@ -41,7 +41,7 @@ struct rt_ecm_eth
     rt_uint8_t              dev_addr[MAX_ADDR_LEN];
 
     ALIGN(4)
-    rt_uint8_t              rx_pool[64];
+    rt_uint8_t              rx_pool[512];
     ALIGN(4)
     rt_size_t               rx_size;
     ALIGN(4)
@@ -147,14 +147,14 @@ const static struct ucdc_data_descriptor _data_desc =
     USB_DESC_TYPE_ENDPOINT,
     USB_DIR_OUT | USB_DYNAMIC,
     USB_EP_ATTR_BULK,
-    USB_CDC_BUFSIZE,
+    USB_DYNAMIC,
     0x00,
     /* endpoint, bulk in */
     USB_DESC_LENGTH_ENDPOINT,
     USB_DESC_TYPE_ENDPOINT,
     USB_DYNAMIC | USB_DIR_IN,
     USB_EP_ATTR_BULK,
-    USB_CDC_BUFSIZE,
+    USB_DYNAMIC,
     0x00,
 };
 
@@ -170,17 +170,20 @@ const static char* _ustring[] =
 };
 
 ALIGN(4)
+//FS and HS needed
 static struct usb_qualifier_descriptor dev_qualifier =
 {
-    sizeof(dev_qualifier),
-    USB_DESC_TYPE_DEVICEQUALIFIER,
-    0x0200,
-    USB_CLASS_CDC,
-    0x00,
-    64,
-    0x01,
+    sizeof(dev_qualifier),          //bLength
+    USB_DESC_TYPE_DEVICEQUALIFIER,  //bDescriptorType
+    0x0200,                         //bcdUSB
+    USB_CLASS_CDC,                  //bDeviceClass
+    USB_CDC_SUBCLASS_ETH,           //bDeviceSubClass
+    USB_CDC_PROTOCOL_NONE,          //bDeviceProtocol
+    64,                             //bMaxPacketSize0
+    0x01,                           //bNumConfigurations
     0,
 };
+
 static rt_err_t _cdc_send_notifi(ufunction_t func,ucdc_notification_code_t notifi,rt_uint16_t wValue,rt_uint16_t wLength)
 {
     static struct ucdc_management_element_notifications _notifi;
@@ -472,7 +475,7 @@ static struct ufunction_ops ops =
  *
  * @return RT_EOK on successful.
  */
-static rt_err_t _cdc_descriptor_config(ucdc_comm_desc_t comm, rt_uint8_t cintf_nr, ucdc_data_desc_t data, rt_uint8_t dintf_nr)
+static rt_err_t _cdc_descriptor_config(ucdc_comm_desc_t comm, rt_uint8_t cintf_nr, ucdc_data_desc_t data, rt_uint8_t dintf_nr, rt_uint8_t device_is_hs)
 {
     comm->call_mgmt_desc.data_interface = dintf_nr;
     comm->union_desc.master_interface = cintf_nr;
@@ -480,7 +483,8 @@ static rt_err_t _cdc_descriptor_config(ucdc_comm_desc_t comm, rt_uint8_t cintf_n
 #ifdef RT_USB_DEVICE_COMPOSITE
     comm->iad_desc.bFirstInterface = cintf_nr;
 #endif
-
+    data->ep_out_desc.wMaxPacketSize = device_is_hs ? 512 : 64;
+    data->ep_in_desc.wMaxPacketSize = device_is_hs ? 512 : 64;
     return RT_EOK;
 }
 
@@ -532,7 +536,7 @@ ufunction_t rt_usbd_function_ecm_create(udevice_t device)
                                          (rt_off_t)&((ucdc_eth_desc_t)0)->intf_desc);
     rt_usbd_altsetting_config_descriptor(data_setting, &_data_desc, 0);
     /* configure the cdc interface descriptor */
-    _cdc_descriptor_config(comm_setting->desc, intf_comm->intf_num, data_setting->desc, intf_data->intf_num);
+    _cdc_descriptor_config(comm_setting->desc, intf_comm->intf_num, data_setting->desc, intf_data->intf_num, device->dcd->device_is_hs);
 
     /* create a command endpoint */
     comm_desc = (ucdc_eth_desc_t)comm_setting->desc;

@@ -7,7 +7,7 @@ cwd     = os.path.join(str(Dir('#')), 'drivers')
 # add the general drivers.
 src = Split("""
 board.c
-usart.c
+drv_uart.c
 hyper_flash_boot.c
 drv_sdram.c
 """)
@@ -17,6 +17,9 @@ CPPDEFINES = []
 
 if GetDepend('RT_USING_PIN'):
     src += ['drv_pin.c']
+
+if GetDepend('RT_USING_HP_RTC'):
+    src += ['drv_hp_rtc.c']
 
 if GetDepend('RT_USING_LWIP'):
     src += ['drv_eth.c', 'fsl_phy.c']
