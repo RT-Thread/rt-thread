@@ -5,9 +5,6 @@ ARCH='arm'
 CPU='cortex-m7'
 CROSS_TOOL='keil'
 
-if os.getenv('RTT_CC'):
-	CROSS_TOOL = os.getenv('RTT_CC')
-
 if CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'C:/Keil_v5'
@@ -48,7 +45,6 @@ if PLATFORM == 'armcc':
     CFLAGS += ' --c99'
 
     POST_ACTION = 'fromelf -z $TARGET'
-    # POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 else:
 	print("only support armcc in this bsp")
 	exit(-1)
