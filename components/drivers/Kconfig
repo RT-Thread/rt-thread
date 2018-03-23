@@ -90,6 +90,7 @@ config RT_USING_RTC
         default n
     config RTC_SYNC_USING_NTP
         bool "Using NTP auto sync RTC time"
+        select PKG_USING_NETUTILS
         select PKG_NETUTILS_NTP
         default n
         
