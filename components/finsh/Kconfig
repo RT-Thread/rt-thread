@@ -27,7 +27,7 @@ config FINSH_USING_DESCRIPTION
     default y
 
 config FINSH_ECHO_DISABLE_DEFAULT
-    bool "Disable the command echo mode or not in default"
+    bool "Disable the echo mode in default"
     default n
     
 config FINSH_THREAD_PRIORITY
