@@ -183,7 +183,7 @@ rt_err_t rt_usb_device_init(void)
 #ifdef RT_USB_DEVICE_COMPOSITE
     rt_usbd_device_set_descriptor(udevice, &compsit_desc);
     rt_usbd_device_set_string(udevice, ustring);
-    rt_usbd_device_set_qualifier(device, &dev_qualifier);
+    rt_usbd_device_set_qualifier(udevice, &dev_qualifier);
 #else
     rt_usbd_device_set_descriptor(udevice, func->dev_desc);
 #endif

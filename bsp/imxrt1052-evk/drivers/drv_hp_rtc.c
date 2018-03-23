@@ -61,7 +61,6 @@ static int set_timestamp(time_t timestamp)
     return RT_EOK;
 }
 
-/* 驱动接口 */
 static rt_err_t rt1052_hp_rtc_init(rt_device_t dev)
 {
     snvs_hp_rtc_config_t snvsRtcConfig;
@@ -112,7 +111,6 @@ static rt_err_t rt1052_hp_rtc_control(rt_device_t dev, int cmd, void *args)
         }
         break;
             
-        /* 无效参数 */
         default:
             return RT_EINVAL; 
     }

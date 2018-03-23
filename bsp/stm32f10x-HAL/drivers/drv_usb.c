@@ -28,6 +28,7 @@ static struct ep_id _ep_pool[] =
     {0x1,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
     {0x2,  USB_EP_ATTR_INT,         USB_DIR_OUT,    64, ID_UNASSIGNED},
     {0x2,  USB_EP_ATTR_INT,         USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x3,  USB_EP_ATTR_INT,         USB_DIR_IN,     64, ID_UNASSIGNED},
     {0xFF, USB_EP_ATTR_TYPE_MASK,   USB_DIR_MASK,   0,  ID_ASSIGNED  },
 };
 
@@ -234,6 +235,7 @@ static rt_err_t _init(rt_device_t device)
     HAL_PCDEx_PMAConfig(pcd , 0x01 , PCD_SNG_BUF, 0x118);
     HAL_PCDEx_PMAConfig(pcd , 0x82 , PCD_SNG_BUF, 0xD8);   
     HAL_PCDEx_PMAConfig(pcd , 0x02 , PCD_SNG_BUF, 0x158);
+    HAL_PCDEx_PMAConfig(pcd , 0x83 , PCD_SNG_BUF, 0x198);
     HAL_PCD_Start(pcd);
 
     return RT_EOK;
