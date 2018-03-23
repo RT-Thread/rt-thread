@@ -27,6 +27,13 @@ if GetDepend('RT_USING_LWIP'):
     
 if GetDepend('RT_USING_SDIO'):
     src += ['drv_sdio.c']
+if GetDepend('RT_USING_USB_DEVICE'):
+    src += Glob('usb/phy/*.c')
+    CPPDEFINES += ['ENDIANNESS']
+    
+if GetDepend('RT_USING_USB_DEVICE'):
+    src += ['drv_usbd.c']
+    src += Glob('usb/device/*.c')
     
 if GetDepend('RT_USING_RTGUI') or GetDepend('PKG_USING_GUIENGINE'):
     src += ['drv_lcd.c', 'drv_ft5406.c', 'drv_i2c.c']
