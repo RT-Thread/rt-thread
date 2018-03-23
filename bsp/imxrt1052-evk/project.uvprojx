@@ -8,11 +8,13 @@
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>5060528::V5.06 update 5 (build 528)::ARMCC</pCCUsed>
+      <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>MIMXRT1052:M7</Device>
           <Vendor>NXP</Vendor>
-          <PackID>NXP.iMXRT_DFP.1.0.1</PackID>
+          <PackID>NXP.iMXRT_DFP.1.0.2</PackID>
+          <PackURL>http://mcuxpresso.nxp.com/cmsis_pack/repo/</PackURL>
           <Cpu>IRAM(0x20000000,0x00060000) IRAM2(0x00000000,0x00020000) CPUTYPE("Cortex-M7") FPU3(SFPU) CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec />
           <StartupFile />
@@ -414,9 +416,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>usart.c</FileName>
+              <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\usart.c</FilePath>
+              <FilePath>drivers\drv_uart.c</FilePath>
             </File>
           </Files>
           <Files>
