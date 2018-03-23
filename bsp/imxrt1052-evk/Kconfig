@@ -35,3 +35,16 @@ config RT_USING_HP_RTC
     default n 
 endif
 
+if RT_USING_USB_DEVICE
+    choice
+        prompt "select usb device controller"
+        default RT_USING_EHCI0_AS_DEVICE
+
+        config RT_USING_EHCI0_AS_DEVICE
+            bool "set EHCI0 as device"
+        config RT_USING_EHCI1_AS_DEVICE
+            bool "set EHCI1 as device"
+    endchoice
+endif
+
+
