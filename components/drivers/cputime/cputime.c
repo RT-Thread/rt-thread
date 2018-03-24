@@ -47,7 +47,7 @@ float clock_cpu_getres(void)
  *
  * @return the cpu tick
  */
-uint32_t clock_cpu_gettime(void)
+rt_uint32_t clock_cpu_gettime(void)
 {
     if (_cputime_ops)
         return _cputime_ops->cputime_gettime();
@@ -64,7 +64,7 @@ uint32_t clock_cpu_gettime(void)
  *
  * @return the microsecond
  */
-uint32_t clock_cpu_microsecond(uint32_t cpu_tick)
+rt_uint32_t clock_cpu_microsecond(rt_uint32_t cpu_tick)
 {
     float unit = clock_cpu_getres();
 
@@ -79,7 +79,7 @@ uint32_t clock_cpu_microsecond(uint32_t cpu_tick)
  *
  * @return the millisecond
  */
-uint32_t clock_cpu_millisecond(uint32_t cpu_tick)
+rt_uint32_t clock_cpu_millisecond(rt_uint32_t cpu_tick)
 {
     float unit = clock_cpu_getres();
 
