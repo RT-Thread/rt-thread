@@ -38,6 +38,11 @@ xMBMasterPortEventInit( void )
     return TRUE;
 }
 
+void vMBMasterPortEventClose(void)
+{
+    rt_event_detach(&xMasterOsEvent);
+}
+
 BOOL
 xMBMasterPortEventPost( eMBMasterEventType eEvent )
 {
@@ -109,6 +114,17 @@ void vMBMasterRunResRelease( void )
 {
     /* release resource */
     rt_sem_release(&xMasterRunRes);
+}
+
+/**
+ * This function is detach Mobus Master running resource.
+ * Note:The resource is define by Operating System.If you not use OS this function can be empty.
+ *
+ */
+void vMBMasterOSResDelete (void)
+{
+    /* detach resource */
+    rt_sem_detach(&xMasterRunRes);
 }
 
 /**
