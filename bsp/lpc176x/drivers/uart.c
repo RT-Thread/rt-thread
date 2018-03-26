@@ -52,9 +52,83 @@ struct rt_uart_lpc
     struct rt_device parent;
 
     /* buffer for reception */
-    rt_uint8_t read_index, save_index;
+    //rt_uint8_t read_index, save_index;
+	rt_uint16_t read_index, save_index;		//fix here 8bit length
     rt_uint8_t rx_buffer[RT_UART_RX_BUFFER_SIZE];
 } uart_device;
+
+ //get the precise bps settings
+void rt_uart_precise_baudset(rt_uint32_t uartclk, rt_uint32_t bps, rt_uint8_t *m_fdr, rt_uint32_t *m_fdiv)
+{
+	typedef struct
+	{
+		rt_uint8_t Div: 4; 
+		rt_uint8_t Mul: 4; 
+	} rt_uart_dcm_tbl;
+
+	//1-[000-999]+\,
+	rt_uart_dcm_tbl const tbl[] =
+	{
+		{ 0, 1 }, { 1, 15}, { 1, 14}, { 1, 13},
+		{ 1, 12}, { 1, 11}, { 1, 10}, { 1, 9 },
+		{ 1, 8 }, { 2, 15}, { 1, 7 }, { 2, 13},
+		{ 1, 6 }, { 2, 11}, { 1, 5 }, { 3, 14},
+		{ 2, 9 }, { 3, 13}, { 1, 4 }, { 4, 15},
+		{ 3, 11}, { 2, 7 }, { 3, 10}, { 4, 13},
+		{ 1, 3 }, { 5, 14}, { 4, 11}, { 3, 8 },
+		{ 5, 13}, { 2, 5 }, { 5, 12}, { 3, 7 },
+		{ 4, 9 }, { 5, 11}, { 6, 13}, { 7, 15},//-----------4*9
+		{ 1, 2 }, { 8, 15}, { 7, 13}, { 6, 11},
+		{ 5, 9 }, { 4, 7 }, { 7, 12}, { 3, 5 },
+		{ 8, 13}, { 5, 8 }, { 7, 11}, { 9, 14},
+		{ 2, 3 }, { 9, 13}, { 7, 10}, { 5, 7 },
+		{ 8, 11}, { 11, 15}, { 3, 4 }, { 10, 13},
+		{ 7, 9 }, { 11, 14}, { 4, 5 }, { 9, 11},
+		{ 5, 6 }, { 11, 13}, { 6, 7 }, { 13, 15},
+		{ 7, 8 }, { 8, 9 }, { 9, 10}, { 10, 11},
+		{ 11, 12}, { 12, 13}, { 13, 14}, { 14, 15},
+	};
+
+	rt_uint8_t i = 0, k = 0, j = 0;
+	rt_uint8_t m_err[72] = {0};
+
+	rt_uint32_t fDiv, uDLest;
+	rt_uint32_t uartClock = uartclk;//SystemCoreClock / 4; // get clk
+
+	float fFRest = 1.5;// tFRest = 1.5, tAbs, min;
+
+
+	if (uartClock % (16 * bps) == 0) // PCLK / (16*bps)
+	{
+		m_fdr[0] = 0x10;// shut down
+		m_fdiv[0] = (uartClock >> 4) / ( bps );
+		return;
+	}
+
+	k = 0xff;
+	for(i = 0; i < 72; i++)				//
+	{
+		uDLest = (uint32_t)(uartClock * tbl[i].Mul / (16 * bps * (tbl[i].Mul + tbl[i].Div)));
+		fFRest = (float)(uartClock * tbl[i].Mul) / (float)(16 * bps * uDLest * (tbl[i].Mul + tbl[i].Div));		//
+		fDiv = (uint32_t)((fFRest - 1) * 10000);
+		if(fDiv > 0xff)
+		{
+			m_err[i] = 0xff;
+		}
+		else
+		{
+			m_err[i] = fDiv;
+		}
+
+		if(m_err[i] < k)
+		{
+			k = m_err[i];		//
+			j = i;
+			m_fdr[0] = tbl[j].Div | (tbl[j].Mul << 4);
+			m_fdiv[0] = uDLest;
+		}
+	}
+}
 
 void UART0_IRQHandler(void)
 {
@@ -104,6 +178,7 @@ static rt_err_t rt_uart_init(rt_device_t dev)
 {
     rt_uint32_t Fdiv;
     rt_uint32_t pclkdiv, pclk;
+	rt_uint8_t  m_fd = 0;
 
     /* Init UART Hardware */
     if (LPC_UART == LPC_UART0)
@@ -130,13 +205,17 @@ static rt_err_t rt_uart_init(rt_device_t dev)
             pclk = SystemCoreClock / 8;
             break;
         }
+		
+		rt_uart_precise_baudset(pclk, UART_BAUDRATE, &m_fd, &Fdiv); //get the precise bps settings
+		LPC_UART0->LCR    = 0x83;							/* 8 bits, no Parity, 1 Stop bit */
 
-        LPC_UART0->LCR = 0x83;      /* 8 bits, no Parity, 1 Stop bit */
-        Fdiv = (pclk / 16) / UART_BAUDRATE;      /*baud rate */
-        LPC_UART0->DLM = Fdiv / 256;
-        LPC_UART0->DLL = Fdiv % 256;
-        LPC_UART0->LCR = 0x03;      /* DLAB = 0 */
-        LPC_UART0->FCR = 0x07;      /* Enable and reset TX and RX FIFO. */
+		LPC_UART0->DLL    = Fdiv % 256;                   /*baud rate */
+		LPC_UART0->FDR    = m_fd;						//add here
+		LPC_UART0->DLM    = Fdiv / 256;
+
+		LPC_UART0->LCR  = 0x03;/* DLAB = 0 */
+		LPC_UART0->FCR  = 0x07;/* Enable and reset TX and RX FIFO. */
+
     }
     else if ((LPC_UART1_TypeDef *)LPC_UART == LPC_UART1)
     {
@@ -164,12 +243,13 @@ static rt_err_t rt_uart_init(rt_device_t dev)
             break;
         }
 
-        LPC_UART1->LCR = 0x83;      /* 8 bits, no Parity, 1 Stop bit */
-        Fdiv = (pclk / 16) / UART_BAUDRATE ;     /*baud rate */
-        LPC_UART1->DLM = Fdiv / 256;
-        LPC_UART1->DLL = Fdiv % 256;
-        LPC_UART1->LCR = 0x03;      /* DLAB = 0 */
-        LPC_UART1->FCR = 0x07;      /* Enable and reset TX and RX FIFO. */
+		rt_uart_precise_baudset(pclk, UART_BAUDRATE, &m_fd, &Fdiv); //get the precise bps settings
+		LPC_UART1->LCR    = 0x83;							/* 8 bits, no Parity, 1 Stop bit */
+		LPC_UART1->DLL    = Fdiv % 256;                   /*baud rate */
+		LPC_UART1->FDR    = m_fd;						//add here
+		LPC_UART1->DLM    = Fdiv / 256;
+		LPC_UART1->LCR  = 0x03;/* DLAB = 0 */
+		LPC_UART1->FCR  = 0x07;/* Enable and reset TX and RX FIFO. */
     }
 
     /* Ensure a clean start, no data in either TX or RX FIFO. */
