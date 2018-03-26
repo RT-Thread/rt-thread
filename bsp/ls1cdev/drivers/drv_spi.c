@@ -25,7 +25,9 @@
 #include <rtthread.h>
 #include <drivers/spi.h>
 #include "drv_spi.h"
+#include "../libraries/ls1c_pin.h"
 
+#ifdef RT_USING_SPI
 
 //#define DEBUG
 
@@ -226,4 +228,66 @@ rt_err_t ls1c_spi_bus_register(rt_uint8_t SPI, const char *spi_bus_name)
     return rt_spi_bus_register(spi_bus, spi_bus_name, &ls1c_spi_ops);
 }
 
+int ls1c_hw_spi_init(void)
+{
+#ifdef RT_USING_SPI0
+    pin_set_purpose(78, PIN_PURPOSE_OTHER);
+    pin_set_purpose(79, PIN_PURPOSE_OTHER);
+    pin_set_purpose(80, PIN_PURPOSE_OTHER);
+    pin_set_purpose(83, PIN_PURPOSE_OTHER);//cs2 - SD card
+    pin_set_purpose(82, PIN_PURPOSE_OTHER);//cs1 
+    
+    pin_set_remap(78, PIN_REMAP_FOURTH);
+    pin_set_remap(79, PIN_REMAP_FOURTH);
+    pin_set_remap(80, PIN_REMAP_FOURTH);
+    pin_set_remap(83, PIN_REMAP_FOURTH);//cs2 - SD card
+    pin_set_remap(82, PIN_REMAP_FOURTH);//cs1 
+    ls1c_spi_bus_register(LS1C_SPI_0,"spi0");
+#endif
+
+#ifdef RT_USING_SPI1
+    pin_set_purpose(46, PIN_PURPOSE_OTHER);
+    pin_set_purpose(47, PIN_PURPOSE_OTHER);
+    pin_set_purpose(48, PIN_PURPOSE_OTHER);
+    pin_set_purpose(49, PIN_PURPOSE_OTHER);//CS0 - touch screen
+    pin_set_remap(46, PIN_REMAP_THIRD);
+    pin_set_remap(47, PIN_REMAP_THIRD);
+    pin_set_remap(48, PIN_REMAP_THIRD);
+    pin_set_remap(49, PIN_REMAP_THIRD);//CS0 - touch screen
+    ls1c_spi_bus_register(LS1C_SPI_1,"spi1");
+
+#endif
+
+
+#ifdef RT_USING_SPI0
+    /* attach cs */
+    {
+        static struct rt_spi_device spi_device1;
+        static struct rt_spi_device spi_device2;
+        static struct ls1c_spi_cs  spi_cs1;
+        static struct ls1c_spi_cs  spi_cs2;
+
+        /* spi02: CS2  SD Card*/
+        spi_cs2.cs = LS1C_SPI_CS_2;
+        rt_spi_bus_attach_device(&spi_device2, "spi02", "spi0", (void*)&spi_cs2);
+        spi_cs1.cs = LS1C_SPI_CS_1;
+        rt_spi_bus_attach_device(&spi_device1, "spi01", "spi0", (void*)&spi_cs1);
+        msd_init("sd0", "spi02");
+    }
+#endif
+#ifdef RT_USING_SPI1    
+    {
+        static struct rt_spi_device spi_device;
+        static struct ls1c_spi_cs  spi_cs;
+
+        /* spi10: CS0  Touch*/
+        spi_cs.cs = LS1C_SPI_CS_0;
+       rt_spi_bus_attach_device(&spi_device, "spi10", "spi1", (void*)&spi_cs);
+    }
+#endif
+}
+
+INIT_BOARD_EXPORT(ls1c_hw_spi_init);
+
+#endif
 

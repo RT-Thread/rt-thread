@@ -20,6 +20,7 @@ typedef enum
     PIN_REMAP_THIRD,                    // 第三复用
     PIN_REMAP_FOURTH,                   // 第四复用
     PIN_REMAP_FIFTH,                    // 第五复用
+    PIN_REMAP_DEFAULT,                //缺省复用
 }pin_remap_t;
 
 
