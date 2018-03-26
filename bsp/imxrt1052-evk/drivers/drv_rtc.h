@@ -1,5 +1,5 @@
 /*
- * File      : drv_hp_rtc.h
+ * File      : drv_rtc.h
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006-2013, RT-Thread Development Team
  *

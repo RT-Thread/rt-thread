@@ -8,35 +8,42 @@ cwd     = os.path.join(str(Dir('#')), 'drivers')
 src = Split("""
 board.c
 drv_uart.c
-hyper_flash_boot.c
-drv_sdram.c
 """)
 
 CPPPATH = [cwd]
 CPPDEFINES = []
 
+# add sdram driver code
+if GetDepend('RT_USING_SDRAM'):
+    src = src + ['./drv_sdram.c'] 
+
 if GetDepend('RT_USING_PIN'):
     src += ['drv_pin.c']
 
-if GetDepend('RT_USING_HP_RTC'):
-    src += ['drv_hp_rtc.c']
+# add rtc driver code
+if GetDepend('RT_USING_RTC_HP'):
+    src = src + ['./drv_rtc.c'] 
 
-if GetDepend('RT_USING_LWIP'):
-    src += ['drv_eth.c', 'fsl_phy.c']
-    CPPDEFINES += ['FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE']
-    
-if GetDepend('RT_USING_SDIO'):
-    src += ['drv_sdio.c']
-if GetDepend('RT_USING_USB_DEVICE'):
-    src += Glob('usb/phy/*.c')
-    CPPDEFINES += ['ENDIANNESS']
-    
-if GetDepend('RT_USING_USB_DEVICE'):
-    src += ['drv_usbd.c']
-    src += Glob('usb/device/*.c')
-    
-if GetDepend('RT_USING_RTGUI') or GetDepend('PKG_USING_GUIENGINE'):
-    src += ['drv_lcd.c', 'drv_ft5406.c', 'drv_i2c.c']
+if GetDepend('BOARD_RT1050_EVK'):
+    src += ['hyper_flash_boot.c']
+
+    if GetDepend('RT_USING_LWIP'):
+        src += ['drv_eth.c', 'fsl_phy.c']
+        CPPDEFINES += ['FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE']
+        
+    if GetDepend('RT_USING_SDIO'):
+        src += ['drv_sdio.c']
+
+    if GetDepend('RT_USING_USB_DEVICE'):
+        src += Glob('usb/phy/*.c')
+        CPPDEFINES += ['ENDIANNESS']
+        
+    if GetDepend('RT_USING_USB_DEVICE'):
+        src += ['drv_usbd.c']
+        src += Glob('usb/device/*.c')
+
+    if GetDepend('RT_USING_RTGUI') or GetDepend('PKG_USING_GUIENGINE'):
+        src += ['drv_lcd.c', 'drv_ft5406.c', 'drv_i2c.c']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
 
