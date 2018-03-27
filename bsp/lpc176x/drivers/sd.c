@@ -314,9 +314,9 @@ static bool LPC17xx_SD_WirteDataBlock(const uint8_t *buff, uint8_t token)
 
     if (token != TOKEN_STOP_TRAN)
     {
-#if USE_FIFO
-        LPC17xx_SPI_SendBlock_FIFO(buff);
-#else
+//#if USE_FIFO
+//        LPC17xx_SPI_SendBlock_FIFO(buff);
+//#else
         /* Send data. */
         for (i = 512 / 4; i ; i--)
         {
@@ -325,7 +325,7 @@ static bool LPC17xx_SD_WirteDataBlock(const uint8_t *buff, uint8_t token)
             LPC17xx_SPI_SendByte(*buff++);
             LPC17xx_SPI_SendByte(*buff++);
         }
-#endif /* USE_FIFO */
+//#endif /* USE_FIFO */
         LPC17xx_SPI_SendByte(0xFF);                 /* 16-bit CRC (Dummy) */
         LPC17xx_SPI_SendByte(0xFF);
 
