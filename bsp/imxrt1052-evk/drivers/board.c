@@ -18,7 +18,9 @@
 #include "board.h"
 #include "drv_uart.h"
 
+#if defined(RT_USING_SDRAM) && defined(RT_USING_MEMHEAP_AS_HEAP)
 static struct rt_memheap system_heap;
+#endif
 
 /* ARM PLL configuration for RUN mode */
 const clock_arm_pll_config_t armPllConfig = { .loopDivider = 100U };
@@ -162,12 +164,14 @@ void rt_lowlevel_init(void)
 {
     BOARD_ConfigMPU();
 
+#if defined(RT_USING_SDRAM) 
     extern int imxrt_sdram_init(void);
     imxrt_sdram_init();
+#endif
 }
 
 /**
- * This function will initial LPC8XX board.
+ * This function will initial rt1050 board.
  */
 void rt_hw_board_init()
 {
@@ -184,11 +188,18 @@ void rt_hw_board_init()
 #endif
     
 #ifdef RT_USING_HEAP
-    rt_kprintf("sdram heap, begin: 0x%p, end: 0x%p\n", SDRAM_BEGIN, SDRAM_END);
-    rt_system_heap_init((void*)SDRAM_BEGIN, (void*)SDRAM_END);
 
-    rt_kprintf("sram heap, begin: 0x%p, end: 0x%p\n", HEAP_BEGIN, HEAP_END);
-    rt_memheap_init(&system_heap, "sram", (void *)HEAP_BEGIN, HEAP_SIZE);
+#if defined(RT_USING_SDRAM) && defined(RT_USING_MEMHEAP_AS_HEAP)
+    rt_kprintf("sdram heap, begin: 0x%p, end: 0x%p\n", SDRAM_BEGIN, SDRAM_END);
+    rt_system_heap_init((void *)SDRAM_BEGIN, (void*)SDRAM_END); 
+    
+    rt_kprintf("sram heap, begin: 0x%p, end: 0x%p\n", HEAP_BEGIN, HEAP_END); 
+    rt_memheap_init(&system_heap, "sram", (void *)HEAP_BEGIN, HEAP_SIZE); 
+#else
+    rt_kprintf("sram heap, begin: 0x%p, end: 0x%p\n", HEAP_BEGIN, HEAP_END); 
+    rt_system_heap_init((void *)HEAP_BEGIN, (void*)HEAP_END); 
+#endif
+    
 #endif
 }
 
