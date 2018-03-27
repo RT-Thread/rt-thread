@@ -243,6 +243,38 @@ static void finsh_wait_auth(void)
             {
                 /* read one character from device */
                 ch = finsh_getchar();
+				
+				/*
+				* handle control key
+				* up key  : 0x1b 0x5b 0x41
+				* down key: 0x1b 0x5b 0x42
+				* right key:0x1b 0x5b 0x43
+				* left key: 0x1b 0x5b 0x44
+				*/
+				if (ch == 0x1b)
+				{
+				  shell->stat = WAIT_SPEC_KEY;
+				  continue;
+				}
+				else if (shell->stat == WAIT_SPEC_KEY)
+				{
+				  if (ch == 0x5b)
+				  {
+					shell->stat = WAIT_FUNC_KEY;
+					continue;
+				  }
+				  shell->stat = WAIT_NORMAL;
+				}
+				else if (shell->stat == WAIT_FUNC_KEY)
+				{
+                  //Home,Insert,Delete,End,PgUp,PgDn, these keys contain 4-bytes
+                  //must continue to read the last byte 0x7f
+                  if((ch < 0x31) || (ch > 0x36))
+                  {
+                    shell->stat = WAIT_NORMAL;
+                  }
+                  continue;
+				}			  
 
                 if (ch >= ' ' && ch <= '~' && cur_pos < FINSH_PASSWORD_MAX)
                 {
@@ -250,7 +282,7 @@ static void finsh_wait_auth(void)
                     rt_kprintf("*");
                     password[cur_pos++] = ch;
                 }
-                else if (ch == '\b' && cur_pos > 0)
+                else if((ch == 0x7f || ch == 0x08) && (cur_pos > 0))//else if (ch == '\b' && cur_pos > 0)
                 {
                     /* backspace */
                     password[cur_pos] = '\0';
