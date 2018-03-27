@@ -294,6 +294,10 @@ static rt_size_t _audio_dev_write(struct rt_device *dev, rt_off_t pos, const voi
 
         _audio_send_replay_frame(audio);
     }
+    else
+    {
+        rt_hw_interrupt_enable(level);
+    }
 
     return size;
 }
