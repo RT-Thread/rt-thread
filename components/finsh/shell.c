@@ -414,7 +414,11 @@ void finsh_thread_entry(void *parameter)
     char ch;
 
     /* normal is echo mode */
+#ifndef FINSH_ECHO_DISABLE_DEFAULT
     shell->echo_mode = 1;
+#else
+    shell->echo_mode = 0;
+#endif
 
 #ifndef FINSH_USING_MSH_ONLY
     finsh_init(&shell->parser);

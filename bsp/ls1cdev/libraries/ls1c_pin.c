@@ -42,6 +42,15 @@ void pin_set_remap(unsigned int gpio, pin_remap_t remap)
     volatile unsigned int *reg = NULL;          // 复用寄存器
     unsigned int port = GPIO_GET_PORT(gpio);
     unsigned int pin  = GPIO_GET_PIN(gpio);
+	int i;
+
+	/*指定全部pin复用为0*/
+	for(i =0; i <=4; i++)
+	{
+		reg = (volatile unsigned int *)((LS1C_CBUS_FIRST0)+((port)*0x04)+((i)*0x10));
+		// 置0
+		reg_clr_one_bit(reg, pin);		
+	}		
 
     switch (port)
     {

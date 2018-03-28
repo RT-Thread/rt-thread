@@ -23,17 +23,66 @@ config SOC_IMXRT1052
     select ARCH_ARM_CORTEX_M7
     default y
 
-if RT_USING_SERIAL
-config RT_USING_UART1
-    bool "Using RT_USING_UART1"
-    default y 
-endif
+# RT1050 board select!
+choice
+    prompt "RT1050 Board select"
+    default BOARD_RT1050_EVK
+    config BOARD_RT1050_EVK
+        bool "RT1050_EVK"
+    config BOARD_RT1050_FIRE
+        bool "RT1050_FIRE"
+endchoice
 
-if RT_USING_RTC
-config RT_USING_HP_RTC
-    bool "Using RT_USING_HP_RTC"
-    default n 
-endif
+if BOARD_RT1050_EVK
+menu "RT1050_EVK Bsp Config" 
+
+menu "Select uart device"
+    config RT_USING_UART1
+        bool "Using uart1"
+        select RT_USING_SERIAL
+        default y 
+    config RT_USING_UART2
+        bool "Using uart2"
+        select RT_USING_SERIAL
+        default n 
+    config RT_USING_UART3
+        bool "Using uart3"
+        select RT_USING_SERIAL
+        default n 
+    config RT_USING_UART4
+        bool "Using uart4"
+        select RT_USING_SERIAL
+        default n 
+    config RT_USING_UART5
+        bool "Using uart5"
+        select RT_USING_SERIAL
+        default n 
+    config RT_USING_UART6
+        bool "Using uart6"
+        select RT_USING_SERIAL
+        default n 
+    config RT_USING_UART7
+        bool "Using uart7"
+        select RT_USING_SERIAL
+        default n 
+    config RT_USING_UART8
+        bool "Using uart8"
+        select RT_USING_SERIAL
+        default n 
+endmenu
+
+#menu "SDRAM drive support"
+    config RT_USING_SDRAM
+        bool "Using sdram"
+        default y 
+#endmenu
+
+#menu "RTC drive support"
+    config RT_USING_RTC_HP
+        bool "Using hp rtc"
+        select RT_USING_RTC
+        default n 
+#endmenu
 
 if RT_USING_USB_DEVICE
     choice
@@ -47,4 +96,59 @@ if RT_USING_USB_DEVICE
     endchoice
 endif
 
+endmenu
+endif
 
+if BOARD_RT1050_FIRE
+menu "RT1050_FIRE Bsp Config" 
+
+menu "Select uart device"
+    config RT_USING_UART1
+        bool "Using uart1"
+        select RT_USING_SERIAL
+        default y 
+    config RT_USING_UART2
+        bool "Using uart2"
+        select RT_USING_SERIAL
+        default n 
+    config RT_USING_UART3
+        bool "Using uart3"
+        select RT_USING_SERIAL
+        default n 
+    config RT_USING_UART4
+        bool "Using uart4"
+        select RT_USING_SERIAL
+        default n 
+    config RT_USING_UART5
+        bool "Using uart5"
+        select RT_USING_SERIAL
+        default n 
+    config RT_USING_UART6
+        bool "Using uart6"
+        select RT_USING_SERIAL
+        default n 
+    config RT_USING_UART7
+        bool "Using uart7"
+        select RT_USING_SERIAL
+        default n 
+    config RT_USING_UART8
+        bool "Using uart8"
+        select RT_USING_SERIAL
+        default n 
+endmenu
+
+#menu "SDRAM drive support"
+    config RT_USING_SDRAM
+        bool "Using sdram"
+        default y 
+#endmenu
+
+#menu "RTC drive support"
+    config RT_USING_RTC_HP
+        bool "Using hp rtc"
+        select RT_USING_RTC
+        default n 
+#endmenu
+
+endmenu
+endif
