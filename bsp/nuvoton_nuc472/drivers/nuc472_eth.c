@@ -206,7 +206,7 @@ static void set_mac_addr(rt_nuc472_emac_t emac, rt_uint8_t *addr)
 void EMAC_init(rt_nuc472_emac_t emac, rt_uint8_t *mac_addr)
 {
     EMAC_T *emac_base = emac->emac_base;  
-	  RT_ASSERT(emac->dev_addr != RT_NULL);
+    RT_ASSERT(emac->dev_addr != RT_NULL);
 
     CLK_EnableModuleClock(EMAC_MODULE);
 
