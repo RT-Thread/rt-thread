@@ -43,7 +43,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m7 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -std=c99 -Wall -DUSE_HAL_DRIVER -D__ASSEMBLY__ -D__FPU_PRESENT -eentry'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=imxrt1052_sdram.map,-cref,-u,Reset_Handler -T ./Libraries/gcc/MIMXRT1052xxxxx_flexspi_nor.ld'
+    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread-imxrt-gcc.map,-cref,-u,Reset_Handler -T ./Libraries/gcc/MIMXRT1052xxxxx_flexspi_nor.ld'
 
     CPATH = ''
     LPATH = ''
@@ -55,7 +55,7 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS += ' -O2 -Os'
 
-    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
+    POST_ACTION = OBJCPY + ' -O binary --remove-section=.boot_data --remove-section=.image_vertor_table --remove-section=.ncache $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
     # module setting 
     CXXFLAGS = ' -Woverloaded-virtual -fno-exceptions -fno-rtti '
@@ -77,7 +77,7 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --cpu Cortex-M7.fp.sp'
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-imxrt.map --scatter ./Libraries/arm/MIMXRT1052xxxxx_flexspi_nor.scf'
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-imxrt-mdk.map --scatter ./Libraries/arm/MIMXRT1052xxxxx_flexspi_nor.scf'
 
     CFLAGS += ' --diag_suppress=66,1296,186'
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
