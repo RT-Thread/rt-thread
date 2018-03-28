@@ -91,12 +91,12 @@ static void SAI_TxEDMACallback(edma_handle_t *handle, void *userData, bool done,
     sai_edma_handle_t *saiHandle = privHandle->handle;
 
     /* If finished a blcok, call the callback function */
-    memset(&saiHandle->saiQueue[saiHandle->queueDriver], 0, sizeof(sai_transfer_t));
-    saiHandle->queueDriver = (saiHandle->queueDriver + 1) % SAI_XFER_QUEUE_SIZE;
     if (saiHandle->callback)
     {
         (saiHandle->callback)(privHandle->base, saiHandle, kStatus_SAI_TxIdle, saiHandle->userData);
-    }
+    }	
+    memset(&saiHandle->saiQueue[saiHandle->queueDriver], 0, sizeof(sai_transfer_t));
+    saiHandle->queueDriver = (saiHandle->queueDriver + 1) % SAI_XFER_QUEUE_SIZE;
 
     /* If all data finished, just stop the transfer */
     if (saiHandle->saiQueue[saiHandle->queueDriver].data == NULL)
