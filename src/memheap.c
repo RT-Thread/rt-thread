@@ -659,6 +659,12 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
     if (rmem == RT_NULL)
         return rt_malloc(newsize);
 
+    if (newsize == 0)
+    {
+        rt_free(rmem);
+        return RT_NULL;
+    }
+
     /* get old memory item */
     header_ptr = (struct rt_memheap_item *)
                  ((rt_uint8_t *)rmem - RT_MEMHEAP_SIZE);
@@ -678,6 +684,8 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
                 rt_memcpy(new_ptr, rmem, oldsize);
             else
                 rt_memcpy(new_ptr, rmem, newsize);
+
+            rt_free(rmem);
         }
     }
 
