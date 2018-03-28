@@ -1,5 +1,5 @@
 /*
- * File      : drv_hp_rtc.c
+ * File      : drv_rtc.c
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006-2013, RT-Thread Development Team
  *
@@ -11,11 +11,12 @@
  * Date           Author       Notes
  * 2018-03-15     Liuguang     the first version.
  */
-#include "drv_hp_rtc.h" 
-#include <time.h>
+#include "drv_rtc.h" 
+
 #include "fsl_common.h" 
 #include "fsl_snvs_hp.h"
 #include "fsl_snvs_lp.h"
+#include <time.h>
 
 #ifdef RT_USING_RTC
 
@@ -35,7 +36,7 @@ static time_t get_timestamp(void)
     tm_new.tm_hour = rtcDate.hour;
     
     tm_new.tm_mday = rtcDate.day; 
-    tm_new.tm_mon  = rtcDate.month - 1;  
+    tm_new.tm_mon  = rtcDate.month - 1; 
     tm_new.tm_year = rtcDate.year - 1900; 
 
     return mktime(&tm_new);
