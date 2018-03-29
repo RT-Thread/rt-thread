@@ -77,6 +77,8 @@ void rt_hw_board_init(void);
 
 #define FINSH_DEVICE_NAME   CONSOLE_DEVICE
 
+#define STM32F4xx_PIN_NUMBERS 176
+
 void Error_Handler(void);
 
 #endif
