@@ -234,7 +234,7 @@ static void _search_i2c_device(rt_device_t dev, uint8_t cmd)
         
         msgs[0].addr  = i;
         msgs[1].addr  = i;
-        len = rt_i2c_transfer(dev, msgs, 2);
+        len = rt_i2c_transfer((struct rt_i2c_bus_device *)dev, msgs, 2);
         if (len == 2)
         {
             count++;
