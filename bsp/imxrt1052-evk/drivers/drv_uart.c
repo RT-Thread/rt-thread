@@ -21,7 +21,6 @@
 
 #ifdef RT_USING_SERIAL
 
-/* GPIO外设时钟会在LPUART_Init中自动配置, 如果定义了以下宏则不会自动配置 */
 #if defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL
 #error "Please don't define 'FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL'!"
 #endif
@@ -41,10 +40,10 @@
 /* imxrt uart driver */
 struct imxrt_uart
 {
-    LPUART_Type * uart_base;
+    LPUART_Type *uart_base;
     IRQn_Type irqn;
 
-    struct rt_serial_device * serial;
+    struct rt_serial_device *serial;
     char *device_name;
 };
 
@@ -129,7 +128,8 @@ void LPUART8_IRQHandler(void)
 
 #endif /* RT_USING_UART8 */
 
-static const struct imxrt_uart uarts[] = {
+static const struct imxrt_uart uarts[] =
+{
 #ifdef RT_USING_UART1
     {
         LPUART1,
@@ -198,7 +198,7 @@ static const struct imxrt_uart uarts[] = {
 };
 
 /* Get debug console frequency. */
-uint32_t BOARD_DebugConsoleSrcFreq(void)
+uint32_t GetUartSrcFreq(void)
 {
     uint32_t freq;
 
@@ -231,7 +231,6 @@ void imxrt_uart_gpio_init(struct imxrt_uart *uart)
     if (uart->uart_base != RT_NULL)
     {
 #ifdef RT_USING_UART1
-        CLOCK_EnableClock(kCLOCK_Iomuxc);           /* iomuxc clock (iomuxc_clk_enable): 0x03u */
 
         IOMUXC_SetPinMux(
             IOMUXC_GPIO_AD_B0_12_LPUART1_TX,        /* GPIO_AD_B0_12 is configured as LPUART1_TX */
@@ -261,7 +260,6 @@ void imxrt_uart_gpio_init(struct imxrt_uart *uart)
                                                      Hyst. Enable Field: Hysteresis Disabled */
 #endif
 #ifdef RT_USING_UART2
-        CLOCK_EnableClock(kCLOCK_Iomuxc);
 
         IOMUXC_SetPinMux(
             IOMUXC_GPIO_AD_B1_02_LPUART2_TX,
@@ -272,15 +270,12 @@ void imxrt_uart_gpio_init(struct imxrt_uart *uart)
         IOMUXC_SetPinConfig(
             IOMUXC_GPIO_AD_B1_02_LPUART2_TX,
             0x10B0u);
-
-
         IOMUXC_SetPinConfig(
             IOMUXC_GPIO_AD_B1_03_LPUART2_RX,
             0x10B0u);
 
 #endif
 #ifdef RT_USING_UART3
-        CLOCK_EnableClock(kCLOCK_Iomuxc);
 
         IOMUXC_SetPinMux(
             IOMUXC_GPIO_AD_B1_06_LPUART3_TX,
@@ -291,13 +286,11 @@ void imxrt_uart_gpio_init(struct imxrt_uart *uart)
         IOMUXC_SetPinConfig(
             IOMUXC_GPIO_AD_B1_06_LPUART3_TX,
             0x10B0u);
-
         IOMUXC_SetPinConfig(
             IOMUXC_GPIO_AD_B1_07_LPUART3_RX,
             0x10B0u);
 #endif
 #ifdef RT_USING_UART4
-        CLOCK_EnableClock(kCLOCK_Iomuxc);
 
         IOMUXC_SetPinMux(
             IOMUXC_GPIO_B1_00_LPUART4_TX,
@@ -308,13 +301,11 @@ void imxrt_uart_gpio_init(struct imxrt_uart *uart)
         IOMUXC_SetPinConfig(
             IOMUXC_GPIO_B1_00_LPUART4_TX,
             0x10B0u);
-
         IOMUXC_SetPinConfig(
             IOMUXC_GPIO_B1_01_LPUART4_RX,
             0x10B0u);
 #endif
 #ifdef RT_USING_UART5
-        CLOCK_EnableClock(kCLOCK_Iomuxc);
 
         IOMUXC_SetPinMux(
             IOMUXC_GPIO_B1_12_LPUART5_TX,
@@ -325,13 +316,11 @@ void imxrt_uart_gpio_init(struct imxrt_uart *uart)
         IOMUXC_SetPinConfig(
             IOMUXC_GPIO_B1_12_LPUART5_TX,
             0x10B0u);
-
         IOMUXC_SetPinConfig(
             IOMUXC_GPIO_B1_13_LPUART5_RX,
             0x10B0u);
 #endif
 #ifdef RT_USING_UART6
-        CLOCK_EnableClock(kCLOCK_Iomuxc);
 
         IOMUXC_SetPinMux(
             IOMUXC_GPIO_AD_B0_02_LPUART6_TX,
@@ -342,13 +331,11 @@ void imxrt_uart_gpio_init(struct imxrt_uart *uart)
         IOMUXC_SetPinConfig(
             IOMUXC_GPIO_AD_B0_02_LPUART6_TX,
             0x10B0u);
-
         IOMUXC_SetPinConfig(
             IOMUXC_GPIO_AD_B0_03_LPUART6_RX,
             0x10B0u);
 #endif
 #ifdef RT_USING_UART7
-        CLOCK_EnableClock(kCLOCK_Iomuxc);
 
         IOMUXC_SetPinMux(
             IOMUXC_GPIO_EMC_31_LPUART7_TX,
@@ -359,13 +346,11 @@ void imxrt_uart_gpio_init(struct imxrt_uart *uart)
         IOMUXC_SetPinConfig(
             IOMUXC_GPIO_EMC_31_LPUART7_TX,
             0x10B0u);
-
         IOMUXC_SetPinConfig(
             IOMUXC_GPIO_EMC_32_LPUART7_RX,
             0x10B0u);
 #endif
 #ifdef RT_USING_UART8
-        CLOCK_EnableClock(kCLOCK_Iomuxc);
 
         IOMUXC_SetPinMux(
             IOMUXC_GPIO_AD_B1_10_LPUART8_TX,
@@ -376,7 +361,6 @@ void imxrt_uart_gpio_init(struct imxrt_uart *uart)
         IOMUXC_SetPinConfig(
             IOMUXC_GPIO_AD_B1_10_LPUART8_TX,
             0x10B0u);
-
         IOMUXC_SetPinConfig(
             IOMUXC_GPIO_AD_B1_11_LPUART8_RX,
             0x10B0u);
@@ -440,8 +424,7 @@ static rt_err_t imxrt_configure(struct rt_serial_device *serial, struct serial_c
     config.enableTx = true;
     config.enableRx = true;
 
-    LPUART_Init(uart->uart_base, &config, BOARD_DebugConsoleSrcFreq());
-
+    LPUART_Init(uart->uart_base, &config, GetUartSrcFreq());
 
     return RT_EOK;
 }
@@ -481,7 +464,7 @@ static int imxrt_putc(struct rt_serial_device *serial, char ch)
     uart = (struct imxrt_uart *)serial->parent.user_data;
 
     LPUART_WriteByte(uart->uart_base, ch);
-    while(!(LPUART_GetStatusFlags(uart->uart_base) & kLPUART_TxDataRegEmptyFlag));
+    while (!(LPUART_GetStatusFlags(uart->uart_base) & kLPUART_TxDataRegEmptyFlag));
 
     return 1;
 }
@@ -546,16 +529,21 @@ static const struct rt_uart_ops imxrt_uart_ops =
     imxrt_getc,
 };
 
-int imxrt_hw_usart_init(void)
+int imxrt_hw_uart_init(void)
 {
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     int i;
+
+    /* Configure UART divider to default */
+    CLOCK_SetMux(kCLOCK_UartMux, 0); /* Set UART source to PLL3 80M */
+    CLOCK_SetDiv(kCLOCK_UartDiv, 0); /* Set UART divider to 1 */
+
     for (i = 0; i < sizeof(uarts) / sizeof(uarts[0]); i++)
     {
         uarts[i].serial->ops    = &imxrt_uart_ops;
         uarts[i].serial->config = config;
 
-        /* register UART1 device */
+        /* register UART device */
         rt_hw_serial_register(uarts[i].serial,
                               uarts[i].device_name,
                               RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
@@ -564,6 +552,6 @@ int imxrt_hw_usart_init(void)
 
     return 0;
 }
-INIT_BOARD_EXPORT(imxrt_hw_usart_init);
+INIT_BOARD_EXPORT(imxrt_hw_uart_init);
 
 #endif /*RT_USING_SERIAL */
