@@ -122,7 +122,7 @@ static const struct pin_index pins[] =
     __STM32_PIN(9, B, 6),
     __STM32_PIN_DEFAULT,
     __STM32_PIN_DEFAULT,
-    __STM32_PIN(13, C, 14),
+    __STM32_PIN(12, C, 14),
     __STM32_PIN(13, A, 13),
     __STM32_PIN(14, B, 3),
     __STM32_PIN(15, B, 7),
