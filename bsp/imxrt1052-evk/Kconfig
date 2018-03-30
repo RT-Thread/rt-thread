@@ -36,7 +36,7 @@ endchoice
 if BOARD_RT1050_EVK
 menu "RT1050_EVK Bsp Config" 
 
-menu "Select uart device"
+menu "Select uart drivers"
     config RT_USING_UART1
         bool "Using uart1"
         select RT_USING_SERIAL
@@ -71,13 +71,32 @@ menu "Select uart device"
         default n 
 endmenu
 
-#menu "SDRAM drive support"
+menu "Select spibus drivers"
+    config RT_USING_SPIBUS1
+        bool "Using spi1 bus"
+        select RT_USING_SPI
+        default n 
+    config RT_USING_SPIBUS2
+        bool "Using spi2 bus"
+        select RT_USING_SPI
+        default n 
+    config RT_USING_SPIBUS3
+        bool "Using spi3 bus"
+        select RT_USING_SPI
+        default n 
+    config RT_USING_SPIBUS4
+        bool "Using spi4 bus"
+        select RT_USING_SPI
+        default y 
+endmenu
+
+#menu "SDRAM driver support"
     config RT_USING_SDRAM
         bool "Using sdram"
         default y 
 #endmenu
 
-#menu "RTC drive support"
+#menu "RTC driver support"
     config RT_USING_RTC_HP
         bool "Using hp rtc"
         select RT_USING_RTC
@@ -102,7 +121,7 @@ endif
 if BOARD_RT1050_FIRE
 menu "RT1050_FIRE Bsp Config" 
 
-menu "Select uart device"
+menu "Select uart drivers"
     config RT_USING_UART1
         bool "Using uart1"
         select RT_USING_SERIAL
@@ -137,13 +156,32 @@ menu "Select uart device"
         default n 
 endmenu
 
-#menu "SDRAM drive support"
+menu "Select spibus drivers"
+    config RT_USING_SPIBUS1
+        bool "Using spi1 bus"
+        select RT_USING_SPI
+        default n 
+    config RT_USING_SPIBUS2
+        bool "Using spi2 bus"
+        select RT_USING_SPI
+        default n 
+    config RT_USING_SPIBUS3
+        bool "Using spi3 bus"
+        select RT_USING_SPI
+        default n 
+    config RT_USING_SPIBUS4
+        bool "Using spi4 bus"
+        select RT_USING_SPI
+        default y 
+endmenu
+
+#menu "SDRAM driver support"
     config RT_USING_SDRAM
         bool "Using sdram"
         default y 
 #endmenu
 
-#menu "RTC drive support"
+#menu "RTC driver support"
     config RT_USING_RTC_HP
         bool "Using hp rtc"
         select RT_USING_RTC

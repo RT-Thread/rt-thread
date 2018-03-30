@@ -17,12 +17,17 @@ CPPDEFINES = []
 if GetDepend('RT_USING_SDRAM'):
     src = src + ['./drv_sdram.c'] 
 
+# add pin driver code
 if GetDepend('RT_USING_PIN'):
     src += ['drv_pin.c']
 
 # add rtc driver code
 if GetDepend('RT_USING_RTC_HP'):
     src = src + ['./drv_rtc.c'] 
+
+# add spibus driver code
+if GetDepend('RT_USING_SPI'):
+    src += ['drv_spi_bus.c']
 
 if GetDepend('BOARD_RT1050_EVK'):
     src += ['hyper_flash_boot.c']
