@@ -95,6 +95,7 @@
 #define RT_USING_PIN
 #define RT_USING_RTC
 #define RT_USING_SDIO
+#define RT_USING_SPI
 
 /* Using USB */
 
@@ -193,11 +194,21 @@
 #define SOC_IMXRT1052
 #define BOARD_RT1050_EVK
 
-/* RT1050_EVK Bsp Config */
+/* RT1050 Bsp Config */
 
-/* Select uart device */
+/* Select uart drivers */
 
 #define RT_USING_UART1
+
+/* Select spi bus drivers */
+
+#define LPSPI_CLK_SOURCE_FROM_PLL3PFD1
+#define LPSPI_CLK_SOURCE 0
+#define LPSPI_CLK_SOURCE_DIVIDER 7
+#define RT_USING_SPIBUS4
+#define LPSPI4_SCK_GPIO_1
+#define LPSPI4_SDO_GPIO_1
+#define LPSPI4_SDI_GPIO_1
 #define RT_USING_SDRAM
 #define RT_USING_RTC_HP
 
