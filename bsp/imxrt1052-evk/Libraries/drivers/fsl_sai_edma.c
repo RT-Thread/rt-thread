@@ -99,7 +99,7 @@ static void SAI_TxEDMACallback(edma_handle_t *handle, void *userData, bool done,
     saiHandle->queueDriver = (saiHandle->queueDriver + 1) % SAI_XFER_QUEUE_SIZE;
 
     /* If all data finished, just stop the transfer */
-    if (saiHandle->saiQueue[saiHandle->queueDriver].data == NULL)
+    if (saiHandle->saiQueue[saiHandle->queueDriver].dataSize == 0)
     {
         /* Disable DMA enable bit */
         SAI_TxEnableDMA(privHandle->base, kSAI_FIFORequestDMAEnable, false);

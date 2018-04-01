@@ -347,7 +347,8 @@ static rt_size_t icodec_transmit(struct rt_audio_device *audio, const void *writ
 
         xfer.data = (uint8_t *)writeBuf;
         xfer.dataSize = size;
-        SAI_TransferSendEDMA(icodec->sai, &icodec->txHandle, &xfer);
+        if (SAI_TransferSendEDMA(icodec->sai, &icodec->txHandle, &xfer) != kStatus_Success)
+            return 0;
 
         return size;
     }
