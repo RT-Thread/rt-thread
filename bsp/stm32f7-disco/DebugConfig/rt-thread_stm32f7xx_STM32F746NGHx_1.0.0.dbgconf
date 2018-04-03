@@ -1,0 +1,148 @@
+// <<< Use Configuration Wizard in Context Menu >>>
+
+// <h> Debug MCU Configuration
+//   <o0.0>    DBG_SLEEP
+//     <i> Debug Sleep Mode
+//     <i> 0: (FCLK=On, HCLK=Off) FCLK is clocked by the system clock as previously configured by the software while HCLK is disabled
+//     <i> 1: (FCLK=On, HCLK=On) HCLK is fed by the same clock that is provided to FCLK
+//   <o0.1>    DBG_STOP
+//     <i> Debug Stop Mode
+//     <i> 0: (FCLK=Off, HCLK=Off) Clock controller disables all clocks
+//     <i> 1: (FCLK=On, HCLK=On) FCLK and HCLK are provided by the internal RC oscillator which remains active
+//   <o0.2>    DBG_STANDBY
+//     <i> Debug Standby Mode
+//     <i> 0: (FCLK=Off, HCLK=Off) The whole digital part is unpowered.
+//     <i> 1: (FCLK=On, HCLK=On) Digital part is powered and FCLK and HCLK are provided by the internal RC oscillator which remains active
+// </h>
+DbgMCU_CR = 0x00000007;
+
+// <h> Debug MCU APB1 Configuration
+//   <o0.0>    DBG_TIM2_STOP
+//     <i> TIM2 counter stopped when core is halted
+//     <i> 0: The clock of the involved Timer Counter is fed even if the core is halted
+//     <i> 1: The clock of the involved Timer counter is stopped when the core is halted
+//   <o0.1>    DBG_TIM3_STOP
+//     <i> TIM3 counter stopped when core is halted
+//     <i> 0: The clock of the involved Timer Counter is fed even if the core is halted
+//     <i> 1: The clock of the involved Timer counter is stopped when the core is halted
+//   <o0.2>    DBG_TIM4_STOP
+//     <i> TIM4 counter stopped when core is halted
+//     <i> 0: The clock of the involved Timer Counter is fed even if the core is halted
+//     <i> 1: The clock of the involved Timer counter is stopped when the core is halted
+//   <o0.3>    DBG_TIM5_STOP
+//     <i> TIM5 counter stopped when core is halted
+//     <i> 0: The clock of the involved Timer Counter is fed even if the core is halted
+//     <i> 1: The clock of the involved Timer counter is stopped when the core is halted
+//   <o0.4>    DBG_TIM6_STOP
+//     <i> TIM6 counter stopped when core is halted
+//     <i> 0: The clock of the involved Timer Counter is fed even if the core is halted
+//     <i> 1: The clock of the involved Timer counter is stopped when the core is halted
+//   <o0.5>    DBG_TIM7_STOP
+//     <i> TIM7 counter stopped when core is halted
+//     <i> 0: The clock of the involved Timer Counter is fed even if the core is halted
+//     <i> 1: The clock of the involved Timer counter is stopped when the core is halted
+//   <o0.6>    DBG_TIM12_STOP
+//     <i> TIM12 counter stopped when core is halted
+//     <i> 0: The clock of the involved Timer Counter is fed even if the core is halted
+//     <i> 1: The clock of the involved Timer counter is stopped when the core is halted
+//   <o0.7>    DBG_TIM13_STOP
+//     <i> TIM13 counter stopped when core is halted
+//     <i> 0: The clock of the involved Timer Counter is fed even if the core is halted
+//     <i> 1: The clock of the involved Timer counter is stopped when the core is halted
+//   <o0.8>    DBG_TIM14_STOP
+//     <i> TIM14 counter stopped when core is halted
+//     <i> 0: The clock of the involved Timer Counter is fed even if the core is halted
+//     <i> 1: The clock of the involved Timer counter is stopped when the core is halted
+//   <o0.9>    DBG_LPTIM1_STOP
+//     <i> LPTMI1 counter stopped when core is halted
+//     <i> 0: The clock of LPTIM1 counter is fed even if the core is halted
+//     <i> 1: The clock of LPTIM1 counter is stopped when the core is halted
+//   <o0.10>   DBG_RTC_STOP
+//     <i> RTC stopped when Core is halted
+//     <i> 0: The RTC counter clock continues even if the core is halted
+//     <i> 1: The RTC counter clock is stopped when the core is halted
+//   <o0.11>   DBG_WWDG_STOP
+//     <i> Debug Window Watchdog stopped when Core is halted
+//     <i> 0: The window watchdog counter clock continues even if the core is halted
+//     <i> 1: The window watchdog counter clock is stopped when the core is halted
+//   <o0.12>   DBG_IWDG_STOP
+//     <i> Debug independent watchdog stopped when core is halted
+//     <i> 0: The independent watchdog counter clock continues even if the core is halted
+//     <i> 1: The independent watchdog counter clock is stopped when the core is halted
+//   <o0.21>   DBG_I2C1_SMBUS_TIMEOUT
+//     <i> I2C1 SMBUS timeout mode stopped when Core is halted
+//     <i> 0: Same behavior as in normal mode
+//     <i> 1: The SMBUS timeout is frozen
+//   <o0.22>   DBG_I2C2_SMBUS_TIMEOUT
+//     <i> I2C2 SMBUS timeout mode stopped when Core is halted
+//     <i> 0: Same behavior as in normal mode
+//     <i> 1: The SMBUS timeout is frozen
+//   <o0.23>   DBG_I2C3_SMBUS_TIMEOUT
+//     <i> I2C3 SMBUS timeout mode stopped when Core is halted
+//     <i> 0: Same behavior as in normal mode
+//     <i> 1: The SMBUS timeout is frozen
+//   <o0.24>   DBG_I2C4_SMBUS_TIMEOUT
+//     <i> I2C4 SMBUS timeout mode stopped when Core is halted
+//     <i> 0: Same behavior as in normal mode
+//     <i> 1: The SMBUS timeout is frozen
+//   <o0.25>   DBG_CAN1_STOP
+//     <i> Debug CAN1 stopped when Core is halted
+//     <i> 0: Same behavior as in normal mode
+//     <i> 1: The CAN1 receive registers are frozen
+//   <o0.26>   DBG_CAN2_STOP
+//     <i> Debug CAN2 stopped when Core is halted
+//     <i> 0: Same behavior as in normal mode
+//     <i> 1: The CAN2 receive registers are frozen
+// </h>
+DbgMCU_APB1_Fz = 0x00000000;
+
+// <h> Debug MCU APB2 Configuration
+//   <o0.0>    DBG_TIM1_STOP
+//     <i> TIM1 counter stopped when core is halted
+//     <i> 0: The clock of the involved Timer Counter is fed even if the core is halted
+//     <i> 1: The clock of the involved Timer counter is stopped when the core is halted
+//   <o0.1>    DBG_TIM8_STOP
+//     <i> TIM8 counter stopped when core is halted
+//     <i> 0: The clock of the involved Timer Counter is fed even if the core is halted
+//     <i> 1: The clock of the involved Timer counter is stopped when the core is halted
+//   <o0.16>   DBG_TIM9_STOP
+//     <i> TIM9 counter stopped when core is halted
+//     <i> 0: The clock of the involved Timer Counter is fed even if the core is halted
+//     <i> 1: The clock of the involved Timer counter is stopped when the core is halted
+//   <o0.17>   DBG_TIM10_STOP
+//     <i> TIM10 counter stopped when core is halted
+//     <i> 0: The clock of the involved Timer Counter is fed even if the core is halted
+//     <i> 1: The clock of the involved Timer counter is stopped when the core is halted
+//   <o0.18>   DBG_TIM11_STOP
+//     <i> TIM11 counter stopped when core is halted
+//     <i> 0: The clock of the involved Timer Counter is fed even if the core is halted
+//     <i> 1: The clock of the involved Timer counter is stopped when the core is halted
+// </h>
+DbgMCU_APB2_Fz = 0x00000000;
+
+// <h> TPIU Pin Routing (TRACECLK fixed on Pin PE2)
+//   <o0> TRACED0
+//     <i> ETM Trace Data 0
+//       <0=> Pin PC1
+//       <1=> Pin PE3
+//       <2=> Pin PG13
+//   <o1> TRACED1
+//     <i> ETM Trace Data 1
+//       <0=> Pin PC8
+//       <1=> Pin PE4
+//       <2=> Pin PG14
+//   <o2> TRACED2
+//     <i> ETM Trace Data 2
+//       <0=> Pin PD2
+//       <1=> Pin PE5
+//   <o3> TRACED3
+//     <i> ETM Trace Data 3
+//       <0=> Pin PC12
+//       <1=> Pin PE6
+ETMTrace_D0 = 1;
+ETMTrace_D1 = 1;
+ETMTrace_D2 = 1;
+ETMTrace_D3 = 1;
+// </h>
+
+// <<< end of configuration section >>>
