@@ -54,17 +54,17 @@ rt_hw_interrupt_enable:
     BX      LR
 
 ;/*
-; * rt_uint8_t rt_faab(volatile rt_uint8_t* val, rt_base_t addend);
+; * rt_uint8_t rt_atomic_add_byte(volatile rt_uint8_t* val, rt_base_t addend);
 ; */
-    EXPORT  rt_faab
-rt_faab:
+    EXPORT  rt_atomic_add_byte
+rt_atomic_add_byte:
     PUSH    {r4}
-rt_faab_fail
+rt_atomic_add_byte_fail
     LDREXB  r2, [r0]                        ; load exclusive
     ADD     r3, r2, r1                      ; ADD operation
     STREXB  r4, r3, [r0]                    ; store exclusive
     CMP     r4, #0x00                       ; see if we succeeded
-    BNE     rt_faab_fail                    ; go back if we fail
+    BNE     rt_atomic_add_byte_fail         ; go back if we fail
     MOV     r0, r2
     POP     {r4}
     BX      LR

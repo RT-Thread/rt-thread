@@ -55,18 +55,177 @@ rt_hw_interrupt_enable    PROC
     ENDP
         
 ;/*
-; * rt_uint8_t rt_faab(volatile rt_uint8_t* val, rt_base_t addend);
+; * rt_uint8_t rt_atomic_add_byte(volatile rt_uint8_t* val, rt_base_t addend);
 ; */
-rt_faab    PROC
-    EXPORT  rt_faab
+rt_atomic_add_byte    PROC
+    EXPORT  rt_atomic_add_byte
     PUSH    {r4}
-rt_faab_fail
+rt_atomic_add_byte_fail
     LDREXB  r2, [r0]                        ; load exclusive
     ADD     r3, r2, r1                      ; ADD operation
     STREXB  r4, r3, [r0]                    ; store exclusive
     CMP     r4, #0x00                       ; see if we succeeded
-    BNE     rt_faab_fail                    ; go back if we fail
+    BNE     rt_atomic_add_byte_fail         ; go back if we fail
     MOV     r0, r2
+    POP     {r4}
+    BX      LR
+    ENDP
+        
+;/*
+; * rt_uint16_t rt_atomic_add_word(volatile rt_uint16_t* val, rt_base_t addend);
+; */
+rt_atomic_add_word    PROC
+    EXPORT  rt_atomic_add_word
+    PUSH    {r4}
+rt_atomic_add_word_fail
+    LDREXH  r2, [r0]                        ; load exclusive
+    ADD     r3, r2, r1                      ; ADD operation
+    STREXH  r4, r3, [r0]                    ; store exclusive
+    CMP     r4, #0x00                       ; see if we succeeded
+    BNE     rt_atomic_add_word_fail         ; go back if we fail
+    MOV     r0, r2
+    POP     {r4}
+    BX      LR
+    ENDP
+        
+;/*
+; * rt_uint32_t rt_atomic_add(volatile rt_uint32_t* val, rt_base_t addend);
+; */
+rt_atomic_add    PROC
+    EXPORT  rt_atomic_add
+    PUSH    {r4}
+rt_atomic_add_fail
+    LDREX   r2, [r0]                        ; load exclusive
+    ADD     r3, r2, r1                      ; ADD operation
+    STREX   r4, r3, [r0]                    ; store exclusive
+    CMP     r4, #0x00                       ; see if we succeeded
+    BNE     rt_atomic_add_fail              ; go back if we fail
+    MOV     r0, r2
+    POP     {r4}
+    BX      LR
+    ENDP
+        
+;/*
+; * rt_uint8_t rt_atomic_and_byte(volatile rt_uint8_t* val, rt_base_t op);
+; */
+rt_atomic_and_byte    PROC
+    EXPORT  rt_atomic_and_byte
+    PUSH    {r4}
+rt_atomic_and_byte_fail
+    LDREXB  r2, [r0]                        ; load exclusive
+    AND     r3, r2, r1                      ; AND operation
+    STREXB  r4, r3, [r0]                    ; store exclusive
+    CMP     r4, #0x00                       ; see if we succeeded
+    BNE     rt_atomic_and_byte_fail         ; go back if we fail
+    MOV     r0, r2
+    POP     {r4}
+    BX      LR
+    ENDP
+        
+;/*
+; * rt_uint16_t rt_atomic_and_word(volatile rt_uint16_t* val, rt_base_t op);
+; */
+rt_atomic_and_word    PROC
+    EXPORT  rt_atomic_and_word
+    PUSH    {r4}
+rt_atomic_and_word_fail
+    LDREXH  r2, [r0]                        ; load exclusive
+    AND     r3, r2, r1                      ; AND operation
+    STREXH  r4, r3, [r0]                    ; store exclusive
+    CMP     r4, #0x00                       ; see if we succeeded
+    BNE     rt_atomic_and_word_fail         ; go back if we fail
+    MOV     r0, r2
+    POP     {r4}
+    BX      LR
+    ENDP
+        
+;/*
+; * rt_uint32_t rt_atomic_and(volatile rt_uint32_t* val, rt_base_t op);
+; */
+rt_atomic_and    PROC
+    EXPORT  rt_atomic_and
+    PUSH    {r4}
+rt_atomic_and_fail
+    LDREX   r2, [r0]                        ; load exclusive
+    AND     r3, r2, r1                      ; AND operation
+    STREX   r4, r3, [r0]                    ; store exclusive
+    CMP     r4, #0x00                       ; see if we succeeded
+    BNE     rt_atomic_and_fail              ; go back if we fail
+    MOV     r0, r2
+    POP     {r4}
+    BX      LR
+    ENDP
+
+;/*
+; * rt_uint8_t rt_atomic_or_byte(volatile rt_uint8_t* val, rt_base_t op);
+; */
+rt_atomic_or_byte    PROC
+    EXPORT  rt_atomic_or_byte
+    PUSH    {r4}
+rt_atomic_or_byte_fail
+    LDREXB  r2, [r0]                        ; load exclusive
+    ORR     r3, r2, r1                      ; ORR operation
+    STREXB  r4, r3, [r0]                    ; store exclusive
+    CMP     r4, #0x00                       ; see if we succeeded
+    BNE     rt_atomic_or_byte_fail          ; go back if we fail
+    MOV     r0, r2
+    POP     {r4}
+    BX      LR
+    ENDP
+        
+;/*
+; * rt_uint16_t rt_atomic_or_word(volatile rt_uint16_t* val, rt_base_t op);
+; */
+rt_atomic_or_word    PROC
+    EXPORT  rt_atomic_or_word
+    PUSH    {r4}
+rt_atomic_or_word_fail
+    LDREXH  r2, [r0]                        ; load exclusive
+    ORR     r3, r2, r1                      ; ORR operation
+    STREXH  r4, r3, [r0]                    ; store exclusive
+    CMP     r4, #0x00                       ; see if we succeeded
+    BNE     rt_atomic_or_word_fail         ; go back if we fail
+    MOV     r0, r2
+    POP     {r4}
+    BX      LR
+    ENDP
+        
+;/*
+; * rt_uint32_t rt_atomic_or(volatile rt_uint32_t* val, rt_base_t op);
+; */
+rt_atomic_or    PROC
+    EXPORT  rt_atomic_or
+    PUSH    {r4}
+rt_atomic_or_fail
+    LDREX   r2, [r0]                        ; load exclusive
+    ORR     r3, r2, r1                      ; AND operation
+    STREX   r4, r3, [r0]                    ; store exclusive
+    CMP     r4, #0x00                       ; see if we succeeded
+    BNE     rt_atomic_or_fail               ; go back if we fail
+    MOV     r0, r2
+    POP     {r4}
+    BX      LR
+    ENDP
+
+;/*
+; * if successful, 1 will be returned; otherwise zero.
+; * rt_uint32_t rt_atomic_cas(volatile rt_uint8_t* val, rt_uint8_t old, rt_uint8_t new);
+; */
+rt_atomic_cas    PROC
+    PUSH    {r4}
+rt_atomic_cas_retry
+    LDREX   r3, [r0]                        ; load exclusive
+    CMP     r3, r1                          ; compare the values
+    BNE     rt_atomic_cas_fail              ; if the values differ, we quit
+    STREX   r4, r2, [r0]                    ; store exclusive
+    CMP     r4, #0x00                       ; see if we succeeded
+    BNE     rt_atomic_cas_retry             ; if not, we try again
+    MOV     r0, #1
+    POP     {r4}
+    BX      LR
+rt_atomic_cas_fail                          
+    CLREX   
+    MOV     r0, #0
     POP     {r4}
     BX      LR
     ENDP
