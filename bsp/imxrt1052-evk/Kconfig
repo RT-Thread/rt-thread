@@ -23,15 +23,233 @@ config SOC_IMXRT1052
     select ARCH_ARM_CORTEX_M7
     default y
 
-if RT_USING_SERIAL
-config RT_USING_UART1
-    bool "Using RT_USING_UART1"
-    default y 
+# RT1050 board select!
+choice
+    prompt "RT1050 Board select"
+    default BOARD_RT1050_EVK
+    config BOARD_RT1050_EVK
+        bool "RT1050_EVK"
+    config BOARD_RT1050_FIRE
+        bool "RT1050_FIRE"
+endchoice
+
+menu "RT1050 Bsp Config" 
+
+menu "Select uart drivers"
+    config RT_USING_UART1
+        bool "Using uart1"
+        select RT_USING_SERIAL
+        default y 
+    config RT_USING_UART2
+        bool "Using uart2"
+        select RT_USING_SERIAL
+        default n 
+    config RT_USING_UART3
+        bool "Using uart3"
+        select RT_USING_SERIAL
+        default n 
+    config RT_USING_UART4
+        bool "Using uart4"
+        select RT_USING_SERIAL
+        default n 
+    config RT_USING_UART5
+        bool "Using uart5"
+        select RT_USING_SERIAL
+        default n 
+    config RT_USING_UART6
+        bool "Using uart6"
+        select RT_USING_SERIAL
+        default n 
+    config RT_USING_UART7
+        bool "Using uart7"
+        select RT_USING_SERIAL
+        default n 
+    config RT_USING_UART8
+        bool "Using uart8"
+        select RT_USING_SERIAL
+        default n 
+endmenu
+
+menu "Select spi bus drivers"
+    choice 
+        prompt "SPI bus clock source"
+        default LPSPI_CLK_SOURCE_FROM_PLL3PFD1
+
+        config LPSPI_CLK_SOURCE_FROM_PLL3PFD1
+            bool "PLL3PFD1"
+        config LPSPI_CLK_SOURCE_FROM_PLL3PFD0
+            bool "PLL3PFD0"
+        config LPSPI_CLK_SOURCE_FROM_PLL2
+            bool "PLL2"
+        config LPSPI_CLK_SOURCE_FROM_PLL2PFD2
+            bool "PLL2PFD2"
+    endchoice
+    config LPSPI_CLK_SOURCE
+        int
+        default 0 if LPSPI_CLK_SOURCE_FROM_PLL3PFD1
+        default 1 if LPSPI_CLK_SOURCE_FROM_PLL3PFD0
+        default 2 if LPSPI_CLK_SOURCE_FROM_PLL2
+        default 3 if LPSPI_CLK_SOURCE_FROM_PLL2PFD2
+
+    config LPSPI_CLK_SOURCE_DIVIDER
+        int "SPI bus clock source divider"
+        range 0 8
+        default 7
+
+    config RT_USING_SPIBUS1
+        bool "Using spi1 bus"
+        select RT_USING_SPI
+        default n 
+    choice
+        prompt "spi1 bus sck io choice"
+        default LPSPI1_SCK_GPIO_1
+        depends on RT_USING_SPIBUS1
+        config LPSPI1_SCK_GPIO_1
+            bool "GPIO_EMC_27"
+        config LPSPI1_SCK_GPIO_2
+            bool "GPIO_SD_B0_00"
+    endchoice
+    choice
+        prompt "spi1 bus sdo io choice"
+        default LPSPI1_SDO_GPIO_1
+        depends on RT_USING_SPIBUS1
+        config LPSPI1_SDO_GPIO_1
+            bool "GPIO_EMC_28"
+        config LPSPI1_SDO_GPIO_2
+            bool "GPIO_SD_B0_02"
+    endchoice
+    choice
+        prompt "spi1 bus sdi io choice"
+        default LPSPI1_SDI_GPIO_1
+        depends on RT_USING_SPIBUS1
+        config LPSPI1_SDI_GPIO_1
+            bool "GPIO_EMC_29"
+        config LPSPI1_SDI_GPIO_2
+            bool "GPIO_SD_B0_03"
+    endchoice
+
+    config RT_USING_SPIBUS2
+        bool "Using spi2 bus"
+        select RT_USING_SPI
+        default n 
+    choice
+        prompt "spi2 bus sck io choice"
+        default LPSPI2_SCK_GPIO_1
+        depends on RT_USING_SPIBUS2
+        config LPSPI2_SCK_GPIO_1
+            bool "GPIO_SD_B1_07"
+        config LPSPI2_SCK_GPIO_2
+            bool "GPIO_EMC_00"
+    endchoice
+    choice
+        prompt "spi2 bus sdo io choice"
+        default LPSPI2_SDO_GPIO_1
+        depends on RT_USING_SPIBUS2
+        config LPSPI2_SDO_GPIO_1
+            bool "GPIO_SD_B1_08"
+        config LPSPI2_SDO_GPIO_2
+            bool "GPIO_EMC_02"
+    endchoice
+    choice
+        prompt "spi2 bus sdi io choice"
+        default LPSPI2_SDI_GPIO_1
+        depends on RT_USING_SPIBUS2
+        config LPSPI2_SDI_GPIO_1
+            bool "GPIO_SD_B1_09"
+        config LPSPI2_SDI_GPIO_2
+            bool "GPIO_EMC_03"
+    endchoice
+
+    config RT_USING_SPIBUS3
+        bool "Using spi3 bus"
+        select RT_USING_SPI
+        default n 
+    choice
+        prompt "spi3 bus sck io choice"
+        default LPSPI3_SCK_GPIO_1
+        depends on RT_USING_SPIBUS3
+        config LPSPI3_SCK_GPIO_1
+            bool "GPIO_AD_B1_15"
+        config LPSPI3_SCK_GPIO_2
+            bool "GPIO_AD_B0_00"
+    endchoice
+    choice
+        prompt "spi3 bus sdo io choice"
+        default LPSPI3_SDO_GPIO_1
+        depends on RT_USING_SPIBUS3
+        config LPSPI3_SDO_GPIO_1
+            bool "GPIO_AD_B1_14"
+        config LPSPI3_SDO_GPIO_2
+            bool "GPIO_AD_B0_01"
+    endchoice
+    choice
+        prompt "spi3 bus sdi io choice"
+        default LPSPI3_SDI_GPIO_1
+        depends on RT_USING_SPIBUS3
+        config LPSPI3_SDI_GPIO_1
+            bool "GPIO_AD_B1_13"
+        config LPSPI3_SDI_GPIO_2
+            bool "GPIO_AD_B0_02"
+    endchoice
+
+    config RT_USING_SPIBUS4
+        bool "Using spi4 bus"
+        select RT_USING_SPI
+        default y 
+    choice
+        prompt "spi4 bus sck io choice"
+        default LPSPI4_SCK_GPIO_1
+        depends on RT_USING_SPIBUS4
+        config LPSPI4_SCK_GPIO_1
+            bool "GPIO_B0_03"
+        config LPSPI4_SCK_GPIO_2
+            bool "GPIO_B1_07"
+    endchoice
+    choice
+        prompt "spi4 bus sdo io choice"
+        default LPSPI4_SDO_GPIO_1
+        depends on RT_USING_SPIBUS4
+        config LPSPI4_SDO_GPIO_1
+            bool "GPIO_B0_02"
+        config LPSPI4_SDO_GPIO_2
+            bool "GPIO_B1_06"
+    endchoice
+    choice
+        prompt "spi4 bus sdi io choice"
+        default LPSPI4_SDI_GPIO_1
+        depends on RT_USING_SPIBUS4
+        config LPSPI4_SDI_GPIO_1
+            bool "GPIO_B0_01"
+        config LPSPI4_SDI_GPIO_2
+            bool "GPIO_B1_05"
+    endchoice
+endmenu
+
+#menu "SDRAM driver support"
+    config RT_USING_SDRAM
+        bool "Using sdram"
+        default y 
+#endmenu
+
+#menu "RTC driver support"
+    config RT_USING_RTC_HP
+        bool "Using hp rtc"
+        select RT_USING_RTC
+        default n 
+#endmenu
+
+if BOARD_RT1050_EVK
+if RT_USING_USB_DEVICE
+    choice
+        prompt "select usb device controller"
+        default RT_USING_EHCI0_AS_DEVICE
+
+        config RT_USING_EHCI0_AS_DEVICE
+            bool "set EHCI0 as device"
+        config RT_USING_EHCI1_AS_DEVICE
+            bool "set EHCI1 as device"
+    endchoice
+endif
 endif
 
-if RT_USING_RTC
-config RT_USING_HP_RTC
-    bool "Using RT_USING_HP_RTC"
-    default n 
-endif
-
+endmenu

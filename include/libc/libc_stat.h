@@ -77,11 +77,23 @@
 
 struct stat
 {
-    struct rt_device* st_dev;
-    uint16_t st_mode;
-    uint32_t st_size;
-    time_t   st_mtime;
-    uint32_t st_blksize;
+    struct rt_device *st_dev;
+    uint16_t  st_ino;
+    uint16_t  st_mode;
+    uint16_t  st_nlink;
+    uint16_t  st_uid;
+    uint16_t  st_gid;
+    struct rt_device *st_rdev;
+    uint32_t  st_size;
+    time_t    st_atime;
+    long      st_spare1;
+    time_t    st_mtime;
+    long      st_spare2;
+    time_t    st_ctime;
+    long      st_spare3;
+    uint32_t  st_blksize;
+    uint32_t  st_blocks;
+    long      st_spare4[2];
 };
 
 #endif

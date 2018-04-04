@@ -12,12 +12,11 @@
  * 2017-10-10     Tanek        the first version
  */
 
-#ifndef __DRV_USART_H__
-#define __DRV_USART_H__
+#ifndef __DRV_UART_H__
+#define __DRV_UART_H__
 
 #include <rthw.h>
 #include <rtthread.h>
 
-int rt_hw_usart_init(void);
 
 #endif
