@@ -93,7 +93,7 @@ menu "Select spi bus drivers"
 
     config LPSPI_CLK_SOURCE_DIVIDER
         int "SPI bus clock source divider"
-        range 0 8
+        range 1 8
         default 7
 
     config RT_USING_SPIBUS1
@@ -223,6 +223,58 @@ menu "Select spi bus drivers"
         config LPSPI4_SDI_GPIO_2
             bool "GPIO_B1_05"
     endchoice
+endmenu
+
+menu "Select iic drivers"
+
+    config LPI2C_CLOCK_SOURCE_DIVIDER
+        int "lpi2c bus clock source divider"
+        range 1 64
+        default 4
+		
+    config RT_USING_I2C1
+        bool "USING I2C1"
+        select RT_USING_I2C
+        default n 
+		if RT_USING_I2C1
+		config RT_USING_I2C1_BITOPS
+		select RT_USING_I2C_BITOPS
+		default n
+        bool "using simulate I2C1"
+		endif
+
+    config RT_USING_I2C2
+        bool "USING I2C2"
+        select RT_USING_I2C
+        default n 
+		if RT_USING_I2C2
+		config RT_USING_I2C2_BITOPS
+		select RT_USING_I2C_BITOPS
+		default n
+        bool "using simulate I2C2"
+		endif
+
+    config RT_USING_I2C3
+        bool "USING I2C3"
+        select RT_USING_I2C
+        default n 
+		if RT_USING_I2C3
+		config RT_USING_I2C3_BITOPS
+		select RT_USING_I2C_BITOPS
+		default n
+        bool "using simulate I2C3"
+		endif
+
+    config RT_USING_I2C4
+        bool "USING I2C4"
+        select RT_USING_I2C
+        default n 
+		if RT_USING_I2C4
+		config RT_USING_I2C4_BITOPS
+		select RT_USING_I2C_BITOPS
+		default n
+        bool "using simulate I2C4"
+		endif
 endmenu
 
 #menu "SDRAM driver support"
