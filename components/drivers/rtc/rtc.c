@@ -247,7 +247,7 @@ FINSH_FUNCTION_EXPORT(list_date, show date and time.)
 FINSH_FUNCTION_EXPORT(set_date, set date. e.g: set_date(2010,2,28))
 FINSH_FUNCTION_EXPORT(set_time, set time. e.g: set_time(23,59,59))
 
-#if defined(RT_USING_FINSH)
+#if defined(RT_USING_FINSH) && defined(FINSH_USING_MSH)
 static void date(uint8_t argc, char **argv)
 {
     if (argc == 1)
@@ -308,6 +308,6 @@ static void date(uint8_t argc, char **argv)
     }
 }
 MSH_CMD_EXPORT(date, get date and time or set [year month day hour min sec]);
-#endif /* defined(RT_USING_FINSH) */
+#endif /* defined(RT_USING_FINSH) && defined(FINSH_USING_MSH) */
 
 #endif /* RT_USING_FINSH */
