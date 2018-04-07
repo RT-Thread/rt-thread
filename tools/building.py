@@ -743,11 +743,20 @@ def SrcRemove(src, remove):
 
     for item in src:
         if type(item) == type('str'):
-            if os.path.basename(item) in remove:
+            item_str = item
+        else:
+            item_str = item.rstr()
+
+        if os.path.isabs(item_str):
+            item_str = os.path.relpath(item_str, GetCurrentDir())
+
+        if type(remove) == type('str'):
+            if item_str == remove:
                 src.remove(item)
         else:
-            if os.path.basename(item.rstr()) in remove:
-                src.remove(item)
+            for remove_item in remove:
+                if item_str == str(remove_item):
+                    src.remove(item)
 
 def GetVersion():
     import SCons.cpp
