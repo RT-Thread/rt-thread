@@ -235,7 +235,7 @@ menu "Select iic drivers"
     config RT_USING_I2C1
         bool "USING I2C1"
         select RT_USING_I2C
-        default n 
+        default y 
 		if RT_USING_I2C1
 		config RT_USING_I2C1_BITOPS
 		select RT_USING_I2C_BITOPS
