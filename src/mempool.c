@@ -95,7 +95,7 @@ rt_err_t rt_mp_init(struct rt_mempool *mp,
                     rt_size_t          block_size)
 {
     rt_uint8_t *block_ptr;
-    register rt_base_t offset;
+    register rt_size_t offset;
 
     /* parameter check */
     RT_ASSERT(mp != RT_NULL);
@@ -200,7 +200,7 @@ rt_mp_t rt_mp_create(const char *name,
 {
     rt_uint8_t *block_ptr;
     struct rt_mempool *mp;
-    register rt_base_t offset;
+    register rt_size_t offset;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
