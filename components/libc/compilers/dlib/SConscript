@@ -1,5 +1,9 @@
+import sys
+
 from building import *
 from distutils.version import LooseVersion
+
+sys.path = sys.path + [os.path.join(os.path.normpath(os.getcwd()), '../../../../tools')]
 from iar import IARVersion
 
 Import('rtconfig')
