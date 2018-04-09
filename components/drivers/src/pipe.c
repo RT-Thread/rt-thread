@@ -358,7 +358,7 @@ rt_err_t  rt_pipe_close  (rt_device_t device)
 rt_size_t rt_pipe_read   (rt_device_t device, rt_off_t pos, void *buffer, rt_size_t count)
 {
     uint8_t *pbuf;
-    int read_bytes = 0;
+    rt_size_t read_bytes = 0;
     rt_pipe_t *pipe = (rt_pipe_t *)device;
 
     if (device == RT_NULL)
@@ -386,7 +386,7 @@ rt_size_t rt_pipe_read   (rt_device_t device, rt_off_t pos, void *buffer, rt_siz
 rt_size_t rt_pipe_write  (rt_device_t device, rt_off_t pos, const void *buffer, rt_size_t count)
 {
     uint8_t *pbuf;
-    int write_bytes = 0;
+    rt_size_t write_bytes = 0;
     rt_pipe_t *pipe = (rt_pipe_t *)device;
 
     if (device == RT_NULL)
