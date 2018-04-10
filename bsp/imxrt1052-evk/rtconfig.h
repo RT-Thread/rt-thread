@@ -209,6 +209,11 @@
 #define LPSPI4_SCK_GPIO_1
 #define LPSPI4_SDO_GPIO_1
 #define LPSPI4_SDI_GPIO_1
+
+/* Select iic drivers */
+
+#define LPI2C_CLOCK_SOURCE_DIVIDER 4
+#define RT_USING_I2C1
 #define RT_USING_SDRAM
 #define RT_USING_RTC_HP
 
