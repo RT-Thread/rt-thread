@@ -53,7 +53,7 @@ if GetDepend('BOARD_RT1050_EVK'):
         src += Glob('usb/device/*.c')
 
     if GetDepend('RT_USING_RTGUI') or GetDepend('PKG_USING_GUIENGINE'):
-        src += ['drv_lcd.c', 'drv_ft5406.c', 'drv_i2c.c']
+        src += ['drv_lcd.c']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
 
