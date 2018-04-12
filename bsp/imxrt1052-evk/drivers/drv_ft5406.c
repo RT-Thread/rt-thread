@@ -40,7 +40,7 @@
 
 #define BSP_TOUCH_SAMPLE_HZ     30
 
-#define I2CBUS_NAME  "i2c0"
+#define I2CBUS_NAME  "i2c1"
 
 #if 0
 #define FTDEBUG      rt_kprintf

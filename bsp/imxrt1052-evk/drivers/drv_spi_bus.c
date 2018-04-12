@@ -18,7 +18,8 @@
 #include "fsl_iomuxc.h" 
 #include "fsl_lpspi.h" 
 
-#ifdef RT_USING_SPI
+#if defined(RT_USING_SPIBUS1) || defined(RT_USING_SPIBUS2) || \
+    defined(RT_USING_SPIBUS3) || defined(RT_USING_SPIBUS4)
 
 #if defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL
     #error "Please don't define 'FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL'!"
@@ -28,7 +29,7 @@
 #define LPSPI_CLK_SOURCE         (1U) /* PLL3 PFD0 */ 
 #endif
 #if !defined(LPSPI_CLK_SOURCE_DIVIDER)
-#define LPSPI_CLK_SOURCE_DIVIDER (7U) /* 8div */
+#define LPSPI_CLK_SOURCE_DIVIDER (8U) /* 8div */
 #endif
 
 /* LPSPI1 SCK SDO SDI IOMUX Config */
@@ -399,14 +400,10 @@ static struct rt_spi_ops rt1050_spi_ops =
  
 int rt_hw_spi_bus_init(void)
 {
-#if defined(RT_USING_SPIBUS1) || defined(RT_USING_SPIBUS2) || \
-    defined(RT_USING_SPIBUS3) || defined(RT_USING_SPIBUS4)
-    
     CLOCK_SetMux(kCLOCK_LpspiMux, LPSPI_CLK_SOURCE);
-    CLOCK_SetDiv(kCLOCK_LpspiDiv, LPSPI_CLK_SOURCE_DIVIDER); 
+    CLOCK_SetDiv(kCLOCK_LpspiDiv, LPSPI_CLK_SOURCE_DIVIDER-1); 
     
     CLOCK_EnableClock(kCLOCK_Iomuxc); 
-#endif
     
 #if defined(RT_USING_SPIBUS1)
     rt_spi_bus_register(&spi1_bus, "spi1", &rt1050_spi_ops); 
