@@ -5,7 +5,11 @@ Import('RTT_ROOT')
 from building import *
 
 cwd = GetCurrentDir()
-src  = Glob('drivers/*.c')
+src = Glob('drivers/*.c')
+
+if GetDepend('BOARD_RT1050_FIRE'): 
+    SrcRemove(src, r'drivers\fsl_enet.c')
+
 SrcRemove(src, 'drivers/dataqueue.c')
 src += Glob('common/chip/*.c')
 src += [cwd + '/system_MIMXRT1052.c']
