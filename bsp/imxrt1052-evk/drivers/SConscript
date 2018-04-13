@@ -2,7 +2,7 @@ Import('RTT_ROOT')
 Import('rtconfig')
 from building import *
 
-cwd     = os.path.join(str(Dir('#')), 'drivers')
+cwd = os.path.join(str(Dir('#')), 'drivers')
 
 # add the general drivers.
 src = Split("""
@@ -16,7 +16,7 @@ CPPDEFINES = []
 
 # add sdram driver code
 if GetDepend('RT_USING_SDRAM'):
-    src = src + ['./drv_sdram.c'] 
+    src = src + ['drv_sdram.c'] 
 
 # add pin driver code
 if GetDepend('RT_USING_PIN'):
@@ -24,15 +24,27 @@ if GetDepend('RT_USING_PIN'):
 
 # add rtc driver code
 if GetDepend('RT_USING_RTC_HP'):
-    src = src + ['./drv_rtc.c'] 
+    src = src + ['drv_rtc.c'] 
 
 # add spibus driver code
 if GetDepend('RT_USING_SPI'):
     src += ['drv_spi_bus.c']
 
+# add spi flash driver code
+if GetDepend('RT_USING_SPI_FLASH'):
+    src += ['drv_spi_flash.c']
+
 # add i2cbus driver code
 if GetDepend('RT_USING_I2C'):
     src += ['drv_i2c.c']
+
+# add lcd driver code
+if GetDepend('RT_USING_LCD'):
+    src += ['drv_lcd.c']
+
+# add sdio driver code
+if GetDepend('RT_USING_SDIO'):
+    src += ['drv_sdio.c']
 
 if GetDepend('BOARD_RT1050_EVK'):
     src += ['hyper_flash_boot.c']
@@ -40,9 +52,6 @@ if GetDepend('BOARD_RT1050_EVK'):
     if GetDepend('RT_USING_LWIP'):
         src += ['drv_eth.c', 'fsl_phy.c']
         CPPDEFINES += ['FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE']
-        
-    if GetDepend('RT_USING_SDIO'):
-        src += ['drv_sdio.c']
 
     if GetDepend('RT_USING_USB_DEVICE'):
         src += Glob('usb/phy/*.c')
@@ -51,9 +60,6 @@ if GetDepend('BOARD_RT1050_EVK'):
     if GetDepend('RT_USING_USB_DEVICE'):
         src += ['drv_usbd.c']
         src += Glob('usb/device/*.c')
-
-    if GetDepend('RT_USING_RTGUI') or GetDepend('PKG_USING_GUIENGINE'):
-        src += ['drv_lcd.c', 'drv_ft5406.c', 'drv_i2c.c']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
 
