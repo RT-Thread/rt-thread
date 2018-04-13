@@ -1,5 +1,5 @@
 /*
- * File      : drv_lcd2.c
+ * File      : drv_spi_flash.c
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006-2013, RT-Thread Development Team
  *
@@ -9,15 +9,15 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-04-05     Liuguang     the first version.
+ * 2018-04-02     Liuguang     the first version.
  */
  
-#ifndef __DRV_LCD_H__
-#define __DRV_LCD_H__
+#ifndef __DRV_SPI_FLASH_H_ 
+#define __DRV_SPI_FLASH_H_ 
 
 #include <rtthread.h> 
 #include <rtdevice.h> 
 
-int rt_hw_lcd_init(void);
+int rt_hw_spi_flash_init(void); 
 
-#endif
+#endif /* __DRV_SPI_FLASH_H_ */ 
