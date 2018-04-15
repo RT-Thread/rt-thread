@@ -1,6 +1,4 @@
 from building import *
-from distutils.version import LooseVersion
-from iar import IARVersion
 
 Import('rtconfig')
 
@@ -8,12 +6,15 @@ src   = Glob('*.c')
 cwd   = GetCurrentDir()
 group = []
 
-CPPPATH = [cwd]
+CPPPATH    = [cwd]
 CPPDEFINES = ['RT_USING_DLIBC']
 
 if rtconfig.PLATFORM == 'iar':
 
     if GetDepend('RT_USING_DFS'):
+        from distutils.version import LooseVersion
+        from iar import IARVersion
+
         CPPDEFINES = CPPDEFINES + ['_DLIB_FILE_DESCRIPTOR']
 
         if LooseVersion(IARVersion()) < LooseVersion("8.20.1"):
