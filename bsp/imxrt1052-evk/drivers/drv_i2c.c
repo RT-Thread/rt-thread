@@ -280,9 +280,10 @@ static rt_size_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
 {
     struct rt1052_i2c_bus *rt1052_i2c;
     rt_uint32_t numbak;
-    rt_uint16_t i;
+    rt_int16_t i;
     RT_ASSERT(bus != RT_NULL);
     rt1052_i2c = (struct rt1052_i2c_bus *) bus;
+    uint32_t status;
 
     rt1052_i2c->msg = msgs;
     rt1052_i2c->msg_ptr = 0;
@@ -296,7 +297,7 @@ static rt_size_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
             LPI2C_MasterStart(rt1052_i2c->I2C, rt1052_i2c->msg[i].addr, kLPI2C_Read);
             if (LPI2C_MasterReceive(rt1052_i2c->I2C, rt1052_i2c->msg[i].buf, rt1052_i2c->msg[i].len) == kStatus_LPI2C_Nak)
             {
-                i = 0;
+                i = -1;
                 break;
             }
         }
@@ -305,14 +306,22 @@ static rt_size_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
             LPI2C_MasterStart(rt1052_i2c->I2C, rt1052_i2c->msg[i].addr, kLPI2C_Write);
             if (LPI2C_MasterSend(rt1052_i2c->I2C, rt1052_i2c->msg[i].buf, rt1052_i2c->msg[i].len) == kStatus_LPI2C_Nak)
             {
-                i = 0;
+                i = -1;
                 break;
             }
         }
     }
 
     i2c_dbg("send stop condition\n");
-    LPI2C_MasterStop(rt1052_i2c->I2C);
+    status = LPI2C_MasterStop(rt1052_i2c->I2C);
+    if (status == kStatus_LPI2C_Nak)
+    {
+        i = -1;
+    }
+    else
+    {
+        i = 1;
+    }
 
     numbak = i;
     rt1052_i2c->msg = RT_NULL;
