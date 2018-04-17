@@ -24,12 +24,9 @@
 
 /*@{*/
 
-
 void HAL_MspInit(void)
 {
-
     HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
-
     /* System interrupt init*/
     __HAL_RCC_AFIO_CLK_ENABLE();
     /* MemoryManagement_IRQn interrupt configuration */
@@ -46,16 +43,14 @@ void HAL_MspInit(void)
     HAL_NVIC_SetPriority(PendSV_IRQn, 15, 0);
     /* SysTick_IRQn interrupt configuration */
     HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
-
     /**DISABLE: JTAG-DP Disabled and SW-DP Disabled**/
     __HAL_AFIO_REMAP_SWJ_NOJTAG();
 }
+
 void SystemClock_Config(void)
 {
-
     RCC_OscInitTypeDef RCC_OscInitStruct;
     RCC_ClkInitTypeDef RCC_ClkInitStruct;
-
     /**Initializes the CPU, AHB and APB busses clocks
       */
     RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
@@ -73,21 +68,16 @@ void SystemClock_Config(void)
     RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
     RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
     RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-
     RT_ASSERT(HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) == HAL_OK);
-
     /**Configure the Systick interrupt time
       */
     HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / RT_TICK_PER_SECOND);
-
     /**Configure the Systick
       */
     HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
-
     /* SysTick_IRQn interrupt configuration */
     HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
 }
-
 
 /**
  * This is the timer interrupt service routine.
@@ -97,10 +87,8 @@ void SysTick_Handler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-
     HAL_IncTick();
     rt_tick_increase();
-
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -115,15 +103,10 @@ void rt_hw_board_init(void)
 #ifdef RT_USING_HEAP
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
-
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
-
 #ifdef RT_USING_CONSOLE
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
-
 }
-
-/*@}*/
