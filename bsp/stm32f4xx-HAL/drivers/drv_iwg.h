@@ -14,15 +14,4 @@
 #ifndef __DRV_IWG_H__
 #define __DRV_IWG_H__
 extern int rt_iwg_init(void);
-
 #endif
-
-
-
-
-
-
-
-
-
-
