@@ -15,9 +15,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "board.h"
-
-//#define USB_DISCONNECT_PIN                  30		//PA9
-
+//#define USB_DISCONNECT_PIN                  30        //PA9
 static PCD_HandleTypeDef _stm_pcd;
 static struct udcd _stm_udc;
 static struct ep_id _ep_pool[] =
@@ -35,12 +33,10 @@ static struct ep_id _ep_pool[] =
 void OTG_FS_IRQHandler(void)
 {
     rt_interrupt_enter();
-
     HAL_PCD_IRQHandler(&_stm_pcd);
-
     /* leave interrupt */
     rt_interrupt_leave();
-  
+
 }
 
 void HAL_PCD_ResetCallback(PCD_HandleTypeDef *pcd)
@@ -53,9 +49,8 @@ void HAL_PCD_ResetCallback(PCD_HandleTypeDef *pcd)
 
 void HAL_PCD_SetupStageCallback(PCD_HandleTypeDef *hpcd)
 {
-    rt_usbd_ep0_setup_handler(&_stm_udc, (struct urequest*)hpcd->Setup);
+    rt_usbd_ep0_setup_handler(&_stm_udc, (struct urequest *)hpcd->Setup);
 }
-
 
 void HAL_PCD_DataInStageCallback(PCD_HandleTypeDef *hpcd, uint8_t epnum)
 {
@@ -65,7 +60,7 @@ void HAL_PCD_DataInStageCallback(PCD_HandleTypeDef *hpcd, uint8_t epnum)
     }
     else
     {
-        rt_usbd_ep_in_handler(&_stm_udc, 0x80|epnum, hpcd->IN_ep[epnum].xfer_count);
+        rt_usbd_ep_in_handler(&_stm_udc, 0x80 | epnum, hpcd->IN_ep[epnum].xfer_count);
     }
 }
 
@@ -92,58 +87,52 @@ void HAL_PCD_DataOutStageCallback(PCD_HandleTypeDef *hpcd, uint8_t epnum)
     }
     else
     {
-        rt_usbd_ep0_out_handler(&_stm_udc,hpcd->OUT_ep[0].xfer_count);
+        rt_usbd_ep0_out_handler(&_stm_udc, hpcd->OUT_ep[0].xfer_count);
     }
 }
 
-
 void HAL_PCDEx_SetConnectionState(PCD_HandleTypeDef *hpcd, uint8_t state)
 {
-    if(state == 1)
+    if (state == 1)
     {
     }
     else
     {
-    }  
+    }
 }
 
-void HAL_PCD_MspInit(PCD_HandleTypeDef* pcdHandle)
+void HAL_PCD_MspInit(PCD_HandleTypeDef *pcdHandle)
 {
     GPIO_InitTypeDef GPIO_InitStruct;
-    if(pcdHandle->Instance==USB_OTG_FS)
+    if (pcdHandle->Instance == USB_OTG_FS)
     {
         /* USER CODE BEGIN USB_MspInit 0 */
         __HAL_RCC_GPIOA_CLK_ENABLE();
-
-        GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_12;
+        GPIO_InitStruct.Pin = GPIO_PIN_11 | GPIO_PIN_12;
         GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
         GPIO_InitStruct.Pull = GPIO_NOPULL;
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
         GPIO_InitStruct.Alternate = GPIO_AF10_OTG_FS;
         HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
         /* Peripheral clock enable */
         __HAL_RCC_USB_OTG_FS_CLK_ENABLE();
-
         /* Peripheral interrupt init */
         HAL_NVIC_SetPriority(OTG_FS_IRQn, 5, 0);
         HAL_NVIC_EnableIRQ(OTG_FS_IRQn);
     }
 }
 
-void HAL_PCD_MspDeInit(PCD_HandleTypeDef* pcdHandle)
+void HAL_PCD_MspDeInit(PCD_HandleTypeDef *pcdHandle)
 {
-    if(pcdHandle->Instance==USB_OTG_FS)
+    if (pcdHandle->Instance == USB_OTG_FS)
     {
         /* Peripheral clock disable */
         __HAL_RCC_USB_OTG_FS_CLK_DISABLE();
-
-        /**USB_OTG_FS GPIO Configuration    
+        /**USB_OTG_FS GPIO Configuration
         PA11     ------> USB_OTG_FS_DM
-        PA12     ------> USB_OTG_FS_DP 
+        PA12     ------> USB_OTG_FS_DP
         */
-        HAL_GPIO_DeInit(GPIOA, GPIO_PIN_11|GPIO_PIN_12);
-
+        HAL_GPIO_DeInit(GPIOA, GPIO_PIN_11 | GPIO_PIN_12);
         /* Peripheral interrupt Deinit*/
         HAL_NVIC_DisableIRQ(OTG_FS_IRQn);
     }
@@ -157,7 +146,7 @@ static rt_err_t _ep_set_stall(rt_uint8_t address)
 
 static rt_err_t _ep_clear_stall(rt_uint8_t address)
 {
-    HAL_PCD_EP_ClrStall(&_stm_pcd, address);  
+    HAL_PCD_EP_ClrStall(&_stm_pcd, address);
     return RT_EOK;
 }
 
@@ -178,7 +167,6 @@ static rt_err_t _ep_enable(uep_t ep)
     RT_ASSERT(ep->ep_desc != RT_NULL);
     HAL_PCD_EP_Open(&_stm_pcd, ep->ep_desc->bEndpointAddress,
                     ep->ep_desc->wMaxPacketSize, ep->ep_desc->bmAttributes);
-
     return RT_EOK;
 }
 
@@ -193,9 +181,7 @@ static rt_err_t _ep_disable(uep_t ep)
 static rt_size_t _ep_read(rt_uint8_t address, void *buffer)
 {
     rt_size_t size = 0;
-
     RT_ASSERT(buffer != RT_NULL);
-
     return size;
 }
 
@@ -212,7 +198,7 @@ static rt_size_t _ep_write(rt_uint8_t address, void *buffer, rt_size_t size)
 }
 
 static rt_err_t _ep0_send_status(void)
-{	
+{
     HAL_PCD_EP_Transmit(&_stm_pcd, 0x00, NULL, 0);
     return RT_EOK;
 }
@@ -230,10 +216,8 @@ static rt_err_t _wakeup(void)
 static rt_err_t _init(rt_device_t device)
 {
     PCD_HandleTypeDef *pcd;
-
     /* Set LL Driver parameters */
-    pcd = (PCD_HandleTypeDef*)device->user_data;
-
+    pcd = (PCD_HandleTypeDef *)device->user_data;
     pcd->Instance = USB_OTG_FS;
     pcd->Init.dev_endpoints = 4;
     pcd->Init.speed = PCD_SPEED_FULL;
@@ -245,17 +229,14 @@ static rt_err_t _init(rt_device_t device)
     pcd->Init.lpm_enable = DISABLE;
     pcd->Init.vbus_sensing_enable = DISABLE;
     pcd->Init.use_dedicated_ep1 = DISABLE;
-
     /* Initialize LL Driver */
     HAL_PCD_Init(pcd);
-
     HAL_PCDEx_SetRxFiFo(pcd, 0x80);
     HAL_PCDEx_SetTxFiFo(pcd, 0, 0x40);
     HAL_PCDEx_SetTxFiFo(pcd, 1, 0x40);
     HAL_PCDEx_SetTxFiFo(pcd, 2, 0x40);
     HAL_PCDEx_SetTxFiFo(pcd, 3, 0x40);
     HAL_PCD_Start(pcd);
-
     return RT_EOK;
 }
 
@@ -275,11 +256,9 @@ const static struct udcd_ops _udc_ops =
     _wakeup,
 };
 
-
 int stm_usbd_register(void)
 {
     rt_memset((void *)&_stm_udc, 0, sizeof(struct udcd));
-
     _stm_udc.parent.type = RT_Device_Class_USBDevice;
     _stm_udc.parent.init = _init;
     _stm_udc.parent.user_data = &_stm_pcd;
@@ -287,10 +266,8 @@ int stm_usbd_register(void)
     /* Register endpoint infomation */
     _stm_udc.ep_pool = _ep_pool;
     _stm_udc.ep0.id = &_ep_pool[0];
-
     rt_device_register((rt_device_t)&_stm_udc, "usbd", 0);
     rt_usb_device_init();
     return RT_EOK;
 }
 INIT_DEVICE_EXPORT(stm_usbd_register);
- 

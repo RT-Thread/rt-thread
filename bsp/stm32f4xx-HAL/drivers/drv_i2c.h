@@ -21,10 +21,7 @@
  * Date           Author       Notes
  * 2017-06-05     tanek        first implementation.
  */
-
 #ifndef __DRV_I2C__
 #define __DRV_I2C__
-
 int hw_i2c_init(void);
-
 #endif

@@ -28,8 +28,9 @@ static rt_err_t drv_init(rt_watchdog_t *wdt)
         {
         }
     }
-		return RT_EOK;
+    return RT_EOK;
 }
+
 static rt_err_t drv_control(rt_watchdog_t *wdt, int cmd, void *arg)
 {
     switch (cmd)
@@ -49,28 +50,21 @@ static rt_err_t drv_control(rt_watchdog_t *wdt, int cmd, void *arg)
     }
     return RT_EOK;
 }
+
 static struct rt_watchdog_ops _ops =
 {
     drv_init,
     drv_control
 };
+
 static rt_watchdog_t _iwg =
 {
     .ops = &_ops
 };
+
 int rt_iwg_init(void)
 {
     return rt_hw_watchdog_register(&_iwg, "iwg", RT_DEVICE_FLAG_DEACTIVATE, RT_NULL);
 }
-
 INIT_BOARD_EXPORT(rt_iwg_init);
-
 #endif
-
-
-
-
-
-
-
-
