@@ -22,9 +22,9 @@
  * 2018-01-13     Liu2guang      the first version.
  */
 
-#ifndef __DRV_SDCARD_H_ 
-#define __DRV_SDCARD_H_ 
+#ifndef __DRV_SDCARD_H_
+#define __DRV_SDCARD_H_
 
-int rt_hw_sdcard_init(void); 
+int rt_hw_sdcard_init(void);
 
 #endif
