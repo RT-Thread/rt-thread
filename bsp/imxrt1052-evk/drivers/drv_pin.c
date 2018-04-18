@@ -392,7 +392,6 @@ void GPIO5_Combined_0_15_IRQHandler(void)
 #if defined __CORTEX_M && (__CORTEX_M == 4U)
     __DSB();
 #endif
-    
     rt_interrupt_leave();
 }
 
@@ -473,13 +472,13 @@ static void rt1052_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     {
         CLOCK_EnableClock(kCLOCK_Iomuxc); 
         
-        IOMUXC_SetPinMux(0x401F8010U + pin*4, 0x5U, 0, 0, 0, 0); 
+        IOMUXC_SetPinMux(0x401F8010U + pin*4, 0x5U, 0, 0, 0, 1); 
     }
     else
     {
         CLOCK_EnableClock(kCLOCK_IomuxcSnvs); 
         
-        IOMUXC_SetPinMux(0x401F8000U + (pin-125)*4, 0x5U, 0, 0, 0, 0); 
+        IOMUXC_SetPinMux(0x401F8000U + (pin-125)*4, 0x5U, 0, 0, 0, 1); 
     }
     
     gpio.outputLogic = 0; 
@@ -530,7 +529,7 @@ static void rt1052_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 
 static int rt1052_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    return GPIO_PinRead(rt1052_pin_map[pin].gpio, rt1052_pin_map[pin].gpio_pin); 
+    return GPIO_PinReadPadStatus(rt1052_pin_map[pin].gpio, rt1052_pin_map[pin].gpio_pin); 
 }
 
 static void rt1052_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
