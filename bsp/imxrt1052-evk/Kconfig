@@ -267,56 +267,64 @@ menu "Select spi bus and dev drivers"
         depends on RT_USING_SPI_FLASH
 endmenu
 
-menu "Select i2c bus drivers"
+menu "Select iic bus drivers"
 
-    config LPI2C_CLOCK_SOURCE_DIVIDER
-        int "lpi2c bus clock source divider"
-        range 1 64
-        default 4
-        
-    config RT_USING_I2C1
-        bool "USING I2C1"
+    config RT_USING_HW_I2C1
+        bool "using hardware i2c1"
         select RT_USING_I2C
         default y 
-        if RT_USING_I2C1
-        config RT_USING_I2C1_BITOPS
-        select RT_USING_I2C_BITOPS
-        default n
-        bool "using simulate I2C1"
-        endif
-
-    config RT_USING_I2C2
-        bool "USING I2C2"
+    choice
+        prompt "i2c1 bus badurate choice"
+        default HW_I2C1_BADURATE_100kHZ
+        depends on RT_USING_HW_I2C1
+        config HW_I2C1_BADURATE_100kHZ
+            bool "100kHZ"
+        config HW_I2C1_BADURATE_400kHZ
+            bool "400kHZ"
+    endchoice
+	
+    config RT_USING_HW_I2C2
+        bool "using hardware i2c2"
         select RT_USING_I2C
         default n 
-        if RT_USING_I2C2
-        config RT_USING_I2C2_BITOPS
-        select RT_USING_I2C_BITOPS
-        default n
-        bool "using simulate I2C2"
-        endif
-
-    config RT_USING_I2C3
-        bool "USING I2C3"
+    choice
+        prompt "i2c2 bus badurate choice"
+        default HW_I2C2_BADURATE_100kHZ
+        depends on RT_USING_HW_I2C2
+        config HW_I2C2_BADURATE_100kHZ
+            bool "100kHZ"
+        config HW_I2C2_BADURATE_400kHZ
+            bool "400kHZ"
+    endchoice
+	
+    config RT_USING_HW_I2C3
+        bool "using hardware i2c3"
         select RT_USING_I2C
         default n 
-        if RT_USING_I2C3
-        config RT_USING_I2C3_BITOPS
-        select RT_USING_I2C_BITOPS
-        default n
-        bool "using simulate I2C3"
-        endif
-
-    config RT_USING_I2C4
-        bool "USING I2C4"
+    choice
+        prompt "i2c3 bus badurate choice"
+        default HW_I2C3_BADURATE_100kHZ
+        depends on RT_USING_HW_I2C3
+        config HW_I2C3_BADURATE_100kHZ
+            bool "100kHZ"
+        config HW_I2C3_BADURATE_400kHZ
+            bool "400kHZ"
+    endchoice
+	
+    config RT_USING_HW_I2C4
+        bool "using hardware i2c4"
         select RT_USING_I2C
         default n 
-        if RT_USING_I2C4
-        config RT_USING_I2C4_BITOPS
-        select RT_USING_I2C_BITOPS
-        default n
-        bool "using simulate I2C4"
-        endif
+    choice
+        prompt "i2c4 bus badurate choice"
+        default HW_I2C4_BADURATE_100kHZ
+        depends on RT_USING_HW_I2C4
+        config HW_I2C4_BADURATE_100kHZ
+            bool "100kHZ"
+        config HW_I2C4_BADURATE_400kHZ
+            bool "400kHZ"
+    endchoice
+
 endmenu
 
 menu "Select lcd driver"
