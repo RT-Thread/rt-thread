@@ -298,7 +298,8 @@ static status_t LPI2C_MasterWaitForTxReady(LPI2C_Type *base)
 
         /* Get the number of words in the tx fifo and compute empty slots. */
         LPI2C_MasterGetFifoCounts(base, NULL, &txCount);
-        txCount = txFifoSize - txCount;
+        /* Change sdk to wait for TxReady. */
+//        txCount = txFifoSize - txCount;
 
         /* Check for error flags. */
         status = LPI2C_MasterGetStatusFlags(base);
@@ -315,7 +316,8 @@ static status_t LPI2C_MasterWaitForTxReady(LPI2C_Type *base)
         return kStatus_LPI2C_Timeout;
     }
 #else
-    } while (!txCount);
+    /* Change sdk to wait for TxReady. */
+    } while (txCount);
 #endif
 
     return kStatus_Success;
