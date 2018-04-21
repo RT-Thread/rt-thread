@@ -46,20 +46,21 @@ if GetDepend('RT_USING_LCD'):
 if GetDepend('RT_USING_SDIO'):
     src += ['drv_sdio.c']
 
+# add usb device driver code
+if GetDepend('RT_USING_USB_DEVICE'):
+    src += ['drv_usbd.c']
+    src += Glob('usb/device/*.c')
+# add usb phy driver code
+if GetDepend('RT_USING_USB_DEVICE'):
+    src += Glob('usb/phy/*.c')
+    CPPDEFINES += ['ENDIANNESS']
+
 if GetDepend('BOARD_RT1050_EVK'):
     src += ['hyper_flash_boot.c']
 
     if GetDepend('RT_USING_LWIP'):
         src += ['drv_eth.c', 'fsl_phy.c']
         CPPDEFINES += ['FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE']
-
-    if GetDepend('RT_USING_USB_DEVICE'):
-        src += Glob('usb/phy/*.c')
-        CPPDEFINES += ['ENDIANNESS']
-        
-    if GetDepend('RT_USING_USB_DEVICE'):
-        src += ['drv_usbd.c']
-        src += Glob('usb/device/*.c')
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
 

@@ -397,7 +397,6 @@ endmenu
         default n 
 #endmenu
 
-if BOARD_RT1050_EVK
 if RT_USING_USB_DEVICE
     choice
         prompt "select usb device controller"
@@ -408,7 +407,6 @@ if RT_USING_USB_DEVICE
         config RT_USING_EHCI1_AS_DEVICE
             bool "set EHCI1 as device"
     endchoice
-endif
 endif
 
 endmenu
