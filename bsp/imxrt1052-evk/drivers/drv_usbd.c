@@ -23,7 +23,7 @@
 #error Can not using 2 controller as usb device
 #endif
 #endif
-
+#define FSL_USB_HS
 
 /* USB PHY condfiguration */
 #define BOARD_USB_PHY_D_CAL (0x0CU)
@@ -81,6 +81,27 @@ void USB_DeviceClockInit(uint8_t controllerId)
 #endif
 }
 #ifdef RT_USING_EHCI0_AS_DEVICE
+#ifdef FSL_USB_HS
+static struct ep_id _ehci0_ep_pool[] =
+{
+    {0x0,  USB_EP_ATTR_CONTROL,     USB_DIR_INOUT,  64, ID_ASSIGNED  },
+    {0x1,  USB_EP_ATTR_BULK,        USB_DIR_IN,     512, ID_UNASSIGNED},
+    {0x1,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    512, ID_UNASSIGNED},
+    {0x2,  USB_EP_ATTR_INT,         USB_DIR_IN,     512, ID_UNASSIGNED},
+    {0x2,  USB_EP_ATTR_INT,         USB_DIR_OUT,    512, ID_UNASSIGNED},
+    {0x3,  USB_EP_ATTR_BULK,        USB_DIR_IN,     512, ID_UNASSIGNED},
+    {0x3,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    512, ID_UNASSIGNED},
+    {0x4,  USB_EP_ATTR_INT,         USB_DIR_IN,     512, ID_UNASSIGNED},
+    {0x4,  USB_EP_ATTR_INT,         USB_DIR_OUT,    512, ID_UNASSIGNED},
+    {0x5,  USB_EP_ATTR_BULK,        USB_DIR_IN,     512, ID_UNASSIGNED},
+    {0x5,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    512, ID_UNASSIGNED},
+    {0x6,  USB_EP_ATTR_INT,         USB_DIR_IN,     512, ID_UNASSIGNED},
+    {0x6,  USB_EP_ATTR_INT,         USB_DIR_OUT,    512, ID_UNASSIGNED},
+    {0x7,  USB_EP_ATTR_BULK,        USB_DIR_IN,     512, ID_UNASSIGNED},
+    {0x7,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    512, ID_UNASSIGNED},
+    {0xFF, USB_EP_ATTR_TYPE_MASK,   USB_DIR_MASK,   0,  ID_ASSIGNED  },
+};
+#else
 static struct ep_id _ehci0_ep_pool[] =
 {
     {0x0,  USB_EP_ATTR_CONTROL,     USB_DIR_INOUT,  64, ID_ASSIGNED  },
@@ -100,6 +121,7 @@ static struct ep_id _ehci0_ep_pool[] =
     {0x7,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
     {0xFF, USB_EP_ATTR_TYPE_MASK,   USB_DIR_MASK,   0,  ID_ASSIGNED  },
 };
+#endif
 void USB_OTG1_IRQHandler(void)
 {
     /* enter interrupt */
@@ -133,6 +155,7 @@ static rt_err_t _ehci0_ep_enable(uep_t ep)
 {
     usb_device_endpoint_init_struct_t ep_init;
     usb_device_endpoint_callback_struct_t ep_callback;
+    rt_uint32_t param = ep->ep_desc->bEndpointAddress;
     RT_ASSERT(ep != RT_NULL);
     RT_ASSERT(ep->ep_desc != RT_NULL);
     ep_init.maxPacketSize = ep->ep_desc->wMaxPacketSize;
@@ -140,7 +163,7 @@ static rt_err_t _ehci0_ep_enable(uep_t ep)
     ep_init.transferType = ep->ep_desc->bmAttributes;
     ep_init.zlt = 0;
     ep_callback.callbackFn = usb_device_endpoint_callback;
-    ep_callback.callbackParam = (void *)ep_init.endpointAddress;
+    ep_callback.callbackParam = (void *)param;
     ep_callback.isBusy = 0;
     USB_DeviceInitEndpoint(ehci0_handle,&ep_init,&ep_callback);
     return RT_EOK;
@@ -220,6 +243,27 @@ static rt_err_t drv_ehci0_usbd_init(rt_device_t device)
 }
 #endif
 #ifdef RT_USING_EHCI1_AS_DEVICE
+#ifdef FSL_USB_HS
+static struct ep_id _ehci1_ep_pool[] =
+{
+    {0x0,  USB_EP_ATTR_CONTROL,     USB_DIR_INOUT,  64, ID_ASSIGNED  },
+    {0x1,  USB_EP_ATTR_BULK,        USB_DIR_IN,     512, ID_UNASSIGNED},
+    {0x1,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    512, ID_UNASSIGNED},
+    {0x2,  USB_EP_ATTR_INT,         USB_DIR_IN,     512, ID_UNASSIGNED},
+    {0x2,  USB_EP_ATTR_INT,         USB_DIR_OUT,    512, ID_UNASSIGNED},
+    {0x3,  USB_EP_ATTR_BULK,        USB_DIR_IN,     512, ID_UNASSIGNED},
+    {0x3,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    512, ID_UNASSIGNED},
+    {0x4,  USB_EP_ATTR_INT,         USB_DIR_IN,     512, ID_UNASSIGNED},
+    {0x4,  USB_EP_ATTR_INT,         USB_DIR_OUT,    512, ID_UNASSIGNED},
+    {0x5,  USB_EP_ATTR_BULK,        USB_DIR_IN,     512, ID_UNASSIGNED},
+    {0x5,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    512, ID_UNASSIGNED},
+    {0x6,  USB_EP_ATTR_INT,         USB_DIR_IN,     512, ID_UNASSIGNED},
+    {0x6,  USB_EP_ATTR_INT,         USB_DIR_OUT,    512, ID_UNASSIGNED},
+    {0x7,  USB_EP_ATTR_BULK,        USB_DIR_IN,     512, ID_UNASSIGNED},
+    {0x7,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    512, ID_UNASSIGNED},
+    {0xFF, USB_EP_ATTR_TYPE_MASK,   USB_DIR_MASK,   0,  ID_ASSIGNED  },
+};
+#else
 static struct ep_id _ehci1_ep_pool[] =
 {
     {0x0,  USB_EP_ATTR_CONTROL,     USB_DIR_INOUT,  64, ID_ASSIGNED  },
@@ -239,6 +283,7 @@ static struct ep_id _ehci1_ep_pool[] =
     {0x7,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
     {0xFF, USB_EP_ATTR_TYPE_MASK,   USB_DIR_MASK,   0,  ID_ASSIGNED  },
 };
+#endif
 void USB_OTG2_IRQHandler(void)
 {
     /* enter interrupt */
@@ -373,6 +418,11 @@ static int rt_usbd_init(void)
     /* Register endpoint infomation */
     _fsl_udc_0.ep_pool = _ehci0_ep_pool;
     _fsl_udc_0.ep0.id = &_ehci0_ep_pool[0];
+    #ifdef FSL_USB_HS
+    _fsl_udc_0.device_is_hs = RT_TRUE;
+    #else
+    _fsl_udc_0.device_is_hs = RT_FALSE;
+    #endif
     rt_device_register((rt_device_t)&_fsl_udc_0, "usbd", 0);
     rt_usb_device_init();
     #endif
@@ -384,6 +434,11 @@ static int rt_usbd_init(void)
     /* Register endpoint infomation */
     _fsl_udc_1.ep_pool = _ehci1_ep_pool;
     _fsl_udc_1.ep0.id = &_ehci1_ep_pool[0];
+    #ifdef FSL_USB_HS
+    _fsl_udc_1.device_is_hs = RT_TRUE;
+    #else
+    _fsl_udc_1.device_is_hs = RT_FALSE;
+    #endif
     rt_device_register((rt_device_t)&_fsl_udc_1, "usbd", 0);
     rt_usb_device_init();
     #endif
@@ -410,6 +465,7 @@ static usb_status_t usb_device_endpoint_callback(usb_device_handle handle, usb_d
     }
     if(message->isSetup)
     {
+        //rt_kprintf("1udcd:%#08X\n",udcd);
         rt_usbd_ep0_setup_handler(udcd, (struct urequest*)message->buffer);
     }
     else if(ep_addr == 0x00)
@@ -423,6 +479,7 @@ static usb_status_t usb_device_endpoint_callback(usb_device_handle handle, usb_d
                 USB_DeviceSetStatus(handle, kUSB_DeviceStatusDeviceState, &state);
             }
         }
+        //rt_kprintf("2udcd:%#08X\n",udcd);
         rt_usbd_ep0_out_handler(udcd,message->length);
     }
     else if(ep_addr == 0x80)
@@ -436,6 +493,7 @@ static usb_status_t usb_device_endpoint_callback(usb_device_handle handle, usb_d
                 USB_DeviceSetStatus(handle, kUSB_DeviceStatusDeviceState, &state);
             }
         }
+        //rt_kprintf("3udcd:%#08X\n",udcd);
         rt_usbd_ep0_in_handler(udcd);
     }
     else if(ep_addr&0x80)
