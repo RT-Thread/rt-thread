@@ -56,7 +56,7 @@ static int enable_log = 1;
 
 #define USDHC_ADMA_TABLE_WORDS      (8U)        /* define the ADMA descriptor table length */
 #define USDHC_ADMA2_ADDR_ALIGN      (4U)        /* define the ADMA2 descriptor table addr align size */
-#define IMXRT_MAX_FREQ              (400 * 1000u)
+#define IMXRT_MAX_FREQ              (50UL * 1000UL * 1000UL)
     
 #define USDHC_ADMA_TABLE_WORDS      (8U)        /* define the ADMA descriptor table length */
 #define USDHC_ADMA2_ADDR_ALIGN      (4U)        /* define the ADMA2 descriptor table addr align size */
