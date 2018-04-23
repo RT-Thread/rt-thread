@@ -180,7 +180,11 @@ menu "Using USB"
     config RT_USING_USB_DEVICE
         bool "Using USB device"
         default n
-
+        if RT_USING_USB_DEVICE || RT_USING_USB_HOST
+            config RT_USBD_THREAD_STACK_SZ
+                int "usb thread stack size"
+                default 4096
+        endif
         if RT_USING_USB_DEVICE
             config USB_VENDOR_ID
                 hex "USB Vendor ID"
