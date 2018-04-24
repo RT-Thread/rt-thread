@@ -934,6 +934,16 @@ static void rt_usb_vcom_init(struct ufunction *func)
     result = rt_thread_startup(&vcom_thread);
     RT_ASSERT(result == RT_EOK);       
 }
+struct udclass vcom_class = 
+{
+    .rt_usbd_function_create = rt_usbd_function_cdc_create
+};
+
+int rt_usbd_vcom_class_register(void)
+{
+    rt_usbd_class_register(&vcom_class);
+    return 0;
+}
+INIT_PREV_EXPORT(rt_usbd_vcom_class_register);
 
 #endif
-
