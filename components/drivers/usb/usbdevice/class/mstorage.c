@@ -1114,5 +1114,16 @@ ufunction_t rt_usbd_function_mstorage_create(udevice_t device)
 
     return func;
 }
+struct udclass msc_class = 
+{
+    .rt_usbd_function_create = rt_usbd_function_mstorage_create
+};
+
+int rt_usbd_msc_class_register(void)
+{
+    rt_usbd_class_register(&msc_class);
+    return 0;
+}
+INIT_PREV_EXPORT(rt_usbd_msc_class_register);
 
 #endif

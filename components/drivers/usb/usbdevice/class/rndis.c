@@ -1325,3 +1325,15 @@ ufunction_t rt_usbd_function_rndis_create(udevice_t device)
 
     return cdc;
 }
+
+struct udclass rndis_class = 
+{
+    .rt_usbd_function_create = rt_usbd_function_rndis_create
+};
+
+int rt_usbd_rndis_class_register(void)
+{
+    rt_usbd_class_register(&rndis_class);
+    return 0;
+}
+INIT_PREV_EXPORT(rt_usbd_rndis_class_register);
