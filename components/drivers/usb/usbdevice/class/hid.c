@@ -674,5 +674,15 @@ ufunction_t rt_usbd_function_hid_create(udevice_t device)
     rt_usb_hid_init(func);
     return func;
 }
+struct udclass hid_class = 
+{
+    .rt_usbd_function_create = rt_usbd_function_hid_create
+};
 
+int rt_usbd_hid_class_register(void)
+{
+    rt_usbd_class_register(&hid_class);
+    return 0;
+}
+INIT_PREV_EXPORT(rt_usbd_hid_class_register);
 #endif /* RT_USB_DEVICE_HID */

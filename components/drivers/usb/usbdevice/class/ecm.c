@@ -604,3 +604,15 @@ ufunction_t rt_usbd_function_ecm_create(udevice_t device)
    
     return cdc;
 }
+
+struct udclass ecm_class = 
+{
+    .rt_usbd_function_create = rt_usbd_function_ecm_create
+};
+
+int rt_usbd_ecm_class_register(void)
+{
+    rt_usbd_class_register(&ecm_class);
+    return 0;
+}
+INIT_PREV_EXPORT(rt_usbd_ecm_class_register);

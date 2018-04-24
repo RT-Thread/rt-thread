@@ -320,3 +320,14 @@ ufunction_t rt_usbd_function_winusb_create(udevice_t device)
     return func;
 }
 
+struct udclass winusb_class = 
+{
+    .rt_usbd_function_create = rt_usbd_function_winusb_create
+};
+
+int rt_usbd_winusb_class_register(void)
+{
+    rt_usbd_class_register(&winusb_class);
+    return 0;
+}
+INIT_PREV_EXPORT(rt_usbd_winusb_class_register);
