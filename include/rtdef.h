@@ -34,6 +34,7 @@
  * 2017-11-30     Bernard      change version number to v3.0.1
  * 2017-12-27     Bernard      change version number to v3.0.2
  * 2018-02-24     Bernard      change version number to v3.0.3
+ * 2018-04-25     Bernard      change version number to v3.0.4
  */
 
 #ifndef __RT_DEF_H__
@@ -55,7 +56,7 @@ extern "C" {
 /* RT-Thread version information */
 #define RT_VERSION                      3L              /**< major version number */
 #define RT_SUBVERSION                   0L              /**< minor version number */
-#define RT_REVISION                     3L              /**< revise version number */
+#define RT_REVISION                     4L              /**< revise version number */
 
 /* RT-Thread version */
 #define RTTHREAD_VERSION                ((RT_VERSION * 10000) + \
