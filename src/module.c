@@ -636,7 +636,7 @@ static struct rt_module *_load_shared_object(const char *name,
             length = rt_strlen((const char *)(strtab + symtab[i].st_name)) + 1;
 
             module->symtab[count].addr =
-                (void *)(module->module_space + symtab[i].st_value);
+                (void *)(module->module_space + symtab[i].st_value - module->vstart_addr);
             module->symtab[count].name = rt_malloc(length);
             rt_memset((void *)module->symtab[count].name, 0, length);
             rt_memcpy((void *)module->symtab[count].name,
@@ -1501,6 +1501,7 @@ rt_err_t rt_module_unload(rt_module_t module)
 {
     struct rt_object *object;
     struct rt_list_node *list;
+	rt_bool_t mdelete = RT_TRUE;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -1511,6 +1512,9 @@ rt_err_t rt_module_unload(rt_module_t module)
     rt_enter_critical();
     if (!(module->parent.flag & RT_MODULE_FLAG_WITHOUTENTRY))
     {
+    	/* delete module in main thread destroy */
+		mdelete = RT_FALSE;
+    
         /* delete all sub-threads */
         list = &module->module_object[RT_Object_Class_Thread].object_list;
         while (list->next != list)
@@ -1542,6 +1546,11 @@ rt_err_t rt_module_unload(rt_module_t module)
         rt_module_unload_hook(module);
     }
 #endif
+
+	if (mdelete == RT_TRUE)
+	{
+		rt_module_destroy(module);
+	}
 
     return RT_EOK;
 }
