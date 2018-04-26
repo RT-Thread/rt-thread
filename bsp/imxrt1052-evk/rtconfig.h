@@ -210,10 +210,10 @@
 #define LPSPI4_SDO_GPIO_1
 #define LPSPI4_SDI_GPIO_1
 
-/* Select i2c bus drivers */
+/* Select iic bus drivers */
 
-#define LPI2C_CLOCK_SOURCE_DIVIDER 4
-#define RT_USING_I2C1
+#define RT_USING_HW_I2C1
+#define HW_I2C1_BADURATE_100kHZ
 
 /* Select lcd driver */
 
