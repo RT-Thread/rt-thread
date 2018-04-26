@@ -1,13 +1,13 @@
 ## board info:
 
-    STM32F4 discovery
-    http://www.st.com/internet/evalboard/product/252419.jsp
+    SM1432F405
+    http://sanmuchina.taobao.com
 
 ## note:
 
 in drivers/stm32f4xx_conf.h
 
-```c
+```
     /* Redefine the HSE value; it's equal to 8 MHz on the STM32F4-DISCOVERY Kit */
     efine HSE_VALUE    ((uint32_t)8000000)
 ```
@@ -25,3 +25,7 @@ IAR IDE steps:
 **TODO**
 
 auto add *.icf by scons script
+
+**log**
+add dfu tools
+add stm32f405
