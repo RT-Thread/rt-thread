@@ -124,6 +124,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     Env = env
     Rtt_Root = os.path.abspath(root_directory)
+    sys.path = sys.path + [os.path.join(Rtt_Root, 'tools')]
 
     # add compability with Keil MDK 4.6 which changes the directory of armcc.exe
     if rtconfig.PLATFORM == 'armcc':
@@ -743,11 +744,20 @@ def SrcRemove(src, remove):
 
     for item in src:
         if type(item) == type('str'):
-            if os.path.basename(item) in remove:
+            item_str = item
+        else:
+            item_str = item.rstr()
+
+        if os.path.isabs(item_str):
+            item_str = os.path.relpath(item_str, GetCurrentDir())
+
+        if type(remove) == type('str'):
+            if item_str == remove:
                 src.remove(item)
         else:
-            if os.path.basename(item.rstr()) in remove:
-                src.remove(item)
+            for remove_item in remove:
+                if item_str == str(remove_item):
+                    src.remove(item)
 
 def GetVersion():
     import SCons.cpp

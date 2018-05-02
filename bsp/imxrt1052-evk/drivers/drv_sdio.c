@@ -56,7 +56,7 @@ static int enable_log = 1;
 
 #define USDHC_ADMA_TABLE_WORDS      (8U)        /* define the ADMA descriptor table length */
 #define USDHC_ADMA2_ADDR_ALIGN      (4U)        /* define the ADMA2 descriptor table addr align size */
-#define IMXRT_MAX_FREQ              (400 * 1000u)
+#define IMXRT_MAX_FREQ              (50UL * 1000UL * 1000UL)
     
 #define USDHC_ADMA_TABLE_WORDS      (8U)        /* define the ADMA descriptor table length */
 #define USDHC_ADMA2_ADDR_ALIGN      (4U)        /* define the ADMA2 descriptor table addr align size */
@@ -357,7 +357,7 @@ static void _mmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
             if (buf)
             {
                 MMCSD_DGB(" write(data->buf to buf) ");
-                memcpy(buf, data->buf, fsl_data.blockSize * fsl_data.blockCount);
+                rt_memcpy(buf, data->buf, fsl_data.blockSize * fsl_data.blockCount);
                 fsl_data.txData = (uint32_t const *)buf;
             }
             else
@@ -401,7 +401,7 @@ static void _mmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
         if (fsl_data.rxData)
         {
             MMCSD_DGB("read copy buf to data->buf ");
-            memcpy(data->buf, buf, fsl_data.blockSize * fsl_data.blockCount);
+            rt_memcpy(data->buf, buf, fsl_data.blockSize * fsl_data.blockCount);
         }
     
         rt_free_align(buf);

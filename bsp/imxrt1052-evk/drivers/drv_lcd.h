@@ -1,29 +1,23 @@
 /*
- * File      : drv_i2c.c
- * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
+ * File      : drv_lcd2.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2006-2013, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-12-15     Tanek        the first version
+ * 2018-04-05     Liuguang     the first version.
  */
  
 #ifndef __DRV_LCD_H__
 #define __DRV_LCD_H__
 
-extern int imxrt_hw_lcd_init(void);
+#include <rtthread.h> 
+#include <rtdevice.h> 
+
+int rt_hw_lcd_init(void);
 
 #endif
