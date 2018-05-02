@@ -554,8 +554,8 @@ int df(const char *path)
         return -1;
     }
 
-    cap = buffer.f_bsize * buffer.f_bfree / 1024;
-    for (unit_index = 0; unit_index < 3; unit_index ++)
+    cap = ((long long)buffer.f_bsize) * ((long long)buffer.f_bfree) / 1024LL;
+    for (unit_index = 0; unit_index < 2; unit_index ++)
     {
         if (cap < 1024) break;
 

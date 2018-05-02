@@ -510,14 +510,7 @@ static void sf(uint8_t argc, char **argv) {
                 addr = 0;
                 size = sfud_dev->chip.capacity;
                 uint32_t start_time, time_cast;
-                rt_uint32_t total_mem, used_mem, max_uesd_mem;
-                rt_memory_info(&total_mem, &used_mem, &max_uesd_mem);
-                size_t write_size = SFUD_WRITE_MAX_PAGE_SIZE, read_size;
-                if ((total_mem - used_mem) / 2 < size) {
-                    read_size = (total_mem - used_mem) / 2;
-                } else {
-                    read_size = size;
-                }
+                size_t write_size = SFUD_WRITE_MAX_PAGE_SIZE, read_size = 4096;
                 uint8_t *write_data = rt_malloc(write_size), *read_data = rt_malloc(read_size);
 
                 if (write_data && read_data) {

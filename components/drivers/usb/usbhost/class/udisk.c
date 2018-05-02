@@ -306,9 +306,9 @@ rt_err_t rt_udisk_run(struct uhintf* intf)
             rt_memset(data, 0, sizeof(struct ustor_data));
             data->intf = intf;            
             data->udisk_id = udisk_get_id();
-            data->part.lock = rt_sem_create(sname, 1, RT_IPC_FLAG_FIFO);
             rt_snprintf(dname, 6, "ud%d-%d", data->udisk_id, i);
             rt_snprintf(sname, 8, "sem_ud%d",  i);
+            data->part.lock = rt_sem_create(sname, 1, RT_IPC_FLAG_FIFO);
 
             /* register sdcard device */
             stor->dev[i].type  = RT_Device_Class_Block;

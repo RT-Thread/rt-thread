@@ -308,7 +308,7 @@
           <state>$PROJ_DIR$\Libraries\drivers</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\posix</state>
+          <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\ipv4</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m7</state>
@@ -316,10 +316,11 @@
           <state>$PROJ_DIR$\..\..\components\dfs\filesystems\devfs</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\Include</state>
           <state>$PROJ_DIR$\Libraries\utilities</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\spi</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat</state>
-          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\posix</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\arch\include</state>
         </option>
         <option>
@@ -1247,7 +1248,7 @@
           <state>$PROJ_DIR$\Libraries\drivers</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\posix</state>
+          <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\ipv4</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m7</state>
@@ -1255,10 +1256,11 @@
           <state>$PROJ_DIR$\..\..\components\dfs\filesystems\devfs</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\Include</state>
           <state>$PROJ_DIR$\Libraries\utilities</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\spi</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat</state>
-          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\posix</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\arch\include</state>
         </option>
         <option>
@@ -1898,7 +1900,7 @@
       <name>$PROJ_DIR$\drivers\drv_uart.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\hyper_flash_boot.c</name>
+      <name>$PROJ_DIR$\drivers\drv_cache.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\drv_sdram.c</name>
@@ -1907,7 +1909,13 @@
       <name>$PROJ_DIR$\drivers\drv_pin.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\drv_hp_rtc.c</name>
+      <name>$PROJ_DIR$\drivers\drv_rtc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\drv_spi_bus.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\hyper_flash_boot.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\drv_eth.c</name>
@@ -2226,6 +2234,12 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\serial\serial.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\spi\spi_core.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\spi\spi_dev.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\src\completion.c</name>

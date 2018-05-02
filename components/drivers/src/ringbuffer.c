@@ -119,8 +119,11 @@ rt_size_t rt_ringbuffer_put_force(struct rt_ringbuffer *rb,
 
     space_length = rt_ringbuffer_space_len(rb);
 
-    if (length > space_length)
+    if (length > rb->buffer_size)
+    {
+        ptr = &ptr[length - rb->buffer_size];
         length = rb->buffer_size;
+    }
 
     if (rb->buffer_size - rb->write_index > length)
     {

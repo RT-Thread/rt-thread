@@ -29,7 +29,7 @@ if GetDepend(['RT_USING_I2C']) or GetDepend('RT_USING_LWIP'):
 
 # add gpio drivers.
 if GetDepend('RT_USING_PIN'):
-    src += ['gpio.c']
+    src += ['drv_gpio.c']
 
 # add spi drivers.
 if GetDepend('RT_USING_SPI'):

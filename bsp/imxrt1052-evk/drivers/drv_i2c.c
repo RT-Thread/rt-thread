@@ -19,171 +19,379 @@
  * Change Logs:
  * Date           Author       Notes
  * 2017-08-08     Yang        the first version
+ * 2018-03-24     LaiYiKeTang add hardware iic
  */
- 
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "board.h"
 #include "fsl_gpio.h"
 #include "fsl_lpi2c.h"
+#include "drv_i2c.h"
 
 //#define DRV_I2C_DEBUG
 
 #ifdef RT_USING_I2C
 
-#ifdef RT_USING_I2C_BITOPS
+#define I2C1BUS_NAME  "i2c1"
+#define I2C2BUS_NAME  "i2c2"
+#define I2C3BUS_NAME  "i2c3"
+#define I2C4BUS_NAME  "i2c4"
 
-#define I2CBUS_NAME             "i2c0"
+#define LPI2C_CLOCK_SOURCE_DIVIDER 4
 
-struct stm32_i2c_bit_data
+/* Get frequency of lpi2c clock */
+#define LPI2C_CLOCK_FREQUENCY ((CLOCK_GetFreq(kCLOCK_Usb1PllClk) / 8) / (LPI2C_CLOCK_SOURCE_DIVIDER))
+
+#ifdef RT_USING_HW_I2C1
+static struct rt1052_i2c_bus lpi2c1 =
 {
-    struct
-    {
-        GPIO_Type *base;
-        uint32_t pin;
-    } scl, sda;
+    .I2C = LPI2C1,
+    .device_name = I2C1BUS_NAME,
+};
+#endif /* RT_USING_HW_I2C1 */
+
+#ifdef RT_USING_HW_I2C2
+static struct rt1052_i2c_bus lpi2c2 =
+{
+    .I2C = LPI2C2,
+    .device_name = I2C2BUS_NAME,
+};
+#endif /* RT_USING_HW_I2C2 */
+
+#ifdef RT_USING_HW_I2C3
+static struct rt1052_i2c_bus lpi2c3 =
+{
+    .I2C = LPI2C3,
+    .device_name = I2C3BUS_NAME,
+};
+#endif /* RT_USING_HW_I2C3 */
+
+#ifdef RT_USING_HW_I2C4
+static struct rt1052_i2c_bus lpi2c4 =
+{
+    .I2C = LPI2C4,
+    .device_name = I2C4BUS_NAME,
+};
+#endif /* RT_USING_HW_I2C4 */
+
+#if (defined(RT_USING_HW_I2C1) || defined(RT_USING_HW_I2C2) || defined(RT_USING_HW_I2C3) || defined(RT_USING_HW_I2C4))
+
+static rt_size_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
+                                    struct rt_i2c_msg msgs[],
+                                    rt_uint32_t num);
+static rt_size_t imxrt_i2c_slv_xfer(struct rt_i2c_bus_device *bus,
+                                    struct rt_i2c_msg msgs[],
+                                    rt_uint32_t num);
+static rt_err_t imxrt_i2c_bus_control(struct rt_i2c_bus_device *bus,
+                                      rt_uint32_t,
+                                      rt_uint32_t);
+
+static const struct rt_i2c_bus_device_ops imxrt_i2c_ops =
+{
+    imxrt_i2c_mst_xfer,
+    imxrt_i2c_slv_xfer,
+    imxrt_i2c_bus_control,
 };
 
-static void gpio_udelay(rt_uint32_t us)
+void imxrt_lpi2c_gpio_init(struct rt1052_i2c_bus *bus)
 {
-    volatile rt_int32_t i;
-    for (; us > 0; us--)
+    if (bus->I2C == LPI2C1)
     {
-        i = 1000;
-        while (i--);
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_AD_B1_00_LPI2C1_SCL,
+            1U);
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_AD_B1_01_LPI2C1_SDA,
+            1U);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_AD_B1_00_LPI2C1_SCL,
+            0xD8B0u);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_AD_B1_01_LPI2C1_SDA,
+            0xD8B0u);
     }
-}
-
-static void gpio_set_input(GPIO_Type* base, uint32_t pin)
-{
-    if (base->GDIR & (1 << pin))        //output mode
+    else if (bus->I2C == LPI2C2)
     {
-        base->GDIR &= ~(1 << pin);
-        gpio_udelay(5);
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_B0_04_LPI2C2_SCL,
+            1U);
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_B0_05_LPI2C2_SDA,
+            1U);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_B0_04_LPI2C2_SCL,
+            0xD8B0u);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_B0_05_LPI2C2_SDA,
+            0xD8B0u);
+    }
+    else if (bus->I2C == LPI2C3)
+    {
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_AD_B1_07_LPI2C3_SCL,
+            1U);
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_AD_B1_06_LPI2C3_SDA,
+            1U);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_AD_B1_07_LPI2C3_SCL,
+            0xD8B0u);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_AD_B1_06_LPI2C3_SDA,
+            0xD8B0u);
+    }
+    else if (bus->I2C == LPI2C4)
+    {
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_EMC_12_LPI2C4_SCL,
+            1U);
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_EMC_11_LPI2C4_SDA,
+            1U);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_EMC_12_LPI2C4_SCL,
+            0xD8B0u);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_EMC_11_LPI2C4_SDA,
+            0xD8B0u);
+    }
+    else
+    {
+        RT_ASSERT(RT_NULL);
     }
 }
 
-static void gpio_set_output(GPIO_Type* base, uint32_t pin)
+static rt_err_t imxrt_lpi2c_configure(struct rt1052_i2c_bus *bus, lpi2c_master_config_t *cfg)
 {
-    if (!(base->GDIR & (1 << pin)))        //input mode
-    {    
-        base->GDIR |= (1 << pin);
-        gpio_udelay(5);
+    RT_ASSERT(bus != RT_NULL);
+    RT_ASSERT(cfg != RT_NULL);
+
+    imxrt_lpi2c_gpio_init(bus);
+    bus->parent.ops = &imxrt_i2c_ops;
+    LPI2C_MasterInit(bus->I2C, cfg, LPI2C_CLOCK_FREQUENCY);
+    return RT_EOK;
+}
+
+status_t LPI2C_MasterCheck(LPI2C_Type *base, uint32_t status)
+{
+    status_t result = kStatus_Success;
+
+    /* Check for error. These errors cause a stop to automatically be sent. We must */
+    /* clear the errors before a new transfer can start. */
+    status &= 0x3c00;
+    if (status)
+    {
+        /* Select the correct error code. Ordered by severity, with bus issues first. */
+        if (status & kLPI2C_MasterPinLowTimeoutFlag)
+        {
+            result = kStatus_LPI2C_PinLowTimeout;
+        }
+        else if (status & kLPI2C_MasterArbitrationLostFlag)
+        {
+            result = kStatus_LPI2C_ArbitrationLost;
+        }
+        else if (status & kLPI2C_MasterNackDetectFlag)
+        {
+            result = kStatus_LPI2C_Nak;
+        }
+        else if (status & kLPI2C_MasterFifoErrFlag)
+        {
+            result = kStatus_LPI2C_FifoError;
+        }
+        else
+        {
+            assert(false);
+        }
+
+        /* Clear the flags. */
+        LPI2C_MasterClearStatusFlags(base, status);
+
+        /* Reset fifos. These flags clear automatically. */
+        base->MCR |= LPI2C_MCR_RRF_MASK | LPI2C_MCR_RTF_MASK;
     }
+
+    return result;
 }
 
-static void gpio_set_sda(void *data, rt_int32_t state)
+/*!
+ * @brief Wait until the tx fifo all empty.
+ * @param base The LPI2C peripheral base address.
+ * @retval #kStatus_Success
+ * @retval #kStatus_LPI2C_PinLowTimeout
+ * @retval #kStatus_LPI2C_ArbitrationLost
+ * @retval #kStatus_LPI2C_Nak
+ * @retval #kStatus_LPI2C_FifoError
+ */
+static status_t LPI2C_MasterWaitForTxFifoAllEmpty(LPI2C_Type *base)
 {
-    struct stm32_i2c_bit_data *bd = data;
-    
-    gpio_set_output(bd->sda.base, bd->sda.pin);
-    
-    GPIO_PinWrite(bd->sda.base, bd->sda.pin, !!state);
+    uint32_t status;
+    size_t txCount;
+    do
+    {
+        status_t result;
+
+        /* Get the number of words in the tx fifo and compute empty slots. */
+        LPI2C_MasterGetFifoCounts(base, NULL, &txCount);
+
+        /* Check for error flags. */
+        status = LPI2C_MasterGetStatusFlags(base);
+        result = LPI2C_MasterCheck(base, status);
+        if (result)
+        {
+            return result;
+        }
+    }
+    while (txCount);
+    return kStatus_Success;
 }
 
-static void gpio_set_scl(void *data, rt_int32_t state)
+static rt_size_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
+                                    struct rt_i2c_msg msgs[],
+                                    rt_uint32_t num)
 {
-    struct stm32_i2c_bit_data *bd = data;
-    
-    gpio_set_output(bd->scl.base, bd->scl.pin);
-    
-    GPIO_PinWrite(bd->scl.base, bd->scl.pin, !!state);
+    struct rt1052_i2c_bus *rt1052_i2c;
+    rt_size_t i;
+    RT_ASSERT(bus != RT_NULL);
+    rt1052_i2c = (struct rt1052_i2c_bus *) bus;
+
+    rt1052_i2c->msg = msgs;
+    rt1052_i2c->msg_ptr = 0;
+    rt1052_i2c->msg_cnt = num;
+    rt1052_i2c->dptr = 0;
+
+    for (i = 0; i < num; i++)
+    {
+        if (rt1052_i2c->msg[i].flags & RT_I2C_RD)
+        {
+            if (LPI2C_MasterStart(rt1052_i2c->I2C, rt1052_i2c->msg[i].addr, kLPI2C_Read) != kStatus_Success)
+            {
+                i = 0;
+                break;
+            }
+            if (LPI2C_MasterWaitForTxFifoAllEmpty(rt1052_i2c->I2C) != kStatus_Success)
+            {
+                i = 0;
+                break;
+            }
+            if (LPI2C_MasterReceive(rt1052_i2c->I2C, rt1052_i2c->msg[i].buf, rt1052_i2c->msg[i].len) != kStatus_Success)
+            {
+                i = 0;
+                break;
+            }
+            if (LPI2C_MasterWaitForTxFifoAllEmpty(rt1052_i2c->I2C) != kStatus_Success)
+            {
+                i = 0;
+                break;
+            }
+        }
+        else
+        {
+            if (LPI2C_MasterStart(rt1052_i2c->I2C, rt1052_i2c->msg[i].addr, kLPI2C_Write) != kStatus_Success)
+            {
+                i = 0;
+                break;
+            }
+            if (LPI2C_MasterWaitForTxFifoAllEmpty(rt1052_i2c->I2C) != kStatus_Success)
+            {
+                i = 0;
+                break;
+            }
+            if (LPI2C_MasterSend(rt1052_i2c->I2C, rt1052_i2c->msg[i].buf, rt1052_i2c->msg[i].len) != kStatus_Success)
+            {
+                i = 0;
+                break;
+            }
+            if (LPI2C_MasterWaitForTxFifoAllEmpty(rt1052_i2c->I2C) != kStatus_Success)
+            {
+                i = 0;
+                break;
+            }
+        }
+    }
+    i2c_dbg("send stop condition\n");
+    if (LPI2C_MasterStop(rt1052_i2c->I2C) != kStatus_Success)
+    {
+        i = 0;
+    }
+
+    rt1052_i2c->msg = RT_NULL;
+    rt1052_i2c->msg_ptr = 0;
+    rt1052_i2c->msg_cnt = 0;
+    rt1052_i2c->dptr = 0;
+    return i;
 }
 
-static rt_int32_t gpio_get_sda(void *data)
+static rt_size_t imxrt_i2c_slv_xfer(struct rt_i2c_bus_device *bus,
+                                    struct rt_i2c_msg msgs[],
+                                    rt_uint32_t num)
 {
-    struct stm32_i2c_bit_data *bd = data;
-    
-    gpio_set_input(bd->sda.base, bd->sda.pin);
-
-    return GPIO_ReadPinInput(bd->sda.base, bd->sda.pin);
+    return 0;
 }
-
-static rt_int32_t gpio_get_scl(void *data)
+static rt_err_t imxrt_i2c_bus_control(struct rt_i2c_bus_device *bus,
+                                      rt_uint32_t cmd,
+                                      rt_uint32_t arg)
 {
-    struct stm32_i2c_bit_data *bd = data;
-    
-    gpio_set_input(bd->scl.base, bd->scl.pin);
-
-    return GPIO_ReadPinInput(bd->scl.base, bd->scl.pin);
+    return RT_ERROR;
 }
 
-
-#else /* RT_USING_I2C_BITOPS */
-    // todo : add hardware i2c
-#endif /* RT_USING_I2C_BITOPS */
+#endif
 
 int rt_hw_i2c_init(void)
 {
-#ifdef RT_USING_I2C_BITOPS
-    /* register I2C1: SCL/P0_20 SDA/P0_19 */
-    {
-        static struct rt_i2c_bus_device i2c_device;
+#if (defined(RT_USING_HW_I2C1) || defined(RT_USING_HW_I2C2) || defined(RT_USING_HW_I2C3) || defined(RT_USING_HW_I2C4))
 
-        static const struct stm32_i2c_bit_data _i2c_bdata =
-        {
-            /* SCL */ {GPIO1, 16},
-            /* SDA */ {GPIO1, 17},
-        };
+    lpi2c_master_config_t masterConfig = {0};
 
-        static const struct rt_i2c_bit_ops _i2c_bit_ops =
-        {
-            (void*)&_i2c_bdata,
-            gpio_set_sda,
-            gpio_set_scl,
-            gpio_get_sda,
-            gpio_get_scl,
+    /*Clock setting for LPI2C*/
+    CLOCK_SetMux(kCLOCK_Lpi2cMux, 0);
+    CLOCK_SetDiv(kCLOCK_Lpi2cDiv, LPI2C_CLOCK_SOURCE_DIVIDER - 1);
 
-            gpio_udelay,
+#endif
 
-            50,
-            1000
-        };
+#if   defined(RT_USING_HW_I2C1)
+    LPI2C_MasterGetDefaultConfig(&masterConfig);
+#if   defined(HW_I2C1_BADURATE_400kHZ)
+    masterConfig.baudRate_Hz = 400000U;
+#elif defined(HW_I2C1_BADURATE_100kHZ)
+    masterConfig.baudRate_Hz = 100000U;
+#endif
+    imxrt_lpi2c_configure(&lpi2c1, &masterConfig);
+    rt_i2c_bus_device_register(&lpi2c1.parent, lpi2c1.device_name);
+#endif
 
-        gpio_pin_config_t pin_config = {
-            kGPIO_DigitalOutput, 0,
-        };
-        
-        CLOCK_EnableClock(kCLOCK_Iomuxc);
+#if   defined(RT_USING_HW_I2C2)
+    LPI2C_MasterGetDefaultConfig(&masterConfig);
+#if   defined(HW_I2C2_BADURATE_400kHZ)
+    masterConfig.baudRate_Hz = 400000U;
+#elif defined(HW_I2C2_BADURATE_100kHZ)
+    masterConfig.baudRate_Hz = 100000U;
+#endif
+    imxrt_lpi2c_configure(&lpi2c2, &masterConfig);
+    rt_i2c_bus_device_register(&lpi2c2.parent, lpi2c2.device_name);
+#endif
 
-        IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_00_GPIO1_IO16, 1U);
-            IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_00_GPIO1_IO16,
-            0xD8B0u);                                /* Slew Rate Field: Slow Slew Rate
-                                                        Drive Strength Field: R0/6
-                                                        Speed Field: medium(100MHz)
-                                                        Open Drain Enable Field: Open Drain Enabled
-                                                        Pull / Keep Enable Field: Pull/Keeper Enabled
-                                                        Pull / Keep Select Field: Keeper
-                                                        Pull Up / Down Config. Field: 22K Ohm Pull Up
-                                                        Hyst. Enable Field: Hysteresis Disabled */
-        IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_01_GPIO1_IO17, 1U);
-            IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_01_GPIO1_IO17,
-            0xD8B0u);                                /* Slew Rate Field: Slow Slew Rate
-                                                        Drive Strength Field: R0/6
-                                                        Speed Field: medium(100MHz)
-                                                        Open Drain Enable Field: Open Drain Enabled
-                                                        Pull / Keep Enable Field: Pull/Keeper Enabled
-                                                        Pull / Keep Select Field: Keeper
-                                                        Pull Up / Down Config. Field: 22K Ohm Pull Up
-                                                        Hyst. Enable Field: Hysteresis Disabled */
-        /* Enable touch panel controller */
-        GPIO_PinInit(_i2c_bdata.sda.base, _i2c_bdata.sda.pin, &pin_config);
-        GPIO_PinInit(_i2c_bdata.scl.base, _i2c_bdata.scl.pin, &pin_config);
-        
-        GPIO_PortSet(_i2c_bdata.sda.base, _i2c_bdata.sda.pin);
-        GPIO_PortSet(_i2c_bdata.scl.base, _i2c_bdata.scl.pin);
-        
-        //RT_ASSERT(gpio_get_scl(&_i2c_bdata) != 0);
-        //RT_ASSERT(gpio_get_sda(&_i2c_bdata) != 0);
+#if   defined(RT_USING_HW_I2C3)
+    LPI2C_MasterGetDefaultConfig(&masterConfig);
+#if   defined(HW_I2C3_BADURATE_400kHZ)
+    masterConfig.baudRate_Hz = 400000U;
+#elif defined(HW_I2C3_BADURATE_100kHZ)
+    masterConfig.baudRate_Hz = 100000U;
+#endif
+    imxrt_lpi2c_configure(&lpi2c3, &masterConfig);
+    rt_i2c_bus_device_register(&lpi2c3.parent, lpi2c3.device_name);
+#endif
 
-        i2c_device.priv = (void *)&_i2c_bit_ops;
-        rt_i2c_bit_add_bus(&i2c_device, I2CBUS_NAME);
-    } /* register I2C */
-
-#else /* RT_USING_I2C_BITOPS */
-    // Todo : add hardware i2c
-
-#endif /* RT_USING_I2C_BITOPS */
+#if   defined(RT_USING_HW_I2C4)
+    LPI2C_MasterGetDefaultConfig(&masterConfig);
+#if   defined(HW_I2C4_BADURATE_400kHZ)
+    masterConfig.baudRate_Hz = 400000U;
+#elif defined(HW_I2C4_BADURATE_100kHZ)
+    masterConfig.baudRate_Hz = 100000U;
+#endif
+    imxrt_lpi2c_configure(&lpi2c4, &masterConfig);
+    rt_i2c_bus_device_register(&lpi2c4.parent, lpi2c4.device_name);
+#endif
 
     return 0;
 }
@@ -197,7 +405,7 @@ static rt_device_t _i2c_find(const char *name)
     rt_device_t dev;
 
     dev = rt_device_find(name);
-    if (!dev) 
+    if (!dev)
     {
         rt_kprintf("search device failed: %s\n", name);
         return RT_NULL;
@@ -210,7 +418,7 @@ static rt_device_t _i2c_find(const char *name)
     }
 
     rt_kprintf("open i2c bus: %s\n", name);
-    
+
     return dev;
 }
 
@@ -231,36 +439,37 @@ static void _search_i2c_device(rt_device_t dev, uint8_t cmd)
     for (int i = 0; i <= 0x7f; i++)
     {
         int len;
-        
+
         msgs[0].addr  = i;
         msgs[1].addr  = i;
-        len = rt_i2c_transfer(dev, msgs, 2);
+        len = rt_i2c_transfer((struct rt_i2c_bus_device *)dev, msgs, 2);
         if (len == 2)
         {
             count++;
             rt_kprintf("add:%02X transfer success, id: %02X\n", i, buf);
-        } 
+        }
     }
-    
+
     rt_kprintf("i2c device: %d\n", count);
 }
 
 static int i2c_test(const char *name, uint8_t cmd)
 {
     rt_device_t dev = _i2c_find(name);
+
     if (dev == RT_NULL)
     {
         rt_kprintf("search i2c device faild\n");
         return -1;
     }
-    
+
     _search_i2c_device(dev, cmd);
-    
     rt_device_close(dev);
-    
+
     return 0;
 }
-FINSH_FUNCTION_EXPORT(i2c_test, e.g: i2c_test("i2c0", 0xA3));
+FINSH_FUNCTION_EXPORT(i2c_test, e.g: i2c_test("i2c1", 0xA3));
+
 #endif
 
 #endif /* RT_USING_I2C */

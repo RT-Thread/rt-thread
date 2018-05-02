@@ -150,9 +150,9 @@ extern unsigned char  _sdata;
 // End address for the .data section// defined in linker script
 extern unsigned char  _edata;
 // Begin address for the .bss section// defined in linker script
-extern unsigned char  __bss_start__;
+extern unsigned char  __bss_start;
 // End address for the .bss section// defined in linker script
-extern unsigned char  __bss_end__;
+extern unsigned char  __bss_end;
 
 extern int entry(void);
 
@@ -333,7 +333,7 @@ pHandler g_pfnVectors[] =
 void _start()
 {
     memcpy(&_sdata, &_sidata, &_edata - &_sdata);
-    memset(&__bss_start__, 0, &__bss_end__ - &__bss_start__);
+    memset(&__bss_start, 0, &__bss_end - &__bss_start);
 }
 
 static void Reset_Handler(void)
