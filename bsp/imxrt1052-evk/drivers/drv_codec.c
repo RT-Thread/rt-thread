@@ -86,11 +86,11 @@ static void BOARD_EnableSaiMclkOutput(bool enable)
 
 static void saidma_callback(I2S_Type *base, sai_edma_handle_t *handle, status_t status, void *userData)
 {
-	int ind = 0;
-	rt_uint8_t *saddr;
+    int ind = 0;
+    rt_uint8_t *saddr;
 
-	ind = handle->queueDriver;
-	saddr = (rt_uint8_t*)handle->saiQueue[ind].data;
+    ind = handle->queueDriver;
+    saddr = (rt_uint8_t*)handle->saiQueue[ind].data;
     rt_audio_tx_complete(userData, saddr);
 }
 
@@ -347,6 +347,7 @@ static rt_size_t icodec_transmit(struct rt_audio_device *audio, const void *writ
 
         xfer.data = (uint8_t *)writeBuf;
         xfer.dataSize = size;
+        rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void*)writeBuf, size);
         if (SAI_TransferSendEDMA(icodec->sai, &icodec->txHandle, &xfer) != kStatus_Success)
             return 0;
 
@@ -358,26 +359,26 @@ static rt_size_t icodec_transmit(struct rt_audio_device *audio, const void *writ
 
 static struct imxcodec          _g_imxcodec;
 static struct rt_audio_device   _g_audio_device;
-const struct rt_audio_ops 	    _g_audio_ops =
+const struct rt_audio_ops       _g_audio_ops =
 {
-    .getcaps	= icodec_getcaps,
-    .configure	= icodec_configure,
+    .getcaps    = icodec_getcaps,
+    .configure  = icodec_configure,
 
     .init       = icodec_init,
     .shutdown   = icodec_shutdown,
-    .start		= icodec_start,
-    .stop 		= icodec_stop,
+    .start      = icodec_start,
+    .stop       = icodec_stop,
     .suspend    = icodec_suspend,
     .resume     = icodec_resume,
-    .control	= icodec_control,
+    .control    = icodec_control,
 
-    .transmit	= icodec_transmit,
+    .transmit   = icodec_transmit,
 };
 
 int rt_hw_codec_init(void)
 {
     int result;
-    struct rt_audio_device *audio 	= &_g_audio_device;
+    struct rt_audio_device *audio   = &_g_audio_device;
 
     audio->ops = (struct rt_audio_ops*)&_g_audio_ops;
     _g_imxcodec.sai = DEMO_SAI;
