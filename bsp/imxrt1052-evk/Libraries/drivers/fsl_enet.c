@@ -1346,12 +1346,7 @@ status_t ENET_SendFrame(ENET_Type *base, enet_handle_t *handle, const uint8_t *d
         address = (uint32_t)curBuffDescrip->buffer;
 #endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */
         
-        {
-            // Change SDK to reduce memory copy
-            extern void pbuf2mem(const uint8_t *data, void *dataptr, uint32_t len);
-            pbuf2mem(data, (void *)address, length);
-        }
-        //memcpy((void *)address, data, length);
+        memcpy((void *)address, data, length);
         /* Set data length. */
         curBuffDescrip->length = length;
 #ifdef ENET_ENHANCEDBUFFERDESCRIPTOR_MODE
