@@ -1,0 +1,98 @@
+### uVision2 Project, (C) Keil Software
+### Do not modify !
+
+Target (RT-Thread-lm3s), 0x0004 // Tools: 'ARM-ADS'
+
+
+
+
+Options 1,0,0  // Target 'RT-Thread-lm3s'
+ Device (LM3S8962)
+ Vendor (Luminary Micro)
+ Cpu (IRAM(0x20000000-0x2000FFFF) IROM(0-0x3FFFF) CLOCK(8000000) CPUTYPE("Cortex-M3"))
+ FlashUt ()
+ StupF ("STARTUP\Luminary\Startup.s" ("Luminary Startup Code"))
+ FlashDR (UL2CM3(-UU0101L5E -O14 -S0 -C0 -N00("ARM Cortex-M3") -D00(1BA00477) -L00(4) -FO7 -FD20000000 -FC800 -FN1 -FF0LM3S_256 -FS00 -FL040000))
+ DevID (4285)
+ Rgf (LM3Sxxx.H)
+ Mem ()
+ C ()
+ A ()
+ RL ()
+ OH ()
+ DBC_IFX ()
+ DBC_CMS ()
+ DBC_AMS ()
+ DBC_LMS ()
+ UseEnv=0
+ EnvBin ()
+ EnvInc ()
+ EnvLib ()
+ EnvReg (Luminary\)
+ OrgReg (Luminary\)
+ TgStat=16
+ OutDir (.\build\)
+ OutName (rtthread-lm3s)
+ GenApp=1
+ GenLib=0
+ GenHex=0
+ Debug=1
+ Browse=1
+ LstDir (.\build\)
+ HexSel=1
+ MG32K=0
+ TGMORE=0
+ RunUsr 0 0 <>
+ RunUsr 1 0 <>
+ BrunUsr 0 0 <>
+ BrunUsr 1 0 <>
+ CrunUsr 0 0 <>
+ CrunUsr 1 0 <>
+ SVCSID <>
+ GLFLAGS=1790
+ ADSFLGA { 243,31,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ACPUTYP ("Cortex-M3")
+ RVDEV ()
+ ADSTFLGA { 0,12,0,0,160,0,0,66,0,0,0,0,0,0,0,0,0,0,0,0 }
+ OCMADSOCM { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ OCMADSIRAM { 0,0,0,0,32,0,0,1,0 }
+ OCMADSIROM { 1,0,0,0,0,0,0,4,0 }
+ OCMADSXRAM { 0,0,0,0,0,0,0,0,0 }
+ OCR_RVCT { 1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,4,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,0,0,1,0,0,0,0,0,0,0,0,0,0 }
+ RV_STAVEC ()
+ ADSCCFLG { 5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSCMISC ()
+ ADSCDEFN ()
+ ADSCUDEF ()
+ ADSCINCD ()
+ ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSAMISC ()
+ ADSADEFN ()
+ ADSAUDEF ()
+ ADSAINCD ()
+ PropFld { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=1
+ AlwaysBuild=0
+ GenAsm=0
+ AsmAsm=0
+ PublicsOnly=0
+ StopCode=3
+ CustArgs ()
+ LibMods ()
+ ADSLDFG { 17,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSLDTA (0x00000000)
+ ADSLDDA (0x00000000)
+ ADSLDSC ()
+ ADSLDIB ()
+ ADSLDIC ()
+ ADSLDMC ()
+ ADSLDIF ()
+ ADSLDDW ()
+  OPTDL (SARMCM3.DLL)()(DLM.DLL)(-pLM3S8962)(SARMCM3.DLL)()(TLM.DLL)(-pLM3S8962)
+  OPTDBG 48118,4,()()()()()()()()()() (BIN\lmidk-agdi.dll)()()()
+ FLASH1 { 1,0,0,0,1,0,0,0,3,16,0,0,0,0,0,0,0,0,0,0 }
+ FLASH2 (BIN\lmidk-agdi.dll)
+ FLASH3 ()
+ FLASH4 ()
+EndOpt
+

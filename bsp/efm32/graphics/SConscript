@@ -1,0 +1,22 @@
+import rtconfig
+from building import *
+
+if rtconfig.EFM32_LCD == 'LCD_MAPPED':
+    src = Split("""
+    dmd/ssd2119/dmd_ssd2119_16bit.c
+    dmd/ssd2119/dmdif_ssd2119_ebi16.c
+    """)
+    CPPPATH = [GetCurrentDir()]
+    CPPPATH.append(GetCurrentDir() + '/dmd/ssd2119')
+    group = DefineGroup('EFM32GG_DK3750_LCD', src, depend = [''], CPPPATH = CPPPATH)
+    Return('group')
+elif rtconfig.EFM32_LCD == 'LCD_DIRECT':
+    src = Split("""
+    dmd/ssd2119/dmd_ssd2119_direct.c
+    """)
+    CPPPATH = [GetCurrentDir()]
+    CPPPATH.append(GetCurrentDir() + '/dmd/ssd2119')
+    group = DefineGroup('EFM32GG_DK3750_LCD', src, depend = [''], CPPPATH = CPPPATH)
+    Return('group')
+else:
+    Return('')

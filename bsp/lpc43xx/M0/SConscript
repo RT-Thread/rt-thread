@@ -1,0 +1,17 @@
+from building import *
+
+cwd  = GetCurrentDir()
+objs = []
+
+for d in os.listdir(os.path.join(cwd, '..')):
+    if d not in ('M0', 'M4'):
+        path = os.path.join('..', d, 'SConscript')
+        if os.path.isfile(os.path.join(cwd, path)):
+            objs = objs + SConscript(os.path.join(cwd, path))
+
+for d in os.listdir(cwd):
+    p = os.path.join(d, 'SConscript');
+    if os.path.isfile(os.path.join(cwd, p)):
+        objs = objs + SConscript(p)
+
+Return('objs')

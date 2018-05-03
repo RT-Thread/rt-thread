@@ -1,0 +1,209 @@
+### uVision2 Project, (C) Keil Software
+### Do not modify !
+
+Target (RT-Thread-lm3s), 0x0004 // Tools: 'ARM-ADS'
+
+Group (Drivers)
+Group (Applications)
+Group (Libraries)
+Group (Kernel)
+Group (CORTEX-M3)
+Group (finsh)
+Group (lwIP)
+
+File 1,1,<drivers/board.c><board.c>
+File 1,1,<drivers/luminaryif.c><luminaryif.c>
+File 1,1,<drivers/sdram.c><sdram.c>
+File 1,1,<drivers/serial.c><serial.c>
+File 2,1,<applications/application.c><application.c>
+File 2,1,<applications/startup.c><startup.c>
+File 3,1,<Libraries/driverlib/adc.c><adc.c>
+File 3,1,<Libraries/driverlib/can.c><can.c>
+File 3,1,<Libraries/driverlib/comp.c><comp.c>
+File 3,1,<Libraries/driverlib/cpu.c><cpu.c>
+File 3,1,<Libraries/driverlib/eeprom.c><eeprom.c>
+File 3,1,<Libraries/driverlib/epi.c><epi.c>
+File 3,1,<Libraries/driverlib/ethernet.c><ethernet.c>
+File 3,1,<Libraries/driverlib/fan.c><fan.c>
+File 3,1,<Libraries/driverlib/flash.c><flash.c>
+File 3,1,<Libraries/driverlib/gpio.c><gpio.c>
+File 3,1,<Libraries/driverlib/hibernate.c><hibernate.c>
+File 3,1,<Libraries/driverlib/i2c.c><i2c.c>
+File 3,1,<Libraries/driverlib/i2s.c><i2s.c>
+File 3,1,<Libraries/driverlib/interrupt.c><interrupt.c>
+File 3,1,<Libraries/driverlib/lpc.c><lpc.c>
+File 3,1,<Libraries/driverlib/mpu.c><mpu.c>
+File 3,1,<Libraries/driverlib/peci.c><peci.c>
+File 3,1,<Libraries/driverlib/pwm.c><pwm.c>
+File 3,1,<Libraries/driverlib/qei.c><qei.c>
+File 3,1,<Libraries/driverlib/ssi.c><ssi.c>
+File 3,1,<Libraries/driverlib/sysctl.c><sysctl.c>
+File 3,1,<Libraries/driverlib/sysexc.c><sysexc.c>
+File 3,1,<Libraries/driverlib/systick.c><systick.c>
+File 3,1,<Libraries/driverlib/timer.c><timer.c>
+File 3,1,<Libraries/driverlib/uart.c><uart.c>
+File 3,1,<Libraries/driverlib/udma.c><udma.c>
+File 3,1,<Libraries/driverlib/usb.c><usb.c>
+File 3,1,<Libraries/driverlib/watchdog.c><watchdog.c>
+File 3,2,<Libraries/startup/arm/start_rvds.S><start_rvds.S>
+File 4,1,<../../src/clock.c><clock.c>
+File 4,1,<../../src/device.c><device.c>
+File 4,1,<../../src/idle.c><idle.c>
+File 4,1,<../../src/ipc.c><ipc.c>
+File 4,1,<../../src/irq.c><irq.c>
+File 4,1,<../../src/kservice.c><kservice.c>
+File 4,1,<../../src/mem.c><mem.c>
+File 4,1,<../../src/mempool.c><mempool.c>
+File 4,1,<../../src/object.c><object.c>
+File 4,1,<../../src/scheduler.c><scheduler.c>
+File 4,1,<../../src/signal.c><signal.c>
+File 4,1,<../../src/thread.c><thread.c>
+File 4,1,<../../src/timer.c><src_timer.c>
+File 5,1,<../../libcpu/arm/cortex-m3/cpuport.c><cpuport.c>
+File 5,2,<../../libcpu/arm/cortex-m3/context_rvds.S><context_rvds.S>
+File 5,1,<../../libcpu/arm/common/backtrace.c><backtrace.c>
+File 5,1,<../../libcpu/arm/common/div0.c><div0.c>
+File 5,1,<../../libcpu/arm/common/showmem.c><showmem.c>
+File 6,1,<../../components/finsh/shell.c><shell.c>
+File 6,1,<../../components/finsh/symbol.c><symbol.c>
+File 6,1,<../../components/finsh/cmd.c><cmd.c>
+File 6,1,<../../components/finsh/finsh_compiler.c><finsh_compiler.c>
+File 6,1,<../../components/finsh/finsh_error.c><finsh_error.c>
+File 6,1,<../../components/finsh/finsh_heap.c><finsh_heap.c>
+File 6,1,<../../components/finsh/finsh_init.c><finsh_init.c>
+File 6,1,<../../components/finsh/finsh_node.c><finsh_node.c>
+File 6,1,<../../components/finsh/finsh_ops.c><finsh_ops.c>
+File 6,1,<../../components/finsh/finsh_parser.c><finsh_parser.c>
+File 6,1,<../../components/finsh/finsh_var.c><finsh_var.c>
+File 6,1,<../../components/finsh/finsh_vm.c><finsh_vm.c>
+File 6,1,<../../components/finsh/finsh_token.c><finsh_token.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/arch/sys_arch.c><sys_arch.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/api/api_lib.c><api_lib.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/api/api_msg.c><api_msg.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/api/err.c><err.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/api/netbuf.c><netbuf.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/api/netdb.c><netdb.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/api/netifapi.c><netifapi.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/api/sockets.c><sockets.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/api/tcpip.c><tcpip.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/def.c><def.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/dns.c><dns.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/inet_chksum.c><inet_chksum.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/init.c><init.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/ip.c><ip.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/memp.c><memp.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/netif.c><netif.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/pbuf.c><pbuf.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/raw.c><raw.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/stats.c><stats.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/sys.c><sys.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/tcp.c><tcp.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/tcp_in.c><tcp_in.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/tcp_out.c><tcp_out.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/timeouts.c><timeouts.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/udp.c><udp.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/netif/ethernet.c><netif_ethernet.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/netif/ethernetif.c><ethernetif.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/netif/lowpan6.c><lowpan6.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/ipv4/autoip.c><autoip.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/ipv4/dhcp.c><dhcp.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/ipv4/etharp.c><etharp.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/ipv4/icmp.c><icmp.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/ipv4/igmp.c><igmp.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/ipv4/ip4.c><ip4.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/ipv4/ip4_addr.c><ip4_addr.c>
+File 7,1,<../../components/net/lwip-2.0.2/src/core/ipv4/ip4_frag.c><ip4_frag.c>
+
+
+
+
+Options 1,0,0  // Target 'RT-Thread-lm3s'
+ Device (LM3S9B96)
+ Vendor (Luminary Micro)
+ Cpu (IRAM(0x20000000-0x20017FFF) IROM(0-0x3FFFF) CLOCK(8000000) CPUTYPE("Cortex-M3"))
+ FlashUt ()
+ StupF ("STARTUP\Luminary\Startup.s" ("Luminary Startup Code"))
+ FlashDR (UL2CM3(-UV2077N9E -O14 -S1 -C0 -N00("ARM CoreSight JTAG-DP") -D00(3BA00477) -L00(4) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP7 -FO7 -FD20000000 -FC800 -FN1 -FF0LM3S_256 -FS00 -FL040000))
+ DevID (4850)
+ Rgf (LM3Sxxxx.H)
+ Mem ()
+ C ()
+ A ()
+ RL ()
+ OH ()
+ DBC_IFX ()
+ DBC_CMS ()
+ DBC_AMS ()
+ DBC_LMS ()
+ UseEnv=0
+ EnvBin ()
+ EnvInc ()
+ EnvLib ()
+ EnvReg (Luminary\)
+ OrgReg (Luminary\)
+ TgStat=16
+ OutDir (.\build\)
+ OutName (rtthread-lm3s)
+ GenApp=1
+ GenLib=0
+ GenHex=0
+ Debug=1
+ Browse=1
+ LstDir (.\build\)
+ HexSel=1
+ MG32K=0
+ TGMORE=0
+ RunUsr 0 0 <>
+ RunUsr 1 0 <>
+ BrunUsr 0 0 <>
+ BrunUsr 1 0 <>
+ CrunUsr 0 0 <>
+ CrunUsr 1 0 <>
+ SVCSID <>
+ GLFLAGS=1790
+ ADSFLGA { 243,31,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ACPUTYP ("Cortex-M3")
+ RVDEV ()
+ ADSTFLGA { 0,12,0,0,160,0,0,66,0,0,0,0,0,0,0,0,0,0,0,0 }
+ OCMADSOCM { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ OCMADSIRAM { 0,0,0,0,32,0,128,1,0 }
+ OCMADSIROM { 1,0,0,0,0,0,0,4,0 }
+ OCMADSXRAM { 0,0,0,0,0,0,0,0,0 }
+ OCR_RVCT { 1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,4,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,0,128,1,0,0,0,0,0,0,0,0,0,0 }
+ RV_STAVEC ()
+ ADSCCFLG { 13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSCMISC ()
+ ADSCDEFN (PART_LM3S9B96)
+ ADSCUDEF ()
+ ADSCINCD (../../components/net/lwip-2.0.2/src;../../libcpu/arm/cortex-m3;../../components/net/lwip-2.0.2/src/include/posix;drivers;../../libcpu/arm/common;.;Libraries;applications;../../include;../../components/net/lwip-2.0.2/src/include/netif;../../components/net/lwip-2.0.2/src/arch/include;../../components/net/lwip-2.0.2/src/include/ipv4;../../components/finsh;../../components/net/lwip-2.0.2/src/include)
+ ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSAMISC ()
+ ADSADEFN ()
+ ADSAUDEF ()
+ ADSAINCD ()
+ PropFld { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=1
+ AlwaysBuild=0
+ GenAsm=0
+ AsmAsm=0
+ PublicsOnly=0
+ StopCode=3
+ CustArgs ()
+ LibMods ()
+ ADSLDFG { 17,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSLDTA (0x00000000)
+ ADSLDDA (0x00000000)
+ ADSLDSC ()
+ ADSLDIB ()
+ ADSLDIC ()
+ ADSLDMC ( --keep *.o(FSymTab) --keep *.o(VSymTab) )
+ ADSLDIF ()
+ ADSLDDW ()
+  OPTDL (SARMCM3.DLL)()(DLM.DLL)(-pLM3S9B96)(SARMCM3.DLL)()(TLM.DLL)(-pLM3S9B96)
+  OPTDBG 48118,4,()()()()()()()()()() (BIN\lmidk-agdi.dll)()()()
+ FLASH1 { 1,0,0,0,1,0,0,0,1,16,0,0,0,0,0,0,0,0,0,0 }
+ FLASH2 (BIN\UL2CM3.DLL)
+ FLASH3 ("" ())
+ FLASH4 ()
+EndOpt
+

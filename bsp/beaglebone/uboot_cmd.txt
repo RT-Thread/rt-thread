@@ -1,0 +1,5 @@
+mmcinfo
+fatload mmc 0 0x80200000 rtthread.bin
+go 0x80200000
+
+其中的地址0x80200000根据链接地址确定

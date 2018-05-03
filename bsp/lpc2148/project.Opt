@@ -1,0 +1,76 @@
+### uVision2 Project, (C) Keil Software
+### Do not modify !
+
+ cExt (*.c)
+ aExt (*.s*; *.src; *.a*)
+ oExt (*.obj)
+ lExt (*.lib)
+ tExt (*.txt; *.h; *.inc)
+ pExt (*.plm)
+ CppX (*.cpp)
+ DaveTm { 0,0,0,0,0,0,0,0 }
+
+Target (rtthread-lpc2148), 0x0004 // Tools: 'ARM-ADS'
+GRPOPT 1,(Applications),0,0,0
+GRPOPT 2,(Drivers),0,0,0
+GRPOPT 3,(Kernel),0,0,0
+GRPOPT 4,(LPC214X),0,0,0
+GRPOPT 5,(finsh),0,0,0
+
+OPTFFF 1,1,1,0,0,0,0,0,<applications\application.c><application.c> 
+OPTFFF 1,2,1,0,0,0,0,0,<applications\startup.c><startup.c> 
+OPTFFF 2,3,1,0,0,0,0,0,<drivers\board.c><board.c> 
+OPTFFF 2,4,1,0,0,0,0,0,<drivers\serial.c><serial.c> 
+OPTFFF 3,5,1,0,0,0,0,0,<..\..\src\device.c><device.c> 
+OPTFFF 3,6,1,0,0,0,0,0,<..\..\src\thread.c><thread.c> 
+OPTFFF 3,7,1,0,0,0,0,0,<..\..\src\scheduler.c><scheduler.c> 
+OPTFFF 3,8,1,0,0,0,0,0,<..\..\src\timer.c><timer.c> 
+OPTFFF 3,9,1,0,0,0,0,0,<..\..\src\irq.c><irq.c> 
+OPTFFF 3,10,1,0,0,0,0,0,<..\..\src\kservice.c><kservice.c> 
+OPTFFF 3,11,1,0,0,0,0,0,<..\..\src\clock.c><clock.c> 
+OPTFFF 3,12,1,0,0,0,0,0,<..\..\src\object.c><object.c> 
+OPTFFF 3,13,1,0,0,0,0,0,<..\..\src\mempool.c><mempool.c> 
+OPTFFF 3,14,1,0,0,0,0,0,<..\..\src\ipc.c><ipc.c> 
+OPTFFF 3,15,1,0,0,0,0,0,<..\..\src\idle.c><idle.c> 
+OPTFFF 3,16,1,0,0,0,0,0,<..\..\src\mem.c><mem.c> 
+OPTFFF 4,17,1,0,0,0,0,0,<..\..\libcpu\arm\lpc214x\cpuport.c><cpuport.c> 
+OPTFFF 4,18,2,0,0,0,0,0,<..\..\libcpu\arm\lpc214x\context_rvds.S><context_rvds.S> 
+OPTFFF 4,19,2,0,0,0,0,0,<..\..\libcpu\arm\lpc214x\start_rvds.S><start_rvds.S> 
+OPTFFF 4,20,1,0,0,0,0,0,<..\..\libcpu\arm\common\backtrace.c><backtrace.c> 
+OPTFFF 4,21,1,0,0,0,0,0,<..\..\libcpu\arm\common\div0.c><div0.c> 
+OPTFFF 4,22,1,0,0,0,0,0,<..\..\libcpu\arm\common\showmem.c><showmem.c> 
+OPTFFF 5,23,1,0,0,0,0,0,<..\..\components\finsh\cmd.c><cmd.c> 
+OPTFFF 5,24,1,0,0,0,0,0,<..\..\components\finsh\finsh_compiler.c><finsh_compiler.c> 
+OPTFFF 5,25,1,0,0,0,0,0,<..\..\components\finsh\finsh_error.c><finsh_error.c> 
+OPTFFF 5,26,1,0,0,0,0,0,<..\..\components\finsh\finsh_heap.c><finsh_heap.c> 
+OPTFFF 5,27,1,0,0,0,0,0,<..\..\components\finsh\finsh_init.c><finsh_init.c> 
+OPTFFF 5,28,1,0,0,0,0,0,<..\..\components\finsh\finsh_node.c><finsh_node.c> 
+OPTFFF 5,29,1,0,0,0,0,0,<..\..\components\finsh\finsh_ops.c><finsh_ops.c> 
+OPTFFF 5,30,1,0,0,0,0,0,<..\..\components\finsh\finsh_parser.c><finsh_parser.c> 
+OPTFFF 5,31,1,0,0,0,0,0,<..\..\components\finsh\finsh_token.c><finsh_token.c> 
+OPTFFF 5,32,1,0,0,0,0,0,<..\..\components\finsh\finsh_var.c><finsh_var.c> 
+OPTFFF 5,33,1,0,0,0,0,0,<..\..\components\finsh\finsh_vm.c><finsh_vm.c> 
+OPTFFF 5,34,1,0,0,0,0,0,<..\..\components\finsh\shell.c><shell.c> 
+OPTFFF 5,35,1,0,0,0,0,0,<..\..\components\finsh\symbol.c><symbol.c> 
+
+
+TARGOPT 1, (rtthread-lpc2148)
+ ADSCLK=12000000
+  OPTTT 1,1,1,0
+  OPTHX 1,65535,0,0,0
+  OPTLX 79,66,8,<.\obj\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,1
+  OPTAX 0
+  OPTDL (SARM.DLL)(-cLPC2100)(DARMP.DLL)(-pLPC2148)(SARM.DLL)()(TARMP.DLL)(-pLPC2148)
+  OPTDBG 49150,0,()()()()()()()()()() (BIN\UL2ARM.DLL)()()()
+  OPTKEY 0,(UL2ARM)(-UV0168AVR -O14 -S1 -C0 -N00("ARM7TDMI-S Core") -D00(4F1F0F0F) -L00(4) -FO27 -FD40000000 -FC800 -FN1 -FF0LPC_IAP2_512 -FS00 -FL07D000)
+  OPTKEY 0,(DLGDARM)((134=-1,-1,-1,-1,0)(135=-1,-1,-1,-1,0)(153=-1,-1,-1,-1,0)(154=-1,-1,-1,-1,0)(108=-1,-1,-1,-1,0)(106=-1,-1,-1,-1,0)(105=-1,-1,-1,-1,0)(145=-1,-1,-1,-1,0)(147=-1,-1,-1,-1,0)(80=-1,-1,-1,-1,0)(104=-1,-1,-1,-1,0)(100=-1,-1,-1,-1,0)(101=-1,-1,-1,-1,0)(160=-1,-1,-1,-1,0)(161=-1,-1,-1,-1,0)(113=-1,-1,-1,-1,0)(112=-1,-1,-1,-1,0)(137=-1,-1,-1,-1,0)(138=-1,-1,-1,-1,0)(117=-1,-1,-1,-1,0)(146=-1,-1,-1,-1,0)(110=-1,-1,-1,-1,0)(111=-1,-1,-1,-1,0)(114=-1,-1,-1,-1,0)(141=-1,-1,-1,-1,0)(142=-1,-1,-1,-1,0)(143=-1,-1,-1,-1,0)(144=-1,-1,-1,-1,0)(115=-1,-1,-1,-1,0)(116=-1,-1,-1,-1,0))
+  OPTKEY 0,(ARMDBGFLAGS)(-T5F)
+  OPTDF 0x94
+  OPTLE <>
+  OPTLC <>
+EndOpt
+

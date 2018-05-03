@@ -1,0 +1,30 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd     = os.path.join(str(Dir('#')), 'drivers')
+
+# add the general drivers.
+src = Split("""
+board.c
+usart.c
+hyper_flash_boot.c
+drv_sdram.c
+""")
+
+CPPPATH = [cwd]
+CPPDEFINES = []
+
+if GetDepend('RT_USING_LWIP'):
+    src += ['drv_eth.c', 'fsl_phy.c']
+    CPPDEFINES += ['FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE']
+    
+if GetDepend('RT_USING_SDIO'):
+    src += ['drv_sdio.c']
+    
+if GetDepend('RT_USING_RTGUI') or GetDepend('PKG_USING_GUIENGINE'):
+    src += ['drv_lcd.c', 'drv_ft5406.c', 'drv_i2c.c']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
+
+Return('group')

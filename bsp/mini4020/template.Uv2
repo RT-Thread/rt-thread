@@ -1,0 +1,98 @@
+### uVision2 Project, (C) Keil Software
+### Do not modify !
+
+Target (RT-Thread_Mini4020), 0x0004 // Tools: 'ARM-ADS'
+
+
+
+
+Options 1,0,0  // Target 'RT-Thread_Mini4020'
+ Device (ARM7 (Little Endian))
+ Vendor (ARM)
+ Cpu (CLOCK(60000000) CPUTYPE(ARM7TDMI))
+ FlashUt ()
+ StupF ()
+ FlashDR ()
+ DevID (3654)
+ Rgf ()
+ Mem ()
+ C ()
+ A ()
+ RL ()
+ OH ()
+ DBC_IFX ()
+ DBC_CMS ()
+ DBC_AMS ()
+ DBC_LMS ()
+ UseEnv=0
+ EnvBin ()
+ EnvInc ()
+ EnvLib ()
+ EnvReg ()
+ OrgReg ()
+ TgStat=16
+ OutDir (.\build\)
+ OutName (rtthread-mini4020)
+ GenApp=1
+ GenLib=0
+ GenHex=0
+ Debug=1
+ Browse=0
+ LstDir (.\build\)
+ HexSel=1
+ MG32K=0
+ TGMORE=0
+ RunUsr 0 0 <>
+ RunUsr 1 0 <>
+ BrunUsr 0 0 <>
+ BrunUsr 1 0 <>
+ CrunUsr 0 0 <>
+ CrunUsr 1 0 <>
+ SVCSID <>
+ GLFLAGS=1790
+ ADSFLGA { 243,31,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ACPUTYP (ARM7TDMI)
+ RVDEV ()
+ ADSTFLGA { 0,0,64,0,160,0,64,8,0,0,0,0,0,0,0,0,0,0,0,0 }
+ OCMADSOCM { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ OCMADSIRAM { 0,0,0,0,0,0,0,0,0 }
+ OCMADSIROM { 0,0,0,0,0,0,0,0,0 }
+ OCMADSXRAM { 0,0,0,0,0,0,0,0,0 }
+ OCR_RVCT { 1,0,0,0,32,0,0,0,2,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,48,0,0,32,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,128,0,0,0,0,0,0,0,0,0,0,0 }
+ RV_STAVEC ()
+ ADSCCFLG { 5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSCMISC (-g)
+ ADSCDEFN ()
+ ADSCUDEF ()
+ ADSCINCD ()
+ ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSAMISC ()
+ ADSADEFN ()
+ ADSAUDEF ()
+ ADSAINCD ()
+ PropFld { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=1
+ AlwaysBuild=0
+ GenAsm=0
+ AsmAsm=0
+ PublicsOnly=0
+ StopCode=3
+ CustArgs ()
+ LibMods ()
+ ADSLDFG { 16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSLDTA (0x00000000)
+ ADSLDDA (0x00000000)
+ ADSLDSC (.\rtthread-mini4020.sct)
+ ADSLDIB ()
+ ADSLDIC ()
+ ADSLDMC ()
+ ADSLDIF ()
+ ADSLDDW ()
+  OPTDL (SARM.DLL)()(DARMP.DLL)()(SARM.DLL)()(TARMP.DLL)()
+  OPTDBG 48126,6,()()()()()()()()()(.\Ext_SDRAM.ini) (Segger\JLTAgdi.dll)()()()
+ FLASH1 { 1,0,0,0,1,0,0,0,4,16,0,0,0,0,0,0,0,0,0,0 }
+ FLASH2 (Segger\JLTAgdi.dll)
+ FLASH3 ("" ())
+ FLASH4 ()
+EndOpt
+

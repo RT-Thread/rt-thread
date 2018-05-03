@@ -1,0 +1,12 @@
+import rtconfig
+from building import *
+
+if rtconfig.EFM32_BOARD == 'EFM32GG_DK3750':
+    src = Glob('*.c')
+    CPPPATH = [GetCurrentDir()]
+
+    group = DefineGroup('EFM32GG_DK3750', src, depend = [''], CPPPATH = CPPPATH)
+    Return('group')
+else:
+    empty = []
+    Return('empty')

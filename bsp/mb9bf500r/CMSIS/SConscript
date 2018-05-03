@@ -1,0 +1,19 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+src = Glob('*.c')
+
+# add for startup script 
+if rtconfig.CROSS_TOOL == 'gcc':
+    src = src + ['start_gcc.S']
+elif rtconfig.CROSS_TOOL == 'keil':
+    src = src + ['start_rvds.S']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src = src + ['start_iar.S']
+    
+CPPPATH = [GetCurrentDir()]
+
+group = DefineGroup('CMSIS', src, depend = [''], CPPPATH = CPPPATH, LIBRARY = '')
+
+Return('group')
