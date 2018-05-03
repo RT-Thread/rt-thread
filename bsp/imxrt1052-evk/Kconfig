@@ -31,6 +31,8 @@ choice
         bool "RT1050_EVK"
     config BOARD_RT1050_FIRE
         bool "RT1050_FIRE"
+	config BOARD_RT1050_ATK
+        bool "RT1050_ATK"
 endchoice
 
 menu "RT1050 Bsp Config" 
@@ -60,15 +62,18 @@ menu "Select uart drivers"
         bool "Using uart6"
         select RT_USING_SERIAL
         default n 
+if ! BOARD_RT1050_ATK
     config RT_USING_UART7
         bool "Using uart7"
         select RT_USING_SERIAL
         default n 
+endif
     config RT_USING_UART8
         bool "Using uart8"
         select RT_USING_SERIAL
         default n 
 endmenu
+
 
 menu "Select spi bus and dev drivers"
     choice 
@@ -326,7 +331,7 @@ menu "Select iic bus drivers"
     endchoice
 
 endmenu
-
+if ! BOARD_RT1050_ATK
 menu "Select lcd driver"
     if RT_USING_LCD && BOARD_RT1050_EVK
     comment "Notice: Evk Board para: 480*272 4 4 8 2 40 10 106 45" 
@@ -391,7 +396,7 @@ menu "Select lcd driver"
         default 45 if BOARD_RT1050_FIRE
         depends on RT_USING_LCD 
 endmenu
-
+endif
 #menu "Select SDRAM driver"
     config RT_USING_SDRAM
         bool "Using sdram"

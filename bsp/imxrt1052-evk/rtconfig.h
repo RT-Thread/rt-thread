@@ -69,9 +69,9 @@
 
 #define RT_USING_DFS
 #define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 2
-#define DFS_FILESYSTEM_TYPES_MAX 2
-#define DFS_FD_MAX 4
+#define DFS_FILESYSTEMS_MAX 4
+#define DFS_FILESYSTEM_TYPES_MAX 4
+#define DFS_FD_MAX 8
 #define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
@@ -85,6 +85,7 @@
 #define RT_DFS_ELM_MAX_SECTOR_SIZE 512
 #define RT_DFS_ELM_REENTRANT
 #define RT_USING_DFS_DEVFS
+#define RT_USING_DFS_ROMFS
 
 /* Device Drivers */
 
@@ -94,8 +95,10 @@
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
 #define RT_USING_RTC
-#define RT_USING_SDIO
 #define RT_USING_SPI
+#define RT_USING_SFUD
+#define RT_SFUD_USING_SFDP
+#define RT_SFUD_USING_FLASH_INFO_TABLE
 
 /* Using USB */
 
@@ -192,7 +195,7 @@
 /* example package: hello */
 
 #define SOC_IMXRT1052
-#define BOARD_RT1050_EVK
+#define BOARD_RT1050_FIRE
 
 /* RT1050 Bsp Config */
 
@@ -205,31 +208,21 @@
 #define LPSPI_CLK_SOURCE_FROM_PLL3PFD1
 #define LPSPI_CLK_SOURCE 0
 #define LPSPI_CLK_SOURCE_DIVIDER 8
-#define RT_USING_SPIBUS4
-#define LPSPI4_SCK_GPIO_1
-#define LPSPI4_SDO_GPIO_1
-#define LPSPI4_SDI_GPIO_1
+#define RT_USING_SPIBUS3
+#define LPSPI3_SCK_GPIO_2
+#define LPSPI3_SDO_GPIO_2
+#define LPSPI3_SDI_GPIO_2
+#define RT_USING_SPI_FLASH
+#define SPI_FLASH_USING_SPIBUS3
+#define SPI_FLASH_USING_SPIBUS_NAME "spi3"
+#define SPI_FLASH_NAME "flash0"
+#define SPI_FLASH_USING_CS_PIN 47
 
 /* Select iic bus drivers */
 
-#define RT_USING_HW_I2C1
-#define HW_I2C1_BADURATE_100kHZ
 
 /* Select lcd driver */
 
-/* Notice: Evk Board para: 480*272 4 4 8 2 40 10 106 45 */
-
-#define RT_USING_LCD
-#define LCD_WIDTH 480
-#define LCD_HEIGHT 272
-#define LCD_HFP 4
-#define LCD_VFP 4
-#define LCD_HBP 8
-#define LCD_VBP 2
-#define LCD_HSW 40
-#define LCD_VSW 10
-#define LCD_BL_PIN 106
-#define LCD_RST_PIN 45
 #define RT_USING_SDRAM
 #define RT_USING_RTC_HP
 

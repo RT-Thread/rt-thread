@@ -10,12 +10,14 @@
       <TargetName>RT-Thread IMXRT1052</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060422::V5.06 update 4 (build 422)::ARMCC</pCCUsed>
+      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
+      <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>MIMXRT1052:M7</Device>
           <Vendor>NXP</Vendor>
-          <PackID>NXP.iMXRT_DFP.1.0.1</PackID>
+          <PackID>NXP.iMXRT_DFP.1.0.2</PackID>
+          <PackURL>http://mcuxpresso.nxp.com/cmsis_pack/repo/</PackURL>
           <Cpu>IRAM(0x20000000,0x00060000) IRAM2(0x00000000,0x00020000) CPUTYPE("Cortex-M7") FPU3(SFPU) CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
@@ -322,6 +324,7 @@
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
+            <uGnu>0</uGnu>
             <useXO>0</useXO>
             <v6Lang>1</v6Lang>
             <v6LangP>1</v6LangP>
@@ -332,9 +335,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--library_interface=armcc --library_type=standardlib --diag_suppress=66,1296,186</MiscControls>
-              <Define>SKIP_SYSCLK_INIT, CPU_MIMXRT1052DVL6A, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1, EVK_MCIMXRM, FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE, RT_USING_ARM_LIBC</Define>
+              <Define>RT_USING_ARM_LIBC, EVK_MCIMXRM, SKIP_SYSCLK_INIT, CPU_MIMXRT1052DVL6A, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;.;drivers;Libraries;Libraries\drivers;Libraries\utilities;Libraries\CMSIS\Include;..\..\include;..\..\libcpu\arm\cortex-m7;..\..\libcpu\arm\common;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\dfs\filesystems\elmfat;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\armlibc;..\..\components\net\lwip-2.0.2\src;..\..\components\net\lwip-2.0.2\src\include;..\..\components\net\lwip-2.0.2\src\include\ipv4;..\..\components\net\lwip-2.0.2\src\arch\include;..\..\components\net\lwip-2.0.2\src\include\netif;..\..\components\net\lwip-2.0.2\src\include\posix</IncludePath>
+              <IncludePath>applications;.;drivers;Libraries;Libraries\drivers;Libraries\utilities;Libraries\CMSIS\Include;..\..\include;..\..\libcpu\arm\cortex-m7;..\..\libcpu\arm\common;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\dfs\filesystems\elmfat;..\..\components\dfs\filesystems\romfs;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\spi\sfud\inc;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\armlibc;..\..\components\net\lwip-2.0.2\src;..\..\components\net\lwip-2.0.2\src\include;..\..\components\net\lwip-2.0.2\src\include\ipv4;..\..\components\net\lwip-2.0.2\src\arch\include;..\..\components\net\lwip-2.0.2\src\include\netif;..\..\components\net\lwip-2.0.2\src\include\posix</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -398,6 +401,11 @@
               <FileType>1</FileType>
               <FilePath>applications\mem_test.c</FilePath>
             </File>
+            <File>
+              <FileName>music_romfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\music_romfs.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -439,34 +447,14 @@
               <FilePath>drivers\drv_spi_bus.c</FilePath>
             </File>
             <File>
+              <FileName>drv_spi_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_spi_flash.c</FilePath>
+            </File>
+            <File>
               <FileName>drv_i2c.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_i2c.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_lcd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_lcd.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_sdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_sdio.c</FilePath>
-            </File>
-            <File>
-              <FileName>hyper_flash_boot.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\hyper_flash_boot.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_eth.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_eth.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_phy.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\fsl_phy.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -552,11 +540,6 @@
               <FileName>fsl_enc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\drivers\fsl_enc.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_enet.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\drivers\fsl_enet.c</FilePath>
             </File>
             <File>
               <FileName>fsl_ewm.c</FileName>
@@ -923,6 +906,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\components\dfs\filesystems\elmfat\option\ccsbcs.c</FilePath>
             </File>
+            <File>
+              <FileName>dfs_romfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\filesystems\romfs\dfs_romfs.c</FilePath>
+            </File>
+            <File>
+              <FileName>romfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\filesystems\romfs\romfs.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -960,6 +953,7 @@
                 <uThumb>2</uThumb>
                 <uSurpInc>2</uSurpInc>
                 <uC99>2</uC99>
+                <uGnu>2</uGnu>
                 <useXO>2</useXO>
                 <v6Lang>0</v6Lang>
                 <v6LangP>0</v6LangP>
@@ -969,7 +963,7 @@
                 <v6WtE>2</v6WtE>
                 <v6Rtti>2</v6Rtti>
                 <VariousControls>
-                  <MiscControls></MiscControls>
+                  <MiscControls> --c99</MiscControls>
                   <Define> </Define>
                   <Undefine> </Undefine>
                   <IncludePath></IncludePath>
@@ -1022,31 +1016,6 @@
               <FilePath>..\..\components\drivers\rtc\rtc.c</FilePath>
             </File>
             <File>
-              <FileName>block_dev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\sdio\block_dev.c</FilePath>
-            </File>
-            <File>
-              <FileName>mmcsd_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\sdio\mmcsd_core.c</FilePath>
-            </File>
-            <File>
-              <FileName>sd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\sdio\sd.c</FilePath>
-            </File>
-            <File>
-              <FileName>sdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\sdio\sdio.c</FilePath>
-            </File>
-            <File>
-              <FileName>mmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\sdio\mmc.c</FilePath>
-            </File>
-            <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\serial\serial.c</FilePath>
@@ -1060,6 +1029,21 @@
               <FileName>spi_dev.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\spi\spi_dev.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi_flash_sfud.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\spi\spi_flash_sfud.c</FilePath>
+            </File>
+            <File>
+              <FileName>sfud.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\spi\sfud\src\sfud.c</FilePath>
+            </File>
+            <File>
+              <FileName>sfud_sfdp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\spi\sfud\src\sfud_sfdp.c</FilePath>
             </File>
             <File>
               <FileName>completion.c</FileName>
