@@ -36,15 +36,15 @@ add bsp/stm32f405
 
 ## 1. 简介
 
-SM1432F405 是由sanmudianzi公司推出的CotexM4内核的banka
+SM1432F405 是由三木电子科技有限公司推出的CotexM4内核的板卡
 包括如下硬件特性：
 
 | 硬件 | 描述 |
 | -- | -- |
 |芯片型号| STM32F405RGT6 |
-|CPU| CotexM4 |
-|主频| 160MHz |
-|片内RAM |  |
+|CPU| Cortex-M4 |
+|主频| 168MHz |
+|片内SRAM |192+4KB  |
 |片内Flash | 1MB|
 
 ## 2. 编译说明
@@ -57,7 +57,7 @@ SM1432F405 是由sanmudianzi公司推出的CotexM4内核的banka
 1) 下载源码
 
 ```
-    git clone https://github.com/RT-Thread/rt-thread.git
+    git clone https://github.com/slcmcu/rt-thread.git
 ```
 2) 配置工程并准备env
 ```
@@ -94,11 +94,19 @@ SM1432F405 是由sanmudianzi公司推出的CotexM4内核的banka
 ```
 2)下载并运行
 
-1.T0-3V3
-2.dakai dfu
-3.lianjie usb
-4.xuanze rtthread.dfu
-5.xiazai
+1.短接T0和3V3
+2.在win7x64系统下打开dfu下载工具
+3.连接开发板的usb到PC机
+4.在dfu工具上选择下载镜像文件rtthread.dfu
+5.更新镜像到开发板
+### 3.1 连接usb转串口模块
+| SM1432F405 | SM12H340F |
+| -- | -- |
+| PA3 |  TX |
+| PA2 |  RX |
+| GND |  GND |
+
+串口波特率设置115200,8,n,1
 
 ### 3.1 运行结果
 
