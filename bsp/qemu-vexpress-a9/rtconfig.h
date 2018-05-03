@@ -51,6 +51,9 @@
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
 /* RT_USING_MODULE is not set */
+#define ARCH_ARM
+#define ARCH_ARM_CORTEX_A
+#define ARCH_ARM_CORTEX_A9
 
 /* RT-Thread Components */
 
@@ -70,6 +73,7 @@
 #define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
+/* FINSH_ECHO_DISABLE_DEFAULT is not set */
 #define FINSH_THREAD_PRIORITY 20
 #define FINSH_THREAD_STACK_SIZE 4096
 #define FINSH_CMD_SIZE 80
@@ -154,6 +158,7 @@
 #define RT_USING_POSIX_MMAP
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_AIO
+/* HAVE_SYS_SIGNALS is not set */
 
 /* Network stack */
 
@@ -231,24 +236,41 @@
 
 /* RT-Thread GUI Engine */
 
-/* PKG_USING_GUIENGINE is not set */
-/* GUIENGINE_IMAGE_JPEG_NONE is not set */
-/* GUIENGINE_IMAGE_JPEG is not set */
-/* GUIENGINE_IMAGE_TJPGD is not set */
-/* GUIENGINE_IMAGE_PNG_NONE is not set */
-/* GUIENGINE_IMAGE_PNG is not set */
-/* GUIENGINE_IMAGE_LODEPNG is not set */
-/* PKG_USING_GUIENGINE_V200 is not set */
+#define PKG_USING_GUIENGINE
+#define PKG_USING_GUIENGINE_V200
 /* PKG_USING_GUIENGINE_LATEST_VERSION is not set */
+#define GUIENGINE_NAME_MAX 16
+#define GUIENGINE_USING_TTF
+#define GUIENGINE_TTF_UTF8
+#define GUIENGINE_USING_FONT16
+#define GUIENGINE_USING_FONT12
+#define GUIENGINE_USING_FONTHZ
+#define GUIENGINE_USING_HZ_FILE
+/* GUIENGINE_IMAGE_XPM is not set */
+/* GUIENGINE_USING_JPG is not set */
+#define GUIENGINE_USING_PNG
+#define GUIENGINE_IMAGE_LODEPNG
+/* GUIENGINE_IMAGE_PNG is not set */
+/* GUIENGINE_IMAGE_BMP is not set */
+#define GUIENGINE_IMAGE_CONTAINER
+#define GUIENGINE_USING_DEMO
+#define PKG_USING_PERSIMMON
+#define PKG_USING_PERSIMMON_V100
+/* PKG_USING_PERSIMMON_V110 is not set */
+/* PKG_USING_PERSIMMON_LATEST_VERSION is not set */
+#define RT_USING_PERSIMMON_EXAMPLE
 /* PKG_USING_LWEXT4 is not set */
 /* PKG_USING_PARTITION is not set */
-/* PKG_USING_SQLITE is not set */
-/* PKG_USING_RTI is not set */
+#define PKG_USING_SQLITE
+#define PKG_USING_RTI
 
 /* IoT - internet of things */
 
 /* PKG_USING_PAHOMQTT is not set */
-/* PKG_USING_WEBCLIENT is not set */
+#define PKG_USING_WEBCLIENT
+/* WEBCLIENT_USING_TLS is not set */
+#define PKG_USING_WEBCLIENT_LATEST_VERSION
+/* PKG_USING_WEBCLIENT_V100 is not set */
 /* PKG_USING_MONGOOSE is not set */
 /* PKG_USING_WEBTERMINAL is not set */
 /* PKG_USING_CJSON is not set */
@@ -268,6 +290,8 @@
 /* PKG_USING_WLAN_WICED is not set */
 /* PKG_USING_COAP is not set */
 /* PKG_USING_NOPOLL is not set */
+/* PKG_USING_NETUTILS is not set */
+/* PKG_USING_ONENET is not set */
 
 /* security packages */
 
@@ -278,7 +302,39 @@
 /* language packages */
 
 /* PKG_USING_JERRYSCRIPT is not set */
-/* PKG_USING_MICROPYTHON is not set */
+#define PKG_USING_MICROPYTHON
+
+/* Hardware Module */
+
+/* MICROPYTHON_USING_MACHINE_I2C is not set */
+/* MICROPYTHON_USING_MACHINE_SPI is not set */
+#define MICROPYTHON_USING_MACHINE_UART
+
+/* System Module */
+
+/* MICROPYTHON_USING_UOS is not set */
+/* MICROPYTHON_USING_THREAD is not set */
+/* MICROPYTHON_USING_USELECT is not set */
+/* MICROPYTHON_USING_UCTYPES is not set */
+/* MICROPYTHON_USING_UERRNO is not set */
+
+/* Tools Module */
+
+/* MICROPYTHON_USING_CMATH is not set */
+/* MICROPYTHON_USING_UBINASCII is not set */
+/* MICROPYTHON_USING_UHASHLIB is not set */
+/* MICROPYTHON_USING_UHEAPQ is not set */
+/* MICROPYTHON_USING_UJSON is not set */
+/* MICROPYTHON_USING_URE is not set */
+/* MICROPYTHON_USING_UZLIB is not set */
+/* MICROPYTHON_USING_URANDOM is not set */
+
+/* Network Module */
+
+/* MICROPYTHON_USING_USOCKET is not set */
+#define PKG_MICROPYTHON_HEAP_SIZE 8192
+#define PKG_USING_MICROPYTHON_LATEST_VERSION
+/* PKG_USING_MICROPYTHON_V10903 is not set */
 
 /* multimedia packages */
 
@@ -287,22 +343,30 @@
 /* tools packages */
 
 /* PKG_USING_CMBACKTRACE is not set */
+/* PKG_USING_EASYFLASH is not set */
 /* PKG_USING_EASYLOGGER is not set */
 /* PKG_USING_SYSTEMVIEW is not set */
 /* PKG_USING_IPERF is not set */
 
 /* miscellaneous packages */
 
-/* PKG_USING_FASTLZ is not set */
+#define PKG_USING_FASTLZ
+/* FASTLZ_USING_SAMPLE is not set */
+#define PKG_USING_FASTLZ_LATEST_VERSION
+/* PKG_USING_FASTLZ_V100 is not set */
 /* PKG_USING_MINILZO is not set */
 /* PKG_USING_QUICKLZ is not set */
+/* PKG_USING_MULTIBUTTON is not set */
+/* PKG_USING_SAMPLES is not set */
+/* PKG_USING_CANFESTIVAL is not set */
 
 /* example package: hello */
 
 /* PKG_USING_HELLO is not set */
-/* PKG_USING_MULTIBUTTON is not set */
+#define SOC_VEXPRESS_A9
 #define RT_USING_UART0
 #define RT_USING_UART1
+#define BSP_DRV_CLCD
 #define BSP_DRV_EMAC
 
 #endif

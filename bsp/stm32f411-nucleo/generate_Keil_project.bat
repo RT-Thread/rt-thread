@@ -1,1 +1,0 @@
-scons --target=mdk5 -s

@@ -1,1 +1,0 @@
-# RT-Thread for Ingenic X1000 porting.
