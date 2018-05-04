@@ -1,5 +1,5 @@
 #include <sys/time.h>
-#include <rtdevice.h>
+#include <rtthread.h>
 
 #if defined(RT_USING_DEVICE) && defined(RT_USING_RTC)
 int gettimeofday(struct timeval *tp, void *ignore)
