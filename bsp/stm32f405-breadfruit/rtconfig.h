@@ -18,7 +18,7 @@
 #define RT_DEBUG_INIT 0
 #define RT_DEBUG_THREAD 0
 #define RT_USING_HOOK
-#define IDLE_THREAD_STACK_SIZE 1024
+#define IDLE_THREAD_STACK_SIZE 256
 /* RT_USING_TIMER_SOFT is not set */
 
 /* Inter-Thread communication */
@@ -46,7 +46,7 @@
 /* RT_USING_INTERRUPT_INFO is not set */
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart2"
+#define RT_CONSOLE_DEVICE_NAME "uart"
 /* RT_USING_MODULE is not set */
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
@@ -55,7 +55,8 @@
 /* RT-Thread Components */
 
 #define RT_USING_COMPONENTS_INIT
-/* RT_USING_USER_MAIN is not set */
+#define RT_USING_USER_MAIN
+#define RT_MAIN_THREAD_STACK_SIZE 2048
 
 /* C++ features */
 
@@ -134,62 +135,22 @@
 /* POSIX layer and C standard library */
 
 #define RT_USING_LIBC
-#define RT_USING_PTHREADS
-/* RT_USING_POSIX is not set */
+/* RT_USING_PTHREADS is not set */
+#define RT_USING_POSIX
+/* RT_USING_POSIX_MMAP is not set */
+/* RT_USING_POSIX_TERMIOS is not set */
+/* RT_USING_POSIX_AIO is not set */
 /* HAVE_SYS_SIGNALS is not set */
 
 /* Network stack */
 
 /* light weight TCP/IP stack */
 
-#define RT_USING_LWIP
-/* RT_USING_LWIP141 is not set */
-#define RT_USING_LWIP202
-/* RT_USING_LWIP_IPV6 is not set */
-#define RT_LWIP_IGMP
-#define RT_LWIP_ICMP
-/* RT_LWIP_SNMP is not set */
-#define RT_LWIP_DNS
-#define RT_LWIP_DHCP
-#define IP_SOF_BROADCAST 1
-#define IP_SOF_BROADCAST_RECV 1
-
-/* Static IPv4 Address */
-
-#define RT_LWIP_IPADDR "192.168.1.30"
-#define RT_LWIP_GWADDR "192.168.1.1"
-#define RT_LWIP_MSKADDR "255.255.255.0"
-#define RT_LWIP_UDP
-#define RT_LWIP_TCP
-/* RT_LWIP_RAW is not set */
-/* RT_LWIP_PPP is not set */
-#define RT_MEMP_NUM_NETCONN 8
-#define RT_LWIP_PBUF_NUM 16
-#define RT_LWIP_RAW_PCB_NUM 4
-#define RT_LWIP_UDP_PCB_NUM 4
-#define RT_LWIP_TCP_PCB_NUM 5
-#define RT_LWIP_TCP_SEG_NUM 40
-#define RT_LWIP_TCP_SND_BUF 8192
-#define RT_LWIP_TCP_WND 8192
-#define RT_LWIP_TCPTHREAD_PRIORITY 12
-#define RT_LWIP_TCPTHREAD_MBOX_SIZE 4
-#define RT_LWIP_TCPTHREAD_STACKSIZE 1024
-#define RT_LWIP_ETHTHREAD_PRIORITY 15
-#define RT_LWIP_ETHTHREAD_STACKSIZE 512
-#define RT_LWIP_ETHTHREAD_MBOX_SIZE 4
-/* RT_LWIP_REASSEMBLY_FRAG is not set */
-#define LWIP_NETIF_STATUS_CALLBACK 1
-#define SO_REUSE 1
-#define LWIP_SO_RCVTIMEO 1
-#define LWIP_SO_SNDTIMEO 1
-#define LWIP_SO_RCVBUF 1
-/* RT_LWIP_NETIF_LOOPBACK is not set */
-#define LWIP_NETIF_LOOPBACK 0
+/* RT_USING_LWIP is not set */
 
 /* Modbus master and slave stack */
 
 /* RT_USING_MODBUS is not set */
-/* LWIP_USING_DHCPD is not set */
 
 /* VBUS(Virtual Software BUS) */
 
@@ -242,7 +203,6 @@
 /* PKG_USING_COAP is not set */
 /* PKG_USING_NOPOLL is not set */
 /* PKG_USING_NETUTILS is not set */
-/* PKG_USING_ONENET is not set */
 
 /* security packages */
 
@@ -280,9 +240,26 @@
 
 /* PKG_USING_HELLO is not set */
 #define SOC_STM32F4
-#define RT_USING_UART1
+
+/* BSP select */
+
+/* Boards Select */
+
+#define Boards
+
+/* Drivers */
+
+#define Drivers
+
+/* Libraries */
+
+#define Libraries
+
+/* UART Select */
+
+/* RT_USING_UART1 is not set */
 #define RT_USING_UART2
-#define RT_USING_UART3
+/* RT_USING_UART3 is not set */
 /* RT_USING_UART4 is not set */
 /* RT_USING_UART5 is not set */
 
