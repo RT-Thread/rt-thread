@@ -32,7 +32,7 @@ choice
     config BOARD_RT1050_FIRE
         bool "RT1050_FIRE"
     config BOARD_RT1050_ShareBoard
-        bool "RT1050_ShareBoard"	
+        bool "RT1050_ShareBoard"
 	config BOARD_RT1050_ATK
         bool "RT1050_ATK"		
 endchoice
