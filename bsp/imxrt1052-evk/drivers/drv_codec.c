@@ -347,6 +347,11 @@ static rt_size_t icodec_transmit(struct rt_audio_device *audio, const void *writ
 
         xfer.data = (uint8_t *)writeBuf;
         xfer.dataSize = size;
+		if (size%32 == 0)
+            icodec->txHandle.count = 16;
+		else
+            icodec->txHandle.count = 1;
+
         rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void*)writeBuf, size);
         if (SAI_TransferSendEDMA(icodec->sai, &icodec->txHandle, &xfer) != kStatus_Success)
             return 0;
