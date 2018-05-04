@@ -25,10 +25,11 @@
 #include <stdint.h>
 #include <rthw.h>
 #include <rtthread.h>
+#include <ws_pcf8563.h>
 
 #ifdef RT_USING_DFS
 #include <dfs_file.h>
-#include <dfs_romfs.h>
+//#include <dfs_romfs.h>
 #endif
 
 #ifdef RT_USING_DEVICE
@@ -119,6 +120,7 @@ void dump_link_info(void)
 int main(void)
 {
     rt_uint32_t result;
+    uchar time[3]={0,0,0};
     dump_clock();
     dump_cc_info();
     dump_link_info();
@@ -140,18 +142,22 @@ int main(void)
         rt_kprintf("sdcard init fail or timeout: %d!\n", result);
     }
 #endif
-
+    PCF8563_init();	
+	PCF8563_setTime(12,0,0);
+    rt_thread_delay(RT_TICK_PER_SECOND);
     /* mount SPI flash as root directory */  
-    if (dfs_mount(RT_NULL, "/", "rom", 0, &(romfs_root)) == 0)//挂载名字为elm的文件系统，这个文件系统对应的设备名为flash0,挂载点为/  
-    {  
-        rt_kprintf("flash0 mount to /.\n");  
-    }  
-    else  
-    {  
-        rt_kprintf("flash0 mount to / failed.\n");  
-    }  
+//    if (dfs_mount(RT_NULL, "/", "rom", 0, &(romfs_root)) == 0)//挂载名字为elm的文件系统，这个文件系统对应的设备名为flash0,挂载点为/  
+//    {  
+//        rt_kprintf("flash0 mount to /.\n");  
+//    }  
+//    else  
+//    {  
+//        rt_kprintf("flash0 mount to / failed.\n");  
+//    }  
     while (1)
     {
+        PCF8563_getTime(time);
+        rt_kprintf("%d:%d:%d\r\n",time[2],time[1],time[0]);
         rt_thread_delay(RT_TICK_PER_SECOND);
     }
 }

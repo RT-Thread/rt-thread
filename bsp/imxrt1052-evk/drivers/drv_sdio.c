@@ -35,7 +35,7 @@
 #define RT_USING_SDIO1
 #define RT_USING_SDIO2
 
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
 static int enable_log = 1;

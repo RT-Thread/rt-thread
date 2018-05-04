@@ -28,6 +28,7 @@
 
 /* Memory Management */
 
+#define RT_USING_MEMPOOL
 #define RT_USING_MEMHEAP
 #define RT_USING_MEMHEAP_AS_HEAP
 #define RT_USING_HEAP
@@ -85,7 +86,6 @@
 #define RT_DFS_ELM_MAX_SECTOR_SIZE 512
 #define RT_DFS_ELM_REENTRANT
 #define RT_USING_DFS_DEVFS
-#define RT_USING_DFS_ROMFS
 
 /* Device Drivers */
 
@@ -95,6 +95,7 @@
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
 #define RT_USING_RTC
+#define RT_USING_SDIO
 #define RT_USING_SPI
 #define RT_USING_SFUD
 #define RT_SFUD_USING_SFDP
@@ -112,7 +113,8 @@
 /* light weight TCP/IP stack */
 
 #define RT_USING_LWIP
-#define RT_USING_LWIP202
+#define RT_USING_LWIP141
+#define RT_LWIP_IGMP
 #define RT_LWIP_ICMP
 #define RT_LWIP_DNS
 #define RT_LWIP_DHCP
@@ -195,13 +197,15 @@
 /* example package: hello */
 
 #define SOC_IMXRT1052
-#define BOARD_RT1050_FIRE
+#define BOARD_RT1050_ATK
 
 /* RT1050 Bsp Config */
 
 /* Select uart drivers */
 
 #define RT_USING_UART1
+#define RT_USING_UART4
+#define RT_USING_UART8
 
 /* Select spi bus and dev drivers */
 
@@ -220,9 +224,8 @@
 
 /* Select iic bus drivers */
 
-
-/* Select lcd driver */
-
+#define RT_USING_HW_I2C1
+#define HW_I2C1_BADURATE_100kHZ
 #define RT_USING_SDRAM
 #define RT_USING_RTC_HP
 
