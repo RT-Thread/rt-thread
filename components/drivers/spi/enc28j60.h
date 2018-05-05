@@ -221,6 +221,12 @@
 #define PHCON2_TXDIS        0x2000
 #define PHCON2_JABBER       0x0400
 #define PHCON2_HDLDIS       0x0100
+/* ENC28J60 PHY PHIE Register Bit Definitions */
+#define PHIE_PLNKIE         (1 << 4)
+#define PHIE_PGEIE          (1 << 1)
+/* ENC28J60 PHY PHIR Register Bit Definitions */
+#define PHIR_PLNKIF         (1 << 4)
+#define PHIR_PGEIF          (1 << 1)
 
 // ENC28J60 Packet Control Byte Bit Definitions
 #define PKTCTRL_PHUGEEN     0x08
