@@ -55,7 +55,7 @@ if GetDepend('RT_USING_USB_DEVICE'):
     src += Glob('usb/phy/*.c')
     CPPDEFINES += ['ENDIANNESS']
 
-if GetDepend('BOARD_RT1050_EVK'):
+if GetDepend('BOARD_RT1050_EVK') or GetDepend('BOARD_RT1050_SeeedStudio'):
     src += ['hyper_flash_boot.c']
 
     if GetDepend('RT_USING_LWIP'):
