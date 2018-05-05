@@ -7,7 +7,7 @@ from building import *
 cwd = GetCurrentDir()
 src = Glob('drivers/*.c')
 
-if GetDepend('BOARD_RT1050_FIRE'): 
+if GetDepend('BOARD_RT1050_FIRE') or GetDepend('BOARD_RT1050_ATK'): 
     SrcRemove(src, r'drivers\fsl_enet.c')
 
 SrcRemove(src, 'drivers/dataqueue.c')

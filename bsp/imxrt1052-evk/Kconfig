@@ -34,7 +34,9 @@ choice
     config BOARD_RT1050_ShareBoard
         bool "RT1050_ShareBoard"
     config BOARD_RT1050_ATK
-        bool "RT1050_ATK"		
+        bool "RT1050_ATK"	
+    config BOARD_RT1050_SeeedStudio
+        bool "RT1050_SeeedStudio"				
 endchoice
 
 menu "RT1050 Bsp Config" 
@@ -52,6 +54,7 @@ menu "Select uart drivers"
         bool "Using uart3"
         select RT_USING_SERIAL
         default n 
+if !BOARD_RT1050_SeeedStudio
     config RT_USING_UART4
         bool "Using uart4"
         select RT_USING_SERIAL
@@ -64,7 +67,8 @@ menu "Select uart drivers"
         bool "Using uart6"
         select RT_USING_SERIAL
         default n 
-if ! BOARD_RT1050_ATK
+endif
+if !BOARD_RT1050_ATK && !BOARD_RT1050_SeeedStudio
     config RT_USING_UART7
         bool "Using uart7"
         select RT_USING_SERIAL
@@ -101,7 +105,7 @@ menu "Select spi bus and dev drivers"
         int "SPI bus clock source divider"
         range 1 8
         default 8
-
+if !BOARD_RT1050_SeeedStudio
     config RT_USING_SPIBUS1
         bool "Using spi1 bus"
         select RT_USING_SPI
@@ -165,7 +169,7 @@ menu "Select spi bus and dev drivers"
         config LPSPI2_SDI_GPIO_2
             bool "GPIO_EMC_03"
     endchoice
-
+endif
     config RT_USING_SPIBUS3
         bool "Using spi3 bus"
         select RT_USING_SPI
@@ -178,6 +182,7 @@ menu "Select spi bus and dev drivers"
             bool "GPIO_AD_B1_15"
         config LPSPI3_SCK_GPIO_2
             bool "GPIO_AD_B0_00"
+            depends on !BOARD_RT1050_SeeedStudio
     endchoice
     choice
         prompt "spi3 bus sdo io choice"
@@ -187,6 +192,7 @@ menu "Select spi bus and dev drivers"
             bool "GPIO_AD_B1_14"
         config LPSPI3_SDO_GPIO_2
             bool "GPIO_AD_B0_01"
+            depends on !BOARD_RT1050_SeeedStudio
     endchoice
     choice
         prompt "spi3 bus sdi io choice"
@@ -196,6 +202,7 @@ menu "Select spi bus and dev drivers"
             bool "GPIO_AD_B1_13"
         config LPSPI3_SDI_GPIO_2
             bool "GPIO_AD_B0_02"
+            depends on !BOARD_RT1050_SeeedStudio
     endchoice
 
     config RT_USING_SPIBUS4
@@ -208,6 +215,7 @@ menu "Select spi bus and dev drivers"
         depends on RT_USING_SPIBUS4
         config LPSPI4_SCK_GPIO_1
             bool "GPIO_B0_03"
+            depends on !BOARD_RT1050_SeeedStudio
         config LPSPI4_SCK_GPIO_2
             bool "GPIO_B1_07"
     endchoice
@@ -217,6 +225,7 @@ menu "Select spi bus and dev drivers"
         depends on RT_USING_SPIBUS4
         config LPSPI4_SDO_GPIO_1
             bool "GPIO_B0_02"
+            depends on !BOARD_RT1050_SeeedStudio
         config LPSPI4_SDO_GPIO_2
             bool "GPIO_B1_06"
     endchoice
@@ -226,6 +235,7 @@ menu "Select spi bus and dev drivers"
         depends on RT_USING_SPIBUS4
         config LPSPI4_SDI_GPIO_1
             bool "GPIO_B0_01"
+            depends on !BOARD_RT1050_SeeedStudio
         config LPSPI4_SDI_GPIO_2
             bool "GPIO_B1_05"
     endchoice
@@ -288,7 +298,7 @@ menu "Select iic bus drivers"
         config HW_I2C1_BADURATE_400kHZ
             bool "400kHZ"
     endchoice
-	
+if !BOARD_RT1050_SeeedStudio
     config RT_USING_HW_I2C2
         bool "using hardware i2c2"
         select RT_USING_I2C
@@ -302,7 +312,7 @@ menu "Select iic bus drivers"
         config HW_I2C2_BADURATE_400kHZ
             bool "400kHZ"
     endchoice
-	
+endif
     config RT_USING_HW_I2C3
         bool "using hardware i2c3"
         select RT_USING_I2C
@@ -332,7 +342,8 @@ menu "Select iic bus drivers"
     endchoice
 
 endmenu
-if ! BOARD_RT1050_ATK
+
+if !BOARD_RT1050_ATK && !BOARD_RT1050_SeeedStudio
 menu "Select lcd driver"
     if RT_USING_LCD && BOARD_RT1050_EVK
     comment "Notice: Evk Board para: 480*272 4 4 8 2 40 10 106 45" 
