@@ -342,6 +342,7 @@ endif
     endchoice
 
 endmenu
+
 if !BOARD_RT1050_ATK && !BOARD_RT1050_SeeedStudio
 menu "Select lcd driver"
     if RT_USING_LCD && BOARD_RT1050_EVK
