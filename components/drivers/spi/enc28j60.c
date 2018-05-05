@@ -321,6 +321,8 @@ static rt_err_t enc28j60_init(rt_device_t dev)
     enc28j60_phy_write(spi_device, PHCON1, PHCON1_PDPXMD); // full duplex
     // no loopback of transmitted frames
     enc28j60_phy_write(spi_device, PHCON2, PHCON2_HDLDIS);
+    /* enable PHY link changed interrupt. */
+    enc28j60_phy_write(spi_device, PHIE, PHIE_PGEIE | PHIE_PLNKIE);
 
     enc28j60_set_bank(spi_device, ECON2);
     spi_write_op(spi_device, ENC28J60_BIT_FIELD_SET, ECON2, ECON2_AUTOINC);
