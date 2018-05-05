@@ -291,7 +291,20 @@ void imxrt_uart_gpio_init(struct imxrt_uart *uart)
             0x10B0u);
 #endif
 #ifdef RT_USING_UART4
-
+#ifdef BOARD_RT1050_ATK
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_SD_B1_00_LPUART4_TX,
+            0U);
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_SD_B1_01_LPUART4_RX,
+            0U);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_SD_B1_00_LPUART4_TX,
+            0x10B0u);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_SD_B1_01_LPUART4_RX,
+            0x10B0u);
+#else
         IOMUXC_SetPinMux(
             IOMUXC_GPIO_B1_00_LPUART4_TX,
             0U);
@@ -304,6 +317,7 @@ void imxrt_uart_gpio_init(struct imxrt_uart *uart)
         IOMUXC_SetPinConfig(
             IOMUXC_GPIO_B1_01_LPUART4_RX,
             0x10B0u);
+#endif
 #endif
 #ifdef RT_USING_UART5
 
