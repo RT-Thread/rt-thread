@@ -1,4 +1,5 @@
 #include <time.h>
+#include <rtthread.h>
 
 /* days per month -- nonleap! */
 const short __spm[13] =
