@@ -62,6 +62,9 @@ if GetDepend('BOARD_RT1050_EVK') or GetDepend('BOARD_RT1050_SeeedStudio'):
         src += ['drv_eth.c', 'fsl_phy.c']
         CPPDEFINES += ['FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE']
 
+if GetDepend('RT_USING_AUDIO'):
+    src += ['drv_codec.c', 'fsl_wm8960.c']
+
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
 
 Return('group')
