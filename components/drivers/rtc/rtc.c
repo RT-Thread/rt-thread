@@ -29,6 +29,8 @@
 #include <string.h>
 #include <rtthread.h>
 
+#ifdef RT_USING_RTC
+
 /* Using NTP auto sync RTC time */
 #ifdef RTC_SYNC_USING_NTP
 /* NTP first sync delay time for network connect, unit: second */
@@ -40,55 +42,6 @@
 #define RTC_NTP_SYNC_PERIOD                      (1L*60L*60L)
 #endif
 #endif /* RTC_SYNC_USING_NTP */
-
-/**
- * Returns the current time.
- *
- * @param time_t * t the timestamp pointer, if not used, keep NULL.
- *
- * @return time_t return timestamp current.
- *
- */
-/* for IAR 6.2 later Compiler */
-#if defined (__IAR_SYSTEMS_ICC__) &&  (__VER__) >= 6020000
-#pragma module_name = "?time"
-time_t (__time32)(time_t *t) /* Only supports 32-bit timestamp */
-#else
-time_t time(time_t *t)
-#endif
-{
-    static rt_device_t device = RT_NULL;
-    time_t time_now = 0;
-
-    /* optimization: find rtc device only first. */
-    if (device == RT_NULL)
-    {
-        device = rt_device_find("rtc");
-    }
-
-    /* read timestamp from RTC device. */
-    if (device != RT_NULL)
-    {
-        if (rt_device_open(device, 0) == RT_EOK)
-        {
-            rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time_now);
-            rt_device_close(device);
-        }
-    }
-
-    /* if t is not NULL, write timestamp to *t */
-    if (t != RT_NULL)
-    {
-        *t = time_now;
-    }
-
-    return time_now;
-}
-
-RT_WEAK clock_t clock(void)
-{
-    return rt_tick_get();
-}
 
 /**
  * Set system date(time not modify).
@@ -311,3 +264,5 @@ MSH_CMD_EXPORT(date, get date and time or set [year month day hour min sec]);
 #endif /* defined(RT_USING_FINSH) && defined(FINSH_USING_MSH) */
 
 #endif /* RT_USING_FINSH */
+
+#endif /* RT_USING_RTC */
