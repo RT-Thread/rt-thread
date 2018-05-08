@@ -91,15 +91,15 @@ static void SAI_TxEDMACallback(edma_handle_t *handle, void *userData, bool done,
     sai_edma_handle_t *saiHandle = privHandle->handle;
 
     /* If finished a blcok, call the callback function */
-    memset(&saiHandle->saiQueue[saiHandle->queueDriver], 0, sizeof(sai_transfer_t));
-    saiHandle->queueDriver = (saiHandle->queueDriver + 1) % SAI_XFER_QUEUE_SIZE;
+    saiHandle->saiQueue[saiHandle->queueDriver].dataSize = 0;
     if (saiHandle->callback)
     {
         (saiHandle->callback)(privHandle->base, saiHandle, kStatus_SAI_TxIdle, saiHandle->userData);
     }
+    saiHandle->queueDriver = (saiHandle->queueDriver + 1) % SAI_XFER_QUEUE_SIZE;
 
     /* If all data finished, just stop the transfer */
-    if (saiHandle->saiQueue[saiHandle->queueDriver].data == NULL)
+    if (saiHandle->saiQueue[saiHandle->queueDriver].dataSize == 0)
     {
         /* Disable DMA enable bit */
         SAI_TxEnableDMA(privHandle->base, kSAI_FIFORequestDMAEnable, false);
@@ -264,7 +264,7 @@ status_t SAI_TransferSendEDMA(I2S_Type *base, sai_edma_handle_t *handle, sai_tra
         return kStatus_InvalidArgument;
     }
 
-    if (handle->saiQueue[handle->queueUser].data)
+    if (handle->saiQueue[handle->queueUser].dataSize)
     {
         return kStatus_SAI_QueueFull;
     }
