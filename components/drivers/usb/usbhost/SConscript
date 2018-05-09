@@ -29,6 +29,6 @@ if GetDepend('RT_USBH_HID_KEYBOARD'):
 CPPPATH = [cwd, cwd + '/class', cwd + '/core', \
 	cwd + '/include', cwd + '../../../include']
 
-group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_USB_HOST'], CPPPATH = CPPPATH)
+group = DefineGroup('rt_usbh', src, depend = ['RT_USING_USB_HOST'], CPPPATH = CPPPATH)
 
 Return('group')

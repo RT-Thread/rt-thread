@@ -2,7 +2,7 @@
 //
 // uart.c - Driver for the UART.
 //
-// Copyright (c) 2005-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 2.1.0.12573 of the Tiva Peripheral Driver Library.
+// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -352,9 +352,14 @@ UARTFIFOLevelGet(uint32_t ui32Base, uint32_t *pui32TxLevel,
 //! zero, respectively).
 //!
 //! The peripheral clock is the same as the processor clock.  The frequency of
-//! the system clock is the value returned by SysCtlClockGet(), or it can be
-//! explicitly hard coded if it is constant and known (to save the
-//! code/execution overhead of a call to SysCtlClockGet()).
+//! the system clock is the value returned by SysCtlClockGet() for TM4C123x
+//! devices or the value returned by SysCtlClockFreqSet() for TM4C129x devices,
+//! or it can be explicitly hard coded if it is constant and known (to save the
+//! code/execution overhead of a call to SysCtlClockGet() or fetch of the 
+//! variable call holding the return value of SysCtlClockFreqSet()).
+//!
+//! The function disables the UART by calling UARTDisable() before changing the
+//! the parameters and enables the UART by calling UARTEnable().
 //!
 //! For Tiva parts that have the ability to specify the UART baud clock
 //! source (via UARTClockSourceSet()), the peripheral clock can be changed to
@@ -451,9 +456,11 @@ UARTConfigSetExpClk(uint32_t ui32Base, uint32_t ui32UARTClk,
 //! UARTConfigSetExpClk().
 //!
 //! The peripheral clock is the same as the processor clock.  The frequency of
-//! the system clock is the value returned by SysCtlClockGet(), or it can be
-//! explicitly hard coded if it is constant and known (to save the
-//! code/execution overhead of a call to SysCtlClockGet()).
+//! the system clock is the value returned by SysCtlClockGet() for TM4C123x
+//! devices or the value returned by SysCtlClockFreqSet() for TM4C129x devices,
+//! or it can be explicitly hard coded if it is constant and known (to save the
+//! code/execution overhead of a call to SysCtlClockGet() or fetch of the 
+//! variable call holding the return value of SysCtlClockFreqSet()).
 //!
 //! For Tiva parts that have the ability to specify the UART baud clock
 //! source (via UARTClockSourceSet()), the peripheral clock can be changed to
@@ -1948,6 +1955,35 @@ UART9BitAddrSend(uint32_t ui32Base, uint8_t ui8Addr)
     // Restore the address/data setting.
     //
     HWREG(ui32Base + UART_O_LCRH) = ui32LCRH;
+}
+
+//*****************************************************************************
+//
+//! Enables internal loopback mode for a UART port
+//!
+//! \param ui32Base is the base address of the UART port.
+//!
+//! This function configures a UART port in internal loopback mode to help with
+//! diagnostics and debug.  In this mode, the transmit and receive terminals of
+//! the same UART port are internally connected.  Hence, the data transmitted
+//! on the UnTx output is received on the UxRx input, without having to go
+//! through I/O's.  UARTCharPut(), UARTCharGet() functions can be used along 
+//! with this function.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void UARTLoopbackEnable(uint32_t ui32Base)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(_UARTBaseValid(ui32Base));
+
+    //
+    // Write the Loopback Enable bit to register.
+    //
+    HWREG(ui32Base + UART_O_CTL) |= UART_CTL_LBE;
 }
 
 //*****************************************************************************

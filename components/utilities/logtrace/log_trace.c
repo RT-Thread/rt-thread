@@ -41,7 +41,7 @@ static struct rt_device _log_device;
 static rt_device_t _traceout_device = RT_NULL;
 
 /* define a default lg session. The name is empty. */
-static struct log_trace_session _def_session = {{"\0"}, LOG_TRACE_LEVEL_INFO};
+static struct log_trace_session _def_session = {{"\0"}, LOG_TRACE_LEVEL_DEFAULT};
 static const struct log_trace_session *_the_sessions[LOG_TRACE_MAX_SESSION] = {&_def_session};
 /* there is a default session at least */
 static rt_uint16_t _the_sess_nr = 1;
@@ -267,16 +267,31 @@ void __logtrace_vfmtout(const struct log_trace_session *session,
     RT_ASSERT(session);
     RT_ASSERT(fmt);
 
-    rt_snprintf(_trace_buf, sizeof(_trace_buf), "[%08x][", rt_tick_get());
-    if (_traceout_device != RT_NULL)
+    /* it's default session */
+    if (session->id.name[0] == '\0')
     {
-        rt_device_write(_traceout_device, -1, _trace_buf, 11);
-        rt_device_write(_traceout_device, -1,
-                session->id.name, _idname_len(session->id.num));
+        rt_snprintf(_trace_buf, sizeof(_trace_buf), "[%08x]", rt_tick_get());
+        if (_traceout_device != RT_NULL)
+        {
+            rt_device_write(_traceout_device, -1, _trace_buf, 10);
+        }
+
+        ptr = &_trace_buf[0];
+    }
+    else
+    {
+        rt_snprintf(_trace_buf, sizeof(_trace_buf), "[%08x][", rt_tick_get());
+        if (_traceout_device != RT_NULL)
+        {
+            rt_device_write(_traceout_device, -1, _trace_buf, 11);
+            rt_device_write(_traceout_device, -1,
+                    session->id.name, _idname_len(session->id.num));
+        }
+
+        _trace_buf[0] = ']';
+        ptr = &_trace_buf[1];
     }
 
-    _trace_buf[0] = ']';
-    ptr = &_trace_buf[1];
     length = rt_vsnprintf(ptr, LOG_TRACE_BUFSZ, fmt, argptr);
 
     if (length >= LOG_TRACE_BUFSZ)
@@ -361,7 +376,7 @@ static rt_size_t _log_write(rt_device_t dev, rt_off_t pos, const void *buffer, r
     return size;
 }
 
-static rt_err_t _log_control(rt_device_t dev, rt_uint8_t cmd, void *arg)
+static rt_err_t _log_control(rt_device_t dev, int cmd, void *arg)
 {
     if (_traceout_device == RT_NULL) return -RT_ERROR;
 

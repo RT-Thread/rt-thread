@@ -56,6 +56,11 @@ rt_err_t rt_device_register(rt_device_t dev,
     dev->ref_count = 0;
     dev->open_flag = 0;
 
+#if defined(RT_USING_POSIX)
+    dev->fops = RT_NULL;
+    rt_list_init(&(dev->wait_queue));
+#endif
+
     return RT_EOK;
 }
 RTM_EXPORT(rt_device_register);
@@ -103,14 +108,13 @@ rt_device_t rt_device_find(const char *name)
     struct rt_list_node *node;
     struct rt_object_information *information;
 
-    extern struct rt_object_information rt_object_container[];
-
     /* enter critical */
     if (rt_thread_self() != RT_NULL)
         rt_enter_critical();
 
     /* try to find device object */
-    information = &rt_object_container[RT_Object_Class_Device];
+    information = rt_object_get_information(RT_Object_Class_Device);
+    RT_ASSERT(information != RT_NULL);
     for (node  = information->object_list.next;
          node != &(information->object_list);
          node  = node->next)
@@ -134,6 +138,50 @@ rt_device_t rt_device_find(const char *name)
     return RT_NULL;
 }
 RTM_EXPORT(rt_device_find);
+
+#ifdef RT_USING_HEAP
+/**
+ * This function creates a device object with user data size.
+ *
+ * @param type, the kind type of this device object.
+ * @param attach_size, the size of user data.
+ *
+ * @return the allocated device object, or RT_NULL when failed.
+ */
+rt_device_t rt_device_create(int type, int attach_size)
+{
+    int size;
+    rt_device_t device;
+
+    size = RT_ALIGN(sizeof(struct rt_device), RT_ALIGN_SIZE);
+    size += attach_size;
+
+    device = (rt_device_t)rt_malloc(size);
+    if (device)
+    {
+        rt_memset(device, 0x0, sizeof(struct rt_device));
+        device->type = (enum rt_device_class_type)type;
+    }
+
+    return device;
+}
+RTM_EXPORT(rt_device_create);
+
+/**
+ * This function destroy the specific device object.
+ *
+ * @param device, the specific device object.
+ */
+void rt_device_destroy(rt_device_t device)
+{
+    /* unregister device firstly */
+    rt_device_unregister(device);
+
+    /* release this device object */
+    rt_free(device);
+}
+RTM_EXPORT(rt_device_destroy);
+#endif
 
 /**
  * This function will initialize the specified device
@@ -213,11 +261,16 @@ rt_err_t rt_device_open(rt_device_t dev, rt_uint16_t oflag)
     {
         result = dev->open(dev, oflag);
     }
+    else
+    {
+        /* set open flag */
+        dev->open_flag = (oflag & RT_DEVICE_OFLAG_MASK);
+    }
 
     /* set open flag */
     if (result == RT_EOK || result == -RT_ENOSYS)
     {
-        dev->open_flag = oflag | RT_DEVICE_OFLAG_OPEN;
+        dev->open_flag |= RT_DEVICE_OFLAG_OPEN;
 
         dev->ref_count++;
         /* don't let bad things happen silently. If you are bitten by this assert,
@@ -349,7 +402,7 @@ RTM_EXPORT(rt_device_write);
  *
  * @return the result
  */
-rt_err_t rt_device_control(rt_device_t dev, rt_uint8_t cmd, void *arg)
+rt_err_t rt_device_control(rt_device_t dev, int cmd, void *arg)
 {
     RT_ASSERT(dev != RT_NULL);
 
@@ -359,7 +412,7 @@ rt_err_t rt_device_control(rt_device_t dev, rt_uint8_t cmd, void *arg)
         return dev->control(dev, cmd, arg);
     }
 
-    return RT_EOK;
+    return -RT_ENOSYS;
 }
 RTM_EXPORT(rt_device_control);
 

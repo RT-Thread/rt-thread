@@ -33,17 +33,10 @@
 
 /*@{*/
 
-#ifdef RT_USING_FINSH
-extern void finsh_system_init(void);
-#endif
-
 extern int  rt_application_init(void);
 extern void rt_show_version(void);
 #ifdef RT_USING_DEVICE
 extern rt_err_t rt_hw_serial_init(void);
-#endif
-#ifdef RT_USING_FINSH
-extern void finsh_system_init(void);
 #endif
 
 #ifdef __CC_ARM
@@ -76,40 +69,18 @@ void rtthread_startup(void)
 
 #ifdef RT_USING_HEAP
 #ifdef __CC_ARM
-    rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)0x40008000);
+    rt_system_heap_init((void *)&Image$$RW_IRAM1$$ZI$$Limit, (void *)0x40008000);
 #else
     /* init memory system */
-    rt_system_heap_init((void*)&__bss_end, (void*)0x40008000);
+    rt_system_heap_init((void *)&__bss_end, (void *)0x40008000);
 #endif
 #endif
 
     /* init scheduler system */
     rt_system_scheduler_init();
 
-#ifdef RT_USING_DEVICE
-#ifdef RT_USING_DFS
-    /* init sd card */
-    rt_hw_sdcard_init();
-#endif
-
-#ifdef RT_USING_LWIP
-    eth_system_device_init();
-    /* init ethernetif device */
-    rt_hw_dm9000_init();
-#endif
-
-    /* init hardware serial device */
-    rt_hw_serial_init();
-#endif
-
     /* init application */
     rt_application_init();
-
-#ifdef RT_USING_FINSH
-    /* init finsh */
-    finsh_system_init();
-    finsh_set_device("uart1");
-#endif
 
     /* init idle thread */
     rt_thread_idle_init();
@@ -121,7 +92,7 @@ void rtthread_startup(void)
     return ;
 }
 
-int main (void)
+int main(void)
 {
     /* invoke rtthread_startup */
     rtthread_startup();

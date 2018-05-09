@@ -25,13 +25,20 @@
  * 2013-12-21     Grissiom     let rt_thread_idle_excute loop until there is no
  *                             dead thread.
  * 2016-08-09     ArdaFu       add method to get the handler of the idle thread.
+ * 2018-02-07     Bernard      lock scheduler to protect tid->cleanup.
  */
 
 #include <rthw.h>
 #include <rtthread.h>
 
+#if defined (RT_USING_HOOK)
+#ifndef RT_USING_IDLE_HOOK
+#define RT_USING_IDLE_HOOK
+#endif
+#endif
+
 #ifndef IDLE_THREAD_STACK_SIZE
-#if defined (RT_USING_HOOK) || defined(RT_USING_HEAP)
+#if defined (RT_USING_IDLE_HOOK) || defined(RT_USING_HEAP)
 #define IDLE_THREAD_STACK_SIZE  256
 #else
 #define IDLE_THREAD_STACK_SIZE  128
@@ -44,12 +51,12 @@ static rt_uint8_t rt_thread_stack[IDLE_THREAD_STACK_SIZE];
 
 extern rt_list_t rt_thread_defunct;
 
-#ifdef RT_USING_HOOK
+#ifdef RT_USING_IDLE_HOOK
 static void (*rt_thread_idle_hook)();
 
 /**
  * @ingroup Hook
- * This function sets a hook function to idle thread loop. When the system performs 
+ * This function sets a hook function to idle thread loop. When the system performs
  * idle loop, this hook function should be invoked.
  *
  * @param hook the specified hook function
@@ -71,7 +78,7 @@ rt_inline int _has_defunct_thread(void)
      * into a "if".
      *
      * So add the volatile qualifier here. */
-    const volatile rt_list_t *l = (const volatile rt_list_t*)&rt_thread_defunct;
+    const volatile rt_list_t *l = (const volatile rt_list_t *)&rt_thread_defunct;
 
     return l->next != l;
 }
@@ -117,18 +124,32 @@ void rt_thread_idle_excute(void)
 #endif
             /* remove defunct thread */
             rt_list_remove(&(thread->tlist));
+
+            /* lock scheduler to prevent scheduling in cleanup function. */
+            rt_enter_critical();
+
             /* invoke thread cleanup */
             if (thread->cleanup != RT_NULL)
                 thread->cleanup(thread);
 
+#ifdef RT_USING_SIGNALS
+            rt_thread_free_sig(thread);
+#endif
+
             /* if it's a system object, not delete it */
             if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
             {
+                /* unlock scheduler */
+                rt_exit_critical();
+
                 /* enable interrupt */
                 rt_hw_interrupt_enable(lock);
 
                 return;
             }
+
+            /* unlock scheduler */
+            rt_exit_critical();
         }
         else
         {
@@ -149,8 +170,8 @@ void rt_thread_idle_excute(void)
             rt_module_free((rt_module_t)thread->module_id, thread->stack_addr);
         else
 #endif
-        /* release thread's stack */
-        RT_KERNEL_FREE(thread->stack_addr);
+            /* release thread's stack */
+            RT_KERNEL_FREE(thread->stack_addr);
         /* delete thread object */
         rt_object_delete((rt_object_t)thread);
 #endif
@@ -179,7 +200,13 @@ static void rt_thread_idle_entry(void *parameter)
 {
     while (1)
     {
-        RT_OBJECT_HOOK_CALL(rt_thread_idle_hook,());
+#ifdef RT_USING_IDLE_HOOK
+        if (rt_thread_idle_hook != RT_NULL)
+        {
+            rt_thread_idle_hook();
+        }
+#endif
+
         rt_thread_idle_excute();
     }
 }

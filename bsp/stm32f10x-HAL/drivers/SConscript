@@ -1,0 +1,31 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split("""
+board.c
+stm32f1xx_it.c
+""")
+
+if GetDepend(['RT_USING_PIN']):
+    src += ['drv_gpio.c']
+if GetDepend(['RT_USING_SERIAL']):
+    src += ['drv_usart.c']
+if GetDepend(['RT_USING_SPI']):
+    src += ['drv_spi.c']
+if GetDepend(['RT_USING_USB_DEVICE']):
+    src += ['drv_usb.c']
+if GetDepend(['RT_USING_SDCARD']):
+    src += ['drv_sdcard.c']
+
+if rtconfig.CROSS_TOOL == 'gcc':
+    src += ['gcc_startup.s']
+    
+CPPPATH = [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

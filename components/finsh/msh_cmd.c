@@ -189,7 +189,10 @@ int cmd_cd(int argc, char **argv)
     }
     else if (argc == 2)
     {
-        chdir(argv[1]);
+        if (chdir(argv[1]) != 0)
+        {
+            rt_kprintf("No such directory: %s\n", argv[1]);
+        }
     }
 
     return 0;
@@ -252,33 +255,56 @@ int cmd_mkfs(int argc, char **argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_mkfs, __cmd_mkfs, format disk with file system);
 
+extern int df(const char *path);
+int cmd_df(int argc, char** argv)
+{
+    if (argc != 2)
+    {
+        df("/");
+    }
+    else
+    {
+        if ((strcmp(argv[1], "--help") == 0) || (strcmp(argv[1], "-h") == 0))
+        {
+            rt_kprintf("df [path]\n");
+        }
+        else
+        {
+            df(argv[1]);
+        }
+    }
+
+    return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_df, __cmd_df, disk free);
+
 int cmd_echo(int argc, char** argv)
 {
-	if (argc == 2)
-	{
-		rt_kprintf("%s\n", argv[1]);
-	}
-	else if (argc == 3)
-	{
-		int fd;
+    if (argc == 2)
+    {
+        rt_kprintf("%s\n", argv[1]);
+    }
+    else if (argc == 3)
+    {
+        int fd;
 
-		fd = open(argv[2], O_RDWR | O_APPEND | O_CREAT, 0);
-		if (fd >= 0)
-		{
-			write (fd, argv[1], strlen(argv[1]));
-			close(fd);
-		}
-		else
-		{
-			rt_kprintf("open file:%s failed!\n", argv[2]);
-		}
-	}
-	else
-	{
-		rt_kprintf("Usage: echo \"string\" [filename]\n");
-	}
+        fd = open(argv[2], O_RDWR | O_APPEND | O_CREAT, 0);
+        if (fd >= 0)
+        {
+            write (fd, argv[1], strlen(argv[1]));
+            close(fd);
+        }
+        else
+        {
+            rt_kprintf("open file:%s failed!\n", argv[2]);
+        }
+    }
+    else
+    {
+        rt_kprintf("Usage: echo \"string\" [filename]\n");
+    }
 
-	return 0;
+    return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_echo, __cmd_echo, echo string to file);
 #endif
@@ -314,6 +340,9 @@ FINSH_FUNCTION_EXPORT_ALIAS(cmd_ifconfig, __cmd_ifconfig, list the information o
 #ifdef RT_LWIP_DNS
 #include <lwip/api.h>
 #include <lwip/dns.h>
+#include <lwip/ip_addr.h>
+#include <lwip/init.h>
+
 int cmd_dns(int argc, char **argv)
 {
     extern void set_dns(char* dns_server);
@@ -321,12 +350,22 @@ int cmd_dns(int argc, char **argv)
     if (argc == 1)
     {
         int index;
-        struct ip_addr ip_addr;
+
+#if (LWIP_VERSION) < 0x02000000U
+        ip_addr_t ip_addr;
         for(index=0; index<DNS_MAX_SERVERS; index++)
         {
             ip_addr = dns_getserver(index);
-            rt_kprintf("dns server #%d: %s\n", index, ipaddr_ntoa(&(ip_addr)));
+            rt_kprintf("dns server #%d: %s\n", index, ipaddr_ntoa(&ip_addr));
         }
+#else
+        const ip_addr_t *ip_addr;
+        for(index=0; index<DNS_MAX_SERVERS; index++)
+        {
+            ip_addr = dns_getserver(index);
+            rt_kprintf("dns server #%d: %s\n", index, ipaddr_ntoa(ip_addr));
+        }
+#endif
     }
     else if (argc == 2)
     {

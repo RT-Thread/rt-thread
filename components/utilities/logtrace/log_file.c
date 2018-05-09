@@ -93,6 +93,25 @@ static rt_size_t fdevice_write(rt_device_t dev, rt_off_t pos, const void *buffer
     return write(fdev->fd, buffer, size);
 }
 
+static rt_err_t fdevice_control(rt_device_t dev, int cmd, void *arg)
+{
+    struct file_device *fdev = (struct file_device *)dev;
+
+    if (fdev->fd < 0)
+        return 0;
+
+    switch (cmd)
+    {
+    case LOG_TRACE_CTRL_FLUSH:
+        if (fsync(fdev->fd) != 0)
+            return RT_ERROR;
+        break;
+    default:
+        break;
+    }
+    return RT_EOK;
+}
+
 void log_trace_file_init(const char *filename)
 {
     rt_device_t device;
@@ -104,10 +123,11 @@ void log_trace_file_init(const char *filename)
 
         _file_device.parent.type  = RT_Device_Class_Char;
 
-        _file_device.parent.init  = RT_NULL;
-        _file_device.parent.open  = fdevice_open;
-        _file_device.parent.close = fdevice_close;
-        _file_device.parent.write = fdevice_write;
+        _file_device.parent.init    = RT_NULL;
+        _file_device.parent.open    = fdevice_open;
+        _file_device.parent.close   = fdevice_close;
+        _file_device.parent.write   = fdevice_write;
+        _file_device.parent.control = fdevice_control;
 
         rt_device_register(&_file_device.parent, "logfile", O_RDWR);
     }

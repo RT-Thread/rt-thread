@@ -35,7 +35,7 @@ extern int Image$$RW_RAM1$$ZI$$Limit;
 #endif
 
 extern void rt_application_init(void);
-extern void finsh_system_init(void);
+extern int finsh_system_init(void);
 extern void sd_init(void);
 
 void rtthread_startup()

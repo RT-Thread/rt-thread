@@ -31,8 +31,7 @@
 #define EXT_SDRAM_BEGIN    SDRAM_BANK_ADDR /* the begining address of external SDRAM */
 //	<o>End Address of External SRAM
 //		<i>Default: 0xD0800000
-#define EXT_SDRAM_END      SDRAM_BANK_ADDR + IS42S16400J_SIZE /* the end address of external SDRAM */
-// </e>
+#define EXT_SDRAM_END      (SDRAM_BANK_ADDR + IS42S16400J_SIZE) /* the end address of external SDRAM */
 
 // <o> Internal SRAM memory size[Kbytes] <8-64>
 //	<i>Default: 64
@@ -60,7 +59,7 @@ extern int __bss_end;
 
 // <o> Console on USART: <0=> no console <1=>USART 1 <2=>USART 2 <3=> USART 3
 // 	<i>Default: 1
-#define STM32_CONSOLE_USART		2
+#define STM32_CONSOLE_USART		1
 
 void rt_hw_board_init(void);
 

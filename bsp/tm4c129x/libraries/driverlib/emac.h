@@ -3,7 +3,7 @@
 // emac.h - Defines and Macros for the Ethernet module on Snowflake-class
 //          devices.
 //
-// Copyright (c) 2012-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2012-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 2.1.0.12573 of the Tiva Peripheral Driver Library.
+// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -710,6 +710,12 @@ struct tEMACDMADescriptor
 
 //
 // This interrupt source is readable using EMACIntStatus but must
+// be cleared by calling the EMACEEEStatus().
+//
+#define EMAC_INT_LPI                      0x40000000
+
+//
+// This interrupt source is readable using EMACIntStatus but must
 // be cleared by calling the EMACTimestampIntStatus().
 //
 #define EMAC_INT_TIMESTAMP                0x20000000
@@ -1012,7 +1018,17 @@ extern void EMACPowerManagementControlSet(uint32_t ui32Base,
                                           uint32_t ui32Flags);
 extern uint32_t EMACPowerManagementControlGet(uint32_t ui32Base);
 extern uint32_t EMACPowerManagementStatusGet(uint32_t ui32Base);
-
+extern void EMACWoLEnter(uint32_t ui32Base);
+extern void EMACLPIConfig(uint32_t ui32Base, bool bLPIConfig,
+                          uint16_t ui16LPILSTimer, uint16_t ui16LPITWTimer);
+extern void EMACLPIEnter(uint32_t ui32Base);
+extern uint16_t EMACLPIStatus(uint32_t ui32Base);
+extern void EMACLPILinkSet(uint32_t ui32Base);
+extern void EMACLPILinkClear(uint32_t ui32Base);
+extern void EMACPHYMMDWrite(uint32_t ui32Base, uint8_t ui8PhyAddr,
+                            uint16_t ui16RegAddr, uint16_t ui16Data);
+extern uint16_t EMACPHYMMDRead(uint32_t ui32Base, uint8_t ui8PhyAddr,
+                               uint16_t ui16RegAddr);
 //*****************************************************************************
 //
 // Mark the end of the C bindings section for C++ compilers.

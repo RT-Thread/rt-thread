@@ -15,14 +15,14 @@ if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
 	EXEC_PATH 	= 'E:/Program Files/CodeSourcery/Sourcery_CodeBench_Lite_for_IA32_ELF/bin'
 elif CROSS_TOOL == 'keil':
-    print '================ERROR============================'
-    print 'Not support keil yet!'
-    print '================================================='
+    print('================ERROR============================')
+    print('Not support keil yet!')
+    print('=================================================')
     exit(0)
 elif CROSS_TOOL == 'iar':
-    print '================ERROR============================'
-    print 'Not support iar yet!'
-    print '================================================='
+    print('================ERROR============================')
+    print('Not support iar yet!')
+    print('=================================================')
     exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):
@@ -32,20 +32,20 @@ BUILD = 'debug'
 
 if PLATFORM == 'gcc':
     # toolchains
-    PREFIX = 'i686-elf-'
-    CC = PREFIX + 'gcc'
-    AS = PREFIX + 'gcc'
+    PREFIX = ''
+    CC = PREFIX + 'gcc -m32 -fno-builtin -fno-stack-protector -nostdinc'
+    AS = PREFIX + 'gcc -m32'
     AR = PREFIX + 'ar'
-    LINK = PREFIX + 'gcc'
+    LINK = PREFIX + 'ld -melf_i386'
     TARGET_EXT = 'elf'
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -mtune=generic'
+    DEVICE = ''
     CFLAGS = DEVICE + ' -Wall'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-ia32.map,-cref,-u,_start -T x86_ram.lds -nostdlib'
+    LFLAGS = DEVICE + ' -Map rtthread-ia32.map -T x86_ram.lds -nostdlib'
 
     CPATH = ''
     LPATH = ''

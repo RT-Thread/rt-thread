@@ -85,7 +85,7 @@ static sem_t *posix_sem_find(const char* name)
             return iter;
         }
     }
-    
+
     return RT_NULL;
 }
 
@@ -334,7 +334,7 @@ int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout)
 
     /* calculate os tick */
     tick = clock_time_to_tick(abs_timeout);
-    
+
     result = rt_sem_take(sem->sem, tick);
     if (result == -RT_ETIMEOUT)
     {
@@ -362,7 +362,7 @@ int sem_trywait(sem_t *sem)
         return -1;
     }
 
-    result = rt_sem_take(sem->sem, RT_WAITING_FOREVER);
+    result = rt_sem_take(sem->sem, 0);
     if (result == -RT_ETIMEOUT)
     {
         rt_set_errno(EAGAIN);

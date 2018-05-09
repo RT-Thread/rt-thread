@@ -23,32 +23,24 @@
 #include "stm32f4xx_eth.h"
 #endif
 
+#ifdef RT_USING_FINSH
+#include <shell.h>
+#include <finsh.h>
+#endif
+
 #ifdef RT_USING_GDB
 #include <gdb_stub.h>
 #endif
 
 void rt_init_thread_entry(void* parameter)
 {
+    /* initialization RT-Thread Components */
+    rt_components_init();
+	
     /* GDB STUB */
 #ifdef RT_USING_GDB
     gdb_set_device("uart6");
     gdb_start();
-#endif
-
-    /* LwIP Initialization */
-#ifdef RT_USING_LWIP
-    {
-        extern void lwip_sys_init(void);
-
-        /* register ethernetif device */
-        eth_system_device_init();
-
-        rt_hw_stm32_eth_init();
-
-        /* init lwip system */
-        lwip_sys_init();
-        rt_kprintf("TCP/IP initialized!\n");
-    }
 #endif
 }
 
@@ -65,5 +57,3 @@ int rt_application_init()
 
     return 0;
 }
-
-/*@}*/

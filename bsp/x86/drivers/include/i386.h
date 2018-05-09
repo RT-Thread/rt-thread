@@ -11,6 +11,18 @@ static __inline unsigned char inb(int port)
 	__asm __volatile("inb %w1,%0" : "=a" (data) : "d" (port));
 	return data;
 }
+static __inline unsigned char inb_p(unsigned short port)
+{
+	unsigned char _v;
+	__asm__ __volatile__ ("inb %1, %0\n\t"
+						  // "outb %0,$0x80\n\t"                                                                                                                                                      
+						  // "outb %0,$0x80\n\t"                                                                                                                                                      
+						  // "outb %0,$0x80\n\t"                                                                                                                                                      
+						  "outb %0,$0x80"
+						  :"=a" (_v)
+						  :"d" ((unsigned short) port));
+	return _v;
+}
 
 static __inline unsigned short inw(int port)
 {
@@ -39,10 +51,33 @@ static __inline void outb(int port, unsigned char data)
 	__asm __volatile("outb %0,%w1" : : "a" (data), "d" (port));
 }
 
+
+static __inline void outb_p(char value, unsigned short port)
+{
+	__asm__ __volatile__ ("outb %0,%1\n\t"
+						  "outb %0,$0x80"
+						  ::"a" ((char) value),"d" ((unsigned short) port));
+}
+
 static __inline void outw(int port, unsigned short data)
 {
 	__asm __volatile("outw %0,%w1" : : "a" (data), "d" (port));
 }
+
+static __inline unsigned char readcmos(int reg)
+{
+	outb(0x70,reg);
+	return (unsigned char) inb(0x71);
+}
+
+#define io_delay()  \
+	__asm__ __volatile__ ("pushal \n\t"\
+            "mov $0x3F6, %dx \n\t" \
+            "inb %dx, %al \n\t"    \
+            "inb %dx, %al \n\t"    \
+            "inb %dx, %al \n\t"    \
+            "inb %dx, %al \n\t"    \
+						  "popal")
 
 /* Gate descriptors are slightly different*/
 struct Gatedesc {

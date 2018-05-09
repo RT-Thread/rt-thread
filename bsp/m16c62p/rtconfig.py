@@ -14,12 +14,12 @@ if  CROSS_TOOL == 'gcc':
 	EXEC_PATH 	= 'C:/Program Files/Renesas/Hew/Tools/KPIT Cummins/GNUM16CM32C-ELF/v11.01/m32c-elf/bin'
 elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
-	IAR_PATH = 'C:/Program Files/IAR Systems/Embedded Workbench Evaluation 6.0'
+	EXEC_PATH = 'C:/Program Files/IAR Systems/Embedded Workbench Evaluation 6.0'
 #	EXEC_PATH 	= 'C:/Program Files/IAR Systems/Embedded Workbench Evaluation 6.0'
 elif CROSS_TOOL == 'keil':
-    print '================ERROR============================'
-    print 'Not support keil yet!'
-    print '================================================='
+    print('================ERROR============================')
+    print('Not support keil yet!')
+    print('=================================================')
     exit(0)	
 
 if os.getenv('RTT_EXEC_PATH'):
@@ -65,16 +65,14 @@ elif PLATFORM == 'iar':
     
     DEVICE = '--cpu M16C'
     
-    EXEC_PATH = IAR_PATH + '/m16c/bin'
-    
     AFLAGS = '-s+'
 #    AFLAGS += ' -M<>' 
     AFLAGS += ' -w+' 
     AFLAGS += ' -r' 
-    AFLAGS += ' -I"' + IAR_PATH + '/m16c/INC"'
+    AFLAGS += ' -I"' + EXEC_PATH + '/m16c/INC"'
         
     LFLAGS = '-xms'
-    LFLAGS += ' -I"' + IAR_PATH + '/m16c/LIB"' 
+    LFLAGS += ' -I"' + EXEC_PATH + '/m16c/LIB"' 
     LFLAGS += ' -rt' 
     LFLAGS += ' -s __program_start' 
     LFLAGS += ' -D_CSTACK_SIZE=80' 
@@ -82,7 +80,7 @@ elif PLATFORM == 'iar':
     LFLAGS += ' -D_DATA16_HEAP_SIZE=1000' 
     LFLAGS += ' -D_FAR_HEAP_SIZE=400'
     LFLAGS += ' -D_DATA20_HEAP_SIZE=400'
-    LFLAGS += ' "' + IAR_PATH + '/m16c/LIB/CLIB/clm16cfnffwc.r34"' 
+    LFLAGS += ' "' + EXEC_PATH + '/m16c/LIB/CLIB/clm16cfnffwc.r34"' 
     LFLAGS += ' -e_small_write=_formatted_write' 
     LFLAGS += ' -e_medium_read=_formatted_read'
     
@@ -95,13 +93,15 @@ elif PLATFORM == 'iar':
     CFLAGS += ' --debug' 
     CFLAGS += ' -e' 
     CFLAGS += ' --align_func 1' 
-    CFLAGS += ' -I"' + IAR_PATH + '/m16c/INC"'
-    CFLAGS += ' -I"' + IAR_PATH + '/m16c/INC/CLIB"' 
+    CFLAGS += ' -I"' + EXEC_PATH + '/m16c/INC"'
+    CFLAGS += ' -I"' + EXEC_PATH + '/m16c/INC/CLIB"' 
     CFLAGS += ' -Ol' 
     CFLAGS += ' --no_cse' 
     CFLAGS += ' --no_unroll' 
     CFLAGS += ' --no_inline' 
     CFLAGS += ' --no_code_motion' 
     CFLAGS += ' --no_tbaa'    
+	
+	EXEC_PATH = EXEC_PATH + '/m16c/bin'
    
     POST_ACTION = ''

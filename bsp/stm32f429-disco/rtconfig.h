@@ -1,174 +1,208 @@
-/* RT-Thread config file */
-#ifndef __RTTHREAD_CFG_H__
-#define __RTTHREAD_CFG_H__
+#ifndef RT_CONFIG_H__
+#define RT_CONFIG_H__
 
-/* RT_NAME_MAX*/
-#define RT_NAME_MAX	   8
+/* Automatically generated file; DO NOT EDIT. */
+/* RT-Thread Configuration */
 
-/* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE	4
+/* RT-Thread Kernel */
 
-/* PRIORITY_MAX */
-#define RT_THREAD_PRIORITY_MAX	32
-
-/* Tick per Second */
-#define RT_TICK_PER_SECOND	100
-
-/* SECTION: RT_DEBUG */
-/* Thread Debug */
+#define RT_NAME_MAX 8
+#define RT_ALIGN_SIZE 4
+/* RT_THREAD_PRIORITY_8 is not set */
+#define RT_THREAD_PRIORITY_32
+/* RT_THREAD_PRIORITY_256 is not set */
+#define RT_THREAD_PRIORITY_MAX 32
+#define RT_TICK_PER_SECOND 100
 #define RT_DEBUG
-#define RT_DEBUG_INIT    1
 #define RT_USING_OVERFLOW_CHECK
-
-/* Using Hook */
+#define RT_DEBUG_INIT 1
+#define RT_DEBUG_THREAD 0
 #define RT_USING_HOOK
+#define IDLE_THREAD_STACK_SIZE 1024
+/* RT_USING_TIMER_SOFT is not set */
 
-#define IDLE_THREAD_STACK_SIZE     1024
+/* Inter-Thread communication */
 
-/* Using Software Timer */
-/* #define RT_USING_TIMER_SOFT */
-#define RT_TIMER_THREAD_PRIO		4
-#define RT_TIMER_THREAD_STACK_SIZE	512
-
-/* SECTION: IPC */
-/* Using Semaphore*/
 #define RT_USING_SEMAPHORE
-
-/* Using Mutex */
 #define RT_USING_MUTEX
-
-/* Using Event */
 #define RT_USING_EVENT
-
-/* Using MailBox */
 #define RT_USING_MAILBOX
-
-/* Using Message Queue */
 #define RT_USING_MESSAGEQUEUE
+/* RT_USING_SIGNALS is not set */
 
-/* SECTION: Memory Management */
-/* Using Memory Pool Management*/
+/* Memory Management */
+
 #define RT_USING_MEMPOOL
-
-/* Using Dynamic Heap Management */
-#define RT_USING_HEAP
 #define RT_USING_MEMHEAP
-/* Using Small MM */
+/* RT_USING_NOHEAP is not set */
 #define RT_USING_SMALL_MEM
+/* RT_USING_SLAB is not set */
+/* RT_USING_MEMHEAP_AS_HEAP is not set */
+/* RT_USING_MEMTRACE is not set */
+#define RT_USING_HEAP
+
+/* Kernel Device Object */
+
+#define RT_USING_DEVICE
+/* RT_USING_INTERRUPT_INFO is not set */
+#define RT_USING_CONSOLE
+#define RT_CONSOLEBUF_SIZE 128
+#define RT_CONSOLE_DEVICE_NAME "uart1"
+/* RT_USING_MODULE is not set */
+
+/* RT-Thread Components */
 
 #define RT_USING_COMPONENTS_INIT
+/* RT_USING_USER_MAIN is not set */
 
-#define RT_USING_EXT_SDRAM
+/* C++ features */
 
-/* SECTION: Device System */
-/* Using Device System */
-#define RT_USING_DEVICE
-#define RT_USING_DEVICE_IPC
-/* Using serial framework */
-#define RT_USING_SERIAL
+/* RT_USING_CPLUSPLUS is not set */
 
-#define RT_USING_UART1
-#define RT_USING_UART2
-#define RT_USING_UART3
+/* Command shell */
 
-/* Using GPIO pin framework */
-//#define RT_USING_PIN
-
-/* Using Hardware Timer framework */
-//#define RT_USING_HWTIMER
-
-/* SECTION: Console options */
-#define RT_USING_CONSOLE
-/* the buffer size of console*/
-#define RT_CONSOLEBUF_SIZE	128
-
-/* SECTION: finsh, a C-Express shell */
 #define RT_USING_FINSH
-/* Using symbol table */
+#define FINSH_THREAD_NAME "tshell"
+#define FINSH_USING_HISTORY
+#define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
+#define FINSH_THREAD_PRIORITY 20
+#define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_CMD_SIZE 80
+/* FINSH_USING_AUTH is not set */
+#define FINSH_USING_MSH
+#define FINSH_USING_MSH_DEFAULT
+/* FINSH_USING_MSH_ONLY is not set */
 
-/* SECTION: device filesystem */
-/* Using Device file system */
-/* #define RT_USING_DFS */
-/* the max number of mounted filesystem */
-#define DFS_FILESYSTEMS_MAX			2
-/* the max number of opened files 		*/
-#define DFS_FD_MAX					4
+/* Device virtual file system */
 
-/* Using ELM FATFS */
-//#define RT_USING_DFS_ELMFAT
-#define RT_DFS_ELM_WORD_ACCESS
-/* Reentrancy (thread safe) of the FatFs module.  */
-#define RT_DFS_ELM_REENTRANT
-/* Number of volumes (logical drives) to be used. */
-#define RT_DFS_ELM_DRIVES			2
-/* #define RT_DFS_ELM_USE_LFN			1 */
-#define RT_DFS_ELM_MAX_LFN			255
-/* Maximum sector size to be handled. */
-#define RT_DFS_ELM_MAX_SECTOR_SIZE  512
+/* RT_USING_DFS is not set */
+/* RT_DFS_ELM_USE_LFN_0 is not set */
+/* RT_DFS_ELM_USE_LFN_1 is not set */
+/* RT_DFS_ELM_USE_LFN_2 is not set */
+/* RT_DFS_ELM_USE_LFN_3 is not set */
 
-/* Using ROM file system */
-// #define RT_USING_DFS_ROMFS
+/* Device Drivers */
 
-/* SECTION: lwip, a lighwight TCP/IP protocol stack */
-/* #define RT_USING_LWIP */
-/* LwIP uses RT-Thread Memory Management */
-#define RT_LWIP_USING_RT_MEM
-/* Enable ICMP protocol*/
-#define RT_LWIP_ICMP
-/* Enable UDP protocol*/
-#define RT_LWIP_UDP
-/* Enable TCP protocol*/
-#define RT_LWIP_TCP
-/* Enable DNS */
-#define RT_LWIP_DNS
+#define RT_USING_DEVICE_IPC
+#define RT_USING_SERIAL
+/* RT_USING_CAN is not set */
+/* RT_USING_HWTIMER is not set */
+/* RT_USING_CPUTIME is not set */
+/* RT_USING_I2C is not set */
+#define RT_USING_PIN
+/* RT_USING_MTD_NOR is not set */
+/* RT_USING_MTD_NAND is not set */
+/* RT_USING_RTC is not set */
+/* RT_USING_SDIO is not set */
+/* RT_USING_SPI is not set */
+/* RT_USING_WDT is not set */
+/* RT_USING_WIFI is not set */
 
-/* the number of simulatenously active TCP connections*/
-#define RT_LWIP_TCP_PCB_NUM	5
+/* Using USB */
 
-/* ip address of target*/
-#define RT_LWIP_IPADDR0	192
-#define RT_LWIP_IPADDR1	168
-#define RT_LWIP_IPADDR2	1
-#define RT_LWIP_IPADDR3	201
+/* RT_USING_USB_HOST is not set */
+/* RT_USING_USB_DEVICE is not set */
 
-/* gateway address of target*/
-#define RT_LWIP_GWADDR0	192
-#define RT_LWIP_GWADDR1	168
-#define RT_LWIP_GWADDR2	1
-#define RT_LWIP_GWADDR3	1
+/* POSIX layer and C standard library */
 
-/* mask address of target*/
-#define RT_LWIP_MSKADDR0	255
-#define RT_LWIP_MSKADDR1	255
-#define RT_LWIP_MSKADDR2	255
-#define RT_LWIP_MSKADDR3	0
+#define RT_USING_LIBC
+#define RT_USING_PTHREADS
+/* HAVE_SYS_SIGNALS is not set */
 
-/* tcp thread options */
-#define RT_LWIP_TCPTHREAD_PRIORITY		12
-#define RT_LWIP_TCPTHREAD_MBOX_SIZE		4
-#define RT_LWIP_TCPTHREAD_STACKSIZE		1024
+/* Network stack */
 
-/* ethernet if thread options */
-#define RT_LWIP_ETHTHREAD_PRIORITY		15
-#define RT_LWIP_ETHTHREAD_MBOX_SIZE		4
-#define RT_LWIP_ETHTHREAD_STACKSIZE		512
+/* light weight TCP/IP stack */
 
-/* TCP sender buffer space */
-#define RT_LWIP_TCP_SND_BUF	8192
-/* TCP receive window. */
-#define RT_LWIP_TCP_WND		8192
+/* RT_USING_LWIP is not set */
 
-#define CHECKSUM_CHECK_TCP              0
-#define CHECKSUM_CHECK_IP               0
-#define CHECKSUM_CHECK_UDP              0
+/* Modbus master and slave stack */
 
-#define CHECKSUM_GEN_TCP                0
-#define CHECKSUM_GEN_IP                 0
-#define CHECKSUM_GEN_UDP                0
+/* RT_USING_MODBUS is not set */
 
-/* RT_GDB_STUB */
-//#define RT_USING_GDB
+/* VBUS(Virtual Software BUS) */
+
+/* RT_USING_VBUS is not set */
+
+/* Utilities */
+
+/* RT_USING_LOGTRACE is not set */
+/* RT_USING_RYM is not set */
+
+/* RT-Thread online packages */
+
+/* system packages */
+
+/* RT-Thread GUI Engine */
+
+/* PKG_USING_GUIENGINE is not set */
+/* PKG_USING_LWEXT4 is not set */
+/* PKG_USING_PARTITION is not set */
+/* PKG_USING_SQLITE is not set */
+/* PKG_USING_RTI is not set */
+
+/* IoT - internet of things */
+
+/* PKG_USING_PAHOMQTT is not set */
+/* PKG_USING_WEBCLIENT is not set */
+/* PKG_USING_MONGOOSE is not set */
+/* PKG_USING_WEBTERMINAL is not set */
+/* PKG_USING_CJSON is not set */
+/* PKG_USING_LJSON is not set */
+/* PKG_USING_EZXML is not set */
+/* PKG_USING_NANOPB is not set */
+/* PKG_USING_GAGENT_CLOUD is not set */
+
+/* Wi-Fi */
+
+/* Marvell WiFi */
+
+/* PKG_USING_WLANMARVELL is not set */
+
+/* Wiced WiFi */
+
+/* PKG_USING_WLAN_WICED is not set */
+/* PKG_USING_COAP is not set */
+/* PKG_USING_NOPOLL is not set */
+/* PKG_USING_NETUTILS is not set */
+
+/* security packages */
+
+/* PKG_USING_MBEDTLS is not set */
+/* PKG_USING_libsodium is not set */
+/* PKG_USING_TINYCRYPT is not set */
+
+/* language packages */
+
+/* PKG_USING_JERRYSCRIPT is not set */
+/* PKG_USING_MICROPYTHON is not set */
+
+/* multimedia packages */
+
+/* PKG_USING_OPENMV is not set */
+
+/* tools packages */
+
+/* PKG_USING_CMBACKTRACE is not set */
+/* PKG_USING_EASYLOGGER is not set */
+/* PKG_USING_SYSTEMVIEW is not set */
+/* PKG_USING_IPERF is not set */
+
+/* miscellaneous packages */
+
+/* PKG_USING_FASTLZ is not set */
+/* PKG_USING_MINILZO is not set */
+/* PKG_USING_QUICKLZ is not set */
+
+/* example package: hello */
+
+/* PKG_USING_HELLO is not set */
+/* PKG_USING_MULTIBUTTON is not set */
+#define RT_USING_EXT_SDRAM
+#define RT_USING_UART1
+/* RT_USING_UART2 is not set */
+/* RT_USING_UART3 is not set */
+/* RT_USING_SPI5 is not set */
 
 #endif

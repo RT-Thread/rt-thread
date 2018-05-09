@@ -25,10 +25,6 @@
 /*@{*/
 
 extern int  rt_application_init(void);
-#ifdef RT_USING_FINSH
-extern void finsh_system_init(void);
-extern void finsh_set_device(const char* device);
-#endif
 
 #ifdef __CC_ARM
 extern int Image$$RW_IRAM1$$ZI$$Limit;
@@ -96,25 +92,8 @@ void rtthread_startup(void)
 	/* init scheduler system */
 	rt_system_scheduler_init();
 
-#ifdef RT_USING_DFS
-	/* init sdcard driver */
-#if STM32_USE_SDIO
-	rt_hw_sdcard_init();
-#else
-	rt_hw_msd_init();
-#endif
-#endif
-
-	rt_hw_rtc_init();
-
 	/* init application */
 	rt_application_init();
-
-#ifdef RT_USING_FINSH
-	/* init finsh */
-	finsh_system_init();
-	finsh_set_device("uart1");
-#endif
 
     /* init timer thread */
     rt_system_timer_thread_init();

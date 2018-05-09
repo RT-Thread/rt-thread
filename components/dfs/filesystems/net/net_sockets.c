@@ -23,12 +23,92 @@
  */
 
 #include <dfs.h>
-#include <dfs_def.h>
 #include <dfs_posix.h>
-
+#include <dfs_poll.h>
 #include <sys/socket.h>
 
 #include "dfs_net.h"
+
+static void event_callback(struct netconn *conn, enum netconn_evt evt, u16_t len)
+{
+    int s;
+    struct lwip_sock *sock;
+    uint32_t event = 0;
+    SYS_ARCH_DECL_PROTECT(lev);
+
+    LWIP_UNUSED_ARG(len);
+
+    /* Get socket */
+    if (conn)
+    {
+        s = conn->socket;
+        if (s < 0)
+        {
+            /* Data comes in right away after an accept, even though
+             * the server task might not have created a new socket yet.
+             * Just count down (or up) if that's the case and we
+             * will use the data later. Note that only receive events
+             * can happen before the new socket is set up. */
+            SYS_ARCH_PROTECT(lev);
+            if (conn->socket < 0)
+            {
+                if (evt == NETCONN_EVT_RCVPLUS)
+                {
+                    conn->socket--;
+                }
+                SYS_ARCH_UNPROTECT(lev);
+                return;
+            }
+            s = conn->socket;
+            SYS_ARCH_UNPROTECT(lev);
+        }
+
+        sock = lwip_tryget_socket(s);
+        if (!sock)
+        {
+            return;
+        }
+    }
+    else
+    {
+        return;
+    }
+
+    SYS_ARCH_PROTECT(lev);
+    /* Set event as required */
+    switch (evt)
+    {
+    case NETCONN_EVT_RCVPLUS:
+        sock->rcvevent++;
+        break;
+    case NETCONN_EVT_RCVMINUS:
+        sock->rcvevent--;
+        break;
+    case NETCONN_EVT_SENDPLUS:
+        sock->sendevent = 1;
+        break;
+    case NETCONN_EVT_SENDMINUS:
+        sock->sendevent = 0;
+        break;
+    case NETCONN_EVT_ERROR:
+        sock->errevent = 1;
+        break;
+    default:
+        LWIP_ASSERT("unknown event", 0);
+        break;
+    }
+
+    if (sock->lastdata || sock->rcvevent > 0) event |= POLLIN;
+    if (sock->sendevent) event |= POLLOUT;
+    if (sock->errevent)  event |= POLLERR;
+
+    SYS_ARCH_UNPROTECT(lev);
+
+    if (event)
+    {
+        rt_wqueue_wakeup(&sock->wait_head, (void*)event);
+    }
+}
 
 int accept(int s, struct sockaddr *addr, socklen_t *addrlen)
 {
@@ -41,15 +121,15 @@ int accept(int s, struct sockaddr *addr, socklen_t *addrlen)
         /* this is a new socket, create it in file system fd */
         int fd;
         struct dfs_fd *d;
-
+        struct lwip_sock *lwsock;
+        
         /* allocate a fd */
         fd = fd_new();
         if (fd < 0)
         {
-            rt_set_errno(-DFS_STATUS_ENOMEM);
+            rt_set_errno(-ENOMEM);
             lwip_close(sock);
 
-            rt_kprintf("no fd yet!\n");
             return -1;
         }
         d = fd_get(fd);
@@ -58,9 +138,12 @@ int accept(int s, struct sockaddr *addr, socklen_t *addrlen)
         d->type = FT_SOCKET;
         d->path = RT_NULL;
 
-        d->fs = dfs_net_get_fs();
+        d->fops = dfs_net_get_fops();
+        /* initialize wait head */
+        lwsock = lwip_tryget_socket(new_client);
+        rt_list_init(&(lwsock->wait_head));
 
-        d->flags = DFS_O_RDWR; /* set flags as read and write */
+        d->flags = O_RDWR; /* set flags as read and write */
         d->size = 0;
         d->pos  = 0;
 
@@ -93,7 +176,7 @@ int shutdown(int s, int how)
     d = fd_get(s);
     if (d == RT_NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
+        rt_set_errno(-EBADF);
 
         return -1;
     }
@@ -200,12 +283,13 @@ int socket(int domain, int type, int protocol)
     int fd;
     int sock;
     struct dfs_fd *d;
+    struct lwip_sock *lwsock;
 
     /* allocate a fd */
     fd = fd_new();
     if (fd < 0)
     {
-        rt_set_errno(-DFS_STATUS_ENOMEM);
+        rt_set_errno(-ENOMEM);
 
         return -1;
     }
@@ -213,20 +297,24 @@ int socket(int domain, int type, int protocol)
 
     /* create socket in lwip and then put it to the dfs_fd */
     sock = lwip_socket(domain, type, protocol);
-    if (sock > 0)
+    if (sock >= 0)
     {
         /* this is a socket fd */
-        d->type = FT_SOCKET;
-        d->path = RT_NULL;
+        d->type  = FT_SOCKET;
+        d->path  = NULL;
 
-        d->fs = dfs_net_get_fs();
+        d->fops  = dfs_net_get_fops();
 
-        d->flags = DFS_O_RDWR; /* set flags as read and write */
-        d->size = 0;
-        d->pos  = 0;
+        d->flags = O_RDWR; /* set flags as read and write */
+        d->size  = 0;
+        d->pos   = 0;
 
         /* set socket to the data of dfs_fd */
         d->data = (void *) sock;
+
+        lwsock = lwip_tryget_socket(sock);
+        rt_list_init(&(lwsock->wait_head));
+        lwsock->conn->callback = event_callback;
     }
 
     /* release the ref-count of fd */
@@ -235,3 +323,27 @@ int socket(int domain, int type, int protocol)
     return fd;
 }
 RTM_EXPORT(socket);
+
+int closesocket(int s)
+{
+    int sock = dfs_net_getsocket(s);
+    struct dfs_fd *d;
+
+    d = fd_get(s);
+
+    /* socket has been closed, delete it from file system fd */
+    fd_put(d);
+    fd_put(d);
+
+    return lwip_close(sock);
+}
+RTM_EXPORT(closesocket);
+
+int ioctlsocket(int s, long cmd, void *arg)
+{
+    int sock = dfs_net_getsocket(s);
+
+    return lwip_ioctl(sock, cmd, arg);
+}
+RTM_EXPORT(ioctlsocket);
+

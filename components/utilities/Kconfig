@@ -1,0 +1,49 @@
+menu "Utilities"
+
+config RT_USING_LOGTRACE
+    bool "Enable log trace"
+    default n
+
+if RT_USING_LOGTRACE
+    config LOG_TRACE_MAX_SESSION
+        int "Maximal number of session"
+        default 16
+
+    choice
+        prompt "The default level of log"
+        default LOG_TRACE_USING_LEVEL_INFO
+
+        config LOG_TRACE_USING_LEVEL_NOTRACE
+            bool "No trace"
+
+        config LOG_TRACE_USING_LEVEL_ERROR
+            bool "Only error log"
+
+        config LOG_TRACE_USING_LEVEL_WARNING
+            bool "Warning log"
+
+        config LOG_TRACE_USING_LEVEL_INFO
+            bool "Information log"
+
+        config LOG_TRACE_USING_LEVEL_VERBOSE
+            bool "Verbose log"
+
+        config LOG_TRACE_USING_LEVEL_DEBUG
+            bool "All debug log"
+    endchoice
+
+    config LOG_TRACE_USING_MEMLOG
+        bool "Enable memory log for logtrace"
+        default n
+        help
+            Enable memory log for logtrace, then the logs in log_trace
+            will be printed out in idle thread hook function.
+
+            Please make sure the idle hook is not used.
+endif
+
+config RT_USING_RYM
+    bool "Enable Ymodem"
+    default n
+
+endmenu

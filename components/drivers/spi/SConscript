@@ -1,8 +1,10 @@
 from building import *
+import rtconfig
 
 cwd = GetCurrentDir()
 src = ['spi_core.c', 'spi_dev.c']
 CPPPATH = [cwd, cwd + '/../include']
+LOCAL_CCFLAGS = ''
 
 src_device = []
 
@@ -11,7 +13,10 @@ if GetDepend('RT_USING_SPI_WIFI'):
 
 if GetDepend('RT_USING_W25QXX'):
     src_device += ['spi_flash_w25qxx.c']
-
+    
+if GetDepend('RT_USING_W25QXX_MTD'):
+    src_device += ['spi_flash_w25qxx_mtd.c']    
+    
 if GetDepend('RT_USING_ENC28J60'):
     src_device += ['enc28j60.c']
 
@@ -24,8 +29,21 @@ if GetDepend('RT_USING_SST25VFXX'):
 if GetDepend('RT_USING_GD'):
     src_device += ['spi_flash_gd.c']
 
+if GetDepend('RT_USING_SPI_MSD'):
+    src_device += ['spi_msd.c']
+
+if GetDepend('RT_USING_SFUD'):
+    src_device += ['spi_flash_sfud.c', 'sfud/src/sfud.c']
+    CPPPATH += [cwd + '/sfud/inc']
+    if GetDepend('RT_SFUD_USING_SFDP'):
+        src_device += ['sfud/src/sfud_sfdp.c']
+    if rtconfig.CROSS_TOOL == 'gcc':
+        LOCAL_CCFLAGS += ' -std=c99'
+    elif rtconfig.CROSS_TOOL == 'keil':
+        LOCAL_CCFLAGS += ' --c99'
+
 src += src_device
 
-group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SPI'], CPPPATH = CPPPATH)
+group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SPI'], CPPPATH = CPPPATH, LOCAL_CCFLAGS = LOCAL_CCFLAGS)
 
 Return('group')

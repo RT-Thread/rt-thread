@@ -1,0 +1,206 @@
+menu "Network stack"
+
+menu "light weight TCP/IP stack"
+config RT_USING_LWIP
+    bool "Enable lwIP stack"
+    select RT_USING_DEVICE
+    default n
+
+    if RT_USING_LWIP
+        choice
+            prompt "lwIP version"
+            default RT_USING_LWIP141
+            help
+                Select the lwIP version
+
+            config RT_USING_LWIP141
+                bool "lwIP v1.4.1"
+
+            config RT_USING_LWIP202
+                bool "lwIP v2.0.2"
+        endchoice
+
+        if RT_USING_LWIP202
+            config RT_USING_LWIP_IPV6
+                bool "IPV6 protocol"
+                default n
+        endif
+
+        config RT_LWIP_IGMP
+            bool "IGMP protocol"
+            default y
+
+        config RT_LWIP_ICMP
+            bool "ICMP protocol"
+            default y
+
+        config RT_LWIP_SNMP
+            bool "SNMP protocol"
+            default n
+
+        config RT_LWIP_DNS
+            bool "Enble DNS for name resolution"
+            select RT_LWIP_UDP
+            default y
+
+        config RT_LWIP_DHCP
+            bool "Enable alloc ip address through DHCP"
+            select RT_LWIP_UDP
+            default y
+
+            if RT_LWIP_DHCP
+                config IP_SOF_BROADCAST
+                    int "SOF broadcast"
+                    default 1
+
+                config IP_SOF_BROADCAST_RECV
+                    int "SOF broadcast recv"
+                    default 1
+            endif
+
+        menu "Static IPv4 Address"
+                config RT_LWIP_IPADDR
+                    string "IPv4: IP address"
+                    default 192.168.1.30
+
+                config RT_LWIP_GWADDR
+                    string "IPv4: Gateway address"
+                    default 192.168.1.1
+
+                config RT_LWIP_MSKADDR
+                    string "IPv4: Mask address"
+                    default 255.255.255.0
+        endmenu
+
+        config RT_LWIP_UDP
+            bool "UDP protocol"
+            default y
+
+        config RT_LWIP_TCP
+            bool "TCP protocol"
+            default y
+
+        config RT_LWIP_RAW
+            bool "RAW protocol"
+            default n
+
+        config RT_LWIP_PPP
+            bool "PPP protocol"
+            default n
+
+        if RT_LWIP_PPP
+            config RT_LWIP_PPPOE
+                bool "PPPoE protocol"
+                default n
+
+            config RT_LWIP_PPPOS
+                bool "PPPoS protocol"
+                default n
+        endif
+
+        config RT_MEMP_NUM_NETCONN
+            int "the number of struct netconns"
+            default 8
+
+        config RT_LWIP_PBUF_NUM
+            int "the number of PBUF"
+            default 16
+
+        config RT_LWIP_RAW_PCB_NUM
+            int "the number of raw connection"
+            default 4
+
+        config RT_LWIP_UDP_PCB_NUM
+            int "the number of UDP socket"
+            default 8 if RT_USING_DFS_NFS
+            default 4
+
+        if RT_LWIP_TCP
+        config RT_LWIP_TCP_PCB_NUM
+            int "the number of TCP socket"
+            default 4
+
+        config RT_LWIP_TCP_SEG_NUM
+            int "the number of TCP segment"
+            default 40
+
+        config RT_LWIP_TCP_SND_BUF
+            int "the size of send buffer"
+            default 8196
+
+        config RT_LWIP_TCP_WND
+            int "the size of TCP send window"
+            default 8196
+        endif
+
+        config RT_LWIP_TCPTHREAD_PRIORITY
+            int "the priority level value of lwIP thread"
+            default 10
+
+        config RT_LWIP_TCPTHREAD_MBOX_SIZE
+            int "the number of mail in the lwIP thread mailbox"
+            default 8
+
+        config RT_LWIP_TCPTHREAD_STACKSIZE
+            int "the stack size of lwIP thread"
+            default 1024
+
+        config RT_LWIP_ETHTHREAD_PRIORITY
+            int "the priority level value of ethernet thread"
+            default 12
+
+        config RT_LWIP_ETHTHREAD_STACKSIZE
+            int "the stack size of ethernet thread"
+            default 1024
+
+        config RT_LWIP_ETHTHREAD_MBOX_SIZE
+            int "the number of mail in the ethernet thread mailbox"
+            default 8
+
+        config RT_LWIP_REASSEMBLY_FRAG
+            bool "Enable IP reassembly and frag"
+            default n
+
+        config LWIP_NETIF_STATUS_CALLBACK
+            int "netif status callback"
+            default 1
+
+        config SO_REUSE
+            int "Enable SO_REUSEADDR option"
+            default 1
+
+        config LWIP_SO_RCVTIMEO
+            int "Enable receive timeout for sockets/netconns and SO_RCVTIMEO processing."
+            default 1
+
+        config LWIP_SO_SNDTIMEO
+            int "Enable send timeout for sockets/netconns and SO_SNDTIMEO processing."
+            default 1
+
+        config LWIP_SO_RCVBUF
+            int "Enable SO_RCVBUF processing"
+            default 1
+
+        config RT_LWIP_NETIF_LOOPBACK
+            bool "Enable netif loopback"
+            default n
+
+        config LWIP_NETIF_LOOPBACK
+        	int
+        	default 1 if RT_LWIP_NETIF_LOOPBACK
+        	default 0 if !RT_LWIP_NETIF_LOOPBACK
+    endif
+
+endmenu
+
+source "$RTT_DIR/components/net/freemodbus/Kconfig"
+
+if RT_USING_LWIP
+
+config LWIP_USING_DHCPD
+    bool "Enable DHCP server"
+    default n
+
+endif
+
+endmenu

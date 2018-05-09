@@ -1,0 +1,15 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Glob('*.c')
+CPPPATH = [cwd]
+
+if not GetDepend('BSP_DRV_EMAC'):
+    SrcRemove(src, ['drv_smc911x.c'])
+
+if not GetDepend('BSP_DRV_CLCD'):
+    SrcRemove(src, ['drv_clcd.c'])
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

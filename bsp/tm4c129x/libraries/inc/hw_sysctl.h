@@ -2,7 +2,7 @@
 //
 // hw_sysctl.h - Macros used when accessing the system control hardware.
 //
-// Copyright (c) 2005-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 2.1.0.12573 of the Tiva Firmware Development Package.
+// This is part of revision 2.1.4.178 of the Tiva Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -425,6 +425,10 @@
 #define SYSCTL_PRLCD            0x400FEA90  // LCD Controller Peripheral Ready
 #define SYSCTL_PROWIRE          0x400FEA98  // 1-Wire Peripheral Ready
 #define SYSCTL_PREMAC           0x400FEA9C  // Ethernet MAC Peripheral Ready
+#define SYSCTL_UNIQUEID0        0x400FEF20  // Unique ID 0
+#define SYSCTL_UNIQUEID1        0x400FEF24  // Unique ID 1
+#define SYSCTL_UNIQUEID2        0x400FEF28  // Unique ID 2
+#define SYSCTL_UNIQUEID3        0x400FEF2C  // Unique ID 3
 #define SYSCTL_CCMCGREQ         0x44030204  // Cryptographic Modules Clock
                                             // Gating Request
 
@@ -666,10 +670,8 @@
 #define SYSCTL_DC1_ADC1         0x00020000  // ADC Module 1 Present
 #define SYSCTL_DC1_ADC0         0x00010000  // ADC Module 0 Present
 #define SYSCTL_DC1_MINSYSDIV_M  0x0000F000  // System Clock Divider
-#define SYSCTL_DC1_MINSYSDIV_80 0x00001000  // Specifies an 80-MHz CPU clock
+#define SYSCTL_DC1_MINSYSDIV_80 0x00002000  // Specifies an 80-MHz CPU clock
                                             // with a PLL divider of 2.5
-#define SYSCTL_DC1_MINSYSDIV_66 0x00002000  // Specifies a 66-MHz CPU clock
-                                            // with a PLL divider of 3
 #define SYSCTL_DC1_MINSYSDIV_50 0x00003000  // Specifies a 50-MHz CPU clock
                                             // with a PLL divider of 4
 #define SYSCTL_DC1_MINSYSDIV_40 0x00004000  // Specifies a 40-MHz CPU clock
@@ -1040,7 +1042,6 @@
 //*****************************************************************************
 #define SYSCTL_RESC_MOSCFAIL    0x00010000  // MOSC Failure Reset
 #define SYSCTL_RESC_HSSR        0x00001000  // HSSR Reset
-#define SYSCTL_RESC_HIB         0x00000040  // HIB Reset
 #define SYSCTL_RESC_WDT1        0x00000020  // Watchdog Timer 1 Reset
 #define SYSCTL_RESC_SW          0x00000010  // Software Reset
 #define SYSCTL_RESC_WDT0        0x00000008  // Watchdog Timer 0 Reset
@@ -3662,6 +3663,42 @@
 
 //*****************************************************************************
 //
+// The following are defines for the bit fields in the SYSCTL_UNIQUEID0
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_UNIQUEID0_ID_M   0xFFFFFFFF  // Unique ID
+#define SYSCTL_UNIQUEID0_ID_S   0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_UNIQUEID1
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_UNIQUEID1_ID_M   0xFFFFFFFF  // Unique ID
+#define SYSCTL_UNIQUEID1_ID_S   0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_UNIQUEID2
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_UNIQUEID2_ID_M   0xFFFFFFFF  // Unique ID
+#define SYSCTL_UNIQUEID2_ID_S   0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_UNIQUEID3
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_UNIQUEID3_ID_M   0xFFFFFFFF  // Unique ID
+#define SYSCTL_UNIQUEID3_ID_S   0
+
+//*****************************************************************************
+//
 // The following are defines for the bit fields in the SYSCTL_CCMCGREQ
 // register.
 //
@@ -3689,6 +3726,14 @@
 #define SYSCTL_DID0_CLASS_SNOWFLAKE                                           \
                                 0x000A0000  // Tiva(TM) C Series TM4C129-class
                                             // microcontrollers
+
+//*****************************************************************************
+//
+// The following are deprecated defines for the bit fields in the SYSCTL_RESC
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_RESC_HIB         0x00000040  // HIB Reset
 
 //*****************************************************************************
 //

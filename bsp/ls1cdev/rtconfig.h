@@ -1,230 +1,260 @@
-#ifndef __RTTHREAD_CFG_H__
-#define __RTTHREAD_CFG_H__
+#ifndef RT_CONFIG_H__
+#define RT_CONFIG_H__
 
-// <RDTConfigurator URL="http://www.rt-thread.com/eclipse">
+/* Automatically generated file; DO NOT EDIT. */
+/* RT-Thread Configuration */
 
-// <integer name="RT_NAME_MAX" description="Maximal size of kernel object name length" default="6" />
-#define RT_NAME_MAX	10
-// <integer name="RT_ALIGN_SIZE" description="Alignment size for CPU architecture data access" default="4" />
-#define RT_ALIGN_SIZE	4
-// <integer name="RT_THREAD_PRIORITY_MAX" description="Maximal level of thread priority" default="32">
-// <item description="8">8</item>
-// <item description="32">32</item>
-// <item description="256">256</item>
-// </integer>
-#define RT_THREAD_PRIORITY_MAX	32
-// <integer name="RT_TICK_PER_SECOND" description="OS tick per second" default="100" />
-#define RT_TICK_PER_SECOND	100
-// <section name="RT_DEBUG" description="Kernel Debug Configuration" default="true" >
+/* RT-Thread Kernel */
+
+#define RT_NAME_MAX 10
+#define RT_ALIGN_SIZE 8
+/* RT_THREAD_PRIORITY_8 is not set */
+#define RT_THREAD_PRIORITY_32
+/* RT_THREAD_PRIORITY_256 is not set */
+#define RT_THREAD_PRIORITY_MAX 32
+#define RT_TICK_PER_SECOND 1000
 #define RT_DEBUG
-// <bool name="RT_THREAD_DEBUG" description="Thread debug enable" default="false" />
-// #define RT_THREAD_DEBUG
-// <bool name="RT_USING_OVERFLOW_CHECK" description="Thread stack over flow detect" default="true" />
 #define RT_USING_OVERFLOW_CHECK
-// <bool name="RT_USING_INTERRUPT_INFO" description="Show more interrupt description" default="true" />
-#define RT_USING_INTERRUPT_INFO
-// <integer name="IDLE_THREAD_STACK_SIZE" description="The stack size of idle thread" default="1024" />
-#define IDLE_THREAD_STACK_SIZE	1024
-// </section>
-
-// <bool name="RT_USING_HOOK" description="Using hook functions" default="true" />
+#define RT_DEBUG_INIT 0
+#define RT_DEBUG_THREAD 0
 #define RT_USING_HOOK
-// <section name="RT_USING_TIMER_SOFT" description="Using software timer which will start a thread to handle soft-timer" default="true" >
-// #define RT_USING_TIMER_SOFT
-// <integer name="RT_TIMER_THREAD_PRIO" description="The priority level of timer thread" default="4" />
-#define RT_TIMER_THREAD_PRIO	4
-// <integer name="RT_TIMER_THREAD_STACK_SIZE" description="The stack size of timer thread" default="512" />
-#define RT_TIMER_THREAD_STACK_SIZE	512
-// <integer name="RT_TIMER_TICK_PER_SECOND" description="The soft-timer tick per second" default="10" />
-#define RT_TIMER_TICK_PER_SECOND	10
-// </section>
+#define IDLE_THREAD_STACK_SIZE 1024
+/* RT_USING_TIMER_SOFT is not set */
 
-// <section name="IPC" description="Inter-Thread communication" default="always" >
-// <bool name="RT_USING_SEMAPHORE" description="Using semaphore in the system" default="true" />
+/* Inter-Thread communication */
+
 #define RT_USING_SEMAPHORE
-// <bool name="RT_USING_MUTEX" description="Using mutex in the system" default="true" />
 #define RT_USING_MUTEX
-// <bool name="RT_USING_EVENT" description="Using event group in the system" default="true" />
 #define RT_USING_EVENT
-// <bool name="RT_USING_MAILBOX" description="Using mailbox in the system" default="true" />
 #define RT_USING_MAILBOX
-// <bool name="RT_USING_MESSAGEQUEUE" description="Using message queue in the system" default="true" />
 #define RT_USING_MESSAGEQUEUE
-// </section>
+/* RT_USING_SIGNALS is not set */
 
-// <section name="MM" description="Memory Management" default="always" >
-// <bool name="RT_USING_MEMPOOL" description="Using Memory Pool Management in the system" default="true" />
+/* Memory Management */
+
 #define RT_USING_MEMPOOL
-// <bool name="RT_USING_MEMHEAP" description="Using Memory Heap Object in the system" default="true" />
 #define RT_USING_MEMHEAP
-// <bool name="RT_USING_HEAP" description="Using Dynamic Heap Management in the system" default="true" />
-#define RT_USING_HEAP
-// <bool name="RT_USING_SMALL_MEM" description="Optimizing for small memory" default="false" />
+/* RT_USING_NOHEAP is not set */
 #define RT_USING_SMALL_MEM
-// <bool name="RT_USING_SLAB" description="Using SLAB memory management for large memory" default="false" />
-// #define RT_USING_SLAB
-// </section>
+/* RT_USING_SLAB is not set */
+/* RT_USING_MEMHEAP_AS_HEAP is not set */
+/* RT_USING_MEMTRACE is not set */
+#define RT_USING_HEAP
 
-// <section name="RT_USING_DEVICE" description="Using Device Driver Framework" default="true" >
+/* Kernel Device Object */
+
 #define RT_USING_DEVICE
-// <bool name="RT_USING_UART" description="Using UART" default="true" />
-#define RT_USING_UART
-// <bool name="RT_USING_UART2" description="Using UART0" default="true" />
-#define RT_USING_UART2
-// <integer name="RT_UART_RX_BUFFER_SIZE" description="The buffer size for UART reception" default="64" />
-#define RT_UART_RX_BUFFER_SIZE	64
-// </section>
-
-// <section name="RT_USING_CONSOLE" description="Using console" default="true" >
+#define RT_USING_INTERRUPT_INFO
 #define RT_USING_CONSOLE
-// <integer name="RT_CONSOLEBUF_SIZE" description="The buffer size for console output" default="128" />
-#define RT_CONSOLEBUF_SIZE	128
-// <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console" default="uart" />
-#define RT_CONSOLE_DEVICE_NAME	"uart2"
-// </section>
+#define RT_CONSOLEBUF_SIZE 128
+#define RT_CONSOLE_DEVICE_NAME "uart2"
+/* RT_USING_MODULE is not set */
 
-// <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
+/* RT-Thread Components */
+
 #define RT_USING_COMPONENTS_INIT
-// <section name="RT_USING_FINSH" description="Using finsh as shell, which is a C-Express shell" default="true" >
+/* RT_USING_USER_MAIN is not set */
+
+/* C++ features */
+
+/* RT_USING_CPLUSPLUS is not set */
+
+/* Command shell */
+
 #define RT_USING_FINSH
-// <bool name="FINSH_USING_SYMTAB" description="Using symbol table in finsh shell" default="true" />
+#define FINSH_THREAD_NAME "tshell"
+#define FINSH_USING_HISTORY
+#define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
-// <bool name="FINSH_USING_DESCRIPTION" description="Keeping description in symbol table" default="true" />
 #define FINSH_USING_DESCRIPTION
-// <integer name="FINSH_THREAD_STACK_SIZE" description="The stack size for finsh thread" default="4096" />
-#define FINSH_THREAD_STACK_SIZE	4096
-// <bool name="FINSH_USING_MSH" description="Using module shell" default="true" />
+#define FINSH_THREAD_PRIORITY 20
+#define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_CMD_SIZE 80
+/* FINSH_USING_AUTH is not set */
 #define FINSH_USING_MSH
-// <bool name="FINSH_USING_MSH_DEFAULT" description="Using module shell as the default shell" default="true" />
 #define FINSH_USING_MSH_DEFAULT
-// </section>
+/* FINSH_USING_MSH_ONLY is not set */
 
-// <section name="LIBC" description="C Runtime library setting" default="always" >
-#define RT_USING_LIBC
-// <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
-#define RT_USING_PTHREADS
-// </section>
+/* Device virtual file system */
 
-// <section name="RT_USING_DFS" description="Device file system" default="true" >
-// #define RT_USING_DFS
-// <bool name="DFS_USING_WORKDIR" description="Using working directory" default="true" />
-// #define DFS_USING_WORKDIR
-// <integer name="DFS_FILESYSTEMS_MAX" description="The maximal number of mounted file system" default="4" />
-#define DFS_FILESYSTEMS_MAX	2
-// <integer name="DFS_FD_MAX" description="The maximal number of opened files" default="4" />
-#define DFS_FD_MAX	4
-// <bool name="RT_USING_DFS_ELMFAT" description="Using ELM FatFs" default="true" />
+#define RT_USING_DFS
+#define DFS_USING_WORKDIR
+#define DFS_FILESYSTEMS_MAX 2
+#define DFS_FILESYSTEM_TYPES_MAX 2
+#define DFS_FD_MAX 4
 #define RT_USING_DFS_ELMFAT
-// <integer name="RT_DFS_ELM_USE_LFN" description="Support long file name" default="0">
-// <item description="LFN1">1</item>
-// <item description="LFN1">2</item>
-// </integer>
-#define RT_DFS_ELM_USE_LFN	1
-// <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="256" />
-#define RT_DFS_ELM_MAX_LFN	64
-// <bool name="RT_USING_DFS_YAFFS2" description="Using YAFFS2" default="false" />
-// #define RT_USING_DFS_YAFFS2
-// <bool name="RT_USING_DFS_UFFS" description="Using UFFS" default="false" />
-// #define RT_USING_DFS_UFFS
-// <bool name="RT_USING_DFS_DEVFS" description="Using devfs for device objects" default="true" />
-// #define RT_USING_DFS_DEVFS
-// <bool name="RT_USING_DFS_NFS" description="Using NFS v3 client file system" default="false" />
-// #define RT_USING_DFS_NFS
-// <string name="RT_NFS_HOST_EXPORT" description="NFSv3 host export" default="192.168.1.5:/" />
-#define RT_NFS_HOST_EXPORT	"192.168.3.108:/"
-// </section>
 
-// <section name="RT_USING_LWIP" description="lwip, a lightweight TCP/IP protocol stack" default="true" >
-// #define RT_USING_LWIP
-// <bool name="RT_LWIP_ICMP" description="Enable ICMP protocol" default="true" />
+/* elm-chan's FatFs, Generic FAT Filesystem Module */
+
+#define RT_DFS_ELM_CODE_PAGE 936
+#define RT_DFS_ELM_WORD_ACCESS
+#define RT_DFS_ELM_USE_LFN_0
+/* RT_DFS_ELM_USE_LFN_1 is not set */
+/* RT_DFS_ELM_USE_LFN_2 is not set */
+/* RT_DFS_ELM_USE_LFN_3 is not set */
+#define RT_DFS_ELM_USE_LFN 0
+#define RT_DFS_ELM_MAX_LFN 64
+#define RT_DFS_ELM_DRIVES 2
+#define RT_DFS_ELM_MAX_SECTOR_SIZE 512
+/* RT_DFS_ELM_USE_ERASE is not set */
+#define RT_DFS_ELM_REENTRANT
+/* RT_USING_DFS_DEVFS is not set */
+/* RT_USING_DFS_NET is not set */
+/* RT_USING_DFS_ROMFS is not set */
+/* RT_USING_DFS_RAMFS is not set */
+/* RT_USING_DFS_UFFS is not set */
+/* RT_USING_DFS_JFFS2 is not set */
+/* RT_USING_DFS_NFS is not set */
+
+/* Device Drivers */
+
+#define RT_USING_DEVICE_IPC
+#define RT_USING_SERIAL
+#define RT_USING_CAN
+#define RT_CAN_USING_HDR
+/* RT_USING_HWTIMER is not set */
+/* RT_USING_CPUTIME is not set */
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
+#define RT_USING_PIN
+/* RT_USING_MTD_NOR is not set */
+/* RT_USING_MTD_NAND is not set */
+/* RT_USING_RTC is not set */
+/* RT_USING_SDIO is not set */
+#define RT_USING_SPI
+#define RT_USING_SPI_MSD
+/* RT_USING_SFUD is not set */
+/* RT_USING_W25QXX is not set */
+/* RT_USING_GD is not set */
+/* RT_USING_ENC28J60 is not set */
+/* RT_USING_SPI_WIFI is not set */
+/* RT_USING_WDT is not set */
+/* RT_USING_WIFI is not set */
+
+/* Using USB */
+
+/* RT_USING_USB_HOST is not set */
+/* RT_USING_USB_DEVICE is not set */
+
+/* POSIX layer and C standard library */
+
+#define RT_USING_LIBC
+#define RT_USING_PTHREADS
+/* RT_USING_POSIX is not set */
+/* HAVE_SYS_SIGNALS is not set */
+
+/* Network stack */
+
+/* light weight TCP/IP stack */
+
+#define RT_USING_LWIP
+#define RT_USING_LWIP141
+/* RT_USING_LWIP202 is not set */
+#define RT_LWIP_IGMP
 #define RT_LWIP_ICMP
-// <bool name="RT_LWIP_IGMP" description="Enable IGMP protocol" default="false" />
-// #define RT_LWIP_IGMP
-// <bool name="RT_LWIP_UDP" description="Enable UDP protocol" default="true" />
-#define RT_LWIP_UDP
-// <bool name="RT_LWIP_TCP" description="Enable TCP protocol" default="true" />
-#define RT_LWIP_TCP
-// <bool name="RT_LWIP_DNS" description="Enable DNS protocol" default="true" />
+/* RT_LWIP_SNMP is not set */
 #define RT_LWIP_DNS
-// <integer name="RT_LWIP_PBUF_NUM" description="Maximal number of buffers in the pbuf pool" default="4" />
-#define RT_LWIP_PBUF_NUM	4
-// <integer name="RT_LWIP_TCP_PCB_NUM" description="Maximal number of simultaneously active TCP connections" default="5" />
-#define RT_LWIP_TCP_PCB_NUM	3
-// <integer name="RT_LWIP_TCP_SND_BUF" description="TCP sender buffer size" default="8192" />
-#define RT_LWIP_TCP_SND_BUF	2048
-// <integer name="RT_LWIP_TCP_WND" description="TCP receive window" default="8192" />
-#define RT_LWIP_TCP_WND	2048
-// <bool name="RT_LWIP_SNMP" description="Enable SNMP protocol" default="false" />
-// #define RT_LWIP_SNMP
-// <bool name="RT_LWIP_DHCP" description="Enable DHCP client to get IP address" default="false" />
-// #define RT_LWIP_DHCP
-// <integer name="RT_LWIP_TCP_SEG_NUM" description="the number of simultaneously queued TCP" default="4" />
-#define RT_LWIP_TCP_SEG_NUM	4
-// <integer name="RT_LWIP_TCPTHREAD_PRIORITY" description="the thread priority of TCP thread" default="128" />
-#define RT_LWIP_TCPTHREAD_PRIORITY	12
-// <integer name="RT_LWIP_TCPTHREAD_MBOX_SIZE" description="the mail box size of TCP thread to wait for" default="32" />
-#define RT_LWIP_TCPTHREAD_MBOX_SIZE	8
-// <integer name="RT_LWIP_TCPTHREAD_STACKSIZE" description="the thread stack size of TCP thread" default="4096" />
-#define RT_LWIP_TCPTHREAD_STACKSIZE	4096
-// <integer name="RT_LWIP_ETHTHREAD_PRIORITY" description="the thread priority of ethnetif thread" default="144" />
-#define RT_LWIP_ETHTHREAD_PRIORITY	14
-// <integer name="RT_LWIP_ETHTHREAD_MBOX_SIZE" description="the mail box size of ethnetif thread to wait for" default="8" />
-#define RT_LWIP_ETHTHREAD_MBOX_SIZE	8
-// <integer name="RT_LWIP_ETHTHREAD_STACKSIZE" description="the stack size of ethnetif thread" default="512" />
-#define RT_LWIP_ETHTHREAD_STACKSIZE	512
-// <ipaddr name="RT_LWIP_IPADDR" description="IP address of device" default="192.168.1.30" />
-#define RT_LWIP_IPADDR0 192
-#define RT_LWIP_IPADDR1 168
-#define RT_LWIP_IPADDR2 3
-#define RT_LWIP_IPADDR3 108
-// <ipaddr name="RT_LWIP_GWADDR" description="Gateway address of device" default="192.168.1.1" />
-#define RT_LWIP_GWADDR0 192
-#define RT_LWIP_GWADDR1 168
-#define RT_LWIP_GWADDR2 3
-#define RT_LWIP_GWADDR3 1
-// <ipaddr name="RT_LWIP_MSKADDR" description="Mask address of device" default="255.255.255.0" />
-#define RT_LWIP_MSKADDR0 255
-#define RT_LWIP_MSKADDR1 255
-#define RT_LWIP_MSKADDR2 255
-#define RT_LWIP_MSKADDR3 0
-// </section>
+/* RT_LWIP_DHCP is not set */
 
-// <section name="RT_USING_MODULE" description="Application module" default="true" >
-// #define RT_USING_MODULE
-// <bool name="RT_USING_LIBDL" description="Using dynamic library" default="true" />
-// #define RT_USING_LIBDL
-// </section>
+/* Static IPv4 Address */
 
-// <section name="RT_USING_RTGUI" description="RTGUI, a graphic user interface" default="true" >
-// #define RT_USING_RTGUI
-// <integer name="RTGUI_NAME_MAX" description="Maximal size of RTGUI object name length" default="16" />
-#define RTGUI_NAME_MAX	16
-// <bool name="RTGUI_USING_FONT16" description="Support 16 weight font" default="true" />
-#define RTGUI_USING_FONT16
-// <bool name="RTGUI_USING_FONT12" description="Support 12 weight font" default="true" />
-#define RTGUI_USING_FONT12
-// <bool name="RTGUI_USING_FONTHZ" description="Support Chinese font" default="true" />
-#define RTGUI_USING_FONTHZ
-// <bool name="RTGUI_USING_DFS_FILERW" description="Using DFS as file interface " default="true" />
-#define RTGUI_USING_DFS_FILERW
-// <bool name="RTGUI_USING_HZ_FILE" description="Using font file as Chinese font" default="false" />
-// #define RTGUI_USING_HZ_FILE
-// <bool name="RTGUI_USING_HZ_BMP" description="Using Chinese bitmap font" default="true" />
-#define RTGUI_USING_HZ_BMP
-// <bool name="RTGUI_USING_SMALL_SIZE" description="Using small size in RTGUI" default="false" />
-#define RTGUI_USING_SMALL_SIZE
-// <bool name="RTGUI_USING_MOUSE_CURSOR" description="Using mouse cursor in RTGUI" default="false" />
-// #define RTGUI_USING_MOUSE_CURSOR
-// <bool name="RTGUI_IMAGE_XPM" description="Using xpm image in RTGUI" default="true" />
-#define RTGUI_IMAGE_XPM
-// <bool name="RTGUI_IMAGE_JPEG" description="Using jpeg image in RTGUI" default="true" />
-// #define RTGUI_IMAGE_JPEG
-// <bool name="RTGUI_IMAGE_PNG" description="Using png image in RTGUI" default="true" />
-// #define RTGUI_IMAGE_PNG
-// <bool name="RTGUI_IMAGE_BMP" description="Using bmp image in RTGUI" default="true" />
-#define RTGUI_IMAGE_BMP
-// </section>
+#define RT_LWIP_IPADDR "192.168.1.254"
+#define RT_LWIP_GWADDR "192.168.1.1"
+#define RT_LWIP_MSKADDR "255.255.255.0"
+#define RT_LWIP_UDP
+#define RT_LWIP_TCP
+/* RT_LWIP_RAW is not set */
+/* RT_LWIP_PPP is not set */
+#define RT_MEMP_NUM_NETCONN 8
+#define RT_LWIP_PBUF_NUM 4
+#define RT_LWIP_RAW_PCB_NUM 4
+#define RT_LWIP_UDP_PCB_NUM 4
+#define RT_LWIP_TCP_PCB_NUM 3
+#define RT_LWIP_TCP_SEG_NUM 40
+#define RT_LWIP_TCP_SND_BUF 4096
+#define RT_LWIP_TCP_WND 2048
+#define RT_LWIP_TCPTHREAD_PRIORITY 12
+#define RT_LWIP_TCPTHREAD_MBOX_SIZE 8
+#define RT_LWIP_TCPTHREAD_STACKSIZE 4096
+#define RT_LWIP_ETHTHREAD_PRIORITY 14
+#define RT_LWIP_ETHTHREAD_STACKSIZE 512
+#define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
+/* RT_LWIP_REASSEMBLY_FRAG is not set */
+#define LWIP_NETIF_STATUS_CALLBACK 1
+#define SO_REUSE 1
+#define LWIP_SO_RCVTIMEO 1
+#define LWIP_SO_SNDTIMEO 1
+#define LWIP_SO_RCVBUF 1
+/* RT_LWIP_NETIF_LOOPBACK is not set */
+#define LWIP_NETIF_LOOPBACK 0
 
-// </RDTConfigurator>
+/* Modbus master and slave stack */
+
+/* RT_USING_MODBUS is not set */
+/* LWIP_USING_DHCPD is not set */
+
+/* VBUS(Virtual Software BUS) */
+
+/* RT_USING_VBUS is not set */
+
+/* Utilities */
+
+/* RT_USING_LOGTRACE is not set */
+/* RT_USING_RYM is not set */
+
+/* RT-Thread online packages */
+
+/* system packages */
+
+/* PKG_USING_PARTITION is not set */
+/* PKG_USING_SQLITE is not set */
+/* PKG_USING_RTI is not set */
+
+/* IoT - internet of things */
+
+/* PKG_USING_PAHOMQTT is not set */
+/* PKG_USING_WEBCLIENT is not set */
+/* PKG_USING_MONGOOSE is not set */
+/* PKG_USING_WEBTERMINAL is not set */
+/* PKG_USING_CJSON is not set */
+/* PKG_USING_EZXML is not set */
+/* PKG_USING_NANOPB is not set */
+
+/* security packages */
+
+/* PKG_USING_MBEDTLS is not set */
+/* PKG_USING_libsodium is not set */
+
+/* language packages */
+
+/* PKG_USING_JERRYSCRIPT is not set */
+/* PKG_USING_MICROPYTHON is not set */
+
+/* multimedia packages */
+
+/* tools packages */
+
+/* PKG_USING_CMBACKTRACE is not set */
+/* PKG_USING_EASYLOGGER is not set */
+/* PKG_USING_SYSTEMVIEW is not set */
+
+/* miscellaneous packages */
+
+/* PKG_USING_FASTLZ is not set */
+/* PKG_USING_MINILZO is not set */
+
+/* example package: hello */
+
+/* PKG_USING_HELLO is not set */
+#define RT_USING_UART2
+#define RT_UART_RX_BUFFER_SIZE 64
+#define RT_USING_GMAC_INT_MODE
+#define RT_USING_FPU
+#define RT_USING_SPI0
+#define RT_USING_SPI1
+#define RT_USING_I2C1
+#define RT_USING_I2C2
+#define USING_BXCAN0
+#define USING_BXCAN1
 
 #endif

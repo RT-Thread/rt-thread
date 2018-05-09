@@ -21,6 +21,7 @@
  * Date           Author       Notes
  * 2014-07-31     aozima       the first version
  * 2014-09-18     aozima       update command & response.
+ * 2017-07-28     armink       fix auto reconnect feature
  */
 
 #include <rtthread.h>
@@ -165,6 +166,8 @@ static void resp_handler(struct rw009_wifi *wifi_device, struct rw009_resp *resp
         }
         else
         {
+            wifi_device->active = 1;
+            eth_device_linkchange(&wifi_device->parent, RT_FALSE);
             WIFI_DEBUG("RW009_CMD_EASY_JOIN result: %d\n", resp->result );
         }
 
@@ -527,7 +530,7 @@ static rt_size_t rw009_wifi_write(rt_device_t dev, rt_off_t pos, const void *buf
     return 0;
 }
 
-static rt_err_t rw009_wifi_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rw009_wifi_control(rt_device_t dev, int cmd, void *args)
 {
     struct rw009_wifi *wifi_device = (struct rw009_wifi *)dev;
     rt_err_t result = RT_EOK;

@@ -9,6 +9,7 @@
 *.pdb
 *.idb
 *.ilk
+*.old
 build
 Debug
 documentation/html
@@ -21,3 +22,5 @@ documentation/html
 *.a
 *.i
 *.d
+tools/kconfig-frontends/kconfig-mconf
+packages

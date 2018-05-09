@@ -39,10 +39,9 @@ const static char* ustring[] =
     "320219198301",
     "Configuration",
     "Interface",
+    USB_STRING_OS
 };
-#endif
 
-#ifdef RT_USB_DEVICE_COMPOSITE
 static struct udevice_descriptor compsit_desc =
 {
     USB_DESC_LENGTH_DEVICE,     //bLength;
@@ -60,7 +59,44 @@ static struct udevice_descriptor compsit_desc =
     USB_STRING_SERIAL_INDEX,    //iSerialNumber;
     USB_DYNAMIC,                //bNumConfigurations;
 };
+
+//FS and HS needed
+static struct usb_qualifier_descriptor dev_qualifier =
+{
+    sizeof(dev_qualifier),          //bLength
+    USB_DESC_TYPE_DEVICEQUALIFIER,  //bDescriptorType
+    0x0200,                         //bcdUSB
+    USB_CLASS_MISC,                 //bDeviceClass
+    0x02,                           //bDeviceSubClass
+    0x01,                           //bDeviceProtocol
+    64,                             //bMaxPacketSize0
+    0x01,                           //bNumConfigurations
+    0,
+};
 #endif
+
+struct usb_os_comp_id_descriptor usb_comp_id_desc = 
+{
+    //head section
+    USB_DYNAMIC,
+    0x0100,
+    0x04,
+    USB_DYNAMIC,
+    {0x00,0x00,0x00,0x00,0x00,0x00,0x00},
+};
+static rt_list_t class_list;
+int rt_usbd_class_list_init(void)
+{
+    rt_list_init(&class_list);
+    return 0;
+}
+INIT_BOARD_EXPORT(rt_usbd_class_list_init);
+
+rt_err_t rt_usbd_class_register(udclass_t udclass)
+{
+    rt_list_insert_before(&class_list,&udclass->list);
+    return RT_EOK;
+}
 
 rt_err_t rt_usb_device_init(void)
 {
@@ -68,6 +104,8 @@ rt_err_t rt_usb_device_init(void)
     udevice_t udevice;
     uconfig_t cfg;
     ufunction_t func;
+    rt_list_t *i;
+    udclass_t udclass;
 
     /* create and startup usb device thread */
     rt_usbd_core_init();
@@ -88,34 +126,25 @@ rt_err_t rt_usb_device_init(void)
     /* create a configuration object */
     cfg = rt_usbd_config_new();
 
-#ifdef RT_USB_DEVICE_MSTORAGE
-    /* create a mass storage function object */
-    func = rt_usbd_function_mstorage_create(udevice);
+    rt_usbd_device_set_os_comp_id_desc(udevice, &usb_comp_id_desc);
 
-    /* add the function to the configuration */
-    rt_usbd_config_add_function(cfg, func);
-#endif
-
-#ifdef RT_USB_DEVICE_CDC
-    /* create a cdc function object */
-    func = rt_usbd_function_cdc_create(udevice);
-
-    /* add the function to the configuration */
-    rt_usbd_config_add_function(cfg, func);
-#endif
-
-#ifdef RT_USB_DEVICE_RNDIS
-    /* create a rndis function object */
-    func = rt_usbd_function_rndis_create(udevice);
-
-    /* add the function to the configuration */
-    rt_usbd_config_add_function(cfg, func);
-#endif
-
+    for(i = class_list.next; i!= &class_list; i = i->next)
+    {
+        /* get a class creater */
+        udclass = rt_list_entry(i, struct udclass, list);
+        /* create a function object */
+        func = udclass->rt_usbd_function_create(udevice);
+        /* add the function to the configuration */
+        rt_usbd_config_add_function(cfg, func);
+    }
     /* set device descriptor to the device */
 #ifdef RT_USB_DEVICE_COMPOSITE
     rt_usbd_device_set_descriptor(udevice, &compsit_desc);
     rt_usbd_device_set_string(udevice, ustring);
+    if(udevice->dcd->device_is_hs)
+    {
+        rt_usbd_device_set_qualifier(udevice, &dev_qualifier);
+    }
 #else
     rt_usbd_device_set_descriptor(udevice, func->dev_desc);
 #endif
@@ -131,5 +160,4 @@ rt_err_t rt_usb_device_init(void)
 
     return RT_EOK;
 }
-
 #endif

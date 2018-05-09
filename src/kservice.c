@@ -46,7 +46,7 @@
 /**@{*/
 
 /* global errno in RT-Thread */
-static volatile int _errno;
+static volatile int __rt_errno;
 
 #if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 static rt_device_t _console_device = RT_NULL;
@@ -64,12 +64,12 @@ rt_err_t rt_get_errno(void)
     if (rt_interrupt_get_nest() != 0)
     {
         /* it's in interrupt context */
-        return _errno;
+        return __rt_errno;
     }
 
     tid = rt_thread_self();
     if (tid == RT_NULL)
-        return _errno;
+        return __rt_errno;
 
     return tid->error;
 }
@@ -87,7 +87,7 @@ void rt_set_errno(rt_err_t error)
     if (rt_interrupt_get_nest() != 0)
     {
         /* it's in interrupt context */
-        _errno = error;
+        __rt_errno = error;
 
         return;
     }
@@ -95,7 +95,7 @@ void rt_set_errno(rt_err_t error)
     tid = rt_thread_self();
     if (tid == RT_NULL)
     {
-        _errno = error;
+        __rt_errno = error;
 
         return;
     }
@@ -114,13 +114,13 @@ int *_rt_errno(void)
     rt_thread_t tid;
 
     if (rt_interrupt_get_nest() != 0)
-        return (int *)&_errno;
+        return (int *)&__rt_errno;
 
     tid = rt_thread_self();
     if (tid != RT_NULL)
-        return (int *)&(tid->error);
+        return (int *) & (tid->error);
 
-    return (int *)&_errno;
+    return (int *)&__rt_errno;
 }
 RTM_EXPORT(_rt_errno);
 
@@ -135,7 +135,7 @@ RTM_EXPORT(_rt_errno);
  */
 void *rt_memset(void *s, int c, rt_ubase_t count)
 {
-#ifdef RT_TINY_SIZE
+#ifdef RT_USING_TINY_SIZE
     char *xs = (char *)s;
 
     while (count--)
@@ -218,11 +218,20 @@ RTM_EXPORT(rt_memset);
  */
 void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 {
-#ifdef RT_TINY_SIZE
+#ifdef RT_USING_TINY_SIZE
     char *tmp = (char *)dst, *s = (char *)src;
+    rt_ubase_t len;
 
-    while (count--)
-        *tmp++ = *s++;
+    if (tmp <= s || tmp > (s + count))
+    {
+        while (count--)
+            *tmp ++ = *s ++;
+    }
+    else
+    {
+        for (len = count; len > 0; len --)
+            tmp[len - 1] = s[len - 1];
+    }
 
     return dst;
 #else
@@ -464,9 +473,9 @@ rt_int32_t rt_strcmp(const char *cs, const char *ct)
 RTM_EXPORT(rt_strcmp);
 /**
  * The  strnlen()  function  returns the number of characters in the
- * string pointed to by s, excluding the terminating null byte ('\0'), 
- * but at most maxlen.  In doing this, strnlen() looks only at the 
- * first maxlen characters in the string pointed to by s and never 
+ * string pointed to by s, excluding the terminating null byte ('\0'),
+ * but at most maxlen.  In doing this, strnlen() looks only at the
+ * first maxlen characters in the string pointed to by s and never
  * beyond s+maxlen.
  *
  * @param s the string
@@ -533,7 +542,7 @@ void rt_show_version(void)
     rt_kprintf("- RT -     Thread Operating System\n");
     rt_kprintf(" / | \\     %d.%d.%d build %s\n",
                RT_VERSION, RT_SUBVERSION, RT_REVISION, __DATE__);
-    rt_kprintf(" 2006 - 2016 Copyright by rt-thread team\n");
+    rt_kprintf(" 2006 - 2018 Copyright by rt-thread team\n");
 }
 RTM_EXPORT(rt_show_version);
 
@@ -547,13 +556,13 @@ rt_inline rt_int32_t divide(rt_int32_t *n, rt_int32_t base)
     /* optimized for processor which does not support divide instructions. */
     if (base == 10)
     {
-        res = ((rt_uint32_t)*n) % 10U;
-        *n = ((rt_uint32_t)*n) / 10U;
+        res = ((rt_uint32_t) * n) % 10U;
+        *n = ((rt_uint32_t) * n) / 10U;
     }
     else
     {
-        res = ((rt_uint32_t)*n) % 16U;
-        *n = ((rt_uint32_t)*n) / 16U;
+        res = ((rt_uint32_t) * n) % 16U;
+        *n = ((rt_uint32_t) * n) / 16U;
     }
 
     return res;
@@ -561,7 +570,7 @@ rt_inline rt_int32_t divide(rt_int32_t *n, rt_int32_t base)
 
 rt_inline int skip_atoi(const char **s)
 {
-    register int i=0;
+    register int i = 0;
     while (isdigit(**s))
         i = i * 10 + *((*s)++) - '0';
 
@@ -640,7 +649,7 @@ static char *print_number(char *buf,
 
     i = 0;
     if (num == 0)
-        tmp[i++]='0';
+        tmp[i++] = '0';
     else
     {
         while (num != 0)
@@ -655,12 +664,12 @@ static char *print_number(char *buf,
     size -= i;
 #endif
 
-    if (!(type&(ZEROPAD | LEFT)))
+    if (!(type & (ZEROPAD | LEFT)))
     {
-        if ((sign)&&(size>0))
+        if ((sign) && (size > 0))
             size--;
 
-        while (size-->0)
+        while (size-- > 0)
         {
             if (buf <= end)
                 *buf = ' ';
@@ -681,7 +690,7 @@ static char *print_number(char *buf,
 #ifdef RT_PRINTF_SPECIAL
     if (type & SPECIAL)
     {
-        if (base==8)
+        if (base == 8)
         {
             if (buf <= end)
                 *buf = '0';
@@ -694,7 +703,7 @@ static char *print_number(char *buf,
             ++ buf;
             if (buf <= end)
             {
-                *buf = type & LARGE? 'X' : 'x';
+                *buf = type & LARGE ? 'X' : 'x';
             }
             ++ buf;
         }
@@ -768,7 +777,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
     /* Make sure end is always >= buf */
     if (end < buf)
     {
-        end  = ((char *)-1);
+        end  = ((char *) - 1);
         size = end - buf;
     }
 
@@ -929,7 +938,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
             ++ str;
             continue;
 
-            /* integer number formats - set up the flags and "break" */
+        /* integer number formats - set up the flags and "break" */
         case 'o':
             base = 8;
             break;
@@ -1028,7 +1037,7 @@ RTM_EXPORT(rt_snprintf);
  */
 rt_int32_t rt_vsprintf(char *buf, const char *format, va_list arg_ptr)
 {
-    return rt_vsnprintf(buf, (rt_size_t) -1, format, arg_ptr);
+    return rt_vsnprintf(buf, (rt_size_t) - 1, format, arg_ptr);
 }
 RTM_EXPORT(rt_vsprintf);
 
@@ -1044,7 +1053,7 @@ rt_int32_t rt_sprintf(char *buf, const char *format, ...)
     va_list arg_ptr;
 
     va_start(arg_ptr, format);
-    n = rt_vsprintf(buf ,format, arg_ptr);
+    n = rt_vsprintf(buf, format, arg_ptr);
     va_end(arg_ptr);
 
     return n;
@@ -1101,11 +1110,38 @@ rt_device_t rt_console_set_device(const char *name)
 RTM_EXPORT(rt_console_set_device);
 #endif
 
-WEAK void rt_hw_console_output(const char *str)
+RT_WEAK void rt_hw_console_output(const char *str)
 {
     /* empty console output */
 }
 RTM_EXPORT(rt_hw_console_output);
+
+/**
+ * This function will put string to the console.
+ *
+ * @param str the string output to the console.
+ */
+void rt_kputs(const char *str)
+{
+    if (!str) return;
+
+#ifdef RT_USING_DEVICE
+    if (_console_device == RT_NULL)
+    {
+        rt_hw_console_output(str);
+    }
+    else
+    {
+        rt_uint16_t old_flag = _console_device->open_flag;
+
+        _console_device->open_flag |= RT_DEVICE_FLAG_STREAM;
+        rt_device_write(_console_device, 0, str, rt_strlen(str));
+        _console_device->open_flag = old_flag;
+    }
+#else
+    rt_hw_console_output(str);
+#endif
+}
 
 /**
  * This function will print a formatted string on system console
@@ -1158,7 +1194,7 @@ RTM_EXPORT(rt_kprintf);
  *
  * @return the allocated memory block on successful, otherwise returns RT_NULL
  */
-void* rt_malloc_align(rt_size_t size, rt_size_t align)
+void *rt_malloc_align(rt_size_t size, rt_size_t align)
 {
     void *align_ptr;
     void *ptr;
@@ -1173,7 +1209,7 @@ void* rt_malloc_align(rt_size_t size, rt_size_t align)
     ptr = rt_malloc(align_size);
     if (ptr != RT_NULL)
     {
-         /* the allocated memory block is aligned */
+        /* the allocated memory block is aligned */
         if (((rt_uint32_t)ptr & (align - 1)) == 0)
         {
             align_ptr = (void *)((rt_uint32_t)ptr + align);
@@ -1203,7 +1239,7 @@ void rt_free_align(void *ptr)
 {
     void *real_ptr;
 
-    real_ptr = (void *)*(rt_uint32_t *)((rt_uint32_t)ptr - sizeof(void *));
+    real_ptr = (void *) * (rt_uint32_t *)((rt_uint32_t)ptr - sizeof(void *));
     rt_free(real_ptr);
 }
 RTM_EXPORT(rt_free_align);
@@ -1240,7 +1276,7 @@ const rt_uint8_t __lowest_bit_bitmap[] =
  * @return return the index of the first bit set. If value is 0, then this function
  * shall return 0.
  */
-rt_ubase_t __rt_ffs(rt_ubase_t value)
+int __rt_ffs(int value)
 {
     if (value == 0) return 0;
 
@@ -1259,13 +1295,14 @@ rt_ubase_t __rt_ffs(rt_ubase_t value)
 
 #ifdef RT_DEBUG
 /* RT_ASSERT(EX)'s hook */
-void (*rt_assert_hook)(const char* ex, const char* func, rt_size_t line);
+void (*rt_assert_hook)(const char *ex, const char *func, rt_size_t line);
 /**
  * This function will set a hook function to RT_ASSERT(EX). It will run when the expression is false.
  *
  * @param hook the hook function
  */
-void rt_assert_set_hook(void (*hook)(const char* ex, const char* func, rt_size_t line)) {
+void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t line))
+{
     rt_assert_hook = hook;
 }
 
@@ -1276,30 +1313,30 @@ void rt_assert_set_hook(void (*hook)(const char* ex, const char* func, rt_size_t
  * @param func the function name when assertion.
  * @param line the file line number when assertion.
  */
-void rt_assert_handler(const char* ex_string, const char* func, rt_size_t line)
+void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line)
 {
     volatile char dummy = 0;
 
     if (rt_assert_hook == RT_NULL)
     {
 #ifdef RT_USING_MODULE
-		if (rt_module_self() != RT_NULL)
-		{
-			/* unload assertion module */
-			rt_module_unload(rt_module_self());
+        if (rt_module_self() != RT_NULL)
+        {
+            /* unload assertion module */
+            rt_module_unload(rt_module_self());
 
-			/* re-schedule */
-			rt_schedule();
-		}
-		else
+            /* re-schedule */
+            rt_schedule();
+        }
+        else
 #endif
-		{
-	        rt_kprintf("(%s) assertion failed at function:%s, line number:%d \n", ex_string, func, line);
-	        while (dummy == 0);
-		}
+        {
+            rt_kprintf("(%s) assertion failed at function:%s, line number:%d \n", ex_string, func, line);
+            while (dummy == 0);
+        }
     }
-	else
-	{
+    else
+    {
         rt_assert_hook(ex_string, func, line);
     }
 }
@@ -1314,7 +1351,7 @@ void *memmove(void *dest, const void *src, size_t n) __attribute__((weak, alias(
 int   memcmp(const void *s1, const void *s2, size_t n) __attribute__((weak, alias("rt_memcmp")));
 
 size_t strlen(const char *s) __attribute__((weak, alias("rt_strlen")));
-char *strstr(const char *s1,const char *s2) __attribute__((weak, alias("rt_strstr")));
+char *strstr(const char *s1, const char *s2) __attribute__((weak, alias("rt_strstr")));
 int strcasecmp(const char *a, const char *b) __attribute__((weak, alias("rt_strcasecmp")));
 char *strncpy(char *dest, const char *src, size_t n) __attribute__((weak, alias("rt_strncpy")));
 int strncmp(const char *cs, const char *ct, size_t count) __attribute__((weak, alias("rt_strncmp")));

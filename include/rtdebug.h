@@ -1,7 +1,7 @@
 /*
  * File      : rtdebug.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,6 +22,28 @@
 #define __RTDEBUG_H__
 
 #include <rtconfig.h>
+
+/* settings depend check */
+#ifdef RT_USING_POSIX
+#if !defined(RT_USING_DFS) || !defined(RT_USING_DFS_DEVFS)
+#error "POSIX poll/select, stdin need file system(RT_USING_DFS) and device file system(RT_USING_DFS_DEVFS)"
+#endif
+
+#if defined(RT_USING_LWIP) && !defined(RT_USING_DFS_NET)
+#error "POSIX poll/select, stdin need file BSD socket API(RT_USING_DFS_NET)"
+#endif
+
+#if !defined(RT_USING_LIBC)
+#error "POSIX layer need standard C library(RT_USING_LIBC)"
+#endif
+
+#endif
+
+#ifdef RT_USING_POSIX_TERMIOS
+#if !defined(RT_USING_POSIX)
+#error "termios need POSIX layer(RT_USING_POSIX)"
+#endif
+#endif
 
 /* Using this macro to control all kernel debug features. */
 #ifdef RT_DEBUG
@@ -95,7 +117,7 @@ do                                                                            \
     level = rt_hw_interrupt_disable();                                        \
     if (rt_interrupt_get_nest() != 0)                                         \
     {                                                                         \
-        rt_kprintf("Function[%s] shall not used in ISR\n", __FUNCTION__);     \
+        rt_kprintf("Function[%s] shall not be used in ISR\n", __FUNCTION__);  \
         RT_ASSERT(0)                                                          \
     }                                                                         \
     rt_hw_interrupt_enable(level);                                            \

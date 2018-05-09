@@ -343,7 +343,7 @@
               <MiscControls />
               <Define>PART_LM4F232H5QD</Define>
               <Undefine />
-              <IncludePath>Libraries;applications;.;drivers;../../include;../../libcpu/arm/cortex-m4;../../libcpu/arm/common;../../components/finsh</IncludePath>
+              <IncludePath>drivers;applications;.;Libraries;../../include;../../libcpu/arm/cortex-m4;../../libcpu/arm/common;../../components/finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -380,6 +380,40 @@
         </TargetArmAds>
       </TargetOption>
       <Groups>
+        <Group>
+          <GroupName>Drivers</GroupName>
+          <Files>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers/board.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>serial.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers/serial.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Applications</GroupName>
+          <Files>
+            <File>
+              <FileName>application.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications/application.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications/startup.c</FilePath>
+            </File>
+          </Files>
+        </Group>
         <Group>
           <GroupName>Libraries</GroupName>
           <Files>
@@ -594,53 +628,12 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Applications</GroupName>
-          <Files>
-            <File>
-              <FileName>application.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications/application.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications/startup.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Drivers</GroupName>
-          <Files>
-            <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers/board.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>serial.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers/serial.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
               <FileName>clock.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../src/clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>components.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/components.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -704,6 +697,13 @@
               <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../src/scheduler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>signal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../src/signal.c</FilePath>
             </File>
           </Files>
           <Files>

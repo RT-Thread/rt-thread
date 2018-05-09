@@ -21,18 +21,31 @@
  * Date           Author       Notes
  * 2012-09-30     Bernard      first version.
  * 2013-05-08     Grissiom     reimplement
+ * 2016-08-18     heyuanjie    add interface
  */
 
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <string.h>
 
+rt_inline enum rt_ringbuffer_state rt_ringbuffer_status(struct rt_ringbuffer *rb)
+{
+    if (rb->read_index == rb->write_index)
+    {
+        if (rb->read_mirror == rb->write_mirror)
+            return RT_RINGBUFFER_EMPTY;
+        else
+            return RT_RINGBUFFER_FULL;
+    }
+    return RT_RINGBUFFER_HALFFULL;
+}
+
 void rt_ringbuffer_init(struct rt_ringbuffer *rb,
                         rt_uint8_t           *pool,
                         rt_int16_t            size)
 {
     RT_ASSERT(rb != RT_NULL);
-    RT_ASSERT(size > 0)
+    RT_ASSERT(size > 0);
 
     /* initialize read and write index */
     rb->read_mirror = rb->read_index = 0;
@@ -106,8 +119,11 @@ rt_size_t rt_ringbuffer_put_force(struct rt_ringbuffer *rb,
 
     space_length = rt_ringbuffer_space_len(rb);
 
-    if (length > space_length)
+    if (length > rb->buffer_size)
+    {
+        ptr = &ptr[length - rb->buffer_size];
         length = rb->buffer_size;
+    }
 
     if (rb->buffer_size - rb->write_index > length)
     {
@@ -284,3 +300,76 @@ rt_size_t rt_ringbuffer_getchar(struct rt_ringbuffer *rb, rt_uint8_t *ch)
 }
 RTM_EXPORT(rt_ringbuffer_getchar);
 
+/** 
+ * get the size of data in rb 
+ */
+rt_size_t rt_ringbuffer_data_len(struct rt_ringbuffer *rb)
+{
+    switch (rt_ringbuffer_status(rb))
+    {
+    case RT_RINGBUFFER_EMPTY:
+        return 0;
+    case RT_RINGBUFFER_FULL:
+        return rb->buffer_size;
+    case RT_RINGBUFFER_HALFFULL:
+    default:
+        if (rb->write_index > rb->read_index)
+            return rb->write_index - rb->read_index;
+        else
+            return rb->buffer_size - (rb->read_index - rb->write_index);
+    };
+}
+RTM_EXPORT(rt_ringbuffer_data_len);
+
+/** 
+ * empty the rb 
+ */
+void rt_ringbuffer_reset(struct rt_ringbuffer *rb)
+{
+    RT_ASSERT(rb != RT_NULL);
+
+    rb->read_mirror = 0;
+    rb->read_index = 0;
+    rb->write_mirror = 0;
+    rb->write_index = 0;
+}
+RTM_EXPORT(rt_ringbuffer_reset);
+
+#ifdef RT_USING_HEAP
+
+struct rt_ringbuffer* rt_ringbuffer_create(rt_uint16_t size)
+{
+    struct rt_ringbuffer *rb;
+    rt_uint8_t *pool;
+
+	RT_ASSERT(size > 0);
+
+    size = RT_ALIGN_DOWN(size, RT_ALIGN_SIZE);
+
+    rb = rt_malloc(sizeof(struct rt_ringbuffer));
+    if (rb == RT_NULL)
+        goto exit;
+
+    pool = rt_malloc(size);
+    if (pool == RT_NULL)
+    {
+        rt_free(rb);
+        goto exit;
+    }
+    rt_ringbuffer_init(rb, pool, size);
+
+exit:
+    return rb;
+}
+RTM_EXPORT(rt_ringbuffer_create);
+
+void rt_ringbuffer_destroy(struct rt_ringbuffer *rb)
+{
+    RT_ASSERT(rb != RT_NULL);
+
+    rt_free(rb->buffer_ptr);
+    rt_free(rb);
+}
+RTM_EXPORT(rt_ringbuffer_destroy);
+
+#endif

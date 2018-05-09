@@ -362,7 +362,7 @@
               <MiscControls>--c99</MiscControls>
               <Define>NRF51, USE_STDPERIPH_DRIVER</Define>
               <Undefine />
-              <IncludePath>Libraries/CMSIS/Include;Libraries/nrf51822/Include;applications;.;drivers;../../include;../../libcpu/arm/cortex-m0;../../libcpu/arm/common;../../components/drivers/include;../../components/finsh</IncludePath>
+              <IncludePath>drivers;applications;.;Libraries/CMSIS/Include;Libraries/nrf51822/Include;../../include;../../libcpu/arm/cortex-m0;../../libcpu/arm/common;../../components/drivers/include;../../components/finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -403,19 +403,19 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Startup Code</GroupName>
+          <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>system_nrf51.c</FileName>
+              <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries/nrf51822/Source/templates/system_nrf51.c</FilePath>
+              <FilePath>drivers/board.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>arm_startup_nrf51.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries/nrf51822/Source/templates/arm/arm_startup_nrf51.s</FilePath>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers/uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -437,19 +437,19 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Drivers</GroupName>
+          <GroupName>Startup Code</GroupName>
           <Files>
             <File>
-              <FileName>board.c</FileName>
+              <FileName>system_nrf51.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers/board.c</FilePath>
+              <FilePath>Libraries/nrf51822/Source/templates/system_nrf51.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers/uart.c</FilePath>
+              <FileName>arm_startup_nrf51.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries/nrf51822/Source/templates/arm/arm_startup_nrf51.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -460,13 +460,6 @@
               <FileName>clock.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../src/clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>components.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/components.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -506,6 +499,20 @@
           </Files>
           <Files>
             <File>
+              <FileName>mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../src/mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mempool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../src/mempool.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../src/object.c</FilePath>
@@ -516,6 +523,13 @@
               <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../src/scheduler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>signal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../src/signal.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -582,9 +596,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>portal.c</FileName>
+              <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/portal.c</FilePath>
+              <FilePath>../../components/drivers/src/dataqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pipe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/drivers/src/pipe.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -592,6 +613,13 @@
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../components/drivers/src/ringbuffer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>waitqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/drivers/src/waitqueue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -627,6 +655,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>msh.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../components/finsh/msh.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>msh_cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../components/finsh/msh_cmd.c</FilePath>
@@ -634,9 +669,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>msh_file.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/finsh/msh.c</FilePath>
+              <FilePath>../../components/finsh/msh_file.c</FilePath>
             </File>
           </Files>
         </Group>

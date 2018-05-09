@@ -347,7 +347,7 @@
               <MiscControls />
               <Define />
               <Undefine />
-              <IncludePath>applications;.;drivers;CMSIS/Include;CMSIS/DeviceSupport;../../include;../../libcpu/arm/cortex-m4;../../libcpu/arm/common;../../components/finsh</IncludePath>
+              <IncludePath>drivers;CMSIS/Include;CMSIS/DeviceSupport;applications;.;../../include;../../libcpu/arm/cortex-m4;../../libcpu/arm/common;../../components/finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -386,30 +386,6 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Applications</GroupName>
-          <Files>
-            <File>
-              <FileName>application.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications/application.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>demo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications/demo.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications/startup.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
@@ -447,6 +423,30 @@
               <FileName>startup_mb9bf56xr.s</FileName>
               <FileType>2</FileType>
               <FilePath>CMSIS/DeviceSupport/arm/startup_mb9bf56xr.s</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Applications</GroupName>
+          <Files>
+            <File>
+              <FileName>application.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications/application.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>demo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications/demo.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications/startup.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -527,6 +527,13 @@
               <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../src/scheduler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>signal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../src/signal.c</FilePath>
             </File>
           </Files>
           <Files>

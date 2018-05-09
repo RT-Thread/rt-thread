@@ -29,6 +29,7 @@ define block FIQ_STACK with alignment = 8, size = __ICFEDIT_size_fiqstack__ { };
 define block UND_STACK with alignment = 8, size = __ICFEDIT_size_undstack__ { };
 define block ABT_STACK with alignment = 8, size = __ICFEDIT_size_abtstack__ { };
 define block HEAP      with alignment = 8, size = __ICFEDIT_size_heap__     { };
+define block RTT_INIT_FUNC with fixed order { readonly section .rti_fn* };
 
 initialize by copy { readwrite };
 do not initialize  { section .noinit };
@@ -38,7 +39,7 @@ keep { section .rti_fn* };
 
 place at address mem :__ICFEDIT_intvec_start__ {readonly section .intvec};
 
-place in ROM_region  { readonly };
+place in ROM_region  { readonly, block RTT_INIT_FUNC };
 place in RAM_region  { readwrite,
                         block CSTACK, block SVC_STACK, block IRQ_STACK, block FIQ_STACK,
                         block UND_STACK, block ABT_STACK, block HEAP };

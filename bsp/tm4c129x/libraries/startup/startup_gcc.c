@@ -2,7 +2,7 @@
 //
 // startup_gcc.c - Startup code for use with GNU tools.
 //
-// Copyright (c) 2013-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2013-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 2.1.0.12573 of the DK-TM4C129X Firmware Package.
+// This is part of revision 2.1.4.178 of the DK-TM4C129X Firmware Package.
 //
 //*****************************************************************************
 
@@ -201,10 +201,10 @@ void (* const g_pfnVectors[])(void) =
 // for the "data" segment resides immediately following the "text" segment.
 //
 //*****************************************************************************
-extern uint32_t _etext;
-extern uint32_t _data;
+extern uint32_t _sidata;
+extern uint32_t _sdata;
 extern uint32_t _edata;
-extern uint32_t _bss;
+extern uint32_t _sbss;
 extern uint32_t _ebss;
 
 //*****************************************************************************
@@ -225,8 +225,8 @@ ResetISR(void)
     //
     // Copy the data segment initializers from flash to SRAM.
     //
-    pui32Src = &_etext;
-    for(pui32Dest = &_data; pui32Dest < &_edata; )
+    pui32Src = &_sidata;
+    for(pui32Dest = &_sdata; pui32Dest < &_edata; )
     {
         *pui32Dest++ = *pui32Src++;
     }
@@ -234,7 +234,7 @@ ResetISR(void)
     //
     // Zero fill the bss segment.
     //
-    __asm("    ldr     r0, =_bss\n"
+    __asm("    ldr     r0, =_sbss\n"
           "    ldr     r1, =_ebss\n"
           "    mov     r2, #0\n"
           "    .thumb_func\n"

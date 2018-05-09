@@ -5,7 +5,7 @@
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
  * Date           Author       Notes
@@ -25,50 +25,50 @@ extern int  rt_application_init(void);
  */
 void rtthread_startup(void)
 {
-	/* initialize board */
-	rt_hw_board_init();
+    /* initialize board */
+    rt_hw_board_init();
 
-	/* show version */
-	rt_show_version();
+    /* show version */
+    rt_show_version();
 
-	/* initialize tick */
-	rt_system_tick_init();
+    /* initialize tick */
+    rt_system_tick_init();
 
-	/* initialize kernel object */
-	rt_system_object_init();
+    /* initialize kernel object */
+    rt_system_object_init();
 
-	/* initialize timer system */
-	rt_system_timer_init();
+    /* initialize timer system */
+    rt_system_timer_init();
 
     /* initialize system heap */
     rt_system_heap_init(HEAP_BEGIN, HEAP_END);
 
-	/* initialize scheduler system */
-	rt_system_scheduler_init();
+    /* initialize scheduler system */
+    rt_system_scheduler_init();
 
-	/* initialize application */
-	rt_application_init();
+    /* initialize application */
+    rt_application_init();
 
     /* initialize timer thread */
     rt_system_timer_thread_init();
 
-	/* initialize idle thread */
-	rt_thread_idle_init();
+    /* initialize idle thread */
+    rt_thread_idle_init();
 
-	/* start scheduler */
-	rt_system_scheduler_start();
+    /* start scheduler */
+    rt_system_scheduler_start();
 
-	/* never reach here */
-	return ;
+    /* never reach here */
+    return ;
 }
 
 int main(void)
 {
-	/* disable interrupt first */
-	rt_hw_interrupt_disable();
+    /* disable interrupt first */
+    rt_hw_interrupt_disable();
 
-	/* startup RT-Thread RTOS */
-	rtthread_startup();
+    /* startup RT-Thread RTOS */
+    rtthread_startup();
 
-	return 0;
+    return 0;
 }

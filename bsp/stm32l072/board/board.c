@@ -15,13 +15,13 @@
 
 #include <rthw.h>
 #include <rtthread.h>
+#ifdef RT_USING_FINSH
+#include <finsh.h>
+#endif
 
 #include "board.h"
 #include "usart.h"
-/* RT_USING_COMPONENTS_INIT */
-#ifdef  RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif
+
 /**
  * @addtogroup STM32
  */
@@ -41,20 +41,6 @@ void NVIC_Configuration(void)
 }
 
 /**
-* @brief  Inserts a delay time.
-* @param  nCount: specifies the delay time length.
-* @retval None
-*/
-static void Delay(__IO uint32_t nCount)
-{
-	/* Decrement nCount value */
-	while (nCount != 0)
-	{
-		nCount--;
-	}
-}
-
-/**
  * This RCC initial for system.
  * use HSE clock source
  * HSE = 20MHZ; sysclk = 20MHZ
@@ -63,32 +49,39 @@ static void Delay(__IO uint32_t nCount)
  */
 static void RCC_Configuration(void)
 {
-
-    RCC_OscInitTypeDef OscInit;
+    RCC_ClkInitTypeDef ClkInit = {0};
+    RCC_OscInitTypeDef OscInit = {0};
+	
 	HAL_RCC_DeInit();
+	
+    /* Enable HSI Oscillator and Activate PLL with HSI as source */
     OscInit.OscillatorType = RCC_OSCILLATORTYPE_HSI;
     OscInit.HSIState = RCC_HSI_ON;
+	OscInit.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
     OscInit.PLL.PLLState = RCC_PLL_ON;
     OscInit.PLL.PLLDIV = RCC_PLLDIV_2;
     OscInit.PLL.PLLMUL = RCC_PLLMUL_4;
     OscInit.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-    HAL_RCC_OscConfig(&OscInit);
+    if (HAL_RCC_OscConfig(&OscInit) != HAL_OK)
+    {
+        RT_ASSERT(RT_NULL);
+    }
 
-    RCC_ClkInitTypeDef ClkInit;
+    /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2
+    clocks dividers */
     ClkInit.ClockType = RCC_CLOCKTYPE_SYSCLK |
                         RCC_CLOCKTYPE_HCLK |
                         RCC_CLOCKTYPE_PCLK1 |
                         RCC_CLOCKTYPE_PCLK2;
 
     ClkInit.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-    ClkInit.AHBCLKDivider = 0;
-    ClkInit.APB1CLKDivider = 0;
-    ClkInit.APB2CLKDivider = 0;
-    HAL_RCC_ClockConfig(&ClkInit, 1);
-
-	Delay(0x3FFFF);
-	/* Update SystemCoreClock value from RCC configure */
-	SystemCoreClockUpdate();
+    ClkInit.AHBCLKDivider = RCC_SYSCLK_DIV1;
+    ClkInit.APB1CLKDivider = RCC_HCLK_DIV1;
+    ClkInit.APB2CLKDivider = RCC_HCLK_DIV1;
+    if (HAL_RCC_ClockConfig(&ClkInit, FLASH_LATENCY_1) != HAL_OK)
+    {
+        RT_ASSERT(RT_NULL);
+    }
 }
 
 #ifdef PRINT_RCC_FREQ_INFO
@@ -166,6 +159,6 @@ long cmd_reset(int argc, char** argv)
     HAL_NVIC_SystemReset();
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_reset, __cmd_reset, Reset Board.);
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_reset, __cmd_reset, Reset Board);
 
 /*@}*/

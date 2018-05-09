@@ -18,7 +18,7 @@
 
 #ifdef RT_USING_DFS
 /* dfs init */
-#include <dfs_init.h>
+#include <dfs.h>
 /* dfs filesystem:ELM FatFs filesystem init */
 #include <dfs_elm.h>
 /* dfs Filesystem APIs */
@@ -33,6 +33,11 @@
 
 #ifdef RT_USING_RTGUI
 #include <rtgui/driver.h>
+#endif
+
+#ifdef RT_USING_FINSH
+#include <shell.h>
+#include <finsh.h>
 #endif
 
 /* thread phase init */
@@ -96,6 +101,11 @@ void rt_init_thread_entry(void *parameter)
 			application_init();
 		}
     }
+#endif
+
+#ifdef RT_USING_FINSH
+	/* initialize finsh */
+	finsh_system_init();
 #endif
 }
 

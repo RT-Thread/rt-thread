@@ -2,7 +2,7 @@
 //
 // hibernate.c - Driver for the Hibernation module
 //
-// Copyright (c) 2007-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2007-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 2.1.0.12573 of the Tiva Peripheral Driver Library.
+// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -124,10 +124,12 @@ _HibernateWriteComplete(void)
 //! This function enables the Hibernation module for operation.  This function
 //! should be called before any of the Hibernation module features are used.
 //!
-//! The peripheral clock is the same as the processor clock.  This value is
-//! returned by SysCtlClockGet(), or it can be explicitly hard-coded if it is
-//! constant and known (to save the code/execution overhead of a call to
-//! SysCtlClockGet()).
+//! The peripheral clock is the same as the processor clock.  The frequency of
+//! the system clock is the value returned by SysCtlClockGet() for TM4C123x
+//! devices or the value returned by SysCtlClockFreqSet() for TM4C129x devices,
+//! or it can be explicitly hard coded if it is constant and known (to save the
+//! code/execution overhead of a call to SysCtlClockGet() or fetch of the 
+//! variable call holding the return value of SysCtlClockFreqSet()).
 //!
 //! \return None.
 //
@@ -2067,7 +2069,7 @@ HibernateTamperIOEnable(uint32_t ui32Input, uint32_t ui32Config)
     //
     // Set tamper I/O configuration for the requested input.
     //
-    ui32Temp |= (ui32Mask | ((ui32Config | HIB_TPIO_EN0) << (ui32Input << 3)));
+    ui32Temp = (ui32Mask | ((ui32Config | HIB_TPIO_EN0) << (ui32Input << 3)));
 
     //
     // Unlock the tamper registers.

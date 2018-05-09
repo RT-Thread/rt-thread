@@ -18,10 +18,6 @@
 #include <rtdevice.h>
 #include <board.h>
 
-#ifdef RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif
-
 #define SPIRXEVENT 0x01
 #define SPITXEVENT 0x02
 

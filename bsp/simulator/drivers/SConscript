@@ -8,13 +8,13 @@ LIBPATH = []
 CPPPATH = [cwd]
 
 # remove no need file.
-if GetDepend('RT_USING_RTGUI') == False:
+if GetDepend('PKG_USING_GUIENGINE') == False:
     SrcRemove(src, 'sdl_fb.c')
 else:
-    LIBS.append('SDL')
+    LIBS.append('SDL2')
     if sys.platform == 'win32':
-        LIBPATH.append(os.path.abspath(os.path.join(cwd, '../SDL/lib/x86')))
-        CPPPATH.append(os.path.abspath(os.path.join(cwd, '../SDL/include')))
+        LIBPATH.append(os.path.abspath(os.path.join(cwd, '../SDL2-2.0.7/lib/x86')))
+        CPPPATH.append(os.path.abspath(os.path.join(cwd, '../SDL2-2.0.7/include')))
 
 if GetDepend('RT_USING_DFS') == False or GetDepend('RT_USING_DFS_ELMFAT') == False:
     SrcRemove(src, 'sd_sim.c')

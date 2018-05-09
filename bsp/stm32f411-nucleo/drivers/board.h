@@ -24,22 +24,6 @@
 #define STM32_SRAM_SIZE         64
 #define STM32_SRAM_END          (0x20000000 + STM32_SRAM_SIZE * 1024)
 
-// <o> Console on USART: <0=> no console <1=>USART 1 <2=>USART 2 <3=> USART 3
-// 	<i>Default: 1
-#define STM32_CONSOLE_USART     2
-
-#if STM32_CONSOLE_USART == 0
-#define CONSOLE_DEVICE "no"
-#elif STM32_CONSOLE_USART == 1
-#define CONSOLE_DEVICE "uart1"
-#elif STM32_CONSOLE_USART == 2
-#define CONSOLE_DEVICE "uart2"
-#elif STM32_CONSOLE_USART == 3
-#define CONSOLE_DEVICE "uart3"
-#endif
-
-#define FINSH_DEVICE_NAME   CONSOLE_DEVICE
-
 #ifdef __CC_ARM
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #define HEAP_BEGIN  ((void *)&Image$$RW_IRAM1$$ZI$$Limit)
@@ -50,7 +34,7 @@ extern int Image$$RW_IRAM1$$ZI$$Limit;
 extern int __bss_end;
 #define HEAP_BEGIN  ((void *)&__bss_end)
 #endif
-#define HEAP_END    (0x20000000 + 128*1024)
+#define HEAP_END    STM32_SRAM_END
 
 #endif
 extern void rt_hw_board_init(void);

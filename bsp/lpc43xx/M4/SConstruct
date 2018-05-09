@@ -26,14 +26,14 @@ Export('rtconfig')
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
 if rtconfig.CROSS_TOOL == 'gcc':
-    print 'build M0 code first'
+    print('build M0 code first')
     if sys.platform.startswith('linux'):
         import glob
         ocwd = os.getcwdu()
         os.chdir('../M0')
         res = os.system('scons')
         if res:
-            print 'build M0 exit with code %d\n' % res
+            print('build M0 exit with code %d\n' % res)
             sys.exit(res)
         os.chdir(ocwd)
         res = os.system('cd ../Libraries/; find -name \*.o -exec rm {} \;')
@@ -47,7 +47,7 @@ if rtconfig.CROSS_TOOL == 'gcc':
 
     # Remove the .o for M0 left on the drivers dir.
     for i in glob.glob(GetCurrentDir() + '/../drivers/*.o'):
-        print 'RM %s' % i
+        print('RM %s' % i)
         os.unlink(i)
 
 # do building 

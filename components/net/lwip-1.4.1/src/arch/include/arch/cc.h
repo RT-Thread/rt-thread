@@ -69,15 +69,11 @@ typedef rt_uint32_t	mem_ptr_t;
 #define LWIP_PROVIDE_ERRNO
 #endif
 
-#ifdef RT_USING_LIBC
+#if defined(RT_USING_LIBC) || defined(RT_USING_MINILIBC)
 #include <sys/time.h>
 #define LWIP_TIMEVAL_PRIVATE	   0
 #else
 #define LWIP_TIMEVAL_PRIVATE	   1
-#endif
-
-#if defined(RT_USING_DFS_NET)
-#define LWIP_COMPAT_SOCKETS        0
 #endif
 
 #if defined(__CC_ARM)   /* ARMCC compiler */

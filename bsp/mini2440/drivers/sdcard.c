@@ -8,19 +8,26 @@
  * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
- * Date           Author      Notes
- * 2007-12-02     Yi.Qiu      the first version
- * 2010-01-01     Bernard     Modify for mini2440
- * 2012-12-15     amr168      support SDHC
+ * Date           Author        Notes
+ * 2007-12-02     Yi.Qiu        the first version
+ * 2010-01-01     Bernard       Modify for mini2440
+ * 2012-12-15     amr168        support SDHC
+ * 2017-11-20     kuangdazzidd  add csd cmd support
  */
 
 #include "sdcard.h"
+#include "rtdef.h"
 
-extern rt_uint32_t PCLK;
-volatile rt_uint32_t rd_cnt;
-volatile rt_uint32_t wt_cnt;
-volatile rt_int32_t RCA;
-volatile rt_int32_t sd_type;
+extern   rt_uint32_t   PCLK;
+volatile rt_uint32_t   rd_cnt;
+volatile rt_uint32_t   wt_cnt;
+volatile rt_int32_t    RCA;
+volatile rt_int32_t    sd_type;
+
+struct sd_csd {
+    rt_uint16_t    bsize;
+    rt_uint32_t    nblks;
+}g_sd_csd;
 
 static void sd_delay(rt_uint32_t ms)
 {
@@ -118,7 +125,23 @@ static int sd_cmd55(void)
 
     SDICSTA = 0xa00;
 
+
     return RT_EOK;
+}
+
+static int sd_cmd9(void *p_rsp)
+{
+SDICARG = RCA << 16;
+SDICCON = (1 << 10) | (1 << 9) | (0x1<<8) | (0x40 | 0x09);
+
+sd_cmd_end(9, 1);
+
+    ((rt_uint32_t *)p_rsp)[0] = SDIRSP3;
+    ((rt_uint32_t *)p_rsp)[1] = SDIRSP2;
+    ((rt_uint32_t *)p_rsp)[2] = SDIRSP1;
+    ((rt_uint32_t *)p_rsp)[3] = SDIRSP0;
+
+return RT_EOK;
 }
 
 static void sd_sel_desel(char sel_desel)
@@ -159,6 +182,75 @@ static void sd_setbus(void)
     }while (sd_cmd_end(6, 1) == RT_ERROR);
 
     SDICSTA=0xa00;      /* Clear cmd_end(with rsp) */
+}
+
+
+static rt_uint32_t bits_str (rt_uint32_t *str, rt_uint32_t start, rt_uint8_t len)
+{
+    rt_uint32_t  mask;
+    rt_uint32_t  index;
+    rt_uint8_t   shift;
+    rt_uint32_t  value;
+
+    mask  = (int)((len < 32) ? (1 << len) : 0) - 1;
+    index = start / 32;
+    shift = start & 31;
+    value = str[index] >> shift;
+
+    if ((len + shift) > 32) {
+        value |= str[index + 1] << (32 - shift);
+    }
+    value &= mask;
+    return value;
+}
+
+
+static int sd_decode_csd (rt_uint32_t  *p_csd)
+{
+    rt_uint32_t e, m, r;
+    rt_uint8_t  structure;
+
+    structure = bits_str(p_csd, 126, 2);
+
+    switch (structure) {
+        case 0:
+            m = bits_str(p_csd, 99, 4);
+            e = bits_str(p_csd, 96, 3);
+            g_sd_csd.bsize  = 512;
+            m = bits_str(p_csd, 62, 12);
+            e = bits_str(p_csd, 47, 3);
+            r = bits_str(p_csd, 80, 4);
+            g_sd_csd.nblks = ((1 + m) << (e + r - 7));
+            break;
+
+        case 1:
+            m = bits_str(p_csd, 99, 4);
+            e = bits_str(p_csd, 96, 3);
+            g_sd_csd.bsize  = 512;
+            m = bits_str(p_csd, 48, 22);
+            g_sd_csd.nblks = (1 + m) << 10;
+            break;
+
+        default:
+            return RT_ERROR;
+    }
+    return RT_EOK;
+}
+
+
+static int sd_send_csd(rt_uint32_t  *p_csd)
+{
+    int         ret;
+    rt_uint32_t rsp[4];
+
+    ret = sd_cmd9((void*)&rsp);
+
+    if (ret != 0) {
+        return ret;
+    }
+
+    rt_memcpy((void*)p_csd, (void*)rsp, 16);
+    return RT_EOK;
 }
 
 static int sd_ocr(void)
@@ -213,7 +305,8 @@ rt_err_t sd_cmd8(void)
 static rt_uint8_t sd_init(void)
 {
     //-- SD controller & card initialize
-    int i;
+    int         i;
+    rt_uint32_t csd[4];
     /* Important notice for MMC test condition */
     /* Cmd & Data lines must be enabled by pull up resister */
     SDIPRE    = PCLK / (INICLK) - 1;
@@ -255,6 +348,9 @@ RECMD3:
     if (sd_cmd_end(3, 1) == RT_ERROR)
         goto RECMD3;
     SDICSTA=0xa00;  /* Clear cmd_end(with rsp) */
+
+    sd_send_csd(csd);
+    sd_decode_csd(csd);
 
     RCA = (SDIRSP0 & 0xffff0000) >> 16;
     SDIPRE = PCLK / (SDCLK) - 1; /* Normal clock=25MHz */
@@ -383,8 +479,12 @@ static rt_err_t rt_sdcard_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_err_t rt_sdcard_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_sdcard_control(rt_device_t dev, int cmd, void *args)
 {
+struct rt_device_blk_geometry *p_geometry = (struct rt_device_blk_geometry *)args;
+p_geometry->block_size = g_sd_csd.bsize;
+p_geometry->sector_count = g_sd_csd.nblks;
+p_geometry->bytes_per_sector = 512;
     return RT_EOK;
 }
 
@@ -398,7 +498,7 @@ static rt_size_t rt_sdcard_read(rt_device_t dev,
 
     if (dev == RT_NULL)
     {
-        rt_set_errno(-DFS_STATUS_EINVAL);
+        rt_set_errno(-EINVAL);
 
         return 0;
     }
@@ -429,7 +529,7 @@ static rt_size_t rt_sdcard_write(rt_device_t dev,
 
     if (dev == RT_NULL)
     {
-        rt_set_errno(-DFS_STATUS_EINVAL);
+        rt_set_errno(-EINVAL);
 
         return 0;
     }

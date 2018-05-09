@@ -146,8 +146,6 @@ extern void lwIPHostGetTime(u32_t *time_s, u32_t *time_ns);
 #include "lwipopts.h"
 #include "drv_eth.h"
 
-#include <components.h>
-
 /**
  * A structure used to keep track of driver state and error counts.
  */
@@ -1320,7 +1318,7 @@ static rt_err_t eth_dev_init(rt_device_t device)
 }
 
 /* control the interface */
-static rt_err_t eth_dev_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t eth_dev_control(rt_device_t dev, int cmd, void *args)
 {
 	switch(cmd)
 	{

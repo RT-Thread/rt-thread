@@ -49,7 +49,7 @@ extern unsigned char __bss_end;
 
 extern void rt_hw_board_init(void);
 extern void rt_application_init(void);
-extern void finsh_system_init(void);
+extern int finsh_system_init(void);
 extern void sd_init(void);
 
 void rtthread_startup()

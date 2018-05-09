@@ -42,7 +42,7 @@ struct mmcsd_blk_device
 #define RT_MMCSD_MAX_PARTITION 16
 #endif
 
-static rt_int32_t mmcsd_num_wr_blocks(struct rt_mmcsd_card *card)
+rt_int32_t mmcsd_num_wr_blocks(struct rt_mmcsd_card *card)
 {
     rt_int32_t err;
     rt_uint32_t blocks;
@@ -109,8 +109,6 @@ static rt_err_t rt_mmcsd_req_blk(struct rt_mmcsd_card *card,
                                  rt_size_t             blks,
                                  rt_uint8_t            dir)
 {
-    void *aligned_buf;
-    
     struct rt_mmcsd_cmd  cmd, stop;
     struct rt_mmcsd_data  data;
     struct rt_mmcsd_req  req;
@@ -222,7 +220,7 @@ static rt_err_t rt_mmcsd_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_err_t rt_mmcsd_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_mmcsd_control(rt_device_t dev, int cmd, void *args)
 {
     struct mmcsd_blk_device *blk_dev = (struct mmcsd_blk_device *)dev->user_data;
     switch (cmd)
@@ -247,7 +245,7 @@ static rt_size_t rt_mmcsd_read(rt_device_t dev,
 
     if (dev == RT_NULL)
     {
-        rt_set_errno(-DFS_STATUS_EINVAL);
+        rt_set_errno(-EINVAL);
 
         return 0;
     }
@@ -259,7 +257,7 @@ static rt_size_t rt_mmcsd_read(rt_device_t dev,
     /* the length of reading must align to SECTOR SIZE */
     if (err) 
     {
-        rt_set_errno(-DFS_STATUS_EIO);
+        rt_set_errno(-EIO);
         return 0;
     }
     return size;
@@ -276,7 +274,7 @@ static rt_size_t rt_mmcsd_write(rt_device_t dev,
 
     if (dev == RT_NULL)
     {
-        rt_set_errno(-DFS_STATUS_EINVAL);
+        rt_set_errno(-EINVAL);
 
         return 0;
     }
@@ -288,7 +286,7 @@ static rt_size_t rt_mmcsd_write(rt_device_t dev,
     /* the length of reading must align to SECTOR SIZE */
     if (err) 
     {
-        rt_set_errno(-DFS_STATUS_EIO);
+        rt_set_errno(-EIO);
 
         return 0;
     }
@@ -479,7 +477,11 @@ void rt_mmcsd_blk_remove(struct rt_mmcsd_card *card)
  * @deprecated since 2.1.0, this function does not need to be invoked
  * in the system initialization.
  */
-void rt_mmcsd_blk_init(void)
+int rt_mmcsd_blk_init(void)
 {
-	/* nothing */
+    /* nothing */
+    return 0;
 }
+
+INIT_PREV_EXPORT(rt_mmcsd_blk_init);
+

@@ -24,7 +24,8 @@
 #include <stdio.h>
 #include <rtthread.h>
 #include <dfs_fs.h>
-#include <dfs_def.h>
+#include <dfs.h>
+#include <dfs_file.h>
 
 #include <rpc/rpc.h>
 
@@ -59,6 +60,7 @@ struct nfs_dir
 
 #define HOST_LENGTH         32
 #define EXPORT_PATH_LENGTH  32
+
 struct nfs_filesystem
 {
     nfs_fh3 root_handle;
@@ -68,10 +70,14 @@ struct nfs_filesystem
 
     char host[HOST_LENGTH];
     char export[EXPORT_PATH_LENGTH];
+    void *data;             /* nfs_file or nfs_dir */
 };
+
+typedef struct nfs_filesystem nfs_filesystem;
 typedef struct nfs_file nfs_file;
 typedef struct nfs_dir nfs_dir;
-nfs_dir *nfs_opendir(struct nfs_filesystem *nfs, const char *path);
+
+nfs_dir *nfs_opendir(nfs_filesystem *nfs, const char *path);
 
 static int nfs_parse_host_export(const char *host_export, 
                                  char       *host,
@@ -98,7 +104,7 @@ static int nfs_parse_host_export(const char *host_export,
     if (index == host_len)
         return -1;
 
-    /* make RT_NULL */
+    /* make NULL */
     host_len = index;
     host[host_len] = '\0';
 
@@ -124,7 +130,7 @@ static void copy_handle(nfs_fh3 *dest, const nfs_fh3 *source)
 {
     dest->data.data_len = source->data.data_len;
     dest->data.data_val = rt_malloc(dest->data.data_len);
-    if (dest->data.data_val == RT_NULL)
+    if (dest->data.data_val == NULL)
     {
         dest->data.data_len = 0;
 
@@ -134,25 +140,25 @@ static void copy_handle(nfs_fh3 *dest, const nfs_fh3 *source)
     memcpy(dest->data.data_val, source->data.data_val, dest->data.data_len);
 }
 
-static nfs_fh3 *get_handle(struct nfs_filesystem *nfs, const char *name)
+static nfs_fh3 *get_handle(nfs_filesystem *nfs, const char *name)
 {
-    nfs_fh3 *handle = RT_NULL;
+    nfs_fh3 *handle = NULL;
     char *file;
     char *path;
     char *init;
 
     init = path = rt_malloc(strlen(name)+1);
-    if (init == RT_NULL)
-        return RT_NULL;
+    if (init == NULL)
+        return NULL;
 
     memcpy(init, name, strlen(name)+1);
 
     handle = rt_malloc(sizeof(nfs_fh3));
-    if (handle == RT_NULL)
+    if (handle == NULL)
     {
         rt_free(init);
 
-        return RT_NULL;
+        return NULL;
     }
 
     if (path[0] == '/')
@@ -165,7 +171,7 @@ static nfs_fh3 *get_handle(struct nfs_filesystem *nfs, const char *name)
         copy_handle(handle, &nfs->current_handle);
     }
 
-    while ((file = strtok_r(RT_NULL, "/", &path)) != RT_NULL)
+    while ((file = strtok_r(NULL, "/", &path)) != NULL)
     {
         LOOKUP3args args;
         LOOKUP3res res;
@@ -181,7 +187,7 @@ static nfs_fh3 *get_handle(struct nfs_filesystem *nfs, const char *name)
             rt_free(handle);
             xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)&args.what.dir);
 
-            return RT_NULL;
+            return NULL;
         }
         else if (res.status != NFS3_OK)
         {
@@ -191,7 +197,7 @@ static nfs_fh3 *get_handle(struct nfs_filesystem *nfs, const char *name)
             xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)&args.what.dir);
             xdr_free((xdrproc_t)xdr_LOOKUP3res, (char *)&res);
 
-            return RT_NULL;
+            return NULL;
         }
         copy_handle(handle, &res.LOOKUP3res_u.resok.object);
         xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)&args.what.dir);
@@ -203,24 +209,24 @@ static nfs_fh3 *get_handle(struct nfs_filesystem *nfs, const char *name)
     return handle;
 }
 
-static nfs_fh3 *get_dir_handle(struct nfs_filesystem *nfs, const char *name)
+static nfs_fh3 *get_dir_handle(nfs_filesystem *nfs, const char *name)
 {
-    nfs_fh3 *handle = RT_NULL;
+    nfs_fh3 *handle = NULL;
     char *file;
     char *path;
     char *init;
 
     init = path = rt_malloc(strlen(name)+1);
-    if (init == RT_NULL)
-        return RT_NULL;
+    if (init == NULL)
+        return NULL;
     memcpy(init, name, strlen(name)+1);
 
     handle = rt_malloc(sizeof(nfs_fh3));
-    if (handle == RT_NULL)
+    if (handle == NULL)
     {
         rt_free(init);
 
-        return RT_NULL;
+        return NULL;
     }
 
     if (path[0] == '/')
@@ -233,7 +239,7 @@ static nfs_fh3 *get_dir_handle(struct nfs_filesystem *nfs, const char *name)
         copy_handle(handle, &nfs->current_handle);
     }
 
-    while ((file = strtok_r(RT_NULL, "/", &path)) != RT_NULL && path[0] != 0)
+    while ((file = strtok_r(NULL, "/", &path)) != NULL && path[0] != 0)
     {
         LOOKUP3args args;
         LOOKUP3res res;
@@ -249,7 +255,7 @@ static nfs_fh3 *get_dir_handle(struct nfs_filesystem *nfs, const char *name)
             rt_free(handle);
             xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)&args.what.dir);
 
-            return RT_NULL;
+            return NULL;
         }
         else if (res.status != NFS3_OK)
         {
@@ -259,7 +265,7 @@ static nfs_fh3 *get_dir_handle(struct nfs_filesystem *nfs, const char *name)
             xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)&args.what.dir);
             xdr_free((xdrproc_t)xdr_LOOKUP3res, (char *)&res);
 
-            return RT_NULL;
+            return NULL;
         }
         copy_handle(handle, &res.LOOKUP3res_u.resok.object);
         xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)&args.what.dir);
@@ -271,7 +277,7 @@ static nfs_fh3 *get_dir_handle(struct nfs_filesystem *nfs, const char *name)
     return handle;
 }
 
-static size_t nfs_get_filesize(struct nfs_filesystem *nfs, nfs_fh3 *handle)
+static size_t nfs_get_filesize(nfs_filesystem *nfs, nfs_fh3 *handle)
 {
     GETATTR3args args;
     GETATTR3res res;
@@ -297,7 +303,7 @@ static size_t nfs_get_filesize(struct nfs_filesystem *nfs, nfs_fh3 *handle)
     return size;
 }
 
-rt_bool_t nfs_is_directory(struct nfs_filesystem *nfs, const char *name)
+rt_bool_t nfs_is_directory(nfs_filesystem *nfs, const char *name)
 {
     GETATTR3args args;
     GETATTR3res res;
@@ -307,7 +313,7 @@ rt_bool_t nfs_is_directory(struct nfs_filesystem *nfs, const char *name)
 
     result = RT_FALSE;
     handle = get_handle(nfs, name);
-    if (handle == RT_NULL)
+    if (handle == NULL)
         return RT_FALSE;
 
     args.object = *handle;
@@ -339,26 +345,26 @@ rt_bool_t nfs_is_directory(struct nfs_filesystem *nfs, const char *name)
     return result;
 }
 
-int nfs_create(struct nfs_filesystem *nfs, const char *name, mode_t mode)
+int nfs_create(nfs_filesystem *nfs, const char *name, mode_t mode)
 {
     CREATE3args args;
     CREATE3res res;
     int ret = 0;
     nfs_fh3 *handle;
 
-    if (nfs->nfs_client == RT_NULL)
+    if (nfs->nfs_client == NULL)
     {
         return -1;
     }
 
     handle = get_dir_handle(nfs, name);
-    if (handle == RT_NULL)
+    if (handle == NULL)
     {
         return -1;
     }
     args.where.dir = *handle;
     args.where.name = strrchr(name, '/') + 1;
-    if (args.where.name == RT_NULL)
+    if (args.where.name == NULL)
     {
         args.where.name = (char *)name;
     }
@@ -391,23 +397,23 @@ int nfs_create(struct nfs_filesystem *nfs, const char *name, mode_t mode)
     return ret;
 }
 
-int nfs_mkdir(struct nfs_filesystem *nfs, const char *name, mode_t mode)
+int nfs_mkdir(nfs_filesystem *nfs, const char *name, mode_t mode)
 {
     MKDIR3args args;
     MKDIR3res res;
     int ret = 0;
     nfs_fh3 *handle;
 
-    if (nfs->nfs_client == RT_NULL)
+    if (nfs->nfs_client == NULL)
         return -1;
 
     handle = get_dir_handle(nfs, name);
-    if (handle == RT_NULL)
+    if (handle == NULL)
         return -1;
 
     args.where.dir = *handle;
     args.where.name = strrchr(name, '/') + 1;
-    if (args.where.name == RT_NULL)
+    if (args.where.name == NULL)
     {
         args.where.name = (char *)name;
     }
@@ -439,14 +445,14 @@ int nfs_mkdir(struct nfs_filesystem *nfs, const char *name, mode_t mode)
     return ret;
 }
 
-/* mount(RT_NULL, "/mnt", "nfs", 0, "192.168.1.1:/export") */
+/* mount(NULL, "/mnt", "nfs", 0, "192.168.1.1:/export") */
 int nfs_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *data)
 {
     mountres3 res;
-    struct nfs_filesystem *nfs;
+    nfs_filesystem *nfs;
 
-    nfs = (struct nfs_filesystem *)rt_malloc(sizeof(struct nfs_filesystem));
-    memset(nfs, 0, sizeof(struct nfs_filesystem));
+    nfs = (nfs_filesystem *)rt_malloc(sizeof(nfs_filesystem));
+    memset(nfs, 0, sizeof(nfs_filesystem));
 
     if (nfs_parse_host_export((const char *)data, nfs->host, HOST_LENGTH,
         nfs->export, EXPORT_PATH_LENGTH) < 0)
@@ -456,7 +462,7 @@ int nfs_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *data)
     }
 
     nfs->mount_client=clnt_create((char *)nfs->host, MOUNT_PROGRAM, MOUNT_V3, "udp");
-    if (nfs->mount_client == RT_NULL)
+    if (nfs->mount_client == NULL)
     {
         rt_kprintf("create mount client failed\n");
         goto __return;
@@ -474,7 +480,7 @@ int nfs_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *data)
         goto __return;
     }
     nfs->nfs_client=clnt_create((char *)nfs->host, NFS_PROGRAM, NFS_V3, "udp");
-    if (nfs->nfs_client == RT_NULL)
+    if (nfs->nfs_client == NULL)
     {
         rt_kprintf("creat nfs client failed\n");
         goto __return;
@@ -488,15 +494,15 @@ int nfs_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *data)
     return 0;
 
 __return:
-    if (nfs != RT_NULL)
+    if (nfs != NULL)
     {
-        if (nfs->mount_client != RT_NULL)
+        if (nfs->mount_client != NULL)
         {
             clnt_destroy(nfs->mount_client);
         }
-        if (nfs->nfs_client != RT_NULL)
+        if (nfs->nfs_client != NULL)
         {
-            if (nfs->nfs_client->cl_auth != RT_NULL)
+            if (nfs->nfs_client->cl_auth != NULL)
             {
                 auth_destroy(nfs->nfs_client->cl_auth);
             }
@@ -510,73 +516,74 @@ __return:
 
 int nfs_unmount(struct dfs_filesystem *fs)
 {
-    struct nfs_filesystem *nfs;
+    nfs_filesystem *nfs;
 
-    RT_ASSERT(fs != RT_NULL);
-    RT_ASSERT(fs->data != RT_NULL);
-    nfs = (struct nfs_filesystem *)fs->data;
+    RT_ASSERT(fs != NULL);
+    RT_ASSERT(fs->data != NULL);
+    nfs = (nfs_filesystem *)fs->data;
 
-    if (nfs->mount_client != RT_NULL && 
-        mountproc3_umnt_3((char *)nfs->export, RT_NULL, nfs->mount_client) != RPC_SUCCESS)
+    if (nfs->mount_client != NULL &&
+        mountproc3_umnt_3((char *)nfs->export, NULL, nfs->mount_client) != RPC_SUCCESS)
     {
-        rt_kprintf("umount failed\n");
+        rt_kprintf("unmount failed\n");
 
         return -1;
     }
 
     /* destroy nfs client */
-    if (nfs->nfs_client != RT_NULL)
+    if (nfs->nfs_client != NULL)
     {
-        if (nfs->nfs_client->cl_auth != RT_NULL)
+        if (nfs->nfs_client->cl_auth != NULL)
         {
             auth_destroy(nfs->nfs_client->cl_auth);
-            nfs->nfs_client->cl_auth = RT_NULL;
+            nfs->nfs_client->cl_auth = NULL;
         }
         clnt_destroy(nfs->nfs_client);
-        nfs->nfs_client = RT_NULL;
+        nfs->nfs_client = NULL;
     }
 
     /* destroy mount client */
-    if (nfs->mount_client != RT_NULL)
+    if (nfs->mount_client != NULL)
     {
-        if (nfs->mount_client->cl_auth != RT_NULL)
+        if (nfs->mount_client->cl_auth != NULL)
         {
             auth_destroy(nfs->mount_client->cl_auth);
-            nfs->mount_client->cl_auth = RT_NULL;
+            nfs->mount_client->cl_auth = NULL;
         }
         clnt_destroy(nfs->mount_client);
-        nfs->mount_client = RT_NULL;
+        nfs->mount_client = NULL;
     }
 
     rt_free(nfs);
-    fs->data = RT_NULL;
+    fs->data = NULL;
 
     return 0;
 }
 
 int nfs_ioctl(struct dfs_fd *file, int cmd, void *args)
 {
-    return -DFS_STATUS_ENOSYS;
+    return -ENOSYS;
 }
 
-int nfs_read(struct dfs_fd *file, void *buf, rt_size_t count)
+int nfs_read(struct dfs_fd *file, void *buf, size_t count)
 {
     READ3args args;
     READ3res res;
     ssize_t bytes, total=0;
     nfs_file *fd;
-    struct nfs_filesystem *nfs;
+    nfs_filesystem *nfs;
 
     if (file->type == FT_DIRECTORY)
-        return -DFS_STATUS_EISDIR;
+        return -EISDIR;
 
-    fd = (nfs_file *)(file->data);
-    RT_ASSERT(fd != RT_NULL);
-    RT_ASSERT(file->fs != RT_NULL);
-    RT_ASSERT(file->fs->data != RT_NULL);
-    nfs = (struct nfs_filesystem *)file->fs->data;
 
-    if (nfs->nfs_client == RT_NULL)
+    RT_ASSERT(file->data != NULL);
+    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem*)(file->data));
+    nfs = (struct nfs_filesystem *)(dfs_nfs->data); 
+    fd = (nfs_file *)(nfs->data);
+    RT_ASSERT(fd != NULL);
+
+    if (nfs->nfs_client == NULL)
         return -1;
 
     /* end of file */
@@ -626,24 +633,24 @@ int nfs_read(struct dfs_fd *file, void *buf, rt_size_t count)
     return total;
 }
 
-int nfs_write(struct dfs_fd *file, const void *buf, rt_size_t count)
+int nfs_write(struct dfs_fd *file, const void *buf, size_t count)
 {
     WRITE3args args;
     WRITE3res res;
     ssize_t bytes, total=0;
     nfs_file *fd;
-    struct nfs_filesystem *nfs;
+    nfs_filesystem *nfs;
 
     if (file->type == FT_DIRECTORY)
-        return -DFS_STATUS_EISDIR;
+        return -EISDIR;
 
-    fd = (nfs_file *)(file->data);
-    RT_ASSERT(fd != RT_NULL);
-    RT_ASSERT(file->fs != RT_NULL);
-    RT_ASSERT(file->fs->data != RT_NULL);
-    nfs = (struct nfs_filesystem *)file->fs->data;
+    RT_ASSERT(file->data != NULL);
+    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem*)(file->data));
+    nfs = (struct nfs_filesystem *)(dfs_nfs->data); 
+    fd = (nfs_file *)(nfs->data);
+    RT_ASSERT(fd != NULL);
 
-    if (nfs->nfs_client == RT_NULL)
+    if (nfs->nfs_client == NULL)
         return -1;
 
     args.file = fd->handle;
@@ -679,8 +686,8 @@ int nfs_write(struct dfs_fd *file, const void *buf, rt_size_t count)
             /* update current position */
             file->pos = fd->offset;
             /* update file size */
-			if (fd->size < fd->offset) fd->size = fd->offset;
-			file->size = fd->size;
+            if (fd->size < fd->offset) fd->size = fd->offset;
+            file->size = fd->size;
         }
         xdr_free((xdrproc_t)xdr_WRITE3res, (char *)&res);
     } while (count > 0);
@@ -690,15 +697,19 @@ int nfs_write(struct dfs_fd *file, const void *buf, rt_size_t count)
     return total;
 }
 
-int nfs_lseek(struct dfs_fd *file, rt_off_t offset)
+int nfs_lseek(struct dfs_fd *file, off_t offset)
 {
     nfs_file *fd;
+    nfs_filesystem *nfs;
 
     if (file->type == FT_DIRECTORY)
-        return -DFS_STATUS_EISDIR;
+        return -EISDIR;
 
-    fd = (nfs_file *)(file->data);
-    RT_ASSERT(fd != RT_NULL);
+    RT_ASSERT(file->data != NULL);
+    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem*)(file->data));
+    nfs = (struct nfs_filesystem *)(dfs_nfs->data); 
+    fd = (nfs_file *)(nfs->data);
+    RT_ASSERT(fd != NULL);
 
     if (offset <= fd->size)
     {
@@ -707,16 +718,21 @@ int nfs_lseek(struct dfs_fd *file, rt_off_t offset)
         return offset;
     }
 
-    return -DFS_STATUS_EIO;
+    return -EIO;
 }
 
 int nfs_close(struct dfs_fd *file)
 {
+    nfs_filesystem *nfs;
+    RT_ASSERT(file->data != NULL);
+    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem*)(file->data));
+    nfs = (struct nfs_filesystem *)(dfs_nfs->data); 
+
     if (file->type == FT_DIRECTORY)
     {
         struct nfs_dir *dir;
 
-        dir = (struct nfs_dir *)file->data;
+        dir = (struct nfs_dir *)nfs->data;
         xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)&dir->handle);
         xdr_free((xdrproc_t)xdr_READDIR3res, (char *)&dir->res);
         rt_free(dir);
@@ -725,38 +741,38 @@ int nfs_close(struct dfs_fd *file)
     {
         struct nfs_file *fd;
 
-        fd = (struct nfs_file *)file->data;
+        fd = (struct nfs_file *)nfs->data;
 
         xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)&fd->handle);
         rt_free(fd);
     }
 
-    file->data = RT_NULL;
+    nfs->data = NULL;
     return 0;
 }
 
 int nfs_open(struct dfs_fd *file)
 {
-    struct nfs_filesystem *nfs;
+    nfs_filesystem *nfs;
+    RT_ASSERT(file->data != NULL);
+    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem*)(file->data));
+    nfs = (struct nfs_filesystem *)(dfs_nfs->data); 
 
-    RT_ASSERT(file->fs != RT_NULL);
-    RT_ASSERT(file->fs->data != RT_NULL);
-    nfs = (struct nfs_filesystem *)file->fs->data;
 
-    if (file->flags & DFS_O_DIRECTORY)
+    if (file->flags & O_DIRECTORY)
     {
         nfs_dir *dir;
     
-        if (file->flags & DFS_O_CREAT)
+        if (file->flags & O_CREAT)
         {
             if (nfs_mkdir(nfs, file->path, 0755) < 0)
-                return -DFS_STATUS_EAGAIN;
+                return -EAGAIN;
         }
 
         /* open directory */
         dir = nfs_opendir(nfs, file->path);
-        if (dir == RT_NULL) return -DFS_STATUS_ENOENT;
-        file->data = dir;
+        if (dir == NULL) return -ENOENT;
+        nfs->data = dir;
     }
     else
     {
@@ -764,23 +780,23 @@ int nfs_open(struct dfs_fd *file)
         nfs_fh3 *handle;
 
         /* create file */
-        if (file->flags & DFS_O_CREAT)
+        if (file->flags & O_CREAT)
         {
             if (nfs_create(nfs, file->path, 0664) < 0)
-                return -DFS_STATUS_EAGAIN;
+                return -EAGAIN;
         }
 
         /* open file (get file handle ) */
         fp = rt_malloc(sizeof(nfs_file));
-        if (fp == RT_NULL)
-            return -DFS_STATUS_ENOMEM;
+        if (fp == NULL)
+            return -ENOMEM;
 
         handle = get_handle(nfs, file->path);
-        if (handle == RT_NULL)
+        if (handle == NULL)
         {
             rt_free(fp);
 
-            return -DFS_STATUS_ENOENT;
+            return -ENOENT;
         }
 
         /* get size of file */
@@ -792,13 +808,13 @@ int nfs_open(struct dfs_fd *file)
         xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)handle);
         rt_free(handle);
 
-        if (file->flags & DFS_O_APPEND)
+        if (file->flags & O_APPEND)
         {
             fp->offset = fp->size;
         }
 
         /* set private file */
-        file->data = fp;
+        nfs->data = fp;
         file->size = fp->size;
     }
 
@@ -811,14 +827,14 @@ int nfs_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
     GETATTR3res res;
     fattr3 *info;
     nfs_fh3 *handle;
-    struct nfs_filesystem *nfs;
+    nfs_filesystem *nfs;
 
-    RT_ASSERT(fs != RT_NULL);
-    RT_ASSERT(fs->data != RT_NULL);
-    nfs = (struct nfs_filesystem *)fs->data;
+    RT_ASSERT(fs != NULL);
+    RT_ASSERT(fs->data != NULL);
+    nfs = (nfs_filesystem *)fs->data;
 
     handle = get_handle(nfs, path);
-    if (handle == RT_NULL)
+    if (handle == NULL)
         return -1;
 
     args.object = *handle;
@@ -840,12 +856,11 @@ int nfs_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
 
     st->st_dev = 0;
 
-    st->st_mode = DFS_S_IFREG | DFS_S_IRUSR | DFS_S_IRGRP | DFS_S_IROTH |
-    DFS_S_IWUSR | DFS_S_IWGRP | DFS_S_IWOTH;
+    st->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH;
     if (info->type == NFS3DIR)
     {
-        st->st_mode &= ~DFS_S_IFREG;
-        st->st_mode |= DFS_S_IFDIR | DFS_S_IXUSR | DFS_S_IXGRP | DFS_S_IXOTH;
+        st->st_mode &= ~S_IFREG;
+        st->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
     }
 
     st->st_size  = info->size;
@@ -858,23 +873,22 @@ int nfs_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
     return 0;
 }
 
-nfs_dir *nfs_opendir(struct nfs_filesystem *nfs, const char *path)
+nfs_dir *nfs_opendir(nfs_filesystem *nfs, const char *path)
 {
     nfs_dir *dir;
     nfs_fh3 *handle;
 
     dir = rt_malloc(sizeof(nfs_dir));
-    if (dir == RT_NULL)
+    if (dir == NULL)
     {
-        return RT_NULL;
+        return NULL;
     }
 
     handle = get_handle(nfs, path);
-    if (handle == RT_NULL)
+    if (handle == NULL)
     {
         rt_free(dir);
-
-        return RT_NULL;
+        return NULL;
     }
 
     copy_handle(&dir->handle, handle);
@@ -883,21 +897,21 @@ nfs_dir *nfs_opendir(struct nfs_filesystem *nfs, const char *path)
 
     dir->cookie = 0;
     memset(&dir->cookieverf, '\0', sizeof(cookieverf3));
-    dir->entry = RT_NULL;
+    dir->entry = NULL;
     dir->eof = FALSE;
     memset(&dir->res, '\0', sizeof(dir->res));
 
     return dir;
 }
 
-char *nfs_readdir(struct nfs_filesystem *nfs, nfs_dir *dir)
+char *nfs_readdir(nfs_filesystem *nfs, nfs_dir *dir)
 {
     static char name[NAME_MAX];
 
-    if (nfs->nfs_client == RT_NULL || dir == RT_NULL)
-        return RT_NULL;
+    if (nfs->nfs_client == NULL || dir == NULL)
+        return NULL;
 
-    if (dir->entry == RT_NULL)
+    if (dir->entry == NULL)
     {
         READDIR3args args;
 
@@ -913,21 +927,21 @@ char *nfs_readdir(struct nfs_filesystem *nfs, nfs_dir *dir)
         {
             rt_kprintf("Readdir failed\n");
 
-            return RT_NULL;
+            return NULL;
         }
         else if (dir->res.status != NFS3_OK)
         {
             rt_kprintf("Readdir failed: %d\n", dir->res.status);
 
-            return RT_NULL;
+            return NULL;
         }
 
         memcpy(&dir->cookieverf, &dir->res.READDIR3res_u.resok.cookieverf, sizeof(cookieverf3));
         dir->eof = dir->res.READDIR3res_u.resok.reply.eof;
         dir->entry = dir->res.READDIR3res_u.resok.reply.entries;
     }
-    if (dir->eof == TRUE && dir->entry == RT_NULL)
-        return RT_NULL;
+    if (dir->eof == TRUE && dir->entry == NULL)
+        return NULL;
 
     dir->cookie = dir->entry->cookie;
     strncpy(name, dir->entry->name, NAME_MAX-1);
@@ -940,11 +954,11 @@ char *nfs_readdir(struct nfs_filesystem *nfs, nfs_dir *dir)
 int nfs_unlink(struct dfs_filesystem *fs, const char *path)
 {
     int ret = 0;
-    struct nfs_filesystem *nfs;
+    nfs_filesystem *nfs;
 
-    RT_ASSERT(fs != RT_NULL);
-    RT_ASSERT(fs->data != RT_NULL);
-    nfs = (struct nfs_filesystem *)fs->data;
+    RT_ASSERT(fs != NULL);
+    RT_ASSERT(fs->data != NULL);
+    nfs = (nfs_filesystem *)fs->data;
 
     if (nfs_is_directory(nfs, path) == RT_FALSE)
     {
@@ -954,12 +968,12 @@ int nfs_unlink(struct dfs_filesystem *fs, const char *path)
         nfs_fh3 *handle;
 
         handle = get_dir_handle(nfs, path);
-        if (handle == RT_NULL)
+        if (handle == NULL)
             return -1;
 
         args.object.dir = *handle;
         args.object.name = strrchr(path, '/') + 1;
-        if (args.object.name == RT_NULL)
+        if (args.object.name == NULL)
         {
             args.object.name = (char *)path;
         }
@@ -988,12 +1002,12 @@ int nfs_unlink(struct dfs_filesystem *fs, const char *path)
         nfs_fh3 *handle;
 
         handle = get_dir_handle(nfs, path);
-        if (handle == RT_NULL)
+        if (handle == NULL)
             return -1;
 
         args.object.dir = *handle;
         args.object.name = strrchr(path, '/') + 1;
-        if (args.object.name == RT_NULL)
+        if (args.object.name == NULL)
         {
             args.object.name = (char *)path;
         }
@@ -1026,31 +1040,31 @@ int nfs_rename(struct dfs_filesystem *fs, const char *src, const char *dest)
     nfs_fh3 *sHandle;
     nfs_fh3 *dHandle;
     int ret = 0;
-    struct nfs_filesystem *nfs;
+    nfs_filesystem *nfs;
 
-    RT_ASSERT(fs != RT_NULL);
-    RT_ASSERT(fs->data != RT_NULL);
-    nfs = (struct nfs_filesystem *)fs->data;
+    RT_ASSERT(fs != NULL);
+    RT_ASSERT(fs->data != NULL);
+    nfs = (nfs_filesystem *)fs->data;
 
-    if (nfs->nfs_client == RT_NULL)
+    if (nfs->nfs_client == NULL)
         return -1;
 
     sHandle = get_dir_handle(nfs, src);
-    if (sHandle == RT_NULL)
+    if (sHandle == NULL)
         return -1;
 
     dHandle = get_dir_handle(nfs, dest);
-    if (dHandle == RT_NULL)
+    if (dHandle == NULL)
         return -1;
 
     args.from.dir = *sHandle;
     args.from.name = strrchr(src, '/') + 1;
-    if (args.from.name == RT_NULL)
+    if (args.from.name == NULL)
         args.from.name = (char *)src;
 
     args.to.dir = *dHandle;
     args.to.name = strrchr(src, '/') + 1;
-    if (args.to.name == RT_NULL)
+    if (args.to.name == NULL)
         args.to.name = (char *)dest;
 
     memset(&res, '\0', sizeof(res));
@@ -1073,24 +1087,25 @@ int nfs_rename(struct dfs_filesystem *fs, const char *src, const char *dest)
     return ret;
 }
 
-int nfs_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint32_t count)
+int nfs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t count)
 {
     nfs_dir *dir;
     rt_uint32_t index;
     struct dirent *d;
-    struct nfs_filesystem *nfs;
+    nfs_filesystem *nfs;
     char *name;
 
-    dir = (nfs_dir *)(file->data);
-    RT_ASSERT(dir != RT_NULL);
-    RT_ASSERT(file->fs != RT_NULL);
-    RT_ASSERT(file->fs->data != RT_NULL);
-    nfs = (struct nfs_filesystem *)file->fs->data;
+
+    RT_ASSERT(file->data != NULL);
+    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem*)(file->data));
+    nfs = (struct nfs_filesystem *)(dfs_nfs->data); 
+    dir = (nfs_dir *)(nfs->data);
+    RT_ASSERT(dir != NULL);
 
     /* make integer count */
     count = (count / sizeof(struct dirent)) * sizeof(struct dirent);
     if (count == 0)
-        return -DFS_STATUS_EINVAL;
+        return -EINVAL;
 
     index = 0;
     while (1)
@@ -1098,10 +1113,10 @@ int nfs_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint32_t count)
         d = dirp + index;
 
         name = nfs_readdir(nfs, dir);
-        if (name == RT_NULL)
+        if (name == NULL)
             break;
 
-        d->d_type = DFS_DT_REG;
+        d->d_type = DT_REG;
 
         d->d_namlen = rt_strlen(name);
         d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
@@ -1115,22 +1130,28 @@ int nfs_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint32_t count)
     return index * sizeof(struct dirent);
 }
 
-static const struct dfs_filesystem_operation _nfs = 
+static const struct dfs_file_ops nfs_fops =
+{
+        nfs_open,
+        nfs_close,
+        nfs_ioctl,
+        nfs_read,
+        nfs_write,
+        NULL, /* flush */
+        nfs_lseek,
+        nfs_getdents,
+        NULL, /* poll */
+};
+
+static const struct dfs_filesystem_ops _nfs = 
 {
     "nfs",
-    DFS_FS_FLAG_DEFAULT,    
+    DFS_FS_FLAG_DEFAULT,
+    &nfs_fops,
     nfs_mount,
     nfs_unmount,
-    RT_NULL, /* mkfs */
-    RT_NULL, /* statfs */
-    nfs_open,
-    nfs_close,
-    nfs_ioctl,
-    nfs_read,
-    nfs_write,
-    RT_NULL, /* flush */
-    nfs_lseek,
-    nfs_getdents,
+    NULL, /* mkfs */
+    NULL, /* statfs */
     nfs_unlink, 
     nfs_stat,
     nfs_rename,
@@ -1138,9 +1159,10 @@ static const struct dfs_filesystem_operation _nfs =
 
 int nfs_init(void)
 {
-    /* register fatfs file system */
+    /* register nfs file system */
     dfs_register(&_nfs);
 
     return RT_EOK;
 }
-INIT_FS_EXPORT(nfs_init);
+INIT_COMPONENT_EXPORT(nfs_init);
+

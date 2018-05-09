@@ -26,12 +26,13 @@
 #include <rtthread.h>
 #include "dm36x.h"
 
+extern int davinci_clk_init(void);
 
 /**
  * @brief System Clock Configuration
  */
 void rt_hw_clock_init(void)
 {
-
+	davinci_clk_init();
 }
 

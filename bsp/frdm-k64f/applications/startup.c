@@ -25,13 +25,13 @@
 
 extern int  rt_application_init(void);
 #ifdef RT_USING_FINSH
-extern void finsh_system_init(void);
+extern int finsh_system_init(void);
 extern void finsh_set_device(const char* device);
 #endif
 
 #ifdef __CC_ARM
-extern int Image$$RW_IRAM1$$ZI$$Limit;
-#define K64_SRAM_BEGIN    (&Image$$RW_IRAM1$$ZI$$Limit)
+extern int Image$$RW_IRAM2$$ZI$$Limit;
+#define K64_SRAM_BEGIN    (&Image$$RW_IRAM2$$ZI$$Limit)
 #elif __ICCARM__
 #pragma section="HEAP"
 #define K64_SRAM_BEGIN    (__segment_end("HEAP"))

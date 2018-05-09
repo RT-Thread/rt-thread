@@ -37,18 +37,18 @@
  */
 struct finsh_var
 {
-	char name[FINSH_NAME_MAX + 1];	/* the name of variable */
+    char name[FINSH_NAME_MAX + 1];  /* the name of variable */
 
-	u_char type;					/* the type of variable */
+    uint8_t type;                   /* the type of variable */
 
-	/* variable value */
-	union {
-		char 	char_value;
-		short 	short_value;
-		int		int_value;
-		long	long_value;
-		void*	ptr;
-	}value;
+    /* variable value */
+    union {
+        char    char_value;
+        short   short_value;
+        int     int_value;
+        long    long_value;
+        void*   ptr;
+    }value;
 };
 extern struct finsh_var global_variable[];
 

@@ -313,13 +313,13 @@ struct CYG_FILEOPS_TAG
 
 struct CYG_FILE_TAG
 {
-    cyg_uint32	                f_flag;		/* file state                   */
+    cyg_uint32	                f_flag;		    /* file state                   */
     cyg_uint16                  f_ucount;       /* use count                    */
-    cyg_uint16                  f_type;		/* descriptor type              */
+    cyg_uint16                  f_type;		    /* descriptor type              */
     cyg_uint32                  f_syncmode;     /* synchronization protocol     */
     struct CYG_FILEOPS_TAG      *f_ops;         /* file operations              */
-    off_t       	        f_offset;       /* current offset               */
-    CYG_ADDRWORD	        f_data;		/* file or socket               */
+    off_t       	            f_offset;       /* current offset               */
+    CYG_ADDRWORD	            f_data;		    /* file or socket               */
     CYG_ADDRWORD                f_xops;         /* extra type specific ops      */
     cyg_mtab_entry              *f_mte;         /* mount table entry            */
 };

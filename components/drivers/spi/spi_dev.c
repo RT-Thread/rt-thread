@@ -54,7 +54,7 @@ static rt_size_t _spi_bus_device_write(rt_device_t dev,
 }
 
 static rt_err_t _spi_bus_device_control(rt_device_t dev,
-                                        rt_uint8_t  cmd,
+                                        int         cmd,
                                         void       *args)
 {
     /* TODO: add control command handle */
@@ -120,7 +120,7 @@ static rt_size_t _spidev_device_write(rt_device_t dev,
 }
 
 static rt_err_t _spidev_device_control(rt_device_t dev,
-                                       rt_uint8_t  cmd,
+                                       int         cmd,
                                        void       *args)
 {
     switch (cmd)

@@ -1,0 +1,13 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c') + Glob('*.cpp')
+CPPPATH = [cwd]
+
+group = DefineGroup('libc', src, 
+    depend = ['RT_USING_DFS', 'RT_USING_POSIX_MMAP'],
+    CPPPATH = CPPPATH)
+
+Return('group')

@@ -1,8 +1,12 @@
 #include <rtthread.h>
 #include "board.h"
 
-void platform_init(void)
+#include <shell.h>
+
+int platform_init(void)
 {
+    finsh_system_init();
+
 #ifdef RT_USING_LWIP
 #ifdef RT_USING_TAPNETIF
     tap_netif_hw_init();
@@ -24,5 +28,21 @@ void platform_init(void)
 #endif
 
 #endif /* RT_USING_DFS */
+
+    return 0;
 }
 
+int platform_post_init(void)
+{
+#ifdef PKG_USING_GUIENGINE
+    {
+        extern void rt_hw_sdl_start(void);
+        extern int rtgui_system_server_init(void);
+
+        rtgui_system_server_init();
+        rt_hw_sdl_start();
+    }
+#endif
+
+    return 0;
+}

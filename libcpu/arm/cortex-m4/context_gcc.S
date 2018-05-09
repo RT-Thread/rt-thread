@@ -145,15 +145,15 @@ switch_to_thread:
 
     MSR psp, r1                 /* update stack pointer */
 
-pendsv_exit:
-    /* restore interrupt */
-    MSR PRIMASK, r2
-
 #if defined (__VFP_FP__) && !defined(__SOFTFP__)
     ORR     lr, lr, #0x10       /* lr |=  (1 << 4), clean FPCA. */
     CMP     r3,  #0             /* if(flag_r3 != 0) */
     BICNE   lr, lr, #0x10       /* lr &= ~(1 << 4), set FPCA. */
 #endif
+
+pendsv_exit:
+    /* restore interrupt */
+    MSR PRIMASK, r2
 
     ORR lr, lr, #0x04
     BX  lr
@@ -203,7 +203,9 @@ rt_hw_context_switch_to:
     NOP
     MSR     msp, r0
 
-    CPSIE   I                       /* enable interrupts at processor level */
+    /* enable interrupts at processor level */
+    CPSIE   F
+    CPSIE   I
 
     /* never reach here! */
 

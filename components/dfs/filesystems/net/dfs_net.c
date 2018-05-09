@@ -21,32 +21,42 @@
  * Date           Author       Notes
  * 2015-02-17     Bernard      First version
  * 2016-05-07     Bernard      Rename dfs_lwip to dfs_net
+ * 2018-03-09     Bernard      Fix the last data issue in poll.
  */
 
 #include <rtthread.h>
 #include <dfs.h>
 #include <dfs_fs.h>
+#include <dfs_file.h>
+#include <dfs_posix.h>
 
+#include <rtdevice.h>
+#include <sys/socket.h>
+
+#include <dfs_poll.h>
 #include "dfs_net.h"
 
 int dfs_net_getsocket(int fd)
 {
+    int sock;
     struct dfs_fd *_dfs_fd; 
-    
+
     _dfs_fd = fd_get(fd);
-    if (_dfs_fd == RT_NULL) return -1;
+    if (_dfs_fd == NULL) return -1;
 
-    if (_dfs_fd->type != FT_SOCKET) return -1;
-    
-    return (int)_dfs_fd->data;
+    if (_dfs_fd->type != FT_SOCKET) sock = -1;
+    else sock = (int)_dfs_fd->data;
+
+    fd_put(_dfs_fd); /* put this dfs fd */
+    return sock;
 }
 
-int dfs_net_ioctl(struct dfs_fd* file, int cmd, void* args)
+static int dfs_net_ioctl(struct dfs_fd* file, int cmd, void* args)
 {
-    return -DFS_STATUS_EIO;
+    return -EIO;
 }
 
-int dfs_net_read(struct dfs_fd* file, void *buf, rt_size_t count)
+static int dfs_net_read(struct dfs_fd* file, void *buf, size_t count)
 {
     int sock;
 
@@ -56,7 +66,7 @@ int dfs_net_read(struct dfs_fd* file, void *buf, rt_size_t count)
     return count;
 }
 
-int dfs_net_write(struct dfs_fd *file, const void *buf, rt_size_t count)
+static int dfs_net_write(struct dfs_fd *file, const void *buf, size_t count)
 {
     int sock;
     
@@ -66,7 +76,7 @@ int dfs_net_write(struct dfs_fd *file, const void *buf, rt_size_t count)
     return count;
 }
 
-int dfs_net_close(struct dfs_fd* file)
+static int dfs_net_close(struct dfs_fd* file)
 {
     int sock;
     int result;
@@ -74,55 +84,60 @@ int dfs_net_close(struct dfs_fd* file)
     sock = (int)file->data;
     result = lwip_close(sock);
     
-    if (result == 0) return DFS_STATUS_OK;
+    if (result == 0) return RT_EOK;
     
     return -result;
 }
 
-static const struct dfs_filesystem_operation _net_fs_ops = 
+static int dfs_net_poll(struct dfs_fd *file, struct rt_pollreq *req)
 {
-    "net",
-    DFS_FS_FLAG_DEFAULT,
-    RT_NULL,    /* mount    */
-    RT_NULL,    /* unmont   */
-    RT_NULL,    /* mkfs     */
-    RT_NULL,    /* statfs   */
+    int sfd;
+    int mask = 0;
+    struct lwip_sock *sock;
 
-    RT_NULL,    /* open     */
+    sfd = (int)file->data;
+
+    sock =  lwip_tryget_socket(sfd);
+    if (sock != NULL)
+    {
+        rt_base_t level;
+
+        rt_poll_add(&sock->wait_head, req);
+
+        level = rt_hw_interrupt_disable();
+        if (sock->lastdata || sock->rcvevent)
+        {
+            mask |= POLLIN;
+        }
+        if (sock->sendevent)
+        {
+            mask |= POLLOUT;
+        }
+        if (sock->errevent)
+        {
+            mask |= POLLERR;
+        }
+        rt_hw_interrupt_enable(level);
+    }
+
+    return mask;
+}
+
+const struct dfs_file_ops _net_fops = 
+{
+    NULL,    /* open     */
     dfs_net_close,
     dfs_net_ioctl,
     dfs_net_read,
     dfs_net_write,
-    RT_NULL,
-    RT_NULL,    /* lseek    */
-    RT_NULL,    /* getdents */
-    RT_NULL,    /* unlink   */
-    RT_NULL,    /* stat     */
-    RT_NULL,    /* rename   */
+    NULL,
+    NULL,    /* lseek    */
+    NULL,    /* getdents */
+    dfs_net_poll,
 };
 
-static struct dfs_filesystem _net_fs = 
+const struct dfs_file_ops *dfs_net_get_fops(void)
 {
-    0,              /* dev_id */
-    RT_NULL,        /* path */
-    &_net_fs_ops,
-    RT_NULL         /* data */
-};
-
-struct dfs_filesystem* dfs_net_get_fs(void)
-{
-    return &_net_fs;
+    return &_net_fops;
 }
 
-/*
-NOTE: Beause we don't need to mount lwIP file system, the filesystem_ops is not 
-registered to the system. 
-
-int dfs_net_system_init(void)
-{
-    dfs_register(&_net_fs_ops);
-    
-    return 0;
-}
-INIT_FS_EXPORT(dfs_net_system_init);
-*/

@@ -15,9 +15,6 @@
 #include <rtdevice.h>
 #include <board.h>
 #include <drv_lpccan.h>
-#ifdef RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif
 
 #ifdef RT_USING_CAN
 
@@ -825,6 +822,7 @@ static struct rt_can_device lpccan2;
 void CAN_IRQHandler(void)
 {
     rt_uint32_t IntStatus;
+    rt_interrupt_enter();
 #ifdef RT_USING_LPCCAN1
     IntStatus = CAN_IntGetStatus(CAN_1);
     //check receive interrupt
@@ -1036,6 +1034,7 @@ void CAN_IRQHandler(void)
         }
     }
 #endif /*RT_USING_LPCCAN2*/
+    rt_interrupt_leave();
 }
 
 int lpc_can_init(void)

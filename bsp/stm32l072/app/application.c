@@ -23,9 +23,6 @@
 #include <rtdevice.h>
 #include "board.h"
 #include <rtthread.h>
-#ifdef  RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif  /* RT_USING_COMPONENTS_INIT */
 
 static void rt_init_thread_entry(void* parameter)
 {

@@ -478,7 +478,7 @@ RTM_EXPORT(rt_sem_release);
  *
  * @return the error code
  */
-rt_err_t rt_sem_control(rt_sem_t sem, rt_uint8_t cmd, void *arg)
+rt_err_t rt_sem_control(rt_sem_t sem, int cmd, void *arg)
 {
     rt_ubase_t level;
     RT_ASSERT(sem != RT_NULL);
@@ -649,11 +649,11 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
 
     RT_ASSERT(mutex != RT_NULL);
 
-    /* disable interrupt */
-    temp = rt_hw_interrupt_disable();
-
     /* get current thread */
     thread = rt_thread_self();
+
+    /* disable interrupt */
+    temp = rt_hw_interrupt_disable();
 
     RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(mutex->parent.parent)));
 
@@ -671,6 +671,7 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
     }
     else
     {
+__again:
         /* The value of mutex is 1 in initial status. Therefore, if the
          * value is great than 0, it indicates the mutex is avaible.
          */
@@ -739,6 +740,9 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
 
                 if (thread->error != RT_EOK)
                 {
+                	/* interrupt by signal, try it again */
+                	if (thread->error == -RT_EINTR) goto __again;
+
                     /* return error */
                     return thread->error;
                 }
@@ -868,7 +872,7 @@ RTM_EXPORT(rt_mutex_release);
  *
  * @return the error code
  */
-rt_err_t rt_mutex_control(rt_mutex_t mutex, rt_uint8_t cmd, void *arg)
+rt_err_t rt_mutex_control(rt_mutex_t mutex, int cmd, void *arg)
 {
     return -RT_ERROR;
 }
@@ -1210,7 +1214,7 @@ RTM_EXPORT(rt_event_recv);
  *
  * @return the error code
  */
-rt_err_t rt_event_control(rt_event_t event, rt_uint8_t cmd, void *arg)
+rt_err_t rt_event_control(rt_event_t event, int cmd, void *arg)
 {
     rt_ubase_t level;
     RT_ASSERT(event != RT_NULL);
@@ -1382,8 +1386,8 @@ rt_err_t rt_mb_delete(rt_mailbox_t mb)
     else
 #endif
 
-    /* free mailbox pool */
-    RT_KERNEL_FREE(mb->msg_pool);
+        /* free mailbox pool */
+        RT_KERNEL_FREE(mb->msg_pool);
 
     /* delete mailbox object */
     rt_object_delete(&(mb->parent.parent));
@@ -1685,7 +1689,7 @@ RTM_EXPORT(rt_mb_recv);
  *
  * @return the error code
  */
-rt_err_t rt_mb_control(rt_mailbox_t mb, rt_uint8_t cmd, void *arg)
+rt_err_t rt_mb_control(rt_mailbox_t mb, int cmd, void *arg)
 {
     rt_ubase_t level;
     RT_ASSERT(mb != RT_NULL);
@@ -1775,7 +1779,7 @@ rt_err_t rt_mq_init(rt_mq_t     mq,
     for (temp = 0; temp < mq->max_msgs; temp ++)
     {
         head = (struct rt_mq_message *)((rt_uint8_t *)mq->msg_pool +
-            temp * (mq->msg_size + sizeof(struct rt_mq_message)));
+                                        temp * (mq->msg_size + sizeof(struct rt_mq_message)));
         head->next = mq->msg_queue_free;
         mq->msg_queue_free = head;
     }
@@ -1849,7 +1853,7 @@ rt_mq_t rt_mq_create(const char *name,
     mq->max_msgs = max_msgs;
 
     /* allocate message pool */
-    mq->msg_pool = RT_KERNEL_MALLOC((mq->msg_size + sizeof(struct rt_mq_message))* mq->max_msgs);
+    mq->msg_pool = RT_KERNEL_MALLOC((mq->msg_size + sizeof(struct rt_mq_message)) * mq->max_msgs);
     if (mq->msg_pool == RT_NULL)
     {
         rt_mq_delete(mq);
@@ -1866,7 +1870,7 @@ rt_mq_t rt_mq_create(const char *name,
     for (temp = 0; temp < mq->max_msgs; temp ++)
     {
         head = (struct rt_mq_message *)((rt_uint8_t *)mq->msg_pool +
-               temp * (mq->msg_size + sizeof(struct rt_mq_message)));
+                                        temp * (mq->msg_size + sizeof(struct rt_mq_message)));
         head->next = mq->msg_queue_free;
         mq->msg_queue_free = head;
     }
@@ -1902,8 +1906,8 @@ rt_err_t rt_mq_delete(rt_mq_t mq)
     else
 #endif
 
-    /* free message queue pool */
-    RT_KERNEL_FREE(mq->msg_pool);
+        /* free message queue pool */
+        RT_KERNEL_FREE(mq->msg_pool);
 
     /* delete message queue object */
     rt_object_delete(&(mq->parent.parent));
@@ -1942,7 +1946,7 @@ rt_err_t rt_mq_send(rt_mq_t mq, void *buffer, rt_size_t size)
     temp = rt_hw_interrupt_disable();
 
     /* get a free list, there must be an empty item */
-    msg = (struct rt_mq_message*)mq->msg_queue_free;
+    msg = (struct rt_mq_message *)mq->msg_queue_free;
     /* message queue is full */
     if (msg == RT_NULL)
     {
@@ -2233,7 +2237,7 @@ RTM_EXPORT(rt_mq_recv);
  *
  * @return the error code
  */
-rt_err_t rt_mq_control(rt_mq_t mq, rt_uint8_t cmd, void *arg)
+rt_err_t rt_mq_control(rt_mq_t mq, int cmd, void *arg)
 {
     rt_ubase_t level;
     struct rt_mq_message *msg;

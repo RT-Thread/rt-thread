@@ -24,6 +24,7 @@
  *                             fix memory check in rt_realloc function
  * 2010-07-13     Bernard      fix RT_ALIGN issue found by kuronca
  * 2010-10-14     Bernard      fix rt_realloc issue when realloc a NULL pointer.
+ * 2017-07-14     armink       fix rt_realloc issue when new size is 0
  */
 
 /*
@@ -112,6 +113,10 @@ struct heap_mem
     rt_uint16_t used;
 
     rt_size_t next, prev;
+
+#ifdef RT_USING_MEMTRACE
+    rt_uint8_t thread[4];   /* thread name */
+#endif
 };
 
 /** pointer to the heap: for alignment, heap_ptr is now a pointer instead of an array */
@@ -131,6 +136,22 @@ static rt_size_t mem_size_aligned;
 
 #ifdef RT_MEM_STATS
 static rt_size_t used_mem, max_mem;
+#endif
+#ifdef RT_USING_MEMTRACE
+rt_inline void rt_mem_setname(struct heap_mem *mem, const char *name)
+{
+    int index;
+    for (index = 0; index < sizeof(mem->thread); index ++)
+    {
+        if (name[index] == '\0') break;
+        mem->thread[index] = name[index];
+    }
+
+    for (; index < sizeof(mem->thread); index ++)
+    {
+        mem->thread[index] = ' ';
+    }
+}
 #endif
 
 static void plug_holes(struct heap_mem *mem)
@@ -216,6 +237,9 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
     mem->next  = mem_size_aligned + SIZEOF_STRUCT_MEM;
     mem->prev  = 0;
     mem->used  = 0;
+#ifdef RT_USING_MEMTRACE
+    rt_mem_setname(mem, "INIT");
+#endif
 
     /* initialize the end of the heap */
     heap_end        = (struct heap_mem *)&heap_ptr[mem->next];
@@ -223,6 +247,9 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
     heap_end->used  = 1;
     heap_end->next  = mem_size_aligned + SIZEOF_STRUCT_MEM;
     heap_end->prev  = mem_size_aligned + SIZEOF_STRUCT_MEM;
+#ifdef RT_USING_MEMTRACE
+    rt_mem_setname(heap_end, "INIT");
+#endif
 
     rt_sem_init(&heap_sem, "heap", 1, RT_IPC_FLAG_FIFO);
 
@@ -308,6 +335,9 @@ void *rt_malloc(rt_size_t size)
                 mem2->used = 0;
                 mem2->next = mem->next;
                 mem2->prev = ptr;
+#ifdef RT_USING_MEMTRACE
+                rt_mem_setname(mem2, "    ");
+#endif
 
                 /* and insert it between mem and mem->next */
                 mem->next = ptr2;
@@ -334,13 +364,19 @@ void *rt_malloc(rt_size_t size)
                  */
                 mem->used = 1;
 #ifdef RT_MEM_STATS
-                used_mem += mem->next - ((rt_uint8_t*)mem - heap_ptr);
+                used_mem += mem->next - ((rt_uint8_t *)mem - heap_ptr);
                 if (max_mem < used_mem)
                     max_mem = used_mem;
 #endif
             }
             /* set memory block magic */
             mem->magic = HEAP_MAGIC;
+#ifdef RT_USING_MEMTRACE
+            if (rt_thread_self())
+                rt_mem_setname(mem, rt_thread_self()->name);
+            else
+                rt_mem_setname(mem, "NONE");
+#endif
 
             if (mem == lfree)
             {
@@ -354,7 +390,7 @@ void *rt_malloc(rt_size_t size)
             rt_sem_release(&heap_sem);
             RT_ASSERT((rt_uint32_t)mem + SIZEOF_STRUCT_MEM + size <= (rt_uint32_t)heap_end);
             RT_ASSERT((rt_uint32_t)((rt_uint8_t *)mem + SIZEOF_STRUCT_MEM) % RT_ALIGN_SIZE == 0);
-            RT_ASSERT((((rt_uint32_t)mem) & (RT_ALIGN_SIZE-1)) == 0);
+            RT_ASSERT((((rt_uint32_t)mem) & (RT_ALIGN_SIZE - 1)) == 0);
 
             RT_DEBUG_LOG(RT_DEBUG_MEM,
                          ("allocate memory at 0x%x, size: %d\n",
@@ -400,6 +436,11 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 
         return RT_NULL;
     }
+    else if (newsize == 0)
+    {
+        rt_free(rmem);
+        return RT_NULL;
+    }
 
     /* allocate a new memory block */
     if (rmem == RT_NULL)
@@ -437,10 +478,13 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 
         ptr2 = ptr + SIZEOF_STRUCT_MEM + newsize;
         mem2 = (struct heap_mem *)&heap_ptr[ptr2];
-        mem2->magic= HEAP_MAGIC;
+        mem2->magic = HEAP_MAGIC;
         mem2->used = 0;
         mem2->next = mem->next;
         mem2->prev = ptr;
+#ifdef RT_USING_MEMTRACE
+        rt_mem_setname(mem2, "    ");
+#endif
         mem->next = ptr2;
         if (mem2->next != mem_size_aligned + SIZEOF_STRUCT_MEM)
         {
@@ -510,7 +554,7 @@ void rt_free(void *rmem)
 
     if (rmem == RT_NULL)
         return;
-    RT_ASSERT((((rt_uint32_t)rmem) & (RT_ALIGN_SIZE-1)) == 0);
+    RT_ASSERT((((rt_uint32_t)rmem) & (RT_ALIGN_SIZE - 1)) == 0);
     RT_ASSERT((rt_uint8_t *)rmem >= (rt_uint8_t *)heap_ptr &&
               (rt_uint8_t *)rmem < (rt_uint8_t *)heap_end);
 
@@ -537,11 +581,19 @@ void rt_free(void *rmem)
     rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
 
     /* ... which has to be in a used state ... */
+    if (!mem->used || mem->magic != HEAP_MAGIC)
+    {
+        rt_kprintf("to free a bad data block:\n");
+        rt_kprintf("mem: 0x%08x, used flag: %d, magic code: 0x%04x\n", mem, mem->used, mem->magic);
+    }
     RT_ASSERT(mem->used);
     RT_ASSERT(mem->magic == HEAP_MAGIC);
     /* ... and is now unused. */
     mem->used  = 0;
     mem->magic = HEAP_MAGIC;
+#ifdef RT_USING_MEMTRACE
+    rt_mem_setname(mem, "    ");
+#endif
 
     if (mem < lfree)
     {
@@ -550,7 +602,7 @@ void rt_free(void *rmem)
     }
 
 #ifdef RT_MEM_STATS
-    used_mem -= (mem->next - ((rt_uint8_t*)mem - heap_ptr));
+    used_mem -= (mem->next - ((rt_uint8_t *)mem - heap_ptr));
 #endif
 
     /* finally, see if prev or next are free also */
@@ -582,11 +634,80 @@ void list_mem(void)
     rt_kprintf("maximum allocated memory: %d\n", max_mem);
 }
 FINSH_FUNCTION_EXPORT(list_mem, list memory usage information)
-#endif
+
+#ifdef RT_USING_MEMTRACE
+int memcheck(void)
+{
+    int position;
+    rt_uint32_t level;
+    struct heap_mem *mem;
+    level = rt_hw_interrupt_disable();
+    for (mem = (struct heap_mem *)heap_ptr; mem != heap_end; mem = (struct heap_mem *)&heap_ptr[mem->next])
+    {
+        position = (rt_uint32_t)mem - (rt_uint32_t)heap_ptr;
+        if (position < 0) goto __exit;
+        if (position > mem_size_aligned) goto __exit;
+        if (mem->magic != HEAP_MAGIC) goto __exit;
+        if (mem->used != 0 && mem->used != 1) goto __exit;
+    }
+    rt_hw_interrupt_enable(level);
+
+    return 0;
+__exit:
+    rt_kprintf("Memory block wrong:\n");
+    rt_kprintf("address: 0x%08x\n", mem);
+    rt_kprintf("  magic: 0x%04x\n", mem->magic);
+    rt_kprintf("   used: %d\n", mem->used);
+    rt_kprintf("  size: %d\n", mem->next - position - SIZEOF_STRUCT_MEM);
+    rt_hw_interrupt_enable(level);
+
+    return 0;
+}
+MSH_CMD_EXPORT(memcheck, check memory data);
+
+int memtrace(int argc, char **argv)
+{
+    struct heap_mem *mem;
+
+    list_mem();
+
+    rt_kprintf("\nmemory heap address:\n");
+    rt_kprintf("heap_ptr: 0x%08x\n", heap_ptr);
+    rt_kprintf("lfree   : 0x%08x\n", lfree);
+    rt_kprintf("heap_end: 0x%08x\n", heap_end);
+
+    rt_kprintf("\n--memory item information --\n");
+    for (mem = (struct heap_mem *)heap_ptr; mem != heap_end; mem = (struct heap_mem *)&heap_ptr[mem->next])
+    {
+        int position = (rt_uint32_t)mem - (rt_uint32_t)heap_ptr;
+        int size;
+
+        rt_kprintf("[0x%08x - ", mem);
+
+        size = mem->next - position - SIZEOF_STRUCT_MEM;
+        if (size < 1024)
+            rt_kprintf("%5d", size);
+        else if (size < 1024 * 1024)
+            rt_kprintf("%4dK", size / 1024);
+        else
+            rt_kprintf("%4dM", size / (1024 * 1024));
+
+        rt_kprintf("] %c%c%c%c", mem->thread[0], mem->thread[1], mem->thread[2], mem->thread[3]);
+        if (mem->magic != HEAP_MAGIC)
+            rt_kprintf(": ***\n");
+        else
+            rt_kprintf("\n");
+    }
+
+    return 0;
+}
+MSH_CMD_EXPORT(memtrace, dump memory trace information);
+#endif /* end of RT_USING_MEMTRACE */
+#endif /* end of RT_USING_FINSH    */
+
 #endif
 
 /**@}*/
 
 #endif /* end of RT_USING_HEAP */
 #endif /* end of RT_USING_MEMHEAP_AS_HEAP */
-

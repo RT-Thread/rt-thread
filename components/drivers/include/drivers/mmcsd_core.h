@@ -185,7 +185,7 @@ struct rt_mmcsd_req {
  * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
  */
 
-rt_inline rt_uint32_t fls(rt_uint32_t val)
+rt_inline rt_uint32_t __rt_fls(rt_uint32_t val)
 {
 	rt_uint32_t  bit = 32;
 
@@ -247,9 +247,9 @@ void mmcsd_change(struct rt_mmcsd_host *host);
 void mmcsd_detect(void *param);
 struct rt_mmcsd_host *mmcsd_alloc_host(void);
 void mmcsd_free_host(struct rt_mmcsd_host *host);
-void rt_mmcsd_core_init(void);
+int rt_mmcsd_core_init(void);
 
-void rt_mmcsd_blk_init(void);
+int rt_mmcsd_blk_init(void);
 rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card);
 void rt_mmcsd_blk_remove(struct rt_mmcsd_card *card);
 

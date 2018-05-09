@@ -320,6 +320,9 @@ static int davinci_spi_setup_transfer(struct rt_spi_device *spi,
 	u8 chip_select = (u8)spi->parent.user_data;
 
 	dspi = spi->bus->parent.user_data;
+	spicfg = (struct davinci_spi_config *)dspi->controller_data;
+	if (!spicfg)
+		spicfg = &davinci_spi_default_cfg;
 
 	bits_per_word = cfg->data_width;
 	hz = cfg->max_hz;
@@ -960,4 +963,5 @@ int rt_hw_spi_init(void)
     return 0;
 }
 
+INIT_DEVICE_EXPORT(rt_hw_spi_init);
 

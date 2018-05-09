@@ -33,17 +33,6 @@
 #include <rtthread.h>
 #include "finsh.h"
 
-/* For historical reasons, users don't define FINSH_USING_HISTORY in rtconfig.h
- * but expect the history feature. So you sould define FINSH_USING_HISTORY to 0
- * to disable it from the rtconfig.h. */
-#ifdef FINSH_USING_HISTORY
-#    if FINSH_USING_HISTORY == 0
-#        undef FINSH_USING_HISTORY
-#    endif
-#else
-#    define FINSH_USING_HISTORY
-#endif
-
 #ifndef FINSH_THREAD_PRIORITY
 #define FINSH_THREAD_PRIORITY 20
 #endif
@@ -51,53 +40,75 @@
 #define FINSH_THREAD_STACK_SIZE 2048
 #endif
 #ifndef FINSH_CMD_SIZE
-#define FINSH_CMD_SIZE		80
+#define FINSH_CMD_SIZE      80
 #endif
 
-#define FINSH_OPTION_ECHO	0x01
+#define FINSH_OPTION_ECHO   0x01
 #if defined(FINSH_USING_MSH) || (defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR))
-#define FINSH_PROMPT		finsh_get_prompt()
+#define FINSH_PROMPT        finsh_get_prompt()
 const char* finsh_get_prompt(void);
 #else
-#define FINSH_PROMPT		"finsh>>"
+#define FINSH_PROMPT        "finsh>>"
 #endif
 
 #ifdef FINSH_USING_HISTORY
-	#ifndef FINSH_HISTORY_LINES
-		#define FINSH_HISTORY_LINES 5
-	#endif
+    #ifndef FINSH_HISTORY_LINES
+        #define FINSH_HISTORY_LINES 5
+    #endif
+#endif
+
+#ifdef FINSH_USING_AUTH
+    #ifndef FINSH_PASSWORD_MAX
+        #define FINSH_PASSWORD_MAX RT_NAME_MAX
+    #endif
+    #ifndef FINSH_PASSWORD_MIN
+        #define FINSH_PASSWORD_MIN 6
+    #endif
+    #ifndef FINSH_DEFAULT_PASSWORD
+        #define FINSH_DEFAULT_PASSWORD "rtthread"
+    #endif
+#endif /* FINSH_USING_AUTH */
+
+#ifndef FINSH_THREAD_NAME
+#define FINSH_THREAD_NAME   "tshell"
 #endif
 
 enum input_stat
 {
-	WAIT_NORMAL,
-	WAIT_SPEC_KEY,
-	WAIT_FUNC_KEY,
+    WAIT_NORMAL,
+    WAIT_SPEC_KEY,
+    WAIT_FUNC_KEY,
 };
 struct finsh_shell
 {
-	struct rt_semaphore rx_sem;
+    struct rt_semaphore rx_sem;
 
-	enum input_stat stat;
+    enum input_stat stat;
 
-	rt_uint8_t echo_mode:1;
+    rt_uint8_t echo_mode:1;
 
 #ifdef FINSH_USING_HISTORY
-	rt_uint16_t current_history;
-	rt_uint16_t history_count;
+    rt_uint16_t current_history;
+    rt_uint16_t history_count;
 
-	char cmd_history[FINSH_HISTORY_LINES][FINSH_CMD_SIZE];
+    char cmd_history[FINSH_HISTORY_LINES][FINSH_CMD_SIZE];
 #endif
 
 #ifndef FINSH_USING_MSH_ONLY
-	struct finsh_parser parser;
+    struct finsh_parser parser;
 #endif
 
-	char line[FINSH_CMD_SIZE];
-	rt_uint8_t line_position;
-	rt_uint8_t line_curpos;
+    char line[FINSH_CMD_SIZE];
+    rt_uint8_t line_position;
+    rt_uint8_t line_curpos;
 
-	rt_device_t device;
+#ifndef RT_USING_POSIX
+    rt_device_t device;
+#endif
+
+#ifdef FINSH_USING_AUTH
+    char password[FINSH_PASSWORD_MAX];
+#endif
 };
 
 void finsh_set_echo(rt_uint32_t echo);
@@ -107,4 +118,10 @@ int finsh_system_init(void);
 void finsh_set_device(const char* device_name);
 const char* finsh_get_device(void);
 
+#ifdef FINSH_USING_AUTH
+rt_err_t finsh_set_password(const char *password);
+const char *finsh_get_password(void);
 #endif
+
+#endif
+

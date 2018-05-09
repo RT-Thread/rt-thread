@@ -32,6 +32,8 @@ import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import SubElement
 from utils import _make_path_relative
 from utils import xml_indent
+import utils
+
 fs_encoding = sys.getfilesystemencoding()
 
 #reference
@@ -123,16 +125,16 @@ def VS_add_ItemGroup(parent, file_type, files, project_path):
             ObjName.text = ''.join('$(IntDir)'+objpath+'\\')
 
 def VS_add_HeadFiles(program, elem, project_path):
-    building.source_ext = []
-    building.source_ext = ["h"]
+    utils.source_ext = []
+    utils.source_ext = ["h"]
     for item in program:
-        building.walk_children(item)    
-    building.source_list.sort()
-    # print building.source_list
+        utils.walk_children(item)    
+    utils.source_list.sort()
+    # print utils.source_list
     ItemGroup = SubElement(elem, 'ItemGroup')
 
     filter_h_ItemGroup = SubElement(filter_project, 'ItemGroup')
-    for f in building.source_list:
+    for f in utils.source_list:
         path = _make_path_relative(project_path, f)
         File = SubElement(ItemGroup, 'ClInclude')
         File.set('Include', path.decode(fs_encoding))

@@ -37,11 +37,6 @@ enum
     SCHED_MAX = SCHED_RR
 };
 
-struct sched_param
-{
-    int sched_priority;
-};
-
 #ifdef __cplusplus
 extern "C"
 {

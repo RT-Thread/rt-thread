@@ -24,7 +24,7 @@
 
 /*@{*/
 
-#if defined(RT_USING_UART) && defined(RT_USING_DEVICE)
+#if defined(RT_USING_SERIAL) && defined(RT_USING_DEVICE)
 
 struct rt_uart_ls1c
 {

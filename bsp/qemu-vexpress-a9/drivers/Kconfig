@@ -1,0 +1,17 @@
+config RT_USING_UART0
+    bool "Enable UART0"
+    default n
+
+config RT_USING_UART1
+    bool "Enable UART1"
+    default y
+
+config BSP_DRV_CLCD
+    bool "CLCD driver"
+    depends on PKG_USING_GUIENGINE
+    default y
+
+config BSP_DRV_EMAC
+    bool "EMAC driver"
+    depends on RT_USING_LWIP
+    default y

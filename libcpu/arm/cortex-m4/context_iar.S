@@ -149,16 +149,16 @@ skip_pop_fpu
 
     MSR     psp, r1                 ; update stack pointer
 
-pendsv_exit
-    ; restore interrupt
-    MSR     PRIMASK, r2
-
 #if defined ( __ARMVFP__ )
     ORR     lr, lr, #0x10           ; lr |=  (1 << 4), clean FPCA.
     CBZ     r3, return_without_fpu  ; if(flag_r3 != 0)
     BIC     lr, lr, #0x10           ; lr &= ~(1 << 4), set FPCA.
 return_without_fpu
 #endif
+
+pendsv_exit
+    ; restore interrupt
+    MSR     PRIMASK, r2
 
     ORR     lr, lr, #0x04
     BX      lr
@@ -207,7 +207,9 @@ rt_hw_context_switch_to:
     NOP
     MSR     msp, r0
 
-    CPSIE   I                       ; enable interrupts at processor level
+    ; enable interrupts at processor level
+    CPSIE   F
+    CPSIE   I
 
     ; never reach here!
 

@@ -2,7 +2,7 @@
 //
 // hw_emac.h - Macros used when accessing the EMAC hardware.
 //
-// Copyright (c) 2012-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2012-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 2.1.0.12573 of the Tiva Firmware Development Package.
+// This is part of revision 2.1.4.178 of the Tiva Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -58,6 +58,10 @@
                                             // Frame Filter
 #define EMAC_O_PMTCTLSTAT       0x0000002C  // Ethernet MAC PMT Control and
                                             // Status Register
+#define EMAC_O_LPICTLSTAT       0x00000030  // Ethernet MAC Low Power Idle
+                                            // Control and Status Register
+#define EMAC_O_LPITIMERCTL      0x00000034  // Ethernet MAC Low Power Idle
+                                            // Timer Control Register
 #define EMAC_O_RIS              0x00000038  // Ethernet MAC Raw Interrupt
                                             // Status
 #define EMAC_O_IM               0x0000003C  // Ethernet MAC Interrupt Mask
@@ -295,19 +299,6 @@
 //*****************************************************************************
 #define EMAC_FLOWCTL_PT_M       0xFFFF0000  // Pause Time
 #define EMAC_FLOWCTL_DZQP       0x00000080  // Disable Zero-Quanta Pause
-#define EMAC_FLOWCTL_PLT_M      0x00000030  // Pause Low Threshold
-#define EMAC_FLOWCTL_PLT_4      0x00000000  // The threshold is Pause time
-                                            // minus 4 slot times (PT - 4 slot
-                                            // times)
-#define EMAC_FLOWCTL_PLT_28     0x00000010  // The threshold is Pause time
-                                            // minus 28 slot times (PT - 28
-                                            // slot times)
-#define EMAC_FLOWCTL_PLT_144    0x00000020  // The threshold is Pause time
-                                            // minus 144 slot times (PT - 144
-                                            // slot times)
-#define EMAC_FLOWCTL_PLT_156    0x00000030  // The threshold is Pause time
-                                            // minus 256 slot times (PT - 256
-                                            // slot times)
 #define EMAC_FLOWCTL_UP         0x00000008  // Unicast Pause Frame Detect
 #define EMAC_FLOWCTL_RFE        0x00000004  // Receive Flow Control Enable
 #define EMAC_FLOWCTL_TFE        0x00000002  // Transmit Flow Control Enable
@@ -420,9 +411,38 @@
 
 //*****************************************************************************
 //
+// The following are defines for the bit fields in the EMAC_O_LPICTLSTAT
+// register.
+//
+//*****************************************************************************
+#define EMAC_LPICTLSTAT_LPITXA  0x00080000  // LPI TX Automate
+#define EMAC_LPICTLSTAT_PLSEN   0x00040000  // PHY Link Status Enable
+#define EMAC_LPICTLSTAT_PLS     0x00020000  // PHY Link Status
+#define EMAC_LPICTLSTAT_LPIEN   0x00010000  // LPI Enable
+#define EMAC_LPICTLSTAT_RLPIST  0x00000200  // Receive LPI State
+#define EMAC_LPICTLSTAT_TLPIST  0x00000100  // Transmit LPI State
+#define EMAC_LPICTLSTAT_RLPIEX  0x00000008  // Receive LPI Exit
+#define EMAC_LPICTLSTAT_RLPIEN  0x00000004  // Receive LPI Entry
+#define EMAC_LPICTLSTAT_TLPIEX  0x00000002  // Transmit LPI Exit
+#define EMAC_LPICTLSTAT_TLPIEN  0x00000001  // Transmit LPI Entry
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the EMAC_O_LPITIMERCTL
+// register.
+//
+//*****************************************************************************
+#define EMAC_LPITIMERCTL_LST_M  0x03FF0000  // Low Power Idle LS Timer
+#define EMAC_LPITIMERCTL_LST_S  16
+#define EMAC_LPITIMERCTL_TWT_M  0x0000FFFF  // Low Power Idle TW Timer
+#define EMAC_LPITIMERCTL_TWT_S  0
+
+//*****************************************************************************
+//
 // The following are defines for the bit fields in the EMAC_O_RIS register.
 //
 //*****************************************************************************
+#define EMAC_RIS_LPI            0x00000400  // LPI Interrupt Status
 #define EMAC_RIS_TS             0x00000200  // Timestamp Interrupt Status
 #define EMAC_RIS_MMCTX          0x00000040  // MMC Transmit Interrupt Status
 #define EMAC_RIS_MMCRX          0x00000020  // MMC Receive Interrupt Status
@@ -434,6 +454,7 @@
 // The following are defines for the bit fields in the EMAC_O_IM register.
 //
 //*****************************************************************************
+#define EMAC_IM_LPI             0x00000400  // LPI Interrupt Mask
 #define EMAC_IM_TSI             0x00000200  // Timestamp Interrupt Mask
 #define EMAC_IM_PMT             0x00000008  // PMT Interrupt Mask
 
@@ -875,77 +896,6 @@
 #define EMAC_PPSCTRL_PPSCTRL_M  0x0000000F  // EN0PPS Output Frequency Control
                                             // (PPSCTRL) or Command Control
                                             // (PPSCMD)
-#define EMAC_PPSCTRL_PPSCTRL_1HZ                                              \
-                                0x00000000  // When the PPSEN0 bit = 0x0, the
-                                            // EN0PPS signal is 1 pulse of the
-                                            // PTP reference clock.(of width
-                                            // clk_ptp_i) every second
-#define EMAC_PPSCTRL_PPSCTRL_2HZ                                              \
-                                0x00000001  // When the PPSEN0 bit = 0x0, the
-                                            // binary rollover is 2 Hz, and the
-                                            // digital rollover is 1 Hz
-#define EMAC_PPSCTRL_PPSCTRL_4HZ                                              \
-                                0x00000002  // When the PPSEN0 bit = 0x0, the
-                                            // binary rollover is 4 Hz, and the
-                                            // digital rollover is 2 Hz
-#define EMAC_PPSCTRL_PPSCTRL_8HZ                                              \
-                                0x00000003  // When thePPSEN0 bit = 0x0, the
-                                            // binary rollover is 8 Hz, and the
-                                            // digital rollover is 4 Hz,
-#define EMAC_PPSCTRL_PPSCTRL_16HZ                                             \
-                                0x00000004  // When thePPSEN0 bit = 0x0, the
-                                            // binary rollover is 16 Hz, and
-                                            // the digital rollover is 8 Hz
-#define EMAC_PPSCTRL_PPSCTRL_32HZ                                             \
-                                0x00000005  // When thePPSEN0 bit = 0x0, the
-                                            // binary rollover is 32 Hz, and
-                                            // the digital rollover is 16 Hz
-#define EMAC_PPSCTRL_PPSCTRL_64HZ                                             \
-                                0x00000006  // When thePPSEN0 bit = 0x0, the
-                                            // binary rollover is 64 Hz, and
-                                            // the digital rollover is 32 Hz
-#define EMAC_PPSCTRL_PPSCTRL_128HZ                                            \
-                                0x00000007  // When thePPSEN0 bit = 0x0, the
-                                            // binary rollover is 128 Hz, and
-                                            // the digital rollover is 64 Hz
-#define EMAC_PPSCTRL_PPSCTRL_256HZ                                            \
-                                0x00000008  // When thePPSEN0 bit = 0x0, the
-                                            // binary rollover is 256 Hz, and
-                                            // the digital rollover is 128 Hz
-#define EMAC_PPSCTRL_PPSCTRL_512HZ                                            \
-                                0x00000009  // When thePPSEN0 bit = 0x0, the
-                                            // binary rollover is 512 Hz, and
-                                            // the digital rollover is 256 Hz
-#define EMAC_PPSCTRL_PPSCTRL_1024HZ                                           \
-                                0x0000000A  // When the PPSEN0 bit = 0x0, the
-                                            // binary rollover is 1.024 kHz,
-                                            // and the digital rollover is 512
-                                            // Hz
-#define EMAC_PPSCTRL_PPSCTRL_2048HZ                                           \
-                                0x0000000B  // When thePPSEN0 bit = 0x0, the
-                                            // binary rollover is 2.048 kHz,
-                                            // and the digital rollover is
-                                            // 1.024 kHz
-#define EMAC_PPSCTRL_PPSCTRL_4096HZ                                           \
-                                0x0000000C  // When thePPSEN0 bit = 0x0, the
-                                            // binary rollover is 4.096 kHz,
-                                            // and the digital rollover is
-                                            // 2.048 kHz
-#define EMAC_PPSCTRL_PPSCTRL_8192HZ                                           \
-                                0x0000000D  // When thePPSEN0 bit = 0x0, the
-                                            // binary rollover is 8.192 kHz,
-                                            // and the digital rollover is
-                                            // 4.096 kHz
-#define EMAC_PPSCTRL_PPSCTRL_16384HZ                                          \
-                                0x0000000E  // When thePPSEN0 bit = 0x0, the
-                                            // binary rollover is 16.384 kHz,
-                                            // and the digital rollover is
-                                            // 8.092 kHz
-#define EMAC_PPSCTRL_PPSCTRL_32768HZ                                          \
-                                0x0000000F  // When thePPSEN0 bit = 0x0, the
-                                            // binary rollover is 32.768 KHz,
-                                            // and the digital rollover is
-                                            // 16.384 KHz
 
 //*****************************************************************************
 //
@@ -1039,6 +989,7 @@
 // The following are defines for the bit fields in the EMAC_O_DMARIS register.
 //
 //*****************************************************************************
+#define EMAC_DMARIS_LPI         0x40000000  // LPI Trigger Interrupt Status
 #define EMAC_DMARIS_TT          0x20000000  // Timestamp Trigger Interrupt
                                             // Status
 #define EMAC_DMARIS_PMT         0x10000000  // MAC PMT Interrupt Status
@@ -1831,6 +1782,84 @@
 //
 //*****************************************************************************
 #ifndef DEPRECATED
+
+//*****************************************************************************
+//
+// The following are deprecated defines for the bit fields in the
+// EMAC_O_PPSCTRL register.
+//
+//*****************************************************************************
+#define EMAC_PPSCTRL_PPSCTRL_1HZ                                              \
+                                0x00000000  // When the PPSEN0 bit = 0x0, the
+                                            // EN0PPS signal is 1 pulse of the
+                                            // PTP reference clock.(of width
+                                            // clk_ptp_i) every second
+#define EMAC_PPSCTRL_PPSCTRL_2HZ                                              \
+                                0x00000001  // When the PPSEN0 bit = 0x0, the
+                                            // binary rollover is 2 Hz, and the
+                                            // digital rollover is 1 Hz
+#define EMAC_PPSCTRL_PPSCTRL_4HZ                                              \
+                                0x00000002  // When the PPSEN0 bit = 0x0, the
+                                            // binary rollover is 4 Hz, and the
+                                            // digital rollover is 2 Hz
+#define EMAC_PPSCTRL_PPSCTRL_8HZ                                              \
+                                0x00000003  // When thePPSEN0 bit = 0x0, the
+                                            // binary rollover is 8 Hz, and the
+                                            // digital rollover is 4 Hz,
+#define EMAC_PPSCTRL_PPSCTRL_16HZ                                             \
+                                0x00000004  // When thePPSEN0 bit = 0x0, the
+                                            // binary rollover is 16 Hz, and
+                                            // the digital rollover is 8 Hz
+#define EMAC_PPSCTRL_PPSCTRL_32HZ                                             \
+                                0x00000005  // When thePPSEN0 bit = 0x0, the
+                                            // binary rollover is 32 Hz, and
+                                            // the digital rollover is 16 Hz
+#define EMAC_PPSCTRL_PPSCTRL_64HZ                                             \
+                                0x00000006  // When thePPSEN0 bit = 0x0, the
+                                            // binary rollover is 64 Hz, and
+                                            // the digital rollover is 32 Hz
+#define EMAC_PPSCTRL_PPSCTRL_128HZ                                            \
+                                0x00000007  // When thePPSEN0 bit = 0x0, the
+                                            // binary rollover is 128 Hz, and
+                                            // the digital rollover is 64 Hz
+#define EMAC_PPSCTRL_PPSCTRL_256HZ                                            \
+                                0x00000008  // When thePPSEN0 bit = 0x0, the
+                                            // binary rollover is 256 Hz, and
+                                            // the digital rollover is 128 Hz
+#define EMAC_PPSCTRL_PPSCTRL_512HZ                                            \
+                                0x00000009  // When thePPSEN0 bit = 0x0, the
+                                            // binary rollover is 512 Hz, and
+                                            // the digital rollover is 256 Hz
+#define EMAC_PPSCTRL_PPSCTRL_1024HZ                                           \
+                                0x0000000A  // When the PPSEN0 bit = 0x0, the
+                                            // binary rollover is 1.024 kHz,
+                                            // and the digital rollover is 512
+                                            // Hz
+#define EMAC_PPSCTRL_PPSCTRL_2048HZ                                           \
+                                0x0000000B  // When thePPSEN0 bit = 0x0, the
+                                            // binary rollover is 2.048 kHz,
+                                            // and the digital rollover is
+                                            // 1.024 kHz
+#define EMAC_PPSCTRL_PPSCTRL_4096HZ                                           \
+                                0x0000000C  // When thePPSEN0 bit = 0x0, the
+                                            // binary rollover is 4.096 kHz,
+                                            // and the digital rollover is
+                                            // 2.048 kHz
+#define EMAC_PPSCTRL_PPSCTRL_8192HZ                                           \
+                                0x0000000D  // When thePPSEN0 bit = 0x0, the
+                                            // binary rollover is 8.192 kHz,
+                                            // and the digital rollover is
+                                            // 4.096 kHz
+#define EMAC_PPSCTRL_PPSCTRL_16384HZ                                          \
+                                0x0000000E  // When thePPSEN0 bit = 0x0, the
+                                            // binary rollover is 16.384 kHz,
+                                            // and the digital rollover is
+                                            // 8.092 kHz
+#define EMAC_PPSCTRL_PPSCTRL_32768HZ                                          \
+                                0x0000000F  // When thePPSEN0 bit = 0x0, the
+                                            // binary rollover is 32.768 KHz,
+                                            // and the digital rollover is
+                                            // 16.384 KHz
 
 //*****************************************************************************
 //

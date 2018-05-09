@@ -3027,6 +3027,9 @@ struct rt_stm32_eth
 
     /* interface address info. */
     rt_uint8_t  dev_addr[MAX_ADDR_LEN];			/* hw address	*/
+
+	uint32_t ETH_HashTableHigh;
+	uint32_t ETH_HashTableLow;
 };
 static struct rt_stm32_eth stm32_eth_device;
 static struct rt_semaphore tx_buf_free;
@@ -3082,10 +3085,118 @@ void ETH_IRQHandler(void)
 
 /* RT-Thread Device Interface */
 
+#if (LWIP_IPV4 && LWIP_IGMP) || (LWIP_IPV6 && LWIP_IPV6_MLD)
+/* polynomial: 0x04C11DB7 */
+static uint32_t ethcrc(const uint8_t *data, size_t length)
+{
+	uint32_t crc = 0xffffffff;
+	size_t i;
+	int j;
+
+	for (i = 0; i < length; i++)
+	{
+		for (j = 0; j < 8; j++)
+		{
+			if (((crc >> 31) ^ (data[i] >> j)) & 0x01)
+			{
+				/* x^26+x^23+x^22+x^16+x^12+x^11+x^10+x^8+x^7+x^5+x^4+x^2+x+1 */
+				crc = (crc << 1) ^ 0x04C11DB7;
+			}
+			else
+			{
+				crc = crc << 1;
+			}
+		}
+	}
+
+	return ~crc;
+}
+
+#define HASH_BITS	6		/* #bits in hash */
+static void register_multicast_address(struct rt_stm32_eth *stm32_eth, const uint8_t *mac)
+{
+	uint32_t crc;
+	uint8_t hash;
+
+	/* calculate crc32 value of mac address */
+	crc = ethcrc(mac, 6);
+
+	/* only upper 6 bits (HASH_BITS) are used
+	* which point to specific bit in he hash registers
+	*/
+	hash = (crc >> 26) & 0x3F;
+	//rt_kprintf("register_multicast_address crc: %08X hash: %02X\n", crc, hash);
+
+	if (hash > 31)
+	{
+		stm32_eth->ETH_HashTableHigh |= 1 << (hash - 32);
+		ETH->MACHTHR = stm32_eth->ETH_HashTableHigh;
+	}
+	else
+	{
+		stm32_eth->ETH_HashTableLow |= 1 << hash;
+		ETH->MACHTLR = stm32_eth->ETH_HashTableLow;
+	}
+}
+#endif /* (LWIP_IPV4 && LWIP_IGMP) || (LWIP_IPV6 && LWIP_IPV6_MLD) */
+
+#if LWIP_IPV4 && LWIP_IGMP
+static err_t igmp_mac_filter( struct netif *netif, const ip4_addr_t *ip4_addr, u8_t action )
+{
+    uint8_t mac[6];
+	const uint8_t *p = (const uint8_t *)ip4_addr;
+    struct rt_stm32_eth *stm32_eth = (struct rt_stm32_eth *)netif->state;
+
+	mac[0] = 0x01;
+	mac[1] = 0x00;
+	mac[2] = 0x5E;
+	mac[3] = *(p+1) & 0x7F;
+	mac[4] = *(p+2);
+	mac[5] = *(p+3);
+
+	register_multicast_address(stm32_eth, mac);
+
+	if(1)
+	{
+		rt_kprintf("%s %s %s ", __FUNCTION__, (action==NETIF_ADD_MAC_FILTER)?"add":"del", ip4addr_ntoa(ip4_addr));
+		rt_kprintf("%02X:%02X:%02X:%02X:%02X:%02X\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+	}
+
+	return 0;
+}
+#endif /* LWIP_IPV4 && LWIP_IGMP */
+
+#if LWIP_IPV6 && LWIP_IPV6_MLD
+static err_t mld_mac_filter( struct netif *netif, const ip6_addr_t *ip6_addr, u8_t action )
+{
+    uint8_t mac[6];
+	const uint8_t *p = (const uint8_t *)&ip6_addr->addr[3];
+    struct rt_stm32_eth *stm32_eth = (struct rt_stm32_eth *)netif->state;
+
+	mac[0] = 0x33;
+	mac[1] = 0x33;
+	mac[2] = *(p+0);
+	mac[3] = *(p+1);
+	mac[4] = *(p+2);
+	mac[5] = *(p+3);
+
+	register_multicast_address(stm32_eth, mac);
+
+	if(1)
+	{
+		rt_kprintf("%s %s %s ", __FUNCTION__, (action==NETIF_ADD_MAC_FILTER)?"add":"del", ip6addr_ntoa(ip6_addr));
+		rt_kprintf("%02X:%02X:%02X:%02X:%02X:%02X\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+	}
+
+	return 0;
+}
+#endif /* LWIP_IPV6 && LWIP_IPV6_MLD */
+
 /* initialize the interface */
 static rt_err_t rt_stm32_eth_init(rt_device_t dev)
 {
     vu32 Value = 0;
+    struct rt_stm32_eth * stm32_eth = (struct rt_stm32_eth *)dev;
 
     /* Reset ETHERNET on AHB Bus */
     ETH_DeInit();
@@ -3112,7 +3223,9 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
     ETH_InitStructure.ETH_ReceiveAll = ETH_ReceiveAll_Enable;
     ETH_InitStructure.ETH_BroadcastFramesReception = ETH_BroadcastFramesReception_Disable;
     ETH_InitStructure.ETH_PromiscuousMode = ETH_PromiscuousMode_Disable;
-    ETH_InitStructure.ETH_MulticastFramesFilter = ETH_MulticastFramesFilter_Perfect;
+    ETH_InitStructure.ETH_MulticastFramesFilter = ETH_MulticastFramesFilter_HashTable;
+    ETH_InitStructure.ETH_HashTableHigh = stm32_eth->ETH_HashTableHigh;
+    ETH_InitStructure.ETH_HashTableLow  = stm32_eth->ETH_HashTableLow;
     ETH_InitStructure.ETH_UnicastFramesFilter = ETH_UnicastFramesFilter_Perfect;
 #if CHECKSUM_BY_HARDWARE
     ETH_InitStructure.ETH_ChecksumOffload = ETH_ChecksumOffload_Enable;
@@ -3153,6 +3266,14 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
     /* Enable MAC and DMA transmission and reception */
     ETH_Start();
 
+#if LWIP_IPV4 && LWIP_IGMP
+    netif_set_igmp_mac_filter(stm32_eth->parent.netif, igmp_mac_filter);
+#endif /* LWIP_IPV4 && LWIP_IGMP */
+
+#if LWIP_IPV6 && LWIP_IPV6_MLD
+    netif_set_mld_mac_filter(stm32_eth->parent.netif, mld_mac_filter);
+#endif /* LWIP_IPV6 && LWIP_IPV6_MLD */
+
     return RT_EOK;
 }
 
@@ -3178,7 +3299,7 @@ static rt_size_t rt_stm32_eth_write (rt_device_t dev, rt_off_t pos, const void* 
     return 0;
 }
 
-static rt_err_t rt_stm32_eth_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_stm32_eth_control(rt_device_t dev, int cmd, void *args)
 {
     switch(cmd)
     {
@@ -3206,7 +3327,12 @@ rt_err_t rt_stm32_eth_tx( rt_device_t dev, struct pbuf* p)
     {
         rt_err_t result;
         result = rt_sem_take(&tx_buf_free, 2);
-        if (result != RT_EOK) return -RT_ERROR;
+        if (result != RT_EOK)
+        {
+            ETH_FlushTransmitFIFO();  // clear fifo
+            ETH_ResumeDMATransmission();	 //	resume dma	
+            return -RT_ERROR;
+        }
     }
 
     offset = 0;

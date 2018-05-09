@@ -192,21 +192,22 @@ static rt_size_t rt_hwtimer_write(struct rt_device *dev, rt_off_t pos, const voi
     if (size != sizeof(rt_hwtimerval_t))
         return 0;
 
-    if ((timer->cycles <= 1) && (timer->mode == HWTIMER_MODE_ONESHOT))
-    {
-        opm = HWTIMER_MODE_ONESHOT;
-    }
     timer->ops->stop(timer);
     timer->overflow = 0;
 
     t = timeout_calc(timer, (rt_hwtimerval_t*)buffer);
+    if ((timer->cycles <= 1) && (timer->mode == HWTIMER_MODE_ONESHOT))
+    {
+        opm = HWTIMER_MODE_ONESHOT;
+    }
+
     if (timer->ops->start(timer, t, opm) != RT_EOK)
         size = 0;
 
     return size;
 }
 
-static rt_err_t rt_hwtimer_control(struct rt_device *dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_hwtimer_control(struct rt_device *dev, int cmd, void *args)
 {
     rt_err_t result = RT_EOK;
     rt_hwtimer_t *timer;

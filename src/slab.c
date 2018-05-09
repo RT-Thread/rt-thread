@@ -222,8 +222,8 @@ static int zone_page_cnt;
 #define PAGE_TYPE_LARGE     0x02
 struct memusage
 {
-    rt_uint32_t type:2 ;        /* page type */
-    rt_uint32_t size:30;        /* pages allocated or offset from zone */
+    rt_uint32_t type: 2 ;       /* page type */
+    rt_uint32_t size: 30;       /* pages allocated or offset from zone */
 };
 static struct memusage *memusage = RT_NULL;
 #define btokup(addr)    \
@@ -238,7 +238,7 @@ struct rt_page_head
     rt_size_t page;                 /* number of page  */
 
     /* dummy */
-    char dummy[RT_MM_PAGE_SIZE - (sizeof(struct rt_page_head*) + sizeof (rt_size_t))];
+    char dummy[RT_MM_PAGE_SIZE - (sizeof(struct rt_page_head *) + sizeof(rt_size_t))];
 };
 static struct rt_page_head *rt_page_list;
 static struct rt_semaphore heap_sem;
@@ -248,7 +248,7 @@ void *rt_page_alloc(rt_size_t npages)
     struct rt_page_head *b, *n;
     struct rt_page_head **prev;
 
-    if(npages == 0)
+    if (npages == 0)
         return RT_NULL;
 
     /* lock heap */
@@ -383,7 +383,7 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
 
     /* calculate zone size */
     zone_size = ZALLOC_MIN_ZONE_SIZE;
-    while (zone_size < ZALLOC_MAX_ZONE_SIZE && (zone_size << 1) < (limsize/1024))
+    while (zone_size < ZALLOC_MAX_ZONE_SIZE && (zone_size << 1) < (limsize / 1024))
         zone_size <<= 1;
 
     zone_limit = zone_size / 4;
@@ -398,7 +398,7 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
     /* allocate memusage array */
     limsize  = npages * sizeof(struct memusage);
     limsize  = RT_ALIGN(limsize, RT_MM_PAGE_SIZE);
-    memusage = rt_page_alloc(limsize/RT_MM_PAGE_SIZE);
+    memusage = rt_page_alloc(limsize / RT_MM_PAGE_SIZE);
 
     RT_DEBUG_LOG(RT_DEBUG_SLAB, ("memusage 0x%x, size 0x%x\n",
                                  (rt_uint32_t)memusage, limsize));
@@ -411,20 +411,20 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
 rt_inline int zoneindex(rt_uint32_t *bytes)
 {
     /* unsigned for shift opt */
-    rt_uint32_t n = (rt_uint32_t)*bytes;
+    rt_uint32_t n = (rt_uint32_t) * bytes;
 
     if (n < 128)
     {
         *bytes = n = (n + 7) & ~7;
 
         /* 8 byte chunks, 16 zones */
-        return(n / 8 - 1);
+        return (n / 8 - 1);
     }
     if (n < 256)
     {
         *bytes = n = (n + 15) & ~15;
 
-        return(n / 16 + 7);
+        return (n / 16 + 7);
     }
     if (n < 8192)
     {
@@ -432,35 +432,35 @@ rt_inline int zoneindex(rt_uint32_t *bytes)
         {
             *bytes = n = (n + 31) & ~31;
 
-            return(n / 32 + 15);
+            return (n / 32 + 15);
         }
         if (n < 1024)
         {
             *bytes = n = (n + 63) & ~63;
 
-            return(n / 64 + 23);
+            return (n / 64 + 23);
         }
         if (n < 2048)
         {
             *bytes = n = (n + 127) & ~127;
 
-            return(n / 128 + 31);
+            return (n / 128 + 31);
         }
         if (n < 4096)
         {
             *bytes = n = (n + 255) & ~255;
 
-            return(n / 256 + 39);
+            return (n / 256 + 39);
         }
         *bytes = n = (n + 511) & ~511;
 
-        return(n / 512 + 47);
+        return (n / 512 + 47);
     }
     if (n < 16384)
     {
         *bytes = n = (n + 1023) & ~1023;
 
-        return(n / 1024 + 55);
+        return (n / 1024 + 55);
     }
 
     rt_kprintf("Unexpected byte count %d", n);
@@ -616,7 +616,10 @@ void *rt_malloc(rt_size_t size)
             /* allocate a zone from page */
             z = rt_page_alloc(zone_size / RT_MM_PAGE_SIZE);
             if (z == RT_NULL)
-                goto fail;
+            {
+                chunk = RT_NULL;
+                goto __exit;
+            }
 
             /* lock heap */
             rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
@@ -672,15 +675,10 @@ void *rt_malloc(rt_size_t size)
 
 done:
     rt_sem_release(&heap_sem);
-
     RT_OBJECT_HOOK_CALL(rt_malloc_hook, ((char *)chunk, size));
 
+__exit:
     return chunk;
-
-fail:
-    rt_sem_release(&heap_sem);
-
-    return RT_NULL;
 }
 RTM_EXPORT(rt_malloc);
 
@@ -737,7 +735,7 @@ void *rt_realloc(void *ptr, rt_size_t size)
 
         zoneindex(&size);
         if (z->z_chunksize == size)
-            return(ptr); /* same chunk */
+            return (ptr); /* same chunk */
 
         /*
          * Allocate memory for the new request size.  Note that zoneindex has
@@ -803,7 +801,7 @@ void rt_free(void *ptr)
     RT_OBJECT_HOOK_CALL(rt_free_hook, (ptr));
 
 #ifdef RT_USING_MODULE
-    if(rt_module_self() != RT_NULL)
+    if (rt_module_self() != RT_NULL)
     {
         rt_module_free(rt_module_self(), ptr);
 

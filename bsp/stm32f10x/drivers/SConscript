@@ -29,17 +29,20 @@ if GetDepend('RT_USING_DFS'):
 
 # add Ethernet drivers.
 if GetDepend('RT_USING_RTC'):
-    src += ['rtc.c']
+    src += ['stm32f1_rtc.c']
 
 # add Ethernet drivers.
-if GetDepend('RT_USING_RTGUI'):
+if GetDepend('PKG_USING_GUIENGINE'):
     src += ['touch.c']
     if rtconfig.RT_USING_LCD_TYPE == 'ILI932X':
         src += ['ili_lcd_general.c']
     elif rtconfig.RT_USING_LCD_TYPE == 'SSD1289':
         src += ['ssd1289.c']
 
-    
+# add wdt driver.
+if GetDepend('RT_USING_WDT'):
+    src += ['stm32f1_wdg.c']
+
 CPPPATH = [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)

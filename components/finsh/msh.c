@@ -26,6 +26,7 @@
  * Date           Author       Notes
  * 2013-03-30     Bernard      the first verion for finsh
  * 2014-01-03     Bernard      msh can execute module.
+ * 2017-07-19     Aubr.Cool    limit argc to RT_FINSH_ARG_MAX
  */
 
 #include "msh.h"
@@ -103,6 +104,7 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[RT_FINSH_ARG_MAX])
     char *ptr;
     rt_size_t position;
     rt_size_t argc;
+    rt_size_t i;
 
     ptr = cmd;
     position = 0; argc = 0;
@@ -115,6 +117,18 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[RT_FINSH_ARG_MAX])
             *ptr = '\0';
             ptr ++; position ++;
         }
+
+        if(argc >= RT_FINSH_ARG_MAX)
+        {
+            rt_kprintf("Too many args ! We only Use:\n");
+            for(i = 0; i < argc; i++)
+            {
+                rt_kprintf("%s ", argv[i]);
+            }
+            rt_kprintf("\n");
+            break;
+        }
+
         if (position >= length) break;
 
         /* handle string */
@@ -268,7 +282,7 @@ RTM_EXPORT(system);
 static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
 {
     int argc;
-    int cmd0_size = 0;
+    rt_size_t cmd0_size = 0;
     cmd_function_t cmd_func;
     char *argv[RT_FINSH_ARG_MAX];
 
@@ -391,7 +405,10 @@ void msh_auto_complete_path(char *path)
     ptr = path;
     for (;;)
     {
-        if (*ptr == '/') index = ptr + 1; if (!*ptr) break; ptr ++;
+        if (*ptr == '/') index = ptr + 1; 
+        if (!*ptr) break; 
+
+        ptr ++;
     }
     if (index == RT_NULL) index = path;
 
@@ -431,7 +448,7 @@ void msh_auto_complete_path(char *path)
     }
     else
     {
-        int length, min_length;
+        rt_size_t length, min_length;
 
         min_length = 0;
         for (;;)

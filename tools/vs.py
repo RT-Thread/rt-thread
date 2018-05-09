@@ -26,6 +26,7 @@ import os
 import sys
 import string
 import building
+import utils
 
 import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import SubElement
@@ -33,7 +34,7 @@ from utils import _make_path_relative
 from utils import xml_indent
 fs_encoding = sys.getfilesystemencoding()
 
-def VS_AddGroup(ProjectFiles, parent, name, files, project_path):
+def VS_AddGroup(ProjectFiles, parent, name, files, libs, project_path):
     Filter = SubElement(parent, 'Filter')
     Filter.set('Name', name) #set group name to group
 
@@ -48,15 +49,25 @@ def VS_AddGroup(ProjectFiles, parent, name, files, project_path):
         File = SubElement(Filter, 'File')
         File.set('RelativePath', path.decode(fs_encoding))
 
+    for lib in libs:
+        name = os.path.basename(lib)
+        path = os.path.dirname(lib)
+
+        path = _make_path_relative(project_path, path)
+        path = os.path.join(path, name)
+
+        File = SubElement(Filter, 'File')
+        File.set('RelativePath', path.decode(fs_encoding))
+
 def VS_AddHeadFilesGroup(program, elem, project_path):
-    building.source_ext = []
-    building.source_ext = ["h"]
+    utils.source_ext = []
+    utils.source_ext = ["h"]
     for item in program:
-        building.walk_children(item)    
-    building.source_list.sort()
-    # print building.source_list
+        utils.walk_children(item)    
+    utils.source_list.sort()
+    # print utils.source_list
     
-    for f in building.source_list:
+    for f in utils.source_list:
         path = _make_path_relative(project_path, f)
         File = SubElement(elem, 'File')
         File.set('RelativePath', path.decode(fs_encoding))
@@ -79,7 +90,19 @@ def VSProject(target, script, program):
             break
 
     for group in script:
-        group_xml = VS_AddGroup(ProjectFiles, elem, group['name'], group['src'], project_path)
+        libs = []
+        if group.has_key('LIBS') and group['LIBS']:
+            for item in group['LIBS']:
+                lib_path = ''
+                for path_item in group['LIBPATH']:
+                    full_path = os.path.join(path_item, item + '.lib')
+                    if os.path.isfile(full_path): # has this library
+                        lib_path = full_path
+
+                if lib_path != '':
+                    libs.append(lib_path)
+
+        group_xml = VS_AddGroup(ProjectFiles, elem, group['name'], group['src'], libs, project_path)
 
     # add "*.h" files group
     for elem in tree.iter(tag='Filter'):
@@ -108,7 +131,14 @@ def VSProject(target, script, program):
 
     # write cppdefinitons flags
     if building.Env.has_key('CPPDEFINES'):
-        definitions = ';'.join(building.Env['CPPDEFINES'])
+        CPPDEFINES = building.Env['CPPDEFINES']
+        definitions = []
+        if type(CPPDEFINES[0]) == type(()):
+            for item in CPPDEFINES:
+                definitions += [i for i in item]
+            definitions = ';'.join(definitions)
+        else:
+            definitions = ';'.join(building.Env['CPPDEFINES'])
         elem.set('PreprocessorDefinitions', definitions)
     # write link flags
 

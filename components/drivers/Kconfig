@@ -1,0 +1,294 @@
+menu "Device Drivers"
+
+config RT_USING_DEVICE_IPC
+    bool "Using device drivers IPC"
+    default y
+
+config RT_USING_SERIAL
+    bool "Using serial device drivers"
+    select RT_USING_DEVICE_IPC
+    select RT_USING_DEVICE
+    default y
+
+config RT_USING_CAN
+    bool "Using CAN device drivers"
+    default n
+
+if RT_USING_CAN
+    config RT_CAN_USING_HDR
+        bool "Enable CAN hardware filter"
+        default y
+endif
+
+config RT_USING_HWTIMER
+    bool "Using hardware timer device drivers"
+    default n
+
+config RT_USING_CPUTIME
+    bool "Enable CPU time for high resolution clock counter"
+    default n
+    help
+        When enable this option, the BSP should provide a rt_clock_cputime_ops
+        for CPU time by:
+        const static struct rt_clock_cputime_ops _ops = {...};
+        clock_cpu_setops(&_ops);
+
+        Then user can use high resolution clock counter with:
+
+        ts1 = clock_cpu_gettime();
+        ts2 = clock_cpu_gettime();
+
+        /* and get the ms of delta tick with API: */
+        ms_tick = clock_cpu_millisecond(t2 - t1);
+        us_tick = clock_cpu_microsecond(t2 - t1);
+
+if RT_USING_CPUTIME 
+    config RT_USING_CPUTIME_CORTEXM
+        bool "Use DWT for CPU time"
+        default y
+        depends on ARCH_ARM_CORTEX_M3 || ARCH_ARM_CORTEX_M4 || ARCH_ARM_CORTEX_M7
+        help
+            Some Cortex-M3/4/7 MCU has Data Watchpoint and Trace Register, use 
+            the cycle counter in DWT for CPU time.
+endif
+
+config RT_USING_I2C
+    bool "Using I2C device drivers"
+    default n
+
+if RT_USING_I2C
+    config RT_USING_I2C_BITOPS
+        bool "Use GPIO to simulate I2C"
+        default y
+endif
+
+config RT_USING_PIN
+    bool "Using generic GPIO device drivers"
+    default y
+
+config RT_USING_MTD_NOR
+    bool "Using MTD Nor Flash device drivers"
+    default n
+
+config RT_USING_MTD_NAND
+    bool "Using MTD Nand Flash device drivers"
+    default n
+
+    if RT_USING_MTD_NAND
+    config RT_MTD_NAND_DEBUG
+        bool "Enable MTD Nand operations debug information"
+        default n
+    endif
+
+config RT_USING_RTC
+    bool "Using RTC device drivers"
+    default n
+
+    if RT_USING_RTC
+    config RT_USING_SOFT_RTC
+        bool "Using software simulation RTC device"
+        default n
+    config RTC_SYNC_USING_NTP
+        bool "Using NTP auto sync RTC time"
+        select PKG_USING_NETUTILS
+        select PKG_NETUTILS_NTP
+        default n
+        
+        if RTC_SYNC_USING_NTP
+        config RTC_NTP_FIRST_SYNC_DELAY
+            int "NTP first sync delay time(second) for network connect"
+            default 30
+        config RTC_NTP_SYNC_PERIOD
+            int "NTP auto sync period(second)"
+            default 3600
+       endif
+    endif
+
+config RT_USING_SDIO
+    bool "Using SD/MMC device drivers"
+    default n
+
+config RT_USING_SPI
+    bool "Using SPI Bus/Device device drivers"
+    default n
+
+    if RT_USING_SPI
+        config RT_USING_SPI_MSD
+            bool "Using SD/TF card driver with spi"
+            select RT_USING_DFS
+            default n
+
+        config RT_USING_SFUD
+            bool "Using Serial Flash Universal Driver"
+            default n
+            if RT_USING_SFUD            
+                config RT_SFUD_USING_SFDP
+                bool "Using auto probe flash JEDEC SFDP parameter"
+                default y
+                
+                config RT_SFUD_USING_FLASH_INFO_TABLE
+                bool "Using defined supported flash chip information table"
+                default y
+                
+                config RT_DEBUG_SFUD
+                bool "Show more SFUD debug information"
+                default n
+            endif
+    
+        config RT_USING_W25QXX
+            bool "Using W25QXX SPI NorFlash"
+            default n
+
+        config RT_USING_GD
+            bool "Using GD SPI NorFlash"
+            default n
+
+        config RT_USING_ENC28J60
+            bool "Using ENC28J60 SPI Ethernet network interface"
+            select RT_USING_LWIP
+            default n
+
+        config RT_USING_SPI_WIFI
+            bool "Using RW009/007 SPI Wi-Fi wireless interface"
+            select RT_USING_LWIP
+            default n
+    endif
+
+config RT_USING_WDT
+    bool "Using Watch Dog device drivers"
+    default n
+
+config RT_USING_WIFI
+    bool "Using Wi-Fi network"
+    default n
+
+menu "Using USB"
+    config RT_USING_USB_HOST
+        bool "Using USB host"
+        default n
+
+        if RT_USING_USB_HOST
+            config RT_USBH_MSTORAGE
+                bool "Enable Udisk Drivers"
+                default n
+                if RT_USBH_MSTORAGE
+                    config UDISK_MOUNTPOINT
+                    string "Udisk mount dir"
+                    default "/"
+                endif
+        endif
+    config RT_USING_USB_DEVICE
+        bool "Using USB device"
+        default n
+        if RT_USING_USB_DEVICE || RT_USING_USB_HOST
+            config RT_USBD_THREAD_STACK_SZ
+                int "usb thread stack size"
+                default 4096
+        endif
+        if RT_USING_USB_DEVICE
+            config USB_VENDOR_ID
+                hex "USB Vendor ID"
+                default 0x0FFE
+            config USB_PRODUCT_ID
+                hex "USB Product ID"
+                default 0x0001
+            
+            config RT_USB_DEVICE_COMPOSITE
+                bool "Enable composite device"
+                default n
+                choice
+                    prompt "Device type"
+                    default _RT_USB_DEVICE_NONE
+                    depends on !RT_USB_DEVICE_COMPOSITE
+                    config _RT_USB_DEVICE_NONE
+                        bool "Using custom class by register interface"
+                        select RT_USB_DEVICE_NONE
+                    config _RT_USB_DEVICE_CDC
+                        bool "Enable to use device as CDC device"
+                        select RT_USB_DEVICE_CDC
+                    config _RT_USB_DEVICE_MSTORAGE
+                        bool "Enable to use device as Mass Storage device"
+                        select RT_USB_DEVICE_MSTORAGE
+                    config _RT_USB_DEVICE_HID
+                        bool "Enable to use device as HID device"
+                        select RT_USB_DEVICE_HID
+                    config _RT_USB_DEVICE_RNDIS
+                        bool "Enable to use device as rndis device"
+                        select RT_USB_DEVICE_RNDIS
+                        depends on RT_USING_LWIP
+                    config _RT_USB_DEVICE_ECM
+                        bool "Enable to use device as ecm device"
+                        select RT_USB_DEVICE_ECM
+                        depends on RT_USING_LWIP
+                    config _RT_USB_DEVICE_WINUSB
+                        bool "Enable to use device as winusb device"
+                        select RT_USB_DEVICE_WINUSB
+                endchoice
+                if RT_USB_DEVICE_COMPOSITE
+                    config RT_USB_DEVICE_CDC
+                        bool "Enable to use device as CDC device"
+                        default n
+                    config RT_USB_DEVICE_NONE
+                        default y
+                    config RT_USB_DEVICE_MSTORAGE
+                        bool "Enable to use device as Mass Storage device"
+                        default n
+                    config RT_USB_DEVICE_HID
+                        bool "Enable to use device as HID device"
+                        default n
+                    config RT_USB_DEVICE_RNDIS
+                        bool "Enable to use device as rndis device"
+                        default n
+                        depends on RT_USING_LWIP
+                    config RT_USB_DEVICE_ECM
+                        bool "Enable to use device as ecm device"
+                        default n
+                        depends on RT_USING_LWIP
+                    config RT_USB_DEVICE_WINUSB
+                        bool "Enable to use device as winusb device"
+                        default n
+                endif
+                if RT_USB_DEVICE_WINUSB
+                    config RT_WINUSB_GUID
+                    string "Guid for winusb"
+                    default "{6860DC3C-C05F-4807-8807-1CA861CC1D66}"
+                endif
+                if RT_USB_DEVICE_MSTORAGE
+                    config RT_USB_MSTORAGE_DISK_NAME
+                    string "msc class disk name"
+                    default "flash0"
+                endif
+                if RT_USB_DEVICE_HID
+                    config RT_USB_DEVICE_HID_KEYBOARD
+                        bool "Use to HID device as Keyboard"
+                        default n
+                    if RT_USB_DEVICE_HID_KEYBOARD
+                        config RT_USB_DEVICE_HID_KEYBOARD_NUMBER
+                        int "Number of Keyboard(max 3)"
+                        default 1
+                        range 1 3
+                    endif
+                    config RT_USB_DEVICE_HID_MOUSE
+                        bool "Use to HID device as Mouse"
+                        default n
+                    config RT_USB_DEVICE_HID_GENERAL
+                        bool "Use to HID device as General HID device"
+                        default y
+                        if RT_USB_DEVICE_HID_GENERAL
+                            config RT_USB_DEVICE_HID_GENERAL_OUT_REPORT_LENGTH
+                                int "General HID device out report length"
+                                default 63
+                                range 0 63
+
+                            config RT_USB_DEVICE_HID_GENERAL_IN_REPORT_LENGTH
+                                int "General HID device in report length"
+                                default 63
+                                range 0 63
+                        endif
+                    config RT_USB_DEVICE_HID_MEDIA
+                        bool "Use to HID device as media keyboard"
+                        default y
+                endif
+        endif
+    endmenu
+endmenu

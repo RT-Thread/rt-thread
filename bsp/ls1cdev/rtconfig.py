@@ -12,11 +12,12 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM    = 'gcc'
-	EXEC_PATH   = '/opt/opt/gcc-4.3-ls232/bin'
+#	EXEC_PATH   = "/opt/mips-2015.05/bin"
+	EXEC_PATH   = r'D:\mgc\embedded\codebench\bin'
 else:
-    print '================ERROR==========================='
-    print 'Not support %s yet!' % CROSS_TOOL
-    print '================================================='
+    print('================ERROR===========================')
+    print('Not support %s yet!' % CROSS_TOOL)
+    print('=================================================')
     exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):
@@ -24,6 +25,9 @@ if os.getenv('RTT_EXEC_PATH'):
 
 BUILD       = 'debug'
 
+# don't use loongson company's cross-compilation tool chain to compile the RT-Thread
+# must use the cross-compilation tool chain that RT-Thread recommand
+# download: https://coding.net/u/bernard/p/rtthread_tools/git/blob/master/GCC_Toolchains.md
 PREFIX = 'mips-sde-elf-'
 CC = PREFIX + 'gcc'
 AS = PREFIX + 'gcc'

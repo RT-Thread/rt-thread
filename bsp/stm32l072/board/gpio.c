@@ -14,9 +14,7 @@
 #include <rthw.h>
 #include <rtdevice.h>
 #include <board.h>
-#ifdef RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif
+
 #ifdef RT_USING_PIN
 
 #include "stm32l0xx.h"
