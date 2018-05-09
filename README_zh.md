@@ -84,3 +84,4 @@ RT-Thread使用了[scons](http://www.scons.org)做为自身的编译构建系统
 ## 贡献者 ##
 
 请访问github上RT-Thread项目上的contributors了解已经为RT-Thread提交过代码，PR的贡献者。感谢所有为RT-Thread付出的开发者们！
+TEST
