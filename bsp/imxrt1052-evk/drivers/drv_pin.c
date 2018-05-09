@@ -246,10 +246,6 @@ void GPIO1_Combined_0_15_IRQHandler(void)
         gpio_isr(GPIO1, gpio_pin); 
     }
     
-#if defined __CORTEX_M && (__CORTEX_M == 4U)
-    __DSB();
-#endif
-    
     rt_interrupt_leave();
 }
 
@@ -263,10 +259,6 @@ void GPIO1_Combined_16_31_IRQHandler(void)
     {
         gpio_isr(GPIO1, gpio_pin); 
     }
-    
-#if defined __CORTEX_M && (__CORTEX_M == 4U)
-    __DSB();
-#endif
     
     rt_interrupt_leave();
 }
@@ -282,10 +274,6 @@ void GPIO2_Combined_0_15_IRQHandler(void)
         gpio_isr(GPIO2, gpio_pin); 
     }
     
-#if defined __CORTEX_M && (__CORTEX_M == 4U)
-    __DSB();
-#endif
-    
     rt_interrupt_leave();
 }
 
@@ -299,10 +287,6 @@ void GPIO2_Combined_16_31_IRQHandler(void)
     {
         gpio_isr(GPIO2, gpio_pin); 
     }
-    
-#if defined __CORTEX_M && (__CORTEX_M == 4U)
-    __DSB();
-#endif
     
     rt_interrupt_leave();
 }
@@ -318,10 +302,6 @@ void GPIO3_Combined_0_15_IRQHandler(void)
         gpio_isr(GPIO3, gpio_pin); 
     }
     
-#if defined __CORTEX_M && (__CORTEX_M == 4U)
-    __DSB();
-#endif
-    
     rt_interrupt_leave();
 }
 
@@ -335,10 +315,6 @@ void GPIO3_Combined_16_31_IRQHandler(void)
     {
         gpio_isr(GPIO3, gpio_pin); 
     }
-    
-#if defined __CORTEX_M && (__CORTEX_M == 4U)
-    __DSB();
-#endif
     
     rt_interrupt_leave();
 }
@@ -354,10 +330,6 @@ void GPIO4_Combined_0_15_IRQHandler(void)
         gpio_isr(GPIO4, gpio_pin); 
     }
     
-#if defined __CORTEX_M && (__CORTEX_M == 4U)
-    __DSB();
-#endif
-    
     rt_interrupt_leave();
 }
 void GPIO4_Combined_16_31_IRQHandler(void)
@@ -370,10 +342,6 @@ void GPIO4_Combined_16_31_IRQHandler(void)
     {
         gpio_isr(GPIO4, gpio_pin); 
     }
-    
-#if defined __CORTEX_M && (__CORTEX_M == 4U)
-    __DSB();
-#endif
     
     rt_interrupt_leave();
 }
@@ -388,10 +356,7 @@ void GPIO5_Combined_0_15_IRQHandler(void)
     {
         gpio_isr(GPIO5, gpio_pin); 
     }
-    
-#if defined __CORTEX_M && (__CORTEX_M == 4U)
-    __DSB();
-#endif
+
     rt_interrupt_leave();
 }
 
@@ -478,7 +443,7 @@ static void rt1052_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     {
         CLOCK_EnableClock(kCLOCK_IomuxcSnvs); 
         
-        IOMUXC_SetPinMux(0x401F8000U + (pin-125)*4, 0x5U, 0, 0, 0, 1); 
+        IOMUXC_SetPinMux(0x400A8000U + (pin-125)*4, 0x5U, 0, 0, 0, 1); 
     }
     
     gpio.outputLogic = 0; 
@@ -521,8 +486,15 @@ static void rt1052_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
         }
         break;
     }
-    
-    IOMUXC_SetPinConfig(0, 0, 0, 0, 0x401F8200U + pin*4, config_value); 
+
+    if(rt1052_pin_map[pin].gpio != GPIO5)
+    {
+        IOMUXC_SetPinConfig(0, 0, 0, 0, 0x401F8200U + pin*4, config_value); 
+    }
+    else
+    {
+        IOMUXC_SetPinConfig(0, 0, 0, 0, 0x400A8018U + (pin-125)*4, config_value); 
+    }
     
     GPIO_PinInit(rt1052_pin_map[pin].gpio, rt1052_pin_map[pin].gpio_pin, &gpio); 
 }
@@ -628,7 +600,7 @@ static rt_err_t rt1052_pin_irq_enable(struct rt_device *device, rt_base_t pin, r
         else
         {
             CLOCK_EnableClock(kCLOCK_IomuxcSnvs); 
-            IOMUXC_SetPinMux(0x401F8000U + (pin-125)*4, 0x5U, 0, 0, 0, 0); 
+            IOMUXC_SetPinMux(0x400A8000U + (pin-125)*4, 0x5U, 0, 0, 0, 0); 
         }
         
         gpio.direction     = kGPIO_DigitalInput; 
