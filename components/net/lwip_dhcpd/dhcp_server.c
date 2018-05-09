@@ -55,11 +55,8 @@
 #endif
 
 /* the DHCP server address */
-#ifndef DHCPD_SERVER_IPADDR0
-    #define DHCPD_SERVER_IPADDR0      192UL
-    #define DHCPD_SERVER_IPADDR1      168UL
-    #define DHCPD_SERVER_IPADDR2      169UL
-    #define DHCPD_SERVER_IPADDR3      1UL
+#ifndef DHCPD_SERVER_IP
+    #define DHCPD_SERVER_IP "192.168.169.1"
 #endif
 
 //#define DHCP_DEBUG_PRINTF
@@ -215,12 +212,22 @@ static void dhcpd_thread_entry(void *parameter)
     struct dhcp_msg *msg;
     int optval = 1;
     struct mac_addr_t mac_addr;
+    uint8_t DHCPD_SERVER_IPADDR0, DHCPD_SERVER_IPADDR1, DHCPD_SERVER_IPADDR2, DHCPD_SERVER_IPADDR3;
 
     /* get ethernet interface. */
     netif = (struct netif *) parameter;
     RT_ASSERT(netif != RT_NULL);
 
     /* our DHCP server information */
+    {
+        ip4_addr_t addr;
+
+        ip4addr_aton(DHCPD_SERVER_IP, &addr);
+        DHCPD_SERVER_IPADDR0 = (ntohl(addr.addr) >> 24) & 0xFF;
+        DHCPD_SERVER_IPADDR1 = (ntohl(addr.addr) >> 16) & 0xFF;
+        DHCPD_SERVER_IPADDR2 = (ntohl(addr.addr) >>  8) & 0xFF;
+        DHCPD_SERVER_IPADDR3 = (ntohl(addr.addr) >>  0) & 0xFF;
+    }
     DEBUG_PRINTF("DHCP server IP: %d.%d.%d.%d  client IP: %d.%d.%d.%d-%d\n",
                  DHCPD_SERVER_IPADDR0, DHCPD_SERVER_IPADDR1,
                  DHCPD_SERVER_IPADDR2, DHCPD_SERVER_IPADDR3,
@@ -492,12 +499,9 @@ void dhcpd_start(const char *netif_name)
     {
         extern void set_if(const char *netif_name, const char *ip_addr, const char *gw_addr, const char *nm_addr);
 
-        char ip_str[4 * 4 + 1];
-
         dhcp_stop(netif);
 
-        sprintf(ip_str, "%d.%d.%d.%d", DHCPD_SERVER_IPADDR0, DHCPD_SERVER_IPADDR1, DHCPD_SERVER_IPADDR2, DHCPD_SERVER_IPADDR3);
-        set_if(netif_name, ip_str, "0.0.0.0", "255.255.255.0");
+        set_if(netif_name, DHCPD_SERVER_IP, "0.0.0.0", "255.255.255.0");
 
         netif_set_up(netif);
     }
