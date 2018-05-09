@@ -41,33 +41,33 @@
 #include <lwip/init.h>
 
 #if (LWIP_VERSION) >= 0x02000000U
-#include <lwip/prot/dhcp.h>
+    #include <lwip/prot/dhcp.h>
 #endif
 
 /* DHCP server option */
 
 /* allocated client ip range */
 #ifndef DHCPD_CLIENT_IP_MIN
-#define DHCPD_CLIENT_IP_MIN     2
+    #define DHCPD_CLIENT_IP_MIN     2
 #endif
 #ifndef DHCPD_CLIENT_IP_MAX
-#define DHCPD_CLIENT_IP_MAX     254
+    #define DHCPD_CLIENT_IP_MAX     254
 #endif
 
 /* the DHCP server address */
 #ifndef DHCPD_SERVER_IPADDR0
-#define DHCPD_SERVER_IPADDR0      192UL
-#define DHCPD_SERVER_IPADDR1      168UL
-#define DHCPD_SERVER_IPADDR2      169UL
-#define DHCPD_SERVER_IPADDR3      1UL
+    #define DHCPD_SERVER_IPADDR0      192UL
+    #define DHCPD_SERVER_IPADDR1      168UL
+    #define DHCPD_SERVER_IPADDR2      169UL
+    #define DHCPD_SERVER_IPADDR3      1UL
 #endif
 
 //#define DHCP_DEBUG_PRINTF
 
 #ifdef  DHCP_DEBUG_PRINTF
-#define DEBUG_PRINTF        rt_kprintf("[DHCP] "); rt_kprintf
+    #define DEBUG_PRINTF        rt_kprintf("[DHCP] "); rt_kprintf
 #else
-#define DEBUG_PRINTF(...)
+    #define DEBUG_PRINTF(...)
 #endif /* DHCP_DEBUG_PRINTF */
 
 /* we need some routines in the DHCP of lwIP */
@@ -79,11 +79,11 @@
 #define BUFSZ               1024
 
 #ifndef MAC_ADDR_LEN
-#define MAC_ADDR_LEN     6
+    #define MAC_ADDR_LEN     6
 #endif
 
 #ifndef MAC_TABLE_LEN
-#define MAC_TABLE_LEN     4
+    #define MAC_TABLE_LEN     4
 #endif
 
 struct mac_addr_t

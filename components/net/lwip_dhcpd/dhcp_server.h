@@ -31,7 +31,7 @@
 #ifndef DHCPV4_SERVER_H__
 #define DHCPV4_SERVER_H__
 
-void dhcpd_start(const char* netif_name);
+void dhcpd_start(const char *netif_name);
 
 #endif
 
