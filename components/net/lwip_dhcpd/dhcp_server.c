@@ -220,7 +220,11 @@ static void dhcpd_thread_entry(void *parameter)
 
     /* our DHCP server information */
     {
+#if (LWIP_VERSION) >= 0x02000000U
         ip4_addr_t addr;
+#else
+        struct ip_addr addr;
+#endif /* LWIP_VERSION */
 
         ip4addr_aton(DHCPD_SERVER_IP, &addr);
         DHCPD_SERVER_IPADDR0 = (ntohl(addr.addr) >> 24) & 0xFF;
