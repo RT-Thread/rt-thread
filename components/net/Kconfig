@@ -201,6 +201,12 @@ config LWIP_USING_DHCPD
     bool "Enable DHCP server"
     default n
 
+    if LWIP_USING_DHCPD
+        config DHCPD_USING_ROUTER
+            bool "alloc gateway ip for router"
+            default y
+    endif
+
 endif
 
 endmenu
