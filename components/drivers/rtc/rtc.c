@@ -146,13 +146,13 @@ rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
 #ifdef RTC_SYNC_USING_NTP
 static void ntp_sync_thread_enrty(void *param)
 {
-    extern time_t ntp_sync_to_rtc(void);
+    extern time_t ntp_sync_to_rtc(const char *host_name);
     /* first sync delay for network connect */
     rt_thread_delay(RTC_NTP_FIRST_SYNC_DELAY * RT_TICK_PER_SECOND);
 
     while (1)
     {
-        ntp_sync_to_rtc();
+        ntp_sync_to_rtc(NULL);
         rt_thread_delay(RTC_NTP_SYNC_PERIOD * RT_TICK_PER_SECOND);
     }
 }
