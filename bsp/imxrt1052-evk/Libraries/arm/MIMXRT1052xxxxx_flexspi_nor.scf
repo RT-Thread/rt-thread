@@ -45,6 +45,12 @@
 ** ###################################################################
 */
 
+#define m_flash_config_start           0x60000000
+#define m_flash_config_size            0x00001000
+
+#define m_ivt_start                    0x60001000
+#define m_ivt_size                     0x00001000
+
 #define m_text_start                   0x60002000
 #define m_text_size                    0x1F7FE000
 
@@ -66,6 +72,20 @@
 #else
   #define Heap_Size                    0x0400
 #endif
+
+LR_m_rom_config m_flash_config_start m_flash_config_size {   ; load region size_region
+	RW_m_config_text m_flash_config_start m_flash_config_size { ; load address = execution address
+	* (.boot_hdr.conf, +FIRST)
+	}  
+}
+
+LR_m_rom_ivt m_ivt_start m_ivt_size {   ; load region size_region
+	RW_m_ivt_text m_ivt_start m_ivt_size { ; load address = execution address
+	* (.boot_hdr.ivt, +FIRST)
+	* (.boot_hdr.boot_data)
+	* (.boot_hdr.dcd_data)
+	}	
+}
 
 #define RTT_HEAP_SIZE                   \
     (m_data_size - ImageLength(RW_m_data) - ImageLength(ARM_LIB_HEAP) - ImageLength(ARM_LIB_STACK))
