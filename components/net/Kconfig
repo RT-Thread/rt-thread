@@ -201,6 +201,16 @@ config LWIP_USING_DHCPD
     bool "Enable DHCP server"
     default n
 
+    if LWIP_USING_DHCPD
+        config DHCPD_SERVER_IP
+            string "DHCPD SERVER IP address"
+            default 192.168.169.1
+
+        config DHCPD_USING_ROUTER
+            bool "alloc gateway ip for router"
+            default y
+    endif
+
 endif
 
 endmenu
