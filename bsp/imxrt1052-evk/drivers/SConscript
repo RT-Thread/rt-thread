@@ -61,6 +61,9 @@ if GetDepend('BOARD_RT1050_EVK') or GetDepend('BOARD_RT1050_SeeedStudio'):
     if GetDepend('RT_USING_LWIP'):
         src += ['drv_eth.c', 'fsl_phy.c']
         CPPDEFINES += ['FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE']
+        
+if GetDepend('BOARD_RT1050_FIRE') and GetDepend('RT_USING_LWIP'):
+    src += ['drv_eth_fire.c', 'fsl_phy_fire.c']
 
 if GetDepend('RT_USING_AUDIO'):
     src += ['drv_codec.c', 'fsl_wm8960.c']
