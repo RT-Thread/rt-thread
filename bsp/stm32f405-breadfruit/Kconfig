@@ -23,34 +23,9 @@ config SOC_STM32F4
     select ARCH_ARM_CORTEX_M4
     default y
 
-menu "BSP select"
-
-menu "Boards Select"
-config Boards
-    bool "STM32F405-Breadfruit"
-    select drivers
-    default y
-endmenu
-
-menu "Drivers"
-config Drivers
-    bool "drivers all"
-    select drivers
-    default y
-endmenu
-
-menu "Libraries"
-config Libraries
-    bool "Libraries all"
-    select Libraries
-    default y
-endmenu
-
-menu "UART Select"
-
 config RT_USING_UART1
     bool "Enable UART1 (PB6/7)"
-    default n
+    default y
 
 config RT_USING_UART2
     bool "Enable UART2 (PA2/3)"
@@ -58,7 +33,7 @@ config RT_USING_UART2
 
 config RT_USING_UART3
     bool "Enable UART3 (PD8/9)"
-    default n
+    default y
 
 config RT_USING_UART4
     bool "Enable UART4 (PC10/11)"
@@ -68,9 +43,3 @@ config RT_USING_UART5
     bool "Enable UART5 (PC12/PD2)"
     default n
 
-endmenu
-
-
-endmenu
-
-#source "$BSP_DIR/drivers/Kconfig"
