@@ -1,7 +1,7 @@
 /*
- * File      : synopGMAC.h
+ * File      : main.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) chinesebear
+ * COPYRIGHT (C) 2008 - 2017, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,19 +19,12 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-08-24     chinesebear  first version
+ * 2018-05-10     zhuangwei    first version
  */
 
-#ifndef __SYNOPGMAC__H
-#define __SYNOPGMAC__H
+#include <rtthread.h>
 
-#include "synopGMAC_network_interface.h"
-#include "synopGMAC_Host.h"
-#include "synopGMAC_Dev.h"
-#include "synopGMAC_plat.h"
-#include "mii.h"
-#include "synopGMAC_types.h"
-
-int rt_hw_eth_init(void);
-
-#endif	/*__SYNOPGMAC__H*/
+int main(int argc, char** argv)
+{   
+    return 0;
+}

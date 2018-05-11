@@ -117,8 +117,8 @@ typedef int bool;
 */
 
 //sw: nothing to display
-#define TR0(fmt, args...) rt_kprintf(fmt, ##args)		
-#define TR(fmt, args...)  rt_kprintf(fmt, ##args) 
+#define TR0(fmt, args...) //rt_kprintf(fmt, ##args)		
+#define TR(fmt, args...)  //rt_kprintf(fmt, ##args) 
 //#define TR rt_kprintf
 
 //typedef int bool;
