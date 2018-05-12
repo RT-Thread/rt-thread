@@ -538,6 +538,23 @@ rt_err_t rt_thread_delay(rt_tick_t tick)
 RTM_EXPORT(rt_thread_delay);
 
 /**
+ * This function will let current thread delay for some milliseconds.
+ *
+ * @param tick the delay time
+ *
+ * @return RT_EOK
+ */
+rt_err_t rt_thread_mdelay(rt_int32_t ms)
+{
+    rt_tick_t tick;
+
+    tick = rt_tick_from_millisecond(ms);
+
+    return rt_thread_sleep(tick);
+}
+RTM_EXPORT(rt_thread_mdelay);
+
+/**
  * This function will control thread behaviors according to control command.
  *
  * @param thread the specified thread to be controlled
