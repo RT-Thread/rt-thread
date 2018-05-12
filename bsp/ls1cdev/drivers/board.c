@@ -100,6 +100,9 @@ void rt_hw_board_init(void)
 	/* init hardware interrupt */
 	rt_hw_interrupt_init();
 
+	/* clear bev */
+	write_c0_status(read_c0_status()&(~(1<<22)));
+
 	/* copy vector */
 	rt_memcpy((void *)A_K0BASE, tlb_refill_exception, 0x80);
 	rt_memcpy((void *)(A_K0BASE + 0x180), general_exception, 0x80);
@@ -109,7 +112,7 @@ void rt_hw_board_init(void)
 	invalidate_icache_all();
 	
 #ifdef RT_USING_HEAP
-		rt_system_heap_init((void*)&__bss_end, (void*)RT_HW_HEAP_END);
+	rt_system_heap_init((void*)&__bss_end, (void*)RT_HW_HEAP_END);
 #endif
 
 #ifdef RT_USING_SERIAL
