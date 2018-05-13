@@ -16,8 +16,9 @@ elif rtconfig.CROSS_TOOL == 'iar':
 	src += ['startup/startup_ewarm.c']
 
 CPPPATH = [cwd, cwd + '/inc', cwd + '/driverlib']
+CCFLAGS = ' --diag_suppress=pe177'
 
 CPPDEFINES = [rtconfig.PART_TYPE]
-group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, CCFLAGS = CCFLAGS)
 
 Return('group')
