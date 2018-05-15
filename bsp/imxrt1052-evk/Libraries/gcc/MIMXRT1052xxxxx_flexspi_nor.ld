@@ -139,7 +139,8 @@ SECTIONS
 
  .ctors :
   {
-    __CTOR_LIST__ = .;
+    PROVIDE(__ctors_start__ = .);
+    /* __CTOR_LIST__ = .; */
     /* gcc uses crtbegin.o to find the start of
        the constructors, so we make sure it is
        first.  Because this is a wildcard, it
@@ -158,18 +159,21 @@ SECTIONS
     KEEP (*(EXCLUDE_FILE(*crtend?.o *crtend.o) .ctors))
     KEEP (*(SORT(.ctors.*)))
     KEEP (*(.ctors))
-    __CTOR_END__ = .;
+    /* __CTOR_END__ = .; */
+    PROVIDE(__ctors_end__ = .);
   } > m_text
 
   .dtors :
   {
-    __DTOR_LIST__ = .;
+    PROVIDE(__dtors_start__ = .);
+    /* __DTOR_LIST__ = .; */
     KEEP (*crtbegin.o(.dtors))
     KEEP (*crtbegin?.o(.dtors))
     KEEP (*(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors))
     KEEP (*(SORT(.dtors.*)))
     KEEP (*(.dtors))
-    __DTOR_END__ = .;
+    /* __DTOR_END__ = .; */
+    PROVIDE(__dtors_end__ = .);
   } > m_text
 
   .preinit_array :
@@ -218,14 +222,14 @@ SECTIONS
     *(NonCacheable.init)
     . = ALIGN(4);
     __noncachedata_init_end__ = .;   /* create a global symbol at initialized ncache data end */
-  } > m_dtcm
+  } > m_nocache
   . = __noncachedata_init_end__;
   .ncache :
   {
     *(NonCacheable)
     . = ALIGN(4);
     __noncachedata_end__ = .;     /* define a global symbol at ncache data end */
-  } > m_dtcm
+  } > m_nocache
 
   __DATA_END = __NDATA_ROM + (__noncachedata_init_end__ - __noncachedata_start__);
   text_end = ORIGIN(m_text) + LENGTH(m_text);

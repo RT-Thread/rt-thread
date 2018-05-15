@@ -181,7 +181,7 @@ static void init_rx_desc(rt_nuc472_emac_t emac)
         emac->rx_desc[i].status1 = OWNERSHIP_EMAC;
         emac->rx_desc[i].buf = &emac->rx_buf[i][0];
         emac->rx_desc[i].status2 = 0;
-        emac->rx_desc[i].next = &emac->rx_desc[(i + 1) % TX_DESCRIPTOR_NUM];
+        emac->rx_desc[i].next = &emac->rx_desc[(i + 1) % RX_DESCRIPTOR_NUM];
     }
     emac_base->RXDSA = (unsigned int)&emac->rx_desc[0];
     return;
@@ -205,8 +205,8 @@ static void set_mac_addr(rt_nuc472_emac_t emac, rt_uint8_t *addr)
 
 void EMAC_init(rt_nuc472_emac_t emac, rt_uint8_t *mac_addr)
 {
+    EMAC_T *emac_base = emac->emac_base;  
     RT_ASSERT(emac->dev_addr != RT_NULL);
-    EMAC_T *emac_base = emac->emac_base;
 
     CLK_EnableModuleClock(EMAC_MODULE);
 
@@ -445,12 +445,12 @@ rt_err_t rt_nuc472_emac_tx(rt_device_t dev, struct pbuf* p)
 struct pbuf *rt_nuc472_emac_rx(rt_device_t dev)
 {
     rt_nuc472_emac_t emac = (rt_nuc472_emac_t)dev;
+    unsigned int status;
     struct pbuf* p;
 
     /* init p pointer */
     p = RT_NULL;
 
-    unsigned int status;
     status = emac->cur_rx_desc_ptr->status1;
 
     if(status & OWNERSHIP_EMAC)

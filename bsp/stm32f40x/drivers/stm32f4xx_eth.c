@@ -4156,3 +4156,4 @@ void rt_hw_stm32_eth_init(void)
             rt_thread_startup(tid);
     }
 }
+INIT_PREV_EXPORT(rt_hw_stm32_eth_init);

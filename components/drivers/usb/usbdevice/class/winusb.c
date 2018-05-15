@@ -43,13 +43,14 @@ static struct udevice_descriptor dev_desc =
 //FS and HS needed
 static struct usb_qualifier_descriptor dev_qualifier =
 {
-    sizeof(dev_qualifier),
-    USB_DESC_TYPE_DEVICEQUALIFIER,
-    0x0200,
-    0x00,
-    0x00,
-    64,
-    0x01,
+    sizeof(dev_qualifier),          //bLength
+    USB_DESC_TYPE_DEVICEQUALIFIER,  //bDescriptorType
+    0x0200,                         //bcdUSB
+    0xFF,                           //bDeviceClass
+    0x00,                           //bDeviceSubClass
+    0x00,                           //bDeviceProtocol
+    64,                             //bMaxPacketSize0
+    0x01,                           //bNumConfigurations
     0,
 };
 
@@ -81,14 +82,14 @@ struct winusb_descriptor _winusb_desc =
     USB_DESC_TYPE_ENDPOINT,
     USB_DYNAMIC | USB_DIR_OUT,
     USB_EP_ATTR_BULK,
-    0x40,
+    USB_DYNAMIC,
     0x00,
     /*endpoint descriptor*/
     USB_DESC_LENGTH_ENDPOINT,
     USB_DESC_TYPE_ENDPOINT,
     USB_DYNAMIC | USB_DIR_IN,
     USB_EP_ATTR_BULK,
-    0x40,
+    USB_DYNAMIC,
     0x00,
 };
 
@@ -197,11 +198,13 @@ static struct ufunction_ops ops =
     RT_NULL,
 };
 
-static rt_err_t _winusb_descriptor_config(winusb_desc_t winusb, rt_uint8_t cintf_nr)
+static rt_err_t _winusb_descriptor_config(winusb_desc_t winusb, rt_uint8_t cintf_nr, rt_uint8_t device_is_hs)
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
     winusb->iad_desc.bFirstInterface = cintf_nr;
 #endif
+    winusb->ep_out_desc.wMaxPacketSize = device_is_hs ? 512 : 64;
+    winusb->ep_in_desc.wMaxPacketSize = device_is_hs ? 512 : 64;
     winusb_func_comp_id_desc.bFirstInterfaceNumber = cintf_nr;
     return RT_EOK;
 }
@@ -293,7 +296,7 @@ ufunction_t rt_usbd_function_winusb_create(udevice_t device)
     rt_usbd_altsetting_config_descriptor(winusb_setting, &_winusb_desc, (rt_off_t)&((winusb_desc_t)0)->intf_desc);
 
     /* configure the hid interface descriptor */
-    _winusb_descriptor_config(winusb_setting->desc, winusb_intf->intf_num);
+    _winusb_descriptor_config(winusb_setting->desc, winusb_intf->intf_num, device->dcd->device_is_hs);
 
     /* create endpoint */
     winusb_desc = (winusb_desc_t)winusb_setting->desc;
@@ -317,3 +320,14 @@ ufunction_t rt_usbd_function_winusb_create(udevice_t device)
     return func;
 }
 
+struct udclass winusb_class = 
+{
+    .rt_usbd_function_create = rt_usbd_function_winusb_create
+};
+
+int rt_usbd_winusb_class_register(void)
+{
+    rt_usbd_class_register(&winusb_class);
+    return 0;
+}
+INIT_PREV_EXPORT(rt_usbd_winusb_class_register);

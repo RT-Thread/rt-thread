@@ -1345,6 +1345,7 @@ status_t ENET_SendFrame(ENET_Type *base, enet_handle_t *handle, const uint8_t *d
 #else
         address = (uint32_t)curBuffDescrip->buffer;
 #endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */
+        
         memcpy((void *)address, data, length);
         /* Set data length. */
         curBuffDescrip->length = length;

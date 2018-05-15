@@ -117,7 +117,7 @@ do                                                                            \
     level = rt_hw_interrupt_disable();                                        \
     if (rt_interrupt_get_nest() != 0)                                         \
     {                                                                         \
-        rt_kprintf("Function[%s] shall not ne used in ISR\n", __FUNCTION__);  \
+        rt_kprintf("Function[%s] shall not be used in ISR\n", __FUNCTION__);  \
         RT_ASSERT(0)                                                          \
     }                                                                         \
     rt_hw_interrupt_enable(level);                                            \

@@ -20,7 +20,7 @@ elif CROSS_TOOL == 'keil':
     EXEC_PATH 	= r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
-	IAR_PATH 	= r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
+	EXEC_PATH 	= r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -119,7 +119,7 @@ elif PLATFORM == 'iar':
     CFLAGS += ' --cpu=Cortex-M7' 
     CFLAGS += ' -e' 
     CFLAGS += ' --fpu=None'
-    CFLAGS += ' --dlib_config "' + IAR_PATH + '/arm/INC/c/DLib_Config_Normal.h"'    
+    CFLAGS += ' --dlib_config "' + EXEC_PATH + '/arm/INC/c/DLib_Config_Normal.h"'    
     CFLAGS += ' -Ol'    
     CFLAGS += ' --use_c++_inline'
     CFLAGS += ' --silent'
@@ -140,5 +140,5 @@ elif PLATFORM == 'iar':
 
     CXXFLAGS = CFLAGS
 
-    EXEC_PATH = IAR_PATH + '/arm/bin/'
+    EXEC_PATH = EXEC_PATH + '/arm/bin/'
     POST_ACTION = ''

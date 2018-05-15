@@ -54,7 +54,8 @@
 
 /* RT-Thread Components */
 
-/* RT_USING_COMPONENTS_INIT is not set */
+#define RT_USING_COMPONENTS_INIT
+/* RT_USING_USER_MAIN is not set */
 
 /* C++ features */
 
@@ -228,11 +229,11 @@
 /* PKG_USING_FASTLZ is not set */
 /* PKG_USING_MINILZO is not set */
 /* PKG_USING_QUICKLZ is not set */
+/* PKG_USING_MULTIBUTTON is not set */
 
 /* example package: hello */
 
 /* PKG_USING_HELLO is not set */
-/* PKG_USING_MULTIBUTTON is not set */
 #define SOC_STM32F1
 #define RT_USING_UART1
 #define RT_USING_UART2

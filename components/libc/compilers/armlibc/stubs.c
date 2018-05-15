@@ -327,12 +327,3 @@ int fgetc(FILE *f)
     return -1;
 }
 #endif
-
-#ifndef RT_USING_RTC
-time_t time(time_t *t)
-{
-	time_t time_now = 0;
-	
-	return time_now;
-}
-#endif

@@ -114,15 +114,17 @@ static struct udevice_descriptor dev_desc =
     USB_DYNAMIC,                //bNumConfigurations;
 };
 
+//FS and HS needed
 static struct usb_qualifier_descriptor dev_qualifier =
 {
-    sizeof(dev_qualifier),
-    USB_DESC_TYPE_DEVICEQUALIFIER,
-    0x0200,
-    USB_CLASS_CDC,
-    0x00,
-    64,
-    0x01,
+    sizeof(dev_qualifier),          //bLength
+    USB_DESC_TYPE_DEVICEQUALIFIER,  //bDescriptorType
+    0x0200,                         //bcdUSB
+    USB_CLASS_CDC,                  //bDeviceClass
+    0x00,                           //bDeviceSubClass
+    0x00,                           //bDeviceProtocol
+    64,                             //bMaxPacketSize0
+    0x01,                           //bNumConfigurations
     0,
 };
 
@@ -304,7 +306,8 @@ static rt_err_t _ep_out_handler(ufunction_t func, rt_size_t size)
 
     data = (struct vcom*)func->user_data;
     /* ensure serial is active */
-    if(data->serial.parent.open_flag & RT_DEVICE_FLAG_ACTIVATED)
+    if((data->serial.parent.flag & RT_DEVICE_FLAG_ACTIVATED)
+        && (data->serial.parent.open_flag & RT_DEVICE_OFLAG_OPEN))
     {
         /* receive data from USB VCOM */
         level = rt_hw_interrupt_disable();
@@ -565,7 +568,8 @@ ufunction_t rt_usbd_function_cdc_create(udevice_t device)
     
     /* create a cdc function */
     func = rt_usbd_function_new(device, &dev_desc, &ops);
-    rt_usbd_device_set_qualifier(device, &dev_qualifier);
+    //not support HS
+    //rt_usbd_device_set_qualifier(device, &dev_qualifier);
     
     /* allocate memory for cdc vcom data */
     data = (struct vcom*)rt_malloc(sizeof(struct vcom));
@@ -930,6 +934,16 @@ static void rt_usb_vcom_init(struct ufunction *func)
     result = rt_thread_startup(&vcom_thread);
     RT_ASSERT(result == RT_EOK);       
 }
+struct udclass vcom_class = 
+{
+    .rt_usbd_function_create = rt_usbd_function_cdc_create
+};
+
+int rt_usbd_vcom_class_register(void)
+{
+    rt_usbd_class_register(&vcom_class);
+    return 0;
+}
+INIT_PREV_EXPORT(rt_usbd_vcom_class_register);
 
 #endif
-

@@ -57,7 +57,7 @@ static rt_size_t i2c_bus_device_write(rt_device_t dev,
     RT_ASSERT(bus != RT_NULL);
     RT_ASSERT(buffer != RT_NULL);
 
-    i2c_dbg("I2C bus dev writing %u bytes.\n", dev->parent.name, count);
+    i2c_dbg("I2C bus dev [%s] writing %u bytes.\n", dev->parent.name, count);
 
     addr = pos & 0xffff;
     flags = (pos >> 16) & 0xffff;

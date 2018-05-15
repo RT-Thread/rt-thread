@@ -90,6 +90,7 @@ config RT_USING_RTC
         default n
     config RTC_SYNC_USING_NTP
         bool "Using NTP auto sync RTC time"
+        select PKG_USING_NETUTILS
         select PKG_NETUTILS_NTP
         default n
         
@@ -129,7 +130,7 @@ config RT_USING_SPI
                 bool "Using defined supported flash chip information table"
                 default y
                 
-                config RT_SFUD_DEBUG
+                config RT_DEBUG_SFUD
                 bool "Show more SFUD debug information"
                 default n
             endif
@@ -179,7 +180,11 @@ menu "Using USB"
     config RT_USING_USB_DEVICE
         bool "Using USB device"
         default n
-
+        if RT_USING_USB_DEVICE || RT_USING_USB_HOST
+            config RT_USBD_THREAD_STACK_SZ
+                int "usb thread stack size"
+                default 4096
+        endif
         if RT_USING_USB_DEVICE
             config USB_VENDOR_ID
                 hex "USB Vendor ID"
@@ -193,8 +198,11 @@ menu "Using USB"
                 default n
                 choice
                     prompt "Device type"
-                    default _RT_USB_DEVICE_CDC
+                    default _RT_USB_DEVICE_NONE
                     depends on !RT_USB_DEVICE_COMPOSITE
+                    config _RT_USB_DEVICE_NONE
+                        bool "Using custom class by register interface"
+                        select RT_USB_DEVICE_NONE
                     config _RT_USB_DEVICE_CDC
                         bool "Enable to use device as CDC device"
                         select RT_USB_DEVICE_CDC
@@ -219,6 +227,8 @@ menu "Using USB"
                 if RT_USB_DEVICE_COMPOSITE
                     config RT_USB_DEVICE_CDC
                         bool "Enable to use device as CDC device"
+                        default n
+                    config RT_USB_DEVICE_NONE
                         default y
                     config RT_USB_DEVICE_MSTORAGE
                         bool "Enable to use device as Mass Storage device"

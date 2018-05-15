@@ -860,7 +860,7 @@ void eth_rx_irq(int irqno,void *param)
 	return;
 }
 
-void rt_hw_eth_init(void)
+int rt_hw_eth_init(void)
 {
 	u64 base_addr = Gmac_base; 
 	struct synopGMACNetworkAdapter * synopGMACadapter;
@@ -925,4 +925,9 @@ void rt_hw_eth_init(void)
 	eth_dev.parent.eth_rx            = rt_eth_rx;
 
 	eth_device_init(&(eth_dev.parent), "e0");
+
+	return 0;
 }
+
+INIT_DEVICE_EXPORT(rt_hw_eth_init);
+
