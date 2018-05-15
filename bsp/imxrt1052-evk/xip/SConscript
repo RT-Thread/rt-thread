@@ -18,6 +18,6 @@ if GetDepend('BOARD_RT1050_EVK') or GetDepend('BOARD_RT1050_SeeedStudio'):
     group = DefineGroup('xip', src, depend = [''], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS) 
     Return('group') 
 
-if GetDepend('BOARD_RT1050_FIRE'): 
+if GetDepend('BOARD_RT1050_FIRE') or GetDepend('BOARD_RT1050_ATK') or GetDepend('RT1050_ShareBoard'): 
     group = []
     Return('group') 
