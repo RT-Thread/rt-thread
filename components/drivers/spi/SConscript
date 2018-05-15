@@ -31,6 +31,9 @@ if GetDepend('RT_USING_GD'):
 
 if GetDepend('RT_USING_SPI_MSD'):
     src_device += ['spi_msd.c']
+    
+if GetDepend('RT_USING_ST7735'):
+    src_device += ['spi_lcd_st7735.c']
 
 if GetDepend('RT_USING_SFUD'):
     src_device += ['spi_flash_sfud.c', 'sfud/src/sfud.c']
