@@ -77,6 +77,10 @@ STM32F4 是由意法半导体推出的Cortex-M4内核的高性能单片机
 
 **MDK 与 IAR 在生成完成工程之后一定要在工程中手动选择一次芯片信号，否则会产生严重编译错误**
 
+![figure1](https://raw.githubusercontent.com/RT-Thread/rt-thread/master/bsp/stm32f4xx-HAL/figures/figure1.png)
+
+![figure2](https://raw.githubusercontent.com/RT-Thread/rt-thread/master/bsp/stm32f4xx-HAL/figures/figure2.png)
+
 5) 编译
 
 使用MDK或IAR请参见对应教程
