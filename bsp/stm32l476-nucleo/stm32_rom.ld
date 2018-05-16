@@ -1,6 +1,6 @@
 /*
- * linker script for STM32F10x with GNU ld
- * bernard.xiong 2009-10-14
+ * linker script for STM32L476 with GNU ld
+ * zyh 2018-05-15
  */
 
 /* Program Entry, set to mark it as "used" and avoid gc */
@@ -45,8 +45,6 @@ SECTIONS
         KEEP(*(SORT(.rti_fn*)))
         __rt_init_end = .;
         . = ALIGN(4);
-
-        . = ALIGN(4);
         _etext = .;
     } > CODE = 0
 
@@ -60,12 +58,12 @@ SECTIONS
         _sidata = .;
     } > CODE
     __exidx_end = .;
-
+    
     /* .data section which is used for initialized data */
 
     .data : AT (_sidata)
     {
-        . = ALIGN(4);
+        . = ALIGN(8);
         /* This is used by the startup in order to initialize the .data secion */
         _sdata = . ;
 
@@ -73,7 +71,7 @@ SECTIONS
         *(.data.*)
         *(.gnu.linkonce.d*)
 
-        . = ALIGN(4);
+        . = ALIGN(8);
         /* This is used by the startup in order to initialize the .data secion */
         _edata = . ;
     } >DATA
