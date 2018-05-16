@@ -63,6 +63,11 @@ if GetDepend('BOARD_RT1050_EVK') or GetDepend('BOARD_RT1050_SeeedStudio'):
         
 if GetDepend('BOARD_RT1050_FIRE') and GetDepend('RT_USING_LWIP'):
     src += ['drv_eth_fire.c', 'fsl_phy_fire.c']
+    
+if GetDepend('BOARD_RT1050_ATK'):
+    src += ['drv_pcf8574.c'] 
+    if GetDepend('RT_USING_LWIP'):
+        src += ['drv_eth_ATK.c', 'fsl_phy_ATK.c'] 
 
 if GetDepend('RT_USING_AUDIO'):
     src += ['drv_codec.c', 'fsl_wm8960.c']
