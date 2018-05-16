@@ -20,7 +20,10 @@ struct timeval {
 };
 #endif /* _TIMEVAL_DEFINED */
 
-#if defined ( __ICCARM__ ) && (__VER__ >= 8011002)
+/*
+ * Skip define timespec for IAR version over 8.10.1 where __VER__ is 8010001.
+ */
+#if defined ( __ICCARM__ ) && (__VER__ >= 8010001)
 #define _TIMESPEC_DEFINED
 #endif
 
