@@ -1,7 +1,7 @@
 /*
- * File      : drv_led.h
+ * File      : main.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,26 +18,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
- * Date           Author        Notes
+ * Date           Author       Notes
+ * 2018-05-14     ZYH          first implementation
  */
-
-#ifndef __DRV_LED_H__
-#define __DRV_LED_H__
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void led_init(void);
-void led_set(int led);
-int  led_get(int led);
-void led_clear(int led);
-void led_toggle(int led);
-void led_value(int value);
-void led_deinit(void);
-
-#ifdef __cplusplus
+#include <stdio.h>
+int main(void)
+{
+    printf("Hello RT-Thread\n");
+    return 0;
 }
-#endif
-
-#endif
