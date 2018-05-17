@@ -1,5 +1,6 @@
 import os
 import re
+import platform 
 
 def GetGCCRoot(rtconfig):
     exec_path = rtconfig.EXEC_PATH
@@ -59,7 +60,11 @@ def GCCResult(rtconfig, str):
         f.close()
 
         # '-fdirectives-only', 
-        child = subprocess.Popen([gcc_cmd, '-E', '-P', '__tmp.c'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        if(platform.system() == 'Windows'):
+            child = subprocess.Popen([gcc_cmd, '-E', '-P', '__tmp.c'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        else:
+            child = subprocess.Popen(gcc_cmd + ' -E -P __tmp.c', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        
         stdout, stderr = child.communicate()
 
         print(stdout)
