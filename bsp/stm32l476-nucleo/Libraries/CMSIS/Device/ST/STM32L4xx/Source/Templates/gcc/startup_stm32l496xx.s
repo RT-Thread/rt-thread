@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file      startup_stm32l496xx.s
   * @author    MCD Application Team
-  * @version   V1.3.2
-  * @date      16-June-2017
   * @brief     STM32L496xx devices vector table GCC toolchain.
   *            This module performs:
   *                - Set the initial SP
@@ -111,9 +109,9 @@ LoopFillZerobss:
 /* Call the clock system intitialization function.*/
     bl  SystemInit
 /* Call static constructors */
-    bl __libc_init_array
+/*    bl __libc_init_array*/
 /* Call the application's entry point.*/
-	bl	main
+	bl	entry
 
 LoopForever:
     b LoopForever

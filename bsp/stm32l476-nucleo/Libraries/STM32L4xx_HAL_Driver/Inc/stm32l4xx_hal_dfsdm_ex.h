@@ -1,12 +1,8 @@
 /**
   ******************************************************************************
-  * @file    stm32l4xx_hal_msp_template.c
+  * @file    stm32l4xx_hal_dfsdm_ex.h
   * @author  MCD Application Team
-  * @version V1.7.2
-  * @date    16-June-2017
-  * @brief   HAL MSP module.
-  *          This file template is located in the HAL folder and should be copied 
-  *          to the user folder.
+  * @brief   Header file of DFSDM HAL extended module.
   ******************************************************************************
   * @attention
   *
@@ -34,90 +30,80 @@
   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *
-  ******************************************************************************  
+  ******************************************************************************
   */ 
 
-/* Includes ------------------------------------------------------------------*/
-#include "stm32l4xx_hal.h"
+/* Define to prevent recursive inclusion -------------------------------------*/
+#ifndef __STM32L4xx_HAL_DFSDM_EX_H
+#define __STM32L4xx_HAL_DFSDM_EX_H
 
+#ifdef __cplusplus
+ extern "C" {
+#endif
+
+#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+
+/* Includes ------------------------------------------------------------------*/
+#include "stm32l4xx_hal_def.h"
+   
 /** @addtogroup STM32L4xx_HAL_Driver
   * @{
   */
 
-/** @defgroup HAL_MSP HAL MSP module driver
-  * @brief HAL MSP module.
+/** @addtogroup DFSDMEx
   * @{
   */
 
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-/* Private function prototypes -----------------------------------------------*/
-/* Private functions ---------------------------------------------------------*/
+/* Exported types ------------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
+/* Exported macros -----------------------------------------------------------*/
+/* Exported functions --------------------------------------------------------*/
 
-/** @defgroup HAL_MSP_Private_Functions
+/** @addtogroup DFSDMEx_Exported_Functions DFSDM Extended Exported Functions
   * @{
   */
 
-/**
-  * @brief  Initialize the Global MSP.
-  * @param  None
-  * @retval None
+/** @addtogroup DFSDMEx_Exported_Functions_Group1_Channel Extended channel operation functions
+  * @{
   */
-void HAL_MspInit(void)
-{
-  /* NOTE : This function is generated automatically by STM32CubeMX and eventually  
-            modified by the user
-   */ 
-}
+
+HAL_StatusTypeDef HAL_DFDSMEx_ChannelSetPulsesSkipping(DFSDM_Channel_HandleTypeDef *hdfsdm_channel, uint32_t PulsesValue);
+HAL_StatusTypeDef HAL_DFDSMEx_ChannelGetPulsesSkipping(DFSDM_Channel_HandleTypeDef *hdfsdm_channel, uint32_t* PulsesValue);
 
 /**
-  * @brief  DeInitialize the Global MSP.
-  * @param  None  
-  * @retval None
-  */
-void HAL_MspDeInit(void)
-{
-  /* NOTE : This function is generated automatically by STM32CubeMX and eventually  
-            modified by the user
-   */
-}
+  * @}
+  */ 
 
 /**
-  * @brief  Initialize the PPP MSP.
-  * @param  None
-  * @retval None
+  * @}
+  */ 
+
+/* Private macros ------------------------------------------------------------*/
+
+/** @addtogroup DFSDMEx_Private_Macros DFSDM Extended Private Macros
+  * @{
   */
-void HAL_PPP_MspInit(void)
-{
-  /* NOTE : This function is generated automatically by STM32CubeMX and eventually  
-            modified by the user
-   */ 
-}
+
+#define IS_DFSDM_CHANNEL_SKIPPING_VALUE(VALUE)   ((VALUE) < 64U)
 
 /**
-  * @brief  DeInitialize the PPP MSP.
-  * @param  None  
-  * @retval None
-  */
-void HAL_PPP_MspDeInit(void)
-{
-  /* NOTE : This function is generated automatically by STM32CubeMX and eventually  
-            modified by the user
-   */
-}
+  * @}
+  */ 
+
+/**
+  * @}
+  */ 
 
 /**
   * @}
   */
 
-/**
-  * @}
-  */
+#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 
-/**
-  * @}
-  */
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* __STM32L4xx_HAL_DFSDM_EX_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
