@@ -22,6 +22,13 @@ config SOC_IMXRT1052
     bool 
     select ARCH_ARM_CORTEX_M7
     default y
+    
+config BOARD_USING_HYPERFLASH
+    bool
+    default n
+config BOARD_USING_QSPIFLASH
+    bool
+    default n
 
 # RT1050 board select!
 choice
@@ -29,14 +36,19 @@ choice
     default BOARD_RT1050_EVK
     config BOARD_RT1050_EVK
         bool "RT1050_EVK"
+        select BOARD_USING_HYPERFLASH
     config BOARD_RT1050_FIRE
         bool "RT1050_FIRE"
+        select BOARD_USING_QSPIFLASH
     config BOARD_RT1050_ShareBoard
         bool "RT1050_ShareBoard"
+        select BOARD_USING_QSPIFLASH
     config BOARD_RT1050_ATK
-        bool "RT1050_ATK"	
+        bool "RT1050_ATK"
+        select BOARD_USING_QSPIFLASH
     config BOARD_RT1050_SeeedStudio
-        bool "RT1050_SeeedStudio"				
+        bool "RT1050_SeeedStudio"
+        select BOARD_USING_HYPERFLASH
 endchoice
 
 menu "RT1050 Bsp Config" 
