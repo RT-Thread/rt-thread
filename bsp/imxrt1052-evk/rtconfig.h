@@ -192,6 +192,7 @@
 /* example package: hello */
 
 #define SOC_IMXRT1052
+#define BOARD_USING_HYPERFLASH
 #define BOARD_RT1050_EVK
 
 /* RT1050 Bsp Config */
