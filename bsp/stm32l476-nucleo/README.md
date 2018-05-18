@@ -140,10 +140,6 @@ msh />
 
 | 选项 | 解释 |
 | -- | -- |
-| Device type | 选择芯片型号，修改此处需修改MDK/IAR工程为相同芯片型号 |
-| Using HSI as clock source | 不使用外部时钟源，该选项目前不能开启 |
-| HSE Value | 外部时钟源的频率，单位(HZ) |
-| System Clock Value | 系统时钟频率，该值会自动计算时钟树，某些特定频率下无法通过PLLQ产生48M时钟，可能导致USB SDIO等设备时钟异常，可使用STM32 Cube MX工具配置需要的时钟树替换board.c中的时钟初始化部分 |
 | using uart1 | 开启串口1，串口1的设备名为"uart1" |
 | using uart2 | 开启串口2，串口1的设备名为"uart2" |
 | using uart3 | 开启串口3，串口1的设备名为"uart3" |
