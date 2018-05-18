@@ -1,8 +1,8 @@
 /* ----------------------------------------------------------------------
 * Copyright (C) 2010-2014 ARM Limited. All rights reserved.
 *
-* $Date:        19. March 2015
-* $Revision: 	V.1.4.5
+* $Date:        19. October 2015
+* $Revision: 	V.1.4.5 a
 *
 * Project: 	    CMSIS DSP Library
 * Title:	    arm_common_tables.h
@@ -46,8 +46,8 @@
 extern const uint16_t armBitRevTable[1024];
 extern const q15_t armRecipTableQ15[64];
 extern const q31_t armRecipTableQ31[64];
-//extern const q31_t realCoefAQ31[1024];
-//extern const q31_t realCoefBQ31[1024];
+/* extern const q31_t realCoefAQ31[1024]; */
+/* extern const q31_t realCoefBQ31[1024]; */
 extern const float32_t twiddleCoef_16[32];
 extern const float32_t twiddleCoef_32[64];
 extern const float32_t twiddleCoef_64[128];

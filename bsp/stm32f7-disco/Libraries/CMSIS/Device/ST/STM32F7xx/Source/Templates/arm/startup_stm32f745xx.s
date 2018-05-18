@@ -1,8 +1,6 @@
-;******************** (C) COPYRIGHT 2015 STMicroelectronics ********************
+;******************** (C) COPYRIGHT 2016 STMicroelectronics ********************
 ;* File Name          : startup_stm32f745xx.s
 ;* Author             : MCD Application Team
-;* Version            : V1.0.1
-;* Date               : 25-June-2015
 ;* Description        : STM32F745xx devices vector table for MDK-ARM toolchain. 
 ;*                      This module performs:
 ;*                      - Set the initial SP
@@ -186,7 +184,7 @@ __Vectors       DCD     __initial_sp               ; Top of Stack
                 DCD     QUADSPI_IRQHandler                ; QUADSPI
                 DCD     LPTIM1_IRQHandler                 ; LPTIM1
                 DCD     CEC_IRQHandler                    ; HDMI_CEC
-                DCD     I2C4_EV_IRQHandler                ; I2C4 Event                                             
+                DCD     I2C4_EV_IRQHandler                ; I2C4 Event
                 DCD     I2C4_ER_IRQHandler                ; I2C4 Error 
                 DCD     SPDIF_RX_IRQHandler               ; SPDIF_RX
 __Vectors_End
@@ -343,12 +341,12 @@ Default_Handler PROC
                 EXPORT  DMA2D_IRQHandler                  [WEAK]
                 EXPORT  SAI2_IRQHandler                   [WEAK]   
                 EXPORT  QUADSPI_IRQHandler                [WEAK]
-				EXPORT  LPTIM1_IRQHandler                 [WEAK]
+                EXPORT  LPTIM1_IRQHandler                 [WEAK]
                 EXPORT  CEC_IRQHandler                    [WEAK]   
                 EXPORT  I2C4_EV_IRQHandler                [WEAK]
-				EXPORT  I2C4_ER_IRQHandler                [WEAK] 
+                EXPORT  I2C4_ER_IRQHandler                [WEAK] 
                 EXPORT  SPDIF_RX_IRQHandler               [WEAK]
-				
+                
 WWDG_IRQHandler                                                       
 PVD_IRQHandler                                      
 TAMP_STAMP_IRQHandler                  
@@ -435,7 +433,7 @@ UART8_IRQHandler
 SPI4_IRQHandler                   
 SPI5_IRQHandler                   
 SPI6_IRQHandler                   
-SAI1_IRQHandler                   
+SAI1_IRQHandler                 
 DMA2D_IRQHandler   
 SAI2_IRQHandler        
 QUADSPI_IRQHandler
