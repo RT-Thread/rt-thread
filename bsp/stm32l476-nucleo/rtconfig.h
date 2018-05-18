@@ -12,7 +12,7 @@
 #define RT_THREAD_PRIORITY_32
 /* RT_THREAD_PRIORITY_256 is not set */
 #define RT_THREAD_PRIORITY_MAX 32
-#define RT_TICK_PER_SECOND 1000
+#define RT_TICK_PER_SECOND 100
 #define RT_DEBUG
 #define RT_USING_OVERFLOW_CHECK
 #define RT_DEBUG_INIT 0
@@ -32,12 +32,12 @@
 
 /* Memory Management */
 
-/* RT_USING_MEMPOOL is not set */
+#define RT_USING_MEMPOOL
 /* RT_USING_MEMHEAP is not set */
 /* RT_USING_NOHEAP is not set */
 #define RT_USING_SMALL_MEM
 /* RT_USING_SLAB is not set */
-#define RT_USING_MEMTRACE
+/* RT_USING_MEMTRACE is not set */
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
@@ -106,7 +106,6 @@
 
 #define RT_USING_LIBC
 /* RT_USING_PTHREADS is not set */
-#define HAVE_SYS_SIGNALS
 
 /* Network stack */
 
