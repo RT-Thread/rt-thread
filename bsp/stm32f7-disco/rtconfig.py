@@ -20,7 +20,7 @@ elif CROSS_TOOL == 'keil':
     EXEC_PATH 	= r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
-	EXEC_PATH 	= 'C:/Program Files (x86)/IAR Systems/Embedded Workbench 7.2'
+	EXEC_PATH 	= r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -75,12 +75,12 @@ elif PLATFORM == 'armcc':
     TARGET_EXT = 'axf'
 
     DEVICE = ' --cpu Cortex-M7.fp.sp --fpu=FPv4-SP'
-    CFLAGS = DEVICE + ' --apcs=interwork -DUSE_HAL_DRIVER -DSTM32F756xx'
+    CFLAGS = DEVICE + ' --apcs=interwork '
     AFLAGS = DEVICE
     LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread.map --scatter rtthread.sct'
 
-    CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
-    LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
+    CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCC/INC'
+    LFLAGS += ' --libpath "' + EXEC_PATH + '/ARM/ARMCC/lib"'
 
     EXEC_PATH += '/arm/bin40/'
 
@@ -102,7 +102,7 @@ elif PLATFORM == 'iar':
     LINK = 'ilinkarm'
     TARGET_EXT = 'out'
 
-    DEVICE = ' -D DUSE_HAL_DRIVER' + ' -D STM32F756xx'
+    DEVICE = ''
 
     CFLAGS = DEVICE
     CFLAGS += ' --diag_suppress Pa050'
