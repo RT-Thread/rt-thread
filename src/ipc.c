@@ -1013,7 +1013,6 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
         return -RT_ERROR;
 
     need_schedule = RT_FALSE;
-    RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(event->parent.parent)));
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -1021,6 +1020,8 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
     /* set event */
     event->set |= set;
 
+    RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(event->parent.parent)));
+    
     if (!rt_list_isempty(&event->parent.suspend_thread))
     {
         /* search thread list to resume thread */
