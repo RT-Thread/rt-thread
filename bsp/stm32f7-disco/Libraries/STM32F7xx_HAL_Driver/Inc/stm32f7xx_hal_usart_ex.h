@@ -2,13 +2,11 @@
   ******************************************************************************
   * @file    stm32f7xx_hal_usart_ex.h
   * @author  MCD Application Team
-  * @version V1.0.1
-  * @date    25-June-2015
   * @brief   Header file of USART HAL Extension module.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2015 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -64,7 +62,7 @@
   * @{
   */
 #define USART_WORDLENGTH_7B                  ((uint32_t)USART_CR1_M_1)
-#define USART_WORDLENGTH_8B                  ((uint32_t)0x00000000)
+#define USART_WORDLENGTH_8B                  ((uint32_t)0x00000000U)
 #define USART_WORDLENGTH_9B                  ((uint32_t)USART_CR1_M_0)
 /**
   * @}
@@ -87,7 +85,7 @@
   *         by the reception API().
   *         This masking operation is not carried out in the case of
   *         DMA transfers.
-  * @param  __HANDLE__: specifies the USART Handle
+  * @param  __HANDLE__ specifies the USART Handle
   * @retval none
   */
 #define __HAL_USART_MASK_COMPUTATION(__HANDLE__)                      \
