@@ -156,11 +156,6 @@
 
 /* RT-Thread online packages */
 
-/* system packages */
-
-/* RT-Thread GUI Engine */
-
-
 /* IoT - internet of things */
 
 
@@ -184,7 +179,18 @@
 /* tools packages */
 
 
+/* system packages */
+
+/* RT-Thread GUI Engine */
+
+
+/* peripheral libraries and drivers */
+
+
 /* miscellaneous packages */
+
+
+/* sample package */
 
 
 /* example package: hello */
