@@ -63,6 +63,7 @@
 #define PHY_BCTL_LOOP_MASK 0x4000U            /*!< The PHY loop bit mask. */
 #define PHY_BCTL_RESET_MASK 0x8000U           /*!< The PHY reset bit mask. */
 #define PHY_BCTL_SPEED_100M_MASK  0x2000U     /*!< The PHY 100M speed mask. */
+#define PHY_BCTL_POWER_DOWN_MASK  0x800U      /*!< The PHY Power Down mask. */
 
 /*!@brief Defines the mask flag of operation mode in control two register*/
 #define PHY_CTL2_REMOTELOOP_MASK 0x0004U    /*!< The PHY remote loopback mask. */
