@@ -1,58 +1,40 @@
 /*
- * Copyright (c) 2015, Freescale Semiconductor, Inc.
- * Copyright 2016-2017 NXP
+ * File      : fsl_phy_fire.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
  *
- * o Redistributions of source code must retain the above copyright notice, this list
- *   of conditions and the following disclaimer.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- * o Redistributions in binary form must reproduce the above copyright notice, this
- *   list of conditions and the following disclaimer in the documentation and/or
- *   other materials provided with the distribution.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- * o Neither the name of the copyright holder nor the names of its
- *   contributors may be used to endorse or promote products derived from this
- *   software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Change Logs:
+ * Date           Author       Notes
+ * 2018-05-21     zylx         first version
  */
 
 #include "fsl_phy_fire.h"
-/*******************************************************************************
- * Definitions
- ******************************************************************************/
+#include <rtthread.h>
 
-/*! @brief Defines the timeout macro. */
-
+#define DBG_ENABLE
+#define DBG_SECTION_NAME    "[PHY]"
+#define DBG_COLOR
+#define DBG_LEVEL           DBG_LOG
+#include <rtdbg.h>
 
 #define PHY_TIMEOUT_COUNT 0x3FFFFFFU
 
-/*******************************************************************************
- * Prototypes
- ******************************************************************************/
-
-/*!
- * @brief Get the ENET instance from peripheral base address.
- *
- * @param base ENET peripheral base address.
- * @return ENET instance.
- */
 extern uint32_t ENET_GetInstance(ENET_Type *base);
 
-/*******************************************************************************
- * Variables
- ******************************************************************************/
 
 #if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
 /*! @brief Pointers to enet clocks for each instance. */
@@ -66,12 +48,12 @@ extern clock_ip_name_t s_enetClock[FSL_FEATURE_SOC_ENET_COUNT];
 status_t PHY_Init(ENET_Type *base, uint32_t phyAddr, uint32_t srcClock_Hz)
 {
     uint32_t bssReg;
+    uint32_t i;
     uint32_t counter = PHY_TIMEOUT_COUNT;
     uint32_t idReg = 0;
     status_t result = kStatus_Success;
     uint32_t instance = ENET_GetInstance(base);
     uint32_t timeDelay;
-//    uint32_t ctlReg = 0;
 
 #if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
     /* Set SMI first. */
@@ -83,7 +65,7 @@ status_t PHY_Init(ENET_Type *base, uint32_t phyAddr, uint32_t srcClock_Hz)
     while ((idReg != PHY_CONTROL_ID1) && (counter != 0))
     {
         PHY_Read(base, phyAddr, PHY_ID1_REG, &idReg);
-        counter --;       
+        counter --;
     }
 
     if (!counter)
@@ -96,53 +78,51 @@ status_t PHY_Init(ENET_Type *base, uint32_t phyAddr, uint32_t srcClock_Hz)
     result = PHY_Write(base, phyAddr, PHY_BASICCONTROL_REG, PHY_BCTL_RESET_MASK);
     if (result == kStatus_Success)
     {
-
-//#if 0//defined(FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE)
-//        uint32_t data = 0;
-//        result = PHY_Read(base, phyAddr, PHY_CONTROL2_REG, &data);
-//        if ( result != kStatus_Success)
-//        {
-//            return result;
-//        }
-//        result = PHY_Write(base, phyAddr, PHY_CONTROL2_REG, (data | PHY_CTL2_REFCLK_SELECT_MASK));
-//        if (result != kStatus_Success)
-//        {
-//            return result;
-//        }
-//#endif  /* FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE */    
-        
-        /* Set the negotiation. */
-        result = PHY_Write(base, phyAddr, PHY_AUTONEG_ADVERTISE_REG,
-                           (PHY_100BASETX_FULLDUPLEX_MASK | PHY_100BASETX_HALFDUPLEX_MASK |
-                            PHY_10BASETX_FULLDUPLEX_MASK | PHY_10BASETX_HALFDUPLEX_MASK | 0x1U));
-        if (result == kStatus_Success)
+        for (i = 0x10000; i > 0; i--)
         {
-            result = PHY_Write(base, phyAddr, PHY_BASICCONTROL_REG,
-                               (PHY_BCTL_AUTONEG_MASK | PHY_BCTL_RESTART_AUTONEG_MASK));
+            result = PHY_Read(base, phyAddr, PHY_BASICCONTROL_REG, &bssReg);
+            if (!(bssReg & PHY_BCTL_POWER_DOWN_MASK))
+            {
+                break;
+            }
+        }
+
+        if (i != 0)
+        {
+            /* Set the negotiation. */
+            result = PHY_Write(base, phyAddr, PHY_AUTONEG_ADVERTISE_REG,
+                               (PHY_100BASETX_FULLDUPLEX_MASK | PHY_100BASETX_HALFDUPLEX_MASK |
+                                PHY_10BASETX_FULLDUPLEX_MASK | PHY_10BASETX_HALFDUPLEX_MASK | 0x1U));
             if (result == kStatus_Success)
             {
-                /* Check auto negotiation complete. */
-                while (counter --)
+                result = PHY_Write(base, phyAddr, PHY_BASICCONTROL_REG,
+                                   (PHY_BCTL_AUTONEG_MASK | PHY_BCTL_RESTART_AUTONEG_MASK));
+                if (result == kStatus_Success)
                 {
-                    result = PHY_Read(base, phyAddr, PHY_BASICSTATUS_REG, &bssReg);
-                    if ( result == kStatus_Success)
+                    /* Check auto negotiation complete. */
+                    while (counter --)
                     {
-                        //PHY_Read(base, phyAddr, PHY_CONTROL2_REG, &ctlReg);&& (ctlReg & PHY_LINK_READY_MASK)
-                        if (((bssReg & PHY_BSTATUS_AUTONEGCOMP_MASK) != 0) )
+                        result = PHY_Read(base, phyAddr, PHY_BASICSTATUS_REG, &bssReg);
+                        if (result == kStatus_Success)
                         {
-                            /* Wait a moment for Phy status stable. */
-                            for (timeDelay = 0; timeDelay < PHY_TIMEOUT_COUNT; timeDelay ++)
+                            if (((bssReg & PHY_BSTATUS_AUTONEGCOMP_MASK) != 0))
                             {
-                                __ASM("nop");
+                                rt_thread_delay(1);
                             }
-                            break;
+                            else
+                            {
+                                dbg_log(DBG_LOG, "auto negotiation complete success\n");
+                                break;
+                            }
                         }
                     }
 
                     if (!counter)
                     {
+                        dbg_log(DBG_LOG, "auto negotiation complete falied\n");
                         return kStatus_PHY_AutoNegotiateFail;
                     }
+
                 }
             }
         }
@@ -234,9 +214,9 @@ status_t PHY_EnableLoopback(ENET_Type *base, uint32_t phyAddr, phy_loop_t mode, 
             }
             else
             {
-                data = PHY_BCTL_DUPLEX_MASK | PHY_BCTL_LOOP_MASK;                
+                data = PHY_BCTL_DUPLEX_MASK | PHY_BCTL_LOOP_MASK;
             }
-           return PHY_Write(base, phyAddr, PHY_BASICCONTROL_REG, data);
+            return PHY_Write(base, phyAddr, PHY_BASICCONTROL_REG, data);
         }
         else
         {
@@ -329,7 +309,8 @@ status_t PHY_GetLinkSpeedDuplex(ENET_Type *base, uint32_t phyAddr, phy_speed_t *
             *speed = kPHY_Speed100M;
         }
         else
-        { /* 10M speed. */
+        {
+            /* 10M speed. */
             *speed = kPHY_Speed10M;
         }
     }
