@@ -250,7 +250,7 @@ rt_inline int rt_slist_isempty(rt_slist_t *l)
  * @head:   the head for your single list.
  * @member: the name of the list_struct within the struct.
  */
-#define rt_slist_fore_each_entry(pos, head, member) \
+#define rt_slist_for_each_entry(pos, head, member) \
     for (pos = rt_slist_entry((head)->next, typeof(*pos), member); \
          &pos->member != (RT_NULL); \
          pos = rt_slist_entry(pos->member.next, typeof(*pos), member))
