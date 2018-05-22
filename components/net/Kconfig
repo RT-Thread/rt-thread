@@ -145,6 +145,14 @@ config RT_USING_LWIP
             int "the stack size of lwIP thread"
             default 1024
 
+        config LWIP_NO_RX_THREAD
+            bool "Not use Rx thread"
+            default n
+
+        config LWIP_NO_TX_THREAD
+            bool "Not use Tx thread"
+            default n
+
         config RT_LWIP_ETHTHREAD_PRIORITY
             int "the priority level value of ethernet thread"
             default 12
