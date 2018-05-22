@@ -16,18 +16,17 @@
 ## 2. 编译说明
 
 GD32303E-EVAL板级包支持MDK5和IAR。
-| IDE/编译器 | 已测试版本                   |
-| ---------- | ---------------------------- |
-| MDK5       | MDK5.25                      |
-| IAR        | IAR8.20             |
+
+| IDE/编译器 | 已测试版本 |
+| -- | -- |
+| MDK5 | MDK5.25 |
+| IAR | IAR8.20 |
 
 ## 3. 烧写及执行
 
 供电方式：开发板使用 Mini USB 接口或者 DC-005 连接器提供 5V 电源。
 
 下载程序：下载程序到开发板需要一套 JLink 或者使用 GD-Link 工具。
-
-串口连接：可使用USB转串口线连接开发板串口0的PA9和PA10引脚。
 
 解决IDE "Missing Device(s)"问题"
 * MDK5: 安装GigaDevice.GD32F30x_AddOn.1.0.1.exe，在 Folder Selection 中的 Destination Folder 那一栏选择 Keil uVision5 软件的安装目录，如 C:\Keil_v5，然后在 Option for Target 的 Device 选择对应的器件，同时在 Option forTarget 的 C/C++中添加路径 C:\Keil_v5\ARM\Pack\ARM\CMSIS\4.2.0\CMSIS\Include。
@@ -41,7 +40,7 @@ GD32303E-EVAL板级包支持MDK5和IAR。
 
 ### 3.2 运行结果
 
-打开MDK或者IAR工程，进入仿真后全速运行，将会在终端设备putty上看到RT-Thread的启动logo信息：
+打开MDK或者IAR工程，进入仿真后全速运行，将会在串口0上看到RT-Thread的启动logo信息：
 
 ```
  \ | /
