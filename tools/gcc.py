@@ -67,7 +67,7 @@ def GCCResult(rtconfig, str):
         
         stdout, stderr = child.communicate()
 
-        print(stdout)
+        # print(stdout)
         if stderr != '':
             print(stderr)
 
