@@ -563,6 +563,7 @@ void list_if(void)
         if (netif->flags & NETIF_FLAG_LINK_UP) rt_kprintf(" LINK_UP");
         else rt_kprintf(" LINK_DOWN");
         if (netif->flags & NETIF_FLAG_ETHARP) rt_kprintf(" ETHARP");
+        if (netif->flags & NETIF_FLAG_BROADCAST) rt_kprintf(" BROADCAST");
         if (netif->flags & NETIF_FLAG_IGMP) rt_kprintf(" IGMP");
         rt_kprintf("\n");
         rt_kprintf("ip address: %s\n", ipaddr_ntoa(&(netif->ip_addr)));
