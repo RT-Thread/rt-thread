@@ -16,9 +16,9 @@
 
 int main(void)
 {
-  /* user app entry */
+    /* user app entry */
 
-  return 0;
+    return 0;
 }
 
 

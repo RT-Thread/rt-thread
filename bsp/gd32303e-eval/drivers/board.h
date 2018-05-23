@@ -42,33 +42,6 @@ extern int __bss_end;
 
 #define HEAP_END          GD32_SRAM_END
 
-// <o> Console on USART: 
-//  <127=> no console 
-//  <0=>USART 0 <1=>USART 1 <2=>USART 2 <3=> USART 3
-//  <4=>USART 4  
-// 	<i>Default: 0
-#define GD32_CONSOLE_USART	0
-
-void rt_hw_board_init(void);
-
-#if GD32_CONSOLE_USART == 127
-    #define CONSOLE_DEVICE "no"
-#elif GD32_CONSOLE_USART == 0
-    #define CONSOLE_DEVICE "uart0"
-#elif GD32_CONSOLE_USART == 1
-    #define CONSOLE_DEVICE "uart1"
-#elif GD32_CONSOLE_USART == 2
-    #define CONSOLE_DEVICE "uart2"
-#elif GD32_CONSOLE_USART == 3
-    #define CONSOLE_DEVICE "uart3"
-#elif GD32_CONSOLE_USART == 4
-    #define CONSOLE_DEVICE "uart4"
-#endif
-
-#define FINSH_DEVICE_NAME   CONSOLE_DEVICE
-
-void Error_Handler(void);
-
 #endif
 
 //*** <<< end of configuration section >>>    ***
