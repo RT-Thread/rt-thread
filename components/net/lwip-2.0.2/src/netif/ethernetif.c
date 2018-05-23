@@ -676,6 +676,7 @@ FINSH_FUNCTION_EXPORT(list_tcps, list all of tcp connections);
 #endif /* LWIP_TCP */
 
 #if LWIP_UDP
+#include "lwip/udp.h"
 void list_udps(void)
 {
     struct udp_pcb *pcb;
