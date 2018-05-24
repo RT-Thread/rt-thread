@@ -1,5 +1,5 @@
 /*
- * linker script for GD32F4xx with GNU ld
+ * linker script for GD32F30x with GNU ld
  * bernard.xiong 2009-10-14
  */
 

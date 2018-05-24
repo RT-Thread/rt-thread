@@ -36,17 +36,17 @@
 // Todo: compress uart info
 struct gd32_uart
 {
-    uint32_t uart_periph;           
-    IRQn_Type irqn;                     
-    rcu_periph_enum per_clk;        
-    rcu_periph_enum tx_gpio_clk;    
-    rcu_periph_enum rx_gpio_clk;    
-    uint32_t tx_port;               
-    uint16_t tx_pin;                
-    uint32_t rx_port;               
-    uint16_t rx_pin;               
+    uint32_t uart_periph;
+    IRQn_Type irqn;
+    rcu_periph_enum per_clk;
+    rcu_periph_enum tx_gpio_clk;
+    rcu_periph_enum rx_gpio_clk;
+    uint32_t tx_port;
+    uint16_t tx_pin;
+    uint32_t rx_port;
+    uint16_t rx_pin; 
 
-    struct rt_serial_device * serial;    
+    struct rt_serial_device * serial;
     char *device_name;
 };
 
@@ -137,8 +137,8 @@ static const struct gd32_uart uarts[] = {
         USART0,                                 // uart peripheral index
         USART0_IRQn,                            // uart iqrn
         RCU_USART0, RCU_GPIOA, RCU_GPIOA,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOA, GPIO_PIN_9,           // tx port, tx pin
-        GPIOA, GPIO_PIN_10,          // rx port, rx pin
+        GPIOA, GPIO_PIN_9,                      // tx port, tx pin
+        GPIOA, GPIO_PIN_10,                     // rx port, rx pin
         &serial0,
         "uart0",
     },
@@ -149,8 +149,8 @@ static const struct gd32_uart uarts[] = {
         USART1,                                 // uart peripheral index
         USART1_IRQn,                            // uart iqrn
         RCU_USART1, RCU_GPIOA, RCU_GPIOA,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOA, GPIO_PIN_2,           // tx port, tx pin
-        GPIOA, GPIO_PIN_3,           // rx port, rx pin
+        GPIOA, GPIO_PIN_2,                      // tx port, tx pin
+        GPIOA, GPIO_PIN_3,                      // rx port, rx pin
         &serial1,
         "uart1",
     },
@@ -161,8 +161,8 @@ static const struct gd32_uart uarts[] = {
         USART2,                                 // uart peripheral index
         USART2_IRQn,                            // uart iqrn
         RCU_USART2, RCU_GPIOB, RCU_GPIOB,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOB, GPIO_PIN_10,          // tx port, tx alternate, tx pin
-        GPIOB, GPIO_PIN_11,          // rx port, rx alternate, rx pin
+        GPIOB, GPIO_PIN_10,                     // tx port, tx alternate, tx pin
+        GPIOB, GPIO_PIN_11,                     // rx port, rx alternate, rx pin
         &serial2,
         "uart2",
     },
@@ -173,8 +173,8 @@ static const struct gd32_uart uarts[] = {
         UART3,                                 // uart peripheral index
         UART3_IRQn,                            // uart iqrn
         RCU_UART3, RCU_GPIOC, RCU_GPIOC,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOC, GPIO_PIN_10,         // tx port, tx alternate, tx pin
-        GPIOC, GPIO_PIN_11,         // rx port, rx alternate, rx pin
+        GPIOC, GPIO_PIN_10,                    // tx port, tx alternate, tx pin
+        GPIOC, GPIO_PIN_11,                    // rx port, rx alternate, rx pin
         &serial3,
         "uart3",
     },
@@ -185,8 +185,8 @@ static const struct gd32_uart uarts[] = {
         UART4,                                 // uart peripheral index
         UART4_IRQn,                            // uart iqrn
         RCU_UART4, RCU_GPIOC, RCU_GPIOD,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOC, GPIO_PIN_12,         // tx port, tx alternate, tx pin
-        GPIOD, GPIO_PIN_2,          // rx port, rx alternate, rx pin
+        GPIOC, GPIO_PIN_12,                    // tx port, tx alternate, tx pin
+        GPIOD, GPIO_PIN_2,                     // rx port, rx alternate, rx pin
         &serial4,
         "uart4",
     },
@@ -296,7 +296,6 @@ static rt_err_t gd32_control(struct rt_serial_device *serial, int cmd, void *arg
         /* enable interrupt */
         usart_interrupt_enable(uart->uart_periph, USART_INT_RBNE);
         break;
-		
     }
 
     return RT_EOK;
@@ -355,14 +354,14 @@ static const struct rt_uart_ops gd32_uart_ops =
     gd32_configure,
     gd32_control,
     gd32_putc,
-    gd32_getc,
+    gd32_getc
 };
 
 int gd32_hw_usart_init(void)
 {
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     int i;
-    
+
     for (i = 0; i < sizeof(uarts) / sizeof(uarts[0]); i++)
     {
         uarts[i].serial->ops    = &gd32_uart_ops;
