@@ -29,7 +29,7 @@
 #ifdef DEBUG
 #define DEBUG_PRINTF(...)   rt_kprintf(__VA_ARGS__)
 #else
-#define DEBUG_PRINTF(...)   
+#define DEBUG_PRINTF(...)
 #endif
 
 /* private rt-thread spi ops function */
@@ -48,8 +48,8 @@ static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configurat
 
     rt_uint32_t spi_periph = (rt_uint32_t)device->bus->parent.user_data;
 
-	RT_ASSERT(device != RT_NULL);
-	RT_ASSERT(configuration != RT_NULL);
+    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(configuration != RT_NULL);
 
     if(configuration->data_width <= 8)
     {
@@ -127,10 +127,10 @@ static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configurat
         break;
     case RT_SPI_MODE_1:
         spi_init_struct.clock_polarity_phase = SPI_CK_PL_LOW_PH_2EDGE;
-        break;        
+        break;
     case RT_SPI_MODE_2:
         spi_init_struct.clock_polarity_phase = SPI_CK_PL_HIGH_PH_1EDGE;
-        break;    
+        break;
     case RT_SPI_MODE_3:
         spi_init_struct.clock_polarity_phase = SPI_CK_PL_HIGH_PH_2EDGE;
         break;
@@ -260,9 +260,9 @@ int gd32_hw_spi_init(void)
 #ifdef RT_USING_SPI0
     static struct rt_spi_bus spi_bus0;
     spi_bus0.parent.user_data = (void *)SPI0;
-    
+
     result = rt_spi_bus_register(&spi_bus0, "spi0", &gd32_spi_ops);
-    
+
     rcu_periph_clock_enable(RCU_GPIOA);
     rcu_periph_clock_enable(RCU_SPI0);
     /* SPI0_SCK(PA5), SPI0_MISO(PA6) and SPI0_MOSI(PA7) GPIO pin configuration */
@@ -274,8 +274,8 @@ int gd32_hw_spi_init(void)
     static struct rt_spi_bus spi_bus1;
     spi_bus1.parent.user_data = (void *)SPI1;
 
-    result = rt_spi_bus_register(&spi_bus1, "spi1", &gd32_spi_ops); 
-    
+    result = rt_spi_bus_register(&spi_bus1, "spi1", &gd32_spi_ops);
+
     rcu_periph_clock_enable(RCU_SPI1);
     rcu_periph_clock_enable(RCU_GPIOB);
 
@@ -291,7 +291,7 @@ int gd32_hw_spi_init(void)
 
     rcu_periph_clock_enable(RCU_SPI2);
     rcu_periph_clock_enable(RCU_GPIOB);
-    
+
     /* SPI2_SCK(PB3), SPI2_MISO(PB4) and SPI2_MOSI(PB5) GPIO pin configuration */
     gpio_init(GPIOB, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_3 | GPIO_PIN_5);
     gpio_init(GPIOB, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_4);

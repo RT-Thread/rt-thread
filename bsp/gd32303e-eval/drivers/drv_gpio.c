@@ -459,7 +459,7 @@ rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_
                 return RT_EINVAL;
         }
 
-		rcu_periph_clock_enable(RCU_AF);
+        rcu_periph_clock_enable(RCU_AF);
 
         /* enable and set interrupt priority */
         nvic_irq_enable(irqmap->irqno, 5U, 0U);
@@ -522,7 +522,7 @@ void GD32_GPIO_EXTI_IRQHandler(rt_int8_t exti_line)
     if(RESET != exti_interrupt_flag_get((exti_line_enum)(1 << exti_line)))
     {
         pin_irq_hdr(exti_line);
-		exti_interrupt_flag_clear((exti_line_enum)(1 << exti_line));
+        exti_interrupt_flag_clear((exti_line_enum)(1 << exti_line));
     } 
 }
 void EXTI0_IRQHandler(void)
