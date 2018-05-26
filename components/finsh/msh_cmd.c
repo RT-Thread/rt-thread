@@ -385,8 +385,10 @@ FINSH_FUNCTION_EXPORT_ALIAS(cmd_dns, __cmd_dns, list the information of dns);
 int cmd_netstat(int argc, char **argv)
 {
     extern void list_tcps(void);
+    extern void list_udps(void);
 
     list_tcps();
+    list_udps();
     return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_netstat, __cmd_netstat, list the information of TCP / IP);
