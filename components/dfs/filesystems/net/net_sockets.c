@@ -223,6 +223,10 @@ int setsockopt(int s, int level, int optname, const void *optval, socklen_t optl
 {
     int sock = dfs_net_getsocket(s);
 
+#if LWIP_VERSION_MAJOR < 2U
+#error "Your lwIP version is not supported. Please using lwIP 2.0.0+."
+#endif
+
     return lwip_setsockopt(sock, level, optname, optval, optlen);
 }
 RTM_EXPORT(setsockopt);
@@ -346,4 +350,3 @@ int ioctlsocket(int s, long cmd, void *arg)
     return lwip_ioctl(sock, cmd, arg);
 }
 RTM_EXPORT(ioctlsocket);
-
