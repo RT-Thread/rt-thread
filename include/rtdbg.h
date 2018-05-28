@@ -32,11 +32,6 @@
  * In your C/C++ file, enable/disable DEBUG_ENABLE macro, and then include this
  * header file.
  *
- * #undef DBG_SECTION_NAME      // avoid the macro is already defined
- * #undef DBG_LEVEL
- * #undef DBG_COLOR
- * #undef DBG_ENABLE
- *
  * #define DBG_SECTION_NAME    "[ MOD]"
  * #define DBG_ENABLE          // enable debug macro
  * #define DBG_LEVEL           DBG_INFO
