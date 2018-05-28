@@ -256,36 +256,10 @@ int wifi_softap_setup_netif(struct netif *netif)
 {
     if (netif)
     {
-        ip_addr_t *ip;
-        ip_addr_t addr;
-
 #ifdef RT_LWIP_DHCP
         /* Stop DHCP Client */
         dhcp_stop(netif);
 #endif
-
-        /* set ipaddr, gw, netmask */
-        ip = (ip_addr_t *)&addr;
-
-        /* set ip address */
-        if (ipaddr_aton("192.168.169.1", &addr))
-        {
-            netif_set_ipaddr(netif, ip);
-        }
-
-        /* set gateway address */
-        if ( ipaddr_aton("192.168.169.1", &addr))
-        {
-            netif_set_gw(netif, ip);
-        }
-
-        /* set netmask address */
-        if ( ipaddr_aton("255.255.255.0", &addr))
-        {
-            netif_set_netmask(netif, ip);
-        }
-
-        netif_set_up(netif);
 
 #ifdef LWIP_USING_DHCPD
         {
