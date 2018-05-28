@@ -1,0 +1,13 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c') + Glob('*.cpp')
+
+if not GetDepend('RT_USING_LWIP'):
+	SrcRemove(src,'tcpserver.c')
+	
+CPPPATH = [cwd, str(Dir('#'))]
+
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
