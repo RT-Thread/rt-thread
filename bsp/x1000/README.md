@@ -178,6 +178,6 @@ static struct rt_mtd_nor_partition _sf_gd25_parts[] =
   [2]: https://www.rt-thread.org/page/download.html
   [3]: https://sourcery.mentor.com/GNUToolchain/package14477/public/mips-sde-elf/mips-2016.05-7-mips-sde-elf-i686-mingw32.tar.bz2
   [4]: https://sourcery.mentor.com/GNUToolchain/package14476/public/mips-sde-elf/mips-2016.05-7-mips-sde-elf-i686-pc-linux-gnu.tar.bz2
-  [5]: http://pan.baidu.com/s/1eSObOkU
+  [5]: https://pan.baidu.com/s/1slVU4tJ
   [6]: images/startup.jpg
   [7]: ftp://ftp.ingenic.com/SOC/X1000/X1000_DS.pdf
