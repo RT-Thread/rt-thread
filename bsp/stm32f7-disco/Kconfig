@@ -49,3 +49,7 @@ config BSP_USING_UART7
     bool "Using uart7"
     select RT_USING_SERIAL
     default n
+
+config BSP_USING_LED
+    bool "Using led"
+    default n
