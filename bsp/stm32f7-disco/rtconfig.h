@@ -142,5 +142,6 @@
 
 #define BSP_USING_SDRAM
 #define BSP_USING_UART1
+#define BSP_USING_LED
 
 #endif
