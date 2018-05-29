@@ -217,7 +217,17 @@ config LWIP_USING_DHCPD
         config DHCPD_USING_ROUTER
             bool "alloc gateway ip for router"
             default y
+
+        config LWIP_USING_CUSTOMER_DNS_SERVER
+            bool "Enable customer DNS server config"
+            default n
+        if LWIP_USING_CUSTOMER_DNS_SERVER
+            config DHCP_DNS_SERVER_IP
+                string "Custom DNS server IP address"
+                default 1.1.1.1
+        endif
     endif
+    
 
 endif
 
