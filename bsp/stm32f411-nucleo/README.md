@@ -2,15 +2,17 @@
 
 ## 1. 简介
 
-STM32F411-nucleo 是由意法半导体推出的搭载Cortex-M4内核的高性能微控制器开发板，包括如下硬件特性：
+[STM32F411-nucleo](http://www.st.com/resource/en/data_brief/nucleo-f411re.pdf) 是由意法半导体推出的搭载Cortex-M4内核的高性能微控制器开发板，包括如下硬件特性：
 
 | 硬件 | 描述 |
 | -- | -- |
-|芯片型号| STM32F411RE |
+|芯片型号| [STM32F411RE](http://www.st.com/en/microcontrollers/stm32f411re.html) |
 |CPU  | Cortex-M4 |
 |主频 | 100MHz |
 |Flash| 512kB |
 |SRAM | 128KB |
+
+![stm32f411](http://www.st.com/content/ccc/fragment/product_related/rpn_information/product_circuit_diagram/4b/82/41/cc/25/ec/4b/3d/bd_stm32f411xe_512k.jpg/files/bd_stm32f411xe_512k.jpg/_jcr_content/translations/en.bd_stm32f411xe_512k.jpg)
 
 ## 2. 编译说明
 
