@@ -267,6 +267,7 @@ INIT_BOARD_EXPORT(rt_hw_usart_init);
 
 static void MX_USART_UART_Init(UART_HandleTypeDef *uartHandle)
 {
+    rt_err_t result;
     uartHandle->Init.BaudRate = 115200;
     uartHandle->Init.WordLength = UART_WORDLENGTH_8B;
     uartHandle->Init.StopBits = UART_STOPBITS_1;
@@ -274,7 +275,8 @@ static void MX_USART_UART_Init(UART_HandleTypeDef *uartHandle)
     uartHandle->Init.Mode = UART_MODE_TX_RX;
     uartHandle->Init.HwFlowCtl = UART_HWCONTROL_NONE;
     uartHandle->Init.OverSampling = UART_OVERSAMPLING_16;
-    RT_ASSERT(HAL_UART_Init(uartHandle) == HAL_OK);
+    result = HAL_UART_Init(uartHandle);
+    RT_ASSERT(result == HAL_OK);
 
 }
 /* USART2 init function */
