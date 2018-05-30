@@ -66,14 +66,13 @@ def walk_kconfig(RTT_ROOT, source_list):
             pathfile = os.path.join(parent, 'KConfig')
             source_list.append(pathfile)
 
-
 def MakeCopy(program, BSP_ROOT, RTT_ROOT, Env):
     global source_list
 
     target_path = os.path.join(BSP_ROOT, 'rt-thread')
 
     if target_path.startswith(RTT_ROOT):
-        print('please use scons --dist to make a distribution')
+        print('please use scons --copy to copy rt-thread to local bsp')
         return
 
     for item in program:
@@ -140,7 +139,7 @@ def MakeCopyHeader(program, BSP_ROOT, RTT_ROOT, Env):
     target_path = os.path.join(BSP_ROOT, 'rt-thread')
 
     if target_path.startswith(RTT_ROOT):
-        print('please use scons --dist to make a distribution')
+        print('please use scons --copy-header to copy header files only')
         return
 
     for item in program:
@@ -186,7 +185,7 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env):
 
     # copy BSP files
     do_copy_folder(os.path.join(BSP_ROOT), dist_dir, 
-        ignore_patterns('build', 'dist', '*.pyc', '*.old', '*.map', 'rtthread.bin', '.sconsign.dblite', '*.elf', '*.axf'))
+        ignore_patterns('build', 'dist', '*.pyc', '*.old', '*.map', 'rtthread.bin', '.sconsign.dblite', '*.elf', '*.axf', 'cconfig.h'))
 
     global source_list
 
