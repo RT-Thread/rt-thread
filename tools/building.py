@@ -326,12 +326,6 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         mk_rtconfig(configfn)
         exit(0)
 
-    AddOption('--test',
-                dest='test',
-                action='store_true',
-                default=False,
-                help='some test feature')
-
     # add comstr option
     AddOption('--verbose',
                 dest='verbose',
