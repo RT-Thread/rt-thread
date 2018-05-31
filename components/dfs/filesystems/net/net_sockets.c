@@ -320,6 +320,16 @@ int socket(int domain, int type, int protocol)
         rt_list_init(&(lwsock->wait_head));
         lwsock->conn->callback = event_callback;
     }
+    else
+    {
+        /* release fd */
+        fd_put(d);
+        fd_put(d);
+        
+        rt_set_errno(-ENOMEM);
+
+    	return -1;
+    }
 
     /* release the ref-count of fd */
     fd_put(d);
