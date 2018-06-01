@@ -3,7 +3,7 @@ import subprocess
 import os
 import platform
 
-tool_pwd=os.path.normpath(os.getcwd()+r'/packages/realtek_ameba/sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0/component/soc/realtek/8711b/misc/iar_utility/common/tools/')
+tool_pwd=os.path.normpath(os.getcwd()+r'/packages/realtek_ameba/sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0/component/soc/realtek/8711b/misc/iar_utility/common/tools')
 
 def grep_func(file,str):
 	fd=open(file,'r')
