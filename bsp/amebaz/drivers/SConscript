@@ -1,0 +1,19 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+src = Split('''
+	board.c
+	drv_uart.c
+	''')
+
+if GetDepend(['RT_USING_LWIP']):
+	src += Split('''
+		drv_wifi.c
+		''')
+
+CPPPATH = [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
