@@ -161,6 +161,8 @@
 
 /* peripheral libraries and drivers */
 
+#define PKG_USING_REALTEK_AMEBA
+#define PKG_USING_REALTEK_AMEBA_LATEST_VERSION
 
 /* miscellaneous packages */
 
