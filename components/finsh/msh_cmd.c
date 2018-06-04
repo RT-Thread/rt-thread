@@ -41,10 +41,61 @@
 extern char working_directory[];
 #endif
 
+static void ls(const char *pathname)
+{
+    struct stat st;
+    char *fullpath, *path;
+    DIR *dir;
+    struct dirent *dirent;
+
+    dir = opendir(path);
+    if (dir != 0)
+    {
+        rt_kprintf("Directory %s:\n", path);
+        do
+        {
+            dirent = readdir(dir);
+
+            if (dirent != 0)
+            {
+                rt_memset(&stat, 0, sizeof(struct stat));
+
+                /* build full path for each file */
+                fullpath = dfs_normalize_path(path, dirent->d_name);
+                if (fullpath == NULL)
+                    break;
+
+                if (stat(fullpath, &st) == 0)
+                {
+                    rt_kprintf("%-20s", dirent->d_name);
+                    if (S_ISDIR(st.st_mode))
+                    {
+                        rt_kprintf("%-25s\n", "<DIR>");
+                    }
+                    else
+                    {
+                        rt_kprintf("%-25lu\n", st.st_size);
+                    }
+                }
+                else
+                    rt_kprintf("BAD file: %s\n", dirent->d_name);
+                rt_free(fullpath);
+            }
+        }while(dirent != 0);
+
+        closedir(dir);
+    }
+    else
+    {
+        rt_kprintf("No such directory\n");
+    }
+
+    if (pathname == NULL)
+        rt_free(path);
+}
+
 int cmd_ls(int argc, char **argv)
 {
-    extern void ls(const char *pathname);
-
     if (argc == 1)
     {
 #ifdef DFS_USING_WORKDIR
@@ -62,10 +113,62 @@ int cmd_ls(int argc, char **argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_ls, __cmd_ls, List information about the FILEs.);
 
+static void copy(const char *src, const char *dst)
+{
+    int sfd, dfd;
+    rt_uint8_t *block_ptr;
+    int read_bytes;
+
+#define BUF_SZ    2048
+
+    block_ptr = rt_malloc(BUF_SZ);
+    if (block_ptr == NULL)
+    {
+        rt_kprintf("out of memory\n");
+        return;
+    }
+
+    sfd = open(src, O_RDONLY, 0);
+    if (sfd < 0)
+    {
+        rt_free(block_ptr);
+        rt_kprintf("Read %s failed\n", src);
+        return;
+    }
+    dfd = open(dst, O_WRONLY | O_CREAT, 0);
+    if (dfd < 0)
+    {
+        rt_free(block_ptr);
+        close(sfd);
+
+        rt_kprintf("Write %s failed\n", dst);
+        return;
+    }
+
+    do
+    {
+        read_bytes = read(sfd, block_ptr, BUF_SZ);
+        if (read_bytes > 0)
+        {
+            int length;
+
+            length = write(dfd, block_ptr, read_bytes);
+            if (length != read_bytes)
+            {
+                /* write failed. */
+                rt_kprintf("Write file data failed, errno=%d\n", length);
+                break;
+            }
+        }
+    } while (read_bytes > 0);
+
+    close(sfd);
+    close(dfd);
+    rt_free(block_ptr);
+}
+
 int cmd_cp(int argc, char **argv)
 {
-    void copy(const char *src, const char *dst);
-
     if (argc != 3)
     {
         rt_kprintf("Usage: cp SOURCE DEST\n");
@@ -139,10 +242,34 @@ int cmd_mv(int argc, char **argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_mv, __cmd_mv, Rename SOURCE to DEST.);
 
+static void cat(const char *filename)
+{
+    int length;
+    char buffer[81];
+    int fd;
+
+    if ((fd = open(filename, O_RDONLY)) < 0)
+    {
+        rt_kprintf("Open %s failed\n", filename);
+        return;
+    }
+
+    do
+    {
+        rt_memset(buffer, 0, sizeof(buffer));
+        length = read(fd, buffer, sizeof(buffer)-1);
+        if (length > 0)
+        {
+            rt_kprintf("%s", buffer);
+        }
+    }while (length > 0);
+
+    close(fd);
+}
+
 int cmd_cat(int argc, char **argv)
 {
     int index;
-    extern void cat(const char *filename);
 
     if (argc == 1)
     {
@@ -255,7 +382,37 @@ int cmd_mkfs(int argc, char **argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_mkfs, __cmd_mkfs, format disk with file system);
 
-extern int df(const char *path);
+static int df(const char *path)
+{
+    int result;
+    int minor = 0;
+    long long cap;
+    struct statfs buffer;
+
+    int unit_index = 0;
+    char *unit_str[] = {"KB", "MB", "GB"};
+
+    result = statfs(path ? path : NULL, &buffer);
+    if (result != 0)
+    {
+        rt_kprintf("dfs_statfs failed.\n");
+        return -1;
+    }
+
+    cap = ((long long)buffer.f_bsize) * ((long long)buffer.f_bfree) / 1024LL;
+    for (unit_index = 0; unit_index < 2; unit_index ++)
+    {
+        if (cap < 1024) break;
+
+        minor = (cap % 1024) * 10 / 1024; /* only one decimal point */
+        cap = cap / 1024;
+    }
+
+    rt_kprintf("disk free: %d.%d %s [ %d block, %d bytes per block ]\n",
+        (unsigned long)cap, minor, unit_str[unit_index], buffer.f_bfree, buffer.f_bsize);
+    return 0;
+}
+
 int cmd_df(int argc, char** argv)
 {
     if (argc != 2)
@@ -385,10 +542,8 @@ FINSH_FUNCTION_EXPORT_ALIAS(cmd_dns, __cmd_dns, list the information of dns);
 int cmd_netstat(int argc, char **argv)
 {
     extern void list_tcps(void);
-    extern void list_udps(void);
 
     list_tcps();
-    list_udps();
     return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_netstat, __cmd_netstat, list the information of TCP / IP);
