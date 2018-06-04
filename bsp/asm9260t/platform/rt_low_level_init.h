@@ -1,5 +1,5 @@
 /*
- * File      : rt_low_level_iar.inc
+ * File      : rt_low_level_init.h
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
  *
@@ -19,8 +19,10 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2015-04-14     ArdaFu      first version
+ * 2018-06-04     ArdaFu      first version
  */
+#ifndef __RT_LOW_LEVEL_INIT_H__
+#define __RT_LOW_LEVEL_INIT_H__
  
 /*-------- Stack size of CPU modes -------------------------------------------*/
 #define UND_STK_SIZE 512
@@ -29,3 +31,5 @@
 #define IRQ_STK_SIZE 1024
 #define FIQ_STK_SIZE 1024
 #define SYS_STK_SIZE 512
+#define Heap_Size    512
+#endif
