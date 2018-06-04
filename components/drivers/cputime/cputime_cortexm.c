@@ -54,6 +54,9 @@ int cortexm_cputime_init(void)
     /* check support bit */
     if ((DWT->CTRL & (1UL << DWT_CTRL_NOCYCCNT_Pos)) == 0) 
     {
+        /* enable trace*/
+        CoreDebug->DEMCR |= (1UL << CoreDebug_DEMCR_TRCENA_Pos);
+        
         /* whether cycle counter not enabled */
         if ((DWT->CTRL & (1UL << DWT_CTRL_CYCCNTENA_Pos)) == 0) 
         {
