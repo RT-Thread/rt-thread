@@ -4,7 +4,7 @@ from building import *
 
 comm = rtconfig.ARCH + '/common'
 path = rtconfig.ARCH + '/' + rtconfig.CPU
-AFLAGS = ''
+ASFLAGS = ''
 
 # The set of source files associated with this SConscript file.
 if rtconfig.PLATFORM == 'armcc':
