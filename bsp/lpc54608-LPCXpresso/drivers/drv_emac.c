@@ -433,6 +433,8 @@ rt_err_t lpc_emac_tx(rt_device_t dev, struct pbuf *p)
 	enet_handle_t * enet_handle = &lpc_emac_device.handle;
     ENET_Type *enet_base = lpc_emac_device.base;
     uint8_t * data;
+	
+	uint16_t 	len;
 
 	RT_ASSERT(p != NULL);
     RT_ASSERT(enet_handle != RT_NULL);
@@ -454,11 +456,13 @@ rt_err_t lpc_emac_tx(rt_device_t dev, struct pbuf *p)
         }
     }
     
-    data = (uint8_t *)ENET_ALIGN(&lpc_emac_device.RxDataBuff[lpc_emac_device.txIdx * ENET_ALIGN(ENET_RXBUFF_SIZE)]);
-    pbuf_copy_partial(p, data, p->tot_len, 0);
+	//	fix RxDataBuff -> TxDataBuff, ENET_RXBUFF_SIZE -> ENET_TXBUFF_SIZE
+    data = (uint8_t *)ENET_ALIGN(&lpc_emac_device.TxDataBuff[lpc_emac_device.txIdx * ENET_ALIGN(ENET_TXBUFF_SIZE)]);
+    len = pbuf_copy_partial(p, data, p->tot_len, 0);
     lpc_emac_device.txIdx = (lpc_emac_device.txIdx + 1) / ENET_TXBD_NUM;
     
-    result = ENET_SendFrame(enet_base, enet_handle, data, p->len);
+	// fix 'p->len' to 'len', avoid send wrong partial packet.
+    result = ENET_SendFrame(enet_base, enet_handle, data, len);
         
     if ((result == kStatus_ENET_TxFrameFail) || (result == kStatus_ENET_TxFrameOverLen) || (result == kStatus_ENET_TxFrameBusy))
     {
