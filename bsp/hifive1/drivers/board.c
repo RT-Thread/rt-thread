@@ -28,7 +28,6 @@
 #include <platform.h>
 #include <encoding.h>
 #include <interrupt.h>
-#include <drv_led.h>
 
 extern void use_default_clocks(void);
 extern void use_pll(int refsel, int bypass, int r, int f, int q);
