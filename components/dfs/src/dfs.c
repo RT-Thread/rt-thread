@@ -414,38 +414,6 @@ up_one:
     return fullpath;
 }
 RTM_EXPORT(dfs_normalize_path);
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-int list_fd(void)
-{
-    int index;
 
-    rt_enter_critical();
-
-    for (index = 0; index < DFS_FD_MAX; index ++)
-    {
-        struct dfs_fd *fd = &(fd_table[index]);
-
-        if (fd->fops)
-        {
-            rt_kprintf("--fd: %d--", index);
-            if (fd->type == FT_DIRECTORY) rt_kprintf("[dir]\n");
-            if (fd->type == FT_REGULAR)   rt_kprintf("[file]\n");
-            if (fd->type == FT_SOCKET)    rt_kprintf("[socket]\n");
-            if (fd->type == FT_USER)      rt_kprintf("[user]\n");
-            rt_kprintf("refcount=%d\n", fd->ref_count);
-            rt_kprintf("magic=0x%04x\n", fd->magic);
-            if (fd->path)
-            {
-                rt_kprintf("path: %s\n", fd->path);
-            }
-        }
-    }
-    rt_exit_critical();
-
-    return 0;
-}
-MSH_CMD_EXPORT(list_fd, list file descriptor);
-#endif
 /*@}*/
 
