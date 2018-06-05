@@ -1,3 +1,80 @@
+# RT-Thread 3.0.4 Change Log
+
+## Kernel
+
+* Change the location of hook invoking in rt_event_send, which can better reflect the event value to the system view.
+* Fix the rt_realloc() issue in memheap;
+* Fix the vstart_addr issue in the dynamic library.
+* Ensure that signal is more standardized and remove si_errno members from siginfo_t;
+* Add rt_thread_mdelay() API for millisecond delay in thread.
+
+## Components
+
+* Fix the DFS mkfs issue of FatFs (which is a merge issue introduced in RT-Thread V3.0 upgrade).
+* Fix dfs_net poll issue, if there is already received data, the upper layer can not wake up and deal with data.
+* Fix the socket issue in dfs_net if lwip_socket failed(Bluebear233);
+* If the dfs_net/socket feature is used within lwIP 1.x version, a compiler error will be returned.
+* Fix the DFS df() information issue;
+* Fix the audio device write issue while the interrupt is not properly recovered.
+* Fix the one-shot timeout issue in the hardware timer driver framework.
+* In ENC28J60 driver, the "link change interrupt" is enable in initialization.
+* Fix the data issue in put data into ringbuffer.
+* Add UDP information display in netstat command;
+* Fix the USB HS issue when sending 1 bytes of data will cause two times of transmission.
+* Change the registration mechanism of USB Class Driver and Class Driver can be registered in package.
+* Add USB Device driver framework for HS USB.
+* Enhance the compatibility of time() function for different compilers;
+* Add more configuration items for DHCPD in menuconfig.
+
+## BSP
+
+* Temporarily remove the Andes AE210P transplant because of the mistakenly use SVC for context switching.
+* Add SD/MMC drive in Allwinner ARM9 BSP;
+* Add SPI and SPI Flash drivers to Allwinner ARM9 BSP.
+* Add GD32's gd32303e-eval development board support;
+* gd32450z-eval supports GNU GCC compilation;
+* Rewriting the hifive1 board level support package for the risc-v architecture;
+* About i.MX RT1052, we have completed various development board support: ATK, Fire, seeed studio;
+* On i.MX RT1052, add the cache-ops functions;
+* On i.MX RT1052, add I2S driver and WM8960 codec driver support;
+* Improve ETH driver support (including support for Fire development board) on i.MX RT1052.
+* Add Hardware Timer driver support on i.MX RT1052.
+* On i.MX RT1052, add GPIO driver;
+* On i.MX RT1052, add RTC driver;
+* On i.MX RT1052, improve SD/MMC driver;
+* On i.MX RT1052, add SPI driver and SPI Flash driver (connect to SFUD component);
+* Add USB Device driver on i.MX RT1052.
+* Add README files and KConfig files in LPC408x BSP;
+* Add README documents in LPC5460x-LPCXpresso BSP;
+* Add the display controller driver (Sundm75) in Godson 1C BSP.
+* Add CAN driver in Loongson 1C BSP(Sundm75);
+* In GPIO driver of Loongson 1C BSP, add (external) interrupt feature (Zhuangwei);
+* Use SPI automatic initialization in Loongson 1C BSP.
+* Add I2C driver in Loongson1C BSP(Sundm75);
+* Add resistive touch screen driver in Loongson 1C BSP(Sundm75);
+* In Loongson 1C BSP, the components initiliazation and main function is enable(Zhuangwei).
+* Add self bootup in Loongson1C BSP (Zhuangwei);
+* Add README files and KConfig files to Loongson 1C BSP(Zhuangwei).
+* Fix the rx descriptor issue in init_rx_desc function in NUC472 BSP (Bluebear233);
+* Add AC97 Audio driver in QEMU-VExpress-A9 BSP;
+* Add README description file in QEMU-VExpress-A9;
+* Add I2C driver in stm32f4xx-HAL BSP, and README description file;
+* Add cache-ops in stm32f7-disco BSP, and README description file;
+* Add README description file in stm32f10x/stm32f10x-HAL;
+* Add README specification files and KConfig configuration files in stm32f40x BSP;
+* Add KConfig configuration file in stm32f20x BSP;
+* Add README description file to stm32f411-nucleo BSP and enable GNU GCC tool chain support;
+* Add GPIO driver and README description file in stm32f429-apollo BSP;
+* Add KConfig configuration files in stm32f429-armfly BSP;
+* Add README description file in stm32l476-nucleo BSP;
+* Because V2M-MPS2 does not support in 32-bit machine simulation operation, temporarily remove this BSP.
+* Add README description file and some firmware file, such as u-boot.bin, wifi firmware etc, in X1000 BSP;
+Tools
+* Add detection feature for the version of GNU GCC tool chain and libc function feature.
+* Add the function of VSCode editor assistance, and support scons --target=vsc -s under BSP folder to generate configuration files for VSCode.
+* Add the detection of verson of IAR;
+* Add the ProjectInfo (Env) function to get information about target: all source files should be compiled, all header files, all macro definitions, the search paths for header file etc.
+
 # RT-Thread 3.0.3 Change Log
 
 ## Kernel

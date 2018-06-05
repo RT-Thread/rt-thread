@@ -123,6 +123,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     Env = env
     Rtt_Root = os.path.abspath(root_directory)
+    # set RTT_ROOT in ENV
+    Env['RTT_ROOT'] = Rtt_Root
+    # set BSP_ROOT in ENV
+    Env['BSP_ROOT'] = Dir('#').abspath
+
     sys.path = sys.path + [os.path.join(Rtt_Root, 'tools')]
 
     # add compability with Keil MDK 4.6 which changes the directory of armcc.exe
@@ -259,7 +264,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     AddOption('--target',
                       dest='target',
                       type='string',
-                      help='set target project: mdk/mdk4/iar/vs/ua')
+                      help='set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua')
 
     #{target_name:(CROSS_TOOL, PLATFORM)}
     tgt_dict = {'mdk':('keil', 'armcc'),
@@ -268,6 +273,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'iar':('iar', 'iar'),
                 'vs':('msvc', 'cl'),
                 'vs2012':('msvc', 'cl'),
+                'vsc' : ('gcc', 'gcc'),
                 'cb':('keil', 'armcc'),
                 'ua':('gcc', 'gcc')}
     tgt_name = GetOption('target')
@@ -481,6 +487,11 @@ def MergeGroup(src_group, group):
             src_group['CPPDEFINES'] = src_group['CPPDEFINES'] + group['CPPDEFINES']
         else:
             src_group['CPPDEFINES'] = group['CPPDEFINES']
+    if group.has_key('ASFLAGS'):
+        if src_group.has_key('ASFLAGS'):
+            src_group['ASFLAGS'] = src_group['ASFLAGS'] + group['ASFLAGS']
+        else:
+            src_group['ASFLAGS'] = group['ASFLAGS']
 
     # for local CCFLAGS/CPPPATH/CPPDEFINES
     if group.has_key('LOCAL_CCFLAGS'):
@@ -514,6 +525,11 @@ def MergeGroup(src_group, group):
             src_group['LIBPATH'] = src_group['LIBPATH'] + group['LIBPATH']
         else:
             src_group['LIBPATH'] = group['LIBPATH']
+    if group.has_key('LOCAL_ASFLAGS'):
+        if src_group.has_key('LOCAL_ASFLAGS'):
+            src_group['LOCAL_ASFLAGS'] = src_group['LOCAL_ASFLAGS'] + group['LOCAL_ASFLAGS']
+        else:
+            src_group['LOCAL_ASFLAGS'] = group['LOCAL_ASFLAGS']
 
 def DefineGroup(name, src, depend, **parameters):
     global Env
@@ -531,7 +547,7 @@ def DefineGroup(name, src, depend, **parameters):
     group = parameters
     group['name'] = name
     group['path'] = group_path
-    if type(src) == type(['src1']):
+    if type(src) == type([]):
         group['src'] = File(src)
     else:
         group['src'] = src
@@ -544,6 +560,8 @@ def DefineGroup(name, src, depend, **parameters):
         Env.AppendUnique(CPPDEFINES = group['CPPDEFINES'])
     if group.has_key('LINKFLAGS'):
         Env.AppendUnique(LINKFLAGS = group['LINKFLAGS'])
+    if group.has_key('ASFLAGS'):
+        Env.AppendUnique(ASFLAGS = group['ASFLAGS'])
 
     # check whether to clean up library
     if GetOption('cleanlib') and os.path.exists(os.path.join(group['path'], GroupLibFullName(name, Env))):
@@ -639,13 +657,14 @@ def DoBuilding(target, objects):
 
     # handle local group
     def local_group(group, objects):
-        if group.has_key('LOCAL_CCFLAGS') or group.has_key('LOCAL_CPPPATH') or group.has_key('LOCAL_CPPDEFINES'):
+        if group.has_key('LOCAL_CCFLAGS') or group.has_key('LOCAL_CPPPATH') or group.has_key('LOCAL_CPPDEFINES') or group.has_key('LOCAL_ASFLAGS'):
             CCFLAGS = Env.get('CCFLAGS', '') + group.get('LOCAL_CCFLAGS', '')
             CPPPATH = Env.get('CPPPATH', ['']) + group.get('LOCAL_CPPPATH', [''])
             CPPDEFINES = Env.get('CPPDEFINES', ['']) + group.get('LOCAL_CPPDEFINES', [''])
+            ASFLAGS = Env.get('ASFLAGS', '') + group.get('LOCAL_ASFLAGS', '')
 
             for source in group['src']:
-                objects.append(Env.Object(source, CCFLAGS = CCFLAGS,
+                objects.append(Env.Object(source, CCFLAGS = CCFLAGS, ASFLAGS = ASFLAGS,
                     CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES))
 
             return True
@@ -691,6 +710,9 @@ def DoBuilding(target, objects):
 
 def EndBuilding(target, program = None):
     import rtconfig
+
+    Env['target']  = program
+    Env['project'] = Projects
 
     Env.AddPostAction(target, rtconfig.POST_ACTION)
     # Add addition clean files
@@ -744,6 +766,10 @@ def EndBuilding(target, program = None):
     if GetOption('target') == 'ua':
         from ua import PrepareUA
         PrepareUA(Projects, Rtt_Root, str(Dir('#')))
+
+    if GetOption('target') == 'vsc':
+        from vsc import GenerateVSCode
+        GenerateVSCode(Env)
 
     BSP_ROOT = Dir('#').abspath
     if GetOption('copy') and program != None:
@@ -830,5 +856,3 @@ def PackageSConscript(package):
     from package import BuildPackage
 
     return BuildPackage(package)
-
-
