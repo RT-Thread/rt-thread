@@ -13,6 +13,9 @@ CPPPATH = [cwd + "/include"]
 if GetDepend('RT_USING_POSIX'):
     src += ['src/poll.c', 'src/select.c']
 
+if GetDepend('RT_USING_FINSH'):
+    src += ['src/msh_fs.c']
+
 group = DefineGroup('Filesystem', src, depend = ['RT_USING_DFS'], CPPPATH = CPPPATH)
 
 if GetDepend('RT_USING_DFS'):
