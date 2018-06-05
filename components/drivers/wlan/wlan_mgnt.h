@@ -1,8 +1,11 @@
 /*
- * File      : wlan_cmd.h
- *             Wi-Fi common commands
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+ *  RT-Thread Wi-Fi Device
+ *
+ * COPYRIGHT (C) 2014 - 2018, Shanghai Real-Thread Technology Co., Ltd
+ *
+ *  This file is part of RT-Thread (http://www.rt-thread.org)
+ *
+ *  All rights reserved.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,31 +23,12 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-06-05     RT-Thread    first version
+ * 2018-02-27     EvalZero     the first verion
  */
 
-#ifndef WLAN_CMD_H__
-#define WLAN_CMD_H__
+#ifndef __WLAN_MGNT_H__
+#define __WLAN_MGNT_H__
 
-struct netif;
-
-int wifi_get_mode(void);
-int wifi_set_mode(int mode);
-
-/* do the wifi default action: read wifi setting and then join or start soft-AP */
-int wifi_default(void);
-/* setup netif for soft-ap */
-int wifi_softap_setup_netif(struct netif *netif);
-
-int wifi_set_setting(const char *ssid, const char *pwd);
-
-#ifdef PKG_USING_CJSON
-int wifi_read_cfg(const char *filename);
-int wifi_save_cfg(const char *filename);
-#endif
-/* save wifi setting with default storage file */
-int wifi_save_setting(void);
-
-extern struct rt_wlan_info info;
+int rt_wlan_mgnt_attach(struct rt_wlan_device *device, void *user_data);
 
 #endif
