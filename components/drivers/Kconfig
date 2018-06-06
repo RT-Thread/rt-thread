@@ -165,7 +165,7 @@ config RT_USING_WIFI
     if RT_USING_WIFI
         config RT_USING_WLAN_STA
             bool "Using station mode"
-            default n
+            default y
 
         config RT_USING_WLAN_AP
             bool "Using ap mode"
