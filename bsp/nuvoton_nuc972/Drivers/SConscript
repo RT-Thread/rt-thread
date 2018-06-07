@@ -1,0 +1,20 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c') + Glob('*.cpp')
+
+if not GetDepend('RT_USING_LWIP'):
+	SrcRemove(src,'nuc97x_ethernet.c')
+
+if not GetDepend('RT_USING_SDIO'):
+	SrcRemove(src,'nuc97x_sdio.c')
+	
+if not GetDepend('RT_USING_SPI'):
+	SrcRemove(src,'nuc97x_spi_master.c')	
+	SrcRemove(src,'drv_spi_flash.c')
+
+CPPPATH = [cwd, str(Dir('#'))]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
