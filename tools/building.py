@@ -130,9 +130,6 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     sys.path = sys.path + [os.path.join(Rtt_Root, 'tools')]
 
-    if not os.path.exists(rtconfig.EXEC_PATH):
-        print "Error: Toolchain path (%s) is not exist, please check 'EXEC_PATH' in path or rtconfig.py." % rtconfig.EXEC_PATH
-        sys.exit(1)
     # add compability with Keil MDK 4.6 which changes the directory of armcc.exe
     if rtconfig.PLATFORM == 'armcc':
         if not os.path.isfile(os.path.join(rtconfig.EXEC_PATH, 'armcc.exe')):
@@ -790,6 +787,11 @@ def EndBuilding(target, program = None):
     if GetOption('cscope'):
         from cscope import CscopeDatabase
         CscopeDatabase(Projects)
+
+    if not GetOption('help') and not GetOption('target'):
+        if not os.path.exists(rtconfig.EXEC_PATH):
+            print "Error: Toolchain path (%s) is not exist, please check 'EXEC_PATH' in path or rtconfig.py." % rtconfig.EXEC_PATH
+            sys.exit(1)
 
 def SrcRemove(src, remove):
     if not src:
