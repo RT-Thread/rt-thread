@@ -1,5 +1,5 @@
 /*
- * File      : _pwm.c
+ * File      : rt_drv_pwm.c
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2018, RT-Thread Development Team
  *
