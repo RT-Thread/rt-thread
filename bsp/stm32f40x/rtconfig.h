@@ -10,7 +10,7 @@
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
-#define RT_TICK_PER_SECOND 100
+#define RT_TICK_PER_SECOND 1000
 #define RT_DEBUG
 #define RT_USING_OVERFLOW_CHECK
 #define RT_DEBUG_INIT 0
@@ -153,11 +153,6 @@
 
 /* RT-Thread online packages */
 
-/* system packages */
-
-/* RT-Thread GUI Engine */
-
-
 /* IoT - internet of things */
 
 
@@ -181,7 +176,18 @@
 /* tools packages */
 
 
+/* system packages */
+
+/* RT-Thread GUI Engine */
+
+
+/* peripheral libraries and drivers */
+
+
 /* miscellaneous packages */
+
+
+/* sample package */
 
 
 /* example package: hello */

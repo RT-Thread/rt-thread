@@ -1048,13 +1048,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>libc_syms.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\libc_syms.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>mem_std.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
