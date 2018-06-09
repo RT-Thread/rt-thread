@@ -1,9 +1,12 @@
 /*
+ * The Clear BSD License
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * are permitted (subject to the limitations in the disclaimer below) provided
+ *  that the following conditions are met:
  *
  * o Redistributions of source code must retain the above copyright notice, this list
  *   of conditions and the following disclaimer.
@@ -16,6 +19,7 @@
  *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE.
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,6 +45,11 @@
 /***********************************************************************************************************************
  * Definitions
  **********************************************************************************************************************/
+/*! @name Driver version */
+/*@{*/
+/*! @brief LPSPI EDMA driver version 2.0.2. */
+#define FSL_LPSPI_EDMA_DRIVER_VERSION (MAKE_VERSION(2, 0, 2))
+/*@}*/
 
 /*!
 * @brief Forward declaration of the _lpspi_master_edma_handle typedefs.
@@ -88,10 +97,10 @@ struct _lpspi_master_edma_handle
 
     volatile uint8_t rxWatermark; /*!< Rx watermark. */
 
-    volatile uint8_t bytesEachWrite; /*!< Bytes for each write TDR . */
-    volatile uint8_t bytesEachRead;  /*!< Bytes for each read RDR . */
+    volatile uint8_t bytesEachWrite; /*!< Bytes for each write TDR. */
+    volatile uint8_t bytesEachRead;  /*!< Bytes for each read RDR. */
 
-    volatile uint8_t bytesLastRead;       /*!< Bytes for last read RDR . */
+    volatile uint8_t bytesLastRead;       /*!< Bytes for last read RDR. */
     volatile uint8_t isThereExtraRxBytes; /*!< Is there extra RX byte. */
 
     uint8_t *volatile txData;             /*!< Send buffer. */
@@ -119,7 +128,7 @@ struct _lpspi_master_edma_handle
     edma_handle_t *edmaRxRegToRxDataHandle; /*!<edma_handle_t handle point used for RxReg to RxData buff*/
     edma_handle_t *edmaTxDataToTxRegHandle; /*!<edma_handle_t handle point used for TxData to TxReg buff*/
 
-    edma_tcd_t lpspiSoftwareTCD[3]; /*!<SoftwareTCD , internal used*/
+    edma_tcd_t lpspiSoftwareTCD[3]; /*!<SoftwareTCD, internal used*/
 };
 
 /*! @brief LPSPI slave eDMA transfer handle structure used for transactional API.*/
@@ -131,10 +140,10 @@ struct _lpspi_slave_edma_handle
 
     volatile uint8_t rxWatermark; /*!< Rx watermark. */
 
-    volatile uint8_t bytesEachWrite; /*!< Bytes for each write TDR . */
-    volatile uint8_t bytesEachRead;  /*!< Bytes for each read RDR . */
+    volatile uint8_t bytesEachWrite; /*!< Bytes for each write TDR. */
+    volatile uint8_t bytesEachRead;  /*!< Bytes for each read RDR. */
 
-    volatile uint8_t bytesLastRead;       /*!< Bytes for last read RDR . */
+    volatile uint8_t bytesLastRead;       /*!< Bytes for last read RDR. */
     volatile uint8_t isThereExtraRxBytes; /*!< Is there extra RX byte. */
 
     uint8_t nbytes; /*!< eDMA minor byte transfer count initially configured. */
@@ -144,8 +153,8 @@ struct _lpspi_slave_edma_handle
     volatile size_t txRemainingByteCount; /*!< Number of bytes remaining to send.*/
     volatile size_t rxRemainingByteCount; /*!< Number of bytes remaining to receive.*/
 
-    volatile uint32_t writeRegRemainingTimes; /*!< Write TDR register remaining times . */
-    volatile uint32_t readRegRemainingTimes;  /*!< Read RDR register remaining times . */
+    volatile uint32_t writeRegRemainingTimes; /*!< Write TDR register remaining times. */
+    volatile uint32_t readRegRemainingTimes;  /*!< Read RDR register remaining times. */
 
     uint32_t totalByteCount; /*!< Number of transfer bytes*/
 
@@ -162,7 +171,7 @@ struct _lpspi_slave_edma_handle
     edma_handle_t *edmaRxRegToRxDataHandle; /*!<edma_handle_t handle point used for RxReg to RxData buff*/
     edma_handle_t *edmaTxDataToTxRegHandle; /*!<edma_handle_t handle point used for TxData to TxReg*/
 
-    edma_tcd_t lpspiSoftwareTCD[2]; /*!<SoftwareTCD , internal used*/
+    edma_tcd_t lpspiSoftwareTCD[2]; /*!<SoftwareTCD, internal used*/
 };
 
 /***********************************************************************************************************************

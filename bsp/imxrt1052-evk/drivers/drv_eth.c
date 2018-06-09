@@ -319,7 +319,7 @@ static void _enet_io_init(void)
 
 static void _enet_clk_init(void)
 {
-    const clock_enet_pll_config_t config = {true, false, false, 1, 1};
+    const clock_enet_pll_config_t config = {true, false, 1};
     CLOCK_InitEnetPll(&config);
 
     IOMUXC_EnableMode(IOMUXC_GPR, kIOMUXC_GPR_ENET1TxClkOutputDir, true);
@@ -830,7 +830,7 @@ static int rt_hw_imxrt_eth_init(void)
     imxrt_eth_device.dev_addr[1] = 0x04;
     imxrt_eth_device.dev_addr[2] = 0x9F;
     /* generate MAC addr from 96bit unique ID (only for test). */
-    imxrt_eth_device.dev_addr[3] = 0x05;
+    imxrt_eth_device.dev_addr[3] = 0x08;
     imxrt_eth_device.dev_addr[4] = 0x44;
     imxrt_eth_device.dev_addr[5] = 0xE5;
 

@@ -41,6 +41,8 @@ if GetDepend('RT_USING_I2C'):
 # add lcd driver code
 if GetDepend('RT_USING_LCD'):
     src += ['drv_lcd.c']
+    if GetDepend('BOARD_RT1050_EVK') and GetDepend('PKG_USING_GUIENGINE'):
+        src += ['drv_ft5406.c']
 
 # add sdio driver code
 if GetDepend('RT_USING_SDIO'):
@@ -56,7 +58,6 @@ if GetDepend('RT_USING_USB_DEVICE'):
     CPPDEFINES += ['ENDIANNESS']
 
 if GetDepend('BOARD_RT1050_EVK') or GetDepend('BOARD_RT1050_SeeedStudio'):
-    
     if GetDepend('RT_USING_LWIP'):
         src += ['drv_eth.c', 'fsl_phy.c']
         CPPDEFINES += ['FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE']
