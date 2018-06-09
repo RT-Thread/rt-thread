@@ -20,6 +20,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2017-11-02     ÇÚÎª±¾       first version
+ * 2018-06-09     zhuangwei    add spi0 cs0 support,remove msd_init
  */
 
 #include <rtthread.h>
@@ -235,13 +236,15 @@ int ls1c_hw_spi_init(void)
     pin_set_purpose(79, PIN_PURPOSE_OTHER);
     pin_set_purpose(80, PIN_PURPOSE_OTHER);
     pin_set_purpose(83, PIN_PURPOSE_OTHER);//cs2 - SD card
-    pin_set_purpose(82, PIN_PURPOSE_OTHER);//cs1 
+    pin_set_purpose(82, PIN_PURPOSE_OTHER);//cs1
+    pin_set_purpose(81, PIN_PURPOSE_OTHER);//cs0 
     
-    pin_set_remap(78, PIN_REMAP_FOURTH);
-    pin_set_remap(79, PIN_REMAP_FOURTH);
-    pin_set_remap(80, PIN_REMAP_FOURTH);
-    pin_set_remap(83, PIN_REMAP_FOURTH);//cs2 - SD card
-    pin_set_remap(82, PIN_REMAP_FOURTH);//cs1 
+    pin_set_remap(78, PIN_REMAP_DEFAULT);
+    pin_set_remap(79, PIN_REMAP_DEFAULT);
+    pin_set_remap(80, PIN_REMAP_DEFAULT);
+    pin_set_remap(83, PIN_REMAP_DEFAULT);//cs2 - SD card
+    pin_set_remap(82, PIN_REMAP_DEFAULT);//CS1
+    pin_set_remap(81, PIN_REMAP_DEFAULT);//cs0
     ls1c_spi_bus_register(LS1C_SPI_0,"spi0");
 #endif
 
@@ -262,8 +265,10 @@ int ls1c_hw_spi_init(void)
 #ifdef RT_USING_SPI0
     /* attach cs */
     {
+    	static struct rt_spi_device spi_device0;
         static struct rt_spi_device spi_device1;
         static struct rt_spi_device spi_device2;
+		static struct ls1c_spi_cs  spi_cs0;
         static struct ls1c_spi_cs  spi_cs1;
         static struct ls1c_spi_cs  spi_cs2;
 
@@ -272,7 +277,8 @@ int ls1c_hw_spi_init(void)
         rt_spi_bus_attach_device(&spi_device2, "spi02", "spi0", (void*)&spi_cs2);
         spi_cs1.cs = LS1C_SPI_CS_1;
         rt_spi_bus_attach_device(&spi_device1, "spi01", "spi0", (void*)&spi_cs1);
-        msd_init("sd0", "spi02");
+		spi_cs0.cs = LS1C_SPI_CS_0;
+        rt_spi_bus_attach_device(&spi_device0, "spi00", "spi0", (void*)&spi_cs0);
     }
 #endif
 #ifdef RT_USING_SPI1    
@@ -286,6 +292,7 @@ int ls1c_hw_spi_init(void)
     }
 #endif
 }
+
 
 INIT_BOARD_EXPORT(ls1c_hw_spi_init);
 
