@@ -28,6 +28,7 @@ if RT_USING_DFS
 
     config RT_USING_DFS_ELMFAT
         bool "Enable elm-chan fatfs"
+        selsect RT_USING_LIBC
         default y
         help
             FatFs is a generic FAT/exFAT file system module for small embedded systems.
