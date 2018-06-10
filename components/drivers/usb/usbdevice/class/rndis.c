@@ -1180,6 +1180,19 @@ rt_err_t rt_rndis_eth_tx(rt_device_t dev, struct pbuf* p)
 
     return result;
 }
+
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops rndis_device_ops =
+{
+    rt_rndis_eth_init,
+    rt_rndis_eth_open,
+    rt_rndis_eth_close,
+    rt_rndis_eth_read,
+    rt_rndis_eth_write,
+    rt_rndis_eth_control
+};
+#endif
+
 #endif /* RT_USING_LWIP */
 
 #ifdef  RNDIS_DELAY_LINK_UP
@@ -1307,20 +1320,24 @@ ufunction_t rt_usbd_function_rndis_create(udevice_t device)
     _rndis->host_addr[4]                = 0xEA;//*(const rt_uint8_t *)(0x0FE081F1);
     _rndis->host_addr[5]                = 0x13;//*(const rt_uint8_t *)(0x0FE081F2);
 
+#ifdef RT_USING_DEVICE_OPS
+    _rndis->parent.parent.ops           = &rndis_device_ops;
+#else
     _rndis->parent.parent.init          = rt_rndis_eth_init;
     _rndis->parent.parent.open          = rt_rndis_eth_open;
     _rndis->parent.parent.close         = rt_rndis_eth_close;
     _rndis->parent.parent.read          = rt_rndis_eth_read;
     _rndis->parent.parent.write         = rt_rndis_eth_write;
     _rndis->parent.parent.control       = rt_rndis_eth_control;
+#endif
     _rndis->parent.parent.user_data     = device;
 
     _rndis->parent.eth_rx               = rt_rndis_eth_rx;
     _rndis->parent.eth_tx               = rt_rndis_eth_tx;
 
-	/* register eth device */
+    /* register eth device */
     eth_device_init(&((rt_rndis_eth_t)cdc->user_data)->parent, "u0");
-   
+
 #endif /* RT_USING_LWIP */
 
     return cdc;

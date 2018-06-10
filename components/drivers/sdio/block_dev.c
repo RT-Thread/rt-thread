@@ -319,6 +319,18 @@ static rt_int32_t mmcsd_set_blksize(struct rt_mmcsd_card *card)
     return 0;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops mmcsd_blk_ops = 
+{
+    rt_mmcsd_init,
+    rt_mmcsd_open,
+    rt_mmcsd_close,
+    rt_mmcsd_read,
+    rt_mmcsd_write,
+    rt_mmcsd_control
+};
+#endif
+
 rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
 {
     rt_int32_t err = 0;
@@ -366,13 +378,17 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
                 blk_dev->part.lock = rt_sem_create(sname, 1, RT_IPC_FLAG_FIFO);
     
                 /* register mmcsd device */
-                blk_dev->dev.type = RT_Device_Class_Block;                  
+                blk_dev->dev.type = RT_Device_Class_Block;
+#ifdef RT_USING_DEVICE_OPS
+                blk_dev->dev.ops  = &mmcsd_blk_ops;
+#else
                 blk_dev->dev.init = rt_mmcsd_init;
                 blk_dev->dev.open = rt_mmcsd_open;
                 blk_dev->dev.close = rt_mmcsd_close;
                 blk_dev->dev.read = rt_mmcsd_read;
                 blk_dev->dev.write = rt_mmcsd_write;
                 blk_dev->dev.control = rt_mmcsd_control;
+#endif
                 blk_dev->dev.user_data = blk_dev;
 
                 blk_dev->card = card;
@@ -396,12 +412,16 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
     
                     /* register mmcsd device */
                     blk_dev->dev.type  = RT_Device_Class_Block;
+#ifdef RT_USING_DEVICE_OPS
+                    blk_dev->dev.ops  = &mmcsd_blk_ops;
+#else
                     blk_dev->dev.init = rt_mmcsd_init;
                     blk_dev->dev.open = rt_mmcsd_open;
                     blk_dev->dev.close = rt_mmcsd_close;
                     blk_dev->dev.read = rt_mmcsd_read;
                     blk_dev->dev.write = rt_mmcsd_write;
                     blk_dev->dev.control = rt_mmcsd_control;
+#endif
                     blk_dev->dev.user_data = blk_dev;
 
                     blk_dev->card = card;
@@ -482,6 +502,3 @@ int rt_mmcsd_blk_init(void)
     /* nothing */
     return 0;
 }
-
-INIT_PREV_EXPORT(rt_mmcsd_blk_init);
-

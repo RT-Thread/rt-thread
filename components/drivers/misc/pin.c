@@ -76,18 +76,34 @@ static rt_err_t  _pin_control(rt_device_t dev, int cmd, void *args)
     return 0;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops pin_ops =
+{
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    _pin_read,
+    _pin_write,
+    _pin_control
+};
+#endif
+
 int rt_device_pin_register(const char *name, const struct rt_pin_ops *ops, void *user_data)
 {
     _hw_pin.parent.type         = RT_Device_Class_Miscellaneous;
     _hw_pin.parent.rx_indicate  = RT_NULL;
     _hw_pin.parent.tx_complete  = RT_NULL;
 
+#ifdef RT_USING_DEVICE_OPS
+    _hw_pin.parent.ops          = &pin_ops;
+#else
     _hw_pin.parent.init         = RT_NULL;
     _hw_pin.parent.open         = RT_NULL;
     _hw_pin.parent.close        = RT_NULL;
     _hw_pin.parent.read         = _pin_read;
     _hw_pin.parent.write        = _pin_write;
     _hw_pin.parent.control      = _pin_control;
+#endif
 
     _hw_pin.ops                 = ops;
     _hw_pin.parent.user_data    = user_data;
@@ -117,6 +133,7 @@ rt_err_t rt_pin_dettach_irq(rt_int32_t pin)
     }
     return RT_ENOSYS;
 }
+
 rt_err_t rt_pin_irq_enable(rt_base_t pin, rt_uint32_t enabled)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
@@ -126,6 +143,7 @@ rt_err_t rt_pin_irq_enable(rt_base_t pin, rt_uint32_t enabled)
     }
     return RT_ENOSYS;
 }
+
 /* RT-Thread Hardware PIN APIs */
 void rt_pin_mode(rt_base_t pin, rt_base_t mode)
 {

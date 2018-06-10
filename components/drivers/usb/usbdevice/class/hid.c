@@ -592,14 +592,33 @@ static void hid_thread_entry(void* parameter)
 		HID_Report_Received(&report);
 	}
 }
+
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops hid_device_ops =
+{
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    _hid_write,
+    RT_NULL,
+};
+#endif
+
 static rt_uint8_t hid_mq_pool[(sizeof(struct hid_report)+sizeof(void*))*8];
 static void rt_usb_hid_init(struct ufunction *func)
 {
     struct hid_s *hiddev;
     hiddev = (struct hid_s *)func->user_data;
     rt_memset(&hiddev->parent, 0, sizeof(hiddev->parent));
+
+#ifdef RT_USING_DEVICE_OPS
+    hiddev->parent.ops   = &hid_device_ops;
+#else
     hiddev->parent.write = _hid_write;
-	hiddev->func = func;
+#endif
+    hiddev->func = func;
+
     rt_device_register(&hiddev->parent, "hidd", RT_DEVICE_FLAG_RDWR);
     rt_mq_init(&hiddev->hid_mq, "hiddmq", hid_mq_pool, sizeof(struct hid_report),
                             sizeof(hid_mq_pool), RT_IPC_FLAG_FIFO);

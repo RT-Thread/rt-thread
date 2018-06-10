@@ -78,6 +78,18 @@ static rt_err_t rt_watchdog_control(struct rt_device *dev,
     return (wtd->ops->control(wtd, cmd, args));
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops wdt_ops = 
+{
+    rt_watchdog_init,
+    rt_watchdog_open,
+    rt_watchdog_close,
+    RT_NULL,
+    RT_NULL,
+    rt_watchdog_control,
+};
+#endif
+
 /**
  * This function register a watchdog device
  */
@@ -95,12 +107,16 @@ rt_err_t rt_hw_watchdog_register(struct rt_watchdog_device *wtd,
     device->rx_indicate = RT_NULL;
     device->tx_complete = RT_NULL;
 
+#ifdef RT_USING_DEVICE_OPS
+    device->ops         = &wdt_ops;
+#else
     device->init        = rt_watchdog_init;
     device->open        = rt_watchdog_open;
     device->close       = rt_watchdog_close;
     device->read        = RT_NULL;
     device->write       = RT_NULL;
     device->control     = rt_watchdog_control;
+#endif
     device->user_data   = data;
 
     /* register a character device */

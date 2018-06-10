@@ -416,6 +416,18 @@ rt_err_t  rt_pipe_control(rt_device_t dev, int cmd, void *args)
     return RT_EOK;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops pipe_ops = 
+{
+    RT_NULL,
+    rt_pipe_open,
+    rt_pipe_close,
+    rt_pipe_read,
+    rt_pipe_write,
+    rt_pipe_control,
+};
+#endif
+
 rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
 {
     rt_pipe_t *pipe;
@@ -434,12 +446,16 @@ rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
 
     dev = &(pipe->parent);
     dev->type = RT_Device_Class_Pipe;
+#ifdef RT_USING_DEVICE_OPS
+    dev->ops         = &pipe_ops;
+#else
     dev->init        = RT_NULL;
     dev->open        = rt_pipe_open;
     dev->read        = rt_pipe_read;
     dev->write       = rt_pipe_write;
     dev->close       = rt_pipe_close;
     dev->control     = rt_pipe_control;
+#endif
 
     dev->rx_indicate = RT_NULL;
     dev->tx_complete = RT_NULL;

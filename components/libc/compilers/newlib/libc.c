@@ -35,6 +35,8 @@
 #include <pthread.h>
 #endif
 
+int	_EXFUN(putenv,(char *__string));
+
 int libc_system_init(void)
 {
 #if defined(RT_USING_DFS) & defined(RT_USING_DFS_DEVFS)
