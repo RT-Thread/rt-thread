@@ -183,7 +183,7 @@ void sfud_log_debug(const char *file, const long line, const char *format, ...) 
 
     /* args point to the first variable parameter */
     va_start(args, format);
-    rt_kprintf("[SFUD](%s:%ld) ", file, line);
+    rt_kprintf("[SFUD] (%s:%ld) ", file, line);
     /* must use vprintf to print */
     vsnprintf(log_buf, sizeof(log_buf), format, args);
     rt_kprintf("%s\n", log_buf);
@@ -201,7 +201,7 @@ void sfud_log_info(const char *format, ...) {
 
     /* args point to the first variable parameter */
     va_start(args, format);
-    rt_kprintf("[SFUD]");
+    rt_kprintf("[SFUD] ");
     /* must use vprintf to print */
     vsnprintf(log_buf, sizeof(log_buf), format, args);
     rt_kprintf("%s\n", log_buf);
@@ -216,6 +216,9 @@ sfud_err sfud_spi_port_init(sfud_flash *flash) {
     flash->spi.lock = spi_lock;
     flash->spi.unlock = spi_unlock;
     flash->spi.user_data = flash;
+    if (RT_TICK_PER_SECOND < 1000) {
+        rt_kprintf("[SFUD] Warning: The OS tick(%d) is less than 1000. So the flash write will take more time.\n", RT_TICK_PER_SECOND);
+    }
     /* 100 microsecond delay */
     flash->retry.delay = retry_delay_100us;
     /* 60 seconds timeout */
@@ -355,7 +358,7 @@ rt_err_t rt_sfud_flash_delete(rt_spi_flash_device_t spi_flash_dev) {
 
 static void sf(uint8_t argc, char **argv) {
 
-#define CMD_SETECT_INDEX              0
+#define CMD_PROBE_INDEX               0
 #define CMD_READ_INDEX                1
 #define CMD_WRITE_INDEX               2
 #define CMD_ERASE_INDEX               3
@@ -368,7 +371,7 @@ static void sf(uint8_t argc, char **argv) {
     size_t i = 0;
 
     const char* sf_help_info[] = {
-            [CMD_SETECT_INDEX]    = "sf probe [spi_device]           - probe and init SPI flash by given 'spi_device'",
+            [CMD_PROBE_INDEX]     = "sf probe [spi_device]           - probe and init SPI flash by given 'spi_device'",
             [CMD_READ_INDEX]      = "sf read addr size               - read 'size' bytes starting at 'addr'",
             [CMD_WRITE_INDEX]     = "sf write addr data1 ... dataN   - write some bytes 'data' to flash starting at 'addr'",
             [CMD_ERASE_INDEX]     = "sf erase addr size              - erase 'size' bytes starting at 'addr'",
@@ -388,7 +391,7 @@ static void sf(uint8_t argc, char **argv) {
 
         if (!strcmp(operator, "probe")) {
             if (argc < 3) {
-                rt_kprintf("Usage: %s.\n", sf_help_info[CMD_SETECT_INDEX]);
+                rt_kprintf("Usage: %s.\n", sf_help_info[CMD_PROBE_INDEX]);
             } else {
                 char *spi_dev_name = argv[2];
                 rtt_dev_bak = rtt_dev;
