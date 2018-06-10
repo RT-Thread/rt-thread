@@ -65,30 +65,6 @@
 #define RT_USING_MODULE_PRIO (RT_THREAD_PRIORITY_MAX - 2)
 #endif
 
-#ifdef RT_USING_SLAB
-#define PAGE_COUNT_MAX    256
-
-/* module memory allocator */
-struct rt_mem_head
-{
-    rt_size_t size;                /* size of memory block */
-    struct rt_mem_head *next;      /* next valid memory block */
-};
-
-struct rt_page_info
-{
-    rt_uint32_t *page_ptr;
-    rt_uint32_t npage;
-};
-
-static void *rt_module_malloc_page(rt_size_t npages);
-static void rt_module_free_page(rt_module_t module,
-                                void       *page_ptr,
-                                rt_size_t   npages);
-
-static struct rt_semaphore mod_sem;
-#endif
-
 static struct rt_module_symtab *_rt_module_symtab_begin = RT_NULL;
 static struct rt_module_symtab *_rt_module_symtab_end   = RT_NULL;
 
