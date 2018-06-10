@@ -4,6 +4,7 @@ from building import *
 
 comm = rtconfig.ARCH + '/common'
 path = rtconfig.ARCH + '/' + rtconfig.CPU
+ASFLAGS = ''
 
 # The set of source files associated with this SConscript file.
 if rtconfig.PLATFORM == 'armcc':
@@ -21,7 +22,10 @@ if rtconfig.PLATFORM == 'cl':
 if rtconfig.PLATFORM == 'mingw':
 	src = Glob(path + '/*.c')
 
+if rtconfig.PLATFORM == 'armcc' and rtconfig.ARCH == 'arm' and rtconfig.CPU == 'arm926':
+    ASFLAGS = ' --cpreproc'
+    
 CPPPATH = [RTT_ROOT + '/libcpu/' + rtconfig.ARCH + '/' + rtconfig.CPU, RTT_ROOT + '/libcpu/' + rtconfig.ARCH + '/common']
-group = DefineGroup(rtconfig.CPU.upper(), src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup(rtconfig.CPU.upper(), src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS)
 
 Return('group')

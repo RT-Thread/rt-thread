@@ -1,7 +1,11 @@
 /*
- * File      : rt_low_level_gcc.inc
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
+ *  RT-Thread Wi-Fi Device
+ *
+ * COPYRIGHT (C) 2014 - 2018, Shanghai Real-Thread Technology Co., Ltd
+ *
+ *  This file is part of RT-Thread (http://www.rt-thread.org)
+ *
+ *  All rights reserved.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,13 +23,12 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2015-04-14     ArdaFu      first version
+ * 2018-02-27     EvalZero     the first verion
  */
 
-/*--------- Stack size of CPU modes ------------------------------------------*/
-.equ UND_STK_SIZE,    2048
-.equ SVC_STK_SIZE,    4096
-.equ ABT_STK_SIZE,    2048
-.equ IRQ_STK_SIZE,    4096
-.equ FIQ_STK_SIZE,    4096
-.equ SYS_STK_SIZE,    2048
+#ifndef __WLAN_MGNT_H__
+#define __WLAN_MGNT_H__
+
+int rt_wlan_mgnt_attach(struct rt_wlan_device *device, void *user_data);
+
+#endif
