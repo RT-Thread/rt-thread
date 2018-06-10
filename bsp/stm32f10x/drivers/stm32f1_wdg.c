@@ -27,7 +27,7 @@ static rt_err_t stm32f1_wdg_control(rt_watchdog_t *wdt, int cmd, void *arg)
      switch(cmd)
      {
      case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
-          timeout_ms = (rt_uint32_t) arg;
+          timeout_ms = *((rt_uint32_t*) arg);
           IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
           if(timeout_ms >= 13107)
           {

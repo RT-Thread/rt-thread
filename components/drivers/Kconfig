@@ -66,6 +66,10 @@ config RT_USING_PIN
     bool "Using generic GPIO device drivers"
     default y
 
+config RT_USING_PWM
+    bool "Using PWM device drivers"
+    default n
+
 config RT_USING_MTD_NOR
     bool "Using MTD Nor Flash device drivers"
     default n
@@ -161,6 +165,24 @@ config RT_USING_WDT
 config RT_USING_WIFI
     bool "Using Wi-Fi network"
     default n
+
+    if RT_USING_WIFI
+        config RT_USING_WLAN_STA
+            bool "Using station mode"
+            default y
+
+        config RT_USING_WLAN_AP
+            bool "Using ap mode"
+            default n
+
+        config WIFI_DEVICE_STA_NAME
+            string "the wifi device name for station"
+            default "w0"
+
+        config WIFI_DEVICE_AP_NAME
+            string "the wifi device name for ap"
+            default "ap"
+    endif
 
 config RT_USING_AUDIO
     bool "Using Audio device drivers"
