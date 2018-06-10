@@ -1,0 +1,7 @@
+config RT_USING_LWP
+    bool "Using light-weight process"
+    select RT_USING_DFS
+    depends on ARCH_ARM_CORTEX_M
+    default n
+    help
+        The lwP is a light weight process running in user mode.
