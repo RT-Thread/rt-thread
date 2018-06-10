@@ -164,14 +164,8 @@ void rt_thread_idle_excute(void)
         rt_hw_interrupt_enable(lock);
 
 #ifdef RT_USING_HEAP
-#if defined(RT_USING_MODULE) && defined(RT_USING_SLAB)
-        /* the thread belongs to an application module */
-        if (thread->flags & RT_OBJECT_FLAG_MODULE)
-            rt_module_free((rt_module_t)thread->module_id, thread->stack_addr);
-        else
-#endif
-            /* release thread's stack */
-            RT_KERNEL_FREE(thread->stack_addr);
+        /* release thread's stack */
+        RT_KERNEL_FREE(thread->stack_addr);
         /* delete thread object */
         rt_object_delete((rt_object_t)thread);
 #endif
