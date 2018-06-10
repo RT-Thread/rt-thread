@@ -264,6 +264,18 @@ static rt_size_t w25qxx_flash_write(rt_device_t dev,
     return size;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops w25qxx_device_ops =
+{
+    w25qxx_flash_init,
+    w25qxx_flash_open,
+    w25qxx_flash_close,
+    w25qxx_flash_read,
+    w25qxx_flash_write,
+    w25qxx_flash_control
+};
+#endif
+
 rt_err_t w25qxx_init(const char * flash_device_name, const char * spi_device_name)
 {
     struct rt_spi_device * rt_spi_device;
@@ -375,12 +387,16 @@ rt_err_t w25qxx_init(const char * flash_device_name, const char * spi_device_nam
 
     /* register device */
     spi_flash_device.flash_device.type    = RT_Device_Class_Block;
+#ifdef RT_USING_DEVICE_OPS
+    spi_flash_device.flash_device.ops     = &w25qxx_device_ops;
+#else
     spi_flash_device.flash_device.init    = w25qxx_flash_init;
     spi_flash_device.flash_device.open    = w25qxx_flash_open;
     spi_flash_device.flash_device.close   = w25qxx_flash_close;
     spi_flash_device.flash_device.read    = w25qxx_flash_read;
     spi_flash_device.flash_device.write   = w25qxx_flash_write;
     spi_flash_device.flash_device.control = w25qxx_flash_control;
+#endif
     /* no private */
     spi_flash_device.flash_device.user_data = RT_NULL;
 

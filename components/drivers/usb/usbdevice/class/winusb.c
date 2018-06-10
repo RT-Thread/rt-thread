@@ -246,16 +246,34 @@ static rt_err_t  win_usb_control(rt_device_t dev, int cmd, void *args)
     }
     return RT_EOK;
 }
+
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops winusb_device_ops =
+{
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    win_usb_read,
+    win_usb_write,
+    win_usb_control,
+};
+#endif
+
 static rt_err_t rt_usb_winusb_init(ufunction_t func)
 {
     winusb_device_t winusb_device   = (winusb_device_t)func->user_data;
     winusb_device->parent.type      = RT_Device_Class_Miscellaneous;
+
+#ifdef RT_USING_DEVICE_OPS
+    winusb_device->parent.ops       = &winusb_device_ops;
+#else
     winusb_device->parent.init      = RT_NULL;
     winusb_device->parent.open      = RT_NULL;
     winusb_device->parent.close     = RT_NULL;
     winusb_device->parent.read      = win_usb_read;
     winusb_device->parent.write     = win_usb_write;
     winusb_device->parent.control   = win_usb_control;
+#endif
 
     winusb_device->parent.user_data = func;
 

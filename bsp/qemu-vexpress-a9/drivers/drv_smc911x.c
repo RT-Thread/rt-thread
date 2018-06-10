@@ -485,6 +485,18 @@ struct pbuf *smc911x_emac_rx(rt_device_t dev)
     return p;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops smc911x_emac_ops = 
+{
+    smc911x_emac_init,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    smc911x_emac_control
+};
+#endif
+
 int smc911x_emac_hw_init(void)
 {
     _emac.iobase = VEXPRESS_ETH_BASE;
@@ -507,12 +519,16 @@ int smc911x_emac_hw_init(void)
     _emac.enetaddr[4] = 0x22;
     _emac.enetaddr[5] = 0x33;
 
+#ifdef RT_USING_DEVICE_OPS
+    _emac.parent.parent.ops        = &smc911x_emac_ops;
+#else
     _emac.parent.parent.init       = smc911x_emac_init;
     _emac.parent.parent.open       = RT_NULL;
     _emac.parent.parent.close      = RT_NULL;
     _emac.parent.parent.read       = RT_NULL;
     _emac.parent.parent.write      = RT_NULL;
     _emac.parent.parent.control    = smc911x_emac_control;
+#endif
     _emac.parent.parent.user_data  = RT_NULL;
     _emac.parent.eth_rx     = smc911x_emac_rx;
     _emac.parent.eth_tx     = smc911x_emac_tx;
@@ -540,12 +556,3 @@ int smc911x_emac_hw_init(void)
     return 0;
 }
 INIT_APP_EXPORT(smc911x_emac_hw_init);
-
-#include <finsh.h>
-int emac(int argc, char** argv)
-{
-    rt_hw_interrupt_umask(_emac.irqno);
-
-    return 0;
-}
-MSH_CMD_EXPORT(emac, emac dump);

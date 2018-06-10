@@ -225,6 +225,18 @@ sfud_err sfud_spi_port_init(sfud_flash *flash) {
     return result;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops flash_device_ops = 
+{
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    rt_sfud_read,
+    rt_sfud_write,
+    rt_sfud_control
+};
+#endif
+
 /**
  * Probe SPI flash by SFUD(Serial Flash Universal Driver) driver library and though SPI device.
  *
@@ -255,7 +267,7 @@ rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const 
         /* initialize lock */
         rt_mutex_init(&(rtt_dev->lock), spi_flash_dev_name, RT_IPC_FLAG_FIFO);
     }
-    
+
     if (rtt_dev && sfud_dev && spi_flash_dev_name_bak && spi_dev_name_bak) {
         rt_memset(sfud_dev, 0, sizeof(sfud_flash));
         rt_strncpy(spi_flash_dev_name_bak, spi_flash_dev_name, rt_strlen(spi_flash_dev_name));
@@ -294,12 +306,16 @@ rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const 
 
         /* register device */
         rtt_dev->flash_device.type = RT_Device_Class_Block;
+#ifdef RT_USING_DEVICE_OPS
+        rtt_dev->flash_device.ops  = &flash_device_ops;
+#else
         rtt_dev->flash_device.init = RT_NULL;
         rtt_dev->flash_device.open = RT_NULL;
         rtt_dev->flash_device.close = RT_NULL;
         rtt_dev->flash_device.read = rt_sfud_read;
         rtt_dev->flash_device.write = rt_sfud_write;
         rtt_dev->flash_device.control = rt_sfud_control;
+#endif
 
         rt_device_register(&(rtt_dev->flash_device), spi_flash_dev_name, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STANDALONE);
 
