@@ -199,6 +199,11 @@ void *sys_realloc(void *rmem, size_t newsize)
     return rt_lwp_mem_realloc(rmem, newsize);
 }
 
+int sys_fstat(int file, struct stat *buf)
+{
+    return fstat(file, buf);
+}
+
 const static void* func_table[] =
 {
     (void *)sys_exit,           // 0x01
@@ -219,6 +224,8 @@ const static void* func_table[] =
         
     (void *)sys_malloc,         // 0x0d
     (void *)sys_free,           // 0x0e
+    (void *)sys_realloc,      //0x0f
+    (void *)sys_fstat,           // 0x10
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
