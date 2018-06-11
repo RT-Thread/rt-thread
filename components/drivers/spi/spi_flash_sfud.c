@@ -29,7 +29,7 @@
 
 #ifdef RT_USING_SFUD
 
-#if RT_DEBUG_SFUD
+#ifdef RT_DEBUG_SFUD
 #define DEBUG_TRACE         rt_kprintf("[SFUD] "); rt_kprintf
 #else
 #define DEBUG_TRACE(...)
