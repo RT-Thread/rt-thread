@@ -352,7 +352,6 @@ int exec(char *filename)
 
     return -RT_ERROR;
 }
-FINSH_FUNCTION_EXPORT(exec, loader a user app &run);
 
 int _exec(int argc, char **argv)
 {
@@ -361,4 +360,4 @@ int _exec(int argc, char **argv)
 
     return exec(argv[1]);
 }
-MSH_CMD_EXPORT_ALIAS(_exec, exec, loader a user app &run);
+MSH_CMD_EXPORT_ALIAS(_exec, elwp, loader a user app &run);
