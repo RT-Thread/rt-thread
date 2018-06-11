@@ -352,12 +352,3 @@ int exec(char *filename)
 
     return -RT_ERROR;
 }
-
-int _exec(int argc, char **argv)
-{
-    if (argc != 2)
-        return -RT_ERROR;
-
-    return exec(argv[1]);
-}
-MSH_CMD_EXPORT_ALIAS(_exec, elwp, loader a user app &run);
