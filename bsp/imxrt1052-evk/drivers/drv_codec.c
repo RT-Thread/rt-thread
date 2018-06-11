@@ -263,6 +263,7 @@ static rt_err_t icodec_init(struct rt_audio_device *audio)
 
     /* Init SAI module */
     SAI_TxGetDefaultConfig(&config);
+    config.protocol = kSAI_BusLeftJustified;
     SAI_TxInit(DEMO_SAI, &config);
 
     /* Configure the audio format */

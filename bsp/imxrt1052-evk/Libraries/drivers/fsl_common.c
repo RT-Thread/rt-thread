@@ -1,10 +1,13 @@
 /*
+* The Clear BSD License
 * Copyright (c) 2015-2016, Freescale Semiconductor, Inc.
  * Copyright 2016 NXP
 * All rights reserved.
 *
+* 
 * Redistribution and use in source and binary forms, with or without modification,
-* are permitted provided that the following conditions are met:
+* are permitted (subject to the limitations in the disclaimer below) provided
+*  that the following conditions are met:
 *
 * o Redistributions of source code must retain the above copyright notice, this list
 *   of conditions and the following disclaimer.
@@ -17,6 +20,7 @@
 *   contributors may be used to endorse or promote products derived from this
 *   software without specific prior written permission.
 *
+* NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE.
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -37,6 +41,12 @@ typedef struct _mem_align_control_block
     uint16_t    identifier;     /*!< Identifier for the memory control block. */
     uint16_t    offset;         /*!< offset from aligned adress to real address */
 } mem_align_cb_t;
+
+/* Component ID definition, used by tools. */
+#ifndef FSL_COMPONENT_ID
+#define FSL_COMPONENT_ID "platform.drivers.common"
+#endif
+
 
 #ifndef __GIC_PRIO_BITS
 #if defined(ENABLE_RAM_VECTOR_TABLE)
@@ -99,30 +109,50 @@ uint32_t InstallIRQHandler(IRQn_Type irq, uint32_t irqHandler)
 
 void EnableDeepSleepIRQ(IRQn_Type interrupt)
 {
-    uint32_t index = 0;
     uint32_t intNumber = (uint32_t)interrupt;
-    while (intNumber >= 32u)
-    {
-        index++;
-        intNumber -= 32u;
-    }
 
-    SYSCON->STARTERSET[index] = 1u << intNumber;
+#if (defined(FSL_FEATURE_SYSCON_STARTER_DISCONTINUOUS) && (FSL_FEATURE_SYSCON_STARTER_DISCONTINUOUS == 1))
+    {
+        SYSCON->STARTERP1 = 1u << intNumber;
+    }
+#else
+    {
+        uint32_t index = 0;
+
+        while (intNumber >= 32u)
+        {
+            index++;
+            intNumber -= 32u;
+        }
+
+        SYSCON->STARTERSET[index] = 1u << intNumber;
+    }
+#endif                    /* FSL_FEATURE_STARTER_DISCONTINUOUS */
     EnableIRQ(interrupt); /* also enable interrupt at NVIC */
 }
 
 void DisableDeepSleepIRQ(IRQn_Type interrupt)
 {
-    uint32_t index = 0;
     uint32_t intNumber = (uint32_t)interrupt;
-    while (intNumber >= 32u)
-    {
-        index++;
-        intNumber -= 32u;
-    }
 
     DisableIRQ(interrupt); /* also disable interrupt at NVIC */
-    SYSCON->STARTERCLR[index] = 1u << intNumber;
+#if (defined(FSL_FEATURE_SYSCON_STARTER_DISCONTINUOUS) && (FSL_FEATURE_SYSCON_STARTER_DISCONTINUOUS == 1))
+    {
+        SYSCON->STARTERP1 &= ~(1u << intNumber);
+    }
+#else
+    {
+        uint32_t index = 0;
+
+        while (intNumber >= 32u)
+        {
+            index++;
+            intNumber -= 32u;
+        }
+
+        SYSCON->STARTERCLR[index] = 1u << intNumber;
+    }
+#endif /* FSL_FEATURE_STARTER_DISCONTINUOUS */
 }
 #endif /* FSL_FEATURE_SOC_SYSCON_COUNT */
 

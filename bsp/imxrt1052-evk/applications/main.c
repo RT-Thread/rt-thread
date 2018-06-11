@@ -59,7 +59,6 @@ void dump_clock(void)
     rt_kprintf("Video PLLCLK(PLL5) : %d\n",         CLOCK_GetFreq(kCLOCK_VideoPllClk));
     rt_kprintf("Enet PLLCLK ref_enetpll0 : %d\n",   CLOCK_GetFreq(kCLOCK_EnetPll0Clk));
     rt_kprintf("Enet PLLCLK ref_enetpll1 : %d\n",   CLOCK_GetFreq(kCLOCK_EnetPll1Clk));
-    rt_kprintf("Enet PLLCLK ref_enetpll2 : %d\n",   CLOCK_GetFreq(kCLOCK_EnetPll2Clk));
     rt_kprintf("USB2PLLCLK(PLL7) : %d\n",           CLOCK_GetFreq(kCLOCK_Usb2PllClk));
 }
 

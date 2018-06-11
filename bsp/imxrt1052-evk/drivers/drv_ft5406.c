@@ -26,12 +26,8 @@
 #include <rtdevice.h>
 #include <finsh.h>
 
-#define RT_USING_RTGUI
-
-#ifdef RT_USING_RTGUI
 #include <rtgui/event.h>
 #include <rtgui/rtgui_server.h>
-#endif
 
 #include "board.h"
 
