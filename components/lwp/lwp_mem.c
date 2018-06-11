@@ -22,7 +22,6 @@
  * 2018-03-24     Tanek        the first version
  */
 
-#include <stdio.h>
 #include <rtthread.h>
 #include <lwp.h>
 
@@ -77,7 +76,7 @@ static void *rt_lwp_malloc_page(struct rt_lwp *lwp, rt_size_t npages)
 
     dbg_log(DBG_LOG, "lwp alloc page: %d\n", npages);
 
-    sprintf(name, "lwp%02x", lwp->heap_cnt);
+    rt_sprintf(name, "lwp%02x", lwp->heap_cnt);
     rt_lwp_memheap_init(lwp_heap, name, chunk, npages * LWP_MEM_PAGE_SIZE);
 
     rt_list_insert_before(&lwp->hlist, &lwp_heap->mlist);
