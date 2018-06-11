@@ -352,13 +352,3 @@ int exec(char *filename)
 
     return -RT_ERROR;
 }
-FINSH_FUNCTION_EXPORT(exec, loader a user app &run);
-
-int _exec(int argc, char **argv)
-{
-    if (argc != 2)
-        return -RT_ERROR;
-
-    return exec(argv[1]);
-}
-MSH_CMD_EXPORT_ALIAS(_exec, exec, loader a user app &run);
