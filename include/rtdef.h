@@ -848,6 +848,17 @@ enum rt_device_class_type
 #define RT_DEVICE_CTRL_RTC_SET_ALARM    0x13            /**< set alarm */
 
 typedef struct rt_device *rt_device_t;
+struct rt_device_ops
+{
+    /* common device interface */
+    rt_err_t  (*init)   (rt_device_t dev);
+    rt_err_t  (*open)   (rt_device_t dev, rt_uint16_t oflag);
+    rt_err_t  (*close)  (rt_device_t dev);
+    rt_size_t (*read)   (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
+    rt_size_t (*write)  (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
+    rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
+};
+
 /**
  * Device structure
  */
@@ -866,6 +877,9 @@ struct rt_device
     rt_err_t (*rx_indicate)(rt_device_t dev, rt_size_t size);
     rt_err_t (*tx_complete)(rt_device_t dev, void *buffer);
 
+#ifdef RT_USING_DEVICE_OPS
+    const struct rt_device_ops *ops;
+#else
     /* common device interface */
     rt_err_t  (*init)   (rt_device_t dev);
     rt_err_t  (*open)   (rt_device_t dev, rt_uint16_t oflag);
@@ -873,6 +887,7 @@ struct rt_device
     rt_size_t (*read)   (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
     rt_size_t (*write)  (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
     rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
+#endif
 
 #if defined(RT_USING_POSIX)
     const struct dfs_file_ops *fops;
@@ -1030,8 +1045,8 @@ struct rt_module
 
     rt_uint32_t                  user_data;             /**< arch data in the module */
 
-    /* object in this module, module object is the last basic object type */
-    struct rt_object_information module_object[RT_Object_Class_Unknown];
+    void (*module_init)(void);
+    void (*module_cleanup)(void);
 };
 typedef struct rt_module *rt_module_t;
 

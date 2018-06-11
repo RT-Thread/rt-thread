@@ -336,7 +336,7 @@ int msh_exec(char *cmd, rt_size_t length)
     {
         return cmd_ret;
     }
-#ifdef RT_USING_MODULE
+#if defined(RT_USING_MODULE) && defined(RT_USING_DFS)
     if (msh_exec_module(cmd, length) == 0)
     {
         return 0;

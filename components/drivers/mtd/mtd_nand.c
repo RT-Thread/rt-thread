@@ -69,6 +69,18 @@ static rt_err_t _mtd_control(rt_device_t dev, int cmd, void *args)
     return RT_EOK;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops mtd_nand_ops = 
+{
+    _mtd_init,
+    _mtd_open,
+    _mtd_close,
+    _mtd_read,
+    _mtd_write,
+    _mtd_control
+};
+#endif
+
 rt_err_t rt_mtd_nand_register_device(const char                *name,
                                      struct rt_mtd_nand_device *device)
 {
@@ -79,12 +91,16 @@ rt_err_t rt_mtd_nand_register_device(const char                *name,
 
     /* set device class and generic device interface */
     dev->type        = RT_Device_Class_MTD;
+#ifdef RT_USING_DEVICE_OPS
+	dev->ops         = &mtd_nand_ops;
+#else
     dev->init        = _mtd_init;
     dev->open        = _mtd_open;
     dev->read        = _mtd_read;
     dev->write       = _mtd_write;
     dev->close       = _mtd_close;
     dev->control     = _mtd_control;
+#endif
 
     dev->rx_indicate = RT_NULL;
     dev->tx_complete = RT_NULL;

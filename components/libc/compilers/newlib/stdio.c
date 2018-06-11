@@ -31,6 +31,8 @@
 
 #define STDIO_DEVICE_NAME_MAX   32
 
+int	_EXFUN(fileno, (FILE *));
+
 static FILE* std_console = NULL;
 
 int libc_stdio_set_console(const char* device_name, int mode)

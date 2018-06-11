@@ -193,13 +193,25 @@ static rt_size_t rt_pipe_write(rt_device_t dev,
 static rt_err_t rt_pipe_control(rt_device_t dev, int cmd, void *args)
 {
     struct rt_audio_pipe *pipe;
-    
+
     pipe = (struct rt_audio_pipe *)dev;
-    
+
     if (cmd == PIPE_CTRL_GET_SPACE && args)
         *(rt_size_t*)args = rt_ringbuffer_space_len(&pipe->ringbuffer);
     return RT_EOK;
 }
+
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops audio_pipe_ops
+{
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    rt_pipe_read,
+    rt_pipe_write,
+    rt_pipe_control
+};
+#endif
 
 /**
  * This function will initialize a pipe device and put it under control of
@@ -233,12 +245,16 @@ rt_err_t rt_audio_pipe_init(struct rt_audio_pipe *pipe,
 
     /* create pipe */
     pipe->parent.type    = RT_Device_Class_Pipe;
+#ifdef RT_USING_DEVICE_OPS
+    pipe->parent.ops     = &audio_pipe_ops;
+#else
     pipe->parent.init    = RT_NULL;
     pipe->parent.open    = RT_NULL;
     pipe->parent.close   = RT_NULL;
     pipe->parent.read    = rt_pipe_read;
     pipe->parent.write   = rt_pipe_write;
     pipe->parent.control = rt_pipe_control;
+#endif
 
     return rt_device_register(&(pipe->parent), name, RT_DEVICE_FLAG_RDWR);
 }
