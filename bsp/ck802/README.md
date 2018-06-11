@@ -13,7 +13,7 @@ CK802是杭州中天微系统有限公司自主开发的极低功耗、极低成
 
 ## 编译说明
 
-CK802板级包支持CDK集成开发环境和Scons编译。使用的编译器是csky-abiv2-elf-toolchain。
+CK802板级包支持CDK集成开发环境和scons编译。使用的编译器是csky-abiv2-elf-toolchain。
 
 | IDE/编译器 | 已测试版本 |
 | ---------- | --------- |
@@ -47,7 +47,8 @@ RTT_EXEC_PATH=r'/opt/csky-abiv2-elf-tools-x86_64-minilibc-20161211/bin'
 
 #### 编译
 
-配置好环境变量`RTT_EXEC_PATH`后，使用[env工具][https://www.rt-thread.org/page/download.html]，可以在console下进入到bsp目录中，运行以下命令就可以编译该BSP：
+配置好环境变量`RTT_EXEC_PATH`后，使用[env工具](https://www.rt-thread.org/page/download.html)，可以在console下进入到bsp目录中，运行以下命令就可以编译该BSP：
+
 ```
 scons
 ```
