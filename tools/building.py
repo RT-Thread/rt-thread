@@ -264,7 +264,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     AddOption('--target',
                       dest='target',
                       type='string',
-                      help='set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua')
+                      help='set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk')
 
     #{target_name:(CROSS_TOOL, PLATFORM)}
     tgt_dict = {'mdk':('keil', 'armcc'),
@@ -275,8 +275,10 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'vs2012':('msvc', 'cl'),
                 'vsc' : ('gcc', 'gcc'),
                 'cb':('keil', 'armcc'),
-                'ua':('gcc', 'gcc')}
+                'ua':('gcc', 'gcc'),
+                'cdk':('gcc', 'gcc')}
     tgt_name = GetOption('target')
+    
     if tgt_name:
         # --target will change the toolchain settings which clang-analyzer is
         # depend on
@@ -770,6 +772,10 @@ def EndBuilding(target, program = None):
     if GetOption('target') == 'vsc':
         from vsc import GenerateVSCode
         GenerateVSCode(Env)
+		
+    if GetOption('target') == 'cdk':
+        from cdk import CDKProject
+        CDKProject('project.cdkproj', Projects)
 
     BSP_ROOT = Dir('#').abspath
     if GetOption('copy') and program != None:
