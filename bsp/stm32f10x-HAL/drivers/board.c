@@ -113,3 +113,23 @@ void rt_hw_board_init(void)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 }
+
+/**
+ * This function will delay for some us.
+ *
+ * @param us the delay time of us
+ */
+void rt_hw_us_delay(rt_uint32_t us)
+{
+    rt_uint32_t delta;
+    us = us * (SysTick->LOAD / (1000000 / RT_TICK_PER_SECOND));
+    delta = SysTick->VAL;
+    if (delta < us)
+    {
+        /* wait current OSTick left time gone */
+        while (SysTick->VAL < us);
+        us -= delta;
+        delta = SysTick->LOAD;
+    }
+    while (delta - SysTick->VAL < us);
+}
