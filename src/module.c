@@ -65,30 +65,6 @@
 #define RT_USING_MODULE_PRIO (RT_THREAD_PRIORITY_MAX - 2)
 #endif
 
-#ifdef RT_USING_SLAB
-#define PAGE_COUNT_MAX    256
-
-/* module memory allocator */
-struct rt_mem_head
-{
-    rt_size_t size;                /* size of memory block */
-    struct rt_mem_head *next;      /* next valid memory block */
-};
-
-struct rt_page_info
-{
-    rt_uint32_t *page_ptr;
-    rt_uint32_t npage;
-};
-
-static void *rt_module_malloc_page(rt_size_t npages);
-static void rt_module_free_page(rt_module_t module,
-                                void       *page_ptr,
-                                rt_size_t   npages);
-
-static struct rt_semaphore mod_sem;
-#endif
-
 static struct rt_module_symtab *_rt_module_symtab_begin = RT_NULL;
 static struct rt_module_symtab *_rt_module_symtab_end   = RT_NULL;
 
@@ -120,10 +96,6 @@ int rt_system_module_init(void)
     _rt_module_symtab_end   = __section_end("RTMSymTab");
 #endif
 
-#ifdef RT_USING_SLAB
-    /* initialize heap semaphore */
-    rt_sem_init(&mod_sem, "module", 1, RT_IPC_FLAG_FIFO);
-#endif
     return 0;
 }
 INIT_COMPONENT_EXPORT(rt_system_module_init);
@@ -138,7 +110,7 @@ void list_symbol(void)
          index != _rt_module_symtab_end;
          index ++)
     {
-        rt_kprintf("%s\n", index->name);
+        rt_kprintf("%s => 0x%08x\n", index->name, index->addr);
     }
 
     return ;
@@ -293,80 +265,6 @@ static int rt_module_arm_relocate(struct rt_module *module,
     }
 
     return 0;
-}
-
-void rt_module_init_object_container(struct rt_module *module)
-{
-    RT_ASSERT(module != RT_NULL);
-
-    /* clear all of object information */
-    rt_memset(&module->module_object[0], 0x0, sizeof(module->module_object));
-
-    /* initialize object container - thread */
-    rt_list_init(&(module->module_object[RT_Object_Class_Thread].object_list));
-    module->module_object[RT_Object_Class_Thread].object_size = sizeof(struct rt_thread);
-    module->module_object[RT_Object_Class_Thread].type = RT_Object_Class_Thread;
-
-#ifdef RT_USING_SEMAPHORE
-    /* initialize object container - semaphore */
-    rt_list_init(&(module->module_object[RT_Object_Class_Semaphore].object_list));
-    module->module_object[RT_Object_Class_Semaphore].object_size = sizeof(struct rt_semaphore);
-    module->module_object[RT_Object_Class_Semaphore].type = RT_Object_Class_Semaphore;
-#endif
-
-#ifdef RT_USING_MUTEX
-    /* initialize object container - mutex */
-    rt_list_init(&(module->module_object[RT_Object_Class_Mutex].object_list));
-    module->module_object[RT_Object_Class_Mutex].object_size = sizeof(struct rt_mutex);
-    module->module_object[RT_Object_Class_Mutex].type = RT_Object_Class_Mutex;
-#endif
-
-#ifdef RT_USING_EVENT
-    /* initialize object container - event */
-    rt_list_init(&(module->module_object[RT_Object_Class_Event].object_list));
-    module->module_object[RT_Object_Class_Event].object_size = sizeof(struct rt_event);
-    module->module_object[RT_Object_Class_Event].type = RT_Object_Class_Event;
-#endif
-
-#ifdef RT_USING_MAILBOX
-    /* initialize object container - mailbox */
-    rt_list_init(&(module->module_object[RT_Object_Class_MailBox].object_list));
-    module->module_object[RT_Object_Class_MailBox].object_size = sizeof(struct rt_mailbox);
-    module->module_object[RT_Object_Class_MailBox].type = RT_Object_Class_MailBox;
-#endif
-
-#ifdef RT_USING_MESSAGEQUEUE
-    /* initialize object container - message queue */
-    rt_list_init(&(module->module_object[RT_Object_Class_MessageQueue].object_list));
-    module->module_object[RT_Object_Class_MessageQueue].object_size = sizeof(struct rt_messagequeue);
-    module->module_object[RT_Object_Class_MessageQueue].type = RT_Object_Class_MessageQueue;
-#endif
-
-#ifdef RT_USING_MEMHEAP
-    /* initialize object container - memory heap */
-    rt_list_init(&(module->module_object[RT_Object_Class_MemHeap].object_list));
-    module->module_object[RT_Object_Class_MemHeap].object_size = sizeof(struct rt_memheap);
-    module->module_object[RT_Object_Class_MemHeap].type = RT_Object_Class_MemHeap;
-#endif
-
-#ifdef RT_USING_MEMPOOL
-    /* initialize object container - memory pool */
-    rt_list_init(&(module->module_object[RT_Object_Class_MemPool].object_list));
-    module->module_object[RT_Object_Class_MemPool].object_size = sizeof(struct rt_mempool);
-    module->module_object[RT_Object_Class_MemPool].type = RT_Object_Class_MemPool;
-#endif
-
-#ifdef RT_USING_DEVICE
-    /* initialize object container - device */
-    rt_list_init(&(module->module_object[RT_Object_Class_Device].object_list));
-    module->module_object[RT_Object_Class_Device].object_size = sizeof(struct rt_device);
-    module->module_object[RT_Object_Class_Device].type = RT_Object_Class_Device;
-#endif
-
-    /* initialize object container - timer */
-    rt_list_init(&(module->module_object[RT_Object_Class_Timer].object_list));
-    module->module_object[RT_Object_Class_Timer].object_size = sizeof(struct rt_timer);
-    module->module_object[RT_Object_Class_Timer].type = RT_Object_Class_Timer;
 }
 
 #ifdef RT_USING_HOOK
@@ -1016,9 +914,6 @@ rt_module_t rt_module_do_main(const char *name,
     if (module == RT_NULL)
         return RT_NULL;
 
-    /* init module object container */
-    rt_module_init_object_container(module);
-
     if (line_size && cmd_line)
     {
         /* set module argument */
@@ -1042,16 +937,6 @@ rt_module_t rt_module_do_main(const char *name,
 
     if (elf_module->e_entry != 0)
     {
-#ifdef RT_USING_SLAB
-        /* init module memory allocator */
-        module->mem_list = RT_NULL;
-
-        /* create page array */
-        module->page_array =
-            (void *)rt_malloc(PAGE_COUNT_MAX * sizeof(struct rt_page_info));
-        module->page_cnt = 0;
-#endif
-
         /* create module thread */
         module->module_thread = rt_thread_create(name,
                                                  module_main_entry, module,
@@ -1291,8 +1176,6 @@ FINSH_FUNCTION_EXPORT_ALIAS(rt_module_open, exec, exec module from a file);
 rt_err_t rt_module_destroy(rt_module_t module)
 {
     int i;
-    struct rt_object *object;
-    struct rt_list_node *list;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -1306,167 +1189,12 @@ rt_err_t rt_module_destroy(rt_module_t module)
     /* module has entry point */
     if (!(module->parent.flag & RT_MODULE_FLAG_WITHOUTENTRY))
     {
-#ifdef RT_USING_SEMAPHORE
-        /* delete semaphores */
-        list = &module->module_object[RT_Object_Class_Semaphore].object_list;
-        while (list->next != list)
-        {
-            object = rt_list_entry(list->next, struct rt_object, list);
-            if (rt_object_is_systemobject(object) == RT_TRUE)
-            {
-                /* detach static object */
-                rt_sem_detach((rt_sem_t)object);
-            }
-            else
-            {
-                /* delete dynamic object */
-                rt_sem_delete((rt_sem_t)object);
-            }
-        }
-#endif
-
-#ifdef RT_USING_MUTEX
-        /* delete mutexs*/
-        list = &module->module_object[RT_Object_Class_Mutex].object_list;
-        while (list->next != list)
-        {
-            object = rt_list_entry(list->next, struct rt_object, list);
-            if (rt_object_is_systemobject(object) == RT_TRUE)
-            {
-                /* detach static object */
-                rt_mutex_detach((rt_mutex_t)object);
-            }
-            else
-            {
-                /* delete dynamic object */
-                rt_mutex_delete((rt_mutex_t)object);
-            }
-        }
-#endif
-
-#ifdef RT_USING_EVENT
-        /* delete mailboxs */
-        list = &module->module_object[RT_Object_Class_Event].object_list;
-        while (list->next != list)
-        {
-            object = rt_list_entry(list->next, struct rt_object, list);
-            if (rt_object_is_systemobject(object) == RT_TRUE)
-            {
-                /* detach static object */
-                rt_event_detach((rt_event_t)object);
-            }
-            else
-            {
-                /* delete dynamic object */
-                rt_event_delete((rt_event_t)object);
-            }
-        }
-#endif
-
-#ifdef RT_USING_MAILBOX
-        /* delete mailboxs */
-        list = &module->module_object[RT_Object_Class_MailBox].object_list;
-        while (list->next != list)
-        {
-            object = rt_list_entry(list->next, struct rt_object, list);
-            if (rt_object_is_systemobject(object) == RT_TRUE)
-            {
-                /* detach static object */
-                rt_mb_detach((rt_mailbox_t)object);
-            }
-            else
-            {
-                /* delete dynamic object */
-                rt_mb_delete((rt_mailbox_t)object);
-            }
-        }
-#endif
-
-#ifdef RT_USING_MESSAGEQUEUE
-        /* delete msgqueues */
-        list = &module->module_object[RT_Object_Class_MessageQueue].object_list;
-        while (list->next != list)
-        {
-            object = rt_list_entry(list->next, struct rt_object, list);
-            if (rt_object_is_systemobject(object) == RT_TRUE)
-            {
-                /* detach static object */
-                rt_mq_detach((rt_mq_t)object);
-            }
-            else
-            {
-                /* delete dynamic object */
-                rt_mq_delete((rt_mq_t)object);
-            }
-        }
-#endif
-
-#ifdef RT_USING_MEMPOOL
-        /* delete mempools */
-        list = &module->module_object[RT_Object_Class_MemPool].object_list;
-        while (list->next != list)
-        {
-            object = rt_list_entry(list->next, struct rt_object, list);
-            if (rt_object_is_systemobject(object) == RT_TRUE)
-            {
-                /* detach static object */
-                rt_mp_detach((rt_mp_t)object);
-            }
-            else
-            {
-                /* delete dynamic object */
-                rt_mp_delete((rt_mp_t)object);
-            }
-        }
-#endif
-
-#ifdef RT_USING_DEVICE
-        /* delete devices */
-        list = &module->module_object[RT_Object_Class_Device].object_list;
-        while (list->next != list)
-        {
-            object = rt_list_entry(list->next, struct rt_object, list);
-            rt_device_unregister((rt_device_t)object);
-        }
-#endif
-
-        /* delete timers */
-        list = &module->module_object[RT_Object_Class_Timer].object_list;
-        while (list->next != list)
-        {
-            object = rt_list_entry(list->next, struct rt_object, list);
-            if (rt_object_is_systemobject(object) == RT_TRUE)
-            {
-                /* detach static object */
-                rt_timer_detach((rt_timer_t)object);
-            }
-            else
-            {
-                /* delete dynamic object */
-                rt_timer_delete((rt_timer_t)object);
-            }
-        }
-
         /* delete command line */
         if (module->module_cmd_line != RT_NULL)
         {
             rt_free(module->module_cmd_line);
         }
     }
-
-#ifdef RT_USING_SLAB
-    if (module->page_cnt > 0)
-    {
-        struct rt_page_info *page = (struct rt_page_info *)module->page_array;
-
-        rt_kprintf("Module: warning - memory still hasn't been free finished\n");
-
-        while (module->page_cnt != 0)
-        {
-            rt_module_free_page(module, page[0].page_ptr, page[0].npage);
-        }
-    }
-#endif
 
     /* release module space memory */
     rt_free(module->module_space);
@@ -1478,11 +1206,6 @@ rt_err_t rt_module_destroy(rt_module_t module)
     }
     if (module->symtab != RT_NULL)
         rt_free(module->symtab);
-
-#ifdef RT_USING_SLAB
-    if (module->page_array != RT_NULL)
-        rt_free(module->page_array);
-#endif
 
     /* delete module object */
     rt_object_delete((rt_object_t)module);
@@ -1499,10 +1222,6 @@ rt_err_t rt_module_destroy(rt_module_t module)
  */
 rt_err_t rt_module_unload(rt_module_t module)
 {
-    struct rt_object *object;
-    struct rt_list_node *list;
-	rt_bool_t mdelete = RT_TRUE;
-
     RT_DEBUG_NOT_IN_INTERRUPT;
 
     /* check parameter */
@@ -1510,34 +1229,7 @@ rt_err_t rt_module_unload(rt_module_t module)
         return -RT_ERROR;
 
     rt_enter_critical();
-    if (!(module->parent.flag & RT_MODULE_FLAG_WITHOUTENTRY))
-    {
-    	/* delete module in main thread destroy */
-		mdelete = RT_FALSE;
-    
-        /* delete all sub-threads */
-        list = &module->module_object[RT_Object_Class_Thread].object_list;
-        while (list->next != list)
-        {
-            object = rt_list_entry(list->next, struct rt_object, list);
-            if (rt_object_is_systemobject(object) == RT_TRUE)
-            {
-                /* detach static object */
-                rt_thread_detach((rt_thread_t)object);
-            }
-            else
-            {
-                /* delete dynamic object */
-                rt_thread_delete((rt_thread_t)object);
-            }
-        }
-
-        /* delete the main thread of module */
-        if (module->module_thread != RT_NULL)
-        {
-            rt_thread_delete(module->module_thread);
-        }
-    }
+    /* invoke module cleanup */
     rt_exit_critical();
 
 #ifdef RT_USING_HOOK
@@ -1546,11 +1238,6 @@ rt_err_t rt_module_unload(rt_module_t module)
         rt_module_unload_hook(module);
     }
 #endif
-
-	if (mdelete == RT_TRUE)
-	{
-		rt_module_destroy(module);
-	}
 
     return RT_EOK;
 }
@@ -1597,463 +1284,5 @@ rt_module_t rt_module_find(const char *name)
     return RT_NULL;
 }
 RTM_EXPORT(rt_module_find);
-
-#ifdef RT_USING_SLAB
-/*
- * This function will allocate the numbers page with specified size
- * in page memory.
- *
- * @param size the size of memory to be allocated.
- * @note this function is used for RT-Thread Application Module
- */
-static void *rt_module_malloc_page(rt_size_t npages)
-{
-    void *chunk;
-    struct rt_page_info *page;
-    rt_module_t self_module;
-
-    self_module = rt_module_self();
-    RT_ASSERT(self_module != RT_NULL);
-
-    chunk = rt_page_alloc(npages);
-    if (chunk == RT_NULL)
-        return RT_NULL;
-
-    page = (struct rt_page_info *)self_module->page_array;
-    page[self_module->page_cnt].page_ptr = chunk;
-    page[self_module->page_cnt].npage    = npages;
-    self_module->page_cnt ++;
-
-    RT_ASSERT(self_module->page_cnt <= PAGE_COUNT_MAX);
-    RT_DEBUG_LOG(RT_DEBUG_MODULE, ("rt_module_malloc_page 0x%x %d\n",
-                                   chunk, npages));
-
-    return chunk;
-}
-
-/*
- * This function will release the previously allocated memory page
- * by rt_malloc_page.
- *
- * @param page_ptr the page address to be released.
- * @param npages the number of page shall be released.
- *
- * @note this function is used for RT-Thread Application Module
- */
-static void rt_module_free_page(rt_module_t module,
-                                void       *page_ptr,
-                                rt_size_t   npages)
-{
-    int i, index;
-    struct rt_page_info *page;
-    rt_module_t self_module;
-
-    self_module = rt_module_self();
-    RT_ASSERT(self_module != RT_NULL);
-
-    RT_DEBUG_LOG(RT_DEBUG_MODULE, ("rt_module_free_page 0x%x %d\n",
-                                   page_ptr, npages));
-    rt_page_free(page_ptr, npages);
-
-    page = (struct rt_page_info *)module->page_array;
-
-    for (i = 0; i < module->page_cnt; i ++)
-    {
-        if (page[i].page_ptr == page_ptr)
-        {
-            if (page[i].npage == npages + 1)
-            {
-                page[i].page_ptr +=
-                    npages * RT_MM_PAGE_SIZE / sizeof(rt_uint32_t);
-                page[i].npage    -= npages;
-            }
-            else if (page[i].npage == npages)
-            {
-                for (index = i; index < module->page_cnt - 1; index ++)
-                {
-                    page[index].page_ptr = page[index + 1].page_ptr;
-                    page[index].npage    = page[index + 1].npage;
-                }
-                page[module->page_cnt - 1].page_ptr = RT_NULL;
-                page[module->page_cnt - 1].npage    = 0;
-
-                module->page_cnt --;
-            }
-            else
-                RT_ASSERT(RT_FALSE);
-            self_module->page_cnt --;
-
-            return;
-        }
-    }
-
-    /* should not get here */
-    RT_ASSERT(RT_FALSE);
-}
-
-/**
- * rt_module_malloc - allocate memory block in free list
- */
-void *rt_module_malloc(rt_size_t size)
-{
-    struct rt_mem_head *b, *n, *up;
-    struct rt_mem_head **prev;
-    rt_uint32_t npage;
-    rt_size_t nunits;
-    rt_module_t self_module;
-
-    self_module = rt_module_self();
-    RT_ASSERT(self_module != RT_NULL);
-
-    RT_DEBUG_NOT_IN_INTERRUPT;
-
-    nunits = (size + sizeof(struct rt_mem_head) - 1) /
-             sizeof(struct rt_mem_head)
-             + 1;
-
-    RT_ASSERT(size != 0);
-    RT_ASSERT(nunits != 0);
-
-    rt_sem_take(&mod_sem, RT_WAITING_FOREVER);
-
-    for (prev = (struct rt_mem_head **)&self_module->mem_list;
-         (b = *prev) != RT_NULL;
-         prev = &(b->next))
-    {
-        if (b->size > nunits)
-        {
-            /* split memory */
-            n       = b + nunits;
-            n->next = b->next;
-            n->size = b->size - nunits;
-            b->size = nunits;
-            *prev   = n;
-
-            RT_DEBUG_LOG(RT_DEBUG_MODULE, ("rt_module_malloc 0x%x, %d\n",
-                                           b + 1, size));
-            rt_sem_release(&mod_sem);
-
-            return (void *)(b + 1);
-        }
-
-        if (b->size == nunits)
-        {
-            /* this node fit, remove this node */
-            *prev = b->next;
-
-            RT_DEBUG_LOG(RT_DEBUG_MODULE, ("rt_module_malloc 0x%x, %d\n",
-                                           b + 1, size));
-
-            rt_sem_release(&mod_sem);
-
-            return (void *)(b + 1);
-        }
-    }
-
-    /* allocate pages from system heap */
-    npage = (size + sizeof(struct rt_mem_head) + RT_MM_PAGE_SIZE - 1) /
-            RT_MM_PAGE_SIZE;
-    if ((up = (struct rt_mem_head *)rt_module_malloc_page(npage)) == RT_NULL)
-        return RT_NULL;
-
-    up->size = npage * RT_MM_PAGE_SIZE / sizeof(struct rt_mem_head);
-
-    for (prev = (struct rt_mem_head **)&self_module->mem_list;
-         (b = *prev) != RT_NULL;
-         prev = &(b->next))
-    {
-        if (b > up + up->size)
-            break;
-    }
-
-    up->next = b;
-    *prev    = up;
-
-    rt_sem_release(&mod_sem);
-
-    return rt_module_malloc(size);
-}
-
-/**
- * rt_module_free - free memory block in free list
- */
-void rt_module_free(rt_module_t module, void *addr)
-{
-    struct rt_mem_head *b, *n, *r;
-    struct rt_mem_head **prev;
-
-    RT_DEBUG_NOT_IN_INTERRUPT;
-
-    RT_ASSERT(addr);
-    RT_ASSERT((((rt_uint32_t)addr) & (sizeof(struct rt_mem_head) - 1)) == 0);
-
-    RT_DEBUG_LOG(RT_DEBUG_MODULE, ("rt_module_free 0x%x\n", addr));
-
-    rt_sem_take(&mod_sem, RT_WAITING_FOREVER);
-
-    n = (struct rt_mem_head *)addr - 1;
-    prev = (struct rt_mem_head **)&module->mem_list;
-
-    while ((b = *prev) != RT_NULL)
-    {
-        RT_ASSERT(b->size > 0);
-        RT_ASSERT(b > n || b + b->size <= n);
-
-        if (b + b->size == n && ((rt_uint32_t)n % RT_MM_PAGE_SIZE != 0))
-        {
-            if (b + (b->size + n->size) == b->next)
-            {
-                b->size += b->next->size + n->size;
-                b->next = b->next->next;
-            }
-            else
-                b->size += n->size;
-
-            if ((rt_uint32_t)b % RT_MM_PAGE_SIZE == 0)
-            {
-                int npage =
-                    b->size * sizeof(struct rt_page_info) / RT_MM_PAGE_SIZE;
-                if (npage > 0)
-                {
-                    if ((b->size * sizeof(struct rt_page_info) % RT_MM_PAGE_SIZE) != 0)
-                    {
-                        rt_size_t nunits = npage *
-                                           RT_MM_PAGE_SIZE /
-                                           sizeof(struct rt_mem_head);
-                        /* split memory */
-                        r       = b + nunits;
-                        r->next = b->next;
-                        r->size = b->size - nunits;
-                        *prev   = r;
-                    }
-                    else
-                    {
-                        *prev = b->next;
-                    }
-
-                    rt_module_free_page(module, b, npage);
-                }
-            }
-
-            /* unlock */
-            rt_sem_release(&mod_sem);
-
-            return;
-        }
-
-        if (b == n + n->size)
-        {
-            n->size = b->size + n->size;
-            n->next = b->next;
-
-            if ((rt_uint32_t)n % RT_MM_PAGE_SIZE == 0)
-            {
-                int npage =
-                    n->size * sizeof(struct rt_page_info) / RT_MM_PAGE_SIZE;
-                if (npage > 0)
-                {
-                    if ((n->size * sizeof(struct rt_page_info) % RT_MM_PAGE_SIZE) != 0)
-                    {
-                        rt_size_t nunits = npage *
-                                           RT_MM_PAGE_SIZE /
-                                           sizeof(struct rt_mem_head);
-                        /* split memory */
-                        r       = n + nunits;
-                        r->next = n->next;
-                        r->size = n->size - nunits;
-                        *prev   = r;
-                    }
-                    else
-                        *prev = n->next;
-
-                    rt_module_free_page(module, n, npage);
-                }
-            }
-            else
-            {
-                *prev = n;
-            }
-
-            /* unlock */
-            rt_sem_release(&mod_sem);
-
-            return;
-        }
-        if (b > n + n->size)
-            break;
-
-        prev = &(b->next);
-    }
-
-    if ((rt_uint32_t)n % RT_MM_PAGE_SIZE == 0)
-    {
-        int npage = n->size * sizeof(struct rt_page_info) / RT_MM_PAGE_SIZE;
-        if (npage > 0)
-        {
-            rt_module_free_page(module, n, npage);
-            if (n->size % RT_MM_PAGE_SIZE != 0)
-            {
-                rt_size_t nunits =
-                    npage * RT_MM_PAGE_SIZE / sizeof(struct rt_mem_head);
-                /* split memory */
-                r       = n + nunits;
-                r->next = b;
-                r->size = n->size - nunits;
-                *prev   = r;
-            }
-            else
-            {
-                *prev = b;
-            }
-        }
-    }
-    else
-    {
-        n->next = b;
-        *prev   = n;
-    }
-
-    /* unlock */
-    rt_sem_release(&mod_sem);
-}
-
-/**
- * rt_module_realloc - realloc memory block in free list
- */
-void *rt_module_realloc(void *ptr, rt_size_t size)
-{
-    struct rt_mem_head *b, *p, *prev, *tmpp;
-    rt_size_t nunits;
-    rt_module_t self_module;
-
-    self_module = rt_module_self();
-    RT_ASSERT(self_module != RT_NULL);
-
-    RT_DEBUG_NOT_IN_INTERRUPT;
-
-    if (!ptr)
-        return rt_module_malloc(size);
-    if (size == 0)
-    {
-        rt_module_free(self_module, ptr);
-
-        return RT_NULL;
-    }
-
-    nunits = (size + sizeof(struct rt_mem_head) - 1) /
-             sizeof(struct rt_mem_head)
-             + 1;
-    b = (struct rt_mem_head *)ptr - 1;
-
-    if (nunits <= b->size)
-    {
-        /* new size is smaller or equal then before */
-        if (nunits == b->size)
-            return ptr;
-        else
-        {
-            p       = b + nunits;
-            p->size = b->size - nunits;
-            b->size = nunits;
-            rt_module_free(self_module, (void *)(p + 1));
-
-            return (void *)(b + 1);
-        }
-    }
-    else
-    {
-        /* more space then required */
-        prev = (struct rt_mem_head *)self_module->mem_list;
-        for (p = prev->next;
-             p != (b->size + b) && p != RT_NULL;
-             prev = p, p = p->next)
-        {
-            break;
-        }
-
-        /* available block after ap in freelist */
-        if (p != RT_NULL &&
-            (p->size >= (nunits - (b->size))) &&
-            p == (b + b->size))
-        {
-            /* perfect match */
-            if (p->size == (nunits - (b->size)))
-            {
-                b->size    = nunits;
-                prev->next = p->next;
-            }
-            else  /* more space then required, split block */
-            {
-                /* pointer to old header */
-                tmpp = p;
-                p    = b + nunits;
-
-                /* restoring old pointer */
-                p->next = tmpp->next;
-
-                /* new size for p */
-                p->size    = tmpp->size + b->size - nunits;
-                b->size    = nunits;
-                prev->next = p;
-            }
-            self_module->mem_list = (void *)prev;
-
-            return (void *)(b + 1);
-        }
-        else /* allocate new memory and copy old data */
-        {
-            if ((p = rt_module_malloc(size)) == RT_NULL)
-                return RT_NULL;
-            rt_memmove(p, (b + 1), ((b->size) * sizeof(struct rt_mem_head)));
-            rt_module_free(self_module, (void *)(b + 1));
-
-            return (void *)(p);
-        }
-    }
-}
-
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-
-void list_memlist(const char *name)
-{
-    rt_module_t module;
-    struct rt_mem_head **prev;
-    struct rt_mem_head *b;
-
-    module = rt_module_find(name);
-    if (module == RT_NULL)
-        return;
-
-    for (prev = (struct rt_mem_head **)&module->mem_list;
-         (b = *prev) != RT_NULL;
-         prev = &(b->next))
-    {
-        rt_kprintf("0x%x--%d\n", b, b->size * sizeof(struct rt_mem_head));
-    }
-}
-FINSH_FUNCTION_EXPORT(list_memlist, list module free memory information)
-
-void list_mempage(const char *name)
-{
-    rt_module_t module;
-    struct rt_page_info *page;
-    int i;
-
-    module = rt_module_find(name);
-    if (module == RT_NULL)
-        return;
-
-    page = (struct rt_page_info *)module->page_array;
-
-    for (i = 0; i < module->page_cnt; i ++)
-    {
-        rt_kprintf("0x%x--%d\n", page[i].page_ptr, page[i].npage);
-    }
-}
-FINSH_FUNCTION_EXPORT(list_mempage, list module using memory page information)
-#endif /* RT_USING_FINSH */
-
-#endif /* RT_USING_SLAB */
 
 #endif
