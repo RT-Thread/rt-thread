@@ -46,21 +46,16 @@ static rt_err_t rt1050_lcd_init(rt_device_t device)
     RT_ASSERT(device != RT_NULL); 
     
     rt_memset(frame_buffer, 0x00, sizeof(frame_buffer)); 
-
-    /* CLK */
-    clock_video_pll_config_t pll_config;
     
-    pll_config.loopDivider = 43;
-    pll_config.postDivider = 4;
-    pll_config.numerator   = 0;
-    pll_config.denominator = 0;
-    
-    CLOCK_InitVideoPll(&pll_config); 
-
-    CLOCK_SetMux(kCLOCK_Lcdif1PreMux, 2); 
-    CLOCK_SetDiv(kCLOCK_Lcdif1PreDiv, 4); 
-    CLOCK_SetMux(kCLOCK_Lcdif1Mux, 0); 
-    CLOCK_SetDiv(kCLOCK_Lcdif1Div, 1); 
+        
+    /* DeInit Video PLL. */
+    CLOCK_DeinitVideoPll();
+    /* Bypass Video PLL. */
+    CCM_ANALOG->PLL_VIDEO |= CCM_ANALOG_PLL_VIDEO_BYPASS_MASK;
+    /* Set divider for Video PLL. */
+    CCM_ANALOG->MISC2 = (CCM_ANALOG->MISC2 & (~CCM_ANALOG_MISC2_VIDEO_DIV_MASK)) | CCM_ANALOG_MISC2_VIDEO_DIV(0);
+    /* Enable Video PLL output. */
+    CCM_ANALOG->PLL_VIDEO |= CCM_ANALOG_PLL_VIDEO_ENABLE_MASK;
     
     /* GPIO */ 
     CLOCK_EnableClock(kCLOCK_Iomuxc); 
@@ -191,8 +186,10 @@ int rt_hw_lcd_init(void)
     
     lcd.device.user_data = (void *)&lcd.info; 
     
+    rt1050_lcd_init(&lcd.device);
+    
     ret = rt_device_register(&lcd.device, "lcd", RT_DEVICE_FLAG_RDWR); 
     
     return ret; 
 }
-INIT_DEVICE_EXPORT(rt_hw_lcd_init); 
+//INIT_DEVICE_EXPORT(rt_hw_lcd_init); 
