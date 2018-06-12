@@ -65,6 +65,10 @@ int rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec)
     rt_thread_t tid = rt_current_thread;
     rt_timer_t  tmr = &(tid->thread_timer);
     struct rt_wqueue_node __wait;
+    rt_base_t level;
+
+    /* current context checking */
+    RT_DEBUG_NOT_IN_INTERRUPT;
 
     tick = rt_tick_from_millisecond(msec);
 
@@ -76,10 +80,8 @@ int rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec)
     __wait.wakeup = __wqueue_default_wake;
     rt_list_init(&__wait.list);
 
+    level = rt_hw_interrupt_disable();
     rt_wqueue_add(queue, &__wait);
-
-    /* current context checking */
-    RT_DEBUG_NOT_IN_INTERRUPT;
     rt_thread_suspend(tid);
 
     /* start timer */
@@ -91,6 +93,7 @@ int rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec)
 
         rt_timer_start(tmr);
     }
+    rt_hw_interrupt_enable(level);
 
     rt_schedule();
 
@@ -98,4 +101,3 @@ int rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec)
 
     return 0;
 }
-
