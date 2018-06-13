@@ -803,22 +803,45 @@ def SrcRemove(src, remove):
     if not src:
         return
 
-    for item in src:
-        if type(item) == type('str'):
-            item_str = item
-        else:
-            item_str = item.rstr()
+    src_bak = src
 
-        if os.path.isabs(item_str):
-            item_str = os.path.relpath(item_str, GetCurrentDir())
+    if type(remove) == type('str'):
+        if os.path.isabs(remove):
+            remove = os.path.relpath(remove, GetCurrentDir())
+        remove = os.path.normpath(remove)
 
-        if type(remove) == type('str'):
+        for item in src:
+            if type(item) == type('str'):
+                item_str = item
+            else:
+                item_str = item.rstr()
+
+            if os.path.isabs(item_str):
+                item_str = os.path.relpath(item_str, GetCurrentDir())
+            item_str = os.path.normpath(item_str)
+
             if item_str == remove:
-                src.remove(item)
-        else:
-            for remove_item in remove:
-                if item_str == str(remove_item):
-                    src.remove(item)
+                src_bak.remove(item)
+    else:
+        for remove_item in remove:
+            remove_str = str(remove_item)
+            if os.path.isabs(remove_str):
+                remove_str = os.path.relpath(remove_str, GetCurrentDir())
+            remove_str = os.path.normpath(remove_str)
+
+            for item in src:
+                if type(item) == type('str'):
+                    item_str = item
+                else:
+                    item_str = item.rstr()
+
+                if os.path.isabs(item_str):
+                    item_str = os.path.relpath(item_str, GetCurrentDir())
+                item_str = os.path.normpath(item_str)
+
+                if item_str == remove_str:
+                    src_bak.remove(item)
+    src = src_bak
 
 def GetVersion():
     import SCons.cpp
