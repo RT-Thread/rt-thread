@@ -46,12 +46,20 @@ def GenerateCFiles(env):
 
         config_obj = {}
         config_obj['name'] = 'Win32'
-        config_obj['includePath'] = info['CPPPATH']
         config_obj['defines'] = info['CPPDEFINES']
         config_obj['intelliSenseMode'] = 'clang-x64'
         config_obj['compilerPath'] = cc
         config_obj['cStandard'] = "c99"
         config_obj['cppStandard'] = "c++11"
+
+        # format "a/b," to a/b. remove first quotation mark("),and remove end (",)
+        includePath = []
+        for i in info['CPPPATH']:
+            if i[0] == '\"' and i[len(i) - 2:len(i)] == '\",':
+                includePath.append(i[1:len(i) - 2])
+            else:
+                includePath.append(i)
+        config_obj['includePath'] = includePath
 
         json_obj = {}
         json_obj['configurations'] = [config_obj]
