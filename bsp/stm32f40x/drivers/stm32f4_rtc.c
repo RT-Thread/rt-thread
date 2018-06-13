@@ -23,7 +23,7 @@ static int get_week(int year, int month, int day)
 		year -=1;
 		month +=12;
 	}
-	return (day+1+2*month+3*(month+1)/5+year+(year/4)-year/100+year/400)%7;
+	return (day+1+2*month+3*(month+1)/5+year+(year/4)-year/100+year/400)%7+1;
 }
 
 static struct rt_device rtc;
