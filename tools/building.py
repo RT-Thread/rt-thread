@@ -803,14 +803,14 @@ def SrcRemove(src, remove):
     if not src:
         return
 
-    src_bak = src
+    src_bak = src[:]
 
     if type(remove) == type('str'):
         if os.path.isabs(remove):
             remove = os.path.relpath(remove, GetCurrentDir())
         remove = os.path.normpath(remove)
 
-        for item in src:
+        for item in src_bak:
             if type(item) == type('str'):
                 item_str = item
             else:
@@ -821,7 +821,7 @@ def SrcRemove(src, remove):
             item_str = os.path.normpath(item_str)
 
             if item_str == remove:
-                src_bak.remove(item)
+                src.remove(item)
     else:
         for remove_item in remove:
             remove_str = str(remove_item)
@@ -829,7 +829,7 @@ def SrcRemove(src, remove):
                 remove_str = os.path.relpath(remove_str, GetCurrentDir())
             remove_str = os.path.normpath(remove_str)
 
-            for item in src:
+            for item in src_bak:
                 if type(item) == type('str'):
                     item_str = item
                 else:
@@ -840,8 +840,7 @@ def SrcRemove(src, remove):
                 item_str = os.path.normpath(item_str)
 
                 if item_str == remove_str:
-                    src_bak.remove(item)
-    src = src_bak
+                    src.remove(item)
 
 def GetVersion():
     import SCons.cpp
