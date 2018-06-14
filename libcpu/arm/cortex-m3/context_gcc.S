@@ -188,7 +188,7 @@ _get_sp_done:
     STMFD   r0!, {r4 - r11}         /* push r4 - r11 register */
     STMFD   r0!, {lr}               /* push exec_return register */
 
-    TST     lr, #0x04               /* if(!EXC_RETURN[2])
+    TST     lr, #0x04               /* if(!EXC_RETURN[2]) */
     BEQ     _update_msp
     MSR     psp, r0                 /* update stack pointer to PSP. */
     B       _update_done
