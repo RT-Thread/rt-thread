@@ -12,17 +12,11 @@
  * 2017-06-08     tanek        first implementation
  */
 #include <rtthread.h>
-#include "board.h"
-#include <rtdevice.h>
-
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-#endif
-
-#ifdef RT_USING_LWIP
-
 #include <netif/ethernetif.h>
 #include "lwipopts.h"
+#include "board.h"
+#include <rtdevice.h>
+#include <finsh.h>
 
 /* debug option */
 //#define DEBUG
@@ -35,68 +29,39 @@
 #define STM32_ETH_PRINTF(...)
 #endif
 
+/* RMII GPIO
+    ETH_MDIO -------------------------> PA2
+    ETH_MDC --------------------------> PC1
+    ETH_RMII_REF_CLK------------------> PA1
+    ETH_RMII_CRS_DV ------------------> PA7
+    ETH_RMII_RXD0 --------------------> PC4
+    ETH_RMII_RXD1 --------------------> PC5
+    ETH_RMII_TX_EN -------------------> PB11
+    ETH_RMII_TXD0 --------------------> PG13
+    ETH_RMII_TXD1 --------------------> PG14
+*/
+#define ETH_MDIO_PORN 					GPIOA
+#define ETH_MDIO_PIN 					GPIO_PIN_2
+#define ETH_MDC_PORN 					GPIOC
+#define ETH_MDC_PIN 					GPIO_PIN_1
+#define ETH_RMII_REF_CLK_PORN 			GPIOA
+#define ETH_RMII_REF_CLK_PIN 			GPIO_PIN_1
+#define ETH_RMII_CRS_DV_PORN 			GPIOA
+#define ETH_RMII_CRS_DV_PIN 			GPIO_PIN_7
+#define ETH_RMII_RXD0_PORN 				GPIOC
+#define ETH_RMII_RXD0_PIN 				GPIO_PIN_4
+#define ETH_RMII_RXD1_PORN 				GPIOC
+#define ETH_RMII_RXD1_PIN 				GPIO_PIN_5
+#define ETH_RMII_TX_EN_PORN 			GPIOG
+#define ETH_RMII_TX_EN_PIN 				GPIO_PIN_11
+#define ETH_RMII_TXD0_PORN 				GPIOG
+#define ETH_RMII_TXD0_PIN 				GPIO_PIN_13
+#define ETH_RMII_TXD1_PORN 				GPIOB
+#define ETH_RMII_TXD1_PIN 				GPIO_PIN_13
+
+#define PHY_ADDRESS 0x01
+
 #define MAX_ADDR_LEN 6
-
-#define DM9161_PHY_ADDRESS           0x01U
-
-
-/* DP83848C and DM9161 PHY Registers is the same */
-#define PHY_REG_BMCR        0x00        /* Basic Mode Control Register       */
-#define PHY_REG_BMSR        0x01        /* Basic Mode Status Register        */
-#define PHY_REG_IDR1        0x02        /* PHY Identifier 1                  */
-#define PHY_REG_IDR2        0x03        /* PHY Identifier 2                  */
-#define PHY_REG_ANAR        0x04        /* Auto-Negotiation Advertisement    */
-#define PHY_REG_ANLPAR      0x05        /* Auto-Neg. Link Partner Abitily    */
-#define PHY_REG_ANER        0x06        /* Auto-Neg. Expansion Register      */
-#define PHY_REG_ANNPTR      0x07        /* Auto-Neg. Next Page TX .DM9161 NO */
-
-/* PHY Extended Registers  only for DP83848C */
-#define PHY_REG_STS         0x10        /* Status Register                   */
-#define PHY_REG_MICR        0x11        /* MII Interrupt Control Register    */
-#define PHY_REG_MISR        0x12        /* MII Interrupt Status Register     */
-#define PHY_REG_FCSCR       0x14        /* False Carrier Sense Counter       */
-#define PHY_REG_RECR        0x15        /* Receive Error Counter             */
-#define PHY_REG_PCSR        0x16        /* PCS Sublayer Config. and Status   */
-#define PHY_REG_RBR         0x17        /* RMII and Bypass Register          */
-#define PHY_REG_LEDCR       0x18        /* LED Direct Control Register       */
-#define PHY_REG_PHYCR       0x19        /* PHY Control Register              */
-#define PHY_REG_10BTSCR     0x1A        /* 10Base-T Status/Control Register  */
-#define PHY_REG_CDCTRL1     0x1B        /* CD Test Control and BIST Extens.  */
-#define PHY_REG_EDCR        0x1D        /* Energy Detect Control Register    */
-
-/* PHY Extended Registers  only for DM9161 */
-#define PHY_REG_DSCR        0x10     /* Specified Congfiguration Register            */
-#define PHY_REG_DSCSR       0x11     /* Specified Congfiguration and Status Register */
-#define PHY_REG_10BTCSR     0x12     /* 10Base-T Status/Control Register     		 */
-#define PHY_REG_PWDOR       0x13     /* Power Down Control Register       			 */
-#define PHY_REG_CONGFIG   	0x14     /* Specified Congfig Register      			 */
-#define PHY_REG_INTERRUPT   0x15     /* Specified interrupt Register             	 */
-#define PHY_REG_SRECR       0x16     /* Specified Receive Error Counter  			 */
-#define PHY_REG_DISCR       0x17     /* Specified Disconnect Counter Register        */
-#define PHY_REG_RLSR       	0x18     /* Hardware reset latch state Register			 */
-#define PHY_REG_PSCR       	0x1D     /* Power Saving control register                */
-
-/* Register BMCR bit defination */
-#define PHY_BMCR_FULLD_100M      0x2100      /* Full Duplex 100Mbit               */
-#define PHY_BMCR_HALFD_100M      0x2000      /* Half Duplex 100Mbit               */
-#define PHY_BMCR_FULLD_10M       0x0100      /* Full Duplex 10Mbit                */
-#define PHY_BMCR_HALFD_10M       0x0000      /* Half Duplex 10MBit                */
-#define PHY_BMCR_AUTO_NEG        0x1000      /* Select Auto Negotiation           */
-
-#define PHY_BMCR_RESET                       ((uint16_t)0x8000U)  /*!< PHY Reset */
-#define PHY_BMCR_POWERDOWN                   ((uint16_t)0x0800U)  /*!< Select the power down mode           */
-
-#define PHY_BMSR_AUTONEGO_COMPLETE           ((uint16_t)0x0020U)  /*!< Auto-Negotiation process completed   */
-#define PHY_BMSR_LINKED_STATUS               ((uint16_t)0x0004U)  /*!< Valid link established               */
-
-#define PHY_DSCSR_100FDX                ((uint16_t)0x8000U)
-#define PHY_DSCSR_100HDX                ((uint16_t)0x4000U)
-#define PHY_DSCSR_10FDX                 ((uint16_t)0x2000U)
-#define PHY_DSCSR_10HDX                 ((uint16_t)0x1000U)
-
-#define PHY_INT_LINK_MASK               ((uint16_t)0x0C00U)
-#define PHY_INT_LINK_CHANGE             ((uint16_t)0x0004U)
-
 struct rt_stm32_eth
 {
 	/* inherit from ethernet device */
@@ -110,74 +75,12 @@ struct rt_stm32_eth
 };
 
 
-ALIGN(4) ETH_DMADescTypeDef DMARxDscrTab[ETH_RXBUFNB];
-ALIGN(4) ETH_DMADescTypeDef DMATxDscrTab[ETH_TXBUFNB];
-ALIGN(4) rt_uint8_t Rx_Buff[ETH_RXBUFNB][ETH_MAX_PACKET_SIZE];
-ALIGN(4) rt_uint8_t Tx_Buff[ETH_TXBUFNB][ETH_MAX_PACKET_SIZE];
+static ETH_DMADescTypeDef  DMARxDscrTab[ETH_RXBUFNB], DMATxDscrTab[ETH_TXBUFNB];
+static rt_uint8_t Rx_Buff[ETH_RXBUFNB][ETH_MAX_PACKET_SIZE], Tx_Buff[ETH_TXBUFNB][ETH_MAX_PACKET_SIZE];
 static rt_bool_t tx_is_waiting = RT_FALSE;
 static  ETH_HandleTypeDef EthHandle;
 static struct rt_stm32_eth stm32_eth_device;
 static struct rt_semaphore tx_wait;
-
-void HAL_ETH_MspInit(ETH_HandleTypeDef* heth)
-{
-    GPIO_InitTypeDef GPIO_InitStruct;
-    if(heth->Instance==ETH)
-    {
-        /* USER CODE BEGIN ETH_MspInit 0 */
-
-        /* USER CODE END ETH_MspInit 0 */
-        /* Peripheral clock enable */
-        __HAL_RCC_ETH_CLK_ENABLE();
-        __HAL_RCC_GPIOA_CLK_ENABLE();
-        __HAL_RCC_GPIOC_CLK_ENABLE();
-        __HAL_RCC_GPIOG_CLK_ENABLE();
-
-        /**ETH GPIO Configuration    
-        PC1     ------> ETH_MDC
-        PA1     ------> ETH_REF_CLK
-        PA2     ------> ETH_MDIO
-        PA7     ------> ETH_CRS_DV
-        PC4     ------> ETH_RXD0
-        PC5     ------> ETH_RXD1
-        PG11     ------> ETH_TX_EN
-        PG13     ------> ETH_TXD0
-        PB13     ------> ETH_TXD1 
-        */
-        GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_7;
-        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-        GPIO_InitStruct.Pull = GPIO_NOPULL;
-        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-        GPIO_InitStruct.Alternate = GPIO_AF11_ETH;
-        HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-        
-        GPIO_InitStruct.Pin = GPIO_PIN_13;
-        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-        GPIO_InitStruct.Pull = GPIO_NOPULL;
-        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-        GPIO_InitStruct.Alternate = GPIO_AF11_ETH;
-        HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-        
-        GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_4|GPIO_PIN_5;
-        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-        GPIO_InitStruct.Pull = GPIO_NOPULL;
-        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-        GPIO_InitStruct.Alternate = GPIO_AF11_ETH;
-        HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-        
-        GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_13;
-        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-        GPIO_InitStruct.Pull = GPIO_NOPULL;
-        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-        GPIO_InitStruct.Alternate = GPIO_AF11_ETH;
-        HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
-
-        /* ETH interrupt Init */
-        HAL_NVIC_SetPriority(ETH_IRQn, 1, 0);
-        HAL_NVIC_EnableIRQ(ETH_IRQn);
-    }
-
-}
 
 /* interrupt service routine */
 void ETH_IRQHandler(void)
@@ -213,165 +116,7 @@ void HAL_ETH_ErrorCallback(ETH_HandleTypeDef *heth)
     rt_kprintf("eth err\n");
 }
 
-/**
-* @brief This function handles EXTI line[9:5] interrupts.
-*/
-void EXTI9_5_IRQHandler(void)
-{
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_6);
-}
 
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-    uint32_t reg_value = 0;
-    int i = 10;
-
-    if (GPIO_Pin == GPIO_PIN_6)
-    {
-        HAL_ETH_ReadPHYRegister(&EthHandle, PHY_REG_INTERRUPT, &reg_value);
-        
-        if (reg_value & PHY_INT_LINK_CHANGE)
-        {
-            do
-            {
-                HAL_ETH_ReadPHYRegister(&EthHandle, PHY_REG_BMSR, &reg_value);
-                if (reg_value & PHY_BMSR_LINKED_STATUS)
-                {
-                    eth_device_linkchange(&stm32_eth_device.parent, RT_TRUE);
-                    STM32_ETH_PRINTF("eth phy link up\n");
-                    return ;
-                }          
-            } 
-            while (i--);
-            
-            eth_device_linkchange(&stm32_eth_device.parent, RT_FALSE);
-            STM32_ETH_PRINTF("eth phy link down\n");
-        }
-    }
-}
-
-static void phy_register_read(int reg)
-{
-    uint32_t value;
-    if (reg > 0xFF || reg < 0)
-        rt_kprintf("reg address error: %d", reg);
-    
-    HAL_ETH_ReadPHYRegister(&EthHandle, reg, &value);
-    
-    rt_kprintf("reg: %02X ==> %08X\n", reg, value);
-
-}
-#ifdef RT_USING_FINSH
-FINSH_FUNCTION_EXPORT_ALIAS(phy_register_read, phyrd, read phy registers);
-#endif
-
-static void phy_register_write(rt_uint16_t reg, rt_uint32_t value)
-{
-    if (reg > 0xFF)
-        rt_kprintf("reg address error: %d", reg);
-    
-    HAL_ETH_WritePHYRegister(&EthHandle, reg, value);
-    
-    rt_kprintf("reg: %02X ==> %08X\n", reg, value);
-
-}
-#ifdef RT_USING_FINSH
-FINSH_FUNCTION_EXPORT_ALIAS(phy_register_write, phywr, write phy registers);
-#endif
-
-
-void eth_link_exit_config(void)
-{
-    GPIO_InitTypeDef GPIO_InitStruct;
-
-    __HAL_RCC_GPIOH_CLK_ENABLE();
-
-    /*Configure GPIO pin : PH6 */
-    GPIO_InitStruct.Pin = GPIO_PIN_6;
-    GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING; 
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(GPIOH, &GPIO_InitStruct);
-    
-    /* EXTI9_5_IRQn interrupt configuration */
-    HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
-}
-
-rt_err_t eth_phy_init(void)
-{
-    uint32_t reg_value = 0;
-    int i, j, k;
-
-    HAL_ETH_WritePHYRegister(&EthHandle, PHY_REG_BMCR, PHY_RESET);
-    
-    for (i = 0x10000; i > 0; i--)
-    {
-        HAL_ETH_ReadPHYRegister(&EthHandle, PHY_REG_BMCR, &reg_value);
-        if (!(reg_value & (PHY_BMCR_RESET | PHY_BMCR_POWERDOWN)))
-        {
-            STM32_ETH_PRINTF("PHY Reset Finsh\n");
-            break;
-        }
-    }
-    if (i <= 0)
-    {
-        STM32_ETH_PRINTF("PHY Power Up Error: %08X\n", reg_value);
-        return -RT_ETIMEOUT;
-    }
-    
-    HAL_ETH_WritePHYRegister(&EthHandle, PHY_REG_BMCR, PHY_AUTONEGOTIATION);
-    for (j = 0x10000; j > 0; j--)
-    {
-        HAL_ETH_ReadPHYRegister(&EthHandle, PHY_REG_BMSR, &reg_value);
-        if (reg_value & PHY_BMSR_AUTONEGO_COMPLETE)
-        {
-            STM32_ETH_PRINTF("Autonegotiation Complete\n");
-            /* Autonegotiation Complete. */
-            break;
-        }
-    }
-    if (j <= 0)
-    {
-        STM32_ETH_PRINTF("Autonegotiation failed: %08X\n", reg_value);
-        return -RT_ETIMEOUT;
-    }
-    
-    /* Check the link status. */
-    for (k = 0x10000; k > 0; k--)
-    {
-        HAL_ETH_ReadPHYRegister(&EthHandle, PHY_REG_BMSR, &reg_value);
-        if (reg_value & PHY_LINKED_STATUS)
-        {
-            /* Link */ 
-            /* Link is on, get connection info */
-            HAL_ETH_ReadPHYRegister(&EthHandle, PHY_REG_DSCSR, &reg_value);
-            if ((reg_value & (PHY_DSCSR_100FDX | PHY_DSCSR_100HDX)))
-                STM32_ETH_PRINTF("100M ");
-            else
-                STM32_ETH_PRINTF("10M ");
-            
-            if ((reg_value & (PHY_DSCSR_100FDX | PHY_DSCSR_10FDX)))
-                STM32_ETH_PRINTF("Full");
-            else
-                STM32_ETH_PRINTF("Half");
-            STM32_ETH_PRINTF(" Duplex Operation Mode\n");
-            break;
-        }
-    }
-    if (k <= 0)
-    {
-        STM32_ETH_PRINTF("check link status failed: %08X\n", reg_value);
-        return -RT_ETIMEOUT;
-    }
-    
-    HAL_ETH_WritePHYRegister(&EthHandle, PHY_REG_INTERRUPT, PHY_INT_LINK_MASK);
-    
-    STM32_ETH_PRINTF("Reset try: %d\n", i);
-    STM32_ETH_PRINTF("Autonegotiation try: %d\n", j);
-    STM32_ETH_PRINTF("Check try: %d\n", k);
-    
-    return RT_EOK;
-}
 
 /* initialize the interface */
 static rt_err_t rt_stm32_eth_init(rt_device_t dev)
@@ -380,6 +125,7 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
 	
 	__HAL_RCC_ETH_CLK_ENABLE();
 	
+
     /* ETHERNET Configuration --------------------------------------------------*/
 	EthHandle.Instance = ETH;  
 	EthHandle.Init.MACAddr = (rt_uint8_t*)&stm32_eth_device.dev_addr[0];
@@ -389,8 +135,7 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
 	EthHandle.Init.MediaInterface = ETH_MEDIA_INTERFACE_RMII;
 	EthHandle.Init.RxMode = ETH_RXINTERRUPT_MODE;
 	EthHandle.Init.ChecksumMode = ETH_CHECKSUM_BY_SOFTWARE;
-    //EthHandle.Init.ChecksumMode = ETH_CHECKSUM_BY_HARDWARE;
-	EthHandle.Init.PhyAddress = DM9161_PHY_ADDRESS;
+	EthHandle.Init.PhyAddress = PHY_ADDRESS;
 	
 	HAL_ETH_DeInit(&EthHandle);
 	
@@ -403,7 +148,7 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
     {
 		STM32_ETH_PRINTF("eth hardware init faild...\n");
     }
-    
+
 	/* Initialize Tx Descriptors list: Chain Mode */
 	HAL_ETH_DMATxDescListInit(&EthHandle, DMATxDscrTab, &Tx_Buff[0][0], ETH_TXBUFNB);
 	 
@@ -420,8 +165,6 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
 		STM32_ETH_PRINTF("eth hardware start faild...\n");
     }
     
-    eth_phy_init();
-    eth_link_exit_config();
 
     return RT_EOK;
 }
@@ -526,9 +269,7 @@ rt_err_t rt_stm32_eth_tx( rt_device_t dev, struct pbuf* p)
         while( (byteslefttocopy + bufferoffset) > ETH_TX_BUF_SIZE )
         {
             /* Copy data to Tx buffer*/
-            memcpy( (uint8_t*)((uint8_t*)buffer + bufferoffset), 
-                    (uint8_t*)((uint8_t*)q->payload + payloadoffset), 
-                    (ETH_TX_BUF_SIZE - bufferoffset) );
+            memcpy( (uint8_t*)((uint8_t*)buffer + bufferoffset), (uint8_t*)((uint8_t*)q->payload + payloadoffset), (ETH_TX_BUF_SIZE - bufferoffset) );
 
             /* Point to next descriptor */
             DmaTxDesc = (ETH_DMADescTypeDef *)(DmaTxDesc->Buffer2NextDescAddr);
@@ -550,9 +291,7 @@ rt_err_t rt_stm32_eth_tx( rt_device_t dev, struct pbuf* p)
         }
 
         /* Copy the remaining bytes */
-        memcpy( (uint8_t*)((uint8_t*)buffer + bufferoffset), 
-                (uint8_t*)((uint8_t*)q->payload + payloadoffset), 
-                byteslefttocopy );
+        memcpy( (uint8_t*)((uint8_t*)buffer + bufferoffset), (uint8_t*)((uint8_t*)q->payload + payloadoffset), byteslefttocopy );
         bufferoffset = bufferoffset + byteslefttocopy;
         framelength = framelength + byteslefttocopy;
     }
@@ -627,7 +366,7 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
     state = HAL_ETH_GetReceivedFrame_IT(&EthHandle);
 	if (state != HAL_OK)
     {
-        //STM32_ETH_PRINTF("receive frame faild\n");
+        STM32_ETH_PRINTF("receive frame faild\n");
         return NULL;
     }
     
@@ -721,6 +460,72 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
     return p;
 }
 
+static void NVIC_Configuration(void)
+{	
+	/* Enable the Ethernet global Interrupt */
+	HAL_NVIC_SetPriority(ETH_IRQn, 0x7, 0);
+	HAL_NVIC_EnableIRQ(ETH_IRQn);
+}
+
+/*
+ * GPIO Configuration for ETH
+ */
+static void GPIO_Configuration(void)
+{
+    GPIO_InitTypeDef GPIO_InitStructure;
+
+    STM32_ETH_PRINTF("GPIO_Configuration...\n");
+    
+    /* Enable SYSCFG clock */
+    __HAL_RCC_ETH_CLK_ENABLE();
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    __HAL_RCC_GPIOG_CLK_ENABLE();
+
+    GPIO_InitStructure.Speed = GPIO_SPEED_HIGH;
+    GPIO_InitStructure.Mode  = GPIO_MODE_AF_PP;
+    GPIO_InitStructure.Alternate = GPIO_AF11_ETH;
+    GPIO_InitStructure.Pull  = GPIO_NOPULL;
+
+    GPIO_InitStructure.Pin = ETH_MDIO_PIN;
+    HAL_GPIO_Init(ETH_MDIO_PORN,&GPIO_InitStructure);
+    GPIO_InitStructure.Pin = ETH_MDC_PIN;
+    HAL_GPIO_Init(ETH_MDC_PORN,&GPIO_InitStructure);
+
+    GPIO_InitStructure.Pin = ETH_RMII_REF_CLK_PIN;
+    HAL_GPIO_Init(ETH_RMII_REF_CLK_PORN,&GPIO_InitStructure);
+    GPIO_InitStructure.Pin = ETH_RMII_CRS_DV_PIN;
+    HAL_GPIO_Init(ETH_RMII_CRS_DV_PORN,&GPIO_InitStructure);
+
+    GPIO_InitStructure.Pin = ETH_RMII_REF_CLK_PIN;
+    HAL_GPIO_Init(ETH_RMII_REF_CLK_PORN,&GPIO_InitStructure);
+    GPIO_InitStructure.Pin = ETH_RMII_CRS_DV_PIN;
+    HAL_GPIO_Init(ETH_RMII_CRS_DV_PORN,&GPIO_InitStructure);
+	
+    GPIO_InitStructure.Pin = ETH_RMII_RXD0_PIN;
+    HAL_GPIO_Init(ETH_RMII_RXD0_PORN,&GPIO_InitStructure);
+    GPIO_InitStructure.Pin = ETH_RMII_RXD1_PIN;
+    HAL_GPIO_Init(ETH_RMII_RXD1_PORN,&GPIO_InitStructure);
+	
+    GPIO_InitStructure.Pin = ETH_RMII_TX_EN_PIN;
+    HAL_GPIO_Init(ETH_RMII_TX_EN_PORN,&GPIO_InitStructure);
+    GPIO_InitStructure.Pin = ETH_RMII_TXD0_PIN;
+    HAL_GPIO_Init(ETH_RMII_TXD0_PORN,&GPIO_InitStructure);
+    GPIO_InitStructure.Pin = ETH_RMII_TXD1_PIN;
+    HAL_GPIO_Init(ETH_RMII_TXD1_PORN,&GPIO_InitStructure);
+	
+    HAL_NVIC_SetPriority(ETH_IRQn,1,0);
+    HAL_NVIC_EnableIRQ(ETH_IRQn);
+}
+
+
+void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
+{
+    GPIO_Configuration();
+    NVIC_Configuration();
+}
+
 static int rt_hw_stm32_eth_init(void)
 {
     rt_err_t state;
@@ -763,7 +568,9 @@ static int rt_hw_stm32_eth_init(void)
     {
         STM32_ETH_PRINTF("eth_device_init faild: %d\r\n", state);
     }
+	
+	eth_device_linkchange(&stm32_eth_device.parent, RT_TRUE);   //linkup the e0 for lwip to check
+	
     return state;
 }
-INIT_DEVICE_EXPORT(rt_hw_stm32_eth_init);
-#endif
+INIT_APP_EXPORT(rt_hw_stm32_eth_init);
