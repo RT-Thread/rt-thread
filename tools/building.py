@@ -21,7 +21,7 @@
 # Date           Author       Notes
 # 2015-01-20     Bernard      Add copyright information
 # 2015-07-25     Bernard      Add LOCAL_CCFLAGS/LOCAL_CPPPATH/LOCAL_CPPDEFINES for
-#                             group definition. 
+#                             group definition.
 #
 
 import os
@@ -69,7 +69,7 @@ def stop_handling_includes(self, t=None):
     d['include'] =  self.do_nothing
     d['include_next'] =  self.do_nothing
     d['define'] =  self.do_nothing
-    
+
 PatchedPreProcessor = SCons.cpp.PreProcessor
 PatchedPreProcessor.start_handling_includes = start_handling_includes
 PatchedPreProcessor.stop_handling_includes = stop_handling_includes
@@ -278,7 +278,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'ua':('gcc', 'gcc'),
                 'cdk':('gcc', 'gcc')}
     tgt_name = GetOption('target')
-    
+
     if tgt_name:
         # --target will change the toolchain settings which clang-analyzer is
         # depend on
@@ -297,10 +297,10 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         and rtconfig.PLATFORM == 'gcc':
         AddDepend('RT_USING_MINILIBC')
 
-    AddOption('--genconfig', 
+    AddOption('--genconfig',
                 dest = 'genconfig',
                 action = 'store_true',
-                default = False, 
+                default = False,
                 help = 'Generate .config from rtconfig.h')
     if GetOption('genconfig'):
         from genconf import genconfig
@@ -308,7 +308,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         exit(0)
 
     if env['PLATFORM'] != 'win32':
-        AddOption('--menuconfig', 
+        AddOption('--menuconfig',
                     dest = 'menuconfig',
                     action = 'store_true',
                     default = False,
@@ -772,7 +772,7 @@ def EndBuilding(target, program = None):
     if GetOption('target') == 'vsc':
         from vsc import GenerateVSCode
         GenerateVSCode(Env)
-		
+
     if GetOption('target') == 'cdk':
         from cdk import CDKProject
         CDKProject('project.cdkproj', Projects)
@@ -803,21 +803,43 @@ def SrcRemove(src, remove):
     if not src:
         return
 
-    for item in src:
-        if type(item) == type('str'):
-            item_str = item
-        else:
-            item_str = item.rstr()
+    src_bak = src[:]
 
-        if os.path.isabs(item_str):
-            item_str = os.path.relpath(item_str, GetCurrentDir())
+    if type(remove) == type('str'):
+        if os.path.isabs(remove):
+            remove = os.path.relpath(remove, GetCurrentDir())
+        remove = os.path.normpath(remove)
 
-        if type(remove) == type('str'):
+        for item in src_bak:
+            if type(item) == type('str'):
+                item_str = item
+            else:
+                item_str = item.rstr()
+
+            if os.path.isabs(item_str):
+                item_str = os.path.relpath(item_str, GetCurrentDir())
+            item_str = os.path.normpath(item_str)
+
             if item_str == remove:
                 src.remove(item)
-        else:
-            for remove_item in remove:
-                if item_str == str(remove_item):
+    else:
+        for remove_item in remove:
+            remove_str = str(remove_item)
+            if os.path.isabs(remove_str):
+                remove_str = os.path.relpath(remove_str, GetCurrentDir())
+            remove_str = os.path.normpath(remove_str)
+
+            for item in src_bak:
+                if type(item) == type('str'):
+                    item_str = item
+                else:
+                    item_str = item.rstr()
+
+                if os.path.isabs(item_str):
+                    item_str = os.path.relpath(item_str, GetCurrentDir())
+                item_str = os.path.normpath(item_str)
+
+                if item_str == remove_str:
                     src.remove(item)
 
 def GetVersion():
