@@ -63,6 +63,7 @@
 #define FINSH_CMD_SIZE 80
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_DEFAULT
+#define FINSH_ARG_MAX 10
 
 /* Device virtual file system */
 
@@ -156,6 +157,11 @@
 
 /* RT-Thread online packages */
 
+/* system packages */
+
+/* RT-Thread GUI Engine */
+
+
 /* IoT - internet of things */
 
 
@@ -179,18 +185,7 @@
 /* tools packages */
 
 
-/* system packages */
-
-/* RT-Thread GUI Engine */
-
-
-/* peripheral libraries and drivers */
-
-
 /* miscellaneous packages */
-
-
-/* sample package */
 
 
 /* example package: hello */
@@ -198,7 +193,6 @@
 #define RT_USING_UART2
 #define RT_UART_RX_BUFFER_SIZE 64
 #define RT_USING_GMAC_INT_MODE
-#define RT_USING_FPU
 #define RT_USING_SPI0
 #define RT_USING_SPI1
 #define RT_USING_I2C1
