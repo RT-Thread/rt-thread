@@ -64,7 +64,7 @@ def GenerateCFiles(env):
         json_obj = {}
         json_obj['configurations'] = [config_obj]
 
-        vsc_file.write(json.dumps(json_obj))
+        vsc_file.write(json.dumps(json_obj, indent=4))
         vsc_file.close()
 
     return
