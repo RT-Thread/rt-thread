@@ -54,15 +54,15 @@ addr6=grep_func(r'application.nmap','__xip_image2_start__')
 sysstr = platform.system()
 print(sysstr)
 if(sysstr == "Linux"):
-	exec_pick = tool_pwd + r'/pick'
-	exec_checksum = tool_pwd + r'/checksum'
+	exec_pick=os.path.join(tool_pwd,'pick')
+	exec_checksum=os.path.join(tool_pwd,'checksum')
 	os.system('chmod +x ' + exec_pick)
 	os.system('chmod +x ' + exec_checksum)
 	#print(exec_pick)
 elif(sysstr == "Windows"):
-	exec_pick=tool_pwd+r'\pick.exe'
-	exec_checksum = tool_pwd + r'\checksum.exe'
-	print(exec_pick)
+	exec_pick=os.path.join(tool_pwd,'pick.exe')
+	exec_checksum=os.path.join(tool_pwd,'checksum.exe')
+	#print(exec_pick)
 else:
 	print("not support!!!")
 
