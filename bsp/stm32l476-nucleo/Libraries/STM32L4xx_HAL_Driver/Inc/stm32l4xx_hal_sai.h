@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_sai.h
   * @author  MCD Application Team
-  * @version V1.7.2
-  * @date    16-June-2017
   * @brief   Header file of SAI HAL module.
   ******************************************************************************
   * @attention
@@ -76,6 +74,20 @@ typedef enum
   */
 typedef void (*SAIcallback)(void);
 
+#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+/** 
+  * @brief  SAI PDM Init structure definition
+  */  
+typedef struct
+{
+  FunctionalState Activation;  /*!< Enable/disable PDM interface */
+  uint32_t        MicPairsNbr; /*!< Specifies the number of microphone pairs used.
+                                    This parameter must be a number between Min_Data = 1 and Max_Data = 3. */
+  uint32_t        ClockEnable; /*!< Specifies which clock must be enabled.
+                                    This parameter can be a values combination of @ref SAI_PDM_ClockEnable */
+}SAI_PdmInitTypeDef;
+#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+
 /** @defgroup SAI_Init_Structure_definition SAI Init Structure definition
   * @brief  SAI Init Structure definition
   * @{
@@ -101,7 +113,14 @@ typedef struct
 
   uint32_t NoDivider;           /*!< Specifies whether master clock will be divided or not.
                                      This parameter can be a value of @ref SAI_Block_NoDivider
-                                     @note: If bit NODIV in the SAI_xCR1 register is cleared, the frame length
+                                     @note: For STM32L4Rx/STM32L4Sx devices :
+                                              If bit NOMCK in the SAI_xCR1 register is cleared, the frame length
+                                              should be aligned to a number equal to a power of 2, from 8 to 256.
+                                              If bit NOMCK in the SAI_xCR1 register is set, the frame length can
+                                              take any of the values without constraint. There is no MCLK_x clock
+                                              which can be output.
+                                            For other devices :
+                                              If bit NODIV in the SAI_xCR1 register is cleared, the frame length
                                               should be aligned to a number equal to a power of 2, from 8 to 256.
                                               If bit NODIV in the SAI_xCR1 register is set, the frame length can
                                               take any of the values without constraint since the input clock of
@@ -116,7 +135,13 @@ typedef struct
 
   uint32_t Mckdiv;              /*!< Specifies the master clock divider, the parameter will be used if for
                                      AudioFrequency the user choice
-                                     This parameter must be a number between Min_Data = 0 and Max_Data = 15 */
+                                     This parameter must be a number between Min_Data = 0 and Max_Data = 63 on STM32L4Rx/STM32L4Sx devices.
+                                     This parameter must be a number between Min_Data = 0 and Max_Data = 15 on other devices. */
+
+#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+  uint32_t MckOverSampling;     /*!< Specifies the master clock oversampling.
+                                     This parameter can be a value of @ref SAI_Block_Mck_OverSampling */
+#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 
   uint32_t MonoStereoMode;      /*!< Specifies if the mono or stereo mode is selected.
                                      This parameter can be a value of @ref SAI_Mono_Stereo_Mode */
@@ -126,6 +151,10 @@ typedef struct
 
   uint32_t TriState;            /*!< Specifies the companding mode type.
                                      This parameter can be a value of @ref SAI_TRIState_Management */
+
+#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+  SAI_PdmInitTypeDef PdmInit;   /*!< Specifies the PDM configuration. */
+#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 
   /* This part of the structure is automatically filled if your are using the high level initialisation
      function HAL_SAI_InitProtocol */
@@ -314,6 +343,26 @@ typedef struct __SAI_HandleTypeDef
   * @}
   */
 
+#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+/** @defgroup SAI_Block_Mck_OverSampling SAI Block Master Clock OverSampling
+  * @{
+  */
+#define SAI_MCK_OVERSAMPLING_DISABLE      ((uint32_t)0x00000000U)
+#define SAI_MCK_OVERSAMPLING_ENABLE       ((uint32_t)SAI_xCR1_OSR)
+/**
+  * @}
+  */
+
+/** @defgroup SAI_PDM_ClockEnable SAI PDM Clock Enable
+  * @{
+  */
+#define SAI_PDM_CLOCK1_ENABLE     ((uint32_t)SAI_PDMCR_CKEN1)
+#define SAI_PDM_CLOCK2_ENABLE     ((uint32_t)SAI_PDMCR_CKEN2)
+/**
+  * @}
+  */
+#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+
 /** @defgroup SAI_Block_Mode SAI Block Mode
   * @{
   */
@@ -391,7 +440,11 @@ typedef struct __SAI_HandleTypeDef
   * @{
   */
 #define SAI_MASTERDIVIDER_ENABLE         ((uint32_t)0x00000000U)
+#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#define SAI_MASTERDIVIDER_DISABLE        ((uint32_t)SAI_xCR1_NOMCK)
+#else
 #define SAI_MASTERDIVIDER_DISABLE        ((uint32_t)SAI_xCR1_NODIV)
+#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 /**
   * @}
   */
@@ -564,14 +617,14 @@ typedef struct __SAI_HandleTypeDef
  */
 
 /** @brief Reset SAI handle state.
-  * @param  __HANDLE__: specifies the SAI Handle.
+  * @param  __HANDLE__ specifies the SAI Handle.
   * @retval None
   */
 #define __HAL_SAI_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_SAI_STATE_RESET)
 
 /** @brief  Enable or disable the specified SAI interrupts.
-  * @param  __HANDLE__: specifies the SAI Handle.
-  * @param  __INTERRUPT__: specifies the interrupt source to enable or disable.
+  * @param  __HANDLE__ specifies the SAI Handle.
+  * @param  __INTERRUPT__ specifies the interrupt source to enable or disable.
   *         This parameter can be one of the following values:
   *            @arg SAI_IT_OVRUDR: Overrun underrun interrupt enable
   *            @arg SAI_IT_MUTEDET: Mute detection interrupt enable
@@ -586,8 +639,8 @@ typedef struct __SAI_HandleTypeDef
 #define __HAL_SAI_DISABLE_IT(__HANDLE__, __INTERRUPT__)  ((__HANDLE__)->Instance->IMR &= (~(__INTERRUPT__)))
 
 /** @brief  Check whether the specified SAI interrupt source is enabled or not.
-  * @param  __HANDLE__: specifies the SAI Handle.
-  * @param  __INTERRUPT__: specifies the SAI interrupt source to check.
+  * @param  __HANDLE__ specifies the SAI Handle.
+  * @param  __INTERRUPT__ specifies the SAI interrupt source to check.
   *         This parameter can be one of the following values:
   *            @arg SAI_IT_OVRUDR: Overrun underrun interrupt enable
   *            @arg SAI_IT_MUTEDET: Mute detection interrupt enable
@@ -601,8 +654,8 @@ typedef struct __SAI_HandleTypeDef
 #define __HAL_SAI_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) ((((__HANDLE__)->Instance->IMR & (__INTERRUPT__)) == (__INTERRUPT__)) ? SET : RESET)
 
 /** @brief  Check whether the specified SAI flag is set or not.
-  * @param  __HANDLE__: specifies the SAI Handle.
-  * @param  __FLAG__: specifies the flag to check.
+  * @param  __HANDLE__ specifies the SAI Handle.
+  * @param  __FLAG__ specifies the flag to check.
   *         This parameter can be one of the following values:
   *            @arg SAI_FLAG_OVRUDR: Overrun underrun flag.
   *            @arg SAI_FLAG_MUTEDET: Mute detection flag.
@@ -616,8 +669,8 @@ typedef struct __SAI_HandleTypeDef
 #define __HAL_SAI_GET_FLAG(__HANDLE__, __FLAG__) ((((__HANDLE__)->Instance->SR) & (__FLAG__)) == (__FLAG__))
 
 /** @brief  Clear the specified SAI pending flag.
-  * @param  __HANDLE__: specifies the SAI Handle.
-  * @param  __FLAG__: specifies the flag to check.
+  * @param  __HANDLE__ specifies the SAI Handle.
+  * @param  __FLAG__ specifies the flag to check.
   *          This parameter can be any combination of the following values:
   *            @arg SAI_FLAG_OVRUDR: Clear Overrun underrun
   *            @arg SAI_FLAG_MUTEDET: Clear Mute detection
@@ -637,6 +690,11 @@ typedef struct __SAI_HandleTypeDef
  /**
   * @}
   */
+
+#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+/* Include SAI HAL Extension module */
+#include "stm32l4xx_hal_sai_ex.h"
+#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 
 /* Exported functions --------------------------------------------------------*/
 
@@ -737,6 +795,16 @@ uint32_t HAL_SAI_GetError(SAI_HandleTypeDef *hsai);
                                        ((AUDIO) == SAI_AUDIO_FREQUENCY_32K)  || ((AUDIO) == SAI_AUDIO_FREQUENCY_22K) || \
                                        ((AUDIO) == SAI_AUDIO_FREQUENCY_16K)  || ((AUDIO) == SAI_AUDIO_FREQUENCY_11K) || \
                                        ((AUDIO) == SAI_AUDIO_FREQUENCY_8K)   || ((AUDIO) == SAI_AUDIO_FREQUENCY_MCKDIV))
+
+#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#define IS_SAI_BLOCK_MCK_OVERSAMPLING(VALUE) (((VALUE) == SAI_MCK_OVERSAMPLING_DISABLE) || \
+                                              ((VALUE) == SAI_MCK_OVERSAMPLING_ENABLE))
+
+#define IS_SAI_PDM_MIC_PAIRS_NUMBER(VALUE)   ((1U <= (VALUE)) && ((VALUE) <= 3U))
+
+#define IS_SAI_PDM_CLOCK_ENABLE(CLOCK) (((CLOCK) != 0U) && \
+                                       (((CLOCK) & ~(SAI_PDM_CLOCK1_ENABLE | SAI_PDM_CLOCK2_ENABLE)) == 0U))
+#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 
 #define IS_SAI_BLOCK_MODE(MODE)  (((MODE) == SAI_MODEMASTER_TX) || \
                                   ((MODE) == SAI_MODEMASTER_RX) || \

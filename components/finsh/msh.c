@@ -37,7 +37,10 @@
 #include <dfs_posix.h>
 #endif
 
-#define RT_FINSH_ARG_MAX    10
+#ifndef FINSH_ARG_MAX
+#define FINSH_ARG_MAX    10
+#endif
+
 typedef int (*cmd_function_t)(int argc, char **argv);
 
 #ifdef FINSH_USING_MSH
@@ -99,7 +102,7 @@ int msh_help(int argc, char **argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(msh_help, __cmd_help, RT-Thread shell help.);
 
-static int msh_split(char *cmd, rt_size_t length, char *argv[RT_FINSH_ARG_MAX])
+static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
 {
     char *ptr;
     rt_size_t position;
@@ -118,7 +121,7 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[RT_FINSH_ARG_MAX])
             ptr ++; position ++;
         }
 
-        if(argc >= RT_FINSH_ARG_MAX)
+        if(argc >= FINSH_ARG_MAX)
         {
             rt_kprintf("Too many args ! We only Use:\n");
             for(i = 0; i < argc; i++)
@@ -284,7 +287,7 @@ static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
     int argc;
     rt_size_t cmd0_size = 0;
     cmd_function_t cmd_func;
-    char *argv[RT_FINSH_ARG_MAX];
+    char *argv[FINSH_ARG_MAX];
 
     RT_ASSERT(cmd);
     RT_ASSERT(retp);
@@ -333,7 +336,7 @@ int msh_exec(char *cmd, rt_size_t length)
     {
         return cmd_ret;
     }
-#ifdef RT_USING_MODULE
+#if defined(RT_USING_MODULE) && defined(RT_USING_DFS)
     if (msh_exec_module(cmd, length) == 0)
     {
         return 0;

@@ -9,7 +9,7 @@ config RT_USING_LWIP
     if RT_USING_LWIP
         choice
             prompt "lwIP version"
-            default RT_USING_LWIP141
+            default RT_USING_LWIP202
             help
                 Select the lwIP version
 
@@ -145,6 +145,14 @@ config RT_USING_LWIP
             int "the stack size of lwIP thread"
             default 1024
 
+        config LWIP_NO_RX_THREAD
+            bool "Not use Rx thread"
+            default n
+
+        config LWIP_NO_TX_THREAD
+            bool "Not use Tx thread"
+            default n
+
         config RT_LWIP_ETHTHREAD_PRIORITY
             int "the priority level value of ethernet thread"
             default 12
@@ -200,6 +208,26 @@ if RT_USING_LWIP
 config LWIP_USING_DHCPD
     bool "Enable DHCP server"
     default n
+
+    if LWIP_USING_DHCPD
+        config DHCPD_SERVER_IP
+            string "DHCPD SERVER IP address"
+            default 192.168.169.1
+
+        config DHCPD_USING_ROUTER
+            bool "alloc gateway ip for router"
+            default y
+
+        config LWIP_USING_CUSTOMER_DNS_SERVER
+            bool "Enable customer DNS server config"
+            default n
+        if LWIP_USING_CUSTOMER_DNS_SERVER
+            config DHCP_DNS_SERVER_IP
+                string "Custom DNS server IP address"
+                default 1.1.1.1
+        endif
+    endif
+    
 
 endif
 

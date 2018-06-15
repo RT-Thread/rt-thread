@@ -1,9 +1,12 @@
 /*
- * Copyright (c) 2017, Freescale Semiconductor, Inc.
+ * The Clear BSD License
+ * Copyright (c) 2016, Freescale Semiconductor, Inc.
+ * Copyright (c) 2017, NXP
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * are permitted (subject to the limitations in the disclaimer below) provided
+ *  that the following conditions are met:
  *
  * o Redistributions of source code must retain the above copyright notice, this list
  *   of conditions and the following disclaimer.
@@ -12,38 +15,11 @@
  *   list of conditions and the following disclaimer in the documentation and/or
  *   other materials provided with the distribution.
  *
- * o Neither the name of Freescale Semiconductor, Inc. nor the names of its
+ * o Neither the name of the copyright holder nor the names of its
  *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * Copyright (c) 2017, NXP Semiconductors, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * o Redistributions of source code must retain the above copyright notice, this list
- *   of conditions and the following disclaimer.
- *
- * o Redistributions in binary form must reproduce the above copyright notice, this
- *   list of conditions and the following disclaimer in the documentation and/or
- *   other materials provided with the distribution.
- *
- * o Neither the name of Freescale Semiconductor, Inc. nor the names of its
- *   contributors may be used to endorse or promote products derived from this
- *   software without specific prior written permission.
- *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE.
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -76,15 +52,15 @@
 /*@}*/
 
 /*! @brief List of SNVS_LP interrupts */
-typedef enum _snvs_lp_srtc_interrupt_enable
+typedef enum _snvs_lp_srtc_interrupts
 {
-    kSNVS_SRTC_AlarmInterruptEnable = 4U, /*!< SRTC time alarm.*/
-} snvs_lp_srtc_interrupt_enable_t;
+    kSNVS_SRTC_AlarmInterrupt = SNVS_LPCR_LPTA_EN_MASK, /*!< SRTC time alarm.*/
+} snvs_lp_srtc_interrupts_t;
 
 /*! @brief List of SNVS_LP flags */
 typedef enum _snvs_lp_srtc_status_flags
 {
-    kSNVS_SRTC_AlarmInterruptFlag = 4U, /*!< SRTC time alarm flag*/
+    kSNVS_SRTC_AlarmInterruptFlag = SNVS_LPSR_LPTA_MASK, /*!< SRTC time alarm flag */
 } snvs_lp_srtc_status_flags_t;
 
 /*! @brief List of SNVS_LP external tampers */
@@ -263,7 +239,10 @@ void SNVS_LP_SRTC_GetAlarm(SNVS_Type *base, snvs_lp_srtc_datetime_t *datetime);
  * @param mask The interrupts to enable. This is a logical OR of members of the
  *             enumeration ::snvs_interrupt_enable_t
  */
-void SNVS_LP_SRTC_EnableInterrupts(SNVS_Type *base, uint32_t mask);
+static inline void SNVS_LP_SRTC_EnableInterrupts(SNVS_Type *base, uint32_t mask)
+{
+    base->LPCR |= mask;
+}
 
 /*!
  * @brief Disables the selected SNVS interrupts.
@@ -272,7 +251,10 @@ void SNVS_LP_SRTC_EnableInterrupts(SNVS_Type *base, uint32_t mask);
  * @param mask The interrupts to enable. This is a logical OR of members of the
  *             enumeration ::snvs_interrupt_enable_t
  */
-void SNVS_LP_SRTC_DisableInterrupts(SNVS_Type *base, uint32_t mask);
+static inline void SNVS_LP_SRTC_DisableInterrupts(SNVS_Type *base, uint32_t mask)
+{
+    base->LPCR &= ~mask;
+}
 
 /*!
  * @brief Gets the enabled SNVS interrupts.
@@ -308,7 +290,10 @@ uint32_t SNVS_LP_SRTC_GetStatusFlags(SNVS_Type *base);
  * @param mask The status flags to clear. This is a logical OR of members of the
  *             enumeration ::snvs_status_flags_t
  */
-void SNVS_LP_SRTC_ClearStatusFlags(SNVS_Type *base, uint32_t mask);
+static inline void SNVS_LP_SRTC_ClearStatusFlags(SNVS_Type *base, uint32_t mask)
+{
+    base->LPSR |= mask;
+}
 
 /*! @}*/
 

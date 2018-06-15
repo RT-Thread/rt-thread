@@ -49,6 +49,7 @@ void HAL_MspInit(void)
 
 void SystemClock_Config(void)
 {
+    rt_err_t result;
     RCC_OscInitTypeDef RCC_OscInitStruct;
     RCC_ClkInitTypeDef RCC_ClkInitStruct;
     /**Initializes the CPU, AHB and APB busses clocks
@@ -60,7 +61,8 @@ void SystemClock_Config(void)
     RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
     RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
     RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
-    RT_ASSERT(HAL_RCC_OscConfig(&RCC_OscInitStruct) == HAL_OK);
+    result = HAL_RCC_OscConfig(&RCC_OscInitStruct);
+    RT_ASSERT(result == HAL_OK);
     /**Initializes the CPU, AHB and APB busses clocks
       */
     RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
@@ -68,7 +70,8 @@ void SystemClock_Config(void)
     RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
     RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
     RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-    RT_ASSERT(HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) == HAL_OK);
+    result = HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2);
+    RT_ASSERT(result == HAL_OK);
     /**Configure the Systick interrupt time
       */
     HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / RT_TICK_PER_SECOND);
@@ -109,4 +112,24 @@ void rt_hw_board_init(void)
 #ifdef RT_USING_CONSOLE
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
+}
+
+/**
+ * This function will delay for some us.
+ *
+ * @param us the delay time of us
+ */
+void rt_hw_us_delay(rt_uint32_t us)
+{
+    rt_uint32_t delta;
+    us = us * (SysTick->LOAD / (1000000 / RT_TICK_PER_SECOND));
+    delta = SysTick->VAL;
+    if (delta < us)
+    {
+        /* wait current OSTick left time gone */
+        while (SysTick->VAL < us);
+        us -= delta;
+        delta = SysTick->LOAD;
+    }
+    while (delta - SysTick->VAL < us);
 }

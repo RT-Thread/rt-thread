@@ -1,9 +1,12 @@
 /*
+ * The Clear BSD License
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
- *
+ * All rights reserved.
+ * 
  * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * are permitted (subject to the limitations in the disclaimer below) provided
+ *  that the following conditions are met:
  *
  * o Redistributions of source code must retain the above copyright notice, this list
  *   of conditions and the following disclaimer.
@@ -16,6 +19,7 @@
  *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE.
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -87,6 +91,17 @@ typedef enum _adc_etc_interrupt_enable
     kADC_ETC_Done2InterruptEnable = 3U, /* Enable the DONE2 interrupt when ADC conversions complete. */
 } adc_etc_interrupt_enable_t;
 
+#if defined(FSL_FEATURE_ADC_ETC_HAS_CTRL_DMA_MODE_SEL) && FSL_FEATURE_ADC_ETC_HAS_CTRL_DMA_MODE_SEL
+/*!
+* @brief DMA mode selection.
+*/
+typedef enum _adc_etc_dma_mode_selection
+{
+    kADC_ETC_TrigDMAWithLatchedSignal = 0U,  /* Trig DMA_REQ with latched signal, REQ will be cleared when ACK and source request cleared. */
+    kADC_ETC_TrigDMAWithPulsedSignal = 1U,   /* Trig DMA_REQ with pulsed signal, REQ will be cleared by ACK only. */
+} adc_etc_dma_mode_selection_t;
+#endif /*FSL_FEATURE_ADC_ETC_HAS_CTRL_DMA_MODE_SEL*/
+
 /*!
  * @brief ADC_ETC configuration.
  */
@@ -96,6 +111,9 @@ typedef struct _adc_etc_config
                                      Otherwise TSC would trigger ADC through ADC_ETC. */
     bool enableTSC0Trigger;       /* Enable external TSC0 trigger. It is valid when enableTSCBypass = false. */
     bool enableTSC1Trigger;       /* Enable external TSC1 trigger. It is valid when enableTSCBypass = false.*/
+#if defined(FSL_FEATURE_ADC_ETC_HAS_CTRL_DMA_MODE_SEL) && FSL_FEATURE_ADC_ETC_HAS_CTRL_DMA_MODE_SEL
+    adc_etc_dma_mode_selection_t dmaMode; /* Select the ADC_ETC DMA mode. */ 
+#endif /*FSL_FEATURE_ADC_ETC_HAS_CTRL_DMA_MODE_SEL*/
     uint32_t TSC0triggerPriority; /* External TSC0 trigger priority, 7 is highest, 0 is lowest. */
     uint32_t TSC1triggerPriority; /* External TSC1 trigger priority, 7 is highest, 0 is lowest. */
     uint32_t clockPreDivider;     /* Pre-divider for trig delay and interval. Available range is 0-255.

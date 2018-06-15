@@ -1,9 +1,12 @@
 /*
+ * The Clear BSD License
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
- *
+ * All rights reserved.
+ * 
  * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * are permitted (subject to the limitations in the disclaimer below) provided
+ *  that the following conditions are met:
  *
  * o Redistributions of source code must retain the above copyright notice, this list
  *   of conditions and the following disclaimer.
@@ -16,6 +19,7 @@
  *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE.
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -34,6 +38,12 @@
 /*******************************************************************************
  * Definitions
  *******************************************************************************/
+
+/* Component ID definition, used by tools. */
+#ifndef FSL_COMPONENT_ID
+#define FSL_COMPONENT_ID "platform.drivers.trng"
+#endif
+
 /* Default values for user configuration structure.*/
 #if (defined(KW40Z4_SERIES) || defined(KW41Z4_SERIES) || defined(KW31Z4_SERIES) || defined(KW21Z4_SERIES) || \
      defined(MCIMX7U5_M4_SERIES) || defined(KW36Z4_SERIES))
@@ -1242,7 +1252,7 @@ status_t TRNG_GetDefaultConfig(trng_config_t *userConfig)
 {
     status_t result;
 
-    if (userConfig != 0)
+    if (userConfig != NULL)
     {
         userConfig->lock = TRNG_USER_CONFIG_DEFAULT_LOCK;
         userConfig->clockMode = kTRNG_ClockModeRingOscillator;
@@ -1519,7 +1529,7 @@ status_t TRNG_Init(TRNG_Type *base, const trng_config_t *userConfig)
     status_t result;
 
     /* Check input parameters.*/
-    if ((base != 0) && (userConfig != 0))
+    if ((base != NULL) && (userConfig != NULL))
     {
 #if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
         /* Enable the clock gate. */

@@ -955,6 +955,7 @@ static rt_size_t rt_usbd_ep_write(udevice_t device, uep_t ep, void *buffer, rt_s
     RT_ASSERT(device->dcd != RT_NULL);
     RT_ASSERT(ep != RT_NULL);    
 
+    rt_enter_critical();
     maxpacket = EP_MAXPACKET(ep);
     if(ep->request.remain_size >= maxpacket)
     {
@@ -968,7 +969,7 @@ static rt_size_t rt_usbd_ep_write(udevice_t device, uep_t ep, void *buffer, rt_s
             ep->request.remain_size);
         ep->request.remain_size = 0;
     }
-
+    rt_exit_critical();
     return size;
 }
 

@@ -11,6 +11,7 @@
  * Date           Author       Notes
  * 2010-05-17     swkyer       first version
  * 2010-09-04     bernard      move the beginning entry to 0x80200000
+ * 2018-05-12     zhuangwei    use -Ttext
  */
 
 OUTPUT_ARCH(mips)
@@ -19,16 +20,13 @@ GROUP(-lgcc -lc)
 ENTRY(_start)
 SECTIONS
 {
-    . = 0x80200000 ;
-
-    .start :
-    {
-        *(.start);
-    }
+    . = 0x80000000 ;
 
     . = ALIGN(4);
     .text : 
     {
+		start = ABSOLUTE(.);
+		*(.start);
          *(.text)
          *(.text.*)
          *(.rodata)

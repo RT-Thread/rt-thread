@@ -1072,6 +1072,18 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
     return ret;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops serial_ops = 
+{
+    rt_serial_init,
+    rt_serial_open,
+    rt_serial_close,
+    rt_serial_read,
+    rt_serial_write,
+    rt_serial_control
+};
+#endif
+
 /*
  * serial register
  */
@@ -1090,12 +1102,16 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
     device->rx_indicate = RT_NULL;
     device->tx_complete = RT_NULL;
 
+#ifdef RT_USING_DEVICE_OPS
+    device->ops         = &serial_ops;
+#else
     device->init        = rt_serial_init;
     device->open        = rt_serial_open;
     device->close       = rt_serial_close;
     device->read        = rt_serial_read;
     device->write       = rt_serial_write;
     device->control     = rt_serial_control;
+#endif
     device->user_data   = data;
 
     /* register a character device */

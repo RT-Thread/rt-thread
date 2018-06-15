@@ -19,11 +19,12 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-11-24     ÇÚÎª±¾       first version
+ * 2017-11-24     å‹¤ä¸ºæœ¬          first version
+ * 2018-05-11     zhuangwei    add gpio interrupt ops
  */
 
-#ifndef LS1C_DRV_GPIO_H
-#define LS1C_DRV_GPIO_H
+#ifndef __DRV_GPIO_H__
+#define __DRV_GPIO_H__
 
 
 int hw_pin_init(void);

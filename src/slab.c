@@ -496,11 +496,6 @@ void *rt_malloc(rt_size_t size)
     if (size == 0)
         return RT_NULL;
 
-#ifdef RT_USING_MODULE
-    if (rt_module_self() != RT_NULL)
-        return rt_module_malloc(size);
-#endif
-
     /*
      * Handle large allocations directly.  There should not be very many of
      * these so performance is not a big issue.
@@ -705,11 +700,6 @@ void *rt_realloc(void *ptr, rt_size_t size)
         return RT_NULL;
     }
 
-#ifdef RT_USING_MODULE
-    if (rt_module_self() != RT_NULL)
-        return rt_module_realloc(ptr, size);
-#endif
-
     /*
      * Get the original allocation's zone.  If the new request winds up
      * using the same chunk size we do not have to do anything.
@@ -799,15 +789,6 @@ void rt_free(void *ptr)
         return ;
 
     RT_OBJECT_HOOK_CALL(rt_free_hook, (ptr));
-
-#ifdef RT_USING_MODULE
-    if (rt_module_self() != RT_NULL)
-    {
-        rt_module_free(rt_module_self(), ptr);
-
-        return;
-    }
-#endif
 
     /* get memory usage */
 #if RT_DEBUG_SLAB
