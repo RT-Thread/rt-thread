@@ -3,7 +3,27 @@ import subprocess
 import os
 import platform
 
-tool_pwd=os.path.normpath(os.getcwd()+r'/packages/realtek_ameba/sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0/component/soc/realtek/8711b/misc/iar_utility/common/tools')
+#tool_pwd=os.path.normpath(os.getcwd()+r'/packages/realtek_ameba/sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0/component/soc/realtek/8711b/misc/iar_utility/common/tools')
+
+pwd=[]
+def findfile(path,filename):
+    for x in os.listdir(path):
+    	if x=='8195a':
+    		continue
+        x=os.path.join(path,x)
+        if os.path.isdir(x):
+            findfile(x,filename)
+        else:
+            if filename in os.path.split(x)[1]:
+                pwd.append(os.path.split(x)[0])
+                break
+    return
+
+findfile(os.path.abspath('.'),'pick.exe')
+if pwd:
+	print(pwd[0])
+
+tool_pwd=str(pwd[0])
 
 def grep_func(file,str):
 	fd=open(file,'r')
@@ -40,9 +60,9 @@ if(sysstr == "Linux"):
 	os.system('chmod +x ' + exec_checksum)
 	#print(exec_pick)
 elif(sysstr == "Windows"):
-	exec_pick=tool_pwd+r'/pick.exe'
-	exec_checksum = tool_pwd + r'/checksum.exe'
-	#print(exec_pick)
+	exec_pick=tool_pwd+r'\pick.exe'
+	exec_checksum = tool_pwd + r'\checksum.exe'
+	print(exec_pick)
 else:
 	print("not support!!!")
 
