@@ -76,7 +76,11 @@ struct lwip_sock {
   /** error happened for this socket, set by event_callback(), tested by select */
   u16_t errevent;
   /** last error that occurred on this socket */
+#if LWIP_VERSION < 0x2000000
   int err;
+#else
+  u8_t err;
+#endif
   /** counter of how many threads are waiting for this socket using select */
   SELWAIT_T select_waiting;
 
