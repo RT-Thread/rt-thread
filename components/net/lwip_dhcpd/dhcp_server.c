@@ -441,17 +441,19 @@ static void dhcpd_thread_entry(void *parameter)
                 *dhcp_opt++ = DHCPD_SERVER_IPADDR2;
                 *dhcp_opt++ = 1;
 #else
-                struct ip_addr dns_addr;
-                ip4addr_aton(DHCP_DNS_SERVER_IP, &dns_addr);
-                DNS_SERVER_IPADDR0 = (ntohl(dns_addr.addr) >> 24) & 0xFF;
-                DNS_SERVER_IPADDR1 = (ntohl(dns_addr.addr) >> 16) & 0xFF;
-                DNS_SERVER_IPADDR2 = (ntohl(dns_addr.addr) >>  8) & 0xFF;
-                DNS_SERVER_IPADDR3 = (ntohl(dns_addr.addr) >>  0) & 0xFF;
+                {
+#if (LWIP_VERSION) >= 0x02000000U
+                    ip4_addr_t dns_addr;
+#else
+                    struct ip_addr dns_addr;
+#endif /* LWIP_VERSION */
+                    ip4addr_aton(DHCP_DNS_SERVER_IP, &dns_addr);
 
-                *dhcp_opt++ = DNS_SERVER_IPADDR0;
-                *dhcp_opt++ = DNS_SERVER_IPADDR1;
-                *dhcp_opt++ = DNS_SERVER_IPADDR2;
-                *dhcp_opt++ = DNS_SERVER_IPADDR3;
+                    *dhcp_opt++ = (ntohl(dns_addr.addr) >> 24) & 0xFF;
+                    *dhcp_opt++ = (ntohl(dns_addr.addr) >> 16) & 0xFF;
+                    *dhcp_opt++ = (ntohl(dns_addr.addr) >>  8) & 0xFF;
+                    *dhcp_opt++ = (ntohl(dns_addr.addr) >>  0) & 0xFF;
+                }
 #endif
 
                 // DHCP_OPTION_LEASE_TIME
