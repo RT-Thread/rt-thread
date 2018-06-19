@@ -31,7 +31,15 @@
 #ifndef DHCPV4_SERVER_H__
 #define DHCPV4_SERVER_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void dhcpd_start(const char *netif_name);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 
