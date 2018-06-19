@@ -692,4 +692,4 @@ int stm32_hw_usart_init(void)
 #endif /* RT_USING_UART5 */
     return 0;
 }
-INIT_BOARD_EXPORT(stm32_hw_usart_init);
+/*INIT_BOARD_EXPORT(stm32_hw_usart_init);*/
