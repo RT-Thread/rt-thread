@@ -438,8 +438,8 @@ rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
 
     rt_memset(pipe, 0, sizeof(rt_pipe_t));
     rt_mutex_init(&(pipe->lock), name, RT_IPC_FLAG_FIFO);
-    rt_list_init(&(pipe->reader_queue));
-    rt_list_init(&(pipe->writer_queue));
+    rt_wqueue_init(&(pipe->reader_queue));
+    rt_wqueue_init(&(pipe->writer_queue));
 
     RT_ASSERT(bufsz < 0xFFFF);
     pipe->bufsz = bufsz;

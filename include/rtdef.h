@@ -767,6 +767,13 @@ typedef struct rt_mempool *rt_mp_t;
 
 /*@{*/
 
+struct rt_wqueue
+{
+    rt_list_t list;
+    rt_uint32_t wake_counter;
+};
+typedef struct rt_wqueue rt_wqueue_t;
+
 /**
  * device (I/O) class type
  */
@@ -891,7 +898,7 @@ struct rt_device
 
 #if defined(RT_USING_POSIX)
     const struct dfs_file_ops *fops;
-    rt_list_t wait_queue;
+    rt_wqueue_t wait_queue;
 #endif
 
     void                     *user_data;                /**< device private data */
