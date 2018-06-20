@@ -36,9 +36,9 @@ void rt_wqueue_wakeup(rt_wqueue_t *queue, void *key)
 
     struct rt_list_node *node;
     struct rt_wqueue_node *entry;
-    
+
     level = rt_hw_interrupt_disable();
-    
+
     if (rt_list_isempty(queue))
     {
         queue->wake_counter++;
@@ -79,12 +79,12 @@ int rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec)
 
     if ((condition) || (tick == 0))
         return 0;
-    
+
     __wait.polling_thread = rt_thread_self();
     __wait.key = 0;
     __wait.wakeup = __wqueue_default_wake;
     rt_list_init(&__wait.list);
-    
+
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
