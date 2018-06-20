@@ -5,7 +5,13 @@
 
 struct rt_wqueue_node;
 
-typedef rt_list_t rt_wqueue_t;
+struct rt_wqueue
+{
+    rt_list_t list;
+    rt_uint32_t wake_counter;
+};
+typedef struct rt_wqueue rt_wqueue_t;
+
 typedef int (*rt_wqueue_func_t)(struct rt_wqueue_node *wait, void *key);
 
 struct rt_wqueue_node
