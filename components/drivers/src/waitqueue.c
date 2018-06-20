@@ -11,7 +11,7 @@ void rt_wqueue_add(rt_wqueue_t *queue, struct rt_wqueue_node *node)
     rt_base_t level;
 
     level = rt_hw_interrupt_disable();
-    rt_list_insert_before(queue, &(node->list));
+    rt_list_insert_before(&queue->list, &(node->list));
     rt_hw_interrupt_enable(level);
 }
 
@@ -36,17 +36,19 @@ void rt_wqueue_wakeup(rt_wqueue_t *queue, void *key)
 
     struct rt_list_node *node;
     struct rt_wqueue_node *entry;
+    rt_list_t *queue_list;
 
     level = rt_hw_interrupt_disable();
+    queue_list = &queue->list;
 
-    if (rt_list_isempty(queue))
+    if (rt_list_isempty(queue_list))
     {
         queue->wake_counter++;
         rt_hw_interrupt_enable(level);
         return;
     }
 
-    for (node = queue->next; node != queue; node = node->next)
+    for (node = queue_list->next; node != queue_list; node = node->next)
     {
         entry = rt_list_entry(node, struct rt_wqueue_node, list);
         if (entry->wakeup(entry, key) == 0)
@@ -71,7 +73,7 @@ int rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec)
     rt_timer_t  tmr = &(tid->thread_timer);
     struct rt_wqueue_node __wait;
     rt_base_t level;
-
+    
     /* current context checking */
     RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -97,7 +99,7 @@ int rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec)
         return 0;
     }
 
-    rt_wqueue_add(queue, &__wait);
+    rt_wqueue_add(&queue->list, &__wait);
     rt_thread_suspend(tid);
 
     /* start timer */
