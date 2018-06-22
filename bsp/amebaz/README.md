@@ -156,7 +156,7 @@ msh />
 | UART       | 支持     | UART0                   |
 
 
-## 6. 联系人信息
+## 5. 联系人信息
 
 维护人:
 [flyingcys][4] < [flyingcys@163.com][5] >
