@@ -1,4 +1,4 @@
-# STM32F4xx-HAL 板级支持包
+# amebaz on RT-Thread
 
 ## 1. 简介
 
