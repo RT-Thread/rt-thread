@@ -112,6 +112,35 @@ class Win32Spawn:
 
         return proc.wait()
 
+# auto fix the 'RTT_CC' and 'RTT_EXEC_PATH'
+# when using 'scons --target=cc' the 'RTT_CC' will set to 'cc'
+# it will fix the the 'rtconfig.EXEC_PATH' when get it failed.
+# NOTE: this function will changed your env. Please backup the env before used it.
+def AutoFixRttCCAndExecPath():
+    import rtconfig
+    target_option = None
+
+    # get --target=cc option
+    if len(sys.argv) > 1:
+        option = sys.argv[1].split('=')
+        if len(option) > 1 and option[0] == '--target':
+            target_option = option[1]
+
+    # force change the 'RTT_CC' when using 'scons --target=cc'
+    if target_option:
+        if target_option == 'mdk' or target_option == 'mdk4' or target_option == 'mdk5':
+            os.environ['RTT_CC'] = 'keil'
+        elif target_option == 'iar':
+            os.environ['RTT_CC'] = 'iar'
+
+    # auto change the 'RTT_EXEC_PATH' when 'rtconfig.EXEC_PATH' get failed
+    reload(rtconfig)
+    if not os.path.exists(rtconfig.EXEC_PATH):
+        if os.environ['RTT_EXEC_PATH']:
+            # del the 'RTT_EXEC_PATH' and using the 'EXEC_PATH' setting on rtconfig.py
+            del os.environ['RTT_EXEC_PATH']
+            reload(rtconfig)
+
 def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = []):
     import SCons.cpp
     import rtconfig
@@ -129,6 +158,9 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     Env['BSP_ROOT'] = Dir('#').abspath
 
     sys.path = sys.path + [os.path.join(Rtt_Root, 'tools')]
+
+    # auto fix the 'RTT_CC' and 'RTT_EXEC_PATH'
+    AutoFixRttCCAndExecPath()
 
     # add compability with Keil MDK 4.6 which changes the directory of armcc.exe
     if rtconfig.PLATFORM == 'armcc':
@@ -709,18 +741,8 @@ def DoBuilding(target, objects):
         program = Env.Program(target, objects)
 
     EndBuilding(target, program)
-
-def EndBuilding(target, program = None):
-    import rtconfig
-
-    Env['target']  = program
-    Env['project'] = Projects
-
-    Env.AddPostAction(target, rtconfig.POST_ACTION)
-    # Add addition clean files
-    Clean(target, 'cconfig.h')
-    Clean(target, 'rtua.py')
-    Clean(target, 'rtua.pyc')
+        
+def GenTargetProject(program = None):
 
     if GetOption('target') == 'mdk':
         from keil import MDKProject
@@ -777,27 +799,47 @@ def EndBuilding(target, program = None):
         from cdk import CDKProject
         CDKProject('project.cdkproj', Projects)
 
+def EndBuilding(target, program = None):
+    import rtconfig
+
+    need_exit = False
+
+    Env['target']  = program
+    Env['project'] = Projects
+
+    Env.AddPostAction(target, rtconfig.POST_ACTION)
+    # Add addition clean files
+    Clean(target, 'cconfig.h')
+    Clean(target, 'rtua.py')
+    Clean(target, 'rtua.pyc')
+
+    if GetOption('target'):
+        GenTargetProject(program)
+
     BSP_ROOT = Dir('#').abspath
     if GetOption('copy') and program != None:
         from mkdist import MakeCopy
         MakeCopy(program, BSP_ROOT, Rtt_Root, Env)
-        exit(0)
+        need_exit = True
     if GetOption('copy-header') and program != None:
         from mkdist import MakeCopyHeader
         MakeCopyHeader(program, BSP_ROOT, Rtt_Root, Env)
-        exit(0)
+        need_exit = True
     if GetOption('make-dist') and program != None:
         from mkdist import MkDist
         MkDist(program, BSP_ROOT, Rtt_Root, Env)
-        exit(0)
+        need_exit = True
     if GetOption('cscope'):
         from cscope import CscopeDatabase
         CscopeDatabase(Projects)
 
     if not GetOption('help') and not GetOption('target'):
         if not os.path.exists(rtconfig.EXEC_PATH):
-            print "Error: Toolchain path (%s) is not exist, please check 'EXEC_PATH' in path or rtconfig.py." % rtconfig.EXEC_PATH
-            sys.exit(1)
+            print "Error: the toolchain path (%s) is not exist, please check 'EXEC_PATH' in path or rtconfig.py." % rtconfig.EXEC_PATH
+            need_exit = True
+
+    if need_exit:
+        exit(0)
 
 def SrcRemove(src, remove):
     if not src:

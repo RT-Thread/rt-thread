@@ -178,21 +178,12 @@ def IARVersion():
 
         return path
 
-    # get the IAR path in 'RTT_EXEC_PATH'
     path = IARPath();
-
-    # retry to get IAR path on 'rtconfig.py'
-    if not os.path.exists(path):
-        rtt_exec_path = os.environ['RTT_EXEC_PATH']
-        if rtt_exec_path:
-            del os.environ['RTT_EXEC_PATH']
-            path = IARPath();
-            os.environ['RTT_EXEC_PATH'] = rtt_exec_path
 
     if os.path.exists(path):
         cmd = os.path.join(path, 'iccarm.exe')
     else:
-        print('Get IAR version error. Please update IAR installation path in rtconfig.py!')
+        print('Error: get IAR version failed. Please update the IAR installation path in rtconfig.py!')
         return "0.0"
 
     child = subprocess.Popen([cmd, '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
