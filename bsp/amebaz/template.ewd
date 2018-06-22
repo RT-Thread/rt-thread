@@ -37,7 +37,7 @@
         </option>
         <option>
           <name>MacFile</name>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\iar_utility\common\preload.mac</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\iar_utility\common\preload.mac</state>
         </option>
         <option>
           <name>MemOverride</name>
@@ -45,7 +45,7 @@
         </option>
         <option>
           <name>MemFile</name>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\iar_utility\common\8710b.ddf</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\iar_utility\common\8710b.ddf</state>
         </option>
         <option>
           <name>RunToEnable</name>
@@ -603,7 +603,7 @@
         </option>
         <option>
           <name>IjetCpuClockEdit</name>
-          <state>72.0</state>
+          <state></state>
         </option>
         <option>
           <name>IjetSwoPrescalerList</name>

@@ -33,6 +33,9 @@
 //#define ETH_TX_DUMP
 //#define MINI_DUMP
 
+struct sk_buff * rltk_wlan_get_recv_skb(int idx);
+struct sk_buff * rltk_wlan_alloc_skb(unsigned int total_len);
+
 #define     MAX_ADDR_LEN        6
 
 struct ameba_wifi
@@ -217,9 +220,9 @@ struct netif *rltk_wlan_get_netif(int idx)
     struct netif *netif;
     
     if(idx == 0)
-        netif = &wifi_sta.parent.parent.netif;
-    else if(idx = 1)
-        netif = &wifi_ap.parent.parent.netif;
+        netif = wifi_sta.parent.parent.netif;
+    else if(idx == 1)
+        netif = wifi_ap.parent.parent.netif;
 
     return netif;
 }
@@ -356,7 +359,7 @@ rt_err_t  rt_ameba_wifi_control(rt_device_t dev, int cmd, void *args)
     {
         int *channel = (int *)args;
 
-        channel = amebaz_wifi_get_channel();
+        *channel = amebaz_wifi_get_channel();
     }
         break;
         
