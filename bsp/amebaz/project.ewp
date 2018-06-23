@@ -313,50 +313,51 @@
           <name>CCIncludePath2</name>
           <state />
           <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\drivers\wlan\realtek\wlan_ram_map\rom</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include\lwip</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\dlib</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\network\ssl\ssl_ram_map\rom</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\drivers\wlan\realtek\wlan_ram_map\rom</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\platform</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\freertos</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\os_dep\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\drivers\wlan\realtek\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\network\ssl\polarssl-1.3.8\include</state>
-          <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\app_wifi</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\hal</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\fwlib\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\app\monitor\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\swlib\std_lib\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\swlib\std_lib\libc\rom\string</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\hal_ext</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\api</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\RT-Thread</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include\netif</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\RT-Thread\realtek\8711b\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\freertos\freertos_v8.1.2\Source\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi\rtw_wpa_supplicant\src</state>
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include\ipv4</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\cmsis</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\swlib\rtl_lib</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\freertos\freertos_v8.1.2\Source\portable\IAR\ARM_CM4F</state>
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\platform</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\rtthread_patch</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\rtthread_patch\realtek\8711b\include</state>
           <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\drivers\wlan\realtek\src\osdep</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\RT-Thread\os</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\cmsis\device</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\app\monitor\include</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\os_dep\include</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\freertos\freertos_v8.1.2\Source\include</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi\rtw_wpa_supplicant\src</state>
+          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include\netif</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\drivers\wlan\realtek\include</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\cmsis\device</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\swlib\std_lib\libc\rom\string</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\hal</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\hal_ext</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\freertos</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\network\ssl\polarssl-1.3.8\include</state>
+          <state>$PROJ_DIR$\drivers\wlan</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\freertos\freertos_v8.1.2\Source\portable\IAR\ARM_CM4F</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include\ipv4</state>
+          <state>$PROJ_DIR$\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\cmsis</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\swlib\rtl_lib</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\rtthread_patch\os</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\wlan</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\fwlib\include</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\drivers\wlan\realtek\src\osdep</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\network\ssl\ssl_ram_map\rom</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\swlib\std_lib\include</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\arch\include</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\api</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -682,8 +683,8 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>CSCRIPT  "$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\iar_utility\common\prebuild.vbs" "$PROJ_DIR$" "1" "0x08080000"</prebuild>
-        <postbuild>CSCRIPT  "$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\iar_utility\common\postbuild_img2.vbs" "$TARGET_DIR$" "$PROJ_DIR$"</postbuild>
+        <prebuild>CSCRIPT  "$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\iar_utility\common\prebuild.vbs" "$PROJ_DIR$" "1" "0x08080000"</prebuild>
+        <postbuild>CSCRIPT  "$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\iar_utility\common\postbuild_img2.vbs" "$TARGET_DIR$" "$PROJ_DIR$"</postbuild>
       </data>
     </settings>
     <settings>
@@ -719,7 +720,7 @@
         </option>
         <option>
           <name>IlinkRawBinaryFile</name>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\image\boot_all.bin</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\image\boot_all.bin</state>
         </option>
         <option>
           <name>IlinkRawBinarySymbol</name>
@@ -820,10 +821,10 @@
         <option>
           <name>IlinkAdditionalLibs</name>
           <state />
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_platform.a</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_rtlstd.a</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_wlan.a</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_wps.a</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_platform.a</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_rtlstd.a</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_wlan.a</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_wps.a</state>
         </option>
         <option>
           <name>IlinkOverrideProgramEntryLabel</name>
@@ -1320,50 +1321,51 @@
           <name>CCIncludePath2</name>
           <state />
           <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\drivers\wlan\realtek\wlan_ram_map\rom</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include\lwip</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\dlib</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\network\ssl\ssl_ram_map\rom</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\drivers\wlan\realtek\wlan_ram_map\rom</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\platform</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\freertos</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\os_dep\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\drivers\wlan\realtek\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\network\ssl\polarssl-1.3.8\include</state>
-          <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\app_wifi</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\hal</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\fwlib\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\app\monitor\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\swlib\std_lib\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\swlib\std_lib\libc\rom\string</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\hal_ext</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\api</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\RT-Thread</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include\netif</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\RT-Thread\realtek\8711b\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\freertos\freertos_v8.1.2\Source\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi\rtw_wpa_supplicant\src</state>
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include\ipv4</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\cmsis</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\swlib\rtl_lib</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\freertos\freertos_v8.1.2\Source\portable\IAR\ARM_CM4F</state>
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\platform</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\rtthread_patch</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\rtthread_patch\realtek\8711b\include</state>
           <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\drivers\wlan\realtek\src\osdep</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\RT-Thread\os</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\cmsis\device</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\app\monitor\include</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\os_dep\include</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\freertos\freertos_v8.1.2\Source\include</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi\rtw_wpa_supplicant\src</state>
+          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include\netif</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\drivers\wlan\realtek\include</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\cmsis\device</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\swlib\std_lib\libc\rom\string</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\hal</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\hal_ext</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\freertos</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\network\ssl\polarssl-1.3.8\include</state>
+          <state>$PROJ_DIR$\drivers\wlan</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\freertos\freertos_v8.1.2\Source\portable\IAR\ARM_CM4F</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include\ipv4</state>
+          <state>$PROJ_DIR$\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\cmsis</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\swlib\rtl_lib</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\rtthread_patch\os</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\wlan</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\fwlib\include</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\drivers\wlan\realtek\src\osdep</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\network\ssl\ssl_ram_map\rom</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\swlib\std_lib\include</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\arch\include</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\api</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1827,10 +1829,10 @@
         <option>
           <name>IlinkAdditionalLibs</name>
           <state />
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_platform.a</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_rtlstd.a</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_wlan.a</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_wps.a</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_platform.a</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_rtlstd.a</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_wlan.a</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_wps.a</state>
         </option>
         <option>
           <name>IlinkOverrideProgramEntryLabel</name>
@@ -2021,12 +2023,6 @@
     </file>
   </group>
   <group>
-    <name>app_wifi</name>
-    <file>
-      <name>$PROJ_DIR$\app_wifi\wifi_test.c</name>
-    </file>
-  </group>
-  <group>
     <name>Drivers</name>
     <file>
       <name>$PROJ_DIR$\drivers\board.c</name>
@@ -2039,129 +2035,135 @@
     </file>
   </group>
   <group>
-    <name>RT-Thread</name>
+    <name>amebaz_wlan</name>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\RT-Thread\os\rtthread_service.c</name>
+      <name>$PROJ_DIR$\drivers\wlan\amebaz_wlan.c</name>
+    </file>
+  </group>
+  <group>
+    <name>rtt_patch</name>
+    <file>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\rtthread_patch\os\rtthread_service.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\RT-Thread\realtek\8711b\rtl8710b_startup.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\rtthread_patch\realtek\8711b\rtl8710b_startup.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\RT-Thread\realtek\8711b\app_start.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\rtthread_patch\realtek\8711b\app_start.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\RT-Thread\realtek\common\wifi\wifi_conf.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\rtthread_patch\realtek\common\wifi\wifi_conf.c</name>
     </file>
   </group>
   <group>
     <name>ameba_wifi</name>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi\wifi_ind.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi\wifi_ind.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi\wifi_util.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi\wifi_util.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi\wifi_promisc.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi\wifi_promisc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi\rtw_wpa_supplicant\wpa_supplicant\wifi_eap_config.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi\rtw_wpa_supplicant\wpa_supplicant\wifi_eap_config.c</name>
     </file>
   </group>
   <group>
     <name>mbed</name>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\analogin_api.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\analogin_api.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\dma_api.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\dma_api.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\efuse_api.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\efuse_api.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\flash_api.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\flash_api.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\gpio_api.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\gpio_api.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\gpio_irq_api.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\gpio_irq_api.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\i2c_api.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\i2c_api.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\i2s_api.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\i2s_api.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\nfc_api.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\nfc_api.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\pinmap.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\pinmap.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\pinmap_common.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\pinmap_common.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\port_api.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\port_api.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\pwmout_api.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\pwmout_api.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\rtc_api.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\rtc_api.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\serial_api.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\serial_api.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\sleep.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\sleep.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\spi_api.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\spi_api.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\sys_api.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\sys_api.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\timer_api.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\timer_api.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\us_ticker.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\us_ticker.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\us_ticker_api.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\us_ticker_api.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\wait_api.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\wait_api.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\wdt_api.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\wdt_api.c</name>
     </file>
   </group>
   <group>
     <name>os_dep</name>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\os_dep\osdep_service.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\os_dep\osdep_service.c</name>
     </file>
   </group>
   <group>
     <name>soc_8711b</name>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\cmsis\device\system_8195a.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\cmsis\device\system_8195a.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\fwlib\ram_lib\rtl8710b_pinmapcfg.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\fwlib\ram_lib\rtl8710b_pinmapcfg.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\fwlib\ram_lib\rtl8710b_intfcfg.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\fwlib\ram_lib\rtl8710b_intfcfg.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\app\monitor\ram\rtl_consol.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\app\monitor\ram\rtl_consol.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\app\monitor\ram\monitor.c</name>
+      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\app\monitor\ram\monitor.c</name>
     </file>
   </group>
   <group>
@@ -2252,6 +2254,15 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\src\workqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\wlan\wlan_cmd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\wlan\wlan_dev.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\wlan\wlan_mgnt.c</name>
     </file>
   </group>
   <group>

@@ -636,8 +636,8 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>CSCRIPT  "$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\iar_utility\common\prebuild.vbs" "$PROJ_DIR$" "1" "0x08080000"</prebuild>
-        <postbuild>CSCRIPT  "$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\iar_utility\common\postbuild_img2.vbs" "$TARGET_DIR$" "$PROJ_DIR$"</postbuild>
+        <prebuild>CSCRIPT  "$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\iar_utility\common\prebuild.vbs" "$PROJ_DIR$" "1" "0x08080000"</prebuild>
+        <postbuild>CSCRIPT  "$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\iar_utility\common\postbuild_img2.vbs" "$TARGET_DIR$" "$PROJ_DIR$"</postbuild>
       </data>
     </settings>
     <settings>
@@ -673,7 +673,7 @@
         </option>
         <option>
           <name>IlinkRawBinaryFile</name>
-          <state>$PROJ_DIR$\packages\realtek_ameba\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\image\boot_all.bin</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\image\boot_all.bin</state>
         </option>
         <option>
           <name>IlinkRawBinarySymbol</name>
