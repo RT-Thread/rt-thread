@@ -112,14 +112,97 @@ class Win32Spawn:
 
         return proc.wait()
 
+# generate cconfig.h file
+def GenCconfigFile(env, BuildOptions):
+    import rtconfig
+    
+    if rtconfig.PLATFORM == 'gcc':
+        contents = ''
+        if not os.path.isfile('cconfig.h'):
+            import gcc
+            gcc.GenerateGCCConfig(rtconfig)
+
+        # try again
+        if os.path.isfile('cconfig.h'):
+            f = file('cconfig.h', 'r')
+            if f:
+                contents = f.read()
+                f.close();
+
+                prep = PatchedPreProcessor()
+                prep.process_contents(contents)
+                options = prep.cpp_namespace
+
+                BuildOptions.update(options)
+
+                # add HAVE_CCONFIG_H definition
+                env.AppendUnique(CPPDEFINES = ['HAVE_CCONFIG_H'])
+
 def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = []):
-    import SCons.cpp
     import rtconfig
 
     global BuildOptions
     global Projects
     global Env
     global Rtt_Root
+
+    # ===== Add option to SCons =====
+    AddOption('--copy',
+                      dest = 'copy',
+                      action = 'store_true',
+                      default = False,
+                      help = 'copy rt-thread directory to local.')
+    AddOption('--copy-header',
+                      dest = 'copy-header',
+                      action = 'store_true',
+                      default = False,
+                      help = 'copy header of rt-thread directory to local.')
+    AddOption('--dist',
+                      dest = 'make-dist',
+                      action = 'store_true',
+                      default = False,
+                      help = 'make distribution')
+    AddOption('--cscope',
+                      dest = 'cscope',
+                      action = 'store_true',
+                      default = False,
+                      help = 'Build Cscope cross reference database. Requires cscope installed.')
+    AddOption('--clang-analyzer',
+                      dest = 'clang-analyzer',
+                      action = 'store_true',
+                      default = False,
+                      help = 'Perform static analyze with Clang-analyzer. ' + \
+                           'Requires Clang installed.\n' + \
+                           'It is recommended to use with scan-build like this:\n' + \
+                           '`scan-build scons --clang-analyzer`\n' + \
+                           'If things goes well, scan-build will instruct you to invoke scan-view.')
+    AddOption('--buildlib',
+                      dest = 'buildlib',
+                      type = 'string',
+                      help = 'building library of a component')
+    AddOption('--cleanlib',
+                      dest = 'cleanlib',
+                      action = 'store_true',
+                      default = False,
+                      help = 'clean up the library by --buildlib')
+    AddOption('--target',
+                      dest = 'target',
+                      type = 'string',
+                      help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk')
+    AddOption('--genconfig',
+                dest = 'genconfig',
+                action = 'store_true',
+                default = False,
+                help = 'Generate .config from rtconfig.h')
+    AddOption('--useconfig',
+                dest = 'useconfig',
+                type = 'string',
+                help = 'make rtconfig.h from config file.')
+    AddOption('--verbose',
+                dest = 'verbose',
+                action = 'store_true',
+                default = False,
+                help = 'print verbose information during build')
 
     Env = env
     Rtt_Root = os.path.abspath(root_directory)
@@ -130,19 +213,60 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     sys.path = sys.path + [os.path.join(Rtt_Root, 'tools')]
 
+    # {target_name:(CROSS_TOOL, PLATFORM)}
+    tgt_dict = {'mdk':('keil', 'armcc'),
+                'mdk4':('keil', 'armcc'),
+                'mdk5':('keil', 'armcc'),
+                'iar':('iar', 'iar'),
+                'vs':('msvc', 'cl'),
+                'vs2012':('msvc', 'cl'),
+                'vsc' : ('gcc', 'gcc'),
+                'cb':('keil', 'armcc'),
+                'ua':('gcc', 'gcc'),
+                'cdk':('gcc', 'gcc')}
+    tgt_name = GetOption('target')
+
+    if tgt_name:
+        # --target will change the toolchain settings which clang-analyzer is
+        # depend on
+        if GetOption('clang-analyzer'):
+            print '--clang-analyzer cannot be used with --target'
+            sys.exit(1)
+
+        SetOption('no_exec', 1)
+        try:
+            rtconfig.CROSS_TOOL, rtconfig.PLATFORM = tgt_dict[tgt_name]
+            # replace the 'RTT_CC' to 'CROSS_TOOL'
+            os.environ['RTT_CC'] = rtconfig.CROSS_TOOL
+            reload(rtconfig)
+        except KeyError:
+            print 'Unknow target: %s. Avaible targets: %s' % \
+                    (tgt_name, ', '.join(tgt_dict.keys()))
+            sys.exit(1)
+    elif (GetDepend('RT_USING_NEWLIB') == False and GetDepend('RT_USING_NOLIBC') == False) \
+        and rtconfig.PLATFORM == 'gcc':
+        AddDepend('RT_USING_MINILIBC')
+
+    # auto change the 'RTT_EXEC_PATH' when 'rtconfig.EXEC_PATH' get failed
+    if not os.path.exists(rtconfig.EXEC_PATH):
+        if os.environ['RTT_EXEC_PATH']:
+            # del the 'RTT_EXEC_PATH' and using the 'EXEC_PATH' setting on rtconfig.py
+            del os.environ['RTT_EXEC_PATH']
+            reload(rtconfig)
+
     # add compability with Keil MDK 4.6 which changes the directory of armcc.exe
     if rtconfig.PLATFORM == 'armcc':
         if not os.path.isfile(os.path.join(rtconfig.EXEC_PATH, 'armcc.exe')):
             if rtconfig.EXEC_PATH.find('bin40') > 0:
                 rtconfig.EXEC_PATH = rtconfig.EXEC_PATH.replace('bin40', 'armcc/bin')
-                Env['LINKFLAGS']=Env['LINKFLAGS'].replace('RV31', 'armcc')
+                Env['LINKFLAGS'] = Env['LINKFLAGS'].replace('RV31', 'armcc')
 
         # reset AR command flags
         env['ARCOM'] = '$AR --create $TARGET $SOURCES'
-        env['LIBPREFIX']   = ''
-        env['LIBSUFFIX']   = '.lib'
+        env['LIBPREFIX'] = ''
+        env['LIBSUFFIX'] = '.lib'
         env['LIBLINKPREFIX'] = ''
-        env['LIBLINKSUFFIX']   = '.lib'
+        env['LIBLINKSUFFIX'] = '.lib'
         env['LIBDIRPREFIX'] = '--userlibpath '
 
     # patch for win32 spawn
@@ -174,62 +298,6 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     PreProcessor.process_contents(contents)
     BuildOptions = PreProcessor.cpp_namespace
 
-    if rtconfig.PLATFORM == 'gcc':
-        contents = ''
-        if not os.path.isfile('cconfig.h'):
-            import gcc
-            gcc.GenerateGCCConfig(rtconfig)
-
-        # try again
-        if os.path.isfile('cconfig.h'):
-            f = file('cconfig.h', 'r')
-            if f:
-                contents = f.read()
-                f.close();
-
-                prep = PatchedPreProcessor()
-                prep.process_contents(contents)
-                options = prep.cpp_namespace
-
-                BuildOptions.update(options)
-
-                # add HAVE_CCONFIG_H definition
-                env.AppendUnique(CPPDEFINES = ['HAVE_CCONFIG_H'])
-
-        if str(env['LINKFLAGS']).find('nano.specs') != -1:
-            env.AppendUnique(CPPDEFINES = ['_REENT_SMALL'])
-
-    # add copy option
-    AddOption('--copy',
-                      dest='copy',
-                      action='store_true',
-                      default=False,
-                      help='copy rt-thread directory to local.')
-    AddOption('--copy-header',
-                      dest='copy-header',
-                      action='store_true',
-                      default=False,
-                      help='copy header of rt-thread directory to local.')
-    AddOption('--dist',
-                      dest = 'make-dist',
-                      action = 'store_true',
-                      default=False,
-                      help = 'make distribution')
-    AddOption('--cscope',
-                      dest='cscope',
-                      action='store_true',
-                      default=False,
-                      help='Build Cscope cross reference database. Requires cscope installed.')
-    AddOption('--clang-analyzer',
-                      dest='clang-analyzer',
-                      action='store_true',
-                      default=False,
-                      help='Perform static analyze with Clang-analyzer. '+\
-                           'Requires Clang installed.\n'+\
-                           'It is recommended to use with scan-build like this:\n'+\
-                           '`scan-build scons --clang-analyzer`\n'+\
-                           'If things goes well, scan-build will instruct you to invoke scan-view.')
-
     if GetOption('clang-analyzer'):
         # perform what scan-build does
         env.Replace(
@@ -249,59 +317,13 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         # found or something like that).
         rtconfig.POST_ACTION = ''
 
-    # add build library option
-    AddOption('--buildlib',
-                      dest='buildlib',
-                      type='string',
-                      help='building library of a component')
-    AddOption('--cleanlib',
-                      dest='cleanlib',
-                      action='store_true',
-                      default=False,
-                      help='clean up the library by --buildlib')
+    # generate cconfig.h file
+    GenCconfigFile(env, BuildOptions)
 
-    # add target option
-    AddOption('--target',
-                      dest='target',
-                      type='string',
-                      help='set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk')
+    # auto append '_REENT_SMALL' when using newlib 'nano.specs' option
+    if rtconfig.PLATFORM == 'gcc' and str(env['LINKFLAGS']).find('nano.specs') != -1:
+        env.AppendUnique(CPPDEFINES = ['_REENT_SMALL'])
 
-    #{target_name:(CROSS_TOOL, PLATFORM)}
-    tgt_dict = {'mdk':('keil', 'armcc'),
-                'mdk4':('keil', 'armcc'),
-                'mdk5':('keil', 'armcc'),
-                'iar':('iar', 'iar'),
-                'vs':('msvc', 'cl'),
-                'vs2012':('msvc', 'cl'),
-                'vsc' : ('gcc', 'gcc'),
-                'cb':('keil', 'armcc'),
-                'ua':('gcc', 'gcc'),
-                'cdk':('gcc', 'gcc')}
-    tgt_name = GetOption('target')
-
-    if tgt_name:
-        # --target will change the toolchain settings which clang-analyzer is
-        # depend on
-        if GetOption('clang-analyzer'):
-            print '--clang-analyzer cannot be used with --target'
-            sys.exit(1)
-
-        SetOption('no_exec', 1)
-        try:
-            rtconfig.CROSS_TOOL, rtconfig.PLATFORM = tgt_dict[tgt_name]
-        except KeyError:
-            print 'Unknow target: %s. Avaible targets: %s' % \
-                    (tgt_name, ', '.join(tgt_dict.keys()))
-            sys.exit(1)
-    elif (GetDepend('RT_USING_NEWLIB') == False and GetDepend('RT_USING_NOLIBC') == False) \
-        and rtconfig.PLATFORM == 'gcc':
-        AddDepend('RT_USING_MINILIBC')
-
-    AddOption('--genconfig',
-                dest = 'genconfig',
-                action = 'store_true',
-                default = False,
-                help = 'Generate .config from rtconfig.h')
     if GetOption('genconfig'):
         from genconf import genconfig
         genconfig()
@@ -318,22 +340,12 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             menuconfig(Rtt_Root)
             exit(0)
 
-    AddOption('--useconfig',
-                dest = 'useconfig',
-                type='string',
-                help = 'make rtconfig.h from config file.')
     configfn = GetOption('useconfig')
     if configfn:
         from menuconfig import mk_rtconfig
         mk_rtconfig(configfn)
         exit(0)
 
-    # add comstr option
-    AddOption('--verbose',
-                dest='verbose',
-                action='store_true',
-                default=False,
-                help='print verbose information during build')
 
     if not GetOption('verbose'):
         # override the default verbose command string
@@ -709,18 +721,8 @@ def DoBuilding(target, objects):
         program = Env.Program(target, objects)
 
     EndBuilding(target, program)
-
-def EndBuilding(target, program = None):
-    import rtconfig
-
-    Env['target']  = program
-    Env['project'] = Projects
-
-    Env.AddPostAction(target, rtconfig.POST_ACTION)
-    # Add addition clean files
-    Clean(target, 'cconfig.h')
-    Clean(target, 'rtua.py')
-    Clean(target, 'rtua.pyc')
+        
+def GenTargetProject(program = None):
 
     if GetOption('target') == 'mdk':
         from keil import MDKProject
@@ -777,27 +779,47 @@ def EndBuilding(target, program = None):
         from cdk import CDKProject
         CDKProject('project.cdkproj', Projects)
 
+def EndBuilding(target, program = None):
+    import rtconfig
+
+    need_exit = False
+
+    Env['target']  = program
+    Env['project'] = Projects
+
+    Env.AddPostAction(target, rtconfig.POST_ACTION)
+    # Add addition clean files
+    Clean(target, 'cconfig.h')
+    Clean(target, 'rtua.py')
+    Clean(target, 'rtua.pyc')
+
+    if GetOption('target'):
+        GenTargetProject(program)
+
     BSP_ROOT = Dir('#').abspath
     if GetOption('copy') and program != None:
         from mkdist import MakeCopy
         MakeCopy(program, BSP_ROOT, Rtt_Root, Env)
-        exit(0)
+        need_exit = True
     if GetOption('copy-header') and program != None:
         from mkdist import MakeCopyHeader
         MakeCopyHeader(program, BSP_ROOT, Rtt_Root, Env)
-        exit(0)
+        need_exit = True
     if GetOption('make-dist') and program != None:
         from mkdist import MkDist
         MkDist(program, BSP_ROOT, Rtt_Root, Env)
-        exit(0)
+        need_exit = True
     if GetOption('cscope'):
         from cscope import CscopeDatabase
         CscopeDatabase(Projects)
 
     if not GetOption('help') and not GetOption('target'):
         if not os.path.exists(rtconfig.EXEC_PATH):
-            print "Error: Toolchain path (%s) is not exist, please check 'EXEC_PATH' in path or rtconfig.py." % rtconfig.EXEC_PATH
-            sys.exit(1)
+            print "Error: the toolchain path (%s) is not exist, please check 'EXEC_PATH' in path or rtconfig.py." % rtconfig.EXEC_PATH
+            need_exit = True
+
+    if need_exit:
+        exit(0)
 
 def SrcRemove(src, remove):
     if not src:
