@@ -426,13 +426,22 @@ int wifi(int argc, char **argv)
             int index, num;
 
             num = scan_result->ap_num;
-            rt_kprintf("----Wi-Fi APInformation----\n");
+            rt_kprintf("             SSID                      MAC            rssi   chn    Mbps\n");
+            rt_kprintf("------------------------------- -----------------     ----   ---    ----\n");
             for (index = 0; index < num; index ++)
             {
-                rt_kprintf("SSID:%-.32s, ", scan_result->ap_table[index].ssid);
-                rt_kprintf("rssi:%d, ", scan_result->ap_table[index].rssi);
-                rt_kprintf("chn:%d, ", scan_result->ap_table[index].channel);
-                rt_kprintf("rate:%d\n", scan_result->ap_table[index].datarate);
+                rt_kprintf("%-32.32s", scan_result->ap_table[index].ssid);
+                rt_kprintf("%02x:%02x:%02x:%02x:%02x:%02x     ", 
+                    scan_result->ap_table[index].bssid[0],
+                    scan_result->ap_table[index].bssid[1],
+                    scan_result->ap_table[index].bssid[2],
+                    scan_result->ap_table[index].bssid[3],
+                    scan_result->ap_table[index].bssid[4],
+                    scan_result->ap_table[index].bssid[5]
+                );
+                rt_kprintf("%4d    ", scan_result->ap_table[index].rssi);
+                rt_kprintf("%2d    ", scan_result->ap_table[index].channel);
+                rt_kprintf("%d\n", scan_result->ap_table[index].datarate / 1000000);
             }
         }
         rt_wlan_release_scan_result(&scan_result);
@@ -502,7 +511,7 @@ int wifi(int argc, char **argv)
                        wlan->info->bssid[4],
                        wlan->info->bssid[5]);
             rt_kprintf(" Channel: %d\n", wlan->info->channel);
-            rt_kprintf("DataRate: %dMbps\n", wlan->info->datarate / 1000);
+            rt_kprintf("DataRate: %dMbps\n", wlan->info->datarate / 1000000);
             rt_kprintf("    RSSI: %d\n", rssi);
         }
         else
