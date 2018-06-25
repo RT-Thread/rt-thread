@@ -1,0 +1,3 @@
+FILTER_SDKs_SHOW_LATEST_VERSIONS=false
+com.freescale.s32ds.cross.sdk.support.projectLocalSDKs=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\r\n<sdks/>\r\n
+eclipse.preferences.version=1
