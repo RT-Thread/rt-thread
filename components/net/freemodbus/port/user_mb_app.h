@@ -25,9 +25,6 @@
 /* salve mode: discrete's all address */
 #define          S_DI_RESERVE                     0
 /* slave mode: holding register"s startup address */
-#define         S_SYSTEM_START_ADDR               0x003A
-#define         S_SYSTEM_SLAVE_ID_ADDR            0x0040
-#define         S_SYSTEM_KEEP_TEMP                0x0009
 
 /* -----------------------Master Defines -------------------------------------*/
 #define M_DISCRETE_INPUT_START        1
