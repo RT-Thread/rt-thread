@@ -3,9 +3,9 @@
 #define SPRG1	0x111	/* Special Purpose Register General 1 */
 
 #define STACK_BALANCE_DEBUG	1
-//栈平衡调试开关， 如果该开关打开后，
-//每次任务切换 都会测试OFFSET R1的值是否为1A2B。
-//如果 *OFFSET R1的值是0x1A2B的话，说明任务切换是OK的
+/*栈平衡调试开关， 如果该开关打开后，
+每次任务切换 都会测试OFFSET R1的值是否为1A2B。
+如果 *OFFSET R1的值是0x1A2B的话，说明任务切换是OK的*/
 
 
     .globl rt_hw_interrupt_disable
@@ -47,14 +47,14 @@ IVOR8_Handler:
 rt_hw_systemcall_entry:
 	//入栈
 	//wrteei  0
-	mtsprg0	r1	//sprg0 sprg 1没有定义功能，这里可以用来暂时保存r1
-	mtsprg1	r3	//sprg0 sprg 1没有定义功能，这里可以用来暂时保存r3
+	mtsprg0	r1	/*sprg0 sprg 1没有定义功能，这里可以用来暂时保存r1*/
+	mtsprg1	r3	/*sprg0 sprg 1没有定义功能，这里可以用来暂时保存r3*/
 
 	e_lis     r3,rt_interrupt_from_thread@h
     e_or2i    r3,rt_interrupt_from_thread@l
-    e_lwz     r3,0(r3)	//r3=rt_interrupt_from_thread	SP的地址
+    e_lwz     r3,0(r3)	/*r3=rt_interrupt_from_thread	SP的地址*/
     e_subi	  r1,r1,STACK_FRAME_SIZES
-    e_stw	  r1,0(r3) //*rt_interrupt_from_thread=当前栈指针
+    e_stw	  r1,0(r3) 	/* *rt_interrupt_from_thread=当前栈指针*/
 	e_stw	  r0   ,OFFSET_R0(r1)
 	e_stw	  r2   ,OFFSET_R2(r1)
 	mfsprg1	  r3
@@ -107,9 +107,9 @@ rt_hw_systemcall_entry:
 
 	//出战
 	e_lis     r4,rt_interrupt_to_thread@h
-    e_or2i    r4,rt_interrupt_to_thread@l//R4此时是rt_interrupt_to_thread的地址
-    e_lwz     r4,0(r4)//R4此时是rt_interrupt_to_thread	也就是SP的地址
-    e_lwz     r1,0(r4)//R1此时是*rt_interrupt_to_thread	也就是SP的值
+    e_or2i    r4,rt_interrupt_to_thread@l/*R4此时是rt_interrupt_to_thread的地址*/
+    e_lwz     r4,0(r4)/*R4此时是rt_interrupt_to_thread	也就是SP的地址*/
+    e_lwz     r1,0(r4)/*R1此时是*rt_interrupt_to_thread	也就是SP的值*/
 
     /*e_lwz	  r5,0(r4)
     e_addi	  r5,r5,STACK_FRAME_SIZES
@@ -168,16 +168,16 @@ ivor8_stack_balance_success:
 	e_lwz	r0,OFFSET_R0(r1)
 	e_addi	r1,r1,STACK_FRAME_SIZES
 	//wrteei  1
-	se_rfi                              ;# End of Interrupt Handler - re-enables interrupts
+	se_rfi   ;# End of Interrupt Handler - re-enables interrupts
 
 		.align    4
     	.globl    rt_frist_switch
     	.type     rt_frist_switch, @function
 rt_frist_switch:
 	e_lis     r4,rt_interrupt_to_thread@h
-    e_or2i    r4,rt_interrupt_to_thread@l//R4此时是rt_interrupt_to_thread的地址
-    e_lwz     r4,0(r4)//R4此时是*rt_interrupt_to_thread	SP的地址
-    e_lwz     r1,0(r4)//R1此时是**rt_interrupt_to_thread	SP的值
+    e_or2i    r4,rt_interrupt_to_thread@l/*R4此时是rt_interrupt_to_thread的地址*/
+    e_lwz     r4,0(r4)/*R4此时是*rt_interrupt_to_thread	SP的地址*/
+    e_lwz     r1,0(r4)/*R1此时是**rt_interrupt_to_thread	SP的值*/
 
     e_lwz	  r5,0(r4)
     e_addi	  r5,r5,STACK_FRAME_SIZES
@@ -247,7 +247,7 @@ rt_frist_switch_stack_balance_success:
 	.vle
 	#endif
 
-	.equ  INTC_IACKR, 0xFFF48010  ;# Interrupt Acknowledge Register address
+	.equ  INTC_IACKR, 0xFFF48010   ;# Interrupt Acknowledge Register address
 	.equ  INTC_EOIR,  0xFFF48018   ;# End Of Interrupt Register address
 
 	.align 4
@@ -258,8 +258,8 @@ IVOR4_Handler:
 	e_subi	  r1,	r1,STACK_FRAME_SIZES
 	e_stw	  r0   ,OFFSET_R0(r1)
 
-    e_li	  r0,	0x1A2B//将0x1A2B付给r0
-    e_stw	  r0	,OFFSET_R1(r1)//将当前SP指针保存起来
+    e_li	  r0,	0x1A2B/*将0x1A2B付给r0*/
+    e_stw	  r0	,OFFSET_R1(r1)/*将当前SP指针保存起来*/
 
 	e_stw	  r2   ,OFFSET_R2(r1)
 	e_stw	  r3   ,OFFSET_R3(r1)
@@ -306,43 +306,43 @@ IVOR4_Handler:
 	mfmsr	  r0
 	e_stw	  r0	,OFFSET_MSR(r1)
 
-	e_subi	r1,r1,16//可能是GCC的BUG,假设r1(SP)的地址是0x4A4，然后会进入中断程序，会占用0x4A4以上的内存空间，所以这里给出16个字节的余量
-			e_lis     r3,  INTC_IACKR@h
-    		e_or2i    r3,  INTC_IACKR@l
-    		e_lwz     r3,  0(r3)           /* load the base adress of Vector Table */
-    		e_lwz     r3,  0(r3)
-    		mtctr     r3                   /* load ISR handler in CTR */
-    		/* Restoring pre-IRQ MSR register value.*/
-    		mfSRR1    %r0
-    		/* No preemption, keeping EE disabled.*/
-    		se_bclri  %r0, 16              /* EE = bit 16 */
-    		mtMSR     %r0
-    		//wrteei    1
-    		se_bctrl                       /* branch to handler */
-    		//wrteei    0
-    		mbar      0                    /* complete all pending operations */
-    		e_lis     r3,  INTC_EOIR@h
-    		e_or2i    r3,  INTC_EOIR@l
-    		e_stw     r3,  0(r3)           /* write 0 to INTC_EOIR_BASE */
-   	e_addi	r1,r1,16//恢复16个字节的余量
+	e_subi	  r1,  r1,16				/*可能是PPC GCC的BUG,假设r1(SP)的地址是0x4A4，然后会进入中断程序，会占用0x4A4以上的内存空间，所以这里给出16个字节的余量*/
+	e_lis     r3,  INTC_IACKR@h
+	e_or2i    r3,  INTC_IACKR@l
+	e_lwz     r3,  0(r3)           		/* load the base adress of Vector Table */
+	e_lwz     r3,  0(r3)
+	mtctr     r3                   		/* load ISR handler in CTR */
+
+	mfSRR1    %r0						/* Restoring pre-IRQ MSR register value.*/
+
+	se_bclri  %r0, 16             		/* No preemption, keeping EE disabled.*/ /* EE = bit 16 */
+	mtMSR     %r0
+	//wrteei    1
+	se_bctrl                       			/* branch to handler */
+	//wrteei    0
+	mbar      0                    			/* complete all pending operations */
+	e_lis     r3,  INTC_EOIR@h
+	e_or2i    r3,  INTC_EOIR@l
+	e_stw     r3,  0(r3)           			/* write 0 to INTC_EOIR_BASE */
+   	e_addi	r1,r1,16						/*恢复16个字节的余量*/
 
 	e_lis     r3,rt_thread_switch_interrput_flag@h
     e_or2i    r3,rt_thread_switch_interrput_flag@l
     e_lwz     r4,0(r3)
-    e_cmpi    cr0,r4,0x0      //By Snikeguo                  /* whether is 0     */
-    e_beq     _no_switch                          /* no switch, exit  */
-    e_li      r4,0x0                              /* set rt_thread_switch_interrput_flag to 0 */
+    e_cmpi    cr0,r4,0x0                     /* By Snikeguo    whether is 0     */
+    e_beq     _no_switch                     /* no switch, exit  */
+    e_li      r4,0x0                         /* set rt_thread_switch_interrput_flag to 0 */
     e_stw     r4,0(r3)
 
 	e_lis     r3,rt_interrupt_from_thread@h
-    e_or2i    r3,rt_interrupt_from_thread@l//r3是rt_interrupt_from_thread的地址
-    e_lwz     r3,0(r3)	//r3是rt_interrupt_from_thread的值。也就是SP的地址
-	e_stw	  r1,0(r3)//*rt_interrupt_from_thread=sp;
+    e_or2i    r3,rt_interrupt_from_thread@l	/*r3是rt_interrupt_from_thread的地址*/
+    e_lwz     r3,0(r3)						/*r3是rt_interrupt_from_thread的值。也就是SP的地址*/
+	e_stw	  r1,0(r3)						/**rt_interrupt_from_thread=sp;*/
 
 	e_lis     r4,rt_interrupt_to_thread@h
-    e_or2i    r4,rt_interrupt_to_thread@l//R4此时是rt_interrupt_to_thread的地址
-    e_lwz     r4,0(r4)//R1此时是rt_interrupt_to_thread,也就是SP的地址
-    e_lwz     r1,0(r4)//R1此时是*rt_interrupt_to_thread，也就是SP的值
+    e_or2i    r4,rt_interrupt_to_thread@l	/*R4此时是rt_interrupt_to_thread的地址*/
+    e_lwz     r4,0(r4)						/*R1此时是rt_interrupt_to_thread,也就是SP的地址*/
+    e_lwz     r1,0(r4)						/*R1此时是*rt_interrupt_to_thread，也就是SP的值*/
 //出栈
 _no_switch:
 #if STACK_BALANCE_DEBUG==1

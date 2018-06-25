@@ -1,0 +1,16 @@
+core=MPC5606B_Z0_1
+coreType=MPC5606B_Z0
+eclipse.preferences.version=1
+flashSize=ff000
+flashStart=1000
+fpu=None
+io=noio
+language=c
+library=ewl_c9x
+pinSet=
+processor=MPC5606B
+productVersion=v1.2 b170613 
+ramSize=14000
+ramStart=40000000
+toolchainVersion=
+wizardVersion=1.0.0.201705041237
