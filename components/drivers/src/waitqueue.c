@@ -1,3 +1,28 @@
+/*
+ * File      : waitqueue.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2018/06/26     Bernard      Fix the wait queue issue when wakeup a soon 
+ *                             to blocked thread.
+ */
+
 #include <stdint.h>
 
 #include <rthw.h>
@@ -32,30 +57,30 @@ void rt_wqueue_wakeup(rt_wqueue_t *queue, void *key)
     rt_base_t level;
     register int need_schedule = 0;
 
-	rt_list_t *queue_list;
+    rt_list_t *queue_list;
     struct rt_list_node *node;
     struct rt_wqueue_node *entry;
 
-	queue_list = &(queue->waiting_list);
+    queue_list = &(queue->waiting_list);
 
     level = rt_hw_interrupt_disable();
-	/* set wakeup flag in the queue */
-	queue->flag = RT_WQ_FLAG_WAKEUP;
+    /* set wakeup flag in the queue */
+    queue->flag = RT_WQ_FLAG_WAKEUP;
 
     if (!(rt_list_isempty(queue_list)))
     {
-	    for (node = queue_list->next; node != queue_list; node = node->next)
-	    {
-	        entry = rt_list_entry(node, struct rt_wqueue_node, list);
-	        if (entry->wakeup(entry, key) == 0)
-	        {
-	            rt_thread_resume(entry->polling_thread);
-	            need_schedule = 1;
+        for (node = queue_list->next; node != queue_list; node = node->next)
+        {
+            entry = rt_list_entry(node, struct rt_wqueue_node, list);
+            if (entry->wakeup(entry, key) == 0)
+            {
+                rt_thread_resume(entry->polling_thread);
+                need_schedule = 1;
 
-	            rt_wqueue_remove(entry);
-	            break;
-	        }
-	    }
+                rt_wqueue_remove(entry);
+                break;
+            }
+        }
     }
     rt_hw_interrupt_enable(level);
 
@@ -85,11 +110,11 @@ int rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec)
     rt_list_init(&__wait.list);
 
     level = rt_hw_interrupt_disable();
-	if (queue->flag == RT_WQ_FLAG_WAKEUP)
-	{
-		/* already wakeup */
-		goto __exit_wakeup;
-	}
+    if (queue->flag == RT_WQ_FLAG_WAKEUP)
+    {
+        /* already wakeup */
+        goto __exit_wakeup;
+    }
 
     rt_wqueue_add(queue, &__wait);
     rt_thread_suspend(tid);
@@ -110,7 +135,7 @@ int rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec)
     level = rt_hw_interrupt_disable();
 
 __exit_wakeup:
-	queue->flag = 0;
+    queue->flag = 0;
     rt_hw_interrupt_enable(level);
 
     rt_wqueue_remove(&__wait);

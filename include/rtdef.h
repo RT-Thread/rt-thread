@@ -868,8 +868,8 @@ struct rt_device_ops
  */
 struct rt_wqueue
 {
-	rt_uint32_t flag;
-	rt_list_t waiting_list;
+    rt_uint32_t flag;
+    rt_list_t waiting_list;
 };
 typedef struct rt_wqueue rt_wqueue_t;
 #endif
