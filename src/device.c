@@ -29,6 +29,9 @@
  */
 
 #include <rtthread.h>
+#if defined(RT_USING_POSIX)
+#include <rtdevice.h> /* for wqueue_init */
+#endif
 
 #ifdef RT_USING_DEVICE
 
@@ -74,7 +77,7 @@ rt_err_t rt_device_register(rt_device_t dev,
 
 #if defined(RT_USING_POSIX)
     dev->fops = RT_NULL;
-    rt_list_init(&(dev->wait_queue));
+	rt_wqueue_init(&(dev->wait_queue));
 #endif
 
     return RT_EOK;

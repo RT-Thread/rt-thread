@@ -4,14 +4,12 @@
 #include <rtdevice.h>
 #include <rtservice.h>
 
-extern struct rt_thread *rt_current_thread;
-
 void rt_wqueue_add(rt_wqueue_t *queue, struct rt_wqueue_node *node)
 {
     rt_base_t level;
 
     level = rt_hw_interrupt_disable();
-    rt_list_insert_before(queue, &(node->list));
+    rt_list_insert_before(&(queue->waiting_list), &(node->list));
     rt_hw_interrupt_enable(level);
 }
 
@@ -34,24 +32,30 @@ void rt_wqueue_wakeup(rt_wqueue_t *queue, void *key)
     rt_base_t level;
     register int need_schedule = 0;
 
+	rt_list_t *queue_list;
     struct rt_list_node *node;
     struct rt_wqueue_node *entry;
 
-    if (rt_list_isempty(queue))
-        return;
+	queue_list = &(queue->waiting_list);
 
     level = rt_hw_interrupt_disable();
-    for (node = queue->next; node != queue; node = node->next)
-    {
-        entry = rt_list_entry(node, struct rt_wqueue_node, list);
-        if (entry->wakeup(entry, key) == 0)
-        {
-            rt_thread_resume(entry->polling_thread);
-            need_schedule = 1;
+	/* set wakeup flag in the queue */
+	queue->flag = RT_WQ_FLAG_WAKEUP;
 
-            rt_wqueue_remove(entry);
-            break;
-        }
+    if (!(rt_list_isempty(queue_list)))
+    {
+	    for (node = queue_list->next; node != queue_list; node = node->next)
+	    {
+	        entry = rt_list_entry(node, struct rt_wqueue_node, list);
+	        if (entry->wakeup(entry, key) == 0)
+	        {
+	            rt_thread_resume(entry->polling_thread);
+	            need_schedule = 1;
+
+	            rt_wqueue_remove(entry);
+	            break;
+	        }
+	    }
     }
     rt_hw_interrupt_enable(level);
 
@@ -62,7 +66,7 @@ void rt_wqueue_wakeup(rt_wqueue_t *queue, void *key)
 int rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec)
 {
     int tick;
-    rt_thread_t tid = rt_current_thread;
+    rt_thread_t tid = rt_thread_self();
     rt_timer_t  tmr = &(tid->thread_timer);
     struct rt_wqueue_node __wait;
     rt_base_t level;
@@ -81,6 +85,12 @@ int rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec)
     rt_list_init(&__wait.list);
 
     level = rt_hw_interrupt_disable();
+	if (queue->flag == RT_WQ_FLAG_WAKEUP)
+	{
+		/* already wakeup */
+		goto __exit_wakeup;
+	}
+
     rt_wqueue_add(queue, &__wait);
     rt_thread_suspend(tid);
 
@@ -96,6 +106,12 @@ int rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec)
     rt_hw_interrupt_enable(level);
 
     rt_schedule();
+
+    level = rt_hw_interrupt_disable();
+
+__exit_wakeup:
+	queue->flag = 0;
+    rt_hw_interrupt_enable(level);
 
     rt_wqueue_remove(&__wait);
 
