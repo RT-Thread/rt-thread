@@ -1,8 +1,8 @@
 #include "enc28j60.h"
 
-#define NET_TRACE
-#define ETH_RX_DUMP
-#define ETH_TX_DUMP
+/* #define NET_TRACE */
+/* #define ETH_RX_DUMP */
+/* #define ETH_TX_DUMP */
 
 #ifdef NET_TRACE
     #define NET_DEBUG         rt_kprintf
@@ -189,10 +189,8 @@ static void enc28j60_interrupt_enable(struct rt_spi_device *spi_device, uint32_t
 static rt_bool_t enc28j60_check_link_status(struct rt_spi_device *spi_device)
 {
     uint16_t reg;
-    int duplex;
 
     reg = enc28j60_phy_read(spi_device, PHSTAT2);
-    duplex = reg & PHSTAT2_DPXSTAT;
 
     if (reg & PHSTAT2_LSTAT)
     {
@@ -205,7 +203,6 @@ static rt_bool_t enc28j60_check_link_status(struct rt_spi_device *spi_device)
         return RT_FALSE;
     }
 }
-
 
 /************************* RT-Thread Device Interface *************************/
 void enc28j60_isr(void)
