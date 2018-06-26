@@ -522,23 +522,30 @@ int list_fd(void)
     if (!fd_table) return -1;
 
     rt_enter_critical();
-
+    
+    rt_kprintf("fd type    ref magic  path\n");
+    rt_kprintf("-- ------  --- ----- ------\n");
     for (index = 0; index < fd_table->maxfd; index ++)
     {
         struct dfs_fd *fd = fd_table->fds[index];
 
         if (fd->fops)
         {
-            rt_kprintf("--fd: %d--", index);
-            if (fd->type == FT_DIRECTORY) rt_kprintf("[dir]\n");
-            if (fd->type == FT_REGULAR)   rt_kprintf("[file]\n");
-            if (fd->type == FT_SOCKET)    rt_kprintf("[socket]\n");
-            if (fd->type == FT_USER)      rt_kprintf("[user]\n");
-            rt_kprintf("refcount=%d\n", fd->ref_count);
-            rt_kprintf("magic=0x%04x\n", fd->magic);
+            rt_kprintf("%2d ", index);
+            if (fd->type == FT_DIRECTORY)    rt_kprintf("%-7.7s ", "dir");
+            else if (fd->type == FT_REGULAR) rt_kprintf("%-7.7s ", "file");
+            else if (fd->type == FT_SOCKET)  rt_kprintf("%-7.7s ", "socket");
+            else if (fd->type == FT_USER)    rt_kprintf("%-7.7s ", "user");
+            else rt_kprintf("%-8.8s ", "unknown");
+            rt_kprintf("%3d ", fd->ref_count);
+            rt_kprintf("%04x  ", fd->magic);
             if (fd->path)
             {
-                rt_kprintf("path: %s\n", fd->path);
+                rt_kprintf("%s\n", fd->path);
+            }
+            else
+            {
+                rt_kprintf("\n");
             }
         }
     }
