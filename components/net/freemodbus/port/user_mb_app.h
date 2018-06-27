@@ -12,10 +12,10 @@
 #define S_DISCRETE_INPUT_NDISCRETES   16
 #define S_COIL_START                  0
 #define S_COIL_NCOILS                 64
-#define S_REG_INPUT_START             (0x0000)
-#define S_REG_INPUT_NREGS             (0x0006 - 0x0000)
+#define S_REG_INPUT_START             0
+#define S_REG_INPUT_NREGS             100
 #define S_REG_HOLDING_START           0
-#define S_REG_HOLDING_NREGS           (0x004B)
+#define S_REG_HOLDING_NREGS           100
 /* salve mode: holding register's all address */
 #define          S_HD_RESERVE                     0
 /* salve mode: input register's all address */
@@ -27,13 +27,13 @@
 /* slave mode: holding register"s startup address */
 
 /* -----------------------Master Defines -------------------------------------*/
-#define M_DISCRETE_INPUT_START        1
+#define M_DISCRETE_INPUT_START        0
 #define M_DISCRETE_INPUT_NDISCRETES   16
-#define M_COIL_START                  1
+#define M_COIL_START                  0
 #define M_COIL_NCOILS                 64
-#define M_REG_INPUT_START             1
+#define M_REG_INPUT_START             0
 #define M_REG_INPUT_NREGS             100
-#define M_REG_HOLDING_START           1
+#define M_REG_HOLDING_START           0
 #define M_REG_HOLDING_NREGS           100
 /* master mode: holding register's all address */
 #define          M_HD_RESERVE                     0
