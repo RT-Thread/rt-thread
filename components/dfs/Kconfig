@@ -2,6 +2,7 @@ menu "Device virtual file system"
 
 config RT_USING_DFS
     bool "Using device virtual file system"
+    select RT_USING_MUTEX
     default y
     help
         The device file system is a light weight virtual file system.
