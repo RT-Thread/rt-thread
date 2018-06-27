@@ -249,7 +249,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     # auto change the 'RTT_EXEC_PATH' when 'rtconfig.EXEC_PATH' get failed
     if not os.path.exists(rtconfig.EXEC_PATH):
-        if os.environ['RTT_EXEC_PATH']:
+        if 'RTT_EXEC_PATH' in os.environ:
             # del the 'RTT_EXEC_PATH' and using the 'EXEC_PATH' setting on rtconfig.py
             del os.environ['RTT_EXEC_PATH']
             reload(rtconfig)
