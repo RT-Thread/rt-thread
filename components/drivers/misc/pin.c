@@ -124,12 +124,12 @@ rt_err_t rt_pin_attach_irq(rt_int32_t pin, rt_uint32_t mode,
     }
     return RT_ENOSYS;
 }
-rt_err_t rt_pin_dettach_irq(rt_int32_t pin)
+rt_err_t rt_pin_detach_irq(rt_int32_t pin)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
-    if(_hw_pin.ops->pin_dettach_irq)
+    if(_hw_pin.ops->pin_detach_irq)
     {
-        return _hw_pin.ops->pin_dettach_irq(&_hw_pin.parent, pin);
+        return _hw_pin.ops->pin_detach_irq(&_hw_pin.parent, pin);
     }
     return RT_ENOSYS;
 }
