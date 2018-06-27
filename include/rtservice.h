@@ -230,6 +230,16 @@ rt_inline rt_slist_t *rt_slist_remove(rt_slist_t *l, rt_slist_t *n)
     return l;
 }
 
+rt_inline rt_slist_t *rt_slist_first(rt_slist_t *l)
+{
+    return l->next;
+}
+
+rt_inline rt_slist_t *rt_slist_next(rt_slist_t *n)
+{
+    return n->next;
+}
+
 rt_inline int rt_slist_isempty(rt_slist_t *l)
 {
     return l->next == RT_NULL;
