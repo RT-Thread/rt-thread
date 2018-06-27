@@ -536,7 +536,7 @@ static rt_err_t rt1052_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-static rt_err_t rt1052_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t rt1052_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 {
     struct rt1052_pin* pin_map = RT_NULL; 
     struct rt1052_irq* irq_map = RT_NULL; 
@@ -675,7 +675,7 @@ int rt_hw_pin_init(void)
     rt1052_pin_ops.pin_read        = rt1052_pin_read; 
     rt1052_pin_ops.pin_write       = rt1052_pin_write; 
     rt1052_pin_ops.pin_attach_irq  = rt1052_pin_attach_irq; 
-    rt1052_pin_ops.pin_dettach_irq = rt1052_pin_dettach_irq;
+    rt1052_pin_ops.pin_detach_irq = rt1052_pin_detach_irq;
     rt1052_pin_ops.pin_irq_enable  = rt1052_pin_irq_enable; 
     
     ret = rt_device_pin_register("pin", &rt1052_pin_ops, RT_NULL);
