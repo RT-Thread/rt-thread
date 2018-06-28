@@ -24,7 +24,6 @@
 #define          S_CO_RESERVE                     0
 /* salve mode: discrete's all address */
 #define          S_DI_RESERVE                     0
-/* slave mode: holding register"s startup address */
 
 /* -----------------------Master Defines -------------------------------------*/
 #define M_DISCRETE_INPUT_START        0
