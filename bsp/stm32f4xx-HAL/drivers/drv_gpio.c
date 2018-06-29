@@ -32,7 +32,7 @@
 
 static GPIO_TypeDef * get_st_gpio(rt_uint16_t gpio_pin)
 {
-    switch(gpio_pin >> 8)
+    switch(gpio_pin & 0xFF00)
     {
     case A:
         #ifdef GPIOA
@@ -87,7 +87,7 @@ static GPIO_TypeDef * get_st_gpio(rt_uint16_t gpio_pin)
 
 static void drv_clock_enable(rt_uint16_t gpio_pin)
 {
-    switch(gpio_pin >> 8)
+    switch(gpio_pin & 0xFF00)
     {
     case A:
         #ifdef __HAL_RCC_GPIOA_CLK_ENABLE
