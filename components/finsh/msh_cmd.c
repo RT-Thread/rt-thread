@@ -381,14 +381,19 @@ int cmd_dns(int argc, char **argv)
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_dns, __cmd_dns, list the information of dns);
 #endif
 
-#ifdef RT_LWIP_TCP
+#if defined (RT_LWIP_TCP) || defined (RT_LWIP_UDP)
 int cmd_netstat(int argc, char **argv)
 {
     extern void list_tcps(void);
     extern void list_udps(void);
 
+#ifdef RT_LWIP_TCP
     list_tcps();
+#endif
+#ifdef RT_LWIP_UDP
     list_udps();
+#endif
+
     return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_netstat, __cmd_netstat, list the information of TCP / IP);
