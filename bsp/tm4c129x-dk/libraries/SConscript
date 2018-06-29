@@ -1,0 +1,26 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+# The set of source files associated with this SConscript file.
+cwd     = GetCurrentDir()
+src = Glob('driverlib/*.c')
+SrcRemove(src, 'onewire.c')
+CCFLAGS = ''
+
+# add for startup script 
+if rtconfig.CROSS_TOOL == 'gcc':
+    src += ['startup/startup_gcc.c']
+elif rtconfig.CROSS_TOOL == 'keil':
+    src += ['startup/startup_rvmdk.S']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += ['startup/startup_ewarm.c']
+    CCFLAGS += ' --diag_suppress=pe177'
+
+CPPPATH = [cwd, cwd + '/inc', cwd + '/driverlib']
+
+
+CPPDEFINES = [rtconfig.PART_TYPE]
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, CCFLAGS = CCFLAGS)
+
+Return('group')
