@@ -848,6 +848,9 @@ enum rt_device_class_type
 #define RT_DEVICE_CTRL_RTC_SET_ALARM    0x13            /**< set alarm */
 
 typedef struct rt_device *rt_device_t;
+/**
+ * operations set for device object
+ */
 struct rt_device_ops
 {
     /* common device interface */
@@ -858,6 +861,16 @@ struct rt_device_ops
     rt_size_t (*write)  (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
     rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
 };
+
+/**
+ * WaitQueue structure
+ */
+struct rt_wqueue
+{
+    rt_uint32_t flag;
+    rt_list_t waiting_list;
+};
+typedef struct rt_wqueue rt_wqueue_t;
 
 /**
  * Device structure
@@ -891,7 +904,7 @@ struct rt_device
 
 #if defined(RT_USING_POSIX)
     const struct dfs_file_ops *fops;
-    rt_list_t wait_queue;
+    struct rt_wqueue wait_queue;
 #endif
 
     void                     *user_data;                /**< device private data */
