@@ -141,7 +141,7 @@ int accept(int s, struct sockaddr *addr, socklen_t *addrlen)
         d->fops = dfs_net_get_fops();
         /* initialize wait head */
         lwsock = lwip_tryget_socket(new_client);
-        rt_list_init(&(lwsock->wait_head));
+        rt_wqueue_init(&(lwsock->wait_head));
 
         d->flags = O_RDWR; /* set flags as read and write */
         d->size = 0;
@@ -317,7 +317,7 @@ int socket(int domain, int type, int protocol)
         d->data = (void *) sock;
 
         lwsock = lwip_tryget_socket(sock);
-        rt_list_init(&(lwsock->wait_head));
+        rt_wqueue_init(&(lwsock->wait_head));
         lwsock->conn->callback = event_callback;
     }
     else
