@@ -103,7 +103,11 @@ extern "C" {
   *        This value is used by the RCC HAL module to compute the system frequency
   *        (when HSE is used as system clock source, directly or through the PLL).
   */
+#if !defined(RT_USING_HSI)
 #define HSE_VALUE ((unsigned int)RT_HSE_VALUE)
+#endif 
+  
+//#define HSE_VALUE ((unsigned int)RT_HSE_VALUE)
 
 #if !defined  (HSE_VALUE)
 #if defined(USE_STM3210C_EVAL)
