@@ -1,0 +1,11 @@
+
+config RT_USING_UART0
+    bool "Enable UART0"
+    default y
+
+
+	config RT_UART_RX_BUFFER_SIZE
+		int "The buffer size for UART reception"
+		default 64
+
+

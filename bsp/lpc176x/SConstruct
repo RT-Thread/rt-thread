@@ -17,7 +17,7 @@ env = Environment(tools = ['mingw'],
 	CXX = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS,
 	AR = rtconfig.AR, ARFLAGS = '-rc',
 	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
-
+env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 if rtconfig.PLATFORM == 'iar':
 	env.Replace(CCCOM = ['$CC $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES'])
 	env.Replace(ARFLAGS = [''])

@@ -13,7 +13,7 @@ if  CROSS_TOOL == 'gcc':
 	EXEC_PATH 	= 'C:/Program Files (x86)/CodeSourcery/Sourcery G++ Lite/bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
-	EXEC_PATH 	= 'C:/Keil'
+	EXEC_PATH 	= 'E:/Keil_v5'
 elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
 	EXEC_PATH 	= 'C:/Program Files/IAR Systems/Embedded Workbench 6.0 Evaluation'

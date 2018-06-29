@@ -1,6 +1,6 @@
 from building import *
 
-cwd  = GetCurrentDir()
+cwd = str(Dir('#'))
 objs = []
 list = os.listdir(cwd)
 
