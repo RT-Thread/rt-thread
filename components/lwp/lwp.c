@@ -34,7 +34,7 @@
 #define DBG_ENABLE
 #define DBG_SECTION_NAME    "[LWP]"
 #define DBG_COLOR
-#define DBG_LEVEL           DBG_LOG
+#define DBG_LEVEL           DBG_WARNING
 #include <rtdbg.h>
 
 extern rt_thread_t rt_current_thread;
