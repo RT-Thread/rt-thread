@@ -34,32 +34,32 @@
     IMPORT lwp_set_kernel_sp
 
 ;/*
-; * void lwp_user_entry(args, text, data);
+; * void lwp_user_entry(u32 R0_text_addr, u32 R1_data_addr);
 ; */
 lwp_user_entry    PROC
     EXPORT  lwp_user_entry
 
-    PUSH    {R0-R3}             ; push text&data addr.
+    PUSH    {R0-R1}             ; push text&data addr.
 
     MOV     R0, SP              ; v1 = SP
     BL      lwp_set_kernel_sp   ; lwp_set_kernel_sp(v1)
+
+    POP     {R0-R1}             ; pop app address to R1.
 
     ; set CPU to user-thread mode.
     MRS     R2, CONTROL
     ORR     R2, R2, #0x03       ; use PSP, user-thread mode.
     MSR     CONTROL, R2
 
-    POP     {R0-R3}             ; pop app address to R1.
     ; set data address.
-    MOV     R9, R2
+    MOV     R9, R1
 
     ; run app, only Thumb-mode.
-    ORR     R1, R1, #0x01
-    BX      R1
+    ORR     R0, R0, #0x01
+    BX      R0
 
     ; never reach here!
     ENDP
-
 
 ;/*
 ; * void SVC_Handler(void);
