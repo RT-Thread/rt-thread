@@ -862,7 +862,6 @@ struct rt_device_ops
     rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
 };
 
-#if defined(RT_USING_POSIX)
 /**
  * WaitQueue structure
  */
@@ -872,7 +871,6 @@ struct rt_wqueue
     rt_list_t waiting_list;
 };
 typedef struct rt_wqueue rt_wqueue_t;
-#endif
 
 /**
  * Device structure
