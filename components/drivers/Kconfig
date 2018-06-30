@@ -4,6 +4,12 @@ config RT_USING_DEVICE_IPC
     bool "Using device drivers IPC"
     default y
 
+if RT_USING_DEVICE_IPC
+    config RT_PIPE_BUFSZ
+        int "Set pipe buffer size"
+        default 512
+endif
+
 config RT_USING_SERIAL
     bool "Using serial device drivers"
     select RT_USING_DEVICE_IPC
