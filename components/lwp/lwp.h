@@ -52,7 +52,6 @@ struct rt_lwp
 
     uint32_t *kernel_sp;                                /**< kernel stack point */
     struct dfs_fdtable fdt;
-    void *args;
 };
 
 struct lwp_header

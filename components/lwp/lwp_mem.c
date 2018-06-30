@@ -28,7 +28,7 @@
 #define DBG_ENABLE
 #define DBG_SECTION_NAME    "[LWPMEM]"
 #define DBG_COLOR
-#define DBG_LEVEL           DBG_WARNING
+#define DBG_LEVEL           DBG_LOG
 #include <rtdbg.h>
 
 // todo: remove repleat code
@@ -117,17 +117,12 @@ void rt_lwp_mem_deinit(struct rt_lwp *lwp)
     
     RT_ASSERT(lwp != RT_NULL);
 
-    node = lwp->hlist.next;
-
-    while (node != &(lwp->hlist))
+    for (node  = lwp->hlist.next; node != &(lwp->hlist); node = node->next)
     {
         struct rt_lwp_memheap *lwp_heap;
-
         lwp_heap = rt_list_entry(node, struct rt_lwp_memheap, mlist);
+        
         RT_ASSERT(lwp_heap != RT_NULL);
-
-        /* update note before free page*/
-        node = node->next;
 
         rt_lwp_free_page(lwp, lwp_heap);
     }
