@@ -67,6 +67,13 @@ const char *finsh_get_prompt()
 #define _PROMPT     "finsh "
     static char finsh_prompt[RT_CONSOLEBUF_SIZE + 1] = {0};
 
+    /* check prompt mode */
+    if (!shell->prompt_mode)
+    {
+        finsh_prompt[0] = '\0';
+        return finsh_prompt;
+    }
+
 #ifdef FINSH_USING_MSH
     if (msh_is_used()) strcpy(finsh_prompt, _MSH_PROMPT);
     else
@@ -83,6 +90,34 @@ const char *finsh_get_prompt()
     return finsh_prompt;
 }
 #endif
+
+/**
+ * @ingroup finsh
+ *
+ * This function get the prompt mode of finsh shell.
+ *
+ * @return prompt the prompt mode, 0 disable prompt mode, other values enable prompt mode.
+ */
+rt_uint32_t finsh_get_prompt_mode(void)
+{
+    RT_ASSERT(shell != RT_NULL);
+    return shell->prompt_mode;
+}
+
+/**
+ * @ingroup finsh
+ *
+ * This function set the prompt mode of finsh shell.
+ *
+ * The parameter 0 disable prompt mode, other values enable prompt mode.
+ *
+ * @param prompt the prompt mode
+ */
+void finsh_set_prompt_mode(rt_uint32_t prompt_mode)
+{
+    RT_ASSERT(shell != RT_NULL);
+    shell->prompt_mode = prompt_mode;
+}
 
 static char finsh_getchar(void)
 {
