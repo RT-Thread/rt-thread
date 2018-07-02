@@ -136,11 +136,19 @@ static void tcpip_init_done_callback(void *arg)
  * LwIP system initialization
  */
 extern int eth_system_device_init_private(void);
+static volatile uint8_t init_ok = 0;
 int lwip_system_init(void)
 {
     rt_err_t rc;
     struct rt_semaphore done_sem;
-	
+
+    if(init_ok)
+    {
+        rt_kprintf("lwip system already init.\n");
+        return 0;        
+    }
+    init_ok = 1;
+
     eth_system_device_init_private();
 
     /* set default netif to NULL */
