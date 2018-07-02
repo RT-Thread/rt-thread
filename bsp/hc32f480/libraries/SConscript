@@ -1,0 +1,31 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+src = Split("""
+mcu/common/system_hc32f480.c
+""")
+
+src += Glob('peripheral/src/*.c')
+
+
+#add for startup script 
+if rtconfig.CROSS_TOOL == 'gcc':
+     src = src + ['mcu/MDK/startup_hc32f480.s']
+elif rtconfig.CROSS_TOOL == 'keil':
+     src = src + ['mcu/MDK/startup_hc32f480.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src = src + ['mcu/EWARM/startup_hc32f480.s']
+
+path = [cwd + '/peripheral/inc', 
+    cwd + '/mcu/common',
+    cwd + '/cmsis/include']
+
+CPPDEFINES = ['USE_STDPERIPH_DRIVER']
+group = DefineGroup('HC32F480_StdPeriph', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

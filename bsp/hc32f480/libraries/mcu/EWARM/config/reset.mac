@@ -1,0 +1,8 @@
+execUserReset()
+{
+    __message("Executing __hwReset");
+    __hwReset(0);
+    __message("__hwReset done");
+     
+    __hwResetWithStrategy(0, 2);
+}
