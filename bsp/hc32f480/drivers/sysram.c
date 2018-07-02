@@ -44,7 +44,7 @@
  **
  ** History:
  ** Date        Author      Notes
- ** 2018-06-26  Jason       the first version
+ ** 2018-06-26  JasonJia    the first version
  **
  ******************************************************************************/
 #include <rtthread.h>

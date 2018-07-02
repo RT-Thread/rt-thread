@@ -44,7 +44,7 @@
  **
  ** History:
  **
- **   - 2018-06-04  1.0  Jason      First version.
+ **   - 2018-06-04  1.0  JasonJia       First version.
  **
  ******************************************************************************/
 
@@ -61,9 +61,7 @@
 #ifdef PKG_USING_EASYLOGGER
 #include "elog.h"
 #endif
-#ifdef PKG_USING_LITTLEVGL2RTT
-#include "littlevgl2rtt.h"
-#endif
+
 /*******************************************************************************
  * Local type definitions ('typedef')
  ******************************************************************************/
@@ -639,10 +637,6 @@ static void lcd_reg_config(void)
     lcd_write_data(0x30);
     lcd_write_data(0x38);
     lcd_write_data(0x0F);
-
-    /* memory access control set */
-    //lcd_write_reg(0x36);
-    //lcd_write_data(LCD_DISPLAY_VER);
 
     /* column address control set */
     lcd_write_reg(0X2A);

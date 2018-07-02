@@ -44,7 +44,7 @@
  **
  ** History:
  ** Date        Author      Notes
- ** 2018-04-22  Jason       the first version
+ ** 2018-04-22  JasonJia    the first version
  **
  ******************************************************************************/
 #ifndef __HW_DELAY_H__
