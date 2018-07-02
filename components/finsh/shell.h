@@ -44,12 +44,10 @@
 #endif
 
 #define FINSH_OPTION_ECHO   0x01
-#if defined(FINSH_USING_MSH) || (defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR))
+
 #define FINSH_PROMPT        finsh_get_prompt()
 const char* finsh_get_prompt(void);
-#else
-#define FINSH_PROMPT        "finsh>>"
-#endif
+int finsh_set_prompt(const char * prompt);
 
 #ifdef FINSH_USING_HISTORY
     #ifndef FINSH_HISTORY_LINES
