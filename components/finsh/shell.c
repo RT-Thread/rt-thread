@@ -56,11 +56,35 @@ ALIGN(RT_ALIGN_SIZE)
 static char finsh_thread_stack[FINSH_THREAD_STACK_SIZE];
 #endif
 struct finsh_shell *shell;
+static char *finsh_prompt_custom = RT_NULL;
 
-#if defined(FINSH_USING_MSH) || (defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR))
+#ifdef RT_USING_HEAP
+int finsh_set_prompt(const char * prompt)
+{
+    if(finsh_prompt_custom)
+    {
+        rt_free(finsh_prompt_custom);
+        finsh_prompt_custom = RT_NULL;
+    }
+
+    /* strdup */
+    if(prompt)
+    {
+        finsh_prompt_custom = rt_malloc(strlen(prompt)+1);
+        if(finsh_prompt_custom)
+        {
+            strcpy(finsh_prompt_custom, prompt);
+        }
+    }
+
+    return 0;
+}
+#endif /* RT_USING_HEAP */
+
 #if defined(RT_USING_DFS)
 #include <dfs_posix.h>
-#endif
+#endif /* RT_USING_DFS */
+
 const char *finsh_get_prompt()
 {
 #define _MSH_PROMPT "msh "
@@ -71,6 +95,12 @@ const char *finsh_get_prompt()
     if (!shell->prompt_mode)
     {
         finsh_prompt[0] = '\0';
+        return finsh_prompt;
+    }
+
+    if(finsh_prompt_custom)
+    {
+        strncpy(finsh_prompt, finsh_prompt_custom, sizeof(finsh_prompt)-1);
         return finsh_prompt;
     }
 
@@ -89,7 +119,6 @@ const char *finsh_get_prompt()
 
     return finsh_prompt;
 }
-#endif
 
 /**
  * @ingroup finsh
