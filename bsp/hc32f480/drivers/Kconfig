@@ -1,0 +1,56 @@
+config RT_USING_UART1
+    bool "Enable UART1 (P610/P611)"
+    default y
+    
+config SRAMSYS_BEGIN
+    hex "Base address of system sram"
+	default 0x20000000
+			
+config SRAMSYS_SIZE
+	int "Size of system sram(KB),Total:0x20000000~0x2001FFFF"
+	default 128
+		
+config SRAMHS_BEGIN
+	hex "Begin address of high speed sram"
+	default 0x1FFF8000
+		
+config SRAMHS_SIZE
+	int "Size of high speed sram(KB),Total:0x1FFF8000~0x1FFFFFFF"
+	default 32
+    
+config RT_USING_EXT_SRAM
+    bool "Using external sram"
+    default n
+    help
+        Using external sram
+			
+if RT_USING_EXT_SRAM
+    config EXT_SRAM_BEGIN
+		hex "Begin address of external sram"
+		default 0xFFFFFFFF
+			
+	config EXT_SRAM_SIZE
+		int "Size of external sram(KB)"
+		default 0
+endif
+
+config RT_USING_LCD
+    bool "Enable lcd"
+    default n
+    
+if RT_USING_LCD
+    config RT_LCD_DEVICE_NAME
+        string "the device name of lcd"
+        default "lcd"
+        
+    config RT_LCD_HOR_RES
+        int "Horizontal pixels"
+        default 320
+        
+    config RT_LCD_VER_RES
+        int "Vertical pixels"
+        default 240
+endif
+
+
+	

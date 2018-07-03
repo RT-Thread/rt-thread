@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<flash_device>
+  <exe>$PROJ_DIR$\..\..\..\..\mcu\EWARM\config\flashloader\FlashHC32F480.out</exe>
+  <page>4</page>
+  <block>128 0x2000</block>
+  <flash_base>0x00000000</flash_base>
+  <macro>$PROJ_DIR$\..\..\..\..\mcu\EWARM\config\flashloader\FlashHC32F480.mac</macro>
+  <aggregate>0</aggregate>
+</flash_device>

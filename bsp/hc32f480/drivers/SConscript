@@ -1,0 +1,42 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split("""
+board.c
+drv_usart.c
+hw_delay.c
+sysram.c
+""")
+
+# add Ethernet drivers.
+if GetDepend('RT_USING_LWIP'):
+    src += ['stm32f4xx_eth.c']
+
+# add gpio drivers.
+if GetDepend('RT_USING_PIN'):
+    src += ['gpio.c']
+
+# add lcd drivers.
+if GetDepend('RT_USING_LCD'):
+    src += ['drv_lcd.c']
+
+# add ext-sram drivers.
+if GetDepend('RT_USING_EXT_SRAM'):
+	src += ['drv_extsram.c']
+	src += ['sram.c']
+	
+# add i2c bit drivers.
+if GetDepend('RT_USING_I2C_BITOPS'):
+	src += ['drv_i2c_bit.c']
+
+# add i2c block device at24c02 drivers.	
+if GetDepend('RT_USING_I2C_BLOCK_DEV_AT24C02'):
+	src += ['drv_at24c02.c']
+	
+CPPPATH = [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

@@ -1,0 +1,35 @@
+setupxx()
+{
+  /*Disable HWD*/
+  __writeMemory32(0x1ACCE551,0x40011014,"Memory");
+  __writeMemory32(0xE5331AAE,0x40011014,"Memory");
+  __writeMemory32(0x0,0x40011008,"Memory");
+
+  /*Clock from High Speed internal Oscilator*/
+  __writeMemory32(__readMemory32(0x40010000, "Memory") & ~0xE0, 0x40010000, "Memory");
+  /*Wait*/ 
+  __delay(5);
+  __emulatorSpeed(0);
+  /*Base Clock Prescaler Register*/
+  __writeMemory32(0, 0x40010010, "Memory"); 
+
+  /*Vectors at RAM*/
+  __writeMemory32(0x20000000, 0xE000ED08, "Memory"); //Vector table remap at 0x20000000
+}
+
+setup()
+{
+    /* todo */
+}
+
+execUserPreload()
+{
+  __message "----- Prepare hardware for Flashloader -----\n";
+  setup();
+}
+execUserFlashInit()  // Called by debugger before loading flash loader in RAM.
+{
+  __message "----- Prepare hardware for Flashloader -----\n";
+  setup();
+}
+
