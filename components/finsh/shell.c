@@ -791,6 +791,12 @@ int finsh_system_init(void)
     rt_err_t result = RT_EOK;
     rt_thread_t tid;
 
+    if(shell)
+    {
+        rt_kprintf("finsh shell already init.\n");
+        return RT_EOK;
+    }
+
 #ifdef FINSH_USING_SYMTAB
 #ifdef __CC_ARM                 /* ARM C Compiler */
     extern const int FSymTab$$Base;
