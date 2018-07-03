@@ -1,9 +1,12 @@
 /*
+ * The Clear BSD License
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * are permitted (subject to the limitations in the disclaimer below) provided
+ * that the following conditions are met:
  *
  * o Redistributions of source code must retain the above copyright notice, this list
  *   of conditions and the following disclaimer.
@@ -16,6 +19,7 @@
  *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE.
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -29,6 +33,11 @@
  */
 
 #include "fsl_adc_etc.h"
+
+/* Component ID definition, used by tools. */
+#ifndef FSL_COMPONENT_ID
+#define FSL_COMPONENT_ID "platform.drivers.adc_etc"
+#endif
 
 /*******************************************************************************
  * Prototypes
@@ -90,7 +99,11 @@ void ADC_ETC_Init(ADC_ETC_Type *base, const adc_etc_config_t *config)
     /* Set ADC_ETC_CTRL register. */
     tmp32 = ADC_ETC_CTRL_EXT0_TRIG_PRIORITY(config->TSC0triggerPriority) |
             ADC_ETC_CTRL_EXT1_TRIG_PRIORITY(config->TSC1triggerPriority) |
-            ADC_ETC_CTRL_PRE_DIVIDER(config->clockPreDivider) | ADC_ETC_CTRL_TRIG_ENABLE(config->XBARtriggerMask);
+            ADC_ETC_CTRL_PRE_DIVIDER(config->clockPreDivider) | ADC_ETC_CTRL_TRIG_ENABLE(config->XBARtriggerMask)
+#if defined(FSL_FEATURE_ADC_ETC_HAS_CTRL_DMA_MODE_SEL) && FSL_FEATURE_ADC_ETC_HAS_CTRL_DMA_MODE_SEL
+            | ADC_ETC_CTRL_DMA_MODE_SEL(config->dmaMode)
+#endif /*FSL_FEATURE_ADC_ETC_HAS_CTRL_DMA_MODE_SEL*/
+        ;
     if (config->enableTSCBypass)
     {
         tmp32 |= ADC_ETC_CTRL_TSC_BYPASS_MASK;
@@ -124,6 +137,9 @@ void ADC_ETC_GetDefaultConfig(adc_etc_config_t *config)
     config->enableTSCBypass = true;
     config->enableTSC0Trigger = false;
     config->enableTSC1Trigger = false;
+#if defined(FSL_FEATURE_ADC_ETC_HAS_CTRL_DMA_MODE_SEL) && FSL_FEATURE_ADC_ETC_HAS_CTRL_DMA_MODE_SEL
+    config->dmaMode = kADC_ETC_TrigDMAWithLatchedSignal;
+#endif /*FSL_FEATURE_ADC_ETC_HAS_CTRL_DMA_MODE_SEL*/
     config->TSC0triggerPriority = 0U;
     config->TSC1triggerPriority = 0U;
     config->clockPreDivider = 0U;

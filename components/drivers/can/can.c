@@ -687,6 +687,18 @@ static void cantimeout(void *arg)
     }
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops can_device_ops =
+{
+    rt_can_init,
+    rt_can_open,
+    rt_can_close,
+    rt_can_read,
+    rt_can_write,
+    rt_can_control
+};
+#endif
+
 /*
  * can register
  */
@@ -712,12 +724,17 @@ rt_err_t rt_hw_can_register(struct rt_can_device *can,
 #ifdef RT_CAN_USING_BUS_HOOK
     can->bus_hook       = RT_NULL;
 #endif /*RT_CAN_USING_BUS_HOOK*/
+
+#ifdef RT_USING_DEVICE_OPS
+    device->ops         = &can_device_ops;
+#else
     device->init        = rt_can_init;
     device->open        = rt_can_open;
     device->close       = rt_can_close;
     device->read        = rt_can_read;
     device->write       = rt_can_write;
     device->control     = rt_can_control;
+#endif
     can->ops            = ops;
 
     can->status_indicate.ind  = RT_NULL;

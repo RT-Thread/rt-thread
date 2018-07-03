@@ -327,6 +327,19 @@ static rt_err_t rt_ecm_eth_control(rt_device_t dev, int cmd, void *args)
 
     return RT_EOK;
 }
+
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops ecm_device_ops =
+{
+    rt_ecm_eth_init,
+    rt_ecm_eth_open,
+    rt_ecm_eth_close,
+    rt_ecm_eth_read,
+    rt_ecm_eth_write,
+    rt_ecm_eth_control
+};
+#endif
+
 struct pbuf *rt_ecm_eth_rx(rt_device_t dev)
 {
     struct pbuf* p = RT_NULL;
@@ -604,3 +617,15 @@ ufunction_t rt_usbd_function_ecm_create(udevice_t device)
    
     return cdc;
 }
+
+struct udclass ecm_class = 
+{
+    .rt_usbd_function_create = rt_usbd_function_ecm_create
+};
+
+int rt_usbd_ecm_class_register(void)
+{
+    rt_usbd_class_register(&ecm_class);
+    return 0;
+}
+INIT_PREV_EXPORT(rt_usbd_ecm_class_register);

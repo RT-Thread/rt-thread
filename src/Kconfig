@@ -192,6 +192,10 @@ menu "Kernel Device Object"
         bool "Using device object"
         default y
 
+    config RT_USING_DEVICE_OPS
+        bool "Using ops for each device object"
+        default n
+
     config RT_USING_INTERRUPT_INFO
         bool "Enable additional interrupt trace information"
         default n

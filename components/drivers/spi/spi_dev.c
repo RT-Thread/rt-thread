@@ -69,6 +69,18 @@ static rt_err_t _spi_bus_device_control(rt_device_t dev,
     return RT_EOK;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops spi_bus_ops = 
+{
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    _spi_bus_device_read,
+    _spi_bus_device_write,
+    _spi_bus_device_control
+};
+#endif
+
 rt_err_t rt_spi_bus_device_init(struct rt_spi_bus *bus, const char *name)
 {
     struct rt_device *device;
@@ -79,12 +91,16 @@ rt_err_t rt_spi_bus_device_init(struct rt_spi_bus *bus, const char *name)
     /* set device type */
     device->type    = RT_Device_Class_SPIBUS;
     /* initialize device interface */
+#ifdef RT_USING_DEVICE_OPS
+    device->ops     = &spi_bus_ops;
+#else
     device->init    = RT_NULL;
     device->open    = RT_NULL;
     device->close   = RT_NULL;
     device->read    = _spi_bus_device_read;
     device->write   = _spi_bus_device_write;
     device->control = _spi_bus_device_control;
+#endif
 
     /* register to device manager */
     return rt_device_register(device, name, RT_DEVICE_FLAG_RDWR);
@@ -134,6 +150,18 @@ static rt_err_t _spidev_device_control(rt_device_t dev,
     return RT_EOK;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops spi_device_ops = 
+{
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    _spidev_device_read,
+    _spidev_device_write,
+    _spidev_device_control
+};
+#endif
+
 rt_err_t rt_spidev_device_init(struct rt_spi_device *dev, const char *name)
 {
     struct rt_device *device;
@@ -143,13 +171,17 @@ rt_err_t rt_spidev_device_init(struct rt_spi_device *dev, const char *name)
 
     /* set device type */
     device->type    = RT_Device_Class_SPIDevice;
+#ifdef RT_USING_DEVICE_OPS
+    device->ops     = &spi_device_ops;
+#else
     device->init    = RT_NULL;
     device->open    = RT_NULL;
     device->close   = RT_NULL;
     device->read    = _spidev_device_read;
     device->write   = _spidev_device_write;
     device->control = _spidev_device_control;
-    
+#endif
+
     /* register to device manager */
     return rt_device_register(device, name, RT_DEVICE_FLAG_RDWR);
 }

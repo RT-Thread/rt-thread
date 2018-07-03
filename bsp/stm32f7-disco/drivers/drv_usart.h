@@ -1,26 +1,27 @@
 /*
- * File      : usart.h
+ * File      : drv_usart.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
- * 2009-01-05     Bernard      the first version
+ * 2018-05-17     ZYH          first implementation
  */
-
-#ifndef __USART_H__
-#define __USART_H__
-
-#include <rthw.h>
-#include <rtthread.h>
-
-#define UART_ENABLE_IRQ(n)            NVIC_EnableIRQ((n))
-#define UART_DISABLE_IRQ(n)           NVIC_DisableIRQ((n))
-
-int stm32_hw_usart_init(void);
-
+#ifndef __DRV_USART_H__
+#define __DRV_USART_H__
+extern int bsp_usart_hw_init(void);
 #endif

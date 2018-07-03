@@ -124,3 +124,119 @@ def walk_children(child):
     if children != []:
         for item in children:
             walk_children(item)
+
+def PrefixPath(prefix, path):
+    path = os.path.abspath(path)
+    prefix = os.path.abspath(prefix)
+
+    if sys.platform == 'win32':
+        prefix = prefix.lower()
+        path = path.lower()
+
+    if path.startswith(prefix):
+        return True
+    
+    return False
+
+def ListMap(l):
+    ret_list = []
+    for item in l:
+        if type(item) == type(()):
+            ret = ListMap(item)
+            ret_list += ret
+        elif type(item) == type([]):
+            ret = ListMap(item)
+            ret_list += ret
+        else:
+            ret_list.append(item)
+
+    return ret_list
+
+def TargetGetList(env, postfix):
+    global source_ext
+    global source_list
+
+    target = env['target']
+
+    source_ext = postfix
+    for item in target:
+        walk_children(item)
+
+    source_list.sort()
+
+    return source_list
+
+def ProjectInfo(env):
+
+    project  = env['project']
+    RTT_ROOT = env['RTT_ROOT']
+    BSP_ROOT = env['BSP_ROOT']
+
+    FILES       = []
+    DIRS        = []
+    HEADERS     = []
+    CPPPATH     = []
+    CPPDEFINES  = []
+
+    for group in project:
+        # get each files
+        if group.has_key('src') and group['src']:
+            FILES += group['src']
+
+        # get each include path
+        if group.has_key('CPPPATH') and group['CPPPATH']:
+            CPPPATH += group['CPPPATH']
+
+    if env.has_key('CPPDEFINES'):
+        CPPDEFINES = env['CPPDEFINES']
+        CPPDEFINES = ListMap(CPPDEFINES)
+
+    # process FILES and DIRS
+    if len(FILES):
+        # use absolute path 
+        for i in range(len(FILES)):
+            FILES[i] = os.path.abspath(str(FILES[i]))
+            DIRS.append(os.path.dirname(FILES[i]))
+
+        FILES.sort()
+        DIRS = list(set(DIRS))
+        DIRS.sort()
+
+    # process HEADERS
+    HEADERS = TargetGetList(env, ['h'])
+
+    # process CPPPATH
+    if len(CPPPATH):
+        # use absolute path 
+        for i in range(len(CPPPATH)):
+            CPPPATH[i] = os.path.abspath(CPPPATH[i])
+
+        # remove repeat path
+        paths = [i for i in set(CPPPATH)]
+        CPPPATH = []
+        for path in paths:
+            if PrefixPath(RTT_ROOT, path):
+                CPPPATH += [os.path.abspath(path).replace('\\', '/')]
+
+            elif PrefixPath(BSP_ROOT, path):
+                CPPPATH += [os.path.abspath(path).replace('\\', '/')]
+
+            else:
+                CPPPATH += ['"%s",' % path.replace('\\', '/')]
+
+        CPPPATH.sort()
+
+    # process CPPDEFINES
+    if len(CPPDEFINES):
+        CPPDEFINES = [i for i in set(CPPDEFINES)]
+
+        CPPDEFINES.sort()
+
+    proj = {}
+    proj['FILES']       = FILES
+    proj['DIRS']        = DIRS
+    proj['HEADERS']     = HEADERS
+    proj['CPPPATH']     = CPPPATH
+    proj['CPPDEFINES']  = CPPDEFINES
+
+    return proj

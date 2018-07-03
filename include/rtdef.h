@@ -34,6 +34,8 @@
  * 2017-11-30     Bernard      change version number to v3.0.1
  * 2017-12-27     Bernard      change version number to v3.0.2
  * 2018-02-24     Bernard      change version number to v3.0.3
+ * 2018-04-25     Bernard      change version number to v3.0.4
+ * 2018-05-31     Bernard      change version number to v3.1.0
  */
 
 #ifndef __RT_DEF_H__
@@ -54,8 +56,8 @@ extern "C" {
 
 /* RT-Thread version information */
 #define RT_VERSION                      3L              /**< major version number */
-#define RT_SUBVERSION                   0L              /**< minor version number */
-#define RT_REVISION                     3L              /**< revise version number */
+#define RT_SUBVERSION                   1L              /**< minor version number */
+#define RT_REVISION                     0L              /**< revise version number */
 
 /* RT-Thread version */
 #define RTTHREAD_VERSION                ((RT_VERSION * 10000) + \
@@ -847,6 +849,30 @@ enum rt_device_class_type
 
 typedef struct rt_device *rt_device_t;
 /**
+ * operations set for device object
+ */
+struct rt_device_ops
+{
+    /* common device interface */
+    rt_err_t  (*init)   (rt_device_t dev);
+    rt_err_t  (*open)   (rt_device_t dev, rt_uint16_t oflag);
+    rt_err_t  (*close)  (rt_device_t dev);
+    rt_size_t (*read)   (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
+    rt_size_t (*write)  (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
+    rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
+};
+
+/**
+ * WaitQueue structure
+ */
+struct rt_wqueue
+{
+    rt_uint32_t flag;
+    rt_list_t waiting_list;
+};
+typedef struct rt_wqueue rt_wqueue_t;
+
+/**
  * Device structure
  */
 struct rt_device
@@ -864,6 +890,9 @@ struct rt_device
     rt_err_t (*rx_indicate)(rt_device_t dev, rt_size_t size);
     rt_err_t (*tx_complete)(rt_device_t dev, void *buffer);
 
+#ifdef RT_USING_DEVICE_OPS
+    const struct rt_device_ops *ops;
+#else
     /* common device interface */
     rt_err_t  (*init)   (rt_device_t dev);
     rt_err_t  (*open)   (rt_device_t dev, rt_uint16_t oflag);
@@ -871,10 +900,11 @@ struct rt_device
     rt_size_t (*read)   (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
     rt_size_t (*write)  (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
     rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
+#endif
 
 #if defined(RT_USING_POSIX)
     const struct dfs_file_ops *fops;
-    rt_list_t wait_queue;
+    struct rt_wqueue wait_queue;
 #endif
 
     void                     *user_data;                /**< device private data */
@@ -1028,8 +1058,8 @@ struct rt_module
 
     rt_uint32_t                  user_data;             /**< arch data in the module */
 
-    /* object in this module, module object is the last basic object type */
-    struct rt_object_information module_object[RT_Object_Class_Unknown];
+    void (*module_init)(void);
+    void (*module_cleanup)(void);
 };
 typedef struct rt_module *rt_module_t;
 

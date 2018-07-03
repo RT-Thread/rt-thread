@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32l4xx_ll_dac.c
   * @author  MCD Application Team
-  * @version V1.7.2
-  * @date    16-June-2017
   * @brief   DAC LL module driver
   ******************************************************************************
   * @attention
@@ -78,6 +76,22 @@
   )
 #endif /* DAC_CHANNEL2_SUPPORT */
 
+#if defined (DAC_CR_TSEL1_3)
+#define IS_LL_DAC_TRIGGER_SOURCE(__TRIGGER_SOURCE__)                           \
+  (   ((__TRIGGER_SOURCE__) == LL_DAC_TRIG_EXT_TIM1_TRGO)                      \
+   || ((__TRIGGER_SOURCE__) == LL_DAC_TRIG_EXT_TIM2_TRGO)                      \
+   || ((__TRIGGER_SOURCE__) == LL_DAC_TRIG_EXT_TIM4_TRGO)                      \
+   || ((__TRIGGER_SOURCE__) == LL_DAC_TRIG_EXT_TIM5_TRGO)                      \
+   || ((__TRIGGER_SOURCE__) == LL_DAC_TRIG_EXT_TIM6_TRGO)                      \
+   || ((__TRIGGER_SOURCE__) == LL_DAC_TRIG_EXT_TIM7_TRGO)                      \
+   || ((__TRIGGER_SOURCE__) == LL_DAC_TRIG_EXT_TIM8_TRGO)                      \
+   || ((__TRIGGER_SOURCE__) == LL_DAC_TRIG_EXT_TIM15_TRGO)                     \
+   || ((__TRIGGER_SOURCE__) == LL_DAC_TRIG_EXT_LPTIM1_OUT_TRGO)                \
+   || ((__TRIGGER_SOURCE__) == LL_DAC_TRIG_EXT_LPTIM2_OUT_TRGO)                \
+   || ((__TRIGGER_SOURCE__) == LL_DAC_TRIG_EXT_EXTI_LINE9)                     \
+   || ((__TRIGGER_SOURCE__) == LL_DAC_TRIG_SOFTWARE)                           \
+  )
+#else
 #define IS_LL_DAC_TRIGGER_SOURCE(__TRIGGER_SOURCE__)                           \
   (   ((__TRIGGER_SOURCE__) == LL_DAC_TRIG_SOFTWARE)                           \
    || ((__TRIGGER_SOURCE__) == LL_DAC_TRIG_EXT_TIM2_TRGO)                      \
@@ -88,6 +102,7 @@
    || ((__TRIGGER_SOURCE__) == LL_DAC_TRIG_EXT_TIM8_TRGO)                      \
    || ((__TRIGGER_SOURCE__) == LL_DAC_TRIG_EXT_EXTI_LINE9)                     \
   )
+#endif /* DAC_CR_TSEL1_3 */
 
 #define IS_LL_DAC_WAVE_AUTO_GENER_MODE(__WAVE_AUTO_GENERATION_MODE__)           \
   (   ((__WAVE_AUTO_GENERATION_MODE__) == LL_DAC_WAVE_AUTO_GENERATION_NONE)     \

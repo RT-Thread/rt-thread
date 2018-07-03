@@ -20,4 +20,28 @@ config $PKGS_DIR
 
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
-source "$BSP_DIR/drivers/Kconfig"
+
+config BSP_USING_UART1
+    bool "using uart1"
+    select RT_USING_SERIAL
+    default n
+config BSP_USING_UART2
+    bool "using uart2"
+    select RT_USING_SERIAL
+    default y
+config BSP_USING_UART3
+    bool "using uart3"
+    select RT_USING_SERIAL
+    default n
+config BSP_USING_UART4
+    bool "using uart4"
+    select RT_USING_SERIAL
+    default n
+config BSP_USING_UART5
+    bool "using uart5"
+    select RT_USING_SERIAL
+    default n
+config BSP_USING_LPUART1
+    bool "using lpuart1"
+    select RT_USING_SERIAL
+    default n

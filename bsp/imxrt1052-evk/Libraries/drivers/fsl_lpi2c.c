@@ -1,9 +1,12 @@
 /*
+ * The Clear BSD License
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * are permitted (subject to the limitations in the disclaimer below) provided
+ *  that the following conditions are met:
  *
  * o Redistributions of source code must retain the above copyright notice, this list
  *   of conditions and the following disclaimer.
@@ -16,6 +19,7 @@
  *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE.
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -35,6 +39,11 @@
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
+
+/* Component ID definition, used by tools. */
+#ifndef FSL_COMPONENT_ID
+#define FSL_COMPONENT_ID "platform.drivers.lpi2c"
+#endif
 
 /*! @brief Common sets of flags used by the driver. */
 enum _lpi2c_flag_constants
@@ -115,13 +124,7 @@ static uint32_t LPI2C_GetCyclesForWidth(uint32_t sourceClock_Hz,
                                         uint32_t maxCycles,
                                         uint32_t prescaler);
 
-/* Not static so it can be used from fsl_lpi2c_edma.c. */
-status_t LPI2C_MasterCheckAndClearError(LPI2C_Type *base, uint32_t status);
-
 static status_t LPI2C_MasterWaitForTxReady(LPI2C_Type *base);
-
-/* Not static so it can be used from fsl_lpi2c_edma.c. */
-status_t LPI2C_CheckForBusyBus(LPI2C_Type *base);
 
 static status_t LPI2C_RunTransferStateMachine(LPI2C_Type *base, lpi2c_master_handle_t *handle, bool *isDone);
 
@@ -156,13 +159,13 @@ static const clock_ip_name_t kLpi2cPeriphClocks[] = LPI2C_PERIPH_CLOCKS;
 static lpi2c_master_isr_t s_lpi2cMasterIsr;
 
 /*! @brief Pointers to master handles for each instance. */
-static lpi2c_master_handle_t *s_lpi2cMasterHandle[FSL_FEATURE_SOC_LPI2C_COUNT];
+static lpi2c_master_handle_t *s_lpi2cMasterHandle[ARRAY_SIZE(kLpi2cBases)];
 
 /*! @brief Pointer to slave IRQ handler for each instance. */
 static lpi2c_slave_isr_t s_lpi2cSlaveIsr;
 
 /*! @brief Pointers to slave handles for each instance. */
-static lpi2c_slave_handle_t *s_lpi2cSlaveHandle[FSL_FEATURE_SOC_LPI2C_COUNT];
+static lpi2c_slave_handle_t *s_lpi2cSlaveHandle[ARRAY_SIZE(kLpi2cBases)];
 
 /*******************************************************************************
  * Code
@@ -204,6 +207,9 @@ static uint32_t LPI2C_GetCyclesForWidth(uint32_t sourceClock_Hz,
                                         uint32_t maxCycles,
                                         uint32_t prescaler)
 {
+    assert(sourceClock_Hz > 0);
+    assert(prescaler > 0);
+
     uint32_t busCycle_ns = 1000000 / (sourceClock_Hz / prescaler / 1000);
     uint32_t cycles = 0;
 
@@ -692,7 +698,7 @@ status_t LPI2C_MasterReceive(LPI2C_Type *base, void *rxBuff, size_t rxSize)
 
 status_t LPI2C_MasterSend(LPI2C_Type *base, const void *txBuff, size_t txSize)
 {
-    uint8_t *buf = (uint8_t *)((void *)txBuff);
+    const uint8_t *buf = (const uint8_t *)((const void *)txBuff);
 
     assert(txBuff);
 
@@ -834,6 +840,10 @@ void LPI2C_MasterTransferCreateHandle(LPI2C_Type *base,
 
     /* Clear internal IRQ enables and enable NVIC IRQ. */
     LPI2C_MasterDisableInterrupts(base, kMasterIrqFlags);
+
+    /* Enable NVIC IRQ, this only enables the IRQ directly connected to the NVIC.
+     In some cases the LPI2C IRQ is configured through INTMUX, user needs to enable
+     INTMUX IRQ in application code. */
     EnableIRQ(kLpi2cIrqs[instance]);
 }
 
@@ -1352,7 +1362,7 @@ static status_t LPI2C_SlaveCheckAndClearError(LPI2C_Type *base, uint32_t flags)
 
 status_t LPI2C_SlaveSend(LPI2C_Type *base, const void *txBuff, size_t txSize, size_t *actualTxSize)
 {
-    uint8_t *buf = (uint8_t *)((void *)txBuff);
+    const uint8_t *buf = (const uint8_t *)((const void *)txBuff);
     size_t remaining = txSize;
 
     assert(txBuff);
@@ -1804,11 +1814,27 @@ void LPI2C3_DriverIRQHandler(void)
 }
 #endif
 
+#if defined(LPI2C4)
+/* Implementation of LPI2C4 handler named in startup code. */
+void LPI2C4_DriverIRQHandler(void)
+{
+    LPI2C_CommonIRQHandler(LPI2C4, 4);
+}
+#endif
+
 #if defined(CM4_0__LPI2C)
 /* Implementation of CM4_0__LPI2C handler named in startup code. */
 void M4_0_LPI2C_DriverIRQHandler(void)
 {
     LPI2C_CommonIRQHandler(CM4_0__LPI2C, LPI2C_GetInstance(CM4_0__LPI2C));
+}
+#endif
+
+#if defined(CM4__LPI2C)
+/* Implementation of CM4__LPI2C handler named in startup code. */
+void M4_LPI2C_DriverIRQHandler(void)
+{
+    LPI2C_CommonIRQHandler(CM4__LPI2C, LPI2C_GetInstance(CM4__LPI2C));
 }
 #endif
 
@@ -1857,5 +1883,45 @@ void DMA_I2C3_INT_DriverIRQHandler(void)
 void DMA_I2C4_INT_DriverIRQHandler(void)
 {
     LPI2C_CommonIRQHandler(DMA__LPI2C4, LPI2C_GetInstance(DMA__LPI2C4));
+}
+#endif
+
+#if defined(ADMA__LPI2C0)
+/* Implementation of DMA__LPI2C0 handler named in startup code. */
+void ADMA_I2C0_INT_DriverIRQHandler(void)
+{
+    LPI2C_CommonIRQHandler(ADMA__LPI2C0, LPI2C_GetInstance(ADMA__LPI2C0));
+}
+#endif
+
+#if defined(ADMA__LPI2C1)
+/* Implementation of DMA__LPI2C1 handler named in startup code. */
+void ADMA_I2C1_INT_DriverIRQHandler(void)
+{
+    LPI2C_CommonIRQHandler(ADMA__LPI2C1, LPI2C_GetInstance(ADMA__LPI2C1));
+}
+#endif
+
+#if defined(ADMA__LPI2C2)
+/* Implementation of DMA__LPI2C2 handler named in startup code. */
+void ADMA_I2C2_INT_DriverIRQHandler(void)
+{
+    LPI2C_CommonIRQHandler(ADMA__LPI2C2, LPI2C_GetInstance(ADMA__LPI2C2));
+}
+#endif
+
+#if defined(ADMA__LPI2C3)
+/* Implementation of DMA__LPI2C3 handler named in startup code. */
+void ADMA_I2C3_INT_DriverIRQHandler(void)
+{
+    LPI2C_CommonIRQHandler(ADMA__LPI2C3, LPI2C_GetInstance(ADMA__LPI2C3));
+}
+#endif
+
+#if defined(ADMA__LPI2C4)
+/* Implementation of DMA__LPI2C3 handler named in startup code. */
+void ADMA_I2C4_INT_DriverIRQHandler(void)
+{
+    LPI2C_CommonIRQHandler(ADMA__LPI2C4, LPI2C_GetInstance(ADMA__LPI2C4));
 }
 #endif

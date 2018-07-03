@@ -164,34 +164,10 @@ void rt_thread_idle_excute(void)
         rt_hw_interrupt_enable(lock);
 
 #ifdef RT_USING_HEAP
-#if defined(RT_USING_MODULE) && defined(RT_USING_SLAB)
-        /* the thread belongs to an application module */
-        if (thread->flags & RT_OBJECT_FLAG_MODULE)
-            rt_module_free((rt_module_t)thread->module_id, thread->stack_addr);
-        else
-#endif
-            /* release thread's stack */
-            RT_KERNEL_FREE(thread->stack_addr);
+        /* release thread's stack */
+        RT_KERNEL_FREE(thread->stack_addr);
         /* delete thread object */
         rt_object_delete((rt_object_t)thread);
-#endif
-
-#ifdef RT_USING_MODULE
-        if (module != RT_NULL)
-        {
-            extern rt_err_t rt_module_destroy(rt_module_t module);
-
-            /* if sub thread list and main thread are all empty */
-            if ((module->module_thread == RT_NULL) &&
-                rt_list_isempty(&module->module_object[RT_Object_Class_Thread].object_list))
-            {
-                module->nref --;
-            }
-
-            /* destroy module */
-            if (module->nref == 0)
-                rt_module_destroy(module);
-        }
 #endif
     }
 }
