@@ -222,26 +222,13 @@ extern "C" {
 #define USB_EP_DESC_NUM(addr)           (addr & USB_EP_DESC_NUM_MASK)
 #define USB_EP_DIR(addr)                ((addr & USB_DIR_MASK)>>7)
 
-#ifdef RT_USB_DEVICE_HID
-    #ifdef RT_USB_DEVICE_HID_KEYBOARD
-        #define HID_REPORT_ID_KEYBOARD1         1
-        #if RT_USB_DEVICE_HID_KEYBOARD_NUMBER>1
-            #define HID_REPORT_ID_KEYBOARD2     2
-            #if RT_USB_DEVICE_HID_KEYBOARD_NUMBER>2
-                #define HID_REPORT_ID_KEYBOARD3 3
-            #endif
-        #endif
-    #endif
-    #ifdef RT_USB_DEVICE_HID_MEDIA
-        #define HID_REPORT_ID_MEDIA             4
-    #endif
-    #ifdef RT_USB_DEVICE_HID_GENERAL
-        #define HID_REPORT_ID_GENERAL           5
-    #endif
-    #ifdef RT_USB_DEVICE_HID_MOUSE
-        #define HID_REPORT_ID_MOUSE             6
-    #endif
-#endif
+#define HID_REPORT_ID_KEYBOARD1         1
+#define HID_REPORT_ID_KEYBOARD2         2
+#define HID_REPORT_ID_KEYBOARD3         3
+#define HID_REPORT_ID_KEYBOARD4         7
+#define HID_REPORT_ID_MEDIA             4
+#define HID_REPORT_ID_GENERAL           5
+#define HID_REPORT_ID_MOUSE             6
 
 #define uswap_32(x) \
     ((((x) & 0xff000000) >> 24) | \
@@ -473,7 +460,6 @@ typedef struct usb_os_proerty * usb_os_proerty_t;
 #define  HID_SUB_DESCRIPTOR_MAX        1
 #endif
 
-#ifdef RT_USB_DEVICE_HID
 struct uhid_descriptor
 {
     rt_uint8_t  bLength;
@@ -497,7 +483,7 @@ struct hid_report
 };
 typedef struct hid_report* hid_report_t;
 extern void HID_Report_Received(hid_report_t report);
-#endif
+
 struct urequest
 {
     rt_uint8_t  request_type;
