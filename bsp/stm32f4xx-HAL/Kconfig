@@ -286,6 +286,10 @@ endchoice
 config RT_USING_HSI
     bool "Using HSI as clock source"
     default n
+config BSP_HSE_BY_PASS
+    bool "HES Bypass"
+    depends on !RT_USING_HSI
+    default n
 config RT_HSE_VALUE
     int "HSE Value"
     default 8000000
