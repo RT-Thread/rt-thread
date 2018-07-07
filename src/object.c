@@ -291,6 +291,9 @@ void rt_object_detach(rt_object_t object)
 
     RT_OBJECT_HOOK_CALL(rt_object_detach_hook, (object));
 
+    /* reset object type */
+    object->type = 0;
+
     /* lock interrupt */
     temp = rt_hw_interrupt_disable();
 
@@ -377,6 +380,9 @@ void rt_object_delete(rt_object_t object)
     RT_ASSERT(!(object->type & RT_Object_Class_Static));
 
     RT_OBJECT_HOOK_CALL(rt_object_detach_hook, (object));
+
+    /* reset object type */
+    object->type = 0;
 
     /* lock interrupt */
     temp = rt_hw_interrupt_disable();
