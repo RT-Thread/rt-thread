@@ -12,13 +12,32 @@
  * 2017-11-08     ZYH            the first version
  */
 #include <rtthread.h>
+#if defined(RT_USING_W25QXX) || defined(RT_USING_SFUD)
+    #include <drv_spi.h>
 #ifdef RT_USING_W25QXX
-#include <drv_spi.h>
-#include "spi_flash_w25qxx.h"
-int rt_w25qxx_init(void)
+    #include "spi_flash_w25qxx.h"
+#elif defined(RT_USING_SFUD)
+    #include "string.h"
+    #include "spi_flash.h"
+    #include "spi_flash_sfud.h"
+    sfud_flash sfud_norflash0;
+    rt_spi_flash_device_t spi_device;
+#endif
+
+int rt_nor_flash_init(void)
 {
-    stm32_spi_bus_attach_device(RT_W25QXX_CS_PIN, RT_W25QXX_SPI_BUS_NAME, "w25qxx");
-    return w25qxx_init("flash0", "w25qxx");
+    stm32_spi_bus_attach_device(RT_FLASH_CS_PIN, RT_FLASH_SPI_BUS_NAME, "norspi");
+#ifdef RT_USING_W25QXX
+    return w25qxx_init("flash0", "norspi");
+#elif defined(RT_USING_SFUD)
+    spi_device = rt_sfud_flash_probe("flash0", "norspi");
+    if (spi_device == RT_NULL)
+    {
+        return -RT_ERROR;
+    }
+    memcpy(&sfud_norflash0, spi_device->user_data, sizeof(sfud_flash));
+    return 0;
+#endif
 }
-INIT_DEVICE_EXPORT(rt_w25qxx_init);
+INIT_DEVICE_EXPORT(rt_nor_flash_init);
 #endif
