@@ -325,12 +325,12 @@ config RT_USING_SPI3
 
 endif
 
-if RT_USING_W25QXX
-config RT_W25QXX_CS_PIN
-    int "W25QXX CS Pin index"
+if RT_USING_W25QXX || RT_USING_SFUD
+config RT_FLASH_CS_PIN
+    int "SPI NOR Flash CS pin index"
     default 0
-config RT_W25QXX_SPI_BUS_NAME
-    string "W25QXX Spi bus name"
+config RT_FLASH_SPI_BUS_NAME
+    string "SPI NOR Flash Spi bus name"
     default "spi1"
 endif
 
