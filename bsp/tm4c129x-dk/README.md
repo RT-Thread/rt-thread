@@ -32,6 +32,7 @@ TM4C129X-DK本身提供了一个烧录接口，是Stellaris ICDI，keil本身不
 http://www.ti.com.cn/tool/cn/stellaris_icdi_drivers
 
 供电方式：使用ICDI接口即可供电
+串口：ICDI也可用作串口，使用uart0
 
 ### 3.1 运行结果
 

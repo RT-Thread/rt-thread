@@ -237,6 +237,7 @@ int rtthread_startup(void)
     /* timer system initialization */
     rt_system_timer_init();
 
+	rt_system_heap_init((void*)0x20004000,(void*)0x2000F000);
     /* scheduler system initialization */
     rt_system_scheduler_init();
 
