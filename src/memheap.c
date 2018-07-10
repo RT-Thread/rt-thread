@@ -134,6 +134,8 @@ RTM_EXPORT(rt_memheap_init);
 rt_err_t rt_memheap_detach(struct rt_memheap *heap)
 {
     RT_ASSERT(heap);
+    RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
+    RT_ASSERT(rt_object_is_systemobject(&heap->parent));
 
     rt_object_detach(&(heap->lock.parent.parent));
     rt_object_detach(&(heap->parent));
@@ -150,6 +152,7 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_uint32_t size)
     struct rt_memheap_item *header_ptr;
 
     RT_ASSERT(heap != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
 
     /* align allocated size */
     size = RT_ALIGN(size, RT_ALIGN_SIZE);
@@ -294,6 +297,9 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
     rt_size_t oldsize;
     struct rt_memheap_item *header_ptr;
     struct rt_memheap_item *new_ptr;
+
+    RT_ASSERT(heap);
+    RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
 
     if (newsize == 0)
     {
@@ -524,6 +530,9 @@ void rt_memheap_free(void *ptr)
     /* get pool ptr */
     heap = header_ptr->pool_ptr;
 
+    RT_ASSERT(heap);
+    RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
+
     /* lock memheap */
     result = rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
     if (result != RT_EOK)
@@ -630,6 +639,9 @@ void *rt_malloc(rt_size_t size)
         {
             object = rt_list_entry(node, struct rt_object, list);
             heap   = (struct rt_memheap *)object;
+
+            RT_ASSERT(heap);
+            RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
 
             /* not allocate in the default system heap */
             if (heap == &_heap)
