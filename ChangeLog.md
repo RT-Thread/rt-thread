@@ -1,3 +1,178 @@
+# RT-Thread 3.0.4 Change Log
+
+## Kernel
+
+* Change the location of hook invoking in rt_event_send, which can better reflect the event value to the system view.
+* Fix the rt_realloc() issue in memheap;
+* Fix the vstart_addr issue in the dynamic library.
+* Ensure that signal is more standardized and remove si_errno members from siginfo_t;
+* Add rt_thread_mdelay() API for millisecond delay in thread.
+
+## Components
+
+* Fix the DFS mkfs issue of FatFs (which is a merge issue introduced in RT-Thread V3.0 upgrade).
+* Fix dfs_net poll issue, if there is already received data, the upper layer can not wake up and deal with data.
+* Fix the socket issue in dfs_net if lwip_socket failed(Bluebear233);
+* If the dfs_net/socket feature is used within lwIP 1.x version, a compiler error will be returned.
+* Fix the DFS df() information issue;
+* Fix the audio device write issue while the interrupt is not properly recovered.
+* Fix the one-shot timeout issue in the hardware timer driver framework.
+* In ENC28J60 driver, the "link change interrupt" is enable in initialization.
+* Fix the data issue in put data into ringbuffer.
+* Add UDP information display in netstat command;
+* Fix the USB HS issue when sending 1 bytes of data will cause two times of transmission.
+* Change the registration mechanism of USB Class Driver and Class Driver can be registered in package.
+* Add USB Device driver framework for HS USB.
+* Enhance the compatibility of time() function for different compilers;
+* Add more configuration items for DHCPD in menuconfig.
+
+## BSP
+
+* Temporarily remove the Andes AE210P transplant because of the mistakenly use SVC for context switching.
+* Add SD/MMC drive in Allwinner ARM9 BSP;
+* Add SPI and SPI Flash drivers to Allwinner ARM9 BSP.
+* Add GD32's gd32303e-eval development board support;
+* gd32450z-eval supports GNU GCC compilation;
+* Rewriting the hifive1 board level support package for the risc-v architecture;
+* About i.MX RT1052, we have completed various development board support: ATK, Fire, seeed studio;
+* On i.MX RT1052, add the cache-ops functions;
+* On i.MX RT1052, add I2S driver and WM8960 codec driver support;
+* Improve ETH driver support (including support for Fire development board) on i.MX RT1052.
+* Add Hardware Timer driver support on i.MX RT1052.
+* On i.MX RT1052, add GPIO driver;
+* On i.MX RT1052, add RTC driver;
+* On i.MX RT1052, improve SD/MMC driver;
+* On i.MX RT1052, add SPI driver and SPI Flash driver (connect to SFUD component);
+* Add USB Device driver on i.MX RT1052.
+* Add README files and KConfig files in LPC408x BSP;
+* Add README documents in LPC5460x-LPCXpresso BSP;
+* Add the display controller driver (Sundm75) in Godson 1C BSP.
+* Add CAN driver in Loongson 1C BSP(Sundm75);
+* In GPIO driver of Loongson 1C BSP, add (external) interrupt feature (Zhuangwei);
+* Use SPI automatic initialization in Loongson 1C BSP.
+* Add I2C driver in Loongson1C BSP(Sundm75);
+* Add resistive touch screen driver in Loongson 1C BSP(Sundm75);
+* In Loongson 1C BSP, the components initiliazation and main function is enable(Zhuangwei).
+* Add self bootup in Loongson1C BSP (Zhuangwei);
+* Add README files and KConfig files to Loongson 1C BSP(Zhuangwei).
+* Fix the rx descriptor issue in init_rx_desc function in NUC472 BSP (Bluebear233);
+* Add AC97 Audio driver in QEMU-VExpress-A9 BSP;
+* Add README description file in QEMU-VExpress-A9;
+* Add I2C driver in stm32f4xx-HAL BSP, and README description file;
+* Add cache-ops in stm32f7-disco BSP, and README description file;
+* Add README description file in stm32f10x/stm32f10x-HAL;
+* Add README specification files and KConfig configuration files in stm32f40x BSP;
+* Add KConfig configuration file in stm32f20x BSP;
+* Add README description file to stm32f411-nucleo BSP and enable GNU GCC tool chain support;
+* Add GPIO driver and README description file in stm32f429-apollo BSP;
+* Add KConfig configuration files in stm32f429-armfly BSP;
+* Add README description file in stm32l476-nucleo BSP;
+* Because V2M-MPS2 does not support in 32-bit machine simulation operation, temporarily remove this BSP.
+* Add README description file and some firmware file, such as u-boot.bin, wifi firmware etc, in X1000 BSP;
+Tools
+* Add detection feature for the version of GNU GCC tool chain and libc function feature.
+* Add the function of VSCode editor assistance, and support scons --target=vsc -s under BSP folder to generate configuration files for VSCode.
+* Add the detection of verson of IAR;
+* Add the ProjectInfo (Env) function to get information about target: all source files should be compiled, all header files, all macro definitions, the search paths for header file etc.
+
+# RT-Thread 3.0.3 Change Log
+
+## Kernel
+
+* Add scheduler protection when do cleanup for a detached thread;
+* Fix the object_find issue when enable module feature;
+* Improve POSIX signal support and add rt_signal_wait function and POSIX sigwait interface;
+* When enable finsh shell, rtthread.h header file includes the API file of finsh. Therefore, the application code can use command export feature without finsh.h file;
+* Improve the comments of rtdbg.h file. In RT-Thread, just use following code to add debug log feature:
+
+```c
+    #define DBG_ENABLE
+
+    #define DBG_SECTION_NAME    "[ MOD]"
+    #define DBG_LEVEL           DBG_INFO
+    #define DBG_COLOR
+    #include <rtdbg.h>
+```
+
+When close the DBG_ENABLE definition, the debug log will be closed. Otherwise, the `dbg_log(level, fmt, ...)` can be used to print debug information. 
+
+DBG_SECTION_NAME - The prefix information for each log line;
+DBG_LEVEL - The debug log level;
+DBG_COLOR - Whether use color log in console.
+
+## Components
+
+* Fix the flag issue of fopen in GNU GCC;
+* Fix the pthread_detach issue when used for a detached pthread;
+* Fix the _TIMESPEC_DEFINED issue in IAR 8;
+* Add libc_stdio_get_console() interface for returns the fd of console;
+* Move UI engine component as a standalone package;
+* Add a unify TF/SD card driver on SPI device bus;
+* Add soft-RTC device, therefore device can synchronize with network time and maintains the time with OS tick later;
+* Change the open/fcntl/ioctl API to POSIX standard  interface;
+* Fix ramfs issue when update with RTT 3.0.x;
+* Fix the elm fatfs umount issue; (liu2guang)
+* ignore the O_CREAT flag when open a device file;
+* Improve VCOM class driver in USB stack; (ChunfengMu, Aubr.Cool)
+
+## BSP
+
+* Fix the potential issue when enable Cortex-M hardware FPU;
+* Add v2m-mps2 bsp, which is used in Keil MDK5 for Cortex-M4/M7/M23/M33 simulation;
+* Add sdcard driver for stm32f10x-HAL;(liu2guang)
+* Improve GNU GCC support for stm32f10x-HAL;(Xeon Xu)
+* simulator bsp can be used in Windows/Visual C++ and update SDL to v2.0.7;
+* Add gk7102 bsp by gokemicro;(gokemicro)
+* Add allwinner F1C100s ARM9 bsp;(uestczyh222)
+* Fix some issues in peripherals drive library of NXP LPC54608/i.MX RT; (Valeriy Van)
+
+## Tools
+
+* scons building script will automatically add `_REENT_SMALL` macro when enable newlib nanao;
+* Modify building script for Python 3.x and scons 3.0
+
+# RT-Thread v3.0.2 Change log
+
+## Platform
+
+* Make sure the Object_Class to a fixed value
+* Add `rt_device_create/destroy` API
+* Add memory trace for small memory management algorithm for memory leak and overwritten.
+* Add a first version of asynchronous I/O API
+* Add cputime for high resolution counter
+* Add pipe device functions in DeviceDrivers
+* USB Host available in stm32f4 with mass storage class
+* Add 'df' command in msh
+* Update UI engine and add an example
+* Split `clock_time` from pthreads and add a new clock id: `CLOCK_CPUTIME_ID`
+* Enable IPv6 in lwIP 2.0.2 version
+* Add memlog in logtrace
+* Fix closesocket issue in dfs_net
+* Fix IPv6 issue in NFS
+* Update JFFS2 file system with new DFS API
+* Fix the issue of stat "/.." of lwext4 (parai)
+* Fix the fs type search issue in mkfs
+* Fix the select issue in dfs_net
+
+## Tools
+
+* scons: add '--useconfig' command to use an exist config file
+* scons: force to use g++ for link when enable `RT_USING_CPLUSPLUS` in GNU GCC configuration
+* Enable package feature in Linux/MacOS host
+
+## BSP
+
+* Add NUC472 bsp (bluebear)
+* Update SD/MMC driver for qemu-vexpress-A9
+* Add keyboard/mouse driver for qemu-vexpress-a9
+* Add ADC/I2C/Flash/PWM/RTC/smbus/SPI driver for apollo2 (Haleyl)
+* Add I2C/LCD/Touch driver for i.MXRT1052-EVK
+* Update SD/MMC driver for mini2440 (kuangdazzidd)
+* Update simulator to adapt VC++ compiler
+* Add USB host driver in stm32f4xx-HAL (uestczyh222)
+* Update EMAC driver for IPv6 in stm32f40x/stm32f107
+* Add stm32h743-nucleo bsp (polariss)
+
 # RT-Thread v3.0.1 Change log
 
 ## Platform:

@@ -221,19 +221,19 @@ void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 #ifdef RT_USING_TINY_SIZE
     char *tmp = (char *)dst, *s = (char *)src;
     rt_ubase_t len;
-    
-    if(tmp <= s || tmp > (s + count))
+
+    if (tmp <= s || tmp > (s + count))
     {
         while (count--)
             *tmp ++ = *s ++;
     }
     else
     {
-        for(len = count; len > 0; len --)
-            tmp[len -1] = s[len - 1];
+        for (len = count; len > 0; len --)
+            tmp[len - 1] = s[len - 1];
     }
 
-    return dst; 
+    return dst;
 #else
 
 #define UNALIGNED(X, Y)                                               \
@@ -542,7 +542,7 @@ void rt_show_version(void)
     rt_kprintf("- RT -     Thread Operating System\n");
     rt_kprintf(" / | \\     %d.%d.%d build %s\n",
                RT_VERSION, RT_SUBVERSION, RT_REVISION, __DATE__);
-    rt_kprintf(" 2006 - 2017 Copyright by rt-thread team\n");
+    rt_kprintf(" 2006 - 2018 Copyright by rt-thread team\n");
 }
 RTM_EXPORT(rt_show_version);
 

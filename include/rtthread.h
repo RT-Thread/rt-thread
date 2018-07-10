@@ -149,6 +149,7 @@ rt_err_t rt_thread_delete(rt_thread_t thread);
 
 rt_err_t rt_thread_yield(void);
 rt_err_t rt_thread_delay(rt_tick_t tick);
+rt_err_t rt_thread_mdelay(rt_int32_t ms);
 rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg);
 rt_err_t rt_thread_suspend(rt_thread_t thread);
 rt_err_t rt_thread_resume(rt_thread_t thread);
@@ -204,6 +205,7 @@ void rt_scheduler_sethook(void (*hook)(rt_thread_t from, rt_thread_t to));
 void rt_signal_mask(int signo);
 void rt_signal_unmask(int signo);
 rt_sighandler_t rt_signal_install(int signo, rt_sighandler_t handler);
+int rt_signal_wait(const rt_sigset_t *set, rt_siginfo_t *si, rt_int32_t timeout);
 
 int rt_system_signal_init(void);
 #endif
@@ -561,6 +563,10 @@ void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t
 
 void rt_assert_handler(const char *ex, const char *func, rt_size_t line);
 #endif /* RT_DEBUG */
+
+#ifdef RT_USING_FINSH
+#include <finsh_api.h>
+#endif
 
 /**@}*/
 

@@ -8,8 +8,8 @@
 #ifdef RT_USING_SPI
 #include "rt_stm32f10x_spi.h"
 
-#if defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT)
-#include "msd.h"
+#if defined(RT_USING_DFS) && defined(RT_USING_SPI_MSD)
+#include "spi_msd.h"
 #endif /* RT_USING_DFS */
 
 /*
@@ -70,7 +70,7 @@ void rt_platform_init(void)
 #ifdef RT_USING_SPI
     rt_hw_spi_init();
 
-#if defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT)
+#if defined(RT_USING_DFS) && defined(RT_USING_SPI_MSD)
     /* init sdcard driver */
     {
         extern void rt_hw_msd_init(void);
@@ -90,7 +90,7 @@ void rt_platform_init(void)
 
         msd_init("sd0", "spi10");
     }
-#endif /* RT_USING_DFS && RT_USING_DFS_ELMFAT */
+#endif /* RT_USING_DFS && RT_USING_SPI_MSD */
 
 #endif // RT_USING_SPI
 

@@ -11,11 +11,11 @@ sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 try:
     from building import *
 except:
-    print 'Cannot found RT-Thread root directory, please check RTT_ROOT'
-    print RTT_ROOT
+    print('Cannot found RT-Thread root directory, please check RTT_ROOT')
+    print(RTT_ROOT)
     exit(-1)
 
-TARGET = 'rtthread-stm32f7xx.' + rtconfig.TARGET_EXT
+TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 
 env = Environment(tools = ['mingw'],
 	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,

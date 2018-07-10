@@ -19,9 +19,51 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-07-31     zhangjun      copy from mini2440
+ * 2017-07-31     tanek        first implementation
  */
+
 #include <rtthread.h>
+
+/* flag in interrupt handling */
+rt_uint32_t rt_interrupt_from_thread;
+rt_uint32_t rt_interrupt_to_thread;
+rt_uint32_t rt_thread_switch_interrupt_flag;
+
+struct stack_frame
+{
+    rt_ubase_t epc;        /* epc - epc    - program counter                     */
+    rt_ubase_t ra;         /* x1  - ra     - return address for jumps            */
+    rt_ubase_t mstatus;    /*              - machine status register             */
+    rt_ubase_t gp;         /* x3  - gp     - global pointer                      */
+    rt_ubase_t tp;         /* x4  - tp     - thread pointer                      */
+    rt_ubase_t t0;         /* x5  - t0     - temporary register 0                */
+    rt_ubase_t t1;         /* x6  - t1     - temporary register 1                */
+    rt_ubase_t t2;         /* x7  - t2     - temporary register 2                */
+    rt_ubase_t s0_fp;      /* x8  - s0/fp  - saved register 0 or frame pointer   */
+    rt_ubase_t s1;         /* x9  - s1     - saved register 1                    */
+    rt_ubase_t a0;         /* x10 - a0     - return value or function argument 0 */
+    rt_ubase_t a1;         /* x11 - a1     - return value or function argument 1 */
+    rt_ubase_t a2;         /* x12 - a2     - function argument 2                 */
+    rt_ubase_t a3;         /* x13 - a3     - function argument 3                 */
+    rt_ubase_t a4;         /* x14 - a4     - function argument 4                 */
+    rt_ubase_t a5;         /* x15 - a5     - function argument 5                 */
+    rt_ubase_t a6;         /* x16 - a6     - function argument 6                 */
+    rt_ubase_t a7;         /* x17 - s7     - function argument 7                 */
+    rt_ubase_t s2;         /* x18 - s2     - saved register 2                    */
+    rt_ubase_t s3;         /* x19 - s3     - saved register 3                    */
+    rt_ubase_t s4;         /* x20 - s4     - saved register 4                    */
+    rt_ubase_t s5;         /* x21 - s5     - saved register 5                    */
+    rt_ubase_t s6;         /* x22 - s6     - saved register 6                    */
+    rt_ubase_t s7;         /* x23 - s7     - saved register 7                    */
+    rt_ubase_t s8;         /* x24 - s8     - saved register 8                    */
+    rt_ubase_t s9;         /* x25 - s9     - saved register 9                    */
+    rt_ubase_t s10;        /* x26 - s10    - saved register 10                   */
+    rt_ubase_t s11;        /* x27 - s11    - saved register 11                   */
+    rt_ubase_t t3;         /* x28 - t3     - temporary register 3                */
+    rt_ubase_t t4;         /* x29 - t4     - temporary register 4                */
+    rt_ubase_t t5;         /* x30 - t5     - temporary register 5                */
+    rt_ubase_t t6;         /* x31 - t6     - temporary register 6                */
+};
 
 /**
  * This function will initialize thread stack
@@ -36,46 +78,27 @@
 rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
                              rt_uint8_t *stack_addr, void *texit)
 {
-    rt_uint32_t *stk;
+    struct stack_frame *stack_frame;
+    rt_uint8_t         *stk;
+    int                i;
 
-    //stk      = (rt_uint32_t*)stack_addr;
-    stack_addr += sizeof(rt_uint32_t);
-    stack_addr  = (rt_uint8_t *)RT_ALIGN_DOWN((rt_uint32_t)stack_addr, 8);
-    stk  = (rt_uint32_t *)stack_addr;
+    stk  = stack_addr + sizeof(rt_uint32_t);
+    stk  = (rt_uint8_t *)RT_ALIGN_DOWN((rt_uint32_t)stk, 8);
+    stk -= sizeof(struct stack_frame);
 
-    *(--stk) = (rt_uint32_t)tentry;         /* entry point */
-    *(--stk) = (rt_uint32_t)texit;          /* ra */
-    *(--stk) = (rt_uint32_t)parameter;      /* a0 */
-    *(--stk) = 0xffffffff;          	    /* a1 */
-    *(--stk) = 0xffffffff;          	    /* a2 */
-    *(--stk) = 0xffffffff;          	    /* a3 */
-    *(--stk) = 0xffffffff;          	    /* a4 */
-    *(--stk) = 0xffffffff;          	    /* a5 */
-    *(--stk) = 0xffffffff;          	    /* a6 */
-    *(--stk) = 0xffffffff;          	    /* a7 */
-    *(--stk) = 0xffffffff;          	    /* s0/fp */
-    *(--stk) = 0xffffffff;          	    /* s1 */
-    *(--stk) = 0xffffffff;          	    /* s2 */
-    *(--stk) = 0xffffffff;          	    /* s3 */
-    *(--stk) = 0xffffffff;          	    /* s4 */
-    *(--stk) = 0xffffffff;          	    /* s5 */
-    *(--stk) = 0xffffffff;          	    /* s6 */
-    *(--stk) = 0xffffffff;          	    /* s7 */
-    *(--stk) = 0xffffffff;          	    /* s8 */
-    *(--stk) = 0xffffffff;          	    /* s9 */
-    *(--stk) = 0xffffffff;          	    /* s10*/
-    *(--stk) = 0xffffffff;          	    /* s11*/
-    *(--stk) = 0xffffffff;          	    /* t0 */
-    *(--stk) = 0xffffffff;          	    /* t1 */
-    *(--stk) = 0xffffffff;          	    /* t2 */
-    *(--stk) = 0xffffffff;          	    /* t3 */
-    *(--stk) = 0xffffffff;          	    /* t4 */
-    *(--stk) = 0xffffffff;          	    /* t5 */
-    *(--stk) = 0xffffffff;          	    /* t6 */
-    *(--stk) = 0xffffffff;          	    /* tp */
-    *(--stk) = 0xffffffff;          	    /* gp */
-    *(--stk) = 0x880;          	            /* mie */
-//    *(--stk) = (rt_uint32_t)parameter;      /* r0 : argument */
-    /* return task's current stack address */
-    return (rt_uint8_t *)stk;
+    stack_frame = (struct stack_frame *)stk;
+
+    for (i = 0; i < sizeof(struct stack_frame) / sizeof(rt_ubase_t); i++)
+    {
+        ((rt_ubase_t *)stack_frame)[i] = 0xdeadbeef;
+    }
+
+    stack_frame->ra      = (rt_ubase_t)texit;
+    stack_frame->a0      = (rt_ubase_t)parameter;
+    stack_frame->epc     = (rt_ubase_t)tentry;
+
+    // force to machine mode(MPP=11) and set MPIE to 1
+    stack_frame->mstatus = 0x00001880;
+
+    return stk;
 }

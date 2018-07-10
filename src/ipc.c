@@ -1013,7 +1013,6 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
         return -RT_ERROR;
 
     need_schedule = RT_FALSE;
-    RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(event->parent.parent)));
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -1021,6 +1020,8 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
     /* set event */
     event->set |= set;
 
+    RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(event->parent.parent)));
+    
     if (!rt_list_isempty(&event->parent.suspend_thread))
     {
         /* search thread list to resume thread */
@@ -1379,15 +1380,8 @@ rt_err_t rt_mb_delete(rt_mailbox_t mb)
     /* also resume all mailbox private suspended thread */
     rt_ipc_list_resume_all(&(mb->suspend_sender_thread));
 
-#if defined(RT_USING_MODULE) && defined(RT_USING_SLAB)
-    /* the mb object belongs to an application module */
-    if (mb->parent.parent.flag & RT_OBJECT_FLAG_MODULE)
-        rt_module_free(mb->parent.parent.module_id, mb->msg_pool);
-    else
-#endif
-
-        /* free mailbox pool */
-        RT_KERNEL_FREE(mb->msg_pool);
+    /* free mailbox pool */
+    RT_KERNEL_FREE(mb->msg_pool);
 
     /* delete mailbox object */
     rt_object_delete(&(mb->parent.parent));
@@ -1899,15 +1893,8 @@ rt_err_t rt_mq_delete(rt_mq_t mq)
     /* resume all suspended thread */
     rt_ipc_list_resume_all(&(mq->parent.suspend_thread));
 
-#if defined(RT_USING_MODULE) && defined(RT_USING_SLAB)
-    /* the mq object belongs to an application module */
-    if (mq->parent.parent.flag & RT_OBJECT_FLAG_MODULE)
-        rt_module_free(mq->parent.parent.module_id, mq->msg_pool);
-    else
-#endif
-
-        /* free message queue pool */
-        RT_KERNEL_FREE(mq->msg_pool);
+    /* free message queue pool */
+    RT_KERNEL_FREE(mq->msg_pool);
 
     /* delete message queue object */
     rt_object_delete(&(mq->parent.parent));

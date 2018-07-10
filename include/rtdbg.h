@@ -20,6 +20,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2016-11-12     Bernard      The first version
+ * 2018-05-25     armink       Add simple API, such as LOG_D, LOG_E
  */
 
 /*
@@ -32,15 +33,19 @@
  * header file.
  *
  * #define DBG_SECTION_NAME    "[ MOD]"
- * #define DEBUG_ENABLE     // enable debug macro
- * #define DEBUG_LEVEL      DBG_INFO
- * #include <rtdbg.h>       // must after of DEBUG_ENABLE or some other options
+ * #define DBG_ENABLE          // enable debug macro
+ * #define DBG_LEVEL           DBG_INFO
+ * #include <rtdbg.h>          // must after of DEBUG_ENABLE or some other options
  *
  * Then in your C/C++ file, you can use dbg_log macro to print out logs:
  * dbg_log(DBG_INFO, "this is a log!\n");
  *
- * Or if you want to use different color for different kinds log, you can
- * #define DEBUG_COLOR
+ * Or if you want to using the simple API, you can
+ * LOG_D("this is a debug log!");
+ * LOG_E("this is a error log!");
+ *
+ * If you want to use different color for different kinds log, you can
+ * #define DBG_COLOR
  */
 
 #ifndef RT_DBG_H__
@@ -120,12 +125,23 @@
         _DBG_COLOR(0);                                      \
     }
 
+#define dbg_log_line(level, ...)                            \
+    dbg_log(level, __VA_ARGS__);                            \
+    if ((level) >= DBG_LEVEL) {                             \
+        rt_kprintf("\n");                                   \
+    }
+
 #else
 #define dbg_log(level, fmt, ...)
 #define dbg_here
 #define dbg_enter
 #define dbg_exit
+#define dbg_log_line(level, ...)
 #endif
 
-#endif
+#define LOG_D(...)           dbg_log_line(DBG_LOG    , __VA_ARGS__)
+#define LOG_I(...)           dbg_log_line(DBG_INFO   , __VA_ARGS__)
+#define LOG_W(...)           dbg_log_line(DBG_WARNING, __VA_ARGS__)
+#define LOG_E(...)           dbg_log_line(DBG_ERROR  , __VA_ARGS__)
 
+#endif /* RT_DBG_H__ */

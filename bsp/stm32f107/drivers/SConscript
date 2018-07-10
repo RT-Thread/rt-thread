@@ -18,7 +18,6 @@ if GetDepend('RT_USING_LWIP'):
 
 if GetDepend('RT_USING_SPI'):
 	src += ['rt_stm32f10x_spi.c'] 
-	src += ['msd.c']
 
 CPPPATH = [cwd]
 

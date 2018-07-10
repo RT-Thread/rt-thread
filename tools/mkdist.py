@@ -1,3 +1,26 @@
+#
+# File      : mkdir.py
+# This file is part of RT-Thread RTOS
+# COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License along
+#  with this program; if not, write to the Free Software Foundation, Inc.,
+#  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+# Change Logs:
+# Date           Author       Notes
+# 2017-10-04     Bernard      The first version
+
 import os
 import shutil
 
@@ -66,14 +89,13 @@ def walk_kconfig(RTT_ROOT, source_list):
             pathfile = os.path.join(parent, 'KConfig')
             source_list.append(pathfile)
 
-
 def MakeCopy(program, BSP_ROOT, RTT_ROOT, Env):
     global source_list
 
     target_path = os.path.join(BSP_ROOT, 'rt-thread')
 
     if target_path.startswith(RTT_ROOT):
-        print('please use scons --dist to make a distribution')
+        print('please use scons --copy to copy rt-thread to local bsp')
         return
 
     for item in program:
@@ -140,7 +162,7 @@ def MakeCopyHeader(program, BSP_ROOT, RTT_ROOT, Env):
     target_path = os.path.join(BSP_ROOT, 'rt-thread')
 
     if target_path.startswith(RTT_ROOT):
-        print('please use scons --dist to make a distribution')
+        print('please use scons --copy-header to copy header files only')
         return
 
     for item in program:
@@ -186,7 +208,7 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env):
 
     # copy BSP files
     do_copy_folder(os.path.join(BSP_ROOT), dist_dir, 
-        ignore_patterns('build', 'dist', '*.pyc', '*.old', '*.map', 'rtthread.bin', '.sconsign.dblite', '*.elf', '*.axf'))
+        ignore_patterns('build', 'dist', '*.pyc', '*.old', '*.map', 'rtthread.bin', '.sconsign.dblite', '*.elf', '*.axf', 'cconfig.h'))
 
     global source_list
 

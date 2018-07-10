@@ -312,9 +312,11 @@ static void mmc_request_send(struct rt_mmcsd_host *host, struct rt_mmcsd_req *re
 {
     struct sdhci_t *sdhci = (struct sdhci_t *)host->private_data;
     struct sdhci_cmd_t cmd;
+    struct sdhci_cmd_t stop;
     struct sdhci_data_t dat;
 
     rt_memset(&cmd, 0, sizeof(struct sdhci_cmd_t));
+    rt_memset(&stop, 0, sizeof(struct sdhci_cmd_t));
     rt_memset(&dat, 0, sizeof(struct sdhci_data_t));
 
     cmd.cmdidx = req->cmd->cmd_code;
@@ -343,6 +345,7 @@ static void mmc_request_send(struct rt_mmcsd_host *host, struct rt_mmcsd_req *re
     }
 
     dbg_log(DBG_INFO, "cmdarg:%d\n", cmd.cmdarg);
+    dbg_log(DBG_INFO, "cmdidx:%d\n", cmd.cmdidx);
 
     dbg_log(DBG_INFO, "[0]:0x%08x [1]:0x%08x [2]:0x%08x [3]:0x%08x\n", cmd.response[0], cmd.response[1], cmd.response[2], cmd.response[3]);
     req->cmd->resp[3] = cmd.response[3];
@@ -352,6 +355,22 @@ static void mmc_request_send(struct rt_mmcsd_host *host, struct rt_mmcsd_req *re
 
     if(req->cmd->err)
         dbg_log(DBG_ERROR, "transfer cmd err \n");
+    
+    if (req->stop)
+    {
+        stop.cmdidx = req->stop->cmd_code;
+        stop.cmdarg = req->stop->arg;
+        if (req->stop->flags & RESP_MASK)
+        {
+            stop.resptype = PL180_RSP_PRESENT;
+            if (resp_type(req->stop) == RESP_R2)
+                stop.resptype |= PL180_RSP_136BIT;
+        }
+        else
+            stop.resptype = 0;
+
+        req->stop->err = sdhci_pl180_transfer(sdhci, &stop, RT_NULL);
+    }
 
     mmcsd_req_complete(host);
 }

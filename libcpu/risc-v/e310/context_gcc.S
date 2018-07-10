@@ -1,7 +1,7 @@
 ;/*
 ; * File      : context_gcc.S
 ; * This file is part of RT-Thread RTOS
-; * COPYRIGHT (C) 2006, RT-Thread Development Team
+; * COPYRIGHT (C) 2018, RT-Thread Development Team
 ; *
 ; *  This program is free software; you can redistribute it and/or modify
 ; *  it under the terms of the GNU General Public License as published by
@@ -19,54 +19,26 @@
 ; *
 ; * Change Logs:
 ; * Date           Author       Notes
-; * 2017-07-16     zhangjun    for hifive1
+; * 2017-07-16     zhangjun     for hifive1
+; * 2018-05-29     tanek        optimize  rt_hw_interrupt_*
+; * 2018-05-29     tanek        add mie register to context
 ; */
 
-#include "encoding.h"
-#include "sifive/bits.h"
-
 /*
- * rt_base_t rt_hw_interrupt_disable();
+ * rt_base_t rt_hw_interrupt_disable(void);
  */
     .globl rt_hw_interrupt_disable
 rt_hw_interrupt_disable:
-  addi sp, sp, -12
-  sw a5, (sp)
-  li a5, 0x800
-  csrr a0, mie
-  blt a0, a5, 1f
-/*  interrupt is enable before disable it*/
-  addi a0, a0, 1
-
-  li a5, 0x1
-  addi a5, a5, -2048
-  csrrc a5, mie, a5
-/*  csrrc a5, mie, 128*/
-  j 2f
-/*  interrupt is disabled before disable it*/
-1:
-  li a0, 0
-2:
-  lw a5, (sp)
-  addi sp, sp, 12
-  ret
+    csrrci a0, mstatus, 8
+    ret
 
 /*
  * void rt_hw_interrupt_enable(rt_base_t level);
  */
     .globl rt_hw_interrupt_enable
 rt_hw_interrupt_enable:
-  addi sp, sp, -12
-  sw a5, (sp)
-  beqz a0, 1f
-  li a5, 0x1
-  addi a5, a5, -2048
-  csrrs a5, mie, a5
-/*  csrrs a5, mie, 128*/
-1:
-  lw a5, (sp)
-  addi sp, sp, 12
-  ret
+    csrw mstatus, a0
+    ret
 
 /*
  * void rt_hw_context_switch(rt_uint32 from, rt_uint32 to);
@@ -75,132 +47,151 @@ rt_hw_interrupt_enable:
  */
     .globl rt_hw_context_switch
 rt_hw_context_switch:
-  addi  sp,  sp, -32*REGBYTES
 
-  STORE sp,  (a0)
-  STORE x30, 1*REGBYTES(sp)
-  STORE x31, 2*REGBYTES(sp)
-  STORE x3,  3*REGBYTES(sp)
-  STORE x4,  4*REGBYTES(sp)
-  STORE x5,  5*REGBYTES(sp)
-  STORE x6,  6*REGBYTES(sp)
-  STORE x7,  7*REGBYTES(sp)
-  STORE x8,  8*REGBYTES(sp)
-  STORE x9,  9*REGBYTES(sp)
-  STORE x10, 10*REGBYTES(sp)
-  STORE x11, 11*REGBYTES(sp)
-  STORE x12, 12*REGBYTES(sp)
-  STORE x13, 13*REGBYTES(sp)
-  STORE x14, 14*REGBYTES(sp)
-  STORE x15, 15*REGBYTES(sp)
-  STORE x16, 16*REGBYTES(sp)
-  STORE x17, 17*REGBYTES(sp)
-  STORE x18, 18*REGBYTES(sp)
-  STORE x19, 19*REGBYTES(sp)
-  STORE x20, 20*REGBYTES(sp)
-  STORE x21, 21*REGBYTES(sp)
-  STORE x22, 22*REGBYTES(sp)
-  STORE x23, 23*REGBYTES(sp)
-  STORE x24, 24*REGBYTES(sp)
-  STORE x25, 25*REGBYTES(sp)
-  STORE x26, 26*REGBYTES(sp)
-  STORE x27, 27*REGBYTES(sp)
-  STORE x28, 28*REGBYTES(sp)
-  STORE x10, 29*REGBYTES(sp)
-  STORE x1,  30*REGBYTES(sp)
-  STORE x1,  31*REGBYTES(sp)
-  csrr  x10, mie
-  STORE x10, 0*REGBYTES(sp)
-/*
- *Remain in M-mode after mret
- *enable interrupt in M-mode
- */
-  li t0, 136
-  csrrs t0, mstatus, t0
+    /* saved from thread context
+     *     x1/ra       -> sp(0)
+     *     x1/ra       -> sp(1)
+     *     mstatus.mie -> sp(2)
+     *     x(i)        -> sp(i-4)
+     */
+    addi  sp,  sp, -32 * 4
+    sw sp,  (a0)
 
-  LOAD sp,  (a1)
-  LOAD x30, 1*REGBYTES(sp)
-  LOAD x31, 2*REGBYTES(sp)
-  LOAD x3,  3*REGBYTES(sp)
-  LOAD x4,  4*REGBYTES(sp)
-  LOAD x5,  5*REGBYTES(sp)
-  LOAD x6,  6*REGBYTES(sp)
-  LOAD x7,  7*REGBYTES(sp)
-  LOAD x8,  8*REGBYTES(sp)
-  LOAD x9,  9*REGBYTES(sp)
-  LOAD x29, 10*REGBYTES(sp)
-  LOAD x11, 11*REGBYTES(sp)
-  LOAD x12, 12*REGBYTES(sp)
-  LOAD x13, 13*REGBYTES(sp)
-  LOAD x14, 14*REGBYTES(sp)
-  LOAD x15, 15*REGBYTES(sp)
-  LOAD x16, 16*REGBYTES(sp)
-  LOAD x17, 17*REGBYTES(sp)
-  LOAD x18, 18*REGBYTES(sp)
-  LOAD x19, 19*REGBYTES(sp)
-  LOAD x20, 20*REGBYTES(sp)
-  LOAD x21, 21*REGBYTES(sp)
-  LOAD x22, 22*REGBYTES(sp)
-  LOAD x23, 23*REGBYTES(sp)
-  LOAD x24, 24*REGBYTES(sp)
-  LOAD x25, 25*REGBYTES(sp)
-  LOAD x26, 26*REGBYTES(sp)
-  LOAD x27, 27*REGBYTES(sp)
-  LOAD x28, 28*REGBYTES(sp)
-  LOAD x10, 31*REGBYTES(sp)
-  csrw mepc,x10
-  LOAD x10, 0*REGBYTES(sp)
-  csrw mie, x10
-  LOAD x10, 29*REGBYTES(sp)
-  LOAD x1,  30*REGBYTES(sp)
-  
-  addi sp,  sp, 32*REGBYTES
-  mret
-	
+    sw x1,   0 * 4(sp)
+    sw x1,   1 * 4(sp)
+
+    csrr a0, mstatus
+    andi a0, a0, 8
+    beqz a0, save_mpie
+    li   a0, 0x80
+save_mpie:
+    sw a0,   2 * 4(sp)
+
+    sw x4,   4 * 4(sp)
+    sw x5,   5 * 4(sp)
+    sw x6,   6 * 4(sp)
+    sw x7,   7 * 4(sp)
+    sw x8,   8 * 4(sp)
+    sw x9,   9 * 4(sp)
+    sw x10, 10 * 4(sp)
+    sw x11, 11 * 4(sp)
+    sw x12, 12 * 4(sp)
+    sw x13, 13 * 4(sp)
+    sw x14, 14 * 4(sp)
+    sw x15, 15 * 4(sp)
+    sw x16, 16 * 4(sp)
+    sw x17, 17 * 4(sp)
+    sw x18, 18 * 4(sp)
+    sw x19, 19 * 4(sp)
+    sw x20, 20 * 4(sp)
+    sw x21, 21 * 4(sp)
+    sw x22, 22 * 4(sp)
+    sw x23, 23 * 4(sp)
+    sw x24, 24 * 4(sp)
+    sw x25, 25 * 4(sp)
+    sw x26, 26 * 4(sp)
+    sw x27, 27 * 4(sp)
+    sw x28, 28 * 4(sp)
+    sw x29, 29 * 4(sp)
+    sw x30, 30 * 4(sp)
+    sw x31, 31 * 4(sp)
+
+    /* restore to thread context
+     * sp(0) -> epc;
+     * sp(1) -> ra;
+     * sp(i) -> x(i+2)
+     */
+    lw sp,  (a1)
+
+    /* resw ra to mepc */
+    lw a1,   0 * 4(sp)
+    csrw mepc, a1
+    lw x1,   1 * 4(sp)
+
+    /* force to machin mode(MPP=11) */
+    li a1, 0x00001800;
+    csrs mstatus, a1
+    lw a1,   2 * 4(sp)
+    csrs mstatus, a1
+
+    lw x4,   4 * 4(sp)
+    lw x5,   5 * 4(sp)
+    lw x6,   6 * 4(sp)
+    lw x7,   7 * 4(sp)
+    lw x8,   8 * 4(sp)
+    lw x9,   9 * 4(sp)
+    lw x10, 10 * 4(sp)
+    lw x11, 11 * 4(sp)
+    lw x12, 12 * 4(sp)
+    lw x13, 13 * 4(sp)
+    lw x14, 14 * 4(sp)
+    lw x15, 15 * 4(sp)
+    lw x16, 16 * 4(sp)
+    lw x17, 17 * 4(sp)
+    lw x18, 18 * 4(sp)
+    lw x19, 19 * 4(sp)
+    lw x20, 20 * 4(sp)
+    lw x21, 21 * 4(sp)
+    lw x22, 22 * 4(sp)
+    lw x23, 23 * 4(sp)
+    lw x24, 24 * 4(sp)
+    lw x25, 25 * 4(sp)
+    lw x26, 26 * 4(sp)
+    lw x27, 27 * 4(sp)
+    lw x28, 28 * 4(sp)
+    lw x29, 29 * 4(sp)
+    lw x30, 30 * 4(sp)
+    lw x31, 31 * 4(sp)
+
+    addi sp,  sp, 32 * 4
+    mret
+
 /*
  * void rt_hw_context_switch_to(rt_uint32 to);
  * a0 --> to
  */
     .globl rt_hw_context_switch_to
 rt_hw_context_switch_to:
-  LOAD sp,  (a0)
-  LOAD x30, 1*REGBYTES(sp)
-  LOAD x31, 2*REGBYTES(sp)
-  LOAD x3,  3*REGBYTES(sp)
-  LOAD x4,  4*REGBYTES(sp)
-  LOAD x5,  5*REGBYTES(sp)
-  LOAD x6,  6*REGBYTES(sp)
-  LOAD x7,  7*REGBYTES(sp)
-  LOAD x8,  8*REGBYTES(sp)
-  LOAD x9,  9*REGBYTES(sp)
-  LOAD x29, 10*REGBYTES(sp)
-  LOAD x11, 11*REGBYTES(sp)
-  LOAD x12, 12*REGBYTES(sp)
-  LOAD x13, 13*REGBYTES(sp)
-  LOAD x14, 14*REGBYTES(sp)
-  LOAD x15, 15*REGBYTES(sp)
-  LOAD x16, 16*REGBYTES(sp)
-  LOAD x17, 17*REGBYTES(sp)
-  LOAD x18, 18*REGBYTES(sp)
-  LOAD x19, 19*REGBYTES(sp)
-  LOAD x20, 20*REGBYTES(sp)
-  LOAD x21, 21*REGBYTES(sp)
-  LOAD x22, 22*REGBYTES(sp)
-  LOAD x23, 23*REGBYTES(sp)
-  LOAD x24, 24*REGBYTES(sp)
-  LOAD x25, 25*REGBYTES(sp)
-  LOAD x26, 26*REGBYTES(sp)
-  LOAD x27, 27*REGBYTES(sp)
-  LOAD x28, 28*REGBYTES(sp)
-  LOAD x10, 31*REGBYTES(sp)
-  csrw mepc,a0
-  LOAD x10, 29*REGBYTES(sp)
-  LOAD x1,  30*REGBYTES(sp)
-  
+    lw sp, (a0)
 
-  addi sp,  sp, 32*REGBYTES
-  mret
-	
+    /* load epc from stack */
+    lw a0,   0 * 4(sp)
+    csrw mepc, a0
+    lw x1,   1 * 4(sp)
+    /* load mstatus from stack */
+    lw a0,   2 * 4(sp)
+    csrw mstatus, a0
+    lw x4,   4 * 4(sp)
+    lw x5,   5 * 4(sp)
+    lw x6,   6 * 4(sp)
+    lw x7,   7 * 4(sp)
+    lw x8,   8 * 4(sp)
+    lw x9,   9 * 4(sp)
+    lw x10, 10 * 4(sp)
+    lw x11, 11 * 4(sp)
+    lw x12, 12 * 4(sp)
+    lw x13, 13 * 4(sp)
+    lw x14, 14 * 4(sp)
+    lw x15, 15 * 4(sp)
+    lw x16, 16 * 4(sp)
+    lw x17, 17 * 4(sp)
+    lw x18, 18 * 4(sp)
+    lw x19, 19 * 4(sp)
+    lw x20, 20 * 4(sp)
+    lw x21, 21 * 4(sp)
+    lw x22, 22 * 4(sp)
+    lw x23, 23 * 4(sp)
+    lw x24, 24 * 4(sp)
+    lw x25, 25 * 4(sp)
+    lw x26, 26 * 4(sp)
+    lw x27, 27 * 4(sp)
+    lw x28, 28 * 4(sp)
+    lw x29, 29 * 4(sp)
+    lw x30, 30 * 4(sp)
+    lw x31, 31 * 4(sp)
+
+    addi sp,  sp, 32 * 4
+    mret
 
 /*
  * void rt_hw_context_switch_interrupt(rt_uint32 from, rt_uint32 to);
@@ -210,27 +201,27 @@ rt_hw_context_switch_to:
     .globl rt_interrupt_to_thread
     .globl rt_hw_context_switch_interrupt
 rt_hw_context_switch_interrupt:
-  addi sp, sp, -16
-  sw   s0, 12(sp)
-  sw   a0, 8(sp)
-  sw   a5, 4(sp)
+    addi sp, sp, -16
+    sw   s0, 12(sp)
+    sw   a0, 8(sp)
+    sw   a5, 4(sp)
 
-  la   a0, rt_thread_switch_interrupt_flag
-  lw   a5, (a0)
-  bnez a5, _reswitch
-  li   a5, 1
-  sw   a5, (a0)
+    la   a0, rt_thread_switch_interrupt_flag
+    lw   a5, (a0)
+    bnez a5, _reswitch
+    li   a5, 1
+    sw   a5, (a0)
 
-  la   a5, rt_interrupt_from_thread
-  lw   a0, 8(sp)
-  sw   a0, (a5)
+    la   a5, rt_interrupt_from_thread
+    lw   a0, 8(sp)
+    sw   a0, (a5)
 
 _reswitch:
-  la   a5, rt_interrupt_to_thread
-  sw   a1, (a5)
+    la   a5, rt_interrupt_to_thread
+    sw   a1, (a5)
 
-  lw   a5, 4(sp)
-  lw   a0, 8(sp)
-  lw   s0, 12(sp)
-  addi sp, sp, 16
-  ret
+    lw   a5, 4(sp)
+    lw   a0, 8(sp)
+    lw   s0, 12(sp)
+    addi sp, sp, 16
+    ret

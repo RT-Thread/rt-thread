@@ -1,9 +1,12 @@
 /*
+ * The Clear BSD License
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
  * Copyright 2017 NXP
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * are permitted (subject to the limitations in the disclaimer below) provided
+ *  that the following conditions are met:
  *
  * o Redistributions of source code must retain the above copyright notice, this list
  *   of conditions and the following disclaimer.
@@ -16,6 +19,7 @@
  *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE.
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -66,9 +70,9 @@ typedef enum _aipstz_master {
 /*! @brief List of AIPSTZ peripheral access control configuration.*/
 typedef enum _aipstz_peripheral_access_control {
     kAIPSTZ_PeripheralAllowUntrustedMaster = 1U,
-    kAIPSTZ_PeripheralWriteProtected = (1U < 1),
-    kAIPSTZ_PeripheralRequireSupervisor = (1U < 2),
-    kAIPSTZ_PeripheralAllowBufferedWrite = (1U < 2)
+    kAIPSTZ_PeripheralWriteProtected = (1U << 1),
+    kAIPSTZ_PeripheralRequireSupervisor = (1U << 2),
+    kAIPSTZ_PeripheralAllowBufferedWrite = (1U << 3)
 } aipstz_peripheral_access_control_t;
 
 /*! @brief List of AIPSTZ peripherals. Organized by register offset for higher 32 bits, width for the 8-15 bits and shift for lower 8 bits.*/

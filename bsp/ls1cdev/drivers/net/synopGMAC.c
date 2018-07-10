@@ -31,6 +31,8 @@
 #include "mii.c"
 #include "synopGMAC_debug.h"
 #include <ls1c.h>
+#include "ls1c_pin.h"
+
 #define RMII
 
 #define Gmac_base			0xbfe10000
@@ -860,14 +862,26 @@ void eth_rx_irq(int irqno,void *param)
 	return;
 }
 
-void rt_hw_eth_init(void)
+int rt_hw_eth_init(void)
 {
 	u64 base_addr = Gmac_base; 
 	struct synopGMACNetworkAdapter * synopGMACadapter;
 	static u8 mac_addr0[6] = DEFAULT_MAC_ADDRESS;
-
+	int index;
+	
 	rt_sem_init(&sem_ack, "tx_ack", 1, RT_IPC_FLAG_FIFO);
 	rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
+
+	for(index=21; index<=30;index++)
+	{
+		pin_set_purpose(index, PIN_PURPOSE_OTHER);
+		pin_set_remap(index, PIN_REMAP_DEFAULT);
+	}
+	pin_set_purpose(35, PIN_PURPOSE_OTHER);
+	pin_set_remap(35, PIN_REMAP_DEFAULT);
+	*((volatile unsigned int *)0xbfd00424) &= ~(7 << 28);
+	*((volatile unsigned int *)0xbfd00424) |= (1 << 30); //wl rmii
+
 
 
 	memset(&eth_dev, 0, sizeof(eth_dev));
@@ -925,4 +939,9 @@ void rt_hw_eth_init(void)
 	eth_dev.parent.eth_rx            = rt_eth_rx;
 
 	eth_device_init(&(eth_dev.parent), "e0");
+
+	return 0;
 }
+
+INIT_DEVICE_EXPORT(rt_hw_eth_init);
+

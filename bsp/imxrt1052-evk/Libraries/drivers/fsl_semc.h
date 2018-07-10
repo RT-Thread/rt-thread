@@ -1,8 +1,11 @@
 /*
+ * The Clear BSD License
  * Copyright 2017 NXP
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * are permitted (subject to the limitations in the disclaimer below) provided
+ * that the following conditions are met:
  *
  * o Redistributions of source code must retain the above copyright notice, this list
  *   of conditions and the following disclaimer.
@@ -15,6 +18,7 @@
  *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE.
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -42,8 +46,8 @@
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief SEMC driver version 2.0.0. */
-#define FSL_SEMC_DRIVER_VERSION (MAKE_VERSION(2, 0, 0))
+/*! @brief SEMC driver version 2.0.1. */
+#define FSL_SEMC_DRIVER_VERSION (MAKE_VERSION(2, 0, 2))
 /*@}*/
 
 /*! @brief SEMC status. */
@@ -87,10 +91,10 @@ typedef enum _semc_sdram_cs {
 } semc_sdram_cs_t;
 
 /*! @brief SEMC NAND device type. */
-typedef enum _semc_nand_type {
-    kSEMC_NAND_AXI = 0,
-    kSEMC_NAND_IP,
-} semc_nand_type_t;
+typedef enum _semc_nand_access_type {
+    kSEMC_NAND_ACCESS_BY_AXI = 0,
+    kSEMC_NAND_ACCESS_BY_IPCMD,
+} semc_nand_access_type_t;
 
 /*! @brief SEMC interrupts . */
 typedef enum _semc_interrupt_enable {
@@ -273,9 +277,7 @@ typedef enum _semc_ipcmd_nand_addrmode {
 
 /*! @brief SEMC IP command for NAND： command mode. */
 typedef enum _semc_ipcmd_nand_cmdmode {
-    kSEMC_NANDCM_AXICmdAddrRead = 0x0U, /*!< For AXI read. */
-    kSEMC_NANDCM_AXICmdAddrWrite,       /*!< For AXI write.  */
-    kSEMC_NANDCM_Command,               /*!< command. */
+    kSEMC_NANDCM_Command = 0x2U,        /*!< command. */
     kSEMC_NANDCM_CommandHold,           /*!< Command hold. */
     kSEMC_NANDCM_CommandAddress,        /*!< Command address. */
     kSEMC_NANDCM_CommandAddressHold,    /*!< Command address hold.  */
@@ -345,7 +347,7 @@ typedef struct _semc_sdram_config
     semc_sdram_column_bit_num_t columnAddrBitNum; /*!< Column address bit number. */
     semc_caslatency_t casLatency;                 /*!< CAS latency. */
     uint8_t tPrecharge2Act_Ns;                    /*!< Precharge to active wait time in unit of nanosecond. */
-    uint8_t tAct2ReadWrtie_Ns;                    /*!< Act to read/write wait time in unit of nanosecond. */
+    uint8_t tAct2ReadWrite_Ns;                    /*!< Act to read/write wait time in unit of nanosecond. */
     uint8_t tRefreshRecovery_Ns;                  /*!< Refresh recovery time in unit of nanosecond. */
     uint8_t tWriteRecovery_Ns;                    /*!< write recovery time in unit of nanosecond. */
     uint8_t tCkeOff_Ns;                           /*!< CKE off minimum time in unit of nanosecond. */
@@ -359,6 +361,26 @@ typedef struct _semc_sdram_config
     uint32_t refreshUrgThreshold;    /*!< Refresh urgent threshold. */
     uint8_t refreshBurstLen;         /*!< Refresh burst length. */
 } semc_sdram_config_t;
+
+
+/*! @brief SEMC NAND device timing configuration structure. */
+typedef struct _semc_nand_timing_config
+{
+    uint8_t tCeSetup_Ns;                         /*!< CE setup time: tCS. */
+    uint8_t tCeHold_Ns;                          /*!< CE hold time: tCH. */
+    uint8_t tCeInterval_Ns;                      /*!< CE interval time:tCEITV. */
+    uint8_t tWeLow_Ns;                           /*!< WE low time: tWP. */
+    uint8_t tWeHigh_Ns;                          /*!< WE high time: tWH. */
+    uint8_t tReLow_Ns;                           /*!< RE low time: tRP. */
+    uint8_t tReHigh_Ns;                          /*!< RE high time: tREH. */
+    uint8_t tTurnAround_Ns;                      /*!< Turnaround time for async mode: tTA. */
+    uint8_t tWehigh2Relow_Ns;                    /*!< WE# high to RE# wait time: tWHR. */
+    uint8_t tRehigh2Welow_Ns;                    /*!< RE# high to WE# low wait time: tRHW. */
+    uint8_t tAle2WriteStart_Ns;                  /*!< ALE to write start wait time: tADL. */
+    uint8_t tReady2Relow_Ns;                     /*!< Ready to RE# low min wait time: tRR. */
+    uint8_t tWehigh2Busy_Ns;                     /*!< WE# high to busy wait time: tWB. */    
+} semc_nand_timing_config_t;
+
 
 /*! @brief SEMC NAND configuration structure. */
 typedef struct _semc_nand_config
@@ -374,19 +396,7 @@ typedef struct _semc_nand_config
     semc_nand_address_option_t arrayAddrOption;  /*!< Address option. */
     sem_nand_burst_len_t burstLen;               /*!< Burst length. */
     smec_port_size_t portSize;                   /*!< Port size. */
-    uint8_t tCeSetup_Ns;                         /*!< CE setup time: tCS. */
-    uint8_t tCeHold_Ns;                          /*!< CE hold time: tCH. */
-    uint8_t tCeInterval_Ns;                      /*!< CE interval time:tCEITV. */
-    uint8_t tWeLow_Ns;                           /*!< WE low time: tWP. */
-    uint8_t tWeHigh_Ns;                          /*!< WE high time: tWH. */
-    uint8_t tReLow_Ns;                           /*!< RE low time: tRP. */
-    uint8_t tReHigh_Ns;                          /*!< RE high time: tREH. */
-    uint8_t tTurnAround_Ns;                      /*!< Turnaround time for async mode: tTA. */
-    uint8_t tWehigh2Relow_Ns;                    /*!< WE# high to RE# wait time: tWHR. */
-    uint8_t tRehigh2Welow_Ns;                    /*!< RE# high to WE# low wait time: tRHW. */
-    uint8_t tAle2WriteStart_Ns;                  /*!< ALE to write start wait time: tADL. */
-    uint8_t tReady2Relow_Ns;                     /*!< Ready to RE# low min wait time: tRR. */
-    uint8_t tWehigh2Busy_Ns;                     /*!< WE# high to busy wait time: tWB. */
+    semc_nand_timing_config_t *timingConfig;     /*!< SEMC nand timing configuration. */
 } semc_nand_config_t;
 
 /*! @brief SEMC NOR configuration structure. */

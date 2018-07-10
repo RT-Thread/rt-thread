@@ -30,6 +30,7 @@ extern "C" {
 #endif
 
 #include <rtthread.h>
+#include <sys/signal.h>
 
 enum rt_signal_value{
     SIG1 = SIGHUP,
@@ -67,57 +68,6 @@ enum rt_signal_value{
     SIGRT_MAX = 31, // SIGRTMAX,
     SIGMAX = NSIG,
 };
-
-/*
-The structure definitions on newlib:
-
-typedef void (*_sig_func_ptr)(int);
-
-struct sigaction
-{
-    _sig_func_ptr sa_handler;
-    sigset_t sa_mask;
-    int sa_flags;
-};
-
-typedef int sig_atomic_t;
-
-typedef _sig_func_ptr sig_t;
-typedef _sig_func_ptr sighandler_t;
-
-When enable POSIX_REALTIME_SIGNALS/POSIX_THREADS:
-
-union sigval {
-  int sival_int;
-  void *sival_ptr;
-};
-
-struct sigevent {
-  int sigev_notify;
-  int sigev_signo;
-  union sigval sigev_value;
-
-
-  void (*sigev_notify_function)( union sigval );
-
-  pthread_attr_t *sigev_notify_attributes;
-
-};
-
-typedef struct {
-  int si_signo;
-  int si_code;
-  union sigval si_value;
-} siginfo_t;
-
-*/
-
-rt_sighandler_t rt_signal_install(int signo, rt_sighandler_t handler);
-void rt_signal_mask(int signo);
-void rt_signal_unmask(int signo);
-int rt_thread_kill(rt_thread_t tid, int sig);
-
-int rt_system_signal_init(void);
 
 #ifdef __cplusplus
 }

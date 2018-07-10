@@ -156,3 +156,38 @@ def IARProject(target, script):
     out.close()
 
     IARWorkspace(target)
+    
+def IARVersion():
+    import subprocess
+    import re
+
+    def IARPath():
+        import rtconfig
+
+        # backup environ
+        old_environ = os.environ
+        os.environ['RTT_CC'] = 'iar'
+        reload(rtconfig)
+
+        # get iar path
+        path = rtconfig.EXEC_PATH
+
+        # restore environ
+        os.environ = old_environ
+        reload(rtconfig)
+
+        return path
+
+    path = IARPath();
+
+    if os.path.exists(path):
+        cmd = os.path.join(path, 'iccarm.exe')
+    else:
+        print('Error: get IAR version failed. Please update the IAR installation path in rtconfig.py!')
+        return "0.0"
+
+    child = subprocess.Popen([cmd, '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    stdout, stderr = child.communicate()
+
+    # example stdout: IAR ANSI C/C++ Compiler V8.20.1.14183/W32 for ARM
+    return re.search('[\d\.]+', stdout).group(0)

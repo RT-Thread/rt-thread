@@ -8,9 +8,7 @@
 
 #define RT_NAME_MAX 8
 #define RT_ALIGN_SIZE 4
-/* RT_THREAD_PRIORITY_8 is not set */
 #define RT_THREAD_PRIORITY_32
-/* RT_THREAD_PRIORITY_256 is not set */
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 100
 #define RT_DEBUG
@@ -19,7 +17,6 @@
 #define RT_DEBUG_THREAD 0
 #define RT_USING_HOOK
 #define IDLE_THREAD_STACK_SIZE 256
-/* RT_USING_TIMER_SOFT is not set */
 
 /* Inter-Thread communication */
 
@@ -28,49 +25,46 @@
 #define RT_USING_EVENT
 #define RT_USING_MAILBOX
 #define RT_USING_MESSAGEQUEUE
-/* RT_USING_SIGNALS is not set */
 
 /* Memory Management */
 
-/* RT_USING_MEMPOOL is not set */
 #define RT_USING_MEMHEAP
-/* RT_USING_NOHEAP is not set */
-/* RT_USING_SMALL_MEM is not set */
-/* RT_USING_SLAB is not set */
 #define RT_USING_MEMHEAP_AS_HEAP
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
 
 #define RT_USING_DEVICE
-/* RT_USING_INTERRUPT_INFO is not set */
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-/* RT_USING_MODULE is not set */
+#define ARCH_ARM
+#define ARCH_ARM_CORTEX_M
+#define ARCH_ARM_CORTEX_M7
 
 /* RT-Thread Components */
 
 #define RT_USING_COMPONENTS_INIT
 #define RT_USING_USER_MAIN
+#define RT_MAIN_THREAD_STACK_SIZE 2048
 
 /* C++ features */
 
-/* RT_USING_CPLUSPLUS is not set */
 
 /* Command shell */
 
 #define RT_USING_FINSH
+#define FINSH_THREAD_NAME "tshell"
 #define FINSH_USING_HISTORY
+#define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
 #define FINSH_THREAD_PRIORITY 20
 #define FINSH_THREAD_STACK_SIZE 4096
 #define FINSH_CMD_SIZE 80
-/* FINSH_USING_AUTH is not set */
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_DEFAULT
-/* FINSH_USING_MSH_ONLY is not set */
+#define FINSH_ARG_MAX 10
 
 /* Device virtual file system */
 
@@ -85,61 +79,39 @@
 
 #define RT_DFS_ELM_CODE_PAGE 437
 #define RT_DFS_ELM_WORD_ACCESS
-/* RT_DFS_ELM_USE_LFN_0 is not set */
-/* RT_DFS_ELM_USE_LFN_1 is not set */
-/* RT_DFS_ELM_USE_LFN_2 is not set */
 #define RT_DFS_ELM_USE_LFN_3
 #define RT_DFS_ELM_USE_LFN 3
 #define RT_DFS_ELM_MAX_LFN 255
 #define RT_DFS_ELM_DRIVES 2
 #define RT_DFS_ELM_MAX_SECTOR_SIZE 512
-/* RT_DFS_ELM_USE_ERASE is not set */
 #define RT_DFS_ELM_REENTRANT
 #define RT_USING_DFS_DEVFS
-/* RT_USING_DFS_NET is not set */
-/* RT_USING_DFS_ROMFS is not set */
-/* RT_USING_DFS_RAMFS is not set */
-/* RT_USING_DFS_UFFS is not set */
-/* RT_USING_DFS_NFS is not set */
 
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
 #define RT_USING_SERIAL
-/* RT_USING_CAN is not set */
-/* RT_USING_HWTIMER is not set */
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
-/* RT_USING_PIN is not set */
-/* RT_USING_MTD_NOR is not set */
-/* RT_USING_MTD_NAND is not set */
-/* RT_USING_RTC is not set */
+#define RT_USING_PIN
+#define RT_USING_RTC
 #define RT_USING_SDIO
-/* RT_USING_SPI is not set */
-/* RT_USING_WDT is not set */
-/* RT_USING_WIFI is not set */
+#define RT_USING_SPI
 
 /* Using USB */
 
-/* RT_USING_USB_HOST is not set */
-/* RT_USING_USB_DEVICE is not set */
 
 /* POSIX layer and C standard library */
 
 #define RT_USING_LIBC
-/* RT_USING_PTHREADS is not set */
-/* RT_USING_POSIX is not set */
 
 /* Network stack */
 
 /* light weight TCP/IP stack */
 
 #define RT_USING_LWIP
-#define RT_USING_LWIP141
-/* RT_USING_LWIP202 is not set */
-/* RT_LWIP_IGMP is not set */
+#define RT_USING_LWIP202
 #define RT_LWIP_ICMP
-/* RT_LWIP_SNMP is not set */
 #define RT_LWIP_DNS
 #define RT_LWIP_DHCP
 #define IP_SOF_BROADCAST 1
@@ -152,8 +124,6 @@
 #define RT_LWIP_MSKADDR "255.255.255.0"
 #define RT_LWIP_UDP
 #define RT_LWIP_TCP
-/* RT_LWIP_RAW is not set */
-/* RT_LWIP_PPP is not set */
 #define RT_MEMP_NUM_NETCONN 8
 #define RT_LWIP_PBUF_NUM 16
 #define RT_LWIP_RAW_PCB_NUM 4
@@ -168,97 +138,113 @@
 #define RT_LWIP_ETHTHREAD_PRIORITY 12
 #define RT_LWIP_ETHTHREAD_STACKSIZE 1024
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
-/* RT_LWIP_REASSEMBLY_FRAG is not set */
 #define LWIP_NETIF_STATUS_CALLBACK 1
 #define SO_REUSE 1
 #define LWIP_SO_RCVTIMEO 1
 #define LWIP_SO_SNDTIMEO 1
 #define LWIP_SO_RCVBUF 1
+#define LWIP_NETIF_LOOPBACK 0
 
 /* Modbus master and slave stack */
 
-/* RT_USING_MODBUS is not set */
-/* LWIP_USING_DHCPD is not set */
-/* RT_USING_NETUTILS is not set */
-
-/* RT-Thread UI Engine */
-
-#define RT_USING_GUIENGINE
-#define RTGUI_NAME_MAX 16
-#define RTGUI_USING_TTF
-#define UTF8_TO_UNICODE
-#define RTGUI_USING_FONT16
-#define RTGUI_USING_FONT12
-/* RTGUI_USING_FONTHZ is not set */
-/* RTGUI_IMAGE_XPM is not set */
-#define RTGUI_IMAGE_JPEG_NONE
-/* RTGUI_IMAGE_JPEG is not set */
-/* RTGUI_IMAGE_TJPGD is not set */
-/* RTGUI_IMAGE_PNG_NONE is not set */
-/* RTGUI_IMAGE_PNG is not set */
-#define RTGUI_IMAGE_LODEPNG
-/* RTGUI_IMAGE_BMP is not set */
-#define RTGUI_IMAGE_CONTAINER
-/* RTGUI_USING_DEMO is not set */
 
 /* VBUS(Virtual Software BUS) */
 
-/* RT_USING_VBUS is not set */
 
 /* Utilities */
 
-/* RT_USING_LOGTRACE is not set */
-/* RT_USING_RYM is not set */
+
+/* ARM CMSIS */
+
 
 /* RT-Thread online packages */
 
-/* system packages */
-
-/* PKG_USING_PARTITION is not set */
-/* PKG_USING_SQLITE is not set */
-/* PKG_USING_RTI is not set */
-
 /* IoT - internet of things */
 
-/* PKG_USING_PAHOMQTT is not set */
-/* PKG_USING_WEBCLIENT is not set */
-/* PKG_USING_MONGOOSE is not set */
-/* PKG_USING_WEBTERMINAL is not set */
-/* PKG_USING_CJSON is not set */
-/* PKG_USING_EZXML is not set */
-/* PKG_USING_NANOPB is not set */
+
+/* Wi-Fi */
+
+/* Marvell WiFi */
+
+
+/* Wiced WiFi */
+
 
 /* security packages */
 
-/* PKG_USING_MBEDTLS is not set */
-/* PKG_USING_libsodium is not set */
-/* PKG_USING_TINYCRYPT is not set */
 
 /* language packages */
 
-/* PKG_USING_JERRYSCRIPT is not set */
-/* PKG_USING_MICROPYTHON is not set */
 
 /* multimedia packages */
 
-/* PKG_USING_OPENMV is not set */
 
 /* tools packages */
 
-/* PKG_USING_CMBACKTRACE is not set */
-/* PKG_USING_EASYLOGGER is not set */
-/* PKG_USING_SYSTEMVIEW is not set */
-/* PKG_USING_IPERF is not set */
+
+/* system packages */
+
+/* RT-Thread GUI Engine */
+
+
+/* peripheral libraries and drivers */
+
 
 /* miscellaneous packages */
 
-/* PKG_USING_FASTLZ is not set */
-/* PKG_USING_MINILZO is not set */
+
+/* sample package */
+
 
 /* example package: hello */
 
-/* PKG_USING_HELLO is not set */
-#define RT_USING_UART
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+#define SOC_IMXRT1052
+#define BOARD_USING_HYPERFLASH
+#define BOARD_RT1050_EVK
+
+/* RT1050 Bsp Config */
+
+/* Select uart drivers */
+
 #define RT_USING_UART1
+
+/* Select spi bus and dev drivers */
+
+#define LPSPI_CLK_SOURCE_FROM_PLL3PFD1
+#define LPSPI_CLK_SOURCE 0
+#define LPSPI_CLK_SOURCE_DIVIDER 8
+#define RT_USING_SPIBUS4
+#define LPSPI4_SCK_GPIO_1
+#define LPSPI4_SDO_GPIO_1
+#define LPSPI4_SDI_GPIO_1
+
+/* Select iic bus drivers */
+
+#define RT_USING_HW_I2C1
+#define HW_I2C1_BADURATE_100kHZ
+
+/* Select lcd driver */
+
+/* Notice: Evk Board para: 480*272 4 4 8 2 40 10 106 45 */
+
+#define RT_USING_LCD
+#define LCD_WIDTH 480
+#define LCD_HEIGHT 272
+#define LCD_HFP 4
+#define LCD_VFP 4
+#define LCD_HBP 8
+#define LCD_VBP 2
+#define LCD_HSW 40
+#define LCD_VSW 10
+#define LCD_BL_PIN 106
+#define LCD_RST_PIN 45
+#define RT_USING_SDRAM
+#define RT_USING_RTC_HP
 
 #endif

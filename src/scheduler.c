@@ -263,7 +263,7 @@ void rt_schedule(void)
                 rt_hw_interrupt_enable(level);
             }
         }
-        else 
+        else
         {
             /* enable interrupt */
             rt_hw_interrupt_enable(level);
@@ -293,7 +293,7 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
     temp = rt_hw_interrupt_disable();
 
     /* change stat */
-    thread->stat = RT_THREAD_READY;
+    thread->stat = RT_THREAD_READY | (thread->stat & ~RT_THREAD_STAT_MASK);
 
     /* insert thread to ready list */
     rt_list_insert_before(&(rt_thread_priority_table[thread->current_priority]),

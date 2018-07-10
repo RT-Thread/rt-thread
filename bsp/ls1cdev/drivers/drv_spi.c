@@ -19,13 +19,16 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-11-02     «⁄Œ™±æ       first version
+ * 2017-11-02     Âã§‰∏∫Êú¨       first version
+ * 2018-06-09     zhuangwei    add spi0 cs0 support,remove msd_init
  */
 
 #include <rtthread.h>
 #include <drivers/spi.h>
 #include "drv_spi.h"
+#include "../libraries/ls1c_pin.h"
 
+#ifdef RT_USING_SPI
 
 //#define DEBUG
 
@@ -40,14 +43,14 @@ static rt_err_t configure(struct rt_spi_device *device, struct rt_spi_configurat
 static rt_uint32_t xfer(struct rt_spi_device *device, struct rt_spi_message *message);
 
 
-static struct rt_spi_ops ls1c_spi_ops = 
+static struct rt_spi_ops ls1c_spi_ops =
 {
     .configure  = configure,
     .xfer       = xfer
 };
 
 
-static rt_err_t configure(struct rt_spi_device *device, 
+static rt_err_t configure(struct rt_spi_device *device,
                           struct rt_spi_configuration *configuration)
 {
     struct rt_spi_bus *spi_bus = NULL;
@@ -67,28 +70,28 @@ static rt_err_t configure(struct rt_spi_device *device,
     spi_base = ls1c_spi_get_base(SPIx);
 
     {
-        //  πƒ‹SPIøÿ÷∆∆˜£¨masterƒ£ Ω£¨πÿ±’÷–∂œ
+        // ‰ΩøËÉΩSPIÊéßÂà∂Âô®ÔºåmasterÊ®°ÂºèÔºåÂÖ≥Èó≠‰∏≠Êñ≠
         reg_write_8(0x53, spi_base + LS1C_SPI_SPCR_OFFSET);
 
-        // «Âø’◊¥Ã¨ºƒ¥Ê∆˜
+        // Ê∏ÖÁ©∫Áä∂ÊÄÅÂØÑÂ≠òÂô®
         reg_write_8(0xc0, spi_base + LS1C_SPI_SPSR_OFFSET);
 
-        // 1◊÷Ω⁄≤˙…˙÷–∂œ£¨≤…—˘(∂¡)”Î∑¢ÀÕ(–¥) ±ª˙Õ¨ ±
+        // 1Â≠óËäÇ‰∫ßÁîü‰∏≠Êñ≠ÔºåÈááÊ†∑(ËØª)‰∏éÂèëÈÄÅ(ÂÜô)Êó∂Êú∫ÂêåÊó∂
         reg_write_8(0x03, spi_base + LS1C_SPI_SPER_OFFSET);
 
-        // πÿ±’SPI flash
+        // ÂÖ≥Èó≠SPI flash
         val = reg_read_8(spi_base + LS1C_SPI_SFC_PARAM_OFFSET);
         val &= 0xfe;
         reg_write_8(val, spi_base + LS1C_SPI_SFC_PARAM_OFFSET);
 
-        // spi flash ±–Úøÿ÷∆ºƒ¥Ê∆˜
+        // spi flashÊó∂Â∫èÊéßÂà∂ÂØÑÂ≠òÂô®
         reg_write_8(0x05, spi_base + LS1C_SPI_SFC_TIMING_OFFSET);
     }
-    
+
     // baudrate
     ls1c_spi_set_clock(spi_base, configuration->max_hz);
 
-    // …Ë÷√Õ®–≈ƒ£ Ω( ±÷”º´–‘∫Õœ‡Œª)
+    // ËÆæÁΩÆÈÄö‰ø°Ê®°Âºè(Êó∂ÈíüÊûÅÊÄßÂíåÁõ∏‰Ωç)
     if (configuration->mode & RT_SPI_CPOL)      // cpol
     {
         cpol = SPI_CPOL_1;
@@ -113,7 +116,7 @@ static rt_err_t configure(struct rt_spi_device *device,
 }
 
 
-static rt_uint32_t xfer(struct rt_spi_device *device, 
+static rt_uint32_t xfer(struct rt_spi_device *device,
                         struct rt_spi_message *message)
 {
     struct rt_spi_bus *spi_bus = NULL;
@@ -146,7 +149,7 @@ static rt_uint32_t xfer(struct rt_spi_device *device,
         ls1c_spi_set_cs(spi_base, cs, 0);
     }
 
-    //  ’∑¢ ˝æ›
+    // Êî∂ÂèëÊï∞ÊçÆ
     send_ptr = message->send_buf;
     recv_ptr = message->recv_buf;
     while (size--)
@@ -178,7 +181,7 @@ static rt_uint32_t xfer(struct rt_spi_device *device,
 
 
 #ifdef RT_USING_SPI0
-struct ls1c_spi ls1c_spi0 = 
+struct ls1c_spi ls1c_spi0 =
 {
     .SPIx = LS1C_SPI_0,
 };
@@ -188,7 +191,7 @@ static struct rt_spi_bus spi0_bus;
 
 
 #ifdef RT_USING_SPI1
-struct ls1c_spi ls1c_spi1 = 
+struct ls1c_spi ls1c_spi1 =
 {
     .SPIx = LS1C_SPI_1,
 };
@@ -198,10 +201,10 @@ static struct rt_spi_bus spi1_bus;
 
 
 /*
- * ≥ı ºªØ≤¢◊¢≤·¡˙–æ1cµƒspi◊‹œﬂ
- * @SPI SPI◊‹œﬂ£¨±»»ÁLS1C_SPI_0£¨ LS1C_SPI_1
- * @spi_bus_name ◊‹œﬂ√˚◊÷
- * @ret 
+ * ÂàùÂßãÂåñÂπ∂Ê≥®ÂÜåÈæôËäØ1cÁöÑspiÊÄªÁ∫ø
+ * @SPI SPIÊÄªÁ∫øÔºåÊØîÂ¶ÇLS1C_SPI_0Ôºå LS1C_SPI_1
+ * @spi_bus_name ÊÄªÁ∫øÂêçÂ≠ó
+ * @ret
  */
 rt_err_t ls1c_spi_bus_register(rt_uint8_t SPI, const char *spi_bus_name)
 {
@@ -226,4 +229,72 @@ rt_err_t ls1c_spi_bus_register(rt_uint8_t SPI, const char *spi_bus_name)
     return rt_spi_bus_register(spi_bus, spi_bus_name, &ls1c_spi_ops);
 }
 
+int ls1c_hw_spi_init(void)
+{
+#ifdef RT_USING_SPI0
+    pin_set_purpose(78, PIN_PURPOSE_OTHER);
+    pin_set_purpose(79, PIN_PURPOSE_OTHER);
+    pin_set_purpose(80, PIN_PURPOSE_OTHER);
+    pin_set_purpose(83, PIN_PURPOSE_OTHER);//cs2 - SD card
+    pin_set_purpose(82, PIN_PURPOSE_OTHER);//cs1
+    pin_set_purpose(81, PIN_PURPOSE_OTHER);//cs0
+
+    pin_set_remap(78, PIN_REMAP_DEFAULT);
+    pin_set_remap(79, PIN_REMAP_DEFAULT);
+    pin_set_remap(80, PIN_REMAP_DEFAULT);
+    pin_set_remap(83, PIN_REMAP_DEFAULT);//cs2 - SD card
+    pin_set_remap(82, PIN_REMAP_DEFAULT);//CS1
+    pin_set_remap(81, PIN_REMAP_DEFAULT);//cs0
+    ls1c_spi_bus_register(LS1C_SPI_0, "spi0");
+#endif
+
+#ifdef RT_USING_SPI1
+    pin_set_purpose(46, PIN_PURPOSE_OTHER);
+    pin_set_purpose(47, PIN_PURPOSE_OTHER);
+    pin_set_purpose(48, PIN_PURPOSE_OTHER);
+    pin_set_purpose(49, PIN_PURPOSE_OTHER);//CS0 - touch screen
+    pin_set_remap(46, PIN_REMAP_THIRD);
+    pin_set_remap(47, PIN_REMAP_THIRD);
+    pin_set_remap(48, PIN_REMAP_THIRD);
+    pin_set_remap(49, PIN_REMAP_THIRD);//CS0 - touch screen
+    ls1c_spi_bus_register(LS1C_SPI_1, "spi1");
+
+#endif
+
+
+#ifdef RT_USING_SPI0
+    /* attach cs */
+    {
+        static struct rt_spi_device spi_device0;
+        static struct rt_spi_device spi_device1;
+        static struct rt_spi_device spi_device2;
+        static struct ls1c_spi_cs  spi_cs0;
+        static struct ls1c_spi_cs  spi_cs1;
+        static struct ls1c_spi_cs  spi_cs2;
+
+        /* spi02: CS2  SD Card*/
+        spi_cs2.cs = LS1C_SPI_CS_2;
+        rt_spi_bus_attach_device(&spi_device2, "spi02", "spi0", (void *)&spi_cs2);
+        spi_cs1.cs = LS1C_SPI_CS_1;
+        rt_spi_bus_attach_device(&spi_device1, "spi01", "spi0", (void *)&spi_cs1);
+        spi_cs0.cs = LS1C_SPI_CS_0;
+        rt_spi_bus_attach_device(&spi_device0, "spi00", "spi0", (void *)&spi_cs0);
+    }
+#endif
+#ifdef RT_USING_SPI1
+    {
+        static struct rt_spi_device spi_device;
+        static struct ls1c_spi_cs  spi_cs;
+
+        /* spi10: CS0  Touch*/
+        spi_cs.cs = LS1C_SPI_CS_0;
+        rt_spi_bus_attach_device(&spi_device, "spi10", "spi1", (void *)&spi_cs);
+    }
+#endif
+}
+
+
+INIT_BOARD_EXPORT(ls1c_hw_spi_init);
+
+#endif
 

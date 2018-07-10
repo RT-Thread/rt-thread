@@ -18,8 +18,21 @@
 #include <rthw.h>
 
 #include "board.h"
-#include "uart.h"
+#include "drv_uart.h"
 #include "ls1c.h"
+
+#define A_K0BASE		0x80000000
+
+extern unsigned char __bss_end;
+
+
+extern void tlb_refill_exception(void);
+extern void general_exception(void);
+extern void irq_exception(void);
+extern void rt_hw_cache_init(void);
+extern void invalidate_writeback_dcache_all(void);
+extern void invalidate_icache_all(void);
+
 
 /**
  * @addtogroup Loongson LS1B
@@ -60,12 +73,12 @@ void rt_hw_fpu_init(void)
     rt_uint32_t c0_status = 0;
     rt_uint32_t c1_status = 0;
 
-    // 使能协处理器1--FPU
+    // 浣胯兘鍗忓鐞嗗櫒1--FPU
     c0_status = read_c0_status();
     c0_status |= (ST0_CU1 | ST0_FR);
     write_c0_status(c0_status);
 
-    // 配置FPU
+    // 閰嶇疆FPU
     c1_status = read_c1_status();
     c1_status |= (FPU_CSR_FS | FPU_CSR_FO | FPU_CSR_FN);    // set FS, FO, FN
     c1_status &= ~(FPU_CSR_ALL_E);                          // disable exception
@@ -81,62 +94,49 @@ void rt_hw_fpu_init(void)
  */
 void rt_hw_board_init(void)
 {
-#ifdef RT_USING_UART
+	/* init cache */
+	rt_hw_cache_init();
+	
+	/* init hardware interrupt */
+	rt_hw_interrupt_init();
+
+	/* clear bev */
+	write_c0_status(read_c0_status()&(~(1<<22)));
+
+	/* copy vector */
+	rt_memcpy((void *)A_K0BASE, tlb_refill_exception, 0x80);
+	rt_memcpy((void *)(A_K0BASE + 0x180), general_exception, 0x80);
+	rt_memcpy((void *)(A_K0BASE + 0x200), irq_exception, 0x80);
+
+	invalidate_writeback_dcache_all();
+	invalidate_icache_all();
+	
+#ifdef RT_USING_HEAP
+	rt_system_heap_init((void*)&__bss_end, (void*)RT_HW_HEAP_END);
+#endif
+
+#ifdef RT_USING_SERIAL
 	/* init hardware UART device */
 	rt_hw_uart_init();
 #endif
 
 #ifdef RT_USING_CONSOLE
 	/* set console device */
-	rt_console_set_device("uart2");
+	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
-
-	/* init operating system timer */
-	rt_hw_timer_init();
+    /* init operating system timer */
+    rt_hw_timer_init();
 
 #ifdef RT_USING_FPU
     /* init hardware fpu */
     rt_hw_fpu_init();
 #endif
 
-	rt_kprintf("current sr: 0x%08x\n", read_c0_status());
-}
-
-#define __raw_out_put(unr) \
-	while (*ptr) \
-	{ \
-		if (*ptr == '\n') \
-		{ \
-			/* FIFO status, contain valid data */ \
-			while (!(UART_LSR(UART##unr##_BASE) & (UARTLSR_TE | UARTLSR_TFE))); \
-			/* write data */ \
-			UART_DAT(UART##unr##_BASE) = '\r'; \
-		} \
-		/* FIFO status, contain valid data */ \
-		while (!(UART_LSR(UART##unr##_BASE) & (UARTLSR_TE | UARTLSR_TFE))); \
-		/* write data */ \
-		UART_DAT(UART##unr##_BASE) = *ptr; \
-		ptr ++; \
-	}
-
-/* UART line status register value */
-#define UARTLSR_ERROR	(1 << 7)
-#define UARTLSR_TE		(1 << 6)
-#define UARTLSR_TFE		(1 << 5)
-#define UARTLSR_BI		(1 << 4)
-#define UARTLSR_FE		(1 << 3)
-#define UARTLSR_PE		(1 << 2)
-#define UARTLSR_OE		(1 << 1)
-#define UARTLSR_DR		(1 << 0)
-void rt_hw_console_output(const char *ptr)
-{
-#if defined(RT_USING_UART0)
-    __raw_out_put(0);
-#elif defined(RT_USING_UART2)
-    __raw_out_put(2);
-#elif defined(RT_USING_UART3)
-    __raw_out_put(3);
+#ifdef RT_USING_COMPONENTS_INIT
+    rt_components_board_init();
 #endif
+
+    rt_kprintf("current sr: 0x%08x\n", read_c0_status());
 }
 
 /*@}*/

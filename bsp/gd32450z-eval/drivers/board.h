@@ -18,7 +18,6 @@
 
 #include <gd32f4xx.h>
 
-
 #define EXT_SDRAM_BEGIN    (0xC0000000U) /* the begining address of external SDRAM */
 #define EXT_SDRAM_END      (EXT_SDRAM_BEGIN + (32U * 1024 * 1024)) /* the end address of external SDRAM */
 
@@ -45,39 +44,6 @@ extern int __bss_end;
 #endif
 
 #define HEAP_END          GD32_SRAM_END
-
-// <o> Console on USART: 
-//  <127=> no console 
-//  <0=>USART 0 <1=>USART 1 <2=>USART 2 <3=> USART 3
-//  <4=>USART 4 <5=>USART 5 <6=>USART 6 <7=> USART 7
-// 	<i>Default: 1
-#define GD32_CONSOLE_USART		0
-
-void rt_hw_board_init(void);
-
-#if GD32_CONSOLE_USART == 127
-    #define CONSOLE_DEVICE "no"
-#elif GD32_CONSOLE_USART == 0
-    #define CONSOLE_DEVICE "uart0"
-#elif GD32_CONSOLE_USART == 1
-    #define CONSOLE_DEVICE "uart1"
-#elif GD32_CONSOLE_USART == 2
-    #define CONSOLE_DEVICE "uart2"
-#elif GD32_CONSOLE_USART == 3
-    #define CONSOLE_DEVICE "uart3"
-#elif GD32_CONSOLE_USART == 4
-    #define CONSOLE_DEVICE "uart4"
-#elif GD32_CONSOLE_USART == 5
-    #define CONSOLE_DEVICE "uart5"
-#elif GD32_CONSOLE_USART == 6
-    #define CONSOLE_DEVICE "uart6"
-#elif GD32_CONSOLE_USART == 7
-    #define CONSOLE_DEVICE "uart7"
-#endif
-
-#define FINSH_DEVICE_NAME   CONSOLE_DEVICE
-
-void Error_Handler(void);
 
 #endif
 

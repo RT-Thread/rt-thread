@@ -31,6 +31,8 @@
 
 #define STDIO_DEVICE_NAME_MAX   32
 
+int	_EXFUN(fileno, (FILE *));
+
 static FILE* std_console = NULL;
 
 int libc_stdio_set_console(const char* device_name, int mode)
@@ -44,7 +46,7 @@ int libc_stdio_set_console(const char* device_name, int mode)
 
     if (mode == O_RDWR) file_mode = "r+";
     else if (mode == O_WRONLY) file_mode = "wb";
-    else if (mode == O_RDONLY) file_mode = "rb";
+    else file_mode = "rb";
 
     fp = fopen(name, file_mode);
     if (fp)
@@ -81,5 +83,14 @@ int libc_stdio_set_console(const char* device_name, int mode)
         _GLOBAL_REENT->__sdidinit = 1;
     }
 
-    return fileno(std_console);
+    if (std_console) return fileno(std_console);
+
+    return -1;
+}
+
+int libc_stdio_get_console(void) {
+    if (std_console)
+        return fileno(std_console);
+    else
+        return -1;
 }

@@ -191,7 +191,7 @@ int cmd_cd(int argc, char **argv)
     {
         if (chdir(argv[1]) != 0)
         {
-        	rt_kprintf("No such directory: %s\n", argv[1]);
+            rt_kprintf("No such directory: %s\n", argv[1]);
         }
     }
 
@@ -255,33 +255,56 @@ int cmd_mkfs(int argc, char **argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_mkfs, __cmd_mkfs, format disk with file system);
 
+extern int df(const char *path);
+int cmd_df(int argc, char** argv)
+{
+    if (argc != 2)
+    {
+        df("/");
+    }
+    else
+    {
+        if ((strcmp(argv[1], "--help") == 0) || (strcmp(argv[1], "-h") == 0))
+        {
+            rt_kprintf("df [path]\n");
+        }
+        else
+        {
+            df(argv[1]);
+        }
+    }
+
+    return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_df, __cmd_df, disk free);
+
 int cmd_echo(int argc, char** argv)
 {
-	if (argc == 2)
-	{
-		rt_kprintf("%s\n", argv[1]);
-	}
-	else if (argc == 3)
-	{
-		int fd;
+    if (argc == 2)
+    {
+        rt_kprintf("%s\n", argv[1]);
+    }
+    else if (argc == 3)
+    {
+        int fd;
 
-		fd = open(argv[2], O_RDWR | O_APPEND | O_CREAT, 0);
-		if (fd >= 0)
-		{
-			write (fd, argv[1], strlen(argv[1]));
-			close(fd);
-		}
-		else
-		{
-			rt_kprintf("open file:%s failed!\n", argv[2]);
-		}
-	}
-	else
-	{
-		rt_kprintf("Usage: echo \"string\" [filename]\n");
-	}
+        fd = open(argv[2], O_RDWR | O_APPEND | O_CREAT, 0);
+        if (fd >= 0)
+        {
+            write (fd, argv[1], strlen(argv[1]));
+            close(fd);
+        }
+        else
+        {
+            rt_kprintf("open file:%s failed!\n", argv[2]);
+        }
+    }
+    else
+    {
+        rt_kprintf("Usage: echo \"string\" [filename]\n");
+    }
 
-	return 0;
+    return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_echo, __cmd_echo, echo string to file);
 #endif
@@ -358,12 +381,19 @@ int cmd_dns(int argc, char **argv)
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_dns, __cmd_dns, list the information of dns);
 #endif
 
-#ifdef RT_LWIP_TCP
+#if defined (RT_LWIP_TCP) || defined (RT_LWIP_UDP)
 int cmd_netstat(int argc, char **argv)
 {
     extern void list_tcps(void);
+    extern void list_udps(void);
 
+#ifdef RT_LWIP_TCP
     list_tcps();
+#endif
+#ifdef RT_LWIP_UDP
+    list_udps();
+#endif
+
     return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_netstat, __cmd_netstat, list the information of TCP / IP);

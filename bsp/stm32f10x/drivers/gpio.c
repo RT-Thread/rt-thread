@@ -21,8 +21,8 @@
 
 #define STM32F10X_PIN_NUMBERS 100 //[48, 64, 100, 144 ]
 
-#define __STM32_PIN(index, rcc, gpio, gpio_index) { 0, RCC_##rcc##Periph_GPIO##gpio, GPIO##gpio, GPIO_Pin_##gpio_index}
-#define __STM32_PIN_DEFAULT {-1, 0, 0, 0}
+#define __STM32_PIN(index, rcc, gpio, gpio_index) { 0, RCC_##rcc##Periph_GPIO##gpio, GPIO##gpio, GPIO_Pin_##gpio_index, GPIO_PortSourceGPIO##gpio, GPIO_PinSource##gpio_index}
+#define __STM32_PIN_DEFAULT {-1, 0, 0, 0, 0, 0}
 
 /* STM32 GPIO driver */
 struct pin_index
@@ -31,6 +31,8 @@ struct pin_index
     uint32_t rcc;
     GPIO_TypeDef *gpio;
     uint32_t pin;
+    uint8_t port_source;
+    uint8_t pin_source;
 };
 
 static const struct pin_index pins[] =
@@ -620,7 +622,7 @@ rt_err_t stm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
  
     return RT_EOK;
 }
-rt_err_t stm32_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
+rt_err_t stm32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 {
     const struct pin_index *index;
     rt_base_t level;
@@ -695,6 +697,7 @@ rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         NVIC_InitStructure.NVIC_IRQChannelCmd=ENABLE;
         NVIC_Init(&NVIC_InitStructure);
 
+        GPIO_EXTILineConfig(index->port_source, index->pin_source);
         EXTI_InitStructure.EXTI_Line = irqmap->irqbit;  
         EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
         switch(pin_irq_hdr_tab[irqindex].mode)
@@ -739,7 +742,7 @@ const static struct rt_pin_ops _stm32_pin_ops =
     stm32_pin_write,
     stm32_pin_read,
     stm32_pin_attach_irq,
-    stm32_pin_dettach_irq,
+    stm32_pin_detach_irq,
     stm32_pin_irq_enable,
 };
 
@@ -754,7 +757,7 @@ INIT_BOARD_EXPORT(stm32_hw_pin_init);
 
 rt_inline void pin_irq_hdr(int irqno)
 {
-    EXTI_ClearITPendingBit(pin_irq_map[irqno].irqno);
+    EXTI_ClearITPendingBit(pin_irq_map[irqno].irqbit);
     if(pin_irq_hdr_tab[irqno].hdr)
     {
        pin_irq_hdr_tab[irqno].hdr(pin_irq_hdr_tab[irqno].args);

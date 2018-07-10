@@ -41,7 +41,7 @@ static struct rt_device _log_device;
 static rt_device_t _traceout_device = RT_NULL;
 
 /* define a default lg session. The name is empty. */
-static struct log_trace_session _def_session = {{"\0"}, LOG_TRACE_LEVEL_INFO};
+static struct log_trace_session _def_session = {{"\0"}, LOG_TRACE_LEVEL_DEFAULT};
 static const struct log_trace_session *_the_sessions[LOG_TRACE_MAX_SESSION] = {&_def_session};
 /* there is a default session at least */
 static rt_uint16_t _the_sess_nr = 1;
@@ -267,16 +267,31 @@ void __logtrace_vfmtout(const struct log_trace_session *session,
     RT_ASSERT(session);
     RT_ASSERT(fmt);
 
-    rt_snprintf(_trace_buf, sizeof(_trace_buf), "[%08x][", rt_tick_get());
-    if (_traceout_device != RT_NULL)
+    /* it's default session */
+    if (session->id.name[0] == '\0')
     {
-        rt_device_write(_traceout_device, -1, _trace_buf, 11);
-        rt_device_write(_traceout_device, -1,
-                session->id.name, _idname_len(session->id.num));
+        rt_snprintf(_trace_buf, sizeof(_trace_buf), "[%08x]", rt_tick_get());
+        if (_traceout_device != RT_NULL)
+        {
+            rt_device_write(_traceout_device, -1, _trace_buf, 10);
+        }
+
+        ptr = &_trace_buf[0];
+    }
+    else
+    {
+        rt_snprintf(_trace_buf, sizeof(_trace_buf), "[%08x][", rt_tick_get());
+        if (_traceout_device != RT_NULL)
+        {
+            rt_device_write(_traceout_device, -1, _trace_buf, 11);
+            rt_device_write(_traceout_device, -1,
+                    session->id.name, _idname_len(session->id.num));
+        }
+
+        _trace_buf[0] = ']';
+        ptr = &_trace_buf[1];
     }
 
-    _trace_buf[0] = ']';
-    ptr = &_trace_buf[1];
     length = rt_vsnprintf(ptr, LOG_TRACE_BUFSZ, fmt, argptr);
 
     if (length >= LOG_TRACE_BUFSZ)
@@ -368,17 +383,33 @@ static rt_err_t _log_control(rt_device_t dev, int cmd, void *arg)
     return rt_device_control(_traceout_device, cmd, arg);
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops log_device_ops = 
+{
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    _log_write,
+    _log_control
+};
+#endif
+
 int log_trace_init(void)
 {
     rt_memset(&_log_device, 0x00, sizeof(_log_device));
 
     _log_device.type = RT_Device_Class_Char;
+#ifdef RT_USING_DEVICE_OPS
+    _log_device.ops     = &log_device_ops;
+#else
     _log_device.init    = RT_NULL;
     _log_device.open    = RT_NULL;
     _log_device.close   = RT_NULL;
     _log_device.read    = RT_NULL;
     _log_device.write   = _log_write;
     _log_device.control = _log_control;
+#endif
 
     /* no indication and complete callback */
     _log_device.rx_indicate = RT_NULL;

@@ -4,13 +4,27 @@ config RT_USING_DEVICE_IPC
     bool "Using device drivers IPC"
     default y
 
+if RT_USING_DEVICE_IPC
+    config RT_PIPE_BUFSZ
+        int "Set pipe buffer size"
+        default 512
+endif
+
 config RT_USING_SERIAL
     bool "Using serial device drivers"
+    select RT_USING_DEVICE_IPC
+    select RT_USING_DEVICE
     default y
 
 config RT_USING_CAN
     bool "Using CAN device drivers"
     default n
+
+if RT_USING_CAN
+    config RT_CAN_USING_HDR
+        bool "Enable CAN hardware filter"
+        default y
+endif
 
 config RT_USING_HWTIMER
     bool "Using hardware timer device drivers"
@@ -22,13 +36,17 @@ config RT_USING_CPUTIME
     help
         When enable this option, the BSP should provide a rt_clock_cputime_ops
         for CPU time by:
-        clock_cpu_setops(const struct rt_clock_cputime_ops *ops);
+        const static struct rt_clock_cputime_ops _ops = {...};
+        clock_cpu_setops(&_ops);
 
-        Then developer can use high resolution clock counter with:
+        Then user can use high resolution clock counter with:
 
-        ts = clock_cpu_gettime(); 
-        /* The unit of clock_cpu_gettime() can be returned by */
-        unit = clock_cpu_getres(); /* number for nanosecond */
+        ts1 = clock_cpu_gettime();
+        ts2 = clock_cpu_gettime();
+
+        /* and get the ms of delta tick with API: */
+        ms_tick = clock_cpu_millisecond(t2 - t1);
+        us_tick = clock_cpu_microsecond(t2 - t1);
 
 if RT_USING_CPUTIME 
     config RT_USING_CPUTIME_CORTEXM
@@ -54,6 +72,10 @@ config RT_USING_PIN
     bool "Using generic GPIO device drivers"
     default y
 
+config RT_USING_PWM
+    bool "Using PWM device drivers"
+    default n
+
 config RT_USING_MTD_NOR
     bool "Using MTD Nor Flash device drivers"
     default n
@@ -72,15 +94,62 @@ config RT_USING_RTC
     bool "Using RTC device drivers"
     default n
 
+    if RT_USING_RTC
+    config RT_USING_SOFT_RTC
+        bool "Using software simulation RTC device"
+        default n
+    config RTC_SYNC_USING_NTP
+        bool "Using NTP auto sync RTC time"
+        select PKG_USING_NETUTILS
+        select PKG_NETUTILS_NTP
+        default n
+        
+        if RTC_SYNC_USING_NTP
+        config RTC_NTP_FIRST_SYNC_DELAY
+            int "NTP first sync delay time(second) for network connect"
+            default 30
+        config RTC_NTP_SYNC_PERIOD
+            int "NTP auto sync period(second)"
+            default 3600
+       endif
+    endif
+
 config RT_USING_SDIO
     bool "Using SD/MMC device drivers"
     default n
+
+    if RT_USING_SDIO
+        config RT_SDIO_STACK_SIZE
+            int "The stack size for sdio irq thread"
+            default 512
+
+        config RT_SDIO_THREAD_PRIORITY
+            int "The priority level value of sdio irq thread"
+            default 15
+
+        config RT_MMCSD_STACK_SIZE
+            int "The stack size for mmcsd thread"
+            default 1024
+
+        config RT_MMCSD_THREAD_PREORITY
+            int "The priority level value of mmcsd thread"
+            default 22
+
+        config RT_MMCSD_MAX_PARTITION
+            int "mmcsd max partition"
+            default 16
+    endif
 
 config RT_USING_SPI
     bool "Using SPI Bus/Device device drivers"
     default n
 
     if RT_USING_SPI
+        config RT_USING_SPI_MSD
+            bool "Using SD/TF card driver with spi"
+            select RT_USING_DFS
+            default n
+
         config RT_USING_SFUD
             bool "Using Serial Flash Universal Driver"
             default n
@@ -93,7 +162,7 @@ config RT_USING_SPI
                 bool "Using defined supported flash chip information table"
                 default y
                 
-                config RT_SFUD_DEBUG
+                config RT_DEBUG_SFUD
                 bool "Show more SFUD debug information"
                 default n
             endif
@@ -125,6 +194,28 @@ config RT_USING_WIFI
     bool "Using Wi-Fi network"
     default n
 
+    if RT_USING_WIFI
+        config RT_USING_WLAN_STA
+            bool "Using station mode"
+            default y
+
+        config RT_USING_WLAN_AP
+            bool "Using ap mode"
+            default n
+
+        config WIFI_DEVICE_STA_NAME
+            string "the wifi device name for station"
+            default "w0"
+
+        config WIFI_DEVICE_AP_NAME
+            string "the wifi device name for ap"
+            default "ap"
+    endif
+
+config RT_USING_AUDIO
+    bool "Using Audio device drivers"
+    default n
+
 menu "Using USB"
     config RT_USING_USB_HOST
         bool "Using USB host"
@@ -143,15 +234,29 @@ menu "Using USB"
     config RT_USING_USB_DEVICE
         bool "Using USB device"
         default n
-
+        if RT_USING_USB_DEVICE || RT_USING_USB_HOST
+            config RT_USBD_THREAD_STACK_SZ
+                int "usb thread stack size"
+                default 4096
+        endif
         if RT_USING_USB_DEVICE
+            config USB_VENDOR_ID
+                hex "USB Vendor ID"
+                default 0x0FFE
+            config USB_PRODUCT_ID
+                hex "USB Product ID"
+                default 0x0001
+            
             config RT_USB_DEVICE_COMPOSITE
                 bool "Enable composite device"
                 default n
                 choice
                     prompt "Device type"
-                    default _RT_USB_DEVICE_CDC
+                    default _RT_USB_DEVICE_NONE
                     depends on !RT_USB_DEVICE_COMPOSITE
+                    config _RT_USB_DEVICE_NONE
+                        bool "Using custom class by register interface"
+                        select RT_USB_DEVICE_NONE
                     config _RT_USB_DEVICE_CDC
                         bool "Enable to use device as CDC device"
                         select RT_USB_DEVICE_CDC
@@ -176,6 +281,8 @@ menu "Using USB"
                 if RT_USB_DEVICE_COMPOSITE
                     config RT_USB_DEVICE_CDC
                         bool "Enable to use device as CDC device"
+                        default n
+                    config RT_USB_DEVICE_NONE
                         default y
                     config RT_USB_DEVICE_MSTORAGE
                         bool "Enable to use device as Mass Storage device"
@@ -194,6 +301,11 @@ menu "Using USB"
                     config RT_USB_DEVICE_WINUSB
                         bool "Enable to use device as winusb device"
                         default n
+                endif
+                if RT_USB_DEVICE_WINUSB
+                    config RT_WINUSB_GUID
+                    string "Guid for winusb"
+                    default "{6860DC3C-C05F-4807-8807-1CA861CC1D66}"
                 endif
                 if RT_USB_DEVICE_MSTORAGE
                     config RT_USB_MSTORAGE_DISK_NAME

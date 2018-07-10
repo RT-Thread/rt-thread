@@ -1,9 +1,12 @@
 /*
+ * The Clear BSD License
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * are permitted (subject to the limitations in the disclaimer below) provided
+ * that the following conditions are met:
  *
  * o Redistributions of source code must retain the above copyright notice, this list
  *   of conditions and the following disclaimer.
@@ -16,6 +19,7 @@
  *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE.
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -44,7 +48,7 @@
 /*! @name Driver version */
 /*@{*/
 /*! @brief FlexCAN driver version 2.2.0. */
-#define FLEXCAN_DRIVER_VERSION (MAKE_VERSION(2, 2, 0))
+#define FSL_FLEXCAN_DRIVER_VERSION (MAKE_VERSION(2, 2, 0))
 /*@}*/
 
 /*! @brief FlexCAN Frame ID helper macro. */
@@ -68,24 +72,26 @@
      (FLEXCAN_ID_STD(id) << 1)) /*!< Standard Rx FIFO Mask helper macro Type A helper macro. */
 #define FLEXCAN_RX_FIFO_STD_MASK_TYPE_B_HIGH(id, rtr, ide)                     \
     (((uint32_t)((uint32_t)(rtr) << 31) | (uint32_t)((uint32_t)(ide) << 30)) | \
-     (((uint32_t)(id) & 0x7FF) << 19)) /*!< Standard Rx FIFO Mask helper macro Type B upper part helper macro. */
+     (((uint32_t)(id)&0x7FF) << 19)) /*!< Standard Rx FIFO Mask helper macro Type B upper part helper macro. */
 #define FLEXCAN_RX_FIFO_STD_MASK_TYPE_B_LOW(id, rtr, ide)                      \
     (((uint32_t)((uint32_t)(rtr) << 15) | (uint32_t)((uint32_t)(ide) << 14)) | \
-     (((uint32_t)(id) & 0x7FF) << 3)) /*!< Standard Rx FIFO Mask helper macro Type B lower part helper macro. */
+     (((uint32_t)(id)&0x7FF) << 3)) /*!< Standard Rx FIFO Mask helper macro Type B lower part helper macro. */
 #define FLEXCAN_RX_FIFO_STD_MASK_TYPE_C_HIGH(id) \
-    (((uint32_t)(id) & 0x7F8) << 21) /*!< Standard Rx FIFO Mask helper macro Type C upper part helper macro. */
+    (((uint32_t)(id)&0x7F8) << 21) /*!< Standard Rx FIFO Mask helper macro Type C upper part helper macro. */
 #define FLEXCAN_RX_FIFO_STD_MASK_TYPE_C_MID_HIGH(id) \
-    (((uint32_t)(id) & 0x7F8) << 13) /*!< Standard Rx FIFO Mask helper macro Type C mid-upper part helper macro. */
+    (((uint32_t)(id)&0x7F8) << 13) /*!< Standard Rx FIFO Mask helper macro Type C mid-upper part helper macro. */
 #define FLEXCAN_RX_FIFO_STD_MASK_TYPE_C_MID_LOW(id) \
-    (((uint32_t)(id) & 0x7F8) << 5) /*!< Standard Rx FIFO Mask helper macro Type C mid-lower part helper macro. */
+    (((uint32_t)(id)&0x7F8) << 5) /*!< Standard Rx FIFO Mask helper macro Type C mid-lower part helper macro. */
 #define FLEXCAN_RX_FIFO_STD_MASK_TYPE_C_LOW(id) \
-    (((uint32_t)(id) & 0x7F8) >> 3) /*!< Standard Rx FIFO Mask helper macro Type C lower part helper macro. */
+    (((uint32_t)(id)&0x7F8) >> 3) /*!< Standard Rx FIFO Mask helper macro Type C lower part helper macro. */
 #define FLEXCAN_RX_FIFO_EXT_MASK_TYPE_A(id, rtr, ide)                          \
     (((uint32_t)((uint32_t)(rtr) << 31) | (uint32_t)((uint32_t)(ide) << 30)) | \
      (FLEXCAN_ID_EXT(id) << 1)) /*!< Extend Rx FIFO Mask helper macro Type A helper macro. */
 #define FLEXCAN_RX_FIFO_EXT_MASK_TYPE_B_HIGH(id, rtr, ide)                        \
-    (((uint32_t)((uint32_t)(rtr) << 31) | (uint32_t)((uint32_t)(ide) << 30)) | \
-     ((FLEXCAN_ID_EXT(id) & 0x1FFF8000) << 1)) /*!< Extend Rx FIFO Mask helper macro Type B upper part helper macro. */
+    (                                                                             \
+        ((uint32_t)((uint32_t)(rtr) << 31) | (uint32_t)((uint32_t)(ide) << 30)) | \
+        ((FLEXCAN_ID_EXT(id) & 0x1FFF8000)                                        \
+         << 1)) /*!< Extend Rx FIFO Mask helper macro Type B upper part helper macro. */
 #define FLEXCAN_RX_FIFO_EXT_MASK_TYPE_B_LOW(id, rtr, ide)                      \
     (((uint32_t)((uint32_t)(rtr) << 15) | (uint32_t)((uint32_t)(ide) << 14)) | \
      ((FLEXCAN_ID_EXT(id) & 0x1FFF8000) >>                                     \
@@ -119,9 +125,10 @@
 #define FLEXCAN_RX_FIFO_STD_FILTER_TYPE_C_MID_LOW(id) \
     FLEXCAN_RX_FIFO_STD_MASK_TYPE_C_MID_LOW(          \
         id) /*!< Standard Rx FIFO Filter helper macro Type C mid-lower part helper macro. */
-#define FLEXCAN_RX_FIFO_STD_FILTER_TYPE_C_LOW(id)                                                                     \
-    FLEXCAN_RX_FIFO_STD_MASK_TYPE_C_LOW(id) /*!< Standard Rx FIFO Filter helper macro Type C lower part helper macro. \
-                                               */
+#define FLEXCAN_RX_FIFO_STD_FILTER_TYPE_C_LOW(id)                                               \
+    FLEXCAN_RX_FIFO_STD_MASK_TYPE_C_LOW(                                                        \
+        id) /*!< Standard Rx FIFO Filter helper macro Type C lower part helper macro. \ \ \ \ \ \
+               */
 #define FLEXCAN_RX_FIFO_EXT_FILTER_TYPE_A(id, rtr, ide) \
     FLEXCAN_RX_FIFO_EXT_MASK_TYPE_A(id, rtr, ide) /*!< Extend Rx FIFO Filter helper macro Type A helper macro. */
 #define FLEXCAN_RX_FIFO_EXT_FILTER_TYPE_B_HIGH(id, rtr, ide) \
@@ -130,9 +137,10 @@
 #define FLEXCAN_RX_FIFO_EXT_FILTER_TYPE_B_LOW(id, rtr, ide) \
     FLEXCAN_RX_FIFO_EXT_MASK_TYPE_B_LOW(                    \
         id, rtr, ide) /*!< Extend Rx FIFO Filter helper macro Type B lower part helper macro. */
-#define FLEXCAN_RX_FIFO_EXT_FILTER_TYPE_C_HIGH(id)                                                                   \
-    FLEXCAN_RX_FIFO_EXT_MASK_TYPE_C_HIGH(id) /*!< Extend Rx FIFO Filter helper macro Type C upper part helper macro. \
-                                                */
+#define FLEXCAN_RX_FIFO_EXT_FILTER_TYPE_C_HIGH(id)                                            \
+    FLEXCAN_RX_FIFO_EXT_MASK_TYPE_C_HIGH(                                                     \
+        id) /*!< Extend Rx FIFO Filter helper macro Type C upper part helper macro. \ \ \ \ \ \
+               */
 #define FLEXCAN_RX_FIFO_EXT_FILTER_TYPE_C_MID_HIGH(id) \
     FLEXCAN_RX_FIFO_EXT_MASK_TYPE_C_MID_HIGH(          \
         id) /*!< Extend Rx FIFO Filter helper macro Type C mid-upper part helper macro. */
@@ -363,11 +371,11 @@ typedef struct _flexcan_fd_frame
         uint32_t format : 1;     /*!< CAN Frame Identifier(STD or EXT format). */
         uint32_t srr : 1;        /*!< Substitute Remote request. */
         uint32_t : 1;
-        uint32_t code : 4;       /*!< Message Buffer Code. */
+        uint32_t code : 4; /*!< Message Buffer Code. */
         uint32_t : 1;
-        uint32_t esi : 1;        /*!< Error State Indicator. */
-        uint32_t brs : 1;        /*!< Bit Rate Switch. */
-        uint32_t edl : 1;        /*!< Extended Data Length. */
+        uint32_t esi : 1; /*!< Error State Indicator. */
+        uint32_t brs : 1; /*!< Bit Rate Switch. */
+        uint32_t edl : 1; /*!< Extended Data Length. */
     };
     struct
     {
@@ -395,6 +403,23 @@ typedef struct _flexcan_fd_frame
 } flexcan_fd_frame_t;
 #endif
 
+/*! @brief FlexCAN protocol timing characteristic configuration structure. */
+typedef struct _flexcan_timing_config
+{
+    uint16_t preDivider; /*!< Clock Pre-scaler Division Factor. */
+    uint8_t rJumpwidth;  /*!< Re-sync Jump Width. */
+    uint8_t phaseSeg1;   /*!< Phase Segment 1. */
+    uint8_t phaseSeg2;   /*!< Phase Segment 2. */
+    uint8_t propSeg;     /*!< Propagation Segment. */
+#if (defined(FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE) && FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE)
+    uint16_t fpreDivider; /*!< Fast Clock Pre-scaler Division Factor. */
+    uint8_t frJumpwidth;  /*!< Fast Re-sync Jump Width. */
+    uint8_t fphaseSeg1;   /*!< Fast Phase Segment 1. */
+    uint8_t fphaseSeg2;   /*!< Fast Phase Segment 2. */
+    uint8_t fpropSeg;     /*!< Fast Propagation Segment. */
+#endif
+} flexcan_timing_config_t;
+
 /*! @brief FlexCAN module configuration structure. */
 typedef struct _flexcan_config
 {
@@ -412,17 +437,8 @@ typedef struct _flexcan_config
 #if (defined(FSL_FEATURE_FLEXCAN_HAS_DOZE_MODE_SUPPORT) && FSL_FEATURE_FLEXCAN_HAS_DOZE_MODE_SUPPORT)
     bool enableDoze; /*!< Enable or Disable Doze Mode. */
 #endif
+    flexcan_timing_config_t timingConfig; /* Protocol timing . */
 } flexcan_config_t;
-
-/*! @brief FlexCAN protocol timing characteristic configuration structure. */
-typedef struct _flexcan_timing_config
-{
-    uint16_t preDivider; /*!< Clock Pre-scaler Division Factor. */
-    uint8_t rJumpwidth;  /*!< Re-sync Jump Width. */
-    uint8_t phaseSeg1;   /*!< Phase Segment 1. */
-    uint8_t phaseSeg2;   /*!< Phase Segment 2. */
-    uint8_t propSeg;     /*!< Propagation Segment. */
-} flexcan_timing_config_t;
 
 /*!
  * @brief FlexCAN Receive Message Buffer configuration structure
@@ -511,6 +527,14 @@ extern "C" {
  */
 
 /*!
+ * @brief Get the FlexCAN instance from peripheral base address.
+ *
+ * @param base FlexCAN peripheral base address.
+ * @return FlexCAN instance.
+ */
+uint32_t FLEXCAN_GetInstance(CAN_Type *base);
+
+/*!
  * @brief Initializes a FlexCAN instance.
  *
  * This function initializes the FlexCAN module with user-defined settings.
@@ -525,6 +549,7 @@ extern "C" {
  *   flexcanConfig.enableSelfWakeup  = false;
  *   flexcanConfig.enableIndividMask = false;
  *   flexcanConfig.enableDoze        = false;
+ *   flexcanConfig.timingConfig      = timingConfig;
  *   FLEXCAN_Init(CAN0, &flexcanConfig, 8000000UL);
  *   @endcode
  *
@@ -556,6 +581,7 @@ void FLEXCAN_Deinit(CAN_Type *base);
  *   flexcanConfig->enableSelfWakeup  = false;
  *   flexcanConfig->enableIndividMask = false;
  *   flexcanConfig->enableDoze        = false;
+ *   flexcanConfig.timingConfig       = timingConfig;
  *
  * @param config Pointer to the FlexCAN configuration structure.
  */

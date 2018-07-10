@@ -35,9 +35,11 @@
 #include <pthread.h>
 #endif
 
+int	_EXFUN(putenv,(char *__string));
+
 int libc_system_init(void)
 {
-#ifdef RT_USING_DFS
+#if defined(RT_USING_DFS) & defined(RT_USING_DFS_DEVFS)
     rt_device_t dev_console;
 
     dev_console = rt_console_get_device();

@@ -24,7 +24,9 @@
 ; * 2015-04-21     ArdaFu     Remove remap code. Using mmu to map vector table
 ; * 2015-06-04     aozima     Align stack address to 8 byte.
 ; */
- 
+
+#include "rt_low_level_init.h"
+
 #define S_FRAME_SIZE    (18*4)   ;72
 
 ;#define S_SPSR          (17*4)   ;SPSR
@@ -54,9 +56,8 @@
 #define MODE_ABT        0x17
 #define MODE_UND        0x1B
 #define MODEMASK        0x1F
-#define NOINT           0xC0
 
-#include "rt_low_level_iar.inc"
+#define NOINT           0xC0
 
 ;----------------------- Stack and Heap Definitions ----------------------------
     MODULE ?cstartup

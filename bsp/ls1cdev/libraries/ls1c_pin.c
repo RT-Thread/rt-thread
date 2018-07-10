@@ -1,4 +1,4 @@
-// Òı½Å¹¦ÄÜ(ÆÕÍ¨gpio£¬pwm£¬¸´ÓÃµÈ)Ïà¹Ø½Ó¿Ú
+// å¼•è„šåŠŸèƒ½(æ™®é€šgpioï¼Œpwmï¼Œå¤ç”¨ç­‰)ç›¸å…³æ¥å£
 
 
 #include "ls1c_public.h"
@@ -8,21 +8,21 @@
 
 
 /*
- * °ÑÖ¸¶¨pinÉèÖÃÎªÖ¸¶¨ÓÃÍ¾(ÆÕÍ¨gpio£¬·Çgpio)
- * @gpio gpioÒı½Å±àºÅ
- * @purpose ÓÃÍ¾
+ * æŠŠæŒ‡å®špinè®¾ç½®ä¸ºæŒ‡å®šç”¨é€”(æ™®é€šgpioï¼Œégpio)
+ * @gpio gpioå¼•è„šç¼–å·
+ * @purpose ç”¨é€”
  */
 void pin_set_purpose(unsigned int gpio, pin_purpose_t purpose)
 {
-    volatile unsigned int *gpio_cfgx;           // GPIO_CFGx¼Ä´æÆ÷
+    volatile unsigned int *gpio_cfgx;           // GPIO_CFGxå¯„å­˜å™¨
     unsigned int pin = GPIO_GET_PIN(gpio);
 
     gpio_cfgx = gpio_get_cfg_reg(gpio);
-    if (PIN_PURPOSE_GPIO == purpose)            // Òı½ÅÓÃ×÷ÆÕÍ¨gpio
+    if (PIN_PURPOSE_GPIO == purpose)            // å¼•è„šç”¨ä½œæ™®é€šgpio
     {
         reg_set_one_bit(gpio_cfgx, pin);
     }
-    else                                        // Òı½ÅÓÃ×÷ÆäËü¹¦ÄÜ(·Çgpio)
+    else                                        // å¼•è„šç”¨ä½œå…¶å®ƒåŠŸèƒ½(égpio)
     {
         reg_clr_one_bit(gpio_cfgx, pin);
     }
@@ -33,107 +33,118 @@ void pin_set_purpose(unsigned int gpio, pin_purpose_t purpose)
 
 
 /*
- * ÉèÖÃÖ¸¶¨pinÎªµÚn¸´ÓÃ
- * @gpio gpio±àºÅ
- * @remap µÚn¸´ÓÃ
+ * è®¾ç½®æŒ‡å®špinä¸ºç¬¬nå¤ç”¨
+ * @gpio gpioç¼–å·
+ * @remap ç¬¬nå¤ç”¨
  */
 void pin_set_remap(unsigned int gpio, pin_remap_t remap)
 {
-    volatile unsigned int *reg = NULL;          // ¸´ÓÃ¼Ä´æÆ÷
+    volatile unsigned int *reg = NULL;          // å¤ç”¨å¯„å­˜å™¨
     unsigned int port = GPIO_GET_PORT(gpio);
     unsigned int pin  = GPIO_GET_PIN(gpio);
+    int i;
+
+    /*æŒ‡å®šå…¨éƒ¨pinå¤ç”¨ä¸º0*/
+    for (i = 0; i <= 4; i++)
+    {
+        reg = (volatile unsigned int *)((LS1C_CBUS_FIRST0) + ((port) * 0x04) + ((i) * 0x10));
+        // ç½®0
+        reg_clr_one_bit(reg, pin);
+    }
+
+    if (remap == PIN_REMAP_DEFAULT) return;
 
     switch (port)
     {
-        case 0:
-            switch (remap)
-            {
-                case PIN_REMAP_FIRST:
-                    reg = (volatile unsigned int *)LS1C_CBUS_FIRST0;
-                    break;
-                case PIN_REMAP_SECOND:
-                    reg = (volatile unsigned int *)LS1C_CBUS_SECOND0;
-                    break;
-                case PIN_REMAP_THIRD:
-                    reg = (volatile unsigned int *)LS1C_CBUS_THIRD0;
-                    break;
-                case PIN_REMAP_FOURTH:
-                    reg = (volatile unsigned int *)LS1C_CBUS_FOURTH0;
-                    break;
-                case PIN_REMAP_FIFTH:
-                    reg = (volatile unsigned int *)LS1C_CBUS_FIFTH0;
-                    break;
-            }
+    case 0:
+        switch (remap)
+        {
+        case PIN_REMAP_FIRST:
+            reg = (volatile unsigned int *)LS1C_CBUS_FIRST0;
             break;
-
-        case 1:
-            switch (remap)
-            {
-                case PIN_REMAP_FIRST:
-                    reg = (volatile unsigned int *)LS1C_CBUS_FIRST1;
-                    break;
-                case PIN_REMAP_SECOND:
-                    reg = (volatile unsigned int *)LS1C_CBUS_SECOND1;
-                    break;
-                case PIN_REMAP_THIRD:
-                    reg = (volatile unsigned int *)LS1C_CBUS_THIRD1;
-                    break;
-                case PIN_REMAP_FOURTH:
-                    reg = (volatile unsigned int *)LS1C_CBUS_FOURTH1;
-                    break;
-                case PIN_REMAP_FIFTH:
-                    reg = (volatile unsigned int *)LS1C_CBUS_FIFTH1;
-                    break;
-            }
+        case PIN_REMAP_SECOND:
+            reg = (volatile unsigned int *)LS1C_CBUS_SECOND0;
             break;
-
-        case 2:
-            switch (remap)
-            {
-                case PIN_REMAP_FIRST:
-                    reg = (volatile unsigned int *)LS1C_CBUS_FIRST2;
-                    break;
-                case PIN_REMAP_SECOND:
-                    reg = (volatile unsigned int *)LS1C_CBUS_SECOND2;
-                    break;
-                case PIN_REMAP_THIRD:
-                    reg = (volatile unsigned int *)LS1C_CBUS_THIRD2;
-                    break;
-                case PIN_REMAP_FOURTH:
-                    reg = (volatile unsigned int *)LS1C_CBUS_FOURTH2;
-                    break;
-                case PIN_REMAP_FIFTH:
-                    reg = (volatile unsigned int *)LS1C_CBUS_FIFTH2;
-                    break;
-            }
+        case PIN_REMAP_THIRD:
+            reg = (volatile unsigned int *)LS1C_CBUS_THIRD0;
             break;
-
-        case 3:
-            switch (remap)
-            {
-                case PIN_REMAP_FIRST:
-                    reg = (volatile unsigned int *)LS1C_CBUS_FIRST3;
-                    break;
-                case PIN_REMAP_SECOND:
-                    reg = (volatile unsigned int *)LS1C_CBUS_SECOND3;
-                    break;
-                case PIN_REMAP_THIRD:
-                    reg = (volatile unsigned int *)LS1C_CBUS_THIRD3;
-                    break;
-                case PIN_REMAP_FOURTH:
-                    reg = (volatile unsigned int *)LS1C_CBUS_FOURTH3;
-                    break;
-                case PIN_REMAP_FIFTH:
-                    reg = (volatile unsigned int *)LS1C_CBUS_FIFTH3;
-                    break;
-            }
+        case PIN_REMAP_FOURTH:
+            reg = (volatile unsigned int *)LS1C_CBUS_FOURTH0;
             break;
+        case PIN_REMAP_FIFTH:
+            reg = (volatile unsigned int *)LS1C_CBUS_FIFTH0;
+            break;
+        }
+        break;
 
-        default:
-            return ;
+    case 1:
+        switch (remap)
+        {
+        case PIN_REMAP_FIRST:
+            reg = (volatile unsigned int *)LS1C_CBUS_FIRST1;
+            break;
+        case PIN_REMAP_SECOND:
+            reg = (volatile unsigned int *)LS1C_CBUS_SECOND1;
+            break;
+        case PIN_REMAP_THIRD:
+            reg = (volatile unsigned int *)LS1C_CBUS_THIRD1;
+            break;
+        case PIN_REMAP_FOURTH:
+            reg = (volatile unsigned int *)LS1C_CBUS_FOURTH1;
+            break;
+        case PIN_REMAP_FIFTH:
+            reg = (volatile unsigned int *)LS1C_CBUS_FIFTH1;
+            break;
+        }
+        break;
+
+    case 2:
+        switch (remap)
+        {
+        case PIN_REMAP_FIRST:
+            reg = (volatile unsigned int *)LS1C_CBUS_FIRST2;
+            break;
+        case PIN_REMAP_SECOND:
+            reg = (volatile unsigned int *)LS1C_CBUS_SECOND2;
+            break;
+        case PIN_REMAP_THIRD:
+            reg = (volatile unsigned int *)LS1C_CBUS_THIRD2;
+            break;
+        case PIN_REMAP_FOURTH:
+            reg = (volatile unsigned int *)LS1C_CBUS_FOURTH2;
+            break;
+        case PIN_REMAP_FIFTH:
+            reg = (volatile unsigned int *)LS1C_CBUS_FIFTH2;
+            break;
+        }
+        break;
+
+    case 3:
+        switch (remap)
+        {
+        case PIN_REMAP_FIRST:
+            reg = (volatile unsigned int *)LS1C_CBUS_FIRST3;
+            break;
+        case PIN_REMAP_SECOND:
+            reg = (volatile unsigned int *)LS1C_CBUS_SECOND3;
+            break;
+        case PIN_REMAP_THIRD:
+            reg = (volatile unsigned int *)LS1C_CBUS_THIRD3;
+            break;
+        case PIN_REMAP_FOURTH:
+            reg = (volatile unsigned int *)LS1C_CBUS_FOURTH3;
+            break;
+        case PIN_REMAP_FIFTH:
+            reg = (volatile unsigned int *)LS1C_CBUS_FIFTH3;
+            break;
+        }
+        break;
+
+    default:
+        return ;
     }
 
-    // ÖÃ1
+    // ç½®1
     reg_set_one_bit(reg, pin);
 
     return ;

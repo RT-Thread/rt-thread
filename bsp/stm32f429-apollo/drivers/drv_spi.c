@@ -480,7 +480,7 @@ void DMA1_Stream2_IRQHandler(void)
 struct stm32f4_spi stm32f4_spi4 = 
 {
     /* .spi_handle = */{
-        /* .Instance = */ SPI5,
+        /* .Instance = */ SPI4,
     },
     /* .hdma_rx = */ {   
         DMA2_Stream0,
@@ -526,6 +526,7 @@ struct stm32f4_spi stm32f4_spi5 =
     /* .spi_handle = */{
         /* .Instance = */ SPI5,
     },
+#ifdef SPI_USE_DMA
     /* .hdma_rx = */ {   
         DMA2_Stream3,
         DMA_CHANNEL_2,
@@ -537,6 +538,7 @@ struct stm32f4_spi stm32f4_spi5 =
         DMA_CHANNEL_2,
     },
     /* .hdma_tx_irq = */ DMA2_Stream4_IRQn,
+#endif /* SPI_USE_DMA */
 };
 
 static struct rt_spi_bus spi5_bus;
@@ -703,6 +705,7 @@ rt_err_t stm32_spi_bus_register(SPI_TypeDef * SPI,
         return RT_ENOSYS;
     }
     
+#ifdef SPI_USE_DMA
     /* Configure the DMA handler for Transmission process */
     p_spi_bus->hdma_tx.Init.Direction           = DMA_MEMORY_TO_PERIPH;
     p_spi_bus->hdma_tx.Init.PeriphInc           = DMA_PINC_DISABLE;
@@ -727,6 +730,7 @@ rt_err_t stm32_spi_bus_register(SPI_TypeDef * SPI,
     p_spi_bus->hdma_rx.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
     p_spi_bus->hdma_rx.Init.MemBurst            = DMA_MBURST_INC4;
     p_spi_bus->hdma_rx.Init.PeriphBurst         = DMA_PBURST_INC4;
+#endif /* SPI_USE_DMA */
 
     spi_bus->parent.user_data = &stm32f4_spi5;
     

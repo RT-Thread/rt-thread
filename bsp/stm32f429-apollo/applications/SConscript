@@ -8,16 +8,10 @@ application.c
 startup.c
 """)
 
-# add for startup script 
-if rtconfig.CROSS_TOOL == 'iar':
-    CPPDEFINES = ['_TIMESPEC_DEFINED']
-else:
-    CPPDEFINES = []
-
 # add UI engine demo.
-if GetDepend('RT_USING_GUIENGINE'):
+if GetDepend('PKG_USING_GUIENGINE'):
     src += ['rtgui_demo.c']
 
-group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

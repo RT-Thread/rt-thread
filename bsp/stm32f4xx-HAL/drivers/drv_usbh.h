@@ -14,7 +14,5 @@
 #ifndef __STM32_USBH_H__
 #define __STM32_USBH_H__
 #include <rtthread.h>
-
 int stm_usbh_register(void);
-
 #endif

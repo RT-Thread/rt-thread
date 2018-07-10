@@ -30,9 +30,12 @@
 
 /* Use Cycle counter of Data Watchpoint and Trace Register for CPU time */
 
-static uint32_t cortexm_cputime_getres(void)
+static float cortexm_cputime_getres(void)
 {
-    return (1000 * 1000 * 1000)/SystemCoreClock;
+    float ret = 1000 * 1000 * 1000;
+    
+    ret = ret / SystemCoreClock;
+    return ret;
 }
 
 static uint32_t cortexm_cputime_gettime(void)
@@ -51,6 +54,9 @@ int cortexm_cputime_init(void)
     /* check support bit */
     if ((DWT->CTRL & (1UL << DWT_CTRL_NOCYCCNT_Pos)) == 0) 
     {
+        /* enable trace*/
+        CoreDebug->DEMCR |= (1UL << CoreDebug_DEMCR_TRCENA_Pos);
+        
         /* whether cycle counter not enabled */
         if ((DWT->CTRL & (1UL << DWT_CTRL_CYCCNTENA_Pos)) == 0) 
         {

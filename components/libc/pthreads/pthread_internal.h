@@ -83,7 +83,7 @@ rt_inline _pthread_data_t *_pthread_get_data(pthread_t thread)
 }
 
 int clock_time_to_tick(const struct timespec *time);
-void clock_time_system_init(void);
+
 void posix_mq_system_init(void);
 void posix_sem_system_init(void);
 void pthread_key_system_init(void);

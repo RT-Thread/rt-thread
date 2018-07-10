@@ -1,4 +1,4 @@
-// ÁúĞ¾1cÍâÉè¼Ä´æÆ÷
+// é¾™èŠ¯1cå¤–è®¾å¯„å­˜å™¨
 
 
 #ifndef __OPENLOONGSON_LS1C_REGS_H
@@ -7,12 +7,12 @@
 
 
 
-// Ê±ÖÓÏà¹Ø¼Ä´æÆ÷µØÖ·
+// æ—¶é’Ÿç›¸å…³å¯„å­˜å™¨åœ°å€
 #define LS1C_START_FREQ                     (0xbfe78030)
 #define LS1C_CLK_DIV_PARAM                  (0xbfe78034)
 
 
-// gpioÏà¹Ø¼Ä´æÆ÷µØÖ·
+// gpioç›¸å…³å¯„å­˜å™¨åœ°å€
 #define LS1C_GPIO_CFG0                      (0xbfd010c0)
 #define LS1C_GPIO_EN0                       (0xbfd010d0)
 #define LS1C_GPIO_IN0                       (0xbfd010e0)
@@ -35,7 +35,7 @@
 
 
 
-// ¸´ÓÃÏà¹Ø¼Ä´æÆ÷
+// å¤ç”¨ç›¸å…³å¯„å­˜å™¨
 #define LS1C_CBUS_FIRST0                    (0xbfd011c0)
 #define LS1C_CBUS_SECOND0                   (0xbfd011d0)
 #define LS1C_CBUS_THIRD0                    (0xbfd011e0)
@@ -61,20 +61,22 @@
 #define LS1C_CBUS_FIFTH3                    (0xbfd0120c)
 
 
-// PWM¼Ä´æÆ÷Æ«ÒÆ
+// PWMå¯„å­˜å™¨åç§»
 #define LS1C_PWM_CNTR                       (0x0)
 #define LS1C_PWM_HRC                        (0x4)
 #define LS1C_PWM_LRC                        (0x8)
 #define LS1C_PWM_CTRL                       (0xC)
-// PWM»ùµØÖ·
+// PWMåŸºåœ°å€
 #define LS1C_REG_BASE_PWM0                  (0xbfe5c000)
 #define LS1C_REG_BASE_PWM1                  (0xbfe5c010)
 #define LS1C_REG_BASE_PWM2                  (0xbfe5c020)
 #define LS1C_REG_BASE_PWM3                  (0xbfe5c030)
 
+//CANåŸºåœ°å€
+#define  LS1C_REG_BASE_CAN0				    (0xbfe50000)
+#define  LS1C_REG_BASE_CAN1					(0xbfe54000)
 
-
-// ÖĞ¶ÏÅäÖÃ¼Ä´æÆ÷
+// ä¸­æ–­é…ç½®å¯„å­˜å™¨
 #define LS1C_INT0_SR                        (0xbfd01040)
 #define LS1C_INT0_EN                        (0xbfd01044)
 #define LS1C_INT0_SET                       (0xbfd01048)
@@ -111,21 +113,32 @@
 #define LS1C_INT4_EDGE                      (0xbfd010b4)
 
 
-// I2C¼Ä´æÆ÷
+// I2Cå¯„å­˜å™¨
 #define LS1C_I2C0_BASE                      (0xbfe58000)
 #define LS1C_I2C1_BASE                      (0xbfe68000)
 #define LS1C_I2C2_BASE                      (0xbfe70000)
 
 
-// SPI¼Ä´æÆ÷
+// SPIå¯„å­˜å™¨
 #define LS1C_SPI0_BASE                      (0xbfe80000)
 #define LS1C_SPI1_BASE                      (0xbfec0000)
 
 
-// ´®¿Ú¼Ä´æÆ÷
-#define LS1C_UART0_BASE                     (0xbfe40000)
+// ä¸²å£å¯„å­˜å™¨
+#define LS1C_UART00_BASE                    (0xbfe40000)
+#define LS1C_UART01_BASE                    (0xbfe41000)
 #define LS1C_UART1_BASE                     (0xbfe44000)
 #define LS1C_UART2_BASE                     (0xbfe48000)
+#define LS1C_UART3_BASE                     (0xbfe4c000)
+#define LS1C_UART4_BASE                     (0xbfe4c400)
+#define LS1C_UART5_BASE                     (0xbfe4c500)
+#define LS1C_UART6_BASE                     (0xbfe4c600)
+#define LS1C_UART7_BASE                     (0xbfe4c700)
+#define LS1C_UART8_BASE                     (0xbfe4c800)
+#define LS1C_UART9_BASE                     (0xbfe4c900)
+#define LS1C_UART10_BASE                    (0xbfe4ca00)
+#define LS1C_UART11_BASE                    (0xbfe4cb00)
+
 
 
 #endif

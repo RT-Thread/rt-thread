@@ -230,6 +230,16 @@ rt_inline rt_slist_t *rt_slist_remove(rt_slist_t *l, rt_slist_t *n)
     return l;
 }
 
+rt_inline rt_slist_t *rt_slist_first(rt_slist_t *l)
+{
+    return l->next;
+}
+
+rt_inline rt_slist_t *rt_slist_next(rt_slist_t *n)
+{
+    return n->next;
+}
+
 rt_inline int rt_slist_isempty(rt_slist_t *l)
 {
     return l->next == RT_NULL;
@@ -250,7 +260,7 @@ rt_inline int rt_slist_isempty(rt_slist_t *l)
  * @head:   the head for your single list.
  * @member: the name of the list_struct within the struct.
  */
-#define rt_slist_fore_each_entry(pos, head, member) \
+#define rt_slist_for_each_entry(pos, head, member) \
     for (pos = rt_slist_entry((head)->next, typeof(*pos), member); \
          &pos->member != (RT_NULL); \
          pos = rt_slist_entry(pos->member.next, typeof(*pos), member))

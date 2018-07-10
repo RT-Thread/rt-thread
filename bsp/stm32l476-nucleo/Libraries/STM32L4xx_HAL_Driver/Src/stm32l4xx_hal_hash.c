@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_hash.c
   * @author  MCD Application Team
-  * @version V1.7.2
-  * @date    16-June-2017
   * @brief   HASH HAL module driver.
   *          This file provides firmware functions to manage the following 
   *          functionalities of the HASH peripheral:
@@ -140,7 +138,7 @@
 
 #ifdef HAL_HASH_MODULE_ENABLED
 
-#if defined (STM32L4A6xx)
+#if defined (STM32L4A6xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
 
 /** @addtogroup STM32L4xx_HAL_Driver
   * @{
@@ -2713,7 +2711,7 @@ HAL_StatusTypeDef HMAC_Start_DMA(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, 
   * @}
   */
 
-#endif /* defined (STM32L4A6xx) */
+#endif /* defined (STM32L4A6xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx) */  
 
 #endif /* HAL_HASH_MODULE_ENABLED */
 

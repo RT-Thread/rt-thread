@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32f7xx_hal_pwr.c
   * @author  MCD Application Team
-  * @version V1.0.1
-  * @date    25-June-2015
   * @brief   PWR HAL module driver.
   *          This file provides firmware functions to manage the following 
   *          functionalities of the Power Controller (PWR) peripheral:
@@ -13,7 +11,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2015 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -63,10 +61,10 @@
 /** @defgroup PWR_PVD_Mode_Mask PWR PVD Mode Mask
   * @{
   */     
-#define PVD_MODE_IT               ((uint32_t)0x00010000)
-#define PVD_MODE_EVT              ((uint32_t)0x00020000)
-#define PVD_RISING_EDGE           ((uint32_t)0x00000001)
-#define PVD_FALLING_EDGE          ((uint32_t)0x00000002)
+#define PVD_MODE_IT               ((uint32_t)0x00010000U)
+#define PVD_MODE_EVT              ((uint32_t)0x00020000U)
+#define PVD_RISING_EDGE           ((uint32_t)0x00000001U)
+#define PVD_FALLING_EDGE          ((uint32_t)0x00000002U)
 /**
   * @}
   */
@@ -176,7 +174,7 @@ void HAL_PWR_DisableBkUpAccess(void)
     [..]
       (+) Wake-up pin is used to wake up the system from Standby mode. This pin is 
           forced in input pull-down configuration and is active on rising edges.
-      (+) There are to 6 Wake-up pin in the STM32F7 devices family
+      (+) There are up to 6 Wake-up pin in the STM32F7 devices family
 
     *** Low Power modes configuration ***
     =====================================
@@ -268,7 +266,7 @@ void HAL_PWR_DisableBkUpAccess(void)
 
 /**
   * @brief Configures the voltage threshold detected by the Power Voltage Detector(PVD).
-  * @param sConfigPVD: pointer to an PWR_PVDTypeDef structure that contains the configuration
+  * @param sConfigPVD pointer to an PWR_PVDTypeDef structure that contains the configuration
   *        information for the PVD.
   * @note Refer to the electrical characteristics of your device datasheet for
   *         more details about the voltage threshold corresponding to each 
@@ -336,7 +334,7 @@ void HAL_PWR_DisablePVD(void)
 
 /**
   * @brief Enable the WakeUp PINx functionality.
-  * @param WakeUpPinPolarity: Specifies which Wake-Up pin to enable.
+  * @param WakeUpPinPolarity Specifies which Wake-Up pin to enable.
   *         This parameter can be one of the following legacy values, which sets the default polarity: 
   *         detection on high level (rising edge):
   *           @arg PWR_WAKEUP_PIN1, PWR_WAKEUP_PIN2, PWR_WAKEUP_PIN3, PWR_WAKEUP_PIN4, PWR_WAKEUP_PIN5, PWR_WAKEUP_PIN6 
@@ -365,7 +363,7 @@ void HAL_PWR_EnableWakeUpPin(uint32_t WakeUpPinPolarity)
 
 /**
   * @brief Disables the WakeUp PINx functionality.
-  * @param WakeUpPinx: Specifies the Power Wake-Up pin to disable.
+  * @param WakeUpPinx Specifies the Power Wake-Up pin to disable.
   *         This parameter can be one of the following values:
   *           @arg PWR_WAKEUP_PIN1
   *           @arg PWR_WAKEUP_PIN2
@@ -390,13 +388,13 @@ void HAL_PWR_DisableWakeUpPin(uint32_t WakeUpPinx)
   * @note In Sleep mode, the systick is stopped to avoid exit from this mode with
   *       systick interrupt when used as time base for Timeout 
   *                
-  * @param Regulator: Specifies the regulator state in SLEEP mode.
+  * @param Regulator Specifies the regulator state in SLEEP mode.
   *            This parameter can be one of the following values:
   *            @arg PWR_MAINREGULATOR_ON: SLEEP mode with regulator ON
   *            @arg PWR_LOWPOWERREGULATOR_ON: SLEEP mode with low power regulator ON
   * @note This parameter is not used for the STM32F7 family and is kept as parameter
   *       just to maintain compatibility with the lower power families.
-  * @param SLEEPEntry: Specifies if SLEEP mode in entered with WFI or WFE instruction.
+  * @param SLEEPEntry Specifies if SLEEP mode in entered with WFI or WFE instruction.
   *          This parameter can be one of the following values:
   *            @arg PWR_SLEEPENTRY_WFI: enter SLEEP mode with WFI instruction
   *            @arg PWR_SLEEPENTRY_WFE: enter SLEEP mode with WFE instruction
@@ -410,6 +408,10 @@ void HAL_PWR_EnterSLEEPMode(uint32_t Regulator, uint8_t SLEEPEntry)
 
   /* Clear SLEEPDEEP bit of Cortex System Control Register */
   CLEAR_BIT(SCB->SCR, ((uint32_t)SCB_SCR_SLEEPDEEP_Msk));
+
+  /* Ensure that all instructions done before entering SLEEP mode */
+  __DSB();
+  __ISB();
 
   /* Select SLEEP mode entry -------------------------------------------------*/
   if(SLEEPEntry == PWR_SLEEPENTRY_WFI)
@@ -435,11 +437,11 @@ void HAL_PWR_EnterSLEEPMode(uint32_t Regulator, uint8_t SLEEPEntry)
   *         startup delay is incurred when waking up from Stop mode. 
   *         By keeping the internal regulator ON during Stop mode, the consumption 
   *         is higher although the startup time is reduced.    
-  * @param Regulator: Specifies the regulator state in Stop mode.
+  * @param Regulator Specifies the regulator state in Stop mode.
   *          This parameter can be one of the following values:
   *            @arg PWR_MAINREGULATOR_ON: Stop mode with regulator ON
   *            @arg PWR_LOWPOWERREGULATOR_ON: Stop mode with low power regulator ON
-  * @param STOPEntry: Specifies if Stop mode in entered with WFI or WFE instruction.
+  * @param STOPEntry Specifies if Stop mode in entered with WFI or WFE instruction.
   *          This parameter can be one of the following values:
   *            @arg PWR_STOPENTRY_WFI: Enter Stop mode with WFI instruction
   *            @arg PWR_STOPENTRY_WFE: Enter Stop mode with WFE instruction
@@ -448,25 +450,29 @@ void HAL_PWR_EnterSLEEPMode(uint32_t Regulator, uint8_t SLEEPEntry)
 void HAL_PWR_EnterSTOPMode(uint32_t Regulator, uint8_t STOPEntry)
 {
   uint32_t tmpreg = 0;
-  
+
   /* Check the parameters */
   assert_param(IS_PWR_REGULATOR(Regulator));
   assert_param(IS_PWR_STOP_ENTRY(STOPEntry));
-  
+
   /* Select the regulator state in Stop mode ---------------------------------*/
   tmpreg = PWR->CR1;
   /* Clear PDDS and LPDS bits */
   tmpreg &= (uint32_t)~(PWR_CR1_PDDS | PWR_CR1_LPDS);
-  
+
   /* Set LPDS, MRLVDS and LPLVDS bits according to Regulator value */
   tmpreg |= Regulator;
-  
+
   /* Store the new value */
   PWR->CR1 = tmpreg;
-  
+
   /* Set SLEEPDEEP bit of Cortex System Control Register */
   SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
-  
+
+  /* Ensure that all instructions done before entering STOP mode */
+  __DSB();
+  __ISB();
+
   /* Select Stop mode entry --------------------------------------------------*/
   if(STOPEntry == PWR_STOPENTRY_WFI)
   {   
