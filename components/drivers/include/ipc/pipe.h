@@ -32,5 +32,5 @@ struct rt_pipe_device
 typedef struct rt_pipe_device rt_pipe_t;
 
 rt_pipe_t *rt_pipe_create(const char *name, int bufsz);
-
+int rt_pipe_delete(const char *name);
 #endif /* PIPE_H__ */
