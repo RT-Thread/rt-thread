@@ -26,7 +26,7 @@
 #include <rtthread.h>
 
 #define DBG_ENABLE
-#define DBG_SECTION_NAME    "[PHY]"
+#define DBG_SECTION_NAME    "PHY"
 #define DBG_COLOR
 #define DBG_LEVEL           DBG_LOG
 #include <rtdbg.h>

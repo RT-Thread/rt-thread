@@ -32,7 +32,7 @@
 #include "lwp.h"
 
 #define DBG_ENABLE
-#define DBG_SECTION_NAME    "[LWP]"
+#define DBG_SECTION_NAME    "LWP"
 #define DBG_COLOR
 #define DBG_LEVEL           DBG_WARNING
 #include <rtdbg.h>

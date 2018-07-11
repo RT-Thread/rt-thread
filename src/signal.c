@@ -35,7 +35,7 @@
 #endif
 
 // #define DBG_ENABLE
-#define DBG_SECTION_NAME    "[SIGN]"
+#define DBG_SECTION_NAME    "SIGN"
 #define DBG_COLOR
 #define DBG_LEVEL           DBG_LOG
 #include <rtdbg.h>

@@ -34,7 +34,7 @@
 #define PIO_THRESHOLD       64  /* use pio mode if data length < PIO_THRESHOLD */
 
 #define DEBUG_ENABLE
-#define DEBUG_SECTION_NAME  "[SDIO]"
+#define DEBUG_SECTION_NAME  "SDIO"
 #define DEBUG_LEVEL         DBG_INFO
 // #define DEBUG_LEVEL         DBG_LOG
 #define DEBUG_COLOR
