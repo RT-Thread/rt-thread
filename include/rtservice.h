@@ -141,7 +141,7 @@ rt_inline unsigned int rt_list_len(const rt_list_t *l)
     rt_container_of(node, type, member)
 
 /**
- * rt_list_for_each	-	iterate over a list
+ * rt_list_for_each - iterate over a list
  * @pos:	the rt_list_t * to use as a loop cursor.
  * @head:	the head for your list.
  */
@@ -273,12 +273,12 @@ rt_inline int rt_slist_isempty(rt_slist_t *l)
     rt_container_of(node, type, member)
 
 /**
- * rt_slist_for_each  -   iterate over a single list
+ * rt_slist_for_each - iterate over a single list
  * @pos:    the rt_slist_t * to use as a loop cursor.
  * @head:   the head for your single list.
  */
 #define rt_slist_for_each(pos, head) \
-    for (pos = (head)->next; &pos->next != (head); pos = pos->next)
+    for (pos = (head)->next; pos != RT_NULL; pos = pos->next)
 
 /**
  * rt_slist_for_each_entry  -   iterate over single list of given type
