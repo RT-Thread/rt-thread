@@ -32,7 +32,7 @@
  * In your C/C++ file, enable/disable DEBUG_ENABLE macro, and then include this
  * header file.
  *
- * #define DBG_SECTION_NAME    "[ MOD]"
+ * #define DBG_SECTION_NAME    "MOD"
  * #define DBG_ENABLE          // enable debug macro
  * #define DBG_LEVEL           DBG_INFO
  * #include <rtdbg.h>          // must after of DEBUG_ENABLE or some other options
@@ -81,10 +81,14 @@
  * WHITE    37
  */
 #ifdef DBG_COLOR
-#define _DBG_COLOR(n)       rt_kprintf("\033["#n"m")
+#define _DBG_COLOR(n)        rt_kprintf("\033["#n"m")
+#define _DBG_LOG_HDR(lvl_name, color_n)                    \
+    rt_kprintf("\033["#color_n"m["lvl_name"/"DBG_SECTION_NAME"] ")
 #else
 #define _DBG_COLOR(n)
-#endif
+#define _DBG_LOG_HDR(lvl_name, color_n)                    \
+    rt_kprintf("["lvl_name"/"DBG_SECTION_NAME"] ")
+#endif /* DBG_COLOR */
 
 /*
  * static debug routine
@@ -94,12 +98,13 @@
     {                                                       \
         switch(level)                                       \
         {                                                   \
-            case DBG_ERROR:   _DBG_COLOR(31); break;        \
-            case DBG_WARNING: _DBG_COLOR(33); break;        \
-            case DBG_INFO:    _DBG_COLOR(32); break;        \
+            case DBG_ERROR:   _DBG_LOG_HDR("E", 31); break; \
+            case DBG_WARNING: _DBG_LOG_HDR("W", 33); break; \
+            case DBG_INFO:    _DBG_LOG_HDR("I", 32); break; \
+            case DBG_LOG:     _DBG_LOG_HDR("D", 0); break;  \
             default: break;                                 \
         }                                                   \
-        rt_kprintf(DBG_SECTION_NAME fmt, ##__VA_ARGS__);    \
+        rt_kprintf(fmt, ##__VA_ARGS__);                     \
         _DBG_COLOR(0);                                      \
     }
 
