@@ -43,7 +43,7 @@
 
 // #define DEBUG_ENABLE
 #define DEBUG_LEVEL         DBG_LOG
-#define DBG_SECTION_NAME    "[UART]"
+#define DBG_SECTION_NAME    "UART"
 #define DEBUG_COLOR
 #include <rtdbg.h>
 
