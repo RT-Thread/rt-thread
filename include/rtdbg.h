@@ -131,17 +131,21 @@
         rt_kprintf("\n");                                   \
     }
 
+#define dbg_raw(...)         rt_kprintf(__VA_ARGS__);
+
 #else
 #define dbg_log(level, fmt, ...)
 #define dbg_here
 #define dbg_enter
 #define dbg_exit
 #define dbg_log_line(level, ...)
+#define dbg_raw(...)
 #endif
 
 #define LOG_D(...)           dbg_log_line(DBG_LOG    , __VA_ARGS__)
 #define LOG_I(...)           dbg_log_line(DBG_INFO   , __VA_ARGS__)
 #define LOG_W(...)           dbg_log_line(DBG_WARNING, __VA_ARGS__)
 #define LOG_E(...)           dbg_log_line(DBG_ERROR  , __VA_ARGS__)
+#define LOG_RAW(...)         dbg_raw(__VA_ARGS__)
 
 #endif /* RT_DBG_H__ */
