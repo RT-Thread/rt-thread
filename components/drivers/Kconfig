@@ -4,6 +4,12 @@ config RT_USING_DEVICE_IPC
     bool "Using device drivers IPC"
     default y
 
+if RT_USING_DEVICE_IPC
+    config RT_PIPE_BUFSZ
+        int "Set pipe buffer size"
+        default 512
+endif
+
 config RT_USING_SERIAL
     bool "Using serial device drivers"
     select RT_USING_DEVICE_IPC
@@ -111,6 +117,28 @@ config RT_USING_RTC
 config RT_USING_SDIO
     bool "Using SD/MMC device drivers"
     default n
+
+    if RT_USING_SDIO
+        config RT_SDIO_STACK_SIZE
+            int "The stack size for sdio irq thread"
+            default 512
+
+        config RT_SDIO_THREAD_PRIORITY
+            int "The priority level value of sdio irq thread"
+            default 15
+
+        config RT_MMCSD_STACK_SIZE
+            int "The stack size for mmcsd thread"
+            default 1024
+
+        config RT_MMCSD_THREAD_PREORITY
+            int "The priority level value of mmcsd thread"
+            default 22
+
+        config RT_MMCSD_MAX_PARTITION
+            int "mmcsd max partition"
+            default 16
+    endif
 
 config RT_USING_SPI
     bool "Using SPI Bus/Device device drivers"

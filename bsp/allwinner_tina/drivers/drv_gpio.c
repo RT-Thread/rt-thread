@@ -493,7 +493,7 @@ static rt_err_t pin_attach_irq(struct rt_device *device, rt_int32_t pin, rt_uint
     gpio_set_irq_type(pin_index[pin].pin_port, pin_index[pin].pin, mode);
     return RT_EOK;
 }
-static rt_err_t pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 {
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
@@ -539,7 +539,7 @@ static const struct rt_pin_ops ops =
     pin_write,
     pin_read,
     pin_attach_irq,
-    pin_dettach_irq,
+    pin_detach_irq,
     pin_irq_enable,
 };
 #endif

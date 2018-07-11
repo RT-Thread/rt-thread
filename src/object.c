@@ -291,6 +291,9 @@ void rt_object_detach(rt_object_t object)
 
     RT_OBJECT_HOOK_CALL(rt_object_detach_hook, (object));
 
+    /* reset object type */
+    object->type = 0;
+
     /* lock interrupt */
     temp = rt_hw_interrupt_disable();
 
@@ -378,6 +381,9 @@ void rt_object_delete(rt_object_t object)
 
     RT_OBJECT_HOOK_CALL(rt_object_detach_hook, (object));
 
+    /* reset object type */
+    object->type = 0;
+
     /* lock interrupt */
     temp = rt_hw_interrupt_disable();
 
@@ -410,6 +416,22 @@ rt_bool_t rt_object_is_systemobject(rt_object_t object)
         return RT_TRUE;
 
     return RT_FALSE;
+}
+
+/**
+ * This function will return the type of object without
+ * RT_Object_Class_Static flag.
+ *
+ * @param object the specified object to be get type.
+ *
+ * @return the type of object.
+ */
+rt_uint8_t rt_object_get_type(rt_object_t object)
+{
+    /* object check */
+    RT_ASSERT(object != RT_NULL);
+
+    return object->type & ~RT_Object_Class_Static;
 }
 
 /**

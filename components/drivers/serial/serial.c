@@ -421,7 +421,6 @@ static void rt_dma_recv_update_put_index(struct rt_serial_device *serial, rt_siz
             /* force overwrite get index */
             if (rx_fifo->put_index >= rx_fifo->get_index)
             {
-                rx_fifo->get_index = rx_fifo->put_index;
                 rx_fifo->is_full = RT_TRUE;
             }
         }
@@ -437,10 +436,15 @@ static void rt_dma_recv_update_put_index(struct rt_serial_device *serial, rt_siz
                 rx_fifo->put_index %= serial->config.bufsz;
             }
             /* force overwrite get index */
-            rx_fifo->get_index = rx_fifo->put_index;
             rx_fifo->is_full = RT_TRUE;
         }
     }
+    
+    if(rx_fifo->is_full == RT_TRUE) 
+    {
+        rx_fifo->get_index = rx_fifo->put_index; 
+    } 
+    
     if (rx_fifo->get_index >= serial->config.bufsz) rx_fifo->get_index = 0;
 }
 

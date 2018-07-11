@@ -44,12 +44,10 @@
 #endif
 
 #define FINSH_OPTION_ECHO   0x01
-#if defined(FINSH_USING_MSH) || (defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR))
+
 #define FINSH_PROMPT        finsh_get_prompt()
 const char* finsh_get_prompt(void);
-#else
-#define FINSH_PROMPT        "finsh>>"
-#endif
+int finsh_set_prompt(const char * prompt);
 
 #ifdef FINSH_USING_HISTORY
     #ifndef FINSH_HISTORY_LINES
@@ -86,6 +84,7 @@ struct finsh_shell
     enum input_stat stat;
 
     rt_uint8_t echo_mode:1;
+    rt_uint8_t prompt_mode: 1;
 
 #ifdef FINSH_USING_HISTORY
     rt_uint16_t current_history;
@@ -117,6 +116,9 @@ rt_uint32_t finsh_get_echo(void);
 int finsh_system_init(void);
 void finsh_set_device(const char* device_name);
 const char* finsh_get_device(void);
+
+rt_uint32_t finsh_get_prompt_mode(void);
+void finsh_set_prompt_mode(rt_uint32_t prompt_mode);
 
 #ifdef FINSH_USING_AUTH
 rt_err_t finsh_set_password(const char *password);
