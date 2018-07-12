@@ -75,6 +75,15 @@ config RT_USING_HOOK
         Enable the hook function when system running, such as idle thread hook, 
         thread context switch etc.
 
+    if RT_USING_HOOK
+    config RT_IDEL_HOOK_LIST_SIZE
+        int "The max size of idel hook list"
+        default 4
+        range 1 16
+        help
+            The system has a hook list. This is the hook list size.
+    endif
+
 config IDLE_THREAD_STACK_SIZE
     int "The stack size of idle thread"
     default 256
