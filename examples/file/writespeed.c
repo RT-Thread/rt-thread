@@ -64,10 +64,10 @@ void writespeed(const char* filename, int total_length, int block_size)
     rt_free(buff_ptr);
 
     /* calculate write speed */
-	if (tick)
+    if (tick)
         rt_kprintf("File write speed: %d byte/s\n", total_length / tick * RT_TICK_PER_SECOND);
     else
-		rt_kprintf("time is not long enough\n");
+        rt_kprintf("time is not long enough\n");
 }
 
 static void cmd_writespeed(int argc, char **argv)
@@ -87,10 +87,10 @@ static void cmd_writespeed(int argc, char **argv)
             ts = atoi(argv[2]);
             break;
         case 4:
-			bs = atoi(argv[3]);
+            bs = atoi(argv[3]);
             break;
         }
-            
+
         argc --;
     }
     rt_kprintf("name: %s, size: %d, blksize: %d\n", name, ts, bs);
