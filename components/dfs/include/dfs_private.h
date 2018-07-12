@@ -3,10 +3,28 @@
 
 #include <dfs.h>
 
-// #define DBG_ENABLE
+#ifdef DFS_DEBUG_ENABLE
+#define DBG_ENABLE
+
+#ifdef RT_DFS_DEBUG_LOG_LEVEL_0
+#define DBG_LEVEL			DBG_LOG
+#endif
+
+#ifdef RT_DFS_DEBUG_LOG_LEVEL_1
+#define DBG_LEVEL			DBG_INFO
+#endif
+
+#ifdef RT_DFS_DEBUG_LOG_LEVEL_2
+#define DBG_LEVEL			DBG_WARNING
+#endif
+
+#ifdef RT_DFS_DEBUG_LOG_LEVEL_3
+#define DBG_LEVEL			DBG_ERROR
+#endif
+#endif
+
 #define DBG_SECTION_NAME	"[ DFS]"
 #define DBG_COLOR
-#define DBG_LEVEL			DBG_LOG
 #include <rtdbg.h>
 
 #define NO_WORKING_DIR  "system does not support working directory\n"

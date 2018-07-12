@@ -159,6 +159,30 @@ if RT_USING_DFS
             string "NFSv3 host export"
             default "192.168.1.5:/"
     endif
+    
+    config DFS_DEBUG_ENABLE
+        bool "Enable file system debug log"
+        default y
+   
+    if DFS_DEBUG_ENABLE
+        choice 
+            prompt "DFS debug level"
+            default RT_DFS_DEBUG_LOG_LEVEL_2
+
+            config RT_DFS_DEBUG_LOG_LEVEL_0
+                bool "0: level log"
+
+            config RT_DFS_DEBUG_LOG_LEVEL_1
+                bool "1: level info"
+            
+            config RT_DFS_DEBUG_LOG_LEVEL_2
+                bool "2: level warning"
+                
+            config RT_DFS_DEBUG_LOG_LEVEL_3
+                bool "3: level error"
+        endchoice
+     
+    endif
 
 endif
 
