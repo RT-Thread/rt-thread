@@ -319,7 +319,7 @@ static void _enet_io_init(void)
 
 static void _enet_clk_init(void)
 {
-    const clock_enet_pll_config_t config = {true, false, false, 1, 1};
+    const clock_enet_pll_config_t config = {true, false, 1};
     CLOCK_InitEnetPll(&config);
 
     IOMUXC_EnableMode(IOMUXC_GPR, kIOMUXC_GPR_ENET1TxClkOutputDir, true);

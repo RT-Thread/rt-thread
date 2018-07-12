@@ -55,8 +55,16 @@ static int  fd_alloc(struct dfs_fdtable *fdt, int startfd);
 /**
  * this function will initialize device file system.
  */
+static volatile uint8_t init_ok = 0;
 int dfs_init(void)
 {
+    if(init_ok)
+    {
+        rt_kprintf("dfs already init.\n");
+        return 0;        
+    }
+    init_ok = 1;	
+
     /* clear filesystem operations table */
     memset((void *)filesystem_operation_table, 0, sizeof(filesystem_operation_table));
     /* clear filesystem table */
