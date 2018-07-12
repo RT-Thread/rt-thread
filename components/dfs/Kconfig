@@ -181,7 +181,6 @@ if RT_USING_DFS
             config RT_DFS_DEBUG_LOG_LEVEL_3
                 bool "3: level error"
         endchoice
-     
     endif
 
 endif
