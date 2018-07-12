@@ -173,7 +173,8 @@ void rt_thread_inited_sethook (void (*hook)(rt_thread_t thread));
  */
 void rt_thread_idle_init(void);
 #if defined(RT_USING_HOOK) || defined(RT_USING_IDLE_HOOK)
-void rt_thread_idle_sethook(void (*hook)(void));
+rt_err_t rt_thread_idle_sethook(void (*hook)(void));
+rt_err_t rt_thread_idle_delhook(void (*hook)(void));
 #endif
 void rt_thread_idle_excute(void);
 rt_thread_t rt_thread_idle_gethandler(void);
