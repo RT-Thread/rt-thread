@@ -1182,6 +1182,7 @@ rt_err_t rt_module_destroy(rt_module_t module)
     /* check parameter */
     RT_ASSERT(module != RT_NULL);
     RT_ASSERT(module->nref == 0);
+    RT_ASSERT(rt_object_get_type(&module->parent) == RT_Object_Class_Module);
 
     RT_DEBUG_LOG(RT_DEBUG_MODULE, ("rt_module_destroy: %8.*s\n",
                                    RT_NAME_MAX, module->parent.name));

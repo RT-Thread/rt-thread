@@ -50,7 +50,11 @@ static void SystemClock_Config(void)
     RCC_OscInitStruct.OscillatorType |= RCC_OSCILLATORTYPE_LSI;
     RCC_OscInitStruct.LSIState = RCC_LSI_ON;
 #endif
+#ifdef BSP_HSE_BY_PASS
+    RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
+#elif !defined(RT_USING_HSI)
     RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+#endif
     RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
     RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
     if (hse_clk % 2 == 0)

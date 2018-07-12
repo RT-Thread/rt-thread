@@ -117,7 +117,18 @@ int rt_wlan_softap(struct rt_wlan_device *device, struct rt_wlan_info *info, cha
         rt_wlan_set_info(device, info);
     }
 
-    rt_strncpy((char *)device->key, (char *)password, sizeof(device->key) - 1);
+    if (password == NULL)
+    {
+        memset(device->key, 0, sizeof(device->key));
+    }
+    else
+    {
+        if (rt_strlen(password) > sizeof(device->key) - 1)
+        {
+            rt_kprintf("WARN input password is longer than %d bytes.", sizeof(device->key) - 1);
+        }
+        rt_strncpy((char *)device->key, (char *)password, sizeof(device->key) - 1);
+    }
 
     result = rt_device_control(RT_DEVICE(device), WIFI_SOFTAP, (void *)password);
 
