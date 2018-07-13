@@ -195,7 +195,8 @@ int fd_new(void)
 
     /* can't find an empty fd entry */
     if (idx == fdt->maxfd)
-    {
+    {	
+        dbg_log(DBG_ERROR, "Please increase the number of files allowed to open.\n");	
         idx = -(1 + DFS_FD_OFFSET);
         goto __result;
     }

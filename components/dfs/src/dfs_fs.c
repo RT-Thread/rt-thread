@@ -70,6 +70,7 @@ int dfs_register(const struct dfs_filesystem_ops *ops)
     {
         rt_set_errno(-ENOSPC);
         ret = -1;
+        dbg_log(DBG_ERROR, "There is no space to register the file system.\n");
     }
     else if (ret == RT_EOK)
     {
@@ -317,6 +318,7 @@ int dfs_mount(const char   *device_name,
     if ((fs == NULL) && (iter == &filesystem_table[DFS_FILESYSTEMS_MAX]))
     {
         rt_set_errno(-ENOSPC);
+        dbg_log(DBG_ERROR, "There is no space to mount the file system.\n");
         goto err1;
     }
 
