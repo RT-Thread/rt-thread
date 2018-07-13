@@ -26,6 +26,7 @@
  *                             dead thread.
  * 2016-08-09     ArdaFu       add method to get the handler of the idle thread.
  * 2018-02-07     Bernard      lock scheduler to protect tid->cleanup.
+ * 2018-07-14     armink       add idle hook list
  */
 
 #include <rthw.h>
@@ -75,6 +76,7 @@ rt_err_t rt_thread_idle_sethook(void (*hook)(void))
 {
     rt_size_t i;
     rt_base_t level;
+    rt_err_t ret = -RT_EFULL;
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -84,16 +86,14 @@ rt_err_t rt_thread_idle_sethook(void (*hook)(void))
         if (idle_hook_list[i] == RT_NULL)
         {
             idle_hook_list[i] = hook;
-            /* enable interrupt */
-            rt_hw_interrupt_enable(level);
-
-            return RT_EOK;
+            ret = RT_EOK;
+            break;
         }
     }
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
 
-    return -RT_EFULL;
+    return ret;
 }
 
 /**
@@ -108,6 +108,7 @@ rt_err_t rt_thread_idle_delhook(void (*hook)(void))
 {
     rt_size_t i;
     rt_base_t level;
+    rt_err_t ret = -RT_ENOSYS;
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -117,16 +118,14 @@ rt_err_t rt_thread_idle_delhook(void (*hook)(void))
         if (idle_hook_list[i] == hook)
         {
             idle_hook_list[i] = RT_NULL;
-            /* enable interrupt */
-            rt_hw_interrupt_enable(level);
-
-            return RT_EOK;
+            ret = RT_EOK;
+            break;
         }
     }
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
 
-    return -RT_ENOSYS;
+    return ret;
 }
 
 #endif
