@@ -34,7 +34,7 @@
 #define SPI_BUS_MAX_CLK    (30 * 1000 * 1000)
 
 #define DBG_ENABLE
-#define DBG_SECTION_NAME  "[SPI]"
+#define DBG_SECTION_NAME  "SPI"
 #define DBG_LEVEL         DBG_WARNING
 #define DBG_COLOR
 #include <rtdbg.h>
