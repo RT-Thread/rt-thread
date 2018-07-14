@@ -76,6 +76,10 @@ static rt_err_t rt_sfud_control(rt_device_t dev, int cmd, void *args) {
             return -RT_ERROR;
         }
 
+        if (end_addr == start_addr) {
+            end_addr ++;
+        }
+
         phy_start_addr = start_addr * rtt_dev->geometry.bytes_per_sector;
         phy_size = (end_addr - start_addr) * rtt_dev->geometry.bytes_per_sector;
 
