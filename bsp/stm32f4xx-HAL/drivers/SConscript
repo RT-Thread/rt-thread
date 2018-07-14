@@ -37,6 +37,9 @@ if GetDepend(['RT_USING_USB_HOST']):
 if GetDepend(['RT_USING_I2C']):
 	src += ['drv_i2c.c']
 
+if GetDepend(['RT_USING_PWM']):
+    src += ['drv_pwm.c']
+
 CPPPATH = [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
