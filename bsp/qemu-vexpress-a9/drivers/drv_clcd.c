@@ -5,8 +5,8 @@
 #include <rtthread.h>
 #include "drv_clcd.h"
 
-#define CLCD_WIDTH  640
-#define CLCD_HEIGHT 480
+#define CLCD_WIDTH  (BSP_LCD_WIDTH)
+#define CLCD_HEIGHT (BSP_LCD_HEIGHT)
 
 #define CLCD_DEVICE(dev)    (struct drv_clcd_device*)(dev)
 

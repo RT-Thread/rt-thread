@@ -16,6 +16,7 @@
 #define RT_DEBUG_INIT 0
 #define RT_DEBUG_THREAD 0
 #define RT_USING_HOOK
+#define RT_IDEL_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 512
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
@@ -101,6 +102,7 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
+#define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
@@ -110,6 +112,11 @@
 #define RT_MTD_NAND_DEBUG
 #define RT_USING_RTC
 #define RT_USING_SDIO
+#define RT_SDIO_STACK_SIZE 512
+#define RT_SDIO_THREAD_PRIORITY 15
+#define RT_MMCSD_STACK_SIZE 1024
+#define RT_MMCSD_THREAD_PREORITY 22
+#define RT_MMCSD_MAX_PARTITION 16
 #define RT_USING_SPI
 #define RT_USING_SPI_MSD
 #define RT_USING_SFUD
@@ -135,6 +142,7 @@
 
 #define RT_USING_LWIP
 #define RT_USING_LWIP202
+#define RT_USING_LWIP_IPV6
 #define RT_LWIP_ICMP
 #define RT_LWIP_DNS
 #define RT_LWIP_DHCP
@@ -162,6 +170,7 @@
 #define RT_LWIP_ETHTHREAD_PRIORITY 12
 #define RT_LWIP_ETHTHREAD_STACKSIZE 1024
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
+#define RT_LWIP_REASSEMBLY_FRAG
 #define LWIP_NETIF_STATUS_CALLBACK 1
 #define SO_REUSE 1
 #define LWIP_SO_RCVTIMEO 1
@@ -208,8 +217,6 @@
 
 /* system packages */
 
-/* RT-Thread GUI Engine */
-
 
 /* peripheral libraries and drivers */
 
@@ -221,12 +228,6 @@
 
 
 /* example package: hello */
-
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
 
 #define SOC_VEXPRESS_A9
 #define RT_USING_UART0
