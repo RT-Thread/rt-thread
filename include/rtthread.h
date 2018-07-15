@@ -549,6 +549,10 @@ rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count);
 rt_int32_t rt_strcmp(const char *cs, const char *ct);
 rt_size_t rt_strlen(const char *src);
 char *rt_strdup(const char *s);
+#ifdef __CC_ARM
+/* leak strdup interface */
+char* strdup(const char* str);
+#endif
 
 char *rt_strstr(const char *str1, const char *str2);
 rt_int32_t rt_sscanf(const char *buf, const char *fmt, ...);
