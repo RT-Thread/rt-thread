@@ -5,6 +5,7 @@
 #include "board.h"
 #include "interrupt.h"
 #include "drv_mouse.h"
+#include "drv_clcd.h"
 
 #define DBG_LEVEL DBG_LOG
 // #define DBG_ENABLE
@@ -14,8 +15,8 @@
 
 #define MOUSE_ADDRESS    (0x10007000)
 #define MOUSE_IRQ_NUM    (IRQ_VEXPRESS_A9_MOUSE)
-#define MOUSE_XMAX       (800)
-#define MOUSE_YMAX       (480)
+#define MOUSE_XMAX       (BSP_LCD_WIDTH)
+#define MOUSE_YMAX       (BSP_LCD_HEIGHT)
 
 #define MOUSE_BUTTON_LEFT    (0x01)
 #define MOUSE_BUTTON_RIGHT   (0x02)
