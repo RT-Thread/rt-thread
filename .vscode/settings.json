@@ -1,0 +1,9 @@
+{
+    "C_Cpp.dimInactiveRegions": false,
+    "files.exclude": {
+        "**/.git": true,
+        "**/build": true,
+        "bsp" : true,
+    },
+    "editor.renderWhitespace": "all"
+}
