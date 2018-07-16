@@ -55,15 +55,15 @@ static int  fd_alloc(struct dfs_fdtable *fdt, int startfd);
 /**
  * this function will initialize device file system.
  */
-static volatile uint8_t init_ok = 0;
 int dfs_init(void)
 {
-    if(init_ok)
+    static rt_bool_t init_ok = RT_FALSE;
+
+    if (init_ok)
     {
         rt_kprintf("dfs already init.\n");
-        return 0;        
+        return 0;
     }
-    init_ok = 1;	
 
     /* clear filesystem operations table */
     memset((void *)filesystem_operation_table, 0, sizeof(filesystem_operation_table));
@@ -91,6 +91,8 @@ int dfs_init(void)
         dfs_mount(NULL, "/dev", "devfs", 0, 0);
     }
 #endif
+
+    init_ok = RT_TRUE;
 
     return 0;
 }
@@ -506,13 +508,13 @@ struct dfs_fdtable* dfs_fdtable_get(void)
 {
     struct dfs_fdtable *fdt;
 #ifdef RT_USING_LWP
-	struct rt_lwp *lwp;
+    struct rt_lwp *lwp;
 
-	lwp = (struct rt_lwp *)rt_thread_self()->user_data;
+    lwp = (struct rt_lwp *)rt_thread_self()->user_data;
     if (lwp)
-		fdt = &lwp->fdt;
-	else
-		fdt = &_fdtab;
+        fdt = &lwp->fdt;
+    else
+        fdt = &_fdtab;
 #else
     fdt = &_fdtab;
 #endif
