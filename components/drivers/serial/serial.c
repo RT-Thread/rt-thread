@@ -393,7 +393,7 @@ static void rt_dma_recv_update_get_index(struct rt_serial_device *serial, rt_siz
     if (rx_fifo->is_full && len != 0) rx_fifo->is_full = RT_FALSE;
 
     rx_fifo->get_index += len;
-    if (rx_fifo->get_index > serial->config.bufsz)
+    if (rx_fifo->get_index >= serial->config.bufsz)
     {
         rx_fifo->get_index %= serial->config.bufsz;
     }
