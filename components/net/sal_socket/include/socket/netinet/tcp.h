@@ -1,7 +1,7 @@
 /*
- * File      : udp.h
+ * File      : tcp.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,9 +22,9 @@
  * 2015-02-17     Bernard      First version
  */
 
-#ifndef UDP_H__
-#define UDP_H__
+#ifndef TCP_H__
+#define TCP_H__
 
-#include <lwip/sockets.h>
+#include <sys/socket.h>
 
 #endif

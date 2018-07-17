@@ -1,7 +1,7 @@
 /*
- * File      : select.h
+ * File      : in.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,12 +19,16 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2015-05-02     Bernard      First version
+ * 2015-02-17     Bernard      First version
  */
 
-#ifndef SELECT_H__
-#define SELECT_H__
+#ifndef IN_H__
+#define IN_H__
 
-#include <dfs_select.h>
+#include <sys/socket.h>
+
+#ifndef IN6_IS_ADDR_MULTICAST
+#define IN6_IS_ADDR_MULTICAST(a) (((uint8_t *) (a))[0] == 0xff)
+#endif
 
 #endif

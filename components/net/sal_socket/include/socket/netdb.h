@@ -1,7 +1,7 @@
 /*
  * File      : netdb.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2015-02-17     Bernard      First version
+ * 2108-05-24     ChenYong     Add socket abstraction layer
  */
 
 #ifndef NETDB_H__
@@ -29,7 +30,7 @@
 extern "C" {
 #endif
 
-#include <lwip/netdb.h>
+#include <sal_netdb.h>
 
 struct hostent *gethostbyname(const char *name);
 
