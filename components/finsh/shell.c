@@ -791,12 +791,6 @@ int finsh_system_init(void)
     rt_err_t result = RT_EOK;
     rt_thread_t tid;
 
-    if(shell)
-    {
-        rt_kprintf("finsh shell already init.\n");
-        return RT_EOK;
-    }
-
 #ifdef FINSH_USING_SYMTAB
 #ifdef __CC_ARM                 /* ARM C Compiler */
     extern const int FSymTab$$Base;
@@ -825,6 +819,12 @@ int finsh_system_init(void)
     finsh_system_var_init(&__vsymtab_start, &__vsymtab_end);
 #elif defined(_MSC_VER)
     unsigned int *ptr_begin, *ptr_end;
+		
+    if(shell)
+    {
+        rt_kprintf("finsh shell already init.\n");
+        return RT_EOK;
+    }
 
     ptr_begin = (unsigned int *)&__fsym_begin;
     ptr_begin += (sizeof(struct finsh_syscall) / sizeof(unsigned int));
