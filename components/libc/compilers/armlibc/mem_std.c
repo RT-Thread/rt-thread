@@ -15,6 +15,7 @@
 
 #include "rtthread.h"
 
+#ifdef RT_USING_HEAP
 /* avoid the heap and heap-using library functions supplied by arm */
 #pragma import(__use_no_heap)
 
@@ -41,3 +42,4 @@ void free(void *rmem)
     rt_free(rmem);
 }
 RTM_EXPORT(free);
+#endif

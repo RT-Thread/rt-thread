@@ -23,6 +23,7 @@
  */
 #include <rtthread.h>
 
+#ifdef RT_USING_HEAP
 void *malloc(rt_size_t n)
 {
     return rt_malloc(n);
@@ -42,3 +43,4 @@ void free(void *rmem)
 {
     rt_free(rmem);
 }
+#endif
