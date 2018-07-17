@@ -585,14 +585,6 @@ def DefineGroup(name, src, depend, **parameters):
             if os.path.exists(fn):
                 os.unlink(fn)
 
-    # check whether exist group library
-    if not GetOption('buildlib') and os.path.exists(os.path.join(group['path'], GroupLibFullName(name, Env))):
-        group['src'] = []
-        if group.has_key('LIBS'): group['LIBS'] = group['LIBS'] + [GroupLibName(name, Env)]
-        else : group['LIBS'] = [GroupLibName(name, Env)]
-        if group.has_key('LIBPATH'): group['LIBPATH'] = group['LIBPATH'] + [GetCurrentDir()]
-        else : group['LIBPATH'] = [GetCurrentDir()]
-
     if group.has_key('LIBS'):
         Env.AppendUnique(LIBS = group['LIBS'])
     if group.has_key('LIBPATH'):
