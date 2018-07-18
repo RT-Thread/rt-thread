@@ -48,13 +48,13 @@ config RT_USING_CPUTIME
         ms_tick = clock_cpu_millisecond(t2 - t1);
         us_tick = clock_cpu_microsecond(t2 - t1);
 
-if RT_USING_CPUTIME 
+if RT_USING_CPUTIME
     config RT_USING_CPUTIME_CORTEXM
         bool "Use DWT for CPU time"
         default y
         depends on ARCH_ARM_CORTEX_M3 || ARCH_ARM_CORTEX_M4 || ARCH_ARM_CORTEX_M7
         help
-            Some Cortex-M3/4/7 MCU has Data Watchpoint and Trace Register, use 
+            Some Cortex-M3/4/7 MCU has Data Watchpoint and Trace Register, use
             the cycle counter in DWT for CPU time.
 endif
 
@@ -103,7 +103,7 @@ config RT_USING_RTC
         select PKG_USING_NETUTILS
         select PKG_NETUTILS_NTP
         default n
-        
+
         if RTC_SYNC_USING_NTP
         config RTC_NTP_FIRST_SYNC_DELAY
             int "NTP first sync delay time(second) for network connect"
@@ -153,20 +153,20 @@ config RT_USING_SPI
         config RT_USING_SFUD
             bool "Using Serial Flash Universal Driver"
             default n
-            if RT_USING_SFUD            
+            if RT_USING_SFUD
                 config RT_SFUD_USING_SFDP
                 bool "Using auto probe flash JEDEC SFDP parameter"
                 default y
-                
+
                 config RT_SFUD_USING_FLASH_INFO_TABLE
                 bool "Using defined supported flash chip information table"
                 default y
-                
+
                 config RT_DEBUG_SFUD
                 bool "Show more SFUD debug information"
                 default n
             endif
-    
+
         config RT_USING_W25QXX
             bool "Using W25QXX SPI NorFlash"
             default n
@@ -246,7 +246,7 @@ menu "Using USB"
             config USB_PRODUCT_ID
                 hex "USB Product ID"
                 default 0x0001
-            
+
             config RT_USB_DEVICE_COMPOSITE
                 bool "Enable composite device"
                 default n

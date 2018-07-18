@@ -1,17 +1,17 @@
 menu "Modbus master and slave stack"
 
 config RT_USING_MODBUS
-	bool "Enable Modbus stack"
-	default n
+    bool "Enable Modbus stack"
+    default n
 
-	if RT_USING_MODBUS
-		config RT_MODBUS_MASTER_RTU
-			bool "RTU master mode"
-			default n
+    if RT_USING_MODBUS
+        config RT_MODBUS_MASTER_RTU
+            bool "RTU master mode"
+            default n
 
-		config RT_MODBUS_SLAVE_RTU
-			bool "RTU slave mode"
-			default n
+        config RT_MODBUS_SLAVE_RTU
+            bool "RTU slave mode"
+            default n
             if RT_MODBUS_SLAVE_RTU
                 config RT_MODBUS_SLAVE_USE_CONTROL_PIN
                     bool "Use Contorl Pin"
@@ -22,6 +22,6 @@ config RT_USING_MODBUS
                             default 10
                     endif
             endif
-	endif
+    endif
 
 endmenu
