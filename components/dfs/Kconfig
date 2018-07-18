@@ -13,14 +13,14 @@ if RT_USING_DFS
         default y
 
     config DFS_FILESYSTEMS_MAX
-        int "The maximal number of mounted file system"        
+        int "The maximal number of mounted file system"
         default 4 if RT_USING_DFS_NFS
-        default 2 
+        default 2
 
     config DFS_FILESYSTEM_TYPES_MAX
         int "The maximal number of file system type"
         default 4 if RT_USING_DFS_NFS
-        default 2 
+        default 2
 
     config DFS_FD_MAX
         int "The maximal number of opened files"
@@ -40,9 +40,9 @@ if RT_USING_DFS
 
         config RT_DFS_ELM_WORD_ACCESS
             bool "Using RT_DFS_ELM_WORD_ACCESS"
-            default y   
+            default y
 
-        choice 
+        choice
             prompt "Support long file name"
             default RT_DFS_ELM_USE_LFN_0
 
@@ -117,7 +117,7 @@ if RT_USING_DFS
         default n
 
     if RT_USING_DFS_UFFS
-        choice 
+        choice
             prompt "UFFS ECC mode"
             default RT_UFFS_ECC_MODE_1
 

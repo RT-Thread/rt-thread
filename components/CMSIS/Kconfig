@@ -12,7 +12,7 @@ config RT_USING_RTT_CMSIS
     bool "Using CMSIS Header files in RT-Thread"
     default n
     help
-        Use CMSIS header files in RT-Thread/components/CMSIS. Otherwise, use the 
+        Use CMSIS header files in RT-Thread/components/CMSIS. Otherwise, use the
         CMSIS header files in BSP.
 
 endmenu
