@@ -104,7 +104,7 @@ static void event_callback(struct netconn *conn, enum netconn_evt evt, u16_t len
 
     SYS_ARCH_UNPROTECT(lev);
 
-    if (event)
+    if (event && (sock->wait_head.next != RT_NULL))
     {
         rt_wqueue_wakeup(&sock->wait_head, (void*)event);
     }
@@ -128,7 +128,7 @@ int accept(int s, struct sockaddr *addr, socklen_t *addrlen)
         if (fd < 0)
         {
             rt_set_errno(-ENOMEM);
-            lwip_close(sock);
+            lwip_close(new_client);
 
             return -1;
         }
