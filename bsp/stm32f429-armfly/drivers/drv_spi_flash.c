@@ -106,5 +106,5 @@ static int rt_hw_spi_flash_init(void)
 {
     return w25qxx_init(SPI_FLASH_CHIP, SPI_FLASH_DEVICE_NAME);
 }
-INIT_COMPONENT_EXPORT(rt_hw_spi_flash_init)
+INIT_COMPONENT_EXPORT(rt_hw_spi_flash_init);
 #endif
