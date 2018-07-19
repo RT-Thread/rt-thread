@@ -197,7 +197,7 @@ static void sockaddr_to_ipaddr_port(const struct sockaddr* sockaddr, ip_addr_t* 
 #endif
 
 #include <rtthread.h>
-#ifdef RT_USING_DFS_NET
+#ifdef SAL_USING_POSIX
 #include <ipc/waitqueue.h>
 #endif
 
@@ -222,7 +222,7 @@ struct lwip_sock {
   /** counter of how many threads are waiting for this socket using select */
   SELWAIT_T select_waiting;
 
-#ifdef RT_USING_DFS_NET
+#ifdef SAL_USING_POSIX
   rt_wqueue_t wait_head;
 #endif
 };

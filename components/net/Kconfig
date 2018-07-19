@@ -1,4 +1,44 @@
-menu "Network stack"
+menu "Network"
+
+menu "Socket abstraction layer"
+    
+config RT_USING_SAL
+    bool "Enable socket abstraction layer"
+    default n
+    select RT_USING_DFS
+
+    if RT_USING_SAL
+
+        menu "protocol stack implement"
+
+            config SAL_USING_LWIP
+                bool "Support lwIP stack"
+                default y if RT_USING_LWIP
+                default n
+                depends on RT_USING_LWIP
+
+            config SAL_USING_AT
+                bool "Support AT Commands stack"
+                default y if RT_USING_AT_SOCKET
+                default n
+                depends on RT_USING_AT_SOCKET
+		endmenu
+
+        config SAL_USING_POSIX
+            bool "Enable BSD socket operated by file system API"
+            select RT_USING_LIBC
+            select RT_USING_POSIX
+            default n
+            help
+                Let BSD socket operated by file system API, such as read/write and involveed in select/poll POSIX APIs.
+        
+        config SAL_PROTO_FAMILIES_NUM
+            int "the number of protocol family"
+            default 4
+
+    endif
+
+endmenu
 
 menu "light weight TCP/IP stack"
 config RT_USING_LWIP
@@ -227,7 +267,6 @@ config LWIP_USING_DHCPD
                 default 1.1.1.1
         endif
     endif
-    
 
 endif
 

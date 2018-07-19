@@ -1,7 +1,7 @@
 /*
- * File      : in.h
+ * File      : dfs_net.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * COPYRIGHT (C) 2015-2016, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,15 +20,24 @@
  * Change Logs:
  * Date           Author       Notes
  * 2015-02-17     Bernard      First version
+ * 2016-05-05     Bernard      rename dfs_lwip to dfs_net.
  */
 
-#ifndef IN_H__
-#define IN_H__
+#ifndef DFS_NET_H__
+#define DFS_NET_H__
 
-#include <lwip/sockets.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#ifndef IN6_IS_ADDR_MULTICAST
-#define IN6_IS_ADDR_MULTICAST(a) (((uint8_t *) (a))[0] == 0xff)
+#include <dfs_file.h>
+
+const struct dfs_file_ops* dfs_net_get_fops(void);
+int dfs_net_getsocket(int fd);
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif
+
