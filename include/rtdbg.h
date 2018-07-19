@@ -60,7 +60,7 @@
 #define DBG_ERROR           3
 
 #ifndef DBG_SECTION_NAME
-#define DBG_SECTION_NAME    "[ DBG]"
+#define DBG_SECTION_NAME    "DBG"
 #endif
 
 #ifdef DBG_ENABLE
