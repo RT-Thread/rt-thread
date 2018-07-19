@@ -1,7 +1,7 @@
 /*
- * File      : netdb.c
+ * File      : sal_type.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,35 +19,22 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2015-02-17     Bernard      First version
+ * 2018-05-17     ChenYong     First version
  */
 
-#include "netdb.h"
-#include <lwip/netdb.h>
+#ifndef SAL_TYPE_H__
+#define SAL_TYPE_H__
 
-struct hostent *gethostbyname(const char *name)
-{
-    return lwip_gethostbyname(name);
-}
-RTM_EXPORT(gethostbyname);
+#include <stdlib.h>
+#include <stdint.h>
 
-int gethostbyname_r(const char *name, struct hostent *ret, char *buf,
-                size_t buflen, struct hostent **result, int *h_errnop)
-{
-    return lwip_gethostbyname_r(name, ret, buf, buflen, result, h_errnop);
-}
+typedef int8_t    err_t;
+typedef uint8_t   u8_t;
+typedef int8_t    s8_t;
+typedef uint16_t  u16_t;
+typedef int16_t   s16_t;
+typedef uint32_t  u32_t;
+typedef int32_t   s32_t;
+typedef uintptr_t mem_ptr_t;
 
-void freeaddrinfo(struct addrinfo *ai)
-{
-    lwip_freeaddrinfo(ai);
-}
-RTM_EXPORT(freeaddrinfo);
-
-int getaddrinfo(const char *nodename,
-       const char *servname,
-       const struct addrinfo *hints,
-       struct addrinfo **res)
-{
-    return lwip_getaddrinfo(nodename, servname, hints, res);
-}
-RTM_EXPORT(getaddrinfo);
+#endif /* SAL_TYPE_H__ */

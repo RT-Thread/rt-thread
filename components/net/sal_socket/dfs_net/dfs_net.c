@@ -1,7 +1,7 @@
 /*
  * File      : dfs_net.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015-2016, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,33 +22,29 @@
  * 2015-02-17     Bernard      First version
  * 2016-05-07     Bernard      Rename dfs_lwip to dfs_net
  * 2018-03-09     Bernard      Fix the last data issue in poll.
+ * 2018-05-24     ChenYong     Add socket abstraction layer
  */
 
 #include <rtthread.h>
+
 #include <dfs.h>
-#include <dfs_fs.h>
-#include <dfs_file.h>
-#include <dfs_posix.h>
+#include <dfs_net.h>
 
-#include <rtdevice.h>
 #include <sys/socket.h>
-
-#include <dfs_poll.h>
-#include "dfs_net.h"
 
 int dfs_net_getsocket(int fd)
 {
-    int sock;
+    int socket;
     struct dfs_fd *_dfs_fd; 
 
     _dfs_fd = fd_get(fd);
     if (_dfs_fd == NULL) return -1;
 
-    if (_dfs_fd->type != FT_SOCKET) sock = -1;
-    else sock = (int)_dfs_fd->data;
+    if (_dfs_fd->type != FT_SOCKET) socket = -1;
+    else socket = (int)_dfs_fd->data;
 
     fd_put(_dfs_fd); /* put this dfs fd */
-    return sock;
+    return socket;
 }
 
 static int dfs_net_ioctl(struct dfs_fd* file, int cmd, void* args)
@@ -58,69 +54,30 @@ static int dfs_net_ioctl(struct dfs_fd* file, int cmd, void* args)
 
 static int dfs_net_read(struct dfs_fd* file, void *buf, size_t count)
 {
-    int sock;
+    int socket = (int) file->data;
 
-    sock = (int)file->data;
-    count = lwip_read(sock, buf, count);
-
-    return count;
+    return sal_recvfrom(socket, buf, count, 0, NULL, NULL);
 }
 
 static int dfs_net_write(struct dfs_fd *file, const void *buf, size_t count)
 {
-    int sock;
-    
-    sock = (int)file->data;
-    count = lwip_write(sock, buf, count);
+    int socket = (int) file->data;
 
-    return count;
+    return sal_sendto(socket, buf, count, 0, NULL, 0);
 }
 
 static int dfs_net_close(struct dfs_fd* file)
 {
-    int sock;
-    int result;
-    
-    sock = (int)file->data;
-    result = lwip_close(sock);
-    
-    if (result == 0) return RT_EOK;
-    
-    return -result;
+    int socket = (int) file->data;
+
+    return sal_closesocket(socket);
 }
 
 static int dfs_net_poll(struct dfs_fd *file, struct rt_pollreq *req)
 {
-    int sfd;
-    int mask = 0;
-    struct lwip_sock *sock;
+    extern int sal_poll(struct dfs_fd *file, struct rt_pollreq *req);
 
-    sfd = (int)file->data;
-
-    sock =  lwip_tryget_socket(sfd);
-    if (sock != NULL)
-    {
-        rt_base_t level;
-
-        rt_poll_add(&sock->wait_head, req);
-
-        level = rt_hw_interrupt_disable();
-        if (sock->lastdata || sock->rcvevent)
-        {
-            mask |= POLLIN;
-        }
-        if (sock->sendevent)
-        {
-            mask |= POLLOUT;
-        }
-        if (sock->errevent)
-        {
-            mask |= POLLERR;
-        }
-        rt_hw_interrupt_enable(level);
-    }
-
-    return mask;
+    return sal_poll(file, req);
 }
 
 const struct dfs_file_ops _net_fops = 
@@ -140,4 +97,3 @@ const struct dfs_file_ops *dfs_net_get_fops(void)
 {
     return &_net_fops;
 }
-

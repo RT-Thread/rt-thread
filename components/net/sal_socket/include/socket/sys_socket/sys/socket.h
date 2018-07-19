@@ -1,7 +1,7 @@
 /*
  * File      : socket.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,73 +20,17 @@
  * Change Logs:
  * Date           Author       Notes
  * 2015-02-17     Bernard      First version
+ * 2018-05-17     ChenYong     Add socket abstraction layer
  */
 
-#ifndef SOCKET_H__
-#define SOCKET_H__
+#ifndef SYS_SOCKET_H_
+#define SYS_SOCKET_H_
+
+#include <sal_socket.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include <inttypes.h>
-#include <lwip/sockets.h>
-#include <lwip/api.h>
-#include <lwip/init.h>
-
-#include <rtdevice.h>
-
-#if LWIP_VERSION < 0x2000000
-typedef uint16_t sa_family_t;
-typedef uint16_t in_port_t;
-
-struct sockaddr_storage
-{
-    sa_family_t ss_family;       /* Address family */
-    char        ss_data[14];     /* 14-bytes of address data */
-};
-#endif
-
-#if LWIP_VERSION < 0x2000000
-#define SELWAIT_T int
-#else
-#ifndef SELWAIT_T
-#define SELWAIT_T u8_t
-#endif
-#endif
-
-/*
- * Re-define lwip socket
- *
- * NOTE: please make sure the definitions same in lwip::net_socket.c
- */
-struct lwip_sock {
-  /** sockets currently are built on netconns, each socket has one netconn */
-  struct netconn *conn;
-  /** data that was left from the previous read */
-  void *lastdata;
-  /** offset in the data that was left from the previous read */
-  u16_t lastoffset;
-  /** number of times data was received, set by event_callback(),
-      tested by the receive and select functions */
-  s16_t rcvevent;
-  /** number of times data was ACKed (free send buffer), set by event_callback(),
-      tested by select */
-  u16_t sendevent;
-  /** error happened for this socket, set by event_callback(), tested by select */
-  u16_t errevent;
-  /** last error that occurred on this socket */
-#if LWIP_VERSION < 0x2000000
-  int err;
-#else
-  u8_t err;
-#endif
-  /** counter of how many threads are waiting for this socket using select */
-  SELWAIT_T select_waiting;
-
-  rt_wqueue_t wait_head;
-};
-struct lwip_sock *lwip_tryget_socket(int s);
 
 int accept(int s, struct sockaddr *addr, socklen_t *addrlen);
 int bind(int s, const struct sockaddr *name, socklen_t namelen);
@@ -111,4 +55,4 @@ int ioctlsocket(int s, long cmd, void *arg);
 }
 #endif
 
-#endif
+#endif /* _SYS_SOCKET_H_ */
