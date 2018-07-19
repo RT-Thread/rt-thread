@@ -1,7 +1,7 @@
 /*
- * File      : dfs_net.h
+ * File      : net_netdb.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015-2016, RT-Thread Development Team
+ * COPYRIGHT (C) 2015, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,24 +20,36 @@
  * Change Logs:
  * Date           Author       Notes
  * 2015-02-17     Bernard      First version
- * 2016-05-05     Bernard      rename dfs_lwip to dfs_net.
+ * 2108-05-24     ChenYong     Add socket abstraction layer
  */
 
-#ifndef DFS_NET_H__
-#define DFS_NET_H__
+#include <rtthread.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <netdb.h>
 
-#include <lwip/sockets.h>
-
-const struct dfs_file_ops* dfs_net_get_fops(void);
-int dfs_net_getsocket(int fd);
-
-#ifdef __cplusplus
+struct hostent *gethostbyname(const char *name)
+{
+    return sal_gethostbyname(name);
 }
-#endif
+RTM_EXPORT(gethostbyname);
 
-#endif
+int gethostbyname_r(const char *name, struct hostent *ret, char *buf,
+                size_t buflen, struct hostent **result, int *h_errnop)
+{
+    return sal_gethostbyname_r(name, ret, buf, buflen, result, h_errnop);
+}
 
+void freeaddrinfo(struct addrinfo *ai)
+{
+    sal_freeaddrinfo(ai);
+}
+RTM_EXPORT(freeaddrinfo);
+
+int getaddrinfo(const char *nodename,
+       const char *servname,
+       const struct addrinfo *hints,
+       struct addrinfo **res)
+{
+    return sal_getaddrinfo(nodename, servname, hints, res);
+}
+RTM_EXPORT(getaddrinfo);
