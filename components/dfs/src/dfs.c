@@ -540,7 +540,7 @@ int list_fd(void)
     {
         struct dfs_fd *fd = fd_table->fds[index];
 
-        if (fd != RT_NULL)
+        if (fd && fd->fops)
         {
             rt_kprintf("%2d ", index);
             if (fd->type == FT_DIRECTORY)    rt_kprintf("%-7.7s ", "dir");
