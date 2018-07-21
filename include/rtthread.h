@@ -570,6 +570,8 @@ void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t
 void rt_assert_handler(const char *ex, const char *func, rt_size_t line);
 #endif /* RT_DEBUG */
 
+void rt_hex_dump(const char *name, const char *buf, rt_size_t size);
+
 #ifdef RT_USING_FINSH
 #include <finsh_api.h>
 #endif

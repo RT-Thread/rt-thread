@@ -1366,6 +1366,50 @@ int sprintf(char *buf, const char *format, ...) __attribute__((weak, alias("rt_s
 int snprintf(char *buf, rt_size_t size, const char *fmt, ...) __attribute__((weak, alias("rt_snprintf")));
 int vsprintf(char *buf, const char *format, va_list arg_ptr) __attribute__((weak, alias("rt_vsprintf")));
 
-#endif
+#endif /* !defined (RT_USING_NEWLIB) && defined (RT_USING_MINILIBC) && defined (__GNUC__) */
+
+/**
+ * dump hex format data
+ *
+ * @param name name for hex object, it will show on log header
+ * @param buf hex buffer
+ * @param size buffer size
+ */
+void rt_hex_dump(const char *name, const char *buf, rt_size_t size)
+{
+#define __is_print(ch)       ((unsigned int)((ch) - ' ') < 127u - ' ')
+#define WIDTH_SIZE           16
+
+    rt_size_t i, j;
+
+    for (i = 0; i < size; i += WIDTH_SIZE)
+    {
+        rt_kprintf("[D/HEX] %s: %04X-%04X: ", name, i, i + WIDTH_SIZE);
+        for (j = 0; j < WIDTH_SIZE; j++)
+        {
+            if (i + j < size)
+            {
+                rt_kprintf("%02X ", buf[i + j]);
+            }
+            else
+            {
+                rt_kprintf("   ");
+            }
+            if ((j + 1) % 8 == 0)
+            {
+                rt_kprintf(" ");
+            }
+        }
+        rt_kprintf("  ");
+        for (j = 0; j < WIDTH_SIZE; j++)
+        {
+            if (i + j < size)
+            {
+                rt_kprintf("%c", __is_print(buf[i + j]) ? buf[i + j] : '.');
+            }
+        }
+        rt_kprintf("\n");
+    }
+}
 
 /**@}*/
