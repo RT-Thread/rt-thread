@@ -123,7 +123,6 @@ static int _ft5x06_read(unsigned char cmd,
 #ifdef RT_USING_FINSH
 static int search_ft5x06(void)
 {
-    int i;
     struct rt_i2c_msg msgs[2];
     uint8_t cmd = 0xA3;
     uint8_t buf = 0;
@@ -136,7 +135,7 @@ static int search_ft5x06(void)
     msgs[1].buf   = &buf;
     msgs[1].len   = 1;
 
-    for (i = 0; i <= 0x7f; i++)
+    for (int i = 0; i <= 0x7f; i++)
     {
         int len;
         msgs[0].addr  = i;
