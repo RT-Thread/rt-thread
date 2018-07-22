@@ -1180,7 +1180,10 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
                     (serial->config.bufsz - (rx_fifo->get_index - rx_fifo->put_index));
                 rt_hw_interrupt_enable(level);
 
-                serial->parent.rx_indicate(&serial->parent, rx_length);
+                if (rx_length)
+                {
+                    serial->parent.rx_indicate(&serial->parent, rx_length);
+                }
             }
             break;
         }
