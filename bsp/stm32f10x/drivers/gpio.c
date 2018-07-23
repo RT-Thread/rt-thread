@@ -11,6 +11,7 @@
  * Date           Author            Notes
  * 2015-03-24     Bright            the first version
  * 2016-05-23     Margguo@gmail.com Add  48 pins IC define
+ * 2018-07-23     jiezhi320         Add GPIO Out_OD mode config
  */
 
 #include <rthw.h>
@@ -542,6 +543,11 @@ void stm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
         /* output setting */
         GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
     }
+    else if (mode == PIN_MODE_OUTPUT_OD)
+    {
+        /* output setting: od. */
+        GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_OD;
+    }				
     else if (mode == PIN_MODE_INPUT)
     {
         /* input setting: not pull. */
