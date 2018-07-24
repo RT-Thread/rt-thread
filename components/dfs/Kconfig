@@ -44,7 +44,7 @@ if RT_USING_DFS
 
         choice
             prompt "Support long file name"
-            default RT_DFS_ELM_USE_LFN_0
+            default RT_DFS_ELM_USE_LFN_3
 
             config RT_DFS_ELM_USE_LFN_0
                 bool "0: LFN disable"
