@@ -462,6 +462,7 @@
 #define MEMP_STATS                  1
 #define PBUF_STATS                  1
 #define SYS_STATS                   1
+#define MIB2_STATS                  1
 #endif /* LWIP_STATS */
 
 /* ---------- PPP options ---------- */

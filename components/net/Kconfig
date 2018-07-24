@@ -76,6 +76,7 @@ config RT_USING_LWIP
 
         config RT_LWIP_SNMP
             bool "SNMP protocol"
+            select RT_LWIP_STATS
             default n
 
         config RT_LWIP_DNS
