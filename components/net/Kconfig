@@ -22,7 +22,7 @@ config RT_USING_SAL
                 default y if RT_USING_AT_SOCKET
                 default n
                 depends on RT_USING_AT_SOCKET
-		endmenu
+        endmenu
 
         config SAL_USING_POSIX
             bool "Enable BSD socket operated by file system API"
@@ -234,9 +234,13 @@ config RT_USING_LWIP
             default n
 
         config LWIP_NETIF_LOOPBACK
-        	int
-        	default 1 if RT_LWIP_NETIF_LOOPBACK
-        	default 0 if !RT_LWIP_NETIF_LOOPBACK
+            int
+            default 1 if RT_LWIP_NETIF_LOOPBACK
+            default 0 if !RT_LWIP_NETIF_LOOPBACK
+
+        config RT_LWIP_STATS
+            bool "Enable lwIP statistics"
+            default n
 
         menuconfig RT_LWIP_DEBUG
             bool "Enable lwIP Debugging Options"
