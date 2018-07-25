@@ -19,9 +19,9 @@ config RT_USING_SAL
 
             config SAL_USING_AT
                 bool "Support AT Commands stack"
-                default y if RT_USING_AT_SOCKET
+                default y if AT_USING_SOCKET
                 default n
-                depends on RT_USING_AT_SOCKET
+                depends on AT_USING_SOCKET
         endmenu
 
         config SAL_USING_POSIX
@@ -368,6 +368,8 @@ config RT_USING_LWIP
 endmenu
 
 source "$RTT_DIR/components/net/freemodbus/Kconfig"
+
+source "$RTT_DIR/components/net/at/Kconfig"
 
 if RT_USING_LWIP
 
