@@ -368,7 +368,6 @@ int msh_exec(char *cmd, rt_size_t length)
     /* Exec sequence:
      * 1. built-in command
      * 2. module(if enabled)
-     * 3. chdir to the directry(if possible)
      */
     if (_msh_exec_cmd(cmd, length, &cmd_ret) == 0)
     {
@@ -383,12 +382,6 @@ int msh_exec(char *cmd, rt_size_t length)
 
 #if defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)
     if (msh_exec_script(cmd, length) == 0)
-    {
-        return 0;
-    }
-
-    /* change to this directory */
-    if (chdir(cmd) == 0)
     {
         return 0;
     }
