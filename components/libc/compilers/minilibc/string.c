@@ -631,4 +631,18 @@ long long strtoll(const char *str, char **endptr, int base)
     return simple_strtoll(str, endptr, base);
 }
 
+void *memcpy(void *dest, const void *src, size_t n) __attribute__((weak, alias("rt_memcpy")));
+void *memset(void *s, int c, size_t n) __attribute__((weak, alias("rt_memset")));
+void *memmove(void *dest, const void *src, size_t n) __attribute__((weak, alias("rt_memmove")));
+int   memcmp(const void *s1, const void *s2, size_t n) __attribute__((weak, alias("rt_memcmp")));
+
+size_t strlen(const char *s) __attribute__((weak, alias("rt_strlen")));
+char *strstr(const char *s1, const char *s2) __attribute__((weak, alias("rt_strstr")));
+int strcasecmp(const char *a, const char *b) __attribute__((weak, alias("rt_strcasecmp")));
+char *strncpy(char *dest, const char *src, size_t n) __attribute__((weak, alias("rt_strncpy")));
+int strncmp(const char *cs, const char *ct, size_t count) __attribute__((weak, alias("rt_strncmp")));
+#ifdef RT_USING_HEAP
+char *strdup(const char *s) __attribute__((weak, alias("rt_strdup")));
 #endif
+
+#endif /* !defined (RT_USING_NEWLIB) && defined (RT_USING_MINILIBC) */
