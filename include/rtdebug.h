@@ -29,10 +29,6 @@
 #error "POSIX poll/select, stdin need file system(RT_USING_DFS) and device file system(RT_USING_DFS_DEVFS)"
 #endif
 
-#if defined(RT_USING_LWIP) && !defined(SAL_USING_POSIX)
-#error "POSIX poll/select, stdin need file BSD socket API(SAL_USING_POSIX)"
-#endif
-
 #if !defined(RT_USING_LIBC)
 #error "POSIX layer need standard C library(RT_USING_LIBC)"
 #endif
