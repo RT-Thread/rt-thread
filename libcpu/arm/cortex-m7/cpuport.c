@@ -18,8 +18,10 @@
  * 2012-12-29     Bernard      Add exception hook.
  * 2013-06-23     aozima       support lazy stack optimized.
  * 2018-07-24     aozima       enhancement hard fault exception handler.
+ * 2018-07-27     hichard     Add rt_hw_cpu_reset, use cortex-m software reset.
  */
 
+#include <rthw.h>
 #include <rtthread.h>
 
 #define USE_FPU   /* ARMCC */ (  (defined ( __CC_ARM ) && defined ( __TARGET_FPU_VFP )) \
@@ -429,6 +431,14 @@ void rt_hw_cpu_shutdown(void)
     rt_kprintf("shutdown...\n");
 
     RT_ASSERT(0);
+}
+
+/**
+ * reset CPU
+ */
+RT_WEAK void rt_hw_cpu_reset(void)
+{
+  HWREG32(0xE000ED0C) = 0x05FA0004;
 }
 
 #ifdef RT_USING_CPU_FFS
