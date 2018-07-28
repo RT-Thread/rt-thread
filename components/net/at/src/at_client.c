@@ -354,11 +354,12 @@ rt_size_t at_client_send(const char *buf, rt_size_t size)
 static char at_client_getchar(void)
 {
     char ch;
-    at_client_t client = at_client_local;
 
-    rt_sem_take(client->rx_notice, RT_WAITING_FOREVER);
-
-    rt_device_read(client->device, 0, &ch, 1);
+    if (rt_device_read(at_client_local->device, 0, &ch, 1) == 0)
+    {
+        rt_sem_take(at_client_local->rx_notice, RT_WAITING_FOREVER);
+        rt_device_read(at_client_local->device, 0, &ch, 1);
+    }
 
     return ch;
 }
@@ -604,6 +605,7 @@ void at_set_urc_table(const struct at_urc *table, rt_size_t size)
 int at_client_init(void)
 {
     int result = RT_EOK;
+    rt_err_t open_result = RT_EOK;
 
     if (at_client_local)
     {
@@ -651,7 +653,14 @@ int at_client_init(void)
     {
         RT_ASSERT(at_client_local->device->type == RT_Device_Class_Char);
 
-        rt_device_open(at_client_local->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX);
+        /* using DMA mode first */
+        open_result = rt_device_open(at_client_local->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_DMA_RX);
+        /* using interrupt mode when DMA mode not supported */
+        if (open_result == -RT_EIO)
+        {
+            open_result = rt_device_open(at_client_local->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX);
+        }
+        RT_ASSERT(open_result == RT_EOK);
 
         rt_device_set_rx_indicate(at_client_local->device, at_client_rx_ind);
     }
