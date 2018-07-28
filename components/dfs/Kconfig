@@ -26,6 +26,18 @@ if RT_USING_DFS
         int "The maximal number of opened files"
         default 16
 
+    config RT_USING_DFS_MNTTABLE
+        bool "Using mount table for file system"
+        default n
+        help
+            User can use mount table for automatically mount, for example:
+                const struct dfs_mount_tbl mount_table[] =
+                {
+                    {"flash0", "/", "elm", 0, 0},
+                    {0}
+                };
+            The mount_table must be terminated with NULL.
+
     config RT_USING_DFS_ELMFAT
         bool "Enable elm-chan fatfs"
         default n
