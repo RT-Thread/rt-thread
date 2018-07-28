@@ -352,9 +352,11 @@ static char at_server_gerchar(void)
 {
     char ch;
 
-    rt_sem_take(at_server_local->rx_notice, RT_WAITING_FOREVER);
-
-    rt_device_read(at_server_local->device, 0, &ch, 1);
+    if (rt_device_read(at_server_local->device, 0, &ch, 1) == 0)
+    {
+        rt_sem_take(at_server_local->rx_notice, RT_WAITING_FOREVER);
+        rt_device_read(at_server_local->device, 0, &ch, 1);
+    }
 
     return ch;
 }
@@ -443,6 +445,7 @@ static rt_err_t at_rx_ind(rt_device_t dev, rt_size_t size)
 int at_server_init(void)
 {
     rt_err_t result = RT_EOK;
+    rt_err_t open_result = RT_EOK;
 
     if (at_server_local)
     {
@@ -493,7 +496,14 @@ int at_server_init(void)
     {
         RT_ASSERT(at_server_local->device->type == RT_Device_Class_Char);
 
-        rt_device_open(at_server_local->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX);
+        /* using DMA mode first */
+        open_result = rt_device_open(at_server_local->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_DMA_RX);
+        /* using interrupt mode when DMA mode not supported */
+        if (open_result == -RT_EIO)
+        {
+            open_result = rt_device_open(at_server_local->device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX);
+        }
+        RT_ASSERT(open_result == RT_EOK);
 
         rt_device_set_rx_indicate(at_server_local->device, at_rx_ind);
     }

@@ -27,7 +27,7 @@
 
 #include <rtthread.h>
 
-#define AT_SW_VERSION                  "0.2.1"
+#define AT_SW_VERSION                  "0.2.2"
 
 #define DBG_ENABLE
 #define DBG_SECTION_NAME               "AT"
