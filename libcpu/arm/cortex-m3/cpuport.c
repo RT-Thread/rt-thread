@@ -15,8 +15,10 @@
  * 2012-12-23   aozima      stack addr align to 8byte.
  * 2012-12-29   Bernard     Add exception hook.
  * 2013-07-09   aozima      enhancement hard fault exception handler.
+ * 2018-07-27   hichard     Add rt_hw_cpu_reset, use cortex-m software reset.
  */
 
+#include <rthw.h>
 #include <rtthread.h>
 
 struct exception_stack_frame
@@ -295,6 +297,7 @@ void rt_hw_hard_fault_exception(struct exception_info * exception_info)
     extern long list_thread(void);
     struct stack_frame* context = &exception_info->stack_frame;
 
+    context = context;
     if (rt_exception_hook != RT_NULL)
     {
         rt_err_t result;
@@ -350,6 +353,14 @@ void rt_hw_cpu_shutdown(void)
     rt_kprintf("shutdown...\n");
 
     RT_ASSERT(0);
+}
+
+/**
+ * reset CPU
+ */
+RT_WEAK void rt_hw_cpu_reset(void)
+{
+  HWREG32(0xE000ED0C) = 0x05FA0004;
 }
 
 #ifdef RT_USING_CPU_FFS
