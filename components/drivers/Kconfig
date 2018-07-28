@@ -283,6 +283,7 @@ menu "Using USB"
                         bool "Enable to use device as CDC device"
                         default n
                     config RT_USB_DEVICE_NONE
+                        bool
                         default y
                     config RT_USB_DEVICE_MSTORAGE
                         bool "Enable to use device as Mass Storage device"
