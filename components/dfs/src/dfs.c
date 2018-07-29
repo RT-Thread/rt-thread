@@ -152,7 +152,7 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
         cnt = cnt > DFS_FD_MAX? DFS_FD_MAX : cnt;
 
         fds = rt_realloc(fdt->fds, cnt * sizeof(struct dfs_fd *));
-        if (fds == NULL) goto __out; /* return fdt->maxfd */
+        if (fds == NULL) goto __exit; /* return fdt->maxfd */
 
         /* clean the new allocated fds */
         for (index = fdt->maxfd; index < cnt; index ++)
@@ -167,12 +167,12 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
     /* allocate  'struct dfs_fd' */
     if (idx < fdt->maxfd &&fdt->fds[idx] == RT_NULL)
     {
-        fdt->fds[idx] = rt_malloc(sizeof(struct dfs_fd));
+        fdt->fds[idx] = rt_calloc(1, sizeof(struct dfs_fd));
         if (fdt->fds[idx] == RT_NULL)
             idx = fdt->maxfd;
     }
 
-__out:
+__exit:
     return idx;
 }
 
@@ -323,7 +323,7 @@ int fd_is_open(const char *pathname)
         for (index = 0; index < fdt->maxfd; index++)
         {
             fd = fdt->fds[index];
-            if (fd == NULL) continue;
+            if (fd == NULL || fd->fops == NULL || fd->path == NULL) continue;
 
             if (fd->fops == fs->ops->fops && strcmp(fd->path, mountpath) == 0)
             {
