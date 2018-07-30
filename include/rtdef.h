@@ -556,7 +556,11 @@ struct rt_thread
 
     void (*cleanup)(struct rt_thread *tid);             /**< cleanup function when thread exit */
 
-    rt_uint32_t user_data;                              /**< private user data beyond this thread */
+    rt_uint32_t user_data;                             /**< private user data beyond this thread */
+
+#ifdef RT_USING_LWP
+    struct rt_lwp *lwp;    /**< if NULL it's a kernel thread */
+#endif
 };
 typedef struct rt_thread *rt_thread_t;
 
