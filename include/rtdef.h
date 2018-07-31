@@ -496,6 +496,10 @@ typedef siginfo_t rt_siginfo_t;
 #define RT_THREAD_CTRL_CHANGE_PRIORITY  0x02                /**< Change thread priority. */
 #define RT_THREAD_CTRL_INFO             0x03                /**< Get thread information. */
 
+#ifdef RT_USING_LWP
+struct rt_lwp;
+#endif
+
 /**
  * Thread structure
  */
