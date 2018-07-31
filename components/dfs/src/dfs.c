@@ -510,7 +510,7 @@ struct dfs_fdtable* dfs_fdtable_get(void)
 #ifdef RT_USING_LWP
     struct rt_lwp *lwp;
 
-    lwp = (struct rt_lwp *)rt_thread_self()->user_data;
+    lwp = (struct rt_lwp *)rt_thread_self()->lwp;
     if (lwp)
         fdt = &lwp->fdt;
     else
