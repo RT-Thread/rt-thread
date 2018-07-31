@@ -496,6 +496,10 @@ typedef siginfo_t rt_siginfo_t;
 #define RT_THREAD_CTRL_CHANGE_PRIORITY  0x02                /**< Change thread priority. */
 #define RT_THREAD_CTRL_INFO             0x03                /**< Get thread information. */
 
+#ifdef RT_USING_LWP
+struct rt_lwp;
+#endif
+
 /**
  * Thread structure
  */
@@ -556,7 +560,11 @@ struct rt_thread
 
     void (*cleanup)(struct rt_thread *tid);             /**< cleanup function when thread exit */
 
-    rt_uint32_t user_data;                              /**< private user data beyond this thread */
+    rt_uint32_t user_data;                             /**< private user data beyond this thread */
+
+#ifdef RT_USING_LWP
+    struct rt_lwp *lwp;    /**< if NULL it's a kernel thread */
+#endif
 };
 typedef struct rt_thread *rt_thread_t;
 
