@@ -255,6 +255,7 @@ const static void* func_table[] =
     SYSCALL_NET(recvfrom),   // 0x1c
     SYSCALL_NET(send),       // 0x1d
     SYSCALL_NET(sendto),     // 0x1e
+    SYSCALL_NET(socket),     // 0x1f
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
