@@ -26,6 +26,15 @@
 #include <lwp_mem.h>
 #include <lwp_syscall.h>
 
+#include <dfs_poll.h>
+#if (defined(RT_USING_SAL) && defined(SAL_USING_POSIX))
+#include <sys/socket.h>
+
+#define SYSCALL_NET(f) (f)
+#else
+#define SYSCALL_NET(f) (sys_notimpl)
+#endif
+
 #define DBG_ENABLE
 #define DBG_SECTION_NAME    "LWP_CALL"
 #define DBG_COLOR
@@ -204,6 +213,11 @@ int sys_fstat(int file, struct stat *buf)
     return fstat(file, buf);
 }
 
+int sys_notimpl(void)
+{
+    return -ENOSYS;
+}
+
 const static void* func_table[] =
 {
     (void *)sys_exit,           // 0x01
@@ -226,11 +240,26 @@ const static void* func_table[] =
     (void *)sys_free,           // 0x0e
     (void *)sys_realloc,      //0x0f
     (void *)sys_fstat,           // 0x10
+    poll,                        // 0x11
+
+    SYSCALL_NET(accept),     // 0x12
+    SYSCALL_NET(bind),       // 0x13
+    SYSCALL_NET(shutdown),   // 0x14
+    SYSCALL_NET(getpeername),// 0x15
+    SYSCALL_NET(getsockname),// 0x16
+    SYSCALL_NET(getsockopt), // 0x17
+    SYSCALL_NET(setsockopt), // 0x18
+    SYSCALL_NET(connect),    // 0x19
+    SYSCALL_NET(listen),     // 0x1a
+    SYSCALL_NET(recv),       // 0x1b
+    SYSCALL_NET(recvfrom),   // 0x1c
+    SYSCALL_NET(send),       // 0x1d
+    SYSCALL_NET(sendto),     // 0x1e
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
 {
-    const void *func = RT_NULL;
+    const void *func = sys_notimpl;
 
     if (number == 0xff)
     {
