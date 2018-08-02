@@ -9,20 +9,22 @@ config RT_USING_SAL
 
     if RT_USING_SAL
 
-        menu "protocol stack implement"
+        if RT_USING_LWIP || AT_USING_SOCKET
+        
+            menu "protocol stack implement"
 
-            config SAL_USING_LWIP
-                bool "Support lwIP stack"
-                default y if RT_USING_LWIP
-                default n
-                depends on RT_USING_LWIP
+                config SAL_USING_LWIP
+                    bool "Support lwIP stack"
+                    default y
+                    depends on RT_USING_LWIP
 
-            config SAL_USING_AT
-                bool "Support AT Commands stack"
-                default y if AT_USING_SOCKET
-                default n
-                depends on AT_USING_SOCKET
-        endmenu
+                config SAL_USING_AT
+                    bool "Support AT Commands stack"
+                    default y
+                    depends on AT_USING_SOCKET
+            endmenu
+        
+        endif
 
         config SAL_USING_POSIX
             bool "Enable BSD socket operated by file system API"
