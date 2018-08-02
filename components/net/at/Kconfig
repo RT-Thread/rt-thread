@@ -61,6 +61,7 @@ if RT_USING_AT
             
         config AT_USING_SOCKET
             bool "Provide similar BSD Socket API by AT"
+            select RT_USING_LIBC
             default n
     endif
 
