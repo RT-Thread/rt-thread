@@ -23,8 +23,8 @@ if GetDepend('SAL_USING_POSIX'):
     if not GetDepend('HAVE_SYS_SELECT_H'):
         CPPPATH += [cwd + '/include/dfs_net/sys_select']
 
-    if not GetDepend('HAVE_SYS_SOCKET_H'):
-        CPPPATH += [cwd + '/include/socket/sys_socket']
+if not GetDepend('HAVE_SYS_SOCKET_H'):
+    CPPPATH += [cwd + '/include/socket/sys_socket']
 
 group = DefineGroup('SAL', src, depend = ['RT_USING_SAL'], CPPPATH = CPPPATH)
 
