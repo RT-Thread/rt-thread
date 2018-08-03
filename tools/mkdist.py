@@ -178,6 +178,8 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
     target_list = []
     libcpu_dir = os.path.join(RTT_ROOT, 'libcpu').lower()
     libc_dir = os.path.join(RTT_ROOT, 'components', 'libc', 'compilers').lower()
+    sal_dir = os.path.join(RTT_ROOT, 'components', 'net', 'sal_socket').lower()
+    sources_include_sal = False
     for src in source_list:
         if src.lower().startswith(BSP_ROOT.lower()):
             continue
@@ -186,6 +188,9 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
         if src.lower().startswith(libcpu_dir):
             continue
         if src.lower().startswith(libc_dir):
+            continue
+        if src.lower().startswith(sal_dir):
+            sources_include_sal = True
             continue
 
         if src.lower().startswith(RTT_ROOT.lower()):
@@ -237,11 +242,16 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
     print('=> %s' % os.path.join('components', 'libc', 'compilers'))
     do_copy_folder(os.path.join(RTT_ROOT, 'components', 'libc', 'compilers'), os.path.join(target_path, 'components', 'libc', 'compilers'))
 
+    if sources_include_sal:
+        print('=> %s' % os.path.join('components', 'net', 'sal_socket'))
+        do_copy_folder(os.path.join(RTT_ROOT, 'components', 'net', 'sal_socket'), os.path.join(target_path, 'components', 'net', 'sal_socket'))
+
     # copy all libcpu/ARCH directory
-    print('=> libcpu')
     import rtconfig
+    print('=> %s' % (os.path.join('libcpu', rtconfig.ARCH, rtconfig.CPU)))
     do_copy_folder(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH, rtconfig.CPU), os.path.join(target_path, 'libcpu', rtconfig.ARCH, rtconfig.CPU))
     if os.path.exists(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH, 'common')):
+        print('=> %s' % (os.path.join('libcpu', rtconfig.ARCH, 'common')))
         do_copy_folder(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH, 'common'), os.path.join(target_path, 'libcpu', rtconfig.ARCH, 'common'))
     do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'Kconfig'), os.path.join(target_path, 'libcpu', 'Kconfig'))
     do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'SConscript'), os.path.join(target_path, 'libcpu', 'SConscript'))
