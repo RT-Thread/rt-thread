@@ -433,7 +433,10 @@ __retry:
 
 static rt_err_t at_rx_ind(rt_device_t dev, rt_size_t size)
 {
-    rt_sem_release(at_server_local->rx_notice);
+    if (size > 0)
+    {
+        rt_sem_release(at_server_local->rx_notice);
+    }
 
     return RT_EOK;
 }

@@ -577,7 +577,11 @@ static void client_parser(at_client_t client)
 
 static rt_err_t at_client_rx_ind(rt_device_t dev, rt_size_t size)
 {
-    rt_sem_release(at_client_local->rx_notice);
+    if (size > 0)
+    {
+        rt_sem_release(at_client_local->rx_notice);
+    }
+
     return RT_EOK;
 }
 
