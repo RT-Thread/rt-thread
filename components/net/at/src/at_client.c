@@ -547,7 +547,7 @@ static void client_parser(at_client_t client)
                     /* get the end data by response result, return response state END_OK. */
                     client->resp_status = AT_RESP_OK;
                 }
-                else if ((memcmp(client->recv_buffer, AT_RESP_END_ERROR, strlen(AT_RESP_END_ERROR)) == 0)
+                else if (strstr(client->recv_buffer, AT_RESP_END_ERROR)
                         || (memcmp(client->recv_buffer, AT_RESP_END_FAIL, strlen(AT_RESP_END_FAIL)) == 0))
                 {
                     client->resp_status = AT_RESP_ERROR;
