@@ -53,7 +53,7 @@ def do_copy_folder(src_dir, dst_dir, ignore=None):
 
     shutil.copytree(src_dir, dst_dir, ignore = ignore)
 
-source_ext = ["c", "h", "s", "S", "cpp", "xpm"]
+source_ext = ['c', 'h', 's', 'S', 'cpp', 'xpm']
 source_list = []
 
 def walk_children(child):
@@ -95,21 +95,24 @@ def bsp_copy_files(bsp_root, dist_dir):
         ignore_patterns('build', 'dist', '*.pyc', '*.old', '*.map', 'rtthread.bin', '.sconsign.dblite', '*.elf', '*.axf', 'cconfig.h'))
 
 def bsp_update_sconstruct(dist_dir):
-    with open(os.path.join(dist_dir, 'SConstruct'), "r") as f:
+    with open(os.path.join(dist_dir, 'SConstruct'), 'r') as f:
         data = f.readlines()
-    with open(os.path.join(dist_dir, 'SConstruct'), "w") as f:
+    with open(os.path.join(dist_dir, 'SConstruct'), 'w') as f:
         for line in data:
             if line.find('RTT_ROOT') != -1:
                 if line.find('sys.path') != -1:
                     f.write('# set RTT_ROOT\n')
-                    f.write("if not os.getenv('RTT_ROOT'): \n    RTT_ROOT='rt-thread'\n\n")
+                    f.write('if not os.getenv("RTT_ROOT"): \n    RTT_ROOT="rt-thread"\n\n')
             f.write(line)
 
 def bsp_update_kconfig(dist_dir):
     # change RTT_ROOT in Kconfig
-    with open(os.path.join(dist_dir, 'Kconfig'), "r") as f:
+    if not os.path.isfile(os.path.join(dist_dir, 'Kconfig')):
+        return
+
+    with open(os.path.join(dist_dir, 'Kconfig'), 'r') as f:
         data = f.readlines()
-    with open(os.path.join(dist_dir, 'Kconfig'), "w") as f:
+    with open(os.path.join(dist_dir, 'Kconfig'), 'w') as f:
         found = 0
         for line in data:
             if line.find('RTT_ROOT') != -1:
@@ -131,19 +134,19 @@ def bs_update_ide_project(bsp_root, rtt_root):
                 'cdk':('gcc', 'gcc')}
 
     scons_env = os.environ.copy()
-    scons_env["RTT_ROOT"] = rtt_root
+    scons_env['RTT_ROOT'] = rtt_root
 
     for item in tgt_dict:
         child = subprocess.Popen('scons --target=' + item, cwd=bsp_root, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = child.communicate()
         if child.returncode == 0:
-            print("update %s project" % item)
+            print('update %s project' % item)
 
 def zip_dist(bsp_root, dist_dir, dist_name):
     import zipfile
 
     zip_filename = os.path.join(bsp_root, 'dist', dist_name)
-    zip = zipfile.ZipFile(zip_filename + ".zip", 'w')
+    zip = zipfile.ZipFile(zip_filename + '.zip', 'w')
     pre_len = len(os.path.dirname(dist_dir))
 
     for parent, dirnames, filenames in os.walk(dist_dir):
@@ -157,13 +160,14 @@ def zip_dist(bsp_root, dist_dir, dist_name):
 def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
     global source_list
 
-    print("make distribution and strip useless files....")
+    print('make distribution and strip useless files....')
 
     dist_name = os.path.basename(BSP_ROOT)
     dist_dir  = os.path.join(BSP_ROOT, 'dist', dist_name)
     target_path = os.path.join(dist_dir, 'rt-thread')
 
-    bsp_copy_files(BSP_ROOT, dist_dir):
+    print('=> %s' % os.path.basename(BSP_ROOT))
+    bsp_copy_files(BSP_ROOT, dist_dir)
 
     # get all source files from program
     for item in program:
@@ -173,7 +177,7 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
     # copy the source files without libcpu and components/libc in RT-Thread
     target_list = []
     libcpu_dir = os.path.join(RTT_ROOT, 'libcpu').lower()
-    libc_dir = os.path.join(RTT_ROOT, 'components', 'libc').lower()
+    libc_dir = os.path.join(RTT_ROOT, 'components', 'libc', 'compilers').lower()
     for src in source_list:
         if src.lower().startswith(BSP_ROOT.lower()):
             continue
@@ -222,21 +226,23 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
         do_copy_file(src, dst)
 
     # copy tools directory
-    print("=> tools")
-    do_copy_folder(os.path.join(RTT_ROOT, "tools"), os.path.join(target_path, "tools"), ignore_patterns('*.pyc'))
+    print('=> tools')
+    do_copy_folder(os.path.join(RTT_ROOT, 'tools'), os.path.join(target_path, 'tools'), ignore_patterns('*.pyc'))
     do_copy_file(os.path.join(RTT_ROOT, 'Kconfig'), os.path.join(target_path, 'Kconfig'))
     do_copy_file(os.path.join(RTT_ROOT, 'AUTHORS'), os.path.join(target_path, 'AUTHORS'))
     do_copy_file(os.path.join(RTT_ROOT, 'COPYING'), os.path.join(target_path, 'COPYING'))
     do_copy_file(os.path.join(RTT_ROOT, 'README.md'), os.path.join(target_path, 'README.md'))
     do_copy_file(os.path.join(RTT_ROOT, 'README_zh.md'), os.path.join(target_path, 'README_zh.md'))
 
-    print('=> libc')
-    do_copy_folder(os.path.join(RTT_ROOT, "components", 'libc', 'compilers'), os.path.join(target_path, "components", 'libc', 'compilers'))
+    print('=> %s' % os.path.join('components', 'libc', 'components'))
+    do_copy_folder(os.path.join(RTT_ROOT, 'rcomponents', 'libc', 'compilers'), os.path.join(target_path, 'components', 'libc', 'compilers'))
 
     # copy all libcpu/ARCH directory
     print('=> libcpu')
     import rtconfig
-    do_copy_folder(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH), os.path.join(target_path, 'libcpu', rtconfig.ARCH))
+    do_copy_folder(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH, rtconfig.CPU), os.path.join(target_path, 'libcpu', rtconfig.ARCH, rtconfig.CPU))
+    if os.path.exists(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH, 'common')):
+        do_copy_folder(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH, 'common'), os.path.join(target_path, 'libcpu', rtconfig.ARCH, 'common'))
     do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'Kconfig'), os.path.join(target_path, 'libcpu', 'Kconfig'))
     do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'SConscript'), os.path.join(target_path, 'libcpu', 'SConscript'))
 
@@ -253,7 +259,7 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
     print('done!')
 
 def MkDist(program, BSP_ROOT, RTT_ROOT, Env):
-    print("make distribution....")
+    print('make distribution....')
 
     dist_name = os.path.basename(BSP_ROOT)
     dist_dir  = os.path.join(BSP_ROOT, 'dist', dist_name)
@@ -261,19 +267,19 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env):
     target_path = os.path.join(dist_dir, 'rt-thread')
 
     # copy BSP files
-    print("=> %s" % os.path.basename(BSP_ROOT))
-    bsp_copy_files(BSP_ROOT, dist_dir):
+    print('=> %s' % os.path.basename(BSP_ROOT))
+    bsp_copy_files(BSP_ROOT, dist_dir)
 
     # copy tools directory
-    print("=> components")
-    do_copy_folder(os.path.join(RTT_ROOT, "components"), os.path.join(target_path, "components"))
+    print('=> components')
+    do_copy_folder(os.path.join(RTT_ROOT, 'components'), os.path.join(target_path, 'components'))
 
     # skip documentation directory
     # skip examples
 
     # copy include directory
-    print("=> include")
-    do_copy_folder(os.path.join(RTT_ROOT, "include"), os.path.join(target_path, "include"))
+    print('=> include')
+    do_copy_folder(os.path.join(RTT_ROOT, 'include'), os.path.join(target_path, 'include'))
 
     # copy all libcpu/ARCH directory
     print('=> libcpu')
@@ -283,12 +289,12 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env):
     do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'SConscript'), os.path.join(target_path, 'libcpu', 'SConscript'))
 
     # copy src directory
-    print("=> src")
-    do_copy_folder(os.path.join(RTT_ROOT, "src"), os.path.join(target_path, "src"))
+    print('=> src')
+    do_copy_folder(os.path.join(RTT_ROOT, 'src'), os.path.join(target_path, 'src'))
 
     # copy tools directory
-    print("=> tools")
-    do_copy_folder(os.path.join(RTT_ROOT, "tools"), os.path.join(target_path, "tools"), ignore_patterns('*.pyc'))
+    print('=> tools')
+    do_copy_folder(os.path.join(RTT_ROOT, 'tools'), os.path.join(target_path, 'tools'), ignore_patterns('*.pyc'))
 
     do_copy_file(os.path.join(RTT_ROOT, 'Kconfig'), os.path.join(target_path, 'Kconfig'))
     do_copy_file(os.path.join(RTT_ROOT, 'AUTHORS'), os.path.join(target_path, 'AUTHORS'))
