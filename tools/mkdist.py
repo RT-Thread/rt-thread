@@ -234,8 +234,8 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
     do_copy_file(os.path.join(RTT_ROOT, 'README.md'), os.path.join(target_path, 'README.md'))
     do_copy_file(os.path.join(RTT_ROOT, 'README_zh.md'), os.path.join(target_path, 'README_zh.md'))
 
-    print('=> %s' % os.path.join('components', 'libc', 'components'))
-    do_copy_folder(os.path.join(RTT_ROOT, 'rcomponents', 'libc', 'compilers'), os.path.join(target_path, 'components', 'libc', 'compilers'))
+    print('=> %s' % os.path.join('components', 'libc', 'compilers'))
+    do_copy_folder(os.path.join(RTT_ROOT, 'components', 'libc', 'compilers'), os.path.join(target_path, 'components', 'libc', 'compilers'))
 
     # copy all libcpu/ARCH directory
     print('=> libcpu')
