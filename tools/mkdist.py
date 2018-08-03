@@ -142,10 +142,10 @@ def bs_update_ide_project(bsp_root, rtt_root):
         if child.returncode == 0:
             print('update %s project' % item)
 
-def zip_dist(bsp_root, dist_dir, dist_name):
+def zip_dist(dist_dir, dist_name):
     import zipfile
 
-    zip_filename = os.path.join(bsp_root, 'dist', dist_name)
+    zip_filename = os.path.join(dist_dir)
     zip = zipfile.ZipFile(zip_filename + '.zip', 'w')
     pre_len = len(os.path.dirname(dist_dir))
 
@@ -163,7 +163,7 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
     print('make distribution and strip useless files....')
 
     dist_name = os.path.basename(BSP_ROOT)
-    dist_dir  = os.path.join(BSP_ROOT, 'dist', dist_name)
+    dist_dir  = os.path.join(BSP_ROOT, 'dist-strip', dist_name)
     target_path = os.path.join(dist_dir, 'rt-thread')
 
     print('=> %s' % os.path.basename(BSP_ROOT))
@@ -254,7 +254,7 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
     bs_update_ide_project(dist_dir, target_path)
 
     # make zip package
-    zip_dist(BSP_ROOT, dist_dir, dist_name)
+    zip_dist(dist_dir, dist_name)
 
     print('done!')
 
@@ -310,7 +310,7 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env):
     bs_update_ide_project(dist_dir, target_path)
 
     # make zip package
-    zip_dist(BSP_ROOT, dist_dir, dist_name)
+    zip_dist(dist_dir, dist_name)
 
     print('done!')
 
