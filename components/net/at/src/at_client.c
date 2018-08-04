@@ -355,10 +355,10 @@ static char at_client_getchar(void)
 {
     char ch;
 
-    if (rt_device_read(at_client_local->device, 0, &ch, 1) == 0)
+    while (rt_device_read(at_client_local->device, 0, &ch, 1) == 0)
     {
+        rt_sem_control(at_client_local->rx_notice, RT_IPC_CMD_RESET, RT_NULL);
         rt_sem_take(at_client_local->rx_notice, RT_WAITING_FOREVER);
-        rt_device_read(at_client_local->device, 0, &ch, 1);
     }
 
     return ch;
