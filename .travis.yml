@@ -18,8 +18,8 @@ before_script:
   - "[ x$RTT_CC == x ] && export RTT_CC='gcc' || true"
 
 script:
+  - whereis clang-analyze
   - scons -C bsp/$RTT_BSP
-  - whereis clang
 
 env:
   - RTT_BSP='simulator' RTT_CC='clang-analyze' RTT_EXEC_PATH=/usr/local/clang-5.0.0/bin
