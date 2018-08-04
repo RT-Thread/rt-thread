@@ -439,6 +439,7 @@ static rt_err_t imxrt_configure(struct rt_serial_device *serial, struct serial_c
     config.enableRx = true;
 
     LPUART_Init(uart->uart_base, &config, GetUartSrcFreq());
+    LPUART_EnableInterrupts(uart->uart_base, kLPUART_RxDataRegFullInterruptEnable);
 
     return RT_EOK;
 }
@@ -453,15 +454,11 @@ static rt_err_t imxrt_control(struct rt_serial_device *serial, int cmd, void *ar
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
-        /* disable interrupt */
-        LPUART_DisableInterrupts(uart->uart_base, kLPUART_RxDataRegFullInterruptEnable);
         /* disable rx irq */
         DisableIRQ(uart->irqn);
 
         break;
     case RT_DEVICE_CTRL_SET_INT:
-        /* enable interrupt */
-        LPUART_EnableInterrupts(uart->uart_base, kLPUART_RxDataRegFullInterruptEnable);
         /* enable rx irq */
         EnableIRQ(uart->irqn);
         break;
