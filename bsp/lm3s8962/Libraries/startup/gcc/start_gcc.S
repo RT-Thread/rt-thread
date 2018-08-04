@@ -1,9 +1,4 @@
-.section .bss.init
-.equ 	Stack_Size, 0x00000200
-.space 	Stack_Size
-Initial_spTop:
-
-    .syntax unified
+  .syntax unified
   .cpu cortex-m3
   .fpu softvfp
   .thumb
@@ -32,13 +27,13 @@ defined in linker script */
  * @retval : None
 */
 
-    .section  .text.Reset_Handler
+  .section  .text.Reset_Handler
   .weak  Reset_Handler
   .type  Reset_Handler, %function
 Reset_Handler:  
 /* restore original stack pointer */  
-  LDR r0, =Initial_spTop
-  MSR msp, r0
+  ldr   sp, =_estack       /* set stack pointer */
+
 /* Copy the data segment initializers from flash to SRAM */  
   movs  r1, #0
   b  LoopCopyDataInit
@@ -98,7 +93,7 @@ Infinite_Loop:
     
     
 g_pfnVectors:
-  .word  Initial_spTop
+  .word  _estack
   .word  Reset_Handler
   .word  Default_Handler                     //NMI_Handler
   .word  HardFault_Handler
