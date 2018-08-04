@@ -19,9 +19,10 @@ before_script:
 
 script:
   - scons -C bsp/$RTT_BSP
+  - whereis clang
 
 env:
-  - RTT_BSP='simulator' RTT_CC='clang-analyze' RTT_EXEC_PATH=/usr/share/clang/scan-build
+  - RTT_BSP='simulator' RTT_CC='clang-analyze' RTT_EXEC_PATH=/usr/local/clang-5.0.0/bin
   - RTT_BSP='allwinner_tina' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='lm3s8962' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='ls1cdev' RTT_TOOL_CHAIN='sourcery-mips'
