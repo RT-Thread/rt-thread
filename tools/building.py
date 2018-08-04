@@ -115,7 +115,7 @@ class Win32Spawn:
 # generate cconfig.h file
 def GenCconfigFile(env, BuildOptions):
     import rtconfig
-    
+
     if rtconfig.PLATFORM == 'gcc':
         contents = ''
         if not os.path.isfile('cconfig.h'):
@@ -147,21 +147,16 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     global Rtt_Root
 
     # ===== Add option to SCons =====
-    AddOption('--copy',
-                      dest = 'copy',
-                      action = 'store_true',
-                      default = False,
-                      help = 'copy rt-thread directory to local.')
-    AddOption('--copy-header',
-                      dest = 'copy-header',
-                      action = 'store_true',
-                      default = False,
-                      help = 'copy header of rt-thread directory to local.')
     AddOption('--dist',
                       dest = 'make-dist',
                       action = 'store_true',
                       default = False,
                       help = 'make distribution')
+    AddOption('--dist-strip',
+                      dest = 'make-dist-strip',
+                      action = 'store_true',
+                      default = False,
+                      help = 'make distribution and strip useless files')
     AddOption('--cscope',
                       dest = 'cscope',
                       action = 'store_true',
@@ -713,7 +708,7 @@ def DoBuilding(target, objects):
         program = Env.Program(target, objects)
 
     EndBuilding(target, program)
-        
+
 def GenTargetProject(program = None):
 
     if GetOption('target') == 'mdk':
@@ -789,17 +784,12 @@ def EndBuilding(target, program = None):
         GenTargetProject(program)
 
     BSP_ROOT = Dir('#').abspath
-    if GetOption('copy') and program != None:
-        from mkdist import MakeCopy
-        MakeCopy(program, BSP_ROOT, Rtt_Root, Env)
-        need_exit = True
-    if GetOption('copy-header') and program != None:
-        from mkdist import MakeCopyHeader
-        MakeCopyHeader(program, BSP_ROOT, Rtt_Root, Env)
-        need_exit = True
     if GetOption('make-dist') and program != None:
         from mkdist import MkDist
         MkDist(program, BSP_ROOT, Rtt_Root, Env)
+    if GetOption('make-dist-strip') and program != None:
+        from mkdist import MkDist_Strip
+        MkDist_Strip(program, BSP_ROOT, Rtt_Root, Env)
         need_exit = True
     if GetOption('cscope'):
         from cscope import CscopeDatabase
