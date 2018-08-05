@@ -150,6 +150,8 @@ rt_err_t rt_mp_detach(struct rt_mempool *mp)
 
     /* parameter check */
     RT_ASSERT(mp != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&mp->parent) == RT_Object_Class_MemPool);
+    RT_ASSERT(rt_object_is_systemobject(&mp->parent));
 
     /* wake up all suspended threads */
     while (!rt_list_isempty(&(mp->suspend_thread)))
@@ -266,6 +268,8 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
 
     /* parameter check */
     RT_ASSERT(mp != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&mp->parent) == RT_Object_Class_MemPool);
+    RT_ASSERT(rt_object_is_systemobject(&mp->parent) == RT_FALSE);
 
     /* wake up all suspended threads */
     while (!rt_list_isempty(&(mp->suspend_thread)))
@@ -292,15 +296,8 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
         rt_hw_interrupt_enable(temp);
     }
 
-#if defined(RT_USING_MODULE) && defined(RT_USING_SLAB)
-    /* the mp object belongs to an application module */
-    if (mp->parent.flag & RT_OBJECT_FLAG_MODULE)
-        rt_module_free(mp->parent.module_id, mp->start_address);
-    else
-#endif
-
-        /* release allocated room */
-        rt_free(mp->start_address);
+    /* release allocated room */
+    rt_free(mp->start_address);
 
     /* detach object */
     rt_object_delete(&(mp->parent));

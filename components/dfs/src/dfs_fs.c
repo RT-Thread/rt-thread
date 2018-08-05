@@ -69,6 +69,7 @@ int dfs_register(const struct dfs_filesystem_ops *ops)
     if (empty == NULL)
     {
         rt_set_errno(-ENOSPC);
+        dbg_log(DBG_ERROR, "There is no space to register this file system (%d).\n", ops->name);
         ret = -1;
     }
     else if (ret == RT_EOK)
@@ -317,6 +318,7 @@ int dfs_mount(const char   *device_name,
     if ((fs == NULL) && (iter == &filesystem_table[DFS_FILESYSTEMS_MAX]))
     {
         rt_set_errno(-ENOSPC);
+        dbg_log(DBG_ERROR, "There is no space to mount this file system (%s).\n", filesystemtype);
         goto err1;
     }
 
@@ -449,6 +451,7 @@ int dfs_mkfs(const char *fs_name, const char *device_name)
     if (dev_id == NULL)
     {
         rt_set_errno(-ENODEV);
+        dbg_log(DBG_ERROR, "Device (%s) was not found\n", device_name);
         return -1;
     }
 
@@ -469,6 +472,7 @@ int dfs_mkfs(const char *fs_name, const char *device_name)
         const struct dfs_filesystem_ops *ops = filesystem_operation_table[index];
         if (ops->mkfs == NULL)
         {
+            dbg_log(DBG_ERROR, "The file system (%s) mkfs function was not implement\n", fs_name);
             rt_set_errno(-ENOSYS);
             return -1;
         }
@@ -476,7 +480,8 @@ int dfs_mkfs(const char *fs_name, const char *device_name)
         return ops->mkfs(dev_id);
     }
 
-    rt_kprintf("Can not find the file system which named as %s.\n", fs_name);
+    dbg_log(DBG_ERROR, "File system (%s) was not found.\n", fs_name);
+
     return -1;
 }
 
@@ -554,8 +559,8 @@ int df(const char *path)
         return -1;
     }
 
-    cap = buffer.f_bsize * buffer.f_bfree / 1024;
-    for (unit_index = 0; unit_index < 3; unit_index ++)
+    cap = ((long long)buffer.f_bsize) * ((long long)buffer.f_bfree) / 1024LL;
+    for (unit_index = 0; unit_index < 2; unit_index ++)
     {
         if (cap < 1024) break;
 

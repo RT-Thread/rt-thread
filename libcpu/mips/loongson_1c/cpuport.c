@@ -17,6 +17,8 @@
 #include <rtthread.h>
 #include "ls1c.h"
 
+register rt_uint32_t $GP __asm__ ("$28");
+
 /**
  * @addtogroup Loongson LS1B
  */
@@ -68,12 +70,15 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_ad
 {
 	rt_uint32_t *stk;
     static rt_uint32_t g_sr = 0;
+	static rt_uint32_t g_gp = 0;
 
     if (g_sr == 0)
     {
     	g_sr = cp0_get_status();
     	g_sr &= 0xfffffffe;
     	g_sr |= 0x8401;
+
+		g_gp = $GP;
     }
 
     /** Start at stack top */
@@ -87,7 +92,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_ad
 	*(--stk) = (rt_uint32_t) texit;	        /* ra */
 	*(--stk) = (rt_uint32_t) 0x0000001e;	/* s8 */
 	*(--stk) = (rt_uint32_t) stack_addr;	/* sp */
-	*(--stk) = (rt_uint32_t) 0x0000001c;	/* gp */
+	*(--stk) = (rt_uint32_t) g_gp;	        /* gp */
 	*(--stk) = (rt_uint32_t) 0x0000001b;	/* k1 */
 	*(--stk) = (rt_uint32_t) 0x0000001a;	/* k0 */
 	*(--stk) = (rt_uint32_t) 0x00000019;	/* t9 */

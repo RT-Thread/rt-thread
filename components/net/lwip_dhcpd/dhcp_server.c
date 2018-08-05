@@ -41,33 +41,30 @@
 #include <lwip/init.h>
 
 #if (LWIP_VERSION) >= 0x02000000U
-#include <lwip/prot/dhcp.h>
+    #include <lwip/prot/dhcp.h>
 #endif
 
 /* DHCP server option */
 
 /* allocated client ip range */
 #ifndef DHCPD_CLIENT_IP_MIN
-#define DHCPD_CLIENT_IP_MIN     2
+    #define DHCPD_CLIENT_IP_MIN     2
 #endif
 #ifndef DHCPD_CLIENT_IP_MAX
-#define DHCPD_CLIENT_IP_MAX     254
+    #define DHCPD_CLIENT_IP_MAX     254
 #endif
 
 /* the DHCP server address */
-#ifndef DHCPD_SERVER_IPADDR0
-#define DHCPD_SERVER_IPADDR0      192UL
-#define DHCPD_SERVER_IPADDR1      168UL
-#define DHCPD_SERVER_IPADDR2      169UL
-#define DHCPD_SERVER_IPADDR3      1UL
+#ifndef DHCPD_SERVER_IP
+    #define DHCPD_SERVER_IP "192.168.169.1"
 #endif
 
 //#define DHCP_DEBUG_PRINTF
 
 #ifdef  DHCP_DEBUG_PRINTF
-#define DEBUG_PRINTF        rt_kprintf("[DHCP] "); rt_kprintf
+    #define DEBUG_PRINTF        rt_kprintf("[DHCP] "); rt_kprintf
 #else
-#define DEBUG_PRINTF(...)
+    #define DEBUG_PRINTF(...)
 #endif /* DHCP_DEBUG_PRINTF */
 
 /* we need some routines in the DHCP of lwIP */
@@ -79,11 +76,11 @@
 #define BUFSZ               1024
 
 #ifndef MAC_ADDR_LEN
-#define MAC_ADDR_LEN     6
+    #define MAC_ADDR_LEN     6
 #endif
 
 #ifndef MAC_TABLE_LEN
-#define MAC_TABLE_LEN     4
+    #define MAC_TABLE_LEN     4
 #endif
 
 struct mac_addr_t
@@ -215,12 +212,26 @@ static void dhcpd_thread_entry(void *parameter)
     struct dhcp_msg *msg;
     int optval = 1;
     struct mac_addr_t mac_addr;
+    uint8_t DHCPD_SERVER_IPADDR0, DHCPD_SERVER_IPADDR1, DHCPD_SERVER_IPADDR2, DHCPD_SERVER_IPADDR3;
 
     /* get ethernet interface. */
     netif = (struct netif *) parameter;
     RT_ASSERT(netif != RT_NULL);
 
     /* our DHCP server information */
+    {
+#if (LWIP_VERSION) >= 0x02000000U
+        ip4_addr_t addr;
+#else
+        struct ip_addr addr;
+#endif /* LWIP_VERSION */
+
+        ip4addr_aton(DHCPD_SERVER_IP, &addr);
+        DHCPD_SERVER_IPADDR0 = (ntohl(addr.addr) >> 24) & 0xFF;
+        DHCPD_SERVER_IPADDR1 = (ntohl(addr.addr) >> 16) & 0xFF;
+        DHCPD_SERVER_IPADDR2 = (ntohl(addr.addr) >>  8) & 0xFF;
+        DHCPD_SERVER_IPADDR3 = (ntohl(addr.addr) >>  0) & 0xFF;
+    }
     DEBUG_PRINTF("DHCP server IP: %d.%d.%d.%d  client IP: %d.%d.%d.%d-%d\n",
                  DHCPD_SERVER_IPADDR0, DHCPD_SERVER_IPADDR1,
                  DHCPD_SERVER_IPADDR2, DHCPD_SERVER_IPADDR3,
@@ -423,10 +434,27 @@ static void dhcpd_thread_entry(void *parameter)
                 // DHCP_OPTION_DNS_SERVER, use the default DNS server address in lwIP
                 *dhcp_opt++ = DHCP_OPTION_DNS_SERVER;
                 *dhcp_opt++ = 4;
-                *dhcp_opt++ = 208;
-                *dhcp_opt++ = 67;
-                *dhcp_opt++ = 222;
-                *dhcp_opt++ = 222;
+
+#ifndef DHCP_DNS_SERVER_IP
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR0;
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR1;
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR2;
+                *dhcp_opt++ = 1;
+#else
+                {
+#if (LWIP_VERSION) >= 0x02000000U
+                    ip4_addr_t dns_addr;
+#else
+                    struct ip_addr dns_addr;
+#endif /* LWIP_VERSION */
+                    ip4addr_aton(DHCP_DNS_SERVER_IP, &dns_addr);
+
+                    *dhcp_opt++ = (ntohl(dns_addr.addr) >> 24) & 0xFF;
+                    *dhcp_opt++ = (ntohl(dns_addr.addr) >> 16) & 0xFF;
+                    *dhcp_opt++ = (ntohl(dns_addr.addr) >>  8) & 0xFF;
+                    *dhcp_opt++ = (ntohl(dns_addr.addr) >>  0) & 0xFF;
+                }
+#endif
 
                 // DHCP_OPTION_LEASE_TIME
                 *dhcp_opt++ = DHCP_OPTION_LEASE_TIME;
@@ -492,12 +520,9 @@ void dhcpd_start(const char *netif_name)
     {
         extern void set_if(const char *netif_name, const char *ip_addr, const char *gw_addr, const char *nm_addr);
 
-        char ip_str[4 * 4 + 1];
-
         dhcp_stop(netif);
 
-        sprintf(ip_str, "%d.%d.%d.%d", DHCPD_SERVER_IPADDR0, DHCPD_SERVER_IPADDR1, DHCPD_SERVER_IPADDR2, DHCPD_SERVER_IPADDR3);
-        set_if(netif_name, ip_str, "0.0.0.0", "255.255.255.0");
+        set_if(netif_name, DHCPD_SERVER_IP, "0.0.0.0", "255.255.255.0");
 
         netif_set_up(netif);
     }

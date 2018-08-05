@@ -67,7 +67,7 @@ path = [GetCurrentDir() + '/src',
     GetCurrentDir() + '/src/arch/include',
     GetCurrentDir() + '/src/include/netif']
 
-if not GetDepend('RT_USING_POSIX') or not GetDepend('RT_USING_DFS_NET'):
+if not GetDepend('RT_USING_POSIX') or not GetDepend('SAL_USING_POSIX'):
     path += [GetCurrentDir() + '/src/include/posix']
 
 if GetDepend(['RT_LWIP_SNMP']):

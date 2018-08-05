@@ -108,7 +108,8 @@ def CBProject(target, script, program):
 
         for macro in building.Env.get('CPPDEFINES', []):
             Add = SubElement(elem, 'Add')
-            Add.set('option', "-D"+macro)
+            for d in macro:
+                Add.set('option', "-D"+d)
         
         # write link flags
     '''

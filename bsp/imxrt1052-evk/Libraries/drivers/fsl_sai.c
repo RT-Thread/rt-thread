@@ -1,9 +1,12 @@
 /*
+ * The Clear BSD License
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * are permitted (subject to the limitations in the disclaimer below) provided
+ *  that the following conditions are met:
  *
  * o Redistributions of source code must retain the above copyright notice, this list
  *   of conditions and the following disclaimer.
@@ -16,6 +19,7 @@
  *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE.
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -29,6 +33,11 @@
  */
 
 #include "fsl_sai.h"
+
+/* Component ID definition, used by tools. */
+#ifndef FSL_COMPONENT_ID
+#define FSL_COMPONENT_ID "platform.drivers.sai"
+#endif
 
 /*******************************************************************************
  * Definitations
@@ -69,7 +78,7 @@ static void SAI_SetMasterClockDivider(I2S_Type *base, uint32_t mclk_Hz, uint32_t
  *
  * @param base SAI base pointer.
  */
-uint32_t SAI_GetInstance(I2S_Type *base);
+static uint32_t SAI_GetInstance(I2S_Type *base);
 
 /*!
  * @brief sends a piece of data in non-blocking way.
@@ -98,7 +107,7 @@ static void SAI_ReadNonBlocking(I2S_Type *base, uint32_t channel, uint32_t bitWi
 /* Base pointer array */
 static I2S_Type *const s_saiBases[] = I2S_BASE_PTRS;
 /*!@brief SAI handle pointer */
-sai_handle_t *s_saiHandle[ARRAY_SIZE(s_saiBases)][2];
+static sai_handle_t *s_saiHandle[ARRAY_SIZE(s_saiBases)][2];
 /* IRQ number array */
 static const IRQn_Type s_saiTxIRQ[] = I2S_TX_IRQS;
 static const IRQn_Type s_saiRxIRQ[] = I2S_RX_IRQS;
@@ -178,7 +187,7 @@ static void SAI_SetMasterClockDivider(I2S_Type *base, uint32_t mclk_Hz, uint32_t
 }
 #endif /* FSL_FEATURE_SAI_HAS_MCLKDIV_REGISTER */
 
-uint32_t SAI_GetInstance(I2S_Type *base)
+static uint32_t SAI_GetInstance(I2S_Type *base)
 {
     uint32_t instance;
 
@@ -253,6 +262,8 @@ void SAI_TxInit(I2S_Type *base, const sai_config_t *config)
     val = (base->MCR & ~I2S_MCR_MOE_MASK);
     base->MCR = (val | I2S_MCR_MOE(config->mclkOutputEnable));
 #endif /* FSL_FEATURE_SAI_HAS_MCR */
+
+    SAI_TxReset(base);
 
     /* Configure audio protocol */
     switch (config->protocol)
@@ -337,6 +348,10 @@ void SAI_TxInit(I2S_Type *base, const sai_config_t *config)
         default:
             break;
     }
+
+#if defined(FSL_FEATURE_SAI_HAS_FIFO_FUNCTION_AFTER_ERROR) && FSL_FEATURE_SAI_HAS_FIFO_FUNCTION_AFTER_ERROR
+    SAI_TxSetFIFOErrorContinue(base, true);
+#endif /* FSL_FEATURE_SAI_HAS_FIFO_FUNCTION_AFTER_ERROR */
 }
 
 void SAI_RxInit(I2S_Type *base, const sai_config_t *config)
@@ -357,6 +372,8 @@ void SAI_RxInit(I2S_Type *base, const sai_config_t *config)
     val = (base->MCR & ~I2S_MCR_MOE_MASK);
     base->MCR = (val | I2S_MCR_MOE(config->mclkOutputEnable));
 #endif /* FSL_FEATURE_SAI_HAS_MCR */
+
+    SAI_RxReset(base);
 
     /* Configure audio protocol */
     switch (config->protocol)
@@ -441,6 +458,10 @@ void SAI_RxInit(I2S_Type *base, const sai_config_t *config)
         default:
             break;
     }
+
+#if defined(FSL_FEATURE_SAI_HAS_FIFO_FUNCTION_AFTER_ERROR) && FSL_FEATURE_SAI_HAS_FIFO_FUNCTION_AFTER_ERROR
+    SAI_RxSetFIFOErrorContinue(base, true);
+#endif /* FSL_FEATURE_SAI_HAS_FIFO_FUNCTION_AFTER_ERROR */
 }
 
 void SAI_Deinit(I2S_Type *base)
@@ -457,7 +478,7 @@ void SAI_TxGetDefaultConfig(sai_config_t *config)
     config->bclkSource = kSAI_BclkSourceMclkDiv;
     config->masterSlave = kSAI_Master;
     config->mclkSource = kSAI_MclkSourceSysclk;
-    config->protocol = kSAI_BusLeftJustified;
+    config->protocol = kSAI_BusI2S;
     config->syncMode = kSAI_ModeAsync;
 #if defined(FSL_FEATURE_SAI_HAS_MCR) && (FSL_FEATURE_SAI_HAS_MCR)
     config->mclkOutputEnable = true;
@@ -469,7 +490,7 @@ void SAI_RxGetDefaultConfig(sai_config_t *config)
     config->bclkSource = kSAI_BclkSourceMclkDiv;
     config->masterSlave = kSAI_Master;
     config->mclkSource = kSAI_MclkSourceSysclk;
-    config->protocol = kSAI_BusLeftJustified;
+    config->protocol = kSAI_BusI2S;
     config->syncMode = kSAI_ModeSync;
 #if defined(FSL_FEATURE_SAI_HAS_MCR) && (FSL_FEATURE_SAI_HAS_MCR)
     config->mclkOutputEnable = true;
@@ -583,6 +604,74 @@ void SAI_RxSetChannelFIFOMask(I2S_Type *base, uint8_t mask)
     base->RCR3 |= I2S_RCR3_RCE(mask);
 }
 
+void SAI_TxSetDataOrder(I2S_Type *base, sai_data_order_t order)
+{
+    uint32_t val = (base->TCR4) & (~I2S_TCR4_MF_MASK);
+
+    val |= I2S_TCR4_MF(order);
+    base->TCR4 = val;
+}
+
+void SAI_RxSetDataOrder(I2S_Type *base, sai_data_order_t order)
+{
+    uint32_t val = (base->RCR4) & (~I2S_RCR4_MF_MASK);
+
+    val |= I2S_RCR4_MF(order);
+    base->RCR4 = val;
+}
+
+void SAI_TxSetBitClockPolarity(I2S_Type *base, sai_clock_polarity_t polarity)
+{
+    uint32_t val = (base->TCR2) & (~I2S_TCR2_BCP_MASK);
+
+    val |= I2S_TCR2_BCP(polarity);
+    base->TCR2 = val;
+}
+
+void SAI_RxSetBitClockPolarity(I2S_Type *base, sai_clock_polarity_t polarity)
+{
+    uint32_t val = (base->RCR2) & (~I2S_RCR2_BCP_MASK);
+
+    val |= I2S_RCR2_BCP(polarity);
+    base->RCR2 = val;
+}
+
+void SAI_TxSetFrameSyncPolarity(I2S_Type *base, sai_clock_polarity_t polarity)
+{
+    uint32_t val = (base->TCR4) & (~I2S_TCR4_FSP_MASK);
+
+    val |= I2S_TCR4_FSP(polarity);
+    base->TCR4 = val;
+}
+
+void SAI_RxSetFrameSyncPolarity(I2S_Type *base, sai_clock_polarity_t polarity)
+{
+    uint32_t val = (base->RCR4) & (~I2S_RCR4_FSP_MASK);
+
+    val |= I2S_RCR4_FSP(polarity);
+    base->RCR4 = val;
+}
+
+#if defined(FSL_FEATURE_SAI_HAS_FIFO_PACKING) && FSL_FEATURE_SAI_HAS_FIFO_PACKING
+void SAI_TxSetFIFOPacking(I2S_Type *base, sai_fifo_packing_t pack)
+{
+    uint32_t val = base->TCR4;
+
+    val &= ~I2S_TCR4_FPACK_MASK;
+    val |= I2S_TCR4_FPACK(pack);
+    base->TCR4 = val;
+}
+
+void SAI_RxSetFIFOPacking(I2S_Type *base, sai_fifo_packing_t pack)
+{
+    uint32_t val = base->RCR4;
+
+    val &= ~I2S_RCR4_FPACK_MASK;
+    val |= I2S_RCR4_FPACK(pack);
+    base->RCR4 = val;
+}
+#endif /* FSL_FEATURE_SAI_HAS_FIFO_PACKING */
+
 void SAI_TxSetFormat(I2S_Type *base,
                      sai_transfer_format_t *format,
                      uint32_t mclkSourceClockHz,
@@ -633,7 +722,14 @@ void SAI_TxSetFormat(I2S_Type *base,
     }
     else
     {
-        base->TCR5 = I2S_TCR5_WNW(val) | I2S_TCR5_W0W(val) | I2S_TCR5_FBT(format->bitWidth - 1);
+        if (base->TCR4 & I2S_TCR4_MF_MASK)
+        {
+            base->TCR5 = I2S_TCR5_WNW(val) | I2S_TCR5_W0W(val) | I2S_TCR5_FBT(format->bitWidth - 1);
+        }
+        else
+        {
+            base->TCR5 = I2S_TCR5_WNW(val) | I2S_TCR5_W0W(val) | I2S_TCR5_FBT(0);
+        }
     }
 
     /* Set mono or stereo */
@@ -699,7 +795,14 @@ void SAI_RxSetFormat(I2S_Type *base,
     }
     else
     {
-        base->RCR5 = I2S_RCR5_WNW(val) | I2S_RCR5_W0W(val) | I2S_RCR5_FBT(format->bitWidth - 1);
+        if (base->RCR4 & I2S_RCR4_MF_MASK)
+        {
+            base->RCR5 = I2S_RCR5_WNW(val) | I2S_RCR5_W0W(val) | I2S_RCR5_FBT(format->bitWidth - 1);
+        }
+        else
+        {
+            base->RCR5 = I2S_RCR5_WNW(val) | I2S_RCR5_W0W(val) | I2S_RCR5_FBT(0);
+        }
     }
 
     /* Set mono or stereo */
@@ -1575,6 +1678,192 @@ void AUDIO_SAI7_INT_DriverIRQHandler(void)
 }
 #endif /* AUDIO__SAI7 */
 
+#if defined(ADMA__SAI0)
+void ADMA_SAI0_INT_DriverIRQHandler(void)
+{
+#if defined(FSL_FEATURE_SAI_FIFO_COUNT) && (FSL_FEATURE_SAI_FIFO_COUNT > 1)
+    if ((s_saiHandle[1][1]) && ((ADMA__SAI0->RCSR & kSAI_FIFORequestFlag) || (ADMA__SAI0->RCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI0->RCSR & kSAI_FIFORequestInterruptEnable) || (ADMA__SAI0->RCSR & kSAI_FIFOErrorInterruptEnable)))
+#else
+    if ((s_saiHandle[1][1]) && ((ADMA__SAI0->RCSR & kSAI_FIFOWarningFlag) || (ADMA__SAI0->RCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI0->RCSR & kSAI_FIFOWarningInterruptEnable) || (ADMA__SAI0->RCSR & kSAI_FIFOErrorInterruptEnable)))
+#endif
+    {
+        s_saiRxIsr(ADMA__SAI0, s_saiHandle[1][1]);
+    }
+#if defined(FSL_FEATURE_SAI_FIFO_COUNT) && (FSL_FEATURE_SAI_FIFO_COUNT > 1)
+    if ((s_saiHandle[1][0]) && ((ADMA__SAI0->TCSR & kSAI_FIFORequestFlag) || (ADMA__SAI0->TCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI0->TCSR & kSAI_FIFORequestInterruptEnable) || (ADMA__SAI0->TCSR & kSAI_FIFOErrorInterruptEnable)))
+#else
+    if ((s_saiHandle[1][0]) && ((ADMA__SAI0->TCSR & kSAI_FIFOWarningFlag) || (ADMA__SAI0->TCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI0->TCSR & kSAI_FIFOWarningInterruptEnable) || (ADMA__SAI0->TCSR & kSAI_FIFOErrorInterruptEnable)))
+#endif
+    {
+        s_saiTxIsr(ADMA__SAI0, s_saiHandle[1][0]);
+    }
+/* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
+  exception return operation might vector to incorrect interrupt */
+#if defined __CORTEX_M && (__CORTEX_M == 4U)
+    __DSB();
+#endif
+}
+#endif /* ADMA__SAI0 */
+
+#if defined(ADMA__SAI1)
+void ADMA_SAI1_INT_DriverIRQHandler(void)
+{
+#if defined(FSL_FEATURE_SAI_FIFO_COUNT) && (FSL_FEATURE_SAI_FIFO_COUNT > 1)
+    if ((s_saiHandle[1][1]) && ((ADMA__SAI1->RCSR & kSAI_FIFORequestFlag) || (ADMA__SAI1->RCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI1->RCSR & kSAI_FIFORequestInterruptEnable) || (ADMA__SAI1->RCSR & kSAI_FIFOErrorInterruptEnable)))
+#else
+    if ((s_saiHandle[1][1]) && ((ADMA__SAI1->RCSR & kSAI_FIFOWarningFlag) || (ADMA__SAI1->RCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI1->RCSR & kSAI_FIFOWarningInterruptEnable) || (ADMA__SAI1->RCSR & kSAI_FIFOErrorInterruptEnable)))
+#endif
+    {
+        s_saiRxIsr(ADMA__SAI1, s_saiHandle[1][1]);
+    }
+#if defined(FSL_FEATURE_SAI_FIFO_COUNT) && (FSL_FEATURE_SAI_FIFO_COUNT > 1)
+    if ((s_saiHandle[1][0]) && ((ADMA__SAI1->TCSR & kSAI_FIFORequestFlag) || (ADMA__SAI1->TCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI1->TCSR & kSAI_FIFORequestInterruptEnable) || (ADMA__SAI1->TCSR & kSAI_FIFOErrorInterruptEnable)))
+#else
+    if ((s_saiHandle[1][0]) && ((ADMA__SAI1->TCSR & kSAI_FIFOWarningFlag) || (ADMA__SAI1->TCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI1->TCSR & kSAI_FIFOWarningInterruptEnable) || (ADMA__SAI1->TCSR & kSAI_FIFOErrorInterruptEnable)))
+#endif
+    {
+        s_saiTxIsr(ADMA__SAI1, s_saiHandle[1][0]);
+    }
+/* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
+  exception return operation might vector to incorrect interrupt */
+#if defined __CORTEX_M && (__CORTEX_M == 4U)
+    __DSB();
+#endif
+}
+#endif /* ADMA__SAI1 */
+
+#if defined(ADMA__SAI2)
+void ADMA_SAI2_INT_DriverIRQHandler(void)
+{
+#if defined(FSL_FEATURE_SAI_FIFO_COUNT) && (FSL_FEATURE_SAI_FIFO_COUNT > 1)
+    if ((s_saiHandle[1][1]) && ((ADMA__SAI2->RCSR & kSAI_FIFORequestFlag) || (ADMA__SAI2->RCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI2->RCSR & kSAI_FIFORequestInterruptEnable) || (ADMA__SAI2->RCSR & kSAI_FIFOErrorInterruptEnable)))
+#else
+    if ((s_saiHandle[1][1]) && ((ADMA__SAI2->RCSR & kSAI_FIFOWarningFlag) || (ADMA__SAI2->RCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI2->RCSR & kSAI_FIFOWarningInterruptEnable) || (ADMA__SAI2->RCSR & kSAI_FIFOErrorInterruptEnable)))
+#endif
+    {
+        s_saiRxIsr(ADMA__SAI2, s_saiHandle[1][1]);
+    }
+#if defined(FSL_FEATURE_SAI_FIFO_COUNT) && (FSL_FEATURE_SAI_FIFO_COUNT > 1)
+    if ((s_saiHandle[1][0]) && ((ADMA__SAI2->TCSR & kSAI_FIFORequestFlag) || (ADMA__SAI2->TCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI2->TCSR & kSAI_FIFORequestInterruptEnable) || (ADMA__SAI2->TCSR & kSAI_FIFOErrorInterruptEnable)))
+#else
+    if ((s_saiHandle[1][0]) && ((ADMA__SAI2->TCSR & kSAI_FIFOWarningFlag) || (ADMA__SAI2->TCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI2->TCSR & kSAI_FIFOWarningInterruptEnable) || (ADMA__SAI2->TCSR & kSAI_FIFOErrorInterruptEnable)))
+#endif
+    {
+        s_saiTxIsr(ADMA__SAI2, s_saiHandle[1][0]);
+    }
+/* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
+  exception return operation might vector to incorrect interrupt */
+#if defined __CORTEX_M && (__CORTEX_M == 4U)
+    __DSB();
+#endif
+}
+#endif /* ADMA__SAI2 */
+
+#if defined(ADMA__SAI3)
+void ADMA_SAI3_INT_DriverIRQHandler(void)
+{
+#if defined(FSL_FEATURE_SAI_FIFO_COUNT) && (FSL_FEATURE_SAI_FIFO_COUNT > 1)
+    if ((s_saiHandle[1][1]) && ((ADMA__SAI3->RCSR & kSAI_FIFORequestFlag) || (ADMA__SAI3->RCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI3->RCSR & kSAI_FIFORequestInterruptEnable) || (ADMA__SAI3->RCSR & kSAI_FIFOErrorInterruptEnable)))
+#else
+    if ((s_saiHandle[1][1]) && ((ADMA__SAI3->RCSR & kSAI_FIFOWarningFlag) || (ADMA__SAI3->RCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI3->RCSR & kSAI_FIFOWarningInterruptEnable) || (ADMA__SAI3->RCSR & kSAI_FIFOErrorInterruptEnable)))
+#endif
+    {
+        s_saiRxIsr(ADMA__SAI3, s_saiHandle[1][1]);
+    }
+#if defined(FSL_FEATURE_SAI_FIFO_COUNT) && (FSL_FEATURE_SAI_FIFO_COUNT > 1)
+    if ((s_saiHandle[1][0]) && ((ADMA__SAI3->TCSR & kSAI_FIFORequestFlag) || (ADMA__SAI3->TCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI3->TCSR & kSAI_FIFORequestInterruptEnable) || (ADMA__SAI3->TCSR & kSAI_FIFOErrorInterruptEnable)))
+#else
+    if ((s_saiHandle[1][0]) && ((ADMA__SAI3->TCSR & kSAI_FIFOWarningFlag) || (ADMA__SAI3->TCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI3->TCSR & kSAI_FIFOWarningInterruptEnable) || (ADMA__SAI3->TCSR & kSAI_FIFOErrorInterruptEnable)))
+#endif
+    {
+        s_saiTxIsr(ADMA__SAI3, s_saiHandle[1][0]);
+    }
+/* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
+  exception return operation might vector to incorrect interrupt */
+#if defined __CORTEX_M && (__CORTEX_M == 4U)
+    __DSB();
+#endif
+}
+#endif /* ADMA__SAI3 */
+
+#if defined(ADMA__SAI4)
+void ADMA_SAI4_INT_DriverIRQHandler(void)
+{
+#if defined(FSL_FEATURE_SAI_FIFO_COUNT) && (FSL_FEATURE_SAI_FIFO_COUNT > 1)
+    if ((s_saiHandle[1][1]) && ((ADMA__SAI4->RCSR & kSAI_FIFORequestFlag) || (ADMA__SAI4->RCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI4->RCSR & kSAI_FIFORequestInterruptEnable) || (ADMA__SAI4->RCSR & kSAI_FIFOErrorInterruptEnable)))
+#else
+    if ((s_saiHandle[1][1]) && ((ADMA__SAI4->RCSR & kSAI_FIFOWarningFlag) || (ADMA__SAI4->RCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI4->RCSR & kSAI_FIFOWarningInterruptEnable) || (ADMA__SAI4->RCSR & kSAI_FIFOErrorInterruptEnable)))
+#endif
+    {
+        s_saiRxIsr(ADMA__SAI4, s_saiHandle[1][1]);
+    }
+#if defined(FSL_FEATURE_SAI_FIFO_COUNT) && (FSL_FEATURE_SAI_FIFO_COUNT > 1)
+    if ((s_saiHandle[1][0]) && ((ADMA__SAI4->TCSR & kSAI_FIFORequestFlag) || (ADMA__SAI4->TCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI4->TCSR & kSAI_FIFORequestInterruptEnable) || (ADMA__SAI4->TCSR & kSAI_FIFOErrorInterruptEnable)))
+#else
+    if ((s_saiHandle[1][0]) && ((ADMA__SAI4->TCSR & kSAI_FIFOWarningFlag) || (ADMA__SAI4->TCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI4->TCSR & kSAI_FIFOWarningInterruptEnable) || (ADMA__SAI4->TCSR & kSAI_FIFOErrorInterruptEnable)))
+#endif
+    {
+        s_saiTxIsr(ADMA__SAI4, s_saiHandle[1][0]);
+    }
+/* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
+  exception return operation might vector to incorrect interrupt */
+#if defined __CORTEX_M && (__CORTEX_M == 4U)
+    __DSB();
+#endif
+}
+#endif /* ADMA__SAI4 */
+
+#if defined(ADMA__SAI5)
+void ADMA_SAI5_INT_DriverIRQHandler(void)
+{
+#if defined(FSL_FEATURE_SAI_FIFO_COUNT) && (FSL_FEATURE_SAI_FIFO_COUNT > 1)
+    if ((s_saiHandle[1][1]) && ((ADMA__SAI5->RCSR & kSAI_FIFORequestFlag) || (ADMA__SAI5->RCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI5->RCSR & kSAI_FIFORequestInterruptEnable) || (ADMA__SAI5->RCSR & kSAI_FIFOErrorInterruptEnable)))
+#else
+    if ((s_saiHandle[1][1]) && ((ADMA__SAI5->RCSR & kSAI_FIFOWarningFlag) || (ADMA__SAI5->RCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI5->RCSR & kSAI_FIFOWarningInterruptEnable) || (ADMA__SAI5->RCSR & kSAI_FIFOErrorInterruptEnable)))
+#endif
+    {
+        s_saiRxIsr(ADMA__SAI5, s_saiHandle[1][1]);
+    }
+#if defined(FSL_FEATURE_SAI_FIFO_COUNT) && (FSL_FEATURE_SAI_FIFO_COUNT > 1)
+    if ((s_saiHandle[1][0]) && ((ADMA__SAI5->TCSR & kSAI_FIFORequestFlag) || (ADMA__SAI5->TCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI5->TCSR & kSAI_FIFORequestInterruptEnable) || (ADMA__SAI5->TCSR & kSAI_FIFOErrorInterruptEnable)))
+#else
+    if ((s_saiHandle[1][0]) && ((ADMA__SAI5->TCSR & kSAI_FIFOWarningFlag) || (ADMA__SAI5->TCSR & kSAI_FIFOErrorFlag)) &&
+        ((ADMA__SAI5->TCSR & kSAI_FIFOWarningInterruptEnable) || (ADMA__SAI5->TCSR & kSAI_FIFOErrorInterruptEnable)))
+#endif
+    {
+        s_saiTxIsr(ADMA__SAI5, s_saiHandle[1][0]);
+    }
+/* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
+  exception return operation might vector to incorrect interrupt */
+#if defined __CORTEX_M && (__CORTEX_M == 4U)
+    __DSB();
+#endif
+}
+#endif /* ADMA__SAI5 */
+
 #if defined(SAI0)
 void SAI0_DriverIRQHandler(void)
 {
@@ -1691,6 +1980,28 @@ void SAI3_DriverIRQHandler(void)
     {
         s_saiTxIsr(SAI3, s_saiHandle[3][0]);
     }
+/* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
+  exception return operation might vector to incorrect interrupt */
+#if defined __CORTEX_M && (__CORTEX_M == 4U)
+    __DSB();
+#endif
+}
+
+void SAI3_Tx_DriverIRQHandler(void)
+{
+    assert(s_saiHandle[3][0]);
+    s_saiTxIsr(SAI3, s_saiHandle[3][0]);
+/* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
+  exception return operation might vector to incorrect interrupt */
+#if defined __CORTEX_M && (__CORTEX_M == 4U)
+    __DSB();
+#endif
+}
+
+void SAI3_Rx_DriverIRQHandler(void)
+{
+    assert(s_saiHandle[3][1]);
+    s_saiRxIsr(SAI3, s_saiHandle[3][1]);
 /* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
   exception return operation might vector to incorrect interrupt */
 #if defined __CORTEX_M && (__CORTEX_M == 4U)

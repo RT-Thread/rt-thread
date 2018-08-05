@@ -15,10 +15,14 @@ config $PKGS_DIR
     option env="PKGS_ROOT"
     default "packages"
 
+config BOARD_STM32F411_NUCLEO
+    bool 
+    select ARCH_ARM_CORTEX_M4
+    default y
+
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
 config RT_USING_UART2
-    bool "Using RT_USING_UART2"
-    default y    
-
+    bool "Using UART2"
+    default y

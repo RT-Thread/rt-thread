@@ -10,8 +10,8 @@ if RT_USING_VBUS
         default n
         help
             When enable remote file system, the application can visit the remote file system
-            through VBUS with POSIX file I/O. 
-    
+            through VBUS with POSIX file I/O.
+
     config RT_USING_VBUS_RSHELL
         bool "Enable Remote Shell on VBUS"
         default n

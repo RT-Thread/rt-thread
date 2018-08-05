@@ -11,7 +11,22 @@ config BSP_DRV_CLCD
     depends on PKG_USING_GUIENGINE
     default y
 
+if BSP_DRV_CLCD
+    config BSP_LCD_WIDTH
+    int "Width of LCD panel"
+    default 640
+
+    config BSP_LCD_HEIGHT
+    int "Height of LCD panel"
+    default 480
+endif
+
 config BSP_DRV_EMAC
     bool "EMAC driver"
     depends on RT_USING_LWIP
     default y
+
+config BSP_DRV_AUDIO
+    bool "Audio driver"
+    select RT_USING_AUDIO
+    default n
