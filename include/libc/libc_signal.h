@@ -25,12 +25,15 @@
 #ifndef LIBC_SIGNAL_H__
 #define LIBC_SIGNAL_H__
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifndef HAVE_SYS_SIGNALS
+#ifdef HAVE_CCONFIG_H
+#include <cconfig.h>
+#endif
+
+#ifndef HAVE_SIGVAL
 /*  Signal Generation and Delivery, P1003.1b-1993, p. 63
     NOTE: P1003.1c/D10, p. 34 adds sigev_notify_function and
           sigev_notify_attributes to the sigevent structure.  */
@@ -40,7 +43,9 @@ union sigval
     int    sival_int;    /* Integer signal value */
     void  *sival_ptr;    /* Pointer signal value */
 };
+#endif
 
+#ifndef HAVE_SIGEVENT
 struct sigevent
 {
     int          sigev_notify;               /* Notification type */
@@ -50,12 +55,13 @@ struct sigevent
                                              /* Notification function */
     void         *sigev_notify_attributes;   /* Notification Attributes, really pthread_attr_t */
 };
+#endif
 
+#ifndef HAVE_SIGINFO
 struct siginfo
 {
-    rt_uint8_t si_signo;
-    rt_uint8_t si_code;
-    rt_int16_t si_errno;
+    rt_uint16_t si_signo;
+    rt_uint16_t si_code;
 
     union sigval si_value;
 };

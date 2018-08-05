@@ -1,8 +1,17 @@
 from building import *
 
 cwd = GetCurrentDir()
-src = Glob('*.c')
+src = Split("""
+board.c
+drv_cache.c
+drv_mpu.c
+""")
 
+if GetDepend('BSP_USING_SDRAM'):
+    src = src + ['drv_sdram.c'] 
+
+if GetDepend('RT_USING_SERIAL'):
+    src = src + ['drv_usart.c'] 
 
 CPPPATH = [cwd]
 

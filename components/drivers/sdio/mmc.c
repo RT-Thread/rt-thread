@@ -412,12 +412,12 @@ static rt_err_t mmc_set_card_addr(struct rt_mmcsd_host *host, rt_uint32_t rca)
 static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
                                      rt_uint32_t           ocr)
 {
-    struct rt_mmcsd_card *card;
     rt_int32_t err;
     rt_uint32_t resp[4];
     rt_uint32_t rocr;
     rt_uint32_t max_data_rate;
     rt_uint8_t *ext_csd = RT_NULL;
+    struct rt_mmcsd_card *card = RT_NULL;
 
     mmcsd_go_idle(host);
     

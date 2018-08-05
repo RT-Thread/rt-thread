@@ -22,6 +22,13 @@ config SOC_IMXRT1052
     bool 
     select ARCH_ARM_CORTEX_M7
     default y
+    
+config BOARD_USING_HYPERFLASH
+    bool
+    default n
+config BOARD_USING_QSPIFLASH
+    bool
+    default n
 
 # RT1050 board select!
 choice
@@ -29,8 +36,19 @@ choice
     default BOARD_RT1050_EVK
     config BOARD_RT1050_EVK
         bool "RT1050_EVK"
+        select BOARD_USING_HYPERFLASH
     config BOARD_RT1050_FIRE
         bool "RT1050_FIRE"
+        select BOARD_USING_QSPIFLASH
+    config BOARD_RT1050_ShareBoard
+        bool "RT1050_ShareBoard"
+        select BOARD_USING_QSPIFLASH
+    config BOARD_RT1050_ATK
+        bool "RT1050_ATK"
+        select BOARD_USING_QSPIFLASH
+    config BOARD_RT1050_SeeedStudio
+        bool "RT1050_SeeedStudio"
+        select BOARD_USING_HYPERFLASH
 endchoice
 
 menu "RT1050 Bsp Config" 
@@ -48,6 +66,7 @@ menu "Select uart drivers"
         bool "Using uart3"
         select RT_USING_SERIAL
         default n 
+if !BOARD_RT1050_SeeedStudio
     config RT_USING_UART4
         bool "Using uart4"
         select RT_USING_SERIAL
@@ -60,10 +79,13 @@ menu "Select uart drivers"
         bool "Using uart6"
         select RT_USING_SERIAL
         default n 
+endif
+if !BOARD_RT1050_ATK && !BOARD_RT1050_SeeedStudio
     config RT_USING_UART7
         bool "Using uart7"
         select RT_USING_SERIAL
         default n 
+endif
     config RT_USING_UART8
         bool "Using uart8"
         select RT_USING_SERIAL
@@ -95,7 +117,7 @@ menu "Select spi bus and dev drivers"
         int "SPI bus clock source divider"
         range 1 8
         default 8
-
+if !BOARD_RT1050_SeeedStudio
     config RT_USING_SPIBUS1
         bool "Using spi1 bus"
         select RT_USING_SPI
@@ -159,7 +181,7 @@ menu "Select spi bus and dev drivers"
         config LPSPI2_SDI_GPIO_2
             bool "GPIO_EMC_03"
     endchoice
-
+endif
     config RT_USING_SPIBUS3
         bool "Using spi3 bus"
         select RT_USING_SPI
@@ -172,6 +194,7 @@ menu "Select spi bus and dev drivers"
             bool "GPIO_AD_B1_15"
         config LPSPI3_SCK_GPIO_2
             bool "GPIO_AD_B0_00"
+            depends on !BOARD_RT1050_SeeedStudio
     endchoice
     choice
         prompt "spi3 bus sdo io choice"
@@ -181,6 +204,7 @@ menu "Select spi bus and dev drivers"
             bool "GPIO_AD_B1_14"
         config LPSPI3_SDO_GPIO_2
             bool "GPIO_AD_B0_01"
+            depends on !BOARD_RT1050_SeeedStudio
     endchoice
     choice
         prompt "spi3 bus sdi io choice"
@@ -190,6 +214,7 @@ menu "Select spi bus and dev drivers"
             bool "GPIO_AD_B1_13"
         config LPSPI3_SDI_GPIO_2
             bool "GPIO_AD_B0_02"
+            depends on !BOARD_RT1050_SeeedStudio
     endchoice
 
     config RT_USING_SPIBUS4
@@ -202,6 +227,7 @@ menu "Select spi bus and dev drivers"
         depends on RT_USING_SPIBUS4
         config LPSPI4_SCK_GPIO_1
             bool "GPIO_B0_03"
+            depends on !BOARD_RT1050_SeeedStudio
         config LPSPI4_SCK_GPIO_2
             bool "GPIO_B1_07"
     endchoice
@@ -211,6 +237,7 @@ menu "Select spi bus and dev drivers"
         depends on RT_USING_SPIBUS4
         config LPSPI4_SDO_GPIO_1
             bool "GPIO_B0_02"
+            depends on !BOARD_RT1050_SeeedStudio
         config LPSPI4_SDO_GPIO_2
             bool "GPIO_B1_06"
     endchoice
@@ -220,6 +247,7 @@ menu "Select spi bus and dev drivers"
         depends on RT_USING_SPIBUS4
         config LPSPI4_SDI_GPIO_1
             bool "GPIO_B0_01"
+            depends on !BOARD_RT1050_SeeedStudio
         config LPSPI4_SDI_GPIO_2
             bool "GPIO_B1_05"
     endchoice
@@ -267,56 +295,64 @@ menu "Select spi bus and dev drivers"
         depends on RT_USING_SPI_FLASH
 endmenu
 
-menu "Select i2c bus drivers"
+menu "Select iic bus drivers"
 
-    config LPI2C_CLOCK_SOURCE_DIVIDER
-        int "lpi2c bus clock source divider"
-        range 1 64
-        default 4
-        
-    config RT_USING_I2C1
-        bool "USING I2C1"
+    config RT_USING_HW_I2C1
+        bool "using hardware i2c1"
         select RT_USING_I2C
         default y 
-        if RT_USING_I2C1
-        config RT_USING_I2C1_BITOPS
-        select RT_USING_I2C_BITOPS
-        default n
-        bool "using simulate I2C1"
-        endif
-
-    config RT_USING_I2C2
-        bool "USING I2C2"
+    choice
+        prompt "i2c1 bus badurate choice"
+        default HW_I2C1_BADURATE_100kHZ
+        depends on RT_USING_HW_I2C1
+        config HW_I2C1_BADURATE_100kHZ
+            bool "100kHZ"
+        config HW_I2C1_BADURATE_400kHZ
+            bool "400kHZ"
+    endchoice
+if !BOARD_RT1050_SeeedStudio
+    config RT_USING_HW_I2C2
+        bool "using hardware i2c2"
         select RT_USING_I2C
         default n 
-        if RT_USING_I2C2
-        config RT_USING_I2C2_BITOPS
-        select RT_USING_I2C_BITOPS
-        default n
-        bool "using simulate I2C2"
-        endif
-
-    config RT_USING_I2C3
-        bool "USING I2C3"
+    choice
+        prompt "i2c2 bus badurate choice"
+        default HW_I2C2_BADURATE_100kHZ
+        depends on RT_USING_HW_I2C2
+        config HW_I2C2_BADURATE_100kHZ
+            bool "100kHZ"
+        config HW_I2C2_BADURATE_400kHZ
+            bool "400kHZ"
+    endchoice
+endif
+    config RT_USING_HW_I2C3
+        bool "using hardware i2c3"
         select RT_USING_I2C
         default n 
-        if RT_USING_I2C3
-        config RT_USING_I2C3_BITOPS
-        select RT_USING_I2C_BITOPS
-        default n
-        bool "using simulate I2C3"
-        endif
-
-    config RT_USING_I2C4
-        bool "USING I2C4"
+    choice
+        prompt "i2c3 bus badurate choice"
+        default HW_I2C3_BADURATE_100kHZ
+        depends on RT_USING_HW_I2C3
+        config HW_I2C3_BADURATE_100kHZ
+            bool "100kHZ"
+        config HW_I2C3_BADURATE_400kHZ
+            bool "400kHZ"
+    endchoice
+	
+    config RT_USING_HW_I2C4
+        bool "using hardware i2c4"
         select RT_USING_I2C
         default n 
-        if RT_USING_I2C4
-        config RT_USING_I2C4_BITOPS
-        select RT_USING_I2C_BITOPS
-        default n
-        bool "using simulate I2C4"
-        endif
+    choice
+        prompt "i2c4 bus badurate choice"
+        default HW_I2C4_BADURATE_100kHZ
+        depends on RT_USING_HW_I2C4
+        config HW_I2C4_BADURATE_100kHZ
+            bool "100kHZ"
+        config HW_I2C4_BADURATE_400kHZ
+            bool "400kHZ"
+    endchoice
+
 endmenu
 
 menu "Select lcd driver"
@@ -324,63 +360,77 @@ menu "Select lcd driver"
     comment "Notice: Evk Board para: 480*272 4 4 8 2 40 10 106 45" 
     endif
 
-    if RT_USING_LCD && BOARD_RT1050_FIRE
+    if RT_USING_LCD &&  BOARD_RT1050_ShareBoard 
+    comment "Notice: ShareBoard Board para: 800*480 4 4 8 2 40 10 58 45" 
+    endif	
+	
+    if RT_USING_LCD && BOARD_RT1050_FIRE 
     comment "Notice: Fire Board para: 800*480 4 4 8 2 40 10 58 45" 
     endif
+	
+    if RT_USING_LCD && BOARD_RT1050_ATK
+    comment "Notice: ATK Board para: 480*272 4 4 8 2 40 10 109 45" 
+    endif
 
+    if RT_USING_LCD && BOARD_RT1050_SeeedStudio
+    comment "Notice: SeeedStudio Board para: 480*272 4 4 8 2 40 10 127 45" 
+    endif
+    
     config RT_USING_LCD
         bool "Using lcd"
         default n 
 
     config LCD_WIDTH
         int "Width pixel num"
-        default 480 if BOARD_RT1050_EVK
-        default 800 if BOARD_RT1050_FIRE
+        default 480 if (BOARD_RT1050_EVK  || BOARD_RT1050_ATK || BOARD_RT1050_SeeedStudio)
+        default 800 if (BOARD_RT1050_FIRE || BOARD_RT1050_ShareBoard)
         depends on RT_USING_LCD
     config LCD_HEIGHT
         int "Height pixel num" 
-        default 272 if BOARD_RT1050_EVK
-        default 480 if BOARD_RT1050_FIRE
+        default 272 if (BOARD_RT1050_EVK  || BOARD_RT1050_ATK || BOARD_RT1050_SeeedStudio)
+        default 480 if (BOARD_RT1050_FIRE || BOARD_RT1050_ShareBoard)
         depends on RT_USING_LCD
     config LCD_HFP
         int "HFP"
-        default 4 if BOARD_RT1050_EVK
-        default 4 if BOARD_RT1050_FIRE
+        default 4 if (BOARD_RT1050_EVK  || BOARD_RT1050_ATK || BOARD_RT1050_SeeedStudio)
+        default 4 if (BOARD_RT1050_FIRE || BOARD_RT1050_ShareBoard)
         depends on RT_USING_LCD
     config LCD_VFP
         int "VFP"
-        default 4 if BOARD_RT1050_EVK
-        default 4 if BOARD_RT1050_FIRE
+        default 4 if (BOARD_RT1050_EVK  || BOARD_RT1050_ATK || BOARD_RT1050_SeeedStudio)
+        default 4 if (BOARD_RT1050_FIRE || BOARD_RT1050_ShareBoard)
         depends on RT_USING_LCD
     config LCD_HBP
         int "HBP"
-        default 8 if BOARD_RT1050_EVK
-        default 8 if BOARD_RT1050_FIRE
+        default 8 if (BOARD_RT1050_EVK  || BOARD_RT1050_ATK || BOARD_RT1050_SeeedStudio)
+        default 8 if (BOARD_RT1050_FIRE || BOARD_RT1050_ShareBoard)
         depends on RT_USING_LCD
     config LCD_VBP
         int "VBP"
-        default 2 if BOARD_RT1050_EVK
-        default 2 if BOARD_RT1050_FIRE
+        default 2 if (BOARD_RT1050_EVK  || BOARD_RT1050_ATK || BOARD_RT1050_SeeedStudio)
+        default 2 if (BOARD_RT1050_FIRE || BOARD_RT1050_ShareBoard)
         depends on RT_USING_LCD
     config LCD_HSW
         int "HSW"
-        default 40 if BOARD_RT1050_EVK
-        default 40 if BOARD_RT1050_FIRE
+        default 40 if (BOARD_RT1050_EVK  || BOARD_RT1050_ATK || BOARD_RT1050_SeeedStudio)
+        default 40 if (BOARD_RT1050_FIRE || BOARD_RT1050_ShareBoard)
         depends on RT_USING_LCD
     config LCD_VSW
         int "VSW"
-        default 10 if BOARD_RT1050_EVK
-        default 10 if BOARD_RT1050_FIRE
+        default 10 if (BOARD_RT1050_EVK  || BOARD_RT1050_ATK || BOARD_RT1050_SeeedStudio)
+        default 10 if (BOARD_RT1050_FIRE || BOARD_RT1050_ShareBoard)
         depends on RT_USING_LCD 
     config LCD_BL_PIN
         int "Backlight pin index"
+        default 127 if BOARD_RT1050_SeeedStudio
+        default 109 if BOARD_RT1050_ATK
         default 106 if BOARD_RT1050_EVK
-        default 58  if BOARD_RT1050_FIRE
+        default 58  if (BOARD_RT1050_FIRE || BOARD_RT1050_ShareBoard)
         depends on RT_USING_LCD 
     config LCD_RST_PIN
         int "Reset pin index"
-        default 45 if BOARD_RT1050_EVK
-        default 45 if BOARD_RT1050_FIRE
+        default 45 if (BOARD_RT1050_EVK  || BOARD_RT1050_ATK || BOARD_RT1050_SeeedStudio)
+        default 45 if (BOARD_RT1050_FIRE || BOARD_RT1050_ShareBoard)
         depends on RT_USING_LCD 
 endmenu
 

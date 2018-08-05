@@ -23,7 +23,7 @@ path = [cwd + '/STM32L4xx_HAL_Driver/Inc',
     cwd + '/CMSIS/Device/ST/STM32L4xx/Include',
     cwd + '/CMSIS/Include']
 
-CPPDEFINES = ['STM32L476xx', 'USE_HAL_DRIVER', 'USE_STM32L4XX_NUCLEO', rtconfig.STM32_TYPE]
+CPPDEFINES = ['STM32L476xx', 'USE_HAL_DRIVER']
 
 group = DefineGroup('STM32_HAL', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 

@@ -286,6 +286,10 @@ endchoice
 config RT_USING_HSI
     bool "Using HSI as clock source"
     default n
+config BSP_HSE_BY_PASS
+    bool "HSE Bypass"
+    depends on !RT_USING_HSI
+    default n
 config RT_HSE_VALUE
     int "HSE Value"
     default 8000000
@@ -321,22 +325,112 @@ config RT_USING_SPI3
 
 endif
 
-if RT_USING_W25QXX
-config RT_W25QXX_CS_PIN
-    int "W25QXX CS Pin index"
-    default 0
-config RT_W25QXX_SPI_BUS_NAME
-    string "W25QXX Spi bus name"
-    default "spi1"
+
+
+menuconfig BSP_USING_PWM1
+    bool "Using PWM1"
+    select RT_USING_PWM
+    default n
+
+if BSP_USING_PWM1
+    config BSP_USING_PWM1_CH1
+        bool "Enable Channel 1 (PA8)"
+        default n
+    config BSP_USING_PWM1_CH2
+        bool "Enable Channel 2 (PA9)"
+        default n
+    config BSP_USING_PWM1_CH3
+        bool "Enable Channel 3 (PA10)"
+        default n
+    config BSP_USING_PWM1_CH4
+        bool "Enable Channel 4 (PA11)"
+        default n
 endif
 
-if RT_USING_USB_DEVICE
-    config USB_VENDOR_ID
-        hex "USB VID"
-        default 0x0483
-    config USB_PRODUCT_ID
-        hex "USB PID"
-        default 0x5750
+menuconfig BSP_USING_PWM2
+    bool "Using PWM2"
+    select RT_USING_PWM
+    default n
+
+if BSP_USING_PWM2
+    config BSP_USING_PWM2_CH1
+        bool "Enable Channel 1 (PA5)"
+        default n
+    config BSP_USING_PWM2_CH2
+        bool "Enable Channel 2 (PB3)"
+        default n
+    config BSP_USING_PWM2_CH3
+        bool "Enable Channel 3 (PB10)"
+        default n
+    config BSP_USING_PWM2_CH4
+        bool "Enable Channel 4 (PA3)"
+        default n
+endif
+
+menuconfig BSP_USING_PWM3
+    bool "Using PWM3"
+    select RT_USING_PWM
+    default n
+
+if BSP_USING_PWM3
+    config BSP_USING_PWM3_CH1
+        bool "Enable Channel 1 (PA6)"
+        default n
+    config BSP_USING_PWM3_CH2
+        bool "Enable Channel 2 (PA7)"
+        default n
+    config BSP_USING_PWM3_CH3
+        bool "Enable Channel 3 (PB0)"
+        default n
+    config BSP_USING_PWM3_CH4
+        bool "Enable Channel 4 (PB1)"
+        default n
+endif
+
+menuconfig BSP_USING_PWM4
+    bool "Using PWM4"
+    select RT_USING_PWM
+    default n
+
+if BSP_USING_PWM4
+    config BSP_USING_PWM4_CH1
+        bool "Enable Channel 1 (PB6)"
+        default n
+    config BSP_USING_PWM4_CH2
+        bool "Enable Channel 2 (PB7)"
+        default n
+    config BSP_USING_PWM4_CH3
+        bool "Enable Channel 3 (PB8)"
+        default n
+    config BSP_USING_PWM4_CH4
+        bool "Enable Channel 4 (PB9)"
+        default n
+endif
+
+menuconfig BSP_USING_PWM5
+    bool "Using PWM5"
+    select RT_USING_PWM
+    default n
+
+if BSP_USING_PWM5
+    config BSP_USING_PWM5_CH1
+        bool "Enable Channel 1 (PA0)"
+        default n
+    config BSP_USING_PWM5_CH2
+        bool "Enable Channel 2 (PA1)"
+        default n
+    config BSP_USING_PWM5_CH3
+        bool "Enable Channel 3 (PA2)"
+        default n
+endif
+
+if RT_USING_W25QXX || RT_USING_SFUD
+config RT_FLASH_CS_PIN
+    int "SPI NOR Flash CS pin index"
+    default 0
+config RT_FLASH_SPI_BUS_NAME
+    string "SPI NOR Flash Spi bus name"
+    default "spi1"
 endif
 
 if RT_USING_USB_HOST

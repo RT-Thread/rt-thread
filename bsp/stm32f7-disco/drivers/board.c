@@ -1,7 +1,7 @@
 /*
  * File      : board.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,111 +19,78 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2009-01-05     Bernard      first implementation
+ * 2018-05-17     ZYH          first implementation
  */
 
 #include <rtthread.h>
 #include "board.h"
-#include "sram.h"
 #include "drv_mpu.h"
+#include "drv_sdram.h"
+#include <rthw.h>
 
 /**
  * @addtogroup STM32
  */
 
-/**
-  * @brief  System Clock Configuration
-  *         The system Clock is configured as follow :
-  *            System Clock source            = PLL (HSE)
-  *            SYSCLK(Hz)                     = 200000000
-  *            HCLK(Hz)                       = 200000000
-  *            AHB Prescaler                  = 1
-  *            APB1 Prescaler                 = 4
-  *            APB2 Prescaler                 = 2
-  *            HSE Frequency(Hz)              = 25000000
-  *            PLL_M                          = 25
-  *            PLL_N                          = 400
-  *            PLL_P                          = 2
-  *            PLLSAI_N                       = 384
-  *            PLLSAI_P                       = 8
-  *            VDD(V)                         = 3.3
-  *            Main regulator output voltage  = Scale1 mode
-  *            Flash Latency(WS)              = 6
-  * @param  None
-  * @retval None
-  */
 static void SystemClock_Config(void)
 {
-    RCC_ClkInitTypeDef RCC_ClkInitStruct;
-    RCC_OscInitTypeDef RCC_OscInitStruct;
-    HAL_StatusTypeDef ret = HAL_OK;
 
-    /* Enable HSE Oscillator and activate PLL with HSE as source */
-    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-    RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-    RCC_OscInitStruct.PLL.PLLM = 25;
-    RCC_OscInitStruct.PLL.PLLN = 400;
-    RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-    RCC_OscInitStruct.PLL.PLLQ = 8;
+  RCC_OscInitTypeDef RCC_OscInitStruct;
+  RCC_ClkInitTypeDef RCC_ClkInitStruct;
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct;
 
-    ret = HAL_RCC_OscConfig(&RCC_OscInitStruct);
-    if(ret != HAL_OK)
-    {
-        while (1) { ; }
-    }
+    /**Configure the main internal regulator output voltage 
+    */
+  __HAL_RCC_PWR_CLK_ENABLE();
 
-    ret = HAL_PWREx_EnableOverDrive();
-    if (ret != HAL_OK)
-    {
-        while (1) { ; }
-    }
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-    /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2
-       clocks dividers */
-    RCC_ClkInitStruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK |\
-                                   RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
-    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-    RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
-    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
-    ret = HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_6);
-    if (ret != HAL_OK)
-    {
-        while (1) { ; }
-    }
+    /**Initializes the CPU, AHB and APB busses clocks 
+    */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE|RCC_OSCILLATORTYPE_LSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLM = 25;
+  RCC_OscInitStruct.PLL.PLLN = 432;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+  RCC_OscInitStruct.PLL.PLLQ = 9;
+  HAL_RCC_OscConfig(&RCC_OscInitStruct);
+    /**Activate the Over-Drive mode 
+    */
+  HAL_PWREx_EnableOverDrive();
+
+    /**Initializes the CPU, AHB and APB busses clocks 
+    */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+
+  HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_7);
+
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC|RCC_PERIPHCLK_USART1
+                              |RCC_PERIPHCLK_USART6|RCC_PERIPHCLK_UART4
+                              |RCC_PERIPHCLK_UART5|RCC_PERIPHCLK_UART7
+                              |RCC_PERIPHCLK_SDMMC2|RCC_PERIPHCLK_CLK48;
+  PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
+  PeriphClkInitStruct.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
+  PeriphClkInitStruct.Uart4ClockSelection = RCC_UART4CLKSOURCE_PCLK1;
+  PeriphClkInitStruct.Uart5ClockSelection = RCC_UART5CLKSOURCE_PCLK1;
+  PeriphClkInitStruct.Usart6ClockSelection = RCC_USART6CLKSOURCE_PCLK2;
+  PeriphClkInitStruct.Uart7ClockSelection = RCC_UART7CLKSOURCE_PCLK1;
+  PeriphClkInitStruct.Clk48ClockSelection = RCC_CLK48SOURCE_PLL;
+  PeriphClkInitStruct.Sdmmc2ClockSelection = RCC_SDMMC2CLKSOURCE_CLK48;
+  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 }
 
-/**
-  * @brief  CPU L1-Cache enable.
-  * @param  None
-  * @retval None
-  */
-static void CPU_CACHE_Enable(void)
-{
-    /* Enable branch prediction */
-    SCB->CCR |= (1 << 18);
-    __DSB();
-
-    /* Enable I-Cache */
-    SCB_EnableICache();
-
-    /* Enable D-Cache */
-    SCB_EnableDCache();
-}
-
-/**
- * This is the timer interrupt service routine.
- *
- */
 void SysTick_Handler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-
-    /* tick for HAL Library */
-    HAL_IncTick();
 
     rt_tick_increase();
 
@@ -131,22 +98,29 @@ void SysTick_Handler(void)
     rt_interrupt_leave();
 }
 
-/* re-implementat tick interface for STM32 HAL */
 HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 {
-    /*Configure the SysTick to have interrupt in 1ms time basis*/
-    HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/RT_TICK_PER_SECOND);
+    /**Configure the Systick interrupt time
+    */
+    HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / RT_TICK_PER_SECOND);
 
-    /*Configure the SysTick IRQ priority */
-    HAL_NVIC_SetPriority(SysTick_IRQn, TickPriority ,0);
+    /**Configure the Systick
+    */
+    HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
-    /* Return function status */
+    /* SysTick_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
     return HAL_OK;
+}
+
+uint32_t HAL_GetTick(void)
+{
+    return rt_tick_get() * 1000 / RT_TICK_PER_SECOND;
 }
 
 void HAL_Delay(__IO uint32_t Delay)
 {
-    rt_thread_delay(Delay);
+    rt_thread_delay(Delay * 1000 / RT_TICK_PER_SECOND);
 }
 
 void HAL_SuspendTick(void)
@@ -158,6 +132,29 @@ void HAL_ResumeTick(void)
 {
     /* we should not resume tick */
 }
+#if defined(BSP_USING_SDRAM) && defined(RT_USING_MEMHEAP_AS_HEAP)
+static struct rt_memheap system_heap;
+#endif
+void HAL_MspInit(void)
+{
+    HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+
+    /* System interrupt init*/
+    /* MemoryManagement_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(MemoryManagement_IRQn, 0, 0);
+    /* BusFault_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(BusFault_IRQn, 0, 0);
+    /* UsageFault_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(UsageFault_IRQn, 0, 0);
+    /* SVCall_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(SVCall_IRQn, 0, 0);
+    /* DebugMonitor_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(DebugMonitor_IRQn, 0, 0);
+    /* PendSV_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(PendSV_IRQn, 15, 0);
+    /* SysTick_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
+}
 
 /**
  * This function will initial STM32 board.
@@ -165,10 +162,13 @@ void HAL_ResumeTick(void)
 void rt_hw_board_init()
 {
     /* Configure the MPU attributes as Write Through */
-    mpu_init();
+    bsp_mpu_hw_init();
 
-    /* Enable the CPU Cache */
-    CPU_CACHE_Enable();
+    /* Enable I-Cache-------------------------------------------------------------*/
+    rt_hw_cpu_icache_enable();
+
+    /* Enable D-Cache-------------------------------------------------------------*/
+    rt_hw_cpu_dcache_enable();
 
     /* STM32F7xx HAL library initialization:
     - Configure the Flash ART accelerator on ITCM interface
@@ -176,28 +176,28 @@ void rt_hw_board_init()
     - Set NVIC Group Priority to 4
     - Global MSP (MCU Support Package) initialization
     */
-    HAL_Init();
-    /* Configure the system clock @ 200 Mhz */
+    /* Configure the system clock @ 216 Mhz */
     SystemClock_Config();
-    /* init systick */
-    SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
-    /* set pend exception priority */
-    NVIC_SetPriority(PendSV_IRQn, (1 << __NVIC_PRIO_BITS) - 1);
+
+    HAL_Init();
+
+#ifdef RT_USING_HEAP
+
+#if defined(BSP_USING_SDRAM) && defined(RT_USING_MEMHEAP_AS_HEAP)
+    bsp_sdram_hw_init();
+    rt_system_heap_init((void *)SDRAM_BEGIN, (void *)SDRAM_END);
+    rt_memheap_init(&system_heap, "sram", (void *)HEAP_BEGIN, HEAP_SIZE);
+#else
+    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
+#endif
+
+#endif
 
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
-#endif
-
-#ifdef RT_USING_EXT_SDRAM
-    rt_system_heap_init((void*)EXT_SDRAM_BEGIN, (void*)EXT_SDRAM_END);
-    sram_init();
-#else
-    rt_system_heap_init((void*)HEAP_BEGIN, (void*)HEAP_END);
 #endif
 
 #ifdef RT_USING_CONSOLE
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 }
-
-/*@}*/

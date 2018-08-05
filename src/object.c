@@ -252,15 +252,9 @@ void rt_object_init(struct rt_object         *object,
     register rt_base_t temp;
     struct rt_object_information *information;
 
-#ifdef RT_USING_MODULE
-    /* get module object information */
-    information = (rt_module_self() != RT_NULL) ?
-                  &rt_module_self()->module_object[type] : rt_object_get_information(type);
-#else
     /* get object information */
     information = rt_object_get_information(type);
     RT_ASSERT(information != RT_NULL);
-#endif
 
     /* initialize object's parameters */
 
@@ -297,6 +291,9 @@ void rt_object_detach(rt_object_t object)
 
     RT_OBJECT_HOOK_CALL(rt_object_detach_hook, (object));
 
+    /* reset object type */
+    object->type = 0;
+
     /* lock interrupt */
     temp = rt_hw_interrupt_disable();
 
@@ -324,18 +321,9 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
-#ifdef RT_USING_MODULE
-    /*
-     * get module object information,
-     * module object should be managed by kernel object container
-     */
-    information = (rt_module_self() != RT_NULL && (type != RT_Object_Class_Module)) ?
-                  &rt_module_self()->module_object[type] : rt_object_get_information(type);
-#else
     /* get object information */
     information = rt_object_get_information(type);
     RT_ASSERT(information != RT_NULL);
-#endif
 
     object = (struct rt_object *)RT_KERNEL_MALLOC(information->object_size);
     if (object == RT_NULL)
@@ -393,6 +381,9 @@ void rt_object_delete(rt_object_t object)
 
     RT_OBJECT_HOOK_CALL(rt_object_detach_hook, (object));
 
+    /* reset object type */
+    object->type = 0;
+
     /* lock interrupt */
     temp = rt_hw_interrupt_disable();
 
@@ -402,14 +393,8 @@ void rt_object_delete(rt_object_t object)
     /* unlock interrupt */
     rt_hw_interrupt_enable(temp);
 
-#if defined(RT_USING_MODULE) && defined(RT_USING_SLAB)
-    if (object->flag & RT_OBJECT_FLAG_MODULE)
-        rt_module_free((rt_module_t)object->module_id, object);
-    else
-#endif
-
-        /* free the memory of object */
-        RT_KERNEL_FREE(object);
+    /* free the memory of object */
+    RT_KERNEL_FREE(object);
 }
 #endif
 
@@ -431,6 +416,22 @@ rt_bool_t rt_object_is_systemobject(rt_object_t object)
         return RT_TRUE;
 
     return RT_FALSE;
+}
+
+/**
+ * This function will return the type of object without
+ * RT_Object_Class_Static flag.
+ *
+ * @param object the specified object to be get type.
+ *
+ * @return the type of object.
+ */
+rt_uint8_t rt_object_get_type(rt_object_t object)
+{
+    /* object check */
+    RT_ASSERT(object != RT_NULL);
+
+    return object->type & ~RT_Object_Class_Static;
 }
 
 /**
@@ -457,65 +458,6 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
 
     /* which is invoke in interrupt status */
     RT_DEBUG_NOT_IN_INTERRUPT;
-
-#ifdef RT_USING_MODULE
-    /* check whether to find a object inside a module. */
-    {
-        const char *name_ptr;
-        int module_name_length;
-
-        name_ptr = name;
-        while ((*name_ptr != '\0') && (*name_ptr != '/'))
-            name_ptr ++;
-
-        if (*name_ptr == '/')
-        {
-            struct rt_module *module = RT_NULL;
-
-            /* get the name length of module */
-            module_name_length = name_ptr - name;
-
-            /* enter critical */
-            rt_enter_critical();
-
-            /* find module */
-            information = rt_object_get_information(RT_Object_Class_Module);
-            RT_ASSERT(information != RT_NULL);
-
-            for (node = information->object_list.next;
-                    node != &(information->object_list);
-                    node  = node->next)
-            {
-                object = rt_list_entry(node, struct rt_object, list);
-                if ((rt_strncmp(object->name, name, module_name_length) == 0) &&
-                        (module_name_length == RT_NAME_MAX || object->name[module_name_length] == '\0'))
-                {
-                    /* get module */
-                    module = (struct rt_module *)object;
-                    break;
-                }
-            }
-            rt_exit_critical();
-
-            /* there is no this module inside the system */
-            if (module == RT_NULL) return RT_NULL;
-
-            /* get the object pool of module */
-            information = &(module->module_object[type]);
-
-            /* get object name */
-            while ((*name_ptr == '/') && (*name_ptr != '\0')) name_ptr ++;
-            if (*name_ptr == '\0')
-            {
-                if (type == RT_Object_Class_Module) return object;
-                return RT_NULL;
-            }
-
-            /* point to the object name */
-            name = name_ptr;
-        }
-    }
-#endif
 
     /* enter critical */
     rt_enter_critical();

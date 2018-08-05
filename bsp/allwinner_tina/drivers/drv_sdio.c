@@ -33,7 +33,7 @@
 #include "drv_clock.h"
 
 #define DBG_ENABLE
-#define DBG_SECTION_NAME  "[MMC]"
+#define DBG_SECTION_NAME  "MMC"
 // #define DBG_LEVEL DBG_LOG    
 // #define DBG_LEVEL DBG_INFO   
 #define DBG_LEVEL DBG_WARNING

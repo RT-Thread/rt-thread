@@ -2,13 +2,11 @@
   ******************************************************************************
   * @file    stm32f7xx_hal_sram.h
   * @author  MCD Application Team
-  * @version V1.0.1
-  * @date    25-June-2015
   * @brief   Header file of SRAM HAL module.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2015 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -63,11 +61,11 @@
   */ 
 typedef enum
 {
-  HAL_SRAM_STATE_RESET     = 0x00,  /*!< SRAM not yet initialized or disabled           */
-  HAL_SRAM_STATE_READY     = 0x01,  /*!< SRAM initialized and ready for use             */
-  HAL_SRAM_STATE_BUSY      = 0x02,  /*!< SRAM internal process is ongoing               */
-  HAL_SRAM_STATE_ERROR     = 0x03,  /*!< SRAM error state                               */
-  HAL_SRAM_STATE_PROTECTED = 0x04   /*!< SRAM peripheral NORSRAM device write protected */
+  HAL_SRAM_STATE_RESET     = 0x00U,  /*!< SRAM not yet initialized or disabled           */
+  HAL_SRAM_STATE_READY     = 0x01U,  /*!< SRAM initialized and ready for use             */
+  HAL_SRAM_STATE_BUSY      = 0x02U,  /*!< SRAM internal process is ongoing               */
+  HAL_SRAM_STATE_ERROR     = 0x03U,  /*!< SRAM error state                               */
+  HAL_SRAM_STATE_PROTECTED = 0x04U   /*!< SRAM peripheral NORSRAM device write protected */
   
 }HAL_SRAM_StateTypeDef;
 
@@ -102,7 +100,7 @@ typedef struct
  */
 
 /** @brief Reset SRAM handle state
-  * @param  __HANDLE__: SRAM handle
+  * @param  __HANDLE__ SRAM handle
   * @retval None
   */
 #define __HAL_SRAM_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_SRAM_STATE_RESET)

@@ -11,14 +11,7 @@
  * Date           Author       Notes
  * 2015-01-05     Bernard      the first version
  */
-#ifndef GPIO_H__
-#define GPIO_H__
-struct stm32_hw_pin_userdata
-{
-    int pin;
-    uint32_t mode;
-};
-#define PIN_USERDATA_END {-1,0}
-extern struct stm32_hw_pin_userdata stm32_pins[];
-int rt_hw_pin_init(void);
+#ifndef __DRV_GPIO_H__
+#define __DRV_GPIO_H__
+extern int rt_hw_pin_init(void);
 #endif

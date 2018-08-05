@@ -53,8 +53,8 @@ STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x0400;
 /* Specify the memory areas */
 MEMORY
 {
-  m_boot_data           (RX)  : ORIGIN = 0x60000000, LENGTH = 0x00000400
-  m_image_vertor_table  (RX)  : ORIGIN = 0x60001000, LENGTH = 0x00000400
+  m_boot_data           (RX)  : ORIGIN = 0x60000000, LENGTH = 0x00001000
+  m_image_vertor_table  (RX)  : ORIGIN = 0x60001000, LENGTH = 0x00001000
 
   m_interrupts          (RX)  : ORIGIN = 0x60002000, LENGTH = 0x00000400
   m_text                (RX)  : ORIGIN = 0x60002400, LENGTH = 0x1F7FDC00
@@ -72,12 +72,14 @@ SECTIONS
 {
   .boot_data :
   {
-    KEEP(*(.bootdata))
+    KEEP(*(.boot_hdr.conf))
   } > m_boot_data
 
   .image_vertor_table :
   {
-    KEEP(*(.ivt))
+    KEEP(*(.boot_hdr.ivt))
+    KEEP(*(.boot_hdr.boot_data))
+    KEEP(*(.boot_hdr.dcd_data))
   } > m_image_vertor_table
 
   /* The startup code goes first into internal RAM */
@@ -139,7 +141,8 @@ SECTIONS
 
  .ctors :
   {
-    __CTOR_LIST__ = .;
+    PROVIDE(__ctors_start__ = .);
+    /* __CTOR_LIST__ = .; */
     /* gcc uses crtbegin.o to find the start of
        the constructors, so we make sure it is
        first.  Because this is a wildcard, it
@@ -158,18 +161,21 @@ SECTIONS
     KEEP (*(EXCLUDE_FILE(*crtend?.o *crtend.o) .ctors))
     KEEP (*(SORT(.ctors.*)))
     KEEP (*(.ctors))
-    __CTOR_END__ = .;
+    /* __CTOR_END__ = .; */
+    PROVIDE(__ctors_end__ = .);
   } > m_text
 
   .dtors :
   {
-    __DTOR_LIST__ = .;
+    PROVIDE(__dtors_start__ = .);
+    /* __DTOR_LIST__ = .; */
     KEEP (*crtbegin.o(.dtors))
     KEEP (*crtbegin?.o(.dtors))
     KEEP (*(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors))
     KEEP (*(SORT(.dtors.*)))
     KEEP (*(.dtors))
-    __DTOR_END__ = .;
+    /* __DTOR_END__ = .; */
+    PROVIDE(__dtors_end__ = .);
   } > m_text
 
   .preinit_array :

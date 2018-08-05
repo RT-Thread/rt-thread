@@ -45,6 +45,12 @@
 ** ###################################################################
 */
 
+#define m_flash_config_start           0x60000000
+#define m_flash_config_size            0x00001000
+
+#define m_ivt_start                    0x60001000
+#define m_ivt_size                     0x00001000
+
 #define m_text_start                   0x60002000
 #define m_text_size                    0x1F7FE000
 
@@ -67,30 +73,55 @@
   #define Heap_Size                    0x0400
 #endif
 
-#define RTT_HEAP_SIZE                   \
-    (m_data_size - ImageLength(RW_m_data) - ImageLength(ARM_LIB_HEAP) - ImageLength(ARM_LIB_STACK))
+#include "../../rtconfig.h"
 
-LR_m_text m_text_start m_text_size {   ; load region size_region
-  ER_m_text m_text_start m_text_size { ; load address = execution address
-    * (RESET,+FIRST)
-    * (InRoot$$Sections)
-    .ANY (+RO)
-  }
-  RW_m_data m_data_start m_data_size-Stack_Size-Heap_Size { ; RW data
-    .ANY (+RW +ZI)
+#if (defined(BOARD_USING_HYPERFLASH))
+LR_m_rom_config m_flash_config_start m_flash_config_size      ; load region size_region
+{   
+    RW_m_config_text m_flash_config_start m_flash_config_size ; load address = execution address
+    { 
+        * (.boot_hdr.conf, +FIRST)
+    }  
+}
 
-  }
-  ARM_LIB_HEAP +0 EMPTY Heap_Size {    ; Heap region growing up
-  }
-  ARM_LIB_STACK +0 EMPTY Stack_Size { ; Stack region growing down
-  }
-  RTT_HEAP +0 EMPTY RTT_HEAP_SIZE {
-  }
+LR_m_rom_ivt m_ivt_start m_ivt_size ; load region size_region
+{   
+    RW_m_ivt_text m_ivt_start m_ivt_size ; load address = execution address
+    { 
+        * (.boot_hdr.ivt, +FIRST)
+        * (.boot_hdr.boot_data)
+        * (.boot_hdr.dcd_data)
+    }   
+}
+#endif
 
-  RW_m_ncache m_ncache_start m_ncache_size { ; ncache RW data
-    * (NonCacheable.init)
-    * (NonCacheable)
-  }
+#define RTT_HEAP_SIZE (m_data_size-ImageLength(RW_m_data)-ImageLength(ARM_LIB_HEAP)-ImageLength(ARM_LIB_STACK))
+
+; load region size_region
+LR_IROM1 m_text_start m_text_size 
+{   
+    ER_IROM1 m_text_start m_text_size ; load address = execution address
+    { 
+        * (RESET,+FIRST)
+        * (InRoot$$Sections)
+        .ANY (+RO)
+    }
+  
+    RW_m_data m_data_start m_data_size-Stack_Size-Heap_Size ; RW data
+    { 
+        .ANY (+RW +ZI)
+    }
+    
+    ARM_LIB_HEAP +0 EMPTY Heap_Size{}   ; Heap region growing up
+    ARM_LIB_STACK +0 EMPTY Stack_Size{} ; Stack region growing down
+    RTT_HEAP +0 EMPTY RTT_HEAP_SIZE{}
+
+    ; ncache RW data
+    RW_m_ncache m_ncache_start m_ncache_size 
+    { 
+        * (NonCacheable.init)
+        * (NonCacheable)
+    }
 }
 
 

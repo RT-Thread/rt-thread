@@ -4,6 +4,12 @@ config RT_USING_DEVICE_IPC
     bool "Using device drivers IPC"
     default y
 
+if RT_USING_DEVICE_IPC
+    config RT_PIPE_BUFSZ
+        int "Set pipe buffer size"
+        default 512
+endif
+
 config RT_USING_SERIAL
     bool "Using serial device drivers"
     select RT_USING_DEVICE_IPC
@@ -42,13 +48,13 @@ config RT_USING_CPUTIME
         ms_tick = clock_cpu_millisecond(t2 - t1);
         us_tick = clock_cpu_microsecond(t2 - t1);
 
-if RT_USING_CPUTIME 
+if RT_USING_CPUTIME
     config RT_USING_CPUTIME_CORTEXM
         bool "Use DWT for CPU time"
         default y
         depends on ARCH_ARM_CORTEX_M3 || ARCH_ARM_CORTEX_M4 || ARCH_ARM_CORTEX_M7
         help
-            Some Cortex-M3/4/7 MCU has Data Watchpoint and Trace Register, use 
+            Some Cortex-M3/4/7 MCU has Data Watchpoint and Trace Register, use
             the cycle counter in DWT for CPU time.
 endif
 
@@ -65,6 +71,10 @@ endif
 config RT_USING_PIN
     bool "Using generic GPIO device drivers"
     default y
+
+config RT_USING_PWM
+    bool "Using PWM device drivers"
+    default n
 
 config RT_USING_MTD_NOR
     bool "Using MTD Nor Flash device drivers"
@@ -93,7 +103,7 @@ config RT_USING_RTC
         select PKG_USING_NETUTILS
         select PKG_NETUTILS_NTP
         default n
-        
+
         if RTC_SYNC_USING_NTP
         config RTC_NTP_FIRST_SYNC_DELAY
             int "NTP first sync delay time(second) for network connect"
@@ -108,6 +118,28 @@ config RT_USING_SDIO
     bool "Using SD/MMC device drivers"
     default n
 
+    if RT_USING_SDIO
+        config RT_SDIO_STACK_SIZE
+            int "The stack size for sdio irq thread"
+            default 512
+
+        config RT_SDIO_THREAD_PRIORITY
+            int "The priority level value of sdio irq thread"
+            default 15
+
+        config RT_MMCSD_STACK_SIZE
+            int "The stack size for mmcsd thread"
+            default 1024
+
+        config RT_MMCSD_THREAD_PREORITY
+            int "The priority level value of mmcsd thread"
+            default 22
+
+        config RT_MMCSD_MAX_PARTITION
+            int "mmcsd max partition"
+            default 16
+    endif
+
 config RT_USING_SPI
     bool "Using SPI Bus/Device device drivers"
     default n
@@ -121,20 +153,20 @@ config RT_USING_SPI
         config RT_USING_SFUD
             bool "Using Serial Flash Universal Driver"
             default n
-            if RT_USING_SFUD            
+            if RT_USING_SFUD
                 config RT_SFUD_USING_SFDP
                 bool "Using auto probe flash JEDEC SFDP parameter"
                 default y
-                
+
                 config RT_SFUD_USING_FLASH_INFO_TABLE
                 bool "Using defined supported flash chip information table"
                 default y
-                
+
                 config RT_DEBUG_SFUD
                 bool "Show more SFUD debug information"
                 default n
             endif
-    
+
         config RT_USING_W25QXX
             bool "Using W25QXX SPI NorFlash"
             default n
@@ -160,6 +192,28 @@ config RT_USING_WDT
 
 config RT_USING_WIFI
     bool "Using Wi-Fi network"
+    default n
+
+    if RT_USING_WIFI
+        config RT_USING_WLAN_STA
+            bool "Using station mode"
+            default y
+
+        config RT_USING_WLAN_AP
+            bool "Using ap mode"
+            default n
+
+        config WIFI_DEVICE_STA_NAME
+            string "the wifi device name for station"
+            default "w0"
+
+        config WIFI_DEVICE_AP_NAME
+            string "the wifi device name for ap"
+            default "ap"
+    endif
+
+config RT_USING_AUDIO
+    bool "Using Audio device drivers"
     default n
 
 menu "Using USB"
@@ -192,7 +246,7 @@ menu "Using USB"
             config USB_PRODUCT_ID
                 hex "USB Product ID"
                 default 0x0001
-            
+
             config RT_USB_DEVICE_COMPOSITE
                 bool "Enable composite device"
                 default n
@@ -229,6 +283,7 @@ menu "Using USB"
                         bool "Enable to use device as CDC device"
                         default n
                     config RT_USB_DEVICE_NONE
+                        bool
                         default y
                     config RT_USB_DEVICE_MSTORAGE
                         bool "Enable to use device as Mass Storage device"
