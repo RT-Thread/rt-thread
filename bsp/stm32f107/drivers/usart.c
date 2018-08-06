@@ -184,7 +184,7 @@ void USART1_IRQHandler(void)
     }
     if (USART_GetFlagStatus(uart->uart_device, USART_FLAG_ORE) == SET)
     {
-        stm32_getc(&serial1);
+        USART_ReceiveData(uart->uart_device);
     }
     /* leave interrupt */
     rt_interrupt_leave();
@@ -221,7 +221,7 @@ void USART2_IRQHandler(void)
     }
     if (USART_GetFlagStatus(uart->uart_device, USART_FLAG_ORE) == SET)
     {
-        stm32_getc(&serial2);
+        USART_ReceiveData(uart->uart_device);
     }
 
     /* leave interrupt */
