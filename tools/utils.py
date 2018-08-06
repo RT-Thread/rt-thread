@@ -114,7 +114,14 @@ def walk_children(child):
 
     # print child
     full_path = child.rfile().abspath
-    file_type  = full_path.rsplit('.',1)[1]
+    file_type_list  = full_path.rsplit('.',1)
+    if(len(file_type_list) >= 2):
+        file_type=file_type_list[1]
+    else:
+        print("Info : something below seems to be a regular file without suffix,and won't be added:")
+        print(full_path)
+        file_type="Something without suffix"
+
     #print file_type
     if file_type in source_ext:
         if full_path not in source_list:
