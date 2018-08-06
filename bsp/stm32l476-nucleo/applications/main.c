@@ -21,9 +21,12 @@
  * Date           Author       Notes
  * 2018-05-14     ZYH          first implementation
  */
+ 
 #include <stdio.h>
+
 int main(void)
 {
     printf("Hello RT-Thread\n");
+
     return 0;
 }
