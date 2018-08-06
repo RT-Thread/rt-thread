@@ -48,16 +48,12 @@ typedef uint16_t in_port_t;
 
 #define SOCK_MAX        (SOCK_RAW + 1)
 
-/*
- * Option flags per-socket. These must match the SOF_ flags in ip.h (checked in init.c)
- */
+/* Option flags per-socket. These must match the SOF_ flags in ip.h (checked in init.c) */
 #define SO_REUSEADDR    0x0004 /* Allow local address reuse */
 #define SO_KEEPALIVE    0x0008 /* keep connections alive */
 #define SO_BROADCAST    0x0020 /* permit to send and to receive broadcast messages (see IP_SOF_BROADCAST option) */
 
-/*
- * Additional options, not kept in so_options.
- */
+/* Additional options, not kept in so_options */
 #define SO_DEBUG        0x0001 /* Unimplemented: turn on debugging info recording */
 #define SO_ACCEPTCONN   0x0002 /* socket has had listen() */
 #define SO_DONTROUTE    0x0010 /* Unimplemented: just use interface addresses */
@@ -77,9 +73,7 @@ typedef uint16_t in_port_t;
 #define SO_CONTIMEO     0x1009 /* Unimplemented: connect timeout */
 #define SO_NO_CHECK     0x100a /* don't create UDP checksum */
 
-/*
- * Level number for (get/set)sockopt() to apply to socket itself.
- */
+/* Level number for (get/set)sockopt() to apply to socket itself */
 #define  SOL_SOCKET     0xfff    /* options for socket level */
 
 #define AF_UNSPEC       0
@@ -104,25 +98,21 @@ typedef uint16_t in_port_t;
 #define IPPROTO_UDPLITE 136
 #define IPPROTO_RAW     255
 
-/* Flags we can use with send and recv. */
+/* Flags we can use with send and recv */
 #define MSG_PEEK        0x01    /* Peeks at an incoming message */
 #define MSG_WAITALL     0x02    /* Unimplemented: Requests that the function block until the full amount of data requested can be returned */
 #define MSG_OOB         0x04    /* Unimplemented: Requests out-of-band data. The significance and semantics of out-of-band data are protocol-specific */
 #define MSG_DONTWAIT    0x08    /* Nonblocking i/o for this operation only */
 #define MSG_MORE        0x10    /* Sender will send more */
 
-/*
- * Options for level IPPROTO_TCP
- */
+/* Options for level IPPROTO_TCP */
 #define TCP_NODELAY     0x01    /* don't delay send to coalesce packets */
 #define TCP_KEEPALIVE   0x02    /* send KEEPALIVE probes when idle for pcb->keep_idle milliseconds */
 #define TCP_KEEPIDLE    0x03    /* set pcb->keep_idle  - Same as TCP_KEEPALIVE, but use seconds for get/setsockopt */
 #define TCP_KEEPINTVL   0x04    /* set pcb->keep_intvl - Use seconds for get/setsockopt */
 #define TCP_KEEPCNT     0x05    /* set pcb->keep_cnt   - Use number of probes sent for get/setsockopt */
 
-/*
- * Options and types related to multicast membership
- */
+/* Options and types related to multicast membership */
 #define IP_ADD_MEMBERSHIP  3
 #define IP_DROP_MEMBERSHIP 4
 
@@ -131,6 +121,13 @@ typedef struct ip_mreq
     struct in_addr imr_multiaddr; /* IP multicast address of group */
     struct in_addr imr_interface; /* local IP address of interface */
 } ip_mreq;
+
+/* Options for shatdown type */
+#ifndef SHUT_RD
+  #define SHUT_RD       0
+  #define SHUT_WR       1
+  #define SHUT_RDWR     2
+#endif
 
 struct sockaddr
 {
