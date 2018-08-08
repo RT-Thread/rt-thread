@@ -330,6 +330,63 @@ __exit:
 }
 
 /**
+ * Waiting for connection to external devices.
+ *
+ * @param timeout millisecond for timeout
+ *
+ * @return 0 : success
+ *        -2 : timeout
+ *        -5 : no memory
+ */
+int at_client_wait_connect(rt_uint32_t timeout)
+{
+    rt_err_t result = RT_EOK;
+    at_response_t resp = RT_NULL;
+    at_client_t client = at_client_local;
+    rt_tick_t start_time = 0;
+
+    resp = at_create_resp(16, 0, rt_tick_from_millisecond(500));
+    if (!resp)
+    {
+        LOG_E("No memory for response structure!");
+        return -RT_ENOMEM;
+    }
+
+    rt_mutex_take(client->lock, RT_WAITING_FOREVER);
+    client->resp = resp;
+
+    start_time = rt_tick_get();
+
+    while (1)
+    {
+        /* Check whether it is timeout */
+        if (rt_tick_get() - start_time > timeout)
+        {
+            LOG_E("wait connect timeout (%d millisecond)!", timeout);
+            result = -RT_ETIMEOUT;
+            break;
+        }
+
+        /* Check whether it is already connected */
+        resp->line_counts = 0;
+        rt_device_write(client->device, 0, "AT\r\n", 4);
+
+        if (rt_sem_take(client->resp_notice, resp->timeout) != RT_EOK)
+            continue;
+        else
+            break;
+    }
+
+    at_delete_resp(resp);
+
+    client->resp = RT_NULL;
+
+    rt_mutex_release(client->lock);
+
+    return result;
+}
+
+/**
  * Send data to AT server, send data don't have end sign(eg: \r\n).
  *
  * @param buf   send data buffer
