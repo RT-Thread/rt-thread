@@ -1,0 +1,58 @@
+/**
+\defgroup pt Protothreads 
+@{ 
+Protothreads are implemented in a single header file, pt.h, which
+includes the local continuations header file, lc.h. This file in turn
+includes the actual implementation of local continuations, which
+typically also is contained in a single header file.
+
+*/
+
+/** @} */
+
+/**
+\defgroup examples Examples
+@{
+
+\section example-small A small example
+
+This first example shows a very simple program: two protothreads
+waiting for each other to toggle two flags. The code illustrates how
+to write protothreads code, how to initialize protothreads, and how to
+schedule them.
+
+\include example-small.c
+
+
+\section example-code-lock A code-lock
+This example shows how to implement a simple code lock - the kind of
+device that is placed next to doors and that you have to push a four
+digit number into in order to unlock the door.
+
+The code lock waits for key presses from a numeric keyboard and if the
+correct code is entered, the lock is unlocked. There is a maximum time
+of one second between each key press, and after the correct code has
+been entered, no more keys must be pressed for 0.5 seconds before the
+lock is opened.
+
+\include example-codelock.c
+
+\section example-buffer The bounded buffer with protothread semaphores
+
+The following example shows how to implement the bounded buffer
+problem using the protothreads semaphore library. The example uses
+three protothreads: one producer() protothread that produces items,
+one consumer() protothread that consumes items, and one
+driver_thread() that schedules the producer and consumer protothreads.
+
+Note that there is no need for a mutex to guard the add_to_buffer()
+and get_from_buffer() functions because of the implicit locking
+semantics of protothreads - a protothread will never be preempted and
+will never block except in an explicit PT_WAIT statement.
+
+\include example-buffer.c
+
+*/
+
+
+/** @} */

@@ -1,0 +1,71 @@
+/**
+@defgroup nrfx_drivers Drivers
+@{
+@brief List of all drivers available in nrfx.
+@defgroup nrf_adc ADC
+
+@defgroup nrf_clock CLOCK
+
+@defgroup nrf_comp COMP
+
+@defgroup nrf_ecb ECB
+
+@defgroup nrf_gpio GPIO
+
+@defgroup nrf_gpiote GPIOTE
+
+@defgroup nrf_i2s I2S
+
+@defgroup nrf_lpcomp LPCOMP
+
+@defgroup nrf_nvmc NVMC
+
+@defgroup nrf_pdm PDM
+
+@defgroup nrf_power POWER
+
+@defgroup nrf_ppi PPI
+
+@defgroup nrf_pwm PWM
+
+@defgroup nrf_qdec QDEC
+
+@defgroup nrf_qspi QSPI
+
+@defgroup nrf_rng RNG
+
+@defgroup nrf_rtc RTC
+
+@defgroup nrf_saadc SAADC
+
+@defgroup nrf_spi SPI
+
+@defgroup nrf_spim SPIM
+
+@defgroup nrf_spis SPIS
+
+@defgroup nrf_systick Cortex-M Systick
+
+@defgroup nrf_swi_egu SWI/EGU
+
+@defgroup nrf_temp TEMP
+
+@defgroup nrf_timer TIMER
+
+@defgroup nrf_twi TWI
+
+@defgroup nrf_twim TWIM
+
+@defgroup nrf_twis TWIS
+
+@defgroup nrf_uart UART
+
+@defgroup nrf_uarte UARTE
+
+@defgroup nrf_usbd USBD
+
+@defgroup nrf_wdt WDT
+@}
+
+@defgroup nrfx nrfx API
+*/

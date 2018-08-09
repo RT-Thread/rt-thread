@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="up" title="FatFs" href="../00index_j.html">
+<link rel="alternate" hreflang="en" title="English" href="../en/sdir.html">
+<link rel="stylesheet" href="../css_j.css" type="text/css" media="screen" title="ELM Default">
+<title>FatFs - DIR</title>
+</head>
+
+<body>
+
+<div class="para">
+<h2>DIR</h2>
+<p><tt>DIR</tt>構造体は、<tt>f_opendir/f_readdir/f_findfirst/f_findnext</tt>関数のワーク エリアとして使用されます。アプリケーションは、この構造体のメンバを書き換えてはなりません。</p>
+<pre>
+<span class="k">typedef</span> <span class="k">struct</span> {
+    _FDID   obj;       <span class="c">/* オブジェクトID */</span>
+    DOWRD   dptr;      <span class="c">/* 現在のread/writeオフセット */</span>
+    DWORD   clust;     <span class="c">/* 現在のクラスタ番号 */</span>
+    DWORD   sect;      <span class="c">/* 現在のセクタ番号 */</span>
+    BYTE*   dir;       <span class="c">/* 現在のSFNエントリ(Win[]内)へのポインタ */</span>
+    BYTE*   fn;        <span class="c">/* SFNバッファへのポインタ (in/out) {file[8],ext[3],status[1]} */</span>
+<span class="k">#if</span> _USE_LFN
+    DWORD   blk_ofs;   <span class="c">/* 現在のエントリブロックの先頭 (0xFFFFFFFF:無効) */</span>
+    WCHAR*  lfn;       <span class="c">/* LFNバッファへのポインタ (in/out) */</span>
+<span class="k">#endif</span>
+<span class="k">#if</span> _USE_FIND
+    const TCHAR*  pat; <span class="c">/* マッチング パターンへのポインタ */</span>
+<span class="k">#endif</span>
+} DIR;
+</pre>
+</div>
+
+<p class="foot"><a href="../00index_j.html">戻る</a></p>
+</body>
+</html>

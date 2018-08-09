@@ -1,0 +1,86 @@
+/**
+@mainpage Introduction
+
+@em nrfx is an extract from the nRF5 SDK that contains solely the drivers for
+peripherals present in Nordic SoCs, for convenience complemented with the MDK
+package containing required structures and bitfields definitions, startup
+files etc.
+
+Refer to the @ref nrfx_drv_supp_matrix to check which drivers are suitable
+for a given SoC.
+
+@section nrfx_integration Integration
+
+The purpose of @em nrfx is to make it possible to use the same set of peripheral
+drivers in various environments, from RTOSes to bare metal applications.
+Hence, for a given host environment, a light integration layer must be provided
+that implements certain specific routines, like interrupt management, critical
+sections, assertions, or logging. This is done by filling a predefined set of
+macros with proper implementations (or keeping some empty if desired) in files
+named:
+- @ref nrfx_glue
+- @ref nrfx_log
+
+Templates of these files are provided
+in the <a href="../../templates/">templates</a> subfolder. Their customized
+versions can be placed in any location within the host environment that the
+used compiler can access via include paths.
+
+In addition, the following locations should be specified as include paths
+([nrfx] stands for the @em nrfx root folder location):
+@code
+[nrfx]/
+[nrfx]/drivers/include
+[nrfx]/mdk
+@endcode
+
+@section nrfx_irq_handlers IRQ handlers
+
+The IRQ handlers in all drivers are implemented as ordinary API functions
+named "nrfx_*_irq_handler". They can be bound to some structures or called in
+a specific way according to the requirements of the host environment.
+To install the handlers in the standard MDK way, you must only add the following
+line to the @ref nrfx_glue file:
+
+@code
+#include <soc/nrfx_irqs.h>
+@endcode
+
+This will cause the preprocessor to properly rename all the IRQ handler
+functions so that the linker could install them in the vector table.
+
+@section nrfx_configuration Configuration
+
+The drivers use both dynamic (run time) and static (compile time) configuration.
+
+Dynamic configuration is done by specifying desired options in configuration
+structures passed to the drivers during their initialization.
+Refer to the API reference for a given driver to see the members of its
+configuration structure.
+
+Static configuration allows enabling and disabling (excluding their code from
+compilation) particular drivers or in some cases their specific features,
+defining default parameters for dynamic configuration, parametrization of
+logging in particular drivers. It is done by specifying desired values of macros
+in a file named:
+
+- nrfx_config.h
+
+This file, similarly to the integration files mentioned above, can be placed
+in any suitable location within the host environment.
+The <a href="../../templates/">templates</a> subfolder contains templates of
+configuration files for all currently supported Nordic SoCs placed in respective
+subfolders.
+Refer to the "driver configuration" section in the API reference for a given
+driver for more information regarding configuration options available for it.
+
+@section nrfx_additional_reqs Additional requirements
+
+Nordic SoCs are based on ARM® Cortex™-M series processors. Before you can
+start developing with @em nrfx, you must add the CMSIS header files to include
+paths during the compilation process. Download these files from the following
+website:
+
+-  <a href="https://github.com/ARM-software/CMSIS"> ARM® CMSIS repository</a>
+(CMSIS/Include directory)
+*/

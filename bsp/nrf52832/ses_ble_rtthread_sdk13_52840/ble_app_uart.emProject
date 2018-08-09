@@ -1,0 +1,108 @@
+<!DOCTYPE CrossStudio_Project_File>
+<solution Name="rt-thread project" target="8" version="2">
+  <project Name="ble_app_uart">
+    <configuration
+      Name="Common"
+      arm_architecture="v7EM"
+      arm_core_type="Cortex-M4"
+      arm_endian="Little"
+      arm_fp_abi="SoftFP"
+      arm_fpu_type="FPv4-SP-D16"
+      arm_linker_heap_size="8192"
+      arm_linker_process_stack_size="0"
+      arm_linker_stack_size="8192"
+      arm_linker_treat_warnings_as_errors="No"
+      arm_simulator_memory_simulation_parameter="RWX 00000000,00100000,FFFFFFFF;RWX 20000000,00010000,CDCDCDCD"
+      arm_target_device_name="nRF52840_xxAA"
+      arm_target_interface_type="SWD"
+      c_preprocessor_definitions="BLE_STACK_SUPPORT_REQD;BOARD_PCA10056;CONFIG_GPIO_AS_PINRESET;NRF52840_XXAA;NRF_SD_BLE_API_VERSION=5;S140;SOFTDEVICE_PRESENT;SWI_DISABLE0;__SOFTFP__;RT_DEBUG;INITIALIZE_USER_SECTIONS;NO_VTOR_CONFIG"
+      c_user_include_directories="../nRF5_SDK_13.0.0_04a0bfd/components;../nRF5_SDK_13.0.0_04a0bfd/components/softdevice/common/softdevice_handler;../nRF5_SDK_13.0.0_04a0bfd/components/softdevice/s140/headers;../nRF5_SDK_13.0.0_04a0bfd/components/softdevice/s140/headers/nrf52;../nRF5_SDK_13.0.0_04a0bfd/components/ble/common;../nRF5_SDK_13.0.0_04a0bfd/components/ble/nrf_ble_gatt;../nRF5_SDK_13.0.0_04a0bfd/components/ble/ble_advertising;../nRF5_SDK_13.0.0_04a0bfd/components/ble/ble_services/ble_nus;../nRF5_SDK_13.0.0_04a0bfd/components/device;../nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/delay;../nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/uart;../nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/clock;../nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/gpiote;../nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/common;../nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/hal;../nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/pwm;../nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/saadc;../nRF5_SDK_13.0.0_04a0bfd/components/libraries/util;../nRF5_SDK_13.0.0_04a0bfd/components/libraries/timer;../nRF5_SDK_13.0.0_04a0bfd/components/libraries/fstorage;../nRF5_SDK_13.0.0_04a0bfd/components/libraries/experimental_section_vars;../nRF5_SDK_13.0.0_04a0bfd/components/libraries/log;../nRF5_SDK_13.0.0_04a0bfd/components/libraries/log/src;../nRF5_SDK_13.0.0_04a0bfd/components/libraries/strerror;../nRF5_SDK_13.0.0_04a0bfd/components/toolchain/cmsis/include;../../../include;../../../libcpu/arm/cortex-m4;../../../libcpu/arm/common;../../../components/drivers/include;../../../components/drivers/include;../nRF5_SDK_13.0.0_04a0bfd/components/toolchain/8.15.0/Device/Include;../nRF5_SDK_13.0.0_04a0bfd/components/toolchain;../nRF5_SDK_13.0.0_04a0bfd/components/ses_startups;applications;board;."
+      debug_additional_load_file="$(ProjectDir)/../nRF5_SDK_13.0.0_04a0bfd/components/softdevice/s140/hex/s140_nrf52840_5.0.0-2.alpha_softdevice.hex"
+      debug_start_from_entry_point_symbol="No"
+      debug_target_connection="J-Link"
+      gcc_c_language_standard="c99"
+      gcc_debugging_level="Level 3"
+      gcc_entry_point="Reset_Handler"
+      gcc_optimization_level="None"
+      linker_output_format="hex"
+      linker_printf_fmt_level="long"
+      linker_printf_width_precision_supported="Yes"
+      linker_section_placement_file="flash_placement.xml"
+      linker_section_placement_macros="FLASH_PH_START=0x0 ;FLASH_PH_SIZE=0x100000;RAM_PH_START=0x20000000;RAM_PH_SIZE=0x40000;FLASH_START=0x22000;FLASH_SIZE=0xde000;RAM_START=0x200026c0;RAM_SIZE=0x3d940"
+      linker_section_placements_segments="FLASH RX 0x0 0x80000 ;RAM RWX 0x20000000 0x10000" />
+    <folder Name="Applications">
+      <file file_name="applications/application.c" />
+      <file file_name="applications/ble_nus_app.c" />
+      <file file_name="applications/startup.c" />
+    </folder>
+    <folder Name="NRF_DRIVERS">
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/hal/nrf_saadc.c" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/common/nrf_drv_common.c" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/clock/nrf_drv_clock.c" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/gpiote/nrf_drv_gpiote.c" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/pwm/nrf_drv_pwm.c" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/saadc/nrf_drv_saadc.c" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/libraries/log/src/nrf_log_backend_serial.c" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/libraries/log/src/nrf_log_frontend.c" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/libraries/timer/app_timer_rtthread.c" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/libraries/util/app_error.c" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/libraries/util/app_error_weak.c" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/libraries/util/app_util_platform.c" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/libraries/util/sdk_mapped_flags.c" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/libraries/fstorage/fstorage.c" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/libraries/strerror/nrf_strerror.c" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/libraries/util/nrf_assert.c" />
+    </folder>
+    <folder Name="Kernel">
+      <file file_name="../../../src/clock.c" />
+      <file file_name="../../../src/device.c" />
+      <file file_name="../../../src/idle.c" />
+      <file file_name="../../../src/ipc.c" />
+      <file file_name="../../../src/irq.c" />
+      <file file_name="../../../src/kservice.c" />
+      <file file_name="../../../src/mem.c" />
+      <file file_name="../../../src/object.c" />
+      <file file_name="../../../src/scheduler.c" />
+      <file file_name="../../../src/signal.c" />
+      <file file_name="../../../src/thread.c" />
+      <file file_name="../../../src/timer.c" />
+    </folder>
+    <folder Name="CORTEX-M4">
+      <file file_name="../../../libcpu/arm/cortex-m4/cpuport.c" />
+      <file file_name="../../../libcpu/arm/common/backtrace.c" />
+      <file file_name="../../../libcpu/arm/common/div0.c" />
+      <file file_name="../../../libcpu/arm/common/showmem.c" />
+      <file file_name="../../../libcpu/arm/cortex-m4/context_gcc.S" />
+    </folder>
+    <folder Name="DeviceDrivers">
+      <file file_name="../../../components/drivers/serial/serial.c" />
+      <file file_name="../../../components/drivers/src/completion.c" />
+      <file file_name="../../../components/drivers/src/dataqueue.c" />
+      <file file_name="../../../components/drivers/src/pipe.c" />
+      <file file_name="../../../components/drivers/src/ringbuffer.c" />
+      <file file_name="../../../components/drivers/src/waitqueue.c" />
+      <file file_name="../../../components/drivers/src/workqueue.c" />
+    </folder>
+    <folder Name="Board">
+      <file file_name="board/board.c" />
+      <file file_name="board/uart.c" />
+    </folder>
+    <folder Name="BLE_STACK">
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/ble/ble_advertising/ble_advertising.c" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/ble/common/ble_advdata.c" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/ble/common/ble_conn_params.c" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/ble/common/ble_srv_common.c" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/ble/nrf_ble_gatt/nrf_ble_gatt.c" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/softdevice/common/softdevice_handler/softdevice_handler.c" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/components/ble/ble_services/ble_nus/ble_nus.c" />
+    </folder>
+    <folder Name="Startup">
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/ses_startups/arm/ses_nRF_Startup.s" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/ses_startups/thumb_crt0.s" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/ses_startups/arm/ses_nrf52840_Vectors.s" />
+      <file file_name="../nRF5_SDK_13.0.0_04a0bfd/ses_startups/system_nrf52840.c" />
+    </folder>
+    <configuration Name="Release" />
+  </project>
+  <configuration Name="debug" />
+</solution>

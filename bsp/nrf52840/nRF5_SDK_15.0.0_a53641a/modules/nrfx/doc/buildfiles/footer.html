@@ -1,0 +1,13 @@
+<div id="nav-path" class="topicfooter">
+<a href="mailto:docfeedback@nordicsemi.no?subject=Documentation%20feedback" id="maillink">Documentation feedback</a> | <a href="https://devzone.nordicsemi.com/questions/" target="_blank">Developer Zone</a> | <a href="http://response.nordicsemi.com/subscribe-to-our-newsletters" target="_blank">Subscribe</a> | Updated <span id="date"/>
+
+<script>
+var date = new Date("$date" + " UTC");
+document.getElementById("date").innerHTML = date.toJSON().slice(0, 10);
+var url=window.location.href.split("?")[0];
+var filename=url.substring(url.lastIndexOf('/')+1);
+document.getElementById("maillink").href = "mailto:docfeedback@nordicsemi.no?subject=Documentation%20feedback"+decodeURIComponent("%26")+"body=File%20name%3A%20"+encodeURIComponent(filename);
+</script>
+</div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+\documentclass[a4paper]{article}
+\usepackage{a4wide}
+\usepackage{makeidx}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{float}
+\usepackage{textcomp}
+\usepackage{alltt}
+\usepackage{times}
+\usepackage{epsfig}
+\ifx\pdfoutput\undefined
+\usepackage[ps2pdf,
+            pagebackref=true,
+            colorlinks=true,
+            linkcolor=blue
+           ]{hyperref}
+\usepackage{pspicture}
+\else
+\usepackage[pdftex,
+            pagebackref=true,
+            colorlinks=true,
+            linkcolor=blue
+           ]{hyperref}
+\fi
+\usepackage{doxygen}
+\makeindex
+\setcounter{tocdepth}{1}
+\renewcommand{\footrulewidth}{0.4pt}
+\begin{document}
+\begin{titlepage}
+\vspace*{5cm}
+\begin{center}
+{\Huge Protothreads}\\
+\vspace*{1cm}
+{\LARGE The Protothreads Library 1.3 Reference Manual}\\
+\vspace*{3cm}
+{\Large June 2006}\\
+\vspace*{2cm}
+\includegraphics[width=6cm]{../sicslogo.pdf}\\
+\vspace*{1cm}
+{\Large Adam Dunkels}\\
+{\Large \texttt{adam@sics.se}}\\
+\vspace*{1cm}
+{\LARGE Swedish Institute of Computer Science}\\
+\vspace*{0.5cm}
+
+\end{center}
+\end{titlepage}
+\pagenumbering{roman}
+\tableofcontents
+\pagenumbering{arabic}

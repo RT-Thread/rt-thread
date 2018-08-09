@@ -1,0 +1,156 @@
+/**
+
+\mainpage The Protothreads Library
+
+\author Adam Dunkels <adam@sics.se>
+
+Protothreads are a type of lightweight stackless threads designed for
+severly memory constrained systems such as deeply embedded systems or
+sensor network nodes. Protothreads provides linear code execution for
+event-driven systems implemented in C. Protothreads can be used with
+or without an RTOS.
+
+Protothreads are a extremely lightweight, stackless type of threads
+that provides a blocking context on top of an event-driven system,
+without the overhead of per-thread stacks. The purpose of protothreads
+is to implement sequential flow of control without complex state
+machines or full multi-threading. Protothreads provides conditional
+blocking inside C functions.
+
+Main features:
+
+    - No machine specific code - the protothreads library is pure C
+
+    - Does not use error-prone functions such as longjmp()
+        
+    - Very small RAM overhead - only two bytes per protothread
+    
+    - Can be used with or without an OS
+    
+    - Provides blocking wait without full multi-threading or
+      stack-switching
+
+Examples applications:
+
+    - Memory constrained systems
+    
+    - Event-driven protocol stacks
+    
+    - Deeply embedded systems
+    
+    - Sensor network nodes
+
+
+\sa \ref examples "Example programs"  
+\sa \ref pt "Protothreads API documentation"
+    
+The protothreads library is released under a BSD-style license that
+allows for both non-commercial and commercial usage. The only
+requirement is that credit is given.
+
+More information and new version of the code can be found at the
+Protothreads homepage:
+
+		     http://www.sics.se/~adam/pt/
+
+\section authors Authors
+
+The protothreads library was written by Adam Dunkels <adam@sics.se>
+with support from Oliver Schmidt <ol.sc@web.de>.
+
+\section using Using protothreads
+
+Using protothreads in a project is easy: simply copy the files pt.h,
+lc.h and lc-switch.h into the include files directory of the project,
+and \#include "pt.h" in all files that should use protothreads.
+
+\section pt-desc Protothreads
+
+Protothreads are a extremely lightweight, stackless threads that
+provides a blocking context on top of an event-driven system, without
+the overhead of per-thread stacks. The purpose of protothreads is to
+implement sequential flow of control without using complex state
+machines or full multi-threading. Protothreads provides conditional
+blocking inside a C function.
+
+In memory constrained systems, such as deeply embedded systems,
+traditional multi-threading may have a too large memory overhead. In
+traditional multi-threading, each thread requires its own stack, that
+typically is over-provisioned. The stacks may use large parts of the
+available memory.
+
+The main advantage of protothreads over ordinary threads is that
+protothreads are very lightweight: a protothread does not require its
+own stack. Rather, all protothreads run on the same stack and context
+switching is done by stack rewinding. This is advantageous in memory
+constrained systems, where a stack for a thread might use a large part
+of the available memory. A protothread only requires only two bytes of
+memory per protothread. Moreover, protothreads are implemented in pure
+C and do not require any machine-specific assembler code.
+
+A protothread runs within a single C function and cannot span over
+other functions. A protothread may call normal C functions, but cannot
+block inside a called function. Blocking inside nested function calls
+is instead made by spawning a separate protothread for each
+potentially blocking function. The advantage of this approach is that
+blocking is explicit: the programmer knows exactly which functions
+that block that which functions the never blocks.
+
+Protothreads are similar to asymmetric co-routines. The main
+difference is that co-routines uses a separate stack for each
+co-routine, whereas protothreads are stackless. The most similar
+mechanism to protothreads are Python generators. These are also
+stackless constructs, but have a different purpose. Protothreads
+provides blocking contexts inside a C function, whereas Python
+generators provide multiple exit points from a generator function.
+
+\section pt-autovars Local variables
+
+\note 
+Because protothreads do not save the stack context across a blocking
+call, local variables are not preserved when the protothread
+blocks. This means that local variables should be used with utmost
+care - if in doubt, do not use local variables inside a protothread!
+
+\section pt-scheduling Scheduling
+
+A protothread is driven by repeated calls to the function in which the
+protothread is running. Each time the function is called, the
+protothread will run until it blocks or exits. Thus the scheduling of
+protothreads is done by the application that uses protothreads.
+
+\section pt-impl Implementation
+
+Protothreads are implemented using local continuations. A local
+continuation represents the current state of execution at a particular
+place in the program, but does not provide any call history or local
+variables. A local continuation can be set in a specific function to
+capture the state of the function. After a local continuation has been
+set can be resumed in order to restore the state of the function at
+the point where the local continuation was set.
+
+
+Local continuations can be implemented in a variety of ways:
+
+   -# by using machine specific assembler code,
+   -# by using standard C constructs, or
+   -# by using compiler extensions. 
+
+The first way works by saving and restoring the processor state,
+except for stack pointers, and requires between 16 and 32 bytes of
+memory per protothread. The exact amount of memory required depends on
+the architecture.
+
+The standard C implementation requires only two bytes of state per
+protothread and utilizes the C switch() statement in a non-obvious way
+that is similar to Duff's device. This implementation does, however,
+impose a slight restriction to the code that uses protothreads: a
+protothread cannot perform a blocking wait (PT_WAIT_UNTIL() or
+PT_YIELD()) inside a switch() statement.
+
+Certain compilers has C extensions that can be used to implement
+protothreads. GCC supports label pointers that can be used for this
+purpose. With this implementation, protothreads require 4 bytes of RAM
+per protothread.
+
+*/

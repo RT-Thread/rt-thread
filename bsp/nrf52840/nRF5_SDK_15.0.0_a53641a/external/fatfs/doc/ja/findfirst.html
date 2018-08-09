@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="up" title="FatFs" href="../00index_j.html">
+<link rel="alternate" hreflang="en" title="English" href="../en/findfirst.html">
+<link rel="stylesheet" href="../css_j.css" type="text/css" media="screen" title="ELM Default">
+<title>FatFs - f_findfirst</title>
+</head>
+
+<body>
+
+<div class="para func">
+<h2>f_findfirst</h2>
+<p>ディレクトリ内のオブジェクトの検索を開始します。</p>
+<pre>
+FRESULT f_findfirst (
+  DIR* <span class="arg">dp</span>,              <span class="c">/* [OUT] ディレクトリ オブジェクト構造体へのポインタ */</span>
+  FILINFO* <span class="arg">fno</span>,         <span class="c">/* [OUT] ファイル情報構造体へのポインタ */</span>
+  const TCHAR* <span class="arg">path</span>,    <span class="c">/* [IN] ディレクトリ名へのポインタ */</span>
+  const TCHAR* <span class="arg">pattern</span>  <span class="c">/* [IN] マッチ パターン文字列へのポインタ */</span>
+);
+</pre>
+</div>
+
+<div class="para arg">
+<h4>引数</h4>
+<dl class="par">
+<dt>dp</dt>
+<dd>空のディレクトリ オブジェクト構造体へのポインタを指定します。</dd>
+<dt>fno</dt>
+<dd>最初にマッチしたディレクトリ項目を格納するファイル情報構造体へのポインタを指定します。</dd>
+<dt>path</dt>
+<dd>オープンするディレクトリの<a href="filename.html">パス名</a>を示すヌル文字<tt>'\0'</tt>終端の文字列へのポインタを指定します。</dd>
+<dt>pattern</dt>
+<dd>検索する名前を示すヌル文字<tt>'\0'</tt>終端の文字列へのポインタを指定します。この文字列は、続く<tt>f_findnext</tt>関数でも参照されるため、一連の処理が終了するまで有効でなければなりません。</dd>
+</dl>
+</div>
+
+
+<div class="para ret">
+<h4>戻り値</h4>
+<p>
+<a href="rc.html#ok">FR_OK</a>,
+<a href="rc.html#de">FR_DISK_ERR</a>,
+<a href="rc.html#ie">FR_INT_ERR</a>,
+<a href="rc.html#nr">FR_NOT_READY</a>,
+<a href="rc.html#np">FR_NO_PATH</a>,
+<a href="rc.html#in">FR_INVALID_NAME</a>,
+<a href="rc.html#io">FR_INVALID_OBJECT</a>,
+<a href="rc.html#id">FR_INVALID_DRIVE</a>,
+<a href="rc.html#ne">FR_NOT_ENABLED</a>,
+<a href="rc.html#ns">FR_NO_FILESYSTEM</a>,
+<a href="rc.html#tm">FR_TIMEOUT</a>,
+<a href="rc.html#nc">FR_NOT_ENOUGH_CORE</a>,
+<a href="rc.html#tf">FR_TOO_MANY_OPEN_FILES</a>
+</p>
+</div>
+
+
+<div class="para desc">
+<h4>解説</h4>
+<p><tt class="arg">path</tt>で指定されるディレクトリを開き、そのディレクトリ内の項目の検索を開始します。正常終了すると、ディレクトリ オブジェクト構造体が作成され、最初に検索名文字列に名前がマッチした項目の情報が<tt class="arg">fno</tt>の指定するファイル情報構造体にストアされます。名前のマッチする項目が見つからなかった場合は、<tt>fno-&gt;fname[]</tt>にヌル文字列が返されます。ファイル情報構造体の使い方については、<a href="readdir.html"><tt>f_readdir</tt></a>関数を参照してください。</p>
+<p>マッチ パターン文字列は、ワイルドカード文字(<tt>?</tt>と<tt>*</tt>)を含むことができます。<tt>?</tt>は任意の1文字に、<tt>*</tt>は0文字以上の任意の文字列にマッチします。LFN構成では、<tt>_USE_FIND = 1</tt>のとき<tt>fname[]</tt>のみテストし、<tt>_USE_FIND = 2</tt>のときは<tt>altname[]</tt>もテストします。現リビジョンではパターン マッチングにおいて次の点で標準システムとは異なる動作となります。</p>
+<ul>
+<li><tt>"*.*"</tt>は拡張子なしの名前にマッチしない。(標準システムでは全ての名前にマッチ)</li>
+<li>ピリオドで終わるパターンは、どの名前にもマッチしない。(標準システムでは拡張子無しの名前にマッチ)</li>
+<li><a href="filename.html#case">DBCS拡張文字</a>については、LFN構成でも非Unicode API構成ではケース センシティブとなる。</li>
+</ul>
+</div>
+
+
+<div class="para comp">
+<h4>対応情報</h4>
+<p>この関数は、<a href="opendir.html"><tt>f_opendir</tt></a>関数および<a href="readdir.html"><tt>f_readdir</tt></a>関数のラッパー関数です。<tt>_USE_FIND &gt;= 1</tt>で、かつ<tt>_FS_MINIMIZE &lt;= 1</tt>のとき使用可能になります。</p>
+</div>
+
+
+<div class="para use">
+<h4>使用例</h4>
+<pre>
+<span class="c">/* ディレクトリ内のオブジェクトの検索と表示 */</span>
+
+void find_image (void)
+{
+    FRESULT fr;     <span class="c">/* API戻り値 */</span>
+    DIR dj;         <span class="c">/* ディレクトリ オブジェクト */</span>
+    FILINFO fno;    <span class="c">/* ファイル情報 */</span>
+
+    fr = f_findfirst(&amp;dj, &amp;fno, "", "dsc*.jpg");  <span class="c">/* "dsc"で始まるJPEGファイルを検索 */</span>
+
+    while (fr == FR_OK &amp;&amp; fno.fname[0]) {         <span class="c">/* 見つかる間繰り返し */</span>
+        printf("%s\n", fno.fname);                <span class="c">/* 見つけた項目の名前を表示 */</span>
+        fr = f_findnext(&amp;dj, &amp;fno);               <span class="c">/* 次を検索 */</span>
+    }
+    f_closedir(&amp;dj);
+}
+</pre>
+</div>
+
+
+<div class="para ref">
+<h4>参照</h4>
+<p><tt><a href="findnext.html">f_findnext</a>, <a href="closedir.html">f_closedir</a>, <a href="sdir.html">DIR</a>, <a href="sfileinfo.html">FILINFO</a></tt></p>
+</div>
+
+<p class="foot"><a href="../00index_j.html">戻る</a></p>
+</body>
+</html>

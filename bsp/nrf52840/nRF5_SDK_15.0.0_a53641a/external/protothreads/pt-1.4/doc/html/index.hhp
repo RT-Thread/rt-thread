@@ -1,0 +1,44 @@
+[OPTIONS]
+Compatibility=1.1
+Full-text search=Yes
+Contents file=index.hhc
+Default Window=main
+Default topic=main.html
+Index file=index.hhk
+Language=0x409 English (United States)
+Title=The Protothreads Library 1.4
+
+[WINDOWS]
+main="The Protothreads Library 1.4","index.hhc","index.hhk","main.html","main.html",,,,,0x23520,,0x387e,,,,,,,,0
+
+[FILES]
+main.html
+files.html
+a00018.html
+a00019.html
+a00020.html
+a00021.html
+a00022.html
+a00009.html
+a00010.html
+a00011.html
+a00012.html
+a00013.html
+annotated.html
+hierarchy.html
+functions.html
+functions_vars.html
+a00005.html
+a00006.html
+a00014.html
+a00015.html
+a00016.html
+a00017.html
+modules.html
+globals.html
+globals_type.html
+globals_defs.html
+tabs.css
+tab_b.gif
+tab_l.gif
+tab_r.gif

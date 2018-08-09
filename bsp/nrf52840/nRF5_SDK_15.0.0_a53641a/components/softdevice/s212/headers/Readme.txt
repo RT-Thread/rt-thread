@@ -1,0 +1,1 @@
+Place S212 SoftDevice header files in this folder.

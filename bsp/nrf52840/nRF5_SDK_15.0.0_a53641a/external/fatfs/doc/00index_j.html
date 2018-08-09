@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="cache-control" content="no-cache">
+<meta name="description" content="組み込みシステム向け汎用FATファイルシステム">
+<link rel="start" title="Site Top" href="../../index_j.html">
+<link rel="up" title="Freewares" href="../../fsw.html">
+<link rel="alternate" hreflang="ja" title="オリジナル版" href="http://elm-chan.org/fsw/ff/00index_j.html">
+<link rel="alternate" hreflang="en" title="英文版" href="00index_e.html">
+<link rel="stylesheet" href="css_j.css" type="text/css" media="screen" title="ELM Default">
+<title>FatFs 汎用FATファイルシステム モジュール</title>
+</head>
+
+<body>
+<h1>FatFs 汎用FATファイルシステム モジュール</h1>
+<hr>
+
+<div class="abst">
+<img src="res/layers.png" class="rset" width="245" height="255" alt="layer">
+<p>FatFsは小規模な組み込みシステム向けの汎用FAT/exFATファイルシステム モジュールです。ANSI C(C89)準拠でハードウェア アーキテクチャには依存しないので、必要なワーク エリアが確保できれば、8051, PIC, AVR, SH, Z80, 68k, H8, ARMなど安価なマイコンでも使用可能です。このほか、FatFsを極小マイコン向けにシュリンクした<a href="http://elm-chan.org/fsw/ff/00index_p.html">ぷちFatFs</a>もあります。</p>
+<h4>FatFsモジュールの特徴</h4>
+<ul>
+ <li>Windows互換 FAT/exFATファイルシステム</li>
+ <li>プラットフォーム非依存</li>
+ <li>コンパクトなコードとRAM使用量</li>
+ <li>多くの<a href="ja/config.html">構成オプション</a>:
+  <ul>
+   <li>ボリューム構成(物理ドライブ数・区画)</li>
+   <li>DBCSを含む複数のANSI/OEMコード ページの選択</li>
+   <li>長いファイル名(LFN)への対応</li>
+   <li>exFATファイルシステムへの対応</li>
+   <li>RTOS環境への対応</li>
+   <li>セクタ サイズ(固定/可変)</li>
+   <li>リード オンリー構成、一部APIの削除、バッファ構成、その他…</li>
+  </ul>
+ </li>
+</ul>
+</div>
+
+
+<div class="para">
+<h3>上位レイヤ インターフェース</h3>
+<img src="res/layers1.png" class="rset" width="245" height="220" alt="layer">
+<ul>
+ <li>ファイル アクセス
+ <ul>
+  <li><a href="ja/open.html">f_open</a> - ファイルのオープン・作成</li>
+  <li><a href="ja/close.html">f_close</a> - ファイルのクローズ</li>
+  <li><a href="ja/read.html">f_read</a> - データの読み出し</li>
+  <li><a href="ja/write.html">f_write</a> - データの書き込み</li>
+  <li><a href="ja/lseek.html">f_lseek</a> - リード/ライト ポインタの移動, サイズの拡張</li>
+  <li><a href="ja/truncate.html">f_truncate</a> - サイズの切り詰め</li>
+  <li><a href="ja/sync.html">f_sync</a> - キャッシュされたデータのフラッシュ</li>
+  <li><a href="ja/forward.html">f_forward</a> - データをストリーム関数に転送</li>
+  <li><a href="ja/expand.html">f_expand</a> - 連続領域の割り当て</li>
+  <li><a href="ja/gets.html">f_gets</a> - 文字列の読み出し</li>
+  <li><a href="ja/putc.html">f_putc</a> - 文字の書き込み</li>
+  <li><a href="ja/puts.html">f_puts</a> - 文字列の書き込み</li>
+  <li><a href="ja/printf.html">f_printf</a> - 書式化文字列の書き込み</li>
+  <li><a href="ja/tell.html">f_tell</a> - リード/ライト ポインタの取得</li>
+  <li><a href="ja/eof.html">f_eof</a> - 終端の有無の取得</li>
+  <li><a href="ja/size.html">f_size</a> - サイズの取得</li>
+  <li><a href="ja/error.html">f_error</a> - エラーの有無の取得</li>
+ </ul>
+ </li>
+ <li>ディレクトリ アクセス
+ <ul>
+  <li><a href="ja/opendir.html">f_opendir</a> - ディレクトリのオープン</li>
+  <li><a href="ja/closedir.html">f_closedir</a> - ディレクトリのクローズ</li>
+  <li><a href="ja/readdir.html">f_readdir</a> - 項目の読み出し</li>
+  <li><a href="ja/findfirst.html">f_findfirst</a> - ディレクトリのオープンと最初の検索項目の読み出し</li>
+  <li><a href="ja/findnext.html">f_findnext</a> - 次の検索項目の読み出し</li>
+ </ul>
+ </li>
+ <li>ファイル/ディレクトリ管理
+ <ul>
+  <li><a href="ja/stat.html">f_stat</a> - ファイル/サブ ディレクトリの存在チェックと情報の取得</li>
+  <li><a href="ja/unlink.html">f_unlink</a> - ファイル/サブ ディレクトリの削除</li>
+  <li><a href="ja/rename.html">f_rename</a> - ファイル/サブ ディレクトリの名前の変更・移動</li>
+  <li><a href="ja/chmod.html">f_chmod</a> - ファイル/サブ ディレクトリの属性の変更</li>
+  <li><a href="ja/utime.html">f_utime</a> - ファイル/サブ ディレクトリのタイムスタンプの変更</li>
+  <li><a href="ja/mkdir.html">f_mkdir</a> - サブ ディレクトリの作成</li>
+  <li><a href="ja/chdir.html">f_chdir</a> - カレント ディレクトリの変更</li>
+  <li><a href="ja/chdrive.html">f_chdrive</a> - カレント ドライブの変更</li>
+  <li><a href="ja/getcwd.html">f_getcwd</a> - カレント ディレクトリの取得</li>
+ </ul>
+ </li>
+ <li>ボリューム管理
+ <ul>
+  <li><a href="ja/mount.html">f_mount</a> - ボリューム ワーク エリアの登録・抹消</li>
+  <li><a href="ja/mkfs.html">f_mkfs</a> - 論理ドライブ上にFATボリュームを作成</li>
+  <li><a href="ja/fdisk.html">f_fdisk</a> - 物理ドライブ上に複数の論理ドライブを作成</li>
+  <li><a href="ja/getfree.html">f_getfree</a> - ボリュームのサイズと空きサイズの取得</li>
+  <li><a href="ja/getlabel.html">f_getlabel</a> - ボリューム ラベルの取得</li>
+  <li><a href="ja/setlabel.html">f_setlabel</a> - ボリューム ラベルの設定</li>
+ </ul>
+ </li>
+</ul>
+</div>
+
+
+<div class="para">
+<h3>下位レイヤ インターフェース</h3>
+<img src="res/layers2.png" class="rset" width="245" height="220" alt="layer">
+<p>FatFsモジュールは、単なるファイルシステム レイヤなので、その下位のストレージ デバイス制御レイヤはそれに含まれません。それぞれのプラットフォームやストレージ デバイスに対応した制御レイヤは、インプリメンタによって提供される必要があります。FatFsモジュールは、下位レイヤに対し標準的には次のインターフェースを要求します。一部の拡張機能、たとえばOS関連機能を有効にしたときは、加えてプロセス/メモリ操作関数なども必要になります。サンプル プロジェクトに下位レイヤの実装例を示します。</p>
+<ul>
+ <li><a href="ja/dstat.html">disk_status</a> - デバイスの状態取得</li>
+ <li><a href="ja/dinit.html">disk_initialize</a> - デバイスの初期化</li>
+ <li><a href="ja/dread.html">disk_read</a> - データの読み出し</li>
+ <li><a href="ja/dwrite.html">disk_write</a> - データの書き込み</li>
+ <li><a href="ja/dioctl.html">disk_ioctl</a> - その他のデバイス制御</li>
+ <li><a href="ja/fattime.html">get_fattime</a> - 日付・時刻の取得</li>
+</ul>
+</div>
+
+
+<div class="para">
+<h3>資料</h3>
+<p>FatFsモジュールはフリー ソフトウェアとして教育・研究・開発用に公開しています。どのような利用目的（個人利用から商用まで）でも使用・改変・配布について一切の制限はありませんが、全て利用者の責任の下での利用とします。詳しくはアプリケーション ノートを参照してください。</p>
+<ul>
+ <li>最初に読め: <a href="ja/appnote.html">FatFsモジュール アプリケーション ノート</a> <span class="mfd">2016. 9. 4</span></li>
+ <li>コミュニティ: <a href="http://elm-chan.org/fsw/ff/bd/">FatFsユーザ フォーラム</a></li>
+ <li><a href="https://msdn.microsoft.com/en-us/windows/hardware/gg463080.aspx">FATファイルシステム仕様 by Microsoft</a>↗ (The reference document on FAT file system)</li>
+ <li><a href="http://elm-chan.org/docs/fat.html">FATファイルシステム概要</a> (↑を読むためのガイド)</li>
+ <li><a href="http://elm-chan.org/docs/mmc/mmc.html">MMCの使いかた</a></li>
+ <li><a href="http://elm-chan.org/junk/fa/faff.html">FlashAirとFatFs [en]</a></li>
+ <li><a href="http://stm32f4-discovery.com/2014/07/library-21-read-sd-card-fatfs-stm32f4xx-devices/">Read SD card with FatFs on STM32F4xx devices by Tilen Majerle</a>↗ (Quick and easy implementation for STM32F4-Discovery)</li>
+ <li><a href="http://nemuisan.blog.bai.ne.jp/">ねむいさんのぶろぐ</a>↗ (Well written implementations for STM32F/SPI &amp; SDIO and LPC4088/SDMMC)</li>
+ <li><a href="http://www.siwawi.arubi.uni-kl.de/avr_projects/arm_projects/arm_memcards/index.html">ARM-Projects by Martin THOMAS</a>↗ (Examples for LPC2000, AT91SAM and STM32)</li>
+ <li><a href="res/rwtest1.png">パフォーマンス テスト1</a> (ATmega1284/20MHz with MMC via USART in SPI, CFC via GPIO)</li>
+ <li><a href="res/rwtest2.png">パフォーマンス テスト2</a> (LPC2368/72MHz with MMC via MCI)</li>
+</ul>
+</div>
+
+
+<hr>
+<p class="foot"><a href="http://elm-chan.org/fsw/ff/00index_j.html">FatFsホームページ</a></p>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="up" title="FatFs" href="../00index_j.html">
+<link rel="alternate" hreflang="ja" title="English" href="../en/expand.html">
+<link rel="stylesheet" href="../css_j.css" type="text/css" media="screen" title="ELM Default">
+<title>FatFs - f_expand</title>
+</head>
+
+<body>
+
+<div class="para func">
+<h2>f_expand</h2>
+<p>ファイルに連続したデータ領域を割り当てます。</p>
+
+<pre>
+FRESULT f_expand (
+  FIL*    <span class="arg">fp</span>,  <span class="c">/* [IN] ファイル オブジェクト構造体へのポインタ */</span>
+  FSIZE_t <span class="arg">fsz</span>, <span class="c">/* [IN] 割り当てサイズ */</span>
+  BYTE    <span class="arg">opt</span>  <span class="c">/* [IN] 動作オプション */</span>
+);
+</pre>
+</div>
+
+<div class="para arg">
+<h4>Parameters</h4>
+<dl class="par">
+<dt>fp</dt>
+<dd>対象となるファイル オブジェクト構造体へのポインタを指定します。</dd>
+<dt>fsz</dt>
+<dd>ファイルに割り当てるバイト単位のサイズ。データ型<tt>FSIZE_t</tt>は、<tt>DWORD</tt>(32-bit)または<tt>QWORD</tt>(64-bit)のエリアスで、exFATサポートの有無により切り替わります。</dd>
+<dt>opt</dt>
+<dd>実際に割り当てを行うかどうか指定するフラグ。</dd>
+</dl>
+</div>
+
+
+<div class="para ret">
+<h4>Return Values</h4>
+<p>
+<a href="rc.html#ok">FR_OK</a>,
+<a href="rc.html#de">FR_DISK_ERR</a>,
+<a href="rc.html#ie">FR_INT_ERR</a>,
+<a href="rc.html#io">FR_INVALID_OBJECT</a>,
+<a href="rc.html#dn">FR_DENIED</a>,
+<a href="rc.html#tm">FR_TIMEOUT</a>
+</p>
+</div>
+
+
+<div class="para desc">
+<h4>解説</h4>
+<p><tt class="arg">opt</tt>に1を指定すると、ファイルに連続したデータ領域を割り当てます。<tt>f_lseek</tt>によるサイズ拡張とは異なり、対象ファイルのサイズは0(つまりデータ領域未割り当て)でなければなりません。また、リード/ライト ポインタは、ファイル先頭に留まります。この関数により割り当てられたファイルの内容は未定義なので、それに対して何の前提も持つべきではありません。この関数は、次の理由により<tt>FR_DENIED</tt>で失敗することがあります。</p>
+<ul>
+<li>ボリューム上に連続した空き領域が見つからなかった。</li>
+<li>ファイルのサイズが0ではなかった。</li>
+<li>ファイルが非書き込みモードで開かれている。</li>
+<li>指定されたファイル サイズが無効。(FATボリューム上で &gt;=4GiB)</li>
+</ul>
+<p><tt class="arg">opt</tt>に0を指定したときは、連続したデータ領域を探すのみで、その時点ではファイルへの割り当てを行わず、代わりにそれを検索開始ポイントとしてファイル システム オブジェクトにセットします。これにより、そのボリューム上で別の操作(FAT変更を伴う)が行われない限り、書き込まれるファイルは少なくともそのサイズまでは連続性が保証され、遅延無く書き込めることになります。</p>
+<p>時間的制約のあるファイル読み書き操作において、連続データ領域を割り当てられたファイルは有利となります。これは、分割されたファイルによりもたらされる無用なランダム アクセスが減ることにより、ファイル システムやストレージ デバイスの処理のオーバーヘッドが削減されるからです。特にexFATボリューム上の連続ファイルでは一切のFATアクセスが発生せず、効率的なシーケンシャル アクセスが行えます。</p>
+<p>連続ファイルに対して低レベルI/Oを使用したさらに効率的な直接アクセスも容易に行えますが、これは将来の互換性の点で推奨はされません。</p>
+</div>
+
+<div class="para comp">
+<h4>対応情報</h4>
+<p><tt>_USE_EXPAND == 1</tt>で、かつ<tt>_FS_READONLY == 0</tt>のとき使用可能です。</p>
+</div>
+
+
+<div class="para use">
+<h4>使用例</h4>
+<pre>
+    <span class="c">/* 連続ファイルの作成 */</span>
+
+    <span class="c">/* 新しいファイルの作成 */</span>
+    res = f_open(fp = malloc(sizeof (FIL)), "file.dat", FA_WRITE|FA_CREATE_ALWAYS);
+    if (res) { <span class="c">/* ファイルが開かれたかチェック */</span>
+        free(fp);
+        ...
+    }
+
+    <span class="c">/* 100 MiB の連続領域を割り当てる */</span>
+    res = f_expand(fp, 104857600, 1);
+    if (res) { <span class="c">/* 割り当てられたかチェック */</span>
+        ...
+        free(fp);
+        ...
+    }
+    <span class="c">/* 連続ファイル作成成功 fp でアクセス可能 */</span>
+
+</pre>
+<pre>
+    <span class="c">/* ファイル システムを介さず直接アクセスする例 */</span>
+
+    <span class="c">/* ファイル データの物理的位置を取得 */</span>
+    drv = fp-&gt;obj.fs-&gt;drv;
+    sect = fp-&gt;obj.fs-&gt;database + fp-&gt;obj.fs-&gt;csize * (fp-&gt;obj.sclust - 2);
+
+    <span class="c">/* ファイル先頭から2048セクタを書き込み */</span>
+    res = disk_write(drv, buffer, sect, 2048);
+
+</pre>
+</div>
+
+
+<div class="para ref">
+<h4>参照</h4>
+<p><tt><a href="open.html">f_open</a>, <a href="lseek.html">f_lseek</a>, <a href="sfile.html">FIL</a></tt></p>
+</div>
+
+<p class="foot"><a href="../00index_j.html">戻る</a></p>
+</body>
+</html>
