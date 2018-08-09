@@ -1,0 +1,5 @@
+IMPORTANT NOTE 
+All source code contained under this folder originates from third
+parties, and is covered by the corresponding licenses found in the
+respective subfolders
+

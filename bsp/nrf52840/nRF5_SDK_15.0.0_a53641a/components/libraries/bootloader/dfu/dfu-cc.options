@@ -1,0 +1,3 @@
+dfu.Hash.hash				max_size:32
+dfu.SignedCommand.signature	max_size:64
+dfu.InitCommand.sd_req		max_count:16

@@ -1,0 +1,161 @@
+<!DOCTYPE CrossStudio_Project_File>
+<solution Name="ble_app_rt_thread_demo" target="8" version="2">
+  <project Name="nordic_rt_thread_demo">
+    <configuration
+      Name="Common"
+      arm_architecture="v7EM"
+      arm_core_type="Cortex-M4"
+      arm_endian="Little"
+      arm_fp_abi="SoftFP"
+      arm_fpu_type="FPv4-SP-D16"
+      arm_linker_heap_size="8192"
+      arm_linker_process_stack_size="0"
+      arm_linker_stack_size="8192"
+      arm_linker_treat_warnings_as_errors="No"
+      arm_simulator_memory_simulation_parameter="RWX 00000000,00100000,FFFFFFFF;RWX 20000000,00010000,CDCDCDCD"
+      arm_target_device_name="nRF52840_xxAA"
+      arm_target_interface_type="SWD"
+      c_preprocessor_definitions="BOARD_PCA10056;CONFIG_GPIO_AS_PINRESET;__SOFTFP__;INITIALIZE_USER_SECTIONS;NO_VTOR_CONFIG;NRF52840_XXAA;NRF_SD_BLE_API_VERSION=6;S140;SOFTDEVICE_PRESENT;SWI_DISABLE0"
+      c_user_include_directories="../../nRF5_SDK_15.0.0_a53641a/components;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_advertising;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_dtm;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_link_ctx_manager;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_racp;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_ancs_c;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_ans_c;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_bas;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_bas_c;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_cscs;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_cts_c;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_dfu;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_dis;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_gls;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_hids;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_hrs;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_hrs_c;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_hts;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_ias;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_ias_c;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_lbs;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_lbs_c;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_lls;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_nus;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_nus_c;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_rscs;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_rscs_c;../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_tps;../../nRF5_SDK_15.0.0_a53641a/components/ble/common;../../nRF5_SDK_15.0.0_a53641a/components/ble/nrf_ble_gatt;../../nRF5_SDK_15.0.0_a53641a/components/ble/nrf_ble_qwr;../../nRF5_SDK_15.0.0_a53641a/components/ble/peer_manager;../../nRF5_SDK_15.0.0_a53641a/components/boards;../../nRF5_SDK_15.0.0_a53641a/components/drivers_nrf/usbd;../../nRF5_SDK_15.0.0_a53641a/components/libraries/atomic;../../nRF5_SDK_15.0.0_a53641a/components/libraries/atomic_fifo;../../nRF5_SDK_15.0.0_a53641a/components/libraries/atomic_flags;../../nRF5_SDK_15.0.0_a53641a/components/libraries/balloc;../../nRF5_SDK_15.0.0_a53641a/components/libraries/bootloader/ble_dfu;../../nRF5_SDK_15.0.0_a53641a/components/libraries/bsp;../../nRF5_SDK_15.0.0_a53641a/components/libraries/button;../../nRF5_SDK_15.0.0_a53641a/components/libraries/cli;../../nRF5_SDK_15.0.0_a53641a/components/libraries/crc16;../../nRF5_SDK_15.0.0_a53641a/components/libraries/crc32;../../nRF5_SDK_15.0.0_a53641a/components/libraries/crypto;../../nRF5_SDK_15.0.0_a53641a/components/libraries/csense;../../nRF5_SDK_15.0.0_a53641a/components/libraries/csense_drv;../../nRF5_SDK_15.0.0_a53641a/components/libraries/delay;../../nRF5_SDK_15.0.0_a53641a/components/libraries/ecc;../../nRF5_SDK_15.0.0_a53641a/components/libraries/experimental_log;../../nRF5_SDK_15.0.0_a53641a/components/libraries/experimental_log/src;../../nRF5_SDK_15.0.0_a53641a/components/libraries/experimental_memobj;../../nRF5_SDK_15.0.0_a53641a/components/libraries/experimental_mpu;../../nRF5_SDK_15.0.0_a53641a/components/libraries/experimental_ringbuf;../../nRF5_SDK_15.0.0_a53641a/components/libraries/experimental_section_vars;../../nRF5_SDK_15.0.0_a53641a/components/libraries/experimental_stack_guard;../../nRF5_SDK_15.0.0_a53641a/components/libraries/experimental_task_manager;../../nRF5_SDK_15.0.0_a53641a/components/libraries/fds;../../nRF5_SDK_15.0.0_a53641a/components/libraries/fifo;../../nRF5_SDK_15.0.0_a53641a/components/libraries/fstorage;../../nRF5_SDK_15.0.0_a53641a/components/libraries/gfx;../../nRF5_SDK_15.0.0_a53641a/components/libraries/gpiote;../../nRF5_SDK_15.0.0_a53641a/components/libraries/hardfault;../../nRF5_SDK_15.0.0_a53641a/components/libraries/hci;../../nRF5_SDK_15.0.0_a53641a/components/libraries/led_softblink;../../nRF5_SDK_15.0.0_a53641a/components/libraries/low_power_pwm;../../nRF5_SDK_15.0.0_a53641a/components/libraries/mem_manager;../../nRF5_SDK_15.0.0_a53641a/components/libraries/mutex;../../nRF5_SDK_15.0.0_a53641a/components/libraries/pwm;../../nRF5_SDK_15.0.0_a53641a/components/libraries/pwr_mgmt;../../nRF5_SDK_15.0.0_a53641a/components/libraries/queue;../../nRF5_SDK_15.0.0_a53641a/components/libraries/scheduler;../../nRF5_SDK_15.0.0_a53641a/components/libraries/sdcard;../../nRF5_SDK_15.0.0_a53641a/components/libraries/slip;../../nRF5_SDK_15.0.0_a53641a/components/libraries/sortlist;../../nRF5_SDK_15.0.0_a53641a/components/libraries/spi_mngr;../../nRF5_SDK_15.0.0_a53641a/components/libraries/strerror;../../nRF5_SDK_15.0.0_a53641a/components/libraries/timer;../../nRF5_SDK_15.0.0_a53641a/components/libraries/twi_mngr;../../nRF5_SDK_15.0.0_a53641a/components/libraries/twi_sensor;../../nRF5_SDK_15.0.0_a53641a/components/libraries/uart;../../nRF5_SDK_15.0.0_a53641a/components/libraries/usbd;../../nRF5_SDK_15.0.0_a53641a/components/libraries/usbd/class/audio;../../nRF5_SDK_15.0.0_a53641a/components/libraries/usbd/class/cdc;../../nRF5_SDK_15.0.0_a53641a/components/libraries/usbd/class/cdc/acm;../../nRF5_SDK_15.0.0_a53641a/components/libraries/usbd/class/hid;../../nRF5_SDK_15.0.0_a53641a/components/libraries/usbd/class/hid/generic;../../nRF5_SDK_15.0.0_a53641a/components/libraries/usbd/class/hid/kbd;../../nRF5_SDK_15.0.0_a53641a/components/libraries/usbd/class/hid/mouse;../../nRF5_SDK_15.0.0_a53641a/components/libraries/usbd/class/msc;../../nRF5_SDK_15.0.0_a53641a/components/libraries/usbd/config;../../nRF5_SDK_15.0.0_a53641a/components/libraries/util;../../nRF5_SDK_15.0.0_a53641a/components/nfc/ndef/conn_hand_parser;../../nRF5_SDK_15.0.0_a53641a/components/nfc/ndef/conn_hand_parser/ac_rec_parser;../../nRF5_SDK_15.0.0_a53641a/components/nfc/ndef/conn_hand_parser/ble_oob_advdata_parser;../../nRF5_SDK_15.0.0_a53641a/components/nfc/ndef/conn_hand_parser/le_oob_rec_parser;../../nRF5_SDK_15.0.0_a53641a/components/nfc/ndef/connection_handover/ac_rec;../../nRF5_SDK_15.0.0_a53641a/components/nfc/ndef/connection_handover/ble_oob_advdata;../../nRF5_SDK_15.0.0_a53641a/components/nfc/ndef/connection_handover/ble_pair_lib;../../nRF5_SDK_15.0.0_a53641a/components/nfc/ndef/connection_handover/ble_pair_msg;../../nRF5_SDK_15.0.0_a53641a/components/nfc/ndef/connection_handover/common;../../nRF5_SDK_15.0.0_a53641a/components/nfc/ndef/connection_handover/ep_oob_rec;../../nRF5_SDK_15.0.0_a53641a/components/nfc/ndef/connection_handover/hs_rec;../../nRF5_SDK_15.0.0_a53641a/components/nfc/ndef/connection_handover/le_oob_rec;../../nRF5_SDK_15.0.0_a53641a/components/nfc/ndef/generic/message;../../nRF5_SDK_15.0.0_a53641a/components/nfc/ndef/generic/record;../../nRF5_SDK_15.0.0_a53641a/components/nfc/ndef/launchapp;../../nRF5_SDK_15.0.0_a53641a/components/nfc/ndef/parser/message;../../nRF5_SDK_15.0.0_a53641a/components/nfc/ndef/parser/record;../../nRF5_SDK_15.0.0_a53641a/components/nfc/ndef/text;../../nRF5_SDK_15.0.0_a53641a/components/nfc/ndef/uri;../../nRF5_SDK_15.0.0_a53641a/components/nfc/t2t_lib;../../nRF5_SDK_15.0.0_a53641a/components/nfc/t2t_lib/hal_t2t;../../nRF5_SDK_15.0.0_a53641a/components/nfc/t2t_parser;../../nRF5_SDK_15.0.0_a53641a/components/nfc/t4t_lib;../../nRF5_SDK_15.0.0_a53641a/components/nfc/t4t_lib/hal_t4t;../../nRF5_SDK_15.0.0_a53641a/components/nfc/t4t_parser/apdu;../../nRF5_SDK_15.0.0_a53641a/components/nfc/t4t_parser/cc_file;../../nRF5_SDK_15.0.0_a53641a/components/nfc/t4t_parser/hl_detection_procedure;../../nRF5_SDK_15.0.0_a53641a/components/nfc/t4t_parser/tlv;../../nRF5_SDK_15.0.0_a53641a/components/softdevice/common;../../nRF5_SDK_15.0.0_a53641a/components/softdevice/s140/headers;../../nRF5_SDK_15.0.0_a53641a/components/softdevice/s140/headers/nrf52;../../nRF5_SDK_15.0.0_a53641a/components/toolchain/cmsis/include;../../nRF5_SDK_15.0.0_a53641a/external/fprintf;../../nRF5_SDK_15.0.0_a53641a/external/segger_rtt;../../nRF5_SDK_15.0.0_a53641a/integration/nrfx;../../nRF5_SDK_15.0.0_a53641a/integration/nrfx/legacy;../../nRF5_SDK_15.0.0_a53641a/modules/nrfx;../../nRF5_SDK_15.0.0_a53641a/modules/nrfx/drivers/include;../../nRF5_SDK_15.0.0_a53641a/modules/nrfx/hal;../../nRF5_SDK_15.0.0_a53641a/modules/nrfx/mdk;../../../../include;../../../../libcpu/arm/cortex-m4;../../../../libcpu/arm/common;../../../../components/drivers/include;../../../../components/drivers/include;../config;../RT_Thread_Startup/board;../RT_Thread_Startup/startup;../RT_Thread_Startup/uart;../applications;../startups;../app_ble/app_conn_params;../app_ble/app_ble_init"
+      debug_additional_load_file="../../nRF5_SDK_15.0.0_a53641a/components/softdevice/s140/hex/s140_nrf52_6.0.0_softdevice.hex"
+      debug_register_definition_file="../../nRF5_SDK_15.0.0_a53641a/modules/nrfx/mdk/nrf52840.svd"
+      debug_start_from_entry_point_symbol="No"
+      debug_target_connection="J-Link"
+      gcc_debugging_level="Level 3"
+      gcc_entry_point="Reset_Handler"
+      linker_output_format="hex"
+      linker_printf_fmt_level="long"
+      linker_printf_width_precision_supported="Yes"
+      linker_section_placement_file="flash_placement.xml"
+      linker_section_placement_macros="FLASH_PH_START=0x0;FLASH_PH_SIZE=0x100000;RAM_PH_START=0x20000000;RAM_PH_SIZE=0x40000;FLASH_START=0x26000;FLASH_SIZE=0xda000;RAM_START=0x20002220;RAM_SIZE=0x3dde0"
+      linker_section_placements_segments="FLASH RX 0x0 0x100000;RAM RWX 0x20000000 0x40000"
+      macros="CMSIS_CONFIG_TOOL=../../nRF5_SDK_15.0.0_a53641a/external_tools/cmsisconfig/CMSIS_Configuration_Wizard.jar"
+      project_directory=""
+      project_type="Executable" />
+    <folder Name="Application">
+      <file file_name="../applications/app_event.c" />
+    </folder>
+    <folder Name="Segger Startup Files">
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/modules/nrfx/mdk/ses_nRF_Startup.s" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/modules/nrfx/mdk/ses_nrf52840_Vectors.s" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/modules/nrfx/mdk/system_nrf52840.c" />
+      <file file_name="../ses_startups/thumb_crt0.s" />
+    </folder>
+    <folder Name="nRF_Log">
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/experimental_log/src/nrf_log_backend_rtt.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/experimental_log/src/nrf_log_backend_serial.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/experimental_log/src/nrf_log_default_backends.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/experimental_log/src/nrf_log_frontend.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/experimental_log/src/nrf_log_str_formatter.c" />
+    </folder>
+    <folder Name="nRF_Libraries">
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/button/app_button.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/util/app_error.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/util/app_error_handler_gcc.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/util/app_error_weak.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/fifo/app_fifo.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/scheduler/app_scheduler.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/uart/app_uart_fifo.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/util/app_util_platform.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/hardfault/hardfault_implementation.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/util/nrf_assert.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/atomic_fifo/nrf_atfifo.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/atomic_flags/nrf_atflags.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/atomic/nrf_atomic.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/balloc/nrf_balloc.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/external/fprintf/nrf_fprintf.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/external/fprintf/nrf_fprintf_format.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/fstorage/nrf_fstorage.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/fstorage/nrf_fstorage_sd.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/experimental_memobj/nrf_memobj.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/pwr_mgmt/nrf_pwr_mgmt.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/experimental_section_vars/nrf_section_iter.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/strerror/nrf_strerror.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/uart/retarget.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/libraries/timer/app_timer_rtthread.c" />
+    </folder>
+    <folder Name="nRF_Drivers">
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/integration/nrfx/legacy/nrf_drv_clock.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/integration/nrfx/legacy/nrf_drv_uart.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/modules/nrfx/drivers/src/nrfx_clock.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/modules/nrfx/drivers/src/nrfx_gpiote.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/modules/nrfx/drivers/src/nrfx_power_clock.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/modules/nrfx/drivers/src/nrfx_uart.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/modules/nrfx/drivers/src/nrfx_uarte.c" />
+    </folder>
+    <folder Name="nRF_Segger_RTT">
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/external/segger_rtt/SEGGER_RTT.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/external/segger_rtt/SEGGER_RTT_Syscalls_SES.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/external/segger_rtt/SEGGER_RTT_printf.c" />
+    </folder>
+    <folder Name="nRF_BLE">
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/ble/common/ble_advdata.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_advertising/ble_advertising.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/ble/common/ble_conn_state.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_link_ctx_manager/ble_link_ctx_manager.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/ble/common/ble_srv_common.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/ble/nrf_ble_gatt/nrf_ble_gatt.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/ble/nrf_ble_qwr/nrf_ble_qwr.c" />
+    </folder>
+    <folder Name="nRF_BLE_Services">
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/ble/ble_services/ble_nus/ble_nus.c" />
+    </folder>
+    <folder Name="nRF_SoftDevice">
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/softdevice/common/nrf_sdh.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/softdevice/common/nrf_sdh_ble.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/softdevice/common/nrf_sdh_soc.c" />
+      <file file_name="../../nRF5_SDK_15.0.0_a53641a/components/softdevice/common/nrf_sdh_rtthread.c" />
+    </folder>
+    <folder Name="App_ble">
+      <file file_name="../app_ble/app_conn_params/app_conn_params.c" />
+      <file file_name="../config/sdk_config.h" />
+      <file file_name="../app_ble/app_ble_init/app_ble_init.c" />
+    </folder>
+    <folder Name="RT_THREAD">
+      <folder Name="RT_Thread_Startup">
+        <file file_name="../RT_Thread_Startup/board/board.c" />
+        <file file_name="../RT_Thread_Startup/startup/application.c" />
+        <file file_name="../RT_Thread_Startup/startup/startup.c" />
+        <file file_name="../RT_Thread_Startup/uart/uart.c" />
+      </folder>
+      <folder Name="Kernel">
+        <file file_name="../../../../src/clock.c" />
+        <file file_name="../../../../src/device.c" />
+        <file file_name="../../../../src/idle.c" />
+        <file file_name="../../../../src/ipc.c" />
+        <file file_name="../../../../src/irq.c" />
+        <file file_name="../../../../src/kservice.c" />
+        <file file_name="../../../../src/mem.c" />
+        <file file_name="../../../../src/object.c" />
+        <file file_name="../../../../src/scheduler.c" />
+        <file file_name="../../../../src/signal.c" />
+        <file file_name="../../../../src/thread.c" />
+        <file file_name="../../../../src/timer.c" />
+      </folder>
+      <folder Name="DeviceDrivers">
+        <file file_name="../../../../components/drivers/serial/serial.c" />
+        <file file_name="../../../../components/drivers/src/completion.c" />
+        <file file_name="../../../../components/drivers/src/dataqueue.c" />
+        <file file_name="../../../../components/drivers/src/pipe.c" />
+        <file file_name="../../../../components/drivers/src/ringbuffer.c" />
+        <file file_name="../../../../components/drivers/src/waitqueue.c" />
+        <file file_name="../../../../components/drivers/src/workqueue.c" />
+      </folder>
+      <folder Name="CORTEX-M4">
+        <file file_name="../../../../libcpu/arm/cortex-m4/cpuport.c" />
+        <file file_name="../../../../libcpu/arm/common/backtrace.c" />
+        <file file_name="../../../../libcpu/arm/common/div0.c" />
+        <file file_name="../../../../libcpu/arm/common/showmem.c" />
+        <file file_name="../../../../libcpu/arm/cortex-m4/context_gcc.S" />
+      </folder>
+    </folder>
+  </project>
+  <configuration
+    Name="Release"
+    c_preprocessor_definitions="NDEBUG"
+    gcc_optimization_level="Optimize For Size" />
+  <configuration
+    Name="Debug"
+    c_preprocessor_definitions="DEBUG; DEBUG_NRF"
+    gcc_optimization_level="None" />
+</solution>

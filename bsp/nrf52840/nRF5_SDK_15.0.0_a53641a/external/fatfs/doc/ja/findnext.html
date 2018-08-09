@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="up" title="FatFs" href="../00index_j.html">
+<link rel="alternate" hreflang="en" title="English" href="../en/findnext.html">
+<link rel="stylesheet" href="../css_j.css" type="text/css" media="screen" title="ELM Default">
+<title>FatFs - f_findnext</title>
+</head>
+
+<body>
+
+<div class="para func">
+<h2>f_findnext</h2>
+<p>次にマッチするオブジェクトを検索します。</p>
+<pre>
+FRESULT f_findnext (
+  DIR* <span class="arg">dp</span>,              <span class="c">/* [IN] ディレクトリ構造体へのポインタ */</span>
+  FILINFO* <span class="arg">fno</span>          <span class="c">/* [OUT] ファイル情報構造体へのポインタ */</span>
+);
+</pre>
+</div>
+
+<div class="para arg">
+<h4>引数</h4>
+<dl class="par">
+<dt>dp</dt>
+<dd><tt>f_findfirst</tt>関数で作成された有効なディレクトリ構造体へのポインタを指定します。</dd>
+<dt>fno</dt>
+<dd>マッチしたディレクトリ項目を格納するファイル情報構造体へのポインタを指定します。</dd>
+</dl>
+</div>
+
+
+<div class="para ret">
+<h4>戻り値</h4>
+<p>
+<a href="rc.html#ok">FR_OK</a>,
+<a href="rc.html#de">FR_DISK_ERR</a>,
+<a href="rc.html#ie">FR_INT_ERR</a>,
+<a href="rc.html#io">FR_INVALID_OBJECT</a>,
+<a href="rc.html#tm">FR_TIMEOUT</a>,
+<a href="rc.html#nc">FR_NOT_ENOUGH_CORE</a>
+</p>
+</div>
+
+
+<div class="para desc">
+<h4>解説</h4>
+<p>次に名前のマッチするディレクトリ項目を検索し、見つかった項目をファイル情報構造体にストアします。名前のマッチする項目が見つからずディレクトリの最後まで達した場合は、<tt>fno-&gt;fname[]</tt>にヌル文字列が返されます。</p>
+</div>
+
+
+<div class="para comp">
+<h4>対応情報</h4>
+<p>この関数は、<a href="readdir.html"><tt>f_readdir</tt></a>関数のラッパー関数です。<tt>_USE_FIND &gt;= 1</tt>で、かつ<tt>_FS_MINIMIZE &lt;= 1</tt>のとき使用可能になります。</p>
+</div>
+
+
+<div class="para ref">
+<h4>参照</h4>
+<p><tt><a href="findfirst.html">f_findfirst</a>, <a href="closedir.html">f_closedir</a>, <a href="sdir.html">DIR</a>, <a href="sfileinfo.html">FILINFO</a></tt></p>
+</div>
+
+<p class="foot"><a href="../00index_j.html">戻る</a></p>
+</body>
+</html>

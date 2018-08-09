@@ -1,0 +1,283 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="up" title="FatFs" href="../00index_j.html">
+<link rel="alternate" hreflang="en" title="English" href="../en/appnote.html">
+<link rel="stylesheet" href="../css_j.css" type="text/css" media="screen" title="ELM Default">
+<title>FatFsモジュール アプリケーション ノート</title>
+</head>
+
+<body>
+<h1>FatFsモジュール アプリケーション ノート</h1>
+<ol class="toc">
+<li><a href="#port">ポーティングの際に配慮すべきこと</a></li>
+<li><a href="#limits">限界値</a></li>
+<li><a href="#memory">メモリ使用量</a></li>
+<li><a href="#reduce">モジュール サイズの縮小</a></li>
+<li><a href="#lfn">長いファイル名</a></li>
+<li><a href="#exfat">exFATファイルシステム</a></li>
+<li><a href="#unicode">Unicode入出力への対応</a></li>
+<li><a href="#reentrant">リエントランシー</a></li>
+<li><a href="#dup">多重ファイル アクセス</a></li>
+<li><a href="#fs1">効率的なファイル アクセス</a></li>
+<li><a href="#fs2">フラッシュ メモリの特性への配慮</a></li>
+<li><a href="#critical">クリチカル セクション</a></li>
+<li><a href="#fs3">APIの拡張的使用例</a></li>
+<li><a href="#license">FatFsのライセンスについて</a></li>
+</ol>
+
+<div class="para doc" id="port">
+<h3>ポーティングの際に配慮すべきこと</h3>
+
+<h4>ポーティングの際の前提条件</h4>
+<p>FatFsモジュールはポータビリティに関して次の点を前提としています。</p>
+<ul>
+<li>処理系はANSI C準拠であること。<br>
+FatFsモジュールはANSI C(C89)準拠で記述されているので、普通のCコンパイラなら特に処理系依存になる点はありません。</li>
+<li>char/short/longのサイズは、それぞれ8/16/32ビットで、intは16または32ビットであること。<br>
+これについても、まっとうな処理系なら問題ないはずです。FatFsモジュールで使用されるサイズを明示する整数型が integer.h 内で定義されていますが、既存の定義と衝突した場合はユーザによって解決されなければなりません。</li>
+</ul>
+
+<h4>システム構成</h4>
+<p>下に示す依存関係図は、FatFsモジュール利用の組み込みシステムにおける代表的な構成を示します。</p>
+<p><img src="../res/modules.png" width="580" height="280" alt="システム構成図"></p>
+<p>(a) FatFs用に書かれたディスク モジュールがある場合は、そのまま追加するだけです。 (b) しかし、多くの既存のディスク モジュールはそのAPIをFatFsに合わせるため、グルー関数が必要になるでしょう。</p>
+<p><img src="../res/funcs.png" width="750" height="420" alt="functional diagram"></p>
+
+<h4>ユーザの作成する関数</h4>
+<p>ポーティング作業は、要求されるデバイス制御関数を用意することが全てで、それ以外にすることは何もありません。既に動作しているデバイス制御モジュールがあるなら、そのインターフェースをFatFsに合わせるかグルー関数を介してつなぐだけで済みますが、無い場合はほかから移植するか最初から書くかする必要があります。定義されている全ての関数が常に必要なわけではありません。例えば、リード オンリ構成では書き込み系関数は必要ありません。次の表に構成オプションと要求される関数の対応を示します。</p>
+<table class="lst2">
+<tr><th>必要な関数</th><th>必要となる条件</th><th>備考</th></tr>
+<tr><td>disk_status<br>disk_initialize<br>disk_read</td><td>常時</td><td rowspan="5">ffsample.zip (サンプル)<br>その他web上に多数</td></tr>
+<tr><td>disk_write<br>get_fattime<br>disk_ioctl (CTRL_SYNC)</td><td>_FS_READONLY == 0</td></tr>
+<tr><td>disk_ioctl (GET_SECTOR_COUNT)<br>disk_ioctl (GET_BLOCK_SIZE)</td><td>_USE_MKFS == 1</td></tr>
+<tr><td>disk_ioctl (GET_SECTOR_SIZE)</td><td>_MAX_SS != _MIN_SS</td></tr>
+<tr><td>disk_ioctl (CTRL_TRIM)</td><td>_USE_TRIM == 1</td></tr>
+<tr><td>ff_convert<br>ff_wtoupper</td><td>_USE_LFN != 0</td><td>option/unicode.cをプロジェクトに<br>加えればよい</td></tr>
+<tr><td>ff_cre_syncobj<br>ff_rel_grant<br>ff_req_grant<br>ff_del_syncobj</td><td>_FS_REENTRANT == 1</td><td rowspan="2">option/syscall.c (サンプル)</td></tr>
+<tr><td>ff_mem_alloc<br>ff_mem_free</td><td>_USE_LFN == 3</td></tr>
+</table>
+</div>
+
+<div class="para doc" id="limits">
+<h3>限界値</h3>
+<ul>
+<li>ファイルシステム: FAT12, FAT16, FAT32(r0.0) および exFAT(r1.0)。</li>
+<li>同時オープン ファイル数: 無制限。(利用可能メモリによる)</li>
+<li>同時マウント ボリューム数: 最大 10。</li>
+<li>ファイル サイズ: 最大 4GiB - 1 (FATボリューム) および、事実上無制限(exFATボリューム)。</li>
+<li>ボリューム サイズ: 最大 2TiB (512B/セクタ時)。</li>
+<li>クラスタ サイズ: 最大 128セクタ (FATボリューム) および、最大 16MiB (exFATボリューム)。</li>
+<li>セクタ サイズ: 512B, 1KiB, 2KiB, 4KiB。</li>
+</ul>
+</div>
+
+<div class="para doc" id="memory">
+<h3>メモリ使用量</h3>
+<p>次の表にいくつかのターゲットにおけるメモリ使用量の例を示します。テスト時の構成オプションはその下の通りです。数値の単位はバイトで、<em>V</em>はボリューム数、<em>F</em>は同時オープン ファイル数を示します。コンパイラの最適化オプションはコード サイズとしています。</p>
+<table class="lst2">
+<tr><th></th><th>ARM7<small><br>32bit</small></th><th>ARM7<small><br>Thumb</small></th><th>CM3<small><br>Thumb-2</small></th><th>AVR</th><th>H8/300H</th><th>PIC24</th><th>RL78</th><th>V850ES</th><th>SH-2A</th><th>RX600</th><th>IA-32</th></tr>
+<tr class="cal">     <td>Compiler</td><td>GCC</td><td>GCC</td><td>GCC</td><td>GCC</td><td>CH38</td><td>C30</td><td>CC78K0R</td><td>CA850</td><td>SHC</td><td>RXC</td><td>MSC</td></tr>
+<!--                                                      ARM        Thumb          CM3           AVR            H8          PIC24          RL78       V850ES        SH-2A        RX600        IA-32   -->
+<tr class="ral"><td class="cal">text (Full, R/W)</td><td>10.4k</td><td>6.8k</td><td>6.3k</td><td>12.4k</td> <td>9.8k</td><td>11.1k</td><td>12.8k</td><td>8.6k</td><td>8.9k</td><td>6.4k</td><td>8.5k</td></tr>
+<tr class="ral"><td class="cal">text (Min, R/W)</td>  <td>6.8k</td><td>4.6k</td><td>4.3k</td> <td>8.2k</td> <td>6.7k</td> <td>7.6k</td> <td>9.1k</td><td>6.0k</td><td>5.9k</td><td>4.5k</td><td>5.9k</td></tr>
+<tr class="ral"><td class="cal">text (Full, R/O)</td> <td>4.8k</td><td>3.1k</td><td>2.8k</td> <td>5.6k</td> <td>4.6k</td> <td>5.3k</td> <td>6.3k</td><td>4.0k</td><td>3.9k</td><td>3.0k</td><td>3.9k</td></tr>
+<tr class="ral"><td class="cal">text (Min, R/O)</td>  <td>3.6k</td><td>2.4k</td><td>2.3k</td> <td>4.4k</td> <td>3.5k</td> <td>4.0k</td> <td>4.9k</td><td>3.3k</td><td>3.0k</td><td>2.4k</td><td>3.1k</td></tr>
+<tr class="ral"><td class="cal">bss</td><td>V*4 + 2</td><td>V*4 + 2</td><td>V*4 + 2</td><td>V*2 + 2</td><td>V*4 + 2</td><td>V*2 + 2</td><td>V*2 + 2</td><td>V*4 + 2</td><td>V*4 + 2</td><td>V*4 + 2</td><td>V*4 + 2</td></tr>
+<tr class="ral"><td class="cal">Work area<br><small>(_FS_TINY == 0)</small></td><td>V*564<br>+ F*552</td><td>V*564<br>+ F*552</td><td>V*564<br>+ F*552</td><td>V*560<br>+ F*546</td><td>V*560<br>+ F*546</td><td>V*560<br>+ F*546</td><td>V*560<br>+ F*546</td><td>V*564<br>+ F*552</td><td>V*564<br>+ F*552</td><td>V*564<br>+ F*552</td><td>V*564<br>+ F*552</td></tr>
+<tr class="ral"><td class="cal">Work area<br><small>(_FS_TINY == 1)</small></td><td>V*564<br>+ F*40</td><td>V*564<br>+ F*40</td><td>V*564<br>+ F*40</td><td>V*560<br>+ F*34</td><td>V*560<br>+ F*34</td><td>V*560<br>+ F*34</td><td>V*560<br>+ F*34</td><td>V*564<br>+ F*40</td><td>V*564<br>+ F*40</td><td>V*564<br>+ F*40</td><td>V*564<br>+ F*40</td></tr>
+</table>
+<pre>
+FatFs R0.12b options:
+_FS_READONLY   0 (R/W) or 1 (R/O)
+_FS_MINIMIZE   0 (Full, with all basic functions) or 3 (Min, with fully minimized)
+_FS_TINY       0 (Default) or 1 (Tiny file object)
+And any other options are left not changed from default setting.
+</pre>
+</div>
+
+<div class="para doc" id="reduce">
+<h3>モジュール サイズの縮小</h3>
+<p>次の表は<a href="config.html">構成オプション</a>の設定値によりどの機能が削除されるかを示します。API関数の行にxが無ければその関数は使用可能です。</p>
+<table class="lst2">
+<tr><td rowspan="2">Function</td><td colspan="4">_FS_<br>MINIMIZE</td><td colspan="2">_FS_<br>READONLY</td><td colspan="2">_USE_<br>STRFUNC</td><td colspan="3">_FS_<br>RPATH</td><td colspan="2">_USE_<br>FIND</td><td colspan="2">_USE_<br>CHMOD</td><td colspan="2">_USE_<br>EXPAND</td><td colspan="2">_USE_<br>LABEL</td><td colspan="2">_USE_<br>MKFS</td><td colspan="2">_USE_<br>FORWARD</td><td colspan="2">_MULTI_<br>PARTITION</td></tr>
+<tr>                    <td>0</td><td>1</td><td>2</td><td>3</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>2</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+<tr class="lst3">
+    <td>f_mount</td>    <td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_open</td>     <td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_close</td>    <td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_read</td>     <td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_write</td>    <td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_sync</td>     <td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_lseek</td>    <td> </td><td> </td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_opendir</td>  <td> </td><td> </td><td>x</td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_closedir</td> <td> </td><td> </td><td>x</td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_readdir</td>  <td> </td><td> </td><td>x</td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_findfirst</td><td> </td><td> </td><td>x</td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_findnext</td> <td> </td><td> </td><td>x</td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_stat</td>     <td> </td><td>x</td><td>x</td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_getfree</td>  <td> </td><td>x</td><td>x</td><td>x</td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_truncate</td> <td> </td><td>x</td><td>x</td><td>x</td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_unlink</td>   <td> </td><td>x</td><td>x</td><td>x</td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_mkdir</td>    <td> </td><td>x</td><td>x</td><td>x</td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_rename</td>   <td> </td><td>x</td><td>x</td><td>x</td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_chdir</td>    <td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_chdrive</td>  <td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_getcwd</td>   <td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_chmod</td>    <td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_utime</td>    <td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_getlabel</td> <td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_setlabel</td> <td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_expand</td>   <td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_forward</td>  <td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_mkfs</td>     <td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_fdisk</td>    <td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td> </td><td> </td><td> </td><td>x</td><td> </td></tr>
+<tr><td>f_putc</td>     <td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_puts</td>     <td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_printf</td>   <td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+<tr><td>f_gets</td>     <td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td>x</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+</table>
+</div>
+
+<div class="para doc" id="lfn">
+<h3>長いファイル名</h3>
+<p>FatFsモジュールは、長いファイル名(LFN)をサポートします。ファイルに付けられた2つの異なる名前(短いファル名と長いファイル名)は、<tt>f_readdir</tt>関数を除くファイル操作関数において透過です。デフォルト構成では、LFN機能はOFFになっています。LFN機能を有効にするには、<tt><a href="config.html#use_lfn">_USE_LFN</a></tt>を1,2または3に設定し、<tt>option/unicode.c</tt>をプロジェクトに追加します。LFN機能は、加えてある程度のワーク エリア(LFN操作バッファ)を必要とします。バッファ長は使用できるメモリに応じて<tt><a href="config.html#max_lfn">_MAX_LFN</a></tt>で構成されることができます。LFNの長さは最大255文字に達するので、LFN完全対応のためには<tt>_MAX_LFN</tt>は255に設定されるべきです。与えられたファイル名に対してバッファ長が不足した場合、ファイル関数は<tt>FR_INVALID_NAME</tt>で失敗します。</p>
+<p>ファイル関数に再入を行う条件の下でLFN機能を使用する場合は、<tt>_USE_LFN</tt>は2または3に設定されなければなりません。この場合、ファイル関数はワーク エリアを動的に確保(スタックまたはヒープ)します。ワーク エリアのサイズは、<tt>(_MAX_LFN + 1) * 2</tt>バイト(exFAT利用時はさらに+608バイト)になるので、スタック等のサイズはそれを考慮した十分な余裕がなければなりません。</p>
+<table class="lst2 rset">
+<caption>LFN構成 at CM3</caption>
+<tr><th><tt>_CODE_PAGE</tt></th><th>追加コード</th></tr>
+<tr><td>SBCS</td><td>+2.8K</td></tr>
+<tr><td>932(Shift_JIS)</td><td>+62.6k</td></tr>
+<tr><td>936(GBK)</td><td>+177k</td></tr>
+<tr><td>949(Korean)</td><td>+139k</td></tr>
+<tr><td>950(Big5)</td><td>+111k</td></tr>
+</table>
+<p>LFN機能の上手な使い方は、それを使わないということです。実際、組み込み用途ではLFN機能がどうしても必要になるということはほとんど無いはずです。LFNを有効にすると、選択されたコード ページに応じてモジュール サイズが増大します。右の表に各コード ページにおけるLFNを有効にしたときのモジュール サイズの違いを示します。特に、CJK地域では数万の文字が使われていますが、不幸なことにそれは巨大なOEM－Unicode相互変換テーブルを要求し、モジュール サイズは劇的に増大します。その結果、それらのコード ページにおいてLFNを有効にしたFatFsモジュールは、多くの8ビット マイコンにインプリメントすることができません。</p>
+<p>LFN機能のハードルはそれだけではありません。マイクロソフト社はFATファイルシステムについていくつかの特許を保有しています。いずれもLFN機能の実装に関するもので、その利用に対して$0.25/unitのライセンス料を要求しています。このため、商用製品でLFN機能を利用する場合は、製品の最終仕向地によってはライセンスが必要になります。最近のFAT32ドライバの多くはLFN機能を含んでいるため、それらの使用に当たってライセンスが必要になりますが、FatFsは構成オプションでLFN機能を任意にON/OFFできるため、無効にしてライセンス問題を回避することもできます。</p>
+</div>
+
+<div class="para doc" id="unicode">
+<h3>Unicode入出力への対応</h3>
+<p>FatFs API上におけるファイル名等の文字列データの入出力は、デフォルトではANSI/OEMコードで行われますが、これをUnicode(UTF-16)に切り替えることもできます(<tt><a href="config.html#lfn_unicode">_LFN_UNICODE</a></tt>で設定)。つまり、これはFatFsがLFN機能に完全対応していることを意味します。Unicodeのファイル名に関する詳細は、<a href="filename.html#uni">パス名のフォーマット</a>を参照してください。</p>
+</div>
+
+<div class="para doc" id="exfat">
+<h3>exFATファイルシステム</h3>
+<p>exFAT(Microsoft's Extended File Allocation Table)ファイルシステムは、既に組み込みシステムや情報家電で広く使われているFATファイルシステムを置き換える目的で開発されました。exFATは、64GiB以上のSDメモリ カードで標準ファイルシステムに採用されるなど、FATに並びリムーバブル メディアの標準ファイルシステムの一つとなりつつあります。</p>
+<p>exFATボリュームでは、FATボリュームで制約となっていた4GiB以上のサイズのファイルを扱え、ファイルシステムのオーバーヘッド(特にファイル アロケーション ディレイ)も大幅に低減され、書き込みスループットがFATより向上しています。しかし、現リビジョンのFatFsでは、実装上の理由から不連続ファイルへのサイズ拡大を伴う書き込み時のとき、スループットがFATより低下します。<tt>f_expand</tt>関数による連続領域の割り当て機能は、この問題の回避に有効かもしれません。</p>
+<p>exFATはマイクロソフト社が開発したものなので、マイクロソフト社はexFATについていくつかの特許を保有しています。FatFsのexFAT機能は、それの US. Pat. App. Pub. No. 2009/0164440 A1 に基づいた実装です。このため、商用製品でexFAT機能を利用する場合、製品の最終仕向地によってはライセンスが必要になります。最近のFATドライバの多くはexFAT機能を含んでいるため、それらの使用に当たってライセンスが必要になりますが、FatFsは構成オプションでexFAT機能を任意にON/OFFできるため、無効にしてライセンス問題を回避することもできます。</p>
+<p><em>exFATを有効にすると、FatFsモジュールのC89互換は失われます(64ビット整数型が必要なため)。</em></p>
+</div>
+
+<div class="para doc" id="reentrant">
+<h3>リエントランシー</h3>
+<p>互いに異なるボリュームに対するファイル操作は、<tt>_USE_LFN == 1</tt>を除いて構成にかかわらずリエントラントで、常に同時平行に動作できます。</p>
+<p>同じボリュームに対してはデフォルトではリエントラントではありませんが、<tt><a href="config.html#fs_reentrant">_FS_REENTRANT</a></tt>でリエントラント(スレッド セーフ)にすることはできます。この場合、OS依存の同期オブジェクト操作関数<tt>ff_cre_syncobj, ff_del_syncobj, ff_req_grant, ff_rel_grant</tt>関数もまたプロジェクトに追加されなければなりません。サンプル コードと解説は<tt>option/syncobj.c</tt>にあります。</p>
+<p>この場合、あるタスクがボリュームを使用中に他のタスクからそのボリュームに対するファイル関数が呼び出されると、そのアクセスは先のタスクがファイル関数を抜けるまでサスペンドされます。待ち時間が<tt>_TIMEOUT</tt>で指定された期間を越えた場合、その関数は<tt>FR_TIMEOUT</tt>でアボートします。いくつかのRTOSではタイムアウト機能はサポートされないかも知れません。</p>
+<p>ひとつの例外が<tt>f_mount, f_mkfs, f_fdisk</tt>関数にあります。これらのボリューム制御関数は同じボリューム(または関連する物理ドライブ)に対してリエントラントではありません。これらの関数を使用するときは、アプリケーション レベルで排他制御しなければなりません。</p>
+<p>注: このセクションはFatFsモジュールそれ自体のリエントランシーについて説明しています。<tt>_FS_REENTRANT</tt>は、各ファイルシステム オブジェクトの排他制御を行うのみで、下位のディスク関数への再入を防止するものではありません。たとえば、シングル ボリューム構成では<tt>disk_status</tt>関数のみ再入される可能性があり、マルチ ボリューム構成ではどのディスク関数も再入される可能性があります。このように、複数のタスクから同時にFatFs APIを使う条件では、ディスクI/Oモジュールはスレッド セーフである必要があります。</p>
+</div>
+
+<div class="para doc" id="dup">
+<h3>多重ファイル アクセス</h3>
+<p>FatFsモジュールではデフォルトでは多重アクセス制御機能をサポートしていません。ファイルに対する多重アクセスは、そのアクセス モードによって制限されます。一つのファイルに対する多重オープンは、それらが全てリード モードのときに限って許可されます。書き込みモードを含む多重オープン、また開かれているファイルに対するリネームや削除を行ってはなりません。さもないと、そのボリュームのFAT構造が破壊される可能性があります。</p>
+<p><tt><a href="config.html#fs_lock">_FS_LOCK</a></tt>に1以上の値(値は同時に管理できるファイル数)をセットすることで多重アクセス制御機能が有効になり、ファイル単位のアクセス制御を自動で行うこともできます。この場合、上記のルールを破ったオープン・リネーム・削除を試みると、その関数は<tt>FR_LOCKED</tt>で失敗します。また、<tt>_FS_LOCK</tt>を越える数のファイルやサブ ディレクトリを同時にオープンしようとすると、<tt>FR_TOO_MANY_OPEN_FILES</tt>で失敗します。</p>
+</div>
+
+<div class="para doc" id="fs1">
+<h3>効率的なファイル アクセス</h3>
+<p>小規模な組込システムでのファイルの読み書きにおける効率の良いアクセスのため、アプリケーション プログラマはFatFsモジュールの中でどのような処理が行われているか考慮すべきです。ストレージ上のデータは<tt>f_read</tt>関数により次のシーケンスで転送されます。</p>
+<p>図1. セクタ ミスアラインド リード (ショート)<br>
+<img src="../res/f1.png" width="490" height="110" alt="fig.1">
+</p>
+<p>図2. セクタ ミスアラインド リード (ロング)<br>
+<img src="../res/f2.png" width="490" height="140" alt="fig.2">
+</p>
+<p>図3. セクタ アラインド リード<br>
+<img src="../res/f3.png" width="490" height="119" alt="fig.3">
+</p>
+<p>ファイルI/Oバッファはセクタの一部のデータを読み書きするためのセクタ バッファを意味します。セクタ バッファは、それぞれのファイル オブジェクト内のプライベート セクタ バッファまたはファイルシステム オブジェクト内の共有セクタ バッファのどちらかです。バッファ構成オプションの<tt><a href="config.html#fs_tiny">_FS_TINY</a></tt>は、データ転送にどちらを使うかを決定します。タイニー バッファ(1)が選択されるとデータ メモリの消費はそれぞれのファイル オブジェクトで<tt>_MAX_SS</tt>バイト減少されます。この場合、FatFsモジュールはファイル データの転送とFAT/ディレクトリ アクセスにファイルシステム オブジェクト内のセクタ バッファだけを使用します。タイニー バッファの欠点は、セクタ バッファにキャッシュされたFATデータがファイル データの転送により失われ、クラスタ境界の毎にリロードされなければならないことです。でも、悪くない性能と少ないメモリ消費の視点から多くのアプリケーションに適するでしょう。</p>
+<p>図1はセクタの一部のデータがファイルI/Oバッファを経由で転送されることを示します。図2に示される長いデータの転送では、転送データの中間の1セクタまたはそれ以上のセクタにまたがる転送データがアプリケーション バッファに直接転送されています。図3は転送データ全体がセクタ境界にアライメントされている場合を示しています。この場合、ファイルI/Oバッファは使用されません。直接転送においては最大の範囲のセクタが<tt>disk_read</tt>関数で一度に読み込まれますが、クラスタ境界を越えるマルチ セクタ転送はそれが隣接であっても行われません。</p>
+<p>このように、セクタにアライメントしたファイルの読み書きへの配慮はバッファ経由のデータ転送を避け、読み書き性能は改善されるでしょう。その効果に加え、タイニー構成でキャッシュされたFATデータがファイル データの転送によりフラッシュされず、非タイニー構成と同じ性能を小さなメモリ フットプリントで達成できます。</p>
+</div>
+
+<div class="para doc" id="fs2">
+<h3>フラッシュ メモリの特性への配慮</h3>
+<p>HDDなどのディスク メディアとは異なり、SDCやCFCなどのフラッシュ メモリ メディアの性能を引き出すには、その特性を意識した制御が必要になります。</p>
+<h4>マルチ セクタ書き込み</h4>
+<div class="rset">
+図6. マルチ/シングル セクタ ライトの比較<br>
+<img src="../res/f6.png" width="630" height="148" alt="fig.6">
+</div>
+<p>フラッシュ メモリ メディアの書き込み速度はシングル セクタ書き込みの時に最も低いものになり、一回のトランザクションで転送されるセクタ数が大きくなるほど書き込み速度は向上します(図6)。この効果はバス速度が高速になるほど大きく、10倍以上の差が現れることも珍しくありません。<a href="../res/rwtest2.png">テスト結果</a>は、マルチ セクタ書き込み(W:16K, 32 sectors)がシングル セクタ書き込み(W:100, 1 sector)よりどの程度速いかを明確に示しています。大容量メディアほどシングル セクタ書き込みが遅くなる点もまた重要です。書き込みトランザクションの回数はまた、メディアの寿命にも影響してきます。つまり、同じ量のデータを書き込む場合、図6上のシングル セクタ書き込みは、図6下のマルチ セクタ書き込みに比べて16倍早くフラッシュ メモリ メディアを消耗させてしまうということです。</p>
+<p>このように、アプリケーションはなるべく大きなブロック(クラスタ サイズまたは2の累乗セクタ境界にアライメントした)で読み書きを行う必要があります。もちろん、アプリケーションからメディアに至る全てのレイヤがマルチ セクタ転送に対応していないと意味がありません。残念ながら、既存のオープン ソースのドライバの多くはマルチ セクタ転送に未対応です。なお、FatFsモジュールおよびサンプル ドライバはマルチ セクタ転送に対応しています。</p>
+<h4>明示的なメモリ消去</h4>
+<p>通常のファイル消去では、記録されたデータに対して何らかの処理が行われるわけではなく、単にFAT上にその領域を未使用と記録しているだけです。このため、ファイルが消去されたあともそれらは有効なデータ ブロックとしてフラッシュ メモリ上に残ります。そこで、ファイルを消去するとき、占有していたデータ セクタを明示的に消去(つまり未使用ブロックにする)することにより、メディア内の空きブロックを増やすことができます。これにより、次にそのブロックに書き込むときの消去動作が無くなり、書き込み性能が向上する可能性があります。また、ウェアレベリングに使えるブロックが増え、メディアの耐久性も向上するかも知れません。この機能を有効にするには、<tt><a href="config.html#use_trim">_USE_TRIM</a></tt>に1を設定します。これはフラッシュ メモリ ドライブの内部動作に期待した制御なので、効果があるとは限りません。また、ファイル消去の時間が延びることも考慮に入れるべきです。</p>
+</div>
+
+<div class="para doc" id="critical">
+<h3>クリチカル セクション</h3>
+<p>ストレージ上のFAT構造を操作している途中で、停電、不正なメディアの取り外し、回復不能なデータ エラー等の障害が発生すると、処理が中途半端な状態で中断され、その結果としてFATボリュームの構造が破壊される可能性があります。次にFatFsモジュールにおけるクリチカル セクションと、その間の障害により起きうるエラーの状態を示します。</p>
+<div class="lset">
+図4. 長いクリチカル セクション<br>
+<img src="../res/f4.png" width="320" height="436" alt="fig.4">
+</div>
+<div class="lset">
+図5. 最小化したクリチカル セクション<br>
+<img src="../res/f5.png" width="320" height="436" alt="fig.5">
+</div>
+<br class="clr">
+<p>赤で示したセクションを実行中に中断が発生した場合、クロス リンクが発生して操作中のファイルやディレクトリが失われる可能性があります。黄色で示したセクションを実行中に中断が発生した場合、次のうちいずれかまたは複数の結果が生じる可能性があります。</p>
+<ul>
+<li>ファイルの一部を書き換え中: 書き換えが中途半端な状態となり、結果データが破壊される。</li>
+<li>追記モードでデータ記録中: ファイルが記録開始の前の状態に戻る。</li>
+<li>新規作成したファイルに記録中: そのファイルが消える。</li>
+<li>新規または上書きで作成したファイルに記録中: ファイルの長さがゼロになって残る。</li>
+<li>これらの障害の結果、ロスト クラスタが発生してボリュームの利用効率が悪化する。</li>
+</ul>
+<p>いずれの場合も操作の対象でないファイルには影響はありません。これらのクリチカル セクションは、ファイルを書き込みモードで開いている時間を最小限にするか、<tt>f_sync</tt>関数を適宜使用することで図5のようにリスクを最小化することができます。</p>
+</div>
+
+<div class="para doc" id="fs3">
+<h3>APIの拡張的使用例</h3>
+<p>FatFs APIの拡張的使用例です。有用なコードがあった場合は、随時追加していきます。。</p>
+<ol>
+<li><a href="../res/app1.c">追記モードでのオープン/新規作成</a>(R0.12以前)</li>
+<li><a href="../res/app2.c">ディレクトリを空にする</a></li>
+<li><a href="../res/app3.c">ファイルに連続領域を割り当てる</a>(R0.11a以前)</li>
+<li><a href="../res/app4.c">ディスクI/Oモジュールの機能/互換性チェッカー</a></li>
+<li><a href="../res/mkfatimg.zip">FATイメージ作成ツール</a></li>
+</ol>
+</div>
+
+<div class="para doc" id="license">
+<h3>FatFsのライセンスについて</h3>
+<p>FatFsは、作者(ChaN)の個人プロジェクトとして開発されています。現在までのリビジョンにおいてコントリビューターはいないため、作者以外の書いたソース コードは含まれません。ソース ファイルにライセンス条件が記述されているので、利用の際はそれに従うこと。原文は英語ですが、参考までに以下に日本語訳を示しておきます。</p>
+<pre>
+/*----------------------------------------------------------------------------/
+/  FatFs - Generic FAT file system module  R0.12a                             /
+/-----------------------------------------------------------------------------/
+/
+/ Copyright (C) 2016, ChaN, all right reserved.
+/
+/ FatFsモジュールはオープンソースソフトウェアです。FatFsの再配布および使用は、
+/ ソースコードかバイナリ形式か、また変更の有無にかかわらず、次の条件が満たされ
+/ る場合に限り許可されます。
+/
+/ 1. ソースコードで再配布するときは、その中に上記の著作権表示、この条件、および
+/    次の免責事項を保持すること。
+/ 
+/ このソフトウェアは、著作権者らおよびコントリビューターらによって<em>現状のまま</em>
+/ 提供されており、<em>いかなる保証もありません</em>。
+/ 著作権者もコントリビューターも、このソフトウェアの使用により発生するいかなる
+/ 損害についても、<em>責任を負いません</em>。
+/----------------------------------------------------------------------------*/
+</pre>
+<p>このようにFatFsはBSDライクなライセンスとしていますが、一つ大きな違いがあります。FatFsは主に組み込み向けとして開発されたため、バイナリ形式(ソース コードを含まない形式全て)での再配布については、商用での使いやすさを考慮して配布時の条件を設けていません。つまり、バイナリ配布の場合は、FatFsおよびそのライセンス文書についてドキュメントに明記してもしなくてもかまいません。これは、一条項BSDライセンスと等価ということです。もちろん、GNU GPLなどほとんど全てのオープン ソース ライセンスの下のプロジェクトにおいて共存可能です。FatFsからフォークを作成し公開する場合は、矛盾しない他のオープン ソース ライセンス(GNU GPLや修正BSDライセンスなど)に変更することも可能です。</p>
+</div>
+
+<p class="foot"><a href="../00index_j.html">戻る</a></p>
+</body>
+</html>

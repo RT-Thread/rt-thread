@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="up" title="FatFs" href="../00index_j.html">
+<link rel="alternate" hreflang="en" title="English" href="../en/mkfs.html">
+<link rel="stylesheet" href="../css_j.css" type="text/css" media="screen" title="ELM Default">
+<title>FatFs - f_mkfs</title>
+</head>
+
+<body>
+
+<div class="para func">
+<h2>f_mkfs</h2>
+<p>論理ドライブ上にFAT/exFATボリュームを作成(フォーマット)します。</p>
+<pre>
+FRESULT f_mkfs (
+  const TCHAR* <span class="arg">path</span>,  <span class="c">/* [IN] 論理ドライブ番号 */</span>
+  BYTE  <span class="arg">opt</span>,          <span class="c">/* [IN] フォーマット オプション */</span>
+  DWORD <span class="arg">au</span>,           <span class="c">/* [IN] クラスタ サイズ */</span>
+  void* <span class="arg">work</span>,         <span class="c">/* [-]  ワーク エリア */</span>
+  UINT <span class="arg">len</span>            <span class="c">/* [IN] ワーク エリアのサイズ */</span>
+);
+</pre>
+</div>
+
+<div class="para arg">
+<h4>引数</h4>
+<dl class="par">
+<dt>path</dt>
+<dd>フォーマット対象の論理ドライブを示す<a href="filename.html">パス名</a>を示すヌル文字<tt>'\0'</tt>終端の文字列へのポインタを指定します。ドライブ番号を含まない場合は、デフォルト ドライブを意味します。論理ドライブには<tt>f_mount</tt>関数でワークエリアが与えられている必要はありません。</dd>
+<dt>opt</dt>
+<dd>フォーマット オプション。<tt>FM_FAT, FM_FAT32, FM_EXFAT</tt>の各フラグの組み合わせ(<tt>FM_ANY</tt>は、これらのOR値)で作成するFATボリュームのタイプを指定します。複数のタイプが指定された場合、その中のいずれかが自動選択されます。exFATが無効のときは、<tt>FM_EXFAT</tt>は無視されます。<tt>FM_SFD</tt>フラグを指定すると、SFD形式(後述)でボリュームを配置します。</dd>
+<dt>au</dt>
+<dd>クラスタ サイズをバイト単位で指定します。有効値は、セクタ サイズのN倍となります。Nは2の累乗で、FAT/FAT32ボリュームでは1～128、exFATボリュームでは1～32768です。0を指定した場合は、ボリュームのサイズと選択されたFATタイプに応じたデフォルトのクラスタ サイズが選択されます。</dd>
+<dt>work</dt>
+<dd>ワークエリアへのポインタを指定します。</dd>
+<dt>len</dt>
+<dd>ワークエリアのサイズをバイト単位で指定します。ワークエリアのサイズは少なくとも関連するドライブのセクタサイズは必要です。また、十分に大きなサイズを与えることにより、書き込みトランザクションの回数が減ってフォーマット時間を短縮できます。</dd>
+</dl>
+</div>
+
+<div class="para ret">
+<h4>戻り値</h4>
+<p>
+<a href="rc.html#ok">FR_OK</a>,
+<a href="rc.html#de">FR_DISK_ERR</a>,
+<a href="rc.html#nr">FR_NOT_READY</a>,
+<a href="rc.html#ma">FR_MKFS_ABORTED</a>,
+<a href="rc.html#ip">FR_INVALID_PARAMETER</a>
+</p>
+</div>
+
+<div class="para desc">
+<h4>説明</h4>
+<p>exFAT以外のボリュームのFATタイプ(FAT12/FAT16/FAT32)は、そのボリューム上の<em>クラスタ数によってのみ決定</em>される決まり[FAT仕様書より]になっていて、それ以外の要因はありません。したがって、どのFATタイプになるかはボリューム サイズとクラスタ サイズに依存します。そのボリュームのサイズにおいて、指定されたFATタイプとクラスタ サイズの組み合わせが成立し得ないときは、関数は<tt>FR_MKFS_ABORTED</tt>で失敗します。</p>
+<p>クラスタとは、データ格納領域の管理の単位のことで、これを単位にファイルにデータ領域が割り当てられます。たとえば、クラスタ サイズが32768のときは、100バイトのファイルも32768バイトのスペースを消費することになります。このように、クラスタ サイズを大きくするほどボリュームの利用効率が悪くなりますが、その一方で読み書きの性能は上がります。クラスタ サイズによる利用効率と性能はトレード オフの関係にあります。GBクラスのストレージでは、極端に多くのファイルを扱わない限り32768バイト以上に(デフォルト指定ではそのようになる)しておくとよいでしょう。</p>
+<p>パーテーション形式には、FDISK形式とSFD形式の二通りあります。FDISK形式は、ハードディスク、マルチメディアカード、SDカード、CFカード、USBメモリなどで標準的に使用されます。FDISK形式では一台の物理ドライブ上に一つまたは複数の区画を作成することができ、区画管理情報はMBR(物理ドライブの先頭セクタ)に記録されます。SFD形式は単に何の分割も行わない形式で、ボリュームは物理ドライブの先頭セクタから開始します。SFD形式は、フロッピー ディスク、マイクロドライブ、光学ディスク、およびその他スーパー フロッピー メディアで標準的に使用されています。システムによっては、FDISK形式またはSFD形式のどちらか一方のみをサポートし他方をサポートしません。</p>
+<p><tt>FM_SFD</tt>が指定されないときはFDISK形式となり、その物理ドライブ全体を占める1個の基本区画(パーテーション)が作成され、その中にFATボリュームが作成されます。<tt>FM_SFD</tt>が指定されたときはSFD形式となり、FATボリュームがその物理ドライブの先頭セクタからベタで作成されます。</p>
+<p>マルチ パーテーション機能(<tt><a href="config.html#multi_partition">_MULTI_PARTITION</a></tt>)により、その論理ドライブが特定の区画(1～4)に結び付けられている場合は、その区画の中にFATボリュームが作成されます。<tt>FM_SFD</tt>の指定は無視され、その物理ドライブはこれに先立ち、<tt>f_fdisk</tt>関数または他のツールで適切に区画設定されている必要があります。</p>
+</div>
+
+<div class="para comp">
+<h4>対応情報</h4>
+<p><tt>_FS_READONLY == 0</tt>で、且つ<tt>_USE_MKFS == 1</tt>のとき使用可能です。</p>
+</div>
+
+
+<div class="para use">
+<h4>使用例</h4>
+<pre>
+<span class="c">/* Format default drive and create a file */</span>
+int main (void)
+{
+    FATFS fs;           <span class="c">/* File system object */</span>
+    FIL fil;            <span class="c">/* File object */</span>
+    FRESULT res;        <span class="c">/* API result code */</span>
+    UINT bw;            <span class="c">/* Bytes written */</span>
+    BYTE work[_MAX_SS]; <span class="c">/* Work area (larger is better for process time) */</span>
+
+
+    <span class="c">/* Create FAT volume */</span>
+    res = f_mkfs("", FM_ANY, 0, work, sizeof work);
+    if (res) ...
+
+    <span class="c">/* Register work area */</span>
+    f_mount(&amp;fs, "", 0);
+
+    <span class="c">/* Create a file as new */</span>
+    res = f_open(&amp;fil, "hello.txt", FA_CREATE_NEW | FA_WRITE);
+    if (res) ...
+
+    <span class="c">/* Write a message */</span>
+    f_write(&amp;fil, "Hello, World!\r\n", 15, &amp;bw);
+    if (bw != 15) ...
+
+    <span class="c">/* Close the file */</span>
+    f_close(&amp;fil);
+
+    ...
+</pre>
+</div>
+
+
+<div class="para ref">
+<h4>参照</h4>
+<p><a href="../res/mkfs.xls">ボリューム サイズとフォーマット パラメータ</a>, <a href="filename.html#vol">ボリューム管理</a>, <tt><a href="fdisk.html">f_fdisk</a></tt></p>
+</div>
+
+
+<p class="foot"><a href="../00index_j.html">戻る</a></p>
+</body>
+</html>

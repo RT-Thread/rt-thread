@@ -26,3 +26,6 @@ tools/kconfig-frontends/kconfig-mconf
 packages
 cconfig.h
 GPUCache
+Output
+*.emSession
+*.jlink

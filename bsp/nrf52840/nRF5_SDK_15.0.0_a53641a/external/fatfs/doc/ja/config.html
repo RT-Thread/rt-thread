@@ -1,0 +1,209 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="up" title="FatFs" href="../00index_j.html">
+<link rel="alternate" hreflang="en" title="English" href="../en/config.html">
+<link rel="stylesheet" href="../css_j.css" type="text/css" media="screen" title="ELM Default">
+<style type="text/css" media="screen" title="ELM Default">
+div.doc h3 {margin-top: 4em }
+div.doc h4 {margin-top: 2em }
+</style>
+<title>FatFs - 構成オプション</title>
+</head>
+
+<body>
+<h1>構成オプション</h1>
+<p>FatFsには多くの構成オプションがあり、それぞれのプロジェクトの要求に応じて柔軟に機能を構成することができます。構成オプションは、<tt>ffconf.h</tt>に記述されます。</p>
+
+<div class="para doc" id="func">
+<h3>基本機能の設定</h3>
+
+<h4 id="fs_readonly">_FS_READONLY</h4>
+<p>0:リード/ライト or 1:リード オンリ。リード オンリ構成では、<tt>f_write</tt>、<tt>f_sync</tt>、<tt>f_unlink</tt>、<tt>f_mkdir</tt>、<tt>f_chmod</tt>、<tt>f_rename</tt>、<tt>f_truncate</tt>、<tt>f_getfree</tt>の基本API関数およびオプションの書き込み系API関数が削除されます。</p>
+
+<h4 id="fs_minimize">_FS_MINIMIZE</h4>
+<p>基本API関数を段階的に削除します。</p>
+<table class="lst1">
+<tr><th>値</th><th>解説</th></tr>
+<tr><td>0</td><td>全ての基本API関数が利用可能。</td></tr>
+<tr><td>1</td><td><tt>f_stat</tt>、<tt>f_getfree</tt>、<tt>f_unlink</tt>、<tt>f_mkdir</tt>、<tt>f_chmod</tt>、<tt>f_utime</tt>、<tt>f_truncate</tt>、<tt>f_rename</tt>関数が削除される。</td></tr>
+<tr><td>2</td><td>1に加え、<tt>f_opendir</tt>、<tt>f_readdir</tt>、<tt>f_closedir</tt>関数が削除される。</td></tr>
+<tr><td>3</td><td>2に加え、<tt>f_lseek</tt>関数が削除される。</td></tr>
+</table>
+
+<h4 id="use_strfunc">_USE_STRFUNC</h4>
+<p>文字列入出力API関数<tt>f_gets</tt>, <tt>f_putc</tt>, <tt>f_puts</tt> and <tt>f_printf</tt>の構成。</p>
+<table class="lst1">
+<tr><th>値</th><th>解説</th></tr>
+<tr><td>0</td><td>文字列入出力API関数を使用しない。</td></tr>
+<tr><td>1</td><td>文字列入出力API関数を使用する。データのLF-CRLF変換はしない。</td></tr>
+<tr><td>2</td><td>文字列入出力API関数を使用する。データのLF-CRLF変換をする。</td></tr>
+</table>
+
+<h4 id="use_find">_USE_FIND</h4>
+<p>フィルタ付きディレクトリ読み出し機能の構成(0:無効 または 1:有効)。有効にすると、<tt>f_findfirst</tt>、<tt>f_findnext</tt>関数が利用可能になります。<tt>_FS_MINIMIZE</tt>は、1以下でなければなりません。</p>
+
+<h4 id="use_mkfs">_USE_MKFS</h4>
+<p>ボリューム作成機能の構成(0:無効 または 1:有効)。有効にすると<tt>f_mkfs</tt>関数が利用可能になります。</p>
+
+<h4 id="use_fastseek">_USE_FASTSEEK</h4>
+<p>高速シーク機能の構成(0:無効 または 1:有効)。有効にすると、<tt>f_lseek</tt>、<tt>f_read</tt>、<tt>f_write</tt>関数において高速化モードが利用可能になります。詳しくは、<a href="lseek.html">こちら</a>を参照してください。</p>
+
+<h4 id="use_expand">_USE_EXPAND</h4>
+<p>連続領域割り当て機能の構成(0:無効 または 1:有効)。有効にすると<tt>f_expand</tt>関数が利用可能になります。<tt>_FS_READONLY</tt>は0でなければなりません。</p>
+
+<h4 id="use_chmod">_USE_CHMOD</h4>
+<p>メタデータ操作機能の構成(0:無効 または 1:有効)。有効にすると、<tt>f_chmod</tt>、<tt>f_utime</tt>関数が利用可能になります。<tt>_FS_READONLY</tt>は0でなければなりません。</p>
+
+<h4 id="use_label">_USE_LABEL</h4>
+<p>ボリューム ラベル操作機能の構成(0:無効 または 1:有効)。有効にすると、<tt>f_getlabel</tt>、<tt>f_setlabel</tt>関数(<tt>_FS_READONLY == 0</tt>のとき)が利用可能になります。</p>
+
+<h4 id="use_forward">_USE_FORWARD</h4>
+<p>ストリーミング読み出し機能(<tt>f_forward</tt>関数)の構成(0:無効 または 1:有効)。</p>
+
+</div>
+
+
+<div class="para doc" id="name">
+<h3>名前空間とロケールの設定</h3>
+
+<h4 id="code_page">_CODE_PAGE</h4>
+<p>パス名等の文字列データのコード ページを指定します。不適切な設定は、ファイル オープン エラーの原因になる可能性があります。拡張文字が全く使われない場合は、どれを選んでも同じです。</p>
+<table class="lst1">
+<tr><th>値</th><th>解説</th></tr>
+<tr><td>1</td><td>ASCII (非LFN構成でのみ有効)</td></tr>
+<tr><td>437</td><td>U.S.</td></tr>
+<tr><td>720</td><td>Arabic</td></tr>
+<tr><td>737</td><td>Greek</td></tr>
+<tr><td>771</td><td>KBL</td></tr>
+<tr><td>775</td><td>Baltic</td></tr>
+<tr><td>850</td><td>Latin 1</td></tr>
+<tr><td>852</td><td>Latin 2</td></tr>
+<tr><td>855</td><td>Cyrillic</td></tr>
+<tr><td>857</td><td>Turkish</td></tr>
+<tr><td>860</td><td>Portuguese</td></tr>
+<tr><td>861</td><td>Icelandic</td></tr>
+<tr><td>862</td><td>Hebrew</td></tr>
+<tr><td>863</td><td>Canadian French</td></tr>
+<tr><td>864</td><td>Arabic</td></tr>
+<tr><td>865</td><td>Nordic</td></tr>
+<tr><td>866</td><td>Russian</td></tr>
+<tr><td>869</td><td>Greek 2</td></tr>
+<tr><td>932</td><td>日本語 (DBCS)</td></tr>
+<tr><td>936</td><td>簡体字中国語 (DBCS)</td></tr>
+<tr><td>949</td><td>韓国語 (DBCS)</td></tr>
+<tr><td>950</td><td>繁体字中国語 (DBCS)</td></tr>
+</table>
+
+<h4 id="use_lfn">_USE_LFN</h4>
+<p>LFN(長いファイル名)対応を設定します。LFN機能を有効にするときは、Unicode操作関数<tt>option/unicode.c</tt>をプロジェクトに加える必要があります。また、LFN操作のワーク エリアとして<tt>(_MAX_LFN + 1) * 2</tt>バイト(exFAT構成時はさらに608バイト)を使用します。このため、バッファをスタックに確保するときは、スタック オーバ フローに注意する必要があります。ヒープに確保するときは、メモリ操作関数(<tt>ff_memalloc</tt>と<tt>ff_memfree</tt>(<tt>option/syscall.c</tt>にサンプルあり))をプロジェクトに加える必要があります。</p>
+<table class="lst1">
+<tr><th>値</th><th>解説</th></tr>
+<tr><td>0</td><td>LFN機能を使わない。8.3形式の名前のみ使用可能。</td></tr>
+<tr><td>1</td><td>LFN機能を使う。ワーク エリアは静的に確保。常にスレッド セーフではない。</td></tr>
+<tr><td>2</td><td>LFN機能を使う。ワーク エリアはスタックに確保。</td></tr>
+<tr><td>3</td><td>LFN機能を使う。ワーク エリアはヒープに確保。</td></tr>
+</table>
+
+<h4 id="max_lfn">_MAX_LFN</h4>
+<p>LFN操作バッファのサイズを文字単位で指定(12～255)します。LFN機能が無効のときは意味を持ちません。</p>
+
+<h4 id="lfn_unicode">_LFN_UNICODE</h4>
+<p>ファイルAPI上におけるUnicode対応機能を設定します。非LFN構成のときは、0でなければなりません。LFN構成のときに1を選択すると、ファイルAPI上の文字列データ<tt>TCHAR</tt>型の定義が切り替わり、パス名等にUnicodeを使用するようになります。この機能は、文字列入出力関数にも影響します。詳しくは、<a href="filename.html#uni">こちら</a>を参照してください。</p>
+
+<h4 id="strf_encode">_STRF_ENCODE</h4>
+<p>Unicode API構成のとき、文字列入出力関数、<tt>f_gets</tt>、<tt>f_putc</tt>、<tt>f_puts</tt>、<tt>f_printf</tt>、におけるファイル上のエンコーディングを指定します。非Unicode API構成のときは意味を持ちません。</p>
+<table class="lst1">
+<tr><th>値</th><th>解説</th></tr>
+<tr><td>0</td><td>ANSI/OEM</td></tr>
+<tr><td>1</td><td>UTF-16LE</td></tr>
+<tr><td>2</td><td>UTF-16BE</td></tr>
+<tr><td>3</td><td>UTF-8</td></tr>
+</table>
+
+<h4 id="fs_rpath">_FS_RPATH</h4>
+<p>相対パス機能を設定します。この機能は、ディレクトリ読み出し関数の出力にも影響します。詳しくは、<a href="filename.html#nam">こちら</a>を参照してください。</p>
+<table class="lst1">
+<tr><th>値</th><th>解説</th></tr>
+<tr><td>0</td><td>相対パス機能を使わない。パス名は常にルート ディレクトリから辿る。</td></tr>
+<tr><td>1</td><td>相対パス機能を使う。<tt>f_chdir</tt>、<tt>f_chdrive</tt>関数が利用可能になる。</td></tr>
+<tr><td>2</td><td>1に加え、<tt>f_getcwd</tt>関数が利用可能になる。</td></tr>
+</table>
+
+</div>
+
+
+<div class="para doc" id="volume">
+<h3>ボリューム/物理ドライブの設定</h3>
+
+<h4 id="volumes">_VOLUMES</h4>
+<p>利用するボリューム(論理ドライブ)の数を1～9の範囲で設定します。</p>
+
+<h4 id="str_volume_id">_STR_VOLUME_ID</h4>
+<p>文字列ボリュームIDの設定(0:無効 または 1:有効)。パス名中のボリュームIDに数字に加え任意の文字列も使用できるようにするオプションです。ボリュームID文字列は<tt>_VOLUME_STRS</tt>で定義します。</p>
+
+<h4 id="volume_strs">_VOLUME_STRS</h4>
+<p>ボリュームID文字列を定義します。<tt>_VOLUMES</tt>で設定された個数の文字列を<tt>"RAM","SD","CF",...</tt> のように挙列します。使用可能な文字はA～Zおよび0～9で、先頭の項目が論理ドライブ0に対応します。</p>
+
+<h4 id="multi_partition">_MULTI_PARTITION</h4>
+<p>マルチ区画機能の設定(0:無効 または 1:有効)。無効のときは、個々の論理ドライブは同じ番号の物理ドライブに1:1で対応し、それぞれの物理ドライブ中の最初の区画に結びつけられます。マルチ区画機能を有効にすると、論理ドライブはそれぞれ任意の物理ドライブの任意の区画に結びつけることができます。マッピングは、ユーザ定義の変換テーブル<tt>VolToPart[]</tt>によって行います。また、<tt>f_fdisk</tt>関数が利用可能になります。詳しくは、<a href="filename.html#vol">こちら</a>を参照してください。</p>
+
+<h4 id="max_ss">_MIN_SS、_MAX_SS</h4>
+<p>使用する物理ドライブのセクタ サイズ(データの読み書きの最小単位)を設定します。有効な値は、512、1024、2048、4096です。<tt>_MIN_SS</tt>は最小サイズ、<tt>_MAX_SS</tt>は最大サイズを設定します。メモリ カードやハードディスクでは、常に両方に512を設定しますが、オンボード メモリや一部の光学メディアでは大きな値を設定する必要があるかも知れません。<tt>_MAX_SS &gt; _MIN_SS</tt>に設定したときは可変セクタ サイズ構成となり、<tt>disk_ioctl</tt>関数には<tt>GET_SECTOR_SIZE</tt>コマンドを実装する必要があります。</p>
+
+<h4 id="use_trim">_USE_TRIM</h4>
+<p>ATA-TRIM機能の使用の設定(0:無効 または 1:有効)。この機能を有効にしたときは、<tt>disk_ioctl</tt>関数に<tt>CTRL_TRIM</tt>コマンドを実装するべきです。</p>
+
+<h4 id="fs_nofsinfo">_FS_NOFSINFO</h4>
+<p>FAT32ボリュームのFSINFOの使用の設定(0～3)。FAT32ボリュームで必ず正確な空き容量を取得する必要があるとき、設定値のビット0をセットすると<tt>f_getfree</tt>関数はFSINFOの情報を使わずに全FATスキャンを行って空き容量を得ます。ビット1は最終割り当てクラスタ番号の利用の制御です。</p>
+<table class="lst1">
+<tr><th>値</th><th>解説</th></tr>
+<tr><td>bit0=0</td><td>FSINFOの空きクラスタ情報が有効なときはそれを利用する。</td></tr>
+<tr><td>bit0=1</td><td>FSINFOの空きクラスタ情報を利用しない。</td></tr>
+<tr><td>bit1=0</td><td>FSINFOの最終割り当てクラスタ番号が有効なときはそれを利用する。</td></tr>
+<tr><td>bit1=1</td><td>FSINFOの最終割り当てクラスタ番号を利用しない。</td></tr>
+</table>
+
+</div>
+
+
+<div class="para doc" id="system">
+<h3>システムの設定</h3>
+
+<h4 id="fs_tiny">_FS_TINY</h4>
+<p>ファイル データ転送バッファの構成(0:ノーマル または 1:タイニ)。タイニ構成では、ファイル オブジェクト<tt>FIL</tt>内のプライベート セクタ バッファが削除され、<tt>_MAX_SS</tt>バイト小さくなります。ファイル データの転送には、代わりにファイル システム オブジェクト<tt>FATFS</tt>内のボリューム共有セクタ バッファが使われます。</p>
+
+<h4 id="fs_exfat">_FS_EXFAT</h4>
+<p>exFATのサポート(0:使用しない または 1:使用する)。exFATを使用するには、LFN機能を有効にしなければなりません。また、exFATの完全サポートのためには、<tt>_LFN_UNICODE = 1</tt>と<tt>_MAX_LFN = 255</tt>の設定が推奨されます。exFAT機能では64ビット整数を使用するため、これを有効にするとC89(ANSI C)互換が失われます。</p>
+
+<h4 id="fs_nortc">_FS_NORTC</h4>
+<p>RTC機能の使用の設定(0:使用する または 1:使用しない)。システムがRTC(カレンダ時計)をサポートしない場合は、1をセットします。この場合、FatFsが変更を加えたオブジェクトのタイムスタンプはデフォルトの日時を持ちます。RTCが使用可能なときは、0を設定し、<tt>get_fattime</tt>関数をプロジェクトに加えます。リード オンリ構成ではこのオプションは意味を持ちません。</p>
+
+<h4 id="nortc_time">_NORTC_MON、_NORTC_MDAY、_NORTC_YEAR</h4>
+<p>デフォルト日時の設定。<tt>_FS_NORTC</tt>が1のとき、固定して与えられる日付を指定します。<tt>_FS_NORTC</tt>が0のとき、およびリード オンリ構成ではこれらのオプションは意味を持ちません。</p>
+
+<h4 id="fs_lock">_FS_LOCK</h4>
+<p>ファイル ロック機能の設定。このオプションは、開かれたオブジェクトに対する不正な操作の制御機能を設定します。リード オンリ構成では0に設定しなければなりません。なお、ファイル ロック機能はリエントランシーとは関係ありません。</p>
+
+<table class="lst1">
+<tr><th>値</th><th>解説</th></tr>
+<tr><td>0</td><td>ファイル ロック機能を使わない。ボリュームの破損を防ぐため、アプリケーションは不正なファイル操作を避けなければならない。</td></tr>
+<tr><td>&gt;0</td><td>ファイル ロック機能を使う。数値は同時にオープンできるファイルやサブ ディレクトリの数を設定します。</td></tr>
+</table>
+
+<h4 id="fs_reentrant">_FS_REENTRANT</h4>
+<p>リエントランシーの設定(0:無効 または 1:有効)。このオプションは、FatFsモジュール自体のリエントランシー(スレッド セーフ)の設定をします。異なるボリュームに対するファイル アクセスはこのオプションに関係なく常にリエントラントで、<tt>f_mount</tt>、<tt>f_mkfs</tt>、<tt>f_fdisk</tt>などのボリューム操作関数はこのオプションに関係なく常にリエントラントではありません。同じボリュームに対するファイル アクセス(つまり、ファイル システム オブジェクトの排他使用)のみがこのオプションの制御下にあります。このオプションを有効にしたときは、同期関数である<tt>ff_req_grant</tt>、<tt>ff_rel_grant</tt>、<tt>ff_del_syncobj</tt>、<tt>ff_cre_syncobj</tt>をプロジェクトに追加する必要があります。サンプルが<tt>option/syscall.c</tt>にあります。</p>
+
+<h4 id="fs_timeout">_FS_TIMEOUT</h4>
+<p>タイムアウト時間の設定。待ち合わせ時間が長いときに<tt>FR_TIMEOUT</tt>でファイル関数をアボートする時間を設定します。<tt>_FS_REENTRANT</tt>が0のときは意味を持ちません。</p>
+
+<h4 id="sync_t">_SYNC_t</h4>
+<p>O/S定義の同期オブジェクトの型を設定します。例: <tt>HANDLE</tt>、<tt>ID</tt>、<tt>OS_EVENT*</tt>、<tt>SemaphoreHandle_t</tt>など。また、O/S機能のヘッダ ファイルを<tt>ff.c</tt>のスコープ内にインクルードする必要があります。<tt>_FS_REENTRANT</tt>が0のときは意味を持ちません。</p>
+
+</div>
+
+<p class="foot"><a href="../00index_j.html">戻る</a></p>
+</body>
+</html>
