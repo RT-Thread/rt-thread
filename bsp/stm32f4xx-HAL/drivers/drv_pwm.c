@@ -38,18 +38,21 @@ static struct rt_pwm_ops drv_ops =
 
 static rt_err_t drv_pwm_enable(TIM_HandleTypeDef * htim, struct rt_pwm_configuration *configuration, rt_bool_t enable)
 {
-    rt_uint32_t channel = 0x04 * configuration->channel;
+    rt_uint32_t channel = 0x04 * (configuration->channel - 1);
     if(!enable)
     {
         HAL_TIM_PWM_Stop(htim, channel);
     }
-    HAL_TIM_PWM_Start(htim, channel);
+    else
+    {
+        HAL_TIM_PWM_Start(htim, channel);
+    }
     return RT_EOK;
 }
 
 static rt_err_t drv_pwm_get(TIM_HandleTypeDef * htim, struct rt_pwm_configuration *configuration)
 {
-    rt_uint32_t channel = 0x04 * configuration->channel;
+    rt_uint32_t channel = 0x04 * (configuration->channel - 1);
     rt_uint32_t tim_clock;
 #if (RT_HSE_HCLK > 100000000UL)//100M
     if(htim->Instance == TIM1 && htim->Instance == TIM8)
@@ -81,7 +84,7 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef * htim, struct rt_pwm_configuratio
 {
     rt_uint32_t period, pulse;
     rt_uint32_t tim_clock, psc;
-    rt_uint32_t channel = 0x04 * configuration->channel;
+    rt_uint32_t channel = 0x04 * (configuration->channel - 1);
 #if (RT_HSE_HCLK > 100000000UL)//100M
     if(htim->Instance == TIM1 && htim->Instance == TIM8)
     {
