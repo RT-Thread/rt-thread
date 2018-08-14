@@ -28,7 +28,7 @@
 #include <dfs_poll.h>
 #include <dfs_select.h>
 
-static void fdzero(fd_set *set, int nfds)
+static void fdszero(fd_set *set, int nfds)
 {
     fd_mask *m;
     int n;
@@ -130,17 +130,17 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struc
     /* Now set up the return values */
     if (readfds)
     {
-        fdzero(readfds, nfds);
+        fdszero(readfds, nfds);
     }
 
     if (writefds)
     {
-        fdzero(writefds, nfds);
+        fdszero(writefds, nfds);
     }
 
     if (exceptfds)
     {
-        fdzero(exceptfds, nfds);
+        fdszero(exceptfds, nfds);
     }
 
     /* Convert the poll descriptor list back into selects 3 bitsets */
