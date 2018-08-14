@@ -18,9 +18,6 @@
  * @addtogroup STM32
  */
 /*@{*/
-#ifdef RT_USING_HSI
-    #error Can not using HSI on this bsp
-#endif
 #if defined(RCC_PERIPHCLK_SDIO) || defined(RCC_PERIPHCLK_CEC) || defined(RCC_PERIPHCLK_LTDC)\
     || defined(RCC_PERIPHCLK_SPDIFRX) || defined(RCC_PERIPHCLK_FMPI2C1) || defined(RCC_PERIPHCLK_LPTIM1)
     #warning Please give priority to the correctness of the clock tree when the peripherals are abnormal
@@ -28,11 +25,18 @@
 
 static void SystemClock_Config(void)
 {
-    rt_uint32_t hse_clk, sys_clk;
-#if (RT_HSE_VALVE % 1000000 != 0)
+    rt_uint32_t source_clk, sys_clk;
+
+#if !defined(RT_USING_HSI) && (RT_HSE_VALVE % 1000000 != 0)
 #error HSE must be integer of MHz
 #endif
-    hse_clk = HSE_VALUE / 1000000UL;
+#ifdef RT_USING_HSI
+#define CLOCK_SOURE_VALUE  HSI_VALUE
+#else
+#define CLOCK_SOURE_VALUE  HSE_VALUE
+#endif    
+
+    source_clk = CLOCK_SOURE_VALUE / 1000000UL;
     sys_clk = HCLK_VALUE / 1000000UL;
     RCC_OscInitTypeDef RCC_OscInitStruct;
     RCC_ClkInitTypeDef RCC_ClkInitStruct;
@@ -45,23 +49,35 @@ static void SystemClock_Config(void)
     __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
     /**Initializes the CPU, AHB and APB busses clocks
     */
+#ifdef RT_USING_HSI
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+#else
     RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+#endif
 #ifdef RT_USING_RTC
     RCC_OscInitStruct.OscillatorType |= RCC_OSCILLATORTYPE_LSI;
     RCC_OscInitStruct.LSIState = RCC_LSI_ON;
 #endif
+#ifdef RT_USING_HSI
+    RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+    RCC_OscInitStruct.HSICalibrationValue = source_clk;
+#else
+#ifdef BSP_HSE_BY_PASS
+    RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
+#else
     RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+#endif
+#endif
     RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+#ifdef RT_USING_HSI
+    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+#else
     RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-    if (hse_clk % 2 == 0)
+#endif
+    if (source_clk % 2 == 0)
     {
-        RCC_OscInitStruct.PLL.PLLM = hse_clk / 2; //Get 2M clock
-        if ((sys_clk * 2) % 48 == 0)
-        {
-            RCC_OscInitStruct.PLL.PLLN = sys_clk;//Get 2*HCLK_VALUE
-            RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;//Get HCLK_VALUE
-        }
-        else if ((sys_clk * 4) % 48 == 0)
+        RCC_OscInitStruct.PLL.PLLM = source_clk / 2; //Get 2M clock
+        if ((sys_clk * 4) % 48 == 0)
         {
             RCC_OscInitStruct.PLL.PLLN = sys_clk * 2;//Get 4*HCLK_VALUE
             RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;//Get HCLK_VALUE
@@ -76,16 +92,17 @@ static void SystemClock_Config(void)
             RCC_OscInitStruct.PLL.PLLN = sys_clk * 4;//Get 8*HCLK_VALUE
             RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV8;//Get HCLK_VALUE
         }
+        else
+        {
+            //can not get 48M Clock USB is unuseable
+            RCC_OscInitStruct.PLL.PLLN = sys_clk;//Get 2*HCLK_VALUE
+            RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;//Get HCLK_VALUE
+        }
     }
     else
     {
-        RCC_OscInitStruct.PLL.PLLM = hse_clk;//Get 1M clock
-        if ((sys_clk * 2) % 48 == 0)
-        {
-            RCC_OscInitStruct.PLL.PLLN = sys_clk * 2;//Get 2*HCLK_VALUE
-            RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;//Get HCLK_VALUE
-        }
-        else if ((sys_clk * 4) % 48 == 0)
+        RCC_OscInitStruct.PLL.PLLM = source_clk;//Get 1M clock
+        if ((sys_clk * 4) % 48 == 0)
         {
             RCC_OscInitStruct.PLL.PLLN = sys_clk * 4;//Get 4*HCLK_VALUE
             RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;//Get HCLK_VALUE
@@ -100,8 +117,14 @@ static void SystemClock_Config(void)
             RCC_OscInitStruct.PLL.PLLN = sys_clk * 8;//Get 8*HCLK_VALUE
             RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV8;//Get HCLK_VALUE
         }
+        else
+        {
+            //can not get 48M Clock USB is unuseable
+            RCC_OscInitStruct.PLL.PLLN = sys_clk * 2;//Get 2*HCLK_VALUE
+            RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;//Get HCLK_VALUE
+        }
     }
-    RCC_OscInitStruct.PLL.PLLQ = hse_clk / RCC_OscInitStruct.PLL.PLLM * RCC_OscInitStruct.PLL.PLLN / 48; //Get 48M Clock
+    RCC_OscInitStruct.PLL.PLLQ = source_clk / RCC_OscInitStruct.PLL.PLLM * RCC_OscInitStruct.PLL.PLLN / 48; //Get 48M Clock
     if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
     {
         while (1)
@@ -125,6 +148,14 @@ static void SystemClock_Config(void)
     RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
     RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
     if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+    {
+        while (1)
+        {}
+    }
+#elif (RT_HSE_HCLK <= 100000000UL)
+    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+    if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
     {
         while (1)
         {}

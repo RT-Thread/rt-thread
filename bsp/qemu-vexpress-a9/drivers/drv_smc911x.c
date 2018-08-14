@@ -466,7 +466,7 @@ struct pbuf *smc911x_emac_rx(rt_device_t dev)
         tmplen = (pktlen + 3) / 4;
 
         /* allocate pbuf */
-        p = pbuf_alloc(PBUF_LINK, tmplen * 4, PBUF_RAM);
+        p = pbuf_alloc(PBUF_RAW, tmplen * 4, PBUF_RAM);
         if (p)
         {
             uint32_t *data = (uint32_t *)p->payload;

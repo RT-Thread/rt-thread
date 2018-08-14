@@ -28,7 +28,7 @@
 #include "interrupt.h"
 
 #define DBG_ENABLE
-#define DBG_SECTION_NAME  "[GPIO]"
+#define DBG_SECTION_NAME  "GPIO"
 #define DBG_LEVEL         DBG_WARNING
 #define DBG_COLOR
 #include <rtdbg.h>

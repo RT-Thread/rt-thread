@@ -449,7 +449,7 @@ int fcntl(int fildes, int cmd, ...)
     }
     else ret = -EBADF;
 
-    if (ret != 0)
+    if (ret < 0)
     {
         rt_set_errno(ret);
         ret = -1;

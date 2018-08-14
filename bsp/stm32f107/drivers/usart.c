@@ -8,11 +8,12 @@
  * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
- * Date           Author       Notes
- * 2009-01-05     Bernard      the first version
- * 2010-03-29     Bernard      remove interrupt Tx and DMA Rx mode
- * 2013-05-13     aozima       update for kehong-lingtai.
- * 2015-01-31     armink       make sure the serial transmit complete in putc()
+ * Date           Author          Notes
+ * 2009-01-05     Bernard         the first version
+ * 2010-03-29     Bernard         remove interrupt Tx and DMA Rx mode
+ * 2013-05-13     aozima          update for kehong-lingtai.
+ * 2015-01-31     armink          make sure the serial transmit complete in putc()
+ * 2018-07-13     whj467467222    add to usart3 uart4
  */
 
 #include "stm32f10x.h"
@@ -37,6 +38,16 @@
 #define UART2_GPIO_RX     GPIO_Pin_3
 #define UART2_GPIO        GPIOA
 #endif
+
+/* USART3 */
+#define UART3_GPIO_TX        GPIO_Pin_10
+#define UART3_GPIO_RX        GPIO_Pin_11
+#define UART3_GPIO           GPIOB
+
+/* USART4 */
+#define UART4_GPIO_TX        GPIO_Pin_10
+#define UART4_GPIO_RX        GPIO_Pin_11
+#define UART4_GPIO           GPIOC
 
 /* STM32 uart driver */
 struct stm32_uart

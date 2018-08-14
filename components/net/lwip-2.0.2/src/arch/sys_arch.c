@@ -98,7 +98,7 @@ static void tcpip_init_done_callback(void *arg)
 
             /* leave critical */
             rt_exit_critical();
-			LOCK_TCPIP_CORE();
+            LOCK_TCPIP_CORE();
 
             netif_add(ethif->netif, &ipaddr, &netmask, &gw,
                       ethif, netif_device_init, tcpip_input);
@@ -121,7 +121,7 @@ static void tcpip_init_done_callback(void *arg)
                 netif_set_link_up(ethif->netif);
             }
 
-			UNLOCK_TCPIP_CORE();
+            UNLOCK_TCPIP_CORE();
             /* enter critical */
             rt_enter_critical();
         }
@@ -140,7 +140,14 @@ int lwip_system_init(void)
 {
     rt_err_t rc;
     struct rt_semaphore done_sem;
-	
+    static rt_bool_t init_ok = RT_FALSE;
+
+    if (init_ok)
+    {
+        rt_kprintf("lwip system already init.\n");
+        return 0;
+    }
+
     eth_system_device_init_private();
 
     /* set default netif to NULL */
@@ -180,6 +187,8 @@ int lwip_system_init(void)
     }
 #endif
     rt_kprintf("lwIP-%d.%d.%d initialized!\n", LWIP_VERSION_MAJOR, LWIP_VERSION_MINOR, LWIP_VERSION_REVISION);
+
+    init_ok = RT_TRUE;
 
     return 0;
 }

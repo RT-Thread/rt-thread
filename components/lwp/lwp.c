@@ -32,7 +32,7 @@
 #include "lwp.h"
 
 #define DBG_ENABLE
-#define DBG_SECTION_NAME    "[LWP]"
+#define DBG_SECTION_NAME    "LWP"
 #define DBG_COLOR
 #define DBG_LEVEL           DBG_WARNING
 #include <rtdbg.h>
@@ -46,14 +46,14 @@ extern void lwp_user_entry(void *args, const void *text, void *data);
 void lwp_set_kernel_sp(uint32_t *sp)
 {
     struct rt_lwp *user_data;
-    user_data = (struct rt_lwp *)rt_current_thread->user_data;
+    user_data = (struct rt_lwp *)rt_current_thread->lwp;
     user_data->kernel_sp = sp;
 }
 
 uint32_t *lwp_get_kernel_sp(void)
 {
     struct rt_lwp *user_data;
-    user_data = (struct rt_lwp *)rt_current_thread->user_data;
+    user_data = (struct rt_lwp *)rt_current_thread->lwp;
 
     return user_data->kernel_sp;
 }
@@ -286,7 +286,7 @@ static void lwp_cleanup(struct rt_thread *tid)
 
     dbg_log(DBG_INFO, "thread: %s, stack_addr: %08X\n", tid->name, tid->stack_addr);
 
-    lwp = (struct rt_lwp *)tid->user_data;
+    lwp = (struct rt_lwp *)tid->lwp;
 
     if (lwp->lwp_type == LWP_TYPE_DYN_ADDR)
     {
@@ -327,16 +327,13 @@ static void lwp_cleanup(struct rt_thread *tid)
 
 static void lwp_thread(void *parameter)
 {
-    volatile uint32_t tmp;
     rt_thread_t tid;
     struct rt_lwp *lwp;
-
-    rt_kprintf("%08x %08x\n", &tmp, tmp);
 
     lwp = (struct rt_lwp *)parameter;
     rt_lwp_mem_init(lwp);
     tid = rt_thread_self();
-    tid->user_data = (rt_uint32_t)lwp;
+    tid->lwp = lwp;
     tid->cleanup = lwp_cleanup;
 
     lwp_user_entry(lwp->args, lwp->text_entry, lwp->data);
@@ -344,7 +341,7 @@ static void lwp_thread(void *parameter)
 
 struct rt_lwp *rt_lwp_self(void)
 {
-    return (struct rt_lwp *)rt_thread_self()->user_data;
+    return (struct rt_lwp *)rt_thread_self()->lwp;
 }
 
 int exec(char *filename, int argc, char **argv)

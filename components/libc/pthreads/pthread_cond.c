@@ -109,6 +109,7 @@ int pthread_cond_init(pthread_cond_t *cond, const pthread_condattr_t *attr)
 
     /* detach the object from system object container */
     rt_object_detach(&(cond->sem.parent.parent));
+    cond->sem.parent.parent.type = RT_Object_Class_Semaphore;
 
     return 0;
 }

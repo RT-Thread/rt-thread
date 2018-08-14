@@ -313,6 +313,44 @@ static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
     return 0;
 }
 
+#if defined(RT_USING_LWP) && defined(RT_USING_DFS)
+static int _msh_exec_lwp(char *cmd, rt_size_t length)
+{
+    int argc;
+    int cmd0_size = 0;
+    char *argv[FINSH_ARG_MAX];
+    int fd = -1;
+    char *pg_name;
+
+    extern int exec(char*, int, char**);
+
+    /* find the size of first command */
+    while ((cmd[cmd0_size] != ' ' && cmd[cmd0_size] != '\t') && cmd0_size < length)
+        cmd0_size ++;
+    if (cmd0_size == 0)
+        return -1;
+
+    /* split arguments */
+    rt_memset(argv, 0x00, sizeof(argv));
+    argc = msh_split(cmd, length, argv);
+    if (argc == 0)
+        return -1;
+
+    pg_name = argv[0];
+    /* try to open program */
+    fd = open(pg_name, O_RDONLY, 0);
+
+    if (fd < 0)
+        return -1;
+
+    /* found program */
+    close(fd);
+    exec(pg_name, argc, argv);
+
+    return 0;
+}
+#endif
+
 int msh_exec(char *cmd, rt_size_t length)
 {
     int cmd_ret;
@@ -330,7 +368,6 @@ int msh_exec(char *cmd, rt_size_t length)
     /* Exec sequence:
      * 1. built-in command
      * 2. module(if enabled)
-     * 3. chdir to the directry(if possible)
      */
     if (_msh_exec_cmd(cmd, length, &cmd_ret) == 0)
     {
@@ -348,9 +385,10 @@ int msh_exec(char *cmd, rt_size_t length)
     {
         return 0;
     }
+#endif
 
-    /* change to this directory */
-    if (chdir(cmd) == 0)
+#if defined(RT_USING_LWP) && defined(RT_USING_DFS)
+    if (_msh_exec_lwp(cmd, length) == 0)
     {
         return 0;
     }
