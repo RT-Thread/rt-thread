@@ -60,10 +60,46 @@ msh />
 | Mouse | 支持 |  |
 | EMAC | 支持 |  |
 
+### 4.1 使用VSCode编辑、编译、调试
+
+在qemu-vexpress-a9中已经携带了部分vscode的配置，需要配合着env一起来使用。步骤包括：
+
+先使用env打开console，然后在console中切换都qemu-vexpress-a9 bsp的目录下，
+
+```bash
+scons --target=vsc -s
+```
+
+更新vscode需要用到的C/C++头文件搜索路径信息（不是每次都需要更新，只有在使用了menuconfig重新配置了RT-Thread或更改了rtconfig.h头文件时才需要）
+
+然后在console下输入
+
+```bash
+code .
+```
+
+启动vscode。使用vscode，目前包含如下的一些功能：
+
+* 编译 `Ctrl+Shift+B` - 开启vscode内置终端，调用scons进行编译；如果有编译错误也会侦测问题，双击问题跳到指定代码文件、代码行；
+* 包含执行`qemu`模拟器，`scons -c`进行目标文件清理的任务
+* `F5` 一键开启QEMU调试模式，并断点停留在`main`函数上；(需要更改下qemu-dbg.bat文件，在qemu-system-arm前加入`start`)，即
+
+```batch
+@echo off
+if exist sd.bin goto run
+qemu-img create -f raw sd.bin 64M
+
+:run
+start qemu-system-arm -M vexpress-a9 -kernel rtthread.elf -serial stdio -sd sd.bin -S -s
+```
+
+**已知问题** 如果在vscode的目录中额外添加了文件夹，会导致调试不能够启动。
+
 ## 5. 联系人信息
 
-维护人：bernard
+维护人：[bernard][4]
 
   [1]: http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.subset.boards.express/index.html
   [2]: https://www.rt-thread.org/page/download.html
   [3]: https://launchpad.net/gcc-arm-embedded/5.0/5-2016-q3-update/+download/gcc-arm-none-eabi-5_4-2016q3-20160926-linux.tar.bz2
+  [4]: https://github.com/BernardXiong
