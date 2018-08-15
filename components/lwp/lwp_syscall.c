@@ -27,6 +27,8 @@
 #include <lwp_syscall.h>
 
 #include <dfs_poll.h>
+#include <dfs_select.h>
+
 #if (defined(RT_USING_SAL) && defined(SAL_USING_POSIX))
 #include <sys/socket.h>
 
@@ -235,7 +237,7 @@ const static void* func_table[] =
 
     (void *)sys_gettimeofday,   // 0x0b
     (void *)sys_settimeofday,   // 0x0c
-        
+
     (void *)sys_malloc,         // 0x0d
     (void *)sys_free,           // 0x0e
     (void *)sys_realloc,      //0x0f
@@ -256,6 +258,8 @@ const static void* func_table[] =
     SYSCALL_NET(send),       // 0x1d
     SYSCALL_NET(sendto),     // 0x1e
     SYSCALL_NET(socket),     // 0x1f
+
+    select,                  // 0x20
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
