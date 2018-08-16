@@ -104,12 +104,18 @@ static int pipe_fops_close(struct dfs_fd *fd)
 
     if (device->ref_count == 1)
     {
+        rt_device_unregister(device);
         rt_ringbuffer_destroy(pipe->fifo);
         pipe->fifo = RT_NULL;
     }
     device->ref_count --;
 
     rt_mutex_release(&(pipe->lock));
+    if (device->ref_count == 0)
+    {
+        rt_mutex_detach(&(pipe->lock));
+        rt_free(pipe);
+    }
 
     return 0;
 }
@@ -344,7 +350,7 @@ rt_err_t  rt_pipe_close  (rt_device_t device)
     if (device == RT_NULL) return -RT_EINVAL;
     rt_mutex_take(&(pipe->lock), RT_WAITING_FOREVER);
 
-    if (device->ref_count == 1)
+    if (device->ref_count == 0)
     {
         rt_ringbuffer_destroy(pipe->fifo);
         pipe->fifo = RT_NULL;
@@ -417,7 +423,7 @@ rt_err_t  rt_pipe_control(rt_device_t dev, int cmd, void *args)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops pipe_ops = 
+const static struct rt_device_ops pipe_ops =
 {
     RT_NULL,
     rt_pipe_open,
@@ -495,7 +501,7 @@ int rt_pipe_delete(const char *name)
             rt_device_unregister(device);
 
             /* close fifo ringbuffer */
-            if (pipe->fifo) 
+            if (pipe->fifo)
             {
                 rt_ringbuffer_destroy(pipe->fifo);
                 pipe->fifo = RT_NULL;
@@ -551,7 +557,7 @@ int pipe(int fildes[2])
 int mkfifo(const char *path, mode_t mode)
 {
     rt_pipe_t *pipe;
-    
+
     pipe = rt_pipe_create(path, PIPE_BUFSZ);
     if (pipe == RT_NULL)
     {
