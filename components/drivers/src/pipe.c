@@ -350,7 +350,7 @@ rt_err_t  rt_pipe_close  (rt_device_t device)
     if (device == RT_NULL) return -RT_EINVAL;
     rt_mutex_take(&(pipe->lock), RT_WAITING_FOREVER);
 
-    if (device->ref_count == 1)
+    if (device->ref_count == 0)
     {
         rt_ringbuffer_destroy(pipe->fifo);
         pipe->fifo = RT_NULL;
