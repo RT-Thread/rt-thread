@@ -1,15 +1,11 @@
 config RT_USING_UART1
     bool "Enable UART1 (PA9/10)"
-    default y
+    default n
 
 config RT_USING_UART2
-    bool "Enable UART2 (PA2/3)"
+    bool "Enable UART2 (PD5/6)"
     default y
 
 config RT_USING_UART3
-    bool "Enable UART3 (PB10/11)"
-    default y
-
-config RT_USING_UART4
-    bool "Enable UART4 (PC10/11)"
-    default y
+    bool "Enable UART3 (PC10/11)"
+    default n

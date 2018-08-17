@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-01-05     Bernard      the first version
+ * 2009-01-05     whj          remove finsh_set_device 
  */
 
 /**
@@ -38,6 +39,7 @@ extern int lwip_system_init(void);
 
 void rt_init_thread_entry(void* parameter)
 {
+	    rt_components_init();
     {
         extern void rt_platform_init(void);
         rt_platform_init();
@@ -72,11 +74,6 @@ void rt_init_thread_entry(void* parameter)
 	rt_kprintf("TCP/IP initialized!\n");
 #endif
 
-#ifdef RT_USING_FINSH
-	/* initialize finsh */
-	finsh_system_init();
-	finsh_set_device(RT_CONSOLE_DEVICE_NAME);
-#endif
 }
 
 int rt_application_init(void)

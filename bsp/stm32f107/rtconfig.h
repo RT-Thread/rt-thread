@@ -10,13 +10,12 @@
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
-#define RT_TICK_PER_SECOND 100
-#define RT_DEBUG
+#define RT_TICK_PER_SECOND 1000
 #define RT_USING_OVERFLOW_CHECK
-#define RT_DEBUG_INIT 0
-#define RT_DEBUG_THREAD 0
 #define RT_USING_HOOK
+#define RT_IDEL_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
+#define RT_DEBUG
 
 /* Inter-Thread communication */
 
@@ -37,7 +36,7 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart"
+#define RT_CONSOLE_DEVICE_NAME "uart2"
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
 #define ARCH_ARM_CORTEX_M3
@@ -88,6 +87,7 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
+#define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
 
 /* Using USB */
@@ -97,7 +97,10 @@
 
 #define RT_USING_LIBC
 
-/* Network stack */
+/* Network */
+
+/* Socket abstraction layer */
+
 
 /* light weight TCP/IP stack */
 
@@ -141,6 +144,9 @@
 /* Modbus master and slave stack */
 
 
+/* AT commands */
+
+
 /* VBUS(Virtual Software BUS) */
 
 
@@ -162,6 +168,9 @@
 
 
 /* Wiced WiFi */
+
+
+/* IoT Cloud */
 
 
 /* security packages */
@@ -191,6 +200,6 @@
 /* example package: hello */
 
 #define SOC_STM32F1
-#define RT_USING_UART1
+#define RT_USING_UART2
 
 #endif
