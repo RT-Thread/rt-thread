@@ -1,0 +1,97 @@
+// <<< Use Configuration Wizard in Context Menu >>>
+// <h> Debug MCU Configuration
+//   <o0.0>    DBG_SLEEP
+// <i> Debug Sleep Mode
+// <i> 0: (FCLK=On, HCLK=Off) FCLK is clocked by the system clock as previously configured by the software while HCLK is disabled
+// <i> 1: (FCLK=On, HCLK=On) HCLK is fed by the same clock that is provided to FCLK
+//   <o0.1>    DBG_STOP
+// <i> Debug Stop Mode
+// <i> 0: (FCLK=Off, HCLK=Off) Clock controller disables all clocks
+// <i> 1: (FCLK=On, HCLK=On) FCLK and HCLK are provided by the internal RC oscillator which remains active
+//   <o0.2>    DBG_STANDBY
+// <i> Debug Standby Mode
+// <i> 0: (FCLK=Off, HCLK=Off) The whole digital part is unpowered.
+// <i> 1: (FCLK=On, HCLK=On) Digital part is powered and FCLK and HCLK are provided by the internal RC oscillator which remains active
+//   <o0.8>    DBG_IWDG_STOP
+// <i> Debug independent watchdog stopped when core is halted
+// <i> 0: The watchdog counter clock continues even if the core is halted
+// <i> 1: The watchdog counter clock is stopped when the core is halted
+//   <o0.9>    DBG_WWDG_STOP
+// <i> Debug window watchdog stopped when core is halted
+// <i> 0: The window watchdog counter clock continues even if the core is halted
+// <i> 1: The window watchdog counter clock is stopped when the core is halted
+//   <o0.10>   DBG_TIM1_STOP
+// <i> Timer 1 counter stopped when core is halted
+// <i> 0: The clock of the involved Timer Counter is fed even if the core is halted
+// <i> 1: The clock of the involved Timer counter is stopped when the core is halted
+//   <o0.11>   DBG_TIM2_STOP
+// <i> Timer 2 counter stopped when core is halted
+// <i> 0: The clock of the involved Timer Counter is fed even if the core is halted
+// <i> 1: The clock of the involved Timer counter is stopped when the core is halted
+//   <o0.12>   DBG_TIM3_STOP
+// <i> Timer 3 counter stopped when core is halted
+// <i> 0: The clock of the involved Timer Counter is fed even if the core is halted
+// <i> 1: The clock of the involved Timer counter is stopped when the core is halted
+//   <o0.13>   DBG_TIM4_STOP
+// <i> Timer 4 counter stopped when core is halted
+// <i> 0: The clock of the involved Timer Counter is fed even if the core is halted
+// <i> 1: The clock of the involved Timer counter is stopped when the core is halted
+//   <o0.14>   DBG_CAN1_STOP
+// <i> Debug CAN1 stopped when Core is halted
+// <i> 0: Same behavior as in normal mode
+// <i> 1: CAN1 receive registers are frozen
+//   <o0.15>   DBG_I2C1_SMBUS_TIMEOUT
+// <i> I2C1 SMBUS timeout mode stopped when Core is halted
+// <i> 0: Same behavior as in normal mode
+// <i> 1: The SMBUS timeout is frozen
+//   <o0.16>   DBG_I2C2_SMBUS_TIMEOUT
+// <i> I2C2 SMBUS timeout mode stopped when Core is halted
+// <i> 0: Same behavior as in normal mode
+// <i> 1: The SMBUS timeout is frozen
+//   <o0.17>   DBG_TIM8_STOP
+// <i> Timer 8 counter stopped when core is halted
+// <i> 0: The clock of the involved timer counter is fed even if the core is halted, and the outputs behave normally.
+// <i> 1: The clock of the involved timer counter is stopped when the core is halted, and the outputs are disabled (as if there were an emergency stop in response to a break event).
+//   <o0.18>   DBG_TIM5_STOP
+// <i> Timer 5 counter stopped when core is halted
+// <i> 0: The clock of the involved timer counter is fed even if the core is halted, and the outputs behave normally.
+// <i> 1: The clock of the involved timer counter is stopped when the core is halted, and the outputs are disabled (as if there were an emergency stop in response to a break event).
+//   <o0.19>   DBG_TIM6_STOP
+// <i> Timer 6 counter stopped when core is halted
+// <i> 0: The clock of the involved timer counter is fed even if the core is halted, and the outputs behave normally.
+// <i> 1: The clock of the involved timer counter is stopped when the core is halted, and the outputs are disabled (as if there were an emergency stop in response to a break event).
+//   <o0.20>   DBG_TIM7_STOP
+// <i> Timer 7 counter stopped when core is halted
+// <i> 0: The clock of the involved timer counter is fed even if the core is halted, and the outputs behave normally.
+// <i> 1: The clock of the involved timer counter is stopped when the core is halted, and the outputs are disabled (as if there were an emergency stop in response to a break event).
+//   <o0.21>   DBG_CAN2_STOP
+// <i> Debug CAN2 stopped when Core is halted
+// <i> 0: Same behavior as in normal mode
+// <i> 1: CAN2 receive registers are frozen
+//   <o0.25>   DBG_TIM12_STOP
+// <i> Timer 12 counter stopped when core is halted
+// <i> 0: The clock of the involved timer counter is fed even if the core is halted, and the outputs behave normally.
+// <i> 1: The clock of the involved timer counter is stopped when the core is halted, and the outputs are disabled (as if there were an emergency stop in response to a break event).
+//   <o0.26>   DBG_TIM13_STOP
+// <i> Timer 13 counter stopped when core is halted
+// <i> 0: The clock of the involved timer counter is fed even if the core is halted, and the outputs behave normally.
+// <i> 1: The clock of the involved timer counter is stopped when the core is halted, and the outputs are disabled (as if there were an emergency stop in response to a break event).
+//   <o0.27>   DBG_TIM14_STOP
+// <i> Timer 14 counter stopped when core is halted
+// <i> 0: The clock of the involved timer counter is fed even if the core is halted, and the outputs behave normally.
+// <i> 1: The clock of the involved timer counter is stopped when the core is halted, and the outputs are disabled (as if there were an emergency stop in response to a break event).
+//   <o0.28>   DBG_TIM9_STOP
+// <i> Timer 9 counter stopped when core is halted
+// <i> 0: The clock of the involved timer counter is fed even if the core is halted, and the outputs behave normally.
+// <i> 1: The clock of the involved timer counter is stopped when the core is halted, and the outputs are disabled (as if there were an emergency stop in response to a break event).
+//   <o0.29>   DBG_TIM10_STOP
+// <i> Timer 10 counter stopped when core is halted
+// <i> 0: The clock of the involved timer counter is fed even if the core is halted, and the outputs behave normally.
+// <i> 1: The clock of the involved timer counter is stopped when the core is halted, and the outputs are disabled (as if there were an emergency stop in response to a break event).
+//   <o0.30>   DBG_TIM11_STOP
+// <i> Timer 11 counter stopped when core is halted
+// <i> 0: The clock of the involved timer counter is fed even if the core is halted, and the outputs behave normally.
+// <i> 1: The clock of the involved timer counter is stopped when the core is halted, and the outputs are disabled (as if there were an emergency stop in response to a break event).
+// </h>
+DbgMCU_CR = 0x00000007;
+// <<< end of configuration section >>>
