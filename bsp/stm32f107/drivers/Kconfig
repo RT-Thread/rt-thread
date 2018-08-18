@@ -9,3 +9,13 @@ config RT_USING_UART2
 config RT_USING_UART3
     bool "Enable UART3 (PC10/11)"
     default n
+
+config BSP_USING_RTC
+    bool "Enable RTC"
+    select RT_USING_RTC
+    default n
+
+config BSP_USING_PIN
+    bool "Enable PIN device for GPIO"
+    select RT_USING_PIN
+    default y
