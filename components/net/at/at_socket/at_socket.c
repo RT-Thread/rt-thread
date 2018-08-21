@@ -64,8 +64,6 @@ typedef enum {
 
 /* the global array of available sockets */
 static struct at_socket sockets[AT_SOCKETS_NUM] = { 0 };
-/* the global AT socket lock */
-static rt_mutex_t at_socket_lock = RT_NULL;
 /* AT device socket options */
 static struct at_device_ops *at_dev_ops = RT_NULL;
 
@@ -257,12 +255,23 @@ static void at_do_event_changes(struct at_socket *sock, at_event_t event, rt_boo
 
 static struct at_socket *alloc_socket(void)
 {
-    char sem_name[RT_NAME_MAX];
-    char lock_name[RT_NAME_MAX];
+    static rt_mutex_t at_slock = RT_NULL;
+    char name[RT_NAME_MAX];
     struct at_socket *sock;
     int idx;
 
-    rt_mutex_take(at_socket_lock, RT_WAITING_FOREVER);
+    if(at_slock == RT_NULL)
+    {
+        /* create AT socket lock */
+        at_slock = rt_mutex_create("at_s", RT_IPC_FLAG_FIFO);
+        if (at_slock == RT_NULL)
+        {
+            LOG_E("No memory for AT socket lock!");
+            return RT_NULL;
+        }
+    }
+
+    rt_mutex_take(at_slock, RT_WAITING_FOREVER);
 
     /* find an empty at socket entry */
     for (idx = 0; idx < AT_SOCKETS_NUM && sockets[idx].magic; idx++);
@@ -282,25 +291,25 @@ static struct at_socket *alloc_socket(void)
     sock->errevent = RT_NULL;
     rt_slist_init(&sock->recvpkt_list);
 
-    rt_snprintf(sem_name, RT_NAME_MAX, "%s%d", "at_recv_notice_", idx);
+    rt_snprintf(name, RT_NAME_MAX, "%s%d", "at_sr", idx);
     /* create AT socket receive mailbox */
-    if ((sock->recv_notice = rt_sem_create(sem_name, 0, RT_IPC_FLAG_FIFO)) == RT_NULL)
+    if ((sock->recv_notice = rt_sem_create(name, 0, RT_IPC_FLAG_FIFO)) == RT_NULL)
     {
         goto __err;
     }
 
-    rt_snprintf(lock_name, RT_NAME_MAX, "%s%d", "at_recv_lock_", idx);
+    rt_snprintf(name, RT_NAME_MAX, "%s%d", "at_sr", idx);
     /* create AT socket receive ring buffer lock */
-    if((sock->recv_lock = rt_mutex_create(lock_name, RT_IPC_FLAG_FIFO)) == RT_NULL)
+    if((sock->recv_lock = rt_mutex_create(name, RT_IPC_FLAG_FIFO)) == RT_NULL)
     {
         goto __err;
     }
 
-    rt_mutex_release(at_socket_lock);
+    rt_mutex_release(at_slock);
     return sock;
 
 __err:
-    rt_mutex_release(at_socket_lock);
+    rt_mutex_release(at_slock);
     return RT_NULL;
 }
 
@@ -486,7 +495,6 @@ static void at_closed_notice_cb(int socket, at_socket_evt_t event, const char *b
     at_do_event_changes(sock, AT_EVENT_RECV, RT_TRUE);
     at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
 
-//    LOG_D("socket (%d) closed by remote");
     sock->state = AT_SOCKET_CLOSED;
     rt_sem_release(sock->recv_notice);
 }
@@ -766,7 +774,6 @@ int at_send(int socket, const void *data, size_t size, int flags)
 {
     return at_sendto(socket, data, size, flags, RT_NULL, 0);
 }
-
 
 int at_getsockopt(int socket, int level, int optname, void *optval, socklen_t *optlen)
 {
@@ -1123,17 +1130,3 @@ void at_scoket_device_register(const struct at_device_ops *ops)
     RT_ASSERT(ops->set_event_cb);
     at_dev_ops = (struct at_device_ops *) ops;
 }
-
-static int at_socket_init(void)
-{
-    /* create AT socket lock */
-    at_socket_lock = rt_mutex_create("at_socket_lock", RT_IPC_FLAG_FIFO);
-    if (!at_socket_lock)
-    {
-        LOG_E("No memory for AT socket lock!");
-        return -RT_ENOMEM;
-    }
-
-    return RT_EOK;
-}
-INIT_COMPONENT_EXPORT(at_socket_init);
