@@ -251,9 +251,4 @@ void at_port_reset(void);
 void at_port_factory_reset(void);
 #endif
 
-#ifdef AT_USING_CLIENT
-/* AT client port initialization */
-int at_client_port_init(void);
-#endif
-
 #endif /* __AT_H__ */
