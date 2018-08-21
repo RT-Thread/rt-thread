@@ -663,6 +663,13 @@ void at_set_urc_table(const struct at_urc *table, rt_size_t size)
 
 }
 
+/**
+ * initialize AT client.
+ *
+ * @return 0: initialize success
+ *        -1: initialize failed
+ *        -5: no memory
+ */
 int at_client_init(void)
 {
     int result = RT_EOK;
@@ -747,11 +754,6 @@ int at_client_init(void)
         goto __exit;
     }
 
-    if ((result = at_client_port_init()) != RT_EOK)
-    {
-        LOG_E("AT client port initialize failed(%d).", result);
-    }
-
 __exit:
     if (!result)
     {
@@ -773,14 +775,8 @@ __exit:
 
     return result;
 }
-INIT_COMPONENT_EXPORT(at_client_init);
 
-RT_WEAK int at_client_port_init(void)
-{
-    at_client_local->urc_table = RT_NULL;
-    at_client_local->urc_table_size = 0;
-
-    LOG_E("The client porting initialize for AT client is not implement.");
-
-    return 0;
-}
+#ifdef FINSH_USING_MSH
+#include <finsh.h>
+MSH_CMD_EXPORT(at_client_init, initialize AT client);
+#endif
