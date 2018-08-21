@@ -100,9 +100,6 @@ void at_cli_deinit(void)
     rt_base_t int_lvl;
     rt_device_t console;
 
-    rt_sem_detach(&console_rx_notice);
-    rt_ringbuffer_destroy(console_rx_fifo);
-
     int_lvl = rt_hw_interrupt_disable();
     console = rt_console_get_device();
     if (console && odev_rx_ind)
@@ -111,6 +108,9 @@ void at_cli_deinit(void)
         rt_device_set_rx_indicate(console, odev_rx_ind);
     }
     rt_hw_interrupt_enable(int_lvl);
+
+    rt_sem_detach(&console_rx_notice);
+    rt_ringbuffer_destroy(console_rx_fifo);
 }
 
 #ifdef AT_USING_SERVER
@@ -272,15 +272,16 @@ static void client_cli_parser(void)
                 }
             }
 
-            rt_thread_delete(at_client);
-            rt_sem_detach(&client_rx_notice);
-            rt_ringbuffer_destroy(client_rx_fifo);
             /* restore client device RX indicate */
             {
                 int_lvl = rt_hw_interrupt_disable();
                 rt_device_set_rx_indicate(client->device, client_odev_rx_ind);
                 rt_hw_interrupt_enable(int_lvl);
             }
+
+            rt_thread_delete(at_client);
+            rt_sem_detach(&client_rx_notice);
+            rt_ringbuffer_destroy(client_rx_fifo);
         }
         else
         {
