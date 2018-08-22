@@ -238,6 +238,8 @@ static sfud_err hardware_init(sfud_flash *flash) {
                     flash->chip.capacity);
         } else if (flash_mf_name) {
             SFUD_INFO("Find a %s flash chip. Size is %ld bytes.", flash_mf_name, flash->chip.capacity);
+        } else {
+            SFUD_INFO("Find a flash chip. Size is %ld bytes.", flash->chip.capacity);
         }
     }
 
