@@ -132,6 +132,18 @@ static rt_size_t fm24clxx_write(rt_device_t dev, rt_off_t pos, const void *buffe
     return (ret == 2) ? size : 0;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device fm24clxx_ops =
+{
+    fm24clxx_init,
+    fm24clxx_open,
+    fm24clxx_close,
+    fm24clxx_read,
+    fm24clxx_write,
+    fm24clxx_control
+};
+#endif
+
 rt_err_t fm24clxx_register(const char *fm_device_name, const char *i2c_bus, void *user_data)
 {
     static struct fm24clxx_device fm24clxx_drv;
@@ -145,12 +157,17 @@ rt_err_t fm24clxx_register(const char *fm_device_name, const char *i2c_bus, void
 
     fm24clxx_drv.bus = bus;
     fm24clxx_drv.parent.type      = RT_Device_Class_Block;
+#ifdef RT_USING_DEVICE_OPS
+    fm24clxx_drv.parent.ops       = &fm24clxx_ops;
+#else
     fm24clxx_drv.parent.init      = fm24clxx_init;
     fm24clxx_drv.parent.open      = fm24clxx_open;
     fm24clxx_drv.parent.close     = fm24clxx_close;
     fm24clxx_drv.parent.read      = fm24clxx_read;
     fm24clxx_drv.parent.write     = fm24clxx_write;
     fm24clxx_drv.parent.control   = fm24clxx_control;
+#endif
+
     fm24clxx_drv.parent.user_data = user_data;
 
     return rt_device_register(&fm24clxx_drv.parent, fm_device_name, RT_DEVICE_FLAG_RDWR);

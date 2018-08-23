@@ -5,8 +5,8 @@
 #include <rtthread.h>
 #include "drv_clcd.h"
 
-#define CLCD_WIDTH  480
-#define CLCD_HEIGHT 320
+#define CLCD_WIDTH  (BSP_LCD_WIDTH)
+#define CLCD_HEIGHT (BSP_LCD_HEIGHT)
 
 #define CLCD_DEVICE(dev)    (struct drv_clcd_device*)(dev)
 
@@ -78,6 +78,18 @@ static rt_err_t drv_clcd_control(struct rt_device *device, int cmd, void *args)
     return RT_EOK;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops clcd_ops = 
+{
+    drv_clcd_init,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    drv_clcd_control
+};
+#endif
+
 int drv_clcd_hw_init(void)
 {
     PL111MMIO   *plio;
@@ -107,8 +119,13 @@ int drv_clcd_hw_init(void)
     plio->control = 0x1921 | (0x6 << 1);
 
     device->type    = RT_Device_Class_Graphic;
+#ifdef RT_USING_DEVICE_OPS
+    device->ops     = &clcd_ops;
+#else
     device->init    = drv_clcd_init;
     device->control = drv_clcd_control;
+#endif
+
     rt_device_register(device, "lcd", RT_DEVICE_FLAG_RDWR);
 
     return 0;

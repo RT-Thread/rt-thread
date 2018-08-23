@@ -49,31 +49,31 @@ def IARAddGroup(parent, name, files, project_path):
     group = SubElement(parent, 'group')
     group_name = SubElement(group, 'name')
     group_name.text = name
-    
+
     for f in files:
         fn = f.rfile()
         name = fn.name
         path = os.path.dirname(fn.abspath)
-    
         basename = os.path.basename(path)
         path = _make_path_relative(project_path, path)
         path = os.path.join(path, name)
-        
+
         file = SubElement(group, 'file')
         file_name = SubElement(file, 'name')
+
         if os.path.isabs(path):
             file_name.text = path.decode(fs_encoding)
         else:
             file_name.text = ('$PROJ_DIR$\\' + path).decode(fs_encoding)
 
 def IARWorkspace(target):
-    # make an workspace 
+    # make an workspace
     workspace = target.replace('.ewp', '.eww')
     out = file(workspace, 'wb')
     xml = iar_workspace % target
     out.write(xml)
     out.close()
-    
+
 def IARProject(target, script):
     project_path = os.path.dirname(os.path.abspath(target))
 
@@ -87,7 +87,19 @@ def IARProject(target, script):
     LINKFLAGS = ''
     CCFLAGS = ''
     Libs = []
-    
+    lib_prefix = ['lib', '']
+    lib_suffix = ['.a', '.o', '']
+
+    def searchLib(group):
+        for path_item in group['LIBPATH']:
+            for prefix_item in lib_prefix:
+                for suffix_item in lib_suffix:
+                    lib_full_path = os.path.join(path_item, prefix_item + item + suffix_item)
+                    if os.path.isfile(lib_full_path):
+                        return lib_full_path
+        else:
+            return ''
+
     # add group
     for group in script:
         IARAddGroup(root, group['name'], group['src'], project_path)
@@ -95,29 +107,26 @@ def IARProject(target, script):
         # get each include path
         if group.has_key('CPPPATH') and group['CPPPATH']:
             CPPPATH += group['CPPPATH']
-        
+
         # get each group's definitions
         if group.has_key('CPPDEFINES') and group['CPPDEFINES']:
             CPPDEFINES += group['CPPDEFINES']
-        
+
         # get each group's link flags
         if group.has_key('LINKFLAGS') and group['LINKFLAGS']:
             LINKFLAGS += group['LINKFLAGS']
-            
+
         if group.has_key('LIBS') and group['LIBS']:
             for item in group['LIBS']:
-                lib_path = ''
-
-                for path_item in group['LIBPATH']:
-                    full_path = os.path.join(path_item, item + '.a')
-                    if os.path.isfile(full_path): # has this library
-                        lib_path = full_path
-
+                lib_path = searchLib(group)
                 if lib_path != '':
                     lib_path = _make_path_relative(project_path, lib_path)
                     Libs += [lib_path]
+                    # print('found lib isfile: ' + lib_path)
+                else:
+                    print('not found LIB: ' + item)
 
-    # make relative path 
+    # make relative path
     paths = set()
     for path in CPPPATH:
         inc = _make_path_relative(project_path, os.path.normpath(path))
@@ -156,7 +165,7 @@ def IARProject(target, script):
     out.close()
 
     IARWorkspace(target)
-    
+
 def IARVersion():
     import subprocess
     import re
@@ -164,7 +173,7 @@ def IARVersion():
     def IARPath():
         import rtconfig
 
-        # set environ
+        # backup environ
         old_environ = os.environ
         os.environ['RTT_CC'] = 'iar'
         reload(rtconfig)
@@ -183,7 +192,7 @@ def IARVersion():
     if os.path.exists(path):
         cmd = os.path.join(path, 'iccarm.exe')
     else:
-        print('Get IAR version error. Please update IAR installation path in rtconfig.h!')
+        print('Error: get IAR version failed. Please update the IAR installation path in rtconfig.py!')
         return "0.0"
 
     child = subprocess.Popen([cmd, '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)

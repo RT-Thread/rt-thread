@@ -434,10 +434,27 @@ static void dhcpd_thread_entry(void *parameter)
                 // DHCP_OPTION_DNS_SERVER, use the default DNS server address in lwIP
                 *dhcp_opt++ = DHCP_OPTION_DNS_SERVER;
                 *dhcp_opt++ = 4;
-                *dhcp_opt++ = 208;
-                *dhcp_opt++ = 67;
-                *dhcp_opt++ = 222;
-                *dhcp_opt++ = 222;
+
+#ifndef DHCP_DNS_SERVER_IP
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR0;
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR1;
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR2;
+                *dhcp_opt++ = 1;
+#else
+                {
+#if (LWIP_VERSION) >= 0x02000000U
+                    ip4_addr_t dns_addr;
+#else
+                    struct ip_addr dns_addr;
+#endif /* LWIP_VERSION */
+                    ip4addr_aton(DHCP_DNS_SERVER_IP, &dns_addr);
+
+                    *dhcp_opt++ = (ntohl(dns_addr.addr) >> 24) & 0xFF;
+                    *dhcp_opt++ = (ntohl(dns_addr.addr) >> 16) & 0xFF;
+                    *dhcp_opt++ = (ntohl(dns_addr.addr) >>  8) & 0xFF;
+                    *dhcp_opt++ = (ntohl(dns_addr.addr) >>  0) & 0xFF;
+                }
+#endif
 
                 // DHCP_OPTION_LEASE_TIME
                 *dhcp_opt++ = DHCP_OPTION_LEASE_TIME;

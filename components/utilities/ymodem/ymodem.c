@@ -72,7 +72,7 @@ static enum rym_code _rym_read_code(
 {
     /* Fast path */
     if (rt_device_read(ctx->dev, 0, ctx->buf, 1) == 1)
-        return *ctx->buf;
+        return (enum rym_code)(*ctx->buf);
 
     /* Slow path */
     do {
@@ -85,7 +85,7 @@ static enum rym_code _rym_read_code(
         /* Try to read one */
         rsz = rt_device_read(ctx->dev, 0, ctx->buf, 1);
         if (rsz == 1)
-            return *ctx->buf;
+            return (enum rym_code)(*ctx->buf);
     } while (1);
 }
 

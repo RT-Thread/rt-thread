@@ -141,6 +141,24 @@ rt_inline unsigned int rt_list_len(const rt_list_t *l)
     rt_container_of(node, type, member)
 
 /**
+ * rt_list_for_each - iterate over a list
+ * @pos:	the rt_list_t * to use as a loop cursor.
+ * @head:	the head for your list.
+ */
+#define rt_list_for_each(pos, head) \
+    for (pos = (head)->next; pos != (head); pos = pos->next)
+
+/**
+ * rt_list_for_each_safe - iterate over a list safe against removal of list entry
+ * @pos:	the rt_list_t * to use as a loop cursor.
+ * @n:		another rt_list_t * to use as temporary storage
+ * @head:	the head for your list.
+ */
+#define rt_list_for_each_safe(pos, n, head) \
+	for (pos = (head)->next, n = pos->next; pos != (head); \
+		pos = n, n = pos->next)
+
+/**
  * rt_list_for_each_entry  -   iterate over list of given type
  * @pos:    the type * to use as a loop cursor.
  * @head:   the head for your list.
@@ -230,6 +248,16 @@ rt_inline rt_slist_t *rt_slist_remove(rt_slist_t *l, rt_slist_t *n)
     return l;
 }
 
+rt_inline rt_slist_t *rt_slist_first(rt_slist_t *l)
+{
+    return l->next;
+}
+
+rt_inline rt_slist_t *rt_slist_next(rt_slist_t *n)
+{
+    return n->next;
+}
+
 rt_inline int rt_slist_isempty(rt_slist_t *l)
 {
     return l->next == RT_NULL;
@@ -245,12 +273,20 @@ rt_inline int rt_slist_isempty(rt_slist_t *l)
     rt_container_of(node, type, member)
 
 /**
+ * rt_slist_for_each - iterate over a single list
+ * @pos:    the rt_slist_t * to use as a loop cursor.
+ * @head:   the head for your single list.
+ */
+#define rt_slist_for_each(pos, head) \
+    for (pos = (head)->next; pos != RT_NULL; pos = pos->next)
+
+/**
  * rt_slist_for_each_entry  -   iterate over single list of given type
  * @pos:    the type * to use as a loop cursor.
  * @head:   the head for your single list.
  * @member: the name of the list_struct within the struct.
  */
-#define rt_slist_fore_each_entry(pos, head, member) \
+#define rt_slist_for_each_entry(pos, head, member) \
     for (pos = rt_slist_entry((head)->next, typeof(*pos), member); \
          &pos->member != (RT_NULL); \
          pos = rt_slist_entry(pos->member.next, typeof(*pos), member))

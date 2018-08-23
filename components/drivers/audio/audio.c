@@ -421,6 +421,18 @@ static rt_err_t _audio_dev_control(struct rt_device *dev, int cmd, void *args)
     return result;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops audio_ops =
+{
+    _audio_dev_init,
+    _audio_dev_open,
+    _audio_dev_close,
+    _audio_dev_read,
+    _audio_dev_write,
+    _audio_dev_control
+};
+#endif
+
 rt_err_t rt_audio_register(struct rt_audio_device *audio, const char *name, rt_uint32_t flag, void *data)
 {
     struct rt_device *device;
@@ -431,12 +443,16 @@ rt_err_t rt_audio_register(struct rt_audio_device *audio, const char *name, rt_u
     device->rx_indicate = RT_NULL;
     device->tx_complete = RT_NULL;
 
-    device->init = _audio_dev_init;
-    device->open = _audio_dev_open;
-    device->close = _audio_dev_close;
-    device->read = _audio_dev_read;
-    device->write = _audio_dev_write;
+#ifdef RT_USING_DEVICE_OPS
+    device->ops  = &audio_ops;
+#else
+    device->init    = _audio_dev_init;
+    device->open    = _audio_dev_open;
+    device->close   = _audio_dev_close;
+    device->read    = _audio_dev_read;
+    device->write   = _audio_dev_write;
     device->control = _audio_dev_control;
+#endif
     device->user_data = data;
 
     //init memory pool for replay

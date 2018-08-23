@@ -53,8 +53,8 @@ STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x0400;
 /* Specify the memory areas */
 MEMORY
 {
-  m_boot_data           (RX)  : ORIGIN = 0x60000000, LENGTH = 0x00000400
-  m_image_vertor_table  (RX)  : ORIGIN = 0x60001000, LENGTH = 0x00000400
+  m_boot_data           (RX)  : ORIGIN = 0x60000000, LENGTH = 0x00001000
+  m_image_vertor_table  (RX)  : ORIGIN = 0x60001000, LENGTH = 0x00001000
 
   m_interrupts          (RX)  : ORIGIN = 0x60002000, LENGTH = 0x00000400
   m_text                (RX)  : ORIGIN = 0x60002400, LENGTH = 0x1F7FDC00
@@ -72,12 +72,14 @@ SECTIONS
 {
   .boot_data :
   {
-    KEEP(*(.bootdata))
+    KEEP(*(.boot_hdr.conf))
   } > m_boot_data
 
   .image_vertor_table :
   {
-    KEEP(*(.ivt))
+    KEEP(*(.boot_hdr.ivt))
+    KEEP(*(.boot_hdr.boot_data))
+    KEEP(*(.boot_hdr.dcd_data))
   } > m_image_vertor_table
 
   /* The startup code goes first into internal RAM */

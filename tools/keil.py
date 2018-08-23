@@ -392,3 +392,40 @@ def MDKProject(target, script):
         project.write(line)
 
     project.close()
+
+def ARMCC_Version():
+    import rtconfig
+    import subprocess
+    import re
+
+    path = rtconfig.EXEC_PATH
+    path = os.path.join(path, 'armcc.exe')
+
+    if os.path.exists(path):
+        cmd = path
+    else:
+        print('Error: get armcc version failed. Please update the KEIL MDK installation path in rtconfig.py!')
+        return "0.0"
+
+    child = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    stdout, stderr = child.communicate()
+
+    '''
+    example stdout: 
+    Product: MDK Plus 5.24
+    Component: ARM Compiler 5.06 update 5 (build 528)
+    Tool: armcc [4d3621]
+
+    return version: MDK Plus 5.24/ARM Compiler 5.06 update 5 (build 528)/armcc [4d3621]
+    '''
+
+    version_Product = re.search(r'Product: (.+)', stdout).group(1)
+    version_Product = version_Product[:-1]
+    version_Component = re.search(r'Component: (.*)', stdout).group(1)
+    version_Component = version_Component[:-1]
+    version_Tool = re.search(r'Tool: (.*)', stdout).group(1)
+    version_Tool = version_Tool[:-1]
+    version_str_format = '%s/%s/%s'
+    version_str = version_str_format % (version_Product, version_Component, version_Tool)
+    #print('version_str:' + version_str)
+    return version_str

@@ -28,6 +28,23 @@
 #include <dfs_poll.h>
 #include <dfs_select.h>
 
+static void fdszero(fd_set *set, int nfds)
+{
+    fd_mask *m;
+    int n;
+    
+    /*
+      The 'sizeof(fd_set)' of the system space may differ from user space,
+      so the actual size of the 'fd_set' is determined here with the parameter 'nfds'
+    */
+    m = (fd_mask*)set;
+    for (n = 0; n < nfds; n += (sizeof(fd_mask) * 8))
+    {
+        rt_memset(m, 0, sizeof(fd_mask));
+        m ++;
+    }
+}
+
 int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout)
 {
     int fd;
@@ -113,17 +130,17 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struc
     /* Now set up the return values */
     if (readfds)
     {
-        memset(readfds, 0, sizeof(fd_set));
+        fdszero(readfds, nfds);
     }
 
     if (writefds)
     {
-        memset(writefds, 0, sizeof(fd_set));
+        fdszero(writefds, nfds);
     }
 
     if (exceptfds)
     {
-        memset(exceptfds, 0, sizeof(fd_set));
+        fdszero(exceptfds, nfds);
     }
 
     /* Convert the poll descriptor list back into selects 3 bitsets */

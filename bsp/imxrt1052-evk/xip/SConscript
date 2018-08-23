@@ -2,7 +2,7 @@ Import('RTT_ROOT')
 Import('rtconfig')
 from building import *
 
-if GetDepend('BOARD_RT1050_EVK') or GetDepend('BOARD_RT1050_SeeedStudio'):
+if GetDepend('BOARD_USING_HYPERFLASH'):
     cwd = GetCurrentDir()
     src = Glob('*.c')
     CPPPATH = [cwd]
@@ -18,6 +18,6 @@ if GetDepend('BOARD_RT1050_EVK') or GetDepend('BOARD_RT1050_SeeedStudio'):
     group = DefineGroup('xip', src, depend = [''], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS) 
     Return('group') 
 
-if GetDepend('BOARD_RT1050_FIRE'): 
+if GetDepend('BOARD_USING_QSPIFLASH'): 
     group = []
     Return('group') 

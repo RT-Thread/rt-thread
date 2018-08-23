@@ -129,6 +129,34 @@ const rt_uint8_t _report_desc[]=
     USAGE_MAXIMUM(1),   0x65,
     INPUT(1),           0x00,
     END_COLLECTION(0),
+#if RT_USB_DEVICE_HID_KEYBOARD_NUMBER>3
+    USAGE_PAGE(1),      0x01,
+    USAGE(1),           0x06,
+    COLLECTION(1),      0x01,
+    REPORT_ID(1),       HID_REPORT_ID_KEYBOARD4,
+
+    USAGE_PAGE(1),      0x07,
+    USAGE_MINIMUM(1),   0xE0,
+    USAGE_MAXIMUM(1),   0xE7,
+    LOGICAL_MINIMUM(1), 0x00,
+    LOGICAL_MAXIMUM(1), 0x01,
+    REPORT_SIZE(1),     0x01,
+    REPORT_COUNT(1),    0x08,
+    INPUT(1),           0x02,
+    REPORT_COUNT(1),    0x01,
+    REPORT_SIZE(1),     0x08,
+    INPUT(1),           0x01,
+
+    REPORT_COUNT(1),    0x06,
+    REPORT_SIZE(1),     0x08,
+    LOGICAL_MINIMUM(1), 0x00,
+    LOGICAL_MAXIMUM(1), 0x65,
+    USAGE_PAGE(1),      0x07,
+    USAGE_MINIMUM(1),   0x00,
+    USAGE_MAXIMUM(1),   0x65,
+    INPUT(1),           0x00,
+    END_COLLECTION(0),
+#endif
 #endif
 #endif
 #endif
@@ -592,14 +620,33 @@ static void hid_thread_entry(void* parameter)
 		HID_Report_Received(&report);
 	}
 }
+
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops hid_device_ops =
+{
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    _hid_write,
+    RT_NULL,
+};
+#endif
+
 static rt_uint8_t hid_mq_pool[(sizeof(struct hid_report)+sizeof(void*))*8];
 static void rt_usb_hid_init(struct ufunction *func)
 {
     struct hid_s *hiddev;
     hiddev = (struct hid_s *)func->user_data;
     rt_memset(&hiddev->parent, 0, sizeof(hiddev->parent));
+
+#ifdef RT_USING_DEVICE_OPS
+    hiddev->parent.ops   = &hid_device_ops;
+#else
     hiddev->parent.write = _hid_write;
-	hiddev->func = func;
+#endif
+    hiddev->func = func;
+
     rt_device_register(&hiddev->parent, "hidd", RT_DEVICE_FLAG_RDWR);
     rt_mq_init(&hiddev->hid_mq, "hiddmq", hid_mq_pool, sizeof(struct hid_report),
                             sizeof(hid_mq_pool), RT_IPC_FLAG_FIFO);

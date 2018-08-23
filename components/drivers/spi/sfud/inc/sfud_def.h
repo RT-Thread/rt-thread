@@ -30,6 +30,7 @@
 #define _SFUD_DEF_H_
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <sfud_cfg.h>
@@ -77,7 +78,7 @@ if (!(EXPR))                                                                   \
     else {if (__delay_temp) {__delay_temp();} retry --;}
 
 /* software version number */
-#define SFUD_SW_VERSION                             "1.0.4"
+#define SFUD_SW_VERSION                             "1.0.6"
 /*
  * all defined supported command
  */

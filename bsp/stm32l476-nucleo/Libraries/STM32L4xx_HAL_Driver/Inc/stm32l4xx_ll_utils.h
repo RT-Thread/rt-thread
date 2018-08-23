@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32l4xx_ll_utils.h
   * @author  MCD Application Team
-  * @version V1.7.2
-  * @date    16-June-2017
   * @brief   Header file of UTILS LL module.
   @verbatim
   ==============================================================================
@@ -189,6 +187,11 @@ typedef struct
 #define LL_UTILS_PACKAGETYPE_UFBGA64        0x0000000DU /*!< UFBGA64 package type                     */
 #define LL_UTILS_PACKAGETYPE_UFBGA100       0x0000000EU /*!< UFBGA100 package type                    */
 #define LL_UTILS_PACKAGETYPE_UFBGA169       0x00000010U /*!< UFBGA169 package type                    */
+#define LL_UTILS_PACKAGETYPE_LQFP100_DSI    0x00000012U /*!< LQFP100 with DSI package type            */
+#define LL_UTILS_PACKAGETYPE_WLCSP144_DSI   0x00000013U /*!< WLCSP144 with DSI package type           */
+#define LL_UTILS_PACKAGETYPE_UFBGA144_DSI   0x00000013U /*!< UFBGA144 with DSI package type           */
+#define LL_UTILS_PACKAGETYPE_UFBGA169_DSI   0x00000014U /*!< UFBGA169 with DSI package type           */
+#define LL_UTILS_PACKAGETYPE_LQFP144_DSI    0x00000015U /*!< LQFP144 with DSI package type            */
 /**
   * @}
   */
@@ -243,7 +246,7 @@ __STATIC_INLINE uint32_t LL_GetUID_Word2(void)
   */
 __STATIC_INLINE uint32_t LL_GetFlashSize(void)
 {
-  return (uint16_t)(READ_REG(*((uint32_t *)FLASHSIZE_BASE_ADDRESS)));
+  return (uint32_t)(READ_REG(*((uint32_t *)FLASHSIZE_BASE_ADDRESS)) & 0xFFFFU);
 }
 
 /**
@@ -260,12 +263,17 @@ __STATIC_INLINE uint32_t LL_GetFlashSize(void)
   *         @arg @ref LL_UTILS_PACKAGETYPE_UFBGA64 (*)
   *         @arg @ref LL_UTILS_PACKAGETYPE_UFBGA100 (*)
   *         @arg @ref LL_UTILS_PACKAGETYPE_UFBGA169 (*)
+  *         @arg @ref LL_UTILS_PACKAGETYPE_LQFP100_DSI (*)
+  *         @arg @ref LL_UTILS_PACKAGETYPE_WLCSP144_DSI (*)
+  *         @arg @ref LL_UTILS_PACKAGETYPE_UFBGA144_DSI (*)
+  *         @arg @ref LL_UTILS_PACKAGETYPE_UFBGA169_DSI (*)
+  *         @arg @ref LL_UTILS_PACKAGETYPE_LQFP144_DSI (*)
   *
   *         (*) value not defined in all devices.
   */
 __STATIC_INLINE uint32_t LL_GetPackageType(void)
 {
-  return (uint8_t)(READ_REG(*((uint32_t *)PACKAGE_BASE_ADDRESS)) & 0x1FU);
+  return (uint32_t)(READ_REG(*((uint32_t *)PACKAGE_BASE_ADDRESS)) & 0x1FU);
 }
 
 /**
@@ -279,7 +287,7 @@ __STATIC_INLINE uint32_t LL_GetPackageType(void)
 /**
   * @brief  This function configures the Cortex-M SysTick source of the time base.
   * @param  HCLKFrequency HCLK frequency in Hz (can be calculated thanks to RCC helper macro)
-  * @note   When a RTOS is used, it is recommended to avoid changing the SysTick 
+  * @note   When a RTOS is used, it is recommended to avoid changing the SysTick
   *         configuration by calling this function, for a delay use rather osDelay RTOS service.
   * @param  Ticks Number of ticks
   * @retval None

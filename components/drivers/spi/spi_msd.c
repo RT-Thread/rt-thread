@@ -47,10 +47,14 @@ static void MSD_release_cs(struct rt_spi_device *device);
 
 static rt_err_t _wait_token(struct rt_spi_device *device, uint8_t token);
 static rt_err_t _wait_ready(struct rt_spi_device *device);
+static rt_err_t  rt_msd_init(rt_device_t dev);
+static rt_err_t  rt_msd_open(rt_device_t dev, rt_uint16_t oflag);
+static rt_err_t  rt_msd_close(rt_device_t dev);
 static rt_size_t rt_msd_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
 static rt_size_t rt_msd_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
 static rt_size_t rt_msd_sdhc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
 static rt_size_t rt_msd_sdhc_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
+static rt_err_t rt_msd_control(rt_device_t dev, int cmd, void *args);
 
 static rt_err_t MSD_take_owner(struct rt_spi_device *spi_device)
 {
@@ -460,6 +464,28 @@ static rt_err_t _write_block(struct rt_spi_device *device, const void *buffer, u
     /* wati ready */
     return _wait_ready(device);
 }
+
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops msd_ops = 
+{
+    rt_msd_init,
+    rt_msd_open,
+    rt_msd_close,
+    rt_msd_read,
+    rt_msd_write,
+    rt_msd_control
+};
+
+const static struct rt_device_ops msd_sdhc_ops = 
+{
+    rt_msd_init,
+    rt_msd_open,
+    rt_msd_close,
+    rt_msd_sdhc_read,
+    rt_msd_sdhc_write,
+    rt_msd_control
+};
+#endif
 
 /* RT-Thread Device Driver Interface */
 static rt_err_t rt_msd_init(rt_device_t dev)
@@ -893,13 +919,21 @@ static rt_err_t rt_msd_init(rt_device_t dev)
 
     if (msd->card_type == MSD_CARD_TYPE_SD_SDHC)
     {
+#ifdef RT_USING_DEVICE_OPS
+        dev->ops   = &msd_sdhc_ops;
+#else
         dev->read  = rt_msd_sdhc_read;
         dev->write = rt_msd_sdhc_write;
+#endif
     }
     else
     {
+#ifdef RT_USING_DEVICE_OPS
+        dev->ops   = &msd_ops;
+#else
         dev->read  = rt_msd_read;
         dev->write = rt_msd_write;
+#endif
     }
 
     /* set CRC */
@@ -1674,12 +1708,16 @@ rt_err_t msd_init(const char *sd_device_name, const char *spi_device_name)
     _msd_device.geometry.sector_count = 0;
     _msd_device.geometry.block_size = 0;
 
+#ifdef RT_USING_DEVICE_OPS
+    _msd_device.parent.ops     = &msd_ops;
+#else
     _msd_device.parent.init    = rt_msd_init;
     _msd_device.parent.open    = rt_msd_open;
     _msd_device.parent.close   = rt_msd_close;
     _msd_device.parent.read    = RT_NULL;
     _msd_device.parent.write   = RT_NULL;
     _msd_device.parent.control = rt_msd_control;
+#endif
 
     /* no private, no callback */
     _msd_device.parent.user_data = RT_NULL;

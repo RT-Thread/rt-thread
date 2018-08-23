@@ -62,6 +62,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type,
                                const char               *name);
 void rt_object_delete(rt_object_t object);
 rt_bool_t rt_object_is_systemobject(rt_object_t object);
+rt_uint8_t rt_object_get_type(rt_object_t object);
 rt_object_t rt_object_find(const char *name, rt_uint8_t type);
 
 #ifdef RT_USING_HOOK
@@ -172,7 +173,8 @@ void rt_thread_inited_sethook (void (*hook)(rt_thread_t thread));
  */
 void rt_thread_idle_init(void);
 #if defined(RT_USING_HOOK) || defined(RT_USING_IDLE_HOOK)
-void rt_thread_idle_sethook(void (*hook)(void));
+rt_err_t rt_thread_idle_sethook(void (*hook)(void));
+rt_err_t rt_thread_idle_delhook(void (*hook)(void));
 #endif
 void rt_thread_idle_excute(void);
 rt_thread_t rt_thread_idle_gethandler(void);
@@ -547,6 +549,10 @@ rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count);
 rt_int32_t rt_strcmp(const char *cs, const char *ct);
 rt_size_t rt_strlen(const char *src);
 char *rt_strdup(const char *s);
+#ifdef __CC_ARM
+/* leak strdup interface */
+char* strdup(const char* str);
+#endif
 
 char *rt_strstr(const char *str1, const char *str2);
 rt_int32_t rt_sscanf(const char *buf, const char *fmt, ...);

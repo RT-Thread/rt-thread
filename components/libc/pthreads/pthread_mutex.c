@@ -141,6 +141,7 @@ int pthread_mutex_init(pthread_mutex_t *mutex, const pthread_mutexattr_t *attr)
 
     /* detach the object from system object container */
     rt_object_detach(&(mutex->lock.parent.parent));
+    mutex->lock.parent.parent.type = RT_Object_Class_Mutex;
 
     return 0;
 }

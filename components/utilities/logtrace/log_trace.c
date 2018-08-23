@@ -383,17 +383,33 @@ static rt_err_t _log_control(rt_device_t dev, int cmd, void *arg)
     return rt_device_control(_traceout_device, cmd, arg);
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops log_device_ops = 
+{
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    _log_write,
+    _log_control
+};
+#endif
+
 int log_trace_init(void)
 {
     rt_memset(&_log_device, 0x00, sizeof(_log_device));
 
     _log_device.type = RT_Device_Class_Char;
+#ifdef RT_USING_DEVICE_OPS
+    _log_device.ops     = &log_device_ops;
+#else
     _log_device.init    = RT_NULL;
     _log_device.open    = RT_NULL;
     _log_device.close   = RT_NULL;
     _log_device.read    = RT_NULL;
     _log_device.write   = _log_write;
     _log_device.control = _log_control;
+#endif
 
     /* no indication and complete callback */
     _log_device.rx_indicate = RT_NULL;

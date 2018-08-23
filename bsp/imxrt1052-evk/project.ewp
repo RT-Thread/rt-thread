@@ -164,7 +164,7 @@
           <name>CCDefines</name>
           <state />
           <state>FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE</state>
-          <state>CPU_MIMXRT1052DVL6A</state>
+          <state>CPU_MIMXRT1052DVL6B</state>
           <state>SKIP_SYSCLK_INIT</state>
           <state>EVK_MCIMXRM</state>
           <state>FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1</state>
@@ -311,6 +311,7 @@
           <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\ipv4</state>
           <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\xip</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m7</state>
           <state>$PROJ_DIR$\..\..\components\dfs\include</state>
           <state>$PROJ_DIR$\..\..\components\dfs\filesystems\devfs</state>
@@ -1104,7 +1105,7 @@
           <name>CCDefines</name>
           <state>NDEBUG</state>
           <state>FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE</state>
-          <state>CPU_MIMXRT1052DVL6A</state>
+          <state>CPU_MIMXRT1052DVL6B</state>
           <state>SKIP_SYSCLK_INIT</state>
           <state>EVK_MCIMXRM</state>
           <state>FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1</state>
@@ -1251,6 +1252,7 @@
           <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\ipv4</state>
           <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\xip</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m7</state>
           <state>$PROJ_DIR$\..\..\components\dfs\include</state>
           <state>$PROJ_DIR$\..\..\components\dfs\filesystems\devfs</state>
@@ -1915,16 +1917,19 @@
       <name>$PROJ_DIR$\drivers\drv_spi_bus.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\hyper_flash_boot.c</name>
+      <name>$PROJ_DIR$\drivers\drv_i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\drv_lcd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\drv_sdio.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\drv_eth.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\fsl_phy.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\drv_sdio.c</name>
     </file>
   </group>
   <group>
@@ -2111,6 +2116,15 @@
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\iar\startup_MIMXRT1052.s</name>
+    </file>
+  </group>
+  <group>
+    <name>xip</name>
+    <file>
+      <name>$PROJ_DIR$\xip\fsl_flexspi_nor_boot.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\xip\fsl_flexspi_nor_flash.c</name>
     </file>
   </group>
   <group>

@@ -102,6 +102,18 @@ static rt_err_t i2c_bus_device_control(rt_device_t dev,
     return RT_EOK;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops i2c_ops = 
+{
+    RT_NULL, 
+    RT_NULL,
+    RT_NULL,
+    i2c_bus_device_read,
+    i2c_bus_device_write,
+    i2c_bus_device_control
+};
+#endif
+
 rt_err_t rt_i2c_bus_device_device_init(struct rt_i2c_bus_device *bus,
                                        const char               *name)
 {
@@ -115,12 +127,16 @@ rt_err_t rt_i2c_bus_device_device_init(struct rt_i2c_bus_device *bus,
     /* set device type */
     device->type    = RT_Device_Class_I2CBUS;
     /* initialize device interface */
+#ifdef RT_USING_DEVICE_OPS
+    device->ops     = &i2c_ops;
+#else
     device->init    = RT_NULL;
     device->open    = RT_NULL;
     device->close   = RT_NULL;
     device->read    = i2c_bus_device_read;
     device->write   = i2c_bus_device_write;
     device->control = i2c_bus_device_control;
+#endif
 
     /* register to device manager */
     rt_device_register(device, name, RT_DEVICE_FLAG_RDWR);

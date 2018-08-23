@@ -95,6 +95,12 @@ struct dirent
     char d_name[DFS_PATH_MAX];   /* The null-terminated file name */
 };
 
+struct dfs_fdtable
+{
+    uint32_t maxfd;
+    struct dfs_fd **fds;
+};
+
 /* Initialization of dfs */
 int dfs_init(void);
 
@@ -109,6 +115,8 @@ int fd_new(void);
 struct dfs_fd *fd_get(int fd);
 void fd_put(struct dfs_fd *fd);
 int fd_is_open(const char *pathname);
+
+struct dfs_fdtable* dfs_fdtable_get(void);
 
 #ifdef __cplusplus
 }

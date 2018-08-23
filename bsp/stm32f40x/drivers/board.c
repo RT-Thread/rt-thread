@@ -96,7 +96,7 @@ void rt_hw_board_init()
     rt_components_board_init();
  
 #ifdef RT_USING_CONSOLE
-    rt_console_set_device(CONSOLE_DEVICE);
+    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif	
 }
 

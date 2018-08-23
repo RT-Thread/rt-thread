@@ -207,6 +207,8 @@ rt_err_t rt_timer_detach(rt_timer_t timer)
 
     /* timer check */
     RT_ASSERT(timer != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
+    RT_ASSERT(rt_object_is_systemobject(&timer->parent));
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -218,7 +220,7 @@ rt_err_t rt_timer_detach(rt_timer_t timer)
 
     rt_object_detach((rt_object_t)timer);
 
-    return -RT_EOK;
+    return RT_EOK;
 }
 RTM_EXPORT(rt_timer_detach);
 
@@ -268,6 +270,8 @@ rt_err_t rt_timer_delete(rt_timer_t timer)
 
     /* timer check */
     RT_ASSERT(timer != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
+    RT_ASSERT(rt_object_is_systemobject(&timer->parent) == RT_FALSE);
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -279,7 +283,7 @@ rt_err_t rt_timer_delete(rt_timer_t timer)
 
     rt_object_delete((rt_object_t)timer);
 
-    return -RT_EOK;
+    return RT_EOK;
 }
 RTM_EXPORT(rt_timer_delete);
 #endif
@@ -302,6 +306,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
 
     /* timer check */
     RT_ASSERT(timer != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
 
     /* stop timer firstly */
     level = rt_hw_interrupt_disable();
@@ -405,7 +410,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
     }
 #endif
 
-    return -RT_EOK;
+    return RT_EOK;
 }
 RTM_EXPORT(rt_timer_start);
 
@@ -422,6 +427,8 @@ rt_err_t rt_timer_stop(rt_timer_t timer)
 
     /* timer check */
     RT_ASSERT(timer != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
+
     if (!(timer->parent.flag & RT_TIMER_FLAG_ACTIVATED))
         return -RT_ERROR;
 
@@ -455,6 +462,7 @@ rt_err_t rt_timer_control(rt_timer_t timer, int cmd, void *arg)
 {
     /* timer check */
     RT_ASSERT(timer != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
 
     switch (cmd)
     {

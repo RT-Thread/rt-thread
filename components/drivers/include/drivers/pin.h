@@ -86,7 +86,7 @@ struct rt_pin_ops
     /* TODO: add GPIO interrupt */
     rt_err_t (*pin_attach_irq)(struct rt_device *device, rt_int32_t pin,
                       rt_uint32_t mode, void (*hdr)(void *args), void *args);
-    rt_err_t (*pin_dettach_irq)(struct rt_device *device, rt_int32_t pin);
+    rt_err_t (*pin_detach_irq)(struct rt_device *device, rt_int32_t pin);
     rt_err_t (*pin_irq_enable)(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled);
 };
 
@@ -97,11 +97,9 @@ void rt_pin_write(rt_base_t pin, rt_base_t value);
 int  rt_pin_read(rt_base_t pin);
 rt_err_t rt_pin_attach_irq(rt_int32_t pin, rt_uint32_t mode,
                              void (*hdr)(void *args), void  *args);
-rt_err_t rt_pin_dettach_irq(rt_int32_t pin);
+rt_err_t rt_pin_detach_irq(rt_int32_t pin);
 rt_err_t rt_pin_irq_enable(rt_base_t pin, rt_uint32_t enabled);
 
-int rt_device_pin_irq_register(const char *name, const struct rt_pin_ops *ops,
-                                                              void *user_data);
 #ifdef __cplusplus
 }
 #endif

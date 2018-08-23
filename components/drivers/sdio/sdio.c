@@ -1171,7 +1171,8 @@ void sdio_irq_wakeup(struct rt_mmcsd_host *host)
 {
     if (host->flags & MMCSD_SUP_SDIO_IRQ)
         host->ops->enable_sdio_irq(host, 0);
-    rt_sem_release(host->sdio_irq_sem);
+    if (host->sdio_irq_sem)
+        rt_sem_release(host->sdio_irq_sem);
 }
 
 rt_int32_t sdio_enable_func(struct rt_sdio_function *func)

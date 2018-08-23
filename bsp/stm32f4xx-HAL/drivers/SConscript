@@ -19,7 +19,7 @@ if GetDepend(['RT_USING_SERIAL']):
 if GetDepend(['RT_USING_SPI']):
     src += ['drv_spi.c']
 
-if GetDepend(['RT_USING_W25QXX']):
+if GetDepend(['RT_USING_W25QXX']) or GetDepend(['RT_USING_SFUD']):
     src += ['drv_spiflash.c']
 
 if GetDepend(['RT_USING_WDT']):
@@ -35,7 +35,13 @@ if GetDepend(['RT_USING_USB_HOST']):
     src += ['drv_usbh.c']
 
 if GetDepend(['RT_USING_I2C']):
-	src += ['drv_i2c.c']
+    src += ['drv_i2c.c']
+
+if GetDepend(['RT_USING_CAN']):
+    src += ['drv_can.c']
+
+if GetDepend(['RT_USING_PWM']):
+    src += ['drv_pwm.c']
 
 CPPPATH = [cwd]
 

@@ -269,6 +269,10 @@ int dfs_elm_mkfs(rt_device_t dev_id)
             f_mount(fat, logic_nbr, (BYTE)index);
         }
     }
+    else
+    {
+        logic_nbr[0] = '0' + index;
+    }
 
     /* [IN] Logical drive number */
     /* [IN] Format options */
@@ -924,10 +928,12 @@ DRESULT disk_ioctl(BYTE drv, BYTE ctrl, void *buff)
 
 DWORD get_fattime(void)
 {
+    DWORD fat_time = 0;
+
+#ifdef RT_USING_LIBC 
     time_t now;
     struct tm *p_tm;
     struct tm tm_now;
-    DWORD fat_time;
 
     /* get current time */
     now = time(RT_NULL);
@@ -947,6 +953,7 @@ DWORD get_fattime(void)
                 (DWORD)tm_now.tm_hour        << 11 |
                 (DWORD)tm_now.tm_min         <<  5 |
                 (DWORD)tm_now.tm_sec / 2 ;
+#endif /* RT_USING_LIBC  */
 
     return fat_time;
 }
