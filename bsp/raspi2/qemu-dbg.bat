@@ -1,0 +1,1 @@
+qemu-system-arm -M raspi2 --kernel rtthread.elf -serial vc -serial stdio -S -s
