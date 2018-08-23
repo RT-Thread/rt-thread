@@ -220,7 +220,7 @@ rt_err_t rt_timer_detach(rt_timer_t timer)
 
     rt_object_detach((rt_object_t)timer);
 
-    return -RT_EOK;
+    return RT_EOK;
 }
 RTM_EXPORT(rt_timer_detach);
 
@@ -283,7 +283,7 @@ rt_err_t rt_timer_delete(rt_timer_t timer)
 
     rt_object_delete((rt_object_t)timer);
 
-    return -RT_EOK;
+    return RT_EOK;
 }
 RTM_EXPORT(rt_timer_delete);
 #endif
@@ -410,7 +410,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
     }
 #endif
 
-    return -RT_EOK;
+    return RT_EOK;
 }
 RTM_EXPORT(rt_timer_start);
 
