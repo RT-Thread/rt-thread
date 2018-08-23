@@ -4,7 +4,7 @@ from building import *
 
 cwd     = GetCurrentDir()
 src	= Glob('*.c')
-src += [cwd + '/arm/arm_startup_nrf52.s']
+src += [cwd + '/gcc/gcc_startup_nrf52.S']
 
 CPPPATH = [cwd]
 

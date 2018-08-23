@@ -3,7 +3,7 @@ import os
 # toolchains options
 ARCH='arm'
 CPU='cortex-m4'
-CROSS_TOOL='keil'
+CROSS_TOOL='gcc'
 
 if os.getenv('RTT_CC'):
 	CROSS_TOOL = os.getenv('RTT_CC')
@@ -13,7 +13,7 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= 'D:/SourceryGCC/bin'
+	EXEC_PATH 	= 'C:/GNU_Tools_ARM_Embedded/2017-q4-major/bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'C:/Keil_v5'
@@ -39,17 +39,17 @@ if PLATFORM == 'gcc':
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
-
-    DEVICE = ' -mcpu=cortex-m4 -mthumb -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
+	
+    DEVICE = ' -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
+    CFLAGS = DEVICE + ' -std=c99 -Dgcc' # -D' + PART_TYPE
+    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-nrf52832.map,-cref,-u,Reset_Handler -T nrf52_xxaa.ld'
 
     CPATH = ''
     LPATH = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O0 -gdwarf-2'
+        CFLAGS += ' -O0 -gdwarf-2 -g'
         AFLAGS += ' -gdwarf-2'
     else:
         CFLAGS += ' -O2'

@@ -6,13 +6,13 @@ from building import *
 cwd = GetCurrentDir()
 
 DriversDir = cwd + '/drivers_nrf/'
-DeviceDrivers = [DriversDir + 'hal/nrf_saadc.c']
-DeviceDrivers += [DriversDir + 'common/nrf_drv_common.c']
-#DeviceDrivers += [DriversDir + 'uart/nrf_drv_uart.c']
-DeviceDrivers += [DriversDir + 'clock/nrf_drv_clock.c']
-DeviceDrivers += [DriversDir + 'gpiote/nrf_drv_gpiote.c']
-DeviceDrivers += [DriversDir + 'pwm/nrf_drv_pwm.c']
-DeviceDrivers += [DriversDir + 'saadc/nrf_drv_saadc.c']
+DeviceDrivers = Glob(DriversDir + 'hal/nrf_saadc.c')
+DeviceDrivers += Glob(DriversDir + 'common/nrf_drv_common.c')
+#DeviceDrivers += Glob(DriversDir + 'uart/nrf_drv_uart.c']
+DeviceDrivers += Glob(DriversDir + 'clock/nrf_drv_clock.c')
+DeviceDrivers += Glob(DriversDir + 'gpiote/nrf_drv_gpiote.c')
+DeviceDrivers += Glob(DriversDir + 'pwm/nrf_drv_pwm.c')
+DeviceDrivers += Glob(DriversDir + 'saadc/nrf_drv_saadc.c')
 
 Libraries_dir = cwd + '/libraries/'
 Libraries_src = Glob(Libraries_dir + 'log/src/*.c')
@@ -32,17 +32,20 @@ path += [cwd + '/drivers_nrf/gpiote']
 path += [cwd + '/drivers_nrf/common']
 path += [cwd + '/drivers_nrf/hal']
 path += [cwd + '/drivers_nrf/pwm']
-path += [DriversDir + 'saadc']
+path += [cwd + '/drivers_nrf/saadc']
 
-path += [Libraries_dir + 'util']
-path += [Libraries_dir + 'timer']
-path += [Libraries_dir + 'fstorage']
-path += [Libraries_dir + 'experimental_section_vars']
-path += [Libraries_dir + 'log']
-path += [Libraries_dir + 'log/src']
-path += [Libraries_dir + 'strerror']
+path += [cwd + '/libraries/util']
+path += [cwd + '/libraries/timer']
+path += [cwd + '/libraries/fstorage']
+path += [cwd + '/libraries/experimental_section_vars']
+path += [cwd + '/libraries/log']
+path += [cwd + '/libraries/log/src']
+path += [cwd + '/libraries/strerror']
+path += [cwd + '/libraries/scheduler']
 
 path += [cwd + '/toolchain/cmsis/include']
+path += [cwd + '/softdevice/s132/headers']
+path += [cwd + '/softdevice/s132/headers/nrf52']
 
 CPPDEFINES = ['RTTHREAD', 'SWI_DISABLE0', 'CONFIG_GPIO_AS_PINRESET', 'NRF52', 'NRF52832_XXAA']
 CPPDEFINES += ['NRF52_PAN_12', 'NRF52_PAN_15', 'NRF52_PAN_20', 'NRF52_PAN_31', 'NRF52_PAN_36']
