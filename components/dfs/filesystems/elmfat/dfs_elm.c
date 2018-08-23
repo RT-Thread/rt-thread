@@ -214,7 +214,8 @@ int dfs_elm_mkfs(rt_device_t dev_id)
     int flag;
     FRESULT result;
     int index;
-
+    char logic_nbr[2] = {'0',':'};
+    
     work = rt_malloc(_MAX_SS);
     if(RT_NULL == work) {
         return -ENOMEM;
@@ -264,8 +265,13 @@ int dfs_elm_mkfs(rt_device_t dev_id)
              * on the disk, you will get a failure. so we need f_mount here,
              * just fill the FatFS[index] in elm fatfs to make mkfs work.
              */
-            f_mount(fat, "", (BYTE)index);
+            logic_nbr[0] = '0' + index;
+            f_mount(fat, logic_nbr, (BYTE)index);
         }
+    }
+    else
+    {
+        logic_nbr[0] = '0' + index;
     }
 
     /* [IN] Logical drive number */
@@ -273,14 +279,14 @@ int dfs_elm_mkfs(rt_device_t dev_id)
     /* [IN] Size of the allocation unit */
     /* [-]  Working buffer */
     /* [IN] Size of working buffer */
-    result = f_mkfs("", FM_ANY, 0, work, _MAX_SS);
+    result = f_mkfs(logic_nbr, FM_ANY, 0, work, _MAX_SS);
     rt_free(work); work = RT_NULL;
 
     /* check flag status, we need clear the temp driver stored in disk[] */
     if (flag == FSM_STATUS_USE_TEMP_DRIVER)
     {
         rt_free(fat);
-        f_mount(RT_NULL, "",(BYTE)index);
+        f_mount(RT_NULL, logic_nbr,(BYTE)index);
         disk[index] = RT_NULL;
         /* close device */
         rt_device_close(dev_id);
@@ -922,10 +928,12 @@ DRESULT disk_ioctl(BYTE drv, BYTE ctrl, void *buff)
 
 DWORD get_fattime(void)
 {
+    DWORD fat_time = 0;
+
+#ifdef RT_USING_LIBC 
     time_t now;
     struct tm *p_tm;
     struct tm tm_now;
-    DWORD fat_time;
 
     /* get current time */
     now = time(RT_NULL);
@@ -945,6 +953,7 @@ DWORD get_fattime(void)
                 (DWORD)tm_now.tm_hour        << 11 |
                 (DWORD)tm_now.tm_min         <<  5 |
                 (DWORD)tm_now.tm_sec / 2 ;
+#endif /* RT_USING_LIBC  */
 
     return fat_time;
 }

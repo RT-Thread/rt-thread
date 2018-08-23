@@ -358,7 +358,7 @@ rt_err_t  rt_pipe_close  (rt_device_t device)
 rt_size_t rt_pipe_read   (rt_device_t device, rt_off_t pos, void *buffer, rt_size_t count)
 {
     uint8_t *pbuf;
-    int read_bytes = 0;
+    rt_size_t read_bytes = 0;
     rt_pipe_t *pipe = (rt_pipe_t *)device;
 
     if (device == RT_NULL)
@@ -386,7 +386,7 @@ rt_size_t rt_pipe_read   (rt_device_t device, rt_off_t pos, void *buffer, rt_siz
 rt_size_t rt_pipe_write  (rt_device_t device, rt_off_t pos, const void *buffer, rt_size_t count)
 {
     uint8_t *pbuf;
-    int write_bytes = 0;
+    rt_size_t write_bytes = 0;
     rt_pipe_t *pipe = (rt_pipe_t *)device;
 
     if (device == RT_NULL)
@@ -416,6 +416,18 @@ rt_err_t  rt_pipe_control(rt_device_t dev, int cmd, void *args)
     return RT_EOK;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops pipe_ops = 
+{
+    RT_NULL,
+    rt_pipe_open,
+    rt_pipe_close,
+    rt_pipe_read,
+    rt_pipe_write,
+    rt_pipe_control,
+};
+#endif
+
 rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
 {
     rt_pipe_t *pipe;
@@ -426,20 +438,24 @@ rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
 
     rt_memset(pipe, 0, sizeof(rt_pipe_t));
     rt_mutex_init(&(pipe->lock), name, RT_IPC_FLAG_FIFO);
-    rt_list_init(&(pipe->reader_queue));
-    rt_list_init(&(pipe->writer_queue));
+    rt_wqueue_init(&(pipe->reader_queue));
+    rt_wqueue_init(&(pipe->writer_queue));
 
     RT_ASSERT(bufsz < 0xFFFF);
     pipe->bufsz = bufsz;
 
     dev = &(pipe->parent);
     dev->type = RT_Device_Class_Pipe;
+#ifdef RT_USING_DEVICE_OPS
+    dev->ops         = &pipe_ops;
+#else
     dev->init        = RT_NULL;
     dev->open        = rt_pipe_open;
     dev->read        = rt_pipe_read;
     dev->write       = rt_pipe_write;
     dev->close       = rt_pipe_close;
     dev->control     = rt_pipe_control;
+#endif
 
     dev->rx_indicate = RT_NULL;
     dev->tx_complete = RT_NULL;
@@ -525,7 +541,7 @@ int pipe(int fildes[2])
     fildes[1] = open(dev_name, O_WRONLY, 0);
     if (fildes[1] < 0)
     {
-        close(fildes[1]);
+        close(fildes[0]);
         return -1;
     }
 

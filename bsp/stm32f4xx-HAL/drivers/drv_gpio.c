@@ -11,103 +11,146 @@
  * Date           Author            Notes
  * 2017-10-20     ZYH            the first version
  */
-
 #include <rthw.h>
 #include <rtdevice.h>
 #include <board.h>
-
 #ifdef RT_USING_PIN
+#define __STM32_PIN(index, gpio, gpio_index) (gpio | gpio_index)
+#define __STM32_PIN_DEFAULT 0
 
-#define __STM32_PIN(index, gpio, gpio_index) {index, GPIO##gpio##_CLK_ENABLE, GPIO##gpio, GPIO_PIN_##gpio_index}
-#define __STM32_PIN_DEFAULT {-1, 0, 0, 0}
+#define A   (1U << 8)
+#define B   (2U << 8)
+#define C   (3U << 8)
+#define D   (4U << 8)
+#define E   (5U << 8)
+#define F   (6U << 8)
+#define G   (7U << 8)
+#define H   (8U << 8)
+#define I   (9U << 8)
+#define J   (10U << 8)
+#define K   (11U << 8)
 
-static void GPIOA_CLK_ENABLE(void)
+static GPIO_TypeDef * get_st_gpio(rt_uint16_t gpio_pin)
 {
-#ifdef __HAL_RCC_GPIOA_CLK_ENABLE
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-#endif
-}
-static void GPIOB_CLK_ENABLE(void)
-{
-#ifdef __HAL_RCC_GPIOB_CLK_ENABLE
-    __HAL_RCC_GPIOB_CLK_ENABLE();
-#endif
-}
-static void GPIOC_CLK_ENABLE(void)
-{
-#ifdef __HAL_RCC_GPIOC_CLK_ENABLE
-    __HAL_RCC_GPIOC_CLK_ENABLE();
-#endif
-}
-#if (STM32F4xx_PIN_NUMBERS > 48)
-
-    static void GPIOD_CLK_ENABLE(void)
+    switch(gpio_pin & 0xFF00)
     {
-    #ifdef __HAL_RCC_GPIOD_CLK_ENABLE
-        __HAL_RCC_GPIOD_CLK_ENABLE();
-    #endif
+    case A:
+        #ifdef GPIOA
+        return GPIOA;
+        #endif
+    case B:
+        #ifdef GPIOB
+        return GPIOB;
+        #endif
+    case C:
+        #ifdef GPIOC
+        return GPIOC;
+        #endif
+    case D:
+        #ifdef GPIOD
+        return GPIOD;
+        #endif
+    case E:
+        #ifdef GPIOE
+        return GPIOE;
+        #endif
+    case F:
+        #ifdef GPIOF
+        return GPIOF;
+        #endif
+    case G:
+        #ifdef GPIOG
+        return GPIOG;
+        #endif
+    case H:
+        #ifdef GPIOH
+        return GPIOH;
+        #endif
+    case I:
+        #ifdef GPIOI
+        return GPIOI;
+        #endif
+    case J:
+        #ifdef GPIOJ
+        return GPIOJ;
+        #endif
+    case K:
+        #ifdef GPIOK
+        return GPIOK;
+        #endif
+    default:
+        return RT_NULL;
     }
-    #if (STM32F4xx_PIN_NUMBERS > 64)
-        static void GPIOE_CLK_ENABLE(void)
-        {
-        #ifdef __HAL_RCC_GPIOE_CLK_ENABLE
-            __HAL_RCC_GPIOE_CLK_ENABLE();
-        #endif
-        }
-        #if (STM32F4xx_PIN_NUMBERS > 100)
-            static void GPIOF_CLK_ENABLE(void)
-            {
-            #ifdef __HAL_RCC_GPIOF_CLK_ENABLE
-                __HAL_RCC_GPIOF_CLK_ENABLE();
-            #endif
-            }
-            static void GPIOG_CLK_ENABLE(void)
-            {
-            #ifdef __HAL_RCC_GPIOG_CLK_ENABLE
-                __HAL_RCC_GPIOG_CLK_ENABLE();
-            #endif
-            }
-            #if (STM32F4xx_PIN_NUMBERS > 144)
-                static void GPIOH_CLK_ENABLE(void)
-                {
-                #ifdef __HAL_RCC_GPIOH_CLK_ENABLE
-                    __HAL_RCC_GPIOH_CLK_ENABLE();
-                #endif
-                }
-                static void GPIOI_CLK_ENABLE(void)
-                {
-                #ifdef __HAL_RCC_GPIOI_CLK_ENABLE
-                    __HAL_RCC_GPIOI_CLK_ENABLE();
-                #endif
-                }
-                #if (STM32F4xx_PIN_NUMBERS > 176)
-                    static void GPIOJ_CLK_ENABLE(void)
-                    {
-                    #ifdef __HAL_RCC_GPIOJ_CLK_ENABLE
-                        __HAL_RCC_GPIOJ_CLK_ENABLE();
-                    #endif
-                    }
-                    static void GPIOK_CLK_ENABLE(void)
-                    {
-                    #ifdef __HAL_RCC_GPIOK_CLK_ENABLE
-                        __HAL_RCC_GPIOK_CLK_ENABLE();
-                    #endif
-                    }
-                #endif
-            #endif
-        #endif
-    #endif
-#endif
-/* STM32 GPIO driver */
-struct pin_index
-{
-    int index;
-    void (*rcc)(void);
-    GPIO_TypeDef *gpio;
-    uint32_t pin;
-};
+}
 
-static const struct pin_index pins[] =
+#define get_st_pin(gpio_pin) (0x01 << (gpio_pin&0xFF))
+
+static void drv_clock_enable(rt_uint16_t gpio_pin)
+{
+    switch(gpio_pin & 0xFF00)
+    {
+    case A:
+        #ifdef __HAL_RCC_GPIOA_CLK_ENABLE
+        __HAL_RCC_GPIOA_CLK_ENABLE();
+        #endif
+        break;
+    case B:
+        #ifdef __HAL_RCC_GPIOB_CLK_ENABLE
+        __HAL_RCC_GPIOB_CLK_ENABLE();
+        #endif
+        break;
+    case C:
+        #ifdef __HAL_RCC_GPIOC_CLK_ENABLE
+        __HAL_RCC_GPIOC_CLK_ENABLE();
+        #endif
+        break;
+    case D:
+        #ifdef __HAL_RCC_GPIOD_CLK_ENABLE
+        __HAL_RCC_GPIOD_CLK_ENABLE();
+        #endif
+        break;
+    case E:
+        #ifdef __HAL_RCC_GPIOE_CLK_ENABLE
+        __HAL_RCC_GPIOE_CLK_ENABLE();
+        #endif
+        break;
+    case F:
+        #ifdef __HAL_RCC_GPIOF_CLK_ENABLE
+        __HAL_RCC_GPIOF_CLK_ENABLE();
+        #endif
+        break;
+    case G:
+        #ifdef __HAL_RCC_GPIOG_CLK_ENABLE
+        __HAL_RCC_GPIOG_CLK_ENABLE();
+        #endif
+        break;
+    case H:
+        #ifdef __HAL_RCC_GPIOH_CLK_ENABLE
+        __HAL_RCC_GPIOH_CLK_ENABLE();
+        #endif
+        break;
+    case I:
+        #ifdef __HAL_RCC_GPIOI_CLK_ENABLE
+        __HAL_RCC_GPIOI_CLK_ENABLE();
+        #endif
+        break;
+    case J:
+        #ifdef __HAL_RCC_GPIOJ_CLK_ENABLE
+        __HAL_RCC_GPIOJ_CLK_ENABLE();
+        #endif
+        break;
+    case K:
+        #ifdef __HAL_RCC_GPIOK_CLK_ENABLE
+        __HAL_RCC_GPIOK_CLK_ENABLE();
+        #endif
+        break;
+    default:
+        break;
+    }
+}
+
+/* STM32 GPIO driver */
+static const rt_uint16_t pins[] =
 {
 #if (STM32F4xx_PIN_NUMBERS == 36)
     __STM32_PIN_DEFAULT,
@@ -122,7 +165,7 @@ static const struct pin_index pins[] =
     __STM32_PIN(9, B, 6),
     __STM32_PIN_DEFAULT,
     __STM32_PIN_DEFAULT,
-    __STM32_PIN(13, C, 14),
+    __STM32_PIN(12, C, 14),
     __STM32_PIN(13, A, 13),
     __STM32_PIN(14, B, 3),
     __STM32_PIN(15, B, 7),
@@ -399,11 +442,11 @@ static const struct pin_index pins[] =
     __STM32_PIN(45, E, 14),
     __STM32_PIN(46, E, 15),
     __STM32_PIN(47, B, 10),
-    #if defined(STM32F405xx)||defined(STM32F415xx)||defined(STM32F407xx)||defined(STM32F417xx)||defined(STM32F427xx)||defined(STM32F437xx)||defined(STM32F429xx)
-        __STM32_PIN(48, B, 11),
-    #else
-        __STM32_PIN_DEFAULT,
-    #endif
+#if defined(STM32F405xx)||defined(STM32F415xx)||defined(STM32F407xx)||defined(STM32F417xx)||defined(STM32F427xx)||defined(STM32F437xx)||defined(STM32F429xx)
+    __STM32_PIN(48, B, 11),
+#else
+    __STM32_PIN_DEFAULT,
+#endif
     __STM32_PIN_DEFAULT,
     __STM32_PIN_DEFAULT,
     __STM32_PIN(51, B, 12),
@@ -1495,6 +1538,7 @@ struct pin_irq_map
     rt_uint16_t pinbit;
     IRQn_Type irqno;
 };
+
 static const struct pin_irq_map pin_irq_map[] =
 {
     {GPIO_PIN_0, EXTI0_IRQn},
@@ -1514,6 +1558,7 @@ static const struct pin_irq_map pin_irq_map[] =
     {GPIO_PIN_14, EXTI15_10_IRQn},
     {GPIO_PIN_15, EXTI15_10_IRQn},
 };
+
 struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
 {
     {-1, 0, RT_NULL, RT_NULL},
@@ -1535,86 +1580,58 @@ struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
 };
 
 #define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
-const struct pin_index *get_pin(uint8_t pin)
+static rt_uint16_t get_pin(uint8_t pin)
 {
-    const struct pin_index *index;
-
+    rt_uint16_t gpio_pin = __STM32_PIN_DEFAULT;
     if (pin < ITEM_NUM(pins))
     {
-        index = &pins[pin];
-        if (index->index == -1)
-        index = RT_NULL;
+        gpio_pin = pins[pin];
     }
-    else
-    {
-        index = RT_NULL;
-    }
-
-    return index;
+    return gpio_pin;
 };
 
-void stm32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void stm32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
 {
-    const struct pin_index *index;
-
-    index = get_pin(pin);
-    if (index == RT_NULL)
+    rt_uint16_t gpio_pin;
+    gpio_pin = get_pin(pin);
+    if (get_st_gpio(gpio_pin) == RT_NULL)
     {
         return;
     }
-
-    HAL_GPIO_WritePin(index->gpio, index->pin, (GPIO_PinState)value);
+    HAL_GPIO_WritePin(get_st_gpio(gpio_pin), get_st_pin(gpio_pin), (GPIO_PinState)value);
 }
 
-int stm32_pin_read(rt_device_t dev, rt_base_t pin)
+static int stm32_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    int value;
-    const struct pin_index *index;
-
-    value = PIN_LOW;
-
-    index = get_pin(pin);
-    if (index == RT_NULL)
+    rt_uint16_t gpio_pin;
+    gpio_pin = get_pin(pin);
+    if (get_st_gpio(gpio_pin) == RT_NULL)
     {
-        return value;
+        return PIN_LOW;
     }
-
-    value = HAL_GPIO_ReadPin(index->gpio, index->pin);
-
-    return value;
+    return HAL_GPIO_ReadPin(get_st_gpio(gpio_pin), get_st_pin(gpio_pin));
 }
 
-void stm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void stm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 {
-    const struct pin_index *index;
+    rt_uint16_t gpio_pin;
     GPIO_InitTypeDef GPIO_InitStruct;
-
-    index = get_pin(pin);
-    if (index == RT_NULL)
+    gpio_pin = get_pin(pin);
+    if (get_st_gpio(gpio_pin) == RT_NULL)
     {
         return;
     }
-
     /* GPIO Periph clock enable */
-    index->rcc();
-
+    drv_clock_enable(gpio_pin);
     /* Configure GPIO_InitStructure */
-    GPIO_InitStruct.Pin = index->pin;
+    GPIO_InitStruct.Pin = get_st_pin(gpio_pin);
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-
-    if (mode == PIN_MODE_OUTPUT)
-    {
-        /* output setting */
-        GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-        GPIO_InitStruct.Pull = GPIO_NOPULL;
-    }
-    else if (mode == PIN_MODE_INPUT)
+    if (mode == PIN_MODE_INPUT)
     {
         /* input setting: not pull. */
         GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-        GPIO_InitStruct.Pull = GPIO_NOPULL;
     }
     else if (mode == PIN_MODE_INPUT_PULLUP)
     {
@@ -1632,55 +1649,41 @@ void stm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     {
         /* output setting: od. */
         GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
-        GPIO_InitStruct.Pull = GPIO_NOPULL;
     }
+    HAL_GPIO_Init(get_st_gpio(gpio_pin), &GPIO_InitStruct);
+}
 
-    HAL_GPIO_Init(index->gpio, &GPIO_InitStruct);
-}
-rt_inline rt_int32_t bit2bitno(rt_uint32_t bit)
+static const struct pin_irq_map *get_pin_irq_map(rt_uint16_t gpio_pin)
 {
-    int i;
-    for (i = 0; i < 32; i++)
-    {
-        if ((0x01 << i) == bit)
-        {
-            return i;
-        }
-    }
-    return -1;
-}
-rt_inline const struct pin_irq_map *get_pin_irq_map(uint32_t pinbit)
-{
-    rt_int32_t mapindex = bit2bitno(pinbit);
+    rt_int32_t mapindex = gpio_pin & 0xFF;
     if (mapindex < 0 || mapindex >= ITEM_NUM(pin_irq_map))
     {
         return RT_NULL;
     }
     return &pin_irq_map[mapindex];
 };
-rt_err_t stm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
+
+static rt_err_t stm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
                               rt_uint32_t mode, void (*hdr)(void *args), void *args)
 {
-    const struct pin_index *index;
+    rt_uint16_t gpio_pin;
     rt_base_t level;
     rt_int32_t irqindex = -1;
-
-    index = get_pin(pin);
-    if (index == RT_NULL)
+    gpio_pin = get_pin(pin);
+    if (get_st_gpio(gpio_pin) == RT_NULL)
     {
         return RT_ENOSYS;
     }
-    irqindex = bit2bitno(index->pin);
+    irqindex = gpio_pin&0xFF;
     if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
         return RT_ENOSYS;
     }
-
     level = rt_hw_interrupt_disable();
     if (pin_irq_hdr_tab[irqindex].pin == pin &&
-        pin_irq_hdr_tab[irqindex].hdr == hdr &&
-        pin_irq_hdr_tab[irqindex].mode == mode &&
-        pin_irq_hdr_tab[irqindex].args == args)
+            pin_irq_hdr_tab[irqindex].hdr == hdr &&
+            pin_irq_hdr_tab[irqindex].mode == mode &&
+            pin_irq_hdr_tab[irqindex].args == args)
     {
         rt_hw_interrupt_enable(level);
         return RT_EOK;
@@ -1695,26 +1698,24 @@ rt_err_t stm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     pin_irq_hdr_tab[irqindex].mode = mode;
     pin_irq_hdr_tab[irqindex].args = args;
     rt_hw_interrupt_enable(level);
-
     return RT_EOK;
 }
-rt_err_t stm32_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
+
+static rt_err_t stm32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 {
-    const struct pin_index *index;
+    rt_uint16_t gpio_pin;
     rt_base_t level;
     rt_int32_t irqindex = -1;
-
-    index = get_pin(pin);
-    if (index == RT_NULL)
+    gpio_pin = get_pin(pin);
+    if (get_st_gpio(gpio_pin) == RT_NULL)
     {
         return RT_ENOSYS;
     }
-    irqindex = bit2bitno(index->pin);
+    irqindex = gpio_pin&0xFF;
     if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
         return RT_ENOSYS;
     }
-
     level = rt_hw_interrupt_disable();
     if (pin_irq_hdr_tab[irqindex].pin == -1)
     {
@@ -1726,26 +1727,25 @@ rt_err_t stm32_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
     pin_irq_hdr_tab[irqindex].mode = 0;
     pin_irq_hdr_tab[irqindex].args = RT_NULL;
     rt_hw_interrupt_enable(level);
-
     return RT_EOK;
 }
-rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
+
+static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
                               rt_uint32_t enabled)
 {
-    const struct pin_index *index;
+    rt_uint16_t gpio_pin;
     const struct pin_irq_map *irqmap;
     rt_base_t level;
     rt_int32_t irqindex = -1;
     GPIO_InitTypeDef GPIO_InitStruct;
-
-    index = get_pin(pin);
-    if (index == RT_NULL)
+    gpio_pin = get_pin(pin);
+    if (get_st_gpio(gpio_pin) == RT_NULL)
     {
         return RT_ENOSYS;
     }
     if (enabled == PIN_IRQ_ENABLE)
     {
-        irqindex = bit2bitno(index->pin);
+        irqindex = gpio_pin&0xFF;
         if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
         {
             return RT_ENOSYS;
@@ -1758,9 +1758,9 @@ rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         }
         irqmap = &pin_irq_map[irqindex];
         /* GPIO Periph clock enable */
-        index->rcc();
+        drv_clock_enable(gpio_pin);
         /* Configure GPIO_InitStructure */
-        GPIO_InitStruct.Pin = index->pin;
+        GPIO_InitStruct.Pin = get_st_pin(gpio_pin);
         GPIO_InitStruct.Pull = GPIO_NOPULL;
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
         switch (pin_irq_hdr_tab[irqindex].mode)
@@ -1775,14 +1775,14 @@ rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
             GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
             break;
         }
-        HAL_GPIO_Init(index->gpio, &GPIO_InitStruct);
+        HAL_GPIO_Init(get_st_gpio(gpio_pin), &GPIO_InitStruct);
         HAL_NVIC_SetPriority(irqmap->irqno, 5, 0);
         HAL_NVIC_EnableIRQ(irqmap->irqno);
         rt_hw_interrupt_enable(level);
     }
     else if (enabled == PIN_IRQ_DISABLE)
     {
-        irqmap = get_pin_irq_map(index->pin);
+        irqmap = get_pin_irq_map(gpio_pin);
         if (irqmap == RT_NULL)
         {
             return RT_ENOSYS;
@@ -1793,30 +1793,38 @@ rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     {
         return RT_ENOSYS;
     }
-
     return RT_EOK;
 }
+
 const static struct rt_pin_ops _stm32_pin_ops =
-    {
-        stm32_pin_mode,
-        stm32_pin_write,
-        stm32_pin_read,
-        stm32_pin_attach_irq,
-        stm32_pin_dettach_irq,
-        stm32_pin_irq_enable,
+{
+    stm32_pin_mode,
+    stm32_pin_write,
+    stm32_pin_read,
+    stm32_pin_attach_irq,
+    stm32_pin_detach_irq,
+    stm32_pin_irq_enable,
 };
 
 int rt_hw_pin_init(void)
 {
     int result;
-
     result = rt_device_pin_register("pin", &_stm32_pin_ops, RT_NULL);
     return result;
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);
 
-rt_inline void pin_irq_hdr(int irqno)
+static void pin_irq_hdr(uint16_t GPIO_Pin)
 {
+    int irqno = 0;
+    for(irqno = 0; irqno < 16; irqno ++)
+    {
+        if((0x01 << irqno) == GPIO_Pin)
+        {
+            break;
+        }
+    }
+    if(irqno == 16)return;
     if (pin_irq_hdr_tab[irqno].hdr)
     {
         pin_irq_hdr_tab[irqno].hdr(pin_irq_hdr_tab[irqno].args);
@@ -1825,38 +1833,44 @@ rt_inline void pin_irq_hdr(int irqno)
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-    pin_irq_hdr(bit2bitno(GPIO_Pin));
+    pin_irq_hdr(GPIO_Pin);
 }
+
 void EXTI0_IRQHandler(void)
 {
     rt_interrupt_enter();
     HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
     rt_interrupt_leave();
 }
+
 void EXTI1_IRQHandler(void)
 {
     rt_interrupt_enter();
     HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
     rt_interrupt_leave();
 }
+
 void EXTI2_IRQHandler(void)
 {
     rt_interrupt_enter();
     HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_2);
     rt_interrupt_leave();
 }
+
 void EXTI3_IRQHandler(void)
 {
     rt_interrupt_enter();
     HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_3);
     rt_interrupt_leave();
 }
+
 void EXTI4_IRQHandler(void)
 {
     rt_interrupt_enter();
     HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_4);
     rt_interrupt_leave();
 }
+
 void EXTI9_5_IRQHandler(void)
 {
     rt_interrupt_enter();
@@ -1867,6 +1881,7 @@ void EXTI9_5_IRQHandler(void)
     HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_9);
     rt_interrupt_leave();
 }
+
 void EXTI15_10_IRQHandler(void)
 {
     rt_interrupt_enter();
@@ -1878,5 +1893,4 @@ void EXTI15_10_IRQHandler(void)
     HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_15);
     rt_interrupt_leave();
 }
-
 #endif

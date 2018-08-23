@@ -513,7 +513,7 @@ rt_err_t stm32_i2c_register(I2C_TypeDef *I2C, rt_uint32_t bitrate,
     if(I2C == I2C1)
     {
         pi2c = &stm32_i2c1;
-        RCC_APB2PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
+        RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
     }
     else
 #endif /*RT_USING_I2C1*/

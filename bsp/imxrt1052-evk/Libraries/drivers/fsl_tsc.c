@@ -1,9 +1,12 @@
 /*
+ * The Clear BSD License
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * are permitted (subject to the limitations in the disclaimer below) provided
+ *  that the following conditions are met:
  *
  * o Redistributions of source code must retain the above copyright notice, this list
  *   of conditions and the following disclaimer.
@@ -16,6 +19,7 @@
  *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE.
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -29,6 +33,12 @@
  */
 
 #include "fsl_tsc.h"
+
+/* Component ID definition, used by tools. */
+#ifndef FSL_COMPONENT_ID
+#define FSL_COMPONENT_ID "platform.drivers.tsc"
+#endif
+
 
 /*******************************************************************************
  * Prototypes
@@ -90,7 +100,7 @@ void TSC_Init(TSC_Type *base, const tsc_config_t *config)
     }
     base->BASIC_SETTING = tmp32;
     /* Configure TSC_PS_INPUT_BUFFER_ADDR register. */
-    base->PS_INPUT_BUFFER_ADDR = TSC_PS_INPUT_BUFFER_ADDR_PRE_CHARGE_TIME(config->prechargeTime);
+    base->PRE_CHARGE_TIME = TSC_PRE_CHARGE_TIME_PRE_CHARGE_TIME(config->prechargeTime);
 }
 
 void TSC_Deinit(TSC_Type *base)
@@ -111,7 +121,7 @@ void TSC_GetDefaultConfig(tsc_config_t *config)
 
 uint32_t TSC_GetMeasureValue(TSC_Type *base, tsc_corrdinate_value_selection_t selection)
 {
-    uint32_t tmp32 = 0U;
+    uint32_t tmp32 = 0;
 
     if (selection == kTSC_XCoordinateValueSelection)
     {

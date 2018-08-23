@@ -104,7 +104,8 @@ SECTIONS
 
  .ctors :
   {
-    __CTOR_LIST__ = .;
+    PROVIDE(__ctors_start__ = .);
+    /* __CTOR_LIST__ = .; */
     /* gcc uses crtbegin.o to find the start of
        the constructors, so we make sure it is
        first.  Because this is a wildcard, it
@@ -123,18 +124,21 @@ SECTIONS
     KEEP (*(EXCLUDE_FILE(*crtend?.o *crtend.o) .ctors))
     KEEP (*(SORT(.ctors.*)))
     KEEP (*(.ctors))
-    __CTOR_END__ = .;
+    /* __CTOR_END__ = .; */
+    PROVIDE(__ctors_end__ = .);
   } > m_text
 
   .dtors :
   {
-    __DTOR_LIST__ = .;
+    PROVIDE(__dtors_start__ = .);
+    /* __DTOR_LIST__ = .; */
     KEEP (*crtbegin.o(.dtors))
     KEEP (*crtbegin?.o(.dtors))
     KEEP (*(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors))
     KEEP (*(SORT(.dtors.*)))
     KEEP (*(.dtors))
-    __DTOR_END__ = .;
+    /* __DTOR_END__ = .; */
+    PROVIDE(__dtors_end__ = .);
   } > m_text
 
   .preinit_array :

@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_dcmi.c
   * @author  MCD Application Team
-  * @version V1.7.2
-  * @date    16-June-2017
   * @brief   DCMI HAL module driver
   *          This file provides firmware functions to manage the following 
   *          functionalities of the Digital Camera Interface (DCMI) peripheral:
@@ -132,7 +130,8 @@
 
 #ifdef HAL_DCMI_MODULE_ENABLED
 
-#if defined(STM32L496xx) || defined(STM32L4A6xx)
+#if defined(STM32L496xx) || defined(STM32L4A6xx) || \
+    defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
 
 /** @addtogroup STM32L4xx_HAL_Driver
   * @{
@@ -1261,7 +1260,8 @@ static uint32_t DCMI_TransferSize(uint32_t InputSize)
   * @}
   */
 
-#endif /* STM32L496xx || STM32L4A6xx */
+#endif /* STM32L496xx || STM32L4A6xx || */
+       /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 
 #endif /* HAL_DCMI_MODULE_ENABLED */
   

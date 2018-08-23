@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file      startup_stm32f745xx.s
   * @author    MCD Application Team
-  * @Version    V1.0.1
-  * @Date       25-June-2015
   * @brief     STM32F745xx Devices vector table for GCC toolchain based application. 
   *            This module performs:
   *                - Set the initial SP
@@ -16,7 +14,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2015 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2016 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -110,9 +108,9 @@ LoopFillZerobss:
 /* Call the clock system initialization function.*/
   bl  SystemInit   
 /* Call static constructors */
-    bl __libc_init_array
+/*   bl __libc_init_array*/
 /* Call the application's entry point.*/
-  bl  main
+  bl  entry
   bx  lr    
 .size  Reset_Handler, .-Reset_Handler
 
@@ -245,12 +243,12 @@ g_pfnVectors:
   .word     UART7_IRQHandler                  /* UART7                        */      
   .word     UART8_IRQHandler                  /* UART8                        */
   .word     SPI4_IRQHandler                   /* SPI4                         */
-  .word     SPI5_IRQHandler                   /* SPI5	 		              */
-  .word     SPI6_IRQHandler                   /* SPI6   			          */
-  .word     SAI1_IRQHandler                   /* SAI1						  */
+  .word     SPI5_IRQHandler                   /* SPI5                           */
+  .word     SPI6_IRQHandler                   /* SPI6                         */
+  .word     SAI1_IRQHandler                   /* SAI1                          */
   .word     0                                 /* Reserved                     */
   .word     0                                 /* Reserved                     */
-  .word     DMA2D_IRQHandler                  /* DMA2D    				      */
+  .word     DMA2D_IRQHandler                  /* DMA2D                          */
   .word     SAI2_IRQHandler                   /* SAI2                         */
   .word     QUADSPI_IRQHandler                /* QUADSPI                      */
   .word     LPTIM1_IRQHandler                 /* LPTIM1                       */
@@ -556,7 +554,7 @@ g_pfnVectors:
 
    .weak      SAI1_IRQHandler            
    .thumb_set SAI1_IRQHandler,Default_Handler
-   
+
    .weak      DMA2D_IRQHandler            
    .thumb_set DMA2D_IRQHandler,Default_Handler   
 
@@ -581,5 +579,5 @@ g_pfnVectors:
    .weak      SPDIF_RX_IRQHandler            
    .thumb_set SPDIF_RX_IRQHandler,Default_Handler 
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/		
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/        
  

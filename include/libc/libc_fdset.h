@@ -35,7 +35,7 @@
 
 #else
 
-#ifdef RT_USING_DFS_NET
+#ifdef SAL_USING_POSIX
 
 #ifdef FD_SETSIZE
 #undef FD_SETSIZE

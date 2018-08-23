@@ -8,11 +8,12 @@
  * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
- * Date           Author       Notes
- * 2009-01-05     Bernard      the first version
- * 2010-03-29     Bernard      remove interrupt Tx and DMA Rx mode
- * 2013-05-13     aozima       update for kehong-lingtai.
- * 2015-01-31     armink       make sure the serial transmit complete in putc()
+ * Date           Author          Notes
+ * 2009-01-05     Bernard         the first version
+ * 2010-03-29     Bernard         remove interrupt Tx and DMA Rx mode
+ * 2013-05-13     aozima          update for kehong-lingtai.
+ * 2015-01-31     armink          make sure the serial transmit complete in putc()
+ * 2018-08-17     whj             add to usart3
  */
 
 #include "stm32f10x.h"
@@ -37,6 +38,11 @@
 #define UART2_GPIO_RX     GPIO_Pin_3
 #define UART2_GPIO        GPIOA
 #endif
+
+/* USART3_REMAP = 1  */
+#define UART3_GPIO_TX        GPIO_Pin_10
+#define UART3_GPIO_RX        GPIO_Pin_11
+#define UART3_GPIO           GPIOC
 
 /* STM32 uart driver */
 struct stm32_uart
@@ -229,6 +235,44 @@ void USART2_IRQHandler(void)
 }
 #endif /* RT_USING_UART2 */
 
+#if defined(RT_USING_UART3)
+/* UART1 device driver structure */
+struct stm32_uart uart3 =
+{
+    USART3,
+    USART3_IRQn,
+};
+struct rt_serial_device serial3;
+
+void USART3_IRQHandler(void)
+{
+    struct stm32_uart* uart;
+
+    uart = &uart3;
+
+    /* enter interrupt */
+    rt_interrupt_enter();
+    if(USART_GetITStatus(uart->uart_device, USART_IT_RXNE) != RESET)
+    {
+        rt_hw_serial_isr(&serial3, RT_SERIAL_EVENT_RX_IND);
+        /* clear interrupt */
+        USART_ClearITPendingBit(uart->uart_device, USART_IT_RXNE);
+    }
+    if (USART_GetITStatus(uart->uart_device, USART_IT_TC) != RESET)
+    {
+        /* clear interrupt */
+        USART_ClearITPendingBit(uart->uart_device, USART_IT_TC);
+    }
+    if (USART_GetFlagStatus(uart->uart_device, USART_FLAG_ORE) == SET)
+    {
+        stm32_getc(&serial3);
+    }
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif /* RT_USING_UART3 */
+
 static void RCC_Configuration(void)
 {
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
@@ -252,6 +296,11 @@ static void RCC_Configuration(void)
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
 #endif /* RT_USING_UART2 */
+
+#if defined(RT_USING_UART3)  
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOC, ENABLE);
+    GPIO_PinRemapConfig(GPIO_PartialRemap_USART3, ENABLE);
+#endif /* RT_USING_UART3 */
 }
 
 static void GPIO_Configuration(void)
@@ -281,6 +330,18 @@ static void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_Pin = UART2_GPIO_TX;
     GPIO_Init(UART2_GPIO, &GPIO_InitStructure);
 #endif /* RT_USING_UART2 */
+
+#if defined(RT_USING_UART3)
+    /* Configure USART3 Rx (PC.11) as input floating */
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_InitStructure.GPIO_Pin = UART3_GPIO_RX;
+    GPIO_Init(UART3_GPIO, &GPIO_InitStructure);
+
+	/* Configure USART3 Tx (PC.10) as alternate function push-pull */
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_InitStructure.GPIO_Pin = UART3_GPIO_TX;
+    GPIO_Init(UART3_GPIO, &GPIO_InitStructure);
+#endif /* RT_USING_UART3 */
 }
 
 static void NVIC_Configuration(struct stm32_uart* uart)
@@ -327,9 +388,24 @@ void rt_hw_usart_init(void)
 
     NVIC_Configuration(&uart2);
 
-    /* register UART1 device */
+    /* register UART2 device */
     rt_hw_serial_register(&serial2, "uart2",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
 #endif /* RT_USING_UART2 */
+
+#if defined(RT_USING_UART3)
+    uart = &uart3;
+
+    config.baud_rate = BAUD_RATE_115200;
+    serial2.ops    = &stm32_uart_ops;
+    serial2.config = config;
+
+    NVIC_Configuration(&uart3);
+
+    /* register UART3 device */
+    rt_hw_serial_register(&serial3, "uart3",
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                          uart);
+#endif /* RT_USING_UART3 */
 }

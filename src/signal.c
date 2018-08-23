@@ -35,7 +35,7 @@
 #endif
 
 // #define DBG_ENABLE
-#define DBG_SECTION_NAME    "[SIGN]"
+#define DBG_SECTION_NAME    "SIGN"
 #define DBG_COLOR
 #define DBG_LEVEL           DBG_LOG
 #include <rtdbg.h>
@@ -45,7 +45,7 @@
 
 struct siginfo_node
 {
-    struct siginfo si;
+    siginfo_t si;
     struct rt_slist_node list;
 };
 
@@ -339,7 +339,7 @@ void rt_thread_handle_sig(rt_bool_t clean_state)
 
                 level = rt_hw_interrupt_disable();
                 tid->sig_pending &= ~sig_mask(signo);
-                error = si_node->si.si_errno;
+                error = -RT_EINTR;
 
                 rt_mp_free(si_node); /* release this siginfo node */
                 /* set errno in thread tcb */
@@ -419,7 +419,6 @@ int rt_thread_kill(rt_thread_t tid, int sig)
     if (!sig_valid(sig)) return -RT_EINVAL;
 
     dbg_log(DBG_INFO, "send signal: %d\n", sig);
-    si.si_errno = RT_EINTR;
     si.si_signo = sig;
     si.si_code  = SI_USER;
     si.si_value.sival_ptr = RT_NULL;

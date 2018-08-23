@@ -129,6 +129,34 @@ const rt_uint8_t _report_desc[]=
     USAGE_MAXIMUM(1),   0x65,
     INPUT(1),           0x00,
     END_COLLECTION(0),
+#if RT_USB_DEVICE_HID_KEYBOARD_NUMBER>3
+    USAGE_PAGE(1),      0x01,
+    USAGE(1),           0x06,
+    COLLECTION(1),      0x01,
+    REPORT_ID(1),       HID_REPORT_ID_KEYBOARD4,
+
+    USAGE_PAGE(1),      0x07,
+    USAGE_MINIMUM(1),   0xE0,
+    USAGE_MAXIMUM(1),   0xE7,
+    LOGICAL_MINIMUM(1), 0x00,
+    LOGICAL_MAXIMUM(1), 0x01,
+    REPORT_SIZE(1),     0x01,
+    REPORT_COUNT(1),    0x08,
+    INPUT(1),           0x02,
+    REPORT_COUNT(1),    0x01,
+    REPORT_SIZE(1),     0x08,
+    INPUT(1),           0x01,
+
+    REPORT_COUNT(1),    0x06,
+    REPORT_SIZE(1),     0x08,
+    LOGICAL_MINIMUM(1), 0x00,
+    LOGICAL_MAXIMUM(1), 0x65,
+    USAGE_PAGE(1),      0x07,
+    USAGE_MINIMUM(1),   0x00,
+    USAGE_MAXIMUM(1),   0x65,
+    INPUT(1),           0x00,
+    END_COLLECTION(0),
+#endif
 #endif
 #endif
 #endif
@@ -227,17 +255,20 @@ static struct udevice_descriptor _dev_desc =
     USB_DYNAMIC,                //bNumConfigurations;
 };
 
-static struct usb_qualifier_descriptor _dev_qualifier =
+//FS and HS needed
+static struct usb_qualifier_descriptor dev_qualifier =
 {
-    sizeof(_dev_qualifier),
-    USB_DESC_TYPE_DEVICEQUALIFIER,
-    0x0200,
-    USB_CLASS_HID,
-    0x00,
-    64,
-    0x01,
+    sizeof(dev_qualifier),          //bLength
+    USB_DESC_TYPE_DEVICEQUALIFIER,  //bDescriptorType
+    0x0200,                         //bcdUSB
+    USB_CLASS_MASS_STORAGE,         //bDeviceClass
+    0x06,                           //bDeviceSubClass
+    0x50,                           //bDeviceProtocol
+    64,                             //bMaxPacketSize0
+    0x01,                           //bNumConfigurations
     0,
 };
+
 
 /* hid interface descriptor */
 const static struct uhid_comm_descriptor _hid_comm_desc =
@@ -589,14 +620,33 @@ static void hid_thread_entry(void* parameter)
 		HID_Report_Received(&report);
 	}
 }
+
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops hid_device_ops =
+{
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    _hid_write,
+    RT_NULL,
+};
+#endif
+
 static rt_uint8_t hid_mq_pool[(sizeof(struct hid_report)+sizeof(void*))*8];
 static void rt_usb_hid_init(struct ufunction *func)
 {
     struct hid_s *hiddev;
     hiddev = (struct hid_s *)func->user_data;
     rt_memset(&hiddev->parent, 0, sizeof(hiddev->parent));
+
+#ifdef RT_USING_DEVICE_OPS
+    hiddev->parent.ops   = &hid_device_ops;
+#else
     hiddev->parent.write = _hid_write;
-	hiddev->func = func;
+#endif
+    hiddev->func = func;
+
     rt_device_register(&hiddev->parent, "hidd", RT_DEVICE_FLAG_RDWR);
     rt_mq_init(&hiddev->hid_mq, "hiddmq", hid_mq_pool, sizeof(struct hid_report),
                             sizeof(hid_mq_pool), RT_IPC_FLAG_FIFO);
@@ -631,7 +681,8 @@ ufunction_t rt_usbd_function_hid_create(udevice_t device)
 
     /* create a cdc function */
     func = rt_usbd_function_new(device, &_dev_desc, &ops);
-    rt_usbd_device_set_qualifier(device, &_dev_qualifier);
+    //not support hs
+    //rt_usbd_device_set_qualifier(device, &_dev_qualifier);
 
     /* allocate memory for cdc vcom data */
     data = (struct hid_s*)rt_malloc(sizeof(struct hid_s));
@@ -670,5 +721,15 @@ ufunction_t rt_usbd_function_hid_create(udevice_t device)
     rt_usb_hid_init(func);
     return func;
 }
+struct udclass hid_class = 
+{
+    .rt_usbd_function_create = rt_usbd_function_hid_create
+};
 
+int rt_usbd_hid_class_register(void)
+{
+    rt_usbd_class_register(&hid_class);
+    return 0;
+}
+INIT_PREV_EXPORT(rt_usbd_hid_class_register);
 #endif /* RT_USB_DEVICE_HID */

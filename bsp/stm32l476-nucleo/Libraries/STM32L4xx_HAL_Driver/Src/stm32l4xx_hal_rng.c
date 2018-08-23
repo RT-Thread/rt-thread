@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_rng.c
   * @author  MCD Application Team
-  * @version V1.7.2
-  * @date    16-June-2017
   * @brief   RNG HAL module driver.
   *          This file provides firmware functions to manage the following 
   *          functionalities of the Random Number Generator (RNG) peripheral:
@@ -122,11 +120,12 @@ HAL_StatusTypeDef HAL_RNG_Init(RNG_HandleTypeDef *hrng)
   {
     return HAL_ERROR;
   }
-  
-  assert_param(IS_RNG_ALL_INSTANCE(hrng->Instance)); 
-  
-  __HAL_LOCK(hrng);
-  
+
+  assert_param(IS_RNG_ALL_INSTANCE(hrng->Instance));
+#if defined(RNG_CR_CED)
+  assert_param(IS_RNG_CED(hrng->Init.ClockErrorDetection));
+#endif /* defined(RNG_CR_CED) */
+
   if(hrng->State == HAL_RNG_STATE_RESET)
   {  
     /* Allocate lock resource and initialize it */
@@ -135,17 +134,20 @@ HAL_StatusTypeDef HAL_RNG_Init(RNG_HandleTypeDef *hrng)
     /* Init the low level hardware */
     HAL_RNG_MspInit(hrng);
   }
-  
+
   /* Change RNG peripheral state */
   hrng->State = HAL_RNG_STATE_BUSY;
+
+#if defined(RNG_CR_CED)
+  /* Clock Error Detection configuration */
+  MODIFY_REG(hrng->Instance->CR, RNG_CR_CED, hrng->Init.ClockErrorDetection);
+#endif /* defined(RNG_CR_CED) */
 
   /* Enable the RNG Peripheral */
   __HAL_RNG_ENABLE(hrng);
 
   /* Initialize the RNG state */
   hrng->State = HAL_RNG_STATE_READY;
-  
-  __HAL_UNLOCK(hrng);
   
   /* Return function status */
   return HAL_OK;
@@ -163,21 +165,27 @@ HAL_StatusTypeDef HAL_RNG_DeInit(RNG_HandleTypeDef *hrng)
   {
     return HAL_ERROR;
   }
+  
+#if defined(RNG_CR_CED)
+  /* Clear Clock Error Detection bit */
+  CLEAR_BIT(hrng->Instance->CR, RNG_CR_CED);
+#endif /* defined(RNG_CR_CED) */
+
   /* Disable the RNG Peripheral */
   CLEAR_BIT(hrng->Instance->CR, RNG_CR_IE | RNG_CR_RNGEN);
-  
+
   /* Clear RNG interrupt status flags */
   CLEAR_BIT(hrng->Instance->SR, RNG_SR_CEIS | RNG_SR_SEIS);
-  
+
   /* DeInit the low level hardware */
   HAL_RNG_MspDeInit(hrng);
-  
+
   /* Update the RNG state */
   hrng->State = HAL_RNG_STATE_RESET; 
 
   /* Release Lock */
   __HAL_UNLOCK(hrng);
-  
+
   /* Return the function status */
   return HAL_OK;
 }

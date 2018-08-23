@@ -39,7 +39,7 @@ OBJDUMP = PREFIX + 'objdump'
 OBJCPY = PREFIX + 'objcopy'
 READELF = PREFIX + 'readelf'
 
-DEVICE = ' -mips32'
+DEVICE = ' -mips32 -msoft-float -mfp32'
 CFLAGS = DEVICE + ' -EL -G0 -mno-abicalls -fno-pic -fno-builtin -fno-exceptions -ffunction-sections -fomit-frame-pointer'
 AFLAGS = ' -c' + DEVICE + ' -EL -fno-pic -fno-builtin -mno-abicalls -x assembler-with-cpp -DSYSTEM_STACK=0x80003fe8'
 LFLAGS = DEVICE + ' -nostartfiles -EL -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T ls1c_ram.lds'

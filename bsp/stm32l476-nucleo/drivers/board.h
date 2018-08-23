@@ -19,17 +19,14 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2009-09-22     Bernard      add board.h to this bsp
+ * 2018-05-14     ZYH          add board.h to this bsp
  */
 
-// <<< Use Configuration Wizard in Context Menu >>>
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
-#include <stm32l4xx.h>
+#include <stm32l4xx_hal.h>
 
-// <o> Internal SRAM memory size[Kbytes] <8-64>
-//	<i>Default: 64
 #ifdef __ICCARM__
 // Use *.icf ram symbal, to avoid hardcode.
 extern char __ICFEDIT_region_RAM_end__;
@@ -52,32 +49,6 @@ extern int __bss_end;
 
 #define HEAP_END          STM32_SRAM_END
 
-// <o> Console on USART: <0=> no console <1=>USART 1 <2=>USART 2 <3=> USART 3
-// 	<i>Default: 1
-#define STM32_CONSOLE_USART		2
-
-void rt_hw_board_init(void);
-
-#if STM32_CONSOLE_USART == 0
-#define CONSOLE_DEVICE "no"
-#elif STM32_CONSOLE_USART == 1
-#define CONSOLE_DEVICE "uart1"
-#elif STM32_CONSOLE_USART == 2
-#define CONSOLE_DEVICE "uart2"
-#elif STM32_CONSOLE_USART == 3
-#define CONSOLE_DEVICE "uart3"
-#elif STM32_CONSOLE_USART == 4
-#define CONSOLE_DEVICE "uart4"
-#elif STM32_CONSOLE_USART == 5
-#define CONSOLE_DEVICE "uart5"
-#elif STM32_CONSOLE_USART == 6
-#define CONSOLE_DEVICE "lpuart1"
-#endif
-
-#define FINSH_DEVICE_NAME   CONSOLE_DEVICE
-
-void Error_Handler(void);
+extern void rt_hw_board_init(void);
 
 #endif
-
-//*** <<< end of configuration section >>>    ***

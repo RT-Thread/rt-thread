@@ -189,7 +189,7 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 
     if ((fh == STDOUT) || (fh == STDERR))
     {
-#ifndef RT_USING_CONSOLE
+#if !defined(RT_USING_CONSOLE) || !defined(RT_USING_DEVICE)
         return 0;
 #else
 #ifdef RT_USING_POSIX
@@ -325,14 +325,5 @@ int fgetc(FILE *f)
 #endif
 
     return -1;
-}
-#endif
-
-#ifndef RT_USING_RTC
-time_t time(time_t *t)
-{
-	time_t time_now = 0;
-	
-	return time_now;
 }
 #endif

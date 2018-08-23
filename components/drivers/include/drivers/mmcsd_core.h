@@ -213,7 +213,6 @@ rt_inline rt_uint32_t __rt_fls(rt_uint32_t val)
 	}
 	if (!(val & 0x80000000u)) 
 	{
-		val <<= 1;
 		bit -= 1;
 	}
 

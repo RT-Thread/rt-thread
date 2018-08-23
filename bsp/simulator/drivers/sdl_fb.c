@@ -73,7 +73,7 @@ int sdlfb_info(int *format, int *bpp)
 }
 
 static rt_mutex_t sdllock;
-static rt_err_t  sdlfb_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t  sdlfb_control(rt_device_t dev, int cmd, void *args)
 {
     struct sdlfb_device *device;
 
