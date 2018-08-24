@@ -34,6 +34,7 @@
 #endif
 
 #include <sal.h>
+#include <af_inet.h>
 
 #if LWIP_VERSION < 0x2000000
 #define SELWAIT_T int
@@ -284,6 +285,7 @@ static int inet_create(struct sal_socket *socket, int type, int protocol)
 }
 
 static const struct proto_family lwip_inet_family_ops = {
+    "lwip",
     AF_INET,
     AF_INET,
     inet_create,
