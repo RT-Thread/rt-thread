@@ -1,4 +1,4 @@
-|# Raspberry A7板级支持包说明
+# Raspberry A7板级支持包说明
 
 ## 1. 简介
 
@@ -8,12 +8,12 @@
 
 当前Raspberry Pi 2B对应的硬件特性：
 
-| 硬件   |         描述                            |
-|------- | -------------------------------         |
-|  CPU   | ARM Cortex-A7（4核心）                   |
-|  主频  | 900M                                  |
-| Memory | 1GB  (0x0000000 - 0x40000000)            |
-|	     | 其中0x3f000000 - 0x40000000为peripheral |
+| 硬件   | 描述 |
+|------- | ------------------------------- |
+|  CPU   | ARM Cortex-A7（4核心） |
+|  主频  | 900M |
+| Memory | 1GB  (0x0000000 - 0x40000000) |
+| | 其中0x3f000000 - 0x40000000为peripheral |
 
 ## 2. 编译说明
 
@@ -89,7 +89,6 @@ msh >
 
 ```
 
-
 ## 4. 支持情况
 
 | 驱动 | 支持情况  |  备注  |
@@ -102,7 +101,6 @@ msh >
 
   [1]: https://www.rt-thread.org/page/download.html
   [2]: https://launchpad.net/gcc-arm-embedded/4.8/4.8-2014-q1-update/+download/gcc-arm-none-eabi-4_8-2014q1-20140314-linux.tar.bz2
-
   [3]: https://downloads.raspberrypi.org/raspbian_lite_latest
   [4]: https://etcher.io
-  [5:] https://github.com/BernardXiong
+  [5]: https://github.com/BernardXiong
