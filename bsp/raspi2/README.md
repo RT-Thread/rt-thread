@@ -1,10 +1,12 @@
-# Raspberry A7板级支持包说明
+# Raspberry PI 2B板级支持包说明
 
 ## 1. 简介
 
 树莓派由注册于英国的慈善组织“Raspberry Pi 基金会”开发，莓派2采用4核Broadcom BCM2836 (ARMv7-A)芯片、双核VideoCore IV GPU和1GB内存。
 
 这份RT-Thread BSP是针对 Raspberry Pi 2B 的一份移植，树莓派价格便宜, 使用者甚众，是研究和运行RT-Thread的可选平台之一。
+
+![raspi2](figures/raspi2.png)
 
 当前Raspberry Pi 2B对应的硬件特性：
 
@@ -17,7 +19,7 @@
 
 ## 2. 编译说明
 
-Windows环境下推荐使用[env工具][1]
+Windows环境下推荐使用[env工具][1]进行编译。
 
 Linux下推荐使用gcc工具 [gcc-arm-none-eabi-4_8-2014q1_linux][2]，如果还没有编译工具，下载后，解开文件。
 
@@ -25,15 +27,15 @@ Linux下推荐使用gcc工具 [gcc-arm-none-eabi-4_8-2014q1_linux][2]，如果�
 tar vxf gcc-arm-none-eabi-4_8-2014q1_linux.tar.bz2
 ```
 
-Linux环境可能需要修改编译器目录设置，修改bsp/raspi2/rtconfig.py中的
+Linux环境下需要修改编译器目录设置，修改`bsp/raspi2/rtconfig.py`中的
 
 ```
-EXEC_PATH   = r'/opt/gcc-arm-none-eabi-4_8-2014q1_gri/bin'
+EXEC_PATH = r'/opt/gcc-arm-none-eabi-4_8-2014q1_gri/bin'
 ```
 
-为编译工具的实际所在目录，这里注意要加上后缀 /bin
+为编译工具的实际所在目录，这里注意要加上后缀 `/bin`
 
-进入到`bsp/raspi2`目录中，运行以下命令：
+进入到`rt-thread/bsp/raspi2`目录中，运行以下命令：
 
 ```
 scons
@@ -41,7 +43,6 @@ scons
 
 来编译这个板级支持包。如果编译正确无误，会产生kernel.elf、kernel.img文件。
 kernel.img即是要cp到raspberry SD卡中根目录的文件
-
 
 ## 3. 执行
 
@@ -69,13 +70,13 @@ Windows环境下，执行etcher选择解压后的2018-06-27-raspbian-stretch-lit
 
 ### 3.2 准备好串口线
 
-目前版本是使用raspi2的 GPIO 14, GPIO 15来作路口输出。
+目前版本是使用raspi2的 GPIO 14, GPIO 15来作路口输出，连线情况如下图所示：
+
+![raspi2](figures/raspi_uart.png)
 
 串口参数： 115200 8N1 ，硬件和软件流控为关。
 
-按上面的方法做好SD卡后，插入树莓派2B，通电。
-
-输出到串口的信息应该是这样的：
+按上面的方法做好SD卡后，插入树莓派2B，通电可以在串口上看到如下所示的输出信息：
 
 ```text
  heap: 0x00020b20 - 0x00400000
@@ -86,7 +87,6 @@ Windows环境下，执行etcher选择解压后的2018-06-27-raspbian-stretch-lit
  2006 - 2018 Copyright by rt-thread team
 Hello RT-Thread!
 msh >
-
 ```
 
 ## 4. 支持情况
