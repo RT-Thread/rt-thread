@@ -28,6 +28,10 @@
 #include <dfs_file.h>
 #include <rtdevice.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if !defined(socklen_t) && !defined(SOCKLEN_T_DEFINED)
 typedef uint32_t socklen_t;
 #endif
@@ -102,5 +106,9 @@ struct sal_socket *sal_get_socket(int sock);
 int sal_proto_family_register(const struct proto_family *pf);
 int sal_proto_family_unregister(const struct proto_family *pf);
 struct proto_family *sal_proto_family_find(const char *name);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SAL_H__ */

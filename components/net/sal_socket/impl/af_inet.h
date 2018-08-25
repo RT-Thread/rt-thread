@@ -27,6 +27,10 @@
 
 #include <rtthread.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef SAL_USING_LWIP
 /* lwIP protocol family register */
 int lwip_inet_init(void);
@@ -35,6 +39,10 @@ int lwip_inet_init(void);
 #ifdef SAL_USING_AT
 /* AT protocol family register */
 int at_inet_init(void);
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* __AF_INET_H__ */

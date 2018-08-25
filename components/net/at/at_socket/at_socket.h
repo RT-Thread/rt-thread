@@ -32,6 +32,10 @@
 #include <netdb.h>
 #include <sys/socket.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef AT_SOCKET_RECV_BFSZ
 #define AT_SOCKET_RECV_BFSZ            512
 #endif
@@ -159,5 +163,9 @@ void at_scoket_device_register(const struct at_device_ops *ops);
 #define freeaddrinfo(ai)                                    at_freeaddrinfo(ai)
 
 #endif /* RT_USING_SAL */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* AT_SOCKET_H__ */
