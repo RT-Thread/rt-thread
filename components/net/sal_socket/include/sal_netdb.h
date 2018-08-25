@@ -26,6 +26,10 @@
 
 #include <sal_socket.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define EAI_NONAME      200
 #define EAI_SERVICE     201
 #define EAI_FAIL        202
@@ -87,5 +91,9 @@ int sal_getaddrinfo(const char *nodename,
        const char *servname,
        const struct addrinfo *hints,
        struct addrinfo **res);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SAL_NETDB_H__ */

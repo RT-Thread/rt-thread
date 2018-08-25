@@ -738,7 +738,6 @@ struct hostent *sal_gethostbyname(const char *name)
             {
                 return hst;
             }
-            continue;
         }
     }
 
@@ -759,7 +758,6 @@ int sal_gethostbyname_r(const char *name, struct hostent *ret, char *buf,
             {
                 return res;
             }
-            continue;
         }
     }
 
@@ -796,7 +794,6 @@ int sal_getaddrinfo(const char *nodename,
             {
                 return ret;
             }
-            continue;
         }
     }
 
