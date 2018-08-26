@@ -49,12 +49,12 @@ static int pcie_dump_cfg_hdr_type0(pcie_cfg_hdr_type0_p header)
     printf("Command: 0x%08x\n", header->cmd);
     printf("Status: 0x%08x\n", header->status);
     printf("Header Type: %d\n", header->hdr_type);
-    printf("BAR0: 0x%08x\n", header->bar0);
-    printf("BAR1: 0x%08x\n", header->bar1);
-    printf("BAR2: 0x%08x\n", header->bar2);
-    printf("BAR3: 0x%08x\n", header->bar3);
-    printf("BAR4: 0x%08x\n", header->bar4);
-    printf("BAR5: 0x%08x\n", header->bar5);
+    printf("BAR0: 0x%08lx\n", header->bar0);
+    printf("BAR1: 0x%08lx\n", header->bar1);
+    printf("BAR2: 0x%08lx\n", header->bar2);
+    printf("BAR3: 0x%08lx\n", header->bar3);
+    printf("BAR4: 0x%08lx\n", header->bar4);
+    printf("BAR5: 0x%08lx\n", header->bar5);
 
     return 0;
 }
@@ -66,8 +66,8 @@ static int pcie_dump_cfg_hdr_type1(pcie_cfg_hdr_type1_p header)
     printf("Command: 0x%08x\n", header->cmd);
     printf("Status: 0x%08x\n", header->status);
     printf("Header Type: %d\n", header->hdr_type);
-    printf("BAR0: 0x%08x\n", header->bar0);
-    printf("BAR1: 0x%08x\n", header->bar1);
+    printf("BAR0: 0x%08lx\n", header->bar0);
+    printf("BAR1: 0x%08lx\n", header->bar1);
 
     return 0;
 }

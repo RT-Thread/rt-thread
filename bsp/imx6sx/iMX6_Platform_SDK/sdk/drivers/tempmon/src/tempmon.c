@@ -85,8 +85,8 @@ typedef struct _tempmon_info {
 // Prototypes
 //////////////////////////////////////////////////////////////////////////////////////////
 
-inline float compute_temp(float measuredCount);
-inline int compute_alarm(float alarmTemp);
+float compute_temp(float measuredCount);
+int compute_alarm(float alarmTemp);
 
 static void tempmon_alarm_isr(void);
 
@@ -104,7 +104,7 @@ static tempmon_info_t s_tempmon;
 //! @brief Calculate the temperature from a measurement result.
 //! @param measuredCount The resulting count value of a temp sensor measurement cycle.
 //! @return The temperature in degrees C.
-inline float compute_temp(float measuredCount)
+float compute_temp(float measuredCount)
 {
     float a = (s_tempmon.hotTemp - ROOM_TEMP);
     float b = (s_tempmon.roomCount - s_tempmon.hotCount);
@@ -119,7 +119,7 @@ inline float compute_temp(float measuredCount)
 //! @brief Calculate an alarm value given the alarm temperature.
 //! @param alarmTemp The desired alarm temperature in degrees C.
 //! @return Value to use for the alarm count value for @a alarmTemp.
-inline int compute_alarm(float alarmTemp)
+int compute_alarm(float alarmTemp)
 {
     float a = (alarmTemp - s_tempmon.hotTemp);
     float b = (s_tempmon.hotTemp - ROOM_TEMP);

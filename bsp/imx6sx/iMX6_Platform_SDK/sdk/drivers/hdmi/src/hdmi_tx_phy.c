@@ -145,6 +145,7 @@ static inline void hdmi_phy_test_dout(uint8_t bit)
     HW_HDMI_PHY_TST2.U = bit;
 }
 
+#if 0
 /*!
  * @brief HDMI PHY TEST mode control
  * 
@@ -160,7 +161,9 @@ static int hdmi_phy_test_control(uint8_t value)
 
     return TRUE;
 }
+#endif
 
+#if 0
 /*!
  * @brief HDMI PHY TEST data set
  * 
@@ -175,6 +178,7 @@ static int hdmi_phy_test_data(uint8_t value)
 
     return TRUE;
 }
+#endif
 
 /*!
  * @brief HDMI PHY tx power down
@@ -247,6 +251,7 @@ static int hdmi_phy_i2c_write(uint16_t data, uint8_t addr)
     return hdmi_phy_wait_i2c_done(1000);
 }
 
+#if 0
 /*!
  * @brief HDMI phy registers read through internal I2C bus
  *
@@ -268,7 +273,9 @@ static uint16_t hdmi_phy_i2c_read(uint8_t addr)
     data = (msb << 8) | lsb;
     return data;
 }
+#endif
 
+#if 0
 /*!
  * @brief HDMI phy registers access and verificate through internal I2C bus
  *
@@ -290,6 +297,7 @@ static int hdmi_phy_i2c_write_verify(uint16_t data, uint8_t addr)
     }
     return TRUE;
 }
+#endif
 
 #define PHY_GEN2
 #define PHY_TNP

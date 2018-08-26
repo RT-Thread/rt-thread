@@ -224,7 +224,7 @@ void show_board_id(const fsl_board_id_t board_id, const char* const indent)
     board_name(board_str, board_id.B.BOARD_TYPE_ID);
     board_revision(board_rev_str, board_id.B.BOARD_REV);
 
-    printf("\n%s%s %s %s %s (0x%08X)\n", loc_indent, chip_str, chip_rev_str, board_str, board_rev_str,
+    printf("\n%s%s %s %s %s (0x%08lX)\n", loc_indent, chip_str, chip_rev_str, board_str, board_rev_str,
            board_id.U);
     printf("%s    Chip Type       = %s (0x%02X)\n", loc_indent, chip_str_full, board_id.B.CHIP_TYPE_ID);
     printf("%s    Chip Revision   = %s (0x%02X)(0x%02X)\n", loc_indent, chip_rev_str,

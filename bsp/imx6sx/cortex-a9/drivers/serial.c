@@ -51,12 +51,15 @@ static void rt_hw_uart_isr(int irqno, void *param)
 static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
     struct hw_uart_device *uart;
+    /*
     uint32_t baudrate;
     uint8_t parity, stopbits, datasize, flowcontrol;
 
     RT_ASSERT(serial != RT_NULL);
+    */
     uart = (struct hw_uart_device *)serial->parent.user_data;
 
+    /*
     baudrate = cfg->baud_rate;
     switch (cfg->data_bits)
     {
@@ -72,6 +75,7 @@ static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_co
 
     parity = PARITY_NONE;
     flowcontrol = FLOWCTRL_OFF;
+    */
 
     /* initailize UART */
     // uart_init(uart->instance, baudrate, parity, stopbits, datasize, flowcontrol);

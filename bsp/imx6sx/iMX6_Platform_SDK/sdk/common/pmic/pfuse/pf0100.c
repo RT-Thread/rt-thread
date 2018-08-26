@@ -95,10 +95,8 @@ void pf0100_reg_write(unsigned char reg_addr, unsigned char reg_data)
  */
 void pf0100_enable_vgen1_1v2(void)
 {
-    unsigned char data;
-
     i2c_init(g_pmic_pf0100_i2c_device.port, 170000);
-    data = pf0100_reg_read(108);
+    pf0100_reg_read(108);
     pf0100_reg_write(108, 0x18);
 }
 
@@ -107,10 +105,8 @@ void pf0100_enable_vgen1_1v2(void)
  */
 void pf0100_enable_vgen2_1v5(void)
 {
-    unsigned char data;
-
     i2c_init(g_pmic_pf0100_i2c_device.port, 170000);
-    data = pf0100_reg_read(109);
+    pf0100_reg_read(109);
     pf0100_reg_write(109, 0x1E);
 }
 
@@ -119,10 +115,8 @@ void pf0100_enable_vgen2_1v5(void)
  */ 
 void pf0100_enable_vgen3_1v8(void)
 {
-    unsigned char data;
-
     i2c_init(g_pmic_pf0100_i2c_device.port, 170000);
-    data = pf0100_reg_read(110);
+    pf0100_reg_read(110);
     pf0100_reg_write(110, 0x10);
 }
 
@@ -131,10 +125,8 @@ void pf0100_enable_vgen3_1v8(void)
  */
 void pf0100_enable_vgen4_1v8(void)
 {
-    unsigned char data;
-
     i2c_init(g_pmic_pf0100_i2c_device.port, 170000);
-    data = pf0100_reg_read(111);
+    pf0100_reg_read(111);
     pf0100_reg_write(111, 0x10);
 }
 
@@ -143,10 +135,8 @@ void pf0100_enable_vgen4_1v8(void)
  */
 void pf0100_enable_vgen4_2v5(void)
 {
-    unsigned char data;
-
     i2c_init(g_pmic_pf0100_i2c_device.port, 170000);
-    data = pf0100_reg_read(112);
+    pf0100_reg_read(112);
     pf0100_reg_write(112, 0x17);
 }
 
@@ -155,10 +145,8 @@ void pf0100_enable_vgen4_2v5(void)
  */
 void pf0100_enable_vgen6_2v8(void)
 {
-    unsigned char data;
-
     i2c_init(g_pmic_pf0100_i2c_device.port, 170000);
-    data = pf0100_reg_read(113);
+    pf0100_reg_read(113);
     pf0100_reg_write(113, 0x1A);
 }
 

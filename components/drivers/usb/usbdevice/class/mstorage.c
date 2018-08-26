@@ -120,38 +120,46 @@ const static struct umass_descriptor _mass_desc =
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
     /* Interface Association Descriptor */
-    USB_DESC_LENGTH_IAD,
-    USB_DESC_TYPE_IAD,
-    USB_DYNAMIC,
-    0x01,
-    USB_CLASS_MASS_STORAGE,
-    0x06,
-    0x50,
-    0x00,
+    {
+        USB_DESC_LENGTH_IAD,
+        USB_DESC_TYPE_IAD,
+        USB_DYNAMIC,
+        0x01,
+        USB_CLASS_MASS_STORAGE,
+        0x06,
+        0x50,
+        0x00,
+    },
 #endif
-    USB_DESC_LENGTH_INTERFACE,  //bLength;
-    USB_DESC_TYPE_INTERFACE,    //type;
-    USB_DYNAMIC,                //bInterfaceNumber;
-    0x00,                       //bAlternateSetting;
-    0x02,                       //bNumEndpoints
-    USB_CLASS_MASS_STORAGE,     //bInterfaceClass;
-    0x06,                       //bInterfaceSubClass;
-    0x50,                       //bInterfaceProtocol;
-    0x00,                       //iInterface;
+    {
+        USB_DESC_LENGTH_INTERFACE,  //bLength;
+        USB_DESC_TYPE_INTERFACE,    //type;
+        USB_DYNAMIC,                //bInterfaceNumber;
+        0x00,                       //bAlternateSetting;
+        0x02,                       //bNumEndpoints
+        USB_CLASS_MASS_STORAGE,     //bInterfaceClass;
+        0x06,                       //bInterfaceSubClass;
+        0x50,                       //bInterfaceProtocol;
+        0x00,                       //iInterface;
+    },
 
-    USB_DESC_LENGTH_ENDPOINT,   //bLength;
-    USB_DESC_TYPE_ENDPOINT,     //type;
-    USB_DYNAMIC | USB_DIR_OUT,  //bEndpointAddress;
-    USB_EP_ATTR_BULK,           //bmAttributes;
-    USB_DYNAMIC,                //wMaxPacketSize;
-    0x00,                       //bInterval;
+    {
+        USB_DESC_LENGTH_ENDPOINT,   //bLength;
+        USB_DESC_TYPE_ENDPOINT,     //type;
+        USB_DYNAMIC | USB_DIR_OUT,  //bEndpointAddress;
+        USB_EP_ATTR_BULK,           //bmAttributes;
+        USB_DYNAMIC,                //wMaxPacketSize;
+        0x00,                       //bInterval;
+    },
 
-    USB_DESC_LENGTH_ENDPOINT,   //bLength;
-    USB_DESC_TYPE_ENDPOINT,     //type;
-    USB_DYNAMIC | USB_DIR_IN,   //bEndpointAddress;
-    USB_EP_ATTR_BULK,           //bmAttributes;
-    USB_DYNAMIC,                //wMaxPacketSize;
-    0x00,                       //bInterval;
+    {
+        USB_DESC_LENGTH_ENDPOINT,   //bLength;
+        USB_DESC_TYPE_ENDPOINT,     //type;
+        USB_DYNAMIC | USB_DIR_IN,   //bEndpointAddress;
+        USB_EP_ATTR_BULK,           //bmAttributes;
+        USB_DYNAMIC,                //wMaxPacketSize;
+        0x00,                       //bInterval;
+    },
 };
 
 const static char* _ustring[] =
@@ -751,8 +759,8 @@ static rt_bool_t _cbw_verify(ufunction_t func, struct scsi_cmd* cmd,
         return RT_FALSE;
     }
 
-    if((cbw->dflags & USB_DIR_IN) && cmd->dir == DIR_OUT ||
-        !(cbw->dflags & USB_DIR_IN) && cmd->dir == DIR_IN)
+    if(((cbw->dflags & USB_DIR_IN) && (cmd->dir == DIR_OUT)) ||
+        (!(cbw->dflags & USB_DIR_IN) && (cmd->dir == DIR_IN)))
     {
         rt_kprintf("dir error\n");
         return RT_FALSE;
