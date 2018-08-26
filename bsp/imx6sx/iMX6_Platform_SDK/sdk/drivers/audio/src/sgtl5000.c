@@ -141,6 +141,7 @@ static int32_t sgtl5000_write_reg(audio_codec_p codec, uint16_t reg_addr,
     return i2c_write(&sgtl5000_i2c_req);
 }
 
+#if 0
 static int32_t sgtl5000_dump(void *priv)
 {
     audio_codec_p codec = (audio_codec_p) priv;
@@ -158,7 +159,9 @@ static int32_t sgtl5000_dump(void *priv)
 
     return 0;
 }
+#endif
 
+#if 0
 /* Turn up the volume */
 static int32_t sgtl5000_dac_volume_up(audio_codec_p codec)
 {
@@ -182,7 +185,9 @@ static int32_t sgtl5000_dac_volume_up(audio_codec_p codec)
 
     return 0;
 }
+#endif
 
+#if 0
 /* Turn down the volume */
 static int32_t sgtl5000_dac_volume_down(audio_codec_p codec)
 {
@@ -206,7 +211,9 @@ static int32_t sgtl5000_dac_volume_down(audio_codec_p codec)
 
     return 0;
 }
+#endif
 
+#if 0
 /* Mute volume */
 static int32_t sgtl5000_hp_mute(audio_codec_p codec)
 {
@@ -218,7 +225,9 @@ static int32_t sgtl5000_hp_mute(audio_codec_p codec)
 
     return 0;
 }
+#endif
 
+#if 0
 /* Mute volume */
 static int32_t sgtl5000_hp_unmute(audio_codec_p codec)
 {
@@ -230,6 +239,7 @@ static int32_t sgtl5000_hp_unmute(audio_codec_p codec)
 
     return 0;
 }
+#endif
 
 static int32_t sgtl5000_dap_init(audio_codec_p codec)
 {

@@ -153,7 +153,7 @@ static uint32_t caam_page_alloc(uint8_t page_num, uint8_t partition_num)
         temp_reg = secmem_set_cmd(PARTITION(partition_num) | CMD_PART_DEALLOC);
         if(temp_reg & SMCSJR_AERR)
         {
-            printf("Error: De-allocation status 0x%X\n",temp_reg);
+            printf("Error: De-allocation status 0x%lX\n",temp_reg);
             return ERROR_IN_PAGE_ALLOC;
         }
     }
@@ -172,7 +172,7 @@ static uint32_t caam_page_alloc(uint8_t page_num, uint8_t partition_num)
         temp_reg = secmem_set_cmd(PAGE(page_num) | CMD_PAGE_DEALLOC);
         if(temp_reg & SMCSJR_AERR)
         {
-            printf("Error: Allocation status 0x%X\n",temp_reg);
+            printf("Error: Allocation status 0x%lX\n",temp_reg);
             return ERROR_IN_PAGE_ALLOC;
         }
     }
@@ -182,7 +182,7 @@ static uint32_t caam_page_alloc(uint8_t page_num, uint8_t partition_num)
                                              | CMD_PAGE_ALLOC);
     if(temp_reg & SMCSJR_AERR)
     {
-        printf("Error: Allocation status 0x%X\n",temp_reg);
+        printf("Error: Allocation status 0x%lX\n",temp_reg);
         return ERROR_IN_PAGE_ALLOC;
     }
     /* page inquiry command to ensure that the page was allocated */
@@ -190,7 +190,7 @@ static uint32_t caam_page_alloc(uint8_t page_num, uint8_t partition_num)
     /* if the page is not owned => problem */
     if((temp_reg & SMCSJR_PO) != PAGE_OWNED)
     {
-        printf("Error: Allocation of page %d in partition %d failed 0x%X\n"
+        printf("Error: Allocation of page %ld in partition %d failed 0x%X\n"
                 ,temp_reg, page_num, partition_num);
 
         return ERROR_IN_PAGE_ALLOC;
@@ -253,7 +253,7 @@ uint32_t caam_enc_data(uint32_t plain_text_addr, uint32_t cipher_text_addr,
         /* check if any error is reported in the output ring */
         if ((g_output_ring[1] & JOB_RING_STS) != 0)
         {
-            printf("Error: encryption job completed with errors 0x%X\n",
+            printf("Error: encryption job completed with errors 0x%lX\n",
                     g_output_ring[1]);
         }
     }
@@ -314,7 +314,7 @@ uint32_t caam_decap_blob(uint32_t blob_addr)
         /* check if any error is reported in the output ring */
         if ((g_output_ring[1] & JOB_RING_STS) != 0)
         {
-            printf("Error: blob decap job completed with errors 0x%X\n",
+            printf("Error: blob decap job completed with errors 0x%lX\n",
                     g_output_ring[1]);
         }
     }
@@ -380,7 +380,7 @@ uint32_t caam_gen_blob(uint32_t plain_data_addr, uint32_t blob_addr)
         /* check if any error is reported in the output ring */
         if ((g_output_ring[1] & JOB_RING_STS) != 0)
         {
-            printf("Error: blob encap job completed with errors 0x%X\n",
+            printf("Error: blob encap job completed with errors 0x%lX\n",
                     g_output_ring[1]);
         }
     }
@@ -469,7 +469,7 @@ void caam_open(void)
             /* check if any error is reported in the output ring */
             if ((g_output_ring[1] & JOB_RING_STS) != 0)
             {
-            printf("Error: RNG instantiation job completed with errors 0x%X\n"
+            printf("Error: RNG instantiation job completed with errors 0x%lX\n"
                     , g_output_ring[1]);
             }
         }
@@ -484,7 +484,7 @@ void caam_open(void)
         if (temp_reg != (RDSTA_IF0 | RDSTA_SKVN))
         {
     
-            printf("Error: RNG instantiation failed 0x%X\n", temp_reg);
+            printf("Error: RNG instantiation failed 0x%lX\n", temp_reg);
         }
 
         /* Remove job from Job Ring Output Queue */

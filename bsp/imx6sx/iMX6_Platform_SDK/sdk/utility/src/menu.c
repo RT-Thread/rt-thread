@@ -476,9 +476,9 @@ void menu_print_menuitem(menuitem_t* menuitem)
 {
     printf("menuitem->type        = %d\n", menuitem->type);
     printf("menuitem->key         = %s\n", menuitem->key);
-    printf("menuitem->description = %s\n", *menuitem->description);
-    printf("menuitem->submenu     = 0x%08X\n", menuitem->submenu);
-    printf("menuitem->func_ptr    = 0x%08X\n", menuitem->func_ptr);
-    printf("menuitem->func_param  = 0x%08X\n", menuitem->func_param);
+    printf("menuitem->description = %s\n", menuitem->description);
+    printf("menuitem->submenu     = 0x%p\n", menuitem->submenu);
+    printf("menuitem->func_ptr    = 0x%p\n", menuitem->func_ptr);
+    printf("menuitem->func_param  = 0x%p\n", menuitem->func_param);
 }
 

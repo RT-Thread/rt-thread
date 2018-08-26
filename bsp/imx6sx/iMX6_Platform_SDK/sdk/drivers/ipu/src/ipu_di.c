@@ -235,7 +235,7 @@ int32_t ipu_di_screen_set(int32_t ipu_index, int32_t di, int32_t screen_height)
         break;
 
     default:
-        printf("Wrong di pointer %d!!\n", di);
+        printf("Wrong di pointer %ld!!\n", di);
         return -1;
     }
 
@@ -302,7 +302,7 @@ int32_t ipu_di_bsclk_gen(int32_t ipu_index, int32_t di, int32_t division, int32_
         break;
 
     default:
-        printf("Wrong di pointer %d!!\n", di);
+        printf("Wrong di pointer %ld!!\n", di);
         return false;
     }
 
@@ -388,6 +388,6 @@ void ipu_di_interface_set(uint32_t ipu_index, uint32_t di, ips_dev_panel_t * pan
         break;
 
     default:
-        printf("Wrong di pointer %d!!\n", di);
+        printf("Wrong di pointer %ld!!\n", di);
     }
 }

@@ -109,7 +109,7 @@ int dump_regs(int abortType, arm_regs_p regs)
     }
     
     // nzcvqeaift
-    printf("cpsr = %c%c%c%c%c%c%c%c%c%c %s (0x%08x)\n",
+    printf("cpsr = %c%c%c%c%c%c%c%c%c%c %s (0x%08lx)\n",
         ((regs->cpsr & CPSR_N) ? 'N' : 'n'),
         ((regs->cpsr & CPSR_Z) ? 'Z' : 'z'),
         ((regs->cpsr & CPSR_C) ? 'C' : 'c'),
@@ -123,32 +123,32 @@ int dump_regs(int abortType, arm_regs_p regs)
         cpsrModeName,
         regs->cpsr);
         
-    printf("r0 = 0x%08x    r8 =  0x%08x\n", regs->r0, regs->r8);
-    printf("r1 = 0x%08x    r9 =  0x%08x\n", regs->r1, regs->r9);
-    printf("r2 = 0x%08x    r10 = 0x%08x\n", regs->r2, regs->r10);
-    printf("r3 = 0x%08x    r11 = 0x%08x\n", regs->r3, regs->r11);
-    printf("r4 = 0x%08x    r12 = 0x%08x\n", regs->r4, regs->r12);
-    printf("r5 = 0x%08x    sp =  0x%08x\n", regs->r5, regs->sp);
-    printf("r6 = 0x%08x    lr =  0x%08x\n", regs->r6, regs->lr);
-    printf("r7 = 0x%08x    pc =  0x%08x\n", regs->r7, regs->pc);
+    printf("r0 = 0x%08lx    r8 =  0x%08lx\n", regs->r0, regs->r8);
+    printf("r1 = 0x%08lx    r9 =  0x%08lx\n", regs->r1, regs->r9);
+    printf("r2 = 0x%08lx    r10 = 0x%08lx\n", regs->r2, regs->r10);
+    printf("r3 = 0x%08lx    r11 = 0x%08lx\n", regs->r3, regs->r11);
+    printf("r4 = 0x%08lx    r12 = 0x%08lx\n", regs->r4, regs->r12);
+    printf("r5 = 0x%08lx    sp =  0x%08lx\n", regs->r5, regs->sp);
+    printf("r6 = 0x%08lx    lr =  0x%08lx\n", regs->r6, regs->lr);
+    printf("r7 = 0x%08lx    pc =  0x%08lx\n", regs->r7, regs->pc);
     
     uint32_t fsr;
     if (abortType == kDataAbortType)
     {
-        printf("dfsr = 0x%08x\n", regs->dfsr);
-        printf("dfar = 0x%08x\n", regs->dfar);
+        printf("dfsr = 0x%08lx\n", regs->dfsr);
+        printf("dfar = 0x%08lx\n", regs->dfar);
         fsr = regs->dfsr;
         printf("\nAccess type: %s\n", (regs->dfsr & BM_DFSR_WNR) ? "write" : "read");
     }
     else
     {
-        printf("ifsr = 0x%08x\n", regs->ifsr);
-        printf("ifar = 0x%08x\n", regs->ifar);
+        printf("ifsr = 0x%08lx\n", regs->ifsr);
+        printf("ifar = 0x%08lx\n", regs->ifar);
         fsr = regs->ifsr;
     }
     
     uint32_t faultStatus = ((fsr & BM_DFSR_FS4) >> BP_DFSR_FS4) | (fsr & BM_DFSR_FS);
-    printf("Fault status: 0x%x\n", faultStatus);
+    printf("Fault status: 0x%lx\n", faultStatus);
 
     return 0;
 }

@@ -140,7 +140,7 @@ int32_t gpio_set_level(int32_t port, int32_t pin, uint32_t level)
 
     if (dir != GPIO_GDIR_OUTPUT)
     {
-        printf("GPIO_PORT%d_%d is not configured to be output!\n", port, pin);
+        printf("GPIO_PORT%ld_%ld is not configured to be output!\n", port, pin);
         return -1;
     }
 

@@ -353,7 +353,7 @@ void audio_Configure_DMA(uint32_t startAddr, uint32_t stopAddr, uint8_t hlockEn,
         audio_DMA_SetCONF1(0xFF);
         break;
     default:
-        printf("invalid auduo channel number: 0x%x\n", audioChnl);
+        printf("invalid auduo channel number: 0x%lx\n", audioChnl);
         break;
     }
 
