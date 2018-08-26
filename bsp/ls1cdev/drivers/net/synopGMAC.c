@@ -304,11 +304,11 @@ static rt_err_t eth_init(rt_device_t device )
 
 	init_phy(adapter->synopGMACdev);
 
-	rt_kprintf("tx desc_queue\n");
+	DEBUG_MES("tx desc_queue\n");
 	synopGMAC_setup_tx_desc_queue(gmacdev,TRANSMIT_DESC_SIZE, RINGMODE);
 	synopGMAC_init_tx_desc_base(gmacdev);
 
-	rt_kprintf("rx desc_queue\n");
+	DEBUG_MES("rx desc_queue\n");
 	synopGMAC_setup_rx_desc_queue(gmacdev,RECEIVE_DESC_SIZE, RINGMODE);
 	synopGMAC_init_rx_desc_base(gmacdev);
 	DEBUG_MES("DmaRxBaseAddr = %08x\n",synopGMACReadReg(gmacdev->DmaBase,DmaRxBaseAddr));
@@ -460,7 +460,7 @@ rt_err_t rt_eth_tx(rt_device_t device, struct pbuf* p)
 	if(!synopGMAC_is_desc_owned_by_dma(gmacdev->TxNextDesc))
 	{
 
-		pbuf = (u32)plat_alloc_memory(p->len);
+		pbuf = (u32)plat_alloc_memory(p->tot_len);
 		//pbuf = (u32)pbuf_alloc(PBUF_LINK, p->len, PBUF_RAM);
 		if(pbuf == 0)
 		{
@@ -469,10 +469,10 @@ rt_err_t rt_eth_tx(rt_device_t device, struct pbuf* p)
 		}
 
 		DEBUG_MES("p->len = %d\n", p->len);
-		memcpy((void *)pbuf, p->payload, p->len);
-		dma_addr = plat_dma_map_single(gmacdev,(void*)pbuf,p->len);
+        pbuf_copy_partial(p, (void *)pbuf, p->tot_len, 0);
+		dma_addr = plat_dma_map_single(gmacdev,(void*)pbuf,p->tot_len);
 
-		status = synopGMAC_set_tx_qptr(gmacdev,dma_addr,p->len,pbuf,0,0,0,offload_needed,&index,dpr);
+		status = synopGMAC_set_tx_qptr(gmacdev,dma_addr,p->tot_len,pbuf,0,0,0,offload_needed,&index,dpr);
 		if(status < 0){
 			rt_kprintf("%s No More Free Tx Descriptors\n",__FUNCTION__);
 
