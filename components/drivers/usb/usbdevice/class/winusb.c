@@ -58,39 +58,47 @@ struct winusb_descriptor _winusb_desc =
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
     /* Interface Association Descriptor */
-    USB_DESC_LENGTH_IAD,
-    USB_DESC_TYPE_IAD,
-    USB_DYNAMIC,
-    0x01,
-    0xFF,
-    0x00,
-    0x00,
-    0x00,
+    {
+        USB_DESC_LENGTH_IAD,
+        USB_DESC_TYPE_IAD,
+        USB_DYNAMIC,
+        0x01,
+        0xFF,
+        0x00,
+        0x00,
+        0x00,
+    },
 #endif
     /*interface descriptor*/
-    USB_DESC_LENGTH_INTERFACE,  //bLength;
-    USB_DESC_TYPE_INTERFACE,    //type;
-    USB_DYNAMIC,                //bInterfaceNumber;
-    0x00,                       //bAlternateSetting;
-    0x02,                       //bNumEndpoints
-    0xFF,                       //bInterfaceClass;
-    0x00,                       //bInterfaceSubClass;
-    0x00,                       //bInterfaceProtocol;
-    0x00,                       //iInterface;
+    {
+        USB_DESC_LENGTH_INTERFACE,  //bLength;
+        USB_DESC_TYPE_INTERFACE,    //type;
+        USB_DYNAMIC,                //bInterfaceNumber;
+        0x00,                       //bAlternateSetting;
+        0x02,                       //bNumEndpoints
+        0xFF,                       //bInterfaceClass;
+        0x00,                       //bInterfaceSubClass;
+        0x00,                       //bInterfaceProtocol;
+        0x00,                       //iInterface;
+    },
     /*endpoint descriptor*/
-    USB_DESC_LENGTH_ENDPOINT,
-    USB_DESC_TYPE_ENDPOINT,
-    USB_DYNAMIC | USB_DIR_OUT,
-    USB_EP_ATTR_BULK,
-    USB_DYNAMIC,
-    0x00,
+    {
+        USB_DESC_LENGTH_ENDPOINT,
+        USB_DESC_TYPE_ENDPOINT,
+        USB_DYNAMIC | USB_DIR_OUT,
+        USB_EP_ATTR_BULK,
+        USB_DYNAMIC,
+        0x00,
+    },
     /*endpoint descriptor*/
-    USB_DESC_LENGTH_ENDPOINT,
-    USB_DESC_TYPE_ENDPOINT,
-    USB_DYNAMIC | USB_DIR_IN,
-    USB_EP_ATTR_BULK,
-    USB_DYNAMIC,
-    0x00,
+    {
+        USB_DESC_LENGTH_ENDPOINT,
+        USB_DESC_TYPE_ENDPOINT,
+        USB_DYNAMIC | USB_DIR_IN,
+        USB_EP_ATTR_BULK,
+        USB_DYNAMIC,
+        0x00,
+    },
 };
 
 

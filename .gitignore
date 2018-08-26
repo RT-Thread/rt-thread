@@ -26,3 +26,8 @@ tools/kconfig-frontends/kconfig-mconf
 packages
 cconfig.h
 GPUCache
+/.vs/rt-thread/v15
+/rt-thread.vcxproj.user
+/rt-thread.vcxproj.filters
+/rt-thread.vcxproj
+/rt-thread.sln
