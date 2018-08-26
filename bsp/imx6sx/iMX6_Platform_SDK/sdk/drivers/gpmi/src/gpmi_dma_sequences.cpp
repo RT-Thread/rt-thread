@@ -56,7 +56,7 @@ void Sequence::dumpChain()
     unsigned nodeNumber = 0;
     while (desc)
     {
-        printf("%d: [@0x%08x] cmd=0x%08x, bar=0x%08x", nodeNumber, (uint32_t)desc, desc->cmd.U, (uint32_t)desc->bar);
+        printf("%d: [@0x%08lx] cmd=0x%08x, bar=0x%08lx", nodeNumber, (uint32_t)desc, desc->cmd.U, (uint32_t)desc->bar);
         
         unsigned pioWords = desc->cmd.B.CMDWORDS;
         if (pioWords)
@@ -67,7 +67,7 @@ void Sequence::dumpChain()
             printf(", pio=(");
             while (pioWords--)
             {
-                printf("0x%08x%s", *pio, pioWords ? ", " : ")");
+                printf("0x%08lx%s", *pio, pioWords ? ", " : ")");
                 ++pio;
             }
         }

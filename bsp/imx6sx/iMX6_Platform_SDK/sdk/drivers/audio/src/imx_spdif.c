@@ -129,6 +129,7 @@ static int32_t spdif_soft_reset(audio_ctrl_p ctrl)
     return 0;
 }
 
+#if 0
 /*!
  * Get the spdif's settings.
  *
@@ -170,6 +171,7 @@ static uint32_t spdif_get_hw_setting(audio_ctrl_p ctrl, uint32_t type)
 
     return val;
 }
+#endif
 
 /*!
  * Calucate the spdif's tx clock divider according the sample rate.

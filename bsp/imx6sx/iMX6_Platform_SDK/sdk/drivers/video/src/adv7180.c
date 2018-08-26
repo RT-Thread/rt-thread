@@ -268,6 +268,7 @@ static void adv7180_reset(void)
 	adv7180_pwdn(1);
 }
 
+#if 0
 /*!
  * @brief Software set the adv7180 power.
  *
@@ -287,6 +288,7 @@ static int32_t adv7180_power_on(int32_t on)
 
 	return TEST_PASSED;
 }
+#endif
 
 /*!
  * @brief Initialize CSI and adv7180 io interface

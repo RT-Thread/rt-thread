@@ -230,7 +230,7 @@ int32_t ipu_ic_calc_resize_coeffs(int32_t in_size, int32_t out_size, int32_t * r
     *resize_coeff = (8192L * (tempSize - 1)) / (out_size - 1);
 
     if (*resize_coeff >= 16384L) {
-        printf("Overflow on resize coeff %d.\n", *resize_coeff);
+        printf("Overflow on resize coeff %ld.\n", *resize_coeff);
         *resize_coeff = 0x3FFF;
     }
 

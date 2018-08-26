@@ -157,7 +157,7 @@ static int32_t validate_buffer_descriptor(sdma_bd_p bdp, uint32_t *num_bd)
 
 static void sdma_channel_default_isr(uint32_t channel)
 {
-    printf("Channel%d interupt.\n", channel);
+    printf("Channel%ld interupt.\n", channel);
 }
 
 static sdma_channel_isr sdma_channel_isr_list[SDMA_NUM_CHANNELS] = { NULL };

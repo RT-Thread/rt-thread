@@ -379,7 +379,7 @@ void list_panel(uint32_t panel_type)
     while (index < num_of_panels) {
         if (panel->panel_type == panel_type)
         {
-            printf("\t%d : %s\n", panel->panel_id, panel->panel_name);
+            printf("\t%ld : %s\n", panel->panel_id, panel->panel_name);
         }
         panel++;
         index++;

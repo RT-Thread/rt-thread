@@ -39,6 +39,7 @@
 // CODE
 ////////////////////////////////////////////////////////////////////////////////
 
+#if 0
 /*!
  * @brief Check the waveform data
  *
@@ -64,6 +65,7 @@ static int check_waveform(unsigned int *wv_buf_orig, unsigned int *wv_buf_cur,
 
     return is_mismatch;
 }
+#endif
 
 /*!
  * @brief Clock gate setting for the EPD controller
@@ -278,7 +280,7 @@ void epdc_dump_registers(void)
     unsigned int reg = EPDC_BASE_ADDR;
 
     for (reg = EPDC_BASE_ADDR; reg < EPDC_BASE_ADDR + 0x800; reg += 0x10)
-        printf("reg %08x : %08x\n", reg, readl(reg));
+        printf("reg %08x : %08lx\n", reg, readl(reg));
 }
 
 /*!
@@ -324,8 +326,8 @@ void epdc_set_vertical_timing(unsigned int vert_start, unsigned int vert_end,
 void epdc_init_settings(void)
 {
     unsigned int reg_val;
-    int left_margin, right_margin, xres, yres, upper_margin, lower_margin, hsync_len, vsync_len;
-    int vscan_holdoff, sdoed_width, sdoed_delay, sdoez_width, sdoez_delay, gdclk_hp_offs, gdsp_offs,
+    int left_margin, right_margin, /*xres, yres,*/ upper_margin, lower_margin, hsync_len, vsync_len;
+    int /*vscan_holdoff,*/ sdoed_width, sdoed_delay, sdoez_width, sdoez_delay, gdclk_hp_offs, gdsp_offs,
         gdoe_offs, gdclk_offs, num_ce;
 
     /*set timming for E060 panel, fresh rate is 85, pclk is 26.667MHz */
@@ -335,11 +337,11 @@ void epdc_init_settings(void)
     lower_margin = 8;
     hsync_len = 4;
     vsync_len = 1;
-    xres = EPDC_HSIZE;
-    yres = EPDC_VSIZE;
+    //xres = EPDC_HSIZE;
+    //yres = EPDC_VSIZE;
 
     /*set scan mode */
-    vscan_holdoff = 4;
+    //vscan_holdoff = 4;
     sdoed_width = 10;
     sdoed_delay = 20;
     sdoez_width = 10;
