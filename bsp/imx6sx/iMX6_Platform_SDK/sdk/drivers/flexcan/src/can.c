@@ -166,10 +166,10 @@ void print_can_mb(uint32_t instance, uint32_t mbID)
     uint32_t base = REGS_FLEXCAN_BASE(instance);
     volatile struct can_message_buffers *can_mb =
         (volatile struct can_message_buffers *)(base + CAN_MB_OFFSET);
-    printf("\tMB[%ld].cs    = 0x%lx\n", mbID, can_mb->MB[mbID].cs);
-    printf("\tMB[%ld].id    = 0x%lx\n", mbID, can_mb->MB[mbID].id);
-    printf("\tMB[%ld].data0 = 0x%lx\n", mbID, can_mb->MB[mbID].data0);
-    printf("\tMB[%ld].data1 = 0x%lx\n\n", mbID, can_mb->MB[mbID].data1);
+    printf("\tMB[%d].cs    = 0x%x\n", mbID, can_mb->MB[mbID].cs);
+    printf("\tMB[%d].id    = 0x%x\n", mbID, can_mb->MB[mbID].id);
+    printf("\tMB[%d].data0 = 0x%x\n", mbID, can_mb->MB[mbID].data0);
+    printf("\tMB[%d].data1 = 0x%x\n\n", mbID, can_mb->MB[mbID].data1);
 }
 
 void can_enable_mb_interrupt(uint32_t instance, uint32_t mbID)

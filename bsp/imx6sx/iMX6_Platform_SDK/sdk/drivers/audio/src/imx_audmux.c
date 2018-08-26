@@ -41,7 +41,6 @@
 #include "imx_audmux_priv.h"
 #include "registers/regsaudmux.h"
 
-#if 0
 /*!
  * Dump the registers of audmux
  *
@@ -53,13 +52,12 @@ static uint32_t audmux_dump(void)
 
     printf("=======================AUDMUX dump===================\n");
     for (idx = AUDMUX_PORT_INDEX_MIN; idx <= AUDMUX_PORT_INDEX_MAX; idx++) {
-        printf("PTCR%ld: 0x%x\n", idx,  HW_AUDMUX_PTCR_RD(idx));
-        printf("PDCR%ld: 0x%x\n", idx,  HW_AUDMUX_PDCR_RD(idx));
+        printf("PTCR%d: 0x%x\n", idx,  HW_AUDMUX_PTCR_RD(idx));
+        printf("PDCR%d: 0x%x\n", idx,  HW_AUDMUX_PDCR_RD(idx));
     }
 
     return 0;
 }
-#endif
 
 uint32_t audmux_port_set(uint32_t port, uint32_t ptcr, uint32_t pdcr)
 {

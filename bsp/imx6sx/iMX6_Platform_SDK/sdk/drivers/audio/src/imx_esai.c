@@ -240,7 +240,6 @@ static uint32_t esai_get_hw_para(audio_ctrl_p ctrl, uint32_t type)
     return val;
 }
 
-#if 0
 /*!
  * Get status of esai
  * @param       ctrl    a pointer of audio controller(audio_ctrl_t) which presents the esai module
@@ -272,7 +271,6 @@ static uint32_t esai_get_status(audio_ctrl_p ctrl, uint32_t type)
 
     return val;
 }
-#endif
 
 /*!
  * Enable or disable sub-modules of ESAI.

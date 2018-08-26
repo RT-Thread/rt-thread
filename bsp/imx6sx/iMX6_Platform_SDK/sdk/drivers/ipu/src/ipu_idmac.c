@@ -35,7 +35,7 @@
  */
 #include "ipu/ipu_common.h"
 
-void ipu_cpmem_set_field(uint32_t base, int32_t w, int32_t bit, int32_t size, uint32_t v)
+inline void ipu_cpmem_set_field(uint32_t base, int32_t w, int32_t bit, int32_t size, uint32_t v)
 {
     int32_t i = (bit) / 32;
     int32_t off = (bit) % 32;
