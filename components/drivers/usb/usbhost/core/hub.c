@@ -249,7 +249,7 @@ rt_err_t rt_usbh_hub_clear_port_feature(uhub_t hub, rt_uint16_t port, rt_uint16_
     if(hub->is_roothub)
     {
         root_hub_ctrl(hub->hcd, port, RH_CLEAR_PORT_FEATURE, 
-            (void*)(rt_uint32_t)feature);
+            (void*)feature);
         return RT_EOK;
     }
 
@@ -290,7 +290,7 @@ rt_err_t rt_usbh_hub_set_port_feature(uhub_t hub, rt_uint16_t port,
     if(hub->is_roothub)
     {
         root_hub_ctrl(hub->hcd, port, RH_SET_PORT_FEATURE, 
-            (void*)(rt_uint32_t)feature);
+            (void*)feature);
         return RT_EOK;
     }
 

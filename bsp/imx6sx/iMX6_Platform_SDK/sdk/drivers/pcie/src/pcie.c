@@ -100,7 +100,6 @@ static void pcie_gpr_write_field(pcie_iomux_gpr_field_type_e field, uint32_t val
     reg32_write(addr, v);
 }
 
-#if 0
 static uint32_t pcie_gpr_read_field(pcie_iomux_gpr_field_type_e field)
 {
     uint32_t v, addr, mask, offset;
@@ -115,7 +114,6 @@ static uint32_t pcie_gpr_read_field(pcie_iomux_gpr_field_type_e field)
 
     return v;
 }
-#endif
 
 static int wait_link_up(int wait_ms)
 {

@@ -202,20 +202,20 @@ int card_init(uint32_t instance, int bus_width)
     /* card detect */
     if(card_detect_test_en) {
         if(usdhc_card_detected(instance) == false) {
-            printf("%s   *Card on SD%ld is not inserted.\n", indent, instance);
+            printf("%s   *Card on SD%d is not inserted.\n", indent, instance);
             return FAIL;
         } else {
-            printf("%s   Card on SD%ld is inserted.\n", indent, instance);
+            printf("%s   Card on SD%d is inserted.\n", indent, instance);
         }
     }
 
     /* write protect */
     if(write_protect_test_en) {
         if(usdhc_write_protected(instance) == true) {
-            printf("%s   *Card on SD%ld is write protected.\n", indent, instance);
+            printf("%s   *Card on SD%d is write protected.\n", indent, instance);
             return FAIL;
         } else {
-            printf("%s   Card on SD%ld is not write protected.\n", indent, instance);
+            printf("%s   Card on SD%d is not write protected.\n", indent, instance);
         }
     }
 
@@ -575,7 +575,7 @@ int card_data_read(uint32_t instance, int *dst_ptr, int length, uint32_t offset)
 
     /* Set block length to card */
     if (card_set_blklen(instance, BLK_LEN) == FAIL) {
-        printf("Fail to set block length to card in reading sector %ld.\n", offset / BLK_LEN);
+        printf("Fail to set block length to card in reading sector %d.\n", offset / BLK_LEN);
         return FAIL;
     }
 
