@@ -19,12 +19,6 @@ if RT_USING_VBUS
             When enable remote shell, the finsh/msh of RT-Thread can be operated from another
             Operating System.
 
-    config RT_VBUS_USING_FLOW_CONTROL
-        bool "Enable flow control on VBUS "
-        default n
-        help
-            Enable manage the rate of data transmission
-
     config RT_VBUS_USING_TESTS
         bool "Enable tests on VBUS "
         default n
