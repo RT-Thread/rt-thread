@@ -1,6 +1,8 @@
 #ifndef __VBUS_API_H__
 #define __VBUS_API_H__
 
+#define RT_VBUS_USING_FLOW_CONTROL
+
 #define RT_VBUS_CHANNEL_NR   32
 
 #define RT_VBUS_BLK_HEAD_SZ  4
