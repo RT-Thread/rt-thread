@@ -39,11 +39,6 @@ if RT_USING_VBUS
         help
             VBUS size of the ring buffer.
 
-    config RT_VMM_RB_BLK_NR
-        int "RT_VMM_RB_BLK_NR"
-        help
-            Number of ring buffer.
-
     config RT_VBUS_GUEST_VIRQ
         int "RT_VBUS_GUEST_VIRQ"
         help
