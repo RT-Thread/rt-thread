@@ -26,6 +26,7 @@
 #include <sal.h>
 
 #include <at_socket.h>
+#include <af_inet.h>
 
 #ifdef SAL_USING_POSIX
 #include <dfs_poll.h>
@@ -107,6 +108,7 @@ static int at_create(struct sal_socket *socket, int type, int protocol)
 }
 
 static const struct proto_family at_inet_family_ops = {
+    "at",
     AF_AT,
     AF_INET,
     at_create,

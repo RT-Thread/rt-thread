@@ -28,6 +28,10 @@
 #include <dfs_file.h>
 #include <rtdevice.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if !defined(socklen_t) && !defined(SOCKLEN_T_DEFINED)
 typedef uint32_t socklen_t;
 #endif
@@ -82,8 +86,9 @@ struct sal_socket
 
 struct proto_family
 {
-    int family;                        /* primary protocol families type*/
-    int sec_family;                    /* secondary protocol families type*/
+    char name[RT_NAME_MAX];
+    int family;                        /* primary protocol families type */
+    int sec_family;                    /* secondary protocol families type */
     int             (*create)(struct sal_socket *sal_socket, int type, int protocol);   /* register socket options */
 
     struct hostent* (*gethostbyname)  (const char *name);
@@ -92,10 +97,18 @@ struct proto_family
     int             (*getaddrinfo)    (const char *nodename, const char *servname, const struct addrinfo *hints, struct addrinfo **res);
 };
 
-/* SAL socket initialization */
+/* SAL(Socket Abstraction Layer) initialize */
 int sal_init(void);
 
-int sal_proto_family_register(const struct proto_family *pf);
 struct sal_socket *sal_get_socket(int sock);
+
+/* protocol family register and unregister operate */
+int sal_proto_family_register(const struct proto_family *pf);
+int sal_proto_family_unregister(const struct proto_family *pf);
+struct proto_family *sal_proto_family_find(const char *name);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SAL_H__ */
