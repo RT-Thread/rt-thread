@@ -16,6 +16,9 @@ if GetDepend('SAL_USING_LWIP'):
 
 if GetDepend('SAL_USING_AT'):
     src += Glob('impl/af_inet_at.c')
+    
+if GetDepend('SAL_USING_LWIP') or GetDepend('SAL_USING_AT'):
+    CPPPATH += [cwd + '/impl']
 
 if GetDepend('SAL_USING_POSIX'):
     src += Glob('dfs_net/*.c')

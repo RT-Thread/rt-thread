@@ -27,6 +27,9 @@
 
 #include <rtthread.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #define AT_SW_VERSION                  "0.3.0"
 
 #define DBG_ENABLE
@@ -249,6 +252,10 @@ void at_port_reset(void);
 
 /* AT server device factory reset */
 void at_port_factory_reset(void);
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* __AT_H__ */

@@ -1,7 +1,7 @@
 /*
- * File      : dfs_net.h
+ * File      : af_inet.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015-2016, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,25 +19,30 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2015-02-17     Bernard      First version
- * 2016-05-05     Bernard      rename dfs_lwip to dfs_net.
+ * 2018-08-25     ChenYong     First version
  */
 
-#ifndef DFS_NET_H__
-#define DFS_NET_H__
+#ifndef __AF_INET_H__
+#define __AF_INET_H__
 
-#include <dfs_file.h>
+#include <rtthread.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-const struct dfs_file_ops* dfs_net_get_fops(void);
-int dfs_net_getsocket(int fd);
+#ifdef SAL_USING_LWIP
+/* lwIP protocol family register */
+int lwip_inet_init(void);
+#endif
+
+#ifdef SAL_USING_AT
+/* AT protocol family register */
+int at_inet_init(void);
+#endif
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif
-
+#endif /* __AF_INET_H__ */

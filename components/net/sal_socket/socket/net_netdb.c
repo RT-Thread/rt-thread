@@ -38,6 +38,7 @@ int gethostbyname_r(const char *name, struct hostent *ret, char *buf,
 {
     return sal_gethostbyname_r(name, ret, buf, buflen, result, h_errnop);
 }
+RTM_EXPORT(gethostbyname_r);
 
 void freeaddrinfo(struct addrinfo *ai)
 {
