@@ -22,6 +22,8 @@
  * 2018-06-06     ChenYong     First version
  */
 
+#include <rtthread.h>
+
 #include <netdb.h>
 #include <sal.h>
 
@@ -91,8 +93,6 @@ static const struct proto_ops at_inet_stream_ops =
 
 #ifdef SAL_USING_POSIX
     at_poll,
-#else
-    NULL,
 #endif /* SAL_USING_POSIX */
 };
 
