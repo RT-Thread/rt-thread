@@ -6,6 +6,8 @@
 #define RT_VBUS_BLK_HEAD_SZ  4
 #define RT_VBUS_MAX_PKT_SZ   (256 - RT_VBUS_BLK_HEAD_SZ)
 
+#define RT_VMM_RB_BLK_NR (_RT_VBUS_RING_SZ / 64 - 1)
+
 #ifndef __ASSEMBLY__
 #include <stddef.h> /* For size_t */
 
