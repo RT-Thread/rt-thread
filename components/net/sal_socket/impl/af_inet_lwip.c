@@ -44,6 +44,7 @@
 #endif
 #endif
 
+#ifdef SAL_USING_POSIX
 /*
  * Re-define lwip socket
  *
@@ -73,9 +74,7 @@ struct lwip_sock {
     /** counter of how many threads are waiting for this socket using select */
     SELWAIT_T select_waiting;
 
-#ifdef SAL_USING_POSIX
     rt_wqueue_t wait_head;
-#endif
 };
 
 extern struct lwip_sock *lwip_tryget_socket(int s);
@@ -160,14 +159,14 @@ static void event_callback(struct netconn *conn, enum netconn_evt evt, u16_t len
 
     if (event)
     {
-#ifdef SAL_USING_POSIX
         rt_wqueue_wakeup(&sock->wait_head, (void*) event);
-#endif
     }
 }
+#endif /* SAL_USING_POSIX */
 
 static int inet_socket(int domain, int type, int protocol)
 {
+#ifdef SAL_USING_POSIX
     int socket;
 
     socket = lwip_socket(domain, type, protocol);
@@ -178,17 +177,18 @@ static int inet_socket(int domain, int type, int protocol)
         lwsock = lwip_tryget_socket(socket);
         lwsock->conn->callback = event_callback;
 
-#ifdef SAL_USING_POSIX
         rt_wqueue_init(&lwsock->wait_head);
-#endif
-
     }
 
     return socket;
+#else
+    return lwip_socket(domain, type, protocol);
+#endif /* SAL_USING_POSIX */
 }
 
 static int inet_accept(int socket, struct sockaddr *addr, socklen_t *addrlen)
 {
+#ifdef SAL_USING_POSIX
     int new_socket;
 
     new_socket = lwip_accept(socket, addr, addrlen);
@@ -198,12 +198,13 @@ static int inet_accept(int socket, struct sockaddr *addr, socklen_t *addrlen)
 
         lwsock = lwip_tryget_socket(new_socket);
 
-#ifdef SAL_USING_POSIX
         rt_wqueue_init(&lwsock->wait_head);
-#endif
     }
 
     return new_socket;
+#else
+    return lwip_accept(socket, addr, addrlen);
+#endif /* SAL_USING_POSIX */
 }
 
 static int inet_getsockname(int socket, struct sockaddr *name, socklen_t *namelen)
@@ -216,6 +217,7 @@ static int inet_getsockname(int socket, struct sockaddr *name, socklen_t *namele
     return lwip_getsockname(socket, name, namelen);
 }
 
+#ifdef SAL_USING_POSIX
 static int inet_poll(struct dfs_fd *file, struct rt_pollreq *req)
 {
     int mask = 0;
@@ -253,6 +255,7 @@ static int inet_poll(struct dfs_fd *file, struct rt_pollreq *req)
 
     return mask;
 }
+#endif
 
 static const struct proto_ops lwip_inet_stream_ops = {
     inet_socket,
@@ -270,7 +273,9 @@ static const struct proto_ops lwip_inet_stream_ops = {
     lwip_getpeername,
     inet_getsockname,
     lwip_ioctl,
+#ifdef SAL_USING_POSIX
     inet_poll,
+#endif
 };
 
 static int inet_create(struct sal_socket *socket, int type, int protocol)
