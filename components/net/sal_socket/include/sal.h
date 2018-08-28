@@ -25,8 +25,11 @@
 #ifndef SAL_H__
 #define SAL_H__
 
-#include <dfs_file.h>
 #include <rtdevice.h>
+
+#ifdef SAL_USING_POSIX
+#include <dfs_file.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,7 +43,9 @@ typedef uint32_t socklen_t;
 #define SAL_SOCKET_MAGIC               0x5A10
 
 /* The maximum number of sockets structure */
+#ifndef SAL_SOCKETS_NUM
 #define SAL_SOCKETS_NUM                DFS_FD_MAX
+#endif
 
 /* The maximum number of protocol families */
 #ifndef SAL_PROTO_FAMILIES_NUM
@@ -68,7 +73,9 @@ struct proto_ops
     int (*getpeername)(int s, struct sockaddr *name, socklen_t *namelen);
     int (*getsockname)(int s, struct sockaddr *name, socklen_t *namelen);
     int (*ioctlsocket)(int s, long cmd, void *arg);
+#ifdef SAL_USING_POSIX
     int (*poll)       (struct dfs_fd *file, struct rt_pollreq *req);
+#endif
 };
 
 struct sal_socket

@@ -705,6 +705,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
     return sock->ops->ioctlsocket((int) sock->user_data, cmd, arg);
 }
 
+#ifdef SAL_USING_POSIX
 int sal_poll(struct dfs_fd *file, struct rt_pollreq *req)
 {
     struct sal_socket *sock;
@@ -723,6 +724,7 @@ int sal_poll(struct dfs_fd *file, struct rt_pollreq *req)
 
     return sock->ops->poll(file, req);
 }
+#endif
 
 struct hostent *sal_gethostbyname(const char *name)
 {
