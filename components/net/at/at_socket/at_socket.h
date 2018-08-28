@@ -77,11 +77,11 @@ typedef void (* at_socket_callback)(struct at_socket *conn, int event, uint16_t 
 /* AT device socket options function */
 struct at_device_ops
 {
-    int (*connect)(int socket, char *ip, int32_t port, enum at_socket_type type, rt_bool_t is_client);
-    int (*close)(int socket);
-    int (*send)(int socket, const char *buff, size_t bfsz, enum at_socket_type type);
-    int (*domain_resolve)(const char *name, char ip[16]);
-    void (*set_event_cb)(at_socket_evt_t event, at_evt_cb_t cb);
+    int (*at_connect)(int socket, char *ip, int32_t port, enum at_socket_type type, rt_bool_t is_client);
+    int (*at_closesocket)(int socket);
+    int (*at_send)(int socket, const char *buff, size_t bfsz, enum at_socket_type type);
+    int (*at_domain_resolve)(const char *name, char ip[16]);
+    void (*at_set_event_cb)(at_socket_evt_t event, at_evt_cb_t cb);
 };
 
 /* AT receive package list structure */

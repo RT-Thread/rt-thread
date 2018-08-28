@@ -46,7 +46,7 @@
         ((unsigned char *)&addr)[2], \
         ((unsigned char *)&addr)[3]
 
-#ifdef AT_DEVICE_NOT_SELECTED
+#if !defined(AT_DEVICE_SOCKETS_NUM) || defined(AT_DEVICE_NOT_SELECTED)
 #error The AT socket device is not selected, please select it through the env menuconfig.
 #endif
 
@@ -398,7 +398,7 @@ int at_closesocket(int socket)
 
     if (last_state == AT_SOCKET_CONNECT)
     {
-        if (at_dev_ops->close(socket) != 0)
+        if (at_dev_ops->at_closesocket(socket) != 0)
         {
             LOG_E("AT socket (%d) closesocket failed!", socket);
         }
@@ -424,7 +424,7 @@ int at_shutdown(int socket, int how)
 
     if (sock->state == AT_SOCKET_CONNECT)
     {
-        if (at_dev_ops->close(socket) != 0)
+        if (at_dev_ops->at_closesocket(socket) != 0)
         {
             LOG_E("AT socket (%d) shutdown failed!", socket);
         }
@@ -535,7 +535,7 @@ int at_connect(int socket, const struct sockaddr *name, socklen_t namelen)
     socketaddr_to_ipaddr_port(name, &remote_addr, &remote_port);
     ipaddr_to_ipstr(name, ipstr);
 
-    if (at_dev_ops->connect(socket, ipstr, remote_port, sock->type, RT_TRUE) < 0)
+    if (at_dev_ops->at_connect(socket, ipstr, remote_port, sock->type, RT_TRUE) < 0)
     {
         LOG_E("AT socket(%d) connect failed!", socket);
         result = -1;
@@ -545,8 +545,8 @@ int at_connect(int socket, const struct sockaddr *name, socklen_t namelen)
     sock->state = AT_SOCKET_CONNECT;
 
     /* set AT socket receive data callback function */
-    at_dev_ops->set_event_cb(AT_SOCKET_EVT_RECV, at_recv_notice_cb);
-    at_dev_ops->set_event_cb(AT_SOCKET_EVT_CLOSED, at_closed_notice_cb);
+    at_dev_ops->at_set_event_cb(AT_SOCKET_EVT_RECV, at_recv_notice_cb);
+    at_dev_ops->at_set_event_cb(AT_SOCKET_EVT_CLOSED, at_closed_notice_cb);
 
 __exit:
 
@@ -593,7 +593,7 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
         socketaddr_to_ipaddr_port(from, &remote_addr, &remote_port);
         ipaddr_to_ipstr(from, ipstr);
 
-        if (at_dev_ops->connect(socket, ipstr, remote_port, sock->type, RT_TRUE) < 0)
+        if (at_dev_ops->at_connect(socket, ipstr, remote_port, sock->type, RT_TRUE) < 0)
         {
             LOG_E("AT socket UDP connect failed!");
             result = -1;
@@ -719,7 +719,7 @@ int at_sendto(int socket, const void *data, size_t size, int flags, const struct
             goto __exit;
         }
 
-        if ((len = at_dev_ops->send(sock->socket, (const char *) data, size, sock->type)) < 0)
+        if ((len = at_dev_ops->at_send(sock->socket, (const char *) data, size, sock->type)) < 0)
         {
             result = -1;
             goto __exit;
@@ -736,7 +736,7 @@ int at_sendto(int socket, const void *data, size_t size, int flags, const struct
             socketaddr_to_ipaddr_port(to, &remote_addr, &remote_port);
             ipaddr_to_ipstr(to, ipstr);
 
-            if (at_dev_ops->connect(socket, ipstr, remote_port, sock->type, RT_TRUE) < 0)
+            if (at_dev_ops->at_connect(socket, ipstr, remote_port, sock->type, RT_TRUE) < 0)
             {
                 LOG_E("AT socket (%d) UDP connect failed!", socket);
                 result = -1;
@@ -745,7 +745,7 @@ int at_sendto(int socket, const void *data, size_t size, int flags, const struct
             sock->state = AT_SOCKET_CONNECT;
         }
 
-        if ((len = at_dev_ops->send(sock->socket, (char *) data, size, sock->type)) < 0)
+        if ((len = at_dev_ops->at_send(sock->socket, (char *) data, size, sock->type)) < 0)
         {
             result = -1;
             goto __exit;
@@ -940,7 +940,7 @@ struct hostent *at_gethostbyname(const char *name)
 
     if (idx < strlen(name))
     {
-        if (at_dev_ops->domain_resolve(name, ipstr) < 0)
+        if (at_dev_ops->at_domain_resolve(name, ipstr) < 0)
         {
             LOG_E("AT domain (%s) resolve error!", name);
             return RT_NULL;
@@ -1040,7 +1040,7 @@ int at_getaddrinfo(const char *nodename, const char *servname,
 
             if(idx < strlen(nodename))
             {
-                if (at_dev_ops->domain_resolve((char *) nodename, ip_str) != 0)
+                if (at_dev_ops->at_domain_resolve((char *) nodename, ip_str) != 0)
                 {
                     return EAI_FAIL;
                 }
@@ -1129,10 +1129,10 @@ void at_freeaddrinfo(struct addrinfo *ai)
 void at_scoket_device_register(const struct at_device_ops *ops)
 {
     RT_ASSERT(ops);
-    RT_ASSERT(ops->connect);
-    RT_ASSERT(ops->close);
-    RT_ASSERT(ops->send);
-    RT_ASSERT(ops->domain_resolve);
-    RT_ASSERT(ops->set_event_cb);
+    RT_ASSERT(ops->at_connect);
+    RT_ASSERT(ops->at_closesocket);
+    RT_ASSERT(ops->at_send);
+    RT_ASSERT(ops->at_domain_resolve);
+    RT_ASSERT(ops->at_set_event_cb);
     at_dev_ops = (struct at_device_ops *) ops;
 }
