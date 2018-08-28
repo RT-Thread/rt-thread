@@ -30,7 +30,6 @@
  * 2015-01-06     Grissiom     version 2.0.3; API change, no functional changes
  */
 
-#include "vbus_local_conf.h"
 #include <vbus_api.h>
 
 int rt_vbus_init(void *outr, void *inr);
