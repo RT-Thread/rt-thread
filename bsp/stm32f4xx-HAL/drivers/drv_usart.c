@@ -193,8 +193,31 @@ void USART2_IRQHandler(void)
 }
 #endif /* RT_USING_UART2 */
 
+#if defined(RT_USING_UART3)
+/* UART3 device driver structure */
+static struct drv_uart uart3;
+struct rt_serial_device serial3;
+void USART3_IRQHandler(void)
+{
+    struct drv_uart *uart;
+    uart = &uart3;
+    /* enter interrupt */
+    rt_interrupt_enter();
+    /* UART in mode Receiver -------------------------------------------------*/
+    if ((__HAL_UART_GET_FLAG(&uart->UartHandle, UART_FLAG_RXNE) != RESET) &&
+            (__HAL_UART_GET_IT_SOURCE(&uart->UartHandle, UART_IT_RXNE) != RESET))
+    {
+        rt_hw_serial_isr(&serial3, RT_SERIAL_EVENT_RX_IND);
+        /* Clear RXNE interrupt flag */
+        __HAL_UART_CLEAR_FLAG(&uart->UartHandle, UART_FLAG_RXNE);
+    }
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif /* RT_USING_UART3 */
+
 #if defined(RT_USING_UART6)
-/* UART2 device driver structure */
+/* UART6 device driver structure */
 static struct drv_uart uart6;
 struct rt_serial_device serial6;
 void USART6_IRQHandler(void)
@@ -214,7 +237,7 @@ void USART6_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif /* RT_USING_UART3 */
+#endif /* RT_USING_UART6 */
 
 /**
 * @brief UART MSP Initialization
@@ -260,6 +283,22 @@ void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle)
         GPIO_InitStruct.Alternate = GPIO_AF7_USART2;
         HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
     }
+    else if (uartHandle->Instance == USART3)
+    {
+        /* USART3 clock enable */
+        __HAL_RCC_USART3_CLK_ENABLE();
+        __HAL_RCC_GPIOB_CLK_ENABLE();
+        /**USART3 GPIO Configuration
+        PB10    ------> USART3_TX
+        PB11    ------> USART3_RX
+        */
+        GPIO_InitStruct.Pin = GPIO_PIN_10 | GPIO_PIN_11;
+        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Pull = GPIO_PULLUP;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+        GPIO_InitStruct.Alternate = GPIO_AF7_USART3;
+        HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+    }
     else if (uartHandle->Instance == USART6)
     {
         /* USART6 clock enable */
@@ -300,6 +339,16 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef *uartHandle)
         */
         HAL_GPIO_DeInit(GPIOA, GPIO_PIN_2 | GPIO_PIN_3);
     }
+    else if (uartHandle->Instance == USART3)
+    {
+        /* Peripheral clock disable */
+        __HAL_RCC_USART3_CLK_DISABLE();
+        /**USART3 GPIO Configuration
+        PB10    ------> USART3_TX
+        PB11    ------> USART3_RX
+        */
+        HAL_GPIO_DeInit(GPIOB, GPIO_PIN_10 | GPIO_PIN_11);
+    }
     else if (uartHandle->Instance == USART6)
     {
         /* Peripheral clock disable */
@@ -338,6 +387,17 @@ int hw_usart_init(void)
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
 #endif /* RT_USING_UART2 */
+#ifdef RT_USING_UART3
+    uart = &uart3;
+    uart->UartHandle.Instance = USART3;
+    uart->irq = USART3_IRQn;
+    serial3.ops    = &drv_uart_ops;
+    serial3.config = config;
+    /* register UART3 device */
+    rt_hw_serial_register(&serial3, "uart3",
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                          uart);
+#endif /* RT_USING_UART3 */
 #ifdef RT_USING_UART6
     uart = &uart6;
     uart->UartHandle.Instance = USART6;
@@ -348,7 +408,7 @@ int hw_usart_init(void)
     rt_hw_serial_register(&serial6, "uart6",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
-#endif /* RT_USING_UART2 */
+#endif /* RT_USING_UART6 */
     return 0;
 }
 INIT_BOARD_EXPORT(hw_usart_init);
