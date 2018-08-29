@@ -303,8 +303,12 @@ config RT_USING_UART1
 
 config RT_USING_UART2
     bool "Using UART2"
-    default n    
-
+    default n
+    
+config RT_USING_UART3
+    bool "Using UART3"
+    default n
+    
 config RT_USING_UART6
     bool "Using UART6"
     default n   
