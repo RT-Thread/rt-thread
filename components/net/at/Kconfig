@@ -59,6 +59,7 @@ if RT_USING_AT
         config AT_USING_SOCKET
             bool "Enable BSD Socket API support by AT commnads"
             select RT_USING_LIBC
+            select RT_USING_SAL
             default n
            
     endif
