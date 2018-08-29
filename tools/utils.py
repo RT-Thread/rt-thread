@@ -114,11 +114,14 @@ def walk_children(child):
 
     # print child
     full_path = child.rfile().abspath
-    file_type  = full_path.rsplit('.',1)[1]
+    file_type_list  = full_path.rsplit('.',1)
     #print file_type
-    if file_type in source_ext:
-        if full_path not in source_list:
-            source_list.append(full_path)
+    if (len(file_type_list) > 1):
+        file_type = full_path.rsplit('.',1)[1]
+
+        if file_type in source_ext:
+            if full_path not in source_list:
+                source_list.append(full_path)
 
     children = child.all_children()
     if children != []:
