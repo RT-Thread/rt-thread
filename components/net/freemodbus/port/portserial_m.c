@@ -57,7 +57,9 @@ BOOL xMBMasterPortSerialInit(UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits,
      * set 485 mode receive and transmit control IO
      * @note MODBUS_MASTER_RT_CONTROL_PIN_INDEX need be defined by user
      */
+#if defined(RT_MODBUS_MASTER_USE_CONTROL_PIN)
     rt_pin_mode(MODBUS_MASTER_RT_CONTROL_PIN_INDEX, PIN_MODE_OUTPUT);
+#endif
 
     /* set serial name */
     if (ucPORT == 1) {
