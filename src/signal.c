@@ -147,7 +147,7 @@ static void _signal_deliver(rt_thread_t tid)
 
 rt_sighandler_t rt_signal_install(int signo, rt_sighandler_t handler)
 {
-    rt_sighandler_t old;
+    rt_sighandler_t old = RT_NULL;
     rt_thread_t tid = rt_thread_self();
 
     if (!sig_valid(signo)) return SIG_ERR;
