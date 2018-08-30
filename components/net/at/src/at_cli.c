@@ -76,7 +76,7 @@ void at_cli_init(void)
     rt_base_t int_lvl;
     rt_device_t console;
 
-    rt_sem_init(&console_rx_notice, "at_cli_notice", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&console_rx_notice, "cli_c", 0, RT_IPC_FLAG_FIFO);
 
     /* create RX FIFO */
     console_rx_fifo = rt_ringbuffer_create(AT_CLI_FIFO_SIZE);
@@ -209,14 +209,12 @@ static rt_err_t client_getchar_rx_ind(rt_device_t dev, rt_size_t size)
 
     return RT_EOK;
 }
-static void client_cli_parser(void)
+static void client_cli_parser(at_client_t  client)
 {
 #define ESC_KEY                 0x1B
 #define BACKSPACE_KEY           0x08
 #define DELECT_KEY              0x7F
 
-    extern at_client_t rt_at_get_client(void);
-    at_client_t  client = rt_at_get_client();
     char ch;
     char cur_line[FINSH_CMD_SIZE] = { 0 };
     rt_size_t cur_line_len = 0;
@@ -234,10 +232,10 @@ static void client_cli_parser(void)
             rt_hw_interrupt_enable(int_lvl);
         }
 
-        rt_sem_init(&client_rx_notice, "at_cli_client_notice", 0, RT_IPC_FLAG_FIFO);
+        rt_sem_init(&client_rx_notice, "cli_r", 0, RT_IPC_FLAG_FIFO);
         client_rx_fifo = rt_ringbuffer_create(AT_CLI_FIFO_SIZE);
 
-        at_client = rt_thread_create("at_cli_client", at_client_entry, RT_NULL, 512, 8, 8);
+        at_client = rt_thread_create("at_cli", at_client_entry, RT_NULL, 512, 8, 8);
         if (client_rx_fifo && at_client)
         {
             rt_kprintf("======== Welcome to using RT-Thread AT command client cli ========\n");
@@ -261,7 +259,7 @@ static void client_cli_parser(void)
                     if (cur_line_len)
                     {
                         rt_kprintf("\n");
-                        at_exec_cmd(RT_NULL, "%.*s", cur_line_len, cur_line);
+                        at_obj_exec_cmd(client, RT_NULL, "%.*s", cur_line_len, cur_line);
                     }
                     cur_line_len = 0;
                 }
@@ -297,9 +295,10 @@ static void client_cli_parser(void)
 
 static void at(int argc, char **argv)
 {
-    if (argc < 2)
+
+    if (argc != 2 && argc != 3)
     {
-        rt_kprintf("Please input 'at <server|client>' \n");
+        rt_kprintf("Please input '<server|client [dev_name]>' \n");
         return;
     }
 
@@ -311,23 +310,40 @@ static void at(int argc, char **argv)
         server_cli_parser();
 #else
         rt_kprintf("Not support AT server, please check your configure!\n");
-#endif
+#endif /* AT_USING_SERVER */
     }
     else if (!strcmp(argv[1], "client"))
     {
 #ifdef AT_USING_CLIENT
-        client_cli_parser();
+        at_client_t client = RT_NULL;
+
+        if (argc == 2)
+        {
+            client_cli_parser(at_client_get_first());
+        }
+        else if (argc == 3)
+        {
+            client = at_client_get(argv[2]);
+            if (client == RT_NULL)
+            {
+                rt_kprintf("input AT client device name(%s) error.\n", argv[2]);
+            }
+            else
+            {
+                client_cli_parser(client);
+            }
+        }
 #else
         rt_kprintf("Not support AT client, please check your configure!\n");
-#endif
+#endif /* AT_USING_CLIENT */
     }
     else
     {
-        rt_kprintf("Please input 'at <server|client>' \n");
+        rt_kprintf("Please input '<server|client [dev_name]>' \n");
     }
 
     at_cli_deinit();
 }
-MSH_CMD_EXPORT(at, RT-Thread AT component cli: at <server|client>);
+MSH_CMD_EXPORT(at, RT-Thread AT component cli: at <server|client [dev_name]>);
 
 #endif /* AT_USING_CLI */
