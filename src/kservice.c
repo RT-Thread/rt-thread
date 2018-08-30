@@ -36,6 +36,10 @@
 #include <rtthread.h>
 #include <rthw.h>
 
+#ifdef RT_USING_MODULE
+#include <dlmodule.h>
+#endif
+
 /* use precision */
 #define RT_PRINTF_PRECISION
 
@@ -1323,13 +1327,10 @@ void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line)
     if (rt_assert_hook == RT_NULL)
     {
 #ifdef RT_USING_MODULE
-        if (rt_module_self() != RT_NULL)
+        if (dlmodule_self())
         {
-            /* unload assertion module */
-            rt_module_unload(rt_module_self());
-
-            /* re-schedule */
-            rt_schedule();
+            /* close assertion module */
+            dlmodule_exit(-1);
         }
         else
 #endif
