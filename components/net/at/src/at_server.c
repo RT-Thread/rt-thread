@@ -485,7 +485,7 @@ int at_server_init(void)
     memset(at_server_local->recv_buffer, 0x00, AT_SERVER_RECV_BUFF_LEN);
     at_server_local->cur_recv_len = 0;
 
-    at_server_local->rx_notice = rt_sem_create("at_server_notice", 0, RT_IPC_FLAG_FIFO);
+    at_server_local->rx_notice = rt_sem_create("at_svr", 0, RT_IPC_FLAG_FIFO);
     if (!at_server_local->rx_notice)
     {
         LOG_E("AT server session initialize failed! at_rx_notice semaphore create failed!");
@@ -521,7 +521,7 @@ int at_server_init(void)
     memcpy(at_server_local->end_mark, AT_CMD_END_MARK, sizeof(AT_CMD_END_MARK));
 
     at_server_local->parser_entry = server_parser;
-    at_server_local->parser = rt_thread_create("at_server",
+    at_server_local->parser = rt_thread_create("at_svr",
                                          (void (*)(void *parameter))server_parser,
                                          at_server_local,
                                          2 * 1024,
