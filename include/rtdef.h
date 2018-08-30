@@ -1021,59 +1021,6 @@ struct rt_device_graphic_ops
 /*@}*/
 #endif
 
-#ifdef RT_USING_MODULE
-/**
- * @addtogroup Module
- */
-
-/*@{*/
-
-/*
- * module system
- */
-
-#define RT_MODULE_FLAG_WITHENTRY        0x00            /**< with entry point */
-#define RT_MODULE_FLAG_WITHOUTENTRY     0x01            /**< without entry point */
-
-/**
- * Application Module structure
- */
-struct rt_module
-{
-    struct rt_object             parent;                /**< inherit from object */
-
-    rt_uint32_t                  vstart_addr;           /**< VMA base address for the
-                                                          first LOAD segment. */
-    rt_uint8_t                  *module_space;          /**< module memory space */
-
-    void                        *module_entry;          /**< the entry address of module */
-    rt_thread_t                  module_thread;         /**< the main thread of module */
-
-    rt_uint8_t                  *module_cmd_line;       /**< module command line */
-    rt_uint32_t                  module_cmd_size;       /**< the size of module command line */
-
-#ifdef RT_USING_SLAB
-    /* module memory allocator */
-    void                        *mem_list;              /**< module's free memory list */
-    void                        *page_array;            /**< module's using pages */
-    rt_uint32_t                  page_cnt;              /**< module's using pages count */
-#endif
-
-    rt_uint16_t                  nref;                  /**< reference count */
-
-    rt_uint16_t                  nsym;                  /**< number of symbol in the module */
-    struct rt_module_symtab     *symtab;                /**< module symbol table */
-
-    rt_uint32_t                  user_data;             /**< arch data in the module */
-
-    void (*module_init)(void);
-    void (*module_cleanup)(void);
-};
-typedef struct rt_module *rt_module_t;
-
-/*@}*/
-#endif
-
 /* definitions for libc */
 #include "rtlibc.h"
 

@@ -37,8 +37,12 @@
 #include <dfs_posix.h>
 #endif
 
+#ifdef RT_USING_MODULE
+#include <dlmodule.h>
+#endif
+
 #ifndef FINSH_ARG_MAX
-#define FINSH_ARG_MAX    10
+#define FINSH_ARG_MAX    8
 #endif
 
 typedef int (*cmd_function_t)(int argc, char **argv);
@@ -64,7 +68,6 @@ static int msh_exit(int argc, char **argv)
 {
     /* return to finsh shell mode */
     __msh_state = RT_FALSE;
-
     return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(msh_exit, __cmd_exit, return to RT-Thread shell mode.);
@@ -254,7 +257,7 @@ int msh_exec_module(const char *cmd_line, int size)
     {
         /* found program */
         close(fd);
-        rt_module_exec_cmd(pg_name, cmd_line, size);
+        dlmodule_exec(pg_name, cmd_line, size);
         ret = 0;
     }
     else

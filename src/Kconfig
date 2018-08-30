@@ -295,8 +295,4 @@ menu "Kernel Device Object"
 
 endmenu
 
-config RT_USING_MODULE
-    bool "The dynamic module feature"
-    default n
-
 endmenu

@@ -1,32 +1,15 @@
 /*
- * File      : module.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
+ * SPDX-License-Identifier: Apache-2.0
+ * 
  * Change Logs:
- * Date           Author       Notes
- * 2010-01-09     Bernard      first version
- * 2010-04-09     yi.qiu       implement based on first version
+ * Date           Author      Notes
+ * 2018/08/29     Bernard     first version
  */
 
-#ifndef __MODULE_H__
-#define __MODULE_H__
-
-#include <rtdef.h>
+#ifndef DL_ELF_H__
+#define DL_ELF_H__
 
 typedef rt_uint8_t              Elf_Byte;
 
@@ -209,11 +192,19 @@ typedef struct
 #define R_ARM_V4BX              40
 
 /*
- * Relocation type for arm
+ * Relocation type for x86
  */
+#define R_386_NONE              0
+#define R_386_32                1
+#define R_386_PC32              2
+#define R_386_GOT32             3
+#define R_386_PLT32             4
+#define R_386_COPY              5
 #define R_386_GLOB_DAT          6
-#define R_386_JUMP_SLOT         7
+#define R_386_JMP_SLOT          7
 #define R_386_RELATIVE          8
+#define R_386_GOTOFF            9
+#define R_386_GOTPC             10
 
 /* Program Header */
 typedef struct
@@ -273,5 +264,22 @@ typedef struct
 #define SHF_EXECINSTR           0x4            /* executable */
 #define SHF_MASKPROC            0xf0000000     /* reserved bits for processor */
 /* specific section attributes */
+
+#define IS_PROG(s)        (s.sh_type == SHT_PROGBITS)
+#define IS_NOPROG(s)      (s.sh_type == SHT_NOBITS)
+#define IS_REL(s)         (s.sh_type == SHT_REL)
+#define IS_RELA(s)        (s.sh_type == SHT_RELA)
+#define IS_ALLOC(s)       (s.sh_flags == SHF_ALLOC)
+#define IS_AX(s)          ((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_EXECINSTR))
+#define IS_AW(s)          ((s.sh_flags & SHF_ALLOC) && (s.sh_flags & SHF_WRITE))
+
+#define elf_module        ((Elf32_Ehdr *)module_ptr)
+#define shdr              ((Elf32_Shdr *)((rt_uint8_t *)module_ptr + elf_module->e_shoff))
+#define phdr              ((Elf32_Phdr *)((rt_uint8_t *)module_ptr + elf_module->e_phoff))
+
+rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_ptr);
+rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module_ptr);
+
+int dlmodule_relocate(struct rt_dlmodule *module, Elf32_Rel *rel, Elf32_Addr sym_val);
 
 #endif
