@@ -404,11 +404,13 @@ int at_closesocket(int socket)
         if (at_dev_ops->at_closesocket(socket) != 0)
         {
             LOG_E("AT socket (%d) closesocket failed!", socket);
+            free_socket(sock);
             return -1;
         }
     }
 
-    return free_socket(sock);
+    free_socket(sock); 
+    return 0;
 }
 
 int at_shutdown(int socket, int how)
@@ -431,11 +433,13 @@ int at_shutdown(int socket, int how)
         if (at_dev_ops->at_closesocket(socket) != 0)
         {
             LOG_E("AT socket (%d) shutdown failed!", socket);
+            free_socket(sock);
             return -1;
         }
     }
 
-    return free_socket(sock);
+    free_socket(sock);
+    return 0;
 }
 
 int at_bind(int socket, const struct sockaddr *name, socklen_t namelen)
