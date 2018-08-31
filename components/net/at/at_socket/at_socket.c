@@ -385,6 +385,9 @@ int at_closesocket(int socket)
         return -1;
     }
 
+    /* deal with TCP server actively disconnect */
+    rt_thread_delay(rt_tick_from_millisecond(100));
+    
     sock = at_get_socket(socket);
     if (sock == RT_NULL)
     {
@@ -401,6 +404,7 @@ int at_closesocket(int socket)
         if (at_dev_ops->at_closesocket(socket) != 0)
         {
             LOG_E("AT socket (%d) closesocket failed!", socket);
+            return -1;
         }
     }
 
@@ -427,6 +431,7 @@ int at_shutdown(int socket, int how)
         if (at_dev_ops->at_closesocket(socket) != 0)
         {
             LOG_E("AT socket (%d) shutdown failed!", socket);
+            return -1;
         }
     }
 
