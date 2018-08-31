@@ -33,8 +33,11 @@ struct rt_dlmodule
     rt_uint8_t stat;        /* status of module */
 
     /* main thread of this module */
+    rt_uint16_t priority;
+    rt_uint32_t stack_size;
     struct rt_thread *main_thread;
-    int ret_code;           /* the return code */
+    /* the return code */
+    int ret_code;
 
     /* VMA base address for the first LOAD segment */
     rt_uint32_t vstart_addr;

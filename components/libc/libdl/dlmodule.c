@@ -174,16 +174,21 @@ __exit:
 
 struct rt_dlmodule *dlmodule_create(void)
 {
-    struct rt_dlmodule *ret = RT_NULL;
+    struct rt_dlmodule *module = RT_NULL;
 
-    ret = (struct rt_dlmodule*) rt_object_allocate(RT_Object_Class_Module, "module");
-    if (ret)
+    module = (struct rt_dlmodule*) rt_object_allocate(RT_Object_Class_Module, "module");
+    if (module)
     {
-        ret->stat = RT_DLMODULE_STAT_INIT;
-        rt_list_init(&(ret->object_list));
+        module->stat = RT_DLMODULE_STAT_INIT;
+
+        /* set initial priority and stack size */
+        module->priority = RT_THREAD_PRIORITY_MAX - 1;
+        module->stack_size = 2048;
+
+        rt_list_init(&(module->object_list));
     }
 
-    return ret;
+    return module;
 }
 
 void dlmodule_destroy_subthread(struct rt_dlmodule *module, rt_thread_t thread)
@@ -519,8 +524,13 @@ struct rt_dlmodule* dlmodule_exec(const char* pgname, const char* cmd, int cmd_s
             rt_thread_t tid;
 
             module->cmd_line = rt_strdup(cmd);
+
+            /* check stack size and priority */
+            if (module->priority > RT_THREAD_PRIORITY_MAX) module->priority = RT_THREAD_PRIORITY_MAX - 1;
+            if (module->stack_size < 2048 || module->stack_size > (1024 * 32)) module->stack_size = 2048;
+
             tid = rt_thread_create(module->parent.name, _dlmodule_thread_entry, (void*)module, 
-                2048, RT_THREAD_PRIORITY_MAX - 1, 10);
+                module->stack_size, module->priority, 10);
             if (tid)
             {
                 tid->module_id = module;
