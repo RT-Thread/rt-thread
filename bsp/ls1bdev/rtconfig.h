@@ -185,8 +185,6 @@
 
 // <section name="RT_USING_MODULE" description="Application module" default="true" >
 // #define RT_USING_MODULE
-// <bool name="RT_USING_LIBDL" description="Using dynamic library" default="true" />
-// #define RT_USING_LIBDL
 // </section>
 
 // <section name="RT_USING_RTGUI" description="RTGUI, a graphic user interface" default="true" >
