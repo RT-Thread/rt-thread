@@ -31,7 +31,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#define AT_SW_VERSION                  "1.0.0"
+
+#define AT_SW_VERSION                  "1.0.1"
 #define AT_SW_VERSION_NUM              0x10000
 
 #define DBG_ENABLE
