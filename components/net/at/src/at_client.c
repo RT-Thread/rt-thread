@@ -290,8 +290,13 @@ int at_obj_exec_cmd(at_client_t client, at_response_t resp, const char *cmd_expr
     rt_err_t result = RT_EOK;
     const char *cmd = RT_NULL;
 
-    RT_ASSERT(client);
     RT_ASSERT(cmd_expr);
+
+    if (client == RT_NULL)
+    {
+        LOG_E("input AT Client object is NULL, please create or get AT Client object!");
+        return -RT_ERROR;
+    }
 
     rt_mutex_take(client->lock, RT_WAITING_FOREVER);
 
@@ -348,8 +353,8 @@ int at_client_obj_wait_connect(at_client_t client, rt_uint32_t timeout)
 
     if (client == RT_NULL)
     {
-        LOG_E("Input AT Client is NULL, please create or get AT Client!");
-        return RT_NULL;
+        LOG_E("input AT Client object is NULL, please create or get AT Client object!");
+        return -RT_ERROR;
     }
 
     resp = at_create_resp(16, 0, rt_tick_from_millisecond(500));
@@ -400,12 +405,18 @@ int at_client_obj_wait_connect(at_client_t client, rt_uint32_t timeout)
  * @param buf   send data buffer
  * @param size  send fixed data size
  *
- * @return send data size
+ * @return >0: send data size
+ *         =0: send failed
  */
 rt_size_t at_client_obj_send(at_client_t client, const char *buf, rt_size_t size)
 {
-    RT_ASSERT(client);
     RT_ASSERT(buf);
+
+    if (client == RT_NULL)
+    {
+        LOG_E("input AT Client object is NULL, please create or get AT Client object!");
+        return 0;
+    }
 
 #ifdef AT_PRINT_RAW_CMD
     at_print_raw_cmd("send", buf, size);
@@ -436,15 +447,21 @@ static char at_client_getchar(at_client_t client)
  *
  * @note this function can only be used in execution function of URC data
  *
- * @return success receive data size
+ * @return >0: receive data size
+ *         =0: receive failed
  */
 rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size)
 {
     rt_size_t read_idx = 0;
     char ch;
 
-    RT_ASSERT(client);
     RT_ASSERT(buf);
+
+    if (client == RT_NULL)
+    {
+        LOG_E("input AT Client object is NULL, please create or get AT Client object!");
+        return 0;
+    }
 
     while (1)
     {
@@ -475,7 +492,11 @@ rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size)
  */
 void at_obj_set_end_sign(at_client_t client, char ch)
 {
-    RT_ASSERT(client);
+    if (client == RT_NULL)
+    {
+        LOG_E("input AT Client object is NULL, please create or get AT Client object!");
+        return;
+    }
 
     client->end_sign = ch;
 }
@@ -490,6 +511,12 @@ void at_obj_set_end_sign(at_client_t client, char ch)
 void at_obj_set_urc_table(at_client_t client, const struct at_urc *urc_table, rt_size_t table_sz)
 {
     rt_size_t idx;
+
+    if (client == RT_NULL)
+    {
+        LOG_E("input AT Client object is NULL, please create or get AT Client object!");
+        return;
+    }
 
     for (idx = 0; idx < table_sz; idx++)
     {
