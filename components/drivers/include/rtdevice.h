@@ -116,6 +116,10 @@ extern "C" {
 #include "drivers/rt_drv_pwm.h"
 #endif
 
+#ifdef MTD_USING_NOR
+#include "drivers/mtdnor.h"
+#endif
+
 #ifdef __cplusplus
 }
 #endif
