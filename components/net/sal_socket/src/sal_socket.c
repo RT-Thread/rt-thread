@@ -411,20 +411,23 @@ int sal_accept(int socket, struct sockaddr *addr, socklen_t *addrlen)
     if (new_socket != -1)
     {
         int retval;
-        int new_socket;
+        int new_sal_socket;
         struct sal_socket *new_sock;
 
         /* allocate a new socket structure and registered socket options */
-        new_socket = socket_new();
-        if (new_socket < 0)
+        new_sal_socket = socket_new();
+        if (new_sal_socket < 0)
         {
+            sock->ops->closesocket(new_socket);
             return -1;
         }
-        new_sock = sal_get_socket(new_socket);
+        new_sock = sal_get_socket(new_sal_socket);
 
         retval = socket_init(sock->domain, sock->type, sock->protocol, &new_sock);
         if (retval < 0)
         {
+            sock->ops->closesocket(new_socket);
+            rt_memset(new_sock, 0x00, sizeof(struct sal_socket));
             LOG_E("New socket registered failed, return error %d.", retval);
             return -1;
         }
@@ -432,7 +435,7 @@ int sal_accept(int socket, struct sockaddr *addr, socklen_t *addrlen)
         /* socket struct user_data used to store the acquired new socket */
         new_sock->user_data = (void *) new_socket;
 
-        return new_sock->socket;
+        return new_sal_socket;
     }
 
     return -1;
