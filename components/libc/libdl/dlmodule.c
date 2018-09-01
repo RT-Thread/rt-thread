@@ -491,6 +491,12 @@ struct rt_dlmodule* dlmodule_load(const char* filename)
     /* increase module reference count */
     module->nref ++;
 
+    /* deal with cache */
+#ifdef RT_USING_CACHE
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, module->mem_space, module->mem_size);
+    rt_hw_cpu_icache_ops(RT_HW_CACHE_INVALIDATE, module->mem_space, module->mem_size);
+#endif
+
     /* set module initialization and cleanup function */
     module->init_func = dlsym(module, "module_init");
     module->cleanup_func = dlsym(module, "module_cleanup");
