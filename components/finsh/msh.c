@@ -376,25 +376,27 @@ int msh_exec(char *cmd, rt_size_t length)
     {
         return cmd_ret;
     }
-#if defined(RT_USING_MODULE) && defined(RT_USING_DFS)
-    if (msh_exec_module(cmd, length) == 0)
-    {
-        return 0;
-    }
-#endif
-
-#if defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)
+#ifdef RT_USING_DFS
+#ifdef DFS_USING_WORKDIR
     if (msh_exec_script(cmd, length) == 0)
     {
         return 0;
     }
 #endif
 
-#if defined(RT_USING_LWP) && defined(RT_USING_DFS)
+#ifdef RT_USING_MODULE
+    if (msh_exec_module(cmd, length) == 0)
+    {
+        return 0;
+    }
+#endif
+
+#ifdef RT_USING_LWP
     if (_msh_exec_lwp(cmd, length) == 0)
     {
         return 0;
     }
+#endif
 #endif
 
     /* truncate the cmd at the first space. */
@@ -449,8 +451,8 @@ void msh_auto_complete_path(char *path)
     ptr = path;
     for (;;)
     {
-        if (*ptr == '/') index = ptr + 1; 
-        if (!*ptr) break; 
+        if (*ptr == '/') index = ptr + 1;
+        if (!*ptr) break;
 
         ptr ++;
     }
