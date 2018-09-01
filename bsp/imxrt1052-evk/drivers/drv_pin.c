@@ -362,7 +362,7 @@ void GPIO5_Combined_0_15_IRQHandler(void)
 
 static IRQn_Type rt1052_get_irqnum(GPIO_Type *gpio, rt_uint32_t gpio_pin)
 {
-    IRQn_Type irq_num; 
+    IRQn_Type irq_num = -100;  /* Invalid interrupt number */
     
     if(gpio == GPIO1)
     {
