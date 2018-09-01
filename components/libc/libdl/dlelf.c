@@ -277,6 +277,7 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
         rt_kprintf("Module: allocate space failed.\n");
         return -RT_ERROR;
     }
+    module->mem_size = module_size;
 
     /* zero all space */
     ptr = module->mem_space;
