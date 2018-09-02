@@ -36,6 +36,7 @@ static rt_list_t device_list;
 static rt_size_t rt_usbd_ep_write(udevice_t device, uep_t ep, void *buffer, rt_size_t size);
 static rt_size_t rt_usbd_ep_read_prepare(udevice_t device, uep_t ep, void *buffer, rt_size_t size);
 static rt_err_t rt_usbd_ep_assign(udevice_t device, uep_t ep);
+rt_err_t rt_usbd_ep_unassign(udevice_t device, uep_t ep);
 
 /**
  * This function will handle get_device_descriptor bRequest.
@@ -1862,6 +1863,19 @@ static rt_err_t rt_usbd_ep_assign(udevice_t device, uep_t ep)
     }
     
     return -RT_ERROR;
+}
+
+rt_err_t rt_usbd_ep_unassign(udevice_t device, uep_t ep)
+{
+    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(device->dcd != RT_NULL);    
+    RT_ASSERT(device->dcd->ep_pool != RT_NULL);        
+    RT_ASSERT(ep != RT_NULL);
+    RT_ASSERT(ep->ep_desc != RT_NULL);
+
+    ep->id->status = ID_UNASSIGNED;
+
+    return RT_EOK;
 }
 
 rt_err_t rt_usbd_ep0_setup_handler(udcd_t dcd, struct urequest* setup)
