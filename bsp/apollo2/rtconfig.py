@@ -43,7 +43,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m4 -mthumb -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-apollo2.map,-cref,-u,Reset_Handler -T'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-apollo2.map,-cref,-u,am_reset_isr -T rtthread_link.ld'
 
     CPATH = ''
     LPATH = ''
