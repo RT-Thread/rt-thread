@@ -413,7 +413,7 @@ static rt_err_t rt_usbh_hub_port_change(uhub_t hub)
         RT_DEBUG_LOG(RT_DEBUG_USB, ("port %d status 0x%x\n", i + 1, pstatus));
 
         /* check port status change */
-        if ((pstatus & PORT_CCSC)) 
+        if (pstatus & PORT_CCSC) 
         {        
             /* clear port status change feature */
             rt_usbh_hub_clear_port_feature(hub, i + 1, PORT_FEAT_C_CONNECTION);
