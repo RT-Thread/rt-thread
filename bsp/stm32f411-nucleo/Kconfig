@@ -23,6 +23,10 @@ config BOARD_STM32F411_NUCLEO
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
-config RT_USING_UART2
+config BSP_USING_UART1
+    bool "Using UART1"
+    default n
+
+config BSP_USING_UART2
     bool "Using UART2"
     default y

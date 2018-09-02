@@ -22,6 +22,7 @@
 * 2009-01-05     Bernard      the first version
 * 2015-08-01     xiaonong     the first version for stm32f7xx
 * 2016-01-15     ArdaFu       the first version for stm32f4xx with STM32 HAL
+* 2018-07-22     armink       add uart1 driver
 */
 
 #include "drv_usart.h"
@@ -35,21 +36,9 @@
 /* User can use this section to tailor USARTx/UARTx instance used and associated 
 resources */
 /* Definition for USARTx clock resources */
-#define USARTx                           USART2
-#define USARTx_CLK_ENABLE()              __HAL_RCC_USART2_CLK_ENABLE();
-#define USARTx_RX_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOA_CLK_ENABLE()
-#define USARTx_TX_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOA_CLK_ENABLE() 
 
 #define USARTx_FORCE_RESET()             __HAL_RCC_USART2_FORCE_RESET()
 #define USARTx_RELEASE_RESET()           __HAL_RCC_USART2_RELEASE_RESET()
-
-/* Definition for USARTx Pins */
-#define USARTx_TX_PIN                    GPIO_PIN_2
-#define USARTx_TX_GPIO_PORT              GPIOA  
-#define USARTx_TX_AF                     GPIO_AF7_USART2
-#define USARTx_RX_PIN                    GPIO_PIN_3
-#define USARTx_RX_GPIO_PORT              GPIOA 
-#define USARTx_RX_AF                     GPIO_AF7_USART2
 
 /* STM32 uart driver */
 struct drv_uart
@@ -182,7 +171,36 @@ static const struct rt_uart_ops drv_uart_ops =
     drv_getc,
 };
 
-#if defined(RT_USING_UART2)
+#if defined(BSP_USING_UART1)
+/* UART1 device driver structure */
+
+static struct drv_uart uart1;
+struct rt_serial_device serial1;
+
+void USART1_IRQHandler(void)
+{
+    struct drv_uart *uart;
+
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    uart = &uart1;
+
+    /* UART in mode Receiver */
+    if ((__HAL_UART_GET_FLAG(&uart->UartHandle, UART_FLAG_RXNE) != RESET) &&
+            (__HAL_UART_GET_IT_SOURCE(&uart->UartHandle, UART_IT_RXNE) != RESET))
+    {
+        rt_hw_serial_isr(&serial1, RT_SERIAL_EVENT_RX_IND);
+        /* Clear RXNE interrupt flag */
+        __HAL_UART_CLEAR_FLAG(&uart->UartHandle, UART_FLAG_RXNE);
+    }
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+
+#endif /* BSP_USING_UART1 */
+
+#if defined(BSP_USING_UART2)
 /* UART1 device driver structure */
 
 static struct drv_uart uart2;
@@ -192,11 +210,12 @@ void USART2_IRQHandler(void)
 {
     struct drv_uart *uart;
 
-    uart = &uart2;
     /* enter interrupt */
     rt_interrupt_enter();
 
-    /* UART in mode Receiver -------------------------------------------------*/
+    uart = &uart2;
+
+    /* UART in mode Receiver */
     if ((__HAL_UART_GET_FLAG(&uart->UartHandle, UART_FLAG_RXNE) != RESET) &&
             (__HAL_UART_GET_IT_SOURCE(&uart->UartHandle, UART_IT_RXNE) != RESET))
     {
@@ -208,7 +227,7 @@ void USART2_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-#endif /* RT_USING_UART1 */
+#endif /* BSP_USING_UART2 */
 
 /**
 * @brief UART MSP Initialization
@@ -222,32 +241,62 @@ void USART2_IRQHandler(void)
 void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 {
     GPIO_InitTypeDef  GPIO_InitStruct;
-    if (huart->Instance == USART2)
+    if (huart->Instance == USART1)
     {
-        /*##-1- Enable peripherals and GPIO Clocks #################################*/
+        /* TX: PA15 RX: PB7 */
+        /* Enable peripherals and GPIO Clocks */
         /* Enable GPIO TX/RX clock */
-        USARTx_TX_GPIO_CLK_ENABLE();
-        USARTx_RX_GPIO_CLK_ENABLE();
+        __HAL_RCC_GPIOA_CLK_ENABLE();
+        __HAL_RCC_GPIOB_CLK_ENABLE();
 
         /* Enable USARTx clock */
-        USARTx_CLK_ENABLE(); 
+        __HAL_RCC_USART1_CLK_ENABLE(); 
 
-        /*##-2- Configure peripheral GPIO ##########################################*/  
+        /* Configure peripheral GPIO */
         /* UART TX GPIO pin configuration  */
-        GPIO_InitStruct.Pin       = USARTx_TX_PIN;
+        GPIO_InitStruct.Pin       = GPIO_PIN_15;
         GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
         GPIO_InitStruct.Pull      = GPIO_PULLUP;
         GPIO_InitStruct.Speed     = GPIO_SPEED_FAST;
-        GPIO_InitStruct.Alternate = USARTx_TX_AF;
+        GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
 
-        HAL_GPIO_Init(USARTx_TX_GPIO_PORT, &GPIO_InitStruct);
+        HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
         
         /* UART RX GPIO pin configuration  */
-        GPIO_InitStruct.Pin = USARTx_RX_PIN;
-        GPIO_InitStruct.Alternate = USARTx_RX_AF;
+        GPIO_InitStruct.Pin       = GPIO_PIN_7;
+        GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
         
-        HAL_GPIO_Init(USARTx_RX_GPIO_PORT, &GPIO_InitStruct);
+        HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
         
+        HAL_NVIC_SetPriority(USART1_IRQn, 0, 1);
+        HAL_NVIC_EnableIRQ(USART1_IRQn);
+    }
+    else if (huart->Instance == USART2)
+    {
+        /* TX: PA2 RX: PA3 */
+        /* Enable peripherals and GPIO Clocks */
+        /* Enable GPIO TX/RX clock */
+        __HAL_RCC_GPIOA_CLK_ENABLE();
+
+        /* Enable USARTx clock */
+        __HAL_RCC_USART2_CLK_ENABLE();
+
+        /* Configure peripheral GPIO */
+        /* UART TX GPIO pin configuration  */
+        GPIO_InitStruct.Pin       = GPIO_PIN_2;
+        GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Pull      = GPIO_PULLUP;
+        GPIO_InitStruct.Speed     = GPIO_SPEED_FAST;
+        GPIO_InitStruct.Alternate = GPIO_AF7_USART2;
+
+        HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+        /* UART RX GPIO pin configuration  */
+        GPIO_InitStruct.Pin = GPIO_PIN_3;
+        GPIO_InitStruct.Alternate = GPIO_AF7_USART2;
+
+        HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
         HAL_NVIC_SetPriority(USART2_IRQn, 0, 1);
         HAL_NVIC_EnableIRQ(USART2_IRQn);
     }
@@ -265,26 +314,39 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef *huart)
 {
     if (huart->Instance == USART2)
     {
-        /*##-1- Reset peripherals ##################################################*/
+        /* Reset peripherals*/
         USARTx_FORCE_RESET();
         USARTx_RELEASE_RESET();
 
-        /*##-2- Disable peripherals and GPIO Clocks #################################*/
+        /* Disable peripherals and GPIO Clocks */
         /* Configure UART Tx as alternate function  */
-        HAL_GPIO_DeInit(USARTx_TX_GPIO_PORT, USARTx_TX_PIN);
+        HAL_GPIO_DeInit(GPIOA, GPIO_PIN_2);
         /* Configure UART Rx as alternate function  */
-        HAL_GPIO_DeInit(USARTx_RX_GPIO_PORT, USARTx_RX_PIN);
+        HAL_GPIO_DeInit(GPIOA, GPIO_PIN_3);
 
         HAL_NVIC_DisableIRQ(USART2_IRQn);
     }
 }
 
-int hw_usart_init(void)
+static int rt_hw_usart_init(void)
 {
     struct drv_uart *uart;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
-#ifdef RT_USING_UART2
+#ifdef BSP_USING_UART1
+    uart = &uart1;
+    uart->UartHandle.Instance = USART1;
+
+    serial1.ops    = &drv_uart_ops;
+    serial1.config = config;
+
+    /* register UART1 device */
+    rt_hw_serial_register(&serial1, "uart1",
+            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+    uart);
+#endif /* BSP_USING_UART1 */
+
+#ifdef BSP_USING_UART2
     uart = &uart2;
     uart->UartHandle.Instance = USART2;
 
@@ -293,10 +355,10 @@ int hw_usart_init(void)
 
     /* register UART1 device */
     rt_hw_serial_register(&serial2, "uart2",
-    RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
     uart);
-#endif /* RT_USING_UART1 */
+#endif /* BSP_USING_UART2 */
 
     return 0;
 }
-INIT_BOARD_EXPORT(hw_usart_init);
+INIT_BOARD_EXPORT(rt_hw_usart_init);
