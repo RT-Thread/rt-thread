@@ -24,7 +24,7 @@ script:
 env:
 #  - RTT_BSP='simulator' RTT_CC='clang-analyze' RTT_EXEC_PATH=/usr/share/clang/scan-build
   - RTT_BSP='CME_M7' RTT_TOOL_CHAIN='sourcery-arm'
-#  - RTT_BSP='apollo2' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='apollo2' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='asm9260t' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='at91sam9260' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='allwinner_tina' RTT_TOOL_CHAIN='sourcery-arm'
@@ -59,6 +59,7 @@ env:
 #  - RTT_BSP='mini4020' # no scons
 #  - RTT_BSP='nios_ii' # no scons
   - RTT_BSP='nuvoton_nuc472' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='nuvoton_m05x' RTT_TOOL_CHAIN='sourcery-arm'
 #  - RTT_BSP='pic32ethernet' # no scons
   - RTT_BSP='qemu-vexpress-a9' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='sam7x' RTT_TOOL_CHAIN='sourcery-arm'
