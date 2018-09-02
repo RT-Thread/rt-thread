@@ -16,6 +16,8 @@
 #include "board.h"
 #include "F28x_Project.h"
 
+extern interrupt void RTOSINT_Handler();
+
 
 /**
  * This is the timer interrupt service routine.
@@ -51,6 +53,7 @@ void rt_hw_board_init()
 
     EALLOW;  // This is needed to write to EALLOW protected registers
     PieVectTable.TIMER2_INT = &cpu_timer2_isr;
+    PieVectTable.RTOS_INT = &RTOSINT_Handler;
     EDIS;
 
     InitCpuTimers();

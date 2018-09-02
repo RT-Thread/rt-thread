@@ -34,6 +34,7 @@ struct exception_stack_frame
 
 struct stack_frame
 {
+    struct exception_stack_frame exception_stack_frame;
 
     /* r4 ~ r11 register */
     rt_uint16_t ar0h;
@@ -48,7 +49,6 @@ struct stack_frame
     rt_uint32_t rpc;
 
 
-    struct exception_stack_frame exception_stack_frame;
 };
 
 rt_uint8_t *rt_hw_stack_init(void       *tentry,
@@ -60,9 +60,9 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     rt_uint8_t         *stk;
     unsigned long       i;
 
-    stk  = stack_addr + sizeof(rt_uint32_t);
-    stk  = (rt_uint8_t *)RT_ALIGN_DOWN((rt_uint32_t)stk, 8);
-    stk -= sizeof(struct stack_frame);
+    stk  = stack_addr;
+    stk  = (rt_uint8_t *)RT_ALIGN((rt_uint32_t)stk, 8);
+    //stk -= sizeof(struct stack_frame);
 
     stack_frame = (struct stack_frame *)stk;
 
@@ -81,7 +81,7 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     stack_frame->exception_stack_frame.return_address = (unsigned long)tentry;          /* return_address */
 
     /* return task's current stack address */
-    return stk;
+    return stk + sizeof(struct stack_frame);
 }
 
 /**
