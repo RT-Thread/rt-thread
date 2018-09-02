@@ -15,6 +15,7 @@
 #define RT_USING_HOOK
 #define RT_IDEL_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 1024
+#define RT_STACK_UPWARD_GROW
 #define RT_DEBUG
 
 /* Inter-Thread communication */
@@ -37,9 +38,6 @@
 //#define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart2"
-#define ARCH_ARM
-#define ARCH_ARM_CORTEX_M
-#define ARCH_ARM_CORTEX_M4
 
 /* RT-Thread Components */
 

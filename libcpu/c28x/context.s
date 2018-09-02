@@ -86,6 +86,7 @@ _rt_hw_interrupt_enable:
     .asmfunc
 _rt_hw_context_switch_interrupt:
 _rt_hw_context_switch:
+    MOV     AR0, AL
     ; set rt_thread_switch_interrupt_flag to 1 
     MOVL    XAR2, #_rt_thread_switch_interrupt_flag
     MOVL    XAR3, *XAR2
@@ -96,7 +97,7 @@ _rt_hw_context_switch:
     MOVL    *XAR2, XAR3
 
     MOVL    XAR2, #_rt_interrupt_from_thread   ; set rt_interrupt_from_thread
-    MOVL    *XAR2, XAR0 
+    MOVL    *XAR2, XAR0
 
 _reswitch:
     MOVL    XAR2, #_rt_interrupt_to_thread     ; set rt_interrupt_to_thread
@@ -162,21 +163,8 @@ switch_to_thread:
 ;    LDMFD   r1!, {r3}           ; pop flag 
 ;#endif
 
-    RT_CTX_RESTORE     ; pop r4 - r11 register 
-    
-
-;#if defined (__VFP_FP__) && !defined(__SOFTFP__)
-;   CMP     r3,  #0             ; if(flag_r3 != 0) 
-;    VLDMIANE  r1!, {d8 - d15}   ; pop FPU register s16~s31 
-;#endif
-
-    MOV     @SP, AR1                 ; update stack pointer 
-
-;#if defined (__VFP_FP__) && !defined(__SOFTFP__)
-;    ORR     lr, lr, #0x10       ; lr |=  (1 << 4), clean FPCA. 
-;    CMP     r3,  #0             ; if(flag_r3 != 0) 
-;    BICNE   lr, lr, #0x10       ; lr &= ~(1 << 4), set FPCA. 
-;#endif
+    MOV     @SP, AR1
+    RT_CTX_RESTORE     ; pop r4 - r11 register
 
 rtosint_exit:
     ; restore interrupt 
@@ -206,8 +194,7 @@ _rt_hw_get_st1:
     .asmfunc
 _rt_hw_context_switch_to:
     MOV     AR1, #_rt_interrupt_to_thread
-    MOV     AL, *AR1
-    MOV     AR0, AL
+    MOV     *AR1, AL
 
 ;#if defined (__VFP_FP__) && !defined(__SOFTFP__)
     ; CLEAR CONTROL.FPCA 
