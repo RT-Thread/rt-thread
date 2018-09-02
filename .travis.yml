@@ -76,6 +76,7 @@ env:
   - RTT_BSP='stm32f429-disco' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='stm32l475-iot-disco' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='stm32l476-nucleo' RTT_TOOL_CHAIN='sourcery-arm' 
+  - RTT_BSP='stm32h743-nucleo' RTT_TOOL_CHAIN='sourcery-arm' 
 #  - RTT_BSP='taihu' RTT_TOOL_CHAIN='sourcery-ppc'
 #  - RTT_BSP='upd70f3454' # iar
 #  - RTT_BSP='x86' # x86
