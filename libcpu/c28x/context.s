@@ -80,28 +80,30 @@ _rt_hw_interrupt_enable:
 ;
 ; void rt_hw_context_switch(rt_uint32 from, rt_uint32 to);
 ; r0 --> from
-; r1 --> to
+; r4 --> to
 
  
     .asmfunc
 _rt_hw_context_switch_interrupt:
 _rt_hw_context_switch:
+    MOVL    XAR0, #0
     MOV     AR0, AL
+    MOVL    XAR4, *-SP[4]
     ; set rt_thread_switch_interrupt_flag to 1 
-    MOVL    XAR2, #_rt_thread_switch_interrupt_flag
-    MOVL    XAR3, *XAR2
-    MOVL    ACC, XAR3
+    MOVL    XAR5, #_rt_thread_switch_interrupt_flag
+    MOVL    XAR6, *XAR5
+    MOVL    ACC, XAR6
     CMPB    AL, #1
     B       _reswitch, EQ
-    MOVL     XAR3, #1
-    MOVL    *XAR2, XAR3
+    MOVL     XAR6, #1
+    MOVL    *XAR5, XAR6
 
-    MOVL    XAR2, #_rt_interrupt_from_thread   ; set rt_interrupt_from_thread
-    MOVL    *XAR2, XAR0
+    MOVL    XAR5, #_rt_interrupt_from_thread   ; set rt_interrupt_from_thread
+    MOVL    *XAR5, XAR0
 
 _reswitch:
-    MOVL    XAR2, #_rt_interrupt_to_thread     ; set rt_interrupt_to_thread
-    MOVL    *XAR2, XAR1
+    MOVL    XAR5, #_rt_interrupt_to_thread     ; set rt_interrupt_to_thread
+    MOVL    *XAR5, XAR4
 
     TRAP    #16
     LRETR
