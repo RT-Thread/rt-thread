@@ -164,6 +164,7 @@ switch_to_thread:
 ;#endif
 
     MOV     @SP, AR1
+    INC     SP
     RT_CTX_RESTORE     ; pop r4 - r11 register
 
 rtosint_exit:
