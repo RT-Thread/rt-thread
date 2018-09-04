@@ -1,3 +1,77 @@
+# RT-Thread 3.1.0 Change Log
+
+## Kernel
+
+* The main thread priority can be configured by Kconfig;
+* Add the checking of kernel object type, which can effectively avoid the problem of continuing to use kernel objects after they are destroyed.
+* Add the idle hook list to mount multiple idle hook, and can be configured by Kconfig.
+* Add the device_ops operation set to reduce the footprint of device object.
+* Remove the special memory operation in application module when using SLAB memory management algorithm.
+* Move application module from the kernel to `libc/libdl`.
+* Enhance the debug information output of `rtdbg.h` file.
+* In Keil/IAR tool chain, the `RT_USED` is used to keep symbols and avoid to add more argument or section in link phrase.
+
+## Components
+
+* Remove all of external codes, which will be moved to packages in the future.
+* Add initialization flag for shell, file system, network protocol stack etc to prevent repeated initialization;
+* Enable the long file name feature of ELM FatFs in default.
+* Change DFS FD to dynamic allocation mode. The maximum number of allocation is still DFS_FD_MAX.
+* Add dfs_fdtable_get() function to get different fdtable;
+* Add more DFS error messages, and provide easy to understand log when abnormal.
+* Fix the disk format issue of FatFs file system when multiple FatFs file systems are mounted.
+* Remove the folder enter feature in msh when input a folder name;
+* Add `int finsh_set_prompt (const char * prompt);` routine for setting a custom prompt for msh;
+* Add the VBUS configuration in Kconfig.
+* Move the application module from kernel to `libc/libdl` component;
+* Rewrite most of the management code for application module: replace the original object container with the object list; split the symbol resolution code into different processor architecture etc.
+* Update the application module chapter in the programming guide, and change it into dynamic module chapter.
+* Overwrite the exit() function of newlib to take over the processing of exit for a dlmodule.
+* Add SAL (Socket Abstraction Layer) component for adapting different protocol stacks and network implementations, and update the relevant sections of the programming guide;
+* Add AT component, including AT client, AT server and AT Socket function;
+* Remove the poll/select API of DFS_NET and move them to SAL component.
+* Remove the strong dependence of lwIP component for DFS_NET and replace it with Kconfig configuration in SAL.
+* Add the DHCP server function with lwIP raw API;
+* Fix the wait queue none-initialization issue in socket allocation of lwIP.
+* When a thread is about to block on a wait queue, fix the wake up issue for `rt_wqueue_wakeup' is executed to wake up that thread;
+* Add the PWM driver framework;
+* Fix the sdio_irq_wakeup release issue in the MMC/SD framework.
+* Fix the problem of DMA handling in the serial driver framework.
+* Update SFUD to v1.0.6 version;
+
+## BSP
+
+* Fix the SP issue when hard fault occurs for ARM Cortex-M arch;
+* Add C-Sky CK802 architecture porting;
+* Add Realtek amebaz WiFi SOC (rtl8710bn) BSP;
+* Update imxrt1052-evk firmware SDK to support B model chip.
+* Fix the copying packets issue in the Godson 1C BSP when sending message.
+* The Nuvoton m05x/m451 BSP are changed into the main() entry mode, and supports GCC compilation;
+* Fix the inconsistency issue between touch range and LCD resolution in qemu-vexpress-a9.
+* Add qemu-vexpress-gemini BSP for dual core A9 (RT-Thread + Linux) arch;
+* Add the basic porting for Raspberry Pi 2B ;
+* Add CAN and PWM drivers in stm32f4xx-HAL BSP;
+* Optimize the GPIO driver in stm32f4xx-HAL BSP;
+* Add UART3 driver in stm32f4xx-HAL BSP;
+* Fix the I2C1 driver clock in stm32f10x BSP and WDG control interface.
+* Add rt_hw_us_delay interface in stm32f10x-HAL BSP;
+* Optimize the GPIO driver in stm32f10x-HAL BSP;
+* Add GPIO driver and RTC driver in stm32f107 BSP;
+
+## Tool
+
+* ENV update to v1.0.0 final version.
+* ENV added the China mirror for software package, which can speed up the software package download, update  etc.
+* Fix the ENV known bugs and enhance the interaction with users.
+* Add building script to detect the version of GCC & newlib;
+* Add building script to detect the version of armcc;
+* Add `scons --dist` function to make distribution for a BSP.
+* Add `scons - dist - strip' function to make a minimal files of distribution for a BSP.
+* Add `ASFLAGS/LOCAL_ASFLAGS' parameters for defined a group and pass them to assembler;
+* Fix some errors in building script under the Linux environment.
+* Add the C-Sky CDK IDE project generation.
+* Add `scons --target=vsc -s` to generate friendly configuration files for VSCode;
+
 # RT-Thread 3.0.4 Change Log
 
 ## Kernel
