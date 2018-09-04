@@ -5,7 +5,6 @@ menu "Socket abstraction layer"
 config RT_USING_SAL
     bool "Enable socket abstraction layer"
     default n
-    select RT_USING_DFS
 
     if RT_USING_SAL
 
@@ -28,14 +27,24 @@ config RT_USING_SAL
 
         config SAL_USING_POSIX
             bool "Enable BSD socket operated by file system API"
+            default y if RT_USING_POSIX
+            default n
+            select RT_USING_DFS
             select RT_USING_LIBC
             select RT_USING_POSIX
-            default n
             help
                 Let BSD socket operated by file system API, such as read/write and involveed in select/poll POSIX APIs.
+                
+        if !SAL_USING_POSIX
+            
+            config SAL_SOCKETS_NUM
+                int "the maximum number of sockets"
+                default 16
+       
+        endif
         
         config SAL_PROTO_FAMILIES_NUM
-            int "the number of protocol family"
+            int "the maximum number of protocol families"
             default 4
 
     endif

@@ -57,7 +57,9 @@ BOOL xMBMasterPortSerialInit(UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits,
      * set 485 mode receive and transmit control IO
      * @note MODBUS_MASTER_RT_CONTROL_PIN_INDEX need be defined by user
      */
+#if defined(RT_MODBUS_MASTER_USE_CONTROL_PIN)
     rt_pin_mode(MODBUS_MASTER_RT_CONTROL_PIN_INDEX, PIN_MODE_OUTPUT);
+#endif
 
     /* set serial name */
     if (ucPORT == 1) {
@@ -128,12 +130,16 @@ void vMBMasterPortSerialEnable(BOOL xRxEnable, BOOL xTxEnable)
         /* enable RX interrupt */
         serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void *)RT_DEVICE_FLAG_INT_RX);
         /* switch 485 to receive mode */
+#if defined(RT_MODBUS_MASTER_USE_CONTROL_PIN)
         rt_pin_write(MODBUS_MASTER_RT_CONTROL_PIN_INDEX, PIN_LOW);
+#endif
     }
     else
     {
         /* switch 485 to transmit mode */
+#if defined(RT_MODBUS_MASTER_USE_CONTROL_PIN)
         rt_pin_write(MODBUS_MASTER_RT_CONTROL_PIN_INDEX, PIN_HIGH);
+#endif
         /* disable RX interrupt */
         serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_RX);
     }

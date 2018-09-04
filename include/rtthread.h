@@ -442,44 +442,6 @@ rt_err_t  rt_device_control(rt_device_t dev, int cmd, void *arg);
 /**@}*/
 #endif
 
-#ifdef RT_USING_MODULE
-/**
- * @addtogroup Module
- */
-
-/**@{*/
-
-/*
- * module interface
- */
-rt_module_t rt_module_load(const char *name, void *module_ptr);
-rt_err_t rt_module_unload(rt_module_t module);
-#ifdef RT_USING_DFS
-rt_module_t rt_module_open(const char *filename);
-rt_module_t rt_module_exec_cmd(const char *path, const char *cmd_line, int size);
-#endif
-void *rt_module_malloc(rt_size_t size);
-void *rt_module_realloc(void *ptr, rt_size_t size);
-void rt_module_free(rt_module_t module, void *addr);
-rt_module_t rt_module_self(void);
-rt_module_t rt_module_find(const char *name);
-
-#ifdef RT_USING_HOOK
-void rt_module_load_sethook(void (*hook)(rt_module_t module));
-void rt_module_unload_sethook(void (*hook)(rt_module_t module));
-#endif
-
-void rt_module_init_object_container(struct rt_module *module);
-rt_err_t rt_module_destroy(rt_module_t module);
-
-/*
- * application module system initialization
- */
-int rt_system_module_init(void);
-
-/**@}*/
-#endif
-
 /*
  * interrupt service
  */

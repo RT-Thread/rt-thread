@@ -27,6 +27,10 @@
 
 #include "sal_ipaddr.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if !defined(socklen_t) && !defined(SOCKLEN_T_DEFINED)
 typedef uint32_t socklen_t;
 #endif
@@ -174,5 +178,9 @@ int sal_sendto(int socket, const void *dataptr, size_t size, int flags,
 int sal_socket(int domain, int type, int protocol);
 int sal_closesocket(int socket);
 int sal_ioctlsocket(int socket, long cmd, void *arg);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SAL_SOCKET_H__ */

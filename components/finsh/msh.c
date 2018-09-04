@@ -37,8 +37,12 @@
 #include <dfs_posix.h>
 #endif
 
+#ifdef RT_USING_MODULE
+#include <dlmodule.h>
+#endif
+
 #ifndef FINSH_ARG_MAX
-#define FINSH_ARG_MAX    10
+#define FINSH_ARG_MAX    8
 #endif
 
 typedef int (*cmd_function_t)(int argc, char **argv);
@@ -64,7 +68,6 @@ static int msh_exit(int argc, char **argv)
 {
     /* return to finsh shell mode */
     __msh_state = RT_FALSE;
-
     return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(msh_exit, __cmd_exit, return to RT-Thread shell mode.);
@@ -254,7 +257,7 @@ int msh_exec_module(const char *cmd_line, int size)
     {
         /* found program */
         close(fd);
-        rt_module_exec_cmd(pg_name, cmd_line, size);
+        dlmodule_exec(pg_name, cmd_line, size);
         ret = 0;
     }
     else
@@ -373,25 +376,27 @@ int msh_exec(char *cmd, rt_size_t length)
     {
         return cmd_ret;
     }
-#if defined(RT_USING_MODULE) && defined(RT_USING_DFS)
-    if (msh_exec_module(cmd, length) == 0)
-    {
-        return 0;
-    }
-#endif
-
-#if defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)
+#ifdef RT_USING_DFS
+#ifdef DFS_USING_WORKDIR
     if (msh_exec_script(cmd, length) == 0)
     {
         return 0;
     }
 #endif
 
-#if defined(RT_USING_LWP) && defined(RT_USING_DFS)
+#ifdef RT_USING_MODULE
+    if (msh_exec_module(cmd, length) == 0)
+    {
+        return 0;
+    }
+#endif
+
+#ifdef RT_USING_LWP
     if (_msh_exec_lwp(cmd, length) == 0)
     {
         return 0;
     }
+#endif
 #endif
 
     /* truncate the cmd at the first space. */
@@ -446,8 +451,8 @@ void msh_auto_complete_path(char *path)
     ptr = path;
     for (;;)
     {
-        if (*ptr == '/') index = ptr + 1; 
-        if (!*ptr) break; 
+        if (*ptr == '/') index = ptr + 1;
+        if (!*ptr) break;
 
         ptr ++;
     }

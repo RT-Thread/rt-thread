@@ -106,54 +106,68 @@ const static struct ucdc_comm_descriptor _comm_desc =
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
     /* Interface Association Descriptor */
-    USB_DESC_LENGTH_IAD,
-    USB_DESC_TYPE_IAD,
-    USB_DYNAMIC,
-    0x02,
-    USB_CDC_CLASS_COMM,
-    USB_CDC_SUBCLASS_ACM,
-    USB_CDC_PROTOCOL_VENDOR,
-    0x00,
+    {
+        USB_DESC_LENGTH_IAD,
+        USB_DESC_TYPE_IAD,
+        USB_DYNAMIC,
+        0x02,
+        USB_CDC_CLASS_COMM,
+        USB_CDC_SUBCLASS_ACM,
+        USB_CDC_PROTOCOL_VENDOR,
+        0x00,
+    },
 #endif
     /* Interface Descriptor */
-    USB_DESC_LENGTH_INTERFACE,
-    USB_DESC_TYPE_INTERFACE,
-    USB_DYNAMIC,
-    0x00,
-    0x01,
-    USB_CDC_CLASS_COMM,
-    USB_CDC_SUBCLASS_ACM,
-    USB_CDC_PROTOCOL_VENDOR,
-    0x00,
+    {
+        USB_DESC_LENGTH_INTERFACE,
+        USB_DESC_TYPE_INTERFACE,
+        USB_DYNAMIC,
+        0x00,
+        0x01,
+        USB_CDC_CLASS_COMM,
+        USB_CDC_SUBCLASS_ACM,
+        USB_CDC_PROTOCOL_VENDOR,
+        0x00,
+    },
     /* Header Functional Descriptor */
-    0x05,
-    USB_CDC_CS_INTERFACE,
-    USB_CDC_SCS_HEADER,
-    0x0110,
+    {
+        0x05,
+        USB_CDC_CS_INTERFACE,
+        USB_CDC_SCS_HEADER,
+        0x0110,
+    },
     /* Call Management Functional Descriptor */
-    0x05,
-    USB_CDC_CS_INTERFACE,
-    USB_CDC_SCS_CALL_MGMT,
-    0x00,
-    USB_DYNAMIC,
+    {
+        0x05,
+        USB_CDC_CS_INTERFACE,
+        USB_CDC_SCS_CALL_MGMT,
+        0x00,
+        USB_DYNAMIC,
+    },
     /* Abstract Control Management Functional Descriptor */
-    0x04,
-    USB_CDC_CS_INTERFACE,
-    USB_CDC_SCS_ACM,
-    0x02,
+    {
+        0x04,
+        USB_CDC_CS_INTERFACE,
+        USB_CDC_SCS_ACM,
+        0x02,
+    },
     /* Union Functional Descriptor */
-    0x05,
-    USB_CDC_CS_INTERFACE,
-    USB_CDC_SCS_UNION,
-    USB_DYNAMIC,
-    USB_DYNAMIC,
+    {
+        0x05,
+        USB_CDC_CS_INTERFACE,
+        USB_CDC_SCS_UNION,
+        USB_DYNAMIC,
+        USB_DYNAMIC,
+    },
     /* Endpoint Descriptor */
-    USB_DESC_LENGTH_ENDPOINT,
-    USB_DESC_TYPE_ENDPOINT,
-    USB_DIR_IN | USB_DYNAMIC,
-    USB_EP_ATTR_INT,
-    0x08,
-    0x0A,
+    {
+        USB_DESC_LENGTH_ENDPOINT,
+        USB_DESC_TYPE_ENDPOINT,
+        USB_DIR_IN | USB_DYNAMIC,
+        USB_EP_ATTR_INT,
+        0x08,
+        0x0A,
+    },
 };
 
 /* data interface descriptor */
@@ -161,29 +175,35 @@ ALIGN(4)
 const static struct ucdc_data_descriptor _data_desc =
 {
     /* interface descriptor */
-    USB_DESC_LENGTH_INTERFACE,
-    USB_DESC_TYPE_INTERFACE,
-    USB_DYNAMIC,
-    0x00,
-    0x02,
-    USB_CDC_CLASS_DATA,
-    0x00,
-    0x00,
-    0x00,
+    {
+        USB_DESC_LENGTH_INTERFACE,
+        USB_DESC_TYPE_INTERFACE,
+        USB_DYNAMIC,
+        0x00,
+        0x02,
+        USB_CDC_CLASS_DATA,
+        0x00,
+        0x00,
+        0x00,
+    },
     /* endpoint, bulk out */
-    USB_DESC_LENGTH_ENDPOINT,
-    USB_DESC_TYPE_ENDPOINT,
-    USB_DIR_OUT | USB_DYNAMIC,
-    USB_EP_ATTR_BULK,
-    USB_DYNAMIC,
-    0x00,
+    {
+        USB_DESC_LENGTH_ENDPOINT,
+        USB_DESC_TYPE_ENDPOINT,
+        USB_DIR_OUT | USB_DYNAMIC,
+        USB_EP_ATTR_BULK,
+        USB_DYNAMIC,
+        0x00,
+    },
     /* endpoint, bulk in */
-    USB_DESC_LENGTH_ENDPOINT,
-    USB_DESC_TYPE_ENDPOINT,
-    USB_DYNAMIC | USB_DIR_IN,
-    USB_EP_ATTR_BULK,
-    USB_DYNAMIC,
-    0x00,
+    {
+        USB_DESC_LENGTH_ENDPOINT,
+        USB_DESC_TYPE_ENDPOINT,
+        USB_DYNAMIC | USB_DIR_IN,
+        USB_EP_ATTR_BULK,
+        USB_DYNAMIC,
+        0x00,
+    },
 };
 
 ALIGN(4)

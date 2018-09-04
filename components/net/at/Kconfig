@@ -51,28 +51,31 @@ if RT_USING_AT
     
     if AT_USING_CLIENT
 
-        config AT_CLIENT_DEVICE
-            string "Client device name"
-            default "uart2"
-
-        config AT_CLIENT_RECV_BUFF_LEN
-            int "The maximum length of client data accepted"
-            default 512
-            
+        config AT_CLIENT_NUM_MAX
+            int "The maximum number of supported clients"
+            default 1
+            range 1 65535
+        
         config AT_USING_SOCKET
-            bool "Provide similar BSD Socket API by AT"
+            bool "Enable BSD Socket API support by AT commnads"
             select RT_USING_LIBC
+            select RT_USING_SAL
             default n
+           
     endif
 
-    config AT_USING_CLI
-        bool "Enable command-line interface for AT commands"
-        default y
-        depends on FINSH_USING_MSH
-
-    config AT_PRINT_RAW_CMD
-        bool "Enable print RAW format AT command communication data"
-        default n
+    if AT_USING_SERVER || AT_USING_CLIENT
+    
+        config AT_USING_CLI
+            bool "Enable CLI(Command-Line Interface) for AT commands"
+            default y
+            depends on FINSH_USING_MSH
+         
+       config AT_PRINT_RAW_CMD
+            bool "Enable print RAW format AT command communication data"
+            default n
+         
+    endif
     
 endif
 
