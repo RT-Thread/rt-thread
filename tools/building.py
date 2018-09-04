@@ -335,6 +335,16 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             menuconfig(Rtt_Root)
             exit(0)
 
+    AddOption('--pyconfig',
+                dest = 'pyconfig',
+                action = 'store_true',
+                default = False,
+                help = 'make menuconfig for RT-Thread BSP')
+    if GetOption('pyconfig'):
+        from menuconfig import pyconfig
+        pyconfig(Rtt_Root)
+        exit(0)
+
     configfn = GetOption('useconfig')
     if configfn:
         from menuconfig import mk_rtconfig
