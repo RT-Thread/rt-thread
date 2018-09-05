@@ -21,7 +21,7 @@ source "$PKGS_DIR/Kconfig"
 
 choice
     prompt "Device type"
-    default STM32F401RC
+    default SOC_STM32F401RC
     config SOC_STM32F405RG
         bool "STM32F405RG"
     config SOC_STM32F405VG
