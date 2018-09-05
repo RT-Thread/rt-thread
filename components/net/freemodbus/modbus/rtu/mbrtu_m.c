@@ -160,7 +160,7 @@ eMBMasterRTUReceive( UCHAR * pucRcvAddress, UCHAR ** pucFrame, USHORT * pusLengt
     eMBErrorCode    eStatus = MB_ENOERR;
 
     ENTER_CRITICAL_SECTION(  );
-    assert_param( usMasterRcvBufferPos < MB_SER_PDU_SIZE_MAX );
+    RT_ASSERT( usMasterRcvBufferPos < MB_SER_PDU_SIZE_MAX );
 
     /* Length and CRC check */
     if( ( usMasterRcvBufferPos >= MB_SER_PDU_SIZE_MIN )
@@ -235,7 +235,7 @@ xMBMasterRTUReceiveFSM( void )
     BOOL            xTaskNeedSwitch = FALSE;
     UCHAR           ucByte;
 
-    assert_param(( eSndState == STATE_M_TX_IDLE ) || ( eSndState == STATE_M_TX_XFWR ));
+    RT_ASSERT(( eSndState == STATE_M_TX_IDLE ) || ( eSndState == STATE_M_TX_XFWR ));
 
     /* Always read the character. */
     ( void )xMBMasterPortSerialGetByte( ( CHAR * ) & ucByte );
@@ -301,7 +301,7 @@ xMBMasterRTUTransmitFSM( void )
 {
     BOOL            xNeedPoll = FALSE;
 
-    assert_param( eRcvState == STATE_M_RX_IDLE );
+    RT_ASSERT( eRcvState == STATE_M_RX_IDLE );
 
     switch ( eSndState )
     {
@@ -370,7 +370,7 @@ xMBMasterRTUTimerExpired(void)
 
 		/* Function called in an illegal state. */
 	default:
-		assert_param(
+		RT_ASSERT(
 				( eRcvState == STATE_M_RX_INIT ) || ( eRcvState == STATE_M_RX_RCV ) ||
 				( eRcvState == STATE_M_RX_ERROR ) || ( eRcvState == STATE_M_RX_IDLE ));
 		break;
@@ -390,7 +390,7 @@ xMBMasterRTUTimerExpired(void)
 		break;
 		/* Function called in an illegal state. */
 	default:
-		assert_param(
+		RT_ASSERT(
 				( eSndState == STATE_M_TX_XFWR ) || ( eSndState == STATE_M_TX_IDLE ));
 		break;
 	}
