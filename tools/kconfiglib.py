@@ -1145,6 +1145,13 @@ class Kconfig(object):
         with self._open(filename, "w") as f:
             f.write(header)
 
+            # written mainmenu_text
+            # The prompt (title) of the top_node menu, with Kconfig variable references
+            # ("$FOO") expanded. Defaults to "Linux Kernel Configuration" (like in the
+            # C tools). Can be changed with the 'mainmenu' statement (see
+            # kconfig-language.txt).
+            f.write("# {}\n#\n".format(self.top_node.prompt[0]))
+
             for node in self.node_iter(unique_syms=True):
                 item = node.item
 
