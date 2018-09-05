@@ -27,7 +27,6 @@ config RT_USING_SAL
 
         config SAL_USING_POSIX
             bool "Enable BSD socket operated by file system API"
-            default y if RT_USING_POSIX
             default n
             select RT_USING_DFS
             select RT_USING_LIBC
