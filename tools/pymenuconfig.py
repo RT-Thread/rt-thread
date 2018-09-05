@@ -783,7 +783,7 @@ class MenuConfig(object):
         pos = []
         for n in self.node_stack + [self.node]:
             pos.append(n.prompt[0] if n.prompt else '[none]')
-        self.label_position['text'] = u'# ' + u' → '.join(pos)
+        self.label_position['text'] = u'# ' + u' -> '.join(pos)
 
     def show_node(self, node):
         self.node = node
@@ -934,6 +934,53 @@ class MenuConfig(object):
             self.status_string
         ))
 
+    def _check_is_visible(self, node):
+        v = True
+        v = v and node.prompt is not None
+        # It should be enough to check if prompt expression is not false and
+        # for menu nodes whether 'visible if' is not false
+        v = v and kconfiglib.expr_value(node.prompt[1]) > 0
+        if node.item == kconfiglib.MENU:
+            v = v and kconfiglib.expr_value(node.visibility) > 0
+        # If node references Symbol, then we also account for symbol visibility
+        # TODO: need to re-think whether this is needed
+        if isinstance(node.item, kconfiglib.Symbol):
+            if node.item.type in (kconfiglib.BOOL, kconfiglib.TRISTATE):
+                v = v and len(node.item.assignable) > 0
+            else:
+                v = v and node.item.visibility > 0
+        return v
+
+    def config_is_changed(self):
+        is_changed = False
+        node = self.kconfig.top_node.list
+        if not node:
+            # Empty configuration
+            return is_changed
+
+        while 1:
+            item = node.item
+            if isinstance(item, kconfiglib.Symbol) and item.user_value is None and self._check_is_visible(node):
+                is_changed = True
+                print("Config \"# {}\" has changed, need save config file\n".format(node.prompt[0]))
+                break;
+
+            # Iterative tree walk using parent pointers
+
+            if node.list:
+                node = node.list
+            elif node.next:
+                node = node.next
+            else:
+                while node.parent:
+                    node = node.parent
+                    if node.next:
+                        node = node.next
+                        break
+                else:
+                    break
+        return is_changed
+
     def prevent_losing_changes(self):
         """
         Checks if there are unsaved changes and asks user to save or discard them
@@ -945,6 +992,8 @@ class MenuConfig(object):
             - True: caller may safely drop current config state
             - False: user needs to continue work on current config ('Cancel' pressed or saving failed)
         """
+        if self.config_is_changed() == True:
+            self.mark_as_changed()
         if not self.unsaved_changes:
             return True
         res = messagebox.askyesnocancel(
