@@ -20,8 +20,12 @@
 # Change Logs:
 # Date           Author       Notes
 # 2017-12-29     Bernard      The first version
+# 2018-07-31.....weety        Support pyconfig
 
 import os
+import sys
+import shutil
+import pymenuconfig
 
 # make rtconfig.h from .config
 
@@ -32,7 +36,7 @@ def mk_rtconfig(filename):
         print('open config:%s failed' % filename)
         return
 
-    rtconfig = file('rtconfig.h', 'w')
+    rtconfig = file('rtconfig.h', 'wb')
     rtconfig.write('#ifndef RT_CONFIG_H__\n')
     rtconfig.write('#define RT_CONFIG_H__\n\n')
 
@@ -88,42 +92,117 @@ def get_env_dir():
     if os.environ.get('ENV_ROOT'):
         return os.environ.get('ENV_ROOT')
 
-    home_dir = os.environ['HOME']
-    env_dir  = os.path.join(home_dir, '.env')
+    if sys.platform == 'win32':
+        home_dir = os.environ['USERPROFILE']
+        env_dir  = os.path.join(home_dir, '.env')
+    else:
+        home_dir = os.environ['HOME']
+        env_dir  = os.path.join(home_dir, '.env')
 
     if not os.path.exists(env_dir):
         return None
 
     return env_dir
 
+def help_info():
+    print("**********************************************************************************\n"
+          "* Help infomation:\n"
+          "* Git tool install step.\n"
+          "* If your system is linux, you can use command below to install git.\n"
+          "* $ sudo yum install git\n"
+          "* $ sudo apt-get install git\n"
+          "* If your system is windows, you should download git software(msysGit).\n"
+          "* Download path: http://git-scm.com/download/win\n"
+          "* After you install it, be sure to add the git command execution PATH \n"
+          "* to your system PATH.\n"
+          "* Usually, git command PATH is $YOUR_INSTALL_DIR\\Git\\bin\n"
+          "* If your system is OSX, please download git and install it.\n"
+          "* Download path:  http://git-scm.com/download/mac\n"
+          "**********************************************************************************\n")
+
 def touch_env():
-    home_dir = os.environ['HOME']
+    if sys.platform != 'win32':
+        home_dir = os.environ['HOME']
+    else:
+        home_dir = os.environ['USERPROFILE']
+
     env_dir  = os.path.join(home_dir, '.env')
     if not os.path.exists(env_dir):
         os.mkdir(env_dir)
         os.mkdir(os.path.join(env_dir, 'local_pkgs'))
         os.mkdir(os.path.join(env_dir, 'packages'))
-
-        os.system('git clone https://github.com/RT-Thread/packages.git ~/.env/packages/packages')
-
-        kconfig = file(os.path.join(env_dir, 'packages', 'Kconfig'), 'w')
-        kconfig.write('source "$PKGS_DIR/packages/Kconfig"')
-
         os.mkdir(os.path.join(env_dir, 'tools'))
-        os.system('git clone https://github.com/RT-Thread/env.git ~/.env/tools/scripts')
+        kconfig = file(os.path.join(env_dir, 'packages', 'Kconfig'), 'wb')
+        kconfig.close()
 
+    if not os.path.exists(os.path.join(env_dir, 'packages', 'packages')):
+        try:
+            ret = os.system('git clone https://github.com/RT-Thread/packages.git %s' % os.path.join(env_dir, 'packages', 'packages'))
+            if ret != 0:
+                shutil.rmtree(os.path.join(env_dir, 'packages', 'packages'))
+                print("********************************************************************************\n"
+                      "* Warnning:\n"
+                      "* Run command error for \"git clone https://github.com/RT-Thread/packages.git\".\n"
+                      "* This error may have been caused by not found a git tool or network error.\n"
+                      "* If the git tool is not installed, install the git tool first.\n"
+                      "* If the git utility is installed, check whether the git command is added to \n"
+                      "* the system PATH.\n"
+                      "* This error may cause the RT-Thread packages to not work properly.\n"
+                      "********************************************************************************\n")
+                help_info()
+            else:
+                kconfig = file(os.path.join(env_dir, 'packages', 'Kconfig'), 'wb')
+                kconfig.write('source "$PKGS_DIR/packages/Kconfig"')
+                kconfig.close()
+        except:
+            print("**********************************************************************************\n"
+                  "* Warnning:\n"
+                  "* Run command error for \"git clone https://github.com/RT-Thread/packages.git\". \n"
+                  "* This error may have been caused by not found a git tool or git tool not in \n"
+                  "* the system PATH. \n"
+                  "* This error may cause the RT-Thread packages to not work properly. \n"
+                  "**********************************************************************************\n")
+            help_info()
+
+    if not os.path.exists(os.path.join(env_dir, 'tools', 'scripts')):
+        try:
+            ret = os.system('git clone https://github.com/RT-Thread/env.git %s' % os.path.join(env_dir, 'tools', 'scripts'))
+            if ret != 0:
+                shutil.rmtree(os.path.join(env_dir, 'tools', 'scripts'))
+                print("********************************************************************************\n"
+                      "* Warnning:\n"
+                      "* Run command error for \"git clone https://github.com/RT-Thread/env.git\".\n"
+                      "* This error may have been caused by not found a git tool or network error.\n"
+                      "* If the git tool is not installed, install the git tool first.\n"
+                      "* If the git utility is installed, check whether the git command is added \n"
+                      "* to the system PATH.\n"
+                      "* This error may cause script tools to fail to work properly.\n"
+                      "********************************************************************************\n")
+                help_info()
+        except:
+            print("********************************************************************************\n"
+                  "* Warnning:\n"
+                  "* Run command error for \"git clone https://github.com/RT-Thread/env.git\". \n"
+                  "* This error may have been caused by not found a git tool or git tool not in \n"
+                  "* the system PATH. \n"
+                  "* This error may cause script tools to fail to work properly. \n"
+                  "********************************************************************************\n")
+            help_info()
+
+    if sys.platform != 'win32':
         env_sh = file(os.path.join(env_dir, 'env.sh'), 'w')
         env_sh.write('export PATH=~/.env/tools/scripts:$PATH')
+    else:
+        if os.path.exists(os.path.join(env_dir, 'tools', 'scripts')):
+            os.environ["PATH"] = os.path.join(env_dir, 'tools', 'scripts') + ';' + os.environ["PATH"]
 
 # menuconfig for Linux
 def menuconfig(RTT_ROOT):
     kconfig_dir = os.path.join(RTT_ROOT, 'tools', 'kconfig-frontends')
     os.system('scons -C ' + kconfig_dir)
 
+    touch_env()
     env_dir = get_env_dir()
-    if not env_dir:
-        touch_env()
-        env_dir = get_env_dir()
 
     os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
 
@@ -136,6 +215,32 @@ def menuconfig(RTT_ROOT):
 
     kconfig_cmd = os.path.join(RTT_ROOT, 'tools', 'kconfig-frontends', 'kconfig-mconf')
     os.system(kconfig_cmd + ' Kconfig')
+
+    if os.path.isfile(fn):
+        mtime2 = os.path.getmtime(fn)
+    else:
+        mtime2 = -1
+
+    # make rtconfig.h
+    if mtime != mtime2:
+        mk_rtconfig(fn)
+
+# pyconfig for windows and linux
+def pyconfig(RTT_ROOT):
+
+    touch_env()
+    env_dir = get_env_dir()
+
+    os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
+
+    fn = '.config'
+
+    if os.path.isfile(fn):
+        mtime = os.path.getmtime(fn)
+    else:
+        mtime = -1
+
+    pymenuconfig.main(['--kconfig', 'Kconfig', '--config', '.config'])
 
     if os.path.isfile(fn):
         mtime2 = os.path.getmtime(fn)
