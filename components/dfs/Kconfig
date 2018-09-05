@@ -154,7 +154,7 @@ if RT_USING_DFS
 
     config RT_USING_DFS_NFS
         bool "Using NFS v3 client file system"
-        select RT_USING_LWIP
+        depends on RT_USING_LWIP
         default n
 
     if RT_USING_DFS_NFS
