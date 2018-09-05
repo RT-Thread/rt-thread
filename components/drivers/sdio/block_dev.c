@@ -27,6 +27,16 @@
 
 #include <drivers/mmcsd_core.h>
 
+#define DBG_ENABLE
+#define DBG_SECTION_NAME               "[SDIO]"
+#ifdef RT_SDIO_DEBUG
+#define DBG_LEVEL                      DBG_LOG
+#else
+#define DBG_LEVEL                      DBG_INFO
+#endif /* RT_SDIO_DEBUG */
+#define DBG_COLOR
+#include <rtdbg.h>
+
 static rt_list_t blk_devices = RT_LIST_OBJECT_INIT(blk_devices);
 
 struct mmcsd_blk_device
@@ -179,7 +189,7 @@ static rt_err_t rt_mmcsd_req_blk(struct rt_mmcsd_card *card,
             err = mmcsd_send_cmd(card->host, &cmd, 5);
             if (err) 
             {
-                rt_kprintf("error %d requesting status\n", err);
+                LOG_E("error %d requesting status", err);
                 break;
             }
             /*
@@ -195,8 +205,8 @@ static rt_err_t rt_mmcsd_req_blk(struct rt_mmcsd_card *card,
 
     if (cmd.err || data.err || stop.err) 
     {
-        rt_kprintf("mmcsd request blocks error\n");
-        rt_kprintf("%d,%d,%d, 0x%08x,0x%08x\n",
+        LOG_E("mmcsd request blocks error");
+        LOG_E("%d,%d,%d, 0x%08x,0x%08x",
                    cmd.err, data.err, stop.err, data.flags, sector);
 
         return -RT_ERROR;
@@ -311,7 +321,7 @@ static rt_int32_t mmcsd_set_blksize(struct rt_mmcsd_card *card)
 
     if (err) 
     {
-        rt_kprintf("MMCSD: unable to set block size to %d: %d\n", cmd.arg, err);
+        LOG_E("MMCSD: unable to set block size to %d: %d", cmd.arg, err);
 
         return -RT_ERROR;
     }
@@ -346,13 +356,13 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
         return err;
     }
 
-    rt_kprintf("probe mmcsd block device!\n");
+    LOG_I("probe mmcsd block device!");
 
     /* get the first sector to read partition table */
     sector = (rt_uint8_t *)rt_malloc(SECTOR_SIZE);
     if (sector == RT_NULL)
     {
-        rt_kprintf("allocate partition sector buffer failed\n");
+        LOG_E("allocate partition sector buffer failed!");
 
         return -RT_ENOMEM;
     }
@@ -365,7 +375,7 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
             blk_dev = rt_calloc(1, sizeof(struct mmcsd_blk_device));
             if (!blk_dev) 
             {
-                rt_kprintf("mmcsd:malloc memory failed!\n");
+                LOG_E("mmcsd:malloc memory failed!");
                 break;
             }
 
@@ -448,7 +458,7 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
 #ifdef RT_USING_DFS_MNTTABLE
             if (0) // if (blk_dev)
             {
-            	rt_kprintf("try to mount file system!\n");
+            	LOG_I("try to mount file system!");
             	/* try to mount file system on this block device */
             	dfs_mount_device(&(blk_dev->dev));
             }
@@ -457,7 +467,7 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
     }
     else
     {
-        rt_kprintf("read mmcsd first sector failed\n");
+        LOG_E("read mmcsd first sector failed");
         err = -RT_ERROR;
     }
     
