@@ -585,10 +585,12 @@ class MenuConfig(object):
         self.list = tk.Listbox(
             dlg,
             selectmode=tk.SINGLE,
-            activestyle=tk.UNDERLINE,
+            activestyle=tk.NONE,
             font=font.nametofont('TkFixedFont'),
             height=1,
         )
+        self.list['foreground'] = 'Blue'
+        self.list['background'] = 'Gray95'
         # Make selection invisible
         self.list['selectbackground'] = self.list['background']
         self.list['selectforeground'] = self.list['foreground']
@@ -633,6 +635,8 @@ class MenuConfig(object):
         dlg.bind('<Return>', self.handle_keypress)
         dlg.bind('<Right>', self.handle_keypress)
         dlg.bind('<Left>', self.handle_keypress)
+        dlg.bind('<Up>', self.handle_keypress)
+        dlg.bind('<Down>', self.handle_keypress)
         dlg.bind('n', self.handle_keypress)
         dlg.bind('m', self.handle_keypress)
         dlg.bind('y', self.handle_keypress)
@@ -655,6 +659,10 @@ class MenuConfig(object):
         for n,c in widget.children.items():
             self._set_option_to_all_children(c, option, value)
 
+    def _invert_colors(self, idx):
+        self.list.itemconfig(idx, {'bg' : self.list['foreground']})
+        self.list.itemconfig(idx, {'fg' : self.list['background']})
+
     @property
     def _selected_entry(self):
         # type: (...) -> ListEntry
@@ -676,6 +684,7 @@ class MenuConfig(object):
         if idx is not None:
             self.list.activate(idx)
             self.list.see(idx)
+            self._invert_colors(idx)
 
     def handle_keypress(self, ev):
         keysym = ev.keysym
@@ -683,6 +692,10 @@ class MenuConfig(object):
             self._select_action(prev=True)
         elif keysym == 'Right':
             self._select_action(prev=False)
+        elif keysym == 'Up':
+            self.refresh_display(reset_selection=False)
+        elif keysym == 'Down':
+            self.refresh_display(reset_selection=False)
         elif keysym == 'space':
             self._selected_entry.toggle()
         elif keysym in ('n', 'm', 'y'):
@@ -777,6 +790,7 @@ class MenuConfig(object):
         else:
             # Select the topmost entry
             self.list.activate(0)
+            self._invert_colors(0)
         # Select ACTION_SELECT on each refresh (mimic C menuconfig)
         self.tk_selected_action.set(self.ACTION_SELECT)
         # Display current location in configuration tree
@@ -804,6 +818,7 @@ class MenuConfig(object):
             self.show_node(parent_node)
             # Restore previous selection
             self._select_node(select_node)
+            self.refresh_display(reset_selection=False)
 
     def ask_for_string(self, ident=None, title='Enter string', value=None):
         """
