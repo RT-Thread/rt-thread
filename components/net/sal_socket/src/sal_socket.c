@@ -30,10 +30,12 @@
 #include <sal.h>
 
 #define DBG_ENABLE
-#define DBG_SECTION_NAME    "SAL_SOC"
-#define DBG_LEVEL           DBG_INFO
+#define DBG_SECTION_NAME               "SAL_SOC"
+#define DBG_LEVEL                      DBG_INFO
 #define DBG_COLOR
 #include <rtdbg.h>
+
+#define SOCKET_TABLE_STEP_LEN          4
 
 /* the socket table used to dynamic allocate sockets */
 struct sal_socket_table
@@ -52,19 +54,29 @@ static rt_bool_t init_ok = RT_FALSE;
 /**
  * SAL (Socket Abstraction Layer) initialize.
  *
- * @return result
- *         >= 0: initialize success
+ * @return result  0: initialize success
+ *                -1: initialize failed        
  */
 int sal_init(void)
 {
+    int cn;
+    
     if(init_ok)
     {
         LOG_D("Socket Abstraction Layer is already initialized.");
         return 0;
     }
 
-    /* clean sal socket table */
-    rt_memset(&socket_table, 0, sizeof(socket_table));
+    /* init sal socket table */
+    cn = SOCKET_TABLE_STEP_LEN < SAL_SOCKETS_NUM ? SOCKET_TABLE_STEP_LEN : SAL_SOCKETS_NUM;
+    socket_table.max_socket = cn;
+    socket_table.sockets = rt_calloc(1, cn * sizeof(struct sal_socket *));
+    if (socket_table.sockets == RT_NULL)
+    {
+        LOG_E("No memory for socket table.\n");
+        return -1;
+    }
+    
     /* create sal socket lock */
     rt_mutex_init(&sal_core_lock, "sal_lock", RT_IPC_FLAG_FIFO);
 
@@ -80,7 +92,7 @@ INIT_COMPONENT_EXPORT(sal_init);
  *
  * @param pf protocol family object
  *
- * @return >=0 : protocol family object index
+ * @return   0 : protocol family object register success
  *          -1 : the global array of available protocol families is full
  */
 int sal_proto_family_register(const struct proto_family *pf)
@@ -331,8 +343,8 @@ static int socket_alloc(struct sal_socket_table *st, int f_socket)
         int cnt, index;
         struct sal_socket **sockets;
 
-        /* increase the number of FD with 4 step length */
-        cnt = st->max_socket + 4;
+        /* increase the number of socket with 4 step length */
+        cnt = st->max_socket + SOCKET_TABLE_STEP_LEN;
         cnt = cnt > SAL_SOCKETS_NUM ? SAL_SOCKETS_NUM : cnt;
 
         sockets = rt_realloc(st->sockets, cnt * sizeof(struct sal_socket *));
@@ -352,7 +364,7 @@ static int socket_alloc(struct sal_socket_table *st, int f_socket)
     /* allocate  'struct sal_socket' */
     if (idx < (int) st->max_socket && st->sockets[idx] == RT_NULL)
     {
-        st->sockets[idx] = rt_malloc(sizeof(struct sal_socket));
+        st->sockets[idx] = rt_calloc(1, sizeof(struct sal_socket));
         if (st->sockets[idx] == RT_NULL)
         {
             idx = st->max_socket;
@@ -476,7 +488,9 @@ int sal_shutdown(int socket, int how)
 
     if (sock->ops->shutdown((int) sock->user_data, how) == 0)
     {
-        rt_memset(sock, 0x00, sizeof(struct sal_socket));
+        rt_free(sock);
+        sock =  RT_NULL;
+        
         return 0;
     }
 
@@ -683,7 +697,9 @@ int sal_closesocket(int socket)
 
     if (sock->ops->closesocket((int) sock->user_data) == 0)
     {
-        rt_memset(sock, 0x00, sizeof(struct sal_socket));
+        rt_free(sock);
+        sock = RT_NULL;
+        
         return 0;
     }
 
