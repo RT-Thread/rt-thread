@@ -1010,7 +1010,7 @@ class MenuConfig(object):
         print('Saving config: \'{}\''.format(path))
         # Try to save config to selected path
         try:
-            self.kconfig.write_config(path)
+            self.kconfig.write_config(path, header="#\n# Automatically generated file; DO NOT EDIT.\n")
             self.unsaved_changes = False
             self.config_path = path
             self.set_status_string('Saved config')
