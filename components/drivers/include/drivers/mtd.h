@@ -32,6 +32,13 @@
 #define MTD_TYPE_NOR    1
 #define MTD_TYPE_NAND   2
 
+ /**
+  * MTD operation modes
+  *
+  * @MTD_OPM_PLACE_OOB:	OOB data are placed at the given offset (default)
+  * @MTD_OPM_AUTO_OOB:	OOB data are automatically placed at the free areas
+  * @MTD_OPM_RAW:	    data are transferred as-is, with no error correction;
+  */
 enum mtd_opm
 {
     MTD_OPM_PLACE_OOB = 0,
