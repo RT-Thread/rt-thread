@@ -18,7 +18,7 @@ config $PKGS_DIR
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
-menu "BSP configure"
+comment "BSP configure"
 
 config RT_USING_GPIO_DEVICE
     bool "Using GPIO"
@@ -47,6 +47,4 @@ config RT_USING_EMAC
 config RT_MMU_PTE_SIZE
     int "The first page table for MMU"
     default 4096
-
-endmenu
 
