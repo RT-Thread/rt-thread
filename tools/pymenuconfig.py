@@ -428,6 +428,7 @@ class EntryDialog(object):
     def __init__(self, master, text, title, ident=None, value=None):
         self.master = master
         dlg = self.dlg = tk.Toplevel(master)
+        self.dlg.withdraw() #hiden window
         dlg.title(title)
         # Identifier label
         if ident is not None:
@@ -471,6 +472,7 @@ class EntryDialog(object):
         dlg.grab_set()
         # Center dialog window
         _center_window_above_parent(master, dlg)
+        self.dlg.deiconify() # show window
         # Focus entry field
         self.entry.focus_set()
 
@@ -486,6 +488,7 @@ class TextDialog(object):
     def __init__(self, master, text, title):
         self.master = master
         dlg = self.dlg = tk.Toplevel(master)
+        self.dlg.withdraw() #hiden window
         dlg.title(title)
         dlg.minsize(600,400)
         # Text
@@ -510,6 +513,7 @@ class TextDialog(object):
         dlg.grab_set()
         # Center dialog window
         _center_window_above_parent(master, dlg)
+        self.dlg.deiconify() # show window
         # Focus entry field
         self.text.focus_set()
 
@@ -544,6 +548,7 @@ class MenuConfig(object):
 
         # Instantiate Tk widgets
         self.root = tk.Tk()
+        self.root.withdraw() #hiden window
         dlg = self.root
 
         # Window title
@@ -624,6 +629,7 @@ class MenuConfig(object):
         self.label_status.pack(fill=tk.X, padx=4, pady=4)
         # Center window
         _center_window(self.root, dlg)
+        self.root.deiconify() # show window
         # Disable keyboard focus on all widgets ...
         self._set_option_to_all_children(dlg, 'takefocus', 0)
         # ... except for main ListBox
