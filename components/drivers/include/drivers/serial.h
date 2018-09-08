@@ -159,7 +159,7 @@ struct rt_serial_device
     void *serial_rx;
     void *serial_tx;
 };
-typedef struct rt_serial_device rt_serial_t;
+typedef struct rt_serial_device *rt_serial_t;
 
 /**
  * uart operators
