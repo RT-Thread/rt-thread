@@ -18,6 +18,7 @@
 
 #include "board.h"
 #include <interrupt.h>
+#include <mmu.h>
 
 #ifdef RT_USING_VMM
 #include <vmm.h>
@@ -151,6 +152,19 @@ INIT_BOARD_EXPORT(rt_hw_timer_init);
  */
 void rt_hw_board_init(void)
 {
+#if defined(__CLANG_ARM)
+    extern void $Super$$__cpp_initialize__aeabi_(void);
+    extern rt_uint32_t Image$$ARM_LIB_HEAP$$ZI$$Base;
+    extern rt_uint32_t Image$$ARM_LIB_HEAP$$ZI$$Limit;
+    rt_uint32_t* pBase = &Image$$ARM_LIB_HEAP$$ZI$$Base;
+    rt_uint32_t* pLimit = &Image$$ARM_LIB_HEAP$$ZI$$Limit;
+    memset(pBase, 0, (pLimit - pBase) * sizeof(rt_uint32_t));
+    rt_system_heap_init(pBase, pLimit);
+    $Super$$__cpp_initialize__aeabi_();
+    
+    rt_hw_interrupt_init();
+    rt_hw_mmu_init();
+#endif
     rt_components_board_init();
 	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 }

@@ -37,7 +37,11 @@
 #include "dfs_posix.h"
 #endif
 
+#if defined(__CLANG_ARM)
+__asm(".global __use_no_semihosting\n\t");
+#elif defined(__CC_ARM)
 #pragma import(__use_no_semihosting_swi)
+#endif
 
 /* Standard IO device handles. */
 #define STDIN       0
@@ -249,7 +253,7 @@ int _sys_tmpnam(char *name, int fileno, unsigned maxlength)
 char *_sys_command_string(char *cmd, int len)
 {
     /* no support */
-    return cmd;
+    return RT_NULL;
 }
 
 /* This function writes a character to the console. */

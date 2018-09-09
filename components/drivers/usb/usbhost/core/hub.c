@@ -502,11 +502,11 @@ static rt_err_t rt_usbh_hub_enable(void *arg)
 {
     int i = 0;
     rt_err_t ret = RT_EOK;
-    uep_desc_t ep_desc;
+    uep_desc_t ep_desc = RT_NULL;
     uhub_t hub;
     struct uinstance* device;
     struct uhintf* intf = (struct uhintf*)arg;
-    upipe_t pipe_in;
+    upipe_t pipe_in = RT_NULL;
     int timeout = 300;
     /* paremeter check */
     RT_ASSERT(intf != RT_NULL);

@@ -1,7 +1,7 @@
 /*
- * File      : rtlibc.h
+ * File      : mmu.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2017, RT-Thread Development Team
+ * COPYRIGHT (C) 2006, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,33 +17,13 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- * Change Logs:
- * Date           Author       Notes
- * 2017-01-21     Bernard      the first version
  */
 
-#ifndef RTLIBC_H__
-#define RTLIBC_H__
+#ifndef __MMU_H__
+#define __MMU_H__
 
-/* definitions for libc if toolchain has no these definitions */
-#include "libc/libc_stat.h"
-#include "libc/libc_errno.h"
+#include <rtthread.h>
 
-#include "libc/libc_fcntl.h"
-#include "libc/libc_ioctl.h"
-#include "libc/libc_dirent.h"
-#include "libc/libc_signal.h"
-#include "libc/libc_fdset.h"
-
-#if defined(__CC_ARM) || defined(__CLANG_ARM) || defined(__IAR_SYSTEMS_ICC__)
-typedef signed long off_t;
-typedef int mode_t;
-#endif
-
-#if defined(__MINGW32__) || defined(_WIN32)
-typedef signed long off_t;
-typedef int mode_t;
-#endif
+void rt_hw_mmu_init(void);
 
 #endif
-

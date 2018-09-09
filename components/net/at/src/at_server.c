@@ -456,7 +456,7 @@ int at_server_init(void)
     }
 
     /* initialize the AT commands table.*/
-#if defined(__CC_ARM)                                 /* ARM C Compiler */
+#if defined(__CC_ARM) || defined(__CLANG_ARM)                                 /* ARM C Compiler */
     extern const int RtAtCmdTab$$Base;
     extern const int RtAtCmdTab$$Limit;
     cmd_table = (at_cmd_t)&RtAtCmdTab$$Base;

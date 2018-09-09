@@ -137,6 +137,27 @@ def GenCconfigFile(env, BuildOptions):
 
                 # add HAVE_CCONFIG_H definition
                 env.AppendUnique(CPPDEFINES = ['HAVE_CCONFIG_H'])
+    elif rtconfig.PLATFORM == 'armclang':
+        contents = ''
+        if not os.path.isfile('cconfig.h'):
+            import armclang
+            armclang.ARMCLANG_GenerateConfig(rtconfig)
+
+        # try again
+        if os.path.isfile('cconfig.h'):
+            f = file('cconfig.h', 'r')
+            if f:
+                contents = f.read()
+                f.close();
+
+                prep = PatchedPreProcessor()
+                prep.process_contents(contents)
+                options = prep.cpp_namespace
+
+                BuildOptions.update(options)
+
+                # add HAVE_CCONFIG_H definition
+                env.AppendUnique(CPPDEFINES = ['HAVE_CCONFIG_H'])
 
 def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = []):
     import rtconfig
