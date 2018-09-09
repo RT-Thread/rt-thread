@@ -394,7 +394,7 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
                 break;
             }
 
-            blk_dev->max_req_size = BLK_MIN((card->host->max_seg_size * 
+            blk_dev->max_req_size = BLK_MIN((card->host->max_dma_segs * 
                                              card->host->max_seg_size) >> 9, 
                                             (card->host->max_blk_count * 
                                              card->host->max_blk_size) >> 9);
