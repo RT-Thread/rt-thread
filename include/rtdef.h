@@ -125,7 +125,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define RTT_API
 
 #elif defined (__GNUC__)                /* GNU GCC Compiler */
-    #ifdef RT_USING_NEWLIB
+    #if defined(RT_USING_NEWLIB) || defined(__CLANG_ARM)
         #include <stdarg.h>
     #else
         /* the version of GNU GCC must be greater than 4.x */

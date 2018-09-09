@@ -17,5 +17,8 @@ if GetDepend('RT_USING_MODULE') == False:
 if rtconfig.PLATFORM == 'armcc':
     group = DefineGroup('libc', src, depend = ['RT_USING_LIBC'], 
         CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+elif rtconfig.PLATFORM == 'armclang':
+    group = DefineGroup('libc', src, depend = ['RT_USING_LIBC'], 
+        CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
 Return('group')

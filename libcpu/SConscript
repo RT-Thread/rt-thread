@@ -10,6 +10,9 @@ ASFLAGS = ''
 if rtconfig.PLATFORM == 'armcc':
 	src = Glob(path + '/*.c') + Glob(path + '/*_rvds.S') + Glob(comm + '/*.c')
 
+if rtconfig.PLATFORM == 'armclang':
+	src = Glob(path + '/*.c') + Glob(path + '/*_armasm.S') + Glob(comm + '/*.c')
+
 if rtconfig.PLATFORM == 'gcc':
 	src = Glob(path + '/*.c') + Glob(path + '/*_gcc.S') + Glob(comm + '/*.c') + Glob(path + '/*_init.S')
 

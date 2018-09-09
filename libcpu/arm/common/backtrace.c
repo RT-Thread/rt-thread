@@ -49,7 +49,7 @@ void rt_hw_backtrace(rt_uint32_t *fp, rt_uint32_t thread_entry)
 
 		if(func_entry <= 0x30000000) break;
 
-		if((func_entry == thread_entry))
+		if(func_entry == thread_entry)
 		{
 			rt_kprintf("EntryPoint:0x%x\n", func_entry);
 
