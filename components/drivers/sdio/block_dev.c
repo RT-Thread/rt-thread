@@ -29,6 +29,8 @@
 
 static rt_list_t blk_devices = RT_LIST_OBJECT_INIT(blk_devices);
 
+#define BLK_MIN(a, b) ((a) < (b) ? (a) : (b))
+
 struct mmcsd_blk_device
 {
     struct rt_mmcsd_card *card;
@@ -36,6 +38,7 @@ struct mmcsd_blk_device
     struct rt_device dev;
     struct dfs_partition part;
     struct rt_device_blk_geometry geometry;
+    rt_size_t max_req_size;
 };
 
 #ifndef RT_MMCSD_MAX_PARTITION
@@ -240,18 +243,29 @@ static rt_size_t rt_mmcsd_read(rt_device_t dev,
                                rt_size_t   size)
 {
     rt_err_t err;
+    rt_size_t offset = 0;
+    rt_size_t req_size = 0;
+    rt_size_t remain_size = size;
+    void *rd_ptr = (void *)buffer;
     struct mmcsd_blk_device *blk_dev = (struct mmcsd_blk_device *)dev->user_data;
     struct dfs_partition *part = &blk_dev->part;
 
     if (dev == RT_NULL)
     {
         rt_set_errno(-EINVAL);
-
         return 0;
     }
 
     rt_sem_take(part->lock, RT_WAITING_FOREVER);
-    err = rt_mmcsd_req_blk(blk_dev->card, part->offset + pos, buffer, size, 0);
+    while (remain_size)
+    {
+        req_size = (size > blk_dev->max_req_size) ? blk_dev->max_req_size : remain_size;
+        err = rt_mmcsd_req_blk(blk_dev->card, part->offset + pos + offset, rd_ptr, req_size, 0);
+        if (err)
+            break;
+        offset += req_size;
+        remain_size -= req_size;
+    }
     rt_sem_release(part->lock);
 
     /* the length of reading must align to SECTOR SIZE */
@@ -260,7 +274,7 @@ static rt_size_t rt_mmcsd_read(rt_device_t dev,
         rt_set_errno(-EIO);
         return 0;
     }
-    return size;
+    return size - remain_size;
 }
 
 static rt_size_t rt_mmcsd_write(rt_device_t dev,
@@ -269,18 +283,29 @@ static rt_size_t rt_mmcsd_write(rt_device_t dev,
                                 rt_size_t   size)
 {
     rt_err_t err;
+    rt_size_t offset = 0;
+    rt_size_t req_size = 0;
+    rt_size_t remain_size = size;
+    void *wr_ptr = (void *)buffer;
     struct mmcsd_blk_device *blk_dev = (struct mmcsd_blk_device *)dev->user_data;
     struct dfs_partition *part = &blk_dev->part;
 
     if (dev == RT_NULL)
     {
         rt_set_errno(-EINVAL);
-
         return 0;
     }
 
     rt_sem_take(part->lock, RT_WAITING_FOREVER);
-    err = rt_mmcsd_req_blk(blk_dev->card, part->offset + pos, (void *)buffer, size, 1);
+    while (remain_size)
+    {
+        req_size = (size > blk_dev->max_req_size) ? blk_dev->max_req_size : remain_size;
+        err = rt_mmcsd_req_blk(blk_dev->card, part->offset + pos + offset, wr_ptr, req_size, 1);
+        if (err)
+            break;
+        offset += req_size;
+        remain_size -= req_size;
+    }
     rt_sem_release(part->lock);
 
     /* the length of reading must align to SECTOR SIZE */
@@ -290,7 +315,7 @@ static rt_size_t rt_mmcsd_write(rt_device_t dev,
 
         return 0;
     }
-    return size;
+    return size - remain_size;
 }
 
 static rt_int32_t mmcsd_set_blksize(struct rt_mmcsd_card *card)
@@ -368,6 +393,11 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
                 rt_kprintf("mmcsd:malloc memory failed!\n");
                 break;
             }
+
+            blk_dev->max_req_size = BLK_MIN((card->host->max_dma_segs * 
+                                             card->host->max_seg_size) >> 9, 
+                                            (card->host->max_blk_count * 
+                                             card->host->max_blk_size) >> 9);
 
             /* get the first partition */
             status = dfs_filesystem_get_partition(&blk_dev->part, sector, i);
