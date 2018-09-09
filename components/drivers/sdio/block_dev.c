@@ -264,6 +264,7 @@ static rt_size_t rt_mmcsd_read(rt_device_t dev,
         if (err)
             break;
         offset += req_size;
+        rd_ptr = (void *)((rt_uint8_t *)rd_ptr + (req_size << 9));
         remain_size -= req_size;
     }
     rt_sem_release(part->lock);
@@ -304,6 +305,7 @@ static rt_size_t rt_mmcsd_write(rt_device_t dev,
         if (err)
             break;
         offset += req_size;
+        wr_ptr = (void *)((rt_uint8_t *)wr_ptr + (req_size << 9));
         remain_size -= req_size;
     }
     rt_sem_release(part->lock);
