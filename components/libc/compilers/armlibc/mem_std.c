@@ -19,7 +19,7 @@
 /* avoid the heap and heap-using library functions supplied by arm */
 #pragma import(__use_no_heap)
 
-void *malloc(int n)
+void *malloc(rt_size_t n)
 {
     return rt_malloc(n);
 }
