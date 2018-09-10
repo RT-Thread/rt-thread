@@ -259,11 +259,12 @@ static rt_size_t rt_mmcsd_read(rt_device_t dev,
     rt_sem_take(part->lock, RT_WAITING_FOREVER);
     while (remain_size)
     {
-        req_size = (size > blk_dev->max_req_size) ? blk_dev->max_req_size : remain_size;
+        req_size = (remain_size > blk_dev->max_req_size) ? blk_dev->max_req_size : remain_size;
         err = rt_mmcsd_req_blk(blk_dev->card, part->offset + pos + offset, rd_ptr, req_size, 0);
         if (err)
             break;
         offset += req_size;
+        rd_ptr = (void *)((rt_uint8_t *)rd_ptr + (req_size << 9));
         remain_size -= req_size;
     }
     rt_sem_release(part->lock);
@@ -299,11 +300,12 @@ static rt_size_t rt_mmcsd_write(rt_device_t dev,
     rt_sem_take(part->lock, RT_WAITING_FOREVER);
     while (remain_size)
     {
-        req_size = (size > blk_dev->max_req_size) ? blk_dev->max_req_size : remain_size;
+        req_size = (remain_size > blk_dev->max_req_size) ? blk_dev->max_req_size : remain_size;
         err = rt_mmcsd_req_blk(blk_dev->card, part->offset + pos + offset, wr_ptr, req_size, 1);
         if (err)
             break;
         offset += req_size;
+        wr_ptr = (void *)((rt_uint8_t *)wr_ptr + (req_size << 9));
         remain_size -= req_size;
     }
     rt_sem_release(part->lock);
