@@ -481,7 +481,7 @@ static int dfs_uffs_seek(struct dfs_fd* file,
 static int dfs_uffs_getdents(
     struct dfs_fd* file,
     struct dirent* dirp,
-    rt_uint32_t count)
+    uint32_t count)
 {
     rt_uint32_t index;
     char * file_path;
