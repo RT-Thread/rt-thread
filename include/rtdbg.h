@@ -54,10 +54,10 @@
 #include <rtconfig.h>
 
 /* DEBUG level */
-#define DBG_LOG             0
-#define DBG_INFO            1
-#define DBG_WARNING         2
-#define DBG_ERROR           3
+#define DBG_ERROR           0
+#define DBG_WARNING         1
+#define DBG_INFO            2
+#define DBG_LOG             3
 
 #ifndef DBG_SECTION_NAME
 #define DBG_SECTION_NAME    "DBG"
@@ -98,7 +98,7 @@
  * static debug routine
  */
 #define dbg_log(level, fmt, ...)                            \
-    if ((level) >= DBG_LEVEL)                               \
+    if ((level) <= DBG_LEVEL)                               \
     {                                                       \
         switch(level)                                       \
         {                                                   \
@@ -113,13 +113,13 @@
     }
 
 #define dbg_here                                            \
-    if ((DBG_LEVEL) >= DBG_LOG){                            \
+    if ((DBG_LEVEL) <= DBG_LOG){                            \
         rt_kprintf(DBG_SECTION_NAME " Here %s:%d\n",        \
             __FUNCTION__, __LINE__);                        \
     }
 
 #define dbg_enter                                           \
-    if ((DBG_LEVEL) >= DBG_LOG){                            \
+    if ((DBG_LEVEL) <= DBG_LOG){                            \
         _DBG_COLOR(32);                                     \
         rt_kprintf(DBG_SECTION_NAME " Enter %s\n",          \
             __FUNCTION__);                                  \
@@ -127,7 +127,7 @@
     }
 
 #define dbg_exit                                            \
-    if ((DBG_LEVEL) >= DBG_LOG){                            \
+    if ((DBG_LEVEL) <= DBG_LOG){                            \
         _DBG_COLOR(32);                                     \
         rt_kprintf(DBG_SECTION_NAME " Exit  %s:%d\n",       \
             __FUNCTION__);                                  \
@@ -155,25 +155,25 @@
 #define dbg_raw(...)
 #endif /* DBG_ENABLE */
 
-#if (DBG_LEVEL <= DBG_LOG)
+#if (DBG_LEVEL >= DBG_LOG)
 #define LOG_D(fmt, ...)      dbg_log_line("D", 0, fmt, ##__VA_ARGS__)
 #else
 #define LOG_D(...)
 #endif
 
-#if (DBG_LEVEL <= DBG_INFO)
+#if (DBG_LEVEL >= DBG_INFO)
 #define LOG_I(fmt, ...)      dbg_log_line("I", 32, fmt, ##__VA_ARGS__)
 #else
 #define LOG_I(...)
 #endif
 
-#if (DBG_LEVEL <= DBG_WARNING)
+#if (DBG_LEVEL >= DBG_WARNING)
 #define LOG_W(fmt, ...)      dbg_log_line("W", 33, fmt, ##__VA_ARGS__)
 #else
 #define LOG_W(...)
 #endif
 
-#if (DBG_LEVEL <= DBG_ERROR)
+#if (DBG_LEVEL >= DBG_ERROR)
 #define LOG_E(fmt, ...)      dbg_log_line("E", 31, fmt, ##__VA_ARGS__)
 #else
 #define LOG_E(...)
