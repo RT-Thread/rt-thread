@@ -36,11 +36,11 @@ void $Sub$$__cpp_initialize__aeabi_(void)
 }
 #elif defined(__GNUC__) && !defined(__CS_SOURCERYGXX_MAJ__)
 /* The _init()/_fini() routines has been defined in codesourcery g++ lite */
-void _init()
+RT_WEAK void _init()
 {
 }
 
-void _fini()
+RT_WEAK void _fini()
 {
 }
 
