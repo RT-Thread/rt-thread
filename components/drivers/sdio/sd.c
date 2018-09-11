@@ -25,6 +25,16 @@
 #include <drivers/mmcsd_core.h>
 #include <drivers/sd.h>
 
+#define DBG_ENABLE
+#define DBG_SECTION_NAME               "[SDIO]"
+#ifdef RT_SDIO_DEBUG
+#define DBG_LEVEL                      DBG_LOG
+#else
+#define DBG_LEVEL                      DBG_INFO
+#endif /* RT_SDIO_DEBUG */
+#define DBG_COLOR
+#include <rtdbg.h>
+
 static const rt_uint32_t tran_unit[] =
 {
     10000, 100000, 1000000, 10000000,
@@ -167,11 +177,11 @@ static rt_int32_t mmcsd_parse_csd(struct rt_mmcsd_card *card)
     #endif
         break;
     default:
-        rt_kprintf("unrecognised CSD structure version %d\n", csd->csd_structure);
+        LOG_E("unrecognised CSD structure version %d!", csd->csd_structure);
 
         return -RT_ERROR;
     }
-    rt_kprintf("SD card capacity %d KB\n", card->card_capacity);
+    LOG_I("SD card capacity %d KB.", card->card_capacity);
 
     return 0;
 }
@@ -201,7 +211,7 @@ static rt_int32_t mmcsd_switch(struct rt_mmcsd_card *card)
     buf = (rt_uint8_t*)rt_malloc(64);
     if (!buf) 
     {
-        rt_kprintf("alloc memory failed\n");
+        LOG_E("alloc memory failed!");
 
         return -RT_ENOMEM;
     }
@@ -270,7 +280,7 @@ static rt_int32_t mmcsd_switch(struct rt_mmcsd_card *card)
 
     if ((buf[16] & 0xF) != 1) 
     {
-        rt_kprintf("switching card to high speed failed\n");
+        LOG_E("switching card to high speed failed!");
         goto err;
     }
 
@@ -588,7 +598,7 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
     card = rt_malloc(sizeof(struct rt_mmcsd_card));
     if (!card) 
     {
-        rt_kprintf("malloc card failed\n");
+        LOG_E("malloc card failed!");
         err = -RT_ENOMEM;
         goto err;
     }
@@ -703,9 +713,9 @@ rt_int32_t init_sd(struct rt_mmcsd_host *host, rt_uint32_t ocr)
 
     if (ocr & VDD_165_195)
     {
-        rt_kprintf(" SD card claims to support the "
+        LOG_I(" SD card claims to support the "
                "incompletely defined 'low voltage range'. This "
-               "will be ignored.\n");
+               "will be ignored.");
         ocr &= ~VDD_165_195;
     }
 
@@ -743,7 +753,7 @@ remove_card:
     host->card = RT_NULL;
 err:
 
-    rt_kprintf("init SD card failed\n");
+    LOG_D("init SD card failed!");
 
     return err;
 }
