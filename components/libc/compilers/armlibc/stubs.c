@@ -249,7 +249,7 @@ int _sys_tmpnam(char *name, int fileno, unsigned maxlength)
 char *_sys_command_string(char *cmd, int len)
 {
     /* no support */
-    return cmd;
+    return RT_NULL;
 }
 
 /* This function writes a character to the console. */
