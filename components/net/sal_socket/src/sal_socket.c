@@ -697,9 +697,8 @@ int sal_closesocket(int socket)
 
     if (sock->ops->closesocket((int) sock->user_data) == 0)
     {
-        rt_free(sock);
-        sock = RT_NULL;
-        
+        rt_free(sock);        
+        socket_table.sockets[socket] = RT_NULL;
         return 0;
     }
 
