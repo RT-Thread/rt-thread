@@ -35,6 +35,7 @@
 #include "ipc/waitqueue.h"
 #include "ipc/pipe.h"
 #include "ipc/poll.h"
+#include "ipc/ringblk_buf.h"
 
 #ifdef __cplusplus
 extern "C" {
