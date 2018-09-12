@@ -248,7 +248,7 @@ static void at_do_event_changes(struct at_socket *sock, at_event_t event, rt_boo
         break;
     }
     default:
-        LOG_E("Not supported event (%d)", event)
+        LOG_E("Not supported event (%d)", event);
     }
 }
 
