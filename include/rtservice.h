@@ -253,6 +253,13 @@ rt_inline rt_slist_t *rt_slist_first(rt_slist_t *l)
     return l->next;
 }
 
+rt_inline rt_slist_t *rt_slist_tail(rt_slist_t *l)
+{
+    while (l->next) l = l->next;
+
+    return l;
+}
+
 rt_inline rt_slist_t *rt_slist_next(rt_slist_t *n)
 {
     return n->next;
@@ -301,6 +308,17 @@ rt_inline int rt_slist_isempty(rt_slist_t *l)
  */
 #define rt_slist_first_entry(ptr, type, member) \
     rt_slist_entry((ptr)->next, type, member)
+
+/**
+ * rt_slist_tail_entry - get the tail element from a slist
+ * @ptr:    the slist head to take the element from.
+ * @type:   the type of the struct this is embedded in.
+ * @member: the name of the slist_struct within the struct.
+ *
+ * Note, that slist is expected to be not empty.
+ */
+#define rt_slist_tail_entry(ptr, type, member) \
+    rt_slist_entry(rt_slist_tail(ptr), type, member)
 
 /*@}*/
 
