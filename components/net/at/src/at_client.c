@@ -748,7 +748,7 @@ static int at_client_para_init(at_client_t client)
     client->recv_buffer = (char *) rt_calloc(1, client->recv_bufsz);
     if (client->recv_buffer == RT_NULL)
     {
-        LOG_E("AT client initialize failed! No memory for receive buffer.")
+        LOG_E("AT client initialize failed! No memory for receive buffer.");
         result = -RT_ENOMEM;
         goto __exit;
     }
