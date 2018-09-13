@@ -34,6 +34,8 @@
 
 void rt_init_thread_entry(void* parameter)
 {
+	  rt_device_t lcd;
+	
     /* GDB STUB */
 #ifdef RT_USING_GDB
     gdb_set_device("uart6");
@@ -59,6 +61,9 @@ void rt_init_thread_entry(void* parameter)
 #ifdef RT_USING_FINSH
     finsh_system_init();
 #endif
+    lcd = rt_device_find("lcd");
+    rtgui_graphic_set_device(lcd);
+    rt_gui_demo_init();
 }
 
 int rt_application_init()

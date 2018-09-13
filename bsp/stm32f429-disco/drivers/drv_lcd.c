@@ -64,6 +64,7 @@ static RCC_PeriphCLKInitTypeDef  PeriphClkInitStruct;
 static uint32_t ActiveLayer = 0;
 //LCD_DrvTypeDef  *LcdDrv;
 SPI_HandleTypeDef hspi5;
+static SPI_HandleTypeDef SpiHandle;
 
 void delay_us(rt_uint32_t nus)
 {
@@ -86,6 +87,28 @@ void delay_ms(rt_uint32_t nms)
 	}
 }
 
+/**
+  * @brief  SPI MSP Init.
+  * @param  hspi: SPI handle
+  */
+static void SPIx_MspInit(SPI_HandleTypeDef *hspi)
+{
+  GPIO_InitTypeDef   GPIO_InitStructure;
+
+  /* Enable SPIx clock */
+  DISCOVERY_SPIx_CLK_ENABLE();
+
+  /* Enable DISCOVERY_SPI GPIO clock */
+  DISCOVERY_SPIx_GPIO_CLK_ENABLE();
+
+  /* configure SPI SCK, MOSI and MISO */    
+  GPIO_InitStructure.Pin    = (DISCOVERY_SPIx_SCK_PIN | DISCOVERY_SPIx_MOSI_PIN | DISCOVERY_SPIx_MISO_PIN);
+  GPIO_InitStructure.Mode   = GPIO_MODE_AF_PP;
+  GPIO_InitStructure.Pull   = GPIO_PULLDOWN;
+  GPIO_InitStructure.Speed  = GPIO_SPEED_MEDIUM;
+  GPIO_InitStructure.Alternate = DISCOVERY_SPIx_AF;
+  HAL_GPIO_Init(DISCOVERY_SPIx_GPIO_PORT, &GPIO_InitStructure);      
+}
 
 /**
   * @brief  Selects the LCD Layer.
@@ -244,29 +267,66 @@ static uint32_t SPIx_Read(uint8_t ReadSize)
 /**
   * @brief  Configures the LCD_SPI interface.
   */
-__weak void LCD_IO_Init(void)
+void LCD_IO_Init(void)
 {
-   /* Set or Reset the control line */
+   GPIO_InitTypeDef GPIO_InitStructure;
+  
+    
+    /* Configure NCS in Output Push-Pull mode */
+    LCD_WRX_GPIO_CLK_ENABLE();
+    GPIO_InitStructure.Pin     = LCD_WRX_PIN;
+    GPIO_InitStructure.Mode    = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStructure.Pull    = GPIO_NOPULL;
+    GPIO_InitStructure.Speed   = GPIO_SPEED_FAST;
+    HAL_GPIO_Init(LCD_WRX_GPIO_PORT, &GPIO_InitStructure);
+    
+    LCD_RDX_GPIO_CLK_ENABLE();
+    GPIO_InitStructure.Pin     = LCD_RDX_PIN;
+    GPIO_InitStructure.Mode    = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStructure.Pull    = GPIO_NOPULL;
+    GPIO_InitStructure.Speed   = GPIO_SPEED_FAST;
+    HAL_GPIO_Init(LCD_RDX_GPIO_PORT, &GPIO_InitStructure);
+    
+    /* Configure the LCD Control pins ----------------------------------------*/
+    LCD_NCS_GPIO_CLK_ENABLE();
+    
+    /* Configure NCS in Output Push-Pull mode */
+    GPIO_InitStructure.Pin     = LCD_NCS_PIN;
+    GPIO_InitStructure.Mode    = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStructure.Pull    = GPIO_NOPULL;
+    GPIO_InitStructure.Speed   = GPIO_SPEED_FAST;
+    HAL_GPIO_Init(LCD_NCS_GPIO_PORT, &GPIO_InitStructure);
+    
+    /* Set or Reset the control line */
     LCD_CS_LOW();
     LCD_CS_HIGH();
     
-	  /* SPI5 parameter configuration*/
-  hspi5.Instance = SPI5;
-  hspi5.Init.Mode = SPI_MODE_MASTER;
-  hspi5.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi5.Init.DataSize = SPI_DATASIZE_8BIT;
-  hspi5.Init.CLKPolarity = SPI_POLARITY_LOW;
-  hspi5.Init.CLKPhase = SPI_PHASE_1EDGE;
-  hspi5.Init.NSS = SPI_NSS_SOFT;
-  hspi5.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
-  hspi5.Init.FirstBit = SPI_FIRSTBIT_MSB;
-  hspi5.Init.TIMode = SPI_TIMODE_DISABLE;
-  hspi5.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-  hspi5.Init.CRCPolynomial = 10;
-  if (HAL_SPI_Init(&hspi5) != HAL_OK)
-  {
-    //_Error_Handler(__FILE__, __LINE__);
-  }
+    /* SPI configuration -----------------------------------------------------*/
+    SpiHandle.Instance = DISCOVERY_SPIx;
+    /* SPI baudrate is set to 5.6 MHz (PCLK2/SPI_BaudRatePrescaler = 90/16 = 5.625 MHz) 
+       to verify these constraints:
+       - ILI9341 LCD SPI interface max baudrate is 10MHz for write and 6.66MHz for read
+       - l3gd20 SPI interface max baudrate is 10MHz for write/read
+       - PCLK2 frequency is set to 90 MHz 
+    */  
+    SpiHandle.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
+
+    /* On STM32F429I-Discovery, LCD ID cannot be read then keep a common configuration */
+    /* for LCD and GYRO (SPI_DIRECTION_2LINES) */
+    /* Note: To read a register a LCD, SPI_DIRECTION_1LINE should be set */
+    SpiHandle.Init.Direction      = SPI_DIRECTION_2LINES;
+    SpiHandle.Init.CLKPhase       = SPI_PHASE_1EDGE;
+    SpiHandle.Init.CLKPolarity    = SPI_POLARITY_LOW;
+    SpiHandle.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLED;
+    SpiHandle.Init.CRCPolynomial  = 7;
+    SpiHandle.Init.DataSize       = SPI_DATASIZE_8BIT;
+    SpiHandle.Init.FirstBit       = SPI_FIRSTBIT_MSB;
+    SpiHandle.Init.NSS            = SPI_NSS_SOFT;
+    SpiHandle.Init.TIMode         = SPI_TIMODE_DISABLED;
+    SpiHandle.Init.Mode           = SPI_MODE_MASTER;
+  
+    SPIx_MspInit(&SpiHandle);
+    HAL_SPI_Init(&SpiHandle);
 	
 }
 
