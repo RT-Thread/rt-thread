@@ -151,6 +151,23 @@ INIT_BOARD_EXPORT(rt_hw_timer_init);
  */
 void rt_hw_board_init(void)
 {
+#if defined(__CLANG_ARM)
+#ifdef RT_USING_CPLUSPLUS
+    extern void $Super$$__cpp_initialize__aeabi_(void);
+#endif
+    extern rt_uint32_t Image$$ARM_LIB_HEAP$$ZI$$Base;
+    extern rt_uint32_t Image$$ARM_LIB_HEAP$$ZI$$Limit;
+    rt_uint32_t* pBase = &Image$$ARM_LIB_HEAP$$ZI$$Base;
+    rt_uint32_t* pLimit = &Image$$ARM_LIB_HEAP$$ZI$$Limit;
+    memset(pBase, 0, (pLimit - pBase) * sizeof(rt_uint32_t));
+    rt_system_heap_init(pBase, pLimit);
+#ifdef RT_USING_CPLUSPLUS
+    $Super$$__cpp_initialize__aeabi_();
+#endif
+    
+    INTC_SYSCONFIG(AM33XX_AINTC_REGS) = 0x2;
+    rt_hw_interrupt_init();
+#endif
     rt_components_board_init();
 	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 }

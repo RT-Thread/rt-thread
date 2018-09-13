@@ -52,7 +52,9 @@ void rt_dump_aintc(void)
     rt_kprintf("\n");
 }
 
+#if !defined(__CLANG_ARM)
 const unsigned int AM335X_VECTOR_BASE = 0x4030FC00;
+#endif
 extern void rt_cpu_vector_set_base(unsigned int addr);
 #ifdef __ICCARM__
 extern int __vector;
@@ -62,6 +64,9 @@ extern int system_vectors;
 
 static void rt_hw_vector_init(void)
 {
+#if defined(__CLANG_ARM)
+    rt_cpu_vector_set_base((unsigned int)&system_vectors);
+#else
     unsigned int *dest = (unsigned int *)AM335X_VECTOR_BASE;
     
 #ifdef __ICCARM__
@@ -72,6 +77,7 @@ static void rt_hw_vector_init(void)
     
     rt_memcpy(dest, src, 16 * 4);
     rt_cpu_vector_set_base(AM335X_VECTOR_BASE);
+#endif
 }
 
 /**

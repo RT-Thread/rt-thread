@@ -792,8 +792,8 @@ int finsh_system_init(void)
     rt_thread_t tid;
 
 #ifdef FINSH_USING_SYMTAB
-#ifdef __CC_ARM                 /* ARM C Compiler */
-    extern const int FSymTab$$Base;
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
+	extern const int FSymTab$$Base;
     extern const int FSymTab$$Limit;
     extern const int VSymTab$$Base;
     extern const int VSymTab$$Limit;

@@ -17,6 +17,7 @@
 
 #include <am33xx.h>
 
+#if !defined(__CLANG_ARM)
 #if defined(__CC_ARM)
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #define HEAP_BEGIN      ((void*)&Image$$RW_IRAM1$$ZI$$Limit)
@@ -26,6 +27,7 @@ extern int __bss_end;
 #endif
 
 #define HEAP_END        (void*)0x90000000
+#endif
 
 void rt_hw_board_init(void);
 
