@@ -109,6 +109,13 @@
 
 #define ABS(X)  ((X) > 0 ? (X) : -(X))
 
+#define CSX_Pin GPIO_PIN_2
+#define CSX_GPIO_Port GPIOC
+#define RDX_Pin GPIO_PIN_12
+#define RDX_GPIO_Port GPIOD
+#define WRX_DCX_Pin GPIO_PIN_13
+#define WRX_DCX_GPIO_Port GPIOD
+
 /* Chip Select macro definition */
 #define LCD_CS_LOW()       HAL_GPIO_WritePin(LCD_NCS_GPIO_PORT, LCD_NCS_PIN, GPIO_PIN_RESET)
 #define LCD_CS_HIGH()      HAL_GPIO_WritePin(LCD_NCS_GPIO_PORT, LCD_NCS_PIN, GPIO_PIN_SET)

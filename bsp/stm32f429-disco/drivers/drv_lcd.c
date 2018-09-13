@@ -174,6 +174,34 @@ __weak void BSP_LCD_MspInit(void)
 }
 
 /**
+  * @brief  SPIx error treatment function.
+  */
+static void SPIx_Error(void)
+{
+  /* De-initialize the SPI communication BUS */
+  HAL_SPI_DeInit(&hspi5);
+  
+  /* Re- Initialize the SPI communication BUS */
+  /* SPI5 parameter configuration*/
+  hspi5.Instance = SPI5;
+  hspi5.Init.Mode = SPI_MODE_MASTER;
+  hspi5.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi5.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi5.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi5.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi5.Init.NSS = SPI_NSS_SOFT;
+  hspi5.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
+  hspi5.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi5.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi5.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi5.Init.CRCPolynomial = 10;
+  if (HAL_SPI_Init(&hspi5) != HAL_OK)
+  {
+    //_Error_Handler(__FILE__, __LINE__);
+  }
+}
+
+/**
   * @brief  Writes a byte to device.
   * @param  Value: value to be written
   */
@@ -187,7 +215,7 @@ static void SPIx_Write(uint16_t Value)
   if(status != HAL_OK)
   {
     /* Re-Initialize the BUS */
-    //SPIx_Error();
+    SPIx_Error();
   }
 }
 
@@ -207,7 +235,7 @@ static uint32_t SPIx_Read(uint8_t ReadSize)
   if(status != HAL_OK)
   {
     /* Re-Initialize the BUS */
-    //SPIx_Error();
+    SPIx_Error();
   }
   
   return readvalue;
@@ -752,6 +780,34 @@ rt_uint16_t ili9341_bgr2rgb(rt_uint16_t value)
 
 void _lcd_low_level_init(void)
 {
+	GPIO_InitTypeDef GPIO_InitStruct;
+
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOC, CSX_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOD, RDX_Pin|WRX_DCX_Pin, GPIO_PIN_RESET);
+
+
+  /*Configure GPIO pins : NCS_MEMS_SPI_Pin CSX_Pin OTG_FS_PSO_Pin */
+  GPIO_InitStruct.Pin = CSX_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : RDX_Pin WRX_DCX_Pin */
+  GPIO_InitStruct.Pin = RDX_Pin|WRX_DCX_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+
 	BSP_LCD_Init();
 	BSP_LCD_LayerDefaultInit(0,0xD0000000);
   BSP_LCD_SelectLayer(0);
