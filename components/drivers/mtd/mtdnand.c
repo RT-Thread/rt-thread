@@ -461,7 +461,7 @@ static int nand_erase(rt_mtd_t *mtd, loff_t addr, size_t size)
     chip = MTDTONAND(mtd);
     blksize = chip->pages_pb * chip->page_size;
 
-    while (size > blksize)
+    while (size >= blksize)
     {
         page = addr / blksize;
         status = chip->ops->cmdfunc(chip, NAND_CMD_BLK_ERASE, page, 0);
