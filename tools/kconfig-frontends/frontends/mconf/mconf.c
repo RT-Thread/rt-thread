@@ -1058,7 +1058,7 @@ int main(int ac, char **av)
         conf_set_message_callback(NULL);
         av++; 
         res = handle_exit();
-        return 1;
+        return res;
      } 
 
     do {
