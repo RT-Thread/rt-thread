@@ -32,6 +32,11 @@
 extern rt_err_t rt_spi_bus_device_init(struct rt_spi_bus *bus, const char *name);
 extern rt_err_t rt_spidev_device_init(struct rt_spi_device *dev, const char *name);
 
+static rt_bool_t device_has_cs(struct rt_spi_device *device)
+{
+    return device->config.mode & RT_SPI_NO_CS ?  RT_FALSE : RT_TRUE;
+}
+
 rt_err_t rt_spi_bus_register(struct rt_spi_bus       *bus,
                              const char              *name,
                              const struct rt_spi_ops *ops)
@@ -123,6 +128,8 @@ rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->bus != RT_NULL);
 
+    rt_memset(&message, 0, sizeof(message));
+
     result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
     if (result == RT_EOK)
     {
@@ -147,9 +154,13 @@ rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
         message.send_buf   = send_buf1;
         message.recv_buf   = RT_NULL;
         message.length     = send_length1;
-        message.cs_take    = 1;
-        message.cs_release = 0;
         message.next       = RT_NULL;
+        if (device_has_cs(device) == RT_TRUE)
+        {
+            message.cs_take = 1;
+            message.cs_release = 0;
+        }
+
 
         result = device->bus->ops->xfer(device, &message);
         if (result == 0)
@@ -162,9 +173,12 @@ rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
         message.send_buf   = send_buf2;
         message.recv_buf   = RT_NULL;
         message.length     = send_length2;
-        message.cs_take    = 0;
-        message.cs_release = 1;
         message.next       = RT_NULL;
+        if (device_has_cs(device) == RT_TRUE)
+        {
+            message.cs_take = 0;
+            message.cs_release = 1;
+        }
 
         result = device->bus->ops->xfer(device, &message);
         if (result == 0)
@@ -198,6 +212,8 @@ rt_err_t rt_spi_send_then_recv(struct rt_spi_device *device,
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->bus != RT_NULL);
 
+    rt_memset(&message, 0, sizeof(message));
+
     result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
     if (result == RT_EOK)
     {
@@ -222,9 +238,12 @@ rt_err_t rt_spi_send_then_recv(struct rt_spi_device *device,
         message.send_buf   = send_buf;
         message.recv_buf   = RT_NULL;
         message.length     = send_length;
-        message.cs_take    = 1;
-        message.cs_release = 0;
         message.next       = RT_NULL;
+        if (device_has_cs(device) == RT_TRUE)
+        {
+            message.cs_take = 1;
+            message.cs_release = 0;
+        }
 
         result = device->bus->ops->xfer(device, &message);
         if (result == 0)
@@ -237,9 +256,12 @@ rt_err_t rt_spi_send_then_recv(struct rt_spi_device *device,
         message.send_buf   = RT_NULL;
         message.recv_buf   = recv_buf;
         message.length     = recv_length;
-        message.cs_take    = 0;
-        message.cs_release = 1;
         message.next       = RT_NULL;
+        if (device_has_cs(device) == RT_TRUE)
+        {
+            message.cs_take = 0;
+            message.cs_release = 1;
+        }
 
         result = device->bus->ops->xfer(device, &message);
         if (result == 0)
@@ -272,6 +294,8 @@ rt_size_t rt_spi_transfer(struct rt_spi_device *device,
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->bus != RT_NULL);
 
+    rt_memset(&message, 0, sizeof(message));
+
     result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
     if (result == RT_EOK)
     {
@@ -297,9 +321,12 @@ rt_size_t rt_spi_transfer(struct rt_spi_device *device,
         message.send_buf   = send_buf;
         message.recv_buf   = recv_buf;
         message.length     = length;
-        message.cs_take    = 1;
-        message.cs_release = 1;
         message.next       = RT_NULL;
+        if (device_has_cs(device) == RT_TRUE)
+        {
+            message.cs_take = 1;
+            message.cs_release = 1;
+        }
 
         /* transfer message */
         result = device->bus->ops->xfer(device, &message);

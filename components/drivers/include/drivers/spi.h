@@ -57,7 +57,7 @@ extern "C"{
 #define RT_SPI_MODE_2       (RT_SPI_CPOL | 0)              /* CPOL = 1, CPHA = 0 */
 #define RT_SPI_MODE_3       (RT_SPI_CPOL | RT_SPI_CPHA)    /* CPOL = 1, CPHA = 1 */
 
-#define RT_SPI_MODE_MASK    (RT_SPI_CPHA | RT_SPI_CPOL | RT_SPI_MSB)
+#define RT_SPI_MODE_MASK    (RT_SPI_CPHA | RT_SPI_CPOL | RT_SPI_MSB | RT_SPI_NO_CS)
 
 #define RT_SPI_CS_HIGH  (1<<4)                             /* Chipselect active high */
 #define RT_SPI_NO_CS    (1<<5)                             /* No chipselect */
