@@ -655,7 +655,7 @@ uint8_t BSP_LCD_Init(void)
 void BSP_LCD_DrawPixel(uint16_t Xpos, uint16_t Ypos, uint32_t RGB_Code)
 {
   /* Write data value to all SDRAM memory */
-  *(__IO uint32_t*) (LtdcHandler.LayerCfg[ActiveLayer].FBStartAdress + (4*(Ypos*240 + Xpos))) = RGB_Code;
+  *(__IO uint32_t*) (LtdcHandler.LayerCfg[ActiveLayer].FBStartAdress + (2*(Ypos*240 + Xpos))) = RGB_Code;
 }
 
 void BSP_LCD_DrawLine(uint32_t pixel, uint16_t X1, uint16_t Y1, uint16_t X2, uint16_t Y2)
@@ -926,7 +926,7 @@ static rt_err_t lcd_control(rt_device_t dev, int cmd, void *args)
 
 static void ili9341_lcd_set_pixel(const char* pixel, int x, int y)
 {
-	*(__IO uint32_t*) (LtdcHandler.LayerCfg[ActiveLayer].FBStartAdress + (4*(y * 240 + x))) = *(uint16_t *)pixel;
+	*(__IO uint16_t*)(LtdcHandler.LayerCfg[ActiveLayer].FBStartAdress + (2*(y * 240 + x))) = *(uint16_t *)pixel;
 }
 #ifdef RT_USING_FINSH
 static void lcd_set_pixel(uint16_t color, int x, int y)
@@ -1006,7 +1006,7 @@ static void ili9341_lcd_blit_line(const char* pixels, int x, int y, rt_size_t si
 {
 	int i = 0;
 	while(size--)
-	  *(__IO uint32_t*) (LtdcHandler.LayerCfg[ActiveLayer].FBStartAdress + (4*(y*240 + x + i++))) = *(uint16_t *)pixels++;
+	  *(__IO uint16_t*) (LtdcHandler.LayerCfg[ActiveLayer].FBStartAdress + (2*(y*240 + x + i++))) = *(uint16_t *)pixels++;
 }
 #ifdef RT_USING_FINSH
 #define LINE_LEN 30
