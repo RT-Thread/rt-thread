@@ -513,6 +513,7 @@ static void at_closed_notice_cb(int socket, at_socket_evt_t event, const char *b
     sock->state = AT_SOCKET_CLOSED;
     rt_sem_release(sock->recv_notice);
 }
+
 int at_connect(int socket, const struct sockaddr *name, socklen_t namelen)
 {
     struct at_socket *sock;
@@ -611,7 +612,13 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
         sock->state = AT_SOCKET_CONNECT;
     }
 
-    if (sock->state != AT_SOCKET_CONNECT)
+    /* socket passively closed, receive function return 0 */
+    if (sock->state == AT_SOCKET_CLOSED)
+    {
+        result = 0;
+        goto __exit;
+    }
+    else if (sock->state != AT_SOCKET_CONNECT)
     {
         LOG_E("received data error, current socket (%d) state (%d) is error.", socket, sock->state);
         result = -1;
@@ -664,7 +671,7 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
             else
             {
                 LOG_D("received data exit, current socket (%d) is closed by remote.", socket);
-                result = -1;
+                result = 0;
                 goto __exit;
             }
         }
@@ -672,17 +679,19 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
 
 __exit:
 
-    if (result < 0)
+    if (recv_len > 0)
     {
-        at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
+        result = recv_len;
+        at_do_event_changes(sock, AT_EVENT_RECV, RT_FALSE);
+
+        if (!rt_slist_isempty(&sock->recvpkt_list))
+        {
+            at_do_event_changes(sock, AT_EVENT_RECV, RT_TRUE);
+        }
     }
     else
     {
-        result = recv_len;
-        if (recv_len)
-        {
-            at_do_event_changes(sock, AT_EVENT_RECV, RT_FALSE);
-        }
+        at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
     }
 
     return result;

@@ -32,8 +32,8 @@
 extern "C" {
 #endif
 
-#define AT_SW_VERSION                  "1.0.1"
-#define AT_SW_VERSION_NUM              0x10000
+#define AT_SW_VERSION                  "1.1.0"
+#define AT_SW_VERSION_NUM              0x10100
 
 #define DBG_ENABLE
 #define DBG_SECTION_NAME               "AT"
@@ -231,7 +231,7 @@ int at_client_obj_wait_connect(at_client_t client, rt_uint32_t timeout);
 
 /* AT client send or receive data */
 rt_size_t at_client_obj_send(at_client_t client, const char *buf, rt_size_t size);
-rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size);
+rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size, rt_int32_t timeout);
 
 /* set AT client a line end sign */
 void at_obj_set_end_sign(at_client_t client, char ch);
@@ -263,7 +263,7 @@ int at_resp_parse_line_args_by_kw(at_response_t resp, const char *keyword, const
 #define at_exec_cmd(resp, ...)                   at_obj_exec_cmd(at_client_get_first(), resp, __VA_ARGS__)
 #define at_client_wait_connect(timeout)          at_client_obj_wait_connect(at_client_get_first(), timeout)
 #define at_client_send(buf, size)                at_client_obj_send(at_client_get_first(), buf, size)
-#define at_client_recv(buf, size)                at_client_obj_recv(at_client_get_first(), buf, size)
+#define at_client_recv(buf, size, timeout)       at_client_obj_recv(at_client_get_first(), buf, size, timeout)
 #define at_set_end_sign(ch)                      at_obj_set_end_sign(at_client_get_first(), ch)
 #define at_set_urc_table(urc_table, table_sz)    at_obj_set_urc_table(at_client_get_first(), urc_table, table_sz)
 
