@@ -26,10 +26,15 @@
  *                             dead thread.
  * 2016-08-09     ArdaFu       add method to get the handler of the idle thread.
  * 2018-02-07     Bernard      lock scheduler to protect tid->cleanup.
+ * 2018-07-14     armink       add idle hook list
  */
 
 #include <rthw.h>
 #include <rtthread.h>
+
+#ifdef RT_USING_MODULE
+#include <dlmodule.h>
+#endif
 
 #if defined (RT_USING_HOOK)
 #ifndef RT_USING_IDLE_HOOK
@@ -52,7 +57,12 @@ static rt_uint8_t rt_thread_stack[IDLE_THREAD_STACK_SIZE];
 extern rt_list_t rt_thread_defunct;
 
 #ifdef RT_USING_IDLE_HOOK
-static void (*rt_thread_idle_hook)();
+
+#ifndef RT_IDEL_HOOK_LIST_SIZE
+#define RT_IDEL_HOOK_LIST_SIZE          4
+#endif
+
+static void (*idle_hook_list[RT_IDEL_HOOK_LIST_SIZE])();
 
 /**
  * @ingroup Hook
@@ -61,12 +71,67 @@ static void (*rt_thread_idle_hook)();
  *
  * @param hook the specified hook function
  *
+ * @return RT_EOK: set OK
+ *         -RT_EFULL: hook list is full
+ *
  * @note the hook function must be simple and never be blocked or suspend.
  */
-void rt_thread_idle_sethook(void (*hook)(void))
+rt_err_t rt_thread_idle_sethook(void (*hook)(void))
 {
-    rt_thread_idle_hook = hook;
+    rt_size_t i;
+    rt_base_t level;
+    rt_err_t ret = -RT_EFULL;
+
+    /* disable interrupt */
+    level = rt_hw_interrupt_disable();
+
+    for (i = 0; i < RT_IDEL_HOOK_LIST_SIZE; i++)
+    {
+        if (idle_hook_list[i] == RT_NULL)
+        {
+            idle_hook_list[i] = hook;
+            ret = RT_EOK;
+            break;
+        }
+    }
+    /* enable interrupt */
+    rt_hw_interrupt_enable(level);
+
+    return ret;
 }
+
+/**
+ * delete the idle hook on hook list
+ *
+ * @param hook the specified hook function
+ *
+ * @return RT_EOK: delete OK
+ *         -RT_ENOSYS: hook was not found
+ */
+rt_err_t rt_thread_idle_delhook(void (*hook)(void))
+{
+    rt_size_t i;
+    rt_base_t level;
+    rt_err_t ret = -RT_ENOSYS;
+
+    /* disable interrupt */
+    level = rt_hw_interrupt_disable();
+
+    for (i = 0; i < RT_IDEL_HOOK_LIST_SIZE; i++)
+    {
+        if (idle_hook_list[i] == hook)
+        {
+            idle_hook_list[i] = RT_NULL;
+            ret = RT_EOK;
+            break;
+        }
+    }
+    /* enable interrupt */
+    rt_hw_interrupt_enable(level);
+
+    return ret;
+}
+
 #endif
 
 /* Return whether there is defunctional thread to be deleted. */
@@ -97,7 +162,7 @@ void rt_thread_idle_excute(void)
         rt_base_t lock;
         rt_thread_t thread;
 #ifdef RT_USING_MODULE
-        rt_module_t module = RT_NULL;
+        struct rt_dlmodule *module = RT_NULL;
 #endif
         RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -112,14 +177,10 @@ void rt_thread_idle_excute(void)
                                    struct rt_thread,
                                    tlist);
 #ifdef RT_USING_MODULE
-            /* get thread's parent module */
-            module = (rt_module_t)thread->module_id;
-
-            /* if the thread is module's main thread */
-            if (module != RT_NULL && module->module_thread == thread)
+            module = (struct rt_dlmodule*)thread->module_id;
+            if (module)
             {
-                /* detach module's main thread */
-                module->module_thread = RT_NULL;
+                dlmodule_destroy(module);
             }
 #endif
             /* remove defunct thread */
@@ -174,12 +235,20 @@ void rt_thread_idle_excute(void)
 
 static void rt_thread_idle_entry(void *parameter)
 {
+#ifdef RT_USING_IDLE_HOOK
+    rt_size_t i;
+#endif
+
     while (1)
     {
+
 #ifdef RT_USING_IDLE_HOOK
-        if (rt_thread_idle_hook != RT_NULL)
+        for (i = 0; i < RT_IDEL_HOOK_LIST_SIZE; i++)
         {
-            rt_thread_idle_hook();
+            if (idle_hook_list[i] != RT_NULL)
+            {
+                idle_hook_list[i]();
+            }
         }
 #endif
 

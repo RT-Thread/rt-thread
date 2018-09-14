@@ -1,4 +1,54 @@
-menu "Network stack"
+menu "Network"
+
+menu "Socket abstraction layer"
+    
+config RT_USING_SAL
+    bool "Enable socket abstraction layer"
+    default n
+
+    if RT_USING_SAL
+
+        if RT_USING_LWIP || AT_USING_SOCKET
+        
+            menu "protocol stack implement"
+
+                config SAL_USING_LWIP
+                    bool "Support lwIP stack"
+                    default y
+                    depends on RT_USING_LWIP
+
+                config SAL_USING_AT
+                    bool "Support AT Commands stack"
+                    default y
+                    depends on AT_USING_SOCKET
+            endmenu
+        
+        endif
+
+        config SAL_USING_POSIX
+            bool "Enable BSD socket operated by file system API"
+            default n
+            select RT_USING_DFS
+            select RT_USING_LIBC
+            select RT_USING_POSIX
+            help
+                Let BSD socket operated by file system API, such as read/write and involveed in select/poll POSIX APIs.
+                
+        if !SAL_USING_POSIX
+            
+            config SAL_SOCKETS_NUM
+                int "the maximum number of sockets"
+                default 16
+       
+        endif
+        
+        config SAL_PROTO_FAMILIES_NUM
+            int "the maximum number of protocol families"
+            default 4
+
+    endif
+
+endmenu
 
 menu "light weight TCP/IP stack"
 config RT_USING_LWIP
@@ -36,6 +86,7 @@ config RT_USING_LWIP
 
         config RT_LWIP_SNMP
             bool "SNMP protocol"
+            select RT_LWIP_STATS
             default n
 
         config RT_LWIP_DNS
@@ -194,14 +245,141 @@ config RT_USING_LWIP
             default n
 
         config LWIP_NETIF_LOOPBACK
-        	int
-        	default 1 if RT_LWIP_NETIF_LOOPBACK
-        	default 0 if !RT_LWIP_NETIF_LOOPBACK
+            int
+            default 1 if RT_LWIP_NETIF_LOOPBACK
+            default 0 if !RT_LWIP_NETIF_LOOPBACK
+
+        config RT_LWIP_STATS
+            bool "Enable lwIP statistics"
+            default n
+
+        menuconfig RT_LWIP_DEBUG
+            bool "Enable lwIP Debugging Options"
+            default n
+
+        if RT_LWIP_DEBUG
+
+            config RT_LWIP_SYS_DEBUG
+                bool "Enable Debugging of sys.c"
+                default n
+
+            config RT_LWIP_ETHARP_DEBUG
+                bool "Enable Debugging of etharp.c"
+                default n
+
+            config RT_LWIP_PPP_DEBUG
+                bool "Enable Debugging of PPP"
+                default n
+
+            config RT_LWIP_MEM_DEBUG
+                bool "Enable Debugging of mem.c"
+                default n
+
+            config RT_LWIP_MEMP_DEBUG
+                bool "Enable Debugging of memp.c"
+                default n
+
+            config RT_LWIP_PBUF_DEBUG
+                bool "Enable Debugging of pbuf.c"
+                default n
+
+            config RT_LWIP_API_LIB_DEBUG
+                bool "Enable Debugging of api_lib.c"
+                default n
+
+            config RT_LWIP_API_MSG_DEBUG
+                bool "Enable Debugging of api_msg.c"
+                default n
+
+            config RT_LWIP_TCPIP_DEBUG
+                bool "Enable Debugging of tcpip.c"
+                default n
+
+            config RT_LWIP_NETIF_DEBUG
+                bool "Enable Debugging of netif.c"
+                default n
+
+            config RT_LWIP_SOCKETS_DEBUG
+                bool "Enable Debugging of sockets.c"
+                default n
+
+            config RT_LWIP_DNS_DEBUG
+                bool "Enable Debugging of DNS"
+                default n
+
+            config RT_LWIP_AUTOIP_DEBUG
+                bool "Enable Debugging of autoip.c"
+                default n
+
+            config RT_LWIP_DHCP_DEBUG
+                bool "Enable Debugging of dhcp.c"
+                default n
+
+            config RT_LWIP_IP_DEBUG
+                bool "Enable Debugging of IP"
+                default n
+
+            config RT_LWIP_IP_REASS_DEBUG
+                bool "Enable debugging in ip_frag.c for both frag & reass"
+                default n
+
+            config RT_LWIP_ICMP_DEBUG
+                bool "Enable Debugging of icmp.c"
+                default n
+
+            config RT_LWIP_IGMP_DEBUG
+                bool "Enable Debugging of igmp.c"
+                default n
+
+            config RT_LWIP_UDP_DEBUG
+                bool "Enable Debugging of UDP"
+                default n
+
+            config RT_LWIP_TCP_DEBUG
+                bool "Enable Debugging of TCP"
+                default n
+
+            config RT_LWIP_TCP_INPUT_DEBUG
+                bool "Enable Debugging of tcp_in.c"
+                default n
+
+            config RT_LWIP_TCP_OUTPUT_DEBUG
+                bool "Enable Debugging of tcp_out.c"
+                default n
+
+            config RT_LWIP_TCP_RTO_DEBUG
+                bool "Enable debugging in TCP for retransmit"
+                default n
+
+            config RT_LWIP_TCP_CWND_DEBUG
+                bool "Enable debugging for TCP congestion window"
+                default n
+
+            config RT_LWIP_TCP_WND_DEBUG
+                bool "Enable debugging in tcp_in.c for window updating"
+                default n
+
+            config RT_LWIP_TCP_FR_DEBUG
+                bool "Enable debugging in tcp_in.c for fast retransmit"
+                default n
+
+            config RT_LWIP_TCP_QLEN_DEBUG
+                bool "Enable debugging for TCP queue lengths"
+                default n
+
+            config RT_LWIP_TCP_RST_DEBUG
+                bool "Enable debugging for TCP with the RST message"
+                default n
+
+        endif
+
     endif
 
 endmenu
 
 source "$RTT_DIR/components/net/freemodbus/Kconfig"
+
+source "$RTT_DIR/components/net/at/Kconfig"
 
 if RT_USING_LWIP
 
@@ -227,7 +405,6 @@ config LWIP_USING_DHCPD
                 default 1.1.1.1
         endif
     endif
-    
 
 endif
 

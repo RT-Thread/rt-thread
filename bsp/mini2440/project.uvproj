@@ -495,13 +495,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>module.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/module.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../src/object.c</FilePath>

@@ -43,7 +43,7 @@
 
 // #define DEBUG_ENABLE
 #define DEBUG_LEVEL         DBG_LOG
-#define DBG_SECTION_NAME    "[UART]"
+#define DBG_SECTION_NAME    "UART"
 #define DEBUG_COLOR
 #include <rtdbg.h>
 
@@ -393,7 +393,7 @@ static void rt_dma_recv_update_get_index(struct rt_serial_device *serial, rt_siz
     if (rx_fifo->is_full && len != 0) rx_fifo->is_full = RT_FALSE;
 
     rx_fifo->get_index += len;
-    if (rx_fifo->get_index > serial->config.bufsz)
+    if (rx_fifo->get_index >= serial->config.bufsz)
     {
         rx_fifo->get_index %= serial->config.bufsz;
     }
@@ -1180,7 +1180,10 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
                     (serial->config.bufsz - (rx_fifo->get_index - rx_fifo->put_index));
                 rt_hw_interrupt_enable(level);
 
-                serial->parent.rx_indicate(&serial->parent, rx_length);
+                if (rx_length)
+                {
+                    serial->parent.rx_indicate(&serial->parent, rx_length);
+                }
             }
             break;
         }

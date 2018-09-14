@@ -310,7 +310,7 @@ static void uart_isr(struct rt_serial_device *serial)
     }
     if (USART_GetFlagStatus(uart->uart_device, USART_FLAG_ORE) == SET)
     {
-        stm32_getc(serial);
+        USART_ReceiveData(uart->uart_device);
     }
 }
 

@@ -359,7 +359,7 @@
               <MiscControls />
               <Define>USE_HAL_DRIVER, RT_USING_ARM_LIBC, STM32F429xx</Define>
               <Undefine />
-              <IncludePath>applications;.;drivers;Libraries\STM32F4xx_HAL_Driver\Inc;Libraries\CMSIS\Device\ST\STM32F4xx\Include;Libraries\CMSIS\Include;..\..\include;..\..\libcpu\arm\cortex-m4;..\..\libcpu\arm\common;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\dfs\filesystems\elmfat;..\..\components\dfs\filesystems\net;..\..\components\dfs\filesystems\net\socket;..\..\components\dfs\filesystems\romfs;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\spi\sfud\inc;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\armlibc;..\..\components\net\lwip-2.0.2\src;..\..\components\net\lwip-2.0.2\src\include;..\..\components\net\lwip-2.0.2\src\include\ipv4;..\..\components\net\lwip-2.0.2\src\arch\include;..\..\components\net\lwip-2.0.2\src\include\netif</IncludePath>
+              <IncludePath>applications;.;drivers;Libraries\STM32F4xx_HAL_Driver\Inc;Libraries\CMSIS\Device\ST\STM32F4xx\Include;Libraries\CMSIS\Include;..\..\include;..\..\libcpu\arm\cortex-m4;..\..\libcpu\arm\common;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\dfs\filesystems\elmfat;..\..\components\dfs\filesystems\romfs;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\spi\sfud\inc;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\armlibc;..\..\components\net\lwip-2.0.2\src;..\..\components\net\lwip-2.0.2\src\include;..\..\components\net\lwip-2.0.2\src\include\ipv4;..\..\components\net\lwip-2.0.2\src\arch\include;..\..\components\net\lwip-2.0.2\src\include\netif;..\..\components\net\sal_socket\include;..\..\components\net\sal_socket\include\socket;..\..\components\net\sal_socket\impl;..\..\components\net\sal_socket\include\dfs_net;..\..\components\net\sal_socket\include\dfs_net\sys_select;..\..\components\net\sal_socket\include\socket\sys_socket</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -483,16 +483,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_i2c.c</FileName>
+              <FileName>drv_pcf8574.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_i2c.c</FilePath>
+              <FilePath>drivers\drv_pcf8574.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>drv_pcf8574.c</FileName>
+              <FileName>drv_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_pcf8574.c</FilePath>
+              <FilePath>drivers\drv_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -507,13 +507,6 @@
               <FileName>drv_spi_flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_spi_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drivers_drv_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_i2c.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1216,27 +1209,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>dfs_net.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\net\dfs_net.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>net_netdb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\net\net_netdb.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>net_sockets.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\net\net_sockets.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>dfs_romfs.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\dfs\filesystems\romfs\dfs_romfs.c</FilePath>
@@ -1485,13 +1457,6 @@
               <FileName>libc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\armlibc\libc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>libc_syms.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\libc_syms.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1775,6 +1740,51 @@
               <FileName>ip4_frag.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip-2.0.2\src\core\ipv4\ip4_frag.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>SAL</GroupName>
+          <Files>
+            <File>
+              <FileName>sal_ipaddr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\sal_socket\src\sal_ipaddr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>sal_socket.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\sal_socket\src\sal_socket.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>net_netdb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\sal_socket\socket\net_netdb.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>af_inet_lwip.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\sal_socket\impl\af_inet_lwip.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>net_sockets.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\sal_socket\socket\net_sockets.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dfs_net.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\sal_socket\dfs_net\dfs_net.c</FilePath>
             </File>
           </Files>
         </Group>

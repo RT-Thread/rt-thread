@@ -584,38 +584,6 @@ FINSH_FUNCTION_EXPORT(list_device, list device in system);
 MSH_CMD_EXPORT(list_device, list device in system);
 #endif
 
-#ifdef RT_USING_MODULE
-#include <rtm.h>
-
-int list_module(void)
-{
-    int maxlen;
-    struct rt_module *module;
-    struct rt_list_node *list, *node;
-    struct rt_object_information *info;
-    const char *item_title = "module";
-
-    info = rt_object_get_information(RT_Object_Class_Module);
-    list = &info->object_list;
-
-    maxlen = object_name_maxlen(item_title, list);
-
-    rt_kprintf("%-*.s ref      address \n", maxlen, item_title); object_split(maxlen);
-    rt_kprintf(         " -------- ------------\n");
-    for (node = list->next; node != list; node = node->next)
-    {
-        module = (struct rt_module *)(rt_list_entry(node, struct rt_object, list));
-        rt_kprintf("%-*.*s %-04d  0x%08x\n",
-                   maxlen, RT_NAME_MAX,
-                   module->parent.name, module->nref, module->module_space);
-    }
-
-    return 0;
-}
-FINSH_FUNCTION_EXPORT(list_module, list module in system);
-MSH_CMD_EXPORT(list_module, list module in system);
-#endif
-
 long list(void)
 {
 #ifndef FINSH_USING_MSH_ONLY

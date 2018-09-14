@@ -541,7 +541,7 @@ int pipe(int fildes[2])
     fildes[1] = open(dev_name, O_WRONLY, 0);
     if (fildes[1] < 0)
     {
-        close(fildes[1]);
+        close(fildes[0]);
         return -1;
     }
 

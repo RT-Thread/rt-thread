@@ -40,7 +40,7 @@ if PLATFORM == 'gcc':
         DEVICE = ' -mcpu=ck802'
 
     CFLAGS  = DEVICE + '  -DCONFIG_CPU_CK802 -c -g -ffunction-sections -Wall -mistack -mlittle-endian'
-    AFLAGS  = ' -c' + DEVICE + ' -EL -x assembler-with-cpp -save-temps=ojb'
+    AFLAGS  = ' -c' + DEVICE + ' -EL -x assembler-with-cpp'
     LFLAGS  = DEVICE + ' -EL -Wl,--gc-sections,-Map=rtthread_ck802.map,-cref,-u,Reset_Handler -T gcc_csky.ld'
     CPATH   = ''
     LPATH   = ''

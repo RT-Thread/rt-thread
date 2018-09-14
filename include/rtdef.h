@@ -36,6 +36,7 @@
  * 2018-02-24     Bernard      change version number to v3.0.3
  * 2018-04-25     Bernard      change version number to v3.0.4
  * 2018-05-31     Bernard      change version number to v3.1.0
+ * 2018-09-04     Bernard      change version number to v3.1.1
  */
 
 #ifndef __RT_DEF_H__
@@ -57,7 +58,7 @@ extern "C" {
 /* RT-Thread version information */
 #define RT_VERSION                      3L              /**< major version number */
 #define RT_SUBVERSION                   1L              /**< minor version number */
-#define RT_REVISION                     0L              /**< revise version number */
+#define RT_REVISION                     1L              /**< revise version number */
 
 /* RT-Thread version */
 #define RTTHREAD_VERSION                ((RT_VERSION * 10000) + \
@@ -189,13 +190,13 @@ typedef int (*init_fn_t)(void);
             const char* fn_name;
             const init_fn_t fn;
         };
-        #define INIT_EXPORT(fn, level)          \
-            const char __rti_##fn##_name[] = #fn; \
-            const struct rt_init_desc __rt_init_desc_##fn SECTION(".rti_fn."level) = \
+        #define INIT_EXPORT(fn, level)                                                       \
+            const char __rti_##fn##_name[] = #fn;                                            \
+            RT_USED const struct rt_init_desc __rt_init_desc_##fn SECTION(".rti_fn."level) = \
             { __rti_##fn##_name, fn};
     #else
-        #define INIT_EXPORT(fn, level)  \
-            const init_fn_t __rt_init_##fn SECTION(".rti_fn."level) = fn
+        #define INIT_EXPORT(fn, level)                                                       \
+            RT_USED const init_fn_t __rt_init_##fn SECTION(".rti_fn."level) = fn
     #endif
 #endif
 #else
@@ -556,7 +557,12 @@ struct rt_thread
 
     void (*cleanup)(struct rt_thread *tid);             /**< cleanup function when thread exit */
 
-    rt_uint32_t user_data;                              /**< private user data beyond this thread */
+    /* light weight process if present */
+#ifdef RT_USING_LWP
+    void        *lwp;
+#endif
+
+    rt_uint32_t user_data;                             /**< private user data beyond this thread */
 };
 typedef struct rt_thread *rt_thread_t;
 
@@ -1009,59 +1015,6 @@ struct rt_device_graphic_ops
     void (*blit_line) (const char *pixel, int x, int y, rt_size_t size);
 };
 #define rt_graphix_ops(device)          ((struct rt_device_graphic_ops *)(device->user_data))
-
-/*@}*/
-#endif
-
-#ifdef RT_USING_MODULE
-/**
- * @addtogroup Module
- */
-
-/*@{*/
-
-/*
- * module system
- */
-
-#define RT_MODULE_FLAG_WITHENTRY        0x00            /**< with entry point */
-#define RT_MODULE_FLAG_WITHOUTENTRY     0x01            /**< without entry point */
-
-/**
- * Application Module structure
- */
-struct rt_module
-{
-    struct rt_object             parent;                /**< inherit from object */
-
-    rt_uint32_t                  vstart_addr;           /**< VMA base address for the
-                                                          first LOAD segment. */
-    rt_uint8_t                  *module_space;          /**< module memory space */
-
-    void                        *module_entry;          /**< the entry address of module */
-    rt_thread_t                  module_thread;         /**< the main thread of module */
-
-    rt_uint8_t                  *module_cmd_line;       /**< module command line */
-    rt_uint32_t                  module_cmd_size;       /**< the size of module command line */
-
-#ifdef RT_USING_SLAB
-    /* module memory allocator */
-    void                        *mem_list;              /**< module's free memory list */
-    void                        *page_array;            /**< module's using pages */
-    rt_uint32_t                  page_cnt;              /**< module's using pages count */
-#endif
-
-    rt_uint16_t                  nref;                  /**< reference count */
-
-    rt_uint16_t                  nsym;                  /**< number of symbol in the module */
-    struct rt_module_symtab     *symtab;                /**< module symbol table */
-
-    rt_uint32_t                  user_data;             /**< arch data in the module */
-
-    void (*module_init)(void);
-    void (*module_cleanup)(void);
-};
-typedef struct rt_module *rt_module_t;
 
 /*@}*/
 #endif

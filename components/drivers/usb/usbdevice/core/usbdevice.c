@@ -78,11 +78,13 @@ static struct usb_qualifier_descriptor dev_qualifier =
 struct usb_os_comp_id_descriptor usb_comp_id_desc = 
 {
     //head section
-    USB_DYNAMIC,
-    0x0100,
-    0x04,
-    USB_DYNAMIC,
-    {0x00,0x00,0x00,0x00,0x00,0x00,0x00},
+    {
+        USB_DYNAMIC,
+        0x0100,
+        0x04,
+        USB_DYNAMIC,
+        {0x00,0x00,0x00,0x00,0x00,0x00,0x00},
+    },
 };
 static rt_list_t class_list;
 int rt_usbd_class_list_init(void)

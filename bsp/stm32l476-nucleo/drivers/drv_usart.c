@@ -24,11 +24,13 @@
 * 2016-01-15     ArdaFu       the first version for stm32f4xx with STM32 HAL
 * 2016-01-15     zyh          the first version for stm32f401rc with STM32 HAL
 */
+
 #include "drv_usart.h"
 #include "board.h"
 #include <rtdevice.h>
 #include <rthw.h>
 #include <rtthread.h>
+
 /* STM32 uart driver */
 struct drv_uart
 {
@@ -40,14 +42,17 @@ static rt_err_t drv_configure(struct rt_serial_device *serial,
                               struct serial_configure *cfg)
 {
     struct drv_uart *uart;
+
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
+
     uart = (struct drv_uart *)serial->parent.user_data;
     uart->UartHandle.Init.BaudRate   = cfg->baud_rate;
     uart->UartHandle.Init.HwFlowCtl  = UART_HWCONTROL_NONE;
     uart->UartHandle.Init.Mode       = UART_MODE_TX_RX;
     uart->UartHandle.Init.OverSampling = UART_OVERSAMPLING_16;
     uart->UartHandle.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+
     switch (cfg->data_bits)
     {
     case DATA_BITS_8:
@@ -60,6 +65,7 @@ static rt_err_t drv_configure(struct rt_serial_device *serial,
         uart->UartHandle.Init.WordLength = UART_WORDLENGTH_8B;
         break;
     }
+
     switch (cfg->stop_bits)
     {
     case STOP_BITS_1:
@@ -72,6 +78,7 @@ static rt_err_t drv_configure(struct rt_serial_device *serial,
         uart->UartHandle.Init.StopBits   = UART_STOPBITS_1;
         break;
     }
+
     switch (cfg->parity)
     {
     case PARITY_NONE:
@@ -87,10 +94,12 @@ static rt_err_t drv_configure(struct rt_serial_device *serial,
         uart->UartHandle.Init.Parity     = UART_PARITY_NONE;
         break;
     }
+
     if (HAL_UART_Init(&uart->UartHandle) != HAL_OK)
     {
         return RT_ERROR;
     }
+
     return RT_EOK;
 }
 
@@ -98,8 +107,11 @@ static rt_err_t drv_control(struct rt_serial_device *serial,
                             int cmd, void *arg)
 {
     struct drv_uart *uart;
+
     RT_ASSERT(serial != RT_NULL);
+
     uart = (struct drv_uart *)serial->parent.user_data;
+
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
@@ -108,6 +120,7 @@ static rt_err_t drv_control(struct rt_serial_device *serial,
         /* disable interrupt */
         __HAL_UART_DISABLE_IT(&uart->UartHandle, UART_IT_RXNE);
         break;
+
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
         HAL_NVIC_SetPriority(uart->irq, 5, 0);
@@ -116,16 +129,21 @@ static rt_err_t drv_control(struct rt_serial_device *serial,
         __HAL_UART_ENABLE_IT(&uart->UartHandle, UART_IT_RXNE);
         break;
     }
+
     return RT_EOK;
 }
 
 static int drv_putc(struct rt_serial_device *serial, char c)
 {
     struct drv_uart *uart;
+
     RT_ASSERT(serial != RT_NULL);
+
     uart = (struct drv_uart *)serial->parent.user_data;
+
     while ((__HAL_UART_GET_FLAG(&uart->UartHandle, UART_FLAG_TXE) == RESET));
     uart->UartHandle.Instance->TDR = c;
+
     return 1;
 }
 
@@ -133,11 +151,15 @@ static int drv_getc(struct rt_serial_device *serial)
 {
     int ch;
     struct drv_uart *uart;
+
     RT_ASSERT(serial != RT_NULL);
+
     uart = (struct drv_uart *)serial->parent.user_data;
+
     ch = -1;
     if (__HAL_UART_GET_FLAG(&uart->UartHandle, UART_FLAG_RXNE) != RESET)
         ch = uart->UartHandle.Instance->RDR & 0xff;
+
     return ch;
 }
 

@@ -269,6 +269,10 @@ int dfs_elm_mkfs(rt_device_t dev_id)
             f_mount(fat, logic_nbr, (BYTE)index);
         }
     }
+    else
+    {
+        logic_nbr[0] = '0' + index;
+    }
 
     /* [IN] Logical drive number */
     /* [IN] Format options */

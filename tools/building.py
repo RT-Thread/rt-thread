@@ -115,7 +115,7 @@ class Win32Spawn:
 # generate cconfig.h file
 def GenCconfigFile(env, BuildOptions):
     import rtconfig
-    
+
     if rtconfig.PLATFORM == 'gcc':
         contents = ''
         if not os.path.isfile('cconfig.h'):
@@ -147,21 +147,16 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     global Rtt_Root
 
     # ===== Add option to SCons =====
-    AddOption('--copy',
-                      dest = 'copy',
-                      action = 'store_true',
-                      default = False,
-                      help = 'copy rt-thread directory to local.')
-    AddOption('--copy-header',
-                      dest = 'copy-header',
-                      action = 'store_true',
-                      default = False,
-                      help = 'copy header of rt-thread directory to local.')
     AddOption('--dist',
                       dest = 'make-dist',
                       action = 'store_true',
                       default = False,
                       help = 'make distribution')
+    AddOption('--dist-strip',
+                      dest = 'make-dist-strip',
+                      action = 'store_true',
+                      default = False,
+                      help = 'make distribution and strip useless files')
     AddOption('--cscope',
                       dest = 'cscope',
                       action = 'store_true',
@@ -339,6 +334,16 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             from menuconfig import menuconfig
             menuconfig(Rtt_Root)
             exit(0)
+
+    AddOption('--pyconfig',
+                dest = 'pyconfig',
+                action = 'store_true',
+                default = False,
+                help = 'make menuconfig for RT-Thread BSP')
+    if GetOption('pyconfig'):
+        from menuconfig import pyconfig
+        pyconfig(Rtt_Root)
+        exit(0)
 
     configfn = GetOption('useconfig')
     if configfn:
@@ -585,14 +590,6 @@ def DefineGroup(name, src, depend, **parameters):
             if os.path.exists(fn):
                 os.unlink(fn)
 
-    # check whether exist group library
-    if not GetOption('buildlib') and os.path.exists(os.path.join(group['path'], GroupLibFullName(name, Env))):
-        group['src'] = []
-        if group.has_key('LIBS'): group['LIBS'] = group['LIBS'] + [GroupLibName(name, Env)]
-        else : group['LIBS'] = [GroupLibName(name, Env)]
-        if group.has_key('LIBPATH'): group['LIBPATH'] = group['LIBPATH'] + [GetCurrentDir()]
-        else : group['LIBPATH'] = [GetCurrentDir()]
-
     if group.has_key('LIBS'):
         Env.AppendUnique(LIBS = group['LIBS'])
     if group.has_key('LIBPATH'):
@@ -721,7 +718,7 @@ def DoBuilding(target, objects):
         program = Env.Program(target, objects)
 
     EndBuilding(target, program)
-        
+
 def GenTargetProject(program = None):
 
     if GetOption('target') == 'mdk':
@@ -797,17 +794,12 @@ def EndBuilding(target, program = None):
         GenTargetProject(program)
 
     BSP_ROOT = Dir('#').abspath
-    if GetOption('copy') and program != None:
-        from mkdist import MakeCopy
-        MakeCopy(program, BSP_ROOT, Rtt_Root, Env)
-        need_exit = True
-    if GetOption('copy-header') and program != None:
-        from mkdist import MakeCopyHeader
-        MakeCopyHeader(program, BSP_ROOT, Rtt_Root, Env)
-        need_exit = True
     if GetOption('make-dist') and program != None:
         from mkdist import MkDist
         MkDist(program, BSP_ROOT, Rtt_Root, Env)
+    if GetOption('make-dist-strip') and program != None:
+        from mkdist import MkDist_Strip
+        MkDist_Strip(program, BSP_ROOT, Rtt_Root, Env)
         need_exit = True
     if GetOption('cscope'):
         from cscope import CscopeDatabase
