@@ -59,7 +59,7 @@ static int at_poll(struct dfs_fd *file, struct rt_pollreq *req)
         {
             mask |= POLLIN;
         }
-        if (sock->sendevent)
+        if ((sock->sendevent)||(sock->state== AT_SOCKET_CONNECT))
         {
             mask |= POLLOUT;
         }
