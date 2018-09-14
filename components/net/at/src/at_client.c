@@ -425,17 +425,22 @@ rt_size_t at_client_obj_send(at_client_t client, const char *buf, rt_size_t size
     return rt_device_write(client->device, 0, buf, size);
 }
 
-static char at_client_getchar(at_client_t client)
+static rt_err_t at_client_getchar(at_client_t client, char *ch, rt_int32_t timeout)
 {
-    char ch;
+    rt_err_t result = RT_EOK;
 
-    while (rt_device_read(client->device, 0, &ch, 1) == 0)
+    while (rt_device_read(client->device, 0, ch, 1) == 0)
     {
         rt_sem_control(client->rx_notice, RT_IPC_CMD_RESET, RT_NULL);
-        rt_sem_take(client->rx_notice, RT_WAITING_FOREVER);
+
+        result = rt_sem_take(client->rx_notice, rt_tick_from_millisecond(timeout));
+        if (result != RT_EOK)
+        {
+            return result;
+        }
     }
 
-    return ch;
+    return RT_EOK;
 }
 
 /**
@@ -444,15 +449,17 @@ static char at_client_getchar(at_client_t client)
  * @param client current AT client object
  * @param buf   receive data buffer
  * @param size  receive fixed data size
+ * @param timeout  receive data timeout (ms)
  *
  * @note this function can only be used in execution function of URC data
  *
  * @return >0: receive data size
  *         =0: receive failed
  */
-rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size)
+rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size, rt_int32_t timeout)
 {
     rt_size_t read_idx = 0;
+    rt_err_t result = RT_EOK;
     char ch;
 
     RT_ASSERT(buf);
@@ -467,7 +474,12 @@ rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size)
     {
         if (read_idx < size)
         {
-            ch = at_client_getchar(client);
+            result = at_client_getchar(client, &ch, timeout);
+            if (result != RT_EOK)
+            {
+                LOG_E("AT Client receive failed, uart device get data error(%d)", result);
+                return 0;
+            }
 
             buf[read_idx++] = ch;
         }
@@ -610,7 +622,7 @@ static int at_recv_readline(at_client_t client)
 
     while (1)
     {
-        ch = at_client_getchar(client);
+        at_client_getchar(client, &ch, RT_WAITING_FOREVER);
 
         if (read_len < client->recv_bufsz)
         {
