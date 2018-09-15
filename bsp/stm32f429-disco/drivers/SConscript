@@ -10,6 +10,7 @@ board.c
 stm32f4xx_it.c
 usart.c
 drv_sdram.c
+drv_lcd.c
 """)
 
 CPPPATH = [cwd]

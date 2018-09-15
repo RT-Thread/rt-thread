@@ -62,7 +62,6 @@ LTDC_HandleTypeDef  LtdcHandler;
 static RCC_PeriphCLKInitTypeDef  PeriphClkInitStruct;
 /* Default LCD configuration with LCD Layer 1 */
 static uint32_t ActiveLayer = 0;
-//LCD_DrvTypeDef  *LcdDrv;
 SPI_HandleTypeDef hspi5;
 static SPI_HandleTypeDef SpiHandle;
 
