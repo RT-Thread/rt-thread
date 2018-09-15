@@ -304,14 +304,11 @@ int system(const char *string)
 }
 #endif
 
-#ifdef __MICROLIB
 #include <stdio.h>
 
 int fputc(int c, FILE *f) 
 {
-    char ch = c;
-
-    rt_kprintf(&ch);
+    rt_kprintf((char*)&c);
     return 1;
 }
 
@@ -326,4 +323,3 @@ int fgetc(FILE *f)
 
     return -1;
 }
-#endif
