@@ -138,8 +138,10 @@ void HAL_Delay(__IO uint32_t Delay)
  */
 void rt_hw_board_init()
 {
-	  rt_device_t lcd;
-	
+#ifdef PKG_USING_GUIENGINE
+    rt_device_t lcd;
+#endif
+
     HAL_Init();
 
     SystemClock_Config();
@@ -154,8 +156,8 @@ void rt_hw_board_init()
     rt_console_set_device(CONSOLE_DEVICE);
 #endif
 	
-#ifdef RT_USING_CONSOLE
-	  lcd = rt_device_find("lcd");
+#ifdef PKG_USING_GUIENGINE
+    lcd = rt_device_find("lcd");
     rtgui_graphic_set_device(lcd);
 #endif
 	
