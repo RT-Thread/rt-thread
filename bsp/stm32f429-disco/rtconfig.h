@@ -133,13 +133,6 @@
 
 /* system packages */
 
-#define PKG_USING_GUIENGINE
-#define PKG_USING_GUIENGINE_LATEST_VERSION
-#define GUIENGINE_NAME_MAX 16
-#define GUIENGINE_USING_FONT16
-#define GUIENGINE_USING_FONT12
-#define GUIENGINE_IMAGE_CONTAINER
-#define GUIENGINE_USING_DEMO
 
 /* peripheral libraries and drivers */
 
