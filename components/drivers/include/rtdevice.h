@@ -117,6 +117,10 @@ extern "C" {
 #include "drivers/rt_drv_pwm.h"
 #endif
 
+#ifdef RT_USING_WIFI
+#include "drivers/wlan.h"
+#endif
+
 #ifdef __cplusplus
 }
 #endif
