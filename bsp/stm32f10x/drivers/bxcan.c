@@ -527,13 +527,13 @@ static rt_err_t bxcancalcbaseoff(struct stm_bxcan *pbxcan, rt_int32_t hdr,
     {
         *pbase = 0;
         ptr = 0;
-	hdr -= fifo0start; 
+        hdr -= fifo0start; 
     }
     else if (hdr >= fifo1start && hdr < fifo1end)
     {
         *pbase = pbxcan->fifo1filteroff;
         ptr = 1;
-	hdr -= fifo1start; 
+        hdr -= fifo1start; 
     }
     else
     {
