@@ -25,7 +25,7 @@
 #include <board.h>
 
 
-#define SDRAM_BANK_ADDR                 ((uint32_t)0xD0000000)
+#define SDRAM_BANK_ADDR                 ((uint32_t)0xD0030000)    /*0xD0000000-0xD002FFFF used for LCD framebuffer*/
 
 /* #define SDRAM_MEMORY_WIDTH            FMC_SDRAM_MEM_BUS_WIDTH_8 */
 #define SDRAM_MEMORY_WIDTH            FMC_SDRAM_MEM_BUS_WIDTH_16
