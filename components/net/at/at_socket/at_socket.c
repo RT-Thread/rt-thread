@@ -200,7 +200,7 @@ static void at_do_event_changes(struct at_socket *sock, at_event_t event, rt_boo
     {
         if (is_plus)
         {
-            sock->sendevent++;
+            sock->sendevent = 1;
 
 #ifdef SAL_USING_POSIX
             rt_wqueue_wakeup(&sock->wait_head, (void*) POLLOUT);
@@ -209,7 +209,7 @@ static void at_do_event_changes(struct at_socket *sock, at_event_t event, rt_boo
         }
         else if (sock->sendevent)
         {
-            sock->sendevent --;
+            sock->sendevent = 0;
         }
         break;
     }
@@ -245,6 +245,30 @@ static void at_do_event_changes(struct at_socket *sock, at_event_t event, rt_boo
         {
             sock->errevent --;
         }
+        break;
+    }
+    default:
+        LOG_E("Not supported event (%d)", event);
+    }
+}
+
+static void at_do_event_clean(struct at_socket *sock, at_event_t event)
+{
+    switch (event)
+    {
+    case AT_EVENT_SEND:
+    {
+        sock->sendevent = 0;
+        break;
+    }
+    case AT_EVENT_RECV:
+    {
+        sock->rcvevent = 0;
+        break;
+    }
+    case AT_EVENT_ERROR:
+    {
+        sock->errevent = 0;
         break;
     }
     default:
@@ -565,6 +589,8 @@ __exit:
         at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
     }
 
+    at_do_event_changes(sock, AT_EVENT_SEND, RT_TRUE);
+    
     return result;
 }
 
@@ -687,6 +713,10 @@ __exit:
         if (!rt_slist_isempty(&sock->recvpkt_list))
         {
             at_do_event_changes(sock, AT_EVENT_RECV, RT_TRUE);
+        }
+        else
+        {
+            at_do_event_clean(sock, AT_EVENT_RECV);
         }
     }
     else
