@@ -47,7 +47,7 @@ enum mtd_opm
 };
 
 #ifndef loff_t
-typedef uint32_t loff_t;
+typedef long loff_t;
 #endif
 
 struct mtd_oob_region
