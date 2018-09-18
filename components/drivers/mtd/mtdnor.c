@@ -80,6 +80,7 @@ int rt_mtd_nor_init(rt_nor_t *nor, int blksize)
     nor->parent.block_size = blksize;
     nor->parent.ops = &_ops;
     nor->parent.type = MTD_TYPE_NOR;
+    nor->parent.oob_size = 0;
 
     return 0;
 }

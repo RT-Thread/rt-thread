@@ -89,8 +89,6 @@ typedef struct nand_chip
     /* driver must init these */
     const struct nand_ops *ops;
     struct nand_ecc ecc;
-    uint16_t oobsize:12;
-    uint16_t nchip:4;
     const struct mtd_oob_region *freelayout;
 
     /* driver do not touch */
@@ -98,6 +96,7 @@ typedef struct nand_chip
     uint8_t *oob_poi;
     uint8_t *pagebuf;
     uint32_t size;
+    uint16_t oobsize;
     uint8_t pages_pb;
     uint16_t page_size;
     int(*read_page)(struct nand_chip *chip, uint8_t *buf, int oob_required, int page);
@@ -114,6 +113,6 @@ struct nand_ops
     int(*markbad)(rt_nand_t *nand, uint32_t blk); /* if NULL OOB[0] used as bad mark(set to 0x00) */
 };
 
-int rt_mtd_nand_init(rt_nand_t *nand, int blk_size, int page_size, int blks_pc);
+int rt_mtd_nand_init(rt_nand_t *nand, int blk_size, int page_size, int blks_pc, int oob_size);
 
 #endif /* MTD_NAND_H_ */

@@ -62,6 +62,7 @@ typedef struct mtd_info
 
     const struct mtd_ops *ops;
 
+    uint16_t oob_size;
     uint16_t sector_size;   /* Minimal writable flash unit size */
     uint32_t block_size:28; /* Erase size for the device */
     uint32_t type:4;
