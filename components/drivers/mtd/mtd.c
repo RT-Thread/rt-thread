@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/*
+ * File       : mtd.c
+ *
+ * Change Logs:
+ * Date           Author        Notes
+   2018-09-10     heyuanjie87   first version
+
+ */
+
 #include <drivers/mtd.h>
 
 static rt_mtd_t* mtd_part_alloc(rt_mtd_t *master, const struct mtd_part *part)
