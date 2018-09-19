@@ -14,7 +14,11 @@
 #include <wlan_prot.h>
 
 #define DBG_ENABLE
+#ifdef RT_WLAN_DEV_DEBUG
+#define DBG_LEVEL DBG_LOG
+#else
 #define DBG_LEVEL DBG_INFO
+#endif
 #define DBG_SECTION_NAME  "WLAN.dev"
 #define DBG_COLOR
 #include <rtdbg.h>
@@ -25,6 +29,22 @@
 
 #define WLAN_DEV_LOCK(_wlan)      (rt_mutex_take(&(_wlan)->lock, RT_WAITING_FOREVER))
 #define WLAN_DEV_UNLOCK(_wlan)    (rt_mutex_release(&(_wlan)->lock))
+
+#if RT_WLAN_SSID_MAX_LENGTH < 1
+#error "SSID length is too short"
+#endif
+
+#if RT_WLAN_BSSID_MAX_LENGTH < 1
+#error "BSSID length is too short"
+#endif
+
+#if RT_WLAN_PASSWORD_MAX_LENGTH < 1
+#error "password length is too short"
+#endif
+
+#if RT_WLAN_DEV_EVENT_NUM < 2
+#error "dev num Too little"
+#endif
 
 rt_err_t rt_wlan_dev_init(struct rt_wlan_device *device, rt_wlan_mode_t mode)
 {
@@ -137,7 +157,7 @@ rt_err_t rt_wlan_dev_ap_start(struct rt_wlan_device *device, struct rt_wlan_info
 
 rt_err_t rt_wlan_dev_ap_stop(struct rt_wlan_device *device)
 {
-    rt_err_t result = 0;
+    rt_err_t result = RT_EOK;
 
     if (device == RT_NULL)
     {
@@ -150,7 +170,7 @@ rt_err_t rt_wlan_dev_ap_stop(struct rt_wlan_device *device)
 
 rt_err_t rt_wlan_dev_ap_deauth(struct rt_wlan_device *device, rt_uint8_t mac[6])
 {
-    rt_err_t result = 0;
+    rt_err_t result = RT_EOK;
 
     if (device == RT_NULL)
     {
@@ -176,7 +196,7 @@ int rt_wlan_dev_get_rssi(struct rt_wlan_device *device)
 
 rt_err_t rt_wlan_dev_get_mac(struct rt_wlan_device *device, rt_uint8_t mac[6])
 {
-    rt_err_t result = 0;
+    rt_err_t result = RT_EOK;
 
     if (device == RT_NULL)
     {
@@ -200,32 +220,31 @@ rt_err_t rt_wlan_dev_set_mac(struct rt_wlan_device *device, rt_uint8_t mac[6])
     return result;
 }
 
-rt_err_t rt_wlan_dev_enable_powersave(struct rt_wlan_device *device)
+rt_err_t rt_wlan_dev_set_powersave(struct rt_wlan_device *device, int level)
 {
     rt_err_t result = RT_EOK;
-    int enable = 1;
 
     if (device == RT_NULL)
     {
         return -RT_EIO;
     }
 
-    result = rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_POWERSAVE, &enable);
+    result = rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_SET_POWERSAVE, &level);
     return result;
 }
 
-rt_err_t rt_wlan_dev_disable_powersave(struct rt_wlan_device *device)
+int rt_wlan_dev_get_powersave(struct rt_wlan_device *device)
 {
-    rt_err_t result = RT_EOK;
-    int enable = 0;
+    int level = 0;
 
     if (device == RT_NULL)
     {
-        return -RT_EIO;
+        return -1;
     }
 
-    result = rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_POWERSAVE, &enable);
-    return result;
+    rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_GET_POWERSAVE, &level);
+
+    return level;
 }
 
 rt_err_t rt_wlan_dev_register_event_handler(struct rt_wlan_device *device, rt_wlan_dev_event_t event, rt_wlan_dev_event_handler handler, void *parameter)
@@ -279,7 +298,7 @@ rt_err_t rt_wlan_dev_unregister_event_handler(struct rt_wlan_device *device, rt_
         if (device->handler_table[event][i].handler == handler)
         {
             rt_memset(&device->handler_table[event][i], 0, sizeof(struct rt_wlan_dev_event_desc));
-            rt_exit_critical();
+            rt_hw_interrupt_enable(level);
             return RT_EOK;
         }
     }
@@ -323,7 +342,7 @@ void rt_wlan_dev_indicate_event_handle(struct rt_wlan_device *device, rt_wlan_de
     }
 }
 
-rt_err_t rt_wlan_dev_enter_pormisc(struct rt_wlan_device *device)
+rt_err_t rt_wlan_dev_enter_promisc(struct rt_wlan_device *device)
 {
     rt_err_t result = RT_EOK;
     int enable = 1;
@@ -337,7 +356,7 @@ rt_err_t rt_wlan_dev_enter_pormisc(struct rt_wlan_device *device)
     return result;
 }
 
-rt_err_t rt_wlan_dev_exit_pormisc(struct rt_wlan_device *device)
+rt_err_t rt_wlan_dev_exit_promisc(struct rt_wlan_device *device)
 {
     rt_err_t result = RT_EOK;
     int enable = 0;
@@ -351,7 +370,7 @@ rt_err_t rt_wlan_dev_exit_pormisc(struct rt_wlan_device *device)
     return result;
 }
 
-rt_err_t rt_wlan_dev_set_pormisc_callback(struct rt_wlan_device *device, rt_wlan_pormisc_callback_t callback)
+rt_err_t rt_wlan_dev_set_promisc_callback(struct rt_wlan_device *device, rt_wlan_pormisc_callback_t callback)
 {
     if (device == RT_NULL)
     {
@@ -362,7 +381,7 @@ rt_err_t rt_wlan_dev_set_pormisc_callback(struct rt_wlan_device *device, rt_wlan
     return RT_EOK;
 }
 
-void rt_wlan_dev_pormisc_handler(struct rt_wlan_device *device, void *data, int len)
+void rt_wlan_dev_promisc_handler(struct rt_wlan_device *device, void *data, int len)
 {
     rt_wlan_pormisc_callback_t callback;
 
@@ -616,13 +635,22 @@ static rt_err_t _rt_wlan_dev_control(rt_device_t dev, int cmd, void *args)
             *rssi = wlan->ops->wlan_get_rssi(wlan);
         break;
     }
-    case RT_WLAN_CMD_POWERSAVE:
+    case RT_WLAN_CMD_SET_POWERSAVE:
     {
-        rt_bool_t enable = *((rt_bool_t *)args);
+        int level = *((int *)args);
 
-        LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_POWERSAVE, "RT_WLAN_CMD_POWERSAVE");
-        if (wlan->ops->wlan_powersave)
-            wlan->ops->wlan_powersave(wlan, enable);
+        LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_POWERSAVE, "RT_WLAN_CMD_SET_POWERSAVE");
+        if (wlan->ops->wlan_set_powersave)
+            wlan->ops->wlan_set_powersave(wlan, level);
+        break;
+    }
+    case RT_WLAN_CMD_GET_POWERSAVE:
+    {
+        int *level = args;
+
+        LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_POWERSAVE, "RT_WLAN_CMD_GET_POWERSAVE");
+        if (wlan->ops->wlan_get_powersave)
+            *level = wlan->ops->wlan_get_powersave(wlan);
         break;
     }
     case RT_WLAN_CMD_CFG_PROMISC:

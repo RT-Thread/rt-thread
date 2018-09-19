@@ -17,7 +17,11 @@
 #include <wlan_workqueue.h>
 
 #define DBG_ENABLE
+#ifdef RT_WLAN_MGNT_DEBUG
+#define DBG_LEVEL DBG_LOG
+#else
 #define DBG_LEVEL DBG_INFO
+#endif
 #define DBG_SECTION_NAME  "WLAN.mgnt"
 #define DBG_COLOR
 #include <rtdbg.h>
@@ -50,6 +54,10 @@
 #define TIME_START()   (rt_timer_start(&reconnect_time))
 
 #define DISCONNECT_RESPONSE_TICK    (2000)
+
+#if RT_WLAN_EBOX_NUM < 1
+#error "event box num Too little"
+#endif
 
 struct rt_wlan_mgnt_des
 {
@@ -108,8 +116,6 @@ static struct rt_wlan_event_desc event_tab[RT_WLAN_EVT_MAX];
 static struct rt_wlan_complete_des *complete_tab[5];
 static struct rt_mutex complete_mutex;
 
-static rt_mailbox_t event_box;
-
 static struct rt_timer reconnect_time;
 
 rt_inline int _sta_is_null(void)
@@ -153,7 +159,7 @@ static rt_err_t rt_wlan_send_msg(rt_wlan_dev_event_t event, void *buff, int len)
     msg = rt_malloc(sizeof(struct rt_wlan_msg) + len);
     if (msg == RT_NULL)
     {
-        RT_WLAN_LOG_E("No memory");
+        RT_WLAN_LOG_E("wlan mgnt send msg err! No memory");
         return -RT_ENOMEM;
     }
     rt_memset(msg, 0, sizeof(struct rt_wlan_msg) + len);
@@ -352,12 +358,12 @@ static rt_err_t rt_wlan_sta_info_del(struct rt_wlan_info *info, int timeout)
     return err;
 }
 
-static rt_err_t rt_wlan_sta_info_del_all(void)
+static rt_err_t rt_wlan_sta_info_del_all(int timeout)
 {
     struct rt_wlan_sta_list *sta_list, *sta_next;
     rt_err_t err = RT_EOK;
 
-    err = rt_mutex_take(&sta_info_mutex, rt_tick_from_millisecond(200));
+    err = rt_mutex_take(&sta_info_mutex, rt_tick_from_millisecond(timeout));
     if (err == RT_EOK)
     {
         /* traversing the list */
@@ -370,7 +376,9 @@ static rt_err_t rt_wlan_sta_info_del_all(void)
         rt_mutex_release(&sta_info_mutex);
     }
     if (sta_info.num != 0)
-        rt_kprintf("zha guo zha guo zha guo\n");
+    {
+        RT_WLAN_LOG_W("\n\n!!!Program runing exception!!!\n\n");
+    }
     sta_info.num = 0;
     sta_info.node = RT_NULL;
     return err;
@@ -414,7 +422,7 @@ static void rt_wlan_auto_connect_run(struct rt_work *work, void *parameter)
     }
     rt_wlan_connect_adv(&cfg_info.info, password);
 exit:
-    MGNT_UNLOCK();
+    rt_mutex_release(&mgnt_mutex);
     level = rt_hw_interrupt_disable();
     rt_memset(work, 0, sizeof(struct rt_work));
     rt_hw_interrupt_enable(level);
@@ -463,24 +471,6 @@ static void rt_wlan_mgnt_work(void *parameter)
             rt_exit_critical();
             RT_WLAN_LOG_D("run save config! ssid:%s len%d", _sta_mgnt.info.ssid.val, _sta_mgnt.info.ssid.len);
             rt_wlan_cfg_save(&cfg_info);
-        }
-        break;
-    }
-    case RT_WLAN_DEV_EVT_AP_ASSOCIATED:
-    {
-        /* save sta info */
-        if (msg->len > 0)
-        {
-            rt_wlan_sta_info_add(msg->buff, RT_WAITING_FOREVER);
-        }
-        break;
-    }
-    case RT_WLAN_DEV_EVT_AP_DISASSOCIATED:
-    {
-        /* delete sta info */
-        if (msg->len > 0)
-        {
-            rt_wlan_sta_info_del(msg->buff, RT_WAITING_FOREVER);
         }
         break;
     }
@@ -558,11 +548,10 @@ static void rt_wlan_event_dispatch(struct rt_wlan_device *device, rt_wlan_dev_ev
         RT_WLAN_LOG_D("event: AP_STOP");
         _ap_mgnt.state &= ~RT_WLAN_STATE_ACTIVE;
         user_event = RT_WLAN_EVT_AP_STOP;
-        err = rt_wlan_sta_info_del_all();
+        err = rt_wlan_sta_info_del_all(RT_WAITING_FOREVER);
         if (err != RT_NULL)
         {
             RT_WLAN_LOG_W("AP_STOP event handle fail");
-            rt_wlan_send_msg(event, RT_NULL, 0);
         }
         user_buff.data = &_ap_mgnt.info;
         user_buff.len = sizeof(struct rt_wlan_info);
@@ -574,11 +563,10 @@ static void rt_wlan_event_dispatch(struct rt_wlan_device *device, rt_wlan_dev_ev
         user_event = RT_WLAN_EVT_AP_ASSOCIATED;
         if (user_buff.len != sizeof(struct rt_wlan_info))
             break;
-        err = rt_wlan_sta_info_add(user_buff.data, 200);
+        err = rt_wlan_sta_info_add(user_buff.data, RT_WAITING_FOREVER);
         if (err != RT_EOK)
         {
             RT_WLAN_LOG_W("AP_ASSOCIATED event handle fail");
-            rt_wlan_send_msg(event, user_buff.data, sizeof(struct rt_wlan_info));
         }
         break;
     }
@@ -588,11 +576,10 @@ static void rt_wlan_event_dispatch(struct rt_wlan_device *device, rt_wlan_dev_ev
         user_event = RT_WLAN_EVT_AP_DISASSOCIATED;
         if (user_buff.len != sizeof(struct rt_wlan_info))
             break;
-        err = rt_wlan_sta_info_del(user_buff.data, 200);
+        err = rt_wlan_sta_info_del(user_buff.data, RT_WAITING_FOREVER);
         if (err != RT_EOK)
         {
             RT_WLAN_LOG_W("AP_DISASSOCIATED event handle fail");
-            rt_wlan_send_msg(event, user_buff.data, sizeof(struct rt_wlan_info));
         }
         break;
     }
@@ -637,7 +624,7 @@ static void rt_wlan_event_dispatch(struct rt_wlan_device *device, rt_wlan_dev_ev
         }
     }
     COMPLETE_UNLOCK();
-    /* 取出用户回调 */
+    /* Get user callback */
     if (user_event < RT_WLAN_EVT_MAX)
     {
         level = rt_hw_interrupt_disable();
@@ -1147,28 +1134,28 @@ rt_err_t rt_wlan_disconnect(void)
     return err;
 }
 
-int rt_wlan_is_connected(void)
+rt_bool_t rt_wlan_is_connected(void)
 {
-    int _connect = 0;
+    rt_bool_t _connect;
 
     if (_sta_is_null())
     {
-        return 0;
+        return RT_FALSE;
     }
-    _connect = _sta_mgnt.state & RT_WLAN_STATE_CONNECT ? 1 : 0;
+    _connect = _sta_mgnt.state & RT_WLAN_STATE_CONNECT ? RT_TRUE : RT_FALSE;
     RT_WLAN_LOG_D("%s is run : %s", __FUNCTION__, _connect ? "connect" : "disconnect");
     return _connect;
 }
 
-int rt_wlan_is_ready(void)
+rt_bool_t rt_wlan_is_ready(void)
 {
-    int _ready = 0;
+    rt_bool_t _ready;
 
     if (_sta_is_null())
     {
-        return 0;
+        return RT_FALSE;
     }
-    _ready = _sta_mgnt.state & RT_WLAN_STATE_READY ? 1 : 0;
+    _ready = _sta_mgnt.state & RT_WLAN_STATE_READY ? RT_TRUE : RT_FALSE;
     RT_WLAN_LOG_D("%s is run : %s", __FUNCTION__, _ready ? "ready" : "not ready");
     return _ready;
 }
@@ -1392,7 +1379,6 @@ rt_err_t rt_wlan_ap_stop(void)
     }
     RT_WLAN_LOG_D("%s is run", __FUNCTION__);
 
-    /* 调用dev层接口 */
     MGNT_LOCK();
     /* create event wait complete */
     complete = rt_wlan_complete_create("stop_ap");
@@ -1435,12 +1421,11 @@ rt_err_t rt_wlan_ap_get_info(struct rt_wlan_info *info)
     }
     RT_WLAN_LOG_D("%s is run", __FUNCTION__);
 
-    /* 返回暂存的ap info */
     *info = _ap_mgnt.info;
     return RT_EOK;
 }
 
-/* 获得sta连接数量 */
+/* get sta number  */
 int rt_wlan_ap_get_sta_num(void)
 {
     int sta_num = 0;
@@ -1452,14 +1437,14 @@ int rt_wlan_ap_get_sta_num(void)
     return sta_num;
 }
 
-/* 获得sta信息 */
+/* get sta info */
 int rt_wlan_ap_get_sta_info(struct rt_wlan_info *info, int num)
 {
     int sta_num = 0, i = 0;
     struct rt_wlan_sta_list *sta_list;
 
     STAINFO_LOCK();
-    /* 找出 num 与 sta_info.num 中较小的那个 */
+    /* sta_num = min(sta_info.num, num) */
     sta_num = sta_info.num > num ? num : sta_info.num;
     for (sta_list = sta_info.node; sta_list != RT_NULL && i < sta_num; sta_list = sta_list->next)
     {
@@ -1471,7 +1456,7 @@ int rt_wlan_ap_get_sta_info(struct rt_wlan_info *info, int num)
     return i;
 }
 
-/* 踢掉某个sta */
+/* deauth sta */
 rt_err_t rt_wlan_ap_deauth_sta(rt_uint8_t *mac)
 {
     rt_err_t err = RT_EOK;
@@ -1500,7 +1485,7 @@ rt_err_t rt_wlan_ap_deauth_sta(rt_uint8_t *mac)
     }
 
     STAINFO_LOCK();
-    /* 重缓存中查询有没有这个sta */
+    /* Search for MAC address from sta list */
     for (sta_list = sta_info.node; sta_list != RT_NULL; sta_list = sta_list->next)
     {
         if (rt_memcmp(&sta_list->info.bssid[0], &mac[0], RT_WLAN_BSSID_MAX_LENGTH) == 0)
@@ -1511,7 +1496,7 @@ rt_err_t rt_wlan_ap_deauth_sta(rt_uint8_t *mac)
     }
     STAINFO_UNLOCK();
 
-    /* 没有找个这个sta，退出 */
+    /* No MAC address was found. return */
     if (find_flag != RT_TRUE)
     {
         RT_WLAN_LOG_E("Not find mac addr");
@@ -1519,7 +1504,7 @@ rt_err_t rt_wlan_ap_deauth_sta(rt_uint8_t *mac)
         return -RT_ERROR;
     }
 
-    /* 调用dev层接口，提到sta */
+    /* Kill STA */
     err = rt_wlan_dev_ap_deauth(AP_DEVICE(), mac);
     if (err != RT_NULL)
     {
@@ -1767,7 +1752,7 @@ int rt_wlan_scan_find_cache(struct rt_wlan_info *info, struct rt_wlan_info *out_
     return count;
 }
 
-rt_err_t rt_wlan_enable_powersave(void)
+rt_err_t rt_wlan_set_powersave(int level)
 {
     rt_err_t err = RT_EOK;
 
@@ -1777,24 +1762,24 @@ rt_err_t rt_wlan_enable_powersave(void)
     }
     RT_WLAN_LOG_D("%s is run", __FUNCTION__);
     MGNT_LOCK();
-    err = rt_wlan_dev_enable_powersave(STA_DEVICE());
+    err = rt_wlan_dev_set_powersave(STA_DEVICE(), level);
     MGNT_UNLOCK();
     return err;
 }
 
-rt_err_t rt_wlan_disable_powersave(void)
+int rt_wlan_get_powersave(void)
 {
-    rt_err_t err = RT_EOK;
+    int level;
 
     if (_sta_is_null())
     {
-        return -RT_EIO;
+        return -1;
     }
     RT_WLAN_LOG_D("%s is run", __FUNCTION__);
     MGNT_LOCK();
-    err = rt_wlan_dev_disable_powersave(STA_DEVICE());
+    level = rt_wlan_dev_get_powersave(STA_DEVICE());
     MGNT_UNLOCK();
-    return err;
+    return level;
 }
 
 rt_err_t rt_wlan_register_event_handler(rt_wlan_event_t event, rt_wlan_event_handler handler, void *parameter)
@@ -1890,10 +1875,6 @@ int rt_wlan_init(void)
         rt_mutex_init(&complete_mutex, "complete", RT_IPC_FLAG_FIFO);
         rt_timer_init(&reconnect_time, "wifi_tim", rt_wlan_cyclic_check, RT_NULL, DISCONNECT_RESPONSE_TICK, RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
         rt_timer_start(&reconnect_time);
-        /* create event */
-        event_box = rt_mb_create("wlan", RT_WLAN_EBOX_NUM, RT_IPC_FLAG_FIFO);
-        if (event_box == RT_NULL)
-            RT_ASSERT(event_box != RT_NULL);
         _init_flag = 1;
     }
     return 0;

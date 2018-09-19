@@ -24,12 +24,13 @@ static int wifi_scan(int argc, char *argv[]);
 static int wifi_status(int argc, char *argv[]);
 static int wifi_join(int argc, char *argv[]);
 static int wifi_ap(int argc, char *argv[]);
-static int list_sta(int argc, char *argv[]);
+static int wifi_list_sta(int argc, char *argv[]);
 static int wifi_disconnect(int argc, char *argv[]);
 static int wifi_ap_stop(int argc, char *argv[]);
-static int wifi_debug(int argc, char *argv[]);
 
+#ifdef RT_WLAN_CMD_DEBUG
 /* just for debug  */
+static int wifi_debug(int argc, char *argv[]);
 static int wifi_debug_save_cfg(int argc, char *argv[]);
 static int wifi_debug_dump_cfg(int argc, char *argv[]);
 static int wifi_debug_clear_cfg(int argc, char *argv[]);
@@ -37,6 +38,7 @@ static int wifi_debug_dump_prot(int argc, char *argv[]);
 static int wifi_debug_set_mode(int argc, char *argv[]);
 static int wifi_debug_set_prot(int argc, char *argv[]);
 static int wifi_debug_set_autoconnect(int argc, char *argv[]);
+#endif
 
 /* cmd table */
 static const struct wifi_cmd_des cmd_tab[] =
@@ -46,13 +48,16 @@ static const struct wifi_cmd_des cmd_tab[] =
     {"status", wifi_status},
     {"join", wifi_join},
     {"ap", wifi_ap},
-    {"list_sta", list_sta},
+    {"list_sta", wifi_list_sta},
     {"disc", wifi_disconnect},
     {"ap_stop", wifi_ap_stop},
     {"smartconfig", RT_NULL},
+#ifdef RT_WLAN_CMD_DEBUG
     {"-d", wifi_debug},
+#endif
 };
 
+#ifdef RT_WLAN_CMD_DEBUG
 /* debug cmd table */
 static const struct wifi_cmd_des debug_tab[] =
 {
@@ -64,6 +69,7 @@ static const struct wifi_cmd_des debug_tab[] =
     {"prot", wifi_debug_set_prot},
     {"auto", wifi_debug_set_autoconnect},
 };
+#endif
 
 static int wifi_help(int argc, char *argv[])
 {
@@ -76,7 +82,9 @@ static int wifi_help(int argc, char *argv[])
     rt_kprintf("wifi ap_stop\n");
     rt_kprintf("wifi status\n");
     rt_kprintf("wifi smartconfig\n");
+#ifdef RT_WLAN_CMD_DEBUG
     rt_kprintf("wifi -d debug command\n");
+#endif
     return 0;
 }
 
@@ -272,7 +280,7 @@ static int wifi_ap(int argc, char *argv[])
     return 0;
 }
 
-static int list_sta(int argc, char *argv[])
+static int wifi_list_sta(int argc, char *argv[])
 {
     struct rt_wlan_info *sta_info;
     int num, i;
@@ -320,6 +328,7 @@ static int wifi_ap_stop(int argc, char *argv[])
     return 0;
 }
 
+#ifdef RT_WLAN_CMD_DEBUG
 /* just for debug */
 static int wifi_debug_help(int argc, char *argv[])
 {
@@ -509,6 +518,7 @@ static int wifi_debug(int argc, char *argv[])
     }
     return 0;
 }
+#endif
 
 static int wifi_msh(int argc, char *argv[])
 {
@@ -551,4 +561,6 @@ static int wifi_msh(int argc, char *argv[])
     return 0;
 }
 
+#if defined(RT_USING_FINSH) && defined(FINSH_USING_MSH)
 FINSH_FUNCTION_EXPORT_ALIAS(wifi_msh, __cmd_wifi, wifi command.);
+#endif
