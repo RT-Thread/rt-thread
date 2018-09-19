@@ -25,10 +25,6 @@ extern "C" {
 
 #define RT_LWAN_ID_PREFIX      (0x5054)
 
-#if RT_WLAN_PROT_NAME_LEN < 4
-#error "The name is too short"
-#endif
-
 #define RT_WLAN_PROT_LWIP  ("lwip")
 
 typedef enum

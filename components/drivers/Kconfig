@@ -205,11 +205,11 @@ menu "Using WiFi"
 
     if RT_USING_WIFI
         config RT_WLAN_DEVICE_STA_NAME
-            string "the WiFi device name for station"
+            string "The WiFi device name for station"
             default "wlan0"
 
         config RT_WLAN_DEVICE_AP_NAME
-            string "the WiFi device name for ap"
+            string "The WiFi device name for ap"
             default "wlan1"
 
         config RT_WLAN_DEFAULT_PROT
@@ -217,11 +217,11 @@ menu "Using WiFi"
             default "lwip"
 
         config RT_WLAN_SCAN_WAIT_MS
-            int "Scan timeout time"
+            int "Set scan timeout time(ms)"
             default 10000;
 
         config RT_WLAN_CONNECT_WAIT_MS
-            int "connect timeout time"
+            int "Set connect timeout time(ms)"
             default 10000;
 
         config RT_WLAN_SSID_MAX_LENGTH
@@ -259,6 +259,36 @@ menu "Using WiFi"
         config RT_WLAN_PROT_LWIP_PBUF_FORCE
             bool "Forced use of PBUF transmission"
             default n
+
+        menuconfig RT_WLAN_DEBUG
+            bool "Enable WLAN Debugging Options"
+            default n
+
+        if RT_WLAN_DEBUG
+            config RT_WLAN_CMD_DEBUG
+                bool "Enable Debugging of wlan_cmd.c"
+                default n
+
+            config RT_WLAN_MGNT_DEBUG
+                bool "Enable Debugging of wlan_mgnt.c"
+                default n
+
+            config RT_WLAN_DEV_DEBUG
+                bool "Enable Debugging of wlan_dev.c"
+                default n
+
+            config RT_WLAN_PROT_DEBUG
+                bool "Enable Debugging of wlan_prot.c"
+                default n
+
+            config RT_WLAN_CFG_DEBUG
+                bool "Enable Debugging of wlan_cfg.c"
+                default n
+
+            config RT_WLAN_LWIP_DEBUG
+                bool "Enable Debugging of wlan_lwip.c"
+                default n
+        endif
     endif
 endmenu
 

@@ -12,10 +12,21 @@
 #include <wlan_cfg.h>
 
 #define DBG_ENABLE
+#ifdef RT_WLAN_CFG_DEBUG
+#define DBG_LEVEL DBG_LOG
+#else
 #define DBG_LEVEL DBG_INFO
+#endif
 #define DBG_SECTION_NAME  "WLAN.cfg"
 #define DBG_COLOR
 #include <rtdbg.h>
+
+#define WLAN_CFG_LOCK()      (rt_mutex_take(&cfg_mutex, RT_WAITING_FOREVER))
+#define WLAN_CFG_UNLOCK()    (rt_mutex_release(&cfg_mutex))
+
+#if RT_WLAN_CFG_INFO_MAX < 1
+#error "The minimum configuration is 1"
+#endif
 
 struct cfg_save_info_head
 {
@@ -30,9 +41,6 @@ struct rt_wlan_cfg_des
     rt_uint32_t num;
     struct rt_wlan_cfg_info *cfg_info;
 };
-
-#define WLAN_CFG_LOCK()      (rt_mutex_take(&cfg_mutex, RT_WAITING_FOREVER))
-#define WLAN_CFG_UNLOCK()    (rt_mutex_release(&cfg_mutex))
 
 static struct rt_wlan_cfg_des *cfg_cache;
 static const struct rt_wlan_cfg_ops *cfg_ops;
@@ -230,7 +238,7 @@ int rt_wlan_cfg_read(struct rt_wlan_cfg_info *cfg_info, int num)
 {
     rt_wlan_cfg_init();
 
-    if (num <= 0)
+    if ((cfg_info == RT_NULL) || (num <= 0))
         return 0;
     /* copy data */
     WLAN_CFG_LOCK();
@@ -308,7 +316,7 @@ int rt_wlan_cfg_read_index(struct rt_wlan_cfg_info *cfg_info, int index)
 {
     rt_wlan_cfg_init();
 
-    if (index < 0)
+    if ((cfg_info == RT_NULL) || (index < 0))
         return 0;
 
     WLAN_CFG_LOCK();

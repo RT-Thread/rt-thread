@@ -37,21 +37,17 @@ extern "C" {
 #define RT_WLAN_EBOX_NUM           (10)
 #endif
 
-#if RT_WLAN_EBOX_NUM < 1
-#error "event box num Too little"
-#endif
-
 /*state fot station*/
-#define RT_WLAN_STATE_CONNECT     (0x1 << 0)
-#define RT_WLAN_STATE_CONNECTING  (0x1 << 1)
-#define RT_WLAN_STATE_READY       (0x1 << 2)
-#define RT_WLAN_STATE_POWERSAVE   (0x1 << 3)
+#define RT_WLAN_STATE_CONNECT     (1UL << 0)
+#define RT_WLAN_STATE_CONNECTING  (1UL << 1)
+#define RT_WLAN_STATE_READY       (1UL << 2)
+#define RT_WLAN_STATE_POWERSAVE   (1UL << 3)
 
 /*flags fot station*/
-#define RT_WLAN_STATE_AUTOEN      (0x1 << 0)
+#define RT_WLAN_STATE_AUTOEN      (1UL << 0)
 
 /*state fot ap*/
-#define RT_WLAN_STATE_ACTIVE      (0x1 << 0)
+#define RT_WLAN_STATE_ACTIVE      (1UL << 0)
 
 typedef enum
 {
@@ -89,8 +85,8 @@ rt_wlan_mode_t rt_wlan_get_mode(const char *dev_name);
 rt_err_t rt_wlan_connect(const char *ssid, const char *password);
 rt_err_t rt_wlan_connect_adv(struct rt_wlan_info *info, const char *password);
 rt_err_t rt_wlan_disconnect(void);
-int rt_wlan_is_connected(void);
-int rt_wlan_is_ready(void);
+rt_bool_t rt_wlan_is_connected(void);
+rt_bool_t rt_wlan_is_ready(void);
 rt_err_t rt_wlan_set_mac(rt_uint8_t *mac);
 rt_err_t rt_wlan_get_mac(rt_uint8_t *mac);
 rt_err_t rt_wlan_get_info(struct rt_wlan_info *info);
@@ -132,8 +128,8 @@ rt_bool_t rt_wlan_get_autoreconnect_mode(void);
 /*
  * wifi power management interface
  */
-rt_err_t rt_wlan_enable_powersave(void);
-rt_err_t rt_wlan_disable_powersave(void);
+rt_err_t rt_wlan_set_powersave(int level);
+int rt_wlan_get_powersave(void);
 
 /*
  * wifi event management interface
