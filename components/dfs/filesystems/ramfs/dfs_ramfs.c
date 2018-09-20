@@ -453,6 +453,7 @@ struct dfs_ramfs* dfs_ramfs_create(rt_uint8_t *pool, rt_size_t size)
 
     /* initialize ramfs object */
     ramfs->magic = RAMFS_MAGIC;
+    ramfs->memheap.parent.type = RT_Object_Class_MemHeap | RT_Object_Class_Static;
 
     /* initialize root directory */
     memset(&(ramfs->root), 0x00, sizeof(ramfs->root));
