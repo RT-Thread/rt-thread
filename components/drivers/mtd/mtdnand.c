@@ -601,7 +601,7 @@ static const struct mtd_ops _ops =
     nand_block_markbad,
 };
 
-int rt_mtd_nand_init(rt_nand_t *nand, int blk_size, int page_size, int blks_pc, int oob_size)
+int rt_mtd_nand_init(rt_nand_t *nand, int blk_size, int page_size, int oob_size)
 {
     uint8_t *buf;
 
@@ -616,7 +616,6 @@ int rt_mtd_nand_init(rt_nand_t *nand, int blk_size, int page_size, int blks_pc, 
     nand->buffers.ecccode = buf;
     nand->pagebuf = 0; /* alloc when unaligen access */
 
-    nand->size = blk_size * blks_pc;
     nand->pages_pb = blk_size / page_size;
     nand->ecc._step = page_size / nand->ecc.stepsize;
     nand->page_size = page_size;
