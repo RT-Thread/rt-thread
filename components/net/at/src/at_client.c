@@ -870,7 +870,7 @@ int at_client_init(const char *dev_name,  rt_size_t recv_bufsz)
 
     if (idx >= AT_CLIENT_NUM_MAX)
     {
-        LOG_E("AT client initialize filed! Check the maximum number(%d) of AT client.", AT_CLIENT_NUM_MAX);
+        LOG_E("AT client initialize failed! Check the maximum number(%d) of AT client.", AT_CLIENT_NUM_MAX);
         result = -RT_EFULL;
         goto __exit;
     }
