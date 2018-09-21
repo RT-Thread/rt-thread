@@ -90,6 +90,20 @@ config RT_USING_MTD_NAND
         default n
     endif
 
+config RT_USING_MTD
+    bool "Using Memory Technology Device (MTD)"
+    default n
+
+    if RT_USING_MTD
+    config MTD_USING_NOR
+        bool "Using MTD Nor Flash device"
+        default n
+
+    config MTD_USING_NAND
+        bool "Using MTD Nand Flash device"
+        default n
+    endif
+
 config RT_USING_RTC
     bool "Using RTC device drivers"
     default n
@@ -138,7 +152,6 @@ config RT_USING_SDIO
         config RT_MMCSD_MAX_PARTITION
             int "mmcsd max partition"
             default 16
-
         config RT_SDIO_DEBUG
             bool "Enable SDIO debug log output"
         default n

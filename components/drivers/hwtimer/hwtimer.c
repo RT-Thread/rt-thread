@@ -30,7 +30,7 @@ rt_inline rt_uint32_t timeout_calc(rt_hwtimer_t *timer, rt_hwtimerval_t *tv)
     float overflow;
     float timeout;
     rt_uint32_t counter;
-    int i, index;
+    int i, index = 0;
     float tv_sec;
     float devi_min = 1;
     float devi;

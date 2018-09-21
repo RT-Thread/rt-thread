@@ -55,10 +55,9 @@ void rt_init_thread_entry(void* parameter)
         rt_kprintf("TCP/IP initialized!\n");
     }
 #endif
+    
+    rt_components_init();
 
-#ifdef RT_USING_FINSH
-    finsh_system_init();
-#endif
 }
 
 int rt_application_init()
