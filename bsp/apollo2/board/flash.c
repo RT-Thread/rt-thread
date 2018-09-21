@@ -140,7 +140,7 @@ int rt_hw_rom_init(void)
     /* register the device */
     rt_device_register(&device, "rom", RT_DEVICE_FLAG_RDWR);
 
-    rt_kprintf("register device rom!\r\n");
+    //rt_kprintf("register device rom!\r\n");
 
     return 0;
 }

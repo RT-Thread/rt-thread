@@ -42,16 +42,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_HAL_RTC_H
 #define AM_HAL_RTC_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
 //*****************************************************************************
 //
@@ -148,6 +143,11 @@ typedef struct am_hal_rtc_time_struct
     uint32_t ui32Second;
     uint32_t ui32Hundredths;
 }am_hal_rtc_time_t;
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 //*****************************************************************************
 //
