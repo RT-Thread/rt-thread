@@ -42,16 +42,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_HAL_ADC_H
 #define AM_HAL_ADC_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
 //*****************************************************************************
 //
@@ -308,6 +303,11 @@ am_hal_adc_config_t;
 #define AM_HAL_ADC_FIFO_COUNT(value)                                          \
     (((value) & AM_REG_ADC_FIFO_COUNT_M) >> AM_REG_ADC_FIFO_COUNT_S)
 //! @}
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 //*****************************************************************************
 //

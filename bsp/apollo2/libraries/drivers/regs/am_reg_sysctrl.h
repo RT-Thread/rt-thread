@@ -38,7 +38,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_REG_SYSCTRL_H
@@ -58,6 +58,8 @@
 // Register offsets.
 //
 //*****************************************************************************
+#define AM_REG_SYSCTRL_ICTR_O                        0xE000E004
+#define AM_REG_SYSCTRL_ACTLR_O                       0xE000E008
 #define AM_REG_SYSCTRL_ICSR_O                        0xE000ED04
 #define AM_REG_SYSCTRL_VTOR_O                        0xE000ED08
 #define AM_REG_SYSCTRL_AIRCR_O                       0xE000ED0C
@@ -77,6 +79,47 @@
 #define AM_REG_SYSCTRL_FPCCR_O                       0xE000EF34
 #define AM_REG_SYSCTRL_FPCAR_O                       0xE000EF38
 #define AM_REG_SYSCTRL_FPDSCR_O                      0xE000EF3C
+
+//*****************************************************************************
+//
+// SYSCTRL_ICTR - Interrupt Controller Type Register (NVIC)
+//
+//*****************************************************************************
+// Total number of interrupt lines in groups of 32.
+#define AM_REG_SYSCTRL_ICTR_INTLINESNUM_S            0
+#define AM_REG_SYSCTRL_ICTR_INTLINESNUM_M            0x0000000F
+#define AM_REG_SYSCTRL_ICTR_INTLINESNUM(n)           (((uint32_t)(n) << 0) & 0x0000000F)
+
+//*****************************************************************************
+//
+// SYSCTRL_ACTLR - Auxilliary Control Register
+//
+//*****************************************************************************
+// Disables lazy stacking of floating point context.
+#define AM_REG_SYSCTRL_ACTLR_DISFPCA_S               9
+#define AM_REG_SYSCTRL_ACTLR_DISFPCA_M               0x00000200
+#define AM_REG_SYSCTRL_ACTLR_DISFPCA(n)              (((uint32_t)(n) << 9) & 0x00000200)
+
+// Disables floating point instructions completing out of order with respect to
+// integer instructions.
+#define AM_REG_SYSCTRL_ACTLR_DISOOFP_S               8
+#define AM_REG_SYSCTRL_ACTLR_DISOOFP_M               0x00000100
+#define AM_REG_SYSCTRL_ACTLR_DISOOFP(n)              (((uint32_t)(n) << 8) & 0x00000100)
+
+// Disables folding of IT instructions.
+#define AM_REG_SYSCTRL_ACTLR_DISFOLD_S               2
+#define AM_REG_SYSCTRL_ACTLR_DISFOLD_M               0x00000004
+#define AM_REG_SYSCTRL_ACTLR_DISFOLD(n)              (((uint32_t)(n) << 2) & 0x00000004)
+
+// Disables write buffer use during default memory map accesses.
+#define AM_REG_SYSCTRL_ACTLR_DISDEFWBUF_S            1
+#define AM_REG_SYSCTRL_ACTLR_DISDEFWBUF_M            0x00000002
+#define AM_REG_SYSCTRL_ACTLR_DISDEFWBUF(n)           (((uint32_t)(n) << 1) & 0x00000002)
+
+// Disables interruption of multi-cycle instructions.
+#define AM_REG_SYSCTRL_ACTLR_DISMCYCINT_S            0
+#define AM_REG_SYSCTRL_ACTLR_DISMCYCINT_M            0x00000001
+#define AM_REG_SYSCTRL_ACTLR_DISMCYCINT(n)           (((uint32_t)(n) << 0) & 0x00000001)
 
 //*****************************************************************************
 //

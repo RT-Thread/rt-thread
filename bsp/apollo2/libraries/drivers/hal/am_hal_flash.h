@@ -42,16 +42,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_HAL_FLASH_H
 #define AM_HAL_FLASH_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -94,13 +89,19 @@ extern "C"
 //
 #define AM_HAL_FLASH_ADDR2ABSPAGE(addr)     ( addr >> 13 )
 
+//*****************************************************************************
 //
-// Given a number of microseconds, convert to a value representing the number of
-// cycles that will give that delay. This macro is basically taking into account
-// some of the call overhead.
+// Given an integer number of microseconds, convert to a value representing the
+// number of am_hal_flash_delay() cycles that will provide that amount of delay.
+// This macro is designed to take into account some of the call overhead.
+//
 // e.g. To provide a 2us delay:
 //  am_hal_flash_delay( FLASH_CYCLES_US(2) );
 //
+// IMPORTANT - Apollo2 is spec'ed for only 48MHz operation, so this macro
+// assumes that.
+//
+//*****************************************************************************
 #define FLASH_CYCLES_US(n)      ((n * (AM_HAL_CLKGEN_FREQ_MAX_MHZ / 3)) - 4)
 
 //
@@ -223,6 +224,11 @@ extern g_am_hal_flash_t g_am_hal_flash;
 #define AM_HAL_FLASH_INFO_CHUNK2INST(n)     ((n >> 5) & 1
 #define AM_HAL_FLASH_INFO_ADDR2CHUNK(n)     ((n) >> 14)
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 //*****************************************************************************
 //
 // Function prototypes for the helper functions
@@ -254,6 +260,10 @@ extern void     am_hal_flash_recovery(uint32_t ui32RecoveryKey);
 extern uint32_t am_hal_flash_load_ui32(uint32_t ui32Address);
 extern void     am_hal_flash_store_ui32(uint32_t ui32Address, uint32_t ui32Data);
 extern void     am_hal_flash_delay(uint32_t ui32Iterations);
+extern uint32_t am_hal_flash_delay_status_change(uint32_t ui32Iterations,
+                                                 uint32_t ui32Address,
+                                                 uint32_t ui32Mask,
+                                                 uint32_t ui32Value);
 
 //
 // These functions update security/protection bits in the customer INFO blOCK.
