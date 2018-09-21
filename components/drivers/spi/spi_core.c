@@ -360,7 +360,6 @@ struct rt_spi_message *rt_spi_transfer_message(struct rt_spi_device  *device,
         {
             /* configure SPI bus failed */
             rt_set_errno(-RT_EIO);
-            result = 0;
             goto __exit;
         }
     }

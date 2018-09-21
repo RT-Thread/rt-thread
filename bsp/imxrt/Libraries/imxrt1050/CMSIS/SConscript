@@ -1,0 +1,10 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+
+CPPPATH = [cwd + '/Include']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

@@ -65,11 +65,27 @@ int libc_stdio_get_console(void)
 
 int libc_stdio_read(void *buffer, size_t size)
 {
-    return read(std_fd, buffer, size);
+    if (std_fd >= 0)
+    {
+        return read(std_fd, buffer, size);
+    }
+    else
+    {
+        rt_kprintf("Illegal stdio input!\n");
+        return 0;
+    }
 }
 
 int libc_stdio_write(const void *buffer, size_t size)
 {
-    return write(std_fd, buffer, size);
+    if (std_fd >= 0)
+    {
+        return write(std_fd, buffer, size);
+    }
+    else
+    {
+        rt_kprintf("Illegal stdio output!\n");
+        return size;
+    }
 }
 #endif
