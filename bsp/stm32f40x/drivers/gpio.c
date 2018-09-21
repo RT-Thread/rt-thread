@@ -763,7 +763,7 @@ rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32
     }
     else if (enabled == PIN_IRQ_DISABLE)
     {
-        irq = get_pin_irq(index->pin);
+        irq = get_pin_irq(pin);
         if (irq == RT_NULL)
         {
             return -RT_ENOSYS;
