@@ -42,16 +42,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_HAL_STIMER_H
 #define AM_HAL_STIMER_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
 //
 // Compute address of a given COMPARE or CAPTURE register.
@@ -203,6 +198,11 @@ typedef struct
 am_hal_stimer_config_t;
 
 
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 //*****************************************************************************
 //

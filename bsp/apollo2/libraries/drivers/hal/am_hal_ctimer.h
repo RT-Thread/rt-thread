@@ -42,16 +42,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_HAL_CTIMER_H
 #define AM_HAL_CTIMER_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
 //*****************************************************************************
 //
@@ -114,7 +109,7 @@ extern "C"
 //!
 //! These options are to be used with the \e am_hal_ctimer_config_t structure
 //! used by \e am_hal_ctimer_config
-//!  @{
+//! @{
 //
 //*****************************************************************************
 #define AM_HAL_CTIMER_CLK_PIN               AM_REG_CTIMER_CTRL0_TMRA0CLK(0x0)
@@ -207,6 +202,11 @@ am_hal_ctimer_config_t;
 //
 //*****************************************************************************
 typedef void (*am_hal_ctimer_handler_t)(void);
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 //*****************************************************************************
 //
