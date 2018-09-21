@@ -118,7 +118,6 @@ int rt_hw_rtc_init(void)
   
 #if RTC_CLK_SRC == XT
     /* Enable the XT for the RTC */
-    //am_hal_clkgen_osc_start(AM_HAL_CLKGEN_OSC_LFRC);
     am_hal_clkgen_osc_start(AM_HAL_CLKGEN_OSC_XT);
 
     /* Select XT for RTC clock source */

@@ -31,7 +31,7 @@
  * @brief External function definitions
  *
  */
-int rt_hw_pdm_init(void);
+int rt_pdm_init(void);
 rt_uint8_t am_pdm_data_get(rt_uint8_t *buff, rt_uint16_t size);
 void am_pdm_start(void);
 void am_pdm_stop(void);

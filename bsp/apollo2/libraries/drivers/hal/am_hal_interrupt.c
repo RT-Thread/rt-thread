@@ -44,7 +44,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -190,7 +190,7 @@ am_hal_interrupt_priority_set(uint32_t ui32Interrupt, uint32_t ui32Priority)
     //
     // OR in the new priority.
     //
-    *pui32PriorityReg |= (ui32Priority << ui32Shift);
+    *pui32PriorityReg = ui32OldPriority | (ui32Priority << ui32Shift);
 }
 
 //*****************************************************************************
@@ -210,7 +210,7 @@ void am_hal_interrupt_pend_set(uint32_t ui32Interrupt)
     //
     // Check to see if the specified interrupt is valid for this MCU
     //
-    if ( ui32Interrupt > 47 )
+    if ( ui32Interrupt > AM_HAL_INTERRUPT_MAX )
     {
         return;
     }
@@ -247,7 +247,7 @@ void am_hal_interrupt_pend_clear(uint32_t ui32Interrupt)
     //
     // Check to see if the specified interrupt is valid for this MCU
     //
-    if ( ui32Interrupt > 47 )
+    if ( ui32Interrupt > AM_HAL_INTERRUPT_MAX )
     {
         return;
     }

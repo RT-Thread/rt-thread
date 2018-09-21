@@ -42,7 +42,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -79,11 +79,13 @@
 #define AM_HAL_IOM_2MHZ      2000000
 #define AM_HAL_IOM_1_5MHZ    1500000
 #define AM_HAL_IOM_1MHZ      1000000
+#define AM_HAL_IOM_800KHZ     800000
 #define AM_HAL_IOM_750KHZ     750000
 #define AM_HAL_IOM_500KHZ     500000
 #define AM_HAL_IOM_400KHZ     400000
 #define AM_HAL_IOM_375KHZ     375000
 #define AM_HAL_IOM_250KHZ     250000
+#define AM_HAL_IOM_200KHZ     200000
 #define AM_HAL_IOM_125KHZ     125000
 #define AM_HAL_IOM_100KHZ     100000
 #define AM_HAL_IOM_50KHZ       50000
@@ -176,18 +178,30 @@
 #define AM_HAL_IOM_INT_FUNDFL               AM_REG_IOMSTR_INTEN_FUNDFL_M
 #define AM_HAL_IOM_INT_THR                  AM_REG_IOMSTR_INTEN_THR_M
 #define AM_HAL_IOM_INT_CMDCMP               AM_REG_IOMSTR_INTEN_CMDCMP_M
-//! @}
 
-//*****************************************************************************
-//
-//! @name IOM function errors
-//! @brief Return values for IOM HAL function errors, such as with the function
-//!        am_hal_iom_error_status_get().
-//!
-//! @{
-//
-//*****************************************************************************
-#define AM_HAL_IOM_ERR_INVALID_MODULE       (1 << 30)
+#define AM_HAL_IOM_INT_ALL          (   \
+            AM_HAL_IOM_INT_ARB      |   \
+            AM_HAL_IOM_INT_STOP     |   \
+            AM_HAL_IOM_INT_START    |   \
+            AM_HAL_IOM_INT_ICMD     |   \
+            AM_HAL_IOM_INT_IACC     |   \
+            AM_HAL_IOM_INT_WTLEN    |   \
+            AM_HAL_IOM_INT_NAK      |   \
+            AM_HAL_IOM_INT_FOVFL    |   \
+            AM_HAL_IOM_INT_FUNDFL   |   \
+            AM_HAL_IOM_INT_THR      |   \
+            AM_HAL_IOM_INT_CMDCMP)
+
+#define AM_HAL_IOM_INT_SWERR        (   \
+            AM_HAL_IOM_INT_ICMD     |   \
+            AM_HAL_IOM_INT_FOVFL    |   \
+            AM_HAL_IOM_INT_FUNDFL   |   \
+            AM_HAL_IOM_INT_IACC)
+
+#define AM_HAL_IOM_INT_I2CARBERR    (   \
+            AM_HAL_IOM_INT_ARB      |   \
+            AM_HAL_IOM_INT_START    |   \
+            AM_HAL_IOM_INT_STOP)
 //! @}
 
 //*****************************************************************************
@@ -202,6 +216,31 @@
 //
 //*****************************************************************************
 #define AM_HAL_IOM_I2CBB_MODULE             AM_REG_IOMSTR_NUM_MODULES
+//! @}
+
+//*****************************************************************************
+//
+//! @name IOM Return Codes
+//! @brief Enum definitions for defining return values for IOM APIs
+//!
+//! This enum defines possible values for non-void IOM APIs
+//!
+//! @{
+//
+//*****************************************************************************
+typedef enum
+{
+    AM_HAL_IOM_SUCCESS = 0,
+    AM_HAL_IOM_ERR_TIMEOUT,
+    AM_HAL_IOM_ERR_INVALID_MODULE,
+    AM_HAL_IOM_ERR_INVALID_PARAM,
+    AM_HAL_IOM_ERR_INVALID_CFG,
+    AM_HAL_IOM_ERR_INVALID_OPER,
+    AM_HAL_IOM_ERR_I2C_NAK,
+    AM_HAL_IOM_ERR_I2C_ARB,
+    AM_HAL_IOM_ERR_RESOURCE_ERR,
+} am_hal_iom_status_e ;
+
 //! @}
 
 //*****************************************************************************
@@ -271,7 +310,7 @@ typedef struct
     //! Select the SPI clock polarity (unused in I2C mode).
     //
     bool bSPOL;
-
+    
     //
     //! @brief Select the FIFO write threshold.
     //!
@@ -404,7 +443,11 @@ am_hal_iom_pwrsave_t;
 //
 //*****************************************************************************
 extern am_hal_iom_pwrsave_t am_hal_iom_pwrsave[AM_REG_IOMSTR_NUM_MODULES];
-extern uint32_t g_iom_error_status;
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 //*****************************************************************************
 //
@@ -420,23 +463,30 @@ extern void     am_hal_iom_config(uint32_t ui32Module,
 extern uint32_t am_hal_iom_frequency_get(uint32_t ui32Module);
 extern void     am_hal_iom_enable(uint32_t ui32Module);
 extern void     am_hal_iom_disable(uint32_t ui32Module);
-extern void     am_hal_iom_spi_write(uint32_t ui32Module, uint32_t ui32ChipSelect,
+extern am_hal_iom_status_e am_hal_iom_spi_write(uint32_t ui32Module, uint32_t ui32ChipSelect,
                                      uint32_t *pui32Data, uint32_t ui32NumBytes,
                                      uint32_t ui32Options);
-extern void     am_hal_iom_spi_read(uint32_t ui32Module, uint32_t ui32ChipSelect,
+extern am_hal_iom_status_e am_hal_iom_spi_read(uint32_t ui32Module, uint32_t ui32ChipSelect,
                                     uint32_t *pui32Data, uint32_t ui32NumBytes,
                                     uint32_t ui32Options);
-extern uint32_t am_hal_iom_spi_write_nq(uint32_t ui32Module, uint32_t ui32ChipSelect,
+extern am_hal_iom_status_e am_hal_iom_spi_fullduplex(uint32_t ui32Module, uint32_t ui32ChipSelect,
+                                                     uint32_t *pui32TxData, uint32_t *pui32RxData, 
+                                                     uint32_t ui32NumBytes, uint32_t ui32Options);
+
+extern am_hal_iom_status_e am_hal_iom_spi_write_nq(uint32_t ui32Module, uint32_t ui32ChipSelect,
                                         uint32_t *pui32Data, uint32_t ui32NumBytes,
                                         uint32_t ui32Options);
-extern uint32_t am_hal_iom_spi_read_nq(uint32_t ui32Module, uint32_t ui32ChipSelect,
+extern am_hal_iom_status_e am_hal_iom_spi_read_nq(uint32_t ui32Module, uint32_t ui32ChipSelect,
                                        uint32_t *pui32Data, uint32_t ui32NumBytes,
                                        uint32_t ui32Options);
-extern void     am_hal_iom_spi_write_nb(uint32_t ui32Module, uint32_t ui32ChipSelect,
+extern am_hal_iom_status_e am_hal_iom_spi_fullduplex_nq(uint32_t ui32Module, uint32_t ui32ChipSelect,
+                                                        uint32_t *pui32TxData, uint32_t *pui32RxData, 
+                                                        uint32_t ui32NumBytes, uint32_t ui32Options);
+extern am_hal_iom_status_e am_hal_iom_spi_write_nb(uint32_t ui32Module, uint32_t ui32ChipSelect,
                                         uint32_t *pui32Data, uint32_t ui32NumBytes,
                                         uint32_t ui32Options,
                                         am_hal_iom_callback_t pfnCallback);
-extern uint32_t am_hal_iom_spi_read_nb(uint32_t ui32Module, uint32_t ui32ChipSelect,
+extern am_hal_iom_status_e am_hal_iom_spi_read_nb(uint32_t ui32Module, uint32_t ui32ChipSelect,
                                        uint32_t *pui32Data, uint32_t ui32NumBytes,
                                        uint32_t ui32Options,
                                        am_hal_iom_callback_t pfnCallback);
@@ -445,39 +495,39 @@ extern void     am_hal_iom_spi_cmd_run(uint32_t ui32Operation,
                                        uint32_t ui32ChipSelect,
                                        uint32_t ui32NumBytes,
                                        uint32_t ui32Options);
-extern void     am_hal_iom_i2c_write(uint32_t ui32Module,
+extern am_hal_iom_status_e am_hal_iom_i2c_write(uint32_t ui32Module,
                                      uint32_t ui32BusAddress,
                                      uint32_t *pui32Data,
                                      uint32_t ui32NumBytes,
                                      uint32_t ui32Options);
-extern void     am_hal_iom_i2c_read(uint32_t ui32Module,
+extern am_hal_iom_status_e am_hal_iom_i2c_read(uint32_t ui32Module,
                                     uint32_t ui32BusAddress,
                                     uint32_t *pui32Data,
                                     uint32_t ui32NumBytes,
                                     uint32_t ui32Options);
-extern uint32_t am_hal_iom_i2c_write_nq(uint32_t ui32Module,
+extern am_hal_iom_status_e am_hal_iom_i2c_write_nq(uint32_t ui32Module,
                                         uint32_t ui32BusAddress,
                                         uint32_t *pui32Data,
                                         uint32_t ui32NumBytes,
                                         uint32_t ui32Options);
-extern uint32_t am_hal_iom_i2c_read_nq(uint32_t ui32Module,
+extern am_hal_iom_status_e am_hal_iom_i2c_read_nq(uint32_t ui32Module,
                                        uint32_t ui32BusAddress,
                                        uint32_t *pui32Data,
                                        uint32_t ui32NumBytes,
                                        uint32_t ui32Options);
-extern void     am_hal_iom_i2c_write_nb(uint32_t ui32Module,
+extern am_hal_iom_status_e am_hal_iom_i2c_write_nb(uint32_t ui32Module,
                                         uint32_t ui32BusAddress,
                                         uint32_t *pui32Data,
                                         uint32_t ui32NumBytes,
                                         uint32_t ui32Options,
                                         am_hal_iom_callback_t pfnCallback);
-extern void     am_hal_iom_i2c_read_nb(uint32_t ui32Module,
+extern am_hal_iom_status_e am_hal_iom_i2c_read_nb(uint32_t ui32Module,
                                        uint32_t ui32BusAddress,
                                        uint32_t *pui32Data,
                                        uint32_t ui32NumBytes,
                                        uint32_t ui32Options,
                                        am_hal_iom_callback_t pfnCallback);
-extern void     am_hal_iom_i2c_cmd_run(uint32_t ui32Operation,
+extern am_hal_iom_status_e am_hal_iom_i2c_cmd_run(uint32_t ui32Operation,
                                        uint32_t ui32Module,
                                        uint32_t ui32BusAddress,
                                        uint32_t ui32NumBytes,
@@ -485,7 +535,7 @@ extern void     am_hal_iom_i2c_cmd_run(uint32_t ui32Operation,
 extern void     am_hal_iom_command_repeat_set(uint32_t ui32Module,
                                               uint32_t ui32CmdCount);
 extern uint32_t am_hal_iom_status_get(uint32_t ui32Module);
-extern uint32_t am_hal_iom_error_status_get(uint32_t ui32Module);
+extern am_hal_iom_status_e am_hal_iom_error_status_get(uint32_t ui32Module);
 extern uint32_t am_hal_iom_fifo_write(uint32_t ui32Module, uint32_t *pui32Data,
                                       uint32_t ui32NumBytes);
 extern uint32_t am_hal_iom_fifo_read(uint32_t ui32Module, uint32_t *pui32Data,
@@ -505,19 +555,19 @@ extern void     am_hal_iom_queue_init(uint32_t ui32ModuleNum,
                                       uint32_t ui32QueueMemSize);
 extern uint32_t am_hal_iom_queue_length_get(uint32_t ui32Module);
 extern void     am_hal_iom_sleeping_queue_flush(uint32_t ui32Module);
-extern void     am_hal_iom_queue_spi_write(uint32_t ui32Module, uint32_t ui32ChipSelect,
+extern am_hal_iom_status_e am_hal_iom_queue_spi_write(uint32_t ui32Module, uint32_t ui32ChipSelect,
                                            uint32_t *pui32Data, uint32_t ui32NumBytes,
                                            uint32_t ui32Options,
                                            am_hal_iom_callback_t pfnCallback);
-extern void     am_hal_iom_queue_spi_read(uint32_t ui32Module, uint32_t ui32ChipSelect,
+extern am_hal_iom_status_e am_hal_iom_queue_spi_read(uint32_t ui32Module, uint32_t ui32ChipSelect,
                                           uint32_t *pui32Data, uint32_t ui32NumBytes,
                                           uint32_t ui32Options,
                                           am_hal_iom_callback_t pfnCallback);
-extern void     am_hal_iom_queue_i2c_write(uint32_t ui32Module, uint32_t ui32BusAddress,
+extern am_hal_iom_status_e am_hal_iom_queue_i2c_write(uint32_t ui32Module, uint32_t ui32BusAddress,
                                            uint32_t *pui32Data, uint32_t ui32NumBytes,
                                            uint32_t ui32Options,
                                            am_hal_iom_callback_t pfnCallback);
-extern void     am_hal_iom_queue_i2c_read(uint32_t ui32Module, uint32_t ui32BusAddress,
+extern am_hal_iom_status_e am_hal_iom_queue_i2c_read(uint32_t ui32Module, uint32_t ui32BusAddress,
                                           uint32_t *pui32Data, uint32_t ui32NumBytes,
                                           uint32_t ui32Options,
                                           am_hal_iom_callback_t pfnCallback);
@@ -533,7 +583,6 @@ extern void     am_hal_iom_queue_service(uint32_t ui32Module, uint32_t ui32Statu
 void am_iomaster##x##_isr(void)                             \
 {                                                           \
     uint32_t ui32IntStatus;                                 \
-    g_iom_error_status = am_hal_iom_error_status_get(x);    \
     ui32IntStatus = am_hal_iom_int_status_get(x, false);    \
     am_hal_iom_int_clear(x, ui32IntStatus);                 \
     am_hal_iom_queue_service(x, ui32IntStatus);             \
@@ -543,11 +592,14 @@ void am_iomaster##x##_isr(void)                             \
 void am_iomaster##x##_isr(void)                             \
 {                                                           \
     uint32_t ui32IntStatus;                                 \
-    g_iom_error_status = am_hal_iom_error_status_get(x);    \
     ui32IntStatus = am_hal_iom_int_status_get(x, false);    \
     am_hal_iom_int_clear(x, ui32IntStatus);                 \
     am_hal_iom_int_service(x, ui32IntStatus);               \
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // AM_HAL_IOM_H
 

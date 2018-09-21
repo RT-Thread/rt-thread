@@ -54,7 +54,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -427,6 +427,47 @@ am_hal_flash_delay(uint32_t ui32Iterations)
 {
     g_am_hal_flash.delay_cycles(ui32Iterations);
 }
+
+//*****************************************************************************
+//
+//! @brief Delays for a desired amount of cycles while also waiting for a
+//! status change.
+//!
+//! @param ui32usMaxDelay - Maximum number of ~1uS delay loops.
+//! @param ui32Address    - Address of the register for the status change.
+//! @param ui32Mask       - Mask for the status change.
+//! @param ui32Value      - Target value for the status change.
+//!
+//! This function will delay for approximately the given number of microseconds
+//! while checking for a status change, exiting when either the given time has
+//! expired or the status change is detected.
+//!
+//! @returns 0 = timeout.
+//!          1 = status change detected.
+//
+//*****************************************************************************
+uint32_t
+am_hal_flash_delay_status_change(uint32_t ui32usMaxDelay, uint32_t ui32Address,
+                                 uint32_t ui32Mask, uint32_t ui32Value)
+{
+    while ( ui32usMaxDelay-- )
+    {
+        //
+        // Check the status
+        //
+        if ( ( AM_REGVAL(ui32Address) & ui32Mask ) == ui32Value )
+        {
+            return 1;
+        }
+
+        //
+        // Call the BOOTROM cycle function to delay for about 1 microsecond.
+        //
+        am_hal_flash_delay( FLASH_CYCLES_US(1) );
+    }
+
+    return 0;
+} // am_hal_flash_delay_status_change()
 
 //*****************************************************************************
 //
