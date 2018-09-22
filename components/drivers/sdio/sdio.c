@@ -140,6 +140,7 @@ rt_int32_t sdio_io_rw_direct(struct rt_mmcsd_card *card,
 
     RT_ASSERT(card != RT_NULL);
     RT_ASSERT(fn <= SDIO_MAX_FUNCTIONS);
+    RT_ASSERT(pdata != RT_NULL);
 
     if (reg_addr & ~SDIO_ARG_CMD53_REG_MASK)
         return -RT_ERROR;
