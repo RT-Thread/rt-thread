@@ -42,8 +42,8 @@ if PLATFORM == 'gcc':
 
     DEVICE = ' -mcpu=cortex-m7 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -std=c99 -Wall -D__FPU_PRESENT -eentry'
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread-imxrt-gcc.map,-cref,-u,Reset_Handler -T ./Libraries/gcc/MIMXRT1052xxxxx_flexspi_nor.ld'
+    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb -D__START=entry'
+    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread-imxrt-gcc.map,-cref,-u,Reset_Handler -T flexspi_nor.ld'
 
     CPATH = ''
     LPATH = ''
@@ -135,7 +135,7 @@ elif PLATFORM == 'iar':
     AFLAGS += ' --cpu Cortex-M7'
     AFLAGS += ' --fpu None'
 
-    LFLAGS = ' --config ./Libraries/iar/MIMXRT1052xxxxx_flexspi_nor.icf'
+    LFLAGS = ' --config flexspi_nor.icf'
     LFLAGS += ' --redirect _Printf=_PrintfTiny'
     LFLAGS += ' --redirect _Scanf=_ScanfSmall'
     LFLAGS += ' --entry __iar_program_start'

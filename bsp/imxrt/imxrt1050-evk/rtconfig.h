@@ -93,6 +93,8 @@
 #define RT_USING_DEVICE_IPC
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
+#define RT_USING_CPUTIME
+#define RT_USING_CPUTIME_CORTEXM
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
@@ -111,6 +113,8 @@
 /* POSIX layer and C standard library */
 
 #define RT_USING_LIBC
+#define RT_USING_PTHREADS
+#define RT_USING_POSIX
 
 /* Network */
 
