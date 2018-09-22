@@ -938,6 +938,7 @@ err3:
                 host->card->sdio_function[i] = RT_NULL;
                 rt_free(host->card);
                 host->card = RT_NULL;
+                break;
             }
         }
     }
