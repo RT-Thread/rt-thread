@@ -198,6 +198,12 @@ static int mmc_get_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t **new_ext_csd)
  */
 static int mmc_parse_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
 {
+  if(RT_NULL == card || RT_NULL == ext_csd)
+  {
+    LOG_E("emmc parse ext csd fail, invaild args");
+    return -1;
+  }
+  
   card->flags |=  CARD_FLAG_HIGHSPEED;
   card->hs_max_data_rate = 200000000;
   
