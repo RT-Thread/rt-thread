@@ -252,7 +252,7 @@ static rt_size_t rt_mmcsd_read(rt_device_t dev,
                                void       *buffer,
                                rt_size_t   size)
 {
-    rt_err_t err;
+    rt_err_t err = 0;
     rt_size_t offset = 0;
     rt_size_t req_size = 0;
     rt_size_t remain_size = size;
@@ -293,7 +293,7 @@ static rt_size_t rt_mmcsd_write(rt_device_t dev,
                                 const void *buffer,
                                 rt_size_t   size)
 {
-    rt_err_t err;
+    rt_err_t err = 0;
     rt_size_t offset = 0;
     rt_size_t req_size = 0;
     rt_size_t remain_size = size;
