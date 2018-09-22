@@ -27,6 +27,7 @@
 
 /* Memory Management */
 
+#define RT_USING_MEMPOOL
 #define RT_USING_MEMHEAP
 #define RT_USING_MEMHEAP_AS_HEAP
 #define RT_USING_HEAP
@@ -39,6 +40,7 @@
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
+#define ARCH_ARM_CORTEX_FPU
 #define ARCH_ARM_CORTEX_M7
 
 /* RT-Thread Components */
@@ -106,6 +108,9 @@
 #define RT_MMCSD_THREAD_PREORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
 #define RT_USING_SPI
+
+/* Using WiFi */
+
 
 /* Using USB */
 
