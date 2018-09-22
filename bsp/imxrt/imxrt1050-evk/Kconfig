@@ -21,6 +21,7 @@ source "$PKGS_DIR/Kconfig"
 config SOC_IMXRT1052
     bool 
     select ARCH_ARM_CORTEX_M7
+    select ARCH_ARM_CORTEX_FPU
     default y
     
 config BOARD_USING_HYPERFLASH
