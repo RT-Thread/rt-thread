@@ -37,7 +37,11 @@
 #include "dfs_posix.h"
 #endif
 
+#if defined(__CLANG_ARM)
+__asm(".global __use_no_semihosting\n\t");
+#else
 #pragma import(__use_no_semihosting_swi)
+#endif
 
 /* Standard IO device handles. */
 #define STDIN       0

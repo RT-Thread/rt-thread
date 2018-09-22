@@ -17,8 +17,9 @@
 
 #ifdef RT_USING_HEAP
 /* avoid the heap and heap-using library functions supplied by arm */
+#if defined(__CC_ARM)
 #pragma import(__use_no_heap)
-
+#endif
 void *malloc(size_t n)
 {
     return rt_malloc(n);

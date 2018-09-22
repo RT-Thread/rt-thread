@@ -1,0 +1,43 @@
+ROM_LOAD 0x80200000 0x1FE00000
+{
+	RAM_RO 0x80200000
+	{
+		vector_armasm.o (+RO, +FIRST)
+		* (InRoot$$Sections)      ; All library sections that must be in a root region, for example, __main.o, __scatter*.o, __dc*.o, and *Region$$Table
+		* (.init_array)
+		* (.rti_fn.0)
+		* (.rti_fn.0.end)
+		* (.rti_fn.1)
+		* (.rti_fn.1.end)
+		* (.rti_fn.2)
+		* (.rti_fn.2.end)
+		* (.rti_fn.3)
+		* (.rti_fn.3.end)
+		* (.rti_fn.4)
+		* (.rti_fn.4.end)
+		* (.rti_fn.5)
+		* (.rti_fn.5.end)
+		* (.rti_fn.6)
+		* (.rti_fn.6.end)
+        * (FSymTab)
+        * (VSymTab)
+		* (+RO)
+	}
+
+	RAM_RW +0
+	{
+		* (+RW)
+	}
+
+	RAM_ZI +0
+	{
+		* (+ZI)
+	}
+
+	ARM_LIB_STACK AlignExpr(+0, 0x1000) EMPTY 0x1000
+	{
+	}
+	ARM_LIB_HEAP AlignExpr(+0, 0x100000) EMPTY 0x2000000
+	{
+	}
+}

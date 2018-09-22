@@ -136,7 +136,7 @@ void rt_application_init(void);
 void rt_hw_board_init(void);
 int rtthread_startup(void);
 
-#if defined (__CC_ARM)
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
 extern int $Super$$main(void);
 /* re-define main function */
 int $Sub$$main(void)
@@ -178,14 +178,17 @@ struct rt_thread main_thread;
 /* the system main thread */
 void main_thread_entry(void *parameter)
 {
-    extern int main(void);
-    extern int $Super$$main(void);
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
+	extern int $Super$$main(void);
+#elif defined(__ICCARM__) || defined(__GNUC__)
+	extern int main(void);
+#endif
 
     /* RT-Thread components initialization */
     rt_components_init();
 
     /* invoke system main function */
-#if defined (__CC_ARM)
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
     $Super$$main(); /* for ARMCC. */
 #elif defined(__ICCARM__) || defined(__GNUC__)
     main();

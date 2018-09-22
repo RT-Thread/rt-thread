@@ -27,13 +27,15 @@
 
 #include <rtthread.h>
 
-#ifdef __CC_ARM
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#ifdef RT_USING_CPLUSPLUS
 extern void $Super$$__cpp_initialize__aeabi_(void);
 /* we need to change the cpp_initialize order */
 void $Sub$$__cpp_initialize__aeabi_(void)
 {
     /* empty */
 }
+#endif
 #elif defined(__GNUC__) && !defined(__CS_SOURCERYGXX_MAJ__)
 /* The _init()/_fini() routines has been defined in codesourcery g++ lite */
 RT_WEAK void _init()
@@ -48,6 +50,7 @@ RT_WEAK void *__dso_handle = 0;
 
 #endif
 
+#if !defined(__CLANG_ARM)
 RT_WEAK
 int cplusplus_system_init(void)
 {
@@ -82,4 +85,4 @@ int cplusplus_system_init(void)
     return 0;
 }
 INIT_COMPONENT_EXPORT(cplusplus_system_init);
-
+#endif
