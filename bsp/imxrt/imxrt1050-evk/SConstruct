@@ -2,7 +2,6 @@ import os
 import sys
 import rtconfig
 
-
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
 else:
@@ -42,26 +41,9 @@ Export('RTT_ROOT')
 Export('rtconfig')
 
 # prepare building environment
-objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
+objs = PrepareBuilding(env, RTT_ROOT)
 
 objs = objs + SConscript('../Libraries/imxrt1050/SConscript')
 
 # make a building
 DoBuilding(TARGET, objs)
-
-def Update_MDKFlashProgrammingAlgorithm(flash_dict):
-    import xml.etree.ElementTree as etree
-    from utils import xml_indent
-
-    project_tree = etree.parse('project.uvoptx')
-    root = project_tree.getroot()
-    out = file('project.uvoptx', 'wb')
-
-    for elem in project_tree.iterfind('.//Target/TargetOption/TargetDriverDllRegistry/SetRegEntry'):
-        Key = elem.find('Key')
-        if Key.text in flash_dict.keys():
-            elem.find('Name').text = flash_dict[Key.text]
-
-    xml_indent(root)
-    out.write(etree.tostring(root, encoding='utf-8'))
-    out.close()
