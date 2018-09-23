@@ -71,7 +71,7 @@ typedef struct siginfo siginfo_t;
 #include <sys/signal.h>
 #endif
 
-#ifdef __CC_ARM
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
 #include <signal.h>
 typedef unsigned long sigset_t;
 

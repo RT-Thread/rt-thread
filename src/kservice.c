@@ -525,7 +525,7 @@ char *rt_strdup(const char *s)
     return tmp;
 }
 RTM_EXPORT(rt_strdup);
-#ifdef __CC_ARM
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
 char *strdup(const char *s) __attribute__((alias("rt_strdup")));
 #endif
 #endif
