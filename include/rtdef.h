@@ -88,14 +88,19 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define RT_UINT32_MAX                   0xffffffff      /**< Maxium number of UINT32 */
 #define RT_TICK_MAX                     RT_UINT32_MAX   /**< Maxium number of tick */
 
+#if defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
+#define __CLANG_ARM
+#endif
+
 /* Compiler Related Definitions */
-#ifdef __CC_ARM                         /* ARM Compiler */
+#if defined(__CC_ARM) || defined(__CLANG_ARM)           /* ARM Compiler */
     #include <stdarg.h>
     #define SECTION(x)                  __attribute__((section(x)))
     #define RT_UNUSED                   __attribute__((unused))
     #define RT_USED                     __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
-    #define RT_WEAK                     __weak
+
+    #define RT_WEAK                     __attribute__((weak))
     #define rt_inline                   static __inline
     /* module compiling */
     #ifdef RT_USING_MODULE

@@ -55,7 +55,9 @@
 static struct rt_thread finsh_thread;
 ALIGN(RT_ALIGN_SIZE)
 static char finsh_thread_stack[FINSH_THREAD_STACK_SIZE];
+struct finsh_shell _shell;
 #endif
+
 struct finsh_shell *shell;
 static char *finsh_prompt_custom = RT_NULL;
 
@@ -473,9 +475,6 @@ static void shell_push_history(struct finsh_shell *shell)
 }
 #endif
 
-#ifndef RT_USING_HEAP
-struct finsh_shell _shell;
-#endif
 void finsh_thread_entry(void *parameter)
 {
     char ch;
@@ -792,7 +791,7 @@ int finsh_system_init(void)
     rt_thread_t tid;
 
 #ifdef FINSH_USING_SYMTAB
-#ifdef __CC_ARM                 /* ARM C Compiler */
+#if defined(__CC_ARM) || defined(__CLANG_ARM)          /* ARM C Compiler */
     extern const int FSymTab$$Base;
     extern const int FSymTab$$Limit;
     extern const int VSymTab$$Base;
@@ -867,4 +866,3 @@ int finsh_system_init(void)
     return 0;
 }
 INIT_APP_EXPORT(finsh_system_init);
-
