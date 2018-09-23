@@ -25,7 +25,7 @@
 #include "libc/libc_signal.h"
 #include "libc/libc_fdset.h"
 
-#if defined(__CC_ARM) || defined(__IAR_SYSTEMS_ICC__)
+#if defined(__CC_ARM) || defined(__CLANG_ARM) || defined(__IAR_SYSTEMS_ICC__)
 typedef signed long off_t;
 typedef int mode_t;
 #endif

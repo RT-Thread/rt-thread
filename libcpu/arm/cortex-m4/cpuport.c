@@ -22,9 +22,14 @@
 
 #include <rtthread.h>
 
-#define USE_FPU   /* ARMCC */ (  (defined ( __CC_ARM ) && defined ( __TARGET_FPU_VFP )) \
-                  /* IAR */   || (defined ( __ICCARM__ ) && defined ( __ARMVFP__ )) \
+#if               /* ARMCC */ (  (defined ( __CC_ARM ) && defined ( __TARGET_FPU_VFP ))    \
+                  /* Clang */ || (defined ( __CLANG_ARM ) && defined ( __TARGET_FPU_VFP )) \
+                  /* IAR */   || (defined ( __ICCARM__ ) && defined ( __ARMVFP__ ))        \
                   /* GNU */   || (defined ( __GNUC__ ) && defined ( __VFP_FP__ ) && !defined(__SOFTFP__)) )
+#define USE_FPU   1
+#else
+#define USE_FPU   0
+#endif
 
 /* exception and interrupt handler table */
 rt_uint32_t rt_interrupt_from_thread;
@@ -452,7 +457,7 @@ RT_WEAK void rt_hw_cpu_reset(void)
  * @return return the index of the first bit set. If value is 0, then this function
  * shall return 0.
  */
-#if defined(__CC_ARM)
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
 __asm int __rt_ffs(int value)
 {
     CMP     r0, #0x00
