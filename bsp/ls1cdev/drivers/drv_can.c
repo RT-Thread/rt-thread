@@ -444,7 +444,7 @@ void ls1c_can0_irqhandler(int irq, void *param)
        rt_kprintf("\r\nCan0 int TX happened!\r\n");
     }
     /*数据溢出中断*/
-    else if (( status  & CAN_IR_TI) == CAN_IR_DOI) 
+    else if (( status  & CAN_IR_DOI) == CAN_IR_DOI) 
     {
        rt_hw_can_isr(&bxcan0, RT_CAN_EVENT_RXOF_IND);
        rt_kprintf("\r\nCan0 int RX OF happened!\r\n");
@@ -484,7 +484,7 @@ void ls1c_can1_irqhandler(int irq, void *param)
        rt_kprintf("\r\nCan1 int TX happened!\r\n");
     }
     /*数据溢出中断*/
-    else if (( status  & CAN_IR_TI) == CAN_IR_DOI) 
+    else if (( status  & CAN_IR_DOI) == CAN_IR_DOI) 
     {
        rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_RXOF_IND);
        rt_kprintf("\r\nCan1 int RX OF happened!\r\n");
