@@ -3,11 +3,6 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  *
- */
-
-/*
- * File      : clock.c
- *
  * Change Logs:
  * Date           Author       Notes
  * 2006-03-12     Bernard      first version
