@@ -315,7 +315,7 @@ int fputc(int c, FILE *f)
 {
     char ch[2] = {0};
 
-    ch[1] = c;
+    ch[0] = c;
     rt_kprintf(&ch[0]);
     return 1;
 }
