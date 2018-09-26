@@ -83,9 +83,9 @@ example:
     typedef struct rt_timer* rt_timer_t;
 
 
-6. Micros
+6. Macros
 
-In RT-Thread, please use upper-case names for micro definitions. Words are
+In RT-Thread, please use upper-case names for macro definitions. Words are
 connected by "_". Like:
 
     #define RT_TRUE                         1
@@ -178,7 +178,7 @@ It is not recommended to use rt_kprintf frequently. Unless you are aware of that
 it's not a big deal to run slower.
 
 Logging should be off by default and can be turned on by a switch(e.g. a
-variable or a micro). When logging, it should be easy to understand and easy to
+variable or a macro). When logging, it should be easy to understand and easy to
 determine where the problem is.
 
 
