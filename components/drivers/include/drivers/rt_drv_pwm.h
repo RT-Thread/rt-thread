@@ -25,6 +25,9 @@
 #ifndef __DRV_PWM_H_INCLUDE__
 #define __DRV_PWM_H_INCLUDE__
 
+#include <rtthread.h>
+#include <rtdevice.h>
+
 #define PWM_CMD_ENABLE      (128 + 0)
 #define PWM_CMD_DISABLE     (128 + 1)
 #define PWM_CMD_SET         (128 + 2)
@@ -49,6 +52,10 @@ struct rt_device_pwm
     const struct rt_pwm_ops *ops;
 };
 
-extern rt_err_t rt_device_pwm_register(struct rt_device_pwm *device, const char *name, const struct rt_pwm_ops *ops, const void *user_data);
+rt_err_t rt_device_pwm_register(struct rt_device_pwm *device, const char *name, const struct rt_pwm_ops *ops, const void *user_data);
+
+rt_err_t rt_pwm_enable(struct rt_device_pwm *device, int channel);
+rt_err_t rt_pwm_disable(struct rt_device_pwm *device, int channel);
+rt_err_t rt_pwm_set(struct rt_device_pwm *device, int channel, rt_uint32_t period, rt_uint32_t pulse);
 
 #endif /* __DRV_PWM_H_INCLUDE__ */

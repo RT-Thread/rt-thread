@@ -24,9 +24,7 @@
 
 #include <string.h>
 
-#include <rtthread.h>
-#include <rtdevice.h>
-
+#include <drivers/rt_drv_pwm.h>
 
 static rt_err_t _pwm_control(rt_device_t dev, int cmd, void *args)
 {
@@ -99,7 +97,6 @@ static rt_size_t _pwm_write(rt_device_t dev, rt_off_t pos, const void *buffer, r
         {
             return 0;
         }
-
     }
 
     return size;
@@ -128,10 +125,9 @@ rt_err_t rt_device_pwm_register(struct rt_device_pwm *device, const char *name, 
     return result;
 }
 
-rt_err_t rt_pwm_enable(int channel)
+rt_err_t rt_pwm_enable(struct rt_device_pwm *device, int channel)
 {
     rt_err_t result = RT_EOK;
-    struct rt_device *device = rt_device_find("pwm");
     struct rt_pwm_configuration configuration = {0};
 
     if (!device)
@@ -140,15 +136,30 @@ rt_err_t rt_pwm_enable(int channel)
     }
 
     configuration.channel = channel;
-    result = rt_device_control(device, PWM_CMD_ENABLE, &configuration);
+    result = rt_device_control(&device->parent, PWM_CMD_ENABLE, &configuration);
 
     return result;
 }
 
-rt_err_t rt_pwm_set(int channel, rt_uint32_t period, rt_uint32_t pulse)
+rt_err_t rt_pwm_disable(struct rt_device_pwm *device, int channel)
 {
     rt_err_t result = RT_EOK;
-    struct rt_device *device = rt_device_find("pwm");
+    struct rt_pwm_configuration configuration = {0};
+
+    if (!device)
+    {
+        return -RT_EIO;
+    }
+
+    configuration.channel = channel;
+    result = rt_device_control(&device->parent, PWM_CMD_DISABLE, &configuration);
+
+    return result;
+}
+
+rt_err_t rt_pwm_set(struct rt_device_pwm *device, int channel, rt_uint32_t period, rt_uint32_t pulse)
+{
+    rt_err_t result = RT_EOK;
     struct rt_pwm_configuration configuration = {0};
 
     if (!device)
@@ -159,11 +170,10 @@ rt_err_t rt_pwm_set(int channel, rt_uint32_t period, rt_uint32_t pulse)
     configuration.channel = channel;
     configuration.period = period;
     configuration.pulse = pulse;
-    result = rt_device_control(device, PWM_CMD_SET, &configuration);
+    result = rt_device_control(&device->parent, PWM_CMD_SET, &configuration);
 
     return result;
 }
-
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
@@ -175,33 +185,75 @@ FINSH_FUNCTION_EXPORT_ALIAS(rt_pwm_set, pwm_set, set pwm.);
 static int pwm_enable(int argc, char **argv)
 {
     int result = 0;
+    struct rt_device_pwm *device = RT_NULL;
 
-    if (argc != 2)
+    if (argc != 3)
     {
-        rt_kprintf("Usage: pwm_enable 1\n");
+        rt_kprintf("Usage: pwm_enable pwm1 1\n");
         result = -RT_ERROR;
         goto _exit;
     }
 
-    result = rt_pwm_enable(atoi(argv[1]));
+    device = (struct rt_device_pwm *)rt_device_find(argv[1]);
+    if (!device)
+    {
+        result = -RT_EIO;
+        goto _exit;
+    }
+
+    result = rt_pwm_enable(device, atoi(argv[2]));
 
 _exit:
     return result;
 }
-MSH_CMD_EXPORT(pwm_enable, pwm_enable 1);
+MSH_CMD_EXPORT(pwm_enable, pwm_enable pwm1 1);
 
-static int pwm_set(int argc, char **argv)
+static int pwm_disable(int argc, char **argv)
 {
     int result = 0;
+    struct rt_device_pwm *device = RT_NULL;
 
-    if (argc != 4)
+    if (argc != 3)
     {
-        rt_kprintf("Usage: pwm_set 1 100 50\n");
+        rt_kprintf("Usage: pwm_enable pwm1 1\n");
         result = -RT_ERROR;
         goto _exit;
     }
 
-    result = rt_pwm_set(atoi(argv[1]), atoi(argv[2]), atoi(argv[3]));
+    device = (struct rt_device_pwm *)rt_device_find(argv[1]);
+    if (!device)
+    {
+        result = -RT_EIO;
+        goto _exit;
+    }
+
+    result = rt_pwm_disable(device, atoi(argv[2]));
+
+_exit:
+    return result;
+}
+MSH_CMD_EXPORT(pwm_disable, pwm_disable pwm1 1);
+
+static int pwm_set(int argc, char **argv)
+{
+    int result = 0;
+    struct rt_device_pwm *device = RT_NULL;
+
+    if (argc != 5)
+    {
+        rt_kprintf("Usage: pwm_set pwm1 1 100 50\n");
+        result = -RT_ERROR;
+        goto _exit;
+    }
+
+    device = (struct rt_device_pwm *)rt_device_find(argv[1]);
+    if (!device)
+    {
+        result = -RT_EIO;
+        goto _exit;
+    }
+
+    result = rt_pwm_set(device, atoi(argv[2]), atoi(argv[3]), atoi(argv[4]));
 
 _exit:
     return result;
@@ -209,6 +261,4 @@ _exit:
 MSH_CMD_EXPORT(pwm_set, pwm_set 1 100 50);
 
 #endif /* FINSH_USING_MSH */
-
-
 #endif /* RT_USING_FINSH */
