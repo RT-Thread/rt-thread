@@ -231,11 +231,11 @@ menu "Using WiFi"
 
         config RT_WLAN_SCAN_WAIT_MS
             int "Set scan timeout time(ms)"
-            default 10000;
+            default 10000
 
         config RT_WLAN_CONNECT_WAIT_MS
             int "Set connect timeout time(ms)"
-            default 10000;
+            default 10000
 
         config RT_WLAN_SSID_MAX_LENGTH
             int "SSID name maximum length"
