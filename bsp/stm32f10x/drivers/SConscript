@@ -15,6 +15,9 @@ usart.c
 if GetDepend(['RT_USING_PIN']):
     src += ['gpio.c']
 
+if GetDepend(['RT_USING_I2C_BITOPS']):
+    src += ['i2c.c']
+
 # add canbus driver.
 if GetDepend('RT_USING_CAN'):
     src += ['bxcan.c']
