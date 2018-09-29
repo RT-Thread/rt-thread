@@ -34,7 +34,7 @@ if GetDepend(['RT_USING_RTC']):
 if GetDepend(['RT_USING_USB_HOST']):
     src += ['drv_usbh.c']
 
-if GetDepend(['RT_USING_I2C']):
+if GetDepend(['RT_USING_I2C_BITOPS']):
     src += ['drv_i2c.c']
 
 if GetDepend(['RT_USING_CAN']):
