@@ -20,12 +20,11 @@
 # Change Logs:
 # Date           Author       Notes
 # 2017-12-29     Bernard      The first version
-# 2018-07-31.....weety        Support pyconfig
+# 2018-07-31     weety        Support pyconfig
 
 import os
 import sys
 import shutil
-import pymenuconfig
 
 # make rtconfig.h from .config
 
@@ -227,6 +226,7 @@ def menuconfig(RTT_ROOT):
 
 # pyconfig for windows and linux
 def pyconfig(RTT_ROOT):
+    import pymenuconfig
 
     touch_env()
     env_dir = get_env_dir()
