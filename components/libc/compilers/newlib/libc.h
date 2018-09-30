@@ -26,7 +26,14 @@
 #ifndef __RTT_LIBC_H__
 #define __RTT_LIBC_H__
 
+#include <stdio.h>
+#include <stdint.h>
+#include <string.h>
 #include <sys/time.h>
+
+#ifndef _EXFUN
+#define _EXFUN(name, proto)		name proto
+#endif
 
 #define MILLISECOND_PER_SECOND  1000UL
 #define MICROSECOND_PER_SECOND  1000000UL
