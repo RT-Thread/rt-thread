@@ -906,7 +906,7 @@ static rt_err_t lcd_control(rt_device_t dev, int cmd, void *args)
 
 		info->bits_per_pixel = 16;
 		info->pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB565;
-		info->framebuffer = RT_NULL;
+		info->framebuffer = (rt_uint8_t *)LtdcHandler.LayerCfg[ActiveLayer].FBStartAdress;
 		info->width = 240;
 		info->height = 320;
 	}
