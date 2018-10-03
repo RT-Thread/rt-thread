@@ -213,26 +213,6 @@ void touch_show_state()
 }
 MSH_CMD_EXPORT(touch_show_state, show screen coordinate in touching);
 
-static void touch_timer(void *parameter)
-{
-    int16_t x;
-    int16_t y;
-    struct touch_state ts;
-    touch_get_state(&ts);
-
-#ifdef PKG_USING_LITTLEVGL2RTT    
-    if(ts.pressed) 
-    {
-        x = (3706 - ts.x) / 14;
-        y = (-461 + ts.y) / 10.5;
-        
-        littlevgl2rtt_send_input_event(x, y, LITTLEVGL2RTT_INPUT_DOWN);
-    }
-    else
-        littlevgl2rtt_send_input_event(-1, -1, LITTLEVGL2RTT_INPUT_UP);
-#endif
-}
-
 static int rt_hw_touch_init(void)
 {
     static struct rt_device touch;
@@ -240,11 +220,7 @@ static int rt_hw_touch_init(void)
     /* init device structure */
     touch.type = RT_Device_Class_Unknown;
     touch.init = stmpe811_touch_init;
-
-    /* create 1/8 second timer */
-
-    touch.user_data = rt_timer_create("touch", touch_timer, RT_NULL,
-                                      RT_TICK_PER_SECOND/8, RT_TIMER_FLAG_PERIODIC);
+    touch.user_data = RT_NULL;
 
     /* register touch device to RT-Thread */
     rt_device_register(&touch, "touch", RT_DEVICE_FLAG_RDWR);

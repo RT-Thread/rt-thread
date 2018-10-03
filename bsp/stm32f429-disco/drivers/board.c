@@ -160,10 +160,6 @@ void rt_hw_board_init()
     lcd = rt_device_find("lcd");
     rtgui_graphic_set_device(lcd);
 #endif
-
-    rt_device_t tscreen = rt_device_find("touch");
-    rt_device_open(tscreen, RT_DEVICE_FLAG_RDWR);
-    rt_timer_start((rt_timer_t)tscreen->user_data);
 	
 }
 
