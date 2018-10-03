@@ -15,6 +15,10 @@
 #include "drv_touch.h"
 #include "drivers/i2c.h"
 
+#ifdef PKG_USING_LITTLEVGL2RTT
+#include "littlevgl2rtt.h"
+#endif
+
 
 #define TSC_I2C_ADDR    0x41            /* 7-bit I2C address                  */
 
@@ -144,7 +148,7 @@ int32_t touch_uninitialize (void) {
    - \b  0: function succeeded
    - \b -1: function failed
 */
-int32_t touch_get_state (struct touch_state *pState)
+int32_t touch_get_state(struct touch_state *pState)
 {
     uint8_t val;
     uint8_t num;
@@ -198,32 +202,52 @@ int32_t touch_get_state (struct touch_state *pState)
 
 void touch_show_state()
 {
+    int16_t x;
+    int16_t y;
     struct touch_state ts;
     touch_get_state(&ts);
+    x = (3706 - ts.x) / 14;
+    y = (-461 + ts.y) / 10.5;
     rt_kprintf("[drv_touch] touch_show_state, x: %d, y: %d, pressed: %d, padding: %d\n", ts.x , ts.y, ts.pressed, ts.padding);
+    rt_kprintf("[drv_touch] touch_show_state, phy x: %d, phy y: %d\n", x , y);
 }
 MSH_CMD_EXPORT(touch_show_state, show screen coordinate in touching);
 
+static void touch_timer(void *parameter)
+{
+    int16_t x;
+    int16_t y;
+    struct touch_state ts;
+    touch_get_state(&ts);
+
+#ifdef PKG_USING_LITTLEVGL2RTT    
+    if(ts.pressed) 
+    {
+        x = (3706 - ts.x) / 14;
+        y = (-461 + ts.y) / 10.5;
+        
+        littlevgl2rtt_send_input_event(x, y, LITTLEVGL2RTT_INPUT_DOWN);
+    }
+    else
+        littlevgl2rtt_send_input_event(-1, -1, LITTLEVGL2RTT_INPUT_UP);
+#endif
+}
+
 static int rt_hw_touch_init(void)
 {
-    rt_device_t touch = RT_NULL;
-
-    touch = (struct rt_device *)rt_malloc(sizeof(struct rt_device));
-    if (touch == RT_NULL)
-        return RT_ENOMEM; /* no memory yet */
+    static struct rt_device touch;
 
     /* init device structure */
-    touch->type = RT_Device_Class_Unknown;
-    touch->init = stmpe811_touch_init;
-    touch->user_data = RT_NULL;
+    touch.type = RT_Device_Class_Unknown;
+    touch.init = stmpe811_touch_init;
 
     /* create 1/8 second timer */
 
-    //rt_timer_create("touch", touch_timer, RT_NULL,
-    //                RT_TICK_PER_SECOND/8, RT_TIMER_FLAG_PERIODIC);
+    touch.user_data = rt_timer_create("touch", touch_timer, RT_NULL,
+                                      RT_TICK_PER_SECOND/8, RT_TIMER_FLAG_PERIODIC);
 
     /* register touch device to RT-Thread */
-    rt_device_register(touch, "touch", RT_DEVICE_FLAG_RDWR);
+    rt_device_register(&touch, "touch", RT_DEVICE_FLAG_RDWR);
     
     return RT_EOK;
 }
