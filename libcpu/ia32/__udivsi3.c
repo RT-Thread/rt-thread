@@ -12,10 +12,7 @@
  * 2006-10-09     Bernard      the first version for i386
  */
 
-#include <rtthread.h>
-
-typedef rt_uint32_t uint32_t;
-typedef rt_int32_t int32_t;
+#include <stdint.h>
 
 uint32_t __udivsi3(uint32_t num, uint32_t den)
 {
