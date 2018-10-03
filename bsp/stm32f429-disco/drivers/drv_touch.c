@@ -93,7 +93,7 @@ static int32_t touch_write (uint8_t reg, uint8_t val)
    - \b  0: function succeeded
    - \b -1: function failed
 */
-int32_t Touch_Initialize (void)
+static rt_err_t stmpe811_touch_init(rt_device_t dev)
 {
     stmpe811_i2c_bus = rt_i2c_bus_device_find(STMPE811_I2CBUS_NAME);
 
@@ -131,7 +131,7 @@ int32_t Touch_Initialize (void)
    - \b  0: function succeeded
    - \b -1: function failed
 */
-int32_t Touch_Uninitialize (void) {
+int32_t touch_uninitialize (void) {
   touch_write(STMPE811_SYS_CTRL1, 0x02);  /* Reset Touch-screen controller    */
   return 0;
 }
@@ -144,13 +144,13 @@ int32_t Touch_Uninitialize (void) {
    - \b  0: function succeeded
    - \b -1: function failed
 */
-int32_t Touch_GetState (struct touch_state *pState) {
+int32_t touch_get_state (struct touch_state *pState)
+{
     uint8_t val;
     uint8_t num;
     uint8_t xyz[4];
     int32_t res;
-    uint8_t buf[4];
-    struct rt_i2c_msg msgs;
+    struct rt_i2c_msg msgs[2];
 
     /* Read touch status */
     res = touch_read(STMPE811_TSC_CTRL, &val);
@@ -167,19 +167,19 @@ int32_t Touch_GetState (struct touch_state *pState) {
 
         while (num--)
         {
-            msgs.addr  = TSC_I2C_ADDR;
-            msgs.flags = RT_I2C_WR;
-            msgs.buf   = buf;
-            msgs.len   = 1;
+            msgs[0].addr  = TSC_I2C_ADDR;
+            msgs[0].flags = RT_I2C_WR;
+            msgs[0].buf   = &val;
+            msgs[0].len   = 1;
 
-            rt_i2c_transfer(stmpe811_i2c_bus, &msgs, 1);
+            //rt_i2c_transfer(stmpe811_i2c_bus, &msgs, 1);
           //ptrI2C->MasterTransmit (TSC_I2C_ADDR, &val, 1, true);
           //while (ptrI2C->GetStatus().busy);
-            msgs.addr  = TSC_I2C_ADDR;
-            msgs.flags = RT_I2C_RD;
-            msgs.buf   = buf;
-            msgs.len   = 4;
-            rt_i2c_transfer(stmpe811_i2c_bus, &msgs, 1);
+            msgs[1].addr  = TSC_I2C_ADDR;
+            msgs[1].flags = RT_I2C_RD;
+            msgs[1].buf   = xyz;
+            msgs[1].len   = 4;
+            rt_i2c_transfer(stmpe811_i2c_bus, msgs, 2);
           //ptrI2C->MasterReceive (TSC_I2C_ADDR, xyz, 4, false);
           //while (ptrI2C->GetStatus().busy);
         }
@@ -188,10 +188,43 @@ int32_t Touch_GetState (struct touch_state *pState) {
     }
     else
     {
-    /* Clear all data in FIFO */
+        /* Clear all data in FIFO */
         touch_write(STMPE811_FIFO_STA, 0x1);
         touch_write(STMPE811_FIFO_STA, 0x0);
     }
 
     return 0;
 }
+
+void touch_show_state()
+{
+    struct touch_state ts;
+    touch_get_state(&ts);
+    rt_kprintf("[drv_touch] touch_show_state, x: %d, y: %d, pressed: %d, padding: %d\n", ts.x , ts.y, ts.pressed, ts.padding);
+}
+MSH_CMD_EXPORT(touch_show_state, show screen coordinate in touching);
+
+static int rt_hw_touch_init(void)
+{
+    rt_device_t touch = RT_NULL;
+
+    touch = (struct rt_device *)rt_malloc(sizeof(struct rt_device));
+    if (touch == RT_NULL)
+        return RT_ENOMEM; /* no memory yet */
+
+    /* init device structure */
+    touch->type = RT_Device_Class_Unknown;
+    touch->init = stmpe811_touch_init;
+    touch->user_data = RT_NULL;
+
+    /* create 1/8 second timer */
+
+    //rt_timer_create("touch", touch_timer, RT_NULL,
+    //                RT_TICK_PER_SECOND/8, RT_TIMER_FLAG_PERIODIC);
+
+    /* register touch device to RT-Thread */
+    rt_device_register(touch, "touch", RT_DEVICE_FLAG_RDWR);
+    
+    return RT_EOK;
+}
+INIT_BOARD_EXPORT(rt_hw_touch_init);
