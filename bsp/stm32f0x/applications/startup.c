@@ -26,7 +26,7 @@
 
 extern int  rt_application_init(void);
 
-#ifdef __CC_ARM
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #define STM32_SRAM_BEGIN    (&Image$$RW_IRAM1$$ZI$$Limit)
 #elif __ICCARM__
