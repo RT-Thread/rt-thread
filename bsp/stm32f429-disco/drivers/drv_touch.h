@@ -78,4 +78,6 @@ struct touch_state {
   uint8_t padding;
 };
 
+int32_t touch_get_state(struct touch_state *state);
+
 #endif /* __DRV_TOUCH_H__ */
