@@ -68,7 +68,7 @@ static int32_t touch_read (uint8_t reg, uint8_t *val)
    - \b  0: function succeeded
    - \b -1: function failed
 */
-static int32_t touch_write (uint8_t reg, uint8_t val)
+static int32_t touch_write(uint8_t reg, uint8_t val)
 {
     struct rt_i2c_msg msgs;
     rt_uint8_t buf[2] = {reg, val};
@@ -99,7 +99,7 @@ static int32_t touch_write (uint8_t reg, uint8_t val)
 */
 static rt_err_t stmpe811_touch_init(rt_device_t dev)
 {
-    stmpe811_i2c_bus = rt_i2c_bus_device_find(STMPE811_I2CBUS_NAME);
+    stmpe811_i2c_bus = rt_i2c_bus_device_find("touch");
 
 //    ptrI2C->Initialize  (NULL);
 //    ptrI2C->PowerControl(ARM_POWER_FULL);
@@ -148,7 +148,7 @@ int32_t touch_uninitialize (void) {
    - \b  0: function succeeded
    - \b -1: function failed
 */
-int32_t touch_get_state(struct touch_state *pState)
+int32_t touch_get_state(struct touch_state *state)
 {
     uint8_t val;
     uint8_t num;
@@ -159,9 +159,9 @@ int32_t touch_get_state(struct touch_state *pState)
     /* Read touch status */
     res = touch_read(STMPE811_TSC_CTRL, &val);
     if (res < 0) return -1;
-    pState->pressed = (val & (1 << 7)) ? 1 : 0;
+    state->pressed = (val & (1 << 7)) ? 1 : 0;
   
-    if (pState->pressed)
+    if (state->pressed)
     {
         val = STMPE811_TSC_DATA;
 
@@ -187,8 +187,8 @@ int32_t touch_get_state(struct touch_state *pState)
           //ptrI2C->MasterReceive (TSC_I2C_ADDR, xyz, 4, false);
           //while (ptrI2C->GetStatus().busy);
         }
-        pState->x =  (int16_t)((xyz[0] << 4) | ((xyz[1] & 0xF0) >> 4));
-        pState->y =  (int16_t) (xyz[2]       | ((xyz[1] & 0x0F) << 8));
+        state->x =  (int16_t)((xyz[0] << 4) | ((xyz[1] & 0xF0) >> 4));
+        state->y =  (int16_t) (xyz[2]       | ((xyz[1] & 0x0F) << 8));
     }
     else
     {

@@ -40,8 +40,10 @@
 
 static void rt_touch_thread_entry(void *parameter)
 {
+#ifdef PKG_USING_LITTLEVGL2RTT    
     int16_t x;
     int16_t y;
+#endif
     struct touch_state ts;
     while(1)
     {
