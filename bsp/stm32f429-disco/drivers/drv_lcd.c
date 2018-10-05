@@ -21,13 +21,13 @@
 
 typedef struct
 {
-	rt_uint16_t width;			//LCD ���
-	rt_uint16_t height;			//LCD �߶�
-	rt_uint16_t id;				//LCD ID
-	rt_uint8_t  dir;			//���������������ƣ�0��������1��������	
-	rt_uint16_t	wramcmd;		//��ʼдgramָ��
-	rt_uint16_t setxcmd;		//����x����ָ��
-	rt_uint16_t setycmd;		//����y����ָ�� 
+	rt_uint16_t width;
+	rt_uint16_t height;
+	rt_uint16_t id;
+	rt_uint8_t  dir;			//Horizontal or vertical screen control: 0, vertical; 1, horizontal 	
+	rt_uint16_t wramcmd;
+	rt_uint16_t setxcmd;
+	rt_uint16_t setycmd; 
 } lcd_info_t;
 
 typedef struct
@@ -36,22 +36,20 @@ typedef struct
 	volatile rt_uint16_t ram;
 } lcd_ili9341_t;
 
-//ʹ��NOR/SRAM�� Bank1.sector1,��ַλHADDR[27,26]=00 A18��Ϊ�������������� 
-//ע������ʱSTM32�ڲ�������һλ����!
 #define LCD_ILI9341_BASE        ((rt_uint32_t)(0x60000000 | 0x0007FFFE))
 #define ili9341					((lcd_ili9341_t *) LCD_ILI9341_BASE)
 //////////////////////////////////////////////////////////////////////////////////
 
-//ɨ�跽����
-#define L2R_U2D  0 		//������,���ϵ���
-#define L2R_D2U  1 		//������,���µ���
-#define R2L_U2D  2 		//���ҵ���,���ϵ���
-#define R2L_D2U  3 		//���ҵ���,���µ���
-#define U2D_L2R  4 		//���ϵ���,������
-#define U2D_R2L  5 		//���ϵ���,���ҵ���
-#define D2U_L2R  6 		//���µ���,������
-#define D2U_R2L  7		//���µ���,���ҵ���	 
-#define DFT_SCAN_DIR  L2R_U2D  //Ĭ�ϵ�ɨ�跽��
+//Definition of scan direction 
+#define L2R_U2D  0
+#define L2R_D2U  1
+#define R2L_U2D  2
+#define R2L_D2U  3
+#define U2D_L2R  4
+#define U2D_R2L  5
+#define D2U_L2R  6
+#define D2U_R2L  7	 
+#define DFT_SCAN_DIR  L2R_U2D
 
 static lcd_info_t lcddev;
 LTDC_HandleTypeDef  LtdcHandler;
@@ -730,108 +728,6 @@ rt_uint16_t ili9341_bgr2rgb(rt_uint16_t value)
 
 	return (blue << 11) + (green << 5) + (red << 0);
 }
-  	   
-//static void ili9341_set_scan_direction(rt_uint8_t dir)
-//{
-//	rt_uint16_t regval = 0;
-//	rt_uint16_t dirreg = 0;
-//	rt_uint16_t temp;
-
-//	switch (dir)
-//	{
-//	case L2R_U2D://������,���ϵ���
-//		regval |= (0 << 7) | (0 << 6) | (0 << 5);
-//		break;
-//	case L2R_D2U://������,���µ���
-//		regval |= (1 << 7) | (0 << 6) | (0 << 5);
-//		break;
-//	case R2L_U2D://���ҵ���,���ϵ���
-//		regval |= (0 << 7) | (1 << 6) | (0 << 5);
-//		break;
-//	case R2L_D2U://���ҵ���,���µ���
-//		regval |= (1 << 7) | (1 << 6) | (0 << 5);
-//		break;
-//	case U2D_L2R://���ϵ���,������
-//		regval |= (0 << 7) | (0 << 6) | (1 << 5);
-//		break;
-//	case U2D_R2L://���ϵ���,���ҵ���
-//		regval |= (0 << 7) | (1 << 6) | (1 << 5);
-//		break;
-//	case D2U_L2R://���µ���,������
-//		regval |= (1 << 7) | (0 << 6) | (1 << 5);
-//		break;
-//	case D2U_R2L://���µ���,���ҵ���
-//		regval |= (1 << 7) | (1 << 6) | (1 << 5);
-//		break;
-//	}
-
-//	dirreg = 0X36;
-//	ili9341_write_reg_with_value(dirreg, regval);
-
-//	if (regval & 0X20)
-//	{
-//		if (lcddev.width < lcddev.height)//����X,Y
-//		{
-//			temp = lcddev.width;
-//			lcddev.width = lcddev.height;
-//			lcddev.height = temp;
-//		}
-//	}
-//	else
-//	{
-//		if (lcddev.width > lcddev.height)//����X,Y
-//		{
-//			temp = lcddev.width;
-//			lcddev.width = lcddev.height;
-//			lcddev.height = temp;
-//		}
-//	}
-//	
-//	ili9341_write_reg(lcddev.setxcmd);
-//	ili9341_write_data(0);
-//	ili9341_write_data(0);
-//	ili9341_write_data((lcddev.width - 1) >> 8);
-//	ili9341_write_data((lcddev.width - 1) & 0XFF);
-
-//	ili9341_write_reg(lcddev.setycmd);
-//	ili9341_write_data(0);
-//	ili9341_write_data(0);
-//	ili9341_write_data((lcddev.height - 1) >> 8);
-//	ili9341_write_data((lcddev.height - 1) & 0XFF);
-//}
-
-//void ili9341_set_backlight(rt_uint8_t pwm)
-//{
-//	ili9341_write_reg(0xBE);
-//	ili9341_write_data(0x05);
-//	ili9341_write_data(pwm*2.55);
-//	ili9341_write_data(0x01);
-//	ili9341_write_data(0xFF);
-//	ili9341_write_data(0x00);
-//	ili9341_write_data(0x00);
-//}
-
-//void ili9341_set_display_direction(rt_uint8_t dir)
-//{
-//	lcddev.dir = dir;
-//	if (dir == 0)
-//	{
-//		lcddev.width = 240;
-//		lcddev.height = 320;
-//	}
-//	else
-//	{
-//		lcddev.width = 320;
-//		lcddev.height = 240;
-//	}
-
-//	lcddev.wramcmd = 0X2C;
-//	lcddev.setxcmd = 0X2A;
-//	lcddev.setycmd = 0X2B;
-
-//	ili9341_set_scan_direction(DFT_SCAN_DIR);
-//}
-
 
 void _lcd_low_level_init(void)
 {
