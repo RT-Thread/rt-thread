@@ -1,11 +1,7 @@
 /*
- * File      : drv_lcd.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 RT-Thread Develop Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -25,13 +21,13 @@
 
 typedef struct
 {
-	rt_uint16_t width;			//LCD ©М╤х
-	rt_uint16_t height;			//LCD ╦ъ╤х
+	rt_uint16_t width;			//LCD О©╫О©╫О©╫
+	rt_uint16_t height;			//LCD О©╫ъ╤О©╫
 	rt_uint16_t id;				//LCD ID
-	rt_uint8_t  dir;			//╨Афа╩╧йгйЗфа©ьжфё╨0ё╛йЗфаё╩1ё╛╨Афа║ё	
-	rt_uint16_t	wramcmd;		//©╙й╪п╢gramж╦аН
-	rt_uint16_t setxcmd;		//иХжцxвЬ╠Йж╦аН
-	rt_uint16_t setycmd;		//иХжцyвЬ╠Йж╦аН 
+	rt_uint8_t  dir;			//О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫фёО©╫0О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫1О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫	
+	rt_uint16_t	wramcmd;		//О©╫О©╫й╪п╢gramж╦О©╫О©╫
+	rt_uint16_t setxcmd;		//О©╫О©╫О©╫О©╫xО©╫О©╫О©╫О©╫ж╦О©╫О©╫
+	rt_uint16_t setycmd;		//О©╫О©╫О©╫О©╫yО©╫О©╫О©╫О©╫ж╦О©╫О©╫ 
 } lcd_info_t;
 
 typedef struct
@@ -40,22 +36,22 @@ typedef struct
 	volatile rt_uint16_t ram;
 } lcd_ili9341_t;
 
-//й╧сцNOR/SRAM╣д Bank1.sector1,╣ьж╥н╩HADDR[27,26]=00 A18вВн╙йЩ╬щцЭаНгЬ╥жоъ 
-//в╒рБиХжцй╠STM32дз╡©╩Асррфр╩н╩╤тфД!
+//й╧О©╫О©╫NOR/SRAMО©╫О©╫ Bank1.sector1,О©╫О©╫ж╥н╩HADDR[27,26]=00 A18О©╫О©╫н╙О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ 
+//в╒О©╫О©╫О©╫О©╫О©╫О©╫й╠STM32О©╫з╡О©╫О©╫О©╫О©╫О©╫О©╫О©╫р╩н╩О©╫О©╫О©╫О©╫!
 #define LCD_ILI9341_BASE        ((rt_uint32_t)(0x60000000 | 0x0007FFFE))
 #define ili9341					((lcd_ili9341_t *) LCD_ILI9341_BASE)
 //////////////////////////////////////////////////////////////////////////////////
 
-//и╗цХ╥╫оР╤╗рЕ
-#define L2R_U2D  0 		//╢свС╣╫ср,╢сио╣╫об
-#define L2R_D2U  1 		//╢свС╣╫ср,╢соб╣╫ио
-#define R2L_U2D  2 		//╢сср╣╫вС,╢сио╣╫об
-#define R2L_D2U  3 		//╢сср╣╫вС,╢соб╣╫ио
-#define U2D_L2R  4 		//╢сио╣╫об,╢свС╣╫ср
-#define U2D_R2L  5 		//╢сио╣╫об,╢сср╣╫вС
-#define D2U_L2R  6 		//╢соб╣╫ио,╢свС╣╫ср
-#define D2U_R2L  7		//╢соб╣╫ио,╢сср╣╫вС	 
-#define DFT_SCAN_DIR  L2R_U2D  //д╛хо╣ди╗цХ╥╫оР
+//и╗О©╫Х╥╫О©╫О©╫О©╫О©╫
+#define L2R_U2D  0 		//О©╫О©╫О©╫О©╫О©╫О©╫,О©╫О©╫О©╫о╣О©╫О©╫О©╫
+#define L2R_D2U  1 		//О©╫О©╫О©╫О©╫О©╫О©╫,О©╫О©╫О©╫б╣О©╫О©╫О©╫
+#define R2L_U2D  2 		//О©╫О©╫О©╫р╣О©╫О©╫О©╫,О©╫О©╫О©╫о╣О©╫О©╫О©╫
+#define R2L_D2U  3 		//О©╫О©╫О©╫р╣О©╫О©╫О©╫,О©╫О©╫О©╫б╣О©╫О©╫О©╫
+#define U2D_L2R  4 		//О©╫О©╫О©╫о╣О©╫О©╫О©╫,О©╫О©╫О©╫О©╫О©╫О©╫
+#define U2D_R2L  5 		//О©╫О©╫О©╫о╣О©╫О©╫О©╫,О©╫О©╫О©╫р╣О©╫О©╫О©╫
+#define D2U_L2R  6 		//О©╫О©╫О©╫б╣О©╫О©╫О©╫,О©╫О©╫О©╫О©╫О©╫О©╫
+#define D2U_R2L  7		//О©╫О©╫О©╫б╣О©╫О©╫О©╫,О©╫О©╫О©╫р╣О©╫О©╫О©╫	 
+#define DFT_SCAN_DIR  L2R_U2D  //д╛О©╫о╣О©╫и╗О©╫Х╥╫О©╫О©╫
 
 static lcd_info_t lcddev;
 LTDC_HandleTypeDef  LtdcHandler;
@@ -743,28 +739,28 @@ rt_uint16_t ili9341_bgr2rgb(rt_uint16_t value)
 
 //	switch (dir)
 //	{
-//	case L2R_U2D://╢свС╣╫ср,╢сио╣╫об
+//	case L2R_U2D://О©╫О©╫О©╫О©╫О©╫О©╫,О©╫О©╫О©╫о╣О©╫О©╫О©╫
 //		regval |= (0 << 7) | (0 << 6) | (0 << 5);
 //		break;
-//	case L2R_D2U://╢свС╣╫ср,╢соб╣╫ио
+//	case L2R_D2U://О©╫О©╫О©╫О©╫О©╫О©╫,О©╫О©╫О©╫б╣О©╫О©╫О©╫
 //		regval |= (1 << 7) | (0 << 6) | (0 << 5);
 //		break;
-//	case R2L_U2D://╢сср╣╫вС,╢сио╣╫об
+//	case R2L_U2D://О©╫О©╫О©╫р╣О©╫О©╫О©╫,О©╫О©╫О©╫о╣О©╫О©╫О©╫
 //		regval |= (0 << 7) | (1 << 6) | (0 << 5);
 //		break;
-//	case R2L_D2U://╢сср╣╫вС,╢соб╣╫ио
+//	case R2L_D2U://О©╫О©╫О©╫р╣О©╫О©╫О©╫,О©╫О©╫О©╫б╣О©╫О©╫О©╫
 //		regval |= (1 << 7) | (1 << 6) | (0 << 5);
 //		break;
-//	case U2D_L2R://╢сио╣╫об,╢свС╣╫ср
+//	case U2D_L2R://О©╫О©╫О©╫о╣О©╫О©╫О©╫,О©╫О©╫О©╫О©╫О©╫О©╫
 //		regval |= (0 << 7) | (0 << 6) | (1 << 5);
 //		break;
-//	case U2D_R2L://╢сио╣╫об,╢сср╣╫вС
+//	case U2D_R2L://О©╫О©╫О©╫о╣О©╫О©╫О©╫,О©╫О©╫О©╫р╣О©╫О©╫О©╫
 //		regval |= (0 << 7) | (1 << 6) | (1 << 5);
 //		break;
-//	case D2U_L2R://╢соб╣╫ио,╢свС╣╫ср
+//	case D2U_L2R://О©╫О©╫О©╫б╣О©╫О©╫О©╫,О©╫О©╫О©╫О©╫О©╫О©╫
 //		regval |= (1 << 7) | (0 << 6) | (1 << 5);
 //		break;
-//	case D2U_R2L://╢соб╣╫ио,╢сср╣╫вС
+//	case D2U_R2L://О©╫О©╫О©╫б╣О©╫О©╫О©╫,О©╫О©╫О©╫р╣О©╫О©╫О©╫
 //		regval |= (1 << 7) | (1 << 6) | (1 << 5);
 //		break;
 //	}
@@ -774,7 +770,7 @@ rt_uint16_t ili9341_bgr2rgb(rt_uint16_t value)
 
 //	if (regval & 0X20)
 //	{
-//		if (lcddev.width < lcddev.height)//╫╩╩╩X,Y
+//		if (lcddev.width < lcddev.height)//О©╫О©╫О©╫О©╫X,Y
 //		{
 //			temp = lcddev.width;
 //			lcddev.width = lcddev.height;
@@ -783,7 +779,7 @@ rt_uint16_t ili9341_bgr2rgb(rt_uint16_t value)
 //	}
 //	else
 //	{
-//		if (lcddev.width > lcddev.height)//╫╩╩╩X,Y
+//		if (lcddev.width > lcddev.height)//О©╫О©╫О©╫О©╫X,Y
 //		{
 //			temp = lcddev.width;
 //			lcddev.width = lcddev.height;
