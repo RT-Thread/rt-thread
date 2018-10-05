@@ -95,12 +95,7 @@ static int32_t touch_write(uint8_t reg, uint8_t val)
 */
 static rt_err_t stmpe811_touch_init(rt_device_t dev)
 {
-    stmpe811_i2c_bus = rt_i2c_bus_device_find("touch");
-
-//    ptrI2C->Initialize  (NULL);
-//    ptrI2C->PowerControl(ARM_POWER_FULL);
-//    ptrI2C->Control     (ARM_I2C_BUS_SPEED, ARM_I2C_BUS_SPEED_FAST);
-//    ptrI2C->Control     (ARM_I2C_BUS_CLEAR, 0);
+    stmpe811_i2c_bus = rt_i2c_bus_device_find("i2c3");
 
     touch_write(STMPE811_SYS_CTRL1,      0x02); /* Reset Touch-screen controller */
     rt_thread_mdelay(10);                              /* Wait 10ms                     */
