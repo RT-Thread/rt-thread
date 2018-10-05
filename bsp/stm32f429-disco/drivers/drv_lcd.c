@@ -1,11 +1,7 @@
 /*
- * File      : drv_lcd.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 RT-Thread Develop Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -25,13 +21,13 @@
 
 typedef struct
 {
-	rt_uint16_t width;			//LCD 宽度
-	rt_uint16_t height;			//LCD 高度
-	rt_uint16_t id;				//LCD ID
-	rt_uint8_t  dir;			//横屏还是竖屏控制：0，竖屏；1，横屏。	
-	rt_uint16_t	wramcmd;		//开始写gram指令
-	rt_uint16_t setxcmd;		//设置x坐标指令
-	rt_uint16_t setycmd;		//设置y坐标指令 
+	rt_uint16_t width;
+	rt_uint16_t height;
+	rt_uint16_t id;
+	rt_uint8_t  dir;			//Horizontal or vertical screen control: 0, vertical; 1, horizontal 	
+	rt_uint16_t wramcmd;
+	rt_uint16_t setxcmd;
+	rt_uint16_t setycmd; 
 } lcd_info_t;
 
 typedef struct
@@ -40,22 +36,20 @@ typedef struct
 	volatile rt_uint16_t ram;
 } lcd_ili9341_t;
 
-//使用NOR/SRAM的 Bank1.sector1,地址位HADDR[27,26]=00 A18作为数据命令区分线 
-//注意设置时STM32内部会右移一位对其!
 #define LCD_ILI9341_BASE        ((rt_uint32_t)(0x60000000 | 0x0007FFFE))
 #define ili9341					((lcd_ili9341_t *) LCD_ILI9341_BASE)
 //////////////////////////////////////////////////////////////////////////////////
 
-//扫描方向定义
-#define L2R_U2D  0 		//从左到右,从上到下
-#define L2R_D2U  1 		//从左到右,从下到上
-#define R2L_U2D  2 		//从右到左,从上到下
-#define R2L_D2U  3 		//从右到左,从下到上
-#define U2D_L2R  4 		//从上到下,从左到右
-#define U2D_R2L  5 		//从上到下,从右到左
-#define D2U_L2R  6 		//从下到上,从左到右
-#define D2U_R2L  7		//从下到上,从右到左	 
-#define DFT_SCAN_DIR  L2R_U2D  //默认的扫描方向
+//Definition of scan direction 
+#define L2R_U2D  0
+#define L2R_D2U  1
+#define R2L_U2D  2
+#define R2L_D2U  3
+#define U2D_L2R  4
+#define U2D_R2L  5
+#define D2U_L2R  6
+#define D2U_R2L  7	 
+#define DFT_SCAN_DIR  L2R_U2D
 
 static lcd_info_t lcddev;
 LTDC_HandleTypeDef  LtdcHandler;
@@ -734,108 +728,6 @@ rt_uint16_t ili9341_bgr2rgb(rt_uint16_t value)
 
 	return (blue << 11) + (green << 5) + (red << 0);
 }
-  	   
-//static void ili9341_set_scan_direction(rt_uint8_t dir)
-//{
-//	rt_uint16_t regval = 0;
-//	rt_uint16_t dirreg = 0;
-//	rt_uint16_t temp;
-
-//	switch (dir)
-//	{
-//	case L2R_U2D://从左到右,从上到下
-//		regval |= (0 << 7) | (0 << 6) | (0 << 5);
-//		break;
-//	case L2R_D2U://从左到右,从下到上
-//		regval |= (1 << 7) | (0 << 6) | (0 << 5);
-//		break;
-//	case R2L_U2D://从右到左,从上到下
-//		regval |= (0 << 7) | (1 << 6) | (0 << 5);
-//		break;
-//	case R2L_D2U://从右到左,从下到上
-//		regval |= (1 << 7) | (1 << 6) | (0 << 5);
-//		break;
-//	case U2D_L2R://从上到下,从左到右
-//		regval |= (0 << 7) | (0 << 6) | (1 << 5);
-//		break;
-//	case U2D_R2L://从上到下,从右到左
-//		regval |= (0 << 7) | (1 << 6) | (1 << 5);
-//		break;
-//	case D2U_L2R://从下到上,从左到右
-//		regval |= (1 << 7) | (0 << 6) | (1 << 5);
-//		break;
-//	case D2U_R2L://从下到上,从右到左
-//		regval |= (1 << 7) | (1 << 6) | (1 << 5);
-//		break;
-//	}
-
-//	dirreg = 0X36;
-//	ili9341_write_reg_with_value(dirreg, regval);
-
-//	if (regval & 0X20)
-//	{
-//		if (lcddev.width < lcddev.height)//交换X,Y
-//		{
-//			temp = lcddev.width;
-//			lcddev.width = lcddev.height;
-//			lcddev.height = temp;
-//		}
-//	}
-//	else
-//	{
-//		if (lcddev.width > lcddev.height)//交换X,Y
-//		{
-//			temp = lcddev.width;
-//			lcddev.width = lcddev.height;
-//			lcddev.height = temp;
-//		}
-//	}
-//	
-//	ili9341_write_reg(lcddev.setxcmd);
-//	ili9341_write_data(0);
-//	ili9341_write_data(0);
-//	ili9341_write_data((lcddev.width - 1) >> 8);
-//	ili9341_write_data((lcddev.width - 1) & 0XFF);
-
-//	ili9341_write_reg(lcddev.setycmd);
-//	ili9341_write_data(0);
-//	ili9341_write_data(0);
-//	ili9341_write_data((lcddev.height - 1) >> 8);
-//	ili9341_write_data((lcddev.height - 1) & 0XFF);
-//}
-
-//void ili9341_set_backlight(rt_uint8_t pwm)
-//{
-//	ili9341_write_reg(0xBE);
-//	ili9341_write_data(0x05);
-//	ili9341_write_data(pwm*2.55);
-//	ili9341_write_data(0x01);
-//	ili9341_write_data(0xFF);
-//	ili9341_write_data(0x00);
-//	ili9341_write_data(0x00);
-//}
-
-//void ili9341_set_display_direction(rt_uint8_t dir)
-//{
-//	lcddev.dir = dir;
-//	if (dir == 0)
-//	{
-//		lcddev.width = 240;
-//		lcddev.height = 320;
-//	}
-//	else
-//	{
-//		lcddev.width = 320;
-//		lcddev.height = 240;
-//	}
-
-//	lcddev.wramcmd = 0X2C;
-//	lcddev.setxcmd = 0X2A;
-//	lcddev.setycmd = 0X2B;
-
-//	ili9341_set_scan_direction(DFT_SCAN_DIR);
-//}
-
 
 void _lcd_low_level_init(void)
 {
@@ -906,7 +798,7 @@ static rt_err_t lcd_control(rt_device_t dev, int cmd, void *args)
 
 		info->bits_per_pixel = 16;
 		info->pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB565;
-		info->framebuffer = RT_NULL;
+		info->framebuffer = (rt_uint8_t *)LtdcHandler.LayerCfg[ActiveLayer].FBStartAdress;
 		info->width = 240;
 		info->height = 320;
 	}
