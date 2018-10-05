@@ -28,37 +28,6 @@
 #include <gdb_stub.h>
 #endif
 
-#include "drv_touch.h"
-
-#ifdef PKG_USING_LITTLEVGL2RTT
-#include "littlevgl2rtt.h"
-#endif 
-
-static void rt_touch_thread_entry(void *parameter)
-{
-#ifdef PKG_USING_LITTLEVGL2RTT    
-    int16_t x;
-    int16_t y;
-#endif
-    struct touch_state ts;
-    while(1)
-    {
-        touch_get_state(&ts);
-
-#ifdef PKG_USING_LITTLEVGL2RTT    
-        if(ts.pressed) 
-        {
-            x = (3706 - ts.x) / 14;
-            y = (-461 + ts.y) / 10.5;
-        
-            littlevgl2rtt_send_input_event(x, y, LITTLEVGL2RTT_INPUT_DOWN);
-        }
-        else
-            littlevgl2rtt_send_input_event(-1, -1, LITTLEVGL2RTT_INPUT_UP);
-#endif
-        rt_thread_mdelay(100);
-    }
-}
 
 void rt_init_thread_entry(void* parameter)
 {
@@ -87,16 +56,6 @@ void rt_init_thread_entry(void* parameter)
 #endif
     
     rt_components_init();
-
-    rt_device_t tscreen = rt_device_find("touch");
-    rt_device_open(tscreen, RT_DEVICE_FLAG_RDWR);
-
-    tid = rt_thread_create("touch",
-                           rt_touch_thread_entry, RT_NULL,
-                           1024, 4, 20);
-
-    if (tid != RT_NULL)
-        rt_thread_startup(tid);
                                       
 }
 
