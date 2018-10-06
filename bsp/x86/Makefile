@@ -7,7 +7,7 @@ all: rtthread rtsym exe dll floppy.img
 	@sudo mount -t vfat floppy.img tmp -o loop
 	@sudo cp -fv rtthread.elf tmp/boot/oskernel
 	@sudo rm tmp/bin/* -fr
-	@sudo cp out/* tmp/bin/ -fv
+	@sudo cp out/*.mo tmp/bin/ -fv
 	@sudo umount tmp
 
 rtthread:
@@ -23,7 +23,8 @@ out:
 	mkdir -p out
 
 dll: obj out
-	$(CC) -shared -s -fPIC -e main -Isrc src/hello.c -o out/hello.mo
+	$(CC) -c -fPIC -Isrc src/hello.c -o out/hello.o
+	$(CC) -s -Wl,-shared,-melf_i386,--entry=main -o out/hello.mo out/hello.o
 
 disasm: obj out
 	$(CC) -shared -S -fPIC -Isrc src/hello.c -o obj/hello.s
