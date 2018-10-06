@@ -71,12 +71,4 @@ void reboot(void)
 }
 FINSH_FUNCTION_EXPORT(reboot, reboot PC)
 #endif
-#ifdef RT_USING_DFS
-#include <time.h>
-time_t time(time_t* tm)
-{
-	(void)tm;
-	return 0;
-}
-#endif
 /*@}*/
