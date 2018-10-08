@@ -46,7 +46,7 @@ extern char __ICFEDIT_region_RAM_end__;
 #define STM32_SRAM_END          (0x20000000 + STM32_SRAM_SIZE * 1024)
 #endif
 
-#ifdef __CC_ARM
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #define HEAP_BEGIN    (&Image$$RW_IRAM1$$ZI$$Limit)
 #elif __ICCARM__

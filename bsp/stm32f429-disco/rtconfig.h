@@ -75,13 +75,20 @@
 #define RT_USING_DEVICE_IPC
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
+
+/* Using WiFi */
+
 
 /* Using USB */
 
 
 /* POSIX layer and C standard library */
 
+#define RT_USING_LIBC
+#define RT_USING_POSIX
 
 /* Network */
 
@@ -147,7 +154,10 @@
 
 /* example package: hello */
 
+#define RT_USING_ILI9341_LCD
+#define RT_USING_STMPE811_TOUCH
 #define RT_USING_EXT_SDRAM
 #define RT_USING_UART1
+#define RT_USING_I2C3
 
 #endif
