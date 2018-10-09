@@ -68,7 +68,7 @@ uint32_t clock_cpu_microsecond(uint32_t cpu_tick)
 {
     float unit = clock_cpu_getres();
 
-    return (cpu_tick * unit) / 1000;
+    return (uint32_t)((cpu_tick * unit) / 1000);
 }
 
 /**
@@ -83,7 +83,7 @@ uint32_t clock_cpu_millisecond(uint32_t cpu_tick)
 {
     float unit = clock_cpu_getres();
 
-    return (cpu_tick * unit) / (1000 * 1000);
+    return (uint32_t)((cpu_tick * unit) / (1000 * 1000));
 }
 
 /**

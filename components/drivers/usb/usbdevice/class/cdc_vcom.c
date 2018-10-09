@@ -849,7 +849,7 @@ static void vcom_tx_thread_entry(void* parameter)
         {
             continue;
         }
-        if(!res & CDC_TX_HAS_DATE)
+        if(!(res & CDC_TX_HAS_DATE))
         {
             continue;
         }
