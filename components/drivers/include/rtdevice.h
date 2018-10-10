@@ -114,6 +114,10 @@ extern "C" {
 #include "drivers/mtdnand.h"
 #endif
 
+#ifdef RT_USING_INPUT
+#include "drivers/input.h"
+#endif
+
 #ifdef __cplusplus
 }
 #endif
