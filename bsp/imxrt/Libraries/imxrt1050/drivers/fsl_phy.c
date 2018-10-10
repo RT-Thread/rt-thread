@@ -328,7 +328,7 @@ status_t PHY_GetLinkSpeedDuplex(ENET_Type *base, uint32_t phyAddr, phy_speed_t *
 #if defined(BOARD_RT1050_FIRE) || defined(BOARD_RT1050_ATK)
     result = PHY_Read(base, phyAddr, PHY_CONTROL2_REG, &ctlReg);
 #endif
-#if defined(BOARD_RT1050_EVK) || defined(BOARD_RT1050_SeeedStudio)
+#if defined(BOARD_RT1050_EVK)
     result = PHY_Read(base, phyAddr, PHY_CONTROL1_REG, &ctlReg);
 #endif
     if (result == kStatus_Success)

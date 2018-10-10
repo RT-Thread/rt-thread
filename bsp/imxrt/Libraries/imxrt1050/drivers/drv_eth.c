@@ -43,7 +43,7 @@
     #define PHY_ADDRESS     0x00u
 #endif
 
-#if defined(BOARD_RT1050_EVK) || defined(BOARD_RT1050_SeeedStudio)
+#if defined(BOARD_RT1050_EVK)
     #define PHY_ADDRESS     0x02u
 #endif
 /* debug option */
@@ -137,7 +137,7 @@ void _enet_callback(ENET_Type *base, enet_handle_t *handle, enet_event_t event, 
         break;
     }
 }
-#if defined(BOARD_RT1050_SeeedStudio) || defined(BOARD_RT1050_EVK)
+#if defined(BOARD_RT1050_EVK)
 static void evk_enet_io_init(void)
 {
     CLOCK_EnableClock(kCLOCK_Iomuxc);          /* iomuxc clock (iomuxc_clk_enable): 0x03u */
@@ -1127,7 +1127,7 @@ static int rt_hw_imxrt_eth_init(void)
     fire_enet_io_init();
 #endif
 
-#if defined(BOARD_RT1050_EVK) || defined(BOARD_RT1050_SeeedStudio)
+#if defined(BOARD_RT1050_EVK)
     evk_enet_io_init();
 #endif
     _enet_clk_init();
