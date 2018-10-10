@@ -791,9 +791,9 @@ int at_sendto(int socket, const void *data, size_t size, int flags, const struct
                 goto __exit;
             }
             sock->state = AT_SOCKET_CONNECT;
-			 /* set AT socket receive data callback function */
-			at_dev_ops->at_set_event_cb(AT_SOCKET_EVT_RECV, at_recv_notice_cb);
-			at_dev_ops->at_set_event_cb(AT_SOCKET_EVT_CLOSED, at_closed_notice_cb);
+            /* set AT socket receive data callback function */
+            at_dev_ops->at_set_event_cb(AT_SOCKET_EVT_RECV, at_recv_notice_cb);
+            at_dev_ops->at_set_event_cb(AT_SOCKET_EVT_CLOSED, at_closed_notice_cb);
         }
 
         if ((len = at_dev_ops->at_send(sock->socket, (char *) data, size, sock->type)) < 0)
