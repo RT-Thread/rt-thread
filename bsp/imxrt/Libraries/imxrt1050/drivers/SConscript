@@ -54,7 +54,7 @@ if GetDepend('RT_USING_USB_DEVICE'):
     src += Glob('usb/phy/*.c')
     CPPDEFINES += ['ENDIANNESS']
 
-if GetDepend('BOARD_RT1050_EVK') or GetDepend('BOARD_RT1050_SeeedStudio'):
+if GetDepend('BOARD_RT1050_EVK'):
     if GetDepend('RT_USING_LWIP'):
         src += ['drv_eth.c', 'fsl_phy.c']
         CPPDEFINES += ['FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE']
