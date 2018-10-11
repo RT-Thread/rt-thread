@@ -115,11 +115,12 @@ void SystemClock_Config(void)
 
 static void m3_m4_delay_us(rt_uint32_t us)
 {
-    int i = (HAL_RCC_GetHCLKFreq() / 4000000 * us);
-    while (i)
+    __IO uint32_t Delay = us * (SystemCoreClock / 8U / 1000000U);
+    do 
     {
-        i--;
-    }
+        __NOP();
+    } 
+    while (Delay --);
 }
 
 void HAL_Delay(__IO uint32_t Delay)
