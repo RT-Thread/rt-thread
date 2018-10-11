@@ -78,11 +78,12 @@ static rt_int32_t  drv_get_scl(void *data)
 
 static void drv_udelay(rt_uint32_t us)
 {
-    int i = (HAL_RCC_GetHCLKFreq() / 4000000 * us);
-    while (i)
+    __IO uint32_t Delay = us * (SystemCoreClock / 8U / 1000000U);
+    do 
     {
-        i--;
-    }
+        __NOP();
+    } 
+    while (Delay --);
 }
 
 static const struct rt_i2c_bit_ops drv_bit_ops =
