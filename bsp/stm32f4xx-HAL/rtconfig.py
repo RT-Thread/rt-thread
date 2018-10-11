@@ -3,15 +3,14 @@
 import os
 
 # toolchains options
-ARCH='arm'
-CPU='cortex-m4'
-CROSS_TOOL='gcc'
+ARCH       = 'arm'
+CPU        = 'cortex-m4'
+CROSS_TOOL = 'gcc'
 
 if os.getenv('RTT_CC'):
 	CROSS_TOOL = os.getenv('RTT_CC')
 	
 #device options
-
 
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
@@ -44,7 +43,7 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 	
     DEVICE = ' -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -std=c99 -Dgcc' # -D' + PART_TYPE
+    CFLAGS = DEVICE + ' -std=c99'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-stm32.map,-cref,-u,Reset_Handler -T stm32_rom.ld'
 
