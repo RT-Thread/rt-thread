@@ -85,13 +85,15 @@ typedef uint16_t in_port_t;
 #define AF_INET6        10
 #define AF_CAN          29  /* Controller Area Network      */
 #define AF_AT           45  /* AT socket */
+#define AF_WIZ          46  /* WIZnet socket */
 #define PF_INET         AF_INET
 #define PF_INET6        AF_INET6
 #define PF_UNSPEC       AF_UNSPEC
 #define PF_CAN          AF_CAN
 #define PF_AT           AF_AT
+#define PF_WIZ          AF_WIZ
 
-#define AF_MAX          (AF_AT + 1)  /* For now.. */
+#define AF_MAX          (AF_WIZ + 1)  /* For now.. */
 
 #define IPPROTO_IP      0
 #define IPPROTO_ICMP    1
