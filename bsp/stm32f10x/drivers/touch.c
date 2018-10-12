@@ -9,6 +9,7 @@
 #include <rtgui/kbddef.h>
 #include <rtgui/rtgui_server.h>
 #include <rtgui/rtgui_system.h>
+#include <rtdevice.h>
 
 /*
 MISO PA6
@@ -19,7 +20,7 @@ CS   PC4
 
 #define   CS_0()          GPIO_ResetBits(GPIOC,GPIO_Pin_4)
 #define   CS_1()          GPIO_SetBits(GPIOC,GPIO_Pin_4)
-
+#define   TOUCH_PIN_NUM   19    /* PB1 touch INT 查看gpio.c确认不同型号芯片对应的引脚编号 */
 /*
 7  6 - 4  3      2     1-0
 s  A2-A0 MODE SER/DFR PD1-PD0
@@ -40,11 +41,9 @@ struct rtgui_touch_device
     rt_uint16_t min_x, max_x;
     rt_uint16_t min_y, max_y;
 };
+
 static struct rtgui_touch_device *touch = RT_NULL;
-
 extern unsigned char SPI_WriteByte(unsigned char data);
-rt_inline void EXTI_Enable(rt_uint32_t enable);
-
 struct rt_semaphore spi1_lock;
 
 void rt_hw_spi1_baud_rate(uint16_t SPI_BaudRatePrescaler)
@@ -197,13 +196,13 @@ void touch_timeout(void* parameter)
     } touch_previous;
 
     /* touch time is too short and we lost the position already. */
-    if ((!touched_down) && GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1) != 0)
+    if ((!touched_down) && rt_pin_read(TOUCH_PIN_NUM) != PIN_LOW)
         return;
 
-    if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_1) != 0)
+    if (rt_pin_read(TOUCH_PIN_NUM) != PIN_LOW)
     {
         int tmer = RT_TICK_PER_SECOND/8 ;
-        EXTI_Enable(1);
+        rt_pin_irq_enable(TOUCH_PIN_NUM,PIN_IRQ_ENABLE);
         emouse.parent.type = RTGUI_EVENT_MOUSE_BUTTON;
         emouse.button = (RTGUI_MOUSE_BUTTON_LEFT |RTGUI_MOUSE_BUTTON_UP);
 
@@ -285,67 +284,17 @@ void touch_timeout(void* parameter)
         rtgui_server_post_event(&emouse.parent, sizeof(struct rtgui_event_mouse));
 }
 
-static void NVIC_Configuration(void)
+static void pin_hdr(void *args)
 {
-    NVIC_InitTypeDef NVIC_InitStructure;
-
-    /* Enable the EXTI0 Interrupt */
-    NVIC_InitStructure.NVIC_IRQChannel = EXTI1_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&NVIC_InitStructure);
-}
-
-rt_inline void EXTI_Enable(rt_uint32_t enable)
-{
-    EXTI_InitTypeDef EXTI_InitStructure;
-
-    /* Configure  EXTI  */
-    EXTI_InitStructure.EXTI_Line = EXTI_Line1;
-    EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-    EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;//Falling下降沿 Rising上升
-
-    if (enable)
-    {
-        /* enable */
-        EXTI_InitStructure.EXTI_LineCmd = ENABLE;
-    }
-    else
-    {
-        /* disable */
-        EXTI_InitStructure.EXTI_LineCmd = DISABLE;
-    }
-
-    EXTI_Init(&EXTI_InitStructure);
-    EXTI_ClearITPendingBit(EXTI_Line1);
-}
-
-static void EXTI_Configuration(void)
-{
-    /* PB1 touch INT */
-    {
-        GPIO_InitTypeDef GPIO_InitStructure;
-        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB,ENABLE);
-
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-        GPIO_Init(GPIOB,&GPIO_InitStructure);
-    }
-
-    GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource1);
-
-    /* Configure  EXTI  */
-    EXTI_Enable(1);
+    /* start timer */
+    rt_timer_start(touch->poll_timer);
 }
 
 /* RT-Thread Device Interface */
 static rt_err_t rtgui_touch_init (rt_device_t dev)
 {
-    NVIC_Configuration();
-    EXTI_Configuration();
-
+    rt_pin_attach_irq(TOUCH_PIN_NUM,PIN_IRQ_MODE_FALLING,pin_hdr,RT_NULL);
+    rt_pin_irq_enable(TOUCH_PIN_NUM,PIN_IRQ_ENABLE);
     /* PC4 touch CS */
     {
         GPIO_InitTypeDef GPIO_InitStructure;
@@ -395,17 +344,6 @@ static rt_err_t rtgui_touch_control (rt_device_t dev, int cmd, void *args)
     }
 
     return RT_EOK;
-}
-
-void EXTI1_IRQHandler(void)
-{
-    /* disable interrupt */
-    EXTI_Enable(0);
-
-    /* start timer */
-    rt_timer_start(touch->poll_timer);
-
-    EXTI_ClearITPendingBit(EXTI_Line1);
 }
 
 void rtgui_touch_hw_init(void)
