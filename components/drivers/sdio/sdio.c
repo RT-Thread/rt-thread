@@ -317,7 +317,7 @@ rt_uint8_t sdio_io_readb(struct rt_sdio_function *func,
                          rt_uint32_t              reg,
                          rt_int32_t              *err)
 {
-    rt_uint8_t data;
+    rt_uint8_t data = 0;
     rt_int32_t ret;
 
     ret = sdio_io_rw_direct(func->card, 0, func->num, reg, &data, 0);
