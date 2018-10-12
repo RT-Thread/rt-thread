@@ -1,0 +1,23 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+depend = []
+
+CPPPATH = [cwd + '/../include']
+group = []
+
+if GetDepend(['RT_USING_INPUT']):
+    src += ['input.c']
+    depend += ['RT_USING_INPUT']
+
+    if GetDepend(['INPUT_USING_TOUCH']):
+        src += ['tsdev.c']
+        depend += ['INPUT_USING_TOUCH']
+
+if src:
+    group = DefineGroup('DeviceDrivers', src, depend = depend, CPPPATH = CPPPATH)
+
+Return('group')

@@ -211,6 +211,19 @@ config RT_USING_AUDIO
     bool "Using Audio device drivers"
     default n
 
+menu "Using Input Device"
+    config RT_USING_INPUT
+    bool "Using Input devices"
+    default n
+
+	if RT_USING_INPUT
+	    config INPUT_USING_TOUCH
+		bool "Enable TouchScren"
+		default n
+
+    endif
+endmenu
+
 menu "Using WiFi"
     config RT_USING_WIFI
     bool "Using Wi-Fi framework"
