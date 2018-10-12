@@ -2,6 +2,7 @@
  * File      : application.c
  * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2008 - 2018, RT-Thread Development Team
+ * 
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
@@ -34,10 +35,7 @@
 #define ENET_RXBUFF_SIZE (ENET_FRAME_MAX_FRAMELEN)
 #define ENET_TXBUFF_SIZE (ENET_FRAME_MAX_FRAMELEN)
 
-
 #define PHY_ADDRESS     0x00u
-
-
 
 /* debug option */
 //#define ETH_RX_DUMP
@@ -131,8 +129,6 @@ void _enet_callback(ENET_Type *base, enet_handle_t *handle, enet_event_t event, 
     }
 }
 
-
-
 static void atk_enet_io_init(void)
 {
     CLOCK_EnableClock(kCLOCK_Iomuxc);          /* iomuxc clock (iomuxc_clk_enable): 0x03u */
@@ -203,22 +199,18 @@ static void atk_enet_io_init(void)
 
     IOMUXC_EnableMode(IOMUXC_GPR, kIOMUXC_GPR_ENET1TxClkOutputDir, true); 
     IOMUXC_GPR->GPR1 |= 1 << 23;  
-
 }
-
 
 static void _enet_clk_init(void)
 {
     const clock_enet_pll_config_t config = {true, false, 1};
     CLOCK_InitEnetPll(&config);
-
     IOMUXC_EnableMode(IOMUXC_GPR, kIOMUXC_GPR_ENET1TxClkOutputDir, true);
 }
 
 static void _delay(void)
 {
     volatile int i = 1000000;
-
     while (i--)
         i = i;
 }
@@ -236,7 +228,6 @@ static void _enet_phy_reset_by_gpio(void)
     pcf8574_write_bit(7, 1);
     _delay();
     pcf8574_write_bit(7, 0);
-
 }
 
 static void _enet_config(void)
@@ -325,7 +316,6 @@ static rt_err_t rt_imxrt_eth_init(rt_device_t dev)
 {
     dbg_log(DBG_LOG, "rt_imxrt_eth_init...\n");
     _enet_config();
-
     return RT_EOK;
 }
 
@@ -365,18 +355,15 @@ static rt_err_t rt_imxrt_eth_control(rt_device_t dev, int cmd, void *args)
         if (args) rt_memcpy(args, imxrt_eth_device.dev_addr, 6);
         else return -RT_ERROR;
         break;
-
     default :
         break;
     }
-
     return RT_EOK;
 }
 
 static void _ENET_ActiveSend(ENET_Type *base, uint32_t ringId)
 {
     assert(ringId < FSL_FEATURE_ENET_QUEUE);
-
     switch (ringId)
     {
         case 0:
@@ -648,9 +635,7 @@ static void phy_monitor_thread_entry(void *parameter)
     phy_speed_t speed;
     phy_duplex_t duplex;
     bool link = false;
-
     _enet_phy_reset_by_gpio();
-
     PHY_Init(imxrt_eth_device.enet_base, PHY_ADDRESS, CLOCK_GetFreq(kCLOCK_AhbClk));
 
     while (1)
@@ -718,7 +703,6 @@ static int rt_hw_imxrt_eth_init(void)
     
     atk_enet_io_init();
 
-
     _enet_clk_init();
     /* OUI 00-80-E1 STMICROELECTRONICS. */
     imxrt_eth_device.dev_addr[0] = 0x00;
@@ -778,9 +762,7 @@ static int rt_hw_imxrt_eth_init(void)
 
     return state;
 }
-
-    INIT_ENV_EXPORT(rt_hw_imxrt_eth_init);
-
+INIT_ENV_EXPORT(rt_hw_imxrt_eth_init);
 #endif
 
 #ifdef RT_USING_FINSH

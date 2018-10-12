@@ -53,9 +53,7 @@
 #define PHY_CONTROL1_REG 0x1EU          /*!< The PHY control one register. */
 #define PHY_CONTROL2_REG 0x1FU          /*!< The PHY control two register. */
 
-
 #define PHY_CONTROL_ID1 0x07U /*!< The PHY ID1*/
-
 
 /*! @brief Defines the mask flag in basic control register. */
 #define PHY_BCTL_DUPLEX_MASK 0x0100U          /*!< The PHY duplex bit mask. */
@@ -66,7 +64,6 @@
 #define PHY_BCTL_RESET_MASK 0x8000U           /*!< The PHY reset bit mask. */
 #define PHY_BCTL_SPEED_100M_MASK  0x2000U     /*!< The PHY 100M speed mask. */
 #define PHY_BCTL_POWER_DOWN_MASK  0x800U      /*!< The PHY Power Down mask. */
-
 
 /*!@brief Defines the mask flag of operation mode in control two register*/
 #if defined(BOARD_RT1050_ATK)
