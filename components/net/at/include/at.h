@@ -33,7 +33,6 @@ extern "C" {
 #endif
 
 #define AT_SW_VERSION                  "1.1.0"
-#define AT_SW_VERSION_NUM              0x10100
 
 #define DBG_ENABLE
 #define DBG_SECTION_NAME               "AT"
