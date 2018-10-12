@@ -79,7 +79,7 @@ if RT_USING_AT
 
     config AT_SW_VERSION_NUM
         int
-        default 0x10100
+        default 0x10200
         help
             sfotware module version number
 

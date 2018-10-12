@@ -34,10 +34,8 @@
 #include <dfs_poll.h>
 #endif
 
-#ifdef DBG_SECTION_NAME
-#undef DBG_SECTION_NAME
-#define DBG_SECTION_NAME     "AT_SOC"
-#endif
+#define LOG_TAG              "at.skt"
+#include <at_log.h>
 
 #define HTONS_PORT(x) ((((x) & 0x00ffUL) << 8) | (((x) & 0xff00UL) >> 8))
 #define NIPQUAD(addr) \

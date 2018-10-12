@@ -29,6 +29,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define LOG_TAG              "at.clnt"
+#include <at_log.h>
+
+#ifdef AT_USING_CLIENT
+
 #define AT_RESP_END_OK                 "OK"
 #define AT_RESP_END_ERROR              "ERROR"
 #define AT_RESP_END_FAIL               "FAIL"
@@ -924,3 +929,4 @@ __exit:
 
     return result;
 }
+#endif /* AT_USING_CLIENT */

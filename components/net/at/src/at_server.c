@@ -30,6 +30,11 @@
 
 #include <rthw.h>
 
+#define LOG_TAG              "at.svr"
+#include <at_log.h>
+
+#ifdef AT_USING_SERVER
+
 #define AT_CMD_CHAR_0                  '0'
 #define AT_CMD_CHAR_9                  '9'
 #define AT_CMD_QUESTION_MARK           '?'
@@ -565,3 +570,5 @@ RT_WEAK void at_port_factory_reset(void)
 {
     LOG_E("The factory reset for AT server is not implement.");
 }
+
+#endif /* AT_USING_SERVER */
