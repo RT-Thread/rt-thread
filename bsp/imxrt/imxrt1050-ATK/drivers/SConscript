@@ -1,0 +1,16 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split("""
+board.c
+""")
+
+CPPPATH = [cwd]
+CPPDEFINES = []
+if  GetDepend('RT_USING_LWIP'):
+    src += ['drv_eth.c', 'fsl_phy.c','drv_pcf8574.c']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
+
+Return('group')
