@@ -29,6 +29,8 @@
 
 #include <rtdevice.h>
 
+#ifdef AT_USING_SERVER
+
 #define AT_ECHO_MODE_CLOSE             0
 #define AT_ECHO_MODE_OPEN              1
 
@@ -129,3 +131,5 @@ static at_result_t at_uart_setup(const char *args)
 }
 
 AT_CMD_EXPORT("AT+UART", "=<baudrate>,<databits>,<stopbits>,<parity>,<flow_control>", RT_NULL, at_uart_query, at_uart_setup, RT_NULL);
+
+#endif /* AT_USING_SERVER */
