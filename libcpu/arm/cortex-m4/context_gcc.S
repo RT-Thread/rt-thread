@@ -14,6 +14,7 @@
  * 2013-06-18     aozima       add restore MSP feature.
  * 2013-06-23     aozima       support lazy stack optimized.
  * 2018-07-24     aozima       enhancement hard fault exception handler.
+ * 2018-10-14     Liuquan      manually add IF‐THEN(IT), do not use "-Wa,-mimplicit-it=thumb".
  */
 
 /**
@@ -111,6 +112,7 @@ PendSV_Handler:
     
 #if defined (__VFP_FP__) && !defined(__SOFTFP__)
     TST     lr, #0x10           /* if(!EXC_RETURN[4]) */
+    IT      EQ
     VSTMDBEQ r1!, {d8 - d15}    /* push FPU register s16~s31 */
 #endif
     
@@ -120,6 +122,7 @@ PendSV_Handler:
     MOV     r4, #0x00           /* flag = 0 */
 
     TST     lr, #0x10           /* if(!EXC_RETURN[4]) */
+    IT      EQ
     MOVEQ   r4, #0x01           /* flag = 1 */
 
     STMFD   r1!, {r4}           /* push flag */
@@ -141,6 +144,7 @@ switch_to_thread:
 
 #if defined (__VFP_FP__) && !defined(__SOFTFP__)
     CMP     r3,  #0             /* if(flag_r3 != 0) */
+    IT      NE
     VLDMIANE  r1!, {d8 - d15}   /* pop FPU register s16~s31 */
 #endif
 
@@ -149,6 +153,7 @@ switch_to_thread:
 #if defined (__VFP_FP__) && !defined(__SOFTFP__)
     ORR     lr, lr, #0x10       /* lr |=  (1 << 4), clean FPCA. */
     CMP     r3,  #0             /* if(flag_r3 != 0) */
+    IT      NE
     BICNE   lr, lr, #0x10       /* lr &= ~(1 << 4), set FPCA. */
 #endif
 
