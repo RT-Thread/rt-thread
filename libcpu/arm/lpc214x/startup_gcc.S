@@ -1,4 +1,12 @@
-	.extern main                               /* ÒıÈëÍâ²¿CÈë¿Ú */
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
+	.extern main                               /* å¼•å…¥å¤–éƒ¨Cå…¥å£ */
 
 	.extern rt_interrupt_enter
 	.extern rt_interrupt_leave
@@ -54,7 +62,7 @@
 
     .equ  VICIntEnClr,	0xFFFFF014
     .equ  VICIntSelect,	0xFFFFF00C
-/************* Ä¿±êÅäÖÃ½áÊø *************/
+/************* ç›®æ ‡é…ç½®ç»“æŸ *************/
 
 
 /* Setup the operating mode & stack.*/
@@ -217,94 +225,94 @@ __pabt: b     .                         /* program abort			*/
 __dabt: b     .                         /* data abort				*/
 __fiq : b     .  					    /* FIQ						*/
 
-/* IRQÈë¿Ú */
+/* IRQå…¥å£ */
 IRQ_Handler :
-		stmfd	sp!, {r0-r12,lr} 			   /* ¶ÔR0 ¨C R12£¬LR¼Ä´æÆ÷Ñ¹Õ»      */
-		bl	rt_interrupt_enter	 			   /* Í¨ÖªRT-Thread½øÈëÖĞ¶ÏÄ£Ê½     */
-		bl	rt_hw_trap_irq		 			   /* ÏàÓ¦ÖĞ¶Ï·şÎñÀı³Ì´¦Àí  	    */
-		bl	rt_interrupt_leave		           /* ; Í¨ÖªRT-ThreadÒªÀë¿ªÖĞ¶ÏÄ£Ê½ */
+		stmfd	sp!, {r0-r12,lr} 			   /* å¯¹R0 â€“ R12ï¼ŒLRå¯„å­˜å™¨å‹æ ˆ      */
+		bl	rt_interrupt_enter	 			   /* é€šçŸ¥RT-Threadè¿›å…¥ä¸­æ–­æ¨¡å¼     */
+		bl	rt_hw_trap_irq		 			   /* ç›¸åº”ä¸­æ–­æœåŠ¡ä¾‹ç¨‹å¤„ç†  	    */
+		bl	rt_interrupt_leave		           /* ; é€šçŸ¥RT-Threadè¦ç¦»å¼€ä¸­æ–­æ¨¡å¼ */
 
-		/* Èç¹ûÉèÖÃÁËrt_thread_switch_interrupt_flag£¬½øĞĞÖĞ¶ÏÖĞµÄÏß³ÌÉÏÏÂÎÄ´¦Àí */
+		/* å¦‚æœè®¾ç½®äº†rt_thread_switch_interrupt_flagï¼Œè¿›è¡Œä¸­æ–­ä¸­çš„çº¿ç¨‹ä¸Šä¸‹æ–‡å¤„ç† */
 		ldr	r0, =rt_thread_switch_interrupt_flag
 		ldr	r1, [r0]
 		cmp	r1, #1
-		beq	rt_hw_context_switch_interrupt_do  /* ÖĞ¶ÏÖĞÇĞ»»·¢Éú */
-											   /* Èç¹ûÌø×ªÁË£¬½«²»»á»ØÀ´ */
-		ldmfd	sp!, {r0-r12,lr}			   /* »Ö¸´Õ» */
-		subs	pc, lr, #4					   /* ´ÓIRQÖĞ·µ»Ø */
+		beq	rt_hw_context_switch_interrupt_do  /* ä¸­æ–­ä¸­åˆ‡æ¢å‘ç”Ÿ */
+											   /* å¦‚æœè·³è½¬äº†ï¼Œå°†ä¸ä¼šå›æ¥ */
+		ldmfd	sp!, {r0-r12,lr}			   /* æ¢å¤æ ˆ */
+		subs	pc, lr, #4					   /* ä»IRQä¸­è¿”å› */
 
 /*
 * void rt_hw_context_switch_interrupt_do(rt_base_t flag)
-* ÖĞ¶Ï½áÊøºóµÄÉÏÏÂÎÄÇĞ»»
+* ä¸­æ–­ç»“æŸåçš„ä¸Šä¸‹æ–‡åˆ‡æ¢
 */
 rt_hw_context_switch_interrupt_do:
 				mov	r1,  #0				/* clear flag */
-										/* Çå³şÖĞ¶ÏÖĞÇĞ»»±êÖ¾ */
+										/* æ¸…æ¥šä¸­æ–­ä¸­åˆ‡æ¢æ ‡å¿— */
 				str	r1,  [r0]			/* */
 
 				ldmfd	sp!, {r0-r12,lr}/* reload saved registers */
-										/* ÏÈ»Ö¸´±»ÖĞ¶ÏÏß³ÌµÄÉÏÏÂÎÄ */
+										/* å…ˆæ¢å¤è¢«ä¸­æ–­çº¿ç¨‹çš„ä¸Šä¸‹æ–‡ */
 				stmfd	sp!, {r0-r3}	/* save r0-r3 */
-										/* ¶ÔR0 ¨C R3Ñ¹Õ»£¬ÒòÎªºóÃæ»áÓÃµ½ */
-				mov	r1,  sp				/* °Ñ´Ë´¦µÄÕ»Öµ±£´æµ½R1 */
+										/* å¯¹R0 â€“ R3å‹æ ˆï¼Œå› ä¸ºåé¢ä¼šç”¨åˆ° */
+				mov	r1,  sp				/* æŠŠæ­¤å¤„çš„æ ˆå€¼ä¿å­˜åˆ°R1 */
 				add	sp,  sp, #16		/* restore sp */
-										/* »Ö¸´IRQµÄÕ»£¬ºóÃæ»áÌø³öIRQÄ£Ê½ */
+										/* æ¢å¤IRQçš„æ ˆï¼Œåé¢ä¼šè·³å‡ºIRQæ¨¡å¼ */
 				sub	r2,  lr, #4			/* save old task's pc to r2 */
-										/* ±£´æÇĞ»»³öÏß³ÌµÄPCµ½R2 */
+										/* ä¿å­˜åˆ‡æ¢å‡ºçº¿ç¨‹çš„PCåˆ°R2 */
 
-				mrs	r3,  spsr			/* disable interrupt ±£´æÖĞ¶ÏÇ°µÄCPSRµ½R3¼Ä´æÆ÷ */
-										/* »ñµÃSPSR¼Ä´æÆ÷Öµ */
+				mrs	r3,  spsr			/* disable interrupt ä¿å­˜ä¸­æ–­å‰çš„CPSRåˆ°R3å¯„å­˜å™¨ */
+										/* è·å¾—SPSRå¯„å­˜å™¨å€¼ */
 				orr	r0,  r3, #I_BIT|F_BIT
-				msr	spsr_c, r0			/*  ¹Ø±ÕSPSRÖĞµÄIRQ/FIQÖĞ¶Ï */
+				msr	spsr_c, r0			/*  å…³é—­SPSRä¸­çš„IRQ/FIQä¸­æ–­ */
 
-				ldr	r0,  =.+8		    /* °Ñµ±Ç°µØÖ·+8ÔØÈëµ½R0¼Ä´æÆ÷ÖĞ switch to interrupted task's stack */
-				movs pc,  r0            /* ÍË³öIRQÄ£Ê½£¬ÓÉÓÚSPSR±»ÉèÖÃ³É¹ØÖĞ¶ÏÄ£Ê½ */
-										/* ËùÒÔ´ÓIRQ·µ»Øºó£¬ÖĞ¶Ï²¢Ã»ÓĞ´ò¿ª
-										; R0¼Ä´æÆ÷ÖĞµÄÎ»ÖÃÊµ¼Ê¾ÍÊÇÏÂÒ»ÌõÖ¸Áî£¬
-										; ¼´PC¼ÌĞøÍùÏÂ×ß
-										; ´ËÊ±
-										; Ä£Ê½ÒÑ¾­»»³ÉÖĞ¶ÏÇ°µÄSVCÄ£Ê½£¬
-										; SP¼Ä´æÆ÷Ò²ÊÇSVCÄ£Ê½ÏÂµÄÕ»¼Ä´æÆ÷
-										; R1±£´æIRQÄ£Ê½ÏÂµÄÕ»Ö¸Õë
-										; R2±£´æÇĞ»»³öÏß³ÌµÄPC
-										; R3±£´æÇĞ»»³öÏß³ÌµÄCPSR */
+				ldr	r0,  =.+8		    /* æŠŠå½“å‰åœ°å€+8è½½å…¥åˆ°R0å¯„å­˜å™¨ä¸­ switch to interrupted task's stack */
+				movs pc,  r0            /* é€€å‡ºIRQæ¨¡å¼ï¼Œç”±äºSPSRè¢«è®¾ç½®æˆå…³ä¸­æ–­æ¨¡å¼ */
+										/* æ‰€ä»¥ä»IRQè¿”å›åï¼Œä¸­æ–­å¹¶æ²¡æœ‰æ‰“å¼€
+										; R0å¯„å­˜å™¨ä¸­çš„ä½ç½®å®é™…å°±æ˜¯ä¸‹ä¸€æ¡æŒ‡ä»¤ï¼Œ
+										; å³PCç»§ç»­å¾€ä¸‹èµ°
+										; æ­¤æ—¶
+										; æ¨¡å¼å·²ç»æ¢æˆä¸­æ–­å‰çš„SVCæ¨¡å¼ï¼Œ
+										; SPå¯„å­˜å™¨ä¹Ÿæ˜¯SVCæ¨¡å¼ä¸‹çš„æ ˆå¯„å­˜å™¨
+										; R1ä¿å­˜IRQæ¨¡å¼ä¸‹çš„æ ˆæŒ‡é’ˆ
+										; R2ä¿å­˜åˆ‡æ¢å‡ºçº¿ç¨‹çš„PC
+										; R3ä¿å­˜åˆ‡æ¢å‡ºçº¿ç¨‹çš„CPSR */
 				stmfd	sp!, {r2}		/* push old task's pc */
-										/* ±£´æÇĞ»»³öÈÎÎñµÄPC */
+										/* ä¿å­˜åˆ‡æ¢å‡ºä»»åŠ¡çš„PC */
 				stmfd	sp!, {r4-r12,lr}/* push old task's lr,r12-r4 */
-										/* ±£´æR4 ¨C R12£¬LR¼Ä´æÆ÷ */
+										/* ä¿å­˜R4 â€“ R12ï¼ŒLRå¯„å­˜å™¨ */
 				mov	r4,  r1				/* Special optimised code below */
-										/* R1±£´æÓĞÑ¹Õ»R0 ¨C R3´¦µÄÕ»Î»ÖÃ */
-				mov	r5,  r3				/* R3ÇĞ»»³öÏß³ÌµÄCPSR */
-				ldmfd	r4!, {r0-r3}	/* »Ö¸´R0 ¨C R3 */
+										/* R1ä¿å­˜æœ‰å‹æ ˆR0 â€“ R3å¤„çš„æ ˆä½ç½® */
+				mov	r5,  r3				/* R3åˆ‡æ¢å‡ºçº¿ç¨‹çš„CPSR */
+				ldmfd	r4!, {r0-r3}	/* æ¢å¤R0 â€“ R3 */
 				stmfd	sp!, {r0-r3}	/* push old task's r3-r0 */
-										/*  R0 ¨C R3Ñ¹Õ»µ½ÇĞ»»³öÏß³Ì */
+										/*  R0 â€“ R3å‹æ ˆåˆ°åˆ‡æ¢å‡ºçº¿ç¨‹ */
 				stmfd	sp!, {r5}		/* push old task's psr */
-										/* ÇĞ»»³öÏß³ÌCPSRÑ¹Õ» */
+										/* åˆ‡æ¢å‡ºçº¿ç¨‹CPSRå‹æ ˆ */
 				mrs	r4,  spsr
 				stmfd	sp!, {r4}		/* push old task's spsr */
-										/* ÇĞ»»³öÏß³ÌSPSRÑ¹Õ» */
+										/* åˆ‡æ¢å‡ºçº¿ç¨‹SPSRå‹æ ˆ */
 
 				ldr	r4,  =rt_interrupt_from_thread
 				ldr	r5,  [r4]
 				str	sp,  [r5]			/* store sp in preempted tasks's TCB */
-										/* ±£´æÇĞ»»³öÏß³ÌµÄSPÖ¸Õë */
+										/* ä¿å­˜åˆ‡æ¢å‡ºçº¿ç¨‹çš„SPæŒ‡é’ˆ */
 
 				ldr	r6,  =rt_interrupt_to_thread
 				ldr	r6,  [r6]
 				ldr	sp,  [r6]			/* get new task's stack pointer */
-										/* »ñµÃÇĞ»»µ½Ïß³ÌµÄÕ» */
+										/* è·å¾—åˆ‡æ¢åˆ°çº¿ç¨‹çš„æ ˆ */
 
 				ldmfd	sp!, {r4}		/* pop new task's spsr */
-										/* »Ö¸´SPSR */
+										/* æ¢å¤SPSR */
 				msr	SPSR_cxsf, r4
 				ldmfd	sp!, {r4}		/* pop new task's psr */
-										/* »Ö¸´CPSR */
+										/* æ¢å¤CPSR */
 				msr	CPSR_cxsf, r4
 
 				ldmfd	sp!, {r0-r12,lr,pc}	/* pop new task's r0-r12,lr & pc */
-											/* »Ö¸´R0 ¨C R12£¬LR¼°PC¼Ä´æÆ÷ */
+											/* æ¢å¤R0 â€“ R12ï¼ŒLRåŠPCå¯„å­˜å™¨ */
 
-/* ´úÂë¼ÓÃÜ¹¦ÄÜ */
+/* ä»£ç åŠ å¯†åŠŸèƒ½ */
 #if defined(CODE_PROTECTION)
 .org 0x01FC
 .word 0x87654321
