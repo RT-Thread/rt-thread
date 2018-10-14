@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #ifndef __CP15_H__
 #define __CP15_H__
 
