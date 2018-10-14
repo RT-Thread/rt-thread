@@ -1,4 +1,12 @@
 /*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
+/*
   This file is part of UFFS, the Ultra-low-cost Flash File System.
   
   Copyright (C) 2005-2009 Ricky Zheng <ricky_gz_zheng@yahoo.co.nz>
