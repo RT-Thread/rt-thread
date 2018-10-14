@@ -455,7 +455,7 @@ int fcntl(int fildes, int cmd, ...)
         ret = -1;
     }
 
-    return 0;
+    return ret;
 }
 RTM_EXPORT(fcntl);
 
