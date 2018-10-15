@@ -27,7 +27,7 @@
 
 #define PAGE_SIZE           4096
 
-/* JEDEC Manufacturer锟斤拷s ID */
+/* JEDEC Manufacturer ID */
 #define MF_ID           (0xEF)
 
 /* JEDEC Device ID: Memory type and Capacity */
