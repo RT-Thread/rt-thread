@@ -129,7 +129,7 @@ int at_getaddrinfo(const char *nodename, const char *servname, const struct addr
 void at_freeaddrinfo(struct addrinfo *ai);
 
 struct at_socket *at_get_socket(int socket);
-void at_scoket_device_register(const struct at_device_ops *ops);
+void at_socket_device_register(const struct at_device_ops *ops);
 
 #ifndef RT_USING_SAL
 
