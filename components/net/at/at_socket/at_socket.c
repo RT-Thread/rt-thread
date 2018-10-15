@@ -655,6 +655,10 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
     {
         timeout = RT_WAITING_FOREVER;
     }
+    else
+    {
+        timeout = rt_tick_from_millisecond(timeout);
+    }
 
     while (1)
     {
@@ -1161,7 +1165,7 @@ void at_freeaddrinfo(struct addrinfo *ai)
     }
 }
 
-void at_scoket_device_register(const struct at_device_ops *ops)
+void at_socket_device_register(const struct at_device_ops *ops)
 {
     RT_ASSERT(ops);
     RT_ASSERT(ops->at_connect);
