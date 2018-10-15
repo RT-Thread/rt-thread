@@ -67,6 +67,40 @@ def GenerateCFiles(env):
         vsc_file.write(json.dumps(json_obj, indent=4))
         vsc_file.close()
 
+    """
+    Generate launch.json files (used to debug)
+    """
+    vsc_debug_file = file('.vscode/launch.json', 'wb')
+    if vsc_debug_file:
+        debug_cfg_obj = {}
+        config_files = []
+        config_files.append(
+            'example:/usr/share/openocd/scripts/interface/stlink-v2.cfg')
+        config_files.append(
+            'example:/usr/share/openocd/scripts/target/stm32f1x_stlink.cfg')
+        debug_cfg_obj['configFiles'] = config_files
+
+        searchdir = []
+        searchdir.append('example:/usr/share/openocd/scripts/')
+        debug_cfg_obj['searchDir'] = searchdir
+
+        debug_cfg_obj['svdFile'] = 'example:~/.vscode/extensions/marus25.cortex-debug-0.1.21/data/STMicro/STM32F103xx.svd'
+
+        debug_cfg_obj['runToMain'] = True
+        debug_cfg_obj['v1'] = False
+        debug_cfg_obj['showDevDebugOutput'] = True
+        debug_cfg_obj['servertype'] = 'openocd'
+        debug_cfg_obj['type'] = 'cortex-debug'
+        debug_cfg_obj['request'] = 'launch'
+        debug_cfg_obj['name'] = 'rt-thread debug'
+        debug_cfg_obj['executable'] = './rtthread-stm32.elf'
+        debug_cfg_obj['cwd'] = '${workspaceRoot}'
+
+        json_obj = {}
+        json_obj['configurations'] = [debug_cfg_obj]
+
+        vsc_debug_file.write(json.dumps(json_obj, indent=4))
+        vsc_debug_file.close()
     return
 
 def GenerateVSCode(env):
