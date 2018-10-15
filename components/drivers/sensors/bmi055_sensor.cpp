@@ -1,11 +1,7 @@
 /*
- * File      : bmi055_sensor.cpp
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2014, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author           Notes
@@ -137,7 +133,7 @@ BMI055_Accelerometer::BMI055_Accelerometer(const char* iic_name, int addr)
 	write_reg(BMI055_BGW_SOFTRESET, 0xB6);			/* reset of the sensor  P57							*/
 	write_reg(BMI055_PMU_LPW, 0x00);				/* PMU_LPW   NORMAL mode P55						*/
 	write_reg(BMI055_PMU_BW, 0x0A);					/* 01010b  31.25 Hz P55								*/
-	write_reg(BMI055_PMU_RANGE, 0x05);				/* 0101b  ±4g range PMU_RANGE set acc +-4g/s  P54	*/
+	write_reg(BMI055_PMU_RANGE, 0x05);				/* 0101b  卤4g range PMU_RANGE set acc +-4g/s  P54	*/
 	
 		
 	x_offset = y_offset = z_offset = 0;
