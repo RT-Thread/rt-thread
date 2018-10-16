@@ -20,6 +20,8 @@
 #include <dfs_poll.h>
 #endif
 
+#ifdef SAL_USING_AT
+
 #ifdef SAL_USING_POSIX
 static int at_poll(struct dfs_fd *file, struct rt_pollreq *req)
 {
@@ -111,3 +113,5 @@ int at_inet_init(void)
     return 0;
 }
 INIT_COMPONENT_EXPORT(at_inet_init);
+
+#endif /* SAL_USING_AT */

@@ -30,6 +30,8 @@
 #endif
 #endif
 
+#ifdef SAL_USING_LWIP
+
 #ifdef SAL_USING_POSIX
 /*
  * Re-define lwip socket
@@ -293,3 +295,5 @@ int lwip_inet_init(void)
     return 0;
 }
 INIT_COMPONENT_EXPORT(lwip_inet_init);
+
+#endif /* SAL_USING_LWIP */
