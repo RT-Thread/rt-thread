@@ -23,6 +23,8 @@
 #define LOG_TAG              "at.skt"
 #include <at_log.h>
 
+#ifdef AT_USING_SOCKET
+
 #define HTONS_PORT(x) ((((x) & 0x00ffUL) << 8) | (((x) & 0xff00UL) >> 8))
 #define NIPQUAD(addr) \
         ((unsigned char *)&addr)[0], \
@@ -1175,3 +1177,5 @@ void at_socket_device_register(const struct at_device_ops *ops)
     RT_ASSERT(ops->at_set_event_cb);
     at_dev_ops = (struct at_device_ops *) ops;
 }
+
+#endif /* AT_USING_SOCKET */
