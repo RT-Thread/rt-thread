@@ -1,0 +1,21 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = os.path.join(str(Dir('#')), 'applications')
+
+src = Split("""
+delay.c
+main.c
+""")
+
+#if GetDepend(['USING_NRF24L01_NODE']):
+#	src += ['app_nrf_node.c']
+#if GetDepend(['USING_NRF24L01_GATEWAY']):
+#	src += ['app_nrf_gateway.c']
+	
+CPPPATH = [cwd, str(Dir('#'))]
+
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

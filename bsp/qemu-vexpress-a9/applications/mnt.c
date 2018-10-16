@@ -14,6 +14,6 @@ int mnt_init(void)
 
     return 0;
 }
-INIT_ENV_EXPORT(mnt_init);
+//INIT_ENV_EXPORT(mnt_init);
 #endif
 
