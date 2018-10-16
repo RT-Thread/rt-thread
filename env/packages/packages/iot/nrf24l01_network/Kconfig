@@ -1,0 +1,63 @@
+
+# Kconfig file for package nrf24l01_network
+menuconfig PKG_USING_NRF24L01_NETWORK
+    bool "NRF24L01 Network: a nrf24l01 network package for rt-thread"
+    default n
+	select PKG_USING_TINYCRYPT if PKG_USING_NRF24L01_NETWORK
+	select TINY_CRYPT_MD5 if PKG_USING_TINYCRYPT
+
+if PKG_USING_NRF24L01_NETWORK
+    config PKG_NRF24L01_NETWORK_PATH
+        string
+        default "/packages/iot/nrf24l01_network"
+
+    choice
+        prompt "Version"
+        default PKG_USING_NRF24L01_NETWORK_LATEST_VERSION
+        help
+            Select the package version
+
+        config PKG_USING_NRF24L01_NETWORK_V101
+            bool "v1.0.1"
+
+        config PKG_USING_NRF24L01_NETWORK_LATEST_VERSION
+            bool "latest"
+    endchoice
+          
+    config PKG_NRF24L01_NETWORK_VER
+       string
+       default "v1.0.1"    if PKG_USING_NRF24L01_NETWORK_V101
+       default "latest"    if PKG_USING_NRF24L01_NETWORK_LATEST_VERSION
+
+	config NRF_SPI_BUS_NAME
+		string "NRF_SPI_BUS_NAME"
+		default "spi1"
+	config NRF_SPI_DEV_NAME
+		string "NRF_SPI_DEV_NAME"
+		default "spi11"
+	config NRF_SPI_CS_PIN
+		int "NRF_SPI_CS_PIN"
+		default 92
+	config NRF_CE_PIN
+		int "NRF_CE_PIN"
+		default 91
+	config NRF_IRQ_PIN
+		int "NRF_IRQ_PIN"
+		default 93
+	choice
+		prompt "Gateway or Node"
+		default NRF24L01_USING_GATEWAY			
+		config NRF24L01_USING_GATEWAY
+			bool "Enable NRF24L01_GATEWAY"
+		config NRF24L01_USING_NODE
+			bool "Enable NRF24L01_NODE"
+	endchoice
+	config NRF24L01_USING_EXAMPLE
+		bool "Enable NRF24L01 EXAMPLE"
+		default y
+		select PKG_USING_MULTIBUTTON if NRF24L01_USING_EXAMPLE
+	config NRF24L01_USING_NRF_LOG
+		bool "Enable NRF24L01 LOG"
+		default n
+endif
+

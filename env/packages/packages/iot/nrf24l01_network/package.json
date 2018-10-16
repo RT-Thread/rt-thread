@@ -1,0 +1,12 @@
+
+{
+    "name": "nrf24l01_network",
+    "description": "a nrf24l01_network package for rt-thread",
+    "keywords": [
+        "nrf24l01_network"
+    ],
+    "site" : [
+    {"version" : "v1.0.1", "URL" : "https://gitee.com/slyant/nrf24l01_network.git", "filename" : "nrf24l01_network-1.0.1.zip","VER_SHA" : "V1.0.1"},
+    {"version" : "latest", "URL" : "https://gitee.com/slyant/nrf24l01_network.git", "filename" : "nrf24l01_network-latest.zip","VER_SHA" : "master"}
+    ]
+}
