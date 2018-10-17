@@ -11,9 +11,6 @@ board.c
 stm32f4xx_it.c
 """)
 
-if GetDepend(['PKG_USING_SQLITE']):
-    src += ['dbhelper.c']
-	
 if GetDepend(['RT_USING_EXT_SDRAM']):
     src += ['drv_sdram.c']
 	

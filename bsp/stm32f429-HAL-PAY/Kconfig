@@ -305,34 +305,6 @@ config RT_USING_EXT_EEPROM
 config RT_USING_LAN8742A
     bool "Enable LAN8742A on the board"
     default n
-menuconfig RT_USING_NRF24L01_NETWORK
-    bool "Enable NRF24L01 NetWork"
-    default n
-	if RT_USING_NRF24L01_NETWORK
-		config NRF_SPI_BUS_NAME
-			string "NRF_SPI_BUS_NAME"
-			default "spi1"
-		config NRF_SPI_DEV_NAME
-			string "NRF_SPI_DEV_NAME"
-			default "spi11"
-		config NRF_SPI_CS_PIN
-			int "NRF_SPI_CS_PIN"
-			default 92
-		config NRF_CE_PIN
-			int "NRF_CE_PIN"
-			default 91
-		config NRF_IRQ_PIN
-			int "NRF_IRQ_PIN"
-			default 93
-		choice
-			prompt "Gateway or Node"
-			default USING_NRF24L01_GATEWAY
-			config USING_NRF24L01_GATEWAY
-				bool "Enable NRF24L01_GATEWAY"
-			config USING_NRF24L01_NODE
-				bool "Enable NRF24L01_NODE"
-		endchoice
-	endif
 
 if RT_USING_SERIAL
 	menu "Serial Select"

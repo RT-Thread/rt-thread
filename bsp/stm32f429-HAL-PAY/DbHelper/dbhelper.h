@@ -2,7 +2,7 @@
 #define __DBHELPER_H__
 #include <sqlite3.h> 
 
-#define DB_NAME "/spi/m.db"
+#define DB_NAME "/nand/m.db"
 
 #define DB_SQL_MAX_LEN 1024
 void db_helper_init(void);

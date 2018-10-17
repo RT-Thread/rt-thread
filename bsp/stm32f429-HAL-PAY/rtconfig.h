@@ -105,6 +105,9 @@
 #define RT_USING_RTC
 #define RT_USING_SPI
 
+/* Using WiFi */
+
+
 /* Using USB */
 
 
@@ -117,6 +120,13 @@
 
 /* Socket abstraction layer */
 
+#define RT_USING_SAL
+
+/* protocol stack implement */
+
+#define SAL_USING_AT
+#define SAL_SOCKETS_NUM 16
+#define SAL_PROTO_FAMILIES_NUM 4
 
 /* light weight TCP/IP stack */
 
@@ -126,6 +136,14 @@
 
 /* AT commands */
 
+#define RT_USING_AT
+#define AT_DEBUG
+#define AT_USING_CLIENT
+#define AT_CLIENT_NUM_MAX 1
+#define AT_USING_SOCKET
+#define AT_USING_CLI
+#define AT_PRINT_RAW_CMD
+#define AT_SW_VERSION_NUM 0x10200
 
 /* VBUS(Virtual Software BUS) */
 
@@ -145,6 +163,12 @@
 
 /* Wiced WiFi */
 
+#define PKG_USING_AT_DEVICE
+#define PKG_AT_INIT_BY_THREAD
+#define AT_DEVICE_NOT_SELECTED
+#define AT_DEVICE_SOCKETS_NUM 0
+#define PKG_USING_AT_DEVICE_LATEST_VERSION
+#define PKG_AT_DEVICE_VER_NUM 0x10400
 
 /* IoT Cloud */
 
