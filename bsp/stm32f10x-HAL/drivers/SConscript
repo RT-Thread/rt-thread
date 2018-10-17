@@ -23,6 +23,9 @@ if GetDepend(['RT_USING_SDCARD']):
 if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_BITOPS']):
     src += ['drv_i2c.c']
 
+if GetDepend(['RT_USING_WDT']):
+    src += ['drv_iwg.c']
+    
 if rtconfig.CROSS_TOOL == 'gcc':
     src += ['gcc_startup.s']
     
