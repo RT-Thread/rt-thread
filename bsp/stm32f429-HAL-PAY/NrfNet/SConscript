@@ -1,0 +1,30 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = os.path.join(str(Dir('#')), 'NrfNet')
+
+src = Glob('*.c')
+
+# src = Split("""
+# """)
+
+
+if not GetDepend(['USING_NRF24L01_NODE']):
+	SrcRemove(src,['nrf_node.c'])
+	if GetDepend('NRF24L01_USING_EXAMPLE'):
+		src = src + ['./examples/app_nrf_gateway.c']
+		if GetDepend(['PKG_USING_MULTIBUTTON']):
+			src = src + ['./examples/button.c']
+if not GetDepend(['USING_NRF24L01_GATEWAY']):
+	SrcRemove(src,['nrf_gateway.c'])
+	if GetDepend('NRF24L01_USING_EXAMPLE'):
+		src = src + ['./examples/app_nrf_node.c']
+		if GetDepend(['PKG_USING_MULTIBUTTON']):
+			src = src + ['./examples/button.c']	
+	
+CPPPATH = [cwd, str(Dir('#'))]
+
+group = DefineGroup('NrfNet', src, depend = ['RT_USING_NRF24L01_NETWORK'], CPPPATH = CPPPATH)
+
+Return('group')

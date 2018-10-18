@@ -1,0 +1,75 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = os.path.join(str(Dir('#')), 'drivers')
+
+# add the general drivers.
+# drv_pcf8574.c
+src = Split("""
+board.c
+stm32f4xx_it.c
+""")
+
+if GetDepend(['PKG_USING_SQLITE']):
+    src += ['dbhelper.c']
+	
+if GetDepend(['RT_USING_EXT_SDRAM']):
+    src += ['drv_sdram.c']
+	
+if GetDepend(['RT_USING_EXT_EEPROM']):
+    src += ['drv_i2c_24lcxx.c']	
+	
+if GetDepend(['RT_USING_PIN']):
+    src += ['drv_gpio.c']
+
+if GetDepend(['RT_USING_SERIAL']):
+    src += ['drv_usart.c']
+
+if GetDepend(['RT_USING_SPI']):
+    src += ['drv_spi.c']
+	
+if GetDepend(['RT_USING_I2C']):
+    src += ['drv_i2c.c']
+	
+if GetDepend(['RT_USING_SFUD']):
+    src += ['drv_spi_flash.c']	
+	
+if GetDepend(['RT_USING_W25QXX']):
+    src += ['drv_spiflash.c']
+	
+if GetDepend(['RT_USING_MTD_NAND']):
+    src += ['drv_nand.c']
+	
+if GetDepend(['RT_USING_SDIO']):
+    src += ['drv_sdio_sd.c']	
+	
+if GetDepend(['RT_USING_WDT']):
+    src += ['drv_iwg.c']
+
+if GetDepend(['RT_USING_USB_DEVICE']):
+    src += ['drv_usbd.c']
+	
+if GetDepend(['RT_USING_USB_HOST']):
+    src += ['drv_usbh.c']
+
+if GetDepend(['RT_USING_RTC']):
+    src += ['drv_rtc.c']
+	
+if GetDepend(['RT_USING_RNG']):
+    src += ['drv_rng.c']
+	
+if GetDepend(['RT_USING_DFS_ROMFS']):
+    src += ['drv_rom_fs.c']	
+	
+if GetDepend('RT_USING_LAN8742A'):
+    src += ['drv_eth.c']
+	
+if GetDepend(['RT_USING_CAN']):
+    src += ['drv_can.c']
+
+CPPPATH = [cwd]	
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
+

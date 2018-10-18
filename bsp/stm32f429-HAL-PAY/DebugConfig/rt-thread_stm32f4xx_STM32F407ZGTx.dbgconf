@@ -1,0 +1,41 @@
+// <<< Use Configuration Wizard in Context Menu >>>
+
+// <h>Debug MCU Configuration
+//   <o.0>    DBG_SLEEP     <i> Debug Sleep Mode
+//   <o.1>    DBG_STOP      <i> Debug Stop Mode
+//   <o.2>    DBG_STANDBY   <i> Debug Standby Mode
+// </h>
+DbgMCU_CR = 0x00000007;
+
+// <h> Debug MCU APB1 Freeze
+//   <o.0>    DBG_TIM2_STOP  <i> Timer 2 Stopped when Core is halted
+//   <o.1>    DBG_TIM3_STOP  <i> Timer 3 Stopped when Core is halted
+//   <o.2>    DBG_TIM4_STOP  <i> Timer 4 Stopped when Core is halted
+//   <o.3>    DBG_TIM5_STOP  <i> Timer 5 Stopped when Core is halted
+//   <o.4>    DBG_TIM6_STOP  <i> Timer 6 Stopped when Core is halted
+//   <o.5>    DBG_TIM7_STOP  <i> Timer 7 Stopped when Core is halted
+//   <o.6>    DBG_TIM12_STOP <i> Timer 12 Stopped when Core is halted
+//   <o.7>    DBG_TIM13_STOP <i> Timer 13 Stopped when Core is halted
+//   <o.8>    DBG_TIM14_STOP <i> Timer 14 Stopped when Core is halted
+//   <o.10>   DBG_RTC_STOP   <i> RTC Stopped when Core is halted
+//   <o.11>   DBG_WWDG_STOP  <i> Window Watchdog Stopped when Core is halted
+//   <o.12>   DBG_IWDG_STOP  <i> Independent Watchdog Stopped when Core is halted
+//   <o.21>   DBG_I2C1_SMBUS_TIMEOUT <i> I2C1 SMBUS Timeout Mode Stopped when Core is halted
+//   <o.22>   DBG_I2C2_SMBUS_TIMEOUT <i> I2C2 SMBUS Timeout Mode Stopped when Core is halted
+//   <o.23>   DBG_I2C3_SMBUS_TIMEOUT <i> I2C3 SMBUS Timeout Mode Stopped when Core is halted
+//   <o.25>   DBG_CAN1_STOP  <i> CAN1 Stopped when Core is halted
+//   <o.26>   DBG_CAN2_STOP  <i> CAN2 Stopped when Core is halted
+// </h>
+DbgMCU_APB1_Fz = 0x00000000;
+
+
+// <h> Debug MCU APB2 Freeze
+//   <o.0>    DBG_TIM1_STOP  <i> Timer 1 Stopped when Core is halted
+//   <o.1>    DBG_TIM8_STOP  <i> Timer 8 Stopped when Core is halted
+//   <o.16>   DBG_TIM9_STOP  <i> Timer 9 Stopped when Core is halted
+//   <o.17>   DBG_TIM10_STOP <i> Timer 10 Stopped when Core is halted
+//   <o.18>   DBG_TIM11_STOP <i> Timer 11 Stopped when Core is halted
+// </h>
+DbgMCU_APB2_Fz = 0x00000000;
+
+// <<< end of configuration section >>>
