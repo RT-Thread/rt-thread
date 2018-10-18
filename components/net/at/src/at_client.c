@@ -363,7 +363,7 @@ int at_client_obj_wait_connect(at_client_t client, rt_uint32_t timeout)
     while (1)
     {
         /* Check whether it is timeout */
-        if (rt_tick_get() - start_time > timeout)
+        if (rt_tick_get() - start_time > rt_tick_from_millisecond(timeout))
         {
             LOG_E("wait connect timeout (%d millisecond)!", timeout);
             result = -RT_ETIMEOUT;
