@@ -189,7 +189,7 @@ int dfs_file_ioctl(struct dfs_fd *fd, int cmd, void *args)
                 int mask  = O_NONBLOCK | O_APPEND;
 
                 flags &= mask;
-                fd->flags &= mask;
+                fd->flags &= ~mask;
                 fd->flags |= flags;
             }
             return 0;

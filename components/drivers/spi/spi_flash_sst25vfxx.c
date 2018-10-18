@@ -1,21 +1,7 @@
 /*
- * File      : spi_flash_sst25vfxx.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2011, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -33,7 +19,7 @@
 #define FLASH_TRACE(...)
 #endif /* #ifdef FLASH_DEBUG */
 
-/* JEDEC Manufacturer¡¯s ID */
+/* JEDEC Manufacturerâ€™s ID */
 #define MF_ID                       (0xBF)
 /* JEDEC Device ID : Memory Type */
 #define MT_ID                       (0x25)
@@ -302,7 +288,7 @@ rt_err_t sst25vfxx_init(const char * flash_device_name, const char * spi_device_
 
         if(id_recv[0] != MF_ID || id_recv[1] != MT_ID)
         {
-            FLASH_TRACE("Manufacturer¡¯s ID or Memory Type error!\r\n");
+            FLASH_TRACE("Manufacturerâ€™s ID or Memory Type error!\r\n");
             FLASH_TRACE("JEDEC Read-ID Data : %02X %02X %02X\r\n", id_recv[0], id_recv[1], id_recv[2]);
             return -RT_ENOSYS;
         }

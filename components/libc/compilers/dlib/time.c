@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #include <sys/time.h>
 #include <rtthread.h>
 
@@ -34,9 +42,9 @@ int gettimeofday(struct timeval *tp, void *ignore)
  */
 #pragma module_name = "?time"
 #if _DLIB_TIME_ALLOW_64
-time_t __time64(time_t *t)
+__time64_t __time64(__time64_t *t)
 #else
-time_t __time32(time_t *t)
+__time32_t __time32(__time32_t *t)
 #endif
 {
   time_t time_now = 0;

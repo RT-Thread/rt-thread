@@ -1,21 +1,7 @@
 /*
- * File      : at.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -32,29 +18,13 @@
 extern "C" {
 #endif
 
-#define AT_SW_VERSION                  "1.1.0"
-#define AT_SW_VERSION_NUM              0x10100
-
-#define DBG_ENABLE
-#define DBG_SECTION_NAME               "AT"
-#ifdef AT_DEBUG
-#define DBG_LEVEL                      DBG_LOG
-#else
-#define DBG_LEVEL                      DBG_INFO
-#endif /* AT_DEBUG */
-#define DBG_COLOR
-#include <rtdbg.h>
+#define AT_SW_VERSION                  "1.2.0"
 
 #define AT_CMD_NAME_LEN                16
 #define AT_END_MARK_LEN                4
 
 #ifndef AT_CMD_MAX_LEN
 #define AT_CMD_MAX_LEN                 128
-#endif
-
-/* client receive idle timeout, client will wait this timeout when send data, unit: ms */
-#ifndef AT_CLIENT_RECV_IDEL
-#define AT_CLIENT_RECV_IDEL            50
 #endif
 
 /* the server AT commands new line sign */

@@ -147,7 +147,7 @@ static const struct rt_uart_ops drv_uart_ops =
     drv_getc,
 };
 
-#if defined(RT_USING_UART1)
+#if defined(BSP_USING_UART1)
 /* UART1 device driver structure */
 static struct drv_uart uart1;
 struct rt_serial_device serial1;
@@ -168,9 +168,9 @@ void USART1_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif /* RT_USING_UART1 */
+#endif /* BSP_USING_UART1 */
 
-#if defined(RT_USING_UART2)
+#if defined(BSP_USING_UART2)
 /* UART2 device driver structure */
 static struct drv_uart uart2;
 struct rt_serial_device serial2;
@@ -191,9 +191,9 @@ void USART2_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif /* RT_USING_UART2 */
+#endif /* BSP_USING_UART2 */
 
-#if defined(RT_USING_UART3)
+#if defined(BSP_USING_UART3)
 /* UART3 device driver structure */
 static struct drv_uart uart3;
 struct rt_serial_device serial3;
@@ -214,9 +214,9 @@ void USART3_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif /* RT_USING_UART3 */
+#endif /* BSP_USING_UART3 */
 
-#if defined(RT_USING_UART6)
+#if defined(BSP_USING_UART6)
 /* UART6 device driver structure */
 static struct drv_uart uart6;
 struct rt_serial_device serial6;
@@ -237,7 +237,7 @@ void USART6_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif /* RT_USING_UART6 */
+#endif /* BSP_USING_UART6 */
 
 /**
 * @brief UART MSP Initialization
@@ -365,7 +365,7 @@ int hw_usart_init(void)
 {
     struct drv_uart *uart;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
-#ifdef RT_USING_UART1
+#ifdef BSP_USING_UART1
     uart = &uart1;
     uart->UartHandle.Instance = USART1;
     uart->irq = USART1_IRQn;
@@ -375,8 +375,8 @@ int hw_usart_init(void)
     rt_hw_serial_register(&serial1, "uart1",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
-#endif /* RT_USING_UART1 */
-#ifdef RT_USING_UART2
+#endif /* BSP_USING_UART1 */
+#ifdef BSP_USING_UART2
     uart = &uart2;
     uart->UartHandle.Instance = USART2;
     uart->irq = USART2_IRQn;
@@ -386,8 +386,8 @@ int hw_usart_init(void)
     rt_hw_serial_register(&serial2, "uart2",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
-#endif /* RT_USING_UART2 */
-#ifdef RT_USING_UART3
+#endif /* BSP_USING_UART2 */
+#ifdef BSP_USING_UART3
     uart = &uart3;
     uart->UartHandle.Instance = USART3;
     uart->irq = USART3_IRQn;
@@ -397,18 +397,19 @@ int hw_usart_init(void)
     rt_hw_serial_register(&serial3, "uart3",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
-#endif /* RT_USING_UART3 */
-#ifdef RT_USING_UART6
+#endif /* BSP_USING_UART3 */
+#ifdef BSP_USING_UART6
     uart = &uart6;
     uart->UartHandle.Instance = USART6;
     uart->irq = USART6_IRQn;
     serial6.ops    = &drv_uart_ops;
     serial6.config = config;
-    /* register UART2 device */
+    /* register UART6 device */
     rt_hw_serial_register(&serial6, "uart6",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
-#endif /* RT_USING_UART6 */
+#endif /* BSP_USING_UART6 */
+
     return 0;
 }
 INIT_BOARD_EXPORT(hw_usart_init);
