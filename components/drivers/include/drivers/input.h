@@ -73,9 +73,12 @@ struct input_handler
 {
     struct rt_device parent;
     uint8_t type; /* @input_devtype_t */
+    /* recv events from low driver */
     void (*events)(struct input_handler *handler, struct input_dev *dev,
                    struct input_value *v, int cnt);
-    void (*disconnect)(struct input_handler *handler, struct input_dev *dev);
+    /* recv connection status from low driver */
+    void (*connect)(struct input_handler *handler, struct input_dev *dev, 
+                    int state);
 
     rt_list_t node;
     rt_list_t c_list; /* clients connect to this list */
@@ -85,7 +88,7 @@ struct input_handler
 int rt_input_device_register(rt_input_t *dev, int devtype, const char *name);
 int rt_input_device_unregister(rt_input_t *dev);
 
-int rt_input_handler_register(struct input_handler *handler, const char *name);
+int rt_input_handler_register(struct input_handler *handler);
 int rt_input_device_open(struct input_handler *h);
 int rt_input_device_close(struct input_handler *h);
 
@@ -94,5 +97,7 @@ int rt_input_rel_report(rt_input_t *dev, int code, int value);
 int rt_input_abs_report(rt_input_t *dev, int code, int value);
 int rt_input_key_report(rt_input_t *dev, int code, int value);
 int rt_input_sync(rt_input_t *dev);
+
+void _input_gettime(struct input_event *ev);
 
 #endif

@@ -21,8 +21,36 @@
 static rt_list_t _handler_list = RT_LIST_OBJECT_INIT(_handler_list);
 static rt_list_t _dev_list = RT_LIST_OBJECT_INIT(_dev_list);
 
+void _input_gettime(struct input_event *ev)
+{
+    rt_tick_t tk;
+
+    tk = rt_tick_get();
+    ev->value = tk/RT_TICK_PER_SECOND;
+    ev->usec = (tk%RT_TICK_PER_SECOND) * (1000/RT_TICK_PER_SECOND) * 1000;
+}
+
+static void _attach_handler(struct input_dev *dev, 
+                            struct input_handler *handler)
+{
+    if (dev->type != handler->type)
+        return;
+
+    rt_list_remove(&dev->node);
+    rt_list_insert_after(&handler->d_list, &dev->node);
+    dev->handler = handler;
+
+    if (handler->connect)
+    {
+        handler->connect(handler, dev, 1);
+    }
+}
+
 int rt_input_device_register(rt_input_t *dev, int devtype, const char *name)
 {
+    struct input_handler *handler;
+    rt_list_t *node, *head;
+
     dev->wpos = 0;
     dev->numbuf = INPUT_EVBUF_MAX;
 
@@ -36,6 +64,16 @@ int rt_input_device_register(rt_input_t *dev, int devtype, const char *name)
     rt_list_init(&dev->node);
 
     rt_list_insert_after(&_dev_list, &dev->node);
+
+    /* matching handler */
+    head = &_handler_list;
+    for (node = head->next; node != head; )
+    {
+        handler = rt_list_entry(node, struct input_handler, node);
+        node = node->next;
+
+        _attach_handler(dev, handler);
+    }
 
     return 0;
 }
@@ -51,9 +89,9 @@ int rt_input_device_unregister(rt_input_t *dev)
     dev->handler = 0;
     rt_list_remove(&dev->node);
 
-    if (h->disconnect)
+    if (h->connect)
     {
-        h->disconnect(h, dev);
+        h->connect(h, dev, 0);
     }
 
     return 0;
@@ -111,9 +149,8 @@ int rt_input_sync(rt_input_t *dev)
     return rt_input_report(dev, EV_SYN, SYN_REPORT, 0);
 }
 
-int rt_input_handler_register(struct input_handler *handler, const char *name)
+int rt_input_handler_register(struct input_handler *handler)
 {
-    int ret;
     struct input_dev *entry;
     rt_list_t *node, *head;
 
@@ -121,27 +158,18 @@ int rt_input_handler_register(struct input_handler *handler, const char *name)
     rt_list_init(&handler->c_list);
     rt_list_init(&handler->d_list);
 
-    ret = rt_device_register(&handler->parent, name, 0);
-    if (ret)
-        return ret;
-
     rt_list_insert_after(&_handler_list, &handler->node);
 
-    /* pass events to all connected client */
+    /* matching low driver */
     head = &_dev_list;
     for (node = head->next; node != head; )
     {
         entry = rt_list_entry(node, struct input_dev, node);
         node = node->next;
 
-        if (entry->type == handler->type)
-        {
-            rt_list_remove(&entry->node);
-            rt_list_insert_after(&handler->d_list, &entry->node);
-            entry->handler = handler;
-        }
+        _attach_handler(entry, handler);
     }
-    
+
     return 0;
 }
 
