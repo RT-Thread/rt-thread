@@ -37,7 +37,7 @@ struct device_uart
     rt_uint32_t irqno;
 };
 
-#ifdef RT_USING_UART0
+#ifdef BSP_USING_UART0
 static struct rt_serial_device  serial0;
 static struct device_uart       uart0;
 #endif
@@ -230,16 +230,16 @@ int rt_hw_uart_init(void)
     struct rt_serial_device *serial;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
-#ifdef RT_USING_UART0
+#ifdef BSP_USING_UART0
     {
         struct device_uart      *uart;
         
         serial  = &serial0;
         uart    = &uart0;
-                
+
         /* Init UART Hardware */
         serial_init(&uart->serial, UART_TX, UART_RX);
-        
+
         serial->ops              = &_uart_ops;
         serial->config           = config;
         serial->config.baud_rate = 115200;

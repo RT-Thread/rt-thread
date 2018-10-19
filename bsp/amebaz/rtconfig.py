@@ -9,12 +9,17 @@ if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
+else:
+    RTT_ROOT = os.path.join(os.path.normpath(os.getcwd()), 'rt-thread')
 
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 if  CROSS_TOOL == 'gcc':
     PLATFORM 	= 'gcc'
-    EXEC_PATH 	= r'/opt/gcc-arm-none-eabi-5_4-2016q3/bin'
+    EXEC_PATH 	= 'C:/work/env/tools/gnu_gcc/arm_gcc/mingw/bin'
+elif CROSS_TOOL == 'iar':
+    PLATFORM     = 'iar'
+    EXEC_PATH    = 'C:/Program Files (x86)/IAR Systems/Embedded Workbench 7.0'
 else:
     print 'Please make sure your toolchains is GNU GCC!'
     exit(0)
@@ -39,7 +44,7 @@ if PLATFORM == 'gcc':
     NM = PREFIX + 'nm'
 
     DEVICE = ' -DM3 -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -g2 -w -O2 -Wno-pointer-sign -fno-common -fmessage-length=0  -ffunction-sections -fdata-sections -fomit-frame-pointer -fno-short-enums -DF_CPU=166000000L -std=gnu99 -fsigned-char'
+    CFLAGS = DEVICE + ' -g2 -Wall -Wno-pointer-sign -fno-common -fmessage-length=0  -ffunction-sections -fdata-sections -fomit-frame-pointer -fno-short-enums -DF_CPU=166000000L -std=gnu99 -fsigned-char'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -g --specs=nano.specs -nostartfiles -Wl,-Map=rtthread.map -Os -Wl,--gc-sections -Wl,--cref -Wl,--entry=Reset_Handler -Wl,--no-enum-size-warning -Wl,--no-wchar-size-warning -T./rlx8711B-symbol-v02-img2_xip1.ld'
     LFLAGS += ' -Wl,-wrap,rtl_printf'
@@ -48,7 +53,7 @@ if PLATFORM == 'gcc':
     LPATH = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O0 -gdwarf-2'
+        CFLAGS += ' -Os -gdwarf-2'
         AFLAGS += ' -gdwarf-2'
     else:
         CFLAGS += ' -O2'
