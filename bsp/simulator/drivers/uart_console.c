@@ -5,7 +5,14 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-/* uart driver */
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 struct console_uart
 {
     int rx_ready;

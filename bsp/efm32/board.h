@@ -1,15 +1,9 @@
-/***************************************************************************//**
- * @file 	board.h
- * @brief 	Board support of RT-Thread RTOS for EFM32
- *  COPYRIGHT (C) 2012, RT-Thread Development Team
- * @author 	onelife
- * @version 1.0
- *******************************************************************************
- * @section License
- * The license and distribution terms for this file may be found in the file
- * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
- *******************************************************************************
- * @section Change Logs
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs
  * Date			Author		Notes
  * 2010-12-21	onelife		Initial creation for EFM32
  * 2011-05-06	onelife		Add EFM32 development kit and SPI Flash support

@@ -1,19 +1,11 @@
 /*
-*******************************************************************************
-**
-** \file      gd_spi.c
-**
-** \brief     Generic spi   device driver (core functions).
-**
-**              (C) Goke Microelectronics China 2007 - 2010
-**
-** \attention THIS SAMPLE CODE IS PROVIDED AS IS. HUNAN GOFORTUNE SEMICONDUCTOR
-**            ACCEPTS NO RESPONSIBILITY OR LIABILITY FOR ANY ERRORS OR
-**            OMMISSIONS.
-** \version   $Id: gd_spi.c,v 1.2 2013/11/21 09:28:00
-**
-*******************************************************************************
-*/
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #include <stdio.h>
 #include <string.h>
 #include <gtypes.h>

@@ -1,23 +1,14 @@
-/***************************************************************************//**
- * @file    drv_usart.c
- * @brief   USART driver of RT-Thread RTOS for EFM32
- *  COPYRIGHT (C) 2012, RT-Thread Development Team
- * @author  onelife
- * @version 1.0
- *******************************************************************************
- * @section License
- * The license and distribution terms for this file may be found in the file
- *  LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
- *******************************************************************************
- * @section Change Logs of serial.c
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs of serial.c
  * Date         Author      Notes
  * 2009-02-05   Bernard     first version
  * 2009-10-25   Bernard     fix rt_serial_read bug when there is no data in the
  *  buffer.
  * 2010-03-29   Bernard     cleanup code.
- *
- * @section Change Logs
- * Date         Author      Notes
  * 2010-12-22   onelife     Initial creation for EFM32
  * 2011-01-17   onelife     Merge with serial.c
  * 2011-05-06   onelife     Add sync mode (SPI) support
