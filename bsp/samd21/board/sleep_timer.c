@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 // From module: RTC - Real Time Counter in Count Mode (Polled APIs)
 #include <rtc_count.h>
 #include <rtc_count_interrupt.h>

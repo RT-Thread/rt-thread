@@ -9,7 +9,7 @@
  * The license and distribution terms for this file may be found in the file
  * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
- * @section Change Logs
+ * Change Logs
  * Date			Author		Notes
  * 2011-12-08	onelife		Initial creation for EFM3 giant gecko support
  * 2012-05-15	onelife		Modified to compatible with CMSIS v3

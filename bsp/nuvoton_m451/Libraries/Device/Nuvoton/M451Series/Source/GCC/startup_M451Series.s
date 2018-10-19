@@ -1,21 +1,11 @@
-/**
-  ******************************************************************************
-  * @file      startup_M451Series.s
-  * @author    RT-Thread Develop Team
-  * @version   V1.0.0
-  * @date      2016-12-07
-  * @brief     M451Series Devices vector table for GCC toolchain.
-  *            This module performs:
-  *                - Set the initial SP
-  *                - Set the initial PC == Reset_Handler,
-  *                - Set the vector table entries with the exceptions ISR address
-  *                - Branches to main in the C library (which eventually
-  *                  calls main()).
-  *            After Reset the Cortex-M4 processor is in Thread mode,
-  *            priority is Privileged, and the Stack is set to Main.
-  *            It's ported from startup_M051Series.s
-  ******************************************************************************
-*/
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
     
   .syntax unified
   .cpu cortex-m4

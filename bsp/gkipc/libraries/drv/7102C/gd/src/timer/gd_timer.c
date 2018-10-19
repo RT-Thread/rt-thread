@@ -1,18 +1,11 @@
-/******************************************************************************
-**
-** \file      gd_timer.c
-**
-** \brief     TIMER driver (core functions).
-**
-**            Copyright:   2012 - 2013 (C) GoKe Microelectronics ShangHai Branch
-**
-** \attention THIS SAMPLE CODE IS PROVIDED AS IS. GOKE MICROELECTRONICS
-**            ACCEPTS NO RESPONSIBILITY OR LIABILITY FOR ANY ERRORS OR
-**            OMMISSIONS.
-**
-** \version
-**
-******************************************************************************/
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #include <stdio.h>
 #include <string.h>
 

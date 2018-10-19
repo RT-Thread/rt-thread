@@ -9,7 +9,7 @@
  * The license and distribution terms for this file may be found in the file
  * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
- * @section Change Logs
+ * Change Logs
  * Date         Author      Notes
  * 2009-10-14   Bernard     first version
  * 2010-12-22   onelife     Modify for EFM32
