@@ -1,11 +1,7 @@
 /*
- * File      : drv_uart.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006-2013, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -30,10 +26,7 @@
     !defined(RT_USING_UART5) && !defined(RT_USING_UART6) && \
     !defined(RT_USING_UART7) && !defined(RT_USING_UART8)
 #error "Please define at least one UARTx"
-
 #endif
-
-
 
 #include <rtdevice.h>
 
