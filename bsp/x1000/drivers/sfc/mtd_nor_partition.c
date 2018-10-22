@@ -1,12 +1,11 @@
-/**
-  ******************************************************************************
-  * @file    rt_mtd_nor_partition.c
-  * @author  Urey
-  * @version V1.0.0
-  * @date    2017Äê2ÔÂ11ÈÕ
-  * @brief   TODO
-  ******************************************************************************         
-**/ 
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 
 
 

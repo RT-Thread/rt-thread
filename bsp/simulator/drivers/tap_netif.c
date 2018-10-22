@@ -1,29 +1,10 @@
 /*
- *  TAP-Win32 -- A kernel driver to provide virtual tap device functionality
- *               on Windows.  Originally derived from the CIPE-Win32
- *               project by Damion K. Wilson, with extensive modifications by
- *               James Yonan.
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  All source code which derives from the CIPE-Win32 project is
- *  Copyright (C) Damion K. Wilson, 2003, and is released under the
- *  GPL version 2 (see below).
+ * SPDX-License-Identifier: Apache-2.0
  *
- *  All other source code is Copyright (C) James Yonan, 2003-2004,
- *  and is released under the GPL version 2 (see below).
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program (see the file COPYING included with this
- *  distribution); if not, see <http://www.gnu.org/licenses/>.
+ * Change Logs:
+ * Date           Author       Notes
  */
 
 #include <stdio.h>

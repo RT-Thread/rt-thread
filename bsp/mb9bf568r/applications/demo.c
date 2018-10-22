@@ -1,4 +1,12 @@
 /*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
+/*
 	此demo用于演示动态线程创建
  */
 #include <rtthread.h>
