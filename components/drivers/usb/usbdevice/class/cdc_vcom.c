@@ -82,6 +82,7 @@ struct vcom_tx_msg
     rt_size_t size;
 };
 
+ALIGN(4)
 static struct udevice_descriptor dev_desc =
 {
     USB_DESC_LENGTH_DEVICE,     //bLength;
@@ -101,6 +102,7 @@ static struct udevice_descriptor dev_desc =
 };
 
 //FS and HS needed
+ALIGN(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
@@ -115,6 +117,7 @@ static struct usb_qualifier_descriptor dev_qualifier =
 };
 
 /* communcation interface descriptor */
+ALIGN(4)
 const static struct ucdc_comm_descriptor _comm_desc =
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
@@ -184,6 +187,7 @@ const static struct ucdc_comm_descriptor _comm_desc =
 };
 
 /* data interface descriptor */
+ALIGN(4)
 const static struct ucdc_data_descriptor _data_desc =
 {
     /* interface descriptor */
@@ -217,7 +221,7 @@ const static struct ucdc_data_descriptor _data_desc =
         0x00,
     },
 };
-
+ALIGN(4)
 static char serno[_SER_NO_LEN + 1] = {'\0'};
 RT_WEAK rt_err_t vcom_get_stored_serno(char *serno, int size);
 
@@ -225,7 +229,7 @@ rt_err_t vcom_get_stored_serno(char *serno, int size)
 {
     return RT_ERROR;
 }
-
+ALIGN(4)
 const static char* _ustring[] =
 {
     "Language",

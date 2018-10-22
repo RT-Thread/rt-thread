@@ -24,6 +24,7 @@ struct winusb_device
 
 typedef struct winusb_device * winusb_device_t;
 
+ALIGN(4)
 static struct udevice_descriptor dev_desc =
 {
     USB_DESC_LENGTH_DEVICE,     //bLength;
@@ -41,7 +42,9 @@ static struct udevice_descriptor dev_desc =
     USB_STRING_SERIAL_INDEX,    //iSerialNumber;
     USB_DYNAMIC,                //bNumConfigurations;
 };
+
 //FS and HS needed
+ALIGN(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
@@ -55,6 +58,7 @@ static struct usb_qualifier_descriptor dev_qualifier =
     0,
 };
 
+ALIGN(4)
 struct winusb_descriptor _winusb_desc = 
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
@@ -102,7 +106,7 @@ struct winusb_descriptor _winusb_desc =
     },
 };
 
-
+ALIGN(4)
 const static char* _ustring[] =
 {
     "Language",
@@ -113,11 +117,14 @@ const static char* _ustring[] =
     "Interface",
     USB_STRING_OS//must be
 };
+
+ALIGN(4)
 struct usb_os_proerty winusb_proerty[] = 
 {
     USB_OS_PROERTY_DESC(USB_OS_PROERTY_TYPE_REG_SZ,"DeviceInterfaceGUID",RT_WINUSB_GUID),
 };
 
+ALIGN(4)
 struct usb_os_function_comp_id_descriptor winusb_func_comp_id_desc = 
 {
     .bFirstInterfaceNumber = USB_DYNAMIC,
