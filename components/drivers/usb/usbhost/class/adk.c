@@ -55,7 +55,7 @@ static rt_err_t rt_usbh_adk_get_protocol(struct uintf* intf, rt_uint16_t *protoc
 {
     struct urequest setup;
     uinst_t device;
-    int timeout = 100;
+    int timeout = USB_TIMEOUT_BASIC;
 
         /* parameter check */
     RT_ASSERT(intf != RT_NULL);
@@ -89,7 +89,7 @@ static rt_err_t rt_usbh_adk_send_string(struct uintf* intf, rt_uint16_t index,
 {
     struct urequest setup;
     uinst_t device;
-    int timeout = 100;
+    int timeout = USB_TIMEOUT_BASIC;
 
         /* parameter check */
     RT_ASSERT(intf != RT_NULL);
@@ -122,7 +122,7 @@ static rt_err_t rt_usbh_adk_start(struct uintf* intf)
 {
     struct urequest setup;
     uinst_t device;
-    int timeout = 100;
+    int timeout = USB_TIMEOUT_BASIC;
 
         /* parameter check */
     RT_ASSERT(intf != RT_NULL);
