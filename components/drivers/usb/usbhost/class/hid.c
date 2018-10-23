@@ -30,7 +30,7 @@ rt_err_t rt_usbh_hid_set_idle(struct uintf* intf, int duration, int report_id)
 {
     struct urequest setup;
     struct uinstance* device;    
-    int timeout = 100;
+    int timeout = USB_TIMEOUT_BASIC;
         
     /* parameter check */
     RT_ASSERT(intf != RT_NULL);
@@ -64,7 +64,7 @@ rt_err_t rt_usbh_hid_get_report(struct uintf* intf, rt_uint8_t type,
 {
     struct urequest setup;
     struct uinstance* device;
-    int timeout = 100;
+    int timeout = USB_TIMEOUT_BASIC;
         
     /* parameter check */
     RT_ASSERT(intf != RT_NULL);
@@ -97,7 +97,7 @@ rt_err_t rt_usbh_hid_set_report(struct uintf* intf, rt_uint8_t *buffer, rt_size_
 {
     struct urequest setup;
     struct uinstance* device;        
-    int timeout = 100;
+    int timeout = USB_TIMEOUT_BASIC;
         
     /* parameter check */
     RT_ASSERT(intf != RT_NULL);
@@ -129,7 +129,7 @@ rt_err_t rt_usbh_hid_set_protocal(struct uintf* intf, int protocol)
 {
     struct urequest setup;
     struct uinstance* device;
-    int timeout = 100;
+    int timeout = USB_TIMEOUT_BASIC;
         
     /* parameter check */
     RT_ASSERT(intf != RT_NULL);
@@ -164,7 +164,7 @@ rt_err_t rt_usbh_hid_get_report_descriptor(struct uintf* intf,
 {
     struct urequest setup;
     struct uinstance* device;    
-    int timeout = 100;
+    int timeout = USB_TIMEOUT_BASIC;
         
     /* parameter check */
     RT_ASSERT(intf != RT_NULL);
@@ -214,7 +214,7 @@ static void rt_usbh_hid_callback(void* context)
 {
     upipe_t pipe; 
     struct uhid* hid;
-    int timeout = 300;
+    int timeout = USB_TIMEOUT_LONG;
 
     /* parameter check */
     RT_ASSERT(context != RT_NULL);
@@ -269,7 +269,7 @@ static rt_err_t rt_usbh_hid_enable(void* arg)
     uprotocal_t protocal;    
     struct uhid* hid;
     struct uintf* intf = (struct uintf*)arg;
-    int timeout = 100;
+    int timeout = USB_TIMEOUT_BASIC;
     upipe_t pipe;
     
     /* parameter check */
