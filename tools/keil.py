@@ -191,7 +191,7 @@ def MDK45Project(tree, target, script):
         group_tree = MDK4AddGroup(ProjectFiles, groups, group['name'], group['src'], project_path)
 
         # for local CPPPATH/CPPDEFINES
-        if (group_tree != None) and (group.has_key('LOCAL_CPPPATH') or group.has_key('LOCAL_CCFLAGS')):
+        if (group_tree != None) and (group.has_key('LOCAL_CPPPATH') or group.has_key('LOCAL_CCFLAGS') or group.has_key('LOCAL_CPPDEFINES')):
             GroupOption     = SubElement(group_tree,  'GroupOption')
             GroupArmAds     = SubElement(GroupOption, 'GroupArmAds')
             Cads            = SubElement(GroupArmAds, 'Cads')

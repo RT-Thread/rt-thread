@@ -1,21 +1,7 @@
 /*
- * File      : rtdef.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -37,6 +23,7 @@
  * 2018-04-25     Bernard      change version number to v3.0.4
  * 2018-05-31     Bernard      change version number to v3.1.0
  * 2018-09-04     Bernard      change version number to v3.1.1
+ * 2018-09-14     Bernard      apply Apache License v2.0 to RT-Thread Kernel
  */
 
 #ifndef __RT_DEF_H__
@@ -97,14 +84,19 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define RT_UINT32_MAX                   0xffffffff      /**< Maxium number of UINT32 */
 #define RT_TICK_MAX                     RT_UINT32_MAX   /**< Maxium number of tick */
 
+#if defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
+#define __CLANG_ARM
+#endif
+
 /* Compiler Related Definitions */
-#ifdef __CC_ARM                         /* ARM Compiler */
+#if defined(__CC_ARM) || defined(__CLANG_ARM)           /* ARM Compiler */
     #include <stdarg.h>
     #define SECTION(x)                  __attribute__((section(x)))
     #define RT_UNUSED                   __attribute__((unused))
     #define RT_USED                     __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
-    #define RT_WEAK                     __weak
+
+    #define RT_WEAK                     __attribute__((weak))
     #define rt_inline                   static __inline
     /* module compiling */
     #ifdef RT_USING_MODULE

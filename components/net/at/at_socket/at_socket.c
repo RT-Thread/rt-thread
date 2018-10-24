@@ -1,21 +1,7 @@
 /*
- * File      : at_socket.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -34,10 +20,10 @@
 #include <dfs_poll.h>
 #endif
 
-#ifdef DBG_SECTION_NAME
-#undef DBG_SECTION_NAME
-#define DBG_SECTION_NAME     "AT_SOC"
-#endif
+#define LOG_TAG              "at.skt"
+#include <at_log.h>
+
+#ifdef AT_USING_SOCKET
 
 #define HTONS_PORT(x) ((((x) & 0x00ffUL) << 8) | (((x) & 0xff00UL) >> 8))
 #define NIPQUAD(addr) \
@@ -200,7 +186,7 @@ static void at_do_event_changes(struct at_socket *sock, at_event_t event, rt_boo
     {
         if (is_plus)
         {
-            sock->sendevent++;
+            sock->sendevent = 1;
 
 #ifdef SAL_USING_POSIX
             rt_wqueue_wakeup(&sock->wait_head, (void*) POLLOUT);
@@ -209,7 +195,7 @@ static void at_do_event_changes(struct at_socket *sock, at_event_t event, rt_boo
         }
         else if (sock->sendevent)
         {
-            sock->sendevent --;
+            sock->sendevent = 0;
         }
         break;
     }
@@ -245,6 +231,30 @@ static void at_do_event_changes(struct at_socket *sock, at_event_t event, rt_boo
         {
             sock->errevent --;
         }
+        break;
+    }
+    default:
+        LOG_E("Not supported event (%d)", event);
+    }
+}
+
+static void at_do_event_clean(struct at_socket *sock, at_event_t event)
+{
+    switch (event)
+    {
+    case AT_EVENT_SEND:
+    {
+        sock->sendevent = 0;
+        break;
+    }
+    case AT_EVENT_RECV:
+    {
+        sock->rcvevent = 0;
+        break;
+    }
+    case AT_EVENT_ERROR:
+    {
+        sock->errevent = 0;
         break;
     }
     default:
@@ -513,6 +523,7 @@ static void at_closed_notice_cb(int socket, at_socket_evt_t event, const char *b
     sock->state = AT_SOCKET_CLOSED;
     rt_sem_release(sock->recv_notice);
 }
+
 int at_connect(int socket, const struct sockaddr *name, socklen_t namelen)
 {
     struct at_socket *sock;
@@ -564,6 +575,8 @@ __exit:
         at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
     }
 
+    at_do_event_changes(sock, AT_EVENT_SEND, RT_TRUE);
+    
     return result;
 }
 
@@ -611,7 +624,13 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
         sock->state = AT_SOCKET_CONNECT;
     }
 
-    if (sock->state != AT_SOCKET_CONNECT)
+    /* socket passively closed, receive function return 0 */
+    if (sock->state == AT_SOCKET_CLOSED)
+    {
+        result = 0;
+        goto __exit;
+    }
+    else if (sock->state != AT_SOCKET_CONNECT)
     {
         LOG_E("received data error, current socket (%d) state (%d) is error.", socket, sock->state);
         result = -1;
@@ -637,6 +656,10 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
     if((timeout = sock->recv_timeout) == 0)
     {
         timeout = RT_WAITING_FOREVER;
+    }
+    else
+    {
+        timeout = rt_tick_from_millisecond(timeout);
     }
 
     while (1)
@@ -664,7 +687,7 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
             else
             {
                 LOG_D("received data exit, current socket (%d) is closed by remote.", socket);
-                result = -1;
+                result = 0;
                 goto __exit;
             }
         }
@@ -672,17 +695,23 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
 
 __exit:
 
-    if (result < 0)
+    if (recv_len > 0)
     {
-        at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
+        result = recv_len;
+        at_do_event_changes(sock, AT_EVENT_RECV, RT_FALSE);
+
+        if (!rt_slist_isempty(&sock->recvpkt_list))
+        {
+            at_do_event_changes(sock, AT_EVENT_RECV, RT_TRUE);
+        }
+        else
+        {
+            at_do_event_clean(sock, AT_EVENT_RECV);
+        }
     }
     else
     {
-        result = recv_len;
-        if (recv_len)
-        {
-            at_do_event_changes(sock, AT_EVENT_RECV, RT_FALSE);
-        }
+        at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
     }
 
     return result;
@@ -752,6 +781,9 @@ int at_sendto(int socket, const void *data, size_t size, int flags, const struct
                 goto __exit;
             }
             sock->state = AT_SOCKET_CONNECT;
+            /* set AT socket receive data callback function */
+            at_dev_ops->at_set_event_cb(AT_SOCKET_EVT_RECV, at_recv_notice_cb);
+            at_dev_ops->at_set_event_cb(AT_SOCKET_EVT_CLOSED, at_closed_notice_cb);
         }
 
         if ((len = at_dev_ops->at_send(sock->socket, (char *) data, size, sock->type)) < 0)
@@ -1135,7 +1167,7 @@ void at_freeaddrinfo(struct addrinfo *ai)
     }
 }
 
-void at_scoket_device_register(const struct at_device_ops *ops)
+void at_socket_device_register(const struct at_device_ops *ops)
 {
     RT_ASSERT(ops);
     RT_ASSERT(ops->at_connect);
@@ -1145,3 +1177,5 @@ void at_scoket_device_register(const struct at_device_ops *ops)
     RT_ASSERT(ops->at_set_event_cb);
     at_dev_ops = (struct at_device_ops *) ops;
 }
+
+#endif /* AT_USING_SOCKET */

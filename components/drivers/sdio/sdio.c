@@ -1,21 +1,7 @@
 /*
- * File      : sdio.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author        Notes
@@ -140,6 +126,7 @@ rt_int32_t sdio_io_rw_direct(struct rt_mmcsd_card *card,
 
     RT_ASSERT(card != RT_NULL);
     RT_ASSERT(fn <= SDIO_MAX_FUNCTIONS);
+    RT_ASSERT(pdata != RT_NULL);
 
     if (reg_addr & ~SDIO_ARG_CMD53_REG_MASK)
         return -RT_ERROR;
@@ -316,7 +303,7 @@ rt_uint8_t sdio_io_readb(struct rt_sdio_function *func,
                          rt_uint32_t              reg,
                          rt_int32_t              *err)
 {
-    rt_uint8_t data;
+    rt_uint8_t data = 0;
     rt_int32_t ret;
 
     ret = sdio_io_rw_direct(func->card, 0, func->num, reg, &data, 0);
@@ -937,6 +924,7 @@ err3:
                 host->card->sdio_function[i] = RT_NULL;
                 rt_free(host->card);
                 host->card = RT_NULL;
+                break;
             }
         }
     }

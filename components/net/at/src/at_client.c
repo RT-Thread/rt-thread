@@ -1,21 +1,7 @@
 /*
- * File      : at_client.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -28,6 +14,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#define LOG_TAG              "at.clnt"
+#include <at_log.h>
+
+#ifdef AT_USING_CLIENT
 
 #define AT_RESP_END_OK                 "OK"
 #define AT_RESP_END_ERROR              "ERROR"
@@ -372,7 +363,7 @@ int at_client_obj_wait_connect(at_client_t client, rt_uint32_t timeout)
     while (1)
     {
         /* Check whether it is timeout */
-        if (rt_tick_get() - start_time > timeout)
+        if (rt_tick_get() - start_time > rt_tick_from_millisecond(timeout))
         {
             LOG_E("wait connect timeout (%d millisecond)!", timeout);
             result = -RT_ETIMEOUT;
@@ -425,17 +416,22 @@ rt_size_t at_client_obj_send(at_client_t client, const char *buf, rt_size_t size
     return rt_device_write(client->device, 0, buf, size);
 }
 
-static char at_client_getchar(at_client_t client)
+static rt_err_t at_client_getchar(at_client_t client, char *ch, rt_int32_t timeout)
 {
-    char ch;
+    rt_err_t result = RT_EOK;
 
-    while (rt_device_read(client->device, 0, &ch, 1) == 0)
+    while (rt_device_read(client->device, 0, ch, 1) == 0)
     {
         rt_sem_control(client->rx_notice, RT_IPC_CMD_RESET, RT_NULL);
-        rt_sem_take(client->rx_notice, RT_WAITING_FOREVER);
+
+        result = rt_sem_take(client->rx_notice, rt_tick_from_millisecond(timeout));
+        if (result != RT_EOK)
+        {
+            return result;
+        }
     }
 
-    return ch;
+    return RT_EOK;
 }
 
 /**
@@ -444,15 +440,17 @@ static char at_client_getchar(at_client_t client)
  * @param client current AT client object
  * @param buf   receive data buffer
  * @param size  receive fixed data size
+ * @param timeout  receive data timeout (ms)
  *
  * @note this function can only be used in execution function of URC data
  *
  * @return >0: receive data size
  *         =0: receive failed
  */
-rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size)
+rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size, rt_int32_t timeout)
 {
     rt_size_t read_idx = 0;
+    rt_err_t result = RT_EOK;
     char ch;
 
     RT_ASSERT(buf);
@@ -467,7 +465,12 @@ rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size)
     {
         if (read_idx < size)
         {
-            ch = at_client_getchar(client);
+            result = at_client_getchar(client, &ch, timeout);
+            if (result != RT_EOK)
+            {
+                LOG_E("AT Client receive failed, uart device get data error(%d)", result);
+                return 0;
+            }
 
             buf[read_idx++] = ch;
         }
@@ -610,7 +613,7 @@ static int at_recv_readline(at_client_t client)
 
     while (1)
     {
-        ch = at_client_getchar(client);
+        at_client_getchar(client, &ch, RT_WAITING_FOREVER);
 
         if (read_len < client->recv_bufsz)
         {
@@ -858,7 +861,7 @@ int at_client_init(const char *dev_name,  rt_size_t recv_bufsz)
 
     if (idx >= AT_CLIENT_NUM_MAX)
     {
-        LOG_E("AT client initialize filed! Check the maximum number(%d) of AT client.", AT_CLIENT_NUM_MAX);
+        LOG_E("AT client initialize failed! Check the maximum number(%d) of AT client.", AT_CLIENT_NUM_MAX);
         result = -RT_EFULL;
         goto __exit;
     }
@@ -912,3 +915,4 @@ __exit:
 
     return result;
 }
+#endif /* AT_USING_CLIENT */

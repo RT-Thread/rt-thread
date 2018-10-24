@@ -104,15 +104,17 @@ void am_low_power_init(void)
     /* Turn off the voltage comparator as this is enabled on reset */
     am_hal_vcomp_disable();
 
+    #ifndef RT_USING_RTC
     /* Run the RTC off the LFRC */
     am_hal_rtc_osc_select(AM_HAL_RTC_OSC_LFRC);
 
     /* Stop the XT and LFRC */
     am_hal_clkgen_osc_stop(AM_HAL_CLKGEN_OSC_XT);
-    am_hal_clkgen_osc_stop(AM_HAL_CLKGEN_OSC_LFRC);
+    //am_hal_clkgen_osc_stop(AM_HAL_CLKGEN_OSC_LFRC);
 
     /* Disable the RTC */
     am_hal_rtc_osc_disable();
+    #endif
 }
 
 /**
@@ -159,7 +161,7 @@ void rt_hw_board_init(void)
 
     /* Turn off unused Flash & SRAM */
     am_hal_pwrctrl_memory_enable(AM_HAL_PWRCTRL_MEMEN_FLASH512K);
-    am_hal_pwrctrl_memory_enable(AM_HAL_PWRCTRL_MEMEN_SRAM32K);
+    //am_hal_pwrctrl_memory_enable(AM_HAL_PWRCTRL_MEMEN_SRAM32K);
 
 #endif
 

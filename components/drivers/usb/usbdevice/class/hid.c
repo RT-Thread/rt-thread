@@ -1,7 +1,9 @@
 /*
  * File      : hid.c
- * COPYRIGHT (C) 2008 - 2016, RT-Thread Development Team
+ * COPYRIGHT (C) 2008 - 2018, RT-Thread Development Team
  *
+ * SPDX-License-Identifier: Apache-2.0
+ * 
  * Change Logs:
  * Date           Author       Notes
  * 2017-03-13     Urey         the first version
@@ -294,9 +296,8 @@ const static struct uhid_comm_descriptor _hid_comm_desc =
         USB_HID_PROTOCOL_MOUSE,     /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
 #endif
         0x00,
-#endif
     },
-
+#endif
     /* Interface Descriptor */
     {
         USB_DESC_LENGTH_INTERFACE,

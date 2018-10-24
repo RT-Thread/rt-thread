@@ -1,21 +1,7 @@
 /*
- * File      : mmc.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author        Notes
@@ -198,6 +184,12 @@ static int mmc_get_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t **new_ext_csd)
  */
 static int mmc_parse_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
 {
+  if(card == RT_NULL || ext_csd == RT_NULL)
+  {
+    LOG_E("emmc parse ext csd fail, invaild args");
+    return -1;
+  }
+
   card->flags |=  CARD_FLAG_HIGHSPEED;
   card->hs_max_data_rate = 200000000;
   
@@ -424,7 +416,7 @@ static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
 {
     rt_int32_t err;
     rt_uint32_t resp[4];
-    rt_uint32_t rocr;
+    rt_uint32_t rocr = 0;
     rt_uint32_t max_data_rate;
     rt_uint8_t *ext_csd = RT_NULL;
     struct rt_mmcsd_card *card = RT_NULL;

@@ -1,23 +1,7 @@
 /*
- * File     : stubs.c
- * Brief    : reimplement some basic functions of arm standard c library
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -37,7 +21,11 @@
 #include "dfs_posix.h"
 #endif
 
+#ifdef __CLANG_ARM
+__asm(".global __use_no_semihosting\n\t");
+#else
 #pragma import(__use_no_semihosting_swi)
+#endif
 
 /* Standard IO device handles. */
 #define STDIN       0
@@ -309,17 +297,18 @@ int system(const char *string)
 
 int fputc(int c, FILE *f) 
 {
-    char ch = c;
+    char ch[2] = {0};
 
-    rt_kprintf(&ch);
+    ch[0] = c;
+    rt_kprintf(&ch[0]);
     return 1;
 }
 
 int fgetc(FILE *f) 
 {
+#ifdef RT_USING_POSIX
     char ch;
 
-#ifdef RT_USING_POSIX
     if (libc_stdio_read(&ch, 1) == 1)
         return ch;
 #endif

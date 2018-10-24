@@ -296,7 +296,7 @@ void SPI_DMA(SPI_T *spi, bool txEn, bool rxEn)
  * @brief
  */
 __SPI_STATIC_INLINE__
-void SPI_SetTxFifoThreshold(SPI_T *spi, uint8_t threshold)
+void SPI_SetTxFifoThreshold(SPI_T *spi, rt_uint8_t threshold)
 {
     HAL_MODIFY_REG(spi->FCTL, SPI_FCTL_TX_TRIG_LEVEL_MASK, threshold << SPI_FCTL_TX_TRIG_LEVEL_SHIFT);
 }
@@ -305,7 +305,7 @@ void SPI_SetTxFifoThreshold(SPI_T *spi, uint8_t threshold)
  * @brief
  */
 __SPI_STATIC_INLINE__
-void SPI_SetRxFifoThreshold(SPI_T *spi, uint8_t threshold)
+void SPI_SetRxFifoThreshold(SPI_T *spi, rt_uint8_t threshold)
 {
     HAL_MODIFY_REG(spi->FCTL, SPI_FCTL_RX_TRIG_LEVEL_MASK, threshold << SPI_FCTL_RX_TRIG_LEVEL_SHIFT);
 }
@@ -314,18 +314,18 @@ void SPI_SetRxFifoThreshold(SPI_T *spi, uint8_t threshold)
  * @brief
  */
 __SPI_STATIC_INLINE__
-uint8_t SPI_GetTxFifoCounter(SPI_T *spi)
+rt_uint8_t SPI_GetTxFifoCounter(SPI_T *spi)
 {
-    return (uint8_t)((spi->FST & SPI_FST_TF_CNT_MASK) >> SPI_FST_TF_CNT_SHIFT);
+    return (rt_uint8_t)((spi->FST & SPI_FST_TF_CNT_MASK) >> SPI_FST_TF_CNT_SHIFT);
 }
 
 /*
  * @brief
  */
 __SPI_STATIC_INLINE__
-uint8_t SPI_GetRxFifoCounter(SPI_T *spi)
+rt_uint8_t SPI_GetRxFifoCounter(SPI_T *spi)
 {
-    return (uint8_t)((spi->FST & SPI_FST_RF_CNT_MASK) >> SPI_FST_RF_CNT_SHIFT);
+    return (rt_uint8_t)((spi->FST & SPI_FST_RF_CNT_MASK) >> SPI_FST_RF_CNT_SHIFT);
 }
 
 /*
@@ -350,7 +350,7 @@ void SPI_DisableDualMode(SPI_T *spi)
  * @brief
  */
 __SPI_STATIC_INLINE__
-void SPI_SetInterval(SPI_T *spi, uint16_t nSCLK)
+void SPI_SetInterval(SPI_T *spi, rt_uint16_t nSCLK)
 {
     HAL_MODIFY_REG(spi->WAIT, SPI_WAIT_WCC_MASK, nSCLK << SPI_WAIT_WCC_SHIFT);
 }
@@ -358,9 +358,9 @@ void SPI_SetInterval(SPI_T *spi, uint16_t nSCLK)
 /*
  * @brief
  */
-static void SPI_SetClkDiv(SPI_T *spi, uint16_t div)
+static void SPI_SetClkDiv(SPI_T *spi, rt_uint16_t div)
 {
-    uint8_t n = 0;
+    rt_uint8_t n = 0;
     if (div < 1)
     {
         return;
@@ -401,7 +401,7 @@ void SPI_SetDataSize(SPI_T *spi, rt_uint32_t data_size, rt_uint32_t dummy_size)
  * @brief
  */
 __SPI_STATIC_INLINE__
-void SPI_Write(SPI_T *spi, uint8_t *data)
+void SPI_Write(SPI_T *spi, rt_uint8_t *data)
 {
     HAL_REG_8BIT(&spi->TXD) = *data;
 }
@@ -410,7 +410,7 @@ void SPI_Write(SPI_T *spi, uint8_t *data)
  * @brief
  */
 __SPI_STATIC_INLINE__
-void SPI_Read(SPI_T *spi, uint8_t *data)
+void SPI_Read(SPI_T *spi, rt_uint8_t *data)
 {
     *data = HAL_REG_8BIT(&spi->RXD);
 }
@@ -419,18 +419,18 @@ void SPI_Read(SPI_T *spi, uint8_t *data)
  * @brief
  */
 __SPI_STATIC_INLINE__
-uint8_t *SPI_TxAddress(SPI_T *spi)
+rt_uint8_t *SPI_TxAddress(SPI_T *spi)
 {
-    return (uint8_t *)&spi->TXD;
+    return (rt_uint8_t *)&spi->TXD;
 }
 
 /*
  * @brief
  */
 __SPI_STATIC_INLINE__
-uint8_t *SPI_RxAddress(SPI_T *spi)
+rt_uint8_t *SPI_RxAddress(SPI_T *spi)
 {
-    return (uint8_t *)&spi->RXD;
+    return (rt_uint8_t *)&spi->RXD;
 }
 
 /* private rt-thread spi ops function */
@@ -586,8 +586,8 @@ static rt_uint32_t xfer(struct rt_spi_device *device, struct rt_spi_message *mes
 
             while (tx_size > 0 || rx_size > 0)
             {
-                uint8_t tx_data = 0xFF;
-                uint8_t rx_data = 0xFF;
+                rt_uint8_t tx_data = 0xFF;
+                rt_uint8_t rx_data = 0xFF;
 
                 while ((SPI_GetTxFifoCounter(spi) < SPI_FIFO_SIZE) && (tx_size > 0))
                 {

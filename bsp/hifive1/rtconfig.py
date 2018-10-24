@@ -16,8 +16,8 @@ if  CROSS_TOOL == 'gcc':
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
-#BUILD = 'debug'
-BUILD = 'release'
+BUILD = 'debug'
+#BUILD = 'release'
 
 CORE = 'risc-v'
 MAP_FILE = 'rtthread.map'
@@ -37,7 +37,7 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -march=rv32imac -mabi=ilp32 -DUSE_PLIC -DUSE_M_TIME -DNO_INIT -mcmodel=medany -msmall-data-limit=8  -g -L.  -nostartfiles  -lc '
+    DEVICE = ' -march=rv32imac -mabi=ilp32 -DUSE_PLIC -DUSE_M_TIME -DNO_INIT -mcmodel=medany -msmall-data-limit=8 -L.  -nostartfiles  -lc '
     CFLAGS = DEVICE
     CFLAGS += ' -save-temps=obj'
     AFLAGS = '-c'+ DEVICE + ' -x assembler-with-cpp'
@@ -51,8 +51,8 @@ if PLATFORM == 'gcc':
     LPATH = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O0 -gdwarf-2'
-        AFLAGS += ' -gdwarf-2'
+        CFLAGS += ' -O0 -g3'
+        AFLAGS += ' -g3'
     else:
         CFLAGS += ' -O2'
 

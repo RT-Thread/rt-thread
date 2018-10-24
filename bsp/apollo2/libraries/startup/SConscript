@@ -18,6 +18,7 @@ elif rtconfig.CROSS_TOOL == 'iar':
     src = src + ['iar/' + 'startup_iar.c']
 
 path = [cwd]
+path += [cwd + '/cmsis/include']
 
 CPPDEFINES = ['AM_PACKAGE_BGA', 'AM_PART_APOLLO2']
 

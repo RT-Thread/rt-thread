@@ -1,11 +1,7 @@
 /*
- * File      : drv_sdram.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2016 RT-Thread Develop Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -25,7 +21,7 @@
 #include <board.h>
 
 
-#define SDRAM_BANK_ADDR                 ((uint32_t)0xD0000000)
+#define SDRAM_BANK_ADDR                 ((uint32_t)0xD0030000)    /*0xD0000000-0xD002FFFF used for LCD framebuffer*/
 
 /* #define SDRAM_MEMORY_WIDTH            FMC_SDRAM_MEM_BUS_WIDTH_8 */
 #define SDRAM_MEMORY_WIDTH            FMC_SDRAM_MEM_BUS_WIDTH_16

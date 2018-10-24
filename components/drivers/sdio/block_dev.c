@@ -1,21 +1,7 @@
 /*
- * File      : block_dev.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author        Notes
@@ -252,7 +238,7 @@ static rt_size_t rt_mmcsd_read(rt_device_t dev,
                                void       *buffer,
                                rt_size_t   size)
 {
-    rt_err_t err;
+    rt_err_t err = 0;
     rt_size_t offset = 0;
     rt_size_t req_size = 0;
     rt_size_t remain_size = size;
@@ -293,7 +279,7 @@ static rt_size_t rt_mmcsd_write(rt_device_t dev,
                                 const void *buffer,
                                 rt_size_t   size)
 {
-    rt_err_t err;
+    rt_err_t err = 0;
     rt_size_t offset = 0;
     rt_size_t req_size = 0;
     rt_size_t remain_size = size;
