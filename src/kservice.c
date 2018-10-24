@@ -1177,6 +1177,12 @@ void rt_kprintf(const char *fmt, ...)
 RTM_EXPORT(rt_kprintf);
 #endif
 
+/**
+ * This function will convert Time (Restartable)
+ *
+ * @param timep the timestamp
+ * @param result the structure to stores information
+ */
 struct tm *rt_gmtime_r(const time_t *timep, struct tm *result)
 {
 #define IS_LEAP_YEAR(year) (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))
@@ -1206,6 +1212,7 @@ struct tm *rt_gmtime_r(const time_t *timep, struct tm *result)
                 break;
         }
         result->tm_year = year - 1900;
+        result->tm_yday = daycount;
 
         while (daycount >= 28)
         {
@@ -1225,7 +1232,7 @@ struct tm *rt_gmtime_r(const time_t *timep, struct tm *result)
             }
             month++;
         }
-        result->tm_mon = month + 1;
+        result->tm_mon = month;
         result->tm_mday = daycount + 1;
     }
     return result;
