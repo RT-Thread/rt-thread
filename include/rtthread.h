@@ -473,6 +473,7 @@ rt_int32_t rt_vsprintf(char *dest, const char *format, va_list arg_ptr);
 rt_int32_t rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args);
 rt_int32_t rt_sprintf(char *buf, const char *format, ...);
 rt_int32_t rt_snprintf(char *buf, rt_size_t size, const char *format, ...);
+struct tm *rt_gmtime_r(const time_t *timep, struct tm *result);
 
 #if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 rt_device_t rt_console_set_device(const char *name);
