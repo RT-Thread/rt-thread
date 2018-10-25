@@ -1189,31 +1189,36 @@ RTM_EXPORT(rt_kprintf);
  */
 void *rt_malloc_align(rt_size_t size, rt_size_t align)
 {
-    void *align_ptr;
     void *ptr;
+    void *align_ptr;
+    int uintptr_size;
     rt_size_t align_size;
 
-    /* align the alignment size to 4 byte */
-    align = ((align + 0x03) & ~0x03);
+    /* sizeof pointer */
+    uintptr_size = sizeof(void*);
+    uintptr_size -= 1;
+
+    /* align the alignment size to uintptr size byte */
+    align = ((align + uintptr_size) & ~uintptr_size);
 
     /* get total aligned size */
-    align_size = ((size + 0x03) & ~0x03) + align;
+    align_size = ((size + uintptr_size) & ~uintptr_size) + align;
     /* allocate memory block from heap */
     ptr = rt_malloc(align_size);
     if (ptr != RT_NULL)
     {
         /* the allocated memory block is aligned */
-        if (((rt_uint32_t)ptr & (align - 1)) == 0)
+        if (((rt_ubase_t)ptr & (align - 1)) == 0)
         {
-            align_ptr = (void *)((rt_uint32_t)ptr + align);
+            align_ptr = (void *)((rt_ubase_t)ptr + align);
         }
         else
         {
-            align_ptr = (void *)(((rt_uint32_t)ptr + (align - 1)) & ~(align - 1));
+            align_ptr = (void *)(((rt_ubase_t)ptr + (align - 1)) & ~(align - 1));
         }
 
         /* set the pointer before alignment pointer to the real pointer */
-        *((rt_uint32_t *)((rt_uint32_t)align_ptr - sizeof(void *))) = (rt_uint32_t)ptr;
+        *((rt_ubase_t *)((rt_ubase_t)align_ptr - sizeof(void *))) = (rt_ubase_t)ptr;
 
         ptr = align_ptr;
     }
@@ -1232,7 +1237,7 @@ void rt_free_align(void *ptr)
 {
     void *real_ptr;
 
-    real_ptr = (void *) * (rt_uint32_t *)((rt_uint32_t)ptr - sizeof(void *));
+    real_ptr = (void *) * (rt_ubase_t *)((rt_ubase_t)ptr - sizeof(void *));
     rt_free(real_ptr);
 }
 RTM_EXPORT(rt_free_align);

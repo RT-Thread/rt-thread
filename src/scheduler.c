@@ -75,11 +75,11 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
     RT_ASSERT(thread != RT_NULL);
 
     if (*((rt_uint8_t *)thread->stack_addr) != '#' ||
-        (rt_uint32_t)thread->sp <= (rt_uint32_t)thread->stack_addr ||
-        (rt_uint32_t)thread->sp >
-        (rt_uint32_t)thread->stack_addr + (rt_uint32_t)thread->stack_size)
+        (rt_ubase_t)thread->sp <= (rt_ubase_t)thread->stack_addr ||
+        (rt_ubase_t)thread->sp >
+        (rt_ubase_t)thread->stack_addr + (rt_ubase_t)thread->stack_size)
     {
-        rt_uint32_t level;
+        rt_ubase_t level;
 
         rt_kprintf("thread:%s stack overflow\n", thread->name);
 #ifdef RT_USING_FINSH
@@ -91,7 +91,7 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
         level = rt_hw_interrupt_disable();
         while (level);
     }
-    else if ((rt_uint32_t)thread->sp <= ((rt_uint32_t)thread->stack_addr + 32))
+    else if ((rt_ubase_t)thread->sp <= ((rt_ubase_t)thread->stack_addr + 32))
     {
         rt_kprintf("warning: %s stack is close to end of stack address.\n",
                    thread->name);
@@ -159,7 +159,7 @@ void rt_system_scheduler_start(void)
     rt_current_thread = to_thread;
 
     /* switch to new thread */
-    rt_hw_context_switch_to((rt_uint32_t)&to_thread->sp);
+    rt_hw_context_switch_to((rt_ubase_t)&to_thread->sp);
 
     /* never come back */
 }
@@ -214,8 +214,8 @@ void rt_schedule(void)
             /* switch to new thread */
             RT_DEBUG_LOG(RT_DEBUG_SCHEDULER,
                          ("[%d]switch to priority#%d "
-                          "thread:%.*s(sp:0x%p), "
-                          "from thread:%.*s(sp: 0x%p)\n",
+                          "thread:%.*s(sp:0x%08x), "
+                          "from thread:%.*s(sp: 0x%08x)\n",
                           rt_interrupt_nest, highest_ready_priority,
                           RT_NAME_MAX, to_thread->name, to_thread->sp,
                           RT_NAME_MAX, from_thread->name, from_thread->sp));
@@ -228,8 +228,8 @@ void rt_schedule(void)
             {
                 extern void rt_thread_handle_sig(rt_bool_t clean_state);
 
-                rt_hw_context_switch((rt_uint32_t)&from_thread->sp,
-                                     (rt_uint32_t)&to_thread->sp);
+                rt_hw_context_switch((rt_ubase_t)&from_thread->sp,
+                                     (rt_ubase_t)&to_thread->sp);
 
                 /* enable interrupt */
                 rt_hw_interrupt_enable(level);
@@ -243,8 +243,8 @@ void rt_schedule(void)
             {
                 RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("switch in interrupt\n"));
 
-                rt_hw_context_switch_interrupt((rt_uint32_t)&from_thread->sp,
-                                               (rt_uint32_t)&to_thread->sp);
+                rt_hw_context_switch_interrupt((rt_ubase_t)&from_thread->sp,
+                                               (rt_ubase_t)&to_thread->sp);
                 /* enable interrupt */
                 rt_hw_interrupt_enable(level);
             }
