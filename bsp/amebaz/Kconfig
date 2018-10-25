@@ -26,10 +26,7 @@ config $ENV_DIR
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 source "$ENV_DIR/tools/scripts/cmds/Kconfig"
-
-config RT_USING_UART0
-    bool "Using RT_USING_UART0"
-    default y
+source "$BSP_DIR/libraries/Kconfig"
+source "$BSP_DIR/drivers/Kconfig"
 
 select PKG_USING_REALTEK_AMEBA
-

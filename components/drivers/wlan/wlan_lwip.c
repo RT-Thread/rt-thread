@@ -31,6 +31,10 @@
 #define DBG_COLOR
 #include <rtdbg.h>
 
+#ifndef IPADDR_STRLEN_MAX
+#define IPADDR_STRLEN_MAX    (32)
+#endif
+
 struct lwip_prot_des
 {
     struct rt_wlan_prot prot;
@@ -46,10 +50,10 @@ static void netif_is_ready(struct rt_work *work, void *parameter)
     struct rt_wlan_device *wlan = parameter;
     struct lwip_prot_des *lwip_prot = (struct lwip_prot_des *)wlan->prot;
     struct eth_device *eth_dev = &lwip_prot->eth;
-    char str[IP4ADDR_STRLEN_MAX];
     rt_base_t level;
     struct rt_wlan_buff buff;
     rt_uint32_t ip_addr[4];
+    char str[IPADDR_STRLEN_MAX];
 
     rt_timer_stop(&lwip_prot->timer);
     if (ip_addr_cmp(&(eth_dev->netif->ip_addr), &ip_addr_zero) != 0)
@@ -91,9 +95,9 @@ static void netif_is_ready(struct rt_work *work, void *parameter)
         rt_timer_start(&lwip_prot->timer);
         goto exit;
     }
-    rt_memset(str, 0, IP4ADDR_STRLEN_MAX);
+    rt_memset(str, 0, IPADDR_STRLEN_MAX);
     rt_enter_critical();
-    rt_memcpy(str, ipaddr_ntoa(&(eth_dev->netif->ip_addr)), IP4ADDR_STRLEN_MAX);
+    rt_memcpy(str, ipaddr_ntoa(&(eth_dev->netif->ip_addr)), IPADDR_STRLEN_MAX);
     rt_exit_critical();
     LOG_I("Got IP address : %s", str);
 exit:
@@ -136,7 +140,7 @@ static void netif_set_connected(void *parameter)
         if (wlan->mode == RT_WLAN_STATION)
         {
             LOG_D("F:%s L:%d dhcp start run", __FUNCTION__, __LINE__);
-            netifapi_netif_set_link_up(eth_dev->netif);
+            netifapi_netif_common(eth_dev->netif, netif_set_link_up, NULL);
 #ifdef RT_LWIP_DHCP
             dhcp_start(eth_dev->netif);
 #endif
@@ -146,7 +150,7 @@ static void netif_set_connected(void *parameter)
         {
             LOG_D("F:%s L:%d dhcpd start run", __FUNCTION__, __LINE__);
 
-            netifapi_netif_set_link_up(eth_dev->netif);
+            netifapi_netif_common(eth_dev->netif, netif_set_link_up, NULL);
 #ifdef LWIP_USING_DHCPD
             {
                 char netif_name[8];
@@ -167,10 +171,10 @@ static void netif_set_connected(void *parameter)
         if (wlan->mode == RT_WLAN_STATION)
         {
             LOG_D("F:%s L:%d dhcp stop run", __FUNCTION__, __LINE__);
-            netifapi_netif_set_link_down(eth_dev->netif);
+            netifapi_netif_common(eth_dev->netif, netif_set_link_down, NULL);
 #ifdef RT_LWIP_DHCP
             {
-                ip4_addr_t ip_addr = { 0 };
+                ip_addr_t ip_addr = { 0 };
                 dhcp_stop(eth_dev->netif);
                 netif_set_addr(eth_dev->netif, &ip_addr, &ip_addr, &ip_addr);
             }
@@ -180,7 +184,7 @@ static void netif_set_connected(void *parameter)
         else if (wlan->mode == RT_WLAN_AP)
         {
             LOG_D("F:%s L:%d dhcpd stop run", __FUNCTION__, __LINE__);
-            netifapi_netif_set_link_down(eth_dev->netif);
+            netifapi_netif_common(eth_dev->netif, netif_set_link_down, NULL);
         }
     }
 }
@@ -438,6 +442,7 @@ static struct rt_wlan_prot *rt_wlan_lwip_protocol_register(struct rt_wlan_prot *
         rt_timer_init(&lwip_prot->timer, timer_name, timer_callback, wlan, rt_tick_from_millisecond(1000),
                       RT_TIMER_FLAG_SOFT_TIMER | RT_TIMER_FLAG_ONE_SHOT);
     }
+    netif_set_up(eth->netif);
     LOG_I("eth device init ok name:%s", eth_name);
 
     return &lwip_prot->prot;

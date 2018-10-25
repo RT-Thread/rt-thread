@@ -4,10 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/*
- * File      : rtdebug.h
- */
-
 #ifndef __RTDEBUG_H__
 #define __RTDEBUG_H__
 

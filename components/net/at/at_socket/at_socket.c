@@ -23,6 +23,8 @@
 #define LOG_TAG              "at.skt"
 #include <at_log.h>
 
+#ifdef AT_USING_SOCKET
+
 #define HTONS_PORT(x) ((((x) & 0x00ffUL) << 8) | (((x) & 0xff00UL) >> 8))
 #define NIPQUAD(addr) \
         ((unsigned char *)&addr)[0], \
@@ -655,6 +657,10 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
     {
         timeout = RT_WAITING_FOREVER;
     }
+    else
+    {
+        timeout = rt_tick_from_millisecond(timeout);
+    }
 
     while (1)
     {
@@ -775,6 +781,9 @@ int at_sendto(int socket, const void *data, size_t size, int flags, const struct
                 goto __exit;
             }
             sock->state = AT_SOCKET_CONNECT;
+            /* set AT socket receive data callback function */
+            at_dev_ops->at_set_event_cb(AT_SOCKET_EVT_RECV, at_recv_notice_cb);
+            at_dev_ops->at_set_event_cb(AT_SOCKET_EVT_CLOSED, at_closed_notice_cb);
         }
 
         if ((len = at_dev_ops->at_send(sock->socket, (char *) data, size, sock->type)) < 0)
@@ -1158,7 +1167,7 @@ void at_freeaddrinfo(struct addrinfo *ai)
     }
 }
 
-void at_scoket_device_register(const struct at_device_ops *ops)
+void at_socket_device_register(const struct at_device_ops *ops)
 {
     RT_ASSERT(ops);
     RT_ASSERT(ops->at_connect);
@@ -1168,3 +1177,5 @@ void at_scoket_device_register(const struct at_device_ops *ops)
     RT_ASSERT(ops->at_set_event_cb);
     at_dev_ops = (struct at_device_ops *) ops;
 }
+
+#endif /* AT_USING_SOCKET */

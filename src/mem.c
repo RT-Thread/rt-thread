@@ -261,10 +261,10 @@ void *rt_malloc(rt_size_t size)
     rt_size_t ptr, ptr2;
     struct heap_mem *mem, *mem2;
 
-    RT_DEBUG_NOT_IN_INTERRUPT;
-
     if (size == 0)
         return RT_NULL;
+
+    RT_DEBUG_NOT_IN_INTERRUPT;
 
     if (size != RT_ALIGN(size, RT_ALIGN_SIZE))
         RT_DEBUG_LOG(RT_DEBUG_MEM, ("malloc size %d, but align to %d\n",
@@ -513,8 +513,6 @@ void *rt_calloc(rt_size_t count, rt_size_t size)
 {
     void *p;
 
-    RT_DEBUG_NOT_IN_INTERRUPT;
-
     /* allocate 'count' objects of size 'size' */
     p = rt_malloc(count * size);
 
@@ -536,10 +534,11 @@ void rt_free(void *rmem)
 {
     struct heap_mem *mem;
 
-    RT_DEBUG_NOT_IN_INTERRUPT;
-
     if (rmem == RT_NULL)
         return;
+
+    RT_DEBUG_NOT_IN_INTERRUPT;
+
     RT_ASSERT((((rt_uint32_t)rmem) & (RT_ALIGN_SIZE - 1)) == 0);
     RT_ASSERT((rt_uint8_t *)rmem >= (rt_uint8_t *)heap_ptr &&
               (rt_uint8_t *)rmem < (rt_uint8_t *)heap_end);

@@ -4,10 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/*
- * File      : rtm.h
- */
-
 #ifndef __RTM_H__
 #define __RTM_H__
 
