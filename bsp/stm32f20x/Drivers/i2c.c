@@ -1,11 +1,7 @@
 /*
- * File      : i2c.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -93,7 +89,7 @@ Status I2C_AcknowledgePolling(I2C_TypeDef* I2Cx ,uint8_t Addr)
 	        }
 	
 	        I2Cx->CR1 |= CR1_START_Set;
-	        tmp = I2Cx->SR1;//²M°£SB¦ì
+	        tmp = I2Cx->SR1;//MSB
 	        I2Cx->DR = Addr;
 	        
 	    }while((I2Cx->SR1&0x0002) != 0x0002);

@@ -222,11 +222,12 @@ static void dhcpd_thread_entry(void *parameter)
     {
 #if (LWIP_VERSION) >= 0x02000000U
         ip4_addr_t addr;
+        ip4addr_aton(DHCPD_SERVER_IP, &addr);
 #else
         struct ip_addr addr;
+        ipaddr_aton(DHCPD_SERVER_IP, &addr);
 #endif /* LWIP_VERSION */
 
-        ip4addr_aton(DHCPD_SERVER_IP, &addr);
         DHCPD_SERVER_IPADDR0 = (ntohl(addr.addr) >> 24) & 0xFF;
         DHCPD_SERVER_IPADDR1 = (ntohl(addr.addr) >> 16) & 0xFF;
         DHCPD_SERVER_IPADDR2 = (ntohl(addr.addr) >>  8) & 0xFF;

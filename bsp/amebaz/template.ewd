@@ -45,7 +45,7 @@
         </option>
         <option>
           <name>MemFile</name>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\iar_utility\common\8710b.ddf</state>
+          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\iar_utility\common\preload.mac</state>
         </option>
         <option>
           <name>RunToEnable</name>
@@ -81,7 +81,7 @@
         </option>
         <option>
           <name>OCProductVersion</name>
-          <state>7.40.3.8937</state>
+          <state>7.30.4.8186</state>
         </option>
         <option>
           <name>OCDynDriverList</name>
@@ -89,7 +89,7 @@
         </option>
         <option>
           <name>OCLastSavedByProductVersion</name>
-          <state>7.40.3.8937</state>
+          <state>7.30.4.8186</state>
         </option>
         <option>
           <name>OCDownloadAttachToProgram</name>
@@ -520,7 +520,7 @@
       <name>IJET_ID</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>6</version>
+        <version>5</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -603,7 +603,7 @@
         </option>
         <option>
           <name>IjetCpuClockEdit</name>
-          <state></state>
+          <state>72.0</state>
         </option>
         <option>
           <name>IjetSwoPrescalerList</name>
@@ -732,10 +732,6 @@
           <version>0</version>
           <state>2</state>
         </option>
-        <option>
-          <name>FlashBoardPathSlave</name>
-          <state>0</state>
-        </option>
       </data>
     </settings>
     <settings>
@@ -844,7 +840,7 @@
         </option>
         <option>
           <name>CCJLinkInterfaceRadio</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OCJLinkAttachSlave</name>
@@ -1256,7 +1252,7 @@
       <name>XDS100_ID</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>4</version>
+        <version>2</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -1276,6 +1272,11 @@
           <state></state>
         </option>
         <option>
+          <name>CCXds100InterfaceList</name>
+          <version>2</version>
+          <state>0</state>
+        </option>
+        <option>
           <name>BoardFile</name>
           <state></state>
         </option>
@@ -1286,129 +1287,6 @@
         <option>
           <name>LogFile</name>
           <state>$PROJ_DIR$\cspycomm.log</state>
-        </option>
-        <option>
-          <name>CCXds100BreakpointRadio</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100DoUpdateBreakpoints</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100UpdateBreakpoints</name>
-          <state>_call_main</state>
-        </option>
-        <option>
-          <name>CCXds100CatchReset</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchUndef</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchSWI</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchData</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchPrefetch</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchIRQ</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchFIQ</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchCORERESET</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchMMERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchNOCPERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchCHRERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchSTATERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchBUSERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchINTERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchHARDERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchDummy</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CpuClockEdit</name>
-          <state>72.0</state>
-        </option>
-        <option>
-          <name>CCXds100SwoClockAuto</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100SwoClockEdit</name>
-          <state>1000</state>
-        </option>
-        <option>
-          <name>CCXds100HWResetDelay</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100ResetList</name>
-          <version>0</version>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100UsbSerialNo</name>
-          <state></state>
-        </option>
-        <option>
-          <name>CCXds100UsbSerialNoSelect</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100JtagSpeedList</name>
-          <version>0</version>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100InterfaceRadio</name>
-          <state>2</state>
-        </option>
-        <option>
-          <name>CCXds100InterfaceCmdLine</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100ProbeList</name>
-          <version>0</version>
-          <state>0</state>
         </option>
       </data>
     </settings>
@@ -1566,7 +1444,7 @@
         </option>
         <option>
           <name>OCProductVersion</name>
-          <state>7.40.3.8937</state>
+          <state>7.30.4.8186</state>
         </option>
         <option>
           <name>OCDynDriverList</name>
@@ -1670,7 +1548,7 @@
         </option>
         <option>
           <name>OCMulticoreNrOfCores</name>
-          <state></state>
+          <state>1</state>
         </option>
         <option>
           <name>OCMulticoreMaster</name>
@@ -2005,7 +1883,7 @@
       <name>IJET_ID</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>6</version>
+        <version>5</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -2216,10 +2094,6 @@
           <name>IjetTraceSizeList</name>
           <version>0</version>
           <state>2</state>
-        </option>
-        <option>
-          <name>FlashBoardPathSlave</name>
-          <state>0</state>
         </option>
       </data>
     </settings>
@@ -2741,7 +2615,7 @@
       <name>XDS100_ID</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>4</version>
+        <version>2</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -2761,6 +2635,11 @@
           <state></state>
         </option>
         <option>
+          <name>CCXds100InterfaceList</name>
+          <version>2</version>
+          <state>0</state>
+        </option>
+        <option>
           <name>BoardFile</name>
           <state></state>
         </option>
@@ -2771,129 +2650,6 @@
         <option>
           <name>LogFile</name>
           <state>$PROJ_DIR$\cspycomm.log</state>
-        </option>
-        <option>
-          <name>CCXds100BreakpointRadio</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100DoUpdateBreakpoints</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100UpdateBreakpoints</name>
-          <state>_call_main</state>
-        </option>
-        <option>
-          <name>CCXds100CatchReset</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchUndef</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchSWI</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchData</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchPrefetch</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchIRQ</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchFIQ</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchCORERESET</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchMMERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchNOCPERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchCHRERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchSTATERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchBUSERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchINTERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchHARDERR</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CatchDummy</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100CpuClockEdit</name>
-          <state>72.0</state>
-        </option>
-        <option>
-          <name>CCXds100SwoClockAuto</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100SwoClockEdit</name>
-          <state>1000</state>
-        </option>
-        <option>
-          <name>CCXds100HWResetDelay</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100ResetList</name>
-          <version>0</version>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100UsbSerialNo</name>
-          <state></state>
-        </option>
-        <option>
-          <name>CCXds100UsbSerialNoSelect</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100JtagSpeedList</name>
-          <version>0</version>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100InterfaceRadio</name>
-          <state>2</state>
-        </option>
-        <option>
-          <name>CCXds100InterfaceCmdLine</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CCXds100ProbeList</name>
-          <version>0</version>
-          <state>0</state>
         </option>
       </data>
     </settings>
