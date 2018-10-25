@@ -25,8 +25,6 @@
 #ifndef __DRV_WLAN_H__
 #define __DRV_WLAN_H__
 
-#include <rtthread.h>
-
 typedef enum 
 {
 	RTHW_MODE_NONE = 0,
@@ -66,19 +64,39 @@ typedef enum {
 } rthw_security_t;
 
 typedef enum {
+    RTHW_WIFI_EVENT_CONNECT = 0,
+    RTHW_WIFI_EVENT_DISCONNECT = 1,
+    RTHW_WIFI_EVENT_FOURWAY_HANDSHAKE_DONE = 2,	
+    RTHW_WIFI_EVENT_SCAN_RESULT_REPORT = 3,
+    RTHW_WIFI_EVENT_SCAN_DONE = 4,
+    RTHW_WIFI_EVENT_RECONNECTION_FAIL = 5,
+    RTHW_WIFI_EVENT_SEND_ACTION_DONE = 6,
+    RTHW_WIFI_EVENT_RX_MGNT = 7,
+    RTHW_WIFI_EVENT_STA_ASSOC = 8,
+    RTHW_WIFI_EVENT_STA_DISASSOC = 9,
+    RTHW_WIFI_EVENT_STA_WPS_START = 10,
+    RTHW_WIFI_EVENT_WPS_FINISH = 11,
+    RTHW_WIFI_EVENT_EAPOL_START = 12,
+    RTHW_WIFI_EVENT_EAPOL_RECVD = 13,
+    RTHW_WIFI_EVENT_NO_NETWORK = 14,
+    RTHW_WIFI_EVENT_BEACON_AFTER_DHCP = 15,
+    RTHW_WIFI_EVENT_MAX,
+}rthw_event_indicate_t;
+
+typedef enum {
     RTHW_802_11_BAND_5GHZ   = 0, /**< Denotes 5GHz radio band   */
     RTHW_802_11_BAND_2_4GHZ = 1  /**< Denotes 2.4GHz radio band */
 } rthw_802_11_band_t;
 
 struct rthw_wlan_info
 {
-	char *ssid;
+    char *ssid;
     rt_uint8_t *bssid;
     rthw_802_11_band_t band;
     rt_uint32_t datarate;
     rt_uint16_t channel;
     rt_int16_t  rssi;
-	rthw_security_t security;
+    rthw_security_t security;
 };
 
 typedef void (*scan_callback_fn)(struct rthw_wlan_info *info, void *user_data);

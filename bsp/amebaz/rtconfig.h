@@ -17,7 +17,7 @@
 #define IDLE_THREAD_STACK_SIZE 256
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
-#define RT_TIMER_THREAD_STACK_SIZE 512
+#define RT_TIMER_THREAD_STACK_SIZE 1024
 #define RT_DEBUG
 
 /* Inter-Thread communication */
@@ -151,6 +151,9 @@
 
 /* AT commands */
 
+#define LWIP_USING_DHCPD
+#define DHCPD_SERVER_IP "192.168.169.1"
+#define DHCPD_USING_ROUTER
 
 /* VBUS(Virtual Software BUS) */
 
@@ -216,6 +219,10 @@
 
 /* Env config */
 
+
+/* External Libraries */
+
+#define RT_USING_SMARTCONFIG_LIB
 #define BSP_USING_WIFI
 
 #endif

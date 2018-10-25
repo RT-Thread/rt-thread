@@ -26,15 +26,7 @@
 #include "wifi_constants.h"
 #include <wifi/wifi_util.h>
 #include <wifi/wifi_conf.h>
-
-#ifdef _LITTLE_ENDIAN
-#undef _LITTLE_ENDIAN
-#endif
-
-#include <rthw.h>
-#include <rtthread.h>
-#include <rtdevice.h>
-#include <wlan_dev.h>
+#include "board.h"
 #include "drv_wlan.h"
 
 // #define SCAN_WAIT_TIME       (10000)
@@ -349,7 +341,7 @@ static void rthw_wifi_promisc_callback(unsigned char *buf, unsigned int len, voi
 {
     if (monitor_callback)
     {
-        monitor_callback(buf, len, RT_NULL);
+        monitor_callback(userdata, len, RT_NULL);
     }
 }
 
@@ -372,4 +364,3 @@ void rthw_wifi_monitor_enable(int enable)
         rthw_wifi_stop();
     }
 }
-

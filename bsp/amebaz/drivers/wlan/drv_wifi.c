@@ -25,8 +25,6 @@
 #include <skbuff.h>
 #include "board.h"
 #include <string.h>
-#include <drv_wlan.h>
-#include <wlan_dev.h>
 #include "drv_wlan.h"
 #include "drv_wifi.h"
 
@@ -153,8 +151,11 @@ static void rtw_connect_callbackfn(char *buf, int len, int flags, void *user_dat
     struct ameba_wifi *wifi = user_data;
 
     LOG_D("L:%d wifi connect callback flags:%d user_data:%08x", __LINE__, flags, user_data);
-    wifi->connected = 1;
-    rt_wlan_dev_indicate_event_handle(wifi->wlan, RT_WLAN_DEV_EVT_CONNECT, RT_NULL);
+    if( wifi_is_connected_to_ap() == 0)
+    {
+        wifi->connected = 1;
+        rt_wlan_dev_indicate_event_handle(wifi->wlan, RT_WLAN_DEV_EVT_CONNECT, RT_NULL);
+    }
 }
 
 static void rtw_connect_fail_callbackfn(char *buf, int len, int flags, void *user_data)
@@ -371,7 +372,7 @@ static rt_err_t rthw_wlan_join                 (struct rt_wlan_device *wlan, str
             ssid = &sta_info->ssid.val[0];
         if (sta_info->key.len > 0)
             key = &sta_info->key.val[0];
-        LOG_D("bssid connect bssid: %02x:%02x:%02x:%02x:%02x:%02x ssid:%s ssid_len:%d key:%s key_len%d", 
+            LOG_D("bssid connect bssid: %02x:%02x:%02x:%02x:%02x:%02x ssid:%s ssid_len:%d key:%s key_len%d", 
             sta_info->bssid[0],sta_info->bssid[1],sta_info->bssid[2],sta_info->bssid[3],sta_info->bssid[4],sta_info->bssid[5],
             ssid, 
             sta_info->ssid.len,
@@ -649,11 +650,8 @@ int rthw_wifi_low_init(void)
     LOG_I("amebaz_wifi_start success");
     LOG_D("F:%s L:%d wifi_sta:0x%08x   wifi_ap:0x%08x", __FUNCTION__, __LINE__, &wifi_sta, &wifi_ap);
 
-    wifi_reg_event_handler(0, rtw_connect_callbackfn, &wifi_sta);
-    wifi_reg_event_handler(1, rtw_disconnect_callbackfn, &wifi_sta);
-
-    wifi_reg_event_handler(8, rtw_sta_assoc_callbackfn, &wifi_ap);
-    wifi_reg_event_handler(9, rtw_sta_disassoc_callbackfn, &wifi_ap);
+    wifi_reg_event_handler(RTHW_WIFI_EVENT_FOURWAY_HANDSHAKE_DONE, rtw_connect_callbackfn, &wifi_sta);
+    wifi_reg_event_handler(RTHW_WIFI_EVENT_DISCONNECT, rtw_disconnect_callbackfn, &wifi_sta);
 
     _init_flag = 1;
 
