@@ -66,32 +66,6 @@ if PLATFORM == 'gcc':
 
     M_CFLAGS = CFLAGS + ' -mlong-calls  -Dsourcerygxx -O0 -fPIC '
     M_LFLAGS = DEVICE + ' -Wl,-z,max-page-size=0x4 -shared -fPIC -e main -nostdlib'
-	
-elif PLATFORM == 'armcc':
-    # toolchains
-    CC = 'armcc'
-    AS = 'armasm'
-    AR = 'armar'
-    LINK = 'armlink'
-    TARGET_EXT = 'axf'
-
-    DEVICE = ' --cpu=cortex-m4.fp'
-    CFLAGS = DEVICE + ' --apcs=interwork -DSTM32F429_439xx'
-    AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-stm32.map --scatter stm32f429_flash.sct'
-
-    CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
-    LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
-
-    EXEC_PATH += '/arm/bin40/'
-
-    if BUILD == 'debug':
-        CFLAGS += ' -g -O0'
-        AFLAGS += ' -g'
-    else:
-        CFLAGS += ' -O2'
-
-    POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
 elif PLATFORM == 'iar':
     # toolchains
@@ -101,7 +75,7 @@ elif PLATFORM == 'iar':
     LINK = 'ilinkarm'
     TARGET_EXT = 'out'
 
-    DEVICE = ' -D USE_STDPERIPH_DRIVER' + ' -D STM32F10X_HD'
+    DEVICE = '-Dewarm'
 
     CFLAGS = DEVICE
     CFLAGS += ' --diag_suppress Pa050'
@@ -112,26 +86,31 @@ elif PLATFORM == 'iar':
     CFLAGS += ' --no_tbaa'
     CFLAGS += ' --no_clustering'
     CFLAGS += ' --no_scheduling'
-    CFLAGS += ' --debug'
     CFLAGS += ' --endian=little'
     CFLAGS += ' --cpu=Cortex-M4'
     CFLAGS += ' -e'
     CFLAGS += ' --fpu=None'
     CFLAGS += ' --dlib_config "' + EXEC_PATH + '/arm/INC/c/DLib_Config_Normal.h"'
-    CFLAGS += ' -Ol'
-    CFLAGS += ' --use_c++_inline'
+    CFLAGS += ' --silent'
 
-    AFLAGS = ''
+    AFLAGS = DEVICE
     AFLAGS += ' -s+'
     AFLAGS += ' -w+'
     AFLAGS += ' -r'
     AFLAGS += ' --cpu Cortex-M4'
     AFLAGS += ' --fpu None'
+    AFLAGS += ' -S'
 
-    LFLAGS = ' --config stm32f429_flash.icf'
+    if BUILD == 'debug':
+        CFLAGS += ' --debug'
+        CFLAGS += ' -On'
+    else:
+        CFLAGS += ' -Oh'
+
+    LFLAGS = ' --config rom_symbol_v01_iar.icf'
     LFLAGS += ' --redirect _Printf=_PrintfTiny'
     LFLAGS += ' --redirect _Scanf=_ScanfSmall'
     LFLAGS += ' --entry __iar_program_start'
 
     EXEC_PATH = EXEC_PATH + '/arm/bin/'
-    POST_ACTION = ''
+    POST_ACTION = 'ielftool --bin $TARGET rt-thread.bin'
