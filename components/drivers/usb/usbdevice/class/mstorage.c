@@ -68,6 +68,7 @@ struct mstorage
     struct rt_device_blk_geometry geometry;    
 };
 
+ALIGN(4)
 static struct udevice_descriptor dev_desc =
 {
     USB_DESC_LENGTH_DEVICE,     //bLength;
@@ -87,6 +88,7 @@ static struct udevice_descriptor dev_desc =
 };
 
 //FS and HS needed
+ALIGN(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
@@ -101,7 +103,7 @@ static struct usb_qualifier_descriptor dev_qualifier =
 };
 
 
-
+ALIGN(4)
 const static struct umass_descriptor _mass_desc =
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
@@ -148,6 +150,7 @@ const static struct umass_descriptor _mass_desc =
     },
 };
 
+ALIGN(4)
 const static char* _ustring[] =
 {
     "Language",
@@ -170,6 +173,7 @@ static rt_size_t _read_10(ufunction_t func, ustorage_cbw_t cbw);
 static rt_size_t _write_10(ufunction_t func, ustorage_cbw_t cbw);
 static rt_size_t _verify_10(ufunction_t func, ustorage_cbw_t cbw);
 
+ALIGN(4)
 static struct scsi_cmd cmd_data[] =
 {
     {SCSI_TEST_UNIT_READY, _test_unit_ready, 6,  FIXED,       0, DIR_NONE},
