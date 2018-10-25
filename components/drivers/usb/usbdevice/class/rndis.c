@@ -214,6 +214,7 @@ const static char* _ustring[] =
     USB_STRING_OS
 };
 
+ALIGN(4)
 struct usb_os_function_comp_id_descriptor rndis_func_comp_id_desc = 
 {
     .bFirstInterfaceNumber = USB_DYNAMIC,
@@ -222,7 +223,9 @@ struct usb_os_function_comp_id_descriptor rndis_func_comp_id_desc =
     .subCompatibleID    = {'5', '1', '6', '2', '0', '0', '1', 0x00},
     .reserved2          = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
 };
+
 //FS and HS needed
+ALIGN(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
