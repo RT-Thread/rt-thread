@@ -225,7 +225,7 @@ extern "C" {
 #ifndef USB_TIMEOUT_LONG
 #define USB_TIMEOUT_LONG                (RT_TICK_PER_SECOND * 5)    /* 5s */
 #endif
-#ifndf USB_DEBOUNCE_TIME
+#ifndef USB_DEBOUNCE_TIME
 #define USB_DEBOUNCE_TIME               (RT_TICK_PER_SECOND / 5)    /* 0.2s */
 #endif
 
