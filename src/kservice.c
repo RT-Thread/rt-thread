@@ -1177,68 +1177,6 @@ void rt_kprintf(const char *fmt, ...)
 RTM_EXPORT(rt_kprintf);
 #endif
 
-/**
- * This function will convert Time (Restartable)
- *
- * @param timep the timestamp
- * @param result the structure to stores information
- */
-struct tm *rt_gmtime_r(const time_t *timep, struct tm *result)
-{
-#define IS_LEAP_YEAR(year) (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))
-
-    const rt_uint32_t mon_table[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    rt_uint32_t year = 1970, month = 0;
-    rt_uint32_t daycount = 0, second = 0, number = 0;
-
-    second = *timep % (24 * 60 * 60);
-    result->tm_hour = second / 3600;
-    result->tm_min = (second % 3600) / 60;
-    result->tm_sec = (second % 3600) % 60;
-
-    daycount = *timep / (24 * 60 * 60);
-    result->tm_wday = (daycount + 4) % 7;
-    if (daycount != 0)
-    {
-        while (daycount >= 365)
-        {
-            number = IS_LEAP_YEAR(year) ? 366 : 365;
-            if (daycount >= number)
-            {
-                daycount -= number;
-                year++;
-            }
-            else
-                break;
-        }
-        result->tm_year = year - 1900;
-        result->tm_yday = daycount;
-
-        while (daycount >= 28)
-        {
-            if (month == 1 && IS_LEAP_YEAR(year))
-            {
-                if (daycount >= 29)
-                    daycount -= 29;
-                else
-                    break;
-            }
-            else
-            {
-                if (daycount >= mon_table[month])
-                    daycount -= mon_table[month];
-                else
-                    break;
-            }
-            month++;
-        }
-        result->tm_mon = month;
-        result->tm_mday = daycount + 1;
-    }
-    return result;
-}
-RTM_EXPORT(rt_gmtime_r);
-
 #ifdef RT_USING_HEAP
 /**
  * This function allocates a memory block, which address is aligned to the
