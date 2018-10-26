@@ -217,8 +217,6 @@ void USART3_IRQHandler(void)
 }
 #endif /* RT_USING_UART2 */
 
-static void MX_USART_UART_Init(UART_HandleTypeDef *uartHandle);
-
 int rt_hw_usart_init(void)
 {
     struct stm32_uart *uart;
@@ -228,7 +226,6 @@ int rt_hw_usart_init(void)
     config.baud_rate = BAUD_RATE_115200;
     serial1.ops    = &stm32_uart_ops;
     serial1.config = config;
-    MX_USART_UART_Init(&uart->huart);
     /* register UART1 device */
     rt_hw_serial_register(&serial1, "uart1",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
@@ -240,7 +237,6 @@ int rt_hw_usart_init(void)
     config.baud_rate = BAUD_RATE_115200;
     serial2.ops    = &stm32_uart_ops;
     serial2.config = config;
-    MX_USART_UART_Init(&uart->huart);
     /* register UART1 device */
     rt_hw_serial_register(&serial2, "uart2",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
@@ -252,7 +248,6 @@ int rt_hw_usart_init(void)
     config.baud_rate = BAUD_RATE_115200;
     serial3.ops    = &stm32_uart_ops;
     serial3.config = config;
-    MX_USART_UART_Init(&uart->huart);
     /* register UART1 device */
     rt_hw_serial_register(&serial3, "uart3",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
@@ -261,22 +256,6 @@ int rt_hw_usart_init(void)
     return 0;
 }
 INIT_BOARD_EXPORT(rt_hw_usart_init);
-
-static void MX_USART_UART_Init(UART_HandleTypeDef *uartHandle)
-{
-    rt_err_t result;
-    uartHandle->Init.BaudRate = 115200;
-    uartHandle->Init.WordLength = UART_WORDLENGTH_8B;
-    uartHandle->Init.StopBits = UART_STOPBITS_1;
-    uartHandle->Init.Parity = UART_PARITY_NONE;
-    uartHandle->Init.Mode = UART_MODE_TX_RX;
-    uartHandle->Init.HwFlowCtl = UART_HWCONTROL_NONE;
-    uartHandle->Init.OverSampling = UART_OVERSAMPLING_16;
-    result = HAL_UART_Init(uartHandle);
-    RT_ASSERT(result == HAL_OK);
-
-}
-/* USART2 init function */
 
 void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle)
 {
