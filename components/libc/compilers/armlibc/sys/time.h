@@ -45,6 +45,7 @@ struct timezone {
 };
 
 int gettimeofday(struct timeval *tp, void *ignore);
+struct tm *gmtime_r(const time_t *timep, struct tm *r);
 
 #ifdef __cplusplus
 }
