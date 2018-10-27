@@ -41,10 +41,15 @@ int gettimeofday(struct timeval *tp, void *ignore)
  *
  */
 #pragma module_name = "?time"
-#if _DLIB_TIME_ALLOW_64
-__time64_t __time64(__time64_t *t)
+#if _DLIB_TIME_USES_64
+time_t __time64(time_t *t)
 #else
-__time32_t __time32(__time32_t *t)
+/* for IAR 6.2 later Compiler */
+#if defined (__IAR_SYSTEMS_ICC__) &&  (__VER__) >= 6020000
+time_t __time32(time_t *t)
+#else
+time_t time(time_t *t)
+#endif
 #endif
 {
   time_t time_now = 0;
