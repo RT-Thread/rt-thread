@@ -1,13 +1,16 @@
-#ifndef __YMODEM_H__
-#define __YMODEM_H__
 /*
- * File      : ymodem.h
- * COPYRIGHT (C) 2012, Shanghai Real-Thread Technology Co., Ltd
+ * COPYRIGHT (C) 2012, Real-Thread Information Technology Ltd
+ * All rights reserved
+ *
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2013-04-14     Grissiom     initial implementation
  */
+
+#ifndef __YMODEM_H__
+#define __YMODEM_H__
 
 #include "rtthread.h"
 

@@ -1,6 +1,8 @@
 /*
- * File      : ymodem.c
- * COPYRIGHT (C) 2012, Shanghai Real-Thread Technology Co., Ltd
+ * COPYRIGHT (C) 2012, Real-Thread Information Technology Ltd
+ * All rights reserved
+ *
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
