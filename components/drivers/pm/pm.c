@@ -238,7 +238,15 @@ void rt_pm_request(rt_ubase_t mode)
          * if not, it has already called in rt_pm_exit()
          */
         if (pm->current_mode < PM_SLEEP_MODE_START)
+        {
             pm->ops->exit(pm);
+        }
+        else if (pm->exit_count)
+        {
+            /* call exeit when global interrupt is disable */
+            pm->ops->exit(pm);
+            pm->exit_count = 0;
+        }
 
         /* update current mode */
         pm->current_mode = mode;
