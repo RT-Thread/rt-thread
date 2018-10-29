@@ -392,6 +392,23 @@ menu "Using USB"
                         bool "Enable to use device as winusb device"
                         default n
                 endif
+                if RT_USB_DEVICE_CDC
+                    config RT_VCOM_TASK_STK_SIZE
+                        int "virtual com thread stack size"
+                        default 512
+                    config RT_VCOM_TX_USE_DMA
+                        bool "Enable to use dma for vcom tx"
+                        default n
+                    config RT_VCOM_SERNO
+                        string "serial number of virtual com"
+                        default "32021919830108"
+                    config RT_VCOM_SER_LEN
+                        int "serial number length of virtual com"
+                        default 14
+                    config RT_VCOM_TX_TIMEOUT
+                        int "tx timeout(ticks) of virtual com"
+                        default 1000
+                endif
                 if RT_USB_DEVICE_WINUSB
                     config RT_WINUSB_GUID
                     string "Guid for winusb"
