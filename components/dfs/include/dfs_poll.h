@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
+
 #ifndef DFS_POLL_H__
 #define DFS_POLL_H__
 
@@ -34,4 +43,3 @@ int poll(struct pollfd *fds, nfds_t nfds, int timeout);
 #endif
 
 #endif
-
