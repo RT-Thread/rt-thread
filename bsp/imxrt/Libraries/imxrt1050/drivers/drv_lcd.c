@@ -16,16 +16,16 @@
 #include "fsl_elcdif.h"
 
 #if !defined(LCD_WIDTH) || !defined(LCD_HEIGHT)
-    #error "Please config lcd pixel parameters."
+#error "Please config lcd pixel parameters."
 #endif
 
 #if !defined(LCD_HFP) || !defined(LCD_HBP) || !defined(LCD_HSW) || \
     !defined(LCD_VFP) || !defined(LCD_VBP) || !defined(LCD_VSW)
-    #error "Please config lcd timing parameters."
+#error "Please config lcd timing parameters."
 #endif
 
 #if !defined(LCD_BL_PIN) || !defined(LCD_RST_PIN)
-    #error "Please config lcd backlight or reset pin."
+#error "Please config lcd backlight or reset pin."
 #endif
 
 struct rt1050_lcd
@@ -35,13 +35,19 @@ struct rt1050_lcd
 };
 
 static struct rt1050_lcd lcd;
-ALIGN(64) static uint16_t frame_buffer[LCD_HEIGHT][LCD_WIDTH] SECTION("NonCacheable");
+
+static volatile int fb_index = 0;
+static volatile rt_bool_t fb_modified  = RT_TRUE;
+
+ALIGN(64) static uint16_t frame_buffer0[LCD_HEIGHT][LCD_WIDTH] SECTION("NonCacheable");
+ALIGN(64) static uint16_t frame_buffer1[LCD_HEIGHT][LCD_WIDTH] SECTION("NonCacheable");
 
 static rt_err_t rt1050_lcd_init(rt_device_t device)
 {
     RT_ASSERT(device != RT_NULL);
 
-    rt_memset(frame_buffer, 0x00, sizeof(frame_buffer));
+    memset(frame_buffer0, 0x00, sizeof(frame_buffer0));
+    memset(frame_buffer1, 0x00, sizeof(frame_buffer1));
 
     /* DeInit Video PLL. */
     CLOCK_DeinitVideoPll();
@@ -145,7 +151,7 @@ static rt_err_t rt1050_lcd_init(rt_device_t device)
     lcd_config.panelHeight   = LCD_HEIGHT;
     lcd_config.pixelFormat   = kELCDIF_PixelFormatRGB565;
     lcd_config.dataBus       = kELCDIF_DataBus16Bit;
-    lcd_config.bufferAddr    = (uint32_t)frame_buffer;
+    lcd_config.bufferAddr    = (uint32_t)frame_buffer0;
 
     ELCDIF_RgbModeInit(LCDIF, &lcd_config);
     ELCDIF_RgbModeStart(LCDIF);
@@ -155,9 +161,22 @@ static rt_err_t rt1050_lcd_init(rt_device_t device)
     lcd.info.height         = LCD_HEIGHT;
     lcd.info.pixel_format   = RTGRAPHIC_PIXEL_FORMAT_RGB565;
     lcd.info.bits_per_pixel = 16;
-    lcd.info.framebuffer    = (void *)frame_buffer;
+    lcd.info.framebuffer    = (void *)rt_malloc_align(LCD_WIDTH * LCD_HEIGHT * 2, 32);
 
     return RT_EOK;
+}
+
+void LCDIF_IRQHandler(void)
+{
+    uint32_t intStatus;
+
+    intStatus = ELCDIF_GetInterruptStatus(LCDIF);
+
+    ELCDIF_ClearInterruptStatus(LCDIF, intStatus);
+    if (intStatus & kELCDIF_CurFrameDone)
+    {
+        fb_modified = RT_TRUE;
+    }
 }
 
 static rt_err_t rt1050_lcd_control(rt_device_t device, int cmd, void *args)
@@ -165,7 +184,36 @@ static rt_err_t rt1050_lcd_control(rt_device_t device, int cmd, void *args)
     switch (cmd)
     {
     case RTGRAPHIC_CTRL_RECT_UPDATE:
-        break;
+    {
+        uint8_t  *ptr;
+
+        if (fb_index == 0)
+        {
+            ptr = (uint8_t *)&frame_buffer1[0];
+        }
+        else
+        {
+            ptr = (uint8_t *)&frame_buffer0[0];
+        }
+
+        while(LCDIF->CUR_BUF != LCDIF->NEXT_BUF);
+
+        memcpy(ptr, lcd.info.framebuffer, LCD_WIDTH * LCD_HEIGHT * 2);
+
+        if (fb_index == 0)
+        {
+            /* use fb1 */
+            ELCDIF_SetNextBufferAddr(LCDIF, (uint32_t)&frame_buffer1[0]);
+            fb_index = 1;
+        }
+        else
+        {
+            /* use fb0 */
+            ELCDIF_SetNextBufferAddr(LCDIF, (uint32_t)&frame_buffer0[0]);
+            fb_index = 0;
+        }
+    }
+    break;
 
     case RTGRAPHIC_CTRL_POWERON:
         rt_pin_write(LCD_BL_PIN, PIN_HIGH);
@@ -176,7 +224,7 @@ static rt_err_t rt1050_lcd_control(rt_device_t device, int cmd, void *args)
         break;
 
     case RTGRAPHIC_CTRL_GET_INFO:
-        rt_memcpy(args, &lcd.info, sizeof(lcd.info));
+        memcpy(args, &lcd.info, sizeof(lcd.info));
         break;
 
     case RTGRAPHIC_CTRL_SET_MODE:
