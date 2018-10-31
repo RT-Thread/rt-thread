@@ -133,8 +133,8 @@ void *rt_memset(void *s, int c, rt_ubase_t count)
 
     return s;
 #else
-#define LBLOCKSIZE      (sizeof(rt_int32_t))
-#define UNALIGNED(X)    ((rt_int32_t)X & (LBLOCKSIZE - 1))
+#define LBLOCKSIZE      (sizeof(long))
+#define UNALIGNED(X)    ((long)X & (LBLOCKSIZE - 1))
 #define TOO_SMALL(LEN)  ((LEN) < LBLOCKSIZE)
 
     int i;
@@ -226,11 +226,10 @@ void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
     return dst;
 #else
 
-#define UNALIGNED(X, Y)                                               \
-                        (((rt_int32_t)X & (sizeof(rt_int32_t) - 1)) | \
-                         ((rt_int32_t)Y & (sizeof(rt_int32_t) - 1)))
-#define BIGBLOCKSIZE    (sizeof(rt_int32_t) << 2)
-#define LITTLEBLOCKSIZE (sizeof(rt_int32_t))
+#define UNALIGNED(X, Y) \
+    (((long)X & (sizeof (long) - 1)) | ((long)Y & (sizeof (long) - 1)))
+#define BIGBLOCKSIZE    (sizeof (long) << 2)
+#define LITTLEBLOCKSIZE (sizeof (long))
 #define TOO_SMALL(LEN)  ((LEN) < BIGBLOCKSIZE)
 
     char *dst_ptr = (char *)dst;
@@ -542,20 +541,20 @@ RTM_EXPORT(rt_show_version);
 /* private function */
 #define isdigit(c)  ((unsigned)((c) - '0') < 10)
 
-rt_inline rt_int32_t divide(rt_int32_t *n, rt_int32_t base)
+rt_inline int divide(long *n, int base)
 {
-    rt_int32_t res;
+    int res;
 
     /* optimized for processor which does not support divide instructions. */
     if (base == 10)
     {
-        res = ((rt_uint32_t) * n) % 10U;
-        *n = ((rt_uint32_t) * n) / 10U;
+        res = (int)(((unsigned long)*n) % 10U);
+        *n = (long)(((unsigned long)*n) / 10U);
     }
     else
     {
-        res = ((rt_uint32_t) * n) % 16U;
-        *n = ((rt_uint32_t) * n) / 16U;
+        res = (int)(((unsigned long)*n) % 16U);
+        *n = (long)(((unsigned long)*n) / 16U);
     }
 
     return res;
