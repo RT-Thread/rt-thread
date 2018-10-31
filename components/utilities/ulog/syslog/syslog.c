@@ -95,7 +95,7 @@ void vsyslog(int priority, const char *format, va_list args)
         priority |= local_facility;
     }
 
-    ulog_voutput(priority, local_ident, format, args);
+    ulog_voutput(priority, local_ident, RT_TRUE, format, args);
 }
 
 /**
@@ -169,7 +169,7 @@ static const char *get_month_str(uint8_t month)
     }
 }
 
-RT_WEAK rt_size_t syslog_formater(char *log_buf, int level, const char *tag, const char *format, va_list args)
+RT_WEAK rt_size_t syslog_formater(char *log_buf, int level, const char *tag, rt_bool_t newline, const char *format, va_list args)
 {
     extern size_t ulog_strcpy(size_t cur_len, char *dst, const char *src);
 
@@ -252,7 +252,10 @@ RT_WEAK rt_size_t syslog_formater(char *log_buf, int level, const char *tag, con
     }
 
     /* package newline sign */
-    log_len += ulog_strcpy(log_len, log_buf + log_len, ULOG_NEWLINE_SIGN);
+    if (newline)
+    {
+        log_len += ulog_strcpy(log_len, log_buf + log_len, ULOG_NEWLINE_SIGN);
+    }
 
     return log_len;
 }

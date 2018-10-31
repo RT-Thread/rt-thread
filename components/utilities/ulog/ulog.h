@@ -84,8 +84,8 @@ void ulog_hexdump(const char *name, rt_size_t width, rt_uint8_t *buf, rt_size_t 
 /*
  * Another log output API. This API is difficult to use than LOG_X API.
  */
-void ulog_voutput(rt_uint32_t level, const char *tag, const char *format, va_list args);
-void ulog_output(rt_uint32_t level, const char *tag, const char *format, ...);
+void ulog_voutput(rt_uint32_t level, const char *tag, rt_bool_t newline, const char *format, va_list args);
+void ulog_output(rt_uint32_t level, const char *tag, rt_bool_t newline, const char *format, ...);
 void ulog_raw(const char *format, ...);
 
 #ifdef __cplusplus
