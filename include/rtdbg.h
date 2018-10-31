@@ -23,10 +23,7 @@
  * #define DBG_LEVEL           DBG_INFO
  * #include <rtdbg.h>          // must after of DEBUG_ENABLE or some other options
  *
- * Then in your C/C++ file, you can use dbg_log macro to print out logs:
- * dbg_log(DBG_INFO, "this is a log!\n");
- *
- * Or if you want to using the simple API, you can
+ * Then in your C/C++ file, you can use LOG_X macro to print out logs:
  * LOG_D("this is a debug log!");
  * LOG_E("this is a error log!");
  *
@@ -38,6 +35,11 @@
 #define RT_DBG_H__
 
 #include <rtconfig.h>
+
+#if defined(RT_USING_ULOG) && defined(DBG_ENABLE)
+/* using ulog compatible with rtdbg  */
+#include <ulog.h>
+#else
 
 /* DEBUG level */
 #define DBG_ERROR           0
@@ -82,6 +84,8 @@
 
 /*
  * static debug routine
+ * NOTE: This is a NOT RECOMMENDED API. Please using LOG_X API.
+ *       It will be DISCARDED later. Because it will take up more resources.
  */
 #define dbg_log(level, fmt, ...)                            \
     if ((level) <= DBG_LEVEL)                               \
@@ -166,5 +170,7 @@
 #endif
 
 #define LOG_RAW(...)         dbg_raw(__VA_ARGS__)
+
+#endif /* defined(RT_USING_ULOG) && define(DBG_ENABLE) */
 
 #endif /* RT_DBG_H__ */
