@@ -825,6 +825,10 @@ enum rt_device_class_type
 #define RT_DEVICE_CTRL_RESUME           0x01            /**< resume device */
 #define RT_DEVICE_CTRL_SUSPEND          0x02            /**< suspend device */
 #define RT_DEVICE_CTRL_CONFIG           0x03            /**< configure device */
+#define RT_DEVICE_CTRL_CONFIG_SET       0x03            /**< configure device, same as above */
+#define RT_DEVICE_CTRL_CONFIG_GET       0x04            /**< device configure get*/
+#define RT_DEVICE_CRTL_TIMEOUT          0x05            /**< timeout ctrl */
+#define RT_DEVICE_CTRL_INTERVAL         0x06            /**< timeout interval ctrl */
 
 #define RT_DEVICE_CTRL_SET_INT          0x10            /**< set interrupt */
 #define RT_DEVICE_CTRL_CLR_INT          0x11            /**< clear interrupt */
