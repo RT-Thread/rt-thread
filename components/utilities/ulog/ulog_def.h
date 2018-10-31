@@ -40,10 +40,16 @@ extern "C" {
 #undef DBG_WARNING
 #undef DBG_INFO
 #undef DBG_LOG
+#undef dbg_log
 #define DBG_ERROR                      LOG_LVL_ERROR
 #define DBG_WARNING                    LOG_LVL_WARNING
 #define DBG_INFO                       LOG_LVL_INFO
 #define DBG_LOG                        LOG_LVL_DBG
+#define dbg_log(level, ...)                                \
+    if ((level) <= DBG_LEVEL)                              \
+    {                                                      \
+        ulog_output(level, LOG_TAG, RT_FALSE, __VA_ARGS__);\
+    }
 
 #if !defined(LOG_TAG)
     /* compatible for rtdbg */
@@ -64,25 +70,25 @@ extern "C" {
 #endif /* !defined(LOG_LVL) */
 
 #if (LOG_LVL >= LOG_LVL_DBG) && (ULOG_OUTPUT_LVL >= LOG_LVL_DBG)
-    #define ulog_d(TAG, ...)           ulog_output(LOG_LVL_DBG, TAG, __VA_ARGS__)
+    #define ulog_d(TAG, ...)           ulog_output(LOG_LVL_DBG, TAG, RT_TRUE, __VA_ARGS__)
 #else
     #define ulog_d(TAG, ...)
 #endif /* (LOG_LVL >= LOG_LVL_DBG) && (ULOG_OUTPUT_LVL >= LOG_LVL_DBG) */
 
 #if (LOG_LVL >= LOG_LVL_INFO) && (ULOG_OUTPUT_LVL >= LOG_LVL_INFO)
-    #define ulog_i(TAG, ...)           ulog_output(LOG_LVL_INFO, TAG, __VA_ARGS__)
+    #define ulog_i(TAG, ...)           ulog_output(LOG_LVL_INFO, TAG, RT_TRUE, __VA_ARGS__)
 #else
     #define ulog_i(TAG, ...)
 #endif /* (LOG_LVL >= LOG_LVL_INFO) && (ULOG_OUTPUT_LVL >= LOG_LVL_INFO) */
 
 #if (LOG_LVL >= LOG_LVL_WARNING) && (ULOG_OUTPUT_LVL >= LOG_LVL_WARNING)
-    #define ulog_w(TAG, ...)           ulog_output(LOG_LVL_WARNING, TAG, __VA_ARGS__)
+    #define ulog_w(TAG, ...)           ulog_output(LOG_LVL_WARNING, TAG, RT_TRUE, __VA_ARGS__)
 #else
     #define ulog_w(TAG, ...)
 #endif /* (LOG_LVL >= LOG_LVL_WARNING) && (ULOG_OUTPUT_LVL >= LOG_LVL_WARNING) */
 
 #if (LOG_LVL >= LOG_LVL_ERROR) && (ULOG_OUTPUT_LVL >= LOG_LVL_ERROR)
-    #define ulog_e(TAG, ...)           ulog_output(LOG_LVL_ERROR, TAG, __VA_ARGS__)
+    #define ulog_e(TAG, ...)           ulog_output(LOG_LVL_ERROR, TAG, RT_TRUE, __VA_ARGS__)
 #else
     #define ulog_e(TAG, ...)
 #endif /* (LOG_LVL >= LOG_LVL_ERROR) && (ULOG_OUTPUT_LVL >= LOG_LVL_ERROR) */
@@ -92,7 +98,7 @@ extern "C" {
     #define ULOG_ASSERT(EXPR)                                                 \
     if (!(EXPR))                                                              \
     {                                                                         \
-        ulog_output(LOG_LVL_ASSERT, LOG_TAG, "(%s) has assert failed at %s:%ld.", #EXPR, __FUNCTION__, __LINE__); \
+        ulog_output(LOG_LVL_ASSERT, LOG_TAG, RT_TRUE, "(%s) has assert failed at %s:%ld.", #EXPR, __FUNCTION__, __LINE__); \
         ulog_flush();                                                         \
         while (1);                                                            \
     }

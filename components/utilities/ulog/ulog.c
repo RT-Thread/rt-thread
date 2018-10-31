@@ -218,7 +218,8 @@ static char *get_log_buf(void)
     }
 }
 
-RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *tag, const char *format, va_list args)
+RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *tag, rt_bool_t newline,
+        const char *format, va_list args)
 {
     rt_size_t log_len = 0, newline_len = rt_strlen(ULOG_NEWLINE_SIGN);
     int fmt_result;
@@ -340,7 +341,10 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
     }
 
     /* package newline sign */
-    log_len += ulog_strcpy(log_len, log_buf + log_len, ULOG_NEWLINE_SIGN);
+    if (newline)
+    {
+        log_len += ulog_strcpy(log_len, log_buf + log_len, ULOG_NEWLINE_SIGN);
+    }
 
 #ifdef ULOG_USING_COLOR
     /* add CSI end sign  */
@@ -449,10 +453,11 @@ static void do_output(rt_uint32_t level, const char *tag, rt_bool_t is_raw, cons
  *
  * @param level level
  * @param tag tag
+ * @param newline has_newline
  * @param format output format
  * @param args variable argument list
  */
-void ulog_voutput(rt_uint32_t level, const char *tag, const char *format, va_list args)
+void ulog_voutput(rt_uint32_t level, const char *tag, rt_bool_t newline, const char *format, va_list args)
 {
     char *log_buf = NULL;
     rt_size_t log_len = 0;
@@ -499,10 +504,10 @@ void ulog_voutput(rt_uint32_t level, const char *tag, const char *format, va_lis
     output_lock();
 
 #ifndef ULOG_USING_SYSLOG
-    log_len = ulog_formater(log_buf, level, tag, format, args);
+    log_len = ulog_formater(log_buf, level, tag, newline, format, args);
 #else
-    extern rt_size_t syslog_formater(char *log_buf, rt_uint8_t level, const char *tag, const char *format, va_list args);
-    log_len = syslog_formater(log_buf, level, tag, format, args);
+    extern rt_size_t syslog_formater(char *log_buf, rt_uint8_t level, const char *tag, rt_bool_t newline, const char *format, va_list args);
+    log_len = syslog_formater(log_buf, level, tag, newline, format, args);
 #endif /* ULOG_USING_SYSLOG */
 
 #ifdef ULOG_USING_FILTER
@@ -532,17 +537,18 @@ void ulog_voutput(rt_uint32_t level, const char *tag, const char *format, va_lis
  *
  * @param level level
  * @param tag tag
+ * @param newline has newline
  * @param format output format
  * @param ... args
  */
-void ulog_output(rt_uint32_t level, const char *tag, const char *format, ...)
+void ulog_output(rt_uint32_t level, const char *tag, rt_bool_t newline, const char *format, ...)
 {
     va_list args;
 
     /* args point to the first variable parameter */
     va_start(args, format);
 
-    ulog_voutput(level, tag, format, args);
+    ulog_voutput(level, tag, newline, format, args);
 
     va_end(args);
 }
