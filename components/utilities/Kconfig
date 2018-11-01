@@ -162,7 +162,7 @@ config RT_USING_ULOG
 
         menu "log format"
             config ULOG_OUTPUT_FLOAT
-                bool "Enable float number support."
+                bool "Enable float number support. It will using more thread stack."
                 select RT_USING_LIBC
                 default n
                 help
