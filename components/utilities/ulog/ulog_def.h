@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2018-08-25     armink       the first version
  */
+
 #ifndef _ULOG_DEF_H_
 #define _ULOG_DEF_H_
 
@@ -63,9 +64,9 @@ extern "C" {
 #if !defined(LOG_LVL)
     /* compatible for rtdbg */
     #if defined(DBG_LEVEL)
-        #define LOG_LVL                    DBG_LEVEL
+        #define LOG_LVL                DBG_LEVEL
     #else
-        #define LOG_LVL                    LOG_LVL_DBG
+        #define LOG_LVL                LOG_LVL_DBG
     #endif
 #endif /* !defined(LOG_LVL) */
 
