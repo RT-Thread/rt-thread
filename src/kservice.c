@@ -137,16 +137,17 @@ void *rt_memset(void *s, int c, rt_ubase_t count)
 #define UNALIGNED(X)    ((long)X & (LBLOCKSIZE - 1))
 #define TOO_SMALL(LEN)  ((LEN) < LBLOCKSIZE)
 
-    int i;
+    unsigned int i;
     char *m = (char *)s;
-    rt_uint32_t buffer;
-    rt_uint32_t *aligned_addr;
-    rt_uint32_t d = c & 0xff;
+    unsigned long buffer;
+    unsigned long *aligned_addr;
+    unsigned int d = c & 0xff;  /* To avoid sign extension, copy C to an
+                                unsigned variable.  */
 
     if (!TOO_SMALL(count) && !UNALIGNED(s))
     {
         /* If we get this far, we know that n is large and m is word-aligned. */
-        aligned_addr = (rt_uint32_t *)s;
+        aligned_addr = (unsigned long *)s;
 
         /* Store D into each char sized location in BUFFER so that
          * we can set large blocks quickly.
@@ -234,16 +235,16 @@ void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 
     char *dst_ptr = (char *)dst;
     char *src_ptr = (char *)src;
-    rt_int32_t *aligned_dst;
-    rt_int32_t *aligned_src;
+    long *aligned_dst;
+    long *aligned_src;
     int len = count;
 
     /* If the size is small, or either SRC or DST is unaligned,
     then punt into the byte copy loop.  This should be rare. */
     if (!TOO_SMALL(len) && !UNALIGNED(src_ptr, dst_ptr))
     {
-        aligned_dst = (rt_int32_t *)dst_ptr;
-        aligned_src = (rt_int32_t *)src_ptr;
+        aligned_dst = (long *)dst_ptr;
+        aligned_src = (long *)src_ptr;
 
         /* Copy 4X long words at a time if possible. */
         while (len >= BIGBLOCKSIZE)
