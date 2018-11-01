@@ -644,11 +644,26 @@ void ulog_hexdump(const char *name, rt_size_t width, rt_uint8_t *buf, rt_size_t 
 #define __is_print(ch)       ((unsigned int)((ch) - ' ') < 127u - ' ')
 
     rt_size_t i, j;
-    rt_size_t log_len = 0;
+    rt_size_t log_len = 0, name_len = rt_strlen(name);
     char *log_buf = NULL, dump_string[8];
     int fmt_result;
 
     RT_ASSERT(ulog.init_ok);
+
+#ifdef ULOG_USING_FILTER
+    /* level filter */
+#ifndef ULOG_USING_SYSLOG
+    if (LOG_LVL_DBG > ulog.filter.level)
+    {
+        return;
+    }
+#else
+    if ((LOG_MASK(LOG_DEBUG) & ulog.filter.level) == 0)
+    {
+        return;
+    }
+#endif /* ULOG_USING_SYSLOG */
+#endif /* ULOG_USING_FILTER */
 
     /* get log buffer */
     log_buf = get_log_buf();
@@ -659,11 +674,22 @@ void ulog_hexdump(const char *name, rt_size_t width, rt_uint8_t *buf, rt_size_t 
     for (i = 0, log_len = 0; i < size; i += width)
     {
         /* package header */
-        fmt_result = rt_snprintf(log_buf, ULOG_LINE_BUF_SIZE, "D/HEX %s: %04X-%04X: ", name, i, i + width);
+        if (i == 0)
+        {
+            log_len += ulog_strcpy(log_len, log_buf + log_len, "D/HEX ");
+            log_len += ulog_strcpy(log_len, log_buf + log_len, name);
+            log_len += ulog_strcpy(log_len, log_buf + log_len, ": ");
+        }
+        else
+        {
+            log_len = 6 + name_len + 2;
+            rt_memset(log_buf, ' ', log_len);
+        }
+        fmt_result = rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE, "%04X-%04X: ", i, i + width);
         /* calculate log length */
         if ((fmt_result > -1) && (fmt_result <= ULOG_LINE_BUF_SIZE))
         {
-            log_len = fmt_result;
+            log_len += fmt_result;
         }
         else
         {
