@@ -68,9 +68,12 @@ config RT_USING_LWIP
 
             config RT_USING_LWIP202
                 bool "lwIP v2.0.2"
+
+            config RT_USING_LWIP210
+                bool "lwIP v2.1.0"
         endchoice
 
-        if RT_USING_LWIP202
+        if (RT_USING_LWIP210)
             config RT_USING_LWIP_IPV6
                 bool "IPV6 protocol"
                 default n
