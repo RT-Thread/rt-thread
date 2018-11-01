@@ -51,8 +51,13 @@ struct proto_ops
     int (*listen)     (int s, int backlog);
     int (*connect)    (int s, const struct sockaddr *name, socklen_t namelen);
     int (*accept)     (int s, struct sockaddr *addr, socklen_t *addrlen);
+#if LWIP_VERSION >= 0x20100ff
+    ssize_t (*sendto)     (int s, const void *data, size_t size, int flags, const struct sockaddr *to, socklen_t tolen);
+    ssize_t (*recvfrom)   (int s, void *mem, size_t len, int flags, struct sockaddr *from, socklen_t *fromlen);
+#else
     int (*sendto)     (int s, const void *data, size_t size, int flags, const struct sockaddr *to, socklen_t tolen);
     int (*recvfrom)   (int s, void *mem, size_t len, int flags, struct sockaddr *from, socklen_t *fromlen);
+#endif
     int (*getsockopt) (int s, int level, int optname, void *optval, socklen_t *optlen);
     int (*setsockopt) (int s, int level, int optname, const void *optval, socklen_t optlen);
     int (*shutdown)   (int s, int how);
