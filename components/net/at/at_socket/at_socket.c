@@ -668,6 +668,7 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
         if (rt_sem_take(sock->recv_notice, timeout) < 0)
         {
             LOG_E("AT socket (%d) receive timeout (%d)!", socket, timeout);
+            errno = EAGAIN;
             result = -1;
             goto __exit;
         }
@@ -699,7 +700,7 @@ __exit:
     {
         result = recv_len;
         at_do_event_changes(sock, AT_EVENT_RECV, RT_FALSE);
-
+        errno = 0;
         if (!rt_slist_isempty(&sock->recvpkt_list))
         {
             at_do_event_changes(sock, AT_EVENT_RECV, RT_TRUE);
