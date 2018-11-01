@@ -700,7 +700,7 @@ __exit:
     {
         result = recv_len;
         at_do_event_changes(sock, AT_EVENT_RECV, RT_FALSE);
-
+        errno = 0;
         if (!rt_slist_isempty(&sock->recvpkt_list))
         {
             at_do_event_changes(sock, AT_EVENT_RECV, RT_TRUE);
