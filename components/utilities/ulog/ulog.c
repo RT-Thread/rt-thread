@@ -170,6 +170,26 @@ size_t ulog_strcpy(size_t cur_len, char *dst, const char *src)
     return src - src_old;
 }
 
+size_t ulog_ultoa(char *s, unsigned long int n)
+{
+    size_t i = 0, j = 0, len = 0;
+    char swap;
+
+    do
+    {
+        s[len++] = n % 10 + '0';
+    } while (n /= 10);
+    s[len] = '\0';
+    /* reverse string */
+    for (i = 0, j = len - 1; i < j; ++i, --j)
+    {
+        swap = s[i];
+        s[i] = s[j];
+        s[j] = swap;
+    }
+    return len;
+}
+
 static void output_unlock(void)
 {
     /* is in thread context */
@@ -221,13 +241,17 @@ static char *get_log_buf(void)
 RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *tag, rt_bool_t newline,
         const char *format, va_list args)
 {
-    rt_size_t log_len = 0, newline_len = rt_strlen(ULOG_NEWLINE_SIGN);
-    int fmt_result;
+    /* the caller has locker, so it can use static variable for reduce stack usage */
+    static rt_size_t log_len, newline_len;
+    static int fmt_result;
 
     RT_ASSERT(log_buf);
     RT_ASSERT(level <= LOG_LVL_DBG);
     RT_ASSERT(tag);
     RT_ASSERT(format);
+
+    log_len = 0;
+    newline_len = rt_strlen(ULOG_NEWLINE_SIGN);
 
 #ifdef ULOG_USING_COLOR
     /* add CSI start sign and color info */
@@ -242,9 +266,10 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
     /* add time info */
     {
 #ifdef ULOG_TIME_USING_TIMESTAMP
-        time_t now = time(NULL);
-        struct tm *tm, tm_tmp;
+        static time_t now;
+        static struct tm *tm, tm_tmp;
 
+        now = time(NULL);
         tm = gmtime_r(&now, &tm_tmp);
 
 #ifdef RT_USING_SOFT_RTC
@@ -256,7 +281,12 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
 #endif /* RT_USING_SOFT_RTC */
 
 #else
-        rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, "[%d]", rt_tick_get());
+        static rt_size_t tick_len = 0;
+
+        log_buf[log_len] = '[';
+        tick_len = ulog_ultoa(log_buf + log_len + 1, rt_tick_get());
+        log_buf[log_len + 1 + tick_len] = ']';
+        log_buf[log_len + 1 + tick_len + 1] = '\0';
 #endif /* ULOG_TIME_USING_TIMESTAMP */
 
         log_len += rt_strlen(log_buf + log_len);
@@ -987,6 +1017,11 @@ rt_err_t ulog_backend_unregister(ulog_backend_t backend)
 
     RT_ASSERT(backend);
     RT_ASSERT(ulog.init_ok);
+
+    if (backend->deinit)
+    {
+        backend->deinit(backend);
+    }
 
     level = rt_hw_interrupt_disable();
     rt_slist_remove(&ulog.backend_list, &backend->list);
