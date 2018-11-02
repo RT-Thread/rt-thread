@@ -36,11 +36,6 @@
 
 #if LWIP_VERSION >= 0x20100ff
 #include <lwip/priv/sockets_priv.h>
-
-#if LWIP_NETCONN_FULLDUPLEX
-#error "Not support"
-#endif
-
 #else /* LWIP_VERSION < 0x20100ff */
 /*
  * Re-define lwip socket
