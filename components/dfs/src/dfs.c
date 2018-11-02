@@ -185,7 +185,7 @@ int fd_new(void)
     if (idx == fdt->maxfd)
     {
         idx = -(1 + DFS_FD_OFFSET);
-        dbg_log(DBG_ERROR, "DFS fd new is failed! Could not found an empty fd entry.");
+        LOG_E( "DFS fd new is failed! Could not found an empty fd entry.");
         goto __result;
     }
 
