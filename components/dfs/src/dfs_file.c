@@ -46,7 +46,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         return -ENOMEM;
     }
 
-    dbg_log(DBG_LOG, "open file:%s\n", fullpath);
+    LOG_D("open file:%s", fullpath);
 
     /* Check whether file is already open */
     if (fd_is_open(fullpath) == 0)
@@ -65,7 +65,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         return -ENOENT;
     }
 
-    dbg_log(DBG_LOG, "open in filesystem:%s\n", fs->ops->name);
+    LOG_D("open in filesystem:%s", fs->ops->name);
     fd->fops  = fs->ops->fops; /* set file ops */
 
     /* initialize the fd item */
@@ -82,7 +82,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         else
             fd->path = rt_strdup(dfs_subdir(fs->path, fullpath));
         rt_free(fullpath);
-        dbg_log(DBG_LOG, "Actual file path: %s\n", fd->path);
+        LOG_D("Actual file path: %s", fd->path);
     }
     else
     {
@@ -105,7 +105,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         rt_free(fd->path);
         fd->path = NULL;
 
-        dbg_log(DBG_ERROR, "open failed\n");
+        LOG_E("open failed");
 
         return result;
     }
@@ -117,7 +117,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         fd->flags |= DFS_F_DIRECTORY;
     }
 
-    dbg_log(DBG_INFO, "open successful\n");
+    LOG_I("open successful");
     return 0;
 }
 
@@ -375,8 +375,8 @@ int dfs_file_stat(const char *path, struct stat *buf)
 
     if ((fs = dfs_filesystem_lookup(fullpath)) == NULL)
     {
-        dbg_log(DBG_ERROR,
-                "can't find mounted filesystem on this path:%s\n", fullpath);
+        LOG_E(
+                "can't find mounted filesystem on this path:%s", fullpath);
         rt_free(fullpath);
 
         return -ENOENT;
@@ -405,8 +405,8 @@ int dfs_file_stat(const char *path, struct stat *buf)
         if (fs->ops->stat == NULL)
         {
             rt_free(fullpath);
-            dbg_log(DBG_ERROR,
-                    "the filesystem didn't implement this function\n");
+            LOG_E(
+                    "the filesystem didn't implement this function");
 
             return -ENOSYS;
         }

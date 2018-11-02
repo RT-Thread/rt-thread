@@ -115,7 +115,7 @@ void push_event_touch_move(int x, int y)
     emouse.ts = rt_tick_get();
     emouse.id = emouse_id;
 
-    dbg_log(DBG_LOG, "[line]:%d motion event id:%d x:%d y:%d\n", __LINE__, emouse.id, x, y);
+    LOG_D("[line]:%d motion event id:%d x:%d y:%d", __LINE__, emouse.id, x, y);
     rtgui_server_post_event(&emouse.parent, sizeof(emouse));
 }
 
@@ -134,7 +134,7 @@ void push_event_touch_begin(int x, int y)
     emouse.y = y;
     emouse.ts = rt_tick_get();
     emouse.id = emouse_id;
-    dbg_log(DBG_LOG, "[line]:%d down event id:%d x:%d y:%d\n", __LINE__, emouse.id, x, y);
+    LOG_D("[line]:%d down event id:%d x:%d y:%d", __LINE__, emouse.id, x, y);
     rtgui_server_post_event(&emouse.parent, sizeof(emouse));
 }
 
@@ -152,7 +152,7 @@ void push_event_touch_end(int x, int y)
     emouse.ts = rt_tick_get();
     emouse.id = emouse_id;
     
-    dbg_log(DBG_LOG, "[line]:%d up event id:%d x:%d y:%d\n", __LINE__, emouse.id, x, y);
+    LOG_D("[line]:%d up event id:%d x:%d y:%d", __LINE__, emouse.id, x, y);
     rtgui_server_post_event(&emouse.parent, sizeof(emouse));
 }
 
@@ -239,14 +239,14 @@ int rt_hw_mouse_init(void)
     
     if(((id >> 12) & 0xff) != 0x41 || (id & 0xfff) != 0x050)
     {
-        dbg_log(DBG_ERROR, "read id fail id:0x%08x\n", id);
+        LOG_E("read id fail id:0x%08x", id);
         return RT_ERROR;
     }
 
     pdat = rt_malloc(sizeof(struct mouse_pl050_pdata_t));
     if(!pdat)
     {
-        dbg_log(DBG_ERROR, "malloc memory\n", id);
+        LOG_E("malloc memory", id);
         return RT_ERROR;
     }
     rt_memset(pdat, 0, sizeof(struct mouse_pl050_pdata_t));
