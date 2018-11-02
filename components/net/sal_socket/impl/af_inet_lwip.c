@@ -271,8 +271,8 @@ static const struct proto_ops lwip_inet_stream_ops = {
     lwip_listen,
     lwip_connect,
     inet_accept,
-    lwip_sendto,
-    lwip_recvfrom,
+    (int (*)(int, const void *, size_t, int, const struct sockaddr *, socklen_t))lwip_sendto,
+    (int (*)(int, void *, size_t, int, struct sockaddr *, socklen_t *))lwip_recvfrom,
     lwip_getsockopt,
     //TODO fix on 1.4.1
     lwip_setsockopt,
