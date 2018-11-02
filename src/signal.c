@@ -41,7 +41,7 @@ void rt_thread_handle_sig(rt_bool_t clean_state);
 
 static void _signal_default_handler(int signo)
 {
-    dbg_log(DBG_INFO, "handled signo[%d] with default action.\n", signo);
+    LOG_I("handled signo[%d] with default action.", signo);
     return ;
 }
 
@@ -60,7 +60,7 @@ static void _signal_entry(void *parameter)
     tid->sp = tid->sig_ret;
     tid->sig_ret = RT_NULL;
 
-    dbg_log(DBG_LOG, "switch back to: 0x%08x\n", tid->sp);
+    LOG_D("switch back to: 0x%08x", tid->sp);
     tid->stat &= ~RT_THREAD_STAT_SIGNAL;
 
     rt_hw_context_switch_to((rt_uint32_t) & (tid->sp));
@@ -119,7 +119,7 @@ static void _signal_deliver(rt_thread_t tid)
                                        (void *)((char *)tid->sig_ret - 32), RT_NULL);
 
             rt_hw_interrupt_enable(level);
-            dbg_log(DBG_LOG, "signal stack pointer @ 0x%08x\n", tid->sp);
+            LOG_D("signal stack pointer @ 0x%08x", tid->sp);
 
             /* re-schedule */
             rt_schedule();
@@ -268,7 +268,7 @@ __done:
         {
             *si  = si_node->si;
 
-            dbg_log(DBG_LOG, "sigwait: %d sig raised!\n", signo);
+            LOG_D("sigwait: %d sig raised!", signo);
             if (si_prev) si_prev->list.next = si_node->list.next;
             else tid->si_list = si_node->list.next;
 
@@ -320,7 +320,7 @@ void rt_thread_handle_sig(rt_bool_t clean_state)
                 handler = tid->sig_vectors[signo];
                 rt_hw_interrupt_enable(level);
 
-                dbg_log(DBG_LOG, "handle signal: %d, handler 0x%08x\n", signo, handler);
+                LOG_D("handle signal: %d, handler 0x%08x", signo, handler);
                 if (handler) handler(signo);
 
                 level = rt_hw_interrupt_disable();
@@ -378,7 +378,7 @@ void rt_thread_free_sig(rt_thread_t tid)
         struct rt_slist_node *node;
         struct siginfo_node  *si_node;
 
-        dbg_log(DBG_LOG, "free signal info list\n");
+        LOG_D("free signal info list");
         node = &(si_list->list);
         do
         {
@@ -404,7 +404,7 @@ int rt_thread_kill(rt_thread_t tid, int sig)
     RT_ASSERT(tid != RT_NULL);
     if (!sig_valid(sig)) return -RT_EINVAL;
 
-    dbg_log(DBG_INFO, "send signal: %d\n", sig);
+    LOG_I("send signal: %d", sig);
     si.si_signo = sig;
     si.si_code  = SI_USER;
     si.si_value.sival_ptr = RT_NULL;
@@ -462,7 +462,7 @@ int rt_thread_kill(rt_thread_t tid, int sig)
     }
     else
     {
-        dbg_log(DBG_ERROR, "The allocation of signal info node failed.\n");
+        LOG_E("The allocation of signal info node failed.");
     }
 
     /* deliver signal to this thread */
@@ -476,7 +476,7 @@ int rt_system_signal_init(void)
     _rt_siginfo_pool = rt_mp_create("signal", RT_SIG_INFO_MAX, sizeof(struct siginfo_node));
     if (_rt_siginfo_pool == RT_NULL)
     {
-        dbg_log(DBG_ERROR, "create memory pool for signal info failed.\n");
+        LOG_E("create memory pool for signal info failed.");
         RT_ASSERT(0);
     }
 
