@@ -11,7 +11,7 @@
 #include "../dlmodule.h"
 #include "../dlelf.h"
 
-#ifdef __x86__
+#ifdef __i386__
 
 #define R_X86_64_GLOB_DAT	6	/* Create GOT entry */
 #define R_X86_64_JUMP_SLOT	7	/* Create PLT entry */
