@@ -131,14 +131,14 @@ __exit:
 
 static void usage(void)
 {
-    LOG_I("Usage: udpserver -p <port>");
-    LOG_I("       udpserver --stop");
-    LOG_I("       udpserver --help");
-    LOG_I("");
-    LOG_I("Miscellaneous:");
-    LOG_I("  -p           Specify the host port number");
-    LOG_I("  --stop       Stop udpserver program");
-    LOG_I("  --help       Print help information");
+    rt_kprintf("Usage: udpserver -p <port>\n");
+    rt_kprintf("       udpserver --stop\n");
+    rt_kprintf("       udpserver --help\n");
+    rt_kprintf("\n");
+    rt_kprintf("Miscellaneous:\n");
+    rt_kprintf("  -p           Specify the host port number\n");
+    rt_kprintf("  --stop       Stop udpserver program\n");
+    rt_kprintf("  --help       Print help information\n");
 }
 
 static void udpserver_test(int argc, char** argv)

@@ -83,16 +83,16 @@ static void udpclient(void *arg)
 
 static void usage(void)
 {
-    LOG_I("Usage: udpclient -h <host> -p <port> [--cnt] [count]");
-    LOG_I("       udpclient --stop");
-    LOG_I("       udpclient --help");
-    LOG_I("");
-    LOG_I("Miscellaneous:");
-    LOG_I("  -h           Specify host address");
-    LOG_I("  -p           Specify the host port number");
-    LOG_I("  --cnt        Specify the send data count");
-    LOG_I("  --stop       Stop tcpclient program");
-    LOG_I("  --help       Print help information");
+    rt_kprintf("Usage: udpclient -h <host> -p <port> [--cnt] [count]\n");
+    rt_kprintf("       udpclient --stop\n");
+    rt_kprintf("       udpclient --help\n");
+    rt_kprintf("\n");
+    rt_kprintf("Miscellaneous:\n");
+    rt_kprintf("  -h           Specify host address\n");
+    rt_kprintf("  -p           Specify the host port number\n");
+    rt_kprintf("  --cnt        Specify the send data count\n");
+    rt_kprintf("  --stop       Stop tcpclient program\n");
+    rt_kprintf("  --help       Print help information\n");
 }
 
 static void udpclient_test(int argc, char** argv)
