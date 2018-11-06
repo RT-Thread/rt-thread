@@ -820,6 +820,11 @@ int ulog_tag_lvl_filter_set(const char *tag, rt_uint32_t level)
     /* unlock output */
     output_unlock();
 
+    if(tag_lvl && level == LOG_FILTER_LVL_ALL)
+    {
+    	rt_free(tag_lvl);
+    }
+
     return result;
 }
 
