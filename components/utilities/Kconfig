@@ -54,20 +54,20 @@ config RT_USING_ULOG
         if !ULOG_USING_SYSLOG
             choice
                 prompt "The static output log level."
-                default ULOG_OUTPUT_LVL_DEBUG
+                default ULOG_OUTPUT_LVL_D
                 help
                     When the log level is less than this option and it will stop output.
                     These log will not compile into ROM when using LOG_X api.
                     NOTE: It's not available on syslog mode.
-                config ULOG_OUTPUT_LVL_ASSERT
+                config ULOG_OUTPUT_LVL_A
                     bool "Assert"
-                config ULOG_OUTPUT_LVL_ERROR
+                config ULOG_OUTPUT_LVL_E
                     bool "Error"
-                config ULOG_OUTPUT_LVL_WARNING
+                config ULOG_OUTPUT_LVL_W
                     bool "Warning"
-                config ULOG_OUTPUT_LVL_INFO
+                config ULOG_OUTPUT_LVL_I
                     bool "Information"
-                config ULOG_OUTPUT_LVL_DEBUG
+                config ULOG_OUTPUT_LVL_D
                     bool "Debug"
             endchoice
         endif
@@ -101,14 +101,18 @@ config RT_USING_ULOG
 
         config ULOG_OUTPUT_LVL
             int
-            default 0 if ULOG_OUTPUT_LVL_ASSERT
+            default 0 if ULOG_OUTPUT_LVL_A
             default 0 if ULOG_OUTPUT_LVL_EMERG
             default 1 if ULOG_OUTPUT_LVL_ALERT
             default 2 if ULOG_OUTPUT_LVL_CRIT
+            default 3 if ULOG_OUTPUT_LVL_E
             default 3 if ULOG_OUTPUT_LVL_ERROR
+            default 4 if ULOG_OUTPUT_LVL_W
             default 4 if ULOG_OUTPUT_LVL_WARNING
             default 5 if ULOG_OUTPUT_LVL_NOTICE
+            default 6 if ULOG_OUTPUT_LVL_I
             default 6 if ULOG_OUTPUT_LVL_INFO
+            default 7 if ULOG_OUTPUT_LVL_D
             default 7 if ULOG_OUTPUT_LVL_DEBUG
             default 7
 
@@ -220,7 +224,7 @@ config RT_USING_ULOG
             default n
             
         config ULOG_SW_VERSION_NUM
-            int
+            hex
             default 0x00100
             help
                 sfotware module version number
