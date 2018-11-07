@@ -83,13 +83,13 @@ class Win32Spawn:
                 try:
                     os.remove(f)
                 except Exception as e:
-                    print 'Error removing file: %s' % e
+                    print ('Error removing file: ' + e)
                     return -1
             return 0
 
         import subprocess
 
-        newargs = string.join(args[1:], ' ')
+        newargs = ' '.join(args[1:])
         cmdline = cmd + " " + newargs
 
         # Make sure the env is constructed by strings
@@ -104,8 +104,8 @@ class Win32Spawn:
         try:
             proc = subprocess.Popen(cmdline, env=_e, shell=False)
         except Exception as e:
-            print 'Error in calling:\n%s' % cmdline
-            print 'Exception: %s: %s' % (e, os.strerror(e.errno))
+            print ('Error in calling:\n' + cmdline)
+            print ('Exception: ' + e + ': ' + os.strerror(e.errno))
             return e.errno
         finally:
             os.environ['PATH'] = old_path
@@ -124,7 +124,7 @@ def GenCconfigFile(env, BuildOptions):
 
         # try again
         if os.path.isfile('cconfig.h'):
-            f = file('cconfig.h', 'r')
+            f = open('cconfig.h', 'r')
             if f:
                 contents = f.read()
                 f.close();
@@ -225,7 +225,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         # --target will change the toolchain settings which clang-analyzer is
         # depend on
         if GetOption('clang-analyzer'):
-            print '--clang-analyzer cannot be used with --target'
+            print ('--clang-analyzer cannot be used with --target')
             sys.exit(1)
 
         SetOption('no_exec', 1)
@@ -235,8 +235,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             os.environ['RTT_CC'] = rtconfig.CROSS_TOOL
             reload(rtconfig)
         except KeyError:
-            print 'Unknow target: %s. Avaible targets: %s' % \
-                    (tgt_name, ', '.join(tgt_dict.keys()))
+            print ('Unknow target: '+ tgt_name+'. Avaible targets: ' +', '.join(tgt_dict.keys()))
             sys.exit(1)
     elif (GetDepend('RT_USING_NEWLIB') == False and GetDepend('RT_USING_NOLIBC') == False) \
         and rtconfig.PLATFORM == 'gcc':
@@ -287,7 +286,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     # parse rtconfig.h to get used component
     PreProcessor = PatchedPreProcessor()
-    f = file('rtconfig.h', 'r')
+    f = open('rtconfig.h', 'r')
     contents = f.read()
     f.close()
     PreProcessor.process_contents(contents)
@@ -438,7 +437,7 @@ def GetConfigValue(name):
 def GetDepend(depend):
     building = True
     if type(depend) == type('str'):
-        if not BuildOptions.has_key(depend) or BuildOptions[depend] == 0:
+        if not depend in BuildOptions or BuildOptions[depend] == 0:
             building = False
         elif BuildOptions[depend] != '':
             return BuildOptions[depend]
@@ -448,7 +447,7 @@ def GetDepend(depend):
     # for list type depend
     for item in depend:
         if item != '':
-            if not BuildOptions.has_key(item) or BuildOptions[item] == 0:
+            if not item in BuildOptions or BuildOptions[item] == 0:
                 building = False
 
     return building
@@ -471,7 +470,7 @@ def LocalOptions(config_filename):
 def GetLocalDepend(options, depend):
     building = True
     if type(depend) == type('str'):
-        if not options.has_key(depend) or options[depend] == 0:
+        if not depend in options or options[depend] == 0:
             building = False
         elif options[depend] != '':
             return options[depend]
@@ -481,7 +480,7 @@ def GetLocalDepend(options, depend):
     # for list type depend
     for item in depend:
         if item != '':
-            if not options.has_key(item) or options[item] == 0:
+            if not item in options or options[item] == 0:
                 building = False
 
     return building
@@ -491,61 +490,61 @@ def AddDepend(option):
 
 def MergeGroup(src_group, group):
     src_group['src'] = src_group['src'] + group['src']
-    if group.has_key('CCFLAGS'):
-        if src_group.has_key('CCFLAGS'):
+    if 'CCFLAGS' in group:
+        if 'CCFLAGS' in src_group:
             src_group['CCFLAGS'] = src_group['CCFLAGS'] + group['CCFLAGS']
         else:
             src_group['CCFLAGS'] = group['CCFLAGS']
-    if group.has_key('CPPPATH'):
-        if src_group.has_key('CPPPATH'):
+    if 'CPPPATH' in group:
+        if 'CPPPATH' in src_group:
             src_group['CPPPATH'] = src_group['CPPPATH'] + group['CPPPATH']
         else:
             src_group['CPPPATH'] = group['CPPPATH']
-    if group.has_key('CPPDEFINES'):
-        if src_group.has_key('CPPDEFINES'):
+    if 'CPPDEFINES' in group:
+        if 'CPPDEFINES' in src_group:
             src_group['CPPDEFINES'] = src_group['CPPDEFINES'] + group['CPPDEFINES']
         else:
             src_group['CPPDEFINES'] = group['CPPDEFINES']
-    if group.has_key('ASFLAGS'):
-        if src_group.has_key('ASFLAGS'):
+    if 'ASFLAGS' in group:
+        if 'ASFLAGS' in src_group:
             src_group['ASFLAGS'] = src_group['ASFLAGS'] + group['ASFLAGS']
         else:
             src_group['ASFLAGS'] = group['ASFLAGS']
 
     # for local CCFLAGS/CPPPATH/CPPDEFINES
-    if group.has_key('LOCAL_CCFLAGS'):
-        if src_group.has_key('LOCAL_CCFLAGS'):
+    if 'LOCAL_CCFLAGS' in group:
+        if 'LOCAL_CCFLAGS' in src_group:
             src_group['LOCAL_CCFLAGS'] = src_group['LOCAL_CCFLAGS'] + group['LOCAL_CCFLAGS']
         else:
             src_group['LOCAL_CCFLAGS'] = group['LOCAL_CCFLAGS']
-    if group.has_key('LOCAL_CPPPATH'):
-        if src_group.has_key('LOCAL_CPPPATH'):
+    if 'LOCAL_CPPPATH' in group:
+        if 'LOCAL_CPPPATH' in src_group:
             src_group['LOCAL_CPPPATH'] = src_group['LOCAL_CPPPATH'] + group['LOCAL_CPPPATH']
         else:
             src_group['LOCAL_CPPPATH'] = group['LOCAL_CPPPATH']
-    if group.has_key('LOCAL_CPPDEFINES'):
-        if src_group.has_key('LOCAL_CPPDEFINES'):
+    if 'LOCAL_CPPDEFINES' in group:
+        if 'LOCAL_CPPDEFINES' in src_group:
             src_group['LOCAL_CPPDEFINES'] = src_group['LOCAL_CPPDEFINES'] + group['LOCAL_CPPDEFINES']
         else:
             src_group['LOCAL_CPPDEFINES'] = group['LOCAL_CPPDEFINES']
 
-    if group.has_key('LINKFLAGS'):
-        if src_group.has_key('LINKFLAGS'):
+    if 'LINKFLAGS' in group:
+        if 'LINKFLAGS' in src_group:
             src_group['LINKFLAGS'] = src_group['LINKFLAGS'] + group['LINKFLAGS']
         else:
             src_group['LINKFLAGS'] = group['LINKFLAGS']
-    if group.has_key('LIBS'):
-        if src_group.has_key('LIBS'):
+    if 'LIBS' in group:
+        if 'LIBS' in src_group:
             src_group['LIBS'] = src_group['LIBS'] + group['LIBS']
         else:
             src_group['LIBS'] = group['LIBS']
-    if group.has_key('LIBPATH'):
-        if src_group.has_key('LIBPATH'):
+    if 'LIBPATH' in group:
+        if 'LIBPATH' in src_group:
             src_group['LIBPATH'] = src_group['LIBPATH'] + group['LIBPATH']
         else:
             src_group['LIBPATH'] = group['LIBPATH']
-    if group.has_key('LOCAL_ASFLAGS'):
-        if src_group.has_key('LOCAL_ASFLAGS'):
+    if 'LOCAL_ASFLAGS' in group:
+        if 'LOCAL_ASFLAGS' in src_group:
             src_group['LOCAL_ASFLAGS'] = src_group['LOCAL_ASFLAGS'] + group['LOCAL_ASFLAGS']
         else:
             src_group['LOCAL_ASFLAGS'] = group['LOCAL_ASFLAGS']
@@ -571,32 +570,32 @@ def DefineGroup(name, src, depend, **parameters):
     else:
         group['src'] = src
 
-    if group.has_key('CCFLAGS'):
+    if 'CCFLAGS' in group:
         Env.AppendUnique(CCFLAGS = group['CCFLAGS'])
-    if group.has_key('CPPPATH'):
+    if 'CPPPATH' in group:
         Env.AppendUnique(CPPPATH = group['CPPPATH'])
-    if group.has_key('CPPDEFINES'):
+    if 'CPPDEFINES' in group:
         Env.AppendUnique(CPPDEFINES = group['CPPDEFINES'])
-    if group.has_key('LINKFLAGS'):
+    if 'LINKFLAGS' in group:
         Env.AppendUnique(LINKFLAGS = group['LINKFLAGS'])
-    if group.has_key('ASFLAGS'):
+    if 'ASFLAGS' in group:
         Env.AppendUnique(ASFLAGS = group['ASFLAGS'])
 
     # check whether to clean up library
     if GetOption('cleanlib') and os.path.exists(os.path.join(group['path'], GroupLibFullName(name, Env))):
         if group['src'] != []:
-            print 'Remove library:', GroupLibFullName(name, Env)
+            print ('Remove library:'+ GroupLibFullName(name, Env))
             fn = os.path.join(group['path'], GroupLibFullName(name, Env))
             if os.path.exists(fn):
                 os.unlink(fn)
 
-    if group.has_key('LIBS'):
+    if 'LIBS' in group:
         Env.AppendUnique(LIBS = group['LIBS'])
-    if group.has_key('LIBPATH'):
+    if 'LIBPATH' in group:
         Env.AppendUnique(LIBPATH = group['LIBPATH'])
 
     # check whether to build group library
-    if group.has_key('LIBRARY'):
+    if 'LIBRARY' in group:
         objs = Env.Library(name, group['src'])
     else:
         # only add source
@@ -650,7 +649,7 @@ def BuildLibInstallAction(target, source, env):
         if Group['name'] == lib_name:
             lib_name = GroupLibFullName(Group['name'], env)
             dst_name = os.path.join(Group['path'], lib_name)
-            print 'Copy %s => %s' % (lib_name, dst_name)
+            print ('Copy '+lib_name+' => ' +dst_name)
             do_copy_file(lib_name, dst_name)
             break
 
@@ -668,7 +667,7 @@ def DoBuilding(target, objects):
 
     # handle local group
     def local_group(group, objects):
-        if group.has_key('LOCAL_CCFLAGS') or group.has_key('LOCAL_CPPPATH') or group.has_key('LOCAL_CPPDEFINES') or group.has_key('LOCAL_ASFLAGS'):
+        if 'LOCAL_CCFLAGS' in group or 'LOCAL_CPPPATH' in group or 'LOCAL_CPPDEFINES' in group or 'LOCAL_ASFLAGS' in group:
             CCFLAGS = Env.get('CCFLAGS', '') + group.get('LOCAL_CCFLAGS', '')
             CPPPATH = Env.get('CPPPATH', ['']) + group.get('LOCAL_CPPPATH', [''])
             CPPDEFINES = Env.get('CPPDEFINES', ['']) + group.get('LOCAL_CPPDEFINES', [''])
@@ -705,7 +704,7 @@ def DoBuilding(target, objects):
     else:
         # remove source files with local flags setting
         for group in Projects:
-            if group.has_key('LOCAL_CCFLAGS') or group.has_key('LOCAL_CPPPATH') or group.has_key('LOCAL_CPPDEFINES'):
+            if 'LOCAL_CCFLAGS' in group or 'LOCAL_CPPPATH' in group or 'LOCAL_CPPDEFINES' in group:
                 for source in group['src']:
                     for obj in objects:
                         if source.abspath == obj.abspath or (len(obj.sources) > 0 and source.abspath == obj.sources[0].abspath):
@@ -738,7 +737,7 @@ def GenTargetProject(program = None):
                 if template:
                     MDK5Project('project.uvprojx', Projects)
                 else:
-                    print 'No template project file found.'
+                    print ('No template project file found.')
 
     if GetOption('target') == 'mdk4':
         from keil import MDK4Project
@@ -807,7 +806,7 @@ def EndBuilding(target, program = None):
 
     if not GetOption('help') and not GetOption('target'):
         if not os.path.exists(rtconfig.EXEC_PATH):
-            print "Error: the toolchain path (%s) is not exist, please check 'EXEC_PATH' in path or rtconfig.py." % rtconfig.EXEC_PATH
+            print ("Error: the toolchain path (" + rtconfig.EXEC_PATH + ") is not exist, please check 'EXEC_PATH' in path or rtconfig.py.")
             need_exit = True
 
     if need_exit:
@@ -873,7 +872,7 @@ def GetVersion():
     version = int(filter(lambda ch: ch in '0123456789.', def_ns['RT_VERSION']))
     subversion = int(filter(lambda ch: ch in '0123456789.', def_ns['RT_SUBVERSION']))
 
-    if def_ns.has_key('RT_REVISION'):
+    if 'RT_REVISION' in def_ns:
         revision = int(filter(lambda ch: ch in '0123456789.', def_ns['RT_REVISION']))
         return '%d.%d.%d' % (version, subversion, revision)
 
