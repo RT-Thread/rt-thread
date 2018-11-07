@@ -28,6 +28,9 @@
  */
 
 #include <rtthread.h>
+
+#ifdef RT_USING_FINSH
+
 #include "finsh.h"
 
 long hello(void)
@@ -831,3 +834,6 @@ void list_prefix(char *prefix)
 static int dummy = 0;
 FINSH_VAR_EXPORT(dummy, finsh_type_int, dummy variable for finsh)
 #endif
+
+#endif /* RT_USING_FINSH */
+
