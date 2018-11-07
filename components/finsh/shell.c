@@ -20,6 +20,8 @@
 
 #include <rthw.h>
 
+#ifdef RT_USING_FINSH
+
 #include "finsh.h"
 #include "shell.h"
 
@@ -847,3 +849,6 @@ int finsh_system_init(void)
     return 0;
 }
 INIT_APP_EXPORT(finsh_system_init);
+
+#endif /* RT_USING_FINSH */
+

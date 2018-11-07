@@ -10,11 +10,12 @@
  */
 
 #include <rtthread.h>
-#include <finsh.h>
-
-#include "msh.h"
 
 #ifdef FINSH_USING_MSH
+
+#include <finsh.h>
+#include "msh.h"
+
 #ifdef RT_USING_DFS
 #include <dfs_posix.h>
 
@@ -418,5 +419,4 @@ int cmd_free(int argc, char **argv)
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_free, __cmd_free, Show the memory usage in the system.);
 #endif
 
-#endif
-
+#endif /* FINSH_USING_MSH */
