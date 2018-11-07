@@ -55,14 +55,14 @@ def GetNewLibVersion(rtconfig):
             for line in f:
                 if line.find('_NEWLIB_VERSION') != -1 and line.find('"') != -1:
                     version = re.search(r'\"([^"]+)\"', line).groups()[0]
-        f.close()
+            f.close()
     elif CheckHeader(rtconfig, 'newlib.h'): # get version from newlib.h
         f = open(os.path.join(root, 'include', 'newlib.h'), 'r')
         if f:
             for line in f:
                 if line.find('_NEWLIB_VERSION') != -1 and line.find('"') != -1:
                     version = re.search(r'\"([^"]+)\"', line).groups()[0]
-        f.close()
+            f.close()
     return version
 
 def GCCResult(rtconfig, str):
@@ -148,7 +148,6 @@ def GCCResult(rtconfig, str):
             result += '#define LIBC_POSIX_THREADS 1\n'
 
         os.remove('__tmp.c')
-    f.close()
     return result
 
 def GenerateGCCConfig(rtconfig):
