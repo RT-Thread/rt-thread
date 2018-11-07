@@ -7,6 +7,11 @@
  * Date           Author       Notes
  * 2010-03-22     Bernard      first version
  */
+ 
+#include <rtthread.h>
+
+#ifdef RT_USING_FINSH
+
 #include "finsh.h"
 
 long hello(void);
@@ -63,3 +68,6 @@ struct finsh_syscall *_syscall_table_end   = &_syscall_table[sizeof(_syscall_tab
 struct finsh_sysvar *_sysvar_table_begin  = NULL;
 struct finsh_sysvar *_sysvar_table_end    = NULL;
 #endif
+
+#endif /* RT_USING_FINSH */
+
