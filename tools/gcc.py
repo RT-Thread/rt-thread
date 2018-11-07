@@ -50,18 +50,19 @@ def GetNewLibVersion(rtconfig):
     root = GetGCCRoot(rtconfig)
 
     if CheckHeader(rtconfig, '_newlib_version.h'): # get version from _newlib_version.h file
-        f = file(os.path.join(root, 'include', '_newlib_version.h'))
+        f = open(os.path.join(root, 'include', '_newlib_version.h'), 'r')
         if f:
             for line in f:
                 if line.find('_NEWLIB_VERSION') != -1 and line.find('"') != -1:
                     version = re.search(r'\"([^"]+)\"', line).groups()[0]
+            f.close()
     elif CheckHeader(rtconfig, 'newlib.h'): # get version from newlib.h
-        f = file(os.path.join(root, 'include', 'newlib.h'))
+        f = open(os.path.join(root, 'include', 'newlib.h'), 'r')
         if f:
             for line in f:
                 if line.find('_NEWLIB_VERSION') != -1 and line.find('"') != -1:
                     version = re.search(r'\"([^"]+)\"', line).groups()[0]
-
+            f.close()
     return version
 
 def GCCResult(rtconfig, str):
@@ -77,7 +78,7 @@ def GCCResult(rtconfig, str):
     gcc_cmd = os.path.join(rtconfig.EXEC_PATH, rtconfig.CC)
 
     # use temp file to get more information 
-    f = file('__tmp.c', 'w')
+    f = open('__tmp.c', 'w')
     if f:
         f.write(str)
         f.close()
@@ -103,27 +104,27 @@ def GCCResult(rtconfig, str):
         stdc = '1989'
         posix_thread = 0
 
-        for line in stdout.split('\n'):
-            if re.search('fd_set', line):
+        for line in stdout.split(b'\n'):
+            if re.search(b'fd_set', line):
                 have_fdset = 1
 
             # check for sigal
-            if re.search('struct[ \t]+sigaction', line):
+            if re.search(b'struct[ \t]+sigaction', line):
                 have_sigaction = 1
-            if re.search('struct[ \t]+sigevent', line):
+            if re.search(b'struct[ \t]+sigevent', line):
                 have_sigevent = 1
-            if re.search('siginfo_t', line):
+            if re.search(b'siginfo_t', line):
                 have_siginfo = 1
-            if re.search('union[ \t]+sigval', line):
+            if re.search(b'union[ \t]+sigval', line):
                 have_sigval = 1
 
-            if re.search('char\* version', line):
-                version = re.search(r'\"([^"]+)\"', line).groups()[0]
+            if re.search(b'char\* version', line):
+                version = re.search(br'\"([^"]+)\"', line).groups()[0]
 
-            if re.findall('iso_c_visible = [\d]+', line):
+            if re.findall(b'iso_c_visible = [\d]+', line):
                 stdc = re.findall('[\d]+', line)[0]
 
-            if re.findall('pthread_create', line):
+            if re.findall(b'pthread_create', line):
                 posix_thread = 1
     
         if have_fdset:
@@ -147,7 +148,6 @@ def GCCResult(rtconfig, str):
             result += '#define LIBC_POSIX_THREADS 1\n'
 
         os.remove('__tmp.c')
-
     return result
 
 def GenerateGCCConfig(rtconfig):
@@ -187,7 +187,7 @@ def GenerateGCCConfig(rtconfig):
     cc_header += GCCResult(rtconfig, str)
     cc_header += '\n#endif\n'
 
-    cc_file = file('cconfig.h', 'w')
+    cc_file = open('cconfig.h', 'w')
     if cc_file:
         cc_file.write(cc_header)
         cc_file.close()
