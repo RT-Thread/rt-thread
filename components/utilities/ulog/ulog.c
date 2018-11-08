@@ -1044,6 +1044,56 @@ static void ulog_kw(uint8_t argc, char **argv)
     }
 }
 MSH_CMD_EXPORT(ulog_kw, Set ulog global filter keyword);
+
+static void ulog_filter(uint8_t argc, char **argv)
+{
+#ifndef ULOG_USING_SYSLOG
+    const char *lvl_name[] = { "Assert ", "Error  ", "Error  ", "Error  ", "Warning", "Info   ", "Info   ", "Debug  " };
+#endif
+    const char *tag = ulog_global_filter_tag_get(), *kw = ulog_global_filter_kw_get();
+    rt_slist_t *node;
+    ulog_tag_lvl_filter_t tag_lvl = NULL;
+
+    rt_kprintf("--------------------------------------\n");
+    rt_kprintf("ulog global filter:\n");
+
+#ifndef ULOG_USING_SYSLOG
+    rt_kprintf("level   : %s\n", lvl_name[ulog_global_filter_lvl_get()]);
+#else
+    rt_kprintf("level   : %d\n", ulog_global_filter_lvl_get());
+#endif
+
+    rt_kprintf("tag     : %s\n", rt_strlen(tag) == 0 ? "NULL" : tag);
+    rt_kprintf("keyword : %s\n", rt_strlen(kw) == 0 ? "NULL" : kw);
+
+    rt_kprintf("--------------------------------------\n");
+    rt_kprintf("ulog tag's level filter:\n");
+    if (rt_slist_isempty(ulog_tag_lvl_list_get()))
+    {
+        rt_kprintf("settings not found\n");
+    }
+    else
+    {
+        /* lock output */
+        output_lock();
+        /* find the tag in list */
+        for (node = rt_slist_first(ulog_tag_lvl_list_get()); node; node = rt_slist_next(node))
+        {
+            tag_lvl = rt_slist_entry(node, struct ulog_tag_lvl_filter, list);
+            rt_kprintf("%-*.s: ", ULOG_FILTER_TAG_MAX_LEN, tag_lvl->tag);
+
+#ifndef ULOG_USING_SYSLOG
+            rt_kprintf("%s\n", lvl_name[tag_lvl->level]);
+#else
+            rt_kprintf("%d\n", tag_lvl->level);
+#endif
+
+        }
+        /* unlock output */
+        output_unlock();
+    }
+}
+MSH_CMD_EXPORT(ulog_filter, Show ulog filter settings);
 #endif /* defined(RT_USING_FINSH) && defined(FINSH_USING_MSH) */
 #endif /* ULOG_USING_FILTER */
 
