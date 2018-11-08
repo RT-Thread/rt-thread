@@ -58,9 +58,13 @@ rt_err_t ulog_backend_unregister(ulog_backend_t backend);
  */
 int ulog_tag_lvl_filter_set(const char *tag, rt_uint32_t level);
 rt_uint32_t ulog_tag_lvl_filter_get(const char *tag);
+rt_slist_t *ulog_tag_lvl_list_get(void);
 void ulog_global_filter_lvl_set(rt_uint32_t level);
+rt_uint32_t ulog_global_filter_lvl_get(void);
 void ulog_global_filter_tag_set(const char *tag);
+const char *ulog_global_filter_tag_get(void);
 void ulog_global_filter_kw_set(const char *keyword);
+const char *ulog_global_filter_kw_get(void);
 #endif /* ULOG_USING_FILTER */
 
 /*
