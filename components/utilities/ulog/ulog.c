@@ -790,6 +790,7 @@ int ulog_tag_lvl_filter_set(const char *tag, rt_uint32_t level)
         {
             /* remove current tag's level filter when input level is the lowest level */
             rt_slist_remove(&ulog.filter.tag_lvl_list, &tag_lvl->list);
+            rt_free(tag_lvl);
         }
         else
         {
