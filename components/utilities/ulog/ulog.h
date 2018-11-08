@@ -18,7 +18,7 @@
 extern "C" {
 #endif
 
-#define ULOG_VERSION_STR               "0.1.0"
+#define ULOG_VERSION_STR               "0.1.1"
 
 /*
  * ulog init and deint
