@@ -83,7 +83,7 @@ void ulog_async_waiting_log(rt_int32_t time);
 /*
  * dump the hex format data to log
  */
-void ulog_hexdump(const char *name, rt_size_t width, rt_uint8_t *buf, rt_size_t size);
+void ulog_hexdump(const char *tag, rt_size_t width, rt_uint8_t *buf, rt_size_t size);
 
 /*
  * Another log output API. This API is more difficult to use than LOG_X API.
