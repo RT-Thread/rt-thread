@@ -625,17 +625,17 @@ void ulog_raw(const char *format, ...)
 /**
  * dump the hex format data to log
  *
- * @param name name for hex object, it will show on log header
+ * @param tag name for hex object, it will show on log header
  * @param width hex number for every line, such as: 16, 32
  * @param buf hex buffer
  * @param size buffer size
  */
-void ulog_hexdump(const char *name, rt_size_t width, rt_uint8_t *buf, rt_size_t size)
+void ulog_hexdump(const char *tag, rt_size_t width, rt_uint8_t *buf, rt_size_t size)
 {
 #define __is_print(ch)       ((unsigned int)((ch) - ' ') < 127u - ' ')
 
     rt_size_t i, j;
-    rt_size_t log_len = 0, name_len = rt_strlen(name);
+    rt_size_t log_len = 0, name_len = rt_strlen(tag);
     char *log_buf = NULL, dump_string[8];
     int fmt_result;
 
@@ -644,7 +644,7 @@ void ulog_hexdump(const char *name, rt_size_t width, rt_uint8_t *buf, rt_size_t 
 #ifdef ULOG_USING_FILTER
     /* level filter */
 #ifndef ULOG_USING_SYSLOG
-    if (LOG_LVL_DBG > ulog.filter.level)
+    if (LOG_LVL_DBG > ulog.filter.level || LOG_LVL_DBG > ulog_tag_lvl_filter_get(tag))
     {
         return;
     }
@@ -654,6 +654,11 @@ void ulog_hexdump(const char *name, rt_size_t width, rt_uint8_t *buf, rt_size_t 
         return;
     }
 #endif /* ULOG_USING_SYSLOG */
+    else if (!rt_strstr(tag, ulog.filter.tag))
+    {
+        /* tag filter */
+        return;
+    }
 #endif /* ULOG_USING_FILTER */
 
     /* get log buffer */
@@ -668,7 +673,7 @@ void ulog_hexdump(const char *name, rt_size_t width, rt_uint8_t *buf, rt_size_t 
         if (i == 0)
         {
             log_len += ulog_strcpy(log_len, log_buf + log_len, "D/HEX ");
-            log_len += ulog_strcpy(log_len, log_buf + log_len, name);
+            log_len += ulog_strcpy(log_len, log_buf + log_len, tag);
             log_len += ulog_strcpy(log_len, log_buf + log_len, ": ");
         }
         else
