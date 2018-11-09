@@ -750,8 +750,9 @@ void ulog_hexdump(const char *tag, rt_size_t width, rt_uint8_t *buf, rt_size_t s
  *        When the level is LOG_FILTER_LVL_ALL, it will remove this tag's level filer.
  *        Then all level log will resume output.
  *
- * @return  0: success
- *         -5: no memory
+ * @return  0 : success
+ *         -5 : no memory
+ *         -10: level is out of range
  */
 int ulog_tag_lvl_filter_set(const char *tag, rt_uint32_t level)
 {
@@ -759,7 +760,8 @@ int ulog_tag_lvl_filter_set(const char *tag, rt_uint32_t level)
     ulog_tag_lvl_filter_t tag_lvl = NULL;
     int result = RT_EOK;
 
-    RT_ASSERT(level <= LOG_FILTER_LVL_ALL);
+    if (level >= LOG_FILTER_LVL_ALL)
+        return -RT_EINVAL;
 
     if (!ulog.init_ok)
         return result;
@@ -767,7 +769,7 @@ int ulog_tag_lvl_filter_set(const char *tag, rt_uint32_t level)
     /* lock output */
     output_lock();
     /* find the tag in list */
-    for (node = rt_slist_first(&ulog.filter.tag_lvl_list); node; node = rt_slist_next(node))
+    for (node = rt_slist_first(ulog_tag_lvl_list_get()); node; node = rt_slist_next(node))
     {
         tag_lvl = rt_slist_entry(node, struct ulog_tag_lvl_filter, list);
         if (!rt_strncmp(tag_lvl->tag, tag, ULOG_FILTER_TAG_MAX_LEN))
@@ -785,7 +787,7 @@ int ulog_tag_lvl_filter_set(const char *tag, rt_uint32_t level)
         if (level == LOG_FILTER_LVL_ALL)
         {
             /* remove current tag's level filter when input level is the lowest level */
-            rt_slist_remove(&ulog.filter.tag_lvl_list, &tag_lvl->list);
+            rt_slist_remove(ulog_tag_lvl_list_get(), &tag_lvl->list);
             rt_free(tag_lvl);
         }
         else
@@ -806,7 +808,7 @@ int ulog_tag_lvl_filter_set(const char *tag, rt_uint32_t level)
                 rt_memset(tag_lvl->tag, 0 , sizeof(tag_lvl->tag));
                 rt_strncpy(tag_lvl->tag, tag, ULOG_FILTER_TAG_MAX_LEN);
                 tag_lvl->level = level;
-                rt_slist_append(&ulog.filter.tag_lvl_list, &tag_lvl->list);
+                rt_slist_append(ulog_tag_lvl_list_get(), &tag_lvl->list);
             }
             else
             {
@@ -840,7 +842,7 @@ rt_uint32_t ulog_tag_lvl_filter_get(const char *tag)
     /* lock output */
     output_lock();
     /* find the tag in list */
-    for (node = rt_slist_first(&ulog.filter.tag_lvl_list); node; node = rt_slist_next(node))
+    for (node = rt_slist_first(ulog_tag_lvl_list_get()); node; node = rt_slist_next(node))
     {
         tag_lvl = rt_slist_entry(node, struct ulog_tag_lvl_filter, list);
         if (!rt_strncmp(tag_lvl->tag, tag, ULOG_FILTER_TAG_MAX_LEN))
@@ -1081,7 +1083,7 @@ static void ulog_filter(uint8_t argc, char **argv)
     {
         /* lock output */
         output_lock();
-        /* find the tag in list */
+        /* show the tag level list */
         for (node = rt_slist_first(ulog_tag_lvl_list_get()); node; node = rt_slist_next(node))
         {
             tag_lvl = rt_slist_entry(node, struct ulog_tag_lvl_filter, list);
@@ -1225,7 +1227,7 @@ int ulog_init(void)
     rt_slist_init(&ulog.backend_list);
 
 #ifdef ULOG_USING_FILTER
-    rt_slist_init(&ulog.filter.tag_lvl_list);
+    rt_slist_init(ulog_tag_lvl_list_get());
 #endif
 
 #ifdef ULOG_USING_ASYNC_OUTPUT
@@ -1287,7 +1289,7 @@ void ulog_deinit(void)
     /* deinit tag's level filter */
     {
         ulog_tag_lvl_filter_t tag_lvl;
-        for (node = rt_slist_first(&ulog.filter.tag_lvl_list); node; node = rt_slist_next(node))
+        for (node = rt_slist_first(ulog_tag_lvl_list_get()); node; node = rt_slist_next(node))
         {
             tag_lvl = rt_slist_entry(node, struct ulog_tag_lvl_filter, list);
             rt_free(tag_lvl);
