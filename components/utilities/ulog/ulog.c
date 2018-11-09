@@ -21,7 +21,7 @@
 #endif
 
 #ifdef ULOG_TIME_USING_TIMESTAMP
-#include <time.h>
+#include <sys/time.h>
 #endif
 
 #ifdef ULOG_USING_ASYNC_OUTPUT
