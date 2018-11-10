@@ -760,7 +760,7 @@ int ulog_tag_lvl_filter_set(const char *tag, rt_uint32_t level)
     ulog_tag_lvl_filter_t tag_lvl = NULL;
     int result = RT_EOK;
 
-    if (level >= LOG_FILTER_LVL_ALL)
+    if (level > LOG_FILTER_LVL_ALL)
         return -RT_EINVAL;
 
     if (!ulog.init_ok)
