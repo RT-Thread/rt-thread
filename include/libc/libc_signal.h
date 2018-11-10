@@ -76,20 +76,20 @@ typedef struct siginfo siginfo_t;
 typedef unsigned long sigset_t;
 
 #define SIGHUP       1
-// #define SIGINT       2
+/* #define SIGINT       2 */
 #define SIGQUIT      3
-// #define SIGILL       4
+/* #define SIGILL       4 */
 #define SIGTRAP      5
-// #define SIGABRT      6
+/* #define SIGABRT      6 */
 #define SIGEMT       7
-// #define SIGFPE       8
+/* #define SIGFPE       8 */
 #define SIGKILL      9
 #define SIGBUS      10
-// #define SIGSEGV     11
+/* #define SIGSEGV     11 */
 #define SIGSYS      12
 #define SIGPIPE     13
 #define SIGALRM     14
-// #define SIGTERM     15
+/* #define SIGTERM     15 */
 #define SIGURG      16
 #define SIGSTOP     17
 #define SIGTSTP     18
@@ -99,8 +99,8 @@ typedef unsigned long sigset_t;
 #define SIGTTOU     22
 #define SIGPOLL     23
 #define SIGWINCH    24
-// #define SIGUSR1     25
-// #define SIGUSR2     26
+/* #define SIGUSR1     25 */
+/* #define SIGUSR2     26 */
 #define SIGRTMIN    27
 #define SIGRTMAX    31
 #define NSIG        32
@@ -136,7 +136,7 @@ typedef unsigned long sigset_t;
 #define SIGQUIT      3
 #define SIGILL       4
 #define SIGTRAP      5
-// #define SIGABRT      6
+/* #define SIGABRT      6 */
 #define SIGEMT       7
 #define SIGFPE       8
 #define SIGKILL      9

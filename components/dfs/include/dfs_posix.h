@@ -41,13 +41,15 @@ int closedir(DIR* d);
 /* file api*/
 int open(const char *file, int flags, ...);
 int close(int d);
-#ifdef RT_USING_NEWLIB
+
+#if defined(RT_USING_NEWLIB) && defined(_EXFUN)
 _READ_WRITE_RETURN_TYPE _EXFUN(read, (int __fd, void *__buf, size_t __nbyte));
 _READ_WRITE_RETURN_TYPE _EXFUN(write, (int __fd, const void *__buf, size_t __nbyte));
 #else
 int read(int fd, void *buf, size_t len);
 int write(int fd, const void *buf, size_t len);
 #endif
+
 off_t lseek(int fd, off_t offset, int whence);
 int rename(const char *from, const char *to);
 int unlink(const char *pathname);
