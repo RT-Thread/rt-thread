@@ -51,11 +51,16 @@ config RT_USING_OVERFLOW_CHECK
 config RT_USING_HOOK
     bool "Enable system hook"
     default y
+    select RT_USING_IDLE_HOOK
     help
         Enable the hook function when system running, such as idle thread hook,
         thread context switch etc.
 
-    if RT_USING_HOOK
+config RT_USING_IDLE_HOOK
+    bool "Enable IDLE Task hook"
+    default y if RT_USING_HOOK
+
+    if RT_USING_IDLE_HOOK
     config RT_IDEL_HOOK_LIST_SIZE
         int "The max size of idel hook list"
         default 4
