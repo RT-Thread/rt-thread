@@ -105,26 +105,27 @@ def GCCResult(rtconfig, str):
         posix_thread = 0
 
         for line in stdout.split(b'\n'):
-            if re.search(b'fd_set', line):
+            line = line.decode()
+            if re.search('fd_set', line):
                 have_fdset = 1
 
             # check for sigal
-            if re.search(b'struct[ \t]+sigaction', line):
+            if re.search('struct[ \t]+sigaction', line):
                 have_sigaction = 1
-            if re.search(b'struct[ \t]+sigevent', line):
+            if re.search('struct[ \t]+sigevent', line):
                 have_sigevent = 1
-            if re.search(b'siginfo_t', line):
+            if re.search('siginfo_t', line):
                 have_siginfo = 1
-            if re.search(b'union[ \t]+sigval', line):
+            if re.search('union[ \t]+sigval', line):
                 have_sigval = 1
 
-            if re.search(b'char\* version', line):
-                version = re.search(br'\"([^"]+)\"', line).groups()[0]
+            if re.search('char\* version', line):
+                version = re.search(r'\"([^"]+)\"', line).groups()[0]
 
-            if re.findall(b'iso_c_visible = [\d]+', line):
+            if re.findall('iso_c_visible = [\d]+', line):
                 stdc = re.findall('[\d]+', line)[0]
 
-            if re.findall(b'pthread_create', line):
+            if re.findall('pthread_create', line):
                 posix_thread = 1
     
         if have_fdset:

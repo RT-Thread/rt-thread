@@ -30,12 +30,12 @@ import shutil
 
 def mk_rtconfig(filename):
     try:
-        config = file(filename)
+        config = open(filename, 'r')
     except:
         print('open config:%s failed' % filename)
         return
 
-    rtconfig = file('rtconfig.h', 'wb')
+    rtconfig = open('rtconfig.h', 'w')
     rtconfig.write('#ifndef RT_CONFIG_H__\n')
     rtconfig.write('#define RT_CONFIG_H__\n\n')
 
@@ -131,7 +131,7 @@ def touch_env():
         os.mkdir(os.path.join(env_dir, 'local_pkgs'))
         os.mkdir(os.path.join(env_dir, 'packages'))
         os.mkdir(os.path.join(env_dir, 'tools'))
-        kconfig = file(os.path.join(env_dir, 'packages', 'Kconfig'), 'wb')
+        kconfig = open(os.path.join(env_dir, 'packages', 'Kconfig'), 'w')
         kconfig.close()
 
     if not os.path.exists(os.path.join(env_dir, 'packages', 'packages')):
@@ -150,7 +150,7 @@ def touch_env():
                       "********************************************************************************\n")
                 help_info()
             else:
-                kconfig = file(os.path.join(env_dir, 'packages', 'Kconfig'), 'wb')
+                kconfig = open(os.path.join(env_dir, 'packages', 'Kconfig'), 'w')
                 kconfig.write('source "$PKGS_DIR/packages/Kconfig"')
                 kconfig.close()
         except:
@@ -189,7 +189,7 @@ def touch_env():
             help_info()
 
     if sys.platform != 'win32':
-        env_sh = file(os.path.join(env_dir, 'env.sh'), 'w')
+        env_sh = open(os.path.join(env_dir, 'env.sh'), 'w')
         env_sh.write('export PATH=~/.env/tools/scripts:$PATH')
     else:
         if os.path.exists(os.path.join(env_dir, 'tools', 'scripts')):
