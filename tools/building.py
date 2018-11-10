@@ -27,6 +27,7 @@
 import os
 import sys
 import string
+import utils
 
 from SCons.Script import *
 from utils import _make_path_relative
@@ -233,7 +234,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             rtconfig.CROSS_TOOL, rtconfig.PLATFORM = tgt_dict[tgt_name]
             # replace the 'RTT_CC' to 'CROSS_TOOL'
             os.environ['RTT_CC'] = rtconfig.CROSS_TOOL
-            reload(rtconfig)
+            utils.ReloadModule(rtconfig)
         except KeyError:
             print ('Unknow target: '+ tgt_name+'. Avaible targets: ' +', '.join(tgt_dict.keys()))
             sys.exit(1)
@@ -246,7 +247,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         if 'RTT_EXEC_PATH' in os.environ:
             # del the 'RTT_EXEC_PATH' and using the 'EXEC_PATH' setting on rtconfig.py
             del os.environ['RTT_EXEC_PATH']
-            reload(rtconfig)
+            utils.ReloadModule(rtconfig)
 
     # add compability with Keil MDK 4.6 which changes the directory of armcc.exe
     if rtconfig.PLATFORM == 'armcc':
@@ -407,7 +408,7 @@ def PrepareModuleBuilding(env, root_directory, bsp_directory):
 
     # parse bsp rtconfig.h to get used component
     PreProcessor = PatchedPreProcessor()
-    f = file(bsp_directory + '/rtconfig.h', 'r')
+    f = open(bsp_directory + '/rtconfig.h', 'r')
     contents = f.read()
     f.close()
     PreProcessor.process_contents(contents)
@@ -458,7 +459,7 @@ def LocalOptions(config_filename):
     # parse wiced_config.h to get used component
     PreProcessor = SCons.cpp.PreProcessor()
 
-    f = file(config_filename, 'r')
+    f = open(config_filename, 'r')
     contents = f.read()
     f.close()
 
@@ -573,6 +574,10 @@ def DefineGroup(name, src, depend, **parameters):
     if 'CCFLAGS' in group:
         Env.AppendUnique(CCFLAGS = group['CCFLAGS'])
     if 'CPPPATH' in group:
+        paths = []
+        for item in group['CPPPATH']:
+            paths.append(os.path.abspath(item))
+        group['CPPPATH'] = paths
         Env.AppendUnique(CPPPATH = group['CPPPATH'])
     if 'CPPDEFINES' in group:
         Env.AppendUnique(CPPDEFINES = group['CPPDEFINES'])
@@ -580,6 +585,18 @@ def DefineGroup(name, src, depend, **parameters):
         Env.AppendUnique(LINKFLAGS = group['LINKFLAGS'])
     if 'ASFLAGS' in group:
         Env.AppendUnique(ASFLAGS = group['ASFLAGS'])
+    if 'LOCAL_CPPPATH' in group:
+        paths = []
+        for item in group['LOCAL_CPPPATH']:
+            paths.append(os.path.abspath(item))
+        group['LOCAL_CPPPATH'] = paths
+
+    import rtconfig
+    if rtconfig.PLATFORM == 'gcc':
+        if 'CCFLAGS' in group:
+            group['CCFLAGS'] = utils.GCCC99Patch(group['CCFLAGS'])
+        if 'LOCAL_CCFLAGS' in group:
+            group['LOCAL_CCFLAGS'] = utils.GCCC99Patch(group['LOCAL_CCFLAGS'])
 
     # check whether to clean up library
     if GetOption('cleanlib') and os.path.exists(os.path.join(group['path'], GroupLibFullName(name, Env))):
@@ -863,7 +880,7 @@ def GetVersion():
 
     # parse rtdef.h to get RT-Thread version
     prepcessor = PatchedPreProcessor()
-    f = file(rtdef, 'r')
+    f = open(rtdef, 'r')
     contents = f.read()
     f.close()
     prepcessor.process_contents(contents)
