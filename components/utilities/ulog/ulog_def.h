@@ -165,6 +165,15 @@ extern "C" {
 
 #define ULOG_FRAME_MAGIC               0x10
 
+/* tag's level filter */
+struct ulog_tag_lvl_filter
+{
+    char tag[ULOG_FILTER_TAG_MAX_LEN + 1];
+    rt_uint32_t level;
+    rt_slist_t list;
+};
+typedef struct ulog_tag_lvl_filter *ulog_tag_lvl_filter_t;
+
 struct ulog_frame
 {
     /* magic word is 0x10 ('lo') */
