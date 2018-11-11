@@ -202,6 +202,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     Env = env
     Rtt_Root = os.path.abspath(root_directory)
+
+    # make an absolute root directory
+    RTT_ROOT = Rtt_Root
+    Export('RTT_ROOT')
+
     # set RTT_ROOT in ENV
     Env['RTT_ROOT'] = Rtt_Root
     # set BSP_ROOT in ENV
