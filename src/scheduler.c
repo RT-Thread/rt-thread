@@ -91,11 +91,19 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
         level = rt_hw_interrupt_disable();
         while (level);
     }
-    else if ((rt_uint32_t)thread->sp <= ((rt_uint32_t)thread->stack_addr + 32))
+#if defined(ARCH_CPU_STACK_GROWS_UPWARD)
+    else if ((rt_uint32_t)thread->sp > ((rt_uint32_t)thread->stack_addr + thread->stack_size))
     {
-        rt_kprintf("warning: %s stack is close to end of stack address.\n",
+        rt_kprintf("warning: %s stack is close to the top of stack address.\n",
                    thread->name);
     }
+#else
+    else if ((rt_uint32_t)thread->sp <= ((rt_uint32_t)thread->stack_addr + 32))
+    {
+        rt_kprintf("warning: %s stack is close to the bottom of stack address.\n",
+                   thread->name);
+    }
+#endif
 }
 #endif
 
