@@ -88,3 +88,7 @@ config ARCH_IA32
 
 config ARCH_HOST_SIMULATOR
     bool
+
+config ARCH_CPU_STACK_GROWS_UPWARD
+    bool
+    default n
