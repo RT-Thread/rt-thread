@@ -3,10 +3,10 @@ from building import *
 cwd = GetCurrentDir()
 path = [cwd + '/include']
 
-src = Split('''
-src/at_cli.c
-src/at_utils.c
-''')
+src = Glob('src/at_utils.c')
+
+if GetDepend(['AT_USING_CLI']):
+    src += Glob('src/at_cli.c')
 
 if GetDepend(['AT_USING_SERVER']):
     src += Split('''
