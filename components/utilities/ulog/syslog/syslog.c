@@ -26,6 +26,8 @@
 
 #ifdef ULOG_USING_SYSLOG
 
+#include <sys/time.h>
+
 #ifndef ULOG_SYSLOG_IDENT_MAX_LEN
 #define ULOG_SYSLOG_IDENT_MAX_LEN      ULOG_FILTER_TAG_MAX_LEN
 #endif
