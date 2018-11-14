@@ -402,14 +402,17 @@ static void sf(uint8_t argc, char **argv) {
             } else {
                 char *spi_dev_name = argv[2];
                 rtt_dev_bak = rtt_dev;
+                
+                /* delete the old SPI flash device */
+                if(rtt_dev_bak) {
+                    rt_sfud_flash_delete(rtt_dev_bak);
+                }
+                
                 rtt_dev = rt_sfud_flash_probe("sf_cmd", spi_dev_name);
                 if (!rtt_dev) {
                     return;
                 }
-                /* already probe then delete the old SPI flash device */
-                if(rtt_dev_bak) {
-                    rt_sfud_flash_delete(rtt_dev_bak);
-                }
+
                 sfud_dev = (sfud_flash_t)rtt_dev->user_data;
                 if (sfud_dev->chip.capacity < 1024 * 1024) {
                     rt_kprintf("%d KB %s is current selected device.\n", sfud_dev->chip.capacity / 1024, sfud_dev->name);
