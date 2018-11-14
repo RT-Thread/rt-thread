@@ -118,9 +118,8 @@ config RT_USING_RTC
         default n
     config RTC_SYNC_USING_NTP
         bool "Using NTP auto sync RTC time"
-        select PKG_USING_NETUTILS
-        select PKG_NETUTILS_NTP
-        default n
+        depends on PKG_NETUTILS_NTP
+        default y
 
         if RTC_SYNC_USING_NTP
         config RTC_NTP_FIRST_SYNC_DELAY
