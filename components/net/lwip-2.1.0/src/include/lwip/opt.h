@@ -564,7 +564,7 @@
  * (before freeing the corresponding memory using lwip_freeaddrinfo()).
  */
 #if !defined MEMP_NUM_NETDB || defined __DOXYGEN__
-#define MEMP_NUM_NETDB                  1
+#define MEMP_NUM_NETDB                  2
 #endif
 
 /**

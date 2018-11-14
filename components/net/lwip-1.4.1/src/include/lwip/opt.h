@@ -388,7 +388,7 @@
  * (before freeing the corresponding memory using lwip_freeaddrinfo()).
  */
 #ifndef MEMP_NUM_NETDB
-#define MEMP_NUM_NETDB                  1
+#define MEMP_NUM_NETDB                  2
 #endif
 
 /**
