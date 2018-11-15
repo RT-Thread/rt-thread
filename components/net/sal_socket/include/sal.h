@@ -25,7 +25,7 @@ extern "C" {
 typedef uint32_t socklen_t;
 #endif
 
-/* sal socket magic word */
+/* SAL socket magic word */
 #define SAL_SOCKET_MAGIC               0x5A10
 
 /* The maximum number of sockets structure */
@@ -38,12 +38,12 @@ typedef uint32_t socklen_t;
 #define SAL_PROTO_FAMILIES_NUM         4
 #endif
 
-/* sal socket offset */
+/* SAL socket offset */
 #ifndef SAL_SOCKET_OFFSET
 #define SAL_SOCKET_OFFSET              0
 #endif
 
-struct proto_ops
+struct sal_socket_ops
 {
     int (*socket)     (int domain, int type, int protocol);
     int (*closesocket)(int s);
@@ -64,30 +64,38 @@ struct proto_ops
 #endif
 };
 
+struct sal_proto_ops
+{
+    struct hostent* (*gethostbyname)  (const char *name);
+    int             (*gethostbyname_r)(const char *name, struct hostent *ret, char *buf, size_t buflen, struct hostent **result, int *h_errnop);
+    int             (*getaddrinfo)    (const char *nodename, const char *servname, const struct addrinfo *hints, struct addrinfo **res);
+    void            (*freeaddrinfo)   (struct addrinfo *ai);
+};
+
 struct sal_socket
 {
-    uint32_t magic;                    /* sal socket magic word */
+    uint32_t magic;                    /* SAL socket magic word */
 
-    int socket;                        /* sal socket descriptor */
+    int socket;                        /* SAL socket descriptor */
     int domain;
     int type;
     int protocol;
 
-    const struct proto_ops  *ops;      /* socket options */
-    void *user_data;                   /* specific sal socket data */
+    const struct sal_socket_ops *ops;  /* socket options */
+
+    void *user_data;                   /* user-specific data */
+#ifdef SAL_USING_TLS
+    void *user_data_tls;               /* user-specific TLS data */
+#endif
 };
 
-struct proto_family
+struct sal_proto_family
 {
-    char name[RT_NAME_MAX];
     int family;                        /* primary protocol families type */
     int sec_family;                    /* secondary protocol families type */
-    int             (*create)(struct sal_socket *sal_socket, int type, int protocol);   /* register socket options */
+    int (*create)(struct sal_socket *sal_socket, int type, int protocol);   /* register socket options */
 
-    struct hostent* (*gethostbyname)  (const char *name);
-    int             (*gethostbyname_r)(const char *name, struct hostent *ret, char *buf, size_t buflen, struct hostent **result, int *h_errnop);
-    void            (*freeaddrinfo)   (struct addrinfo *ai);
-    int             (*getaddrinfo)    (const char *nodename, const char *servname, const struct addrinfo *hints, struct addrinfo **res);
+    struct sal_proto_ops *ops;             /* protocol family options */
 };
 
 /* SAL(Socket Abstraction Layer) initialize */
@@ -95,10 +103,11 @@ int sal_init(void);
 
 struct sal_socket *sal_get_socket(int sock);
 
-/* protocol family register and unregister operate */
-int sal_proto_family_register(const struct proto_family *pf);
-int sal_proto_family_unregister(const struct proto_family *pf);
-struct proto_family *sal_proto_family_find(const char *name);
+/* SAL protocol family register and unregister operate */
+int sal_proto_family_register(const struct sal_proto_family *pf);
+int sal_proto_family_unregister(int family);
+rt_bool_t sal_proto_family_is_registered(int family);
+struct sal_proto_family *sal_proto_family_find(int family);
 
 #ifdef __cplusplus
 }

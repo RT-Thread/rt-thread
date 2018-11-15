@@ -62,7 +62,7 @@ static int at_poll(struct dfs_fd *file, struct rt_pollreq *req)
 }
 #endif
 
-static const struct proto_ops at_inet_stream_ops =
+static const struct sal_socket_ops at_socket_ops =
 {
     at_socket,
     at_closesocket,
@@ -90,25 +90,30 @@ static int at_create(struct sal_socket *socket, int type, int protocol)
 
     //TODO Check type & protocol
 
-    socket->ops = &at_inet_stream_ops;
+    socket->ops = &at_socket_ops;
 
     return 0;
 }
 
-static const struct proto_family at_inet_family_ops = {
-    "at",
+static struct sal_proto_ops at_proto_ops =
+{
+    at_gethostbyname,
+    NULL,
+    at_getaddrinfo,
+    at_freeaddrinfo,
+};
+
+static const struct sal_proto_family at_inet_family =
+{
     AF_AT,
     AF_INET,
     at_create,
-    at_gethostbyname,
-    NULL,
-    at_freeaddrinfo,
-    at_getaddrinfo,
+    &at_proto_ops,
 };
 
 int at_inet_init(void)
 {
-    sal_proto_family_register(&at_inet_family_ops);
+    sal_proto_family_register(&at_inet_family);
 
     return 0;
 }
