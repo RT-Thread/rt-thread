@@ -539,7 +539,7 @@ struct stm32f4_spi stm32f4_spi5 =
 
 static struct rt_spi_bus spi5_bus;
 
-
+#ifdef SPI_USE_DMA
 /**
   * @brief  This function handles DMA Rx interrupt request.
   * @param  None
@@ -558,6 +558,7 @@ void DMA2_Stream4_IRQHandler(void)
 {
     HAL_DMA_IRQHandler(stm32f4_spi5.spi_handle.hdmatx);
 }
+#endif /* SPI_USE_DMA */
 
 #endif
 
