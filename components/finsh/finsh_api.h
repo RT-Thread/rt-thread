@@ -1,20 +1,7 @@
 /*
- * File      : finsh_api.h
- * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -102,20 +89,20 @@ struct finsh_syscall* finsh_syscall_lookup(const char* name);
                 };
 
         #else
-            #define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)      \
-                const char __fsym_##cmd##_name[] SECTION(".rodata.name") = #cmd;   \
-                const char __fsym_##cmd##_desc[] SECTION(".rodata.name") = #desc;  \
-                const struct finsh_syscall __fsym_##cmd SECTION("FSymTab")= \
+            #define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)                      \
+                const char __fsym_##cmd##_name[] SECTION(".rodata.name") = #cmd;    \
+                const char __fsym_##cmd##_desc[] SECTION(".rodata.name") = #desc;   \
+                RT_USED const struct finsh_syscall __fsym_##cmd SECTION("FSymTab")= \
                 {                           \
                     __fsym_##cmd##_name,    \
                     __fsym_##cmd##_desc,    \
                     (syscall_func)&name     \
                 };
 
-            #define FINSH_VAR_EXPORT(name, type, desc)              \
-                const char __vsym_##name##_name[] SECTION(".rodata.name") = #name; \
-                const char __vsym_##name##_desc[] SECTION(".rodata.name") = #desc; \
-                const struct finsh_sysvar __vsym_##name SECTION("VSymTab")= \
+            #define FINSH_VAR_EXPORT(name, type, desc)                              \
+                const char __vsym_##name##_name[] SECTION(".rodata.name") = #name;  \
+                const char __vsym_##name##_desc[] SECTION(".rodata.name") = #desc;  \
+                RT_USED const struct finsh_sysvar __vsym_##name SECTION("VSymTab")= \
                 {                           \
                     __vsym_##name##_name,   \
                     __vsym_##name##_desc,   \
@@ -139,10 +126,10 @@ struct finsh_syscall* finsh_syscall_lookup(const char* name);
             #define FINSH_VAR_EXPORT(name, type, desc)              \
                 const char __vsym_##name##_name[] = #name;          \
                 __declspec(allocate("VSymTab")) const struct finsh_sysvar __vsym_##name = \
-                {                           \
-                    __vsym_##name##_name,   \
-                    type,                   \
-                    (void*)&name            \
+                {                                                                         \
+                    __vsym_##name##_name,                                                 \
+                    type,                                                                 \
+                    (void*)&name                                                          \
                 };
 
         #elif defined(__TI_COMPILER_VERSION__)
@@ -159,28 +146,28 @@ struct finsh_syscall* finsh_syscall_lookup(const char* name);
                 __TI_FINSH_EXPORT_VAR(__vsym_##name);               \
                 const char __vsym_##name##_name[] = #name;          \
                 const struct finsh_sysvar __vsym_##name =           \
-                {                           \
-                    __vsym_##name##_name,   \
-                    type,                   \
-                    (void*)&name            \
+                {                                                   \
+                    __vsym_##name##_name,                           \
+                    type,                                           \
+                    (void*)&name                                    \
                 };
 
         #else
-            #define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)      \
-                const char __fsym_##cmd##_name[] = #cmd;            \
-                const struct finsh_syscall __fsym_##cmd SECTION("FSymTab")= \
-                {                           \
-                    __fsym_##cmd##_name,    \
-                    (syscall_func)&name     \
+            #define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)                      \
+                const char __fsym_##cmd##_name[] = #cmd;                            \
+                RT_USED const struct finsh_syscall __fsym_##cmd SECTION("FSymTab")= \
+                {                                                                   \
+                    __fsym_##cmd##_name,                                            \
+                    (syscall_func)&name                                             \
                 };
 
-            #define FINSH_VAR_EXPORT(name, type, desc)              \
-                const char __vsym_##name##_name[] = #name;          \
-                const struct finsh_sysvar __vsym_##name SECTION("VSymTab")= \
-                {                           \
-                    __vsym_##name##_name,   \
-                    type,                   \
-                    (void*)&name            \
+            #define FINSH_VAR_EXPORT(name, type, desc)                              \
+                const char __vsym_##name##_name[] = #name;                          \
+                RT_USED const struct finsh_sysvar __vsym_##name SECTION("VSymTab")= \
+                {                                                                   \
+                    __vsym_##name##_name,                                           \
+                    type,                                                           \
+                    (void*)&name                                                    \
                 };
 
         #endif

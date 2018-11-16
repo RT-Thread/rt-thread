@@ -1,0 +1,268 @@
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# 1. The minimum set of files needed for lwIP.
+lwipcore_SRCS = Split("""
+src/core/init.c
+src/core/def.c
+src/core/dns.c
+src/core/inet_chksum.c
+src/core/ip.c
+src/core/memp.c
+src/core/netif.c
+src/core/pbuf.c
+src/core/raw.c
+src/core/stats.c
+src/core/sys.c
+src/core/tcp.c
+src/core/tcp_in.c
+src/core/tcp_out.c
+src/core/timeouts.c
+src/core/udp.c
+""")
+
+# 1.1 
+lwipcore_altcp_SRCS = Split("""
+src/core/altcp.c
+src/core/altcp_alloc.c
+src/core/altcp_tcp.c
+""")
+
+# 1.2 
+lwipcore4_SRCS = Split("""
+src/core/ipv4/autoip.c
+src/core/ipv4/dhcp.c
+src/core/ipv4/etharp.c
+src/core/ipv4/icmp.c
+src/core/ipv4/igmp.c
+src/core/ipv4/ip4_frag.c
+src/core/ipv4/ip4.c
+src/core/ipv4/ip4_addr.c
+""")
+
+# 1.3 
+lwipcore6_SRCS = Split("""
+src/core/ipv6/dhcp6.c
+src/core/ipv6/ethip6.c
+src/core/ipv6/icmp6.c
+src/core/ipv6/inet6.c
+src/core/ipv6/ip6.c
+src/core/ipv6/ip6_addr.c
+src/core/ipv6/ip6_frag.c
+src/core/ipv6/mld6.c
+src/core/ipv6/nd6.c
+""")
+
+# 2. APIFILES: The files which implement the sequential and socket APIs.
+lwipapi_SRCS = Split("""
+src/api/api_lib.c
+src/api/api_msg.c
+src/api/err.c
+src/api/if_api.c
+src/api/netbuf.c
+src/api/netdb.c
+src/api/netifapi.c
+src/api/sockets.c
+src/api/tcpip.c
+""")
+
+# 3. Files implementing various generic network interface functions
+lwipnetif_SRCS = Split("""
+src/netif/ethernet.c
+src/netif/ethernetif.c
+""")
+
+# 3.1 Files implementing an IEEE 802.1D bridge by using a multilayer netif approach
+lwipnetif_bridgeif_SRCS = Split("""
+src/netif/bridgeif.c
+src/netif/bridgeif_fdb.c
+""")
+
+# 3.2 A generic implementation of the SLIP (Serial Line IP) protocol.
+lwipnetif_slipif_SRCS = Split("""
+src/netif/slipif.c
+""")
+
+# 4. 6LoWPAN
+lwipsixlowpan_SRCS = Split("""
+src/netif/lowpan6.c
+""")
+
+# 4.1 A 6LoWPAN over Bluetooth Low Energy (BLE) implementation as netif,
+#           according to RFC-7668.
+lwipsixlowpan_ble_SRCS = Split("""
+src/netif/lowpan6_ble.c
+""")
+
+# 4.2 Common 6LowPAN routines for IPv6.
+lwipsixlowpan_ipv6_SRCS = Split("""
+src/netif/lowpan6_common.c
+""")
+
+# 4.3 A netif implementing the ZigBee Encapsulation Protocol (ZEP).
+lwipsixlowpan_zep_SRCS = Split("""
+src/netif/zepif.c
+""")
+
+# 5. PPP
+lwipppp_SRCS = Split("""
+src/netif/ppp/auth.c
+src/netif/ppp/ccp.c
+src/netif/ppp/chap-md5.c
+src/netif/ppp/chap_ms.c
+src/netif/ppp/chap-new.c
+src/netif/ppp/demand.c
+src/netif/ppp/eap.c
+src/netif/ppp/ecp.c
+src/netif/ppp/eui64.c
+src/netif/ppp/fsm.c
+src/netif/ppp/ipcp.c
+src/netif/ppp/ipv6cp.c
+src/netif/ppp/lcp.c
+src/netif/ppp/magic.c
+src/netif/ppp/mppe.c
+src/netif/ppp/multilink.c
+src/netif/ppp/ppp.c
+src/netif/ppp/pppapi.c
+src/netif/ppp/pppcrypt.c
+src/netif/ppp/pppoe.c
+src/netif/ppp/pppol2tp.c
+src/netif/ppp/pppos.c
+src/netif/ppp/upap.c
+src/netif/ppp/utils.c
+src/netif/ppp/vj.c
+src/netif/ppp/polarssl/arc4.c
+src/netif/ppp/polarssl/des.c
+src/netif/ppp/polarssl/md4.c
+src/netif/ppp/polarssl/md5.c
+src/netif/ppp/polarssl/sha1.c
+""")
+
+# 6. SNMPv3 agent
+lwipsnmp_SRCS = Split("""
+src/apps/snmp/snmp_asn1.c
+src/apps/snmp/snmp_core.c
+src/apps/snmp/snmp_mib2.c
+src/apps/snmp/snmp_mib2_icmp.c
+src/apps/snmp/snmp_mib2_interfaces.c
+src/apps/snmp/snmp_mib2_ip.c
+src/apps/snmp/snmp_mib2_snmp.c
+src/apps/snmp/snmp_mib2_system.c
+src/apps/snmp/snmp_mib2_tcp.c
+src/apps/snmp/snmp_mib2_udp.c
+src/apps/snmp/snmp_snmpv2_framework.c
+src/apps/snmp/snmp_snmpv2_usm.c
+src/apps/snmp/snmp_msg.c
+src/apps/snmp/snmpv3.c
+src/apps/snmp/snmp_netconn.c
+src/apps/snmp/snmp_pbuf_stream.c
+src/apps/snmp/snmp_raw.c
+src/apps/snmp/snmp_scalar.c
+src/apps/snmp/snmp_table.c
+src/apps/snmp/snmp_threadsync.c
+src/apps/snmp/snmp_traps.c
+""")
+
+# 7. HTTP server + client
+lwiphttp_SRCS = Split("""
+src/apps/http/altcp_proxyconnect.c
+src/apps/http/fs.c
+src/apps/http/http_client.c
+src/apps/http/httpd.c
+""")
+
+# 8. MAKEFSDATA HTTP server host utility
+lwipmakefsdata_SRCS = Split("""
+src/apps/http/makefsdata/makefsdata.c
+""")
+
+# 9. IPERF server
+lwipiperf_SRCS = Split("""
+src/apps/lwiperf/lwiperf.c
+""")
+
+# 10. SMTP client
+lwipsmtp_SRCS = Split("""
+src/apps/smtp/smtp.c
+""")
+
+# 11. SNTP client
+lwipsntp_SRCS = Split("""
+src/apps/sntp/sntp.c
+""")
+
+# 12. MDNS responder
+lwipmdns_SRCS = Split("""
+src/apps/mdns/mdns.c
+""")
+
+# 13. NetBIOS name server
+lwipnetbios_SRCS = Split("""
+src/apps/netbiosns/netbiosns.c
+""")
+
+# 14. TFTP server files
+lwiptftp_SRCS = Split("""
+src/apps/tftp/tftp_server.c
+src/apps/tftp/tftp_port.c
+""")
+
+# 15. MQTT client files
+lwipmqtt_SRCS = Split("""
+src/apps/mqtt/mqtt.c
+""")
+
+# 16. ARM MBEDTLS related files of lwIP rep
+lwipmbedtls_SRCS = Split("""
+src/apps/altcp_tls/altcp_tls_mbedtls.c
+src/apps/altcp_tls/altcp_tls_mbedtls_mem.c
+src/apps/snmp/snmpv3_mbedtls.c
+""")
+
+# 17. ping
+lwipping_SRCS = Split("""
+src/apps/ping/ping.c
+""")
+
+src = Split("""
+src/arch/sys_arch.c
+""")
+
+src += lwipcore_SRCS       # rm mem.c
+src += lwipcore_altcp_SRCS
+src += lwipapi_SRCS
+src += lwipnetif_SRCS
+src += lwipsixlowpan_SRCS
+
+src += lwipcore4_SRCS
+
+path = [cwd + '/src',
+    cwd + '/src/include',
+    cwd + '/src/arch/include',
+    cwd + '/src/include/netif']
+
+if not GetDepend('RT_USING_SAL'):
+    path += [cwd + '/src/include/compat/posix']
+
+if GetDepend(['RT_LWIP_SNMP']):
+    src += lwipsnmp_SRCS
+    path += [cwd + '/src/apps/snmp']
+
+if GetDepend(['RT_LWIP_PPP']):
+    src += lwipppp_SRCS
+    path += [cwd + '/src/netif/ppp']
+
+if GetDepend(['RT_USING_LWIP_IPV6']):
+    src += lwipcore6_SRCS
+
+if GetDepend(['RT_USING_NETUTILS']):
+    if GetDepend(['RT_NETUTILS_USING_TFTP']):
+        src += lwiptftp_SRCS
+    if GetDepend(['RT_NETUTILS_USING_PING']):
+        src += lwipping_SRCS
+
+group = DefineGroup('lwIP', src, depend = ['RT_USING_LWIP', 'RT_USING_LWIP210'], CPPPATH = path)
+
+Return('group')

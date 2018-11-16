@@ -1,21 +1,7 @@
 /*
- * File      : kservice.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -35,6 +21,10 @@
 
 #include <rtthread.h>
 #include <rthw.h>
+
+#ifdef RT_USING_MODULE
+#include <dlmodule.h>
+#endif
 
 /* use precision */
 #define RT_PRINTF_PRECISION
@@ -531,7 +521,7 @@ char *rt_strdup(const char *s)
     return tmp;
 }
 RTM_EXPORT(rt_strdup);
-#ifdef __CC_ARM
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
 char *strdup(const char *s) __attribute__((alias("rt_strdup")));
 #endif
 #endif
@@ -1323,13 +1313,10 @@ void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line)
     if (rt_assert_hook == RT_NULL)
     {
 #ifdef RT_USING_MODULE
-        if (rt_module_self() != RT_NULL)
+        if (dlmodule_self())
         {
-            /* unload assertion module */
-            rt_module_unload(rt_module_self());
-
-            /* re-schedule */
-            rt_schedule();
+            /* close assertion module */
+            dlmodule_exit(-1);
         }
         else
 #endif

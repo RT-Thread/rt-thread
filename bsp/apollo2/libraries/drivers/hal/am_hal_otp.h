@@ -38,16 +38,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_HAL_OTP_H
 #define AM_HAL_OTP_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
 //*****************************************************************************
 //
@@ -81,6 +76,11 @@ extern "C"
 #define AM_OTP_STRM_LOCKOUT_M       (0x1 << AM_OTP_STRM_LOCKOUT_S)
 #define AM_OTP_SRAM_LOCKOUT_S       (2)
 #define AM_OTP_SRAM_LOCKOUT_M       (0x1 << AM_OTP_SRAM_LOCKOUT_S)
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 //*****************************************************************************
 //

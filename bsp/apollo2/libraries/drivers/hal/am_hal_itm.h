@@ -42,17 +42,12 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
 #ifndef AM_HAL_ITM_H
 #define AM_HAL_ITM_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
 //*****************************************************************************
 //
@@ -71,12 +66,16 @@ extern "C"
 #define AM_HAL_ITM_PRINT_NUM_REGS       1
 extern uint32_t am_hal_itm_print_registers[AM_HAL_ITM_PRINT_NUM_REGS];
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 //*****************************************************************************
 //
 // External function definitions
 //
 //*****************************************************************************
-extern void am_hal_itm_delay_us(uint32_t ui32MicroSeconds);
 extern void am_hal_itm_enable(void);
 extern void am_hal_itm_disable(void);
 extern void am_hal_itm_not_busy(void);

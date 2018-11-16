@@ -76,7 +76,13 @@ if RT_USING_AT
             default n
          
     endif
-    
+
+    config AT_SW_VERSION_NUM
+        hex
+        default 0x10200
+        help
+            sfotware module version number
+
 endif
 
 endmenu

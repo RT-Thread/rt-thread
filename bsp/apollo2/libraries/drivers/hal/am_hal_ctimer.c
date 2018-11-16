@@ -42,7 +42,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -68,11 +68,12 @@
 // still pass in the event of a timer rollover.
 //
 //*****************************************************************************
+//! Timer read workaround: Do count values differ by one tick or less.
 #define adjacent(A, B)      (((A) == (B)) || (((A) + 1) == (B)) || ((B) == 0))
 
 //*****************************************************************************
 //
-// Array of function pointers for handling CTimer interrupts.
+//! Array of function pointers for handling CTimer interrupts.
 //
 //*****************************************************************************
 am_hal_ctimer_handler_t am_hal_ctimer_ppfnHandlers[16];
@@ -162,10 +163,10 @@ back2back_reads( uint32_t u32TimerAddr, uint32_t u32Data[])
 
 //*****************************************************************************
 //
-// @brief Check to see if the given CTimer is using the HFRC
-//
-//  Note - Calls to this function should be from inside a critical section.
-//
+//! @brief Check to see if the given CTimer is using the HFRC
+//!
+//! @note Calls to this function should be from inside a critical section.
+//!
 //! @return None.
 //
 //*****************************************************************************
@@ -501,7 +502,7 @@ am_hal_ctimer_config(uint32_t ui32TimerNumber,
 //! @param ui32TimerSegment specifies which segment of the timer should be
 //! enabled.
 //!
-//! @param ui32Configval specifies the configuration options for the selected
+//! @param ui32ConfigVal specifies the configuration options for the selected
 //! timer.
 //!
 //! This function should be used to perform the initial set-up of the
@@ -823,7 +824,7 @@ uint32_t
 am_hal_ctimer_read(uint32_t ui32TimerNumber, uint32_t ui32TimerSegment)
 {
     volatile uint32_t ui32Value = 0;
-    uint32_t ui32Values[3] = {0};
+    uint32_t ui32Values[4] = {0, };
     uint32_t ui32TimerAddrTbl[4] =
     {
         REG_CTIMER_BASEADDR + AM_REG_CTIMER_TMR0_O,
@@ -1023,7 +1024,7 @@ am_hal_ctimer_pin_disable(uint32_t ui32TimerNumber, uint32_t ui32TimerSegment)
 //!
 //! @param ui32TimerSegment specifies which segment of the timer to use.
 //!
-//! @param bInvertOutpt determines whether the output should be inverted. If
+//! @param bInvertOutput determines whether the output should be inverted. If
 //! true, the timer output pin for the selected timer segment will be
 //! inverted.
 //!
@@ -1131,7 +1132,7 @@ am_hal_ctimer_compare_set(uint32_t ui32TimerNumber, uint32_t ui32TimerSegment,
     pui32CmprRegA = (uint32_t *)(AM_REG_CTIMERn(0) +
                                  AM_REG_CTIMER_CMPRA0_O +
                                  (ui32TimerNumber * TIMER_OFFSET));
-    pui32CmprRegB = pui32CmprRegA + CTIMER_CMPR_OFFSET;
+    pui32CmprRegB = pui32CmprRegA + CTIMER_CMPR_OFFSET / 4;
 
     //
     // Write the compare register with the selected value.

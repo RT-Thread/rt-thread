@@ -103,7 +103,7 @@ void aaci_ac97_write(rt_uint16_t reg, rt_uint16_t val)
 
     if (v & (AACI_SLFR_1TXB | AACI_SLFR_2TXB))
     {
-        dbg_log(DBG_ERROR, "timeout waiting for write to complete\n");
+        LOG_E("timeout waiting for write to complete");
     }
 }
 
@@ -126,7 +126,7 @@ rt_uint16_t aaci_ac97_read(rt_uint16_t reg)
 
     if (v & AACI_SLFR_1TXB)
     {
-        dbg_log(DBG_ERROR, "timeout on slot 1 TX busy\n");
+        LOG_E("timeout on slot 1 TX busy");
         v = ~0x0;
         return v;
     }
@@ -142,7 +142,7 @@ rt_uint16_t aaci_ac97_read(rt_uint16_t reg)
 
     if (v != (AACI_SLFR_1RXV | AACI_SLFR_2RXV))
     {
-        dbg_log(DBG_ERROR, "timeout on RX valid\n");
+        LOG_E("timeout on RX valid");
         v = ~0x0;
         return v;
     }
@@ -157,12 +157,12 @@ rt_uint16_t aaci_ac97_read(rt_uint16_t reg)
         }
         else if (--retries)
         {
-            dbg_log(DBG_ERROR, "ac97 read back fail. retry\n");
+            LOG_E("ac97 read back fail. retry");
             continue;
         }
         else
         {
-            dbg_log(DBG_ERROR, "wrong ac97 register read back (%x != %x)\n", v, reg);
+            LOG_E("wrong ac97 register read back (%x != %x)", v, reg);
             v = ~0x0;
         }
     }
@@ -277,7 +277,7 @@ rt_err_t aaci_pl041_irq_register(int channle, pl041_irq_fun_t fun, void *user_da
 {
     if (channle < 0 || channle >= PL041_CHANNLE_NUM)
     {
-        dbg_log(DBG_ERROR, "%s channle:%d err.\n", __FUNCTION__, channle);
+        LOG_E("%s channle:%d err.", __FUNCTION__, channle);
         return -RT_ERROR;
     }
     irq_tbl[channle].fun = fun;
@@ -289,7 +289,7 @@ rt_err_t aaci_pl041_irq_unregister(int channle)
 {
     if (channle < 0 || channle >= PL041_CHANNLE_NUM)
     {
-        dbg_log(DBG_ERROR, "%s channle:%d err.\n", __FUNCTION__, channle);
+        LOG_E("%s channle:%d err.", __FUNCTION__, channle);
         return -RT_ERROR;
     }
     irq_tbl[channle].fun = RT_NULL;
@@ -312,17 +312,17 @@ static void aaci_pl041_irq_handle(int irqno, void *param)
         m = mask & 0x7f;
         if (m & AACI_ISR_ORINTR)
         {
-            dbg_log(DBG_WARNING, "RX overrun on chan %d\n", channle);
+            LOG_W("RX overrun on chan %d", channle);
         }
 
         if (m & AACI_ISR_RXTOINTR)
         {
-            dbg_log(DBG_WARNING, "RX timeout on chan %d\n", channle);
+            LOG_W("RX timeout on chan %d", channle);
         }
 
         if (mask & AACI_ISR_URINTR)
         {
-            dbg_log(DBG_WARNING, "TX underrun on chan %d\n", channle);
+            LOG_W("TX underrun on chan %d", channle);
         }
 
         p_status = (void *)((rt_uint32_t)(&PL041->sr1) + channle * 0x14);

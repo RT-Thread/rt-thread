@@ -26,9 +26,6 @@
 #ifndef __DRV_UART_H__
 #define __DRV_UART_H__
 
-#include "ameba_soc.h"
-#include "serial_api.h"
-
 #if defined(CONFIG_PLATFORM_8711B)
 // 8710B
 #define UART_TX PA_23

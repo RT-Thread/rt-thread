@@ -28,11 +28,9 @@ if RT_USING_LIBC && RT_USING_DFS
         default n
     endif
 
-    if RT_USING_MODULE
-    config RT_USING_LIBDL
-        bool "Enable dlopen/dlsym/dlclose feature"
+    config RT_USING_MODULE
+        bool "Enable dynamic module with dlopen/dlsym/dlclose feature"
         default n
-    endif
 endif
 
 endmenu

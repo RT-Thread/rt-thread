@@ -1,21 +1,7 @@
 /*
- * File      : rtthread.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -114,7 +100,8 @@ rt_tick_t rt_timer_next_timeout_tick(void);
 void rt_timer_check(void);
 
 #ifdef RT_USING_HOOK
-void rt_timer_timeout_sethook(void (*hook)(struct rt_timer *timer));
+void rt_timer_enter_sethook(void (*hook)(struct rt_timer *timer));
+void rt_timer_exit_sethook(void (*hook)(struct rt_timer *timer));
 #endif
 
 /**@}*/
@@ -442,44 +429,6 @@ rt_err_t  rt_device_control(rt_device_t dev, int cmd, void *arg);
 /**@}*/
 #endif
 
-#ifdef RT_USING_MODULE
-/**
- * @addtogroup Module
- */
-
-/**@{*/
-
-/*
- * module interface
- */
-rt_module_t rt_module_load(const char *name, void *module_ptr);
-rt_err_t rt_module_unload(rt_module_t module);
-#ifdef RT_USING_DFS
-rt_module_t rt_module_open(const char *filename);
-rt_module_t rt_module_exec_cmd(const char *path, const char *cmd_line, int size);
-#endif
-void *rt_module_malloc(rt_size_t size);
-void *rt_module_realloc(void *ptr, rt_size_t size);
-void rt_module_free(rt_module_t module, void *addr);
-rt_module_t rt_module_self(void);
-rt_module_t rt_module_find(const char *name);
-
-#ifdef RT_USING_HOOK
-void rt_module_load_sethook(void (*hook)(rt_module_t module));
-void rt_module_unload_sethook(void (*hook)(rt_module_t module));
-#endif
-
-void rt_module_init_object_container(struct rt_module *module);
-rt_err_t rt_module_destroy(rt_module_t module);
-
-/*
- * application module system initialization
- */
-int rt_system_module_init(void);
-
-/**@}*/
-#endif
-
 /*
  * interrupt service
  */
@@ -549,7 +498,7 @@ rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count);
 rt_int32_t rt_strcmp(const char *cs, const char *ct);
 rt_size_t rt_strlen(const char *src);
 char *rt_strdup(const char *s);
-#ifdef __CC_ARM
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
 /* leak strdup interface */
 char* strdup(const char* str);
 #endif

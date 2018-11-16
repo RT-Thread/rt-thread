@@ -1,0 +1,18 @@
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+path = [cwd + '/inc']
+libs = ['']
+libpath = [cwd + '/libs']
+
+if rtconfig.CROSS_TOOL == 'gcc':
+    libs += ['libsmartconfig_armcm4_gcc']
+elif rtconfig.CROSS_TOOL == 'iar':
+    libs += ['libsmartconfig_armcm4_iar']
+
+group = DefineGroup('smartconfig', src, depend = ['RT_USING_SMARTCONFIG_LIB'], CPPPATH = path, LIBS = libs, LIBPATH = libpath)
+
+Return('group')
+

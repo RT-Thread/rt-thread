@@ -1,21 +1,7 @@
 /*
- * File      : idle.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -31,6 +17,10 @@
 
 #include <rthw.h>
 #include <rtthread.h>
+
+#ifdef RT_USING_MODULE
+#include <dlmodule.h>
+#endif
 
 #if defined (RT_USING_HOOK)
 #ifndef RT_USING_IDLE_HOOK
@@ -158,7 +148,7 @@ void rt_thread_idle_excute(void)
         rt_base_t lock;
         rt_thread_t thread;
 #ifdef RT_USING_MODULE
-        rt_module_t module = RT_NULL;
+        struct rt_dlmodule *module = RT_NULL;
 #endif
         RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -173,14 +163,10 @@ void rt_thread_idle_excute(void)
                                    struct rt_thread,
                                    tlist);
 #ifdef RT_USING_MODULE
-            /* get thread's parent module */
-            module = (rt_module_t)thread->module_id;
-
-            /* if the thread is module's main thread */
-            if (module != RT_NULL && module->module_thread == thread)
+            module = (struct rt_dlmodule*)thread->module_id;
+            if (module)
             {
-                /* detach module's main thread */
-                module->module_thread = RT_NULL;
+                dlmodule_destroy(module);
             }
 #endif
             /* remove defunct thread */

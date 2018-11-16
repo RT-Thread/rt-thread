@@ -1,26 +1,7 @@
 /*
- *  RT-Thread finsh shell commands
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
- *
- *  This file is part of RT-Thread (http://www.rt-thread.org)
- *  Maintainer: bernard.xiong <bernard.xiong at gmail.com>
- *
- *  All rights reserved.
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -47,6 +28,9 @@
  */
 
 #include <rtthread.h>
+
+#ifdef RT_USING_FINSH
+
 #include "finsh.h"
 
 long hello(void)
@@ -117,16 +101,28 @@ static long _list_thread(struct rt_list_node *list)
         else if (stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
         else if (stat == RT_THREAD_CLOSE)   rt_kprintf(" close  ");
 
+#if defined(ARCH_CPU_STACK_GROWS_UPWARD)
+        ptr = (rt_uint8_t *)thread->stack_addr + thread->stack_size;
+        while (*ptr == '#')ptr --;
+
+        rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
+                   ((rt_uint32_t)thread->sp - (rt_uint32_t)thread->stack_addr),
+                   thread->stack_size,
+                   ((rt_uint32_t)ptr - (rt_uint32_t)thread->stack_addr) * 100 / thread->stack_size,
+                   thread->remaining_tick,
+                   thread->error);
+#else
         ptr = (rt_uint8_t *)thread->stack_addr;
         while (*ptr == '#')ptr ++;
 
         rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
-                   thread->stack_size + ((rt_uint32_t)thread->stack_addr - (rt_uint32_t)thread->sp),
+                   (thread->stack_size + (rt_uint32_t)thread->stack_addr - (rt_uint32_t)thread->sp),
                    thread->stack_size,
-                   (thread->stack_size - ((rt_uint32_t) ptr - (rt_uint32_t) thread->stack_addr)) * 100
+                   (thread->stack_size + (rt_uint32_t)thread->stack_addr - (rt_uint32_t) ptr) * 100
                         / thread->stack_size,
                    thread->remaining_tick,
                    thread->error);
+#endif
     }
 
     return 0;
@@ -584,38 +580,6 @@ FINSH_FUNCTION_EXPORT(list_device, list device in system);
 MSH_CMD_EXPORT(list_device, list device in system);
 #endif
 
-#ifdef RT_USING_MODULE
-#include <rtm.h>
-
-int list_module(void)
-{
-    int maxlen;
-    struct rt_module *module;
-    struct rt_list_node *list, *node;
-    struct rt_object_information *info;
-    const char *item_title = "module";
-
-    info = rt_object_get_information(RT_Object_Class_Module);
-    list = &info->object_list;
-
-    maxlen = object_name_maxlen(item_title, list);
-
-    rt_kprintf("%-*.s ref      address \n", maxlen, item_title); object_split(maxlen);
-    rt_kprintf(         " -------- ------------\n");
-    for (node = list->next; node != list; node = node->next)
-    {
-        module = (struct rt_module *)(rt_list_entry(node, struct rt_object, list));
-        rt_kprintf("%-*.*s %-04d  0x%08x\n",
-                   maxlen, RT_NAME_MAX,
-                   module->parent.name, module->nref, module->module_space);
-    }
-
-    return 0;
-}
-FINSH_FUNCTION_EXPORT(list_module, list module in system);
-MSH_CMD_EXPORT(list_module, list module in system);
-#endif
-
 long list(void)
 {
 #ifndef FINSH_USING_MSH_ONLY
@@ -882,3 +846,6 @@ void list_prefix(char *prefix)
 static int dummy = 0;
 FINSH_VAR_EXPORT(dummy, finsh_type_int, dummy variable for finsh)
 #endif
+
+#endif /* RT_USING_FINSH */
+

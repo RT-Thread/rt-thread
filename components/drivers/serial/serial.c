@@ -1,21 +1,7 @@
 /*
- * File      : serial.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -84,19 +70,19 @@ static int serial_fops_open(struct dfs_fd *fd)
     switch (fd->flags & O_ACCMODE)
     {
     case O_RDONLY:
-        dbg_log(DBG_LOG, "fops open: O_RDONLY!\n");
+        LOG_D("fops open: O_RDONLY!");
         flags = RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_RDONLY;
         break;
     case O_WRONLY:
-        dbg_log(DBG_LOG, "fops open: O_WRONLY!\n");
+        LOG_D("fops open: O_WRONLY!");
         flags = RT_DEVICE_FLAG_WRONLY;
         break;
     case O_RDWR:
-        dbg_log(DBG_LOG, "fops open: O_RDWR!\n");
+        LOG_D("fops open: O_RDWR!");
         flags = RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_RDWR;
         break;
     default:
-        dbg_log(DBG_ERROR, "fops open: unknown mode - %d!\n", fd->flags & O_ACCMODE);
+        LOG_E("fops open: unknown mode - %d!", fd->flags & O_ACCMODE);
         break;
     }
 
@@ -573,7 +559,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
     RT_ASSERT(dev != RT_NULL);
     serial = (struct rt_serial_device *)dev;
 
-    dbg_log(DBG_LOG, "open serial device: 0x%08x with open flag: 0x%04x\n",
+    LOG_D("open serial device: 0x%08x with open flag: 0x%04x",
         dev, oflag);
     /* check device flag with the open flag */
     if ((oflag & RT_DEVICE_FLAG_DMA_RX) && !(dev->flag & RT_DEVICE_FLAG_DMA_RX))

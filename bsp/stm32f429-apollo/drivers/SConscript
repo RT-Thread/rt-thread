@@ -2,8 +2,12 @@ from building import *
 
 cwd = GetCurrentDir()
 
+# init src and inc vars
+src = []
+inc = []
+
 # add the general drivers.
-src = Split("""
+src += Split("""
 board.c
 stm32f4xx_it.c
 usart.c
@@ -11,6 +15,9 @@ drv_sdram.c
 drv_rtc.c
 drv_mpu.c
 """)
+
+# add dwin basic include
+inc += [cwd]
 
 # add sdio driver
 if GetDepend('RT_USING_DFS'):
@@ -39,12 +46,15 @@ if GetDepend('RT_USING_SPI'):
 if GetDepend('RT_USING_SFUD'):
     src += ['drv_spi_flash.c']
 
+# add audio drivers.
+if GetDepend('RT_USING_SAI_AUDIO'):
+    src += Glob('./audio/*.c')
+    inc += [cwd + "/audio"] 
+
 # add lcd drivers.
 if GetDepend('PKG_USING_GUIENGINE'):
     src += ['drv_lcd.c']
- 
-CPPPATH = [cwd]
 
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = inc)
 
 Return('group')
