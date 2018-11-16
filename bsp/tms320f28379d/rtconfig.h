@@ -14,7 +14,7 @@
 #define RT_USING_HOOK
 #define RT_IDEL_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 1024
-#define RT_STACK_UPWARD_GROW
+#define ARCH_CPU_STACK_GROWS_UPWARD
 #define RT_DEBUG
 
 /* Inter-Thread communication */
