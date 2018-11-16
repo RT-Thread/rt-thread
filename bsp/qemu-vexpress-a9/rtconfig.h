@@ -14,7 +14,7 @@
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_IDEL_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 512
+#define IDLE_THREAD_STACK_SIZE 1024
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 1024
@@ -109,6 +109,7 @@
 #define RT_USING_MTD_NAND
 #define RT_MTD_NAND_DEBUG
 #define RT_USING_RTC
+#define RT_USING_SOFT_RTC
 #define RT_USING_SDIO
 #define RT_SDIO_STACK_SIZE 512
 #define RT_SDIO_THREAD_PRIORITY 15
@@ -121,6 +122,9 @@
 #define RT_SFUD_USING_SFDP
 #define RT_SFUD_USING_FLASH_INFO_TABLE
 #define RT_USING_WDT
+
+/* Using WiFi */
+
 
 /* Using USB */
 
@@ -239,6 +243,8 @@
 
 
 /* sample package */
+
+/* samples: kernel and components samples */
 
 
 /* example package: hello */

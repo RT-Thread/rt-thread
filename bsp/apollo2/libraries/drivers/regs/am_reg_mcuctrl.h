@@ -38,7 +38,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_REG_MCUCTRL_H
@@ -143,6 +143,7 @@
 #define AM_REG_MCUCTRL_CHIPREV_REVMIN_M              0x0000000F
 #define AM_REG_MCUCTRL_CHIPREV_REVMIN(n)             (((uint32_t)(n) << 0) & 0x0000000F)
 #define AM_REG_MCUCTRL_CHIPREV_REVMIN_REV0           0x00000000
+#define AM_REG_MCUCTRL_CHIPREV_REVMIN_REV2           0x00000002
 
 //*****************************************************************************
 //

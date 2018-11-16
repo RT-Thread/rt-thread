@@ -1,21 +1,7 @@
 /*
- * File      : af_inet_at.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -33,6 +19,8 @@
 #ifdef SAL_USING_POSIX
 #include <dfs_poll.h>
 #endif
+
+#ifdef SAL_USING_AT
 
 #ifdef SAL_USING_POSIX
 static int at_poll(struct dfs_fd *file, struct rt_pollreq *req)
@@ -74,7 +62,7 @@ static int at_poll(struct dfs_fd *file, struct rt_pollreq *req)
 }
 #endif
 
-static const struct proto_ops at_inet_stream_ops =
+static const struct sal_socket_ops at_socket_ops =
 {
     at_socket,
     at_closesocket,
@@ -102,26 +90,33 @@ static int at_create(struct sal_socket *socket, int type, int protocol)
 
     //TODO Check type & protocol
 
-    socket->ops = &at_inet_stream_ops;
+    socket->ops = &at_socket_ops;
 
     return 0;
 }
 
-static const struct proto_family at_inet_family_ops = {
-    "at",
+static struct sal_proto_ops at_proto_ops =
+{
+    at_gethostbyname,
+    NULL,
+    at_getaddrinfo,
+    at_freeaddrinfo,
+};
+
+static const struct sal_proto_family at_inet_family =
+{
     AF_AT,
     AF_INET,
     at_create,
-    at_gethostbyname,
-    NULL,
-    at_freeaddrinfo,
-    at_getaddrinfo,
+    &at_proto_ops,
 };
 
 int at_inet_init(void)
 {
-    sal_proto_family_register(&at_inet_family_ops);
+    sal_proto_family_register(&at_inet_family);
 
     return 0;
 }
 INIT_COMPONENT_EXPORT(at_inet_init);
+
+#endif /* SAL_USING_AT */

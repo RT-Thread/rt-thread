@@ -1,21 +1,7 @@
 /*
- * File      : spi_flash_sfud.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2016, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -416,14 +402,17 @@ static void sf(uint8_t argc, char **argv) {
             } else {
                 char *spi_dev_name = argv[2];
                 rtt_dev_bak = rtt_dev;
+                
+                /* delete the old SPI flash device */
+                if(rtt_dev_bak) {
+                    rt_sfud_flash_delete(rtt_dev_bak);
+                }
+                
                 rtt_dev = rt_sfud_flash_probe("sf_cmd", spi_dev_name);
                 if (!rtt_dev) {
                     return;
                 }
-                /* already probe then delete the old SPI flash device */
-                if(rtt_dev_bak) {
-                    rt_sfud_flash_delete(rtt_dev_bak);
-                }
+
                 sfud_dev = (sfud_flash_t)rtt_dev->user_data;
                 if (sfud_dev->chip.capacity < 1024 * 1024) {
                     rt_kprintf("%d KB %s is current selected device.\n", sfud_dev->chip.capacity / 1024, sfud_dev->name);

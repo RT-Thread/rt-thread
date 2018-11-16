@@ -33,24 +33,21 @@
 
 #define SPI_BUS_MAX_CLK    (30 * 1000 * 1000)
 
+//#define DEBUG
+
 #define DBG_ENABLE
 #define DBG_SECTION_NAME  "SPI"
+#ifdef DEBUG
+#define DBG_LEVEL         DBG_LOG
+#else
 #define DBG_LEVEL         DBG_WARNING
+#endif /* DEBUG */
 #define DBG_COLOR
 #include <rtdbg.h>
 
 #ifdef RT_USING_SPI
 
-//#define DEBUG
-
 #define ARR_LEN(__N)      (sizeof(__N) / sizeof(__N[0]))
-
-#ifdef DEBUG
-#define DEBUG_PRINTF(...)   rt_kprintf(__VA_ARGS__)
-#else
-#define DEBUG_PRINTF(...)
-#endif
-
 
 #define __SPI_STATIC_INLINE__ rt_inline
 
@@ -296,7 +293,7 @@ void SPI_DMA(SPI_T *spi, bool txEn, bool rxEn)
  * @brief
  */
 __SPI_STATIC_INLINE__
-void SPI_SetTxFifoThreshold(SPI_T *spi, uint8_t threshold)
+void SPI_SetTxFifoThreshold(SPI_T *spi, rt_uint8_t threshold)
 {
     HAL_MODIFY_REG(spi->FCTL, SPI_FCTL_TX_TRIG_LEVEL_MASK, threshold << SPI_FCTL_TX_TRIG_LEVEL_SHIFT);
 }
@@ -305,7 +302,7 @@ void SPI_SetTxFifoThreshold(SPI_T *spi, uint8_t threshold)
  * @brief
  */
 __SPI_STATIC_INLINE__
-void SPI_SetRxFifoThreshold(SPI_T *spi, uint8_t threshold)
+void SPI_SetRxFifoThreshold(SPI_T *spi, rt_uint8_t threshold)
 {
     HAL_MODIFY_REG(spi->FCTL, SPI_FCTL_RX_TRIG_LEVEL_MASK, threshold << SPI_FCTL_RX_TRIG_LEVEL_SHIFT);
 }
@@ -314,18 +311,18 @@ void SPI_SetRxFifoThreshold(SPI_T *spi, uint8_t threshold)
  * @brief
  */
 __SPI_STATIC_INLINE__
-uint8_t SPI_GetTxFifoCounter(SPI_T *spi)
+rt_uint8_t SPI_GetTxFifoCounter(SPI_T *spi)
 {
-    return (uint8_t)((spi->FST & SPI_FST_TF_CNT_MASK) >> SPI_FST_TF_CNT_SHIFT);
+    return (rt_uint8_t)((spi->FST & SPI_FST_TF_CNT_MASK) >> SPI_FST_TF_CNT_SHIFT);
 }
 
 /*
  * @brief
  */
 __SPI_STATIC_INLINE__
-uint8_t SPI_GetRxFifoCounter(SPI_T *spi)
+rt_uint8_t SPI_GetRxFifoCounter(SPI_T *spi)
 {
-    return (uint8_t)((spi->FST & SPI_FST_RF_CNT_MASK) >> SPI_FST_RF_CNT_SHIFT);
+    return (rt_uint8_t)((spi->FST & SPI_FST_RF_CNT_MASK) >> SPI_FST_RF_CNT_SHIFT);
 }
 
 /*
@@ -350,7 +347,7 @@ void SPI_DisableDualMode(SPI_T *spi)
  * @brief
  */
 __SPI_STATIC_INLINE__
-void SPI_SetInterval(SPI_T *spi, uint16_t nSCLK)
+void SPI_SetInterval(SPI_T *spi, rt_uint16_t nSCLK)
 {
     HAL_MODIFY_REG(spi->WAIT, SPI_WAIT_WCC_MASK, nSCLK << SPI_WAIT_WCC_SHIFT);
 }
@@ -358,9 +355,9 @@ void SPI_SetInterval(SPI_T *spi, uint16_t nSCLK)
 /*
  * @brief
  */
-static void SPI_SetClkDiv(SPI_T *spi, uint16_t div)
+static void SPI_SetClkDiv(SPI_T *spi, rt_uint16_t div)
 {
-    uint8_t n = 0;
+    rt_uint8_t n = 0;
     if (div < 1)
     {
         return;
@@ -401,7 +398,7 @@ void SPI_SetDataSize(SPI_T *spi, rt_uint32_t data_size, rt_uint32_t dummy_size)
  * @brief
  */
 __SPI_STATIC_INLINE__
-void SPI_Write(SPI_T *spi, uint8_t *data)
+void SPI_Write(SPI_T *spi, rt_uint8_t *data)
 {
     HAL_REG_8BIT(&spi->TXD) = *data;
 }
@@ -410,7 +407,7 @@ void SPI_Write(SPI_T *spi, uint8_t *data)
  * @brief
  */
 __SPI_STATIC_INLINE__
-void SPI_Read(SPI_T *spi, uint8_t *data)
+void SPI_Read(SPI_T *spi, rt_uint8_t *data)
 {
     *data = HAL_REG_8BIT(&spi->RXD);
 }
@@ -419,18 +416,18 @@ void SPI_Read(SPI_T *spi, uint8_t *data)
  * @brief
  */
 __SPI_STATIC_INLINE__
-uint8_t *SPI_TxAddress(SPI_T *spi)
+rt_uint8_t *SPI_TxAddress(SPI_T *spi)
 {
-    return (uint8_t *)&spi->TXD;
+    return (rt_uint8_t *)&spi->TXD;
 }
 
 /*
  * @brief
  */
 __SPI_STATIC_INLINE__
-uint8_t *SPI_RxAddress(SPI_T *spi)
+rt_uint8_t *SPI_RxAddress(SPI_T *spi)
 {
-    return (uint8_t *)&spi->RXD;
+    return (rt_uint8_t *)&spi->RXD;
 }
 
 /* private rt-thread spi ops function */
@@ -451,30 +448,30 @@ static rt_err_t configure(struct rt_spi_device *device,
     struct tina_spi *_spi_info = (struct tina_spi *)spi_bus->parent.user_data;
     SPI_T *spi = _spi_info->spi;
 
-    DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+    LOG_D("%s -> %d", __FUNCTION__, __LINE__);
 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(configuration != RT_NULL);
 
-    DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+    LOG_D("%s -> %d", __FUNCTION__, __LINE__);
 
-    DEBUG_PRINTF("spi address: %08X\n", (rt_uint32_t)spi);
+    LOG_D("spi address: %08X", (rt_uint32_t)spi);
 
     SPI_Disable(spi);
     SPI_Reset(spi);
     SPI_ResetRxFifo(spi);
     SPI_ResetTxFifo(spi);
 
-    DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+    LOG_D("%s -> %d", __FUNCTION__, __LINE__);
 
     /* data_width */
     if (configuration->data_width != 8)
     {
-        DEBUG_PRINTF("error: data_width is %d\n", configuration->data_width);
+        LOG_D("error: data_width is %d", configuration->data_width);
         return RT_EIO;
     }
 
-    DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+    LOG_D("%s -> %d", __FUNCTION__, __LINE__);
     SPI_SetDuplex(spi, SPI_TCTRL_DHB_FULL_DUPLEX);
     SPI_SetMode(spi, SPI_CTRL_MODE_MASTER);
 
@@ -510,7 +507,7 @@ static rt_err_t configure(struct rt_spi_device *device,
         rt_uint32_t max_hz;
         rt_uint32_t div;
 
-        DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+        LOG_D("%s -> %d", __FUNCTION__, __LINE__);
 
         max_hz = configuration->max_hz;
 
@@ -520,14 +517,14 @@ static rt_err_t configure(struct rt_spi_device *device,
         }
         spi_clock = ahb_get_clk();
 
-        DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+        LOG_D("%s -> %d", __FUNCTION__, __LINE__);
 
         div = (spi_clock + max_hz - 1) / max_hz;
 
-        dbg_log(DBG_LOG, "configuration->max_hz: %d\n", configuration->max_hz);
-        dbg_log(DBG_LOG, "max freq: %d\n", max_hz);
-        dbg_log(DBG_LOG, "spi_clock: %d\n", spi_clock);
-        dbg_log(DBG_LOG, "div: %d\n", div);
+        LOG_D("configuration->max_hz: %d", configuration->max_hz);
+        LOG_D("max freq: %d", max_hz);
+        LOG_D("spi_clock: %d", spi_clock);
+        LOG_D("div: %d", div);
 
         SPI_SetClkDiv(spi, div / 2);
     } /* baudrate */
@@ -536,7 +533,7 @@ static rt_err_t configure(struct rt_spi_device *device,
     SPI_SetDataSize(spi, 0, 0);
     SPI_Enable(spi);
 
-    DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+    LOG_D("%s -> %d", __FUNCTION__, __LINE__);
 
     return RT_EOK;
 };
@@ -552,19 +549,19 @@ static rt_uint32_t xfer(struct rt_spi_device *device, struct rt_spi_message *mes
     RT_ASSERT(device != NULL);
     RT_ASSERT(message != NULL);
 
-    DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
-    DEBUG_PRINTF("spi_info: %08X\n", (rt_uint32_t)_spi_info);
-    DEBUG_PRINTF("spi address: %08X\n", (rt_uint32_t)spi);
+    LOG_D("%s -> %d", __FUNCTION__, __LINE__);
+    LOG_D("spi_info: %08X", (rt_uint32_t)_spi_info);
+    LOG_D("spi address: %08X", (rt_uint32_t)spi);
 
     /* take CS */
     if (message->cs_take)
     {
         SPI_ManualChipSelect(spi, tina_spi_cs->cs);
         SPI_SetCsLevel(spi, false);
-        DEBUG_PRINTF("spi take cs\n");
+        LOG_D("spi take cs");
     }
 
-    DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+    LOG_D("%s -> %d", __FUNCTION__, __LINE__);
 
     {
         if ((config->data_width <= 8) && (message->length > 0))
@@ -574,7 +571,7 @@ static rt_uint32_t xfer(struct rt_spi_device *device, struct rt_spi_message *mes
             rt_uint32_t tx_size = message->length;
             rt_uint32_t rx_size = message->length;
 
-            DEBUG_PRINTF("spi poll transfer start: %d\n", tx_size);
+            LOG_D("spi poll transfer start: %d", tx_size);
 
             SPI_ResetTxFifo(spi);
             SPI_ResetRxFifo(spi);
@@ -582,12 +579,12 @@ static rt_uint32_t xfer(struct rt_spi_device *device, struct rt_spi_message *mes
 
             SPI_StartTransmit(spi);
 
-            DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+            LOG_D("%s -> %d", __FUNCTION__, __LINE__);
 
             while (tx_size > 0 || rx_size > 0)
             {
-                uint8_t tx_data = 0xFF;
-                uint8_t rx_data = 0xFF;
+                rt_uint8_t tx_data = 0xFF;
+                rt_uint8_t rx_data = 0xFF;
 
                 while ((SPI_GetTxFifoCounter(spi) < SPI_FIFO_SIZE) && (tx_size > 0))
                 {
@@ -611,25 +608,25 @@ static rt_uint32_t xfer(struct rt_spi_device *device, struct rt_spi_message *mes
                 }
             }
 
-            DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+            LOG_D("%s -> %d", __FUNCTION__, __LINE__);
 
             if ((tx_size != 0) || (rx_size != 0))
             {
-                DEBUG_PRINTF("spi_tx_rx error with tx count = %d, rx count = %d.\n", tx_size, rx_size);
+                LOG_D("spi_tx_rx error with tx count = %d, rx count = %d.", tx_size, rx_size);
 
                 return 0;
             }
 
-            DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+            LOG_D("%s -> %d", __FUNCTION__, __LINE__);
 
             while (SPI_IntState(spi, SPI_INT_TRANSFER_COMPLETE) == 0);
             SPI_ClearInt(spi, SPI_INT_TRANSFER_COMPLETE);
 
-            DEBUG_PRINTF("spi poll transfer finsh\n");
+            LOG_D("spi poll transfer finsh");
         }
         else if (config->data_width > 8)
         {
-            DEBUG_PRINTF("data width: %d\n", config->data_width);
+            LOG_D("data width: %d", config->data_width);
             RT_ASSERT(NULL);
         }
     }
@@ -638,7 +635,7 @@ static rt_uint32_t xfer(struct rt_spi_device *device, struct rt_spi_message *mes
     if (message->cs_release)
     {
         SPI_SetCsLevel(spi, true);
-        DEBUG_PRINTF("spi release cs\n");
+        LOG_D("spi release cs");
     }
 
     return message->length;
@@ -676,7 +673,7 @@ rt_err_t tina_spi_bus_register(SPI_T *spi, const char *spi_bus_name)
 {
     int i;
 
-    DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+    LOG_D("%s -> %d", __FUNCTION__, __LINE__);
 
     RT_ASSERT(spi_bus_name != RT_NULL);
 
@@ -688,67 +685,67 @@ rt_err_t tina_spi_bus_register(SPI_T *spi, const char *spi_bus_name)
             bus_gate_clk_enalbe(spis[i].spi_gate);
 
             spis[i].spi_bus->parent.user_data = (void *)&spis[i];
-            DEBUG_PRINTF("bus  addr: %08X\n", (rt_uint32_t)spis[i].spi_bus);
-            DEBUG_PRINTF("user_data: %08X\n", (rt_uint32_t)spis[i].spi_bus->parent.user_data);
-            DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+            LOG_D("bus  addr: %08X", (rt_uint32_t)spis[i].spi_bus);
+            LOG_D("user_data: %08X", (rt_uint32_t)spis[i].spi_bus->parent.user_data);
+            LOG_D("%s -> %d", __FUNCTION__, __LINE__);
             rt_spi_bus_register(spis[i].spi_bus, spi_bus_name, &tina_spi_ops);
-            DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+            LOG_D("%s -> %d", __FUNCTION__, __LINE__);
             return RT_EOK;
         }
     }
 
-    DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+    LOG_D("%s -> %d", __FUNCTION__, __LINE__);
 
     return RT_ERROR;
 }
 
 int rt_hw_spi_init(void)
 {
-    DEBUG_PRINTF("register spi bus\n");
+    LOG_D("register spi bus");
 
 #ifdef TINA_USING_SPI0
     /* register spi bus */
     {
         rt_err_t result;
 
-        DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+        LOG_D("%s -> %d", __FUNCTION__, __LINE__);
 
         gpio_set_func(GPIO_PORT_C, GPIO_PIN_0, IO_FUN_1);
         gpio_set_func(GPIO_PORT_C, GPIO_PIN_2, IO_FUN_1);
         gpio_set_func(GPIO_PORT_C, GPIO_PIN_3, IO_FUN_1);
 
-        DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+        LOG_D("%s -> %d", __FUNCTION__, __LINE__);
 
         result = tina_spi_bus_register((SPI_T *)SPI0_BASE_ADDR, "spi0");
         if (result != RT_EOK)
         {
-            DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+            LOG_D("%s -> %d", __FUNCTION__, __LINE__);
             return result;
         }
     }
 
-    DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+    LOG_D("%s -> %d", __FUNCTION__, __LINE__);
     /* attach cs */
     {
         static struct rt_spi_device spi_device;
         static struct tina_spi_cs  spi_cs;
         rt_err_t result;
 
-        DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+        LOG_D("%s -> %d", __FUNCTION__, __LINE__);
         spi_cs.cs = SPI_TCTRL_SS_SEL_SS0;
 
-        DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+        LOG_D("%s -> %d", __FUNCTION__, __LINE__);
         gpio_set_func(GPIO_PORT_C, GPIO_PIN_1, IO_FUN_1);
 
-        DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+        LOG_D("%s -> %d", __FUNCTION__, __LINE__);
         result = rt_spi_bus_attach_device(&spi_device, "spi00", "spi0", (void *)&spi_cs);
         if (result != RT_EOK)
         {
-            DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+            LOG_D("%s -> %d", __FUNCTION__, __LINE__);
             return result;
         }
     }
-    DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
+    LOG_D("%s -> %d", __FUNCTION__, __LINE__);
 #endif
 
 #ifdef TINA_USING_SPI1
@@ -763,12 +760,12 @@ int rt_hw_spi_init(void)
         result = tina_spi_bus_register((SPI_T *)SPI1_BASE_ADDR, "spi1");
         if (result != RT_EOK)
         {
-            DEBUG_PRINTF("register spi bus faild: %d\n", result);
+            LOG_D("register spi bus faild: %d", result);
             return result;
         }
     }
 
-    DEBUG_PRINTF("attach cs\n");
+    LOG_D("attach cs");
     /* attach cs */
     {
         static struct rt_spi_device spi_device;
@@ -781,7 +778,7 @@ int rt_hw_spi_init(void)
         result = rt_spi_bus_attach_device(&spi_device, "spi10", "spi1", (void *)&spi_cs);
         if (result != RT_EOK)
         {
-            DEBUG_PRINTF("attach cs faild: %d\n", result);
+            LOG_D("attach cs faild: %d", result);
             return result;
         }
     }

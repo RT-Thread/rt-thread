@@ -1,0 +1,16 @@
+from building import *
+
+cwd  = GetCurrentDir()
+src  = Glob('*.c')
+path = [cwd]
+
+if GetDepend('ULOG_BACKEND_USING_CONSOLE'):
+    src += ['backend/console_be.c']
+    
+if GetDepend('ULOG_USING_SYSLOG'):
+    path +=  [cwd + '/syslog']
+    src  += Glob('syslog/*.c')
+
+group = DefineGroup('Utilities', src, depend = ['RT_USING_ULOG'], CPPPATH = path)
+
+Return('group')

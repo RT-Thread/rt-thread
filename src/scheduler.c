@@ -1,21 +1,7 @@
 /*
- * File      : scheduler.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -105,11 +91,19 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
         level = rt_hw_interrupt_disable();
         while (level);
     }
-    else if ((rt_uint32_t)thread->sp <= ((rt_uint32_t)thread->stack_addr + 32))
+#if defined(ARCH_CPU_STACK_GROWS_UPWARD)
+    else if ((rt_uint32_t)thread->sp > ((rt_uint32_t)thread->stack_addr + thread->stack_size))
     {
-        rt_kprintf("warning: %s stack is close to end of stack address.\n",
+        rt_kprintf("warning: %s stack is close to the top of stack address.\n",
                    thread->name);
     }
+#else
+    else if ((rt_uint32_t)thread->sp <= ((rt_uint32_t)thread->stack_addr + 32))
+    {
+        rt_kprintf("warning: %s stack is close to the bottom of stack address.\n",
+                   thread->name);
+    }
+#endif
 }
 #endif
 

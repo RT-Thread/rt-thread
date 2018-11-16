@@ -26,8 +26,6 @@
            kservice.h
            mem.c
            mempool.c
-           module.c
-           module.h
            object.c
            rtm.c
            scheduler.c

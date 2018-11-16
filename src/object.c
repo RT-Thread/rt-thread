@@ -1,21 +1,7 @@
 /*
- * File      : object.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -31,6 +17,10 @@
 
 #include <rtthread.h>
 #include <rthw.h>
+
+#ifdef RT_USING_MODULE
+#include <dlmodule.h>
+#endif
 
 /*
  * define object_info for the number of rt_object_container items.
@@ -111,7 +101,7 @@ static struct rt_object_information rt_object_container[RT_Object_Info_Unknown] 
     {RT_Object_Class_Timer, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Timer), sizeof(struct rt_timer)},
 #ifdef RT_USING_MODULE
     /* initialize object container - module */
-    {RT_Object_Class_Module, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Module), sizeof(struct rt_module)},
+    {RT_Object_Class_Module, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Module), sizeof(struct rt_dlmodule)},
 #endif
 };
 
@@ -251,6 +241,9 @@ void rt_object_init(struct rt_object         *object,
 {
     register rt_base_t temp;
     struct rt_object_information *information;
+#ifdef RT_USING_MODULE
+    struct rt_dlmodule *module = dlmodule_self();
+#endif
 
     /* get object information */
     information = rt_object_get_information(type);
@@ -269,8 +262,18 @@ void rt_object_init(struct rt_object         *object,
     /* lock interrupt */
     temp = rt_hw_interrupt_disable();
 
-    /* insert object into information object list */
-    rt_list_insert_after(&(information->object_list), &(object->list));
+#ifdef RT_USING_MODULE
+    if (module)
+    {
+        rt_list_insert_after(&(module->object_list), &(object->list));
+        object->module_id = (void *)module;
+    }
+    else
+#endif
+    {
+        /* insert object into information object list */
+        rt_list_insert_after(&(information->object_list), &(object->list));
+    }
 
     /* unlock interrupt */
     rt_hw_interrupt_enable(temp);
@@ -318,6 +321,9 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
     struct rt_object *object;
     register rt_base_t temp;
     struct rt_object_information *information;
+#ifdef RT_USING_MODULE
+    struct rt_dlmodule *module = dlmodule_self();
+#endif
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -332,6 +338,9 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
         return RT_NULL;
     }
 
+    /* clean memory data of object */
+    rt_memset(object, 0x0, information->object_size);
+
     /* initialize object's parameters */
 
     /* set object type */
@@ -339,14 +348,6 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
 
     /* set object flag */
     object->flag = 0;
-
-#ifdef RT_USING_MODULE
-    if (rt_module_self() != RT_NULL)
-    {
-        object->flag |= RT_OBJECT_FLAG_MODULE;
-    }
-    object->module_id = (void *)rt_module_self();
-#endif
 
     /* copy name */
     rt_strncpy(object->name, name, RT_NAME_MAX);
@@ -356,8 +357,18 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
     /* lock interrupt */
     temp = rt_hw_interrupt_disable();
 
-    /* insert object into information object list */
-    rt_list_insert_after(&(information->object_list), &(object->list));
+#ifdef RT_USING_MODULE
+    if (module)
+    {
+        rt_list_insert_after(&(module->object_list), &(object->list));
+        object->module_id = (void *)module;
+    }
+    else
+#endif
+    {
+        /* insert object into information object list */
+        rt_list_insert_after(&(information->object_list), &(object->list));
+    }
 
     /* unlock interrupt */
     rt_hw_interrupt_enable(temp);

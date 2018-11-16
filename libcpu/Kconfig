@@ -5,6 +5,9 @@ config ARCH_ARM_CORTEX_M
     bool
     select ARCH_ARM
 
+config ARCH_ARM_CORTEX_FPU
+    bool
+
 config ARCH_ARM_CORTEX_M0
     bool
     select ARCH_ARM_CORTEX_M
@@ -85,3 +88,7 @@ config ARCH_IA32
 
 config ARCH_HOST_SIMULATOR
     bool
+
+config ARCH_CPU_STACK_GROWS_UPWARD
+    bool
+    default n
