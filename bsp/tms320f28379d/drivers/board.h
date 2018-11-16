@@ -1,15 +1,12 @@
 /*
- * File      : board.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2009-09-22     Bernard      add board.h to this bsp
+ * 2018-09-02     xuzhuoyi     modify for TMS320F28379D version
  */
 // <<< Use Configuration Wizard in Context Menu >>>
 #ifndef __BOARD_H__

@@ -1,3 +1,12 @@
+;
+; Copyright (c) 2006-2018, RT-Thread Development Team
+;
+; SPDX-License-Identifier: Apache-2.0
+;
+; Change Logs:
+; Date           Author       Notes
+; 2018-09-01     xuzhuoyi     the first version.
+;
 
     .ref   _rt_interrupt_to_thread
     .ref   _rt_interrupt_from_thread
