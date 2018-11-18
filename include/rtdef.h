@@ -44,9 +44,9 @@ extern "C" {
 /*@{*/
 
 /* RT-Thread version information */
-#define RT_VERSION                      3L              /**< major version number */
-#define RT_SUBVERSION                   1L              /**< minor version number */
-#define RT_REVISION                     1L              /**< revise version number */
+#define RT_VERSION                      4L              /**< major version number */
+#define RT_SUBVERSION                   0L              /**< minor version number */
+#define RT_REVISION                     0L              /**< revise version number */
 
 /* RT-Thread version */
 #define RTTHREAD_VERSION                ((RT_VERSION * 10000) + \
