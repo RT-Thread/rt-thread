@@ -8,7 +8,7 @@
  * 2009-09-22     Bernard      add board.h to this bsp
  * 2018-09-02     xuzhuoyi     modify for TMS320F28379D version
  */
-// <<< Use Configuration Wizard in Context Menu >>>
+
 #ifndef __BOARD_H__
 #define __BOARD_H__
 #include <rtthread.h>
