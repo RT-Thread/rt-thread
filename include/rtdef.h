@@ -24,6 +24,7 @@
  * 2018-05-31     Bernard      change version number to v3.1.0
  * 2018-09-04     Bernard      change version number to v3.1.1
  * 2018-09-14     Bernard      apply Apache License v2.0 to RT-Thread Kernel
+ * 2018-11-18     Bernard      change version number to v4.0.0
  */
 
 #ifndef __RT_DEF_H__
