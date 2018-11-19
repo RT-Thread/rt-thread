@@ -72,6 +72,10 @@ config RT_USING_PIN
     bool "Using generic GPIO device drivers"
     default y
 
+config RT_USING_ADC
+    bool "Using ADC device drivers"
+    default n
+
 config RT_USING_PWM
     bool "Using PWM device drivers"
     default n
