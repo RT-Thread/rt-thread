@@ -576,7 +576,8 @@ rt_err_t rt_wlan_dev_report_data(struct rt_wlan_device *device, void *buff, int 
 /*
  * wlan device register interface
  */
-struct rt_wlan_device *rt_wlan_dev_register(const char *name, const struct rt_wlan_dev_ops *ops, rt_uint32_t flag, void *user_data);
+rt_err_t rt_wlan_dev_register(struct rt_wlan_device *wlan, const char *name, 
+    const struct rt_wlan_dev_ops *ops, rt_uint32_t flag, void *user_data);
 
 #ifdef __cplusplus
 }
