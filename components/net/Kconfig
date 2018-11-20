@@ -21,6 +21,11 @@ config RT_USING_SAL
                     bool "Support AT Commands stack"
                     default y
                     depends on AT_USING_SOCKET
+                    
+                config SAL_USING_TLS
+                    bool "Support MbedTLS protocol"
+                    default y
+                    depends on PKG_USING_MBEDTLS
             endmenu
         
         endif
@@ -68,9 +73,12 @@ config RT_USING_LWIP
 
             config RT_USING_LWIP202
                 bool "lwIP v2.0.2"
+
+            config RT_USING_LWIP210
+                bool "lwIP v2.1.0"
         endchoice
 
-        if RT_USING_LWIP202
+        if (RT_USING_LWIP210 || RT_USING_LWIP202)
             config RT_USING_LWIP_IPV6
                 bool "IPV6 protocol"
                 default n

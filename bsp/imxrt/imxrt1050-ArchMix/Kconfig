@@ -30,15 +30,9 @@ config BOARD_RT1050_ArchMix
     default y
 
 # RT1050 flash select!
-choice
-    prompt "RT1050 Flash select"
-    default BOARD_USING_QSPIFLASH
-    config BOARD_USING_HYPERFLASH
-        bool "HYPERFLASH"
-    config BOARD_USING_QSPIFLASH
-        bool "QSPIFLASH"
-
-endchoice
+config BOARD_USING_QSPIFLASH
+	bool
+	default y
 
 menu "RT1050 Bsp Config" 
 

@@ -1,3 +1,59 @@
+# RT-Thread v3.1.1 Change Log
+
+## Kernel
+
+* Support the configuration of the upward growth stack which is defined by the `ARCH_CPU_STACK_GROWS_UPWARD` macro. Because there are fewer ARCH for stacks growing upward, this configuration item does not display directly in menuconfig. When a CPU ARCH needs stacks growing upward, the configuration of `ARCH_CPU_STACK_GROWS_UPWARD` can be selected by BSP Kconfig file in default.
+* Support for ARMCC V6 and later compiler (LLVM-based Compiler); currently it's mainly used in Keil MDK IDE. Please notes that the "Warnings" needs to use `Moderate Warnings` in project configuration in C/C++ (AC6) TAB; After using ARMCC v6, RT-Thread will add an additional `CLANG_ARM` macro definition; (liruncong, nongxiaoming, bernard)
+* The `RT_USING_IDLE_HOOK` configuration in Kconfig becomes a separate configuration item, not limited to `RT_USING_HOOK`; (geniusgogo)
+
+## Components
+
+* Improve the PWM driver framework and add more interfaces.
+* Fix the F_SETFL handling in ioctrl function; Fix the return value issue of fcntl function which is always 0 value.
+* Fix the memheap object type issue when creating a ramfs object.
+* Add power management framework for low power applications.
+* Add multi-segment support for read and write operations in MC/SDIO driver framework (for stm32, you can choose a separate stm32_sdio package); (weety)
+* Add ringblk_buf component for the block mode but in ringbuffer applications;
+* Improve WLAN management framework with unified interfaces, management, commands, to provide more friendly support to developers and users;
+* Add the conditional macro in the finsh when the MSH component is not enabled, even if the code files are compiled.
+* Remove gdbstub and move to rt-thread packages.
+* Upgrade and improve SAL and AT components: (linuxhan, eddylin83, slyant, luofanlu, Hubert Xie, Lawlieta, zhaojuntao, armink)
+  * Fix the none cleared issue when closing socket in SAL, which lead to the socket is always holding.
+  * Fix the `select()` issue for UDP communication in AT component. Add the receiving data handling to complete the clearing of received event;
+  * Add the errno value when receive data timeout in at_recvfrom function in the AT component.
+  * Add the receive data timeout handling in at_client_recv function in the AT component.
+* Fix a possible issue in fputc function implementation when using microlib;
+* Add gmtime_r implementation for ARMCC, IAR tool chain;
+* Improve time function support in IAR and support 64bit time; (hichard)
+* DHCPD's support for IPv6;
+* Remove lwIP-1.3.2 porting and add lwIP-2.1.0 porting; lwIP-2.0.2 is still the default version.
+* Add a lightweight ulog component and automatically replace the debug macro of the original rtdbg.h when it's enable.
+* USB stack update
+  * HOST, optimize the USB HOST timeout mechanism; fix the un-alignment visit issue in F4xx-HAL USB host driver;
+  * Device: Add the check when class drivers are illegally registered; Fix the un-aligned access issue in some platforms; optimize CDC VCOM classes, add the timeout mechanism and ID definition.
+
+## BSP
+
+* Upgrade the wlan adaptor to the new version of Wi-Fi management framework in amebaz BSP.
+* Add airkiss wifi configuration code to amebaz BSP.
+* Update Apollo2 BSP with ADC, GPIO, I2C, PDM, SPI, UART and other drivers; (Haleyl)
+* BeagleBone BSP is changed to main function mode, and adds Kconfig configuration file.
+* DM365 BSP adds Kconfig configuration file;
+* Update HiFive1 BSP and add more documentation.
+* Update imx6sx BSP to main function mode, and add Kconfig configuration file.
+* Change the old imxrt1052-evk BSP. The imxrt1052-related BSPs are classified into the `bsp/imxrt` directory; A touch framework is added to `bsp/imxrt`, and later will be moved into `components/drivers` directory;
+* Improve stm32f4xx-HAL BSP with PWM, I2C, USB Host driver; (XuanZe, xuzhuoyi)
+* Improve stm32f10x BSP with CAN driver and increase I2C driver; (wuhanstudio, AubrCool)
+* Improve stm32f10x-HAL BSP with I2C, IWG, PWM, RTC and other drivers, improve UART driver; (XuanZe)
+* Improve stm32f429-disco BSP and add I2C, LCD, Touch driver; (xuzhuoyi)
+* Improve x86 BSP, support dlmodule function; (SASANO Takayoshi, parai)
+
+## Tool
+
+* Modify the building script to support Python 3; <Python 3 patches have been submitted to scons and need to wait for next scons release，maybe scons-3.0.2> (Arda)
+* Add `scons --pyconfig` mode, which has a TK UI configurator; (weety)
+* Support for GNU GCC 7/8 version toolchains (The `-std=c99` is not added into C-compiler flags), but please note: PThreads component failed in 2.5 and new version of newlib.
+
 # RT-Thread 3.1.0 Change Log
 
 ## Kernel

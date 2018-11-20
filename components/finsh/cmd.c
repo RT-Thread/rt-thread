@@ -28,6 +28,9 @@
  */
 
 #include <rtthread.h>
+
+#ifdef RT_USING_FINSH
+
 #include "finsh.h"
 
 long hello(void)
@@ -98,6 +101,17 @@ static long _list_thread(struct rt_list_node *list)
         else if (stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
         else if (stat == RT_THREAD_CLOSE)   rt_kprintf(" close  ");
 
+#if defined(ARCH_CPU_STACK_GROWS_UPWARD)
+        ptr = (rt_uint8_t *)thread->stack_addr + thread->stack_size;
+        while (*ptr == '#')ptr --;
+
+        rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
+                   ((rt_ubase_t)thread->sp - (rt_ubase_t)thread->stack_addr),
+                   thread->stack_size,
+                   ((rt_ubase_t)ptr - (rt_ubase_t)thread->stack_addr) * 100 / thread->stack_size,
+                   thread->remaining_tick,
+                   thread->error);
+#else
         ptr = (rt_uint8_t *)thread->stack_addr;
         while (*ptr == '#')ptr ++;
 
@@ -108,6 +122,7 @@ static long _list_thread(struct rt_list_node *list)
                         / thread->stack_size,
                    thread->remaining_tick,
                    thread->error);
+#endif
     }
 
     return 0;
@@ -831,3 +846,6 @@ void list_prefix(char *prefix)
 static int dummy = 0;
 FINSH_VAR_EXPORT(dummy, finsh_type_int, dummy variable for finsh)
 #endif
+
+#endif /* RT_USING_FINSH */
+

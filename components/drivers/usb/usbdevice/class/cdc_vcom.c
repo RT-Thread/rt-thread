@@ -22,7 +22,12 @@
 
 #ifdef RT_USB_DEVICE_CDC
 
-#define TX_TIMEOUT              1000
+#ifdef RT_VCOM_TX_TIMEOUT
+#define VCOM_TX_TIMEOUT      RT_VCOM_TX_TIMEOUT
+#else /*!RT_VCOM_TX_TIMEOUT*/
+#define VCOM_TX_TIMEOUT      1000
+#endif /*RT_VCOM_TX_TIMEOUT*/
+
 #define CDC_RX_BUFSIZE          128
 #define CDC_MAX_PACKET_SIZE     64
 #define VCOM_DEVICE             "vcom"
@@ -82,6 +87,7 @@ struct vcom_tx_msg
     rt_size_t size;
 };
 
+ALIGN(4)
 static struct udevice_descriptor dev_desc =
 {
     USB_DESC_LENGTH_DEVICE,     //bLength;
@@ -101,6 +107,7 @@ static struct udevice_descriptor dev_desc =
 };
 
 //FS and HS needed
+ALIGN(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
@@ -115,6 +122,7 @@ static struct usb_qualifier_descriptor dev_qualifier =
 };
 
 /* communcation interface descriptor */
+ALIGN(4)
 const static struct ucdc_comm_descriptor _comm_desc =
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
@@ -184,6 +192,7 @@ const static struct ucdc_comm_descriptor _comm_desc =
 };
 
 /* data interface descriptor */
+ALIGN(4)
 const static struct ucdc_data_descriptor _data_desc =
 {
     /* interface descriptor */
@@ -217,7 +226,7 @@ const static struct ucdc_data_descriptor _data_desc =
         0x00,
     },
 };
-
+ALIGN(4)
 static char serno[_SER_NO_LEN + 1] = {'\0'};
 RT_WEAK rt_err_t vcom_get_stored_serno(char *serno, int size);
 
@@ -225,7 +234,7 @@ rt_err_t vcom_get_stored_serno(char *serno, int size)
 {
     return RT_ERROR;
 }
-
+ALIGN(4)
 const static char* _ustring[] =
 {
     "Language",
@@ -876,7 +885,7 @@ static void vcom_tx_thread_entry(void* parameter)
 
             rt_usbd_io_request(func->device, data->ep_in, &data->ep_in->request);
 
-            if (rt_completion_wait(&data->wait, TX_TIMEOUT) != RT_EOK)
+            if (rt_completion_wait(&data->wait, VCOM_TX_TIMEOUT) != RT_EOK)
             {
                 RT_DEBUG_LOG(RT_DEBUG_USB, ("vcom tx timeout\n"));
             }

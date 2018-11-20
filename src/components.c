@@ -44,7 +44,7 @@
  *
  * rti_end           --> 6.end
  *
- * These automatically initializaiton, the driver or component initial function must
+ * These automatically initialization, the driver or component initial function must
  * be defined with:
  * INIT_BOARD_EXPORT(fn);
  * INIT_DEVICE_EXPORT(fn);
@@ -109,7 +109,7 @@ void rt_components_init(void)
     int result;
     const struct rt_init_desc *desc;
 
-    rt_kprintf("do components intialization.\n");
+    rt_kprintf("do components initialization.\n");
     for (desc = &__rt_init_desc_rti_board_end; desc < &__rt_init_desc_rti_end; desc ++)
     {
         rt_kprintf("initialize %s", desc->fn_name);
@@ -215,7 +215,7 @@ int rtthread_startup(void)
 {
     rt_hw_interrupt_disable();
 
-    /* board level initalization
+    /* board level initialization
      * NOTE: please initialize heap inside board initialization.
      */
     rt_hw_board_init();

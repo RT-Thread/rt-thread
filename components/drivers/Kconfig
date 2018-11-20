@@ -72,6 +72,10 @@ config RT_USING_PIN
     bool "Using generic GPIO device drivers"
     default y
 
+config RT_USING_ADC
+    bool "Using ADC device drivers"
+    default n
+
 config RT_USING_PWM
     bool "Using PWM device drivers"
     default n
@@ -104,6 +108,10 @@ config RT_USING_MTD
         default n
     endif
 
+config RT_USING_PM
+    bool "Using Power Management device drivers"
+    default n
+
 config RT_USING_RTC
     bool "Using RTC device drivers"
     default n
@@ -114,9 +122,8 @@ config RT_USING_RTC
         default n
     config RTC_SYNC_USING_NTP
         bool "Using NTP auto sync RTC time"
-        select PKG_USING_NETUTILS
-        select PKG_NETUTILS_NTP
-        default n
+        depends on PKG_NETUTILS_NTP
+        default y
 
         if RTC_SYNC_USING_NTP
         config RTC_NTP_FIRST_SYNC_DELAY
@@ -391,6 +398,23 @@ menu "Using USB"
                     config RT_USB_DEVICE_WINUSB
                         bool "Enable to use device as winusb device"
                         default n
+                endif
+                if RT_USB_DEVICE_CDC
+                    config RT_VCOM_TASK_STK_SIZE
+                        int "virtual com thread stack size"
+                        default 512
+                    config RT_VCOM_TX_USE_DMA
+                        bool "Enable to use dma for vcom tx"
+                        default n
+                    config RT_VCOM_SERNO
+                        string "serial number of virtual com"
+                        default "32021919830108"
+                    config RT_VCOM_SER_LEN
+                        int "serial number length of virtual com"
+                        default 14
+                    config RT_VCOM_TX_TIMEOUT
+                        int "tx timeout(ticks) of virtual com"
+                        default 1000
                 endif
                 if RT_USB_DEVICE_WINUSB
                     config RT_WINUSB_GUID

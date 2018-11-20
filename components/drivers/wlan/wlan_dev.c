@@ -639,7 +639,7 @@ static rt_err_t _rt_wlan_dev_control(rt_device_t dev, int cmd, void *args)
     {
         int level = *((int *)args);
 
-        LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_POWERSAVE, "RT_WLAN_CMD_SET_POWERSAVE");
+        LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_SET_POWERSAVE, "RT_WLAN_CMD_SET_POWERSAVE");
         if (wlan->ops->wlan_set_powersave)
             wlan->ops->wlan_set_powersave(wlan, level);
         break;
@@ -648,7 +648,7 @@ static rt_err_t _rt_wlan_dev_control(rt_device_t dev, int cmd, void *args)
     {
         int *level = args;
 
-        LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_POWERSAVE, "RT_WLAN_CMD_GET_POWERSAVE");
+        LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_GET_POWERSAVE, "RT_WLAN_CMD_GET_POWERSAVE");
         if (wlan->ops->wlan_get_powersave)
             *level = wlan->ops->wlan_get_powersave(wlan);
         break;

@@ -394,8 +394,8 @@ void rt_hw_usart_init(void)
     uart = &uart3;
 
     config.baud_rate = BAUD_RATE_115200;
-    serial2.ops    = &stm32_uart_ops;
-    serial2.config = config;
+    serial3.ops    = &stm32_uart_ops;
+    serial3.config = config;
 
     NVIC_Configuration(&uart3);
 

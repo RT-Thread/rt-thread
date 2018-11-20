@@ -14,6 +14,9 @@
 
 #include <rtthread.h>
 #include <sal_socket.h>
+#ifdef SAL_USING_TLS
+#include <sal_tls.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {

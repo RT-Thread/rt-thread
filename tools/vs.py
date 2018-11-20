@@ -78,7 +78,7 @@ def VSProject(target, script, program):
     tree = etree.parse('template_vs2005.vcproj')
     root = tree.getroot()
     
-    out = file(target, 'wb')
+    out = open(target, 'w')
     out.write('<?xml version="1.0" encoding="UTF-8"?>\r\n')
     
     ProjectFiles = []
@@ -91,7 +91,7 @@ def VSProject(target, script, program):
 
     for group in script:
         libs = []
-        if group.has_key('LIBS') and group['LIBS']:
+        if 'LIBS' in group and group['LIBS']:
             for item in group['LIBS']:
                 lib_path = ''
                 for path_item in group['LIBPATH']:
@@ -111,7 +111,7 @@ def VSProject(target, script, program):
     VS_AddHeadFilesGroup(program, elem, project_path)
     
     # write head include path
-    if building.Env.has_key('CPPPATH'):
+    if 'CPPPATH' in building.Env:
         cpp_path = building.Env['CPPPATH']
         paths  = set()
         for path in cpp_path:
@@ -130,7 +130,7 @@ def VSProject(target, script, program):
         elem.set('AdditionalIncludeDirectories', cpp_path)
 
     # write cppdefinitons flags
-    if building.Env.has_key('CPPDEFINES'):
+    if 'CPPDEFINES' in building.Env:
         CPPDEFINES = building.Env['CPPDEFINES']
         definitions = []
         if type(CPPDEFINES[0]) == type(()):
@@ -143,7 +143,7 @@ def VSProject(target, script, program):
     # write link flags
 
     # write lib dependence 
-    if building.Env.has_key('LIBS'):
+    if 'LIBS' in building.Env:
         for elem in tree.iter(tag='Tool'):
             if elem.attrib['Name'] == 'VCLinkerTool':
                 break
@@ -152,7 +152,7 @@ def VSProject(target, script, program):
         elem.set('AdditionalDependencies', libs)
 
     # write lib include path
-    if building.Env.has_key('LIBPATH'):
+    if 'LIBPATH' in building.Env:
         lib_path = building.Env['LIBPATH']
         paths  = set()
         for path in lib_path:
