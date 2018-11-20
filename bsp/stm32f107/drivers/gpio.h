@@ -21,6 +21,6 @@ struct stm32_hw_pin_userdata
 
 extern struct stm32_hw_pin_userdata stm32_pins[];
 
-int stm32_hw_pin_init(void);
+int32_t stm32_hw_pin_init(void);
 
 #endif
