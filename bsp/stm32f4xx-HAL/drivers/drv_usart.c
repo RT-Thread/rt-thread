@@ -251,6 +251,7 @@ void USART6_IRQHandler(void)
 void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle)
 {
     GPIO_InitTypeDef GPIO_InitStruct;
+#ifdef BSP_USING_UART1
     if (uartHandle->Instance == USART1)
     {
         /* USART1 clock enable */
@@ -267,7 +268,9 @@ void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle)
         GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
         HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
     }
-    else if (uartHandle->Instance == USART2)
+#endif /* BSP_USING_UART1 */
+#ifdef BSP_USING_UART2
+    if (uartHandle->Instance == USART2)
     {
         /* USART2 clock enable */
         __HAL_RCC_USART2_CLK_ENABLE();
@@ -283,7 +286,9 @@ void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle)
         GPIO_InitStruct.Alternate = GPIO_AF7_USART2;
         HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
     }
-    else if (uartHandle->Instance == USART3)
+#endif /* BSP_USING_UART2 */  
+#ifdef BSP_USING_UART3
+    if (uartHandle->Instance == USART3)
     {
         /* USART3 clock enable */
         __HAL_RCC_USART3_CLK_ENABLE();
@@ -299,7 +304,9 @@ void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle)
         GPIO_InitStruct.Alternate = GPIO_AF7_USART3;
         HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
     }
-    else if (uartHandle->Instance == USART6)
+#endif /* BSP_USING_UART3 */
+#ifdef BSP_USING_UART6
+    if (uartHandle->Instance == USART6)
     {
         /* USART6 clock enable */
         __HAL_RCC_USART6_CLK_ENABLE();
@@ -315,10 +322,12 @@ void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle)
         GPIO_InitStruct.Alternate = GPIO_AF8_USART6;
         HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
     }
+#endif /* BSP_USING_UART6 */
 }
 
 void HAL_UART_MspDeInit(UART_HandleTypeDef *uartHandle)
 {
+#ifdef BSP_USING_UART1
     if (uartHandle->Instance == USART1)
     {
         /* Peripheral clock disable */
@@ -329,7 +338,9 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef *uartHandle)
         */
         HAL_GPIO_DeInit(GPIOA, GPIO_PIN_9 | GPIO_PIN_10);
     }
-    else if (uartHandle->Instance == USART2)
+#endif /* BSP_USING_UART1 */
+#ifdef BSP_USING_UART2    
+    if (uartHandle->Instance == USART2)
     {
         /* Peripheral clock disable */
         __HAL_RCC_USART2_CLK_DISABLE();
@@ -339,7 +350,9 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef *uartHandle)
         */
         HAL_GPIO_DeInit(GPIOA, GPIO_PIN_2 | GPIO_PIN_3);
     }
-    else if (uartHandle->Instance == USART3)
+#endif /* BSP_USING_UART2 */  
+#ifdef BSP_USING_UART3    
+    if (uartHandle->Instance == USART3)
     {
         /* Peripheral clock disable */
         __HAL_RCC_USART3_CLK_DISABLE();
@@ -349,7 +362,9 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef *uartHandle)
         */
         HAL_GPIO_DeInit(GPIOB, GPIO_PIN_10 | GPIO_PIN_11);
     }
-    else if (uartHandle->Instance == USART6)
+#endif /* BSP_USING_UART3 */
+#ifdef BSP_USING_UART6
+    if (uartHandle->Instance == USART6)
     {
         /* Peripheral clock disable */
         __HAL_RCC_USART6_CLK_DISABLE();
@@ -359,6 +374,7 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef *uartHandle)
         */
         HAL_GPIO_DeInit(GPIOC, GPIO_PIN_6 | GPIO_PIN_7);
     }
+#endif /* BSP_USING_UART6 */
 }
 
 int hw_usart_init(void)

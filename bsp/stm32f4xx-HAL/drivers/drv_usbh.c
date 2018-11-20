@@ -179,6 +179,9 @@ static int drv_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbyte
             {
                 pipe->callback(pipe);
             }
+            if (pipe->ep.bEndpointAddress & 0x80) {
+                return HAL_HCD_HC_GetXferCount(&_stm_hhcd_fs, pipe->pipe_index);
+            } 
             return nbytes;
         }
         return -1;

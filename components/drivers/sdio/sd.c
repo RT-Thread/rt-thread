@@ -12,7 +12,7 @@
 #include <drivers/sd.h>
 
 #define DBG_ENABLE
-#define DBG_SECTION_NAME               "[SDIO]"
+#define DBG_SECTION_NAME               "SDIO"
 #ifdef RT_SDIO_DEBUG
 #define DBG_LEVEL                      DBG_LOG
 #else

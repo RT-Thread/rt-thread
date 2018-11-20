@@ -9,11 +9,11 @@
  */
 
 #include <rtthread.h>
-#include <finsh.h>
-
-#include "msh.h"
 
 #if defined(FINSH_USING_MSH) && defined(RT_USING_DFS)
+
+#include <finsh.h>
+#include "msh.h"
 #include <dfs_posix.h>
 
 static int msh_readline(int fd, char *line_buf, int size)
@@ -137,4 +137,5 @@ int msh_exec_script(const char *cmd_line, int size)
     return ret;
 }
 
-#endif
+#endif /* defined(FINSH_USING_MSH) && defined(RT_USING_DFS) */
+

@@ -99,8 +99,16 @@ extern "C" {
 #include "drivers/cputime.h"
 #endif
 
+#ifdef RT_USING_ADC
+#include "drivers/adc.h"
+#endif
+
 #ifdef RT_USING_PWM
 #include "drivers/rt_drv_pwm.h"
+#endif
+
+#ifdef RT_USING_PM
+#include "drivers/pm.h"
 #endif
 
 #ifdef RT_USING_WIFI
