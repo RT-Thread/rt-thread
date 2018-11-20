@@ -184,7 +184,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     AddOption('--target',
                       dest = 'target',
                       type = 'string',
-                      help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk')
+                      help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses')
     AddOption('--genconfig',
                 dest = 'genconfig',
                 action = 'store_true',
@@ -224,7 +224,8 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'vsc' : ('gcc', 'gcc'),
                 'cb':('keil', 'armcc'),
                 'ua':('gcc', 'gcc'),
-                'cdk':('gcc', 'gcc')}
+                'cdk':('gcc', 'gcc'),
+                'ses' : ('gcc', 'gcc')}
     tgt_name = GetOption('target')
 
     if tgt_name:
@@ -796,6 +797,10 @@ def GenTargetProject(program = None):
     if GetOption('target') == 'cdk':
         from cdk import CDKProject
         CDKProject('project.cdkproj', Projects)
+
+    if GetOption('target') == 'ses':
+        from ses import SESProject
+        SESProject(Env)
 
 def EndBuilding(target, program = None):
     import rtconfig
