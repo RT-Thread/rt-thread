@@ -31,8 +31,8 @@
 /* STM32 GPIO driver */
 struct pin_index
 {
-    int index;
-    unsigned int clk;
+    int32_t index;
+    uint32_t clk;
     GPIO_TypeDef *gpio;
     uint32_t pin;
 };
@@ -95,7 +95,7 @@ const struct pin_index *get_pin(uint8_t pin)
 
     return index;
 };
-inline void stm32_pin_write_early(rt_base_t pin, rt_base_t value)
+void stm32_pin_write_early(int32_t pin, uint32_t value)
 {
     const struct pin_index *index;
 
@@ -106,13 +106,13 @@ inline void stm32_pin_write_early(rt_base_t pin, rt_base_t value)
     }
     HAL_GPIO_WritePin(index->gpio, index->pin, value);
 }
-void stm32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+void stm32_pin_write(rt_device_t dev, int32_t pin, uint32_t value)
 {
     stm32_pin_write_early(pin, value);
 }
-inline int stm32_pin_read_early(rt_base_t pin)
+uint32_t stm32_pin_read_early(int32_t pin)
 {
-    int value;
+    uint32_t value;
     const struct pin_index *index;
 
     value = PIN_LOW;
@@ -125,11 +125,11 @@ inline int stm32_pin_read_early(rt_base_t pin)
     value = HAL_GPIO_ReadPin(index->gpio, index->pin);
     return value;
 }
-int stm32_pin_read(rt_device_t dev, rt_base_t pin)
+uint32_t stm32_pin_read(rt_device_t dev, int32_t pin)
 {
     return stm32_pin_read_early(pin);
 }
-void stm32_pin_mode_early(rt_base_t pin, rt_base_t mode)
+void stm32_pin_mode_early(int32_t pin, uint32_t mode)
 {
     const struct pin_index *index;
     GPIO_InitTypeDef  GPIO_InitStructure;
@@ -175,7 +175,7 @@ void stm32_pin_mode_early(rt_base_t pin, rt_base_t mode)
     }
     HAL_GPIO_Init(index->gpio, &GPIO_InitStructure);
 }
-void stm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+void stm32_pin_mode(rt_device_t dev, int32_t pin, uint32_t mode)
 {
     stm32_pin_mode_early(pin, mode);
 }
@@ -187,7 +187,7 @@ const static struct rt_pin_ops _stm32_pin_ops =
 };
 int stm32_hw_pin_init(void)
 {
-    int result;
+    int32_t result;
 
     result = rt_device_pin_register("pin", &_stm32_pin_ops, RT_NULL);
     return result;

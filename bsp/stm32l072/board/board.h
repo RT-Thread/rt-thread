@@ -46,9 +46,9 @@ void rt_hw_msd_init(void);
 #define UFQFPN32
 
 #ifdef RT_USING_PIN
-extern inline void stm32_pin_write_early(rt_base_t pin, rt_base_t value);
-extern inline int stm32_pin_read_early(rt_base_t pin);
-extern void stm32_pin_mode_early(rt_base_t pin, rt_base_t mode);
+extern void stm32_pin_write_early(int32_t pin, uint32_t value);
+extern uint32_t stm32_pin_read_early(int32_t pin);
+extern void stm32_pin_mode_early(int32_t pin, uint32_t mode);
 #endif /*RT_USING_PIN*/
 
 #define RT_USING_UART1
