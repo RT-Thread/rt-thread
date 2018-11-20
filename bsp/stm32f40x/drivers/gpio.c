@@ -24,7 +24,7 @@
 /* STM32 GPIO driver */
 struct pin_index
 {
-    int index;
+    int32_t index;
     uint32_t rcc;
     GPIO_TypeDef *gpio;
     uint32_t pin;
@@ -34,13 +34,13 @@ struct pin_index
 struct pin_irq
 {
     /* EXTI port source gpiox, such as EXTI_PortSourceGPIOA */
-    rt_uint8_t port_source;
+    uint8_t port_source;
     /* EXTI pin sources, such as EXTI_PinSource0 */
-    rt_uint8_t pin_source;
+    uint8_t pin_source;
     /* NVIC IRQ EXTI channel, such as EXTI0_IRQn */
     enum IRQn irq_exti_channel;
     /* EXTI line, such as EXTI_Line0 */
-    rt_uint32_t exti_line;
+    uint32_t exti_line;
 };
 
 static const struct pin_index pins[] =
@@ -455,7 +455,7 @@ const struct pin_index *get_pin(uint8_t pin)
     return index;
 };
 
-void stm32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+void stm32_pin_write(rt_device_t dev, int32_t pin, int32_t value)
 {
     const struct pin_index *index;
 
@@ -475,9 +475,9 @@ void stm32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     }
 }
 
-int stm32_pin_read(rt_device_t dev, rt_base_t pin)
+int32_t stm32_pin_read(rt_device_t dev, int32_t pin)
 {
-    int value;
+    int32_t value;
     const struct pin_index *index;
 
     value = PIN_LOW;
@@ -500,7 +500,7 @@ int stm32_pin_read(rt_device_t dev, rt_base_t pin)
     return value;
 }
 
-void stm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+void stm32_pin_mode(rt_device_t dev, int32_t pin, uint32_t mode)
 {
     const struct pin_index *index;
     GPIO_InitTypeDef  GPIO_InitStructure;
@@ -557,9 +557,9 @@ void stm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     GPIO_Init(index->gpio, &GPIO_InitStructure);
 }
 
-rt_inline rt_int32_t bit2bitno(rt_uint32_t bit)
+rt_inline int32_t bit2bitno(uint32_t bit)
 {
-    int i;
+    int32_t i;
     for (i = 0; i < 32; i++)
     {
         if ((1UL << i) == bit)
@@ -570,7 +570,7 @@ rt_inline rt_int32_t bit2bitno(rt_uint32_t bit)
     return -1;
 }
 
-rt_inline rt_int32_t bitno2bit(rt_uint32_t bitno)
+rt_inline int32_t bitno2bit(uint32_t bitno)
 {
     if (bitno <= 32)
     {
@@ -620,13 +620,12 @@ static const struct pin_irq *get_pin_irq(uint16_t pin)
     return &irq;
 };
 
-rt_err_t stm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                  rt_uint32_t mode, void (*hdr)(void *args), void *args)
+rt_err_t stm32_pin_attach_irq(struct rt_device *device, int32_t pin, uint32_t mode, void (*hdr)(void *args), void *args)
 {
     const struct pin_index *index;
     rt_base_t level;
 
-    rt_int32_t irqindex = -1;
+    int32_t irqindex = -1;
     index = get_pin(pin);
     if (index == RT_NULL)
     {
@@ -663,11 +662,11 @@ rt_err_t stm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-rt_err_t stm32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+rt_err_t stm32_pin_detach_irq(struct rt_device *device, int32_t pin)
 {
     const struct pin_index *index;
     rt_base_t level;
-    rt_int32_t irqindex = -1;
+    int32_t irqindex = -1;
 
     index = get_pin(pin);
     if (index == RT_NULL)
@@ -695,12 +694,12 @@ rt_err_t stm32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     return RT_EOK;
 }
 
-rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+rt_err_t stm32_pin_irq_enable(struct rt_device *device, int32_t pin, uint32_t enabled)
 {
     const struct pin_index *index;
     const struct pin_irq *irq;
     rt_base_t level;
-    rt_int32_t irqindex = -1;
+    int32_t irqindex = -1;
     NVIC_InitTypeDef NVIC_InitStructure;
     EXTI_InitTypeDef EXTI_InitStructure;
 
@@ -789,7 +788,7 @@ const static struct rt_pin_ops _stm32_pin_ops =
 
 int stm32_hw_pin_init(void)
 {
-    int result;
+    int32_t result;
 
     /* enable SYSCFG clock for EXTI */
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
@@ -799,7 +798,7 @@ int stm32_hw_pin_init(void)
 }
 INIT_BOARD_EXPORT(stm32_hw_pin_init);
 
-rt_inline void pin_irq_hdr(int irqno)
+rt_inline void pin_irq_hdr(int32_t irqno)
 {
     EXTI_ClearITPendingBit(bitno2bit(irqno));
     if (pin_irq_hdr_tab[irqno].hdr)
