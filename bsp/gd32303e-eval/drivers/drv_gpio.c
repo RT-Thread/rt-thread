@@ -248,10 +248,10 @@ const struct pin_index *get_pin(rt_uint8_t pin)
     return index;
 };
 
-void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+void gd32_pin_mode(rt_device_t dev, int32_t pin, uint32_t mode)
 {
     const struct pin_index *index;
-    rt_uint32_t pin_mode;
+    uint32_t pin_mode;
     index = get_pin(pin);
     if (index == RT_NULL)
     {
@@ -291,7 +291,7 @@ void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     gpio_init(index->gpio_periph, pin_mode, GPIO_OSPEED_50MHZ, index->pin);
 }
 
-void gd32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+void gd32_pin_write(rt_device_t dev, int32_t pin, int32_t value)
 {
     const struct pin_index *index;
 
@@ -304,7 +304,7 @@ void gd32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     gpio_bit_write(index->gpio_periph, index->pin, (bit_status)value);
 }
 
-int gd32_pin_read(rt_device_t dev, rt_base_t pin)
+int32_t gd32_pin_read(rt_device_t dev, int32_t pin)
 {
     int value;
     const struct pin_index *index;
@@ -323,9 +323,9 @@ int gd32_pin_read(rt_device_t dev, rt_base_t pin)
 }
 
 
-rt_inline rt_int32_t bit2bitno(rt_uint32_t bit)
+rt_inline int32_t bit2bitno(uint32_t bit)
 {
-    rt_uint8_t i;
+    int32_t i;
     for (i = 0; i < 32; i++)
     {
         if ((0x01 << i) == bit)
@@ -335,7 +335,7 @@ rt_inline rt_int32_t bit2bitno(rt_uint32_t bit)
     }
     return -1;
 }
-rt_inline const struct pin_irq_map *get_pin_irq_map(rt_uint32_t pinbit)
+rt_inline const struct pin_irq_map *get_pin_irq_map(uint32_t pinbit)
 {
     rt_int32_t mapindex = bit2bitno(pinbit);
     if (mapindex < 0 || mapindex >= ITEM_NUM(pin_irq_map))
@@ -344,12 +344,12 @@ rt_inline const struct pin_irq_map *get_pin_irq_map(rt_uint32_t pinbit)
     }
     return &pin_irq_map[mapindex];
 };
-rt_err_t gd32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
+rt_err_t gd32_pin_attach_irq(struct rt_device *device, int32_t pin,
                               rt_uint32_t mode, void (*hdr)(void *args), void *args)
 {
     const struct pin_index *index;
     rt_base_t level;
-    rt_int32_t hdr_index = -1;
+    int32_t hdr_index = -1;
 
     index = get_pin(pin);
     if (index == RT_NULL)
@@ -384,11 +384,11 @@ rt_err_t gd32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
 
     return RT_EOK;
 }
-rt_err_t gd32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+rt_err_t gd32_pin_detach_irq(struct rt_device *device, int32_t pin)
 {
     const struct pin_index *index;
     rt_base_t level;
-    rt_int32_t hdr_index = -1;
+    int32_t hdr_index = -1;
 
     index = get_pin(pin);
     if (index == RT_NULL)
@@ -415,12 +415,12 @@ rt_err_t gd32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 
     return RT_EOK;
 }
-rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+rt_err_t gd32_pin_irq_enable(struct rt_device *device, int32_t pin, uint32_t enabled)
 {
     const struct pin_index *index;
     const struct pin_irq_map *irqmap;
     rt_base_t level;
-    rt_int32_t hdr_index = -1;
+    int32_t hdr_index = -1;
     exti_trig_type_enum trigger_mode;
 
     index = get_pin(pin);
@@ -509,7 +509,7 @@ int rt_hw_pin_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);
 
-rt_inline void pin_irq_hdr(int irqno)
+rt_inline void pin_irq_hdr(int32_t irqno)
 {
     if (pin_irq_hdr_tab[irqno].hdr)
     {
