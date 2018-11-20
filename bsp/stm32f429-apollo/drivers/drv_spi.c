@@ -617,7 +617,9 @@ rt_err_t stm32_spi_bus_register(SPI_TypeDef * SPI,
                             //struct stm32_spi_bus * stm32_spi,
                             const char * spi_bus_name)
 {
+#ifdef SPI_USE_DMA
     struct stm32f4_spi * p_spi_bus;
+#endif
     struct rt_spi_bus *  spi_bus;
     
     RT_ASSERT(SPI != RT_NULL);

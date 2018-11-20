@@ -36,7 +36,6 @@ rt_uint8_t SD_Init(void)
 //hsd:SD¿¨¾ä±ú
 void HAL_SD_MspInit(SD_HandleTypeDef *hsd)
 {
-    DMA_HandleTypeDef TxDMAHandler,RxDMAHandler;
     GPIO_InitTypeDef GPIO_Initure;
     
     __HAL_RCC_SDIO_CLK_ENABLE();    //Ê¹ÄÜSDIOÊ±ÖÓ

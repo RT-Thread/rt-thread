@@ -30,7 +30,6 @@
 
 
 static struct stm32f4_nand _device;
-static rt_bool_t read_status(rt_uint8_t cmd);
 
 NAND_HandleTypeDef NAND_Handler;    //NAND FLASH¾ä±ú
 
@@ -189,7 +188,7 @@ void HAL_NAND_MspInit(NAND_HandleTypeDef *hnand)
 //·µ»ØÖµ:NAND×´Ì¬Öµ
 //bit0:0,³É¹¦;1,´íÎó(±à³Ì/²Á³ý/READ)
 //bit6:0,Busy;1,Ready
-static rt_bool_t read_status(rt_uint8_t cmd)
+RT_WEAK rt_bool_t read_status(rt_uint8_t cmd)
 {
     volatile rt_uint8_t value=0; 
     SET_NAND_CMD(NAND_READSTA);//·¢ËÍ¶Á×´Ì¬ÃüÁî
