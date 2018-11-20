@@ -74,7 +74,7 @@ const static struct rt_device_ops pin_ops =
 };
 #endif
 
-int rt_device_pin_register(const char *name, const struct rt_pin_ops *ops, void *user_data)
+int32_t rt_device_pin_register(const char *name, const struct rt_pin_ops *ops, void *user_data)
 {
     _hw_pin.parent.type         = RT_Device_Class_Miscellaneous;
     _hw_pin.parent.rx_indicate  = RT_NULL;
@@ -120,7 +120,7 @@ rt_err_t rt_pin_detach_irq(rt_int32_t pin)
     return RT_ENOSYS;
 }
 
-rt_err_t rt_pin_irq_enable(rt_base_t pin, rt_uint32_t enabled)
+rt_err_t rt_pin_irq_enable(int32_t pin, uint32_t enabled)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     if(_hw_pin.ops->pin_irq_enable)
@@ -131,21 +131,21 @@ rt_err_t rt_pin_irq_enable(rt_base_t pin, rt_uint32_t enabled)
 }
 
 /* RT-Thread Hardware PIN APIs */
-void rt_pin_mode(rt_base_t pin, rt_base_t mode)
+void rt_pin_mode(int32_t pin, uint32_t mode)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     _hw_pin.ops->pin_mode(&_hw_pin.parent, pin, mode);
 }
 FINSH_FUNCTION_EXPORT_ALIAS(rt_pin_mode, pinMode, set hardware pin mode);
 
-void rt_pin_write(rt_base_t pin, rt_base_t value)
+void rt_pin_write(int32_t pin, rt_base_t value)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     _hw_pin.ops->pin_write(&_hw_pin.parent, pin, value);
 }
 FINSH_FUNCTION_EXPORT_ALIAS(rt_pin_write, pinWrite, write value to hardware pin);
 
-int  rt_pin_read(rt_base_t pin)
+int32_t rt_pin_read(int32_t pin)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     return _hw_pin.ops->pin_read(&_hw_pin.parent, pin);
