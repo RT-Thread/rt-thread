@@ -26,7 +26,7 @@
 #define J   (10U << 8)
 #define K   (11U << 8)
 
-static GPIO_TypeDef * get_st_gpio(rt_uint16_t gpio_pin)
+static GPIO_TypeDef * get_st_gpio(uint16_t gpio_pin)
 {
     switch(gpio_pin & 0xFF00)
     {
@@ -81,7 +81,7 @@ static GPIO_TypeDef * get_st_gpio(rt_uint16_t gpio_pin)
 
 #define get_st_pin(gpio_pin) (0x01 << (gpio_pin&0xFF))
 
-static void drv_clock_enable(rt_uint16_t gpio_pin)
+static void drv_clock_enable(uint16_t gpio_pin)
 {
     switch(gpio_pin & 0xFF00)
     {
@@ -146,7 +146,7 @@ static void drv_clock_enable(rt_uint16_t gpio_pin)
 }
 
 /* STM32 GPIO driver */
-static const rt_uint16_t pins[] =
+static const uint16_t pins[] =
 {
 #if (STM32F4xx_PIN_NUMBERS == 36)
     __STM32_PIN_DEFAULT,
@@ -1531,7 +1531,7 @@ static const rt_uint16_t pins[] =
 
 struct pin_irq_map
 {
-    rt_uint16_t pinbit;
+    uint16_t pinbit;
     IRQn_Type irqno;
 };
 
@@ -1576,9 +1576,9 @@ struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
 };
 
 #define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
-static rt_uint16_t get_pin(uint8_t pin)
+static uint16_t get_pin(uint8_t pin)
 {
-    rt_uint16_t gpio_pin = __STM32_PIN_DEFAULT;
+    uint16_t gpio_pin = __STM32_PIN_DEFAULT;
     if (pin < ITEM_NUM(pins))
     {
         gpio_pin = pins[pin];
@@ -1586,9 +1586,9 @@ static rt_uint16_t get_pin(uint8_t pin)
     return gpio_pin;
 };
 
-static void stm32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void stm32_pin_write(rt_device_t dev, int32_t pin, uint32_t value)
 {
-    rt_uint16_t gpio_pin;
+    uint16_t gpio_pin;
     gpio_pin = get_pin(pin);
     if (get_st_gpio(gpio_pin) == RT_NULL)
     {
@@ -1597,9 +1597,9 @@ static void stm32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     HAL_GPIO_WritePin(get_st_gpio(gpio_pin), get_st_pin(gpio_pin), (GPIO_PinState)value);
 }
 
-static int stm32_pin_read(rt_device_t dev, rt_base_t pin)
+static uint32_t stm32_pin_read(rt_device_t dev, int32_t pin)
 {
-    rt_uint16_t gpio_pin;
+    uint16_t gpio_pin;
     gpio_pin = get_pin(pin);
     if (get_st_gpio(gpio_pin) == RT_NULL)
     {
@@ -1608,9 +1608,9 @@ static int stm32_pin_read(rt_device_t dev, rt_base_t pin)
     return HAL_GPIO_ReadPin(get_st_gpio(gpio_pin), get_st_pin(gpio_pin));
 }
 
-static void stm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void stm32_pin_mode(rt_device_t dev, int32_t pin, uint32_t mode)
 {
-    rt_uint16_t gpio_pin;
+    uint16_t gpio_pin;
     GPIO_InitTypeDef GPIO_InitStruct;
     gpio_pin = get_pin(pin);
     if (get_st_gpio(gpio_pin) == RT_NULL)
@@ -1649,9 +1649,9 @@ static void stm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     HAL_GPIO_Init(get_st_gpio(gpio_pin), &GPIO_InitStruct);
 }
 
-static const struct pin_irq_map *get_pin_irq_map(rt_uint16_t gpio_pin)
+static const struct pin_irq_map *get_pin_irq_map(uint16_t gpio_pin)
 {
-    rt_int32_t mapindex = gpio_pin & 0xFF;
+    int32_t mapindex = gpio_pin & 0xFF;
     if (mapindex < 0 || mapindex >= ITEM_NUM(pin_irq_map))
     {
         return RT_NULL;
@@ -1659,12 +1659,11 @@ static const struct pin_irq_map *get_pin_irq_map(rt_uint16_t gpio_pin)
     return &pin_irq_map[mapindex];
 };
 
-static rt_err_t stm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                              rt_uint32_t mode, void (*hdr)(void *args), void *args)
+rt_err_t stm32_pin_attach_irq(struct rt_device *device, int32_t pin, uint32_t mode, void(*hdr)(void *args), void *args)
 {
-    rt_uint16_t gpio_pin;
+    uint16_t gpio_pin;
     rt_base_t level;
-    rt_int32_t irqindex = -1;
+    int32_t irqindex = -1;
     gpio_pin = get_pin(pin);
     if (get_st_gpio(gpio_pin) == RT_NULL)
     {
@@ -1697,11 +1696,11 @@ static rt_err_t stm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-static rt_err_t stm32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t stm32_pin_detach_irq(struct rt_device *device, int32_t pin)
 {
-    rt_uint16_t gpio_pin;
+    uint16_t gpio_pin;
     rt_base_t level;
-    rt_int32_t irqindex = -1;
+    int32_t irqindex = -1;
     gpio_pin = get_pin(pin);
     if (get_st_gpio(gpio_pin) == RT_NULL)
     {
@@ -1726,13 +1725,12 @@ static rt_err_t stm32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     return RT_EOK;
 }
 
-static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                              rt_uint32_t enabled)
+static rt_err_t stm32_pin_irq_enable(struct rt_device *device, int32_t pin, uint32_t enabled)
 {
-    rt_uint16_t gpio_pin;
+    uint16_t gpio_pin;
     const struct pin_irq_map *irqmap;
     rt_base_t level;
-    rt_int32_t irqindex = -1;
+    int32_t irqindex = -1;
     GPIO_InitTypeDef GPIO_InitStruct;
     gpio_pin = get_pin(pin);
     if (get_st_gpio(gpio_pin) == RT_NULL)
@@ -1804,7 +1802,7 @@ const static struct rt_pin_ops _stm32_pin_ops =
 
 int rt_hw_pin_init(void)
 {
-    int result;
+    int32_t result;
     result = rt_device_pin_register("pin", &_stm32_pin_ops, RT_NULL);
     return result;
 }
@@ -1812,7 +1810,7 @@ INIT_BOARD_EXPORT(rt_hw_pin_init);
 
 static void pin_irq_hdr(uint16_t GPIO_Pin)
 {
-    int irqno = 0;
+    int32_t irqno = 0;
     for(irqno = 0; irqno < 16; irqno ++)
     {
         if((0x01 << irqno) == GPIO_Pin)
