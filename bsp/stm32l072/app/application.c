@@ -19,6 +19,7 @@
 #include <rtdevice.h>
 #include "board.h"
 #include <rtthread.h>
+#include <finsh.h>
 
 static void rt_init_thread_entry(void* parameter)
 {
