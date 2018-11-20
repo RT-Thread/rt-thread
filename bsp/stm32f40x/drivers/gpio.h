@@ -10,6 +10,6 @@
 #ifndef GPIO_H__
 #define GPIO_H__
 
-int stm32_hw_pin_init(void);
+int32_t stm32_hw_pin_init(void);
 
 #endif
