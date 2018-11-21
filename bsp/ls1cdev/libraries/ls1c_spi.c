@@ -38,7 +38,7 @@
  * 获取指定SPI模块的基地址
  * @SPIx SPI模块的编号
  */
-inline void *ls1c_spi_get_base(unsigned char SPIx)
+void *ls1c_spi_get_base(unsigned char SPIx)
 {
     void *base = NULL;
 
@@ -229,7 +229,7 @@ void ls1c_spi_set_cs(void *spi_base, unsigned char cs, int new_status)
  * 等待收发完成
  * @spi_base 基地址
  */
-inline void ls1c_spi_wait_txrx_done(void *spi_base)
+void ls1c_spi_wait_txrx_done(void *spi_base)
 {
     int timeout = LS1C_SPI_TX_TIMEOUT;
 
@@ -247,7 +247,7 @@ inline void ls1c_spi_wait_txrx_done(void *spi_base)
  * 清中断和标志位
  * @spi_base 基地址
  */
-inline void ls1c_spi_clear(void *spi_base)
+void ls1c_spi_clear(void *spi_base)
 {
     unsigned char val = 0;
 

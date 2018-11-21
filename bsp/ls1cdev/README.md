@@ -21,13 +21,19 @@
 
 Windows平台推荐使用[env工具][1]。龙芯1C的LS232处理器核是一款MIPS32兼容处理器，由于env工具中并未默认携带MIPS的工具链，需要下载如下工具链：
 
-* [mips-2015.05-19-mips-sde-elf.exe][2]
+* 百度网盘[mipsel-none-elf-win-20180903.tar.gz][2] 密码：p5rb
 
-安装好工具链后，假设工具链安装在`D:\mgc\embedded\codebench`目录下。使用env工具，打开console后，进入到命令行环境中，需要手动设置工具链的环境变量`RTT_EXEC_PATH`：
+安装好工具链后，假设工具链安装在`D:\mipsel-none-elf-win-20180903`目录下，修改bsp/ls1cdev目录下rtconfig.py文件中的`EXEC_PATH`和`PREFIX`，修改为如下：
 
-    set RTT_EXEC_PATH=D:\mgc\embedded\codebench\bin
+	EXEC_PATH   = r'D:\mipsel-none-elf-win-20180903\bin'
 	
-使用env工具，可以在console下进入到`bsp/ls1cdev`目录中，运行以下命令：
+	PREFIX = 'mipsel-none-elf-'
+	
+使用env工具，还需要修改env安装目录\tools\ConEmu\ConEmu下的CmdInit.cmd文件，第50行修改为：
+
+	set RTT_EXEC_PATH=D:\mipsel-none-elf-win-20180903\bin
+	
+在console下进入到`bsp/ls1cdev`目录中，运行以下命令：
 
     scons
 
@@ -92,6 +98,6 @@ Link is with 100M Speed
 * 1C芯片[数据手册][4]
 
   [1]: https://www.rt-thread.org/page/download.html
-  [2]: https://sourcery.mentor.com/GNUToolchain/package13851/public/mips-sde-elf/mips-2015.05-19-mips-sde-elf.exe
+  [2]: https://pan.baidu.com/s/1_ObfHDLKJC-QDA2EA9WkaA
   [3]: http://www.loongson.cn/uploadfile/cpu/1C/Loongson_1C300_user.pdf
   [4]: http://www.loongson.cn/uploadfile/cpu/1C/Loongson_1C300_data.pdf

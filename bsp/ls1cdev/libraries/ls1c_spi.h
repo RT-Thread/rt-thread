@@ -92,7 +92,7 @@
  * 获取指定SPI模块的基地址
  * @SPIx SPI模块的编号
  */
-inline void *ls1c_spi_get_base(unsigned char SPIx);
+void *ls1c_spi_get_base(unsigned char SPIx);
 
 
 /*
