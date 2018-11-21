@@ -24,7 +24,7 @@ struct rt1052_pin
 {
     rt_uint16_t   pin; 
     GPIO_Type    *gpio; 
-    rt_uint32_t   gpio_pin; 
+    uint32_t   gpio_pin; 
 }; 
 
 struct rt1052_irq
@@ -218,7 +218,7 @@ static struct rt1052_irq rt1052_irq_map[] =
     {PIN_IRQ_DISABLE, {PIN_IRQ_PIN_NONE, PIN_IRQ_MODE_RISING, RT_NULL, RT_NULL} }
 }; 
 
-void gpio_isr(GPIO_Type* base, rt_uint32_t gpio_pin)
+void gpio_isr(GPIO_Type* base, uint32_t gpio_pin)
 {
     if((GPIO_PortGetInterruptFlags(base) & (1 << gpio_pin)) != 0)
     {
@@ -233,7 +233,7 @@ void gpio_isr(GPIO_Type* base, rt_uint32_t gpio_pin)
 
 void GPIO1_Combined_0_15_IRQHandler(void)
 {
-    rt_uint8_t gpio_pin; 
+    uint8_t gpio_pin; 
     
     rt_interrupt_enter();
 
@@ -247,7 +247,7 @@ void GPIO1_Combined_0_15_IRQHandler(void)
 
 void GPIO1_Combined_16_31_IRQHandler(void)
 {
-    rt_uint8_t gpio_pin; 
+    uint8_t gpio_pin; 
     
     rt_interrupt_enter();
 
@@ -261,7 +261,7 @@ void GPIO1_Combined_16_31_IRQHandler(void)
 
 void GPIO2_Combined_0_15_IRQHandler(void)
 {
-    rt_uint8_t gpio_pin; 
+    uint8_t gpio_pin; 
     
     rt_interrupt_enter();
 
@@ -275,7 +275,7 @@ void GPIO2_Combined_0_15_IRQHandler(void)
 
 void GPIO2_Combined_16_31_IRQHandler(void)
 {
-    rt_uint8_t gpio_pin; 
+    uint8_t gpio_pin; 
     
     rt_interrupt_enter();
 
@@ -289,7 +289,7 @@ void GPIO2_Combined_16_31_IRQHandler(void)
 
 void GPIO3_Combined_0_15_IRQHandler(void) 
 {
-    rt_uint8_t gpio_pin; 
+    uint8_t gpio_pin; 
     
     rt_interrupt_enter();
 
@@ -303,7 +303,7 @@ void GPIO3_Combined_0_15_IRQHandler(void)
 
 void GPIO3_Combined_16_31_IRQHandler(void)
 {
-    rt_uint8_t gpio_pin; 
+    uint8_t gpio_pin; 
     
     rt_interrupt_enter();
 
@@ -317,7 +317,7 @@ void GPIO3_Combined_16_31_IRQHandler(void)
 
 void GPIO4_Combined_0_15_IRQHandler(void)
 {
-    rt_uint8_t gpio_pin; 
+    uint8_t gpio_pin; 
     
     rt_interrupt_enter();
 
@@ -330,7 +330,7 @@ void GPIO4_Combined_0_15_IRQHandler(void)
 }
 void GPIO4_Combined_16_31_IRQHandler(void)
 {
-    rt_uint8_t gpio_pin; 
+    uint8_t gpio_pin; 
     
     rt_interrupt_enter();
 
@@ -344,7 +344,7 @@ void GPIO4_Combined_16_31_IRQHandler(void)
 
 void GPIO5_Combined_0_15_IRQHandler(void)
 { 
-    rt_uint8_t gpio_pin; 
+    uint8_t gpio_pin; 
     
     rt_interrupt_enter();
 
@@ -356,7 +356,7 @@ void GPIO5_Combined_0_15_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-static IRQn_Type rt1052_get_irqnum(GPIO_Type *gpio, rt_uint32_t gpio_pin)
+static IRQn_Type rt1052_get_irqnum(GPIO_Type *gpio, uint32_t gpio_pin)
 {
     IRQn_Type irq_num = NotAvail_IRQn;  /* Invalid interrupt number */
     
@@ -419,10 +419,10 @@ static IRQn_Type rt1052_get_irqnum(GPIO_Type *gpio, rt_uint32_t gpio_pin)
     return irq_num; 
 }
 
-static void rt1052_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void rt1052_pin_mode(rt_device_t dev, int32_t pin, uint32_t mode)
 {
     gpio_pin_config_t gpio; 
-    rt_uint32_t config_value = 0; 
+    uint32_t config_value = 0; 
     
     if((pin > __ARRAY_LEN(rt1052_pin_map)) || (pin == 0))
     {
@@ -493,18 +493,17 @@ static void rt1052_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     GPIO_PinInit(rt1052_pin_map[pin].gpio, rt1052_pin_map[pin].gpio_pin, &gpio); 
 }
 
-static int rt1052_pin_read(rt_device_t dev, rt_base_t pin)
+static uint32_t rt1052_pin_read(rt_device_t dev, int32_t pin)
 {
     return GPIO_PinReadPadStatus(rt1052_pin_map[pin].gpio, rt1052_pin_map[pin].gpio_pin); 
 }
 
-static void rt1052_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void rt1052_pin_write(rt_device_t dev, int32_t pin, uint32_t value)
 {
     GPIO_PinWrite(rt1052_pin_map[pin].gpio, rt1052_pin_map[pin].gpio_pin, value);
 }
 
-static rt_err_t rt1052_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-    rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t rt1052_pin_attach_irq(struct rt_device *device, int32_t pin, uint32_t mode, void (*hdr)(void *args), void *args)
 {
     struct rt1052_pin* pin_map = RT_NULL; 
     struct rt1052_irq* irq_map = RT_NULL; 
@@ -530,7 +529,7 @@ static rt_err_t rt1052_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-static rt_err_t rt1052_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t rt1052_pin_detach_irq(struct rt_device *device, int32_t pin)
 {
     struct rt1052_pin* pin_map = RT_NULL; 
     struct rt1052_irq* irq_map = RT_NULL; 
@@ -556,11 +555,11 @@ static rt_err_t rt1052_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     return RT_EOK;
 }
 
-static rt_err_t rt1052_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+static rt_err_t rt1052_pin_irq_enable(struct rt_device *device, int32_t pin, uint32_t enabled)
 {
     gpio_pin_config_t gpio; 
     IRQn_Type irq_num;
-    rt_uint32_t config_value = 0x1b0a0; 
+    uint32_t config_value = 0x1b0a0; 
     
     struct rt1052_pin* pin_map = RT_NULL; 
     struct rt1052_irq* irq_map = RT_NULL; 
