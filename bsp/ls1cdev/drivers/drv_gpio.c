@@ -31,9 +31,9 @@
 
 #ifdef RT_USING_PIN
 
-void ls1c_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t mode)
+void ls1c_pin_mode(struct rt_device *device, int32_t pin, uint32_t mode)
 {
-    unsigned int gpio = pin;
+    uint32_t gpio = pin;
 
     if (PIN_MODE_OUTPUT == mode)
     {
@@ -48,9 +48,9 @@ void ls1c_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t mode)
 }
 
 
-void ls1c_pin_write(struct rt_device *device, rt_base_t pin, rt_base_t value)
+void ls1c_pin_write(struct rt_device *device, int32_t pin, uint32_t value)
 {
-    unsigned int gpio = pin;
+    uint32_t gpio = pin;
 
     if (PIN_LOW == value)
     {
@@ -65,10 +65,10 @@ void ls1c_pin_write(struct rt_device *device, rt_base_t pin, rt_base_t value)
 }
 
 
-int ls1c_pin_read(struct rt_device *device, rt_base_t pin)
+uint32_t ls1c_pin_read(struct rt_device *device, int32_t pin)
 {
-    unsigned int gpio = pin;
-    int value = PIN_LOW;
+    uint32_t gpio = pin;
+    uint32_t value = PIN_LOW;
 
     if (0 == gpio_get(gpio))
     {
@@ -82,10 +82,9 @@ int ls1c_pin_read(struct rt_device *device, rt_base_t pin)
     return value;
 }
 
-rt_err_t ls1c_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                             rt_uint32_t mode, void (*hdr)(void *args), void *args)
+rt_err_t ls1c_pin_attach_irq(struct rt_device *device, int32_t pin, uint32_t mode, void (*hdr)(void *args), void *args)
 {
-    unsigned int gpio = pin;
+    uint32_t gpio = pin;
     char irq_name[10];
 
     gpio_set_irq_type(gpio, mode);
@@ -95,14 +94,14 @@ rt_err_t ls1c_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-rt_err_t ls1c_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+rt_err_t ls1c_pin_detach_irq(struct rt_device *device, int32_t pin)
 {
     return RT_EOK;
 }
 
-rt_err_t ls1c_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+rt_err_t ls1c_pin_irq_enable(struct rt_device *device, int32_t pin, uint32_t enabled)
 {
-    unsigned int gpio = pin;
+    uint32_t gpio = pin;
 
     if (enabled)
         rt_hw_interrupt_umask(LS1C_GPIO_TO_IRQ(gpio));
