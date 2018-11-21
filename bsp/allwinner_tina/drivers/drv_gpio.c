@@ -44,9 +44,9 @@
 *********************************************************/
 int gpio_set_func(enum gpio_port port, enum gpio_pin pin, rt_uint8_t func)
 {
-    rt_uint32_t addr;
-    rt_uint32_t offset;
-    rt_uint32_t data;
+    uint32_t addr;
+    uint32_t offset;
+    uint32_t data;
 
     RT_ASSERT((GPIO_PORT_A <= port) && (port < GPIO_PORT_NUM));
     RT_ASSERT((GPIO_PIN_0 <= pin) && (pin < GPIO_PIN_NUM));
@@ -65,15 +65,15 @@ int gpio_set_func(enum gpio_port port, enum gpio_pin pin, rt_uint8_t func)
     data |= func << offset;
     writel(data, addr);
 
-    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((uint32_t *)addr));
     return RT_EOK;
 }
 
 int gpio_set_value(enum gpio_port port, enum gpio_pin pin, rt_uint8_t value)
 {
-    rt_uint32_t addr;
-    rt_uint32_t offset;
-    rt_uint32_t data;
+    uint32_t addr;
+    uint32_t offset;
+    uint32_t data;
 
     RT_ASSERT((GPIO_PORT_A <= port) && (port < GPIO_PORT_NUM));
     RT_ASSERT((GPIO_PIN_0 <= pin) && (pin < GPIO_PIN_NUM));
@@ -92,15 +92,15 @@ int gpio_set_value(enum gpio_port port, enum gpio_pin pin, rt_uint8_t value)
     data |= value << offset;
     writel(data, addr);
 
-    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((uint32_t *)addr));
     return RT_EOK;
 }
 
 int gpio_get_value(enum gpio_port port, enum gpio_pin pin)
 {
-    rt_uint32_t addr;
-    rt_uint32_t offset;
-    rt_uint32_t data;
+    uint32_t addr;
+    uint32_t offset;
+    uint32_t data;
 
     RT_ASSERT((GPIO_PORT_A <= port) && (port < GPIO_PORT_NUM));
     RT_ASSERT((GPIO_PIN_0 <= pin) && (pin < GPIO_PIN_NUM));
@@ -110,15 +110,15 @@ int gpio_get_value(enum gpio_port port, enum gpio_pin pin)
 
     data = readl(addr);
 
-    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((uint32_t *)addr));
     return (data >> offset) & 0x01;
 }
 
 int gpio_set_pull_mode(enum gpio_port port,  enum gpio_pin pin, enum gpio_pull pull)
 {
-    rt_uint32_t addr;
-    rt_uint32_t offset;
-    rt_uint32_t data;
+    uint32_t addr;
+    uint32_t offset;
+    uint32_t data;
 
     RT_ASSERT((GPIO_PORT_A <= port) && (port < GPIO_PORT_NUM));
     RT_ASSERT((GPIO_PIN_0 <= pin) && (pin < GPIO_PIN_NUM));
@@ -138,15 +138,15 @@ int gpio_set_pull_mode(enum gpio_port port,  enum gpio_pin pin, enum gpio_pull p
     data |= pull << offset;
     writel(data, addr);
 
-    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((uint32_t *)addr));
     return RT_EOK;
 }
 
 int gpio_set_drive_level(enum gpio_port port, enum gpio_pin pin, enum gpio_drv_level level)
 {
-    volatile rt_uint32_t addr;
-    rt_uint32_t offset;
-    rt_uint32_t data;
+    volatile uint32_t addr;
+    uint32_t offset;
+    uint32_t data;
 
     RT_ASSERT((GPIO_PORT_A <= port) && (port < GPIO_PORT_NUM));
     RT_ASSERT((GPIO_PIN_0 <= pin) && (pin < GPIO_PIN_NUM));
@@ -166,15 +166,15 @@ int gpio_set_drive_level(enum gpio_port port, enum gpio_pin pin, enum gpio_drv_l
     data |= level << offset;
     writel(data, addr);
 
-    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((uint32_t *)addr));
     return RT_EOK;
 }
 
 void gpio_direction_input(enum gpio_port port,  enum gpio_pin pin)
 {
-    volatile rt_uint32_t addr;
-    rt_uint32_t offset;
-    rt_uint32_t data;
+    volatile uint32_t addr;
+    uint32_t offset;
+    uint32_t data;
 
     RT_ASSERT((GPIO_PORT_A <= port) && (port < GPIO_PORT_NUM));
     RT_ASSERT((GPIO_PIN_0 <= pin) && (pin < GPIO_PIN_NUM));
@@ -187,14 +187,14 @@ void gpio_direction_input(enum gpio_port port,  enum gpio_pin pin)
     data |= IO_INPUT << offset;
     writel(data, addr);
 
-    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((uint32_t *)addr));
 }
 
 void gpio_direction_output(enum gpio_port port, enum gpio_pin pin, int value)
 {
-    volatile rt_uint32_t addr;
-    rt_uint32_t offset;
-    rt_uint32_t data;
+    volatile uint32_t addr;
+    uint32_t offset;
+    uint32_t data;
 
     RT_ASSERT((GPIO_PORT_A <= port) && (port < GPIO_PORT_NUM));
     RT_ASSERT((GPIO_PIN_0 <= pin) && (pin < GPIO_PIN_NUM));
@@ -208,15 +208,15 @@ void gpio_direction_output(enum gpio_port port, enum gpio_pin pin, int value)
     data |= IO_OUTPUT << offset;
     writel(data, addr);
 
-    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((uint32_t *)addr));
 }
 /*********************************************************
 **   IRQ
 *********************************************************/
 static void gpio_ack_irq(enum gpio_port port,  enum gpio_pin pin)
 {
-    rt_uint32_t addr;
-    rt_uint32_t data;
+    uint32_t addr;
+    uint32_t data;
 
     addr = GPIOn_INT_STA_ADDR(port);
     data = readl(addr);
@@ -226,8 +226,8 @@ static void gpio_ack_irq(enum gpio_port port,  enum gpio_pin pin)
 
 void gpio_select_irq_clock(enum gpio_port port, enum gpio_irq_clock clock)
 {
-    rt_uint32_t addr;
-    rt_uint32_t data;
+    uint32_t addr;
+    uint32_t data;
 
     RT_ASSERT((GPIO_PORT_C < port) && (port < GPIO_PORT_NUM));
 
@@ -237,13 +237,13 @@ void gpio_select_irq_clock(enum gpio_port port, enum gpio_irq_clock clock)
     data &= ~0x01;
     data |= clock;
     writel(data, addr);
-    LOG_D("[line]:%d addr:%08x data:%08x", __LINE__, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d addr:%08x data:%08x", __LINE__, addr, *((uint32_t *)addr));
 }
 
 void gpio_set_debounce(enum gpio_port port, enum gpio_direction_type prescaler)
 {
-    rt_uint32_t addr;
-    rt_uint32_t data;
+    uint32_t addr;
+    uint32_t data;
 
     RT_ASSERT((GPIO_PORT_C < port) && (port < GPIO_PORT_NUM));
 
@@ -253,14 +253,14 @@ void gpio_set_debounce(enum gpio_port port, enum gpio_direction_type prescaler)
     data &= ~(0x07 << 4);
     data |= prescaler << 4;
     writel(data, addr);
-    LOG_D("[line]:%d addr:%08x data:%08x", __LINE__, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d addr:%08x data:%08x", __LINE__, addr, *((uint32_t *)addr));
 }
 
 void gpio_irq_enable(enum gpio_port port,  enum gpio_pin pin)
 {
-    rt_uint32_t addr;
-    rt_uint32_t offset;
-    rt_uint32_t data;
+    uint32_t addr;
+    uint32_t offset;
+    uint32_t data;
 
     RT_ASSERT((GPIO_PORT_C < port) && (port < GPIO_PORT_NUM));
     RT_ASSERT((GPIO_PIN_0 <= pin) && (pin < GPIO_PIN_NUM));
@@ -272,14 +272,14 @@ void gpio_irq_enable(enum gpio_port port,  enum gpio_pin pin)
     data |= 0x1 << offset;
     writel(data, addr);
     gpio_select_irq_clock(port, GPIO_IRQ_HOSC_24MHZ);
-    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((uint32_t *)addr));
 }
 
 void gpio_irq_disable(enum gpio_port port,  enum gpio_pin pin)
 {
-    rt_uint32_t addr;
-    rt_uint32_t offset;
-    rt_uint32_t data;
+    uint32_t addr;
+    uint32_t offset;
+    uint32_t data;
 
     RT_ASSERT((GPIO_PORT_C < port) && (port < GPIO_PORT_NUM));
     RT_ASSERT((GPIO_PIN_0 <= pin) && (pin < GPIO_PIN_NUM));
@@ -292,14 +292,14 @@ void gpio_irq_disable(enum gpio_port port,  enum gpio_pin pin)
     data &= ~(0x1 << offset);
 
     writel(data, addr);
-    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((uint32_t *)addr));
 }
 
 void gpio_set_irq_type(enum gpio_port port,  enum gpio_pin pin, enum gpio_irq_type irq_type)
 {
-    rt_uint32_t addr;
-    rt_uint32_t offset;
-    rt_uint32_t data;
+    uint32_t addr;
+    uint32_t offset;
+    uint32_t data;
 
     RT_ASSERT((GPIO_PORT_C < port) && (port < GPIO_PORT_NUM));
     RT_ASSERT((GPIO_PIN_0 <= pin) && (pin < GPIO_PIN_NUM));
@@ -312,7 +312,7 @@ void gpio_set_irq_type(enum gpio_port port,  enum gpio_pin pin, enum gpio_irq_ty
     data |= irq_type << offset;
     writel(data, addr);
 
-    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((uint32_t *)addr));
 }
 
 static struct gpio_irq_def _g_gpio_irq_tbl[GPIO_PORT_NUM];
@@ -337,9 +337,9 @@ void gpio_clear_irq_callback(enum gpio_port port, enum gpio_pin pin)
 static void gpio_irq_handler(int irq, void *param)
 {
     struct gpio_irq_def *irq_def = (struct gpio_irq_def *)param;
-    rt_uint32_t pend, enable;
+    uint32_t pend, enable;
     int port, pin;
-    rt_uint32_t addr;
+    uint32_t addr;
 
     pin = 0;
     port = irq - PIOD_INTERRUPT;
@@ -448,7 +448,7 @@ static struct _pin_index pin_index[] =
     {66, GPIO_PORT_A, GPIO_PIN_0, PIN_MAGIC},
 };
 
-static void pin_mode(struct rt_device *dev, rt_base_t pin, rt_base_t mode)
+static void pin_mode(struct rt_device *dev, int32_t pin, uint32_t mode)
 {
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
@@ -459,7 +459,7 @@ static void pin_mode(struct rt_device *dev, rt_base_t pin, rt_base_t mode)
     gpio_set_func(pin_index[pin].pin_port, pin_index[pin].pin, mode);
 }
 
-static void pin_write(struct rt_device *dev, rt_base_t pin, rt_base_t value)
+static void pin_write(struct rt_device *dev, int32_t pin, uint32_t value)
 {
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
@@ -470,7 +470,7 @@ static void pin_write(struct rt_device *dev, rt_base_t pin, rt_base_t value)
     gpio_set_value(pin_index[pin].pin_port, pin_index[pin].pin, value);
 }
 
-static int pin_read(struct rt_device *device, rt_base_t pin)
+static uint32_t pin_read(struct rt_device *device, int32_t pin)
 {
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
@@ -481,7 +481,7 @@ static int pin_read(struct rt_device *device, rt_base_t pin)
     return gpio_get_value(pin_index[pin].pin_port, pin_index[pin].pin);
 }
 
-static rt_err_t pin_attach_irq(struct rt_device *device, rt_int32_t pin, rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t pin_attach_irq(struct rt_device *device, int32_t pin, uint32_t mode, void (*hdr)(void *args), void *args)
 {
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
@@ -493,7 +493,7 @@ static rt_err_t pin_attach_irq(struct rt_device *device, rt_int32_t pin, rt_uint
     gpio_set_irq_type(pin_index[pin].pin_port, pin_index[pin].pin, mode);
     return RT_EOK;
 }
-static rt_err_t pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t pin_detach_irq(struct rt_device *device, int32_t pin)
 {
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
@@ -506,7 +506,7 @@ static rt_err_t pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     return RT_EOK;
 }
 
-rt_err_t pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+rt_err_t pin_irq_enable(struct rt_device *device, int32_t pin, uint32_t enabled)
 {
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
