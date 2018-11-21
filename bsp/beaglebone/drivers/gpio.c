@@ -19,7 +19,7 @@
 
 #ifdef RT_USING_PIN
 
-#define reg(base)         *(int*)(base)
+#define reg(base)         *(uint32_t*)(base)
 
 #define GPIO_PIN_LOW              (0x0)
 #define GPIO_PIN_HIGH             (0x1)
@@ -37,7 +37,7 @@ static rt_base_t GPIO_BASE[] =
     AM33XX_GPIO_3_REGS
 };
 
-static void am33xx_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t mode)
+static void am33xx_pin_mode(struct rt_device *device, int32_t pin, uint32_t mode)
 {
     RT_ASSERT(pin >= 0 && pin < 128);
     RT_ASSERT(mode != PIN_MODE_INPUT_PULLUP); /* Mode not supported */
@@ -54,11 +54,11 @@ static void am33xx_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t m
     }
 }
 
-static void am33xx_pin_write(struct rt_device *device, rt_base_t pin, rt_base_t value)
+static void am33xx_pin_write(struct rt_device *device, int32_t pin, uint32_t value)
 {
     RT_ASSERT(pin >= 0 && pin < 128);
-    rt_base_t gpiox     = pin >> 5;
-    rt_base_t pinNumber = pin & 0x1F;
+    uint32_t gpiox     = pin >> 5;
+    uint32_t  pinNumber = pin & 0x1F;
 
     if(GPIO_PIN_HIGH == value)
     {
@@ -70,11 +70,11 @@ static void am33xx_pin_write(struct rt_device *device, rt_base_t pin, rt_base_t 
     }
 }
 
-static int am33xx_pin_read(struct rt_device *device, rt_base_t pin)
+static uint32_t am33xx_pin_read(struct rt_device *device, int32_t pin)
 {
     RT_ASSERT(pin >= 0 && pin < 128);
-    rt_base_t gpiox     = pin >> 5;
-    rt_base_t pinNumber = pin & 0x1F;
+    uint32_t  gpiox     = pin >> 5;
+    uint32_t  pinNumber = pin & 0x1F;
 
     return reg(GPIO_BASE[gpiox] + GPIO_DATAIN) & (1 << pinNumber) ? 1 : 0;
 }
