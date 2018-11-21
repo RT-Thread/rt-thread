@@ -32,7 +32,7 @@
 #define APLLO2_PIN_NUMBERS    64 //[34, 64]
 struct rt_pin_irq_hdr am_pin_irq_hdr_tab[64];
 
-void am_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+void am_pin_mode(rt_device_t dev, int32_t pin, uint32_t mode)
 {
     if (mode == PIN_MODE_OUTPUT)
     {
@@ -61,7 +61,7 @@ void am_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     }
 }
 
-void am_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+void am_pin_write(rt_device_t dev, int32_t pin, uint32_t value)
 {
     if (value == PIN_LOW)
     {
@@ -73,9 +73,9 @@ void am_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     }    
 }
 
-int am_pin_read(rt_device_t dev, rt_base_t pin)
+uint32_t am_pin_read(rt_device_t dev, int32_t pin)
 {
-    int value = PIN_LOW;
+    uint32_t value = PIN_LOW;
 
     if (am_hal_gpio_pin_config_read(pin) == AM_HAL_GPIO_OUTPUT)
     {
@@ -103,11 +103,10 @@ int am_pin_read(rt_device_t dev, rt_base_t pin)
     return value;
 }
 
-rt_err_t am_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                rt_uint32_t mode, void (*hdr)(void *args), void *args)
+rt_err_t am_pin_attach_irq(struct rt_device *device, int32_t pin, uint32_t mode, void (*hdr)(void *args), void *args)
 {
     rt_base_t level;
-    rt_int32_t irqindex = -1;
+    int32_t irqindex = -1;
 
     irqindex = pin;
 
@@ -135,10 +134,10 @@ rt_err_t am_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-rt_err_t am_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
+rt_err_t am_pin_dettach_irq(struct rt_device *device, int32_t pin)
 {
     rt_base_t level;
-    rt_int32_t irqindex = -1;
+    int32_t irqindex = -1;
 
     irqindex = pin;
 
@@ -157,10 +156,10 @@ rt_err_t am_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
     return RT_EOK;
 }
 
-rt_err_t am_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+rt_err_t am_pin_irq_enable(struct rt_device *device, int32_t pin, uint32_t enabled)
 {
     rt_base_t level;
-    rt_int32_t irqindex = -1;
+    int32_t irqindex = -1;
 
     irqindex = pin;
 
