@@ -1176,11 +1176,6 @@ static rt_err_t rt_msd_init(rt_device_t dev)
 
     } /* read CSD */
 
-    /* Store configuration to msd spi device*/
-    msd->spi_device->config.data_width = 8;
-    msd->spi_device->config.mode = RT_SPI_MODE_0 | RT_SPI_MSB;
-    msd->spi_device->config.max_hz = msd->max_clock;
-    
     /* config spi to high speed */
     {
         struct rt_spi_configuration cfg;
