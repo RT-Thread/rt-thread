@@ -30,11 +30,6 @@
 #endif
 #endif
 
-#ifdef RT_USING_IDLE_HOOK
-#ifndef RT_IDEL_HOOK_LIST_SIZE
-#define RT_IDEL_HOOK_LIST_SIZE  4
-#endif
-
 #ifndef IDLE_THREAD_STACK_SIZE
 #if defined (RT_USING_IDLE_HOOK) || defined(RT_USING_HEAP)
 #define IDLE_THREAD_STACK_SIZE  256
@@ -54,6 +49,12 @@ extern rt_list_t rt_thread_defunct;
 static struct rt_thread idle[_CPUS_NR];
 ALIGN(RT_ALIGN_SIZE)
 static rt_uint8_t rt_thread_stack[_CPUS_NR][IDLE_THREAD_STACK_SIZE];
+
+#ifdef RT_USING_IDLE_HOOK
+#ifndef RT_IDEL_HOOK_LIST_SIZE
+#define RT_IDEL_HOOK_LIST_SIZE  4
+#endif
+
 static void (*idle_hook_list[RT_IDEL_HOOK_LIST_SIZE])();
 
 /**
