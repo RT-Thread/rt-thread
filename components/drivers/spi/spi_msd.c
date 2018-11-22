@@ -1214,7 +1214,11 @@ static rt_err_t rt_msd_init(rt_device_t dev)
         cfg.data_width = 8;
         cfg.mode = RT_SPI_MODE_0 | RT_SPI_MSB; /* SPI Compatible Modes 0 */
         cfg.max_hz = msd->max_clock;
-
+        
+        msd->spi_device->config.data_width = 8;
+        msd->spi_device->config.mode = RT_SPI_MODE_0 | RT_SPI_MSB;
+        msd->spi_device->config.max_hz = msd->max_clock;
+        
         rt_spi_configure(msd->spi_device, &cfg);
     } /* config spi */
 
