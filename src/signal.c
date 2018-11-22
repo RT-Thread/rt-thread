@@ -6,6 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2017/10/5      Bernard      the first version
+ * 2018/09/17     Jesven       fix: in _signal_deliver RT_THREAD_STAT_MASK to RT_THREAD_STAT_SIGNAL_MASK
+ * 2018/11/22     Jesven       in smp version rt_hw_context_switch_to add a param
  */
 
 #include <stdint.h>
@@ -60,10 +62,14 @@ static void _signal_entry(void *parameter)
     tid->sp = tid->sig_ret;
     tid->sig_ret = RT_NULL;
 
-    LOG_D("switch back to: 0x%08x", tid->sp);
+    LOG_D("switch back to: 0x%08x\n", tid->sp);
     tid->stat &= ~RT_THREAD_STAT_SIGNAL;
 
-    rt_hw_context_switch_to((rt_uint32_t) & (tid->sp));
+#ifdef RT_USING_SMP
+    rt_hw_context_switch_to((rt_ubase_t)&(tid->sp), tid);
+#else
+    rt_hw_context_switch_to((rt_ubase_t)&(tid->sp));
+#endif /*RT_USING_SMP*/
 }
 
 /*
@@ -108,7 +114,7 @@ static void _signal_deliver(rt_thread_t tid)
             /* do signal action in self thread context */
             rt_thread_handle_sig(RT_TRUE);
         }
-        else if (!((tid->stat & RT_THREAD_STAT_MASK) & RT_THREAD_STAT_SIGNAL))
+        else if (!((tid->stat & RT_THREAD_STAT_SIGNAL_MASK) & RT_THREAD_STAT_SIGNAL))
         {
             /* add signal state */
             tid->stat |= RT_THREAD_STAT_SIGNAL;
