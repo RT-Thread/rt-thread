@@ -10,6 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2013-07-06     Bernard      first version
+ * 2018-11-22     Jesven       add smp support
  */
 
 #include <rthw.h>
@@ -19,21 +20,21 @@
 
 #define MAX_HANDLERS                NR_IRQS_PBA8
 
-extern volatile rt_uint8_t rt_interrupt_nest;
-
 /* exception and interrupt handler table */
 struct rt_irq_desc isr_table[MAX_HANDLERS];
 
+#ifndef RT_USING_SMP
 /* Those varibles will be accessed in ISR, so we need to share them. */
 rt_uint32_t rt_interrupt_from_thread;
 rt_uint32_t rt_interrupt_to_thread;
 rt_uint32_t rt_thread_switch_interrupt_flag;
+#endif
 
 const unsigned int VECTOR_BASE = 0x00;
 extern void rt_cpu_vector_set_base(unsigned int addr);
 extern int system_vectors;
 
-static void rt_hw_vector_init(void)
+void rt_hw_vector_init(void)
 {
     rt_cpu_vector_set_base((unsigned int)&system_vectors);
 }
@@ -60,10 +61,11 @@ void rt_hw_interrupt_init(void)
     arm_gic_cpu_init(0, gic_cpu_base);
 
     /* init interrupt nest, and context in thread sp */
-    rt_interrupt_nest = 0;
+#ifndef RT_USING_SMP
     rt_interrupt_from_thread = 0;
     rt_interrupt_to_thread = 0;
     rt_thread_switch_interrupt_flag = 0;
+#endif
 }
 
 /**
