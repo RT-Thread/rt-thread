@@ -69,8 +69,6 @@ status_t PHY_Init(ENET_Type *base, uint32_t phyAddr, uint32_t srcClock_Hz)
     uint32_t idReg = 0;
     status_t result = kStatus_Success;
     uint32_t instance = ENET_GetInstance(base);
-    uint32_t timeDelay;
-    uint32_t ctlReg = 0;
 
 #if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
     /* Set SMI first. */
@@ -95,7 +93,19 @@ status_t PHY_Init(ENET_Type *base, uint32_t phyAddr, uint32_t srcClock_Hz)
     result = PHY_Write(base, phyAddr, PHY_BASICCONTROL_REG, PHY_BCTL_RESET_MASK);
     if (result == kStatus_Success)
     {
-
+#if defined(BOARD_RT1050_FIRE)
+        for (uint32_t i = 0x10000; i > 0; i--)
+        {
+            result = PHY_Read(base, phyAddr, PHY_BASICCONTROL_REG, &bssReg);
+            if (!(bssReg & PHY_BCTL_POWER_DOWN_MASK))
+            {
+                break;
+            }
+        }
+#endif
+#if defined(BOARD_RT1050_ATK)
+      rt_thread_delay(RT_TICK_PER_SECOND);  
+#endif
 #if defined(FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE)
         uint32_t data = 0;
         result = PHY_Read(base, phyAddr, PHY_CONTROL2_REG, &data);
@@ -126,15 +136,21 @@ status_t PHY_Init(ENET_Type *base, uint32_t phyAddr, uint32_t srcClock_Hz)
                     result = PHY_Read(base, phyAddr, PHY_BASICSTATUS_REG, &bssReg);
                     if ( result == kStatus_Success)
                     {
+#if defined(BOARD_RT1050_FIRE) || defined(BOARD_RT1050_ATK)
+                        if (((bssReg & PHY_BSTATUS_AUTONEGCOMP_MASK) != 0))
+#else
+                        uint32_t ctlReg = 0;
                         PHY_Read(base, phyAddr, PHY_CONTROL1_REG, &ctlReg);
                         if (((bssReg & PHY_BSTATUS_AUTONEGCOMP_MASK) != 0) && (ctlReg & PHY_LINK_READY_MASK))
+#endif
                         {
-                            /* Wait a moment for Phy status stable. */
-                            for (timeDelay = 0; timeDelay < PHY_TIMEOUT_COUNT; timeDelay ++)
-                            {
-                                __ASM("nop");
-                            }
+                            rt_kprintf("auto negotiation complete success\n");
                             break;
+                        }
+                        else
+                        {
+                         /* Wait a moment for Phy status stable. */
+                                __ASM("nop");
                         }
                     }
                     
@@ -309,7 +325,12 @@ status_t PHY_GetLinkSpeedDuplex(ENET_Type *base, uint32_t phyAddr, phy_speed_t *
     uint32_t data, ctlReg;
 
     /* Read the control two register. */
+#if defined(BOARD_RT1050_FIRE) || defined(BOARD_RT1050_ATK)
+    result = PHY_Read(base, phyAddr, PHY_CONTROL2_REG, &ctlReg);
+#endif
+#if defined(BOARD_RT1050_EVK) || defined(BOARD_RT1050_SeeedStudio)
     result = PHY_Read(base, phyAddr, PHY_CONTROL1_REG, &ctlReg);
+#endif
     if (result == kStatus_Success)
     {
         data = ctlReg & PHY_CTL1_SPEEDUPLX_MASK;

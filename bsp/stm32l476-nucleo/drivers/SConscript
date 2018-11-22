@@ -7,12 +7,15 @@ cwd     = os.path.join(str(Dir('#')), 'drivers')
 # add the general drivers.
 src = Split("""
 board.c
-usart.c
-drv_led.c
-gpio.c
 """)
 
 CPPPATH = [cwd]
+
+if GetDepend(['RT_USING_PIN']):
+    src += ['drv_gpio.c']
+
+if GetDepend(['RT_USING_SERIAL']):
+    src += ['drv_usart.c']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 

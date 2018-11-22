@@ -1,21 +1,7 @@
 /*
- * File      : mmcsd_core.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author        Notes
@@ -27,6 +13,16 @@
 #include <drivers/sd.h>
 #include <drivers/mmc.h>
 #include <drivers/sdio.h>
+
+#define DBG_ENABLE
+#define DBG_SECTION_NAME               "SDIO"
+#ifdef RT_SDIO_DEBUG
+#define DBG_LEVEL                      DBG_LOG
+#else
+#define DBG_LEVEL                      DBG_INFO
+#endif /* RT_SDIO_DEBUG */
+#define DBG_COLOR
+#include <rtdbg.h>
 
 #ifndef RT_MMCSD_STACK_SIZE
 #define RT_MMCSD_STACK_SIZE 1024
@@ -206,7 +202,7 @@ rt_int32_t mmcsd_get_cid(struct rt_mmcsd_host *host, rt_uint32_t *cid)
     buf = (rt_uint32_t *)rt_malloc(16);
     if (!buf) 
     {
-        rt_kprintf("allocate memory failed\n");
+        LOG_E("allocate memory failed!");
 
         return -RT_ENOMEM;
     }
@@ -282,7 +278,7 @@ rt_int32_t mmcsd_get_csd(struct rt_mmcsd_card *card, rt_uint32_t *csd)
     buf = (rt_uint32_t*)rt_malloc(16);
     if (!buf) 
     {
-        rt_kprintf("allocate memory failed\n");
+        LOG_E("allocate memory failed!");
 
         return -RT_ENOMEM;
     }
@@ -418,7 +414,7 @@ void mmcsd_set_clock(struct rt_mmcsd_host *host, rt_uint32_t clk)
 {
     if (clk < host->freq_min)
     {
-        rt_kprintf("clock too low\n");
+        LOG_W("clock too low!");
     }
 
     host->io_cfg.clock = clk;
@@ -539,7 +535,7 @@ rt_uint32_t mmcsd_select_voltage(struct rt_mmcsd_host *host, rt_uint32_t ocr)
     } 
     else 
     {
-        rt_kprintf("host doesn't support card's voltages\n");
+        LOG_W("host doesn't support card's voltages!");
         ocr = 0;
     }
 
@@ -679,7 +675,7 @@ void mmcsd_detect(void *param)
             	mmcsd_host_lock(host);
             	if (host->card->sdio_function_num != 0)
             	{
-            		rt_kprintf("unsupport sdio card plug out!\n");
+            		LOG_W("unsupport sdio card plug out!");
             	}
             	else
             	{
@@ -702,7 +698,7 @@ struct rt_mmcsd_host *mmcsd_alloc_host(void)
     host = rt_malloc(sizeof(struct rt_mmcsd_host));
     if (!host) 
     {
-        rt_kprintf("alloc host failed\n");
+        LOG_E("alloc host failed");
 
         return RT_NULL;
     }

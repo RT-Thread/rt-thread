@@ -1,26 +1,7 @@
 /*
- *  RT-Thread finsh shell commands
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
- *
- *  This file is part of RT-Thread (http://www.rt-thread.org)
- *  Maintainer: bernard.xiong <bernard.xiong at gmail.com>
- *
- *  All rights reserved.
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -47,6 +28,9 @@
  */
 
 #include <rtthread.h>
+
+#ifdef RT_USING_FINSH
+
 #include "finsh.h"
 
 long hello(void)
@@ -117,16 +101,28 @@ static long _list_thread(struct rt_list_node *list)
         else if (stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
         else if (stat == RT_THREAD_CLOSE)   rt_kprintf(" close  ");
 
+#if defined(ARCH_CPU_STACK_GROWS_UPWARD)
+        ptr = (rt_uint8_t *)thread->stack_addr + thread->stack_size;
+        while (*ptr == '#')ptr --;
+
+        rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
+                   ((rt_ubase_t)thread->sp - (rt_ubase_t)thread->stack_addr),
+                   thread->stack_size,
+                   ((rt_ubase_t)ptr - (rt_ubase_t)thread->stack_addr) * 100 / thread->stack_size,
+                   thread->remaining_tick,
+                   thread->error);
+#else
         ptr = (rt_uint8_t *)thread->stack_addr;
         while (*ptr == '#')ptr ++;
 
         rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
-                   thread->stack_size + ((rt_uint32_t)thread->stack_addr - (rt_uint32_t)thread->sp),
+                   thread->stack_size + ((rt_ubase_t)thread->stack_addr - (rt_ubase_t)thread->sp),
                    thread->stack_size,
-                   (thread->stack_size - ((rt_uint32_t) ptr - (rt_uint32_t) thread->stack_addr)) * 100
+                   (thread->stack_size - ((rt_ubase_t) ptr - (rt_ubase_t) thread->stack_addr)) * 100
                         / thread->stack_size,
                    thread->remaining_tick,
                    thread->error);
+#endif
     }
 
     return 0;
@@ -584,145 +580,6 @@ FINSH_FUNCTION_EXPORT(list_device, list device in system);
 MSH_CMD_EXPORT(list_device, list device in system);
 #endif
 
-#ifdef RT_USING_MODULE
-#include <rtm.h>
-
-int list_module(void)
-{
-    int maxlen;
-    struct rt_module *module;
-    struct rt_list_node *list, *node;
-    struct rt_object_information *info;
-    const char *item_title = "module";
-
-    info = rt_object_get_information(RT_Object_Class_Module);
-    list = &info->object_list;
-
-    maxlen = object_name_maxlen(item_title, list);
-
-    rt_kprintf("%-*.s ref      address \n", maxlen, item_title); object_split(maxlen);
-    rt_kprintf(         " -------- ------------\n");
-    for (node = list->next; node != list; node = node->next)
-    {
-        module = (struct rt_module *)(rt_list_entry(node, struct rt_object, list));
-        rt_kprintf("%-*.*s %-04d  0x%08x\n",
-                   maxlen, RT_NAME_MAX,
-                   module->parent.name, module->nref, module->module_space);
-    }
-
-    return 0;
-}
-FINSH_FUNCTION_EXPORT(list_module, list module in system);
-MSH_CMD_EXPORT(list_module, list module in system);
-
-int list_mod_detail(const char *name)
-{
-    int i;
-    struct rt_module *module;
-
-    /* find module */
-    if ((module = rt_module_find(name)) != RT_NULL)
-    {
-        /* module has entry point */
-        if (!(module->parent.flag & RT_MODULE_FLAG_WITHOUTENTRY))
-        {
-            struct rt_thread *thread;
-            struct rt_list_node *tlist;
-            rt_uint8_t *ptr;
-
-            /* list main thread in module */
-            if (module->module_thread != RT_NULL)
-            {
-                rt_uint8_t stat;
-
-                rt_kprintf("main thread  pri  status      sp     stack size max used   left tick  error\n");
-                rt_kprintf("------------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
-                thread = module->module_thread;
-                rt_kprintf("%-8.*s 0x%02x", RT_NAME_MAX, thread->name, thread->current_priority);
-
-                stat = (thread->stat & RT_THREAD_STAT_MASK);
-                if (stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
-                else if (stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
-                else if (stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
-
-                ptr = (rt_uint8_t *)thread->stack_addr;
-                while (*ptr == '#')ptr ++;
-
-                rt_kprintf(" 0x%08x 0x%08x 0x%08x 0x%08x %03d\n",
-                           thread->stack_size + ((rt_uint32_t)thread->stack_addr - (rt_uint32_t)thread->sp),
-                           thread->stack_size,
-                           thread->stack_size - ((rt_uint32_t) ptr - (rt_uint32_t)thread->stack_addr),
-                           thread->remaining_tick,
-                           thread->error);
-            }
-
-            /* list sub thread in module */
-            tlist = &module->module_object[RT_Object_Class_Thread].object_list;
-            if (!rt_list_isempty(tlist)) _list_thread(tlist);
-#ifdef RT_USING_SEMAPHORE
-            /* list semaphored in module */
-            tlist = &module->module_object[RT_Object_Class_Semaphore].object_list;
-            if (!rt_list_isempty(tlist)) _list_sem(tlist);
-#endif
-#ifdef RT_USING_MUTEX
-            /* list mutex in module */
-            tlist = &module->module_object[RT_Object_Class_Mutex].object_list;
-            if (!rt_list_isempty(tlist)) _list_mutex(tlist);
-#endif
-#ifdef RT_USING_EVENT
-            /* list event in module */
-            tlist = &module->module_object[RT_Object_Class_Event].object_list;
-            if (!rt_list_isempty(tlist)) _list_event(tlist);
-#endif
-#ifdef RT_USING_MAILBOX
-            /* list mailbox in module */
-            tlist = &module->module_object[RT_Object_Class_MailBox].object_list;
-            if (!rt_list_isempty(tlist)) _list_mailbox(tlist);
-#endif
-#ifdef RT_USING_MESSAGEQUEUE
-            /* list message queue in module */
-            tlist = &module->module_object[RT_Object_Class_MessageQueue].object_list;
-            if (!rt_list_isempty(tlist)) _list_msgqueue(tlist);
-#endif
-#ifdef RT_USING_MEMHEAP
-            /* list memory heap in module */
-            tlist = &module->module_object[RT_Object_Class_MemHeap].object_list;
-            if (!rt_list_isempty(tlist)) _list_memheap(tlist);
-#endif
-#ifdef RT_USING_MEMPOOL
-            /* list memory pool in module */
-            tlist = &module->module_object[RT_Object_Class_MemPool].object_list;
-            if (!rt_list_isempty(tlist)) _list_mempool(tlist);
-#endif
-#ifdef RT_USING_DEVICE
-            /* list device in module */
-            tlist = &module->module_object[RT_Object_Class_Device].object_list;
-            if (!rt_list_isempty(tlist)) _list_device(tlist);
-#endif
-            /* list timer in module */
-            tlist = &module->module_object[RT_Object_Class_Timer].object_list;
-            if (!rt_list_isempty(tlist)) _list_timer(tlist);
-        }
-
-        if (module->nsym > 0)
-        {
-            rt_kprintf("symbol    address   \n");
-            rt_kprintf("-------- ----------\n");
-
-            /* list module export symbols */
-            for (i = 0; i < module->nsym; i++)
-            {
-                rt_kprintf("%s 0x%x\n",
-                           module->symtab[i].name, module->symtab[i].addr);
-            }
-        }
-    }
-
-    return 0;
-}
-FINSH_FUNCTION_EXPORT(list_mod_detail, list module objects in system)
-#endif
-
 long list(void)
 {
 #ifndef FINSH_USING_MSH_ONLY
@@ -989,3 +846,6 @@ void list_prefix(char *prefix)
 static int dummy = 0;
 FINSH_VAR_EXPORT(dummy, finsh_type_int, dummy variable for finsh)
 #endif
+
+#endif /* RT_USING_FINSH */
+

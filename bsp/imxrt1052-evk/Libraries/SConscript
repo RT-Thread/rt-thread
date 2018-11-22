@@ -12,7 +12,7 @@ src += Glob('common/chip/*.c')
 src += [cwd + '/system_MIMXRT1052.c']
 
 CPPPATH = [ cwd, cwd + '/drivers', cwd + '/utilities', cwd + '/CMSIS/Include']
-CPPDEFINES = ['CPU_MIMXRT1052DVL6A', 'SKIP_SYSCLK_INIT', 'EVK_MCIMXRM', 'FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1']
+CPPDEFINES = ['CPU_MIMXRT1052DVL6B', 'SKIP_SYSCLK_INIT', 'EVK_MCIMXRM', 'FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1']
 
 # add for startup script 
 if rtconfig.CROSS_TOOL == 'gcc':

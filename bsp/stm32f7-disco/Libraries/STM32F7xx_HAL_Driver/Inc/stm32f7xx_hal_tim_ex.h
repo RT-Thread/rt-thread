@@ -2,13 +2,11 @@
   ******************************************************************************
   * @file    stm32f7xx_hal_tim_ex.h
   * @author  MCD Application Team
-  * @version V1.0.1
-  * @date    25-June-2015
   * @brief   Header file of TIM HAL Extension module.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2015 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -97,7 +95,7 @@ typedef struct {
   */ 
 typedef struct
 {
-  uint32_t OffStateRunMode;	        /*!< TIM off state in run mode.
+  uint32_t OffStateRunMode;	    /*!< TIM off state in run mode.
                                        This parameter can be a value of @ref TIM_OSSR_Off_State_Selection_for_Run_mode_state */
   uint32_t OffStateIDLEMode;	    /*!< TIM off state in IDLE mode.
                                        This parameter can be a value of @ref TIM_OSSI_Off_State_Selection_for_Idle_mode_state */
@@ -121,10 +119,23 @@ typedef struct
                                        This parameter can be a value of @ref TIM_AOE_Bit_Set_Reset */           
 } TIM_BreakDeadTimeConfigTypeDef;
 
+#if defined (STM32F765xx) || defined(STM32F767xx) || defined(STM32F769xx) || defined(STM32F777xx) || defined(STM32F779xx)
+/** 
+  * @brief  TIM Break/Break2 input configuration   
+  */
+typedef struct {
+  uint32_t Source;         /*!< Specifies the source of the timer break input.
+                                This parameter can be a value of @ref TIMEx_Break_Input_Source */
+  uint32_t Enable;         /*!< Specifies whether or not the break input source is enabled.
+                                This parameter can be a value of @ref TIMEx_Break_Input_Source_Enable */
+  uint32_t Polarity;       /*!< Specifies the break input source polarity.
+                                This parameter can be a value of @ref TIMEx_Break_Input_Source_Polarity
+                                Not relevant when analog watchdog output of the DFSDM1 used as break input source */
+} TIMEx_BreakInputConfigTypeDef;
+#endif /* STM32F767xx || STM32F769xx || STM32F777xx || STM32F779xx */
 /**
   * @}
-  */
-  
+  */  
 /* Exported constants --------------------------------------------------------*/
 /** @defgroup TIMEx_Exported_Constants  TIMEx Exported Constants
   * @{
@@ -134,14 +145,14 @@ typedef struct
   * @{
   */
 
-#define TIM_CHANNEL_1                      ((uint32_t)0x0000)
-#define TIM_CHANNEL_2                      ((uint32_t)0x0004)
-#define TIM_CHANNEL_3                      ((uint32_t)0x0008)
-#define TIM_CHANNEL_4                      ((uint32_t)0x000C)
-#define TIM_CHANNEL_5                      ((uint32_t)0x0010)
-#define TIM_CHANNEL_6                      ((uint32_t)0x0014)
-#define TIM_CHANNEL_ALL                    ((uint32_t)0x003C)
-                                 
+#define TIM_CHANNEL_1                      ((uint32_t)0x0000U)
+#define TIM_CHANNEL_2                      ((uint32_t)0x0004U)
+#define TIM_CHANNEL_3                      ((uint32_t)0x0008U)
+#define TIM_CHANNEL_4                      ((uint32_t)0x000CU)
+#define TIM_CHANNEL_5                      ((uint32_t)0x0010U)
+#define TIM_CHANNEL_6                      ((uint32_t)0x0014U)
+#define TIM_CHANNEL_ALL                    ((uint32_t)0x003CU)
+
 /**
   * @}
   */ 
@@ -149,7 +160,7 @@ typedef struct
 /** @defgroup TIMEx_Output_Compare_and_PWM_modes TIMEx Output Compare and PWM Modes
   * @{
   */
-#define TIM_OCMODE_TIMING                   ((uint32_t)0x0000)
+#define TIM_OCMODE_TIMING                   ((uint32_t)0x0000U)
 #define TIM_OCMODE_ACTIVE                   ((uint32_t)TIM_CCMR1_OC1M_0)
 #define TIM_OCMODE_INACTIVE                 ((uint32_t)TIM_CCMR1_OC1M_1)
 #define TIM_OCMODE_TOGGLE                   ((uint32_t)TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_0)
@@ -171,18 +182,18 @@ typedef struct
 /** @defgroup TIMEx_Remap  TIMEx Remap
   * @{
   */
-#define TIM_TIM2_TIM8_TRGO                     (0x00000000)
-#define TIM_TIM2_ETH_PTP                       (0x00000400)
-#define TIM_TIM2_USBFS_SOF                     (0x00000800)
-#define TIM_TIM2_USBHS_SOF                     (0x00000C00)
-#define TIM_TIM5_GPIO                          (0x00000000)
-#define TIM_TIM5_LSI                           (0x00000040)
-#define TIM_TIM5_LSE                           (0x00000080)
-#define TIM_TIM5_RTC                           (0x000000C0)
-#define TIM_TIM11_GPIO                         (0x00000000)
-#define TIM_TIM11_SPDIFRX                      (0x00000001)
-#define TIM_TIM11_HSE                          (0x00000002)
-#define TIM_TIM11_MCO1                         (0x00000003)
+#define TIM_TIM2_TIM8_TRGO                     (0x00000000U)
+#define TIM_TIM2_ETH_PTP                       (0x00000400U)
+#define TIM_TIM2_USBFS_SOF                     (0x00000800U)
+#define TIM_TIM2_USBHS_SOF                     (0x00000C00U)
+#define TIM_TIM5_GPIO                          (0x00000000U)
+#define TIM_TIM5_LSI                           (0x00000040U)
+#define TIM_TIM5_LSE                           (0x00000080U)
+#define TIM_TIM5_RTC                           (0x000000C0U)
+#define TIM_TIM11_GPIO                         (0x00000000U)
+#define TIM_TIM11_SPDIFRX                      (0x00000001U)
+#define TIM_TIM11_HSE                          (0x00000002U)
+#define TIM_TIM11_MCO1                         (0x00000003U)
 /**
   * @}
   */	
@@ -190,9 +201,8 @@ typedef struct
 /** @defgroup TIMEx_ClearInput_Source TIMEx Clear Input Source
   * @{
   */
-#define TIM_CLEARINPUTSOURCE_ETR            ((uint32_t)0x0001) 
-#define TIM_CLEARINPUTSOURCE_OCREFCLR       ((uint32_t)0x0002) 
-#define TIM_CLEARINPUTSOURCE_NONE           ((uint32_t)0x0000)
+#define TIM_CLEARINPUTSOURCE_ETR            ((uint32_t)0x0001U) 
+#define TIM_CLEARINPUTSOURCE_NONE           ((uint32_t)0x0000U)
 /**
   * @}
   */
@@ -200,7 +210,7 @@ typedef struct
 /** @defgroup TIMEx_Break2_Input_enable_disable  TIMEx Break input 2 Enable
   * @{
   */                         
-#define TIM_BREAK2_DISABLE         ((uint32_t)0x00000000)
+#define TIM_BREAK2_DISABLE         ((uint32_t)0x00000000U)
 #define TIM_BREAK2_ENABLE          ((uint32_t)TIM_BDTR_BK2E)
 /**
   * @}
@@ -209,7 +219,7 @@ typedef struct
 /** @defgroup TIMEx_Break2_Polarity TIMEx Break2 Polarity
   * @{
   */
-#define TIM_BREAK2POLARITY_LOW        ((uint32_t)0x00000000)
+#define TIM_BREAK2POLARITY_LOW        ((uint32_t)0x00000000U)
 #define TIM_BREAK2POLARITY_HIGH       (TIM_BDTR_BK2P)
 /**
   * @}
@@ -218,7 +228,7 @@ typedef struct
 /** @defgroup TIMEx_Group_Channel5 TIMEx Group Channel 5 and Channel 1, 2 or 3
   * @{
   */
-#define TIM_GROUPCH5_NONE       (uint32_t)0x00000000  /* !< No effect of OC5REF on OC1REFC, OC2REFC and OC3REFC */
+#define TIM_GROUPCH5_NONE       ((uint32_t)0x00000000U)  /* !< No effect of OC5REF on OC1REFC, OC2REFC and OC3REFC */
 #define TIM_GROUPCH5_OC1REFC    (TIM_CCR5_GC5C1)      /* !< OC1REFC is the logical AND of OC1REFC and OC5REF */
 #define TIM_GROUPCH5_OC2REFC    (TIM_CCR5_GC5C2)      /* !< OC2REFC is the logical AND of OC2REFC and OC5REF */
 #define TIM_GROUPCH5_OC3REFC    (TIM_CCR5_GC5C3)       /* !< OC3REFC is the logical AND of OC3REFC and OC5REF */
@@ -229,7 +239,7 @@ typedef struct
 /** @defgroup TIMEx_Master_Mode_Selection_2 TIMEx Master Mode Selection 2 (TRGO2)
   * @{
   */  
-#define	TIM_TRGO2_RESET                          ((uint32_t)0x00000000)             
+#define	TIM_TRGO2_RESET                          ((uint32_t)0x00000000U)             
 #define	TIM_TRGO2_ENABLE                         ((uint32_t)(TIM_CR2_MMS2_0))          
 #define	TIM_TRGO2_UPDATE                         ((uint32_t)(TIM_CR2_MMS2_1))
 #define	TIM_TRGO2_OC1                            ((uint32_t)(TIM_CR2_MMS2_1 | TIM_CR2_MMS2_0))   
@@ -252,7 +262,7 @@ typedef struct
 /** @defgroup TIMEx_Slave_Mode TIMEx Slave mode
   * @{
   */
-#define TIM_SLAVEMODE_DISABLE                ((uint32_t)0x0000)
+#define TIM_SLAVEMODE_DISABLE                ((uint32_t)0x0000U)
 #define TIM_SLAVEMODE_RESET                  ((uint32_t)(TIM_SMCR_SMS_2))
 #define TIM_SLAVEMODE_GATED                  ((uint32_t)(TIM_SMCR_SMS_2 | TIM_SMCR_SMS_0))
 #define TIM_SLAVEMODE_TRIGGER                ((uint32_t)(TIM_SMCR_SMS_2 | TIM_SMCR_SMS_1))
@@ -261,6 +271,47 @@ typedef struct
 /**
   * @}
   */
+#if defined(STM32F765xx) || defined(STM32F767xx) || defined(STM32F769xx) || defined(STM32F777xx) || defined(STM32F779xx)
+/** @defgroup TIMEx_Break_Input TIM  Extended Break input
+  * @{
+  */
+#define TIM_BREAKINPUT_BRK     ((uint32_t)0x00000001U) /* !< Timer break input  */
+#define TIM_BREAKINPUT_BRK2    ((uint32_t)0x00000002U) /* !< Timer break2 input */
+/**
+  * @}
+  */
+
+/** @defgroup TIMEx_Break_Input_Source TIM  Extended Break input source
+  * @{
+  */
+#define TIM_BREAKINPUTSOURCE_BKIN     ((uint32_t)0x00000001U) /* !< An external source (GPIO) is connected to the BKIN pin  */
+#define TIM_BREAKINPUTSOURCE_DFSDM1   ((uint32_t)0x00000008U) /* !< The analog watchdog output of the DFSDM1 peripheral is connected to the break input */
+/**
+  * @}
+  */ 
+
+/** @defgroup TIMEx_Break_Input_Source_Enable TIM Extended Break input source enabling
+  * @{
+  */
+#define TIM_BREAKINPUTSOURCE_DISABLE     ((uint32_t)0x00000000U) /* !< Break input source is disabled */
+#define TIM_BREAKINPUTSOURCE_ENABLE      ((uint32_t)0x00000001U) /* !< Break input source is enabled */
+/**
+  * @}
+  */ 
+
+/** @defgroup TIMEx_Break_Input_Source_Polarity TIM  Extended Break input polarity
+  * @{
+  */
+#define TIM_BREAKINPUTSOURCE_POLARITY_LOW     ((uint32_t)(0x00000001)) /* !< Break input source is active low */
+#define TIM_BREAKINPUTSOURCE_POLARITY_HIGH    ((uint32_t)(0x00000000)) /* !< Break input source is active_high */
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */ 
+#endif /* STM32F767xx || STM32F769xx || STM32F777xx || STM32F779xx */
 /**
   * @}
   */
@@ -273,8 +324,8 @@ typedef struct
 /**
   * @brief  Sets the TIM Capture Compare Register value on runtime without
   *         calling another time ConfigChannel function.
-  * @param  __HANDLE__: TIM handle.
-  * @param  __CHANNEL__ : TIM Channels to be configured.
+  * @param  __HANDLE__ TIM handle.
+  * @param  __CHANNEL__  TIM Channels to be configured.
   *          This parameter can be one of the following values:
   *            @arg TIM_CHANNEL_1: TIM Channel 1 selected
   *            @arg TIM_CHANNEL_2: TIM Channel 2 selected
@@ -282,7 +333,7 @@ typedef struct
   *            @arg TIM_CHANNEL_4: TIM Channel 4 selected
   *            @arg TIM_CHANNEL_5: TIM Channel 5 selected
   *            @arg TIM_CHANNEL_6: TIM Channel 6 selected
-  * @param  __COMPARE__: specifies the Capture Compare register new value.
+  * @param  __COMPARE__ specifies the Capture Compare register new value.
   * @retval None
   */
 #define __HAL_TIM_SET_COMPARE(__HANDLE__, __CHANNEL__, __COMPARE__) \
@@ -291,12 +342,12 @@ typedef struct
  ((__CHANNEL__) == TIM_CHANNEL_3) ? ((__HANDLE__)->Instance->CCR3 = (__COMPARE__)) :\
  ((__CHANNEL__) == TIM_CHANNEL_4) ? ((__HANDLE__)->Instance->CCR4 = (__COMPARE__)) :\
  ((__CHANNEL__) == TIM_CHANNEL_5) ? ((__HANDLE__)->Instance->CCR5 = (__COMPARE__)) :\
- ((__HANDLE__)->Instance->CCR6 |= (__COMPARE__)))
+ ((__HANDLE__)->Instance->CCR6 = (__COMPARE__)))
 
 /**
   * @brief  Gets the TIM Capture Compare Register value on runtime
-  * @param  __HANDLE__: TIM handle.
-  * @param  __CHANNEL__ : TIM Channel associated with the capture compare register
+  * @param  __HANDLE__ TIM handle.
+  * @param  __CHANNEL__  TIM Channel associated with the capture compare register
   *          This parameter can be one of the following values:
   *            @arg TIM_CHANNEL_1: get capture/compare 1 register value
   *            @arg TIM_CHANNEL_2: get capture/compare 2 register value
@@ -313,6 +364,48 @@ typedef struct
  ((__CHANNEL__) == TIM_CHANNEL_4) ? ((__HANDLE__)->Instance->CCR4) :\
  ((__CHANNEL__) == TIM_CHANNEL_5) ? ((__HANDLE__)->Instance->CCR5) :\
  ((__HANDLE__)->Instance->CCR6))
+
+/**
+  * @brief  Sets the TIM Output compare preload.
+  * @param  __HANDLE__ TIM handle.
+  * @param  __CHANNEL__ TIM Channels to be configured.
+  *          This parameter can be one of the following values:
+  *            @arg TIM_CHANNEL_1: TIM Channel 1 selected
+  *            @arg TIM_CHANNEL_2: TIM Channel 2 selected
+  *            @arg TIM_CHANNEL_3: TIM Channel 3 selected
+  *            @arg TIM_CHANNEL_4: TIM Channel 4 selected
+  *            @arg TIM_CHANNEL_5: TIM Channel 5 selected
+  *            @arg TIM_CHANNEL_6: TIM Channel 6 selected
+  * @retval None
+  */
+#define __HAL_TIM_ENABLE_OCxPRELOAD(__HANDLE__, __CHANNEL__)    \
+        (((__CHANNEL__) == TIM_CHANNEL_1) ? ((__HANDLE__)->Instance->CCMR1 |= TIM_CCMR1_OC1PE) :\
+         ((__CHANNEL__) == TIM_CHANNEL_2) ? ((__HANDLE__)->Instance->CCMR1 |= TIM_CCMR1_OC2PE) :\
+         ((__CHANNEL__) == TIM_CHANNEL_3) ? ((__HANDLE__)->Instance->CCMR2 |= TIM_CCMR2_OC3PE) :\
+         ((__CHANNEL__) == TIM_CHANNEL_4) ? ((__HANDLE__)->Instance->CCMR2 |= TIM_CCMR2_OC4PE) :\
+         ((__CHANNEL__) == TIM_CHANNEL_5) ? ((__HANDLE__)->Instance->CCMR3 |= TIM_CCMR3_OC5PE) :\
+         ((__HANDLE__)->Instance->CCMR3 |= TIM_CCMR3_OC6PE))
+
+/**
+  * @brief  Resets the TIM Output compare preload.
+  * @param  __HANDLE__ TIM handle.
+  * @param  __CHANNEL__ TIM Channels to be configured.
+  *          This parameter can be one of the following values:
+  *            @arg TIM_CHANNEL_1: TIM Channel 1 selected
+  *            @arg TIM_CHANNEL_2: TIM Channel 2 selected
+  *            @arg TIM_CHANNEL_3: TIM Channel 3 selected
+  *            @arg TIM_CHANNEL_4: TIM Channel 4 selected
+  *            @arg TIM_CHANNEL_5: TIM Channel 5 selected
+  *            @arg TIM_CHANNEL_6: TIM Channel 6 selected
+  * @retval None
+  */
+#define __HAL_TIM_DISABLE_OCxPRELOAD(__HANDLE__, __CHANNEL__)    \
+        (((__CHANNEL__) == TIM_CHANNEL_1) ? ((__HANDLE__)->Instance->CCMR1 &= (uint16_t)~TIM_CCMR1_OC1PE) :\
+         ((__CHANNEL__) == TIM_CHANNEL_2) ? ((__HANDLE__)->Instance->CCMR1 &= (uint16_t)~TIM_CCMR1_OC2PE) :\
+         ((__CHANNEL__) == TIM_CHANNEL_3) ? ((__HANDLE__)->Instance->CCMR2 &= (uint16_t)~TIM_CCMR2_OC3PE) :\
+         ((__CHANNEL__) == TIM_CHANNEL_4) ? ((__HANDLE__)->Instance->CCMR2 &= (uint16_t)~TIM_CCMR2_OC4PE) :\
+         ((__CHANNEL__) == TIM_CHANNEL_5) ? ((__HANDLE__)->Instance->CCMR3 &= (uint16_t)~TIM_CCMR3_OC5PE) :\
+         ((__HANDLE__)->Instance->CCMR3 &= (uint16_t)~TIM_CCMR3_OC6PE))
 
 /**
   * @}
@@ -407,6 +500,9 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigCommutationEvent_IT(TIM_HandleTypeDef* htim, u
 HAL_StatusTypeDef HAL_TIMEx_ConfigCommutationEvent_DMA(TIM_HandleTypeDef* htim, uint32_t  InputTrigger, uint32_t  CommutationSource);
 HAL_StatusTypeDef HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef* htim, TIM_MasterConfigTypeDef * sMasterConfig);
 HAL_StatusTypeDef HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef* htim, TIM_BreakDeadTimeConfigTypeDef *sBreakDeadTimeConfig);
+#if defined (STM32F765xx) || defined(STM32F767xx) || defined(STM32F769xx) || defined(STM32F777xx) || defined(STM32F779xx)
+HAL_StatusTypeDef HAL_TIMEx_ConfigBreakInput(TIM_HandleTypeDef *htim, uint32_t BreakInput, TIMEx_BreakInputConfigTypeDef *sBreakInputConfig);
+#endif /* STM32F767xx || STM32F769xx || STM32F777xx || STM32F779xx */
 HAL_StatusTypeDef HAL_TIMEx_RemapConfig(TIM_HandleTypeDef* htim, uint32_t Remap);
 HAL_StatusTypeDef HAL_TIMEx_GroupChannel5(TIM_HandleTypeDef *htim, uint32_t OCRef);
 /**
@@ -491,7 +587,6 @@ HAL_TIM_StateTypeDef HAL_TIMEx_HallSensor_GetState(TIM_HandleTypeDef* htim);
 #define IS_TIM_DEADTIME(__DEADTIME__)      ((__DEADTIME__) <= 0xFF) 
 #define IS_TIM_BREAK_FILTER(__FILTER__) ((__FILTER__) <= 0xF)
 #define IS_TIM_CLEARINPUT_SOURCE(MODE) (((MODE) == TIM_CLEARINPUTSOURCE_ETR)      || \
-                                        ((MODE) == TIM_CLEARINPUTSOURCE_OCREFCLR)  || \
                                         ((MODE) == TIM_CLEARINPUTSOURCE_NONE))
 #define IS_TIM_BREAK2_STATE(STATE) (((STATE) == TIM_BREAK2_ENABLE) || \
                                     ((STATE) == TIM_BREAK2_DISABLE))
@@ -522,6 +617,20 @@ HAL_TIM_StateTypeDef HAL_TIMEx_HallSensor_GetState(TIM_HandleTypeDef* htim);
                                  ((MODE) == TIM_SLAVEMODE_EXTERNAL1) || \
                                  ((MODE) == TIM_SLAVEMODE_COMBINED_RESETTRIGGER))
 
+#if defined (STM32F765xx) || defined(STM32F767xx) || defined(STM32F769xx) || defined(STM32F777xx) || defined(STM32F779xx)
+#define IS_TIM_BREAKINPUT(__BREAKINPUT__)  (((__BREAKINPUT__) == TIM_BREAKINPUT_BRK)  || \
+                                            ((__BREAKINPUT__) == TIM_BREAKINPUT_BRK2))
+                                            
+#define IS_TIM_BREAKINPUTSOURCE(__SOURCE__)  (((__SOURCE__) == TIM_BREAKINPUTSOURCE_BKIN)  || \
+                                              ((__SOURCE__) == TIM_BREAKINPUTSOURCE_DFSDM))
+
+#define IS_TIM_BREAKINPUTSOURCE_STATE(__STATE__)  (((__STATE__) == TIM_BREAKINPUTSOURCE_DISABLE)  || \
+                                                   ((__STATE__) == TIM_BREAKINPUTSOURCE_ENABLE))
+                                   
+#define IS_TIM_BREAKINPUTSOURCE_POLARITY(__POLARITY__)  (((__POLARITY__) == TIM_BREAKINPUTSOURCE_POLARITY_LOW)  || \
+                                                         ((__POLARITY__) == TIM_BREAKINPUTSOURCE_POLARITY_HIGH))
+
+#endif /* STM32F767xx || STM32F769xx || STM32F777xx || STM32F779xx */
 /**
   * @}
   */  

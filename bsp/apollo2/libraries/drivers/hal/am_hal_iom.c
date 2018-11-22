@@ -42,14 +42,13 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
 #include <stdint.h>
 #include <stdbool.h>
 #include "am_mcu_apollo.h"
-//#include "am_util_delay.h"
 
 #ifdef __IAR_SYSTEMS_ICC__
 #define AM_INSTR_CLZ(n)                     __CLZ(n)
@@ -61,22 +60,6 @@
 #ifndef AM_ASSERT_INVALID_THRESHOLD
 #define AM_ASSERT_INVALID_THRESHOLD    (1)
 #endif
-
-uint32_t am_util_wait_status_change(uint32_t ui32Iterations, uint32_t ui32Address, uint32_t ui32Mask, uint32_t ui32Value)
-{
-    int i;
-		for (i = 0; i < ui32Iterations; i++)
-		{
-				// Check the status
-				if (((*(uint32_t *)ui32Address) & ui32Mask) == ui32Value)
-				{
-					return 1;
-				}
-				// Call the BOOTROM cycle delay function to get about 1 usec @ 48MHz
-				am_hal_flash_delay(16);
-		}
-		return 0;
-}
 
 //*****************************************************************************
 //
@@ -111,6 +94,8 @@ internal_am_hal_iom_spi_cmd_construct(uint32_t ui32Operation,
                                       uint32_t ui32ChipSelect,
                                       uint32_t ui32NumBytes,
                                       uint32_t ui32Options);
+static am_hal_iom_status_e
+internal_iom_wait_i2c_scl_hi(uint32_t ui32Module);
 
 //*****************************************************************************
 //
@@ -126,11 +111,6 @@ internal_am_hal_iom_spi_cmd_construct(uint32_t ui32Operation,
 // Global state variables
 //
 //*****************************************************************************
-//
-// Save error status from ISR, particularly for use in I2C queue mode.
-//
-uint32_t g_iom_error_status = 0;
-
 //
 // Define a structure to map CE for IOM4 only.
 //
@@ -149,6 +129,26 @@ const IOMPad_t g_IOMPads[] =
     {5, 47, 6}, {6, 35, 4}, {7, 38, 6}
 };
 
+typedef struct
+{
+  uint8_t       module;         // IOM module
+  uint8_t       pad;            // GPIO Pad
+  uint8_t       funcsel;        // FNCSEL value
+} I2CPad_t;
+
+// Define the mapping between I2C SCL Pads, and FNCSEL values for all IOMs.
+const I2CPad_t g_I2CPads[] =
+{
+    {0, 5, 0},
+    {1, 8, 0},
+    {2, 0, 7},
+    {3, 42, 4},
+    {4, 39, 4},
+    {5, 48, 4},
+    {2, 27, 4},
+};
+
+// Defines for IOM 4 Workaround
 #define WORKAROUND_IOM          4
 #define WORKAROUND_IOM_MOSI_PIN 44
 #define WORKAROUND_IOM_MOSI_CFG AM_HAL_PIN_44_M4MOSI
@@ -174,9 +174,14 @@ am_hal_iom_nb_buffer;
 //
 // Global State to keep track if there is an ongoing transaction
 //
-volatile bool g_bIomBusy[AM_REG_IOMSTR_NUM_MODULES] = {0};
+volatile bool g_bIomBusy[AM_REG_IOMSTR_NUM_MODULES + 1] = {0};
 
 am_hal_iom_nb_buffer g_psIOMBuffers[AM_REG_IOMSTR_NUM_MODULES];
+
+//
+// Save error status from non-blocking calls
+//
+static am_hal_iom_status_e g_iom_error_status[AM_REG_IOMSTR_NUM_MODULES + 1];
 
 //*****************************************************************************
 //
@@ -208,12 +213,69 @@ am_hal_iom_queue_flush_t am_hal_iom_queue_flush = am_hal_iom_sleeping_queue_flus
 //*****************************************************************************
 am_hal_iom_pwrsave_t am_hal_iom_pwrsave[AM_REG_IOMSTR_NUM_MODULES];
 
+//*****************************************************************************
+//
+// I2C BitBang to IOM error mapping
+//
+//*****************************************************************************
+const am_hal_iom_status_e i2c_bb_errmap[AM_HAL_I2C_BIT_BANG_STATUS_MAX] =
+    {
+        AM_HAL_IOM_SUCCESS, // AM_HAL_I2C_BIT_BANG_SUCCESS,
+        AM_HAL_IOM_ERR_I2C_NAK, // AM_HAL_I2C_BIT_BANG_ADDRESS_NAKED,
+        AM_HAL_IOM_ERR_I2C_NAK, // AM_HAL_I2C_BIT_BANG_DATA_NAKED,
+        AM_HAL_IOM_ERR_TIMEOUT, // AM_HAL_I2C_BIT_BANG_CLOCK_TIMEOUT,
+        AM_HAL_IOM_ERR_TIMEOUT, // AM_HAL_I2C_BIT_BANG_DATA_TIMEOUT,
+    };
 
 //*****************************************************************************
 //
 // Static helper functions
 //
 //*****************************************************************************
+
+//*****************************************************************************
+//
+// Get the error interrupt staus
+//
+//*****************************************************************************
+//
+//! @brief Returns the error status based on interrupt bits
+//!
+//! @param ui32Module - IOM module
+//!        ui32Status - Currently accumulated error status
+//!
+//! The function looks at the supplied interrupt error status bits and the
+//! the current INTSTAT and maps the same to the enum am_hal_iom_status_e.
+//!
+//! @return Returns the appropriate error status in the form of am_hal_iom_status_e
+//!
+//*****************************************************************************
+static am_hal_iom_status_e
+internal_iom_get_int_err(uint32_t ui32Module, uint32_t ui32IntStatus)
+{
+    am_hal_iom_status_e ui32Status = AM_HAL_IOM_SUCCESS;
+    //
+    // Let's accumulate the errors
+    //
+    ui32IntStatus |= am_hal_iom_int_status_get(ui32Module, false);
+
+    if (ui32IntStatus & AM_HAL_IOM_INT_SWERR)
+    {
+        // Error in hardware command issued or illegal access by SW
+        ui32Status = AM_HAL_IOM_ERR_INVALID_OPER;
+    }
+    else if (ui32IntStatus & AM_HAL_IOM_INT_I2CARBERR)
+    {
+        // Loss of I2C multi-master arbitration
+        ui32Status = AM_HAL_IOM_ERR_I2C_ARB;
+    }
+    else if (ui32IntStatus & AM_HAL_IOM_INT_NAK)
+    {
+        // I2C NAK
+        ui32Status = AM_HAL_IOM_ERR_I2C_NAK;
+    }
+    return ui32Status;
+}
 
 //*****************************************************************************
 // onebit()
@@ -313,6 +375,128 @@ isRevB0(void)
     {
         return false;
     }
+}
+
+//*****************************************************************************
+//
+// Checks to see if this processor is a Rev B2 device.
+//
+// This is needed for the B2 I2C workaround.
+//
+//*****************************************************************************
+static bool
+isRevB2(void)
+{
+    //
+    // Check to make sure the major rev is B and the minor rev is zero.
+    //
+    if ( (AM_REG(MCUCTRL, CHIPREV) & 0xFF) ==
+         (AM_REG_MCUCTRL_CHIPREV_REVMAJ_B | AM_REG_MCUCTRL_CHIPREV_REVMIN_REV2) )
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+//*****************************************************************************
+//
+// Checks and waits for the SCL line to be high
+// This is to ensure clock hi time specs are not violated in case slave did
+// clock stretching in previous transaction
+//
+//*****************************************************************************
+static am_hal_iom_status_e
+internal_iom_wait_i2c_scl_hi(uint32_t ui32Module)
+{
+    uint32_t ui32IOMGPIO = 0xDEADBEEF;
+    volatile uint32_t *pui32SCLPadreg;
+    uint32_t ui32SCLPadregVal;
+    uint32_t index;
+    uint8_t  ui8PadRegVal;
+    uint8_t  ui8FncSelVal;
+    uint32_t waitStatus;
+
+    // Need to change the SCL pin as a GPIO and poll till it is set to hi
+    // For all the IOM's except for IOM2, there is a single designated pin for SCL
+    // IOM2 has two choices and we need to determine which one
+
+    //
+    // Figure out which GPIO we are using for the SCL
+    //
+    for ( index = 0; index < (sizeof(g_I2CPads) / sizeof(I2CPad_t)); index++ )
+    {
+        //
+        //  Is this for the IOM that we are using?
+        //
+        if ( g_I2CPads[index].module == ui32Module )
+        {
+            //
+            // Get the PAD register value
+            //
+            ui8PadRegVal = ((AM_REGVAL(AM_HAL_GPIO_PADREG(g_I2CPads[index].pad))) &
+                             AM_HAL_GPIO_PADREG_M(g_I2CPads[index].pad)) >>
+                             AM_HAL_GPIO_PADREG_S(g_I2CPads[index].pad);
+
+            //
+            // Get the FNCSEL field value
+            //
+            ui8FncSelVal = (ui8PadRegVal & 0x38) >> 3;
+
+            //
+            // Is the FNCSEL filed for this pad set to the expected value?
+            //
+            if ( ui8FncSelVal == g_I2CPads[index].funcsel )
+            {
+                // This is the GPIO we need to use.
+                ui32IOMGPIO = g_I2CPads[index].pad;
+                break;
+            }
+        }
+    }
+    if (0xDEADBEEF == ui32IOMGPIO)
+    {
+        // SCL has not been configured
+        return AM_HAL_IOM_ERR_INVALID_CFG;
+    }
+
+    //
+    // Save the locations and values of the SCL pin configuration
+    // information.
+    //
+    pui32SCLPadreg = (volatile uint32_t *)AM_HAL_GPIO_PADREG(ui32IOMGPIO);
+    ui32SCLPadregVal = *pui32SCLPadreg;
+    //
+    // Temporarily configure the override pin as an input.
+    //
+    am_hal_gpio_pin_config(ui32IOMGPIO, AM_HAL_PIN_INPUT);
+
+    //
+    // Make sure SCL is high within standard timeout
+    //
+    waitStatus = am_hal_flash_delay_status_change(ui32StatusTimeout[ui32Module],
+                 AM_HAL_GPIO_RD_REG(ui32IOMGPIO), AM_HAL_GPIO_RD_M(ui32IOMGPIO),
+                 AM_HAL_GPIO_RD_M(ui32IOMGPIO));
+
+    //
+    // Write the GPIO PADKEY register
+    //
+    AM_REGn(GPIO, 0, PADKEY) = AM_REG_GPIO_PADKEY_KEYVAL;
+    // Revert back the original settings
+    *pui32SCLPadreg = ui32SCLPadregVal;
+    //
+    // Re-lock the GPIO PADKEY register
+    //
+    AM_REGn(GPIO, 0, PADKEY) = 0;
+
+    if (waitStatus != 1)
+    {
+        return AM_HAL_IOM_ERR_TIMEOUT;
+    }
+
+    return AM_HAL_IOM_SUCCESS;
 }
 
 //*****************************************************************************
@@ -474,6 +658,53 @@ uint64_t iom_get_interface_clock_cfg(uint32_t ui32FreqHz, uint32_t ui32Phase )
 
 } //iom_get_interface_clock_cfg()
 
+
+//*****************************************************************************
+//
+//! @brief Clock setting for the I2C Clock Stretch Workaround
+//!
+//! This restricts the frequencies that can be used for I2C devices on
+//!
+//! @param  ui32FreqHz - The desired interface frequency in Hz.
+//!
+//! @return None.
+//
+//*****************************************************************************
+static
+uint64_t iom_get_i2c_workaround_clock_cfg(uint32_t ui32FreqHz)
+{
+  uint32_t      ui32Fsel;
+
+  // Only allow certain SCL frequencies for clock stretching devices.
+  if (ui32FreqHz == AM_HAL_IOM_800KHZ)
+  {
+    ui32Fsel = 2;
+  }
+  else if (ui32FreqHz == AM_HAL_IOM_400KHZ)
+  {
+    ui32Fsel = 3;
+  }
+  else if (ui32FreqHz == AM_HAL_IOM_200KHZ)
+  {
+    ui32Fsel = 4;
+  }
+  else if (ui32FreqHz == AM_HAL_IOM_100KHZ)
+  {
+    ui32Fsel = 5;
+  }
+  else  // Default is 100KHz.
+  {
+    ui32Fsel = 5;
+  }
+
+  // Return the resulting CLKCFG register settings.
+  return (AM_REG_IOMSTR_CLKCFG_FSEL(ui32Fsel) |
+    AM_REG_IOMSTR_CLKCFG_DIV3(0)              |
+      AM_REG_IOMSTR_CLKCFG_DIVEN(1)           |
+        AM_REG_IOMSTR_CLKCFG_LOWPER(14)       |
+          AM_REG_IOMSTR_CLKCFG_TOTPER(29));
+
+} // iom_get_i2c_workaround_clock_cfg
 
 //*****************************************************************************
 //
@@ -777,27 +1008,42 @@ am_hal_iom_config(uint32_t ui32Module, const am_hal_iom_config_t *psConfig)
 #error AM_ASSERT_INVALID_THRESHOLD must be 0 or 1.
 #endif
 
-    //
-    // An exception occurs in the LOWPER computation when setting an interface
-    //  frequency (such as a divide by 5 frequency) which results in a 60/40
-    //  duty cycle.  The 60% cycle must occur in the appropriate half-period,
-    //  as only one of the half-periods is active, depending on which phase
-    //  is being selected.
-    // If SPHA=0 the low period must be 60%. If SPHA=1 high period must be 60%.
-    // Note that the predetermined frequency parameters use the formula
-    //  lowper = (totper-1)/2, which results in a 60% low period.
-    //
-    ui32ClkCfg = iom_get_interface_clock_cfg(psConfig->ui32ClockFrequency,
-                                             psConfig->bSPHA );
+    // Apply I2C clock stretching workaround if B2 silicon and IOM 1,2,3, or 5
+    // Note: Only I2C clock speeds of AM_HAL_IOM_800KHZ, AM_HAL_IOM_400KHZ,
+    // AM_HAL_IOM_200KHZ, and AM_HAL_IOM_100KHZ are allowed.  Other values will
+    // result in the default of AM_HAL_IOM_100KHZ.
+    if ((0 != ui32Module) && (4 != ui32Module) && (6 != ui32Module) && 
+			isRevB2() && (AM_HAL_IOM_I2CMODE == psConfig->ui32InterfaceMode))
+    {
+      // Set SPHA field to 1 on B2 silicon to enable the feature;
+      AM_REGn(IOMSTR, ui32Module, CFG) |= AM_REG_IOMSTR_CFG_SPHA_M;
+      ui32ClkCfg = iom_get_i2c_workaround_clock_cfg(psConfig->ui32ClockFrequency);
+    }
+    else
+    {
+      //
+      // An exception occurs in the LOWPER computation when setting an interface
+      //  frequency (such as a divide by 5 frequency) which results in a 60/40
+      //  duty cycle.  The 60% cycle must occur in the appropriate half-period,
+      //  as only one of the half-periods is active, depending on which phase
+      //  is being selected.
+      // If SPHA=0 the low period must be 60%. If SPHA=1 high period must be 60%.
+      // Note that the predetermined frequency parameters use the formula
+      //  lowper = (totper-1)/2, which results in a 60% low period.
+      //
+      ui32ClkCfg = iom_get_interface_clock_cfg(psConfig->ui32ClockFrequency,
+                                               psConfig->bSPHA );
+    }
+
     if ( ui32ClkCfg )
     {
         AM_REGn(IOMSTR, ui32Module, CLKCFG) = (uint32_t)ui32ClkCfg;
     }
-    
+
     //
     // Compute the status timeout value.
     //
-    ui32StatusTimeout[ui32Module] = MAX_IOM_BITS * AM_HAL_IOM_MAX_FIFO_SIZE * 
+    ui32StatusTimeout[ui32Module] = MAX_IOM_BITS * AM_HAL_IOM_MAX_FIFO_SIZE *
       IOM_OVERHEAD_FACTOR * (am_hal_clkgen_sysclk_get() / psConfig->ui32ClockFrequency);
 }
 
@@ -1101,6 +1347,10 @@ am_hal_iom_workaround_word_write(uint32_t ui32ChipSelect,
             pui32CSPadreg, ui32CSPadregVal,
             ui32DelayTime, ui32ClkCfg,
             ui32LowClkCfg, bRising);
+    //
+    // Re-lock the GPIO PADKEY register
+    //
+    AM_REGn(GPIO, 0, PADKEY) = 0;
 
     //
     // Update the pointer and data counter.
@@ -1122,7 +1372,7 @@ am_hal_iom_workaround_word_write(uint32_t ui32ChipSelect,
 //! @return None.
 //
 //*****************************************************************************
-#if defined(__GNUC_STDC_INLINE__)
+#if defined(__GNUC__)
 static void __attribute__((naked))
 iom_workaround_loop(uint32_t ui32PadRegVal, volatile uint32_t *pui32PadReg,
                     bool bRising)
@@ -1164,8 +1414,7 @@ iom_workaround_loop(uint32_t ui32PadRegVal, volatile uint32_t *pui32PadReg,
     __asm("    str     r0, [r1]");
     __asm("    bx      lr");
 }
-#endif
-#ifdef keil
+#elif defined(__CC_ARM)
 __asm static void
 iom_workaround_loop(uint32_t ui32PadRegVal, volatile uint32_t *pui32PadReg,
                     bool bRising)
@@ -1208,8 +1457,7 @@ falling_check_mosi
     bx      lr
     nop
 }
-#endif
-#ifdef iar
+#elif defined(__ICCARM__)
 static void
 iom_workaround_loop(uint32_t ui32PadRegVal, volatile uint32_t *pui32PadReg,
                     bool bRising)
@@ -1276,21 +1524,29 @@ iom_workaround_loop(uint32_t ui32PadRegVal, volatile uint32_t *pui32PadReg,
 //! last word with bytes of any value. The IOM hardware will only read the
 //! first \e ui32NumBytes in the \e pui8Data array.
 //!
-//! @return None.
+//! @return returns AM_HAL_IOM_SUCCESS on successful execution.
 //
 //*****************************************************************************
-void
+am_hal_iom_status_e
 am_hal_iom_spi_write(uint32_t ui32Module, uint32_t ui32ChipSelect,
                      uint32_t *pui32Data, uint32_t ui32NumBytes,
                      uint32_t ui32Options)
 {
+    am_hal_iom_status_e ui32Status;
     //
     // Validate parameters
     //
-    am_hal_debug_assert_msg(ui32Module < AM_REG_IOMSTR_NUM_MODULES,
-                            "Trying to use an IOM module that doesn't exist.");
-    am_hal_debug_assert_msg(ui32NumBytes > 0,
-                            "Trying to do a 0 byte transaction");
+    if ( ui32Module >= AM_REG_IOMSTR_NUM_MODULES )
+    {
+        return AM_HAL_IOM_ERR_INVALID_MODULE;
+    }
+    // Reset the error status
+    ui32Status = g_iom_error_status[ui32Module] = AM_HAL_IOM_SUCCESS;
+    if (ui32NumBytes == 0)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
 
     //
     // Check to see if queues have been enabled. If they are, we'll actually
@@ -1301,27 +1557,32 @@ am_hal_iom_spi_write(uint32_t ui32Module, uint32_t ui32ChipSelect,
         //
         // If the queue is on, go ahead and add this transaction to the queue.
         //
-        am_hal_iom_queue_spi_write(ui32Module, ui32ChipSelect, pui32Data,
+        ui32Status = am_hal_iom_queue_spi_write(ui32Module, ui32ChipSelect, pui32Data,
                                    ui32NumBytes, ui32Options, 0);
 
-        //
-        // Wait until the transaction actually clears.
-        //
-        am_hal_iom_queue_flush(ui32Module);
+        if (ui32Status == AM_HAL_IOM_SUCCESS)
+        {
+            //
+            // Wait until the transaction actually clears.
+            //
+            am_hal_iom_queue_flush(ui32Module);
+            // g_iom_error_status gets set in the isr handling
+            ui32Status = g_iom_error_status[ui32Module];
+        }
 
         //
         // At this point, we've completed the transaction, and we can return.
         //
-        return;
     }
     else
     {
         //
         // Otherwise, we'll just do a polled transaction.
         //
-        am_hal_iom_spi_write_nq(ui32Module, ui32ChipSelect, pui32Data,
+        ui32Status = am_hal_iom_spi_write_nq(ui32Module, ui32ChipSelect, pui32Data,
                                 ui32NumBytes, ui32Options);
     }
+    return ui32Status;
 }
 
 //*****************************************************************************
@@ -1343,26 +1604,38 @@ am_hal_iom_spi_write(uint32_t ui32Module, uint32_t ui32ChipSelect,
 //! into 32-bit words, which are then placed into the \e pui32Data array. Only
 //! the first \e ui32NumBytes bytes in this array will contain valid data.
 //!
-//! @return None.
+//! @return returns AM_HAL_IOM_SUCCESS on successful execution.
 //
 //*****************************************************************************
-void
+am_hal_iom_status_e
 am_hal_iom_spi_read(uint32_t ui32Module, uint32_t ui32ChipSelect,
                     uint32_t *pui32Data, uint32_t ui32NumBytes,
                     uint32_t ui32Options)
 {
+    am_hal_iom_status_e ui32Status;
     //
     // Validate parameters
     //
-    am_hal_debug_assert_msg(ui32Module < AM_REG_IOMSTR_NUM_MODULES,
-                            "Trying to use an IOM module that doesn't exist.");
-    am_hal_debug_assert_msg(ui32NumBytes > 0,
-                            "Trying to do a 0 byte transaction");
-
+    if ( ui32Module >= AM_REG_IOMSTR_NUM_MODULES )
+    {
+        return AM_HAL_IOM_ERR_INVALID_MODULE;
+    }
+    // Reset the error status
+    AM_REGn(IOMSTR, ui32Module, INTCLR) = AM_HAL_IOM_INT_ALL;
+    ui32Status = g_iom_error_status[ui32Module] = AM_HAL_IOM_SUCCESS;
+    if (ui32NumBytes == 0)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
     //
     // Make sure the transfer isn't too long for the hardware to support.
     //
-    am_hal_debug_assert_msg(ui32NumBytes < 4096, "SPI transfer too big.");
+    if (ui32NumBytes >= 4096)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
 
     //
     // Check to see if queues have been enabled. If they are, we'll actually
@@ -1373,27 +1646,131 @@ am_hal_iom_spi_read(uint32_t ui32Module, uint32_t ui32ChipSelect,
         //
         // If the queue is on, go ahead and add this transaction to the queue.
         //
-        am_hal_iom_queue_spi_read(ui32Module, ui32ChipSelect, pui32Data,
+        ui32Status = am_hal_iom_queue_spi_read(ui32Module, ui32ChipSelect, pui32Data,
                                   ui32NumBytes, ui32Options, 0);
 
-        //
-        // Wait until the transaction actually clears.
-        //
-        am_hal_iom_queue_flush(ui32Module);
+        if (ui32Status == AM_HAL_IOM_SUCCESS)
+        {
+            //
+            // Wait until the transaction actually clears.
+            //
+            am_hal_iom_queue_flush(ui32Module);
+            // g_iom_error_status gets set in the isr handling
+            ui32Status = g_iom_error_status[ui32Module];
+        }
 
         //
         // At this point, we've completed the transaction, and we can return.
         //
-        return;
     }
     else
     {
         //
         // Otherwise, just perform a polled transaction.
         //
-        am_hal_iom_spi_read_nq(ui32Module, ui32ChipSelect, pui32Data,
+        ui32Status = am_hal_iom_spi_read_nq(ui32Module, ui32ChipSelect, pui32Data,
                                ui32NumBytes, ui32Options);
     }
+    return ui32Status;
+}
+
+//*****************************************************************************
+//
+//! @brief Perform a simple full-duplex transaction to the SPI interface.
+//!
+//! @param ui32Module - Module number for the IOM
+//! @param ui32ChipSelect - Chip-select number for this transaction.
+//! @param pui32TxData - Pointer to the bytes that will be sent.
+//! @param pui32RxData - Pointer to the bytes that will be received.
+//! @param ui32NumBytes - Number of bytes to send.
+//! @param ui32Options - Additional SPI transfer options.
+//!
+//! This function performs SPI full-duplex operation to a selected SPI device.
+//!
+//! @note The actual SPI and I2C interfaces operate in BYTES, not 32-bit words.
+//! This means that you will need to byte-pack the \e pui32TxData array with the
+//! data you intend to send over the interface. One easy way to do this is to
+//! declare the array as a 32-bit integer array, but use an 8-bit pointer to
+//! put your actual data into the array. If there are not enough bytes in your
+//! desired message to completely fill the last 32-bit word, you may pad that
+//! last word with bytes of any value. The IOM hardware will only read the
+//! first \e ui32NumBytes in the \e pui32TxData array.
+//!
+//! @return returns AM_HAL_IOM_SUCCESS on successful execution.
+//
+//*****************************************************************************
+am_hal_iom_status_e
+am_hal_iom_spi_fullduplex(uint32_t ui32Module, uint32_t ui32ChipSelect,
+                          uint32_t *pui32TxData, uint32_t *pui32RxData,
+                          uint32_t ui32NumBytes, uint32_t ui32Options)
+{
+    am_hal_iom_status_e ui32Status;
+    //
+    // Validate parameters
+    //
+    if ( ui32Module >= AM_REG_IOMSTR_NUM_MODULES )
+    {
+        return AM_HAL_IOM_ERR_INVALID_MODULE;
+    }
+    // Reset the error status
+    ui32Status = g_iom_error_status[ui32Module] = AM_HAL_IOM_SUCCESS;
+    if (ui32NumBytes == 0)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
+    //
+    // Full-Duplex operation is only supported for Apollo2 B2 Silicon.
+    //
+    if (!isRevB2())
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_OPER;
+        return ui32Status;
+    }
+
+    //
+    // Check to see if queues have been enabled. If they are, we'll actually
+    // switch to the queued interface.
+    //
+#if 0
+
+    // To be implemented!!!
+    if ( g_psIOMQueue[ui32Module].pui8Data != NULL )
+    {
+        //
+        // If the queue is on, go ahead and add this transaction to the queue.
+        //
+        ui32Status = am_hal_iom_queue_spi_write(ui32Module, ui32ChipSelect, pui32Data,
+                                   ui32NumBytes, ui32Options, 0);
+
+        if (ui32Status == AM_HAL_IOM_SUCCESS)
+        {
+            //
+            // Wait until the transaction actually clears.
+            //
+            am_hal_iom_queue_flush(ui32Module);
+            // g_iom_error_status gets set in the isr handling
+            ui32Status = g_iom_error_status[ui32Module];
+        }
+
+        //
+        // At this point, we've completed the transaction, and we can return.
+        //
+    }
+    else
+    {
+#endif
+        //
+        // Otherwise, we'll just do a polled transaction.
+        //
+        ui32Status = am_hal_iom_spi_fullduplex_nq(ui32Module, ui32ChipSelect,
+                                                   pui32TxData, pui32RxData,
+                                                   ui32NumBytes, ui32Options);
+#if 0
+    }
+#endif
+
+    return ui32Status;
 }
 
 //*****************************************************************************
@@ -1417,10 +1794,10 @@ am_hal_iom_spi_read(uint32_t ui32Module, uint32_t ui32ChipSelect,
 //! last word with bytes of any value. The IOM hardware will only read the
 //! first \e ui32NumBytes in the \e pui8Data array.
 //!
-//! @return None.
+//! @return returns AM_HAL_IOM_SUCCESS on successful execution.
 //
 //*****************************************************************************
-uint32_t
+am_hal_iom_status_e
 am_hal_iom_spi_write_nq(uint32_t ui32Module, uint32_t ui32ChipSelect,
                         uint32_t *pui32Data, uint32_t ui32NumBytes,
                         uint32_t ui32Options)
@@ -1429,34 +1806,47 @@ am_hal_iom_spi_write_nq(uint32_t ui32Module, uint32_t ui32ChipSelect,
     uint32_t ui32SpaceInFifo;
     uint32_t ui32IntConfig;
     uint32_t ui32MaxFifoSize;
-    uint32_t ui32Status = 1;
+    am_hal_iom_status_e ui32Status;
+    uint32_t waitStatus;
 
     //
     // Validate parameters
     //
-    am_hal_debug_assert_msg(ui32Module < AM_REG_IOMSTR_NUM_MODULES,
-                            "Trying to use an IOM module that doesn't exist.");
-    am_hal_debug_assert_msg(ui32NumBytes > 0,
-                            "Trying to do a 0 byte transaction");
+    if ( ui32Module >= AM_REG_IOMSTR_NUM_MODULES )
+    {
+        return AM_HAL_IOM_ERR_INVALID_MODULE;
+    }
+    //
+    // Wait until the bus is idle
+    //
+    am_hal_iom_poll_complete(ui32Module);
+
+    // Reset the error status
+    ui32Status = g_iom_error_status[ui32Module] = AM_HAL_IOM_SUCCESS;
+    if (ui32NumBytes == 0)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
 
     //
     // Make sure the transfer isn't too long for the hardware to support.
     //
-    am_hal_debug_assert_msg(ui32NumBytes < 4096, "SPI transfer too big.");
+    if (ui32NumBytes >= 4096)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
 
     ui32MaxFifoSize = ((0 == AM_BFRn(IOMSTR, ui32Module, CFG, FULLDUP)) ?
                        AM_HAL_IOM_MAX_FIFO_SIZE : AM_HAL_IOM_MAX_FIFO_SIZE / 2);
-    //
-    // Wait until any earlier transactions have completed.
-    //
-    am_hal_iom_poll_complete(ui32Module);
     //
     // Disable interrupts so that we don't get any undesired interrupts.
     //
     ui32IntConfig = AM_REGn(IOMSTR, ui32Module, INTEN);
     AM_REGn(IOMSTR, ui32Module, INTEN) = 0;
-    // Clear CMDCMP status
-    AM_BFWn(IOMSTR, ui32Module, INTCLR, CMDCMP, 1);
+    // Clear interrupts
+    AM_REGn(IOMSTR, ui32Module, INTCLR) = AM_HAL_IOM_INT_ALL;
 
     //
     // If we're on a B0 part, and we're using IOM4, our first byte coule be
@@ -1547,23 +1937,27 @@ am_hal_iom_spi_write_nq(uint32_t ui32Module, uint32_t ui32ChipSelect,
     //
     // Make sure CMDCMP was raised with standard timeout
     //
-    ui32Status = am_util_wait_status_change(ui32StatusTimeout[ui32Module],
-    		AM_REG_IOMSTRn(ui32Module) + AM_REG_IOMSTR_INTSTAT_O,
-    		AM_REG_IOMSTR_INTEN_CMDCMP_M, AM_REG_IOMSTR_INTEN_CMDCMP_M);
+    waitStatus = am_hal_flash_delay_status_change(ui32StatusTimeout[ui32Module],
+                 AM_REG_IOMSTRn(ui32Module) + AM_REG_IOMSTR_INTSTAT_O,
+                 AM_REG_IOMSTR_INTEN_CMDCMP_M, AM_REG_IOMSTR_INTEN_CMDCMP_M);
+
+    if (waitStatus != 1)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_TIMEOUT;
+    }
+    else
+    {
+        g_iom_error_status[ui32Module] = ui32Status = internal_iom_get_int_err(ui32Module, 0);
+    }
 
     //
-    // Re-enable IOM interrupts. Make sure CMDCMP is cleared
+    // Re-enable IOM interrupts.
     //
-    AM_REGn(IOMSTR, ui32Module, INTCLR) = (ui32IntConfig | AM_REG_IOMSTR_INTSTAT_CMDCMP_M);
+    // Clear interrupts
+    AM_REGn(IOMSTR, ui32Module, INTCLR) = AM_HAL_IOM_INT_ALL;
     AM_REGn(IOMSTR, ui32Module, INTEN) = ui32IntConfig;
 
-    am_hal_debug_assert_msg(ui32Status == 1,"IOM CMDCMP was not seen");
-    
-    //
-    // Return the status (0 = timeout; 1 = success)
-    //
     return ui32Status;
-
 }
 
 //*****************************************************************************
@@ -1585,10 +1979,10 @@ am_hal_iom_spi_write_nq(uint32_t ui32Module, uint32_t ui32ChipSelect,
 //! into 32-bit words, which are then placed into the \e pui32Data array. Only
 //! the first \e ui32NumBytes bytes in this array will contain valid data.
 //!
-//! @return None.
+//! @return returns AM_HAL_IOM_SUCCESS on successful execution.
 //
 //*****************************************************************************
-uint32_t
+am_hal_iom_status_e
 am_hal_iom_spi_read_nq(uint32_t ui32Module, uint32_t ui32ChipSelect,
                        uint32_t *pui32Data, uint32_t ui32NumBytes,
                        uint32_t ui32Options)
@@ -1596,26 +1990,36 @@ am_hal_iom_spi_read_nq(uint32_t ui32Module, uint32_t ui32ChipSelect,
     uint32_t ui32BytesInFifo;
     uint32_t ui32IntConfig;
     uint32_t bCmdCmp = false;
-    uint32_t ui32Status = 1;
+    am_hal_iom_status_e ui32Status;
+    uint32_t waitStatus;
 
     //
     // Validate parameters
     //
-    am_hal_debug_assert_msg(ui32Module < AM_REG_IOMSTR_NUM_MODULES,
-                            "Trying to use an IOM module that doesn't exist.");
-    am_hal_debug_assert_msg(ui32NumBytes > 0,
-                            "Trying to do a 0 byte transaction");
+    if ( ui32Module >= AM_REG_IOMSTR_NUM_MODULES )
+    {
+        return AM_HAL_IOM_ERR_INVALID_MODULE;
+    }
+    //
+    // Wait until the bus is idle
+    //
+    am_hal_iom_poll_complete(ui32Module);
 
+    // Reset the error status
+    ui32Status = g_iom_error_status[ui32Module] = AM_HAL_IOM_SUCCESS;
+    if (ui32NumBytes == 0)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
     //
     // Make sure the transfer isn't too long for the hardware to support.
     //
-    am_hal_debug_assert_msg(ui32NumBytes < 4096, "SPI transfer too big.");
-
-    //
-    // Wait until the bus is idle, then start the requested READ transfer on
-    // the physical interface.
-    //
-    am_hal_iom_poll_complete(ui32Module);
+    if (ui32NumBytes >= 4096)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
 
     //
     // Disable interrupts so that we don't get any undesired interrupts.
@@ -1627,10 +2031,8 @@ am_hal_iom_spi_read_nq(uint32_t ui32Module, uint32_t ui32ChipSelect,
     //
     AM_REGn(IOMSTR, ui32Module, INTEN) = 0;
 
-    //
-    // Clear CMDCMP status
-    //
-    AM_BFWn(IOMSTR, ui32Module, INTCLR, CMDCMP, 1);
+    // Clear interrupts
+    AM_REGn(IOMSTR, ui32Module, INTCLR) = AM_HAL_IOM_INT_ALL;
 
     //
     // If we're on a B0 part, and we're using IOM4, our first byte coule be
@@ -1656,11 +2058,22 @@ am_hal_iom_spi_read_nq(uint32_t ui32Module, uint32_t ui32ChipSelect,
         // Wait for the dummy word to go out over the bus.
         //
         // Make sure the command complete has also been raised
-        ui32Status = am_util_wait_status_change(ui32StatusTimeout[ui32Module],
-    		AM_REG_IOMSTRn(ui32Module) + AM_REG_IOMSTR_INTSTAT_O,
-    		AM_REG_IOMSTR_INTEN_CMDCMP_M, AM_REG_IOMSTR_INTEN_CMDCMP_M);
-        
-        
+        waitStatus = am_hal_flash_delay_status_change(ui32StatusTimeout[ui32Module],
+                     AM_REG_IOMSTRn(ui32Module) + AM_REG_IOMSTR_INTSTAT_O,
+                     AM_REG_IOMSTR_INTEN_CMDCMP_M, AM_REG_IOMSTR_INTEN_CMDCMP_M);
+
+        if (waitStatus != 1)
+        {
+            g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_TIMEOUT;
+            //
+            // Re-enable IOM interrupts.
+            //
+            // Clear interrupts
+            AM_REGn(IOMSTR, ui32Module, INTCLR) = AM_HAL_IOM_INT_ALL;
+            AM_REGn(IOMSTR, ui32Module, INTEN) = ui32IntConfig;
+            return ui32Status;
+        }
+
         // Clear CMDCMP status
         AM_BFWn(IOMSTR, ui32Module, INTCLR, CMDCMP, 1);
     }
@@ -1708,21 +2121,230 @@ am_hal_iom_spi_read_nq(uint32_t ui32Module, uint32_t ui32ChipSelect,
     //
     // Make sure CMDCMP was raised,
     //
-    ui32Status = am_util_wait_status_change(ui32StatusTimeout[ui32Module],
-    		AM_REG_IOMSTRn(ui32Module) + AM_REG_IOMSTR_INTSTAT_O,
-    		AM_REG_IOMSTR_INTEN_CMDCMP_M, AM_REG_IOMSTR_INTEN_CMDCMP_M);
+    waitStatus = am_hal_flash_delay_status_change(ui32StatusTimeout[ui32Module],
+                 AM_REG_IOMSTRn(ui32Module) + AM_REG_IOMSTR_INTSTAT_O,
+                 AM_REG_IOMSTR_INTEN_CMDCMP_M, AM_REG_IOMSTR_INTEN_CMDCMP_M);
+
+    if (waitStatus != 1)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_TIMEOUT;
+    }
+    else
+    {
+        g_iom_error_status[ui32Module] = ui32Status = internal_iom_get_int_err(ui32Module, 0);
+    }
 
     //
     // Re-enable IOM interrupts. Make sure CMDCMP is cleared
     //
-    AM_REGn(IOMSTR, ui32Module, INTCLR) = (ui32IntConfig | AM_REG_IOMSTR_INTSTAT_CMDCMP_M);
+    // Clear interrupts
+    AM_REGn(IOMSTR, ui32Module, INTCLR) = AM_HAL_IOM_INT_ALL;
     AM_REGn(IOMSTR, ui32Module, INTEN) = ui32IntConfig;
 
-    am_hal_debug_assert_msg(ui32Status == 1,"IOM CMDCMP was not seen");
-    
+    return ui32Status;
+
+}
+
+//*****************************************************************************
+//
+//! @brief Perform a simple full-duplex operation to the SPI interface (without queuing)
+//!
+//! @param ui32Module - Module number for the IOM
+//! @param ui32ChipSelect - Chip-select number for this transaction.
+//! @param pui32Data - Pointer to the bytes that will be sent.
+//! @param pui32Data - Pointer to the bytes that will be received.
+//! @param ui32NumBytes - Number of bytes to send.
+//! @param ui32Options - Additional SPI transfer options.
+//!
+//! This function performs SPI full-duplex operation to a selected SPI device.
+//!
+//! @note The actual SPI and I2C interfaces operate in BYTES, not 32-bit words.
+//! This means that you will need to byte-pack the \e pui32TxData array with the
+//! data you intend to send over the interface. One easy way to do this is to
+//! declare the array as a 32-bit integer array, but use an 8-bit pointer to
+//! put your actual data into the array. If there are not enough bytes in your
+//! desired message to completely fill the last 32-bit word, you may pad that
+//! last word with bytes of any value. The IOM hardware will only read the
+//! first \e ui32NumBytes in the \e pui32TxData array.
+//!
+//! @return returns AM_HAL_IOM_SUCCESS on successful execution.
+//
+//*****************************************************************************
+am_hal_iom_status_e
+am_hal_iom_spi_fullduplex_nq(uint32_t ui32Module, uint32_t ui32ChipSelect,
+                             uint32_t *pui32TxData, uint32_t *pui32RxData,
+                             uint32_t ui32NumBytes, uint32_t ui32Options)
+{
+    uint32_t ui32TransferSize;
+    uint32_t ui32SpaceInFifo;
+    uint32_t bCmdCmp = false;
+    uint32_t ui32IntConfig;
+    uint32_t ui32MaxFifoSize;
+    am_hal_iom_status_e ui32Status;
+    uint32_t waitStatus;
+
     //
-    // Return the status (0 = timeout; 1 = success)
+    // Validate parameters
     //
+    if ( ui32Module >= AM_REG_IOMSTR_NUM_MODULES )
+    {
+        return AM_HAL_IOM_ERR_INVALID_MODULE;
+    }
+    //
+    // Wait until the bus is idle
+    //
+    am_hal_iom_poll_complete(ui32Module);
+
+    // Reset the error status
+    ui32Status = g_iom_error_status[ui32Module] = AM_HAL_IOM_SUCCESS;
+    if (ui32NumBytes == 0)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
+
+    //
+    // Make sure the transfer isn't too long for the hardware to support.
+    //
+    if (ui32NumBytes >= 4096)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
+
+    //
+    // Full-Duplex operation is only supported for Apollo2 B2 Silicon.
+    //
+    if (!isRevB2())
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_OPER;
+        return ui32Status;
+    }
+
+    //
+    // Put the IOM into Full-Duplex mode.
+    //
+    AM_REGn(IOMSTR, ui32Module, CFG) |= AM_REG_IOMSTR_CFG_FULLDUP_FULLDUP;
+
+    ui32MaxFifoSize = ((0 == AM_BFRn(IOMSTR, ui32Module, CFG, FULLDUP)) ?
+                       AM_HAL_IOM_MAX_FIFO_SIZE : AM_HAL_IOM_MAX_FIFO_SIZE / 2);
+    //
+    // Disable interrupts so that we don't get any undesired interrupts.
+    //
+    ui32IntConfig = AM_REGn(IOMSTR, ui32Module, INTEN);
+    AM_REGn(IOMSTR, ui32Module, INTEN) = 0;
+    // Clear interrupts
+    AM_REGn(IOMSTR, ui32Module, INTCLR) = AM_HAL_IOM_INT_ALL;
+
+    //
+    // Figure out how many bytes we can write to the FIFO immediately.
+    //
+    ui32TransferSize = (ui32NumBytes <= ui32MaxFifoSize ? ui32NumBytes :
+                          ui32MaxFifoSize);
+    //
+    // write up to the maximum FIFO size into the fifo.
+    //
+    am_hal_iom_fifo_write(ui32Module, pui32TxData, ui32TransferSize);
+
+    //
+    // Start the write on the bus.
+    //
+    am_hal_iom_spi_cmd_run(AM_HAL_IOM_WRITE, ui32Module, ui32ChipSelect,
+                           ui32NumBytes, ui32Options);
+
+    //
+    // Update the pointer and data counter.
+    //
+    pui32TxData += ui32TransferSize >> 2;
+
+    //
+    // Keep looping until we're out of bytes to receive or command complete (error).
+    //
+    while ( ui32NumBytes )
+    {
+        //
+        // Wait for FIFO to empty.
+        //
+        while (am_hal_iom_fifo_full_slots(ui32Module) > 0);
+
+        am_hal_iom_fifo_read(ui32Module, pui32RxData, ui32TransferSize);
+        ui32NumBytes -= ui32TransferSize;
+        pui32RxData += ui32TransferSize >> 2;
+
+        //
+        // Get the number of bytes that can be written (always a multiple of 4).
+        //
+        ui32SpaceInFifo =  am_hal_iom_fifo_empty_slots(ui32Module);
+
+        if ( ui32NumBytes <= ui32SpaceInFifo )
+        {
+            //
+            // If the entire message will fit in the fifo, prepare to copy
+            // everything.
+            //
+            ui32TransferSize = ui32NumBytes;
+        }
+        else
+        {
+            //
+            // If only a portion of the message will fit in the fifo, prepare
+            // to copy the largest number of 4-byte blocks possible.
+            //
+            ui32TransferSize = ui32SpaceInFifo & ~(0x3);
+        }
+
+        //
+        // Write this chunk to the fifo.
+        //
+        am_hal_iom_fifo_write(ui32Module, pui32TxData, ui32TransferSize);
+
+        //
+        // Update the data pointer and bytes-left count.
+        //
+        pui32TxData += ui32TransferSize >> 2;
+
+        //
+        // Check for Command Complete condition.
+        if ( bCmdCmp == true )
+        {
+            //
+            // No more data expected. Get out of the loop
+            //
+            break;
+        }
+
+        bCmdCmp = AM_BFRn(IOMSTR, ui32Module, INTSTAT, CMDCMP);
+
+    }
+
+    //
+    // Make sure CMDCMP was raised with standard timeout
+    //
+    waitStatus = am_hal_flash_delay_status_change(ui32StatusTimeout[ui32Module],
+                 AM_REG_IOMSTRn(ui32Module) + AM_REG_IOMSTR_INTSTAT_O,
+                 AM_REG_IOMSTR_INTEN_CMDCMP_M, AM_REG_IOMSTR_INTEN_CMDCMP_M);
+
+    if (waitStatus != 1)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_TIMEOUT;
+    }
+    else
+    {
+        g_iom_error_status[ui32Module] = ui32Status = internal_iom_get_int_err(ui32Module, 0);
+    }
+
+    //
+    // Re-enable IOM interrupts.
+    //
+    // Clear interrupts
+    AM_REGn(IOMSTR, ui32Module, INTCLR) = AM_HAL_IOM_INT_ALL;
+    AM_REGn(IOMSTR, ui32Module, INTEN) = ui32IntConfig;
+
+    //
+    // Take the IOM out of Full-Duplex mode.
+    //
+    AM_REGn(IOMSTR, ui32Module, CFG) &= ~AM_REG_IOMSTR_CFG_FULLDUP_FULLDUP;
+
     return ui32Status;
 }
 
@@ -1756,15 +2378,19 @@ am_hal_iom_spi_read_nq(uint32_t ui32Module, uint32_t ui32ChipSelect,
 //! last word with bytes of any value. The IOM hardware will only read the
 //! first \e ui32NumBytes in the \e pui8Data array.
 //!
-//! @return None.
+//! @return returns AM_HAL_IOM_SUCCESS on successful execution. Note that
+//! successful execution for non-blocking call only means the transaction was
+//! successfully initiated. The status of the transaction is not known till the
+//! callback is called on completion
 //
 //*****************************************************************************
-void
+am_hal_iom_status_e
 am_hal_iom_spi_write_nb(uint32_t ui32Module, uint32_t ui32ChipSelect,
                         uint32_t *pui32Data, uint32_t ui32NumBytes,
                         uint32_t ui32Options,
                         am_hal_iom_callback_t pfnCallback)
 {
+    am_hal_iom_status_e ui32Status;
     uint32_t ui32TransferSize;
     uint32_t ui32MaxFifoSize;
 
@@ -1773,23 +2399,31 @@ am_hal_iom_spi_write_nb(uint32_t ui32Module, uint32_t ui32ChipSelect,
     //
     if ( ui32Module >= AM_REG_IOMSTR_NUM_MODULES )
     {
-        return;
+        return AM_HAL_IOM_ERR_INVALID_MODULE;
     }
-
-    //
-    // Make sure the transfer isn't too long for the hardware to support.
-    //
-    am_hal_debug_assert_msg(ui32NumBytes < 4096, "SPI transfer too big.");
-    am_hal_debug_assert_msg(ui32NumBytes > 0,
-                            "Trying to do a 0 byte transaction");
-
-    ui32MaxFifoSize = ((0 == AM_BFRn(IOMSTR, ui32Module, CFG, FULLDUP)) ?
-                      AM_HAL_IOM_MAX_FIFO_SIZE : AM_HAL_IOM_MAX_FIFO_SIZE / 2);
-
     //
     // Wait until the bus is idle
     //
     am_hal_iom_poll_complete(ui32Module);
+
+    // Reset the error status for non-blocking transfer
+    ui32Status = g_iom_error_status[ui32Module] = AM_HAL_IOM_SUCCESS;
+    if (ui32NumBytes == 0)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
+    //
+    // Make sure the transfer isn't too long for the hardware to support.
+    //
+    if (ui32NumBytes >= 4096)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
+
+    ui32MaxFifoSize = ((0 == AM_BFRn(IOMSTR, ui32Module, CFG, FULLDUP)) ?
+                      AM_HAL_IOM_MAX_FIFO_SIZE : AM_HAL_IOM_MAX_FIFO_SIZE / 2);
 
     //
     // Need to mark IOM busy to avoid another transaction to be scheduled.
@@ -1798,10 +2432,8 @@ am_hal_iom_spi_write_nb(uint32_t ui32Module, uint32_t ui32ChipSelect,
     //
     g_bIomBusy[ui32Module] = true;
 
-    //
-    // Clear CMDCMP status
-    //
-    AM_BFWn(IOMSTR, ui32Module, INTCLR, CMDCMP, 1);
+    // Clear interrupts
+    AM_REGn(IOMSTR, ui32Module, INTCLR) = AM_HAL_IOM_INT_ALL;
 
     //
     // Check to see if we need to do the workaround.
@@ -1865,6 +2497,7 @@ am_hal_iom_spi_write_nb(uint32_t ui32Module, uint32_t ui32ChipSelect,
                                    ui32NumBytes, ui32Options);
         }
     }
+    return ui32Status;
 }
 
 //*****************************************************************************
@@ -1894,51 +2527,62 @@ am_hal_iom_spi_write_nb(uint32_t ui32Module, uint32_t ui32ChipSelect,
 //! into 32-bit words, which are then placed into the \e pui32Data array. Only
 //! the first \e ui32NumBytes bytes in this array will contain valid data.
 //!
-//! @return None.
+//! @return returns AM_HAL_IOM_SUCCESS on successful execution. Note that
+//! successful execution for non-blocking call only means the transaction was
+//! successfully initiated. The status of the transaction is not known till the
+//! callback is called on completion
 //
 //*****************************************************************************
-uint32_t
+am_hal_iom_status_e
 am_hal_iom_spi_read_nb(uint32_t ui32Module, uint32_t ui32ChipSelect,
                        uint32_t *pui32Data, uint32_t ui32NumBytes,
                        uint32_t ui32Options,
                        am_hal_iom_callback_t pfnCallback)
 {
+    am_hal_iom_status_e ui32Status;
     uint32_t ui32IntConfig;
-    uint32_t ui32Status = 1;
-    
+    uint32_t waitStatus;
+
     //
     // Validate parameters
     //
-    am_hal_debug_assert_msg(ui32Module < AM_REG_IOMSTR_NUM_MODULES,
-                            "Trying to use an IOM module that doesn't exist.");
-    am_hal_debug_assert_msg(ui32NumBytes > 0,
-                            "Trying to do a 0 byte transaction");
-
-    //
-    // Make sure the transfer isn't too long for the hardware to support.
-    //
-    am_hal_debug_assert_msg(ui32NumBytes < 4096, "SPI transfer too big.");
-
+    if ( ui32Module >= AM_REG_IOMSTR_NUM_MODULES )
+    {
+        return AM_HAL_IOM_ERR_INVALID_MODULE;
+    }
     //
     // Wait until the bus is idle
     //
     am_hal_iom_poll_complete(ui32Module);
+    // Reset the error status
+    ui32Status = g_iom_error_status[ui32Module] = AM_HAL_IOM_SUCCESS;
+    if (ui32NumBytes == 0)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
+    //
+    // Make sure the transfer isn't too long for the hardware to support.
+    //
+    if (ui32NumBytes >= 4096)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
+
 
     //
     // Need to mark IOM busy to avoid another transaction to be scheduled.
     // This is to take care of a race condition in Queue mode, where the IDLE
     // set is not a guarantee that the CMDCMP has been received
     //
-
     g_bIomBusy[ui32Module] = true;
 
-    //
-    // Clear CMDCMP status
-    //
-    AM_BFWn(IOMSTR, ui32Module, INTCLR, CMDCMP, 1);
+    // Clear interrupts
+    AM_REGn(IOMSTR, ui32Module, INTCLR) = AM_HAL_IOM_INT_ALL;
 
     //
-    // If we're on a B0 part, and we're using IOM4, our first byte coule be
+    // If we're on a B0 part, and we're using IOM4, our first byte could be
     // corrupted, so we need to send a dummy word with chip-select held high to
     // get that first byte out of the way. This is only true for spi reads with
     // OFFSET values.
@@ -1970,9 +2614,15 @@ am_hal_iom_spi_read_nb(uint32_t ui32Module, uint32_t ui32ChipSelect,
         // Wait for the dummy word to go out over the bus.
         //
         // Make sure the command complete has also been raised
-        ui32Status = am_util_wait_status_change(ui32StatusTimeout[ui32Module],
-    		AM_REG_IOMSTRn(ui32Module) + AM_REG_IOMSTR_INTSTAT_O,
-    		AM_REG_IOMSTR_INTEN_CMDCMP_M, AM_REG_IOMSTR_INTEN_CMDCMP_M);
+        waitStatus = am_hal_flash_delay_status_change(ui32StatusTimeout[ui32Module],
+                     AM_REG_IOMSTRn(ui32Module) + AM_REG_IOMSTR_INTSTAT_O,
+                     AM_REG_IOMSTR_INTEN_CMDCMP_M, AM_REG_IOMSTR_INTEN_CMDCMP_M);
+
+        if (waitStatus != 1)
+        {
+            g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_TIMEOUT;
+            return ui32Status;
+        }
 
         //
         // Re-mark IOM as busy
@@ -1983,7 +2633,7 @@ am_hal_iom_spi_read_nb(uint32_t ui32Module, uint32_t ui32ChipSelect,
         //
         // Re-enable IOM interrupts. Make sure CMDCMP is cleared
         //
-        AM_REGn(IOMSTR, 4, INTCLR) = (ui32IntConfig | AM_REG_IOMSTR_INTSTAT_CMDCMP_M);
+        AM_REGn(IOMSTR, ui32Module, INTCLR) = AM_HAL_IOM_INT_ALL;
         AM_REGn(IOMSTR, 4, INTEN) = ui32IntConfig;
     }
 
@@ -2001,9 +2651,7 @@ am_hal_iom_spi_read_nb(uint32_t ui32Module, uint32_t ui32ChipSelect,
     //
     am_hal_iom_spi_cmd_run(AM_HAL_IOM_READ, ui32Module, ui32ChipSelect,
                            ui32NumBytes, ui32Options);
-    
-    am_hal_debug_assert_msg(ui32Status == 1,"IOM CMDCMP was not seen");
-    
+
     return ui32Status;
 }
 
@@ -2099,10 +2747,10 @@ am_hal_iom_spi_cmd_run(uint32_t ui32Operation, uint32_t ui32Module,
 //! last word with bytes of any value. The IOM hardware will only read the
 //! first \e ui32NumBytes in the \e pui32Data array.
 //!
-//! @return None.
+//! @return returns AM_HAL_IOM_SUCCESS on successful execution.
 //
 //*****************************************************************************
-uint32_t
+am_hal_iom_status_e
 am_hal_iom_i2c_write_nq(uint32_t ui32Module, uint32_t ui32BusAddress,
                         uint32_t *pui32Data, uint32_t ui32NumBytes,
                         uint32_t ui32Options)
@@ -2111,17 +2759,29 @@ am_hal_iom_i2c_write_nq(uint32_t ui32Module, uint32_t ui32BusAddress,
     uint32_t ui32SpaceInFifo;
     uint32_t ui32IntConfig;
     uint32_t ui32MaxFifoSize;
-    uint32_t ui32Status = 1;
+    am_hal_iom_status_e ui32Status;
+    uint32_t waitStatus;
+    am_hal_i2c_bit_bang_enum_e i2cBBStatus;
 
     //
     // Validate parameters
     //
     if ( ui32Module > AM_REG_IOMSTR_NUM_MODULES )
     {
-        return 0;
+        return AM_HAL_IOM_ERR_INVALID_MODULE;
     }
-    am_hal_debug_assert_msg(ui32NumBytes > 0,
-                            "Trying to do a 0 byte transaction");
+    //
+    // Wait until any earlier transactions have completed.
+    //
+    am_hal_iom_poll_complete(ui32Module);
+
+    // Reset the error status
+    ui32Status = g_iom_error_status[ui32Module] = AM_HAL_IOM_SUCCESS;
+    if (ui32NumBytes == 0)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
 
     //
     // Redirect to the bit-bang interface if the module number matches the
@@ -2131,13 +2791,13 @@ am_hal_iom_i2c_write_nq(uint32_t ui32Module, uint32_t ui32BusAddress,
     {
         if ( ui32Options & AM_HAL_IOM_RAW )
         {
-            am_hal_i2c_bit_bang_send(ui32BusAddress << 1, ui32NumBytes,
+            i2cBBStatus = am_hal_i2c_bit_bang_send(ui32BusAddress << 1, ui32NumBytes,
                                      (uint8_t *)pui32Data, 0, false,
                                      (ui32Options & AM_HAL_IOM_NO_STOP));
         }
         else
         {
-            am_hal_i2c_bit_bang_send(ui32BusAddress << 1, ui32NumBytes,
+            i2cBBStatus = am_hal_i2c_bit_bang_send(ui32BusAddress << 1, ui32NumBytes,
                                      (uint8_t *)pui32Data,
                                      ((ui32Options & 0xFF00) >> 8),
                                      true,
@@ -2145,23 +2805,23 @@ am_hal_iom_i2c_write_nq(uint32_t ui32Module, uint32_t ui32BusAddress,
         }
 
         //
-        // Return.
+        // Return. convert BB retCode to proper retCode here
         //
-        return 0;
+        g_iom_error_status[ui32Module] = ui32Status = i2c_bb_errmap[i2cBBStatus];
+        return ui32Status;
     }
 
     //
     // Make sure the transfer isn't too long for the hardware to support.
     //
-    am_hal_debug_assert_msg(ui32NumBytes < 256, "I2C transfer too big.");
+    if (ui32NumBytes >= 256)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
 
     ui32MaxFifoSize = ((0 == AM_BFRn(IOMSTR, ui32Module, CFG, FULLDUP)) ?
                       AM_HAL_IOM_MAX_FIFO_SIZE : AM_HAL_IOM_MAX_FIFO_SIZE / 2);
-
-    //
-    // Wait until any earlier transactions have completed.
-    //
-    am_hal_iom_poll_complete(ui32Module);
 
     //
     // Disable interrupts so that we don't get any undesired interrupts.
@@ -2169,10 +2829,8 @@ am_hal_iom_i2c_write_nq(uint32_t ui32Module, uint32_t ui32BusAddress,
     ui32IntConfig = AM_REGn(IOMSTR, ui32Module, INTEN);
     AM_REGn(IOMSTR, ui32Module, INTEN) = 0;
 
-    //
-    // Clear CMDCMP status
-    //
-    AM_BFWn(IOMSTR, ui32Module, INTCLR, CMDCMP, 1);
+    // Clear interrupts
+    AM_REGn(IOMSTR, ui32Module, INTCLR) = AM_HAL_IOM_INT_ALL;
 
     //
     // Figure out how many bytes we can write to the FIFO immediately.
@@ -2185,9 +2843,20 @@ am_hal_iom_i2c_write_nq(uint32_t ui32Module, uint32_t ui32BusAddress,
     //
     // Start the write on the bus.
     //
-    am_hal_iom_i2c_cmd_run(AM_HAL_IOM_WRITE, ui32Module, ui32BusAddress,
+    ui32Status = am_hal_iom_i2c_cmd_run(AM_HAL_IOM_WRITE, ui32Module, ui32BusAddress,
                            ui32NumBytes, ui32Options);
 
+    if (ui32Status != AM_HAL_IOM_SUCCESS)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = ui32Status;
+        //
+        // Re-enable IOM interrupts.
+        //
+        // Clear interrupts
+        AM_REGn(IOMSTR, ui32Module, INTCLR) = AM_HAL_IOM_INT_ALL;
+        AM_REGn(IOMSTR, ui32Module, INTEN) = ui32IntConfig;
+        return ui32Status;
+    }
     //
     // Update the pointer and data counter.
     //
@@ -2236,21 +2905,25 @@ am_hal_iom_i2c_write_nq(uint32_t ui32Module, uint32_t ui32BusAddress,
     //
     // Make sure CMDCMP was raised,
     //
-    ui32Status = am_util_wait_status_change(ui32StatusTimeout[ui32Module],
-    		AM_REG_IOMSTRn(ui32Module) + AM_REG_IOMSTR_INTSTAT_O,
-    		AM_REG_IOMSTR_INTEN_CMDCMP_M, AM_REG_IOMSTR_INTEN_CMDCMP_M);
+    waitStatus = am_hal_flash_delay_status_change(ui32StatusTimeout[ui32Module],
+                 AM_REG_IOMSTRn(ui32Module) + AM_REG_IOMSTR_INTSTAT_O,
+                 AM_REG_IOMSTR_INTEN_CMDCMP_M, AM_REG_IOMSTR_INTEN_CMDCMP_M);
+
+    if (waitStatus != 1)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_TIMEOUT;
+    }
+    else
+    {
+        g_iom_error_status[ui32Module] = ui32Status = internal_iom_get_int_err(ui32Module, 0);
+    }
 
     //
-    // Re-enable IOM interrupts. Make sure CMDCMP is cleared
+    // Re-enable IOM interrupts.
     //
-    AM_REGn(IOMSTR, ui32Module, INTCLR) = (ui32IntConfig | AM_REG_IOMSTR_INTSTAT_CMDCMP_M);
+    // Clear interrupts
+    AM_REGn(IOMSTR, ui32Module, INTCLR) = AM_HAL_IOM_INT_ALL;
     AM_REGn(IOMSTR, ui32Module, INTEN) = ui32IntConfig;
-    
-    am_hal_debug_assert_msg(ui32Status == 1,"IOM CMDCMP was not seen");
-    
-    //
-    // Return the status (0 = timeout; 1 = success)
-    //
     return ui32Status;
 }
 
@@ -2275,10 +2948,10 @@ am_hal_iom_i2c_write_nq(uint32_t ui32Module, uint32_t ui32BusAddress,
 //! into 32-bit words, which are then placed into the \e pui32Data array. Only
 //! the first \e ui32NumBytes bytes in this array will contain valid data.
 //!
-//! @return None.
+//! @return returns AM_HAL_IOM_SUCCESS on successful execution.
 //
 //*****************************************************************************
-uint32_t
+am_hal_iom_status_e
 am_hal_iom_i2c_read_nq(uint32_t ui32Module, uint32_t ui32BusAddress,
                        uint32_t *pui32Data, uint32_t ui32NumBytes,
                        uint32_t ui32Options)
@@ -2286,17 +2959,29 @@ am_hal_iom_i2c_read_nq(uint32_t ui32Module, uint32_t ui32BusAddress,
     uint32_t ui32BytesInFifo;
     uint32_t ui32IntConfig;
     uint32_t bCmdCmp = false;
-    uint32_t ui32Status = 1;
+    am_hal_iom_status_e ui32Status;
+    uint32_t waitStatus;
+    am_hal_i2c_bit_bang_enum_e i2cBBStatus;
 
     //
     // Validate parameters
     //
     if ( ui32Module > AM_REG_IOMSTR_NUM_MODULES )
     {
-        return 0;
+        return AM_HAL_IOM_ERR_INVALID_MODULE;
     }
-    am_hal_debug_assert_msg(ui32NumBytes > 0,
-                            "Trying to do a 0 byte transaction");
+    //
+    // Wait until the bus is idle
+    //
+    am_hal_iom_poll_complete(ui32Module);
+
+    // Reset the error status
+    ui32Status = g_iom_error_status[ui32Module] = AM_HAL_IOM_SUCCESS;
+    if (ui32NumBytes == 0)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
 
     //
     // Redirect to the bit-bang interface if the module number matches the
@@ -2306,13 +2991,13 @@ am_hal_iom_i2c_read_nq(uint32_t ui32Module, uint32_t ui32BusAddress,
     {
         if ( ui32Options & AM_HAL_IOM_RAW )
         {
-            am_hal_i2c_bit_bang_receive((ui32BusAddress << 1) | 1, ui32NumBytes,
+            i2cBBStatus = am_hal_i2c_bit_bang_receive((ui32BusAddress << 1) | 1, ui32NumBytes,
                                         (uint8_t *)pui32Data, 0, false,
                                         (ui32Options & AM_HAL_IOM_NO_STOP));
         }
         else
         {
-            am_hal_i2c_bit_bang_receive((ui32BusAddress << 1) | 1, ui32NumBytes,
+            i2cBBStatus = am_hal_i2c_bit_bang_receive((ui32BusAddress << 1) | 1, ui32NumBytes,
                                         (uint8_t *)pui32Data,
                                         ((ui32Options & 0xFF00) >> 8),
                                         true,
@@ -2320,20 +3005,20 @@ am_hal_iom_i2c_read_nq(uint32_t ui32Module, uint32_t ui32BusAddress,
         }
 
         //
-        // Return.
+        // Return. convert i2c bb retCode
         //
-        return 0;
+        g_iom_error_status[ui32Module] = ui32Status = i2c_bb_errmap[i2cBBStatus];
+        return ui32Status;
     }
 
     //
     // Make sure the transfer isn't too long for the hardware to support.
     //
-    am_hal_debug_assert_msg(ui32NumBytes < 256, "I2C transfer too big.");
-
-    //
-    // Wait until the bus is idle
-    //
-    am_hal_iom_poll_complete(ui32Module);
+    if (ui32NumBytes >= 256)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
 
     //
     // Disable interrupts so that we don't get any undesired interrupts.
@@ -2341,13 +3026,23 @@ am_hal_iom_i2c_read_nq(uint32_t ui32Module, uint32_t ui32BusAddress,
     ui32IntConfig = AM_REGn(IOMSTR, ui32Module, INTEN);
     AM_REGn(IOMSTR, ui32Module, INTEN) = 0;
 
-    //
-    // Clear CMDCMP status
-    //
-    AM_BFWn(IOMSTR, ui32Module, INTCLR, CMDCMP, 1);
+    // Clear interrupts
+    AM_REGn(IOMSTR, ui32Module, INTCLR) = AM_HAL_IOM_INT_ALL;
 
-    am_hal_iom_i2c_cmd_run(AM_HAL_IOM_READ, ui32Module, ui32BusAddress,
+    ui32Status = am_hal_iom_i2c_cmd_run(AM_HAL_IOM_READ, ui32Module, ui32BusAddress,
                            ui32NumBytes, ui32Options);
+
+    if (ui32Status != AM_HAL_IOM_SUCCESS)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = ui32Status;
+        //
+        // Re-enable IOM interrupts.
+        //
+        // Clear interrupts
+        AM_REGn(IOMSTR, ui32Module, INTCLR) = AM_HAL_IOM_INT_ALL;
+        AM_REGn(IOMSTR, ui32Module, INTEN) = ui32IntConfig;
+        return ui32Status;
+    }
 
     //
     // Start a loop to catch the Rx data.
@@ -2389,21 +3084,24 @@ am_hal_iom_i2c_read_nq(uint32_t ui32Module, uint32_t ui32BusAddress,
     //
     // Make sure CMDCMP was raised,
     //
-    ui32Status = am_util_wait_status_change(ui32StatusTimeout[ui32Module],
-    		AM_REG_IOMSTRn(ui32Module) + AM_REG_IOMSTR_INTSTAT_O,
-    		AM_REG_IOMSTR_INTEN_CMDCMP_M, AM_REG_IOMSTR_INTEN_CMDCMP_M);
+    waitStatus = am_hal_flash_delay_status_change(ui32StatusTimeout[ui32Module],
+                 AM_REG_IOMSTRn(ui32Module) + AM_REG_IOMSTR_INTSTAT_O,
+                 AM_REG_IOMSTR_INTEN_CMDCMP_M, AM_REG_IOMSTR_INTEN_CMDCMP_M);
 
+    if (waitStatus != 1)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_TIMEOUT;
+    }
+    else
+    {
+        g_iom_error_status[ui32Module] = ui32Status = internal_iom_get_int_err(ui32Module, 0);
+    }
     //
-    // Re-enable IOM interrupts. Make sure CMDCMP is cleared
+    // Re-enable IOM interrupts.
     //
-    AM_REGn(IOMSTR, ui32Module, INTCLR) = (ui32IntConfig | AM_REG_IOMSTR_INTSTAT_CMDCMP_M);
+    // Clear interrupts
+    AM_REGn(IOMSTR, ui32Module, INTCLR) = AM_HAL_IOM_INT_ALL;
     AM_REGn(IOMSTR, ui32Module, INTEN) = ui32IntConfig;
-    
-    am_hal_debug_assert_msg(ui32Status == 1,"IOM CMDCMP was not seen");
-    
-    //
-    // Return the status (0 = timeout; 1 = success)
-    //
     return ui32Status;
 }
 
@@ -2422,23 +3120,35 @@ am_hal_iom_i2c_read_nq(uint32_t ui32Module, uint32_t ui32BusAddress,
 //! See the "Command Options" section for parameters that may be ORed together
 //! and used in the \b ui32Options parameter.
 //!
-//! @return None.
+//! @return returns AM_HAL_IOM_SUCCESS on successful execution.
 //
 //*****************************************************************************
-void
+am_hal_iom_status_e
 am_hal_iom_i2c_write(uint32_t ui32Module, uint32_t ui32BusAddress,
                      uint32_t *pui32Data, uint32_t ui32NumBytes,
                      uint32_t ui32Options)
 {
+    am_hal_iom_status_e ui32Status;
+    am_hal_i2c_bit_bang_enum_e i2cBBStatus;
     //
     // Validate parameters
     //
     if ( ui32Module > AM_REG_IOMSTR_NUM_MODULES )
     {
-        return;
+        return AM_HAL_IOM_ERR_INVALID_MODULE;
     }
-    am_hal_debug_assert_msg(ui32NumBytes > 0,
-                            "Trying to do a 0 byte transaction");
+    //
+    // Wait until the bus is idle
+    //
+    am_hal_iom_poll_complete(ui32Module);
+
+    // Reset the error status
+    ui32Status = g_iom_error_status[ui32Module] = AM_HAL_IOM_SUCCESS;
+    if (ui32NumBytes == 0)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
 
     //
     // Redirect to the bit-bang interface if the module number matches the
@@ -2448,13 +3158,13 @@ am_hal_iom_i2c_write(uint32_t ui32Module, uint32_t ui32BusAddress,
     {
         if ( ui32Options & AM_HAL_IOM_RAW )
         {
-            am_hal_i2c_bit_bang_send(ui32BusAddress << 1, ui32NumBytes,
+            i2cBBStatus = am_hal_i2c_bit_bang_send(ui32BusAddress << 1, ui32NumBytes,
                                      (uint8_t *)pui32Data, 0, false,
                                      (ui32Options & AM_HAL_IOM_NO_STOP));
         }
         else
         {
-            am_hal_i2c_bit_bang_send(ui32BusAddress << 1, ui32NumBytes,
+            i2cBBStatus = am_hal_i2c_bit_bang_send(ui32BusAddress << 1, ui32NumBytes,
                                      (uint8_t *)pui32Data,
                                      ((ui32Options & 0xFF00) >> 8),
                                      true,
@@ -2462,15 +3172,20 @@ am_hal_iom_i2c_write(uint32_t ui32Module, uint32_t ui32BusAddress,
         }
 
         //
-        // Return.
+        // Return. convert i2c bb retCode
         //
-        return;
+        g_iom_error_status[ui32Module] = ui32Status = i2c_bb_errmap[i2cBBStatus];
+        return ui32Status;
     }
 
     //
     // Make sure the transfer isn't too long for the hardware to support.
     //
-    am_hal_debug_assert_msg(ui32NumBytes < 256, "I2C transfer too big.");
+    if (ui32NumBytes >= 256)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
 
     //
     // Check to see if queues have been enabled. If they are, we'll actually
@@ -2481,27 +3196,32 @@ am_hal_iom_i2c_write(uint32_t ui32Module, uint32_t ui32BusAddress,
         //
         // If the queue is on, go ahead and add this transaction to the queue.
         //
-        am_hal_iom_queue_i2c_write(ui32Module, ui32BusAddress, pui32Data,
+        ui32Status = am_hal_iom_queue_i2c_write(ui32Module, ui32BusAddress, pui32Data,
                                    ui32NumBytes, ui32Options, 0);
 
-        //
-        // Wait until the transaction actually clears.
-        //
-        am_hal_iom_queue_flush(ui32Module);
+        if (ui32Status == AM_HAL_IOM_SUCCESS)
+        {
+            //
+            // Wait until the transaction actually clears.
+            //
+            am_hal_iom_queue_flush(ui32Module);
+            // g_iom_error_status gets set in the isr handling
+            ui32Status = g_iom_error_status[ui32Module];
+        }
 
         //
         // At this point, we've completed the transaction, and we can return.
         //
-        return;
     }
     else
     {
         //
         // Otherwise, we'll just do a polled transaction.
         //
-        am_hal_iom_i2c_write_nq(ui32Module, ui32BusAddress, pui32Data,
+        ui32Status = am_hal_iom_i2c_write_nq(ui32Module, ui32BusAddress, pui32Data,
                                 ui32NumBytes, ui32Options);
     }
+    return ui32Status;
 }
 
 //*****************************************************************************
@@ -2532,23 +3252,35 @@ am_hal_iom_i2c_write(uint32_t ui32Module, uint32_t ui32BusAddress,
 //! into 32-bit words, which are then placed into the \e pui32Data array. Only
 //! the first \e ui32NumBytes bytes in this array will contain valid data.
 //!
-//! @return None.
+//! @return returns AM_HAL_IOM_SUCCESS on successful execution.
 //
 //*****************************************************************************
-void
+am_hal_iom_status_e
 am_hal_iom_i2c_read(uint32_t ui32Module, uint32_t ui32BusAddress,
                     uint32_t *pui32Data, uint32_t ui32NumBytes,
                     uint32_t ui32Options)
 {
+    am_hal_iom_status_e ui32Status;
+    am_hal_i2c_bit_bang_enum_e i2cBBStatus;
     //
     // Validate parameters
     //
     if ( ui32Module > AM_REG_IOMSTR_NUM_MODULES )
     {
-        return;
+        return AM_HAL_IOM_ERR_INVALID_MODULE;
     }
-    am_hal_debug_assert_msg(ui32NumBytes > 0,
-                            "Trying to do a 0 byte transaction");
+    //
+    // Wait until the bus is idle
+    //
+    am_hal_iom_poll_complete(ui32Module);
+
+    // Reset the error status
+    ui32Status = g_iom_error_status[ui32Module] = AM_HAL_IOM_SUCCESS;
+    if (ui32NumBytes == 0)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
 
     //
     // Redirect to the bit-bang interface if the module number matches the
@@ -2558,13 +3290,13 @@ am_hal_iom_i2c_read(uint32_t ui32Module, uint32_t ui32BusAddress,
     {
         if ( ui32Options & AM_HAL_IOM_RAW )
         {
-            am_hal_i2c_bit_bang_receive((ui32BusAddress << 1) | 1, ui32NumBytes,
+            i2cBBStatus = am_hal_i2c_bit_bang_receive((ui32BusAddress << 1) | 1, ui32NumBytes,
                                         (uint8_t *)pui32Data, 0, false,
                                         (ui32Options & AM_HAL_IOM_NO_STOP));
         }
         else
         {
-            am_hal_i2c_bit_bang_receive((ui32BusAddress << 1) | 1, ui32NumBytes,
+            i2cBBStatus = am_hal_i2c_bit_bang_receive((ui32BusAddress << 1) | 1, ui32NumBytes,
                                         (uint8_t *)pui32Data,
                                         ((ui32Options & 0xFF00) >> 8),
                                         true,
@@ -2572,15 +3304,20 @@ am_hal_iom_i2c_read(uint32_t ui32Module, uint32_t ui32BusAddress,
         }
 
         //
-        // Return.
+        // Return. convert i2c bb retCode
         //
-        return;
+        g_iom_error_status[ui32Module] = ui32Status = i2c_bb_errmap[i2cBBStatus];
+        return ui32Status;
     }
 
     //
     // Make sure the transfer isn't too long for the hardware to support.
     //
-    am_hal_debug_assert_msg(ui32NumBytes < 256, "I2C transfer too big.");
+    if (ui32NumBytes >= 256)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
 
     //
     // Check to see if queues have been enabled. If they are, we'll actually
@@ -2591,27 +3328,32 @@ am_hal_iom_i2c_read(uint32_t ui32Module, uint32_t ui32BusAddress,
         //
         // If the queue is on, go ahead and add this transaction to the queue.
         //
-        am_hal_iom_queue_i2c_read(ui32Module, ui32BusAddress, pui32Data,
+        ui32Status = am_hal_iom_queue_i2c_read(ui32Module, ui32BusAddress, pui32Data,
                                   ui32NumBytes, ui32Options, 0);
 
-        //
-        // Wait until the transaction actually clears.
-        //
-        am_hal_iom_queue_flush(ui32Module);
+        if (ui32Status == AM_HAL_IOM_SUCCESS)
+        {
+            //
+            // Wait until the transaction actually clears.
+            //
+            am_hal_iom_queue_flush(ui32Module);
+            // g_iom_error_status gets set in the isr handling
+            ui32Status = g_iom_error_status[ui32Module];
+        }
 
         //
         // At this point, we've completed the transaction, and we can return.
         //
-        return;
     }
     else
     {
         //
         // Otherwise, just perform a polled transaction.
         //
-        am_hal_iom_i2c_read_nq(ui32Module, ui32BusAddress, pui32Data,
+        ui32Status = am_hal_iom_i2c_read_nq(ui32Module, ui32BusAddress, pui32Data,
                                ui32NumBytes, ui32Options);
     }
+    return ui32Status;
 }
 
 //*****************************************************************************
@@ -2644,27 +3386,42 @@ am_hal_iom_i2c_read(uint32_t ui32Module, uint32_t ui32BusAddress,
 //! last word with bytes of any value. The IOM hardware will only read the
 //! first \e ui32NumBytes in the \e pui32Data array.
 //!
-//! @return None.
+//! @return returns AM_HAL_IOM_SUCCESS on successful execution. Note that
+//! successful execution for non-blocking call only means the transaction was
+//! successfully initiated. The status of the transaction is not known till the
+//! callback is called on completion
 //
 //*****************************************************************************
-void
+am_hal_iom_status_e
 am_hal_iom_i2c_write_nb(uint32_t ui32Module, uint32_t ui32BusAddress,
                         uint32_t *pui32Data, uint32_t ui32NumBytes,
                         uint32_t ui32Options,
                         am_hal_iom_callback_t pfnCallback)
 {
+    am_hal_iom_status_e ui32Status;
     uint32_t ui32TransferSize;
     uint32_t ui32MaxFifoSize;
+    am_hal_i2c_bit_bang_enum_e i2cBBStatus;
 
     //
     // Validate parameters
     //
     if ( ui32Module > AM_REG_IOMSTR_NUM_MODULES )
     {
-        return;
+        return AM_HAL_IOM_ERR_INVALID_MODULE;
     }
-    am_hal_debug_assert_msg(ui32NumBytes > 0,
-                            "Trying to do a 0 byte transaction");
+    //
+    // Wait until the bus is idle
+    //
+    am_hal_iom_poll_complete(ui32Module);
+
+    // Reset the error status
+    ui32Status = g_iom_error_status[ui32Module] = AM_HAL_IOM_SUCCESS;
+    if (ui32NumBytes == 0)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
 
     //
     // Redirect to the bit-bang interface if the module number matches the
@@ -2672,21 +3429,27 @@ am_hal_iom_i2c_write_nb(uint32_t ui32Module, uint32_t ui32BusAddress,
     //
     if ( ui32Module == AM_HAL_IOM_I2CBB_MODULE )
     {
+        // Reset the error status for non-blocking transfer
+        g_iom_error_status[ui32Module] = AM_HAL_IOM_SUCCESS;
         if ( ui32Options & AM_HAL_IOM_RAW )
         {
-            am_hal_i2c_bit_bang_send(ui32BusAddress << 1, ui32NumBytes,
+            i2cBBStatus = am_hal_i2c_bit_bang_send(ui32BusAddress << 1, ui32NumBytes,
                                      (uint8_t *)pui32Data, 0, false,
                                      (ui32Options & AM_HAL_IOM_NO_STOP));
         }
         else
         {
-            am_hal_i2c_bit_bang_send(ui32BusAddress << 1, ui32NumBytes,
+            i2cBBStatus = am_hal_i2c_bit_bang_send(ui32BusAddress << 1, ui32NumBytes,
                                      (uint8_t *)pui32Data,
                                      ((ui32Options & 0xFF00) >> 8),
                                      true,
                                      (ui32Options & AM_HAL_IOM_NO_STOP));
         }
 
+        //
+        // Return. convert i2c bb retCode
+        //
+        g_iom_error_status[ui32Module] = ui32Status = i2c_bb_errmap[i2cBBStatus];
         //
         // The I2C bit-bang interface is actually a blocking transfer, and it
         // doesn't trigger the interrupt handler, so we have to call the
@@ -2696,16 +3459,17 @@ am_hal_iom_i2c_write_nb(uint32_t ui32Module, uint32_t ui32BusAddress,
         {
             pfnCallback();
         }
-        //
-        // Return.
-        //
-        return;
+        return ui32Status;
     }
 
     //
     // Make sure the transfer isn't too long for the hardware to support.
     //
-    am_hal_debug_assert_msg(ui32NumBytes < 256, "I2C transfer too big.");
+    if (ui32NumBytes >= 256)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
 
     ui32MaxFifoSize = ((0 == AM_BFRn(IOMSTR, ui32Module, CFG, FULLDUP)) ?
                        AM_HAL_IOM_MAX_FIFO_SIZE : AM_HAL_IOM_MAX_FIFO_SIZE / 2);
@@ -2716,21 +3480,13 @@ am_hal_iom_i2c_write_nb(uint32_t ui32Module, uint32_t ui32BusAddress,
     ui32TransferSize = (ui32NumBytes <= ui32MaxFifoSize ? ui32NumBytes :
                         ui32MaxFifoSize);
 
-    //
-    // Wait until any earlier transactions have completed, and then write our
-    // first word to the fifo.
-    //
-    am_hal_iom_poll_complete(ui32Module);
-
     // Need to mark IOM busy to avoid another transaction to be scheduled.
     // This is to take care of a race condition in Queue mode, where the IDLE
     // set is not a guarantee that the CMDCMP has been received
     g_bIomBusy[ui32Module] = true;
 
-    //
-    // Clear CMDCMP status
-    //
-    AM_BFWn(IOMSTR, ui32Module, INTCLR, CMDCMP, 1);
+    // Clear interrupts
+    AM_REGn(IOMSTR, ui32Module, INTCLR) = AM_HAL_IOM_INT_ALL;
 
     if ( am_hal_iom_fifo_write(ui32Module, pui32Data, ui32TransferSize) > 0 )
     {
@@ -2752,9 +3508,14 @@ am_hal_iom_i2c_write_nb(uint32_t ui32Module, uint32_t ui32BusAddress,
         //
         // Start the write on the bus.
         //
-        am_hal_iom_i2c_cmd_run(AM_HAL_IOM_WRITE, ui32Module, ui32BusAddress,
+        ui32Status = am_hal_iom_i2c_cmd_run(AM_HAL_IOM_WRITE, ui32Module, ui32BusAddress,
                                ui32NumBytes, ui32Options);
+        if (ui32Status != AM_HAL_IOM_SUCCESS)
+        {
+            g_iom_error_status[ui32Module] = ui32Status;
+        }
     }
+    return ui32Status;
 }
 
 //*****************************************************************************
@@ -2784,24 +3545,39 @@ am_hal_iom_i2c_write_nb(uint32_t ui32Module, uint32_t ui32BusAddress,
 //! into 32-bit words, which are then placed into the \e pui32Data array. Only
 //! the first \e ui32NumBytes bytes in this array will contain valid data.
 //!
-//! @return None.
+//! @return returns AM_HAL_IOM_SUCCESS on successful execution. Note that
+//! successful execution for non-blocking call only means the transaction was
+//! successfully initiated. The status of the transaction is not known till the
+//! callback is called on completion
 //
 //*****************************************************************************
-void
+am_hal_iom_status_e
 am_hal_iom_i2c_read_nb(uint32_t ui32Module, uint32_t ui32BusAddress,
                        uint32_t *pui32Data, uint32_t ui32NumBytes,
                        uint32_t ui32Options,
                        am_hal_iom_callback_t pfnCallback)
 {
+    am_hal_iom_status_e ui32Status;
+    am_hal_i2c_bit_bang_enum_e i2cBBStatus;
     //
     // Validate parameters
     //
     if ( ui32Module > AM_REG_IOMSTR_NUM_MODULES )
     {
-        return;
+        return AM_HAL_IOM_ERR_INVALID_MODULE;
     }
-    am_hal_debug_assert_msg(ui32NumBytes > 0,
-                            "Trying to do a 0 byte transaction");
+    //
+    // Wait until the bus is idle
+    //
+    am_hal_iom_poll_complete(ui32Module);
+
+    // Reset the error status
+    ui32Status = g_iom_error_status[ui32Module] = AM_HAL_IOM_SUCCESS;
+    if (ui32NumBytes == 0)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
 
     //
     // Redirect to the bit-bang interface if the module number matches the
@@ -2809,21 +3585,27 @@ am_hal_iom_i2c_read_nb(uint32_t ui32Module, uint32_t ui32BusAddress,
     //
     if ( ui32Module == AM_HAL_IOM_I2CBB_MODULE )
     {
+        // Reset the error status for non-blocking transfer
+        g_iom_error_status[ui32Module] = AM_HAL_IOM_SUCCESS;
         if ( ui32Options & AM_HAL_IOM_RAW )
         {
-            am_hal_i2c_bit_bang_receive((ui32BusAddress << 1) | 1, ui32NumBytes,
+            i2cBBStatus = am_hal_i2c_bit_bang_receive((ui32BusAddress << 1) | 1, ui32NumBytes,
                                         (uint8_t *)pui32Data, 0, false,
                                         (ui32Options & AM_HAL_IOM_NO_STOP));
         }
         else
         {
-            am_hal_i2c_bit_bang_receive((ui32BusAddress << 1) | 1, ui32NumBytes,
+            i2cBBStatus = am_hal_i2c_bit_bang_receive((ui32BusAddress << 1) | 1, ui32NumBytes,
                                         (uint8_t *)pui32Data,
                                         ((ui32Options & 0xFF00) >> 8),
                                         true,
                                         (ui32Options & AM_HAL_IOM_NO_STOP));
         }
 
+        //
+        // Return. convert i2c bb retCode
+        //
+        g_iom_error_status[ui32Module] = ui32Status = i2c_bb_errmap[i2cBBStatus];
         //
         // The I2C bit-bang interface is actually a blocking transfer, and it
         // doesn't trigger the interrupt handler, so we have to call the
@@ -2834,33 +3616,26 @@ am_hal_iom_i2c_read_nb(uint32_t ui32Module, uint32_t ui32BusAddress,
             pfnCallback();
         }
 
-        //
-        // Return.
-        //
-        return;
+        return ui32Status;
     }
 
     //
     // Make sure the transfer isn't too long for the hardware to support.
     //
-    am_hal_debug_assert_msg(ui32NumBytes < 256, "I2C transfer too big.");
+    if (ui32NumBytes >= 256)
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
 
-    //
-    // Wait until the bus is idle
-    //
-    am_hal_iom_poll_complete(ui32Module);
-
-    //
     // Need to mark IOM busy to avoid another transaction to be scheduled.
     // This is to take care of a race condition in Queue mode, where the IDLE
     // set is not a guarantee that the CMDCMP has been received
     //
     g_bIomBusy[ui32Module] = true;
 
-    //
-    // Clear CMDCMP status
-    //
-    AM_BFWn(IOMSTR, ui32Module, INTCLR, CMDCMP, 1);
+    // Clear interrupts
+    AM_REGn(IOMSTR, ui32Module, INTCLR) = AM_HAL_IOM_INT_ALL;
 
     //
     // Prepare the global IOM buffer structure.
@@ -2873,8 +3648,13 @@ am_hal_iom_i2c_read_nb(uint32_t ui32Module, uint32_t ui32BusAddress,
     //
     // Start the read transaction on the bus.
     //
-    am_hal_iom_i2c_cmd_run(AM_HAL_IOM_READ, ui32Module, ui32BusAddress,
+    ui32Status = am_hal_iom_i2c_cmd_run(AM_HAL_IOM_READ, ui32Module, ui32BusAddress,
                            ui32NumBytes, ui32Options);
+    if (ui32Status != AM_HAL_IOM_SUCCESS)
+    {
+        g_iom_error_status[ui32Module] = ui32Status;
+    }
+    return ui32Status;
 }
 
 //*****************************************************************************
@@ -2889,28 +3669,32 @@ am_hal_iom_i2c_read_nb(uint32_t ui32Module, uint32_t ui32BusAddress,
 //! @param ui32Options - Additional I2C options to apply to this command.
 //!
 //! This function may be used along with am_hal_iom_fifo_write and
-//! am_hal_iom_fifo_read to perform more complex I2C reads and writes. This
-//! function
+//! am_hal_iom_fifo_read to perform more complex I2C reads and writes.
+//! This function has additional logic to make sure SCL is high before a new
+//! transaction is initiated.
 //!
-//! @return None.
+//! @return 0 on success
 //
 //*****************************************************************************
-void
+am_hal_iom_status_e
 am_hal_iom_i2c_cmd_run(uint32_t ui32Operation, uint32_t ui32Module,
                        uint32_t ui32BusAddress, uint32_t ui32NumBytes,
                        uint32_t ui32Options)
 {
     uint32_t ui32Command;
+    am_hal_iom_status_e ui32Status = AM_HAL_IOM_SUCCESS;
 
     //
     // Validate parameters
     //
     if ( ui32Module >= AM_REG_IOMSTR_NUM_MODULES )
     {
-        return;
+        return AM_HAL_IOM_ERR_INVALID_MODULE;
     }
-    am_hal_debug_assert_msg(ui32NumBytes > 0,
-                            "Trying to do a 0 byte transaction");
+    if (ui32NumBytes == 0)
+    {
+        return AM_HAL_IOM_ERR_INVALID_PARAM;
+    }
 
     //
     // Start building the command from the operation parameter.
@@ -2935,9 +3719,20 @@ am_hal_iom_i2c_cmd_run(uint32_t ui32Operation, uint32_t ui32Module,
     ui32Command |= (ui32Options & 0x5C00FF00);
 
     //
-    // Write the complete command word to the IOM command register.
+    // Wait for SCL to be high before initiating a new transaction
+    // This is to ensure clock hi time specs are not violated in case slave did
+    // clock stretching in previous transaction
     //
-    AM_REGn(IOMSTR, ui32Module, CMD) = ui32Command;
+    ui32Status = internal_iom_wait_i2c_scl_hi(ui32Module);
+
+    if (ui32Status == AM_HAL_IOM_SUCCESS)
+    {
+        //
+        // Write the complete command word to the IOM command register.
+        //
+        AM_REGn(IOMSTR, ui32Module, CMD) = ui32Command;
+    }
+    return ui32Status;
 }
 
 //*****************************************************************************
@@ -3101,9 +3896,13 @@ am_hal_iom_fifo_read(uint32_t ui32Module, uint32_t *pui32Data,
 
     //
     // Make sure we check the number of bytes we're reading from the FIFO.
+    // This doesn't make sense for Full-Duplex operations.
     //
-    am_hal_debug_assert_msg((am_hal_iom_fifo_full_slots(ui32Module) >= ui32NumBytes),
+    if ( AM_REG_IOMSTR_CFG_FULLDUP_NORMAL == (AM_REGn(IOMSTR, ui32Module, CFG) & AM_REG_IOMSTR_CFG_FULLDUP_M) )
+    {
+        am_hal_debug_assert_msg((am_hal_iom_fifo_full_slots(ui32Module) >= ui32NumBytes),
                             "The fifo doesn't contain the requested number of bytes.");
+    }
 
     //
     // Figure out how many whole words we're reading from the fifo, and how
@@ -3272,35 +4071,20 @@ am_hal_iom_status_get(uint32_t ui32Module)
 //! @param ui32Module IOM instance to check the status of.
 //!
 //! This function returns status indicating whether the IOM has incurred any
-//! errors or not.
+//! errors or not for previous operation.
+//! This function can be called when the callback is invoked to determine the
+//! status of the transaction just completed.
+//! This function can also be called after a blocking call, though it would
+//! return the same status as returned from the call itself
+//! This function should not be called for an ongoing transaction, and the
+//! result of such operation is indeterministic
 //!
-//! @return 0 if all is well.
-//!         Otherwise error status as a bitmask of:
-//!             AM_HAL_IOM_ERR_INVALID_MODULE
-//!             AM_HAL_IOM_INT_ARB      Another master initiated an operation
-//!                                     simultaenously and the IOM lost.  Or
-//!                                     the IOM started an operation but found
-//!                                     SDA already low.
-//!             AM_HAL_IOM_INT_START    A START from another master detected.
-//!                                     SW must wait for STOP before continuing.
-//!             AM_HAL_IOM_INT_ICMD     Attempt to issue a CMD while another
-//!                                     CMD was already in progress, or issue a
-//!                                     non-zero-len write CMD with empty FIFO.
-//!             AM_HAL_IOM_INT_IACC     Attempt to read the FIFO on a write. Or
-//!                                     an attempt to write the FIFO on a read.
-//!             AM_HAL_IOM_INT_NAK      Expected ACK from slave not received.
-//!             AM_HAL_IOM_INT_FOVFL    Attempt to write the FIFO while full
-//!                                     (FIFOSIZ > 124).
-//!             AM_HAL_IOM_INT_FUNDFL   Attempt to read FIFO when empty (that is
-//!                                     FIFOSIZ < 4).
-//!         Note - see the datasheet text for full explanations of the INT errs.
+//! @return AM_HAL_IOM_SUCCESS if all is well.
 //
 //*****************************************************************************
-uint32_t
+am_hal_iom_status_e
 am_hal_iom_error_status_get(uint32_t ui32Module)
 {
-    uint32_t ui32intstat = 0;
-
     //
     // Validate parameters
     //
@@ -3312,27 +4096,7 @@ am_hal_iom_error_status_get(uint32_t ui32Module)
         return AM_HAL_IOM_ERR_INVALID_MODULE;
     }
 
-    if ( AM_REGn(IOMSTR, ui32Module, STATUS) & AM_REG_IOMSTR_STATUS_ERR_ERROR )
-    {
-        //
-        // The IOM is currently indicating an error condition.
-        // Let's figure out what is going on.
-        //
-        ui32intstat = AM_REGn(IOMSTR, ui32Module, INTSTAT);
-
-        //
-        // Filter out non-error bits.
-        //
-        ui32intstat &=  AM_REG_IOMSTR_INTSTAT_ARB_M     |
-                        AM_REG_IOMSTR_INTSTAT_START_M   |
-                        AM_REG_IOMSTR_INTSTAT_ICMD_M    |
-                        AM_REG_IOMSTR_INTSTAT_IACC_M    |
-                        AM_REG_IOMSTR_INTSTAT_NAK_M     |
-                        AM_REG_IOMSTR_INTSTAT_FOVFL_M   |
-                        AM_REG_IOMSTR_INTSTAT_FUNDFL_M;
-    }
-
-    return ui32intstat;
+    return (g_iom_error_status[ui32Module]);
 }
 
 //*****************************************************************************
@@ -3368,6 +4132,9 @@ am_hal_iom_int_service(uint32_t ui32Module, uint32_t ui32Status)
     //
     psBuffer = &g_psIOMBuffers[ui32Module];
 
+    // Keep accumulating any error indications
+    // This is to account for the case if the error indication comes before CMDCMP
+    g_iom_error_status[ui32Module] |= ui32Status;
     //
     // Figure out what type of interrupt this was.
     //
@@ -3406,6 +4173,7 @@ am_hal_iom_int_service(uint32_t ui32Module, uint32_t ui32Status)
         //
         psBuffer->ui32State = BUFFER_IDLE;
 
+        g_iom_error_status[ui32Module] = internal_iom_get_int_err(ui32Module, g_iom_error_status[ui32Module]);
         //
         // If we have a callback, call it now.
         //
@@ -3623,7 +4391,7 @@ am_hal_iom_queue_length_get(uint32_t ui32Module)
 void
 am_hal_iom_queue_start_next_msg(uint32_t ui32Module)
 {
-  am_hal_iom_queue_entry_t sIOMTransaction = {0};
+    am_hal_iom_queue_entry_t sIOMTransaction = {0};
 
     uint32_t ui32ChipSelect;
     uint32_t *pui32Data;
@@ -3631,6 +4399,7 @@ am_hal_iom_queue_start_next_msg(uint32_t ui32Module)
     uint32_t ui32Options;
     am_hal_iom_callback_t pfnCallback;
 
+    am_hal_iom_status_e ui32Status = AM_HAL_IOM_SUCCESS;
     uint32_t ui32Critical;
 
     //
@@ -3667,22 +4436,22 @@ am_hal_iom_queue_start_next_msg(uint32_t ui32Module)
         switch ( sIOMTransaction.ui32Operation )
         {
             case AM_HAL_IOM_QUEUE_SPI_WRITE:
-                am_hal_iom_spi_write_nb(ui32Module, ui32ChipSelect, pui32Data,
+                ui32Status = am_hal_iom_spi_write_nb(ui32Module, ui32ChipSelect, pui32Data,
                                         ui32NumBytes, ui32Options, pfnCallback);
                 break;
 
             case AM_HAL_IOM_QUEUE_SPI_READ:
-                am_hal_iom_spi_read_nb(ui32Module, ui32ChipSelect, pui32Data,
+                ui32Status = am_hal_iom_spi_read_nb(ui32Module, ui32ChipSelect, pui32Data,
                                        ui32NumBytes, ui32Options, pfnCallback);
                 break;
 
             case AM_HAL_IOM_QUEUE_I2C_WRITE:
-                am_hal_iom_i2c_write_nb(ui32Module, ui32ChipSelect, pui32Data,
+                ui32Status = am_hal_iom_i2c_write_nb(ui32Module, ui32ChipSelect, pui32Data,
                                         ui32NumBytes, ui32Options, pfnCallback);
                 break;
 
             case AM_HAL_IOM_QUEUE_I2C_READ:
-                am_hal_iom_i2c_read_nb(ui32Module, ui32ChipSelect, pui32Data,
+                ui32Status = am_hal_iom_i2c_read_nb(ui32Module, ui32ChipSelect, pui32Data,
                                        ui32NumBytes, ui32Options, pfnCallback);
                 break;
         }
@@ -3692,6 +4461,14 @@ am_hal_iom_queue_start_next_msg(uint32_t ui32Module)
     // Exit the critical section.
     //
     am_hal_interrupt_master_set(ui32Critical);
+
+    if (ui32Status != AM_HAL_IOM_SUCCESS)
+    {
+        // Preserve the error
+        g_iom_error_status[ui32Module] = ui32Status;
+        // Call the respective callback
+        pfnCallback();
+    }
 }
 
 //*****************************************************************************
@@ -3728,22 +4505,28 @@ am_hal_iom_queue_start_next_msg(uint32_t ui32Module)
 //! first \e ui32NumBytes in the \e pui8Data array.
 //
 //*****************************************************************************
-void
+am_hal_iom_status_e
 am_hal_iom_queue_spi_write(uint32_t ui32Module, uint32_t ui32ChipSelect,
                            uint32_t *pui32Data, uint32_t ui32NumBytes,
                            uint32_t ui32Options, am_hal_iom_callback_t pfnCallback)
 {
     uint32_t ui32Critical;
+    am_hal_iom_status_e ui32Status;
 
     //
     // Validate parameters
     //
     if ( ui32Module >= AM_REG_IOMSTR_NUM_MODULES )
     {
-        return;
+        return AM_HAL_IOM_ERR_INVALID_MODULE;
     }
-    am_hal_debug_assert_msg(ui32NumBytes > 0,
-                            "Trying to do a 0 byte transaction");
+    // Reset the error status
+    ui32Status = g_iom_error_status[ui32Module] = AM_HAL_IOM_SUCCESS;
+    if ( ui32NumBytes == 0 )
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
 
     //
     // Start a critical section.
@@ -3763,7 +4546,7 @@ am_hal_iom_queue_spi_write(uint32_t ui32Module, uint32_t ui32ChipSelect,
         //
         // Send the packet.
         //
-        am_hal_iom_spi_write_nb(ui32Module, ui32ChipSelect, pui32Data,
+        ui32Status = am_hal_iom_spi_write_nb(ui32Module, ui32ChipSelect, pui32Data,
                                 ui32NumBytes, ui32Options, pfnCallback);
     }
     else
@@ -3789,17 +4572,19 @@ am_hal_iom_queue_spi_write(uint32_t ui32Module, uint32_t ui32ChipSelect,
             //
             // Didn't have enough memory.
             //
-            am_hal_debug_assert_msg(0,
-                                    "The IOM queue is full. Allocate more"
-                                    "memory to the IOM queue, or allow it more"
-                                    "time to empty between transactions.");
+            ui32Status = AM_HAL_IOM_ERR_RESOURCE_ERR;
         }
     }
 
+    if (ui32Status != AM_HAL_IOM_SUCCESS)
+    {
+        g_iom_error_status[ui32Module] = ui32Status;
+    }
     //
     // Exit the critical section.
     //
     am_hal_interrupt_master_set(ui32Critical);
+    return ui32Status;
 }
 
 //*****************************************************************************
@@ -3836,22 +4621,28 @@ am_hal_iom_queue_spi_write(uint32_t ui32Module, uint32_t ui32ChipSelect,
 //! first \e ui32NumBytes in the \e pui8Data array.
 //
 //*****************************************************************************
-void
+am_hal_iom_status_e
 am_hal_iom_queue_spi_read(uint32_t ui32Module, uint32_t ui32ChipSelect,
                           uint32_t *pui32Data, uint32_t ui32NumBytes,
                           uint32_t ui32Options, am_hal_iom_callback_t pfnCallback)
 {
     uint32_t ui32Critical;
+    am_hal_iom_status_e ui32Status;
 
     //
     // Validate parameters
     //
     if ( ui32Module >= AM_REG_IOMSTR_NUM_MODULES )
     {
-        return;
+        return AM_HAL_IOM_ERR_INVALID_MODULE;
     }
-    am_hal_debug_assert_msg(ui32NumBytes > 0,
-                            "Trying to do a 0 byte transaction");
+    // Reset the error status
+    ui32Status = g_iom_error_status[ui32Module] = AM_HAL_IOM_SUCCESS;
+    if ( ui32NumBytes == 0 )
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
 
     // Start a critical section.
     //
@@ -3870,7 +4661,7 @@ am_hal_iom_queue_spi_read(uint32_t ui32Module, uint32_t ui32ChipSelect,
         //
         // Send the packet.
         //
-        am_hal_iom_spi_read_nb(ui32Module, ui32ChipSelect, pui32Data,
+        ui32Status = am_hal_iom_spi_read_nb(ui32Module, ui32ChipSelect, pui32Data,
                                ui32NumBytes, ui32Options, pfnCallback);
     }
     else
@@ -3896,17 +4687,19 @@ am_hal_iom_queue_spi_read(uint32_t ui32Module, uint32_t ui32ChipSelect,
             //
             // Didn't have enough memory.
             //
-            am_hal_debug_assert_msg(0,
-                                    "The IOM queue is full. Allocate more"
-                                    "memory to the IOM queue, or allow it more"
-                                    "time to empty between transactions.");
+            ui32Status = AM_HAL_IOM_ERR_RESOURCE_ERR;
         }
     }
 
+    if (ui32Status != AM_HAL_IOM_SUCCESS)
+    {
+        g_iom_error_status[ui32Module] = ui32Status;
+    }
     //
     // Exit the critical section.
     //
     am_hal_interrupt_master_set(ui32Critical);
+    return ui32Status;
 }
 
 //*****************************************************************************
@@ -3943,11 +4736,12 @@ am_hal_iom_queue_spi_read(uint32_t ui32Module, uint32_t ui32ChipSelect,
 //! first \e ui32NumBytes in the \e pui8Data array.
 //
 //*****************************************************************************
-void
+am_hal_iom_status_e
 am_hal_iom_queue_i2c_write(uint32_t ui32Module, uint32_t ui32BusAddress,
                            uint32_t *pui32Data, uint32_t ui32NumBytes,
                            uint32_t ui32Options, am_hal_iom_callback_t pfnCallback)
 {
+    am_hal_iom_status_e ui32Status;
     uint32_t ui32Critical;
 
     //
@@ -3955,10 +4749,15 @@ am_hal_iom_queue_i2c_write(uint32_t ui32Module, uint32_t ui32BusAddress,
     //
     if ( ui32Module >= AM_REG_IOMSTR_NUM_MODULES )
     {
-        return;
+        return AM_HAL_IOM_ERR_INVALID_MODULE;
     }
-    am_hal_debug_assert_msg(ui32NumBytes > 0,
-                            "Trying to do a 0 byte transaction");
+    // Reset the error status
+    ui32Status = g_iom_error_status[ui32Module] = AM_HAL_IOM_SUCCESS;
+    if ( ui32NumBytes == 0 )
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
 
     //
     // Start a critical section.
@@ -3978,7 +4777,7 @@ am_hal_iom_queue_i2c_write(uint32_t ui32Module, uint32_t ui32BusAddress,
         //
         // Send the packet.
         //
-        am_hal_iom_i2c_write_nb(ui32Module, ui32BusAddress, pui32Data,
+        ui32Status = am_hal_iom_i2c_write_nb(ui32Module, ui32BusAddress, pui32Data,
                                 ui32NumBytes, ui32Options, pfnCallback);
     }
     else
@@ -4004,17 +4803,19 @@ am_hal_iom_queue_i2c_write(uint32_t ui32Module, uint32_t ui32BusAddress,
             //
             // Didn't have enough memory.
             //
-            am_hal_debug_assert_msg(0,
-                                    "The IOM queue is full. Allocate more"
-                                    "memory to the IOM queue, or allow it more"
-                                    "time to empty between transactions.");
+            ui32Status = AM_HAL_IOM_ERR_RESOURCE_ERR;
         }
     }
 
+    if (ui32Status != AM_HAL_IOM_SUCCESS)
+    {
+        g_iom_error_status[ui32Module] = ui32Status;
+    }
     //
     // Exit the critical section.
     //
     am_hal_interrupt_master_set(ui32Critical);
+    return ui32Status;
 }
 
 //*****************************************************************************
@@ -4051,22 +4852,28 @@ am_hal_iom_queue_i2c_write(uint32_t ui32Module, uint32_t ui32BusAddress,
 //! first \e ui32NumBytes in the \e pui8Data array.
 //
 //*****************************************************************************
-void
+am_hal_iom_status_e
 am_hal_iom_queue_i2c_read(uint32_t ui32Module, uint32_t ui32BusAddress,
                           uint32_t *pui32Data, uint32_t ui32NumBytes,
                           uint32_t ui32Options, am_hal_iom_callback_t pfnCallback)
 {
     uint32_t ui32Critical;
+    am_hal_iom_status_e ui32Status;
 
     //
     // Validate parameters
     //
     if ( ui32Module >= AM_REG_IOMSTR_NUM_MODULES )
     {
-        return;
+        return AM_HAL_IOM_ERR_INVALID_MODULE;
     }
-    am_hal_debug_assert_msg(ui32NumBytes > 0,
-                            "Trying to do a 0 byte transaction");
+    // Reset the error status
+    ui32Status = g_iom_error_status[ui32Module] = AM_HAL_IOM_SUCCESS;
+    if ( ui32NumBytes == 0 )
+    {
+        g_iom_error_status[ui32Module] = ui32Status = AM_HAL_IOM_ERR_INVALID_PARAM;
+        return ui32Status;
+    }
 
     //
     // Start a critical section.
@@ -4086,7 +4893,7 @@ am_hal_iom_queue_i2c_read(uint32_t ui32Module, uint32_t ui32BusAddress,
         //
         // Send the packet.
         //
-        am_hal_iom_i2c_read_nb(ui32Module, ui32BusAddress, pui32Data,
+        ui32Status = am_hal_iom_i2c_read_nb(ui32Module, ui32BusAddress, pui32Data,
                                ui32NumBytes, ui32Options, pfnCallback);
     }
     else
@@ -4112,16 +4919,19 @@ am_hal_iom_queue_i2c_read(uint32_t ui32Module, uint32_t ui32BusAddress,
             //
             // Didn't have enough memory.
             //
-            am_hal_debug_assert_msg(0, "The IOM queue is full. Allocate more"
-                                       "memory to the IOM queue, or allow it more"
-                                       "time to empty between transactions.");
+            ui32Status = AM_HAL_IOM_ERR_RESOURCE_ERR;
         }
     }
 
+    if (ui32Status != AM_HAL_IOM_SUCCESS)
+    {
+        g_iom_error_status[ui32Module] = ui32Status;
+    }
     //
     // Exit the critical section.
     //
     am_hal_interrupt_master_set(ui32Critical);
+    return ui32Status;
 }
 
 //*****************************************************************************
@@ -4224,16 +5034,17 @@ am_hal_iom_sleeping_queue_flush(uint32_t ui32Module)
 //!     ui32Status = am_hal_iom_int_status(0, true);
 //!
 //!     //
+//!     // Clear the interrupts. This should be done before calling service routine
+//!     // as otherwise we may lose re-triggered interrupts
+//!     //
+//!     am_hal_iom_int_clear(ui32Status);
+//!
+//!     //
 //!     // Fill or empty the FIFO, and either continue the current operation or
 //!     // start the next one in the queue. If there was a callback, it will be
 //!     // called here.
 //!     //
 //!     am_hal_iom_queue_service(0, ui32Status);
-//!
-//!     //
-//!     // Clear the interrupts before leaving the ISR.
-//!     //
-//!     am_hal_iom_int_clear(ui32Status);
 //! }
 //! @endcode
 //!

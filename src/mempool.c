@@ -1,21 +1,7 @@
 /*
- * File      : mempool.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -150,6 +136,8 @@ rt_err_t rt_mp_detach(struct rt_mempool *mp)
 
     /* parameter check */
     RT_ASSERT(mp != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&mp->parent) == RT_Object_Class_MemPool);
+    RT_ASSERT(rt_object_is_systemobject(&mp->parent));
 
     /* wake up all suspended threads */
     while (!rt_list_isempty(&(mp->suspend_thread)))
@@ -266,6 +254,8 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
 
     /* parameter check */
     RT_ASSERT(mp != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&mp->parent) == RT_Object_Class_MemPool);
+    RT_ASSERT(rt_object_is_systemobject(&mp->parent) == RT_FALSE);
 
     /* wake up all suspended threads */
     while (!rt_list_isempty(&(mp->suspend_thread)))
@@ -292,15 +282,8 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
         rt_hw_interrupt_enable(temp);
     }
 
-#if defined(RT_USING_MODULE) && defined(RT_USING_SLAB)
-    /* the mp object belongs to an application module */
-    if (mp->parent.flag & RT_OBJECT_FLAG_MODULE)
-        rt_module_free(mp->parent.module_id, mp->start_address);
-    else
-#endif
-
-        /* release allocated room */
-        rt_free(mp->start_address);
+    /* release allocated room */
+    rt_free(mp->start_address);
 
     /* detach object */
     rt_object_delete(&(mp->parent));

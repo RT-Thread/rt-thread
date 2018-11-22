@@ -38,7 +38,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_REG_CTIMER_H
@@ -51,7 +51,7 @@
 //*****************************************************************************
 #define AM_REG_CTIMER_NUM_MODULES                    1
 #define AM_REG_CTIMERn(n) \
-    (REG_CTIMER_BASEADDR + 0x00000000 * n)
+    (REG_CTIMER_BASEADDR + 0x00000010 * n)
 
 //*****************************************************************************
 //

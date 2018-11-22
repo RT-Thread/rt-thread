@@ -1,8 +1,6 @@
 ;********************** COPYRIGHT(c) 2017  STMicroelectronics ******************
 ;* File Name          : startup_stm32l476xx.s
 ;* Author             : MCD Application Team
-;* Version            : V1.3.2
-;* Date               : 16-June-2017
 ;* Description        : STM32L476xx Ultra Low Power devices vector table for MDK-ARM toolchain.
 ;*                      This module performs:
 ;*                      - Set the initial SP

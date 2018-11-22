@@ -1,21 +1,7 @@
 /*
- * File      : pipe.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012-2017, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -416,6 +402,18 @@ rt_err_t  rt_pipe_control(rt_device_t dev, int cmd, void *args)
     return RT_EOK;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops pipe_ops = 
+{
+    RT_NULL,
+    rt_pipe_open,
+    rt_pipe_close,
+    rt_pipe_read,
+    rt_pipe_write,
+    rt_pipe_control,
+};
+#endif
+
 rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
 {
     rt_pipe_t *pipe;
@@ -426,20 +424,24 @@ rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
 
     rt_memset(pipe, 0, sizeof(rt_pipe_t));
     rt_mutex_init(&(pipe->lock), name, RT_IPC_FLAG_FIFO);
-    rt_list_init(&(pipe->reader_queue));
-    rt_list_init(&(pipe->writer_queue));
+    rt_wqueue_init(&(pipe->reader_queue));
+    rt_wqueue_init(&(pipe->writer_queue));
 
     RT_ASSERT(bufsz < 0xFFFF);
     pipe->bufsz = bufsz;
 
     dev = &(pipe->parent);
     dev->type = RT_Device_Class_Pipe;
+#ifdef RT_USING_DEVICE_OPS
+    dev->ops         = &pipe_ops;
+#else
     dev->init        = RT_NULL;
     dev->open        = rt_pipe_open;
     dev->read        = rt_pipe_read;
     dev->write       = rt_pipe_write;
     dev->close       = rt_pipe_close;
     dev->control     = rt_pipe_control;
+#endif
 
     dev->rx_indicate = RT_NULL;
     dev->tx_complete = RT_NULL;
@@ -525,7 +527,7 @@ int pipe(int fildes[2])
     fildes[1] = open(dev_name, O_WRONLY, 0);
     if (fildes[1] < 0)
     {
-        close(fildes[1]);
+        close(fildes[0]);
         return -1;
     }
 

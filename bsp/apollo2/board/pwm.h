@@ -32,5 +32,7 @@
  *
  */
 int rt_hw_pwm_init(void);
+void am_pwm_start(int led);
+void am_pwm_stop(int led);
 
 #endif // __PWM_H_

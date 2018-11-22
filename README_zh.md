@@ -1,7 +1,10 @@
 # RT-Thread #
 
+[![GitHub release](https://img.shields.io/github/release/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/releases)
 [![Build Status](https://travis-ci.org/RT-Thread/rt-thread.svg)](https://travis-ci.org/RT-Thread/rt-thread)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/RT-Thread/rt-thread?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![GitHub pull-requests](https://img.shields.io/github/issues-pr/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/pulls)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](https://github.com/RT-Thread/rt-thread/pulls)
 
 RT-Thread是一个来自中国的开源物联网操作系统，它提供了非常强的可伸缩能力：从一个可以运行在ARM Cortex-M0芯片上的极小内核，到中等的ARM Cortex-M3/4/7系统，甚至是运行于MIPS32、ARM Cortex-A系列处理器上功能丰富系统。
 
@@ -28,7 +31,7 @@ RT-Thread包含了一个自有的、传统的硬实时内核：可抢占的多�
 
 更多的IoT软件包则以package方式被添加到RT-Thread系统中。
 
-应用模块，或者说用户应用（User Application，UA）是一个可动态加载的模块：它可以独立于RT-Thread固件而单独编译。一般的，每个UA都包含一个main函数入口；一个它自己的对象容器，用于管理这个应用的任务/信号量/消息队列等内核对象，创建、初始化、销毁等。更多关于UA的信息，请访问另外一个 [git 仓库](https://github.com/RT-Thread/rtthread-apps) 了解。
+应用模块，或者说用户应用（User Application，UA）是一个可动态加载的模块：它可以独立于RT-Thread固件而单独编译。一般的，每个UA都包含一个main函数入口；一个它自己的对象链表，用于管理这个应用的任务/信号量/消息队列等内核对象，创建、初始化、销毁等。更多关于UA的信息，请访问另外一个 [git 仓库](https://github.com/RT-Thread/rtthread-apps) 了解。
 
 ## 支持的芯片架构 ##
 
@@ -48,11 +51,19 @@ RT-Thread支持数种芯片体系架构，已经覆盖当前应用中的主流�
 
 ## 许可证 ##
 
-RT-Thread is free software; you can redistribute it and/or modify it under terms of the GNU General Public License version 2 as published by the Free Software Foundation. RT-Thread RTOS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with RT-Thread; see file COPYING. If not, write to the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+RT-Thread从v3.1.1版本开始，是一个以Apache许可证2.0版本授权的开源软件，许可证信息以及版权信息一般的可以在代码首部看到：
 
-As a special exception, including RT-Thread RTOS header files in a file, instantiating RT-Thread RTOS generics or templates, or linking other files with RT-Thread RTOS objects to produce an executable application, does not by itself cause the resulting executable application to be covered by the GNU General Public License. This exception does not however invalidate any other reasons why the executable file might be covered by the GNU Public License.
+    /*
+     * Copyright (c) 2006-2018, RT-Thread Development Team
+     *
+     * SPDX-License-Identifier: Apache-2.0
+     */
 
-RT-Thread始终以开源的方式发展，所有发布的代码都遵循GPLv2+许可证。注意，GPLv2+的意思是，它是GPLv2的一个修改版本，添加了一定的例外。简单的来说，当使用RT-Thread时，除了RT-Thread发布的源代码以外的代码，可以不用遵循GPLv2的方式开源代码。
+从2018/09/09开始，开发者提交PR需要签署贡献者许可协议（CLA）。
+
+注意：
+
+以Apache许可协议v2.0版本授权仅在RT-Thread v3.1.1正式版发布之后才正式实施，当前依然在准备阶段（准备所有原有开发者签署CLA协议）。
 
 ## 编译 ##
 

@@ -143,7 +143,6 @@ static void BOARD_ConfigMPU(void)
     SCB_EnableICache();
 }
 
-
 /**
  * This is the timer interrupt service routine.
  *
@@ -159,7 +158,7 @@ void SysTick_Handler(void)
     rt_interrupt_leave();
 }
 
-void rt_lowlevel_init(void)
+void SystemInitHook(void)
 {
     BOARD_ConfigMPU();
 

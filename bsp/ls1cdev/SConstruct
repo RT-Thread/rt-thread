@@ -12,6 +12,8 @@ from building import *
 
 TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 
+rtconfig.AFLAGS += ' -I' + str(Dir('#'))
+
 env = Environment(tools = ['mingw'],
 	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
 	CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
@@ -24,6 +26,18 @@ Export('rtconfig')
 
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT)
+
+if GetDepend('RT_USING_SELF_BOOT'):
+    rtconfig.LFLAGS += " -Ttext 0x80010000"
+else:
+	rtconfig.LFLAGS += " -Ttext 0x80200000"    
+env.Replace(LINKFLAGS = rtconfig.LFLAGS)
+
+if GetDepend('RT_USING_FPU'):
+    env['CCFLAGS']   = env['CCFLAGS'].replace('-msoft-float', '-mhard-float')
+    env['ASFLAGS']   = env['ASFLAGS'].replace('-msoft-float', '-mhard-float')
+    env['CXXFLAGS']  = env['CXXFLAGS'].replace('-msoft-float', '-mhard-float')
+    env['LINKFLAGS'] = env['LINKFLAGS'].replace('-msoft-float', '-mhard-float')
     
 if GetDepend('RT_USING_RTGUI'):
     objs = objs + SConscript(RTT_ROOT + '/examples/gui/SConscript', variant_dir='build/examples/gui', duplicate=0)

@@ -1,8 +1,6 @@
 ;/********************* COPYRIGHT(c) 2017 STMicroelectronics ********************
 ;* File Name          : startup_stm32l471xx.s
 ;* Author             : MCD Application Team
-;* Version            : V1.3.2
-;* Date               : 16-June-2017
 ;* Description        : STM32L471xx Ultra Low Power Devices vector
 ;*                      This module performs:
 ;*                      - Set the initial SP

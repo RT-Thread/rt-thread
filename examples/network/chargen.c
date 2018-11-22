@@ -1,13 +1,13 @@
 #include <rtthread.h>
 #include <sys/socket.h>
 
-#ifdef RT_USING_DFS_NET
+#ifdef SAL_USING_POSIX
 #include <sys/select.h> // only dfs_net
 #include <dfs_posix.h>
 #else
 #define read        lwip_read
 #define write       lwip_write
-#endif /* RT_USING_DFS_NET */
+#endif /* SAL_USING_POSIX */
 
 #include "netdb.h"
 

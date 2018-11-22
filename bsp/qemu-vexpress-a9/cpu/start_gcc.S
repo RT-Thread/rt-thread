@@ -34,11 +34,11 @@
 .equ F_Bit,           0x40            @ when F bit is set, FIQ is disabled
 
 .equ UND_Stack_Size,     0x00000000
-.equ SVC_Stack_Size,     0x00000100
+.equ SVC_Stack_Size,     0x00000400
 .equ ABT_Stack_Size,     0x00000000
 .equ RT_FIQ_STACK_PGSZ,  0x00000000
-.equ RT_IRQ_STACK_PGSZ,  0x00000100
-.equ USR_Stack_Size,     0x00000100
+.equ RT_IRQ_STACK_PGSZ,  0x00000800
+.equ USR_Stack_Size,     0x00000400
 
 #define ISR_Stack_Size  (UND_Stack_Size + SVC_Stack_Size + ABT_Stack_Size + \
                  RT_FIQ_STACK_PGSZ + RT_IRQ_STACK_PGSZ)

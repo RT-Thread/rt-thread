@@ -1,5 +1,29 @@
+#
+# File      : gcc.py
+# This file is part of RT-Thread RTOS
+# COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License along
+#  with this program; if not, write to the Free Software Foundation, Inc.,
+#  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+# Change Logs:
+# Date           Author       Notes
+# 2018-05-22     Bernard      The first version
+
 import os
 import re
+import platform 
 
 def GetGCCRoot(rtconfig):
     exec_path = rtconfig.EXEC_PATH
@@ -26,18 +50,19 @@ def GetNewLibVersion(rtconfig):
     root = GetGCCRoot(rtconfig)
 
     if CheckHeader(rtconfig, '_newlib_version.h'): # get version from _newlib_version.h file
-        f = file(os.path.join(root, 'include', '_newlib_version.h'))
+        f = open(os.path.join(root, 'include', '_newlib_version.h'), 'r')
         if f:
             for line in f:
                 if line.find('_NEWLIB_VERSION') != -1 and line.find('"') != -1:
                     version = re.search(r'\"([^"]+)\"', line).groups()[0]
+            f.close()
     elif CheckHeader(rtconfig, 'newlib.h'): # get version from newlib.h
-        f = file(os.path.join(root, 'include', 'newlib.h'))
+        f = open(os.path.join(root, 'include', 'newlib.h'), 'r')
         if f:
             for line in f:
                 if line.find('_NEWLIB_VERSION') != -1 and line.find('"') != -1:
                     version = re.search(r'\"([^"]+)\"', line).groups()[0]
-
+            f.close()
     return version
 
 def GCCResult(rtconfig, str):
@@ -53,16 +78,20 @@ def GCCResult(rtconfig, str):
     gcc_cmd = os.path.join(rtconfig.EXEC_PATH, rtconfig.CC)
 
     # use temp file to get more information 
-    f = file('__tmp.c', 'w')
+    f = open('__tmp.c', 'w')
     if f:
         f.write(str)
         f.close()
 
         # '-fdirectives-only', 
-        child = subprocess.Popen([gcc_cmd, '-E', '-P', '__tmp.c'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        if(platform.system() == 'Windows'):
+            child = subprocess.Popen([gcc_cmd, '-E', '-P', '__tmp.c'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        else:
+            child = subprocess.Popen(gcc_cmd + ' -E -P __tmp.c', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        
         stdout, stderr = child.communicate()
 
-        print(stdout)
+        # print(stdout)
         if stderr != '':
             print(stderr)
 
@@ -75,7 +104,8 @@ def GCCResult(rtconfig, str):
         stdc = '1989'
         posix_thread = 0
 
-        for line in stdout.split('\n'):
+        for line in stdout.split(b'\n'):
+            line = line.decode()
             if re.search('fd_set', line):
                 have_fdset = 1
 
@@ -119,7 +149,6 @@ def GCCResult(rtconfig, str):
             result += '#define LIBC_POSIX_THREADS 1\n'
 
         os.remove('__tmp.c')
-
     return result
 
 def GenerateGCCConfig(rtconfig):
@@ -159,7 +188,7 @@ def GenerateGCCConfig(rtconfig):
     cc_header += GCCResult(rtconfig, str)
     cc_header += '\n#endif\n'
 
-    cc_file = file('cconfig.h', 'w')
+    cc_file = open('cconfig.h', 'w')
     if cc_file:
         cc_file.write(cc_header)
         cc_file.close()

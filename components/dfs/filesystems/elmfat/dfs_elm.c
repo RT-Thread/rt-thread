@@ -1,21 +1,7 @@
 /*
- * File      : dfs_elm.c
- * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2008-2011, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -268,6 +254,10 @@ int dfs_elm_mkfs(rt_device_t dev_id)
             logic_nbr[0] = '0' + index;
             f_mount(fat, logic_nbr, (BYTE)index);
         }
+    }
+    else
+    {
+        logic_nbr[0] = '0' + index;
     }
 
     /* [IN] Logical drive number */
@@ -924,10 +914,12 @@ DRESULT disk_ioctl(BYTE drv, BYTE ctrl, void *buff)
 
 DWORD get_fattime(void)
 {
+    DWORD fat_time = 0;
+
+#ifdef RT_USING_LIBC 
     time_t now;
     struct tm *p_tm;
     struct tm tm_now;
-    DWORD fat_time;
 
     /* get current time */
     now = time(RT_NULL);
@@ -947,6 +939,7 @@ DWORD get_fattime(void)
                 (DWORD)tm_now.tm_hour        << 11 |
                 (DWORD)tm_now.tm_min         <<  5 |
                 (DWORD)tm_now.tm_sec / 2 ;
+#endif /* RT_USING_LIBC  */
 
     return fat_time;
 }

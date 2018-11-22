@@ -1,21 +1,7 @@
 /*
- * File      : spi.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -36,8 +22,8 @@ extern "C"{
 #define RT_SPI_CPOL     (1<<1)                             /* bit[1]:CPOL, clock polarity */
 /**
  * At CPOL=0 the base value of the clock is zero
- *  - For CPHA=0, data are captured on the clock's rising edge (low¡úhigh transition)
- *    and data are propagated on a falling edge (high¡úlow clock transition).
+ *  - For CPHA=0, data are captured on the clock's rising edge (low->high transition)
+ *    and data are propagated on a falling edge (high->low clock transition).
  *  - For CPHA=1, data are captured on the clock's falling edge and data are
  *    propagated on a rising edge.
  * At CPOL=1 the base value of the clock is one (inversion of CPOL=0)
@@ -118,6 +104,7 @@ struct rt_spi_device
     struct rt_spi_bus *bus;
 
     struct rt_spi_configuration config;
+    void   *user_data;
 };
 #define SPI_DEVICE(dev) ((struct rt_spi_device *)(dev))
 

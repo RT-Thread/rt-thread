@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_lcd.c
   * @author  MCD Application Team
-  * @version V1.7.2
-  * @date    16-June-2017
   * @brief   LCD Controller HAL module driver.
   *          This file provides firmware functions to manage the following
   *          functionalities of the LCD Controller (LCD) peripheral:

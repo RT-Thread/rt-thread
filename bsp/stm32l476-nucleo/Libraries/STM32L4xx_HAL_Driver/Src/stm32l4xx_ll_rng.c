@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32l4xx_ll_rng.c
   * @author  MCD Application Team
-  * @version V1.7.2
-  * @date    16-June-2017
   * @brief   RNG LL module driver.
   ******************************************************************************
   * @attention
@@ -60,6 +58,18 @@
 /* Private variables ---------------------------------------------------------*/
 /* Private constants ---------------------------------------------------------*/
 /* Private macros ------------------------------------------------------------*/
+/** @addtogroup RNG_LL_Private_Macros
+  * @{
+  */
+#if defined(RNG_CR_CED)
+#define IS_LL_RNG_CED(__MODE__) (((__MODE__) == LL_RNG_CED_ENABLE) || \
+                                 ((__MODE__) == LL_RNG_CED_DISABLE))
+#endif /* defined(RNG_CR_CED) */
+
+/**
+  * @}
+  */
+                                           
 /* Private function prototypes -----------------------------------------------*/
 
 /* Exported functions --------------------------------------------------------*/
@@ -91,6 +101,42 @@ ErrorStatus LL_RNG_DeInit(RNG_TypeDef *RNGx)
 
   return (SUCCESS);
 }
+
+#if defined(RNG_CR_CED)
+/**
+  * @brief  Initialize RNG registers according to the specified parameters in RNG_InitStruct.
+  * @param  RNGx RNG Instance
+  * @param  RNG_InitStruct: pointer to a LL_RNG_InitTypeDef structure
+  *         that contains the configuration information for the specified RNG peripheral.
+  * @retval An ErrorStatus enumeration value:
+  *          - SUCCESS: RNG registers are initialized according to RNG_InitStruct content
+  *          - ERROR: not applicable
+  */
+ErrorStatus LL_RNG_Init(RNG_TypeDef *RNGx, LL_RNG_InitTypeDef *RNG_InitStruct)
+{
+  /* Check the parameters */
+  assert_param(IS_RNG_ALL_INSTANCE(RNGx));
+  assert_param(IS_LL_RNG_CED(RNG_InitStruct->ClockErrorDetection));
+
+  /* Clock Error Detection configuration */
+  MODIFY_REG(RNGx->CR, RNG_CR_CED, RNG_InitStruct->ClockErrorDetection);
+
+  return (SUCCESS);
+}
+
+/**
+  * @brief Set each @ref LL_RNG_InitTypeDef field to default value.
+  * @param RNG_InitStruct: pointer to a @ref LL_RNG_InitTypeDef structure
+  *                          whose fields will be set to default values.
+  * @retval None
+  */
+void LL_RNG_StructInit(LL_RNG_InitTypeDef *RNG_InitStruct)
+{
+  /* Set RNG_InitStruct fields to default values */
+  RNG_InitStruct->ClockErrorDetection   = LL_RNG_CED_ENABLE;
+
+}
+#endif /* defined(RNG_CR_CED) */
 
 /**
   * @}

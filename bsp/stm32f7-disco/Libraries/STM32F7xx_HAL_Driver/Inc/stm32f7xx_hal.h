@@ -2,14 +2,12 @@
   ******************************************************************************
   * @file    stm32f7xx_hal.h
   * @author  MCD Application Team
-  * @version V1.0.1
-  * @date    25-June-2015
   * @brief   This file contains all the functions prototypes for the HAL 
   *          module driver.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2015 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -57,6 +55,38 @@
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
+
+/** @defgroup HAL_Exported_Constants HAL Exported Constants
+  * @{
+  */
+
+/** @defgroup HAL_TICK_FREQ Tick Frequency
+  * @{
+  */
+typedef enum
+{
+  HAL_TICK_FREQ_10HZ         = 100U,
+  HAL_TICK_FREQ_100HZ        = 10U,
+  HAL_TICK_FREQ_1KHZ         = 1U,
+  HAL_TICK_FREQ_DEFAULT      = HAL_TICK_FREQ_1KHZ
+} HAL_TickFreqTypeDef;
+/**
+  * @}
+  */
+
+/** @defgroup SYSCFG_BootMode Boot Mode
+  * @{
+  */
+#define SYSCFG_MEM_BOOT_ADD0          ((uint32_t)0x00000000U)
+#define SYSCFG_MEM_BOOT_ADD1          SYSCFG_MEMRMP_MEM_BOOT
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
+   
 /* Exported macro ------------------------------------------------------------*/
 /** @defgroup HAL_Exported_Macros HAL Exported Macros
   * @{
@@ -126,9 +156,41 @@
                                           SYSCFG->MEMRMP |= (SYSCFG_MEMRMP_SWP_FMC_0);\
                                          }while(0);
 /**
+  * @brief  Return the memory boot mapping as configured by user.
+  * @retval The boot mode as configured by user. The returned value can be one
+  *         of the following values:
+  *           @arg @ref SYSCFG_MEM_BOOT_ADD0
+  *           @arg @ref SYSCFG_MEM_BOOT_ADD1
+  */
+#define __HAL_SYSCFG_GET_BOOT_MODE()           READ_BIT(SYSCFG->MEMRMP, SYSCFG_MEMRMP_MEM_BOOT)
+
+#if defined (STM32F765xx) || defined (STM32F767xx) || defined (STM32F769xx) || defined (STM32F777xx) || defined (STM32F779xx)
+/** @brief  SYSCFG Break Cortex-M7 Lockup lock.
+  *         Enable and lock the connection of Cortex-M7 LOCKUP (Hardfault) output to TIM1/8 Break input.
+  * @note   The selected configuration is locked and can be unlocked only by system reset.
+  */
+#define __HAL_SYSCFG_BREAK_LOCKUP_LOCK()     SET_BIT(SYSCFG->CBR, SYSCFG_CBR_CLL)
+
+/** @brief  SYSCFG Break PVD lock.
+  *         Enable and lock the PVD connection to Timer1/8 Break input, as well as the PVDE and PLS[2:0] in the PWR_CR1 register.
+  * @note   The selected configuration is locked and can be unlocked only by system reset.
+  */
+#define __HAL_SYSCFG_BREAK_PVD_LOCK()        SET_BIT(SYSCFG->CBR, SYSCFG_CBR_PVDL)
+#endif /* STM32F765xx || STM32F767xx || STM32F769xx || STM32F777xx || STM32F779xx */
+
+/**
   * @}
   */
   
+/** @defgroup HAL_Private_Macros HAL Private Macros
+  * @{
+  */
+#define IS_TICKFREQ(FREQ) (((FREQ) == HAL_TICK_FREQ_10HZ)  || \
+                           ((FREQ) == HAL_TICK_FREQ_100HZ) || \
+                           ((FREQ) == HAL_TICK_FREQ_1KHZ))
+/**
+  * @}
+  */
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup HAL_Exported_Functions
   * @{
@@ -136,12 +198,12 @@
 /** @addtogroup HAL_Exported_Functions_Group1
   * @{
   */
-/* Initialization and de-initialization functions  ******************************/
+/* Initialization and Configuration functions  ******************************/
 HAL_StatusTypeDef HAL_Init(void);
 HAL_StatusTypeDef HAL_DeInit(void);
 void HAL_MspInit(void);
 void HAL_MspDeInit(void);
-HAL_StatusTypeDef HAL_InitTick (uint32_t TickPriority);
+HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority);
 /**
   * @}
   */
@@ -151,13 +213,19 @@ HAL_StatusTypeDef HAL_InitTick (uint32_t TickPriority);
   */ 
 /* Peripheral Control functions  ************************************************/
 void HAL_IncTick(void);
-void HAL_Delay(__IO uint32_t Delay);
+void HAL_Delay(uint32_t Delay);
 uint32_t HAL_GetTick(void);
+uint32_t HAL_GetTickPrio(void);
+HAL_StatusTypeDef HAL_SetTickFreq(HAL_TickFreqTypeDef Freq);
+HAL_TickFreqTypeDef HAL_GetTickFreq(void);
 void HAL_SuspendTick(void);
 void HAL_ResumeTick(void);
 uint32_t HAL_GetHalVersion(void);
 uint32_t HAL_GetREVID(void);
 uint32_t HAL_GetDEVID(void);
+uint32_t HAL_GetUIDw0(void);
+uint32_t HAL_GetUIDw1(void);
+uint32_t HAL_GetUIDw2(void);
 void HAL_DBGMCU_EnableDBGSleepMode(void);
 void HAL_DBGMCU_DisableDBGSleepMode(void);
 void HAL_DBGMCU_EnableDBGStopMode(void);
@@ -168,6 +236,10 @@ void HAL_EnableCompensationCell(void);
 void HAL_DisableCompensationCell(void);
 void HAL_EnableFMCMemorySwapping(void);
 void HAL_DisableFMCMemorySwapping(void);
+#if defined (STM32F765xx) || defined (STM32F767xx) || defined (STM32F769xx) || defined (STM32F777xx) || defined (STM32F779xx)
+void HAL_EnableMemorySwappingBank(void);
+void HAL_DisableMemorySwappingBank(void);
+#endif /* STM32F765xx || STM32F767xx || STM32F769xx || STM32F777xx || STM32F779xx */
 /**
   * @}
   */

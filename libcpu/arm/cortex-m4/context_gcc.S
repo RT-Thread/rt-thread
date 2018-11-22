@@ -1,11 +1,7 @@
 /*
- * File      : context_gcc.S
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -13,6 +9,7 @@
  * 2012-01-01     aozima       support context switch load/store FPU register.
  * 2013-06-18     aozima       add restore MSP feature.
  * 2013-06-23     aozima       support lazy stack optimized.
+ * 2018-07-24     aozima       enhancement hard fault exception handler.
  */
 
 /**
@@ -220,10 +217,29 @@ rt_hw_interrupt_thread_switch:
 .type HardFault_Handler, %function
 HardFault_Handler:
     /* get current context */
-    MRS     r0, psp                 /* get fault thread stack pointer */
-    PUSH    {lr}
+    MRS     r0, msp                 /* get fault context from handler. */
+    TST     lr, #0x04               /* if(!EXC_RETURN[2]) */
+    BEQ     _get_sp_done
+    MRS     r0, psp                 /* get fault context from thread. */
+_get_sp_done:
+
+    STMFD   r0!, {r4 - r11}         /* push r4 - r11 register */
+#if defined (__VFP_FP__) && !defined(__SOFTFP__)
+    STMFD   r0!, {lr}               /* push dummy for flag */
+#endif
+    STMFD   r0!, {lr}               /* push exec_return register */
+
+    TST     lr, #0x04               /* if(!EXC_RETURN[2]) */
+    BEQ     _update_msp
+    MSR     psp, r0                 /* update stack pointer to PSP. */
+    B       _update_done
+_update_msp:
+    MSR     msp, r0                 /* update stack pointer to MSP. */
+_update_done:
+
+    PUSH    {LR}
     BL      rt_hw_hard_fault_exception
-    POP     {lr}
+    POP     {LR}
 
     ORR     lr, lr, #0x04
     BX      lr

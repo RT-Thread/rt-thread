@@ -70,7 +70,7 @@ extern "C" {
 // #define HAL_I2C_MODULE_ENABLED
 // #define HAL_I2S_MODULE_ENABLED
 // #define HAL_IRDA_MODULE_ENABLED
-// #define HAL_IWDG_MODULE_ENABLED
+#define HAL_IWDG_MODULE_ENABLED
 // #define HAL_NAND_MODULE_ENABLED
 // #define HAL_NOR_MODULE_ENABLED
 // #define HAL_PCCARD_MODULE_ENABLED
@@ -79,7 +79,9 @@ extern "C" {
 #endif
 #define HAL_PWR_MODULE_ENABLED
 #define HAL_RCC_MODULE_ENABLED
-// #define HAL_RTC_MODULE_ENABLED
+#ifdef RT_USING_RTC
+#define HAL_RTC_MODULE_ENABLED
+#endif
 #ifdef RT_USING_SDCARD
 #define HAL_SD_MODULE_ENABLED
 #endif
@@ -103,7 +105,11 @@ extern "C" {
   *        This value is used by the RCC HAL module to compute the system frequency
   *        (when HSE is used as system clock source, directly or through the PLL).
   */
+#if !defined(RT_USING_HSI)
 #define HSE_VALUE ((unsigned int)RT_HSE_VALUE)
+#endif 
+  
+//#define HSE_VALUE ((unsigned int)RT_HSE_VALUE)
 
 #if !defined  (HSE_VALUE)
 #if defined(USE_STM3210C_EVAL)

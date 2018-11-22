@@ -1,8 +1,6 @@
-;******************** (C) COPYRIGHT 2015 STMicroelectronics ********************
+;******************** (C) COPYRIGHT 2016 STMicroelectronics ********************
 ;* File Name          : startup_stm32f756xx.s
 ;* Author             : MCD Application Team
-;* Version            : V1.0.1
-;* Date               : 25-June-2015
 ;* Description        : STM32F756xx devices vector table for MDK-ARM toolchain. 
 ;*                      This module performs:
 ;*                      - Set the initial SP
@@ -302,7 +300,7 @@ Default_Handler PROC
                 EXPORT  TIM8_CC_IRQHandler                [WEAK]                                   
                 EXPORT  DMA1_Stream7_IRQHandler           [WEAK]                                          
                 EXPORT  FMC_IRQHandler                    [WEAK]                                             
-                EXPORT  SDMMC1_IRQHandler                   [WEAK]                                             
+                EXPORT  SDMMC1_IRQHandler                 [WEAK]                                             
                 EXPORT  TIM5_IRQHandler                   [WEAK]                                             
                 EXPORT  SPI3_IRQHandler                   [WEAK]                                             
                 EXPORT  UART4_IRQHandler                  [WEAK]                                            
@@ -346,12 +344,12 @@ Default_Handler PROC
                 EXPORT  DMA2D_IRQHandler                  [WEAK]
                 EXPORT  SAI2_IRQHandler                   [WEAK]   
                 EXPORT  QUADSPI_IRQHandler                [WEAK]
-				EXPORT  LPTIM1_IRQHandler                 [WEAK]
+                EXPORT  LPTIM1_IRQHandler                 [WEAK]
                 EXPORT  CEC_IRQHandler                    [WEAK]   
                 EXPORT  I2C4_EV_IRQHandler                [WEAK]
-				EXPORT  I2C4_ER_IRQHandler                [WEAK] 
+                EXPORT  I2C4_ER_IRQHandler                [WEAK] 
                 EXPORT  SPDIF_RX_IRQHandler               [WEAK]
-				
+                
 WWDG_IRQHandler                                                       
 PVD_IRQHandler                                      
 TAMP_STAMP_IRQHandler                  

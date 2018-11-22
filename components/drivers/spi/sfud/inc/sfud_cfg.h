@@ -33,8 +33,8 @@
 
 /**
  * It will print more information on debug mode.
- * #define RT_DEBUG_SFUD  1: open debug mode */
-#if RT_DEBUG_SFUD
+ * #define RT_DEBUG_SFUD open debug mode */
+#ifdef RT_DEBUG_SFUD
 #define SFUD_DEBUG_MODE
 #endif
 

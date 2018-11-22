@@ -453,24 +453,6 @@
 								</file-configuration>
 							</file-configurations>
 						</file>
-						<file name="..\..\..\src\module.c">
-							<file-configurations>
-								<file-configuration name="Debug">
-									<excluded-flag value="no"/>
-									<build-with-flag value="project"/>
-									<intermediate-dir>.\Debug</intermediate-dir>
-									<output-dir>.\Debug</output-dir>
-								</file-configuration>
-								<file-configuration name="Release">
-									<excluded-flag value="no"/>
-									<build-with-flag value="project"/>
-									<intermediate-dir>.\Release</intermediate-dir>
-									<output-dir>.\Release</output-dir>
-								</file-configuration>
-							</file-configurations>
-						</file>
-						<file name="..\..\..\src\module.h">
-						</file>
 						<file name="..\..\..\src\object.c">
 							<file-configurations>
 								<file-configuration name="Debug">

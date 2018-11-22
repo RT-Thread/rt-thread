@@ -27,7 +27,7 @@
 #include <rtdevice.h>
 
 #define DBG_ENABLE
-#define DBG_SECTION_NAME  "[FLASH]"
+#define DBG_SECTION_NAME  "FLASH"
 #define DBG_LEVEL         DBG_LOG
 #define DBG_COLOR
 #include <rtdbg.h>

@@ -1,11 +1,7 @@
 /*
- * File      : drv_gpio.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
@@ -1698,7 +1694,7 @@ rt_err_t stm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
 
     return RT_EOK;
 }
-rt_err_t stm32_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
+rt_err_t stm32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 {
     const struct pin_index *index;
     rt_base_t level;
@@ -1802,7 +1798,7 @@ const static struct rt_pin_ops _stm32_pin_ops =
         stm32_pin_write,
         stm32_pin_read,
         stm32_pin_attach_irq,
-        stm32_pin_dettach_irq,
+        stm32_pin_detach_irq,
         stm32_pin_irq_enable,
 };
 

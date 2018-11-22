@@ -392,7 +392,8 @@ lwip_accept(int s, struct sockaddr *addr, socklen_t *addrlen)
     return -1;
   }
   LWIP_ASSERT("invalid socket index", (newsock >= 0) && (newsock < NUM_SOCKETS));
-  LWIP_ASSERT("newconn->callback == event_callback", newconn->callback == event_callback);
+  /* RT-Thread has changed callback when using BSD socket API, so remove this assert. */
+  /* LWIP_ASSERT("newconn->callback == event_callback", newconn->callback == event_callback); */
   nsock = &sockets[newsock];
 
   /* See event_callback: If data comes in right away after an accept, even

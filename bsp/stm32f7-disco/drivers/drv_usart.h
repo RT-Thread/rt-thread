@@ -1,26 +1,13 @@
 /*
- * File      : usart.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2009-01-05     Bernard      the first version
+ * 2018-05-17     ZYH          first implementation
  */
-
-#ifndef __USART_H__
-#define __USART_H__
-
-#include <rthw.h>
-#include <rtthread.h>
-
-#define UART_ENABLE_IRQ(n)            NVIC_EnableIRQ((n))
-#define UART_DISABLE_IRQ(n)           NVIC_DisableIRQ((n))
-
-int stm32_hw_usart_init(void);
-
+#ifndef __DRV_USART_H__
+#define __DRV_USART_H__
+extern int bsp_usart_hw_init(void);
 #endif
