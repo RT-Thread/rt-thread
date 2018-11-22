@@ -1249,16 +1249,6 @@ static rt_size_t rt_msd_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_siz
         goto _exit;
     }
 
-    /* config spi to high speed */
-    {
-        struct rt_spi_configuration cfg;
-        cfg.data_width = 8;
-        cfg.mode = RT_SPI_MODE_0 | RT_SPI_MSB; /* SPI Compatible Modes 0 */
-        cfg.max_hz = msd->max_clock;
-
-        rt_spi_configure(msd->spi_device, &cfg);
-    } /* config spi */
-
     /* SINGLE_BLOCK? */
     if (size == 1)
     {
@@ -1334,16 +1324,6 @@ static rt_size_t rt_msd_sdhc_read(rt_device_t dev, rt_off_t pos, void *buffer, r
     {
         goto _exit;
     }
-
-    /* config spi to high speed */
-    {
-        struct rt_spi_configuration cfg;
-        cfg.data_width = 8;
-        cfg.mode = RT_SPI_MODE_0 | RT_SPI_MSB; /* SPI Compatible Modes 0 */
-        cfg.max_hz = msd->max_clock;
-
-        rt_spi_configure(msd->spi_device, &cfg);
-    } /* config spi */
 
     /* SINGLE_BLOCK? */
     if (size == 1)
@@ -1422,15 +1402,6 @@ static rt_size_t rt_msd_write(rt_device_t dev, rt_off_t pos, const void *buffer,
         goto _exit;
     }
 
-    /* config spi to high speed */
-    {
-        struct rt_spi_configuration cfg;
-        cfg.data_width = 8;
-        cfg.mode = RT_SPI_MODE_0 | RT_SPI_MSB; /* SPI Compatible Modes 0 */
-        cfg.max_hz = msd->max_clock;
-
-        rt_spi_configure(msd->spi_device, &cfg);
-    } /* config spi */
 
     /* SINGLE_BLOCK? */
     if (size == 1)
@@ -1549,16 +1520,6 @@ static rt_size_t rt_msd_sdhc_write(rt_device_t dev, rt_off_t pos, const void *bu
     {
         goto _exit;
     }
-
-    /* config spi to high speed */
-    {
-        struct rt_spi_configuration cfg;
-        cfg.data_width = 8;
-        cfg.mode = RT_SPI_MODE_0 | RT_SPI_MSB; /* SPI Compatible Modes 0 */
-        cfg.max_hz = msd->max_clock;
-
-        rt_spi_configure(msd->spi_device, &cfg);
-    } /* config spi */
 
     /* SINGLE_BLOCK? */
     if (size == 1)
