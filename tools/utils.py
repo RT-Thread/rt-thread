@@ -245,7 +245,9 @@ def ProjectInfo(env):
     return proj
 
 def VersionCmp(ver1, ver2):
-    la = ver1.split('.')
+    la=[];
+    if ver1:
+        la = ver1.split('.')
     lb = ver2.split('.')
     f = 0
     if len(la) > len(lb):
