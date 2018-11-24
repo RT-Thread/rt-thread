@@ -20,7 +20,7 @@ config $PKGS_DIR
 
 config SOC_TMS320F28X
     bool
-    select ARCH_C28X
+    select ARCH_TIDSP_C28X
     default y
 
 source "$RTT_DIR/Kconfig"

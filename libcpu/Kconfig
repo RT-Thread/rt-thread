@@ -86,8 +86,12 @@ config ARCH_RISCV
 config ARCH_IA32
     bool
 
-config ARCH_C28X
+config ARCH_TIDSP
     bool
+
+config ARCH_TIDSP_C28X
+    bool
+    select ARCH_TIDSP
     select ARCH_CPU_STACK_GROWS_UPWARD
 
 config ARCH_HOST_SIMULATOR
