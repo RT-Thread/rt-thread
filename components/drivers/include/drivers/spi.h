@@ -144,8 +144,8 @@ struct rt_qspi_configuration
     rt_uint32_t medium_size;
     /* double data rate mode */
     rt_uint8_t ddr_mode;
-    /* the number of lines connected to the hardware */
-    rt_uint8_t qspi_hw_lines;
+    /* the data lines max width which QSPI bus supported, such as 1, 2, 4 */
+    rt_uint8_t qspi_dl_width ;
 };
 
 struct rt_qspi_device

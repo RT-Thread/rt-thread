@@ -185,6 +185,10 @@ config RT_USING_SPI
                 config RT_SFUD_USING_FLASH_INFO_TABLE
                 bool "Using defined supported flash chip information table"
                 default y
+                
+                config RT_SFUD_USING_QSPI
+                bool "Using QSPI mode support"
+                default n
 
                 config RT_DEBUG_SFUD
                 bool "Show more SFUD debug information"

@@ -2,7 +2,7 @@ from building import *
 import rtconfig
 
 cwd = GetCurrentDir()
-src = ['spi_core.c', 'spi_dev.c']
+src = ['spi_core.c', 'spi_dev.c', 'qspi_core.c']
 CPPPATH = [cwd, cwd + '/../include']
 LOCAL_CCFLAGS = ''
 
