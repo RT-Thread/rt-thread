@@ -26,14 +26,14 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>C28X</name>
-			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/libcpu/c28x</locationURI>
-		</link>
-		<link>
 			<name>Kernel</name>
 			<type>2</type>
 			<locationURI>PARENT-2-PROJECT_LOC/src</locationURI>
+		</link>
+		<link>
+			<name>c28x</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/libcpu/ti-dsp/c28x</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

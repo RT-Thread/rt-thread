@@ -40,7 +40,8 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart"
-#define ARCH_C28X
+#define ARCH_TIDSP
+#define ARCH_TIDSP_C28X
 #define ARCH_CPU_STACK_GROWS_UPWARD
 
 /* RT-Thread Components */
