@@ -256,8 +256,10 @@ static sfud_err hardware_init(sfud_flash *flash) {
         return result;
     }
 
+#ifdef SFUD_USING_QSPI
     /* set default read instruction */
     flash->read_cmd_format.instruction = SFUD_CMD_READ_DATA;
+#endif /* SFUD_USING_QSPI */
 
     /* SPI write read function must be initialize */
     SFUD_ASSERT(flash->spi.wr);
