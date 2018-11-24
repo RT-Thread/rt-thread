@@ -1,7 +1,7 @@
 /*
  * This file is part of the Serial Flash Universal Driver Library.
  *
- * Copyright (c) 2016-2017, Armink, <armink.ztl@gmail.com>
+ * Copyright (c) 2016-2018, Armink, <armink.ztl@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -59,10 +59,20 @@ typedef struct {
     uint8_t type_id;                             /**< memory type ID */
     uint8_t capacity_id;                         /**< capacity ID */
     uint32_t capacity;                           /**< flash capacity (bytes) */
-    uint16_t write_mode;                         /**< write mode  @see sfud_write_mode */
+    uint16_t write_mode;                         /**< write mode @see sfud_write_mode */
     uint32_t erase_gran;                         /**< erase granularity (bytes) */
     uint8_t erase_gran_cmd;                      /**< erase granularity size block command */
 } sfud_flash_chip;
+
+#ifdef SFUD_USING_QSPI
+/* QSPI flash chip's extended information compared with SPI flash */
+typedef struct {
+    uint8_t mf_id;                               /**< manufacturer ID */
+    uint8_t type_id;                             /**< memory type ID */
+    uint8_t capacity_id;                         /**< capacity ID */
+    uint8_t read_mode;                           /**< supported read mode on this qspi flash chip */
+} sfud_qspi_flash_ext_info;
+#endif
 
 /* SFUD support manufacturer JEDEC ID */
 #define SFUD_MF_ID_CYPRESS                             0x01
@@ -130,6 +140,42 @@ typedef struct {
     {"PCT25VF016B", SFUD_MF_ID_SST, 0x25, 0x41, 2L*1024L*1024L, SFUD_WM_BYTE|SFUD_WM_AAI, 4096, 0x20},              \
 }
 #endif /* SFUD_USING_FLASH_INFO_TABLE */
+
+#ifdef SFUD_USING_QSPI
+/* This table saves flash read-fast instructions in QSPI mode, 
+ * SFUD can use this table to select the most appropriate read instruction for flash.
+ * | mf_id | type_id | capacity_id | qspi_read_mode |
+ */
+#define SFUD_FLASH_EXT_INFO_TABLE                                                                  \
+{                                                                                                  \
+    /* W25Q40BV */                                                                                 \
+    {SFUD_MF_ID_WINBOND, 0x40, 0x13, NORMAL_SPI_READ|DUAL_OUTPUT},                                 \
+    /* W25Q80JV */                                                                                 \
+    {SFUD_MF_ID_WINBOND, 0x40, 0x14, NORMAL_SPI_READ|DUAL_OUTPUT},                                 \
+    /* W25Q16BV */                                                                                 \
+    {SFUD_MF_ID_WINBOND, 0x40, 0x15, NORMAL_SPI_READ|DUAL_OUTPUT},                                 \
+    /* W25Q32BV */                                                                                 \
+    {SFUD_MF_ID_WINBOND, 0x40, 0x16, NORMAL_SPI_READ|DUAL_OUTPUT},                                 \
+    /* W25Q64JV */                                                                                 \
+    {SFUD_MF_ID_WINBOND, 0x40, 0x17, NORMAL_SPI_READ|DUAL_OUTPUT|DUAL_IO|QUAD_OUTPUT|QUAD_IO},     \
+    /* W25Q128JV */                                                                                \
+    {SFUD_MF_ID_WINBOND, 0x40, 0x18, NORMAL_SPI_READ|DUAL_OUTPUT|DUAL_IO|QUAD_OUTPUT|QUAD_IO},     \
+    /* W25Q256FV */                                                                                \
+    {SFUD_MF_ID_WINBOND, 0x40, 0x19, NORMAL_SPI_READ|DUAL_OUTPUT|DUAL_IO|QUAD_OUTPUT|QUAD_IO},     \
+    /* EN25Q32B */                                                                                 \
+    {SFUD_MF_ID_EON, 0x30, 0x16, NORMAL_SPI_READ|DUAL_OUTPUT|QUAD_IO},                             \
+    /* S25FL216K */                                                                                \
+    {SFUD_MF_ID_CYPRESS, 0x40, 0x15, NORMAL_SPI_READ|DUAL_OUTPUT},                                 \
+    /* A25L080 */                                                                                  \
+    {SFUD_MF_ID_AMIC, 0x30, 0x14, NORMAL_SPI_READ|DUAL_OUTPUT|DUAL_IO},                            \
+    /* A25LQ64 */                                                                                  \
+    {SFUD_MF_ID_AMIC, 0x40, 0x17, NORMAL_SPI_READ|DUAL_OUTPUT|DUAL_IO|QUAD_IO},                    \
+    /* MX25L3206E and KH25L3206E */                                                                \
+    {SFUD_MF_ID_MICRONIX, 0x20, 0x16, NORMAL_SPI_READ|DUAL_OUTPUT},                                \
+    /* GD25Q64B */                                                                                 \
+    {SFUD_MF_ID_GIGADEVICE, 0x40, 0x17, NORMAL_SPI_READ|DUAL_OUTPUT},                              \
+}
+#endif /* SFUD_USING_QSPI */
 
 #ifdef __cplusplus
 }
