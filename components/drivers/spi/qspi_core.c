@@ -25,7 +25,7 @@ rt_err_t rt_qspi_configure(struct rt_qspi_device *device, struct rt_qspi_configu
     qspi_device->config.parent.reserved = cfg->parent.reserved;
     qspi_device->config.medium_size = cfg->medium_size;
     qspi_device->config.ddr_mode = cfg->ddr_mode;
-    qspi_device->config.qspi_hw_lines = cfg->qspi_hw_lines;
+    qspi_device->config.qspi_dl_width = cfg->qspi_dl_width;
 
     result = rt_spi_configure(&device->parent, &cfg->parent);
 
