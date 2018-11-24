@@ -167,7 +167,7 @@ static rt_err_t _audio_dev_open(struct rt_device *dev, rt_uint16_t oflag)
                     return -RT_ENOMEM;
                 }
                 
-                rt_audio_pipe_init(&audio_pipe, "recpipe", RT_PIPE_FLAG_FORCE_WR | RT_PIPE_FLAG_BLOCK_RD, buf,
+                rt_audio_pipe_init(&audio_pipe, "recpipe", (rt_int32_t)(RT_PIPE_FLAG_FORCE_WR | RT_PIPE_FLAG_BLOCK_RD), buf,
                              CFG_AUDIO_RECORD_PIPE_SIZE);
             }
 
