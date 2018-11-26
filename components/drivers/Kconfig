@@ -168,7 +168,11 @@ config RT_USING_SPI
     bool "Using SPI Bus/Device device drivers"
     default n
 
-    if RT_USING_SPI
+    if RT_USING_SPI  
+        config RT_USING_QSPI
+            bool "Enable QSPI mode"
+            default n
+
         config RT_USING_SPI_MSD
             bool "Using SD/TF card driver with spi"
             select RT_USING_DFS
@@ -185,6 +189,11 @@ config RT_USING_SPI
                 config RT_SFUD_USING_FLASH_INFO_TABLE
                 bool "Using defined supported flash chip information table"
                 default y
+                
+                config RT_SFUD_USING_QSPI
+                bool "Using QSPI mode support"
+                select RT_USING_QSPI
+                default n
 
                 config RT_DEBUG_SFUD
                 bool "Show more SFUD debug information"
