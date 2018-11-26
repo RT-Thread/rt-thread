@@ -23,11 +23,21 @@
 
 #ifndef RT_SFUD_DEFAULT_SPI_CFG
 /* read the JEDEC SFDP command must run at 50 MHz or less */
-#define RT_SFUD_DEFAULT_SPI_CFG                 \
-{                                               \
-    .mode = RT_SPI_MODE_0 | RT_SPI_MSB,         \
-    .data_width = 8,                            \
-    .max_hz = 50 * 1000 * 1000,                 \
+#define RT_SFUD_DEFAULT_SPI_CFG                  \
+{                                                \
+    .mode = RT_SPI_MODE_0 | RT_SPI_MSB,          \
+    .data_width = 8,                             \
+    .max_hz = 50 * 1000 * 1000,                  \
+}
+#endif
+
+#ifdef SFUD_USING_QSPI
+#define RT_SFUD_DEFAULT_QSPI_CFG                 \
+{                                                \
+    RT_SFUD_DEFAULT_SPI_CFG,                     \
+    .medium_size = 0x800000,                     \
+    .ddr_mode = 0,                               \
+    .qspi_dl_width = 4,                          \
 }
 #endif
 
@@ -116,30 +126,89 @@ static sfud_err spi_write_read(const sfud_spi *spi, const uint8_t *write_buf, si
     sfud_err result = SFUD_SUCCESS;
     sfud_flash *sfud_dev = (sfud_flash *) (spi->user_data);
     struct spi_flash_device *rtt_dev = (struct spi_flash_device *) (sfud_dev->user_data);
-
+#ifdef SFUD_USING_QSPI
+    struct rt_qspi_device *qspi_dev = RT_NULL;
+#endif
     if (write_size) {
         RT_ASSERT(write_buf);
     }
     if (read_size) {
         RT_ASSERT(read_buf);
     }
-
-    if (write_size && read_size) {
-        if (rt_spi_send_then_recv(rtt_dev->rt_spi_device, write_buf, write_size, read_buf, read_size) != RT_EOK) {
-            result = SFUD_ERR_TIMEOUT;
+#ifdef SFUD_USING_QSPI
+    if(rtt_dev->rt_spi_device->bus->mode & RT_SPI_BUS_MODE_QSPI) {
+        qspi_dev = (struct rt_qspi_device *) (rtt_dev->rt_spi_device);
+        if (write_size && read_size) {
+            if (rt_qspi_send_then_recv(qspi_dev, write_buf, write_size, read_buf, read_size) == 0) {
+                result = SFUD_ERR_TIMEOUT;
+            }
+        } else if (write_size) {
+            if (rt_qspi_send(qspi_dev, write_buf, write_size) == 0) {
+                result = SFUD_ERR_TIMEOUT;
+            }
         }
-    } else if (write_size) {
-        if (rt_spi_send(rtt_dev->rt_spi_device, write_buf, write_size) == 0) {
-            result = SFUD_ERR_TIMEOUT;
-        }
-    } else {
-        if (rt_spi_recv(rtt_dev->rt_spi_device, read_buf, read_size) == 0) {
-            result = SFUD_ERR_TIMEOUT;
+    }
+    else
+#endif
+    {
+        if (write_size && read_size) {
+            if (rt_spi_send_then_recv(rtt_dev->rt_spi_device, write_buf, write_size, read_buf, read_size) != RT_EOK) {
+                result = SFUD_ERR_TIMEOUT;
+            }
+        } else if (write_size) {
+            if (rt_spi_send(rtt_dev->rt_spi_device, write_buf, write_size) == 0) {
+                result = SFUD_ERR_TIMEOUT;
+            }
+        } else {
+            if (rt_spi_recv(rtt_dev->rt_spi_device, read_buf, read_size) == 0) {
+                result = SFUD_ERR_TIMEOUT;
+            }
         }
     }
 
     return result;
 }
+
+#ifdef SFUD_USING_QSPI
+/**
+ * QSPI fast read data
+ */
+static sfud_err qspi_read(const struct __sfud_spi *spi, uint32_t addr, sfud_qspi_read_cmd_format *qspi_read_cmd_format, uint8_t *read_buf, size_t read_size) {
+    struct rt_qspi_message message;
+    sfud_err result = SFUD_SUCCESS;
+
+    sfud_flash *sfud_dev = (sfud_flash *) (spi->user_data);
+    struct spi_flash_device *rtt_dev = (struct spi_flash_device *) (sfud_dev->user_data);
+    struct rt_qspi_device *qspi_dev = (struct rt_qspi_device *) (rtt_dev->rt_spi_device);
+                             
+    /* set message struct */
+    message.instruction.content = qspi_read_cmd_format->instruction;
+    message.instruction.qspi_lines = qspi_read_cmd_format->instruction_lines;
+
+    message.address.content = addr;
+    message.address.size = qspi_read_cmd_format->address_size;
+    message.address.qspi_lines = qspi_read_cmd_format->address_lines;
+
+    message.alternate_bytes.content = 0;
+    message.alternate_bytes.size = 0;
+    message.alternate_bytes.qspi_lines = 0;
+
+    message.dummy_cycles = qspi_read_cmd_format->dummy_cycles;
+
+    message.parent.send_buf = RT_NULL;
+    message.parent.recv_buf = read_buf;
+    message.parent.length = read_size;
+    message.parent.cs_release = 1;
+    message.parent.cs_take = 1;
+    message.qspi_data_lines = qspi_read_cmd_format->data_lines;
+    
+    if (rt_qspi_transfer_message(qspi_dev, &message) != read_size) {
+        result = SFUD_ERR_TIMEOUT;
+    }
+    
+    return result;
+}
+#endif
 
 static void spi_lock(const sfud_spi *spi) {
     sfud_flash *sfud_dev = (sfud_flash *) (spi->user_data);
@@ -203,6 +272,9 @@ sfud_err sfud_spi_port_init(sfud_flash *flash) {
 
     /* port SPI device interface */
     flash->spi.wr = spi_write_read;
+#ifdef SFUD_USING_QSPI
+    flash->spi.qspi_read = qspi_read;
+#endif
     flash->spi.lock = spi_lock;
     flash->spi.unlock = spi_unlock;
     flash->spi.user_data = flash;
@@ -213,8 +285,7 @@ sfud_err sfud_spi_port_init(sfud_flash *flash) {
     flash->retry.delay = retry_delay_100us;
     /* 60 seconds timeout */
     flash->retry.times = 60 * 10000;
-
-
+    
     return result;
 }
 
@@ -246,6 +317,10 @@ rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const 
      * @note you also can change the SPI to other configuration after initialized finish */
     struct rt_spi_configuration cfg = RT_SFUD_DEFAULT_SPI_CFG;
     extern sfud_err sfud_device_init(sfud_flash *flash);
+#ifdef SFUD_USING_QSPI
+    struct rt_qspi_configuration qspi_cfg = RT_SFUD_DEFAULT_QSPI_CFG;
+    struct rt_qspi_device *qspi_dev = RT_NULL;
+#endif
 
     RT_ASSERT(spi_flash_dev_name);
     RT_ASSERT(spi_dev_name);
@@ -277,7 +352,17 @@ rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const 
                 goto error;
             }
             sfud_dev->spi.name = spi_dev_name_bak;
-            rt_spi_configure(rtt_dev->rt_spi_device, &cfg);
+
+#ifdef SFUD_USING_QSPI
+            /* set the qspi line number and configure the QSPI bus */
+            if(rtt_dev->rt_spi_device->bus->mode &RT_SPI_BUS_MODE_QSPI) {
+                qspi_dev = (struct rt_qspi_device *)rtt_dev->rt_spi_device;
+                qspi_cfg.qspi_dl_width = qspi_dev->config.qspi_dl_width;
+                rt_qspi_configure(qspi_dev, &qspi_cfg);
+            }
+            else
+#endif                
+                rt_spi_configure(rtt_dev->rt_spi_device, &cfg);
         }
         /* SFUD flash device initialize */
         {
@@ -296,6 +381,17 @@ rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const 
             rtt_dev->geometry.sector_count = sfud_dev->chip.capacity / sfud_dev->chip.erase_gran;
             rtt_dev->geometry.bytes_per_sector = sfud_dev->chip.erase_gran;
             rtt_dev->geometry.block_size = sfud_dev->chip.erase_gran;
+#ifdef SFUD_USING_QSPI
+            /* reconfigure the QSPI bus for medium size */
+            if(rtt_dev->rt_spi_device->bus->mode &RT_SPI_BUS_MODE_QSPI) {
+                qspi_cfg.medium_size = sfud_dev->chip.capacity;
+                rt_qspi_configure(qspi_dev, &qspi_cfg);
+                if(qspi_dev->enter_qspi_mode != RT_NULL)
+                    qspi_dev->enter_qspi_mode(qspi_dev);
+            }
+            /* set data lines width */
+            sfud_qspi_fast_read_enable(sfud_dev, qspi_dev->config.qspi_dl_width);
+#endif /* SFUD_USING_QSPI */
         }
 
         /* register device */
