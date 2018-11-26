@@ -2,9 +2,12 @@ from building import *
 import rtconfig
 
 cwd = GetCurrentDir()
-src = ['spi_core.c', 'spi_dev.c', 'qspi_core.c']
+src = ['spi_core.c', 'spi_dev.c']
 CPPPATH = [cwd, cwd + '/../include']
 LOCAL_CCFLAGS = ''
+
+if GetDepend('RT_USING_QSPI'):
+    src += ['qspi_core.c']
 
 src_device = []
 
