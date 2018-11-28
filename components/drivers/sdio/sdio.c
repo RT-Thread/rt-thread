@@ -1,21 +1,7 @@
 /*
- * File      : sdio.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author        Notes
@@ -25,6 +11,16 @@
 #include <drivers/mmcsd_core.h>
 #include <drivers/sdio.h>
 #include <drivers/sd.h>
+
+#define DBG_ENABLE
+#define DBG_SECTION_NAME               "SDIO"
+#ifdef RT_SDIO_DEBUG
+#define DBG_LEVEL                      DBG_LOG
+#else
+#define DBG_LEVEL                      DBG_INFO
+#endif /* RT_SDIO_DEBUG */
+#define DBG_COLOR
+#include <rtdbg.h>
 
 #ifndef RT_SDIO_STACK_SIZE
 #define RT_SDIO_STACK_SIZE 512
@@ -130,6 +126,7 @@ rt_int32_t sdio_io_rw_direct(struct rt_mmcsd_card *card,
 
     RT_ASSERT(card != RT_NULL);
     RT_ASSERT(fn <= SDIO_MAX_FUNCTIONS);
+    RT_ASSERT(pdata != RT_NULL);
 
     if (reg_addr & ~SDIO_ARG_CMD53_REG_MASK)
         return -RT_ERROR;
@@ -306,7 +303,7 @@ rt_uint8_t sdio_io_readb(struct rt_sdio_function *func,
                          rt_uint32_t              reg,
                          rt_int32_t              *err)
 {
-    rt_uint8_t data;
+    rt_uint8_t data = 0;
     rt_int32_t ret;
 
     ret = sdio_io_rw_direct(func->card, 0, func->num, reg, &data, 0);
@@ -432,7 +429,7 @@ static rt_int32_t sdio_read_cccr(struct rt_mmcsd_card *card)
 
     if (cccr_version > SDIO_CCCR_REV_3_00) 
     {
-        rt_kprintf("unrecognised CCCR structure version %d\n", cccr_version);
+        LOG_E("unrecognised CCCR structure version %d", cccr_version);
 
         return -RT_ERROR;
     }
@@ -579,7 +576,7 @@ static rt_int32_t sdio_read_cis(struct rt_sdio_function *func)
         case CISTPL_MANFID:
             if (tpl_link < 4)
             {
-                rt_kprintf("bad CISTPL_MANFID length\n");
+                LOG_D("bad CISTPL_MANFID length");
                 break;
             }
             if (func->num != 0)
@@ -605,15 +602,15 @@ static rt_int32_t sdio_read_cis(struct rt_sdio_function *func)
 
             if (ret)
             {
-                rt_kprintf("bad CISTPL_FUNCE size %u "
-                       "type %u\n", tpl_link, curr->data[0]);
+                LOG_D("bad CISTPL_FUNCE size %u "
+                       "type %u", tpl_link, curr->data[0]);
             }
 
             break;
         case CISTPL_VERS_1:
             if (tpl_link < 2)
             {
-                rt_kprintf("CISTPL_VERS_1 too short\n");
+                LOG_D("CISTPL_VERS_1 too short");
             }
             break;
         default: 
@@ -623,7 +620,7 @@ static rt_int32_t sdio_read_cis(struct rt_sdio_function *func)
             curr->size = tpl_link;
             *prev = curr;
             prev = &curr->next;
-            rt_kprintf( "function %d, CIS tuple code %#x, length %d\n",
+            LOG_D( "function %d, CIS tuple code %#x, length %d",
                 func->num, tpl_code, tpl_link);
             break;
         }
@@ -686,7 +683,6 @@ err:
     return ret;
 }
 
-
 static rt_int32_t sdio_initialize_function(struct rt_mmcsd_card *card,
                                            rt_uint32_t           func_num)
 {
@@ -698,7 +694,7 @@ static rt_int32_t sdio_initialize_function(struct rt_mmcsd_card *card,
     func = rt_malloc(sizeof(struct rt_sdio_function));
     if (!func)
     {
-        rt_kprintf("malloc rt_sdio_function failed\n");
+        LOG_E("malloc rt_sdio_function failed");
         ret = -RT_ENOMEM;
         goto err;
     }
@@ -788,7 +784,7 @@ static rt_int32_t sdio_register_card(struct rt_mmcsd_card *card)
     sc = rt_malloc(sizeof(struct sdio_card));
     if (sc == RT_NULL)
     {
-        rt_kprintf("malloc sdio card failed\n");
+        LOG_E("malloc sdio card failed");
         return -RT_ENOMEM;
     }
 
@@ -836,7 +832,7 @@ static rt_int32_t sdio_init_card(struct rt_mmcsd_host *host, rt_uint32_t ocr)
     card = rt_malloc(sizeof(struct rt_mmcsd_card));
     if (!card) 
     {
-        rt_kprintf("malloc card failed\n");
+        LOG_E("malloc card failed");
         err = -RT_ENOMEM;
         goto err;
     }
@@ -850,7 +846,7 @@ static rt_int32_t sdio_init_card(struct rt_mmcsd_host *host, rt_uint32_t ocr)
     card->sdio_function[0] = rt_malloc(sizeof(struct rt_sdio_function));
     if (!card->sdio_function[0])
     {
-        rt_kprintf("malloc sdio_func0 failed\n");
+        LOG_E("malloc sdio_func0 failed");
         err = -RT_ENOMEM;
         goto err1;
     }
@@ -928,6 +924,7 @@ err3:
                 host->card->sdio_function[i] = RT_NULL;
                 rt_free(host->card);
                 host->card = RT_NULL;
+                break;
             }
         }
     }
@@ -944,7 +941,7 @@ err1:
         rt_free(host->card);
     }
 err:
-    rt_kprintf("error %d while initialising SDIO card\n", err);
+    LOG_E("error %d while initialising SDIO card", err);
     
     return err;
 }
@@ -958,13 +955,13 @@ rt_int32_t init_sdio(struct rt_mmcsd_host *host, rt_uint32_t ocr)
 
     if (ocr & 0x7F) 
     {
-        rt_kprintf("Card ocr below the defined voltage rang.\n");
+        LOG_W("Card ocr below the defined voltage rang.");
         ocr &= ~0x7F;
     }
 
     if (ocr & VDD_165_195) 
     {
-        rt_kprintf("Can't support the low voltage SDIO card.\n");
+        LOG_W("Can't support the low voltage SDIO card.");
         ocr &= ~VDD_165_195;
     }
 
@@ -987,7 +984,7 @@ remove_card:
     host->card = RT_NULL;
 err:
 
-    rt_kprintf("init SDIO card failed\n");
+    LOG_E("init SDIO card failed");
 
     return err;
 }
@@ -1341,7 +1338,7 @@ rt_int32_t sdio_register_driver(struct rt_sdio_driver *driver)
     sd = rt_malloc(sizeof(struct sdio_driver));
     if (sd == RT_NULL)
     {
-        rt_kprintf("malloc sdio driver failed\n");
+        LOG_E("malloc sdio driver failed");
 
         return -RT_ENOMEM;
     }
@@ -1378,7 +1375,7 @@ rt_int32_t sdio_unregister_driver(struct rt_sdio_driver *driver)
 
     if (sd == RT_NULL)
     {
-        rt_kprintf("SDIO driver %s not register\n", driver->name);
+        LOG_E("SDIO driver %s not register", driver->name);
         return -RT_ERROR;
     }
 

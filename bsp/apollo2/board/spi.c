@@ -25,10 +25,9 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "am_mcu_apollo.h"
-#include "board.h"
 #include "spi.h"
 
-/* SPI1 */
+/* SPI0 */
 #define AM_SPI0_IOM_INST    0
 
 #define SPI0_GPIO_SCK       5
@@ -38,17 +37,17 @@
 #define SPI0_GPIO_MOSI      7
 #define SPI0_GPIO_CFG_MOSI  AM_HAL_PIN_7_M0MOSI
 
-/* SPI2 */
+/* SPI1 */
 #define AM_SPI1_IOM_INST    1
 
 static am_hal_iom_config_t g_sIOMConfig =
 {
     AM_HAL_IOM_SPIMODE, // ui32InterfaceMode
-    AM_HAL_IOM_8MHZ, // ui32ClockFrequency
+    AM_HAL_IOM_400KHZ, // ui32ClockFrequency
     0, // bSPHA
     0, // bSPOL
-    4, // ui8WriteThreshold
-    60, // ui8ReadThreshold
+    80, // ui8WriteThreshold
+    80, // ui8ReadThreshold
 };
 
 /* AM spi driver */
@@ -64,7 +63,19 @@ static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configurat
     struct am_spi_bus * am_spi_bus = (struct am_spi_bus *)device->bus;
     rt_uint32_t max_hz = configuration->max_hz;
 
-    if(max_hz >= 8000000)
+    if(max_hz >= 24000000)
+    {
+        g_sIOMConfig.ui32ClockFrequency = AM_HAL_IOM_24MHZ;
+    }
+    else if(max_hz >= 16000000)
+    {
+        g_sIOMConfig.ui32ClockFrequency = AM_HAL_IOM_16MHZ;
+    }
+    else if(max_hz >= 12000000)
+    {
+        g_sIOMConfig.ui32ClockFrequency = AM_HAL_IOM_12MHZ;
+    }
+    else if(max_hz >= 8000000)
     {
         g_sIOMConfig.ui32ClockFrequency = AM_HAL_IOM_8MHZ;
     }
@@ -147,7 +158,6 @@ static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configurat
 
     /* init SPI */
     am_hal_iom_disable(am_spi_bus->u32Module);
-    am_hal_iom_pwrctrl_enable(am_spi_bus->u32Module);
     am_hal_iom_config(am_spi_bus->u32Module, &g_sIOMConfig);
     am_hal_iom_enable(am_spi_bus->u32Module);
 
@@ -167,14 +177,12 @@ static rt_uint32_t xfer(struct rt_spi_device *device, struct rt_spi_message* mes
     /* take CS */
     if (message->cs_take)
     {
-        ;
+        am_hal_gpio_out_bit_clear(am_spi_cs->chip_select);
     }
 
     // 读数据
     if (recv_ptr != RT_NULL)
     {
-        u32TransferSize = u32BytesRemaining;
-
         while (u32BytesRemaining)
         {
             /* Set the transfer size to either 64, or the number of remaining
@@ -182,22 +190,21 @@ static rt_uint32_t xfer(struct rt_spi_device *device, struct rt_spi_message* mes
             if (u32BytesRemaining > 64)
             {
                 u32TransferSize = 64;
+                am_hal_gpio_pin_config(SPI0_GPIO_MOSI, AM_HAL_GPIO_OUTPUT | AM_HAL_GPIO_PULL6K);
+                am_hal_gpio_out_bit_set(SPI0_GPIO_MOSI);
                 am_hal_iom_spi_read(am_spi_bus->u32Module, am_spi_cs->chip_select,
-                                   (uint32_t *)recv_ptr, u32TransferSize, AM_HAL_IOM_CS_LOW | AM_HAL_IOM_RAW);
+                                   (uint32_t *)recv_ptr, u32TransferSize, AM_HAL_IOM_RAW);
+                am_hal_gpio_pin_config(SPI0_GPIO_MOSI, SPI0_GPIO_CFG_MOSI | AM_HAL_GPIO_PULL6K);
             }
             else
             {
                 u32TransferSize = u32BytesRemaining;
-                /* release CS */
-                if(message->cs_release)
                 {
+                    am_hal_gpio_pin_config(SPI0_GPIO_MOSI, AM_HAL_GPIO_OUTPUT | AM_HAL_GPIO_PULL6K);
+                    am_hal_gpio_out_bit_set(SPI0_GPIO_MOSI);
                     am_hal_iom_spi_read(am_spi_bus->u32Module, am_spi_cs->chip_select,
                                    (uint32_t *)recv_ptr, u32TransferSize, AM_HAL_IOM_RAW);
-                }
-                else
-                {
-                    am_hal_iom_spi_read(am_spi_bus->u32Module, am_spi_cs->chip_select,
-                                   (uint32_t *)recv_ptr, u32TransferSize, AM_HAL_IOM_CS_LOW | AM_HAL_IOM_RAW);
+                    am_hal_gpio_pin_config(SPI0_GPIO_MOSI, SPI0_GPIO_CFG_MOSI | AM_HAL_GPIO_PULL6K);
                 }
             }
 
@@ -207,38 +214,37 @@ static rt_uint32_t xfer(struct rt_spi_device *device, struct rt_spi_message* mes
     }
 
     // 写数据
-    else if (send_ptr != RT_NULL)
+    else
     {
         while (u32BytesRemaining)
         {
             /* Set the transfer size to either 32, or the number of remaining
                bytes, whichever is smaller */
-            if (u32BytesRemaining > 32)
+            if (u32BytesRemaining > 64)
             {
-                u32TransferSize = 32;
+                u32TransferSize = 64;
                 am_hal_iom_spi_write(am_spi_bus->u32Module, am_spi_cs->chip_select,
-                                    (uint32_t *)send_ptr, u32TransferSize, AM_HAL_IOM_CS_LOW | AM_HAL_IOM_RAW);
+                                    (uint32_t *)send_ptr, u32TransferSize, AM_HAL_IOM_RAW);
         
             }
             else
             {
                 u32TransferSize = u32BytesRemaining;
-                /* release CS */
-                if (message->cs_release)
                 {
                     am_hal_iom_spi_write(am_spi_bus->u32Module, am_spi_cs->chip_select,
                               (uint32_t *)send_ptr, u32TransferSize, AM_HAL_IOM_RAW);
-                }
-                else
-                {
-                    am_hal_iom_spi_write(am_spi_bus->u32Module, am_spi_cs->chip_select,
-                              (uint32_t *)send_ptr, u32TransferSize, AM_HAL_IOM_CS_LOW | AM_HAL_IOM_RAW);
                 }
             }
 
             u32BytesRemaining -= u32TransferSize;
             send_ptr = (rt_uint32_t *)((rt_uint32_t)send_ptr + u32TransferSize);
         }
+    }
+
+    /* release CS */
+    if(message->cs_release)
+    {
+        am_hal_gpio_out_bit_set(am_spi_cs->chip_select);
     }
 
     return message->length;
@@ -250,31 +256,31 @@ static const struct rt_spi_ops am_spi_ops =
     xfer
 };
 
-#ifdef RT_USING_SPI1
-static struct am_spi_bus am_spi_bus_1 = 
+#ifdef RT_USING_SPI0
+static struct am_spi_bus am_spi_bus_0 = 
 {
     {0},
     AM_SPI0_IOM_INST
 };
-#endif /* #ifdef RT_USING_SPI1 */
+#endif /* #ifdef RT_USING_SPI0 */
 
-#ifdef RT_USING_SPI2
-static struct ambiq_spi_bus ambiq_spi_bus_2 =
+#ifdef RT_USING_SPI1
+static struct am_spi_bus am_spi_bus_1 =
 {
-    {1},
+    {0},
     AM_SPI1_IOM_INST
 };
-#endif /* #ifdef RT_USING_SPI2 */
+#endif /* #ifdef RT_USING_SPI1 */
 
 int yr_hw_spi_init(void)
 {
     struct am_spi_bus* am_spi;
 
-#ifdef RT_USING_SPI1
+#ifdef RT_USING_SPI0
     /* init spi gpio */
     am_hal_gpio_pin_config(SPI0_GPIO_SCK, SPI0_GPIO_CFG_SCK);
-    am_hal_gpio_pin_config(SPI0_GPIO_MISO, SPI0_GPIO_CFG_MISO);
-    am_hal_gpio_pin_config(SPI0_GPIO_MOSI, SPI0_GPIO_CFG_MOSI);
+    am_hal_gpio_pin_config(SPI0_GPIO_MISO, SPI0_GPIO_CFG_MISO | AM_HAL_GPIO_PULL6K);
+    am_hal_gpio_pin_config(SPI0_GPIO_MOSI, SPI0_GPIO_CFG_MOSI | AM_HAL_GPIO_PULL6K);
 
     /* Initialize IOM 0 in SPI mode at 100KHz */
     am_hal_iom_pwrctrl_enable(AM_SPI0_IOM_INST);
@@ -282,11 +288,11 @@ int yr_hw_spi_init(void)
     am_hal_iom_enable(AM_SPI0_IOM_INST);
 
     //init spi bus device
-    am_spi = &am_spi_bus_1;
-    rt_spi_bus_register(&am_spi->parent, "spi1", &am_spi_ops);
+    am_spi = &am_spi_bus_0;
+    rt_spi_bus_register(&am_spi->parent, "spi0", &am_spi_ops);
 #endif
 
-    rt_kprintf("spi init!\n");
+    //rt_kprintf("spi init!\n");
 
     return 0;
 }

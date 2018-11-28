@@ -1,11 +1,7 @@
 /*
- * File      : application.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -32,8 +28,11 @@
 #include <gdb_stub.h>
 #endif
 
+
 void rt_init_thread_entry(void* parameter)
 {
+    rt_thread_t tid;
+    
     /* GDB STUB */
 #ifdef RT_USING_GDB
     gdb_set_device("uart6");
@@ -55,10 +54,9 @@ void rt_init_thread_entry(void* parameter)
         rt_kprintf("TCP/IP initialized!\n");
     }
 #endif
-
-#ifdef RT_USING_FINSH
-    finsh_system_init();
-#endif
+    
+    rt_components_init();
+                                      
 }
 
 int rt_application_init()

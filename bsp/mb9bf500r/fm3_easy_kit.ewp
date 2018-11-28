@@ -1785,9 +1785,6 @@
       <name>$PROJ_DIR$\..\..\src\mempool.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\module.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\src\object.c</name>
     </file>
     <file>

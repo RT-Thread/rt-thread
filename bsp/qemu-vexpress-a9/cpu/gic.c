@@ -11,8 +11,11 @@
  * Date           Author       Notes
  * 2013-07-20     Bernard      first version
  * 2014-04-03     Grissiom     many enhancements
+ * 2018-11-22     Jesven       add rt_hw_ipi_send()
+ *                             add rt_hw_ipi_handler_install()
  */
 
+#include <rthw.h>
 #include <rtthread.h>
 #include <board.h>
 
@@ -278,3 +281,19 @@ void arm_gic_set_group(rt_uint32_t index, int vector, int group)
                         vector) |=  (1 << (vector % 32));
     }
 }
+
+#ifdef RT_USING_SMP
+void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask)
+ {
+     /* note: ipi_vector maybe different with irq_vector */
+     GIC_DIST_SOFTINT(_gic_table[0].dist_hw_base) = (cpu_mask << 16) | ipi_vector;
+}
+#endif
+
+#ifdef RT_USING_SMP
+void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler)
+{
+    /* note: ipi_vector maybe different with irq_vector */
+    rt_hw_interrupt_install(ipi_vector, ipi_isr_handler, 0, "IPI_HANDLER");
+}
+#endif

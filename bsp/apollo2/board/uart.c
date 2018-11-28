@@ -25,7 +25,6 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "am_mcu_apollo.h"
-#include "board.h"
 
 /* USART0 */
 #define AM_UART0_INST         0
@@ -165,8 +164,14 @@ static rt_err_t am_configure(struct rt_serial_device *serial, struct serial_conf
     else if (cfg->stop_bits == STOP_BITS_2)
         uart_cfg.bTwoStopBits = true;
 
-    uart_cfg.ui32Parity = cfg->parity;
-    uart_cfg.ui32FlowCtrl = AM_HAL_UART_PARITY_NONE;
+    if (cfg->parity == PARITY_NONE)    
+        uart_cfg.ui32Parity = AM_HAL_UART_PARITY_NONE;
+    else if (cfg->parity == PARITY_ODD)    
+        uart_cfg.ui32Parity = AM_HAL_UART_PARITY_ODD;
+    else if (cfg->parity == PARITY_EVEN)    
+        uart_cfg.ui32Parity = AM_HAL_UART_PARITY_EVEN;
+
+    uart_cfg.ui32FlowCtrl = AM_HAL_UART_FLOW_CTRL_NONE;
 
     /* UART Config */
     am_hal_uart_config(uart->uart_device, &uart_cfg);
@@ -181,7 +186,7 @@ static rt_err_t am_configure(struct rt_serial_device *serial, struct serial_conf
     am_hal_uart_enable(uart->uart_device);
 
     /* Enable interrupts */
-    am_hal_uart_int_enable(uart->uart_device, AM_HAL_UART_INT_RX_TMOUT | AM_HAL_UART_INT_RX | AM_HAL_UART_INT_TX);
+    am_hal_uart_int_enable(uart->uart_device, AM_HAL_UART_INT_RX_TMOUT | AM_HAL_UART_INT_RX);
 
     /* Enable the uart interrupt in the NVIC */
     am_hal_interrupt_enable(uart->uart_interrupt);
@@ -231,7 +236,7 @@ static int am_putc(struct rt_serial_device *serial, char c)
     //if (txsize > 0)
     {
         am_hal_uart_char_transmit_buffered(uart->uart_device, c);
-		}
+    }
 
     /* Wait until busy bit clears to make sure UART fully transmitted last byte */
     while ( am_hal_uart_flags_get(uart->uart_device) & AM_HAL_UART_FR_BUSY );
@@ -400,9 +405,6 @@ int rt_hw_uart_init(void)
 #if defined(RT_USING_UART0)
     uart = &uart0;
     config.baud_rate = BAUD_RATE_115200;
-    config.data_bits = DATA_BITS_8;
-    config.stop_bits = STOP_BITS_1;
-    config.parity = PARITY_NONE;
 
     RCC_Configuration(uart);
 
@@ -418,9 +420,6 @@ int rt_hw_uart_init(void)
 #if defined(RT_USING_UART1)
     uart = &uart1;
     config.baud_rate = BAUD_RATE_115200;
-    config.data_bits = DATA_BITS_8;
-    config.stop_bits = STOP_BITS_1;
-    config.parity = PARITY_NONE;
 
     RCC_Configuration(uart);
 

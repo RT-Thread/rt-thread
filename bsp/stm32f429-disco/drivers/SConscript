@@ -9,8 +9,19 @@ src = Split("""
 board.c
 stm32f4xx_it.c
 usart.c
-drv_sdram.c
 """)
+
+if GetDepend(['RT_USING_EXT_SDRAM']):
+    src += ['drv_sdram.c']
+
+if GetDepend(['RT_USING_I2C']):
+    src += ['drv_i2c.c']
+
+if GetDepend(['RT_USING_ILI9341_LCD']):
+    src += ['drv_lcd.c']
+
+if GetDepend(['RT_USING_STMPE811_TOUCH']):
+    src += ['drv_touch.c']
 
 CPPPATH = [cwd]
 

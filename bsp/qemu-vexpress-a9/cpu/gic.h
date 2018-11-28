@@ -27,6 +27,7 @@ int arm_gic_get_active_irq(rt_uint32_t index);
 void arm_gic_ack(rt_uint32_t index, int irq);
 
 void arm_gic_dump_type(rt_uint32_t index);
+void rt_hw_vector_init(void);
 
 #endif
 

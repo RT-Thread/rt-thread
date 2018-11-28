@@ -1,11 +1,7 @@
 /*
- * File      : drv_iwg.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
@@ -36,7 +32,7 @@ static rt_err_t drv_control(rt_watchdog_t *wdt, int cmd, void *arg)
     switch (cmd)
     {
     case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
-        hiwdg.Init.Reload = (rt_uint32_t)arg;
+        hiwdg.Init.Reload = (rt_uint32_t)*arg;
         if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
         {
             return RT_ERROR;
