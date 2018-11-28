@@ -2,7 +2,7 @@ OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")
 OUTPUT_ARCH(arm)
 SECTIONS
 {
-    . = 0x60000000;
+    . = 0x60010000;
 
     __text_start = .;
     .text :

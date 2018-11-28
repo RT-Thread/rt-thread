@@ -14,6 +14,7 @@
  * 2015-05-04     Bernard      Rename it to components.c because compiling issue
  *                             in some IDEs.
  * 2015-07-29     Arda.Fu      Add support to use RT_USING_USER_MAIN with IAR
+ * 2018-11-22     Jesven       Add secondary cpu boot up
  */
 
 #include <rthw.h>
@@ -180,6 +181,9 @@ void main_thread_entry(void *parameter)
     /* RT-Thread components initialization */
     rt_components_init();
 
+#ifdef RT_USING_SMP
+    rt_hw_secondary_cpu_up();
+#endif
     /* invoke system main function */
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
     $Super$$main(); /* for ARMCC. */
@@ -242,6 +246,10 @@ int rtthread_startup(void)
 
     /* idle thread initialization */
     rt_thread_idle_init();
+
+#ifdef RT_USING_SMP
+    rt_hw_spin_lock(&_cpus_lock);
+#endif /*RT_USING_SMP*/
 
     /* start scheduler */
     rt_system_scheduler_start();

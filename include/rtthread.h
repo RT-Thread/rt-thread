@@ -13,6 +13,7 @@
  * 2010-04-11     yi.qiu       add module feature
  * 2013-06-24     Bernard      add rt_kprintf re-define when not use RT_USING_CONSOLE.
  * 2016-08-09     ArdaFu       add new thread and interrupt hook.
+ * 2018-11-22     Jesven       add all cpu's lock and ipi handler
  */
 
 #ifndef __RT_THREAD_H__
@@ -184,6 +185,10 @@ rt_uint16_t rt_critical_level(void);
 void rt_scheduler_sethook(void (*hook)(rt_thread_t from, rt_thread_t to));
 #endif
 
+#ifdef RT_USING_SMP
+void rt_scheduler_ipi_handler(int vector, void *param);
+#endif
+
 /**@}*/
 
 /**
@@ -257,7 +262,7 @@ void rt_page_free(void *addr, rt_size_t npages);
 #endif
 
 #ifdef RT_USING_HOOK
-void rt_malloc_sethook(void (*hook)(void *ptr, rt_uint32_t size));
+void rt_malloc_sethook(void (*hook)(void *ptr, rt_size_t size));
 void rt_free_sethook(void (*hook)(void *ptr));
 #endif
 
@@ -270,9 +275,9 @@ void rt_free_sethook(void (*hook)(void *ptr));
 rt_err_t rt_memheap_init(struct rt_memheap *memheap,
                          const char        *name,
                          void              *start_addr,
-                         rt_uint32_t        size);
+                         rt_size_t         size);
 rt_err_t rt_memheap_detach(struct rt_memheap *heap);
-void *rt_memheap_alloc(struct rt_memheap *heap, rt_uint32_t size);
+void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size);
 void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize);
 void rt_memheap_free(void *ptr);
 #endif
@@ -348,11 +353,11 @@ rt_err_t rt_mb_detach(rt_mailbox_t mb);
 rt_mailbox_t rt_mb_create(const char *name, rt_size_t size, rt_uint8_t flag);
 rt_err_t rt_mb_delete(rt_mailbox_t mb);
 
-rt_err_t rt_mb_send(rt_mailbox_t mb, rt_uint32_t value);
+rt_err_t rt_mb_send(rt_mailbox_t mb, rt_ubase_t value);
 rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
-                         rt_uint32_t  value,
+                         rt_ubase_t  value,
                          rt_int32_t   timeout);
-rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_uint32_t *value, rt_int32_t timeout);
+rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout);
 rt_err_t rt_mb_control(rt_mailbox_t mb, int cmd, void *arg);
 #endif
 
@@ -438,6 +443,20 @@ rt_err_t  rt_device_control(rt_device_t dev, int cmd, void *arg);
  */
 void rt_interrupt_enter(void);
 void rt_interrupt_leave(void);
+
+#ifdef RT_USING_SMP
+
+/*
+ * smp cpus lock service
+ */
+
+rt_base_t rt_cpus_lock(void);
+void rt_cpus_unlock(rt_base_t level);
+
+struct rt_cpu *rt_cpu_self(void);
+struct rt_cpu *rt_cpu_index(int index);
+
+#endif
 
 /*
  * the number of nested interrupts.

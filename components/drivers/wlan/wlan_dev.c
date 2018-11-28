@@ -733,22 +733,16 @@ static rt_err_t _rt_wlan_dev_control(rt_device_t dev, int cmd, void *args)
     return err;
 }
 
-struct rt_wlan_device *rt_wlan_dev_register(const char *name, const struct rt_wlan_dev_ops *ops, rt_uint32_t flag, void *user_data)
+rt_err_t rt_wlan_dev_register(struct rt_wlan_device *wlan, const char *name, const struct rt_wlan_dev_ops *ops, rt_uint32_t flag, void *user_data)
 {
-    struct rt_wlan_device *wlan;
+    rt_err_t err = RT_EOK;
 
-    if (name == RT_NULL || ops == RT_NULL)
+    if ((wlan == RT_NULL) || (name == RT_NULL) || (ops == RT_NULL))
     {
         LOG_E("F:%s L:%d parameter Wrongful", __FUNCTION__, __LINE__);
         return RT_NULL;
     }
 
-    wlan = rt_malloc(sizeof(struct rt_wlan_device));
-    if (wlan == RT_NULL)
-    {
-        LOG_E("F:%s L:%d", __FUNCTION__, __LINE__);
-        return RT_NULL;
-    }
     rt_memset(wlan, 0, sizeof(struct rt_wlan_device));
 
     wlan->device.init       = _rt_wlan_dev_init;
@@ -765,9 +759,9 @@ struct rt_wlan_device *rt_wlan_dev_register(const char *name, const struct rt_wl
     wlan->user_data  = user_data;
 
     wlan->flags = flag;
-    rt_device_register(&wlan->device, name, RT_DEVICE_FLAG_RDWR);
+    err = rt_device_register(&wlan->device, name, RT_DEVICE_FLAG_RDWR);
 
     LOG_D("F:%s L:%d run", __FUNCTION__, __LINE__);
 
-    return wlan;
+    return err;
 }

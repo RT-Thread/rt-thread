@@ -24,7 +24,11 @@
  * 2018-05-31     Bernard      change version number to v3.1.0
  * 2018-09-04     Bernard      change version number to v3.1.1
  * 2018-09-14     Bernard      apply Apache License v2.0 to RT-Thread Kernel
- * 2018-11-18     Bernard      change version number to v4.0.0
+ * 2018-10-13     Bernard      change version number to v4.0.0
+ * 2018-10-02     Bernard      add 64bit arch support
+ * 2018-11-22     Jesven       add smp member to struct rt_thread
+ *                             add struct rt_cpu
+ *                             add smp relevant macros
  */
 
 #ifndef __RT_DEF_H__
@@ -55,13 +59,20 @@ extern "C" {
 /* RT-Thread basic data type definitions */
 typedef signed   char                   rt_int8_t;      /**<  8bit integer type */
 typedef signed   short                  rt_int16_t;     /**< 16bit integer type */
-typedef signed   long                   rt_int32_t;     /**< 32bit integer type */
+typedef signed   int                    rt_int32_t;     /**< 32bit integer type */
 typedef unsigned char                   rt_uint8_t;     /**<  8bit unsigned integer type */
 typedef unsigned short                  rt_uint16_t;    /**< 16bit unsigned integer type */
-typedef unsigned long                   rt_uint32_t;    /**< 32bit unsigned integer type */
-typedef int                             rt_bool_t;      /**< boolean type */
+typedef unsigned int                    rt_uint32_t;    /**< 32bit unsigned integer type */
 
-/* 32bit CPU */
+#ifdef ARCH_CPU_64BIT
+typedef signed long                     rt_int64_t;     /**< 64bit integer type */
+typedef unsigned long                   rt_uint64_t;    /**< 64bit unsigned integer type */
+#else
+typedef signed long long                rt_int64_t;     /**< 64bit integer type */
+typedef unsigned long long              rt_uint64_t;    /**< 64bit unsigned integer type */
+#endif
+
+typedef int                             rt_bool_t;      /**< boolean type */
 typedef long                            rt_base_t;      /**< Nbit CPU related date type */
 typedef unsigned long                   rt_ubase_t;     /**< Nbit unsigned CPU related data type */
 
@@ -122,11 +133,11 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
         #include <stdarg.h>
     #else
         /* the version of GNU GCC must be greater than 4.x */
-        typedef __builtin_va_list   __gnuc_va_list;
-        typedef __gnuc_va_list      va_list;
-        #define va_start(v,l)       __builtin_va_start(v,l)
-        #define va_end(v)           __builtin_va_end(v)
-        #define va_arg(v,l)         __builtin_va_arg(v,l)
+        typedef __builtin_va_list       __gnuc_va_list;
+        typedef __gnuc_va_list          va_list;
+        #define va_start(v,l)           __builtin_va_start(v,l)
+        #define va_end(v)               __builtin_va_end(v)
+        #define va_arg(v,l)             __builtin_va_arg(v,l)
     #endif
 
     #define SECTION(x)                  __attribute__((section(x)))
@@ -489,6 +500,41 @@ typedef siginfo_t rt_siginfo_t;
 #define RT_THREAD_CTRL_CLOSE            0x01                /**< Close thread. */
 #define RT_THREAD_CTRL_CHANGE_PRIORITY  0x02                /**< Change thread priority. */
 #define RT_THREAD_CTRL_INFO             0x03                /**< Get thread information. */
+#define RT_THREAD_CTRL_BIND_CPU         0x03                /**< Set thread bind cpu. */
+
+#ifdef RT_USING_SMP
+
+#define RT_CPU_DETACHED                 RT_CPUS_NR          /**< The thread not running on cpu. */
+#define RT_CPU_MASK                     ((1 << RT_CPUS_NR) - 1) /**< All CPUs mask bit. */
+
+#ifndef RT_SCHEDULE_IPI_IRQ
+#define RT_SCHEDULE_IPI_IRQ             0
+#endif
+
+/**
+ * CPUs definitions
+ * 
+ */
+struct rt_cpu
+{
+    struct rt_thread *current_thread;
+
+    rt_uint16_t irq_nest;
+    rt_uint8_t  irq_switch_flag;
+
+    rt_uint8_t current_priority;
+    rt_list_t priority_table[RT_THREAD_PRIORITY_MAX];
+#if RT_THREAD_PRIORITY_MAX > 32
+    rt_uint32_t priority_group;
+    rt_uint8_t ready_table[32];
+#else
+    rt_uint32_t priority_group;
+#endif
+
+    rt_tick_t tick;
+};
+
+#endif
 
 /**
  * Thread structure
@@ -518,6 +564,14 @@ struct rt_thread
     rt_err_t    error;                                  /**< error code */
 
     rt_uint8_t  stat;                                   /**< thread status */
+
+#ifdef RT_USING_SMP
+    rt_uint8_t  bind_cpu;                               /**< thread is bind to cpu */
+    rt_uint8_t  oncpu;                                  /**< process on cpu` */
+
+    rt_uint16_t scheduler_lock_nest;                    /**< scheduler lock count */
+    rt_uint16_t cpus_lock_nest;                         /**< cpus lock count */
+#endif /*RT_USING_SMP*/
 
     /* priority */
     rt_uint8_t  current_priority;                       /**< current priority */
@@ -648,7 +702,7 @@ struct rt_mailbox
 {
     struct rt_ipc_object parent;                        /**< inherit from ipc_object */
 
-    rt_uint32_t         *msg_pool;                      /**< start address of message buffer */
+    rt_ubase_t          *msg_pool;                      /**< start address of message buffer */
 
     rt_uint16_t          size;                          /**< size of message pool */
 

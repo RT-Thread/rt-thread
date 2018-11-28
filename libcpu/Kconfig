@@ -1,3 +1,6 @@
+config ARCH_CPU_64BIT
+    bool
+
 config ARCH_ARM
     bool
 
@@ -83,8 +86,28 @@ config ARCH_POWERPC
 config ARCH_RISCV
     bool
 
+config ARCH_RISCV_FPU
+    bool
+
+config ARCH_RISCV32
+    select ARCH_RISCV
+    bool
+
+config ARCH_RISCV64
+    select ARCH_RISCV
+    select ARCH_CPU_64BIT
+    bool
+
 config ARCH_IA32
     bool
+
+config ARCH_TIDSP
+    bool
+
+config ARCH_TIDSP_C28X
+    bool
+    select ARCH_TIDSP
+    select ARCH_CPU_STACK_GROWS_UPWARD
 
 config ARCH_HOST_SIMULATOR
     bool

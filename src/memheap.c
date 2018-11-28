@@ -50,7 +50,7 @@
 rt_err_t rt_memheap_init(struct rt_memheap *memheap,
                          const char        *name,
                          void              *start_addr,
-                         rt_uint32_t        size)
+                         rt_size_t         size)
 {
     struct rt_memheap_item *item;
 
@@ -135,7 +135,7 @@ rt_err_t rt_memheap_detach(struct rt_memheap *heap)
 }
 RTM_EXPORT(rt_memheap_detach);
 
-void *rt_memheap_alloc(struct rt_memheap *heap, rt_uint32_t size)
+void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size)
 {
     rt_err_t result;
     rt_uint32_t free_size;
