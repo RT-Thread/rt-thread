@@ -50,7 +50,7 @@ struct rt_audio_pipe
     /* ring buffer in pipe device */
     struct rt_ringbuffer ringbuffer;
 
-    enum rt_audio_pipe_flag flag;
+    rt_int32_t flag;
 
     /* suspended list */
     rt_list_t suspended_read_list;
@@ -64,12 +64,12 @@ struct rt_audio_pipe
 
 rt_err_t rt_audio_pipe_init(struct rt_audio_pipe *pipe,
                       const char *name,
-                      enum rt_audio_pipe_flag flag,
+                      rt_int32_t flag,
                       rt_uint8_t *buf,
                       rt_size_t size);
 rt_err_t rt_audio_pipe_detach(struct rt_audio_pipe *pipe);
 #ifdef RT_USING_HEAP
-rt_err_t rt_audio_pipe_create(const char *name, enum rt_audio_pipe_flag flag, rt_size_t size);
+rt_err_t rt_audio_pipe_create(const char *name, rt_int32_t flag, rt_size_t size);
 void rt_audio_pipe_destroy(struct rt_audio_pipe *pipe);
 #endif
 #endif
