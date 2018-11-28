@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 /*	$NetBSD: divsi3.S,v 1.5 2005/02/26 22:58:56 perry Exp $	*/
 
 /*

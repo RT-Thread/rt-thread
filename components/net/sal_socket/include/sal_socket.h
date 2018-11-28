@@ -1,21 +1,7 @@
 /*
- * File      : sal_socket.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -26,6 +12,10 @@
 #define SAL_SOCKET_H__
 
 #include "sal_ipaddr.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #if !defined(socklen_t) && !defined(SOCKLEN_T_DEFINED)
 typedef uint32_t socklen_t;
@@ -81,13 +71,15 @@ typedef uint16_t in_port_t;
 #define AF_INET6        10
 #define AF_CAN          29  /* Controller Area Network      */
 #define AF_AT           45  /* AT socket */
+#define AF_WIZ          46  /* WIZnet socket */
 #define PF_INET         AF_INET
 #define PF_INET6        AF_INET6
 #define PF_UNSPEC       AF_UNSPEC
 #define PF_CAN          AF_CAN
 #define PF_AT           AF_AT
+#define PF_WIZ          AF_WIZ
 
-#define AF_MAX          (AF_AT + 1)  /* For now.. */
+#define AF_MAX          (AF_WIZ + 1)  /* For now.. */
 
 #define IPPROTO_IP      0
 #define IPPROTO_ICMP    1
@@ -174,5 +166,9 @@ int sal_sendto(int socket, const void *dataptr, size_t size, int flags,
 int sal_socket(int domain, int type, int protocol);
 int sal_closesocket(int socket);
 int sal_ioctlsocket(int socket, long cmd, void *arg);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SAL_SOCKET_H__ */

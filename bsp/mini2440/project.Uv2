@@ -30,7 +30,6 @@ File 3,1,<../../src/irq.c><irq.c>
 File 3,1,<../../src/kservice.c><kservice.c>
 File 3,1,<../../src/mem.c><mem.c>
 File 3,1,<../../src/mempool.c><mempool.c>
-File 3,1,<../../src/module.c><module.c>
 File 3,1,<../../src/object.c><object.c>
 File 3,1,<../../src/scheduler.c><scheduler.c>
 File 3,1,<../../src/signal.c><signal.c>

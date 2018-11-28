@@ -48,7 +48,7 @@ void components_init(void)
 #endif
 
 #ifdef RT_USING_MODULE
-	rt_system_module_init();
+	rt_system_dlmodule_init();
 #endif
 #endif
 }

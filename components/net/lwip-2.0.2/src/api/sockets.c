@@ -410,8 +410,6 @@ lwip_tryget_socket(int s)
 	return tryget_socket(s);
 }
 
-
-
 /**
  * Allocate a new socket for a given netconn.
  *
@@ -443,6 +441,9 @@ alloc_socket(struct netconn *newconn, int accepted)
       sockets[i].sendevent  = (NETCONNTYPE_GROUP(newconn->type) == NETCONN_TCP ? (accepted != 0) : 1);
       sockets[i].errevent   = 0;
       sockets[i].err        = 0;
+#ifdef SAL_USING_POSIX
+      rt_wqueue_init(&sockets[i].wait_head);
+#endif
       return i + LWIP_SOCKET_OFFSET;
     }
     SYS_ARCH_UNPROTECT(lev);

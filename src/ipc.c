@@ -1,21 +1,7 @@
 /*
- * File      : ipc.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -46,6 +32,7 @@
  * 2010-11-10     Bernard      add IPC reset command implementation.
  * 2011-12-18     Bernard      add more parameter checking in message queue
  * 2013-09-14     Grissiom     add an option check in rt_event_recv
+ * 2018-10-02     Bernard      add 64bit support for mailbox
  */
 
 #include <rtthread.h>
@@ -500,10 +487,10 @@ rt_err_t rt_sem_control(rt_sem_t sem, int cmd, void *arg)
 
     if (cmd == RT_IPC_CMD_RESET)
     {
-        rt_uint32_t value;
+        rt_ubase_t value;
 
         /* get value */
-        value = (rt_uint32_t)arg;
+        value = (rt_ubase_t)arg;
         /* disable interrupt */
         level = rt_hw_interrupt_disable();
 
@@ -1387,7 +1374,7 @@ rt_mailbox_t rt_mb_create(const char *name, rt_size_t size, rt_uint8_t flag)
 
     /* init mailbox */
     mb->size     = size;
-    mb->msg_pool = RT_KERNEL_MALLOC(mb->size * sizeof(rt_uint32_t));
+    mb->msg_pool = RT_KERNEL_MALLOC(mb->size * sizeof(rt_ubase_t));
     if (mb->msg_pool == RT_NULL)
     {
         /* delete mailbox object */
@@ -1450,7 +1437,7 @@ RTM_EXPORT(rt_mb_delete);
  * @return the error code
  */
 rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
-                         rt_uint32_t  value,
+                         rt_ubase_t   value,
                          rt_int32_t   timeout)
 {
     struct rt_thread *thread;
@@ -1581,7 +1568,7 @@ RTM_EXPORT(rt_mb_send_wait);
  *
  * @return the error code
  */
-rt_err_t rt_mb_send(rt_mailbox_t mb, rt_uint32_t value)
+rt_err_t rt_mb_send(rt_mailbox_t mb, rt_ubase_t value)
 {
     return rt_mb_send_wait(mb, value, 0);
 }
@@ -1597,7 +1584,7 @@ RTM_EXPORT(rt_mb_send);
  *
  * @return the error code
  */
-rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_uint32_t *value, rt_int32_t timeout)
+rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
 {
     struct rt_thread *thread;
     register rt_ubase_t temp;

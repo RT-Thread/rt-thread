@@ -1,21 +1,7 @@
 /*
- * File      : idle.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -27,10 +13,16 @@
  * 2016-08-09     ArdaFu       add method to get the handler of the idle thread.
  * 2018-02-07     Bernard      lock scheduler to protect tid->cleanup.
  * 2018-07-14     armink       add idle hook list
+ * 2018-11-22     Jesven       add per cpu idle task
+ *                             combine the code of primary and secondary cpu
  */
 
 #include <rthw.h>
 #include <rtthread.h>
+
+#ifdef RT_USING_MODULE
+#include <dlmodule.h>
+#endif
 
 #if defined (RT_USING_HOOK)
 #ifndef RT_USING_IDLE_HOOK
@@ -46,16 +38,21 @@
 #endif
 #endif
 
-static struct rt_thread idle;
-ALIGN(RT_ALIGN_SIZE)
-static rt_uint8_t rt_thread_stack[IDLE_THREAD_STACK_SIZE];
+#ifdef RT_USING_SMP
+#define _CPUS_NR                RT_CPUS_NR
+#else
+#define _CPUS_NR                1
+#endif
 
 extern rt_list_t rt_thread_defunct;
 
-#ifdef RT_USING_IDLE_HOOK
+static struct rt_thread idle[_CPUS_NR];
+ALIGN(RT_ALIGN_SIZE)
+static rt_uint8_t rt_thread_stack[_CPUS_NR][IDLE_THREAD_STACK_SIZE];
 
+#ifdef RT_USING_IDLE_HOOK
 #ifndef RT_IDEL_HOOK_LIST_SIZE
-#define RT_IDEL_HOOK_LIST_SIZE          4
+#define RT_IDEL_HOOK_LIST_SIZE  4
 #endif
 
 static void (*idle_hook_list[RT_IDEL_HOOK_LIST_SIZE])();
@@ -158,7 +155,7 @@ void rt_thread_idle_excute(void)
         rt_base_t lock;
         rt_thread_t thread;
 #ifdef RT_USING_MODULE
-        rt_module_t module = RT_NULL;
+        struct rt_dlmodule *module = RT_NULL;
 #endif
         RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -173,14 +170,10 @@ void rt_thread_idle_excute(void)
                                    struct rt_thread,
                                    tlist);
 #ifdef RT_USING_MODULE
-            /* get thread's parent module */
-            module = (rt_module_t)thread->module_id;
-
-            /* if the thread is module's main thread */
-            if (module != RT_NULL && module->module_thread == thread)
+            module = (struct rt_dlmodule*)thread->module_id;
+            if (module)
             {
-                /* detach module's main thread */
-                module->module_thread = RT_NULL;
+                dlmodule_destroy(module);
             }
 #endif
             /* remove defunct thread */
@@ -235,14 +228,21 @@ void rt_thread_idle_excute(void)
 
 static void rt_thread_idle_entry(void *parameter)
 {
-#ifdef RT_USING_IDLE_HOOK
-    rt_size_t i;
+#ifdef RT_USING_SMP
+    if (rt_hw_cpu_id() != 0)
+    {
+        while (1)
+        {
+            rt_hw_secondary_cpu_idle_exec();
+        }
+    }
 #endif
 
     while (1)
     {
-
 #ifdef RT_USING_IDLE_HOOK
+        rt_size_t i;
+
         for (i = 0; i < RT_IDEL_HOOK_LIST_SIZE; i++)
         {
             if (idle_hook_list[i] != RT_NULL)
@@ -265,18 +265,26 @@ static void rt_thread_idle_entry(void *parameter)
  */
 void rt_thread_idle_init(void)
 {
-    /* initialize thread */
-    rt_thread_init(&idle,
-                   "tidle",
-                   rt_thread_idle_entry,
-                   RT_NULL,
-                   &rt_thread_stack[0],
-                   sizeof(rt_thread_stack),
-                   RT_THREAD_PRIORITY_MAX - 1,
-                   32);
+    int i;
+    char tidle_name[RT_NAME_MAX];
 
-    /* startup */
-    rt_thread_startup(&idle);
+    for (i = 0; i < _CPUS_NR; i++)
+    {
+        rt_sprintf(tidle_name, "tidle%d", i);
+        rt_thread_init(&idle[i],
+                tidle_name,
+                rt_thread_idle_entry,
+                RT_NULL,
+                &rt_thread_stack[i][0],
+                sizeof(rt_thread_stack[i]),
+                RT_THREAD_PRIORITY_MAX - 1,
+                32);
+#ifdef RT_USING_SMP
+        rt_thread_control(&idle[i], RT_THREAD_CTRL_BIND_CPU, (void*)i);
+#endif
+        /* startup */
+        rt_thread_startup(&idle[i]);
+    }
 }
 
 /**
@@ -287,5 +295,11 @@ void rt_thread_idle_init(void)
  */
 rt_thread_t rt_thread_idle_gethandler(void)
 {
-    return (rt_thread_t)(&idle);
+#ifdef RT_USING_SMP
+    register int id = rt_hw_cpu_id();
+#else
+    register int id = 0;
+#endif
+
+    return (rt_thread_t)(&idle[id]);
 }

@@ -18,6 +18,11 @@ config RT_USING_SPI5
     bool "Enable SPI5"
     default y     
 
+config RT_USING_SAI_AUDIO
+    select RT_USING_AUDIO
+    bool "Enable AUDIO"
+    default n
+
 config RT_RTC_NAME
     string "The name of RTC device"
     default rtc
