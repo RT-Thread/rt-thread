@@ -151,11 +151,10 @@ void rt_pm_enter(void)
             /* enter sleep and wait to be waken up */
             pm->ops->enter(pm);
 
-            rt_hw_interrupt_enable(level);
-
             /* exit from low power mode */
             rt_pm_exit();
 
+            rt_hw_interrupt_enable(level);
             return ;
         }
     }
