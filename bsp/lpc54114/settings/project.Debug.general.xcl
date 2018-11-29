@@ -1,0 +1,15 @@
+"D:\software\iar\arm\bin\armproc.dll" 
+
+"D:\software\iar\arm\bin\armJET.dll" 
+
+"E:\rt-thread_lpc\bsp\lpc54110\Debug\Exe\project.out" 
+
+--plugin="D:\software\iar\arm\bin\armbat.dll" 
+
+--device_macro="D:\software\iar\arm\config\debugger\NXP\LPC5411x_M4.dmac" 
+
+--flash_loader="D:\software\iar\arm\config\flashloader\NXP\FlashNXPLPC5411xM4F256K.board" 
+
+
+
+
