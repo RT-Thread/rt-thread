@@ -636,7 +636,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>../../../rt-thread.bin</state>
+                    <state>../../../rtthread.bin</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>

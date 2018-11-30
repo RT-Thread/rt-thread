@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  *
- *
  * Change Logs:
  * Date           Author       Notes
  * 2018-11-27     zylx         change to new framework
@@ -19,10 +18,7 @@
 #define LOG_TAG              "drv.qspi"
 #include <drv_log.h>
 
-#if !defined(BSP_USING_QSPI)
-    #error "Please define at least one BSP_USING_QSPI"
-    /* this driver can be disabled at menuconfig ? RT-Thread Components ? Device Drivers */
-#endif
+#if defined(BSP_USING_QSPI)
 
 struct stm32_hw_spi_cs
 {
@@ -33,6 +29,9 @@ struct stm32_qspi_bus
 {
     QSPI_HandleTypeDef QSPI_Handler;
     char *bus_name;
+#ifdef BSP_QSPI_USING_DMA
+    DMA_HandleTypeDef hdma_quadspi;
+#endif
 };
 
 struct rt_spi_bus _qspi_bus1;
@@ -93,6 +92,33 @@ static int stm32_qspi_init(struct rt_qspi_device *device, struct rt_qspi_configu
     {
         LOG_E("qspi init failed (%d)!", result);
     }
+
+#ifdef BSP_QSPI_USING_DMA
+    /* QSPI interrupts must be enabled when using the HAL_QSPI_Receive_DMA */
+    HAL_NVIC_SetPriority(QUADSPI_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(QUADSPI_IRQn);
+    HAL_NVIC_SetPriority(DMA1_Channel5_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
+
+    /* init QSPI DMA */
+     __HAL_RCC_DMA1_CLK_ENABLE();
+    HAL_DMA_DeInit(qspi_bus->QSPI_Handler.hdma);
+    qspi_bus->hdma_quadspi.Instance = DMA1_Channel5;
+    qspi_bus->hdma_quadspi.Init.Request = DMA_REQUEST_5;
+    qspi_bus->hdma_quadspi.Init.Direction = DMA_PERIPH_TO_MEMORY;
+    qspi_bus->hdma_quadspi.Init.PeriphInc = DMA_PINC_DISABLE;
+    qspi_bus->hdma_quadspi.Init.MemInc = DMA_MINC_ENABLE;
+    qspi_bus->hdma_quadspi.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    qspi_bus->hdma_quadspi.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    qspi_bus->hdma_quadspi.Init.Mode = DMA_NORMAL;
+    qspi_bus->hdma_quadspi.Init.Priority = DMA_PRIORITY_LOW;
+    if (HAL_DMA_Init(&qspi_bus->hdma_quadspi) != HAL_OK)
+    {
+        LOG_E("qspi dma init failed (%d)!", result);
+    }
+    
+    __HAL_LINKDMA(&qspi_bus->QSPI_Handler,hdma,qspi_bus->hdma_quadspi);
+#endif /* BSP_QSPI_USING_DMA */
 
     return result;
 }
@@ -205,7 +231,6 @@ static rt_uint32_t qspixfer(struct rt_spi_device *device, struct rt_spi_message 
         {
             if (HAL_QSPI_Transmit(&qspi_bus->QSPI_Handler, (rt_uint8_t *)sndb, 5000) == HAL_OK)
             {
-
                 len = length;
             }
             else
@@ -222,12 +247,17 @@ static rt_uint32_t qspixfer(struct rt_spi_device *device, struct rt_spi_message 
     }
     else if (rcvb)/* recv data */
     {
-
         qspi_send_cmd(qspi_bus, qspi_message);
-
+#ifdef BSP_QSPI_USING_DMA
+        if (HAL_QSPI_Receive_DMA(&qspi_bus->QSPI_Handler, rcvb) == HAL_OK)
+#else
         if (HAL_QSPI_Receive(&qspi_bus->QSPI_Handler, rcvb, 5000) == HAL_OK)
+#endif
         {
             len = length;
+#ifdef BSP_QSPI_USING_DMA           
+            while(qspi_bus->QSPI_Handler.RxXferCount != 0);
+#endif
         }
         else
         {
@@ -283,20 +313,22 @@ static int stm32_qspi_register_bus(struct stm32_qspi_bus *qspi_bus, const char *
   */
 rt_err_t stm32_qspi_bus_attach_device(const char *bus_name, const char *device_name, rt_uint32_t pin, rt_uint8_t data_line_width, void (*enter_qspi_mode)(), void (*exit_qspi_mode)())
 {
+    struct rt_qspi_device *qspi_device = RT_NULL;
+    struct stm32_hw_spi_cs *cs_pin = RT_NULL;
     rt_err_t result = RT_EOK;
 
     RT_ASSERT(bus_name != RT_NULL);
     RT_ASSERT(device_name != RT_NULL);
     RT_ASSERT(data_line_width == 1 || data_line_width == 2 || data_line_width == 4);
 
-    struct rt_qspi_device *qspi_device = (struct rt_qspi_device *)rt_malloc(sizeof(struct rt_qspi_device));
+    qspi_device = (struct rt_qspi_device *)rt_malloc(sizeof(struct rt_qspi_device));
     if (qspi_device == RT_NULL)
     {
         LOG_E("no memory, qspi bus attach device failed!");
         result = RT_ENOMEM;
         goto __exit;
     }
-    struct stm32_hw_spi_cs *cs_pin = (struct stm32_hw_spi_cs *)rt_malloc(sizeof(struct stm32_hw_spi_cs));
+    cs_pin = (struct stm32_hw_spi_cs *)rt_malloc(sizeof(struct stm32_hw_spi_cs));
     if (qspi_device == RT_NULL)
     {
         LOG_E("no memory, qspi bus attach device failed!");
@@ -333,10 +365,35 @@ __exit:
     return  result;
 }
 
+#ifdef BSP_QSPI_USING_DMA
+void QUADSPI_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    HAL_QSPI_IRQHandler(&_stm32_qspi_bus.QSPI_Handler);
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+
+void DMA1_Channel5_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    HAL_DMA_IRQHandler(&_stm32_qspi_bus.hdma_quadspi);
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif /* BSP_QSPI_USING_DMA */
+
 static int rt_hw_qspi_bus_init(void)
 {
     return stm32_qspi_register_bus(&_stm32_qspi_bus, "qspi1");
 }
 INIT_BOARD_EXPORT(rt_hw_qspi_bus_init);
 
+#endif /* BSP_USING_QSPI */
 #endif /* RT_USING_QSPI */
