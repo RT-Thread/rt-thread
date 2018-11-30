@@ -289,6 +289,7 @@ struct stm32_uart uart1 =
         DMA1_FLAG_GL5,
         DMA1_Channel5_IRQn,
         0,
+        0,
     },
 };
 struct rt_serial_device serial1;
@@ -325,6 +326,7 @@ struct stm32_uart uart2 =
         DMA1_Channel6,
         DMA1_FLAG_GL6,
         DMA1_Channel6_IRQn,
+        0,
         0,
     },
 };
@@ -363,6 +365,7 @@ struct stm32_uart uart3 =
         DMA1_FLAG_GL3,
         DMA1_Channel3_IRQn,
         0,
+        0,
     },
 };
 struct rt_serial_device serial3;
@@ -399,6 +402,7 @@ struct stm32_uart uart4 =
         DMA2_Channel3,
         DMA2_FLAG_GL3,
         DMA2_Channel3_IRQn,
+        0,
         0,
     },
 };
