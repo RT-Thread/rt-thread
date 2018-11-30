@@ -4,7 +4,7 @@ import os
 ARCH='arm'
 CPU='cortex-m4'
 CROSS_TOOL='gcc'
-BOARD_NAME = 'lpcxpresso'
+BOARD_NAME = 'lpc54114'
 
 if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
@@ -38,9 +38,9 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -mcpu=cortex-m4 -mthumb -ffunction-sections -fdata-sections -mfpu=fpv4-sp-d16 -mfloat-abi=hard'
-    CFLAGS = DEVICE + ' -g -Wall -D__STARTUP_CLEAR_BSS'
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles  -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,ResetISR -T drivers\linker_scripts\link.lds'
+    CFLAGS = DEVICE + ' -g -Wall -eentry'
+    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb -D__STARTUP_CLEAR_BSS'
+    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles  -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,ResetISR -T drivers\linker_scripts\LPC54114J256_cm4_flash.ld'
 
     CPATH = ''
     LPATH = ''

@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>rtthread-lpc546xx</TargetName>
+      <TargetName>rtthread-lpc54114</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
@@ -49,7 +49,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\build\</OutputDirectory>
-          <OutputName>rtthread-lpc546xx</OutputName>
+          <OutputName>rtthread-lpc54114</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>

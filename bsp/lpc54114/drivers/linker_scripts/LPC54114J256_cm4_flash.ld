@@ -106,6 +106,23 @@ SECTIONS
     KEEP (*(.init))
     KEEP (*(.fini))
     . = ALIGN(4);
+
+    /* section information for finsh shell */
+    . = ALIGN(4);
+    __fsymtab_start = .;
+    KEEP(*(FSymTab))
+    __fsymtab_end = .;
+    . = ALIGN(4);
+    __vsymtab_start = .;
+    KEEP(*(VSymTab))
+    __vsymtab_end = .;
+    . = ALIGN(4);
+
+    /* section information for initial. */
+    . = ALIGN(4);
+    __rt_init_start = .;
+    KEEP(*(SORT(.rti_fn*)))
+    __rt_init_end = .;
   } > m_text
 
   .ARM.extab :
@@ -213,15 +230,10 @@ SECTIONS
     __END_BSS = .;
   } > m_data
 
-  .heap :
+  .RTT_HEAP :
   {
+    heap_start = .;
     . = ALIGN(8);
-    __end__ = .;
-    PROVIDE(end = .);
-    __HeapBase = .;
-    . += HEAP_SIZE;
-    __HeapLimit = .;
-    __heap_limit = .; /* Add for _sbrk */
   } > m_data
 
   .stack :
@@ -230,6 +242,8 @@ SECTIONS
     . += STACK_SIZE;
   } > m_data
 
+  PROVIDE(heap_end = ORIGIN(m_data) + LENGTH(m_data));
+  
   /* Initializes stack on the end of block */
   __StackTop   = ORIGIN(m_data) + LENGTH(m_data);
   __StackLimit = __StackTop - STACK_SIZE;
@@ -237,6 +251,5 @@ SECTIONS
 
   .ARM.attributes 0 : { *(.ARM.attributes) }
 
-  ASSERT(__StackLimit >= __HeapLimit, "region m_data overflowed with stack and heap")
 }
 

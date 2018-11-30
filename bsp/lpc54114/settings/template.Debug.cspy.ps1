@@ -23,9 +23,9 @@
 
 if ($debugfile -eq "")
 {
-& "D:\software\iar\common\bin\cspybat" -f "E:\rt-thread_lpc\bsp\lpc54110\settings\template.Debug.general.xcl" --backend -f "E:\rt-thread_lpc\bsp\lpc54110\settings\template.Debug.driver.xcl" 
+& "D:\software\iar\common\bin\cspybat" -f "E:\rt-thread_lpc54114\bsp\lpc54114\settings\template.Debug.general.xcl" --backend -f "E:\rt-thread_lpc54114\bsp\lpc54114\settings\template.Debug.driver.xcl" 
 }
 else
 {
-& "D:\software\iar\common\bin\cspybat" -f "E:\rt-thread_lpc\bsp\lpc54110\settings\template.Debug.general.xcl" --debug_file=$debugfile --backend -f "E:\rt-thread_lpc\bsp\lpc54110\settings\template.Debug.driver.xcl" 
+& "D:\software\iar\common\bin\cspybat" -f "E:\rt-thread_lpc54114\bsp\lpc54114\settings\template.Debug.general.xcl" --debug_file=$debugfile --backend -f "E:\rt-thread_lpc54114\bsp\lpc54114\settings\template.Debug.driver.xcl" 
 }

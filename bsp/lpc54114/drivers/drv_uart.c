@@ -8,6 +8,7 @@
  * 2013-05-18     Bernard      The first version for LPC40xx
  * 2014-12-16     RT_learning  The first version for LPC5410x
  * 2017-08-01     XiaoYang     The first version for LPC546xx
+ * 2018-11-30     yangjie      The first version for LPC54114
  */
 
 
@@ -114,17 +115,9 @@ static const struct rt_uart_ops lpc_uart_ops =
     lpc_getc,
 };
 
-
-#define IOCON_PIO_DIGITAL_EN        0x0100u   /*!< Enables digital function */
-#define IOCON_PIO_FUNC1               0x01u   /*!< Selects pin function 1 */
-#define IOCON_PIO_INPFILT_OFF       0x0200u   /*!< Input filter disabled */
-#define IOCON_PIO_INV_DI              0x00u   /*!< Input function is not inverted */
-#define IOCON_PIO_MODE_INACT          0x00u   /*!< No addition pin function */
-#define IOCON_PIO_OPENDRAIN_DI        0x00u   /*!< Open drain is disabled */
-#define IOCON_PIO_SLEW_STANDARD       0x00u   /*!< Standard mode, output slew rate control is enabled */
-#define PIN0_IDX                         0u   /*!< Pin number for pin 29 in a port 0 */
-#define PIN1_IDX                         1u   /*!< Pin number for pin 30 in a port 0 */
 #define PORT0_IDX                        0u   /*!< Port index */
+#define PIN0_IDX                         0u   /*!< Pin number for pin 0 */
+#define PIN1_IDX                         1u   /*!< Pin number for pin 1 */
 
 /* UART0 device driver structure */
 struct lpc_uart uart0 =

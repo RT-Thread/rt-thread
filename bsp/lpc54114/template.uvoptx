@@ -22,7 +22,7 @@
   </DaveTm>
 
   <Target>
-    <TargetName>rtthread-lpc546xx</TargetName>
+    <TargetName>rtthread-lpc54114</TargetName>
     <ToolsetNumber>0x4</ToolsetNumber>
     <ToolsetName>ARM-ADS</ToolsetName>
     <TargetOption>

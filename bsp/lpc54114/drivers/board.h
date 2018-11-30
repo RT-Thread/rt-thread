@@ -31,15 +31,21 @@
 
 #ifdef __CC_ARM
 extern int Image$$RTT_HEAP$$ZI$$Base;
-#define HEAP_BEGIN  ((void *)&Image$$RTT_HEAP$$ZI$$Base)
+extern int Image$$RTT_HEAP$$ZI$$Limit;
+#define HEAP_BEGIN          (&Image$$RTT_HEAP$$ZI$$Base)
+#define HEAP_END            (&Image$$RTT_HEAP$$ZI$$Limit)
 #elif __ICCARM__
 #pragma section="HEAP"
 #define HEAP_BEGIN  (__segment_end("HEAP"))
+extern void __RTT_HEAP_END;
+#define HEAP_END            (&__RTT_HEAP_END)
 #else
-extern int __bss_end;
-#define HEAP_BEGIN  ((void *)&__bss_end)
+extern int heap_start;
+extern int heap_end;
+#define HEAP_BEGIN          (&heap_start)
+#define HEAP_END            (&heap_end)
 #endif
-#define HEAP_END    (void*)(0x20000000 + 0x28000)
+//#define HEAP_END    (void*)(0x20000000 + 0x28000)
 
 extern void rt_hw_board_init(void);
 #endif

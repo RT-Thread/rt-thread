@@ -5,6 +5,6 @@ src = Split('''
 startup_LPC54114_cm4.s
 ''')
 
-group = DefineGroup('CMSIS', src, depend = [''], LIBS=[''], LIBPATH=[cwd])
+group = DefineGroup('CMSIS', src, depend = [''], LIBS=['libpower_cm4_hardabi'], LIBPATH=[cwd])
 
 Return('group')

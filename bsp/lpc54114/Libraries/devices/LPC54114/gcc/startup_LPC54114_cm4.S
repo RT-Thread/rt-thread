@@ -125,11 +125,6 @@ rel_vals:
 
     .thumb_func
     .align 2
-    .text
-    .align 1
-_start:
-    .text
-    .align 1
     .globl   Reset_Handler
     .weak    Reset_Handler
     .type    Reset_Handler, %function
@@ -263,7 +258,7 @@ normal_boot:
     strlt   r0, [r1], #4
     blt    .LC2
 #endif /* __STARTUP_CLEAR_BSS */
-    ldr   r0,=__START
+    ldr   r0,=entry
     blx   r0
 #else
     ldr   r0,=__libc_init_array

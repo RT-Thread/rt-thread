@@ -63,7 +63,7 @@ static void lpc_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     
     case PIN_MODE_INPUT:   
         dir = kGPIO_DigitalInput;
-        pin_cfg = IOCON_FUNC0 | IOCON_INPFILT_OFF | IOCON_DIGITAL_EN ;
+        pin_cfg = IOCON_FUNC0 | IOCON_INPFILT_OFF | IOCON_DIGITAL_EN;
         break;        
     case PIN_MODE_INPUT_PULLUP:
         dir = kGPIO_DigitalInput;        

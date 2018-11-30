@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"D:\software\iar\common\bin\cspybat" -f "E:\rt-thread_lpc\bsp\lpc54110\settings\template.Debug.general.xcl" --backend -f "E:\rt-thread_lpc\bsp\lpc54110\settings\template.Debug.driver.xcl" 
+"D:\software\iar\common\bin\cspybat" -f "E:\rt-thread_lpc54114\bsp\lpc54114\settings\template.Debug.general.xcl" --backend -f "E:\rt-thread_lpc54114\bsp\lpc54114\settings\template.Debug.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"D:\software\iar\common\bin\cspybat" -f "E:\rt-thread_lpc\bsp\lpc54110\settings\template.Debug.general.xcl" "--debug_file=%~1" --backend -f "E:\rt-thread_lpc\bsp\lpc54110\settings\template.Debug.driver.xcl" 
+"D:\software\iar\common\bin\cspybat" -f "E:\rt-thread_lpc54114\bsp\lpc54114\settings\template.Debug.general.xcl" "--debug_file=%~1" --backend -f "E:\rt-thread_lpc54114\bsp\lpc54114\settings\template.Debug.driver.xcl" 
 
 @echo off 
 :end
