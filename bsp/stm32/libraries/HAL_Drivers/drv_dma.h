@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  *
- *
  * Change Logs:
  * Date           Author       Notes
  * 2018-11-10      SummerGift   change to new framework

@@ -112,6 +112,8 @@ STM32 BSP 由三部分组成，分别是 (1) 通用库、(2) BSP 模板和 (3) �
 | SOC_STM32F103RB | 芯片型号 | SOC_STM32xxx |
 | SOC_SERIES_STM32F1 | 芯片系列| SOC_SERIES_STM32xx |
 
+用户可参考这个链接学习 Kconfig语法：(https://blog.csdn.net/jianwen_hi/article/details/53398141)
+
 ### 修改工程构建相关文件
 接下来需要修改用于构建工程相关的文件。
 

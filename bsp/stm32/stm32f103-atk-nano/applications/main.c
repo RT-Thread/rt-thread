@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2018-11-27     balanceTWK   change to new framework
  */
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
