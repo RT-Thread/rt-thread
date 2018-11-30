@@ -559,7 +559,7 @@ rt_err_t rt_wlan_dev_cfg_filter(struct rt_wlan_device *device, struct rt_wlan_fi
  * wlan device channel interface
  */
 rt_err_t rt_wlan_dev_set_channel(struct rt_wlan_device *device, int channel);
-rt_err_t rt_wlan_dev_get_channel(struct rt_wlan_device *device);
+int rt_wlan_dev_get_channel(struct rt_wlan_device *device);
 
 /*
  * wlan device country interface
