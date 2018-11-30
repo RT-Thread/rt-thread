@@ -19,8 +19,6 @@
 #include "fsl_common.h"
 #include "fsl_iocon.h"
 
-
-
 struct lpc_uart
 {
     USART_Type *UART;
@@ -170,14 +168,14 @@ int rt_hw_uart_init(void)
     /* Enables the clock for the IOCON block. 0 = Disable; 1 = Enable.: 0x01u */
     CLOCK_EnableClock(kCLOCK_Iocon);
     
-    const uint32_t port0_pin0_config = ((IOCON->PIO[0][0] &
+    const uint32_t port0_pin0_config = ((IOCON->PIO[PORT0_IDX][PIN0_IDX] &
                                         (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))    /* Mask bits to zero which are setting */                                            
                                         | IOCON_PIO_FUNC(1)                   /* Selects pin function: PORT00 (pin 31) is configured as FC0_RXD_SDA_MOSI. */                                            
                                         | IOCON_PIO_DIGIMODE(1));             /* Select Analog/Digital mode : Digital mode. */              
                     
     IOCON_PinMuxSet(IOCON, PORT0_IDX, PIN0_IDX, port0_pin0_config);           /* PORT0 PIN0 (coords: 31) is configured as FC0_RXD_SDA_MOSI */
     
-    const uint32_t port0_pin1_config = ((IOCON->PIO[0][1] &                                             
+    const uint32_t port0_pin1_config = ((IOCON->PIO[PORT0_IDX][PIN1_IDX] &                                             
                                         (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))    /* Mask bits to zero which are setting */                                            
                                         | IOCON_PIO_FUNC(1)                   /* Selects pin function: PORT01 (pin 32) is configured as FC0_TXD_SCL_MISO. */                                            
                                         | IOCON_PIO_DIGIMODE(1));             /* Select Analog/Digital mode : Digital mode. */

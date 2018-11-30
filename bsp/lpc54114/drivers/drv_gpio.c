@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 
+ * 2018-11-30     yangjie      The first version for LPC54114
  */
 
 #include <rthw.h>
@@ -63,7 +63,7 @@ static void lpc_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     
     case PIN_MODE_INPUT:   
         dir = kGPIO_DigitalInput;
-        pin_cfg = IOCON_FUNC0 | IOCON_INPFILT_OFF | IOCON_DIGITAL_EN ;		
+        pin_cfg = IOCON_FUNC0 | IOCON_INPFILT_OFF | IOCON_DIGITAL_EN ;
         break;        
     case PIN_MODE_INPUT_PULLUP:
         dir = kGPIO_DigitalInput;        
@@ -81,10 +81,10 @@ static void lpc_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     IOCON_PinMuxSet(IOCON, portx, piny, pin_cfg);        
     GPIO_PortInit(GPIO, portx);    
     
-    gpio_pin_config_t pin_config = {dir, 0};
+    gpio_pin_config_t pin_config = {(gpio_pin_direction_t)dir, 0};
     GPIO_PinInit(GPIO, portx, piny, &pin_config); 
 
-    CLOCK_DisableClock(kCLOCK_Iocon);		
+    CLOCK_DisableClock(kCLOCK_Iocon);
 }
 
 static void lpc_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
@@ -140,7 +140,7 @@ void callback(pint_pin_int_t pintr, uint32_t pmatch_status)
 }
 
 static rt_err_t lpc_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                     rt_uint32_t mode, void (*hdr)(void *args), void *args)
+                                   rt_uint32_t mode, void (*hdr)(void *args), void *args)
 {
     int portx, piny, trigger_mode, pin_initx, pintsel, pin_cfg, i;    
     
@@ -172,17 +172,17 @@ static rt_err_t lpc_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     /* Get inputmux_connection_t */        
     pintsel = (pin + (0xC0U << 20));
     
-    for(i = 0; i < IRQ_MAX_VAL; i++)	
-    {				
+    for(i = 0; i < IRQ_MAX_VAL; i++)
+    {
         if(pin_irq_hdr_tab[i].pin == -1)
         {
-            pin_initx = kPINT_PinInt0 + i;	
+            pin_initx = kPINT_PinInt0 + i;
             pin_irq_hdr_tab[i].pin = pin;
             pin_irq_hdr_tab[i].mode = trigger_mode;
             pin_irq_hdr_tab[i].hdr = hdr;
             pin_irq_hdr_tab[i].args = args;
             break;
-        }				
+        }
     }
         
     if(i >= IRQ_MAX_VAL)
@@ -193,7 +193,7 @@ static rt_err_t lpc_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     CLOCK_EnableClock(kCLOCK_Iocon);
     
     /* AttachSignal */    
-    INPUTMUX_AttachSignal(INPUTMUX, i, pintsel);
+    INPUTMUX_AttachSignal(INPUTMUX, i, (inputmux_connection_t)pintsel);
     pin_cfg = ((IOCON->PIO[portx][piny] &
               (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK | IOCON_PIO_FILTEROFF_MASK))) /* Mask bits to zero which are setting */
               | IOCON_PIO_FUNC(0)                /* Selects pin function.: PORT18 (pin 28) is configured as PIO1_8 */
@@ -203,7 +203,7 @@ static rt_err_t lpc_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     IOCON_PinMuxSet(IOCON, portx, piny, pin_cfg);    
     
     /* PINT_PinInterruptConfig */
-    PINT_PinInterruptConfig(PINT, pin_initx, pin_irq_hdr_tab[i].mode, callback);    
+    PINT_PinInterruptConfig(PINT, (pint_pin_int_t)pin_initx, (pint_pin_enable_t)(pin_irq_hdr_tab[i].mode), callback);    
     
     CLOCK_DisableClock(kCLOCK_InputMux);
     CLOCK_DisableClock(kCLOCK_Iocon);
@@ -213,16 +213,13 @@ static rt_err_t lpc_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
 
 static rt_err_t lpc_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 {
-    int portx, piny, i;    
+    int i;    
     
     if(pin > PIN_MAX_VAL)
         return RT_ERROR; 
     
-    portx = get_port(pin);
-    piny  = get_pin(pin); 
-    
-    for(i = 0; i < IRQ_MAX_VAL; i++)	
-    {				
+    for(i = 0; i < IRQ_MAX_VAL; i++)
+    {
         if(pin_irq_hdr_tab[i].pin == pin)
         {
             pin_irq_hdr_tab[i].pin = -1;
@@ -230,7 +227,7 @@ static rt_err_t lpc_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
             pin_irq_hdr_tab[i].mode = 0;
             pin_irq_hdr_tab[i].args = RT_NULL;
             break;
-        }				
+        }
     }        
     return RT_EOK;
 }
@@ -243,8 +240,8 @@ static rt_err_t lpc_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     if(pin > PIN_MAX_VAL)
         return RT_ERROR; 
     
-    for(i = 0; i < IRQ_MAX_VAL; i++)	
-    {				
+    for(i = 0; i < IRQ_MAX_VAL; i++)
+    {
         if(pin_irq_hdr_tab[i].pin == pin)
         {
             switch(i)
@@ -260,22 +257,22 @@ static rt_err_t lpc_pin_irq_enable(struct rt_device *device, rt_base_t pin,
                 default:break;
             }
             if(enabled)
-            {						
+            {
                 /* PINT_EnableCallback */
                 PINT_PinInterruptClrStatusAll(PINT);
-                NVIC_ClearPendingIRQ(irqn_type);
-                PINT_PinInterruptClrStatus(PINT, kPINT_PinInt0 + i);
-                EnableIRQ(irqn_type);
+                NVIC_ClearPendingIRQ((IRQn_Type)irqn_type);
+                PINT_PinInterruptClrStatus(PINT, (pint_pin_int_t)(kPINT_PinInt0 + i));
+                EnableIRQ((IRQn_Type)irqn_type);
             }
             else
-            {				
+            {
                 /* PINT_DisableCallback */
-                DisableIRQ(irqn_type);
-                PINT_PinInterruptClrStatus(PINT, kPINT_PinInt0 + i);
-                NVIC_ClearPendingIRQ(irqn_type);			
-            }						
+                DisableIRQ((IRQn_Type)irqn_type);
+                PINT_PinInterruptClrStatus(PINT, (pint_pin_int_t)(kPINT_PinInt0 + i));
+                NVIC_ClearPendingIRQ((IRQn_Type)irqn_type);
+            }
             break;
-        }				
+        }
     }  
         
     if(i >= IRQ_MAX_VAL)
