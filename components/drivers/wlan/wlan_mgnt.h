@@ -97,7 +97,7 @@ int rt_wlan_get_rssi(void);
  */
 rt_err_t rt_wlan_start_ap(const char *ssid, const char *password);
 rt_err_t rt_wlan_start_ap_adv(struct rt_wlan_info *info, const char *password);
-int rt_wlan_ap_is_active(void);
+rt_bool_t rt_wlan_ap_is_active(void);
 rt_err_t rt_wlan_ap_stop(void);
 rt_err_t rt_wlan_ap_get_info(struct rt_wlan_info *info);
 int rt_wlan_ap_get_sta_num(void);
