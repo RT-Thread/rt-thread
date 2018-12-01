@@ -80,6 +80,7 @@ SECTIONS
 
     .stack : 
     {
+        _sstack = .;
         . = . + _system_stack_size;
         . = ALIGN(4);
         _estack = .;

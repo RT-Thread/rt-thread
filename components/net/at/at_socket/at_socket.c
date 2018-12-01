@@ -622,6 +622,9 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
             goto __exit;
         }
         sock->state = AT_SOCKET_CONNECT;
+        /* set AT socket receive data callback function */
+        at_dev_ops->at_set_event_cb(AT_SOCKET_EVT_RECV, at_recv_notice_cb);
+        at_dev_ops->at_set_event_cb(AT_SOCKET_EVT_CLOSED, at_closed_notice_cb);
     }
 
     /* socket passively closed, receive function return 0 */
