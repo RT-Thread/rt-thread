@@ -258,10 +258,10 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
     {
 #ifdef ULOG_TIME_USING_TIMESTAMP
         static time_t now;
-        static struct tm *tm, tm_tmp;
+        static struct tm *tm;
 
         now = time(NULL);
-        tm = gmtime_r(&now, &tm_tmp);
+        tm = localtime(&now);
 
 #ifdef RT_USING_SOFT_RTC
         rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, "%02d-%02d %02d:%02d:%02d.%03d", tm->tm_mon + 1,
