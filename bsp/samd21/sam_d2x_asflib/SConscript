@@ -31,13 +31,19 @@ if rtconfig.DEVICE_SERIES == 'SAMD20':
 	path += [cwd + '/sam0/', cwd + '/sam0/utils/cmsis/samd20/include/']
 	path += [cwd + '/sam0/utils/cmsis/samd20/source/']
 	src	+= Glob('./sam0/utils/cmsis/samd20/source/*.c')
-	src += Glob('./sam0/utils/cmsis/samd20/source/arm/*.s')
+	if rtconfig.CROSS_TOOL == 'gcc':
+		src += Glob('./sam0/utils/cmsis/samd20/source/gcc/*.s')
+	elif rtconfig.CROSS_TOOL == 'keil':
+		src += Glob('./sam0/utils/cmsis/samd20/source/arm/*.s')
 elif rtconfig.DEVICE_SERIES == 'SAMD21':
 	#D21
 	path += [cwd + '/sam0/utils/cmsis/samd21/include/']
 	path += [cwd + '/sam0/utils/cmsis/samd21/source/']
 	src	+= Glob('./sam0/utils/cmsis/samd21/source/*.c')
-	src += Glob('./sam0/utils/cmsis/samd21/source/arm/*.s')
+	if rtconfig.CROSS_TOOL == 'gcc':
+		src += Glob('./sam0/utils/cmsis/samd21/source/gcc/*.s')
+	elif rtconfig.CROSS_TOOL == 'keil':
+		src += Glob('./sam0/utils/cmsis/samd21/source/arm/*.s')
 
 #sam0/drivers/system
 path += [cwd + '/sam0/drivers/system/']
@@ -68,8 +74,8 @@ elif rtconfig.DEVICE_SERIES == 'SAMD21':
 path += [cwd + '/sam0/drivers/sercom', cwd + '/sam0/drivers/sercom/usart']
 src += Glob('./sam0/drivers/sercom/*.c')
 src += Glob('./sam0/drivers/sercom/usart/*.c')
-SrcRemove(src, 'sercom_interrupt.c')
-SrcRemove(src, 'usart_interrupt.c')
+SrcRemove(src, './sam0/drivers/sercom/sercom_interrupt.c')
+SrcRemove(src, './sam0/drivers/sercom/usart/usart_interrupt.c')
 CPPDEFINES += ['USART_CALLBACK_MODE=false']
 
 #sam0/drivers/port
