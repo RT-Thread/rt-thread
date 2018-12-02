@@ -919,8 +919,6 @@ FINSH_FUNCTION_EXPORT(lcd_blit_line, draw blit line in lcd display);
 
 static int rt_hw_lcd_init(void)
 {
-	_lcd_low_level_init();
-
 	static struct rt_device lcd_device;
 
 	static struct rt_device_graphic_ops ili9341_ops =
@@ -932,6 +930,8 @@ static int rt_hw_lcd_init(void)
 		ili9341_lcd_blit_line
 	};
 
+	_lcd_low_level_init();
+	
 	/* register lcd device */
 	lcd_device.type = RT_Device_Class_Graphic;
 	lcd_device.init = lcd_init;
