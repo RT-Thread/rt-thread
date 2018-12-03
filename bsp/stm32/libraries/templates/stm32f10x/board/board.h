@@ -17,6 +17,8 @@
 
 #ifdef BSP_USING_GPIO
 #include "drv_gpio.h"
+/* Board Pin definitions */
+// #define LED0_PIN                       GET_PIN(C,  0)
 #endif
 
 /* Internal SRAM memory size[Kbytes] <8-64>, Default: 64*/

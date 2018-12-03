@@ -67,3 +67,11 @@ void MX_GPIO_Init(void)
 
 }
 
+#ifdef RT_USING_PIN
+// int board_pin_init(void)
+// {
+//     rt_pin_mode(LED0_PIN, PIN_MODE_OUTPUT);
+//     return 0;
+// }
+// INIT_BOARD_EXPORT(board_pin_init);
+#endif /* RT_USING_PIN */
