@@ -13,6 +13,7 @@
 #define RT_TICK_PER_SECOND 1000
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
+#define RT_USING_IDLE_HOOK
 #define RT_IDEL_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 1024
 #define RT_DEBUG
@@ -153,6 +154,9 @@
 
 /* example package: hello */
 
+
+/* rtpkgs online packages */
+
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32F4
 
@@ -162,13 +166,14 @@
 
 /* Onboard Peripheral Drivers */
 
-
-/* Offboard Peripheral Drivers */
+#define BSP_USING_USB_TO_USART
 
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
-#define BSP_USING_UART
 #define BSP_USING_UART1
+
+/* Board extended module Drivers */
+
 
 #endif

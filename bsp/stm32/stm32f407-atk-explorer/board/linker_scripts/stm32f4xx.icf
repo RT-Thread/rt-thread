@@ -18,7 +18,6 @@ define symbol __ICFEDIT_size_heap__   = 0x0000;
 define memory mem with size = 4G;
 define region ROM_region      = mem:[from __ICFEDIT_region_ROM_start__   to __ICFEDIT_region_ROM_end__];
 define region RAM1_region     = mem:[from __ICFEDIT_region_RAM1_start__   to __ICFEDIT_region_RAM1_end__];
-define region RAM2_region     = mem:[from __ICFEDIT_region_RAM2_start__   to __ICFEDIT_region_RAM2_end__];
 
 define block CSTACK    with alignment = 8, size = __ICFEDIT_size_cstack__   { };
 
@@ -28,5 +27,4 @@ do not initialize  { section .noinit };
 place at address mem:__ICFEDIT_intvec_start__ { readonly section .intvec };
 
 place in ROM_region   { readonly };
-place in RAM1_region  { section .sram };
-place in RAM2_region  { readwrite, block CSTACK};
+place in RAM1_region  { readwrite, last block CSTACK };

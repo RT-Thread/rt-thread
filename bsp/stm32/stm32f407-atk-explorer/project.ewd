@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>Debug</name>
+        <name>rt-thread</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>
@@ -80,7 +80,7 @@
                 </option>
                 <option>
                     <name>OCProductVersion</name>
-                    <state>8.11.3.13977</state>
+                    <state>8.20.1.14181</state>
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
@@ -88,7 +88,7 @@
                 </option>
                 <option>
                     <name>OCLastSavedByProductVersion</name>
-                    <state>8.11.3.13977</state>
+                    <state>8.20.1.14181</state>
                 </option>
                 <option>
                     <name>UseFlashLoader</name>
@@ -1403,11 +1403,11 @@
                 <loadFlag>1</loadFlag>
             </plugin>
             <plugin>
-                <file>$EW_DIR$\common\plugins\IARProbe\IarProbePlugin.ENU.ewplugin</file>
+                <file>$EW_DIR$\common\plugins\Orti\Orti.ENU.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
-                <file>$EW_DIR$\common\plugins\Orti\Orti.ENU.ewplugin</file>
+                <file>$EW_DIR$\common\plugins\TargetAccessServer\TargetAccessServer.ENU.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
@@ -2818,11 +2818,11 @@
                 <loadFlag>1</loadFlag>
             </plugin>
             <plugin>
-                <file>$EW_DIR$\common\plugins\IARProbe\IarProbePlugin.ENU.ewplugin</file>
+                <file>$EW_DIR$\common\plugins\Orti\Orti.ENU.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
-                <file>$EW_DIR$\common\plugins\Orti\Orti.ENU.ewplugin</file>
+                <file>$EW_DIR$\common\plugins\TargetAccessServer\TargetAccessServer.ENU.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>

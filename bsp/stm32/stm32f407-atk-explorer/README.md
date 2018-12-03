@@ -116,7 +116,7 @@ msh >
 
 ## 注意事项
 
-- STM32F407 有两块 RAM：RAM1(0x20000000,128K) 、RAM2(0x10000000,64K) ，本 BSP 将 RT-Thread HEAP 放到了 RAM1，将 RW 段数据放到了 RAM2（此地址空间不能使用 DMA 传输）。因此，如需使用 DMA 功能需使用 `rt_malloc/rt_calloc` 函数为缓冲区分配 RAM1 的空间。
+暂无
 
 ## 联系人信息
 
