@@ -768,7 +768,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>$PROJ_DIR$\drivers\linker_scripts\LPC54114J256_cm4.icf</state>
+                    <state>$PROJ_DIR$\drivers\linker_scripts\link.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>

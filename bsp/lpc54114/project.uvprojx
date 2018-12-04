@@ -368,7 +368,7 @@
             <TextAddressRange>0x00000000</TextAddressRange>
             <DataAddressRange>0x02000000</DataAddressRange>
             <pXoBase></pXoBase>
-            <ScatterFile>.\drivers\linker_scripts\LPC54114J256_cm4.scf</ScatterFile>
+            <ScatterFile>.\drivers\linker_scripts\link.scf</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
             <Misc> --keep *.o(.rti_fn.*)   --keep *.o(FSymTab) --keep *.o(VSymTab) </Misc>
