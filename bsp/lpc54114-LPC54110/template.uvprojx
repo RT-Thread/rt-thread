@@ -337,7 +337,7 @@
               <MiscControls>--library_interface=armcc --library_type=standardlib --diag_suppress=66,1296,186</MiscControls>
               <Define>CPU_LPC54608, CPU_LPC54608J512ET180=1</Define>
               <Undefine></Undefine>
-              <IncludePath></IncludePath>
+              <IncludePath>.</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>

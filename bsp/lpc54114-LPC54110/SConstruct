@@ -21,10 +21,9 @@ env = Environment(tools = ['mingw'],
 
 if rtconfig.PLATFORM == 'armcc':
     # overwrite cflags, because cflags has '--C99'
-    CXXCOM = '$CXX -o $TARGET --cpp -c $CXXFLAGS $_CCCOMCOM $SOURCES'
-        
+    env['CXXCOM'] = env['$CXX -o $TARGET --cpp -c $CXXFLAGS $_CCCOMCOM $SOURCES']
+    
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
-env['ASCOM'] = env['ASPPCOM']
 
 if rtconfig.PLATFORM == 'iar':
     env.Replace(CCCOM = ['$CC $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES'])
