@@ -40,7 +40,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m4 -mthumb -ffunction-sections -fdata-sections -mfpu=fpv4-sp-d16 -mfloat-abi=hard'
     CFLAGS = DEVICE + ' -g -Wall -eentry'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb -D__STARTUP_CLEAR_BSS'
-    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles  -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,ResetISR -T drivers\linker_scripts\LPC54114J256_cm4_flash.ld'
+    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles  -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,ResetISR -T drivers\linker_scripts\link.lds'
 
     CPATH = ''
     LPATH = ''
@@ -68,7 +68,7 @@ elif PLATFORM == 'armcc':
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
     LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread_' + \
-        BOARD_NAME + '.map --scatter \drivers\linker_scripts\LPC54114J256_cm4.scf'
+        BOARD_NAME + '.map --scatter \drivers\linker_scripts\link.scf'
 
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
     LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
@@ -127,7 +127,7 @@ elif PLATFORM == 'iar':
     else:
         CFLAGS += ' -Oh'    	
     
-    LFLAGS = ' --config "\drivers\linker_scripts\LPC54114J256_cm4.icf"' 
+    LFLAGS = ' --config "\drivers\linker_scripts\link.icf"' 
     LFLAGS += ' --entry __iar_program_start'    
     #LFLAGS += ' --silent'
     
