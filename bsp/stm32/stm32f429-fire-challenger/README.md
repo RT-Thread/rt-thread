@@ -31,7 +31,7 @@
 - 常用接口：USB 转串口、SD 卡接口、以太网接口、LCD 接口
 - 调试接口，标准 JTAG/SWD
 
-开发板更多详细信息请参考野火 [STM32 挑战者开发板介绍](https://item.taobao.com/item.htm?id=545418358219)。
+开发板更多详细信息请参考野火 [STM32 挑战者开发板介绍](https://fire-stm32.taobao.com/index.htm)。
 
 ## 外设支持
 
@@ -124,4 +124,4 @@ msh >
 
 维护人:
 
-- [guozhanxin](https://github.com/Guozhanxin) , 邮箱：<guozhanxin@rt-thread.com>
+- [SummerGift](https://github.com/SummerGGift)

@@ -30,7 +30,7 @@ ATK-NANO STM32F103 是正点原子推出的一款基于 ARM Cortex-M3 内核的�
 - 常用接口：USB 转串口、DS18B20/DHT11 接口 、USB SLAVE
 - 调试接口，板载的 ST-LINK SWD 下载
 
-开发板更多详细信息请参考正点原子 [STM32 ATK-NANO 开发板介绍](https://item.taobao.com/item.htm?id=575313690747)。
+开发板更多详细信息请参考正点原子 [STM32 ATK-NANO 开发板介绍](https://eboard.taobao.com/index.htm)。
 
 ## 外设支持
 
@@ -112,4 +112,4 @@ msh >
 
 维护人:
 
-- [guozhanxin](https://github.com/Guozhanxin) , 邮箱：<guozhanxin@rt-thread.com>
+- [guozhanxin](https://github.com/Guozhanxin) 
