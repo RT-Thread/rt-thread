@@ -48,7 +48,6 @@ LPC54110开发板由万利电子提供，双核高性能，专注语音应用的
 | UART              |     支持     | UART0                            |
 | SPI               |   暂不支持   | 即将支持         |
 | I2C               |   暂不支持   | 即将支持         |
-| SDIO              |   暂不支持   | 即将支持                              |
 | ADC          | 暂不支持 | 即将支持 |
 | PWM               |   暂不支持   | 即将支持                              |
 | USB Device        |   暂不支持   | 即将支持                              |
@@ -106,4 +105,4 @@ msh >
 
 维护人:
 
--  [xxx](https://个人主页), 邮箱：<xxx@xxx.com>
+-  [yangjie](https://github.com/yangjie11)
