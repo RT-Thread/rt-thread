@@ -14,18 +14,9 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
-
 #include <stdint.h>
 
 #include <rtthread.h>
-
-// <RDTConfigurator URL="http://www.rt-thread.com/eclipse">
-
-// <integer name="LPC_EXT_SDRAM" description="Begin Address of External SDRAM" default="0xA0000000" />
-#define LPC_EXT_SDRAM_BEGIN    0xA0000000
-// <integer name="LPC_EXT_SDRAM_END" description="End Address of External SDRAM" default="0xA2000000" />
-#define LPC_EXT_SDRAM_END      0xA0800000
-
 
 // </RDTConfigurator>
 
