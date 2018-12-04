@@ -159,7 +159,7 @@
 
 /* example package: hello */
 
-#define SOC_LPC54110
+#define SOC_LPC54114
 #define RT_USING_UART0
 
 #endif
