@@ -18,10 +18,7 @@ int main(void)
     rt_pin_mode(LED4_PIN, PIN_MODE_OUTPUT);
     while (1)
     {
-        rt_pin_write(LED4_PIN, 0);
-        rt_thread_delay(1000);
-        
-        rt_pin_write(LED4_PIN, 1);
+        rt_pin_write(LED4_PIN, !rt_pin_read(LED4_PIN));
         rt_thread_delay(1000);
     }
     
