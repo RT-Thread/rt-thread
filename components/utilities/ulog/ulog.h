@@ -45,6 +45,7 @@ void ulog_deinit(void);
 #define LOG_I(...)                     ulog_i(LOG_TAG, __VA_ARGS__)
 #define LOG_D(...)                     ulog_d(LOG_TAG, __VA_ARGS__)
 #define LOG_RAW(...)                   ulog_raw(__VA_ARGS__)
+#define LOG_HEX(name, width, buf, size)      ulog_hex(name, width, buf, size)
 
 /*
  * backend register and unregister
