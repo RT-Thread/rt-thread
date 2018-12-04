@@ -138,7 +138,7 @@ rt_hw_context_switch_interrupt:
 
     stmfd   sp!, {r2}       @ push old task's pc
     stmfd   sp!, {r4-r12,lr}@ push old task's lr,r12-r4
-    ldmfd   r0,  {r4-r7}    @ restore r0-r3 of the interrupt thread
+    ldmfd   r1,  {r4-r7}    @ restore r0-r3 of the interrupt thread
     stmfd   sp!, {r4-r7}    @ push old task's r0-r3
     stmfd   sp!, {r3}       @ push old task's cpsr
 
