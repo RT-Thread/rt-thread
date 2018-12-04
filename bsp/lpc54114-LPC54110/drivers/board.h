@@ -15,7 +15,6 @@
 #define __BOARD_H__
 
 #include <stdint.h>
-
 #include <rtthread.h>
 
 // </RDTConfigurator>

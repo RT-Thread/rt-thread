@@ -11,7 +11,6 @@
  * 2018-11-30     yangjie      The first version for LPC54114
  */
 
-
 #include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -137,7 +136,6 @@ void FLEXCOMM0_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-
 
 int rt_hw_uart_init(void)
 {
