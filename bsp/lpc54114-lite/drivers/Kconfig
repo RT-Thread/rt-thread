@@ -19,12 +19,6 @@ menu "LPC54110 Bsp Config"
             default y
     endmenu
 
-    menu "Select spi bus drivers"
-        config BSP_USING_SPI2
-            bool "Enable SPI2"
-            default y
-    endmenu
-
     config BSP_USING_SDCARD
         bool "Enable SDCARD"
         select BSP_USING_SPI2
