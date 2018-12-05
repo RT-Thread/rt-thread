@@ -11,6 +11,8 @@
 #ifndef SPI_FLASH_H__
 #define SPI_FLASH_H__
 
+#include <rtdevice.h>
+
 struct spi_flash_device
 {
     struct rt_device                flash_device;
