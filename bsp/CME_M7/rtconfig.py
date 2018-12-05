@@ -15,8 +15,10 @@ elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'C:/Keil'
 elif CROSS_TOOL == 'iar':
-	PLATFORM 	= 'iar'
-	EXEC_PATH 	= 'C:/Program Files/IAR Systems/Embedded Workbench 6.0 Evaluation'	
+	print('================ERROR============================')
+	print('Not support iar yet!')
+	print('=================================================')
+	exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -64,15 +66,14 @@ elif PLATFORM == 'armcc':
     LINK = 'armlink'
     TARGET_EXT = 'axf'
 
-    DEVICE = ' --cortex-m3'
+    DEVICE = ' --cpu Cortex-M3'
     CFLAGS = DEVICE + ' --c99 --apcs=interwork'
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread.map --scatter nuc472_flash.sct'
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread.map --scatter CME_M7.sct'
 
-    CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
-    LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
+    LFLAGS += ' --keep *.o(.rti_fn.*)   --keep *.o(FSymTab) --keep *.o(VSymTab)' 
 
-    EXEC_PATH += '/arm/bin40/'
+    EXEC_PATH += '/ARM/ARMCC/bin'
 
     if BUILD == 'debug':
         CFLAGS += ' -g -O0'
