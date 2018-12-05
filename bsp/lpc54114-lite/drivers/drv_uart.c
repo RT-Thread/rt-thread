@@ -142,7 +142,7 @@ int rt_hw_uart_init(void)
     struct lpc_uart *uart;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
-#ifdef RT_USING_UART0
+#ifdef BSP_USING_UART0
     
     uart = &uart0;
 
