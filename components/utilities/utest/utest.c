@@ -51,10 +51,10 @@ int utest_init(void)
     tc_table = (utest_tc_export_t)__section_begin("UtestTcTab");
     tc_num = (utest_tc_export_t)__section_end("UtestTcTab") - tc_table;
 #elif defined (__GNUC__)                              /* for GCC Compiler */
-    extern const int __rtatcmdtab_start;
-    extern const int __rtatcmdtab_end;
-    tc_table = (utest_tc_export_t)&__rtatcmdtab_start;
-    tc_num = (utest_tc_export_t) &__rtatcmdtab_end - tc_table;
+    extern const int __rt_utest_tc_tab_start;
+    extern const int __rt_utest_tc_tab_end;
+    tc_table = (utest_tc_export_t)&__rt_utest_tc_tab_start;
+    tc_num = (utest_tc_export_t) &__rt_utest_tc_tab_end - tc_table;
 #endif /* defined(__CC_ARM) */
 
     LOG_D("[          ] total utest testcase num: (%d)", tc_num);
