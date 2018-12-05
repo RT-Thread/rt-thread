@@ -98,8 +98,6 @@ BOOL xMBMasterPortSerialInit(UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits,
         break;
     }
     }
-    /* set serial configure */
-    serial->ops->configure(serial, &(serial->config));
 
     /* open serial device */
     if (!rt_device_open(&serial->parent, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX)) {
