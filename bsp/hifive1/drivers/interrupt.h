@@ -32,6 +32,6 @@ void rt_hw_interrupt_init(void);
 rt_uint32_t rt_hw_interrupt_get_active(rt_uint32_t fiq_irq);
 void rt_hw_interrupt_ack(rt_uint32_t fiq_irq, rt_uint32_t id);
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
-        void *param, char *name);
+        void *param, const char *name);
         
 #endif
