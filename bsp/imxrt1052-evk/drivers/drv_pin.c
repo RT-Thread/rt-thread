@@ -160,25 +160,26 @@ static struct rt1052_pin rt1052_pin_map[] =
     __RT1052_PIN(105, GPIO2, 30),    /* GPIO_B1_14 */
     __RT1052_PIN(106, GPIO2, 31),    /* GPIO_B1_15 */
     
-    /* GPIO3 */
-    __RT1052_PIN(107, GPIO3,  0),    /* GPIO_SD_B1_00 */
-    __RT1052_PIN(108, GPIO3,  1),    /* GPIO_SD_B1_01 */
-    __RT1052_PIN(109, GPIO3,  2),    /* GPIO_SD_B1_02 */
-    __RT1052_PIN(110, GPIO3,  3),    /* GPIO_SD_B1_03 */
-    __RT1052_PIN(111, GPIO3,  4),    /* GPIO_SD_B1_04 */
-    __RT1052_PIN(112, GPIO3,  5),    /* GPIO_SD_B1_05 */
-    __RT1052_PIN(113, GPIO3,  6),    /* GPIO_SD_B1_06 */
-    __RT1052_PIN(114, GPIO3,  7),    /* GPIO_SD_B1_07 */
-    __RT1052_PIN(115, GPIO3,  8),    /* GPIO_SD_B1_08 */
-    __RT1052_PIN(116, GPIO3,  9),    /* GPIO_SD_B1_09 */
-    __RT1052_PIN(117, GPIO3, 10),    /* GPIO_SD_B1_10 */
-    __RT1052_PIN(118, GPIO3, 11),    /* GPIO_SD_B1_11 */
-    __RT1052_PIN(119, GPIO3, 12),    /* GPIO_SD_B0_00 */
-    __RT1052_PIN(120, GPIO3, 13),    /* GPIO_SD_B0_01 */
-    __RT1052_PIN(121, GPIO3, 14),    /* GPIO_SD_B0_02 */
-    __RT1052_PIN(122, GPIO3, 15),    /* GPIO_SD_B0_03 */
-    __RT1052_PIN(123, GPIO3, 16),    /* GPIO_SD_B0_04 */
-    __RT1052_PIN(124, GPIO3, 17),    /* GPIO_SD_B0_05 */
+      /* GPIO3 */
+    __RT1052_PIN(107, GPIO3,     12),    /* GPIO_SD_B0_00 */
+    __RT1052_PIN(108, GPIO3,     13),    /* GPIO_SD_B0_01 */
+    __RT1052_PIN(109, GPIO3,     14),    /* GPIO_SD_B0_02 */
+    __RT1052_PIN(110, GPIO3,     15),    /* GPIO_SD_B0_03 */
+    __RT1052_PIN(111, GPIO3,     16),    /* GPIO_SD_B0_04 */
+    __RT1052_PIN(112, GPIO3,     17),    /* GPIO_SD_B0_05 */
+    __RT1052_PIN(113, GPIO3,      0),    /* GPIO_SD_B1_00 */
+    __RT1052_PIN(114, GPIO3,      1),    /* GPIO_SD_B1_01 */
+    __RT1052_PIN(115, GPIO3,      2),    /* GPIO_SD_B1_02 */
+    __RT1052_PIN(116, GPIO3,      3),    /* GPIO_SD_B1_03 */
+    __RT1052_PIN(117, GPIO3,      4),    /* GPIO_SD_B1_04 */
+    __RT1052_PIN(118, GPIO3,      5),    /* GPIO_SD_B1_05 */
+    __RT1052_PIN(119, GPIO3,      6),    /* GPIO_SD_B1_06 */
+    __RT1052_PIN(120, GPIO3,      7),    /* GPIO_SD_B1_07 */
+    __RT1052_PIN(121, GPIO3,      8),    /* GPIO_SD_B1_08 */
+    __RT1052_PIN(122, GPIO3,      9),    /* GPIO_SD_B1_09 */
+    __RT1052_PIN(123, GPIO3,     10),    /* GPIO_SD_B1_10 */
+    __RT1052_PIN(124, GPIO3,     11),    /* GPIO_SD_B1_11 */
+
 
     /* GPIO5 */
     __RT1052_PIN(125, GPIO5,  0),    /* WAKEUP */

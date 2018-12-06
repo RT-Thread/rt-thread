@@ -1,10 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <ProjectOpt xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_optx.xsd">
-
   <SchemaVersion>1.0</SchemaVersion>
-
   <Header>### uVision Project, (C) Keil Software</Header>
-
   <Extensions>
     <cExt>*.c</cExt>
     <aExt>*.s*; *.src; *.a*</aExt>
@@ -15,12 +11,10 @@
     <CppX>*.cpp</CppX>
     <nMigrate>0</nMigrate>
   </Extensions>
-
   <DaveTm>
     <dwLowDateTime>0</dwLowDateTime>
     <dwHighDateTime>0</dwHighDateTime>
   </DaveTm>
-
   <Target>
     <TargetName>RT-Thread IMXRT1052</TargetName>
     <ToolsetNumber>0x4</ToolsetNumber>
@@ -104,15 +98,15 @@
         <bSchkAxf>0</bSchkAxf>
         <bTchkAxf>0</bTchkAxf>
         <nTsel>3</nTsel>
-        <sDll></sDll>
-        <sDllPa></sDllPa>
-        <sDlgDll></sDlgDll>
-        <sDlgPa></sDlgPa>
-        <sIfile></sIfile>
-        <tDll></tDll>
-        <tDllPa></tDllPa>
-        <tDlgDll></tDlgDll>
-        <tDlgPa></tDlgPa>
+        <sDll />
+        <sDllPa />
+        <sDlgDll />
+        <sDlgPa />
+        <sIfile />
+        <tDll />
+        <tDllPa />
+        <tDlgDll />
+        <tDlgPa />
         <tIfile>.\Libraries\arm\evkmimxrt1050_flexspi_nor.ini</tIfile>
         <pMon>BIN\CMSIS_AGDI.dll</pMon>
       </DebugOpt>
@@ -120,12 +114,12 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>JL2CM3</Key>
-          <Name>-U30000299 -O78 -S2 -ZTIFSpeedSel5000 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -RST1 -TO18 -TC10000000 -TP21 -TDS8001 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO7 -FD20000000 -FCF000 -FN1 -FF0MIMXRT105x_HYPER_256KB_SEC.FLM -FS060000000 -FL04000000 -FP0($$Device:MIMXRT1052$Flash\MIMXRT105x_HYPER_256KB_SEC.FLM)</Name>
+          <Name>-U30000299 -O78 -S2 -ZTIFSpeedSel5000 -A0 -C0 -JU1 -JI-JP0 -JP0 -RST1 -N00("ARM CoreSight SW-DP") -D00(0BD11477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8001 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO15 -FD20000000 -FC8000 -FN1 -FF0MIMXRT105x_QuadSPI_4KB_SEC -FS060000000 -FL0800000</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
           <Key>CMSIS_AGDI</Key>
-          <Name>-X"" -O974 -S0 -C0 -P00 -TO18 -TC10000000 -TP20 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO7 -FD20000000 -FCF000 -FN1 -FF0MIMXRT105x_HYPER_256KB_SEC.FLM -FS060000000 -FL04000000 -FP0($$Device:MIMXRT1052$Flash\MIMXRT105x_HYPER_256KB_SEC.FLM)</Name>
+          <Name>-X"Any" -UAny -O974 -S9 -C0 -P00 -N00("ARM CoreSight SW-DP") -D00(0BD11477) -L00(0) -TO18 -TC10000000 -TP20 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD20000000 -FC8000 -FN1 -FF0MIMXRT105x_QuadSPI_4KB_SEC -FS060000000 -FL0800000</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -133,7 +127,7 @@
           <Name>UL2CM3(-S0 -C0 -P0 -FD20000000 -FCF000 -FN1 -FF0MIMXRT105x_HYPER_256KB_SEC -FS060000000 -FL04000000 -FP0($$Device:MIMXRT1052$Flash\MIMXRT105x_HYPER_256KB_SEC.FLM))</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
-      <Breakpoint/>
+      <Breakpoint />
       <Tracepoint>
         <THDelay>0</THDelay>
       </Tracepoint>
@@ -163,22 +157,21 @@
         <newCpu>0</newCpu>
         <uProt>0</uProt>
       </DebugFlag>
-      <LintExecutable></LintExecutable>
-      <LintConfigFile></LintConfigFile>
+      <LintExecutable />
+      <LintConfigFile />
       <bLintAuto>0</bLintAuto>
       <bAutoGenD>0</bAutoGenD>
       <LntExFlags>0</LntExFlags>
-      <pMisraName></pMisraName>
-      <pszMrule></pszMrule>
-      <pSingCmds></pSingCmds>
-      <pMultCmds></pMultCmds>
-      <pMisraNamep></pMisraNamep>
-      <pszMrulep></pszMrulep>
-      <pSingCmdsp></pSingCmdsp>
-      <pMultCmdsp></pMultCmdsp>
+      <pMisraName />
+      <pszMrule />
+      <pSingCmds />
+      <pMultCmds />
+      <pMisraNamep />
+      <pszMrulep />
+      <pSingCmdsp />
+      <pMultCmdsp />
     </TargetOption>
   </Target>
-
   <Group>
     <GroupName>::CMSIS</GroupName>
     <tvExp>0</tvExp>
@@ -186,5 +179,4 @@
     <cbSel>0</cbSel>
     <RteFlg>1</RteFlg>
   </Group>
-
 </ProjectOpt>

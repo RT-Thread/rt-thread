@@ -19,5 +19,15 @@ if GetDepend('BOARD_USING_HYPERFLASH'):
     Return('group') 
 
 if GetDepend('BOARD_USING_QSPIFLASH'): 
-    group = []
+    if rtconfig.CROSS_TOOL == 'iar':
+        cwd = GetCurrentDir()     
+        CPPPATH = [cwd]
+        LINKFLAGS = ''
+        src  = ['fsl_flexspi_nor_boot.c']
+        src += ['imxrt1052_sdram_ini_dcd.c']
+        src += ['imxrt1052_spiflash_config.c']
+        group = DefineGroup('xip', src, depend = [''], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS) 
+    else:
+	    group = []
+	   
     Return('group') 

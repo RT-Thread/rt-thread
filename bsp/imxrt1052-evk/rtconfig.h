@@ -11,12 +11,12 @@
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 100
-#define RT_DEBUG
 #define RT_USING_OVERFLOW_CHECK
-#define RT_DEBUG_INIT 0
-#define RT_DEBUG_THREAD 0
 #define RT_USING_HOOK
+#define RT_USING_IDLE_HOOK
+#define RT_IDEL_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
+#define RT_DEBUG
 
 /* Inter-Thread communication */
 
@@ -38,6 +38,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
+#define RT_VER_NUM 0x40000
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
 #define ARCH_ARM_CORTEX_M7
@@ -47,6 +48,7 @@
 #define RT_USING_COMPONENTS_INIT
 #define RT_USING_USER_MAIN
 #define RT_MAIN_THREAD_STACK_SIZE 2048
+#define RT_MAIN_THREAD_PRIORITY 10
 
 /* C++ features */
 
@@ -90,13 +92,22 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
+#define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
 #define RT_USING_RTC
 #define RT_USING_SDIO
+#define RT_SDIO_STACK_SIZE 512
+#define RT_SDIO_THREAD_PRIORITY 15
+#define RT_MMCSD_STACK_SIZE 1024
+#define RT_MMCSD_THREAD_PREORITY 22
+#define RT_MMCSD_MAX_PARTITION 16
 #define RT_USING_SPI
+
+/* Using WiFi */
+
 
 /* Using USB */
 
@@ -105,7 +116,10 @@
 
 #define RT_USING_LIBC
 
-/* Network stack */
+/* Network */
+
+/* Socket abstraction layer */
+
 
 /* light weight TCP/IP stack */
 
@@ -148,6 +162,9 @@
 /* Modbus master and slave stack */
 
 
+/* AT commands */
+
+
 /* VBUS(Virtual Software BUS) */
 
 
@@ -158,6 +175,11 @@
 
 
 /* RT-Thread online packages */
+
+/* system packages */
+
+/* RT-Thread GUI Engine */
+
 
 /* IoT - internet of things */
 
@@ -182,31 +204,14 @@
 /* tools packages */
 
 
-/* system packages */
-
-/* RT-Thread GUI Engine */
-
-
-/* peripheral libraries and drivers */
-
-
 /* miscellaneous packages */
-
-
-/* sample package */
 
 
 /* example package: hello */
 
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
-
 #define SOC_IMXRT1052
-#define BOARD_USING_HYPERFLASH
-#define BOARD_RT1050_EVK
+#define BOARD_USING_QSPIFLASH
+#define BOARD_RT1050_ATK
 
 /* RT1050 Bsp Config */
 
@@ -231,7 +236,7 @@
 
 /* Select lcd driver */
 
-/* Notice: Evk Board para: 480*272 4 4 8 2 40 10 106 45 */
+/* Notice: ATK Board para: 480*272 4 4 8 2 40 10 109 45 */
 
 #define RT_USING_LCD
 #define LCD_WIDTH 480

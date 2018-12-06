@@ -24,19 +24,50 @@
 
 #include <rtthread.h>
 
-#if defined(PKG_USING_GUIENGINE)
+#if defined(PKG_USING_GUIENGINE) || defined(RT_USING_LITTLEVGL)
 
-#include <rtgui/driver.h>
+#include "../lv_conf.h"
+#include <drivers/pin.h>
+#include "fsl_gpio.h" 
+#include "fsl_iomuxc.h"
+
+
+int ELCDIF_PanelID_Read(void);
+
+ 
+
 int lcd_init(void)
 {
     struct rt_device *device;
+    
+    
+//    device = rt_device_find("pin"); // ÕÒµ½¹Ü½Å¿ØÖÆ
+//    
+//    
+//    
+//    rt_device_open(device,RT_DEVICE_OFLAG_RDWR);
+//    
+//    if(device)
+//    {
+//      rt_device_control(device,0,(void*)&ledBL);    
+//    }
+//    
+//    rt_device_write(device,0,(void*)&ledBL_status_on,sizeof(ledBL_status_on));// ×´Ì¬µÆ
+//    
+    
+    
+    
     device = rt_device_find("lcd");
     if (device)
     {
-        rtgui_graphic_set_device(device);
+      //rtgui_graphic_set_device(device);
+      rt_device_open(device,RT_DEVICE_OFLAG_RDWR);
     }
 
     return 0;
 }
 INIT_APP_EXPORT(lcd_init);
 #endif
+
+
+

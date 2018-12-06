@@ -3,7 +3,7 @@ import os
 # toolchains options
 ARCH='arm'
 CPU='cortex-m7'
-CROSS_TOOL='gcc'
+CROSS_TOOL='iar'
 
 if os.getenv('RTT_CC'):
 	CROSS_TOOL = os.getenv('RTT_CC')
@@ -18,7 +18,7 @@ elif CROSS_TOOL == 'keil':
 	EXEC_PATH 	= 'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
     PLATFORM 	= 'iar'
-    EXEC_PATH    = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
+    EXEC_PATH    = r'D:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
 
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
