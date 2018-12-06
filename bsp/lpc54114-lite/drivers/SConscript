@@ -9,10 +9,6 @@ clock_config.c
 
 CPPPATH = [cwd]
 
-# remove no need file.
-if GetDepend('RT_USING_LWIP') == False:
-    SrcRemove(src, 'drv_emac.c')
-
 # add driver code
 if GetDepend('BSP_USING_UART0'):
     src = src + ['drv_uart.c'] 

@@ -91,18 +91,13 @@ static rt_err_t i2c_bus_control(struct rt_i2c_bus_device *bus, rt_uint32_t cmd, 
 
 static const struct rt_i2c_bus_device_ops ops =
 {
-    .master_xfer     = master_xfer, 
-    .slave_xfer      = slave_xfer,
-    .i2c_bus_control = i2c_bus_control,
+    master_xfer, 
+    slave_xfer,
+    i2c_bus_control,
 }; 
 
 #if defined(BSP_USING_I2C4)
-static struct lpc_i2c i2c4 = 
-{
-    .base = I2C4,
-    .device_name = "i2c4", 
-    .bus.ops = &ops
-}; 
+static struct lpc_i2c i2c4 = {0}; 
 #endif
 
 int rt_hw_i2c_init(void)
@@ -112,6 +107,10 @@ int rt_hw_i2c_init(void)
 #if defined(BSP_USING_I2C4)
     CLOCK_AttachClk(kFRO12M_to_FLEXCOMM4);
     RESET_PeripheralReset(kFC4_RST_SHIFT_RSTn);
+    
+    i2c4.base = I2C4;
+    i2c4.device_name = "i2c4"; 
+    i2c4.bus.ops = &ops; 
     
     IOCON_PinMuxSet(IOCON, 1, 1, IOCON_MODE_PULLUP | IOCON_FUNC5 | IOCON_DIGITAL_EN | IOCON_INPFILT_OFF);
     IOCON_PinMuxSet(IOCON, 1, 2, IOCON_MODE_PULLUP | IOCON_FUNC5 | IOCON_DIGITAL_EN | IOCON_INPFILT_OFF);

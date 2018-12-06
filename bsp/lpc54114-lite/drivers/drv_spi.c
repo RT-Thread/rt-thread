@@ -160,20 +160,14 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
 }
 
 #if defined(BSP_USING_SPI2)
-static struct lpc_spi spi2 = 
-{
-    .base = SPI2
-}; 
-static struct rt_spi_bus spi2_bus = 
-{
-    .parent.user_data = &spi2
-}; 
+static struct lpc_spi spi2 = {0}; 
+static struct rt_spi_bus spi2_bus = {0}; 
 #endif
 
 static struct rt_spi_ops lpc_spi_ops = 
 {
-    .configure = configure, 
-    .xfer      = spixfer
+    configure, 
+    spixfer
 }; 
 
 int rt_hw_spi_init(void)
@@ -183,6 +177,10 @@ int rt_hw_spi_init(void)
 #if defined(BSP_USING_SPI2)
     CLOCK_AttachClk(kFRO12M_to_FLEXCOMM2);
     RESET_PeripheralReset(kFC2_RST_SHIFT_RSTn);
+
+    spi2.base = SPI2; 
+    spi2.cfg = RT_NULL; 
+    spi2_bus.parent.user_data = &spi2; 
     
     IOCON_PinMuxSet(IOCON, 0,  8, (IOCON_FUNC1 | IOCON_MODE_PULLUP | IOCON_GPIO_MODE | IOCON_DIGITAL_EN));  /* SPI2_MOSI */
     IOCON_PinMuxSet(IOCON, 0,  9, (IOCON_FUNC1 | IOCON_MODE_PULLUP | IOCON_GPIO_MODE | IOCON_DIGITAL_EN));  /* SPI2_MISO */
