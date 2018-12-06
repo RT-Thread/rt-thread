@@ -57,7 +57,8 @@ int utest_init(void)
     tc_num = (utest_tc_export_t) &__rt_utest_tc_tab_end - tc_table;
 #endif /* defined(__CC_ARM) */
 
-    LOG_D("[          ] total utest testcase num: (%d)", tc_num);
+    LOG_I("utest is initialize success.");
+    LOG_I("total utest testcase num: (%d)", tc_num);
     return tc_num;
 }
 INIT_COMPONENT_EXPORT(utest_init);
@@ -66,11 +67,11 @@ static void utest_tc_list(void)
 {
     rt_size_t i = 0;
 
-    LOG_D("Commands list : ");
+    LOG_I("Commands list : ");
 
     for (i = 0; i < tc_num; i++)
     {
-        LOG_D("%s", tc_table[i].name);
+        LOG_I("[testcase name]:%s; [run timeout]:%d", tc_table[i].name, tc_table[i].run_timeout);
     }
 }
 MSH_CMD_EXPORT_ALIAS(utest_tc_list, utest_tc_list, output all utest testcase);
@@ -114,8 +115,6 @@ static char *file_basename(const char *file)
 static void utest_run(const char *utest_name)
 {
     rt_size_t i = 0;
-
-    LOG_D("[          ] total utest testcase num: (%d)", tc_num);
 
     LOG_I("[==========] [ utest    ] started");
     while(i < tc_num)
