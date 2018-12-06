@@ -58,13 +58,15 @@ Windows上编译推荐使用[env工具][1]，可以在console下进入到`vega/r
 
 ## 5. 联系人信息
 
-维护人：xxx < abc@name.com >
+维护人：
 
 ## 6. 参考
 
-* 板子[数据手册][2]
-* 芯片[数据手册][3]
+* 开发板[用户手册][2]
+* RV32M1芯片[数据手册][3]
+* [openisa链接][4]
 
   [1]: https://www.rt-thread.org/page/download.html
-  [2]: http://abc.com/datasheet.pdf
-  [3]: http://abc.com/um.pdf
+  [2]: https://github.com/open-isa-org/open-isa.org/blob/master/RV32M1_VEGA_Board_User_Guide.pdf
+  [3]: https://github.com/open-isa-org/open-isa.org/blob/master/Reference%20Manual%20and%20Data%20Sheet/RV32M1DS_Rev.1.1.pdf
+  [4]: https://github.com/open-isa-org/open-isa.org
