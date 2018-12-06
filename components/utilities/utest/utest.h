@@ -34,6 +34,7 @@ typedef struct utest *utest_t;
 
 struct utest_tc_export {
     const char  *name;
+    uint32_t     run_timeout;
     rt_err_t   (*init)(void);
     void       (*tc)(void);
     rt_err_t   (*cleanup)(void);
@@ -52,18 +53,19 @@ utest_t utest_handle_get(void);
 
 #define UTEST_NAME_MAX_LEN (128u)
 
-#define UTEST_TC_EXPORT(testcase, name, init, cleanup)      \
+#define UTEST_TC_EXPORT(testcase, name, init, cleanup, timeout)                \
     RT_USED static const struct utest_tc_export _utest_testcase                \
-    SECTION("UtestTcTab") =                                                   \
+    SECTION("UtestTcTab") =                                                    \
     {                                                                          \
-        name,                                                            \
-        init,                                                            \
-        testcase,                                                          \
-        cleanup                                                          \
+        name,                                                                  \
+        timeout,                                                               \
+        init,                                                                  \
+        testcase,                                                              \
+        cleanup                                                                \
     }
 
-#define UTEST_UNIT_RUN(test_unit_func)                            \
-    utest_unit_run(test_unit_func, #test_unit_func);             \
+#define UTEST_UNIT_RUN(test_unit_func)                                         \
+    utest_unit_run(test_unit_func, #test_unit_func);                           \
     if(utest_handle_get()->failed_num != 0) return;
 
 #endif
