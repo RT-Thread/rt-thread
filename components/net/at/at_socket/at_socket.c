@@ -715,7 +715,19 @@ __exit:
     }
     else
     {
-        at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
+        /* try to read Legacy data */
+        /* receive packet list last transmission of remaining data */
+        rt_mutex_take(sock->recv_lock, RT_WAITING_FOREVER);
+        recv_len = at_recvpkt_get(&(sock->recvpkt_list), (char *)mem, len);
+        rt_mutex_release(sock->recv_lock);
+        if(recv_len<=0)
+        {    
+            at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
+        }
+        else
+        {
+            result = recv_len;
+        }  
     }
 
     return result;
