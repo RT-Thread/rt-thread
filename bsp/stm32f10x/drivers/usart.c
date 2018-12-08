@@ -100,8 +100,6 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
 
     /* Enable USART */
     USART_Cmd(uart->uart_device, ENABLE);
-    
-    USART_ClearFlag(uart->uart_device,USART_FLAG_TC);
 
     return RT_EOK;
 }
@@ -159,6 +157,7 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
     }
     else
     {
+        USART_ClearFlag(uart->uart_device,USART_FLAG_TC);
         uart->uart_device->DR = c;
         while (!(uart->uart_device->SR & USART_FLAG_TC));
     }
