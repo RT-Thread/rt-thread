@@ -1,35 +1,23 @@
 /*
- * File      : stack.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-07-31     tanek        first implementation
+ * 2018/10/28     Bernard      The unify RISC-V porting code.
  */
 
+#include <rthw.h>
 #include <rtthread.h>
 
-/* flag in interrupt handling */
-rt_uint32_t rt_interrupt_from_thread;
-rt_uint32_t rt_interrupt_to_thread;
-rt_uint32_t rt_thread_switch_interrupt_flag;
+#include "cpuport.h"
 
-struct stack_frame
+volatile rt_ubase_t  rt_interrupt_from_thread = 0;
+volatile rt_ubase_t  rt_interrupt_to_thread   = 0;
+volatile rt_uint32_t rt_thread_switch_interrupt_flag = 0;
+
+struct rt_hw_stack_frame
 {
     rt_ubase_t epc;        /* epc - epc    - program counter                     */
     rt_ubase_t ra;         /* x1  - ra     - return address for jumps            */
@@ -75,30 +63,43 @@ struct stack_frame
  *
  * @return stack address
  */
-rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
-                             rt_uint8_t *stack_addr, void *texit)
+rt_uint8_t *rt_hw_stack_init(void       *tentry,
+                             void       *parameter,
+                             rt_uint8_t *stack_addr,
+                             void       *texit)
 {
-    struct stack_frame *stack_frame;
+    struct rt_hw_stack_frame *frame;
     rt_uint8_t         *stk;
     int                i;
 
-    stk  = stack_addr + sizeof(rt_uint32_t);
-    stk  = (rt_uint8_t *)RT_ALIGN_DOWN((rt_uint32_t)stk, 8);
-    stk -= sizeof(struct stack_frame);
+    stk  = stack_addr + sizeof(rt_ubase_t);
+    stk  = (rt_uint8_t *)RT_ALIGN_DOWN((rt_ubase_t)stk, REGBYTES);
+    stk -= sizeof(struct rt_hw_stack_frame);
 
-    stack_frame = (struct stack_frame *)stk;
+    frame = (struct rt_hw_stack_frame *)stk;
 
-    for (i = 0; i < sizeof(struct stack_frame) / sizeof(rt_ubase_t); i++)
+    for (i = 0; i < sizeof(struct rt_hw_stack_frame) / sizeof(rt_ubase_t); i++)
     {
-        ((rt_ubase_t *)stack_frame)[i] = 0xdeadbeef;
+        ((rt_ubase_t *)frame)[i] = 0xdeadbeef;
     }
 
-    stack_frame->ra      = (rt_ubase_t)texit;
-    stack_frame->a0      = (rt_ubase_t)parameter;
-    stack_frame->epc     = (rt_ubase_t)tentry;
+    frame->ra      = (rt_ubase_t)texit;
+    frame->a0      = (rt_ubase_t)parameter;
+    frame->epc     = (rt_ubase_t)tentry;
 
-    // force to machine mode(MPP=11) and set MPIE to 1
-    stack_frame->mstatus = 0x00001880;
+    /* force to machine mode(MPP=11) and set MPIE to 1 */
+    frame->mstatus = 0x00007880;
 
     return stk;
+}
+
+void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to)
+{
+    if (rt_thread_switch_interrupt_flag == 0)
+        rt_interrupt_from_thread = from;
+
+    rt_interrupt_to_thread = to;
+    rt_thread_switch_interrupt_flag = 1;
+
+    return ;
 }
