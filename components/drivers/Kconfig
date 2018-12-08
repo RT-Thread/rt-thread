@@ -16,6 +16,12 @@ config RT_USING_SERIAL
     select RT_USING_DEVICE
     default y
 
+if RT_USING_SERIAL
+    config RT_SERIAL_USING_DMA
+        bool "Enable serial DMA mode"
+        default y
+endif    
+
 config RT_USING_CAN
     bool "Using CAN device drivers"
     default n
