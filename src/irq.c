@@ -52,7 +52,7 @@ void rt_interrupt_leave_sethook(void (*hook)(void))
 #ifdef RT_USING_SMP
 #define rt_interrupt_nest rt_cpu_self()->irq_nest
 #else
-volatile rt_uint8_t rt_interrupt_nest;
+volatile rt_uint8_t rt_interrupt_nest = 0;
 #endif
 
 /**
