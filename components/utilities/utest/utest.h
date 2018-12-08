@@ -81,22 +81,6 @@ typedef struct utest_tc_export *utest_tc_export_t;
 typedef void (*test_unit_func)(void);
 
 /**
- * TC_LOG_x
- * 
- * @brief Log output interface used in test cases.
- * 
- * @type TC_LOG_I Output info level log.
- * @type TC_LOG_D Output debug level log.
- * @type TC_LOG_E Output error level log.
- * @type TC_LOG_W Output warning level log.
- * 
-*/
-#define TC_LOG_I(...)  LOG_I(__VA_ARGS__)
-#define TC_LOG_D(...)  LOG_D(__VA_ARGS__)
-#define TC_LOG_E(...)  LOG_E(__VA_ARGS__)
-#define TC_LOG_W(...)  LOG_W(__VA_ARGS__)
-
-/**
  * utest_unit_run
  * 
  * @brief Unit test function executor.
