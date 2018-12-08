@@ -74,42 +74,24 @@ static void utest_tc_list(void)
         LOG_I("[testcase name]:%s; [run timeout]:%d", tc_table[i].name, tc_table[i].run_timeout);
     }
 }
-MSH_CMD_EXPORT_ALIAS(utest_tc_list, utest_tc_list, output all utest testcase);
+MSH_CMD_EXPORT_ALIAS(utest_tc_list, utest_list, output all utest testcase);
 
-static char *file_basename(const char *file)
+static const char *file_basename(const char *file)
 {
-    char *ptr = RT_NULL;
+    char *end_ptr = RT_NULL;
     char *rst = RT_NULL;
-    char *file_bak = rt_strdup(file);
-    uint8_t len = 0;
-    if ((ptr = strrchr(file_bak, '\\')) != RT_NULL || (ptr = strrchr(file_bak, '/')) != RT_NULL)
+
+    if (!((end_ptr = strrchr(file, '\\')) != RT_NULL || \
+        (end_ptr = strrchr(file, '/')) != RT_NULL) || \
+        (rt_strlen(file) < 2))
     {
-        rst = ptr;
+        rst = (char *)file;
     }
     else
     {
-        rst = file_bak;
+        rst = (char *)(end_ptr + 1);
     }
-
-    len = rst - file_bak;
-    if (rst != file)
-    {
-        file_bak[len] = '\0';
-
-        if ((ptr = strrchr(file_bak, '\\')) != RT_NULL || (ptr = strrchr(file_bak, '/')) != RT_NULL)
-        {
-            rst = ptr;
-        }
-        else
-        {
-            rst = file_bak;
-        }
-        len = rst - file_bak;
-    }
-
-    rt_free(file_bak);
-    len = len != 0? len + 1 : len;
-    return (char *)(file + len);
+    return (const char *)rst;
 }
 
 static void utest_run(const char *utest_name)

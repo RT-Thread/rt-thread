@@ -14,8 +14,6 @@
 #include <rtthread.h>
 #include "utest_log.h"
 
-#define UTEST_SW_VERSION                  "0.0.1"
-
 /**
  * utest_error
  * 
