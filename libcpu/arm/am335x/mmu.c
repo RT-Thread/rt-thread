@@ -11,147 +11,34 @@
 #include <rtthread.h>
 #include "am33xx.h"
 #include <mmu.h>
+#include "cp15.h"
 
-extern void rt_cpu_dcache_disable(void);
-extern void rt_hw_cpu_dcache_enable(void);
-extern void rt_cpu_icache_disable(void);
-extern void rt_hw_cpu_icache_enable(void);
-extern void rt_cpu_mmu_disable(void);
-extern void rt_cpu_mmu_enable(void);
-extern void rt_cpu_tlb_set(register rt_uint32_t i);
-
-void mmu_disable_dcache()
-{
-	rt_cpu_dcache_disable();
-}
-
-void mmu_enable_dcache()
-{
-	rt_hw_cpu_dcache_enable();
-}
-
-void mmu_disable_icache()
-{
-	rt_cpu_icache_disable();
-}
-
-void mmu_enable_icache()
-{
-	rt_hw_cpu_icache_enable();
-}
-
-void mmu_disable()
-{
-	rt_cpu_mmu_disable();
-}
-
-void mmu_enable()
-{
-	rt_cpu_mmu_enable();
-}
-
-void mmu_setttbase(register rt_uint32_t i)
-{
-	register rt_uint32_t value;
-
-   /* Invalidates all TLBs.Domain access is selected as
-    * client by configuring domain access register,
-    * in that case access controlled by permission value
-    * set by page table entry
-    */
-	value = 0;
-	asm volatile ("mcr p15, 0, %0, c8, c7, 0"::"r"(value));
-
-	value = 0x55555555;
-	asm volatile ("mcr p15, 0, %0, c3, c0, 0"::"r"(value));
-	
-	rt_cpu_tlb_set(i);
-}
-
-void mmu_set_domain(register rt_uint32_t i)
-{
-	asm volatile ("mcr p15,0, %0, c3, c0,  0": :"r" (i));
-}
-
-void mmu_enable_alignfault()
-{
-	register rt_uint32_t i;
-
-	/* read control register */
-	asm volatile ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
-
-	i |= (1 << 1);
-
-	/* write back to control register */
-	asm volatile ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
-}
-
-void mmu_disable_alignfault()
-{
-	register rt_uint32_t i;
-
-	/* read control register */
-	asm volatile ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
-
-	i &= ~(1 << 1);
-
-	/* write back to control register */
-	asm volatile ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
-}
-
-void mmu_clean_invalidated_cache_index(int index)
-{
-	asm volatile ("mcr p15, 0, %0, c7, c14, 2": :"r" (index));
-}
-
-void mmu_clean_dcache(rt_uint32_t buffer, rt_uint32_t size)
-{
-	unsigned int ptr;
-
-	ptr = buffer & ~0x1f;
-
-	while (ptr < buffer + size)
-	{
-		asm volatile ("mcr p15, 0, %0, c7, c10, 1": :"r" (ptr));
-		ptr += 32;
-	}
-}
-
-void mmu_invalidate_dcache(rt_uint32_t buffer, rt_uint32_t size)
-{
-	unsigned int ptr;
-
-	ptr = buffer & ~0x1f;
-
-	while (ptr < buffer + size)
-	{
-		asm volatile ("mcr p15, 0, %0, c7, c6, 1": :"r" (ptr));
-		ptr += 32;
-	}
-}
-
-void mmu_invalidate_tlb()
-{
-	asm volatile ("mcr p15, 0, %0, c8, c7, 0": :"r" (0));
-}
-
-void mmu_invalidate_icache()
-{
-	asm volatile ("mcr p15, 0, %0, c7, c5, 0": :"r" (0));
-}
-
-/* level1 page table */
+// [ref] DDI0344K_cortex_a8_r3p2_trm.pdf: 3.2.33 c2, Translation Table Base Control Register
+//      Bit     Field           Description
+//      31-6    Reverse
+//      5       PD1             Specifies occurrence of a translation table walk on a TLB miss when using Translation Table Base Register 1.
+//      4       PD0             Specifies occurrence of a translation table walk on a TLB miss when using Translation Table Base Register 0.
+//      3       Reverse
+//      2-0     N               Specifies the boundary size of Translation Table Base Register 0:
+//                              b000 = 16KB, reset value
+//                              b001 = 8KB
+//                              b010 = 4KB
+//                              b011 = 2KB
+//                              b100 = 1KB
+//                              b101 = 512B
+//                              b110 = 256B
+//                              b111 = 128B
 static volatile unsigned int _page_table[4*1024] __attribute__((aligned(16*1024)));
-void mmu_setmtt(rt_uint32_t vaddrStart, rt_uint32_t vaddrEnd, rt_uint32_t paddrStart, rt_uint32_t attr)
+void mmu_setmtt(uint32_t vaddrStart, uint32_t vaddrEnd, uint32_t paddrStart, uint32_t attr)
 {
-    volatile rt_uint32_t *pTT;
+    volatile uint32_t *pTT;
     volatile int i,nSec;
-    pTT=(rt_uint32_t *)_page_table+(vaddrStart>>20);
+    pTT=(uint32_t *)_page_table+(vaddrStart>>20);
     nSec=(vaddrEnd>>20)-(vaddrStart>>20);
     for(i=0;i<=nSec;i++)
     {
-		*pTT = attr |(((paddrStart>>20)+i)<<20);
-		pTT++;
+        *pTT = attr |(((paddrStart>>20)+i)<<20);
+        pTT++;
     }
 }
 
@@ -166,24 +53,16 @@ RT_WEAK void mmu_setmtts(void)
 
 void rt_hw_mmu_init(void)
 {
-	/* disable I/D cache */
-	mmu_disable_dcache();
-	mmu_disable_icache();
-	mmu_disable();
-	mmu_invalidate_tlb();
+    rt_cpu_cache_disable();
+    rt_cpu_mmu_disable();
 
+    rt_cpu_ctl_feature_disable(CP15_SCTLR_AFE | CP15_SCTLR_TRE | CP15_SCTLR_A);
+    rt_cpu_domain_access_client_set();
+    rt_cpu_tlb_invalidate();
     mmu_setmtts();
+    rt_cpu_tlb_set((uint32_t)_page_table);
 
-	/* set MMU table address */
-	mmu_setttbase((rt_uint32_t)_page_table);
-
-    /* enables MMU */
-    mmu_enable();
-
-    /* enable Instruction Cache */
-    mmu_enable_icache();
-
-    /* enable Data Cache */
-    mmu_enable_dcache();
+    rt_cpu_mmu_enable();
+    rt_cpu_cache_enable();
 }
 
