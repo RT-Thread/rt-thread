@@ -386,6 +386,11 @@
               <FileType>1</FileType>
               <FilePath>applications\main.c</FilePath>
             </File>
+            <File>
+              <FileName>mnt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\mnt.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -402,9 +407,9 @@
               <FilePath>drivers\drv_uart.c</FilePath>
             </File>
             <File>
-              <FileName>drv_pin.c</FileName>
+              <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_pin.c</FilePath>
+              <FilePath>drivers\drv_gpio.c</FilePath>
             </File>
             <File>
               <FileName>drv_spi.c</FileName>

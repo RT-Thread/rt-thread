@@ -18,4 +18,8 @@ config $PKGS_DIR
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
+config BOARD_SWXT-LQ100-32101
+    bool
+    default y
+
 source "drivers/Kconfig"

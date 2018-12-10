@@ -1,42 +1,27 @@
 /*
- * File      : drv_i2c.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+ * Copyright (c) 2006-2018, Synwit Technology Co.,Ltd.
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-05-31     ZYH          first version
+ * 2018-05-31     Zohar_Lee    first version
  */
+
 #include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
 
-#ifdef RT_USING_PWM
+rt_err_t swm320_pwm_control(struct rt_device_pwm *device, int cmd, void *arg);
 
-rt_err_t pwm_control(struct rt_device_pwm *device, int cmd, void *arg);
+const struct rt_pwm_ops pwm_ops = {swm320_pwm_control};
+struct rt_device_pwm swm320_device_pwm0;
+struct rt_device_pwm swm320_device_pwm1;
+struct rt_device_pwm swm320_device_pwm2;
+struct rt_device_pwm swm320_device_pwm3;
 
-const struct rt_pwm_ops pwm_ops = {pwm_control};
-struct rt_device_pwm _device_pwm0;
-struct rt_device_pwm _device_pwm1;
-struct rt_device_pwm _device_pwm2;
-struct rt_device_pwm _device_pwm3;
-
-rt_err_t pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
+rt_err_t swm320_pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
 {
     struct rt_pwm_configuration configuration = {0};
 
@@ -44,7 +29,7 @@ rt_err_t pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
 
     configuration = *(struct rt_pwm_configuration *)arg;
 
-    if (&_device_pwm0 == device)
+    if (&swm320_device_pwm0 == device)
     {
         switch (cmd)
         {
@@ -95,7 +80,7 @@ rt_err_t pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
             break;
         }
     }
-    else if (&_device_pwm1 == device)
+    else if (&swm320_device_pwm1 == device)
     {
         switch (cmd)
         {
@@ -147,7 +132,7 @@ rt_err_t pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
             break;
         }
     }
-    else if (&_device_pwm2 == device)
+    else if (&swm320_device_pwm2 == device)
     {
         switch (cmd)
         {
@@ -199,7 +184,7 @@ rt_err_t pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
             break;
         }
     }
-    else if (&_device_pwm3 == device)
+    else if (&swm320_device_pwm3 == device)
     {
         switch (cmd)
         {
@@ -285,28 +270,28 @@ int pwm_register(PWM_TypeDef *PWMx, const char *name)
         PORT_Init(PORTA, PIN4, FUNMUX0_PWM0A_OUT, 0);
         PORT_Init(PORTA, PIN10, FUNMUX0_PWM0B_OUT, 0);
 
-        device_pwm = &_device_pwm0;
+        device_pwm = &swm320_device_pwm0;
     }
     else if (PWMx == PWM1)
     {
         PWM_Init(PWM1, &PWM_initStruct);
         PORT_Init(PORTA, PIN5, FUNMUX1_PWM1A_OUT, 0);
         PORT_Init(PORTA, PIN9, FUNMUX1_PWM1B_OUT, 0);
-        device_pwm = &_device_pwm1;
+        device_pwm = &swm320_device_pwm1;
     }
     else if (PWMx == PWM2)
     {
         PWM_Init(PWM2, &PWM_initStruct);
         PORT_Init(PORTP, PIN0, FUNMUX0_PWM2A_OUT, 0);
         PORT_Init(PORTP, PIN2, FUNMUX0_PWM2B_OUT, 0);
-        device_pwm = &_device_pwm2;
+        device_pwm = &swm320_device_pwm2;
     }
     else if (PWMx == PWM3)
     {
         PWM_Init(PWM3, &PWM_initStruct);
         PORT_Init(PORTP, PIN1, FUNMUX1_PWM3A_OUT, 0);
         PORT_Init(PORTP, PIN3, FUNMUX1_PWM3B_OUT, 0);
-        device_pwm = &_device_pwm3;
+        device_pwm = &swm320_device_pwm3;
     }
     else
     {
@@ -316,7 +301,7 @@ int pwm_register(PWM_TypeDef *PWMx, const char *name)
     return rt_device_pwm_register(device_pwm, name, (struct rt_pwm_ops *)ops, user_data);
 }
 
-int drv_pwm_init(void)
+int rt_hw_pwm_init(void)
 {
     int result = 0;
 #ifdef BSP_USING_PWM0
@@ -337,6 +322,4 @@ int drv_pwm_init(void)
 
     return result;
 }
-INIT_DEVICE_EXPORT(drv_pwm_init);
-
-#endif //RT_USING_PWM
+INIT_DEVICE_EXPORT(rt_hw_pwm_init);

@@ -1,53 +1,40 @@
 /*
- * File      : drv_uart.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+ * Copyright (c) 2006-2018, Synwit Technology Co.,Ltd.
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-05-31     ZYH          first version
+ * 2018-05-31     Zohar_Lee    first version
  */
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
 #include <SWM320_port.h>
 #include <SWM320_uart.h>
 
-struct drv_uart
+struct swm320_uart
 {
     UART_TypeDef *uart;
     IRQn_Type irq;
 };
 
-static rt_err_t drv_configure(struct rt_serial_device *serial,
-                              struct serial_configure *cfg)
+static rt_err_t swm320_uart_configure(struct rt_serial_device *serial,
+                                      struct serial_configure *cfg)
 {
-    struct drv_uart *uart;
+    struct swm320_uart *uart;
     UART_InitStructure UART_initStruct;
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
-    uart = (struct drv_uart *)serial->parent.user_data;
+    uart = (struct swm320_uart *)serial->parent.user_data;
     NVIC_DisableIRQ(uart->irq);
     UART_initStruct.Baudrate = cfg->baud_rate;
     UART_initStruct.RXThreshold = 1;
-	UART_initStruct.RXThresholdIEn = 1;
-	UART_initStruct.TXThresholdIEn = 0;
-	UART_initStruct.TimeoutTime = 10;		
-	UART_initStruct.TimeoutIEn = 0;
+    UART_initStruct.RXThresholdIEn = 1;
+    UART_initStruct.TXThresholdIEn = 0;
+    UART_initStruct.TimeoutTime = 10;
+    UART_initStruct.TimeoutIEn = 0;
     switch (cfg->data_bits)
     {
     case DATA_BITS_9:
@@ -79,16 +66,16 @@ static rt_err_t drv_configure(struct rt_serial_device *serial,
         break;
     }
     UART_Init(uart->uart, &UART_initStruct);
-	UART_Open(uart->uart);
+    UART_Open(uart->uart);
     return RT_EOK;
 }
 
-static rt_err_t drv_control(struct rt_serial_device *serial,
-                            int cmd, void *arg)
+static rt_err_t swm320_uart_control(struct rt_serial_device *serial,
+                                    int cmd, void *arg)
 {
-    struct drv_uart *uart;
+    struct swm320_uart *uart;
     RT_ASSERT(serial != RT_NULL);
-    uart = (struct drv_uart *)serial->parent.user_data;
+    uart = (struct swm320_uart *)serial->parent.user_data;
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
@@ -103,49 +90,50 @@ static rt_err_t drv_control(struct rt_serial_device *serial,
     return RT_EOK;
 }
 
-static int drv_putc(struct rt_serial_device *serial, char c)
+static int swm320_uart_putc(struct rt_serial_device *serial, char c)
 {
-    struct drv_uart *uart;
+    struct swm320_uart *uart;
     RT_ASSERT(serial != RT_NULL);
-    uart = (struct drv_uart *)serial->parent.user_data;
-    while (UART_IsTXBusy(uart->uart));
+    uart = (struct swm320_uart *)serial->parent.user_data;
+    while (UART_IsTXBusy(uart->uart))
+        ;
     uart->uart->DATA = c;
     return 1;
 }
 
-static int drv_getc(struct rt_serial_device *serial)
+static int swm320_uart_getc(struct rt_serial_device *serial)
 {
     int ch;
-    struct drv_uart *uart;
+    struct swm320_uart *uart;
     RT_ASSERT(serial != RT_NULL);
-    uart = (struct drv_uart *)serial->parent.user_data;
+    uart = (struct swm320_uart *)serial->parent.user_data;
     ch = -1;
     if (UART_IsRXFIFOEmpty(uart->uart) == 0)
         UART_ReadByte(uart->uart, (uint32_t *)&ch);
     return ch;
 }
 
-static const struct rt_uart_ops drv_uart_ops =
+static const struct rt_uart_ops swm320_uart_ops =
 {
-    drv_configure,
-    drv_control,
-    drv_putc,
-    drv_getc,
+    swm320_uart_configure,
+    swm320_uart_control,
+    swm320_uart_putc,
+    swm320_uart_getc,
 };
 
 #if defined(BSP_USING_UART0)
 /* UART0 device driver structure */
-static struct drv_uart uart0;
+static struct swm320_uart uart0;
 struct rt_serial_device serial0;
 void UART0_Handler(void)
 {
-    struct drv_uart *uart;
+    struct swm320_uart *uart;
     /* enter interrupt */
     rt_interrupt_enter();
 
     uart = &uart0;
     /* UART in mode Receiver -------------------------------------------------*/
-    if(UART_INTRXThresholdStat(uart->uart) || UART_INTTimeoutStat(uart->uart))
+    if (UART_INTRXThresholdStat(uart->uart) || UART_INTTimeoutStat(uart->uart))
     {
         rt_hw_serial_isr(&serial0, RT_SERIAL_EVENT_RX_IND);
         //rt_kprintf("1\n");
@@ -157,17 +145,17 @@ void UART0_Handler(void)
 
 #if defined(BSP_USING_UART1)
 /* UART1 device driver structure */
-static struct drv_uart uart1;
+static struct swm320_uart uart1;
 struct rt_serial_device serial1;
 void UART1_Handler(void)
 {
-    struct drv_uart *uart;
+    struct swm320_uart *uart;
     /* enter interrupt */
     rt_interrupt_enter();
 
     uart = &uart1;
     /* UART in mode Receiver -------------------------------------------------*/
-    if(UART_INTRXThresholdStat(uart->uart) || UART_INTTimeoutStat(uart->uart))
+    if (UART_INTRXThresholdStat(uart->uart) || UART_INTTimeoutStat(uart->uart))
     {
         rt_hw_serial_isr(&serial1, RT_SERIAL_EVENT_RX_IND);
     }
@@ -178,17 +166,17 @@ void UART1_Handler(void)
 
 #if defined(BSP_USING_UART2)
 /* UART2 device driver structure */
-static struct drv_uart uart2;
+static struct swm320_uart uart2;
 struct rt_serial_device serial2;
 void UART2_Handler(void)
 {
-    struct drv_uart *uart;
+    struct swm320_uart *uart;
     /* enter interrupt */
     rt_interrupt_enter();
 
     uart = &uart2;
     /* UART in mode Receiver -------------------------------------------------*/
-    if(UART_INTRXThresholdStat(uart->uart) || UART_INTTimeoutStat(uart->uart))
+    if (UART_INTRXThresholdStat(uart->uart) || UART_INTTimeoutStat(uart->uart))
     {
         rt_hw_serial_isr(&serial2, RT_SERIAL_EVENT_RX_IND);
     }
@@ -199,17 +187,17 @@ void UART2_Handler(void)
 
 #if defined(BSP_USING_UART3)
 /* UART3 device driver structure */
-static struct drv_uart uart3;
+static struct swm320_uart uart3;
 struct rt_serial_device serial3;
 void UART3_Handler(void)
 {
-    struct drv_uart *uart;
+    struct swm320_uart *uart;
     /* enter interrupt */
     rt_interrupt_enter();
 
     uart = &uart3;
     /* UART in mode Receiver -------------------------------------------------*/
-    if(UART_INTRXThresholdStat(uart->uart) || UART_INTTimeoutStat(uart->uart))
+    if (UART_INTRXThresholdStat(uart->uart) || UART_INTTimeoutStat(uart->uart))
     {
         rt_hw_serial_isr(&serial3, RT_SERIAL_EVENT_RX_IND);
     }
@@ -218,17 +206,17 @@ void UART3_Handler(void)
 }
 #endif /* BSP_USING_UART3 */
 
-int hw_usart_init(void)
+int rt_hw_uart_init(void)
 {
-    struct drv_uart *uart;
+    struct swm320_uart *uart;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 #ifdef BSP_USING_UART0
-    PORT_Init(PORTA, PIN2, FUNMUX0_UART0_RXD, 1);	
-	PORT_Init(PORTA, PIN3, FUNMUX1_UART0_TXD, 0);	
+    PORT_Init(PORTA, PIN2, FUNMUX0_UART0_RXD, 1);
+    PORT_Init(PORTA, PIN3, FUNMUX1_UART0_TXD, 0);
     uart = &uart0;
     uart->uart = UART0;
     uart->irq = UART0_IRQn;
-    serial0.ops    = &drv_uart_ops;
+    serial0.ops = &swm320_uart_ops;
     serial0.config = config;
     /* register UART0 device */
     rt_hw_serial_register(&serial0, "uart0",
@@ -236,12 +224,12 @@ int hw_usart_init(void)
                           uart);
 #endif /* BSP_USING_UART0 */
 #ifdef BSP_USING_UART1
-    PORT_Init(PORTC, PIN2, FUNMUX0_UART1_RXD, 1);	
-	PORT_Init(PORTC, PIN3, FUNMUX1_UART1_TXD, 0);	
+    PORT_Init(PORTC, PIN2, FUNMUX0_UART1_RXD, 1);
+    PORT_Init(PORTC, PIN3, FUNMUX1_UART1_TXD, 0);
     uart = &uart1;
     uart->uart = UART1;
     uart->irq = UART1_IRQn;
-    serial1.ops    = &drv_uart_ops;
+    serial1.ops = &swm320_uart_ops;
     serial1.config = config;
     /* register UART1 device */
     rt_hw_serial_register(&serial1, "uart1",
@@ -249,12 +237,12 @@ int hw_usart_init(void)
                           uart);
 #endif /* BSP_USING_UART1 */
 #ifdef BSP_USING_UART2
-    PORT_Init(PORTC, PIN4, FUNMUX0_UART2_RXD, 1);	
-	PORT_Init(PORTC, PIN5, FUNMUX1_UART2_TXD, 0);	
+    PORT_Init(PORTC, PIN4, FUNMUX0_UART2_RXD, 1);
+    PORT_Init(PORTC, PIN5, FUNMUX1_UART2_TXD, 0);
     uart = &uart2;
     uart->uart = UART2;
     uart->irq = UART2_IRQn;
-    serial2.ops    = &drv_uart_ops;
+    serial2.ops = &swm320_uart_ops;
     serial2.config = config;
     /* register UART2 device */
     rt_hw_serial_register(&serial2, "uart2",
@@ -262,12 +250,12 @@ int hw_usart_init(void)
                           uart);
 #endif /* BSP_USING_UART2 */
 #ifdef BSP_USING_UART3
-    PORT_Init(PORTC, PIN6, FUNMUX0_UART3_RXD, 1);	
-	PORT_Init(PORTC, PIN7, FUNMUX1_UART3_TXD, 0);	
+    PORT_Init(PORTC, PIN6, FUNMUX0_UART3_RXD, 1);
+    PORT_Init(PORTC, PIN7, FUNMUX1_UART3_TXD, 0);
     uart = &uart3;
     uart->uart = UART3;
     uart->irq = UART3_IRQn;
-    serial3.ops    = &drv_uart_ops;
+    serial3.ops = &swm320_uart_ops;
     serial3.config = config;
     /* register UART3 device */
     rt_hw_serial_register(&serial3, "uart3",
@@ -276,4 +264,4 @@ int hw_usart_init(void)
 #endif /* BSP_USING_UART3 */
     return 0;
 }
-INIT_BOARD_EXPORT(hw_usart_init);
+INIT_BOARD_EXPORT(rt_hw_uart_init);

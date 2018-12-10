@@ -1,48 +1,37 @@
 /*
- * File      : drv_spi.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+ * Copyright (c) 2006-2018, Synwit Technology Co.,Ltd.
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-05-31     ZYH          first version
+ * 2018-05-31     Zohar_Lee    first version
  */
+
 #include <board.h>
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <SWM320_port.h>
 #include <rthw.h>
-#ifdef RT_USING_SPI
+
 #define SPIRXEVENT 0x01
 #define SPITXEVENT 0x02
 #define SPITIMEOUT 2
 #define SPICRCEN 0
-struct spi_cs
+
+struct swm320_spi_cs
 {
     rt_uint32_t pin;
 };
 
-struct spi
+struct swm320_spi
 {
-    SPI_TypeDef *spi;
+    SPI_TypeDef *swm320_spi;
     struct rt_spi_configuration *cfg;
 };
 
-static rt_err_t spi_init(SPI_TypeDef *spix, struct rt_spi_configuration *cfg)
+static rt_err_t swm320_spi_init(SPI_TypeDef *spix,
+                                struct rt_spi_configuration *cfg)
 {
     SPI_InitStructure SPI_initStruct;
     if (cfg->mode & RT_SPI_SLAVE)
@@ -120,10 +109,10 @@ static rt_err_t spi_init(SPI_TypeDef *spix, struct rt_spi_configuration *cfg)
     }
     SPI_initStruct.FrameFormat = SPI_FORMAT_SPI;
     SPI_initStruct.RXHFullIEn = 0;
-	SPI_initStruct.TXEmptyIEn = 0;
-	SPI_initStruct.TXCompleteIEn = 0;
+    SPI_initStruct.TXEmptyIEn = 0;
+    SPI_initStruct.TXCompleteIEn = 0;
     SPI_Init(spix, &SPI_initStruct);
-	SPI_Open(spix);
+    SPI_Open(spix);
     return RT_EOK;
 }
 
@@ -153,7 +142,7 @@ static rt_err_t spi_init(SPI_TypeDef *spix, struct rt_spi_configuration *cfg)
         }                                 \
     } while (0)
 
-static rt_err_t spitxrx1b(struct spi *hspi, void *rcvb, const void *sndb)
+static rt_err_t spitxrx1b(struct swm320_spi *hspi, void *rcvb, const void *sndb)
 {
     rt_uint32_t padrcv = 0;
     rt_uint32_t padsnd = 0xFF;
@@ -169,20 +158,21 @@ static rt_err_t spitxrx1b(struct spi *hspi, void *rcvb, const void *sndb)
     {
         sndb = &padsnd;
     }
-    while (SPI_IsTXFull(hspi->spi))
+    while (SPI_IsTXFull(hspi->swm320_spi))
         ;
-    SPISEND_1(hspi->spi->DATA, sndb, hspi->cfg->data_width);
-    while (SPI_IsRXEmpty(hspi->spi))
+    SPISEND_1(hspi->swm320_spi->DATA, sndb, hspi->cfg->data_width);
+    while (SPI_IsRXEmpty(hspi->swm320_spi))
         ;
-    SPIRECV_1(hspi->spi->DATA, rcvb, hspi->cfg->data_width);
+    SPIRECV_1(hspi->swm320_spi->DATA, rcvb, hspi->cfg->data_width);
     return RT_EOK;
 }
 
-static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static rt_uint32_t swm320_spi_xfer(struct rt_spi_device *device,
+                                   struct rt_spi_message *message)
 {
     rt_err_t res;
-    struct spi *hspi = (struct spi *)device->bus->parent.user_data;
-    struct spi_cs *cs = device->parent.user_data;
+    struct swm320_spi *hspi = (struct swm320_spi *)device->bus->parent.user_data;
+    struct swm320_spi_cs *cs = device->parent.user_data;
     const rt_uint8_t *sndb = message->send_buf;
     rt_uint8_t *rcvb = message->recv_buf;
     rt_int32_t length = message->length;
@@ -211,7 +201,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         length--;
     }
     /* Wait until Busy flag is reset before disabling SPI */
-    while (!SPI_IsTXEmpty(hspi->spi) && !SPI_IsRXEmpty(hspi->spi))
+    while (!SPI_IsTXEmpty(hspi->swm320_spi) && !SPI_IsRXEmpty(hspi->swm320_spi))
         ;
     if (message->cs_release)
     {
@@ -220,73 +210,77 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     return message->length - length;
 }
 
-rt_err_t spi_configure(struct rt_spi_device *device,
-                       struct rt_spi_configuration *configuration)
+rt_err_t swm320_spi_configure(struct rt_spi_device *device,
+                              struct rt_spi_configuration *configuration)
 {
-    struct spi *hspi = (struct spi *)device->bus->parent.user_data;
+    struct swm320_spi *hspi = (struct swm320_spi *)device->bus->parent.user_data;
     hspi->cfg = configuration;
-    return spi_init(hspi->spi, configuration);
+    return swm320_spi_init(hspi->swm320_spi, configuration);
 }
-const struct rt_spi_ops spi_ops =
+const struct rt_spi_ops swm320_spi_ops =
 {
-    .configure = spi_configure,
-    .xfer = spixfer,
+    .configure = swm320_spi_configure,
+    .xfer = swm320_spi_xfer,
 };
 
-struct rt_spi_bus _spi_bus0, _spi_bus1;
-struct spi _spi0, _spi1;
-int spi_register_bus(SPI_TypeDef *SPIx, const char *name)
+struct rt_spi_bus swm320_spi_bus0, swm320_spi_bus1;
+struct swm320_spi swm320_spi0, swm320_spi1;
+int swm320_spi_register_bus(SPI_TypeDef *SPIx, const char *name)
 {
     struct rt_spi_bus *spi_bus;
-    struct spi *spi;
+    struct swm320_spi *swm320_spi;
     if (SPIx == SPI0)
     {
         PORT_Init(PORTB, PIN1, FUNMUX1_SPI0_SCLK, 0);
         PORT_Init(PORTB, PIN2, FUNMUX0_SPI0_MOSI, 0);
         PORT_Init(PORTB, PIN3, FUNMUX1_SPI0_MISO, 1);
-        spi_bus = &_spi_bus0;
-        spi = &_spi1;
+        spi_bus = &swm320_spi_bus0;
+        swm320_spi = &swm320_spi0;
     }
     else if (SPIx == SPI1)
     {
         PORT_Init(PORTB, PIN5, FUNMUX1_SPI1_SCLK, 0);
         PORT_Init(PORTB, PIN6, FUNMUX0_SPI1_MOSI, 0);
         PORT_Init(PORTB, PIN7, FUNMUX1_SPI1_MISO, 1);
-        spi_bus = &_spi_bus1;
-        spi = &_spi1;
+        spi_bus = &swm320_spi_bus1;
+        swm320_spi = &swm320_spi1;
     }
     else
     {
         return -1;
     }
-    spi->spi = SPIx;
-    spi_bus->parent.user_data = spi;
-    return rt_spi_bus_register(spi_bus, name, &spi_ops);
+    swm320_spi->swm320_spi = SPIx;
+    spi_bus->parent.user_data = swm320_spi;
+    return rt_spi_bus_register(spi_bus, name, &swm320_spi_ops);
 }
 
 //cannot be used before completion init
-rt_err_t stm32_spi_bus_attach_device(rt_uint32_t pin, const char *bus_name, const char *device_name)
+rt_err_t stm32_spi_bus_attach_device(rt_uint32_t pin,
+                                     const char *bus_name,
+                                     const char *device_name)
 {
     struct rt_spi_device *spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
     RT_ASSERT(spi_device != RT_NULL);
-    struct spi_cs *cs_pin = (struct spi_cs *)rt_malloc(sizeof(struct spi_cs));
+    struct swm320_spi_cs *cs_pin = (struct swm320_spi_cs *)rt_malloc(sizeof(struct swm320_spi_cs));
     RT_ASSERT(cs_pin != RT_NULL);
     cs_pin->pin = pin;
     rt_pin_mode(pin, PIN_MODE_OUTPUT);
     rt_pin_write(pin, 1);
-    return rt_spi_bus_attach_device(spi_device, device_name, bus_name, (void *)cs_pin);
+    return rt_spi_bus_attach_device(spi_device,
+                                    device_name,
+                                    bus_name,
+                                    (void *)cs_pin);
 }
 
-int bsp_hw_spi_init(void)
+int rt_hw_spi_init(void)
 {
     int result = 0;
 #ifdef BSP_USING_SPI0
-    result = spi_register_bus(SPI0, "spi0");
+    result = swm320_spi_register_bus(SPI0, "spi0");
 #endif
 #ifdef BSP_USING_SPI1
-    result = spi_register_bus(SPI1, "spi1");
+    result = swm320_spi_register_bus(SPI1, "spi1");
 #endif
     return result;
 }
-INIT_BOARD_EXPORT(bsp_hw_spi_init);
-#endif /*RT_USING_SPI*/
+INIT_BOARD_EXPORT(rt_hw_spi_init);

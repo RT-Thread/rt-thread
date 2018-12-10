@@ -1,24 +1,25 @@
-/******************************************************************************
-* @file drv_wdt.c
-* @author Zohar_Lee
-* @version V1.00
-* @date 2018.11.09
-* @brief
-******************************************************************************/
+/*
+ * Copyright (c) 2006-2018, Synwit Technology Co.,Ltd.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2018-05-31     Zohar_Lee    first version
+ */
+
 #include "SWM320.h"
 #include "rtthread.h"
 #include "rtdevice.h"
 
-#ifdef BSP_USING_WDT
-
-rt_err_t watchdog_init(rt_watchdog_t *wdt)
+rt_err_t swm320_wdt_init(rt_watchdog_t *wdt)
 {
     WDT_Init(WDT, SystemCoreClock / 2, WDT_MODE_INTERRUPT);
 
     return RT_EOK;
 }
 
-rt_err_t watchdog_control(rt_watchdog_t *wdt, int cmd, void *arg)
+rt_err_t swm320_wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
 {
     switch (cmd)
     {
@@ -48,25 +49,26 @@ rt_err_t watchdog_control(rt_watchdog_t *wdt, int cmd, void *arg)
     return RT_EOK;
 }
 
-rt_watchdog_t _watchdog;
-struct rt_watchdog_ops _watchdog_ops =
-    {
-        watchdog_init,
-        watchdog_control};
+rt_watchdog_t swm320_wdt;
+struct rt_watchdog_ops swm320_wdt_ops =
+{
+    swm320_wdt_init,
+    swm320_wdt_control
+};
 
-int drv_watchdog_init(void)
+int rt_hw_wdt_init(void)
 {
     rt_err_t result = RT_EOK;
 
     WDT_Init(WDT, SystemCoreClock / 2, WDT_MODE_INTERRUPT);
 
-    _watchdog.ops = &_watchdog_ops;
+    swm320_wdt.ops = &swm320_wdt_ops;
 
-    result = rt_hw_watchdog_register(&_watchdog, "watchdog", RT_DEVICE_FLAG_RDWR, WDT);
+    result = rt_hw_watchdog_register(&swm320_wdt, "watchdog", RT_DEVICE_FLAG_RDWR, WDT);
 
     return result;
 }
-INIT_DEVICE_EXPORT(drv_watchdog_init);
+INIT_DEVICE_EXPORT(rt_hw_wdt_init);
 
 void WDT_Handler(void)
 {
@@ -74,7 +76,3 @@ void WDT_Handler(void)
 
     rt_kprintf("%s  %s()  %d\r\n", __FILE__, __func__, __LINE__); //打印位置
 }
-
-#endif //BSP_USING_WDT
-
-/******************************* end of file *********************************/

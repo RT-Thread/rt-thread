@@ -1,26 +1,13 @@
 /*
- * File      : drv_pin.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+ * Copyright (c) 2006-2018, Synwit Technology Co.,Ltd.
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-05-31     ZYH          first version
+ * 2018-05-31     Zohar_Lee    first version
  */
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
@@ -28,6 +15,7 @@
 #include <SWM320_gpio.h>
 #include <SWM320_exti.h>
 #include <rthw.h>
+
 typedef void (*pin_callback_t)(void *args);
 struct pin
 {
@@ -170,7 +158,7 @@ static pin_t *get_pin(uint8_t pin)
     return index;
 };
 
-static void pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void swm320_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
 {
     pin_t *index;
     index = get_pin(pin);
@@ -187,7 +175,8 @@ static void pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
         GPIO_ClrBit(index->port, index->group_index);
     }
 }
-static int pin_read(rt_device_t dev, rt_base_t pin)
+
+static int swm320_pin_read(rt_device_t dev, rt_base_t pin)
 {
     pin_t *index;
     index = get_pin(pin);
@@ -198,7 +187,7 @@ static int pin_read(rt_device_t dev, rt_base_t pin)
     return GPIO_GetBit(index->port, index->group_index);
 }
 
-static void pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void swm320_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 {
     pin_t *index;
     int dir = 0;
@@ -235,13 +224,14 @@ static void pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     else if (mode == PIN_MODE_OUTPUT_OD)
     {
         /* output setting: od. */
+        dir = 1;
         pull_up = 1;
     }
     GPIO_Init(index->port, index->group_index, dir, pull_up, pull_down);
 }
 
-static rt_err_t pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                               rt_uint32_t mode, pin_callback_t cb, void *args)
+static rt_err_t swm320_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
+                                      rt_uint32_t mode, pin_callback_t cb, void *args)
 {
     pin_t *index;
     rt_base_t level;
@@ -259,7 +249,7 @@ static rt_err_t pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-static rt_err_t pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t swm320_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
 {
     pin_t *index;
     rt_base_t level;
@@ -276,8 +266,9 @@ static rt_err_t pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
     return RT_EOK;
 }
 
-static rt_err_t pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                               rt_uint32_t enabled)
+static rt_err_t swm320_pin_irq_enable(struct rt_device *device,
+                                      rt_base_t pin,
+                                      rt_uint32_t enabled)
 {
     pin_t *index;
     rt_base_t level = 0;
@@ -333,22 +324,24 @@ static rt_err_t pin_irq_enable(struct rt_device *device, rt_base_t pin,
     return RT_EOK;
 }
 
-const static struct rt_pin_ops pin_ops =
+const static struct rt_pin_ops swm320_pin_ops =
 {
-    pin_mode,
-    pin_write,
-    pin_read,
-    pin_attach_irq,
-    pin_dettach_irq,
-    pin_irq_enable,
+    swm320_pin_mode,
+    swm320_pin_write,
+    swm320_pin_read,
+    swm320_pin_attach_irq,
+    swm320_pin_dettach_irq,
+    swm320_pin_irq_enable
 };
+
 int rt_hw_pin_init(void)
 {
     int result;
-    result = rt_device_pin_register("pin", &pin_ops, RT_NULL);
+    result = rt_device_pin_register("pin", &swm320_pin_ops, RT_NULL);
     return result;
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);
+
 void GPIOA_Handler(void)
 {
     static int gpio[24];
@@ -388,6 +381,7 @@ void GPIOA_Handler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
+
 void GPIOB_Handler(void)
 {
     static int gpio[24];
@@ -427,6 +421,7 @@ void GPIOB_Handler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
+
 void GPIOC_Handler(void)
 {
     static int gpio[24];
@@ -466,6 +461,7 @@ void GPIOC_Handler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
+
 void GPIOM_Handler(void)
 {
     static int gpio[24];
@@ -505,6 +501,7 @@ void GPIOM_Handler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
+
 void GPION_Handler(void)
 {
     static int gpio[24];
@@ -544,6 +541,7 @@ void GPION_Handler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
+
 void GPIOP_Handler(void)
 {
     static int gpio[24];
