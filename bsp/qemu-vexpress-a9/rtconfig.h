@@ -287,6 +287,7 @@
 
 /* PKG_USING_PAHOMQTT is not set */
 /* PKG_USING_WEBCLIENT is not set */
+/* PKG_USING_WEBNET is not set */
 /* PKG_USING_MONGOOSE is not set */
 /* PKG_USING_WEBTERMINAL is not set */
 /* PKG_USING_CJSON is not set */
@@ -308,6 +309,7 @@
 /* PKG_USING_NOPOLL is not set */
 /* PKG_USING_NETUTILS is not set */
 /* PKG_USING_AT_DEVICE is not set */
+/* PKG_USING_WIZNET is not set */
 
 /* IoT Cloud */
 
@@ -315,6 +317,7 @@
 /* PKG_USING_GAGENT_CLOUD is not set */
 /* PKG_USING_ALI_IOTKIT is not set */
 /* PKG_USING_AZURE is not set */
+/* PKG_USING_TENCENT_IOTKIT is not set */
 
 /* security packages */
 
@@ -339,6 +342,9 @@
 /* PKG_USING_EASYFLASH is not set */
 /* PKG_USING_EASYLOGGER is not set */
 /* PKG_USING_SYSTEMVIEW is not set */
+/* PKG_USING_RDB is not set */
+/* PKG_USING_QRCODE is not set */
+/* PKG_USING_ULOG_EASYFLASH is not set */
 
 /* system packages */
 
@@ -353,17 +359,22 @@
 /* PKG_USING_RTI is not set */
 /* PKG_USING_LITTLEVGL2RTT is not set */
 /* PKG_USING_CMSIS is not set */
+/* PKG_USING_DFS_YAFFS is not set */
+/* PKG_USING_LITTLEFS is not set */
 
 /* peripheral libraries and drivers */
 
-/* PKG_USING_STM32F4_HAL is not set */
-/* PKG_USING_STM32F4_DRIVERS is not set */
 /* PKG_USING_REALTEK_AMEBA is not set */
 /* PKG_USING_SHT2X is not set */
 /* PKG_USING_AHT10 is not set */
 /* PKG_USING_AP3216C is not set */
 /* PKG_USING_STM32_SDIO is not set */
 /* PKG_USING_ICM20608 is not set */
+/* PKG_USING_U8G2 is not set */
+/* PKG_USING_BUTTON is not set */
+/* PKG_USING_MPU6XXX is not set */
+/* PKG_USING_PCF8574 is not set */
+/* PKG_USING_KENDRYTE_SDK is not set */
 
 /* miscellaneous packages */
 
@@ -376,6 +387,7 @@
 /* PKG_USING_CANFESTIVAL is not set */
 /* PKG_USING_ZLIB is not set */
 /* PKG_USING_DSTR is not set */
+/* PKG_USING_TINYFRAME is not set */
 
 /* sample package */
 
@@ -389,6 +401,28 @@
 /* example package: hello */
 
 /* PKG_USING_HELLO is not set */
+
+/* Privated Packages of RealThread */
+
+/* PKG_USING_CODEC is not set */
+/* PKG_USING_PLAYER is not set */
+/* PKG_USING_PERSIMMON_SRC is not set */
+/* PKG_USING_JS_PERSIMMON is not set */
+/* PKG_USING_JERRYSCRIPT_WIN32 is not set */
+
+/* Network Utilities */
+
+/* PKG_USING_MDNS is not set */
+/* PKG_USING_UPNP is not set */
+/* PKG_USING_WICED is not set */
+/* PKG_USING_CLOUDSDK is not set */
+/* PKG_USING_COREMARK is not set */
+/* PKG_USING_POWER_MANAGER is not set */
+/* PKG_USING_RT_OTA is not set */
+/* PKG_USING_RDBD_SRC is not set */
+/* PKG_USING_RTINSIGHT is not set */
+/* PKG_USING_SMARTCONFIG is not set */
+/* PKG_USING_RTX is not set */
 #define SOC_VEXPRESS_A9
 #define RT_USING_UART0
 #define RT_USING_UART1

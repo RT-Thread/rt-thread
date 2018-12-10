@@ -1,24 +1,11 @@
 /*
- * File      : lwp_gcc.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2018-12-10     Jesven       first version
  */
 
 #define  Mode_USR       0x10
@@ -35,7 +22,7 @@
 #define F_Bit        0x40 @; when F bit is set, FIQ is disabled
 #define T_Bit        0x20
 
-.cpu arm9
+.cpu cortex-a9
 .syntax unified
 .text
 
@@ -46,13 +33,9 @@
 .type lwp_user_entry, % function
 lwp_user_entry:
     mrs     r9, cpsr
-    mov     r8, r9
     bic     r9, #0x1f
     orr     r9, #Mode_USR
-
-    orr     r8, #I_Bit
-    msr     cpsr_c, r8
-
+    cpsid i
     msr     spsr, r9
 
     /* set data address. */
@@ -68,26 +51,19 @@ SVC_Handler:
     push {lr}
     mrs lr, spsr
     push {r4, r5, lr}
-
-    mrs r4, cpsr
-    bic r4, #I_Bit
-    msr cpsr_c, r4
+    cpsie i
 
     push {r0 - r3, r12}
     and r0, r7, #0xff
     bl lwp_get_sys_api
     cmp r0, #0           /* r0 = api */
-    mov r4, r0
+    mov lr, r0
     pop {r0 - r3, r12}
     beq svc_exit
-    ldr lr, = svc_exit
-    bx  r4
+    blx lr
 
 svc_exit:
-    mrs r4, cpsr
-    orr r4, #I_Bit
-    msr cpsr_c, r4
-
+    cpsid i
     pop {r4, r5, lr}
     msr spsr_cxsf, lr
     pop {lr}

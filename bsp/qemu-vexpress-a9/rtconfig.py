@@ -2,7 +2,7 @@ import os
 
 # toolchains options
 ARCH='arm'
-CPU='vexpress-a9'
+CPU='cortex-a9'
 CROSS_TOOL='gcc'
 
 if os.getenv('RTT_CC'):
