@@ -288,6 +288,11 @@ rt_hw_context_switch_interrupt_do:
     stmfd   sp!, {r1-r4}    @ push old task's r0-r3
     stmfd   sp!, {r0}       @ push old task's cpsr
 
+#ifdef RT_USING_LWP
+    stmfd sp, {r13, r14}^  @push usr_sp, usr_lr
+    sub sp, #8
+#endif
+
     ldr     r4,  =rt_interrupt_from_thread
     ldr     r5,  [r4]
     str     sp,  [r5]       @ store sp in preempted tasks's TCB
@@ -295,6 +300,11 @@ rt_hw_context_switch_interrupt_do:
     ldr     r6,  =rt_interrupt_to_thread
     ldr     r6,  [r6]
     ldr     sp,  [r6]       @ get new task's stack pointer
+
+#ifdef RT_USING_LWP
+    ldmfd sp, {r13, r14}^  @pop usr_sp, usr_lr
+    add sp, #8
+#endif
 
     ldmfd   sp!, {r4}       @ pop new task's cpsr to spsr
     msr     spsr_cxsf, r4
@@ -317,6 +327,8 @@ rt_hw_context_switch_interrupt_do:
 
     .align  5
     .globl  vector_swi
+.weak SVC_Handler
+SVC_Handler:
 vector_swi:
     push_svc_reg
     bl      rt_hw_trap_swi
@@ -400,8 +412,8 @@ irq_stack_2:
 irq_stack_2_limit:
 
 .data
-#define DEVICE_MEM  0x10406
-#define NORMAL_MEM  0x1140e
+#define DEVICE_MEM  0x10c06
+#define NORMAL_MEM  0x11c0e
 .align 14
 mtbl:
 
