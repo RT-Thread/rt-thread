@@ -77,6 +77,10 @@
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
 #define RT_USING_PIN
+#define RT_USING_SPI
+#define RT_USING_SFUD
+#define RT_SFUD_USING_SFDP
+#define RT_SFUD_USING_FLASH_INFO_TABLE
 
 /* Using WiFi */
 
@@ -86,6 +90,7 @@
 
 /* POSIX layer and C standard library */
 
+#define RT_USING_LIBC
 
 /* Network */
 
@@ -140,6 +145,11 @@
 
 /* system packages */
 
+#define PKG_USING_FAL
+#define FAL_DEBUG_CONFIG
+#define FAL_DEBUG 1
+#define FAL_PART_HAS_TABLE_CFG
+#define PKG_USING_FAL_LATEST_VERSION
 
 /* peripheral libraries and drivers */
 
@@ -154,9 +164,6 @@
 
 /* example package: hello */
 
-
-/* rtpkgs online packages */
-
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32F4
 
@@ -167,11 +174,15 @@
 /* Onboard Peripheral Drivers */
 
 #define BSP_USING_USB_TO_USART
+#define BSP_USING_SPI_FLASH
 
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART1
+#define BSP_USING_ON_CHIP_FLASH
+#define BSP_USING_SPI1
+#define BSP_SPI_USING_DMA
 
 /* Board extended module Drivers */
 

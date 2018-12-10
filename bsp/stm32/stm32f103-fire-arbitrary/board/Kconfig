@@ -24,6 +24,12 @@ menu "Onboard Peripheral Drivers"
         select RT_SFUD_USING_SFDP
         default n
 
+    config BSP_USING_POT
+        bool "Enable potentiometer"
+        select BSP_USING_ADC
+        select BSP_USING_ADC1
+        default n  
+
     config BSP_USING_EEPROM
         bool "Enable I2C EEPROM (i2c1)"
         select BSP_USING_I2C1
@@ -85,6 +91,10 @@ menu "On-chip Peripheral Drivers"
         bool "Enable UART RX DMA support"
         default n
         
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
+
     config BSP_USING_SPI1
         bool "Enable SPI1 BUS"
         select RT_USING_SPI
@@ -120,6 +130,35 @@ menu "On-chip Peripheral Drivers"
                 range 0 175
                 default 23
         endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+
+            config BSP_USING_ADC2
+                bool "Enable ADC2"
+                default n
+
+            config BSP_USING_ADC3
+                bool "Enable ADC3"
+                default n
+        endif
+
+    config BSP_USING_ONCHIP_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        select RT_USING_LIBC
+        default n
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
 
 endmenu
 
