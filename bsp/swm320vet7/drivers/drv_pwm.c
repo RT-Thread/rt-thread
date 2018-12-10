@@ -13,15 +13,19 @@
 #include <rtdevice.h>
 #include <board.h>
 
-rt_err_t swm320_pwm_control(struct rt_device_pwm *device, int cmd, void *arg);
+static rt_err_t swm320_pwm_control(struct rt_device_pwm *device,
+                                   int cmd,
+                                   void *arg);
 
-const struct rt_pwm_ops pwm_ops = {swm320_pwm_control};
+const static struct rt_pwm_ops pwm_ops = {swm320_pwm_control};
 struct rt_device_pwm swm320_device_pwm0;
 struct rt_device_pwm swm320_device_pwm1;
 struct rt_device_pwm swm320_device_pwm2;
 struct rt_device_pwm swm320_device_pwm3;
 
-rt_err_t swm320_pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
+static rt_err_t swm320_pwm_control(struct rt_device_pwm *device,
+                                   int cmd,
+                                   void *arg)
 {
     struct rt_pwm_configuration configuration = {0};
 
@@ -244,20 +248,20 @@ rt_err_t swm320_pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
     return RT_EOK;
 }
 
-int pwm_register(PWM_TypeDef *PWMx, const char *name)
+static int pwm_register(PWM_TypeDef *PWMx, const char *name)
 {
     struct rt_device_pwm *device_pwm;
     const struct rt_pwm_ops *ops = &pwm_ops;
     void *user_data = NULL;
     PWM_InitStructure PWM_initStruct;
 
-    PWM_initStruct.clk_div = PWM_CLKDIV_8; //F_PWM = 20M/8 = 2.5M
-    PWM_initStruct.mode = PWM_MODE_INDEP;  //A路和B路独立输出
-    PWM_initStruct.cycleA = 10000;         //2.5M/10000 = 250Hz
-    PWM_initStruct.hdutyA = 2500;          //2500/10000 = 25%
+    PWM_initStruct.clk_div = PWM_CLKDIV_8; /* F_PWM = 20M/8 = 2.5M */
+    PWM_initStruct.mode = PWM_MODE_INDEP;  /* A路和B路独立输出 */
+    PWM_initStruct.cycleA = 10000;         /* 2.5M/10000 = 250Hz */
+    PWM_initStruct.hdutyA = 2500;          /* 2500/10000 = 25% */
     PWM_initStruct.initLevelA = 1;
     PWM_initStruct.cycleB = 10000;
-    PWM_initStruct.hdutyB = 5000; //5000/10000 = 50%
+    PWM_initStruct.hdutyB = 5000; /* 5000/10000 = 50% */
     PWM_initStruct.initLevelB = 1;
     PWM_initStruct.HEndAIEn = 0;
     PWM_initStruct.NCycleAIEn = 0;
@@ -298,7 +302,9 @@ int pwm_register(PWM_TypeDef *PWMx, const char *name)
         return -1;
     }
 
-    return rt_device_pwm_register(device_pwm, name, (struct rt_pwm_ops *)ops, user_data);
+    return rt_device_pwm_register(device_pwm, name,
+                                  (struct rt_pwm_ops *)ops,
+                                  user_data);
 }
 
 int rt_hw_pwm_init(void)

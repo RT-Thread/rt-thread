@@ -133,7 +133,7 @@ void UART0_Handler(void)
     rt_interrupt_enter();
 
     uart = &uart0;
-    /* UART in mode Receiver -------------------------------------------------*/
+    /* UART in mode Receiver */
     if (UART_INTRXThresholdStat(uart->uart) || UART_INTTimeoutStat(uart->uart))
     {
         rt_hw_serial_isr(&serial0, RT_SERIAL_EVENT_RX_IND);
@@ -154,7 +154,7 @@ void UART1_Handler(void)
     rt_interrupt_enter();
 
     uart = &uart1;
-    /* UART in mode Receiver -------------------------------------------------*/
+    /* UART in mode Receiver */
     if (UART_INTRXThresholdStat(uart->uart) || UART_INTTimeoutStat(uart->uart))
     {
         rt_hw_serial_isr(&serial1, RT_SERIAL_EVENT_RX_IND);
@@ -175,7 +175,7 @@ void UART2_Handler(void)
     rt_interrupt_enter();
 
     uart = &uart2;
-    /* UART in mode Receiver -------------------------------------------------*/
+    /* UART in mode Receiver */
     if (UART_INTRXThresholdStat(uart->uart) || UART_INTTimeoutStat(uart->uart))
     {
         rt_hw_serial_isr(&serial2, RT_SERIAL_EVENT_RX_IND);
@@ -196,7 +196,7 @@ void UART3_Handler(void)
     rt_interrupt_enter();
 
     uart = &uart3;
-    /* UART in mode Receiver -------------------------------------------------*/
+    /* UART in mode Receiver */
     if (UART_INTRXThresholdStat(uart->uart) || UART_INTTimeoutStat(uart->uart))
     {
         rt_hw_serial_isr(&serial3, RT_SERIAL_EVENT_RX_IND);

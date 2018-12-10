@@ -45,7 +45,8 @@ static volatile rt_hwtimer_mode_t swm320_timer3_mode = HWTIMER_MODE_PERIOD;
 static volatile rt_hwtimer_mode_t swm320_timer4_mode = HWTIMER_MODE_PERIOD;
 static volatile rt_hwtimer_mode_t swm320_timer5_mode = HWTIMER_MODE_PERIOD;
 
-void swm320_hwtimer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
+static void swm320_hwtimer_init(struct rt_hwtimer_device *timer,
+                                rt_uint32_t state)
 {
 #ifdef BSP_USING_HWTIMER0
     if (&swm320_timer0 == timer)
@@ -114,9 +115,9 @@ void swm320_hwtimer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
 #endif //BSP_USING_HWTIMER5
 }
 
-rt_err_t swm320_hwtimer_start(struct rt_hwtimer_device *timer,
-                              rt_uint32_t cnt,
-                              rt_hwtimer_mode_t mode)
+static rt_err_t swm320_hwtimer_start(struct rt_hwtimer_device *timer,
+                                     rt_uint32_t cnt,
+                                     rt_hwtimer_mode_t mode)
 {
 #ifdef BSP_USING_HWTIMER0
     if (&swm320_timer0 == timer)
@@ -151,7 +152,7 @@ rt_err_t swm320_hwtimer_start(struct rt_hwtimer_device *timer,
     return RT_EOK;
 }
 
-void swm320_hwtimer_stop(struct rt_hwtimer_device *timer)
+static void swm320_hwtimer_stop(struct rt_hwtimer_device *timer)
 {
 #ifdef BSP_USING_HWTIMER0
     if (&swm320_timer0 == timer)
@@ -184,7 +185,7 @@ void swm320_hwtimer_stop(struct rt_hwtimer_device *timer)
 #endif //BSP_USING_HWTIMER5
 }
 
-rt_uint32_t swm320_hwtimer_count_get(struct rt_hwtimer_device *timer)
+static rt_uint32_t swm320_hwtimer_count_get(struct rt_hwtimer_device *timer)
 {
     rt_uint32_t hwtimer_count = 0;
 
@@ -221,7 +222,7 @@ rt_uint32_t swm320_hwtimer_count_get(struct rt_hwtimer_device *timer)
     return hwtimer_count;
 }
 
-void swm320_hwtimer_freq_set(struct rt_hwtimer_device *timer, void *freq)
+static void swm320_hwtimer_freq_set(struct rt_hwtimer_device *timer, void *freq)
 {
     uint32_t period = SystemCoreClock / *(uint32_t *)freq;
 
@@ -256,12 +257,13 @@ void swm320_hwtimer_freq_set(struct rt_hwtimer_device *timer, void *freq)
 #endif //BSP_USING_HWTIMER5
 }
 
-void swm320_hwtimer_info_get(struct rt_hwtimer_device *timer, void *info)
+static void swm320_hwtimer_info_get(struct rt_hwtimer_device *timer, void *info)
 {
     *(struct rt_hwtimer_info *)info = *timer->info;
 }
 
-rt_uint32_t swm320_hwtimer_mode_set(struct rt_hwtimer_device *timer, void *mode)
+static rt_uint32_t swm320_hwtimer_mode_set(struct rt_hwtimer_device *timer,
+        void *mode)
 {
 #ifdef BSP_USING_HWTIMER0
     if (&swm320_timer0 == timer)
@@ -374,9 +376,9 @@ rt_uint32_t swm320_hwtimer_mode_set(struct rt_hwtimer_device *timer, void *mode)
     return RT_EOK;
 }
 
-rt_err_t swm320_hwtimer_control(struct rt_hwtimer_device *timer,
-                                rt_uint32_t cmd,
-                                void *args)
+static rt_err_t swm320_hwtimer_control(struct rt_hwtimer_device *timer,
+                                       rt_uint32_t cmd,
+                                       void *args)
 {
     switch (cmd)
     {
@@ -447,7 +449,7 @@ void TIMR5_Handler(void)
 }
 #endif //BSP_USING_HWTIMER5
 
-struct rt_hwtimer_ops swm320_hwtimer_ops =
+const static struct rt_hwtimer_ops swm320_hwtimer_ops =
 {
     swm320_hwtimer_init,
     swm320_hwtimer_start,
@@ -455,7 +457,7 @@ struct rt_hwtimer_ops swm320_hwtimer_ops =
     swm320_hwtimer_count_get,
     swm320_hwtimer_control
 };
-struct rt_hwtimer_info swm320_hwtimer_info =
+const struct rt_hwtimer_info swm320_hwtimer_info =
 {
     32000, /*默认使用最低频率工作，即32K*/
     1,     /*2的32次方*/

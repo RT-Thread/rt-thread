@@ -211,14 +211,14 @@ static rt_uint32_t swm320_spi_xfer(struct rt_spi_device *device,
     return message->length - length;
 }
 
-rt_err_t swm320_spi_configure(struct rt_spi_device *device,
-                              struct rt_spi_configuration *configuration)
+static rt_err_t swm320_spi_configure(struct rt_spi_device *device,
+                                     struct rt_spi_configuration *configuration)
 {
     struct swm320_spi *hspi = (struct swm320_spi *)device->bus->parent.user_data;
     hspi->cfg = configuration;
     return swm320_spi_init(hspi->swm320_spi, configuration);
 }
-const struct rt_spi_ops swm320_spi_ops =
+const static struct rt_spi_ops swm320_spi_ops =
 {
     .configure = swm320_spi_configure,
     .xfer = swm320_spi_xfer,
@@ -226,7 +226,7 @@ const struct rt_spi_ops swm320_spi_ops =
 
 struct rt_spi_bus swm320_spi_bus0, swm320_spi_bus1;
 struct swm320_spi swm320_spi0, swm320_spi1;
-int swm320_spi_register_bus(SPI_TypeDef *SPIx, const char *name)
+static int swm320_spi_register_bus(SPI_TypeDef *SPIx, const char *name)
 {
     struct rt_spi_bus *spi_bus;
     struct swm320_spi *swm320_spi;
@@ -256,9 +256,9 @@ int swm320_spi_register_bus(SPI_TypeDef *SPIx, const char *name)
 }
 
 //cannot be used before completion init
-rt_err_t swm320_spi_bus_attach_device(rt_uint32_t pin,
-                                      const char *bus_name,
-                                      const char *device_name)
+static rt_err_t swm320_spi_bus_attach_device(rt_uint32_t pin,
+        const char *bus_name,
+        const char *device_name)
 {
     struct rt_spi_device *spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
     RT_ASSERT(spi_device != RT_NULL);

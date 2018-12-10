@@ -27,20 +27,22 @@ struct rt_device_rtc
     const struct rt_rtc_ops *ops;
 };
 
-rt_err_t rtc_control(struct rt_device_rtc *device, int cmd, void *arg);
+static rt_err_t rtc_control(struct rt_device_rtc *device, int cmd, void *arg);
 
-const struct rt_rtc_ops rtc_ops = {rtc_control};
-struct rt_device_rtc rtc_device;
+const static struct rt_rtc_ops rtc_ops = {rtc_control};
+static struct rt_device_rtc rtc_device;
 
-/*******************************************************************************
-* 函数名称: calcWeekDay()
-* 功能说明: get the weed day
-* 输    入: uint32_t year     年
-*                 uint32_t month        月
-*                 uint32_t date     日
-* 输    出: uint32_t          0 星期日    1 星期一    ... ...    6 星期六
-* 注意事项: 无
-*******************************************************************************/
+/**
+ * This function will get the weed day from a date.
+ *
+ * @param year the year of time
+ * @param month the month of time
+ * @param date the date of time
+ *
+ * @return the week day 0 ~ 6 : sun ~ sat
+ *
+ * @note No
+ */
 static uint32_t calcWeekDay(uint32_t year, uint32_t month, uint32_t date)
 {
     uint32_t i, cnt = 0;
@@ -66,7 +68,7 @@ static uint32_t calcWeekDay(uint32_t year, uint32_t month, uint32_t date)
     return (cnt + 1) % 7;
 }
 
-void RTC_SetDateTime(RTC_TypeDef *RTCx, RTC_DateTime *dateTime)
+static void RTC_SetDateTime(RTC_TypeDef *RTCx, RTC_DateTime *dateTime)
 {
     RTC_Stop(RTCx);
 
@@ -140,19 +142,6 @@ static rt_err_t rtc_control(struct rt_device_rtc *device, int cmd, void *arg)
     return RT_EOK;
 }
 
-static rt_err_t swm320_rtc_init(rt_device_t dev)
-{
-    return RT_EOK;
-}
-static rt_err_t swm320_rtc_open(rt_device_t dev, rt_uint16_t oflag)
-{
-    return RT_EOK;
-}
-static rt_err_t swm320_rtc_close(rt_device_t dev)
-{
-    return RT_EOK;
-}
-
 static rt_size_t swm320_rtc_read(rt_device_t dev,
                                  rt_off_t pos,
                                  void *buffer,
@@ -186,9 +175,9 @@ static rt_err_t swm320__rtc_control(rt_device_t dev, int cmd, void *args)
     return result;
 }
 
-rt_err_t rt_device_rtc_register(struct rt_device_rtc *device,
-                                const char *name,
-                                const struct rt_rtc_ops *ops)
+static rt_err_t rt_device_rtc_register(struct rt_device_rtc *device,
+                                       const char *name,
+                                       const struct rt_rtc_ops *ops)
 {
     rt_err_t result = RT_EOK;
 
@@ -196,9 +185,9 @@ rt_err_t rt_device_rtc_register(struct rt_device_rtc *device,
 
     device->parent.type = RT_Device_Class_RTC;
 
-    device->parent.init = swm320_rtc_init;
-    device->parent.open = swm320_rtc_open;
-    device->parent.close = swm320_rtc_close;
+    device->parent.init = RT_NULL;
+    device->parent.open = RT_NULL;
+    device->parent.close = RT_NULL;
     device->parent.read = swm320_rtc_read;
     device->parent.write = swm320_rtc_write;
     device->parent.control = swm320__rtc_control;
@@ -210,7 +199,7 @@ rt_err_t rt_device_rtc_register(struct rt_device_rtc *device,
     return result;
 }
 
-int rtc_register(RTC_TypeDef *RTCx, const char *name)
+static int rtc_register(RTC_TypeDef *RTCx, const char *name)
 {
     RTC_InitStructure RTC_initStruct;
     struct rt_device_rtc *p_rtc_device;

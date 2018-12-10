@@ -12,14 +12,14 @@
 #include "rtthread.h"
 #include "rtdevice.h"
 
-rt_err_t swm320_wdt_init(rt_watchdog_t *wdt)
+static rt_err_t swm320_wdt_init(rt_watchdog_t *wdt)
 {
     WDT_Init(WDT, SystemCoreClock / 2, WDT_MODE_INTERRUPT);
 
     return RT_EOK;
 }
 
-rt_err_t swm320_wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
+static rt_err_t swm320_wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
 {
     switch (cmd)
     {
@@ -50,7 +50,7 @@ rt_err_t swm320_wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
 }
 
 rt_watchdog_t swm320_wdt;
-struct rt_watchdog_ops swm320_wdt_ops =
+const static struct rt_watchdog_ops swm320_wdt_ops =
 {
     swm320_wdt_init,
     swm320_wdt_control
@@ -59,8 +59,6 @@ struct rt_watchdog_ops swm320_wdt_ops =
 int rt_hw_wdt_init(void)
 {
     rt_err_t result = RT_EOK;
-
-    WDT_Init(WDT, SystemCoreClock / 2, WDT_MODE_INTERRUPT);
 
     swm320_wdt.ops = &swm320_wdt_ops;
 
@@ -73,6 +71,4 @@ INIT_DEVICE_EXPORT(rt_hw_wdt_init);
 void WDT_Handler(void)
 {
     WDT_INTClr(WDT);
-
-    rt_kprintf("%s  %s()  %d\r\n", __FILE__, __func__, __LINE__);
 }
