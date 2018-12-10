@@ -205,11 +205,7 @@
 /* Select i2c bus drivers */
 
 #define BSP_USING_I2C4
-
-/* Select spi bus drivers */
-
 #define BSP_USING_SDCARD
 #define BSP_USING_SPIFLASH
-#define BSP_USING_PCT2075
 
 #endif
