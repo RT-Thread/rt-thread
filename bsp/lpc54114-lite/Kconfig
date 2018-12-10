@@ -23,5 +23,5 @@ config SOC_LPC54114
     select ARCH_ARM_CORTEX_M4
     default y
 
-source "$BSP_DIR/drivers/Kconfig"
 
+source "$BSP_DIR/drivers/Kconfig"
