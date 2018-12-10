@@ -57,7 +57,9 @@ src += ['drv_common.c']
 
 path =  [cwd]
 path += [cwd + '/config']
-path += [cwd + '/drv_flash']
+
+if GetDepend('BSP_USING_ON_CHIP_FLASH'):
+    path += [cwd + '/drv_flash']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
