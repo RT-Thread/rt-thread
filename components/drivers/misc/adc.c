@@ -46,7 +46,7 @@ static rt_err_t _adc_control(rt_device_t dev, int cmd, void *args)
     rt_err_t result = RT_EOK;
     rt_adc_device_t adc = (struct rt_adc_device *)dev;
 
-    if (adc->ops->enabled != RT_NULL)
+    if (adc->ops->enabled == RT_NULL)
     {
         return -RT_ENOSYS;
     }
