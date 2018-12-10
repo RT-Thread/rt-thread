@@ -73,6 +73,10 @@ menu "On-chip Peripheral Drivers"
         bool "Enable UART6"
         select RT_USING_SERIAL
         default n
+        
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
 
     config BSP_UART_USING_DMA_RX
         bool "Enable UART RX DMA support"
@@ -97,6 +101,24 @@ menu "On-chip Peripheral Drivers"
         bool "Enable SPI DMA support"
         default n
 
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+
+            config BSP_USING_ADC2
+                bool "Enable ADC2"
+                default n
+
+            config BSP_USING_ADC3
+                bool "Enable ADC3"
+                default n
+        endif
+
     menuconfig BSP_USING_I2C1
         bool "Enable I2C1 BUS (software simulation)"
         default y
@@ -113,6 +135,17 @@ menu "On-chip Peripheral Drivers"
                 range 0 143
                 default 25
         endif
+
+    config BSP_USING_ONCHIP_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        select RT_USING_LIBC
+        default n
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
 
 endmenu
 

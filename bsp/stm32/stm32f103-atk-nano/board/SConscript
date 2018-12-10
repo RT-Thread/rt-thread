@@ -11,6 +11,7 @@ if GetDepend(['BSP_USING_SPI_FLASH']):
 
 path = [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
+path += [cwd + '/ports']
 
 if rtconfig.CROSS_TOOL == 'gcc':
     src += [cwd + '/../../libraries/STM32F1xx_HAL/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.s']
