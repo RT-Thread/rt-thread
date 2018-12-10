@@ -5,7 +5,8 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-05-31     Zohar_Lee    first version
+ * 2018-05-31     ZYH          first version
+ * 2018-12-10     Zohar_Lee    format file
  */
 
 #include <rtthread.h>
@@ -136,7 +137,6 @@ void UART0_Handler(void)
     if (UART_INTRXThresholdStat(uart->uart) || UART_INTTimeoutStat(uart->uart))
     {
         rt_hw_serial_isr(&serial0, RT_SERIAL_EVENT_RX_IND);
-        //rt_kprintf("1\n");
     }
     /* leave interrupt */
     rt_interrupt_leave();

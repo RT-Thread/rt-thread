@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-05-31     Zohar_Lee    first version
+ * 2018-12-10     Zohar_Lee    first version
  */
 
 #include "SWM320.h"
@@ -74,5 +74,5 @@ void WDT_Handler(void)
 {
     WDT_INTClr(WDT);
 
-    rt_kprintf("%s  %s()  %d\r\n", __FILE__, __func__, __LINE__); //打印位置
+    rt_kprintf("%s  %s()  %d\r\n", __FILE__, __func__, __LINE__);
 }

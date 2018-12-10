@@ -5,7 +5,8 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-05-31     Zohar_Lee    first version
+ * 2018-05-31     ZYH          first version
+ * 2018-12-10     Zohar_Lee    format file
  */
 
 #include <board.h>
@@ -231,17 +232,17 @@ int swm320_spi_register_bus(SPI_TypeDef *SPIx, const char *name)
     struct swm320_spi *swm320_spi;
     if (SPIx == SPI0)
     {
-        PORT_Init(PORTB, PIN1, FUNMUX1_SPI0_SCLK, 0);
-        PORT_Init(PORTB, PIN2, FUNMUX0_SPI0_MOSI, 0);
-        PORT_Init(PORTB, PIN3, FUNMUX1_SPI0_MISO, 1);
+        PORT_Init(PORTC, PIN5, FUNMUX1_SPI0_SCLK, 0);
+        PORT_Init(PORTC, PIN6, FUNMUX0_SPI0_MOSI, 0);
+        PORT_Init(PORTC, PIN7, FUNMUX1_SPI0_MISO, 1);
         spi_bus = &swm320_spi_bus0;
         swm320_spi = &swm320_spi0;
     }
     else if (SPIx == SPI1)
     {
-        PORT_Init(PORTB, PIN5, FUNMUX1_SPI1_SCLK, 0);
-        PORT_Init(PORTB, PIN6, FUNMUX0_SPI1_MOSI, 0);
-        PORT_Init(PORTB, PIN7, FUNMUX1_SPI1_MISO, 1);
+        PORT_Init(PORTM, PIN5, FUNMUX1_SPI1_SCLK, 0);
+        PORT_Init(PORTC, PIN2, FUNMUX0_SPI1_MOSI, 0);
+        PORT_Init(PORTC, PIN3, FUNMUX1_SPI1_MISO, 1);
         spi_bus = &swm320_spi_bus1;
         swm320_spi = &swm320_spi1;
     }
@@ -255,9 +256,9 @@ int swm320_spi_register_bus(SPI_TypeDef *SPIx, const char *name)
 }
 
 //cannot be used before completion init
-rt_err_t stm32_spi_bus_attach_device(rt_uint32_t pin,
-                                     const char *bus_name,
-                                     const char *device_name)
+rt_err_t swm320_spi_bus_attach_device(rt_uint32_t pin,
+                                      const char *bus_name,
+                                      const char *device_name)
 {
     struct rt_spi_device *spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
     RT_ASSERT(spi_device != RT_NULL);

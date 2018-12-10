@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-05-31     Zohar_Lee    first version
+ * 2018-12-10    Zohar_Lee    first version
  */
 
 #include "SWM320.h"
@@ -457,8 +457,8 @@ struct rt_hwtimer_ops swm320_hwtimer_ops =
 };
 struct rt_hwtimer_info swm320_hwtimer_info =
 {
-    32000, //默认使用最低频率工作，即32K
-    1,     //2的32次方
+    32000, /*默认使用最低频率工作，即32K*/
+    1,     /*2的32次方*/
     4294967295,
     0
 };

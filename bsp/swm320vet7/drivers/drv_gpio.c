@@ -5,7 +5,8 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-05-31     Zohar_Lee    first version
+ * 2018-05-31     ZYH          first version
+ * 2018-12-10     Zohar_Lee    修复bug
  */
 
 #include <rtthread.h>
@@ -230,8 +231,11 @@ static void swm320_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     GPIO_Init(index->port, index->group_index, dir, pull_up, pull_down);
 }
 
-static rt_err_t swm320_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                      rt_uint32_t mode, pin_callback_t cb, void *args)
+static rt_err_t swm320_pin_attach_irq(struct rt_device *device,
+                                      rt_int32_t pin,
+                                      rt_uint32_t mode,
+                                      pin_callback_t cb,
+                                      void *args)
 {
     pin_t *index;
     rt_base_t level;
@@ -359,7 +363,7 @@ void GPIOA_Handler(void)
             {
                 gpio[index] = pin->package_index;
                 index++;
-                RT_ASSERT(index >= 24)
+                RT_ASSERT(index <= 24)
             }
         }
     }
@@ -399,7 +403,7 @@ void GPIOB_Handler(void)
             {
                 gpio[index] = pin->package_index;
                 index++;
-                RT_ASSERT(index >= 24)
+                RT_ASSERT(index <= 24)
             }
         }
     }
@@ -439,7 +443,7 @@ void GPIOC_Handler(void)
             {
                 gpio[index] = pin->package_index;
                 index++;
-                RT_ASSERT(index >= 24)
+                RT_ASSERT(index <= 24)
             }
         }
     }
@@ -479,7 +483,7 @@ void GPIOM_Handler(void)
             {
                 gpio[index] = pin->package_index;
                 index++;
-                RT_ASSERT(index >= 24)
+                RT_ASSERT(index <= 24)
             }
         }
     }
@@ -519,7 +523,7 @@ void GPION_Handler(void)
             {
                 gpio[index] = pin->package_index;
                 index++;
-                RT_ASSERT(index >= 24)
+                RT_ASSERT(index <= 24)
             }
         }
     }
@@ -559,7 +563,7 @@ void GPIOP_Handler(void)
             {
                 gpio[index] = pin->package_index;
                 index++;
-                RT_ASSERT(index >= 24)
+                RT_ASSERT(index <= 24)
             }
         }
     }

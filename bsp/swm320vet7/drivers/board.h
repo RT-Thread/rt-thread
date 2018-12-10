@@ -5,11 +5,12 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-05-31     Zohar_Lee    first version
+ * 2018-05-31     ZYH          first version
+ * 2018-12-10     Zohar_Lee    format file
  */
 
-#ifndef __BOARD_H__
-#define __BOARD_H__
+#ifndef BOARD_H__
+#define BOARD_H__
 #include <rtthread.h>
 #include <SWM320.h>
 #define SRAM_BASE 0x20000000

@@ -29,13 +29,13 @@ menu "Hardware Drivers Config"
         menu "SPI Drivers"
 
             config BSP_USING_SPI0
-                bool "Enable SPI0 BUS PB1/2/3(C/O/I)"
+                bool "Enable SPI0 BUS PC4/5/6(C/O/I)"
                 select RT_USING_SPI
                 select RT_USING_PIN
                 default n 
 
             config BSP_USING_SPI1
-                bool "Enable SPI1 BUS PB5/6/7(C/O/I)"
+                bool "Enable SPI1 BUS PM5/C2/C3(C/O/I)"
                 select RT_USING_SPI
                 select RT_USING_PIN
                 default n

@@ -5,7 +5,8 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-05-31     Zohar_Lee    first version
+ * 2018-05-31     ZYH          first version
+ * 2018-12-10     Zohar_Lee    format file
  */
 
 #include <board.h>
@@ -34,8 +35,7 @@ void SysTick_Handler(void)
 void rt_hw_board_init()
 {
     bsp_clock_config();
-//    PORT_Init(PORTA, PIN0, PORTA_PIN0_SWCLK, 1);
-//  PORT_Init(PORTA, PIN1, PORTA_PIN1_SWDIO, 1);
+
 #ifdef BSP_USING_EXT_SRAM
     drv_sram_init();
 #endif

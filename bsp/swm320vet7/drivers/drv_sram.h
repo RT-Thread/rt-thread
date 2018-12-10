@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-05-31     Zohar_Lee    first version
+ * 2018-12-10     Zohar_Lee    first version
  */
 
 #ifndef DRV_SRAM_H__

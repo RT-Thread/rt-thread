@@ -173,6 +173,7 @@
 
 /* example package: hello */
 
+#define SOC_SWM320VET7
 
 /* Hardware Drivers Config */
 
