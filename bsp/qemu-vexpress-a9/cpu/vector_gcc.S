@@ -21,6 +21,7 @@
  * Date           Author       Notes
  * 2013-07-05     Bernard      the first version
  */
+
 .section .vectors, "ax"
 .code 32
 
@@ -49,7 +50,7 @@ _vector_reset:
 _vector_undef:
     .word vector_undef
 _vector_swi:
-    .word vector_swi
+    .word SVC_Handler
 _vector_pabt:
     .word vector_pabt
 _vector_dabt:
