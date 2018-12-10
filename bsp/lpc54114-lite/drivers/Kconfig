@@ -1,4 +1,4 @@
-# RT1050 bsp Config!
+# LPC54110 bsp Config
 menu "LPC54110 Bsp Config" 
 
     menu "Select uart drivers"
@@ -27,11 +27,6 @@ menu "LPC54110 Bsp Config"
     config BSP_USING_SPIFLASH
         bool "Enable SPI Flash"
         select BSP_USING_SPI2
-        default y
-
-    config BSP_USING_PCT2075
-        bool "Enable PCT2075"
-        select BSP_USING_I2C4
         default y
 
 endmenu

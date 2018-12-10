@@ -432,11 +432,6 @@
               <FileType>1</FileType>
               <FilePath>drivers\drv_spi_flash.c</FilePath>
             </File>
-            <File>
-              <FileName>drv_pct2075.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_pct2075.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
