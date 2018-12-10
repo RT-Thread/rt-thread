@@ -13,6 +13,7 @@
 #define RT_TICK_PER_SECOND 1000
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
+#define RT_USING_IDLE_HOOK
 #define RT_IDEL_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 1024
 #define RT_DEBUG
@@ -29,7 +30,7 @@
 
 #define RT_USING_MEMPOOL
 #define RT_USING_MEMHEAP
-#define RT_USING_SMALL_MEM
+#define RT_USING_MEMHEAP_AS_HEAP
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
@@ -153,6 +154,12 @@
 
 /* example package: hello */
 
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32F4
 
@@ -169,7 +176,7 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART1
 
-/* Offboard Peripheral Drivers */
+/* Board extended module Drivers */
 
 
 #endif
