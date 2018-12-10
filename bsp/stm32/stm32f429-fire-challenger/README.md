@@ -57,6 +57,7 @@
 | ADC               |     支持     |                                     |
 | RTC               |     支持     |                                      |
 | WDT               |     支持     |                                       |
+| FLASH | 支持 | 已适配 [FAL](https://github.com/RT-Thread-packages/fal) |
 | SDIO              |   暂不支持   | 即将支持                              |
 | PWM               |   暂不支持   | 即将支持                              |
 | USB Device        |   暂不支持   | 即将支持                              |

@@ -49,6 +49,7 @@ ATK-NANO STM32F103 是正点原子推出的一款基于 ARM Cortex-M3 内核的�
 | RTC               |     支持     |                                       |
 | WDT               |     支持     |                                       |
 | ADC               |     支持     |                                       |
+| FLASH | 支持 | 已适配 [FAL](https://github.com/RT-Thread-packages/fal) |
 | **扩展模块**      | **支持情况** | **备注**                              |
 | DS18B20/DHT11  |   暂不支持   |                               |
 
