@@ -9,7 +9,6 @@
  */
 
 #include <rtthread.h>
-#include "am33xx.h"
 #include <mmu.h>
 #include "cp15.h"
 

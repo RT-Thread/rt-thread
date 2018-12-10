@@ -16,7 +16,7 @@
 #ifndef _B
 #define _B(i)           (((i) >= 32) ? (1ull << (i)) : (1u << (i)))
 #endif
-#ifdef _L
+#ifndef _L
 #define _L(i, n)        ((i) << (n))
 #endif
 

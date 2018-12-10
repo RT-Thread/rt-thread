@@ -10,7 +10,6 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include "am33xx.h"
 
 /**
  * @addtogroup AM33xx
