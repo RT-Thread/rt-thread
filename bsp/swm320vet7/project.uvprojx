@@ -386,11 +386,6 @@
               <FileType>1</FileType>
               <FilePath>applications\main.c</FilePath>
             </File>
-            <File>
-              <FileName>mnt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\mnt.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>

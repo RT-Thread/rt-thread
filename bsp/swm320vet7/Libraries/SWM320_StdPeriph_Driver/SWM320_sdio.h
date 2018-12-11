@@ -35,70 +35,70 @@
 #define SD_CMD_SDIO_RW_EXTENDED                    ((uint8_t)53)
 
 
-#define SD_RESP_NO			0	//0 无响应
-#define SD_RESP_32b			2	//2 32位响应
-#define SD_RESP_128b		1	//1 128位响应
-#define SD_RESP_32b_busy	3	//3 32位响应，check Busy after response
+#define SD_RESP_NO          0   //0 无响应
+#define SD_RESP_32b         2   //2 32位响应
+#define SD_RESP_128b        1   //1 128位响应
+#define SD_RESP_32b_busy    3   //3 32位响应，check Busy after response
 
-#define SD_CLK_400KHz		0
-#define SD_CLK_20MHz		1
+#define SD_CLK_400KHz       0
+#define SD_CLK_20MHz        1
 
-#define SD_BUSWIDTH_1b		0
-#define SD_BUSWIDTH_4b		2
+#define SD_BUSWIDTH_1b      0
+#define SD_BUSWIDTH_4b      2
 
-#define SD_RES_OK			0
-#define SD_RES_ERR			1
+#define SD_RES_OK           0
+#define SD_RES_ERR          1
 
 
 typedef struct
 {
-  __IO uint8_t  CSDStruct;            // CSD structure 
-  __IO uint8_t  SysSpecVersion;       // System specification version 
-  __IO uint8_t  Reserved1;            // Reserved 
-  __IO uint8_t  TAAC;                 // Data read access-time 1 
-  __IO uint8_t  NSAC;                 // Data read access-time 2 in CLK cycles 
-  __IO uint8_t  MaxBusClkFrec;        // Max. bus clock frequency 
-  __IO uint16_t CardComdClasses;      //< Card command classes 
-  __IO uint8_t  RdBlockLen;           // Max. read data block length 
-  __IO uint8_t  PartBlockRead;        // Partial blocks for read allowed 
-  __IO uint8_t  WrBlockMisalign;      // Write block misalignment 
-  __IO uint8_t  RdBlockMisalign;      // Read block misalignment 
-  __IO uint8_t  DSRImpl;              // DSR implemented 
-  __IO uint8_t  Reserved2;            // Reserved 
-  __IO uint32_t DeviceSize;           // Device Size 
-  __IO uint8_t  MaxRdCurrentVDDMin;   // Max. read current @ VDD min 
-  __IO uint8_t  MaxRdCurrentVDDMax;   // Max. read current @ VDD max 
-  __IO uint8_t  MaxWrCurrentVDDMin;   // Max. write current @ VDD min 
-  __IO uint8_t  MaxWrCurrentVDDMax;   // Max. write current @ VDD max 
-  __IO uint8_t  DeviceSizeMul;        // Device size multiplier 
-  __IO uint8_t  EraseGrSize;          // Erase group size 
-  __IO uint8_t  EraseGrMul;           // Erase group size multiplier 
-  __IO uint8_t  WrProtectGrSize;      // Write protect group size 
-  __IO uint8_t  WrProtectGrEnable;    // Write protect group enable 
-  __IO uint8_t  ManDeflECC;           // Manufacturer default ECC 
-  __IO uint8_t  WrSpeedFact;          // Write speed factor 
-  __IO uint8_t  MaxWrBlockLen;        // Max. write data block length 
-  __IO uint8_t  WriteBlockPaPartial;  // Partial blocks for write allowed 
-  __IO uint8_t  Reserved3;            // Reserded 
-  __IO uint8_t  ContentProtectAppli;  // Content protection application 
-  __IO uint8_t  FileFormatGrouop;     // File format group 
-  __IO uint8_t  CopyFlag;             // Copy flag (OTP) 
-  __IO uint8_t  PermWrProtect;        // Permanent write protection 
-  __IO uint8_t  TempWrProtect;        // Temporary write protection 
-  __IO uint8_t  FileFormat;           // File Format 
-  __IO uint8_t  ECC;                  // ECC code 
+    __IO uint8_t  CSDStruct;            // CSD structure
+    __IO uint8_t  SysSpecVersion;       // System specification version
+    __IO uint8_t  Reserved1;            // Reserved
+    __IO uint8_t  TAAC;                 // Data read access-time 1
+    __IO uint8_t  NSAC;                 // Data read access-time 2 in CLK cycles
+    __IO uint8_t  MaxBusClkFrec;        // Max. bus clock frequency
+    __IO uint16_t CardComdClasses;      //< Card command classes
+    __IO uint8_t  RdBlockLen;           // Max. read data block length
+    __IO uint8_t  PartBlockRead;        // Partial blocks for read allowed
+    __IO uint8_t  WrBlockMisalign;      // Write block misalignment
+    __IO uint8_t  RdBlockMisalign;      // Read block misalignment
+    __IO uint8_t  DSRImpl;              // DSR implemented
+    __IO uint8_t  Reserved2;            // Reserved
+    __IO uint32_t DeviceSize;           // Device Size
+    __IO uint8_t  MaxRdCurrentVDDMin;   // Max. read current @ VDD min
+    __IO uint8_t  MaxRdCurrentVDDMax;   // Max. read current @ VDD max
+    __IO uint8_t  MaxWrCurrentVDDMin;   // Max. write current @ VDD min
+    __IO uint8_t  MaxWrCurrentVDDMax;   // Max. write current @ VDD max
+    __IO uint8_t  DeviceSizeMul;        // Device size multiplier
+    __IO uint8_t  EraseGrSize;          // Erase group size
+    __IO uint8_t  EraseGrMul;           // Erase group size multiplier
+    __IO uint8_t  WrProtectGrSize;      // Write protect group size
+    __IO uint8_t  WrProtectGrEnable;    // Write protect group enable
+    __IO uint8_t  ManDeflECC;           // Manufacturer default ECC
+    __IO uint8_t  WrSpeedFact;          // Write speed factor
+    __IO uint8_t  MaxWrBlockLen;        // Max. write data block length
+    __IO uint8_t  WriteBlockPaPartial;  // Partial blocks for write allowed
+    __IO uint8_t  Reserved3;            // Reserded
+    __IO uint8_t  ContentProtectAppli;  // Content protection application
+    __IO uint8_t  FileFormatGrouop;     // File format group
+    __IO uint8_t  CopyFlag;             // Copy flag (OTP)
+    __IO uint8_t  PermWrProtect;        // Permanent write protection
+    __IO uint8_t  TempWrProtect;        // Temporary write protection
+    __IO uint8_t  FileFormat;           // File Format
+    __IO uint8_t  ECC;                  // ECC code
 } SD_CSD;
 
 typedef struct
 {
-  __IO uint8_t  ManufacturerID;       // ManufacturerID 
-  __IO uint16_t OEM_AppliID;          // OEM/Application ID 
-  __IO uint32_t ProdName1;            // Product Name part1 
-  __IO uint8_t  ProdName2;            // Product Name part2
-  __IO uint8_t  ProdRev;              // Product Revision 
-  __IO uint32_t ProdSN;               // Product Serial Number 
-  __IO uint8_t  Reserved1;            // Reserved1 
-  __IO uint16_t ManufactDate;         // Manufacturing Date 
+    __IO uint8_t  ManufacturerID;       // ManufacturerID
+    __IO uint16_t OEM_AppliID;          // OEM/Application ID
+    __IO uint32_t ProdName1;            // Product Name part1
+    __IO uint8_t  ProdName2;            // Product Name part2
+    __IO uint8_t  ProdRev;              // Product Revision
+    __IO uint32_t ProdSN;               // Product Serial Number
+    __IO uint8_t  Reserved1;            // Reserved1
+    __IO uint16_t ManufactDate;         // Manufacturing Date
 } SD_CID;
 
 
@@ -114,12 +114,12 @@ typedef struct
 
 typedef struct
 {
-  SD_CSD SD_csd;
-  SD_CID SD_cid;
-  uint64_t CardCapacity;  // Card Capacity 
-  uint32_t CardBlockSize; // Card Block Size 
-  uint16_t RCA;
-  uint8_t CardType;
+    SD_CSD SD_csd;
+    SD_CID SD_cid;
+    uint64_t CardCapacity;  // Card Capacity
+    uint32_t CardBlockSize; // Card Block Size
+    uint16_t RCA;
+    uint8_t CardType;
 } SD_CardInfo;
 
 
