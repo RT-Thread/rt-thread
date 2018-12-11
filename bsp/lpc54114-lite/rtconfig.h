@@ -16,9 +16,6 @@
 #define RT_USING_IDLE_HOOK
 #define RT_IDEL_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
-#define RT_USING_TIMER_SOFT
-#define RT_TIMER_THREAD_PRIO 4
-#define RT_TIMER_THREAD_STACK_SIZE 512
 #define RT_DEBUG
 
 /* Inter-Thread communication */
@@ -32,7 +29,6 @@
 /* Memory Management */
 
 #define RT_USING_MEMPOOL
-#define RT_USING_MEMHEAP
 #define RT_USING_SMALL_MEM
 #define RT_USING_HEAP
 
@@ -74,13 +70,38 @@
 
 /* Device virtual file system */
 
+#define RT_USING_DFS
+#define DFS_USING_WORKDIR
+#define DFS_FILESYSTEMS_MAX 4
+#define DFS_FILESYSTEM_TYPES_MAX 4
+#define DFS_FD_MAX 16
+#define RT_USING_DFS_ELMFAT
+
+/* elm-chan's FatFs, Generic FAT Filesystem Module */
+
+#define RT_DFS_ELM_CODE_PAGE 437
+#define RT_DFS_ELM_WORD_ACCESS
+#define RT_DFS_ELM_USE_LFN_3
+#define RT_DFS_ELM_USE_LFN 3
+#define RT_DFS_ELM_MAX_LFN 255
+#define RT_DFS_ELM_DRIVES 2
+#define RT_DFS_ELM_MAX_SECTOR_SIZE 4096
+#define RT_DFS_ELM_REENTRANT
+#define RT_USING_DFS_DEVFS
+#define RT_USING_DFS_ROMFS
 
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
+#define RT_USING_SPI
+#define RT_USING_SPI_MSD
+#define RT_USING_SFUD
+#define RT_SFUD_USING_FLASH_INFO_TABLE
 
 /* Using WiFi */
 
@@ -91,6 +112,7 @@
 /* POSIX layer and C standard library */
 
 #define RT_USING_LIBC
+#define RT_USING_POSIX
 
 /* Network */
 
@@ -159,7 +181,31 @@
 
 /* example package: hello */
 
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* rtpkgs online packages */
+
 #define SOC_LPC54114
-#define RT_USING_UART0
+
+/* LPC54110 Bsp Config */
+
+/* Select uart drivers */
+
+#define BSP_USING_UART0
+
+/* Select spi bus drivers */
+
+#define BSP_USING_SPI2
+
+/* Select i2c bus drivers */
+
+#define BSP_USING_I2C4
+#define BSP_USING_SDCARD
+#define BSP_USING_SPIFLASH
 
 #endif

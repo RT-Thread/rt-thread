@@ -124,7 +124,7 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
     {
         return -RT_ERROR;
     }
-    __HAL_UART_CLEAR_FLAG(&(uart->handle), UART_FLAG_TC);
+
     return RT_EOK;
 }
 
@@ -174,6 +174,7 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
     RT_ASSERT(serial != RT_NULL);
 
     uart = (struct stm32_uart *)serial->parent.user_data;
+    __HAL_UART_CLEAR_FLAG(&(uart->handle), UART_FLAG_TC);
 #if defined(SOC_SERIES_STM32L4)
     uart->handle.Instance->TDR = c;
 #else

@@ -49,11 +49,13 @@
 | UART         |     支持     |              UART1/2/3/6              |
 | SPI          |     支持     |               SPI1/2/3                |
 | I2C          |     支持     |               软件 I2C                |
-| RTC          |   暂不支持   |               即将支持                |
+| ADC          |     支持     |                                       |
+| RTC          |     支持     |                                       |
+| WDT          |     支持     |                                       |
+| FLASH | 支持 | 已适配 [FAL](https://github.com/RT-Thread-packages/fal) |
 | PWM          |   暂不支持   |               即将支持                |
 | USB Device   |   暂不支持   |               即将支持                |
 | USB Host     |   暂不支持   |               即将支持                |
-| IWG          |   暂不支持   |               即将支持                |
 | **扩展模块** | **支持情况** |               **备注**                |
 | ATK-ESP8266 模块 | 暂不支持 | 即将支持 |
 

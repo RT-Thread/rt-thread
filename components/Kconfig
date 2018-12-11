@@ -39,4 +39,6 @@ source "$RTT_DIR/components/utilities/Kconfig"
 
 source "$RTT_DIR/components/CMSIS/Kconfig"
 
+source "$RTT_DIR/components/lwp/Kconfig"
+
 endmenu

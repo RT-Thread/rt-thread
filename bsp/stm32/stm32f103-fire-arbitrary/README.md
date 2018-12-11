@@ -43,6 +43,7 @@
 | RS232        |     支持     | 使用 UART2                            |
 | SPI Flash    |     支持     | W25Q64                                |
 | 以太网       |     支持     | W5500                                 |
+| 电位器       |     支持     | 使用 ADC1                              |
 | SD卡         |   即将支持   |                                       |
 | CAN          |   即将支持   |                                       |
 | SDRAM        |   即将支持   |                                       |
@@ -52,12 +53,14 @@
 | UART         |     支持     | UART1/2/3                             |
 | SPI          |     支持     | SPI1/2/3                              |
 | I2C          |     支持     | 软件 I2C                              |
+| ADC          |     支持     |                                      |
+| RTC          |     支持     |                                      |
+| WDT          |     支持     |                                       |
+| FLASH | 支持 | 已适配 [FAL](https://github.com/RT-Thread-packages/fal) |
 | SDIO         |   暂不支持   | 即将支持                              |
-| RTC          |   暂不支持   | 即将支持                              |
 | PWM          |   暂不支持   | 即将支持                              |
 | USB Device   |   暂不支持   | 即将支持                              |
 | USB Host     |   暂不支持   | 即将支持                              |
-| IWG          |   暂不支持   | 即将支持                              |
 | **扩展模块** | **支持情况** | **备注**                              |
 | 暂无         |   暂不支持   | 暂不支持                              |
 
