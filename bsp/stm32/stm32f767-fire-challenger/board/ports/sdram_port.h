@@ -23,9 +23,9 @@
 /* row bit numbers: 11, 12, 13 */
 #define SDRAM_ROW_BITS                  12
 /* cas latency clock number: 1, 2, 3 */
-#define SDRAM_CAS_LATENCY               3
+#define SDRAM_CAS_LATENCY               2
 /* read pipe delay: 0, 1, 2 */
-#define SDRAM_RPIPE_DELAY               1
+#define SDRAM_RPIPE_DELAY               0
 /* clock divid: 2, 3 */
 #define SDCLOCK_PERIOD                  2
 /* refresh rate counter */
@@ -33,21 +33,21 @@
 #define SDRAM_SIZE                      ((uint32_t)0x800000)
 
 /* Timing configuration for IS42S16400J */
-/* 90 MHz of SD clock frequency (180MHz/2) */
+/* 108 MHz of SD clock frequency (216MHz/2) */
 /* TMRD: 2 Clock cycles */
 #define LOADTOACTIVEDELAY               2
-/* TXSR: 7x11.90ns */
-#define EXITSELFREFRESHDELAY            7
-/* TRAS: 4x11.90ns */
-#define SELFREFRESHTIME                 4
-/* TRC:  7x11.90ns */
+/* TXSR: 8x9.25ns */
+#define EXITSELFREFRESHDELAY            8
+/* TRAS: 5x9.25ns */
+#define SELFREFRESHTIME                 5
+/* TRC:  7x9.25ns */
 #define ROWCYCLEDELAY                   7
 /* TWR:  2 Clock cycles */
 #define WRITERECOVERYTIME               2
-/* TRP:  2x11.90ns */
+/* TRP:  2x9.25ns */
 #define RPDELAY                         2
-/* TRCD: 2x11.90ns */
-#define RCDDELAY                        2
+/* TRCD: 2x9.25ns */
+#define RCDDELAY                        3
 
 /* memory mode register */
 #define SDRAM_MODEREG_BURST_LENGTH_1             ((uint16_t)0x0000)

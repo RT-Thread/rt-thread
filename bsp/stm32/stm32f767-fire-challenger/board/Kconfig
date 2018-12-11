@@ -17,39 +17,6 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART2
         default n
         
-    config BSP_USING_SDRAM
-        bool "Enable SDRAM"
-        default n
-        
-    config BSP_USING_SPI_FLASH
-        bool "Enable SPI FLASH (W25Q128 spi5)"
-        select BSP_USING_SPI5
-        select RT_USING_SFUD
-        select RT_SFUD_USING_SFDP
-        default n
-        
-    config BSP_USING_MPU6050
-        bool "Enable MPU6050 (i2c1)"
-        select BSP_USING_I2C1
-        select PKG_USING_MPU6XXX
-        default n
-
-    config BSP_USING_ETH
-        bool "Enable Ethernet"
-        default n
-        select RT_USING_LWIP
-        if BSP_USING_ETH
-            config EXTERNAL_PHY_ADDRESS
-                hex
-                default 0x00
-        endif
-
-    config BSP_USING_POT
-        bool "Enable potentiometer"
-        select BSP_USING_ADC
-        select BSP_USING_ADC1
-        default n    
-
 endmenu
 
 menu "On-chip Peripheral Drivers"
