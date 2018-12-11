@@ -14,7 +14,6 @@
 #include <board.h>
 #include <string.h>
 #include <time.h>
-#include "SWM320.h"
 
 struct rt_device_rtc;
 struct rt_rtc_ops

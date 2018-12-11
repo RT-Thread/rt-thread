@@ -1,10 +1,10 @@
 /****************************************************************************************************************************************** 
-* Œƒº˛√˚≥∆:	system_SWM320.c
-* π¶ƒ‹Àµ√˜:	SWM320µ•∆¨ª˙µƒ ±÷”…Ë÷√
-* ºº ı÷ß≥÷:	http://www.synwit.com.cn/e/tool/gbook/?bid=1
-* ◊¢“‚ ¬œÓ:
-* ∞Ê±æ»’∆⁄: V1.1.0		2017ƒÍ10‘¬25»’
-* …˝º∂º«¬º: 
+* Êñá‰ª∂ÂêçÁß∞:	system_SWM320.c
+* ÂäüËÉΩËØ¥Êòé:	SWM320ÂçïÁâáÊú∫ÁöÑÊó∂ÈíüËÆæÁΩÆ
+* ÊäÄÊúØÊîØÊåÅ:	http://www.synwit.com.cn/e/tool/gbook/?bid=1
+* Ê≥®ÊÑè‰∫ãÈ°π:
+* ÁâàÊú¨Êó•Êúü: V1.1.0		2017Âπ¥10Êúà25Êó•
+* ÂçáÁ∫ßËÆ∞ÂΩï: 
 *
 *
 *******************************************************************************************************************************************
@@ -17,203 +17,199 @@
 * -ECTION WITH THEIR PRODUCTS.
 *
 * COPYRIGHT 2012 Synwit Technology
-*******************************************************************************************************************************************/ 
+*******************************************************************************************************************************************/
 #include <stdint.h>
 #include "SWM320.h"
 
-
 /******************************************************************************************************************************************
- * œµÕ≥ ±÷”…Ë∂®
+ * Á≥ªÁªüÊó∂ÈíüËÆæÂÆö
  *****************************************************************************************************************************************/
-#define SYS_CLK_20MHz	0	 	//0 ƒ⁄≤ø∏ﬂ∆µ20MHz RC’Òµ¥∆˜
-#define SYS_CLK_40MHz	1		//1 ƒ⁄≤ø∏ﬂ∆µ40MHz RC’Òµ¥∆˜
-#define SYS_CLK_32KHz	2		//2 ƒ⁄≤øµÕ∆µ32KHz RC’Òµ¥∆˜
-#define SYS_CLK_XTAL	3		//3 Õ‚≤øæßÃÂ’Òµ¥∆˜£®2-30MHz£©
-#define SYS_CLK_PLL		4		//4 ∆¨ƒ⁄À¯œ‡ª∑ ‰≥ˆ
+#define SYS_CLK_20MHz 0 //0 ÂÜÖÈÉ®È´òÈ¢ë20MHz RCÊåØËç°Âô®
+#define SYS_CLK_40MHz 1 //1 ÂÜÖÈÉ®È´òÈ¢ë40MHz RCÊåØËç°Âô®
+#define SYS_CLK_32KHz 2 //2 ÂÜÖÈÉ®‰ΩéÈ¢ë32KHz RCÊåØËç°Âô®
+#define SYS_CLK_XTAL 3  //3 Â§ñÈÉ®Êô∂‰ΩìÊåØËç°Âô®Ôºà2-30MHzÔºâ
+#define SYS_CLK_PLL 4   //4 ÁâáÂÜÖÈîÅÁõ∏ÁéØËæìÂá∫
 
-#define SYS_CLK   SYS_CLK_PLL
+#define SYS_CLK SYS_CLK_PLL
 
+#define SYS_CLK_DIV_1 0
+#define SYS_CLK_DIV_2 1
 
-#define SYS_CLK_DIV_1	0
-#define SYS_CLK_DIV_2	1
+#define SYS_CLK_DIV SYS_CLK_DIV_1
 
-#define SYS_CLK_DIV   	SYS_CLK_DIV_1
+#define __HSI (20000000UL) //È´òÈÄüÂÜÖÈÉ®Êó∂Èíü
+#define __LSI (32000UL)	//‰ΩéÈÄüÂÜÖÈÉ®Êó∂Èíü
+#define __HSE (20000000UL) //È´òÈÄüÂ§ñÈÉ®Êó∂Èíü
 
+/********************************** PLL ËÆæÂÆö **********************************************
+ * VCOËæìÂá∫È¢ëÁéá = PLLËæìÂÖ•Êó∂Èíü / INDIV * 4 * FBDIV
+ * PLLËæìÂá∫È¢ëÁéá = PLLËæìÂÖ•Êó∂Èíü / INDIV * 4 * FBDIV / OUTDIV = VCOËæìÂá∫È¢ëÁéá / OUTDIV         
+ *****************************************************************************************/
+#define SYS_PLL_SRC SYS_CLK_XTAL //ÂèØÂèñÂÄºSYS_CLK_20MHz„ÄÅSYS_CLK_XTAL
 
-#define __HSI		(20000000UL)		//∏ﬂÀŸƒ⁄≤ø ±÷”
-#define __LSI		(   32000UL)		//µÕÀŸƒ⁄≤ø ±÷”
-#define __HSE		(20000000UL)		//∏ﬂÀŸÕ‚≤ø ±÷”
+#define PLL_IN_DIV 5
 
+#define PLL_FB_DIV 50
 
-/********************************** PLL …Ë∂® **********************************************
- * VCO ‰≥ˆ∆µ¬  = PLL ‰»Î ±÷” / INDIV * 4 * FBDIV
- * PLL ‰≥ˆ∆µ¬  = PLL ‰»Î ±÷” / INDIV * 4 * FBDIV / OUTDIV = VCO ‰≥ˆ∆µ¬  / OUTDIV         
- *****************************************************************************************/ 
-#define SYS_PLL_SRC   	SYS_CLK_XTAL	//ø…»°÷µSYS_CLK_20MHz°¢SYS_CLK_XTAL
+#define PLL_OUT_DIV8 0
+#define PLL_OUT_DIV4 1
+#define PLL_OUT_DIV2 2
 
-#define PLL_IN_DIV		5
+#define PLL_OUT_DIV PLL_OUT_DIV8
 
-#define PLL_FB_DIV		60
-
-
-#define PLL_OUT_DIV8	0
-#define PLL_OUT_DIV4	1
-#define PLL_OUT_DIV2	2
-
-#define PLL_OUT_DIV		PLL_OUT_DIV8
-
-
-
-uint32_t SystemCoreClock  = (120000000UL);   				//System Clock Frequency (Core Clock)
-uint32_t CyclesPerUs      = ((120000000UL) / 1000000); 		//Cycles per micro second
-
+uint32_t SystemCoreClock = (120000000UL);		  //System Clock Frequency (Core Clock)
+uint32_t CyclesPerUs = ((120000000UL) / 1000000); //Cycles per micro second
 
 /****************************************************************************************************************************************** 
-* ∫Ø ˝√˚≥∆: 
-* π¶ƒ‹Àµ√˜: This function is used to update the variable SystemCoreClock and must be called whenever the core clock is changed
-*  ‰    »Î: 
-*  ‰    ≥ˆ: 
-* ◊¢“‚ ¬œÓ: 
+* ÂáΩÊï∞ÂêçÁß∞: 
+* ÂäüËÉΩËØ¥Êòé: This function is used to update the variable SystemCoreClock and must be called whenever the core clock is changed
+* Ëæì    ÂÖ•: 
+* Ëæì    Âá∫: 
+* Ê≥®ÊÑè‰∫ãÈ°π: 
 ******************************************************************************************************************************************/
-void SystemCoreClockUpdate(void)    
+void SystemCoreClockUpdate(void)
 {
-	if(SYS->CLKSEL & SYS_CLKSEL_SYS_Msk)			//SYS_CLK  <= HFCK
+	if (SYS->CLKSEL & SYS_CLKSEL_SYS_Msk) //SYS_CLK  <= HFCK
 	{
-		if(SYS->CLKSEL & SYS_CLKSEL_HFCK_Msk)			//HFCK <= XTAL
+		if (SYS->CLKSEL & SYS_CLKSEL_HFCK_Msk) //HFCK <= XTAL
 		{
-			SystemCoreClock =  __HSE;
+			SystemCoreClock = __HSE;
 		}
-		else											//HFCK <= HRC
+		else //HFCK <= HRC
 		{
-			if(SYS->HRCCR & SYS_HRCCR_DBL_Msk)				//HRC = 40MHz
+			if (SYS->HRCCR & SYS_HRCCR_DBL_Msk) //HRC = 40MHz
 			{
-				SystemCoreClock = __HSI*2;
+				SystemCoreClock = __HSI * 2;
 			}
-			else											//HRC = 20MHz
+			else //HRC = 20MHz
 			{
 				SystemCoreClock = __HSI;
 			}
 		}
 	}
-	else											//SYS_CLK  <= LFCK
+	else //SYS_CLK  <= LFCK
 	{
-		if(SYS->CLKSEL & SYS_CLKSEL_LFCK_Msk)			//LFCK <= PLL
+		if (SYS->CLKSEL & SYS_CLKSEL_LFCK_Msk) //LFCK <= PLL
 		{
-			if(SYS->PLLCR & SYS_PLLCR_INSEL_Msk)			//PLL_SRC <= HRC
+			if (SYS->PLLCR & SYS_PLLCR_INSEL_Msk) //PLL_SRC <= HRC
 			{
 				SystemCoreClock = __HSI;
 			}
-			else											//PLL_SRC <= XTAL
+			else //PLL_SRC <= XTAL
 			{
 				SystemCoreClock = __HSE;
 			}
-			
+
 			SystemCoreClock = SystemCoreClock / PLL_IN_DIV * PLL_FB_DIV * 4 / (2 << (2 - PLL_OUT_DIV));
 		}
-		else											//LFCK <= LRC
+		else //LFCK <= LRC
 		{
 			SystemCoreClock = __LSI;
 		}
 	}
-	
-	if(SYS->CLKDIV & SYS_CLKDIV_SYS_Msk) SystemCoreClock /= 2;
+
+	if (SYS->CLKDIV & SYS_CLKDIV_SYS_Msk)
+		SystemCoreClock /= 2;
 }
 
 /****************************************************************************************************************************************** 
-* ∫Ø ˝√˚≥∆: 
-* π¶ƒ‹Àµ√˜: The necessary initializaiton of systerm
-*  ‰    »Î: 
-*  ‰    ≥ˆ: 
-* ◊¢“‚ ¬œÓ: 
+* ÂáΩÊï∞ÂêçÁß∞: 
+* ÂäüËÉΩËØ¥Êòé: The necessary initializaiton of systerm
+* Ëæì    ÂÖ•: 
+* Ëæì    Âá∫: 
+* Ê≥®ÊÑè‰∫ãÈ°π: 
 ******************************************************************************************************************************************/
 void SystemInit(void)
-{	
+{
 	uint32_t i;
-	
+
 	SYS->CLKEN |= (1 << SYS_CLKEN_ANAC_Pos);
-	
-	switch(SYS_CLK)
+
+	switch (SYS_CLK)
 	{
-		case SYS_CLK_20MHz:			//0 ƒ⁄≤ø∏ﬂ∆µ20MHz RC’Òµ¥∆˜
-			SYS->HRCCR = (0 << SYS_HRCCR_OFF_Pos) |
-						 (0 << SYS_HRCCR_DBL_Pos);			//HRC = 20MHz
-			
-			SYS->CLKSEL &= ~SYS_CLKSEL_HFCK_Msk;			//HFCK  <=  HRC
-			SYS->CLKSEL |= (1 << SYS_CLKSEL_SYS_Pos);		//SYS_CLK  <= HFCK
-			break;
-		
-		case SYS_CLK_40MHz:			//1 ƒ⁄≤ø∏ﬂ∆µ40MHz RC’Òµ¥∆˜
-			SYS->HRCCR = (0 << SYS_HRCCR_OFF_Pos) |
-						 (1 << SYS_HRCCR_DBL_Pos);			//HRC = 40MHz		
-			
-			SYS->CLKSEL &= ~SYS_CLKSEL_HFCK_Msk;			//HFCK  <=  HRC
-			SYS->CLKSEL |= (1 << SYS_CLKSEL_SYS_Pos);		//SYS_CLK  <= HFCK
-			break;
-		
-		case SYS_CLK_32KHz:			//2 ƒ⁄≤øµÕ∆µ32KHz RC’Òµ¥∆˜
-			SYS->CLKEN |= (1 << SYS_CLKEN_RTCBKP_Pos);
-			
-			SYS->LRCCR &= ~(1 << SYS_LRCCR_OFF_Pos);
-			
-			for(i = 0; i < 20000; i++);
-			
-			SYS->CLKSEL &= ~SYS_CLKSEL_LFCK_Msk;			//LFCK  <=  LRC
-			SYS->CLKSEL &= ~SYS_CLKSEL_SYS_Msk;				//SYS_CLK  <= LFCK
-			break;
-		
-		case SYS_CLK_XTAL:			//3 Õ‚≤øæßÃÂ’Òµ¥∆˜£®2-30MHz£©
-			SYS->XTALCR = (1 << SYS_XTALCR_EN_Pos);
-		
-			for(i = 0; i < 20000; i++);
-			
-			SYS->CLKSEL |= (1 << SYS_CLKSEL_HFCK_Pos);		//HFCK  <=  XTAL
-			SYS->CLKSEL |= (1 << SYS_CLKSEL_SYS_Pos);		//SYS_CLK  <= HFCK
-			break;
-		
-		case SYS_CLK_PLL:			//4 ∆¨ƒ⁄À¯œ‡ª∑ ‰≥ˆ
-			PLLInit();
-			SYS->PLLCR |= (1 << SYS_PLLCR_OUTEN_Pos);
-			
-			SYS->CLKSEL |= (1 << SYS_CLKSEL_LFCK_Pos);		//LFCK  <=  PLL
-			SYS->CLKSEL &= ~SYS_CLKSEL_SYS_Msk;				//SYS_CLK  <= LFCK
-			break;
+	case SYS_CLK_20MHz: //0 ÂÜÖÈÉ®È´òÈ¢ë20MHz RCÊåØËç°Âô®
+		SYS->HRCCR = (0 << SYS_HRCCR_OFF_Pos) |
+					 (0 << SYS_HRCCR_DBL_Pos); //HRC = 20MHz
+
+		SYS->CLKSEL &= ~SYS_CLKSEL_HFCK_Msk;	  //HFCK  <=  HRC
+		SYS->CLKSEL |= (1 << SYS_CLKSEL_SYS_Pos); //SYS_CLK  <= HFCK
+		break;
+
+	case SYS_CLK_40MHz: //1 ÂÜÖÈÉ®È´òÈ¢ë40MHz RCÊåØËç°Âô®
+		SYS->HRCCR = (0 << SYS_HRCCR_OFF_Pos) |
+					 (1 << SYS_HRCCR_DBL_Pos); //HRC = 40MHz
+
+		SYS->CLKSEL &= ~SYS_CLKSEL_HFCK_Msk;	  //HFCK  <=  HRC
+		SYS->CLKSEL |= (1 << SYS_CLKSEL_SYS_Pos); //SYS_CLK  <= HFCK
+		break;
+
+	case SYS_CLK_32KHz: //2 ÂÜÖÈÉ®‰ΩéÈ¢ë32KHz RCÊåØËç°Âô®
+		SYS->CLKEN |= (1 << SYS_CLKEN_RTCBKP_Pos);
+
+		SYS->LRCCR &= ~(1 << SYS_LRCCR_OFF_Pos);
+
+		for (i = 0; i < 20000; i++)
+			;
+
+		SYS->CLKSEL &= ~SYS_CLKSEL_LFCK_Msk; //LFCK  <=  LRC
+		SYS->CLKSEL &= ~SYS_CLKSEL_SYS_Msk;  //SYS_CLK  <= LFCK
+		break;
+
+	case SYS_CLK_XTAL: //3 Â§ñÈÉ®Êô∂‰ΩìÊåØËç°Âô®Ôºà2-30MHzÔºâ
+		SYS->XTALCR = (1 << SYS_XTALCR_EN_Pos);
+
+		for (i = 0; i < 20000; i++)
+			;
+
+		SYS->CLKSEL |= (1 << SYS_CLKSEL_HFCK_Pos); //HFCK  <=  XTAL
+		SYS->CLKSEL |= (1 << SYS_CLKSEL_SYS_Pos);  //SYS_CLK  <= HFCK
+		break;
+
+	case SYS_CLK_PLL: //4 ÁâáÂÜÖÈîÅÁõ∏ÁéØËæìÂá∫
+		PLLInit();
+		SYS->PLLCR |= (1 << SYS_PLLCR_OUTEN_Pos);
+
+		SYS->CLKSEL |= (1 << SYS_CLKSEL_LFCK_Pos); //LFCK  <=  PLL
+		SYS->CLKSEL &= ~SYS_CLKSEL_SYS_Msk;		   //SYS_CLK  <= LFCK
+		break;
 	}
-	
+
 	SYS->CLKDIV &= ~SYS_CLKDIV_SYS_Msk;
 	SYS->CLKDIV |= (SYS_CLK_DIV << SYS_CLKDIV_SYS_Pos);
-	
+
 	SystemCoreClockUpdate();
 }
-
 
 void PLLInit(void)
 {
 	uint32_t i;
-	
-	if(SYS_PLL_SRC == SYS_CLK_20MHz)
+
+	if (SYS_PLL_SRC == SYS_CLK_20MHz)
 	{
 		SYS->HRCCR = (0 << SYS_HRCCR_OFF_Pos) |
-					 (0 << SYS_HRCCR_DBL_Pos);		//HRC = 20MHz
-		
-		SYS->PLLCR |= (1 << SYS_PLLCR_INSEL_Pos);	//PLL_SRC <= HRC
+					 (0 << SYS_HRCCR_DBL_Pos); //HRC = 20MHz
+
+		SYS->PLLCR |= (1 << SYS_PLLCR_INSEL_Pos); //PLL_SRC <= HRC
 	}
-	else if(SYS_PLL_SRC == SYS_CLK_XTAL)
+	else if (SYS_PLL_SRC == SYS_CLK_XTAL)
 	{
 		SYS->XTALCR = (1 << SYS_XTALCR_EN_Pos);
-		
-		for(i = 0; i < 20000; i++);
-		
-		SYS->PLLCR &= ~(1 << SYS_PLLCR_INSEL_Pos);	//PLL_SRC <= XTAL
+
+		for (i = 0; i < 20000; i++)
+			;
+
+		SYS->PLLCR &= ~(1 << SYS_PLLCR_INSEL_Pos); //PLL_SRC <= XTAL
 	}
-	
+
 	SYS->PLLDIV &= ~(SYS_PLLDIV_INDIV_Msk |
 					 SYS_PLLDIV_FBDIV_Msk |
 					 SYS_PLLDIV_OUTDIV_Msk);
 	SYS->PLLDIV |= (PLL_IN_DIV << SYS_PLLDIV_INDIV_Pos) |
 				   (PLL_FB_DIV << SYS_PLLDIV_FBDIV_Pos) |
-				   (PLL_OUT_DIV<< SYS_PLLDIV_OUTDIV_Pos);
-	
+				   (PLL_OUT_DIV << SYS_PLLDIV_OUTDIV_Pos);
+
 	SYS->PLLCR &= ~(1 << SYS_PLLCR_OFF_Pos);
-	
-	while(SYS->PLLLOCK == 0);		//µ»¥˝PLLÀ¯∂®
+
+	while (SYS->PLLLOCK == 0)
+		; //Á≠âÂæÖPLLÈîÅÂÆö
 }

@@ -8,7 +8,6 @@
  * 2018-12-10    Zohar_Lee    first version
  */
 
-#include "SWM320.h"
 #include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
