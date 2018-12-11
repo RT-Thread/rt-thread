@@ -22,7 +22,7 @@
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：STM32f767，主频 216MHz，1MB FLASH ，256KB RAM
+- MCU：STM32f767，主频 216MHz，1MB FLASH ，512KB RAM ，16K CACHE
 - 外部 RAM：型号，8MB
 - 外部 FLASH：型号，16MB
 - 常用外设
@@ -42,7 +42,7 @@
 | USB 转串口        |     支持     |                                       |
 | RS232         |     支持     | 与以太网有引脚冲突                    |
 | QSPI Flash        |   暂不支持    |                                       |
-| 电位器             |   暂不支持     |     使用 ADC1                          |
+| 电位器             |   暂不支持     |     使用 ADC1                         |
 | 以太网            |   暂不支持    |                                       |
 | MPU6050六轴传感器 |   暂不支持     |                   |
 | SDRAM             |     支持     |                                       |
@@ -56,7 +56,7 @@
 | ADC               |     支持     |                                     |
 | RTC               |     支持     |                                      |
 | WDT               |     支持     |                                       |
-| FLASH | 暂不支持 |                                |
+| FLASH | 支持 | 已适配 [FAL](https://github.com/RT-Thread-packages/fal)  |
 | SDIO              |   暂不支持   | 即将支持                              |
 | PWM               |   暂不支持   | 即将支持                              |
 | USB Device        |   暂不支持   | 即将支持                              |
