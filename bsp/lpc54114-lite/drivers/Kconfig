@@ -19,6 +19,12 @@ menu "LPC54110 Bsp Config"
             default y
     endmenu
 
+    config BSP_USING_ROMFS
+        bool "Enable ROMFS"
+        select RT_USING_DFS
+        select RT_USING_DFS_ROMFS
+        default y
+
     config BSP_USING_SDCARD
         bool "Enable SDCARD"
         select BSP_USING_SPI2
