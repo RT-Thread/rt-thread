@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F767xx, USE_HAL_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;.;board;board\CubeMX_Config\Inc;board\ports;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\libraries\HAL_Drivers\drv_flash;..\..\..\include;..\..\..\libcpu\arm\cortex-m7;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Inc;..\libraries\STM32F7xx_HAL\CMSIS\Device\ST\STM32F7xx\Include;..\libraries\STM32F7xx_HAL\CMSIS\Include</IncludePath>
+              <IncludePath>applications;.;board;board\CubeMX_Config\Inc;board\ports;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\include;..\..\..\libcpu\arm\cortex-m7;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Inc;..\libraries\STM32F7xx_HAL\CMSIS\Device\ST\STM32F7xx\Include;..\libraries\STM32F7xx_HAL\CMSIS\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>

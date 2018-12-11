@@ -16,7 +16,11 @@ menu "Onboard Peripheral Drivers"
         bool "Enable RS232 (uart2 pin conflict with Ethernet)"
         select BSP_USING_UART2
         default n
-        
+
+    config BSP_USING_SDRAM
+        bool "Enable SDRAM"
+        default n
+            
 endmenu
 
 menu "On-chip Peripheral Drivers"
