@@ -5,6 +5,7 @@ cwd = GetCurrentDir()
 src = Split("""
 board.c
 clock_config.c
+drv_gpio.c
 """)
 
 CPPPATH = [cwd]
@@ -18,6 +19,9 @@ if GetDepend('BSP_USING_SPI2'):
 
 if GetDepend('BSP_USING_I2C4'):
     src = src + ['drv_i2c.c'] 
+
+if GetDepend('BSP_USING_ROMFS'):
+    src = src + ['drv_romfs.c'] 
 
 if GetDepend('BSP_USING_SDCARD'):
     src = src + ['drv_sdcard.c'] 
