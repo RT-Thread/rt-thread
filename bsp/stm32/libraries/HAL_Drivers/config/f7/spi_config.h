@@ -37,8 +37,8 @@
     {                                                    \
         .Instance = SPI2,                                \
         .bus_name = "spi2",                              \
-        .dma_rx.dma_rcc = RCC_AHB1ENR_DMA1EN,     \
-        .dma_tx.dma_rcc = RCC_AHB1ENR_DMA1EN,     \
+        .dma_rx.dma_rcc = RCC_AHB1ENR_DMA1EN,            \
+        .dma_tx.dma_rcc = RCC_AHB1ENR_DMA1EN,            \
         .dma_rx.Instance = DMA1_Stream3,                 \
         .dma_rx.channel = DMA_CHANNEL_0,                 \
         .dma_rx.dma_irq = DMA1_Stream3_IRQn,             \

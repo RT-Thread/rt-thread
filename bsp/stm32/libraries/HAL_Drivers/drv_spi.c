@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-11-5      SummerGift   change to new framework
+ * 2018-12-11     greedyhao    Porting for stm32f7xx
  */
 
 #include "board.h"
