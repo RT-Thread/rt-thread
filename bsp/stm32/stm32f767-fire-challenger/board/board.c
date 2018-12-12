@@ -79,7 +79,6 @@ void MX_GPIO_Init(void)
 int board_pin_init(void)
 {
     rt_pin_mode(LED0_PIN, PIN_MODE_OUTPUT);
-    // rt_pin_mode(LED1_PIN, PIN_MODE_OUTPUT);
 
     return 0;
 }
