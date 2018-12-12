@@ -627,6 +627,15 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
         at_dev_ops->at_set_event_cb(AT_SOCKET_EVT_CLOSED, at_closed_notice_cb);
     }
 
+    /* receive packet list last transmission of remaining data */
+    rt_mutex_take(sock->recv_lock, RT_WAITING_FOREVER);
+    if((recv_len = at_recvpkt_get(&(sock->recvpkt_list), (char *)mem, len)) > 0)
+    {
+        rt_mutex_release(sock->recv_lock);
+        goto __exit;
+    }
+    rt_mutex_release(sock->recv_lock);
+        
     /* socket passively closed, receive function return 0 */
     if (sock->state == AT_SOCKET_CLOSED)
     {
@@ -639,15 +648,6 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
         result = -1;
         goto __exit;
     }
-
-    /* receive packet list last transmission of remaining data */
-    rt_mutex_take(sock->recv_lock, RT_WAITING_FOREVER);
-    if((recv_len = at_recvpkt_get(&(sock->recvpkt_list), (char *)mem, len)) > 0)
-    {
-        rt_mutex_release(sock->recv_lock);
-        goto __exit;
-    }
-    rt_mutex_release(sock->recv_lock);
 
     /* non-blocking sockets receive data */
     if (flags & MSG_DONTWAIT)
@@ -715,19 +715,7 @@ __exit:
     }
     else
     {
-        /* try to read Legacy data */
-        /* receive packet list last transmission of remaining data */
-        rt_mutex_take(sock->recv_lock, RT_WAITING_FOREVER);
-        recv_len = at_recvpkt_get(&(sock->recvpkt_list), (char *)mem, len);
-        rt_mutex_release(sock->recv_lock);
-        if(recv_len<=0)
-        {    
-            at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
-        }
-        else
-        {
-            result = recv_len;
-        }  
+        at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
     }
 
     return result;
