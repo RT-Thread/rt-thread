@@ -10,8 +10,8 @@ src += Glob('CubeMX_Config/Src/stm32f7xx_hal_msp.c')
 if GetDepend(['BSP_USING_ETH']):
     src += Glob('ports/phy_reset.c')
 
-if GetDepend(['BSP_USING_SPI_FLASH']):
-    src += Glob('ports/spi_flash_init.c')
+if GetDepend(['BSP_USING_QSPI_FLASH']):
+    src += Glob('ports/qspi_flash_init.c')
 
 path = [cwd]
 path += [cwd + '/CubeMX_Config/Inc']

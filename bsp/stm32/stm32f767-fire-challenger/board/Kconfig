@@ -20,7 +20,14 @@ menu "Onboard Peripheral Drivers"
     config BSP_USING_SDRAM
         bool "Enable SDRAM"
         default n
-            
+
+    config BSP_USING_QSPI_FLASH
+        bool "Enable QSPI FLASH (W25Q128 spi5)"
+        select BSP_USING_SPI5
+        select RT_USING_SFUD
+        select RT_SFUD_USING_SFDP
+        default n
+         
 endmenu
 
 menu "On-chip Peripheral Drivers"
