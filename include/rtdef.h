@@ -500,7 +500,7 @@ typedef siginfo_t rt_siginfo_t;
 #define RT_THREAD_CTRL_CLOSE            0x01                /**< Close thread. */
 #define RT_THREAD_CTRL_CHANGE_PRIORITY  0x02                /**< Change thread priority. */
 #define RT_THREAD_CTRL_INFO             0x03                /**< Get thread information. */
-#define RT_THREAD_CTRL_BIND_CPU         0x03                /**< Set thread bind cpu. */
+#define RT_THREAD_CTRL_BIND_CPU         0x04                /**< Set thread bind cpu. */
 
 #ifdef RT_USING_SMP
 
