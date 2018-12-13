@@ -14,12 +14,14 @@
 
 static int get_week(int year, int month, int day)
 {
+    int week;
 	if (month==1||month==2)
 	{
 		year -=1;
 		month +=12;
 	}
-	return (day+1+2*month+3*(month+1)/5+year+(year/4)-year/100+year/400)%7+1;
+	week = (day+1+2*month+3*(month+1)/5+year+(year/4)-year/100+year/400)%7/*+1*/; //week 0: Sunday.
+    return (week == 0 ? 7 : week);      //week should be 1 ~ 7.
 }
 
 static struct rt_device rtc;
@@ -54,13 +56,14 @@ static rt_err_t rt_rtc_control(rt_device_t dev, int cmd, void *args)
 			rt_memset(&ct,0,sizeof(struct tm));
 			time = (rt_time_t *)args;
 			/* read device */
-			RTC_GetDate(RTC_Format_BIN,&d);
+			//RTC_GetDate(RTC_Format_BIN,&d);
 			RTC_GetTime(RTC_Format_BIN,&t);
+            RTC_GetDate(RTC_Format_BIN,&d);     //STM32F4 必须先读时间，再读日期，才能解决更改日期必须重启的毛病
 
 			ct.tm_year = d.RTC_Year + 100;
 			ct.tm_mon = d.RTC_Month - 1;
 			ct.tm_mday = d.RTC_Date;
-			ct.tm_wday = d.RTC_WeekDay;
+			ct.tm_wday = (d.RTC_WeekDay == 7 ? 0 : d.RTC_WeekDay);   //RTC_WeekDay 1 ~ 7 对应周一 ~ 周天,  ct.tm_wday: 0 ~ 6 对应 周天 ~ 周六
 
 			ct.tm_hour = t.RTC_Hours;
 			ct.tm_min = t.RTC_Minutes;
