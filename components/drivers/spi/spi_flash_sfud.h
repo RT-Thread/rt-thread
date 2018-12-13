@@ -12,6 +12,7 @@
 #define _SPI_FLASH_SFUD_H_
 
 #include <rtthread.h>
+#include <rtdevice.h>
 #include "./sfud/inc/sfud.h"
 #include "spi_flash.h"
 

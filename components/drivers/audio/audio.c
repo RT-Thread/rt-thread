@@ -105,8 +105,6 @@ static rt_err_t _audio_dev_init(struct rt_device *dev)
 
 static rt_err_t _audio_dev_open(struct rt_device *dev, rt_uint16_t oflag)
 {
-    rt_err_t result = RT_EOK;
-    rt_base_t level;
     struct rt_audio_device *audio;
 
     RT_ASSERT(dev != RT_NULL);
@@ -159,7 +157,6 @@ static rt_err_t _audio_dev_open(struct rt_device *dev, rt_uint16_t oflag)
 
             //init pipe for record
             {
-                rt_size_t size = CFG_AUDIO_RECORD_PIPE_SIZE;
                 rt_uint8_t *buf = rt_malloc(CFG_AUDIO_RECORD_PIPE_SIZE);
 
                 if (buf == RT_NULL)
@@ -170,7 +167,7 @@ static rt_err_t _audio_dev_open(struct rt_device *dev, rt_uint16_t oflag)
                     return -RT_ENOMEM;
                 }
                 
-                rt_audio_pipe_init(&audio_pipe, "recpipe", RT_PIPE_FLAG_FORCE_WR | RT_PIPE_FLAG_BLOCK_RD, buf,
+                rt_audio_pipe_init(&audio_pipe, "recpipe", (rt_int32_t)(RT_PIPE_FLAG_FORCE_WR | RT_PIPE_FLAG_BLOCK_RD), buf,
                              CFG_AUDIO_RECORD_PIPE_SIZE);
             }
 
@@ -536,8 +533,6 @@ void rt_audio_tx_complete(struct rt_audio_device *audio, rt_uint8_t *pbuf)
 
 void rt_audio_rx_done(struct rt_audio_device *audio, rt_uint8_t *pbuf, rt_size_t len)
 {
-    rt_err_t result = RT_EOK;
-
     //save data to record pipe
     rt_device_write(RT_DEVICE(RT_DEVICE(&audio_pipe)), 0, pbuf, len);
 

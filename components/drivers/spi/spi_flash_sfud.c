@@ -619,7 +619,7 @@ static void sf(uint8_t argc, char **argv) {
                 addr = 0;
                 size = sfud_dev->chip.capacity;
                 uint32_t start_time, time_cast;
-                size_t write_size = SFUD_WRITE_MAX_PAGE_SIZE, read_size = 4096;
+                size_t write_size = SFUD_WRITE_MAX_PAGE_SIZE, read_size = SFUD_WRITE_MAX_PAGE_SIZE;
                 uint8_t *write_data = rt_malloc(write_size), *read_data = rt_malloc(read_size);
 
                 if (write_data && read_data) {
@@ -660,6 +660,13 @@ static void sf(uint8_t argc, char **argv) {
                         } else {
                             result = sfud_read(sfud_dev, addr + i, size - i, read_data);
                         }
+                        /* data check */
+                        if (memcmp(write_data, read_data, read_size))
+                        {
+                            rt_kprintf("Data check ERROR! Please check you flash by other command.\n");
+                            result = SFUD_ERR_READ;
+                        }
+                        
                         if (result != SFUD_SUCCESS) {
                             break;
                         }

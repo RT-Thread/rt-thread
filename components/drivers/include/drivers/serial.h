@@ -100,7 +100,7 @@ struct serial_configure
     rt_uint32_t bit_order               :1;
     rt_uint32_t invert                  :1;
     rt_uint32_t bufsz                   :16;
-    rt_uint32_t reserved                :4;
+    rt_uint32_t reserved                :6;
 };
 
 /*

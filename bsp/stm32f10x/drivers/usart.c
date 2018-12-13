@@ -157,6 +157,7 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
     }
     else
     {
+        USART_ClearFlag(uart->uart_device,USART_FLAG_TC);
         uart->uart_device->DR = c;
         while (!(uart->uart_device->SR & USART_FLAG_TC));
     }
