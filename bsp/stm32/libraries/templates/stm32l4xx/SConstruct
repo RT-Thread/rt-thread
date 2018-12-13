@@ -32,24 +32,27 @@ if rtconfig.PLATFORM == 'iar':
 Export('RTT_ROOT')
 Export('rtconfig')
 
-# prepare building environment
-objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
-
 SDK_ROOT = os.path.abspath('./')
 
 if os.path.exists(SDK_ROOT + '/libraries'):
-    libraries_path_prefix = SDK_ROOT + '/libraries/'
+    libraries_path_prefix = SDK_ROOT + '/libraries'
 else:
-    libraries_path_prefix = os.path.dirname(SDK_ROOT) + '/libraries/'
+    libraries_path_prefix = os.path.dirname(SDK_ROOT) + '/libraries'
 
-stm32_library = 'STM32FL4xx_HAL'
+SDK_LIB = libraries_path_prefix
+Export('SDK_LIB')
+
+# prepare building environment
+objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
+
+stm32_library = 'STM32L4xx_HAL'
 rtconfig.BSP_LIBRARY_TYPE = stm32_library
 
 # include libraries
-objs.extend(SConscript(libraries_path_prefix + stm32_library + '/SConscript'))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, stm32_library, 'SConscript')))
 
 # include drivers
-objs.extend(SConscript(libraries_path_prefix + '/HAL_Drivers/SConscript'))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript')))
 
 # make a building
 DoBuilding(TARGET, objs)
