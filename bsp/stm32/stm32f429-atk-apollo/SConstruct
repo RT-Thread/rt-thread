@@ -37,11 +37,19 @@ objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
 SDK_ROOT = os.path.abspath('./')
 
-# include drivers
-objs.extend(SConscript(os.path.dirname(SDK_ROOT) + '/libraries/STM32F4xx_HAL/SConscript'))
+if os.path.exists(SDK_ROOT + '/libraries'):
+    libraries_path_prefix = SDK_ROOT + '/libraries/'
+else:
+    libraries_path_prefix = os.path.dirname(SDK_ROOT) + '/libraries/'
+
+stm32_library = 'STM32F4xx_HAL'
+rtconfig.BSP_LIBRARY_TYPE = stm32_library
 
 # include libraries
-objs.extend(SConscript(os.path.dirname(SDK_ROOT) + '/libraries/HAL_Drivers/SConscript'))
+objs.extend(SConscript(libraries_path_prefix + stm32_library + '/SConscript'))
+
+# include drivers
+objs.extend(SConscript(libraries_path_prefix + '/HAL_Drivers/SConscript'))
 
 # make a building
 DoBuilding(TARGET, objs)
