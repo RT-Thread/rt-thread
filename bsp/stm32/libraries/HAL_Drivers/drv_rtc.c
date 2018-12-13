@@ -134,7 +134,7 @@ static rt_err_t rt_rtc_control(rt_device_t dev, int cmd, void *args)
     {
     case RT_DEVICE_CTRL_RTC_GET_TIME:
         *(rt_uint32_t *)args = get_rtc_timestamp();
-        LOG_D("RTC: get rtc_time %x\n", *(rt_uint32_t *)args());
+        LOG_D("RTC: get rtc_time %x\n", *(rt_uint32_t *)args);
         break;
 
     case RT_DEVICE_CTRL_RTC_SET_TIME:
