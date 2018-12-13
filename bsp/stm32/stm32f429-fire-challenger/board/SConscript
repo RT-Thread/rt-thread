@@ -2,6 +2,8 @@ import os
 import rtconfig
 from building import *
 
+Import('SDK_LIB')
+
 cwd = GetCurrentDir()
 
 # add general drivers
@@ -18,10 +20,7 @@ path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
 path += [cwd + '/ports']
 
-if os.path.exists(cwd + '/../libraries'):
-    startup_path_prefix = cwd + '/../libraries'
-else:
-    startup_path_prefix = cwd + '/../../libraries'
+startup_path_prefix = SDK_LIB
 
 if rtconfig.CROSS_TOOL == 'gcc':
     src += [startup_path_prefix + '/STM32F4xx_HAL/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc/startup_stm32f429xx.s']
