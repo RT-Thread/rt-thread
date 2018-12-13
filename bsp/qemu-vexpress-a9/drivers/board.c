@@ -82,4 +82,10 @@ void rt_hw_spin_unlock(rt_hw_spinlock_t *lock)
     lock->tickets.owner++;
     __asm__ volatile ("dsb ishst\nsev":::"memory");
 }
+
+void rt_hw_mb(void)
+{
+    __asm__ volatile ("dmb":::"memory");
+}
+
 #endif /*RT_USING_SMP*/
