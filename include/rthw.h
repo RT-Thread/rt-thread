@@ -146,6 +146,8 @@ typedef union {
 void rt_hw_spin_lock(rt_hw_spinlock_t *lock);
 void rt_hw_spin_unlock(rt_hw_spinlock_t *lock);
 
+void rt_hw_mb(void);
+
 int rt_hw_cpu_id(void);
 
 extern rt_hw_spinlock_t _cpus_lock;
