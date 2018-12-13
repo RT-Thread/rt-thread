@@ -37,7 +37,7 @@ rt_inline rt_uint32_t timeout_calc(rt_hwtimer_t *timer, rt_hwtimerval_t *tv)
         {
             timeout = tv_sec/i;
 
-            if (timeout <= overflow && timeout * timer->freq <= timer->info->maxcnt)
+            if (timeout <= overflow)
             {
                 counter = timeout*timer->freq;
                 devi = tv_sec - (counter/(float)timer->freq)*i;
