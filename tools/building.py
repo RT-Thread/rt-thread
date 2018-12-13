@@ -810,6 +810,9 @@ def EndBuilding(target, program = None):
     Env['target']  = program
     Env['project'] = Projects
 
+    if hasattr(rtconfig, 'BSP_LIBRARY_TYPE'):
+        Env['bsp_lib_type'] = rtconfig.BSP_LIBRARY_TYPE
+
     Env.AddPostAction(target, rtconfig.POST_ACTION)
     # Add addition clean files
     Clean(target, 'cconfig.h')
