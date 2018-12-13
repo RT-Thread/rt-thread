@@ -67,7 +67,10 @@ static int32_t touch_read (uint8_t reg, uint8_t *val)
 static int32_t touch_write(uint8_t reg, uint8_t val)
 {
     struct rt_i2c_msg msgs;
-    rt_uint8_t buf[2] = {reg, val};
+    rt_uint8_t buf[2];
+
+    buf[0] = reg;
+    buf[1] = val;
 
     msgs.addr  = TSC_I2C_ADDR;
     msgs.flags = RT_I2C_WR;

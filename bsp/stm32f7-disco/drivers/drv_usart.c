@@ -106,8 +106,9 @@ static int drv_putc(struct rt_serial_device *serial, char c)
     struct drv_uart *uart;
     RT_ASSERT(serial != RT_NULL);
     uart = (struct drv_uart *)serial->parent.user_data;
-    while ((__HAL_UART_GET_FLAG(&uart->UartHandle, UART_FLAG_TXE) == RESET));
+    __HAL_UART_CLEAR_IT(&(uart->UartHandle), UART_CLEAR_TCF);
     uart->UartHandle.Instance->TDR = c;
+    while (__HAL_UART_GET_FLAG(&(uart->UartHandle), UART_FLAG_TC) == RESET);
     return 1;
 }
 

@@ -166,8 +166,9 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
     RT_ASSERT(serial != RT_NULL);
     uart = (struct stm32_uart *)serial->parent.user_data;
 
-    while (!(uart->uart_device->SR & USART_FLAG_TXE));
+    USART_ClearFlag(uart->uart_device,USART_FLAG_TC);
     uart->uart_device->DR = c;
+    while (!(uart->uart_device->SR & USART_FLAG_TC));
 
     return 1;
 }

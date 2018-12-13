@@ -113,8 +113,9 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
     struct stm32_uart *uart;
     RT_ASSERT(serial != RT_NULL);
     uart = (struct stm32_uart *)serial->parent.user_data;
-    while (__HAL_UART_GET_FLAG(&uart->huart, UART_FLAG_TXE) == RESET);
+    __HAL_UART_CLEAR_FLAG(&(uart->huart), UART_FLAG_TC);
     uart->huart.Instance->DR = c;
+    while (__HAL_UART_GET_FLAG(&(uart->huart), UART_FLAG_TC) == RESET);
     return 1;
 }
 
