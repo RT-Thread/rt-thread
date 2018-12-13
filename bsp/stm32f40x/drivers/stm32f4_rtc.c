@@ -21,7 +21,7 @@ static int get_week(int year, int month, int day)
 		month +=12;
 	}
 	week = (day+1+2*month+3*(month+1)/5+year+(year/4)-year/100+year/400)%7; //week 0 ~ 6 : Sun ~ Sat.
-    return (week == 0 ? 7 : week);                                          //RTC WeekDay value [1,7]
+	return (week == 0 ? 7 : week);                                          //RTC WeekDay value [1,7]
 }
 
 static struct rt_device rtc;
