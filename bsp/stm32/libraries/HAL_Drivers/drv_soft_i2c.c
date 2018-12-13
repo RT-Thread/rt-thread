@@ -32,7 +32,7 @@ static const struct stm32_soft_i2c_config soft_i2c_config[] =
     I2C2_BUS_CONFIG,
 #endif
 #ifdef BSP_USING_I2C3
-    I2C2_BUS_CONFIG,
+    I2C3_BUS_CONFIG,
 #endif
 };
 

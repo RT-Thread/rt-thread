@@ -86,6 +86,6 @@ void rt_cpus_lock_status_restore(struct rt_thread *thread)
         rt_hw_spin_unlock(&_cpus_lock);
     }
 }
-RTM_EXPORT(rt_post_switch);
+RTM_EXPORT(rt_cpus_lock_status_restore);
 
 #endif

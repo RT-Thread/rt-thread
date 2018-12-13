@@ -221,7 +221,7 @@ struct dfs_fd *fd_get(int fd)
     d = fdt->fds[fd];
 
     /* check dfs_fd valid or not */
-    if (d->magic != DFS_FD_MAGIC)
+    if ((d == NULL) || (d->magic != DFS_FD_MAGIC))
     {
         dfs_unlock();
         return NULL;
