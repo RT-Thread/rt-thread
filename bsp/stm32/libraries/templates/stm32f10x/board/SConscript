@@ -7,8 +7,10 @@ Import('SDK_LIB')
 cwd = GetCurrentDir()
 
 # add general drivers
-src =  Glob('board.c')
-src += Glob('CubeMX_Config/Src/stm32f1xx_hal_msp.c')
+src = Split('''
+board.c
+CubeMX_Config/Src/stm32f1xx_hal_msp.c
+''')
 
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
