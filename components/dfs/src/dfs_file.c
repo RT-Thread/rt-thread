@@ -171,7 +171,7 @@ int dfs_file_ioctl(struct dfs_fd *fd, int cmd, void *args)
             return fd->flags; /* return flags */
         case F_SETFL:
             {
-                int flags = (int)args;
+                int flags = (int)(rt_base_t)args;
                 int mask  = O_NONBLOCK | O_APPEND;
 
                 flags &= mask;
