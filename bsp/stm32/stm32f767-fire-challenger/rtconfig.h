@@ -78,7 +78,6 @@
 #define RT_USING_DEVICE_IPC
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
-#define RT_SERIAL_USING_DMA
 #define RT_USING_PIN
 
 /* Using WiFi */
@@ -150,12 +149,7 @@
 /* miscellaneous packages */
 
 
-/* sample package */
-
 /* samples: kernel and components samples */
-
-
-/* example package: hello */
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32F7

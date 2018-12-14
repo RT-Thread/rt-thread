@@ -122,6 +122,24 @@ def bsp_update_kconfig(dist_dir):
                 line = line[0:position] + 'default: "rt-thread"\n'
                 found = 0
             f.write(line)
+            
+def bsp_update_kconfig_library(dist_dir):
+    # change RTT_ROOT in Kconfig
+    if not os.path.isfile(os.path.join(dist_dir, 'Kconfig')):
+        return
+
+    with open(os.path.join(dist_dir, 'Kconfig'), 'r') as f:
+        data = f.readlines()
+    with open(os.path.join(dist_dir, 'Kconfig'), 'w') as f:
+        found = 0
+        for line in data:
+            if line.find('RTT_ROOT') != -1:
+                found = 1
+            if line.find('../libraries') != -1 and found:
+                position = line.find('../libraries')
+                line = line[0:position] + 'libraries/Kconfig"\n'
+                found = 0
+            f.write(line)
 
 def bs_update_ide_project(bsp_root, rtt_root):
     import subprocess
@@ -168,6 +186,15 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
 
     print('=> %s' % os.path.basename(BSP_ROOT))
     bsp_copy_files(BSP_ROOT, dist_dir)
+
+    # copy stm32 bsp libiary files
+    if os.path.basename(os.path.dirname(BSP_ROOT)) == 'stm32':
+        print("=> copy stm32 bsp library")
+        library_path = os.path.join(os.path.dirname(BSP_ROOT), 'libraries')
+        library_dir  = os.path.join(dist_dir, 'libraries')
+        bsp_copy_files(os.path.join(library_path, 'HAL_Drivers'), os.path.join(library_dir, 'HAL_Drivers'))
+        bsp_copy_files(os.path.join(library_path, Env['bsp_lib_type']), os.path.join(library_dir, Env['bsp_lib_type']))
+        shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
 
     # get all source files from program
     for item in program:
@@ -260,6 +287,7 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
     bsp_update_sconstruct(dist_dir)
     # change RTT_ROOT in Kconfig
     bsp_update_kconfig(dist_dir)
+    bsp_update_kconfig_library(dist_dir)
     # update all project files
     bs_update_ide_project(dist_dir, target_path)
 
@@ -280,6 +308,15 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env):
     print('=> %s' % os.path.basename(BSP_ROOT))
     bsp_copy_files(BSP_ROOT, dist_dir)
 
+    # copy stm32 bsp libiary files
+    if os.path.basename(os.path.dirname(BSP_ROOT)) == 'stm32':
+        print("=> copy stm32 bsp library")
+        library_path = os.path.join(os.path.dirname(BSP_ROOT), 'libraries')
+        library_dir  = os.path.join(dist_dir, 'libraries')
+        bsp_copy_files(os.path.join(library_path, 'HAL_Drivers'), os.path.join(library_dir, 'HAL_Drivers'))
+        bsp_copy_files(os.path.join(library_path, Env['bsp_lib_type']), os.path.join(library_dir, Env['bsp_lib_type']))
+        shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
+    
     # copy tools directory
     print('=> components')
     do_copy_folder(os.path.join(RTT_ROOT, 'components'), os.path.join(target_path, 'components'))
@@ -316,6 +353,7 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env):
     bsp_update_sconstruct(dist_dir)
     # change RTT_ROOT in Kconfig
     bsp_update_kconfig(dist_dir)
+    bsp_update_kconfig_library(dist_dir)
     # update all project files
     bs_update_ide_project(dist_dir, target_path)
 

@@ -230,4 +230,8 @@ config RT_USING_ULOG
                 sfotware module version number
     endif
 
+config RT_USING_UTEST
+    bool "Enable utest (RT-Thread test framework)"
+    default n
+
 endmenu
