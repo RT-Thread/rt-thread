@@ -264,9 +264,9 @@ void rt_system_scheduler_start(void)
 
     /* switch to new thread */
 #ifdef RT_USING_SMP
-    rt_hw_context_switch_to((rt_uint32_t)&to_thread->sp, to_thread);
+    rt_hw_context_switch_to((rt_ubase_t)&to_thread->sp, to_thread);
 #else
-    rt_hw_context_switch_to((rt_uint32_t)&to_thread->sp);
+    rt_hw_context_switch_to((rt_ubase_t)&to_thread->sp);
 #endif /*RT_USING_SMP*/
 
     /* never come back */
