@@ -18,7 +18,7 @@
 
 int rt_hw_usart_init(void);
 
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4)
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32L4)
 #define DMA_INSTANCE_TYPE              DMA_Channel_TypeDef
 #elif defined(SOC_SERIES_STM32F4)
 #define DMA_INSTANCE_TYPE              DMA_Stream_TypeDef
@@ -33,6 +33,13 @@ struct stm32_uart_config
 
     union {
         DMA_INSTANCE_TYPE *Instance;
+
+#if defined(SOC_SERIES_STM32F0)
+        /* the DMA config has channel only, such as on STM32F1xx */
+        struct {
+            DMA_INSTANCE_TYPE *Instance;
+        } channel;
+#endif
 
 #if defined(SOC_SERIES_STM32F1)
         /* the DMA config has channel only, such as on STM32F1xx */
@@ -67,7 +74,7 @@ struct stm32_uart
 {
     UART_HandleTypeDef handle;
     const struct stm32_uart_config *config;
-    
+
 
 #ifdef BSP_UART_USING_DMA_RX
     struct

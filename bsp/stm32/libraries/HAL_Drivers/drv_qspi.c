@@ -101,7 +101,7 @@ static int stm32_qspi_init(struct rt_qspi_device *device, struct rt_qspi_configu
     HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
 
     /* init QSPI DMA */
-     __HAL_RCC_DMA1_CLK_ENABLE();
+    __HAL_RCC_DMA1_CLK_ENABLE();
     HAL_DMA_DeInit(qspi_bus->QSPI_Handler.hdma);
     qspi_bus->hdma_quadspi.Instance = DMA1_Channel5;
     qspi_bus->hdma_quadspi.Init.Request = DMA_REQUEST_5;
@@ -116,7 +116,7 @@ static int stm32_qspi_init(struct rt_qspi_device *device, struct rt_qspi_configu
     {
         LOG_E("qspi dma init failed (%d)!", result);
     }
-    
+
     __HAL_LINKDMA(&qspi_bus->QSPI_Handler,hdma,qspi_bus->hdma_quadspi);
 #endif /* BSP_QSPI_USING_DMA */
 
@@ -255,7 +255,7 @@ static rt_uint32_t qspixfer(struct rt_spi_device *device, struct rt_spi_message 
 #endif
         {
             len = length;
-#ifdef BSP_QSPI_USING_DMA           
+#ifdef BSP_QSPI_USING_DMA
             while(qspi_bus->QSPI_Handler.RxXferCount != 0);
 #endif
         }

@@ -514,12 +514,12 @@ static void phy_monitor_thread_entry(void *parameter)
                 LOG_D("link down\r\n");
                 /* send link down. */
                 eth_device_linkchange(&stm32_eth_device.parent, RT_FALSE);
-            } 
+            }
             phy_speed = phy_speed_new;
-        } 
+        }
 
         rt_thread_delay(RT_TICK_PER_SECOND);
-    } 
+    }
 }
 
 /* Register the EMAC device */
@@ -531,19 +531,19 @@ static int rt_hw_stm32_eth_init(void)
     {
         LOG_E("No memory");
     }
-    
+
     Tx_Buff = (rt_uint8_t *)rt_calloc(ETH_TXBUFNB, ETH_MAX_PACKET_SIZE);
     if (Rx_Buff == RT_NULL)
     {
         LOG_E("No memory");
     }
-    
+
     DMARxDscrTab = (ETH_DMADescTypeDef * )rt_calloc(ETH_RXBUFNB, sizeof(ETH_DMADescTypeDef));
     if (DMARxDscrTab == RT_NULL)
     {
         LOG_E("No memory");
     }
-    
+
     DMATxDscrTab = (ETH_DMADescTypeDef * )rt_calloc(ETH_TXBUFNB, sizeof(ETH_DMADescTypeDef));
     if (DMATxDscrTab == RT_NULL)
     {
@@ -589,7 +589,7 @@ static int rt_hw_stm32_eth_init(void)
     {
         LOG_D("emac device init faild: %d", state);
     }
-    
+
     /* start phy monitor */
     rt_thread_t tid;
     tid = rt_thread_create("phy",
@@ -600,9 +600,9 @@ static int rt_hw_stm32_eth_init(void)
                            2);
     if (tid != RT_NULL)
     {
-        rt_thread_startup(tid);   
+        rt_thread_startup(tid);
     }
-    
+
     return state;
 }
 INIT_APP_EXPORT(rt_hw_stm32_eth_init);

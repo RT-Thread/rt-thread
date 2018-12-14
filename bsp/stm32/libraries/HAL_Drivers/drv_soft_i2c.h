@@ -37,7 +37,7 @@ struct stm32_i2c
         .bus_name = "i2c1",                              \
     }
 #endif
-    
+
 #ifdef BSP_USING_I2C2
 #define I2C2_BUS_CONFIG                                  \
     {                                                    \
@@ -46,7 +46,7 @@ struct stm32_i2c
         .bus_name = "i2c2",                              \
     }
 #endif
-    
+
 #ifdef BSP_USING_I2C3
 #define I2C3_BUS_CONFIG                                  \
     {                                                    \
