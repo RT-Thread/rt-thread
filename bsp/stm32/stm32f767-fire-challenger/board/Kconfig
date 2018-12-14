@@ -22,7 +22,7 @@ menu "Onboard Peripheral Drivers"
         default n
 
     config BSP_USING_QSPI_FLASH
-        bool "Enable QSPI FLASH"
+        bool "Enable QSPI FLASH (W25Q128 qspi1)"
         select BSP_USING_QSPI
         select RT_USING_SFUD
         select RT_SFUD_USING_QSPI
@@ -134,6 +134,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_I2C_BITOPS
         select RT_USING_PIN
         if BSP_USING_I2C2
+            comment "Notice: PC15 --> 47; PD0 --> 48"
             config BSP_I2C2_SCL_PIN
                 int "i2c2 scl pin number"
                 range 1 176
@@ -151,6 +152,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_I2C_BITOPS
         select RT_USING_PIN
         if BSP_USING_I2C3
+            comment "Notice: PF12 --> 92; PF13 --> 93"
             config BSP_I2C3_SCL_PIN
                 int "i2c3 scl pin number"
                 range 1 176
