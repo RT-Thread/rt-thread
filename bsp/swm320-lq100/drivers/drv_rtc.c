@@ -161,7 +161,7 @@ static rt_size_t swm320_rtc_write(rt_device_t dev,
     return size;
 }
 
-static rt_err_t swm320__rtc_control(rt_device_t dev, int cmd, void *args)
+static rt_err_t swm320_rtc_control(rt_device_t dev, int cmd, void *args)
 {
     rt_err_t result = RT_EOK;
     struct rt_device_rtc *rtc = (struct rt_device_rtc *)dev;
@@ -189,7 +189,7 @@ static rt_err_t rt_device_rtc_register(struct rt_device_rtc *device,
     device->parent.close = RT_NULL;
     device->parent.read = swm320_rtc_read;
     device->parent.write = swm320_rtc_write;
-    device->parent.control = swm320__rtc_control;
+    device->parent.control = swm320_rtc_control;
 
     device->ops = ops;
 

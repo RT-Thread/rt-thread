@@ -51,9 +51,10 @@ static rt_err_t swm320_wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
 
 rt_watchdog_t swm320_wdt;
 const static struct rt_watchdog_ops swm320_wdt_ops =
-    {
-        swm320_wdt_init,
-        swm320_wdt_control};
+{
+    swm320_wdt_init,
+    swm320_wdt_control
+};
 
 int rt_hw_wdt_init(void)
 {

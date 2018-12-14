@@ -14,27 +14,27 @@
 #include <board.h>
 
 #ifdef BSP_USING_HWTIMER0
-static rt_hwtimer_t swm320_timer0;
+    static rt_hwtimer_t swm320_timer0;
 #endif //BSP_USING_HWTIMER0
 
 #ifdef BSP_USING_HWTIMER1
-static rt_hwtimer_t swm320_timer1;
+    static rt_hwtimer_t swm320_timer1;
 #endif //BSP_USING_HWTIMER1
 
 #ifdef BSP_USING_HWTIMER2
-static rt_hwtimer_t swm320_timer2;
+    static rt_hwtimer_t swm320_timer2;
 #endif //BSP_USING_HWTIMER2
 
 #ifdef BSP_USING_HWTIMER3
-static rt_hwtimer_t swm320_timer3;
+    static rt_hwtimer_t swm320_timer3;
 #endif //BSP_USING_HWTIMER3
 
 #ifdef BSP_USING_HWTIMER4
-static rt_hwtimer_t swm320_timer4;
+    static rt_hwtimer_t swm320_timer4;
 #endif //BSP_USING_HWTIMER4
 
 #ifdef BSP_USING_HWTIMER5
-static rt_hwtimer_t swm320_timer5;
+    static rt_hwtimer_t swm320_timer5;
 #endif //BSP_USING_HWTIMER5
 
 static rt_hwtimer_mode_t swm320_timer0_mode = HWTIMER_MODE_PERIOD;
@@ -94,7 +94,7 @@ static void swm320_hwtimer_info_get(struct rt_hwtimer_device *timer, void *info)
 }
 
 static rt_uint32_t swm320_hwtimer_mode_set(struct rt_hwtimer_device *timer,
-                                           void *mode)
+        void *mode)
 {
 #ifdef BSP_USING_HWTIMER0
     if (&swm320_timer0 == timer)
@@ -281,18 +281,20 @@ void TIMR5_Handler(void)
 #endif //BSP_USING_HWTIMER5
 
 const static struct rt_hwtimer_ops swm320_hwtimer_ops =
-    {
-        swm320_hwtimer_init,
-        swm320_hwtimer_start,
-        swm320_hwtimer_stop,
-        swm320_hwtimer_count_get,
-        swm320_hwtimer_control};
+{
+    swm320_hwtimer_init,
+    swm320_hwtimer_start,
+    swm320_hwtimer_stop,
+    swm320_hwtimer_count_get,
+    swm320_hwtimer_control
+};
 const struct rt_hwtimer_info swm320_hwtimer_info =
-    {
-        32000, /*默认使用最低频率工作，即32K*/
-        1,     /*2的32次方*/
-        4294967295,
-        0};
+{
+    32000, /*默认使用最低频率工作，即32K*/
+    1,     /*2的32次方*/
+    4294967295,
+    0
+};
 
 int rt_hw_hwtimer_init(void)
 {

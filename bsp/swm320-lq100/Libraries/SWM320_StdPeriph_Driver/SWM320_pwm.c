@@ -1,10 +1,10 @@
 /******************************************************************************************************************************************
-* ÎÄ¼þÃû³Æ: SWM320_pwm.c
-* ¹¦ÄÜËµÃ÷: SWM320µ¥Æ¬»úµÄPWM¹¦ÄÜÇý¶¯¿â
-* ¼¼ÊõÖ§³Ö: http://www.synwit.com.cn/e/tool/gbook/?bid=1
-* ×¢ÒâÊÂÏî:
-* °æ±¾ÈÕÆÚ: V1.1.0      2017Äê10ÔÂ25ÈÕ
-* Éý¼¶¼ÇÂ¼:
+* æ–‡ä»¶åç§°: SWM320_pwm.c
+* åŠŸèƒ½è¯´æ˜Ž: SWM320å•ç‰‡æœºçš„PWMåŠŸèƒ½é©±åŠ¨åº“
+* æŠ€æœ¯æ”¯æŒ: http://www.synwit.com.cn/e/tool/gbook/?bid=1
+* æ³¨æ„äº‹é¡¹:
+* ç‰ˆæœ¬æ—¥æœŸ: V1.1.0      2017å¹´10æœˆ25æ—¥
+* å‡çº§è®°å½•:
 *
 *
 *******************************************************************************************************************************************
@@ -21,14 +21,13 @@
 #include "SWM320.h"
 #include "SWM320_pwm.h"
 
-
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: PWM_Init()
-* ¹¦ÄÜËµÃ÷: PWM³õÊ¼»¯
-* Êä    Èë: PWM_TypeDef * PWMx      Ö¸¶¨Òª±»ÉèÖÃµÄPWM£¬ÓÐÐ§Öµ°üÀ¨PWM0¡¢PWM1¡¢PWM2¡¢PWM3¡¢PWM4¡¢PWM5
-*           PWM_InitStructure * initStruct  °üº¬PWMÏà¹ØÉè¶¨ÖµµÄ½á¹¹Ìå
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: PWM_Init()
+* åŠŸèƒ½è¯´æ˜Ž: PWMåˆå§‹åŒ–
+* è¾“    å…¥: PWM_TypeDef * PWMx      æŒ‡å®šè¦è¢«è®¾ç½®çš„PWMï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬PWM0ã€PWM1ã€PWM2ã€PWM3ã€PWM4ã€PWM5
+*           PWM_InitStructure * initStruct  åŒ…å«PWMç›¸å…³è®¾å®šå€¼çš„ç»“æž„ä½“
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void PWM_Init(PWM_TypeDef *PWMx, PWM_InitStructure *initStruct)
 {
@@ -39,7 +38,7 @@ void PWM_Init(PWM_TypeDef *PWMx, PWM_InitStructure *initStruct)
     SYS->CLKDIV &= ~SYS_CLKDIV_PWM_Msk;
     SYS->CLKDIV |= (initStruct->clk_div << SYS_CLKDIV_PWM_Pos);
 
-    PWM_Stop(PWMx, 1, 1);   //Ò»Ð©¹Ø¼ü¼Ä´æÆ÷Ö»ÄÜÔÚPWMÍ£Ö¹Ê±ÉèÖÃ
+    PWM_Stop(PWMx, 1, 1); //ä¸€äº›å…³é”®å¯„å­˜å™¨åªèƒ½åœ¨PWMåœæ­¢æ—¶è®¾ç½®
 
     PWMx->MODE = initStruct->mode;
 
@@ -84,8 +83,8 @@ void PWM_Init(PWM_TypeDef *PWMx, PWM_InitStructure *initStruct)
         break;
     }
 
-    PWMG->IRS = ((0x01 << bit_offset) | (0x01 << (bit_offset + 1))  | (0x01 << (bit_offset + 12)) | (0x01 << (bit_offset + 13))); //Çå³ýÖÐ¶Ï±êÖ¾
-    PWMG->IE &= ~((0x01 << bit_offset) | (0x01 << (bit_offset + 1))  | (0x01 << (bit_offset + 12)) | (0x01 << (bit_offset + 13)));
+    PWMG->IRS = ((0x01 << bit_offset) | (0x01 << (bit_offset + 1)) | (0x01 << (bit_offset + 12)) | (0x01 << (bit_offset + 13))); //æ¸…é™¤ä¸­æ–­æ ‡å¿—
+    PWMG->IE &= ~((0x01 << bit_offset) | (0x01 << (bit_offset + 1)) | (0x01 << (bit_offset + 12)) | (0x01 << (bit_offset + 13)));
     PWMG->IE |= (initStruct->NCycleAIEn << bit_offset) | (initStruct->NCycleBIEn << (bit_offset + 1)) |
                 (initStruct->HEndAIEn << (bit_offset + 12)) | (initStruct->HEndBIEn << (bit_offset + 13));
 
@@ -93,20 +92,20 @@ void PWM_Init(PWM_TypeDef *PWMx, PWM_InitStructure *initStruct)
     {
         NVIC_EnableIRQ(PWM_IRQn);
     }
-    else if ((PWMG->IE & (~((0x01 << bit_offset) | (0x01 << (bit_offset + 1))  | (0x01 << (bit_offset + 12)) | (0x01 << (bit_offset + 13))))) == 0)
+    else if ((PWMG->IE & (~((0x01 << bit_offset) | (0x01 << (bit_offset + 1)) | (0x01 << (bit_offset + 12)) | (0x01 << (bit_offset + 13))))) == 0)
     {
         NVIC_DisableIRQ(PWM_IRQn);
     }
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: PWM_Start()
-* ¹¦ÄÜËµÃ÷: Æô¶¯PWM£¬¿ªÊ¼PWMÊä³ö
-* Êä    Èë: PWM_TypeDef * PWMx      Ö¸¶¨Òª±»ÉèÖÃµÄPWM£¬ÓÐÐ§Öµ°üÀ¨PWM0¡¢PWM1¡¢PWM2¡¢PWM3¡¢PWM4¡¢PWM5
-*           uint32_t chA            0 Í¨µÀA²»Æô¶¯       1 Í¨µÀAÆô¶¯
-*           uint32_t chB            0 Í¨µÀB²»Æô¶¯       1 Í¨µÀBÆô¶¯
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: PWM_Start()
+* åŠŸèƒ½è¯´æ˜Ž: å¯åŠ¨PWMï¼Œå¼€å§‹PWMè¾“å‡º
+* è¾“    å…¥: PWM_TypeDef * PWMx      æŒ‡å®šè¦è¢«è®¾ç½®çš„PWMï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬PWM0ã€PWM1ã€PWM2ã€PWM3ã€PWM4ã€PWM5
+*           uint32_t chA            0 é€šé“Aä¸å¯åŠ¨       1 é€šé“Aå¯åŠ¨
+*           uint32_t chB            0 é€šé“Bä¸å¯åŠ¨       1 é€šé“Bå¯åŠ¨
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void PWM_Start(PWM_TypeDef *PWMx, uint32_t chA, uint32_t chB)
 {
@@ -139,13 +138,13 @@ void PWM_Start(PWM_TypeDef *PWMx, uint32_t chA, uint32_t chB)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: PWM_Stop()
-* ¹¦ÄÜËµÃ÷: ¹Ø±ÕPWM£¬Í£Ö¹PWMÊä³ö
-* Êä    Èë: PWM_TypeDef * PWMx      Ö¸¶¨Òª±»ÉèÖÃµÄPWM£¬ÓÐÐ§Öµ°üÀ¨PWM0¡¢PWM1¡¢PWM2¡¢PWM3¡¢PWM4¡¢PWM5
-*           uint32_t chA            0 Í¨µÀA²»¹Ø±Õ       1 Í¨µÀA¹Ø±Õ
-*           uint32_t chB            0 Í¨µÀB²»¹Ø±Õ       1 Í¨µÀB¹Ø±Õ
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: PWM_Stop()
+* åŠŸèƒ½è¯´æ˜Ž: å…³é—­PWMï¼Œåœæ­¢PWMè¾“å‡º
+* è¾“    å…¥: PWM_TypeDef * PWMx      æŒ‡å®šè¦è¢«è®¾ç½®çš„PWMï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬PWM0ã€PWM1ã€PWM2ã€PWM3ã€PWM4ã€PWM5
+*           uint32_t chA            0 é€šé“Aä¸å…³é—­       1 é€šé“Aå…³é—­
+*           uint32_t chB            0 é€šé“Bä¸å…³é—­       1 é€šé“Bå…³é—­
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void PWM_Stop(PWM_TypeDef *PWMx, uint32_t chA, uint32_t chB)
 {
@@ -178,13 +177,13 @@ void PWM_Stop(PWM_TypeDef *PWMx, uint32_t chA, uint32_t chB)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: PWM_SetCycle()
-* ¹¦ÄÜËµÃ÷: ÉèÖÃÖÜÆÚ
-* Êä    Èë: PWM_TypeDef * PWMx      Ö¸¶¨Òª±»ÉèÖÃµÄPWM£¬ÓÐÐ§Öµ°üÀ¨PWM0¡¢PWM1¡¢PWM2¡¢PWM3¡¢PWM4¡¢PWM5
-*           uint32_t chn            Ñ¡ÔñÒªÉèÖÃÄÄ¸öÍ¨µÀ£¬ÓÐÐ§Öµ£ºPWM_CH_A¡¢PWM_CH_B
-*           uint16_t cycle          ÒªÉè¶¨µÄÖÜÆÚÖµ
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: PWM_SetCycle()
+* åŠŸèƒ½è¯´æ˜Ž: è®¾ç½®å‘¨æœŸ
+* è¾“    å…¥: PWM_TypeDef * PWMx      æŒ‡å®šè¦è¢«è®¾ç½®çš„PWMï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬PWM0ã€PWM1ã€PWM2ã€PWM3ã€PWM4ã€PWM5
+*           uint32_t chn            é€‰æ‹©è¦è®¾ç½®å“ªä¸ªé€šé“ï¼Œæœ‰æ•ˆå€¼ï¼šPWM_CH_Aã€PWM_CH_B
+*           uint16_t cycle          è¦è®¾å®šçš„å‘¨æœŸå€¼
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void PWM_SetCycle(PWM_TypeDef *PWMx, uint32_t chn, uint16_t cycle)
 {
@@ -195,12 +194,12 @@ void PWM_SetCycle(PWM_TypeDef *PWMx, uint32_t chn, uint16_t cycle)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: PWM_GetCycle()
-* ¹¦ÄÜËµÃ÷: »ñÈ¡ÖÜÆÚ
-* Êä    Èë: PWM_TypeDef * PWMx      Ö¸¶¨Òª±»ÉèÖÃµÄPWM£¬ÓÐÐ§Öµ°üÀ¨PWM0¡¢PWM1¡¢PWM2¡¢PWM3¡¢PWM4¡¢PWM5
-*           uint32_t chn            Ñ¡ÔñÒª²éÑ¯ÄÄ¸öÍ¨µÀ£¬ÓÐÐ§Öµ£ºPWM_CH_A¡¢PWM_CH_B
-* Êä    ³ö: uint16_t                »ñÈ¡µ½µÄÖÜÆÚÖµ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: PWM_GetCycle()
+* åŠŸèƒ½è¯´æ˜Ž: èŽ·å–å‘¨æœŸ
+* è¾“    å…¥: PWM_TypeDef * PWMx      æŒ‡å®šè¦è¢«è®¾ç½®çš„PWMï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬PWM0ã€PWM1ã€PWM2ã€PWM3ã€PWM4ã€PWM5
+*           uint32_t chn            é€‰æ‹©è¦æŸ¥è¯¢å“ªä¸ªé€šé“ï¼Œæœ‰æ•ˆå€¼ï¼šPWM_CH_Aã€PWM_CH_B
+* è¾“    å‡º: uint16_t                èŽ·å–åˆ°çš„å‘¨æœŸå€¼
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 uint16_t PWM_GetCycle(PWM_TypeDef *PWMx, uint32_t chn)
 {
@@ -215,13 +214,13 @@ uint16_t PWM_GetCycle(PWM_TypeDef *PWMx, uint32_t chn)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: PWM_SetHDuty()
-* ¹¦ÄÜËµÃ÷: ÉèÖÃ¸ßµçÆ½Ê±³¤
-* Êä    Èë: PWM_TypeDef * PWMx      Ö¸¶¨Òª±»ÉèÖÃµÄPWM£¬ÓÐÐ§Öµ°üÀ¨PWM0¡¢PWM1¡¢PWM2¡¢PWM3¡¢PWM4¡¢PWM5
-*           uint32_t chn            Ñ¡ÔñÒªÉèÖÃÄÄ¸öÍ¨µÀ£¬ÓÐÐ§Öµ£ºPWM_CH_A¡¢PWM_CH_B
-*           uint16_t hduty          ÒªÉè¶¨µÄ¸ßµçÆ½Ê±³¤
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: PWM_SetHDuty()
+* åŠŸèƒ½è¯´æ˜Ž: è®¾ç½®é«˜ç”µå¹³æ—¶é•¿
+* è¾“    å…¥: PWM_TypeDef * PWMx      æŒ‡å®šè¦è¢«è®¾ç½®çš„PWMï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬PWM0ã€PWM1ã€PWM2ã€PWM3ã€PWM4ã€PWM5
+*           uint32_t chn            é€‰æ‹©è¦è®¾ç½®å“ªä¸ªé€šé“ï¼Œæœ‰æ•ˆå€¼ï¼šPWM_CH_Aã€PWM_CH_B
+*           uint16_t hduty          è¦è®¾å®šçš„é«˜ç”µå¹³æ—¶é•¿
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void PWM_SetHDuty(PWM_TypeDef *PWMx, uint32_t chn, uint16_t hduty)
 {
@@ -232,12 +231,12 @@ void PWM_SetHDuty(PWM_TypeDef *PWMx, uint32_t chn, uint16_t hduty)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: PWM_GetHDuty()
-* ¹¦ÄÜËµÃ÷: »ñÈ¡¸ßµçÆ½Ê±³¤
-* Êä    Èë: PWM_TypeDef * PWMx      Ö¸¶¨Òª±»ÉèÖÃµÄPWM£¬ÓÐÐ§Öµ°üÀ¨PWM0¡¢PWM1¡¢PWM2¡¢PWM3¡¢PWM4¡¢PWM5
-*           uint32_t chn            Ñ¡ÔñÒª²éÑ¯ÄÄ¸öÍ¨µÀ£¬ÓÐÐ§Öµ£ºPWM_CH_A¡¢PWM_CH_B
-* Êä    ³ö: uint16_t                »ñÈ¡µ½µÄ¸ßµçÆ½Ê±³¤
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: PWM_GetHDuty()
+* åŠŸèƒ½è¯´æ˜Ž: èŽ·å–é«˜ç”µå¹³æ—¶é•¿
+* è¾“    å…¥: PWM_TypeDef * PWMx      æŒ‡å®šè¦è¢«è®¾ç½®çš„PWMï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬PWM0ã€PWM1ã€PWM2ã€PWM3ã€PWM4ã€PWM5
+*           uint32_t chn            é€‰æ‹©è¦æŸ¥è¯¢å“ªä¸ªé€šé“ï¼Œæœ‰æ•ˆå€¼ï¼šPWM_CH_Aã€PWM_CH_B
+* è¾“    å‡º: uint16_t                èŽ·å–åˆ°çš„é«˜ç”µå¹³æ—¶é•¿
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 uint16_t PWM_GetHDuty(PWM_TypeDef *PWMx, uint32_t chn)
 {
@@ -252,13 +251,13 @@ uint16_t PWM_GetHDuty(PWM_TypeDef *PWMx, uint32_t chn)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: PWM_SetDeadzone()
-* ¹¦ÄÜËµÃ÷: ÉèÖÃËÀÇøÊ±³¤
-* Êä    Èë: PWM_TypeDef * PWMx      Ö¸¶¨Òª±»ÉèÖÃµÄPWM£¬ÓÐÐ§Öµ°üÀ¨PWM0¡¢PWM1¡¢PWM2¡¢PWM3¡¢PWM4¡¢PWM5
-*           uint32_t chn            Ñ¡ÔñÒªÉèÖÃÄÄ¸öÍ¨µÀ£¬ÓÐÐ§Öµ£ºPWM_CH_A¡¢PWM_CH_B
-*           uint8_t deadzone        ÒªÉè¶¨µÄËÀÇøÊ±³¤
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: PWM_SetDeadzone()
+* åŠŸèƒ½è¯´æ˜Ž: è®¾ç½®æ­»åŒºæ—¶é•¿
+* è¾“    å…¥: PWM_TypeDef * PWMx      æŒ‡å®šè¦è¢«è®¾ç½®çš„PWMï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬PWM0ã€PWM1ã€PWM2ã€PWM3ã€PWM4ã€PWM5
+*           uint32_t chn            é€‰æ‹©è¦è®¾ç½®å“ªä¸ªé€šé“ï¼Œæœ‰æ•ˆå€¼ï¼šPWM_CH_Aã€PWM_CH_B
+*           uint8_t deadzone        è¦è®¾å®šçš„æ­»åŒºæ—¶é•¿
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void PWM_SetDeadzone(PWM_TypeDef *PWMx, uint32_t chn, uint8_t deadzone)
 {
@@ -269,14 +268,14 @@ void PWM_SetDeadzone(PWM_TypeDef *PWMx, uint32_t chn, uint8_t deadzone)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: PWM_GetDeadzone()
-* ¹¦ÄÜËµÃ÷: »ñÈ¡ËÀÇøÊ±³¤
-* Êä    Èë: PWM_TypeDef * PWMx      Ö¸¶¨Òª±»ÉèÖÃµÄPWM£¬ÓÐÐ§Öµ°üÀ¨PWM0¡¢PWM1¡¢PWM2¡¢PWM3¡¢PWM4¡¢PWM5
-*           uint32_t chn            Ñ¡ÔñÒª²éÑ¯ÄÄ¸öÍ¨µÀ£¬ÓÐÐ§Öµ£ºPWM_CH_A¡¢PWM_CH_B
-* Êä    ³ö: uint8_t                 »ñÈ¡µ½µÄËÀÇøÊ±³¤
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: PWM_GetDeadzone()
+* åŠŸèƒ½è¯´æ˜Ž: èŽ·å–æ­»åŒºæ—¶é•¿
+* è¾“    å…¥: PWM_TypeDef * PWMx      æŒ‡å®šè¦è¢«è®¾ç½®çš„PWMï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬PWM0ã€PWM1ã€PWM2ã€PWM3ã€PWM4ã€PWM5
+*           uint32_t chn            é€‰æ‹©è¦æŸ¥è¯¢å“ªä¸ªé€šé“ï¼Œæœ‰æ•ˆå€¼ï¼šPWM_CH_Aã€PWM_CH_B
+* è¾“    å‡º: uint8_t                 èŽ·å–åˆ°çš„æ­»åŒºæ—¶é•¿
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-uint8_t  PWM_GetDeadzone(PWM_TypeDef *PWMx, uint32_t chn)
+uint8_t PWM_GetDeadzone(PWM_TypeDef *PWMx, uint32_t chn)
 {
     uint8_t deadzone = 0;
 
@@ -288,146 +287,181 @@ uint8_t  PWM_GetDeadzone(PWM_TypeDef *PWMx, uint32_t chn)
     return deadzone;
 }
 
-
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: PWM_IntNCycleEn()
-* ¹¦ÄÜËµÃ÷: ÐÂÖÜÆÚ¿ªÊ¼ÖÐ¶ÏÊ¹ÄÜ
-* Êä    Èë: PWM_TypeDef * PWMx      Ö¸¶¨Òª±»ÉèÖÃµÄPWM£¬ÓÐÐ§Öµ°üÀ¨PWM0¡¢PWM1¡¢PWM2¡¢PWM3¡¢PWM4¡¢PWM5
-*           uint32_t chn            Ñ¡ÔñÒªÉèÖÃÄÄ¸öÍ¨µÀ£¬ÓÐÐ§Öµ£ºPWM_CH_A¡¢PWM_CH_B
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: PWM_IntNCycleEn()
+* åŠŸèƒ½è¯´æ˜Ž: æ–°å‘¨æœŸå¼€å§‹ä¸­æ–­ä½¿èƒ½
+* è¾“    å…¥: PWM_TypeDef * PWMx      æŒ‡å®šè¦è¢«è®¾ç½®çš„PWMï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬PWM0ã€PWM1ã€PWM2ã€PWM3ã€PWM4ã€PWM5
+*           uint32_t chn            é€‰æ‹©è¦è®¾ç½®å“ªä¸ªé€šé“ï¼Œæœ‰æ•ˆå€¼ï¼šPWM_CH_Aã€PWM_CH_B
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void PWM_IntNCycleEn(PWM_TypeDef *PWMx, uint32_t chn)
 {
     switch ((uint32_t)PWMx)
     {
     case ((uint32_t)PWM0):
-        if (chn == PWM_CH_A) PWMG->IE |= (0x01 << PWMG_IE_NEWP0A_Pos);
-        else                PWMG->IE |= (0x01 << PWMG_IE_NEWP0B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE |= (0x01 << PWMG_IE_NEWP0A_Pos);
+        else
+            PWMG->IE |= (0x01 << PWMG_IE_NEWP0B_Pos);
         break;
 
     case ((uint32_t)PWM1):
-        if (chn == PWM_CH_A) PWMG->IE |= (0x01 << PWMG_IE_NEWP1A_Pos);
-        else                PWMG->IE |= (0x01 << PWMG_IE_NEWP1B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE |= (0x01 << PWMG_IE_NEWP1A_Pos);
+        else
+            PWMG->IE |= (0x01 << PWMG_IE_NEWP1B_Pos);
         break;
 
     case ((uint32_t)PWM2):
-        if (chn == PWM_CH_A) PWMG->IE |= (0x01 << PWMG_IE_NEWP2A_Pos);
-        else                PWMG->IE |= (0x01 << PWMG_IE_NEWP2B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE |= (0x01 << PWMG_IE_NEWP2A_Pos);
+        else
+            PWMG->IE |= (0x01 << PWMG_IE_NEWP2B_Pos);
         break;
 
     case ((uint32_t)PWM3):
-        if (chn == PWM_CH_A) PWMG->IE |= (0x01 << PWMG_IE_NEWP3A_Pos);
-        else                PWMG->IE |= (0x01 << PWMG_IE_NEWP3B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE |= (0x01 << PWMG_IE_NEWP3A_Pos);
+        else
+            PWMG->IE |= (0x01 << PWMG_IE_NEWP3B_Pos);
         break;
 
     case ((uint32_t)PWM4):
-        if (chn == PWM_CH_A) PWMG->IE |= (0x01 << PWMG_IE_NEWP4A_Pos);
-        else                PWMG->IE |= (0x01 << PWMG_IE_NEWP4B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE |= (0x01 << PWMG_IE_NEWP4A_Pos);
+        else
+            PWMG->IE |= (0x01 << PWMG_IE_NEWP4B_Pos);
         break;
 
     case ((uint32_t)PWM5):
-        if (chn == PWM_CH_A) PWMG->IE |= (0x01 << PWMG_IE_NEWP5A_Pos);
-        else                PWMG->IE |= (0x01 << PWMG_IE_NEWP5B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE |= (0x01 << PWMG_IE_NEWP5A_Pos);
+        else
+            PWMG->IE |= (0x01 << PWMG_IE_NEWP5B_Pos);
         break;
     }
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: PWM_IntNCycleDis()
-* ¹¦ÄÜËµÃ÷: ÐÂÖÜÆÚ¿ªÊ¼ÖÐ¶Ï½ûÄÜ
-* Êä    Èë: PWM_TypeDef * PWMx      Ö¸¶¨Òª±»ÉèÖÃµÄPWM£¬ÓÐÐ§Öµ°üÀ¨PWM0¡¢PWM1¡¢PWM2¡¢PWM3¡¢PWM4¡¢PWM5
-*           uint32_t chn            Ñ¡ÔñÒªÉèÖÃÄÄ¸öÍ¨µÀ£¬ÓÐÐ§Öµ£ºPWM_CH_A¡¢PWM_CH_B
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: PWM_IntNCycleDis()
+* åŠŸèƒ½è¯´æ˜Ž: æ–°å‘¨æœŸå¼€å§‹ä¸­æ–­ç¦èƒ½
+* è¾“    å…¥: PWM_TypeDef * PWMx      æŒ‡å®šè¦è¢«è®¾ç½®çš„PWMï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬PWM0ã€PWM1ã€PWM2ã€PWM3ã€PWM4ã€PWM5
+*           uint32_t chn            é€‰æ‹©è¦è®¾ç½®å“ªä¸ªé€šé“ï¼Œæœ‰æ•ˆå€¼ï¼šPWM_CH_Aã€PWM_CH_B
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void PWM_IntNCycleDis(PWM_TypeDef *PWMx, uint32_t chn)
 {
     switch ((uint32_t)PWMx)
     {
     case ((uint32_t)PWM0):
-        if (chn == PWM_CH_A) PWMG->IE &= ~(0x01 << PWMG_IE_NEWP0A_Pos);
-        else                PWMG->IE &= ~(0x01 << PWMG_IE_NEWP0B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE &= ~(0x01 << PWMG_IE_NEWP0A_Pos);
+        else
+            PWMG->IE &= ~(0x01 << PWMG_IE_NEWP0B_Pos);
         break;
 
     case ((uint32_t)PWM1):
-        if (chn == PWM_CH_A) PWMG->IE &= ~(0x01 << PWMG_IE_NEWP1A_Pos);
-        else                PWMG->IE &= ~(0x01 << PWMG_IE_NEWP1B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE &= ~(0x01 << PWMG_IE_NEWP1A_Pos);
+        else
+            PWMG->IE &= ~(0x01 << PWMG_IE_NEWP1B_Pos);
         break;
 
     case ((uint32_t)PWM2):
-        if (chn == PWM_CH_A) PWMG->IE &= ~(0x01 << PWMG_IE_NEWP2A_Pos);
-        else                PWMG->IE &= ~(0x01 << PWMG_IE_NEWP2B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE &= ~(0x01 << PWMG_IE_NEWP2A_Pos);
+        else
+            PWMG->IE &= ~(0x01 << PWMG_IE_NEWP2B_Pos);
         break;
 
     case ((uint32_t)PWM3):
-        if (chn == PWM_CH_A) PWMG->IE &= ~(0x01 << PWMG_IE_NEWP3A_Pos);
-        else                PWMG->IE &= ~(0x01 << PWMG_IE_NEWP3B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE &= ~(0x01 << PWMG_IE_NEWP3A_Pos);
+        else
+            PWMG->IE &= ~(0x01 << PWMG_IE_NEWP3B_Pos);
         break;
 
     case ((uint32_t)PWM4):
-        if (chn == PWM_CH_A) PWMG->IE &= ~(0x01 << PWMG_IE_NEWP4A_Pos);
-        else                PWMG->IE &= ~(0x01 << PWMG_IE_NEWP4B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE &= ~(0x01 << PWMG_IE_NEWP4A_Pos);
+        else
+            PWMG->IE &= ~(0x01 << PWMG_IE_NEWP4B_Pos);
         break;
 
     case ((uint32_t)PWM5):
-        if (chn == PWM_CH_A) PWMG->IE &= ~(0x01 << PWMG_IE_NEWP5A_Pos);
-        else                PWMG->IE &= ~(0x01 << PWMG_IE_NEWP5B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE &= ~(0x01 << PWMG_IE_NEWP5A_Pos);
+        else
+            PWMG->IE &= ~(0x01 << PWMG_IE_NEWP5B_Pos);
         break;
     }
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: PWM_IntNCycleClr()
-* ¹¦ÄÜËµÃ÷: ÐÂÖÜÆÚ¿ªÊ¼ÖÐ¶Ï±êÖ¾Çå³ý
-* Êä    Èë: PWM_TypeDef * PWMx      Ö¸¶¨Òª±»ÉèÖÃµÄPWM£¬ÓÐÐ§Öµ°üÀ¨PWM0¡¢PWM1¡¢PWM2¡¢PWM3¡¢PWM4¡¢PWM5
-*           uint32_t chn            Ñ¡ÔñÒªÉèÖÃÄÄ¸öÍ¨µÀ£¬ÓÐÐ§Öµ£ºPWM_CH_A¡¢PWM_CH_B
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: PWM_IntNCycleClr()
+* åŠŸèƒ½è¯´æ˜Ž: æ–°å‘¨æœŸå¼€å§‹ä¸­æ–­æ ‡å¿—æ¸…é™¤
+* è¾“    å…¥: PWM_TypeDef * PWMx      æŒ‡å®šè¦è¢«è®¾ç½®çš„PWMï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬PWM0ã€PWM1ã€PWM2ã€PWM3ã€PWM4ã€PWM5
+*           uint32_t chn            é€‰æ‹©è¦è®¾ç½®å“ªä¸ªé€šé“ï¼Œæœ‰æ•ˆå€¼ï¼šPWM_CH_Aã€PWM_CH_B
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void PWM_IntNCycleClr(PWM_TypeDef *PWMx, uint32_t chn)
 {
     switch ((uint32_t)PWMx)
     {
     case ((uint32_t)PWM0):
-        if (chn == PWM_CH_A) PWMG->IRS = (0x01 << PWMG_IRS_NEWP0A_Pos);
-        else                PWMG->IRS = (0x01 << PWMG_IRS_NEWP0B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IRS = (0x01 << PWMG_IRS_NEWP0A_Pos);
+        else
+            PWMG->IRS = (0x01 << PWMG_IRS_NEWP0B_Pos);
         break;
 
     case ((uint32_t)PWM1):
-        if (chn == PWM_CH_A) PWMG->IRS = (0x01 << PWMG_IRS_NEWP1A_Pos);
-        else                PWMG->IRS = (0x01 << PWMG_IRS_NEWP1B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IRS = (0x01 << PWMG_IRS_NEWP1A_Pos);
+        else
+            PWMG->IRS = (0x01 << PWMG_IRS_NEWP1B_Pos);
         break;
 
     case ((uint32_t)PWM2):
-        if (chn == PWM_CH_A) PWMG->IRS = (0x01 << PWMG_IRS_NEWP2A_Pos);
-        else                PWMG->IRS = (0x01 << PWMG_IRS_NEWP2B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IRS = (0x01 << PWMG_IRS_NEWP2A_Pos);
+        else
+            PWMG->IRS = (0x01 << PWMG_IRS_NEWP2B_Pos);
         break;
 
     case ((uint32_t)PWM3):
-        if (chn == PWM_CH_A) PWMG->IRS = (0x01 << PWMG_IRS_NEWP3A_Pos);
-        else                PWMG->IRS = (0x01 << PWMG_IRS_NEWP3B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IRS = (0x01 << PWMG_IRS_NEWP3A_Pos);
+        else
+            PWMG->IRS = (0x01 << PWMG_IRS_NEWP3B_Pos);
         break;
 
     case ((uint32_t)PWM4):
-        if (chn == PWM_CH_A) PWMG->IRS = (0x01 << PWMG_IRS_NEWP4A_Pos);
-        else                PWMG->IRS = (0x01 << PWMG_IRS_NEWP4B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IRS = (0x01 << PWMG_IRS_NEWP4A_Pos);
+        else
+            PWMG->IRS = (0x01 << PWMG_IRS_NEWP4B_Pos);
         break;
 
     case ((uint32_t)PWM5):
-        if (chn == PWM_CH_A) PWMG->IRS = (0x01 << PWMG_IRS_NEWP5A_Pos);
-        else                PWMG->IRS = (0x01 << PWMG_IRS_NEWP5B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IRS = (0x01 << PWMG_IRS_NEWP5A_Pos);
+        else
+            PWMG->IRS = (0x01 << PWMG_IRS_NEWP5B_Pos);
         break;
     }
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: PWM_IntNCycleStat()
-* ¹¦ÄÜËµÃ÷: ÐÂÖÜÆÚ¿ªÊ¼ÖÐ¶ÏÊÇ·ñ·¢Éú
-* Êä    Èë: PWM_TypeDef * PWMx      Ö¸¶¨Òª±»ÉèÖÃµÄPWM£¬ÓÐÐ§Öµ°üÀ¨PWM0¡¢PWM1¡¢PWM2¡¢PWM3¡¢PWM4¡¢PWM5
-*           uint32_t chn            Ñ¡ÔñÒªÉèÖÃÄÄ¸öÍ¨µÀ£¬ÓÐÐ§Öµ£ºPWM_CH_A¡¢PWM_CH_B
-* Êä    ³ö: uint32_t                1 ÐÂÖÜÆÚ¿ªÊ¼ÖÐ¶ÏÒÑ·¢Éú    0 ÐÂÖÜÆÚ¿ªÊ¼ÖÐ¶ÏÎ´·¢Éú
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: PWM_IntNCycleStat()
+* åŠŸèƒ½è¯´æ˜Ž: æ–°å‘¨æœŸå¼€å§‹ä¸­æ–­æ˜¯å¦å‘ç”Ÿ
+* è¾“    å…¥: PWM_TypeDef * PWMx      æŒ‡å®šè¦è¢«è®¾ç½®çš„PWMï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬PWM0ã€PWM1ã€PWM2ã€PWM3ã€PWM4ã€PWM5
+*           uint32_t chn            é€‰æ‹©è¦è®¾ç½®å“ªä¸ªé€šé“ï¼Œæœ‰æ•ˆå€¼ï¼šPWM_CH_Aã€PWM_CH_B
+* è¾“    å‡º: uint32_t                1 æ–°å‘¨æœŸå¼€å§‹ä¸­æ–­å·²å‘ç”Ÿ    0 æ–°å‘¨æœŸå¼€å§‹ä¸­æ–­æœªå‘ç”Ÿ
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 uint32_t PWM_IntNCycleStat(PWM_TypeDef *PWMx, uint32_t chn)
 {
@@ -436,179 +470,226 @@ uint32_t PWM_IntNCycleStat(PWM_TypeDef *PWMx, uint32_t chn)
     switch ((uint32_t)PWMx)
     {
     case ((uint32_t)PWM0):
-        if (chn == PWM_CH_A) int_stat = (PWMG->IF & PWMG_IF_NEWP0A_Msk);
-        else                int_stat = (PWMG->IF & PWMG_IF_NEWP0B_Msk);
+        if (chn == PWM_CH_A)
+            int_stat = (PWMG->IF & PWMG_IF_NEWP0A_Msk);
+        else
+            int_stat = (PWMG->IF & PWMG_IF_NEWP0B_Msk);
         break;
 
     case ((uint32_t)PWM1):
-        if (chn == PWM_CH_A) int_stat = (PWMG->IF & PWMG_IF_NEWP1A_Msk);
-        else                int_stat = (PWMG->IF & PWMG_IF_NEWP1B_Msk);
+        if (chn == PWM_CH_A)
+            int_stat = (PWMG->IF & PWMG_IF_NEWP1A_Msk);
+        else
+            int_stat = (PWMG->IF & PWMG_IF_NEWP1B_Msk);
         break;
 
     case ((uint32_t)PWM2):
-        if (chn == PWM_CH_A) int_stat = (PWMG->IF & PWMG_IF_NEWP2A_Msk);
-        else                int_stat = (PWMG->IF & PWMG_IF_NEWP2B_Msk);
+        if (chn == PWM_CH_A)
+            int_stat = (PWMG->IF & PWMG_IF_NEWP2A_Msk);
+        else
+            int_stat = (PWMG->IF & PWMG_IF_NEWP2B_Msk);
         break;
 
     case ((uint32_t)PWM3):
-        if (chn == PWM_CH_A) int_stat = (PWMG->IF & PWMG_IF_NEWP3A_Msk);
-        else                int_stat = (PWMG->IF & PWMG_IF_NEWP3B_Msk);
+        if (chn == PWM_CH_A)
+            int_stat = (PWMG->IF & PWMG_IF_NEWP3A_Msk);
+        else
+            int_stat = (PWMG->IF & PWMG_IF_NEWP3B_Msk);
         break;
 
     case ((uint32_t)PWM4):
-        if (chn == PWM_CH_A) int_stat = (PWMG->IF & PWMG_IF_NEWP4A_Msk);
-        else                int_stat = (PWMG->IF & PWMG_IF_NEWP4B_Msk);
+        if (chn == PWM_CH_A)
+            int_stat = (PWMG->IF & PWMG_IF_NEWP4A_Msk);
+        else
+            int_stat = (PWMG->IF & PWMG_IF_NEWP4B_Msk);
         break;
 
     case ((uint32_t)PWM5):
-        if (chn == PWM_CH_A) int_stat = (PWMG->IF & PWMG_IF_NEWP5A_Msk);
-        else                int_stat = (PWMG->IF & PWMG_IF_NEWP5B_Msk);
+        if (chn == PWM_CH_A)
+            int_stat = (PWMG->IF & PWMG_IF_NEWP5A_Msk);
+        else
+            int_stat = (PWMG->IF & PWMG_IF_NEWP5B_Msk);
         break;
     }
 
     return int_stat;
 }
 
-
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: PWM_IntHEndEn()
-* ¹¦ÄÜËµÃ÷: ¸ßµçÆ½½áÊøÖÐ¶ÏÊ¹ÄÜ
-* Êä    Èë: PWM_TypeDef * PWMx      Ö¸¶¨Òª±»ÉèÖÃµÄPWM£¬ÓÐÐ§Öµ°üÀ¨PWM0¡¢PWM1¡¢PWM2¡¢PWM3¡¢PWM4¡¢PWM5
-*           uint32_t chn            Ñ¡ÔñÒªÉèÖÃÄÄ¸öÍ¨µÀ£¬ÓÐÐ§Öµ£ºPWM_CH_A¡¢PWM_CH_B
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: PWM_IntHEndEn()
+* åŠŸèƒ½è¯´æ˜Ž: é«˜ç”µå¹³ç»“æŸä¸­æ–­ä½¿èƒ½
+* è¾“    å…¥: PWM_TypeDef * PWMx      æŒ‡å®šè¦è¢«è®¾ç½®çš„PWMï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬PWM0ã€PWM1ã€PWM2ã€PWM3ã€PWM4ã€PWM5
+*           uint32_t chn            é€‰æ‹©è¦è®¾ç½®å“ªä¸ªé€šé“ï¼Œæœ‰æ•ˆå€¼ï¼šPWM_CH_Aã€PWM_CH_B
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void PWM_IntHEndEn(PWM_TypeDef *PWMx, uint32_t chn)
 {
     switch ((uint32_t)PWMx)
     {
     case ((uint32_t)PWM0):
-        if (chn == PWM_CH_A) PWMG->IE |= (0x01 << PWMG_IE_HEND0A_Pos);
-        else                PWMG->IE |= (0x01 << PWMG_IE_HEND0B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE |= (0x01 << PWMG_IE_HEND0A_Pos);
+        else
+            PWMG->IE |= (0x01 << PWMG_IE_HEND0B_Pos);
         break;
 
     case ((uint32_t)PWM1):
-        if (chn == PWM_CH_A) PWMG->IE |= (0x01 << PWMG_IE_HEND1A_Pos);
-        else                PWMG->IE |= (0x01 << PWMG_IE_HEND1B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE |= (0x01 << PWMG_IE_HEND1A_Pos);
+        else
+            PWMG->IE |= (0x01 << PWMG_IE_HEND1B_Pos);
         break;
 
     case ((uint32_t)PWM2):
-        if (chn == PWM_CH_A) PWMG->IE |= (0x01 << PWMG_IE_HEND2A_Pos);
-        else                PWMG->IE |= (0x01 << PWMG_IE_HEND2B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE |= (0x01 << PWMG_IE_HEND2A_Pos);
+        else
+            PWMG->IE |= (0x01 << PWMG_IE_HEND2B_Pos);
         break;
 
     case ((uint32_t)PWM3):
-        if (chn == PWM_CH_A) PWMG->IE |= (0x01 << PWMG_IE_HEND3A_Pos);
-        else                PWMG->IE |= (0x01 << PWMG_IE_HEND3B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE |= (0x01 << PWMG_IE_HEND3A_Pos);
+        else
+            PWMG->IE |= (0x01 << PWMG_IE_HEND3B_Pos);
         break;
 
     case ((uint32_t)PWM4):
-        if (chn == PWM_CH_A) PWMG->IE |= (0x01 << PWMG_IE_HEND4A_Pos);
-        else                PWMG->IE |= (0x01 << PWMG_IE_HEND4B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE |= (0x01 << PWMG_IE_HEND4A_Pos);
+        else
+            PWMG->IE |= (0x01 << PWMG_IE_HEND4B_Pos);
         break;
 
     case ((uint32_t)PWM5):
-        if (chn == PWM_CH_A) PWMG->IE |= (0x01 << PWMG_IE_HEND5A_Pos);
-        else                PWMG->IE |= (0x01 << PWMG_IE_HEND5B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE |= (0x01 << PWMG_IE_HEND5A_Pos);
+        else
+            PWMG->IE |= (0x01 << PWMG_IE_HEND5B_Pos);
         break;
     }
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: PWM_IntHEndDis()
-* ¹¦ÄÜËµÃ÷: ¸ßµçÆ½½áÊøÖÐ¶Ï½ûÄÜ
-* Êä    Èë: PWM_TypeDef * PWMx      Ö¸¶¨Òª±»ÉèÖÃµÄPWM£¬ÓÐÐ§Öµ°üÀ¨PWM0¡¢PWM1¡¢PWM2¡¢PWM3¡¢PWM4¡¢PWM5
-*           uint32_t chn            Ñ¡ÔñÒªÉèÖÃÄÄ¸öÍ¨µÀ£¬ÓÐÐ§Öµ£ºPWM_CH_A¡¢PWM_CH_B
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: PWM_IntHEndDis()
+* åŠŸèƒ½è¯´æ˜Ž: é«˜ç”µå¹³ç»“æŸä¸­æ–­ç¦èƒ½
+* è¾“    å…¥: PWM_TypeDef * PWMx      æŒ‡å®šè¦è¢«è®¾ç½®çš„PWMï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬PWM0ã€PWM1ã€PWM2ã€PWM3ã€PWM4ã€PWM5
+*           uint32_t chn            é€‰æ‹©è¦è®¾ç½®å“ªä¸ªé€šé“ï¼Œæœ‰æ•ˆå€¼ï¼šPWM_CH_Aã€PWM_CH_B
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void PWM_IntHEndDis(PWM_TypeDef *PWMx, uint32_t chn)
 {
     switch ((uint32_t)PWMx)
     {
     case ((uint32_t)PWM0):
-        if (chn == PWM_CH_A) PWMG->IE &= ~(0x01 << PWMG_IE_HEND0A_Pos);
-        else                PWMG->IE &= ~(0x01 << PWMG_IE_HEND0B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE &= ~(0x01 << PWMG_IE_HEND0A_Pos);
+        else
+            PWMG->IE &= ~(0x01 << PWMG_IE_HEND0B_Pos);
         break;
 
     case ((uint32_t)PWM1):
-        if (chn == PWM_CH_A) PWMG->IE &= ~(0x01 << PWMG_IE_HEND1A_Pos);
-        else                PWMG->IE &= ~(0x01 << PWMG_IE_HEND1B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE &= ~(0x01 << PWMG_IE_HEND1A_Pos);
+        else
+            PWMG->IE &= ~(0x01 << PWMG_IE_HEND1B_Pos);
         break;
 
     case ((uint32_t)PWM2):
-        if (chn == PWM_CH_A) PWMG->IE &= ~(0x01 << PWMG_IE_HEND2A_Pos);
-        else                PWMG->IE &= ~(0x01 << PWMG_IE_HEND2B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE &= ~(0x01 << PWMG_IE_HEND2A_Pos);
+        else
+            PWMG->IE &= ~(0x01 << PWMG_IE_HEND2B_Pos);
         break;
 
     case ((uint32_t)PWM3):
-        if (chn == PWM_CH_A) PWMG->IE &= ~(0x01 << PWMG_IE_HEND3A_Pos);
-        else                PWMG->IE &= ~(0x01 << PWMG_IE_HEND3B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE &= ~(0x01 << PWMG_IE_HEND3A_Pos);
+        else
+            PWMG->IE &= ~(0x01 << PWMG_IE_HEND3B_Pos);
         break;
 
     case ((uint32_t)PWM4):
-        if (chn == PWM_CH_A) PWMG->IE &= ~(0x01 << PWMG_IE_HEND4A_Pos);
-        else                PWMG->IE &= ~(0x01 << PWMG_IE_HEND4B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE &= ~(0x01 << PWMG_IE_HEND4A_Pos);
+        else
+            PWMG->IE &= ~(0x01 << PWMG_IE_HEND4B_Pos);
         break;
 
     case ((uint32_t)PWM5):
-        if (chn == PWM_CH_A) PWMG->IE &= ~(0x01 << PWMG_IE_HEND5A_Pos);
-        else                PWMG->IE &= ~(0x01 << PWMG_IE_HEND5B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IE &= ~(0x01 << PWMG_IE_HEND5A_Pos);
+        else
+            PWMG->IE &= ~(0x01 << PWMG_IE_HEND5B_Pos);
         break;
     }
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: PWM_IntHEndClr()
-* ¹¦ÄÜËµÃ÷: ¸ßµçÆ½½áÊøÖÐ¶Ï±êÖ¾Çå³ý
-* Êä    Èë: PWM_TypeDef * PWMx      Ö¸¶¨Òª±»ÉèÖÃµÄPWM£¬ÓÐÐ§Öµ°üÀ¨PWM0¡¢PWM1¡¢PWM2¡¢PWM3¡¢PWM4¡¢PWM5
-*           uint32_t chn            Ñ¡ÔñÒªÉèÖÃÄÄ¸öÍ¨µÀ£¬ÓÐÐ§Öµ£ºPWM_CH_A¡¢PWM_CH_B
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: PWM_IntHEndClr()
+* åŠŸèƒ½è¯´æ˜Ž: é«˜ç”µå¹³ç»“æŸä¸­æ–­æ ‡å¿—æ¸…é™¤
+* è¾“    å…¥: PWM_TypeDef * PWMx      æŒ‡å®šè¦è¢«è®¾ç½®çš„PWMï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬PWM0ã€PWM1ã€PWM2ã€PWM3ã€PWM4ã€PWM5
+*           uint32_t chn            é€‰æ‹©è¦è®¾ç½®å“ªä¸ªé€šé“ï¼Œæœ‰æ•ˆå€¼ï¼šPWM_CH_Aã€PWM_CH_B
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void PWM_IntHEndClr(PWM_TypeDef *PWMx, uint32_t chn)
 {
     switch ((uint32_t)PWMx)
     {
     case ((uint32_t)PWM0):
-        if (chn == PWM_CH_A) PWMG->IRS = (0x01 << PWMG_IRS_HEND0A_Pos);
-        else                PWMG->IRS = (0x01 << PWMG_IRS_HEND0B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IRS = (0x01 << PWMG_IRS_HEND0A_Pos);
+        else
+            PWMG->IRS = (0x01 << PWMG_IRS_HEND0B_Pos);
         break;
 
     case ((uint32_t)PWM1):
-        if (chn == PWM_CH_A) PWMG->IRS = (0x01 << PWMG_IRS_HEND1A_Pos);
-        else                PWMG->IRS = (0x01 << PWMG_IRS_HEND1B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IRS = (0x01 << PWMG_IRS_HEND1A_Pos);
+        else
+            PWMG->IRS = (0x01 << PWMG_IRS_HEND1B_Pos);
         break;
 
     case ((uint32_t)PWM2):
-        if (chn == PWM_CH_A) PWMG->IRS = (0x01 << PWMG_IRS_HEND2A_Pos);
-        else                PWMG->IRS = (0x01 << PWMG_IRS_HEND2B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IRS = (0x01 << PWMG_IRS_HEND2A_Pos);
+        else
+            PWMG->IRS = (0x01 << PWMG_IRS_HEND2B_Pos);
         break;
 
     case ((uint32_t)PWM3):
-        if (chn == PWM_CH_A) PWMG->IRS = (0x01 << PWMG_IRS_HEND3A_Pos);
-        else                PWMG->IRS = (0x01 << PWMG_IRS_HEND3B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IRS = (0x01 << PWMG_IRS_HEND3A_Pos);
+        else
+            PWMG->IRS = (0x01 << PWMG_IRS_HEND3B_Pos);
         break;
 
     case ((uint32_t)PWM4):
-        if (chn == PWM_CH_A) PWMG->IRS = (0x01 << PWMG_IRS_HEND4A_Pos);
-        else                PWMG->IRS = (0x01 << PWMG_IRS_HEND4B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IRS = (0x01 << PWMG_IRS_HEND4A_Pos);
+        else
+            PWMG->IRS = (0x01 << PWMG_IRS_HEND4B_Pos);
         break;
 
     case ((uint32_t)PWM5):
-        if (chn == PWM_CH_A) PWMG->IRS = (0x01 << PWMG_IRS_HEND5A_Pos);
-        else                PWMG->IRS = (0x01 << PWMG_IRS_HEND5B_Pos);
+        if (chn == PWM_CH_A)
+            PWMG->IRS = (0x01 << PWMG_IRS_HEND5A_Pos);
+        else
+            PWMG->IRS = (0x01 << PWMG_IRS_HEND5B_Pos);
         break;
     }
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: PWM_IntHEndStat()
-* ¹¦ÄÜËµÃ÷: ¸ßµçÆ½½áÊøÖÐ¶ÏÊÇ·ñ·¢Éú
-* Êä    Èë: PWM_TypeDef * PWMx      Ö¸¶¨Òª±»ÉèÖÃµÄPWM£¬ÓÐÐ§Öµ°üÀ¨PWM0¡¢PWM1¡¢PWM2¡¢PWM3¡¢PWM4¡¢PWM5
-*           uint32_t chn            Ñ¡ÔñÒªÉèÖÃÄÄ¸öÍ¨µÀ£¬ÓÐÐ§Öµ£ºPWM_CH_A¡¢PWM_CH_B
-* Êä    ³ö: uint32_t                1 ¸ßµçÆ½½áÊøÖÐ¶ÏÒÑ·¢Éú    0 ¸ßµçÆ½½áÊøÖÐ¶ÏÎ´·¢Éú
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: PWM_IntHEndStat()
+* åŠŸèƒ½è¯´æ˜Ž: é«˜ç”µå¹³ç»“æŸä¸­æ–­æ˜¯å¦å‘ç”Ÿ
+* è¾“    å…¥: PWM_TypeDef * PWMx      æŒ‡å®šè¦è¢«è®¾ç½®çš„PWMï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬PWM0ã€PWM1ã€PWM2ã€PWM3ã€PWM4ã€PWM5
+*           uint32_t chn            é€‰æ‹©è¦è®¾ç½®å“ªä¸ªé€šé“ï¼Œæœ‰æ•ˆå€¼ï¼šPWM_CH_Aã€PWM_CH_B
+* è¾“    å‡º: uint32_t                1 é«˜ç”µå¹³ç»“æŸä¸­æ–­å·²å‘ç”Ÿ    0 é«˜ç”µå¹³ç»“æŸä¸­æ–­æœªå‘ç”Ÿ
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 uint32_t PWM_IntHEndStat(PWM_TypeDef *PWMx, uint32_t chn)
 {
@@ -617,33 +698,45 @@ uint32_t PWM_IntHEndStat(PWM_TypeDef *PWMx, uint32_t chn)
     switch ((uint32_t)PWMx)
     {
     case ((uint32_t)PWM0):
-        if (chn == PWM_CH_A) int_stat = (PWMG->IF & PWMG_IF_HEND0A_Msk);
-        else                int_stat = (PWMG->IF & PWMG_IF_HEND0B_Msk);
+        if (chn == PWM_CH_A)
+            int_stat = (PWMG->IF & PWMG_IF_HEND0A_Msk);
+        else
+            int_stat = (PWMG->IF & PWMG_IF_HEND0B_Msk);
         break;
 
     case ((uint32_t)PWM1):
-        if (chn == PWM_CH_A) int_stat = (PWMG->IF & PWMG_IF_HEND1A_Msk);
-        else                int_stat = (PWMG->IF & PWMG_IF_HEND1B_Msk);
+        if (chn == PWM_CH_A)
+            int_stat = (PWMG->IF & PWMG_IF_HEND1A_Msk);
+        else
+            int_stat = (PWMG->IF & PWMG_IF_HEND1B_Msk);
         break;
 
     case ((uint32_t)PWM2):
-        if (chn == PWM_CH_A) int_stat = (PWMG->IF & PWMG_IF_HEND2A_Msk);
-        else                int_stat = (PWMG->IF & PWMG_IF_HEND2B_Msk);
+        if (chn == PWM_CH_A)
+            int_stat = (PWMG->IF & PWMG_IF_HEND2A_Msk);
+        else
+            int_stat = (PWMG->IF & PWMG_IF_HEND2B_Msk);
         break;
 
     case ((uint32_t)PWM3):
-        if (chn == PWM_CH_A) int_stat = (PWMG->IF & PWMG_IF_HEND3A_Msk);
-        else                int_stat = (PWMG->IF & PWMG_IF_HEND3B_Msk);
+        if (chn == PWM_CH_A)
+            int_stat = (PWMG->IF & PWMG_IF_HEND3A_Msk);
+        else
+            int_stat = (PWMG->IF & PWMG_IF_HEND3B_Msk);
         break;
 
     case ((uint32_t)PWM4):
-        if (chn == PWM_CH_A) int_stat = (PWMG->IF & PWMG_IF_HEND4A_Msk);
-        else                int_stat = (PWMG->IF & PWMG_IF_HEND4B_Msk);
+        if (chn == PWM_CH_A)
+            int_stat = (PWMG->IF & PWMG_IF_HEND4A_Msk);
+        else
+            int_stat = (PWMG->IF & PWMG_IF_HEND4B_Msk);
         break;
 
     case ((uint32_t)PWM5):
-        if (chn == PWM_CH_A) int_stat = (PWMG->IF & PWMG_IF_HEND5A_Msk);
-        else                int_stat = (PWMG->IF & PWMG_IF_HEND5B_Msk);
+        if (chn == PWM_CH_A)
+            int_stat = (PWMG->IF & PWMG_IF_HEND5A_Msk);
+        else
+            int_stat = (PWMG->IF & PWMG_IF_HEND5B_Msk);
         break;
     }
 
