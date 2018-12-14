@@ -63,6 +63,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
+#define RT_VER_NUM 0x40000
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_A
 #define ARCH_ARM_CORTEX_A9
@@ -102,7 +103,7 @@
 #define RT_USING_DFS
 #define DFS_USING_WORKDIR
 #define DFS_FILESYSTEMS_MAX 2
-#define DFS_FILESYSTEM_TYPES_MAX 2
+#define DFS_FILESYSTEM_TYPES_MAX 8
 #define DFS_FD_MAX 16
 /* RT_USING_DFS_MNTTABLE is not set */
 #define RT_USING_DFS_ELMFAT
@@ -156,10 +157,12 @@
 #define RT_MMCSD_MAX_PARTITION 16
 /* RT_SDIO_DEBUG is not set */
 #define RT_USING_SPI
+/* RT_USING_QSPI is not set */
 #define RT_USING_SPI_MSD
 #define RT_USING_SFUD
 #define RT_SFUD_USING_SFDP
 #define RT_SFUD_USING_FLASH_INFO_TABLE
+/* RT_SFUD_USING_QSPI is not set */
 /* RT_DEBUG_SFUD is not set */
 /* RT_USING_W25QXX is not set */
 /* RT_USING_GD is not set */
@@ -276,6 +279,7 @@
 /* LOG_TRACE_USING_MEMLOG is not set */
 /* RT_USING_RYM is not set */
 /* RT_USING_ULOG is not set */
+#define RT_USING_LWP
 
 /* RT-Thread online packages */
 
@@ -283,6 +287,7 @@
 
 /* PKG_USING_PAHOMQTT is not set */
 /* PKG_USING_WEBCLIENT is not set */
+/* PKG_USING_WEBNET is not set */
 /* PKG_USING_MONGOOSE is not set */
 /* PKG_USING_WEBTERMINAL is not set */
 /* PKG_USING_CJSON is not set */
@@ -304,6 +309,7 @@
 /* PKG_USING_NOPOLL is not set */
 /* PKG_USING_NETUTILS is not set */
 /* PKG_USING_AT_DEVICE is not set */
+/* PKG_USING_WIZNET is not set */
 
 /* IoT Cloud */
 
@@ -311,6 +317,7 @@
 /* PKG_USING_GAGENT_CLOUD is not set */
 /* PKG_USING_ALI_IOTKIT is not set */
 /* PKG_USING_AZURE is not set */
+/* PKG_USING_TENCENT_IOTKIT is not set */
 
 /* security packages */
 
@@ -335,6 +342,9 @@
 /* PKG_USING_EASYFLASH is not set */
 /* PKG_USING_EASYLOGGER is not set */
 /* PKG_USING_SYSTEMVIEW is not set */
+/* PKG_USING_RDB is not set */
+/* PKG_USING_QRCODE is not set */
+/* PKG_USING_ULOG_EASYFLASH is not set */
 
 /* system packages */
 
@@ -348,14 +358,23 @@
 /* PKG_USING_SQLITE is not set */
 /* PKG_USING_RTI is not set */
 /* PKG_USING_LITTLEVGL2RTT is not set */
+/* PKG_USING_CMSIS is not set */
+/* PKG_USING_DFS_YAFFS is not set */
+/* PKG_USING_LITTLEFS is not set */
 
 /* peripheral libraries and drivers */
 
-/* PKG_USING_STM32F4_HAL is not set */
-/* PKG_USING_STM32F4_DRIVERS is not set */
 /* PKG_USING_REALTEK_AMEBA is not set */
 /* PKG_USING_SHT2X is not set */
 /* PKG_USING_AHT10 is not set */
+/* PKG_USING_AP3216C is not set */
+/* PKG_USING_STM32_SDIO is not set */
+/* PKG_USING_ICM20608 is not set */
+/* PKG_USING_U8G2 is not set */
+/* PKG_USING_BUTTON is not set */
+/* PKG_USING_MPU6XXX is not set */
+/* PKG_USING_PCF8574 is not set */
+/* PKG_USING_KENDRYTE_SDK is not set */
 
 /* miscellaneous packages */
 
@@ -368,14 +387,42 @@
 /* PKG_USING_CANFESTIVAL is not set */
 /* PKG_USING_ZLIB is not set */
 /* PKG_USING_DSTR is not set */
+/* PKG_USING_TINYFRAME is not set */
 
 /* sample package */
 
-/* PKG_USING_SAMPLES is not set */
+/* samples: kernel and components samples */
+
+/* PKG_USING_KERNEL_SAMPLES is not set */
+/* PKG_USING_FILESYSTEM_SAMPLES is not set */
+/* PKG_USING_NETWORK_SAMPLES is not set */
+/* PKG_USING_PERIPHERAL_SAMPLES is not set */
 
 /* example package: hello */
 
 /* PKG_USING_HELLO is not set */
+
+/* Privated Packages of RealThread */
+
+/* PKG_USING_CODEC is not set */
+/* PKG_USING_PLAYER is not set */
+/* PKG_USING_PERSIMMON_SRC is not set */
+/* PKG_USING_JS_PERSIMMON is not set */
+/* PKG_USING_JERRYSCRIPT_WIN32 is not set */
+
+/* Network Utilities */
+
+/* PKG_USING_MDNS is not set */
+/* PKG_USING_UPNP is not set */
+/* PKG_USING_WICED is not set */
+/* PKG_USING_CLOUDSDK is not set */
+/* PKG_USING_COREMARK is not set */
+/* PKG_USING_POWER_MANAGER is not set */
+/* PKG_USING_RT_OTA is not set */
+/* PKG_USING_RDBD_SRC is not set */
+/* PKG_USING_RTINSIGHT is not set */
+/* PKG_USING_SMARTCONFIG is not set */
+/* PKG_USING_RTX is not set */
 #define SOC_VEXPRESS_A9
 #define RT_USING_UART0
 #define RT_USING_UART1

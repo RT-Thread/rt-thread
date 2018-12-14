@@ -1,0 +1,22 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Split('''
+drv_uart.c
+''')
+CPPPATH = [cwd]
+
+if GetDepend('RT_USING_PIN'):
+    src += ['drv_gpio.c']
+
+if GetDepend('RT_USING_I2C'):
+    src += ['drv_i2c.c']
+
+if GetDepend('RT_USING_DFS_ELMFAT'):
+    src += ['drv_sdcard.c']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

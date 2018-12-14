@@ -10,8 +10,10 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    # EXEC_PATH   = '/home/tanek/risc-v/e300/riscv64-unknown-elf-gcc-20170612-x86_64-linux-centos6/bin'
-    EXEC_PATH   = '/home/tanek/risc-v/e300/riscv64-unknown-elf-gcc-20171231-x86_64-linux-centos6/bin'
+    EXEC_PATH   = r'/opt/unknown-gcc/bin'
+else:
+    print('Please make sure your toolchains is GNU GCC!')
+    exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -27,8 +29,9 @@ TARGET_NAME = 'rtthread.bin'
 #------- GCC settings ----------------------------------------------------------
 if PLATFORM == 'gcc':
     # toolchains
-    PREFIX = 'riscv64-unknown-elf-'
+    PREFIX = 'riscv-none-embed-'
     CC = PREFIX + 'gcc'
+    CXX= PREFIX + 'g++'
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
