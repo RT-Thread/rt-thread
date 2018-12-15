@@ -37,10 +37,10 @@
         .bus_name = "spi2",                              \
         .dma_rx.dma_rcc = RCC_AHBENR_DMA1EN,             \
         .dma_tx.dma_rcc = RCC_AHBENR_DMA1EN,             \
-        .dma_rx.Instance = DMA1_Channel4,                \
-        .dma_rx.dma_irq = DMA1_Channel4_IRQn,            \
-        .dma_tx.Instance = DMA1_Channel5,                \
-        .dma_tx.dma_irq = DMA1_Channel5_IRQn,            \
+        .dma_rx.Instance = DMA1_Channel1,                \
+        .dma_rx.dma_irq = DMA1_Channel1_IRQn,            \
+        .dma_tx.Instance = DMA1_Channel2,                \
+        .dma_tx.dma_irq = DMA1_Channel2_3_IRQn,            \
     }
     
 #define SPI2_DMA_RX_IRQHandler           DMA1_Channel4_IRQHandler    

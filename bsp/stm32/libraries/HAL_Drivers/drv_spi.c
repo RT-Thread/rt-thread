@@ -135,7 +135,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
     uint32_t SPI_APB_CLOCK;
 
-    SPI_APB_CLOCK = HAL_RCC_GetPCLK2Freq();
+    SPI_APB_CLOCK = HAL_RCC_GetPCLK1Freq();
 
     if (cfg->max_hz >= SPI_APB_CLOCK / 2)
     {

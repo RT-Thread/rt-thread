@@ -44,6 +44,9 @@ enum
 #ifdef BSP_USING_UART5
     UART5_INDEX,
 #endif
+#ifdef BSP_USING_UART5
+    UART6_INDEX,
+#endif
 };
 
 static const struct stm32_uart_config uart_config[] =
@@ -62,6 +65,9 @@ static const struct stm32_uart_config uart_config[] =
 #endif
 #ifdef BSP_USING_UART5
     UART5_CONFIG,
+#endif
+#ifdef BSP_USING_UART6
+    UART6_CONFIG,
 #endif
 };
 
@@ -371,6 +377,25 @@ void USART2_RX_DMA_ISR(void)
 #endif /* defined(BSP_UART_USING_DMA_RX) && defined(USART2_RX_DMA_ISR) */
 #endif /* BSP_USING_UART2 */
 
+
+
+#if defined(SOC_SERIES_STM32F0)
+void USART3_6_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    uart_isr(&(uart_obj[UART3_INDEX].serial));
+    uart_isr(&(uart_obj[UART4_INDEX].serial));
+    uart_isr(&(uart_obj[UART5_INDEX].serial));
+    uart_isr(&(uart_obj[UART6_INDEX].serial));
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+
+}
+#elif defined(SOC_SERIES_STM32F1)||defined(SOC_SERIES_STM32F4)
+
 #if defined(BSP_USING_UART3)
 void USART3_IRQHandler(void)
 {
@@ -446,6 +471,31 @@ void USART5_RX_DMA_ISR(void)
 #endif /* defined(BSP_UART_USING_DMA_RX) && defined(USART5_RX_DMA_ISR) */
 #endif /* BSP_USING_UART5*/
 
+#if defined(BSP_USING_UART6)
+void UART6_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    uart_isr(&(uart_obj[UART6_INDEX].serial));
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#if defined(BSP_UART_USING_DMA_RX) && defined(USART6_RX_DMA_ISR)
+void USART6_RX_DMA_ISR(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    HAL_DMA_IRQHandler(&uart_obj[UART6_INDEX].dma.handle);
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif /* defined(BSP_UART_USING_DMA_RX) && defined(USART5_RX_DMA_ISR) */
+#endif /* BSP_USING_UART6*/
+#endif
 #ifdef BSP_UART_USING_DMA_RX
 static void stm32_dma_config(struct rt_serial_device *serial)
 {
@@ -579,6 +629,12 @@ int rt_hw_usart_init(void)
 
     for (int i = 0; i < obj_num; i++)
     {
+		switch(i)
+		{
+			case 1:
+				config.baud_rate = BAUD_RATE_9600 ;
+				break;
+		}
         uart_obj[i].config = &uart_config[i];
         uart_obj[i].serial.ops    = &stm32_uart_ops;
         uart_obj[i].serial.config = config;

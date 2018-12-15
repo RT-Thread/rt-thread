@@ -1,0 +1,20 @@
+
+#ifndef __APP_CONFIG_H__
+#define __APP_CONFIG_H__
+
+#include <rtthread.h>
+
+typedef struct RxCon
+{
+	rt_uint32_t recsize;
+	rt_uint8_t* recBuf;
+
+}RxControl_Type;
+
+typedef struct TxCon
+{
+	rt_uint32_t recsize;
+	rt_uint8_t* recBuf;
+
+}TxControl_Type;
+#endif

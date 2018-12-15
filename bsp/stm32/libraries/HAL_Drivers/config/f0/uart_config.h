@@ -36,7 +36,7 @@
         .irq_type = USART2_IRQn,                           \
         .dma.channel.Instance = DMA1_Channel2,             \
         .dma_rcc = RCC_AHBENR_DMA1EN,                      \
-        .dma_irq = DMA1_Channel2_IRQn,                     \
+        .dma_irq = DMA1_Channel2_3_IRQn,                     \
     }
 
 #define USART2_RX_DMA_ISR                        DMA1_Channel6_IRQHandler
@@ -48,10 +48,10 @@
     {                                                      \
         .name = "uart3",                                   \
         .Instance = USART3,                                \
-        .irq_type = USART3_IRQn,                           \
+        .irq_type = USART3_6_IRQn,                           \
         .dma.channel.Instance = DMA1_Channel3,             \
         .dma_rcc = RCC_AHBENR_DMA1EN,                      \
-        .dma_irq = DMA1_Channel3_IRQn,                     \
+        .dma_irq = DMA1_Channel2_3_IRQn,                     \
     }
 
 #define USART3_RX_DMA_ISR                        DMA1_Channel3_IRQHandler
@@ -62,11 +62,11 @@
 #define UART4_CONFIG                                       \
     {                                                      \
         .name = "uart4",                                   \
-        .Instance = UART4,                                 \
-        .irq_type = UART4_IRQn,                            \
-        .dma.channel.Instance = DMA2_Channel4,             \
-        .dma_rcc = RCC_AHBENR_DMA2EN,                      \
-        .dma_irq = DMA1_Channel4_IRQn,                     \
+        .Instance = USART4,                                 \
+        .irq_type = USART3_6_IRQn,                            \
+        .dma.channel.Instance = DMA1_Channel4,             \
+        .dma_rcc = RCC_AHBENR_DMA1EN,                      \
+        .dma_irq = DMA1_Channel4_5_IRQn,                     \
     }
 
 #define USART4_RX_DMA_ISR                        DMA2_Channel3_IRQHandler
@@ -77,8 +77,19 @@
 #define UART5_CONFIG                                       \
     {                                                      \
         .name = "uart5",                                   \
-        .Instance = UART5,                                 \
-        .irq_type = UART5_IRQn,                            \
+        .Instance = USART5,                                 \
+        .irq_type = USART3_6_IRQn,                            \
+        .dma.channel.Instance = DMA_NOT_AVAILABLE,         \
+    }
+#endif
+
+#if defined(BSP_USING_UART6)
+
+#define UART6_CONFIG                                       \
+    {                                                      \
+        .name = "uart6",                                   \
+        .Instance = USART6,                                 \
+        .irq_type = USART3_6_IRQn,                            \
         .dma.channel.Instance = DMA_NOT_AVAILABLE,         \
     }
 #endif

@@ -18,12 +18,15 @@
 #ifdef BSP_USING_GPIO
 #include "drv_gpio.h"
 /* Board Pin definitions */
-#define LED0_PIN                       GET_PIN(C,  0)
-#define LED1_PIN                       GET_PIN(C,  1)
+#define LED0_PIN                       	GET_PIN(C,  0)
+#define LED1_PIN                      	GET_PIN(C,  1)
+#define STA_IN_Pin 					 	GET_PIN(A,  7)
+#define PWRKEY_OUT_Pin 					GET_PIN(B,  0)
+#define SPI2_CS_Pin 					GET_PIN(B,  12)
 #endif
 
 #define STM32_FLASH_START_ADRESS     ((uint32_t)0x08000000)
-#define STM32_FLASH_SIZE             (128 * 1024)
+#define STM32_FLASH_SIZE             (256 * 1024)
 #define STM32_FLASH_END_ADDRESS      ((uint32_t)(STM32_FLASH_START_ADRESS + STM32_FLASH_SIZE))
 
 /* Internal SRAM memory size[Kbytes] <8-64>, Default: 64*/

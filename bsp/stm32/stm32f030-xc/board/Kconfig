@@ -54,6 +54,21 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SERIAL
         default n
 
+    config BSP_USING_UART4
+        bool "Enable UART4"
+        select RT_USING_SERIAL
+        default n
+
+    config BSP_USING_UART5
+        bool "Enable UART5"
+        select RT_USING_SERIAL
+        default n
+
+    config BSP_USING_UART6
+        bool "Enable UART6"
+        select RT_USING_SERIAL
+        default n
+
     config BSP_UART_USING_DMA_RX
         bool "Enable UART RX DMA support"
         default n

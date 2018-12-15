@@ -61,7 +61,6 @@ void SystemClock_Config(void)
   */
 void MX_GPIO_Init(void)
 {
-
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOF_CLK_ENABLE();
@@ -73,6 +72,9 @@ void MX_GPIO_Init(void)
 int board_pin_init(void)
 {
     rt_pin_mode(LED0_PIN, PIN_MODE_OUTPUT);
+    rt_pin_mode(STA_IN_Pin, PIN_MODE_INPUT);
+    rt_pin_mode(PWRKEY_OUT_Pin, PIN_MODE_OUTPUT);
+    rt_pin_mode(SPI2_CS_Pin, PIN_MODE_OUTPUT);
     return 0;
 }
 INIT_BOARD_EXPORT(board_pin_init);
