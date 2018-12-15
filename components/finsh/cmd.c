@@ -116,7 +116,7 @@ static long _list_thread(struct rt_list_node *list)
         else if (stat == RT_THREAD_CLOSE)   rt_kprintf(" close  ");
 
 #if defined(ARCH_CPU_STACK_GROWS_UPWARD)
-        ptr = (rt_uint8_t *)thread->stack_addr + thread->stack_size;
+        ptr = (rt_uint8_t *)thread->stack_addr + thread->stack_size - 1;
         while (*ptr == '#')ptr --;
 
         rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
