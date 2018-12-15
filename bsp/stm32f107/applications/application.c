@@ -1,15 +1,12 @@
 /*
- * File      : application.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2009-01-05     Bernard      the first version
+ * 2018-08-17     whj          remove finsh_set_device  add components 
  */
 
 /**
@@ -38,6 +35,11 @@ extern int lwip_system_init(void);
 
 void rt_init_thread_entry(void* parameter)
 {
+#ifdef RT_USING_COMPONENTS_INIT
+    /* initialization RT-Thread Components */
+	rt_components_init();
+#endif	
+	
     {
         extern void rt_platform_init(void);
         rt_platform_init();
@@ -72,11 +74,6 @@ void rt_init_thread_entry(void* parameter)
 	rt_kprintf("TCP/IP initialized!\n");
 #endif
 
-#ifdef RT_USING_FINSH
-	/* initialize finsh */
-	finsh_system_init();
-	finsh_set_device(RT_CONSOLE_DEVICE_NAME);
-#endif
 }
 
 int rt_application_init(void)

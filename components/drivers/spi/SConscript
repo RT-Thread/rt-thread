@@ -6,6 +6,9 @@ src = ['spi_core.c', 'spi_dev.c']
 CPPPATH = [cwd, cwd + '/../include']
 LOCAL_CCFLAGS = ''
 
+if GetDepend('RT_USING_QSPI'):
+    src += ['qspi_core.c']
+
 src_device = []
 
 if GetDepend('RT_USING_SPI_WIFI'):

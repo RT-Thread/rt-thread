@@ -1,0 +1,10 @@
+{
+    "C_Cpp.dimInactiveRegions": false,
+    "files.exclude": {
+        "**/.git": true,
+        "**/GPUCache" : true,
+        "**/build" : true,
+        "**/*.pyc" : true
+    },
+    "editor.renderWhitespace": "all"
+}

@@ -52,7 +52,9 @@ extern "C" {
   */
 #define HAL_MODULE_ENABLED
 /* #define HAL_ADC_MODULE_ENABLED      */
-/* #define HAL_CAN_MODULE_ENABLED      */
+#ifdef RT_USING_CAN
+#define HAL_CAN_MODULE_ENABLED
+#endif
 /* #define HAL_CRC_MODULE_ENABLED      */
 /* #define HAL_CRYP_MODULE_ENABLED     */
 /* #define HAL_DAC_MODULE_ENABLED      */

@@ -8,8 +8,8 @@ config $BSP_DIR
 config $RTT_DIR
     string
     option env="RTT_ROOT"
-    default: "rt-thread"
-    
+    default: "../.."
+
 # you can change the RTT_ROOT default: "rt-thread"
 # example : default "F:/git_repositories/rt-thread"
 

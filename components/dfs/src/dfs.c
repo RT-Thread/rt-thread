@@ -1,21 +1,7 @@
 /*
- * File      : dfs.c
- * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -152,7 +138,7 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
         cnt = cnt > DFS_FD_MAX? DFS_FD_MAX : cnt;
 
         fds = rt_realloc(fdt->fds, cnt * sizeof(struct dfs_fd *));
-        if (fds == NULL) goto __out; /* return fdt->maxfd */
+        if (fds == NULL) goto __exit; /* return fdt->maxfd */
 
         /* clean the new allocated fds */
         for (index = fdt->maxfd; index < cnt; index ++)
@@ -167,12 +153,12 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
     /* allocate  'struct dfs_fd' */
     if (idx < fdt->maxfd &&fdt->fds[idx] == RT_NULL)
     {
-        fdt->fds[idx] = rt_malloc(sizeof(struct dfs_fd));
+        fdt->fds[idx] = rt_calloc(1, sizeof(struct dfs_fd));
         if (fdt->fds[idx] == RT_NULL)
             idx = fdt->maxfd;
     }
 
-__out:
+__exit:
     return idx;
 }
 
@@ -199,7 +185,7 @@ int fd_new(void)
     if (idx == fdt->maxfd)
     {
         idx = -(1 + DFS_FD_OFFSET);
-        dbg_log(DBG_ERROR, "DFS fd new is failed! Could not found an empty fd entry.");
+        LOG_E( "DFS fd new is failed! Could not found an empty fd entry.");
         goto __result;
     }
 
@@ -235,7 +221,7 @@ struct dfs_fd *fd_get(int fd)
     d = fdt->fds[fd];
 
     /* check dfs_fd valid or not */
-    if (d->magic != DFS_FD_MAGIC)
+    if ((d == NULL) || (d->magic != DFS_FD_MAGIC))
     {
         dfs_unlock();
         return NULL;
@@ -323,7 +309,7 @@ int fd_is_open(const char *pathname)
         for (index = 0; index < fdt->maxfd; index++)
         {
             fd = fdt->fds[index];
-            if (fd == NULL) continue;
+            if (fd == NULL || fd->fops == NULL || fd->path == NULL) continue;
 
             if (fd->fops == fs->ops->fops && strcmp(fd->path, mountpath) == 0)
             {

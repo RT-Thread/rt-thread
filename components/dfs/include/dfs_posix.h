@@ -1,21 +1,7 @@
 /*
- * File      : dfs_posix.h
- * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -55,13 +41,15 @@ int closedir(DIR* d);
 /* file api*/
 int open(const char *file, int flags, ...);
 int close(int d);
-#ifdef RT_USING_NEWLIB
+
+#if defined(RT_USING_NEWLIB) && defined(_EXFUN)
 _READ_WRITE_RETURN_TYPE _EXFUN(read, (int __fd, void *__buf, size_t __nbyte));
 _READ_WRITE_RETURN_TYPE _EXFUN(write, (int __fd, const void *__buf, size_t __nbyte));
 #else
 int read(int fd, void *buf, size_t len);
 int write(int fd, const void *buf, size_t len);
 #endif
+
 off_t lseek(int fd, off_t offset, int whence);
 int rename(const char *from, const char *to);
 int unlink(const char *pathname);

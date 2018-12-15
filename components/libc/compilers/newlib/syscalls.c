@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #include <reent.h>
 #include <sys/errno.h>
 #include <sys/time.h>
@@ -9,6 +17,10 @@
 
 #ifdef RT_USING_PTHREADS
 #include <pthread.h>
+#endif
+
+#ifdef RT_USING_MODULE
+#include <dlmodule.h>
 #endif
 
 /* Reentrant versions of system calls.  */
@@ -379,18 +391,12 @@ _free_r (struct _reent *ptr, void *addr)
 }
 
 void
-_exit (int status)
+exit (int status)
 {
 #ifdef RT_USING_MODULE
-    rt_module_t module;
-
-    module = rt_module_self();
-    if (module != RT_NULL)
+    if (dlmodule_self())
     {
-        rt_thread_suspend(rt_thread_self());
-
-        /* re-schedule */
-        rt_schedule();
+        dlmodule_exit(status);
     }
 #endif
 

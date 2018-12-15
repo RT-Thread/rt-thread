@@ -1,17 +1,16 @@
-定时器设备
-===
-  
-##功能
----
+# 定时器设备
+
+## 功能
+
 * 时间测量
 * 周期或单次执行回调函数
   
-##编译
----
+## 编译
+
 1. 在rtconfig.h添加 `#define RT_USING_HWTIMER`
-  
-##使用流程
----
+
+## 使用流程
+
 1. 以读写方式打开设备
 2. 设置超时回调函数（如果需要）
 3. 根据需要设置定时模式（单次/周期）
@@ -19,12 +18,12 @@
 5. 写入超时值，定时器随即启动
 6. 停止定时器（可选）
 7. 关闭设备（如果需要）
-  
+
 应用参考 [hwtimer_test] (/examples/test/hwtimer\_test.c)
 
-##驱动编写指南
----
-###操作接口
+## 驱动编写指南
+
+### 操作接口
 
 ``` 
 struct rt_hwtimer_ops
@@ -43,8 +42,8 @@ struct rt_hwtimer_ops
 * count_get - <读取计数器值>
 * control - <设置计数频率 >
 
-###定时器特征信息
-  
+### 定时器特征信息
+
 ```
 struct rt_hwtimer_info
 {
@@ -60,7 +59,8 @@ struct rt_hwtimer_info
 * maxcnt  <计数器最大计数值>
 * cntmode <递增计数/递减计数>
   
-###注册设备
+### 注册设备
+
 ```
 static rt_hwtimer_t _timer0;
 int stm32_hwtimer_init(void)
@@ -73,8 +73,9 @@ int stm32_hwtimer_init(void)
     return 0;
 }
 ```
-  
-###定时器中断
+
+### 定时器中断
+
 ```
 void timer_irq_handler(void)
 {
@@ -84,15 +85,13 @@ void timer_irq_handler(void)
 }
 ```
 
-##注意事项
----
-  
-<font color="#FF0000">可能出现定时误差</font>
-  
+## 注意事项
+
+**可能出现定时误差**
 
 误差原因：
 
 假设计数器最大值0xFFFF，计数频率1Mhz，定时时间1秒又1微秒。
-  
+
 由于定时器一次最多只能计时到65535us，对于1000001us的定时要求。
 可以50000us定时20次完成，此时将会出现计算误差1us。

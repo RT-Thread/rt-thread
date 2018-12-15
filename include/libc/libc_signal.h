@@ -1,21 +1,7 @@
 /*
- * File      : libc_signal.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -81,25 +67,25 @@ typedef struct siginfo siginfo_t;
 #include <sys/signal.h>
 #endif
 
-#ifdef __CC_ARM
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
 #include <signal.h>
 typedef unsigned long sigset_t;
 
 #define SIGHUP       1
-// #define SIGINT       2
+/* #define SIGINT       2 */
 #define SIGQUIT      3
-// #define SIGILL       4
+/* #define SIGILL       4 */
 #define SIGTRAP      5
-// #define SIGABRT      6
+/* #define SIGABRT      6 */
 #define SIGEMT       7
-// #define SIGFPE       8
+/* #define SIGFPE       8 */
 #define SIGKILL      9
 #define SIGBUS      10
-// #define SIGSEGV     11
+/* #define SIGSEGV     11 */
 #define SIGSYS      12
 #define SIGPIPE     13
 #define SIGALRM     14
-// #define SIGTERM     15
+/* #define SIGTERM     15 */
 #define SIGURG      16
 #define SIGSTOP     17
 #define SIGTSTP     18
@@ -109,8 +95,8 @@ typedef unsigned long sigset_t;
 #define SIGTTOU     22
 #define SIGPOLL     23
 #define SIGWINCH    24
-// #define SIGUSR1     25
-// #define SIGUSR2     26
+/* #define SIGUSR1     25 */
+/* #define SIGUSR2     26 */
 #define SIGRTMIN    27
 #define SIGRTMAX    31
 #define NSIG        32
@@ -146,7 +132,7 @@ typedef unsigned long sigset_t;
 #define SIGQUIT      3
 #define SIGILL       4
 #define SIGTRAP      5
-// #define SIGABRT      6
+/* #define SIGABRT      6 */
 #define SIGEMT       7
 #define SIGFPE       8
 #define SIGKILL      9

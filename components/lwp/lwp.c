@@ -1,24 +1,12 @@
 /*
- * File      : clock.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2006-03-12     Bernard      first version
+ * 2018-11-02     heyuanjie    fix complie error in iar
  */
 
 #include <rtthread.h>
@@ -37,7 +25,6 @@
 #define DBG_LEVEL           DBG_WARNING
 #include <rtdbg.h>
 
-extern rt_thread_t rt_current_thread;
 extern void lwp_user_entry(void *args, const void *text, void *data);
 
 /**
@@ -46,14 +33,14 @@ extern void lwp_user_entry(void *args, const void *text, void *data);
 void lwp_set_kernel_sp(uint32_t *sp)
 {
     struct rt_lwp *user_data;
-    user_data = (struct rt_lwp *)rt_current_thread->lwp;
+    user_data = (struct rt_lwp *)rt_thread_self()->lwp;
     user_data->kernel_sp = sp;
 }
 
 uint32_t *lwp_get_kernel_sp(void)
 {
     struct rt_lwp *user_data;
-    user_data = (struct rt_lwp *)rt_current_thread->lwp;
+    user_data = (struct rt_lwp *)rt_thread_self()->lwp;
 
     return user_data->kernel_sp;
 }
@@ -311,11 +298,6 @@ static void lwp_cleanup(struct rt_thread *tid)
     rt_lwp_mem_deinit(lwp);
 
     /* cleanup fd table */
-    while (lwp->fdt.maxfd > 0)
-    {
-        lwp->fdt.maxfd --;
-        close(lwp->fdt.maxfd);
-    }
     rt_free(lwp->fdt.fds);
     rt_free(lwp->args);
 

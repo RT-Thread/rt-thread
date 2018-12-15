@@ -1,11 +1,7 @@
 /*
- * File      : drv_gpio.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
@@ -1761,17 +1757,19 @@ static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         drv_clock_enable(gpio_pin);
         /* Configure GPIO_InitStructure */
         GPIO_InitStruct.Pin = get_st_pin(gpio_pin);
-        GPIO_InitStruct.Pull = GPIO_NOPULL;
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
         switch (pin_irq_hdr_tab[irqindex].mode)
         {
         case PIN_IRQ_MODE_RISING:
+            GPIO_InitStruct.Pull = GPIO_PULLDOWN;
             GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
             break;
         case PIN_IRQ_MODE_FALLING:
+            GPIO_InitStruct.Pull = GPIO_PULLUP;
             GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
             break;
         case PIN_IRQ_MODE_RISING_FALLING:
+            GPIO_InitStruct.Pull = GPIO_NOPULL;
             GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
             break;
         }

@@ -16,10 +16,8 @@ if  CROSS_TOOL == 'gcc':
     PLATFORM 	= 'gcc'
     EXEC_PATH 	= '/usr/local/Cellar/arm-none-eabi-gcc/7-2017-q4-major/gcc/bin/'
 elif CROSS_TOOL == 'keil':
-    print('================ERROR============================')
-    print('Not support iar yet!')
-    print('=================================================')
-    exit(0)
+    PLATFORM 	= 'armcc'
+    EXEC_PATH 	= 'C:/Keil'
 elif CROSS_TOOL == 'iar':
     print('================ERROR============================')
     print('Not support iar yet!')
@@ -63,12 +61,34 @@ if PLATFORM == 'gcc':
 
     M_CFLAGS = CFLAGS + ' -mlong-calls  -Dsourcerygxx -O0 -fPIC '
     M_LFLAGS = DEVICE + ' -Wl,-z,max-page-size=0x4 -shared -fPIC -e main -nostdlib'
-	
+
 elif PLATFORM == 'armcc':
-    print('================ERROR============================')
-    print('Not support iar yet!')
-    print('=================================================')
-    exit(0)
+    # toolchains
+    CC = 'armcc'
+    AS = 'armasm'
+    AR = 'armar'
+    LINK = 'armlink'
+    TARGET_EXT = 'axf'
+
+    DEVICE = ' --device DARMSTM'
+    CFLAGS = DEVICE + ' --apcs=interwork'
+    AFLAGS = DEVICE
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-stm32.map --scatter stm32_rom.sct'
+
+    CFLAGS += ' --c99'
+    CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
+    LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
+
+    EXEC_PATH += '/arm/bin40/'
+
+    if BUILD == 'debug':
+        CFLAGS += ' -g -O0'
+        AFLAGS += ' -g'
+    else:
+        CFLAGS += ' -O2'
+
+    POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
+
 elif PLATFORM == 'iar':
     print('================ERROR============================')
     print('Not support iar yet!')

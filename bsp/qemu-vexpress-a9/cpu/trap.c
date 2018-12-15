@@ -20,7 +20,6 @@
 
 #include "gic.h"
 
-extern struct rt_thread *rt_current_thread;
 #ifdef RT_USING_FINSH
 extern long list_thread(void);
 #endif

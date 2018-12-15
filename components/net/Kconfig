@@ -5,35 +5,50 @@ menu "Socket abstraction layer"
 config RT_USING_SAL
     bool "Enable socket abstraction layer"
     default n
-    select RT_USING_DFS
 
     if RT_USING_SAL
 
-        menu "protocol stack implement"
+        if RT_USING_LWIP || AT_USING_SOCKET
+        
+            menu "protocol stack implement"
 
-            config SAL_USING_LWIP
-                bool "Support lwIP stack"
-                default y if RT_USING_LWIP
-                default n
-                depends on RT_USING_LWIP
+                config SAL_USING_LWIP
+                    bool "Support lwIP stack"
+                    default y
+                    depends on RT_USING_LWIP
 
-            config SAL_USING_AT
-                bool "Support AT Commands stack"
-                default y if AT_USING_SOCKET
-                default n
-                depends on AT_USING_SOCKET
-        endmenu
+                config SAL_USING_AT
+                    bool "Support AT Commands stack"
+                    default y
+                    depends on AT_USING_SOCKET
+                    
+                config SAL_USING_TLS
+                    bool "Support MbedTLS protocol"
+                    default y
+                    depends on PKG_USING_MBEDTLS
+            endmenu
+        
+        endif
 
         config SAL_USING_POSIX
             bool "Enable BSD socket operated by file system API"
+            default n
+            select RT_USING_DFS
             select RT_USING_LIBC
             select RT_USING_POSIX
-            default n
             help
                 Let BSD socket operated by file system API, such as read/write and involveed in select/poll POSIX APIs.
+                
+        if !SAL_USING_POSIX
+            
+            config SAL_SOCKETS_NUM
+                int "the maximum number of sockets"
+                default 16
+       
+        endif
         
         config SAL_PROTO_FAMILIES_NUM
-            int "the number of protocol family"
+            int "the maximum number of protocol families"
             default 4
 
     endif
@@ -58,9 +73,12 @@ config RT_USING_LWIP
 
             config RT_USING_LWIP202
                 bool "lwIP v2.0.2"
+
+            config RT_USING_LWIP210
+                bool "lwIP v2.1.0"
         endchoice
 
-        if RT_USING_LWIP202
+        if (RT_USING_LWIP210 || RT_USING_LWIP202)
             config RT_USING_LWIP_IPV6
                 bool "IPV6 protocol"
                 default n

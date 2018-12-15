@@ -37,7 +37,7 @@ def GenerateCFiles(env):
     if not os.path.exists('.vscode'):
         os.mkdir('.vscode')
 
-    vsc_file = file('.vscode/c_cpp_properties.json', 'wb')
+    vsc_file = open('.vscode/c_cpp_properties.json', 'w')
     if vsc_file:
         info = utils.ProjectInfo(env)
 

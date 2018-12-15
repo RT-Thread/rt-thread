@@ -3141,7 +3141,7 @@ static void register_multicast_address(struct rt_stm32_eth *stm32_eth, const uin
 #endif /* (LWIP_IPV4 && LWIP_IGMP) || (LWIP_IPV6 && LWIP_IPV6_MLD) */
 
 #if LWIP_IPV4 && LWIP_IGMP
-static err_t igmp_mac_filter( struct netif *netif, const ip4_addr_t *ip4_addr, u8_t action )
+static err_t igmp_mac_filter( struct netif *netif, const ip4_addr_t *ip4_addr, enum netif_mac_filter_action action )
 {
     uint8_t mac[6];
 	const uint8_t *p = (const uint8_t *)ip4_addr;
@@ -3167,7 +3167,7 @@ static err_t igmp_mac_filter( struct netif *netif, const ip4_addr_t *ip4_addr, u
 #endif /* LWIP_IPV4 && LWIP_IGMP */
 
 #if LWIP_IPV6 && LWIP_IPV6_MLD
-static err_t mld_mac_filter( struct netif *netif, const ip6_addr_t *ip6_addr, u8_t action )
+static err_t mld_mac_filter( struct netif *netif, const ip6_addr_t *ip6_addr, enum netif_mac_filter_action action )
 {
     uint8_t mac[6];
 	const uint8_t *p = (const uint8_t *)&ip6_addr->addr[3];

@@ -1,21 +1,7 @@
 /*
- * File      : sal.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -25,30 +11,39 @@
 #ifndef SAL_H__
 #define SAL_H__
 
-#include <dfs_file.h>
 #include <rtdevice.h>
+
+#ifdef SAL_USING_POSIX
+#include <dfs_file.h>
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #if !defined(socklen_t) && !defined(SOCKLEN_T_DEFINED)
 typedef uint32_t socklen_t;
 #endif
 
-/* sal socket magic word */
+/* SAL socket magic word */
 #define SAL_SOCKET_MAGIC               0x5A10
 
 /* The maximum number of sockets structure */
+#ifndef SAL_SOCKETS_NUM
 #define SAL_SOCKETS_NUM                DFS_FD_MAX
+#endif
 
 /* The maximum number of protocol families */
 #ifndef SAL_PROTO_FAMILIES_NUM
 #define SAL_PROTO_FAMILIES_NUM         4
 #endif
 
-/* sal socket offset */
+/* SAL socket offset */
 #ifndef SAL_SOCKET_OFFSET
 #define SAL_SOCKET_OFFSET              0
 #endif
 
-struct proto_ops
+struct sal_socket_ops
 {
     int (*socket)     (int domain, int type, int protocol);
     int (*closesocket)(int s);
@@ -64,38 +59,58 @@ struct proto_ops
     int (*getpeername)(int s, struct sockaddr *name, socklen_t *namelen);
     int (*getsockname)(int s, struct sockaddr *name, socklen_t *namelen);
     int (*ioctlsocket)(int s, long cmd, void *arg);
+#ifdef SAL_USING_POSIX
     int (*poll)       (struct dfs_fd *file, struct rt_pollreq *req);
+#endif
+};
+
+struct sal_proto_ops
+{
+    struct hostent* (*gethostbyname)  (const char *name);
+    int             (*gethostbyname_r)(const char *name, struct hostent *ret, char *buf, size_t buflen, struct hostent **result, int *h_errnop);
+    int             (*getaddrinfo)    (const char *nodename, const char *servname, const struct addrinfo *hints, struct addrinfo **res);
+    void            (*freeaddrinfo)   (struct addrinfo *ai);
 };
 
 struct sal_socket
 {
-    uint32_t magic;                    /* sal socket magic word */
+    uint32_t magic;                    /* SAL socket magic word */
 
-    int socket;                        /* sal socket descriptor */
+    int socket;                        /* SAL socket descriptor */
     int domain;
     int type;
     int protocol;
 
-    const struct proto_ops  *ops;      /* socket options */
-    void *user_data;                   /* specific sal socket data */
+    const struct sal_socket_ops *ops;  /* socket options */
+
+    void *user_data;                   /* user-specific data */
+#ifdef SAL_USING_TLS
+    void *user_data_tls;               /* user-specific TLS data */
+#endif
 };
 
-struct proto_family
+struct sal_proto_family
 {
-    int family;                        /* primary protocol families type*/
-    int sec_family;                    /* secondary protocol families type*/
-    int             (*create)(struct sal_socket *sal_socket, int type, int protocol);   /* register socket options */
+    int family;                        /* primary protocol families type */
+    int sec_family;                    /* secondary protocol families type */
+    int (*create)(struct sal_socket *sal_socket, int type, int protocol);   /* register socket options */
 
-    struct hostent* (*gethostbyname)  (const char *name);
-    int             (*gethostbyname_r)(const char *name, struct hostent *ret, char *buf, size_t buflen, struct hostent **result, int *h_errnop);
-    void            (*freeaddrinfo)   (struct addrinfo *ai);
-    int             (*getaddrinfo)    (const char *nodename, const char *servname, const struct addrinfo *hints, struct addrinfo **res);
+    struct sal_proto_ops *ops;             /* protocol family options */
 };
 
-/* SAL socket initialization */
+/* SAL(Socket Abstraction Layer) initialize */
 int sal_init(void);
 
-int sal_proto_family_register(const struct proto_family *pf);
 struct sal_socket *sal_get_socket(int sock);
+
+/* SAL protocol family register and unregister operate */
+int sal_proto_family_register(const struct sal_proto_family *pf);
+int sal_proto_family_unregister(int family);
+rt_bool_t sal_proto_family_is_registered(int family);
+struct sal_proto_family *sal_proto_family_find(int family);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SAL_H__ */
