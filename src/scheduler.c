@@ -82,10 +82,17 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
 {
     RT_ASSERT(thread != RT_NULL);
 
+#if defined(ARCH_CPU_STACK_GROWS_UPWARD)
+	if (*((rt_uint8_t *)((rt_ubase_t)thread->stack_addr + thread->stack_size - 1)) != '#' ||
+        (rt_ubase_t)thread->sp <= (rt_ubase_t)thread->stack_addr ||
+        (rt_ubase_t)thread->sp >
+        (rt_ubase_t)thread->stack_addr + (rt_ubase_t)thread->stack_size)
+#else
     if (*((rt_uint8_t *)thread->stack_addr) != '#' ||
         (rt_ubase_t)thread->sp <= (rt_ubase_t)thread->stack_addr ||
         (rt_ubase_t)thread->sp >
         (rt_ubase_t)thread->stack_addr + (rt_ubase_t)thread->stack_size)
+#endif
     {
         rt_ubase_t level;
 
