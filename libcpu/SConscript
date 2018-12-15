@@ -10,16 +10,19 @@ ASFLAGS = ''
 
 # The set of source files associated with this SConscript file.
 if rtconfig.PLATFORM == 'armcc':
-    src += Glob(path + '/*.c') + Glob(path + '/*_rvds.S') 
+    src += Glob(path + '/*.c') + Glob(path + '/*_rvds.S')
+    src += Glob(path + '/cp15/*.c')
     src += Glob(comm + '/*.c') + Glob(comm + '/*_rvds.S')
 
 if rtconfig.PLATFORM == 'gcc':
     src += Glob(path + '/*_init.S')
     src += Glob(path + '/*.c') + Glob(path + '/*_gcc.S') 
+    src += Glob(path + '/cp15/*.c')
     src += Glob(comm + '/*.c') + Glob(comm + '/*_gcc.S')
 
 if rtconfig.PLATFORM == 'iar':
     src += Glob(path + '/*.c') + Glob(path + '/*_iar.S')
+    src += Glob(path + '/cp15/*.c')
     src += Glob(comm + '/*.c') + Glob(comm + '/*_iar.S')
 
 if rtconfig.PLATFORM == 'cl':
@@ -31,7 +34,9 @@ if rtconfig.PLATFORM == 'mingw':
 if rtconfig.PLATFORM == 'armcc' and rtconfig.ARCH == 'arm' and rtconfig.CPU == 'arm926':
     ASFLAGS = ' --cpreproc'
 
-CPPPATH = [RTT_ROOT + '/libcpu/' + arch + '/' + rtconfig.CPU, RTT_ROOT + '/libcpu/' + arch + '/common']
+CPPPATH = [RTT_ROOT + '/libcpu/' + arch + '/' + rtconfig.CPU]
+CPPPATH += [RTT_ROOT + '/libcpu/' + arch + '/' + rtconfig.CPU + '/cp15']
+CPPPATH += [RTT_ROOT + '/libcpu/' + arch + '/common']
 
 group = DefineGroup(rtconfig.CPU.upper(), src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS)
 
