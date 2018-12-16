@@ -12,13 +12,7 @@
 #define __MMU_H__
 
 #include <rtthread.h>
-
-#ifndef _B
-#define _B(i)           (((i) >= 32) ? (1ull << (i)) : (1u << (i)))
-#endif
-#ifndef _L
-#define _L(i, n)        ((i) << (n))
-#endif
+#include "cp15/cp15_def.h"
 
 // [ref]
 //   1) DDI0406C_d_armv7ar_arm.pdf: B3.5.1 Short-descriptor translation table format descriptors

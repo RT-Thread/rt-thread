@@ -65,9 +65,6 @@ extern "C" {
     void rt_cpu_vector_set_base(uint32_t addr);
     void rt_cpu_domain_access_client_set(void);
 
-    void rt_hw_cpu_dcache_enable(void);
-    void rt_hw_cpu_icache_enable(void);
-
 #ifdef __cplusplus
 }
 #endif
