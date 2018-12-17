@@ -507,8 +507,8 @@ typedef siginfo_t rt_siginfo_t;
 #define RT_CPU_DETACHED                 RT_CPUS_NR          /**< The thread not running on cpu. */
 #define RT_CPU_MASK                     ((1 << RT_CPUS_NR) - 1) /**< All CPUs mask bit. */
 
-#ifndef RT_SCHEDULE_IPI_IRQ
-#define RT_SCHEDULE_IPI_IRQ             0
+#ifndef RT_SCHEDULE_IPI
+#define RT_SCHEDULE_IPI                 0
 #endif
 
 /**
