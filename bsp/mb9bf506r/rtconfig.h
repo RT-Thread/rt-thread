@@ -68,6 +68,7 @@
 #define RT_USING_DEVICE_IPC
 // <bool name="RT_USING_SERIAL" description="Using Serial Device Driver Framework" default="true" />
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 // <bool name="RT_USING_UART0_0" description="Using UART0_0" default="true" />
 #define RT_USING_UART0_0
 // <bool name="RT_USING_UART0_1" description="Using UART0_1" default="false" />
