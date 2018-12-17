@@ -118,14 +118,14 @@ static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_co
         /* enable the coresponding AMBA Peripheral Clock */
         __REG32(Zynq7000_SLCR_BASE+Zynq7000_SLCR_APER_CLK_CTRL) |= 1 << 20;
         /* enable uart clock. Divider 0x14 gives 50MHZ ref clock on IO PLL input. */
-        __REG32(Zynq7000_SLCR_BASE+Zynq7000_SLCR_UART_CLK_CTRL) |= (0x14 << 8) | 0x01;
+        __REG32(Zynq7000_SLCR_BASE+Zynq7000_SLCR_UART_CLK_CTRL) |= (0xa << 8) | 0x01;
         /* deassert the AMBA clock and software reset */
         __REG32(Zynq7000_SLCR_BASE+Zynq7000_SLCR_UART_RST_CTRL) &= ~((0x01 << 2)|(0x01 << 0));
     }
     else if (uart == (void*)Zynq7000_UART1_BASE)
     {
         __REG32(Zynq7000_SLCR_BASE+Zynq7000_SLCR_APER_CLK_CTRL) |= 1 << 21;
-        __REG32(Zynq7000_SLCR_BASE+Zynq7000_SLCR_UART_CLK_CTRL) |= (0x14 << 8) | 0x02;
+        __REG32(Zynq7000_SLCR_BASE+Zynq7000_SLCR_UART_CLK_CTRL) |= (0xa << 8) | 0x02;
         __REG32(Zynq7000_SLCR_BASE+Zynq7000_SLCR_UART_RST_CTRL) &= ~((0x01 << 3)|(0x01 << 1));
     }
     else

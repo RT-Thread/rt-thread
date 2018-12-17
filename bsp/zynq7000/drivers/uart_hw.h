@@ -153,7 +153,7 @@ typedef struct
 
 /*Baudrates assuming input clock speed is 3125000L */
 /*Baud_rate_gen_reg0*/
-#define UART_BAUDGEN_115200       62 /*Baud Rate Clock Divisor*/
+#define UART_BAUDGEN_115200       124 /*Baud Rate Clock Divisor*/
 
 /*Register Baud_rate_divider_reg0 Details*/
 #define UART_BAUDDIV_115200       6  /*Baud Rate Clock Divisor*/
