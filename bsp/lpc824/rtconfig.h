@@ -128,6 +128,7 @@
 // <c1>Using Serial
 //  <i>Using Serial
 //#define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 // </c>
 // </h>
 
