@@ -111,6 +111,7 @@
 
 #define RT_USING_DEVICE_IPC
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 /* RT_USING_CAN is not set */
 /* RT_USING_HWTIMER is not set */
 /* RT_USING_CPUTIME is not set */

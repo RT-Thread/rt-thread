@@ -55,6 +55,7 @@
 #define RT_USING_DEVICE
 #define RT_USING_DEVICE_IPC
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
