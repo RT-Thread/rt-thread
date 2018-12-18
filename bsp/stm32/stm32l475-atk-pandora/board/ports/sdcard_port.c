@@ -10,7 +10,7 @@
 
 #include <rtthread.h>
 
-#ifdef RT_USING_DFS
+#ifdef BSP_USING_SDCARD
 
 #include <dfs_elm.h>
 #include <dfs_fs.h>
@@ -71,5 +71,5 @@ static int rt_hw_spi1_tfcard(void)
 }
 INIT_DEVICE_EXPORT(rt_hw_spi1_tfcard);
 
-#endif
+#endif /* BSP_USING_SDCARD */
 
