@@ -136,18 +136,71 @@ void rt_pin_mode(rt_base_t pin, rt_base_t mode)
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     _hw_pin.ops->pin_mode(&_hw_pin.parent, pin, mode);
 }
-FINSH_FUNCTION_EXPORT_ALIAS(rt_pin_mode, pinMode, set hardware pin mode);
 
 void rt_pin_write(rt_base_t pin, rt_base_t value)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     _hw_pin.ops->pin_write(&_hw_pin.parent, pin, value);
 }
-FINSH_FUNCTION_EXPORT_ALIAS(rt_pin_write, pinWrite, write value to hardware pin);
 
 int  rt_pin_read(rt_base_t pin)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     return _hw_pin.ops->pin_read(&_hw_pin.parent, pin);
 }
-FINSH_FUNCTION_EXPORT_ALIAS(rt_pin_read, pinRead, read status from hardware pin);
+
+
+#ifdef RT_USING_FINSH
+#include <finsh.h>
+
+FINSH_FUNCTION_EXPORT_ALIAS(rt_pin_mode,  pin_mode, set hardware pin mode);
+FINSH_FUNCTION_EXPORT_ALIAS(rt_pin_write, pin_write, write value to hardware pin);
+FINSH_FUNCTION_EXPORT_ALIAS(rt_pin_read,  pin_read, read status from hardware pin);
+
+int pin_mode(int argc, char **argv)
+{
+    if(argc != 3)
+    {    
+        rt_kprintf("Usage: pin_mode pin mode\n");
+        rt_kprintf("output       0\n");
+        rt_kprintf("input        1\n");
+        rt_kprintf("input_pp     2\n");
+        rt_kprintf("input_pd     3\n");
+        rt_kprintf("output_od    4\n");
+        return -RT_EIO;
+    }
+    rt_pin_mode(atoi(argv[1]), atoi(argv[2]));
+    return 0;
+}
+MSH_CMD_EXPORT(pin_mode, set hardware pin mode);  
+
+int pin_write(int argc, char **argv)
+{
+    if(argc != 3)
+    {    
+        rt_kprintf("Usage: pin_write pin val\n");
+        rt_kprintf("high       1\n");
+        rt_kprintf("low        0\n");
+        return -RT_EIO;
+    }
+    rt_pin_write(atoi(argv[1]), atoi(argv[2]));
+    return 0;
+}
+MSH_CMD_EXPORT(pin_write, write value to hardware pin);  
+
+int  pin_read(int argc, char **argv)
+{
+    if(argc != 2)
+    {    
+        rt_kprintf("Usage: pin_read pin\n");
+        rt_kprintf("high       1\n");
+        rt_kprintf("low        0\n");
+        return -RT_EIO;
+    }
+    rt_pin_read(atoi(argv[1]));
+    return 0;
+}
+MSH_CMD_EXPORT(pin_read, read status from hardware pin);  
+
+#endif
+
