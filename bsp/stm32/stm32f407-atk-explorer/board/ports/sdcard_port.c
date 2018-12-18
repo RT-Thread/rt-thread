@@ -10,7 +10,7 @@
 
 #include <rtthread.h>
 
-#ifdef RT_USING_DFS
+#ifdef BSP_USING_SDCARD
 
 #include <dfs_elm.h>
 #include <dfs_fs.h>
@@ -61,5 +61,5 @@ int stm32_sdcard_mount(void)
 }
 INIT_APP_EXPORT(stm32_sdcard_mount);
 
-#endif
+#endif /* BSP_USING_SDCARD */
 
