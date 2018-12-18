@@ -1,0 +1,25 @@
+config BSP_USING_UART_HS
+    bool "Enable High Speed UART"
+    default y
+
+config BSP_USING_UART1
+    bool "Enable UART1 (GPIO0/1)"
+    default n
+
+config BSP_USING_UART2
+    bool "Enable UART2 (GPIO0/1)"
+    default n
+
+config BSP_USING_UART3
+    bool "Enable UART3 (GPIO0/1)"
+    default n
+
+config BSP_USING_I2C1
+    bool "Enable I2C1 (GPIO0/1)"
+    select RT_USING_I2C
+    default n
+
+config BSP_USING_SPI1
+    bool "Enable SPI1 (GPIO0/1)"
+    select RT_USING_SPI
+    default n
