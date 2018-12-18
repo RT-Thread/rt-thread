@@ -196,6 +196,12 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
         bsp_copy_files(os.path.join(library_path, Env['bsp_lib_type']), os.path.join(library_dir, Env['bsp_lib_type']))
         shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
 
+    # do bsp special dist handle
+    if 'dist_handle' in Env:       
+        print("=> start dist handle")
+        dist_handle = Env['dist_handle']
+        dist_handle(BSP_ROOT)
+        
     # get all source files from program
     for item in program:
         walk_children(item)
@@ -316,7 +322,13 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env):
         bsp_copy_files(os.path.join(library_path, 'HAL_Drivers'), os.path.join(library_dir, 'HAL_Drivers'))
         bsp_copy_files(os.path.join(library_path, Env['bsp_lib_type']), os.path.join(library_dir, Env['bsp_lib_type']))
         shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
-    
+
+    # do bsp special dist handle
+    if 'dist_handle' in Env:
+        print("=> start dist handle")
+        dist_handle = Env['dist_handle']
+        dist_handle(BSP_ROOT)
+
     # copy tools directory
     print('=> components')
     do_copy_folder(os.path.join(RTT_ROOT, 'components'), os.path.join(target_path, 'components'))
