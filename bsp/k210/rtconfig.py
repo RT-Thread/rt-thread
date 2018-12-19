@@ -8,7 +8,7 @@ CROSS_TOOL  ='gcc'
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
 else:
-    RTT_ROOT = r'rt-thread'
+    RTT_ROOT = r'../..'
 
 if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
