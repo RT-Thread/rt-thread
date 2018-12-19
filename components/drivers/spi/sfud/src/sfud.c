@@ -603,7 +603,8 @@ static sfud_err page256_or_1_byte_write(const sfud_flash *flash, uint32_t addr, 
         const uint8_t *data) {
     sfud_err result = SFUD_SUCCESS;
     const sfud_spi *spi = &flash->spi;
-    uint8_t cmd_data[5 + SFUD_WRITE_MAX_PAGE_SIZE], cmd_size;
+    static uint8_t cmd_data[5 + SFUD_WRITE_MAX_PAGE_SIZE];
+    uint8_t cmd_size;
     size_t data_size;
 
     SFUD_ASSERT(flash);
