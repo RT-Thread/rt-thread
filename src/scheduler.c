@@ -612,7 +612,7 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
         rt_list_insert_before(&(rt_thread_priority_table[thread->current_priority]),
                               &(thread->tlist));
         cpu_mask = RT_CPU_MASK ^ (1 << cpu_id);
-        rt_hw_ipi_send(RT_SCHEDULE_IPI_IRQ, cpu_mask);
+        rt_hw_ipi_send(RT_SCHEDULE_IPI, cpu_mask);
     }
     else
     {
@@ -629,7 +629,7 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
         if (cpu_id != bind_cpu)
         {
             cpu_mask = 1 << bind_cpu;
-            rt_hw_ipi_send(RT_SCHEDULE_IPI_IRQ, cpu_mask);
+            rt_hw_ipi_send(RT_SCHEDULE_IPI, cpu_mask);
         }
     }
 
