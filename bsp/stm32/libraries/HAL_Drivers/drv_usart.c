@@ -23,12 +23,6 @@
 /* this driver can be disabled at menuconfig → RT-Thread Components → Device Drivers */
 #endif
 
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F4)
-#define UART_INSTANCE_CLEAR_FUNCTION    __HAL_UART_CLEAR_FLAG
-#elif defined(SOC_SERIES_STM32F7)
-#define UART_INSTANCE_CLEAR_FUNCTION    __HAL_UART_CLEAR_IT
-#endif
-
 #ifdef BSP_UART_USING_DMA_RX
 static void stm32_dma_config(struct rt_serial_device *serial);
 #endif
@@ -186,13 +180,8 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
     RT_ASSERT(serial != RT_NULL);
 
     uart = (struct stm32_uart *)serial->parent.user_data;
-<<<<<<< HEAD
-    UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_TC);
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7)
-=======
     __HAL_UART_CLEAR_FLAG(&(uart->handle), UART_FLAG_TC);
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0)
->>>>>>> 154484c1c213ae5214634665f252b493af4d33db
     uart->handle.Instance->TDR = c;
 #elif defined(SOC_SERIES_STM32F1)
     uart->handle.Instance->DR = c;
@@ -212,7 +201,7 @@ static int stm32_getc(struct rt_serial_device *serial)
     ch = -1;
     if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_RXNE) != RESET)
     {
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32L4)
         ch = uart->handle.Instance->RDR & 0xff;
 #elseif  defined(SOC_SERIES_STM32F3)
         ch = uart->handle.Instance->RDR & 0xff;
@@ -255,7 +244,7 @@ static void uart_isr(struct rt_serial_device *serial)
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
         /* Clear RXNE interrupt flag */
-        UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_RXNE);
+        __HAL_UART_CLEAR_FLAG(&(uart->handle), UART_FLAG_RXNE);
     }
 #ifdef BSP_UART_USING_DMA_RX
     else if ((__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_IDLE) != RESET) &&
@@ -272,9 +261,9 @@ static void uart_isr(struct rt_serial_device *serial)
             rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
         }
 
-        UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_IDLE);
+        __HAL_UART_CLEAR_FLAG(&(uart->handle), UART_FLAG_IDLE);
         rt_uint32_t ch;
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32L4)
         ch = uart->handle.Instance->RDR;
 #elif defined(SOC_SERIES_STM32F0)
         ch = uart->handle.Instance->TDR;
@@ -288,81 +277,46 @@ static void uart_isr(struct rt_serial_device *serial)
     {
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_ORE) != RESET)
         {
-            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_ORE);
+            __HAL_UART_CLEAR_FLAG(&(uart->handle), UART_FLAG_ORE);
         }
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_NE) != RESET)
         {
-            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_NE);
+            __HAL_UART_CLEAR_FLAG(&(uart->handle), UART_FLAG_NE);
         }
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_FE) != RESET)
         {
-            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_FE);
+            __HAL_UART_CLEAR_FLAG(&(uart->handle), UART_FLAG_FE);
         }
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_PE) != RESET)
         {
-            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_PE);
+            __HAL_UART_CLEAR_FLAG(&(uart->handle), UART_FLAG_PE);
         }
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_CTS) != RESET)
         {
-            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_CTS);
+            __HAL_UART_CLEAR_FLAG(&(uart->handle), UART_FLAG_CTS);
         }
 #if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4)
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_LBD) != RESET)
         {
-            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_LBD);
-        }
-#elif defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4)
-        if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_LBDF) != RESET)
-        {
-            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_LBDF);
+            __HAL_UART_CLEAR_FLAG(&(uart->handle), UART_FLAG_LBD);
         }
 #endif
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TXE) != RESET)
         {
-            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_TXE);
+            __HAL_UART_CLEAR_FLAG(&(uart->handle), UART_FLAG_TXE);
         }
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TC) != RESET)
         {
-            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_TC);
+            __HAL_UART_CLEAR_FLAG(&(uart->handle), UART_FLAG_TC);
         }
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_RXNE) != RESET)
         {
-            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_RXNE);
+            __HAL_UART_CLEAR_FLAG(&(uart->handle), UART_FLAG_RXNE);
         }
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_IDLE) != RESET)
         {
-            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_IDLE);
+            __HAL_UART_CLEAR_FLAG(&(uart->handle), UART_FLAG_IDLE);
         }
-#if defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4)
-        if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TEACK) != RESET)
-        {
-            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_TEACK);
-        }
-        if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_SBKF) != RESET)
-        {
-            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_SBKF);
-        }
-        if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_CMF) != RESET)
-        {
-            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_CMF);
-        }
-        if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_BUSY) != RESET)
-        {
-            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_BUSY);
-        }
-        if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_ABRF) != RESET)
-        {
-            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_ABRF);
-        }
-        if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_ABRE) != RESET)
-        {
-            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_ABRE);
-        }
-        if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_CTSIF) != RESET)
-        {
-            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_CTSIF);
-        }
-#endif         
     }
 }
 
@@ -549,7 +503,7 @@ static void stm32_dma_config(struct rt_serial_device *serial)
         /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
         SET_BIT(RCC->AHBENR, uart->config->dma_rcc);
         tmpreg = READ_BIT(RCC->AHBENR, uart->config->dma_rcc);
-#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4)
+#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32L4)
         /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
         SET_BIT(RCC->AHB1ENR, uart->config->dma_rcc);
         tmpreg = READ_BIT(RCC->AHB1ENR, uart->config->dma_rcc);
@@ -561,7 +515,7 @@ static void stm32_dma_config(struct rt_serial_device *serial)
 
 #if defined(SOC_SERIES_STM32F1)
     uart->dma.handle.Instance                 = uart->config->dma.Instance;
-#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+#elif defined(SOC_SERIES_STM32F4)
     uart->dma.handle.Instance                 = uart->config->dma.Instance;
     uart->dma.handle.Init.Channel             = uart->config->dma.stream_channel.channel;
 #elif defined(SOC_SERIES_STM32L4)
@@ -575,11 +529,7 @@ static void stm32_dma_config(struct rt_serial_device *serial)
     uart->dma.handle.Init.MemDataAlignment    = DMA_MDATAALIGN_BYTE;
     uart->dma.handle.Init.Mode                = DMA_CIRCULAR;
     uart->dma.handle.Init.Priority            = DMA_PRIORITY_MEDIUM;
-<<<<<<< HEAD
-#if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-=======
 #if defined(SOC_SERIES_STM32F4)
->>>>>>> 154484c1c213ae5214634665f252b493af4d33db
     uart->dma.handle.Init.FIFOMode            = DMA_FIFOMODE_DISABLE;
 #endif
     if (HAL_DMA_DeInit(&(uart->dma.handle)) != HAL_OK)

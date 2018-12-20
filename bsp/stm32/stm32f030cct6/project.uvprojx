@@ -482,13 +482,6 @@
         </Group>
         <Group>
           <GroupName>at_device</GroupName>
-          <Files>
-            <File>
-              <FileName>at_client_sample.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\packages\at_device-latest\at_client_sample.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>Kernel</GroupName>
