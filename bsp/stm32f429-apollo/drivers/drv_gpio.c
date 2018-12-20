@@ -1757,17 +1757,19 @@ rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         index->rcc();
         /* Configure GPIO_InitStructure */
         GPIO_InitStruct.Pin = index->pin;
-        GPIO_InitStruct.Pull = GPIO_NOPULL;
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
         switch (pin_irq_hdr_tab[irqindex].mode)
         {
         case PIN_IRQ_MODE_RISING:
+            GPIO_InitStruct.Pull = GPIO_PULLDOWN;
             GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
             break;
         case PIN_IRQ_MODE_FALLING:
+            GPIO_InitStruct.Pull = GPIO_PULLUP;
             GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
             break;
         case PIN_IRQ_MODE_RISING_FALLING:
+            GPIO_InitStruct.Pull = GPIO_NOPULL;
             GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
             break;
         }

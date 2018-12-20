@@ -61,6 +61,7 @@
 #define RT_USING_DEVICE_IPC
 /* Using serial framework */
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 
 #define RT_USING_UART1
 #define RT_USING_UART2

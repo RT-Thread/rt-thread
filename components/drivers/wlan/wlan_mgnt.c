@@ -1320,7 +1320,10 @@ rt_err_t rt_wlan_start_ap_adv(struct rt_wlan_info *info, const char *password)
         return -RT_EIO;
     }
     RT_WLAN_LOG_D("%s is run", __FUNCTION__);
-    password_len = rt_strlen(password);
+    if (password != RT_NULL)
+    {
+        password_len = rt_strlen(password);
+    }
     if (password_len > RT_WLAN_PASSWORD_MAX_LENGTH)
     {
         RT_WLAN_LOG_E("key is to long! len:%d", password_len);
@@ -1358,16 +1361,16 @@ rt_err_t rt_wlan_start_ap_adv(struct rt_wlan_info *info, const char *password)
     return err;
 }
 
-int rt_wlan_ap_is_active(void)
+rt_bool_t rt_wlan_ap_is_active(void)
 {
-    int _active = 0;
+    rt_bool_t _active = RT_FALSE;
 
     if (_ap_is_null())
     {
-        return 0;
+        return RT_FALSE;
     }
 
-    _active = _ap_mgnt.state & RT_WLAN_STATE_ACTIVE ? 1 : 0;
+    _active = _ap_mgnt.state & RT_WLAN_STATE_ACTIVE ? RT_TRUE : RT_FALSE;
     RT_WLAN_LOG_D("%s is run active:%s", __FUNCTION__, _active ? "Active" : "Inactive");
     return _active;
 }

@@ -1,0 +1,38 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Split('''
+board.c
+drv_uart.c
+''')
+CPPPATH = [cwd]
+
+if GetDepend('RT_USING_PIN'):
+    src += ['drv_gpio.c']
+
+if GetDepend('RT_USING_HWTIMER'):
+    src += ['drv_hw_timer.c']
+
+if GetDepend('RT_USING_CPUTIME'):
+    src += ['drv_cputime.c']
+
+if GetDepend('RT_USING_I2C'):
+    src += ['drv_i2c.c']
+
+if GetDepend('RT_USING_SPI'):
+    src += ['drv_spi.c']
+
+if GetDepend('RT_USING_PWM'):
+    src += ['drv_pwm.c']
+
+if GetDepend('RT_USING_RTC'):
+    src += ['drv_rtc.c']
+
+if GetDepend('RT_USING_WDT'):
+    src += ['drv_wdt.c']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
