@@ -59,6 +59,7 @@ STM32 BSP 由三部分组成，分别是 (1) 通用库、(2) BSP 模板和 (3) �
 | ------- | ---- |
 | libraries/templates/stm32f10x | F1系列芯片模板 |
 | libraries/templates/stm32f4xx | F4系列芯片模板 |
+| libraries/templates/stm32f7xx | F7系列芯片模板 |
 | libraries/templates/stm32l4xx | L4系列芯片模板 |
 
 拷贝 `stm32/libraries/templates/stm32f10x` 文件夹并改名为 `stm32/stm32f103-atk-nano` 。如下图所示：
