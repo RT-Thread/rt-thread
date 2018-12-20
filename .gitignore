@@ -34,3 +34,20 @@ ncscope.*
 #ctag files
 tags
 
+/bsp/stm32/libraries/STM32F0xx_HAL/CMSIS/DSP_Lib
+figures
+/bsp/stm32/stm32f030-xc/applications/gps.c
+/bsp/stm32/stm32f030-xc/applications/appconfig.h
+/bsp/stm32/stm32f030-xc/applications/atsim800c.h
+/bsp/stm32/stm32f030-xc/applications/gps.h
+/bsp/stm32/stm32f030-xc/applications/oil.h
+/bsp/stm32/stm32f030-xc/applications/sim800c.h
+/bsp/stm32/stm32f030-xc/applications/appconfig.h.orig
+/bsp/stm32/stm32f030-xc/applications/gps.c.orig
+/bsp/stm32/stm32f030-xc/applications/oil.c.orig
+/bsp/stm32/stm32f030-xc/applications/sim800c.c.orig
+/bsp/stm32/stm32f030-xc/applications/appconfig.c
+/bsp/stm32/stm32f030-xc/applications/atsim800c.c
+/bsp/stm32/stm32f030-xc/applications/oil.c
+/bsp/stm32/stm32f030-xc/applications/sim800c.c
+/bsp/stm32/libraries/HAL_Drivers/*.orig

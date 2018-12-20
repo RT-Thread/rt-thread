@@ -90,11 +90,19 @@
 
 /* POSIX layer and C standard library */
 
+#define RT_USING_LIBC
 
 /* Network */
 
 /* Socket abstraction layer */
 
+#define RT_USING_SAL
+
+/* protocol stack implement */
+
+#define SAL_USING_AT
+#define SAL_SOCKETS_NUM 16
+#define SAL_PROTO_FAMILIES_NUM 4
 
 /* light weight TCP/IP stack */
 
@@ -104,6 +112,14 @@
 
 /* AT commands */
 
+#define RT_USING_AT
+#define AT_DEBUG
+#define AT_USING_CLIENT
+#define AT_CLIENT_NUM_MAX 1
+#define AT_USING_SOCKET
+#define AT_USING_CLI
+#define AT_PRINT_RAW_CMD
+#define AT_SW_VERSION_NUM 0x10200
 
 /* VBUS(Virtual Software BUS) */
 
@@ -126,6 +142,12 @@
 
 /* Wiced WiFi */
 
+#define PKG_USING_AT_DEVICE
+#define AT_DEVICE_EC20
+#define AT_DEVICE_SOCKETS_NUM 12
+#define AT_DEVICE_NAME "uart6"
+#define AT_DEVICE_RECV_BUFF_LEN 512
+#define PKG_USING_AT_DEVICE_LATEST_VERSION
 
 /* IoT Cloud */
 
@@ -151,12 +173,7 @@
 /* miscellaneous packages */
 
 
-/* sample package */
-
 /* samples: kernel and components samples */
-
-
-/* example package: hello */
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32F0

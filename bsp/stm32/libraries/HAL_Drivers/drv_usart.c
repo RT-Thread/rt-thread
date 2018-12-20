@@ -181,12 +181,10 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
 
     uart = (struct stm32_uart *)serial->parent.user_data;
     __HAL_UART_CLEAR_FLAG(&(uart->handle), UART_FLAG_TC);
-#if defined(SOC_SERIES_STM32L4)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0)
     uart->handle.Instance->TDR = c;
 #elif defined(SOC_SERIES_STM32F1)
     uart->handle.Instance->DR = c;
-#elif defined(SOC_SERIES_STM32F0)
-    uart->handle.Instance->TDR = c;
 #endif
     while (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TC) == RESET);
     return 1;
@@ -297,11 +295,6 @@ static void uart_isr(struct rt_serial_device *serial)
         {
             __HAL_UART_CLEAR_FLAG(&(uart->handle), UART_FLAG_CTS);
         }
-//#if !defined(SOC_SERIES_STM32L4)
-//        if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_LBD) != RESET)
-//        {
-//            __HAL_UART_CLEAR_FLAG(&(uart->handle), UART_FLAG_LBD);
-//        }
 #if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4)
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_LBD) != RESET)
         {
@@ -384,12 +377,10 @@ void USART3_6_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-
     uart_isr(&(uart_obj[UART3_INDEX].serial));
     uart_isr(&(uart_obj[UART4_INDEX].serial));
     uart_isr(&(uart_obj[UART5_INDEX].serial));
     uart_isr(&(uart_obj[UART6_INDEX].serial));
-
     /* leave interrupt */
     rt_interrupt_leave();
 
@@ -629,17 +620,10 @@ int rt_hw_usart_init(void)
 
     for (int i = 0; i < obj_num; i++)
     {
-		switch(i)
-		{
-			case 1:
-				config.baud_rate = BAUD_RATE_9600 ;
-				break;
-		}
         uart_obj[i].config = &uart_config[i];
         uart_obj[i].serial.ops    = &stm32_uart_ops;
         uart_obj[i].serial.config = config;
-
-        /* Determines whether a serial instance supports DMA */
+		/* Determines whether a serial instance supports DMA */
         if(uart_obj[i].config->dma.Instance != DMA_NOT_AVAILABLE)
         {
             /* register UART device */
