@@ -10,7 +10,6 @@
 
 #include <board.h>
 #include "drv_gpio.h"
-#include "drv_gpio.h"
 //.\libraries\HAL_Drivers\config
 #ifdef RT_USING_PIN
 
