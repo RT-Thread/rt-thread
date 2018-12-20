@@ -5,11 +5,6 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2006-03-18     Bernard      the first version
- * 2006-04-25     Bernard      add rt_hw_context_switch_interrupt declaration
- * 2006-09-24     Bernard      add rt_hw_context_switch_to declaration
- * 2012-12-29     Bernard      add rt_hw_exception_install declaration
- * 2017-10-17     Hichard      add some micros
  * 2018-12-10     Jesven       fix complie error in iar and keil
  */
 

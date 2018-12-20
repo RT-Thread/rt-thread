@@ -82,7 +82,11 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
 {
     RT_ASSERT(thread != RT_NULL);
 
+#if defined(ARCH_CPU_STACK_GROWS_UPWARD)
+	if (*((rt_uint8_t *)((rt_ubase_t)thread->stack_addr + thread->stack_size - 1)) != '#' ||
+#else
     if (*((rt_uint8_t *)thread->stack_addr) != '#' ||
+#endif
         (rt_ubase_t)thread->sp <= (rt_ubase_t)thread->stack_addr ||
         (rt_ubase_t)thread->sp >
         (rt_ubase_t)thread->stack_addr + (rt_ubase_t)thread->stack_size)
@@ -264,9 +268,9 @@ void rt_system_scheduler_start(void)
 
     /* switch to new thread */
 #ifdef RT_USING_SMP
-    rt_hw_context_switch_to((rt_uint32_t)&to_thread->sp, to_thread);
+    rt_hw_context_switch_to((rt_ubase_t)&to_thread->sp, to_thread);
 #else
-    rt_hw_context_switch_to((rt_uint32_t)&to_thread->sp);
+    rt_hw_context_switch_to((rt_ubase_t)&to_thread->sp);
 #endif /*RT_USING_SMP*/
 
     /* never come back */
@@ -441,8 +445,8 @@ void rt_schedule(void)
                 /* switch to new thread */
                 RT_DEBUG_LOG(RT_DEBUG_SCHEDULER,
                         ("[%d]switch to priority#%d "
-                         "thread:%.*s(sp:0x%p), "
-                         "from thread:%.*s(sp: 0x%p)\n",
+                         "thread:%.*s(sp:0x%08x), "
+                         "from thread:%.*s(sp: 0x%08x)\n",
                          rt_interrupt_nest, highest_ready_priority,
                          RT_NAME_MAX, to_thread->name, to_thread->sp,
                          RT_NAME_MAX, from_thread->name, from_thread->sp));
@@ -608,7 +612,7 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
         rt_list_insert_before(&(rt_thread_priority_table[thread->current_priority]),
                               &(thread->tlist));
         cpu_mask = RT_CPU_MASK ^ (1 << cpu_id);
-        rt_hw_ipi_send(RT_SCHEDULE_IPI_IRQ, cpu_mask);
+        rt_hw_ipi_send(RT_SCHEDULE_IPI, cpu_mask);
     }
     else
     {
@@ -625,7 +629,7 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
         if (cpu_id != bind_cpu)
         {
             cpu_mask = 1 << bind_cpu;
-            rt_hw_ipi_send(RT_SCHEDULE_IPI_IRQ, cpu_mask);
+            rt_hw_ipi_send(RT_SCHEDULE_IPI, cpu_mask);
         }
     }
 
