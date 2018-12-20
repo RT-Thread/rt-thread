@@ -15,10 +15,6 @@
 #include <stm32f4xx.h>
 #include "drv_common.h"
 
-#ifdef BSP_USING_GPIO
-#include "drv_gpio.h"
-#endif
-
 #define STM32_SRAM_SIZE           (192)
 #define STM32_SRAM_END            (0x20000000 + STM32_SRAM_SIZE * 1024)
 
@@ -38,10 +34,6 @@ extern int __bss_end;
 #endif
 
 #define HEAP_END        STM32_SRAM_END
-
-/* Board Pin definitions */
-#define LED0_PIN                       GET_PIN(H, 10)
-#define LED1_PIN                       GET_PIN(H, 11)
 
 void SystemClock_Config(void);
 void MX_GPIO_Init(void);
