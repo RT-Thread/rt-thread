@@ -80,3 +80,4 @@ figures
 /bsp/stm32/stm32f030cct6/applications/gps.c
 /bsp/stm32/stm32f030cct6/applications/gps.c.orig
 /bsp/stm32/stm32f030cct6/applications/gps.h
+/bsp/stm32/stm32f030cct6/applications/main.c
