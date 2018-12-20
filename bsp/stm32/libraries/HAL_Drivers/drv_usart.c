@@ -263,10 +263,8 @@ static void uart_isr(struct rt_serial_device *serial)
 
         __HAL_UART_CLEAR_FLAG(&(uart->handle), UART_FLAG_IDLE);
         rt_uint32_t ch;
-#if defined(SOC_SERIES_STM32L4)
+#if defined(SOC_SERIES_STM32L4)||defined(SOC_SERIES_STM32F0)
         ch = uart->handle.Instance->RDR;
-#elif defined(SOC_SERIES_STM32F0)
-        ch = uart->handle.Instance->TDR;
 #elif defined(SOC_SERIES_STM32F1)
         ch = uart->handle.Instance->DR;
 #endif
