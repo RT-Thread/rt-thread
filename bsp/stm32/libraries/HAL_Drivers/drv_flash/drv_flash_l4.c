@@ -244,7 +244,7 @@ int stm32_flash_erase(long offset, size_t size)
     /* Get the 1st page to erase */
     FirstPage = GetPage(addr);
     /* Get the number of pages to erase from 1st page */
-    NbOfPages = GetPage(addr + size) - FirstPage + 1;
+    NbOfPages = GetPage(addr + size - 1) - FirstPage + 1;
     /* Get the bank */
     BankNumber = GetBank(addr);
     /* Fill EraseInit structure*/
