@@ -45,7 +45,7 @@ struct stm32_spi
     SPI_HandleTypeDef handle;
     const struct stm32_spi_config *config;
     struct rt_spi_configuration *cfg;
-    
+
 #ifdef BSP_SPI_USING_DMA
     struct
     {
@@ -53,7 +53,7 @@ struct stm32_spi
         DMA_HandleTypeDef handle_tx;
     } dma;
 #endif
-    
+
     struct rt_spi_bus spi_bus;
 };
 

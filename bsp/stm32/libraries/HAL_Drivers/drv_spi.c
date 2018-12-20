@@ -13,7 +13,11 @@
 
 #ifdef RT_USING_SPI
 
+<<<<<<< HEAD
 #if defined(BSP_USING_SPI1) || defined(BSP_USING_SPI2) || defined(BSP_USING_SPI3) || defined(BSP_USING_SPI4) || defined(BSP_USING_SPI5) || defined(BSP_USING_SPI6) 
+=======
+#if defined(BSP_USING_SPI1) || defined(BSP_USING_SPI2) || defined(BSP_USING_SPI3) || defined(BSP_USING_SPI4) || defined(BSP_USING_SPI5)
+>>>>>>> 154484c1c213ae5214634665f252b493af4d33db
 /* this driver can be disabled at menuconfig → RT-Thread Components → Device Drivers */
 
 #include "drv_spi.h"
@@ -143,7 +147,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
     uint32_t SPI_APB_CLOCK;
 
-    SPI_APB_CLOCK = HAL_RCC_GetPCLK2Freq();
+    SPI_APB_CLOCK = HAL_RCC_GetPCLK1Freq();
 
     if (cfg->max_hz >= SPI_APB_CLOCK / 2)
     {
@@ -303,7 +307,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
             HAL_StatusTypeDef state;
             LOG_D("%s dma transfer prepare and start", spi_drv->config->bus_name);
             LOG_D("%s sendbuf: %X, recvbuf: %X, length: %d",
-                   spi_drv->config->bus_name,
+                  spi_drv->config->bus_name,
                   (uint32_t)message->send_buf,
                   (uint32_t)message->recv_buf, message->length);
 
@@ -341,7 +345,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         {
             const rt_uint8_t * send_ptr = message->send_buf;
             rt_uint8_t * recv_ptr = message->recv_buf;
-            
+
             while (length--)
             {
                 rt_uint8_t data = ~0;
@@ -350,7 +354,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
                 {
                     data = *send_ptr++;
                 }
-                
+
                 /* send data once */
                 while (__HAL_SPI_GET_FLAG(spi_handle, SPI_FLAG_TXE) == RESET);
                 *(volatile rt_uint8_t *)(&spi_handle->Instance->DR) = data;
@@ -361,7 +365,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
 #endif
                 while (__HAL_SPI_GET_FLAG(spi_handle, SPI_FLAG_RXNE) == RESET);
                 data = *(volatile rt_uint8_t *)(&spi_handle->Instance->DR);
-                
+
                 if(recv_ptr != RT_NULL)
                 {
                     *recv_ptr++ = data;
@@ -372,16 +376,16 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         {
             const rt_uint16_t * send_ptr = message->send_buf;
             rt_uint16_t * recv_ptr = message->recv_buf;
-            
+
             while (length--)
             {
                 rt_uint16_t data = ~0;
-                
+
                 if(send_ptr != RT_NULL)
                 {
                     data = *send_ptr++;
                 }
-                
+
                 /* send data once */
                 while (__HAL_SPI_GET_FLAG(spi_handle, SPI_FLAG_TXE) == RESET);
                 *(volatile rt_uint16_t *)(&spi_handle->Instance->DR) = data;
@@ -392,7 +396,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
 #endif
                 while (__HAL_SPI_GET_FLAG(spi_handle, SPI_FLAG_RXNE) == RESET);
                 data = *(volatile rt_uint16_t *)(&spi_handle->Instance->DR);
-                
+
                 if(recv_ptr != RT_NULL)
                 {
                     *recv_ptr++ = data;

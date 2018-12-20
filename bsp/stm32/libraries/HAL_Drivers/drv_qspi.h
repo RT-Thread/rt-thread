@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2018-11-27     zylx         change to new framework
  */
- 
+
 #ifndef __DRV_QSPI_H_
 #define __DRV_QSPI_H_
 #include <rtthread.h>

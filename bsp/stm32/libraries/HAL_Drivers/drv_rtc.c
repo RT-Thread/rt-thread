@@ -150,7 +150,7 @@ static rt_err_t rt_rtc_control(rt_device_t dev, int cmd, void *args)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops rtc_ops = 
+const static struct rt_device_ops rtc_ops =
 {
     RT_NULL,
     RT_NULL,

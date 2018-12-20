@@ -42,11 +42,11 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
 {
     switch (cmd)
     {
-        /* feed the watchdog */
+    /* feed the watchdog */
     case RT_DEVICE_CTRL_WDT_KEEPALIVE:
         HAL_IWDG_Refresh(&hiwdg);
         break;
-        /* set watchdog timeout */
+    /* set watchdog timeout */
     case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
         hiwdg.Init.Reload = (rt_uint32_t)arg;
         if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
