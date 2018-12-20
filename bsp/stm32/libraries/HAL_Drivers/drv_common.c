@@ -130,4 +130,3 @@ RT_WEAK void rt_hw_board_init()
     rt_components_board_init();
 #endif
 }
-
