@@ -21,10 +21,6 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SERIAL
         default y
 
-    config BSP_UART_USING_DMA_RX
-        bool "Enable UART RX DMA support"
-        default n
-
     config BSP_USING_SPI1
         bool "Enable SPI1 BUS"
         select RT_USING_SPI
