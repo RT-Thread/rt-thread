@@ -82,10 +82,6 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SERIAL
         default n
 
-    config BSP_UART_USING_DMA_RX
-        bool "Enable UART RX DMA support"
-        default y
-
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
         default n

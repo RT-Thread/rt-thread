@@ -118,10 +118,6 @@ menu "On-chip Peripheral Drivers"
         bool "Enable on-chip FLASH"
         default n
 
-    config BSP_UART_USING_DMA_RX
-        bool "Enable UART RX DMA support"
-        default n
-
     config BSP_USING_SPI1
         bool "Enable SPI1 BUS"
         select RT_USING_SPI
