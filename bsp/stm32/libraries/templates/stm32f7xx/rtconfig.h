@@ -39,6 +39,9 @@
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_VER_NUM 0x40000
+#define ARCH_ARM
+#define ARCH_ARM_CORTEX_M
+#define ARCH_ARM_CORTEX_M7
 
 /* RT-Thread Components */
 
@@ -74,6 +77,7 @@
 #define RT_USING_DEVICE_IPC
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 #define RT_USING_PIN
 
 /* Using WiFi */
@@ -103,6 +107,9 @@
 
 
 /* Utilities */
+
+
+/* ARM CMSIS */
 
 
 /* RT-Thread online packages */
@@ -149,14 +156,14 @@
 
 /* example package: hello */
 
+#define SOC_FAMILY_STM32
+#define SOC_SERIES_STM32F7
 
 /* Hardware Drivers Config */
 
 #define SOC_STM32F767IG
 
 /* Onboard Peripheral Drivers */
-
-#define BSP_USING_USB_TO_USART
 
 /* On-chip Peripheral Drivers */
 
