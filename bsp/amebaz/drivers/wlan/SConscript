@@ -1,0 +1,16 @@
+import rtconfig
+from building import *
+
+cwd     = GetCurrentDir()
+CPPPATH = [cwd, str(Dir('#'))]
+
+src = []
+if GetDepend(['RT_USING_LWIP']):
+        src += Split('''
+                drv_wifi.c
+                drv_wlan.c
+                ''')
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

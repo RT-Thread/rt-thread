@@ -10,6 +10,7 @@ hal/am_hal_clkgen.c
 hal/am_hal_debug.c
 hal/am_hal_cachectrl.c
 hal/am_hal_pwrctrl.c
+hal/am_hal_mcuctrl.c
 hal/am_hal_sysctrl.c
 hal/am_hal_reset.c
 hal/am_hal_stimer.c

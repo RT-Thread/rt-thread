@@ -1,21 +1,7 @@
 /*
- * File      : log_trace.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2013, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -383,17 +369,33 @@ static rt_err_t _log_control(rt_device_t dev, int cmd, void *arg)
     return rt_device_control(_traceout_device, cmd, arg);
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops log_device_ops = 
+{
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    _log_write,
+    _log_control
+};
+#endif
+
 int log_trace_init(void)
 {
     rt_memset(&_log_device, 0x00, sizeof(_log_device));
 
     _log_device.type = RT_Device_Class_Char;
+#ifdef RT_USING_DEVICE_OPS
+    _log_device.ops     = &log_device_ops;
+#else
     _log_device.init    = RT_NULL;
     _log_device.open    = RT_NULL;
     _log_device.close   = RT_NULL;
     _log_device.read    = RT_NULL;
     _log_device.write   = _log_write;
     _log_device.control = _log_control;
+#endif
 
     /* no indication and complete callback */
     _log_device.rx_indicate = RT_NULL;

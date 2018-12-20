@@ -1,11 +1,7 @@
 /*
- * File      : ecm.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006-2013, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
@@ -80,52 +76,64 @@ const static struct ucdc_eth_descriptor _comm_desc =
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
     /* Interface Association Descriptor */
-    USB_DESC_LENGTH_IAD,
-    USB_DESC_TYPE_IAD,
-    USB_DYNAMIC,
-    0x02,
-    USB_CDC_CLASS_COMM,
-    USB_CDC_SUBCLASS_ETH,
-    USB_CDC_PROTOCOL_NONE,
-    0x00,
+    {
+        USB_DESC_LENGTH_IAD,
+        USB_DESC_TYPE_IAD,
+        USB_DYNAMIC,
+        0x02,
+        USB_CDC_CLASS_COMM,
+        USB_CDC_SUBCLASS_ETH,
+        USB_CDC_PROTOCOL_NONE,
+        0x00,
+    },
 #endif
     /* Interface Descriptor */
-    USB_DESC_LENGTH_INTERFACE,
-    USB_DESC_TYPE_INTERFACE,
-    USB_DYNAMIC,
-    0x00,
-    0x01,
-    USB_CDC_CLASS_COMM,
-    USB_CDC_SUBCLASS_ETH,
-    USB_CDC_PROTOCOL_NONE,
-    0x00,
+    {
+        USB_DESC_LENGTH_INTERFACE,
+        USB_DESC_TYPE_INTERFACE,
+        USB_DYNAMIC,
+        0x00,
+        0x01,
+        USB_CDC_CLASS_COMM,
+        USB_CDC_SUBCLASS_ETH,
+        USB_CDC_PROTOCOL_NONE,
+        0x00,
+    },
     /* Header Functional Descriptor */
-    sizeof(struct ucdc_header_descriptor),
-    USB_CDC_CS_INTERFACE,
-    USB_CDC_SCS_HEADER,
-    0x0110,
+    {
+        sizeof(struct ucdc_header_descriptor),
+        USB_CDC_CS_INTERFACE,
+        USB_CDC_SCS_HEADER,
+        0x0110,
+    },
     /* Union Functional Descriptor */
-    sizeof(struct ucdc_union_descriptor),
-    USB_CDC_CS_INTERFACE,
-    USB_CDC_SCS_UNION,
-    USB_DYNAMIC,
-    USB_DYNAMIC,
+    {
+        sizeof(struct ucdc_union_descriptor),
+        USB_CDC_CS_INTERFACE,
+        USB_CDC_SCS_UNION,
+        USB_DYNAMIC,
+        USB_DYNAMIC,
+    },
     /* Abstract Control Management Functional Descriptor */
-    sizeof(struct ucdc_enet_descriptor),
-    USB_CDC_CS_INTERFACE,
-    USB_CDC_SCS_ETH,
-    USB_STRING_SERIAL_INDEX,
-    {0,0,0,0},
-    USB_ETH_MTU,
-    0x00,
-    0x00,
+    {
+        sizeof(struct ucdc_enet_descriptor),
+        USB_CDC_CS_INTERFACE,
+        USB_CDC_SCS_ETH,
+        USB_STRING_SERIAL_INDEX,
+        {0,0,0,0},
+        USB_ETH_MTU,
+        0x00,
+        0x00,
+    },
     /* Endpoint Descriptor */
-    USB_DESC_LENGTH_ENDPOINT,
-    USB_DESC_TYPE_ENDPOINT,
-    USB_DIR_IN | USB_DYNAMIC,
-    USB_EP_ATTR_INT,
-    0x08,
-    0xFF,
+    {
+        USB_DESC_LENGTH_ENDPOINT,
+        USB_DESC_TYPE_ENDPOINT,
+        USB_DIR_IN | USB_DYNAMIC,
+        USB_EP_ATTR_INT,
+        0x08,
+        0xFF,
+    },
 };
 
 /* data interface descriptor */
@@ -133,29 +141,35 @@ ALIGN(4)
 const static struct ucdc_data_descriptor _data_desc =
 {
     /* interface descriptor */
-    USB_DESC_LENGTH_INTERFACE,
-    USB_DESC_TYPE_INTERFACE,
-    USB_DYNAMIC,
-    0x00,
-    0x02,
-    USB_CDC_CLASS_DATA,
-    USB_CDC_SUBCLASS_ETH,
-    0x00,
-    0x00,
+    {
+        USB_DESC_LENGTH_INTERFACE,
+        USB_DESC_TYPE_INTERFACE,
+        USB_DYNAMIC,
+        0x00,
+        0x02,
+        USB_CDC_CLASS_DATA,
+        USB_CDC_SUBCLASS_ETH,
+        0x00,
+        0x00,
+    },
     /* endpoint, bulk out */
-    USB_DESC_LENGTH_ENDPOINT,
-    USB_DESC_TYPE_ENDPOINT,
-    USB_DIR_OUT | USB_DYNAMIC,
-    USB_EP_ATTR_BULK,
-    USB_DYNAMIC,
-    0x00,
+    {
+        USB_DESC_LENGTH_ENDPOINT,
+        USB_DESC_TYPE_ENDPOINT,
+        USB_DIR_OUT | USB_DYNAMIC,
+        USB_EP_ATTR_BULK,
+        USB_DYNAMIC,
+        0x00,
+    },
     /* endpoint, bulk in */
-    USB_DESC_LENGTH_ENDPOINT,
-    USB_DESC_TYPE_ENDPOINT,
-    USB_DYNAMIC | USB_DIR_IN,
-    USB_EP_ATTR_BULK,
-    USB_DYNAMIC,
-    0x00,
+    {
+        USB_DESC_LENGTH_ENDPOINT,
+        USB_DESC_TYPE_ENDPOINT,
+        USB_DYNAMIC | USB_DIR_IN,
+        USB_EP_ATTR_BULK,
+        USB_DYNAMIC,
+        0x00,
+    },
 };
 
 ALIGN(4)
@@ -327,6 +341,19 @@ static rt_err_t rt_ecm_eth_control(rt_device_t dev, int cmd, void *args)
 
     return RT_EOK;
 }
+
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops ecm_device_ops =
+{
+    rt_ecm_eth_init,
+    rt_ecm_eth_open,
+    rt_ecm_eth_close,
+    rt_ecm_eth_read,
+    rt_ecm_eth_write,
+    rt_ecm_eth_control
+};
+#endif
+
 struct pbuf *rt_ecm_eth_rx(rt_device_t dev)
 {
     struct pbuf* p = RT_NULL;

@@ -1,21 +1,7 @@
 /*
- * File      : mtd_nor.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012, Shanghai Real-Thread Technology Co., Ltd
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * COPYRIGHT (C) 2018, Real-Thread Information Technology Ltd
+ * 
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -65,6 +51,18 @@ static rt_err_t _mtd_control(rt_device_t dev, int cmd, void *args)
     return RT_EOK;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops mtd_nor_ops = 
+{
+    _mtd_init,
+    _mtd_open,
+    _mtd_close,
+    _mtd_read,
+    _mtd_write,
+    _mtd_control
+};
+#endif
+
 rt_err_t rt_mtd_nor_register_device(const char               *name,
                                     struct rt_mtd_nor_device *device)
 {
@@ -75,12 +73,16 @@ rt_err_t rt_mtd_nor_register_device(const char               *name,
 
     /* set device class and generic device interface */
     dev->type        = RT_Device_Class_MTD;
+#ifdef RT_USING_DEVICE_OPS
+    dev->ops         = &mtd_nor_ops;
+#else
     dev->init        = _mtd_init;
     dev->open        = _mtd_open;
     dev->read        = _mtd_read;
     dev->write       = _mtd_write;
     dev->close       = _mtd_close;
     dev->control     = _mtd_control;
+#endif
 
     dev->rx_indicate = RT_NULL;
     dev->tx_complete = RT_NULL;

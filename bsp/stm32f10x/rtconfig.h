@@ -112,6 +112,7 @@
 
 #define RT_USING_DEVICE_IPC
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 #define RT_USING_CAN
 #define RT_CAN_USING_HDR
 /* RT_USING_HWTIMER is not set */

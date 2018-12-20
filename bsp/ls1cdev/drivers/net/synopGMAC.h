@@ -32,6 +32,6 @@
 #include "mii.h"
 #include "synopGMAC_types.h"
 
-void rt_hw_eth_init(void);
+int rt_hw_eth_init(void);
 
 #endif	/*__SYNOPGMAC__H*/

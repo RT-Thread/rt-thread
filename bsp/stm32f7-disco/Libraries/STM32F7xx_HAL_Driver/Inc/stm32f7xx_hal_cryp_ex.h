@@ -2,13 +2,11 @@
   ******************************************************************************
   * @file    stm32f7xx_hal_cryp_ex.h
   * @author  MCD Application Team
-  * @version V1.0.1
-  * @date    25-June-2015
   * @brief   Header file of CRYP HAL Extension module.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2015 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -43,9 +41,10 @@
  extern "C" {
 #endif
 
-#if defined(STM32F756xx)
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7xx_hal_def.h"
+
+#if defined (CRYP)
 
 /** @addtogroup STM32F7xx_HAL_Driver
   * @{
@@ -65,10 +64,10 @@
 /** @defgroup CRYPEx_Exported_Constants_Group1 CRYP AlgoModeDirection
   * @{
   */ 
-#define CRYP_CR_ALGOMODE_AES_GCM_ENCRYPT   ((uint32_t)0x00080000)
-#define CRYP_CR_ALGOMODE_AES_GCM_DECRYPT   ((uint32_t)0x00080004)
-#define CRYP_CR_ALGOMODE_AES_CCM_ENCRYPT   ((uint32_t)0x00080008)
-#define CRYP_CR_ALGOMODE_AES_CCM_DECRYPT   ((uint32_t)0x0008000C)
+#define CRYP_CR_ALGOMODE_AES_GCM_ENCRYPT   ((uint32_t)0x00080000U)
+#define CRYP_CR_ALGOMODE_AES_GCM_DECRYPT   ((uint32_t)0x00080004U)
+#define CRYP_CR_ALGOMODE_AES_CCM_ENCRYPT   ((uint32_t)0x00080008U)
+#define CRYP_CR_ALGOMODE_AES_CCM_DECRYPT   ((uint32_t)0x0008000CU)
 /**
   * @}
   */
@@ -77,7 +76,7 @@
   * @brief    The phases are relevant only to AES-GCM and AES-CCM
   * @{
   */ 
-#define CRYP_PHASE_INIT           ((uint32_t)0x00000000)
+#define CRYP_PHASE_INIT           ((uint32_t)0x00000000U)
 #define CRYP_PHASE_HEADER         CRYP_CR_GCM_CCMPH_0
 #define CRYP_PHASE_PAYLOAD        CRYP_CR_GCM_CCMPH_1
 #define CRYP_PHASE_FINAL          CRYP_CR_GCM_CCMPH
@@ -97,8 +96,8 @@
 /**
   * @brief  Set the phase: Init, header, payload, final. 
   *         This is relevant only for GCM and CCM modes.
-  * @param  __HANDLE__: specifies the CRYP handle.
-  * @param  __PHASE__: The phase.
+  * @param  __HANDLE__ specifies the CRYP handle.
+  * @param  __PHASE__ The phase.
   * @retval None
   */
 #define __HAL_CRYP_SET_PHASE(__HANDLE__, __PHASE__)  do{(__HANDLE__)->Instance->CR &= (uint32_t)(~CRYP_CR_GCM_CCMPH);\
@@ -206,7 +205,78 @@ void HAL_CRYPEx_GCMCCM_IRQHandler(CRYP_HandleTypeDef *hcryp);
   * @}
   */ 
 
-#endif /* STM32F756xx */
+#endif /* CRYP */
+
+#if defined (AES)
+
+/** @addtogroup CRYPEx_Exported_Functions
+  * @{
+  */
+
+/** @addtogroup CRYPEx_Exported_Functions_Group1
+  * @{
+  */
+
+/* CallBack functions  ********************************************************/
+void HAL_CRYPEx_ComputationCpltCallback(CRYP_HandleTypeDef *hcryp);
+
+/**
+  * @}
+  */ 
+
+/** @addtogroup CRYPEx_Exported_Functions_Group2
+  * @{
+  */
+
+/* AES encryption/decryption processing functions  ****************************/
+HAL_StatusTypeDef HAL_CRYPEx_AES(CRYP_HandleTypeDef *hcryp, uint8_t *pInputData, uint16_t Size, uint8_t *pOutputData, uint32_t Timeout);
+HAL_StatusTypeDef HAL_CRYPEx_AES_IT(CRYP_HandleTypeDef *hcryp,  uint8_t *pInputData, uint16_t Size, uint8_t *pOutputData);
+HAL_StatusTypeDef HAL_CRYPEx_AES_DMA(CRYP_HandleTypeDef *hcryp,  uint8_t *pInputData, uint16_t Size, uint8_t *pOutputData);
+
+/* AES encryption/decryption/authentication processing functions  *************/
+HAL_StatusTypeDef HAL_CRYPEx_AES_Auth(CRYP_HandleTypeDef *hcryp, uint8_t *pInputData, uint64_t Size, uint8_t *pOutputData, uint32_t Timeout);
+HAL_StatusTypeDef HAL_CRYPEx_AES_Auth_IT(CRYP_HandleTypeDef *hcryp, uint8_t *pInputData, uint64_t Size, uint8_t *pOutputData);
+HAL_StatusTypeDef HAL_CRYPEx_AES_Auth_DMA(CRYP_HandleTypeDef *hcryp, uint8_t *pInputData, uint64_t Size, uint8_t *pOutputData);
+
+/**
+  * @}
+  */ 
+
+/** @addtogroup CRYPEx_Exported_Functions_Group3
+  * @{
+  */
+
+/* AES suspension/resumption functions  ***************************************/
+void HAL_CRYPEx_Read_IVRegisters(CRYP_HandleTypeDef *hcryp, uint8_t* Output);
+void HAL_CRYPEx_Write_IVRegisters(CRYP_HandleTypeDef *hcryp, uint8_t* Input);
+void HAL_CRYPEx_Read_SuspendRegisters(CRYP_HandleTypeDef *hcryp, uint8_t* Output);
+void HAL_CRYPEx_Write_SuspendRegisters(CRYP_HandleTypeDef *hcryp, uint8_t* Input);
+void HAL_CRYPEx_Read_KeyRegisters(CRYP_HandleTypeDef *hcryp, uint8_t* Output, uint32_t KeySize);
+void HAL_CRYPEx_Write_KeyRegisters(CRYP_HandleTypeDef *hcryp, uint8_t* Input, uint32_t KeySize);
+void HAL_CRYPEx_Read_ControlRegister(CRYP_HandleTypeDef *hcryp, uint8_t* Output);
+void HAL_CRYPEx_Write_ControlRegister(CRYP_HandleTypeDef *hcryp, uint8_t* Input);
+void HAL_CRYPEx_ProcessSuspend(CRYP_HandleTypeDef *hcryp);
+
+/**
+  * @}
+  */  
+  
+
+/**
+  * @}
+  */ 
+  
+/* Private functions -----------------------------------------------------------*/
+/** @addtogroup CRYPEx_Private_Functions CRYPEx Private Functions
+  * @{
+  */
+HAL_StatusTypeDef CRYP_AES_Auth_IT(CRYP_HandleTypeDef *hcryp);
+
+/**
+  * @}
+  */
+ 
+#endif /* AES */
 
 /**
   * @}

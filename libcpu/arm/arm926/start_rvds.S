@@ -25,6 +25,8 @@
 ; * 2015-06-04     aozima     Align stack address to 8 byte.
 ; */
 
+#include "rt_low_level_init.h"
+
 S_FRAME_SIZE    EQU     (18*4)   ;72
 ;S_SPSR          EQU     (17*4)   ;SPSR
 ;S_CPSR          EQU     (16*4)   ;CPSR
@@ -46,7 +48,6 @@ S_PC            EQU     (15*4)   ;R15
 ;S_R1            EQU     (1*4)
 ;S_R0            EQU     (0*4)
 
-
 MODE_USR        EQU     0X10
 MODE_FIQ        EQU     0X11
 MODE_IRQ        EQU     0X12
@@ -57,8 +58,6 @@ MODE_SYS        EQU     0X1F
 MODEMASK        EQU     0X1F
 
 NOINT           EQU     0xC0
-
-    GET rt_low_level_keil.inc
     
 ;----------------------- Stack and Heap Definitions ----------------------------
     AREA    STACK, NOINIT, READWRITE, ALIGN=3

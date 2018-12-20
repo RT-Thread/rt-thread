@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_cryp_ex.c
   * @author  MCD Application Team
-  * @version V1.7.2
-  * @date    16-June-2017
   * @brief   CRYPEx HAL module driver.
   *          This file provides firmware functions to manage the extended
   *          functionalities of the Cryptography (CRYP) peripheral.  
@@ -43,7 +41,7 @@
 
 #ifdef HAL_CRYP_MODULE_ENABLED
 
-#if defined (STM32L442xx) || defined (STM32L443xx) || defined (STM32L462xx) || defined(STM32L485xx) || defined(STM32L486xx) || defined(STM32L4A6xx)
+#if defined (STM32L442xx) || defined (STM32L443xx) || defined (STM32L462xx) || defined(STM32L485xx) || defined(STM32L486xx) || defined(STM32L4A6xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
 
 /** @addtogroup STM32L4xx_HAL_Driver
   * @{
@@ -189,8 +187,6 @@ HAL_StatusTypeDef HAL_CRYPEx_AES(CRYP_HandleTypeDef *hcryp, uint8_t *pInputData,
     /* Check parameters setting */
     if (hcryp->Init.OperatingMode == CRYP_ALGOMODE_KEYDERIVATION)
     {
-      /* Enable IP at this point, since not enabled in HAL_CRYP_Init() */
-      __HAL_CRYP_ENABLE(hcryp);
       if (pOutputData == NULL) 
       {
         return  HAL_ERROR;
@@ -310,16 +306,8 @@ HAL_StatusTypeDef HAL_CRYPEx_AES_IT(CRYP_HandleTypeDef *hcryp,  uint8_t *pInputD
       /* Process Unlocked */
     __HAL_UNLOCK(hcryp);
     
-    if (hcryp->Init.OperatingMode != CRYP_ALGOMODE_KEYDERIVATION)
-    {   
     /* Enable Computation Complete Flag and Error Interrupts */
     __HAL_CRYP_ENABLE_IT(hcryp, CRYP_IT_CCFIE|CRYP_IT_ERRIE);
-    }
-    else
-    {
-      /* In the case of Key derivation, enable the IP at the same time as the interruptions */
-      SET_BIT(hcryp->Instance->CR, CRYP_IT_CCFIE|CRYP_IT_ERRIE|AES_CR_EN);
-    }
     
     
     /* If operating mode is key derivation only, the input data have 
@@ -1428,13 +1416,13 @@ HAL_StatusTypeDef HAL_CRYPEx_AES_Auth_DMA(CRYP_HandleTypeDef *hcryp, uint8_t *pI
         }
       }      
 #else       
-      if (hcryp->Init.ChainingMode == CRYP_CHAINMODE_AES_CMAC)
+      if (hcryp->Init.ChainingMode == CRYP_CHAINMODE_AES_CMAC) 
       {
         if ((pInputData == NULL) || (Size == 0))
         {
           return  HAL_ERROR;
         }
-      }      
+      }
 #endif             
     }
     else if (hcryp->Init.GCMCMACPhase == CRYP_PAYLOAD_PHASE)
@@ -3141,7 +3129,7 @@ static void CRYP_Padding(CRYP_HandleTypeDef *hcryp, uint32_t difflength, uint32_
   * @}
   */
 
-#endif /* defined (STM32L442xx) || defined (STM32L443xx) || defined (STM32L462xx) || defined(STM32L485xx) || defined(STM32L486xx) || defined(STM32L4A6xx) */  
+#endif /* defined (STM32L442xx) || defined (STM32L443xx) || defined (STM32L462xx) || defined(STM32L485xx) || defined(STM32L486xx) || defined(STM32L4A6xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx) */  
 
 #endif /* HAL_CRYP_MODULE_ENABLED */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_qspi.h
   * @author  MCD Application Team
-  * @version V1.7.2
-  * @date    16-June-2017
   * @brief   Header file of QSPI HAL module.
   ******************************************************************************
   * @attention
@@ -46,6 +44,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx_hal_def.h"
 
+#if defined(QUADSPI) || defined(QUADSPI1) || defined(QUADSPI2)
+
 /** @addtogroup STM32L4xx_HAL_Driver
   * @{
   */
@@ -81,9 +81,7 @@ typedef struct
                                   This parameter can be a value of @ref QSPI_ChipSelectHighTime */   
   uint32_t ClockMode;          /* Specifies the Clock Mode. It indicates the level that clock takes between commands.
                                   This parameter can be a value of @ref QSPI_ClockMode */
-#if defined(STM32L431xx) || defined(STM32L432xx) || defined(STM32L433xx) || defined(STM32L442xx) || \
-    defined(STM32L443xx) || defined(STM32L451xx) || defined(STM32L452xx) || defined(STM32L462xx) || \
-    defined(STM32L496xx) || defined(STM32L4A6xx) 
+#if defined(QUADSPI_CR_DFM) 
   uint32_t FlashID;            /* Specifies the Flash which will be used,
                                   This parameter can be a value of @ref QSPI_Flash_Select */
   uint32_t DualFlash;          /* Specifies the Dual Flash Mode State
@@ -206,10 +204,10 @@ typedef struct
 /** @defgroup QSPI_ErrorCode QSPI Error Code
   * @{
   */ 
-#define HAL_QSPI_ERROR_NONE            ((uint32_t)0x00000000) /*!< No error                 */
-#define HAL_QSPI_ERROR_TIMEOUT         ((uint32_t)0x00000001) /*!< Timeout error            */
-#define HAL_QSPI_ERROR_TRANSFER        ((uint32_t)0x00000002) /*!< Transfer error           */
-#define HAL_QSPI_ERROR_DMA             ((uint32_t)0x00000004) /*!< DMA transfer error       */
+#define HAL_QSPI_ERROR_NONE            ((uint32_t)0x00000000) /*!< No error           */
+#define HAL_QSPI_ERROR_TIMEOUT         ((uint32_t)0x00000001) /*!< Timeout error      */
+#define HAL_QSPI_ERROR_TRANSFER        ((uint32_t)0x00000002) /*!< Transfer error     */
+#define HAL_QSPI_ERROR_DMA             ((uint32_t)0x00000004) /*!< DMA transfer error */
 #define HAL_QSPI_ERROR_INVALID_PARAM   ((uint32_t)0x00000008) /*!< Invalid parameters error */
 /**
   * @}
@@ -248,9 +246,7 @@ typedef struct
   * @}
   */
 
-#if defined(STM32L431xx) || defined(STM32L432xx) || defined(STM32L433xx) || defined(STM32L442xx) || \
-    defined(STM32L443xx) || defined(STM32L451xx) || defined(STM32L452xx) || defined(STM32L462xx) || \
-    defined(STM32L496xx) || defined(STM32L4A6xx) 
+#if defined(QUADSPI_CR_DFM) 
 /** @defgroup QSPI_Flash_Select QSPI Flash Select
   * @{
   */
@@ -328,7 +324,7 @@ typedef struct
 /** @defgroup QSPI_DataMode QSPI Data Mode
   * @{
   */
-#define QSPI_DATA_NONE                 ((uint32_t)0X00000000)           /*!<No data*/
+#define QSPI_DATA_NONE                 ((uint32_t)0X00000000)          /*!<No data*/
 #define QSPI_DATA_1_LINE               ((uint32_t)QUADSPI_CCR_DMODE_0) /*!<Data on a single line*/
 #define QSPI_DATA_2_LINES              ((uint32_t)QUADSPI_CCR_DMODE_1) /*!<Data on two lines*/
 #define QSPI_DATA_4_LINES              ((uint32_t)QUADSPI_CCR_DMODE)   /*!<Data on four lines*/
@@ -349,9 +345,7 @@ typedef struct
   * @{
   */
 #define QSPI_DDR_HHC_ANALOG_DELAY      ((uint32_t)0x00000000)       /*!<Delay the data output using analog delay in DDR mode*/
-#if defined(STM32L431xx) || defined(STM32L432xx) || defined(STM32L433xx) || defined(STM32L442xx) || \
-    defined(STM32L443xx) || defined(STM32L451xx) || defined(STM32L452xx) || defined(STM32L462xx) || \
-    defined(STM32L496xx) || defined(STM32L4A6xx) 
+#if defined(QUADSPI_CCR_DHHC) 
 #define QSPI_DDR_HHC_HALF_CLK_DELAY    ((uint32_t)QUADSPI_CCR_DHHC) /*!<Delay the data output by 1/2 clock cycle in DDR mode*/
 #endif
 /**
@@ -437,19 +431,19 @@ typedef struct
   * @{
   */
 /** @brief Reset QSPI handle state.
-  * @param  __HANDLE__: QSPI handle.
+  * @param  __HANDLE__ : QSPI handle.
   * @retval None
   */
 #define __HAL_QSPI_RESET_HANDLE_STATE(__HANDLE__)           ((__HANDLE__)->State = HAL_QSPI_STATE_RESET)
 
 /** @brief  Enable the QSPI peripheral.
-  * @param  __HANDLE__: specifies the QSPI Handle.
+  * @param  __HANDLE__ : specifies the QSPI Handle.
   * @retval None
   */ 
 #define __HAL_QSPI_ENABLE(__HANDLE__)                       SET_BIT((__HANDLE__)->Instance->CR, QUADSPI_CR_EN)
 
 /** @brief  Disable the QSPI peripheral.
-  * @param  __HANDLE__: specifies the QSPI Handle.
+  * @param  __HANDLE__ : specifies the QSPI Handle.
   * @retval None
   */
 #define __HAL_QSPI_DISABLE(__HANDLE__)                      CLEAR_BIT((__HANDLE__)->Instance->CR, QUADSPI_CR_EN)
@@ -507,7 +501,7 @@ typedef struct
   *            @arg QSPI_FLAG_TE:   QSPI Transfer error flag
   * @retval None
   */
-#define __HAL_QSPI_GET_FLAG(__HANDLE__, __FLAG__)           (READ_BIT((__HANDLE__)->Instance->SR, (__FLAG__)) != 0)
+#define __HAL_QSPI_GET_FLAG(__HANDLE__, __FLAG__)           ((READ_BIT((__HANDLE__)->Instance->SR, (__FLAG__)) != 0) ? SET : RESET)
 
 /** @brief  Clears the specified QSPI's flag status.
   * @param  __HANDLE__: specifies the QSPI Handle.
@@ -611,9 +605,7 @@ uint32_t              HAL_QSPI_GetFifoThreshold(QSPI_HandleTypeDef *hqspi);
 #define IS_QSPI_CLOCK_MODE(CLKMODE)        (((CLKMODE) == QSPI_CLOCK_MODE_0) || \
                                             ((CLKMODE) == QSPI_CLOCK_MODE_3))
 
-#if defined(STM32L431xx) || defined(STM32L432xx) || defined(STM32L433xx) || defined(STM32L442xx) || \
-    defined(STM32L443xx) || defined(STM32L451xx) || defined(STM32L452xx) || defined(STM32L462xx) || \
-    defined(STM32L496xx) || defined(STM32L4A6xx) 
+#if defined(QUADSPI_CR_DFM) 
 #define IS_QSPI_FLASH_ID(FLASH)            (((FLASH) == QSPI_FLASH_ID_1) || \
                                             ((FLASH) == QSPI_FLASH_ID_2)) 
                                   
@@ -658,9 +650,7 @@ uint32_t              HAL_QSPI_GetFifoThreshold(QSPI_HandleTypeDef *hqspi);
 #define IS_QSPI_DDR_MODE(DDR_MODE)         (((DDR_MODE) == QSPI_DDR_MODE_DISABLE) || \
                                             ((DDR_MODE) == QSPI_DDR_MODE_ENABLE))
 
-#if defined(STM32L431xx) || defined(STM32L432xx) || defined(STM32L433xx) || defined(STM32L442xx) || \
-    defined(STM32L443xx) || defined(STM32L451xx) || defined(STM32L452xx) || defined(STM32L462xx) || \
-    defined(STM32L496xx) || defined(STM32L4A6xx) 
+#if defined(QUADSPI_CCR_DHHC) 
 #define IS_QSPI_DDR_HHC(DDR_HHC)           (((DDR_HHC) == QSPI_DDR_HHC_ANALOG_DELAY) || \
                                             ((DDR_HHC) == QSPI_DDR_HHC_HALF_CLK_DELAY))
 #else
@@ -696,7 +686,9 @@ uint32_t              HAL_QSPI_GetFifoThreshold(QSPI_HandleTypeDef *hqspi);
 /**
   * @}
   */ 
-  
+
+#endif /* defined(QUADSPI) || defined(QUADSPI1) || defined(QUADSPI2) */
+
 #ifdef __cplusplus
 }
 #endif

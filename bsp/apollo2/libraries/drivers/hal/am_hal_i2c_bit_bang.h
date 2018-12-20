@@ -40,16 +40,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_HAL_I2C_BIT_BANG_H
 #define AM_HAL_I2C_BIT_BANG_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
 //*****************************************************************************
 //
@@ -63,24 +58,30 @@ typedef enum
     AM_HAL_I2C_BIT_BANG_DATA_NAKED,
     AM_HAL_I2C_BIT_BANG_CLOCK_TIMEOUT,
     AM_HAL_I2C_BIT_BANG_DATA_TIMEOUT,
-}am_hal_i2c_bit_bang_enum_t;
+    AM_HAL_I2C_BIT_BANG_STATUS_MAX,
+}am_hal_i2c_bit_bang_enum_e;
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 //*****************************************************************************
 //
 // External function definitions
 //
 //*****************************************************************************
-extern am_hal_i2c_bit_bang_enum_t am_hal_i2c_bit_bang_init(uint32_t sck_gpio_number,
+extern am_hal_i2c_bit_bang_enum_e am_hal_i2c_bit_bang_init(uint32_t sck_gpio_number,
                                      uint32_t sda_gpio_number);
 
-extern am_hal_i2c_bit_bang_enum_t am_hal_i2c_bit_bang_send(uint8_t address,
+extern am_hal_i2c_bit_bang_enum_e am_hal_i2c_bit_bang_send(uint8_t address,
                                                     uint32_t number_of_bytes,
                                                     uint8_t *pData,
                                                     uint8_t ui8Offset,
                                                     bool bUseOffset,
                                                     bool bNoStop);
 
-extern am_hal_i2c_bit_bang_enum_t am_hal_i2c_bit_bang_receive(uint8_t address,
+extern am_hal_i2c_bit_bang_enum_e am_hal_i2c_bit_bang_receive(uint8_t address,
                                                     uint32_t number_of_bytes,
                                                     uint8_t *pData,
                                                     uint8_t ui8Offset,

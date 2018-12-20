@@ -1,0 +1,88 @@
+menu "AT commands"
+
+config RT_USING_AT
+    bool "Enable AT commands"
+    default n
+
+if RT_USING_AT
+
+    config AT_DEBUG
+        bool "Enable debug log output"
+        default n
+    
+    config AT_USING_SERVER
+        bool "Enable AT commands server"
+        default n
+    
+    if AT_USING_SERVER
+
+        config AT_SERVER_DEVICE
+            string "Server device name"
+            default "uart3"
+
+        config AT_SERVER_RECV_BUFF_LEN
+            int "The maximum length of server data accepted"
+            default 256
+
+        choice
+            prompt "The commands new line sign"
+            help
+                This end mark can used for AT server determine the end of commands ,
+                it can choose "\r", "\n" or "\r\n"
+
+            default AT_CMD_END_MARK_CRLF
+
+            config AT_CMD_END_MARK_CRLF
+                bool "\\r\\n"
+
+            config AT_CMD_END_MARK_CR
+                bool "\\r"
+
+            config AT_CMD_END_MARK_LF
+                bool "\\n"
+
+        endchoice
+
+    endif
+    
+    config AT_USING_CLIENT
+        bool "Enable AT commands client"
+        default n
+    
+    if AT_USING_CLIENT
+
+        config AT_CLIENT_NUM_MAX
+            int "The maximum number of supported clients"
+            default 1
+            range 1 65535
+        
+        config AT_USING_SOCKET
+            bool "Enable BSD Socket API support by AT commnads"
+            select RT_USING_LIBC
+            select RT_USING_SAL
+            default n
+           
+    endif
+
+    if AT_USING_SERVER || AT_USING_CLIENT
+    
+        config AT_USING_CLI
+            bool "Enable CLI(Command-Line Interface) for AT commands"
+            default y
+            depends on FINSH_USING_MSH
+         
+       config AT_PRINT_RAW_CMD
+            bool "Enable print RAW format AT command communication data"
+            default n
+         
+    endif
+
+    config AT_SW_VERSION_NUM
+        hex
+        default 0x10200
+        help
+            sfotware module version number
+
+endif
+
+endmenu

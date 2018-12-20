@@ -1,11 +1,7 @@
 /*
- * File      : bxcan.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
@@ -512,12 +508,14 @@ static rt_err_t bxcancalcbaseoff(struct stm_bxcan *pbxcan, rt_int32_t hdr,
     rt_uint32_t fifo1start, fifo1end;
     rt_uint32_t ptr;
     fifo0start = 0;
-    fifo0end = pbxcan->filtermap[0].id32mask_cnt
+    fifo0end = fifo0start 
+               + pbxcan->filtermap[0].id32mask_cnt
                + pbxcan->filtermap[0].id32bit_cnt
                + pbxcan->filtermap[0].id16mask_cnt
                + pbxcan->filtermap[0].id16bit_cnt ;
     fifo1start = pbxcan->fifo1filteroff * 4;
-    fifo1end = pbxcan->filtermap[1].id32mask_cnt
+    fifo1end = fifo1start 
+               + pbxcan->filtermap[1].id32mask_cnt
                + pbxcan->filtermap[1].id32bit_cnt
                + pbxcan->filtermap[1].id16mask_cnt
                + pbxcan->filtermap[1].id16bit_cnt ;
@@ -525,17 +523,18 @@ static rt_err_t bxcancalcbaseoff(struct stm_bxcan *pbxcan, rt_int32_t hdr,
     {
         *pbase = 0;
         ptr = 0;
+        hdr -= fifo0start; 
     }
     else if (hdr >= fifo1start && hdr < fifo1end)
     {
         *pbase = pbxcan->fifo1filteroff;
         ptr = 1;
+        hdr -= fifo1start; 
     }
     else
     {
         return RT_ERROR;
     }
-    ptr = 0;
     if (hdr > pbxcan->filtermap[ptr].id32mask_cnt)
     {
         hdr -= pbxcan->filtermap[ptr].id32mask_cnt;

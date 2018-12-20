@@ -1,11 +1,7 @@
 /*
- * File      : backtrace.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, 2008 RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -49,7 +45,7 @@ void rt_hw_backtrace(rt_uint32_t *fp, rt_uint32_t thread_entry)
 
 		if(func_entry <= 0x30000000) break;
 
-		if((func_entry == thread_entry))
+		if(func_entry == thread_entry)
 		{
 			rt_kprintf("EntryPoint:0x%x\n", func_entry);
 

@@ -1,11 +1,7 @@
 /*
- * File      : drv_spi.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2017 RT-Thread Develop Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -526,6 +522,7 @@ struct stm32f4_spi stm32f4_spi5 =
     /* .spi_handle = */{
         /* .Instance = */ SPI5,
     },
+#ifdef SPI_USE_DMA
     /* .hdma_rx = */ {   
         DMA2_Stream3,
         DMA_CHANNEL_2,
@@ -537,11 +534,12 @@ struct stm32f4_spi stm32f4_spi5 =
         DMA_CHANNEL_2,
     },
     /* .hdma_tx_irq = */ DMA2_Stream4_IRQn,
+#endif /* SPI_USE_DMA */
 };
 
 static struct rt_spi_bus spi5_bus;
 
-
+#ifdef SPI_USE_DMA
 /**
   * @brief  This function handles DMA Rx interrupt request.
   * @param  None
@@ -560,6 +558,7 @@ void DMA2_Stream4_IRQHandler(void)
 {
     HAL_DMA_IRQHandler(stm32f4_spi5.spi_handle.hdmatx);
 }
+#endif /* SPI_USE_DMA */
 
 #endif
 
@@ -703,6 +702,7 @@ rt_err_t stm32_spi_bus_register(SPI_TypeDef * SPI,
         return RT_ENOSYS;
     }
     
+#ifdef SPI_USE_DMA
     /* Configure the DMA handler for Transmission process */
     p_spi_bus->hdma_tx.Init.Direction           = DMA_MEMORY_TO_PERIPH;
     p_spi_bus->hdma_tx.Init.PeriphInc           = DMA_PINC_DISABLE;
@@ -727,6 +727,7 @@ rt_err_t stm32_spi_bus_register(SPI_TypeDef * SPI,
     p_spi_bus->hdma_rx.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
     p_spi_bus->hdma_rx.Init.MemBurst            = DMA_MBURST_INC4;
     p_spi_bus->hdma_rx.Init.PeriphBurst         = DMA_PBURST_INC4;
+#endif /* SPI_USE_DMA */
 
     spi_bus->parent.user_data = &stm32f4_spi5;
     

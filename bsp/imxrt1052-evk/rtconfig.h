@@ -64,6 +64,7 @@
 #define FINSH_CMD_SIZE 80
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_DEFAULT
+#define FINSH_ARG_MAX 10
 
 /* Device virtual file system */
 
@@ -90,6 +91,7 @@
 
 #define RT_USING_DEVICE_IPC
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
@@ -158,11 +160,6 @@
 
 /* RT-Thread online packages */
 
-/* system packages */
-
-/* RT-Thread GUI Engine */
-
-
 /* IoT - internet of things */
 
 
@@ -186,12 +183,30 @@
 /* tools packages */
 
 
+/* system packages */
+
+/* RT-Thread GUI Engine */
+
+
+/* peripheral libraries and drivers */
+
+
 /* miscellaneous packages */
+
+
+/* sample package */
 
 
 /* example package: hello */
 
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
 #define SOC_IMXRT1052
+#define BOARD_USING_HYPERFLASH
 #define BOARD_RT1050_EVK
 
 /* RT1050 Bsp Config */

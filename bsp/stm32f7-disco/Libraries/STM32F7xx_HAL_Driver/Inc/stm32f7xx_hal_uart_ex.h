@@ -2,13 +2,11 @@
   ******************************************************************************
   * @file    stm32f7xx_hal_uart_ex.h
   * @author  MCD Application Team
-  * @version V1.0.1
-  * @date    25-June-2015
   * @brief   Header file of UART HAL Extension module.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2015 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -64,7 +62,7 @@
   * @{
   */
 #define UART_WORDLENGTH_7B                  ((uint32_t)USART_CR1_M_1)
-#define UART_WORDLENGTH_8B                  ((uint32_t)0x0000)
+#define UART_WORDLENGTH_8B                  ((uint32_t)0x0000U)
 #define UART_WORDLENGTH_9B                  ((uint32_t)USART_CR1_M_0)
 #define IS_UART_WORD_LENGTH(__LENGTH__) (((__LENGTH__) == UART_WORDLENGTH_7B) || \
                                          ((__LENGTH__) == UART_WORDLENGTH_8B) || \
@@ -78,7 +76,7 @@
 /** @defgroup UARTEx_WakeUp_Address_Length UARTEx WakeUp Address Length
   * @{
   */
-#define UART_ADDRESS_DETECT_4B                ((uint32_t)0x00000000)
+#define UART_ADDRESS_DETECT_4B                ((uint32_t)0x00000000U)
 #define UART_ADDRESS_DETECT_7B                ((uint32_t)USART_CR2_ADDM7)
 #define IS_UART_ADDRESSLENGTH_DETECT(__ADDRESS__) (((__ADDRESS__) == UART_ADDRESS_DETECT_4B) || \
                                                    ((__ADDRESS__) == UART_ADDRESS_DETECT_7B))
@@ -98,8 +96,8 @@
   */
            
 /** @brief  Reports the UART clock source.
-  * @param  __HANDLE__: specifies the UART Handle
-  * @param  __CLOCKSOURCE__: output variable   
+  * @param  __HANDLE__ specifies the UART Handle
+  * @param  __CLOCKSOURCE__ output variable   
   * @retval UART clocking source, written in __CLOCKSOURCE__.
   */
 #define UART_GETCLOCKSOURCE(__HANDLE__,__CLOCKSOURCE__) \
@@ -272,7 +270,7 @@
   *         by the reception API().
   *         This masking operation is not carried out in the case of
   *         DMA transfers.        
-  * @param  __HANDLE__: specifies the UART Handle
+  * @param  __HANDLE__ specifies the UART Handle
   * @retval mask to apply to UART RDR register value.
   */
 #define UART_MASK_COMPUTATION(__HANDLE__)                       \
@@ -318,14 +316,44 @@
 
 /* Exported functions --------------------------------------------------------*/
 
+/** @addtogroup UARTEx_Exported_Functions
+  * @{
+  */
+
+/** @addtogroup UARTEx_Exported_Functions_Group1
+  * @{
+  */
+
+/* Initialization and de-initialization functions  ****************************/
+HAL_StatusTypeDef HAL_RS485Ex_Init(UART_HandleTypeDef *huart, uint32_t Polarity, uint32_t AssertionTime, uint32_t DeassertionTime);
+
+/**
+  * @}
+  */
+  
 /**
   * @}
   */ 
 
+/** @addtogroup UARTEx_Exported_Functions_Group3
+  * @{
+  */
+
+/* Peripheral Control functions  **********************************************/
+HAL_StatusTypeDef HAL_MultiProcessorEx_AddressLength_Set(UART_HandleTypeDef *huart, uint32_t AddressLength);
+
 /**
   * @}
-  */ 
+  */
   
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
+
 #ifdef __cplusplus
 }
 #endif

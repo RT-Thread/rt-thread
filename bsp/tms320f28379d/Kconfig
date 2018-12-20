@@ -1,0 +1,27 @@
+mainmenu "RT-Thread Configuration"
+
+config $BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "."
+
+config $RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "../.."
+    
+# you can change the RTT_ROOT default "../.." to your rtthread_root,
+# example : default "F:/git_repositories/rt-thread"
+
+config $PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+config SOC_TMS320F28X
+    bool
+    select ARCH_TIDSP_C28X
+    default y
+
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"

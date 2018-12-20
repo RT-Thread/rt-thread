@@ -2,13 +2,11 @@
   ******************************************************************************
   * @file    stm32f7xx_hal_pwr_ex.h
   * @author  MCD Application Team
-  * @version V1.0.1
-  * @date    25-June-2015
   * @brief   Header file of PWR HAL Extension module.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2015 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -99,7 +97,7 @@
   */
 #define PWR_FLAG_ODRDY                  PWR_CSR1_ODRDY
 #define PWR_FLAG_ODSWRDY                PWR_CSR1_ODSWRDY
-#define PWR_FLAG_UDRDY                  PWR_CSR1_UDSWRDY
+#define PWR_FLAG_UDRDY                  PWR_CSR1_UDRDY
 /**
   * @}
   */
@@ -149,7 +147,7 @@
 #define __HAL_PWR_UNDERDRIVE_DISABLE() (PWR->CR1 &= (uint32_t)(~PWR_CR1_UDEN))
 
 /** @brief  Check PWR flag is set or not.
-  * @param  __FLAG__: specifies the flag to check.
+  * @param  __FLAG__ specifies the flag to check.
   *         This parameter can be one of the following values:
   *            @arg PWR_FLAG_ODRDY: This flag indicates that the Over-drive mode
   *                                 is ready 
@@ -166,7 +164,7 @@
 #define __HAL_PWR_CLEAR_ODRUDR_FLAG() (PWR->CSR1 |= PWR_FLAG_UDRDY)
 
 /** @brief  Check Wake Up flag is set or not.
-  * @param  __WUFLAG__: specifies the Wake Up flag to check.
+  * @param  __WUFLAG__ specifies the Wake Up flag to check.
   *          This parameter can be one of the following values:
   *            @arg PWR_WAKEUP_PIN_FLAG1: Wakeup Pin Flag for PA0
   *            @arg PWR_WAKEUP_PIN_FLAG2: Wakeup Pin Flag for PA2
@@ -178,7 +176,7 @@
 #define __HAL_PWR_GET_WAKEUP_FLAG(__WUFLAG__) (PWR->CSR2 & (__WUFLAG__))
 
 /** @brief  Clear the WakeUp pins flags.
-  * @param  __WUFLAG__: specifies the Wake Up pin flag to clear.
+  * @param  __WUFLAG__ specifies the Wake Up pin flag to clear.
   *          This parameter can be one of the following values:
   *            @arg PWR_WAKEUP_PIN_FLAG1: Wakeup Pin Flag for PA0
   *            @arg PWR_WAKEUP_PIN_FLAG2: Wakeup Pin Flag for PA2

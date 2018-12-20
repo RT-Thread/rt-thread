@@ -1,26 +1,7 @@
 /*
- *  shell implementation for finsh shell.
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
- *
- *  This file is part of RT-Thread (http://www.rt-thread.org)
- *  Maintainer: bernard.xiong <bernard.xiong at gmail.com>
- *
- *  All rights reserved.
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -34,9 +15,12 @@
  * 2011-02-23     Bernard      fix variable section end issue of finsh shell
  *                             initialization when use GNU GCC compiler.
  * 2016-11-26     armink       add password authentication
+ * 2018-07-02     aozima       add custome prompt support.
  */
 
 #include <rthw.h>
+
+#ifdef RT_USING_FINSH
 
 #include "finsh.h"
 #include "shell.h"
@@ -54,18 +38,57 @@
 static struct rt_thread finsh_thread;
 ALIGN(RT_ALIGN_SIZE)
 static char finsh_thread_stack[FINSH_THREAD_STACK_SIZE];
+struct finsh_shell _shell;
 #endif
-struct finsh_shell *shell;
 
-#if defined(FINSH_USING_MSH) || (defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR))
+struct finsh_shell *shell;
+static char *finsh_prompt_custom = RT_NULL;
+
+#ifdef RT_USING_HEAP
+int finsh_set_prompt(const char * prompt)
+{
+    if(finsh_prompt_custom)
+    {
+        rt_free(finsh_prompt_custom);
+        finsh_prompt_custom = RT_NULL;
+    }
+
+    /* strdup */
+    if(prompt)
+    {
+        finsh_prompt_custom = rt_malloc(strlen(prompt)+1);
+        if(finsh_prompt_custom)
+        {
+            strcpy(finsh_prompt_custom, prompt);
+        }
+    }
+
+    return 0;
+}
+#endif /* RT_USING_HEAP */
+
 #if defined(RT_USING_DFS)
 #include <dfs_posix.h>
-#endif
+#endif /* RT_USING_DFS */
+
 const char *finsh_get_prompt()
 {
 #define _MSH_PROMPT "msh "
 #define _PROMPT     "finsh "
     static char finsh_prompt[RT_CONSOLEBUF_SIZE + 1] = {0};
+
+    /* check prompt mode */
+    if (!shell->prompt_mode)
+    {
+        finsh_prompt[0] = '\0';
+        return finsh_prompt;
+    }
+
+    if(finsh_prompt_custom)
+    {
+        strncpy(finsh_prompt, finsh_prompt_custom, sizeof(finsh_prompt)-1);
+        return finsh_prompt;
+    }
 
 #ifdef FINSH_USING_MSH
     if (msh_is_used()) strcpy(finsh_prompt, _MSH_PROMPT);
@@ -82,7 +105,34 @@ const char *finsh_get_prompt()
 
     return finsh_prompt;
 }
-#endif
+
+/**
+ * @ingroup finsh
+ *
+ * This function get the prompt mode of finsh shell.
+ *
+ * @return prompt the prompt mode, 0 disable prompt mode, other values enable prompt mode.
+ */
+rt_uint32_t finsh_get_prompt_mode(void)
+{
+    RT_ASSERT(shell != RT_NULL);
+    return shell->prompt_mode;
+}
+
+/**
+ * @ingroup finsh
+ *
+ * This function set the prompt mode of finsh shell.
+ *
+ * The parameter 0 disable prompt mode, other values enable prompt mode.
+ *
+ * @param prompt the prompt mode
+ */
+void finsh_set_prompt_mode(rt_uint32_t prompt_mode)
+{
+    RT_ASSERT(shell != RT_NULL);
+    shell->prompt_mode = prompt_mode;
+}
 
 static char finsh_getchar(void)
 {
@@ -408,9 +458,6 @@ static void shell_push_history(struct finsh_shell *shell)
 }
 #endif
 
-#ifndef RT_USING_HEAP
-struct finsh_shell _shell;
-#endif
 void finsh_thread_entry(void *parameter)
 {
     char ch;
@@ -727,7 +774,7 @@ int finsh_system_init(void)
     rt_thread_t tid;
 
 #ifdef FINSH_USING_SYMTAB
-#ifdef __CC_ARM                 /* ARM C Compiler */
+#if defined(__CC_ARM) || defined(__CLANG_ARM)          /* ARM C Compiler */
     extern const int FSymTab$$Base;
     extern const int FSymTab$$Limit;
     extern const int VSymTab$$Base;
@@ -754,6 +801,12 @@ int finsh_system_init(void)
     finsh_system_var_init(&__vsymtab_start, &__vsymtab_end);
 #elif defined(_MSC_VER)
     unsigned int *ptr_begin, *ptr_end;
+		
+    if(shell)
+    {
+        rt_kprintf("finsh shell already init.\n");
+        return RT_EOK;
+    }
 
     ptr_begin = (unsigned int *)&__fsym_begin;
     ptr_begin += (sizeof(struct finsh_syscall) / sizeof(unsigned int));
@@ -789,10 +842,13 @@ int finsh_system_init(void)
 #endif /* RT_USING_HEAP */
 
     rt_sem_init(&(shell->rx_sem), "shrx", 0, 0);
+    finsh_set_prompt_mode(1);
 
     if (tid != NULL && result == RT_EOK)
         rt_thread_startup(tid);
     return 0;
 }
 INIT_APP_EXPORT(finsh_system_init);
+
+#endif /* RT_USING_FINSH */
 

@@ -6,7 +6,7 @@ def genconfig() :
     PreProcessor = SCons.cpp.PreProcessor()
 
     try:
-        f = file('rtconfig.h', 'r')
+        f = open('rtconfig.h', 'r')
         contents = f.read()
         f.close()
     except :
@@ -16,7 +16,7 @@ def genconfig() :
     options = PreProcessor.cpp_namespace
 
     try:
-        f = file('.config', 'w')
+        f = open('.config', 'w')
         for (opt, value) in options.items():
             if type(value) == type(1):
                 f.write("CONFIG_%s=%d\n" % (opt, value))

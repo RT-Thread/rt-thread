@@ -16,6 +16,13 @@ platform.c
 if GetDepend('RT_USING_LWIP'):
 	src += ['stm32_eth.c']
 
+if GetDepend(['RT_USING_PIN']):
+    src += ['gpio.c']
+
+# add Ethernet drivers.
+if GetDepend('RT_USING_RTC'):
+    src += ['stm32f1_rtc.c']
+
 if GetDepend('RT_USING_SPI'):
 	src += ['rt_stm32f10x_spi.c'] 
 

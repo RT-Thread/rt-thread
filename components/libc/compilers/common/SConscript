@@ -1,0 +1,12 @@
+from building import *
+
+Import('rtconfig')
+
+src   = Glob('*.c')
+cwd   = GetCurrentDir()
+group = []
+CPPPATH = [cwd]
+
+group = DefineGroup('libc', src, depend = ['RT_USING_LIBC'], CPPPATH = CPPPATH)
+
+Return('group')

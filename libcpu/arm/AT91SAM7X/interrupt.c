@@ -1,11 +1,7 @@
 /*
- * File      : trap.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -95,7 +91,7 @@ void rt_hw_interrupt_umask(int vector)
  * @return the old handler
  */
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler, 
-									void *param, char *name)
+									void *param, const char *name)
 {
 	rt_isr_handler_t old_handler = RT_NULL;
 	if(vector >= 0 && vector < MAX_HANDLERS)

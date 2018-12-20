@@ -2,13 +2,11 @@
   ******************************************************************************
   * @file    stm32f7xx_hal_rng.h
   * @author  MCD Application Team
-  * @version V1.0.1
-  * @date    25-June-2015
   * @brief   Header file of RNG HAL module.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2015 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -66,11 +64,11 @@
   */
 typedef enum
 {
-  HAL_RNG_STATE_RESET     = 0x00,  /*!< RNG not yet initialized or disabled */
-  HAL_RNG_STATE_READY     = 0x01,  /*!< RNG initialized and ready for use   */
-  HAL_RNG_STATE_BUSY      = 0x02,  /*!< RNG internal process is ongoing     */ 
-  HAL_RNG_STATE_TIMEOUT   = 0x03,  /*!< RNG timeout state                   */
-  HAL_RNG_STATE_ERROR     = 0x04   /*!< RNG error state                     */
+  HAL_RNG_STATE_RESET     = 0x00U,  /*!< RNG not yet initialized or disabled */
+  HAL_RNG_STATE_READY     = 0x01U,  /*!< RNG initialized and ready for use   */
+  HAL_RNG_STATE_BUSY      = 0x02U,  /*!< RNG internal process is ongoing     */ 
+  HAL_RNG_STATE_TIMEOUT   = 0x03U,  /*!< RNG timeout state                   */
+  HAL_RNG_STATE_ERROR     = 0x04U   /*!< RNG error state                     */
     
 }HAL_RNG_StateTypeDef;
 
@@ -139,29 +137,29 @@ typedef struct
   */
 
 /** @brief Reset RNG handle state
-  * @param  __HANDLE__: RNG Handle
+  * @param  __HANDLE__ RNG Handle
   * @retval None
   */
 #define __HAL_RNG_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_RNG_STATE_RESET)
 
 /**
   * @brief  Enables the RNG peripheral.
-  * @param  __HANDLE__: RNG Handle
+  * @param  __HANDLE__ RNG Handle
   * @retval None
   */
 #define __HAL_RNG_ENABLE(__HANDLE__) ((__HANDLE__)->Instance->CR |=  RNG_CR_RNGEN)
 
 /**
   * @brief  Disables the RNG peripheral.
-  * @param  __HANDLE__: RNG Handle
+  * @param  __HANDLE__ RNG Handle
   * @retval None
   */
 #define __HAL_RNG_DISABLE(__HANDLE__) ((__HANDLE__)->Instance->CR &= ~RNG_CR_RNGEN)
 
 /**
   * @brief  Check the selected RNG flag status.
-  * @param  __HANDLE__: RNG Handle
-  * @param  __FLAG__: RNG flag
+  * @param  __HANDLE__ RNG Handle
+  * @param  __FLAG__ RNG flag
   *          This parameter can be one of the following values:
   *            @arg RNG_FLAG_DRDY: Data ready                
   *            @arg RNG_FLAG_CECS: Clock error current status
@@ -172,8 +170,8 @@ typedef struct
 
 /**
   * @brief  Clears the selected RNG flag status.
-  * @param  __HANDLE__: RNG handle
-  * @param  __FLAG__: RNG flag to clear  
+  * @param  __HANDLE__ RNG handle
+  * @param  __FLAG__ RNG flag to clear  
   * @note   WARNING: This is a dummy macro for HAL code alignment,
   *         flags RNG_FLAG_DRDY, RNG_FLAG_CECS and RNG_FLAG_SECS are read-only.
   * @retval None
@@ -184,22 +182,22 @@ typedef struct
 
 /**
   * @brief  Enables the RNG interrupts.
-  * @param  __HANDLE__: RNG Handle
+  * @param  __HANDLE__ RNG Handle
   * @retval None
   */
 #define __HAL_RNG_ENABLE_IT(__HANDLE__) ((__HANDLE__)->Instance->CR |=  RNG_CR_IE)
     
 /**
   * @brief  Disables the RNG interrupts.
-  * @param  __HANDLE__: RNG Handle
+  * @param  __HANDLE__ RNG Handle
   * @retval None
   */
 #define __HAL_RNG_DISABLE_IT(__HANDLE__) ((__HANDLE__)->Instance->CR &= ~RNG_CR_IE)
 
 /**
   * @brief  Checks whether the specified RNG interrupt has occurred or not.
-  * @param  __HANDLE__: RNG Handle
-  * @param  __INTERRUPT__: specifies the RNG interrupt status flag to check.
+  * @param  __HANDLE__ RNG Handle
+  * @param  __INTERRUPT__ specifies the RNG interrupt status flag to check.
   *         This parameter can be one of the following values:
   *            @arg RNG_IT_DRDY: Data ready interrupt              
   *            @arg RNG_IT_CEI: Clock error interrupt
@@ -210,8 +208,8 @@ typedef struct
 
 /**
   * @brief  Clear the RNG interrupt status flags.
-  * @param  __HANDLE__: RNG Handle
-  * @param  __INTERRUPT__: specifies the RNG interrupt status flag to clear.
+  * @param  __HANDLE__ RNG Handle
+  * @param  __INTERRUPT__ specifies the RNG interrupt status flag to clear.
   *          This parameter can be one of the following values:            
   *            @arg RNG_IT_CEI: Clock error interrupt
   *            @arg RNG_IT_SEI: Seed error interrupt

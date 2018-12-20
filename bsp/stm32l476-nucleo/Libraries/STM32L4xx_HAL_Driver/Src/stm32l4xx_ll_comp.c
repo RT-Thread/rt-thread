@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32l4xx_ll_comp.c
   * @author  MCD Application Team
-  * @version V1.7.2
-  * @date    16-June-2017
   * @brief   COMP LL module driver
   ******************************************************************************
   * @attention
@@ -94,7 +92,7 @@
 /*       the same on all COMP instances.                                      */
 /*       However, comparator instance kept as macro parameter for             */
 /*       compatibility with other STM32 families.                             */
-#if defined(COMP_CSR_INMESEL_1) && defined(DAC_CHANNEL2_SUPPORT)
+#if defined(COMP_CSR_INMESEL_1)
 #define IS_LL_COMP_INPUT_MINUS(__COMP_INSTANCE__, __INPUT_MINUS__)             \
   (   ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_1_4VREFINT)                    \
    || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_1_2VREFINT)                    \
@@ -107,30 +105,6 @@
    || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_IO3)                           \
    || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_IO4)                           \
    || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_IO5)                           \
-  )
-#elif defined(COMP_CSR_INMESEL_1)
-#define IS_LL_COMP_INPUT_MINUS(__COMP_INSTANCE__, __INPUT_MINUS__)             \
-  (   ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_1_4VREFINT)                    \
-   || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_1_2VREFINT)                    \
-   || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_3_4VREFINT)                    \
-   || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_VREFINT)                       \
-   || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_DAC1_CH1)                      \
-   || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_IO1)                           \
-   || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_IO2)                           \
-   || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_IO3)                           \
-   || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_IO4)                           \
-   || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_IO5)                           \
-  )
-#elif defined(DAC_CHANNEL2_SUPPORT)
-#define IS_LL_COMP_INPUT_MINUS(__COMP_INSTANCE__, __INPUT_MINUS__)             \
-  (   ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_1_4VREFINT)                    \
-   || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_1_2VREFINT)                    \
-   || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_3_4VREFINT)                    \
-   || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_VREFINT)                       \
-   || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_DAC1_CH1)                      \
-   || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_DAC1_CH2)                      \
-   || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_IO1)                           \
-   || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_IO2)                           \
   )
 #else
 #define IS_LL_COMP_INPUT_MINUS(__COMP_INSTANCE__, __INPUT_MINUS__)             \
@@ -139,6 +113,7 @@
    || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_3_4VREFINT)                    \
    || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_VREFINT)                       \
    || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_DAC1_CH1)                      \
+   || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_DAC1_CH2)                      \
    || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_IO1)                           \
    || ((__INPUT_MINUS__) == LL_COMP_INPUT_MINUS_IO2)                           \
   )
@@ -156,14 +131,25 @@
    || ((__POLARITY__) == LL_COMP_OUTPUTPOL_INVERTED)                           \
   )
 
-#define IS_LL_COMP_OUTPUT_BLANKING_SOURCE(__OUTPUT_BLANKING_SOURCE__)          \
-  (   ((__OUTPUT_BLANKING_SOURCE__) == LL_COMP_BLANKINGSRC_NONE)               \
-   || ((__OUTPUT_BLANKING_SOURCE__) == LL_COMP_BLANKINGSRC_TIM1_OC5_COMP1)     \
-   || ((__OUTPUT_BLANKING_SOURCE__) == LL_COMP_BLANKINGSRC_TIM2_OC3_COMP1)     \
-   || ((__OUTPUT_BLANKING_SOURCE__) == LL_COMP_BLANKINGSRC_TIM3_OC3_COMP1)     \
-   || ((__OUTPUT_BLANKING_SOURCE__) == LL_COMP_BLANKINGSRC_TIM3_OC4_COMP2)     \
-   || ((__OUTPUT_BLANKING_SOURCE__) == LL_COMP_BLANKINGSRC_TIM8_OC5_COMP2)     \
-   || ((__OUTPUT_BLANKING_SOURCE__) == LL_COMP_BLANKINGSRC_TIM15_OC1_COMP2)    \
+#define IS_LL_COMP_OUTPUT_BLANKING_SOURCE(__COMP_INSTANCE__, __OUTPUT_BLANKING_SOURCE__)       \
+  (((__OUTPUT_BLANKING_SOURCE__) == LL_COMP_BLANKINGSRC_NONE)                                  \
+    ? (                                                                                        \
+       (1U)                                                                                    \
+      )                                                                                        \
+      :                                                                                        \
+      (((__COMP_INSTANCE__) == COMP1)                                                          \
+        ? (                                                                                    \
+              ((__OUTPUT_BLANKING_SOURCE__) == LL_COMP_BLANKINGSRC_TIM1_OC5_COMP1)             \
+           || ((__OUTPUT_BLANKING_SOURCE__) == LL_COMP_BLANKINGSRC_TIM2_OC3_COMP1)             \
+           || ((__OUTPUT_BLANKING_SOURCE__) == LL_COMP_BLANKINGSRC_TIM3_OC3_COMP1)             \
+          )                                                                                    \
+          :                                                                                    \
+          (                                                                                    \
+              ((__OUTPUT_BLANKING_SOURCE__) == LL_COMP_BLANKINGSRC_TIM3_OC4_COMP2)             \
+           || ((__OUTPUT_BLANKING_SOURCE__) == LL_COMP_BLANKINGSRC_TIM8_OC5_COMP2)             \
+           || ((__OUTPUT_BLANKING_SOURCE__) == LL_COMP_BLANKINGSRC_TIM15_OC1_COMP2)            \
+          )                                                                                    \
+      )                                                                                        \
   )
 
 /**
@@ -241,7 +227,7 @@ ErrorStatus LL_COMP_Init(COMP_TypeDef *COMPx, LL_COMP_InitTypeDef *COMP_InitStru
   assert_param(IS_LL_COMP_INPUT_MINUS(COMPx, COMP_InitStruct->InputMinus));
   assert_param(IS_LL_COMP_INPUT_HYSTERESIS(COMP_InitStruct->InputHysteresis));
   assert_param(IS_LL_COMP_OUTPUT_POLARITY(COMP_InitStruct->OutputPolarity));
-  assert_param(IS_LL_COMP_OUTPUT_BLANKING_SOURCE(COMP_InitStruct->OutputBlankingSource));
+  assert_param(IS_LL_COMP_OUTPUT_BLANKING_SOURCE(COMPx, COMP_InitStruct->OutputBlankingSource));
   
   /* Note: Hardware constraint (refer to description of this function)        */
   /*       COMP instance must not be locked.                                  */
@@ -305,8 +291,8 @@ ErrorStatus LL_COMP_Init(COMP_TypeDef *COMPx, LL_COMP_InitTypeDef *COMP_InitStru
 
 /**
   * @brief Set each @ref LL_COMP_InitTypeDef field to default value.
-  * @param COMP_InitStruct: pointer to a @ref LL_COMP_InitTypeDef structure
-  *                         whose fields will be set to default values.
+  * @param COMP_InitStruct Pointer to a @ref LL_COMP_InitTypeDef structure
+  *                        whose fields will be set to default values.
   * @retval None
   */
 void LL_COMP_StructInit(LL_COMP_InitTypeDef *COMP_InitStruct)
