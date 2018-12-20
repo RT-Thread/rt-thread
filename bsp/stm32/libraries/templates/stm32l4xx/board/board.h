@@ -15,12 +15,6 @@
 #include <stm32l4xx.h>
 #include "drv_common.h"
 
-#ifdef BSP_USING_GPIO
-#include "drv_gpio.h"
-/* Board Pin definitions */
-// #define LED0_PIN                       GET_PIN(C,  0)
-#endif
-
 #define STM32_SRAM_SIZE         96
 #define STM32_SRAM_END          (0x20000000 + STM32_SRAM_SIZE * 1024)
 
