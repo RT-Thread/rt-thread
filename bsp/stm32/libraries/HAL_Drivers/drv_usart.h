@@ -20,7 +20,7 @@ int rt_hw_usart_init(void);
 
 #if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4)
 #define DMA_INSTANCE_TYPE              DMA_Channel_TypeDef
-#elif defined(SOC_SERIES_STM32F4)
+#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
 #define DMA_INSTANCE_TYPE              DMA_Stream_TypeDef
 #endif /*  defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) */
 
@@ -41,7 +41,7 @@ struct stm32_uart_config
         } channel;
 #endif
 
-#if defined(SOC_SERIES_STM32F4)
+#if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
         /* the DMA config has stream and channel, such as on STM32F4xx */
         struct {
             DMA_INSTANCE_TYPE *Instance;
