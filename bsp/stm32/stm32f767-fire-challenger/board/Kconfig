@@ -231,6 +231,12 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_WDT
         default n
 
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        default n
+        
 endmenu
 
 menu "Board extended module Drivers"
