@@ -91,22 +91,30 @@ static rt_uint32_t GetSector(rt_uint32_t Address)
     {
         sector = FLASH_SECTOR_7;
     }
+#if defined(FLASH_SECTOR_8)
     else if((Address < ADDR_FLASH_SECTOR_9) && (Address >= ADDR_FLASH_SECTOR_8))
     {
         sector = FLASH_SECTOR_8;
     }
+#endif
+#if defined(FLASH_SECTOR_9)
     else if((Address < ADDR_FLASH_SECTOR_10) && (Address >= ADDR_FLASH_SECTOR_9))
     {
         sector = FLASH_SECTOR_9;
     }
+#endif
+#if defined(FLASH_SECTOR_10)
     else if((Address < ADDR_FLASH_SECTOR_11) && (Address >= ADDR_FLASH_SECTOR_10))
     {
         sector = FLASH_SECTOR_10;
     }
+#endif
+#if defined(FLASH_SECTOR_11)
     else if((Address < ADDR_FLASH_SECTOR_12) && (Address >= ADDR_FLASH_SECTOR_11))
     {
         sector = FLASH_SECTOR_11;
     }
+#endif
 #if defined(STM32F427xx) || defined(STM32F437xx) || defined(STM32F429xx)|| defined(STM32F439xx) || defined(STM32F469xx) || defined(STM32F479xx)
     else if((Address < ADDR_FLASH_SECTOR_13) && (Address >= ADDR_FLASH_SECTOR_12))
     {
@@ -219,7 +227,7 @@ int stm32_flash_write(long offset, const rt_uint8_t *buf, size_t size)
 
     HAL_FLASH_Unlock();
 
-    __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR | FLASH_FLAG_PGSERR);
+    __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR);
 
     for (size_t i = 0; i < size; i++, addr++, buf++)
     {
@@ -278,17 +286,19 @@ int stm32_flash_erase(long offset, size_t size)
     /* Unlock the Flash to enable the flash control register access */
     HAL_FLASH_Unlock();
 
+    __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR);
+
     /* Get the 1st sector to erase */
     FirstSector = GetSector(addr);
     /* Get the number of sector to erase from 1st sector*/
-    NbOfSectors = GetSector(addr + size) - FirstSector + 1;
+    NbOfSectors = GetSector(addr + size - 1) - FirstSector + 1;
     /* Fill EraseInit structure*/
     EraseInitStruct.TypeErase     = FLASH_TYPEERASE_SECTORS;
     EraseInitStruct.VoltageRange  = FLASH_VOLTAGE_RANGE_3;
     EraseInitStruct.Sector        = FirstSector;
     EraseInitStruct.NbSectors     = NbOfSectors;
 
-    if (HAL_FLASHEx_Erase(&EraseInitStruct, &SECTORError) != HAL_OK)
+    if (HAL_FLASHEx_Erase(&EraseInitStruct, (uint32_t *)&SECTORError) != HAL_OK)
     {
         result = -RT_ERROR;
         goto __exit;
