@@ -54,9 +54,42 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SERIAL
         default n
 
-    config BSP_UART_USING_DMA_RX
-        bool "Enable UART RX DMA support"
+    menuconfig BSP_USING_TIM
+        bool "Enable timer"
         default n
+        select RT_USING_HWTIMER
+        if BSP_USING_TIM
+            config BSP_USING_TIM2
+                bool "Enable TIM2"
+                default n
+
+            config BSP_USING_TIM3
+                bool "Enable TIM3"
+                default n
+
+            config BSP_USING_TIM4
+                bool "Enable TIM4"
+                default n
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable pwm"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+        menuconfig BSP_USING_PWM3
+            bool "Enable timer3 output pwm"
+            default n
+            if BSP_USING_PWM3
+                config BSP_USING_PWM3_CH1
+                    bool "Enable PWM3 channel1"
+                    default n
+
+                config BSP_USING_PWM3_CH2
+                    bool "Enable PWM3 channel2"
+                    default n
+            endif
+        endif
 
     config BSP_USING_SPI1
         bool "Enable SPI1 BUS"
@@ -101,7 +134,6 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_ADC2
                 bool "Enable ADC2"
                 default n
-
         endif
 
     config BSP_USING_ON_CHIP_FLASH
