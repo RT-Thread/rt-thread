@@ -488,6 +488,10 @@ static int rt_hw_spi_bus_init(void)
             SET_BIT(RCC->AHB1ENR, spi_config[i].dma_rx.dma_rcc);
             /* Delay after an RCC peripheral clock enabling */
             tmpreg = READ_BIT(RCC->AHB1ENR, spi_config[i].dma_rx.dma_rcc);
+#elif defined(SOC_SERIES_STM32F7)
+            SET_BIT(RCC->APB2ENR, RCC_APB2ENR_SPI1EN);\
+            /* Delay after an RCC peripheral clock enabling */ \
+            tmpreg = READ_BIT(RCC->APB2ENR, RCC_APB2ENR_SPI1EN);\
 #endif
             UNUSED(tmpreg); /* To avoid compiler warnings */
         }
