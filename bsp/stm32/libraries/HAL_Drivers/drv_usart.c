@@ -492,11 +492,7 @@ static void stm32_dma_config(struct rt_serial_device *serial)
         /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
         SET_BIT(RCC->AHBENR, uart->config->dma_rcc);
         tmpreg = READ_BIT(RCC->AHBENR, uart->config->dma_rcc);
-#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32L4)
-        /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
-        SET_BIT(RCC->AHB1ENR, uart->config->dma_rcc);
-        tmpreg = READ_BIT(RCC->AHB1ENR, uart->config->dma_rcc);
-#elif defined(SOC_SERIES_STM32F7)
+#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4)
         /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
         SET_BIT(RCC->AHB1ENR, uart->config->dma_rcc);
         tmpreg = READ_BIT(RCC->AHB1ENR, uart->config->dma_rcc);

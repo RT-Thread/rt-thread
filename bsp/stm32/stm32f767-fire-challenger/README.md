@@ -44,7 +44,7 @@
 | QSPI Flash        |   支持    |                                       |
 | 电位器             |   支持     |     使用 ADC1                      |
 | 以太网            |   暂不支持    |           移植中                     |
-| MPU6050六轴传感器 |   支持     |              |
+| MPU6050六轴传感器 |   支持     |                           |
 | SDRAM             |     支持     |                                       |
 | SD卡              |   即将支持   |                           |
 | CAN               |   即将支持   |                               |
@@ -58,7 +58,7 @@
 | RTC               |     支持     |                                      |
 | WDT               |     支持     |                                       |
 | FLASH | 支持 | 已适配 [FAL](https://github.com/RT-Thread-packages/fal)  |
-| SDIO              |   暂不支持   | 即将支持                              |
+| SDIO              |    支持   |                                        |
 | PWM               |   暂不支持   | 即将支持                              |
 | USB Device        |   暂不支持   | 即将支持                              |
 | USB Host          |   暂不支持   | 即将支持                              |

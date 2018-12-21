@@ -17,7 +17,7 @@
 #ifdef BSP_USING_SDIO
 #define SDIO_BUS_CONFIG                                  \
     {                                                    \
-        .Instance = SDIO,                                \
+        .Instance = SDMMC1,                              \
         .dma_rx.dma_rcc = RCC_AHB1ENR_DMA2EN,            \
         .dma_tx.dma_rcc = RCC_AHB1ENR_DMA2EN,            \
         .dma_rx.Instance = DMA2_Stream3,                 \
