@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-11-27     zylx         change to new framework
+ * 2018-12-12     greedyhao    Porting for stm32f7xx
  */
 
 #include "board.h"
@@ -19,6 +20,14 @@
 #include <drv_log.h>
 
 #if defined(BSP_USING_QSPI)
+
+#if defined (SOC_SERIES_STM32L4)
+#define QUADSPI_DMA_IRQ                DMA1_Channel5_IRQn
+#define QUADSPI_DMA_IRQHandler         DMA1_Channel5_IRQHandler
+#elif defined (SOC_SERIES_STM32F7)
+#define QUADSPI_DMA_IRQ                DMA2_Stream2_IRQn
+#define QUADSPI_DMA_IRQHandler         DMA2_Stream2_IRQHandler
+#endif /*   SOC_SERIES_STM32L4  */
 
 struct stm32_hw_spi_cs
 {
@@ -97,14 +106,19 @@ static int stm32_qspi_init(struct rt_qspi_device *device, struct rt_qspi_configu
     /* QSPI interrupts must be enabled when using the HAL_QSPI_Receive_DMA */
     HAL_NVIC_SetPriority(QUADSPI_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(QUADSPI_IRQn);
-    HAL_NVIC_SetPriority(DMA1_Channel5_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
+    HAL_NVIC_SetPriority(QUADSPI_DMA_IRQ, 0, 0);
+    HAL_NVIC_EnableIRQ(QUADSPI_DMA_IRQ);
 
-    /* init QSPI DMA */
-     __HAL_RCC_DMA1_CLK_ENABLE();
+    /* init QSPI DMA */ 
+    __HAL_RCC_DMA1_CLK_ENABLE();
     HAL_DMA_DeInit(qspi_bus->QSPI_Handler.hdma);
+#if defined(SOC_SERIES_STM32F4)
     qspi_bus->hdma_quadspi.Instance = DMA1_Channel5;
     qspi_bus->hdma_quadspi.Init.Request = DMA_REQUEST_5;
+#elif defined(SOC_SERIES_STM32F7)
+    qspi_bus->hdma_quadspi.Instance = DMA2_Stream2;
+    qspi_bus->hdma_quadspi.Init.channel = DMA_CHANNEL_11;
+#endif
     qspi_bus->hdma_quadspi.Init.Direction = DMA_PERIPH_TO_MEMORY;
     qspi_bus->hdma_quadspi.Init.PeriphInc = DMA_PINC_DISABLE;
     qspi_bus->hdma_quadspi.Init.MemInc = DMA_MINC_ENABLE;
@@ -377,7 +391,7 @@ void QUADSPI_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-void DMA1_Channel5_IRQHandler(void)
+void QUADSPI_DMA_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();

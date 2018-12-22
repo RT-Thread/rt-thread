@@ -18,14 +18,26 @@
 #include "f1/uart_config.h"
 #include "f1/spi_config.h"
 #include "f1/adc_config.h"
+#include "f1/tim_config.h"
+#include "f1/sdio_config.h"
+#include "f1/pwm_config.h"
 #elif  defined(SOC_SERIES_STM32F4)
 #include "f4/uart_config.h"
 #include "f4/spi_config.h"
 #include "f4/adc_config.h"
+#include "f4/tim_config.h"
+#include "f4/sdio_config.h"
+#include "f4/pwm_config.h"
+#elif  defined(SOC_SERIES_STM32F7)
+#include "f7/uart_config.h"
+#include "f7/spi_config.h"
+#include "f7/adc_config.h"
 #elif  defined(SOC_SERIES_STM32L4)
 #include "l4/uart_config.h"
 #include "l4/spi_config.h"
 #include "l4/adc_config.h"
+#include "l4/tim_config.h"
+#include "l4/pwm_config.h"
 #endif
 
 #endif

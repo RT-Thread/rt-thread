@@ -59,6 +59,7 @@ STM32 BSP 由三部分组成，分别是 (1) 通用库、(2) BSP 模板和 (3) �
 | ------- | ---- |
 | libraries/templates/stm32f10x | F1系列芯片模板 |
 | libraries/templates/stm32f4xx | F4系列芯片模板 |
+| libraries/templates/stm32f7xx | F7系列芯片模板 |
 | libraries/templates/stm32l4xx | L4系列芯片模板 |
 
 拷贝 `stm32/libraries/templates/stm32f10x` 文件夹并改名为 `stm32/stm32f103-atk-nano` 。如下图所示：
@@ -128,6 +129,8 @@ STM32 BSP 由三部分组成，分别是 (1) 通用库、(2) BSP 模板和 (3) �
 **SConscript** 脚本决定 MDK/IAR 工程的生成过程中要添加那些文件。在这一步中需要修改芯片型号以及芯片启动文件的地址，修改内容如下图所示：
 
 ![修改启动文件和芯片型号](./figures/SConscript.png)
+
+注意：如果在文件夹中找不到相应系列的 .s 文件，可能是多个系列的芯片重用了相同的启动文件，此时可以在 CubeMX 中生成目标芯片的工程，查看使用了哪个启动文件，然后再修改启动文件名。
 
 #### 修改工程模板
 
