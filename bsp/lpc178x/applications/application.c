@@ -1,11 +1,7 @@
 /*
- * File      : application.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -18,7 +14,7 @@
 
 #ifdef RT_USING_DFS
 /* dfs init */
-#include <dfs_init.h>
+#include <dfs.h>
 /* dfs filesystem:ELM FatFs filesystem init */
 #include <dfs_elm.h>
 /* dfs Filesystem APIs */
@@ -33,6 +29,11 @@
 
 #ifdef RT_USING_RTGUI
 #include <rtgui/driver.h>
+#endif
+
+#ifdef RT_USING_FINSH
+#include <shell.h>
+#include <finsh.h>
 #endif
 
 /* thread phase init */
@@ -65,8 +66,6 @@ void rt_init_thread_entry(void *parameter)
 
         /* register ethernetif device */
         lpc17xx_emac_hw_init();
-        /* init all device */
-        rt_device_init_all();
 
         /* init lwip system */
         lwip_sys_init();
@@ -78,13 +77,11 @@ void rt_init_thread_entry(void *parameter)
     {
     	extern void rtgui_system_server_init(void);
 		extern void application_init(void);
-		
+
 		rt_device_t lcd;
 
 		/* init lcd */
 		rt_hw_lcd_init();
-		/* re-init device driver */
-		rt_device_init_all();
 
 		/* find lcd device */
 		lcd = rt_device_find("lcd");
@@ -100,6 +97,11 @@ void rt_init_thread_entry(void *parameter)
 			application_init();
 		}
     }
+#endif
+
+#ifdef RT_USING_FINSH
+	/* initialize finsh */
+	finsh_system_init();
 #endif
 }
 

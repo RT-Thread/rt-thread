@@ -1,0 +1,14 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+src = Glob('src/*.c')
+
+path = [cwd + '/inc']
+
+group = DefineGroup('StdPeriph_Driver', src, depend = [''], CPPPATH = path)
+
+Return('group')

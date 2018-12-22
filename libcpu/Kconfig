@@ -1,0 +1,117 @@
+config ARCH_CPU_64BIT
+    bool
+
+config ARCH_ARM
+    bool
+
+config ARCH_ARM_CORTEX_M
+    bool
+    select ARCH_ARM
+
+config ARCH_ARM_CORTEX_FPU
+    bool
+
+config ARCH_ARM_CORTEX_M0
+    bool
+    select ARCH_ARM_CORTEX_M
+
+config ARCH_ARM_CORTEX_M3
+    bool
+    select ARCH_ARM_CORTEX_M
+
+config ARCH_ARM_MPU
+    bool
+    depends on ARCH_ARM
+
+config ARCH_ARM_CORTEX_M4
+    bool
+    select ARCH_ARM_CORTEX_M
+
+config ARCH_ARM_CORTEX_M7
+    bool
+    select ARCH_ARM_CORTEX_M
+
+config ARCH_ARM_CORTEX_R
+    bool
+    select ARCH_ARM
+
+config ARCH_ARM_MMU
+    bool
+    depends on ARCH_ARM
+
+config ARCH_ARM_ARM9
+    bool
+    select ARCH_ARM
+
+config ARCH_ARM_ARM11
+    bool
+    select ARCH_ARM
+
+config ARCH_ARM_CORTEX_A
+    bool
+    select ARCH_ARM
+
+config ARCH_ARM_CORTEX_A5
+    bool
+    select ARCH_ARM_CORTEX_A
+
+config ARCH_ARM_CORTEX_A7
+    bool
+    select ARCH_ARM_CORTEX_A
+
+config ARCH_ARM_CORTEX_A8
+    bool
+    select ARCH_ARM_CORTEX_A
+
+config ARCH_ARM_CORTEX_A9
+    bool
+    select ARCH_ARM_CORTEX_A
+
+config ARCH_MIPS
+    bool
+
+config ARCH_MIPS_XBURST
+    bool
+    select ARCH_MIPS
+
+config ARCH_ANDES
+    bool
+
+config ARCH_CSKY
+    bool
+
+config ARCH_POWERPC
+    bool
+
+config ARCH_RISCV
+    bool
+
+config ARCH_RISCV_FPU
+    bool
+
+config ARCH_RISCV32
+    select ARCH_RISCV
+    bool
+
+config ARCH_RISCV64
+    select ARCH_RISCV
+    select ARCH_CPU_64BIT
+    bool
+
+config ARCH_IA32
+    bool
+
+config ARCH_TIDSP
+    bool
+
+config ARCH_TIDSP_C28X
+    bool
+    select ARCH_TIDSP
+    select ARCH_CPU_STACK_GROWS_UPWARD
+
+config ARCH_HOST_SIMULATOR
+    bool
+
+config ARCH_CPU_STACK_GROWS_UPWARD
+    bool
+    default n

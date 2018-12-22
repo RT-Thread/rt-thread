@@ -21,8 +21,6 @@
 #include <rtthread.h>
 
 #ifdef RT_USING_DFS
-/* dfs init */
-#include <dfs_init.h>
 /* dfs filesystem:ELM FatFs filesystem init */
 #include <dfs_elm.h>
 /* dfs Filesystem APIs */

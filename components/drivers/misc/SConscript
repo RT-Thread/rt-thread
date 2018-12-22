@@ -1,0 +1,20 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = [] 
+CPPPATH = [cwd + '/../include']
+group = []
+
+if GetDepend(['RT_USING_PIN']):
+    src = src + ['pin.c']
+    
+if GetDepend(['RT_USING_ADC']):
+    src = src + ['adc.c']
+    
+if GetDepend(['RT_USING_PWM']):
+    src = src + ['rt_drv_pwm.c']
+
+if len(src):
+    group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

@@ -1,21 +1,7 @@
 /*
- * File      : kservice.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -30,10 +16,15 @@
  * 2012-12-22     Bernard      fix rt_kprintf issue, which found by Grissiom.
  * 2013-06-24     Bernard      remove rt_kprintf if RT_USING_CONSOLE is not defined.
  * 2013-09-24     aozima       make sure the device is in STREAM mode when used by rt_kprintf.
+ * 2015-07-06     Bernard      Add rt_assert_handler routine.
  */
 
 #include <rtthread.h>
 #include <rthw.h>
+
+#ifdef RT_USING_MODULE
+#include <dlmodule.h>
+#endif
 
 /* use precision */
 #define RT_PRINTF_PRECISION
@@ -42,10 +33,10 @@
  * @addtogroup KernelService
  */
 
-/*@{*/
+/**@{*/
 
 /* global errno in RT-Thread */
-static volatile int _errno;
+static volatile int __rt_errno;
 
 #if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 static rt_device_t _console_device = RT_NULL;
@@ -63,12 +54,12 @@ rt_err_t rt_get_errno(void)
     if (rt_interrupt_get_nest() != 0)
     {
         /* it's in interrupt context */
-        return _errno;
+        return __rt_errno;
     }
 
     tid = rt_thread_self();
     if (tid == RT_NULL)
-        return _errno;
+        return __rt_errno;
 
     return tid->error;
 }
@@ -86,7 +77,7 @@ void rt_set_errno(rt_err_t error)
     if (rt_interrupt_get_nest() != 0)
     {
         /* it's in interrupt context */
-        _errno = error;
+        __rt_errno = error;
 
         return;
     }
@@ -94,7 +85,7 @@ void rt_set_errno(rt_err_t error)
     tid = rt_thread_self();
     if (tid == RT_NULL)
     {
-        _errno = error;
+        __rt_errno = error;
 
         return;
     }
@@ -113,13 +104,13 @@ int *_rt_errno(void)
     rt_thread_t tid;
 
     if (rt_interrupt_get_nest() != 0)
-        return (int *)&_errno;
+        return (int *)&__rt_errno;
 
     tid = rt_thread_self();
     if (tid != RT_NULL)
-        return (int *)&(tid->error);
+        return (int *) & (tid->error);
 
-    return (int *)&_errno;
+    return (int *)&__rt_errno;
 }
 RTM_EXPORT(_rt_errno);
 
@@ -134,7 +125,7 @@ RTM_EXPORT(_rt_errno);
  */
 void *rt_memset(void *s, int c, rt_ubase_t count)
 {
-#ifdef RT_TINY_SIZE
+#ifdef RT_USING_TINY_SIZE
     char *xs = (char *)s;
 
     while (count--)
@@ -142,20 +133,21 @@ void *rt_memset(void *s, int c, rt_ubase_t count)
 
     return s;
 #else
-#define LBLOCKSIZE      (sizeof(rt_int32_t))
-#define UNALIGNED(X)    ((rt_int32_t)X & (LBLOCKSIZE - 1))
+#define LBLOCKSIZE      (sizeof(long))
+#define UNALIGNED(X)    ((long)X & (LBLOCKSIZE - 1))
 #define TOO_SMALL(LEN)  ((LEN) < LBLOCKSIZE)
 
-    int i;
+    unsigned int i;
     char *m = (char *)s;
-    rt_uint32_t buffer;
-    rt_uint32_t *aligned_addr;
-    rt_uint32_t d = c & 0xff;
+    unsigned long buffer;
+    unsigned long *aligned_addr;
+    unsigned int d = c & 0xff;  /* To avoid sign extension, copy C to an
+                                unsigned variable.  */
 
     if (!TOO_SMALL(count) && !UNALIGNED(s))
     {
         /* If we get this far, we know that n is large and m is word-aligned. */
-        aligned_addr = (rt_uint32_t *)s;
+        aligned_addr = (unsigned long *)s;
 
         /* Store D into each char sized location in BUFFER so that
          * we can set large blocks quickly.
@@ -217,34 +209,42 @@ RTM_EXPORT(rt_memset);
  */
 void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 {
-#ifdef RT_TINY_SIZE
+#ifdef RT_USING_TINY_SIZE
     char *tmp = (char *)dst, *s = (char *)src;
+    rt_ubase_t len;
 
-    while (count--)
-        *tmp++ = *s++;
+    if (tmp <= s || tmp > (s + count))
+    {
+        while (count--)
+            *tmp ++ = *s ++;
+    }
+    else
+    {
+        for (len = count; len > 0; len --)
+            tmp[len - 1] = s[len - 1];
+    }
 
     return dst;
 #else
 
-#define UNALIGNED(X, Y)                                               \
-                        (((rt_int32_t)X & (sizeof(rt_int32_t) - 1)) | \
-                         ((rt_int32_t)Y & (sizeof(rt_int32_t) - 1)))
-#define BIGBLOCKSIZE    (sizeof(rt_int32_t) << 2)
-#define LITTLEBLOCKSIZE (sizeof(rt_int32_t))
+#define UNALIGNED(X, Y) \
+    (((long)X & (sizeof (long) - 1)) | ((long)Y & (sizeof (long) - 1)))
+#define BIGBLOCKSIZE    (sizeof (long) << 2)
+#define LITTLEBLOCKSIZE (sizeof (long))
 #define TOO_SMALL(LEN)  ((LEN) < BIGBLOCKSIZE)
 
     char *dst_ptr = (char *)dst;
     char *src_ptr = (char *)src;
-    rt_int32_t *aligned_dst;
-    rt_int32_t *aligned_src;
+    long *aligned_dst;
+    long *aligned_src;
     int len = count;
 
     /* If the size is small, or either SRC or DST is unaligned,
     then punt into the byte copy loop.  This should be rare. */
     if (!TOO_SMALL(len) && !UNALIGNED(src_ptr, dst_ptr))
     {
-        aligned_dst = (rt_int32_t *)dst_ptr;
-        aligned_src = (rt_int32_t *)src_ptr;
+        aligned_dst = (long *)dst_ptr;
+        aligned_src = (long *)src_ptr;
 
         /* Copy 4X long words at a time if possible. */
         while (len >= BIGBLOCKSIZE)
@@ -430,7 +430,7 @@ RTM_EXPORT(rt_strncpy);
  *
  * @return the result
  */
-rt_ubase_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count)
+rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count)
 {
     register signed char __res = 0;
 
@@ -453,7 +453,7 @@ RTM_EXPORT(rt_strncmp);
  *
  * @return the result
  */
-rt_ubase_t rt_strcmp(const char *cs, const char *ct)
+rt_int32_t rt_strcmp(const char *cs, const char *ct)
 {
     while (*cs && *cs == *ct)
         cs++, ct++;
@@ -461,7 +461,26 @@ rt_ubase_t rt_strcmp(const char *cs, const char *ct)
     return (*cs - *ct);
 }
 RTM_EXPORT(rt_strcmp);
+/**
+ * The  strnlen()  function  returns the number of characters in the
+ * string pointed to by s, excluding the terminating null byte ('\0'),
+ * but at most maxlen.  In doing this, strnlen() looks only at the
+ * first maxlen characters in the string pointed to by s and never
+ * beyond s+maxlen.
+ *
+ * @param s the string
+ * @param maxlen the max size
+ * @return the length of string
+ */
+rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen)
+{
+    const char *sc;
 
+    for (sc = s; *sc != '\0' && sc - s < maxlen; ++sc) /* nothing */
+        ;
+
+    return sc - s;
+}
 /**
  * This function will return the length of a string, which terminate will
  * null character.
@@ -470,7 +489,7 @@ RTM_EXPORT(rt_strcmp);
  *
  * @return the length of string
  */
-rt_ubase_t rt_strlen(const char *s)
+rt_size_t rt_strlen(const char *s)
 {
     const char *sc;
 
@@ -502,6 +521,9 @@ char *rt_strdup(const char *s)
     return tmp;
 }
 RTM_EXPORT(rt_strdup);
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
+char *strdup(const char *s) __attribute__((alias("rt_strdup")));
+#endif
 #endif
 
 /**
@@ -513,27 +535,27 @@ void rt_show_version(void)
     rt_kprintf("- RT -     Thread Operating System\n");
     rt_kprintf(" / | \\     %d.%d.%d build %s\n",
                RT_VERSION, RT_SUBVERSION, RT_REVISION, __DATE__);
-    rt_kprintf(" 2006 - 2013 Copyright by rt-thread team\n");
+    rt_kprintf(" 2006 - 2018 Copyright by rt-thread team\n");
 }
 RTM_EXPORT(rt_show_version);
 
 /* private function */
 #define isdigit(c)  ((unsigned)((c) - '0') < 10)
 
-rt_inline rt_int32_t divide(rt_int32_t *n, rt_int32_t base)
+rt_inline int divide(long *n, int base)
 {
-    rt_int32_t res;
+    int res;
 
     /* optimized for processor which does not support divide instructions. */
     if (base == 10)
     {
-        res = ((rt_uint32_t)*n) % 10U;
-        *n = ((rt_uint32_t)*n) / 10U;
+        res = (int)(((unsigned long)*n) % 10U);
+        *n = (long)(((unsigned long)*n) / 10U);
     }
     else
     {
-        res = ((rt_uint32_t)*n) % 16U;
-        *n = ((rt_uint32_t)*n) / 16U;
+        res = (int)(((unsigned long)*n) % 16U);
+        *n = (long)(((unsigned long)*n) / 16U);
     }
 
     return res;
@@ -541,7 +563,7 @@ rt_inline rt_int32_t divide(rt_int32_t *n, rt_int32_t base)
 
 rt_inline int skip_atoi(const char **s)
 {
-    register int i=0;
+    register int i = 0;
     while (isdigit(**s))
         i = i * 10 + *((*s)++) - '0';
 
@@ -620,7 +642,7 @@ static char *print_number(char *buf,
 
     i = 0;
     if (num == 0)
-        tmp[i++]='0';
+        tmp[i++] = '0';
     else
     {
         while (num != 0)
@@ -635,12 +657,12 @@ static char *print_number(char *buf,
     size -= i;
 #endif
 
-    if (!(type&(ZEROPAD | LEFT)))
+    if (!(type & (ZEROPAD | LEFT)))
     {
-        if ((sign)&&(size>0))
+        if ((sign) && (size > 0))
             size--;
 
-        while (size-->0)
+        while (size-- > 0)
         {
             if (buf <= end)
                 *buf = ' ';
@@ -661,7 +683,7 @@ static char *print_number(char *buf,
 #ifdef RT_PRINTF_SPECIAL
     if (type & SPECIAL)
     {
-        if (base==8)
+        if (base == 8)
         {
             if (buf <= end)
                 *buf = '0';
@@ -674,7 +696,7 @@ static char *print_number(char *buf,
             ++ buf;
             if (buf <= end)
             {
-                *buf = type & LARGE? 'X' : 'x';
+                *buf = type & LARGE ? 'X' : 'x';
             }
             ++ buf;
         }
@@ -748,7 +770,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
     /* Make sure end is always >= buf */
     if (end < buf)
     {
-        end  = ((char *)-1);
+        end  = ((char *) - 1);
         size = end - buf;
     }
 
@@ -909,7 +931,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
             ++ str;
             continue;
 
-            /* integer number formats - set up the flags and "break" */
+        /* integer number formats - set up the flags and "break" */
         case 'o':
             base = 8;
             break;
@@ -1008,7 +1030,7 @@ RTM_EXPORT(rt_snprintf);
  */
 rt_int32_t rt_vsprintf(char *buf, const char *format, va_list arg_ptr)
 {
-    return rt_vsnprintf(buf, (rt_size_t) -1, format, arg_ptr);
+    return rt_vsnprintf(buf, (rt_size_t) - 1, format, arg_ptr);
 }
 RTM_EXPORT(rt_vsprintf);
 
@@ -1024,7 +1046,7 @@ rt_int32_t rt_sprintf(char *buf, const char *format, ...)
     va_list arg_ptr;
 
     va_start(arg_ptr, format);
-    n = rt_vsprintf(buf ,format, arg_ptr);
+    n = rt_vsprintf(buf, format, arg_ptr);
     va_end(arg_ptr);
 
     return n;
@@ -1072,8 +1094,8 @@ rt_device_t rt_console_set_device(const char *name)
         }
 
         /* set new console device */
+        rt_device_open(new, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_STREAM);
         _console_device = new;
-        rt_device_open(_console_device, RT_DEVICE_OFLAG_RDWR);
     }
 
     return old;
@@ -1081,23 +1103,38 @@ rt_device_t rt_console_set_device(const char *name)
 RTM_EXPORT(rt_console_set_device);
 #endif
 
-#if defined(__GNUC__) || defined(__ADSPBLACKFIN__)
-void rt_hw_console_output(const char *str) __attribute__((weak));
-void rt_hw_console_output(const char *str)
-#elif defined(__CC_ARM)
-__weak void rt_hw_console_output(const char *str)
-#elif defined(__IAR_SYSTEMS_ICC__)
-    #if __VER__ > 540
-    __weak
-    #endif
-void rt_hw_console_output(const char *str)
-#else
-void rt_hw_console_output(const char *str)
-#endif
+RT_WEAK void rt_hw_console_output(const char *str)
 {
     /* empty console output */
 }
 RTM_EXPORT(rt_hw_console_output);
+
+/**
+ * This function will put string to the console.
+ *
+ * @param str the string output to the console.
+ */
+void rt_kputs(const char *str)
+{
+    if (!str) return;
+
+#ifdef RT_USING_DEVICE
+    if (_console_device == RT_NULL)
+    {
+        rt_hw_console_output(str);
+    }
+    else
+    {
+        rt_uint16_t old_flag = _console_device->open_flag;
+
+        _console_device->open_flag |= RT_DEVICE_FLAG_STREAM;
+        rt_device_write(_console_device, 0, str, rt_strlen(str));
+        _console_device->open_flag = old_flag;
+    }
+#else
+    rt_hw_console_output(str);
+#endif
+}
 
 /**
  * This function will print a formatted string on system console
@@ -1126,11 +1163,11 @@ void rt_kprintf(const char *fmt, ...)
     }
     else
     {
-        rt_uint16_t old_flag = _console_device->flag;
+        rt_uint16_t old_flag = _console_device->open_flag;
 
-        _console_device->flag |= RT_DEVICE_FLAG_STREAM;
+        _console_device->open_flag |= RT_DEVICE_FLAG_STREAM;
         rt_device_write(_console_device, 0, rt_log_buf, length);
-        _console_device->flag = old_flag;
+        _console_device->open_flag = old_flag;
     }
 #else
     rt_hw_console_output(rt_log_buf);
@@ -1150,33 +1187,38 @@ RTM_EXPORT(rt_kprintf);
  *
  * @return the allocated memory block on successful, otherwise returns RT_NULL
  */
-void* rt_malloc_align(rt_size_t size, rt_size_t align)
+void *rt_malloc_align(rt_size_t size, rt_size_t align)
 {
-    void *align_ptr;
     void *ptr;
+    void *align_ptr;
+    int uintptr_size;
     rt_size_t align_size;
 
-    /* align the alignment size to 4 byte */
-    align = ((align + 0x03) & ~0x03);
+    /* sizeof pointer */
+    uintptr_size = sizeof(void*);
+    uintptr_size -= 1;
+
+    /* align the alignment size to uintptr size byte */
+    align = ((align + uintptr_size) & ~uintptr_size);
 
     /* get total aligned size */
-    align_size = ((size + 0x03) & ~0x03) + align;
+    align_size = ((size + uintptr_size) & ~uintptr_size) + align;
     /* allocate memory block from heap */
     ptr = rt_malloc(align_size);
     if (ptr != RT_NULL)
     {
-         /* the allocated memory block is aligned */
-        if (((rt_uint32_t)ptr & (align - 1)) == 0)
+        /* the allocated memory block is aligned */
+        if (((rt_ubase_t)ptr & (align - 1)) == 0)
         {
-            align_ptr = (void *)((rt_uint32_t)ptr + align);
+            align_ptr = (void *)((rt_ubase_t)ptr + align);
         }
         else
         {
-            align_ptr = (void *)(((rt_uint32_t)ptr + (align - 1)) & ~(align - 1));
+            align_ptr = (void *)(((rt_ubase_t)ptr + (align - 1)) & ~(align - 1));
         }
 
         /* set the pointer before alignment pointer to the real pointer */
-        *((rt_uint32_t *)((rt_uint32_t)align_ptr - sizeof(void *))) = (rt_uint32_t)ptr;
+        *((rt_ubase_t *)((rt_ubase_t)align_ptr - sizeof(void *))) = (rt_ubase_t)ptr;
 
         ptr = align_ptr;
     }
@@ -1195,7 +1237,7 @@ void rt_free_align(void *ptr)
 {
     void *real_ptr;
 
-    real_ptr = (void *)*(rt_uint32_t *)((rt_uint32_t)ptr - sizeof(void *));
+    real_ptr = (void *) * (rt_ubase_t *)((rt_ubase_t)ptr - sizeof(void *));
     rt_free(real_ptr);
 }
 RTM_EXPORT(rt_free_align);
@@ -1249,6 +1291,53 @@ int __rt_ffs(int value)
 }
 #endif
 
+#ifdef RT_DEBUG
+/* RT_ASSERT(EX)'s hook */
+void (*rt_assert_hook)(const char *ex, const char *func, rt_size_t line);
+/**
+ * This function will set a hook function to RT_ASSERT(EX). It will run when the expression is false.
+ *
+ * @param hook the hook function
+ */
+void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t line))
+{
+    rt_assert_hook = hook;
+}
+
+/**
+ * The RT_ASSERT function.
+ *
+ * @param ex the assertion condition string
+ * @param func the function name when assertion.
+ * @param line the file line number when assertion.
+ */
+void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line)
+{
+    volatile char dummy = 0;
+
+    if (rt_assert_hook == RT_NULL)
+    {
+#ifdef RT_USING_MODULE
+        if (dlmodule_self())
+        {
+            /* close assertion module */
+            dlmodule_exit(-1);
+        }
+        else
+#endif
+        {
+            rt_kprintf("(%s) assertion failed at function:%s, line number:%d \n", ex_string, func, line);
+            while (dummy == 0);
+        }
+    }
+    else
+    {
+        rt_assert_hook(ex_string, func, line);
+    }
+}
+RTM_EXPORT(rt_assert_handler);
+#endif /* RT_DEBUG */
+
 #if !defined (RT_USING_NEWLIB) && defined (RT_USING_MINILIBC) && defined (__GNUC__)
 #include <sys/types.h>
 void *memcpy(void *dest, const void *src, size_t n) __attribute__((weak, alias("rt_memcpy")));
@@ -1257,7 +1346,7 @@ void *memmove(void *dest, const void *src, size_t n) __attribute__((weak, alias(
 int   memcmp(const void *s1, const void *s2, size_t n) __attribute__((weak, alias("rt_memcmp")));
 
 size_t strlen(const char *s) __attribute__((weak, alias("rt_strlen")));
-char *strstr(const char *s1,const char *s2) __attribute__((weak, alias("rt_strstr")));
+char *strstr(const char *s1, const char *s2) __attribute__((weak, alias("rt_strstr")));
 int strcasecmp(const char *a, const char *b) __attribute__((weak, alias("rt_strcasecmp")));
 char *strncpy(char *dest, const char *src, size_t n) __attribute__((weak, alias("rt_strncpy")));
 int strncmp(const char *cs, const char *ct, size_t count) __attribute__((weak, alias("rt_strncmp")));
@@ -1271,4 +1360,4 @@ int vsprintf(char *buf, const char *format, va_list arg_ptr) __attribute__((weak
 
 #endif
 
-/*@}*/
+/**@}*/

@@ -1,26 +1,7 @@
 /*
- *  heap management in finsh shell.
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
- *
- *  This file is part of RT-Thread (http://www.rt-thread.org)
- *  Maintainer: bernard.xiong <bernard.xiong at gmail.com>
- *
- *  All rights reserved.
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -31,16 +12,16 @@
 #include "finsh_var.h"
 
 ALIGN(RT_ALIGN_SIZE)
-u_char finsh_heap[FINSH_HEAP_MAX];
+uint8_t finsh_heap[FINSH_HEAP_MAX];
 struct finsh_block_header
 {
-	u_long length;
-	struct finsh_block_header* next;
+    uint32_t length;
+    struct finsh_block_header* next;
 };
 #define BLOCK_HEADER(x)                 (struct finsh_block_header*)(x)
-#define finsh_block_get_header(data)    (struct finsh_block_header*)((u_char*)data - sizeof(struct finsh_block_header))
-#define finsh_block_get_data(header)    (u_char*)((struct finsh_block_header*)header + 1)
-#define HEAP_ALIGN_SIZE(size)			(((size) + HEAP_ALIGNMENT - 1) & ~(HEAP_ALIGNMENT-1))
+#define finsh_block_get_header(data)    (struct finsh_block_header*)((uint8_t*)data - sizeof(struct finsh_block_header))
+#define finsh_block_get_data(header)    (uint8_t*)((struct finsh_block_header*)header + 1)
+#define HEAP_ALIGN_SIZE(size)           (((size) + HEAP_ALIGNMENT - 1) & ~(HEAP_ALIGNMENT-1))
 
 static struct finsh_block_header* free_list;
 static struct finsh_block_header* allocate_list;
@@ -54,12 +35,12 @@ static void finsh_block_merge(struct finsh_block_header** list, struct finsh_blo
 
 int finsh_heap_init(void)
 {
-	/* clear heap to zero */
-	memset(&finsh_heap[0], 0, sizeof(finsh_heap));
+    /* clear heap to zero */
+    memset(&finsh_heap[0], 0, sizeof(finsh_heap));
 
-	/* init free and alloc list */
+    /* init free and alloc list */
     free_list           = BLOCK_HEADER(&finsh_heap[0]);
-	free_list->length   = FINSH_HEAP_MAX - sizeof(struct finsh_block_header);
+    free_list->length   = FINSH_HEAP_MAX - sizeof(struct finsh_block_header);
     free_list->next     = NULL;
 
     allocate_list       = NULL;
@@ -72,41 +53,41 @@ int finsh_heap_init(void)
  */
 void* finsh_heap_allocate(size_t size)
 {
-	struct finsh_block_header* header;
+    struct finsh_block_header* header;
 
-	size = HEAP_ALIGN_SIZE(size);
+    size = HEAP_ALIGN_SIZE(size);
 
     /* find the first fit block */
     for (header = free_list;
         ((header != NULL) && (header->length <= size + sizeof(struct finsh_block_header)));
         header = header->next) ;
 
-	if (header == NULL)
-	{
-		finsh_heap_gc();
+    if (header == NULL)
+    {
+        finsh_heap_gc();
 
-		/* find the first fit block */
-		for (header = free_list;
-			((header != NULL) && (header->length < size + sizeof(struct finsh_block_header)));
-			header = header->next) ;
+        /* find the first fit block */
+        for (header = free_list;
+            ((header != NULL) && (header->length < size + sizeof(struct finsh_block_header)));
+            header = header->next) ;
 
-		/* there is no memory */
-		if (header == NULL) return NULL;
-	}
+        /* there is no memory */
+        if (header == NULL) return NULL;
+    }
 
     /* split block */
-	finsh_block_split(header, size);
+    finsh_block_split(header, size);
 
-	/* remove from free list */
-	finsh_block_remove(&free_list, header);
-	header->next = NULL;
+    /* remove from free list */
+    finsh_block_remove(&free_list, header);
+    header->next = NULL;
 
     /* insert to allocate list */
     finsh_block_insert(&allocate_list, header);
 
-	memset(finsh_block_get_data(header), 0, size);
+    memset(finsh_block_get_data(header), 0, size);
 
-	return finsh_block_get_data(header);
+    return finsh_block_get_data(header);
 }
 
 /**
@@ -117,14 +98,14 @@ void  finsh_heap_free(void*ptr)
     struct finsh_block_header* header;
 
     /* get block header */
-	header = finsh_block_get_header(ptr);
+    header = finsh_block_get_header(ptr);
 
     /* remove from allocate list */
-	finsh_block_remove(&allocate_list, header);
+    finsh_block_remove(&allocate_list, header);
 
-	/* insert to free list */
-	finsh_block_insert(&free_list, header);
-	finsh_block_merge(&free_list, header);
+    /* insert to free list */
+    finsh_block_insert(&free_list, header);
+    finsh_block_merge(&free_list, header);
 }
 
 /**
@@ -132,31 +113,31 @@ void  finsh_heap_free(void*ptr)
  */
 static void finsh_heap_gc(void)
 {
-	int i;
-	struct finsh_block_header *header, *temp;
+    int i;
+    struct finsh_block_header *header, *temp;
 
-	temp = NULL;
+    temp = NULL;
 
     /* find the first fit block */
     for (header = allocate_list; header != NULL; )
     {
-    	for (i = 0; i < FINSH_VARIABLE_MAX; i ++)
-    	{
-    		if (global_variable[i].type != finsh_type_unknown)
-    		{
-    			if (global_variable[i].value.ptr == finsh_block_get_data(header))
-					break;
-    		}
-    	}
+        for (i = 0; i < FINSH_VARIABLE_MAX; i ++)
+        {
+            if (global_variable[i].type != finsh_type_unknown)
+            {
+                if (global_variable[i].value.ptr == finsh_block_get_data(header))
+                    break;
+            }
+        }
 
-		temp   = header;
-		header = header->next;
+        temp   = header;
+        header = header->next;
 
-		/* this block is an unused block, release it */
-    	if (i == FINSH_VARIABLE_MAX)
-    	{
-    		finsh_heap_free(finsh_block_get_data(temp));
-    	}
+        /* this block is an unused block, release it */
+        if (i == FINSH_VARIABLE_MAX)
+        {
+            finsh_heap_free(finsh_block_get_data(temp));
+        }
     }
 }
 
@@ -174,25 +155,25 @@ void finsh_block_insert(struct finsh_block_header** list, struct finsh_block_hea
     }
 
     /* find out insert point */
-	node = *list;
+    node = *list;
 
-	if (node > header)
-	{
-		/* insert node in the header of list */
-		header->next = node;
-		*list = header;
+    if (node > header)
+    {
+        /* insert node in the header of list */
+        header->next = node;
+        *list = header;
 
-		return;
-	}
-	else
-	{
-		for (node = *list; node; node = node->next)
-		{
-    		if (node->next > header) break;
+        return;
+    }
+    else
+    {
+        for (node = *list; node; node = node->next)
+        {
+            if (node->next > header) break;
 
-    		if (node->next == NULL) break;
-		}
-	}
+            if (node->next == NULL) break;
+        }
+    }
 
     /* insert node */
     if (node->next != NULL) header->next = node->next;
@@ -237,7 +218,7 @@ void finsh_block_split(struct finsh_block_header* header, size_t size)
      * split header into two node:
      * header->next->...
      */
-    next = BLOCK_HEADER((u_char*)header + sizeof(struct finsh_block_header) + size);
+    next = BLOCK_HEADER((uint8_t*)header + sizeof(struct finsh_block_header) + size);
     next->length = header->length - sizeof(struct finsh_block_header) - size;
     header->length = size;
     next->next = header->next;
@@ -267,16 +248,16 @@ void finsh_block_merge(struct finsh_block_header** list, struct finsh_block_head
 
     /* merge to previous node */
     if (prev_node != NULL &&
-        ((u_char*)prev_node + prev_node->length + sizeof(struct finsh_block_header)
-        == (u_char*)header))
+        ((uint8_t*)prev_node + prev_node->length + sizeof(struct finsh_block_header)
+        == (uint8_t*)header))
     {
         /* is it close to next node? */
         if ((next_node != NULL) &&
-            ((u_char*)header + header->length + sizeof(struct finsh_block_header)
-            == (u_char*)next_node))
+            ((uint8_t*)header + header->length + sizeof(struct finsh_block_header)
+            == (uint8_t*)next_node))
         {
             /* merge three node */
-        	prev_node->length += header->length + next_node->length +
+            prev_node->length += header->length + next_node->length +
                 2 * sizeof(struct finsh_block_header);
 
             prev_node->next = next_node->next;
@@ -289,8 +270,8 @@ void finsh_block_merge(struct finsh_block_header** list, struct finsh_block_head
     }
     else /* merge to last node */
     if ( (next_node != NULL) &&
-        ((u_char*)header + header->length + sizeof(struct finsh_block_header)
-        == (u_char*)next_node))
+        ((uint8_t*)header + header->length + sizeof(struct finsh_block_header)
+        == (uint8_t*)next_node))
     {
         header->length += next_node->length + sizeof(struct finsh_block_header);
         header->next = next_node->next;

@@ -1,21 +1,7 @@
 /*
- * File      : block_dev.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author        Notes
@@ -27,7 +13,19 @@
 
 #include <drivers/mmcsd_core.h>
 
-static rt_list_t blk_devices;
+#define DBG_ENABLE
+#define DBG_SECTION_NAME               "SDIO"
+#ifdef RT_SDIO_DEBUG
+#define DBG_LEVEL                      DBG_LOG
+#else
+#define DBG_LEVEL                      DBG_INFO
+#endif /* RT_SDIO_DEBUG */
+#define DBG_COLOR
+#include <rtdbg.h>
+
+static rt_list_t blk_devices = RT_LIST_OBJECT_INIT(blk_devices);
+
+#define BLK_MIN(a, b) ((a) < (b) ? (a) : (b))
 
 struct mmcsd_blk_device
 {
@@ -36,13 +34,14 @@ struct mmcsd_blk_device
     struct rt_device dev;
     struct dfs_partition part;
     struct rt_device_blk_geometry geometry;
+    rt_size_t max_req_size;
 };
 
 #ifndef RT_MMCSD_MAX_PARTITION
 #define RT_MMCSD_MAX_PARTITION 16
 #endif
 
-static rt_int32_t mmcsd_num_wr_blocks(struct rt_mmcsd_card *card)
+rt_int32_t mmcsd_num_wr_blocks(struct rt_mmcsd_card *card)
 {
     rt_int32_t err;
     rt_uint32_t blocks;
@@ -109,8 +108,6 @@ static rt_err_t rt_mmcsd_req_blk(struct rt_mmcsd_card *card,
                                  rt_size_t             blks,
                                  rt_uint8_t            dir)
 {
-    void *aligned_buf;
-    
     struct rt_mmcsd_cmd  cmd, stop;
     struct rt_mmcsd_data  data;
     struct rt_mmcsd_req  req;
@@ -149,7 +146,7 @@ static rt_err_t rt_mmcsd_req_blk(struct rt_mmcsd_card *card,
     }
     else
     {
-        req.stop = NULL;
+        req.stop = RT_NULL;
         r_cmd = READ_SINGLE_BLOCK;
         w_cmd = WRITE_BLOCK;
     }
@@ -181,7 +178,7 @@ static rt_err_t rt_mmcsd_req_blk(struct rt_mmcsd_card *card,
             err = mmcsd_send_cmd(card->host, &cmd, 5);
             if (err) 
             {
-                rt_kprintf("error %d requesting status\n", err);
+                LOG_E("error %d requesting status", err);
                 break;
             }
             /*
@@ -197,8 +194,8 @@ static rt_err_t rt_mmcsd_req_blk(struct rt_mmcsd_card *card,
 
     if (cmd.err || data.err || stop.err) 
     {
-        rt_kprintf("mmcsd request blocks error\n");
-        rt_kprintf("%d,%d,%d, 0x%08x,0x%08x\n",
+        LOG_E("mmcsd request blocks error");
+        LOG_E("%d,%d,%d, 0x%08x,0x%08x",
                    cmd.err, data.err, stop.err, data.flags, sector);
 
         return -RT_ERROR;
@@ -222,7 +219,7 @@ static rt_err_t rt_mmcsd_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_err_t rt_mmcsd_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_mmcsd_control(rt_device_t dev, int cmd, void *args)
 {
     struct mmcsd_blk_device *blk_dev = (struct mmcsd_blk_device *)dev->user_data;
     switch (cmd)
@@ -241,28 +238,40 @@ static rt_size_t rt_mmcsd_read(rt_device_t dev,
                                void       *buffer,
                                rt_size_t   size)
 {
-    rt_err_t err;
+    rt_err_t err = 0;
+    rt_size_t offset = 0;
+    rt_size_t req_size = 0;
+    rt_size_t remain_size = size;
+    void *rd_ptr = (void *)buffer;
     struct mmcsd_blk_device *blk_dev = (struct mmcsd_blk_device *)dev->user_data;
     struct dfs_partition *part = &blk_dev->part;
 
     if (dev == RT_NULL)
     {
-        rt_set_errno(-DFS_STATUS_EINVAL);
-
+        rt_set_errno(-EINVAL);
         return 0;
     }
 
     rt_sem_take(part->lock, RT_WAITING_FOREVER);
-    err = rt_mmcsd_req_blk(blk_dev->card, part->offset + pos, buffer, size, 0);
+    while (remain_size)
+    {
+        req_size = (remain_size > blk_dev->max_req_size) ? blk_dev->max_req_size : remain_size;
+        err = rt_mmcsd_req_blk(blk_dev->card, part->offset + pos + offset, rd_ptr, req_size, 0);
+        if (err)
+            break;
+        offset += req_size;
+        rd_ptr = (void *)((rt_uint8_t *)rd_ptr + (req_size << 9));
+        remain_size -= req_size;
+    }
     rt_sem_release(part->lock);
 
     /* the length of reading must align to SECTOR SIZE */
     if (err) 
     {
-        rt_set_errno(-DFS_STATUS_EIO);
+        rt_set_errno(-EIO);
         return 0;
     }
-    return size;
+    return size - remain_size;
 }
 
 static rt_size_t rt_mmcsd_write(rt_device_t dev,
@@ -270,29 +279,41 @@ static rt_size_t rt_mmcsd_write(rt_device_t dev,
                                 const void *buffer,
                                 rt_size_t   size)
 {
-    rt_err_t err;
+    rt_err_t err = 0;
+    rt_size_t offset = 0;
+    rt_size_t req_size = 0;
+    rt_size_t remain_size = size;
+    void *wr_ptr = (void *)buffer;
     struct mmcsd_blk_device *blk_dev = (struct mmcsd_blk_device *)dev->user_data;
     struct dfs_partition *part = &blk_dev->part;
 
     if (dev == RT_NULL)
     {
-        rt_set_errno(-DFS_STATUS_EINVAL);
-
+        rt_set_errno(-EINVAL);
         return 0;
     }
 
     rt_sem_take(part->lock, RT_WAITING_FOREVER);
-    err = rt_mmcsd_req_blk(blk_dev->card, part->offset + pos, (void *)buffer, size, 1);
+    while (remain_size)
+    {
+        req_size = (remain_size > blk_dev->max_req_size) ? blk_dev->max_req_size : remain_size;
+        err = rt_mmcsd_req_blk(blk_dev->card, part->offset + pos + offset, wr_ptr, req_size, 1);
+        if (err)
+            break;
+        offset += req_size;
+        wr_ptr = (void *)((rt_uint8_t *)wr_ptr + (req_size << 9));
+        remain_size -= req_size;
+    }
     rt_sem_release(part->lock);
 
     /* the length of reading must align to SECTOR SIZE */
     if (err) 
     {
-        rt_set_errno(-DFS_STATUS_EIO);
+        rt_set_errno(-EIO);
 
         return 0;
     }
-    return size;
+    return size - remain_size;
 }
 
 static rt_int32_t mmcsd_set_blksize(struct rt_mmcsd_card *card)
@@ -313,13 +334,25 @@ static rt_int32_t mmcsd_set_blksize(struct rt_mmcsd_card *card)
 
     if (err) 
     {
-        rt_kprintf("MMCSD: unable to set block size to %d: %d\n", cmd.arg, err);
+        LOG_E("MMCSD: unable to set block size to %d: %d", cmd.arg, err);
 
         return -RT_ERROR;
     }
 
     return 0;
 }
+
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops mmcsd_blk_ops = 
+{
+    rt_mmcsd_init,
+    rt_mmcsd_open,
+    rt_mmcsd_close,
+    rt_mmcsd_read,
+    rt_mmcsd_write,
+    rt_mmcsd_control
+};
+#endif
 
 rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
 {
@@ -336,11 +369,13 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
         return err;
     }
 
+    LOG_I("probe mmcsd block device!");
+
     /* get the first sector to read partition table */
     sector = (rt_uint8_t *)rt_malloc(SECTOR_SIZE);
     if (sector == RT_NULL)
     {
-        rt_kprintf("allocate partition sector buffer failed\n");
+        LOG_E("allocate partition sector buffer failed!");
 
         return -RT_ENOMEM;
     }
@@ -350,13 +385,18 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
     {
         for (i = 0; i < RT_MMCSD_MAX_PARTITION; i++)
         {
-            blk_dev = rt_malloc(sizeof(struct mmcsd_blk_device));
+            blk_dev = rt_calloc(1, sizeof(struct mmcsd_blk_device));
             if (!blk_dev) 
             {
-                rt_kprintf("mmcsd:malloc mem failde\n");
+                LOG_E("mmcsd:malloc memory failed!");
                 break;
             }
-            rt_memset((void *)blk_dev, 0, sizeof(struct mmcsd_blk_device));
+
+            blk_dev->max_req_size = BLK_MIN((card->host->max_dma_segs * 
+                                             card->host->max_seg_size) >> 9, 
+                                            (card->host->max_blk_count * 
+                                             card->host->max_blk_size) >> 9);
+
             /* get the first partition */
             status = dfs_filesystem_get_partition(&blk_dev->part, sector, i);
             if (status == RT_EOK)
@@ -366,13 +406,17 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
                 blk_dev->part.lock = rt_sem_create(sname, 1, RT_IPC_FLAG_FIFO);
     
                 /* register mmcsd device */
-                blk_dev->dev.type = RT_Device_Class_Block;                  
+                blk_dev->dev.type = RT_Device_Class_Block;
+#ifdef RT_USING_DEVICE_OPS
+                blk_dev->dev.ops  = &mmcsd_blk_ops;
+#else
                 blk_dev->dev.init = rt_mmcsd_init;
                 blk_dev->dev.open = rt_mmcsd_open;
                 blk_dev->dev.close = rt_mmcsd_close;
                 blk_dev->dev.read = rt_mmcsd_read;
                 blk_dev->dev.write = rt_mmcsd_write;
                 blk_dev->dev.control = rt_mmcsd_control;
+#endif
                 blk_dev->dev.user_data = blk_dev;
 
                 blk_dev->card = card;
@@ -396,27 +440,24 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
     
                     /* register mmcsd device */
                     blk_dev->dev.type  = RT_Device_Class_Block;
+#ifdef RT_USING_DEVICE_OPS
+                    blk_dev->dev.ops  = &mmcsd_blk_ops;
+#else
                     blk_dev->dev.init = rt_mmcsd_init;
                     blk_dev->dev.open = rt_mmcsd_open;
                     blk_dev->dev.close = rt_mmcsd_close;
                     blk_dev->dev.read = rt_mmcsd_read;
                     blk_dev->dev.write = rt_mmcsd_write;
                     blk_dev->dev.control = rt_mmcsd_control;
+#endif
                     blk_dev->dev.user_data = blk_dev;
 
                     blk_dev->card = card;
 
                     blk_dev->geometry.bytes_per_sector = 1<<9;
                     blk_dev->geometry.block_size = card->card_blksize;
-                    if (card->flags & CARD_FLAG_SDHC) 
-                    {
-                        blk_dev->geometry.sector_count = (card->csd.c_size + 1) * 1024;
-                    }
-                    else
-                    {
-                        blk_dev->geometry.sector_count = 
-                            card->card_capacity * 1024 / 512;
-                    }
+                    blk_dev->geometry.sector_count = 
+                        card->card_capacity * (1024 / 512);
     
                     rt_device_register(&blk_dev->dev, "sd0",
                         RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
@@ -431,11 +472,20 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
                     break;
                 }
             }
+
+#ifdef RT_USING_DFS_MNTTABLE
+            if (0) // if (blk_dev)
+            {
+            	LOG_I("try to mount file system!");
+            	/* try to mount file system on this block device */
+            	dfs_mount_device(&(blk_dev->dev));
+            }
+#endif
         }
     }
     else
     {
-        rt_kprintf("read mmcsd first sector failed\n");
+        LOG_E("read mmcsd first sector failed");
         err = -RT_ERROR;
     }
     
@@ -447,14 +497,21 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
 
 void rt_mmcsd_blk_remove(struct rt_mmcsd_card *card)
 {
-    rt_list_t *l;
+    rt_list_t *l, *n;
     struct mmcsd_blk_device *blk_dev;
-    
-    for (l = (&blk_devices)->next; l != &blk_devices; l = l->next)
+
+    for (l = (&blk_devices)->next, n = l->next; l != &blk_devices; l = n)
     {
         blk_dev = (struct mmcsd_blk_device *)rt_list_entry(l, struct mmcsd_blk_device, list);
         if (blk_dev->card == card) 
         {
+        	/* unmount file system */
+        	const char * mounted_path = dfs_filesystem_get_mounted_path(&(blk_dev->dev));
+        	if (mounted_path)
+        	{
+        		dfs_unmount(mounted_path);
+        	}
+
             rt_device_unregister(&blk_dev->dev);
             rt_list_remove(&blk_dev->list);
             rt_free(blk_dev);
@@ -462,7 +519,14 @@ void rt_mmcsd_blk_remove(struct rt_mmcsd_card *card)
     }
 }
 
-void rt_mmcsd_blk_init(void)
+/*
+ * This function will initialize block device on the mmc/sd.
+ *
+ * @deprecated since 2.1.0, this function does not need to be invoked
+ * in the system initialization.
+ */
+int rt_mmcsd_blk_init(void)
 {
-    rt_list_init(&blk_devices);
+    /* nothing */
+    return 0;
 }

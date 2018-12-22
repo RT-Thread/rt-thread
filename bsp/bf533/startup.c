@@ -62,9 +62,6 @@ void rtthread_startup(void)
         RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
         &uart0);
 
-    /* init all device */
-    rt_device_init_all();
-
     rt_console_set_device("uart0");
 #endif
 
@@ -73,7 +70,7 @@ void rtthread_startup(void)
 
 #ifdef RT_USING_FINSH
     /* init finsh */
-    extern void finsh_system_init(void);
+    extern int finsh_system_init(void);
     finsh_system_init();
     finsh_set_device("uart0");
 #endif

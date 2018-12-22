@@ -5,10 +5,18 @@ from building import *
 src = Glob('*.c')
 
 CPPPATH = [RTT_ROOT + '/include']
-if rtconfig.CROSS_TOOL == 'keil' and GetDepend('RT_USING_MODULE') == True:
-    LINKFLAGS = ' --keep __rtmsym_* '
+if rtconfig.CROSS_TOOL == 'keil':
+    # add more link flags for module and components_init.
+    LINKFLAGS = ''
+    if GetDepend('RT_USING_MODULE'):
+        LINKFLAGS += ' --keep *.o(RTMSymTab) '
+    if GetDepend('RT_USING_COMPONENTS_INIT'):
+        LINKFLAGS += ' --keep *.o(.rti_fn.*) '
 else:
     LINKFLAGS = ''
+
+if GetDepend('RT_USING_COMPONENTS_INIT') == False:
+    SrcRemove(src, ['components.c'])
 
 if GetDepend('RT_USING_MODULE') == False:
     SrcRemove(src, ['module.c'])

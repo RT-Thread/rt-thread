@@ -1,21 +1,7 @@
 /*
- * File      : cdc.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -31,6 +17,7 @@
 #define USB_CDC_CLASS_COMM              0x02
 #define USB_CDC_CLASS_DATA              0x0A
 
+#define USB_CDC_SUBCLASS_NONE           0x00
 #define USB_CDC_SUBCLASS_DLCM           0x01
 #define USB_CDC_SUBCLASS_ACM            0x02
 #define USB_CDC_SUBCLASS_TCM            0x03
@@ -38,9 +25,10 @@
 #define USB_CDC_SUBCLASS_CCM            0x05
 #define USB_CDC_SUBCLASS_ETH            0x06
 #define USB_CDC_SUBCLASS_ATM            0x07
+#define USB_CDC_SUBCLASS_EEM            0x0C
 
+#define USB_CDC_PROTOCOL_NONE           0x00
 #define USB_CDC_PROTOCOL_V25TER         0x01
-
 #define USB_CDC_PROTOCOL_I430           0x30
 #define USB_CDC_PROTOCOL_HDLC           0x31
 #define USB_CDC_PROTOCOL_TRANS          0x32
@@ -54,6 +42,7 @@
 #define USB_CDC_PROTOCOL_HOST           0xFD
 #define USB_CDC_PROTOCOL_PUFD           0xFE
 #define USB_CDC_PROTOCOL_VENDOR         0xFF
+#define USB_CDC_PROTOCOL_EEM            0x07
 
 #define USB_CDC_CS_INTERFACE            0x24
 #define USB_CDC_CS_ENDPOINT             0x25
@@ -62,6 +51,7 @@
 #define USB_CDC_SCS_CALL_MGMT           0x01
 #define USB_CDC_SCS_ACM                 0x02
 #define USB_CDC_SCS_UNION               0x06
+#define USB_CDC_SCS_ETH                 0x0F
 
 #define CDC_SEND_ENCAPSULATED_COMMAND   0x00
 #define CDC_GET_ENCAPSULATED_RESPONSE   0x01
@@ -153,6 +143,30 @@ struct ucdc_comm_descriptor
 };
 typedef struct ucdc_comm_descriptor* ucdc_comm_desc_t;
 
+struct ucdc_enet_descriptor
+{
+  rt_uint8_t    bFunctionLength;
+  rt_uint8_t    bDescriptorType;
+  rt_uint8_t    bDescriptorSubtype;
+  rt_uint8_t    iMACAddress;
+  rt_uint8_t    bmEthernetStatistics[4];
+  rt_uint16_t   wMaxSegmentSize;
+  rt_uint16_t   wMCFilters;
+  rt_uint8_t    bNumberPowerFilters;
+};
+struct ucdc_eth_descriptor
+{
+#ifdef RT_USB_DEVICE_COMPOSITE
+    struct uiad_descriptor iad_desc;
+#endif
+    struct uinterface_descriptor    intf_desc;
+    struct ucdc_header_descriptor   hdr_desc;
+    struct ucdc_union_descriptor    union_desc;
+    struct ucdc_enet_descriptor     enet_desc;
+    struct uendpoint_descriptor     ep_desc;
+};
+typedef struct ucdc_eth_descriptor* ucdc_eth_desc_t;
+
 struct ucdc_data_descriptor
 {
     struct uinterface_descriptor intf_desc;
@@ -177,7 +191,39 @@ struct cdc_eps
     uep_t ep_cmd;
 };
 typedef struct cdc_eps* cdc_eps_t;
- 
+
+
+
+struct ucdc_management_element_notifications
+{
+    rt_uint8_t bmRequestType;
+    rt_uint8_t bNotificatinCode;
+    rt_uint16_t wValue;
+    rt_uint16_t wIndex;
+    rt_uint16_t wLength;
+};
+typedef struct ucdc_management_element_notifications * ucdc_mg_notifications_t;
+
+struct ucdc_connection_speed_change_data
+{
+    rt_uint32_t down_bit_rate;
+    rt_uint32_t up_bit_rate;
+};
+typedef struct connection_speed_change_data * connect_speed_data_t;
+
+enum ucdc_notification_code
+{
+    UCDC_NOTIFI_NETWORK_CONNECTION      = 0x00,
+    UCDC_NOTIFI_RESPONSE_AVAILABLE      = 0x01,
+    UCDC_NOTIFI_AUX_JACK_HOOK_STATE     = 0x08,
+    UCDC_NOTIFI_RING_DETECT             = 0x09,
+    UCDC_NOTIFI_SERIAL_STATE            = 0x20,
+    UCDC_NOTIFI_CALL_STATE_CHANGE       = 0x28,
+    UCDC_NOTIFI_LINE_STATE_CHANGE       = 0x29,
+    UCDC_NOTIFI_CONNECTION_SPEED_CHANGE = 0x2A,
+};
+typedef enum ucdc_notification_code ucdc_notification_code_t;
+
 #pragma pack()
 
 #endif

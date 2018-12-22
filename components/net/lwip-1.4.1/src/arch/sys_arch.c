@@ -1,16 +1,34 @@
 /*
- * File      : sys_arch.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012, RT-Thread Development Team
+ * COPYRIGHT (C) 2006-2018, RT-Thread Development Team
+ * All rights reserved.
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 3. The name of the author may not be used to endorse or promote products
+ *    derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+ * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+ * OF SUCH DAMAGE.
  *
  * Change Logs:
  * Date           Author       Notes
  * 2012-12-8      Bernard      add file header
  *                             export bsd socket symbol for RT-Thread Application Module 
+ * 2017-11-15     Bernard      add lock for init_done callback.
  */
 
 #include <rtthread.h>
@@ -26,9 +44,15 @@
 #include "netif/ethernetif.h"
 #include "lwip/sio.h"
 #include <lwip/init.h>
+#include "lwip/inet.h"
 
 #include <string.h>
 
+/*
+ * Initialize the network interface device
+ *
+ * @return the operation status, ERR_OK on OK, ERR_IF on error
+ */
 static err_t netif_device_init(struct netif *netif)
 {
     struct eth_device *ethif;
@@ -53,7 +77,9 @@ static err_t netif_device_init(struct netif *netif)
 
     return ERR_IF;
 }
-
+/*
+ * Initialize the ethernetif layer and set network interface device up
+ */
 static void tcpip_init_done_callback(void *arg)
 {
     rt_device_t device;
@@ -62,8 +88,6 @@ static void tcpip_init_done_callback(void *arg)
     struct rt_list_node* node;
     struct rt_object* object;
     struct rt_object_information *information;
-
-    extern struct rt_object_information rt_object_container[];
 
     LWIP_ASSERT("invalid arg.\n",arg);
 
@@ -75,7 +99,8 @@ static void tcpip_init_done_callback(void *arg)
     rt_enter_critical();
 
     /* for each network interfaces */
-    information = &rt_object_container[RT_Object_Class_Device];
+    information = rt_object_get_information(RT_Object_Class_Device);
+    RT_ASSERT(information != RT_NULL);
     for (node = information->object_list.next;
          node != &(information->object_list);
          node = node->next)
@@ -88,6 +113,7 @@ static void tcpip_init_done_callback(void *arg)
 
             /* leave critical */
             rt_exit_critical();
+            LOCK_TCPIP_CORE();
 
             netif_add(ethif->netif, &ipaddr, &netmask, &gw,
                       ethif, netif_device_init, tcpip_input);
@@ -108,10 +134,12 @@ static void tcpip_init_done_callback(void *arg)
                 netif_set_up(ethif->netif);
             }
 
-#ifdef LWIP_NETIF_LINK_CALLBACK
-            netif_set_link_up(ethif->netif);
-#endif
+            if (!(ethif->flags & ETHIF_LINK_PHYUP))
+            {
+                netif_set_link_up(ethif->netif);
+            }
 
+            UNLOCK_TCPIP_CORE();
             /* enter critical */
             rt_enter_critical();
         }
@@ -159,9 +187,9 @@ int lwip_system_init(void)
     {
         struct ip_addr ipaddr, netmask, gw;
 
-        IP4_ADDR(&ipaddr, RT_LWIP_IPADDR0, RT_LWIP_IPADDR1, RT_LWIP_IPADDR2, RT_LWIP_IPADDR3);
-        IP4_ADDR(&gw, RT_LWIP_GWADDR0, RT_LWIP_GWADDR1, RT_LWIP_GWADDR2, RT_LWIP_GWADDR3);
-        IP4_ADDR(&netmask, RT_LWIP_MSKADDR0, RT_LWIP_MSKADDR1, RT_LWIP_MSKADDR2, RT_LWIP_MSKADDR3);
+        ipaddr.addr = inet_addr(RT_LWIP_IPADDR);
+        gw.addr = inet_addr(RT_LWIP_GWADDR);
+        netmask.addr = inet_addr(RT_LWIP_MSKADDR);
 
         netifapi_netif_set_addr(netif_default, &ipaddr, &netmask, &gw);
     }
@@ -182,6 +210,11 @@ void lwip_sys_init(void)
     lwip_system_init();
 }
 
+/*
+ * Create a new semaphore
+ *
+ * @return the operation status, ERR_OK on OK; others on error
+ */
 err_t sys_sem_new(sys_sem_t *sem, u8_t count)
 {
     static unsigned short counter = 0;
@@ -204,17 +237,31 @@ err_t sys_sem_new(sys_sem_t *sem, u8_t count)
     }
 }
 
+/*
+ * Deallocate a semaphore
+ */
 void sys_sem_free(sys_sem_t *sem)
 {
     RT_DEBUG_NOT_IN_INTERRUPT;
     rt_sem_delete(*sem);
 }
 
+/*
+ * Signal a semaphore
+ */
 void sys_sem_signal(sys_sem_t *sem)
 {
     rt_sem_release(*sem);
 }
 
+/*
+ * Block the thread while waiting for the semaphore to be signaled
+ *
+ * @return If the timeout argument is non-zero, it will return the number of milliseconds
+ *         spent waiting for the semaphore to be signaled; If the semaphore isn't signaled
+ *         within the specified time, it will return SYS_ARCH_TIMEOUT; If the thread doesn't 
+ *         wait for the semaphore, it will return zero
+ */
 u32_t sys_arch_sem_wait(sys_sem_t *sem, u32_t timeout)
 {
     rt_err_t ret;
@@ -354,6 +401,11 @@ void sys_mutex_set_invalid(sys_mutex_t *mutex)
 
 /* ====================== Mailbox ====================== */
 
+/*
+ * Create an empty mailbox for maximum "size" elements
+ *
+ * @return the operation status, ERR_OK on OK; others on error
+ */
 err_t sys_mbox_new(sys_mbox_t *mbox, int size)
 {
     static unsigned short counter = 0;
@@ -376,6 +428,9 @@ err_t sys_mbox_new(sys_mbox_t *mbox, int size)
     return ERR_MEM;
 }
 
+/*
+ * Deallocate a mailbox
+ */
 void sys_mbox_free(sys_mbox_t *mbox)
 {
     RT_DEBUG_NOT_IN_INTERRUPT;
@@ -399,6 +454,11 @@ void sys_mbox_post(sys_mbox_t *mbox, void *msg)
     return;
 }
 
+/*
+ * Try to post the "msg" to the mailbox
+ *
+ * @return return ERR_OK if the "msg" is posted, ERR_MEM if the mailbox is full
+ */
 err_t sys_mbox_trypost(sys_mbox_t *mbox, void *msg)
 {
     if (rt_mb_send(*mbox, (rt_uint32_t)msg) == RT_EOK)
@@ -502,6 +562,11 @@ void sys_mbox_set_invalid(sys_mbox_t *mbox)
 
 /* ====================== System ====================== */
 
+/*
+ * Start a new thread named "name" with priority "prio" that will begin
+ * its execution in the function "thread()". The "arg" argument will be
+ * passed as an argument to the thread() function
+ */
 sys_thread_t sys_thread_new(const char    *name,
                             lwip_thread_fn thread,
                             void          *arg,
@@ -651,3 +716,17 @@ RTM_EXPORT(dhcp_stop);
 #include <lwip/netifapi.h>
 RTM_EXPORT(netifapi_netif_set_addr);
 #endif
+
+#if LWIP_NETIF_LINK_CALLBACK
+RTM_EXPORT(netif_set_link_callback);
+#endif
+
+#if LWIP_NETIF_STATUS_CALLBACK
+RTM_EXPORT(netif_set_status_callback);
+#endif
+
+RTM_EXPORT(netif_find);
+RTM_EXPORT(netif_set_addr);
+RTM_EXPORT(netif_set_ipaddr);
+RTM_EXPORT(netif_set_gw);
+RTM_EXPORT(netif_set_netmask);

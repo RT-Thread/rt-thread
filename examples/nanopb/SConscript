@@ -1,0 +1,13 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+src	= Split('''
+simple.c
+simple.pb.c
+''')
+CPPPATH = [RTT_ROOT + '/examples/nanopb']
+
+group = DefineGroup('Nanopb_test', src, depend = ['RT_USING_NANOPB'], CPPPATH = CPPPATH)
+
+Return('group')

@@ -94,7 +94,7 @@ static rt_err_t rt_serial_close(rt_device_t dev)
 	return RT_EOK;
 }
 
-static rt_err_t rt_serial_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_serial_control(rt_device_t dev, int cmd, void *args)
 {
 	return RT_EOK;
 }

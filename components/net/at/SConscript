@@ -1,0 +1,26 @@
+from building import *
+
+cwd = GetCurrentDir()
+path = [cwd + '/include']
+
+src = Glob('src/at_utils.c')
+
+if GetDepend(['AT_USING_CLI']):
+    src += Glob('src/at_cli.c')
+
+if GetDepend(['AT_USING_SERVER']):
+    src += Split('''
+    src/at_server.c
+    src/at_base_cmd.c
+    ''')
+    
+if GetDepend(['AT_USING_CLIENT']):
+    src += Glob('src/at_client.c')
+    
+if GetDepend(['AT_USING_SOCKET']):
+    src += Glob('at_socket/*.c')
+    path += [cwd + '/at_socket']   
+
+group = DefineGroup('AT', src, depend = ['RT_USING_AT'], CPPPATH = path)
+
+Return('group')

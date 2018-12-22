@@ -215,7 +215,7 @@ typedef struct rt_mailbox *osMailQId;
 /// \note CAN BE CHANGED: \b os_thread_def is implementation specific in every CMSIS-RTOS.
 typedef const struct os_thread_def  {
 	const char *name;
-	void (*entry)(void *parameter);
+	os_pthread entry;
 	rt_uint32_t stack_size;
 	rt_uint8_t priority;
 	rt_uint32_t tick;
@@ -225,7 +225,7 @@ typedef const struct os_thread_def  {
 /// \note CAN BE CHANGED: \b os_timer_def is implementation specific in every CMSIS-RTOS.
 typedef const struct os_timer_def  {
 	const char *name;
-	void (*timeout)(void *parameter);
+    os_ptimer timeout;
 	void *parameter;
 	rt_tick_t time;
 	rt_uint8_t flag;
@@ -257,8 +257,8 @@ typedef const struct os_pool_def  {
 /// \note CAN BE CHANGED: \b os_messageQ_def is implementation specific in every CMSIS-RTOS.
 typedef const struct os_messageQ_def  {
 	const char *name;
-	rt_size_t msg_size;
 	rt_size_t max_msgs;
+	rt_size_t msg_size;
 	rt_uint8_t flag;
 } osMessageQDef_t;
 
@@ -294,7 +294,7 @@ typedef struct  {
 /// \param[in]     argument      pointer that is passed to the thread function as start argument.
 /// \return status code that indicates the execution status of the function.
 /// \note MUST REMAIN UNCHANGED: \b osKernelStart shall be consistent in every CMSIS-RTOS. 
-osStatus osKernelStart (osThreadDef_t *thread_def, void *argument);
+osStatus osKernelStart (void);
    
 /// Check if the RTOS kernel is already started.
 /// \note MUST REMAIN UNCHANGED: \b osKernelRunning shall be consistent in every CMSIS-RTOS. 
@@ -498,6 +498,11 @@ osStatus osMutexWait (osMutexId mutex_id, uint32_t millisec);
 /// \note MUST REMAIN UNCHANGED: \b osMutexRelease shall be consistent in every CMSIS-RTOS.
 osStatus osMutexRelease (osMutexId mutex_id);
 
+/// Delete a Mutex that was created by \ref osMutexCreate.
+/// \param[in]     mutex_id      mutex ID obtained by \ref osMutexCreate.
+/// \return status code that indicates the execution status of the function.
+/// \note MUST REMAIN UNCHANGED: \b osMutexDelete shall be consistent in every CMSIS-RTOS.
+osStatus osMutexDelete (osMutexId mutex_id);
 
 //  ==== Semaphore Management Functions ====
 
@@ -560,7 +565,7 @@ extern osPoolDef_t os_pool_def_##name
 #else                            // define the object
 #define osPoolDef(name, no, type)   \
 osPoolDef_t os_pool_def_##name = \
-{ (no), sizeof(type), NULL }
+{"pool", (no), sizeof(type) }
 #endif
 
 /// \brief Access a Memory Pool definition.
@@ -614,7 +619,7 @@ extern osMessageQDef_t os_messageQ_def_##name
 #else                            // define the object
 #define osMessageQDef(name, queue_sz, type)   \
 osMessageQDef_t os_messageQ_def_##name = \
-{ (queue_sz), sizeof (type)  }
+{"msg", (queue_sz), 4  }
 #endif
 
 /// \brief Access a Message Queue Definition.

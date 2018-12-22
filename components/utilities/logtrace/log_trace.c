@@ -1,21 +1,7 @@
 /*
- * File      : log_trace.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2013, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -41,7 +27,7 @@ static struct rt_device _log_device;
 static rt_device_t _traceout_device = RT_NULL;
 
 /* define a default lg session. The name is empty. */
-static struct log_trace_session _def_session = {{"\0"}, LOG_TRACE_LEVEL_INFO};
+static struct log_trace_session _def_session = {{"\0"}, LOG_TRACE_LEVEL_DEFAULT};
 static const struct log_trace_session *_the_sessions[LOG_TRACE_MAX_SESSION] = {&_def_session};
 /* there is a default session at least */
 static rt_uint16_t _the_sess_nr = 1;
@@ -267,16 +253,31 @@ void __logtrace_vfmtout(const struct log_trace_session *session,
     RT_ASSERT(session);
     RT_ASSERT(fmt);
 
-    rt_snprintf(_trace_buf, sizeof(_trace_buf), "[%08x][", rt_tick_get());
-    if (_traceout_device != RT_NULL)
+    /* it's default session */
+    if (session->id.name[0] == '\0')
     {
-        rt_device_write(_traceout_device, -1, _trace_buf, 11);
-        rt_device_write(_traceout_device, -1,
-                session->id.name, _idname_len(session->id.num));
+        rt_snprintf(_trace_buf, sizeof(_trace_buf), "[%08x]", rt_tick_get());
+        if (_traceout_device != RT_NULL)
+        {
+            rt_device_write(_traceout_device, -1, _trace_buf, 10);
+        }
+
+        ptr = &_trace_buf[0];
+    }
+    else
+    {
+        rt_snprintf(_trace_buf, sizeof(_trace_buf), "[%08x][", rt_tick_get());
+        if (_traceout_device != RT_NULL)
+        {
+            rt_device_write(_traceout_device, -1, _trace_buf, 11);
+            rt_device_write(_traceout_device, -1,
+                    session->id.name, _idname_len(session->id.num));
+        }
+
+        _trace_buf[0] = ']';
+        ptr = &_trace_buf[1];
     }
 
-    _trace_buf[0] = ']';
-    ptr = &_trace_buf[1];
     length = rt_vsnprintf(ptr, LOG_TRACE_BUFSZ, fmt, argptr);
 
     if (length >= LOG_TRACE_BUFSZ)
@@ -361,32 +362,53 @@ static rt_size_t _log_write(rt_device_t dev, rt_off_t pos, const void *buffer, r
     return size;
 }
 
-static rt_err_t _log_control(rt_device_t dev, rt_uint8_t cmd, void *arg)
+static rt_err_t _log_control(rt_device_t dev, int cmd, void *arg)
 {
     if (_traceout_device == RT_NULL) return -RT_ERROR;
 
     return rt_device_control(_traceout_device, cmd, arg);
 }
 
-void log_trace_init(void)
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops log_device_ops = 
+{
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    _log_write,
+    _log_control
+};
+#endif
+
+int log_trace_init(void)
 {
     rt_memset(&_log_device, 0x00, sizeof(_log_device));
 
     _log_device.type = RT_Device_Class_Char;
+#ifdef RT_USING_DEVICE_OPS
+    _log_device.ops     = &log_device_ops;
+#else
     _log_device.init    = RT_NULL;
     _log_device.open    = RT_NULL;
     _log_device.close   = RT_NULL;
     _log_device.read    = RT_NULL;
     _log_device.write   = _log_write;
     _log_device.control = _log_control;
+#endif
 
     /* no indication and complete callback */
     _log_device.rx_indicate = RT_NULL;
     _log_device.tx_complete = RT_NULL;
 
     rt_device_register(&_log_device, "log", RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_RDWR);
-    return ;
+
+	/* set console as default device */
+	_traceout_device = rt_console_get_device();
+
+    return 0;
 }
+INIT_DEVICE_EXPORT(log_trace_init);
 
 rt_device_t log_trace_get_device(void)
 {
@@ -404,7 +426,7 @@ rt_err_t log_trace_set_device(const char *device_name)
         rt_err_t result;
 
         /* open device */
-        result = rt_device_open(output_device, RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_RDWR);
+        result = rt_device_open(output_device, RT_DEVICE_FLAG_STREAM | RT_DEVICE_OFLAG_RDWR);
         if (result != RT_EOK)
         {
             rt_kprintf("Open trace device failed.\n");

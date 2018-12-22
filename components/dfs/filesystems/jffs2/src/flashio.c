@@ -16,7 +16,7 @@
 #include "nodelist.h"
 #include <rtdevice.h>
 
-int jffs2_flash_read(struct jffs2_sb_info * c, uint32_t offset,
+int jffs2_flash_read(struct jffs2_sb_info * c, cyg_uint32 offset,
 		const size_t size,
 		size_t * return_size,
 		unsigned char *buffer)
@@ -33,7 +33,7 @@ int jffs2_flash_read(struct jffs2_sb_info * c, uint32_t offset,
 }
 
 int jffs2_flash_write(struct jffs2_sb_info * c,
-		uint32_t offset, const size_t size,
+		cyg_uint32 offset, const size_t size,
 		size_t * return_size, unsigned char *buffer)
 {
 	uint32_t len;

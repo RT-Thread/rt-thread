@@ -64,12 +64,11 @@
 
 /* SECTION: the runtime libc library */
 /* the runtime libc library */
-#define RT_USING_NEWLIB
+#define RT_USING_LIBC
 #define RT_USING_PTHREADS
 
 /* Using Module System */
 #define RT_USING_MODULE
-#define RT_USING_LIBDL
 
 /* SECTION: Device System */
 /* Using Device System */
@@ -77,6 +76,7 @@
 
 #define RT_USING_DEVICE_IPC
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
@@ -91,6 +91,7 @@
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
 #define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_USING_MSH
 
 /* SECTION: C++ support */
 /* Using C++ support */
@@ -146,7 +147,7 @@
 #define RT_LWIP_DNS
 
 /* Trace LwIP protocol */
-// #define RT_LWIP_DEBUG 
+// #define RT_LWIP_DEBUG
 
 /* Enable ICMP protocol */
 #define RT_LWIP_ICMP
@@ -176,22 +177,13 @@
 /* #define RT_LWIP_DHCP */
 
 /* ip address of target */
-#define RT_LWIP_IPADDR0	192
-#define RT_LWIP_IPADDR1	168
-#define RT_LWIP_IPADDR2	1
-#define RT_LWIP_IPADDR3	30
+#define RT_LWIP_IPADDR "192.168.1.30"
 
 /* gateway address of target */
-#define RT_LWIP_GWADDR0	192
-#define RT_LWIP_GWADDR1	168
-#define RT_LWIP_GWADDR2	1
-#define RT_LWIP_GWADDR3	1
+#define RT_LWIP_GWADDR  "192.168.1.1"
 
 /* mask address of target */
-#define RT_LWIP_MSKADDR0	255
-#define RT_LWIP_MSKADDR1	255
-#define RT_LWIP_MSKADDR2	255
-#define RT_LWIP_MSKADDR3	0
+#define RT_LWIP_MSKADDR  "255.255.255.0"
 
 /* the number of blocks for pbuf */
 #define RT_LWIP_PBUF_NUM	16
@@ -247,13 +239,16 @@
 
 /*
  * Note on FTK:
- * 
+ *
  * FTK depends :
  * #define RT_USING_NEWLIB
  * #define DFS_USING_WORKDIR
- * 
+ *
  * And the maximal length must great than 64
  * #define RT_DFS_ELM_MAX_LFN	128
  */
+
+#define RT_USING_COMPONENTS_INIT
+#define RT_USING_USER_MAIN
 
 #endif

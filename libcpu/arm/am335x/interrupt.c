@@ -1,15 +1,12 @@
 /*
- * File      : interrupt.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2011, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2013-07-06     Bernard      first version
+ * 2015-11-06     zchong       support iar compiler
  */
 
 #include <rthw.h>
@@ -53,13 +50,22 @@ void rt_dump_aintc(void)
 
 const unsigned int AM335X_VECTOR_BASE = 0x4030FC00;
 extern void rt_cpu_vector_set_base(unsigned int addr);
+#ifdef __ICCARM__
+extern int __vector;
+#else
 extern int system_vectors;
+#endif
 
 static void rt_hw_vector_init(void)
 {
     unsigned int *dest = (unsigned int *)AM335X_VECTOR_BASE;
+    
+#ifdef __ICCARM__
+    unsigned int *src =  (unsigned int *)&__vector;
+#else
     unsigned int *src =  (unsigned int *)&system_vectors;
-
+#endif
+    
     rt_memcpy(dest, src, 16 * 4);
     rt_cpu_vector_set_base(AM335X_VECTOR_BASE);
 }
@@ -152,7 +158,7 @@ void rt_hw_interrupt_ack(int fiq_irq)
  * @param old_handler the old interrupt service routine
  */
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
-        void *param, char *name)
+        void *param, const char *name)
 {
     rt_isr_handler_t old_handler = RT_NULL;
 
@@ -203,3 +209,5 @@ void rt_dump_isr_table(void)
     }
 }
 /*@}*/
+
+

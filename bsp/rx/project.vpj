@@ -1,0 +1,326 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+	Version="10.0"
+	VendorName="SlickEdit"
+	TemplateName="Other C/C++"
+	WorkingDir=".">
+	<Config
+		Name="Debug"
+		Type="cpp"
+		DebugCallbackName="gdb"
+		OutputFile="%bdproject"
+		CompilerConfigName="Latest Version">
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				CaptureOutputWith="ProcessBuffer"
+				OutputExts="*.o"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec CmdLine='cc -c -g %i %defd -o "%bd%n.o" "%f"'/>
+			</Target>
+			<Target
+				Name="Link"
+				MenuCaption="&amp;Link">
+				<Exec CmdLine='cc -g -o "%o" %f %libs'/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec CmdLine='"%(VSLICKBIN1)vsbuild" build "%w" "%r"'/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec CmdLine='"%(VSLICKBIN1)vsbuild" rebuild "%w" "%r"'/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				SaveOption="SaveNone"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				RunFromDir="%rw">
+				<Exec CmdLine='vsdebugio -prog "%o"'/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				SaveOption="SaveNone"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				RunFromDir="%rw">
+				<Exec CmdLine='"%o"'/>
+			</Target>
+		</Menu>
+	</Config>
+	<Config
+		Name="Release"
+		Type="cpp"
+		DebugCallbackName="gdb"
+		OutputFile="%bdproject"
+		CompilerConfigName="Latest Version">
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveCurrent"
+				OutputExts="*.o"
+				RunFromDir="%rw">
+				<Exec CmdLine='cc -c -O %i %defd -o "%bd%n.o" "%f"'/>
+			</Target>
+			<Target
+				Name="Link"
+				MenuCaption="&amp;Link">
+				<Exec CmdLine='cc -O -o "%o" %f %libs'/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec CmdLine='"%(VSLICKBIN1)vsbuild" build "%w" "%r"'/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec CmdLine='"%(VSLICKBIN1)vsbuild" rebuild "%w" "%r"'/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				SaveOption="SaveNone"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				RunFromDir="%rw">
+				<Exec CmdLine='vsdebugio -prog "%o"'/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				SaveOption="SaveNone"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				RunFromDir="%rw">
+				<Exec CmdLine='"%o"'/>
+			</Target>
+		</Menu>
+	</Config>
+	<Rules Name="Compile">
+		<Rule
+			InputExts="*.s"
+			OutputExts="*.o"
+			LinkObject="1">
+			<Exec CmdLine='as -o "%bd%n.o" "%f"'/>
+		</Rule>
+	</Rules>
+	<CustomFolders>
+		<Folder
+			Name="Source Files"
+			Filters="*.c;*.C;*.cc;*.cpp;*.cp;*.cxx;*.c++;*.prg;*.pas;*.dpr;*.asm;*.s;*.bas;*.java;*.cs;*.sc;*.e;*.cob;*.html;*.rc;*.tcl;*.py;*.pl;*.d;*.m;*.mm;*.go">
+		</Folder>
+		<Folder
+			Name="Header Files"
+			Filters="*.h;*.H;*.hh;*.hpp;*.hxx;*.inc;*.sh;*.cpy;*.if">
+		</Folder>
+		<Folder
+			Name="Resource Files"
+			Filters="*.ico;*.cur;*.dlg"/>
+		<Folder
+			Name="Bitmaps"
+			Filters="*.bmp"/>
+		<Folder
+			Name="Other Files"
+			Filters="">
+		</Folder>
+	</CustomFolders>
+	<Files AutoFolders="DirectoryView">
+		<Folder Name="applications">
+			<F N="applications/application.c"/>
+			<F N="applications/startup.c"/>
+		</Folder>
+		<Folder Name="../../components">
+			<Folder Name="drivers">
+				<Folder Name="include">
+					<Folder Name="drivers">
+						<F N="../../components/drivers/include/drivers/serial.h"/>
+					</Folder>
+				</Folder>
+				<Folder Name="serial">
+					<F N="../../components/drivers/serial/serial.c"/>
+				</Folder>
+			</Folder>
+			<Folder Name="finsh">
+				<F N="../../components/finsh/cmd.c"/>
+				<F N="../../components/finsh/finsh.h"/>
+				<F N="../../components/finsh/finsh_compiler.c"/>
+				<F N="../../components/finsh/finsh_error.c"/>
+				<F N="../../components/finsh/finsh_error.h"/>
+				<F N="../../components/finsh/finsh_heap.c"/>
+				<F N="../../components/finsh/finsh_heap.h"/>
+				<F N="../../components/finsh/finsh_init.c"/>
+				<F N="../../components/finsh/finsh_node.c"/>
+				<F N="../../components/finsh/finsh_node.h"/>
+				<F N="../../components/finsh/finsh_ops.c"/>
+				<F N="../../components/finsh/finsh_ops.h"/>
+				<F N="../../components/finsh/finsh_parser.c"/>
+				<F N="../../components/finsh/finsh_parser.h"/>
+				<F N="../../components/finsh/finsh_token.c"/>
+				<F N="../../components/finsh/finsh_token.h"/>
+				<F N="../../components/finsh/finsh_var.c"/>
+				<F N="../../components/finsh/finsh_var.h"/>
+				<F N="../../components/finsh/finsh_vm.c"/>
+				<F N="../../components/finsh/finsh_vm.h"/>
+				<F N="../../components/finsh/msh.c"/>
+				<F N="../../components/finsh/msh.h"/>
+				<F N="../../components/finsh/msh_cmd.c"/>
+				<F N="../../components/finsh/SConscript"/>
+				<F N="../../components/finsh/shell.c"/>
+				<F N="../../components/finsh/shell.h"/>
+				<F N="../../components/finsh/symbol.c"/>
+			</Folder>
+		</Folder>
+		<Folder Name="drivers">
+			<F N="drivers/board.c"/>
+			<F N="drivers/board.h"/>
+			<F N="drivers/uart.c"/>
+			<F N="drivers/uart.h"/>
+		</Folder>
+		<Folder Name="../../include">
+			<F N="../../include/rtdebug.h"/>
+			<F N="../../include/rtdef.h"/>
+			<F N="../../include/rthw.h"/>
+			<F N="../../include/rtm.h"/>
+			<F N="../../include/rtservice.h"/>
+			<F N="../../include/rtthread.h"/>
+		</Folder>
+		<Folder Name="../../libcpu">
+			<Folder Name="rx">
+				<F N="../../libcpu/rx/context_iar.S"/>
+				<F N="../../libcpu/rx/cpuconfig.h"/>
+				<F N="../../libcpu/rx/cpuport.c"/>
+			</Folder>
+		</Folder>
+		<Folder Name="RPDL">
+			<F N="RPDL/interrupt_adc_10.c"/>
+			<F N="RPDL/interrupt_adc_12.c"/>
+			<F N="RPDL/interrupt_bsc.c"/>
+			<F N="RPDL/interrupt_cmt.c"/>
+			<F N="RPDL/interrupt_dmac.c"/>
+			<F N="RPDL/interrupt_exdmac.c"/>
+			<F N="RPDL/interrupt_iic.c"/>
+			<F N="RPDL/Interrupt_INTC.c"/>
+			<F N="RPDL/interrupt_mtu2.c"/>
+			<F N="RPDL/interrupt_not_rpdl.c"/>
+			<F N="RPDL/interrupt_poe.c"/>
+			<F N="RPDL/Interrupt_RTC.c"/>
+			<F N="RPDL/interrupt_sci.c"/>
+			<F N="RPDL/Interrupt_SPI.c"/>
+			<F N="RPDL/Interrupt_TMR.c"/>
+			<F N="RPDL/interrupt_wdt.c"/>
+			<F N="RPDL/macro.h"/>
+			<F N="RPDL/r_pdl_adc_10.h"/>
+			<F N="RPDL/r_pdl_adc_10_rx62nxx.h"/>
+			<F N="RPDL/r_pdl_adc_12.h"/>
+			<F N="RPDL/r_pdl_adc_12_rx62nxx.h"/>
+			<F N="RPDL/r_pdl_bsc.h"/>
+			<F N="RPDL/r_pdl_bsc_rx62nxx.h"/>
+			<F N="RPDL/r_pdl_cgc.h"/>
+			<F N="RPDL/r_pdl_cgc_rx62nxx.h"/>
+			<F N="RPDL/r_pdl_cmt.h"/>
+			<F N="RPDL/r_pdl_cmt_rx62nxx.h"/>
+			<F N="RPDL/r_pdl_common_defs_rx62nxx.h"/>
+			<F N="RPDL/r_pdl_crc.h"/>
+			<F N="RPDL/r_pdl_crc_rx62nxx.h"/>
+			<F N="RPDL/r_pdl_dac_10.h"/>
+			<F N="RPDL/r_pdl_dac_10_rx62nxx.h"/>
+			<F N="RPDL/r_pdl_definitions.h"/>
+			<F N="RPDL/r_pdl_dmac.h"/>
+			<F N="RPDL/r_pdl_dmac_rx62nxx.h"/>
+			<F N="RPDL/r_pdl_dtc.h"/>
+			<F N="RPDL/r_pdl_dtc_rx62nxx.h"/>
+			<F N="RPDL/r_pdl_exdmac.h"/>
+			<F N="RPDL/r_pdl_exdmac_rx62nxx.h"/>
+			<F N="RPDL/r_pdl_iic.h"/>
+			<F N="RPDL/r_pdl_iic_rx62nxfp.h"/>
+			<F N="RPDL/r_pdl_iic_rx62nxnfp.h"/>
+			<F N="RPDL/r_pdl_intc.h"/>
+			<F N="RPDL/r_pdl_intc_rx62nxx.h"/>
+			<F N="RPDL/r_pdl_io_port.h"/>
+			<F N="RPDL/r_pdl_io_port_rx62nxbg.h"/>
+			<F N="RPDL/r_pdl_io_port_rx62nxfb.h"/>
+			<F N="RPDL/r_pdl_io_port_rx62nxfp.h"/>
+			<F N="RPDL/r_pdl_io_port_rx62nxld.h"/>
+			<F N="RPDL/r_pdl_io_port_rx62nxle.h"/>
+			<F N="RPDL/r_pdl_iwdt.h"/>
+			<F N="RPDL/r_pdl_iwdt_RX62Nxx.h"/>
+			<F N="RPDL/r_pdl_lpc.h"/>
+			<F N="RPDL/r_pdl_lpc_rx62nxx.h"/>
+			<F N="RPDL/r_pdl_lvd.h"/>
+			<F N="RPDL/r_pdl_lvd_RX62Nxx.h"/>
+			<F N="RPDL/r_pdl_mcu.h"/>
+			<F N="RPDL/r_pdl_mcu_rx62nxx.h"/>
+			<F N="RPDL/r_pdl_mtu2.h"/>
+			<F N="RPDL/r_pdl_mtu2_rx62nxx.h"/>
+			<F N="RPDL/r_pdl_pfc.h"/>
+			<F N="RPDL/r_pdl_pfc_rx62nxx.h"/>
+			<F N="RPDL/r_pdl_poe.h"/>
+			<F N="RPDL/r_pdl_poe_rx62nxx.h"/>
+			<F N="RPDL/r_pdl_ppg.h"/>
+			<F N="RPDL/r_pdl_ppg_rx62nxx.h"/>
+			<F N="RPDL/r_pdl_rtc.h"/>
+			<F N="RPDL/r_pdl_rtc_RX62Nxx.h"/>
+			<F N="RPDL/r_pdl_sci.h"/>
+			<F N="RPDL/r_pdl_sci_rx62nxx.h"/>
+			<F N="RPDL/r_pdl_spi.h"/>
+			<F N="RPDL/r_pdl_spi_rx62nxx.h"/>
+			<F N="RPDL/r_pdl_tmr.h"/>
+			<F N="RPDL/r_pdl_tmr_rx62nxx.h"/>
+			<F N="RPDL/r_pdl_user_definitions.h"/>
+			<F N="RPDL/r_pdl_wdt.h"/>
+			<F N="RPDL/r_pdl_wdt_rx62nxx.h"/>
+			<F N="RPDL/rx62n_library.a"/>
+		</Folder>
+		<Folder Name="../../src">
+			<F N="../../src/clock.c"/>
+			<F N="../../src/device.c"/>
+			<F N="../../src/idle.c"/>
+			<F N="../../src/ipc.c"/>
+			<F N="../../src/irq.c"/>
+			<F N="../../src/kservice.c"/>
+			<F N="../../src/mem.c"/>
+			<F N="../../src/memheap.c"/>
+			<F N="../../src/mempool.c"/>
+			<F N="../../src/object.c"/>
+			<F N="../../src/scheduler.c"/>
+			<F N="../../src/SConscript"/>
+			<F N="../../src/slab.c"/>
+			<F N="../../src/thread.c"/>
+			<F N="../../src/timer.c"/>
+		</Folder>
+		<Folder Name="E:/">
+			<Folder Name="ForTest">
+				<Folder Name="iar_rx">
+					<Folder Name="rx">
+						<Folder Name="inc">
+							<F N="E:/ForTest/iar_rx/rx/inc/iorx62n.h"/>
+						</Folder>
+					</Folder>
+				</Folder>
+			</Folder>
+		</Folder>
+		<F N="rtconfig.h"/>
+	</Files>
+</Project>

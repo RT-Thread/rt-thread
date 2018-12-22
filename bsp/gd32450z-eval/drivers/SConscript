@@ -1,0 +1,38 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd     = os.path.join(str(Dir('#')), 'drivers')
+
+# add the general drivers.
+src = Split("""
+board.c
+""")
+
+CPPPATH = [cwd]
+
+# add uart drivers.
+if GetDepend('RT_USING_SERIAL'):
+    src += ['drv_usart.c']
+
+# add sdram drivers.
+if GetDepend('BSP_USING_SDRAM'):
+    src += ['drv_exmc_sdram.c']
+
+# add Ethernet drivers.
+if GetDepend('RT_USING_LWIP'):
+    src += ['drv_enet.c', 'synopsys_emac.c']
+    
+# add lcd drivers.
+if GetDepend('PKG_USING_GUIENGINE'):
+    src += ['drv_lcd.c', 'gd32f450z_lcd_eval.c']
+
+# add spi flash drivers.
+if GetDepend('RT_USING_SFUD'):
+    src += ['drv_spi_flash.c', 'drv_spi.c']    
+elif GetDepend('RT_USING_SPI'):
+    src += ['drv_spi.c']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

@@ -16,7 +16,7 @@ elif CROSS_TOOL == 'keil':
 	EXEC_PATH 	= 'C:/Keil'
 elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
-	IAR_PATH 	= 'C:/Program Files/IAR Systems/Embedded Workbench 6.0 Evaluation'
+	EXEC_PATH 	= 'C:/Program Files/IAR Systems/Embedded Workbench 6.0 Evaluation'
 
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -26,7 +26,8 @@ BUILD = 'debug'
 if PLATFORM == 'gcc':
     # toolchains
     PREFIX = 'arm-none-eabi-'
-    CC = PREFIX + 'gcc'
+    CC  = PREFIX + 'gcc'
+    CXX = PREFIX + 'g++'
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
@@ -37,6 +38,7 @@ if PLATFORM == 'gcc':
 
     DEVICE = ' -mcpu=cortex-m3 -mthumb'
     CFLAGS = DEVICE
+    CXXFLAGS = CFLAGS
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc17xx.map,-cref,-u,Reset_Handler -T rtthread-lpc17xx.ld'
 
@@ -54,6 +56,7 @@ if PLATFORM == 'gcc':
 elif PLATFORM == 'armcc':
     # toolchains
     CC = 'armcc'
+    CXX = 'armcc'
     AS = 'armasm'
     AR = 'armar'
     LINK = 'armlink'
@@ -65,6 +68,7 @@ elif PLATFORM == 'armcc':
     LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-lpc17xx.map --scatter rtthread-lpc17xx.sct'
 
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
+    CXXFLAGS = CFLAGS
     LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
 
     EXEC_PATH += '/arm/bin40/'
@@ -101,7 +105,7 @@ elif PLATFORM == 'iar':
     CFLAGS += ' --cpu=Cortex-M3' 
     CFLAGS += ' -e' 
     CFLAGS += ' --fpu=None'
-    CFLAGS += ' --dlib_config "' + IAR_PATH + '/arm/INC/c/DLib_Config_Normal.h"'    
+    CFLAGS += ' --dlib_config "' + EXEC_PATH + '/arm/INC/c/DLib_Config_Normal.h"'    
     CFLAGS += ' -Ol'    
     CFLAGS += ' --use_c++_inline'
         
@@ -116,6 +120,6 @@ elif PLATFORM == 'iar':
     LFLAGS += ' --semihosting' 
     LFLAGS += ' --entry __iar_program_start'    
 
-    EXEC_PATH = IAR_PATH + '/arm/bin/'
+    EXEC_PATH = EXEC_PATH + '/arm/bin/'
     RT_USING_MINILIBC = False
     POST_ACTION = ''

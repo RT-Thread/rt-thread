@@ -81,8 +81,8 @@ _reswitch
     STR     r1, [r0]
     BX      LR
 
-; r0 --> swith from thread stack
-; r1 --> swith to thread stack
+; r0 --> switch from thread stack
+; r1 --> switch to thread stack
 ; psr, pc, lr, r12, r3, r2, r1, r0 are pushed into [from] stack
     EXPORT PendSV_Handler
 PendSV_Handler:
@@ -104,7 +104,7 @@ PendSV_Handler:
     LDR     r0, =rt_interrupt_from_thread
     LDR     r1, [r0]
     CMP     r1, #0x00
-    BEQ     swtich_to_thread        ; skip register save at the first time
+    BEQ     switch_to_thread        ; skip register save at the first time
 
     MRS     r1, psp                 ; get from thread stack pointer
 
@@ -120,7 +120,7 @@ PendSV_Handler:
     MOV     r7, r11
     STMIA   r1!, {r4 - r7}          ; push thread {r8 - r11} high register to thread stack
 
-swtich_to_thread
+switch_to_thread
     LDR     r1, =rt_interrupt_to_thread
     LDR     r1, [r1]
     LDR     r1, [r1]                ; load thread stack pointer

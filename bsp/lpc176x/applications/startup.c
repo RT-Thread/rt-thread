@@ -1,11 +1,7 @@
 /*
- * File      : startup.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -16,20 +12,13 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#include "LPC17xx.h"
-#include "board.h"
-
-#ifdef RT_USING_DFS
-#include "sd.h"
-#endif
-
 /**
- * @addtogroup LPC17
+ * @addtogroup LPC176x
  */
 
 /*@{*/
-
-extern int  rt_application_init(void);
+#include <board.h>
+extern int rt_application_init(void);
 
 #ifdef __CC_ARM
 extern int Image$$RW_IRAM1$$ZI$$Limit;
@@ -37,26 +26,6 @@ extern int Image$$RW_IRAM1$$ZI$$Limit;
 #pragma section="HEAP"
 #else
 extern int __bss_end;
-#endif
-
-#ifdef  DEBUG
-/*******************************************************************************
-* Function Name  : assert_failed
-* Description    : Reports the name of the source file and the source line number
-*                  where the assert error has occurred.
-* Input          : - file: pointer to the source file name
-*                  - line: assert error line source number
-* Output         : None
-* Return         : None
-*******************************************************************************/
-void assert_failed(u8* file, u32 line)
-{
-	rt_kprintf("\n\r Wrong parameter value detected on\r\n");
-	rt_kprintf("       file  %s\r\n", file);
-	rt_kprintf("       line  %d\r\n", line);
-
-	while (1) ;
-}
 #endif
 
 /**
@@ -83,14 +52,6 @@ void rtthread_startup(void)
 
 	/* initialize scheduler system */
 	rt_system_scheduler_init();
-
-#ifdef RT_USING_DEVICE
-#ifdef RT_USING_DFS
-	rt_hw_sdcard_init();
-#endif
-	/* initialize all device */
-	rt_device_init_all();
-#endif
 
 	/* initialize application */
 	rt_application_init();

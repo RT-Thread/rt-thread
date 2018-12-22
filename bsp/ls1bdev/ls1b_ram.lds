@@ -50,9 +50,16 @@ SECTIONS
          . = ALIGN(4);
          __rt_init_start = .;
          KEEP(*(SORT(.rti_fn*)))
-             __rt_init_end = .;
+          __rt_init_end = .;
          . = ALIGN(4);
     }
+    
+    .eh_frame_hdr : 
+    { 
+         *(.eh_frame_hdr) 
+         *(.eh_frame_entry)
+    }
+    .eh_frame : ONLY_IF_RO { KEEP (*(.eh_frame)) }
 
     . = ALIGN(4);
     .data : 

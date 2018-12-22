@@ -1,4 +1,12 @@
 /*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
+/*
  * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
  * unrestricted use provided that this legend is included on all tape
  * media and as a part of the software program in whole or part.  Users
@@ -38,18 +46,12 @@
 #include <lwip/sockets.h>
 
 #include <string.h>
+#include <stdint.h>
 
 #ifndef RT_USING_MINILIBC
 typedef unsigned int u_int;
 typedef unsigned char u_char;
 typedef unsigned long u_long;
-
-typedef rt_int8_t   int8_t;
-typedef rt_uint8_t  uint8_t;
-typedef rt_int16_t  int16_t;
-typedef rt_uint16_t uint16_t;
-typedef rt_int32_t  int32_t;
-typedef rt_uint32_t uint32_t;
 #else
 #include <sys/types.h>
 #include <stdint.h>

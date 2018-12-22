@@ -64,6 +64,7 @@
 
 // <section name="RT_USING_DEVICE" description="Using Device Driver Framework" default="true" >
 #define RT_USING_DEVICE
+#define RT_USING_DEVICE_IPC
 // <bool name="RT_USING_UART0" description="Using UART0" default="true" />
 #define RT_USING_UART0
 // <integer name="RT_UART_RX_BUFFER_SIZE" description="The buffer size for UART reception" default="64" />
@@ -87,8 +88,8 @@
 // </section>
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
-// <bool name="RT_USING_NEWLIB" description="Using newlib library, only available under GNU GCC" default="true" />
-#define RT_USING_NEWLIB
+// <bool name="RT_USING_LIBC" description="Using C library" default="true" />
+#define RT_USING_LIBC
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
 #define RT_USING_PTHREADS
 // </section>
@@ -112,8 +113,8 @@
 #define RT_DFS_ELM_CODE_PAGE	936
 // <bool name="RT_DFS_ELM_CODE_PAGE_FILE" description="Using OEM code page file" default="false" />
 // #define RT_DFS_ELM_CODE_PAGE_FILE
-// <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="256" />
-#define RT_DFS_ELM_MAX_LFN	256
+// <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="255" />
+#define RT_DFS_ELM_MAX_LFN	255
 // <bool name="RT_USING_DFS_YAFFS2" description="Using YAFFS2" default="false" />
 // #define RT_USING_DFS_YAFFS2
 // <bool name="RT_USING_DFS_UFFS" description="Using UFFS" default="false" />
@@ -128,8 +129,6 @@
 
 // <section name="RT_USING_LWIP" description="lwip, a lightweight TCP/IP protocol stack" default="true" >
 #define RT_USING_LWIP
-// <bool name="RT_LWIP_USING_RT_MEM" description="Using RT-Thread memory management for LwIP" default="true" />
-#define RT_LWIP_USING_RT_MEM
 // <bool name="RT_LWIP_ICMP" description="Enable ICMP protocol" default="true" />
 #define RT_LWIP_ICMP
 // <bool name="RT_LWIP_IGMP" description="Enable IGMP protocol" default="false" />
@@ -165,73 +164,13 @@
 // <integer name="RT_LWIP_ETHTHREAD_STACKSIZE" description="the stack size of ethnetif thread" default="512" />
 #define RT_LWIP_ETHTHREAD_STACKSIZE	512
 // <ipaddr name="RT_LWIP_IPADDR" description="IP address of device" default="192.168.1.30" />
-#define RT_LWIP_IPADDR0 192
-#define RT_LWIP_IPADDR1 168
-#define RT_LWIP_IPADDR2 1
-#define RT_LWIP_IPADDR3 30
+#define RT_LWIP_IPADDR "192.168.1.30"
 // <ipaddr name="RT_LWIP_GWADDR" description="Gateway address of device" default="192.168.1.1" />
-#define RT_LWIP_GWADDR0 192
-#define RT_LWIP_GWADDR1 168
-#define RT_LWIP_GWADDR2 1
-#define RT_LWIP_GWADDR3 1
+#define RT_LWIP_GWADDR  "192.168.1.1"
 // <ipaddr name="RT_LWIP_MSKADDR" description="Mask address of device" default="255.255.255.0" />
-#define RT_LWIP_MSKADDR0 255
-#define RT_LWIP_MSKADDR1 255
-#define RT_LWIP_MSKADDR2 255
-#define RT_LWIP_MSKADDR3 0
-// </section>
-
-// <section name="RT_USING_MODULE" description="Application module" default="true" >
-#define RT_USING_MODULE
-// <bool name="RT_USING_LIBDL" description="Using dynamic library" default="true" />
-#define RT_USING_LIBDL
-// </section>
-
-// <section name="RT_USING_RTGUI" description="RTGUI, a graphic user interface" default="true" >
-// #define RT_USING_RTGUI
-// <integer name="RTGUI_NAME_MAX" description="Maximal size of RTGUI object name length" default="16" />
-#define RTGUI_NAME_MAX	16
-// <bool name="RTGUI_USING_FONT16" description="Support 16 weight font" default="true" />
-#define RTGUI_USING_FONT16
-// <bool name="RTGUI_USING_FONT12" description="Support 12 weight font" default="true" />
-#define RTGUI_USING_FONT12
-// <bool name="RTGUI_USING_FONTHZ" description="Support Chinese font" default="true" />
-#define RTGUI_USING_FONTHZ
-// <bool name="RTGUI_USING_DFS_FILERW" description="Using DFS as file interface " default="true" />
-#define RTGUI_USING_DFS_FILERW
-// <bool name="RTGUI_USING_HZ_FILE" description="Using font file as Chinese font" default="false" />
-// #define RTGUI_USING_HZ_FILE
-// <bool name="RTGUI_USING_HZ_BMP" description="Using Chinese bitmap font" default="true" />
-#define RTGUI_USING_HZ_BMP
-// <bool name="RTGUI_USING_SMALL_SIZE" description="Using small size in RTGUI" default="false" />
-// #define RTGUI_USING_SMALL_SIZE
-// <bool name="RTGUI_USING_MOUSE_CURSOR" description="Using mouse cursor in RTGUI" default="false" />
-// #define RTGUI_USING_MOUSE_CURSOR
-// <bool name="RTGUI_IMAGE_XPM" description="Using xpm image in RTGUI" default="true" />
-#define RTGUI_IMAGE_XPM
-// <bool name="RTGUI_IMAGE_JPEG" description="Using jpeg image in RTGUI" default="true" />
-#define RTGUI_IMAGE_JPEG
-// <bool name="RTGUI_IMAGE_PNG" description="Using png image in RTGUI" default="true" />
-#define RTGUI_IMAGE_PNG
-// <bool name="RTGUI_IMAGE_BMP" description="Using bmp image in RTGUI" default="true" />
-#define RTGUI_IMAGE_BMP
+#define RT_LWIP_MSKADDR  "255.255.255.0"
 // </section>
 
 // </RDTConfigurator>
-
-/* SECTION: FTK support */
-/* using FTK support */
-/* #define RT_USING_FTK */
-
-/*
- * Note on FTK:
- *
- * FTK depends :
- * #define RT_USING_NEWLIB
- * #define DFS_USING_WORKDIR
- *
- * And the maximal length must great than 64
- * #define RT_DFS_ELM_MAX_LFN	128
- */
 
 #endif

@@ -49,7 +49,7 @@ extern unsigned char __bss_end;
 
 extern void rt_hw_board_init(void);
 extern void rt_application_init(void);
-extern void finsh_system_init(void);
+extern int finsh_system_init(void);
 extern void sd_init(void);
 
 void rtthread_startup()
@@ -77,20 +77,6 @@ void rtthread_startup()
 
 	/* init scheduler system */
 	rt_system_scheduler_init();
-
-#ifdef RT_USING_DEVICE
-
-#ifdef RT_USING_DFS
-  /* Not implemented */
-#endif
-
-#ifdef RT_USING_LWIP
-  /* Not implemented */
-#endif
-
-	/*init all registed devices */
-	rt_device_init_all();
-#endif
 
 	/* init application */
 	rt_application_init();

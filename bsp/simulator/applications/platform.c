@@ -1,8 +1,20 @@
 #include <rtthread.h>
 #include "board.h"
 
-void rt_platform_init(void)
+#include <shell.h>
+
+int platform_init(void)
 {
+    finsh_system_init();
+
+#ifdef RT_USING_LWIP
+#ifdef RT_USING_TAPNETIF
+    tap_netif_hw_init();
+#else
+    pcap_netif_hw_init();
+#endif
+#endif
+
 #ifdef RT_USING_DFS
     /* initialize sd card */
     rt_hw_sdcard_init();
@@ -17,8 +29,20 @@ void rt_platform_init(void)
 
 #endif /* RT_USING_DFS */
 
-#ifdef _WIN32
-    rt_thread_idle_sethook(rt_hw_win32_low_cpu);
-#endif
+    return 0;
 }
 
+int platform_post_init(void)
+{
+#ifdef PKG_USING_GUIENGINE
+    {
+        extern void rt_hw_sdl_start(void);
+        extern int rtgui_system_server_init(void);
+
+        rtgui_system_server_init();
+        rt_hw_sdl_start();
+    }
+#endif
+
+    return 0;
+}

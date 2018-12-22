@@ -11,13 +11,14 @@
  * Date           Author       Notes
  * 2012-11-27     prife        the first version
  * 2013-03-03     aozima       add dfs_win32_stat st_mtime support.
+ * 2017-10-20     urey         support rt-thread 3.0
  */
 #include <rtthread.h>
+#include <rtlibc.h>
 
 #include <dfs_fs.h>
-#include <dfs_def.h>
+#include <dfs_file.h>
 #include <rtdevice.h>
-//#include "dfs_win32.h"
 
 #include <io.h>
 #include <fcntl.h>
@@ -25,7 +26,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <WinError.h>
-#include  <windows.h>
+#include <windows.h>
 
 #if defined(__MINGW32__) && defined(_NO_OLDNAMES)
 #define O_RDONLY    _O_RDONLY
@@ -48,7 +49,15 @@
  */
 #define FILE_PATH_MAX           256  /* the longest file path */
 
-#define WIN32_DIRDISK_ROOT  "." /* "F:\\Project\\svn\\rtt\\trunk\\bsp\\simulator_test" */
+#define WIN32_DIRDISK_ROOT  "./disk"
+
+typedef struct {
+    HANDLE handle;
+    char *start;
+    char *end;
+    char *curr;
+    struct _finddata_t finddata;
+} WINDIR;
 
 /* There are so many error codes in windows, you'd better google for details.
  * google  "System Error Codes (Windows)"
@@ -63,13 +72,13 @@ struct _errcode_map
 
 static const struct _errcode_map errcode_table[] =
 {
-    {DFS_STATUS_ENOENT, ERROR_FILE_NOT_FOUND },
-    {DFS_STATUS_ENOENT, ERROR_PATH_NOT_FOUND },
-    {DFS_STATUS_EEXIST, ERROR_FILE_EXISTS },
-    {DFS_STATUS_EEXIST, ERROR_ALREADY_EXISTS },
-    {DFS_STATUS_ENOTEMPTY, ERROR_DIR_NOT_EMPTY },
-    {DFS_STATUS_EBUSY, ERROR_PATH_BUSY },
-    {DFS_STATUS_EINVAL, ERROR_ACCESS_DENIED },
+    {ENOENT, ERROR_FILE_NOT_FOUND },
+    {ENOENT, ERROR_PATH_NOT_FOUND },
+    {EEXIST, ERROR_FILE_EXISTS },
+    {EEXIST, ERROR_ALREADY_EXISTS },
+    {ENOTEMPTY, ERROR_DIR_NOT_EMPTY },
+    {EBUSY, ERROR_PATH_BUSY },
+    {EINVAL, ERROR_ACCESS_DENIED },
 
 #if 0 /* TODO: MORE NEED BE ADDED */
     {DFS_STATUS_EISDIR, ERROR_FILE_EXISTS },
@@ -113,13 +122,13 @@ static int dfs_win32_unmount(struct dfs_filesystem *fs)
 
 static int dfs_win32_mkfs(rt_device_t devid)
 {
-    return -DFS_STATUS_ENOSYS;
+    return -ENOSYS;
 }
 
 static int dfs_win32_statfs(struct dfs_filesystem *fs,
                             struct statfs *buf)
 {
-    return -DFS_STATUS_ENOSYS;
+    return -ENOSYS;
 }
 
 static char *winpath_dirdup(char *des, const char *src)
@@ -159,20 +168,20 @@ char * dfs_win32_dirdup(char * path)
 static int dfs_win32_open(struct dfs_fd *file)
 {
     int fd;
-    int oflag, mode;
+    uint32_t oflag, mode;
     char *file_path;
     int res;
 
     oflag = file->flags;
-    if (oflag & DFS_O_DIRECTORY)   /* operations about dir */
+    if (oflag & O_DIRECTORY)   /* operations about dir */
     {
-        struct _finddata_t  dir;
-        int handle;
+        WINDIR *wdirp;
+        HANDLE handle;
         int len;
 
         file_path = winpath_dirdup(WIN32_DIRDISK_ROOT, file->path);
 
-        if (oflag & DFS_O_CREAT)   /* create a dir*/
+        if (oflag & O_CREAT)   /* create a dir*/
         {
             res = CreateDirectory(file_path, NULL);
             if (res == 0)
@@ -191,28 +200,38 @@ static int dfs_win32_open(struct dfs_fd *file)
 
         strcat(file_path, "*.*");
         /* _findfirst will get '.' */
-        if ((handle = _findfirst(file_path, &dir)) == -1)
+        /* save this pointer,will used by  dfs_win32_getdents*/
+        wdirp = rt_malloc(sizeof(WINDIR));
+        RT_ASSERT(wdirp != NULL);
+        if ((handle = _findfirst(file_path, &wdirp->finddata)) == -1)
         {
+            rt_free(wdirp);
             rt_free(file_path);
             goto __err;
         }
+        len = strlen(wdirp->finddata.name) + 1;
+        wdirp->handle = handle;
+        //wdirp->nfiles = 1;
+        wdirp->start = malloc(len); //not rt_malloc!
+        wdirp->end = wdirp->curr = wdirp->start;
+        wdirp->end += len;
+        strncpy(wdirp->curr, wdirp->finddata.name, len);
 
-        /* save this pointer,will used by  dfs_win32_getdents*/
-        file->data = (void *)handle;
+        file->data = (void *)wdirp;
         rt_free(file_path);
-        return DFS_STATUS_OK;
+        return 0;
     }
     /* regular file operations */
     mode = O_BINARY;
-    if (oflag & DFS_O_RDONLY) mode |= O_RDONLY;
-    if (oflag & DFS_O_WRONLY) mode |= O_WRONLY;
-    if (oflag & DFS_O_RDWR)   mode |= O_RDWR;
+    if (oflag & O_RDONLY) mode |= O_RDONLY;
+    if (oflag & O_WRONLY) mode |= O_WRONLY;
+    if (oflag & O_RDWR)   mode |= O_RDWR;
     /* Opens the file, if it is existing. If not, a new file is created. */
-    if (oflag & DFS_O_CREAT) mode |= O_CREAT;
+    if (oflag & O_CREAT) mode |= O_CREAT;
     /* Creates a new file. If the file is existing, it is truncated and overwritten. */
-    if (oflag & DFS_O_TRUNC) mode |= O_TRUNC;
+    if (oflag & O_TRUNC) mode |= O_TRUNC;
     /* Creates a new file. The function fails if the file is already existing. */
-    if (oflag & DFS_O_EXCL) mode |= O_EXCL;
+    if (oflag & O_EXCL) mode |= O_EXCL;
 
     file_path = winpath_dirdup(WIN32_DIRDISK_ROOT, file->path);
     fd = _open(file_path, mode, 0x0100 | 0x0080); /* _S_IREAD | _S_IWRITE */
@@ -227,7 +246,7 @@ static int dfs_win32_open(struct dfs_fd *file)
     file->pos  = 0;
     file->size = _lseek(fd, 0, SEEK_END);
 
-    if (oflag & DFS_O_APPEND)
+    if (oflag & O_APPEND)
     {
         file->pos = file->size;
     }
@@ -243,34 +262,31 @@ __err:
 
 static int dfs_win32_close(struct dfs_fd *file)
 {
-    int oflag;
-
-    oflag = file->flags;
-    if (oflag & DFS_O_DIRECTORY)
+    if (file->flags & O_DIRECTORY)
     {
-        /* operations about dir */
-        if (_findclose((intptr_t)file->data) < 0)
-            goto __err;
-
-        return 0;
+        WINDIR *wdirp = (WINDIR*)(file->data);
+        RT_ASSERT(wdirp != RT_NULL);
+        if (_findclose((intptr_t)wdirp->handle) == 0) {
+            free(wdirp->start); //NOTE: here we don't use rt_free!
+            rt_free(wdirp);
+            return 0;
+        }
+    }
+    else /* regular file operations */
+    {
+        if (_close((int)(file->data)) == 0)
+            return 0;
     }
 
-    /* regular file operations */
-    if (_close((int)(file->data)) < 0)
-        goto __err;
-
-    return 0;
-
-__err:
     return win32_result_to_dfs(GetLastError());
 }
 
 static int dfs_win32_ioctl(struct dfs_fd *file, int cmd, void *args)
 {
-    return -DFS_STATUS_ENOSYS;
+    return -ENOSYS;
 }
 
-static int dfs_win32_read(struct dfs_fd *file, void *buf, rt_size_t len)
+static int dfs_win32_read(struct dfs_fd *file, void *buf, size_t len)
 {
     int fd;
     int char_read;
@@ -285,9 +301,7 @@ static int dfs_win32_read(struct dfs_fd *file, void *buf, rt_size_t len)
     return char_read;
 }
 
-static int dfs_win32_write(struct dfs_fd *file,
-                           const void *buf,
-                           rt_size_t len)
+static int dfs_win32_write(struct dfs_fd *file, const void *buf, size_t len)
 {
     int fd;
     int char_write;
@@ -316,71 +330,70 @@ static int dfs_win32_seek(struct dfs_fd *file,
     /* set offset as current offset */
     if (file->type == FT_DIRECTORY)
     {
-        return -DFS_STATUS_ENOSYS;
+        WINDIR* wdirp = (WINDIR*)(file->data);
+        RT_ASSERT(wdirp != RT_NULL);
+        wdirp->curr = wdirp->start + offset;
+        return offset;
     }
-    else if (file->type == FT_REGULAR)
+    else //file->type == FT_REGULAR)
     {
         result = _lseek((int)(file->data), offset, SEEK_SET);
         if (result >= 0)
             return offset;
+        else
+            return win32_result_to_dfs(GetLastError());
     }
-
-    return win32_result_to_dfs(GetLastError());
 }
 
 /* return the size of struct dirent*/
-static int dfs_win32_getdents(
-    struct dfs_fd *file,
-    struct dirent *dirp,
-    rt_uint32_t count)
+static int dfs_win32_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint32_t count)
 {
-    rt_uint32_t index;
-    struct dirent *d;
-    struct _finddata_t  fileinfo;
-    int handle;
+    WINDIR *wdirp;
+    struct dirent *d = dirp;
     int result;
 
-    handle = (int)(file->data);
-    RT_ASSERT(handle != RT_NULL);
+    /* make integer count */
+    if (count / sizeof(struct dirent) != 1)
+        return -EINVAL;
 
-    /* round count, count is always 1 */
-    count = (count / sizeof(struct dirent)) * sizeof(struct dirent);
-    if (count == 0) return -DFS_STATUS_EINVAL;
-
-    index = 0;
-    /* usually, the while loop should only be looped only once! */
-    while (1)
-    {
-        d = dirp + index;
-        if (_findnext(handle, &fileinfo) != 0) //-1 failed
-            goto __err;
-
-        if (fileinfo.attrib & _A_SUBDIR)
-            d->d_type = DFS_DT_DIR;  /* directory */
-        else
-            d->d_type = DFS_DT_REG;
-
-        /* write the rest arguments of struct dirent* dirp  */
-        d->d_namlen = strlen(fileinfo.name);
-        d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
-        strcpy(d->d_name, fileinfo.name);
-
-        index ++;
-        if (index * sizeof(struct dirent) >= count)
-            break;
-    }
-    if (index == 0)
+    wdirp = (WINDIR*)(file->data);
+    RT_ASSERT(wdirp != RT_NULL);
+    if (wdirp->curr == NULL) //no more entries in this directory
         return 0;
 
-    file->pos += index * sizeof(struct dirent);
-
-    return index * sizeof(struct dirent);
-
-__err:
-    if ((result = GetLastError()) == ERROR_NO_MORE_FILES)
-        return 0;
+    /* get the current entry */
+    if (wdirp->finddata.attrib & _A_SUBDIR)
+        d->d_type = DT_DIR;
     else
-        return win32_result_to_dfs(result);
+        d->d_type = DT_REG;
+    d->d_namlen = strlen(wdirp->curr);
+    strncpy(d->d_name, wdirp->curr, DFS_PATH_MAX);
+    d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
+    wdirp->curr += (strlen(wdirp->curr) + 1);
+    file->pos = wdirp->curr - wdirp->start + sizeof(struct dirent);//NOTE!
+
+    /* now set up for the next call to readdir */
+    if (wdirp->curr >= wdirp->end)
+    {
+        if (_findnext(wdirp->handle, &wdirp->finddata) == 0)
+        {
+            char* old_start = wdirp->start;
+            long name_len = strlen(wdirp->finddata.name) + 1;
+            wdirp->start = realloc(wdirp->start, wdirp->end - wdirp->start + name_len);
+            wdirp->curr = wdirp->start + (wdirp->curr - old_start);
+            wdirp->end = wdirp->curr + name_len;
+            strcpy(wdirp->curr, wdirp->finddata.name);
+        }
+        else
+        {
+            if ((result = GetLastError()) == ERROR_NO_MORE_FILES)
+                wdirp->curr = NULL;
+            else
+                return win32_result_to_dfs(result);
+        }
+    }
+
+    return sizeof(struct dirent);
 }
 
 static int dfs_win32_unlink(struct dfs_filesystem *fs, const char *path)
@@ -391,7 +404,7 @@ static int dfs_win32_unlink(struct dfs_filesystem *fs, const char *path)
     if (fp == RT_NULL)
     {
         rt_kprintf("out of memory.\n");
-        return -DFS_STATUS_ENOMEM;
+        return -ENOMEM;
     }
 
     result = GetFileAttributes(fp);
@@ -428,7 +441,7 @@ static int dfs_win32_rename(
     if (op == RT_NULL || np == RT_NULL)
     {
         rt_kprintf("out of memory.\n");
-        return -DFS_STATUS_ENOMEM;
+        return -ENOMEM;
     }
 
     /* If the function fails, the return value is zero. */
@@ -452,7 +465,7 @@ static int dfs_win32_stat(struct dfs_filesystem *fs, const char *path, struct st
     if (fp == RT_NULL)
     {
         rt_kprintf("out of memory.\n");
-        return -DFS_STATUS_ENOMEM;
+        return -ENOMEM;
     }
 
     hFind = FindFirstFile(fp, &fileInfo);
@@ -461,14 +474,14 @@ static int dfs_win32_stat(struct dfs_filesystem *fs, const char *path, struct st
     if (hFind == INVALID_HANDLE_VALUE)
         goto __err;
 
-    st->st_mode = DFS_S_IFREG | DFS_S_IRUSR | DFS_S_IRGRP | DFS_S_IROTH |
-                  DFS_S_IWUSR | DFS_S_IWGRP | DFS_S_IWOTH;
+    st->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
+                  S_IWUSR | S_IWGRP | S_IWOTH;
 
     /* convert file info to dfs stat structure */
     if (fileInfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
     {
-        st->st_mode &= ~DFS_S_IFREG;
-        st->st_mode |= DFS_S_IFDIR | DFS_S_IXUSR | DFS_S_IXGRP | DFS_S_IXOTH;
+        st->st_mode &= ~S_IFREG;
+        st->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
     }
 
     st->st_dev  = 0;
@@ -488,8 +501,6 @@ static int dfs_win32_stat(struct dfs_filesystem *fs, const char *path, struct st
         st->st_mtime = time_tmp.QuadPart;
     }
 
-    st->st_blksize = 0;
-
     FindClose(hFind);
 
     return 0;
@@ -498,15 +509,8 @@ __err:
     return win32_result_to_dfs(GetLastError());
 }
 
-static const struct dfs_filesystem_operation dfs_win32_ops =
+static const struct dfs_file_ops dfs_win32_file_ops =
 {
-    "wdir", /* file system type: dir */
-    DFS_FS_FLAG_DEFAULT,
-    dfs_win32_mount,
-    dfs_win32_unmount,
-    dfs_win32_mkfs,
-    dfs_win32_statfs,
-
     dfs_win32_open,
     dfs_win32_close,
     dfs_win32_ioctl,
@@ -515,6 +519,17 @@ static const struct dfs_filesystem_operation dfs_win32_ops =
     dfs_win32_flush,
     dfs_win32_seek,
     dfs_win32_getdents,
+};
+
+static const struct dfs_filesystem_ops dfs_win32_ops =
+{
+    "wdir", /* file system type: dir */
+    DFS_FS_FLAG_DEFAULT,
+    &dfs_win32_file_ops,
+    dfs_win32_mount,
+    dfs_win32_unmount,
+    dfs_win32_mkfs,
+    dfs_win32_statfs,
     dfs_win32_unlink,
     dfs_win32_stat,
     dfs_win32_rename,
@@ -559,7 +574,7 @@ static rt_size_t nop_write(rt_device_t dev,
     return size;
 }
 
-static rt_err_t nop_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t nop_control(rt_device_t dev, int cmd, void *args)
 {
     return RT_EOK;
 }

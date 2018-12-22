@@ -33,7 +33,7 @@ def generate(env):
     env['AR']   = 'true'
     env['LINK'] = 'true'
 
-    env['CFLAGS']    = ['-fsyntax-only', '-Wall', '-Wno-invalid-source-encoding']
+    env['CFLAGS']    = ['-fsyntax-only', '-Wall', '-Wno-invalid-source-encoding', '-m32']
     env['LINKFLAGS'] = '-Wl,--gc-sections'
     env['ARFLAGS']   = '-rc'
 

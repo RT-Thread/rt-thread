@@ -1,0 +1,96 @@
+S110/S120/S130/S132/S140 license agreement 
+
+
+NORDIC SEMICONDUCTOR ASA SOFTDEVICE LICENSE AGREEMENT 
+
+License Agreement for the Nordic Semiconductor ASA ("Nordic") S110, S120, S130, S132, and S140 Bluetooth SoftDevice software packages 
+("SoftDevice"). 
+
+You ("You" "Licensee") must carefully and thoroughly read this License Agreement ("Agreement"), and accept to adhere to this Agreement before 
+downloading, installing and/or using any software or content in the SoftDevice provided herewith. 
+
+YOU ACCEPT THIS LICENSE AGREEMENT BY (A) CLICKING ACCEPT OR AGREE TO THIS LICENSE AGREEMENT, WHERE THIS 
+OPTION IS MADE AVAILABLE TO YOU; OR (B) BY ACTUALLY USING THE SOFTDEVICE, IN THIS CASE YOU AGREE THAT THE USE OF 
+THE SOFTDEVICE CONSTITUTES ACCEPTANCE OF THE LICENSING AGREEMENT FROM THAT POINT ONWARDS. 
+
+IF YOU DO NOT AGREE TO BE BOUND BY THE TERMS OF THIS AGREEMENT, THEN DO NOT DOWNLOAD, INSTALL/COMPLETE 
+INSTALLATION OF, OR IN ANY OTHER WAY MAKE USE OF THE SOFTDEVICE. 
+
+1. Grant of License 
+Subject to the terms in this Agreement Nordic grants Licensee a limited, non-exclusive, non-transferable, non-sub licensable, revocable license 
+("License"): (a) to use the SoftDevice solely in connection with a Nordic integrated circuit, and (b) to distribute the SoftDevice solely as integrated 
+in Licensee Product. Licensee shall not use the SoftDevice for any purpose other than specifically authorized herein. It is a material breach of this 
+agreement to use or modify the SoftDevice for use on any wireless connectivity integrated circuit other than a Nordic integrated circuit. 
+
+2. Title 
+Nordic retains full rights, title, and ownership to the SoftDevice and any and all patents, copyrights, trade secrets, trade names, trademarks, and 
+other intellectual property rights in and to the SoftDevice. 
+
+3. No Modifications or Reverse Engineering 
+Licensee shall not, modify, reverse engineer, disassemble, decompile or otherwise attempt to discover the source code of any non-source code 
+parts of the SoftDevice including, but not limited to pre-compiled hex files, binaries and object code. 
+
+4. Distribution Restrictions 
+Except as set forward in Section 1 above, the Licensee may not disclose or distribute any or all parts of the SoftDevice to any third party. 
+Licensee agrees to provide reasonable security precautions to prevent unauthorized access to or use of the SoftDevice as proscribed herein. 
+Licensee also agrees that use of and access to the SoftDevice will be strictly limited to the employees and subcontractors of the Licensee 
+necessary for the performance of development, verification and production tasks under this Agreement. The Licensee is responsible for making 
+such employees and subcontractors comply with the obligations concerning use and non-disclosure of the SoftDevice. 
+
+5. No Other Rights 
+Licensee shall use the SoftDevice only in compliance with this Agreement and shall refrain from using the SoftDevice in any way that may be 
+contrary to this Agreement. 
+
+6. Fees 
+Nordic grants the License to the Licensee free of charge provided that the Licensee undertakes the obligations in the Agreement and warrants to 
+comply with the Agreement. 
+
+7. DISCLAIMER OF WARRANTY 
+THE SOFTDEVICE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND EXPRESS OR IMPLIED AND NEITHER NORDIC, ITS 
+LICENSORS OR AFFILIATES NOR THE COPYRIGHT HOLDERS MAKE ANY REPRESENTATIONS OR WARRANTIES, EXPRESS OR 
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE OR 
+THAT THE SOFTDEVICE WILL NOT INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS. THERE 
+IS NO WARRANTY BY NORDIC OR BY ANY OTHER PARTY THAT THE FUNCTIONS CONTAINED IN THE SOFTDEVICE WILL MEET THE 
+REQUIREMENTS OF LICENSEE OR THAT THE OPERATION OF THE SOFTDEVICE WILL BE UNINTERRUPTED OR ERROR-FREE. 
+LICENSEE ASSUMES ALL RESPONSIBILITY AND RISK FOR THE SELECTION OF THE SOFTDEVICE TO ACHIEVE LICENSEE’S 
+INTENDED RESULTS AND FOR THE INSTALLATION, USE AND RESULTS OBTAINED FROM IT. 
+
+
+8. No Support 
+Nordic is not obligated to furnish or make available to Licensee any further information, software, technical information, know-how, show-how, 
+bug-fixes or support. Nordic reserves the right to make changes to the SoftDevice without further notice. 
+
+9. Limitation of Liability 
+In no event shall Nordic, its employees or suppliers, licensors or affiliates be liable for any lost profits, revenue, sales, data or costs of 
+procurement of substitute goods or services, property damage, personal injury, interruption of business, loss of business information or for any 
+special, direct, indirect, incidental, economic, punitive, special or consequential damages, however caused and whether arising under contract, 
+tort, negligence, or other theory of liability arising out of the use of or inability to use the SoftDevice, even if Nordic or its employees or suppliers, 
+licensors or affiliates are advised of the possibility of such damages. Because some countries/states/jurisdictions do not allow the exclusion or 
+limitation of liability, but may allow liability to be limited, in such cases, Nordic, its employees or licensors or affiliates’ liability shall be limited to 
+USD 50. 
+
+10. Breach of Contract 
+Upon a breach of contract by the Licensee, Nordic and its licensor are entitled to damages in respect of any direct loss which can be reasonably 
+attributed to the breach by the Licensee. If the Licensee has acted with gross negligence or willful misconduct, the Licensee shall cover both 
+direct and indirect costs for Nordic and its licensors. 
+
+11. Indemnity 
+Licensee undertakes to indemnify, hold harmless and defend Nordic and its directors, officers, affiliates, shareholders, licensors, employees and 
+agents from and against any claims or lawsuits, including attorney's fees, that arise or result of the Licensee’s execution of the License and which 
+is not due to causes for which Nordic is responsible. 
+
+12. Governing Law 
+This Agreement shall be construed according to the laws of Norway, and hereby submits to the exclusive jurisdiction of the Oslo tingrett. 
+
+13. Assignment 
+Licensee shall not assign this Agreement or any rights or obligations hereunder without the prior written consent of Nordic. 
+
+14. Termination 
+Without prejudice to any other rights, Nordic may cancel this Agreement if Licensee does not abide by the terms and conditions of this 
+Agreement. Upon termination Licensee must promptly cease the use of the License and destroy all copies of the Licensed Technology and any 
+other material provided by Nordic or its affiliate, or produced by the Licensee in connection with the Agreement or the Licensed Technology. 
+
+15. Third party beneficiaries 
+Nordic’s licensors are intended third party beneficiaries under this Agreement. 
+
+

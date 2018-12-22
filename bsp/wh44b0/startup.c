@@ -35,7 +35,7 @@ extern int __bss_end;
 #endif
 
 #ifdef RT_USING_FINSH
-extern void finsh_system_init(void);
+extern int finsh_system_init(void);
 #endif
 extern int  rt_application_init(void);
 
@@ -82,10 +82,6 @@ void rtthread_startup(void)
 #ifdef RT_USING_HOOK
 	/* set idle thread hook */
 	rt_thread_idle_sethook(rt_hw_led_flash);
-#endif
-
-#ifdef RT_USING_DEVICE
-    rt_device_init_all();
 #endif
 
 	/* init application */

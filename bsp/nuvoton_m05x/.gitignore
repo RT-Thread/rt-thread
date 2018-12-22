@@ -1,0 +1,5 @@
+Nu_Link_Driver.ini
+*.uvoptx
+*.uvguix.*
+scons-cmd.bat
+obj

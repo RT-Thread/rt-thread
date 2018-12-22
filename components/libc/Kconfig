@@ -1,0 +1,36 @@
+menu "POSIX layer and C standard library"
+
+config RT_USING_LIBC
+    bool "Enable libc APIs from toolchain"
+    default y
+
+config RT_USING_PTHREADS
+    bool "Enable pthreads APIs"
+    default n
+
+if RT_USING_LIBC && RT_USING_DFS
+    config RT_USING_POSIX
+        bool "Enable POSIX layer for poll/select, stdin etc"
+        select RT_USING_DFS_DEVFS
+        default y
+
+    if RT_USING_POSIX
+    config RT_USING_POSIX_MMAP
+        bool "Enable mmap() api"
+        default n
+
+    config RT_USING_POSIX_TERMIOS
+        bool "Enable termios feature"
+        default n
+
+    config RT_USING_POSIX_AIO
+        bool "Enable AIO"
+        default n
+    endif
+
+    config RT_USING_MODULE
+        bool "Enable dynamic module with dlopen/dlsym/dlclose feature"
+        default n
+endif
+
+endmenu

@@ -364,7 +364,7 @@ static void efm32_spiLcd_drawVLine(rtgui_color_t *c, int x , int y1, int y2)
 * @return
 *   Error code
 ******************************************************************************/
-static rt_err_t efm32_spiLcd_control (rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t efm32_spiLcd_control (rt_device_t dev, int cmd, void *args)
 {
     switch (cmd)
     {

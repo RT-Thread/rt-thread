@@ -1,0 +1,51 @@
+# Object files
+*.o
+*.ko
+*.mo
+*.d
+*.crf
+*.lst
+
+# Libraries
+*.lib
+*.a
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+*.pyc
+
+# Executables
+*.exe
+*.out
+*.app
+*.elf
+*.axf
+*.bin
+*.hex
+
+# Intermediate file
+*.bak
+*.swp
+*.map
+*.dblite
+*.dep
+*.lnp
+*.uvgui.*
+*.build_log.*
+build
+
+Debug
+_UpgradeReport_Files
+*.ncb
+*.suo
+*.exp
+*.sdf
+*.XML
+*.user
+*.def
+Backup*
+UpgradeLog*
+*.filters

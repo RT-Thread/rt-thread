@@ -142,7 +142,7 @@ void luminaryif_isr(void)
 }
 
 /* control the interface */
-rt_err_t luminaryif_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+rt_err_t luminaryif_control(rt_device_t dev, int cmd, void *args)
 {
 	switch(cmd)
 	{

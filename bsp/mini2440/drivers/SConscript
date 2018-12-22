@@ -1,0 +1,44 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd     = os.path.join(str(Dir('#')), 'drivers')
+
+# add the general drivers.
+src = Split("""
+board.c
+led.c
+console.c
+""")
+
+if GetDepend('RT_USING_DFS'):
+	src += ['sdcard.c']
+
+if GetDepend('RT_USING_LWIP'):
+	src += ['dm9000.c']
+
+if GetDepend('RT_USING_RTGUI'):
+    	src += ['touch.c', 'key.c', 'calibration.c']
+
+if GetDepend('RT_USING_FTK'):
+    	src += ['touch.c', 'key.c']
+
+if GetDepend('RT_USING_RTI'):
+    	src += ['rti_stub.c']
+		
+if GetDepend('RT_USING_RTGUI') or GetDepend('RT_USING_FTK'):
+	if rtconfig.RT_USING_LCD_TYPE == 'PNL_A70':
+		src += ['lcd_a70.c']
+	elif rtconfig.RT_USING_LCD_TYPE == 'PNL_N35':
+		src += ['lcd_n35.c']
+	elif rtconfig.RT_USING_LCD_TYPE == 'PNL_T35':
+		src += ['lcd_t35.c']
+	elif rtconfig.RT_USING_LCD_TYPE == 'PNL_X35':
+                src += ['lcd_x35.c']
+
+CPPPATH = [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
+

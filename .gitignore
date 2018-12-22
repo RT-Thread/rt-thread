@@ -9,7 +9,10 @@
 *.pdb
 *.idb
 *.ilk
+*.old
 build
+Debug
+documentation/html
 *~
 *.o
 *.obj
@@ -19,3 +22,15 @@ build
 *.a
 *.i
 *.d
+tools/kconfig-frontends/kconfig-mconf
+packages
+cconfig.h
+GPUCache
+
+#cscope files
+cscope.*
+ncscope.*
+
+#ctag files
+tags
+

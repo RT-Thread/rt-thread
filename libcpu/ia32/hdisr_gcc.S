@@ -60,7 +60,7 @@ HDINTERRUPTFNC(irq15, 15)
 .type _hdinterrupts,@function
 .globl rt_interrupt_enter
 .globl rt_interrupt_leave
-.globl isr_table
+.globl rt_hw_isr
 .globl rt_thread_switch_interrupt_flag
 .globl rt_interrupt_from_thread
 .globl rt_interrupt_to_thread
@@ -81,10 +81,7 @@ _hdinterrupts:
 	movl (%eax), %eax     /* vector(eax) = *eax */
 
 	pushl %eax            /* push argument : int vector */
-	shll $0x2, %eax       /* each item takes up 4bytes in isr_table. */
-	movl $isr_table, %ebx /* ebx = &isr_table[0] */
-	addl %eax, %ebx       /* eax = &isr_table[vector] */
-	call *(%ebx)
+	call rt_hw_isr
 	add $4, %esp          /* restore argument */
 
 	call rt_interrupt_leave

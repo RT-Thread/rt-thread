@@ -1,240 +1,233 @@
-/* RT-Thread config file */
-#ifndef __RTTHREAD_CFG_H__
-#define __RTTHREAD_CFG_H__
+#ifndef RT_CONFIG_H__
+#define RT_CONFIG_H__
 
-#define RT_HEAP_SIZE   (1024*1024*2)
+/* Automatically generated file; DO NOT EDIT. */
+/* RT-Thread Configuration */
 
-#if  defined(_MSC_VER)
-/* SECTION: port for visual studio */
-#undef RT_USING_NEWLIB
-#undef RT_USING_MINILIBC
-#define NORESOURCE  //RT_VESRION in winuser.h
-#define _CRT_ERRNO_DEFINED  //errno macro redefinition
-#define _INC_WTIME_INL//dfs_elm.c time.h conflicts with wtime.inl
-#define _INC_TIME_INL //dfs_elm.c time.h conflicts with wtime.inl
+/* RT-Thread Kernel */
 
-/* disable some warning in MSC */
-#pragma warning(disable:4273)	/* to ignore: warning C4273: inconsistent dll linkage */
-#pragma warning(disable:4312)   /* to ignore: warning C4312: 'type cast' : conversion from 'rt_uint32_t' to 'rt_uint32_t *' */
-#pragma warning(disable:4311)   /* to ignore: warning C4311: 'type cast' : pointer truncation from 'short *__w64 ' to 'long' */
-#pragma warning(disable:4996)   /* to ignore: warning C4996: The POSIX name for this item is deprecated. */
-#pragma warning(disable:4267)   /* to ignore: warning C4267: conversion from 'size_t' to 'rt_size_t', possible loss of data */
-#pragma warning(disable:4244)   /* to ignore: warning C4244: '=' : conversion from '__w64 int' to 'rt_size_t', possible loss of data */
-
-#elif defined(__GNUC__)
-#define RT_USING_NOLIBC
-
-#if defined(__MINGW32__)
-#define _NO_OLDNAMES   /* to ignore: mode_t in sys/type.h */
-#endif
-#endif
-
-/* SECTION: basic kernel options */
-/* RT_NAME_MAX*/
-#define RT_NAME_MAX	8
-
-/* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE	4
-
-/* PRIORITY_MAX */
-#define RT_THREAD_PRIORITY_MAX  32	
-
-/* Tick per Second */
-#define RT_TICK_PER_SECOND	100
-
-/* SECTION: RT_DEBUG */
-/* Thread Debug */
+#define RT_NAME_MAX 8
+#define RT_ALIGN_SIZE 4
+/* RT_THREAD_PRIORITY_8 is not set */
+#define RT_THREAD_PRIORITY_32
+/* RT_THREAD_PRIORITY_256 is not set */
+#define RT_THREAD_PRIORITY_MAX 32
+#define RT_TICK_PER_SECOND 100
 #define RT_DEBUG
-//#define RT_DEBUG_SCHEDULER   1
-#define RT_THREAD_DEBUG
-
 #define RT_USING_OVERFLOW_CHECK
-
-/* Using Hook */
+#define RT_DEBUG_INIT 0
+#define RT_DEBUG_THREAD 0
 #define RT_USING_HOOK
+#define IDLE_THREAD_STACK_SIZE 256
+/* RT_USING_TIMER_SOFT is not set */
 
-/* Using Software Timer */
-/* #define RT_USING_TIMER_SOFT */
-#define RT_TIMER_THREAD_PRIO		4
-#define RT_TIMER_THREAD_STACK_SIZE	512
-#define RT_TIMER_TICK_PER_SECOND	10
+/* Inter-Thread communication */
 
-/* SECTION: IPC */
-/* Using Semaphore*/
 #define RT_USING_SEMAPHORE
-
-/* Using Mutex */
 #define RT_USING_MUTEX
-
-/* Using Event */
 #define RT_USING_EVENT
-
-/* Using MailBox */
 #define RT_USING_MAILBOX
-
-/* Using Message Queue */
 #define RT_USING_MESSAGEQUEUE
+/* RT_USING_SIGNALS is not set */
 
-/* SECTION: Memory Management */
-/* Using Memory Pool Management*/
-/* #define RT_USING_MEMPOOL */
+/* Memory Management */
 
-/* Using Dynamic Heap Management */
+#define RT_USING_MEMPOOL
+/* RT_USING_MEMHEAP is not set */
+/* RT_USING_NOHEAP is not set */
+#define RT_USING_SMALL_MEM
+/* RT_USING_SLAB is not set */
+/* RT_USING_MEMTRACE is not set */
 #define RT_USING_HEAP
 
-/* Using Small MM */
-#define RT_USING_SMALL_MEM
-/* #define RT_TINY_SIZE */
+/* Kernel Device Object */
 
-/* SECTION: Device System */
-/* Using Device System */
 #define RT_USING_DEVICE
-#define RT_USING_DEVICE_IPC
-/* #define RT_USING_UART1 */
-
-/* SECTION: Console options */
+/* RT_USING_INTERRUPT_INFO is not set */
 #define RT_USING_CONSOLE
-/* the buffer size of console*/
-#define RT_CONSOLEBUF_SIZE	128
-#define RT_CONSOLE_DEVICE_NAME	"sci0"
+#define RT_CONSOLEBUF_SIZE 128
+#define RT_CONSOLE_DEVICE_NAME "console"
+/* RT_USING_MODULE is not set */
 
-/* SECTION: component options */
-#define RT_USING_COMPONENTS_INIT
+/* RT-Thread Components */
 
-/* SECTION: APP MODULE  */
-/* #define RT_USING_MODULE */
+/* RT_USING_COMPONENTS_INIT is not set */
 
-/* SECTION: MTD interface options */
-/* using mtd nand flash */
-#define RT_USING_MTD_NAND
-/* using mtd nor flash */
-/* #define RT_USING_MTD_NOR */
+/* C++ features */
 
-/* SECTION: finsh, a C-Express shell */
+/* RT_USING_CPLUSPLUS is not set */
+
+/* Command shell */
+
 #define RT_USING_FINSH
-/* Using symbol table */
+#define FINSH_THREAD_NAME "tshell"
+#define FINSH_USING_HISTORY
+#define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
+#define FINSH_THREAD_PRIORITY 20
+#define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_CMD_SIZE 80
+/* FINSH_USING_AUTH is not set */
+#define FINSH_USING_MSH
+#define FINSH_USING_MSH_DEFAULT
+/* FINSH_USING_MSH_ONLY is not set */
 
-/* SECTION: device file system */
+/* Device virtual file system */
+
 #define RT_USING_DFS
-#define DFS_FILESYSTEM_TYPES_MAX  8
-
-/* DFS: ELM FATFS options */
+#define DFS_USING_WORKDIR
+#define DFS_FILESYSTEMS_MAX 2
+#define DFS_FILESYSTEM_TYPES_MAX 2
+#define DFS_FD_MAX 4
 #define RT_USING_DFS_ELMFAT
+
+/* elm-chan's FatFs, Generic FAT Filesystem Module */
+
+#define RT_DFS_ELM_CODE_PAGE 437
 #define RT_DFS_ELM_WORD_ACCESS
-/* Reentrancy (thread safe) of the FatFs module.  */
+#define RT_DFS_ELM_USE_LFN_0
+/* RT_DFS_ELM_USE_LFN_1 is not set */
+/* RT_DFS_ELM_USE_LFN_2 is not set */
+/* RT_DFS_ELM_USE_LFN_3 is not set */
+#define RT_DFS_ELM_USE_LFN 0
+#define RT_DFS_ELM_MAX_LFN 255
+#define RT_DFS_ELM_DRIVES 2
+#define RT_DFS_ELM_MAX_SECTOR_SIZE 512
+/* RT_DFS_ELM_USE_ERASE is not set */
 #define RT_DFS_ELM_REENTRANT
-/* Number of volumes (logical drives) to be used. */
-#define RT_DFS_ELM_DRIVES			2
-/* #define RT_DFS_ELM_USE_LFN			1 */
-#define RT_DFS_ELM_MAX_LFN			255
-/* Maximum sector size to be handled. */
-#define RT_DFS_ELM_MAX_SECTOR_SIZE  512
+#define RT_USING_DFS_DEVFS
+/* RT_USING_DFS_NET is not set */
+/* RT_USING_DFS_ROMFS is not set */
+/* RT_USING_DFS_RAMFS is not set */
+/* RT_USING_DFS_UFFS is not set */
+/* RT_USING_DFS_JFFS2 is not set */
+/* RT_USING_DFS_NFS is not set */
 
-/* DFS: network file system options */
-/* #define RT_USING_DFS_NFS */
+/* Device Drivers */
 
-/* DFS: UFFS nand file system options */
-#define RT_USING_DFS_UFFS
-/* configuration for uffs, more to see dfs_uffs.h and uffs_config.h */
-#define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_HW_AUTO
-/* enable this ,you need provide a mark_badblock/check_block function */
-/* #define RT_UFFS_USE_CHECK_MARK_FUNCITON */
+#define RT_USING_DEVICE_IPC
+#define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
+/* RT_USING_CAN is not set */
+/* RT_USING_HWTIMER is not set */
+/* RT_USING_CPUTIME is not set */
+/* RT_USING_I2C is not set */
+/* RT_USING_PIN is not set */
+/* RT_USING_MTD_NOR is not set */
+/* RT_USING_MTD_NAND is not set */
+/* RT_USING_RTC is not set */
+/* RT_USING_SDIO is not set */
+/* RT_USING_SPI is not set */
+/* RT_USING_WDT is not set */
+/* RT_USING_WIFI is not set */
 
-/* DFS: JFFS2 nor flash file system options */
-//#define RT_USING_DFS_JFFS2
+/* Using USB */
 
-/* DFS: windows share directory mounted to rt-thread/dfs  */
-/* only used in bsp/simulator */
-#ifdef _WIN32
+/* RT_USING_USB_HOST is not set */
+/* RT_USING_USB_DEVICE is not set */
+
+/* POSIX layer and C standard library */
+
+/* RT_USING_LIBC is not set */
+/* RT_USING_PTHREADS is not set */
+
+/* Network stack */
+
+/* light weight TCP/IP stack */
+
+/* RT_USING_LWIP is not set */
+
+/* Modbus master and slave stack */
+
+/* RT_USING_MODBUS is not set */
+
+/* VBUS(Virtual Software BUS) */
+
+/* RT_USING_VBUS is not set */
+
+/* Utilities */
+
+/* RT_USING_LOGTRACE is not set */
+/* RT_USING_RYM is not set */
+
+/* RT-Thread online packages */
+
+/* system packages */
+
+/* RT-Thread GUI Engine */
+
+/* PKG_USING_GUIENGINE is not set */
+/* GUIENGINE_IMAGE_JPEG_NONE is not set */
+/* GUIENGINE_IMAGE_JPEG is not set */
+/* GUIENGINE_IMAGE_TJPGD is not set */
+/* GUIENGINE_IMAGE_PNG_NONE is not set */
+/* GUIENGINE_IMAGE_PNG is not set */
+/* GUIENGINE_IMAGE_LODEPNG is not set */
+/* PKG_USING_GUIENGINE_V200 is not set */
+/* PKG_USING_GUIENGINE_LATEST_VERSION is not set */
+/* PKG_USING_LWEXT4 is not set */
+/* PKG_USING_PARTITION is not set */
+/* PKG_USING_SQLITE is not set */
+/* PKG_USING_RTI is not set */
+
+/* IoT - internet of things */
+
+/* PKG_USING_PAHOMQTT is not set */
+/* PKG_USING_WEBCLIENT is not set */
+/* PKG_USING_MONGOOSE is not set */
+/* PKG_USING_WEBTERMINAL is not set */
+/* PKG_USING_CJSON is not set */
+/* PKG_USING_LJSON is not set */
+/* PKG_USING_EZXML is not set */
+/* PKG_USING_NANOPB is not set */
+/* PKG_USING_GAGENT_CLOUD is not set */
+
+/* Wi-Fi */
+
+/* Marvell WiFi */
+
+/* PKG_USING_WLANMARVELL is not set */
+
+/* Wiced WiFi */
+
+/* PKG_USING_WLAN_WICED is not set */
+/* PKG_USING_COAP is not set */
+/* PKG_USING_NOPOLL is not set */
+
+/* security packages */
+
+/* PKG_USING_MBEDTLS is not set */
+/* PKG_USING_libsodium is not set */
+/* PKG_USING_TINYCRYPT is not set */
+
+/* language packages */
+
+/* PKG_USING_JERRYSCRIPT is not set */
+/* PKG_USING_MICROPYTHON is not set */
+
+/* multimedia packages */
+
+/* PKG_USING_OPENMV is not set */
+
+/* tools packages */
+
+/* PKG_USING_CMBACKTRACE is not set */
+/* PKG_USING_EASYLOGGER is not set */
+/* PKG_USING_SYSTEMVIEW is not set */
+/* PKG_USING_IPERF is not set */
+
+/* miscellaneous packages */
+
+#define PKG_USING_FASTLZ
+/* PKG_USING_MINILZO is not set */
+/* PKG_USING_QUICKLZ is not set */
+
+/* example package: hello */
+
+/* PKG_USING_HELLO is not set */
+/* PKG_USING_MULTIBUTTON is not set */
 #define RT_USING_DFS_WINSHAREDIR
-#endif
-
-/* the max number of mounted file system */
-#define DFS_FILESYSTEMS_MAX			4
-/* the max number of opened files 		*/
-#define DFS_FD_MAX					4
-
-/* SECTION: lwip, a lightweight TCP/IP protocol stack */
-/* #define RT_USING_LWIP */
-/* LwIP uses RT-Thread Memory Management */
-#define RT_LWIP_USING_RT_MEM
-/* Enable ICMP protocol*/
-#define RT_LWIP_ICMP
-/* Enable UDP protocol*/
-#define RT_LWIP_UDP
-/* Enable TCP protocol*/
-#define RT_LWIP_TCP
-/* Enable DNS */
-#define RT_LWIP_DNS
-
-/* the number of simultaneously active TCP connections*/
-#define RT_LWIP_TCP_PCB_NUM	5
-
-/* Using DHCP */
-/* #define RT_LWIP_DHCP */
-
-/* ip address of target*/
-#define RT_LWIP_IPADDR0	192
-#define RT_LWIP_IPADDR1	168
-#define RT_LWIP_IPADDR2	126
-#define RT_LWIP_IPADDR3	30
-
-/* gateway address of target*/
-#define RT_LWIP_GWADDR0	192
-#define RT_LWIP_GWADDR1	168
-#define RT_LWIP_GWADDR2	126
-#define RT_LWIP_GWADDR3	1
-
-/* mask address of target*/
-#define RT_LWIP_MSKADDR0	255
-#define RT_LWIP_MSKADDR1	255
-#define RT_LWIP_MSKADDR2	255
-#define RT_LWIP_MSKADDR3	0
-
-/* tcp thread options */
-#define RT_LWIP_TCPTHREAD_PRIORITY		12
-#define RT_LWIP_TCPTHREAD_MBOX_SIZE		10
-#define RT_LWIP_TCPTHREAD_STACKSIZE		1024
-
-/* Ethernet if thread options */
-#define RT_LWIP_ETHTHREAD_PRIORITY		15
-#define RT_LWIP_ETHTHREAD_MBOX_SIZE		10
-#define RT_LWIP_ETHTHREAD_STACKSIZE		512
-
-/* TCP sender buffer space */
-#define RT_LWIP_TCP_SND_BUF	8192
-/* TCP receive window. */
-#define RT_LWIP_TCP_WND		8192
-
-/* SECTION: RT-Thread/GUI */
-/* #define RT_USING_RTGUI */
-
-/* name length of RTGUI object */
-#define RTGUI_NAME_MAX		12
-/* support 16 weight font */
-#define RTGUI_USING_FONT16
-/* support Chinese font */
-#define RTGUI_USING_FONTHZ
-/* use DFS as file interface */
-#define RTGUI_USING_DFS_FILERW
-/* use font file as Chinese font */
-/* #define RTGUI_USING_HZ_FILE */
-/* use Chinese bitmap font */
-#define RTGUI_USING_HZ_BMP
-/* use small size in RTGUI */
-#define RTGUI_USING_SMALL_SIZE
-/* use mouse cursor */
-/* #define RTGUI_USING_MOUSE_CURSOR */
-/* default font size in RTGUI */
-#define RTGUI_DEFAULT_FONT_SIZE	16
-
-/* image support */
-#define RTGUI_IMAGE_XPM
-#define RTGUI_IMAGE_BMP
-/* #define RTGUI_IMAGE_JPEG */
-/* #define RTGUI_IMAGE_PNG */
-#define RTGUI_USING_NOTEBOOK_IMAGE
+#include "rtconfig_project.h"
 
 #endif

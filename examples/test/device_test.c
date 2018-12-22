@@ -90,7 +90,7 @@ static rt_err_t _block_device_test(rt_device_t device)
 
         /* step 3:  R/W test */
         {
-            rt_uint32_t i,err_count, sector_no;
+            rt_uint32_t i, err_count, sector_no;
             rt_uint8_t * data_point;
 
             i = rt_device_read(device, 0, read_buffer, 1);
@@ -449,11 +449,13 @@ static rt_err_t _block_device_test(rt_device_t device)
             }
         } /* step 5: multiple sector speed test */
 
+        rt_device_close(device);
         return RT_EOK;
     }// device can read and write.
     else
     {
         // device read only
+        rt_device_close(device);
         return RT_EOK;
     }// device read only
 
@@ -466,6 +468,7 @@ __return:
     {
         rt_free(write_buffer);
     }
+    rt_device_close(device);
     return RT_ERROR;
 }
 
@@ -477,7 +480,7 @@ int device_test(const char * device_name)
     device = rt_device_find(device_name);
     if( device == RT_NULL)
     {
-        rt_kprintf("device %s: not found!\r\n");
+        rt_kprintf("device %s: not found!\r\n", device_name);
         return RT_ERROR;
     }
 

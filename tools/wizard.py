@@ -1,6 +1,30 @@
 #! /usr/bin/env python
 #coding=utf-8
 
+#
+# File      : wizard.py
+# This file is part of RT-Thread RTOS
+# COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License along
+#  with this program; if not, write to the Free Software Foundation, Inc.,
+#  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+# Change Logs:
+# Date           Author       Notes
+# 2015-01-20     Bernard      Add copyright information
+#
+
 """
 wizard.py - a script to generate SConscript in RT-Thread RTOS. 
 
@@ -16,7 +40,7 @@ SConscript_com = '''# RT-Thread building script for component
 from building import *
 
 cwd = GetCurrentDir()
-src = Glob('*.c')
+src = Glob('*.c') + Glob('*.cpp')
 CPPPATH = [cwd]
 
 group = DefineGroup('COMPONENT_NAME', src, depend = [''], CPPPATH = CPPPATH)
@@ -42,19 +66,19 @@ Return('objs')
 '''
 
 def usage():
-    print 'wizard --component name'
-    print 'wizard --bridge'
+    print('wizard --component name')
+    print('wizard --bridge')
 
 def gen_component(name):
-    print 'generate SConscript for ' + name
+    print('generate SConscript for ' + name)
     text = SConscript_com.replace('COMPONENT_NAME', name)
-    f = file('SConscript', 'w')
+    f = open('SConscript', 'w')
     f.write(text)
     f.close()
 
 def gen_bridge():
-    print 'generate SConscript for bridge'
-    f = file('SConscript', 'w')
+    print('generate SConscript for bridge')
+    f = open('SConscript', 'w')
     f.write(SConscript_bridge)
     f.close()
 

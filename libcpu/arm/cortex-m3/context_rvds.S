@@ -1,7 +1,7 @@
 ;/*
 ; * File      : context_rvds.S
 ; * This file is part of RT-Thread RTOS
-; * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
+; * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
 ; *
 ; * The license and distribution terms for this file may be
 ; * found in the file LICENSE in this distribution or at
@@ -84,8 +84,8 @@ _reswitch
     BX      LR
     ENDP
 
-; r0 --> swith from thread stack
-; r1 --> swith to thread stack
+; r0 --> switch from thread stack
+; r1 --> switch to thread stack
 ; psr, pc, lr, r12, r3, r2, r1, r0 are pushed into [from] stack
 PendSV_Handler   PROC
     EXPORT PendSV_Handler
@@ -105,14 +105,14 @@ PendSV_Handler   PROC
 
     LDR     r0, =rt_interrupt_from_thread
     LDR     r1, [r0]
-    CBZ     r1, swtich_to_thread    ; skip register save at the first time
+    CBZ     r1, switch_to_thread    ; skip register save at the first time
 
     MRS     r1, psp                 ; get from thread stack pointer
     STMFD   r1!, {r4 - r11}         ; push r4 - r11 register
     LDR     r0, [r0]
     STR     r1, [r0]                ; update from thread stack pointer
 
-swtich_to_thread
+switch_to_thread
     LDR     r1, =rt_interrupt_to_thread
     LDR     r1, [r1]
     LDR     r1, [r1]                ; load thread stack pointer
@@ -168,6 +168,7 @@ rt_hw_context_switch_to    PROC
     MSR     msp, r0
 
     ; enable interrupts at processor level
+    CPSIE   F
     CPSIE   I
 
     ; never reach here!
@@ -177,7 +178,6 @@ rt_hw_context_switch_to    PROC
 rt_hw_interrupt_thread_switch PROC
     EXPORT rt_hw_interrupt_thread_switch
     BX      lr
-    NOP
     ENDP
 
     IMPORT rt_hw_hard_fault_exception
@@ -186,14 +186,17 @@ HardFault_Handler    PROC
 
     ; get current context
     TST     lr, #0x04               ; if(!EXC_RETURN[2])
-    MRSNE   r0, msp                 ; get fault context from handler.
-    MRSEQ   r0, psp                 ; get fault context from thread.
+    ITE     EQ
+    MRSEQ   r0, msp                 ; [2]=0 ==> Z=1, get fault context from handler.
+    MRSNE   r0, psp                 ; [2]=1 ==> Z=0, get fault context from thread.
 
     STMFD   r0!, {r4 - r11}         ; push r4 - r11 register
     STMFD   r0!, {lr}               ; push exec_return register
 
-    MSRNE   msp, r0                 ; update stack pointer to MSP.
-    MSREQ   psp, r0                 ; update stack pointer to PSP.
+    TST     lr, #0x04               ; if(!EXC_RETURN[2])
+    ITE     EQ
+    MSREQ   msp, r0                 ; [2]=0 ==> Z=1, update stack pointer to MSP.
+    MSRNE   psp, r0                 ; [2]=1 ==> Z=0, update stack pointer to PSP.
 
     PUSH    {lr}
     BL      rt_hw_hard_fault_exception
@@ -202,5 +205,7 @@ HardFault_Handler    PROC
     ORR     lr, lr, #0x04
     BX      lr
     ENDP
+
+    ALIGN   4
 
     END

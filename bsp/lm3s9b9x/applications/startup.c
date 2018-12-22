@@ -30,7 +30,7 @@ extern void rt_hw_serial_init(void);
 
 /*@{*/
 #ifdef RT_USING_FINSH
-extern void finsh_system_init(void);
+extern int finsh_system_init(void);
 extern void finsh_set_device(char* device);
 #endif
 
@@ -118,8 +118,6 @@ void rtthread_startup(void)
 	/* init sd card device */
 	rt_hw_sdcard_init();
 #endif
-	/* init all device */
-	rt_device_init_all();
 
 	/* init application */
 	rt_application_init();

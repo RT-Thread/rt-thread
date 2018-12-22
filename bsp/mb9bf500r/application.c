@@ -44,10 +44,7 @@ void rt_init_thread_entry(void *parameter)
 	rt_hw_adc_init();
 	rt_hw_lcd_init();      
 	rt_hw_cpu_init();
-    
-	/* re-init device driver */
-	rt_device_init_all();
-	
+
 #ifdef RT_USING_RTGUI
 	extern void rtgui_system_server_init(void);
 

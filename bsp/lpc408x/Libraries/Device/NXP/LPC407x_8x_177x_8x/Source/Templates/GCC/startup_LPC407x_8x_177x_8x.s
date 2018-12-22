@@ -102,18 +102,18 @@ __cs3_interrupt_vector_cortex_m:
     .long   DMA_IRQHandler              /* 42: General Purpose DMA          */
     .long   I2S_IRQHandler              /* 43: I2S                          */
     .long   ENET_IRQHandler             /* 44: Ethernet                     */
-    .long   MCI_IRQHandler              /* 45: SD/MMC Card					*/
+    .long   MCI_IRQHandler              /* 45: SD/MMC Card		    */
     .long   MCPWM_IRQHandler            /* 46: Motor Control PWM            */
     .long   QEI_IRQHandler              /* 47: Quadrature Encoder Interface */
     .long   PLL1_IRQHandler             /* 48: PLL1 Lock (USB PLL)          */
-    .long	USBActivity_IRQHandler		/* 49: USB Activity 				*/
-    .long 	CANActivity_IRQHandler		/* 50: CAN Activity					*/
-    .long	UART4_IRQHandler            /* 51: UART4						*/
-    .long	SSP2_IRQHandler				/* 52: SSP2							*/
-    .long 	LCD_IRQHandler				/* 53: LCD							*/
-    .long	GPIO_IRQHandler				/* 54: GPIO							*/
-    .long 	PWM0_IRQHandler				/* 55: PWM0							*/
-    .long 	EEPROM_IRQHandler			/* 56: EEPROM						*/
+    .long   USBActivity_IRQHandler	/* 49: USB Activity 		    */
+    .long   CANActivity_IRQHandler	/* 50: CAN Activity		    */
+    .long   UART4_IRQHandler            /* 51: UART4			    */
+    .long   SSP2_IRQHandler		/* 52: SSP2			    */
+    .long   LCD_IRQHandler		/* 53: LCD			    */
+    .long   GPIO_IRQHandler		/* 54: GPIO			    */
+    .long   PWM0_IRQHandler		/* 55: PWM0			    */
+    .long   EEPROM_IRQHandler		/* 56: EEPROM			    */
 
     .size   __cs3_interrupt_vector_cortex_m, . - __cs3_interrupt_vector_cortex_m
 
@@ -130,22 +130,24 @@ CRP_Value:
     .section .cs3.reset,"x",%progbits
     .thumb_func
     .globl  __cs3_reset_cortex_m
+    .globl  Reset_Handler
     .type   __cs3_reset_cortex_m, %function
 __cs3_reset_cortex_m:
+Reset_Handler:
     .fnstart
 .ifdef RAM_MODE
 /* Clear .bss section (Zero init) */
-	MOV     R0, #0
-	LDR     R1, =__bss_start__
-	LDR     R2, =__bss_end__
-	CMP     R1,R2
-	BEQ     BSSIsEmpty
+    MOV     R0, #0
+    LDR     R1, =__bss_start__
+    LDR     R2, =__bss_end__
+    CMP     R1,R2
+    BEQ     BSSIsEmpty
 LoopZI:
-	CMP     R1, R2
-	BHS		BSSIsEmpty
-	STR   	R0, [R1]
-	ADD		R1, #4
-	BLO     LoopZI
+    CMP     R1, R2
+    BHS	    BSSIsEmpty
+    STR     R0, [R1]
+    ADD	    R1, #4
+    BLO     LoopZI
 BSSIsEmpty:
     LDR     R0, =SystemInit
     BLX     R0
@@ -154,7 +156,7 @@ BSSIsEmpty:
 .else
     LDR     R0, =SystemInit
     BLX     R0
-	LDR     R0,=_start
+    LDR     R0,=main
     BX      R0
 .endif
     .pool

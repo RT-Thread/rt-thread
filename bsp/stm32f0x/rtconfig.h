@@ -34,7 +34,7 @@
 #define RT_USING_SEMAPHORE
 
 /* Using Mutex */
-/* #define RT_USING_MUTEX */
+#define RT_USING_MUTEX
 
 /* Using Event */
 /* #define RT_USING_EVENT */
@@ -66,6 +66,7 @@
 #define RT_USING_DEVICE_IPC
 // <bool name="RT_USING_SERIAL" description="Using Serial" default="true" />
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
@@ -83,24 +84,13 @@
 #define FINSH_THREAD_STACK_SIZE	1024
 #define FINSH_HISTORY_LINES	1
 /* Using symbol table */
-#define FINSH_USING_SYMTAB
-#define FINSH_USING_DESCRIPTION
+//#define FINSH_USING_SYMTAB
+//#define FINSH_USING_DESCRIPTION
+#define FINSH_USING_MSH
+#define FINSH_USING_MSH_ONLY
 
 /* SECTION: libc management */
-#ifdef __CC_ARM
-/* #define RT_USING_MINILIBC */
-/* #define RT_USING_NEWLIB */
-#endif
-
-#ifdef __ICCARM__
-/* #define RT_USING_MINILIBC */
-/* #define RT_USING_NEWLIB */
-#endif
-
-#ifdef __GNUC__
-/* #define RT_USING_MINILIBC */
-#define RT_USING_NEWLIB
-#endif
+// #define RT_USING_LIBC
 
 /* SECTION: device filesystem */
 /* #define RT_USING_DFS */

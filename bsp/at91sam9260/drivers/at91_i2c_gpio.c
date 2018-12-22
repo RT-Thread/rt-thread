@@ -104,7 +104,7 @@ static const struct rt_i2c_bit_ops bit_ops = {
 	100
 };
 
-rt_err_t at91_i2c_init(void)
+int at91_i2c_init(void)
 {
 	struct rt_i2c_bus_device *bus;
 
@@ -123,8 +123,8 @@ rt_err_t at91_i2c_init(void)
 
 	rt_i2c_bit_add_bus(bus, "i2c0");
 
-	return RT_EOK;
+	return 0;
 }
 
-
+INIT_DEVICE_EXPORT(at91_i2c_init);
 

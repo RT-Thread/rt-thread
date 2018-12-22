@@ -249,13 +249,16 @@ void rt_hw_uart_init(void)
 	uart->parent.type = RT_Device_Class_Char;
 	rt_memset(uart->rx_buffer, 0, sizeof(uart->rx_buffer));
 	uart->read_index = uart->save_index = 0;
-	
+
 #if defined(RT_USING_UART0)
 	uart->hw_base = UART0_BASE;
 	uart->irq = LS1B_UART0_IRQ;
 #elif defined(RT_USING_UART1)
 	uart->hw_base = UART1_BASE;
 	uart->irq = LS1B_UART1_IRQ;
+#elif defined(RT_USING_UART3)
+	uart->hw_base = UART3_BASE;
+	uart->irq = LS1B_UART3_IRQ;
 #endif
 
 	/* device interface */
@@ -267,9 +270,9 @@ void rt_hw_uart_init(void)
 	uart->parent.control    = RT_NULL;
 	uart->parent.user_data  = RT_NULL;
 
-	rt_device_register(&uart->parent, "uart0", 
-						RT_DEVICE_FLAG_RDWR | 
-						RT_DEVICE_FLAG_STREAM | 
+	rt_device_register(&uart->parent, "uart0",
+						RT_DEVICE_FLAG_RDWR |
+						RT_DEVICE_FLAG_STREAM |
 						RT_DEVICE_FLAG_INT_RX);
 }
 #endif /* end of UART */

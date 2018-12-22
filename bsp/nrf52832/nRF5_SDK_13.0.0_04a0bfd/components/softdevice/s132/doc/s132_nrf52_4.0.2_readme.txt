@@ -1,0 +1,13 @@
+s132_nrf52_4.0.2
+
+This release consists of the following:
+- This readme file
+- The s132_nrf52_4.0.2 API (SoftDevice header files)
+- The s132_nrf52_4.0.2 license agreement
+- The s132_nrf52_4.0.2 release notes
+- The s132_nrf52_4.0.2 SoftDevice (binary hex file)
+- The s132_nrf52_4.0.2 migration document
+- The s132_nrf52_4.0.2 API diff
+
+
+

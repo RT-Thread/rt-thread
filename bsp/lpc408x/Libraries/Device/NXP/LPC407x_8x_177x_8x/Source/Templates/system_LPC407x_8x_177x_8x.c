@@ -221,12 +221,12 @@
 #define SCS_Val               0x00000020
 #define CLKSRCSEL_Val         0x00000001
 #define PLL0_SETUP            1
-#define PLL0CFG_Val           0x0000000a
+#define PLL0CFG_Val           0x00000009
 #define PLL1_SETUP            1
 #define PLL1CFG_Val           0x00000023
 #define CCLKSEL_Val           0x00000101
 #define USBCLKSEL_Val         0x00000201
-#define EMCCLKSEL_Val         0x00000001
+#define EMCCLKSEL_Val         0x00000000
 #define PCLKSEL_Val           0x00000002
 #define SPIFICLKSEL_Val       0x00000002
 #define PCONP_Val             0x042887DE

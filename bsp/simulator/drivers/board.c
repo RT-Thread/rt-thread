@@ -14,8 +14,11 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include "board.h"
+
 #include <stdlib.h>
+
+#include "board.h"
+#include "uart_console.h"
 
 /**
  * @addtogroup simulator on win32
@@ -83,6 +86,7 @@ void rt_hw_exit(void)
 #if defined(RT_USING_FINSH)
 #include <finsh.h>
 FINSH_FUNCTION_EXPORT_ALIAS(rt_hw_exit, exit, exit rt - thread);
+FINSH_FUNCTION_EXPORT_ALIAS(rt_hw_exit, __cmd_quit, exit rt-thread);
 #endif /* RT_USING_FINSH */
 
 /**
@@ -93,9 +97,11 @@ void rt_hw_board_init()
     /* init system memory */
     heap = rt_hw_sram_init();
 
-//#if defined(RT_USING_USART)
-    rt_hw_usart_init();
-//#endif
+    uart_console_init();
+
+#ifdef _WIN32
+    rt_thread_idle_sethook(rt_hw_win32_low_cpu);
+#endif
 
 #if defined(RT_USING_CONSOLE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);

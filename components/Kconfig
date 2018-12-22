@@ -1,0 +1,44 @@
+menu "RT-Thread Components"
+
+config RT_USING_COMPONENTS_INIT
+    bool "Use components automatically initialization"
+    default y
+
+if RT_USING_COMPONENTS_INIT
+    config RT_USING_USER_MAIN
+        bool "The main() function as user entry function"
+        default y
+
+    if RT_USING_USER_MAIN
+        config RT_MAIN_THREAD_STACK_SIZE
+            int "Set main thread stack size"
+            default 2048
+        config RT_MAIN_THREAD_PRIORITY
+            int "Set main thread priority" 
+            default 4  if RT_THREAD_PRIORITY_8
+            default 10  if RT_THREAD_PRIORITY_32
+            default 85  if RT_THREAD_PRIORITY_256
+    endif
+endif
+
+source "$RTT_DIR/components/cplusplus/Kconfig"
+
+source "$RTT_DIR/components/finsh/Kconfig"
+
+source "$RTT_DIR/components/dfs/Kconfig"
+
+source "$RTT_DIR/components/drivers/Kconfig"
+
+source "$RTT_DIR/components/libc/Kconfig"
+
+source "$RTT_DIR/components/net/Kconfig"
+
+source "$RTT_DIR/components/vbus/Kconfig"
+
+source "$RTT_DIR/components/utilities/Kconfig"
+
+source "$RTT_DIR/components/CMSIS/Kconfig"
+
+source "$RTT_DIR/components/lwp/Kconfig"
+
+endmenu

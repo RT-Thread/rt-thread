@@ -25,8 +25,8 @@ rt_err_t rym_cat_to_dev(rt_device_t idev, rt_device_t odev)
         rt_kprintf("open output device error: 0x%x", -res);
         return res;
     }
-    res = rym_recv_on_device(&rctx, idev,
-            RT_NULL, _rym_echo_data, RT_NULL, 1000);
+    res = rym_recv_on_device(&rctx, idev, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                             RT_NULL, _rym_echo_data, RT_NULL, 1000);
     rt_device_close(_odev);
     rt_kprintf("leaving RYM mode with code %X\n", res);
     return res;

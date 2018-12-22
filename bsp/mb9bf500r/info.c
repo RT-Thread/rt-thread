@@ -42,7 +42,7 @@ static rt_bool_t view_event_handler(struct rtgui_widget* widget, struct rtgui_ev
         rtgui_dc_draw_text(dc, "  FM3 Easy Kit Demo", &rect);
         rect.y1 += 10;
         rtgui_dc_draw_text(dc, "  rt-thread / RTGUI", &rect);
-		rtgui_dc_end_drawing(dc);
+		rtgui_dc_end_drawing(dc, RT_TRUE);
 
 		return RT_FALSE;
 	}
@@ -81,7 +81,7 @@ static rt_bool_t view_event_handler(struct rtgui_widget* widget, struct rtgui_ev
             rect.y2 = 10;       
             rtgui_dc_fill_rect(dc, &rect);
             rtgui_dc_draw_text(dc, key_str, &rect);
-            rtgui_dc_end_drawing(dc);
+            rtgui_dc_end_drawing(dc, RT_TRUE);
         }
         else if (ekbd->type == RTGUI_KEYUP)
         {
@@ -94,7 +94,7 @@ static rt_bool_t view_event_handler(struct rtgui_widget* widget, struct rtgui_ev
             rect.y2 = 10;       
             rtgui_dc_fill_rect(dc, &rect);
             //rtgui_dc_draw_text(dc, key_str, &rect);
-            rtgui_dc_end_drawing(dc);
+            rtgui_dc_end_drawing(dc, RT_TRUE);
         }
     }
     else if (event->type == RTGUI_EVENT_COMMAND)
@@ -144,7 +144,7 @@ static rt_bool_t view_event_handler(struct rtgui_widget* widget, struct rtgui_ev
                     rtgui_dc_draw_vline(dc, index, rect.y2-major, rect.y2);
                 break;
         }
-        rtgui_dc_end_drawing(dc); 
+        rtgui_dc_end_drawing(dc, RT_TRUE); 
     }
 
 	return rtgui_view_event_handler(widget, event);

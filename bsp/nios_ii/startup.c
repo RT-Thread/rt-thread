@@ -26,7 +26,7 @@
 extern int rt_application_init(void);
 
 #ifdef RT_USING_FINSH
-extern void finsh_system_init(void);
+extern int finsh_system_init(void);
 extern void finsh_set_device(const char* device);
 #endif
 
@@ -85,10 +85,8 @@ void rtthread_startup(void)
 
 int main(void)
 {
-    rt_uint32_t UNUSED level;
-
     /* disable interrupt first */
-    level = rt_hw_interrupt_disable();
+    rt_hw_interrupt_disable();
 
     /* startup RT-Thread RTOS */
     rtthread_startup();

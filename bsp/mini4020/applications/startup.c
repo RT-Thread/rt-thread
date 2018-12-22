@@ -35,7 +35,7 @@ extern int Image$$RW_RAM1$$ZI$$Limit;
 #endif
 
 extern void rt_application_init(void);
-extern void finsh_system_init(void);
+extern int finsh_system_init(void);
 extern void sd_init(void);
 
 void rtthread_startup()
@@ -79,9 +79,6 @@ void rtthread_startup()
 	eth_system_device_init();
 	rt_hw_dm9161_init();
 #endif
-	
-	/*init all registed devices */
-	rt_device_init_all();
 #endif
 
 	/* init application */
@@ -108,10 +105,8 @@ void rtthread_startup()
 
 int main()
 {
-	rt_uint32_t UNUSED level;
-
 	/* disable interrupt first */
-	level = rt_hw_interrupt_disable();
+	rt_hw_interrupt_disable();
 
 	/* startup RT-Thread RTOS */
 	rtthread_startup();

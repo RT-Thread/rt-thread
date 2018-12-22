@@ -1,0 +1,224 @@
+/*!
+
+@mainpage
+
+The Platform SDK is a comprehensive set of reference drivers for the modules and
+peripherals present on the i.MX6 Series SoCs.
+
+
+
+ */
+
+
+// Define doxygen modules.
+/*!
+
+@defgroup diag_util Utilities
+@brief SDK utilities
+
+@defgroup diag_timer Timer Services
+@brief System timer services
+@ingroup timers
+
+@defgroup diag_epit EPIT
+@brief EPIT timer driver
+@ingroup timers
+
+@defgroup diag_gpt GPT
+@brief GPT timer driver
+@ingroup timers
+
+@defgroup diag_keypad Keypad Port
+@brief Keypad driver
+
+@defgroup diag_init Base SDK
+@brief Definitions common to SDK
+
+@defgroup diag_ipu IPU
+@brief IPU driver
+@ingroup graphics
+
+@defgroup diag_hdmi HDMI
+@brief HDMI transmitter driver
+@ingroup graphics
+
+@defgroup diag_uart UART
+@brief UART driver
+@ingroup serial
+
+@defgroup diag_ioexpander IO Expander
+@brief IO expander chip driver
+
+@defgroup diag_nand NAND
+@brief GPMI NAND driver
+@ingroup storage
+
+@defgroup bch BCH40 ECC
+@brief BCH ECC driver
+@ingroup diag_nand
+
+@defgroup diag_usb USB
+@brief USB driver
+
+@defgroup diag_audio Audio
+@brief Audio driver
+
+@defgroup VPU VPU
+@brief VPU driver
+@ingroup graphics
+
+@defgroup diag_camera Camera Interface
+@brief Camera driver
+@ingroup graphics
+
+@defgroup diag_mipi MIPI DSI/CSI
+@brief MIPI display and camera driver
+@ingroup graphics
+
+@defgroup diag_ocotp OTP
+@brief One-time programmable memory driver
+
+@defgroup diag_i2c I2C
+@brief I2C driver
+@ingroup serial
+
+@defgroup diag_ldb LDB
+@brief LVDS Display Bridge driver
+@ingroup graphics
+
+@defgroup diag_enet Ethernet
+@brief Internal Ethernet MAC driver
+
+@defgroup diag_gpio GPIO
+@brief GPIO driver
+
+@defgroup tempmon Temperature Monitor
+@brief Internal temperature monitor driver
+
+@defgroup diag_pmu PMU
+@brief Internal power manager driver
+
+@defgroup gic GIC
+@brief Generic Interrupt Controller driver
+
+@defgroup sdk_common SDK Common Definitions
+@brief Definitions used throughout the SDK.
+
+@defgroup diag_eim EIM
+@brief External Interface Module driver
+
+@defgroup diag_pwm PWM
+@brief Pulse Width Modulator driver
+
+@defgroup diag_rtc RTC
+@brief Real Time Clock driver
+@ingroup timers
+
+@defgroup diag_srtc SRTC
+@brief Secure Real Time Clock driver
+@ingroup timers
+
+@defgroup diag_snvs SNVS
+@brief Secure Non-volatile Storage driver
+
+@defgroup diag_spi SPI
+@brief SPI driver
+@ingroup serial
+
+@defgroup diag_usdhc USDHC
+@brief uSDHC SD/MMC driver
+@ingroup storage
+
+@defgroup diag_vdoa VDOA
+@brief Video Data Order Adapter driver
+@ingroup graphics
+
+@defgroup diag_pcie PCIe
+@brief PCIe driver
+
+@defgroup atomics Atomic Operations
+@brief Atomic operation routines
+@ingroup lowlevel
+
+@defgroup menu Menu
+@brief Menu Framework API
+
+@defgroup spinlock Spinlock
+@brief Simple spinlock API
+
+@defgroup diag_clocks Clocks
+@brief Clock management driver
+@ingroup lowlevel
+
+@defgroup cortexa9 Cortex-A9
+@brief CPU related functions
+@ingroup lowlevel
+
+@defgroup diag_interrupt Interrupts
+@brief Interrupt manager
+@ingroup lowlevel
+
+@defgroup diag_mmu MMU
+@brief MMU related routines
+@ingroup lowlevel
+
+@defgroup cpu_utility CPU Utility
+@brief Miscellaneous CPU utility routines
+@ingroup lowlevel
+
+@defgroup diag_adv7180 ADV7180
+@brief ADV7180 video decoder driver
+@ingroup graphics
+
+
+@defgroup lowlevel Low-level Services
+@brief
+
+
+@defgroup timers Timers
+@brief Timer drivers and services
+
+
+@defgroup graphics Display and Graphics Drivers
+@brief
+
+
+@defgroup serial Serial Protocols
+@brief
+
+
+@defgroup storage Storage Media Drivers
+@brief
+
+
+@defgroup os_fat FAT32
+@brief FAT32 filesystem
+
+@defgroup os_fat_io FAT32 I/O Layer
+@brief Low-level I/O layer for FAT32 filesystem.
+
+@defgroup os_fat_errors Filesystem Errors
+@brief Errors for FAT32 filesystem.
+
+
+@defgroup diag_accel Accelerometer
+@brief Accelerometer drivers
+
+@defgroup diag_epdc EPDC
+@brief E-ink EPD display controller driver
+@ingroup graphics
+
+@defgroup diag_lcdif LCDIF
+@brief LCDIF driver
+@ingroup graphics
+
+@defgroup diag_spdc SPDC
+@brief Sipix EPD display controller driver
+@ingroup graphics
+
+@defgroup diag_vpu VPU
+@brief VPU driver
+@ingroup graphics
+
+ */
+

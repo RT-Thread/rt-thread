@@ -1,18 +1,15 @@
 ;/*
-; * File      : context_rvds.S
-; * This file is part of RT-Thread RTOS
-; * COPYRIGHT (C) 2009, RT-Thread Development Team
-; *
-; * The license and distribution terms for this file may be
-; * found in the file LICENSE in this distribution or at
-; * http://www.rt-thread.org/license/LICENSE
-; *
+;* Copyright (c) 2006-2018, RT-Thread Development Team
+;*
+;* SPDX-License-Identifier: Apache-2.0
+;*
 ; * Change Logs:
 ; * Date           Author       Notes
 ; * 2009-01-17     Bernard      first version.
 ; * 2012-01-01     aozima       support context switch load/store FPU register.
 ; * 2013-06-18     aozima       add restore MSP feature.
 ; * 2013-06-23     aozima       support lazy stack optimized.
+; * 2018-07-24     aozima       enhancement hard fault exception handler.
 ; */
 
 ;/**
@@ -85,8 +82,8 @@ _reswitch
     BX      LR
     ENDP
 
-; r0 --> swith from thread stack
-; r1 --> swith to thread stack
+; r0 --> switch from thread stack
+; r1 --> switch to thread stack
 ; psr, pc, lr, r12, r3, r2, r1, r0 are pushed into [from] stack
 PendSV_Handler   PROC
     EXPORT PendSV_Handler
@@ -106,7 +103,7 @@ PendSV_Handler   PROC
 
     LDR     r0, =rt_interrupt_from_thread
     LDR     r1, [r0]
-    CBZ     r1, swtich_to_thread    ; skip register save at the first time
+    CBZ     r1, switch_to_thread    ; skip register save at the first time
 
     MRS     r1, psp                 ; get from thread stack pointer
 
@@ -129,7 +126,7 @@ PendSV_Handler   PROC
     LDR     r0, [r0]
     STR     r1, [r0]                ; update from thread stack pointer
 
-swtich_to_thread
+switch_to_thread
     LDR     r1, =rt_interrupt_to_thread
     LDR     r1, [r1]
     LDR     r1, [r1]                ; load thread stack pointer
@@ -147,15 +144,15 @@ swtich_to_thread
 
     MSR     psp, r1                 ; update stack pointer
 
-pendsv_exit
-    ; restore interrupt
-    MSR     PRIMASK, r2
-
     IF      {FPU} != "SoftVFP"
     ORR     lr, lr, #0x10           ; lr |=  (1 << 4), clean FPCA.
     CMP     r3,  #0                 ; if(flag_r3 != 0)
     BICNE   lr, lr, #0x10           ; lr &= ~(1 << 4), set FPCA.
     ENDIF
+
+pendsv_exit
+    ; restore interrupt
+    MSR     PRIMASK, r2
 
     ORR     lr, lr, #0x04
     BX      lr
@@ -205,10 +202,10 @@ rt_hw_context_switch_to    PROC
     LDR     r0, =SCB_VTOR
     LDR     r0, [r0]
     LDR     r0, [r0]
-    NOP
     MSR     msp, r0
 
     ; enable interrupts at processor level
+    CPSIE   F
     CPSIE   I
 
     ; never reach here!
@@ -218,7 +215,6 @@ rt_hw_context_switch_to    PROC
 rt_hw_interrupt_thread_switch PROC
     EXPORT rt_hw_interrupt_thread_switch
     BX      lr
-    NOP
     ENDP
 
     IMPORT rt_hw_hard_fault_exception
@@ -226,7 +222,22 @@ rt_hw_interrupt_thread_switch PROC
 HardFault_Handler    PROC
 
     ; get current context
-    MRS     r0, psp                 ; get fault thread stack pointer
+    TST     lr, #0x04               ; if(!EXC_RETURN[2])
+    ITE     EQ
+    MRSEQ   r0, msp                 ; [2]=0 ==> Z=1, get fault context from handler.
+    MRSNE   r0, psp                 ; [2]=1 ==> Z=0, get fault context from thread.
+
+    STMFD   r0!, {r4 - r11}         ; push r4 - r11 register
+    IF      {FPU} != "SoftVFP"
+    STMFD   r0!, {lr}               ; push dummy for flag
+    ENDIF
+    STMFD   r0!, {lr}               ; push exec_return register
+
+    TST     lr, #0x04               ; if(!EXC_RETURN[2])
+    ITE     EQ
+    MSREQ   msp, r0                 ; [2]=0 ==> Z=1, update stack pointer to MSP.
+    MSRNE   psp, r0                 ; [2]=1 ==> Z=0, update stack pointer to PSP.
+
     PUSH    {lr}
     BL      rt_hw_hard_fault_exception
     POP     {lr}
@@ -234,5 +245,7 @@ HardFault_Handler    PROC
     ORR     lr, lr, #0x04
     BX      lr
     ENDP
+
+    ALIGN   4
 
     END
