@@ -50,7 +50,7 @@ if PLATFORM == 'gcc':
         CFLAGS += ' -O0 -ggdb'
         AFLAGS += ' -ggdb'
     else:
-        CFLAGS += ' -O2'
+        CFLAGS += ' -O2 -Os'
 
     CXXFLAGS = CFLAGS
 
