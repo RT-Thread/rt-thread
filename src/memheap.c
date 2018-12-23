@@ -1,21 +1,11 @@
 /*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/*
  * File      : memheap.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012, RT-Thread Development Team
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -44,7 +34,7 @@
 #define RT_MEMHEAP_MINIALLOC    12
 
 #define RT_MEMHEAP_SIZE         RT_ALIGN(sizeof(struct rt_memheap_item), RT_ALIGN_SIZE)
-#define MEMITEM_SIZE(item)      ((rt_uint32_t)item->next - (rt_uint32_t)item - RT_MEMHEAP_SIZE)
+#define MEMITEM_SIZE(item)      ((rt_ubase_t)item->next - (rt_ubase_t)item - RT_MEMHEAP_SIZE)
 
 /*
  * The initialized memory pool will be:
@@ -60,7 +50,7 @@
 rt_err_t rt_memheap_init(struct rt_memheap *memheap,
                          const char        *name,
                          void              *start_addr,
-                         rt_uint32_t        size)
+                         rt_size_t         size)
 {
     struct rt_memheap_item *item;
 
@@ -145,7 +135,7 @@ rt_err_t rt_memheap_detach(struct rt_memheap *heap)
 }
 RTM_EXPORT(rt_memheap_detach);
 
-void *rt_memheap_alloc(struct rt_memheap *heap, rt_uint32_t size)
+void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size)
 {
     rt_err_t result;
     rt_uint32_t free_size;

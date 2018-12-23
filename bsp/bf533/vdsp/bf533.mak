@@ -138,10 +138,6 @@ bf533_Debug : ./Debug/bf533.ldr
 	@echo "..\..\..\src\mempool.c"
 	$(VDSP)/ccblkfn.exe -c ..\..\..\src\mempool.c -file-attr ProjectName=bf533 -g -structs-do-not-overlap -no-multiline -I ../../../include -I ../ -I ../../../components/finsh -I ../../../libcpu/blackfin/bf53x -I ../../../src -double-size-64 -decls-strong -warn-protos -proc ADSP-BF533 -o .\Debug\mempool.doj -MM
 
-./Debug/module.doj :../../../src/module.c ../../../include/rthw.h ../../../include/rtthread.h ../../../include/rtdef.h ../rtconfig.h $(VDSP)/Blackfin/include/stdarg.h $(VDSP)/Blackfin/include/yvals.h ../../../include/rtdebug.h ../../../include/rtservice.h ../../../include/rtm.h $(VDSP)/Blackfin/include/string.h 
-	@echo "..\..\..\src\module.c"
-	$(VDSP)/ccblkfn.exe -c ..\..\..\src\module.c -file-attr ProjectName=bf533 -g -structs-do-not-overlap -no-multiline -I ../../../include -I ../ -I ../../../components/finsh -I ../../../libcpu/blackfin/bf53x -I ../../../src -double-size-64 -decls-strong -warn-protos -proc ADSP-BF533 -o .\Debug\module.doj -MM
-
 ./Debug/object.doj :../../../src/object.c ../../../include/rtthread.h ../../../include/rtdef.h ../rtconfig.h $(VDSP)/Blackfin/include/stdarg.h $(VDSP)/Blackfin/include/yvals.h ../../../include/rtdebug.h ../../../include/rtservice.h ../../../include/rthw.h 
 	@echo "..\..\..\src\object.c"
 	$(VDSP)/ccblkfn.exe -c ..\..\..\src\object.c -file-attr ProjectName=bf533 -g -structs-do-not-overlap -no-multiline -I ../../../include -I ../ -I ../../../components/finsh -I ../../../libcpu/blackfin/bf53x -I ../../../src -double-size-64 -decls-strong -warn-protos -proc ADSP-BF533 -o .\Debug\object.doj -MM

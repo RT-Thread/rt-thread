@@ -1,21 +1,7 @@
 /*
- * File      : timer.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -57,7 +43,8 @@ static rt_uint8_t timer_thread_stack[RT_TIMER_THREAD_STACK_SIZE];
 #ifdef RT_USING_HOOK
 extern void (*rt_object_take_hook)(struct rt_object *object);
 extern void (*rt_object_put_hook)(struct rt_object *object);
-static void (*rt_timer_timeout_hook)(struct rt_timer *timer);
+static void (*rt_timer_enter_hook)(struct rt_timer *timer);
+static void (*rt_timer_exit_hook)(struct rt_timer *timer);
 
 /**
  * @addtogroup Hook
@@ -66,14 +53,25 @@ static void (*rt_timer_timeout_hook)(struct rt_timer *timer);
 /**@{*/
 
 /**
- * This function will set a hook function, which will be invoked when timer
- * is timeout.
+ * This function will set a hook function, which will be invoked when enter
+ * timer timeout callback function.
  *
  * @param hook the hook function
  */
-void rt_timer_timeout_sethook(void (*hook)(struct rt_timer *timer))
+void rt_timer_enter_sethook(void (*hook)(struct rt_timer *timer))
 {
-    rt_timer_timeout_hook = hook;
+    rt_timer_enter_hook = hook;
+}
+
+/**
+ * This function will set a hook function, which will be invoked when exit
+ * timer timeout callback function.
+ *
+ * @param hook the hook function
+ */
+void rt_timer_exit_sethook(void (*hook)(struct rt_timer *timer))
+{
+    rt_timer_exit_hook = hook;
 }
 
 /**@}*/
@@ -517,7 +515,7 @@ void rt_timer_check(void)
          */
         if ((current_tick - t->timeout_tick) < RT_TICK_MAX / 2)
         {
-            RT_OBJECT_HOOK_CALL(rt_timer_timeout_hook, (t));
+            RT_OBJECT_HOOK_CALL(rt_timer_enter_hook, (t));
 
             /* remove timer from timer list firstly */
             _rt_timer_remove(t);
@@ -528,6 +526,7 @@ void rt_timer_check(void)
             /* re-get tick */
             current_tick = rt_tick_get();
 
+            RT_OBJECT_HOOK_CALL(rt_timer_exit_hook, (t));
             RT_DEBUG_LOG(RT_DEBUG_TIMER, ("current tick: %d\n", current_tick));
 
             if ((t->parent.flag & RT_TIMER_FLAG_PERIODIC) &&
@@ -592,7 +591,7 @@ void rt_soft_timer_check(void)
          */
         if ((current_tick - t->timeout_tick) < RT_TICK_MAX / 2)
         {
-            RT_OBJECT_HOOK_CALL(rt_timer_timeout_hook, (t));
+            RT_OBJECT_HOOK_CALL(rt_timer_enter_hook, (t));
 
             /* move node to the next */
             n = n->next;
@@ -608,6 +607,7 @@ void rt_soft_timer_check(void)
             /* re-get tick */
             current_tick = rt_tick_get();
 
+            RT_OBJECT_HOOK_CALL(rt_timer_exit_hook, (t));
             RT_DEBUG_LOG(RT_DEBUG_TIMER, ("current tick: %d\n", current_tick));
 
             /* lock scheduler */

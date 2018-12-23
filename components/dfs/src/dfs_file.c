@@ -1,22 +1,8 @@
 /*
- * File      : dfs_file.c
- * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2011, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
+ * SPDX-License-Identifier: Apache-2.0
+ * 
  * Change Logs:
  * Date           Author       Notes
  * 2005-02-22     Bernard      The first version.
@@ -60,7 +46,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         return -ENOMEM;
     }
 
-    dbg_log(DBG_LOG, "open file:%s\n", fullpath);
+    LOG_D("open file:%s", fullpath);
 
     /* Check whether file is already open */
     if (fd_is_open(fullpath) == 0)
@@ -79,7 +65,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         return -ENOENT;
     }
 
-    dbg_log(DBG_LOG, "open in filesystem:%s\n", fs->ops->name);
+    LOG_D("open in filesystem:%s", fs->ops->name);
     fd->fops  = fs->ops->fops; /* set file ops */
 
     /* initialize the fd item */
@@ -96,7 +82,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         else
             fd->path = rt_strdup(dfs_subdir(fs->path, fullpath));
         rt_free(fullpath);
-        dbg_log(DBG_LOG, "Actual file path: %s\n", fd->path);
+        LOG_D("Actual file path: %s", fd->path);
     }
     else
     {
@@ -119,7 +105,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         rt_free(fd->path);
         fd->path = NULL;
 
-        dbg_log(DBG_ERROR, "open failed\n");
+        LOG_E("open failed");
 
         return result;
     }
@@ -131,7 +117,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         fd->flags |= DFS_F_DIRECTORY;
     }
 
-    dbg_log(DBG_INFO, "open successful\n");
+    LOG_I("open successful");
     return 0;
 }
 
@@ -185,11 +171,11 @@ int dfs_file_ioctl(struct dfs_fd *fd, int cmd, void *args)
             return fd->flags; /* return flags */
         case F_SETFL:
             {
-                int flags = (int)args;
+                int flags = (int)(rt_base_t)args;
                 int mask  = O_NONBLOCK | O_APPEND;
 
                 flags &= mask;
-                fd->flags &= mask;
+                fd->flags &= ~mask;
                 fd->flags |= flags;
             }
             return 0;
@@ -389,8 +375,8 @@ int dfs_file_stat(const char *path, struct stat *buf)
 
     if ((fs = dfs_filesystem_lookup(fullpath)) == NULL)
     {
-        dbg_log(DBG_ERROR,
-                "can't find mounted filesystem on this path:%s\n", fullpath);
+        LOG_E(
+                "can't find mounted filesystem on this path:%s", fullpath);
         rt_free(fullpath);
 
         return -ENOENT;
@@ -419,8 +405,8 @@ int dfs_file_stat(const char *path, struct stat *buf)
         if (fs->ops->stat == NULL)
         {
             rt_free(fullpath);
-            dbg_log(DBG_ERROR,
-                    "the filesystem didn't implement this function\n");
+            LOG_E(
+                    "the filesystem didn't implement this function");
 
             return -ENOSYS;
         }

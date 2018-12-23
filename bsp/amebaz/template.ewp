@@ -12,7 +12,7 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>24</version>
+        <version>22</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -28,30 +28,40 @@
           <state>Debug\List</state>
         </option>
         <option>
+          <name>Variant</name>
+          <version>21</version>
+          <state>39</state>
+        </option>
+        <option>
           <name>GEndianMode</name>
           <state>0</state>
         </option>
         <option>
           <name>Input variant</name>
           <version>3</version>
-          <state>7</state>
+          <state>0</state>
         </option>
         <option>
           <name>Input description</name>
-          <state>No specifier n, no float nor long long, no scan set, no assignment suppressing, without multibyte support.</state>
+          <state>Automatic choice of formatter.</state>
         </option>
         <option>
           <name>Output variant</name>
           <version>2</version>
-          <state>7</state>
+          <state>0</state>
         </option>
         <option>
           <name>Output description</name>
-          <state>No specifier a, A, no specifier n, no float nor long long, no flags.</state>
+          <state>Automatic choice of formatter.</state>
         </option>
         <option>
           <name>GOutputBinary</name>
           <state>0</state>
+        </option>
+        <option>
+          <name>FPU</name>
+          <version>3</version>
+          <state>5</state>
         </option>
         <option>
           <name>OGCoreOrChip</name>
@@ -73,11 +83,11 @@
         </option>
         <option>
           <name>OGProductVersion</name>
-          <state>6.10.1.52170</state>
+          <state>7.30.4.8186</state>
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>7.40.3.8937</state>
+          <state>7.30.4.8186</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -89,11 +99,11 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>STM32F107xC	ST STM32F107xC</state>
+          <state>Default	None</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>GEndianModeBE</name>
@@ -126,8 +136,13 @@
           <state>$TOOLKIT_DIR$\INC\c\DLib_Config_Normal.h</state>
         </option>
         <option>
+          <name>GFPUCoreSlave</name>
+          <version>21</version>
+          <state>39</state>
+        </option>
+        <option>
           <name>GBECoreSlave</name>
-          <version>22</version>
+          <version>21</version>
           <state>39</state>
         </option>
         <option>
@@ -142,34 +157,6 @@
           <name>GRuntimeLibThreads</name>
           <state>0</state>
         </option>
-        <option>
-          <name>CoreVariant</name>
-          <version>22</version>
-          <state>39</state>
-        </option>
-        <option>
-          <name>GFPUDeviceSlave</name>
-          <state>STM32F107xC	ST STM32F107xC</state>
-        </option>
-        <option>
-          <name>FPU2</name>
-          <version>0</version>
-          <state>4</state>
-        </option>
-        <option>
-          <name>NrRegs</name>
-          <version>0</version>
-          <state>1</state>
-        </option>
-        <option>
-          <name>NEON</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>GFPUCoreSlave2</name>
-          <version>22</version>
-          <state>39</state>
-        </option>
       </data>
     </settings>
     <settings>
@@ -182,6 +169,13 @@
         <option>
           <name>CCDefines</name>
           <state></state>
+          <state>CONFIG_PLATFORM_8711B</state>
+          <state>CONFIG_BUILD_ROM</state>
+          <state>PLATFORM_RTTHREAD</state>
+          <state>__IEEE_LITTLE_ENDIAN</state>
+          <state>RT_USING_DLIBC</state>
+          <state>_DLIB_FILE_DESCRIPTOR</state>
+          <state>_DLIB_THREAD_SUPPORT</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -597,7 +591,7 @@
         <debug>1</debug>
         <option>
           <name>OOCOutputFormat</name>
-          <version>3</version>
+          <version>2</version>
           <state>0</state>
         </option>
         <option>
@@ -967,7 +961,7 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>24</version>
+        <version>22</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -983,13 +977,18 @@
           <state>Release\List</state>
         </option>
         <option>
+          <name>Variant</name>
+          <version>21</version>
+          <state>0</state>
+        </option>
+        <option>
           <name>GEndianMode</name>
           <state>0</state>
         </option>
         <option>
           <name>Input variant</name>
           <version>3</version>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>Input description</name>
@@ -998,7 +997,7 @@
         <option>
           <name>Output variant</name>
           <version>2</version>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>Output description</name>
@@ -1006,6 +1005,11 @@
         </option>
         <option>
           <name>GOutputBinary</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>FPU</name>
+          <version>3</version>
           <state>0</state>
         </option>
         <option>
@@ -1028,11 +1032,11 @@
         </option>
         <option>
           <name>OGProductVersion</name>
-          <state>6.10.1.52170</state>
+          <state>7.30.4.8186</state>
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>7.40.3.8937</state>
+          <state></state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -1044,7 +1048,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>Default	None</state>
+          <state></state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -1081,9 +1085,14 @@
           <state></state>
         </option>
         <option>
+          <name>GFPUCoreSlave</name>
+          <version>21</version>
+          <state>1</state>
+        </option>
+        <option>
           <name>GBECoreSlave</name>
-          <version>22</version>
-          <state>0</state>
+          <version>21</version>
+          <state>1</state>
         </option>
         <option>
           <name>OGUseCmsis</name>
@@ -1095,34 +1104,6 @@
         </option>
         <option>
           <name>GRuntimeLibThreads</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CoreVariant</name>
-          <version>22</version>
-          <state>0</state>
-        </option>
-        <option>
-          <name>GFPUDeviceSlave</name>
-          <state>Default	None</state>
-        </option>
-        <option>
-          <name>FPU2</name>
-          <version>0</version>
-          <state>0</state>
-        </option>
-        <option>
-          <name>NrRegs</name>
-          <version>0</version>
-          <state>0</state>
-        </option>
-        <option>
-          <name>NEON</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>GFPUCoreSlave2</name>
-          <version>22</version>
           <state>0</state>
         </option>
       </data>
@@ -1552,7 +1533,7 @@
         <debug>0</debug>
         <option>
           <name>OOCOutputFormat</name>
-          <version>3</version>
+          <version>2</version>
           <state>0</state>
         </option>
         <option>

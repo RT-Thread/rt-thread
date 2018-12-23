@@ -42,7 +42,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -61,6 +61,7 @@ typedef struct
     volatile uint32_t ui32WriteIndex;
     volatile uint32_t ui32ReadIndex;
     volatile uint32_t ui32Length;
+    uint32_t          ui32FifoInc;
     uint32_t          ui32Capacity;
 }
 am_hal_ios_buffer_t;
@@ -102,6 +103,23 @@ uint8_t *g_pui8FIFOEnd = (uint8_t *) REG_IOSLAVE_BASEADDR;
 uint8_t *g_pui8FIFOPtr = (uint8_t *) REG_IOSLAVE_BASEADDR;
 uint8_t g_ui32HwFifoSize = 0;
 uint32_t g_ui32FifoBaseOffset = 0;
+
+//*****************************************************************************
+//
+// Checks to see if this processor is a Rev B2 device.
+//
+// This is needed to disable SHELBY-1654 workaround.
+//
+//*****************************************************************************
+bool
+isRevB2(void)
+{
+    //
+    // Check to make sure the major rev is B and the minor rev is 2.
+    //
+    return ( (AM_REG(MCUCTRL, CHIPREV) & 0xFF) ==   \
+        (AM_REG_MCUCTRL_CHIPREV_REVMAJ_B | (AM_REG_MCUCTRL_CHIPREV_REVMIN_REV0 + 2)) );
+}
 
 //*****************************************************************************
 //
@@ -957,7 +975,10 @@ am_hal_ios_fifo_service(uint32_t ui32Status)
                     }
                 }
             }
-            resync_fifoSize();
+            if (!isRevB2())
+            {
+                resync_fifoSize();
+            }
 
             //
             // Need to retake the FIFO space, after Threshold interrupt has been reenabled
@@ -1041,7 +1062,10 @@ am_hal_ios_fifo_write(uint8_t *pui8Data, uint32_t ui32NumBytes)
             ui32NumBytes -= ui32FIFOSpace;
             pui8Data += ui32FIFOSpace;
         };
-        resync_fifoSize();
+        if (!isRevB2())
+        {
+            resync_fifoSize();
+        }
     }
 
     //
@@ -1102,6 +1126,8 @@ am_hal_ios_fifo_write(uint8_t *pui8Data, uint32_t ui32NumBytes)
         }
     }
 
+    // Number of bytes written
+    g_sSRAMBuffer.ui32FifoInc += totalBytes - ui32NumBytes;
     return (totalBytes - ui32NumBytes);
 }
 
@@ -1114,7 +1140,7 @@ am_hal_ios_fifo_write(uint8_t *pui8Data, uint32_t ui32NumBytes)
 //!
 //! This function will write data from the caller-provided array to the IOS
 //! LRAM FIFO. This simple routine does not use SRAM buffering for large
-//! messages.
+//! messages. This function also updates the FIFOCTR.
 //!
 //! The maximum message size for the IO Slave is 128 bytes.
 //!
@@ -1140,6 +1166,8 @@ am_hal_ios_fifo_write_simple(uint8_t *pui8Data, uint32_t ui32NumBytes)
     if ( ui32NumBytes <= ui32FIFOSpace )
     {
         fifo_write(pui8Data, ui32NumBytes);
+        // Write FIFOINC
+        AM_BFW(IOSLAVE, FIFOINC, FIFOINC, ui32NumBytes);
     }
     else
     {
@@ -1209,6 +1237,7 @@ am_hal_ios_buffer_init(am_hal_ios_buffer_t *psBuffer, void *pvArray,
     psBuffer->ui32ReadIndex = 0;
     psBuffer->ui32Length = 0;
     psBuffer->ui32Capacity = ui32Bytes;
+    psBuffer->ui32FifoInc = 0;
     psBuffer->pui8Data = (uint8_t *)pvArray;
 }
 
@@ -1273,12 +1302,19 @@ am_hal_ios_fifo_buffer_init(uint8_t *pui8Buffer, uint32_t ui32NumBytes)
 //! @brief Update the FIFOCTR to inform host of available data to read.
 //!
 //! This function allows the application to indicate to HAL when it is safe to
-//! update the FIFOCTR.
+//! update the FIFOCTR. This function needs to be used in conjunction with
+//! am_hal_ios_fifo_write(), which itself does not update the FIFOCTR
 //!
+//! CAUTION:
 //! Application needs to implement some sort of
 //! synchronization with the host to make sure host is not reading FIFOCTR while
 //! it is being updated by the MCU, since the FIFOCTR read over
-//! IO is not an atomic operation.
+//! IO is not an atomic operation. Otherwise, some other logic could be implemented
+//! by the host to detect and disregard transient values of FIFOCTR (e.g. multiple
+//! reads till it gets a stable value).
+//! For Pre-B2 parts, it is necessary to have this synchronization guarantee that
+//! Host is not doing any READ operation - be it for FIFOCTR or FIFO itself when
+//! this call is made, as otherwise the FIFOCTR value may get corrupted.
 //!
 //!
 //! @return None.
@@ -1287,11 +1323,9 @@ am_hal_ios_fifo_buffer_init(uint8_t *pui8Buffer, uint32_t ui32NumBytes)
 void
 am_hal_ios_update_fifoctr(void)
 {
-    uint32_t ui32Val;
-    // Determine the available data
-    ui32Val = am_hal_ios_fifo_space_used();
-    // Update FIFOCTR
-    AM_BFW(IOSLAVE, FIFOCTR, FIFOCTR, ui32Val);
+    // Write FIFOINC
+    AM_BFW(IOSLAVE, FIFOINC, FIFOINC, g_sSRAMBuffer.ui32FifoInc);
+    g_sSRAMBuffer.ui32FifoInc = 0;
     return;
 }
 

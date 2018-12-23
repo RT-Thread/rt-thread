@@ -12,10 +12,8 @@
  * 2009-01-05     Bernard      first implementation
  * 2018-03-15     flyingcys    add amebaz
  */
+#include <rtl8710b.h>
 #include <stdint.h>
-#include <rthw.h>
-#include <rtthread.h>
-
 #include "board.h"
 #include "drv_uart.h"
 
@@ -87,7 +85,7 @@ void rt_hw_board_init(void)
 {
     extern uint32_t SystemCoreClock;
     SysTick_Config(SystemCoreClock/RT_TICK_PER_SECOND);
-    
+
 #ifdef RT_USING_HEAP
         rt_system_heap_init((void*)HEAP_BEGIN, (void*)HEAP_END);
 #endif

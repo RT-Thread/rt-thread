@@ -1,26 +1,7 @@
 /*
- *  RT-Thread module shell implementation.
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * COPYRIGHT (C) 2013, Shanghai Real-Thread Technology Co., Ltd
- *
- *  This file is part of RT-Thread (http://www.rt-thread.org)
- *  Maintainer: bernard.xiong <bernard.xiong at gmail.com>
- *
- *  All rights reserved.
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -28,6 +9,9 @@
  * 2014-01-03     Bernard      msh can execute module.
  * 2017-07-19     Aubr.Cool    limit argc to RT_FINSH_ARG_MAX
  */
+#include <rtthread.h>
+
+#ifdef FINSH_USING_MSH
 
 #include "msh.h"
 #include <finsh.h>
@@ -37,8 +21,12 @@
 #include <dfs_posix.h>
 #endif
 
+#ifdef RT_USING_MODULE
+#include <dlmodule.h>
+#endif
+
 #ifndef FINSH_ARG_MAX
-#define FINSH_ARG_MAX    10
+#define FINSH_ARG_MAX    8
 #endif
 
 typedef int (*cmd_function_t)(int argc, char **argv);
@@ -64,7 +52,6 @@ static int msh_exit(int argc, char **argv)
 {
     /* return to finsh shell mode */
     __msh_state = RT_FALSE;
-
     return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(msh_exit, __cmd_exit, return to RT-Thread shell mode.);
@@ -254,7 +241,7 @@ int msh_exec_module(const char *cmd_line, int size)
     {
         /* found program */
         close(fd);
-        rt_module_exec_cmd(pg_name, cmd_line, size);
+        dlmodule_exec(pg_name, cmd_line, size);
         ret = 0;
     }
     else
@@ -373,25 +360,27 @@ int msh_exec(char *cmd, rt_size_t length)
     {
         return cmd_ret;
     }
-#if defined(RT_USING_MODULE) && defined(RT_USING_DFS)
-    if (msh_exec_module(cmd, length) == 0)
-    {
-        return 0;
-    }
-#endif
-
-#if defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)
+#ifdef RT_USING_DFS
+#ifdef DFS_USING_WORKDIR
     if (msh_exec_script(cmd, length) == 0)
     {
         return 0;
     }
 #endif
 
-#if defined(RT_USING_LWP) && defined(RT_USING_DFS)
+#ifdef RT_USING_MODULE
+    if (msh_exec_module(cmd, length) == 0)
+    {
+        return 0;
+    }
+#endif
+
+#ifdef RT_USING_LWP
     if (_msh_exec_lwp(cmd, length) == 0)
     {
         return 0;
     }
+#endif
 #endif
 
     /* truncate the cmd at the first space. */
@@ -446,8 +435,8 @@ void msh_auto_complete_path(char *path)
     ptr = path;
     for (;;)
     {
-        if (*ptr == '/') index = ptr + 1; 
-        if (!*ptr) break; 
+        if (*ptr == '/') index = ptr + 1;
+        if (!*ptr) break;
 
         ptr ++;
     }
@@ -624,3 +613,4 @@ void msh_auto_complete(char *prefix)
 }
 #endif
 
+#endif /* FINSH_USING_MSH */

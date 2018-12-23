@@ -25,6 +25,7 @@
 import os
 import sys
 import string
+import utils
 
 import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import SubElement
@@ -62,14 +63,14 @@ def IARAddGroup(parent, name, files, project_path):
         file_name = SubElement(file, 'name')
 
         if os.path.isabs(path):
-            file_name.text = path.decode(fs_encoding)
+            file_name.text = path # path.decode(fs_encoding)
         else:
-            file_name.text = ('$PROJ_DIR$\\' + path).decode(fs_encoding)
+            file_name.text = '$PROJ_DIR$\\' + path # ('$PROJ_DIR$\\' + path).decode(fs_encoding)
 
 def IARWorkspace(target):
     # make an workspace
     workspace = target.replace('.ewp', '.eww')
-    out = file(workspace, 'wb')
+    out = open(workspace, 'w')
     xml = iar_workspace % target
     out.write(xml)
     out.close()
@@ -80,7 +81,7 @@ def IARProject(target, script):
     tree = etree.parse('template.ewp')
     root = tree.getroot()
 
-    out = file(target, 'wb')
+    out = open(target, 'w')
 
     CPPPATH = []
     CPPDEFINES = []
@@ -105,18 +106,18 @@ def IARProject(target, script):
         IARAddGroup(root, group['name'], group['src'], project_path)
 
         # get each include path
-        if group.has_key('CPPPATH') and group['CPPPATH']:
+        if 'CPPPATH' in group and group['CPPPATH']:
             CPPPATH += group['CPPPATH']
 
         # get each group's definitions
-        if group.has_key('CPPDEFINES') and group['CPPDEFINES']:
+        if 'CPPDEFINES' in group and group['CPPDEFINES']:
             CPPDEFINES += group['CPPDEFINES']
 
         # get each group's link flags
-        if group.has_key('LINKFLAGS') and group['LINKFLAGS']:
+        if 'LINKFLAGS' in group and group['LINKFLAGS']:
             LINKFLAGS += group['LINKFLAGS']
 
-        if group.has_key('LIBS') and group['LIBS']:
+        if 'LIBS' in group and group['LIBS']:
             for item in group['LIBS']:
                 lib_path = searchLib(group)
                 if lib_path != '':
@@ -161,7 +162,7 @@ def IARProject(target, script):
                 state.text = path
 
     xml_indent(root)
-    out.write(etree.tostring(root, encoding='utf-8'))
+    out.write(etree.tostring(root, encoding='utf-8').decode())
     out.close()
 
     IARWorkspace(target)
@@ -176,14 +177,14 @@ def IARVersion():
         # backup environ
         old_environ = os.environ
         os.environ['RTT_CC'] = 'iar'
-        reload(rtconfig)
+        utils.ReloadModule(rtconfig)
 
         # get iar path
         path = rtconfig.EXEC_PATH
 
         # restore environ
         os.environ = old_environ
-        reload(rtconfig)
+        utils.ReloadModule(rtconfig)
 
         return path
 

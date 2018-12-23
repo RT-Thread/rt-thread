@@ -1,6 +1,7 @@
 /*
- * File      : winusb.c
- * COPYRIGHT (C) 2008 - 2016, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -23,6 +24,7 @@ struct winusb_device
 
 typedef struct winusb_device * winusb_device_t;
 
+ALIGN(4)
 static struct udevice_descriptor dev_desc =
 {
     USB_DESC_LENGTH_DEVICE,     //bLength;
@@ -40,7 +42,9 @@ static struct udevice_descriptor dev_desc =
     USB_STRING_SERIAL_INDEX,    //iSerialNumber;
     USB_DYNAMIC,                //bNumConfigurations;
 };
+
 //FS and HS needed
+ALIGN(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
@@ -54,46 +58,55 @@ static struct usb_qualifier_descriptor dev_qualifier =
     0,
 };
 
+ALIGN(4)
 struct winusb_descriptor _winusb_desc = 
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
     /* Interface Association Descriptor */
-    USB_DESC_LENGTH_IAD,
-    USB_DESC_TYPE_IAD,
-    USB_DYNAMIC,
-    0x01,
-    0xFF,
-    0x00,
-    0x00,
-    0x00,
+    {
+        USB_DESC_LENGTH_IAD,
+        USB_DESC_TYPE_IAD,
+        USB_DYNAMIC,
+        0x01,
+        0xFF,
+        0x00,
+        0x00,
+        0x00,
+    },
 #endif
     /*interface descriptor*/
-    USB_DESC_LENGTH_INTERFACE,  //bLength;
-    USB_DESC_TYPE_INTERFACE,    //type;
-    USB_DYNAMIC,                //bInterfaceNumber;
-    0x00,                       //bAlternateSetting;
-    0x02,                       //bNumEndpoints
-    0xFF,                       //bInterfaceClass;
-    0x00,                       //bInterfaceSubClass;
-    0x00,                       //bInterfaceProtocol;
-    0x00,                       //iInterface;
+    {
+        USB_DESC_LENGTH_INTERFACE,  //bLength;
+        USB_DESC_TYPE_INTERFACE,    //type;
+        USB_DYNAMIC,                //bInterfaceNumber;
+        0x00,                       //bAlternateSetting;
+        0x02,                       //bNumEndpoints
+        0xFF,                       //bInterfaceClass;
+        0x00,                       //bInterfaceSubClass;
+        0x00,                       //bInterfaceProtocol;
+        0x00,                       //iInterface;
+    },
     /*endpoint descriptor*/
-    USB_DESC_LENGTH_ENDPOINT,
-    USB_DESC_TYPE_ENDPOINT,
-    USB_DYNAMIC | USB_DIR_OUT,
-    USB_EP_ATTR_BULK,
-    USB_DYNAMIC,
-    0x00,
+    {
+        USB_DESC_LENGTH_ENDPOINT,
+        USB_DESC_TYPE_ENDPOINT,
+        USB_DYNAMIC | USB_DIR_OUT,
+        USB_EP_ATTR_BULK,
+        USB_DYNAMIC,
+        0x00,
+    },
     /*endpoint descriptor*/
-    USB_DESC_LENGTH_ENDPOINT,
-    USB_DESC_TYPE_ENDPOINT,
-    USB_DYNAMIC | USB_DIR_IN,
-    USB_EP_ATTR_BULK,
-    USB_DYNAMIC,
-    0x00,
+    {
+        USB_DESC_LENGTH_ENDPOINT,
+        USB_DESC_TYPE_ENDPOINT,
+        USB_DYNAMIC | USB_DIR_IN,
+        USB_EP_ATTR_BULK,
+        USB_DYNAMIC,
+        0x00,
+    },
 };
 
-
+ALIGN(4)
 const static char* _ustring[] =
 {
     "Language",
@@ -104,11 +117,14 @@ const static char* _ustring[] =
     "Interface",
     USB_STRING_OS//must be
 };
+
+ALIGN(4)
 struct usb_os_proerty winusb_proerty[] = 
 {
     USB_OS_PROERTY_DESC(USB_OS_PROERTY_TYPE_REG_SZ,"DeviceInterfaceGUID",RT_WINUSB_GUID),
 };
 
+ALIGN(4)
 struct usb_os_function_comp_id_descriptor winusb_func_comp_id_desc = 
 {
     .bFirstInterfaceNumber = USB_DYNAMIC,
