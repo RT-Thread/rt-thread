@@ -114,6 +114,13 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
     return old_handler;
 }
 
+RT_WEAK
+void plic_irq_handle(plic_irq_t irq)
+{
+    rt_kprintf("UN-handled interrupt %d occurred!!!\n", irq);
+    return ;
+}
+
 uintptr_t handle_irq_m_ext(uintptr_t cause, uintptr_t epc)
 {
     /*
@@ -142,7 +149,12 @@ uintptr_t handle_irq_m_ext(uintptr_t cause, uintptr_t epc)
         /* Disable software interrupt and timer interrupt */
         clear_csr(mie, MIP_MTIP | MIP_MSIP);
 
-        if (irq_desc[core_id][int_num].handler)
+        if (irq_desc[core_id][int_num].handler == (rt_isr_handler_t)rt_hw_interrupt_handle)
+        {
+            /* default handler, route to kendryte bsp plic driver */
+            plic_irq_handle(int_num);
+        }
+        else if (irq_desc[core_id][int_num].handler)
         {
             irq_desc[core_id][int_num].handler(int_num, irq_desc[core_id][int_num].param);
         }
