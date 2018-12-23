@@ -514,11 +514,6 @@
               <FilePath>..\..\src\mempool.c</FilePath>
             </File>
             <File>
-              <FileName>module.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\module.c</FilePath>
-            </File>
-            <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\object.c</FilePath>

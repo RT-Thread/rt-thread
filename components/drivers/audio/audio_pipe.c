@@ -1,21 +1,7 @@
 /*
- * File      : pipe.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -202,7 +188,7 @@ static rt_err_t rt_pipe_control(rt_device_t dev, int cmd, void *args)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops audio_pipe_ops
+const static struct rt_device_ops audio_pipe_ops =
 {
     RT_NULL,
     RT_NULL,
@@ -227,7 +213,7 @@ const static struct rt_device_ops audio_pipe_ops
  */
 rt_err_t rt_audio_pipe_init(struct rt_audio_pipe *pipe,
                       const char *name,
-                      enum rt_audio_pipe_flag flag,
+                      rt_int32_t flag,
                       rt_uint8_t *buf,
                       rt_size_t size)
 {
@@ -272,7 +258,7 @@ rt_err_t rt_audio_pipe_detach(struct rt_audio_pipe *pipe)
 }
 
 #ifdef RT_USING_HEAP
-rt_err_t rt_audio_pipe_create(const char *name, enum rt_audio_pipe_flag flag, rt_size_t size)
+rt_err_t rt_audio_pipe_create(const char *name, rt_int32_t flag, rt_size_t size)
 {
     rt_uint8_t *rb_memptr = RT_NULL;
     struct rt_audio_pipe *pipe = RT_NULL;

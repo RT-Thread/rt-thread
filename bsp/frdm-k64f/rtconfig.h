@@ -63,6 +63,7 @@
 #define RT_USING_DEVICE_IPC
 /* Using Serial Device Driver Framework" default="true" */
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 
 // <section name="RT_USING_COMPONENTS_INIT" description="Using components init" default="false" >
 #define RT_USING_COMPONENTS_INIT

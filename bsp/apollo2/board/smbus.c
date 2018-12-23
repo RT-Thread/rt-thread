@@ -25,23 +25,22 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "am_mcu_apollo.h"
-#include "board.h"
 
 #ifdef RT_USING_SMBUS
 
 #define SMBUS_GPIO_SDA    5
 #define SMBUS_GPIO_SCL    6
 
-#define mSDA_LOW()        am_hal_gpio_out_bit_clear(SMBUS_GPIO_SCL)    /* Clear SDA line */
-#define mSDA_HIGH()       am_hal_gpio_out_bit_set(SMBUS_GPIO_SCL)      /* Set SDA line */
-#define mSCL_LOW()        am_hal_gpio_out_bit_clear(SMBUS_GPIO_SDA)    /* Clear SCL line */
-#define mSCL_HIGH()       am_hal_gpio_out_bit_set(SMBUS_GPIO_SDA)      /* Set SCL line */
+#define mSDA_LOW()        am_hal_gpio_out_bit_clear(SMBUS_GPIO_SDA)    /* Clear SDA line */
+#define mSDA_HIGH()       am_hal_gpio_out_bit_set(SMBUS_GPIO_SDA)      /* Set SDA line */
+#define mSCL_LOW()        am_hal_gpio_out_bit_clear(SMBUS_GPIO_SCL)    /* Clear SCL line */
+#define mSCL_HIGH()       am_hal_gpio_out_bit_set(SMBUS_GPIO_SCL)      /* Set SCL line */
 
-#define mSDA_READ()       am_hal_gpio_input_bit_read(SMBUS_GPIO_SCL)   /* Read SCL line */
+#define mSDA_READ()       am_hal_gpio_input_bit_read(SMBUS_GPIO_SDA)   /* Read SDA line */
 
-#define mSDA_IN()         am_hal_gpio_pin_config(SMBUS_GPIO_SCL, AM_HAL_GPIO_INPUT | AM_HAL_GPIO_PULL6K)  /* Set SDA as Input */
-#define mSDA_OUT()        am_hal_gpio_pin_config(SMBUS_GPIO_SCL, AM_HAL_GPIO_OUTPUT)                      /* Set SDA as Output */
-#define mSCL_OUT()        am_hal_gpio_pin_config(SMBUS_GPIO_SDA, AM_HAL_GPIO_OUTPUT)                      /* Set SCL as Output */
+#define mSDA_IN()         am_hal_gpio_pin_config(SMBUS_GPIO_SDA, AM_HAL_GPIO_INPUT | AM_HAL_GPIO_PULL6K)  /* Set SDA as Input */
+#define mSDA_OUT()        am_hal_gpio_pin_config(SMBUS_GPIO_SDA, AM_HAL_GPIO_OUTPUT)                      /* Set SDA as Output */
+#define mSCL_OUT()        am_hal_gpio_pin_config(SMBUS_GPIO_SCL, AM_HAL_GPIO_OUTPUT)                      /* Set SCL as Output */
 
 #define ACK	      0
 #define	NACK      1

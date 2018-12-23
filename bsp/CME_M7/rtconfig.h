@@ -55,6 +55,7 @@
 #define RT_USING_DEVICE
 #define RT_USING_DEVICE_IPC
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
@@ -100,8 +101,14 @@
 /* Enable DHCP */
 // #define RT_LWIP_DHCP
 
-/* the number of simulatenously active TCP connections*/
-#define RT_LWIP_TCP_PCB_NUM		3
+#define RT_MEMP_NUM_NETCONN     12
+#define RT_LWIP_PBUF_NUM        3
+#define RT_LWIP_RAW_PCB_NUM     2
+#define RT_LWIP_UDP_PCB_NUM     4
+#define RT_LWIP_TCP_PCB_NUM     8
+#define RT_LWIP_TCP_SEG_NUM     40
+#define RT_LWIP_TCP_SND_BUF     4380
+#define RT_LWIP_TCP_WND         4380
 
 /* ip address of target */
 #define RT_LWIP_IPADDR "192.168.1.30"

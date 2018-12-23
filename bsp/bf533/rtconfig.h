@@ -68,7 +68,6 @@
 
 /* Using Module System */
 //#define RT_USING_MODULE
-#define RT_USING_LIBDL
 
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
@@ -231,11 +230,11 @@
 
 /*
  * Note on FTK:
- * 
+ *
  * FTK depends :
  * #define RT_USING_NEWLIB
  * #define DFS_USING_WORKDIR
- * 
+ *
  * And the maximal length must great than 64
  * #define RT_DFS_ELM_MAX_LFN	128
  */

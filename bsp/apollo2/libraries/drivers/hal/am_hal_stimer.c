@@ -42,7 +42,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -136,11 +136,14 @@ am_hal_stimer_counter_clear(void)
 //!
 //! @param ui32CmprInstance is the compare register instance number (0-7).
 //! @param ui32Delta is the value to add to the STimer counter and load into
-//!        the comparator register.
+//!        the comparator register. It should be > 1
 //!
 //! NOTE: There is no way to set an absolute value into a comparator register.
 //!       Only deltas added to the STimer counter can be written to the compare
 //!       registers.
+//! CAUTION: The HAL implementation requires temporarily disabling the
+//!       comparison. To avoid the remote possibility of losing an interrupt
+//!       during that time, delta should always be set to a value greater than 1
 //!
 //! @return None.
 //
@@ -148,12 +151,32 @@ am_hal_stimer_counter_clear(void)
 void
 am_hal_stimer_compare_delta_set(uint32_t ui32CmprInstance, uint32_t ui32Delta)
 {
+    uint32_t cfgVal;
+    uint32_t ui32Critical = 0;
     if ( ui32CmprInstance > 7 )
     {
         return;
     }
 
+    cfgVal = AM_REG(CTIMER, STCFG);
+    // We need to disable the compare temporarily while setting the delta value
+    // That leaves a corner case where we could miss the trigger if setting a very
+    // small delta. To avoid this, we take critical section, and we should ensure
+    // that delta value is at least > 1
+
+    // Disable the compare if already enabled, when setting the new value
+    AM_REG(CTIMER, STCFG) &= ~((AM_HAL_STIMER_CFG_COMPARE_A_ENABLE << ui32CmprInstance));
+    //
+    // Start a critical section.
+    //
+    ui32Critical = am_hal_interrupt_master_disable();
     AM_REGVAL(AM_REG_STIMER_COMPARE(0, ui32CmprInstance)) = ui32Delta;
+    // Restore Compare Enable bit
+    AM_REG(CTIMER, STCFG) |= cfgVal & (AM_HAL_STIMER_CFG_COMPARE_A_ENABLE << ui32CmprInstance);
+    //
+    // End the critical section.
+    //
+    am_hal_interrupt_master_set(ui32Critical);
 }
 
 //*****************************************************************************

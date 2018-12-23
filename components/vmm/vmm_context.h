@@ -1,3 +1,14 @@
+/*
+ * COPYRIGHT (C) 2013-2014, Real-Thread Information Technology Ltd
+ * All rights reserved
+ * 
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2013-11-04     Grissiom     add comment
+ */
+
 #ifndef __VMM_CONTEXT_H__
 #define __VMM_CONTEXT_H__
 

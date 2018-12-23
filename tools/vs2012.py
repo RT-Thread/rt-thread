@@ -168,7 +168,7 @@ def VS2012Project(target, script, program):
     VS_add_HeadFiles(program, elem, project_path)
 
     # write head include path
-    if building.Env.has_key('CPPPATH'):
+    if 'CPPPATH' in building.Env:
         cpp_path = building.Env['CPPPATH']
         paths = set()
         for path in cpp_path:
@@ -185,7 +185,7 @@ def VS2012Project(target, script, program):
             break
 
     # write cppdefinitons flags
-    if building.Env.has_key('CPPDEFINES'):
+    if 'CPPDEFINES' in building.Env:
         for elem in tree.iter(tag='PreprocessorDefinitions'):
             definitions = ';'.join(building.Env['CPPDEFINES']) + ';%(PreprocessorDefinitions)'
             elem.text = definitions
@@ -193,7 +193,7 @@ def VS2012Project(target, script, program):
     # write link flags
 
     # write lib dependence (Link)
-    if building.Env.has_key('LIBS'):
+    if 'LIBS' in building.Env:
         for elem in tree.iter(tag='AdditionalDependencies'):
             libs_with_extention = [i+'.lib' for i in building.Env['LIBS']]
             libs = ';'.join(libs_with_extention) + ';%(AdditionalDependencies)'
@@ -201,7 +201,7 @@ def VS2012Project(target, script, program):
             break
 
     # write lib include path
-    if building.Env.has_key('LIBPATH'):
+    if 'LIBPATH' in building.Env:
         lib_path = building.Env['LIBPATH']
         paths  = set()
         for path in lib_path:

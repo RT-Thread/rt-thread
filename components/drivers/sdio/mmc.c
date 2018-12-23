@@ -1,21 +1,7 @@
 /*
- * File      : mmc.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author        Notes
@@ -24,6 +10,16 @@
 
 #include <drivers/mmcsd_core.h>
 #include <drivers/mmc.h>
+
+#define DBG_ENABLE
+#define DBG_SECTION_NAME               "SDIO"
+#ifdef RT_SDIO_DEBUG
+#define DBG_LEVEL                      DBG_LOG
+#else
+#define DBG_LEVEL                      DBG_INFO
+#endif /* RT_SDIO_DEBUG */
+#define DBG_COLOR
+#include <rtdbg.h>
 
 static const rt_uint32_t tran_unit[] =
 {
@@ -81,7 +77,7 @@ static rt_int32_t mmcsd_parse_csd(struct rt_mmcsd_card *card)
       */
       csd->csd_structure = GET_BITS(resp, 126, 2);
       if (csd->csd_structure == 0) {
-        rt_kprintf("unrecognised CSD structure version %d\n", csd->csd_structure);
+        LOG_E("unrecognised CSD structure version %d!", csd->csd_structure);
         
         return -RT_ERROR;
       }
@@ -137,7 +133,7 @@ static int mmc_get_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t **new_ext_csd)
   */
   ext_csd = rt_malloc(512);
   if (!ext_csd) {
-    rt_kprintf("alloc memory failed when get ext csd\n");
+    LOG_E("alloc memory failed when get ext csd!");
     return -RT_ENOMEM;
   }
   
@@ -188,13 +184,19 @@ static int mmc_get_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t **new_ext_csd)
  */
 static int mmc_parse_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
 {
+  if(card == RT_NULL || ext_csd == RT_NULL)
+  {
+    LOG_E("emmc parse ext csd fail, invaild args");
+    return -1;
+  }
+
   card->flags |=  CARD_FLAG_HIGHSPEED;
   card->hs_max_data_rate = 200000000;
   
   card->card_capacity = *((rt_uint32_t *)&ext_csd[EXT_CSD_SEC_CNT]);
   card->card_capacity *= card->card_blksize;
   card->card_capacity >>= 10; /* unit:KB */
-  rt_kprintf("emmc card capacity %d KB\n", card->card_capacity);
+  LOG_I("emmc card capacity %d KB.", card->card_capacity);
   
   return 0;
 }
@@ -333,13 +335,13 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
     } else {
       switch(ext_csd_bits[idx]){
           case 0:
-            rt_kprintf("switch to bus width 1 bit failed\n");
+            LOG_E("switch to bus width 1 bit failed!");
             break;
           case 1:
-            rt_kprintf("switch to bus width 4 bit failed\n");
+            LOG_E("switch to bus width 4 bit failed!");
             break;
           case 2:
-            rt_kprintf("switch to bus width 8 bit failed\n");
+            LOG_E("switch to bus width 8 bit failed!");
             break;
           default:
             break;
@@ -414,7 +416,7 @@ static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
 {
     rt_int32_t err;
     rt_uint32_t resp[4];
-    rt_uint32_t rocr;
+    rt_uint32_t rocr = 0;
     rt_uint32_t max_data_rate;
     rt_uint8_t *ext_csd = RT_NULL;
     struct rt_mmcsd_card *card = RT_NULL;
@@ -443,7 +445,7 @@ static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
     card = rt_malloc(sizeof(struct rt_mmcsd_card));
     if (!card) 
     {
-        rt_kprintf("malloc card failed\n");
+        LOG_E("malloc card failed!");
         err = -RT_ENOMEM;
         goto err;
     }
@@ -580,7 +582,7 @@ remove_card:
     host->card = RT_NULL;
 err:
 
-    rt_kprintf("init MMC card failed\n");
+    LOG_E("init MMC card failed!");
 
     return err;
 }

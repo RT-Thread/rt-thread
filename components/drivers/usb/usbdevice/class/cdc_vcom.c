@@ -1,21 +1,7 @@
 /*
- * File      : cdc_vcom.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -36,7 +22,12 @@
 
 #ifdef RT_USB_DEVICE_CDC
 
-#define TX_TIMEOUT              1000
+#ifdef RT_VCOM_TX_TIMEOUT
+#define VCOM_TX_TIMEOUT      RT_VCOM_TX_TIMEOUT
+#else /*!RT_VCOM_TX_TIMEOUT*/
+#define VCOM_TX_TIMEOUT      1000
+#endif /*RT_VCOM_TX_TIMEOUT*/
+
 #define CDC_RX_BUFSIZE          128
 #define CDC_MAX_PACKET_SIZE     64
 #define VCOM_DEVICE             "vcom"
@@ -96,6 +87,7 @@ struct vcom_tx_msg
     rt_size_t size;
 };
 
+ALIGN(4)
 static struct udevice_descriptor dev_desc =
 {
     USB_DESC_LENGTH_DEVICE,     //bLength;
@@ -115,6 +107,7 @@ static struct udevice_descriptor dev_desc =
 };
 
 //FS and HS needed
+ALIGN(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
@@ -129,89 +122,111 @@ static struct usb_qualifier_descriptor dev_qualifier =
 };
 
 /* communcation interface descriptor */
+ALIGN(4)
 const static struct ucdc_comm_descriptor _comm_desc =
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
     /* Interface Association Descriptor */
-    USB_DESC_LENGTH_IAD,
-    USB_DESC_TYPE_IAD,
-    USB_DYNAMIC,
-    0x02,
-    USB_CDC_CLASS_COMM,
-    USB_CDC_SUBCLASS_ACM,
-    USB_CDC_PROTOCOL_V25TER,
-    0x00,
+    {
+        USB_DESC_LENGTH_IAD,
+        USB_DESC_TYPE_IAD,
+        USB_DYNAMIC,
+        0x02,
+        USB_CDC_CLASS_COMM,
+        USB_CDC_SUBCLASS_ACM,
+        USB_CDC_PROTOCOL_V25TER,
+        0x00,
+    },
 #endif
     /* Interface Descriptor */
-    USB_DESC_LENGTH_INTERFACE,
-    USB_DESC_TYPE_INTERFACE,
-    USB_DYNAMIC,
-    0x00,   
-    0x01,
-    USB_CDC_CLASS_COMM,
-    USB_CDC_SUBCLASS_ACM,
-    USB_CDC_PROTOCOL_V25TER,
-    0x00,
+    {
+        USB_DESC_LENGTH_INTERFACE,
+        USB_DESC_TYPE_INTERFACE,
+        USB_DYNAMIC,
+        0x00,   
+        0x01,
+        USB_CDC_CLASS_COMM,
+        USB_CDC_SUBCLASS_ACM,
+        USB_CDC_PROTOCOL_V25TER,
+        0x00,
+    },
     /* Header Functional Descriptor */   
-    0x05,                              
-    USB_CDC_CS_INTERFACE,
-    USB_CDC_SCS_HEADER,
-    0x0110,
+    {
+        0x05,                              
+        USB_CDC_CS_INTERFACE,
+        USB_CDC_SCS_HEADER,
+        0x0110,
+    },
     /* Call Management Functional Descriptor */   
-    0x05,            
-    USB_CDC_CS_INTERFACE,
-    USB_CDC_SCS_CALL_MGMT,
-    0x00,
-    USB_DYNAMIC,
+    {
+        0x05,            
+        USB_CDC_CS_INTERFACE,
+        USB_CDC_SCS_CALL_MGMT,
+        0x00,
+        USB_DYNAMIC,
+    },
     /* Abstract Control Management Functional Descriptor */
-    0x04,
-    USB_CDC_CS_INTERFACE,
-    USB_CDC_SCS_ACM,
-    0x02,
+    {
+        0x04,
+        USB_CDC_CS_INTERFACE,
+        USB_CDC_SCS_ACM,
+        0x02,
+    },
     /* Union Functional Descriptor */   
-    0x05,
-    USB_CDC_CS_INTERFACE,
-    USB_CDC_SCS_UNION,
-    USB_DYNAMIC,
-    USB_DYNAMIC,
+    {
+        0x05,
+        USB_CDC_CS_INTERFACE,
+        USB_CDC_SCS_UNION,
+        USB_DYNAMIC,
+        USB_DYNAMIC,
+    },
     /* Endpoint Descriptor */    
-    USB_DESC_LENGTH_ENDPOINT,
-    USB_DESC_TYPE_ENDPOINT,
-    USB_DYNAMIC | USB_DIR_IN,
-    USB_EP_ATTR_INT,
-    0x08,
-    0xFF,
+    {
+        USB_DESC_LENGTH_ENDPOINT,
+        USB_DESC_TYPE_ENDPOINT,
+        USB_DYNAMIC | USB_DIR_IN,
+        USB_EP_ATTR_INT,
+        0x08,
+        0xFF,
+    },
 };
 
 /* data interface descriptor */
+ALIGN(4)
 const static struct ucdc_data_descriptor _data_desc =
 {
     /* interface descriptor */
-    USB_DESC_LENGTH_INTERFACE,
-    USB_DESC_TYPE_INTERFACE,
-    USB_DYNAMIC,
-    0x00,
-    0x02,         
-    USB_CDC_CLASS_DATA,
-    0x00,                             
-    0x00,                             
-    0x00,              
+    {
+        USB_DESC_LENGTH_INTERFACE,
+        USB_DESC_TYPE_INTERFACE,
+        USB_DYNAMIC,
+        0x00,
+        0x02,         
+        USB_CDC_CLASS_DATA,
+        0x00,                             
+        0x00,                             
+        0x00,              
+    },
     /* endpoint, bulk out */
-    USB_DESC_LENGTH_ENDPOINT,     
-    USB_DESC_TYPE_ENDPOINT,
-    USB_DYNAMIC | USB_DIR_OUT,
-    USB_EP_ATTR_BULK,      
-    USB_CDC_BUFSIZE,
-    0x00,          
+    {
+        USB_DESC_LENGTH_ENDPOINT,     
+        USB_DESC_TYPE_ENDPOINT,
+        USB_DYNAMIC | USB_DIR_OUT,
+        USB_EP_ATTR_BULK,      
+        USB_CDC_BUFSIZE,
+        0x00,          
+    },
     /* endpoint, bulk in */
-    USB_DESC_LENGTH_ENDPOINT,
-    USB_DESC_TYPE_ENDPOINT,
-    USB_DYNAMIC | USB_DIR_IN,
-    USB_EP_ATTR_BULK,      
-    USB_CDC_BUFSIZE,
-    0x00,
+    {
+        USB_DESC_LENGTH_ENDPOINT,
+        USB_DESC_TYPE_ENDPOINT,
+        USB_DYNAMIC | USB_DIR_IN,
+        USB_EP_ATTR_BULK,      
+        USB_CDC_BUFSIZE,
+        0x00,
+    },
 };
-
+ALIGN(4)
 static char serno[_SER_NO_LEN + 1] = {'\0'};
 RT_WEAK rt_err_t vcom_get_stored_serno(char *serno, int size);
 
@@ -219,7 +234,7 @@ rt_err_t vcom_get_stored_serno(char *serno, int size)
 {
     return RT_ERROR;
 }
-
+ALIGN(4)
 const static char* _ustring[] =
 {
     "Language",
@@ -829,7 +844,7 @@ static void vcom_tx_thread_entry(void* parameter)
         {
             continue;
         }
-        if(!res & CDC_TX_HAS_DATE)
+        if(!(res & CDC_TX_HAS_DATE))
         {
             continue;
         }
@@ -870,7 +885,7 @@ static void vcom_tx_thread_entry(void* parameter)
 
             rt_usbd_io_request(func->device, data->ep_in, &data->ep_in->request);
 
-            if (rt_completion_wait(&data->wait, TX_TIMEOUT) != RT_EOK)
+            if (rt_completion_wait(&data->wait, VCOM_TX_TIMEOUT) != RT_EOK)
             {
                 RT_DEBUG_LOG(RT_DEBUG_USB, ("vcom tx timeout\n"));
             }

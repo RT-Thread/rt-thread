@@ -1,29 +1,11 @@
 /*
- * File      : lwp_syscall.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2006-03-18     Bernard      the first version
- * 2006-04-25     Bernard      add rt_hw_context_switch_interrupt declaration
- * 2006-09-24     Bernard      add rt_hw_context_switch_to declaration
- * 2012-12-29     Bernard      add rt_hw_exception_install declaration
- * 2017-10-17     Hichard      add some micros
+ * 2018-12-10     Jesven       fix complie error in iar and keil
  */
 
 #ifndef __LWP_SYSCALL_H__
@@ -36,7 +18,6 @@
 #include <sys/types.h>
 
 typedef long suseconds_t;       /* microseconds (signed) */
-typedef long key_t;             /* IPC key (for Sys V IPC) */
 typedef uint32_t id_t;          /* may contain pid, uid or gid */
 
 /*
