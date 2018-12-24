@@ -60,13 +60,7 @@ void rt_hw_spin_unlock(rt_hw_spinlock_t *lock)
     lock->tickets.owner++;
     __asm__ volatile ("dsb ishst\nsev":::"memory");
 }
-
 #endif /*RT_USING_SMP*/
-
-void idle_wfi(void)
-{
-    asm volatile ("wfi");
-}
 
 /**
  * @addtogroup ARM CPU
