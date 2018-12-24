@@ -1,0 +1,33 @@
+{
+    "configurations": [
+        {
+            "intelliSenseMode": "clang-x64",
+            "name": "Win32",
+            "cppStandard": "c++11",
+            "cStandard": "c99",
+            "compilerPath": "E:/Tools/env/tools/gnu_gcc/riscv64/bin/riscv-none-embed-gcc",
+            "includePath": [
+                ".",
+                "E:/Tools/env/workspace/rt-thread/bsp/k210/applications",
+                "E:/Tools/env/workspace/rt-thread/bsp/k210/driver",
+                "E:/Tools/env/workspace/rt-thread/bsp/k210/packages/kendryte-sdk-v0.5.2/kendryte-standalone-sdk/lib/bsp/include",
+                "E:/Tools/env/workspace/rt-thread/bsp/k210/packages/kendryte-sdk-v0.5.2/kendryte-standalone-sdk/lib/drivers/include",
+                "E:/Tools/env/workspace/rt-thread/bsp/k210/packages/kendryte-sdk-v0.5.2/kendryte-standalone-sdk/lib/utils/include",
+                "E:/Tools/env/workspace/rt-thread/components/dfs/filesystems/devfs",
+                "E:/Tools/env/workspace/rt-thread/components/dfs/include",
+                "E:/Tools/env/workspace/rt-thread/components/drivers/include",
+                "E:/Tools/env/workspace/rt-thread/components/finsh",
+                "E:/Tools/env/workspace/rt-thread/components/libc/compilers/common",
+                "E:/Tools/env/workspace/rt-thread/components/libc/compilers/newlib",
+                "E:/Tools/env/workspace/rt-thread/include",
+                "E:/Tools/env/workspace/rt-thread/libcpu/risc-v/common",
+                "E:/Tools/env/workspace/rt-thread/libcpu/risc-v/k210"
+            ],
+            "defines": [
+                "HAVE_CCONFIG_H",
+                "RT_USING_NEWLIB"
+            ]
+        }
+    ],
+    "version": 4
+}
