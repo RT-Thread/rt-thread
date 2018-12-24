@@ -553,8 +553,8 @@ int rt_hw_usart_init(void)
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     
     rt_err_t result = 0;
-    
-    for (int i = 0; i < obj_num; i++)
+    int i = 0;
+    for (i = 0; i < obj_num; i++)
     {
         uart_obj[i].config = &uart_config[i];
         uart_obj[i].serial.ops    = &stm32_uart_ops;
