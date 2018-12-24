@@ -105,8 +105,11 @@ class Win32Spawn:
         try:
             proc = subprocess.Popen(cmdline, env=_e, shell=False)
         except Exception as e:
-            print ('Error in calling:\n' + cmdline)
-            print ('Exception: ' + e + ': ' + os.strerror(e.errno))
+            print ('Error in calling command:' + cmdline.split(' ')[0])
+            print ('Exception: ' + os.strerror(e.errno))
+            if (os.strerror(e.errno) == "No such file or directory"):
+                print ("\nPlease check Toolchains PATH setting.\n")
+
             return e.errno
         finally:
             os.environ['PATH'] = old_path
