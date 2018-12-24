@@ -19,8 +19,12 @@
 
 #define SYS_CTRL                        __REG32(REALVIEW_SCTL_BASE)
 
-extern void idle_wfi(void);
 extern void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler);
+
+void idle_wfi(void)
+{
+    asm volatile ("wfi");
+}
 
 /**
  * This function will initialize beaglebone board
@@ -42,4 +46,3 @@ void rt_hw_board_init(void)
     rt_hw_ipi_handler_install(RT_SCHEDULE_IPI, rt_scheduler_ipi_handler);
 #endif
 }
-
