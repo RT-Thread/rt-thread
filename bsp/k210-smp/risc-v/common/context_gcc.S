@@ -217,6 +217,18 @@ save_mpie:
     .globl rt_hw_context_switch_interrupt
 rt_hw_context_switch_interrupt:
 
+    STORE a0, 0(a1)
+
+    csrr  a1, mepc
+    STORE a1, 0 * REGBYTES(a0)
+
+    csrr  a1, mstatus
+    STORE a1, 2 * REGBYTES(a0)
+
+    LOAD  sp, 0(a2)
+    move  a0, a3
+    call rt_cpus_lock_status_restore
+
     /* resw ra to mepc */
     LOAD a1,   0 * REGBYTES(sp)
     csrw mepc, a1

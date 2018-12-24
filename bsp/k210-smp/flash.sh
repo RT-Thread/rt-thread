@@ -1,1 +1,1 @@
-python3 kflash.py -t rtthread.bin
+sudo python3 kflash.py -t $1

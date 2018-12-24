@@ -290,6 +290,7 @@
 /* PKG_USING_ZLIB is not set */
 /* PKG_USING_DSTR is not set */
 /* PKG_USING_TINYFRAME is not set */
+/* PKG_USING_KENDRYTE_DEMO is not set */
 
 /* samples: kernel and components samples */
 

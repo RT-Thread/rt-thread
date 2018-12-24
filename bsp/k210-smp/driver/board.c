@@ -37,21 +37,14 @@ void init_bss(void)
     }
 }
 
-void cpu_entry(int cpuid)
+void primary_cpu_entry(void)
 {
     extern void entry(void);
 
     /* disable global interrupt */
+    init_bss();
     rt_hw_interrupt_disable();
-    if (cpuid == 0)
-    {
-        init_bss();
-        entry();
-    }
-    else
-    {
-        while (1) ;
-    }
+    entry();
 }
 
 #include <clint.h>
@@ -85,6 +78,8 @@ int freq(void)
 }
 MSH_CMD_EXPORT(freq, show freq info);
 
+extern int rt_hw_clint_ipi_enable(void);
+
 void rt_hw_board_init(void)
 {
     /* Init FPIOA */
@@ -96,8 +91,10 @@ void rt_hw_board_init(void)
     rt_hw_interrupt_init();
     /* initialize hardware interrupt */
     rt_hw_uart_init();
+
     rt_hw_tick_init();
 
+    rt_hw_clint_ipi_enable();
 #ifdef RT_USING_CONSOLE
     /* set console device */
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);

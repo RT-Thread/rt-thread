@@ -35,53 +35,40 @@ void rt_hw_spin_unlock(rt_hw_spinlock_t *lock)
     spinlock_unlock((spinlock_t *)lock);
 }
 
-static int k210_ipi_callback(void *ctx)
-{
-    /* do re-schedule */
-    rt_schedule();
-}
-
 void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask)
 {
     int idx;
 
     for (idx = 0; idx < RT_CPUS_NR; idx ++)
     {
-        if (cpu_mask & (1 < idx))
+        if (cpu_mask & (1 << idx))
         {
             clint_ipi_send(idx);
         }
     }
 }
 
-int rt_hw_ipi_init(void)
-{
-    clint_ipi_init();
-    clint_ipi_enable();
-
-    /* register ipi callback */
-    clint_ipi_register(k210_ipi_callback, RT_NULL);
-
-    return 0;
-}
-
+extern rt_base_t secondary_boot_flag;
 void rt_hw_secondary_cpu_up(void)
 {
     mb();
-
-    clint_ipi_send(1);
-    atomic_set(&g_wake_up[1], 1);
+    secondary_boot_flag = 0xa55a;
 }
+
+extern void rt_hw_scondary_interrupt_init(void);
+extern int rt_hw_tick_init(void);
+extern int rt_hw_clint_ipi_enable(void);
 
 void secondary_cpu_c_start(void)
 {
     rt_hw_spin_lock(&_cpus_lock);
 
     /* initialize interrupt controller */
-    rt_hw_interrupt_init();
+    rt_hw_scondary_interrupt_init();
 
-    /* todo: this cpu timer init */
-    /* todo: this cpu timer interrupt config */
+    rt_hw_tick_init();
+
+    rt_hw_clint_ipi_enable();
 
     rt_system_scheduler_start();
 }

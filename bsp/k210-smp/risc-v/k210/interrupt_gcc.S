@@ -74,8 +74,9 @@ trap_entry:
 
 #ifdef RT_USING_SMP
     /* s0 --> sp */
-    move  a0, s0
-    j     rt_scheduler_do_irq_switch
+    mv  a0, s0
+    call rt_scheduler_do_irq_switch
+    mv  sp, s0
 #else
 
     /* switch to from_thread stack */

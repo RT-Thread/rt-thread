@@ -115,19 +115,19 @@ _start:
 
   /* other cpu core, jump to cpu entry directly */
   bnez a0, _cpu_entry
-
-#if 0
-  /* clear bss section */
-  la a0, __bss_start
-  la a1, __bss_end
-  bgeu a0, a1, 2f
-1:
-  sw zero, (a0)
-  addi a0, a0, REGBYTES
-  bltu a0, a1, 1b
-2:
-#endif
+  j primary_cpu_entry
 
 _cpu_entry:
-  csrr a0, mhartid
-  j cpu_entry
+  la a0, secondary_boot_flag
+  ld a0, 0(a0)
+  li a1, 0xa55a
+#ifdef RT_USING_SMP
+  beq a0, a1, secondary_cpu_c_start
+#endif
+  j _cpu_entry
+
+.data
+.global secondary_boot_flag
+.align 3
+secondary_boot_flag:
+    .dword 0
