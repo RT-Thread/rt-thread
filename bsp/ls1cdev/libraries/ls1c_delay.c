@@ -1,4 +1,12 @@
-// 软件延时源文件
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2017-09-06     勤为本       first version
+ */
 
 
 #include "ls1c_clock.h"
@@ -12,7 +20,7 @@
  */
 void delay_ms(int j)
 {
-    int k_max = clk_get_cpu_rate()/1000/3;  // 除以1000表示ms，除以3为测试所得的经验(可以理解为最内层循环执行一次需要的时钟个数)
+    int k_max = clk_get_cpu_rate()/1000/92;  // 除以1000表示ms，另外一个除数为实验测得的经验值
     int k = k_max;
 
     for ( ; j > 0; j--)
@@ -33,24 +41,25 @@ void delay_ms(int j)
  */
 void delay_us(int n)
 {
-    int count_1us = clk_get_cpu_rate() / 1000000 / 3;   // 延时1us的循环次数
+    int count_1us = 252000000 / 1000000 / 84;           // 延时1us的循环次数
+                    // 252000000为cpu频率，除以1000000表示延时单位为us，92为实验测得的经验值
     int count_max;                                      // 延时n微秒的循环次数
     int tmp;
 
-    // 根据延时长短微调(注意，这里是手动优化的，cpu频率改变了可能需要重新优化，此时cpu频率为252Mhz)
+    // 微调
+    count_max = n * count_1us;
     if (10 >= n)                // <=10us
     {
-        count_1us -= 35;
+        count_max = count_max / 3;
     }
     else if (100 >= n)          // <= 100us
     {
-        count_1us -= 6;
+        count_max = count_max - count_max / 5;
     }
     else                        // > 100us
     {
-        count_1us -= 1;
+        count_max = count_max - count_max / 10;
     }
-    count_max = n * count_1us;
 
     // 延时
     for (tmp = count_max; tmp > 0; tmp--)
