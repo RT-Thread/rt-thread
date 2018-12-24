@@ -484,7 +484,7 @@ static int rt_hw_spi_bus_init(void)
             /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
             SET_BIT(RCC->AHBENR, spi_config[i].dma_rx.dma_rcc);
             tmpreg = READ_BIT(RCC->AHBENR, spi_config[i].dma_rx.dma_rcc);
-#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32L4) 
+#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4) 
             SET_BIT(RCC->AHB1ENR, spi_config[i].dma_rx.dma_rcc);
             /* Delay after an RCC peripheral clock enabling */
             tmpreg = READ_BIT(RCC->AHB1ENR, spi_config[i].dma_rx.dma_rcc);
@@ -757,5 +757,5 @@ int rt_hw_spi_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_spi_init);
 
-#endif /* BSP_USING_SPI1 || BSP_USING_SPI2 || BSP_USING_SPI3 || BSP_USING_SPI4 || BSP_USING_SPI5 */
+#endif /* BSP_USING_SPI1 || BSP_USING_SPI2 || BSP_USING_SPI3 || BSP_USING_SPI4 || BSP_USING_SPI5 || BSP_USING_SPI6 */
 #endif /* RT_USING_SPI */
