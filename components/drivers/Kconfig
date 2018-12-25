@@ -388,6 +388,7 @@ menu "Using USB"
                     config _RT_USB_DEVICE_WINUSB
                         bool "Enable to use device as winusb device"
                         select RT_USB_DEVICE_WINUSB
+                        depends on RT_USING_POSIX
                 endchoice
                 if RT_USB_DEVICE_COMPOSITE
                     config RT_USB_DEVICE_CDC
@@ -413,6 +414,7 @@ menu "Using USB"
                     config RT_USB_DEVICE_WINUSB
                         bool "Enable to use device as winusb device"
                         default n
+                        depends on RT_USING_POSIX
                 endif
                 if RT_USB_DEVICE_CDC
                     config RT_VCOM_TASK_STK_SIZE
