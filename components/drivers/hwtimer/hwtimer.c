@@ -153,7 +153,7 @@ static rt_size_t rt_hwtimer_read(struct rt_device *dev, rt_off_t pos, void *buff
     cnt = timer->ops->count_get(timer);
     if (timer->info->cntmode == HWTIMER_CNTMODE_DW)
     {
-        cnt = timer->info->maxcnt - cnt;
+        cnt = (timer->freq * timer->period_sec) - cnt;
     }
 
     t = timer->overflow * timer->period_sec + cnt/(float)timer->freq;
