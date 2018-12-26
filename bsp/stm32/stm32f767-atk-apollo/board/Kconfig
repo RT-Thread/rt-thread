@@ -36,12 +36,20 @@ menu "Onboard Peripheral Drivers"
 
     config PHY_USING_LAN8720A
         bool
-    
+
     config BSP_USING_ETH
         bool "Enable Ethernet"
-        default n
+        select BSP_USING_I2C2
+        select PKG_USING_PCF8574
         select RT_USING_LWIP
         select PHY_USING_LAN8720A
+        default n
+
+    config BSP_USING_POT
+        bool "Enable potentiometer"
+        select BSP_USING_ADC
+        select BSP_USING_ADC1
+        default n
 
     config BSP_USING_SDCARD
         bool "Enable SDCARD (sdio)"
@@ -69,9 +77,8 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SERIAL
         default n
 
-    config BSP_USING_UART3
-        bool "Enable UART3"
-        select RT_USING_SERIAL
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
         default n
 
     config BSP_USING_SPI2
@@ -82,6 +89,41 @@ menu "On-chip Peripheral Drivers"
     config BSP_SPI_USING_DMA
         bool "Enable SPI DMA support"
         default n
+
+    config BSP_USING_QSPI
+        bool "Enable QSPI BUS"
+        select RT_USING_QSPI
+        select RT_USING_SPI
+        default n
+
+    config BSP_QSPI_USING_DMA
+        bool "Enable QSPI DMA support"
+        default n
+
+    menuconfig BSP_USING_TIM
+        bool "Enable timer"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_TIM
+            config BSP_USING_TIM11
+                bool "Enable TIM11"
+                default n
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable pwm"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+        menuconfig BSP_USING_PWM3
+            bool "Enable timer3 output pwm"
+            default n
+            if BSP_USING_PWM3
+                config BSP_USING_PWM3_CH3
+                    bool "Enable PWM3 channel3"
+                    default n
+            endif
+        endif
 
     menuconfig BSP_USING_ADC
         bool "Enable ADC"

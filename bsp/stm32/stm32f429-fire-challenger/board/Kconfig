@@ -51,7 +51,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM5_CH1
         select BSP_USING_PWM5_CH2
         select BSP_USING_PWM5_CH3
-        default n    
+        default n
 
     config BSP_USING_POT
         bool "Enable potentiometer"
@@ -88,16 +88,6 @@ menu "On-chip Peripheral Drivers"
 
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
-        default n
-        
-    config BSP_USING_SPI1
-        bool "Enable SPI1 BUS"
-        select RT_USING_SPI
-        default n
-
-    config BSP_USING_SPI2
-        bool "Enable SPI2 BUS"
-        select RT_USING_SPI
         default n
 
     config BSP_USING_SPI5
