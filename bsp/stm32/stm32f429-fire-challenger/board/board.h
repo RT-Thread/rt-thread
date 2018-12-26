@@ -36,7 +36,6 @@ extern int __bss_end;
 #define HEAP_END        STM32_SRAM_END
 
 void SystemClock_Config(void);
-void MX_GPIO_Init(void);
 
 #endif
 
