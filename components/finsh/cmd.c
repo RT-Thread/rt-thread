@@ -79,80 +79,140 @@ rt_inline void object_split(int len)
     while (len--) rt_kprintf("-");
 }
 
-static long _list_thread(struct rt_list_node *list)
+static rt_list_t *list_thread_next(rt_list_t *current, int *max_name_len)
 {
-    int maxlen;
-    rt_uint8_t *ptr;
+    int first_flag = 0;
+    rt_ubase_t level;
+    struct rt_object_information *info;
+    rt_list_t *node, *iter, *list;
     struct rt_thread *thread;
-    struct rt_list_node *node;
     const char *item_title = "thread";
+    int maxlen;
+    struct rt_thread thread_info;
 
-    maxlen = object_name_maxlen(item_title, list);
+    info = rt_object_get_information(RT_Object_Class_Thread);
+    list = &info->object_list;
 
-#ifdef RT_USING_SMP
-    rt_kprintf("%-*.s cpu pri  status      sp     stack size max used left tick  error\n", maxlen, item_title); object_split(maxlen);
-    rt_kprintf(     " --- ---  ------- ---------- ----------  ------  ---------- ---\n");
-#else
-    rt_kprintf("%-*.s pri  status      sp     stack size max used left tick  error\n", maxlen, item_title); object_split(maxlen);
-    rt_kprintf(     " ---  ------- ---------- ----------  ------  ---------- ---\n");
-#endif /*RT_USING_SMP*/
-    for (node = list->next; node != list; node = node->next)
+    if (!current) /* find first */
+    {
+        node = list;
+        first_flag = 1;
+    }
+    else
+    {
+        node = current;
+    }
+
+    level = rt_hw_interrupt_disable();
+
+    if (first_flag)
+    {
+        /* is find first */
+        maxlen = object_name_maxlen(item_title, list);
+        *max_name_len = maxlen;
+    }
+    else
+    {
+        /* The node in the list? */
+        for (iter = list->next; iter != list; iter = iter->next)
+        {
+            if (iter == node)
+            {
+                break;
+            }
+        }
+        if (iter == list)
+        {
+            /* not found , error! */
+            rt_hw_interrupt_enable(level);
+            return (rt_list_t *)RT_NULL;
+        }
+        maxlen = *max_name_len;
+    }
+
+    node = node->next;
+    if (node == list)
+    {
+        /* At the end of list */
+        rt_hw_interrupt_enable(level);
+        return (rt_list_t *)RT_NULL;
+    }
+
+    /* ok, found a thread */
+    thread = rt_list_entry(node, struct rt_thread, list);
+    /* copy info */
+    memcpy(&thread_info, thread, sizeof thread_info);
+
+    rt_hw_interrupt_enable(level);
+
+    /* now output thread info */
     {
         rt_uint8_t stat;
-        thread = rt_list_entry(node, struct rt_thread, list);
+        rt_uint8_t *ptr;
+
+        if (first_flag)
+        {
 #ifdef RT_USING_SMP
-        if (thread->oncpu != RT_CPU_DETACHED)
-            rt_kprintf("%-*.*s %3d %3d ", maxlen, RT_NAME_MAX, thread->name, thread->oncpu, thread->current_priority);
+            rt_kprintf("%-*.s cpu pri  status      sp     stack size max used left tick  error\n", maxlen, item_title); object_split(maxlen);
+            rt_kprintf(     " --- ---  ------- ---------- ----------  ------  ---------- ---\n");
+#else
+            rt_kprintf("%-*.s pri  status      sp     stack size max used left tick  error\n", maxlen, item_title); object_split(maxlen);
+            rt_kprintf(     " ---  ------- ---------- ----------  ------  ---------- ---\n");
+#endif /*RT_USING_SMP*/
+        }
+#ifdef RT_USING_SMP
+        if (thread_info.oncpu != RT_CPU_DETACHED)
+            rt_kprintf("%-*.*s %3d %3d ", maxlen, RT_NAME_MAX, thread_info.name, thread_info.oncpu, thread_info.current_priority);
         else
-            rt_kprintf("%-*.*s N/A %3d ", maxlen, RT_NAME_MAX, thread->name, thread->current_priority);
+            rt_kprintf("%-*.*s N/A %3d ", maxlen, RT_NAME_MAX, thread_info.name, thread_info.current_priority);
 
 #else
-        rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->name, thread->current_priority);
+        rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread_info.name, thread_info.current_priority);
 #endif /*RT_USING_SMP*/
-        stat = (thread->stat & RT_THREAD_STAT_MASK);
+        stat = (thread_info.stat & RT_THREAD_STAT_MASK);
         if (stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
         else if (stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
         else if (stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
         else if (stat == RT_THREAD_CLOSE)   rt_kprintf(" close  ");
 
 #if defined(ARCH_CPU_STACK_GROWS_UPWARD)
-        ptr = (rt_uint8_t *)thread->stack_addr + thread->stack_size - 1;
+        ptr = (rt_uint8_t *)thread_info.stack_addr + thread_info.stack_size - 1;
         while (*ptr == '#')ptr --;
 
         rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
-                   ((rt_ubase_t)thread->sp - (rt_ubase_t)thread->stack_addr),
-                   thread->stack_size,
-                   ((rt_ubase_t)ptr - (rt_ubase_t)thread->stack_addr) * 100 / thread->stack_size,
-                   thread->remaining_tick,
-                   thread->error);
+                ((rt_ubase_t)thread_info.sp - (rt_ubase_t)thread_info.stack_addr),
+                thread_info.stack_size,
+                ((rt_ubase_t)ptr - (rt_ubase_t)thread_info.stack_addr) * 100 / thread_info.stack_size,
+                thread_info.remaining_tick,
+                thread_info.error);
 #else
-        ptr = (rt_uint8_t *)thread->stack_addr;
+        ptr = (rt_uint8_t *)thread_info.stack_addr;
         while (*ptr == '#')ptr ++;
 
         rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
-                   thread->stack_size + ((rt_ubase_t)thread->stack_addr - (rt_ubase_t)thread->sp),
-                   thread->stack_size,
-                   (thread->stack_size - ((rt_ubase_t) ptr - (rt_ubase_t) thread->stack_addr)) * 100
-                        / thread->stack_size,
-                   thread->remaining_tick,
-                   thread->error);
+                thread_info.stack_size + ((rt_ubase_t)thread_info.stack_addr - (rt_ubase_t)thread_info.sp),
+                thread_info.stack_size,
+                (thread_info.stack_size - ((rt_ubase_t) ptr - (rt_ubase_t) thread_info.stack_addr)) * 100
+                / thread_info.stack_size,
+                thread_info.remaining_tick,
+                thread_info.error);
 #endif
     }
-
-    return 0;
+    return node;
 }
 
 long list_thread(void)
 {
-    rt_ubase_t level;
-    struct rt_object_information *info;
-    long ret;
+    int maxlen;
+    rt_list_t *thread_list = (rt_list_t*)RT_NULL;
 
-    level = rt_hw_interrupt_disable();
-    info = rt_object_get_information(RT_Object_Class_Thread);
-    ret = _list_thread(&info->object_list);
-    rt_hw_interrupt_enable(level);
-    return ret;
+    do
+    {
+        thread_list = list_thread_next(thread_list, &maxlen);
+    }
+    while (thread_list != (rt_list_t*)RT_NULL);
+
+    return 0;
 }
 FINSH_FUNCTION_EXPORT(list_thread, list thread);
 MSH_CMD_EXPORT(list_thread, list thread);
