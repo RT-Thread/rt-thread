@@ -96,16 +96,9 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
     HAL_ETH_DeInit(&EthHandle);
 
     /* configure ethernet peripheral (GPIOs, clocks, MAC, DMA) */
-    if (HAL_ETH_Init(&EthHandle) == HAL_OK)
-    {
-        LOG_D("emac hardware init sucess");
-    }
-    else
-    {
-        LOG_E("emac hardware init faild");
-        return -RT_ERROR;
-    }
-
+    HAL_ETH_Init(&EthHandle);
+    LOG_D("eth hardware init finished");
+    
     /* Initialize Tx Descriptors list: Chain Mode */
     HAL_ETH_DMATxDescListInit(&EthHandle, DMATxDscrTab, Tx_Buff, ETH_TXBUFNB);
 
@@ -543,7 +536,7 @@ static int rt_hw_stm32_eth_init(void)
     if (Rx_Buff == RT_NULL)
     {
         LOG_E("No memory");
-        state = RT_ENOMEM;
+        state = -RT_ENOMEM;
         goto __exit;
     }
 
@@ -551,7 +544,7 @@ static int rt_hw_stm32_eth_init(void)
     if (Rx_Buff == RT_NULL)
     {
         LOG_E("No memory");
-        state = RT_ENOMEM;
+        state = -RT_ENOMEM;
         goto __exit;
     }
 
@@ -559,7 +552,7 @@ static int rt_hw_stm32_eth_init(void)
     if (DMARxDscrTab == RT_NULL)
     {
         LOG_E("No memory");
-        state = RT_ENOMEM;
+        state = -RT_ENOMEM;
         goto __exit;
     }
 
@@ -567,7 +560,7 @@ static int rt_hw_stm32_eth_init(void)
     if (DMATxDscrTab == RT_NULL)
     {
         LOG_E("No memory");
-        state = RT_ENOMEM;
+        state = -RT_ENOMEM;
         goto __exit;
     }
 
@@ -607,7 +600,8 @@ static int rt_hw_stm32_eth_init(void)
     else
     {
         LOG_E("emac device init faild: %d", state);
-        return -RT_ERROR;
+        state = -RT_ERROR;
+        goto __exit;
     }
 
     /* start phy monitor */
@@ -621,6 +615,10 @@ static int rt_hw_stm32_eth_init(void)
     if (tid != RT_NULL)
     {
         rt_thread_startup(tid);
+    }
+    else
+    {
+        state = -RT_ERROR;
     }
 __exit:
     if (state != RT_EOK)
