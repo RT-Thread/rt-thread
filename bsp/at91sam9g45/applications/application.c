@@ -46,9 +46,11 @@
 
 static int rt_led_app_init(void);
 
-int main(void)
+RT_WEAK int main(void)
 {
+#ifdef RT_USING_SDIO
 	int timeout = 0;
+#endif
 
 /* Filesystem Initialization */
 #ifdef RT_USING_DFS
@@ -96,10 +98,8 @@ int main(void)
 #endif
 	}
 #endif
-	
-#ifdef RT_USING_LED
+
 	rt_led_app_init();
-#endif
 }
 
 #ifdef RT_USING_LED
@@ -124,6 +124,7 @@ void rt_led_thread_entry(void* parameter)
 			led_on(3);
 		else
 			led_off(3);
+			
 	}
 }
 #endif
