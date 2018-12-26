@@ -37,6 +37,7 @@
 #elif  defined(SOC_SERIES_STM32F7)
 #include "f7/uart_config.h"
 #include "f7/spi_config.h"
+#include "f7/qspi_config.h"
 #include "f7/adc_config.h"
 #include "f7/tim_config.h"
 #include "f7/sdio_config.h"
