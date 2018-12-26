@@ -25,7 +25,14 @@
 ; * 2015-06-04     aozima     Align stack address to 8 byte.
 ; */
 
-#include "rt_low_level_init.h"
+;#include "rt_low_level_init.h"
+UND_STK_SIZE EQU 512
+SVC_STK_SIZE EQU 4096
+ABT_STK_SIZE EQU 512
+IRQ_STK_SIZE EQU 1024
+FIQ_STK_SIZE EQU 1024
+SYS_STK_SIZE EQU 512
+Heap_Size    EQU 512
 
 S_FRAME_SIZE    EQU     (18*4)   ;72
 ;S_SPSR          EQU     (17*4)   ;SPSR
