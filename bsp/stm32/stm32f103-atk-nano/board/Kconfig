@@ -130,10 +130,6 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_ADC1
                 bool "Enable ADC1"
                 default n
-
-            config BSP_USING_ADC2
-                bool "Enable ADC2"
-                default n
         endif
 
     config BSP_USING_ON_CHIP_FLASH
