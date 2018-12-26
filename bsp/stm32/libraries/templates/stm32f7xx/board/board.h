@@ -15,9 +15,11 @@
 #include <stm32f7xx.h>
 #include "drv_common.h"
 
-#ifdef BSP_USING_GPIO
+#define STM32_FLASH_START_ADRESS     ((uint32_t)0x08000000)
+#define STM32_FLASH_SIZE             (1024 * 1024)
+#define STM32_FLASH_END_ADDRESS      ((uint32_t)(STM32_FLASH_START_ADRESS + STM32_FLASH_SIZE))
 
-#define STM32_SRAM_SIZE           256
+#define STM32_SRAM_SIZE           (512)
 #define STM32_SRAM_END            (0x20000000 + STM32_SRAM_SIZE * 1024)
 
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
@@ -36,4 +38,3 @@ extern int __bss_end;
 void SystemClock_Config(void);
 
 #endif
-
