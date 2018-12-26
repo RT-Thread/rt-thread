@@ -60,27 +60,3 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 }
-
-void MX_GPIO_Init(void)
-{
-
-  /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOF_CLK_ENABLE();
-  __HAL_RCC_GPIOH_CLK_ENABLE();
-  __HAL_RCC_GPIOC_CLK_ENABLE();
-  __HAL_RCC_GPIOG_CLK_ENABLE();
-  __HAL_RCC_GPIOE_CLK_ENABLE();
-  __HAL_RCC_GPIOD_CLK_ENABLE();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-
-}
-
-#ifdef RT_USING_PIN
-int board_pin_init(void)
-{
-    rt_pin_mode(LED0_PIN, PIN_MODE_OUTPUT);
-
-    return 0;
-}
-INIT_BOARD_EXPORT(board_pin_init);
-#endif /* RT_USING_PIN */
