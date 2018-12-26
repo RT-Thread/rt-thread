@@ -69,8 +69,10 @@ BSP 的制作过程分为如下五个步骤：
 
 | 工程模板 | 说明 |
 | ------- | ---- |
+| libraries/templates/stm32f0xx | F0 系列 BSP 模板 |
 | libraries/templates/stm32f10x | F1 系列 BSP 模板 |
 | libraries/templates/stm32f4xx | F4 系列 BSP 模板 |
+| libraries/templates/stm32f7xx | F7 系列 BSP 模板 |
 | libraries/templates/stm32l4xx | L4 系列 BSP 模板 |
 
 本次示例所用的 F1 系列 BSP 模板文件夹结构如下所示：
@@ -157,9 +159,25 @@ BSP 的制作过程分为如下五个步骤：
 
 ![需要修改的链接脚本](./figures/linker_scripts.png)
 
-修改这些文件需要用户掌握链接脚本语法，根据相应的芯片进行修改。
+下面以 MDK 使用的链接脚本 link.sct 为例，演示如何修改链接脚本：
+
+![linkscripts_change](figures/linkscripts_change.png)
+
+本次制作 BSP 使用的芯片为 STM32F103RB，FLASH 为 128k，因此修改 LR_IROM1 和 ER_IROM1 的参数为 0x00020000。RAM 的大小为20k， 因此修改 RW_IRAM1 的参数为 0x00005000。这样的修改方式在一般的应用下就够用了，后续如果有特殊要求，则需要按照链接脚本的语法来根据需求修改。
+
+其他两个链接脚本的文件分别为 iar 使用的 link.icf 和 gcc 编译器使用的 link.lds，修改的方式也是类似的，如下图所示：
+
+- link.icf 修改内容
+
+  ![link_icf](figures/link_icf.png)
+
+- link.lds 修改内容
+
+  ![link_lds](figures/link_lds.png)
+
 
 ####  3.4.2 修改构建脚本
+
 **SConscript** 脚本决定 MDK/IAR 工程的生成以及编译过程中要添加文件。
 
 在这一步中需要修改芯片型号以及芯片启动文件的地址，修改内容如下图所示：
