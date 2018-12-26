@@ -22,10 +22,10 @@
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：STM32f767，主频 216MHz，1MB FLASH ，512KB RAM ，16K CACHE
-- 外部 SDRAM：W9825G6KH， 32MB
-- 外部 NAND FLASH： MT29F4G08， 512MB
-- 外部 SPI FLASH： W25Q256， 32M 
+- MCU：STM32f767，主频 216MHz，1MB FLASH ，512KB RAM，16K CACHE
+- 外部 SDRAM：W9825G6KH，32MB
+- 外部 NAND FLASH： MT29F4G08，512MB
+- 外部 SPI FLASH： W25Q256，32M 
 - 常用外设
   - LED：2个，DS0（红色，PB1），DS1（绿色，PB0）
   - 按键：4个，KEY_UP（兼具唤醒功能，PA0），K0（PH3），K1（PH2），K2（PC13）
@@ -41,25 +41,25 @@
 | **板载外设**      | **支持情况** | **备注**                              |
 | :----------------- | :----------: | :------------------------------------- |
 | USB 转串口        |     支持      |                                       |
-| RS232             |     支持     | 和以太网冲突，如需使用该外设，请使用 CubeMX 重新配置 UART2 管脚 |
-| QSPI Flash        |   即将支持   |                                       |
+| RS232             |     支持     | 与以太网引脚有冲突，如需使用该外设，请使用 CubeMX 重新配置 UART2 管脚 |
+| QSPI Flash        |     支持     |                                       |
 | 以太网            |   支持        |                                        |
 | MPU9250六轴传感器 |   支持        |                                       |
 | SDRAM             |   支持       |                                       |
-| SD卡              |   即将支持   |                                       |
+| SD卡              |        支持   |                                       |
 | CAN               |   即将支持   |                                       |
 | EMW1062 | 暂不支持 | |
 | **片上外设**      | **支持情况** | **备注**                              |
-| GPIO              |     支持     | PA0, PA1... PK15 ---> PIN: 0, 1...176 |
+| GPIO              |     支持     | PA0，PA1... PK15 ---> PIN: 0，1...176 |
 | UART              |     支持     |                                       |
 | SPI               |     支持     |                                       |
 | I2C               |     支持     | 软件 I2C                              |
-| ADC               | 即将支持     |                                     |
+| ADC               |    支持     |                                     |
 | RTC               |     支持     |                                      |
 | WDT               |     支持     |                                       |
-| FLASH             | 即将支持 | 已适配 [FAL](https://github.com/RT-Thread-packages/fal)  |
-| SDIO              |   暂不支持   | 即将支持                              |
-| PWM               |   暂不支持   | 即将支持                              |
+| PWM               |     支持     |                                       |
+| SDIO              |     支持     |                                       |
+| FLASH             |     支持     |                                       |
 | USB Device        |   暂不支持   | 即将支持                              |
 | USB Host          |   暂不支持   | 即将支持                              |
 | **扩展模块**      | **支持情况** | **备注**                              |
@@ -71,7 +71,7 @@
 
 - 快速上手
 
-    本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
+    本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果。
 
 - 进阶使用
 
@@ -96,7 +96,7 @@
 
 下载程序成功之后，系统会自动运行，LED 闪烁。
 
-连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
+连接开发板对应串口到 PC ，在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
 
 ```bash
  \ | /
@@ -127,4 +127,4 @@ msh >
 
 维护人:
 
-- [SummerGift](https://github.com/SummerGGift)
+- [BalanceTWK](https://github.com/balanceTWK)

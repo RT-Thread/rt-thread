@@ -41,12 +41,14 @@ menu "Onboard Peripheral Drivers"
 
     config PHY_USING_LAN8720A
         bool
-    
+
     config BSP_USING_ETH
         bool "Enable Ethernet"
-        default n
+        select BSP_USING_I2C1
+        select PKG_USING_PCF8574
         select RT_USING_LWIP
         select PHY_USING_LAN8720A
+        default n
 
     config BSP_USING_SDCARD
         bool "Enable SDCARD (sdio)"
