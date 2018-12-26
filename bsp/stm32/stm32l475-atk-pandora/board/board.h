@@ -27,7 +27,6 @@
 #define HEAP_END                       STM32_SRAM1_END
 
 void SystemClock_Config(void);
-void MX_GPIO_Init(void);
 
 #endif
 
