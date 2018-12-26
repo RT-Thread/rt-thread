@@ -543,8 +543,11 @@ class MenuConfig(object):
         ('Save as', ACTION_SAVE_AS),
     )
 
-    def __init__(self, kconfig):
+    def __init__(self, kconfig, __silent=None):
         self.kconfig = kconfig
+        self.__silent = __silent
+        if self.__silent is True:
+            return
 
         # Instantiate Tk widgets
         self.root = tk.Tk()
@@ -728,6 +731,8 @@ class MenuConfig(object):
     def _close_window(self):
         if self.prevent_losing_changes():
             print('Exiting..')
+            if self.__silent is True:
+                return
             self.root.destroy()
 
     def _action_exit(self):
@@ -949,6 +954,8 @@ class MenuConfig(object):
         - current config path
         - status string (see set_status_string())
         """
+        if self.__silent is True:
+            return
         self.tk_status.set('{} [{}] {}'.format(
             '<UNSAVED>' if self.unsaved_changes else '',
             self.config_path if self.config_path else '',
@@ -1017,6 +1024,10 @@ class MenuConfig(object):
             self.mark_as_changed()
         if not self.unsaved_changes:
             return True
+        
+        if self.__silent:
+            saved = self.save_config()
+            return saved
         res = messagebox.askyesnocancel(
             parent=self.root,
             title='Unsaved changes',
@@ -1056,11 +1067,13 @@ class MenuConfig(object):
             self.kconfig.load_config(path)
         except IOError as e:
             self.set_status_string('Failed to load: \'{}\''.format(path))
-            self.refresh_display()
+            if not self.__silent:
+                self.refresh_display()
             print('Failed to load config \'{}\': {}'.format(path, e))
             return False
         self.set_status_string('Opened config')
-        self.refresh_display()
+        if not self.__silent:
+            self.refresh_display()
         return True
 
     def save_config(self, force_file_dialog=False):
@@ -1154,19 +1167,39 @@ def main(argv=None):
         type=str,
         help='path to .config file to load'
     )
+    if "--silent" in argv:
+        parser.add_argument(
+            '--silent',
+            dest = '_silent_',
+            type=str,
+            help='silent mode, not show window'
+        )
     args = parser.parse_args(argv)
     kconfig_path = args.kconfig
     config_path = args.config
     # Verify that Kconfig file exists
     if not os.path.isfile(kconfig_path):
         raise RuntimeError('\'{}\': no such file'.format(kconfig_path))
+
     # Parse Kconfig files
     kconf = kconfiglib.Kconfig(filename=kconfig_path)
-    mc = MenuConfig(kconf)
-    # If config file was specified, load it
-    if config_path:
-        mc.open_config(config_path)
-    tk.mainloop()
+
+    if "--silent" not in argv:
+        print("In normal mode. Will show menuconfig window.")
+        mc = MenuConfig(kconf)
+        # If config file was specified, load it
+        if config_path:
+            mc.open_config(config_path)
+
+        print("Enter mainloop. Waiting...")
+        tk.mainloop()
+    else:
+        print("In silent mode. Don`t show menuconfig window.")
+        mc = MenuConfig(kconf, True)
+        # If config file was specified, load it
+        if config_path:
+            mc.open_config(config_path)
+        mc._close_window()
 
 
 if __name__ == '__main__':
