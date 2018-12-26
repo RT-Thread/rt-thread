@@ -131,7 +131,7 @@ def GenCconfigFile(env, BuildOptions):
             f = open('cconfig.h', 'r')
             if f:
                 contents = f.read()
-                f.close();
+                f.close()
 
                 prep = PatchedPreProcessor()
                 prep.process_contents(contents)
@@ -349,8 +349,20 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 action = 'store_true',
                 default = False,
                 help = 'make menuconfig for RT-Thread BSP')
-    if GetOption('pyconfig'):
+    AddOption('--pyconfig-silent',
+                dest = 'pyconfig_silent',
+                action = 'store_true',
+                default = False,
+                help = 'Don`t show pyconfig window')
+
+    if GetOption('pyconfig_silent'):    
+        from menuconfig import pyconfig_silent
+
+        pyconfig_silent(Rtt_Root)
+        exit(0)
+    elif GetOption('pyconfig'):
         from menuconfig import pyconfig
+
         pyconfig(Rtt_Root)
         exit(0)
 
