@@ -34,15 +34,14 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_DFS_ELMFAT
         default n
 
+    config PHY_USING_LAN8720A
+        bool
+    
     config BSP_USING_ETH
         bool "Enable Ethernet"
         default n
         select RT_USING_LWIP
-        if BSP_USING_ETH
-            config EXTERNAL_PHY_ADDRESS
-                hex
-                default 0x01
-        endif
+        select PHY_USING_LAN8720A
 
     config BSP_USING_MPU6050
         bool "Enable MPU6050(i2c1)"
