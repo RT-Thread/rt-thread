@@ -23,64 +23,32 @@
  */
 
 #include <rtthread.h>
-#include <at91sam926x.h>
+#include <at91sam9g45.h>
 #include "led.h"
 
-#if 1
-// GB9260 board
-#define PIO_LED		AT91_PIOB
-#define LED1		(1 << 25)	// LED_SYS
-#define LED2		(0)
-#define LED3		(1 << 23)	// LED_USR
-#define LED_ALL		(LED1 | LED2 | LED3)
-#else
-#define PIO_LED		AT91_PIOC
-#define LED1		(1 << 8)
-#define LED2		(1 << 11)
-#define LED3		(1 << 6)
-#define LED_ALL		(LED1 | LED2 | LED3)
-#endif
+// BYHX A-Plus Board
+#define LED0    (1UL << 30)
+#define LED1    (1UL << 31)
+#define LED2    (1UL << 29)
+#define LED3    (1UL << 28)
+#define LED_ALL     (LED0 | LED1 | LED2 | LED3)
 
 void led_init(void)
 {
-	at91_sys_write(PIO_LED+0x00, LED_ALL);
-	at91_sys_write(PIO_LED+0x10, LED_ALL);
-	at91_sys_write(PIO_LED+0x64, LED_ALL);
-	at91_sys_write(PIO_LED+0x30, LED_ALL);
+	AT91C_BASE_PIOC->PIO_PER   = LED_ALL;
+	AT91C_BASE_PIOC->PIO_OER   = LED_ALL;
+	AT91C_BASE_PIOC->PIO_PPUER = LED_ALL;
+	AT91C_BASE_PIOC->PIO_SODR  = LED_ALL;
 }
+
+const static rt_uint32_t m_leds[] = { LED0, LED1, LED2, LED3 };
 
 void led_on(int num)
 {
-	switch(num)
-	{
-		case 1:
-			at91_sys_write(PIO_LED+0x34, LED1);
-			break;
-		case 2:
-			at91_sys_write(PIO_LED+0x34, LED2);
-			break;
-		case 3:
-			at91_sys_write(PIO_LED+0x34, LED3);
-			break;
-		default:
-			break;
-	}
+    if (num < 4) AT91C_BASE_PIOC->PIO_CODR = m_leds[num];
 }
 
 void led_off(int num)
 {
-	switch(num)
-	{
-		case 1:
-			at91_sys_write(PIO_LED+0x30, LED1);
-			break;
-		case 2:
-			at91_sys_write(PIO_LED+0x30, LED2);
-			break;
-		case 3:
-			at91_sys_write(PIO_LED+0x30, LED3);
-			break;
-		default:
-			break;
-	}
+    if (num < 4) AT91C_BASE_PIOC->PIO_SODR = m_leds[num];
 }

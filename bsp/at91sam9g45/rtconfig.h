@@ -6,11 +6,11 @@
 
 /* RT-Thread Kernel */
 
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 16
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
-#define RT_TICK_PER_SECOND 100
+#define RT_TICK_PER_SECOND 1000
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_IDEL_HOOK_LIST_SIZE 4
@@ -48,9 +48,7 @@
 
 /* C++ features */
 
-#define RT_USING_DEVICE_IPC
-#define RT_USING_SERIAL
-#define RT_SERIAL_USING_DMA
+#define RT_USING_CPLUSPLUS
 
 /* Command shell */
 
@@ -89,6 +87,7 @@
 /* POSIX layer and C standard library */
 
 #define RT_USING_LIBC
+#define RT_USING_PTHREADS
 
 /* Network */
 
