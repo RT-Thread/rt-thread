@@ -367,7 +367,8 @@ typedef struct rt_object *rt_object_t;                  /**< Type for kernel obj
  */
 enum rt_object_class_type
 {
-    RT_Object_Class_Thread = 0,                         /**< The object is a thread. */
+    RT_Object_Class_Null   = 0,                         /**< The object is not used. */
+    RT_Object_Class_Thread,                             /**< The object is a thread. */
     RT_Object_Class_Semaphore,                          /**< The object is a semaphore. */
     RT_Object_Class_Mutex,                              /**< The object is a mutex. */
     RT_Object_Class_Event,                              /**< The object is a event. */
