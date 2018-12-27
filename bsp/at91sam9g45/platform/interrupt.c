@@ -23,8 +23,10 @@
  */
 
 #include <rthw.h>
-#include "at91sam926x.h"
+#include "at91sam9g45.h"
 #include "interrupt.h"
+
+#define AIC_IRQS	32
 #define MAX_HANDLERS    (AIC_IRQS + PIN_IRQS)
 
 extern rt_uint32_t rt_interrupt_nest;
@@ -47,43 +49,43 @@ rt_uint32_t at91_extern_irq;
 /*
  * The default interrupt priority levels (0 = lowest, 7 = highest).
  */
-static rt_uint32_t at91sam9260_default_irq_priority[MAX_HANDLERS] = {
-    7,  /* Advanced Interrupt Controller */
-    7,  /* System Peripherals */
-    1,  /* Parallel IO Controller A */
-    1,  /* Parallel IO Controller B */
-    1,  /* Parallel IO Controller C */
-    0,  /* Analog-to-Digital Converter */
-    5,  /* USART 0 */
-    5,  /* USART 1 */
-    5,  /* USART 2 */
-    0,  /* Multimedia Card Interface */
-    2,  /* USB Device Port */
-    6,  /* Two-Wire Interface */
-    5,  /* Serial Peripheral Interface 0 */
-    5,  /* Serial Peripheral Interface 1 */
-    5,  /* Serial Synchronous Controller */
-    0,
-    0,
-    0,  /* Timer Counter 0 */
-    0,  /* Timer Counter 1 */
-    0,  /* Timer Counter 2 */
-    2,  /* USB Host port */
-    3,  /* Ethernet */
-    0,  /* Image Sensor Interface */
-    5,  /* USART 3 */
-    5,  /* USART 4 */
-    5,  /* USART 5 */
-    0,  /* Timer Counter 3 */
-    0,  /* Timer Counter 4 */
-    0,  /* Timer Counter 5 */
-    0,  /* Advanced Interrupt Controller */
-    0,  /* Advanced Interrupt Controller */
-    0,  /* Advanced Interrupt Controller */
+static rt_uint32_t at91sam9g45_default_irq_priority[MAX_HANDLERS] = {
+    7,  /* Advanced Interrupt Controller - FIQ    */
+    7,  /* System Controller Interrupt            */
+    1,  /* Parallel I/O Controller A,             */
+    1,  /* Parallel I/O Controller B              */
+    1,  /* Parallel I/O Controller C              */
+    0,  /* Parallel I/O Controller D/E            */
+    5,  /* True Random Number Generator           */
+    5,  /* USART 0                                */
+    5,  /* USART 1                                */
+    0,  /* USART 2                                */
+    2,  /* USART 3                                */
+    6,  /* High Speed Multimedia Card Interface 0 */
+    5,  /* Two-Wire Interface 0                   */
+    5,  /* Two-Wire Interface 1                   */
+    5,  /* Serial Peripheral Interface            */
+    0,  /* Serial Peripheral Interface            */
+    0,  /* Synchronous Serial Controller 0        */
+    0,  /* Synchronous Serial Controller 1        */
+    0,  /* Timer Counter 0,1,2,3,4,5              */
+    0,  /* Pulse Width Modulation Controller      */
+    2,  /* Touch Screen ADC Controller            */
+    3,  /* DMA Controller                         */
+    0,  /* USB Host High Speed                    */
+    5,  /* LCD Controller                         */
+    5,  /* AC97 Controller                        */
+    5,  /* Ethernet MAC                           */
+    0,  /* Image Sensor Interface                 */
+    0,  /* USB Device High Speed                  */
+    0,  /* N/A                                    */
+    0,  /* High Speed Multimedia Card Interface 1 */
+    0,  /* Reserved                               */
+    0,  /* Advanced Interrupt Controller - IRQ    */
 };
 
 /**
- * @addtogroup AT91SAM926X
+ * @addtogroup AT91SAM9G45
  */
 /*@{*/
 
@@ -96,29 +98,24 @@ rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t vector, void *param)
     return RT_NULL;
 }
 
-rt_isr_handler_t at91_gpio_irq_handle(rt_uint32_t vector, void *param)
+rt_isr_handler_t at91_gpio_irq_handle(rt_uint32_t bank, void *param)
 {
-    rt_uint32_t isr, pio, irq_n;
+    rt_uint32_t isr, irq_n;
+	AT91PS_PIO pio;
     void *parameter;
 
-    if (vector == AT91SAM9260_ID_PIOA)
+    switch (bank)
     {
-        pio = AT91_PIOA;
-        irq_n = AIC_IRQS;
+	case 0: pio = AT91C_BASE_PIOA; break;
+	case 1: pio = AT91C_BASE_PIOB; break;
+	case 2: pio = AT91C_BASE_PIOC; break;
+	case 3: pio = AT91C_BASE_PIOD; break;
+	case 4: pio = AT91C_BASE_PIOE; break;
+	default: return RT_NULL;
     }
-    else if (vector == AT91SAM9260_ID_PIOB)
-    {
-        pio = AT91_PIOB;
-        irq_n = AIC_IRQS + 32;
-    }
-    else if (vector == AT91SAM9260_ID_PIOC)
-    {
-        pio = AT91_PIOC;
-        irq_n = AIC_IRQS + 32*2;
-    }
-    else
-        return RT_NULL;
-    isr = at91_sys_read(pio+PIO_ISR) & at91_sys_read(pio+PIO_IMR);
+    irq_n = AIC_IRQS + 32*bank;
+    isr = readl(pio->PIO_ISR);
+    isr &= readl(pio->PIO_IMR);
     while (isr)
     {
         if (isr & 1)
@@ -133,6 +130,26 @@ rt_isr_handler_t at91_gpio_irq_handle(rt_uint32_t vector, void *param)
     return RT_NULL;
 }
 
+unsigned int SpuriousCount = 0;
+static void DefaultSpuriousHandler( void )
+{
+	SpuriousCount++;
+	rt_kprintf("Spurious interrupt %d occured!!!\n", SpuriousCount);
+	return ;
+}
+
+static void DefaultFiqHandler(void)
+{
+	rt_kprintf("Unhandled FIQ occured!!!\n");
+	while (1);
+}
+
+static void DefaultIrqHandler(void)
+{
+	rt_kprintf("Unhandled IRQ %d occured!!!\n", AT91C_BASE_AIC->AIC_ISR);
+	while (1);
+}
+
 /*
  * Initialize the AIC interrupt controller.
  */
@@ -144,57 +161,58 @@ void at91_aic_init(rt_uint32_t *priority)
      * The IVR is used by macro get_irqnr_and_base to read and verify.
      * The irq number is NR_AIC_IRQS when a spurious interrupt has occurred.
      */
-    for (i = 0; i < AIC_IRQS; i++) {
+    AT91C_BASE_AIC->AIC_SVR[0] = (rt_uint32_t)DefaultFiqHandler;
+    for (i = 1; i < AIC_IRQS; i++) {
         /* Put irq number in Source Vector Register: */
-        at91_sys_write(AT91_AIC_SVR(i), i); // no-used
+        AT91C_BASE_AIC->AIC_SVR[i] = (rt_uint32_t)DefaultIrqHandler; // no-used
         /* Active Low interrupt, with the specified priority */
-        at91_sys_write(AT91_AIC_SMR(i), AT91_AIC_SRCTYPE_LOW | priority[i]);
-        //AT91_AIC_SRCTYPE_FALLING
-
-        /* Perform 8 End Of Interrupt Command to make sure AIC will not Lock out nIRQ */
-        if (i < 8)
-            at91_sys_write(AT91_AIC_EOICR, 0);
+        AT91C_BASE_AIC->AIC_SMR[i] = AT91C_AIC_SRCTYPE_INT_LEVEL_SENSITIVE | priority[i];
+        //AT91C_AIC_SRCTYPE_FALLING
     }
 
     /*
      * Spurious Interrupt ID in Spurious Vector Register is NR_AIC_IRQS
      * When there is no current interrupt, the IRQ Vector Register reads the value stored in AIC_SPU
      */
-    at91_sys_write(AT91_AIC_SPU, AIC_IRQS);
+    AT91C_BASE_AIC->AIC_SPU = (rt_uint32_t)DefaultSpuriousHandler;
+
+    /* Perform 8 End Of Interrupt Command to make sure AIC will not Lock out nIRQ */
+    for (i = 0; i < 8; i++)
+        AT91C_BASE_AIC->AIC_EOICR = 0;
 
     /* No debugging in AIC: Debug (Protect) Control Register */
-    at91_sys_write(AT91_AIC_DCR, 0);
+    AT91C_BASE_AIC->AIC_DCR = 0;
 
     /* Disable and clear all interrupts initially */
-    at91_sys_write(AT91_AIC_IDCR, 0xFFFFFFFF);
-    at91_sys_write(AT91_AIC_ICCR, 0xFFFFFFFF);
+    AT91C_BASE_AIC->AIC_IDCR = 0xFFFFFFFF;
+    AT91C_BASE_AIC->AIC_ICCR = 0xFFFFFFFF;
 }
 
 
 static void at91_gpio_irq_init()
 {
     int i, idx;
-    char *name[] = {"PIOA", "PIOB", "PIOC"};
+    char *name[] = {"PIOA", "PIOB", "PIOC", "PIODE"};
+    rt_uint32_t aic_pids[] = { AT91C_ID_PIOA, AT91C_ID_PIOB, AT91C_ID_PIOC, AT91C_ID_PIOD_E };
 
-    at91_sys_write(AT91_PIOA+PIO_IDR, 0xffffffff);
-    at91_sys_write(AT91_PIOB+PIO_IDR, 0xffffffff);
-    at91_sys_write(AT91_PIOC+PIO_IDR, 0xffffffff);
+    AT91C_BASE_PIOA->PIO_IDR = 0xffffffff;
+    AT91C_BASE_PIOB->PIO_IDR = 0xffffffff;
+    AT91C_BASE_PIOC->PIO_IDR = 0xffffffff;
+    AT91C_BASE_PIOD->PIO_IDR = 0xffffffff;
+    AT91C_BASE_PIOE->PIO_IDR = 0xffffffff;
 
-    idx = AT91SAM9260_ID_PIOA;
-    for (i = 0; i < 3; i++)
+    for (i = 0; i < 4; i++)
     {
+        idx = aic_pids[i];
         irq_desc[idx].handler = (rt_isr_handler_t)at91_gpio_irq_handle;
         irq_desc[idx].param = RT_NULL;
 #ifdef RT_USING_INTERRUPT_INFO
         rt_snprintf(irq_desc[idx].name, RT_NAME_MAX - 1, name[i]);
         irq_desc[idx].counter = 0;
 #endif
-		idx++;
-    }
 
-    rt_hw_interrupt_umask(AT91SAM9260_ID_PIOA);
-    rt_hw_interrupt_umask(AT91SAM9260_ID_PIOB);
-    rt_hw_interrupt_umask(AT91SAM9260_ID_PIOC);
+        rt_hw_interrupt_umask(idx);
+    }
 }
 
 
@@ -204,10 +222,9 @@ static void at91_gpio_irq_init()
 void rt_hw_interrupt_init(void)
 {
     register rt_uint32_t idx;
-    rt_uint32_t *priority = at91sam9260_default_irq_priority;
+    rt_uint32_t *priority = at91sam9g45_default_irq_priority;
 
-    at91_extern_irq = (1UL << AT91SAM9260_ID_IRQ0) | (1UL << AT91SAM9260_ID_IRQ1)
-            | (1UL << AT91SAM9260_ID_IRQ2);
+    at91_extern_irq = (1UL << AT91C_ID_IRQ0);
 
     /* Initialize the AIC interrupt controller */
     at91_aic_init(priority);
@@ -234,31 +251,27 @@ void rt_hw_interrupt_init(void)
 
 static void at91_gpio_irq_mask(int irq)
 {
-    rt_uint32_t pin, pio, bank;
+    rt_uint32_t pin, bank;
+    AT91PS_PIO pio;
 
     bank = (irq - AIC_IRQS)>>5;
 
-    if (bank == 0)
+    switch (bank)
     {
-        pio = AT91_PIOA;
+    case 0: pio = AT91C_BASE_PIOA; break;
+    case 1: pio = AT91C_BASE_PIOB; break;
+    case 2: pio = AT91C_BASE_PIOC; break;
+    case 3: pio = AT91C_BASE_PIOD; break;
+    case 4: pio = AT91C_BASE_PIOE; break;
+    default: return;
     }
-    else if (bank == 1)
-    {
-        pio = AT91_PIOB;
-    }
-    else if (bank == 2)
-    {
-        pio = AT91_PIOC;
-    }
-    else
-        return;
     pin = 1 << ((irq - AIC_IRQS) & 31);
-    at91_sys_write(pio+PIO_IDR, pin);
+    pio->PIO_IDR = pin;
 }
 
 /**
  * This function will mask a interrupt.
- * @param vector the interrupt number
+ * @param irq   the interrupt number
  */
 void rt_hw_interrupt_mask(int irq)
 {
@@ -269,32 +282,28 @@ void rt_hw_interrupt_mask(int irq)
     else
     {
         /* Disable interrupt on AIC */
-        at91_sys_write(AT91_AIC_IDCR, 1 << irq);
+        AT91C_BASE_AIC->AIC_IDCR = 1 << irq;
     }
 }
 
 static void at91_gpio_irq_umask(int irq)
 {
-    rt_uint32_t pin, pio, bank;
+    rt_uint32_t pin, bank;
+    AT91PS_PIO pio;
 
     bank = (irq - AIC_IRQS)>>5;
 
-    if (bank == 0)
+    switch (bank)
     {
-        pio = AT91_PIOA;
+    case 0: pio = AT91C_BASE_PIOA; break;
+    case 1: pio = AT91C_BASE_PIOB; break;
+    case 2: pio = AT91C_BASE_PIOC; break;
+    case 3: pio = AT91C_BASE_PIOD; break;
+    case 4: pio = AT91C_BASE_PIOE; break;
+    default: return;
     }
-    else if (bank == 1)
-    {
-        pio = AT91_PIOB;
-    }
-    else if (bank == 2)
-    {
-        pio = AT91_PIOC;
-    }
-    else
-        return;
     pin = 1 << ((irq - AIC_IRQS) & 31);
-    at91_sys_write(pio+PIO_IER, pin);
+    pio->PIO_IER = pin;
 }
 
 /**
@@ -310,7 +319,7 @@ void rt_hw_interrupt_umask(int irq)
     else
     {
         /* Enable interrupt on AIC */
-        at91_sys_write(AT91_AIC_IECR, 1 << irq);
+        AT91C_BASE_AIC->AIC_IECR = 1 << irq;
     }
 }
 
@@ -322,12 +331,12 @@ void rt_hw_interrupt_umask(int irq)
  * @param name the interrupt name
  * @return old handler
  */
-rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler, 
-                                    void *param, const char *name)
+rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
+                                    void *param, char *name)
 {
     rt_isr_handler_t old_handler = RT_NULL;
 
-    if(vector < MAX_HANDLERS)
+    if (vector < MAX_HANDLERS)
     {
         old_handler = irq_desc[vector].handler;
         if (handler != RT_NULL)
@@ -352,23 +361,23 @@ static int at91_aic_set_type(unsigned irq, unsigned type)
     unsigned int smr, srctype;
 
     switch (type) {
-    case IRQ_TYPE_LEVEL_HIGH:
-        srctype = AT91_AIC_SRCTYPE_HIGH;
+    case AT91C_AIC_SRCTYPE_EXT_HIGH_LEVEL:
+        srctype = AT91C_AIC_SRCTYPE_HIGH;
         break;
-    case IRQ_TYPE_EDGE_RISING:
-        srctype = AT91_AIC_SRCTYPE_RISING;
+    case AT91C_AIC_SRCTYPE_EXT_POSITIVE_EDGE:
+        srctype = AT91C_AIC_SRCTYPE_RISING;
         break;
-    case IRQ_TYPE_LEVEL_LOW:
+    case AT91C_AIC_SRCTYPE_INT_LEVEL_SENSITIVE:
         // only supported on external interrupts
-        if ((irq == AT91_ID_FIQ) || is_extern_irq(irq))
-            srctype = AT91_AIC_SRCTYPE_LOW;
+        if ((irq == AT91C_ID_FIQ) || is_extern_irq(irq))
+            srctype = AT91C_AIC_SRCTYPE_LOW;
         else
             return -1;
         break;
-    case IRQ_TYPE_EDGE_FALLING:
+    case AT91C_AIC_SRCTYPE_INT_EDGE_TRIGGERED:
         // only supported on external interrupts
-        if ((irq == AT91_ID_FIQ) || is_extern_irq(irq))
-            srctype = AT91_AIC_SRCTYPE_FALLING;
+        if ((irq == AT91C_ID_FIQ) || is_extern_irq(irq))
+            srctype = AT91C_AIC_SRCTYPE_FALLING;
         else
             return -1;
         break;
@@ -376,8 +385,8 @@ static int at91_aic_set_type(unsigned irq, unsigned type)
         return -1;
     }
 
-    smr = at91_sys_read(AT91_AIC_SMR(irq)) & ~AT91_AIC_SRCTYPE;
-    at91_sys_write(AT91_AIC_SMR(irq), smr | srctype);
+    smr = readl(AT91C_AIC_SMR(irq)) & ~AT91C_AIC_SRCTYPE;
+    AT91C_BASE_AIC->AIC_SMR[irq] = smr | srctype;
     return 0;
 }
 */
@@ -391,9 +400,9 @@ rt_uint32_t rt_hw_interrupt_get_active(rt_uint32_t fiq_irq)
 
     //IRQ
     /* AIC need this dummy read */
-    at91_sys_read(AT91_AIC_IVR);
+    readl(AT91C_AIC_IVR);
     /* clear pending register */
-    id = at91_sys_read(AT91_AIC_ISR);
+    id = readl(AT91C_AIC_ISR);
 
     return id;
 }
@@ -407,7 +416,7 @@ void rt_hw_interrupt_ack(rt_uint32_t fiq_irq, rt_uint32_t id)
     /* new IRQ generation */
     // EIOCR must be write any value after interrupt,
     // or else can't response next interrupt
-    at91_sys_write(AT91_AIC_EOICR, 0x0);
+    AT91C_BASE_AIC->AIC_EOICR = 0x0;
 }
 
 #ifdef RT_USING_FINSH
