@@ -105,8 +105,11 @@ class Win32Spawn:
         try:
             proc = subprocess.Popen(cmdline, env=_e, shell=False)
         except Exception as e:
-            print ('Error in calling:\n' + cmdline)
-            print ('Exception: ' + e + ': ' + os.strerror(e.errno))
+            print ('Error in calling command:' + cmdline.split(' ')[0])
+            print ('Exception: ' + os.strerror(e.errno))
+            if (os.strerror(e.errno) == "No such file or directory"):
+                print ("\nPlease check Toolchains PATH setting.\n")
+
             return e.errno
         finally:
             os.environ['PATH'] = old_path
@@ -128,7 +131,7 @@ def GenCconfigFile(env, BuildOptions):
             f = open('cconfig.h', 'r')
             if f:
                 contents = f.read()
-                f.close();
+                f.close()
 
                 prep = PatchedPreProcessor()
                 prep.process_contents(contents)
@@ -346,8 +349,20 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 action = 'store_true',
                 default = False,
                 help = 'make menuconfig for RT-Thread BSP')
-    if GetOption('pyconfig'):
+    AddOption('--pyconfig-silent',
+                dest = 'pyconfig_silent',
+                action = 'store_true',
+                default = False,
+                help = 'Don`t show pyconfig window')
+
+    if GetOption('pyconfig_silent'):    
+        from menuconfig import pyconfig_silent
+
+        pyconfig_silent(Rtt_Root)
+        exit(0)
+    elif GetOption('pyconfig'):
         from menuconfig import pyconfig
+
         pyconfig(Rtt_Root)
         exit(0)
 

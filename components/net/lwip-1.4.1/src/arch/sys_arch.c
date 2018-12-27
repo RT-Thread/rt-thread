@@ -497,10 +497,11 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout)
             t = timeout / (1000/RT_TICK_PER_SECOND);
     }
 
-    ret = rt_mb_recv(*mbox, (rt_uint32_t *)msg, t);
-
+    ret = rt_mb_recv(*mbox, (rt_ubase_t *)msg, t);
     if(ret == -RT_ETIMEOUT)
+    {
         return SYS_ARCH_TIMEOUT;
+    }
     else
     {
         LWIP_ASSERT("rt_mb_recv returned with error!", ret == RT_EOK);
@@ -528,10 +529,11 @@ u32_t sys_arch_mbox_tryfetch(sys_mbox_t *mbox, void **msg)
 {
     int ret;
 
-    ret = rt_mb_recv(*mbox, (rt_uint32_t *)msg, 0);
-
+    ret = rt_mb_recv(*mbox, (rt_ubase_t *)msg, 0);
     if(ret == -RT_ETIMEOUT)
+    {
         return SYS_ARCH_TIMEOUT;
+    }
     else
     {
         if (ret == RT_EOK) 

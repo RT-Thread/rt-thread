@@ -32,6 +32,9 @@
 #include "f7/uart_config.h"
 #include "f7/spi_config.h"
 #include "f7/adc_config.h"
+#include "f7/tim_config.h"
+#include "f7/sdio_config.h"
+#include "f7/pwm_config.h"
 #elif  defined(SOC_SERIES_STM32L4)
 #include "l4/uart_config.h"
 #include "l4/spi_config.h"

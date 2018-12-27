@@ -1,21 +1,7 @@
 /*
- * File      : touch.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -32,7 +18,7 @@
 #include "drv_spi.h"
 #include "touch.h"
 
-#ifdef RT_USING_RTGUI
+#ifdef XPT2046_USING_TOUCH
 
 #include <rtgui/calibration.h>
 #include <rtgui/event.h>
@@ -40,8 +26,9 @@
 #include <rtgui/rtgui_server.h>
 #include <rtgui/rtgui_system.h>
 
-//ÊúÆÁÄ» ²»ĞèÒª  _ILI_HORIZONTAL_DIRECTION_
-//ºáÆÁÄ» ĞèÒª  _ILI_HORIZONTAL_DIRECTION_
+
+//ç«–å±å¹• ä¸éœ€è¦  _ILI_HORIZONTAL_DIRECTION_
+//æ¨ªå±å¹• éœ€è¦  _ILI_HORIZONTAL_DIRECTION_
 
 //#define _ILI_HORIZONTAL_DIRECTION_
 
@@ -57,7 +44,7 @@ TOUCH INT: 84
 */
 #define IS_TOUCH_UP()     gpio_get(TOUCH_INT_PIN)
 
-#define led_gpio 52    // led1Ö¸Ê¾ 
+#define led_gpio 52    // led1æŒ‡ç¤º 
 
 #define DUMMY                 0x00
 
@@ -97,7 +84,7 @@ s  A2-A0 MODE SER/DFR PD1-PD0
 #define TOUCH_MSR_Y     (START | MEASURE_Y | MODE_12BIT | DIFFERENTIAL | POWER_MODE0)
 
 
-/* ÒÔÏÂ¶¨ÒåXPT2046 µÄ´¥ÃşÆÁÎ»ÖÃ*/
+/* ä»¥ä¸‹å®šä¹‰XPT2046 çš„è§¦æ‘¸å±ä½ç½®*/
 #if defined(_ILI_HORIZONTAL_DIRECTION_)
 #define MIN_X_DEFAULT   2047
 #define MAX_X_DEFAULT   47
@@ -117,7 +104,7 @@ s  A2-A0 MODE SER/DFR PD1-PD0
 #define SH   10                                 // Valve value
 
 
-/*ºê¶¨Òå */
+/*å®å®šä¹‰ */
 #define TOUCH_SPI_X                 SPI1 
 #define TOUCH_INT_PIN               84 
 #define TOUCH_CS_PIN                49 
@@ -126,21 +113,21 @@ s  A2-A0 MODE SER/DFR PD1-PD0
 #define TOUCH_MOSI_PIN              48     
 
 
-/*´´½¨½á¹¹Ìå½«ĞèÒªÓÃµ½µÄ¶«Î÷½øĞĞ´ò°ü*/
+/*åˆ›å»ºç»“æ„ä½“å°†éœ€è¦ç”¨åˆ°çš„ä¸œè¥¿è¿›è¡Œæ‰“åŒ…*/
 struct rtgui_touch_device 
 {
-    struct rt_device parent;                    /* ÓÃÓÚ×¢²áÉè±¸*/
+    struct rt_device parent;                    /* ç”¨äºæ³¨å†Œè®¾å¤‡*/
 
-    rt_uint16_t x, y;                           /* ¼ÇÂ¼¶ÁÈ¡µ½µÄÎ»ÖÃÖµ  */ 
+    rt_uint16_t x, y;                           /* è®°å½•è¯»å–åˆ°çš„ä½ç½®å€¼  */ 
 
-    rt_bool_t calibrating;                      /* ´¥ÃşĞ£×¼±êÖ¾ */ 
-    rt_touch_calibration_func_t calibration_func;/* ´¥Ãşº¯Êı º¯ÊıÖ¸Õë */       
+    rt_bool_t calibrating;                      /* è§¦æ‘¸æ ¡å‡†æ ‡å¿— */ 
+    rt_touch_calibration_func_t calibration_func;/* è§¦æ‘¸å‡½æ•° å‡½æ•°æŒ‡é’ˆ */       
 
-    rt_uint16_t min_x, max_x;                   /* Ğ£×¼ºó X ·½Ïò×îĞ¡ ×î´óÖµ */ 
-    rt_uint16_t min_y, max_y;                   /* Ğ£×¼ºó Y ·½Ïò×îĞ¡ ×î´óÖµ */
+    rt_uint16_t min_x, max_x;                   /* æ ¡å‡†å X æ–¹å‘æœ€å° æœ€å¤§å€¼ */ 
+    rt_uint16_t min_y, max_y;                   /* æ ¡å‡†å Y æ–¹å‘æœ€å° æœ€å¤§å€¼ */
 
-    struct rt_spi_device * spi_device;          /* SPI Éè±¸ ÓÃÓÚÍ¨ĞÅ */ 
-    struct rt_event event;                       /* ÊÂ¼şÍ¬²½£¬ÓÃÓÚ¡°±ÊÖĞ¶Ï¡± */ 
+    struct rt_spi_device * spi_device;          /* SPI è®¾å¤‡ ç”¨äºé€šä¿¡ */ 
+    struct rt_event event;                       /* äº‹ä»¶åŒæ­¥ï¼Œç”¨äºâ€œç¬”ä¸­æ–­â€ */ 
 };
 static struct rtgui_touch_device *touch = RT_NULL;
 
@@ -230,14 +217,14 @@ static void rtgui_touch_calculate(void)
         /* read touch */
         {
             rt_uint8_t i, j, k, min;
-	        rt_uint16_t temp;
+            rt_uint16_t temp;
             rt_uint16_t tmpxy[2][SAMP_CNT];
             rt_uint8_t send_buffer[1];
             rt_uint8_t recv_buffer[2];
             for(i=0; i<SAMP_CNT; i++)
             {
                 send_buffer[0] = TOUCH_MSR_X;
-		  touch_send_then_recv(touch->spi_device, send_buffer, 1, recv_buffer, 2);
+          touch_send_then_recv(touch->spi_device, send_buffer, 1, recv_buffer, 2);
                 rt_kprintf("touch x: %d ",(recv_buffer[0]*256|recv_buffer[1])>>4);
 #if defined(_ILI_HORIZONTAL_DIRECTION_)
                 tmpxy[1][i]  = (recv_buffer[0]<<8)|recv_buffer[1] ;
@@ -249,7 +236,7 @@ static void rtgui_touch_calculate(void)
 #endif
                 send_buffer[0] = TOUCH_MSR_Y;
                 touch_send_then_recv(touch->spi_device, send_buffer, 1, recv_buffer, 2);
-		  rt_kprintf("touch y: %d \n",(recv_buffer[0]*256|recv_buffer[1])>>4);
+          rt_kprintf("touch y: %d \n",(recv_buffer[0]*256|recv_buffer[1])>>4);
 
 #if defined(_ILI_HORIZONTAL_DIRECTION_)
                 tmpxy[0][i]  = (recv_buffer[0]<<8)|recv_buffer[1] ;
@@ -259,46 +246,46 @@ static void rtgui_touch_calculate(void)
                 tmpxy[1][i] >>= 4;
 #endif
             }
-            /*ÔÙ´Î´ò¿ª´¥ÃşÖĞ¶Ï*/
+            /*å†æ¬¡æ‰“å¼€è§¦æ‘¸ä¸­æ–­*/
             send_buffer[0] = 1 << 7;
-		  touch_send_then_recv(touch->spi_device, send_buffer, 1, recv_buffer, 2);
+          touch_send_then_recv(touch->spi_device, send_buffer, 1, recv_buffer, 2);
                 touch_send_then_recv(touch->spi_device, send_buffer, 1, recv_buffer, 2);
             /* calculate average */
-			{
-				rt_uint32_t total_x = 0;
-				rt_uint32_t total_y = 0;
-				for(k=0; k<2; k++)
-				{ 
-					// sorting the ADC value
-					for(i=0; i<SAMP_CNT-1; i++)
-					{
-						min=i;
-						for (j=i+1; j<SAMP_CNT; j++)
-						{
-							if (tmpxy[k][min] > tmpxy[k][j]) 
-								min=j;
-						}
-						temp = tmpxy[k][i];
-						tmpxy[k][i] = tmpxy[k][min];
-						tmpxy[k][min] = temp;
-				    }
-				    //check value for Valve value
-					if((tmpxy[k][SAMP_CNT_DIV2+1]-tmpxy[k][SAMP_CNT_DIV2-2]) > SH)
-					{
-						return;
-					}
-				}
-				total_x=tmpxy[0][SAMP_CNT_DIV2-2]+tmpxy[0][SAMP_CNT_DIV2-1]+tmpxy[0][SAMP_CNT_DIV2]+tmpxy[0][SAMP_CNT_DIV2+1];
-				total_y=tmpxy[1][SAMP_CNT_DIV2-2]+tmpxy[1][SAMP_CNT_DIV2-1]+tmpxy[1][SAMP_CNT_DIV2]+tmpxy[1][SAMP_CNT_DIV2+1];
-				//calculate average value
-				touch->x=total_x>>2;
-				touch->y=total_y>>2;
+            {
+                rt_uint32_t total_x = 0;
+                rt_uint32_t total_y = 0;
+                for(k=0; k<2; k++)
+                { 
+                    // sorting the ADC value
+                    for(i=0; i<SAMP_CNT-1; i++)
+                    {
+                        min=i;
+                        for (j=i+1; j<SAMP_CNT; j++)
+                        {
+                            if (tmpxy[k][min] > tmpxy[k][j]) 
+                                min=j;
+                        }
+                        temp = tmpxy[k][i];
+                        tmpxy[k][i] = tmpxy[k][min];
+                        tmpxy[k][min] = temp;
+                    }
+                    //check value for Valve value
+                    if((tmpxy[k][SAMP_CNT_DIV2+1]-tmpxy[k][SAMP_CNT_DIV2-2]) > SH)
+                    {
+                        return;
+                    }
+                }
+                total_x=tmpxy[0][SAMP_CNT_DIV2-2]+tmpxy[0][SAMP_CNT_DIV2-1]+tmpxy[0][SAMP_CNT_DIV2]+tmpxy[0][SAMP_CNT_DIV2+1];
+                total_y=tmpxy[1][SAMP_CNT_DIV2-2]+tmpxy[1][SAMP_CNT_DIV2-1]+tmpxy[1][SAMP_CNT_DIV2]+tmpxy[1][SAMP_CNT_DIV2+1];
+                //calculate average value
+                touch->x=total_x>>2;
+                touch->y=total_y>>2;
                 rt_kprintf("touch->x:%d touch->y:%d\r\n", touch->x, touch->y);
            } /* calculate average */
         } /* read touch */
 
         /* if it's not in calibration status  */
-        /*´¥ÃşÖµËõ·Å*/
+        /*è§¦æ‘¸å€¼ç¼©æ”¾*/
         if (touch->calibrating != RT_TRUE)
         {
             if (touch->max_x > touch->min_x)
@@ -322,19 +309,19 @@ static void rtgui_touch_calculate(void)
     }
 }
 #include "ls1c_regs.h"
-#define TOUCH_INT_EN				__REG32(LS1C_INT4_EN)
+#define TOUCH_INT_EN                __REG32(LS1C_INT4_EN)
 rt_inline void touch_int_cmd(rt_bool_t NewState)
 {
-	if(NewState == RT_TRUE)
-		{
-			//TOUCH_INT_EN |= (1<<(TOUCH_INT_PIN-64));
-			reg_set_one_bit(LS1C_INT4_EN, 1<<(TOUCH_INT_PIN-64));
-		}
-	else
-		{
-			//TOUCH_INT_EN &=(~ (1<<(TOUCH_INT_PIN-64)));
-			reg_clr_one_bit(LS1C_INT4_EN, 1<<(TOUCH_INT_PIN-64));
-		}
+    if(NewState == RT_TRUE)
+        {
+            //TOUCH_INT_EN |= (1<<(TOUCH_INT_PIN-64));
+            reg_set_one_bit(LS1C_INT4_EN, 1<<(TOUCH_INT_PIN-64));
+        }
+    else
+        {
+            //TOUCH_INT_EN &=(~ (1<<(TOUCH_INT_PIN-64)));
+            reg_clr_one_bit(LS1C_INT4_EN, 1<<(TOUCH_INT_PIN-64));
+        }
 
 }
 
@@ -342,29 +329,29 @@ void ls1c_touch_irqhandler(void) /* TouchScreen */
 {
   if(gpio_get(TOUCH_INT_PIN)==0)
   {
-    /* ´¥ÃşÆÁ°´ÏÂºó²Ù×÷ */  
-	if (gpio_level_low == gpio_get(led_gpio))
-		gpio_set(led_gpio, gpio_level_high); 
-	else
-		gpio_set(led_gpio, gpio_level_low); 
-	touch_int_cmd(RT_FALSE);
-	rt_event_send(&touch->event, 1);
+    /* è§¦æ‘¸å±æŒ‰ä¸‹åæ“ä½œ */  
+    if (gpio_level_low == gpio_get(led_gpio))
+        gpio_set(led_gpio, gpio_level_high); 
+    else
+        gpio_set(led_gpio, gpio_level_low); 
+    touch_int_cmd(RT_FALSE);
+    rt_event_send(&touch->event, 1);
   }
 }
 
-/*¹Ü½Å³õÊ¼»¯£¬ÅäÖÃÖĞ¶Ï´ò¿ªSPI1 CS0 Éè±¸*/
+/*ç®¡è„šåˆå§‹åŒ–ï¼Œé…ç½®ä¸­æ–­æ‰“å¼€SPI1 CS0 è®¾å¤‡*/
 rt_inline void touch_init(void)
-{	 
-    unsigned int touch_int_gpio = TOUCH_INT_PIN;     // ´¥ÃşÆÁÖĞ¶Ï
+{     
+    unsigned int touch_int_gpio = TOUCH_INT_PIN;     // è§¦æ‘¸å±ä¸­æ–­
     int touch_irq = LS1C_GPIO_TO_IRQ(touch_int_gpio);  
   
-    // ³õÊ¼»¯°´¼üÖĞ¶Ï  
+    // åˆå§‹åŒ–æŒ‰é”®ä¸­æ–­  
     gpio_set_irq_type(touch_int_gpio, IRQ_TYPE_EDGE_FALLING);  
     rt_hw_interrupt_install(touch_irq, ls1c_touch_irqhandler, RT_NULL, "touch");  
     rt_hw_interrupt_umask(touch_irq);  
     gpio_init(touch_int_gpio, gpio_mode_input);  
   
-    // ³õÊ¼»¯led  
+    // åˆå§‹åŒ–led  
     gpio_init(led_gpio, gpio_mode_output); 
     gpio_set(led_gpio, gpio_level_high);   
 }
@@ -374,9 +361,9 @@ rt_inline void touch_init(void)
 static rt_err_t rtgui_touch_init (rt_device_t dev)
 {
     rt_uint8_t send;
-	rt_uint8_t recv_buffer[2];
+    rt_uint8_t recv_buffer[2];
     struct rtgui_touch_device * touch_device = (struct rtgui_touch_device *)dev;
-	
+    
     touch_init();
     rt_kprintf("touch_init ...\n");
     send = START | DIFFERENTIAL | POWER_MODE0;
@@ -433,7 +420,7 @@ static void touch_thread_entry(void *parameter)
 
     while(1)
     {
-        /* ½ÓÊÕµ½´¥ÃşÖĞ¶ÏÊÂ¼ş */
+        /* æ¥æ”¶åˆ°è§¦æ‘¸ä¸­æ–­äº‹ä»¶ */
         if(rt_event_recv(&touch->event,
                          1,
                          RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
@@ -445,7 +432,7 @@ static void touch_thread_entry(void *parameter)
             {
                 if (IS_TOUCH_UP())
                 {
-                    /* ´¥Ãş±ÊÌ§Æğ */
+                    /* è§¦æ‘¸ç¬”æŠ¬èµ· */
                     /* touch up */
                     emouse.button = (RTGUI_MOUSE_BUTTON_LEFT |RTGUI_MOUSE_BUTTON_UP);
 
@@ -461,14 +448,14 @@ static void touch_thread_entry(void *parameter)
 
                     if ((touch->calibrating == RT_TRUE) && (touch->calibration_func != RT_NULL))
                     {
-                        /* ´¥ÃşĞ£×¼´¦Àí */
+                        /* è§¦æ‘¸æ ¡å‡†å¤„ç† */
                         /* callback function */
                         touch->calibration_func(emouse.x, emouse.y);
-											
+                                            
                     }
                     else
                     {
-                        /* Ïòui·¢ËÍ´¥Ãş×ø±ê */
+                        /* å‘uiå‘é€è§¦æ‘¸åæ ‡ */
                         rtgui_server_post_event(&emouse.parent, sizeof(struct rtgui_event_mouse));
                     }
                     rt_kprintf("touch up: (%d, %d)\n", emouse.x, emouse.y);
@@ -503,7 +490,7 @@ static void touch_thread_entry(void *parameter)
                     emouse.x = touch->x;
                     emouse.y = touch->y;
                     _set_mouse_position(emouse.x, emouse.y);
-                    /* ¹â±ê¸úËæ */
+                    /* å…‰æ ‡è·Ÿéš */
                     /* init mouse button */
                     emouse.button = (RTGUI_MOUSE_BUTTON_LEFT |RTGUI_MOUSE_BUTTON_DOWN);
 
@@ -519,7 +506,7 @@ static void touch_thread_entry(void *parameter)
                         {
                             touch_previous.x = touch->x;
                             touch_previous.y = touch->y;
-                            /* Ïòui·¢ËÍ´¥Ãş×ø±ê */
+                            /* å‘uiå‘é€è§¦æ‘¸åæ ‡ */
                             rtgui_server_post_event(&emouse.parent, sizeof(struct rtgui_event_mouse));
                             if(touch_down == RT_FALSE)
                             {
@@ -545,24 +532,24 @@ static void touch_thread_entry(void *parameter)
 
 rt_err_t rtgui_touch_hw_init(const char * spi_device_name)
 {
-    	 rt_uint32_t arg[2]; 
-	struct rt_device * spi_device;
-    	struct rt_thread * touch_thread;
-	rt_err_t err;
+         rt_uint32_t arg[2]; 
+    struct rt_device * spi_device;
+        struct rt_thread * touch_thread;
+    rt_err_t err;
 
-	rt_kprintf("spi1 cs0 start...\n");
-	spi_device = rt_device_find("spi10");
-	if(spi_device ==  RT_NULL)
-	{
-		rt_kprintf("Did not find spi1, exit thread....\n");
-		return;
-	}
-	err = rt_device_open(spi_device, RT_DEVICE_OFLAG_RDWR);
-	if(err != RT_EOK)
-	{
-		rt_kprintf("Open spi1 failed %08X, exit thread....\n", err);
-		return;
-	}
+    rt_kprintf("spi1 cs0 start...\n");
+    spi_device = rt_device_find("spi10");
+    if(spi_device ==  RT_NULL)
+    {
+        rt_kprintf("Did not find spi1, exit thread....\n");
+        return;
+    }
+    err = rt_device_open(spi_device, RT_DEVICE_OFLAG_RDWR);
+    if(err != RT_EOK)
+    {
+        rt_kprintf("Open spi1 failed %08X, exit thread....\n", err);
+        return;
+    }
       
       /* config spi */
       {
@@ -573,7 +560,7 @@ rt_err_t rtgui_touch_hw_init(const char * spi_device_name)
         rt_spi_configure((struct rt_spi_device *)spi_device, &cfg);
       }
 
-	touch = (struct rtgui_touch_device*)rt_malloc (sizeof(struct rtgui_touch_device));
+    touch = (struct rtgui_touch_device*)rt_malloc (sizeof(struct rtgui_touch_device));
     if (touch == RT_NULL) return RT_ENOMEM; /* no memory yet */
 
     /* clear device structure */
@@ -597,7 +584,7 @@ rt_err_t rtgui_touch_hw_init(const char * spi_device_name)
 
     /* register touch device to RT-Thread */
     rt_device_register(&(touch->parent), "touch", RT_DEVICE_FLAG_RDWR);
-	
+    
 
     touch_thread = rt_thread_create("touch_thread",
                                     touch_thread_entry, RT_NULL,
