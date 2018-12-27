@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2006-2018, RT-Thread Development Team
  *
@@ -76,7 +77,7 @@ static void list_find_init(list_get_next_t *p, rt_uint8_t type, rt_list_t **arra
     struct rt_object_information *info;
     rt_list_t *list;
 
-    info = rt_object_get_information(type);
+    info = rt_object_get_information((enum rt_object_class_type)type);
     list = &info->object_list;
 
     p->list = list;
