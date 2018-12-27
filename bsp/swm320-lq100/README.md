@@ -101,7 +101,7 @@ msh />
 | SPI               |     支持     | SPI0 / SPI1        |
 | I2C               |   支持   |    I2C0 IO模拟   |
 | ADC               | 暂不支持 | 即将支持 |
-| PWM               |   支持   |  PWM0 / PWM1 /PWM2 /PWM3  其余两个个后续补充                           |
+| PWM               |   支持   |  PWM0 / PWM1 /PWM2 /PWM3  其余两个后续补充                           |
 | IWG               |   支持   |                            |
 | TIMER             |   暂不支持   |                       |
 | RTC               |   支持   |                             |
