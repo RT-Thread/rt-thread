@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author            Notes
- * 2018-11-06     balanceTWK        change to new framework
+ * 2018-11-06     balanceTWK        first version
  */
 
 #include <board.h>
@@ -217,6 +217,24 @@ static const struct pin_index pins[] =
 
 static const struct pin_irq_map pin_irq_map[] =
 {
+#if defined(SOC_SERIES_STM32F0)
+    {GPIO_PIN_0, EXTI0_1_IRQn},
+    {GPIO_PIN_1, EXTI0_1_IRQn},
+    {GPIO_PIN_2, EXTI2_3_IRQn},
+    {GPIO_PIN_3, EXTI2_3_IRQn},
+    {GPIO_PIN_4, EXTI4_15_IRQn},
+    {GPIO_PIN_5, EXTI4_15_IRQn},
+    {GPIO_PIN_6, EXTI4_15_IRQn},
+    {GPIO_PIN_7, EXTI4_15_IRQn},
+    {GPIO_PIN_8, EXTI4_15_IRQn},
+    {GPIO_PIN_9, EXTI4_15_IRQn},
+    {GPIO_PIN_10, EXTI4_15_IRQn},
+    {GPIO_PIN_11, EXTI4_15_IRQn},
+    {GPIO_PIN_12, EXTI4_15_IRQn},
+    {GPIO_PIN_13, EXTI4_15_IRQn},
+    {GPIO_PIN_14, EXTI4_15_IRQn},
+    {GPIO_PIN_15, EXTI4_15_IRQn}, 
+#else
     {GPIO_PIN_0, EXTI0_IRQn},
     {GPIO_PIN_1, EXTI1_IRQn},
     {GPIO_PIN_2, EXTI2_IRQn},
@@ -233,6 +251,7 @@ static const struct pin_irq_map pin_irq_map[] =
     {GPIO_PIN_13, EXTI15_10_IRQn},
     {GPIO_PIN_14, EXTI15_10_IRQn},
     {GPIO_PIN_15, EXTI15_10_IRQn},
+#endif
 };
 
 static struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
@@ -606,6 +625,41 @@ void EXTI15_10_IRQHandler(void)
     HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_14);
     HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_15);
     rt_interrupt_leave();
+}
+
+void EXTI0_1_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
+    rt_interrupt_leave();
+}
+
+void EXTI2_3_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_2);
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_3);
+    rt_interrupt_leave();
+}
+void EXTI4_15_IRQHandler(void)
+{
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_2);
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_3);
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_4);
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_5);
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_6);
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_7);
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_8);
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_9);
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_10);
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_12);
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_14);
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_15);
 }
 
 int rt_hw_pin_init(void)

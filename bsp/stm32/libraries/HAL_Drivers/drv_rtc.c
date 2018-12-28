@@ -24,8 +24,8 @@ static RTC_HandleTypeDef RTC_Handler;
 
 static time_t get_rtc_timestamp(void)
 {
-    RTC_TimeTypeDef RTC_TimeStruct;
-    RTC_DateTypeDef RTC_DateStruct;
+    RTC_TimeTypeDef RTC_TimeStruct = {0};
+    RTC_DateTypeDef RTC_DateStruct = {0};
     struct tm tm_new;
 
     HAL_RTC_GetTime(&RTC_Handler, &RTC_TimeStruct, RTC_FORMAT_BIN);
@@ -44,9 +44,9 @@ static time_t get_rtc_timestamp(void)
 
 static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 {
-    RCC_PeriphCLKInitTypeDef PeriphClkInitStruct;
-    RTC_TimeTypeDef RTC_TimeStruct;
-    RTC_DateTypeDef RTC_DateStruct;
+    RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
+    RTC_TimeTypeDef RTC_TimeStruct = {0};
+    RTC_DateTypeDef RTC_DateStruct = {0};
     struct tm *p_tm;
 
     HAL_PWR_EnableBkUpAccess();
@@ -86,7 +86,7 @@ static void rt_rtc_init(void)
 {
     __HAL_RCC_PWR_CLK_ENABLE();
 
-    RCC_OscInitTypeDef RCC_OscInitStruct;
+    RCC_OscInitTypeDef RCC_OscInitStruct = {0};
     RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSE;
     RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
     RCC_OscInitStruct.LSEState = RCC_LSE_ON;
@@ -95,7 +95,7 @@ static void rt_rtc_init(void)
 
 static rt_err_t rt_rtc_config(struct rt_device *dev)
 {
-    RCC_PeriphCLKInitTypeDef PeriphClkInitStruct;
+    RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
 
     HAL_PWR_EnableBkUpAccess();
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
@@ -110,9 +110,13 @@ static rt_err_t rt_rtc_config(struct rt_device *dev)
 #if defined(SOC_SERIES_STM32F1)
         RTC_Handler.Init.OutPut = RTC_OUTPUTSOURCE_NONE;
         RTC_Handler.Init.AsynchPrediv = RTC_AUTO_1_SECOND;
-#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32L4)
+#elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4)
         RTC_Handler.Init.AsynchPrediv = 0X7F;
+#ifndef SOC_SERIES_STM32F0
         RTC_Handler.Init.SynchPrediv = 0XFF;
+#else
+        RTC_Handler.Init.SynchPrediv = 0x0130;
+#endif
         RTC_Handler.Init.HourFormat = RTC_HOURFORMAT_24;
         RTC_Handler.Init.OutPut = RTC_OUTPUT_DISABLE;
         RTC_Handler.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;

@@ -13,12 +13,12 @@ menu "Onboard Peripheral Drivers"
         default y
 
     config BSP_USING_COM2
-        bool "Enable COM2 (uart2 pin conflict with Ethernet)"
+        bool "Enable COM2 (uart2 pin conflict with Ethernet and PWM)"
         select BSP_USING_UART2
         default n
 
     config BSP_USING_COM3
-        bool "Enable COM3 (uart3)"
+        bool "Enable COM3 (uart3 pin conflict with Ethernet)"
         select BSP_USING_UART3
         default n
 
@@ -39,17 +39,16 @@ menu "Onboard Peripheral Drivers"
         select PKG_USING_MPU6XXX
         default n
 
+    config PHY_USING_LAN8720A
+        bool
+
     config BSP_USING_ETH
         bool "Enable Ethernet"
-        default n
-        select RT_USING_LWIP
-        select PKG_USING_PCF8574
         select BSP_USING_I2C1
-        if BSP_USING_ETH
-            config EXTERNAL_PHY_ADDRESS
-                hex
-                default 0x00
-        endif
+        select PKG_USING_PCF8574
+        select RT_USING_LWIP
+        select PHY_USING_LAN8720A
+        default n
 
     config BSP_USING_SDCARD
         bool "Enable SDCARD (sdio)"
@@ -163,14 +162,6 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_ADC
             config BSP_USING_ADC1
                 bool "Enable ADC1"
-                default n
-
-            config BSP_USING_ADC2
-                bool "Enable ADC2"
-                default n
-
-            config BSP_USING_ADC3
-                bool "Enable ADC3"
                 default n
         endif
 

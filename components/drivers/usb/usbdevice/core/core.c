@@ -194,7 +194,18 @@ static rt_err_t _get_descriptor(struct udevice* device, ureq_t setup)
             _get_string_descriptor(device, setup);
             break;
         case USB_DESC_TYPE_DEVICEQUALIFIER:
-            _get_qualifier_descriptor(device, setup);
+            /* If a full-speed only device (with a device descriptor version number equal to 0200H) receives a
+            GetDescriptor() request for a device_qualifier, it must respond with a request error. The host must not make
+            a request for an other_speed_configuration descriptor unless it first successfully retrieves the
+            device_qualifier descriptor. */
+            if(device->dcd->device_is_hs)
+            {
+                _get_qualifier_descriptor(device, setup);
+            }
+            else
+            {
+                rt_usbd_ep0_set_stall(device);
+            }
             break;
         case USB_DESC_TYPE_OTHERSPEED:
             _get_config_descriptor(device, setup);

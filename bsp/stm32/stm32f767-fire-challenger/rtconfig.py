@@ -37,6 +37,7 @@ if PLATFORM == 'gcc':
     CXX = PREFIX + 'g++'
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
+    CXX = PREFIX + 'g++'
     LINK = PREFIX + 'gcc'
     TARGET_EXT = 'elf'
     SIZE = PREFIX + 'size'

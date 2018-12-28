@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018/10/01     Bernard      The first version
+ * 2018/12/27     Jesven       Change irq enable/disable to cpu0
  */
 
 #include <rthw.h>
@@ -19,12 +20,58 @@
 #define CPU_NUM         2
 #define MAX_HANDLERS    IRQN_MAX
 
-static struct rt_irq_desc irq_desc[CPU_NUM][MAX_HANDLERS];
+static struct rt_irq_desc irq_desc[MAX_HANDLERS];
 
 static rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t vector, void *param)
 {
     rt_kprintf("UN-handled interrupt %d occurred!!!\n", vector);
     return RT_NULL;
+}
+
+int rt_hw_clint_ipi_enable(void)
+{
+    /* Set the Machine-Software bit in MIE */
+    set_csr(mie, MIP_MSIP);
+    return 0;
+}
+
+int rt_hw_clint_ipi_disable(void)
+{
+    /* Clear the Machine-Software bit in MIE */
+    clear_csr(mie, MIP_MSIP);
+    return 0;
+}
+
+int rt_hw_plic_irq_enable(plic_irq_t irq_number)
+{
+    unsigned long core_id = 0;
+
+    /* Check parameters */
+    if (PLIC_NUM_SOURCES < irq_number || 0 > irq_number)
+        return -1;
+    /* Get current enable bit array by IRQ number */
+    uint32_t current = plic->target_enables.target[core_id].enable[irq_number / 32];
+    /* Set enable bit in enable bit array */
+    current |= (uint32_t)1 << (irq_number % 32);
+    /* Write back the enable bit array */
+    plic->target_enables.target[core_id].enable[irq_number / 32] = current;
+    return 0;
+}
+
+int rt_hw_plic_irq_disable(plic_irq_t irq_number)
+{
+    unsigned long core_id = 0;
+
+    /* Check parameters */
+    if (PLIC_NUM_SOURCES < irq_number || 0 > irq_number)
+        return -1;
+    /* Get current enable bit array by IRQ number */
+    uint32_t current = plic->target_enables.target[core_id].enable[irq_number / 32];
+    /* Clear enable bit in enable bit array */
+    current &= ~((uint32_t)1 << (irq_number % 32));
+    /* Write back the enable bit array */
+    plic->target_enables.target[core_id].enable[irq_number / 32] = current;
+    return 0;
 }
 
 /**
@@ -52,13 +99,31 @@ void rt_hw_interrupt_init(void)
     for (idx = 0; idx < MAX_HANDLERS; idx++)
     {
         rt_hw_interrupt_mask(idx);
-        irq_desc[cpuid][idx].handler = (rt_isr_handler_t)rt_hw_interrupt_handle;
-        irq_desc[cpuid][idx].param = RT_NULL;
+        irq_desc[idx].handler = (rt_isr_handler_t)rt_hw_interrupt_handle;
+        irq_desc[idx].param = RT_NULL;
 #ifdef RT_USING_INTERRUPT_INFO
-        rt_snprintf(irq_desc[cpuid][idx].name, RT_NAME_MAX - 1, "default");
-        irq_desc[idx][cpuid].counter = 0;
+        rt_snprintf(irq_desc[idx].name, RT_NAME_MAX - 1, "default");
+        irq_desc[idx].counter = 0;
 #endif
     }
+
+    /* Enable machine external interrupts. */
+    set_csr(mie, MIP_MEIP);
+}
+
+void rt_hw_scondary_interrupt_init(void)
+{
+    int idx;
+    int cpuid;
+
+    cpuid = current_coreid();
+
+    /* Disable all interrupts for the current core. */
+    for (idx = 0; idx < ((PLIC_NUM_SOURCES + 32u) / 32u); idx ++)
+        plic->target_enables.target[cpuid].enable[idx] = 0;
+
+    /* Set the threshold to zero. */
+    plic->targets.target[cpuid].priority_threshold = 0;
 
     /* Enable machine external interrupts. */
     set_csr(mie, MIP_MEIP);
@@ -70,7 +135,7 @@ void rt_hw_interrupt_init(void)
  */
 void rt_hw_interrupt_mask(int vector)
 {
-    plic_irq_disable(vector);
+    rt_hw_plic_irq_disable(vector);
 }
 
 /**
@@ -80,7 +145,7 @@ void rt_hw_interrupt_mask(int vector)
 void rt_hw_interrupt_umask(int vector)
 {
     plic_set_priority(vector, 1);
-    plic_irq_enable(vector);
+    rt_hw_plic_irq_enable(vector);
 }
 
 /**
@@ -92,21 +157,18 @@ void rt_hw_interrupt_umask(int vector)
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
         void *param, const char *name)
 {
-    int cpuid;
     rt_isr_handler_t old_handler = RT_NULL;
-
-    cpuid = current_coreid();
 
     if(vector < MAX_HANDLERS)
     {
-        old_handler = irq_desc[cpuid][vector].handler;
+        old_handler = irq_desc[vector].handler;
         if (handler != RT_NULL)
         {
-            irq_desc[cpuid][vector].handler = (rt_isr_handler_t)handler;
-            irq_desc[cpuid][vector].param = param;
+            irq_desc[vector].handler = (rt_isr_handler_t)handler;
+            irq_desc[vector].param = param;
 #ifdef RT_USING_INTERRUPT_INFO
-            rt_snprintf(irq_desc[cpuid][vector].name, RT_NAME_MAX - 1, "%s", name);
-            irq_desc[cpuid][vector].counter = 0;
+            rt_snprintf(irq_desc[vector].name, RT_NAME_MAX - 1, "%s", name);
+            irq_desc[vector].counter = 0;
 #endif
         }
     }
@@ -149,14 +211,14 @@ uintptr_t handle_irq_m_ext(uintptr_t cause, uintptr_t epc)
         /* Disable software interrupt and timer interrupt */
         clear_csr(mie, MIP_MTIP | MIP_MSIP);
 
-        if (irq_desc[core_id][int_num].handler == (rt_isr_handler_t)rt_hw_interrupt_handle)
+        if (irq_desc[int_num].handler == (rt_isr_handler_t)rt_hw_interrupt_handle)
         {
             /* default handler, route to kendryte bsp plic driver */
             plic_irq_handle(int_num);
         }
-        else if (irq_desc[core_id][int_num].handler)
+        else if (irq_desc[int_num].handler)
         {
-            irq_desc[core_id][int_num].handler(int_num, irq_desc[core_id][int_num].param);
+            irq_desc[int_num].handler(int_num, irq_desc[int_num].param);
         }
 
         /* Perform IRQ complete */
@@ -185,6 +247,12 @@ uintptr_t handle_trap(uintptr_t mcause, uintptr_t epc)
         switch (cause)
         {
             case IRQ_M_SOFT:
+                {
+                    uint64_t core_id = current_coreid();
+
+                    clint_ipi_clear(core_id);
+                    rt_schedule();
+                }
                 break;
             case IRQ_M_EXT:
                 handle_irq_m_ext(mcause, epc);
