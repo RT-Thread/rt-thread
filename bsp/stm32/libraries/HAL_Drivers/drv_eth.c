@@ -86,7 +86,7 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
     /* ETHERNET Configuration */
     EthHandle.Instance = ETH;
     EthHandle.Init.MACAddr = (rt_uint8_t *)&stm32_eth_device.dev_addr[0];
-    EthHandle.Init.AutoNegotiation = ETH_AUTONEGOTIATION_ENABLE;
+    EthHandle.Init.AutoNegotiation = ETH_AUTONEGOTIATION_DISABLE;
     EthHandle.Init.Speed = ETH_SPEED_100M;
     EthHandle.Init.DuplexMode = ETH_MODE_FULLDUPLEX;
     EthHandle.Init.MediaInterface = ETH_MEDIA_INTERFACE_RMII;
@@ -96,9 +96,16 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
     HAL_ETH_DeInit(&EthHandle);
 
     /* configure ethernet peripheral (GPIOs, clocks, MAC, DMA) */
-    HAL_ETH_Init(&EthHandle);
-    LOG_D("eth hardware init finished");
-    
+    if (HAL_ETH_Init(&EthHandle) != HAL_OK)
+    {
+        LOG_E("eth hardware init failed");
+        return -RT_ERROR;
+    }
+    else
+    {
+        LOG_D("eth hardware init success");
+    }
+
     /* Initialize Tx Descriptors list: Chain Mode */
     HAL_ETH_DMATxDescListInit(&EthHandle, DMATxDscrTab, Tx_Buff, ETH_TXBUFNB);
 
@@ -252,7 +259,6 @@ rt_err_t rt_stm32_eth_tx(rt_device_t dev, struct pbuf *p)
     /* Prepare transmit descriptors to give to DMA */
     /* TODO Optimize data send speed*/
     LOG_D("transmit frame lenth :%d", framelength);
-    rt_thread_mdelay(1);
 
     state = HAL_ETH_TransmitFrame(&EthHandle, framelength);
     if (state != HAL_OK)
@@ -420,7 +426,7 @@ static void phy_monitor_thread_entry(void *parameter)
 
         HAL_ETH_ReadPHYRegister(&EthHandle, PHY_ID1_REG, (uint32_t *)&temp);
 
-        if (temp != 0xFFFF)
+        if (temp != 0xFFFF && temp != 0x00)
         {
             phy_addr = i;
             break;
@@ -503,15 +509,9 @@ static void phy_monitor_thread_entry(void *parameter)
                     stm32_eth_device.ETH_Mode = ETH_MODE_HALFDUPLEX;
                 }
 
-                if (rt_stm32_eth_init((rt_device_t)&stm32_eth_device) != RT_EOK)
-                {
-                    break;
-                }
-                else
-                {
-                    /* send link up. */
-                    eth_device_linkchange(&stm32_eth_device.parent, RT_TRUE);
-                }
+                /* send link up. */
+                eth_device_linkchange(&stm32_eth_device.parent, RT_TRUE);
+
             } /* link up. */
             else
             {
