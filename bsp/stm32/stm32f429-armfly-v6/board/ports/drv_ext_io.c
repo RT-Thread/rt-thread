@@ -21,7 +21,7 @@
 
 volatile rt_uint32_t HC574_state = 0;
 
-void HC574_SetPin(uint32_t _pin, uint8_t _value)
+void HC574_SetPin(rt_uint32_t _pin, uint8_t _value)
 {
 	if (_value == 0)
 	{

@@ -58,6 +58,9 @@
  extern "C" {
 #endif /* __cplusplus */
 
+/* Includes ------------------------------------------------------------------*/
+#include <rtthread.h>
+
 /** @addtogroup Library_configuration_section
   * @{
   */
