@@ -50,4 +50,12 @@
 #define PHY_FULL_DUPLEX_MASK        (1<<4)
 #endif /* PHY_USING_LAN8720A */
 
+#ifdef PHY_USING_DM9161CEP
+#define PHY_Status_REG              0x11U
+#define PHY_10M_MASK                ((1<<12) || (1<<13))
+#define PHY_100M_MASK               ((1<<14) || (1<<15))
+#define PHY_FULL_DUPLEX_MASK        ((1<<15) || (1<<13))
+
+#endif /* PHY_USING_DM9161CEP */
+
 #endif /* __DRV_ETH_H__ */
