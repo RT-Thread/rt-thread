@@ -24,6 +24,7 @@
  * 2018-05-31     Bernard      change version number to v3.1.0
  * 2018-09-04     Bernard      change version number to v3.1.1
  * 2018-09-14     Bernard      apply Apache License v2.0 to RT-Thread Kernel
+ * 2018-12-28     armink       change version number to v3.1.2
  */
 
 #ifndef __RT_DEF_H__
@@ -45,7 +46,7 @@ extern "C" {
 /* RT-Thread version information */
 #define RT_VERSION                      3L              /**< major version number */
 #define RT_SUBVERSION                   1L              /**< minor version number */
-#define RT_REVISION                     1L              /**< revise version number */
+#define RT_REVISION                     2L              /**< revise version number */
 
 /* RT-Thread version */
 #define RTTHREAD_VERSION                ((RT_VERSION * 10000) + \
