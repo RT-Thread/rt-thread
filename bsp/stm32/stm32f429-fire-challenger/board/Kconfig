@@ -13,7 +13,7 @@ menu "Onboard Peripheral Drivers"
         default y
 
     config BSP_USING_RS232
-        bool "Enable RS232 (uart2 pin conflict with Ethernet)"
+        bool "Enable RS232"
         select BSP_USING_UART2
         default n
         
@@ -33,16 +33,15 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_I2C1
         select PKG_USING_MPU6XXX
         default n
-
+    
+    config PHY_USING_LAN8720A
+        bool
+    
     config BSP_USING_ETH
         bool "Enable Ethernet"
         default n
         select RT_USING_LWIP
-        if BSP_USING_ETH
-            config EXTERNAL_PHY_ADDRESS
-                hex
-                default 0x00
-        endif
+        select PHY_USING_LAN8720A
 
     config BSP_USING_RGB
         bool "Enable RGB LED (timer5 channel1 - 3)"
@@ -52,7 +51,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM5_CH1
         select BSP_USING_PWM5_CH2
         select BSP_USING_PWM5_CH3
-        default n    
+        default n
 
     config BSP_USING_POT
         bool "Enable potentiometer"
@@ -87,23 +86,8 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SERIAL
         default n
 
-    config BSP_USING_UART3
-        bool "Enable UART3"
-        select RT_USING_SERIAL
-        default n
-
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
-        default n
-        
-    config BSP_USING_SPI1
-        bool "Enable SPI1 BUS"
-        select RT_USING_SPI
-        default n
-
-    config BSP_USING_SPI2
-        bool "Enable SPI2 BUS"
-        select RT_USING_SPI
         default n
 
     config BSP_USING_SPI5
@@ -163,14 +147,6 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_ADC
             config BSP_USING_ADC1
                 bool "Enable ADC1"
-                default n
-
-            config BSP_USING_ADC2
-                bool "Enable ADC2"
-                default n
-
-            config BSP_USING_ADC3
-                bool "Enable ADC3"
                 default n
         endif
 

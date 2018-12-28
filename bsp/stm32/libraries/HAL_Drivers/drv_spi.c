@@ -143,7 +143,11 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
     uint32_t SPI_APB_CLOCK;
 
+#ifdef SOC_SERIES_STM32F0
+    SPI_APB_CLOCK = HAL_RCC_GetPCLK1Freq();
+#else
     SPI_APB_CLOCK = HAL_RCC_GetPCLK2Freq();
+#endif
 
     if (cfg->max_hz >= SPI_APB_CLOCK / 2)
     {
@@ -202,7 +206,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
         return RT_EIO;
     }
 
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0)|| defined(SOC_SERIES_STM32F7)
     SET_BIT(spi_handle->Instance->CR2, SPI_RXFIFO_THRESHOLD_HF);
 #endif
 
@@ -356,7 +360,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
                 *(volatile rt_uint8_t *)(&spi_handle->Instance->DR) = data;
 
                 /* receive data once */
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F7)
                 SET_BIT(spi_handle->Instance->CR2, SPI_RXFIFO_THRESHOLD_HF);
 #endif
                 while (__HAL_SPI_GET_FLAG(spi_handle, SPI_FLAG_RXNE) == RESET);
@@ -387,7 +391,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
                 *(volatile rt_uint16_t *)(&spi_handle->Instance->DR) = data;
 
                 /* receive data once */
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F7)
                 SET_BIT(spi_handle->Instance->CR2, SPI_RXFIFO_THRESHOLD_HF);
 #endif
                 while (__HAL_SPI_GET_FLAG(spi_handle, SPI_FLAG_RXNE) == RESET);
@@ -757,5 +761,5 @@ int rt_hw_spi_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_spi_init);
 
-#endif /* BSP_USING_SPI1 || BSP_USING_SPI2 || BSP_USING_SPI3 || BSP_USING_SPI4 || BSP_USING_SPI5 || BSP_USING_SPI6 */
+#endif /* BSP_USING_SPI1 || BSP_USING_SPI2 || BSP_USING_SPI3 || BSP_USING_SPI4 || BSP_USING_SPI5 */
 #endif /* RT_USING_SPI */

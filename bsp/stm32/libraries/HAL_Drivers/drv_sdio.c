@@ -19,12 +19,6 @@
 #define LOG_TAG             "drv.sdio"
 #include <drv_log.h>
 
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4)
-#define SDCARD_INSTANCE                   SDIO
-#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7)
-#define SDCARD_INSTANCE                   SDMMC1
-#endif /*  defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4) */
-
 static struct stm32_sdio_config sdio_config = SDIO_BUS_CONFIG;
 static struct stm32_sdio_class sdio_obj;
 static struct rt_mmcsd_host *host;

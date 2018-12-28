@@ -164,15 +164,17 @@ static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
         tim_device = (struct stm32_hwtimer *)timer;
 
         /* time init */
-#if defined(SOC_SERIES_STM32F4)
+#if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
         if (tim->Instance == TIM9 || tim->Instance == TIM10 || tim->Instance == TIM11)
 #elif defined(SOC_SERIES_STM32L4)
         if (tim->Instance == TIM15 || tim->Instance == TIM16 || tim->Instance == TIM17)
-#elif defined(SOC_SERIES_STM32F1)
+#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0)
         if (0)
 #endif
         {
+#ifndef SOC_SERIES_STM32F0
             prescaler_value = (uint32_t)(HAL_RCC_GetPCLK2Freq() * 2 / 10000) - 1;
+#endif
         }
         else
         {
@@ -190,7 +192,7 @@ static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
             tim->Init.CounterMode   = TIM_COUNTERMODE_DOWN;
         }
         tim->Init.RepetitionCounter = 0;
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4)
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0)
         tim->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 #endif
         if (HAL_TIM_Base_Init(tim) != HAL_OK)
@@ -276,23 +278,27 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
         /* set timer frequence */
         freq = *((rt_uint32_t *)arg);
 
-#if defined(SOC_SERIES_STM32F4)
+#if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
         if (tim->Instance == TIM9 || tim->Instance == TIM10 || tim->Instance == TIM11)
 #elif defined(SOC_SERIES_STM32L4)
         if (tim->Instance == TIM15 || tim->Instance == TIM16 || tim->Instance == TIM17)
-#elif defined(SOC_SERIES_STM32F1)
+#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0)
         if (0)
 #endif
         {
 #if defined(SOC_SERIES_STM32L4)
             val = HAL_RCC_GetPCLK2Freq() / freq;
-#else
+#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4)
             val = HAL_RCC_GetPCLK2Freq() * 2 / freq;
 #endif
         }
         else
         {
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4)
             val = HAL_RCC_GetPCLK1Freq() * 2 / freq;
+#elif defined(SOC_SERIES_STM32F0)
+            val = HAL_RCC_GetPCLK1Freq() / freq;
+#endif
         }
         __HAL_TIM_SET_PRESCALER(tim, val - 1);
 
@@ -393,7 +399,11 @@ void TIM8_UP_TIM13_IRQHandler(void)
 }
 #endif
 #ifdef BSP_USING_TIM14
-void TIM8_TRG_COM_TIM14_IRQHandler(void)
+#if defined(SOC_SERIES_STM32F4)
+    void TIM8_TRG_COM_TIM14_IRQHandler(void)
+#elif defined(SOC_SERIES_STM32F0)
+    void TIM14_IRQHandler(void)
+#endif
 {
     /* enter interrupt */
     rt_interrupt_enter();
@@ -413,7 +423,11 @@ void TIM1_BRK_TIM15_IRQHandler(void)
 }
 #endif
 #ifdef BSP_USING_TIM16
-void TIM1_UP_TIM16_IRQHandler(void)
+#if defined(SOC_SERIES_STM32L4)
+    void TIM1_UP_TIM16_IRQHandler(void)
+#elif defined(SOC_SERIES_STM32F0)
+    void TIM16_IRQHandler(void)
+#endif
 {
     /* enter interrupt */
     rt_interrupt_enter();
@@ -423,7 +437,11 @@ void TIM1_UP_TIM16_IRQHandler(void)
 }
 #endif
 #ifdef BSP_USING_TIM17
-void TIM1_TRG_COM_TIM17_IRQHandler(void)
+#if defined(SOC_SERIES_STM32L4)
+    void TIM1_TRG_COM_TIM17_IRQHandler(void)
+#elif defined(SOC_SERIES_STM32F0)
+    void TIM17_IRQHandler(void)
+#endif
 {
     /* enter interrupt */
     rt_interrupt_enter();

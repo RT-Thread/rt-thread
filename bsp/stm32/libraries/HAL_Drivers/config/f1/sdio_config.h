@@ -26,8 +26,6 @@
         .dma_tx.dma_irq = DMA2_Channel4_IRQn,            \
     }
 
-#define SPI1_DMA_RX_IRQHandler           DMA2_Channel4_IRQHandler    
-#define SPI1_DMA_TX_IRQHandler           DMA2_Channel4_IRQHandler
 #endif
 
 #endif /*__SDIO_CONFIG_H__ */
