@@ -122,11 +122,11 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
         #include <stdarg.h>
     #else
         /* the version of GNU GCC must be greater than 4.x */
-        typedef __builtin_va_list   __gnuc_va_list;
-        typedef __gnuc_va_list      va_list;
-        #define va_start(v,l)       __builtin_va_start(v,l)
-        #define va_end(v)           __builtin_va_end(v)
-        #define va_arg(v,l)         __builtin_va_arg(v,l)
+        typedef __builtin_va_list       __gnuc_va_list;
+        typedef __gnuc_va_list          va_list;
+        #define va_start(v,l)           __builtin_va_start(v,l)
+        #define va_end(v)               __builtin_va_end(v)
+        #define va_arg(v,l)             __builtin_va_arg(v,l)
     #endif
 
     #define SECTION(x)                  __attribute__((section(x)))
@@ -248,7 +248,7 @@ typedef int (*init_fn_t)(void);
  * @addtogroup Error
  */
 
-/*@{*/
+/**@{*/
 
 /* RT-Thread error code definitions */
 #define RT_EOK                          0               /**< There is no error */
@@ -263,7 +263,7 @@ typedef int (*init_fn_t)(void);
 #define RT_EINTR                        9               /**< Interrupted system call */
 #define RT_EINVAL                       10              /**< Invalid argument */
 
-/*@}*/
+/**@}*/
 
 /**
  * @ingroup BasicDef
@@ -314,7 +314,7 @@ typedef struct rt_slist_node rt_slist_t;                /**< Type for single lis
  * @addtogroup KernelObject
  */
 
-/*@{*/
+/**@{*/
 
 /*
  * kernel object macros
@@ -391,13 +391,13 @@ struct rt_object_information
 #define RT_OBJECT_HOOK_CALL(func, argv)
 #endif
 
-/*@}*/
+/**@}*/
 
 /**
  * @addtogroup Clock
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * clock & timer macros
@@ -454,13 +454,13 @@ typedef siginfo_t rt_siginfo_t;
 
 #define RT_SIG_MAX          32
 #endif
-/*@}*/
+/**@}*/
 
 /**
  * @addtogroup Thread
  */
 
-/*@{*/
+/**@{*/
 
 /*
  * Thread
@@ -559,13 +559,13 @@ struct rt_thread
 };
 typedef struct rt_thread *rt_thread_t;
 
-/*@}*/
+/**@}*/
 
 /**
  * @addtogroup IPC
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * IPC flags and control command definitions
@@ -683,13 +683,13 @@ struct rt_messagequeue
 typedef struct rt_messagequeue *rt_mq_t;
 #endif
 
-/*@}*/
+/**@}*/
 
 /**
  * @addtogroup MM
  */
 
-/*@{*/
+/**@{*/
 
 /*
  * memory management
@@ -757,14 +757,14 @@ struct rt_mempool
 typedef struct rt_mempool *rt_mp_t;
 #endif
 
-/*@}*/
+/**@}*/
 
 #ifdef RT_USING_DEVICE
 /**
  * @addtogroup Device
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * device (I/O) class type
@@ -1009,7 +1009,7 @@ struct rt_device_graphic_ops
 };
 #define rt_graphix_ops(device)          ((struct rt_device_graphic_ops *)(device->user_data))
 
-/*@}*/
+/**@}*/
 #endif
 
 /* definitions for libc */

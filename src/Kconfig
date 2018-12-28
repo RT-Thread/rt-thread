@@ -300,4 +300,10 @@ menu "Kernel Device Object"
 
 endmenu
 
+config RT_VER_NUM
+    hex
+    default 0x30102
+    help
+        RT-Thread version number
+
 endmenu
