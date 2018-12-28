@@ -264,18 +264,7 @@ def pyconfig_silent(RTT_ROOT):
 
     fn = '.config'
 
-    if os.path.isfile(fn):
-        mtime = os.path.getmtime(fn)
-    else:
-        mtime = -1
-
     pymenuconfig.main(['--kconfig', 'Kconfig', '--config', '.config', '--silent', 'True'])
 
-    if os.path.isfile(fn):
-        mtime2 = os.path.getmtime(fn)
-    else:
-        mtime2 = -1
-
-    # make rtconfig.h
-    if mtime != mtime2:
-        mk_rtconfig(fn)
+    # silent mode, force to make rtconfig.h
+    mk_rtconfig(fn)
