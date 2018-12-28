@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018/10/02     Bernard      The first version
+ * 2018/12/27     Jesven       Add SMP schedule
  */
 
 #include "cpuport.h"
@@ -72,6 +73,13 @@ trap_entry:
     call  handle_trap
     call  rt_interrupt_leave
 
+#ifdef RT_USING_SMP
+    /* s0 --> sp */
+    mv  a0, s0
+    call rt_scheduler_do_irq_switch
+    mv  sp, s0
+#else
+
     /* switch to from_thread stack */
     move  sp, s0
 
@@ -94,6 +102,7 @@ trap_entry:
 
     LOAD  a0,  0 * REGBYTES(sp)
     csrw  mepc, a0
+#endif
 
 spurious_interrupt:
     LOAD  x1,   1 * REGBYTES(sp)

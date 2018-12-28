@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018/10/01     Bernard      The first version
+ * 2018/12/27     Jesven       Add SMP support
  */
 
 #define MSTATUS_FS      0x00006000U /* initial state of FPU     */
@@ -114,20 +115,22 @@ _start:
   add  sp, sp, t1 /* sp = (cpuid + 1) * __STACKSIZE__ + __stack_start__ */
 
   /* other cpu core, jump to cpu entry directly */
-  bnez a0, _cpu_entry
+  bnez a0, secondary_cpu_entry
+  j primary_cpu_entry
 
-#if 0
-  /* clear bss section */
-  la a0, __bss_start
-  la a1, __bss_end
-  bgeu a0, a1, 2f
-1:
-  sw zero, (a0)
-  addi a0, a0, REGBYTES
-  bltu a0, a1, 1b
-2:
+secondary_cpu_entry:
+#ifdef RT_USING_SMP
+  la a0, secondary_boot_flag
+  ld a0, 0(a0)
+  li a1, 0xa55a
+  beq a0, a1, secondary_cpu_c_start
 #endif
+  j secondary_cpu_entry
 
-_cpu_entry:
-  csrr a0, mhartid
-  j cpu_entry
+#ifdef RT_USING_SMP
+.data
+.global secondary_boot_flag
+.align 3
+secondary_boot_flag:
+    .dword 0
+#endif

@@ -15,7 +15,7 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = r'/opt/riscv64-unknown-elf-gcc-2018.07.0-x86_64-linux-ubuntu14/bin'
+    EXEC_PATH   = r'/opt/riscv64-unknown-elf/bin'
 else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)
@@ -27,8 +27,7 @@ BUILD = 'release'
 
 if PLATFORM == 'gcc':
     # toolchains
-    PREFIX  = 'riscv-none-embed-'
-    # PREFIX  = 'riscv64-unknown-elf-'
+    PREFIX  = 'riscv64-unknown-elf-'
     CC      = PREFIX + 'gcc'
     CXX     = PREFIX + 'g++'
     AS      = PREFIX + 'gcc'
