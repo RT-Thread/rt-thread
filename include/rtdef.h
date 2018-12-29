@@ -441,7 +441,7 @@ struct rt_timer
 };
 typedef struct rt_timer *rt_timer_t;
 
-/*@}*/
+/**@}*/
 
 /**
  * @addtogroup Signal
