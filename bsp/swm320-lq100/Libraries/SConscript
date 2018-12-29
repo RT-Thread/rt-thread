@@ -11,8 +11,7 @@ if rtconfig.CROSS_TOOL == 'gcc':
 elif rtconfig.CROSS_TOOL == 'keil':
     src += ['CMSIS/DeviceSupport/startup/arm/startup_SWM320.s']
 elif rtconfig.CROSS_TOOL == 'iar':
-    print('Not Support iar now\n')
-    exit(0)
+    src += ['CMSIS/DeviceSupport/startup/iar/startup_SWM320.s']
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
