@@ -283,7 +283,6 @@ static rt_err_t swm320_pin_irq_enable(struct rt_device *device,
     }
     if (enabled == PIN_IRQ_ENABLE)
     {
-
         switch (index->irq_mode)
         {
         case PIN_IRQ_MODE_RISING:
