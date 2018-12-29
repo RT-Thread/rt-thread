@@ -461,4 +461,3 @@ SECTION("itcm") int rt_hw_flexspi_init(void)
     rt_hw_interrupt_enable(level);
     return 0;
 }
-INIT_PREV_EXPORT(rt_hw_flexspi_init);
