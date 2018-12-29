@@ -89,7 +89,7 @@
 
 /* POSIX layer and C standard library */
 
-/* RT_USING_LIBC is not set */
+#define RT_USING_LIBC
 /* RT_USING_PTHREADS is not set */
 
 /* Network stack */

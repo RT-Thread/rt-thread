@@ -221,14 +221,12 @@ void rt_thread_idle_excute(void)
 
 static void rt_thread_idle_entry(void *parameter)
 {
-#ifdef RT_USING_IDLE_HOOK
-    rt_size_t i;
-#endif
-
     while (1)
     {
 
 #ifdef RT_USING_IDLE_HOOK
+        rt_size_t i;
+
         for (i = 0; i < RT_IDEL_HOOK_LIST_SIZE; i++)
         {
             if (idle_hook_list[i] != RT_NULL)

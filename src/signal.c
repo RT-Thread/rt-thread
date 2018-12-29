@@ -108,7 +108,7 @@ static void _signal_deliver(rt_thread_t tid)
             /* do signal action in self thread context */
             rt_thread_handle_sig(RT_TRUE);
         }
-        else if (!((tid->stat & RT_THREAD_STAT_MASK) & RT_THREAD_STAT_SIGNAL))
+        else if (!((tid->stat & RT_THREAD_STAT_SIGNAL_MASK) & RT_THREAD_STAT_SIGNAL))
         {
             /* add signal state */
             tid->stat |= RT_THREAD_STAT_SIGNAL;
