@@ -6,6 +6,7 @@
  * Date           Author       Notes
  * 2018-01-26     armink       the first version
  */
+
 #include <rtthread.h>
 #include <fal.h>
 #include <drv_flexspi.h>
