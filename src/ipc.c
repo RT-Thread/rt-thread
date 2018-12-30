@@ -87,6 +87,7 @@ rt_inline rt_err_t rt_ipc_list_suspend(rt_list_t        *list,
     {
     case RT_IPC_FLAG_FIFO:
         rt_list_insert_before(list, &(thread->tlist));
+        thread->tlist_head = list;
         break;
 
     case RT_IPC_FLAG_PRIO:
@@ -113,7 +114,10 @@ rt_inline rt_err_t rt_ipc_list_suspend(rt_list_t        *list,
              * append to the end of suspend_thread list
              */
             if (n == list)
+            {
                 rt_list_insert_before(list, &(thread->tlist));
+            }
+            thread->tlist_head = list;
         }
         break;
     }

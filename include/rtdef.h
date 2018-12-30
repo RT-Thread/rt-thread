@@ -553,6 +553,7 @@ struct rt_thread
 
     rt_list_t   list;                                   /**< the object list */
     rt_list_t   tlist;                                  /**< the thread list */
+    rt_list_t*  tlist_head;                             /**< the thread list head */
 
     /* stack point and entry */
     void       *sp;                                     /**< stack point */

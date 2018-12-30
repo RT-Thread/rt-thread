@@ -334,6 +334,8 @@ void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
         /* need suspend thread */
         rt_thread_suspend(thread);
         rt_list_insert_after(&(mp->suspend_thread), &(thread->tlist));
+        thread->tlist_head = &(mp->suspend_thread);
+
         mp->suspend_thread_count++;
 
         if (time > 0)

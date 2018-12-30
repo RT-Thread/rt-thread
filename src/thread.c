@@ -125,6 +125,7 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
 {
     /* init thread list */
     rt_list_init(&(thread->tlist));
+    thread->tlist_head = (rt_list_t*)RT_NULL;
 
     thread->entry = (void *)entry;
     thread->parameter = parameter;
@@ -721,6 +722,7 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
 
     /* remove from suspend list */
     rt_list_remove(&(thread->tlist));
+    thread->tlist_head = (rt_list_t*)RT_NULL;
 
     rt_timer_stop(&thread->thread_timer);
 
@@ -757,6 +759,7 @@ void rt_thread_timeout(void *parameter)
 
     /* remove from suspend list */
     rt_list_remove(&(thread->tlist));
+    thread->tlist_head = (rt_list_t*)RT_NULL;
 
     /* insert to schedule ready list */
     rt_schedule_insert_thread(thread);
