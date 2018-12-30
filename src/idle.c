@@ -178,6 +178,7 @@ void rt_thread_idle_excute(void)
 #endif
             /* remove defunct thread */
             rt_list_remove(&(thread->tlist));
+            thread->tlist_head = (rt_list_t *)RT_NULL;
 
             /* lock scheduler to prevent scheduling in cleanup function. */
             rt_enter_critical();

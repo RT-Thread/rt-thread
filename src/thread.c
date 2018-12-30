@@ -105,6 +105,7 @@ void rt_thread_exit(void)
     {
         /* insert to defunct thread list */
         rt_list_insert_after(&rt_thread_defunct, &(thread->tlist));
+        thread->tlist_head = &rt_thread_defunct;
     }
 
     /* enable interrupt */
@@ -125,6 +126,7 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
 {
     /* init thread list */
     rt_list_init(&(thread->tlist));
+    thread->tlist_head = (rt_list_t*)RT_NULL;
 
     thread->entry = (void *)entry;
     thread->parameter = parameter;
@@ -357,6 +359,7 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
 
         /* insert to defunct thread list */
         rt_list_insert_after(&rt_thread_defunct, &(thread->tlist));
+        thread->tlist_head = &rt_thread_defunct;
 
         /* enable interrupt */
         rt_hw_interrupt_enable(lock);
@@ -452,6 +455,7 @@ rt_err_t rt_thread_delete(rt_thread_t thread)
 
     /* insert to defunct thread list */
     rt_list_insert_after(&rt_thread_defunct, &(thread->tlist));
+    thread->tlist_head = &rt_thread_defunct;
 
     /* enable interrupt */
     rt_hw_interrupt_enable(lock);
@@ -721,6 +725,7 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
 
     /* remove from suspend list */
     rt_list_remove(&(thread->tlist));
+    thread->tlist_head = (rt_list_t*)RT_NULL;
 
     rt_timer_stop(&thread->thread_timer);
 
@@ -757,6 +762,7 @@ void rt_thread_timeout(void *parameter)
 
     /* remove from suspend list */
     rt_list_remove(&(thread->tlist));
+    thread->tlist_head = (rt_list_t*)RT_NULL;
 
     /* insert to schedule ready list */
     rt_schedule_insert_thread(thread);
