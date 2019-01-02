@@ -87,6 +87,7 @@
 
 #define RT_USING_DEVICE_IPC
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 #define RT_USING_I2C
 #define RT_USING_PIN
 #define RT_USING_SPI

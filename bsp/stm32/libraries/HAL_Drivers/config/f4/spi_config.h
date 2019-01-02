@@ -61,13 +61,13 @@
         .dma_rx.Instance = DMA1_Stream0,                 \
         .dma_rx.channel = DMA_CHANNEL_0,                 \
         .dma_rx.dma_irq = DMA1_Stream0_IRQn,             \
-        .dma_tx.Instance = DMA1_Stream2,                 \
+        .dma_tx.Instance = DMA1_Stream5,                 \
         .dma_tx.channel = DMA_CHANNEL_0,                 \
-        .dma_tx.dma_irq = DMA1_Stream2_IRQn,             \
+        .dma_tx.dma_irq = DMA1_Stream5_IRQn,             \
     }
 
 #define SPI3_DMA_RX_IRQHandler           DMA1_Stream0_IRQHandler    
-#define SPI3_DMA_TX_IRQHandler           DMA1_Stream2_IRQHandler
+#define SPI3_DMA_TX_IRQHandler           DMA1_Stream5_IRQHandler
 #endif
 
 #ifdef BSP_USING_SPI4

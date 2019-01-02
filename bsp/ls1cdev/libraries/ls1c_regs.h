@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2017-09-06     勤为本       first version
+ */
+
 // 龙芯1c外设寄存器
 
 
@@ -139,6 +149,8 @@
 #define LS1C_UART10_BASE                    (0xbfe4ca00)
 #define LS1C_UART11_BASE                    (0xbfe4cb00)
 
+//RTC寄存器
+#define LS1C_RTC_BASE                       (0xbfe64024)
 
 
 #endif
