@@ -559,7 +559,7 @@ rt_err_t rt_wlan_dev_cfg_filter(struct rt_wlan_device *device, struct rt_wlan_fi
  * wlan device channel interface
  */
 rt_err_t rt_wlan_dev_set_channel(struct rt_wlan_device *device, int channel);
-rt_err_t rt_wlan_dev_get_channel(struct rt_wlan_device *device);
+int rt_wlan_dev_get_channel(struct rt_wlan_device *device);
 
 /*
  * wlan device country interface
@@ -576,7 +576,8 @@ rt_err_t rt_wlan_dev_report_data(struct rt_wlan_device *device, void *buff, int 
 /*
  * wlan device register interface
  */
-struct rt_wlan_device *rt_wlan_dev_register(const char *name, const struct rt_wlan_dev_ops *ops, rt_uint32_t flag, void *user_data);
+rt_err_t rt_wlan_dev_register(struct rt_wlan_device *wlan, const char *name, 
+    const struct rt_wlan_dev_ops *ops, rt_uint32_t flag, void *user_data);
 
 #ifdef __cplusplus
 }

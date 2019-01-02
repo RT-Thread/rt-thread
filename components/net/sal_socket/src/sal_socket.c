@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-05-23     ChenYong     First version
+ * 2018-11-12     ChenYong     Add TLS support
  */
 
 #include <rtthread.h>
@@ -13,6 +14,9 @@
 
 #include <sal_socket.h>
 #include <sal_netdb.h>
+#ifdef SAL_USING_TLS
+#include <sal_tls.h>
+#endif
 #include <sal.h>
 
 #define DBG_ENABLE
@@ -30,12 +34,31 @@ struct sal_socket_table
     struct sal_socket **sockets;
 };
 
+#ifdef SAL_USING_TLS
+/* The global TLS protocol options */
+static struct sal_proto_tls *proto_tls;
+#endif
+
 /* The global array of available protocol families */
-static struct proto_family proto_families[SAL_PROTO_FAMILIES_NUM];
+static struct sal_proto_family proto_families[SAL_PROTO_FAMILIES_NUM];
 /* The global socket table */
 static struct sal_socket_table socket_table;
 static struct rt_mutex sal_core_lock;
 static rt_bool_t init_ok = RT_FALSE;
+
+#define IS_SOCKET_PROTO_TLS(sock)                (((sock)->protocol == PROTOCOL_TLS) || \
+                                                 ((sock)->protocol == PROTOCOL_DTLS))
+#define SAL_SOCKOPS_PROTO_TLS_VALID(sock, name)  (proto_tls && (proto_tls->ops->name) && IS_SOCKET_PROTO_TLS(sock))
+
+#define SAL_SOCKOPT_PROTO_TLS_EXEC(sock, name, optval, optlen)                    \
+do                                                                                \
+{                                                                                 \
+    if (SAL_SOCKOPS_PROTO_TLS_VALID(sock, name))                                  \
+    {                                                                             \
+        return proto_tls->ops->name((sock)->user_data_tls, (optval), (optlen));   \
+    }                                                                             \
+}while(0)                                                                         \
+
 
 /**
  * SAL (Socket Abstraction Layer) initialize.
@@ -47,7 +70,7 @@ int sal_init(void)
 {
     int cn;
     
-    if(init_ok)
+    if (init_ok)
     {
         LOG_D("Socket Abstraction Layer is already initialized.");
         return 0;
@@ -74,14 +97,31 @@ int sal_init(void)
 INIT_COMPONENT_EXPORT(sal_init);
 
 /**
+ * This function will register TLS protocol to the global TLS protocol.
+ *
+ * @param pt TLS protocol object
+ *
+ * @return 0: TLS protocol object register success
+ */
+#ifdef SAL_USING_TLS
+int sal_proto_tls_register(const struct sal_proto_tls *pt)
+{
+    RT_ASSERT(pt);
+    proto_tls = (struct sal_proto_tls *) pt;
+
+    return 0;
+}
+#endif
+
+/**
  * This function will register protocol family to the global array of protocol families.
  *
  * @param pf protocol family object
  *
- * @return   0 : protocol family object register success
- *          -1 : the global array of available protocol families is full
+ * @return  0: protocol family object register success
+ *         -1: the global array of available protocol families is full
  */
-int sal_proto_family_register(const struct proto_family *pf)
+int sal_proto_family_register(const struct sal_proto_family *pf)
 {
     rt_base_t level;
     int idx;
@@ -92,11 +132,11 @@ int sal_proto_family_register(const struct proto_family *pf)
     /* check protocol family is already registered */
     for(idx = 0; idx < SAL_PROTO_FAMILIES_NUM; idx++)
     {
-        if(rt_strcmp(proto_families[idx].name, pf->name) == 0)
+        if (proto_families[idx].family == pf->family && proto_families[idx].create)
         {
             /* enable interrupt */
             rt_hw_interrupt_enable(level);
-            LOG_E("%s protocol family is already registered!", pf->name);
+            LOG_E("%s protocol family is already registered!", pf->family);
             return -1;
         }
     }
@@ -105,22 +145,22 @@ int sal_proto_family_register(const struct proto_family *pf)
     for(idx = 0; idx < SAL_PROTO_FAMILIES_NUM && proto_families[idx].create; idx++);
 
     /* can't find an empty protocol family entry */
-    if(idx == SAL_PROTO_FAMILIES_NUM)
+    if (idx == SAL_PROTO_FAMILIES_NUM)
     {
         /* enable interrupt */
         rt_hw_interrupt_enable(level);
         return -1;
     }
 
-    rt_strncpy(proto_families[idx].name, pf->name, rt_strlen(pf->name));
     proto_families[idx].family = pf->family;
     proto_families[idx].sec_family = pf->sec_family;
     proto_families[idx].create = pf->create;
 
-    proto_families[idx].gethostbyname = pf->gethostbyname;
-    proto_families[idx].gethostbyname_r = pf->gethostbyname_r;
-    proto_families[idx].freeaddrinfo = pf->freeaddrinfo;
-    proto_families[idx].getaddrinfo = pf->getaddrinfo;
+    proto_families[idx].ops = pf->ops;
+    proto_families[idx].ops->gethostbyname = pf->ops->gethostbyname;
+    proto_families[idx].ops->gethostbyname_r = pf->ops->gethostbyname_r;
+    proto_families[idx].ops->freeaddrinfo = pf->ops->freeaddrinfo;
+    proto_families[idx].ops->getaddrinfo = pf->ops->getaddrinfo;
 
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
@@ -136,17 +176,17 @@ int sal_proto_family_register(const struct proto_family *pf)
  * @return >=0 : unregister protocol family index
  *          -1 : unregister failed
  */
-int sal_proto_family_unregister(const struct proto_family *pf)
+int sal_proto_family_unregister(int family)
 {
     int idx = 0;
 
-    RT_ASSERT(pf != RT_NULL);
+    RT_ASSERT(family > 0 && family < AF_MAX);
 
     for(idx = 0; idx < SAL_PROTO_FAMILIES_NUM; idx++)
     {
-        if(rt_strcmp(proto_families[idx].name, pf->name) == 0)
+        if (proto_families[idx].family == family && proto_families[idx].create)
         {
-            rt_memset(&proto_families[idx], 0x00, sizeof(struct proto_family));
+            rt_memset(&proto_families[idx], 0x00, sizeof(struct sal_proto_family));
 
             return idx;
         }
@@ -156,21 +196,46 @@ int sal_proto_family_unregister(const struct proto_family *pf)
 }
 
 /**
- * This function will get protocol family by name.
+ * This function will judge whether protocol family is registered
  *
- * @param name protocol family name
+ * @param family protocol family number
  *
- * @return protocol family object
+ * @return 1: protocol family is registered
+ *         0: protocol family is not registered
  */
-struct proto_family *sal_proto_family_find(const char *name)
+rt_bool_t sal_proto_family_is_registered(int family)
 {
     int idx = 0;
 
-    RT_ASSERT(name != RT_NULL);
+    RT_ASSERT(family > 0 && family < AF_MAX);
 
     for (idx = 0; idx < SAL_PROTO_FAMILIES_NUM; idx++)
     {
-        if (rt_strcmp(proto_families[idx].name, name) == 0)
+        if (proto_families[idx].family == family && proto_families[idx].create)
+        {
+            return RT_TRUE;
+        }
+    }
+
+    return RT_FALSE;
+}
+
+/**
+ * This function will get protocol family object by family number.
+ *
+ * @param family protocol family number
+ *
+ * @return protocol family object
+ */
+struct sal_proto_family *sal_proto_family_find(int family)
+{
+    int idx = 0;
+
+    RT_ASSERT(family > 0 && family < AF_MAX);
+
+    for (idx = 0; idx < SAL_PROTO_FAMILIES_NUM; idx++)
+    {
+        if (proto_families[idx].family == family && proto_families[idx].create)
         {
             return &proto_families[idx];
         }
@@ -238,7 +303,7 @@ static void sal_unlock(void)
  *
  * @return protocol family structure address
  */
-static struct proto_family *get_proto_family(int family)
+static struct sal_proto_family *get_proto_family(int family)
 {
     int idx;
 
@@ -278,7 +343,7 @@ static struct proto_family *get_proto_family(int family)
 static int socket_init(int family, int type, int protocol, struct sal_socket **res)
 {
     struct sal_socket *sock;
-    struct proto_family *pf;
+    struct sal_proto_family *pf;
 
     if (family < 0 || family > AF_MAX)
     {
@@ -383,6 +448,11 @@ static int socket_new(void)
     sock = st->sockets[idx];
     sock->socket = idx + SAL_SOCKET_OFFSET;
     sock->magic = SAL_SOCKET_MAGIC;
+    sock->ops = RT_NULL;
+    sock->user_data = RT_NULL;
+#ifdef SAL_USING_TLS
+    sock->user_data_tls = RT_NULL;
+#endif
 
 __result:
     sal_unlock();
@@ -474,6 +544,15 @@ int sal_shutdown(int socket, int how)
 
     if (sock->ops->shutdown((int) sock->user_data, how) == 0)
     {
+#ifdef SAL_USING_TLS
+        if (SAL_SOCKOPS_PROTO_TLS_VALID(sock, closesocket))
+        {
+            if (proto_tls->ops->closesocket(sock->user_data_tls) < 0)
+            {
+                return -1;
+            }
+        }
+#endif
         rt_free(sock);
         socket_table.sockets[socket] = RT_NULL;
         return 0;
@@ -551,12 +630,46 @@ int sal_setsockopt(int socket, int level, int optname, const void *optval, sockl
         return -RT_ENOSYS;
     }
 
+#ifdef SAL_USING_TLS
+    if (level == SOL_TLS)
+    {
+        switch (optname)
+        {
+        case TLS_CRET_LIST:
+            SAL_SOCKOPT_PROTO_TLS_EXEC(sock, set_cret_list, optval, optlen);
+            break;
+
+        case TLS_CIPHERSUITE_LIST:
+            SAL_SOCKOPT_PROTO_TLS_EXEC(sock, set_ciphersurite, optval, optlen);
+            break;
+
+        case TLS_PEER_VERIFY:
+            SAL_SOCKOPT_PROTO_TLS_EXEC(sock, set_peer_verify, optval, optlen);
+            break;
+
+        case TLS_DTLS_ROLE:
+            SAL_SOCKOPT_PROTO_TLS_EXEC(sock, set_dtls_role, optval, optlen);
+            break;
+
+        default:
+            return -1;
+        }
+
+        return 0;
+    }
+    else
+    {
+        return sock->ops->setsockopt((int) sock->user_data, level, optname, optval, optlen);
+    }
+#else
     return sock->ops->setsockopt((int) sock->user_data, level, optname, optval, optlen);
+#endif /* SAL_USING_TLS */
 }
 
 int sal_connect(int socket, const struct sockaddr *name, socklen_t namelen)
 {
     struct sal_socket *sock;
+    int ret;
 
     sock = sal_get_socket(socket);
     if (!sock)
@@ -569,7 +682,20 @@ int sal_connect(int socket, const struct sockaddr *name, socklen_t namelen)
         return -RT_ENOSYS;
     }
 
-    return sock->ops->connect((int) sock->user_data, name, namelen);
+    ret = sock->ops->connect((int) sock->user_data, name, namelen);
+#ifdef SAL_USING_TLS
+    if (ret >= 0 && SAL_SOCKOPS_PROTO_TLS_VALID(sock, connect))
+    {
+        if (proto_tls->ops->connect(sock->user_data_tls) < 0)
+        {
+            return -1;
+        }
+        
+        return ret;
+    }
+#endif
+
+    return ret;
 }
 
 int sal_listen(int socket, int backlog)
@@ -606,7 +732,24 @@ int sal_recvfrom(int socket, void *mem, size_t len, int flags,
         return -RT_ENOSYS;
     }
 
+#ifdef SAL_USING_TLS
+    if (SAL_SOCKOPS_PROTO_TLS_VALID(sock, recv))
+    {
+        int ret;
+        
+        if ((ret = proto_tls->ops->recv(sock->user_data_tls, mem, len)) < 0)
+        {
+            return -1;
+        }   
+        return ret;
+    }
+    else
+    {
+        return sock->ops->recvfrom((int) sock->user_data, mem, len, flags, from, fromlen);
+    }
+#else
     return sock->ops->recvfrom((int) sock->user_data, mem, len, flags, from, fromlen);
+#endif
 }
 
 int sal_sendto(int socket, const void *dataptr, size_t size, int flags,
@@ -625,7 +768,24 @@ int sal_sendto(int socket, const void *dataptr, size_t size, int flags,
         return -RT_ENOSYS;
     }
 
+#ifdef SAL_USING_TLS
+    if (SAL_SOCKOPS_PROTO_TLS_VALID(sock, send))
+    {
+        int ret;
+        
+        if ((ret = proto_tls->ops->send(sock->user_data_tls, dataptr, size)) < 0)
+        {
+            return -1;
+        }      
+        return ret;
+    }
+    else
+    {
+        return sock->ops->sendto((int) sock->user_data, dataptr, size, flags, to, tolen);
+    }
+#else
     return sock->ops->sendto((int) sock->user_data, dataptr, size, flags, to, tolen);
+#endif
 }
 
 int sal_socket(int domain, int type, int protocol)
@@ -657,8 +817,17 @@ int sal_socket(int domain, int type, int protocol)
     proto_socket = sock->ops->socket(domain, type, protocol);
     if (proto_socket >= 0)
     {
+#ifdef SAL_USING_TLS
+        if (SAL_SOCKOPS_PROTO_TLS_VALID(sock, socket))
+        {
+            sock->user_data_tls = proto_tls->ops->socket(proto_socket);
+            if (sock->user_data_tls == RT_NULL)
+            {
+                return -1;
+            }
+        }
+#endif
         sock->user_data = (void *) proto_socket;
-
         return sock->socket;
     }
 
@@ -682,6 +851,15 @@ int sal_closesocket(int socket)
 
     if (sock->ops->closesocket((int) sock->user_data) == 0)
     {
+#ifdef SAL_USING_TLS
+        if (SAL_SOCKOPS_PROTO_TLS_VALID(sock, closesocket))
+        {
+            if (proto_tls->ops->closesocket(sock->user_data_tls) < 0)
+            {
+                return -1;
+            }
+        }
+#endif
         rt_free(sock);        
         socket_table.sockets[socket] = RT_NULL;
         return 0;
@@ -736,9 +914,9 @@ struct hostent *sal_gethostbyname(const char *name)
 
     for (i = 0; i < SAL_PROTO_FAMILIES_NUM; ++i)
     {
-        if (proto_families[i].gethostbyname)
+        if (proto_families[i].ops && proto_families[i].ops->gethostbyname)
         {
-            hst = proto_families[i].gethostbyname(name);
+            hst = proto_families[i].ops->gethostbyname(name);
             if (hst != RT_NULL)
             {
                 return hst;
@@ -756,12 +934,34 @@ int sal_gethostbyname_r(const char *name, struct hostent *ret, char *buf,
 
     for (i = 0; i < SAL_PROTO_FAMILIES_NUM; ++i)
     {
-        if (proto_families[i].gethostbyname_r)
+        if (proto_families[i].ops && proto_families[i].ops->gethostbyname_r)
         {
-            res = proto_families[i].gethostbyname_r(name, ret, buf, buflen, result, h_errnop);
+            res = proto_families[i].ops->gethostbyname_r(name, ret, buf, buflen, result, h_errnop);
             if (res == 0)
             {
                 return res;
+            }
+        }
+    }
+
+    return -1;
+}
+
+int sal_getaddrinfo(const char *nodename,
+       const char *servname,
+       const struct addrinfo *hints,
+       struct addrinfo **res)
+{
+    int i, ret;
+
+    for (i = 0; i < SAL_PROTO_FAMILIES_NUM; ++i)
+    {
+        if (proto_families[i].ops && proto_families[i].ops->getaddrinfo)
+        {
+            ret = proto_families[i].ops->getaddrinfo(nodename, servname, hints, res);
+            if (ret == 0)
+            {
+                return ret;
             }
         }
     }
@@ -775,32 +975,10 @@ void sal_freeaddrinfo(struct addrinfo *ai)
 
     for (i = 0; i < SAL_PROTO_FAMILIES_NUM; ++i)
     {
-        if (proto_families[i].freeaddrinfo)
+        if (proto_families[i].ops && proto_families[i].ops->freeaddrinfo)
         {
-            proto_families[i].freeaddrinfo(ai);
+            proto_families[i].ops->freeaddrinfo(ai);
             return;
         }
     }
-}
-
-int sal_getaddrinfo(const char *nodename,
-       const char *servname,
-       const struct addrinfo *hints,
-       struct addrinfo **res)
-{
-    int i, ret;
-
-    for (i = 0; i < SAL_PROTO_FAMILIES_NUM; ++i)
-    {
-        if (proto_families[i].getaddrinfo)
-        {
-            ret = proto_families[i].getaddrinfo(nodename, servname, hints, res);
-            if (ret == 0)
-            {
-                return ret;
-            }
-        }
-    }
-
-    return -1;
 }
