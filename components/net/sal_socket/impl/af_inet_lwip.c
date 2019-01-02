@@ -259,7 +259,8 @@ static int inet_poll(struct dfs_fd *file, struct rt_pollreq *req)
 }
 #endif
 
-static const struct proto_ops lwip_inet_stream_ops = {
+static const struct sal_socket_ops lwip_socket_ops =
+{
     inet_socket,
     lwip_close,
     lwip_bind,
@@ -286,25 +287,30 @@ static int inet_create(struct sal_socket *socket, int type, int protocol)
 
     //TODO Check type & protocol
 
-    socket->ops = &lwip_inet_stream_ops;
+    socket->ops = &lwip_socket_ops;
 
     return 0;
 }
 
-static const struct proto_family lwip_inet_family_ops = {
-    "lwip",
+static struct sal_proto_ops lwip_proto_ops =
+{
+    lwip_gethostbyname,
+    lwip_gethostbyname_r,
+    lwip_getaddrinfo,
+    lwip_freeaddrinfo,
+};
+
+static const struct sal_proto_family lwip_inet_family =
+{
     AF_INET,
     AF_INET,
     inet_create,
-    lwip_gethostbyname,
-    lwip_gethostbyname_r,
-    lwip_freeaddrinfo,
-    lwip_getaddrinfo,
+    &lwip_proto_ops,
 };
 
 int lwip_inet_init(void)
 {
-    sal_proto_family_register(&lwip_inet_family_ops);
+    sal_proto_family_register(&lwip_inet_family);
 
     return 0;
 }

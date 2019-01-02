@@ -145,7 +145,10 @@ rt_err_t rt_wlan_dev_ap_start(struct rt_wlan_device *device, struct rt_wlan_info
 
     rt_memset(&ap_info, 0, sizeof(struct rt_ap_info));
     rt_memcpy(&ap_info.ssid, &info->ssid, sizeof(rt_wlan_ssid_t));
-    rt_memcpy(ap_info.key.val, password, password_len);
+    if (password != RT_NULL)
+    {
+        rt_memcpy(ap_info.key.val, password, password_len);
+    }
     ap_info.key.len = password_len;
     ap_info.hidden = info->hidden;
     ap_info.channel = info->channel;
@@ -184,13 +187,21 @@ rt_err_t rt_wlan_dev_ap_deauth(struct rt_wlan_device *device, rt_uint8_t mac[6])
 int rt_wlan_dev_get_rssi(struct rt_wlan_device *device)
 {
     int rssi = 0;
+    rt_err_t result = RT_EOK;
 
     if (device == RT_NULL)
     {
-        return -RT_EIO;
+        rt_set_errno(-RT_EIO);
+        return 0;
     }
 
-    rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_GET_RSSI, &rssi);
+    result = rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_GET_RSSI, &rssi);
+    if (result != RT_EOK)
+    {
+        rt_set_errno(result);
+        return 0;
+    }
+
     return rssi;
 }
 
@@ -235,14 +246,20 @@ rt_err_t rt_wlan_dev_set_powersave(struct rt_wlan_device *device, int level)
 
 int rt_wlan_dev_get_powersave(struct rt_wlan_device *device)
 {
-    int level = 0;
+    int level = -1;
+    rt_err_t result = RT_EOK;
 
     if (device == RT_NULL)
     {
+        rt_set_errno(-RT_EIO);
         return -1;
     }
 
-    rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_GET_POWERSAVE, &level);
+    result = rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_GET_POWERSAVE, &level);
+    if (result != RT_EOK)
+    {
+        rt_set_errno(result);
+    }
 
     return level;
 }
@@ -432,19 +449,21 @@ rt_err_t rt_wlan_dev_set_channel(struct rt_wlan_device *device, int channel)
     return result;
 }
 
-rt_err_t rt_wlan_dev_get_channel(struct rt_wlan_device *device)
+int rt_wlan_dev_get_channel(struct rt_wlan_device *device)
 {
     rt_err_t result = RT_EOK;
-    int channel;
+    int channel = -1;
 
     if (device == RT_NULL)
     {
-        return -RT_EIO;
+        rt_set_errno(-RT_EIO);
+        return -1;
     }
 
     result = rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_GET_CHANNEL, &channel);
     if (result != RT_EOK)
     {
+        rt_set_errno(result);
         return -1;
     }
 
@@ -466,17 +485,19 @@ rt_err_t rt_wlan_dev_set_country(struct rt_wlan_device *device, rt_country_code_
 
 rt_country_code_t rt_wlan_dev_get_country(struct rt_wlan_device *device)
 {
-    int result = 0;
+    int result = RT_EOK;
     rt_country_code_t country_code = RT_COUNTRY_UNKNOWN;
 
     if (device == RT_NULL)
     {
-        return country_code;
+        rt_set_errno(-RT_EIO);
+        return RT_COUNTRY_UNKNOWN;
     }
 
     result = rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_GET_COUNTRY, &country_code);
     if (result != RT_EOK)
     {
+        rt_set_errno(result);
         return RT_COUNTRY_UNKNOWN;
     }
 
@@ -641,7 +662,7 @@ static rt_err_t _rt_wlan_dev_control(rt_device_t dev, int cmd, void *args)
 
         LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_SET_POWERSAVE, "RT_WLAN_CMD_SET_POWERSAVE");
         if (wlan->ops->wlan_set_powersave)
-            wlan->ops->wlan_set_powersave(wlan, level);
+            err = wlan->ops->wlan_set_powersave(wlan, level);
         break;
     }
     case RT_WLAN_CMD_GET_POWERSAVE:
@@ -659,7 +680,7 @@ static rt_err_t _rt_wlan_dev_control(rt_device_t dev, int cmd, void *args)
 
         LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_CFG_PROMISC, "RT_WLAN_CMD_CFG_PROMISC");
         if (wlan->ops->wlan_cfg_promisc)
-            wlan->ops->wlan_cfg_promisc(wlan, start);
+            err = wlan->ops->wlan_cfg_promisc(wlan, start);
         break;
     }
     case RT_WLAN_CMD_CFG_FILTER:
@@ -668,7 +689,7 @@ static rt_err_t _rt_wlan_dev_control(rt_device_t dev, int cmd, void *args)
 
         LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_CFG_FILTER, "RT_WLAN_CMD_CFG_FILTER");
         if (wlan->ops->wlan_cfg_filter)
-            wlan->ops->wlan_cfg_filter(wlan, filter);
+            err = wlan->ops->wlan_cfg_filter(wlan, filter);
         break;
     }
     case RT_WLAN_CMD_SET_CHANNEL:
@@ -676,7 +697,7 @@ static rt_err_t _rt_wlan_dev_control(rt_device_t dev, int cmd, void *args)
         int channel = *(int *)args;
         LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_SET_CHANNEL, "RT_WLAN_CMD_SET_CHANNEL");
         if (wlan->ops->wlan_set_channel)
-            wlan->ops->wlan_set_channel(wlan, channel);
+            err = wlan->ops->wlan_set_channel(wlan, channel);
         break;
     }
     case RT_WLAN_CMD_GET_CHANNEL:
@@ -694,7 +715,7 @@ static rt_err_t _rt_wlan_dev_control(rt_device_t dev, int cmd, void *args)
 
         LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_SET_COUNTRY, "RT_WLAN_CMD_SET_COUNTRY");
         if (wlan->ops->wlan_set_country)
-            wlan->ops->wlan_set_country(wlan, country);
+            err = wlan->ops->wlan_set_country(wlan, country);
         break;
     }
     case RT_WLAN_CMD_GET_COUNTRY:
@@ -711,7 +732,7 @@ static rt_err_t _rt_wlan_dev_control(rt_device_t dev, int cmd, void *args)
 
         LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_SET_MAC, "RT_WLAN_CMD_SET_MAC");
         if (wlan->ops->wlan_set_mac)
-            wlan->ops->wlan_set_mac(wlan, mac);
+            err = wlan->ops->wlan_set_mac(wlan, mac);
         break;
     }
     case RT_WLAN_CMD_GET_MAC:
@@ -720,7 +741,7 @@ static rt_err_t _rt_wlan_dev_control(rt_device_t dev, int cmd, void *args)
 
         LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_GET_MAC, "RT_WLAN_CMD_GET_MAC");
         if (wlan->ops->wlan_get_mac)
-            wlan->ops->wlan_get_mac(wlan, mac);
+            err = wlan->ops->wlan_get_mac(wlan, mac);
         break;
     }
     default:
@@ -733,22 +754,16 @@ static rt_err_t _rt_wlan_dev_control(rt_device_t dev, int cmd, void *args)
     return err;
 }
 
-struct rt_wlan_device *rt_wlan_dev_register(const char *name, const struct rt_wlan_dev_ops *ops, rt_uint32_t flag, void *user_data)
+rt_err_t rt_wlan_dev_register(struct rt_wlan_device *wlan, const char *name, const struct rt_wlan_dev_ops *ops, rt_uint32_t flag, void *user_data)
 {
-    struct rt_wlan_device *wlan;
+    rt_err_t err = RT_EOK;
 
-    if (name == RT_NULL || ops == RT_NULL)
+    if ((wlan == RT_NULL) || (name == RT_NULL) || (ops == RT_NULL))
     {
         LOG_E("F:%s L:%d parameter Wrongful", __FUNCTION__, __LINE__);
         return RT_NULL;
     }
 
-    wlan = rt_malloc(sizeof(struct rt_wlan_device));
-    if (wlan == RT_NULL)
-    {
-        LOG_E("F:%s L:%d", __FUNCTION__, __LINE__);
-        return RT_NULL;
-    }
     rt_memset(wlan, 0, sizeof(struct rt_wlan_device));
 
     wlan->device.init       = _rt_wlan_dev_init;
@@ -765,9 +780,9 @@ struct rt_wlan_device *rt_wlan_dev_register(const char *name, const struct rt_wl
     wlan->user_data  = user_data;
 
     wlan->flags = flag;
-    rt_device_register(&wlan->device, name, RT_DEVICE_FLAG_RDWR);
+    err = rt_device_register(&wlan->device, name, RT_DEVICE_FLAG_RDWR);
 
     LOG_D("F:%s L:%d run", __FUNCTION__, __LINE__);
 
-    return wlan;
+    return err;
 }

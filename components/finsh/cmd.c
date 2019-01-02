@@ -199,7 +199,7 @@ long list_sem(void)
 
     return _list_sem(&info->object_list);
 }
-FINSH_FUNCTION_EXPORT(list_sem, list semaphone in system);
+FINSH_FUNCTION_EXPORT(list_sem, list semaphore in system);
 MSH_CMD_EXPORT(list_sem, list semaphore in system);
 #endif
 
