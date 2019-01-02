@@ -33,16 +33,8 @@
 #define EXT_SDRAM_END      (EXT_SDRAM_BEGIN + EXT_SDRAM_SIZE)
 // </e>
 
-#ifdef __CC_ARM
-extern int Image$$RW_IRAM1$$ZI$$Limit;
-#define HEAP_BEGIN    (&Image$$RW_IRAM1$$ZI$$Limit)
-#elif __ICCARM__
-#pragma section="HEAP"
-#define HEAP_BEGIN    (__segment_end("HEAP"))
-#else
-extern int __bss_end;
-#define HEAP_BEGIN    (&__bss_end)
-#endif
+
+#define HEAP_BEGIN       0x24000000
 
 // <o> Internal SRAM memory size[Kbytes] <8-64>
 //  <i>Default: 64

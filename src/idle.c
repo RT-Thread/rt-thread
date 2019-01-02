@@ -265,7 +265,7 @@ static void rt_thread_idle_entry(void *parameter)
  */
 void rt_thread_idle_init(void)
 {
-    int i;
+    rt_ubase_t i;
     char tidle_name[RT_NAME_MAX];
 
     for (i = 0; i < _CPUS_NR; i++)

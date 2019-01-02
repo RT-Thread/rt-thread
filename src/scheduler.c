@@ -445,8 +445,8 @@ void rt_schedule(void)
                 /* switch to new thread */
                 RT_DEBUG_LOG(RT_DEBUG_SCHEDULER,
                         ("[%d]switch to priority#%d "
-                         "thread:%.*s(sp:0x%p), "
-                         "from thread:%.*s(sp: 0x%p)\n",
+                         "thread:%.*s(sp:0x%08x), "
+                         "from thread:%.*s(sp: 0x%08x)\n",
                          rt_interrupt_nest, highest_ready_priority,
                          RT_NAME_MAX, to_thread->name, to_thread->sp,
                          RT_NAME_MAX, from_thread->name, from_thread->sp));
@@ -612,7 +612,7 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
         rt_list_insert_before(&(rt_thread_priority_table[thread->current_priority]),
                               &(thread->tlist));
         cpu_mask = RT_CPU_MASK ^ (1 << cpu_id);
-        rt_hw_ipi_send(RT_SCHEDULE_IPI_IRQ, cpu_mask);
+        rt_hw_ipi_send(RT_SCHEDULE_IPI, cpu_mask);
     }
     else
     {
@@ -629,7 +629,7 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
         if (cpu_id != bind_cpu)
         {
             cpu_mask = 1 << bind_cpu;
-            rt_hw_ipi_send(RT_SCHEDULE_IPI_IRQ, cpu_mask);
+            rt_hw_ipi_send(RT_SCHEDULE_IPI, cpu_mask);
         }
     }
 

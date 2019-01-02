@@ -95,15 +95,22 @@ void _Error_Handler(char *s, int num)
  */
 RT_WEAK void rt_hw_board_init()
 {
+#ifdef SCB_EnableICache
+    /* Enable I-Cache---------------------------------------------------------*/
+    SCB_EnableICache();
+#endif
+
+#ifdef SCB_EnableDCache
+    /* Enable D-Cache---------------------------------------------------------*/
+    SCB_EnableDCache();
+#endif
+
     /* HAL_Init() function is called at the beginning of the program */
     HAL_Init();
 
     /* System clock initialization */
     SystemClock_Config();
     rt_hw_systick_init();
-
-    /* Hardware GPIO initialization */
-    MX_GPIO_Init();
 
     /* Heap initialization */
 #if defined(RT_USING_HEAP)

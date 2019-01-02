@@ -270,7 +270,10 @@ long _sys_flen(FILEHANDLE fh)
 
 int _sys_istty(FILEHANDLE fh)
 {
-    return 0;
+    if((STDIN <= fh) && (fh <= STDERR))
+        return 1;
+    else
+        return 0;
 }
 
 int remove(const char *filename)

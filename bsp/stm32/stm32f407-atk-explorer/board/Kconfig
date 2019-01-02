@@ -12,11 +12,9 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART1
         default y
 
-    config BSP_USING_SPI_FLASH
-        bool "Enable SPI FLASH (w25q128 spi1)"
-        select BSP_USING_SPI1
-        select RT_USING_SFUD
-        select RT_SFUD_USING_SFDP
+    config BSP_USING_COM2
+        bool "Enable COM2 (uart2 pin conflict with Ethernet and PWM)"
+        select BSP_USING_UART2
         default n
 
     config BSP_USING_COM3
@@ -24,26 +22,39 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART3
         default n
 
+    config BSP_USING_SPI_FLASH
+        bool "Enable SPI FLASH (w25q128 spi1)"
+        select BSP_USING_SPI1
+        select RT_USING_SFUD
+        select RT_SFUD_USING_SFDP
+        default n
+
     config BSP_USING_EEPROM
         bool "Enable I2C EEPROM (i2c1)"
         select BSP_USING_I2C1
         default n
 
+    config PHY_USING_LAN8720A
+        bool
+    
     config BSP_USING_ETH
         bool "Enable Ethernet"
         default n
         select RT_USING_LWIP
-        if BSP_USING_ETH
-            config EXTERNAL_PHY_ADDRESS
-                hex
-                default 0x00
-        endif
+        select PHY_USING_LAN8720A
 
     config BSP_USING_MPU6050
         bool "Enable MPU6050 (i2c1)"
         default n
         select BSP_USING_I2C1
         select PKG_USING_MPU6XXX
+
+    config BSP_USING_SDCARD
+        bool "Enable SDCARD (sdio)"
+        select BSP_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        default n
 
 endmenu
 
@@ -59,27 +70,46 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SERIAL
         default y
 
-    config BSP_USING_UART2
-        bool "Enable UART2"
-        select RT_USING_SERIAL
-        default n
-
     config BSP_USING_UART3
         bool "Enable UART3"
         select RT_USING_SERIAL
         default n
 
-    config BSP_USING_UART6
-        bool "Enable UART6"
-        select RT_USING_SERIAL
+    menuconfig BSP_USING_TIM
+        bool "Enable timer"
         default n
-        
+        select RT_USING_HWTIMER
+        if BSP_USING_TIM
+            config BSP_USING_TIM11
+                bool "Enable TIM11"
+                default n
+
+            config BSP_USING_TIM13
+                bool "Enable TIM13"
+                default n
+
+            config BSP_USING_TIM14
+                bool "Enable TIM14"
+                default n
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable pwm"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+        menuconfig BSP_USING_PWM2
+            bool "Enable timer2 output pwm"
+            default n
+            if BSP_USING_PWM2
+                config BSP_USING_PWM2_CH4
+                    bool "Enable PWM2 channel4"
+                    default n
+            endif
+        endif
+
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
-        default n
-
-    config BSP_UART_USING_DMA_RX
-        bool "Enable UART RX DMA support"
         default n
 
     config BSP_USING_SPI1
@@ -89,11 +119,6 @@ menu "On-chip Peripheral Drivers"
 
     config BSP_USING_SPI2
         bool "Enable SPI2 BUS"
-        select RT_USING_SPI
-        default n
-
-    config BSP_USING_SPI3
-        bool "Enable SPI3 BUS"
         select RT_USING_SPI
         default n
 
@@ -108,14 +133,6 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_ADC
             config BSP_USING_ADC1
                 bool "Enable ADC1"
-                default n
-
-            config BSP_USING_ADC2
-                bool "Enable ADC2"
-                default n
-
-            config BSP_USING_ADC3
-                bool "Enable ADC3"
                 default n
         endif
 
@@ -145,6 +162,12 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_WDT
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
+        default n
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
         default n
 
 endmenu
