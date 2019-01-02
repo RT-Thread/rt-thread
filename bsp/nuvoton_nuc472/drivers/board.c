@@ -22,7 +22,7 @@ extern int Image$$RW_IRAM1$$ZI$$Limit;
 #elif __ICCARM__
 #pragma section="HEAP"
 #else
-extern int __bss_end__;
+extern int __bss_end;
 #endif
 
 /**
@@ -80,7 +80,7 @@ void rt_hw_board_init(void)
     rt_system_heap_init(__segment_end("HEAP"), (void*)SRAM_END);
 #else
     /* init memory system */
-    rt_system_heap_init((void*)&__bss_end__, (void*)SRAM_END);
+    rt_system_heap_init((void*)&__bss_end, (void*)SRAM_END);
 #endif
 #endif /* RT_USING_HEAP */
 

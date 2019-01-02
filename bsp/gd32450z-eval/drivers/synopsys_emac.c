@@ -1,7 +1,7 @@
 /*
  * File      : rthw.h
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 /* Global pointers on Tx and Rx descriptor used to track transmit and receive descriptors */
 extern EMAC_DMADESCTypeDef  *DMATxDescToSet;
 extern EMAC_DMADESCTypeDef  *DMARxDescToGet;
-
 
 /**
   * Initializes the ETHERNET peripheral according to the specified

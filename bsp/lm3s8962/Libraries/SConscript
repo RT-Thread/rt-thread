@@ -4,7 +4,7 @@ from building import *
 
 # The set of source files associated with this SConscript file.
 cwd     = GetCurrentDir()
-src = Glob('driverlib/*.c')
+src     = Glob('driverlib/*.c')
 
 # cortex-m3 no FPU.
 if rtconfig.PART_TYPE.startswith('PART_LM4F') != True:
@@ -18,9 +18,9 @@ elif rtconfig.CROSS_TOOL == 'keil':
 elif rtconfig.CROSS_TOOL == 'iar':
 	src += ['startup/iar/start_iar.S']
 
-CPPPATH = [cwd]
-
+CPPPATH    = [cwd]
 CPPDEFINES = [rtconfig.PART_TYPE]
+
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
 Return('group')

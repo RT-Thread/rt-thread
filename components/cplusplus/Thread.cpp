@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #include "Thread.h"
 
 using namespace rtthread;
@@ -6,7 +14,7 @@ Thread::Thread(rt_uint32_t stack_size,
                rt_uint8_t  priority,
                rt_uint32_t tick,
                const char *name)
-: _entry(RT_NULL), started(false)
+: _entry(RT_NULL), _param(RT_NULL), started(false)
 {
     rt_event_init(&_event, name, 0);
 
@@ -24,7 +32,7 @@ Thread::Thread(void (*entry)(void *p),
                rt_uint8_t  priority,
                rt_uint32_t tick,
                const char *name)
-: _entry(RT_NULL), started(false), _param(p)
+: _entry(RT_NULL), _param(p), started(false)
 {
     rt_event_init(&_event, name, 0);
 

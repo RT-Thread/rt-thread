@@ -1,11 +1,7 @@
 /*
- * File      : application.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -26,7 +22,7 @@
 #include <dfs_posix.h>
 #endif
 
-#ifdef RT_USING_GUIENGINE
+#ifdef PKG_USING_GUIENGINE
 #include "rtgui_demo.h"
 #include <rtgui/driver.h>
 #endif
@@ -63,7 +59,7 @@ void rt_init_thread_entry(void* parameter)
         
 #endif /* DFS */
     
-#ifdef RT_USING_GUIENGINE
+#ifdef PKG_USING_GUIENGINE
 	{
 		rt_device_t device;
 

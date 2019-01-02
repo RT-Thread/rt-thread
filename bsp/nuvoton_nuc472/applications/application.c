@@ -15,7 +15,14 @@
 
 int main(void)
 {
-    while(1){
+#ifdef RT_USING_LWIP
+    /* initialize eth interface */
+    extern void rt_hw_nuc472_emac_init(void);
+    rt_hw_nuc472_emac_init();
+#endif /* RT_USING_LWIP */
+  
+    while(1)
+    {
         rt_thread_delay(RT_TICK_PER_SECOND);
     }
 }

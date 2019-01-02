@@ -1,0 +1,37 @@
+
+
+config TINA_USING_UART0
+    bool "Using UART0"
+    select RT_USING_SERIAL
+    default n
+
+config TINA_USING_UART1
+    bool "Using UART1"
+    select RT_USING_SERIAL
+    default y
+
+config TINA_USING_UART2
+    bool "Using UART2"
+    select RT_USING_SERIAL
+    default y
+
+config TINA_USING_SDIO0
+    bool "Using SDIO0"
+    select RT_USING_SDIO
+    default y
+
+config TINA_USING_SPI0
+    bool "Using spi0"
+    select RT_USING_SPI
+    default y
+
+config TINA_USING_SPI1
+    bool "Using spi1"
+    select RT_USING_SPI
+    default y
+
+config TINA_USING_SPI_FLASH
+    bool "Using flash"
+    select TINA_USING_SPI0
+    select RT_USING_SFUD
+    default y

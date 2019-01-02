@@ -1,11 +1,8 @@
 /*
- * File      : dev_gpio.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
+ *
  *
  * Change Logs:
  * Date           Author            Notes
@@ -16,17 +13,14 @@
 #include <board.h>
 #include <drv_spi.h>
 #ifdef RT_USING_SPI
-
 #define SPIRXEVENT 0x01
 #define SPITXEVENT 0x02
 #define SPITIMEOUT 2
 #define SPICRCEN 0
-
 struct stm32_hw_spi_cs
 {
     rt_uint32_t pin;
 };
-
 
 struct stm32_spi
 {
@@ -34,12 +28,10 @@ struct stm32_spi
     struct rt_spi_configuration *cfg;
 };
 
-
 static rt_err_t stm32_spi_init(SPI_TypeDef *spix, struct rt_spi_configuration *cfg)
 {
     SPI_HandleTypeDef hspi;
     hspi.Instance = spix;
-
     if (cfg->mode & RT_SPI_SLAVE)
     {
         hspi.Init.Mode = SPI_MODE_SLAVE;
@@ -145,6 +137,7 @@ static rt_err_t stm32_spi_init(SPI_TypeDef *spix, struct rt_spi_configuration *c
     __HAL_SPI_ENABLE(&hspi);
     return RT_EOK;
 }
+
 #define SPISTEP(datalen) (((datalen) == 8) ? 1 : 2)
 #define SPISEND_1(reg, ptr, datalen)       \
     do                                     \
@@ -195,6 +188,7 @@ static rt_err_t spitxrx1b(struct stm32_spi *hspi, void *rcvb, const void *sndb)
     SPIRECV_1(hspi->Instance->DR, rcvb, hspi->cfg->data_width);
     return RT_EOK;
 }
+
 static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     rt_err_t res;
@@ -203,7 +197,6 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     RT_ASSERT(device->bus->parent.user_data != RT_NULL);
     struct stm32_spi *hspi = (struct stm32_spi *)device->bus->parent.user_data;
     struct stm32_hw_spi_cs *cs = device->parent.user_data;
-
     if (message->cs_take)
     {
         rt_pin_write(cs->pin, 0);
@@ -237,7 +230,6 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     }
     return message->length - length;
 }
-
 
 rt_err_t spi_configure(struct rt_spi_device *device,
                        struct rt_spi_configuration *configuration)
@@ -378,34 +370,3 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef *spiHandle)
     }
 }
 #endif /*RT_USING_SPI*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

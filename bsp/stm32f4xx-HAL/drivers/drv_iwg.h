@@ -1,11 +1,7 @@
 /*
- * File      : drv_iwg.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
@@ -14,15 +10,4 @@
 #ifndef __DRV_IWG_H__
 #define __DRV_IWG_H__
 extern int rt_iwg_init(void);
-
 #endif
-
-
-
-
-
-
-
-
-
-

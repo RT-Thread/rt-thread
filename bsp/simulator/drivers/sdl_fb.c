@@ -97,6 +97,7 @@ static rt_err_t  sdlfb_control(rt_device_t dev, int cmd, void *args)
         info->height = device->height;
     }
     break;
+
     case RTGRAPHIC_CTRL_RECT_UPDATE:
     {
         SDL_Texture * texture;

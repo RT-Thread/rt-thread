@@ -24,13 +24,11 @@
 * 2016-01-15     ArdaFu       the first version for stm32f4xx with STM32 HAL
 * 2016-01-15     zyh          the first version for stm32f401rc with STM32 HAL
 */
-
 #include "drv_usart.h"
 #include "board.h"
 #include <rtdevice.h>
 #include <rthw.h>
 #include <rtthread.h>
-
 /* STM32 uart driver */
 struct drv_uart
 {
@@ -39,20 +37,16 @@ struct drv_uart
 };
 
 static rt_err_t drv_configure(struct rt_serial_device *serial,
-struct serial_configure *cfg)
+                              struct serial_configure *cfg)
 {
     struct drv_uart *uart;
-
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
-
     uart = (struct drv_uart *)serial->parent.user_data;
-
     uart->UartHandle.Init.BaudRate   = cfg->baud_rate;
     uart->UartHandle.Init.HwFlowCtl  = UART_HWCONTROL_NONE;
     uart->UartHandle.Init.Mode       = UART_MODE_TX_RX;
     uart->UartHandle.Init.OverSampling = UART_OVERSAMPLING_16;
-
     switch (cfg->data_bits)
     {
     case DATA_BITS_8:
@@ -92,23 +86,19 @@ struct serial_configure *cfg)
         uart->UartHandle.Init.Parity     = UART_PARITY_NONE;
         break;
     }
-
     if (HAL_UART_Init(&uart->UartHandle) != HAL_OK)
     {
         return RT_ERROR;
     }
-
     return RT_EOK;
 }
 
 static rt_err_t drv_control(struct rt_serial_device *serial,
-int cmd, void *arg)
+                            int cmd, void *arg)
 {
     struct drv_uart *uart;
-
     RT_ASSERT(serial != RT_NULL);
     uart = (struct drv_uart *)serial->parent.user_data;
-
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
@@ -124,19 +114,17 @@ int cmd, void *arg)
         __HAL_UART_ENABLE_IT(&uart->UartHandle, UART_IT_RXNE);
         break;
     }
-
     return RT_EOK;
 }
 
 static int drv_putc(struct rt_serial_device *serial, char c)
 {
     struct drv_uart *uart;
-
     RT_ASSERT(serial != RT_NULL);
     uart = (struct drv_uart *)serial->parent.user_data;
-    
-    while((__HAL_UART_GET_FLAG(&uart->UartHandle, UART_FLAG_TXE) == RESET));
+    __HAL_UART_CLEAR_FLAG(&(uart->UartHandle), UART_FLAG_TC);
     uart->UartHandle.Instance->DR = c;
+    while (__HAL_UART_GET_FLAG(&(uart->UartHandle), UART_FLAG_TC) == RESET);
     return 1;
 }
 
@@ -144,12 +132,10 @@ static int drv_getc(struct rt_serial_device *serial)
 {
     int ch;
     struct drv_uart *uart;
-
     RT_ASSERT(serial != RT_NULL);
     uart = (struct drv_uart *)serial->parent.user_data;
-
     ch = -1;
-    if (__HAL_UART_GET_FLAG(&uart->UartHandle, UART_FLAG_RXNE) != RESET) 
+    if (__HAL_UART_GET_FLAG(&uart->UartHandle, UART_FLAG_RXNE) != RESET)
         ch = uart->UartHandle.Instance->DR & 0xff;
     return ch;
 }
@@ -161,19 +147,17 @@ static const struct rt_uart_ops drv_uart_ops =
     drv_putc,
     drv_getc,
 };
-#if defined(RT_USING_UART1)
+
+#if defined(BSP_USING_UART1)
 /* UART1 device driver structure */
 static struct drv_uart uart1;
 struct rt_serial_device serial1;
-
 void USART1_IRQHandler(void)
 {
     struct drv_uart *uart;
-
     uart = &uart1;
     /* enter interrupt */
     rt_interrupt_enter();
-
     /* UART in mode Receiver -------------------------------------------------*/
     if ((__HAL_UART_GET_FLAG(&uart->UartHandle, UART_FLAG_RXNE) != RESET) &&
             (__HAL_UART_GET_IT_SOURCE(&uart->UartHandle, UART_IT_RXNE) != RESET))
@@ -185,22 +169,18 @@ void USART1_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
+#endif /* BSP_USING_UART1 */
 
-#endif /* RT_USING_UART1 */
-#if defined(RT_USING_UART2)
+#if defined(BSP_USING_UART2)
 /* UART2 device driver structure */
-
 static struct drv_uart uart2;
 struct rt_serial_device serial2;
-
 void USART2_IRQHandler(void)
 {
     struct drv_uart *uart;
-
     uart = &uart2;
     /* enter interrupt */
     rt_interrupt_enter();
-
     /* UART in mode Receiver -------------------------------------------------*/
     if ((__HAL_UART_GET_FLAG(&uart->UartHandle, UART_FLAG_RXNE) != RESET) &&
             (__HAL_UART_GET_IT_SOURCE(&uart->UartHandle, UART_IT_RXNE) != RESET))
@@ -212,23 +192,41 @@ void USART2_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
+#endif /* BSP_USING_UART2 */
 
-#endif /* RT_USING_UART2 */
+#if defined(BSP_USING_UART3)
+/* UART3 device driver structure */
+static struct drv_uart uart3;
+struct rt_serial_device serial3;
+void USART3_IRQHandler(void)
+{
+    struct drv_uart *uart;
+    uart = &uart3;
+    /* enter interrupt */
+    rt_interrupt_enter();
+    /* UART in mode Receiver -------------------------------------------------*/
+    if ((__HAL_UART_GET_FLAG(&uart->UartHandle, UART_FLAG_RXNE) != RESET) &&
+            (__HAL_UART_GET_IT_SOURCE(&uart->UartHandle, UART_IT_RXNE) != RESET))
+    {
+        rt_hw_serial_isr(&serial3, RT_SERIAL_EVENT_RX_IND);
+        /* Clear RXNE interrupt flag */
+        __HAL_UART_CLEAR_FLAG(&uart->UartHandle, UART_FLAG_RXNE);
+    }
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif /* BSP_USING_UART3 */
 
-#if defined(RT_USING_UART6)
-/* UART2 device driver structure */
-
+#if defined(BSP_USING_UART6)
+/* UART6 device driver structure */
 static struct drv_uart uart6;
 struct rt_serial_device serial6;
-
 void USART6_IRQHandler(void)
 {
     struct drv_uart *uart;
-
     uart = &uart6;
     /* enter interrupt */
     rt_interrupt_enter();
-
     /* UART in mode Receiver -------------------------------------------------*/
     if ((__HAL_UART_GET_FLAG(&uart->UartHandle, UART_FLAG_RXNE) != RESET) &&
             (__HAL_UART_GET_IT_SOURCE(&uart->UartHandle, UART_IT_RXNE) != RESET))
@@ -240,8 +238,7 @@ void USART6_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-
-#endif /* RT_USING_UART3 */
+#endif /* BSP_USING_UART6 */
 
 /**
 * @brief UART MSP Initialization
@@ -252,138 +249,183 @@ void USART6_IRQHandler(void)
 * @param huart: UART handle pointer
 * @retval None
 */
-void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
+void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle)
 {
-
-  GPIO_InitTypeDef GPIO_InitStruct;
-  if(uartHandle->Instance==USART1)
-  {
-    /* USART1 clock enable */
-    __HAL_RCC_USART1_CLK_ENABLE();
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-    /**USART1 GPIO Configuration    
-    PA9     ------> USART1_TX
-    PA10     ------> USART1_RX 
-    */
-    GPIO_InitStruct.Pin = GPIO_PIN_9|GPIO_PIN_10;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_PULLUP;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-  }
-  else if(uartHandle->Instance==USART2)
-  {
-    /* USART2 clock enable */
-    __HAL_RCC_USART2_CLK_ENABLE();
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-    /**USART2 GPIO Configuration    
-    PA2     ------> USART2_TX
-    PA3     ------> USART2_RX 
-    */
-    GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_3;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_PULLUP;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF7_USART2;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-  }
-  else if(uartHandle->Instance==USART6)
-  {
-    /* USART6 clock enable */
-    __HAL_RCC_USART6_CLK_ENABLE();
-    __HAL_RCC_GPIOC_CLK_ENABLE();
-    /**USART6 GPIO Configuration    
-    PC6     ------> USART6_TX
-    PC7     ------> USART6_RX 
-    */
-    GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_PULLUP;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF8_USART6;
-    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-  }
+    GPIO_InitTypeDef GPIO_InitStruct;
+#ifdef BSP_USING_UART1
+    if (uartHandle->Instance == USART1)
+    {
+        /* USART1 clock enable */
+        __HAL_RCC_USART1_CLK_ENABLE();
+        __HAL_RCC_GPIOA_CLK_ENABLE();
+        /**USART1 GPIO Configuration
+        PA9     ------> USART1_TX
+        PA10     ------> USART1_RX
+        */
+        GPIO_InitStruct.Pin = GPIO_PIN_9 | GPIO_PIN_10;
+        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Pull = GPIO_PULLUP;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+        GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
+        HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    }
+#endif /* BSP_USING_UART1 */
+#ifdef BSP_USING_UART2
+    if (uartHandle->Instance == USART2)
+    {
+        /* USART2 clock enable */
+        __HAL_RCC_USART2_CLK_ENABLE();
+        __HAL_RCC_GPIOA_CLK_ENABLE();
+        /**USART2 GPIO Configuration
+        PA2     ------> USART2_TX
+        PA3     ------> USART2_RX
+        */
+        GPIO_InitStruct.Pin = GPIO_PIN_2 | GPIO_PIN_3;
+        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Pull = GPIO_PULLUP;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+        GPIO_InitStruct.Alternate = GPIO_AF7_USART2;
+        HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    }
+#endif /* BSP_USING_UART2 */  
+#ifdef BSP_USING_UART3
+    if (uartHandle->Instance == USART3)
+    {
+        /* USART3 clock enable */
+        __HAL_RCC_USART3_CLK_ENABLE();
+        __HAL_RCC_GPIOB_CLK_ENABLE();
+        /**USART3 GPIO Configuration
+        PB10    ------> USART3_TX
+        PB11    ------> USART3_RX
+        */
+        GPIO_InitStruct.Pin = GPIO_PIN_10 | GPIO_PIN_11;
+        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Pull = GPIO_PULLUP;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+        GPIO_InitStruct.Alternate = GPIO_AF7_USART3;
+        HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+    }
+#endif /* BSP_USING_UART3 */
+#ifdef BSP_USING_UART6
+    if (uartHandle->Instance == USART6)
+    {
+        /* USART6 clock enable */
+        __HAL_RCC_USART6_CLK_ENABLE();
+        __HAL_RCC_GPIOC_CLK_ENABLE();
+        /**USART6 GPIO Configuration
+        PC6     ------> USART6_TX
+        PC7     ------> USART6_RX
+        */
+        GPIO_InitStruct.Pin = GPIO_PIN_6 | GPIO_PIN_7;
+        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Pull = GPIO_PULLUP;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+        GPIO_InitStruct.Alternate = GPIO_AF8_USART6;
+        HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+    }
+#endif /* BSP_USING_UART6 */
 }
 
-void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
+void HAL_UART_MspDeInit(UART_HandleTypeDef *uartHandle)
 {
-
-  if(uartHandle->Instance==USART1)
-  {
-    /* Peripheral clock disable */
-    __HAL_RCC_USART1_CLK_DISABLE();
-  
-    /**USART1 GPIO Configuration    
-    PA9     ------> USART1_TX
-    PA10     ------> USART1_RX 
-    */
-    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_9|GPIO_PIN_10);
-  }
-  else if(uartHandle->Instance==USART2)
-  {
-    /* Peripheral clock disable */
-    __HAL_RCC_USART2_CLK_DISABLE();
-  
-    /**USART2 GPIO Configuration    
-    PA2     ------> USART2_TX
-    PA3     ------> USART2_RX 
-    */
-    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_2|GPIO_PIN_3);
-  }
-  else if(uartHandle->Instance==USART6)
-  {
-    /* Peripheral clock disable */
-    __HAL_RCC_USART6_CLK_DISABLE();
-  
-    /**USART6 GPIO Configuration    
-    PC6     ------> USART6_TX
-    PC7     ------> USART6_RX 
-    */
-    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_6|GPIO_PIN_7);
-  }
-} 
+#ifdef BSP_USING_UART1
+    if (uartHandle->Instance == USART1)
+    {
+        /* Peripheral clock disable */
+        __HAL_RCC_USART1_CLK_DISABLE();
+        /**USART1 GPIO Configuration
+        PA9     ------> USART1_TX
+        PA10     ------> USART1_RX
+        */
+        HAL_GPIO_DeInit(GPIOA, GPIO_PIN_9 | GPIO_PIN_10);
+    }
+#endif /* BSP_USING_UART1 */
+#ifdef BSP_USING_UART2    
+    if (uartHandle->Instance == USART2)
+    {
+        /* Peripheral clock disable */
+        __HAL_RCC_USART2_CLK_DISABLE();
+        /**USART2 GPIO Configuration
+        PA2     ------> USART2_TX
+        PA3     ------> USART2_RX
+        */
+        HAL_GPIO_DeInit(GPIOA, GPIO_PIN_2 | GPIO_PIN_3);
+    }
+#endif /* BSP_USING_UART2 */  
+#ifdef BSP_USING_UART3    
+    if (uartHandle->Instance == USART3)
+    {
+        /* Peripheral clock disable */
+        __HAL_RCC_USART3_CLK_DISABLE();
+        /**USART3 GPIO Configuration
+        PB10    ------> USART3_TX
+        PB11    ------> USART3_RX
+        */
+        HAL_GPIO_DeInit(GPIOB, GPIO_PIN_10 | GPIO_PIN_11);
+    }
+#endif /* BSP_USING_UART3 */
+#ifdef BSP_USING_UART6
+    if (uartHandle->Instance == USART6)
+    {
+        /* Peripheral clock disable */
+        __HAL_RCC_USART6_CLK_DISABLE();
+        /**USART6 GPIO Configuration
+        PC6     ------> USART6_TX
+        PC7     ------> USART6_RX
+        */
+        HAL_GPIO_DeInit(GPIOC, GPIO_PIN_6 | GPIO_PIN_7);
+    }
+#endif /* BSP_USING_UART6 */
+}
 
 int hw_usart_init(void)
 {
     struct drv_uart *uart;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
-#ifdef RT_USING_UART1
+#ifdef BSP_USING_UART1
     uart = &uart1;
     uart->UartHandle.Instance = USART1;
-		uart->irq = USART1_IRQn;
+    uart->irq = USART1_IRQn;
     serial1.ops    = &drv_uart_ops;
     serial1.config = config;
-
     /* register UART1 device */
     rt_hw_serial_register(&serial1, "uart1",
-    RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-    uart);
-#endif /* RT_USING_UART1 */
-#ifdef RT_USING_UART2
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                          uart);
+#endif /* BSP_USING_UART1 */
+#ifdef BSP_USING_UART2
     uart = &uart2;
     uart->UartHandle.Instance = USART2;
-		uart->irq = USART2_IRQn;
+    uart->irq = USART2_IRQn;
     serial2.ops    = &drv_uart_ops;
     serial2.config = config;
-
     /* register UART2 device */
     rt_hw_serial_register(&serial2, "uart2",
-    RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-    uart);
-#endif /* RT_USING_UART2 */
-#ifdef RT_USING_UART6
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                          uart);
+#endif /* BSP_USING_UART2 */
+#ifdef BSP_USING_UART3
+    uart = &uart3;
+    uart->UartHandle.Instance = USART3;
+    uart->irq = USART3_IRQn;
+    serial3.ops    = &drv_uart_ops;
+    serial3.config = config;
+    /* register UART3 device */
+    rt_hw_serial_register(&serial3, "uart3",
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                          uart);
+#endif /* BSP_USING_UART3 */
+#ifdef BSP_USING_UART6
     uart = &uart6;
     uart->UartHandle.Instance = USART6;
-		uart->irq = USART6_IRQn;
+    uart->irq = USART6_IRQn;
     serial6.ops    = &drv_uart_ops;
     serial6.config = config;
-
-    /* register UART2 device */
+    /* register UART6 device */
     rt_hw_serial_register(&serial6, "uart6",
-    RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-    uart);
-#endif /* RT_USING_UART2 */
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                          uart);
+#endif /* BSP_USING_UART6 */
 
     return 0;
 }

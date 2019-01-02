@@ -1,24 +1,6 @@
 /*
- * File      : ethernetif.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2010, RT-Thread Development Team
- *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
- *
- * Change Logs:
- * Date           Author       Notes
- * 2010-07-07     Bernard      fix send mail to mailbox issue.
- * 2011-07-30     mbbill       port lwIP 1.4.0 to RT-Thread
- * 2012-04-10     Bernard      add more compatible with RT-Thread.
- * 2012-11-12     Bernard      The network interface can be initialized
- *                             after lwIP initialization.
- * 2013-02-28     aozima       fixed list_tcps bug: ipaddr_ntoa isn't reentrant.
- */
-
-/*
  * Copyright (c) 2001-2004 Swedish Institute of Computer Science.
+ * COPYRIGHT (C) 2006-2010, RT-Thread Development Team
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -47,6 +29,14 @@
  *
  * Author: Adam Dunkels <adam@sics.se>
  *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2010-07-07     Bernard      fix send mail to mailbox issue.
+ * 2011-07-30     mbbill       port lwIP 1.4.0 to RT-Thread
+ * 2012-04-10     Bernard      add more compatible with RT-Thread.
+ * 2012-11-12     Bernard      The network interface can be initialized
+ *                             after lwIP initialization.
+ * 2013-02-28     aozima       fixed list_tcps bug: ipaddr_ntoa isn't reentrant.
  */
 
 #include <rtthread.h>
@@ -317,7 +307,7 @@ static void eth_tx_thread_entry(void* parameter)
 
     while (1)
     {
-        if (rt_mb_recv(&eth_tx_thread_mb, (rt_uint32_t*)&msg, RT_WAITING_FOREVER) == RT_EOK)
+        if (rt_mb_recv(&eth_tx_thread_mb, (rt_ubase_t*)&msg, RT_WAITING_FOREVER) == RT_EOK)
         {
             struct eth_device* enetif;
 
@@ -349,7 +339,7 @@ static void eth_rx_thread_entry(void* parameter)
 
     while (1)
     {
-        if (rt_mb_recv(&eth_rx_thread_mb, (rt_uint32_t*)&device, RT_WAITING_FOREVER) == RT_EOK)
+        if (rt_mb_recv(&eth_rx_thread_mb, (rt_ubase_t*)&device, RT_WAITING_FOREVER) == RT_EOK)
         {
             struct pbuf *p;
 
@@ -617,5 +607,35 @@ void list_tcps(void)
 }
 FINSH_FUNCTION_EXPORT(list_tcps, list all of tcp connections);
 #endif
+
+#if LWIP_UDP
+#include "lwip/udp.h"
+void list_udps(void)
+{
+    struct udp_pcb *pcb;
+    rt_uint32_t num = 0;
+    char local_ip_str[16];
+    char remote_ip_str[16];
+
+    rt_enter_critical();
+    rt_kprintf("Active UDP PCB states:\n");
+    for (pcb = udp_pcbs; pcb != NULL; pcb = pcb->next)
+    {
+        strcpy(local_ip_str, ipaddr_ntoa(&(pcb->local_ip)));
+        strcpy(remote_ip_str, ipaddr_ntoa(&(pcb->remote_ip)));
+
+        rt_kprintf("#%d %d %s:%d <==> %s:%d \n",
+                   num, (int)pcb->flags,
+                   local_ip_str,
+                   pcb->local_port,
+                   remote_ip_str,
+                   pcb->remote_port);
+
+        num++;
+    }
+    rt_exit_critical();
+}
+FINSH_FUNCTION_EXPORT(list_udps, list all of udp connections);
+#endif /* LWIP_UDP */
 
 #endif

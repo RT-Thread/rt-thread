@@ -7,7 +7,7 @@ src = Glob('*.c')
 if GetDepend('RT_USING_LWIP') == False:
     SrcRemove(src, 'sam7x_emac.c')
 if GetDepend('RT_USING_DFS') == False:
-    SrcRemove(src, 'ssd.c')
+    SrcRemove(src, 'sd.c')
 
 CPPPATH = [cwd]
 

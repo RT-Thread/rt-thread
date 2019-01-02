@@ -1,21 +1,7 @@
 /*
- * File      : dfs_ramfs.c
- * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2013, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -42,7 +28,7 @@ int dfs_ramfs_mount(struct dfs_filesystem *fs,
 
     ramfs = (struct dfs_ramfs *)data;
     fs->data = ramfs;
-
+    
     return RT_EOK;
 }
 
@@ -189,8 +175,11 @@ int dfs_ramfs_open(struct dfs_fd *file)
     rt_size_t size;
     struct dfs_ramfs *ramfs;
     struct ramfs_dirent *dirent;
+    struct dfs_filesystem *fs;
 
-    ramfs = (struct dfs_ramfs *)file->data;
+    fs = (struct dfs_filesystem *)file->data;
+
+    ramfs = (struct dfs_ramfs *)fs->data;
     RT_ASSERT(ramfs != NULL);
 
     if (file->flags & O_DIRECTORY)
@@ -450,12 +439,14 @@ struct dfs_ramfs* dfs_ramfs_create(rt_uint8_t *pool, rt_size_t size)
 
     /* initialize ramfs object */
     ramfs->magic = RAMFS_MAGIC;
+    ramfs->memheap.parent.type = RT_Object_Class_MemHeap | RT_Object_Class_Static;
 
     /* initialize root directory */
     memset(&(ramfs->root), 0x00, sizeof(ramfs->root));
     rt_list_init(&(ramfs->root.list));
     ramfs->root.size = 0;
     strcpy(ramfs->root.name, ".");
+    ramfs->root.fs = ramfs;
 
     return ramfs;
 }

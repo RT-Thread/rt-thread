@@ -80,7 +80,7 @@ objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
 def ObjRemove(objs, remove):
     for item in objs:
-        # print type(item), os.path.basename(str(item))
+        # print(type(item), os.path.basename(str(item)) )
         if os.path.basename(str(item)) in remove:
              objs.remove(item)
     return

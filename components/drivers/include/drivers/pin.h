@@ -1,21 +1,7 @@
 /*
- * File      : pin.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -52,6 +38,8 @@ struct rt_device_pin
 #define PIN_IRQ_MODE_RISING             0x00
 #define PIN_IRQ_MODE_FALLING            0x01
 #define PIN_IRQ_MODE_RISING_FALLING     0x02
+#define PIN_IRQ_MODE_HIGH_LEVEL         0x03
+#define PIN_IRQ_MODE_LOW_LEVEL          0x04
 
 #define PIN_IRQ_DISABLE                 0x00
 #define PIN_IRQ_ENABLE                  0x01
@@ -84,7 +72,7 @@ struct rt_pin_ops
     /* TODO: add GPIO interrupt */
     rt_err_t (*pin_attach_irq)(struct rt_device *device, rt_int32_t pin,
                       rt_uint32_t mode, void (*hdr)(void *args), void *args);
-    rt_err_t (*pin_dettach_irq)(struct rt_device *device, rt_int32_t pin);
+    rt_err_t (*pin_detach_irq)(struct rt_device *device, rt_int32_t pin);
     rt_err_t (*pin_irq_enable)(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled);
 };
 
@@ -95,11 +83,9 @@ void rt_pin_write(rt_base_t pin, rt_base_t value);
 int  rt_pin_read(rt_base_t pin);
 rt_err_t rt_pin_attach_irq(rt_int32_t pin, rt_uint32_t mode,
                              void (*hdr)(void *args), void  *args);
-rt_err_t rt_pin_dettach_irq(rt_int32_t pin);
+rt_err_t rt_pin_detach_irq(rt_int32_t pin);
 rt_err_t rt_pin_irq_enable(rt_base_t pin, rt_uint32_t enabled);
 
-int rt_device_pin_irq_register(const char *name, const struct rt_pin_ops *ops,
-                                                              void *user_data);
 #ifdef __cplusplus
 }
 #endif

@@ -121,14 +121,14 @@ static rt_err_t pl180_transfer_command(struct sdhci_pl180_pdata_t * pdat, struct
     do {
         status = read32(pdat->virt + PL180_STATUS);
     } while(!(status & (PL180_STAT_CMD_SENT | PL180_STAT_CMD_RESP_END | PL180_STAT_CMD_TIME_OUT | PL180_STAT_CMD_CRC_FAIL)));
-    dbg_log(DBG_LOG, "mmc status done!\n");
+    LOG_D("mmc status done!");
 
     if(cmd->resptype & PL180_RSP_PRESENT)
     {
         cmd->response[0] = read32(pdat->virt + PL180_RESP0);
         if(cmd->resptype & PL180_RSP_136BIT)
         {
-            dbg_log(DBG_LOG, "136bit response\n");
+            LOG_D("136bit response");
             cmd->response[1] = read32(pdat->virt + PL180_RESP1);
             cmd->response[2] = read32(pdat->virt + PL180_RESP2);
             cmd->response[3] = read32(pdat->virt + PL180_RESP3);
@@ -344,17 +344,17 @@ static void mmc_request_send(struct rt_mmcsd_host *host, struct rt_mmcsd_req *re
         req->cmd->err = sdhci_pl180_transfer(sdhci, &cmd, RT_NULL);
     }
 
-    dbg_log(DBG_INFO, "cmdarg:%d\n", cmd.cmdarg);
-    dbg_log(DBG_INFO, "cmdidx:%d\n", cmd.cmdidx);
+    LOG_I("cmdarg:%d", cmd.cmdarg);
+    LOG_I("cmdidx:%d", cmd.cmdidx);
 
-    dbg_log(DBG_INFO, "[0]:0x%08x [1]:0x%08x [2]:0x%08x [3]:0x%08x\n", cmd.response[0], cmd.response[1], cmd.response[2], cmd.response[3]);
+    LOG_I("[0]:0x%08x [1]:0x%08x [2]:0x%08x [3]:0x%08x", cmd.response[0], cmd.response[1], cmd.response[2], cmd.response[3]);
     req->cmd->resp[3] = cmd.response[3];
     req->cmd->resp[2] = cmd.response[2];
     req->cmd->resp[1] = cmd.response[1];
     req->cmd->resp[0] = cmd.response[0];
 
     if(req->cmd->err)
-        dbg_log(DBG_ERROR, "transfer cmd err \n");
+        LOG_E("transfer cmd err ");
     
     if (req->stop)
     {
@@ -381,7 +381,7 @@ static void mmc_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io
 
     sdhci_pl180_setclock(sdhci, io_cfg->clock);
     sdhci_pl180_setwidth(sdhci, io_cfg->bus_width);
-    dbg_log(DBG_INFO, "clock:%d bus_width:%d\n", io_cfg->clock, io_cfg->bus_width);
+    LOG_I("clock:%d bus_width:%d", io_cfg->clock, io_cfg->bus_width);
 }
 
 static const struct rt_mmcsd_host_ops ops = 
@@ -403,14 +403,14 @@ int pl180_init(void)
     host = mmcsd_alloc_host();
     if (!host)
     {
-        dbg_log(DBG_ERROR, "alloc host failed\n");
+        LOG_E("alloc host failed");
         goto err;
     }
 
     sdhci = rt_malloc(sizeof(struct sdhci_t));
     if (!sdhci)
     {
-        dbg_log(DBG_ERROR, "alloc sdhci failed\n");
+        LOG_E("alloc sdhci failed");
         goto err;
     }
     rt_memset(sdhci, 0, sizeof(struct sdhci_t));
@@ -421,10 +421,10 @@ int pl180_init(void)
                 ((read32((virt + 0xfe4)) & 0xff) <<  8) |
                 ((read32((virt + 0xfe0)) & 0xff) <<  0));
 
-    dbg_log(DBG_LOG, "id=0x%08x\n", id);
+    LOG_D("id=0x%08x", id);
     if(((id >> 12) & 0xff) != 0x41 || (id & 0xfff) != 0x181)
     {
-        dbg_log(DBG_ERROR, "check id  failed\n");
+        LOG_E("check id  failed");
         goto err;
     }
 

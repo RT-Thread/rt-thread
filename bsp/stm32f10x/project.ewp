@@ -165,6 +165,8 @@
           <state />
           <state>USE_STDPERIPH_DRIVER</state>
           <state>STM32F10X_HD</state>
+          <state>RT_USING_DLIBC</state>
+          <state>_DLIB_FILE_DESCRIPTOR</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -295,14 +297,18 @@
           <name>CCIncludePath2</name>
           <state />
           <state>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\inc</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat</state>
           <state>$PROJ_DIR$\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\include</state>
           <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\dlib</state>
           <state>$PROJ_DIR$\..\..\components\CMSIS\Include</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
           <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\filesystems\devfs</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x</state>
         </option>
@@ -1084,6 +1090,8 @@
           <state>NDEBUG</state>
           <state>USE_STDPERIPH_DRIVER</state>
           <state>STM32F10X_HD</state>
+          <state>RT_USING_DLIBC</state>
+          <state>_DLIB_FILE_DESCRIPTOR</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1214,14 +1222,18 @@
           <name>CCIncludePath2</name>
           <state />
           <state>$PROJ_DIR$\Libraries\STM32F10x_StdPeriph_Driver\inc</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat</state>
           <state>$PROJ_DIR$\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\include</state>
           <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\dlib</state>
           <state>$PROJ_DIR$\..\..\components\CMSIS\Include</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
           <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\filesystems\devfs</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x</state>
         </option>
@@ -1870,6 +1882,9 @@
     <file>
       <name>$PROJ_DIR$\drivers\bxcan.c</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\sdcard.c</name>
+    </file>
   </group>
   <group>
     <name>STM32_StdPeriph</name>
@@ -2013,6 +2028,36 @@
     </file>
   </group>
   <group>
+    <name>Filesystem</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\src\dfs.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\src\dfs_file.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\src\dfs_fs.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\src\dfs_posix.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\src\poll.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\src\select.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\devfs\devfs.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat\dfs_elm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat\ff.c</name>
+    </file>
+  </group>
+  <group>
     <name>DeviceDrivers</name>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\can\can.c</name>
@@ -2054,6 +2099,15 @@
       <name>$PROJ_DIR$\..\..\components\finsh\cmd.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\components\finsh\msh.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\finsh\msh_cmd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\finsh\msh_file.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\components\finsh\finsh_compiler.c</name>
     </file>
     <file>
@@ -2082,6 +2136,45 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\finsh\finsh_token.c</name>
+    </file>
+  </group>
+  <group>
+    <name>dlib</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\environ.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\libc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\rmtx.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\stdio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_close.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_open.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_read.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_write.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\time.c</name>
     </file>
   </group>
 </project>

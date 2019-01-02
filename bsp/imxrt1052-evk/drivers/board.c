@@ -16,9 +16,11 @@
 #include <rtthread.h>
 
 #include "board.h"
-#include "usart.h"
+#include "drv_uart.h"
 
+#if defined(RT_USING_SDRAM) && defined(RT_USING_MEMHEAP_AS_HEAP)
 static struct rt_memheap system_heap;
+#endif
 
 /* ARM PLL configuration for RUN mode */
 const clock_arm_pll_config_t armPllConfig = { .loopDivider = 100U };
@@ -46,40 +48,39 @@ static void BOARD_BootClockRUN(void)
     /* Boot ROM did initialize the XTAL, here we only sets external XTAL OSC freq */
     CLOCK_SetXtalFreq(24000000U);
     CLOCK_SetRtcXtalFreq(32768U);
-    
+
     CLOCK_SetMux(kCLOCK_PeriphClk2Mux, 0x1); /* Set PERIPH_CLK2 MUX to OSC */
-    CLOCK_SetMux(kCLOCK_PeriphMux, 0x1); /* Set PERIPH_CLK MUX to PERIPH_CLK2 */   
-    
+    CLOCK_SetMux(kCLOCK_PeriphMux, 0x1); /* Set PERIPH_CLK MUX to PERIPH_CLK2 */
+
     /* Setting the VDD_SOC to 1.5V. It is necessary to config AHB to 600Mhz */
     DCDC->REG3 = (DCDC->REG3 & (~DCDC_REG3_TRG_MASK)) | DCDC_REG3_TRG(0x12);
-    
+
     CLOCK_InitArmPll(&armPllConfig); /* Configure ARM PLL to 1200M */
 #ifndef SKIP_SYSCLK_INIT
     CLOCK_InitSysPll(&sysPllConfig); /* Configure SYS PLL to 528M */
 #endif
-#ifndef SKIP_USB_PLL_INIT    
+#ifndef SKIP_USB_PLL_INIT
     CLOCK_InitUsb1Pll(&usb1PllConfig); /* Configure USB1 PLL to 480M */
-#endif    
+#endif
     CLOCK_SetDiv(kCLOCK_ArmDiv, 0x1); /* Set ARM PODF to 0, divide by 2 */
-    CLOCK_SetDiv(kCLOCK_AhbDiv, 0x0); /* Set AHB PODF to 0, divide by 1 */ 
-    CLOCK_SetDiv(kCLOCK_IpgDiv, 0x3); /* Set IPG PODF to 3, divede by 4 */ 
-    
-    CLOCK_SetMux(kCLOCK_PrePeriphMux, 0x3); /* Set PRE_PERIPH_CLK to PLL1, 1200M */    
-    CLOCK_SetMux(kCLOCK_PeriphMux, 0x0); /* Set PERIPH_CLK MUX to PRE_PERIPH_CLK */       
-    
+    CLOCK_SetDiv(kCLOCK_AhbDiv, 0x0); /* Set AHB PODF to 0, divide by 1 */
+    CLOCK_SetDiv(kCLOCK_IpgDiv, 0x3); /* Set IPG PODF to 3, divede by 4 */
+
+    CLOCK_SetMux(kCLOCK_PrePeriphMux, 0x3); /* Set PRE_PERIPH_CLK to PLL1, 1200M */
+    CLOCK_SetMux(kCLOCK_PeriphMux, 0x0); /* Set PERIPH_CLK MUX to PRE_PERIPH_CLK */
+
     /* Disable unused clock */
-    BOARD_BootClockGate();    
-    
-    /* Power down all unused PLL */    
+    BOARD_BootClockGate();
+
+    /* Power down all unused PLL */
     CLOCK_DeinitAudioPll();
     CLOCK_DeinitVideoPll();
     CLOCK_DeinitEnetPll();
     CLOCK_DeinitUsb2Pll();
 
-    /* Configure UART divider to default */
-    CLOCK_SetMux(kCLOCK_UartMux, 0); /* Set UART source to PLL3 80M */
-    CLOCK_SetDiv(kCLOCK_UartDiv, 0); /* Set UART divider to 1 */    
-    
+    /* iomuxc clock (iomuxc_clk_enable): 0x03u */
+    CLOCK_EnableClock(kCLOCK_Iomuxc);
+
     /* Update core clock */
     SystemCoreClockUpdate();
 }
@@ -142,7 +143,6 @@ static void BOARD_ConfigMPU(void)
     SCB_EnableICache();
 }
 
-
 /**
  * This is the timer interrupt service routine.
  *
@@ -158,58 +158,47 @@ void SysTick_Handler(void)
     rt_interrupt_leave();
 }
 
-void rt_lowlevel_init(void)
+void SystemInitHook(void)
 {
     BOARD_ConfigMPU();
 
+#if defined(RT_USING_SDRAM)
     extern int imxrt_sdram_init(void);
     imxrt_sdram_init();
+#endif
 }
 
 /**
- * This function will initial LPC8XX board.
+ * This function will initial rt1050 board.
  */
 void rt_hw_board_init()
 {
     BOARD_BootClockRUN();
 
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
-    
+
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
-    
+
 #ifdef RT_USING_CONSOLE
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
-    
+
 #ifdef RT_USING_HEAP
+
+#if defined(RT_USING_SDRAM) && defined(RT_USING_MEMHEAP_AS_HEAP)
     rt_kprintf("sdram heap, begin: 0x%p, end: 0x%p\n", SDRAM_BEGIN, SDRAM_END);
-    rt_system_heap_init((void*)SDRAM_BEGIN, (void*)SDRAM_END);
+    rt_system_heap_init((void *)SDRAM_BEGIN, (void *)SDRAM_END);
 
     rt_kprintf("sram heap, begin: 0x%p, end: 0x%p\n", HEAP_BEGIN, HEAP_END);
     rt_memheap_init(&system_heap, "sram", (void *)HEAP_BEGIN, HEAP_SIZE);
+#else
+    rt_kprintf("sram heap, begin: 0x%p, end: 0x%p\n", HEAP_BEGIN, HEAP_END);
+    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
+#endif
+
 #endif
 }
-
-#ifdef RT_USING_GUIENGINE
-#include <rtgui/driver.h>
-#include "drv_lcd.h"
-
-/* initialize for gui driver */
-int rtgui_lcd_init(void)
-{
-    rt_device_t device;
-
-    imxrt_hw_lcd_init();
-
-    device = rt_device_find("lcd");
-    /* set graphic device */
-    rtgui_graphic_set_device(device);
-
-    return 0;
-}
-INIT_DEVICE_EXPORT(rtgui_lcd_init);
-#endif
 
 /*@}*/

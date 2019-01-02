@@ -1,25 +1,12 @@
 /*
- * File      : dfs_posix.c
- * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2009-05-27     Yi.qiu       The first version
+ * 2018-02-07     Bernard      Change the 3rd parameter of open/fcntl/ioctl to '...'
  */
 
 #include <dfs.h>
@@ -38,11 +25,10 @@
  *
  * @param file the path name of file.
  * @param flags the file open flags.
- * @param mode ignored parameter
  *
  * @return the non-negative integer on successful open, others for failed.
  */
-int open(const char *file, int flags, int mode)
+int open(const char *file, int flags, ...)
 {
     int fd, result;
     struct dfs_fd *d;
@@ -124,7 +110,7 @@ RTM_EXPORT(close);
  * @return the actual read data buffer length. If the returned value is 0, it
  * may be reach the end of file, please check errno.
  */
-#ifdef RT_USING_NEWLIB
+#if defined(RT_USING_NEWLIB) && defined(_EXFUN)
 _READ_WRITE_RETURN_TYPE _EXFUN(read, (int fd, void *buf, size_t len))
 #else
 int read(int fd, void *buf, size_t len)
@@ -168,7 +154,7 @@ RTM_EXPORT(read);
  *
  * @return the actual written data buffer length.
  */
-#ifdef RT_USING_NEWLIB
+#if defined(RT_USING_NEWLIB) && defined(_EXFUN)
 _READ_WRITE_RETURN_TYPE _EXFUN(write, (int fd, const void *buf, size_t len))
 #else
 int write(int fd, const void *buf, size_t len)
@@ -428,28 +414,60 @@ RTM_EXPORT(fsync);
  * @return 0 on successful completion. Otherwise, -1 shall be returned and errno
  * set to indicate the error.
  */
-int ioctl(int fildes, int cmd, void *data)
+int fcntl(int fildes, int cmd, ...)
 {
-    int ret;
+    int ret = -1;
     struct dfs_fd *d;
 
     /* get the fd */
     d = fd_get(fildes);
-    if (d == NULL)
+    if (d)
     {
-        rt_set_errno(-EBADF);
-        return -1;
-    }
+        void* arg;
+        va_list ap;
 
-    ret = dfs_file_ioctl(d, cmd, data);
-    if (ret != 0)
+        va_start(ap, cmd);
+        arg = va_arg(ap, void*);
+        va_end(ap);
+
+        ret = dfs_file_ioctl(d, cmd, arg);
+        fd_put(d);
+    }
+    else ret = -EBADF;
+
+    if (ret < 0)
     {
         rt_set_errno(ret);
         ret = -1;
     }
-    fd_put(d);
 
     return ret;
+}
+RTM_EXPORT(fcntl);
+
+/**
+ * this function is a POSIX compliant version, which shall perform a variety of
+ * control functions on devices.
+ *
+ * @param fildes the file description
+ * @param cmd the specified command
+ * @param data represents the additional information that is needed by this
+ * specific device to perform the requested function.
+ *
+ * @return 0 on successful completion. Otherwise, -1 shall be returned and errno
+ * set to indicate the error.
+ */
+int ioctl(int fildes, int cmd, ...)
+{
+    void* arg;
+    va_list ap;
+
+    va_start(ap, cmd);
+    arg = va_arg(ap, void*);
+    va_end(ap);
+
+    /* we use fcntl for this API. */
+    return fcntl(fildes, cmd, arg);
 }
 RTM_EXPORT(ioctl);
 
@@ -872,9 +890,9 @@ int access(const char *path, int amode)
 char *getcwd(char *buf, size_t size)
 {
 #ifdef DFS_USING_WORKDIR
-    rt_enter_critical();
+    dfs_lock();
     strncpy(buf, working_directory, size);
-    rt_exit_critical();
+    dfs_unlock();
 #else
     rt_kprintf(NO_WORKING_DIR);
 #endif

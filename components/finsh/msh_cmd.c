@@ -1,26 +1,7 @@
 /*
- *  internal commands for RT-Thread module shell
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * COPYRIGHT (C) 2013-2015, Shanghai Real-Thread Technology Co., Ltd
- *
- *  This file is part of RT-Thread (http://www.rt-thread.org)
- *  Maintainer: bernard.xiong <bernard.xiong at gmail.com>
- *
- *  All rights reserved.
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -29,11 +10,12 @@
  */
 
 #include <rtthread.h>
-#include <finsh.h>
-
-#include "msh.h"
 
 #ifdef FINSH_USING_MSH
+
+#include <finsh.h>
+#include "msh.h"
+
 #ifdef RT_USING_DFS
 #include <dfs_posix.h>
 
@@ -191,7 +173,7 @@ int cmd_cd(int argc, char **argv)
     {
         if (chdir(argv[1]) != 0)
         {
-        	rt_kprintf("No such directory: %s\n", argv[1]);
+            rt_kprintf("No such directory: %s\n", argv[1]);
         }
     }
 
@@ -255,33 +237,56 @@ int cmd_mkfs(int argc, char **argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_mkfs, __cmd_mkfs, format disk with file system);
 
+extern int df(const char *path);
+int cmd_df(int argc, char** argv)
+{
+    if (argc != 2)
+    {
+        df("/");
+    }
+    else
+    {
+        if ((strcmp(argv[1], "--help") == 0) || (strcmp(argv[1], "-h") == 0))
+        {
+            rt_kprintf("df [path]\n");
+        }
+        else
+        {
+            df(argv[1]);
+        }
+    }
+
+    return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_df, __cmd_df, disk free);
+
 int cmd_echo(int argc, char** argv)
 {
-	if (argc == 2)
-	{
-		rt_kprintf("%s\n", argv[1]);
-	}
-	else if (argc == 3)
-	{
-		int fd;
+    if (argc == 2)
+    {
+        rt_kprintf("%s\n", argv[1]);
+    }
+    else if (argc == 3)
+    {
+        int fd;
 
-		fd = open(argv[2], O_RDWR | O_APPEND | O_CREAT, 0);
-		if (fd >= 0)
-		{
-			write (fd, argv[1], strlen(argv[1]));
-			close(fd);
-		}
-		else
-		{
-			rt_kprintf("open file:%s failed!\n", argv[2]);
-		}
-	}
-	else
-	{
-		rt_kprintf("Usage: echo \"string\" [filename]\n");
-	}
+        fd = open(argv[2], O_RDWR | O_APPEND | O_CREAT, 0);
+        if (fd >= 0)
+        {
+            write (fd, argv[1], strlen(argv[1]));
+            close(fd);
+        }
+        else
+        {
+            rt_kprintf("open file:%s failed!\n", argv[2]);
+        }
+    }
+    else
+    {
+        rt_kprintf("Usage: echo \"string\" [filename]\n");
+    }
 
-	return 0;
+    return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_echo, __cmd_echo, echo string to file);
 #endif
@@ -358,12 +363,19 @@ int cmd_dns(int argc, char **argv)
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_dns, __cmd_dns, list the information of dns);
 #endif
 
-#ifdef RT_LWIP_TCP
+#if defined (RT_LWIP_TCP) || defined (RT_LWIP_UDP)
 int cmd_netstat(int argc, char **argv)
 {
     extern void list_tcps(void);
+    extern void list_udps(void);
 
+#ifdef RT_LWIP_TCP
     list_tcps();
+#endif
+#ifdef RT_LWIP_UDP
+    list_udps();
+#endif
+
     return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_netstat, __cmd_netstat, list the information of TCP / IP);
@@ -407,5 +419,4 @@ int cmd_free(int argc, char **argv)
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_free, __cmd_free, Show the memory usage in the system.);
 #endif
 
-#endif
-
+#endif /* FINSH_USING_MSH */

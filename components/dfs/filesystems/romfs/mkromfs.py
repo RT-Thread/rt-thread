@@ -50,7 +50,7 @@ class File(object):
         return bytes(self._data)
 
     def dump(self, indent=0):
-        print '%s%s' % (' ' * indent, self._name)
+        print('%s%s' % (' ' * indent, self._name))
 
 class Folder(object):
     bin_fmt = struct.Struct('IIII')
@@ -108,7 +108,7 @@ class Folder(object):
                 c.sort()
 
     def dump(self, indent=0):
-        print '%s%s' % (' ' * indent, self._name)
+        print('%s%s' % (' ' * indent, self._name))
         for c in self._children:
             c.dump(indent + 1)
 

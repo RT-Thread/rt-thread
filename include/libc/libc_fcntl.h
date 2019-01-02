@@ -1,6 +1,18 @@
 /*
- * fcntl.h file in libc
- */ 
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/*
+ * File      : libc_fcntl.h
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2018-02-07     Bernard      Add O_DIRECTORY definition in NEWLIB mode.
+ * 2018-02-09     Bernard      Add O_BINARY definition
+ */
+
 #ifndef LIBC_FCNTL_H__
 #define LIBC_FCNTL_H__
 
@@ -8,12 +20,30 @@
 #include <fcntl.h>
 
 #ifndef O_NONBLOCK
-#define O_NONBLOCK    04000
+#define O_NONBLOCK   0x4000
 #endif
 
 #if defined(_WIN32)
-#define O_DIRECTORY 0200000
 #define O_ACCMODE   (_O_RDONLY | _O_WRONLY | _O_RDWR)
+#endif
+
+#ifndef F_GETFL
+#define F_GETFL  3
+#endif
+#ifndef F_SETFL
+#define F_SETFL  4
+#endif
+
+#ifndef O_DIRECTORY
+#define O_DIRECTORY 0x200000
+#endif
+
+#ifndef O_BINARY
+#ifdef  _O_BINARY
+#define O_BINARY _O_BINARY
+#else
+#define O_BINARY	     0
+#endif
 #endif
 
 #else
@@ -70,4 +100,3 @@
 #endif
 
 #endif
-

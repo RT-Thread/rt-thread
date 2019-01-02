@@ -11,15 +11,15 @@ if os.getenv('RTT_CC'):
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 if  CROSS_TOOL == 'gcc':
-    print '================ERROR============================'
-    print 'Not support gcc yet!'
-    print '================================================='
+    print('================ERROR============================')
+    print('Not support gcc yet!')
+    print('=================================================')
 elif CROSS_TOOL == 'keil':
     PLATFORM 	= 'armcc'
     EXEC_PATH 	= 'C:/keil_v5'
 elif CROSS_TOOL == 'iar':
     PLATFORM 	= 'iar'
-    IAR_PATH    = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
+    EXEC_PATH    = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
 
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -34,7 +34,7 @@ if PLATFORM == 'gcc':
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
-    TARGET_EXT = 'axf'
+    TARGET_EXT = 'elf'
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
@@ -105,7 +105,7 @@ elif PLATFORM == 'iar':
     CFLAGS += ' --cpu=Cortex-M0'
     CFLAGS += ' -e'
     CFLAGS += ' --fpu=None'
-    CFLAGS += ' --dlib_config "' + IAR_PATH + '/arm/INC/c/DLib_Config_Normal.h"'
+    CFLAGS += ' --dlib_config "' + EXEC_PATH + '/arm/INC/c/DLib_Config_Normal.h"'
     CFLAGS += ' -Ol'
     CFLAGS += ' --use_c++_inline'
 
@@ -121,5 +121,5 @@ elif PLATFORM == 'iar':
     LFLAGS += ' --redirect _Scanf=_ScanfSmall'
     LFLAGS += ' --entry __iar_program_start'
 
-    EXEC_PATH = IAR_PATH + '/arm/bin/'
+    EXEC_PATH = EXEC_PATH + '/arm/bin/'
     POST_ACTION = ''

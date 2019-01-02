@@ -1,11 +1,7 @@
 /*
- * File      : board.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006-2012, RT-Thread Develop Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date                Author         Notes
@@ -20,7 +16,7 @@
 void rt_hw_board_init(void);
 
 /* 32M SDRAM */
-#define RT_HW_HEAP_END	(0x80000000 + 32 * 1024 * 1024)
-#define CPU_HZ			(252 * 1000000)
+#define RT_HW_HEAP_END    (0x80000000 + 32 * 1024 * 1024)
+#define CPU_HZ            (252 * 1000000)
 
 #endif

@@ -3,7 +3,7 @@
     NuTiny-EVB-NUC472
 
 ## note:
-    support the GCC MDK5 IAR
+    support the GCC MDK4 MDK5 IAR
 
 **TODO**
 

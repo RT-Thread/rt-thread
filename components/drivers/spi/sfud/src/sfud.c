@@ -1,7 +1,7 @@
 /*
  * This file is part of the Serial Flash Universal Driver Library.
  *
- * Copyright (c) 2016, Armink, <armink.ztl@gmail.com>
+ * Copyright (c) 2016-2018, Armink, <armink.ztl@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -36,10 +36,6 @@
 #error "Please configure the flash device information table in (in sfud_cfg.h)."
 #endif
 
-#if !defined(SFUD_USING_SFDP) && !defined(SFUD_USING_FLASH_INFO_TABLE)
-#error "Please configure SFUD_USING_SFDP or SFUD_USING_FLASH_INFO_TABLE at least one kind of mode (in sfud_cfg.h)."
-#endif
-
 /* user configured flash device information table */
 static sfud_flash flash_table[] = SFUD_FLASH_DEVICE_TABLE;
 /* supported manufacturer information table */
@@ -49,6 +45,22 @@ static const sfud_mf mf_table[] = SFUD_MF_TABLE;
 /* supported flash chip information table */
 static const sfud_flash_chip flash_chip_table[] = SFUD_FLASH_CHIP_TABLE;
 #endif
+
+#ifdef SFUD_USING_QSPI
+/**
+ * flash read data mode
+ */
+enum sfud_qspi_read_mode {
+    NORMAL_SPI_READ = 1 << 0,               /**< mormal spi read mode */
+    DUAL_OUTPUT = 1 << 1,                   /**< qspi fast read dual output */
+    DUAL_IO = 1 << 2,                       /**< qspi fast read dual input/output */
+    QUAD_OUTPUT = 1 << 3,                   /**< qspi fast read quad output */
+    QUAD_IO = 1 << 4,                       /**< qspi fast read quad input/output */
+};
+
+/* QSPI flash chip's extended information table */
+static const sfud_qspi_flash_ext_info qspi_flash_ext_info_table[] = SFUD_FLASH_EXT_INFO_TABLE;
+#endif /* SFUD_USING_QSPI */
 
 static sfud_err software_init(const sfud_flash *flash);
 static sfud_err hardware_init(sfud_flash *flash);
@@ -150,11 +162,89 @@ const sfud_flash *sfud_get_device_table(void) {
     return flash_table;
 }
 
+#ifdef SFUD_USING_QSPI
+static void qspi_set_read_cmd_format(sfud_flash *flash, uint8_t ins, uint8_t ins_lines, uint8_t addr_lines,
+        uint8_t dummy_cycles, uint8_t data_lines) {
+    /* if medium size greater than 16Mb, use 4-Byte address, instruction should be added one */
+    if (flash->chip.capacity <= 0x1000000) {
+        flash->read_cmd_format.instruction = ins;
+        flash->read_cmd_format.address_size = 24;
+    } else {
+        flash->read_cmd_format.instruction = ins + 1;
+        flash->read_cmd_format.address_size = 32;
+    }
+
+    flash->read_cmd_format.instruction_lines = ins_lines;
+    flash->read_cmd_format.address_lines = addr_lines;
+    flash->read_cmd_format.alternate_bytes_lines = 0;
+    flash->read_cmd_format.dummy_cycles = dummy_cycles;
+    flash->read_cmd_format.data_lines = data_lines;
+}
+
+/**
+ * Enbale the fast read mode in QSPI flash mode. Default read mode is normal SPI mode.
+ *
+ * it will find the appropriate fast-read instruction to replace the read instruction(0x03)
+ * fast-read instruction @see SFUD_FLASH_EXT_INFO_TABLE
+ *
+ * @note When Flash is in QSPI mode, the method must be called after sfud_device_init().
+ *
+ * @param flash flash device
+ * @param data_line_width the data lines max width which QSPI bus supported, such as 1, 2, 4
+ *
+ * @return result
+ */
+sfud_err sfud_qspi_fast_read_enable(sfud_flash *flash, uint8_t data_line_width) {
+    size_t i = 0;
+    uint8_t read_mode = NORMAL_SPI_READ;
+    sfud_err result = SFUD_SUCCESS;
+
+    SFUD_ASSERT(flash);
+    SFUD_ASSERT(data_line_width == 1 || data_line_width == 2 || data_line_width == 4);
+
+    /* get read_mode, If don't found, the default is SFUD_QSPI_NORMAL_SPI_READ */
+    for (i = 0; i < sizeof(qspi_flash_ext_info_table) / sizeof(sfud_qspi_flash_ext_info); i++) {
+        if ((qspi_flash_ext_info_table[i].mf_id == flash->chip.mf_id)
+                && (qspi_flash_ext_info_table[i].type_id == flash->chip.type_id)
+                && (qspi_flash_ext_info_table[i].capacity_id == flash->chip.capacity_id)) {
+            read_mode = qspi_flash_ext_info_table[i].read_mode;
+        }
+    }
+
+    /* determine qspi supports which read mode and set read_cmd_format struct */
+    switch (data_line_width) {
+    case 1:
+        qspi_set_read_cmd_format(flash, SFUD_CMD_READ_DATA, 1, 1, 0, 1);
+        break;
+    case 2:
+        if (read_mode & DUAL_IO) {
+            qspi_set_read_cmd_format(flash, SFUD_CMD_DUAL_IO_READ_DATA, 1, 2, 8, 2);
+        } else if (read_mode & DUAL_OUTPUT) {
+            qspi_set_read_cmd_format(flash, SFUD_CMD_DUAL_OUTPUT_READ_DATA, 1, 1, 8, 2);
+        } else {
+            qspi_set_read_cmd_format(flash, SFUD_CMD_READ_DATA, 1, 1, 0, 1);
+        }
+        break;
+    case 4:
+        if (read_mode & QUAD_IO) {
+            qspi_set_read_cmd_format(flash, SFUD_CMD_QUAD_IO_READ_DATA, 1, 4, 6, 4);
+        } else if (read_mode & QUAD_OUTPUT) {
+            qspi_set_read_cmd_format(flash, SFUD_CMD_QUAD_OUTPUT_READ_DATA, 1, 1, 8, 4);
+        } else {
+            qspi_set_read_cmd_format(flash, SFUD_CMD_READ_DATA, 1, 1, 0, 1);
+        }
+        break;
+    }
+
+    return result;
+}
+#endif /* SFUD_USING_QSPI */
+
 /**
  * hardware initialize
  */
 static sfud_err hardware_init(sfud_flash *flash) {
-    extern sfud_err sfud_spi_port_init(sfud_flash *flash);
+    extern sfud_err sfud_spi_port_init(sfud_flash * flash);
 
     sfud_err result = SFUD_SUCCESS;
     size_t i;
@@ -165,6 +255,11 @@ static sfud_err hardware_init(sfud_flash *flash) {
     if (result != SFUD_SUCCESS) {
         return result;
     }
+
+#ifdef SFUD_USING_QSPI
+    /* set default read instruction */
+    flash->read_cmd_format.instruction = SFUD_CMD_READ_DATA;
+#endif /* SFUD_USING_QSPI */
 
     /* SPI write read function must be initialize */
     SFUD_ASSERT(flash->spi.wr);
@@ -242,6 +337,8 @@ static sfud_err hardware_init(sfud_flash *flash) {
                     flash->chip.capacity);
         } else if (flash_mf_name) {
             SFUD_INFO("Find a %s flash chip. Size is %ld bytes.", flash_mf_name, flash->chip.capacity);
+        } else {
+            SFUD_INFO("Find a flash chip. Size is %ld bytes.", flash->chip.capacity);
         }
     }
 
@@ -251,7 +348,7 @@ static sfud_err hardware_init(sfud_flash *flash) {
         return result;
     }
 
-    /* I found when the flash read mode is supported AAI mode. The flash all blocks is protected,
+    /* I found when the flash write mode is supported AAI mode. The flash all blocks is protected,
      * so need change the flash status to unprotected before write and erase operate. */
     if (flash->chip.write_mode & SFUD_WM_AAI) {
         result = sfud_write_status(flash, true, 0x00);
@@ -261,7 +358,7 @@ static sfud_err hardware_init(sfud_flash *flash) {
     }
 
     /* if the flash is large than 16MB (256Mb) then enter in 4-Byte addressing mode */
-    if (flash->chip.capacity > (1 << 24)) {
+    if (flash->chip.capacity > (1L << 24)) {
         result = set_4_byte_address_mode(flash, true);
     } else {
         flash->addr_in_4_byte = false;
@@ -317,10 +414,17 @@ sfud_err sfud_read(const sfud_flash *flash, uint32_t addr, size_t size, uint8_t 
     result = wait_busy(flash);
 
     if (result == SFUD_SUCCESS) {
-        cmd_data[0] = SFUD_CMD_READ_DATA;
-        make_adress_byte_array(flash, addr, &cmd_data[1]);
-        cmd_size = flash->addr_in_4_byte ? 5 : 4;
-        result = spi->wr(spi, cmd_data, cmd_size, data, size);
+#ifdef SFUD_USING_QSPI
+        if (flash->read_cmd_format.instruction != SFUD_CMD_READ_DATA) {
+            result = spi->qspi_read(spi, addr, (sfud_qspi_read_cmd_format *)&flash->read_cmd_format, data, size);
+        } else
+#endif
+        {
+            cmd_data[0] = SFUD_CMD_READ_DATA;
+            make_adress_byte_array(flash, addr, &cmd_data[1]);
+            cmd_size = flash->addr_in_4_byte ? 5 : 4;
+            result = spi->wr(spi, cmd_data, cmd_size, data, size);
+        }
     }
     /* unlock SPI */
     if (spi->unlock) {
@@ -329,7 +433,6 @@ sfud_err sfud_read(const sfud_flash *flash, uint32_t addr, size_t size, uint8_t 
 
     return result;
 }
-
 
 /**
  * erase all flash data
@@ -401,7 +504,7 @@ sfud_err sfud_erase(const sfud_flash *flash, uint32_t addr, size_t size) {
     sfud_err result = SFUD_SUCCESS;
     const sfud_spi *spi = &flash->spi;
     uint8_t cmd_data[5], cmd_size, cur_erase_cmd;
-    size_t eraser_index, cur_erase_size;
+    size_t cur_erase_size;
 
     SFUD_ASSERT(flash);
     /* must be call this function after initialize OK */
@@ -425,6 +528,7 @@ sfud_err sfud_erase(const sfud_flash *flash, uint32_t addr, size_t size) {
     while (size) {
         /* if this flash is support SFDP parameter, then used SFDP parameter supplies eraser */
 #ifdef SFUD_USING_SFDP
+        size_t eraser_index;
         if (flash->sfdp.available) {
             /* get the suitable eraser for erase process from SFDP parameter */
             eraser_index = sfud_sfdp_get_suitable_eraser(flash, addr, size);
@@ -499,7 +603,8 @@ static sfud_err page256_or_1_byte_write(const sfud_flash *flash, uint32_t addr, 
         const uint8_t *data) {
     sfud_err result = SFUD_SUCCESS;
     const sfud_spi *spi = &flash->spi;
-    uint8_t cmd_data[5 + SFUD_WRITE_MAX_PAGE_SIZE], cmd_size;
+    static uint8_t cmd_data[5 + SFUD_WRITE_MAX_PAGE_SIZE];
+    uint8_t cmd_size;
     size_t data_size;
 
     SFUD_ASSERT(flash);
@@ -716,8 +821,16 @@ static sfud_err reset(const sfud_flash *flash) {
     SFUD_ASSERT(flash);
 
     cmd_data[0] = SFUD_CMD_ENABLE_RESET;
+    result = spi->wr(spi, cmd_data, 1, NULL, 0);
+    if (result == SFUD_SUCCESS) {
+        result = wait_busy(flash);
+    } else {
+        SFUD_INFO("Error: Flash device reset failed.");
+        return result;
+    }
+
     cmd_data[1] = SFUD_CMD_RESET;
-    result = spi->wr(spi, cmd_data, 2, NULL, 0);
+    result = spi->wr(spi, &cmd_data[1], 1, NULL, 0);
 
     if (result == SFUD_SUCCESS) {
         result = wait_busy(flash);

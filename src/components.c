@@ -1,21 +1,7 @@
 /*
- * File      : init.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012 - 2015, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -28,6 +14,7 @@
  * 2015-05-04     Bernard      Rename it to components.c because compiling issue
  *                             in some IDEs.
  * 2015-07-29     Arda.Fu      Add support to use RT_USING_USER_MAIN with IAR
+ * 2018-11-22     Jesven       Add secondary cpu boot up
  */
 
 #include <rthw.h>
@@ -36,6 +23,9 @@
 #ifdef RT_USING_USER_MAIN
 #ifndef RT_MAIN_THREAD_STACK_SIZE
 #define RT_MAIN_THREAD_STACK_SIZE     2048
+#endif
+#ifndef RT_MAIN_THREAD_PRIORITY
+#define RT_MAIN_THREAD_PRIORITY       (RT_THREAD_PRIORITY_MAX / 3)
 #endif
 #endif
 
@@ -55,7 +45,7 @@
  *
  * rti_end           --> 6.end
  *
- * These automatically initializaiton, the driver or component initial function must
+ * These automatically initialization, the driver or component initial function must
  * be defined with:
  * INIT_BOARD_EXPORT(fn);
  * INIT_DEVICE_EXPORT(fn);
@@ -120,7 +110,7 @@ void rt_components_init(void)
     int result;
     const struct rt_init_desc *desc;
 
-    rt_kprintf("do components intialization.\n");
+    rt_kprintf("do components initialization.\n");
     for (desc = &__rt_init_desc_rti_board_end; desc < &__rt_init_desc_rti_end; desc ++)
     {
         rt_kprintf("initialize %s", desc->fn_name);
@@ -143,7 +133,7 @@ void rt_application_init(void);
 void rt_hw_board_init(void);
 int rtthread_startup(void);
 
-#if defined (__CC_ARM)
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
 extern int $Super$$main(void);
 /* re-define main function */
 int $Sub$$main(void)
@@ -191,8 +181,11 @@ void main_thread_entry(void *parameter)
     /* RT-Thread components initialization */
     rt_components_init();
 
+#ifdef RT_USING_SMP
+    rt_hw_secondary_cpu_up();
+#endif
     /* invoke system main function */
-#if defined (__CC_ARM)
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
     $Super$$main(); /* for ARMCC. */
 #elif defined(__ICCARM__) || defined(__GNUC__)
     main();
@@ -205,15 +198,18 @@ void rt_application_init(void)
 
 #ifdef RT_USING_HEAP
     tid = rt_thread_create("main", main_thread_entry, RT_NULL,
-                           RT_MAIN_THREAD_STACK_SIZE, RT_THREAD_PRIORITY_MAX / 3, 20);
+                           RT_MAIN_THREAD_STACK_SIZE, RT_MAIN_THREAD_PRIORITY, 20);
     RT_ASSERT(tid != RT_NULL);
 #else
     rt_err_t result;
 
     tid = &main_thread;
     result = rt_thread_init(tid, "main", main_thread_entry, RT_NULL,
-                            main_stack, sizeof(main_stack), RT_THREAD_PRIORITY_MAX / 3, 20);
+                            main_stack, sizeof(main_stack), RT_MAIN_THREAD_PRIORITY, 20);
     RT_ASSERT(result == RT_EOK);
+	
+    /* if not define RT_USING_HEAP, using to eliminate the warning */
+    (void)result;
 #endif
 
     rt_thread_startup(tid);
@@ -223,7 +219,7 @@ int rtthread_startup(void)
 {
     rt_hw_interrupt_disable();
 
-    /* board level initalization
+    /* board level initialization
      * NOTE: please initialize heap inside board initialization.
      */
     rt_hw_board_init();
@@ -250,6 +246,10 @@ int rtthread_startup(void)
 
     /* idle thread initialization */
     rt_thread_idle_init();
+
+#ifdef RT_USING_SMP
+    rt_hw_spin_lock(&_cpus_lock);
+#endif /*RT_USING_SMP*/
 
     /* start scheduler */
     rt_system_scheduler_start();

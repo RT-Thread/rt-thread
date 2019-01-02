@@ -24,20 +24,29 @@
 
 MEMORY
 {
-    FLASH (rx) : ORIGIN = 0x00000000, LENGTH = 0x00100000
-    SRAM (rwx) : ORIGIN = 0x20000000, LENGTH = 0x00040000
+    CODE (rx)  : ORIGIN = 0x00000000, LENGTH = 0x00100000
+    DATA (rwx) : ORIGIN = 0x20000000, LENGTH = 0x00040000
 }
+
+ENTRY(ResetISR)
+_system_stack_size = 0x200;
 
 SECTIONS
 {
     .text :
     {
-        _text = .;
-        KEEP(*(.isr_vector))
-        *(.text*)
+        . = ALIGN(4);
+        KEEP(*(.isr_vector))            /* Startup code */
+        . = ALIGN(4);
+        *(.text)                        /* remaining code */
+        *(.text.*)                      /* remaining code */
+        *(.rodata)                      /* read-only data (constants) */
         *(.rodata*)
-		
-		/* section information for finsh shell */
+        *(.glue_7)
+        *(.glue_7t)
+        *(.gnu.linkonce.t*)
+
+        /* section information for finsh shell */
         . = ALIGN(4);
         __fsymtab_start = .;
         KEEP(*(FSymTab))
@@ -48,30 +57,114 @@ SECTIONS
         __vsymtab_end = .;
         . = ALIGN(4);
 
-        /* section information for initial. */
         . = ALIGN(4);
         __rt_init_start = .;
         KEEP(*(SORT(.rti_fn*)))
         __rt_init_end = .;
         . = ALIGN(4);
-		
+
+        PROVIDE(__ctors_start__ = .);
+        /* old GCC version uses .ctors */
+        KEEP(*(SORT(.ctors.*)))
+        KEEP(*(.ctors))
+        /* new GCC version uses .init_array */
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        PROVIDE(__ctors_end__ = .);
+
+        . = ALIGN(4);
         _etext = .;
-    } > FLASH
+    } > CODE = 0
 
-    .data : AT(ADDR(.text) + SIZEOF(.text))
+    .ARM.extab : 
+    { 
+        *(.ARM.extab*) 
+
+        . = ALIGN(4);
+        /* This is used by the startup in order to initialize the .data secion */
+        _sidata = .;
+    } > CODE
+
+    /* .data section which is used for initialized data */
+    .data : AT (_sidata)
     {
-        _data = .;
-        _ldata = LOADADDR (.data);
-        *(vtable)
-        *(.data*)
-        _edata = .;
-    } > SRAM
+        . = ALIGN(4);
+        PROVIDE(__dtors_start__ = .);
+        KEEP(*(SORT(.dtors.*)))
+        KEEP(*(.dtors))
+        PROVIDE(__dtors_end__ = .);
 
+        . = ALIGN(4);
+        /* This is used by the startup in order to initialize the .data secion */
+        _sdata = . ;
+
+        *(.data)
+        *(.data.*)
+        *(.gnu.linkonce.d*)
+
+        . = ALIGN(4);
+        /* This is used by the startup in order to initialize the .data secion */
+        _edata = . ;
+    } > DATA
+
+    .stack : 
+    {
+        . = . + _system_stack_size;
+        . = ALIGN(4);
+        _estack = .;
+    } >DATA
+
+    __bss_start = .;
     .bss :
     {
-        _bss = .;
-        *(.bss*)
+        . = ALIGN(4);
+        /* This is used by the startup in order to initialize the .bss secion */
+        _sbss = .;
+
+        *(.bss)
+        *(.bss.*)
         *(COMMON)
-        _ebss = .;
-    } > SRAM
+
+        . = ALIGN(4);
+        /* This is used by the startup in order to initialize the .bss secion */
+        _ebss = . ;        
+        *(.bss.init)
+    } > DATA
+    __bss_end = .;
+
+    _end = .;
+
+    /* Stabs debugging sections.  */
+    .stab          0 : { *(.stab) }
+    .stabstr       0 : { *(.stabstr) }
+    .stab.excl     0 : { *(.stab.excl) }
+    .stab.exclstr  0 : { *(.stab.exclstr) }
+    .stab.index    0 : { *(.stab.index) }
+    .stab.indexstr 0 : { *(.stab.indexstr) }
+    .comment       0 : { *(.comment) }
+    /* DWARF debug sections.
+     * Symbols in the DWARF debugging sections are relative to the beginning
+     * of the section so we begin them at 0.  */
+    /* DWARF 1 */
+    .debug          0 : { *(.debug) }
+    .line           0 : { *(.line) }
+    /* GNU DWARF 1 extensions */
+    .debug_srcinfo  0 : { *(.debug_srcinfo) }
+    .debug_sfnames  0 : { *(.debug_sfnames) }
+    /* DWARF 1.1 and DWARF 2 */
+    .debug_aranges  0 : { *(.debug_aranges) }
+    .debug_pubnames 0 : { *(.debug_pubnames) }
+    /* DWARF 2 */
+    .debug_info     0 : { *(.debug_info .gnu.linkonce.wi.*) }
+    .debug_abbrev   0 : { *(.debug_abbrev) }
+    .debug_line     0 : { *(.debug_line) }
+    .debug_frame    0 : { *(.debug_frame) }
+    .debug_str      0 : { *(.debug_str) }
+    .debug_loc      0 : { *(.debug_loc) }
+    .debug_macinfo  0 : { *(.debug_macinfo) }
+    /* SGI/MIPS DWARF 2 extensions */
+    .debug_weaknames 0 : { *(.debug_weaknames) }
+    .debug_funcnames 0 : { *(.debug_funcnames) }
+    .debug_typenames 0 : { *(.debug_typenames) }
+    .debug_varnames  0 : { *(.debug_varnames) }
 }

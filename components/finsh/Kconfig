@@ -6,9 +6,17 @@ config RT_USING_FINSH
 
 if RT_USING_FINSH
 
+config FINSH_THREAD_NAME
+    string "The finsh thread name"
+    default "tshell"
 config FINSH_USING_HISTORY
     bool "Enable command history feature"
     default y
+if FINSH_USING_HISTORY
+config FINSH_HISTORY_LINES
+    int "The command history line number"
+    default 5
+endif
 
 config FINSH_USING_SYMTAB
     bool "Using symbol table for commands"
@@ -18,6 +26,10 @@ config FINSH_USING_DESCRIPTION
     bool "Keeping description in symbol table"
     default y
 
+config FINSH_ECHO_DISABLE_DEFAULT
+    bool "Disable the echo mode in default"
+    default n
+    
 config FINSH_THREAD_PRIORITY
     int "The priority level value of finsh thread"
     default 20
@@ -38,6 +50,12 @@ if FINSH_USING_AUTH
 config FINSH_DEFAULT_PASSWORD
     string "The default password for shell authentication"
     default "rtthread"
+config FINSH_PASSWORD_MIN
+    int "The password min length"
+    default 6
+config FINSH_PASSWORD_MAX
+    int "The password max length"
+    default RT_NAME_MAX
 endif
 
 config FINSH_USING_MSH
@@ -52,6 +70,10 @@ config FINSH_USING_MSH_DEFAULT
 config FINSH_USING_MSH_ONLY
     bool "Only using module shell"
     default n
+
+config FINSH_ARG_MAX
+    int "The command arg num for shell"
+    default 10
 endif
 
 endif

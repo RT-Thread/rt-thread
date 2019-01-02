@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #include <rtthread.h>
 #include <rtdevice.h>
 
@@ -17,7 +25,7 @@
 #define FLASH_TRACE(...)
 #endif /* #ifdef FLASH_DEBUG */
 
-/* JEDEC Manufacturer¡¯s ID */
+/* JEDEC Manufacturerâ€™s ID */
 #define MF_ID           (0xEF)
 /* JEDEC Device ID: Memory type and Capacity */
 #define MTC_W25Q80_BV         (0x4014) /* W25Q80BV */

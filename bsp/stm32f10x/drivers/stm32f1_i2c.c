@@ -1,11 +1,7 @@
 /*
- * File      : stm32f1_i2c.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006-2017, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author                Notes
@@ -513,7 +509,7 @@ rt_err_t stm32_i2c_register(I2C_TypeDef *I2C, rt_uint32_t bitrate,
     if(I2C == I2C1)
     {
         pi2c = &stm32_i2c1;
-        RCC_APB2PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
+        RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
     }
     else
 #endif /*RT_USING_I2C1*/

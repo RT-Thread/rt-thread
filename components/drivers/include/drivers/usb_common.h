@@ -1,21 +1,7 @@
 /*
- * File      : usb_common.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -222,25 +208,25 @@ extern "C" {
 #define USB_EP_DESC_NUM(addr)           (addr & USB_EP_DESC_NUM_MASK)
 #define USB_EP_DIR(addr)                ((addr & USB_DIR_MASK)>>7)
 
-#ifdef RT_USB_DEVICE_HID
-    #ifdef RT_USB_DEVICE_HID_KEYBOARD
-        #define HID_REPORT_ID_KEYBOARD1         1
-        #if RT_USB_DEVICE_HID_KEYBOARD_NUMBER>1
-            #define HID_REPORT_ID_KEYBOARD2     2
-            #if RT_USB_DEVICE_HID_KEYBOARD_NUMBER>2
-                #define HID_REPORT_ID_KEYBOARD3 3
-            #endif
-        #endif
-    #endif
-    #ifdef RT_USB_DEVICE_HID_MEDIA
-        #define HID_REPORT_ID_MEDIA             4
-    #endif
-    #ifdef RT_USB_DEVICE_HID_GENERAL
-        #define HID_REPORT_ID_GENERAL           5
-    #endif
-    #ifdef RT_USB_DEVICE_HID_MOUSE
-        #define HID_REPORT_ID_MOUSE             6
-    #endif
+#define HID_REPORT_ID_KEYBOARD1         1
+#define HID_REPORT_ID_KEYBOARD2         2
+#define HID_REPORT_ID_KEYBOARD3         3
+#define HID_REPORT_ID_KEYBOARD4         7
+#define HID_REPORT_ID_MEDIA             4
+#define HID_REPORT_ID_GENERAL           5
+#define HID_REPORT_ID_MOUSE             6
+
+/*
+ * Time of usb timeout
+ */
+#ifndef USB_TIMEOUT_BASIC
+#define USB_TIMEOUT_BASIC               (RT_TICK_PER_SECOND)        /* 1s */
+#endif
+#ifndef USB_TIMEOUT_LONG
+#define USB_TIMEOUT_LONG                (RT_TICK_PER_SECOND * 5)    /* 5s */
+#endif
+#ifndef USB_DEBOUNCE_TIME
+#define USB_DEBOUNCE_TIME               (RT_TICK_PER_SECOND / 5)    /* 0.2s */
 #endif
 
 #define uswap_32(x) \
@@ -473,7 +459,6 @@ typedef struct usb_os_proerty * usb_os_proerty_t;
 #define  HID_SUB_DESCRIPTOR_MAX        1
 #endif
 
-#ifdef RT_USB_DEVICE_HID
 struct uhid_descriptor
 {
     rt_uint8_t  bLength;
@@ -497,7 +482,7 @@ struct hid_report
 };
 typedef struct hid_report* hid_report_t;
 extern void HID_Report_Received(hid_report_t report);
-#endif
+
 struct urequest
 {
     rt_uint8_t  request_type;

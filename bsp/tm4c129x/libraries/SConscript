@@ -6,24 +6,21 @@ from building import *
 cwd     = GetCurrentDir()
 src = Glob('driverlib/*.c')
 SrcRemove(src, 'onewire.c')
+CCFLAGS = ''
 
 # add for startup script 
 if rtconfig.CROSS_TOOL == 'gcc':
-	src += ['startup/startup_gcc.c']
+    src += ['startup/startup_gcc.c']
 elif rtconfig.CROSS_TOOL == 'keil':
-	src += ['startup/startup_rvmdk.S']
+    src += ['startup/startup_rvmdk.S']
 elif rtconfig.CROSS_TOOL == 'iar':
-	src += ['startup/startup_ewarm.c']
+    src += ['startup/startup_ewarm.c']
+    CCFLAGS += ' --diag_suppress=pe177'
 
 CPPPATH = [cwd, cwd + '/inc', cwd + '/driverlib']
 
+
 CPPDEFINES = [rtconfig.PART_TYPE]
-if rtconfig.CROSS_TOOL == 'gcc':
-	CPPDEFINES += ['gcc'];
-	CPPDEFINES += ['uint_fast8_t=uint32_t'];
-	CPPDEFINES += ['uint_fast32_t=uint32_t'];
-	CPPDEFINES += ['int_fast8_t=int32_t'];
-	CPPDEFINES += ['uint_fast16_t=uint32_t'];
-group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, CCFLAGS = CCFLAGS)
 
 Return('group')

@@ -2,23 +2,26 @@ Import('RTT_ROOT')
 Import('rtconfig')
 from building import *
 
-cwd     = os.path.join(str(Dir('#')), 'drivers')
+cwd = GetCurrentDir()
 
 # add the general drivers.
 src = Split("""
 board.c
 stm32f4xx_it.c
 usart.c
-drv_sdram.c
 """)
 
-# add Ethernet drivers.
-if GetDepend('RT_USING_LWIP'):
-    src += ['stm32f4xx_eth.c']
+if GetDepend(['RT_USING_EXT_SDRAM']):
+    src += ['drv_sdram.c']
 
-# add gpio drivers.
-if GetDepend('RT_USING_PIN'):
-    src += ['gpio.c']
+if GetDepend(['RT_USING_I2C']):
+    src += ['drv_i2c.c']
+
+if GetDepend(['RT_USING_ILI9341_LCD']):
+    src += ['drv_lcd.c']
+
+if GetDepend(['RT_USING_STMPE811_TOUCH']):
+    src += ['drv_touch.c']
 
 CPPPATH = [cwd]
 

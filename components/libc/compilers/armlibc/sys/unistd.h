@@ -1,9 +1,22 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #ifndef _SYS_UNISTD_H
 #define _SYS_UNISTD_H
 
 #include <rtthread.h>
 
 #ifdef RT_USING_DFS
+
+#define STDIN_FILENO    0       /* standard input file descriptor */
+#define STDOUT_FILENO   1       /* standard output file descriptor */
+#define STDERR_FILENO   2       /* standard error file descriptor */
+
 #include <dfs_posix.h>
 #else
 #define _FREAD      0x0001  /* read enabled */

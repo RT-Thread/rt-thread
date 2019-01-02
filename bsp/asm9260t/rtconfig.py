@@ -17,7 +17,7 @@ elif CROSS_TOOL == 'keil':
     EXEC_PATH   = 'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
     PLATFORM    = 'iar'
-    IAR_PATH    = 'C:/Program Files (x86)/IAR Systems/Embedded Workbench 7.0'
+    EXEC_PATH    = 'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -39,7 +39,7 @@ if PLATFORM == 'gcc':
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
-    TARGET_EXT = 'axf'
+    TARGET_EXT = 'elf'
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
@@ -113,7 +113,7 @@ elif PLATFORM == 'iar':
     CFLAGS += ' --endian=little'
     CFLAGS += ' -e'
     CFLAGS += ' --fpu=none'
-    CFLAGS += ' --dlib_config "' + IAR_PATH + '/arm/INC/c/DLib_Config_Normal.h"'
+    CFLAGS += ' --dlib_config "' + EXEC_PATH + '/arm/INC/c/DLib_Config_Normal.h"'
     CFLAGS += ' --silent'
 
     AFLAGS = '--cpu '+ DEVICE
@@ -135,5 +135,5 @@ elif PLATFORM == 'iar':
     LFLAGS += ' --map ' + MAP_FILE
     LFLAGS += ' --silent'
 
-    EXEC_PATH = IAR_PATH + '/arm/bin/'
+    EXEC_PATH = EXEC_PATH + '/arm/bin/'
     POST_ACTION = 'ielftool  --silent --bin $TARGET ' + TARGET_NAME

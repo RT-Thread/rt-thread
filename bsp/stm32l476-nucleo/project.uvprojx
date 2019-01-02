@@ -10,7 +10,7 @@
       <TargetName>rt-thread_stm32l4xx</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060528::V5.06 update 5 (build 528)::ARMCC</pCCUsed>
+      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -184,6 +184,7 @@
             <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
+            <RvdsMve>0</RvdsMve>
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -323,7 +324,8 @@
             <wLevel>0</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
-            <uC99>0</uC99>
+            <uC99>1</uC99>
+            <uGnu>0</uGnu>
             <useXO>0</useXO>
             <v6Lang>1</v6Lang>
             <v6LangP>1</v6LangP>
@@ -334,9 +336,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>STM32L4x6, USE_HAL_DRIVER, STM32L476xx, USE_STM32L4XX_NUCLEO</Define>
+              <Define>USE_HAL_DRIVER, STM32L476xx, RT_USING_ARM_LIBC</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;.;drivers;Libraries\STM32L4xx_HAL_Driver\Inc;Libraries\CMSIS\Device\ST\STM32L4xx\Include;Libraries\CMSIS\Include;..\..\include;..\..\libcpu\arm\cortex-m4;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh</IncludePath>
+              <IncludePath>applications;.;drivers;Libraries\STM32L4xx_HAL_Driver\Inc;Libraries\CMSIS\Device\ST\STM32L4xx\Include;Libraries\CMSIS\Include;..\..\include;..\..\libcpu\arm\cortex-m4;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\armlibc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -381,19 +383,9 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>application.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\application.c</FilePath>
-            </File>
-            <File>
-              <FileName>startup.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\startup.c</FilePath>
-            </File>
-            <File>
-              <FileName>userled.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\userled.c</FilePath>
+              <FilePath>applications\main.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -406,19 +398,14 @@
               <FilePath>drivers\board.c</FilePath>
             </File>
             <File>
-              <FileName>usart.c</FileName>
+              <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\usart.c</FilePath>
+              <FilePath>drivers\drv_gpio.c</FilePath>
             </File>
             <File>
-              <FileName>drv_led.c</FileName>
+              <FileName>drv_usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_led.c</FilePath>
-            </File>
-            <File>
-              <FileName>gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\gpio.c</FilePath>
+              <FilePath>drivers\drv_usart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -496,6 +483,11 @@
               <FilePath>Libraries\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_dfsdm.c</FilePath>
             </File>
             <File>
+              <FileName>stm32l4xx_hal_dfsdm_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_dfsdm_ex.c</FilePath>
+            </File>
+            <File>
               <FileName>stm32l4xx_hal_dma.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_dma.c</FilePath>
@@ -504,6 +496,16 @@
               <FileName>stm32l4xx_hal_dma2d.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_dma2d.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_dma_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_dma_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_dsi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_dsi.c</FilePath>
             </File>
             <File>
               <FileName>stm32l4xx_hal_firewall.c</FileName>
@@ -524,6 +526,11 @@
               <FileName>stm32l4xx_hal_flash_ramfunc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_flash_ramfunc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_gfxmmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_gfxmmu.c</FilePath>
             </File>
             <File>
               <FileName>stm32l4xx_hal_gpio.c</FileName>
@@ -576,9 +583,14 @@
               <FilePath>Libraries\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_lptim.c</FilePath>
             </File>
             <File>
-              <FileName>stm32l4xx_hal_msp_template.c</FileName>
+              <FileName>stm32l4xx_hal_ltdc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_msp_template.c</FilePath>
+              <FilePath>Libraries\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_ltdc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_ltdc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_ltdc_ex.c</FilePath>
             </File>
             <File>
               <FileName>stm32l4xx_hal_nand.c</FileName>
@@ -599,6 +611,11 @@
               <FileName>stm32l4xx_hal_opamp_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_opamp_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_ospi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_ospi.c</FilePath>
             </File>
             <File>
               <FileName>stm32l4xx_hal_pcd.c</FileName>
@@ -656,9 +673,19 @@
               <FilePath>Libraries\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_sai.c</FilePath>
             </File>
             <File>
+              <FileName>stm32l4xx_hal_sai_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_sai_ex.c</FilePath>
+            </File>
+            <File>
               <FileName>stm32l4xx_hal_sd.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_sd.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_sd_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_sd_ex.c</FilePath>
             </File>
             <File>
               <FileName>stm32l4xx_hal_smartcard.c</FileName>
@@ -724,6 +751,11 @@
               <FileName>stm32l4xx_hal_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_usart_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_usart_ex.c</FilePath>
             </File>
             <File>
               <FileName>stm32l4xx_hal_wwdg.c</FileName>
@@ -1099,6 +1131,31 @@
               <FileName>finsh_token.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_token.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>libc</GroupName>
+          <Files>
+            <File>
+              <FileName>libc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\libc.c</FilePath>
+            </File>
+            <File>
+              <FileName>mem_std.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
+            </File>
+            <File>
+              <FileName>stubs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\stubs.c</FilePath>
+            </File>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\time.c</FilePath>
             </File>
           </Files>
         </Group>

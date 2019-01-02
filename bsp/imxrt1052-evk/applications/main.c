@@ -38,29 +38,28 @@
 
 void dump_clock(void)
 {
-    rt_kprintf("CPU clock: %d\n",                   CLOCK_GetFreq(kCLOCK_CpuClk));
-	rt_kprintf("AHB clock : %d\n",                  CLOCK_GetFreq(kCLOCK_AhbClk));
-	rt_kprintf("SEMC clock : %d\n",                 CLOCK_GetFreq(kCLOCK_SemcClk));
-	rt_kprintf("IPG clock : %d\n",                  CLOCK_GetFreq(kCLOCK_IpgClk));
-	rt_kprintf("OSC clock selected : %d\n",         CLOCK_GetFreq(kCLOCK_OscClk));
-	rt_kprintf("RTC clock: %d\n",                   CLOCK_GetFreq(kCLOCK_RtcClk));
-	rt_kprintf("ARMPLLCLK : %d\n",                  CLOCK_GetFreq(kCLOCK_ArmPllClk));
-	rt_kprintf("USB1PLLCLK : %d\n",                 CLOCK_GetFreq(kCLOCK_Usb1PllClk));
-	rt_kprintf("USB1PLLPDF0CLK : %d\n",             CLOCK_GetFreq(kCLOCK_Usb1PllPfd0Clk));
-	rt_kprintf("USB1PLLPFD1CLK : %d\n",             CLOCK_GetFreq(kCLOCK_Usb1PllPfd1Clk));
-	rt_kprintf("USB1PLLPFD2CLK : %d\n",             CLOCK_GetFreq(kCLOCK_Usb1PllPfd2Clk));
-	rt_kprintf("USB1PLLPFD3CLK : %d\n",             CLOCK_GetFreq(kCLOCK_Usb1PllPfd3Clk));
-	rt_kprintf("USB2PLLCLK : %d\n",                 CLOCK_GetFreq(kCLOCK_Usb2PllClk));
-	rt_kprintf("SYSPLLCLK : %d\n",                  CLOCK_GetFreq(kCLOCK_SysPllClk));
-	rt_kprintf("SYSPLLPDF0CLK : %d\n",              CLOCK_GetFreq(kCLOCK_SysPllPfd0Clk));
-	rt_kprintf("SYSPLLPFD1CLK : %d\n",              CLOCK_GetFreq(kCLOCK_SysPllPfd1Clk));
-	rt_kprintf("SYSPLLPFD2CLK : %d\n",              CLOCK_GetFreq(kCLOCK_SysPllPfd2Clk));
-	rt_kprintf("SYSPLLPFD3CLK : %d\n",              CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
-	rt_kprintf("Enet PLLCLK ref_enetpll0 : %d\n",   CLOCK_GetFreq(kCLOCK_EnetPll0Clk));
-	rt_kprintf("Enet PLLCLK ref_enetpll1 : %d\n",   CLOCK_GetFreq(kCLOCK_EnetPll1Clk));
-	rt_kprintf("Enet PLLCLK ref_enetpll2 : %d\n",   CLOCK_GetFreq(kCLOCK_EnetPll2Clk));
-	rt_kprintf("Audio PLLCLK : %d\n",               CLOCK_GetFreq(kCLOCK_AudioPllClk));
-	rt_kprintf("Video PLLCLK : %d\n",               CLOCK_GetFreq(kCLOCK_VideoPllClk));
+    rt_kprintf("OSC clock : %d\n",                  CLOCK_GetFreq(kCLOCK_OscClk));
+    rt_kprintf("RTC clock : %d\n",                  CLOCK_GetFreq(kCLOCK_RtcClk));
+    rt_kprintf("CPU clock: %d\n",                   CLOCK_GetFreq(kCLOCK_CpuClk)); 
+    rt_kprintf("AHB clock : %d\n",                  CLOCK_GetFreq(kCLOCK_AhbClk)); 
+    rt_kprintf("SEMC clock : %d\n",                 CLOCK_GetFreq(kCLOCK_SemcClk)); 
+    rt_kprintf("IPG clock : %d\n",                  CLOCK_GetFreq(kCLOCK_IpgClk));
+    rt_kprintf("ARMPLLCLK(PLL1) : %d\n",            CLOCK_GetFreq(kCLOCK_ArmPllClk));
+    rt_kprintf("SYSPLLCLK(PLL2/528_PLL) : %d\n",    CLOCK_GetFreq(kCLOCK_SysPllClk));
+    rt_kprintf("SYSPLLPDF0CLK : %d\n",              CLOCK_GetFreq(kCLOCK_SysPllPfd0Clk));
+    rt_kprintf("SYSPLLPFD1CLK : %d\n",              CLOCK_GetFreq(kCLOCK_SysPllPfd1Clk));
+    rt_kprintf("SYSPLLPFD2CLK : %d\n",              CLOCK_GetFreq(kCLOCK_SysPllPfd2Clk));
+    rt_kprintf("SYSPLLPFD3CLK : %d\n",              CLOCK_GetFreq(kCLOCK_SysPllPfd3Clk));
+    rt_kprintf("USB1PLLCLK(PLL3) : %d\n",           CLOCK_GetFreq(kCLOCK_Usb1PllClk));
+    rt_kprintf("USB1PLLPDF0CLK : %d\n",             CLOCK_GetFreq(kCLOCK_Usb1PllPfd0Clk));
+    rt_kprintf("USB1PLLPFD1CLK : %d\n",             CLOCK_GetFreq(kCLOCK_Usb1PllPfd1Clk));
+    rt_kprintf("USB1PLLPFD2CLK : %d\n",             CLOCK_GetFreq(kCLOCK_Usb1PllPfd2Clk));
+    rt_kprintf("USB1PLLPFD3CLK : %d\n",             CLOCK_GetFreq(kCLOCK_Usb1PllPfd3Clk));
+    rt_kprintf("Audio PLLCLK(PLL4) : %d\n",         CLOCK_GetFreq(kCLOCK_AudioPllClk));
+    rt_kprintf("Video PLLCLK(PLL5) : %d\n",         CLOCK_GetFreq(kCLOCK_VideoPllClk));
+    rt_kprintf("Enet PLLCLK ref_enetpll0 : %d\n",   CLOCK_GetFreq(kCLOCK_EnetPll0Clk));
+    rt_kprintf("Enet PLLCLK ref_enetpll1 : %d\n",   CLOCK_GetFreq(kCLOCK_EnetPll1Clk));
+    rt_kprintf("USB2PLLCLK(PLL7) : %d\n",           CLOCK_GetFreq(kCLOCK_Usb2PllClk));
 }
 
 void dump_cc_info(void)
