@@ -4,7 +4,7 @@
 
 ### Intent for your PR 拉取请求的目的  
 
-Choose one (Mandatory):  
+Choose one (Mandatory): 必须选择一项  
 
 - [ ] This PR is for a code-review and is intended to get feedback 本拉取请求是一个草稿版本  
 - [ ] This PR is mature, and ready to be integrated into the repo 本拉取请求是一个成熟版本  
