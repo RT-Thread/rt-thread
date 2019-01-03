@@ -3,36 +3,57 @@ Import('rtconfig')
 from building import *
 
 arch = rtconfig.ARCH
-comm = rtconfig.ARCH + '/common'
-path = rtconfig.ARCH + '/' + rtconfig.CPU
-src  = []
-ASFLAGS = ''
+paths = [rtconfig.ARCH + '/common']
+try:
+    rtconfig.ARCHVER
+except:
+    paths += [rtconfig.ARCH + '/' + rtconfig.CPU]
+else:
+    paths += [rtconfig.ARCH + '/' + rtconfig.ARCHVER + '/common']
+    if GetDepend('RT_USING_GICV2'):
+        paths += [rtconfig.ARCH + '/' + rtconfig.ARCHVER + '/gicv2']
+    paths += [rtconfig.ARCH + '/' + rtconfig.ARCHVER + '/' + rtconfig.CPU]
+
+# Including subfolders
+walkpaths = []
+for path in paths:
+    abspath = RTT_ROOT + '/libcpu/' + path
+    if os.path.isdir(abspath):
+        walkpaths += [abspath]
+        for root, dirs, files in os.walk(abspath):
+            for d in dirs:
+                walkpaths += [os.path.join(root, d)]
 
 # The set of source files associated with this SConscript file.
+src = []
 if rtconfig.PLATFORM == 'armcc':
-    src += Glob(path + '/*.c') + Glob(path + '/*_rvds.S') 
-    src += Glob(comm + '/*.c') + Glob(comm + '/*_rvds.S')
+    for path in walkpaths:
+        src += Glob(path + '/*.c')
+        src += Glob(path + '/*_rvds.S')
 
 if rtconfig.PLATFORM == 'gcc':
-    src += Glob(path + '/*_init.S')
-    src += Glob(path + '/*.c') + Glob(path + '/*_gcc.S') 
-    src += Glob(comm + '/*.c') + Glob(comm + '/*_gcc.S')
+    for path in walkpaths:
+        src += Glob(path + '/*.c')
+        src += Glob(path + '/*_init.S') + Glob(path + '/*_gcc.S')
 
 if rtconfig.PLATFORM == 'iar':
-    src += Glob(path + '/*.c') + Glob(path + '/*_iar.S')
-    src += Glob(comm + '/*.c') + Glob(comm + '/*_iar.S')
+    for path in walkpaths:
+        src += Glob(path + '/*.c')
+        src += Glob(path + '/*_iar.S')
 
 if rtconfig.PLATFORM == 'cl':
-    src = Glob(path + '/*.c')
+    for path in walkpaths:
+        src += Glob(path + '/*.c')
 
 if rtconfig.PLATFORM == 'mingw':
-    src = Glob(path + '/*.c')
+    for path in walkpaths:
+        src += Glob(path + '/*.c')
 
+ASFLAGS = ''
 if rtconfig.PLATFORM == 'armcc' and rtconfig.ARCH == 'arm' and rtconfig.CPU == 'arm926':
     ASFLAGS = ' --cpreproc'
 
-CPPPATH = [RTT_ROOT + '/libcpu/' + arch + '/' + rtconfig.CPU, RTT_ROOT + '/libcpu/' + arch + '/common']
-
+CPPPATH = walkpaths
 group = DefineGroup(rtconfig.CPU.upper(), src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS)
 
 Return('group')
