@@ -2,6 +2,7 @@ import os
 
 # toolchains options
 ARCH='arm'
+ARCHVER='armv7'
 CPU='am335x'
 CROSS_TOOL='gcc'
 
