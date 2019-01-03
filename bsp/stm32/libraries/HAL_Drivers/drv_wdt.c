@@ -48,7 +48,7 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
         break;
         /* set watchdog timeout */
     case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
-        hiwdg.Init.Reload = (rt_uint32_t)arg;
+        hiwdg.Init.Reload = *((rt_uint32_t*)arg);
         if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
         {
             LOG_E("wdg set timeout failed.");
