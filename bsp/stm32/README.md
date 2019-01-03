@@ -9,7 +9,7 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | **F1 系列** |  |
 | [stm32f103-atk-nano](stm32f103-atk-nano/)        | 正点原子 F103 NANO 开发板  |
 | [stm32f103-fire-arbitrary](stm32f103-fire-arbitrary/)  | 野火 F103  霸道开发板      |
-| [stm32f107-uc-eval](stm32f107-uc-eval/)  | 麦克泰 F107  μc_Eval开发板      |
+| [stm32f107-uc-eval](stm32f107-uc-eval/)  | 麦克泰 F107 μc_Eval开发板      |
 | **F4 系列** |  |
 | [stm32f407-st-discovery](stm32f407-st-discovery/) | ST 官方 stm32f407-discovery 开发板 |
 | [stm32f407-atk-explorer](stm32f407-atk-explorer/)    | 正点原子 F407 探索者开发板 |
