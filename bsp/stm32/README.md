@@ -5,7 +5,7 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | BSP 文件夹名称       | 开发板名称                 |
 |:------------------------- |:-------------------------- |
 | **F0 系列** |  |
-| [stm32f091-nucleo](stm32f091-nucleo/) | ST 官方 stm32f091-nucleo 开发板 |
+| [stm32f091-st-nucleo](stm32f091-st-nucleo/) | ST 官方 stm32f091-nucleo 开发板 |
 | **F1 系列** |  |
 | [stm32f103-atk-nano](stm32f103-atk-nano/)        | 正点原子 F103 NANO 开发板  |
 | [stm32f103-fire-arbitrary](stm32f103-fire-arbitrary/)  | 野火 F103  霸道开发板      |
