@@ -13,7 +13,7 @@
 #include <rtdevice.h>
 #include <board.h>
 #include "drv_gpio.h"
-/* defined the LED0 pin: PF9 */
+/* defined the LED1 pin: PD13 */
 #define LED1_PIN    GET_PIN(D, 13)
 
 int main(void)
