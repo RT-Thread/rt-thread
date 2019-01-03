@@ -81,7 +81,7 @@ env:
   - RTT_BSP='stm32l475-iot-disco' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='stm32l476-nucleo' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='stm32h743-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
-  - RTT_BSP='stm32/stm32f091-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32f091-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f103-atk-nano' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f103-fire-arbitrary' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f407-atk-explorer' RTT_TOOL_CHAIN='sourcery-arm'
