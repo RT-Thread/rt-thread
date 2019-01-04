@@ -1,11 +1,7 @@
 /*
- * File      : usart.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006-2013, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author          Notes
@@ -63,19 +59,19 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
 
     USART_InitStructure.USART_BaudRate = cfg->baud_rate;
 
-    if (cfg->data_bits == DATA_BITS_8){
+    if (cfg->data_bits == DATA_BITS_8) {
         USART_InitStructure.USART_WordLength = USART_WordLength_8b;
     } else if (cfg->data_bits == DATA_BITS_9) {
         USART_InitStructure.USART_WordLength = USART_WordLength_9b;
     }
 
-    if (cfg->stop_bits == STOP_BITS_1){
+    if (cfg->stop_bits == STOP_BITS_1) {
         USART_InitStructure.USART_StopBits = USART_StopBits_1;
-    } else if (cfg->stop_bits == STOP_BITS_2){
+    } else if (cfg->stop_bits == STOP_BITS_2) {
         USART_InitStructure.USART_StopBits = USART_StopBits_2;
     }
 
-    if (cfg->parity == PARITY_NONE){
+    if (cfg->parity == PARITY_NONE) {
         USART_InitStructure.USART_Parity = USART_Parity_No;
     } else if (cfg->parity == PARITY_ODD) {
         USART_InitStructure.USART_Parity = USART_Parity_Odd;
@@ -128,6 +124,7 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
     RT_ASSERT(serial != RT_NULL);
     uart = (struct stm32_uart *)serial->parent.user_data;
 
+    USART_ClearFlag(uart->uart_device,USART_FLAG_TC);
     uart->uart_device->DR = c;
     while (!(uart->uart_device->SR & USART_FLAG_TC));
 
@@ -275,9 +272,9 @@ void USART3_IRQHandler(void)
 
 static void RCC_Configuration(void)
 {
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
 
-#if defined(RT_USING_UART1)  
+#if defined(RT_USING_UART1)
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
 #endif /* RT_USING_UART1 */
@@ -297,8 +294,9 @@ static void RCC_Configuration(void)
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
 #endif /* RT_USING_UART2 */
 
-#if defined(RT_USING_UART3)  
+#if defined(RT_USING_UART3)
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOC, ENABLE);
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3,ENABLE);
     GPIO_PinRemapConfig(GPIO_PartialRemap_USART3, ENABLE);
 #endif /* RT_USING_UART3 */
 }
@@ -315,7 +313,7 @@ static void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_Pin = UART1_GPIO_RX;
     GPIO_Init(UART1_GPIO, &GPIO_InitStructure);
 
-	/* Configure USART1 Tx (PA.09) as alternate function push-pull */
+    /* Configure USART1 Tx (PA.09) as alternate function push-pull */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_InitStructure.GPIO_Pin = UART1_GPIO_TX;
     GPIO_Init(UART1_GPIO, &GPIO_InitStructure);
@@ -337,7 +335,7 @@ static void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_Pin = UART3_GPIO_RX;
     GPIO_Init(UART3_GPIO, &GPIO_InitStructure);
 
-	/* Configure USART3 Tx (PC.10) as alternate function push-pull */
+    /* Configure USART3 Tx (PC.10) as alternate function push-pull */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_InitStructure.GPIO_Pin = UART3_GPIO_TX;
     GPIO_Init(UART3_GPIO, &GPIO_InitStructure);
@@ -398,8 +396,8 @@ void rt_hw_usart_init(void)
     uart = &uart3;
 
     config.baud_rate = BAUD_RATE_115200;
-    serial2.ops    = &stm32_uart_ops;
-    serial2.config = config;
+    serial3.ops    = &stm32_uart_ops;
+    serial3.config = config;
 
     NVIC_Configuration(&uart3);
 

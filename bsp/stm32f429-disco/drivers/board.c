@@ -1,24 +1,26 @@
 /*
- * File      : board.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 RT-Thread Develop Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2009-01-05     Bernard      first implementation
  */
+
 #include <stdint.h>
 #include <rthw.h>
 #include <rtthread.h>
+
+#ifdef PKG_USING_GUIENGINE
+#include <rtgui/driver.h>
+#endif
 
 #include "stm32f4xx.h"
 #include "board.h"
 #include "usart.h"
 #include "stm32f4xx_hal.h"
+
 
 void _init(void)
 {
@@ -133,6 +135,10 @@ void HAL_Delay(__IO uint32_t Delay)
  */
 void rt_hw_board_init()
 {
+#ifdef PKG_USING_GUIENGINE
+    rt_device_t lcd;
+#endif
+
     HAL_Init();
 
     SystemClock_Config();
@@ -142,10 +148,16 @@ void rt_hw_board_init()
 #else
     stm32_hw_usart_init();
 #endif
-
+	
 #ifdef RT_USING_CONSOLE
     rt_console_set_device(CONSOLE_DEVICE);
 #endif
+	
+#ifdef PKG_USING_GUIENGINE
+    lcd = rt_device_find("lcd");
+    rtgui_graphic_set_device(lcd);
+#endif
+	
 }
 
 /*@}*/

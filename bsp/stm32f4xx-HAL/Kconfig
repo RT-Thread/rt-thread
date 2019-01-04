@@ -297,20 +297,24 @@ config RT_HSE_VALUE
 config RT_HSE_HCLK
     int "System Clock Value"
     default 84000000
-config RT_USING_UART1
+config BSP_USING_UART1
     bool "Using UART1"
+    select RT_USING_SERIAL
     default y    
 
-config RT_USING_UART2
+config BSP_USING_UART2
     bool "Using UART2"
+    select RT_USING_SERIAL
     default n
     
-config RT_USING_UART3
+config BSP_USING_UART3
     bool "Using UART3"
+    select RT_USING_SERIAL
     default n
     
-config RT_USING_UART6
+config BSP_USING_UART6
     bool "Using UART6"
+    select RT_USING_SERIAL
     default n   
 
 if RT_USING_CAN

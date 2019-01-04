@@ -1,21 +1,7 @@
 /*
- * File      : mstorage.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -82,6 +68,7 @@ struct mstorage
     struct rt_device_blk_geometry geometry;    
 };
 
+ALIGN(4)
 static struct udevice_descriptor dev_desc =
 {
     USB_DESC_LENGTH_DEVICE,     //bLength;
@@ -101,6 +88,7 @@ static struct udevice_descriptor dev_desc =
 };
 
 //FS and HS needed
+ALIGN(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
@@ -115,7 +103,7 @@ static struct usb_qualifier_descriptor dev_qualifier =
 };
 
 
-
+ALIGN(4)
 const static struct umass_descriptor _mass_desc =
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
@@ -162,6 +150,7 @@ const static struct umass_descriptor _mass_desc =
     },
 };
 
+ALIGN(4)
 const static char* _ustring[] =
 {
     "Language",
@@ -184,6 +173,7 @@ static rt_size_t _read_10(ufunction_t func, ustorage_cbw_t cbw);
 static rt_size_t _write_10(ufunction_t func, ustorage_cbw_t cbw);
 static rt_size_t _verify_10(ufunction_t func, ustorage_cbw_t cbw);
 
+ALIGN(4)
 static struct scsi_cmd cmd_data[] =
 {
     {SCSI_TEST_UNIT_READY, _test_unit_ready, 6,  FIXED,       0, DIR_NONE},

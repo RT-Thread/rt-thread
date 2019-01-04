@@ -18,6 +18,10 @@ DEVICE_TYPE = '__SAMD21J18A__'
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
 	EXEC_PATH 	= 'C:/Program Files/CodeSourcery/Sourcery_CodeBench_Lite_for_ARM_EABI/bin'
+	print('================ERROR============================')
+	print('Not support gcc yet!')
+	print('=================================================')
+	exit(0)
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'C:/Keil'

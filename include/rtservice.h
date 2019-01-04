@@ -1,21 +1,7 @@
 /*
- * File      : rtservice.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -38,7 +24,7 @@ extern "C" {
  * @addtogroup KernelService
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * rt_container_of - return the member address of ptr, if the type of ptr is the
@@ -320,7 +306,7 @@ rt_inline int rt_slist_isempty(rt_slist_t *l)
 #define rt_slist_tail_entry(ptr, type, member) \
     rt_slist_entry(rt_slist_tail(ptr), type, member)
 
-/*@}*/
+/**@}*/
 
 #ifdef __cplusplus
 }

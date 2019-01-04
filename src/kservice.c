@@ -1,21 +1,7 @@
 /*
- * File      : kservice.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -147,20 +133,21 @@ void *rt_memset(void *s, int c, rt_ubase_t count)
 
     return s;
 #else
-#define LBLOCKSIZE      (sizeof(rt_int32_t))
-#define UNALIGNED(X)    ((rt_int32_t)X & (LBLOCKSIZE - 1))
+#define LBLOCKSIZE      (sizeof(long))
+#define UNALIGNED(X)    ((long)X & (LBLOCKSIZE - 1))
 #define TOO_SMALL(LEN)  ((LEN) < LBLOCKSIZE)
 
-    int i;
+    unsigned int i;
     char *m = (char *)s;
-    rt_uint32_t buffer;
-    rt_uint32_t *aligned_addr;
-    rt_uint32_t d = c & 0xff;
+    unsigned long buffer;
+    unsigned long *aligned_addr;
+    unsigned int d = c & 0xff;  /* To avoid sign extension, copy C to an
+                                unsigned variable.  */
 
     if (!TOO_SMALL(count) && !UNALIGNED(s))
     {
         /* If we get this far, we know that n is large and m is word-aligned. */
-        aligned_addr = (rt_uint32_t *)s;
+        aligned_addr = (unsigned long *)s;
 
         /* Store D into each char sized location in BUFFER so that
          * we can set large blocks quickly.
@@ -240,25 +227,24 @@ void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
     return dst;
 #else
 
-#define UNALIGNED(X, Y)                                               \
-                        (((rt_int32_t)X & (sizeof(rt_int32_t) - 1)) | \
-                         ((rt_int32_t)Y & (sizeof(rt_int32_t) - 1)))
-#define BIGBLOCKSIZE    (sizeof(rt_int32_t) << 2)
-#define LITTLEBLOCKSIZE (sizeof(rt_int32_t))
+#define UNALIGNED(X, Y) \
+    (((long)X & (sizeof (long) - 1)) | ((long)Y & (sizeof (long) - 1)))
+#define BIGBLOCKSIZE    (sizeof (long) << 2)
+#define LITTLEBLOCKSIZE (sizeof (long))
 #define TOO_SMALL(LEN)  ((LEN) < BIGBLOCKSIZE)
 
     char *dst_ptr = (char *)dst;
     char *src_ptr = (char *)src;
-    rt_int32_t *aligned_dst;
-    rt_int32_t *aligned_src;
+    long *aligned_dst;
+    long *aligned_src;
     int len = count;
 
     /* If the size is small, or either SRC or DST is unaligned,
     then punt into the byte copy loop.  This should be rare. */
     if (!TOO_SMALL(len) && !UNALIGNED(src_ptr, dst_ptr))
     {
-        aligned_dst = (rt_int32_t *)dst_ptr;
-        aligned_src = (rt_int32_t *)src_ptr;
+        aligned_dst = (long *)dst_ptr;
+        aligned_src = (long *)src_ptr;
 
         /* Copy 4X long words at a time if possible. */
         while (len >= BIGBLOCKSIZE)
@@ -535,7 +521,7 @@ char *rt_strdup(const char *s)
     return tmp;
 }
 RTM_EXPORT(rt_strdup);
-#ifdef __CC_ARM
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
 char *strdup(const char *s) __attribute__((alias("rt_strdup")));
 #endif
 #endif
@@ -556,20 +542,20 @@ RTM_EXPORT(rt_show_version);
 /* private function */
 #define isdigit(c)  ((unsigned)((c) - '0') < 10)
 
-rt_inline rt_int32_t divide(rt_int32_t *n, rt_int32_t base)
+rt_inline int divide(long *n, int base)
 {
-    rt_int32_t res;
+    int res;
 
     /* optimized for processor which does not support divide instructions. */
     if (base == 10)
     {
-        res = ((rt_uint32_t) * n) % 10U;
-        *n = ((rt_uint32_t) * n) / 10U;
+        res = (int)(((unsigned long)*n) % 10U);
+        *n = (long)(((unsigned long)*n) / 10U);
     }
     else
     {
-        res = ((rt_uint32_t) * n) % 16U;
-        *n = ((rt_uint32_t) * n) / 16U;
+        res = (int)(((unsigned long)*n) % 16U);
+        *n = (long)(((unsigned long)*n) / 16U);
     }
 
     return res;
@@ -1203,31 +1189,36 @@ RTM_EXPORT(rt_kprintf);
  */
 void *rt_malloc_align(rt_size_t size, rt_size_t align)
 {
-    void *align_ptr;
     void *ptr;
+    void *align_ptr;
+    int uintptr_size;
     rt_size_t align_size;
 
-    /* align the alignment size to 4 byte */
-    align = ((align + 0x03) & ~0x03);
+    /* sizeof pointer */
+    uintptr_size = sizeof(void*);
+    uintptr_size -= 1;
+
+    /* align the alignment size to uintptr size byte */
+    align = ((align + uintptr_size) & ~uintptr_size);
 
     /* get total aligned size */
-    align_size = ((size + 0x03) & ~0x03) + align;
+    align_size = ((size + uintptr_size) & ~uintptr_size) + align;
     /* allocate memory block from heap */
     ptr = rt_malloc(align_size);
     if (ptr != RT_NULL)
     {
         /* the allocated memory block is aligned */
-        if (((rt_uint32_t)ptr & (align - 1)) == 0)
+        if (((rt_ubase_t)ptr & (align - 1)) == 0)
         {
-            align_ptr = (void *)((rt_uint32_t)ptr + align);
+            align_ptr = (void *)((rt_ubase_t)ptr + align);
         }
         else
         {
-            align_ptr = (void *)(((rt_uint32_t)ptr + (align - 1)) & ~(align - 1));
+            align_ptr = (void *)(((rt_ubase_t)ptr + (align - 1)) & ~(align - 1));
         }
 
         /* set the pointer before alignment pointer to the real pointer */
-        *((rt_uint32_t *)((rt_uint32_t)align_ptr - sizeof(void *))) = (rt_uint32_t)ptr;
+        *((rt_ubase_t *)((rt_ubase_t)align_ptr - sizeof(void *))) = (rt_ubase_t)ptr;
 
         ptr = align_ptr;
     }
@@ -1246,7 +1237,7 @@ void rt_free_align(void *ptr)
 {
     void *real_ptr;
 
-    real_ptr = (void *) * (rt_uint32_t *)((rt_uint32_t)ptr - sizeof(void *));
+    real_ptr = (void *) * (rt_ubase_t *)((rt_ubase_t)ptr - sizeof(void *));
     rt_free(real_ptr);
 }
 RTM_EXPORT(rt_free_align);

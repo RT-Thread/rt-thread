@@ -1,21 +1,7 @@
 /*
- * File      : rtthread.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -27,6 +13,7 @@
  * 2010-04-11     yi.qiu       add module feature
  * 2013-06-24     Bernard      add rt_kprintf re-define when not use RT_USING_CONSOLE.
  * 2016-08-09     ArdaFu       add new thread and interrupt hook.
+ * 2018-11-22     Jesven       add all cpu's lock and ipi handler
  */
 
 #ifndef __RT_THREAD_H__
@@ -114,7 +101,8 @@ rt_tick_t rt_timer_next_timeout_tick(void);
 void rt_timer_check(void);
 
 #ifdef RT_USING_HOOK
-void rt_timer_timeout_sethook(void (*hook)(struct rt_timer *timer));
+void rt_timer_enter_sethook(void (*hook)(struct rt_timer *timer));
+void rt_timer_exit_sethook(void (*hook)(struct rt_timer *timer));
 #endif
 
 /**@}*/
@@ -197,6 +185,10 @@ rt_uint16_t rt_critical_level(void);
 void rt_scheduler_sethook(void (*hook)(rt_thread_t from, rt_thread_t to));
 #endif
 
+#ifdef RT_USING_SMP
+void rt_scheduler_ipi_handler(int vector, void *param);
+#endif
+
 /**@}*/
 
 /**
@@ -270,7 +262,7 @@ void rt_page_free(void *addr, rt_size_t npages);
 #endif
 
 #ifdef RT_USING_HOOK
-void rt_malloc_sethook(void (*hook)(void *ptr, rt_uint32_t size));
+void rt_malloc_sethook(void (*hook)(void *ptr, rt_size_t size));
 void rt_free_sethook(void (*hook)(void *ptr));
 #endif
 
@@ -283,9 +275,9 @@ void rt_free_sethook(void (*hook)(void *ptr));
 rt_err_t rt_memheap_init(struct rt_memheap *memheap,
                          const char        *name,
                          void              *start_addr,
-                         rt_uint32_t        size);
+                         rt_size_t         size);
 rt_err_t rt_memheap_detach(struct rt_memheap *heap);
-void *rt_memheap_alloc(struct rt_memheap *heap, rt_uint32_t size);
+void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size);
 void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize);
 void rt_memheap_free(void *ptr);
 #endif
@@ -361,11 +353,11 @@ rt_err_t rt_mb_detach(rt_mailbox_t mb);
 rt_mailbox_t rt_mb_create(const char *name, rt_size_t size, rt_uint8_t flag);
 rt_err_t rt_mb_delete(rt_mailbox_t mb);
 
-rt_err_t rt_mb_send(rt_mailbox_t mb, rt_uint32_t value);
+rt_err_t rt_mb_send(rt_mailbox_t mb, rt_ubase_t value);
 rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
-                         rt_uint32_t  value,
+                         rt_ubase_t  value,
                          rt_int32_t   timeout);
-rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_uint32_t *value, rt_int32_t timeout);
+rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout);
 rt_err_t rt_mb_control(rt_mailbox_t mb, int cmd, void *arg);
 #endif
 
@@ -452,6 +444,20 @@ rt_err_t  rt_device_control(rt_device_t dev, int cmd, void *arg);
 void rt_interrupt_enter(void);
 void rt_interrupt_leave(void);
 
+#ifdef RT_USING_SMP
+
+/*
+ * smp cpus lock service
+ */
+
+rt_base_t rt_cpus_lock(void);
+void rt_cpus_unlock(rt_base_t level);
+
+struct rt_cpu *rt_cpu_self(void);
+struct rt_cpu *rt_cpu_index(int index);
+
+#endif
+
 /*
  * the number of nested interrupts.
  */
@@ -511,7 +517,7 @@ rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count);
 rt_int32_t rt_strcmp(const char *cs, const char *ct);
 rt_size_t rt_strlen(const char *src);
 char *rt_strdup(const char *s);
-#ifdef __CC_ARM
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
 /* leak strdup interface */
 char* strdup(const char* str);
 #endif

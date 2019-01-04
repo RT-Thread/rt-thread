@@ -10,14 +10,16 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    # EXEC_PATH   = '/home/tanek/risc-v/e300/riscv64-unknown-elf-gcc-20170612-x86_64-linux-centos6/bin'
-    EXEC_PATH   = '/home/tanek/risc-v/e300/riscv64-unknown-elf-gcc-20171231-x86_64-linux-centos6/bin'
+    EXEC_PATH   = r'/opt/unknown-gcc/bin'
+else:
+    print('Please make sure your toolchains is GNU GCC!')
+    exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
-#BUILD = 'debug'
-BUILD = 'release'
+BUILD = 'debug'
+#BUILD = 'release'
 
 CORE = 'risc-v'
 MAP_FILE = 'rtthread.map'
@@ -27,8 +29,9 @@ TARGET_NAME = 'rtthread.bin'
 #------- GCC settings ----------------------------------------------------------
 if PLATFORM == 'gcc':
     # toolchains
-    PREFIX = 'riscv64-unknown-elf-'
+    PREFIX = 'riscv-none-embed-'
     CC = PREFIX + 'gcc'
+    CXX= PREFIX + 'g++'
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
@@ -37,7 +40,7 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -march=rv32imac -mabi=ilp32 -DUSE_PLIC -DUSE_M_TIME -DNO_INIT -mcmodel=medany -msmall-data-limit=8  -g -L.  -nostartfiles  -lc '
+    DEVICE = ' -march=rv32imac -mabi=ilp32 -DUSE_PLIC -DUSE_M_TIME -DNO_INIT -mcmodel=medany -msmall-data-limit=8 -L.  -nostartfiles  -lc '
     CFLAGS = DEVICE
     CFLAGS += ' -save-temps=obj'
     AFLAGS = '-c'+ DEVICE + ' -x assembler-with-cpp'
@@ -51,8 +54,8 @@ if PLATFORM == 'gcc':
     LPATH = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O0 -gdwarf-2'
-        AFLAGS += ' -gdwarf-2'
+        CFLAGS += ' -O0 -g3'
+        AFLAGS += ' -g3'
     else:
         CFLAGS += ' -O2'
 

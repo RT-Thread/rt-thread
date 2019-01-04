@@ -1,21 +1,7 @@
 /*
- * File      : dfs_posix.c
- * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -124,7 +110,7 @@ RTM_EXPORT(close);
  * @return the actual read data buffer length. If the returned value is 0, it
  * may be reach the end of file, please check errno.
  */
-#ifdef RT_USING_NEWLIB
+#if defined(RT_USING_NEWLIB) && defined(_EXFUN)
 _READ_WRITE_RETURN_TYPE _EXFUN(read, (int fd, void *buf, size_t len))
 #else
 int read(int fd, void *buf, size_t len)
@@ -168,7 +154,7 @@ RTM_EXPORT(read);
  *
  * @return the actual written data buffer length.
  */
-#ifdef RT_USING_NEWLIB
+#if defined(RT_USING_NEWLIB) && defined(_EXFUN)
 _READ_WRITE_RETURN_TYPE _EXFUN(write, (int fd, const void *buf, size_t len))
 #else
 int write(int fd, const void *buf, size_t len)
@@ -455,7 +441,7 @@ int fcntl(int fildes, int cmd, ...)
         ret = -1;
     }
 
-    return 0;
+    return ret;
 }
 RTM_EXPORT(fcntl);
 
@@ -904,9 +890,9 @@ int access(const char *path, int amode)
 char *getcwd(char *buf, size_t size)
 {
 #ifdef DFS_USING_WORKDIR
-    rt_enter_critical();
+    dfs_lock();
     strncpy(buf, working_directory, size);
-    rt_exit_critical();
+    dfs_unlock();
 #else
     rt_kprintf(NO_WORKING_DIR);
 #endif

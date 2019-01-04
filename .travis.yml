@@ -12,7 +12,7 @@ before_script:
   # - "[ $RTT_TOOL_CHAIN = 'sourcery-arm' ] && export RTT_EXEC_PATH=/usr/bin && arm-none-eabi-gcc --version || true"
   # - "[ $RTT_TOOL_CHAIN = 'sourcery-arm' ] && curl -s https://sourcery.mentor.com/public/gnu_toolchain/arm-none-eabi/arm-2014.05-28-arm-none-eabi-i686-pc-linux-gnu.tar.bz2 | sudo tar xjf - -C /opt && export RTT_EXEC_PATH=/opt/arm-2014.05/bin && /opt/arm-2014.05/bin/arm-none-eabi-gcc --version || true"
   - "[ $RTT_TOOL_CHAIN = 'sourcery-arm' ] && wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/arm-2017q2-v6/gcc-arm-none-eabi-6-2017-q2-update-linux.tar.bz2 && sudo tar xjf gcc-arm-none-eabi-6-2017-q2-update-linux.tar.bz2 -C /opt && export RTT_EXEC_PATH=/opt/gcc-arm-none-eabi-6-2017-q2-update/bin && /opt/gcc-arm-none-eabi-6-2017-q2-update/bin/arm-none-eabi-gcc --version || true"
-  - "[ $RTT_TOOL_CHAIN = 'sourcery-mips' ] && curl -s https://sourcery.mentor.com/public/gnu_toolchain/mips-sde-elf/mips-2012.09-98-mips-sde-elf-i686-pc-linux-gnu.tar.bz2 | sudo tar xjf - -C /opt && export RTT_EXEC_PATH=/opt/mips-2012.09/bin && /opt/mips-2012.09/bin/mips-sde-elf-gcc --version || true"
+  - "[ $RTT_TOOL_CHAIN = 'sourcery-mips' ] && curl -s https://sourcery.mentor.com/public/gnu_toolchain/mips-sde-elf/mips-2016.05-7-mips-sde-elf-i686-pc-linux-gnu.tar.bz2 | sudo tar xjf - -C /opt && export RTT_EXEC_PATH=/opt/mips-2016.05/bin && /opt/mips-2016.05/bin/mips-sde-elf-gcc --version || true"
   # - "[ $RTT_TOOL_CHAIN = 'sourcery-ppc' ] && curl -s https://sourcery.mentor.com/public/gnu_toolchain/powerpc-eabi/freescale-2011.03-39-powerpc-eabi-i686-pc-linux-gnu.tar.bz2 | sudo tar xjf - -C /opt && export RTT_EXEC_PATH=/opt/freescale-2011.03/bin && /opt/freescale-2011.03/bin/powerpc-eabi-gcc --version || true"
   # - "[ $RTT_TOOL_CHAIN = 'atmel-avr32' ] && curl -s http://www.atmel.com/images/avr32-gnu-toolchain-3.4.1.348-linux.any.x86.tar.gz | sudo tar xzf - -C /opt && export RTT_EXEC_PATH=/opt/avr32-gnu-toolchain-linux_x86/bin && /opt/avr32-gnu-toolchain-linux_x86/bin/avr32-gcc --version && curl -sO http://www.atmel.com/images/avr-headers-3.2.3.970.zip && unzip -qq avr-headers-3.2.3.970.zip -d bsp/$RTT_BSP || true"
   - export RTT_ROOT=`pwd`
@@ -80,7 +80,18 @@ env:
   - RTT_BSP='stm32f429-disco' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='stm32l475-iot-disco' RTT_TOOL_CHAIN='sourcery-arm' 
   - RTT_BSP='stm32l476-nucleo' RTT_TOOL_CHAIN='sourcery-arm' 
-  - RTT_BSP='stm32h743-nucleo' RTT_TOOL_CHAIN='sourcery-arm' 
+  - RTT_BSP='stm32h743-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32f091-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32f103-atk-nano' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32f103-fire-arbitrary' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32f407-atk-explorer' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32f407-st-discovery' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32f429-armfly-v6' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32f429-atk-apollo' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32f429-fire-challenger' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32f767-atk-apollo' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32f767-fire-challenger' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32l475-atk-pandora' RTT_TOOL_CHAIN='sourcery-arm'
 #  - RTT_BSP='taihu' RTT_TOOL_CHAIN='sourcery-ppc'
 #  - RTT_BSP='upd70f3454' # iar
 #  - RTT_BSP='x86' # x86

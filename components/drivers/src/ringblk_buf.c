@@ -1,21 +1,7 @@
 /*
- * File      : ringblk_buf.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -32,8 +18,10 @@
  * @param rbb ring block buffer object
  * @param buf buffer
  * @param buf_size buffer size
- * @param block_set
- * @param blk_max_num
+ * @param block_set block set
+ * @param blk_max_num max block number
+ *
+ * @note When your application need align access, please make the buffer address is aligned.
  */
 void rt_rbb_init(rt_rbb_t rbb, rt_uint8_t *buf, rt_size_t buf_size, rt_rbb_blk_t block_set, rt_size_t blk_max_num)
 {
@@ -137,6 +125,8 @@ static rt_rbb_blk_t find_empty_blk_in_set(rt_rbb_t rbb)
  * @param rbb ring block buffer object
  * @param blk_size block size
  *
+ * @note When your application need align access, please make the blk_szie is aligned.
+ *
  * @return != NULL: allocated block
  *            NULL: allocate failed
  */
@@ -147,7 +137,7 @@ rt_rbb_blk_t rt_rbb_blk_alloc(rt_rbb_t rbb, rt_size_t blk_size)
     rt_rbb_blk_t head, tail, new = NULL;
 
     RT_ASSERT(rbb);
-    RT_ASSERT(blk_size < 1L << 24);
+    RT_ASSERT(blk_size < (1L << 24));
 
     level = rt_hw_interrupt_disable();
 
@@ -290,6 +280,36 @@ __exit:
     return block;
 }
 RTM_EXPORT(rt_rbb_blk_get);
+
+/**
+ * return the block size
+ *
+ * @param block the block
+ *
+ * @return block size
+ */
+rt_size_t rt_rbb_blk_size(rt_rbb_blk_t block)
+{
+    RT_ASSERT(block);
+
+    return block->size;
+}
+RTM_EXPORT(rt_rbb_blk_size);
+
+/**
+ * return the block buffer
+ *
+ * @param block the block
+ *
+ * @return block buffer
+ */
+rt_uint8_t *rt_rbb_blk_buf(rt_rbb_blk_t block)
+{
+    RT_ASSERT(block);
+
+    return block->buf;
+}
+RTM_EXPORT(rt_rbb_blk_buf);
 
 /**
  * free the block

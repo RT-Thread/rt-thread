@@ -1,26 +1,7 @@
 /*
- *  RT-Thread module shell implementation.
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * COPYRIGHT (C) 2013, Shanghai Real-Thread Technology Co., Ltd
- *
- *  This file is part of RT-Thread (http://www.rt-thread.org)
- *  Maintainer: bernard.xiong <bernard.xiong at gmail.com>
- *
- *  All rights reserved.
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -28,6 +9,9 @@
  * 2014-01-03     Bernard      msh can execute module.
  * 2017-07-19     Aubr.Cool    limit argc to RT_FINSH_ARG_MAX
  */
+#include <rtthread.h>
+
+#ifdef FINSH_USING_MSH
 
 #include "msh.h"
 #include <finsh.h>
@@ -629,3 +613,4 @@ void msh_auto_complete(char *prefix)
 }
 #endif
 
+#endif /* FINSH_USING_MSH */

@@ -1,11 +1,7 @@
 /*
- * File      : rndis.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006-2013, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
@@ -218,6 +214,7 @@ const static char* _ustring[] =
     USB_STRING_OS
 };
 
+ALIGN(4)
 struct usb_os_function_comp_id_descriptor rndis_func_comp_id_desc = 
 {
     .bFirstInterfaceNumber = USB_DYNAMIC,
@@ -226,7 +223,9 @@ struct usb_os_function_comp_id_descriptor rndis_func_comp_id_desc =
     .subCompatibleID    = {'5', '1', '6', '2', '0', '0', '1', 0x00},
     .reserved2          = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
 };
+
 //FS and HS needed
+ALIGN(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength

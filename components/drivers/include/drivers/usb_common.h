@@ -1,21 +1,7 @@
 /*
- * File      : usb_common.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -229,6 +215,19 @@ extern "C" {
 #define HID_REPORT_ID_MEDIA             4
 #define HID_REPORT_ID_GENERAL           5
 #define HID_REPORT_ID_MOUSE             6
+
+/*
+ * Time of usb timeout
+ */
+#ifndef USB_TIMEOUT_BASIC
+#define USB_TIMEOUT_BASIC               (RT_TICK_PER_SECOND)        /* 1s */
+#endif
+#ifndef USB_TIMEOUT_LONG
+#define USB_TIMEOUT_LONG                (RT_TICK_PER_SECOND * 5)    /* 5s */
+#endif
+#ifndef USB_DEBOUNCE_TIME
+#define USB_DEBOUNCE_TIME               (RT_TICK_PER_SECOND / 5)    /* 0.2s */
+#endif
 
 #define uswap_32(x) \
     ((((x) & 0xff000000) >> 24) | \
