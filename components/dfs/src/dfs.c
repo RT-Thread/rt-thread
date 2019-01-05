@@ -18,6 +18,10 @@
 #include <lwp.h>
 #endif
 
+#ifdef RT_USING_DFS_DEVFS
+#include <libc.h>
+#endif
+
 /* Global variables */
 const struct dfs_filesystem_ops *filesystem_operation_table[DFS_FILESYSTEM_TYPES_MAX];
 struct dfs_filesystem filesystem_table[DFS_FILESYSTEMS_MAX];
@@ -211,6 +215,11 @@ struct dfs_fd *fd_get(int fd)
 {
     struct dfs_fd *d;
     struct dfs_fdtable *fdt;
+
+#ifdef RT_USING_DFS_DEVFS
+    if ((0 <= fd) && (fd <= 2))
+        fd = libc_stdio_get_console();
+#endif
 
     fdt = dfs_fdtable_get();
     fd = fd - DFS_FD_OFFSET;
