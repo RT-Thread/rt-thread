@@ -63,6 +63,7 @@
 /* SECTION: Device System */
 /* Using Device System */
 #define RT_USING_DEVICE
+#define RT_USING_DEVICE_IPC
 
 /* SECTION: Console options */
 /* the buffer size of console */
