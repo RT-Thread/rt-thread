@@ -1,8 +1,8 @@
-# STM32F767 阿波罗开发板 BSP 说明
+# STM32F746-disco 开发板 BSP 说明
 
 ## 简介
 
-本文档为 RT-Thread 开发团队为 STM32F767 阿波罗开发板提供的 BSP (板级支持包) 说明。
+本文档为 jinsheng 为 STM32F746 STM32F746-disco开发板提供的 BSP (板级支持包) 说明。
 
 主要内容如下：
 
@@ -14,25 +14,19 @@
 
 ## 开发板介绍
 
-阿波罗 STM32F767 是正点原子推出的一款基于 ARM Cortex-M7 内核的开发板，最高主频为 216Mhz，该开发板具有丰富的板载资源，可以充分发挥 STM32F767 的芯片性能。
-
-开发板外观如下图所示：
-
-![board](figures/board.jpg)
+STM32F746-disco 是ST推出的一款基于 ARM Cortex-M7 内核的开发板，最高主频为 216Mhz，该开发板具有丰富的板载资源，可以充分发挥 STM32F746 的芯片性能。
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：STM32f767，主频 216MHz，1MB FLASH ，512KB RAM，16K CACHE
-- 外部 SDRAM：W9825G6KH，32MB
-- 外部 NAND FLASH： MT29F4G08，512MB
-- 外部 SPI FLASH： W25Q256，32M 
+- MCU：STM32f767，主频 216MHz，1MB FLASH ，320KB RAM，16K CACHE
+- 外部：
 - 常用外设
-  - LED：2个，DS0（红色，PB1），DS1（绿色，PB0）
-  - 按键：4个，KEY_UP（兼具唤醒功能，PA0），K0（PH3），K1（PH2），K2（PC13）
-- 常用接口：USB 转串口、SD 卡接口、以太网接口、LCD 接口
+  - LED：LED1（绿色，PI1）
+- 常用接口：
 - 调试接口，标准 JTAG/SWD
+开发板更多详细信息请参考官网：()(https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/stm32-mcu-eval-tools/stm32-mcu-discovery-kits/32f746gdiscovery.html)。
+开发板更多详细信息请参考官网：()(https://www.st.com/content/st_com/en/products/microcontrollers/stm32-32-bit-arm-cortex-mcus/stm32-high-performance-mcus/stm32f7-series/stm32f7x6/stm32f746ng.html)。
 
-开发板更多详细信息请参考正点原子 [STM32 阿波罗开发板介绍](https://eboard.taobao.com/index.htm)。
 
 ## 外设支持
 
@@ -40,28 +34,9 @@
 
 | **板载外设**      | **支持情况** | **备注**                              |
 | :----------------- | :----------: | :------------------------------------- |
-| USB 转串口        |     支持      |                                       |
-| RS232             |     支持     | 与以太网引脚有冲突，如需使用该外设，请使用 CubeMX 重新配置 UART2 管脚 |
-| QSPI Flash        |     支持     |                                       |
-| 以太网            |   支持        |                                        |
-| MPU9250六轴传感器 |   支持        |                                       |
-| SDRAM             |   支持       |                                       |
-| SD卡              |        支持   |                                       |
-| CAN               |   即将支持   |                                       |
-| EMW1062 | 暂不支持 | |
+| 暂无         |   暂不支持   | 暂不支持                              |
 | **片上外设**      | **支持情况** | **备注**                              |
-| GPIO              |     支持     | PA0，PA1... PK15 ---> PIN: 0，1...176 |
-| UART              |     支持     |                                       |
-| SPI               |     支持     |                                       |
-| I2C               |     支持     | 软件 I2C                              |
-| ADC               |    支持     |                                     |
-| RTC               |     支持     |                                      |
-| WDT               |     支持     |                                       |
-| PWM               |     支持     |                                       |
-| SDIO              |     支持     |                                       |
-| FLASH             |     支持     |                                       |
-| USB Device        |   暂不支持   | 即将支持                              |
-| USB Host          |   暂不支持   | 即将支持                              |
+| 暂无         |   暂不支持   | 暂不支持                              |
 | **扩展模块**      | **支持情况** | **备注**                              |
 | 暂无         |   暂不支持   | 暂不支持                              |
 
@@ -126,5 +101,6 @@ msh >
 ## 联系人信息
 
 维护人:
-
-- [BalanceTWK](https://github.com/balanceTWK)
+jinsheng
+邮箱：
+jinsheng20@outlook.com
