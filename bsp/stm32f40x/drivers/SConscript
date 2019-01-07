@@ -17,6 +17,11 @@ if GetDepend('RT_USING_LWIP'):
 if GetDepend('RT_USING_PIN'):
     src += ['gpio.c']
 
+# add i2c drivers.
+if GetDepend(['RT_USING_I2C']):
+    src += ['drv_i2c.c']
+
+
 CPPPATH = [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
