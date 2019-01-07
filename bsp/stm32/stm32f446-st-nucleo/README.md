@@ -95,7 +95,7 @@
 ```bash
  \ | /
 - RT -     Thread Operating System
- / | \     3.1.1 build Nov 19 2018
+ / | \     4.0.0 build Jan  7 2019
  2006 - 2018 Copyright by rt-thread team
 msh >
 ```
