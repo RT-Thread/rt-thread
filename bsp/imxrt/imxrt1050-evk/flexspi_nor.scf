@@ -122,4 +122,13 @@ LR_IROM1 m_text_start m_text_size
         * (NonCacheable.init)
         * (NonCacheable)
     }
+  ITCM 0x400 0xFBFF {
+		;drv_flexspi_hyper.o(+RO)
+		;fsl_flexspi.o(+RO)
+		* (*CLOCK_DisableClock)
+		* (*CLOCK_ControlGate)
+		* (*CLOCK_EnableClock)
+		* (*CLOCK_SetDiv)
+		* (itcm)
+	}
 }

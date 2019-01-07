@@ -91,10 +91,16 @@ int rthw_wifi_register(struct ameba_wifi *wifi)
 
     if ((wifi->flag & WIFI_INIT_FLAG) == 0)
     {
+        wlan = rt_malloc(sizeof(struct rt_wlan_device));
+        RT_ASSERT(wlan != RT_NULL);
         if (wifi->type == WIFI_TYPE_STA)
-            wlan = rt_wlan_dev_register(RT_WLAN_DEVICE_STA_NAME, &ops, 0, wifi);
+        {
+            rt_wlan_dev_register(wlan, RT_WLAN_DEVICE_STA_NAME, &ops, 0, wifi);
+        }
         if (wifi->type == WIFI_TYPE_AP)
-            wlan = rt_wlan_dev_register(RT_WLAN_DEVICE_AP_NAME, &ops, 0, wifi);
+        {
+            rt_wlan_dev_register(wlan, RT_WLAN_DEVICE_AP_NAME, &ops, 0, wifi);
+        }
         wifi->flag |= WIFI_INIT_FLAG;
         wifi->wlan = wlan;
         LOG_D("F:%s L:%d wifi:0x%08x wlan:0x%08x\n", __FUNCTION__, __LINE__, wifi, wlan);

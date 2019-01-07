@@ -1,4 +1,12 @@
-// ·â×°gpio½Ó¿Ú
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2017-09-06     å‹¤ä¸ºæœ¬       first version
+ */
 
 
 #include "ls1c_public.h"
@@ -8,13 +16,13 @@
 
 
 /*
- * »ñÈ¡Ö¸¶¨gpioµÄCFG¼Ä´æÆ÷
- * @gpio gpio±àºÅ
- * @ret CFG¼Ä´æÆ÷
+ * è·å–æŒ‡å®šgpioçš„CFGå¯„å­˜å™¨
+ * @gpio gpioç¼–å·
+ * @ret CFGå¯„å­˜å™¨
  */
 volatile unsigned int *gpio_get_cfg_reg(unsigned int gpio)
 {
-    volatile unsigned int *gpio_cfgx = NULL;            // GPIO_CFGx¼Ä´æÆ÷
+    volatile unsigned int *gpio_cfgx = NULL;            // GPIO_CFGxå¯„å­˜å™¨
     unsigned int port = GPIO_GET_PORT(gpio);
 
     switch (port)
@@ -45,13 +53,13 @@ volatile unsigned int *gpio_get_cfg_reg(unsigned int gpio)
 
 
 /*
- * »ñÈ¡Ö¸¶¨gpioµÄEN¼Ä´æÆ÷
- * @gpio gpio±àºÅ
- * @ret EN¼Ä´æÆ÷
+ * è·å–æŒ‡å®šgpioçš„ENå¯„å­˜å™¨
+ * @gpio gpioç¼–å·
+ * @ret ENå¯„å­˜å™¨
  */
 volatile unsigned int *gpio_get_en_reg(unsigned int gpio)
 {
-    volatile unsigned int *gpio_enx = NULL;         // GPIO_ENx¼Ä´æÆ÷
+    volatile unsigned int *gpio_enx = NULL;         // GPIO_ENxå¯„å­˜å™¨
     unsigned int port = GPIO_GET_PORT(gpio);
     
     switch (port)
@@ -81,28 +89,28 @@ volatile unsigned int *gpio_get_en_reg(unsigned int gpio)
 }
 
 /*
- * gpio³õÊ¼»¯
- * @gpio gpioÒı½Å£¬È¡Öµ·¶Î§[0, 127]
- * @mode gpioµÄ¹¤×÷Ä£Ê½(ÊäÈë¡¢Êä³ö)
+ * gpioåˆå§‹åŒ–
+ * @gpio gpioå¼•è„šï¼Œå–å€¼èŒƒå›´[0, 127]
+ * @mode gpioçš„å·¥ä½œæ¨¡å¼(è¾“å…¥ã€è¾“å‡º)
  *
- * Àı: ½«gpio50³õÊ¼»¯ÎªÊä³ö
+ * ä¾‹: å°†gpio50åˆå§‹åŒ–ä¸ºè¾“å‡º
  * gpio_init(50, gpio_mode_output);
  */
 void gpio_init(unsigned int gpio, gpio_mode_t mode)
 {
-    volatile unsigned int *gpio_enx = NULL;        // GPIO_ENx¼Ä´æÆ÷
+    volatile unsigned int *gpio_enx = NULL;        // GPIO_ENxå¯„å­˜å™¨
     unsigned int pin = GPIO_GET_PIN(gpio);
 
-    // ½«pinÉèÎªÆÕÍ¨GPIO
+    // å°†pinè®¾ä¸ºæ™®é€šGPIO
     pin_set_purpose(gpio, PIN_PURPOSE_GPIO);
 
-    // ÉèÖÃgpio¹¤×÷Ä£Ê½(ÊäÈë¡¢Êä³ö)
+    // è®¾ç½®gpioå·¥ä½œæ¨¡å¼(è¾“å…¥ã€è¾“å‡º)
     gpio_enx  = gpio_get_en_reg(gpio);
-    if (gpio_mode_output == mode)       // Êä³ö
+    if (gpio_mode_output == mode)       // è¾“å‡º
     {
         reg_clr_one_bit(gpio_enx, pin);
     }
-    else                                // ÊäÈë
+    else                                // è¾“å…¥
     {
         reg_set_one_bit(gpio_enx, pin);
     }
@@ -112,20 +120,20 @@ void gpio_init(unsigned int gpio, gpio_mode_t mode)
 
 
 /*
- * ÔÚÖ¸¶¨gpioÊä³ö¸ßµçÆ½»òµÍµçÆ½
- * @gpio gpioÒı½Å£¬È¡Öµ·¶Î§[0, 127]
- * @level µçÆ½Öµ
+ * åœ¨æŒ‡å®šgpioè¾“å‡ºé«˜ç”µå¹³æˆ–ä½ç”µå¹³
+ * @gpio gpioå¼•è„šï¼Œå–å€¼èŒƒå›´[0, 127]
+ * @level ç”µå¹³å€¼
  *
- * Àı: ÔÚgpio50ÉÏÊä³öµÍµçÆ½
+ * ä¾‹: åœ¨gpio50ä¸Šè¾“å‡ºä½ç”µå¹³
  * gpio_set(50, gpio_level_low);
  */
 void gpio_set(unsigned int gpio, gpio_level_t level)
 {
-    volatile unsigned int *gpio_outx = NULL;       // GPIO_OUTx¼Ä´æÆ÷
+    volatile unsigned int *gpio_outx = NULL;       // GPIO_OUTxå¯„å­˜å™¨
     unsigned int port   = GPIO_GET_PORT(gpio);
     unsigned int pin    = GPIO_GET_PIN(gpio);
 
-    // »ñÈ¡¼Ä´æÆ÷µØÖ·
+    // è·å–å¯„å­˜å™¨åœ°å€
     switch (port)
     {
         case 0:
@@ -144,11 +152,11 @@ void gpio_set(unsigned int gpio, gpio_level_t level)
             gpio_outx = (volatile unsigned int *)LS1C_GPIO_OUT3;
             break;
 
-        default:        // ÕıÈ·µÄ³ÌĞò²»Ó¦¸Ã×ßµ½ÕâÀï£¬Ö±½Ó·µ»Ø
+        default:        // æ­£ç¡®çš„ç¨‹åºä¸åº”è¯¥èµ°åˆ°è¿™é‡Œï¼Œç›´æ¥è¿”å›
             return ;
     }
 
-    // Êä³ö
+    // è¾“å‡º
     if (gpio_level_low == level)
     {
         reg_clr_one_bit(gpio_outx, pin);
@@ -163,20 +171,20 @@ void gpio_set(unsigned int gpio, gpio_level_t level)
 
 
 /*
- * ¶ÁÈ¡Ö¸¶¨gpioÒı½ÅµÄÖµ
- * @gpio gpioÒı½Å£¬È¡Öµ·¶Î§[0,127]
+ * è¯»å–æŒ‡å®šgpioå¼•è„šçš„å€¼
+ * @gpio gpioå¼•è„šï¼Œå–å€¼èŒƒå›´[0,127]
  *
- * Àı: ¶ÁÈ¡gpio50Òı½ÅÉÏµÄÖµ
+ * ä¾‹: è¯»å–gpio50å¼•è„šä¸Šçš„å€¼
  * gpio_level_t level;
  * level = gpio_get(50);
  */
 unsigned int gpio_get(unsigned int gpio)
 {
-    volatile unsigned int *gpio_inx = NULL;        // GPIO_INx¼Ä´æÆ÷
+    volatile unsigned int *gpio_inx = NULL;        // GPIO_INxå¯„å­˜å™¨
     unsigned int port   = GPIO_GET_PORT(gpio);
     unsigned int pin    = GPIO_GET_PIN(gpio);
 
-    // »ñÈ¡¼Ä´æÆ÷µØÖ·
+    // è·å–å¯„å­˜å™¨åœ°å€
     switch (port)
     {
         case 0:
@@ -195,28 +203,28 @@ unsigned int gpio_get(unsigned int gpio)
             gpio_inx = (volatile unsigned int *)LS1C_GPIO_IN3;
             break;
 
-        default:        // Õı³£µÄÁ÷³Ì²»Ó¦¸Ã×ßµ½ÕâÀï£¬Ö±½Ó·µ»Ø
+        default:        // æ­£å¸¸çš„æµç¨‹ä¸åº”è¯¥èµ°åˆ°è¿™é‡Œï¼Œç›´æ¥è¿”å›
             return 0;
     }
 
-    // ¶ÁÈ¡
+    // è¯»å–
     return reg_get_bit(gpio_inx, pin);
 }
 
 
 /**
- * ÉèÖÃÖĞ¶ÏÀàĞÍ
- * @gpio gpioÒı½Å
- * @type ´¥·¢ÖĞ¶ÏµÄÌõ¼ş¡£¸ßµçÆ½´¥·¢¡¢µÍµçÆ½´¥·¢¡¢ÉÏÉıÑØ´¥·¢ or ÏÂ½µÑØ´¥·¢
+ * è®¾ç½®ä¸­æ–­ç±»å‹
+ * @gpio gpioå¼•è„š
+ * @type è§¦å‘ä¸­æ–­çš„æ¡ä»¶ã€‚é«˜ç”µå¹³è§¦å‘ã€ä½ç”µå¹³è§¦å‘ã€ä¸Šå‡æ²¿è§¦å‘ or ä¸‹é™æ²¿è§¦å‘
  */
 void gpio_set_irq_type(unsigned int gpio, gpio_irq_type_t type)
 {
-    volatile unsigned int *int_pol = NULL;     // ÖĞ¶Ï¼«ĞÔÑ¡Ôñ¼Ä´æÆ÷
-    volatile unsigned int *int_edge = NULL;    // ÖĞ¶Ï±ßÑØÑ¡Ôñ¼Ä´æÆ÷
+    volatile unsigned int *int_pol = NULL;     // ä¸­æ–­ææ€§é€‰æ‹©å¯„å­˜å™¨
+    volatile unsigned int *int_edge = NULL;    // ä¸­æ–­è¾¹æ²¿é€‰æ‹©å¯„å­˜å™¨
     unsigned int port = GPIO_GET_PORT(gpio);
     unsigned int pin  = GPIO_GET_PIN(gpio);
 
-    // »ñÈ¡¼Ä´æÆ÷µØÖ·
+    // è·å–å¯„å­˜å™¨åœ°å€
     switch (port)
     {
         case 0:     // GPIO[31:0]
@@ -235,7 +243,7 @@ void gpio_set_irq_type(unsigned int gpio, gpio_irq_type_t type)
             break;
     }
 
-    // ÉèÖÃÖĞ¶ÏÀàĞÍ
+    // è®¾ç½®ä¸­æ–­ç±»å‹
     switch (type)
     {
         case IRQ_TYPE_EDGE_RISING:

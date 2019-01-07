@@ -27,6 +27,9 @@ if RT_USING_SERIAL
 config RT_USING_UART2
     bool "Using RT_USING_UART2"
     default y      
+config RT_USING_UART1
+    bool "Using RT_USING_UART1"
+    default y      
 
 config RT_UART_RX_BUFFER_SIZE
     int "The rx buffer size"        
@@ -78,6 +81,28 @@ config RT_CAN_USING_HDR
     bool "Using RT_CAN_USING_HDR"
 	select RT_USING_CAN
     default y  
+endif    
+
+choice
+    prompt "Touch format"
+    default NO_TOUCH
+
+    config NO_TOUCH
+        bool "with no touch"	
+		
+if RT_USING_RTGUI
+    config XPT2046_USING_TOUCH
+        bool "with XPT2046 touch"
+endif    
+
+    config TINA_USING_TOUCH
+        bool "with TINA touch"		
+endchoice
+
+if RT_USING_RTC
+config RT_RTC_NAME
+    string "RT_RTC_NAME"
+    default "RTC" 
 endif    
 
     
