@@ -3,7 +3,7 @@
 import os
 from building import *
 
-import('rtconfig')
+Import('rtconfig')
 
 cwd   = GetCurrentDir()
 group = []
