@@ -273,6 +273,7 @@ static struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
 };
+static uint32_t pin_irq_enable_mask=0;
 
 #define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
 static const struct pin_index *get_pin(uint8_t pin)
@@ -526,6 +527,7 @@ static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
         HAL_NVIC_SetPriority(irqmap->irqno, 5, 0);
         HAL_NVIC_EnableIRQ(irqmap->irqno);
+        pin_irq_enable_mask |= irqmap->pinbit;
 
         rt_hw_interrupt_enable(level);
     }
@@ -537,7 +539,30 @@ static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
             return RT_ENOSYS;
         }
 
-        HAL_NVIC_DisableIRQ(irqmap->irqno);
+        level = rt_hw_interrupt_disable();
+
+        HAL_GPIO_DeInit(index->gpio, index->pin);
+
+        pin_irq_enable_mask &= ~irqmap->pinbit;
+        if (( irqmap->pinbit>=GPIO_PIN_5 )&&( irqmap->pinbit<=GPIO_PIN_9 ))
+        {
+            if(!(pin_irq_enable_mask&(GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9)))
+            {    
+                HAL_NVIC_DisableIRQ(irqmap->irqno);
+            }
+        }
+        else if (( irqmap->pinbit>=GPIO_PIN_10 )&&( irqmap->pinbit<=GPIO_PIN_15 ))
+        {
+            if(!(pin_irq_enable_mask&(GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15)))
+            {    
+                HAL_NVIC_DisableIRQ(irqmap->irqno);
+            }
+        }
+        else
+        {
+            HAL_NVIC_DisableIRQ(irqmap->irqno);
+        }
+        rt_hw_interrupt_enable(level);  
     }
     else
     {
