@@ -8,5 +8,4 @@
  * 2018-11-06     SummerGift   change to new framework
  */
 
-#include "board.h"
-
+#include "CubeMX_Config/Src/main.c"
