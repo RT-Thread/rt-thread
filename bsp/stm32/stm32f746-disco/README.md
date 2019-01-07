@@ -18,27 +18,25 @@ STM32F746-disco 是ST推出的一款基于 ARM Cortex-M7 内核的开发板，�
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：STM32f767，主频 216MHz，1MB FLASH ，320KB RAM，16K CACHE
-- 外部：
+- MCU：STM32f767，主频 216MHz，1MB FLASH ，340KB RAM
 - 常用外设
   - LED：LED1（绿色，PI1）
-- 常用接口：
+  - 按键，2个，Reset 和 User。
 - 调试接口，标准 JTAG/SWD
-开发板更多详细信息请参考官网：()(https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/stm32-mcu-eval-tools/stm32-mcu-discovery-kits/32f746gdiscovery.html)。
-开发板更多详细信息请参考官网：()(https://www.st.com/content/st_com/en/products/microcontrollers/stm32-32-bit-arm-cortex-mcus/stm32-high-performance-mcus/stm32f7-series/stm32f7x6/stm32f746ng.html)。
+
+开发板更多详细信息请参考官网 [stm32f746-disco 开发板介绍](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/stm32-mcu-eval-tools/stm32-mcu-discovery-kits/32f746gdiscovery.html)。
+
+主芯片更多详细信息请参考官网 [stm32f746 芯片资料](https://www.st.com/content/st_com/en/products/microcontrollers/stm32-32-bit-arm-cortex-mcus/stm32-high-performance-mcus/stm32f7-series/stm32f7x6/stm32f746ng.html)。
 
 
 ## 外设支持
 
 本 BSP 目前对外设的支持情况如下：
 
-| **板载外设**      | **支持情况** | **备注**                              |
-| :----------------- | :----------: | :------------------------------------- |
-| 暂无         |   暂不支持   | 暂不支持                              |
-| **片上外设**      | **支持情况** | **备注**                              |
-| 暂无         |   暂不支持   | 暂不支持                              |
-| **扩展模块**      | **支持情况** | **备注**                              |
-| 暂无         |   暂不支持   | 暂不支持                              |
+| **片上外设** | **支持情况** |               **备注**                |
+| :------------ | :----------: | :-----------------------------------: |
+| GPIO         |     支持     |                PI1              |
+| UART         |     支持     |              UART1              |
 
 ## 使用说明
 
@@ -82,7 +80,7 @@ msh >
 ```
 ### 进阶使用
 
-此 BSP 默认只开启了 GPIO 和 串口1 的功能，如果需使用 SD 卡、Flash 等更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
+此 BSP 默认只开启了 GPIO 和 串口1 的功能，更多高级功能，需要利用 ENV 工具对 BSP 进行配置，步骤如下：
 
 1. 在 bsp 下打开 env 工具。
 
@@ -101,6 +99,4 @@ msh >
 ## 联系人信息
 
 维护人:
-jinsheng
-邮箱：
-jinsheng20@outlook.com
+- [jinsheng](https://github.com/jinsheng20)
