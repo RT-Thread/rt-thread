@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-27     zylx         change to new framework
+ * 2018-11-27     zylx         first version
  */
  
 #include <board.h>

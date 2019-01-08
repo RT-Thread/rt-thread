@@ -15,25 +15,18 @@
 #include <stm32l4xx.h>
 #include "drv_common.h"
 
-#define STM32_SRAM_SIZE         96
-#define STM32_SRAM_END          (0x20000000 + STM32_SRAM_SIZE * 1024)
+#define STM32_FLASH_START_ADRESS       ((uint32_t)0x08000000)
+#define STM32_FLASH_SIZE               (512 * 1024)
+#define STM32_FLASH_END_ADDRESS        ((uint32_t)(STM32_FLASH_START_ADRESS + STM32_FLASH_SIZE))
 
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
-extern int Image$$RW_IRAM1$$ZI$$Limit;
-#define HEAP_BEGIN      (&Image$$RW_IRAM1$$ZI$$Limit)
-#elif __ICCARM__
-#pragma section="CSTACK"
-#define HEAP_BEGIN      (__segment_end("CSTACK"))
-#else
-extern int __bss_end;
-#define HEAP_BEGIN      (&__bss_end)
-#endif
+#define STM32_SRAM1_SIZE               (96)
+#define STM32_SRAM1_START              (0x20000000)
+#define STM32_SRAM1_END                (STM32_SRAM1_START + STM32_SRAM1_SIZE * 1024)
 
-#define HEAP_END        STM32_SRAM_END
+#define HEAP_BEGIN                     STM32_SRAM1_START
+#define HEAP_END                       STM32_SRAM1_END
 
 void SystemClock_Config(void);
-void MX_GPIO_Init(void);
 
 #endif
-
 

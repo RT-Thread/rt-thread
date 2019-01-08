@@ -21,7 +21,6 @@ STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c
 STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c
 STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c
 STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rng.c
-STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sram.c
 ''')
 
 if GetDepend(['RT_USING_PIN']):
@@ -89,6 +88,10 @@ if GetDepend(['BSP_USING_SDRAM']):
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_fmc.c']
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_fsmc.c']
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sdram.c']
+
+if GetDepend(['BSP_USING_EXT_FMC_IO']):
+    src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_fmc.c']
+    src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sram.c']
 
 if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c']

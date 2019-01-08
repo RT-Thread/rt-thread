@@ -44,10 +44,9 @@ static uint32_t GetPage(uint32_t addr)
  *
  * @return result
  */
-int stm32_flash_read(long offset, rt_uint8_t *buf, size_t size)
+int stm32_flash_read(rt_uint32_t addr, rt_uint8_t *buf, size_t size)
 {
     size_t i;
-    rt_uint32_t addr = STM32_FLASH_START_ADRESS + offset;
 
     if ((addr + size) > STM32_FLASH_END_ADDRESS)
     {
@@ -74,10 +73,9 @@ int stm32_flash_read(long offset, rt_uint8_t *buf, size_t size)
  *
  * @return result
  */
-int stm32_flash_write(long offset, const rt_uint8_t *buf, size_t size)
+int stm32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
 {
     rt_err_t result        = RT_EOK;
-    rt_uint32_t addr       = STM32_FLASH_START_ADRESS + offset;
     rt_uint32_t end_addr   = addr + size;
 
     if (addr % 4 != 0)
@@ -139,10 +137,9 @@ int stm32_flash_write(long offset, const rt_uint8_t *buf, size_t size)
  *
  * @return result
  */
-int stm32_flash_erase(long offset, size_t size)
+int stm32_flash_erase(rt_uint32_t addr, size_t size)
 {
     rt_err_t result = RT_EOK;
-    rt_uint32_t addr = STM32_FLASH_START_ADRESS + offset;
     uint32_t PAGEError = 0;
 
     /*Variable used for Erase procedure*/
@@ -180,6 +177,27 @@ __exit:
 }
 
 #if defined(PKG_USING_FAL)
-const struct fal_flash_dev stm32_onchip_flash = { "onchip_flash", STM32_FLASH_START_ADRESS, STM32_FLASH_SIZE, FLASH_PAGE_SIZE, {NULL, stm32_flash_read, stm32_flash_write, stm32_flash_erase} };
+
+static int fal_flash_read(long offset, rt_uint8_t *buf, size_t size);
+static int fal_flash_write(long offset, const rt_uint8_t *buf, size_t size);
+static int fal_flash_erase(long offset, size_t size);
+
+const struct fal_flash_dev stm32_onchip_flash = { "onchip_flash", STM32_FLASH_START_ADRESS, STM32_FLASH_SIZE, FLASH_PAGE_SIZE, {NULL, fal_flash_read, fal_flash_write, fal_flash_erase} };
+
+static int fal_flash_read(long offset, rt_uint8_t *buf, size_t size)
+{
+    return stm32_flash_read(stm32_onchip_flash.addr + offset, buf, size);
+}
+
+static int fal_flash_write(long offset, const rt_uint8_t *buf, size_t size)
+{
+    return stm32_flash_write(stm32_onchip_flash.addr + offset, buf, size);
+}
+
+static int fal_flash_erase(long offset, size_t size)
+{
+    return stm32_flash_erase(stm32_onchip_flash.addr + offset, size);
+}
+
 #endif
 #endif /* BSP_USING_ON_CHIP_FLASH */

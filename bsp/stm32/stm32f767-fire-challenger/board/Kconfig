@@ -58,10 +58,6 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SERIAL
         default n
 
-    config BSP_UART_USING_DMA_RX
-        bool "Enable UART RX DMA support"
-        default n
-
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
         default n
@@ -99,14 +95,6 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_ADC1
                 bool "Enable ADC1"
                 default n
-
-            config BSP_USING_ADC2
-                bool "Enable ADC2"
-                default n
-
-            config BSP_USING_ADC3
-                bool "Enable ADC3"
-                default n
         endif
 
     menuconfig BSP_USING_I2C1
@@ -125,60 +113,6 @@ menu "On-chip Peripheral Drivers"
                 int "I2C1 sda pin number"
                 range 1 176
                 default 23
-        endif
-
-    menuconfig BSP_USING_I2C2
-        bool "Enable I2C2 BUS (software simulation)"
-        default n
-        select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C2
-            comment "Notice: PC15 --> 47; PD0 --> 48"
-            config BSP_I2C2_SCL_PIN
-                int "i2c2 scl pin number"
-                range 1 176
-                default 47
-            config BSP_I2C2_SDA_PIN
-                int "I2C2 sda pin number"
-                range 1 176
-                default 48
-        endif
-
-    menuconfig BSP_USING_I2C3
-        bool "Enable I2C3 BUS (software simulation)"
-        default n
-        select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C3
-            comment "Notice: PF12 --> 92; PF13 --> 93"
-            config BSP_I2C3_SCL_PIN
-                int "i2c3 scl pin number"
-                range 1 176
-                default 92
-            config BSP_I2C3_SDA_PIN
-                int "I2C3 sda pin number"
-                range 1 176
-                default 93
-        endif
-
-    menuconfig BSP_USING_I2C4
-        bool "Enable I2C4 BUS (software simulation)"
-        default n
-        select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C4
-            comment "Notice: PD12 --> 60; PD13 --> 61" 
-            config BSP_I2C4_SCL_PIN
-                int "i2c4 scl pin number"
-                range 1 176
-                default 60
-            config BSP_I2C4_SDA_PIN
-                int "I2C4 sda pin number"
-                range 1 176
-                default 61
         endif
 
     config BSP_USING_ONCHIP_RTC

@@ -1,0 +1,35 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+CubeMX_Config/Src/stm32f0xx_hal_msp.c
+''')
+
+path =  [cwd]
+path += [cwd + '/CubeMX_Config/Inc']
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.CROSS_TOOL == 'gcc':
+    src += [startup_path_prefix + '/STM32F0xx_HAL/CMSIS/Device/ST/STM32F0xx/Source/Templates/gcc/startup_stm32f091xc.s']
+elif rtconfig.CROSS_TOOL == 'keil':
+    src += [startup_path_prefix + '/STM32F0xx_HAL/CMSIS/Device/ST/STM32F0xx/Source/Templates/arm/startup_stm32f091xc.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += [startup_path_prefix + '/STM32F0xx_HAL/CMSIS/Device/ST/STM32F0xx/Source/Templates/iar/startup_stm32f091xc.s']
+
+# STM32F030x6 || STM32F030x8 || STM32F031x6
+# STM32F038xx || STM32F042x6 || STM32F048xx
+# STM32F070x6 || STM32F051x8 || STM32F058xx
+# STM32F071xB || STM32F072xB || STM32F078xx
+# STM32F070xB || STM32F091xC || STM32F098xx || STM32F030xC
+# You can select chips from the list above
+CPPDEFINES = ['STM32F091xC']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+Return('group')

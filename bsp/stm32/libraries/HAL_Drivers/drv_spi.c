@@ -143,7 +143,11 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
     uint32_t SPI_APB_CLOCK;
 
+#ifdef SOC_SERIES_STM32F0
+    SPI_APB_CLOCK = HAL_RCC_GetPCLK1Freq();
+#else
     SPI_APB_CLOCK = HAL_RCC_GetPCLK2Freq();
+#endif
 
     if (cfg->max_hz >= SPI_APB_CLOCK / 2)
     {
@@ -202,7 +206,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
         return RT_EIO;
     }
 
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0)|| defined(SOC_SERIES_STM32F7)
     SET_BIT(spi_handle->Instance->CR2, SPI_RXFIFO_THRESHOLD_HF);
 #endif
 
@@ -356,7 +360,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
                 *(volatile rt_uint8_t *)(&spi_handle->Instance->DR) = data;
 
                 /* receive data once */
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F7)
                 SET_BIT(spi_handle->Instance->CR2, SPI_RXFIFO_THRESHOLD_HF);
 #endif
                 while (__HAL_SPI_GET_FLAG(spi_handle, SPI_FLAG_RXNE) == RESET);
@@ -387,7 +391,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
                 *(volatile rt_uint16_t *)(&spi_handle->Instance->DR) = data;
 
                 /* receive data once */
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F7)
                 SET_BIT(spi_handle->Instance->CR2, SPI_RXFIFO_THRESHOLD_HF);
 #endif
                 while (__HAL_SPI_GET_FLAG(spi_handle, SPI_FLAG_RXNE) == RESET);
@@ -484,7 +488,7 @@ static int rt_hw_spi_bus_init(void)
             /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
             SET_BIT(RCC->AHBENR, spi_config[i].dma_rx.dma_rcc);
             tmpreg = READ_BIT(RCC->AHBENR, spi_config[i].dma_rx.dma_rcc);
-#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32L4) 
+#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4) 
             SET_BIT(RCC->AHB1ENR, spi_config[i].dma_rx.dma_rcc);
             /* Delay after an RCC peripheral clock enabling */
             tmpreg = READ_BIT(RCC->AHB1ENR, spi_config[i].dma_rx.dma_rcc);

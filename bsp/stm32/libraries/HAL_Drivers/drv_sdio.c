@@ -809,14 +809,14 @@ int rt_hw_sdio_init(void)
 {
     struct stm32_sdio_des sdio_des;
     SD_HandleTypeDef hsd;
-    hsd.Instance = SDIO;
+    hsd.Instance = SDCARD_INSTANCE;
     {
         rt_uint32_t tmpreg = 0x00U;
 #if defined(SOC_SERIES_STM32F1)
         /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
         SET_BIT(RCC->AHBENR, sdio_config.dma_rx.dma_rcc);
         tmpreg = READ_BIT(RCC->AHBENR, sdio_config.dma_rx.dma_rcc);
-#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32L4)
+#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4)
         SET_BIT(RCC->AHB1ENR, sdio_config.dma_rx.dma_rcc);
         /* Delay after an RCC peripheral clock enabling */
         tmpreg = READ_BIT(RCC->AHB1ENR, sdio_config.dma_rx.dma_rcc);
@@ -828,7 +828,7 @@ int rt_hw_sdio_init(void)
     HAL_SD_MspInit(&hsd);
 
     sdio_des.clk_get = stm32_sdio_clock_get;
-    sdio_des.hw_sdio = (struct stm32_sdio *)SDIO;
+    sdio_des.hw_sdio = (struct stm32_sdio *)SDCARD_INSTANCE;
     sdio_des.rxconfig = DMA_RxConfig;
     sdio_des.txconfig = DMA_TxConfig;
 

@@ -307,7 +307,7 @@ static void eth_tx_thread_entry(void* parameter)
 
     while (1)
     {
-        if (rt_mb_recv(&eth_tx_thread_mb, (rt_uint32_t*)&msg, RT_WAITING_FOREVER) == RT_EOK)
+        if (rt_mb_recv(&eth_tx_thread_mb, (rt_ubase_t*)&msg, RT_WAITING_FOREVER) == RT_EOK)
         {
             struct eth_device* enetif;
 
@@ -339,7 +339,7 @@ static void eth_rx_thread_entry(void* parameter)
 
     while (1)
     {
-        if (rt_mb_recv(&eth_rx_thread_mb, (rt_uint32_t*)&device, RT_WAITING_FOREVER) == RT_EOK)
+        if (rt_mb_recv(&eth_rx_thread_mb, (rt_ubase_t*)&device, RT_WAITING_FOREVER) == RT_EOK)
         {
             struct pbuf *p;
 

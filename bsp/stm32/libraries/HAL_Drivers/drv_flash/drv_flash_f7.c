@@ -22,33 +22,18 @@
 #define LOG_TAG                "drv.flash"
 #include <drv_log.h>
 
-/* Base address of the Flash sectors Bank 1 */
-#define ADDR_FLASH_SECTOR_0     ((uint32_t)0x08000000) /* Base @ of Sector 0, 16 Kbytes */
-#define ADDR_FLASH_SECTOR_1     ((uint32_t)0x08004000) /* Base @ of Sector 1, 16 Kbytes */
-#define ADDR_FLASH_SECTOR_2     ((uint32_t)0x08008000) /* Base @ of Sector 2, 16 Kbytes */
-#define ADDR_FLASH_SECTOR_3     ((uint32_t)0x0800C000) /* Base @ of Sector 3, 16 Kbytes */
-#define ADDR_FLASH_SECTOR_4     ((uint32_t)0x08010000) /* Base @ of Sector 4, 64 Kbytes */
-#define ADDR_FLASH_SECTOR_5     ((uint32_t)0x08020000) /* Base @ of Sector 5, 128 Kbytes */
-#define ADDR_FLASH_SECTOR_6     ((uint32_t)0x08040000) /* Base @ of Sector 6, 128 Kbytes */
-#define ADDR_FLASH_SECTOR_7     ((uint32_t)0x08060000) /* Base @ of Sector 7, 128 Kbytes */
-#define ADDR_FLASH_SECTOR_8     ((uint32_t)0x08080000) /* Base @ of Sector 8, 128 Kbytes */
-#define ADDR_FLASH_SECTOR_9     ((uint32_t)0x080A0000) /* Base @ of Sector 9, 128 Kbytes */
-#define ADDR_FLASH_SECTOR_10    ((uint32_t)0x080C0000) /* Base @ of Sector 10, 128 Kbytes */
-#define ADDR_FLASH_SECTOR_11    ((uint32_t)0x080E0000) /* Base @ of Sector 11, 128 Kbytes */
-
-/* Base address of the Flash sectors Bank 2 */
-#define ADDR_FLASH_SECTOR_12     ((uint32_t)0x08100000) /* Base @ of Sector 0, 16 Kbytes */
-#define ADDR_FLASH_SECTOR_13     ((uint32_t)0x08104000) /* Base @ of Sector 1, 16 Kbytes */
-#define ADDR_FLASH_SECTOR_14     ((uint32_t)0x08108000) /* Base @ of Sector 2, 16 Kbytes */
-#define ADDR_FLASH_SECTOR_15     ((uint32_t)0x0810C000) /* Base @ of Sector 3, 16 Kbytes */
-#define ADDR_FLASH_SECTOR_16     ((uint32_t)0x08110000) /* Base @ of Sector 4, 64 Kbytes */
-#define ADDR_FLASH_SECTOR_17     ((uint32_t)0x08120000) /* Base @ of Sector 5, 128 Kbytes */
-#define ADDR_FLASH_SECTOR_18     ((uint32_t)0x08140000) /* Base @ of Sector 6, 128 Kbytes */
-#define ADDR_FLASH_SECTOR_19     ((uint32_t)0x08160000) /* Base @ of Sector 7, 128 Kbytes */
-#define ADDR_FLASH_SECTOR_20     ((uint32_t)0x08180000) /* Base @ of Sector 8, 128 Kbytes  */
-#define ADDR_FLASH_SECTOR_21     ((uint32_t)0x081A0000) /* Base @ of Sector 9, 128 Kbytes  */
-#define ADDR_FLASH_SECTOR_22     ((uint32_t)0x081C0000) /* Base @ of Sector 10, 128 Kbytes */
-#define ADDR_FLASH_SECTOR_23     ((uint32_t)0x081E0000) /* Base @ of Sector 11, 128 Kbytes */
+#define ADDR_FLASH_SECTOR_0     ((rt_uint32_t)0x08000000) /* Base address of Sector 0, 32 Kbytes */
+#define ADDR_FLASH_SECTOR_1     ((rt_uint32_t)0x08008000) /* Base address of Sector 1, 32 Kbytes */
+#define ADDR_FLASH_SECTOR_2     ((rt_uint32_t)0x08010000) /* Base address of Sector 2, 32 Kbytes */
+#define ADDR_FLASH_SECTOR_3     ((rt_uint32_t)0x08018000) /* Base address of Sector 3, 32 Kbytes */
+#define ADDR_FLASH_SECTOR_4     ((rt_uint32_t)0x08020000) /* Base address of Sector 4, 128 Kbytes */
+#define ADDR_FLASH_SECTOR_5     ((rt_uint32_t)0x08040000) /* Base address of Sector 5, 256 Kbytes */
+#define ADDR_FLASH_SECTOR_6     ((rt_uint32_t)0x08080000) /* Base address of Sector 6, 256 Kbytes */
+#define ADDR_FLASH_SECTOR_7     ((rt_uint32_t)0x080C0000) /* Base address of Sector 7, 256 Kbytes */
+#define ADDR_FLASH_SECTOR_8     ((rt_uint32_t)0x08100000) /* Base address of Sector 8, 256 Kbytes */
+#define ADDR_FLASH_SECTOR_9     ((rt_uint32_t)0x08140000) /* Base address of Sector 9, 256 Kbytes */
+#define ADDR_FLASH_SECTOR_10    ((rt_uint32_t)0x08180000) /* Base address of Sector 10, 256 Kbytes */
+#define ADDR_FLASH_SECTOR_11    ((rt_uint32_t)0x081C0000) /* Base address of Sector 11, 256 Kbytes */
 
 /**
   * @brief  Gets the sector of a given address
@@ -59,104 +44,54 @@ static rt_uint32_t GetSector(rt_uint32_t Address)
 {
     rt_uint32_t sector = 0;
 
-    if((Address < ADDR_FLASH_SECTOR_1) && (Address >= ADDR_FLASH_SECTOR_0))
+    if ((Address < ADDR_FLASH_SECTOR_1) && (Address >= ADDR_FLASH_SECTOR_0))
     {
         sector = FLASH_SECTOR_0;
     }
-    else if((Address < ADDR_FLASH_SECTOR_2) && (Address >= ADDR_FLASH_SECTOR_1))
+    else if ((Address < ADDR_FLASH_SECTOR_2) && (Address >= ADDR_FLASH_SECTOR_1))
     {
         sector = FLASH_SECTOR_1;
     }
-    else if((Address < ADDR_FLASH_SECTOR_3) && (Address >= ADDR_FLASH_SECTOR_2))
+    else if ((Address < ADDR_FLASH_SECTOR_3) && (Address >= ADDR_FLASH_SECTOR_2))
     {
         sector = FLASH_SECTOR_2;
     }
-    else if((Address < ADDR_FLASH_SECTOR_4) && (Address >= ADDR_FLASH_SECTOR_3))
+    else if ((Address < ADDR_FLASH_SECTOR_4) && (Address >= ADDR_FLASH_SECTOR_3))
     {
         sector = FLASH_SECTOR_3;
     }
-    else if((Address < ADDR_FLASH_SECTOR_5) && (Address >= ADDR_FLASH_SECTOR_4))
+    else if ((Address < ADDR_FLASH_SECTOR_5) && (Address >= ADDR_FLASH_SECTOR_4))
     {
         sector = FLASH_SECTOR_4;
     }
-    else if((Address < ADDR_FLASH_SECTOR_6) && (Address >= ADDR_FLASH_SECTOR_5))
+    else if ((Address < ADDR_FLASH_SECTOR_6) && (Address >= ADDR_FLASH_SECTOR_5))
     {
         sector = FLASH_SECTOR_5;
     }
-    else if((Address < ADDR_FLASH_SECTOR_7) && (Address >= ADDR_FLASH_SECTOR_6))
+    else if ((Address < ADDR_FLASH_SECTOR_7) && (Address >= ADDR_FLASH_SECTOR_6))
     {
         sector = FLASH_SECTOR_6;
     }
-    else if((Address < ADDR_FLASH_SECTOR_8) && (Address >= ADDR_FLASH_SECTOR_7))
+    else if ((Address < ADDR_FLASH_SECTOR_8) && (Address >= ADDR_FLASH_SECTOR_7))
     {
         sector = FLASH_SECTOR_7;
     }
-    else if((Address < ADDR_FLASH_SECTOR_9) && (Address >= ADDR_FLASH_SECTOR_8))
+    else if ((Address < ADDR_FLASH_SECTOR_9) && (Address >= ADDR_FLASH_SECTOR_8))
     {
         sector = FLASH_SECTOR_8;
     }
-    else if((Address < ADDR_FLASH_SECTOR_10) && (Address >= ADDR_FLASH_SECTOR_9))
+    else if ((Address < ADDR_FLASH_SECTOR_10) && (Address >= ADDR_FLASH_SECTOR_9))
     {
         sector = FLASH_SECTOR_9;
     }
-    else if((Address < ADDR_FLASH_SECTOR_11) && (Address >= ADDR_FLASH_SECTOR_10))
+    else if ((Address < ADDR_FLASH_SECTOR_11) && (Address >= ADDR_FLASH_SECTOR_10))
     {
         sector = FLASH_SECTOR_10;
     }
-    else if((Address < ADDR_FLASH_SECTOR_12) && (Address >= ADDR_FLASH_SECTOR_11))
+    else /* (Address < FLASH_END_ADDR) && (Address >= ADDR_FLASH_SECTOR_11) */
     {
         sector = FLASH_SECTOR_11;
     }
-#if defined(STM32F765xx) || defined(STM32F767xx) || defined(STM32F769xx)|| defined(STM32F777xx) || defined(STM32F779xx)
-    else if((Address < ADDR_FLASH_SECTOR_13) && (Address >= ADDR_FLASH_SECTOR_12))
-    {
-        sector = FLASH_SECTOR_12;
-    }
-    else if((Address < ADDR_FLASH_SECTOR_14) && (Address >= ADDR_FLASH_SECTOR_13))
-    {
-        sector = FLASH_SECTOR_13;
-    }
-    else if((Address < ADDR_FLASH_SECTOR_15) && (Address >= ADDR_FLASH_SECTOR_14))
-    {
-        sector = FLASH_SECTOR_14;
-    }
-    else if((Address < ADDR_FLASH_SECTOR_16) && (Address >= ADDR_FLASH_SECTOR_15))
-    {
-        sector = FLASH_SECTOR_15;
-    }
-    else if((Address < ADDR_FLASH_SECTOR_17) && (Address >= ADDR_FLASH_SECTOR_16))
-    {
-        sector = FLASH_SECTOR_16;
-    }
-    else if((Address < ADDR_FLASH_SECTOR_18) && (Address >= ADDR_FLASH_SECTOR_17))
-    {
-        sector = FLASH_SECTOR_17;
-    }
-    else if((Address < ADDR_FLASH_SECTOR_19) && (Address >= ADDR_FLASH_SECTOR_18))
-    {
-        sector = FLASH_SECTOR_18;
-    }
-    else if((Address < ADDR_FLASH_SECTOR_20) && (Address >= ADDR_FLASH_SECTOR_19))
-    {
-        sector = FLASH_SECTOR_19;
-    }
-    else if((Address < ADDR_FLASH_SECTOR_21) && (Address >= ADDR_FLASH_SECTOR_20))
-    {
-        sector = FLASH_SECTOR_20;
-    }
-    else if((Address < ADDR_FLASH_SECTOR_22) && (Address >= ADDR_FLASH_SECTOR_21))
-    {
-        sector = FLASH_SECTOR_21;
-    }
-    else if((Address < ADDR_FLASH_SECTOR_23) && (Address >= ADDR_FLASH_SECTOR_22))
-    {
-        sector = FLASH_SECTOR_22;
-    }
-    else /* (Address < FLASH_END_ADDR) && (Address >= ADDR_FLASH_SECTOR_23) */
-    {
-        sector = FLASH_SECTOR_23;
-    }
-#endif
     return sector;
 }
 
@@ -170,14 +105,13 @@ static rt_uint32_t GetSector(rt_uint32_t Address)
  *
  * @return result
  */
-int stm32_flash_read(long offset, rt_uint8_t *buf, size_t size)
+int stm32_flash_read(rt_uint32_t addr, rt_uint8_t *buf, size_t size)
 {
     size_t i;
-    rt_uint32_t addr = STM32_FLASH_START_ADRESS + offset;
 
     if ((addr + size) > STM32_FLASH_END_ADDRESS)
     {
-        LOG_E("read outrange flash size! addr is (0x%p)", (void*)(addr + size));
+        LOG_E("read outrange flash size! addr is (0x%p)", (void *)(addr + size));
         return -1;
     }
 
@@ -200,15 +134,14 @@ int stm32_flash_read(long offset, rt_uint8_t *buf, size_t size)
  *
  * @return result
  */
-int stm32_flash_write(long offset, const rt_uint8_t *buf, size_t size)
+int stm32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
 {
     rt_err_t result      = RT_EOK;
-    rt_uint32_t addr     = STM32_FLASH_START_ADRESS + offset;
     rt_uint32_t end_addr = addr + size;
 
     if ((end_addr) > STM32_FLASH_END_ADDRESS)
     {
-        LOG_E("write outrange flash size! addr is (0x%p)", (void*)(addr + size));
+        LOG_E("write outrange flash size! addr is (0x%p)", (void *)(addr + size));
         return -RT_EINVAL;
     }
 
@@ -217,8 +150,8 @@ int stm32_flash_write(long offset, const rt_uint8_t *buf, size_t size)
         return -RT_EINVAL;
     }
 
+    /* Unlock the Flash to enable the flash control register access */
     HAL_FLASH_Unlock();
-
     __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR | FLASH_FLAG_ERSERR);
 
     for (size_t i = 0; i < size; i++, addr++, buf++)
@@ -259,16 +192,15 @@ int stm32_flash_write(long offset, const rt_uint8_t *buf, size_t size)
  *
  * @return result
  */
-int stm32_flash_erase(long offset, size_t size)
+int stm32_flash_erase(rt_uint32_t addr, size_t size)
 {
     rt_err_t result = RT_EOK;
-    rt_uint32_t addr = STM32_FLASH_START_ADRESS + offset;
     rt_uint32_t FirstSector = 0, NbOfSectors = 0;
     rt_uint32_t SECTORError = 0;
 
     if ((addr + size) > STM32_FLASH_END_ADDRESS)
     {
-        LOG_E("ERROR: erase outrange flash size! addr is (0x%p)\n", (void*)(addr + size));
+        LOG_E("ERROR: erase outrange flash size! addr is (0x%p)\n", (void *)(addr + size));
         return -RT_EINVAL;
     }
 
@@ -295,6 +227,7 @@ int stm32_flash_erase(long offset, size_t size)
     }
 
 __exit:
+
     HAL_FLASH_Lock();
 
     if (result != RT_EOK)
@@ -302,11 +235,66 @@ __exit:
         return result;
     }
 
-    LOG_D("erase done: addr (0x%p), size %d", (void*)addr, size);
+    LOG_D("erase done: addr (0x%p), size %d", (void *)addr, size);
     return result;
 }
 
 #if defined(PKG_USING_FAL)
-const struct fal_flash_dev stm32_onchip_flash = { "onchip_flash", STM32_FLASH_START_ADRESS, STM32_FLASH_SIZE, (128 * 1024), {NULL, stm32_flash_read, stm32_flash_write, stm32_flash_erase} };
+
+static int fal_flash_read_32k(long offset, rt_uint8_t *buf, size_t size);
+static int fal_flash_read_128k(long offset, rt_uint8_t *buf, size_t size);
+static int fal_flash_read_256k(long offset, rt_uint8_t *buf, size_t size);
+
+static int fal_flash_write_32k(long offset, const rt_uint8_t *buf, size_t size);
+static int fal_flash_write_128k(long offset, const rt_uint8_t *buf, size_t size);
+static int fal_flash_write_256k(long offset, const rt_uint8_t *buf, size_t size);
+
+static int fal_flash_erase_32k(long offset, size_t size);
+static int fal_flash_erase_128k(long offset, size_t size);
+static int fal_flash_erase_256k(long offset, size_t size);
+
+const struct fal_flash_dev stm32_onchip_flash_32k = { "onchip_flash_32k", STM32_FLASH_START_ADRESS, FLASH_SIZE_GRANULARITY_32K, (32 * 1024), {NULL, fal_flash_read_32k, fal_flash_write_32k, fal_flash_erase_32k} };
+const struct fal_flash_dev stm32_onchip_flash_128k = { "onchip_flash_128k", STM32_FLASH_START_ADRESS, FLASH_SIZE_GRANULARITY_128K, (128 * 1024), {NULL, fal_flash_read_128k, fal_flash_write_128k, fal_flash_erase_128k} };
+const struct fal_flash_dev stm32_onchip_flash_256k = { "onchip_flash_256k", STM32_FLASH_START_ADRESS, FLASH_SIZE_GRANULARITY_256K, (256 * 1024), {NULL, fal_flash_read_256k, fal_flash_write_256k, fal_flash_erase_256k} };
+
+static int fal_flash_read_32k(long offset, rt_uint8_t *buf, size_t size)
+{
+    return stm32_flash_read(stm32_onchip_flash_32k.addr + offset, buf, size);
+}
+static int fal_flash_read_128k(long offset, rt_uint8_t *buf, size_t size)
+{
+    return stm32_flash_read(stm32_onchip_flash_128k.addr + offset, buf, size);
+}
+static int fal_flash_read_256k(long offset, rt_uint8_t *buf, size_t size)
+{
+    return stm32_flash_read(stm32_onchip_flash_256k.addr + offset, buf, size);
+}
+
+static int fal_flash_write_32k(long offset, const rt_uint8_t *buf, size_t size)
+{
+    return stm32_flash_write(stm32_onchip_flash_32k.addr + offset, buf, size);
+}
+static int fal_flash_write_128k(long offset, const rt_uint8_t *buf, size_t size)
+{
+    return stm32_flash_write(stm32_onchip_flash_128k.addr + offset, buf, size);
+}
+static int fal_flash_write_256k(long offset, const rt_uint8_t *buf, size_t size)
+{
+    return stm32_flash_write(stm32_onchip_flash_256k.addr + offset, buf, size);
+}
+
+static int fal_flash_erase_32k(long offset, size_t size)
+{
+    return stm32_flash_erase(stm32_onchip_flash_32k.addr + offset, size);
+}
+static int fal_flash_erase_128k(long offset, size_t size)
+{
+    return stm32_flash_erase(stm32_onchip_flash_128k.addr + offset, size);
+}
+static int fal_flash_erase_256k(long offset, size_t size)
+{
+    return stm32_flash_erase(stm32_onchip_flash_256k.addr + offset, size);
+}
+
 #endif
 #endif /* BSP_USING_ON_CHIP_FLASH */

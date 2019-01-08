@@ -149,7 +149,7 @@ size_t ulog_strcpy(size_t cur_len, char *dst, const char *src)
     while (*src != 0)
     {
         /* make sure destination has enough space */
-        if (cur_len++ <= ULOG_LINE_BUF_SIZE)
+        if (cur_len++ < ULOG_LINE_BUF_SIZE)
         {
             *dst++ = *src++;
         }
