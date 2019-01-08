@@ -1,13 +1,13 @@
 /*
- * linker script for STM32F4xx with GNU ld
- * bernard.xiong 2009-10-14
+ * linker script for STM32F7xx with GNU ld
+ * jinsheng 2019-01-06
  */
 
 /* Program Entry, set to mark it as "used" and avoid gc */
 MEMORY
 {
     ROM (rx) : ORIGIN = 0x08000000, LENGTH = 1024k /* 1024KB flash */
-    RAM (rw) : ORIGIN = 0x20000000, LENGTH =  128k /* 128K sram */
+    RAM (rw) : ORIGIN = 0x20000000, LENGTH =  320k /* 320 K sram */
 }
 ENTRY(Reset_Handler)
 _system_stack_size = 0x200;

@@ -1,8 +1,8 @@
-# BSP README 模板
+# STM32F746-st-disco 开发板 BSP 说明
 
 ## 简介
 
-本文档为 xxx 开发板的 BSP (板级支持包) 说明。
+本文档为 STM32F746 STM32F746-disco 开发板的 BSP (板级支持包) 说明。
 
 主要内容如下：
 
@@ -14,7 +14,7 @@
 
 ## 开发板介绍
 
-【此处简单介绍一下开发板】
+STM32F746-disco 是ST推出的一款基于 ARM Cortex-M7 内核的开发板，最高主频为 216Mhz，该开发板具有丰富的板载资源，可以充分发挥 STM32F746 的芯片性能。
 
 开发板外观如下图所示：
 
@@ -22,42 +22,24 @@
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：STM32xxx，主频 xxxMHz，xxxKB FLASH ，xxxKB RAM
-- 外部 RAM：型号，xMB
-- 外部 FLASH：型号，xMB
+- MCU：STM32f746，主频 216MHz，1MB FLASH ，340KB RAM
 - 常用外设
-  - LED：x个，DS0（红色，PB1），DS1（绿色，PB0）
-  - 按键：x个，K0（兼具唤醒功能，PA0），K1（PC13）
-- 常用接口：USB 转串口、SD 卡接口、以太网接口、LCD 接口等
+  - LED：1个，LED1（绿色，PI1）
+  - 按键：2个，Reset 和 User。
 - 调试接口，标准 JTAG/SWD
 
-开发板更多详细信息请参考【厂商名】 [xxx开发板介绍](https://xxx)。
+开发板更多详细信息请参考官网 [stm32f746-disco 开发板介绍](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/stm32-mcu-eval-tools/stm32-mcu-discovery-kits/32f746gdiscovery.html)。
+
+主芯片更多详细信息请参考官网 [stm32f746 芯片资料](https://www.st.com/content/st_com/en/products/microcontrollers/stm32-32-bit-arm-cortex-mcus/stm32-high-performance-mcus/stm32f7-series/stm32f7x6/stm32f746ng.html)。
 
 ## 外设支持
 
 本 BSP 目前对外设的支持情况如下：
 
-| **板载外设**      | **支持情况** | **备注**                              |
-| :----------------- | :----------: | :------------------------------------- |
-| USB 转串口        |     支持     |                                       |
-| SPI Flash         |     支持     |                                       |
-| 以太网            |     支持     |                                       |
-| SD卡              |   暂不支持   |                                       |
-| CAN               |   暂不支持   |                                       |
-| **片上外设**      | **支持情况** | **备注**                              |
-| GPIO              |     支持     | PA0, PA1... PK15 ---> PIN: 0, 1...176 |
-| UART              |     支持     | UART1/x/x                             |
-| SPI               |     支持     | SPI1/x/x                              |
-| I2C               |     支持     | 软件 I2C                              |
-| SDIO              |   暂不支持   | 即将支持                              |
-| RTC               |   暂不支持   | 即将支持                              |
-| PWM               |   暂不支持   | 即将支持                              |
-| USB Device        |   暂不支持   | 即将支持                              |
-| USB Host          |   暂不支持   | 即将支持                              |
-| IWG               |   暂不支持   | 即将支持                              |
-| xxx               |   暂不支持   | 即将支持                              |
-| **扩展模块**      | **支持情况** | **备注**                              |
-|     xxx 模块      |   支持   |                                      |
+| **片上外设** | **支持情况** |               **备注**                |
+| :------------ | :----------: | :-----------------------------------: |
+| GPIO         |     支持     |                PI1              |
+| UART         |     支持     |              UART1              |
 
 ## 使用说明
 
@@ -84,24 +66,24 @@
 
 双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
 
-> 工程默认配置使用 xxx 仿真器下载程序，在通过 xxx 连接开发板的基础上，点击下载按钮即可下载程序到开发板
+> 工程默认配置使用 st-link 仿真器下载程序，在通过 usb 连接开发板的基础上，点击下载按钮即可下载程序到开发板
 
 #### 运行结果
 
 下载程序成功之后，系统会自动运行，【这里写开发板运行起来之后的现象，如：LED 闪烁等】。
 
-连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
+连接开发板对应串口到 PC ，在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
 
 ```bash
  \ | /
 - RT -     Thread Operating System
- / | \     3.1.1 build Nov 19 2018
+ / | \     4.0.0 build Dec 10 2018
  2006 - 2018 Copyright by rt-thread team
 msh >
 ```
 ### 进阶使用
 
-此 BSP 默认只开启了 GPIO 和 串口1 的功能，如果需使用 SD 卡、Flash 等更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
+此 BSP 默认只开启了 GPIO 和 串口1 的功能，更多高级功能，需要利用 ENV 工具对 BSP 进行配置，步骤如下：
 
 1. 在 bsp 下打开 env 工具。
 
@@ -115,10 +97,9 @@ msh >
 
 ## 注意事项
 
-- xxx
+暂无
 
 ## 联系人信息
 
 维护人:
-
--  [xxx](https://个人主页), 邮箱：<xxx@xxx.com>
+- [jinsheng](https://github.com/jinsheng20)

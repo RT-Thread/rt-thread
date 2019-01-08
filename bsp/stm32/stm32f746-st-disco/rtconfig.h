@@ -125,9 +125,6 @@
 /* Wiced WiFi */
 
 
-/* IoT Cloud */
-
-
 /* security packages */
 
 
@@ -149,14 +146,17 @@
 /* miscellaneous packages */
 
 
-/* samples: kernel and components samples */
+/* sample package */
+
+
+/* example package: hello */
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32F7
 
 /* Hardware Drivers Config */
 
-#define SOC_STM32F767IG
+#define SOC_STM32F746NG
 
 /* Onboard Peripheral Drivers */
 

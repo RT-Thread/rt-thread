@@ -5,11 +5,15 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-06     SummerGift   change to new framework
+ * 2019-01-06     jinsheng   change to new framework
  */
 
 #include "board.h"
 
+/**
+  * @brief System Clock Configuration
+  * @retval None
+  */
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
@@ -60,4 +64,3 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 }
-
