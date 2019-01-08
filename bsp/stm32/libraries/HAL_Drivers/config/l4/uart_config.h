@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-06     SummerGift   change to new framework
+ * 2018-11-06     SummerGift   first version
  */
 
 #ifndef __UART_CONFIG_H__
@@ -28,10 +28,10 @@
 #ifndef UART1_DMA_CONFIG
 #define UART1_DMA_CONFIG                                            \
     {                                                               \
-        .Instance = USART1_RX_DMA_INSTANCE,                          \
-        .request = USART1_RX_DMA_REQUEST,                            \
-        .dma_rcc = USART1_RX_DMA_RCC,                                \
-        .dma_irq = USART1_RX_DMA_IRQ,                                \
+        .Instance = UART1_RX_DMA_INSTANCE,                          \
+        .request  = UART1_RX_DMA_REQUEST,                           \
+        .dma_rcc  = UART1_RX_DMA_RCC,                               \
+        .dma_irq  = UART1_RX_DMA_IRQ,                               \
     }
 #endif /* UART1_DMA_CONFIG */
 #endif /* BSP_UART1_RX_USING_DMA */  
@@ -51,10 +51,10 @@
 #ifndef UART2_DMA_CONFIG
 #define UART2_DMA_CONFIG                                            \
     {                                                               \
-        .Instance = USART2_RX_DMA_INSTANCE,                          \
-        .request = USART2_RX_DMA_REQUEST,                            \
-        .dma_rcc = USART2_RX_DMA_RCC,                                \
-        .dma_irq = USART2_RX_DMA_IRQ,                                \
+        .Instance = UART2_RX_DMA_INSTANCE,                          \
+        .request  = UART2_RX_DMA_REQUEST,                           \
+        .dma_rcc  = UART2_RX_DMA_RCC,                               \
+        .dma_irq  = UART2_RX_DMA_IRQ,                               \
     }
 #endif /* UART2_DMA_CONFIG */
 #endif /* BSP_UART2_RX_USING_DMA */  
