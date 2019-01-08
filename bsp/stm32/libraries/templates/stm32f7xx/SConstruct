@@ -38,7 +38,7 @@ objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 SDK_ROOT = os.path.abspath('./')
 
 # include drivers
-objs.extend(SConscript(os.path.dirname(SDK_ROOT) + '/libraries/STM32F4xx_HAL/SConscript'))
+objs.extend(SConscript(os.path.dirname(SDK_ROOT) + '/libraries/STM32F7xx_HAL/SConscript'))
 
 # include libraries
 objs.extend(SConscript(os.path.dirname(SDK_ROOT) + '/libraries/HAL_Drivers/SConscript'))
