@@ -117,7 +117,7 @@ rt_hw_context_switch:
     ldmfd sp!, {r0-r12, lr, pc}^  @ pop new task r0-r12, lr & pc, copy spsr to cpsr
 
 /*
- * void rt_hw_context_switch_interrupt(rt_uint32 from, rt_uint32 to);
+ * void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to);
  */
 .equ Mode_USR,        0x10
 .equ Mode_FIQ,        0x11

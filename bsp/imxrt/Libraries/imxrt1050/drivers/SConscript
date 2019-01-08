@@ -11,7 +11,13 @@ drv_cache.c
 CPPPATH = [cwd]
 CPPDEFINES = []
 
-# add sdram driver code
+if GetDepend('BOARD_USING_QSPIFLASH'):
+    src += ['drv_flexspi_nor.c'] 
+
+if GetDepend('BOARD_USING_HYPERFLASH'):
+    src += ['drv_flexspi_hyper.c'] 
+    
+# add sdram driver code 
 if GetDepend('RT_USING_SDRAM'):
     src = src + ['drv_sdram.c'] 
 
@@ -21,7 +27,7 @@ if GetDepend('RT_USING_PIN'):
 
 # add rtc driver code
 if GetDepend('RT_USING_RTC_HP'):
-    src = src + ['drv_rtc.c'] 
+    src += ['drv_rtc.c'] 
 
 # add spibus driver code
 if GetDepend('RT_USING_SPI'):

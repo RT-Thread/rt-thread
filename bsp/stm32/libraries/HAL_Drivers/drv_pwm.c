@@ -185,19 +185,21 @@ static rt_err_t drv_pwm_get(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     rt_uint32_t channel = 0x04 * (configuration->channel - 1);
     rt_uint64_t tim_clock;
 
-#if defined(SOC_SERIES_STM32F4)
+#if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
 #elif defined(SOC_SERIES_STM32L4)
     if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
-#elif defined(SOC_SERIES_STM32F1)
+#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0)
     if (0)
 #endif
     {
+#ifndef SOC_SERIES_STM32F0
         tim_clock = HAL_RCC_GetPCLK2Freq() * 2;
+#endif
     }
     else
     {
-#if defined(SOC_SERIES_STM32L4)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0)
         tim_clock = HAL_RCC_GetPCLK1Freq();
 #else
         tim_clock = HAL_RCC_GetPCLK1Freq() * 2;
@@ -228,19 +230,21 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     /* Converts the channel number to the channel number of Hal library */
     rt_uint32_t channel = 0x04 * (configuration->channel - 1);
 
-#if defined(SOC_SERIES_STM32F4)
+#if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
 #elif defined(SOC_SERIES_STM32L4)
     if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
-#elif defined(SOC_SERIES_STM32F1)
+#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0)
     if (0)
 #endif
     {
+#ifndef SOC_SERIES_STM32F0
         tim_clock = HAL_RCC_GetPCLK2Freq() * 2;
+#endif
     }
     else
     {
-#if defined(SOC_SERIES_STM32L4)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0)
         tim_clock = HAL_RCC_GetPCLK1Freq();
 #else
         tim_clock = HAL_RCC_GetPCLK1Freq() * 2;
@@ -407,6 +411,9 @@ __exit:
 
 static void pwm_get_channel(void)
 {
+#ifdef BSP_USING_PWM2_CH1
+    stm32_pwm_obj[PWM2_INDEX].channel |= 1 << 0;
+#endif
 #ifdef BSP_USING_PWM2_CH4
     stm32_pwm_obj[PWM2_INDEX].channel |= 1 << 3;
 #endif

@@ -30,6 +30,19 @@ if RT_USING_SERIAL
     config RT_USING_UART2
         bool "Using UART2"
         default y
+
+    if RT_USING_UART2
+        choice
+            prompt "GPIO function pins select"
+            default CONFIG_SYS_UART2_PC
+
+            config CONFIG_SYS_UART2_PC
+                bool "PORT C"
+
+            config CONFIG_SYS_UART2_PD
+                bool "PORT D"
+        endchoice
+    endif
 endif
 
 if RT_USING_SDIO
