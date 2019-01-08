@@ -15,9 +15,9 @@
 #include "rtdevice.h"
 #include <rthw.h>
 #include <drv_common.h>
+#include "drv_dma.h"
 
 int rt_hw_usart_init(void);
-
 
 #if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4)
 #define DMA_INSTANCE_TYPE              DMA_Channel_TypeDef
@@ -37,45 +37,15 @@ struct stm32_uart_config
     const char *name;
     USART_TypeDef *Instance;
     IRQn_Type irq_type;
-
-    union {
-        DMA_INSTANCE_TYPE *Instance;
-
-#if defined(SOC_SERIES_STM32F1)
-        /* the DMA config has channel only, such as on STM32F1xx */
-        struct {
-            DMA_INSTANCE_TYPE *Instance;
-        } channel;
-#endif
-
-#if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-        /* the DMA config has stream and channel, such as on STM32F4xx */
-        struct {
-            DMA_INSTANCE_TYPE *Instance;
-            rt_uint32_t channel;
-        } stream_channel;
-#endif
-
-#if defined(SOC_SERIES_STM32L4)
-        /* the DMA config has channel and request, such as on STM32L4xx */
-        struct {
-            DMA_INSTANCE_TYPE *Instance;
-            rt_uint32_t request;
-        } channel_request;
-#endif
-    } dma;
-
-    rt_uint32_t dma_rcc;
-    IRQn_Type dma_irq;
+    struct dma_config *dma_rx;
 };
 
 /* stm32 uart dirver class */
 struct stm32_uart
 {
     UART_HandleTypeDef handle;
-    const struct stm32_uart_config *config;
+    struct stm32_uart_config *config;
     
-
 #ifdef RT_SERIAL_USING_DMA
     struct
     {
@@ -83,7 +53,7 @@ struct stm32_uart
         rt_size_t last_index;
     } dma;
 #endif
-
+    rt_uint8_t uart_dma_flag;
     struct rt_serial_device serial;
 };
 

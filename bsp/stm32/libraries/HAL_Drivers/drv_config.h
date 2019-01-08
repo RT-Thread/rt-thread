@@ -15,12 +15,14 @@
 #include <rtthread.h>
 
 #if defined(SOC_SERIES_STM32F0)
+#include "f0/dma_config.h"
 #include "f0/uart_config.h"
 #include "f0/spi_config.h"
 #include "f0/tim_config.h"
 #include "f0/pwm_config.h"
 #include "f0/adc_config.h"
 #elif defined(SOC_SERIES_STM32F1)
+#include "f1/dma_config.h"
 #include "f1/uart_config.h"
 #include "f1/spi_config.h"
 #include "f1/adc_config.h"
@@ -28,6 +30,7 @@
 #include "f1/sdio_config.h"
 #include "f1/pwm_config.h"
 #elif  defined(SOC_SERIES_STM32F4)
+#include "f4/dma_config.h"
 #include "f4/uart_config.h"
 #include "f4/spi_config.h"
 #include "f4/adc_config.h"
@@ -35,6 +38,7 @@
 #include "f4/sdio_config.h"
 #include "f4/pwm_config.h"
 #elif  defined(SOC_SERIES_STM32F7)
+#include "f7/dma_config.h"
 #include "f7/uart_config.h"
 #include "f7/spi_config.h"
 #include "f7/qspi_config.h"
@@ -43,6 +47,7 @@
 #include "f7/sdio_config.h"
 #include "f7/pwm_config.h"
 #elif  defined(SOC_SERIES_STM32L4)
+#include "l4/dma_config.h"
 #include "l4/uart_config.h"
 #include "l4/spi_config.h"
 #include "l4/qspi_config.h"
