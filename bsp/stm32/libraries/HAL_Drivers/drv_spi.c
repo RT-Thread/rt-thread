@@ -19,6 +19,7 @@
 
 #include "drv_spi.h"
 #include "drv_config.h"
+#include <string.h>
 
 //#define DRV_DEBUG
 #define LOG_TAG              "drv.spi"
@@ -204,8 +205,8 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
     spi_handle->State = HAL_SPI_STATE_RESET;
 #ifdef SOC_SERIES_STM32L4
     spi_handle->Init.NSSPMode          = SPI_NSS_PULSE_DISABLE;
-#endif    
-    
+#endif
+
     if (HAL_SPI_Init(spi_handle) != HAL_OK)
     {
         return RT_EIO;
@@ -267,19 +268,20 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
           spi_drv->config->bus_name,
           (uint32_t)message->send_buf,
           (uint32_t)message->recv_buf, message->length);
-    
+
     if (message->length)
     {
         /* start once data exchange in DMA mode */
         if (message->send_buf && message->recv_buf)
         {
-             if ((spi_drv->spi_dma_flag & SPI_USING_TX_DMA_FLAG) && (spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG))
-             {
+            if ((spi_drv->spi_dma_flag & SPI_USING_TX_DMA_FLAG) && (spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG))
+            {
                 state = HAL_SPI_TransmitReceive_DMA(spi_handle, (uint8_t *)message->send_buf, (uint8_t *)message->recv_buf, message->length);
-             }else
-             {
+            }
+            else
+            {
                 state = HAL_SPI_TransmitReceive(spi_handle, (uint8_t *)message->send_buf, (uint8_t *)message->recv_buf, message->length, 1000);
-             }
+            }
         }
         else if (message->send_buf)
         {
@@ -294,6 +296,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         }
         else
         {
+            memset(message->recv_buf, 0xff, message->length);
             if (spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG)
             {
                 state = HAL_SPI_Receive_DMA(spi_handle, (uint8_t *)message->recv_buf, message->length);
@@ -303,7 +306,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
                 state = HAL_SPI_Receive(spi_handle, (uint8_t *)message->recv_buf, message->length, 1000);
             }
         }
-        
+
         if (state != HAL_OK)
         {
             LOG_I("spi transfer error : %d", state);
@@ -320,7 +323,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
            is ongoing. */
         while (HAL_SPI_GetState(spi_handle) != HAL_SPI_STATE_READY);
     }
-        
+
     if (message->cs_release)
     {
         HAL_GPIO_WritePin(cs->GPIOx, cs->GPIO_Pin, GPIO_PIN_SET);
@@ -379,19 +382,19 @@ static int rt_hw_spi_bus_init(void)
             spi_bus_obj[i].dma.handle_rx.Init.PeriphBurst         = DMA_PBURST_INC4;
 #endif
 
-        {
-            rt_uint32_t tmpreg = 0x00U;
+            {
+                rt_uint32_t tmpreg = 0x00U;
 #if defined(SOC_SERIES_STM32F1)
-            /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
-            SET_BIT(RCC->AHBENR, spi_config[i].dma_rx->dma_rcc);
-            tmpreg = READ_BIT(RCC->AHBENR, spi_config[i].dma_rx->dma_rcc);
-#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4) 
+                /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
+                SET_BIT(RCC->AHBENR, spi_config[i].dma_rx->dma_rcc);
+                tmpreg = READ_BIT(RCC->AHBENR, spi_config[i].dma_rx->dma_rcc);
+#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4)
                 SET_BIT(RCC->AHB1ENR, spi_config[i].dma_rx->dma_rcc);
                 /* Delay after an RCC peripheral clock enabling */
                 tmpreg = READ_BIT(RCC->AHB1ENR, spi_config[i].dma_rx->dma_rcc);
 #endif
-            UNUSED(tmpreg); /* To avoid compiler warnings */
-        }
+                UNUSED(tmpreg); /* To avoid compiler warnings */
+            }
         }
 
         if (spi_bus_obj[i].spi_dma_flag & SPI_USING_TX_DMA_FLAG)
@@ -417,19 +420,19 @@ static int rt_hw_spi_bus_init(void)
             spi_bus_obj[i].dma.handle_tx.Init.PeriphBurst         = DMA_PBURST_INC4;
 #endif
 
-        {
-            rt_uint32_t tmpreg = 0x00U;
+            {
+                rt_uint32_t tmpreg = 0x00U;
 #if defined(SOC_SERIES_STM32F1)
-            /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
-            SET_BIT(RCC->AHBENR, spi_config[i].dma_rx->dma_rcc);
-            tmpreg = READ_BIT(RCC->AHBENR, spi_config[i].dma_rx->dma_rcc);
-#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4) 
+                /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
+                SET_BIT(RCC->AHBENR, spi_config[i].dma_rx->dma_rcc);
+                tmpreg = READ_BIT(RCC->AHBENR, spi_config[i].dma_rx->dma_rcc);
+#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4)
                 SET_BIT(RCC->AHB1ENR, spi_config[i].dma_tx->dma_rcc);
                 /* Delay after an RCC peripheral clock enabling */
                 tmpreg = READ_BIT(RCC->AHB1ENR, spi_config[i].dma_tx->dma_rcc);
 #endif
-            UNUSED(tmpreg); /* To avoid compiler warnings */
-        }
+                UNUSED(tmpreg); /* To avoid compiler warnings */
+            }
         }
 
         result = rt_spi_bus_register(&spi_bus_obj[i].spi_bus, spi_config[i].bus_name, &stm_spi_ops);
