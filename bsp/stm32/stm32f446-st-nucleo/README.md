@@ -2,7 +2,7 @@
 
 ## 简介
 
-本文档为 xxx 开发板的 BSP (板级支持包) 说明。
+本文档为 NUCLEO-F446ZE 开发板的 BSP (板级支持包) 说明。
 
 主要内容如下：
 
@@ -18,20 +18,17 @@
 
 开发板外观如下图所示：
 
-![board](figures/board.png)
+![board](figures/board.jpg)
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：STM32xxx，主频 xxxMHz，xxxKB FLASH ，xxxKB RAM
-- 外部 RAM：型号，xMB
-- 外部 FLASH：型号，xMB
+- MCU：STM32f446ZE，主频 180MHz，512KB FLASH ，128KB RAM
 - 常用外设
-  - LED：x个，DS0（红色，PB1），DS1（绿色，PB0）
-  - 按键：x个，K0（兼具唤醒功能，PA0），K1（PC13）
+  - LED：3个，LD2（蓝色，PB7），LD2（红色，PB14）
 - 常用接口：USB 转串口、SD 卡接口、以太网接口、LCD 接口等
 - 调试接口，标准 JTAG/SWD
 
-开发板更多详细信息请参考【厂商名】 [xxx开发板介绍](https://xxx)。
+开发板更多详细信息请参考【NUCLEO-F446ZE】 [开发板介绍](https://www.st.com/zh/evaluation-tools/nucleo-f446ze.html)。
 
 ## 外设支持
 
@@ -45,7 +42,7 @@
 | SD卡              |   暂不支持   |                                       |
 | CAN               |   暂不支持   |                                       |
 | **片上外设**      | **支持情况** | **备注**                              |
-| GPIO              |     支持     | PA0, PA1... PK15 ---> PIN: 0, 1...176 |
+| GPIO              |     支持     |                                     |
 | UART              |     支持     | UART1/x/x                             |
 | SPI               |     支持     | SPI1/x/x                              |
 | I2C               |     支持     | 软件 I2C                              |
@@ -84,7 +81,7 @@
 
 双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
 
-> 工程默认配置使用 xxx 仿真器下载程序，在通过 xxx 连接开发板的基础上，点击下载按钮即可下载程序到开发板
+> 工程默认配置使用 ST-LINK 仿真器下载程序，在通过 ST-LINK 连接开发板的基础上，点击下载按钮即可下载程序到开发板
 
 #### 运行结果
 
@@ -92,7 +89,7 @@
 
 连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
 
-```bash
+```bas
  \ | /
 - RT -     Thread Operating System
  / | \     4.0.0 build Jan  7 2019
@@ -121,4 +118,4 @@ msh >
 
 维护人:
 
--  [xxx](https://个人主页), 邮箱：<xxx@xxx.com>
+-   邮箱：<qihengchuan8888@163.com>
