@@ -30,7 +30,7 @@
 #define QSPI_DMA_CONFIG                                        \
     {                                                          \
         .Instance = QSPI_DMA_INSTANCE,                         \
-        .Init.Request = QSPI_DMA_CHANNEL,                      \
+        .Init.Request = QSPI_DMA_REQUEST,                      \
         .Init.Direction = DMA_PERIPH_TO_MEMORY,                \
         .Init.PeriphInc = DMA_PINC_DISABLE,                    \
         .Init.MemInc = DMA_MINC_ENABLE,                        \
