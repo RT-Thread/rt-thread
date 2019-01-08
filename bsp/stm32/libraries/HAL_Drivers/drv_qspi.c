@@ -92,11 +92,19 @@ static int stm32_qspi_init(struct rt_qspi_device *device, struct rt_qspi_configu
     /* QSPI interrupts must be enabled when using the HAL_QSPI_Receive_DMA */
     HAL_NVIC_SetPriority(QSPI_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(QSPI_IRQn);
-    HAL_NVIC_SetPriority(QSPI_DMA_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(QSPI_DMA_IRQn);
+    HAL_NVIC_SetPriority(QSPI_DMA_IRQ, 0, 0);
+    HAL_NVIC_EnableIRQ(QSPI_DMA_IRQ);
 
     /* init QSPI DMA */
-    QSPI_DMA_CLK_ENABLE;
+    if(QSPI_DMA_RCC  == RCC_AHB1ENR_DMA1EN)
+    {
+        __HAL_RCC_DMA1_CLK_ENABLE();
+    }
+    else
+    {
+        __HAL_RCC_DMA2_CLK_ENABLE();
+    }
+    
     HAL_DMA_DeInit(qspi_bus->QSPI_Handler.hdma);
     DMA_HandleTypeDef hdma_quadspi_config = QSPI_DMA_CONFIG;
     qspi_bus->hdma_quadspi = hdma_quadspi_config;

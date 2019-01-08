@@ -9,11 +9,13 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_USB_TO_USART
         bool "Enable USB TO USART (uart1)"
+        select BSP_USING_UART
         select BSP_USING_UART1
         default y
 
     config BSP_USING_RS232
         bool "Enable RS232 (uart2 pin conflict with Ethernet)"
+        select BSP_USING_UART
         select BSP_USING_UART2
         default n
 
@@ -43,43 +45,93 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_PIN
         default y
 
-    config BSP_USING_UART1
-        bool "Enable UART1"
-        select RT_USING_SERIAL
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
         default y
-
-    config BSP_USING_UART2
-        bool "Enable UART2"
         select RT_USING_SERIAL
-        default n
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default y
 
-    config BSP_USING_UART3
-        bool "Enable UART3"
-        select RT_USING_SERIAL
-        default n
+            config BSP_UART1_RX_USING_DMA
+                bool "Enable UART1 RX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
+
+            config BSP_UART2_RX_USING_DMA
+                bool "Enable UART2 RX DMA"
+                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART3
+                bool "Enable UART3"
+                default n
+
+            config BSP_UART3_RX_USING_DMA
+                bool "Enable UART3 RX DMA"
+                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                default n
+        endif
 
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
         default n
         
-    config BSP_USING_SPI1
-        bool "Enable SPI1 BUS"
+menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
         select RT_USING_SPI
-        default n
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS"
+                default n
 
-    config BSP_USING_SPI2
-        bool "Enable SPI2 BUS"
-        select RT_USING_SPI
-        default n
+            config BSP_SPI1_TX_USING_DMA
+                bool "Enable SPI1 TX DMA"
+                depends on BSP_USING_SPI1
+                default n
+                
+            config BSP_SPI1_RX_USING_DMA
+                bool "Enable SPI1 RX DMA"
+                depends on BSP_USING_SPI1
+                select BSP_SPI1_TX_USING_DMA
+                default n
 
-    config BSP_USING_SPI5
-        bool "Enable SPI5 BUS"
-        select RT_USING_SPI
-        default n
+            config BSP_USING_SPI2
+                bool "Enable SPI2 BUS"
+                default n  
+                
+            config BSP_SPI2_TX_USING_DMA
+                bool "Enable SPI2 TX DMA"
+                depends on BSP_USING_SPI2
+                default n
+                
+            config BSP_SPI2_RX_USING_DMA
+                bool "Enable SPI2 RX DMA"
+                depends on BSP_USING_SPI2
+                select BSP_SPI2_TX_USING_DMA
+                default n
 
-    config BSP_SPI_USING_DMA
-        bool "Enable SPI DMA support"
-        default n
+            config BSP_USING_SPI5
+                bool "Enable SPI5 BUS"
+                default n  
+                
+            config BSP_SPI5_TX_USING_DMA
+                bool "Enable SPI5 TX DMA"
+                depends on BSP_USING_SPI5
+                default n
+                
+            config BSP_SPI5_RX_USING_DMA
+                bool "Enable SPI5 RX DMA"
+                depends on BSP_USING_SPI5
+                select BSP_SPI5_TX_USING_DMA
+                default n
+        endif
 
     config BSP_USING_QSPI
         bool "Enable QSPI BUS"
