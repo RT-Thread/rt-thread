@@ -15,7 +15,7 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_RS232
         bool "Enable RS232"
-	select BSP_USING_UART
+        select BSP_USING_UART
         select BSP_USING_UART2
         default n
         
@@ -91,7 +91,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_UART1_RX_USING_DMA
                 bool "Enable UART1 RX DMA"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
-                default y
+                default n
 
             config BSP_USING_UART2
                 bool "Enable UART2"
@@ -101,7 +101,6 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART2 RX DMA"
                 depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
                 default n
-
         endif
 
     config BSP_USING_ON_CHIP_FLASH
