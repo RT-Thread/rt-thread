@@ -39,11 +39,23 @@ menu "Onboard Peripheral Drivers"
     config PHY_USING_DM9161CEP
         bool
     
-    config BSP_USING_ETH
+
+    
+    menuconfig BSP_USING_ETH
         bool "Enable Ethernet"
-        default n
         select RT_USING_LWIP
         select PHY_USING_DM9161CEP
+        default n
+        if BSP_USING_ETH
+            config PHY_USING_INTERRUPT_MODE
+                bool "enable phy interrupt mode"
+                select PHY_INT_PIN
+                default n
+ 
+            config PHY_INT_PIN
+                int 
+                default 118
+        endif
 
     config BSP_USING_MPU6050
         bool "Enable MPU6050(i2c1)"
@@ -74,7 +86,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_UART1_RX_USING_DMA
                 bool "Enable UART1 RX DMA"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
-                default y
+                default n
         endif
 
     config BSP_USING_ON_CHIP_FLASH

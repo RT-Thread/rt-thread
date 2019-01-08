@@ -24,7 +24,6 @@ menu "Onboard Peripheral Drivers"
         bool "Enable SDCARD (spi1)"
         select BSP_USING_SPI
         select BSP_USING_SPI1
-        select BSP_SPI_USING_DMA
         select RT_USING_SPI_MSD
         select RT_USING_DFS
         select RT_USING_DFS_ELMFAT
@@ -51,7 +50,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_UART1_RX_USING_DMA
                 bool "Enable UART1 RX DMA"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
-                default y
+                default n
                 
             config BSP_USING_UART2
                 bool "Enable UART2"
