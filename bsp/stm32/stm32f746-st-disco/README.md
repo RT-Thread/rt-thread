@@ -2,7 +2,7 @@
 
 ## 简介
 
-本文档为 STM32F746 STM32F746-disco 开发板的 BSP (板级支持包) 说明。
+本文档为 jinsheng 为STM32F746-disco开发板提供的 BSP (板级支持包) 说明。
 
 主要内容如下：
 
@@ -18,7 +18,7 @@ STM32F746-disco 是ST推出的一款基于 ARM Cortex-M7 内核的开发板，�
 
 开发板外观如下图所示：
 
-![board](figures/board.png)
+![board](figures/board.jpg)
 
 该开发板常用 **板载资源** 如下：
 
@@ -66,7 +66,7 @@ STM32F746-disco 是ST推出的一款基于 ARM Cortex-M7 内核的开发板，�
 
 双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
 
-> 工程默认配置使用 st-link 仿真器下载程序，在通过 usb 连接开发板的基础上，点击下载按钮即可下载程序到开发板
+> 工程默认配置使用 st-link 仿真器下载程序，在通过 st-link 连接开发板的基础上，点击下载按钮即可下载程序到开发板
 
 #### 运行结果
 
