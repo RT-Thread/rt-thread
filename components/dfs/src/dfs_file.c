@@ -66,7 +66,8 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
     }
 
     LOG_D("open in filesystem:%s", fs->ops->name);
-    fd->fops  = fs->ops->fops; /* set file ops */
+    fd->fs    = fs;             /* set file system */
+    fd->fops  = fs->ops->fops;  /* set file ops */
 
     /* initialize the fd item */
     fd->type  = FT_REGULAR;
