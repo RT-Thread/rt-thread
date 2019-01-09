@@ -14,6 +14,10 @@
 
 #include <rtthread.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* DMA1 stream0 */
 #if defined(BSP_SPI3_RX_USING_DMA) && !defined(SPI3_RX_DMA_INSTANCE)
 #define SPI3_DMA_RX_IRQHandler           DMA1_Stream0_IRQHandler
@@ -204,6 +208,10 @@
 #endif
 
 /* DMA2 stream7 */
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif /* __DMA_CONFIG_H__ */

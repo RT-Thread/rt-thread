@@ -15,6 +15,10 @@
 #include <stm32f4xx.h>
 #include "drv_common.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef BSP_USING_GPIO
 #include "drv_gpio.h"
 #endif
@@ -45,6 +49,10 @@ extern int __bss_end;
 
 void SystemClock_Config(void);
 void MX_GPIO_Init(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

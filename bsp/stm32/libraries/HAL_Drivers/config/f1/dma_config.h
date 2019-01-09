@@ -14,6 +14,10 @@
 
 #include <rtthread.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* DMA1 channel1 */
 /* DMA1 channel2 */
 #if defined(BSP_SPI1_RX_USING_DMA) && !defined(SPI1_RX_DMA_INSTANCE)
@@ -88,5 +92,8 @@
 /* DMA2 channel4 */
 /* DMA2 channel5 */
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __DMA_CONFIG_H__ */
