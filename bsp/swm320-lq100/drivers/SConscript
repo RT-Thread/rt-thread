@@ -45,6 +45,10 @@ if GetDepend(['BSP_USING_RTC']):
 if GetDepend(['BSP_USING_WDT']):
     src += ['drv_iwg.c']
 
+# add hwtimer driver code
+if  GetDepend('BSP_USING_HWTIMER0') or GetDepend('BSP_USING_HWTIMER1') or  GetDepend('BSP_USING_HWTIMER2') or GetDepend('BSP_USING_HWTIMER3') or GetDepend('BSP_USING_HWTIMER4') or GetDepend('BSP_USING_HWTIMER5'):
+    src += ['drv_hwtimer.c']
+
 CPPPATH = [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)

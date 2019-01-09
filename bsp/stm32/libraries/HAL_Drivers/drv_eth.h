@@ -55,6 +55,13 @@
 #define PHY_10M_MASK                ((1<<12) || (1<<13))
 #define PHY_100M_MASK               ((1<<14) || (1<<15))
 #define PHY_FULL_DUPLEX_MASK        ((1<<15) || (1<<13))
+/*  The PHY interrupt source flag register. */
+#define PHY_INTERRUPT_FLAG_REG      0x15U
+/*  The PHY interrupt mask register. */
+#define PHY_INTERRUPT_MSAK_REG      0x15U
+#define PHY_LINK_CHANGE_FLAG        (1<<2)
+#define PHY_LINK_CHANGE_MASK        (1<<9)
+#define PHY_INT_MASK                0
 
 #endif /* PHY_USING_DM9161CEP */
 

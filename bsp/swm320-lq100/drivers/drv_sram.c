@@ -28,8 +28,7 @@ int rt_hw_sram_init(void)
 
     SYS->CLKEN |= (1 << SYS_CLKEN_SDRAM_Pos);
 
-    while (SDRAMC->REFDONE == 0)
-        ;
+    while (SDRAMC->REFDONE == 0);
     SDRAMC->REFRESH &= ~(1 << SDRAMC_REFRESH_EN_Pos);
 
     for (i = 0; i < 1000; i++)

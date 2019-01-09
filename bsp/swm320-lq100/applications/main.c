@@ -10,18 +10,22 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-
-#define LED4_PIN 100
+/* defined the LED pin: PA12 */
+#define LED_PIN    100
 
 int main(void)
 {
-    /* user app entry */
-    rt_pin_mode(LED4_PIN, PIN_MODE_OUTPUT);
-    while (1)
+    int count = 1;
+    /* set LED4 pin mode to output */
+    rt_pin_mode(LED_PIN, PIN_MODE_OUTPUT);
+
+    while (count++)
     {
-        rt_pin_write(LED4_PIN, !rt_pin_read(LED4_PIN));
-        rt_thread_mdelay(1000);
+        rt_pin_write(LED_PIN, PIN_HIGH);
+        rt_thread_mdelay(500);
+        rt_pin_write(LED_PIN, PIN_LOW);
+        rt_thread_mdelay(500);
     }
 
-    return 0;
+    return RT_EOK;
 }

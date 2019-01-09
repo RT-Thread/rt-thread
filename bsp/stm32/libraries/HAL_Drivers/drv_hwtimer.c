@@ -288,13 +288,13 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
         {
 #if defined(SOC_SERIES_STM32L4)
             val = HAL_RCC_GetPCLK2Freq() / freq;
-#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4)
+#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
             val = HAL_RCC_GetPCLK2Freq() * 2 / freq;
 #endif
         }
         else
         {
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4)
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
             val = HAL_RCC_GetPCLK1Freq() * 2 / freq;
 #elif defined(SOC_SERIES_STM32F0)
             val = HAL_RCC_GetPCLK1Freq() / freq;
