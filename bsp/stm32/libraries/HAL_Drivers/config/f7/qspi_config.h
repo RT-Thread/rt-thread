@@ -13,6 +13,10 @@
 
 #include <rtthread.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef BSP_USING_QSPI
 #ifndef QSPI_BUS_CONFIG
 #define QSPI_BUS_CONFIG                                        \
@@ -44,5 +48,9 @@
 
 #define QSPI_IRQn                   QUADSPI_IRQn
 #define QSPI_IRQHandler             QUADSPI_IRQHandler
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __QSPI_CONFIG_H__ */

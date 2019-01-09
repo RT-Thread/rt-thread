@@ -15,6 +15,10 @@
 #include <stm32f1xx.h>
 #include "drv_common.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Internal SRAM memory size[Kbytes] <8-64>, Default: 64*/
 #define STM32_SRAM_SIZE      64
 #define STM32_SRAM_END       (0x20000000 + STM32_SRAM_SIZE * 1024)
@@ -37,5 +41,9 @@ extern int __bss_end;
 #define HEAP_END        STM32_SRAM_END
 
 void SystemClock_Config(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __BOARD_H__ */

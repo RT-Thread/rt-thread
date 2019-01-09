@@ -14,6 +14,10 @@
 
 #include <rtthread.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* DMA1 channel1 */
 
 /* DMA1 channel2 */
@@ -122,6 +126,10 @@
 #define QSPI_DMA_INSTANCE               DMA2_Channel7
 #define QSPI_DMA_REQUEST                DMA_REQUEST_3
 #define QSPI_DMA_IRQ                    DMA2_Channel7_IRQn
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* __DMA_CONFIG_H__ */
