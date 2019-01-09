@@ -14,6 +14,10 @@
 #include <rtthread.h>
 #include "stm32f1xx_hal.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef BSP_USING_SDIO
 #define SDIO_BUS_CONFIG                                  \
     {                                                    \
@@ -26,6 +30,10 @@
         .dma_tx.dma_irq = DMA2_Channel4_IRQn,            \
     }
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /*__SDIO_CONFIG_H__ */

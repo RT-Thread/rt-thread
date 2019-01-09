@@ -5,13 +5,17 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-06     SummerGift   change to new framework
+ * 2018-11-06     SummerGift   first version
  */
 
 #ifndef __SPI_CONFIG_H__
 #define __SPI_CONFIG_H__
 
 #include <rtthread.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifdef BSP_USING_SPI1
 #ifndef SPI1_BUS_CONFIG
@@ -79,6 +83,10 @@
         .dma_tx.dma_irq = DMA2_Channel2_IRQn,            \
     }
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /*__SPI_CONFIG_H__ */

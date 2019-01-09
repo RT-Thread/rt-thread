@@ -13,6 +13,10 @@
 
 #include <rtthread.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef BSP_USING_SPI1
 #define SPI1_BUS_CONFIG                                  \
     {                                                    \
@@ -28,6 +32,10 @@
 
 #define SPI1_DMA_RX_IRQHandler           DMA1_Ch2_3_DMA2_Ch1_2_IRQHandler    
 #define SPI1_DMA_TX_IRQHandler           DMA1_Ch2_3_DMA2_Ch1_2_IRQHandler
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /*__SPI_CONFIG_H__ */

@@ -15,6 +15,10 @@
 #include <rtthread.h>
 #include "dma_config.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if defined(BSP_USING_UART1)
 #ifndef UART1_CONFIG
 #define UART1_CONFIG                                                \
@@ -122,5 +126,9 @@
     }
 #endif /* UART5_DMA_CONFIG */
 #endif /* BSP_UART5_RX_USING_DMA */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
