@@ -1,0 +1,30 @@
+menu "Hardware Drivers Config"
+
+config SOC_STM32L432KC
+    bool
+    select SOC_SERIES_STM32L4
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    config BSP_USING_UART2
+        bool "Enable UART2"
+        select RT_USING_SERIAL
+        default y
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu
