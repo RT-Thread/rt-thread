@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-06     SummerGift   change to new framework
+ * 2018-11-06     SummerGift   first version
  */
 
 #ifndef __UART_CONFIG_H__
@@ -14,35 +14,49 @@
 #include <rtthread.h>
 
 #if defined(BSP_USING_UART1)
-
-#define UART1_CONFIG                                       \
-    {                                                      \
-        .name = "uart1",                                   \
-        .Instance = USART1,                                \
-        .irq_type = USART1_IRQn,                           \
-        .dma.channel_request.Instance = DMA2_Channel7,     \
-        .dma.channel_request.request = DMA_REQUEST_2,      \
-        .dma_rcc = RCC_AHB1ENR_DMA2EN,                     \
-        .dma_irq = DMA2_Channel7_IRQn,                     \
+#ifndef UART1_CONFIG
+#define UART1_CONFIG                                                \
+    {                                                               \
+        .name = "uart1",                                            \
+        .Instance = USART1,                                         \
+        .irq_type = USART1_IRQn,                                    \
     }
+#endif /* UART1_CONFIG */
+#endif /* BSP_USING_UART1 */
 
-#define USART1_RX_DMA_ISR                        DMA2_Channel7_IRQHandler
-#endif
-
+#if defined(BSP_UART1_RX_USING_DMA)
+#ifndef UART1_DMA_CONFIG
+#define UART1_DMA_CONFIG                                            \
+    {                                                               \
+        .Instance = UART1_RX_DMA_INSTANCE,                          \
+        .request  = UART1_RX_DMA_REQUEST,                           \
+        .dma_rcc  = UART1_RX_DMA_RCC,                               \
+        .dma_irq  = UART1_RX_DMA_IRQ,                               \
+    }
+#endif /* UART1_DMA_CONFIG */
+#endif /* BSP_UART1_RX_USING_DMA */  
+   
 #if defined(BSP_USING_UART2)
-
-#define UART2_CONFIG                                       \
-    {                                                      \
-        .name = "uart2",                                   \
-        .Instance = USART2,                                \
-        .irq_type = USART2_IRQn,                           \
-        .dma.channel_request.Instance = DMA1_Channel6,     \
-        .dma.channel_request.request = DMA_REQUEST_2,      \
-        .dma_rcc = RCC_AHB1SMENR_DMA1SMEN,                 \
-        .dma_irq = DMA1_Channel6_IRQn,                     \
+#ifndef UART2_CONFIG
+#define UART2_CONFIG                                                \
+    {                                                               \
+        .name = "uart2",                                            \
+        .Instance = USART2,                                         \
+        .irq_type = USART2_IRQn,                                    \
     }
+#endif /* UART2_CONFIG */
+#endif /* BSP_USING_UART2 */
 
-#define USART2_RX_DMA_ISR                        DMA1_Channel6_IRQHandler
-#endif
+#if defined(BSP_UART2_RX_USING_DMA)
+#ifndef UART2_DMA_CONFIG
+#define UART2_DMA_CONFIG                                            \
+    {                                                               \
+        .Instance = UART2_RX_DMA_INSTANCE,                          \
+        .request  = UART2_RX_DMA_REQUEST,                           \
+        .dma_rcc  = UART2_RX_DMA_RCC,                               \
+        .dma_irq  = UART2_RX_DMA_IRQ,                               \
+    }
+#endif /* UART2_DMA_CONFIG */
+#endif /* BSP_UART2_RX_USING_DMA */  
 
 #endif
