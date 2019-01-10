@@ -2,7 +2,7 @@
 
 ## 简介
 
-本文档为 xxx 开发板的 BSP (板级支持包) 说明。
+本文档为 NUCLEO32-L432 开发板的 BSP (板级支持包) 说明。
 
 主要内容如下：
 
@@ -14,24 +14,24 @@
 
 ## 开发板介绍
 
-【此处简单介绍一下开发板】
+对于NUCLEO32-L432，内核是Cortex-M4，绿色的Nucleo标志显示了这款芯片是低功耗系列，板载ST-LINK/V2-1调试器/编程器，迷你尺寸，mirco USB接口，可数的外设，Arduino™ nano兼容的接口。
 
 开发板外观如下图所示：
 
-![board](figures/board.png)
+![board](figures/board.jpg)
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：STM32xxx，主频 xxxMHz，xxxKB FLASH ，xxxKB RAM
-- 外部 RAM：型号，xMB
-- 外部 FLASH：型号，xMB
+- MCU：STM32L432KC，主频 80MHz，256KB FLASH ，64KB RAM
+- 外部 RAM：无
+- 外部 FLASH：无
 - 常用外设
-  - LED：x个，DS0（红色，PB1），DS1（绿色，PB0）
-  - 按键：x个，K0（兼具唤醒功能，PA0），K1（PC13）
-- 常用接口：USB 转串口、SD 卡接口、以太网接口、LCD 接口等
-- 调试接口，标准 JTAG/SWD
+  - LED：3个，USB communication(LD1),power LED(LD2),user LED(LD3)
+  - 按键：1个，复位按键(B1)
+- 常用接口：Arduino Nano扩展接口
+- 调试接口，SWD
 
-开发板更多详细信息请参考【厂商名】 [xxx开发板介绍](https://xxx)。
+开发板更多详细信息请参考【STMicroelectronics】 [NUCLEO-L432KC](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/stm32-mcu-eval-tools/stm32-mcu-nucleo/nucleo-l432kc.html)。
 
 ## 外设支持
 
@@ -39,24 +39,24 @@
 
 | **板载外设**      | **支持情况** | **备注**                              |
 | :----------------- | :----------: | :------------------------------------- |
-| USB 转串口        |     支持     |                                       |
-| SPI Flash         |     支持     |                                       |
-| 以太网            |     支持     |                                       |
+| USB 转串口         |     支持     |                                       |
+| SPI Flash         |   暂不支持     |                                       |
+| 以太网             |   暂不支持     |                                       |
 | SD卡              |   暂不支持   |                                       |
 | CAN               |   暂不支持   |                                       |
 | **片上外设**      | **支持情况** | **备注**                              |
 | GPIO              |     支持     | PA0, PA1... PK15 ---> PIN: 0, 1...176 |
-| UART              |     支持     | UART1/x/x                             |
-| SPI               |     支持     | SPI1/x/x                              |
-| I2C               |     支持     | 软件 I2C                              |
-| SDIO              |   暂不支持   | 即将支持                              |
-| RTC               |   暂不支持   | 即将支持                              |
-| PWM               |   暂不支持   | 即将支持                              |
-| USB Device        |   暂不支持   | 即将支持                              |
-| USB Host          |   暂不支持   | 即将支持                              |
-| IWG               |   暂不支持   | 即将支持                              |
+| UART              |     支持     | UART2/x/x                             |
+| SPI               |   暂不支持   | SPI1/x/x                              |
+| I2C               |   暂不支持   | 软件 I2C                              |
+| SDIO              |   暂不支持   |                               |
+| RTC               |   暂不支持   |                               |
+| PWM               |   暂不支持   |                               |
+| USB Device        |   暂不支持   |                               |
+| USB Host          |   暂不支持   |                               |
+| IWG               |   暂不支持   |                               |
 | **扩展模块**      | **支持情况** | **备注**                              |
-|     xxx 模块      |   支持   |                                      |
+|           |      |                                      |
 
 ## 使用说明
 
@@ -73,7 +73,7 @@
 
 ### 快速上手
 
-本 BSP 为开发者提供 MDK4、MDK5 和 IAR 工程，并且支持 GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
+本 BSP 为开发者提供 MDK5 和 IAR 工程，并且支持 GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
 
 #### 硬件连接
 
@@ -83,7 +83,7 @@
 
 双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
 
-> 工程默认配置使用 xxx 仿真器下载程序，在通过 xxx 连接开发板的基础上，点击下载按钮即可下载程序到开发板
+> 工程默认配置使用 ST-LINK 仿真器下载程序，在通过 microUSB 连接开发板的基础上，点击下载按钮即可下载程序到开发板
 
 #### 运行结果
 
@@ -94,13 +94,13 @@
 ```bash
  \ | /
 - RT -     Thread Operating System
- / | \     3.1.1 build Nov 19 2018
+ / | \     4.0.0 build Jan  9 2019
  2006 - 2018 Copyright by rt-thread team
 msh >
 ```
 ### 进阶使用
 
-此 BSP 默认只开启了 GPIO 和 串口1 的功能，如果需使用 SD 卡、Flash 等更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
+此 BSP 默认只开启了 GPIO 和 串口2 的功能，如果需使用更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
 
 1. 在 bsp 下打开 env 工具。
 
@@ -114,10 +114,10 @@ msh >
 
 ## 注意事项
 
-- xxx
+- 开机时如果不能打印RT-Thread版本信息，请将BSP中串口GPIO速率调低
 
 ## 联系人信息
 
 维护人:
 
--  [xxx](https://个人主页), 邮箱：<xxx@xxx.com>
+-  [sun_shine](https://github.com/sunshine0824), 邮箱：<baozitai@163.com>
