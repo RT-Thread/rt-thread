@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2019-01-06     jinsheng   change to new framework
+ * 2019-01-06     jinsheng   first version
  */
 
 #ifndef __BOARD_H__
@@ -14,14 +14,6 @@
 #include <rtthread.h>
 #include <stm32f7xx.h>
 #include "drv_common.h"
-
-#ifdef BSP_USING_GPIO
-#include "drv_gpio.h"
-/*Board Pin definitions*/
-
-/* defined the LED1 pin: PI1 */
-#define LED1_PIN    GET_PIN(I, 1)
-#endif
 
 #define STM32_FLASH_START_ADRESS     ((uint32_t)0x08000000)
 #define STM32_FLASH_SIZE             (1024 * 1024)

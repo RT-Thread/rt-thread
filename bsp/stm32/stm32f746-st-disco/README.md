@@ -2,7 +2,7 @@
 
 ## 简介
 
-本文档为 jinsheng 为STM32F746-disco开发板提供的 BSP (板级支持包) 说明。
+本文档为 jinsheng 为 STM32F746-disco 开发板提供的 BSP (板级支持包) 说明。
 
 主要内容如下：
 
@@ -26,11 +26,11 @@ STM32F746-disco 是ST推出的一款基于 ARM Cortex-M7 内核的开发板，�
 - 常用外设
   - LED：1个，LED1（绿色，PI1）
   - 按键：2个，Reset 和 User。
-- 调试接口，标准 JTAG/SWD
+- 调试接口，ST-LINK/V2-1
 
-开发板更多详细信息请参考官网 [stm32f746-disco 开发板介绍](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/stm32-mcu-eval-tools/stm32-mcu-discovery-kits/32f746gdiscovery.html)。
+开发板更多详细信息请参考官网 [stm32f746-disco 开发板介绍](https://www.st.com/en/evaluation-tools/32f746gdiscovery.html)。
 
-主芯片更多详细信息请参考官网 [stm32f746 芯片资料](https://www.st.com/content/st_com/en/products/microcontrollers/stm32-32-bit-arm-cortex-mcus/stm32-high-performance-mcus/stm32f7-series/stm32f7x6/stm32f746ng.html)。
+主芯片更多详细信息请参考官网 [stm32f746 芯片资料](https://www.st.com/en/microcontrollers/stm32f746ng.html)。
 
 ## 外设支持
 
@@ -40,6 +40,8 @@ STM32F746-disco 是ST推出的一款基于 ARM Cortex-M7 内核的开发板，�
 | :------------ | :----------: | :-----------------------------------: |
 | GPIO         |     支持     |                PI1              |
 | UART         |     支持     |              UART1              |
+| SD卡              |   暂不支持   | 即将支持                              |
+| 以太网               |   暂不支持   | 即将支持                              |
 
 ## 使用说明
 
@@ -70,7 +72,7 @@ STM32F746-disco 是ST推出的一款基于 ARM Cortex-M7 内核的开发板，�
 
 #### 运行结果
 
-下载程序成功之后，系统会自动运行，【这里写开发板运行起来之后的现象，如：LED 闪烁等】。
+下载程序成功之后，LED 闪烁。
 
 连接开发板对应串口到 PC ，在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
 

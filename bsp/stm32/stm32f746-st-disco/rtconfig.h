@@ -125,6 +125,9 @@
 /* Wiced WiFi */
 
 
+/* IoT Cloud */
+
+
 /* security packages */
 
 
@@ -148,6 +151,8 @@
 
 /* sample package */
 
+/* samples: kernel and components samples */
+
 
 /* example package: hello */
 
@@ -159,6 +164,8 @@
 #define SOC_STM32F746NG
 
 /* Onboard Peripheral Drivers */
+
+#define BSP_USING_USB_TO_USART
 
 /* On-chip Peripheral Drivers */
 

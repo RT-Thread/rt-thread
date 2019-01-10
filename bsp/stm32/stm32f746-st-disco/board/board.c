@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2019-01-06     jinsheng   change to new framework
+ * 2019-01-06     jinsheng   first version
  */
 
 #include "board.h"

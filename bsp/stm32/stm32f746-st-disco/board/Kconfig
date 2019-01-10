@@ -6,6 +6,11 @@ config SOC_STM32F746NG
     default y
 
 menu "Onboard Peripheral Drivers"
+    config BSP_USING_USB_TO_USART
+        bool "Enable USB TO USART (uart1)"
+        select BSP_USING_UART
+        select BSP_USING_UART1
+        default y
 
 endmenu
 
