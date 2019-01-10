@@ -23,5 +23,4 @@ elif rtconfig.CROSS_TOOL == 'iar':
 # You can select chips from the list above
 CPPDEFINES = ['STM32F767xx']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
-
 Return('group')
