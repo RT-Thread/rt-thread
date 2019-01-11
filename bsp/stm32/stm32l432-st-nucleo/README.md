@@ -1,4 +1,4 @@
-# BSP README 模板
+# BSP README
 
 ## 简介
 
@@ -14,7 +14,7 @@
 
 ## 开发板介绍
 
-对于NUCLEO32-L432，内核是Cortex-M4，绿色的Nucleo标志显示了这款芯片是低功耗系列，板载ST-LINK/V2-1调试器/编程器，迷你尺寸，mirco USB接口，可数的外设，Arduino™ nano兼容的接口。
+对于 NUCLEO32-L432，内核是 Cortex-M4，绿色的 Nucleo 标志显示了这款芯片是低功耗系列，板载 ST-LINK/V2-1 调试器/编程器，迷你尺寸，mirco USB 接口，可数的外设，Arduino™ nano 兼容的接口。
 
 开发板外观如下图所示：
 
@@ -22,14 +22,12 @@
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：STM32L432KC，主频 80MHz，256KB FLASH ，64KB RAM
-- 外部 RAM：无
-- 外部 FLASH：无
+- MCU：STM32L432KC，主频 80MHz，256KB FLASH ，64KB RAM。
 - 常用外设
-  - LED：3个，USB communication(LD1),power LED(LD2),user LED(LD3)
-  - 按键：1个，复位按键(B1)
-- 常用接口：Arduino Nano扩展接口
-- 调试接口，SWD
+  - LED：3个，USB communication(LD1 双色),power LED(LD2 红色),user LED(LD3 黄色)
+  - 按键：1个，复位按键(B1)。
+- 常用接口：USB 支持 3 种不同接口：虚拟 COM 端口、大容量存储和调试端口。
+- 调试接口：板载 ST-LINK/V2-1 调试器。
 
 开发板更多详细信息请参考【STMicroelectronics】 [NUCLEO-L432KC](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/stm32-mcu-eval-tools/stm32-mcu-nucleo/nucleo-l432kc.html)。
 
@@ -39,24 +37,18 @@
 
 | **板载外设**      | **支持情况** | **备注**                              |
 | :----------------- | :----------: | :------------------------------------- |
-| USB 转串口         |     支持     |                                       |
-| SPI Flash         |   暂不支持     |                                       |
-| 以太网             |   暂不支持     |                                       |
-| SD卡              |   暂不支持   |                                       |
-| CAN               |   暂不支持   |                                       |
+| USB 转串口         |     支持     |                                    |
 | **片上外设**      | **支持情况** | **备注**                              |
-| GPIO              |     支持     | PA0, PA1... PK15 ---> PIN: 0, 1...176 |
-| UART              |     支持     | UART2/x/x                             |
-| SPI               |   暂不支持   | SPI1/x/x                              |
-| I2C               |   暂不支持   | 软件 I2C                              |
-| SDIO              |   暂不支持   |                               |
+| GPIO              |     支持     | PA0, PA1... PC15 ---> PIN: 0, 1...47 |
+| UART              |     支持     | UART2                             |
+| SPI               |   暂不支持   | SPI1                              |
+| I2C               |   暂不支持   | 软件 I2C                      |
 | RTC               |   暂不支持   |                               |
 | PWM               |   暂不支持   |                               |
-| USB Device        |   暂不支持   |                               |
-| USB Host          |   暂不支持   |                               |
+| USB Device        |   暂不支持   |                              |
 | IWG               |   暂不支持   |                               |
 | **扩展模块**      | **支持情况** | **备注**                              |
-|           |      |                                      |
+
 
 ## 使用说明
 
@@ -87,9 +79,9 @@
 
 #### 运行结果
 
-下载程序成功之后，系统会自动运行，【这里写开发板运行起来之后的现象，如：LED 闪烁等】。
+下载程序成功之后，系统会自动运行，观察开发板上 LED 的运行效果，红色 LD1 和 LD2 常亮、黄色色 LD3 会周期性闪烁。
 
-连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
+USB 虚拟 COM 端口默认连接串口 2，在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
 
 ```bash
  \ | /
@@ -100,7 +92,7 @@ msh >
 ```
 ### 进阶使用
 
-此 BSP 默认只开启了 GPIO 和 串口2 的功能，如果需使用更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
+此 BSP 默认只开启了 GPIO 和 串口2 的功能，如果需使用更多高级功能，需要利用 ENV 工具对 BSP 进行配置，步骤如下：
 
 1. 在 bsp 下打开 env 工具。
 
@@ -114,7 +106,8 @@ msh >
 
 ## 注意事项
 
-- 开机时如果不能打印RT-Thread版本信息，请将BSP中串口GPIO速率调低
+- 开机时如果不能打印 RT-Thread 版本信息，请将BSP中串口 GPIO 速率调低
+- 开机时如果不能打印 RT-Thread 版本信息，请重新选择 PC 端串口调试软件的串口号
 
 ## 联系人信息
 
