@@ -13,6 +13,10 @@
 
 #include <rtthread.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if defined(BSP_USING_UART1)
 #ifndef UART1_CONFIG
 #define UART1_CONFIG                                                \
@@ -57,6 +61,10 @@
         .dma_irq  = UART2_RX_DMA_IRQ,                               \
     }
 #endif /* UART2_DMA_CONFIG */
-#endif /* BSP_UART2_RX_USING_DMA */  
+#endif /* BSP_UART2_RX_USING_DMA */
+
+#ifdef __cplusplus
+}
+#endif 
 
 #endif
