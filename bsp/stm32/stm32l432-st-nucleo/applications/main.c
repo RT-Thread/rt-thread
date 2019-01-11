@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2019-01-11     sun_shine   first edition
+ * 2019-01-11     sun_shine    first edition
  */
 
 #include <rtthread.h>
