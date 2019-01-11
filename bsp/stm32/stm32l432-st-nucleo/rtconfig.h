@@ -168,8 +168,7 @@
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
-#define BSP_USING_UART
-#define BSP_USING_UART2
+#define BSP_USING_STLINK_TO_USART
 
 /* Board extended module Drivers */
 
