@@ -9,7 +9,7 @@ cwd   = GetCurrentDir()
 group = []
 list  = os.listdir(cwd)
 
-if rtconfig.ARCH in list:
-    group = group + SConscript(os.path.join(cwd, rtconfig.ARCH, 'SConscript'))
+# cpu porting code files
+group = group + SConscript(os.path.join(cwd, rtconfig.CPU, 'SConscript'))
 
 Return('group')
