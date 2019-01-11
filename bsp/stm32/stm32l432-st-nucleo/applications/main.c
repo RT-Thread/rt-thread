@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-06     SummerGift   change to new framework
+ * 2019-01-11     sun_shine   first edition
  */
 
 #include <rtthread.h>
