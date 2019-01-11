@@ -10,7 +10,6 @@
       <TargetName>rt-thread_stm32h7xx</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32H743ZITx</Device>
@@ -297,13 +296,13 @@
               </OCR_RVCT8>
               <OCR_RVCT9>
                 <Type>0</Type>
-                <StartAddress>0x20010000</StartAddress>
-                <Size>0x40000</Size>
+                <StartAddress>0x20000000</StartAddress>
+                <Size>0x20000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
-                <StartAddress>0x20000000</StartAddress>
-                <Size>0x10000</Size>
+                <StartAddress>0x24000000</StartAddress>
+                <Size>0x80000</Size>
               </OCR_RVCT10>
             </OnChipMemories>
             <RvctStartVector></RvctStartVector>
@@ -377,11 +376,5 @@
       </TargetOption>
     </Target>
   </Targets>
-
-  <RTE>
-    <apis/>
-    <components/>
-    <files/>
-  </RTE>
 
 </Project>
