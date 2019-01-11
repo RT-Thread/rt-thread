@@ -16,6 +16,10 @@
 #include <rthw.h>
 #include <drv_common.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4)
 #define DMA_INSTANCE_TYPE              DMA_Channel_TypeDef
 #elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
@@ -35,5 +39,9 @@ struct dma_config {
     rt_uint32_t request;
 #endif
 };
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /*__DRV_DMA_H_ */
