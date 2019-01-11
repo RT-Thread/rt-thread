@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-11-06     SummerGift   change to new framework
+ * 2019-1-10      e31207077    change to new framework
  */
 
 #include "board.h"
