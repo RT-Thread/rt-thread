@@ -254,6 +254,10 @@ vector_irq:
     mov     r0, sp
     bl      rt_scheduler_do_irq_switch
 
+#ifdef RT_USING_SIGNALS
+    mov     r0, sp
+    bl      rt_check_signal_interrupt
+#endif
     ldmfd   sp!, {r0-r12,lr}
     subs    pc,  lr, #4
 #else

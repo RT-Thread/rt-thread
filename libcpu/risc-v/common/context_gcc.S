@@ -48,6 +48,18 @@ rt_hw_context_switch_to:
 #ifdef RT_USING_SMP
     mv   a0,   a1
     jal  rt_cpus_lock_status_restore
+#ifdef RT_USING_SIGNALS
+    mv a0, sp
+    csrr  t0, mhartid
+    /* switch interrupt stack of current cpu */
+    la    sp, __stack_start__
+    addi  t1, t0, 1
+    li    t2, __STACKSIZE__
+    mul   t1, t1, t2
+    add   sp, sp, t1 /* sp = (cpuid + 1) * __STACKSIZE__ + __stack_start__ */
+    jal  rt_check_signal
+    mv sp, a0
+#endif
 #endif
 
     /* load epc from stack */
@@ -161,6 +173,18 @@ save_mpie:
 #ifdef RT_USING_SMP
     mv   a0,   a2
     jal  rt_cpus_lock_status_restore
+#ifdef RT_USING_SIGNALS
+    mv a0, sp
+    csrr  t0, mhartid
+    /* switch interrupt stack of current cpu */
+    la    sp, __stack_start__
+    addi  t1, t0, 1
+    li    t2, __STACKSIZE__
+    mul   t1, t1, t2
+    add   sp, sp, t1 /* sp = (cpuid + 1) * __STACKSIZE__ + __stack_start__ */
+    jal  rt_check_signal
+    mv sp, a0
+#endif
 #endif /*RT_USING_SMP*/
 
     /* resw ra to mepc */
@@ -229,6 +253,18 @@ rt_hw_context_switch_interrupt:
     LOAD  sp, 0(a2)
     move  a0, a3
     call rt_cpus_lock_status_restore
+#ifdef RT_USING_SIGNALS
+    mv a0, sp
+    csrr  t0, mhartid
+    /* switch interrupt stack of current cpu */
+    la    sp, __stack_start__
+    addi  t1, t0, 1
+    li    t2, __STACKSIZE__
+    mul   t1, t1, t2
+    add   sp, sp, t1 /* sp = (cpuid + 1) * __STACKSIZE__ + __stack_start__ */
+    jal  rt_check_signal
+    mv sp, a0
+#endif
 
     /* resw ra to mepc */
     LOAD a1,   0 * REGBYTES(sp)
@@ -273,4 +309,29 @@ rt_hw_context_switch_interrupt:
     addi sp,  sp, 32 * REGBYTES
     mret
 
+#endif
+
+#ifdef RT_USING_SMP
+#ifdef RT_USING_SIGNALS
+
+/* void rt_hw_handle_sig(context);
+ */
+ .globl rt_hw_handle_sig
+ rt_hw_handle_sig:
+     /* a0 :svc_mod context
+      */
+     j rt_insert_sig_handle
+
+/*
+ * void rt_hw_handle_sig_interrupt(context);
+ */
+/* a0 :context
+ */
+.globl rt_hw_handle_sig_interrupt
+rt_hw_handle_sig_interrupt:
+    /* switch to interrupt stack */
+    call rt_insert_sig_handle
+	mv sp, a0
+	j spurious_interrupt
+#endif
 #endif

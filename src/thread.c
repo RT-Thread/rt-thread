@@ -191,7 +191,9 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
     thread->sig_mask    = 0x00;
     thread->sig_pending = 0x00;
 
+#ifndef RT_USING_SMP
     thread->sig_ret     = RT_NULL;
+#endif
     thread->sig_vectors = RT_NULL;
     thread->si_list     = RT_NULL;
 #endif

@@ -61,6 +61,15 @@ rt_hw_context_switch_to:
 #ifdef RT_USING_SMP
     mov     r0, r1
     bl      rt_cpus_lock_status_restore
+
+#ifdef RT_USING_SIGNALS
+    mov r0, sp
+    msr cpsr_c, #I_Bit|F_Bit|Mode_IRQ
+    bl  rt_check_signal
+    msr cpsr_c, #I_Bit|F_Bit|Mode_SVC
+    mov sp, r0
+#endif
+
 #endif /*RT_USING_SMP*/
 
 #ifdef RT_USING_LWP
@@ -105,6 +114,15 @@ rt_hw_context_switch:
 #ifdef RT_USING_SMP
     mov     r0, r2
     bl      rt_cpus_lock_status_restore
+
+#ifdef RT_USING_SIGNALS
+    mov r0, sp
+    msr cpsr_c, #I_Bit|F_Bit|Mode_IRQ
+    bl  rt_check_signal
+    msr cpsr_c, #I_Bit|F_Bit|Mode_SVC
+    mov sp, r0
+#endif
+
 #endif /*RT_USING_SMP*/
 
 #ifdef RT_USING_LWP
@@ -172,6 +190,14 @@ rt_hw_context_switch_interrupt:
     mov     r0, r3
     bl      rt_cpus_lock_status_restore
 
+#ifdef RT_USING_SIGNALS
+    mov r0, sp
+    msr cpsr_c, #I_Bit|F_Bit|Mode_IRQ
+    bl  rt_check_signal
+    msr cpsr_c, #I_Bit|F_Bit|Mode_SVC
+    mov sp, r0
+#endif
+
 #ifdef RT_USING_LWP
     ldmfd sp, {r13,r14}^  @pop usr_sp usr_lr
     add sp, #8
@@ -196,3 +222,64 @@ _reswitch:
     str r1, [r2]
     bx  lr
 #endif /*RT_USING_SMP*/
+
+#ifdef RT_USING_SMP
+#ifdef RT_USING_SIGNALS
+
+/* void rt_hw_handle_sig(context);
+ */
+.globl rt_hw_handle_sig
+rt_hw_handle_sig:
+    /* r0 :svc_mod context
+     */
+    b  rt_insert_sig_handle
+
+/*
+ * void rt_hw_handle_sig_interrupt(context);
+ */
+/* r0 :irq_mod context
+ */
+.globl rt_hw_handle_sig_interrupt
+rt_hw_handle_sig_interrupt:
+    /* r0 :irq_mod context
+     */
+
+    @ r0 point to {r0-r3} in stack
+    mov     r1, r0
+    add     r0, r0, #4*4
+    ldmfd   r0!, {r4-r12,lr}@ reload saved registers
+    mrs     r3,  spsr       @ get cpsr of interrupt thread
+    sub     r2,  lr, #4     @ save old task's pc to r2
+    msr     cpsr_c, #I_Bit|F_Bit|Mode_SVC
+
+    stmfd   sp!, {r2}       @ push old task's pc
+    stmfd   sp!, {r4-r12,lr}@ push old task's lr,r12-r4
+    ldmfd   r1,  {r4-r7}    @ restore r0-r3 of the interrupt thread
+    stmfd   sp!, {r4-r7}    @ push old task's r0-r3
+    stmfd   sp!, {r3}       @ push old task's cpsr
+
+#ifdef RT_USING_LWP
+    stmfd sp, {r13,r14}^    @push usr_sp usr_lr
+    sub sp, #8
+#endif
+
+    mov     r1,  sp         @ svc sp
+
+    msr     cpsr_c, #I_Bit|F_Bit|Mode_IRQ
+    mov     sp, r0          @ restore irq stack
+    mov     r0, r1
+    bl      rt_insert_sig_handle
+
+    msr     cpsr_c, #I_Bit|F_Bit|Mode_SVC
+
+    mov     sp, r0
+
+#ifdef RT_USING_LWP
+    ldmfd sp, {r13,r14}^  @pop usr_sp usr_lr
+    add sp, #8
+#endif
+    ldmfd   sp!, {r4}       @ pop new task's cpsr to spsr
+    msr     spsr_cxsf, r4
+    ldmfd   sp!, {r0-r12,lr,pc}^ @ pop new task's r0-r12,lr & pc, copy spsr to cpsr
+#endif
+#endif

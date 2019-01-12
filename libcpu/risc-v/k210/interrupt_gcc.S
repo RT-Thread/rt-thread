@@ -77,6 +77,10 @@ trap_entry:
     /* s0 --> sp */
     mv  a0, s0
     call rt_scheduler_do_irq_switch
+#ifdef RT_USING_SIGNALS
+    mv a0, s0
+    call rt_check_signal_interrupt
+#endif
     mv  sp, s0
 #else
 
@@ -104,6 +108,7 @@ trap_entry:
     csrw  mepc, a0
 #endif
 
+.global spurious_interrupt
 spurious_interrupt:
     LOAD  x1,   1 * REGBYTES(sp)
 
