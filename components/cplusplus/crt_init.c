@@ -13,10 +13,10 @@
 
 #include <rtthread.h>
 
-#ifdef __CC_ARM
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
 extern void $Super$$__cpp_initialize__aeabi_(void);
 /* we need to change the cpp_initialize order */
-void $Sub$$__cpp_initialize__aeabi_(void)
+RT_WEAK void $Sub$$__cpp_initialize__aeabi_(void)
 {
     /* empty */
 }
