@@ -13,6 +13,10 @@
 
 #include <rtthread.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef BSP_USING_QSPI
 #ifndef QSPI_BUS_CONFIG
 #define QSPI_BUS_CONFIG                                        \
@@ -29,8 +33,8 @@
 #ifndef QSPI_DMA_CONFIG
 #define QSPI_DMA_CONFIG                                        \
     {                                                          \
-        .Instance = DMA1_Channel5,                             \
-        .Init.Request = DMA_REQUEST_5,                         \
+        .Instance = QSPI_DMA_INSTANCE,                         \
+        .Init.Request = QSPI_DMA_REQUEST,                      \
         .Init.Direction = DMA_PERIPH_TO_MEMORY,                \
         .Init.PeriphInc = DMA_PINC_DISABLE,                    \
         .Init.MemInc = DMA_MINC_ENABLE,                        \
@@ -42,10 +46,11 @@
 #endif /* QSPI_DMA_CONFIG */
 #endif /* BSP_QSPI_USING_DMA */
 
-#define QSPI_DMA_CLK_ENABLE         __HAL_RCC_DMA1_CLK_ENABLE()
 #define QSPI_IRQn                   QUADSPI_IRQn
-#define QSPI_DMA_IRQn               DMA1_Channel5_IRQn
 #define QSPI_IRQHandler             QUADSPI_IRQHandler
-#define QSPI_DMA_IRQHandler         DMA1_Channel5_IRQHandler
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __QSPI_CONFIG_H__ */
