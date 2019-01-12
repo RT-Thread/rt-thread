@@ -2,6 +2,7 @@ import os
 
 # toolchains options
 ARCH='arm'
+SUBARCH='armv7-a'
 CPU='am335x'
 CROSS_TOOL='gcc'
 
@@ -41,10 +42,10 @@ if PLATFORM == 'gcc':
     LPATH = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O0 -gdwarf-2 -Wall'
+        CFLAGS += ' -O0 -gdwarf-2'
         AFLAGS += ' -gdwarf-2'
     else:
-        CFLAGS += ' -O2 -Wall'
+        CFLAGS += ' -O2'
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' +\
                   SIZE + ' $TARGET \n'
