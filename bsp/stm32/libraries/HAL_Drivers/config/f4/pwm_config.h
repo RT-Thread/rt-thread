@@ -13,6 +13,10 @@
 
 #include <rtthread.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef BSP_USING_PWM2
 #ifndef PWM2_CONFIG
 #define PWM2_CONFIG                             \
@@ -56,5 +60,9 @@
     }
 #endif /* PWM5_CONFIG */
 #endif /* BSP_USING_PWM5 */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __PWM_CONFIG_H__ */

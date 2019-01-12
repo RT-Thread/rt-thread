@@ -11,6 +11,7 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32f103-fire-arbitrary](stm32f103-fire-arbitrary/)  | 野火 F103 霸道开发板     |
 | **F4 系列** |  |
 | [stm32f407-st-discovery](stm32f407-st-discovery/) | ST 官方 stm32f407-discovery 开发板 |
+| [stm32f411-st-nucleo](stm32f411-st-nucleo/) | ST 官方 STM32F411-Nucleo-64 开发板 |
 | [stm32f407-atk-explorer](stm32f407-atk-explorer/)    | 正点原子 F407 探索者开发板 |
 | [stm32f429-atk-apollo](stm32f429-atk-apollo/)      | 正点原子 F429 阿波罗开发板 |
 | [stm32f429-fire-challenger](stm32f429-fire-challenger/) | 野火 F429 挑战者开发板     |

@@ -260,6 +260,9 @@ rt_err_t rt_stm32_eth_tx(rt_device_t dev, struct pbuf *p)
     /* TODO Optimize data send speed*/
     LOG_D("transmit frame lenth :%d", framelength);
 
+    /* wait for unlocked */
+    while (EthHandle.Lock == HAL_LOCKED);
+
     state = HAL_ETH_TransmitFrame(&EthHandle, framelength);
     if (state != HAL_OK)
     {
@@ -410,6 +413,40 @@ void HAL_ETH_ErrorCallback(ETH_HandleTypeDef *heth)
     LOG_E("eth err");
 }
 
+#ifdef PHY_USING_INTERRUPT_MODE
+static void eth_phy_isr(void *args)
+{
+    rt_uint32_t status = 0;
+    static rt_uint8_t link_status = 1;
+
+    HAL_ETH_ReadPHYRegister(&EthHandle, PHY_INTERRUPT_FLAG_REG, (uint32_t *)&status);
+    LOG_D("phy interrupt status reg is 0x%X", status);
+    HAL_ETH_ReadPHYRegister(&EthHandle, PHY_BASIC_STATUS_REG, (uint32_t *)&status);
+    LOG_D("phy basic status reg is 0x%X", status);
+
+    if (status & PHY_LINKED_STATUS_MASK)
+    {
+        if (link_status == 0)
+        {
+            link_status = 1;
+            LOG_D("link up");
+            /* send link up. */
+            eth_device_linkchange(&stm32_eth_device.parent, RT_TRUE);
+        }
+    }
+    else
+    {
+        if (link_status == 1)
+        {
+            link_status = 0;
+            LOG_I("link down");
+            /* send link down. */
+            eth_device_linkchange(&stm32_eth_device.parent, RT_FALSE);
+        }
+    }
+}
+#endif /* PHY_USING_INTERRUPT_MODE */
+
 static uint8_t phy_speed = 0;
 #define PHY_LINK_MASK       (1<<0)
 static void phy_monitor_thread_entry(void *parameter)
@@ -435,12 +472,12 @@ static void phy_monitor_thread_entry(void *parameter)
 
     if (phy_addr == 0xFF)
     {
-        LOG_E("phy not probe!\r\n");
+        LOG_E("phy not probe!");
         return;
     }
     else
     {
-        LOG_D("found a phy, address:0x%02X\r\n", phy_addr);
+        LOG_D("found a phy, address:0x%02X", phy_addr);
     }
 
     /* RESET PHY */
@@ -452,7 +489,7 @@ static void phy_monitor_thread_entry(void *parameter)
     while (1)
     {
         HAL_ETH_ReadPHYRegister(&EthHandle, PHY_BASIC_STATUS_REG, (uint32_t *)&status);
-        LOG_D("PHY BASIC STATUS REG:0x%04X\r\n", status);
+        LOG_D("PHY BASIC STATUS REG:0x%04X", status);
 
         phy_speed_new = 0;
 
@@ -512,10 +549,21 @@ static void phy_monitor_thread_entry(void *parameter)
                 /* send link up. */
                 eth_device_linkchange(&stm32_eth_device.parent, RT_TRUE);
 
+#ifdef PHY_USING_INTERRUPT_MODE
+                /* configuration intterrupt pin */
+                rt_pin_mode(PHY_INT_PIN, PIN_MODE_INPUT_PULLUP);
+                rt_pin_attach_irq(PHY_INT_PIN, PIN_IRQ_MODE_FALLING, eth_phy_isr, (void *)"callbackargs");
+                rt_pin_irq_enable(PHY_INT_PIN, PIN_IRQ_ENABLE);
+
+                /* enable phy interrupt */
+                HAL_ETH_WritePHYRegister(&EthHandle, PHY_INTERRUPT_MSAK_REG, PHY_INT_MASK);
+
+                break;
+#endif
             } /* link up. */
             else
             {
-                LOG_I("link down\r\n");
+                LOG_I("link down");
                 /* send link down. */
                 eth_device_linkchange(&stm32_eth_device.parent, RT_FALSE);
             }
