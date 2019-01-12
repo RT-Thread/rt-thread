@@ -1,0 +1,27 @@
+# RT-Thread building script for bridge
+
+import os
+from building import *
+
+Import('rtconfig')
+
+cwd   = GetCurrentDir()
+
+# Including subfolders
+workpaths = [cwd]
+for root, dirs, files in os.walk(cwd):
+    for d in dirs:
+        workpaths += [os.path.join(root, d)]
+
+src = []
+for path in workpaths:
+    src += Glob(path + '/*.c') + Glob(path + '/*.cpp')
+    if rtconfig.PLATFORM == 'armcc' or rtconfig.PLATFORM == 'armclang':
+        src += Glob(path + '/*_rvds.S')
+    elif rtconfig.PLATFORM == 'gcc':
+        src += Glob(path + '/*_gcc.S')
+
+CPPPATH = workpaths
+group = DefineGroup('cpu', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

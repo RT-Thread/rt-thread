@@ -1,0 +1,17 @@
+# RT-Thread building script for bridge
+
+import os
+from building import *
+
+Import('rtconfig')
+
+cwd   = GetCurrentDir()
+group = []
+list  = os.listdir(cwd)
+
+# add all sub dir
+for subdir in list:
+    if os.path.isdir(subdir):
+        group = group + SConscript(os.path.join(cwd, subdir, 'SConscript'))
+
+Return('group')
