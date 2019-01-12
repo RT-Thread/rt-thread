@@ -266,6 +266,7 @@ rt_hw_context_switch_interrupt:
     mv sp, a0
 #endif
 
+restore_context:
     /* resw ra to mepc */
     LOAD a1,   0 * REGBYTES(sp)
     csrw mepc, a1
@@ -330,8 +331,13 @@ rt_hw_context_switch_interrupt:
 .globl rt_hw_handle_sig_interrupt
 rt_hw_handle_sig_interrupt:
     /* switch to interrupt stack */
+
+    csrr  a1, mepc
+    STORE a1, 0 * REGBYTES(a0)
+
     call rt_insert_sig_handle
 	mv sp, a0
-	j spurious_interrupt
+
+	j restore_context
 #endif
 #endif
