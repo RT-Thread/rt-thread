@@ -7,17 +7,11 @@ Import('rtconfig')
 cwd     = GetCurrentDir()
 src     = Glob('*.c') + Glob('*.cpp')
 CPPPATH = [cwd]
+group = []
 
-if rtconfig.PLATFORM == 'armcc':
-    src += Glob('*_rvds.S')
-
-if rtconfig.PLATFORM == 'gcc':
-    src += Glob('*_init.S')
-    src += Glob('*_gcc.S')
-
-if rtconfig.PLATFORM == 'iar':
-    src += Glob('*_iar.S')
-
-group = DefineGroup('cpu', src, depend = [''], CPPPATH = CPPPATH)
+# armv7-a files
+group += SConscript(os.path.join(cwd, '../armv7-a/SConscript'))
+# Specific cpu files
+group += DefineGroup('cpu', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
