@@ -37,7 +37,7 @@ RT_WEAK void *__dso_handle = 0;
 RT_WEAK
 int cplusplus_system_init(void)
 {
-#if defined(__GNUC__) && !defined(__CC_ARM)
+#if defined(__GNUC__) && !defined(__CC_ARM) && !defined(__CLANG_ARM)
     typedef void (*pfunc) ();
     extern pfunc __ctors_start__[];
     extern pfunc __ctors_end__[];
@@ -46,7 +46,7 @@ int cplusplus_system_init(void)
     for (p = __ctors_start__; p < __ctors_end__; p++)
         (*p)();
 
-#elif defined(__CC_ARM)
+#elif defined(__CC_ARM) || defined(__CLANG_ARM)
     /* If there is no SHT$$INIT_ARRAY, calling
      * $Super$$__cpp_initialize__aeabi_() will cause fault. At least until Keil5.12
      * the problem still exists. So we have to initialize the C++ runtime by ourself.
@@ -68,4 +68,3 @@ int cplusplus_system_init(void)
     return 0;
 }
 INIT_COMPONENT_EXPORT(cplusplus_system_init);
-
