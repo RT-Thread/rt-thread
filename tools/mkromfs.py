@@ -40,6 +40,10 @@ class File(object):
         head = 'static const rt_uint8_t %s[] = {\n' % \
                 (prefix + self.c_name)
         tail = '\n};'
+
+        if self.entry_size == 0:
+            return ''
+
         return head + ','.join(('0x%02x' % ord(i) for i in self._data)) + tail
 
     @property
@@ -118,23 +122,31 @@ class Folder(object):
            It is recursive.'''
         # make the current dirent
         # static is good. Only root dirent is global visible.
+        if self.entry_size == 0:
+            return ''
+
         dhead = 'static const struct romfs_dirent %s[] = {\n' % (prefix + self.c_name)
         dtail = '\n};'
         body_fmt = '    {{{type}, "{name}", (rt_uint8_t *){data}, sizeof({data})/sizeof({data}[0])}}'
+        body_fmt0= '    {{{type}, "{name}", RT_NULL, 0}}'
         # prefix of children
         cpf = prefix+self.c_name
         body_li = []
         payload_li = []
         for c in self._children:
+            entry_size = c.entry_size
             if isinstance(c, File):
                 tp = 'ROMFS_DIRENT_FILE'
             elif isinstance(c, Folder):
                 tp = 'ROMFS_DIRENT_DIR'
             else:
                 assert False, 'Unkown instance:%s' % str(c)
-            body_li.append(body_fmt.format(type=tp,
-                                           name=c.name,
-                                           data=cpf+c.c_name))
+            if entry_size == 0:
+                body_li.append(body_fmt0.format(type=tp, name = c.name))
+            else:
+                body_li.append(body_fmt.format(type=tp,
+                                            name=c.name,
+                                            data=cpf+c.c_name))
             payload_li.append(c.c_data(prefix=cpf))
 
         # All the data we need is defined in payload so we should append the
