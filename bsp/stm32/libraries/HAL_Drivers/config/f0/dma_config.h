@@ -14,6 +14,10 @@
 
 #include <rtthread.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* DMA1 channel1  */
 
 /* DMA1 channel2-3 DMA2 channel1-2 */
@@ -33,5 +37,9 @@
 #define UART2_RX_DMA_IRQ                 DMA1_Ch4_7_DMA2_Ch3_5_IRQn
 #endif
 /* DMA1 channel4-7 DMA2 channel3-5 */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __DMA_CONFIG_H__ */

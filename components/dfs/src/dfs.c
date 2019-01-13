@@ -320,7 +320,7 @@ int fd_is_open(const char *pathname)
             fd = fdt->fds[index];
             if (fd == NULL || fd->fops == NULL || fd->path == NULL) continue;
 
-            if (fd->fops == fs->ops->fops && strcmp(fd->path, mountpath) == 0)
+            if (fd->fs == fs && strcmp(fd->path, mountpath) == 0)
             {
                 /* found file in file descriptor table */
                 rt_free(fullpath);

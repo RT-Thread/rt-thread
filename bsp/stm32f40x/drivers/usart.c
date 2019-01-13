@@ -333,9 +333,9 @@ static const struct rt_uart_ops stm32_uart_ops =
 /* UART1 device driver structure */
 struct stm32_uart uart1 =
 {
-    USART1,
-#ifdef RT_SERIAL_USING_DMA       
+    USART1,     
     USART1_IRQn,
+#ifdef RT_SERIAL_USING_DMA  
     {
         DMA2_Stream5,
         DMA_Channel_4,
@@ -377,8 +377,8 @@ void DMA2_Stream5_IRQHandler(void) {
 struct stm32_uart uart2 =
 {
     USART2,
-#ifdef RT_SERIAL_USING_DMA
     USART2_IRQn,
+#ifdef RT_SERIAL_USING_DMA
     {
         DMA1_Stream5,
         DMA_Channel_4,
@@ -420,9 +420,9 @@ void DMA1_Stream5_IRQHandler(void) {
 /* UART3 device driver structure */
 struct stm32_uart uart3 =
 {
-    USART3,
-#ifdef RT_SERIAL_USING_DMA    
+    USART3,  
     USART3_IRQn,
+#ifdef RT_SERIAL_USING_DMA  
     {
         DMA1_Stream1,
         DMA_Channel_4,
@@ -465,8 +465,8 @@ void DMA1_Stream1_IRQHandler(void) {
 struct stm32_uart uart4 =
 {
     UART4,
-#ifdef RT_SERIAL_USING_DMA
     UART4_IRQn,
+#ifdef RT_SERIAL_USING_DMA
     {
         DMA1_Stream2,
         DMA_Channel_4,
@@ -508,9 +508,9 @@ void DMA1_Stream2_IRQHandler(void) {
 /* UART5 device driver structure */
 struct stm32_uart uart5 =
 {
-    UART5,
-#ifdef RT_SERIAL_USING_DMA    
+    UART5,  
     UART5_IRQn,
+#ifdef RT_SERIAL_USING_DMA  
     {
         DMA1_Stream0,
         DMA_Channel_4,
