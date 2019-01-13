@@ -35,6 +35,8 @@
 #define STM32_SRAM_SIZE   (512 * 1024)
 #define HEAP_END          (0x24000000 + STM32_SRAM_SIZE)
 
+#define STM32F7xx_PIN_NUMBERS 144
+
 void rt_hw_board_init(void);
 
 #endif

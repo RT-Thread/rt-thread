@@ -13,6 +13,10 @@ if GetDepend(['RT_USING_SERIAL']):
 if GetDepend('RT_USING_LWIP'):
     src += ['lan8742a.c']
 
+# add gpio drivers.
+if GetDepend('RT_USING_PIN'):
+    src += ['drv_gpio.c']
+
 CPPPATH = [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
