@@ -655,6 +655,7 @@ RTM_EXPORT(rt_thread_control);
  */
 rt_err_t rt_thread_suspend(rt_thread_t thread)
 {
+    register rt_base_t stat;
     register rt_base_t temp;
 
     /* thread check */
@@ -663,22 +664,25 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
 
     RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread suspend:  %s\n", thread->name));
 
-    if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_READY)
+    stat = thread->stat & RT_THREAD_STAT_MASK;
+    if ((stat != RT_THREAD_READY) && (stat != RT_THREAD_RUNNING))
     {
         RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread suspend: thread disorder, 0x%2x\n",
                                        thread->stat));
-
         return -RT_ERROR;
     }
 
-    RT_ASSERT(thread == rt_thread_self());
-
     /* disable interrupt */
     temp = rt_hw_interrupt_disable();
+    if (stat == RT_THREAD_RUNNING)
+    {
+        /* not suspend running status thread on other core */
+        RT_ASSERT(thread == rt_thread_self());
+    }
 
     /* change thread stat */
-    thread->stat = RT_THREAD_SUSPEND | (thread->stat & ~RT_THREAD_STAT_MASK);
     rt_schedule_remove_thread(thread);
+    thread->stat = RT_THREAD_SUSPEND | (thread->stat & ~RT_THREAD_STAT_MASK);
 
     /* stop thread timer anyway */
     rt_timer_stop(&(thread->thread_timer));
