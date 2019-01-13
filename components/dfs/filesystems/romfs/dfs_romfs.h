@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2019, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2019/01/13     Bernard      code cleanup
  */
 
 #ifndef __DFS_ROMFS_H__
@@ -17,11 +18,11 @@
 
 struct romfs_dirent
 {
-	rt_uint32_t		 type;	/* dirent type */
+    rt_uint32_t      type;  /* dirent type */
 
-	const char		 *name;	/* dirent name */
-	const rt_uint8_t *data;	/* file date ptr */
-	rt_size_t		 size;	/* file size */
+    const char       *name; /* dirent name */
+    const rt_uint8_t *data; /* file date ptr */
+    rt_size_t        size;  /* file size */
 };
 
 int dfs_romfs_init(void);
