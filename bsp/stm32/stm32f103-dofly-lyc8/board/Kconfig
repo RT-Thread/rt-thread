@@ -1,0 +1,30 @@
+menu "Hardware Drivers Config"
+
+config SOC_STM32F103c8
+    bool
+    select SOC_SERIES_STM32F1
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    config BSP_USING_UART1
+        bool "Enable UART1"
+        select RT_USING_SERIAL
+        default y
+		
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu
