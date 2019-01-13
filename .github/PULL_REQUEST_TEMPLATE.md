@@ -1,10 +1,15 @@
 ## 拉取/合并请求描述：(PR description)
 
-请仔细阅读以下文字。请在这里填写您的PR描述，可以包括以下之一的内容：为什么提交这份PR；解决的问题是什么，你的解决方案是什么；
-Please read the following carefully. Please fill in your PR description here, which can include one of the following items: why to submit this PR; what is the problem solved and what is your solution;
+[
+这段方括号里的内容是您必须填写并替换掉的，否则PR不可能被合并。方括号外面的内容不需要修改，但请仔细阅读。
+The content in this square bracket must be filled in and replaced, otherwise PR can not be merged. The contents outside square brackets need not be changed, but please read them carefully.
 
-并确认已经在什么情况或板卡上进行了测试。
+请在这里填写您的PR描述，可以包括以下之一的内容：为什么提交这份PR；解决的问题是什么，你的解决方案是什么；
+Please fill in your PR description here, which can include one of the following items: why to submit this PR; what is the problem solved and what is your solution;
+
+并确认并列出已经在什么情况或板卡上进行了测试。
 And confirm in which case or board have been tested.
+]
 
 以下的内容请在提交PR后，一项项进行check，没问题后逐条在页面上打钩。
 The following contents should be checked item by item after submitted PR, and ticked on the browser one by one after no problem.
