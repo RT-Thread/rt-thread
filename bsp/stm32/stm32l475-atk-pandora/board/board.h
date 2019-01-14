@@ -15,6 +15,10 @@
 #include <stm32l4xx.h>
 #include "drv_common.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define STM32_FLASH_START_ADRESS       ((uint32_t)0x08000000)
 #define STM32_FLASH_SIZE               (512 * 1024)
 #define STM32_FLASH_END_ADDRESS        ((uint32_t)(STM32_FLASH_START_ADRESS + STM32_FLASH_SIZE))
@@ -27,6 +31,10 @@
 #define HEAP_END                       STM32_SRAM1_END
 
 void SystemClock_Config(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

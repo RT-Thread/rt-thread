@@ -14,6 +14,10 @@
 #include <board.h>
 #include <rtthread.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if defined(SOC_SERIES_STM32F0)
 #include "f0/dma_config.h"
 #include "f0/uart_config.h"
@@ -54,6 +58,10 @@
 #include "l4/adc_config.h"
 #include "l4/tim_config.h"
 #include "l4/pwm_config.h"
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif
