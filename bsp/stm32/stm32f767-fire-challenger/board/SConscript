@@ -18,6 +18,9 @@ if GetDepend(['BSP_USING_ETH']):
 if GetDepend(['BSP_USING_QSPI_FLASH']):
     src += Glob('ports/drv_qspi_flash.c')
 
+if GetDepend(['BSP_USING_SDCARD']):
+    src += Glob('ports/sdcard_port.c')
+
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
 path += [cwd + '/ports']
