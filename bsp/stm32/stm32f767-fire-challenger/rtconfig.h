@@ -97,12 +97,6 @@
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
 #define RT_USING_PIN
-#define RT_USING_SDIO
-#define RT_SDIO_STACK_SIZE 512
-#define RT_SDIO_THREAD_PRIORITY 15
-#define RT_MMCSD_STACK_SIZE 1024
-#define RT_MMCSD_THREAD_PREORITY 22
-#define RT_MMCSD_MAX_PARTITION 16
 
 /* Using WiFi */
 
@@ -202,18 +196,12 @@
 /* Onboard Peripheral Drivers */
 
 #define BSP_USING_USB_TO_USART
-#define BSP_USING_SDRAM
-#define BSP_USING_LCD
-#define BSP_USING_SDCARD
 
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
-#define BSP_USING_SDIO
-#define BSP_USING_FMC
-#define BSP_USING_LTDC
 
 /* Board extended module Drivers */
 
