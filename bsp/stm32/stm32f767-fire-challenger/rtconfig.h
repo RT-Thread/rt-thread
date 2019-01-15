@@ -115,6 +115,7 @@
 #define RT_USING_LIBC
 #define RT_USING_PTHREADS
 #define RT_USING_POSIX
+#define RT_USING_POSIX_MMAP
 
 /* Network */
 
@@ -169,6 +170,19 @@
 
 /* system packages */
 
+#define PKG_USING_LITTLEVGL2RTT
+#define PKG_USING_LITTLEVGL2RTT_TEST_VERSION
+
+/* LittlevGL2RTT Options */
+
+#define LV_MEM_DYNAMIC
+#define LV_MEM_CUSTOM 1
+#define LV_COLOR_DEPTH_16
+#define LV_COLOR_DEPTH 16
+#define LV_HOR_RES 800
+#define LV_VER_RES 480
+#define LV_DPI 50
+#define LITTLEVGL2RTT_USING_DEMO
 
 /* peripheral libraries and drivers */
 
@@ -189,6 +203,7 @@
 
 #define BSP_USING_USB_TO_USART
 #define BSP_USING_SDRAM
+#define BSP_USING_LCD
 #define BSP_USING_SDCARD
 
 /* On-chip Peripheral Drivers */
@@ -198,6 +213,7 @@
 #define BSP_USING_UART1
 #define BSP_USING_SDIO
 #define BSP_USING_FMC
+#define BSP_USING_LTDC
 
 /* Board extended module Drivers */
 
