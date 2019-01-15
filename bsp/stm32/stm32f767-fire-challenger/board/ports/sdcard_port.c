@@ -17,8 +17,6 @@
 #include <dfs_posix.h>
 #include "drv_gpio.h"
 
-#include <littlevgl2rtt_demo.h>
-
 #define DBG_ENABLE
 #define DBG_SECTION_NAME  "app.card"
 #define DBG_COLOR
@@ -46,7 +44,6 @@ void sd_mount(void *parameter)
             if (dfs_mount("sd0", "/", "elm", 0, 0) == RT_EOK)
             {
                 LOG_I("sd card mount to '/'");
-                rt_lvgl_demo_init();
                 break;
             }
             else
