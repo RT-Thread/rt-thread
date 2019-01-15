@@ -21,6 +21,7 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_SDRAM
         bool "Enable SDRAM"
+        select BSP_USING_FMC
         default n
 
     config BSP_USING_QSPI_FLASH
@@ -30,10 +31,30 @@ menu "Onboard Peripheral Drivers"
         select RT_SFUD_USING_QSPI
         default n
 
+    config BSP_USING_LCD
+        bool "Enable LCD"
+        select BSP_USING_LTDC
+        select BSP_USING_SDRAM
+        default n
+
     config BSP_USING_MPU6050
         bool "Enable MPU6050 (i2c4)"
         select BSP_USING_I2C4
         select PKG_USING_MPU6XXX
+        default n
+
+    config BSP_USING_POT
+        bool "Enable potentiometer"
+        select BSP_USING_ADC
+        select BSP_USING_ADC1
+        default n
+    
+    config BSP_USING_SDCARD
+        bool "Enable SDCARD (sdio)"
+        select BSP_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        select RT_USING_PIN
         default n
 
 endmenu
@@ -178,6 +199,20 @@ menuconfig BSP_USING_SPI
         select RT_USING_WDT
         default n
 
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        default n
+    
+    config BSP_USING_FMC
+        bool
+        default n
+
+    config BSP_USING_LTDC
+        bool
+        default n
+        
 endmenu
 
 menu "Board extended module Drivers"
