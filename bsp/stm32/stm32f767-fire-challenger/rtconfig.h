@@ -72,24 +72,6 @@
 
 /* Device virtual file system */
 
-#define RT_USING_DFS
-#define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 2
-#define DFS_FILESYSTEM_TYPES_MAX 2
-#define DFS_FD_MAX 16
-#define RT_USING_DFS_ELMFAT
-
-/* elm-chan's FatFs, Generic FAT Filesystem Module */
-
-#define RT_DFS_ELM_CODE_PAGE 437
-#define RT_DFS_ELM_WORD_ACCESS
-#define RT_DFS_ELM_USE_LFN_3
-#define RT_DFS_ELM_USE_LFN 3
-#define RT_DFS_ELM_MAX_LFN 255
-#define RT_DFS_ELM_DRIVES 2
-#define RT_DFS_ELM_MAX_SECTOR_SIZE 512
-#define RT_DFS_ELM_REENTRANT
-#define RT_USING_DFS_DEVFS
 
 /* Device Drivers */
 
@@ -106,10 +88,6 @@
 
 /* POSIX layer and C standard library */
 
-#define RT_USING_LIBC
-#define RT_USING_PTHREADS
-#define RT_USING_POSIX
-#define RT_USING_POSIX_MMAP
 
 /* Network */
 
