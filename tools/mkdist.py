@@ -119,7 +119,7 @@ def bsp_update_kconfig(dist_dir):
                 found = 1
             if line.find('default') != -1 and found:
                 position = line.find('default')
-                line = line[0:position] + 'default: "rt-thread"\n'
+                line = line[0:position] + 'default "rt-thread"\n'
                 found = 0
             f.write(line)
             
