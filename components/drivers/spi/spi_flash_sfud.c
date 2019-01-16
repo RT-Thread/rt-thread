@@ -455,6 +455,35 @@ rt_err_t rt_sfud_flash_delete(rt_spi_flash_device_t spi_flash_dev) {
     return RT_EOK;
 }
 
+sfud_flash_t rt_sfud_flash_find(const char *spi_dev_name)
+{
+    rt_spi_flash_device_t  rtt_dev       = RT_NULL;
+    struct rt_spi_device  *rt_spi_device = RT_NULL;
+    sfud_flash_t           sfud_dev      = RT_NULL;
+    
+    rt_spi_device = (struct rt_spi_device *) rt_device_find(spi_dev_name);
+    if (rt_spi_device == RT_NULL || rt_spi_device->parent.type != RT_Device_Class_SPIDevice)
+    {
+        rt_kprintf("ERROR: SPI device %s not found!\n", spi_dev_name);
+        goto error;
+    }
+
+    rtt_dev = (rt_spi_flash_device_t)(rt_spi_device->user_data);
+    if (rtt_dev && rtt_dev->user_data)
+    {
+        sfud_dev = (sfud_flash_t)(rtt_dev->user_data);
+        return sfud_dev;
+    }
+    else
+    {
+        rt_kprintf("ERROR: SFUD flash device not found!\n");
+        goto error;
+    }
+
+error:
+    return RT_NULL;
+}
+
 #if defined(RT_USING_FINSH) && defined(FINSH_USING_MSH)
 
 #include <finsh.h>
@@ -698,36 +727,6 @@ static void sf(uint8_t argc, char **argv) {
     }
 }
 MSH_CMD_EXPORT(sf, SPI Flash operate.);
-
-sfud_flash_t rt_sfud_flash_find(const char *spi_dev_name)
-{
-    rt_spi_flash_device_t  rtt_dev       = RT_NULL;
-    struct rt_spi_device  *rt_spi_device = RT_NULL;
-    sfud_flash_t           sfud_dev      = RT_NULL;
-    
-    rt_spi_device = (struct rt_spi_device *) rt_device_find(spi_dev_name);
-    if (rt_spi_device == RT_NULL || rt_spi_device->parent.type != RT_Device_Class_SPIDevice)
-    {
-        rt_kprintf("ERROR: SPI device %s not found!\n", spi_dev_name);
-        goto error;
-    }
-
-    rtt_dev = (rt_spi_flash_device_t)(rt_spi_device->user_data);
-    if (rtt_dev && rtt_dev->user_data)
-    {
-        sfud_dev = (sfud_flash_t)(rtt_dev->user_data);
-        return sfud_dev;
-    }
-    else
-    {
-        rt_kprintf("ERROR: SFUD flash device not found!\n");
-        goto error;
-    }
-
-error:
-    return RT_NULL;
-}
-
 #endif /* defined(RT_USING_FINSH) && defined(FINSH_USING_MSH) */
 
 #endif /* RT_USING_SFUD */

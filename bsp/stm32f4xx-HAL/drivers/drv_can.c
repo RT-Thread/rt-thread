@@ -362,12 +362,16 @@ void CAN2_SCE_IRQHandler(void)
  */
 void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan)
 {
-    /* TODO Error Callback */
-    /* Prevent unused argument(s) compilation warning */
-    UNUSED(hcan);
-    /* NOTE : This function Should not be modified, when the callback is needed,
-       the HAL_CAN_ErrorCallback could be implemented in the user file
-    */
+    __HAL_CAN_ENABLE_IT(hcan, CAN_IT_EWG |
+                               CAN_IT_EPV |
+                               CAN_IT_BOF |
+                               CAN_IT_LEC |
+                               CAN_IT_ERR |
+                               CAN_IT_FMP0|
+                               CAN_IT_FOV0|
+                               CAN_IT_FMP1|
+                               CAN_IT_FOV1|
+                               CAN_IT_TME);
 }
 
 /**
