@@ -161,12 +161,14 @@
 
 /* Hardware Drivers Config */
 
-#define SOC_STM32F103c8
+#define SOC_STM32F103C8
 
 /* Onboard Peripheral Drivers */
 
 /* On-chip Peripheral Drivers */
 
+#define BSP_USING_GPIO
+#define BSP_USING_UART
 #define BSP_USING_UART1
 
 /* Board extended module Drivers */
