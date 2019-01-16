@@ -49,7 +49,7 @@ static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
 
     if (enabled)
     {
-#ifdef SOC_SERIES_STM32L4
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
         ADC_Enable(stm32_adc_handler);
 #else
         __HAL_ADC_ENABLE(stm32_adc_handler);
@@ -57,7 +57,7 @@ static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
     }
     else
     {
-#ifdef SOC_SERIES_STM32L4
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
         ADC_Disable(stm32_adc_handler);
 #else
         __HAL_ADC_DISABLE(stm32_adc_handler);
@@ -149,7 +149,8 @@ static rt_err_t stm32_get_adc_value(struct rt_adc_device *device, rt_uint32_t ch
 
 #if defined(SOC_SERIES_STM32F1)
     if (channel <= 17)
-#elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4)
+#elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) \
+    || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
     if (channel <= 18)
 #endif
     {
@@ -160,7 +161,8 @@ static rt_err_t stm32_get_adc_value(struct rt_adc_device *device, rt_uint32_t ch
     {
 #if defined(SOC_SERIES_STM32F1)
         LOG_E("ADC channel must be between 0 and 17.");
-#elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4)
+#elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) \
+    || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
         LOG_E("ADC channel must be between 0 and 18.");
 #endif
         return -RT_ERROR;

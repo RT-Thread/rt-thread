@@ -145,7 +145,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
     uint32_t SPI_APB_CLOCK;
 
-#ifdef SOC_SERIES_STM32F0
+#if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
     SPI_APB_CLOCK = HAL_RCC_GetPCLK1Freq();
 #else
     SPI_APB_CLOCK = HAL_RCC_GetPCLK2Freq();
