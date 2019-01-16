@@ -132,7 +132,6 @@ extern __IO uint32_t uwTick;
 uint32_t HAL_GetTick(void)
 {
     HAL_Delay(1);
-    uwTick ++;
     return uwTick;
 }
 
