@@ -235,8 +235,6 @@ static void uart_isr(struct rt_serial_device *serial)
         (__HAL_UART_GET_IT_SOURCE(&(uart->handle), UART_IT_RXNE) != RESET))
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
-        /* Clear RXNE interrupt flag */
-        UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_RXNE);
     }
 #ifdef RT_SERIAL_USING_DMA
     else if ((uart->uart_dma_flag) && (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_IDLE) != RESET) &&
