@@ -16,6 +16,7 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32f429-atk-apollo](stm32f429-atk-apollo/)      | 正点原子 F429 阿波罗开发板 |
 | [stm32f429-fire-challenger](stm32f429-fire-challenger/) | 野火 F429 挑战者开发板     |
 | [stm32f429-armfly-v6](stm32f429-armfly-v6) | 安富莱 f429-v6 开发板 |
+| [stm32f446-st-nucleo](stm32f446-st-nucleo) | ST 官方 stm32f446-nucleo 开发板 |
 | **F7 系列** |  |
 | [stm32f767-atk-apollo](stm32f767-atk-apollo) | 正点原子 F767 阿波罗开发板 |
 | [stm32f767-fire-challenger](stm32f767-fire-challenger/) | 野火 F767 挑战者开发板 |
