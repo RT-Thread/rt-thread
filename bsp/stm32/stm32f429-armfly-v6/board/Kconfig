@@ -15,10 +15,12 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_EXT_FMC_IO
         bool "Enable extend gpio"
+        select BSP_USING_FMC
         default y
 
 	config BSP_USING_SDRAM
         bool "Enable SDRAM"
+        select BSP_USING_FMC
         default n
 		
 	config BSP_USING_SPI_FLASH
@@ -38,9 +40,7 @@ menu "Onboard Peripheral Drivers"
 
     config PHY_USING_DM9161CEP
         bool
-    
 
-    
     menuconfig BSP_USING_ETH
         bool "Enable Ethernet"
         select RT_USING_LWIP
@@ -57,14 +57,22 @@ menu "Onboard Peripheral Drivers"
                 default 118
         endif
 
+    config BSP_USING_LCD
+        bool "Enable LCD"
+        select BSP_USING_LTDC
+        select BSP_USING_SDRAM
+        select BSP_USING_PWM
+        select BSP_USING_PWM2
+        select BSP_USING_PWM2_CH1
+        default n
+
     config BSP_USING_MPU6050
         bool "Enable MPU6050(i2c1)"
         select BSP_USING_I2C1
         select PKG_USING_MPU6XXX
         select PKG_USING_MPU6XXX_SAMPLE
         select PKG_USING_MPU6XXX_LATEST_VERSION
-        default n	
-
+        default n
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -191,6 +199,13 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_DFS
         default n
 
+    config BSP_USING_FMC
+        bool
+        default n
+
+    config BSP_USING_LTDC
+        bool
+        default n
 endmenu
 
 menu "Board extended module Drivers"
