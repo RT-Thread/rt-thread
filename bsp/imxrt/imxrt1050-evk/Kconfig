@@ -445,6 +445,7 @@ endmenu
     config RT_USING_RTC_HP
         bool "Using hp rtc"
         select RT_USING_RTC
+        select RT_USING_LIBC
         default n 
 #endmenu
 
