@@ -308,7 +308,7 @@ void USART1_IRQHandler(void)
     rt_interrupt_leave();
 }
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART1_RX_USING_DMA)
-void USART1_DMA_RX_IRQHandler(void)
+void UART1_DMA_RX_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
@@ -333,7 +333,7 @@ void USART2_IRQHandler(void)
     rt_interrupt_leave();
 }
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART2_RX_USING_DMA)
-void USART2_DMA_RX_IRQHandler(void)
+void UART2_DMA_RX_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
@@ -358,7 +358,7 @@ void USART3_IRQHandler(void)
     rt_interrupt_leave();
 }
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART3_RX_USING_DMA)
-void USART3_DMA_RX_IRQHandler(void)
+void UART3_DMA_RX_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
@@ -383,7 +383,7 @@ void UART4_IRQHandler(void)
     rt_interrupt_leave();
 }
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART4_RX_USING_DMA)
-void USART4_DMA_RX_IRQHandler(void)
+void UART4_DMA_RX_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
@@ -408,7 +408,7 @@ void UART5_IRQHandler(void)
     rt_interrupt_leave();
 }
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART5_RX_USING_DMA)
-void USART5_DMA_RX_IRQHandler(void)
+void UART5_DMA_RX_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
