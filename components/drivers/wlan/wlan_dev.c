@@ -754,6 +754,18 @@ static rt_err_t _rt_wlan_dev_control(rt_device_t dev, int cmd, void *args)
     return err;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops wlan_ops =
+{
+    _rt_wlan_dev_init,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    _rt_wlan_dev_control
+};
+#endif
+
 rt_err_t rt_wlan_dev_register(struct rt_wlan_device *wlan, const char *name, const struct rt_wlan_dev_ops *ops, rt_uint32_t flag, void *user_data)
 {
     rt_err_t err = RT_EOK;
@@ -765,13 +777,18 @@ rt_err_t rt_wlan_dev_register(struct rt_wlan_device *wlan, const char *name, con
     }
 
     rt_memset(wlan, 0, sizeof(struct rt_wlan_device));
-
+    
+#ifdef RT_USING_DEVICE_OPS
+    wlan->device.ops = &wlan_ops;
+#else
     wlan->device.init       = _rt_wlan_dev_init;
     wlan->device.open       = RT_NULL;
     wlan->device.close      = RT_NULL;
     wlan->device.read       = RT_NULL;
     wlan->device.write      = RT_NULL;
     wlan->device.control    = _rt_wlan_dev_control;
+#endif
+
     wlan->device.user_data  = RT_NULL;
 
     wlan->device.type = RT_Device_Class_NetIf;

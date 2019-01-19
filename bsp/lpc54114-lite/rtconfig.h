@@ -192,7 +192,6 @@
 /* Select i2c bus drivers */
 
 #define BSP_USING_I2C4
-#define BSP_USING_ROMFS
 #define BSP_USING_SDCARD
 #define BSP_USING_SPIFLASH
 
