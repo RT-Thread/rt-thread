@@ -33,10 +33,10 @@ extern "C" {
 #ifndef UART1_DMA_CONFIG
 #define UART1_DMA_CONFIG                                            \
     {                                                               \
-        .Instance = USART1_RX_DMA_INSTANCE,                         \
-        .channel = USART1_RX_DMA_CHANNEL,                           \
-        .dma_rcc = USART1_RX_DMA_RCC,                               \
-        .dma_irq = USART1_RX_DMA_IRQ,                               \
+        .Instance = UART1_RX_DMA_INSTANCE,                         \
+        .channel = UART1_RX_DMA_CHANNEL,                           \
+        .dma_rcc = UART1_RX_DMA_RCC,                               \
+        .dma_irq = UART1_RX_DMA_IRQ,                               \
     }
 #endif /* UART1_DMA_CONFIG */
 #endif /* BSP_UART1_RX_USING_DMA */

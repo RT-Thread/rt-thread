@@ -235,8 +235,6 @@ static void uart_isr(struct rt_serial_device *serial)
         (__HAL_UART_GET_IT_SOURCE(&(uart->handle), UART_IT_RXNE) != RESET))
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
-        /* Clear RXNE interrupt flag */
-        UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_RXNE);
     }
 #ifdef RT_SERIAL_USING_DMA
     else if ((uart->uart_dma_flag) && (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_IDLE) != RESET) &&
@@ -310,7 +308,7 @@ void USART1_IRQHandler(void)
     rt_interrupt_leave();
 }
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART1_RX_USING_DMA)
-void USART1_DMA_RX_IRQHandler(void)
+void UART1_DMA_RX_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
@@ -335,7 +333,7 @@ void USART2_IRQHandler(void)
     rt_interrupt_leave();
 }
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART2_RX_USING_DMA)
-void USART2_DMA_RX_IRQHandler(void)
+void UART2_DMA_RX_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
@@ -360,7 +358,7 @@ void USART3_IRQHandler(void)
     rt_interrupt_leave();
 }
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART3_RX_USING_DMA)
-void USART3_DMA_RX_IRQHandler(void)
+void UART3_DMA_RX_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
@@ -385,7 +383,7 @@ void UART4_IRQHandler(void)
     rt_interrupt_leave();
 }
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART4_RX_USING_DMA)
-void USART4_DMA_RX_IRQHandler(void)
+void UART4_DMA_RX_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
@@ -410,7 +408,7 @@ void UART5_IRQHandler(void)
     rt_interrupt_leave();
 }
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART5_RX_USING_DMA)
-void USART5_DMA_RX_IRQHandler(void)
+void UART5_DMA_RX_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
