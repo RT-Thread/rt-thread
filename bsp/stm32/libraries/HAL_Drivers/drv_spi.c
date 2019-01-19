@@ -248,6 +248,10 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     HAL_StatusTypeDef state;
+    rt_size_t message_length, already_send_length;
+    rt_uint16_t send_length;
+    rt_uint8_t *recv_buf;
+    const rt_uint8_t *send_buf;
 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->bus != RT_NULL);
@@ -269,41 +273,61 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
           (uint32_t)message->send_buf,
           (uint32_t)message->recv_buf, message->length);
 
-    if (message->length)
+    message_length = message->length;
+    recv_buf = message->recv_buf;
+    send_buf = message->send_buf;
+    while (message_length)
     {
+        /* the HAL library use uint16 to save the data length */
+        if (message_length > 65535)
+        {
+            send_length = 65535;
+            message_length = message_length - 65535;
+        }
+        else
+        {
+            send_length = message_length;
+            message_length = 0;
+        }
+
+        /* calculate the start address */
+        already_send_length = message->length - send_length - message_length;
+        send_buf = (rt_uint8_t *)message->send_buf + already_send_length;
+        recv_buf = (rt_uint8_t *)message->recv_buf + already_send_length;
+        
         /* start once data exchange in DMA mode */
         if (message->send_buf && message->recv_buf)
         {
             if ((spi_drv->spi_dma_flag & SPI_USING_TX_DMA_FLAG) && (spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG))
             {
-                state = HAL_SPI_TransmitReceive_DMA(spi_handle, (uint8_t *)message->send_buf, (uint8_t *)message->recv_buf, message->length);
+                state = HAL_SPI_TransmitReceive_DMA(spi_handle, (uint8_t *)send_buf, (uint8_t *)recv_buf, send_length);
             }
             else
             {
-                state = HAL_SPI_TransmitReceive(spi_handle, (uint8_t *)message->send_buf, (uint8_t *)message->recv_buf, message->length, 1000);
+                state = HAL_SPI_TransmitReceive(spi_handle, (uint8_t *)send_buf, (uint8_t *)recv_buf, send_length, 1000);
             }
         }
         else if (message->send_buf)
         {
             if (spi_drv->spi_dma_flag & SPI_USING_TX_DMA_FLAG)
             {
-                state = HAL_SPI_Transmit_DMA(spi_handle, (uint8_t *)message->send_buf, message->length);
+                state = HAL_SPI_Transmit_DMA(spi_handle, (uint8_t *)send_buf, send_length);
             }
             else
             {
-                state = HAL_SPI_Transmit(spi_handle, (uint8_t *)message->send_buf, message->length, 1000);
+                state = HAL_SPI_Transmit(spi_handle, (uint8_t *)send_buf, send_length, 1000);
             }
         }
         else
         {
-            memset(message->recv_buf, 0xff, message->length);
+            memset((uint8_t *)recv_buf, 0xff, send_length);
             if (spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG)
             {
-                state = HAL_SPI_Receive_DMA(spi_handle, (uint8_t *)message->recv_buf, message->length);
+                state = HAL_SPI_Receive_DMA(spi_handle, (uint8_t *)recv_buf, send_length);
             }
             else
             {
-                state = HAL_SPI_Receive(spi_handle, (uint8_t *)message->recv_buf, message->length, 1000);
+                state = HAL_SPI_Receive(spi_handle, (uint8_t *)recv_buf, send_length, 1000);
             }
         }
 
