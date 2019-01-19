@@ -84,12 +84,6 @@ int stm32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
         return -RT_EINVAL;
     }
 
-    if (size % 4 != 0)
-    {
-        LOG_E("write size must be 4-byte alignment");
-        return -RT_EINVAL;
-    }
-
     if ((end_addr) > STM32_FLASH_END_ADDRESS)
     {
         LOG_E("write outrange flash size! addr is (0x%p)", (void *)(addr + size));
