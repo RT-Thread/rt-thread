@@ -273,6 +273,13 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         env['LIBLINKSUFFIX'] = '.lib'
         env['LIBDIRPREFIX'] = '--userlibpath '
 
+    elif rtconfig.PLATFORM == 'iar':
+        env['LIBPREFIX'] = ''
+        env['LIBSUFFIX'] = '.a'
+        env['LIBLINKPREFIX'] = ''
+        env['LIBLINKSUFFIX'] = '.a'
+        env['LIBDIRPREFIX'] = '--search '
+
     # patch for win32 spawn
     if env['PLATFORM'] == 'win32':
         win32_spawn = Win32Spawn()
