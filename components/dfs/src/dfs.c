@@ -18,7 +18,7 @@
 #include <lwp.h>
 #endif
 
-#ifdef RT_USING_DFS_DEVFS
+#if defined(RT_USING_DFS_DEVFS) && defined(RT_USING_POSIX)
 #include <libc.h>
 #endif
 
@@ -216,7 +216,7 @@ struct dfs_fd *fd_get(int fd)
     struct dfs_fd *d;
     struct dfs_fdtable *fdt;
 
-#ifdef RT_USING_DFS_DEVFS
+#if defined(RT_USING_DFS_DEVFS) && defined(RT_USING_POSIX)
     if ((0 <= fd) && (fd <= 2))
         fd = libc_stdio_get_console();
 #endif
@@ -320,7 +320,7 @@ int fd_is_open(const char *pathname)
             fd = fdt->fds[index];
             if (fd == NULL || fd->fops == NULL || fd->path == NULL) continue;
 
-            if (fd->fops == fs->ops->fops && strcmp(fd->path, mountpath) == 0)
+            if (fd->fs == fs && strcmp(fd->path, mountpath) == 0)
             {
                 /* found file in file descriptor table */
                 rt_free(fullpath);
