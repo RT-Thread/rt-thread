@@ -1,0 +1,125 @@
+// File: STM32L4x5_4x6.dbgconf
+// Version: 1.0.0
+// Note: refer to STM32L4x5 and STM32L4x6 Reference manual (RM0351)
+//       refer to STM32L475xx, STM32L476xx, STM32L486xx, STM32L496xx and STM32L4A6xx datasheets
+
+// <<< Use Configuration Wizard in Context Menu >>>
+
+// <h> Debug MCU configuration register (DBGMCU_CR)
+//   <o0.2>    DBG_STANDBY
+//     <i> Debug Standby mode
+//     <i> 0: (FCLK=Off, HCLK=Off) The whole digital part is unpowered.
+//     <i> 1: (FCLK=On, HCLK=On) The digital part is not unpowered and FCLK and HCLK are provided by the internal RC oscillator which remains active
+//   <o0.1>    DBG_STOP
+//     <i> Debug Stop mode
+//     <i> 0: (FCLK=Off, HCLK=Off) In STOP mode, the clock controller disables all clocks (including HCLK and FCLK). 
+//     <i> 1: (FCLK=On, HCLK=On) When entering STOP mode, FCLK and HCLK are provided by the internal RC oscillator which remains active in STOP mode.
+//   <o0.0>    DBG_SLEEP
+//     <i> Debug Sleep mode
+//     <i> 0: (FCLK=On, HCLK=Off) In Sleep mode, FCLK is clocked by the system clock as previously configured by the software while HCLK is disabled.
+//     <i> 1: (FCLK=On, HCLK=On) When entering Sleep mode, HCLK is fed by the same clock that is provided to FCLK (system clock as previously configured by the software).
+// </h>
+DbgMCU_CR = 0x00000007;
+
+// <h> Debug MCU APB1 freeze register1 (DBGMCU_APB1FZR1)
+//   <o0.31>    DBG_LPTIM1_STOP
+//     <i> LPTIM1 counter stopped when core is halted
+//     <i> 0: The counter clock of LPTIM1 is fed even if the core is halted
+//     <i> 1: The counter clock of LPTIM1 is stopped when the core is halted
+//   <o0.26>    DBG_CAN2_STOP
+//     <i> bxCAN2 stopped when core is halted (Reserved on STM32L475xx/476xx/486xx devices)
+//     <i> 0: Same behavior as in normal mode
+//     <i> 1: The bxCAN2 receive registers are frozen
+//   <o0.25>    DBG_CAN_STOP
+//     <i> bxCAN1 stopped when core is halted
+//     <i> 0: Same behavior as in normal mode
+//     <i> 1: The bxCAN1 receive registers are frozen
+//   <o0.23>    DBG_I2C3_STOP
+//     <i> I2C3 SMBUS timeout counter stopped when core is halted
+//     <i> 0: Same behavior as in normal mode
+//     <i> 1: The I2C3 SMBus timeout is frozen
+//   <o0.22>    DBG_I2C2_STOP
+//     <i> I2C2 SMBUS timeout counter stopped when core is halted
+//     <i> 0: Same behavior as in normal mode
+//     <i> 1: The I2C2 SMBus timeout is frozen
+//   <o0.21>    DBG_I2C1_STOP
+//     <i> I2C1 SMBUS timeout counter stopped when core is halted
+//     <i> 0: Same behavior as in normal mode
+//     <i> 1: The I2C1 SMBus timeout is frozen
+//   <o0.12>    DBG_IWDG_STOP
+//     <i> Independent watchdog counter stopped when core is halted
+//     <i> 0: The independent watchdog counter clock continues even if the core is halted
+//     <i> 1: The independent watchdog counter clock is stopped when the core is halted
+//   <o0.11>    DBG_WWDG_STOP
+//     <i> Window watchdog counter stopped when core is halted
+//     <i> 0: The window watchdog counter clock continues even if the core is halted
+//     <i> 1: The window watchdog counter clock is stopped when the core is halted
+//   <o0.10>    DBG_RTC_STOP
+//     <i> RTC counter stopped when core is halted
+//     <i> 0: The clock of the RTC counter is fed even if the core is halted
+//     <i> 1: The clock of the RTC counter is stopped when the core is halted
+//   <o0.5>    DBG_TIM7_STOP
+//     <i> TIM7 counter stopped when core is halted
+//     <i> 0: The counter clock of TIM7 is fed even if the core is halted
+//     <i> 1: The counter clock of TIM7 is stopped when the core is halted
+//   <o0.4>    DBG_TIM6_STOP
+//     <i> TIM6 counter stopped when core is halted
+//     <i> 0: The counter clock of TIM6 is fed even if the core is halted
+//     <i> 1: The counter clock of TIM6 is stopped when the core is halted
+//   <o0.3>    DBG_TIM5_STOP
+//     <i> TIM5 counter stopped when core is halted
+//     <i> 0: The counter clock of TIM5 is fed even if the core is halted
+//     <i> 1: The counter clock of TIM5 is stopped when the core is halted
+//   <o0.2>    DBG_TIM4_STOP
+//     <i> TIM4 counter stopped when core is halted
+//     <i> 0: The counter clock of TIM4 is fed even if the core is halted
+//     <i> 1: The counter clock of TIM4 is stopped when the core is halted
+//   <o0.1>    DBG_TIM3_STOP
+//     <i> TIM3 counter stopped when core is halted
+//     <i> 0: The counter clock of TIM3 is fed even if the core is halted
+//     <i> 1: The counter clock of TIM3 is stopped when the core is halted
+//   <o0.0>    DBG_TIM2_STOP
+//     <i> TIM2 counter stopped when core is halted
+//     <i> 0: The counter clock of TIM2 is fed even if the core is halted
+//     <i> 1: The counter clock of TIM2 is stopped when the core is halted
+// </h>
+DbgMCU_APB1_Fz1 = 0x00000000;
+
+// <h> Debug MCU APB1 freeze register 2 (DBGMCU_APB1FZR2)
+//   <o0.5>    DBG_LPTIM2_STOP
+//     <i> LPTIM2 counter stopped when core is halted
+//     <i> 0: The counter clock of LPTIM2 is fed even if the core is halted
+//     <i> 1: The counter clock of LPTIM2 is stopped when the core is halted
+//   <o0.1>    DBG_I2C4_STOP
+//     <i> I2C4 SMBUS timeout counter stopped when core is halted (Reserved on STM32L475xx/476xx/486xx devices)
+//     <i> 0: Same behavior as in normal mode
+//     <i> 1: The I2C4 SMBus timeout is frozen
+// </h>
+DbgMCU_APB1_Fz2 = 0x00000000;
+
+// <h> Debug MCU APB2 freeze register (DBGMCU_APB2FZR)
+//   <o0.18>    DBG_TIM17_STOP
+//     <i> TIM17 counter stopped when core is halted
+//     <i> 0: The clock of the TIM17 counter is fed even if the core is halted
+//     <i> 1: The clock of the TIM17 counter is stopped when the core is halted
+//   <o0.17>    DBG_TIM16_STOP
+//     <i> TIM16 counter stopped when core is halted
+//     <i> 0: The clock of the TIM16 counter is fed even if the core is halted
+//     <i> 1: The clock of the TIM16 counter is stopped when the core is halted
+//   <o0.16>    DBG_TIM15_STOP
+//     <i> TIM15 counter stopped when core is halted
+//     <i> 0: The clock of the TIM15 counter is fed even if the core is halted
+//     <i> 1: The clock of the TIM15 counter is stopped when the core is halted
+//   <o0.13>    DBG_TIM8_STOP
+//     <i> TIM8 counter stopped when core is halted
+//     <i> 0: The clock of the TIM8 counter is fed even if the core is halted
+//     <i> 1: The clock of the TIM8 counter is stopped when the core is halted
+//   <o0.11>    DBG_TIM1_STOP
+//     <i> TIM1 counter stopped when core is halted
+//     <i> 0: The clock of the TIM1 counter is fed even if the core is halted
+//     <i> 1: The clock of the TIM1 counter is stopped when the core is halted
+// </h>
+DbgMCU_APB2_Fz = 0x00000000;
+// </h>
+
+// <<< end of configuration section >>>
