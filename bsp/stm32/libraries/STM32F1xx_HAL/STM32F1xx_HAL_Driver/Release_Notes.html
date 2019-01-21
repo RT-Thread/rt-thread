@@ -1,0 +1,1518 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns="http://www.w3.org/TR/REC-html40"><head>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="File-List" href="Release_Notes_for_STM32F45x_StdPeriph_Driver_files/filelist.xml">
+<link rel="Edit-Time-Data" href="Release_Notes_for_STM32F45x_StdPeriph_Driver_files/editdata.mso"><!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]--><title>Release Notes for STM32F1xx HAL Drivers</title><!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>STMicroelectronics</o:Author>
+  <o:LastAuthor>Raouf Hosni</o:LastAuthor>
+  <o:Revision>39</o:Revision>
+  <o:TotalTime>137</o:TotalTime>
+  <o:Created>2009-02-27T19:26:00Z</o:Created>
+  <o:LastSaved>2010-10-15T11:07:00Z</o:LastSaved>
+  <o:Pages>3</o:Pages>
+  <o:Words>973</o:Words>
+  <o:Characters>5548</o:Characters>
+  <o:Company>STMicroelectronics</o:Company>
+  <o:Lines>46</o:Lines>
+  <o:Paragraphs>13</o:Paragraphs>
+  <o:CharactersWithSpaces>6508</o:CharactersWithSpaces>
+  <o:Version>12.00</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]-->
+
+
+
+<link rel="themeData" href="Release_Notes_for_STM32F45x_StdPeriph_Driver_files/themedata.thmx">
+<link rel="colorSchemeMapping" href="Release_Notes_for_STM32F45x_StdPeriph_Driver_files/colorschememapping.xml"><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:Zoom>110</w:Zoom>
+  <w:TrackMoves>false</w:TrackMoves>
+  <w:TrackFormatting/>
+  <w:ValidateAgainstSchemas/>
+  <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid>
+  <w:IgnoreMixedContent>false</w:IgnoreMixedContent>
+  <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText>
+  <w:DoNotPromoteQF/>
+  <w:LidThemeOther>EN-US</w:LidThemeOther>
+  <w:LidThemeAsian>X-NONE</w:LidThemeAsian>
+  <w:LidThemeComplexScript>X-NONE</w:LidThemeComplexScript>
+  <w:Compatibility>
+   <w:BreakWrappedTables/>
+   <w:SnapToGridInCell/>
+   <w:WrapTextWithPunct/>
+   <w:UseAsianBreakRules/>
+   <w:DontGrowAutofit/>
+   <w:SplitPgBreakAndParaMark/>
+   <w:DontVertAlignCellWithSp/>
+   <w:DontBreakConstrainedForcedTables/>
+   <w:DontVertAlignInTxbx/>
+   <w:Word11KerningPairs/>
+   <w:CachedColBalance/>
+  </w:Compatibility>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+  <m:mathPr>
+   <m:mathFont m:val="Cambria Math"/>
+   <m:brkBin m:val="before"/>
+   <m:brkBinSub m:val="&#45;-"/>
+   <m:smallFrac m:val="off"/>
+   <m:dispDef/>
+   <m:lMargin m:val="0"/>
+   <m:rMargin m:val="0"/>
+   <m:defJc m:val="centerGroup"/>
+   <m:wrapIndent m:val="1440"/>
+   <m:intLim m:val="subSup"/>
+   <m:naryLim m:val="undOvr"/>
+  </m:mathPr></w:WordDocument>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:LatentStyles DefLockedState="false" DefUnhideWhenUsed="false"
+  DefSemiHidden="false" DefQFormat="false" LatentStyleCount="267">
+  <w:LsdException Locked="false" QFormat="true" Name="Normal"/>
+  <w:LsdException Locked="false" QFormat="true" Name="heading 1"/>
+  <w:LsdException Locked="false" QFormat="true" Name="heading 2"/>
+  <w:LsdException Locked="false" QFormat="true" Name="heading 3"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="heading 4"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="heading 5"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="heading 6"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="heading 7"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="heading 8"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="heading 9"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="caption"/>
+  <w:LsdException Locked="false" QFormat="true" Name="Title"/>
+  <w:LsdException Locked="false" Priority="1" Name="Default Paragraph Font"/>
+  <w:LsdException Locked="false" QFormat="true" Name="Subtitle"/>
+  <w:LsdException Locked="false" QFormat="true" Name="Strong"/>
+  <w:LsdException Locked="false" QFormat="true" Name="Emphasis"/>
+  <w:LsdException Locked="false" Priority="99" Name="No List"/>
+  <w:LsdException Locked="false" Priority="99" SemiHidden="true"
+   Name="Placeholder Text"/>
+  <w:LsdException Locked="false" Priority="1" QFormat="true" Name="No Spacing"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 1"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 1"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 1"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 1"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 1"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 1"/>
+  <w:LsdException Locked="false" Priority="99" SemiHidden="true" Name="Revision"/>
+  <w:LsdException Locked="false" Priority="34" QFormat="true"
+   Name="List Paragraph"/>
+  <w:LsdException Locked="false" Priority="29" QFormat="true" Name="Quote"/>
+  <w:LsdException Locked="false" Priority="30" QFormat="true"
+   Name="Intense Quote"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 1"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 1"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 1"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 1"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 1"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 1"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 1"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 1"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 2"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 2"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 2"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 2"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 2"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 2"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 2"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 2"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 2"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 2"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 2"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 2"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 2"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 2"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 3"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 3"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 3"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 3"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 3"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 3"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 3"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 3"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 3"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 3"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 3"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 3"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 3"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 3"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 4"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 4"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 4"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 4"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 4"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 4"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 4"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 4"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 4"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 4"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 4"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 4"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 4"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 4"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 5"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 5"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 5"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 5"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 5"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 5"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 5"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 5"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 5"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 5"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 5"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 5"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 5"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 5"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 6"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 6"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 6"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 6"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 6"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 6"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 6"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 6"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 6"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 6"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 6"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 6"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 6"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 6"/>
+  <w:LsdException Locked="false" Priority="19" QFormat="true"
+   Name="Subtle Emphasis"/>
+  <w:LsdException Locked="false" Priority="21" QFormat="true"
+   Name="Intense Emphasis"/>
+  <w:LsdException Locked="false" Priority="31" QFormat="true"
+   Name="Subtle Reference"/>
+  <w:LsdException Locked="false" Priority="32" QFormat="true"
+   Name="Intense Reference"/>
+  <w:LsdException Locked="false" Priority="33" QFormat="true" Name="Book Title"/>
+  <w:LsdException Locked="false" Priority="37" SemiHidden="true"
+   UnhideWhenUsed="true" Name="Bibliography"/>
+  <w:LsdException Locked="false" Priority="39" SemiHidden="true"
+   UnhideWhenUsed="true" QFormat="true" Name="TOC Heading"/>
+ </w:LatentStyles>
+</xml><![endif]-->
+
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;
+	mso-font-charset:1;
+	mso-generic-font-family:roman;
+	mso-font-format:other;
+	mso-font-pitch:variable;
+	mso-font-signature:0 0 0 0 0 0;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:swiss;
+	mso-font-pitch:variable;
+	mso-font-signature:-1610611985 1073750139 0 0 159 0;}
+@font-face
+	{font-family:Tahoma;
+	panose-1:2 11 6 4 3 5 4 4 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:swiss;
+	mso-font-pitch:variable;
+	mso-font-signature:1627400839 -2147483648 8 0 66047 0;}
+@font-face
+	{font-family:Verdana;
+	panose-1:2 11 6 4 3 5 4 4 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:swiss;
+	mso-font-pitch:variable;
+	mso-font-signature:536871559 0 0 0 415 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";}
+h1
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 1 Char";
+	mso-margin-top-alt:auto;
+	margin-right:0in;
+	mso-margin-bottom-alt:auto;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	mso-outline-level:1;
+	font-size:24.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;
+	font-weight:bold;}
+h2
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 2 Char";
+	mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:14.0pt;
+	font-family:"Arial","sans-serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;
+	font-weight:bold;
+	font-style:italic;}
+h3
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 3 Char";
+	mso-margin-top-alt:auto;
+	margin-right:0in;
+	mso-margin-bottom-alt:auto;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	mso-outline-level:3;
+	font-size:13.5pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;
+	font-weight:bold;}
+a:link, span.MsoHyperlink
+	{mso-style-unhide:no;
+	color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{mso-style-unhide:no;
+	color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+p
+	{mso-style-unhide:no;
+	mso-margin-top-alt:auto;
+	margin-right:0in;
+	mso-margin-bottom-alt:auto;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoAcetate, li.MsoAcetate, div.MsoAcetate
+	{mso-style-unhide:no;
+	mso-style-link:"Balloon Text Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:8.0pt;
+	font-family:"Tahoma","sans-serif";
+	mso-fareast-font-family:"Times New Roman";}
+span.Heading1Char
+	{mso-style-name:"Heading 1 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 1";
+	mso-ansi-font-size:14.0pt;
+	mso-bidi-font-size:14.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#365F91;
+	mso-themecolor:accent1;
+	mso-themeshade:191;
+	font-weight:bold;}
+span.Heading2Char
+	{mso-style-name:"Heading 2 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 2";
+	mso-ansi-font-size:13.0pt;
+	mso-bidi-font-size:13.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#4F81BD;
+	mso-themecolor:accent1;
+	font-weight:bold;}
+span.Heading3Char
+	{mso-style-name:"Heading 3 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 3";
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#4F81BD;
+	mso-themecolor:accent1;
+	font-weight:bold;}
+span.BalloonTextChar
+	{mso-style-name:"Balloon Text Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Balloon Text";
+	mso-ansi-font-size:8.0pt;
+	mso-bidi-font-size:8.0pt;
+	font-family:"Tahoma","sans-serif";
+	mso-ascii-font-family:Tahoma;
+	mso-hansi-font-family:Tahoma;
+	mso-bidi-font-family:Tahoma;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	mso-default-props:yes;
+	font-size:10.0pt;
+	mso-ansi-font-size:10.0pt;
+	mso-bidi-font-size:10.0pt;}
+@page WordSection1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.WordSection1
+	{page:WordSection1;}
+ /* List Definitions */
+ @list l0
+	{mso-list-id:62067358;
+	mso-list-template-ids:-174943062;}
+@list l0:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l0:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1
+	{mso-list-id:128015942;
+	mso-list-template-ids:-90681214;}
+@list l1:level1
+	{mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2
+	{mso-list-id:216556000;
+	mso-list-template-ids:925924412;}
+@list l2:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l2:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l2:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3
+	{mso-list-id:562446694;
+	mso-list-template-ids:913898366;}
+@list l3:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l3:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4
+	{mso-list-id:797802132;
+	mso-list-template-ids:-1971191336;}
+@list l4:level1
+	{mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5
+	{mso-list-id:907304066;
+	mso-list-template-ids:1969781532;}
+@list l5:level1
+	{mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6
+	{mso-list-id:1050613616;
+	mso-list-template-ids:-1009886748;}
+@list l6:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l6:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l6:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l7
+	{mso-list-id:1234970193;
+	mso-list-template-ids:2055904002;}
+@list l7:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l7:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l7:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l7:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l7:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l7:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l7:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l7:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l7:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l8
+	{mso-list-id:1846092290;
+	mso-list-template-ids:-768590846;}
+@list l8:level1
+	{mso-level-start-at:2;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l8:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l8:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l8:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l8:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l8:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l8:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l8:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l8:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l9
+	{mso-list-id:1894656566;
+	mso-list-template-ids:1199983812;}
+@list l9:level1
+	{mso-level-start-at:2;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l9:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l9:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l9:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l9:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l9:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l9:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l9:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l9:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style><!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-priority:99;
+	mso-style-qformat:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";}
+</style>
+<![endif]--><!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="7170"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+  <meta content="MCD Application Team" name="author"></head>
+<body link="blue" vlink="blue">
+
+<div class="WordSection1">
+
+<p class="MsoNormal"><span style="font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;"><o:p>&nbsp;</o:p></span></p>
+
+<div align="center">
+
+<table class="MsoNormalTable" style="width: 675pt;" border="0" cellpadding="0" cellspacing="0" width="900">
+ <tbody><tr style="">
+  <td style="padding: 0in;" valign="top">
+  <table class="MsoNormalTable" style="width: 675pt;" border="0" cellpadding="0" cellspacing="0" width="900">
+   <tbody><tr style="">
+    <td style="padding: 0in 5.4pt;" valign="top">
+    <p class="MsoNormal"><span style="font-size: 8pt; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;; color: blue;"><a href="../../Release_Notes.html">Back to Release page</a></span><span style="font-size: 10pt;"><o:p></o:p></span></p>
+    </td>
+   </tr>
+   <tr style="">
+    <td style="padding: 1.5pt;">
+    <h1 style="margin-bottom: 0.25in; text-align: center;" align="center"><span style="font-size: 20pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; color: rgb(51, 102, 255);">Release Notes for STM32F1xx HAL Drivers</span><span style="font-size: 20pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"><o:p></o:p></span></h1>
+    <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-size: 10pt; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;; color: black;">Copyright
+    2016 STMicroelectronics</span><span style="color: black;"><u1:p></u1:p><o:p></o:p></span></p>
+    <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-size: 10pt; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;; color: black;"><img style="border: 0px solid ; width: 112px; height: 83px;" alt="" id="_x0000_i1026" src="../../_htmresc/st_logo.png"></span><span style="font-size: 10pt;"><o:p></o:p></span></p>
+    </td>
+   </tr>
+  </tbody></table>
+  <p class="MsoNormal"><span style="font-family: &quot;Arial&quot;,&quot;sans-serif&quot;; display: none;"><o:p>&nbsp;</o:p></span></p>
+  <table class="MsoNormalTable" style="width: 675pt;" border="0" cellpadding="0" width="900">
+   <tbody><tr style="">
+    <td style="padding: 0in;" valign="top">
+    <h2 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;"><a name="History"></a><span style="font-size: 12pt; color: white;">Update History</span></h2>
+            
+            <h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.1.2 / 09-March-2018 <o:p></o:p></span></h3><ul style="margin-bottom: 0in; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; margin-top: 0cm;" type="square"><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana,sans-serif;">General updates to fix known defects and enhancements implementation</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt; font-weight: normal;">Remove Date and version from&nbsp;header files</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-weight: bold;">HAL&nbsp;</span><span class="Apple-converted-space"></span><span style="font-weight: bold;">Generic</span> update</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">stm32f1xx_hal_def.h file changes:</span></li></ul><ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Update UNUSED() macro implementation to avoid GCC warning</span></li></ul><ul style="margin-bottom: 0in;"><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">The warning is detected when the UNUSED() macro is called from C++ file</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Update __weak and __packed defined values for&nbsp;ARM compiler</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Update __ALIGN_BEGIN and __ALIGN_END defined values for&nbsp;ARM compiler</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="color: rgb(0, 0, 0); font-family: Verdana,sans-serif; font-size: 13.3333px; font-style: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; display: inline ! important; float: none;">Update to make RAMFUNC define as generic type instead of HAL_StatusTypdef type</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">stm32f1xx_hal.c/</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">.h</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"> file changes:</span></li></ul><ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Update HAL driver to allow user to change systick period to 1ms, 10 ms or 100 ms:</span></li><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add the following APIs:&nbsp;&nbsp;</span></li><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">HAL_GetTickPrio(): Returns a tick priority</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">HAL_SetTickFreq(): Sets new tick&nbsp;</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">frequency</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">HAL_GetTickFreq(): Returns tick frequency</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add HAL_TickFreqTypeDef enumeration for the different Tick Frequencies: 10 Hz, 100 Hz and <br>1KHz (default)</span></li></ul></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">stm32f1xx_hal_conf_template.h file changes:</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Fix wrong defined value of LSI<br></span></li></ul></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-weight: bold;">HAL GPIO<span> </span></span>update</span></li><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Rework AFIO remap macros to avoid issue with Read-modify-write sequence on AFIO_MAPR register</span></li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-weight: bold;">HAL I2C</span> update</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Fix wrong check of data size in HAL_I2C_Slave Receive() API</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add a check on the minimum allowed PCLK1 frequency in HAL_I2C_Init() API</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Fix I2C_SPEED_FAST() and I2C_SPEED_STANDARD() speed calculation macros to not let I2C SCL to go beyond <br>400KHz&nbsp;in some conditions</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><b><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">HAL RCC&nbsp;</span></b><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">update</span></li><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-size: 10pt; font-family: Verdana,sans-serif; color: black;" lang="EN-US">Update HAL_RCC_DeInit() and LL_RCC_DeInit() APIs to</span></li><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-size: 10pt; font-family: Verdana,sans-serif; color: black;" lang="EN-US">Be able to return HAL/LL status</span></li></ul><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-size: 10pt; font-family: Verdana,sans-serif; color: black;" lang="EN-US">Add checks for HSI, PLL and PLLI2S &nbsp;ready before modifying RCC CFGR registers</span></li></ul><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-size: 10pt; font-family: Verdana,sans-serif; color: black;" lang="EN-US">Clear all interrupt flags</span></li></ul><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-size: 10pt; font-family: &quot;Courier New&quot;; color: black;" lang="EN-US"><span><span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-stretch: normal;"></span></span></span><span style="font-size: 10pt; font-family: Verdana,sans-serif; color: black;" lang="EN-US">Initialize systick interrupt period</span></li></ul></ul><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-size: 10pt; font-family: Verdana,sans-serif; color: black;" lang="EN-US">Update HAL_RCC_GetSysClockFreq() to avoid risk of rounding error which may leads to a wrong returned value.</span><span style="font-size: 10pt; font-family: Symbol; color: black;" lang="EN-US"><span><span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-stretch: normal;">&nbsp;</span></span></span><span style="font-size: 10pt; font-family: Verdana,sans-serif; color: black;" lang="EN-US"><o:p></o:p></span></li></ul></ul><p class="MsoListParagraph" style="margin: 4.5pt 0cm 4.5pt 72pt; font-size: medium; font-family: &quot;Times New Roman&quot;,serif; color: rgb(0, 0, 0); font-style: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; text-indent: -18pt;"><span style="font-size: 10pt; font-family: &quot;Courier New&quot;; color: black;" lang="EN-US"><span></span></span><span style="font-size: 10pt; font-family: Verdana,sans-serif; color: black;" lang="EN-US"><o:p></o:p></span></p><p class="MsoListParagraph" style="margin: 4.5pt 0cm 4.5pt 36pt; font-size: medium; font-family: &quot;Times New Roman&quot;,serif; color: rgb(0, 0, 0); font-style: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; text-indent: -18pt;"><span style="font-size: 10pt; font-family: Symbol; color: black;" lang="EN-US"><span></span></span><span style="font-size: 10pt; font-family: Verdana,sans-serif; color: black;" lang="EN-US"><o:p></o:p></span></p><ul style="margin-bottom: 0in; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; margin-top: 0cm;" type="square"><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-weight: bold;">HAL SMARTCARD </span>update</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Update data processing in&nbsp;HAL smartcard transmit/receive&nbsp;processes(</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Polling/IT</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">) to fix memory corruption issue.</span></li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-weight: bold;">LL GPIO </span>update</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Fix wrong management of GPIO pin position in LL_GPIO_Init() API when configuring GPIOx_CRH register</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Fix wrong check conditions on GPIO mode in LL_GPIO_Init() API<br></span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-weight: bold;">LL I2C<span>&nbsp;</span></span>update</span></li><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">Rename
+IS_I2C_CLOCK_SPEED() and IS_I2C_DUTY_CYCLE() respectively to
+IS_LL_I2C_CLOCK_SPEED() and IS_LL_I2C_DUTY_CYCLE() to avoid
+incompatible macros redefinition.</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">LL RCC</span><span>&nbsp;</span>update&nbsp;</span></li><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">Add LL_RCC_PLL_SetMainSource() macro&nbsp;to configure PLL main clock source</span></li></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.1.1 / 12-May-2017 <o:p></o:p></span></h3><ul style="margin-bottom: 0in; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; margin-top: 0cm;" type="square"><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana,sans-serif;">General updates to fix known defects and enhancements implementation</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-weight: bold;">HAL&nbsp;</span><span class="Apple-converted-space"></span><span style="font-weight: bold;">Generic</span> update</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">stm32f1xx_hal_conf_template.h fix typo: update to refer to stm32f1xx_hal_mmc.h instead of&nbsp; </span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">stm32f4xx_hal_mmc.h</span></li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-weight: bold;">LL SYSTEM </span>update</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">LL_DBGMCU_APB1_GRP1_I2C1_STOP and </span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">LL_DBGMCU_APB1_GRP1_I2C2_STOP </span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">literals are retarget to an available literals</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">LL_DBGMCU_APB1_GRP1_RTC_STOP literal is not available for all STM32F1 devices</span></li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-weight: bold;">HAL MMC</span><span class="Apple-converted-space"> </span>update</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add missing () to fix&nbsp;compilation warning </span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">detected </span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">with SW4STM32 when extra feature is enabled.</span></li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-weight: bold;">HAL&nbsp;I2C</span><span class="Apple-converted-space"> </span>update</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Update
+HAL I2C processes to manage correctly the I2C state to allow the
+possibility to call HAL_I2C_Master_Sequential_Receive_IT() followed by
+a call </span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">HAL_I2C_Master_Sequential_Transmit_IT()</span></li></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.1.0 / 14-April-2017 <o:p></o:p></span></h3><ul style="margin-bottom: 0in; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; margin-top: 0cm;" type="square"><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="color: rgb(0, 0, 0); font-family: Verdana; font-size: 13.3333px; font-style: normal; font-variant: normal; font-weight: bold; letter-spacing: normal; line-height: normal; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; display: inline ! important; float: none;">Add Low Layer drivers allowing performance and footprint optimization</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Low
+Layer drivers APIs provide register level programming: require deep
+knowledge of peripherals described in STM32F1xx Reference Manuals</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="color: rgb(0, 0, 0); font-family: Verdana; font-size: 13.3333px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; display: inline ! important; float: none;">Low
+Layer drivers are available for: ADC,&nbsp;Cortex, CRC, DAC, DMA,&nbsp;EXTI, GPIO, I2C, IWDG,&nbsp;PWR, RCC,&nbsp;RTC, SPI, TIM,
+USART, WWDG peripherals and additionnal Low Level Bus, System and
+Utilities APIs.</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Low Layer drivers APIs are implemented as static inline function in new<span class="Apple-converted-space">&nbsp;</span><span style="font-style: italic;">Inc/stm32f1xx_ll_ppp.h</span><span class="Apple-converted-space">&nbsp;</span>files for PPP peripherals, there is no configuration file and each<span class="Apple-converted-space">&nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic;">stm32f1xx_ll_ppp.h</span><span class="Apple-converted-space">&nbsp;</span>file must be included in user code.</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add new<span class="Apple-converted-space"> </span><span style="font-weight: bold;">HAL MMC</span><span class="Apple-converted-space"></span><span class="Apple-converted-space"></span><span style="font-weight: bold;"></span><span class="Apple-converted-space">&nbsp;</span>driver</span><span style="font-size: 10pt; font-family: Verdana;"></span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana,sans-serif;">General updates to fix known defects and enhancements implementation</span></li><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal">
+
+<span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;">Enhance HAL delay and time base implementation</span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;">:</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add
+new drivers stm32f1xx_hal_timebase_rtc_alarm_template.c and
+stm32f1xx_hal_timebase_tim_template.c which override the native
+HAL time base functions (defined as weak) to either use the RTC/TIM as time
+base tick source. For more details about the usage of these drivers,
+please refer to HAL\HAL_TimeBase_RTC &nbsp;and </span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">HAL\HAL_TimeBase_TIM </span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">examples&nbsp;</span><span style="color: rgb(0, 0, 0); font-family: Verdana,sans-serif; font-size: 13.3333px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; float: none; display: inline ! important;">and FreeRTOS-based applications</span></li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana,sans-serif;">Fix&nbsp;extra warnings with GCC compiler</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana,sans-serif;">HAL drivers&nbsp;clean up: update&nbsp;</span><span style="font-size: 10pt; font-family: Verdana,sans-serif;">'uint32_t'</span><span style="font-size: 10pt; font-family: Verdana,sans-serif;"> cast&nbsp;with 'U'</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana,sans-serif;">Update to used the new defined Bit_Pos CMSIS defines insetad of </span><span style="font-size: 10pt; font-family: Verdana,sans-serif;">POSITION_VAL() macro</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Update HAL 
+weak empty callbacks to prevent unused argument compilation warnings with some 
+compilers by calling the following line:</span>
+</li><ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">UNUSED(hppp);</span></li></ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">STM32Fxxx_User_Manual.chm files regenerated for HAL V1.1.0</span></li></ul><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;"></span><ul style="margin-bottom: 0in; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; margin-top: 0cm;" type="square"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-weight: bold;">The following changes done on the HAL drivers require an update on the application code based on older HAL versions</span></span></li><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-style: italic;">HAL UART, USART, IRDA, SMARTCARD, SPI, I2C <span class="Apple-converted-space"></span></span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-style: italic;"></span>(referenced as<span class="Apple-converted-space">&nbsp;</span><span style="font-style: italic;">PPP</span><span class="Apple-converted-space">&nbsp;</span>here below)<span style="font-style: italic;"></span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-style: italic;"><span class="Apple-converted-space">&nbsp;</span></span>drivers</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"></span></li><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add PPP error management during DMA process. This requires the following updates on&nbsp;</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">user application:</span></li><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Configure and enable the PPP IRQ in HAL_PPP_MspInit() function<br></span></li></ul><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">In<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">stm32f1xx_it.c file,<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">PPP_IRQHandler() function:<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">add a call to HAL_PPP_IRQHandler() function</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add&nbsp;customize the Error Callback API: HAL_PPP_ErrorCallback()</span></li></ul></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-style: italic;">HAL SD</span><span class="Apple-converted-space"> </span>driver:</span></li><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Overall rework of the driver for a more efficient&nbsp;implementation</span></li><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Modify initialization API and structures</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Modify Read / Write sequences: separate transfer process and SD Cards state management&nbsp;</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Adding interrupt mode for Read / Write operations</span></li></ul><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Update the HAL_SD_IRQHandler function by optimizing the management of interrupt errors<br></span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Refer to the following example to identify the changes: BSP example and USB_Device/MSC_Standalone application</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-style: italic;">HAL NAND</span><span class="Apple-converted-space"> </span>driver:</span></li><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Modify NAND_AddressTypeDef, NAND_DeviceConfigTypeDef and NAND_HandleTypeDef structures fields</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add new HAL_NAND_ConfigDevice API</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-style: italic;">HAL CEC driver:<span class="Apple-converted-space">&nbsp;</span></span>&nbsp;Overall driver rework with compatibility break versus previous HAL version</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Remove HAL CEC polling Process functions: HAL_CEC_Transmit() and HAL_CEC_Receive()</span><span style="font-family: 'Times New Roman',serif; font-size: 12pt;" lang="EN-US"><o:p></o:p></span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Remove
+HAL CEC receive interrupt process function&nbsp;HAL_CEC_Receive_IT()
+and enable the "receive" &nbsp;mode during the Init phase</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Rename&nbsp;HAL_CEC_GetReceivedFrameSize() funtion to&nbsp;HAL_CEC_GetLastReceivedFrameSize()<br></span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Add new HAL APIs: HAL_CEC_SetDeviceAddress() and HAL_CEC_ChangeRxBuffer()</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Remove the&nbsp;<span></span>'InitiatorAddress'
+field from the&nbsp;CEC_InitTypeDef structure&nbsp;and manage
+it&nbsp;as a parameter in the HAL_CEC_Transmit_IT() function</span><span style="font-family: 'Times New Roman',serif; font-size: 12pt;" lang="EN-US"><o:p></o:p></span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Add new parameter 'RxFrameSize' in HAL_CEC_RxCpltCallback() function</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Move CEC Rx buffer pointer&nbsp;from CEC_HandleTypeDef structure to CEC_InitTypeDef structure</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-style: italic;">HAL IWDG</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-style: italic;"><span class="Apple-converted-space">&nbsp;</span></span>driver: rework overall driver for better implementation</span></li><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Remove&nbsp;</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">HAL_IWDG_Start(),<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">HAL_IWDG_MspInit() and<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">HAL_IWDG_GetState()&nbsp;</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">APIs</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-style: italic;">HAL WWDG</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-style: italic;"><span class="Apple-converted-space">&nbsp;</span></span>driver: rework overall driver for better implementation</span><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Remove HAL_WWDG_Start(),<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">HAL_WWDG_Start_IT(),</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US"><span class="Apple-converted-space">&nbsp;</span>HAL_WWDG_MspDeInit() and<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">HAL_WWDG_GetState() APIs&nbsp;</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Update the&nbsp;</span><span style="font-family: Calibri,sans-serif; font-size: 11pt;" lang="EN-US"></span><span style="font-family: Calibri,sans-serif; font-size: 11pt;" lang="EN-US"></span><span style="font-family: Calibri,sans-serif; font-size: 11pt;" lang="EN-US"></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US"></span><span style="font-family: Calibri,sans-serif; font-size: 11pt;" lang="EN-US">HAL_WWDG_Refresh</span><span style="font-family: Calibri,sans-serif; font-size: 11pt;" lang="EN-US">(WWDG_HandleTypeDef *hwwdg, uint32_t counter) &nbsp;function and API &nbsp;by removing the &nbsp;"counter" parameter</span></li></ul></li></ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;"><span style="font-weight: bold;">HAL GENERIC</span> update</span></li><ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-size: 10pt; font-family: Verdana,sans-serif;">Modifiy default HAL_Delay implementation to guarantee minimum delay&nbsp;</span></li><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">stm32f1xx_hal_conf_template.h</span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;"></span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;"></span></li><ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Add new define LSI_VALUE</span></li><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Add new define USE_SPI_CRC for code cleanup when the CRC calculation is disabled.</span></li></ul></ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;"><span style="font-weight: bold;">HAL CORTEX </span>update</span></li><ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Move HAL_MPU_Disable() and HAL_MPU_Enable() from stm32f4xx_hal_cortex.h to stm32f4xx_hal_cortex.c</span></li><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Clear the whole MPU control register in&nbsp;</span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">HAL_MPU_Disable() API</span></li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;"><span style="font-weight: bold;">HAL FLASH</span> update</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">HAL_FLASH_OB_Launch(): fix static code analyzer warning: The removed code will not execute under any circumstances <br></span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-weight: bold;">HAL GPIO</span><span class="Apple-converted-space"> </span>update</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Update IS_GPIO_PIN() macro implementation to be more safe</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: 'Segoe UI'; color: rgb(0, 0, 0); direction: ltr;" dir="ltr">Update remap macros implementation to use CLEAR_BIT()/SET_BIT() macros instead of&nbsp; MODIFY_REG() macro.</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-weight: bold;">HAL RCC</span><span class="Apple-converted-space"> </span>update</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;"></span><span style="font-size: 10pt; font-family: 'Segoe UI'; color: rgb(0, 0, 0); direction: ltr;" dir="ltr">Update LSI workaround delay to use CPU cycles instead of systick</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: 'Segoe UI'; color: rgb(0, 0, 0); direction: ltr;" dir="ltr">Move LSI_VALUE define from RCC HAL driver to stm32f1xx_hal_conf.h file</span></li></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: 'Segoe UI'; color: rgb(0, 0, 0); direction: ltr;" dir="ltr">Adjust defined PLL MUL values in aPLLMULFactorTable[] <br></span></li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="color: rgb(0, 0, 0); font-family: Verdana,sans-serif; font-size: 13.3333px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; display: inline ! important; float: none;"><span style="font-weight: bold;">HAL ADC </span>update</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">HAL_ADCEx_MultiModeStart_DMA() &nbsp;and </span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">HAL_ADCEx_MultiModeStop_DMA()</span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US"> API's </span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">update to fix code static analyzer warning: Redundant Condition / Unreachable Computation</span></li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="color: rgb(0, 0, 0); font-family: Verdana,sans-serif; font-size: 13.3333px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; display: inline ! important; float: none;"><span style="font-weight: bold;">HAL DMA </span>update</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">HAL_DMA_Init(): update to check compatibility between FIFO threshold level and size of the memory burst&nbsp;</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana; font-size: 10pt;">Global driver code optimization to reduce memory footprint&nbsp;</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana; font-size: 10pt;"></span><span style="font-family: Verdana; font-size: 10pt;">New APIs HAL_DMA_RegisterCallback() and </span><span style="font-family: Verdana; font-size: 10pt;">HAL_DMA_UnRegisterCallback() </span><span style="font-family: Verdana; font-size: 10pt;">to register/unregister the different possible callbacks identified by enum typedef HAL_DMA_CallbackIDTypeDef</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="color: black; font-family: &quot;Verdana&quot;,sans-serif; font-size: 10pt;">Add new Error Codes: HAL_DMA_ERROR_NO_XFER and HAL_DMA_ERROR_NOT_SUPPORTED</span></li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;"><span style="font-weight: bold;">HAL USART </span></span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">update</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="color: rgb(0, 0, 0); font-family: Verdana,sans-serif; font-size: 13.3333px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; float: none; display: inline ! important;">Add Transfer abort functions and callbacks</span></li></ul><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><p class="MsoNormal"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-style: italic;"></span>DMA Receive process; the code 
+has been updated to clear the USART OVR&nbsp;flag before enabling&nbsp;DMA receive request.</span></p></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="color: rgb(0, 0, 0); font-family: Verdana,sans-serif; font-size: 13.3333px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; display: inline ! important; float: none;">Update HAL_USART_IRQHandler() to add a check on interrupt source before managing the error</span><span style="font-family: &quot;Courier New&quot;; color: rgb(31, 73, 125);" lang="EN-US"><span style=""><span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;</span></span></span></li></ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal">
+
+<b><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">HAL UART </span></b><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">update<b><o:p></o:p></b></span>
+</li><ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Several update on HAL UART driver to implement the new UART state machine:&nbsp;</span></li></ul><ul><ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Add new field in UART_HandleTypeDef structure: </span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">"rxState", </span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">UART</span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;"> state information related to Rx Operations</span></li></ul><ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Rename "state" field in UART_HandleTypeDef structure by "gstate": </span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">UART</span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;"> state information related to global Handle management and Tx Operations</span></li><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Update UART process to manage the new UART states.</span></li><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif; color: black;" lang="EN-US">Update __HAL_UART_RESET_HANDLE_STATE() macro
+to handle the new UART state parameters (gState, rxState)</span></li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="color: rgb(0, 0, 0); font-family: Verdana,sans-serif; font-size: 13.3333px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; float: none; display: inline ! important;">Add Transfer abort functions and callbacks</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="color: rgb(0, 0, 0); font-family: Verdana,sans-serif; font-size: 13.3333px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; display: inline ! important; float: none;">Update HAL_UART_IRQHandler() to add a check on interrupt source before managing the error</span><span style="font-family: &quot;Courier New&quot;; color: rgb(31, 73, 125);" lang="EN-US"><span style=""><span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;</span></span></span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><p class="MsoNormal"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-style: italic;"></span>DMA Receive process; the code 
+has been updated to clear the USART OVR&nbsp;flag before enabling&nbsp;DMA receive request.</span></p></li></ul></ul>
+
+
+
+
+<ul style="margin-top: 0cm;" type="square"><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal">
+
+<b><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">HAL IRDA </span></b><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">update<b><o:p></o:p></b></span>
+</li><ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Several update on HAL IRDA driver to implement the new UART state machine:&nbsp;</span></li></ul><ul><ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Add new field in IRDA_HandleTypeDef structure: </span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">"rxState", </span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">IRDA</span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;"> state information related to Rx Operations</span></li></ul></ul><ul><ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Rename "state" field in UART_HandleTypeDef structure by "gstate": </span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">IRDA</span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;"> state information related to global Handle management and Tx Operations</span></li></ul></ul><ul><ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Update IRDA process to manage the new UART states.</span></li></ul></ul><ul><ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif; color: black;" lang="EN-US">Update __HAL_IRDA_RESET_HANDLE_STATE() macro
+to handle the new IRDA state parameters (gState, rxState)</span></li></ul></ul><ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Removal of IRDA_TIMEOUT_VALUE define</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="color: rgb(0, 0, 0); font-family: Verdana,sans-serif; font-size: 13.3333px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; float: none; display: inline ! important;">Add Transfer abort functions and callbacks</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="color: rgb(0, 0, 0); font-family: Verdana,sans-serif; font-size: 13.3333px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; display: inline ! important; float: none;">Update HAL_IRDA_IRQHandler() to add a check on interrupt source before managing the error</span><span style="font-family: &quot;Courier New&quot;; color: rgb(31, 73, 125);" lang="EN-US"><span style=""><span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;</span></span></span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><p class="MsoNormal"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-style: italic;"></span>DMA Receive process; the code 
+has been updated to clear the USART OVR&nbsp;flag before enabling&nbsp;DMA receive request.</span></p></li></ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal">
+
+<b><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">HAL SMARTCARD </span></b><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">update<b><o:p></o:p></b></span>
+</li><ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Several update on HAL SMARTCARD driver to implement the new UART state machine:&nbsp;</span></li><ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Add new field in&nbsp;</span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">SMARTCARD</span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">_HandleTypeDef structure: </span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">"rxState", </span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">SMARTCARD</span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">state information related to Rx Operations</span></li></ul><ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Rename "state" field in UART_HandleTypeDef structure by "gstate": </span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">SMARTCARD</span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">state information related to global Handle management and Tx Operations</span></li></ul><ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Update&nbsp;</span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">SMARTCARD</span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;"> process to manage the new UART states.</span></li></ul><ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif; color: black;" lang="EN-US">Update __HAL_</span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">SMARTCARD</span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif; color: black;" lang="EN-US">_RESET_HANDLE_STATE() macro
+to handle the new&nbsp;</span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">SMARTCARD</span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif; color: black;" lang="EN-US"> state parameters (gState, rxState)</span></li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="color: rgb(0, 0, 0); font-family: Verdana,sans-serif; font-size: 13.3333px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; float: none; display: inline ! important;">Add Transfer abort functions and callbacks</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="color: rgb(0, 0, 0); font-family: Verdana,sans-serif; font-size: 13.3333px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; display: inline ! important; float: none;">Update HAL_SMARTCARD_IRQHandler() to add a check on interrupt source before managing the error</span><span style="font-family: &quot;Courier New&quot;; color: rgb(31, 73, 125);" lang="EN-US"><span style=""><span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;</span></span></span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><p class="MsoNormal"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-style: italic;"></span>DMA Receive process; the code 
+has been updated to clear the USART OVR&nbsp;flag before enabling&nbsp;DMA receive request.</span></p></li></ul></ul><ul style="margin-bottom: 0in; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; margin-top: 0cm;" type="square"><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;"><span style="font-weight: bold;">HAL CAN </span>update</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Add
+      management of&nbsp;overrun error.&nbsp;</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Allow
+      possibility to receive messages from the 2 RX FIFOs in parallel via
+      interrupt.</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Fix&nbsp;message
+      lost issue with specific sequence of transmit requests.</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Handle
+      transmission failure with error callback, when NART is enabled.</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif; color: black;" lang="EN-US">Add __HAL_CAN_CANCEL_TRANSMIT() call to abort transmission when
+      timeout is reached</span></li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="color: rgb(0, 0, 0); font-family: Verdana,sans-serif; font-size: 13.3333px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; display: inline ! important; float: none;"><span style="font-weight: bold;">HAL TIM </span>update</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"></span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: 'Segoe UI'; color: rgb(0, 0, 0); direction: ltr;" dir="ltr">Add __HAL_TIM_MOE_DISABLE_UNCONDITIONALLY() macro to disable Master output without check on TIM channel state.&nbsp;</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: 'Segoe UI'; color: rgb(0, 0, 0); direction: ltr;" dir="ltr"><span style="font-size: 10pt; font-family: Verdana,sans-serif;">Update HAL_TIMEx_ConfigBreakDeadTime() to fix TIM BDTR register corruption.</span></span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Update Input Capture polarity by removing non-supported "TIM_INPUTCHANNELPOLARITY_BOTHEDGE" define.</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Update HAL_TIM_ConfigOCrefClear() API by removing the usage of non-existant SMCR OCCS bit.</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add
+"AutoReloadPreload" field to TIM_Base_InitTypeDef structure and
+corresponding macros __HAL_TIM_ENABLE_OCxPRELOAD() and
+__HAL_TIM_DISABLE_OCxPRELOAD() .</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Update TIM_Base_SetConfig() API to set the auto-reload preload.<br></span></li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="color: rgb(0, 0, 0); font-family: Verdana,sans-serif; font-size: 13.3333px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; display: inline ! important; float: none;"><span style="font-weight: bold;">HAL I2C </span>update</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Update
+HAL_I2C_Master_Transmit() and HAL_I2C_Slave_Transmit() to avoid sending
+extra bytes&nbsp;at the end of the transmit processes</span><span style="font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif;" lang="EN-US"><o:p></o:p></span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Update
+      HAL_I2C_Mem_Read() API to fix wrong check on misused parameter “Size”</span><span style="font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif;" lang="EN-US"><o:p></o:p></span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Update
+      I2C_MasterReceive_RXNE() and I2C_MasterReceive_BTF() static APIs to
+      enhance Master sequential reception process.</span></li></ul><li class="MsoNormal" style="color: black;"><span style="color: rgb(0, 0, 0); font-family: Verdana,sans-serif; font-size: 13.3333px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; display: inline ! important; float: none;"><span style="font-weight: bold;">HAL SPI </span>update</span></li><ul><li class="MsoNormal" style="color: black;"><span style="color: rgb(0, 0, 0); font-family: Verdana,sans-serif; font-size: 13.3333px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; display: inline ! important; float: none;"></span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Major Update to improve performance in
+      polling/interrupt mode to reach max frequency:</span></li><ul><li class="MsoNormal" style="color: black;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Polling mode :</span></li><ul><li class="MsoNormal" style="color: black;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Replace use of
+        SPI_WaitOnFlagUnitTimeout() funnction by "if" statement to
+        check on RXNE/TXE flage while transferring data.<o:p></o:p></span></li></ul><ul><li class="MsoNormal" style="color: black;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Use API data pointer instead of SPI
+        handle data pointer.<o:p></o:p></span></li></ul><li class="MsoNormal" style="color: black;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Use a Goto implementation instead of
+        "if..else" statements</span></li><li class="MsoNormal" style="color: black;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Interrupt mode</span></li><ul><li class="MsoNormal" style="color: black;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Minimize access on SPI registers.<o:p></o:p></span></li></ul><ul><li class="MsoNormal" style="color: black;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Split the SPI modes into dedicated
+        static functions to minimize checking statements under
+        HAL_IRQHandler():<o:p></o:p></span></li></ul><ul type="square"><ul><li class="MsoNormal" style="color: black;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">1lines/2lines modes<o:p></o:p></span></li></ul><ul><li class="MsoNormal" style="color: black;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">8 bit/ 16 bits data formats<o:p></o:p></span></li></ul><ul><li class="MsoNormal" style="color: black;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">CRC calculation enabled/disabled.<o:p></o:p></span></li></ul></ul><li class="MsoNormal" style="color: black;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Remove waiting loop under ISR when
+        closing &nbsp;the communication.<o:p></o:p></span></li><li class="MsoNormal" style="color: black;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">All modes:&nbsp;&nbsp;<o:p></o:p></span></li><ul><li class="MsoNormal" style="color: black;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Adding switch USE_SPI_CRC to minimize
+        number of statements when CRC calculation is disabled.<o:p></o:p></span></li></ul><ul><li class="MsoNormal" style="color: black;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Update Timeout management to check on
+        global process.<o:p></o:p></span></li></ul><ul><li class="MsoNormal" style="color: black;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Update Error code management in all
+        processes.</span></li></ul></ul><li class="MsoNormal" style="color: black;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Add note to the max frequencies reached in
+      all modes.</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Add note about Master Receive mode
+      restrictions :</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Master Receive mode restriction:<br>
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (#) In Master unidirectional receive-only
+       mode (MSTR =1, BIDIMODE=0, RXONLY=0) or <br>
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bidirectional
+       receive mode (MSTR=1, BIDIMODE=1, BIDIOE=0), to ensure that the SPI <br>
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; does not initiate
+       a new transfer the following procedure has to be respected:<br>
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (##)
+       HAL_SPI_DeInit()<br>
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (##)
+       HAL_SPI_Init()</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Add transfer abort APIs&nbsp;and
+      associated callbacks in interrupt mode</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">HAL_SPI_Abort()</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">HAL_SPI_Abort_IT()</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">HAL_SPI_AbortCpltCallback()</span></li></ul></ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal">
+
+<b><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">HAL CEC </span></b><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">update</span></li><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Overall driver rework with&nbsp;break of compatibility with HAL V1.0.5<br></span></li></ul><ul style="margin-bottom: 0in;"><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Remove the HAL CEC polling Process: HAL_CEC_Transmit() and HAL_CEC_Receive()</span><span style="font-family: 'Times New Roman',serif; font-size: 12pt;" lang="EN-US"><o:p></o:p></span></li></ul></ul><ul style="margin-bottom: 0in; margin-top: 0cm;" type="circle"><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Remove the HAL CEC receive interrupt process (HAL_CEC_Receive_IT()) and manage the "Receive" mode enable within the Init phase</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Rename HAL_CEC_GetReceivedFrameSize() function to&nbsp;HAL_CEC_GetLastReceivedFrameSize() function<br></span></li></ul><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Add new HAL APIs: HAL_CEC_SetDeviceAddress() and HAL_CEC_ChangeRxBuffer()</span></li></ul><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Remove the&nbsp;<span></span>'InitiatorAddress'
+field from the&nbsp;CEC_InitTypeDef structure&nbsp;and manage
+it&nbsp;as a parameter in the HAL_CEC_Transmit_IT() function</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US"></span></li></ul><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Add new parameter 'RxFrameSize' in HAL_CEC_RxCpltCallback() function</span><span style="font-family: 'Times New Roman',serif; font-size: 12pt;" lang="EN-US"><o:p></o:p></span></li></ul><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US">Move CEC Rx buffer pointer&nbsp;from CEC_HandleTypeDef structure to CEC_InitTypeDef structure</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;" lang="EN-US"><o:p></o:p></span></li></ul></ul><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Update driver to implement the new CEC state machine:</span></li></ul><ul style="margin-bottom: 0in;"><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add new&nbsp;</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">"rxState"</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span class="Apple-converted-space">&nbsp;</span>field in CEC_HandleTypeDef structure to provide the<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">CEC<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">state information related to Rx Operations</span></li></ul><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Rename "state" field in CEC_HandleTypeDef structure to "gstate": CEC<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">state information related to global Handle management and Tx Operations</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Update CEC process to manage the new CEC states.</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; color: black; font-size: 10pt;" lang="EN-US">Update __HAL_CEC_RESET_HANDLE_STATE() macro to handle the new CEC state parameters (gState, rxState)</span></li></ul></ul></ul>
+<ul style="margin-bottom: 0in; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; margin-top: 0cm;" type="square"><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="color: rgb(0, 0, 0); font-family: Verdana,sans-serif; font-size: 13.3333px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; display: inline ! important; float: none;"><span style="font-weight: bold;">HAL I2S </span>update</span></li><ul><li class="MsoNormal" style="color: black;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif; color: black;" lang="EN-US">Update I2S Transmit/Receive polling process to manage&nbsp;Overrun and Underrun errors</span></li><li class="MsoNormal" style="color: black;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif; color: black;" lang="EN-US">HAL I2S driver ovall clean-up and optimization<br></span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif; color: black;" lang="EN-US">HAL_I2S_Init() API updated to</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif; color: black;" lang="EN-US">Fix wrong I2S clock calculation when PCM mode is used.</span></li></ul><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif; color: black;" lang="EN-US">Return state&nbsp;</span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif; color: black;" lang="EN-US">HAL_I2S_ERROR_PRESCALER</span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif; color: black;" lang="EN-US">&nbsp;when the I2S clock is wrongly configured</span></li></ul></ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;"><span style="font-weight: bold;">HAL NAND</span> update</span></li><ul><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Modify NAND_AddressTypeDef, NAND_DeviceConfigTypeDef and NAND_HandleTypeDef structures fields</span></li><li style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;" class="MsoNormal"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Add new HAL_NAND_ConfigDevice API</span></li></ul></ul>
+<ul style="margin-bottom: 0in; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; margin-top: 0cm;" type="square"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-weight: bold;">HAL USB</span><span class="Apple-converted-space"> <span style="font-weight: bold;">PCD</span> </span>update</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Flush all TX FIFOs on USB Reset</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Remove Lock mechanism from HAL_PCD_EP_Transmit() and HAL_PCD_EP_Receive() API's</span></li></ul></ul><span style="font-size: 10pt; font-family: 'Segoe UI'; color: rgb(0, 0, 0); direction: ltr;" dir="ltr"></span><ul style="margin-bottom: 0in; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; margin-top: 0cm;" type="square"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-weight: bold;">LL USB</span><span class="Apple-converted-space"> </span>update</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Enable DMA Burst mode for USB OTG HS</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="color: rgb(0, 0, 0); font-family: Verdana,sans-serif; font-size: 13.3333px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; display: inline ! important; float: none;">Fix SD card detection issue</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-weight: bold;">LL SDMMC</span><span class="Apple-converted-space">&nbsp;</span>update</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add new SDMMC_CmdSDEraseStartAdd, SDMMC_CmdSDEraseEndAdd, SDMMC_CmdOpCondition and SDMMC_CmdSwitch functions</span></li></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.0.5 / 06-December-2016 <o:p></o:p></span></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            
+            
+            
+            
+            
+            
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes</span></u></b></p>
+<ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana,sans-serif;">General updates to fix mainly known I2C defects and enhancements implementation</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-weight: bold;">The following changes done on the HAL drivers require an update on the application code based on HAL V1.0.4</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"></span></li><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-style: italic;">HAL I2C</span><span style="font-style: italic;"></span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-style: italic;"></span><span class="Apple-converted-space"></span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span style="font-style: italic;"><span class="Apple-converted-space">&nbsp;</span></span>driver:</span><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add&nbsp; </span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span class="Apple-converted-space"></span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">I2C</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"> &nbsp;</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">error management during DMA process. This requires the following updates on&nbsp;</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">user application:</span></li><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Configure and enable the&nbsp;</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span class="Apple-converted-space"></span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">I2C</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"> </span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"> IRQ in HAL_</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span class="Apple-converted-space"></span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">I2C</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">_MspInit() function<br></span></li></ul><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">In<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">stm32f1xx_it.c file,<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span class="Apple-converted-space"></span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">I2C</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"> </span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">_IRQHandler() function:<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">add a call to HAL_</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span class="Apple-converted-space"></span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">I2C</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">_IRQHandler() function</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add and customize the Error Callback API: HAL_</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span class="Apple-converted-space"></span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">I2C</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">_ErrorCallback()</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Update to avoid waiting on<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">STOPF/BTF/AF flag under DMA ISR by using the<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">I2C</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"> end of transfer interrupt in the</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"> DMA transfer process.</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span class="Apple-converted-space">&nbsp;</span>This requires the following updates on&nbsp;</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">user application</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">:</span></li><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Configure and enable the&nbsp;</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">I2C</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"> IRQ in HAL_</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">I2C</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">_MspInit() function<br></span></li></ul></ul><ul style="margin-bottom: 0in;"><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">In<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">stm32f1xx_it.c file,<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">I2C</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">_IRQHandler() function:<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">add a call to HAL_</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">I2C</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">_IRQHandler() function</span></li></ul></ul></li><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana,sans-serif;"></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">I2C
+transfer processes IT update: NACK during addressing phase is managed
+through I2C Error interrupt&nbsp;instead of HAL&nbsp;state</span></li></ul></ul><li><b><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">HAL I2C&nbsp;</span></b><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">update</span></li><ul style="margin-bottom: 0in;"><li><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">Add support of I2C repeated start feature:</span></li></ul><ul style="margin-bottom: 0in;"><ul style="margin-bottom: 0in;"><li><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">With the following new API's<br></span></li></ul></ul><ul style="margin-bottom: 0in;"><ul style="margin-bottom: 0in;"><ul style="margin-bottom: 0in;"><li><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">HAL_I2C_Master_Sequential_Transmit_IT()</span></li><li><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">HAL_I2C_Master_Sequential_Receive_IT()</span></li><li><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US"></span><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">HAL_I2C_Master_Abort_IT()</span></li><li><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US"></span><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">HAL_I2C_Slave_Sequential_Transmit_IT()</span></li><li><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US"></span><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">HAL_I2C_Slave_Sequential_Receive_IT()</span></li><li><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US"></span><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">HAL_I2C_EnableListen_IT()</span></li><li><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US"></span><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">HAL_I2C_DisableListen_IT()</span></li></ul></ul><ul style="margin-bottom: 0in;"><li><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">Add
+new user callbacks:</span><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US"></span></li></ul><ul style="margin-bottom: 0in;"><ul style="margin-bottom: 0in;"><li><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US"></span><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">HAL_I2C_ListenCpltCallback()</span></li></ul><ul style="margin-bottom: 0in;"><li><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">HAL_I2C_AddrCallback()</span></li></ul></ul><li>
+
+<p class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">IRQ handler optimization: read
+registers&nbsp;</span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US">status</span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,sans-serif;" lang="EN-US"> only once</span></p></li><li><span style="font-family: Verdana,sans-serif; font-size: 10pt;">I2C addressing phase is updated to be managed using interrupt instead of&nbsp;polling</span></li><ul><li><span style="font-family: Verdana,sans-serif; font-size: 10pt;"></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add new static functions to manage I2C SB, ADDR and ADD10 flags</span></li></ul><li><span style="font-family: Verdana,sans-serif; font-size: 10pt;"></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">I2C</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">&nbsp;</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">IT</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"> transfer</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"> processes&nbsp;update: NACK during addressing phase is managed through I2C Error interrupt&nbsp;instead of HAL&nbsp;state</span></li><li><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">Update to generate STOP condition when a acknowledge failure error is detected&nbsp;</span></li><li><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">Update I2C_WaitOnFlagUntilTimeout()&nbsp;to manage the NACK feature.</span></li><li><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">Update&nbsp;&nbsp;I2C transmission process to support the case data size equal 0</span></li><li><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US"></span><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">Update<span class="Apple-converted-space">&nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">Polling management:</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"></span></li><ul><li><span style="font-family: Verdana,sans-serif; font-size: 10pt;">The Timeout value must be estimated for the overall process duration: the Timeout measurement is cumulative</span></li></ul><li><span style="font-family: Verdana,sans-serif; font-size: 10pt;"></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add the management of Abort service:&nbsp;Abort DMA transfer through interrupt</span></li><ul><li><span style="font-family: Verdana,sans-serif; font-size: 10pt;"></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">In the case of Master Abort IT transfer usage:</span></li></ul><ul><ul><li><span style="font-family: Verdana,sans-serif; font-size: 10pt;"></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add&nbsp;new user HAL_I2C_AbortCpltCallback() to inform user of the end of abort process</span></li></ul></ul><ul><ul><li><span style="font-family: Verdana,sans-serif; font-size: 10pt;"></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">A new abort state is defined in the<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">HAL_I2C_StateTypeDef<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">structure</span></li></ul></ul><li><span style="font-family: Verdana,sans-serif; font-size: 10pt;"></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add
+the management of I2C peripheral errors, ACK failure and STOP condition
+detection during DMA process. This requires the following updates on
+user application:</span></li><ul><li><span style="font-family: Verdana,sans-serif; font-size: 10pt;"></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Configure and enable the I2C IRQ in HAL_I2C_MspInit() function</span></li></ul><ul><li><span style="font-family: Verdana,sans-serif; font-size: 10pt;"></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">In stm32f1xx_it.c file, I2C_IRQHandler() function: add a call to HAL_I2C_IRQHandler() function</span></li></ul><ul><li><span style="font-family: Verdana,sans-serif; font-size: 10pt;"></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add and customize the Error Callback API: HAL_I2C_ErrorCallback()</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Update to avoid waiting on<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">STOPF/BTF/AF flag under DMA ISR by using the<span class="Apple-converted-space"> I2C</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"> end of transfer interrupt in the </span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">DMA transfer process.</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"><span class="Apple-converted-space">&nbsp;</span>This requires the following updates on&nbsp;</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">user application</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">:</span></li><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Configure and enable the I2C IRQ in HAL_I2C_MspInit() function<br></span></li></ul><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">In<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">stm32f1xx_it.c file,<span class="Apple-converted-space"> </span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">I2C_IRQHandler() function:<span class="Apple-converted-space">&nbsp;</span></span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">add a call to HAL_I2C_IRQHandler() function</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana,sans-serif; color: black;" lang="EN-US">Add a&nbsp;</span><span style="font-size: 10pt; font-family: Verdana,sans-serif; color: black;" lang="EN-US">check if the I2C is already enabled<span class="Apple-converted-space">&nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana,sans-serif; color: black;" lang="EN-US">at start of all I2C API's.</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><p class="MsoNormal" style="margin: 0in 0in 0.0001pt; font-size: 12pt; font-family: 'Times New Roman',serif;"><span style="font-size: 10pt; font-family: Verdana,sans-serif; color: black;" lang="EN-US">Update I2C API's<span class="Apple-converted-space">&nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana,sans-serif; color: black;" lang="EN-US">(Polling, IT, DMA interfaces)</span><span style="font-size: 10pt; font-family: Verdana,sans-serif; color: black;" lang="EN-US"><span class="Apple-converted-space">&nbsp;</span>to use&nbsp;hi2c-&gt;XferSize and hi2c-&gt;XferCount instead of size<span class="Apple-converted-space">&nbsp;</span><br>parameter to help user to get information of counter in case of error<br></span></p></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><b><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">HAL<span class="Apple-converted-space">&nbsp;</span><span style="font-style: italic;">DMA</span></span></b><span style="font-size: 10pt; font-family: Verdana,sans-serif;"><span style="font-style: italic;"><span class="Apple-converted-space">&nbsp;</span></span></span><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">update</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add new API HAL_DMA_Abort_IT() to abort DMA transfer under interrupt context<br></span></li><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">The new registered Abort callback is called when DMA transfer abortion is completed</span></li></ul></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><b><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">HAL ETH<span class="Apple-converted-space">&nbsp;</span></span></b><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">update<b><o:p></o:p></b></span></li><ul style="margin-bottom: 0in;"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Remove ETH MAC debug register defines</span></li></ul><li><b><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">HAL DAC </span></b><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">update</span></li><ul style="margin-bottom: 0in;"><li><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US"></span><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US"></span><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">Clean up: remove the&nbsp;following literals that aren't used&nbsp;</span></li></ul><ul style="margin-bottom: 0in;"><ul style="margin-bottom: 0in;"><li><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">DAC_WAVE_NOISE</span></li><li><span style="font-size: 10pt; font-family: Verdana,sans-serif;" lang="EN-US">DAC_WAVE_TRIANGLE</span></li></ul></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.0.4 / 29-April-2016 <o:p></o:p></span></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            
+            
+            
+            
+            
+            
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes</span></u></b><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;"><o:p></o:p></span></u></b>
+
+
+
+
+
+
+
+
+
+
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+            
+            
+            
+
+
+
+
+            
+            
+            
+            </p><ul style="list-style-type: square;"><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana,sans-serif;">General updates to fix known defects and enhancements implementation.</span></li></ul>
+
+
+
+
+
+
+
+
+
+
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+            
+            
+            
+
+
+
+
+            
+            
+            
+            <ul style="list-style-type: square;"><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;"><span style="font-size: 10pt; font-family: Verdana,sans-serif;">HAL RCC</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Add suffix U for defines equals to 0xFFFFFFFF&nbsp;(fix MISRA error 10.6)</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Optimization of HAL_RCC_ClockConfig().</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Replace aAPBAHBPrescTable by APBPrescTable and AHBPrescTable defined inside system_stm32f1xx.c.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">When using HAL_RCC_OscConfig
+to activate LSE, if LSE is already ON, it remains in its state ON.
+Previously, it was turned OFF then ON in all cases.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">The backup domain is no more reset when changing the RTC clock source from reset value.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Correct strange behavior in HAL_RCCEx_PeriphCLKConfig.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL UART</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Correct the macro UART_BRR_SAMPLING16</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL SMARTCARD</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Correct the macro SMARTCARD_BRR</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL IRDA</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Correct the macro IRDA_BRR</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">EIE bit is no more activated in transmit (this bit only triggers errors in reception)</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">EIE bit is reset at the end of the reception.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL DMA</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Add macro __HAL_DMA_GET_COUNTER to get the number of remaining data units in the current channel.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL FSMC</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Adapt&nbsp;FSMC_NAND_Init behavior to the others STM32 series by reseting the bit&nbsp;FSMC_PCRx_PBKEN.</li></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.0.3 / 11-January-2016 <o:p></o:p></span></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            
+            
+            
+            
+            
+            
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+
+
+
+
+
+
+
+
+
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+            
+            
+            
+
+
+
+
+            
+            
+            
+            <ul style="list-style-type: square;"><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana,sans-serif;">Remove the&nbsp;</span>#if defined(USE_HAL_LEGACY) condition to include&nbsp;Legacy/stm32_hal_legacy.h by default, in stm32f1xx_hal_def.h.</li></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.0.2 / 18-December-2015 <o:p></o:p></span></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            
+            
+            
+            
+            
+            
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+
+
+
+
+
+
+
+
+
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+            
+            
+            
+
+
+
+
+            
+            
+            
+            <ul style="list-style-type: square;"><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana,sans-serif;">General updates to fix known defects and enhancements implementation.</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;"><span style="font-weight: bold;">HAL generic</span></span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Insure that do {} while(0) &nbsp;are used in in multi statement macros. (hal eth and pcd)</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Manage simultaneous errors in IRQHandler. (hal uart, smartcard, usart and uart)</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">To
+ensure the full compatibility of the GPIO interfaces across all the
+STM32 families, the gpio speed definition have been renamed:</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">GPIO_SPEED_LOW to GPIO_SPEED_FREQ_LOW</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">GPIO_SPEED_MEDIUM to GPIO_SPEED_FREQ_MEDIUM</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">GPIO_SPEED_HIGH to GPIO_SPEED_FREQ_HIGH</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">aliases are created to keep backward compatibility</span></li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Reduce the default timeout value for the startup of the HSE form 5s to 100ms.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Update HAL weak empty callbacks to prevent unused argument compilation warnings with some compilers.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL ADC</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Remove useless state HAL_ADC_STATE_REG_OVR and HAL_ADC_STATE_REG_EOSMP.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Add an error case if init is done with both continuous and discontinuous modes.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">HAL_ADC_PollForEvent returns HAL_TIMEOUT if a timeout occurs instead of HAL_ERROR.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Trigger the assert_param of &nbsp;the number of discontinuous conversion only if the discontinuous mode is enabled.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Enhance the check for ScanConvMode in HAL_ADC_Init.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL CAN</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Clear the ERRI bit in HAL_CAN_IRQHandler.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL CORTEX</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Remove the macro __HAL_CORTEX_SYSTICKCLK_CONFIG as duplicated by HAL_SYSTICK_CLKSourceConfig.</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Create an alias to HAL_SYSTICK_CLKSourceConfig for backward compatibility.</li></ul></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL FLASH</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">The
+parameter ReturnValue of HAL_FLASH_EndOfOperationCallback, in the case
+of Pages Erase, now take the value of 0xFFFFFFFF if all the selected
+pages have been erased.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Add a new interface HAL_FLASHEx_OBGetUserData to get the option byte user data.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL GPIO</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Remove a useless assert_param on the pull mode in HAL_GPIO_Init.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL I2C</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Correct issue at reception of 2 bytes using memory polling and IT interface.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Correct a wrong management of the AF flag.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL RCC</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Reduce the timeout of HSI, LSI and PLL to be closer to HW specifications:</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">HSI_TIMEOUT_VALUE reduced from 100ms to 2ms</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">LSI_TIMEOUT_VALUE reduced from 100ms to 2ms</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">PLL_TIMEOUT_VALUE reduced from 100ms to 2ms</li></ul></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL SD</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Correct wrong calculation of the capacity for High Capacity cards.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL SPI</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Remove incorrect reset of DMA parameter in HAL_SPI_Receive_DMA and HAL_SPI_Transmit_DMA.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL TIM</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Remove useless assert_param.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Rewrite the assert_param when setting clock source.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL UART</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Manage the case of reception of a character while the driver is not expecting one. This was causing a crash of the driver.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">LL USB</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Remove the NoVbusSensing feature from driver. (feature not present on STM32F1xx)</li></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.0.1 / 31-July-2015 <o:p></o:p></span></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            
+            
+            
+            
+            
+            
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+
+
+
+
+
+
+
+
+
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+            
+            
+            
+
+
+
+
+            
+            
+            
+            <ul style="list-style-type: square;"><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana,sans-serif;">General updates to fix known defects and enhancements implementation.</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;"><span style="font-weight: bold;">HAL generic</span></span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">stm32f1xx_hal_def.h</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Update NULL definition </span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">to 
+fix C++ compilation issue.</span></li></ul></ul></ul><ul style="list-style-type: square;"><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;"><span style="font-weight: bold;">HAL ADC</span></span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Optimization of </span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">macro __HAL_ADC_CLEAR_FLAG.</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">ADC poll for conversion now return error status in case of ADC-DMA mode.</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">ADC polling functions now return HAL_TIMEOUT (or HAL_ERROR in case of configuration error).</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Removing field NbrOfConversionRank of ADC_HandleTypeDef. This field was useless on STM32F1xx.</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Improving the ADC state machine.<span style="font-weight: bold;"><br></span></span></li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL CAN</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Field Data of CanRxMsgTypeDef and CanTxMsgTypeDef is changed from uint32_t to uint8_t.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL Cortex</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Add MPU APIs in Cortex HAL driver.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL CRC</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Correcting a wrong definition of __HAL_CRC_SET_IDR macro.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">HAL DAC</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">HAL_IS_BIT_SET is nowused properly in HAL_DAC_Start.</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Add 2 defines: DAC_WAVEGENERATION_NOISE and DAC_WAVEGENERATION_TRIANGLE.</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">HAL_DAC_Stop now disable DAC software conversion.</span></li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL DMA</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Minor typographic updates.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL ETH</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">ETH_MAC_READCONTROLLER_FLUSHING: Removing a space in the middle of the name.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Removing some duplicated macros.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL FLASH</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">FLASH_OB_GetRDP
+returns uint32_t instead of FlagStatus. (internal function). This
+permit a more coherent use for&nbsp;HAL_FLASHEx_OBGetConfig
+and&nbsp;HAL_FLASHEx_OBProgram.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Correct an issue making impossible to set Flash read protection level1 and&nbsp; level2.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">The activation of backup domain in RCC is systematic.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL I2C</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Correct an issue depending of APB/I2C frequency which was preventing the STOP bit to be cleared.</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">The POS bit is now cleared at the beginning of each I2C API.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">The POS bit is no more cleared near STOP generation.</li></ul></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL I2S</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">HAL_I2S_Transmit() API is updated to keep the check on busy flag only for the slave.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;"><span style="font-weight: bold;">HAL NAND</span></span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;"></span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">Review __ARRAY_ADDRESS macro and adapt tests to detect bad blocks</span></li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL RCC</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">In HAL_RCCEx_PeriphCLKConfig, Reset backup domain only if RTC clock source has been changed.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Update of HAL_RCC_OscConfig functionto correctly check LSEState.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Rework __HAL_RCC_LSE_CONFIG macro to manage correctly LSE_Bypass.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">New HAL RCC macro to configure the SYSCLK clock source: __HAL_RCC_SYSCLK_CONFIG(__RCC_SYSCLKSOURCE__).</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Adding macro: __HAL_RCC_MCO_CONFIG.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">For some RPN, the prediv source management in HAL_RCC_OscConfig function was not used.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL RTC</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">CMSIS mask definition&nbsp;used instead of hardcoded values.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL SMARTCARD</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Improve documentation</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL TIM</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">All STM32F101xx and STM32F102xx defines were missing&nbsp;in the file stm32f1xx_hal_tim_ex.h.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">The assert on trigger polarity for TI1F_ED&nbsp;is removed.</li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt; font-weight: bold;">HAL USB</li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Correct issue preventing USB Device double-buffering mode for IN endpoints to correctly behave.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Correct a bad configuration of Turnaround Time.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Correct USB_FlushTxFifo function which was leading to a&nbsp;GRSTCTL register corruption.</li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;">Replaced
+the access to&nbsp; USB_OTG_HCCHAR_CHDIS and&nbsp;USB_OTG_HCCHAR_CHENA
+from a sequencial access to a simultaneous access.</li></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.0.0 / 15-December-2014</span></h3><p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes</span></u></b></p>
+<ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">First Official release of <span style="font-weight: bold;">STM32F1xx HAL
+Drivers</span> for all STM32F1</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">devices</span><span style="font-size: 10pt; font-family: Verdana;">.</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;"></span><span style="font-family: 'Verdana','sans-serif'; font-size: 10pt;">This
+release is in line with <span style="font-weight: bold;">STM32Cube
+Firmware specification Rev1.0</span> document&nbsp;</span></li></ul><h2 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;"><a name="License"></a><span style="font-size: 12pt; color: white;">License<o:p></o:p></span></h2>
+            <div style="text-align: justify;">
+            <div style="text-align: justify;"><font size="-1"><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:</span><br>
+            </font>
+            <ol><li><font size="-1"><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span></font></li><li><font size="-1"><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">Redistributions
+in binary form must reproduce the above copyright notice, this list of
+conditions and the following disclaimer in </span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">the documentation and/or other materials provided with the distribution.</span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span></font></li><li><font size="-1"><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">Neither the name of STMicroelectronics nor the names of its contributors may be used to endorse or promote products derived </span><br>
+                </font>
+              </li></ol>
+            <font size="-1"><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; from this software without specific prior written permission.</span><br>
+            <span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span><br>
+            <span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED</span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"> WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A </span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY </span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, </span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER</span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"> CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR </span><span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</span></font>
+            
+            </div>
+<span style="font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span></div>
+<span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; color: black;"></span>
+    <div class="MsoNormal" style="text-align: center;" align="center"><span style="color: black;">
+    <hr align="center" size="2" width="100%">
+    </span></div>
+    <p class="MsoNormal" style="margin: 4.5pt 0in 4.5pt 0.25in; text-align: center;" align="center"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; color: black;">For
+    complete documentation on </span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">STM32<span style="color: black;">
+    Microcontrollers visit </span><u><span style="color: blue;"><a href="http://www.st.com/internet/mcu/family/141.jsp" target="_blank">www.st.com/STM32</a></span></u></span><span style="color: black;"><o:p></o:p></span></p>
+    </td>
+   </tr>
+  </tbody></table>
+  <p class="MsoNormal"><span style="font-size: 10pt;"><o:p></o:p></span></p>
+  </td>
+ </tr>
+</tbody></table>
+
+</div>
+
+<p class="MsoNormal"><o:p>&nbsp;</o:p></p>
+
+</div></body></html>
