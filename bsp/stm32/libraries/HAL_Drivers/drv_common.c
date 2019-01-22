@@ -10,10 +10,6 @@
 
 #include "drv_common.h"
 
-#ifdef RT_USING_PIN
-#include "drv_gpio.h"
-#endif
-
 #ifdef RT_USING_SERIAL
 #include "drv_usart.h"
 #endif
