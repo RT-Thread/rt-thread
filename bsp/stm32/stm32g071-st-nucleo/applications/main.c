@@ -13,7 +13,7 @@
 #include <board.h>
 
 /* defined the LED pin: PA5 */
-#define LED_PIN     GET_PIN(A, 5)
+#define LED0_PIN     GET_PIN(A, 5)
 
 int main(void)
 {
