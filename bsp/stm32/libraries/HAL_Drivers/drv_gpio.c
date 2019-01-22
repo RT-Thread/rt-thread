@@ -217,7 +217,7 @@ static const struct pin_index pins[] =
 
 static const struct pin_irq_map pin_irq_map[] =
 {
-#if defined(SOC_SERIES_STM32F0)
+#if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
     {GPIO_PIN_0, EXTI0_1_IRQn},
     {GPIO_PIN_1, EXTI0_1_IRQn},
     {GPIO_PIN_2, EXTI2_3_IRQn},
