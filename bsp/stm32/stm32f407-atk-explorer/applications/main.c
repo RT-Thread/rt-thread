@@ -12,7 +12,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
-#include "drv_gpio.h"
+
 /* defined the LED0 pin: PF9 */
 #define LED0_PIN    GET_PIN(F, 9)
 

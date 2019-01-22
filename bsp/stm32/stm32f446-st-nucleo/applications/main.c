@@ -11,7 +11,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
-#include "drv_gpio.h"
+
 /* defined the LED2 pin: PB7 */
 #define LED2_PIN    GET_PIN(B, 7)
 
