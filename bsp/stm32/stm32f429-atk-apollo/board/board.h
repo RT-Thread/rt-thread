@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-5      balanceTWK   change to new framework
+ * 2018-11-5      balanceTWK   first version
  */
 
 #ifndef __BOARD_H__

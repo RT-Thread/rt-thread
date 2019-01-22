@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018.10.30     SummerGift   change to new framework
+ * 2018.10.30     SummerGift   first version
  */
 
 #ifndef __DRV_USART_H__

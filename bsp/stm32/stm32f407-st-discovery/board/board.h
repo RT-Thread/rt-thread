@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-5      misonyo   change to new framework
+ * 2018-11-5      misonyo   first version
  */
 
 #ifndef __BOARD_H__

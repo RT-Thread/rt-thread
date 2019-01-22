@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date         Author      Notes
- * 2018-12-04   balanceTWK        change to new framework
+ * Date         Author        Notes
+ * 2018-12-04   balanceTWK    first version
  */
 
 #include "board.h"
