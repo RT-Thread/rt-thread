@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-06-22     tyx          first
- * 2018-12-12     balanceTWK   change to new framework
+ * 2018-12-12     balanceTWK   first version
  */
 
 #include "board.h"

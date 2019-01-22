@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-5      SummerGift   change to new framework
+ * 2018-11-5      SummerGift   first version
  */
 
 #ifndef __BOARD_H__

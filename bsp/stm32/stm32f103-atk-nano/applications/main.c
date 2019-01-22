@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-27     balanceTWK   change to new framework
+ * 2018-11-27     balanceTWK   first version
  */
 
 #include <rtthread.h>

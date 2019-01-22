@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-06     SummerGift   change to new framework
+ * 2018-11-06     SummerGift   first version
  * 2018-11-19     flybreak     add stm32f407-atk-explorer bsp
  */
 
