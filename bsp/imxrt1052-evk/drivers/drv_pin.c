@@ -1,11 +1,7 @@
 /*
- * File      : drv_pin.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006-2013, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -226,9 +222,9 @@ void gpio_isr(GPIO_Type* base, rt_uint32_t gpio_pin)
 {
     if((GPIO_PortGetInterruptFlags(base) & (1 << gpio_pin)) != 0)
     {
-        GPIO_PortClearInterruptFlags(base, gpio_pin); 
-        
-        if(rt1052_irq_map[gpio_pin].irq_info.hdr != RT_NULL)
+        GPIO_PortClearInterruptFlags(base, (1 << gpio_pin));
+
+        if (rt1052_irq_map[gpio_pin].irq_info.hdr != RT_NULL)
         {
             rt1052_irq_map[gpio_pin].irq_info.hdr(rt1052_irq_map[gpio_pin].irq_info.args);
         }
@@ -362,7 +358,7 @@ void GPIO5_Combined_0_15_IRQHandler(void)
 
 static IRQn_Type rt1052_get_irqnum(GPIO_Type *gpio, rt_uint32_t gpio_pin)
 {
-    IRQn_Type irq_num = -100;  /* Invalid interrupt number */
+    IRQn_Type irq_num = NotAvail_IRQn;  /* Invalid interrupt number */
     
     if(gpio == GPIO1)
     {
@@ -451,36 +447,36 @@ static void rt1052_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     {
         case PIN_MODE_OUTPUT:
         {
-            config_value = 0x1030U;
-            gpio.direction = kGPIO_DigitalOutput; 
+            config_value = 0x0030U;/* Drive Strength R0/6 */
+            gpio.direction = kGPIO_DigitalOutput;
         }
-        break; 
-        
+        break;
+
         case PIN_MODE_INPUT:
         {
-            config_value = 0x1030U;
-            gpio.direction = kGPIO_DigitalInput; 
+            config_value = 0x0830U;/* Open Drain Enable */
+            gpio.direction = kGPIO_DigitalInput;
         }
         break;
-        
+
         case PIN_MODE_INPUT_PULLDOWN:
         {
-            config_value = 0x1030U;
-            gpio.direction = kGPIO_DigitalInput; 
-        }
-        break; 
-        
-        case PIN_MODE_INPUT_PULLUP:
-        {
-            config_value = 0x5030U;
-            gpio.direction = kGPIO_DigitalInput; 
+            config_value = 0x3030U;/* 100K Ohm Pull Down */
+            gpio.direction = kGPIO_DigitalInput;
         }
         break;
-        
+
+        case PIN_MODE_INPUT_PULLUP:
+        {
+            config_value = 0xB030U;/* 100K Ohm Pull Up */
+            gpio.direction = kGPIO_DigitalInput;
+        }
+        break;
+
         case PIN_MODE_OUTPUT_OD:
         {
-            config_value = 0x1830U;
-            gpio.direction = kGPIO_DigitalOutput; 
+            config_value = 0x0830U;/* Open Drain Enable */
+            gpio.direction = kGPIO_DigitalOutput;
         }
         break;
     }
@@ -564,15 +560,14 @@ static rt_err_t rt1052_pin_irq_enable(struct rt_device *device, rt_base_t pin, r
 {
     gpio_pin_config_t gpio; 
     IRQn_Type irq_num;
-    rt_uint32_t config_value = 0x1b0a0; 
-    
-    struct rt1052_pin* pin_map = RT_NULL; 
-    struct rt1052_irq* irq_map = RT_NULL; 
-    
-    pin_map = &rt1052_pin_map[pin]; 
-    irq_map = &rt1052_irq_map[rt1052_pin_map[pin].gpio_pin]; 
-    
-    if(pin_map == RT_NULL || irq_map == RT_NULL) 
+    rt_uint32_t config_value = 0;
+    struct rt1052_pin *pin_map = RT_NULL;
+    struct rt1052_irq *irq_map = RT_NULL;
+
+    pin_map = &rt1052_pin_map[pin];
+    irq_map = &rt1052_irq_map[rt1052_pin_map[pin].gpio_pin];
+
+    if (pin_map == RT_NULL || irq_map == RT_NULL)
     {
         return RT_ENOSYS; 
     }
@@ -593,13 +588,13 @@ static rt_err_t rt1052_pin_irq_enable(struct rt_device *device, rt_base_t pin, r
         
         if(rt1052_pin_map[pin].gpio != GPIO5)
         {
-            CLOCK_EnableClock(kCLOCK_Iomuxc); 
-            IOMUXC_SetPinMux(0x401F8010U + pin*4, 0x5U, 0, 0, 0, 0); 
+            CLOCK_EnableClock(kCLOCK_Iomuxc);
+            IOMUXC_SetPinMux(0x401F8010U + pin * 4, 0x5U, 0, 0, 0, 1);
         }
         else
         {
-            CLOCK_EnableClock(kCLOCK_IomuxcSnvs); 
-            IOMUXC_SetPinMux(0x400A8000U + (pin-125)*4, 0x5U, 0, 0, 0, 0); 
+            CLOCK_EnableClock(kCLOCK_IomuxcSnvs);
+            IOMUXC_SetPinMux(0x400A8000U + (pin - 125) * 4, 0x5U, 0, 0, 0, 1);
         }
         
         gpio.direction     = kGPIO_DigitalInput; 
@@ -609,31 +604,36 @@ static rt_err_t rt1052_pin_irq_enable(struct rt_device *device, rt_base_t pin, r
         {
             case PIN_IRQ_MODE_RISING:
             {
-                gpio.interruptMode = kGPIO_IntRisingEdge; 
+                config_value = 0x3030U;/* 100K Ohm Pull Down */
+                gpio.interruptMode = kGPIO_IntRisingEdge;
             }
             break;
-            
+
             case PIN_IRQ_MODE_FALLING:
             {
-                gpio.interruptMode = kGPIO_IntFallingEdge; 
+                config_value = 0xB030U;/* 100K Ohm Pull Up */
+                gpio.interruptMode = kGPIO_IntFallingEdge;
             }
             break;
-            
+
             case PIN_IRQ_MODE_RISING_FALLING:
             {
-                gpio.interruptMode = kGPIO_IntRisingOrFallingEdge; 
+                config_value = 0x0830U;/* Open Drain Enable */
+                gpio.interruptMode = kGPIO_IntRisingOrFallingEdge;
             }
             break;
-            
+
             case PIN_IRQ_MODE_HIGH_LEVEL:
             {
-                gpio.interruptMode = kGPIO_IntHighLevel; 
+                config_value = 0x3030U;/* 100K Ohm Pull Down */
+                gpio.interruptMode = kGPIO_IntHighLevel;
             }
             break;
-            
+
             case PIN_IRQ_MODE_LOW_LEVEL:
             {
-                gpio.interruptMode = kGPIO_IntLowLevel; 
+                config_value = 0xB030U;/* 100K Ohm Pull Up */
+                gpio.interruptMode = kGPIO_IntLowLevel;
             }
             break;
         }
