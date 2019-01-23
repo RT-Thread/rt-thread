@@ -2,7 +2,7 @@
 
 ## 简介
 
-本文档为ST官方 (64)NUCLEO-L476RG 开发板的 BSP (板级支持包) 说明。
+本文档为 ST 官方 (64)NUCLEO-L476RG 开发板的 BSP (板级支持包) 说明。
 
 主要内容如下：
 
@@ -29,7 +29,7 @@
 - 常用接口：USB 支持 3 种不同接口：虚拟 COM 端口、大容量存储和调试端口。
 - 调试接口：板载 ST-LINK/V2-1 调试器。
 
-开发板更多详细信息请参考【STMicroelectronics】 [NUCLEO-L432KC](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/stm32-mcu-eval-tools/stm32-mcu-nucleo/nucleo-l476rg.html)。
+开发板更多详细信息请参考【STMicroelectronics】 [NUCLEO-L476RG](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/stm32-mcu-eval-tools/stm32-mcu-nucleo/nucleo-l476rg.html)。
 
 ## 外设支持
 
@@ -41,15 +41,15 @@
 | **片上外设**      | **支持情况** | **备注**                              |
 | GPIO              |     支持     |          |
 | UART              |     支持     | UART2    |
-| SPI               |   暂不支持   |          |
-| I2C               |   暂不支持   |          |
-| RTC               |   暂不支持   |          |
-| PWM               |   暂不支持   |          |
-| USB Device        |   暂不支持   |          |
-| IWG               |   暂不支持   |          |
+| SPI               |   暂不支持   | 即将支持 |
+| I2C               |   暂不支持   | 即将支持 |
+| RTC               |   暂不支持   | 即将支持 |
+| PWM               |   暂不支持   | 即将支持 |
+| USB Device        |   暂不支持   | 即将支持 |
+| IWG               |   暂不支持   | 即将支持 |
 | **扩展模块**      | **支持情况** | **备注** |
-| LCD               |   暂不支持   |          |
-
+| LCD               |   暂不支持   | 即将支持 |
+| SDcard            |   暂不支持   | 即将支持 |
 ## 使用说明
 
 使用说明分为如下两个章节：
@@ -106,7 +106,7 @@ msh >
 
 ## 注意事项
 
-- 开机时如果不能打印 RT-Thread 版本信息，请将BSP中串口 GPIO 速率调低
+- 开机时如果不能打印 RT-Thread 版本信息，请将 BSP 中串口 GPIO 速率调低
 - 开机时如果不能打印 RT-Thread 版本信息，请重新选择 PC 端串口调试软件的串口号
 
 ## 联系人信息

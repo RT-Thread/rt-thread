@@ -13,22 +13,6 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART2
         default y
 
-    config BSP_USING_QSPI_FLASH
-        bool "Enable QSPI FLASH"
-        select BSP_USING_QSPI
-        select RT_USING_SFUD
-        select RT_SFUD_USING_QSPI
-        default n
-
-    config BSP_USING_SDCARD
-        bool "Enable SDCARD (spi1)"
-        select BSP_USING_SPI
-        select BSP_USING_SPI1
-        select RT_USING_SPI_MSD
-        select RT_USING_DFS
-        select RT_USING_DFS_ELMFAT
-        default n
-
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -52,21 +36,6 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
                 default n
         endif
-
-    config BSP_USING_ON_CHIP_FLASH
-        bool "Enable on-chip FLASH"
-        default n
-
-    config BSP_USING_ONCHIP_RTC
-        bool "Enable RTC"
-        select RT_USING_RTC
-        select RT_USING_LIBC
-        default n
-
-    config BSP_USING_WDT
-        bool "Enable Watchdog Timer"
-        select RT_USING_WDT
-        default n
 
 endmenu
 
