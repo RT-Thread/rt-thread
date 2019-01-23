@@ -265,7 +265,7 @@ int dfs_elm_mkfs(rt_device_t dev_id)
     /* [IN] Size of the allocation unit */
     /* [-]  Working buffer */
     /* [IN] Size of working buffer */
-    result = f_mkfs(logic_nbr, FM_ANY, 0, work, _MAX_SS);
+    result = f_mkfs(logic_nbr, FM_ANY|FM_SFD, 0, work, _MAX_SS);
     rt_free(work); work = RT_NULL;
 
     /* check flag status, we need clear the temp driver stored in disk[] */

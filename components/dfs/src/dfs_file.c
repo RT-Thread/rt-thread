@@ -66,7 +66,8 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
     }
 
     LOG_D("open in filesystem:%s", fs->ops->name);
-    fd->fops  = fs->ops->fops; /* set file ops */
+    fd->fs    = fs;             /* set file system */
+    fd->fops  = fs->ops->fops;  /* set file ops */
 
     /* initialize the fd item */
     fd->type  = FT_REGULAR;
@@ -171,7 +172,7 @@ int dfs_file_ioctl(struct dfs_fd *fd, int cmd, void *args)
             return fd->flags; /* return flags */
         case F_SETFL:
             {
-                int flags = (int)args;
+                int flags = (int)(rt_base_t)args;
                 int mask  = O_NONBLOCK | O_APPEND;
 
                 flags &= mask;

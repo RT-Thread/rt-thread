@@ -26,6 +26,9 @@
  * 2018-09-14     Bernard      apply Apache License v2.0 to RT-Thread Kernel
  * 2018-10-13     Bernard      change version number to v4.0.0
  * 2018-10-02     Bernard      add 64bit arch support
+ * 2018-11-22     Jesven       add smp member to struct rt_thread
+ *                             add struct rt_cpu
+ *                             add smp relevant macros
  */
 
 #ifndef __RT_DEF_H__
@@ -42,7 +45,7 @@ extern "C" {
  * @addtogroup BasicDef
  */
 
-/*@{*/
+/**@{*/
 
 /* RT-Thread version information */
 #define RT_VERSION                      4L              /**< major version number */
@@ -85,7 +88,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define RT_TRUE                         1               /**< boolean true  */
 #define RT_FALSE                        0               /**< boolean fails */
 
-/*@}*/
+/**@}*/
 
 /* maximum value of base type */
 #define RT_UINT8_MAX                    0xff            /**< Maxium number of UINT8 */
@@ -130,11 +133,11 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
         #include <stdarg.h>
     #else
         /* the version of GNU GCC must be greater than 4.x */
-        typedef __builtin_va_list   __gnuc_va_list;
-        typedef __gnuc_va_list      va_list;
-        #define va_start(v,l)       __builtin_va_start(v,l)
-        #define va_end(v)           __builtin_va_end(v)
-        #define va_arg(v,l)         __builtin_va_arg(v,l)
+        typedef __builtin_va_list       __gnuc_va_list;
+        typedef __gnuc_va_list          va_list;
+        #define va_start(v,l)           __builtin_va_start(v,l)
+        #define va_end(v)               __builtin_va_end(v)
+        #define va_arg(v,l)             __builtin_va_arg(v,l)
     #endif
 
     #define SECTION(x)                  __attribute__((section(x)))
@@ -256,7 +259,7 @@ typedef int (*init_fn_t)(void);
  * @addtogroup Error
  */
 
-/*@{*/
+/**@{*/
 
 /* RT-Thread error code definitions */
 #define RT_EOK                          0               /**< There is no error */
@@ -271,7 +274,7 @@ typedef int (*init_fn_t)(void);
 #define RT_EINTR                        9               /**< Interrupted system call */
 #define RT_EINVAL                       10              /**< Invalid argument */
 
-/*@}*/
+/**@}*/
 
 /**
  * @ingroup BasicDef
@@ -322,7 +325,7 @@ typedef struct rt_slist_node rt_slist_t;                /**< Type for single lis
  * @addtogroup KernelObject
  */
 
-/*@{*/
+/**@{*/
 
 /*
  * kernel object macros
@@ -364,7 +367,8 @@ typedef struct rt_object *rt_object_t;                  /**< Type for kernel obj
  */
 enum rt_object_class_type
 {
-    RT_Object_Class_Thread = 0,                         /**< The object is a thread. */
+    RT_Object_Class_Null   = 0,                         /**< The object is not used. */
+    RT_Object_Class_Thread,                             /**< The object is a thread. */
     RT_Object_Class_Semaphore,                          /**< The object is a semaphore. */
     RT_Object_Class_Mutex,                              /**< The object is a mutex. */
     RT_Object_Class_Event,                              /**< The object is a event. */
@@ -399,13 +403,13 @@ struct rt_object_information
 #define RT_OBJECT_HOOK_CALL(func, argv)
 #endif
 
-/*@}*/
+/**@}*/
 
 /**
  * @addtogroup Clock
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * clock & timer macros
@@ -449,7 +453,7 @@ struct rt_timer
 };
 typedef struct rt_timer *rt_timer_t;
 
-/*@}*/
+/**@}*/
 
 /**
  * @addtogroup Signal
@@ -462,13 +466,13 @@ typedef siginfo_t rt_siginfo_t;
 
 #define RT_SIG_MAX          32
 #endif
-/*@}*/
+/**@}*/
 
 /**
  * @addtogroup Thread
  */
 
-/*@{*/
+/**@{*/
 
 /*
  * Thread
@@ -497,6 +501,41 @@ typedef siginfo_t rt_siginfo_t;
 #define RT_THREAD_CTRL_CLOSE            0x01                /**< Close thread. */
 #define RT_THREAD_CTRL_CHANGE_PRIORITY  0x02                /**< Change thread priority. */
 #define RT_THREAD_CTRL_INFO             0x03                /**< Get thread information. */
+#define RT_THREAD_CTRL_BIND_CPU         0x04                /**< Set thread bind cpu. */
+
+#ifdef RT_USING_SMP
+
+#define RT_CPU_DETACHED                 RT_CPUS_NR          /**< The thread not running on cpu. */
+#define RT_CPU_MASK                     ((1 << RT_CPUS_NR) - 1) /**< All CPUs mask bit. */
+
+#ifndef RT_SCHEDULE_IPI
+#define RT_SCHEDULE_IPI                 0
+#endif
+
+/**
+ * CPUs definitions
+ * 
+ */
+struct rt_cpu
+{
+    struct rt_thread *current_thread;
+
+    rt_uint16_t irq_nest;
+    rt_uint8_t  irq_switch_flag;
+
+    rt_uint8_t current_priority;
+    rt_list_t priority_table[RT_THREAD_PRIORITY_MAX];
+#if RT_THREAD_PRIORITY_MAX > 32
+    rt_uint32_t priority_group;
+    rt_uint8_t ready_table[32];
+#else
+    rt_uint32_t priority_group;
+#endif
+
+    rt_tick_t tick;
+};
+
+#endif
 
 /**
  * Thread structure
@@ -526,6 +565,14 @@ struct rt_thread
     rt_err_t    error;                                  /**< error code */
 
     rt_uint8_t  stat;                                   /**< thread status */
+
+#ifdef RT_USING_SMP
+    rt_uint8_t  bind_cpu;                               /**< thread is bind to cpu */
+    rt_uint8_t  oncpu;                                  /**< process on cpu` */
+
+    rt_uint16_t scheduler_lock_nest;                    /**< scheduler lock count */
+    rt_uint16_t cpus_lock_nest;                         /**< cpus lock count */
+#endif /*RT_USING_SMP*/
 
     /* priority */
     rt_uint8_t  current_priority;                       /**< current priority */
@@ -567,13 +614,13 @@ struct rt_thread
 };
 typedef struct rt_thread *rt_thread_t;
 
-/*@}*/
+/**@}*/
 
 /**
  * @addtogroup IPC
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * IPC flags and control command definitions
@@ -691,13 +738,13 @@ struct rt_messagequeue
 typedef struct rt_messagequeue *rt_mq_t;
 #endif
 
-/*@}*/
+/**@}*/
 
 /**
  * @addtogroup MM
  */
 
-/*@{*/
+/**@{*/
 
 /*
  * memory management
@@ -765,14 +812,14 @@ struct rt_mempool
 typedef struct rt_mempool *rt_mp_t;
 #endif
 
-/*@}*/
+/**@}*/
 
 #ifdef RT_USING_DEVICE
 /**
  * @addtogroup Device
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * device (I/O) class type
@@ -1017,7 +1064,7 @@ struct rt_device_graphic_ops
 };
 #define rt_graphix_ops(device)          ((struct rt_device_graphic_ops *)(device->user_data))
 
-/*@}*/
+/**@}*/
 #endif
 
 /* definitions for libc */

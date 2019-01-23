@@ -48,7 +48,7 @@ static int timer_app_init(void)
         return -1;
     }
 }
-INIT_EXPORT_APP(timer_app_init);
+INIT_APP_EXPORT(timer_app_init);
 
 #endif /* RT_USING_PM */
 

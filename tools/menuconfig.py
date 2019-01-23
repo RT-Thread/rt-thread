@@ -251,3 +251,20 @@ def pyconfig(RTT_ROOT):
     if mtime != mtime2:
         mk_rtconfig(fn)
 
+
+# pyconfig_silent for windows and linux
+def pyconfig_silent(RTT_ROOT):
+    import pymenuconfig
+    print("In pyconfig silent mode. Don`t display menuconfig window.")
+
+    touch_env()
+    env_dir = get_env_dir()
+
+    os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
+
+    fn = '.config'
+
+    pymenuconfig.main(['--kconfig', 'Kconfig', '--config', '.config', '--silent', 'True'])
+
+    # silent mode, force to make rtconfig.h
+    mk_rtconfig(fn)

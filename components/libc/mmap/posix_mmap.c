@@ -35,7 +35,7 @@ void *mmap(void *addr, size_t length, int prot, int flags,
         cur = lseek(fd, 0, SEEK_SET);
 
         lseek(fd, offset, SEEK_SET);
-        read_bytes = read(fd, addr, length);
+        read_bytes = read(fd, mem, length);
         if (read_bytes != length)
         {
             if (addr == RT_NULL)

@@ -188,7 +188,7 @@ static rt_err_t rt_pipe_control(rt_device_t dev, int cmd, void *args)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops audio_pipe_ops
+const static struct rt_device_ops audio_pipe_ops =
 {
     RT_NULL,
     RT_NULL,
@@ -213,7 +213,7 @@ const static struct rt_device_ops audio_pipe_ops
  */
 rt_err_t rt_audio_pipe_init(struct rt_audio_pipe *pipe,
                       const char *name,
-                      enum rt_audio_pipe_flag flag,
+                      rt_int32_t flag,
                       rt_uint8_t *buf,
                       rt_size_t size)
 {
@@ -258,7 +258,7 @@ rt_err_t rt_audio_pipe_detach(struct rt_audio_pipe *pipe)
 }
 
 #ifdef RT_USING_HEAP
-rt_err_t rt_audio_pipe_create(const char *name, enum rt_audio_pipe_flag flag, rt_size_t size)
+rt_err_t rt_audio_pipe_create(const char *name, rt_int32_t flag, rt_size_t size)
 {
     rt_uint8_t *rb_memptr = RT_NULL;
     struct rt_audio_pipe *pipe = RT_NULL;

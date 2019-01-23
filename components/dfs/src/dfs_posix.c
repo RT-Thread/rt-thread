@@ -890,9 +890,9 @@ int access(const char *path, int amode)
 char *getcwd(char *buf, size_t size)
 {
 #ifdef DFS_USING_WORKDIR
-    rt_enter_critical();
+    dfs_lock();
     strncpy(buf, working_directory, size);
-    rt_exit_critical();
+    dfs_unlock();
 #else
     rt_kprintf(NO_WORKING_DIR);
 #endif

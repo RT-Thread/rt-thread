@@ -68,6 +68,7 @@
 #define RT_USING_DEVICE_IPC
 // <bool name="RT_USING_SERIAL" description="Using serial driver framework" default="true" />
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 // </section>
 
 // <section name="RT_USING_CONSOLE" description="Using console" default="true" >

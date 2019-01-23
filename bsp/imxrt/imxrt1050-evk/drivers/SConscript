@@ -5,6 +5,7 @@ cwd = GetCurrentDir()
 # add the general drivers.
 src = Split("""
 board.c
+drv_flexspi.c
 """)
 
 CPPPATH = [cwd]
