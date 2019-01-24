@@ -340,6 +340,7 @@ struct rt_ringbuffer* rt_ringbuffer_create(rt_uint16_t size)
     if (pool == RT_NULL)
     {
         rt_free(rb);
+        rb = RT_NULL;
         goto exit;
     }
     rt_ringbuffer_init(rb, pool, size);
