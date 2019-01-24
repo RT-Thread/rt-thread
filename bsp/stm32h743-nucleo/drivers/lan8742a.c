@@ -17,7 +17,7 @@
 
 
 #include "lwip/opt.h"
-#include "lwip/ip_frag.h"
+#include "lwip/ip4_frag.h"
 #include "lwip/def.h"
 #include "lwip/inet_chksum.h"
 #include "lwip/netif.h"
@@ -837,7 +837,7 @@ static rt_size_t rt_lan8742_write (rt_device_t dev, rt_off_t pos, const void* bu
     return 0;
 }
 
-static rt_err_t rt_lan8742_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_lan8742_control(rt_device_t dev, int cmd, void *args)
 {
 	switch (cmd)
 	{
