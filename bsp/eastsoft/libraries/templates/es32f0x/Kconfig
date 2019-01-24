@@ -1,0 +1,91 @@
+mainmenu "RT-Thread Configuration"
+
+config $BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "."
+
+config $RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "../.."
+
+config $PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
+
+
+choice
+    prompt "Device type"
+    default ES32F0654LT
+    config SOC_ES32F0653LQ
+        bool "SOC_ES32F0653LQ"
+    config SOC_ES32F0653NQ
+        bool "SOC_ES32F0653NQ"
+    config SOC_ES32F0653LT
+        bool "SOC_ES32F0653LT"
+    config SOC_ES32F0653LX
+        bool "SOC_ES32F0653LX"
+    config SOC_ES32F0654LQ
+        bool "SOC_ES32F0654LQ"
+    config SOC_ES32F0654NQ
+        bool "SOC_ES32F0654NQ"
+    config SOC_ES32F0654LT
+        bool "SOC_ES32F0654LT"
+    config SOC_ES32F0654LX
+        bool "SOC_ES32F0654LX"
+endchoice
+
+config RT_USING_UART0
+    bool "Using uart0"
+    default n  
+
+config RT_USING_UART1
+    bool "Using uart1"
+    default n  
+
+config RT_USING_UART2
+    bool "Using uart2"
+    default y    
+
+config RT_USING_UART3
+    bool "Using uart3"
+    default n  
+
+if RT_USING_SPI
+
+config RT_USING_SPI0
+    bool "Using SPI0"
+    default n 
+
+config RT_USING_SPI1
+    bool "Using SPI1"
+    default n
+
+endif
+
+if RT_USING_W25QXX || RT_USING_SFUD
+config RT_FLASH_CS_PIN
+    int "SPI NOR Flash CS pin index"
+    default 20
+config RT_FLASH_SPI_BUS_NAME
+    string "SPI NOR Flash Spi bus name"
+    default "spi0"
+endif
+
+if RT_USING_I2C
+
+config RT_USING_I2C0
+    bool "Using I2C0"
+    default n 
+
+config RT_USING_I2C1
+    bool "Using I2C1"
+    default n
+
+endif
+

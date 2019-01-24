@@ -1,0 +1,26 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split("""
+board.c
+""")
+
+# add gpio drivers.
+if GetDepend('RT_USING_PIN'):
+    src += ['drv_gpio.c']
+if GetDepend(['RT_USING_SERIAL']):
+    src += ['drv_usart.c']
+if GetDepend(['RT_USING_SPI']):
+    src += ['drv_spi.c']
+if GetDepend(['RT_USING_I2C']):
+    src += ['drv_i2c.c']
+if GetDepend(['RT_USING_DFS']):
+    src += ['drv_spiflash.c']
+
+CPPPATH = [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

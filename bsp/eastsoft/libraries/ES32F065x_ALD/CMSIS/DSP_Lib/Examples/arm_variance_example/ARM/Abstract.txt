@@ -1,0 +1,4 @@
+CMSIS DSP_Lib example arm_variance_example for
+  Cortex-M0, Cortex-M3 and Cortex-M4 with FPU
+
+The example is configured for uVision Simulator
