@@ -37,11 +37,11 @@
 /**
   * @brief ALD version number
   */
-#define __ALD_VERSION_MAIN	(0x01) /**< [31:24] main version */
-#define __ALD_VERSION_SUB1	(0x00) /**< [23:16] sub1 version */
-#define __ALD_VERSION_SUB2	(0x00) /**< [15:8]  sub2 version */
-#define __ALD_VERSION_RC	(0x00) /**< [7:0]  release candidate */
-#define __ALD_VERSION		((__ALD_VERSION_MAIN << 24) | \
+#define __ALD_VERSION_MAIN  (0x01) /**< [31:24] main version */
+#define __ALD_VERSION_SUB1  (0x00) /**< [23:16] sub1 version */
+#define __ALD_VERSION_SUB2  (0x00) /**< [15:8]  sub2 version */
+#define __ALD_VERSION_RC    (0x00) /**< [7:0]  release candidate */
+#define __ALD_VERSION       ((__ALD_VERSION_MAIN << 24) | \
                                  (__ALD_VERSION_SUB1 << 16) | \
                                  (__ALD_VERSION_SUB2 << 8 ) | \
                                  (__ALD_VERSION_RC))
@@ -84,7 +84,7 @@ uint32_t __systick_interval = SYSTICK_INTERVAL_1MS;
              duration should be kept 1ms.
         (++) Time base configuration function (__init_tick()) is called automatically
              at the beginning of the program after reset by mcu_ald_init() or at
-	     any time when clock is configured.
+         any time when clock is configured.
         (++) Source of time base is configured  to generate interrupts at regular
              time intervals. Care must be taken if __delay_ms() is called from a
              peripheral ISR process, the Tick interrupt line must have higher priority
@@ -110,12 +110,12 @@ uint32_t __systick_interval = SYSTICK_INTERVAL_1MS;
   */
 void mcu_ald_init(void)
 {
-	cmu_clock_config_default();
-	__init_tick(TICK_INT_PRIORITY);
+    cmu_clock_config_default();
+    __init_tick(TICK_INT_PRIORITY);
 #ifdef ALD_DMA
-	dma_init(DMA0);
+    dma_init(DMA0);
 #endif
-	return;
+    return;
 }
 
 /**
@@ -134,13 +134,13 @@ void mcu_ald_init(void)
   */
 __weak void __init_tick(uint32_t prio)
 {
-	/* Configure the SysTick IRQ */
-	SysTick_Config(cmu_get_clock() / SYSTICK_INTERVAL_1MS);
+    /* Configure the SysTick IRQ */
+    SysTick_Config(cmu_get_clock() / SYSTICK_INTERVAL_1MS);
 
-	if (prio != 3)
-		NVIC_SetPriority(SysTick_IRQn, prio);
+    if (prio != 3)
+        NVIC_SetPriority(SysTick_IRQn, prio);
 
-	return;
+    return;
 }
 
 /**
@@ -154,15 +154,15 @@ __weak void __init_tick(uint32_t prio)
   */
 void systick_interval_select(systick_interval_t value)
 {
-	assert_param(IS_SYSTICK_INTERVAL(value));
+    assert_param(IS_SYSTICK_INTERVAL(value));
 
-	SysTick_Config(cmu_get_clock() / value);
-	__systick_interval = value;
+    SysTick_Config(cmu_get_clock() / value);
+    __systick_interval = value;
 
-	if (TICK_INT_PRIORITY != 3)
-		NVIC_SetPriority(SysTick_IRQn, TICK_INT_PRIORITY);
+    if (TICK_INT_PRIORITY != 3)
+        NVIC_SetPriority(SysTick_IRQn, TICK_INT_PRIORITY);
 
-	return;
+    return;
 }
 /**
   * @}
@@ -200,7 +200,7 @@ void systick_interval_select(systick_interval_t value)
   */
 __weak void __inc_tick(void)
 {
-	++lib_tick;
+    ++lib_tick;
 }
 
 /**
@@ -211,8 +211,8 @@ __weak void __inc_tick(void)
   */
 __weak void systick_irq_cbk(void)
 {
-	/* do nothing */
-	return;
+    /* do nothing */
+    return;
 }
 
 /**
@@ -221,10 +221,10 @@ __weak void systick_irq_cbk(void)
   */
 __isr__ void SysTick_Handler(void)
 {
-	__inc_tick();
-	systick_irq_cbk();
+    __inc_tick();
+    systick_irq_cbk();
 
-	return;
+    return;
 }
 
 /**
@@ -235,7 +235,7 @@ __isr__ void SysTick_Handler(void)
   */
 __weak uint32_t __get_tick(void)
 {
-	return lib_tick;
+    return lib_tick;
 }
 
 /**
@@ -251,35 +251,36 @@ __weak uint32_t __get_tick(void)
   */
 __weak void __delay_ms(__IO uint32_t delay)
 {
-	uint32_t tick, __delay;
+    uint32_t tick, __delay;
 
-	switch (__systick_interval) {
-	case SYSTICK_INTERVAL_1MS:
-		__delay = delay;
-		break;
+    switch (__systick_interval)
+    {
+    case SYSTICK_INTERVAL_1MS:
+        __delay = delay;
+        break;
 
-	case SYSTICK_INTERVAL_10MS:
-		__delay = delay / 10;
-		break;
+    case SYSTICK_INTERVAL_10MS:
+        __delay = delay / 10;
+        break;
 
-	case SYSTICK_INTERVAL_100MS:
-		__delay = delay / 100;
-		break;
+    case SYSTICK_INTERVAL_100MS:
+        __delay = delay / 100;
+        break;
 
-	case SYSTICK_INTERVAL_1000MS:
-		__delay = delay / 1000;
-		break;
+    case SYSTICK_INTERVAL_1000MS:
+        __delay = delay / 1000;
+        break;
 
-	default:
-		__delay = delay;
-		break;
-	}
+    default:
+        __delay = delay;
+        break;
+    }
 
-	tick    = __get_tick();
-	__delay = __delay == 0 ? 1 : __delay;
+    tick    = __get_tick();
+    __delay = __delay == 0 ? 1 : __delay;
 
-	while ((__get_tick() - tick) < __delay)
-		;
+    while ((__get_tick() - tick) < __delay)
+        ;
 }
 
 /**
@@ -294,7 +295,7 @@ __weak void __delay_ms(__IO uint32_t delay)
   */
 __weak void __suspend_tick(void)
 {
-	CLEAR_BIT(SysTick->CTRL, SysTick_CTRL_TICKINT_Msk);
+    CLEAR_BIT(SysTick->CTRL, SysTick_CTRL_TICKINT_Msk);
 }
 
 /**
@@ -309,7 +310,7 @@ __weak void __suspend_tick(void)
   */
 __weak void __resume_tick(void)
 {
-	SET_BIT(SysTick->CTRL, SysTick_CTRL_TICKINT_Msk);
+    SET_BIT(SysTick->CTRL, SysTick_CTRL_TICKINT_Msk);
 }
 
 /**
@@ -318,7 +319,7 @@ __weak void __resume_tick(void)
   */
 uint32_t get_ald_version(void)
 {
-	return __ALD_VERSION;
+    return __ALD_VERSION;
 }
 
 /**
@@ -331,24 +332,28 @@ uint32_t get_ald_version(void)
   */
 ald_status_t __wait_flag(uint32_t *reg, uint32_t bit, flag_status_t status, uint32_t timeout)
 {
-	uint32_t tick = __get_tick();
+    uint32_t tick = __get_tick();
 
-	assert_param(timeout > 0);
+    assert_param(timeout > 0);
 
-	if (status == SET) {
-		while (!(IS_BIT_SET(*reg, bit))) {
-			if (((__get_tick()) - tick) > timeout)
-				return TIMEOUT;
-		}
-	}
-	else {
-		while ((IS_BIT_SET(*reg, bit))) {
-			if (((__get_tick()) - tick) > timeout)
-				return TIMEOUT;
-		}
-	}
+    if (status == SET)
+    {
+        while (!(IS_BIT_SET(*reg, bit)))
+        {
+            if (((__get_tick()) - tick) > timeout)
+                return TIMEOUT;
+        }
+    }
+    else
+    {
+        while ((IS_BIT_SET(*reg, bit)))
+        {
+            if (((__get_tick()) - tick) > timeout)
+                return TIMEOUT;
+        }
+    }
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -362,18 +367,20 @@ ald_status_t __wait_flag(uint32_t *reg, uint32_t bit, flag_status_t status, uint
   */
 void mcu_irq_config(IRQn_Type irq, uint8_t prio, type_func_t status)
 {
-	assert_param(IS_FUNC_STATE(status));
-	assert_param(IS_PRIO(prio));
+    assert_param(IS_FUNC_STATE(status));
+    assert_param(IS_PRIO(prio));
 
-	if (status == ENABLE) {
-		NVIC_SetPriority(irq, prio);
-		NVIC_EnableIRQ(irq);
-	}
-	else {
-		NVIC_DisableIRQ(irq);
-	}
+    if (status == ENABLE)
+    {
+        NVIC_SetPriority(irq, prio);
+        NVIC_EnableIRQ(irq);
+    }
+    else
+    {
+        NVIC_DisableIRQ(irq);
+    }
 
-	return;
+    return;
 }
 
 /**
@@ -382,10 +389,10 @@ void mcu_irq_config(IRQn_Type irq, uint8_t prio, type_func_t status)
   */
 uint32_t mcu_get_tick(void)
 {
-	uint32_t load = SysTick->LOAD;
-	uint32_t val  = SysTick->VAL;
+    uint32_t load = SysTick->LOAD;
+    uint32_t val  = SysTick->VAL;
 
-	return (load - val);
+    return (load - val);
 }
 
 /**
@@ -394,7 +401,7 @@ uint32_t mcu_get_tick(void)
   */
 uint32_t mcu_get_cpu_id(void)
 {
-	return SCB->CPUID;
+    return SCB->CPUID;
 }
 
 /**

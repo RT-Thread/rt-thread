@@ -24,7 +24,7 @@
 #define ALD_UART
 #define ALD_LPUART
 #define ALD_USART
-#define ALD_SMARTCARD	/* The ALD_SMARTCARD depend on ALD_USART */
+#define ALD_SMARTCARD   /* The ALD_SMARTCARD depend on ALD_USART */
 #define ALD_I2C
 #define ALD_CMU
 #define ALD_RMU
@@ -50,6 +50,6 @@
 #define ALD_DAC
 #define ALD_IAP
 
-#define TICK_INT_PRIORITY	3
+#define TICK_INT_PRIORITY   3
 
 #endif

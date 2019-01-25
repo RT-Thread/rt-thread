@@ -27,7 +27,7 @@ static rt_err_t es32f0x_configure(struct rt_serial_device *serial, struct serial
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
     uart = (struct es32_uart *)serial->parent.user_data;
-    
+
     /* Initialize tx pin */
     gpio_init_initstructure.mode = GPIO_MODE_OUTPUT;
     gpio_init_initstructure.odos = GPIO_PUSH_PULL;
@@ -37,85 +37,85 @@ static rt_err_t es32f0x_configure(struct rt_serial_device *serial, struct serial
     gpio_init_initstructure.type = GPIO_TYPE_TTL;
 
 #ifdef RT_USING_UART0
-    
+
     gpio_init_initstructure.func = GPIO_FUNC_3;
     gpio_init(GPIOB, GPIO_PIN_10, &gpio_init_initstructure);
 
     /* Initialize rx pin ,the same as txpin except mode*/
     gpio_init_initstructure.mode = GPIO_MODE_INPUT;
     gpio_init(GPIOB, GPIO_PIN_11, &gpio_init_initstructure);
-    
+
     NVIC_EnableIRQ(UART0_IRQn);
 
 #endif /* uart0 gpio init */
 
 #ifdef RT_USING_UART1
-    
+
     gpio_init_initstructure.func = GPIO_FUNC_3;
     gpio_init(GPIOC, GPIO_PIN_10, &gpio_init_initstructure);
 
     /* Initialize rx pin ,the same as txpin except mode*/
     gpio_init_initstructure.mode = GPIO_MODE_INPUT;
     gpio_init(GPIOC, GPIO_PIN_11, &gpio_init_initstructure);
-    
+
     NVIC_EnableIRQ(UART1_IRQn);
 
 #endif /* uart1 gpio init */
 
 #ifdef RT_USING_UART2
-    
+
     gpio_init_initstructure.func = GPIO_FUNC_5;
     gpio_init(GPIOC, GPIO_PIN_12, &gpio_init_initstructure);
 
     /* Initialize rx pin ,the same as txpin except mode*/
     gpio_init_initstructure.mode = GPIO_MODE_INPUT;
     gpio_init(GPIOD, GPIO_PIN_2, &gpio_init_initstructure);
-    
+
     NVIC_EnableIRQ(BS16T1_UART2_IRQn);
 
 #endif /* uart2 gpio init */
 
 #ifdef RT_USING_UART3
-    
+
     gpio_init_initstructure.func = GPIO_FUNC_4;
     gpio_init(GPIOC, GPIO_PIN_4, &gpio_init_initstructure);
 
     /* Initialize rx pin ,the same as txpin except mode*/
     gpio_init_initstructure.mode = GPIO_MODE_INPUT;
     gpio_init(GPIOC, GPIO_PIN_5, &gpio_init_initstructure);
-    
+
     NVIC_EnableIRQ(BS16T2_UART3_IRQn);
 
 #endif /* uart3 gpio init */
-    
+
 //    uart->huart.perh             = ((struct es32_uart *)serial->parent.user_data)->huart.perh;
     uart->huart.init.mode        = UART_MODE_UART;
     uart->huart.init.baud        = cfg->baud_rate;
     uart->huart.init.word_length = (uart_word_length_t)(cfg->data_bits - 5);
-    uart->huart.init.parity = (uart_parity_t)(cfg->parity==PARITY_EVEN ? UART_PARITY_EVEN : cfg->parity);
+    uart->huart.init.parity = (uart_parity_t)(cfg->parity == PARITY_EVEN ? UART_PARITY_EVEN : cfg->parity);
     uart->huart.init.fctl        = UART_HW_FLOW_CTL_DISABLE;
     uart_init(&uart->huart);
-    
+
     if (cfg->bit_order == BIT_ORDER_MSB)
     {
-      UART_MSB_FIRST_ENABLE(&uart->huart);
+        UART_MSB_FIRST_ENABLE(&uart->huart);
     }
     else
     {
-      UART_MSB_FIRST_DISABLE(&uart->huart);
+        UART_MSB_FIRST_DISABLE(&uart->huart);
     }
-    
+
     if (cfg->invert == NRZ_INVERTED)
     {
-      UART_DATA_INV_ENABLE(&uart->huart);
+        UART_DATA_INV_ENABLE(&uart->huart);
     }
     else
     {
-      UART_DATA_INV_DISABLE(&uart->huart);
+        UART_DATA_INV_DISABLE(&uart->huart);
     }
-    
+
     /*enable rx int*/
-    uart_interrupt_config(&uart->huart,UART_IT_RXRD,ENABLE);
+    uart_interrupt_config(&uart->huart, UART_IT_RXRD, ENABLE);
 
     return RT_EOK;
 }
@@ -124,22 +124,22 @@ static rt_err_t es32f0x_control(struct rt_serial_device *serial, int cmd, void *
 {
     struct es32_uart *uart;
     RT_ASSERT(serial != RT_NULL);
-  
+
     uart = (struct es32_uart *)serial->parent.user_data;
     switch (cmd)
     {
-        case RT_DEVICE_CTRL_CLR_INT:
-            /* disable rx irq */
-            UART_DISABLE_IRQ(uart->irq);
-            /* disable interrupt */
-            uart_interrupt_config(&uart->huart,UART_IT_RXRD,DISABLE);
+    case RT_DEVICE_CTRL_CLR_INT:
+        /* disable rx irq */
+        UART_DISABLE_IRQ(uart->irq);
+        /* disable interrupt */
+        uart_interrupt_config(&uart->huart, UART_IT_RXRD, DISABLE);
         break;
-        
-        case RT_DEVICE_CTRL_SET_INT:
-            /* enable rx irq */
-            UART_ENABLE_IRQ(uart->irq);
-            /* enable interrupt */
-            uart_interrupt_config(&uart->huart,UART_IT_RXRD,ENABLE);
+
+    case RT_DEVICE_CTRL_SET_INT:
+        /* enable rx irq */
+        UART_ENABLE_IRQ(uart->irq);
+        /* enable interrupt */
+        uart_interrupt_config(&uart->huart, UART_IT_RXRD, ENABLE);
         break;
     }
 
@@ -199,8 +199,9 @@ void UART0_Handler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    
-    if (UART0->RIF&0x01) {
+
+    if (UART0->RIF & 0x01)
+    {
         rt_hw_serial_isr(&serial0, RT_SERIAL_EVENT_RX_IND);
     }
     /* leave interrupt */
@@ -223,7 +224,8 @@ void UART1_Handler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    if (UART1->RIF&0x01) {
+    if (UART1->RIF & 0x01)
+    {
         rt_hw_serial_isr(&serial1, RT_SERIAL_EVENT_RX_IND);
     }
     /* leave interrupt */
@@ -246,7 +248,8 @@ void BS16T1_UART2_Handler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    if (UART2->RIF&0x01) {
+    if (UART2->RIF & 0x01)
+    {
         rt_hw_serial_isr(&serial2, RT_SERIAL_EVENT_RX_IND);
     }
     /* leave interrupt */
@@ -269,7 +272,8 @@ void BS16T2_UART3_Handler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    if (UART3->RIF&0x01) {
+    if (UART3->RIF & 0x01)
+    {
         rt_hw_serial_isr(&serial3, RT_SERIAL_EVENT_RX_IND);
     }
     /* leave interrupt */
@@ -281,7 +285,7 @@ int rt_hw_usart_init(void)
 {
     struct es32_uart *uart;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
-  
+
 #ifdef RT_USING_UART0
     uart = &uart0;
     serial0.ops = &es32f0x_uart_ops;
@@ -292,7 +296,7 @@ int rt_hw_usart_init(void)
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
 #endif /* RT_USING_UART0 */
-  
+
 #ifdef RT_USING_UART1
     uart = &uart1;
     serial1.ops = &es32f0x_uart_ops;
@@ -303,7 +307,7 @@ int rt_hw_usart_init(void)
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
 #endif /* RT_USING_UART1 */
-  
+
 #ifdef RT_USING_UART2
     uart = &uart2;
     serial2.ops = &es32f0x_uart_ops;

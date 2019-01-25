@@ -55,17 +55,17 @@
   */
 void bkpc_ldo_config(bkpc_ldo_output_t output, type_func_t state)
 {
-	assert_param(IS_BKPC_LDO_OUTPUT(output));
-	assert_param(IS_FUNC_STATE(state));
+    assert_param(IS_BKPC_LDO_OUTPUT(output));
+    assert_param(IS_FUNC_STATE(state));
 
-	BKPC_UNLOCK();
-	MODIFY_REG(BKPC->CR, BKPC_CR_MT_STDB_MSK, state << BKPC_CR_MT_STDB_POS);
+    BKPC_UNLOCK();
+    MODIFY_REG(BKPC->CR, BKPC_CR_MT_STDB_MSK, state << BKPC_CR_MT_STDB_POS);
 
-	if (state)
-		MODIFY_REG(BKPC->CR, BKPC_CR_LDO_VSEL_MSK, output << BKPC_CR_LDO_VSEL_POSS);
+    if (state)
+        MODIFY_REG(BKPC->CR, BKPC_CR_LDO_VSEL_MSK, output << BKPC_CR_LDO_VSEL_POSS);
 
-	BKPC_LOCK();
-	return;
+    BKPC_LOCK();
+    return;
 }
 
 /**
@@ -76,17 +76,17 @@ void bkpc_ldo_config(bkpc_ldo_output_t output, type_func_t state)
   */
 void bkpc_bor_config(bkpc_bor_vol_t vol, type_func_t state)
 {
-	assert_param(IS_BKPC_BOR_VOL(vol));
-	assert_param(IS_FUNC_STATE(state));
+    assert_param(IS_BKPC_BOR_VOL(vol));
+    assert_param(IS_FUNC_STATE(state));
 
-	BKPC_UNLOCK();
-	MODIFY_REG(BKPC->PCR, BKPC_PCR_BOREN_MSK, state << BKPC_PCR_BOREN_POS);
+    BKPC_UNLOCK();
+    MODIFY_REG(BKPC->PCR, BKPC_PCR_BOREN_MSK, state << BKPC_PCR_BOREN_POS);
 
-	if (state)
-		MODIFY_REG(BKPC->PCR, BKPC_PCR_BORS_MSK, vol << BKPC_PCR_BORS_POSS);
+    if (state)
+        MODIFY_REG(BKPC->PCR, BKPC_PCR_BORS_MSK, vol << BKPC_PCR_BORS_POSS);
 
-	BKPC_LOCK();
-	return;
+    BKPC_LOCK();
+    return;
 
 
 }
@@ -117,13 +117,13 @@ void bkpc_bor_config(bkpc_bor_vol_t vol, type_func_t state)
   */
 void bkpc_write_ram(uint8_t idx, uint32_t value)
 {
-	assert_param(IS_BKPC_RAM_IDX(idx));
+    assert_param(IS_BKPC_RAM_IDX(idx));
 
-	RTC_UNLOCK();
-	WRITE_REG(RTC->BKPR[idx], value);
-	RTC_LOCK();
+    RTC_UNLOCK();
+    WRITE_REG(RTC->BKPR[idx], value);
+    RTC_LOCK();
 
-	return;
+    return;
 }
 
 /**
@@ -133,9 +133,9 @@ void bkpc_write_ram(uint8_t idx, uint32_t value)
   */
 uint32_t bkpc_read_ram(uint8_t idx)
 {
-	assert_param(IS_BKPC_RAM_IDX(idx));
+    assert_param(IS_BKPC_RAM_IDX(idx));
 
-	return READ_REG(RTC->BKPR[idx]);
+    return READ_REG(RTC->BKPR[idx]);
 }
 /**
   * @}

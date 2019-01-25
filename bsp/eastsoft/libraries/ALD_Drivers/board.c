@@ -48,7 +48,7 @@ void  SystemClock_Configuration(void)
     cmu_clock_config(CMU_CLOCK_PLL1, 48000000);
 
     /* SYSCLK 24MHz */
-    cmu_div_config(CMU_SYS,CMU_DIV_2);
+    cmu_div_config(CMU_SYS, CMU_DIV_2);
 }
 
 /*******************************************************************************
@@ -62,12 +62,12 @@ void  SysTick_Configuration(void)
 {
     rt_uint32_t _mclk;
     rt_uint32_t _sys_div = READ_BITS(CMU->CFGR, CMU_CFGR_SYSDIV_MSK, CMU_CFGR_SYSDIV_POSS);
-    
+
     /* get hrc clock*/
     _mclk = cmu_get_clock();
 
     /* SYSCLK = MCLK/SYSDIV */
-    SysTick_Config(_mclk/(RT_TICK_PER_SECOND<<_sys_div));
+    SysTick_Config(_mclk / (RT_TICK_PER_SECOND << _sys_div));
 }
 
 /**
@@ -93,10 +93,10 @@ void rt_hw_board_init(void)
 {
     /* NVIC Configuration */
     NVIC_Configuration();
-  
+
     /*System Clock Configuration */
     SystemClock_Configuration();
-  
+
     /* Configure the SysTick */
     SysTick_Configuration();
 
