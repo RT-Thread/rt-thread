@@ -12,6 +12,11 @@
 #define __PTHREAD_H__
 
 #include <rtthread.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <posix_types.h>
 #include <sched.h>
 
@@ -261,5 +266,9 @@ int pthread_barrier_init(pthread_barrier_t           *barrier,
                          unsigned                     count);
 
 int pthread_barrier_wait(pthread_barrier_t *barrier);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

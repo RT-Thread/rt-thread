@@ -112,7 +112,7 @@ static void utest_run(const char *utest_name)
         {
             if (tc_table[i].init() != RT_EOK)
             {
-                LOG_I("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
+                LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
                 goto __tc_continue;
             }
         }
@@ -126,19 +126,19 @@ static void utest_run(const char *utest_name)
             }
             else
             {
-                LOG_I("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
+                LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
             }
         }
         else
         {
-            LOG_I("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
+            LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
         }
 
         if (tc_table[i].cleanup != RT_NULL)
         {
             if (tc_table[i].cleanup() != RT_EOK)
             {
-                LOG_I("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
+                LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
                 goto __tc_continue;
             }
         }
@@ -227,6 +227,37 @@ void utest_assert_string(const char *a, const char *b, rt_bool_t equal, const ch
     else
     {
         if (rt_strcmp(a, b) == 0)
+        {
+            utest_assert(0, file, line, func, msg);
+        }
+        else
+        {
+            utest_assert(1, file, line, func, msg);
+        }
+    }
+}
+
+void utest_assert_buf(const char *a, const char *b, rt_size_t sz, rt_bool_t equal, const char *file, int line, const char *func, const char *msg)
+{
+    if (a == RT_NULL || b == RT_NULL)
+    {
+        utest_assert(0, file, line, func, msg);
+    }
+
+    if (equal)
+    {
+        if (rt_memcmp(a, b, sz) == 0)
+        {
+            utest_assert(1, file, line, func, msg);
+        }
+        else
+        {
+            utest_assert(0, file, line, func, msg);
+        }
+    }
+    else
+    {
+        if (rt_memcmp(a, b, sz) == 0)
         {
             utest_assert(0, file, line, func, msg);
         }

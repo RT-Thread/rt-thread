@@ -14,7 +14,7 @@
 /* parameters for sdram peripheral */
 /* Bank1 or Bank2 */
 #define SDRAM_TARGET_BANK               2
-/* stm32f4 Bank1:0XC0000000  Bank2:0XD0000000 */
+/* stm32f7 Bank1:0XC0000000  Bank2:0XD0000000 */
 #define SDRAM_BANK_ADDR                 ((uint32_t)0XD0000000)
 /* data width: 8, 16, 32 */
 #define SDRAM_DATA_WIDTH                16

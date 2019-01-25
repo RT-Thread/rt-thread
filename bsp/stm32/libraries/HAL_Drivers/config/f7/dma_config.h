@@ -14,6 +14,10 @@
 
 #include <rtthread.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* DMA1 stream0 */
 #if defined(BSP_SPI3_RX_USING_DMA) && !defined(SPI3_RX_DMA_INSTANCE)
 #define SPI3_DMA_RX_IRQHandler           DMA1_Stream0_IRQHandler
@@ -129,12 +133,12 @@
 #define SPI1_RX_DMA_INSTANCE             DMA2_Stream2
 #define SPI1_RX_DMA_CHANNEL              DMA_CHANNEL_3
 #define SPI1_RX_DMA_IRQ                  DMA2_Stream2_IRQn
-#elif defined(BSP_UART1_RX_USING_DMA) && !defined(USART1_RX_DMA_INSTANCE)
-#define USART1_DMA_RX_IRQHandler         DMA2_Stream2_IRQHandler
-#define USART1_RX_DMA_RCC                RCC_AHB1ENR_DMA2EN
-#define USART1_RX_DMA_INSTANCE           DMA2_Stream2
-#define USART1_RX_DMA_CHANNEL            DMA_CHANNEL_4
-#define USART1_RX_DMA_IRQ                DMA2_Stream2_IRQn
+#elif defined(BSP_UART1_RX_USING_DMA) && !defined(UART1_RX_DMA_INSTANCE)
+#define UART1_DMA_RX_IRQHandler         DMA2_Stream2_IRQHandler
+#define UART1_RX_DMA_RCC                RCC_AHB1ENR_DMA2EN
+#define UART1_RX_DMA_INSTANCE           DMA2_Stream2
+#define UART1_RX_DMA_CHANNEL            DMA_CHANNEL_4
+#define UART1_RX_DMA_IRQ                DMA2_Stream2_IRQn
 #elif defined(BSP_QSPI_USING_DMA) && !defined(QSPI_DMA_INSTANCE)
 #define QSPI_DMA_IRQHandler              DMA2_Stream2_IRQHandler
 #define QSPI_DMA_RCC                     RCC_AHB1ENR_DMA2EN
@@ -186,12 +190,12 @@
 #define SPI1_TX_DMA_INSTANCE             DMA2_Stream5
 #define SPI1_TX_DMA_CHANNEL              DMA_CHANNEL_3
 #define SPI1_TX_DMA_IRQ                  DMA2_Stream5_IRQn
-#elif defined(BSP_UART1_RX_USING_DMA) && !defined(USART1_RX_DMA_INSTANCE)
-#define USART1_DMA_RX_IRQHandler         DMA2_Stream5_IRQHandler
-#define USART1_RX_DMA_RCC                RCC_AHB1ENR_DMA2EN
-#define USART1_RX_DMA_INSTANCE           DMA2_Stream5
-#define USART1_RX_DMA_CHANNEL            DMA_CHANNEL_4
-#define USART1_RX_DMA_IRQ                DMA2_Stream5_IRQn
+#elif defined(BSP_UART1_RX_USING_DMA) && !defined(UART1_RX_DMA_INSTANCE)
+#define UART1_DMA_RX_IRQHandler         DMA2_Stream5_IRQHandler
+#define UART1_RX_DMA_RCC                RCC_AHB1ENR_DMA2EN
+#define UART1_RX_DMA_INSTANCE           DMA2_Stream5
+#define UART1_RX_DMA_CHANNEL            DMA_CHANNEL_4
+#define UART1_RX_DMA_IRQ                DMA2_Stream5_IRQn
 #elif defined(BSP_SPI5_RX_USING_DMA) && !defined(SPI5_RX_DMA_INSTANCE)
 #define SPI5_DMA_RX_IRQHandler           DMA2_Stream5_IRQHandler
 #define SPI5_RX_DMA_RCC                  RCC_AHB1ENR_DMA2EN
@@ -216,6 +220,10 @@
 #define QSPI_DMA_INSTANCE                DMA2_Stream7
 #define QSPI_DMA_CHANNEL                 DMA_CHANNEL_3
 #define QSPI_DMA_IRQ                     DMA2_Stream7_IRQn
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* __DMA_CONFIG_H__ */
