@@ -601,6 +601,7 @@ static char *print_number(char *buf,
 #else
     char tmp[16];
 #endif
+    int precision_bak = precision;
     const char *digits;
     static const char small_digits[] = "0123456789abcdef";
     static const char large_digits[] = "0123456789ABCDEF";
@@ -724,7 +725,7 @@ static char *print_number(char *buf,
 #endif
 
     /* put number in the temporary buffer */
-    while (i-- > 0)
+    while (i-- > 0 && (precision_bak != 0))
     {
         if (buf <= end)
             *buf = tmp[i];
