@@ -47,8 +47,8 @@
   * @{
   */
 #ifdef ALD_DMA
-static void adc_dma_normal_conv_cplt(void *arg);
-static void adc_dma_error(void *arg);
+    static void adc_dma_normal_conv_cplt(void *arg);
+    static void adc_dma_error(void *arg);
 #endif
 /**
   * @}
@@ -73,86 +73,92 @@ static void adc_dma_error(void *arg);
   */
 ald_status_t adc_init(adc_handle_t *hperh)
 {
-	ald_status_t tmp_status = OK;
+    ald_status_t tmp_status = OK;
 
-	if (hperh == NULL)
-		return ERROR;
+    if (hperh == NULL)
+        return ERROR;
 
-	assert_param(IS_ADC_TYPE(hperh->perh));
-	assert_param(IS_ADC_DATA_ALIGN_TYPE(hperh->init.data_align));
-	assert_param(IS_ADC_SCAN_MODE_TYPE(hperh->init.scan_mode));
-	assert_param(IS_ADC_CLK_DIV_TYPE(hperh->init.clk_div));
-	assert_param(IS_ADC_NEG_REF_VOLTAGE_TYPE(hperh->init.neg_ref));
-	assert_param(IS_POS_REF_VOLTAGE_TYPE(hperh->init.pos_ref));
-	assert_param(IS_ADC_CONV_RES_TYPE(hperh->init.conv_res));
-	assert_param(IS_ADC_NBR_OF_NM_TYPE(hperh->init.conv_nbr));
-	assert_param(IS_ADC_DISC_NBR_TYPE(hperh->init.disc_nbr));
-	assert_param(IS_FUNC_STATE(hperh->init.cont_mode));
-	assert_param(IS_FUNC_STATE(hperh->init.disc_mode));
-	assert_param(IS_ADC_NCHESEL_MODE_TYPE(hperh->init.nche_mode));
-	assert_param(IS_ADC_TRIG_MODE_TYPE(hperh->nm_trig_mode));
+    assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_DATA_ALIGN_TYPE(hperh->init.data_align));
+    assert_param(IS_ADC_SCAN_MODE_TYPE(hperh->init.scan_mode));
+    assert_param(IS_ADC_CLK_DIV_TYPE(hperh->init.clk_div));
+    assert_param(IS_ADC_NEG_REF_VOLTAGE_TYPE(hperh->init.neg_ref));
+    assert_param(IS_POS_REF_VOLTAGE_TYPE(hperh->init.pos_ref));
+    assert_param(IS_ADC_CONV_RES_TYPE(hperh->init.conv_res));
+    assert_param(IS_ADC_NBR_OF_NM_TYPE(hperh->init.conv_nbr));
+    assert_param(IS_ADC_DISC_NBR_TYPE(hperh->init.disc_nbr));
+    assert_param(IS_FUNC_STATE(hperh->init.cont_mode));
+    assert_param(IS_FUNC_STATE(hperh->init.disc_mode));
+    assert_param(IS_ADC_NCHESEL_MODE_TYPE(hperh->init.nche_mode));
+    assert_param(IS_ADC_TRIG_MODE_TYPE(hperh->nm_trig_mode));
 
-	if (hperh->state ==  ADC_STATE_RESET ) {
-		hperh->error_code = ADC_ERROR_NONE;
-		hperh->lock 	  = UNLOCK;
-	}
+    if (hperh->state ==  ADC_STATE_RESET)
+    {
+        hperh->error_code = ADC_ERROR_NONE;
+        hperh->lock       = UNLOCK;
+    }
 
-	ADC_DISABLE(hperh);
-	hperh->state = ADC_STATE_BUSY_INTERNAL;
-	MODIFY_REG(hperh->perh->CON1, ADC_CON1_ALIGN_MSK, hperh->init.data_align << ADC_CON1_ALIGN_POS);
-	MODIFY_REG(hperh->perh->CON1, ADC_CON1_CM_MSK, hperh->init.cont_mode << ADC_CON1_CM_POS);
-	MODIFY_REG(hperh->perh->CON0, ADC_CON0_SCANEN_MSK, hperh->init.scan_mode << ADC_CON0_SCANEN_POS);
-	MODIFY_REG(hperh->perh->CON0, ADC_CON0_RSEL_MSK, hperh->init.conv_res << ADC_CON0_RSEL_POSS);
+    ADC_DISABLE(hperh);
+    hperh->state = ADC_STATE_BUSY_INTERNAL;
+    MODIFY_REG(hperh->perh->CON1, ADC_CON1_ALIGN_MSK, hperh->init.data_align << ADC_CON1_ALIGN_POS);
+    MODIFY_REG(hperh->perh->CON1, ADC_CON1_CM_MSK, hperh->init.cont_mode << ADC_CON1_CM_POS);
+    MODIFY_REG(hperh->perh->CON0, ADC_CON0_SCANEN_MSK, hperh->init.scan_mode << ADC_CON0_SCANEN_POS);
+    MODIFY_REG(hperh->perh->CON0, ADC_CON0_RSEL_MSK, hperh->init.conv_res << ADC_CON0_RSEL_POSS);
 
-	/* Enable discontinuous mode only if continuous mode is enabled */
-	if (hperh->init.disc_mode == ENABLE) {
-		if (hperh->init.cont_mode == ENABLE) {
-			SET_BIT(hperh->perh->CON0, ADC_CON0_NCHDCEN_MSK);
-			MODIFY_REG(hperh->perh->CON0, ADC_CON0_ETRGN_MSK, hperh->init.disc_nbr << ADC_CON0_ETRGN_POSS);
-			MODIFY_REG(hperh->perh->CHSL, ADC_CHSL_NSL_MSK, hperh->init.conv_nbr << ADC_CHSL_NSL_POSS);
-		}
-		else {
-			hperh->state 	  |= ADC_STATE_ERROR;
-			hperh->error_code |= ADC_ERROR_INTERNAL;
-			tmp_status 	   = ERROR;
-		}
-	}
-	else {
-		CLEAR_BIT(hperh->perh->CON0, ADC_CON0_NCHDCEN_MSK);
-	}
+    /* Enable discontinuous mode only if continuous mode is enabled */
+    if (hperh->init.disc_mode == ENABLE)
+    {
+        if (hperh->init.cont_mode == ENABLE)
+        {
+            SET_BIT(hperh->perh->CON0, ADC_CON0_NCHDCEN_MSK);
+            MODIFY_REG(hperh->perh->CON0, ADC_CON0_ETRGN_MSK, hperh->init.disc_nbr << ADC_CON0_ETRGN_POSS);
+            MODIFY_REG(hperh->perh->CHSL, ADC_CHSL_NSL_MSK, hperh->init.conv_nbr << ADC_CHSL_NSL_POSS);
+        }
+        else
+        {
+            hperh->state      |= ADC_STATE_ERROR;
+            hperh->error_code |= ADC_ERROR_INTERNAL;
+            tmp_status     = ERROR;
+        }
+    }
+    else
+    {
+        CLEAR_BIT(hperh->perh->CON0, ADC_CON0_NCHDCEN_MSK);
+    }
 
-	if (hperh->init.scan_mode == ADC_SCAN_ENABLE)
-		MODIFY_REG(hperh->perh->CHSL, ADC_CHSL_NSL_MSK, hperh->init.conv_nbr << ADC_CHSL_NSL_POSS);
+    if (hperh->init.scan_mode == ADC_SCAN_ENABLE)
+        MODIFY_REG(hperh->perh->CHSL, ADC_CHSL_NSL_MSK, hperh->init.conv_nbr << ADC_CHSL_NSL_POSS);
 
-	if (hperh->init.cont_mode == ENABLE)
-		MODIFY_REG(hperh->perh->CHSL, ADC_CHSL_NSL_MSK, hperh->init.conv_nbr << ADC_CHSL_NSL_POSS);
+    if (hperh->init.cont_mode == ENABLE)
+        MODIFY_REG(hperh->perh->CHSL, ADC_CHSL_NSL_MSK, hperh->init.conv_nbr << ADC_CHSL_NSL_POSS);
 
-	MODIFY_REG(hperh->perh->CCR, ADC_CCR_GAINCALEN_MSK, DISABLE << ADC_CCR_GAINCALEN_POS);
-	MODIFY_REG(hperh->perh->CCR, ADC_CCR_OFFCALEN_MSK, DISABLE << ADC_CCR_OFFCALEN_POS);
-	MODIFY_REG(hperh->perh->CCR, ADC_CCR_DIFFEN_MSK, DISABLE << ADC_CCR_DIFFEN_POS);
-	/* if the ADC CLK less than 1MHZ,PWRMOD should be Enable*/
-	MODIFY_REG(hperh->perh->CCR, ADC_CCR_PWRMODSEL_MSK, DISABLE << ADC_CCR_PWRMODSEL_POS);
-	MODIFY_REG(hperh->perh->CCR, ADC_CCR_VRBUFEN_MSK, ENABLE << ADC_CCR_VRBUFEN_POS);
-	MODIFY_REG(hperh->perh->CCR, ADC_CCR_VCMBUFEN_MSK, ENABLE << ADC_CCR_VCMBUFEN_POS);
-	MODIFY_REG(hperh->perh->CCR, ADC_CCR_VREFEN_MSK, ENABLE << ADC_CCR_VREFEN_POS);
-	MODIFY_REG(hperh->perh->CCR, ADC_CCR_IREFEN_MSK, ENABLE << ADC_CCR_IREFEN_POS);
-	MODIFY_REG(hperh->perh->CCR, ADC_CCR_CKDIV_MSK, hperh->init.clk_div << ADC_CCR_CKDIV_POSS);
-	MODIFY_REG(hperh->perh->CCR, ADC_CCR_VRNSEL_MSK, hperh->init.neg_ref << ADC_CCR_VRNSEL_POS);
-	MODIFY_REG(hperh->perh->CCR, ADC_CCR_VRPSEL_MSK, hperh->init.pos_ref << ADC_CCR_VRPSEL_POSS);
-	MODIFY_REG(hperh->perh->CON1, ADC_CON1_NCHESEL_MSK, hperh->init.nche_mode << ADC_CON1_NCHESEL_POS);
+    MODIFY_REG(hperh->perh->CCR, ADC_CCR_GAINCALEN_MSK, DISABLE << ADC_CCR_GAINCALEN_POS);
+    MODIFY_REG(hperh->perh->CCR, ADC_CCR_OFFCALEN_MSK, DISABLE << ADC_CCR_OFFCALEN_POS);
+    MODIFY_REG(hperh->perh->CCR, ADC_CCR_DIFFEN_MSK, DISABLE << ADC_CCR_DIFFEN_POS);
+    /* if the ADC CLK less than 1MHZ,PWRMOD should be Enable*/
+    MODIFY_REG(hperh->perh->CCR, ADC_CCR_PWRMODSEL_MSK, DISABLE << ADC_CCR_PWRMODSEL_POS);
+    MODIFY_REG(hperh->perh->CCR, ADC_CCR_VRBUFEN_MSK, ENABLE << ADC_CCR_VRBUFEN_POS);
+    MODIFY_REG(hperh->perh->CCR, ADC_CCR_VCMBUFEN_MSK, ENABLE << ADC_CCR_VCMBUFEN_POS);
+    MODIFY_REG(hperh->perh->CCR, ADC_CCR_VREFEN_MSK, ENABLE << ADC_CCR_VREFEN_POS);
+    MODIFY_REG(hperh->perh->CCR, ADC_CCR_IREFEN_MSK, ENABLE << ADC_CCR_IREFEN_POS);
+    MODIFY_REG(hperh->perh->CCR, ADC_CCR_CKDIV_MSK, hperh->init.clk_div << ADC_CCR_CKDIV_POSS);
+    MODIFY_REG(hperh->perh->CCR, ADC_CCR_VRNSEL_MSK, hperh->init.neg_ref << ADC_CCR_VRNSEL_POS);
+    MODIFY_REG(hperh->perh->CCR, ADC_CCR_VRPSEL_MSK, hperh->init.pos_ref << ADC_CCR_VRPSEL_POSS);
+    MODIFY_REG(hperh->perh->CON1, ADC_CON1_NCHESEL_MSK, hperh->init.nche_mode << ADC_CON1_NCHESEL_POS);
 
-	if (hperh->nm_trig_mode != ADC_TRIG_SOFT)
-		pis_create(&hperh->reg_pis_handle);
+    if (hperh->nm_trig_mode != ADC_TRIG_SOFT)
+        pis_create(&hperh->reg_pis_handle);
 
-	if (tmp_status == OK) {
-		hperh->error_code = ADC_ERROR_NONE;
-		hperh->state 	 |= ADC_STATE_READY;
-		hperh->state 	 &= ~(ADC_STATE_ERROR | ADC_STATE_NM_BUSY
-				      | ADC_STATE_IST_BUSY | ADC_STATE_BUSY_INTERNAL);
-	}
+    if (tmp_status == OK)
+    {
+        hperh->error_code = ADC_ERROR_NONE;
+        hperh->state     |= ADC_STATE_READY;
+        hperh->state     &= ~(ADC_STATE_ERROR | ADC_STATE_NM_BUSY
+                              | ADC_STATE_IST_BUSY | ADC_STATE_BUSY_INTERNAL);
+    }
 
-	adc_interrupt_config(hperh, ADC_IT_OVR, ENABLE);
-	return tmp_status;
+    adc_interrupt_config(hperh, ADC_IT_OVR, ENABLE);
+    return tmp_status;
 }
 
 /**
@@ -164,47 +170,47 @@ ald_status_t adc_init(adc_handle_t *hperh)
   */
 ald_status_t adc_reset(adc_handle_t *hperh)
 {
-	if (hperh == NULL)
-		return ERROR;
+    if (hperh == NULL)
+        return ERROR;
 
-	assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_TYPE(hperh->perh));
 
-	ADC_DISABLE(hperh);
+    ADC_DISABLE(hperh);
 
-	adc_clear_flag_status(hperh, ADC_FLAG_AWD);
-	adc_clear_flag_status(hperh, ADC_FLAG_NH);
-	adc_clear_flag_status(hperh, ADC_FLAG_IH);
-	adc_clear_flag_status(hperh, ADC_FLAG_OVR);
-	adc_clear_flag_status(hperh, ADC_FLAG_NHS);
-	adc_clear_flag_status(hperh, ADC_FLAG_IHS);
+    adc_clear_flag_status(hperh, ADC_FLAG_AWD);
+    adc_clear_flag_status(hperh, ADC_FLAG_NH);
+    adc_clear_flag_status(hperh, ADC_FLAG_IH);
+    adc_clear_flag_status(hperh, ADC_FLAG_OVR);
+    adc_clear_flag_status(hperh, ADC_FLAG_NHS);
+    adc_clear_flag_status(hperh, ADC_FLAG_IHS);
 
-	WRITE_REG(hperh->perh->CON0, 0x0);
-	WRITE_REG(hperh->perh->CON1, 0x0);
-	WRITE_REG(hperh->perh->CCR, 0x0);
-	WRITE_REG(hperh->perh->WDTH, 0xFFF);
-	WRITE_REG(hperh->perh->WDTL, 0x0);
-	WRITE_REG(hperh->perh->ICHOFF[0], 0x0);
-	WRITE_REG(hperh->perh->ICHOFF[1], 0x0);
-	WRITE_REG(hperh->perh->ICHOFF[2], 0x0);
-	WRITE_REG(hperh->perh->ICHOFF[3], 0x0);
-	WRITE_REG(hperh->perh->ICHS, 0x0);
-	WRITE_REG(hperh->perh->NCHS1, 0x0);
-	WRITE_REG(hperh->perh->NCHS2, 0x0);
-	WRITE_REG(hperh->perh->NCHS3, 0x0);
-	WRITE_REG(hperh->perh->NCHS4, 0x0);
-	WRITE_REG(hperh->perh->SMPT1, 0x0);
-	WRITE_REG(hperh->perh->SMPT2, 0x0);
-	WRITE_REG(hperh->perh->CHSL, 0x0);
+    WRITE_REG(hperh->perh->CON0, 0x0);
+    WRITE_REG(hperh->perh->CON1, 0x0);
+    WRITE_REG(hperh->perh->CCR, 0x0);
+    WRITE_REG(hperh->perh->WDTH, 0xFFF);
+    WRITE_REG(hperh->perh->WDTL, 0x0);
+    WRITE_REG(hperh->perh->ICHOFF[0], 0x0);
+    WRITE_REG(hperh->perh->ICHOFF[1], 0x0);
+    WRITE_REG(hperh->perh->ICHOFF[2], 0x0);
+    WRITE_REG(hperh->perh->ICHOFF[3], 0x0);
+    WRITE_REG(hperh->perh->ICHS, 0x0);
+    WRITE_REG(hperh->perh->NCHS1, 0x0);
+    WRITE_REG(hperh->perh->NCHS2, 0x0);
+    WRITE_REG(hperh->perh->NCHS3, 0x0);
+    WRITE_REG(hperh->perh->NCHS4, 0x0);
+    WRITE_REG(hperh->perh->SMPT1, 0x0);
+    WRITE_REG(hperh->perh->SMPT2, 0x0);
+    WRITE_REG(hperh->perh->CHSL, 0x0);
 
-	if (hperh->nm_trig_mode != ADC_TRIG_SOFT)
-		pis_destroy(&hperh->reg_pis_handle);
+    if (hperh->nm_trig_mode != ADC_TRIG_SOFT)
+        pis_destroy(&hperh->reg_pis_handle);
 
-	if (hperh->ist_trig_mode != ADC_TRIG_SOFT)
-		pis_destroy(&hperh->inj_pis_handle);
+    if (hperh->ist_trig_mode != ADC_TRIG_SOFT)
+        pis_destroy(&hperh->inj_pis_handle);
 
-	hperh->state      = ADC_STATE_RESET;
-	hperh->error_code = ADC_ERROR_NONE;
-	return OK;
+    hperh->state      = ADC_STATE_RESET;
+    hperh->error_code = ADC_ERROR_NONE;
+    return OK;
 }
 /**
   * @}
@@ -223,23 +229,23 @@ ald_status_t adc_reset(adc_handle_t *hperh)
   */
 ald_status_t adc_normal_start(adc_handle_t *hperh)
 {
-	if (hperh == NULL)
-		return ERROR;
+    if (hperh == NULL)
+        return ERROR;
 
-	assert_param(IS_ADC_TRIG_MODE_TYPE(hperh->nm_trig_mode));
-	assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_TRIG_MODE_TYPE(hperh->nm_trig_mode));
+    assert_param(IS_ADC_TYPE(hperh->perh));
 
-	__LOCK(hperh);
-	ADC_ENABLE(hperh);
-	hperh->state &= ~(ADC_STATE_READY | ADC_STATE_NM_EOC);
-	hperh->state |= ADC_STATE_NM_BUSY;
-	__UNLOCK(hperh);
-	adc_clear_flag_status(hperh, ADC_FLAG_NH);
+    __LOCK(hperh);
+    ADC_ENABLE(hperh);
+    hperh->state &= ~(ADC_STATE_READY | ADC_STATE_NM_EOC);
+    hperh->state |= ADC_STATE_NM_BUSY;
+    __UNLOCK(hperh);
+    adc_clear_flag_status(hperh, ADC_FLAG_NH);
 
-	if (hperh->nm_trig_mode == ADC_TRIG_SOFT)
-		SET_BIT(hperh->perh->CON1, ADC_CON1_NCHTRG_MSK);
+    if (hperh->nm_trig_mode == ADC_TRIG_SOFT)
+        SET_BIT(hperh->perh->CON1, ADC_CON1_NCHTRG_MSK);
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -254,17 +260,17 @@ ald_status_t adc_normal_start(adc_handle_t *hperh)
   */
 ald_status_t adc_normal_stop(adc_handle_t *hperh)
 {
-	assert_param(IS_ADC_TRIG_MODE_TYPE(hperh->nm_trig_mode));
-	assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_TRIG_MODE_TYPE(hperh->nm_trig_mode));
+    assert_param(IS_ADC_TYPE(hperh->perh));
 
-	__LOCK(hperh);
+    __LOCK(hperh);
 
-	ADC_DISABLE(hperh);
-	hperh->state &= ~(ADC_STATE_NM_BUSY | ADC_STATE_NM_EOC);
-	hperh->state |=  ADC_STATE_READY;
+    ADC_DISABLE(hperh);
+    hperh->state &= ~(ADC_STATE_NM_BUSY | ADC_STATE_NM_EOC);
+    hperh->state |=  ADC_STATE_READY;
 
-	__UNLOCK(hperh);
-	return OK;
+    __UNLOCK(hperh);
+    return OK;
 }
 
 /**
@@ -281,35 +287,39 @@ ald_status_t adc_normal_stop(adc_handle_t *hperh)
   */
 ald_status_t adc_normal_poll_for_conversion(adc_handle_t *hperh, uint32_t timeout)
 {
-	uint32_t tickstart = 0;
+    uint32_t tickstart = 0;
 
-	assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_TYPE(hperh->perh));
 
-	tickstart = __get_tick();
-	while (!(READ_BIT(hperh->perh->STAT, ADC_STAT_NCHE_MSK))) {
-		if (timeout != ALD_MAX_DELAY ) {
-			if ((timeout == 0) || ((__get_tick() - tickstart) > timeout)) {
-				hperh->state |= ADC_STATE_TIMEOUT;
-				__UNLOCK(hperh);
-				return TIMEOUT;
-			}
-		}
-	}
+    tickstart = __get_tick();
+    while (!(READ_BIT(hperh->perh->STAT, ADC_STAT_NCHE_MSK)))
+    {
+        if (timeout != ALD_MAX_DELAY)
+        {
+            if ((timeout == 0) || ((__get_tick() - tickstart) > timeout))
+            {
+                hperh->state |= ADC_STATE_TIMEOUT;
+                __UNLOCK(hperh);
+                return TIMEOUT;
+            }
+        }
+    }
 
-	adc_clear_flag_status(hperh, ADC_FLAG_NHS);
-	adc_clear_flag_status(hperh, ADC_FLAG_NH);
+    adc_clear_flag_status(hperh, ADC_FLAG_NHS);
+    adc_clear_flag_status(hperh, ADC_FLAG_NH);
 
-	hperh->state |= ADC_STATE_NM_EOC;
+    hperh->state |= ADC_STATE_NM_EOC;
 
-	if ((hperh->nm_trig_mode == ADC_TRIG_SOFT)
-		       && (hperh->init.cont_mode == DISABLE)
-	               && (hperh->init.scan_mode == ADC_SCAN_DISABLE)) {
-		hperh->state &= ~ADC_STATE_NM_BUSY;
+    if ((hperh->nm_trig_mode == ADC_TRIG_SOFT)
+            && (hperh->init.cont_mode == DISABLE)
+            && (hperh->init.scan_mode == ADC_SCAN_DISABLE))
+    {
+        hperh->state &= ~ADC_STATE_NM_BUSY;
 
-		if ((hperh->state & ADC_STATE_IST_BUSY) == 0)
-			hperh->state |= ADC_STATE_READY;
-	}
-	return OK;
+        if ((hperh->state & ADC_STATE_IST_BUSY) == 0)
+            hperh->state |= ADC_STATE_READY;
+    }
+    return OK;
 }
 
 /**
@@ -324,25 +334,28 @@ ald_status_t adc_normal_poll_for_conversion(adc_handle_t *hperh, uint32_t timeou
   */
 ald_status_t adc_poll_for_event(adc_handle_t *hperh, adc_event_type_t event_type, uint32_t timeout)
 {
-	uint32_t tickstart = 0;
+    uint32_t tickstart = 0;
 
-	assert_param(IS_ADC_TYPE(hperh->perh));
-	assert_param(IS_ADC_EVENT_TYPE(event_type));
+    assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_EVENT_TYPE(event_type));
 
-	tickstart = __get_tick();
+    tickstart = __get_tick();
 
-	while (adc_get_flag_status(hperh, (adc_flag_t)event_type) == RESET) {
-		if (timeout != ALD_MAX_DELAY ) {
-			if ((timeout == 0) || ((__get_tick() - tickstart) > timeout)) {
-				hperh->state |= ADC_STATE_TIMEOUT;
-				__UNLOCK(hperh);
-				return TIMEOUT;
-			}
-		}
-	}
+    while (adc_get_flag_status(hperh, (adc_flag_t)event_type) == RESET)
+    {
+        if (timeout != ALD_MAX_DELAY)
+        {
+            if ((timeout == 0) || ((__get_tick() - tickstart) > timeout))
+            {
+                hperh->state |= ADC_STATE_TIMEOUT;
+                __UNLOCK(hperh);
+                return TIMEOUT;
+            }
+        }
+    }
 
-	hperh->state |= ADC_STATE_AWD;
-	return OK;
+    hperh->state |= ADC_STATE_AWD;
+    return OK;
 }
 
 /**
@@ -356,27 +369,28 @@ ald_status_t adc_poll_for_event(adc_handle_t *hperh, adc_event_type_t event_type
   */
 ald_status_t adc_normal_start_by_it(adc_handle_t *hperh)
 {
-	assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_TYPE(hperh->perh));
 
-	__LOCK(hperh);
-	ADC_ENABLE(hperh);
-	hperh->state 	 &= ~(ADC_STATE_READY | ADC_STATE_NM_EOC);
-	hperh->state 	 |= ADC_STATE_NM_BUSY;
-	hperh->error_code = ADC_ERROR_NONE;
+    __LOCK(hperh);
+    ADC_ENABLE(hperh);
+    hperh->state     &= ~(ADC_STATE_READY | ADC_STATE_NM_EOC);
+    hperh->state     |= ADC_STATE_NM_BUSY;
+    hperh->error_code = ADC_ERROR_NONE;
 
-	if (READ_BIT(hperh->perh->CON0, ADC_CON0_IAUTO_MSK)) {
-		hperh->state &= ~(ADC_STATE_IST_EOC);
-		hperh->state |= ADC_STATE_IST_BUSY;
-	}
+    if (READ_BIT(hperh->perh->CON0, ADC_CON0_IAUTO_MSK))
+    {
+        hperh->state &= ~(ADC_STATE_IST_EOC);
+        hperh->state |= ADC_STATE_IST_BUSY;
+    }
 
-	__UNLOCK(hperh);
-	adc_clear_flag_status(hperh, ADC_FLAG_NH);
-	adc_interrupt_config(hperh, ADC_IT_NH, ENABLE);
+    __UNLOCK(hperh);
+    adc_clear_flag_status(hperh, ADC_FLAG_NH);
+    adc_interrupt_config(hperh, ADC_IT_NH, ENABLE);
 
-	if (hperh->nm_trig_mode == ADC_TRIG_SOFT)
-		SET_BIT(hperh->perh->CON1, ADC_CON1_NCHTRG_MSK);
+    if (hperh->nm_trig_mode == ADC_TRIG_SOFT)
+        SET_BIT(hperh->perh->CON1, ADC_CON1_NCHTRG_MSK);
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -389,16 +403,16 @@ ald_status_t adc_normal_start_by_it(adc_handle_t *hperh)
   */
 ald_status_t adc_normal_stop_by_it(adc_handle_t *hperh)
 {
-	assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_TYPE(hperh->perh));
 
-	__LOCK(hperh);
-	ADC_DISABLE(hperh);
-	adc_interrupt_config(hperh, ADC_IT_NH, DISABLE);
-	hperh->state |= ADC_STATE_READY;
-	hperh->state &= ~(ADC_STATE_NM_BUSY | ADC_STATE_IST_BUSY);
+    __LOCK(hperh);
+    ADC_DISABLE(hperh);
+    adc_interrupt_config(hperh, ADC_IT_NH, DISABLE);
+    hperh->state |= ADC_STATE_READY;
+    hperh->state &= ~(ADC_STATE_NM_BUSY | ADC_STATE_IST_BUSY);
 
-	__UNLOCK(hperh);
-	return OK;
+    __UNLOCK(hperh);
+    return OK;
 }
 
 #ifdef ALD_DMA
@@ -414,62 +428,65 @@ ald_status_t adc_normal_stop_by_it(adc_handle_t *hperh)
   */
 ald_status_t adc_start_by_dma(adc_handle_t *hperh, uint16_t *buf, uint16_t size, uint8_t channel)
 {
-	if ((hperh == NULL) || (buf == NULL) || (size == 0) || (channel > 5))
-		return ERROR;
+    if ((hperh == NULL) || (buf == NULL) || (size == 0) || (channel > 5))
+        return ERROR;
 
-	assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_TYPE(hperh->perh));
 
-	__LOCK(hperh);
-	ADC_ENABLE(hperh);
-	hperh->state &= ~(ADC_STATE_READY | ADC_STATE_NM_EOC);
-	hperh->state |= ADC_STATE_NM_BUSY;
+    __LOCK(hperh);
+    ADC_ENABLE(hperh);
+    hperh->state &= ~(ADC_STATE_READY | ADC_STATE_NM_EOC);
+    hperh->state |= ADC_STATE_NM_BUSY;
 
-	if (READ_BIT(hperh->perh->CON0, ADC_CON0_IAUTO_MSK)) {
-		hperh->state &= ~(ADC_STATE_IST_EOC);
-		hperh->state |= ADC_STATE_IST_BUSY;
-	}
+    if (READ_BIT(hperh->perh->CON0, ADC_CON0_IAUTO_MSK))
+    {
+        hperh->state &= ~(ADC_STATE_IST_EOC);
+        hperh->state |= ADC_STATE_IST_BUSY;
+    }
 
-	if ((hperh->state & ADC_STATE_IST_BUSY) != 0) {
-		hperh->state      &= ~(ADC_STATE_ERROR);
-		hperh->error_code &= ~(ADC_ERROR_OVR | ADC_ERROR_DMA);
-	}
-	else {
-		hperh->state     &= ~(ADC_STATE_ERROR);
-		hperh->error_code = ADC_ERROR_NONE;
-	}
-	__UNLOCK(hperh);
+    if ((hperh->state & ADC_STATE_IST_BUSY) != 0)
+    {
+        hperh->state      &= ~(ADC_STATE_ERROR);
+        hperh->error_code &= ~(ADC_ERROR_OVR | ADC_ERROR_DMA);
+    }
+    else
+    {
+        hperh->state     &= ~(ADC_STATE_ERROR);
+        hperh->error_code = ADC_ERROR_NONE;
+    }
+    __UNLOCK(hperh);
 
-	if (hperh->hdma.perh == NULL)
-		hperh->hdma.perh = DMA0;
+    if (hperh->hdma.perh == NULL)
+        hperh->hdma.perh = DMA0;
 
-	hperh->hdma.cplt_cbk = adc_dma_normal_conv_cplt;
-	hperh->hdma.cplt_arg = hperh;
-	hperh->hdma.err_cbk  = adc_dma_error;
-	hperh->hdma.err_arg  = hperh;
+    hperh->hdma.cplt_cbk = adc_dma_normal_conv_cplt;
+    hperh->hdma.cplt_arg = hperh;
+    hperh->hdma.err_cbk  = adc_dma_error;
+    hperh->hdma.err_arg  = hperh;
 
-	dma_config_struct(&hperh->hdma.config);
-	hperh->hdma.config.src        = (void *)&hperh->perh->NCHDR;
-	hperh->hdma.config.dst        = (void *)buf;
-	hperh->hdma.config.size       = size;
-	hperh->hdma.config.data_width = DMA_DATA_SIZE_HALFWORD;
-	hperh->hdma.config.src_inc    = DMA_DATA_INC_NONE;
-	hperh->hdma.config.dst_inc    = DMA_DATA_INC_HALFWORD;
-	hperh->hdma.config.msel       = DMA_MSEL_ADC0;
-	hperh->hdma.config.msigsel    = DMA_MSIGSEL_ADC;
-	hperh->hdma.config.channel    = channel;
-	dma_config_basic(&hperh->hdma);
+    dma_config_struct(&hperh->hdma.config);
+    hperh->hdma.config.src        = (void *)&hperh->perh->NCHDR;
+    hperh->hdma.config.dst        = (void *)buf;
+    hperh->hdma.config.size       = size;
+    hperh->hdma.config.data_width = DMA_DATA_SIZE_HALFWORD;
+    hperh->hdma.config.src_inc    = DMA_DATA_INC_NONE;
+    hperh->hdma.config.dst_inc    = DMA_DATA_INC_HALFWORD;
+    hperh->hdma.config.msel       = DMA_MSEL_ADC0;
+    hperh->hdma.config.msigsel    = DMA_MSIGSEL_ADC;
+    hperh->hdma.config.channel    = channel;
+    dma_config_basic(&hperh->hdma);
 
-	hperh->hpis.init.producer_src  = PIS_ADC1_REGULAT;
-	hperh->hpis.init.producer_clk  = PIS_CLK_PCLK2;
-	hperh->hpis.init.producer_edge = PIS_EDGE_NONE;
-	hperh->hpis.init.consumer_trig = PIS_CH7_DAC_CH0;
-	hperh->hpis.init.consumer_clk  = PIS_CLK_PCLK1;
- 	pis_create(&hperh->hpis);
+    hperh->hpis.init.producer_src  = PIS_ADC1_REGULAT;
+    hperh->hpis.init.producer_clk  = PIS_CLK_PCLK2;
+    hperh->hpis.init.producer_edge = PIS_EDGE_NONE;
+    hperh->hpis.init.consumer_trig = PIS_CH7_DAC_CH0;
+    hperh->hpis.init.consumer_clk  = PIS_CLK_PCLK1;
+    pis_create(&hperh->hpis);
 
-	if (hperh->nm_trig_mode == ADC_TRIG_SOFT)
-		SET_BIT(hperh->perh->CON1, ADC_CON1_NCHTRG_MSK);
+    if (hperh->nm_trig_mode == ADC_TRIG_SOFT)
+        SET_BIT(hperh->perh->CON1, ADC_CON1_NCHTRG_MSK);
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -482,16 +499,16 @@ ald_status_t adc_start_by_dma(adc_handle_t *hperh, uint16_t *buf, uint16_t size,
   */
 ald_status_t adc_stop_dma(adc_handle_t *hperh)
 {
-	assert_param(IS_ADC_TYPE(hperh->perh));
-	__LOCK(hperh);
+    assert_param(IS_ADC_TYPE(hperh->perh));
+    __LOCK(hperh);
 
-	ADC_DISABLE(hperh);
-	pis_destroy(&hperh->hpis);
-	hperh->state &= ~(ADC_STATE_NM_BUSY | ADC_STATE_IST_BUSY);
-	hperh->state |= ADC_STATE_READY;
+    ADC_DISABLE(hperh);
+    pis_destroy(&hperh->hpis);
+    hperh->state &= ~(ADC_STATE_NM_BUSY | ADC_STATE_IST_BUSY);
+    hperh->state |= ADC_STATE_READY;
 
-	__UNLOCK(hperh);
-	return OK;
+    __UNLOCK(hperh);
+    return OK;
 }
 
 /**
@@ -501,14 +518,14 @@ ald_status_t adc_stop_dma(adc_handle_t *hperh)
   */
 static void adc_dma_timer_trigger_cplt(void *arg)
 {
-	adc_timer_config_t *hperh = (adc_timer_config_t *)arg;
+    adc_timer_config_t *hperh = (adc_timer_config_t *)arg;
 
-	ADC_DISABLE(&hperh->lh_adc);
-	timer_base_stop(&hperh->lh_timer);
-	
-	__UNLOCK(hperh);
-	if (hperh->lh_adc.adc_reg_cplt_cbk != NULL)
-		hperh->lh_adc.adc_reg_cplt_cbk(&hperh->lh_adc);
+    ADC_DISABLE(&hperh->lh_adc);
+    timer_base_stop(&hperh->lh_timer);
+
+    __UNLOCK(hperh);
+    if (hperh->lh_adc.adc_reg_cplt_cbk != NULL)
+        hperh->lh_adc.adc_reg_cplt_cbk(&hperh->lh_adc);
 
 }
 
@@ -521,88 +538,88 @@ static void adc_dma_timer_trigger_cplt(void *arg)
   */
 ald_status_t adc_timer_trigger_adc_by_dma(adc_timer_config_t *config)
 {
-	__LOCK(config);
+    __LOCK(config);
 
-	config->lh_pis.perh               = PIS;
-	config->lh_pis.init.producer_clk  = PIS_CLK_PCLK1;
-	config->lh_pis.init.producer_edge = PIS_EDGE_NONE;
-	config->lh_pis.init.consumer_clk  = PIS_CLK_PCLK1;
-	
-	if (config->p_timer == TIMER0)
-		config->lh_pis.init.producer_src  = PIS_TIMER0_UPDATA;
-	else if (config->p_timer == TIMER1)
-		config->lh_pis.init.producer_src  = PIS_TIMER1_UPDATA;
-	else if (config->p_timer == TIMER2)
-		config->lh_pis.init.producer_src  = PIS_TIMER2_UPDATA;
-	else if (config->p_timer == TIMER3)
-		config->lh_pis.init.producer_src  = PIS_TIMER3_UPDATA;
-	else
-		return ERROR;
-	
-	if (config->p_adc == ADC0)
-		config->lh_pis.init.consumer_trig = PIS_CH6_ADC0_NORMAL;
-	else if (config->p_adc == ADC1)
-		config->lh_pis.init.consumer_trig = PIS_CH0_ADC1_NORMAL;
-	else
-		return ERROR;
+    config->lh_pis.perh               = PIS;
+    config->lh_pis.init.producer_clk  = PIS_CLK_PCLK1;
+    config->lh_pis.init.producer_edge = PIS_EDGE_NONE;
+    config->lh_pis.init.consumer_clk  = PIS_CLK_PCLK1;
 
-	pis_create(&config->lh_pis);
-	
-	/* Initialize TIMER0 */
-	config->lh_timer.perh           = config->p_timer;
-	config->lh_timer.init.prescaler = 0;
-	config->lh_timer.init.mode      = TIMER_CNT_MODE_UP;
-	config->lh_timer.init.period    = ((cmu_get_pclk1_clock() / 1000000) * config->time);
-	config->lh_timer.init.clk_div   = TIMER_CLOCK_DIV1;
-	config->lh_timer.init.re_cnt    = 0;
-	timer_base_init(&config->lh_timer);
+    if (config->p_timer == TIMER0)
+        config->lh_pis.init.producer_src  = PIS_TIMER0_UPDATA;
+    else if (config->p_timer == TIMER1)
+        config->lh_pis.init.producer_src  = PIS_TIMER1_UPDATA;
+    else if (config->p_timer == TIMER2)
+        config->lh_pis.init.producer_src  = PIS_TIMER2_UPDATA;
+    else if (config->p_timer == TIMER3)
+        config->lh_pis.init.producer_src  = PIS_TIMER3_UPDATA;
+    else
+        return ERROR;
 
-	config->lh_adc.perh               = config->p_adc;
-	config->lh_adc.init.data_align    = ADC_DATAALIGN_RIGHT;
-	config->lh_adc.init.scan_mode     = ADC_SCAN_DISABLE;
-	config->lh_adc.init.cont_mode     = DISABLE;
-	config->lh_adc.init.conv_nbr      = ADC_NM_NBR_1;
-	config->lh_adc.init.disc_mode     = DISABLE;
-	config->lh_adc.init.disc_nbr      = ADC_DISC_NBR_1;
-	config->lh_adc.init.conv_res      = ADC_CONV_RES_12;
-	config->lh_adc.init.clk_div       = ADC_CKDIV_16;
-	config->lh_adc.init.nche_mode     = ADC_NCHESEL_MODE_ONE;
-	config->lh_adc.init.neg_ref       = config->n_ref;
-	config->lh_adc.init.pos_ref       = config->p_ref;
-	config->lh_adc.adc_reg_cplt_cbk   = config->adc_cplt_cbk;
-	config->lh_adc.adc_inj_cplt_cbk   = NULL;
-	config->lh_adc.adc_out_of_win_cbk = NULL;
-	config->lh_adc.adc_error_cbk      = NULL;
-	config->lh_adc.adc_ovr_cbk        = NULL;
-	adc_init(&config->lh_adc);
+    if (config->p_adc == ADC0)
+        config->lh_pis.init.consumer_trig = PIS_CH6_ADC0_NORMAL;
+    else if (config->p_adc == ADC1)
+        config->lh_pis.init.consumer_trig = PIS_CH0_ADC1_NORMAL;
+    else
+        return ERROR;
 
-	config->lnm_config.channel       = config->adc_ch;
-	config->lnm_config.rank          = ADC_NC_RANK_1;
-	config->lnm_config.sampling_time = ADC_SAMPLETIME_1;
- 	adc_normal_channel_config(&config->lh_adc, &config->lnm_config);
-	
-	config->lh_dma.cplt_cbk = adc_dma_timer_trigger_cplt;
-	config->lh_dma.cplt_arg = config;
-	config->lh_dma.err_cbk  = adc_dma_error;
-	config->lh_dma.err_arg  = &config->lh_adc;
+    pis_create(&config->lh_pis);
 
-	dma_config_struct(&config->lh_dma.config);
-	config->lh_dma.perh              = DMA0;
-	config->lh_dma.config.src        = (void *)&config->lh_adc.perh->NCHDR;
-	config->lh_dma.config.dst        = (void *)config->buf;
-	config->lh_dma.config.size       = config->size;
-	config->lh_dma.config.data_width = DMA_DATA_SIZE_HALFWORD;
-	config->lh_dma.config.src_inc    = DMA_DATA_INC_NONE;
-	config->lh_dma.config.dst_inc    = DMA_DATA_INC_HALFWORD;
-	config->lh_dma.config.msel       = config->p_adc == ADC0? DMA_MSEL_ADC0 : DMA_MSEL_ADC1;
-	config->lh_dma.config.msigsel    = DMA_MSIGSEL_ADC;
-	config->lh_dma.config.channel    = config->dma_ch;
-	dma_config_basic(&config->lh_dma);
-	
-	ADC_ENABLE(&config->lh_adc);
-	timer_base_start(&config->lh_timer);
+    /* Initialize TIMER0 */
+    config->lh_timer.perh           = config->p_timer;
+    config->lh_timer.init.prescaler = 0;
+    config->lh_timer.init.mode      = TIMER_CNT_MODE_UP;
+    config->lh_timer.init.period    = ((cmu_get_pclk1_clock() / 1000000) * config->time);
+    config->lh_timer.init.clk_div   = TIMER_CLOCK_DIV1;
+    config->lh_timer.init.re_cnt    = 0;
+    timer_base_init(&config->lh_timer);
 
-	return OK;
+    config->lh_adc.perh               = config->p_adc;
+    config->lh_adc.init.data_align    = ADC_DATAALIGN_RIGHT;
+    config->lh_adc.init.scan_mode     = ADC_SCAN_DISABLE;
+    config->lh_adc.init.cont_mode     = DISABLE;
+    config->lh_adc.init.conv_nbr      = ADC_NM_NBR_1;
+    config->lh_adc.init.disc_mode     = DISABLE;
+    config->lh_adc.init.disc_nbr      = ADC_DISC_NBR_1;
+    config->lh_adc.init.conv_res      = ADC_CONV_RES_12;
+    config->lh_adc.init.clk_div       = ADC_CKDIV_16;
+    config->lh_adc.init.nche_mode     = ADC_NCHESEL_MODE_ONE;
+    config->lh_adc.init.neg_ref       = config->n_ref;
+    config->lh_adc.init.pos_ref       = config->p_ref;
+    config->lh_adc.adc_reg_cplt_cbk   = config->adc_cplt_cbk;
+    config->lh_adc.adc_inj_cplt_cbk   = NULL;
+    config->lh_adc.adc_out_of_win_cbk = NULL;
+    config->lh_adc.adc_error_cbk      = NULL;
+    config->lh_adc.adc_ovr_cbk        = NULL;
+    adc_init(&config->lh_adc);
+
+    config->lnm_config.channel       = config->adc_ch;
+    config->lnm_config.rank          = ADC_NC_RANK_1;
+    config->lnm_config.sampling_time = ADC_SAMPLETIME_1;
+    adc_normal_channel_config(&config->lh_adc, &config->lnm_config);
+
+    config->lh_dma.cplt_cbk = adc_dma_timer_trigger_cplt;
+    config->lh_dma.cplt_arg = config;
+    config->lh_dma.err_cbk  = adc_dma_error;
+    config->lh_dma.err_arg  = &config->lh_adc;
+
+    dma_config_struct(&config->lh_dma.config);
+    config->lh_dma.perh              = DMA0;
+    config->lh_dma.config.src        = (void *)&config->lh_adc.perh->NCHDR;
+    config->lh_dma.config.dst        = (void *)config->buf;
+    config->lh_dma.config.size       = config->size;
+    config->lh_dma.config.data_width = DMA_DATA_SIZE_HALFWORD;
+    config->lh_dma.config.src_inc    = DMA_DATA_INC_NONE;
+    config->lh_dma.config.dst_inc    = DMA_DATA_INC_HALFWORD;
+    config->lh_dma.config.msel       = config->p_adc == ADC0 ? DMA_MSEL_ADC0 : DMA_MSEL_ADC1;
+    config->lh_dma.config.msigsel    = DMA_MSIGSEL_ADC;
+    config->lh_dma.config.channel    = config->dma_ch;
+    dma_config_basic(&config->lh_dma);
+
+    ADC_ENABLE(&config->lh_adc);
+    timer_base_start(&config->lh_timer);
+
+    return OK;
 }
 #endif
 
@@ -614,10 +631,10 @@ ald_status_t adc_timer_trigger_adc_by_dma(adc_timer_config_t *config)
   */
 uint32_t adc_normal_get_value(adc_handle_t *hperh)
 {
-	assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_TYPE(hperh->perh));
 
-	hperh->state &= ~ADC_STATE_NM_EOC;
-	return hperh->perh->NCHDR;
+    hperh->state &= ~ADC_STATE_NM_EOC;
+    return hperh->perh->NCHDR;
 }
 
 /**
@@ -629,26 +646,27 @@ uint32_t adc_normal_get_value(adc_handle_t *hperh)
   */
 ald_status_t adc_insert_start(adc_handle_t *hperh)
 {
-	assert_param(IS_ADC_TYPE(hperh->perh));
-	assert_param(IS_ADC_TRIG_MODE_TYPE(hperh->ist_trig_mode));
+    assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_TRIG_MODE_TYPE(hperh->ist_trig_mode));
 
-	__LOCK(hperh);
-	ADC_ENABLE(hperh);
-	hperh->state &= ~(ADC_STATE_READY | ADC_STATE_IST_EOC);
-	hperh->state |= ADC_STATE_IST_BUSY;
+    __LOCK(hperh);
+    ADC_ENABLE(hperh);
+    hperh->state &= ~(ADC_STATE_READY | ADC_STATE_IST_EOC);
+    hperh->state |= ADC_STATE_IST_BUSY;
 
-	if ((hperh->state & ADC_STATE_NM_BUSY) == 0)
-		hperh->error_code = ADC_ERROR_NONE;
+    if ((hperh->state & ADC_STATE_NM_BUSY) == 0)
+        hperh->error_code = ADC_ERROR_NONE;
 
-	__UNLOCK(hperh);
-	adc_clear_flag_status(hperh, ADC_FLAG_IH);
+    __UNLOCK(hperh);
+    adc_clear_flag_status(hperh, ADC_FLAG_IH);
 
-	if (!(READ_BIT(hperh->perh->CON0, ADC_CON0_IAUTO_MSK))) {
-		if (hperh->ist_trig_mode == ADC_TRIG_SOFT)
-			SET_BIT(hperh->perh->CON1, ADC_CON1_ICHTRG_MSK);
-	}
+    if (!(READ_BIT(hperh->perh->CON0, ADC_CON0_IAUTO_MSK)))
+    {
+        if (hperh->ist_trig_mode == ADC_TRIG_SOFT)
+            SET_BIT(hperh->perh->CON1, ADC_CON1_ICHTRG_MSK);
+    }
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -665,25 +683,27 @@ ald_status_t adc_insert_start(adc_handle_t *hperh)
   */
 ald_status_t adc_insert_stop(adc_handle_t *hperh)
 {
-	assert_param(IS_ADC_TYPE(hperh->perh));
-	assert_param(IS_ADC_TRIG_MODE_TYPE(hperh->ist_trig_mode));
+    assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_TRIG_MODE_TYPE(hperh->ist_trig_mode));
 
-	__LOCK(hperh);
+    __LOCK(hperh);
 
-	if (((hperh->state & ADC_STATE_NM_BUSY) == 0)
-				&& (!(READ_BIT(hperh->perh->CON0, ADC_CON0_IAUTO_MSK)))) {
-		ADC_DISABLE(hperh);
-		hperh->state &= ~(ADC_STATE_NM_BUSY | ADC_STATE_IST_BUSY | ADC_STATE_IST_EOC);
-		hperh->state |= ADC_STATE_READY;
-	}
-	else {
-		hperh->state |= ADC_STATE_ERROR;
-		__UNLOCK(hperh);
-		return ERROR;
-	}
+    if (((hperh->state & ADC_STATE_NM_BUSY) == 0)
+            && (!(READ_BIT(hperh->perh->CON0, ADC_CON0_IAUTO_MSK))))
+    {
+        ADC_DISABLE(hperh);
+        hperh->state &= ~(ADC_STATE_NM_BUSY | ADC_STATE_IST_BUSY | ADC_STATE_IST_EOC);
+        hperh->state |= ADC_STATE_READY;
+    }
+    else
+    {
+        hperh->state |= ADC_STATE_ERROR;
+        __UNLOCK(hperh);
+        return ERROR;
+    }
 
-	__UNLOCK(hperh);
-	return OK;
+    __UNLOCK(hperh);
+    return OK;
 }
 
 /**
@@ -695,38 +715,42 @@ ald_status_t adc_insert_stop(adc_handle_t *hperh)
   */
 ald_status_t adc_insert_poll_for_conversion(adc_handle_t *hperh, uint32_t timeout)
 {
-	uint32_t tickstart;
+    uint32_t tickstart;
 
-	assert_param(IS_ADC_TYPE(hperh->perh));
-	assert_param(IS_ADC_TRIG_MODE_TYPE(hperh->ist_trig_mode));
+    assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_TRIG_MODE_TYPE(hperh->ist_trig_mode));
 
-	tickstart = __get_tick();
+    tickstart = __get_tick();
 
-	while (!(READ_BIT(hperh->perh->STAT, ADC_STAT_ICHE_MSK))) {
-		if (timeout != ALD_MAX_DELAY) {
-			if ((timeout == 0) || ((__get_tick() - tickstart) > timeout)) {
-				hperh->state |= ADC_STATE_TIMEOUT;
-				__UNLOCK(hperh);
-				return TIMEOUT;
-			}
-		}
-	}
+    while (!(READ_BIT(hperh->perh->STAT, ADC_STAT_ICHE_MSK)))
+    {
+        if (timeout != ALD_MAX_DELAY)
+        {
+            if ((timeout == 0) || ((__get_tick() - tickstart) > timeout))
+            {
+                hperh->state |= ADC_STATE_TIMEOUT;
+                __UNLOCK(hperh);
+                return TIMEOUT;
+            }
+        }
+    }
 
-	adc_clear_flag_status(hperh, ADC_FLAG_IHS);
-	adc_clear_flag_status(hperh, ADC_FLAG_IH);
-	adc_clear_flag_status(hperh, ADC_FLAG_NH);
+    adc_clear_flag_status(hperh, ADC_FLAG_IHS);
+    adc_clear_flag_status(hperh, ADC_FLAG_IH);
+    adc_clear_flag_status(hperh, ADC_FLAG_NH);
 
-	hperh->state |= ADC_STATE_IST_EOC;
+    hperh->state |= ADC_STATE_IST_EOC;
 
-	if (hperh->ist_trig_mode == ADC_TRIG_SOFT ) {
-		hperh->state &= ~(ADC_STATE_IST_BUSY);
-		if ((hperh->state & ADC_STATE_NM_BUSY) == 0)
-			hperh->state |= ADC_STATE_READY;
-	}
+    if (hperh->ist_trig_mode == ADC_TRIG_SOFT)
+    {
+        hperh->state &= ~(ADC_STATE_IST_BUSY);
+        if ((hperh->state & ADC_STATE_NM_BUSY) == 0)
+            hperh->state |= ADC_STATE_READY;
+    }
 
-	hperh->state &= ~(ADC_STATE_TIMEOUT);
-	__UNLOCK(hperh);
-	return OK;
+    hperh->state &= ~(ADC_STATE_TIMEOUT);
+    __UNLOCK(hperh);
+    return OK;
 }
 
 /**
@@ -739,26 +763,27 @@ ald_status_t adc_insert_poll_for_conversion(adc_handle_t *hperh, uint32_t timeou
   */
 ald_status_t adc_insert_start_by_it(adc_handle_t *hperh)
 {
-	assert_param(IS_ADC_TYPE(hperh->perh));
-	assert_param(IS_ADC_TRIG_MODE_TYPE(hperh->ist_trig_mode));
+    assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_TRIG_MODE_TYPE(hperh->ist_trig_mode));
 
-	__LOCK(hperh);
-	ADC_ENABLE(hperh);
-	hperh->state &= ~(ADC_STATE_READY | ADC_STATE_IST_EOC);
-	hperh->state |= ADC_STATE_IST_BUSY;
+    __LOCK(hperh);
+    ADC_ENABLE(hperh);
+    hperh->state &= ~(ADC_STATE_READY | ADC_STATE_IST_EOC);
+    hperh->state |= ADC_STATE_IST_BUSY;
 
-	if ((hperh->state & ADC_STATE_NM_BUSY) == 0)
-		hperh->error_code = ADC_ERROR_NONE;
+    if ((hperh->state & ADC_STATE_NM_BUSY) == 0)
+        hperh->error_code = ADC_ERROR_NONE;
 
-	__UNLOCK(hperh);
-	adc_clear_flag_status(hperh, ADC_FLAG_IH);
-	adc_interrupt_config(hperh, ADC_IT_IH, ENABLE);
+    __UNLOCK(hperh);
+    adc_clear_flag_status(hperh, ADC_FLAG_IH);
+    adc_interrupt_config(hperh, ADC_IT_IH, ENABLE);
 
-	if (!(READ_BIT(hperh->perh->CON0, ADC_CON0_IAUTO_MSK))) {
-		if (hperh->ist_trig_mode == ADC_TRIG_SOFT)
-			SET_BIT(hperh->perh->CON1, ADC_CON1_ICHTRG_MSK);
-	}
-	return OK;
+    if (!(READ_BIT(hperh->perh->CON0, ADC_CON0_IAUTO_MSK)))
+    {
+        if (hperh->ist_trig_mode == ADC_TRIG_SOFT)
+            SET_BIT(hperh->perh->CON1, ADC_CON1_ICHTRG_MSK);
+    }
+    return OK;
 }
 
 /**
@@ -776,27 +801,29 @@ ald_status_t adc_insert_start_by_it(adc_handle_t *hperh)
   */
 ald_status_t adc_insert_stop_by_it(adc_handle_t *hperh)
 {
-	assert_param(IS_ADC_TYPE(hperh->perh));
-	assert_param(IS_ADC_TRIG_MODE_TYPE(hperh->ist_trig_mode));
+    assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_TRIG_MODE_TYPE(hperh->ist_trig_mode));
 
-	__LOCK(hperh);
+    __LOCK(hperh);
 
-	if (((hperh->state & ADC_STATE_NM_BUSY) == 0)
-				&& (!(READ_BIT(hperh->perh->CON0, ADC_CON0_IAUTO_MSK)))) {
-		ADC_DISABLE(hperh);
-		adc_interrupt_config(hperh, ADC_IT_IH, DISABLE);
-		hperh->state &= ~(ADC_STATE_NM_BUSY | ADC_STATE_IST_BUSY);
-		hperh->state |= ADC_STATE_READY;
-	}
-	else {
-		adc_interrupt_config(hperh, ADC_IT_IH, DISABLE);
-		hperh->state |= ADC_STATE_ERROR;
-		__UNLOCK(hperh);
-		return ERROR;
-	}
+    if (((hperh->state & ADC_STATE_NM_BUSY) == 0)
+            && (!(READ_BIT(hperh->perh->CON0, ADC_CON0_IAUTO_MSK))))
+    {
+        ADC_DISABLE(hperh);
+        adc_interrupt_config(hperh, ADC_IT_IH, DISABLE);
+        hperh->state &= ~(ADC_STATE_NM_BUSY | ADC_STATE_IST_BUSY);
+        hperh->state |= ADC_STATE_READY;
+    }
+    else
+    {
+        adc_interrupt_config(hperh, ADC_IT_IH, DISABLE);
+        hperh->state |= ADC_STATE_ERROR;
+        __UNLOCK(hperh);
+        return ERROR;
+    }
 
-	__UNLOCK(hperh);
-	return OK;
+    __UNLOCK(hperh);
+    return OK;
 }
 
 /**
@@ -813,29 +840,30 @@ ald_status_t adc_insert_stop_by_it(adc_handle_t *hperh)
   */
 uint32_t adc_insert_get_value(adc_handle_t *hperh, adc_ih_rank_t ih_rank)
 {
-	uint32_t tmp;
+    uint32_t tmp;
 
-	assert_param(IS_ADC_TYPE(hperh->perh));
-	assert_param(IS_ADC_IH_RANK_TYPE(ih_rank));
+    assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_IH_RANK_TYPE(ih_rank));
 
-	switch (ih_rank) {
-	case ADC_IH_RANK_1:
-		tmp = hperh->perh->ICHDR[0];
-		break;
-	case ADC_IH_RANK_2:
-		tmp = hperh->perh->ICHDR[1];
-		break;
-	case ADC_IH_RANK_3:
-		tmp = hperh->perh->ICHDR[2];
-		break;
-	case ADC_IH_RANK_4:
-		tmp = hperh->perh->ICHDR[3];
-		break;
-	default:
-		break;
-	}
+    switch (ih_rank)
+    {
+    case ADC_IH_RANK_1:
+        tmp = hperh->perh->ICHDR[0];
+        break;
+    case ADC_IH_RANK_2:
+        tmp = hperh->perh->ICHDR[1];
+        break;
+    case ADC_IH_RANK_3:
+        tmp = hperh->perh->ICHDR[2];
+        break;
+    case ADC_IH_RANK_4:
+        tmp = hperh->perh->ICHDR[3];
+        break;
+    default:
+        break;
+    }
 
-	return tmp;
+    return tmp;
 }
 
 /**
@@ -846,68 +874,74 @@ uint32_t adc_insert_get_value(adc_handle_t *hperh, adc_ih_rank_t ih_rank)
   */
 void adc_irq_handler(adc_handle_t *hperh)
 {
-	assert_param(IS_ADC_TYPE(hperh->perh));
-	assert_param(IS_ADC_TRIG_MODE_TYPE(hperh->ist_trig_mode));
-	assert_param(IS_ADC_TRIG_MODE_TYPE(hperh->nm_trig_mode));
+    assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_TRIG_MODE_TYPE(hperh->ist_trig_mode));
+    assert_param(IS_ADC_TRIG_MODE_TYPE(hperh->nm_trig_mode));
 
-	if (adc_get_it_status(hperh, ADC_IT_NH) && adc_get_flag_status(hperh, ADC_FLAG_NH)) {
-		if ((hperh->state & ADC_STATE_ERROR) == 0)
-			hperh->state |= ADC_STATE_NM_EOC;
+    if (adc_get_it_status(hperh, ADC_IT_NH) && adc_get_flag_status(hperh, ADC_FLAG_NH))
+    {
+        if ((hperh->state & ADC_STATE_ERROR) == 0)
+            hperh->state |= ADC_STATE_NM_EOC;
 
-		if ((hperh->nm_trig_mode == ADC_TRIG_SOFT)
-			         && (hperh->init.cont_mode == DISABLE)) {
-			adc_interrupt_config(hperh, ADC_IT_NH, DISABLE);
-			hperh->state &= ~(ADC_STATE_NM_BUSY);
+        if ((hperh->nm_trig_mode == ADC_TRIG_SOFT)
+                && (hperh->init.cont_mode == DISABLE))
+        {
+            adc_interrupt_config(hperh, ADC_IT_NH, DISABLE);
+            hperh->state &= ~(ADC_STATE_NM_BUSY);
 
-			if ((hperh->state & ADC_STATE_IST_BUSY) == 0)
-				hperh->state |= ADC_STATE_READY;
-		}
+            if ((hperh->state & ADC_STATE_IST_BUSY) == 0)
+                hperh->state |= ADC_STATE_READY;
+        }
 
-		if (hperh->adc_reg_cplt_cbk != NULL)
-			hperh->adc_reg_cplt_cbk(hperh);
+        if (hperh->adc_reg_cplt_cbk != NULL)
+            hperh->adc_reg_cplt_cbk(hperh);
 
-		adc_clear_flag_status(hperh, ADC_FLAG_NHS);
-		adc_clear_flag_status(hperh, ADC_FLAG_NH);
-	}
+        adc_clear_flag_status(hperh, ADC_FLAG_NHS);
+        adc_clear_flag_status(hperh, ADC_FLAG_NH);
+    }
 
-	if (adc_get_it_status(hperh, ADC_IT_IH) && adc_get_flag_status(hperh, ADC_FLAG_IH)) {
-		if ((hperh->state & ADC_STATE_ERROR) == 0)
-			hperh->state |= ADC_STATE_IST_EOC;
+    if (adc_get_it_status(hperh, ADC_IT_IH) && adc_get_flag_status(hperh, ADC_FLAG_IH))
+    {
+        if ((hperh->state & ADC_STATE_ERROR) == 0)
+            hperh->state |= ADC_STATE_IST_EOC;
 
-		if ((hperh->ist_trig_mode == ADC_TRIG_SOFT)
-			   || ((!(READ_BIT(hperh->perh->CON0, ADC_CON0_IAUTO_MSK)))
-		           && (hperh->nm_trig_mode == ADC_TRIG_SOFT)
-			   && (hperh->init.cont_mode == DISABLE))) {
-			adc_interrupt_config(hperh, ADC_IT_IH, DISABLE);
-			hperh->state &= ~(ADC_STATE_IST_BUSY);
+        if ((hperh->ist_trig_mode == ADC_TRIG_SOFT)
+                || ((!(READ_BIT(hperh->perh->CON0, ADC_CON0_IAUTO_MSK)))
+                    && (hperh->nm_trig_mode == ADC_TRIG_SOFT)
+                    && (hperh->init.cont_mode == DISABLE)))
+        {
+            adc_interrupt_config(hperh, ADC_IT_IH, DISABLE);
+            hperh->state &= ~(ADC_STATE_IST_BUSY);
 
-			if ((hperh->state & ADC_STATE_NM_BUSY) == 0)
-				hperh->state |= ADC_STATE_READY;
-		}
-		if (hperh->adc_inj_cplt_cbk != NULL)
-			hperh->adc_inj_cplt_cbk(hperh);
+            if ((hperh->state & ADC_STATE_NM_BUSY) == 0)
+                hperh->state |= ADC_STATE_READY;
+        }
+        if (hperh->adc_inj_cplt_cbk != NULL)
+            hperh->adc_inj_cplt_cbk(hperh);
 
-		adc_clear_flag_status(hperh, ADC_FLAG_IHS);
-		adc_clear_flag_status(hperh, ADC_FLAG_IH);
-	}
+        adc_clear_flag_status(hperh, ADC_FLAG_IHS);
+        adc_clear_flag_status(hperh, ADC_FLAG_IH);
+    }
 
-	if (adc_get_it_status(hperh, ADC_IT_AWD) && adc_get_flag_status(hperh, ADC_FLAG_AWD)) {
-		hperh->state |= ADC_STATE_AWD;
+    if (adc_get_it_status(hperh, ADC_IT_AWD) && adc_get_flag_status(hperh, ADC_FLAG_AWD))
+    {
+        hperh->state |= ADC_STATE_AWD;
 
-		if (hperh->adc_out_of_win_cbk != NULL)
-			hperh->adc_out_of_win_cbk(hperh);
+        if (hperh->adc_out_of_win_cbk != NULL)
+            hperh->adc_out_of_win_cbk(hperh);
 
-		adc_clear_flag_status(hperh, ADC_FLAG_AWD);
-	}
+        adc_clear_flag_status(hperh, ADC_FLAG_AWD);
+    }
 
-	if (adc_get_it_status(hperh, ADC_IT_OVR) && adc_get_flag_status(hperh, ADC_FLAG_OVR)) {
-		adc_clear_flag_status(hperh, ADC_FLAG_OVR);
-		hperh->error_code |= ADC_ERROR_OVR;
-		hperh->state      |= ADC_STATE_ERROR;
+    if (adc_get_it_status(hperh, ADC_IT_OVR) && adc_get_flag_status(hperh, ADC_FLAG_OVR))
+    {
+        adc_clear_flag_status(hperh, ADC_FLAG_OVR);
+        hperh->error_code |= ADC_ERROR_OVR;
+        hperh->state      |= ADC_STATE_ERROR;
 
-		if (hperh->adc_ovr_cbk != NULL)
-			hperh->adc_ovr_cbk(hperh);
-	}
+        if (hperh->adc_ovr_cbk != NULL)
+            hperh->adc_ovr_cbk(hperh);
+    }
 }
 
 /**
@@ -929,41 +963,47 @@ void adc_irq_handler(adc_handle_t *hperh)
   */
 ald_status_t adc_normal_channel_config(adc_handle_t *hperh, adc_channel_conf_t *config)
 {
-	assert_param(IS_ADC_TYPE(hperh->perh));
-	assert_param(IS_ADC_CHANNELS_TYPE(config->channel));
-	assert_param(IS_ADC_NC_RANK_TYPE(config->rank));
-	assert_param(IS_ADC_SAMPLING_TIMES_TYPE(config->sampling_time));
+    assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_CHANNELS_TYPE(config->channel));
+    assert_param(IS_ADC_NC_RANK_TYPE(config->rank));
+    assert_param(IS_ADC_SAMPLING_TIMES_TYPE(config->sampling_time));
 
-	__LOCK(hperh);
+    __LOCK(hperh);
 
-	if (config->rank <= ADC_NC_RANK_4 ) {
-		hperh->perh->NCHS1 &= ~(0x1f <<  ((config->rank - 1) << 3));
-		hperh->perh->NCHS1 |= (config->channel << ((config->rank - 1) << 3));
-	}
-	else if (config->rank <= ADC_NC_RANK_8) {
-		hperh->perh->NCHS2 &= ~(0x1f <<  ((config->rank - 5) << 3));
-		hperh->perh->NCHS2 |= (config->channel << ((config->rank - 5) << 3));
-	}
-	else if (config->rank <= ADC_NC_RANK_12) {
-		hperh->perh->NCHS3 &= ~(0x1f <<  ((config->rank - 9) << 3));
-		hperh->perh->NCHS3 |= (config->channel << ((config->rank - 9) << 3));
-	}
-	else {
-		hperh->perh->NCHS4 &= ~(0x1f <<  ((config->rank - 13) << 3));
-		hperh->perh->NCHS4 |= (config->channel << ((config->rank - 13) << 3));
-	}
+    if (config->rank <= ADC_NC_RANK_4)
+    {
+        hperh->perh->NCHS1 &= ~(0x1f << ((config->rank - 1) << 3));
+        hperh->perh->NCHS1 |= (config->channel << ((config->rank - 1) << 3));
+    }
+    else if (config->rank <= ADC_NC_RANK_8)
+    {
+        hperh->perh->NCHS2 &= ~(0x1f << ((config->rank - 5) << 3));
+        hperh->perh->NCHS2 |= (config->channel << ((config->rank - 5) << 3));
+    }
+    else if (config->rank <= ADC_NC_RANK_12)
+    {
+        hperh->perh->NCHS3 &= ~(0x1f << ((config->rank - 9) << 3));
+        hperh->perh->NCHS3 |= (config->channel << ((config->rank - 9) << 3));
+    }
+    else
+    {
+        hperh->perh->NCHS4 &= ~(0x1f << ((config->rank - 13) << 3));
+        hperh->perh->NCHS4 |= (config->channel << ((config->rank - 13) << 3));
+    }
 
-	if (config->channel <= 15) {
-		hperh->perh->SMPT1 &=  ~(0x03 << (config->channel << 1));
-		hperh->perh->SMPT1 |= config->sampling_time << (config->channel << 1);
-	}
-	else {
-		hperh->perh->SMPT2 &=  ~(0x03 << ((config->channel - 16) << 1));
-		hperh->perh->SMPT2 |= config->sampling_time << ((config->channel - 16) << 1);
-	}
+    if (config->channel <= 15)
+    {
+        hperh->perh->SMPT1 &=  ~(0x03 << (config->channel << 1));
+        hperh->perh->SMPT1 |= config->sampling_time << (config->channel << 1);
+    }
+    else
+    {
+        hperh->perh->SMPT2 &=  ~(0x03 << ((config->channel - 16) << 1));
+        hperh->perh->SMPT2 |= config->sampling_time << ((config->channel - 16) << 1);
+    }
 
-	__UNLOCK(hperh);
-	return OK;
+    __UNLOCK(hperh);
+    return OK;
 }
 
 /**
@@ -976,111 +1016,125 @@ ald_status_t adc_normal_channel_config(adc_handle_t *hperh, adc_channel_conf_t *
   */
 ald_status_t adc_insert_channel_config(adc_handle_t *hperh, adc_ih_conf_t *config)
 {
-	uint8_t tmp1, tmp2;
-	ald_status_t tmp_status = OK;
+    uint8_t tmp1, tmp2;
+    ald_status_t tmp_status = OK;
 
-	assert_param(IS_ADC_TYPE(hperh->perh));
-	assert_param(IS_ADC_CHANNELS_TYPE(config->channel));
-	assert_param(IS_ADC_IH_RANK_TYPE(config->rank));
-	assert_param(IS_ADC_SAMPLING_TIMES_TYPE(config->samp_time));
-	assert_param(IS_ADC_IST_OFFSET_TYPE(config->offset));
-	assert_param(IS_ADC_NBR_OF_IST_TYPE(config->nbr));
-	assert_param(IS_FUNC_STATE(config->disc_mode));
-	assert_param(IS_FUNC_STATE(config->auto_inj));
-	assert_param(IS_ADC_TRIG_MODE_TYPE(hperh->ist_trig_mode));
+    assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_CHANNELS_TYPE(config->channel));
+    assert_param(IS_ADC_IH_RANK_TYPE(config->rank));
+    assert_param(IS_ADC_SAMPLING_TIMES_TYPE(config->samp_time));
+    assert_param(IS_ADC_IST_OFFSET_TYPE(config->offset));
+    assert_param(IS_ADC_NBR_OF_IST_TYPE(config->nbr));
+    assert_param(IS_FUNC_STATE(config->disc_mode));
+    assert_param(IS_FUNC_STATE(config->auto_inj));
+    assert_param(IS_ADC_TRIG_MODE_TYPE(hperh->ist_trig_mode));
 
-	__LOCK(hperh);
+    __LOCK(hperh);
 
-	if (hperh->init.scan_mode == ADC_SCAN_DISABLE) {
-		switch (config->rank) {
-		case ADC_IH_RANK_1:
-			MODIFY_REG(hperh->perh->ICHS, ADC_ICHS_IS1_MSK, config->channel << ADC_ICHS_IS1_POSS);
-			break;
-		case ADC_IH_RANK_2:
-			MODIFY_REG(hperh->perh->ICHS, ADC_ICHS_IS2_MSK, config->channel << ADC_ICHS_IS1_POSS);
-			break;
-		case ADC_IH_RANK_3:
-			MODIFY_REG(hperh->perh->ICHS, ADC_ICHS_IS3_MSK, config->channel << ADC_ICHS_IS1_POSS);
-			break;
-		case ADC_IH_RANK_4:
-			MODIFY_REG(hperh->perh->ICHS, ADC_ICHS_IS4_MSK, config->channel << ADC_ICHS_IS1_POSS);
-			break;
-		default:
-			hperh->state      |= ADC_STATE_ERROR;
-			hperh->error_code |= ADC_ERROR_INTERNAL;
-			tmp_status         = ERROR;
-			break;
-		}
-	}
-	else {
-		MODIFY_REG(hperh->perh->CHSL, ADC_CHSL_ISL_MSK, config->nbr << ADC_CHSL_ISL_POSS);
-		tmp1 = config->rank ;
-		tmp2 = config->nbr;
+    if (hperh->init.scan_mode == ADC_SCAN_DISABLE)
+    {
+        switch (config->rank)
+        {
+        case ADC_IH_RANK_1:
+            MODIFY_REG(hperh->perh->ICHS, ADC_ICHS_IS1_MSK, config->channel << ADC_ICHS_IS1_POSS);
+            break;
+        case ADC_IH_RANK_2:
+            MODIFY_REG(hperh->perh->ICHS, ADC_ICHS_IS2_MSK, config->channel << ADC_ICHS_IS1_POSS);
+            break;
+        case ADC_IH_RANK_3:
+            MODIFY_REG(hperh->perh->ICHS, ADC_ICHS_IS3_MSK, config->channel << ADC_ICHS_IS1_POSS);
+            break;
+        case ADC_IH_RANK_4:
+            MODIFY_REG(hperh->perh->ICHS, ADC_ICHS_IS4_MSK, config->channel << ADC_ICHS_IS1_POSS);
+            break;
+        default:
+            hperh->state      |= ADC_STATE_ERROR;
+            hperh->error_code |= ADC_ERROR_INTERNAL;
+            tmp_status         = ERROR;
+            break;
+        }
+    }
+    else
+    {
+        MODIFY_REG(hperh->perh->CHSL, ADC_CHSL_ISL_MSK, config->nbr << ADC_CHSL_ISL_POSS);
+        tmp1 = config->rank ;
+        tmp2 = config->nbr;
 
-		if (tmp1 <= tmp2) {
-			hperh->perh->ICHS &= ~(0x1f << ((tmp1 - 1) << 3));
-			hperh->perh->ICHS |= config->channel
-			                                  << ((tmp1 - 1) << 3);
-		}
-		else {
-			hperh->perh->ICHS &= ~(0x1f << ((tmp1 - 1) << 3));
-		}
-	}
+        if (tmp1 <= tmp2)
+        {
+            hperh->perh->ICHS &= ~(0x1f << ((tmp1 - 1) << 3));
+            hperh->perh->ICHS |= config->channel
+                                 << ((tmp1 - 1) << 3);
+        }
+        else
+        {
+            hperh->perh->ICHS &= ~(0x1f << ((tmp1 - 1) << 3));
+        }
+    }
 
-	if (config->auto_inj == ENABLE) {
-		if (hperh->ist_trig_mode == ADC_TRIG_SOFT) {
-			SET_BIT(hperh->perh->CON0, ADC_CON0_IAUTO_MSK);
-		}
-		else {
-			hperh->state      |= ADC_STATE_ERROR;
-			hperh->error_code |= ADC_ERROR_INTERNAL;
-			tmp_status         = ERROR;
-		}
-	}
+    if (config->auto_inj == ENABLE)
+    {
+        if (hperh->ist_trig_mode == ADC_TRIG_SOFT)
+        {
+            SET_BIT(hperh->perh->CON0, ADC_CON0_IAUTO_MSK);
+        }
+        else
+        {
+            hperh->state      |= ADC_STATE_ERROR;
+            hperh->error_code |= ADC_ERROR_INTERNAL;
+            tmp_status         = ERROR;
+        }
+    }
 
-	if (config->disc_mode == ENABLE) {
-		if (config->auto_inj == DISABLE) {
-			MODIFY_REG(hperh->perh->CHSL, ADC_CHSL_ISL_MSK, config->nbr << ADC_CHSL_ISL_POSS);
-			SET_BIT(hperh->perh->CON0, ADC_CON0_ICHDCEN_MSK);
-		}
-		else {
-			hperh->state      |= ADC_STATE_ERROR;
-			hperh->error_code |= ADC_ERROR_INTERNAL;
-			tmp_status         = ERROR;
-		}
-	}
+    if (config->disc_mode == ENABLE)
+    {
+        if (config->auto_inj == DISABLE)
+        {
+            MODIFY_REG(hperh->perh->CHSL, ADC_CHSL_ISL_MSK, config->nbr << ADC_CHSL_ISL_POSS);
+            SET_BIT(hperh->perh->CON0, ADC_CON0_ICHDCEN_MSK);
+        }
+        else
+        {
+            hperh->state      |= ADC_STATE_ERROR;
+            hperh->error_code |= ADC_ERROR_INTERNAL;
+            tmp_status         = ERROR;
+        }
+    }
 
-	if (config->channel <= 15) {
-		hperh->perh->SMPT1 &=  ~(0x03 << (config->channel << 1));
-		hperh->perh->SMPT1 |= config->samp_time << (config->channel << 1);
-	}
-	else {
-		hperh->perh->SMPT2 &=  ~(0x03 << ((config->channel - 16) << 1));
-		hperh->perh->SMPT2 |= config->samp_time << ((config->channel - 16) << 1);
-	}
+    if (config->channel <= 15)
+    {
+        hperh->perh->SMPT1 &=  ~(0x03 << (config->channel << 1));
+        hperh->perh->SMPT1 |= config->samp_time << (config->channel << 1);
+    }
+    else
+    {
+        hperh->perh->SMPT2 &=  ~(0x03 << ((config->channel - 16) << 1));
+        hperh->perh->SMPT2 |= config->samp_time << ((config->channel - 16) << 1);
+    }
 
-	switch (config->rank) {
-	case ADC_IH_RANK_1:
-		hperh->perh->ICHOFF[0] = config->offset;
-		break;
-	case ADC_IH_RANK_2:
-		hperh->perh->ICHOFF[1] = config->offset;
-		break;
-	case ADC_IH_RANK_3:
-		hperh->perh->ICHOFF[2] = config->offset;
-		break;
-	case ADC_IH_RANK_4:
-		hperh->perh->ICHOFF[3] = config->offset;
-		break;
-	default:
-		break;
-	}
+    switch (config->rank)
+    {
+    case ADC_IH_RANK_1:
+        hperh->perh->ICHOFF[0] = config->offset;
+        break;
+    case ADC_IH_RANK_2:
+        hperh->perh->ICHOFF[1] = config->offset;
+        break;
+    case ADC_IH_RANK_3:
+        hperh->perh->ICHOFF[2] = config->offset;
+        break;
+    case ADC_IH_RANK_4:
+        hperh->perh->ICHOFF[3] = config->offset;
+        break;
+    default:
+        break;
+    }
 
-	if (hperh->ist_trig_mode != ADC_TRIG_SOFT)
-		pis_create(&hperh->inj_pis_handle);
+    if (hperh->ist_trig_mode != ADC_TRIG_SOFT)
+        pis_create(&hperh->inj_pis_handle);
 
-	__UNLOCK(hperh);
-	return tmp_status;
+    __UNLOCK(hperh);
+    return tmp_status;
 }
 
 /**
@@ -1093,37 +1147,37 @@ ald_status_t adc_insert_channel_config(adc_handle_t *hperh, adc_ih_conf_t *confi
 ald_status_t adc_analog_wdg_config(adc_handle_t *hperh, adc_analog_wdg_conf_t *config)
 {
 
-	assert_param(IS_ADC_TYPE(hperh->perh));
-	assert_param(IS_ADC_ANALOG_WTD_MODE_TYPE(config->watchdog_mode));
-	assert_param(IS_FUNC_STATE(config->it_mode));
-	assert_param(IS_HTR_TYPE(config->high_threshold));
-	assert_param(IS_LTR_TYPE(config->low_threshold));
+    assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_ANALOG_WTD_MODE_TYPE(config->watchdog_mode));
+    assert_param(IS_FUNC_STATE(config->it_mode));
+    assert_param(IS_HTR_TYPE(config->high_threshold));
+    assert_param(IS_LTR_TYPE(config->low_threshold));
 
-	__LOCK(hperh);
+    __LOCK(hperh);
 
-	if ((config->watchdog_mode == ADC_ANAWTD_SING_NM)
-		|| (config->watchdog_mode == ADC_ANAWTD_SING_IST)
-	        || (config->watchdog_mode == ADC_ANAWTD_SING_NMIST))
-		assert_param(IS_ADC_CHANNELS_TYPE(config->channel));
+    if ((config->watchdog_mode == ADC_ANAWTD_SING_NM)
+            || (config->watchdog_mode == ADC_ANAWTD_SING_IST)
+            || (config->watchdog_mode == ADC_ANAWTD_SING_NMIST))
+        assert_param(IS_ADC_CHANNELS_TYPE(config->channel));
 
-	if (config->it_mode == DISABLE)
-		adc_interrupt_config(hperh, ADC_IT_AWD, DISABLE);
-	else
-		adc_interrupt_config(hperh, ADC_IT_AWD, ENABLE);
+    if (config->it_mode == DISABLE)
+        adc_interrupt_config(hperh, ADC_IT_AWD, DISABLE);
+    else
+        adc_interrupt_config(hperh, ADC_IT_AWD, ENABLE);
 
-	CLEAR_BIT(hperh->perh->CON0, ADC_CON0_ICHWDTEN_MSK);
-	CLEAR_BIT(hperh->perh->CON0, ADC_CON0_NCHWDEN_MSK);
-	CLEAR_BIT(hperh->perh->CON0, ADC_CON0_AWDSGL_MSK);
-	hperh->perh->CON0 |= config->watchdog_mode;
+    CLEAR_BIT(hperh->perh->CON0, ADC_CON0_ICHWDTEN_MSK);
+    CLEAR_BIT(hperh->perh->CON0, ADC_CON0_NCHWDEN_MSK);
+    CLEAR_BIT(hperh->perh->CON0, ADC_CON0_AWDSGL_MSK);
+    hperh->perh->CON0 |= config->watchdog_mode;
 
-	if (READ_BIT(hperh->perh->CON0, ADC_CON0_AWDSGL_MSK))
-		MODIFY_REG(hperh->perh->CON0, ADC_CON0_AWDCH_MSK, config->channel << ADC_CON0_AWDCH_POSS);
+    if (READ_BIT(hperh->perh->CON0, ADC_CON0_AWDSGL_MSK))
+        MODIFY_REG(hperh->perh->CON0, ADC_CON0_AWDCH_MSK, config->channel << ADC_CON0_AWDCH_POSS);
 
-	WRITE_REG(hperh->perh->WDTL, config->low_threshold);
-	WRITE_REG(hperh->perh->WDTH, config->high_threshold);
+    WRITE_REG(hperh->perh->WDTL, config->low_threshold);
+    WRITE_REG(hperh->perh->WDTH, config->high_threshold);
 
-	__UNLOCK(hperh);
-	return OK;
+    __UNLOCK(hperh);
+    return OK;
 }
 
 /**
@@ -1138,16 +1192,16 @@ ald_status_t adc_analog_wdg_config(adc_handle_t *hperh, adc_analog_wdg_conf_t *c
   */
 void adc_interrupt_config(adc_handle_t *hperh, adc_it_t it, type_func_t state)
 {
-	assert_param(IS_ADC_TYPE(hperh->perh));
-	assert_param(IS_ADC_IT_TYPE(it));
-	assert_param(IS_FUNC_STATE(state));
+    assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_IT_TYPE(it));
+    assert_param(IS_FUNC_STATE(state));
 
-	if (state == ENABLE)
-		SET_BIT(hperh->perh->CON0, it);
-	else
-		CLEAR_BIT(hperh->perh->CON0, it);
+    if (state == ENABLE)
+        SET_BIT(hperh->perh->CON0, it);
+    else
+        CLEAR_BIT(hperh->perh->CON0, it);
 
-	return;
+    return;
 }
 
 /**
@@ -1161,13 +1215,13 @@ void adc_interrupt_config(adc_handle_t *hperh, adc_it_t it, type_func_t state)
   */
 it_status_t adc_get_it_status(adc_handle_t *hperh, adc_it_t it)
 {
-	assert_param(IS_ADC_TYPE(hperh->perh));
-	assert_param(IS_ADC_IT_TYPE(it));
+    assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_IT_TYPE(it));
 
-	if (READ_BIT(hperh->perh->CON0, it))
-		return SET;
+    if (READ_BIT(hperh->perh->CON0, it))
+        return SET;
 
-	return RESET;
+    return RESET;
 }
 
 /** @brief  Check whether the specified ADC flag is set or not.
@@ -1180,13 +1234,13 @@ it_status_t adc_get_it_status(adc_handle_t *hperh, adc_it_t it)
   */
 flag_status_t adc_get_flag_status(adc_handle_t *hperh, adc_flag_t flag)
 {
-	assert_param(IS_ADC_TYPE(hperh->perh));
-	assert_param(IS_ADC_FLAGS_TYPE(flag));
+    assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_FLAGS_TYPE(flag));
 
-	if (READ_BIT(hperh->perh->STAT, flag))
-		return SET;
+    if (READ_BIT(hperh->perh->STAT, flag))
+        return SET;
 
-	return RESET;
+    return RESET;
 }
 
 /** @brief  Clear the specified ADC pending flags.
@@ -1197,11 +1251,11 @@ flag_status_t adc_get_flag_status(adc_handle_t *hperh, adc_flag_t flag)
   */
 void adc_clear_flag_status(adc_handle_t *hperh, adc_flag_t flag)
 {
-	assert_param(IS_ADC_TYPE(hperh->perh));
-	assert_param(IS_ADC_FLAGS_TYPE(flag));
+    assert_param(IS_ADC_TYPE(hperh->perh));
+    assert_param(IS_ADC_FLAGS_TYPE(flag));
 
-	WRITE_REG(hperh->perh->CLR, flag);
-	return;
+    WRITE_REG(hperh->perh->CLR, flag);
+    return;
 }
 /**
   * @}
@@ -1220,7 +1274,7 @@ void adc_clear_flag_status(adc_handle_t *hperh, adc_flag_t flag)
   */
 uint32_t adc_get_state(adc_handle_t *hperh)
 {
-	return hperh->state;
+    return hperh->state;
 }
 
 /**
@@ -1231,7 +1285,7 @@ uint32_t adc_get_state(adc_handle_t *hperh)
   */
 uint32_t adc_get_error(adc_handle_t *hperh)
 {
-	return hperh->error_code;
+    return hperh->error_code;
 }
 
 /**
@@ -1254,10 +1308,10 @@ uint32_t adc_get_error(adc_handle_t *hperh)
   */
 static void adc_dma_normal_conv_cplt(void *arg)
 {
-	adc_handle_t *hperh = (adc_handle_t *)arg;
+    adc_handle_t *hperh = (adc_handle_t *)arg;
 
-	if (hperh->adc_reg_cplt_cbk != NULL)
-		hperh->adc_reg_cplt_cbk(hperh);
+    if (hperh->adc_reg_cplt_cbk != NULL)
+        hperh->adc_reg_cplt_cbk(hperh);
 
 }
 
@@ -1268,12 +1322,12 @@ static void adc_dma_normal_conv_cplt(void *arg)
   */
 static void adc_dma_error(void *arg)
 {
-	adc_handle_t *hperh = (adc_handle_t *)arg;
-	hperh->state       |= ADC_STATE_ERROR;
-	hperh->error_code  |= ADC_ERROR_DMA;
+    adc_handle_t *hperh = (adc_handle_t *)arg;
+    hperh->state       |= ADC_STATE_ERROR;
+    hperh->error_code  |= ADC_ERROR_DMA;
 
-	if (hperh->adc_error_cbk != NULL)
-		hperh->adc_error_cbk(hperh);
+    if (hperh->adc_error_cbk != NULL)
+        hperh->adc_error_cbk(hperh);
 }
 #endif
 /**

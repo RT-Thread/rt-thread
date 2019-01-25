@@ -60,27 +60,29 @@
   */
 void trng_init(trng_init_t *init)
 {
-	assert_param(IS_TRNG_DATA_WIDTH(init->data_width));
-	assert_param(IS_TRNG_SEED_TYPE(init->seed_type));
-	assert_param(IS_TRNG_ADJC(init->adjc));
+    assert_param(IS_TRNG_DATA_WIDTH(init->data_width));
+    assert_param(IS_TRNG_SEED_TYPE(init->seed_type));
+    assert_param(IS_TRNG_ADJC(init->adjc));
 
-	SET_BIT(TRNG->CR, TRNG_CR_TRNGSEL_MSK);
-	MODIFY_REG(TRNG->CR, TRNG_CR_DSEL_MSK, (init->data_width) << TRNG_CR_DSEL_POSS);
-	MODIFY_REG(TRNG->CR, TRNG_CR_SDSEL_MSK, (init->seed_type) << TRNG_CR_SDSEL_POSS);
-	MODIFY_REG(TRNG->CR, TRNG_CR_ADJC_MSK, (init->adjc) << TRNG_CR_ADJC_POSS);
+    SET_BIT(TRNG->CR, TRNG_CR_TRNGSEL_MSK);
+    MODIFY_REG(TRNG->CR, TRNG_CR_DSEL_MSK, (init->data_width) << TRNG_CR_DSEL_POSS);
+    MODIFY_REG(TRNG->CR, TRNG_CR_SDSEL_MSK, (init->seed_type) << TRNG_CR_SDSEL_POSS);
+    MODIFY_REG(TRNG->CR, TRNG_CR_ADJC_MSK, (init->adjc) << TRNG_CR_ADJC_POSS);
 
-	if (init->adjc == 0) {
-		MODIFY_REG(TRNG->CR, TRNG_CR_ADJC_MSK, (0) << TRNG_CR_ADJC_POSS);
-	}
-	else {
-		MODIFY_REG(TRNG->CR, TRNG_CR_ADJC_MSK, (1) << TRNG_CR_ADJC_POSS);
-	}
+    if (init->adjc == 0)
+    {
+        MODIFY_REG(TRNG->CR, TRNG_CR_ADJC_MSK, (0) << TRNG_CR_ADJC_POSS);
+    }
+    else
+    {
+        MODIFY_REG(TRNG->CR, TRNG_CR_ADJC_MSK, (1) << TRNG_CR_ADJC_POSS);
+    }
 
-	WRITE_REG(TRNG->SEED, init->seed);
-	MODIFY_REG(TRNG->CFGR, TRNG_CFGR_TSTART_MSK, (init->t_start) << TRNG_CFGR_TSTART_POSS);
-	MODIFY_REG(TRNG->CR, TRNG_CR_POSTEN_MSK, (init->posten) << TRNG_CR_POSTEN_MSK);
+    WRITE_REG(TRNG->SEED, init->seed);
+    MODIFY_REG(TRNG->CFGR, TRNG_CFGR_TSTART_MSK, (init->t_start) << TRNG_CFGR_TSTART_POSS);
+    MODIFY_REG(TRNG->CR, TRNG_CR_POSTEN_MSK, (init->posten) << TRNG_CR_POSTEN_MSK);
 
-	return;
+    return;
 }
 /**
   * @}
@@ -111,7 +113,7 @@ void trng_init(trng_init_t *init)
   */
 uint32_t trng_get_result(void)
 {
-	return (uint32_t)TRNG->DR;
+    return (uint32_t)TRNG->DR;
 }
 
 /**
@@ -126,15 +128,15 @@ uint32_t trng_get_result(void)
   */
 void trng_interrupt_config(trng_it_t it, type_func_t state)
 {
-	assert_param(IS_TRNG_IT(it));
-	assert_param(IS_FUNC_STATE(state));
+    assert_param(IS_TRNG_IT(it));
+    assert_param(IS_FUNC_STATE(state));
 
-	if (state)
-		SET_BIT(TRNG->IER, it);
-	else
-		CLEAR_BIT(TRNG->IER, it);
+    if (state)
+        SET_BIT(TRNG->IER, it);
+    else
+        CLEAR_BIT(TRNG->IER, it);
 
-	return;
+    return;
 }
 
 /**
@@ -147,12 +149,12 @@ void trng_interrupt_config(trng_it_t it, type_func_t state)
   */
 flag_status_t trng_get_status(trng_status_t status)
 {
-	assert_param(IS_TRNG_STATUS(status));
+    assert_param(IS_TRNG_STATUS(status));
 
-	if (READ_BIT(TRNG->SR, status))
-		return SET;
+    if (READ_BIT(TRNG->SR, status))
+        return SET;
 
-	return RESET;
+    return RESET;
 }
 
 /**
@@ -165,12 +167,12 @@ flag_status_t trng_get_status(trng_status_t status)
   */
 it_status_t trng_get_it_status(trng_it_t it)
 {
-	assert_param(IS_TRNG_IT(it));
+    assert_param(IS_TRNG_IT(it));
 
-	if (READ_BIT(TRNG->IER, it))
-		return SET;
+    if (READ_BIT(TRNG->IER, it))
+        return SET;
 
-	return RESET;
+    return RESET;
 }
 
 /**
@@ -183,12 +185,12 @@ it_status_t trng_get_it_status(trng_it_t it)
   */
 flag_status_t trng_get_flag_status(trng_flag_t flag)
 {
-	assert_param(IS_TRNG_FLAG(flag));
+    assert_param(IS_TRNG_FLAG(flag));
 
-	if (READ_BIT(TRNG->IFR, flag))
-		return SET;
+    if (READ_BIT(TRNG->IFR, flag))
+        return SET;
 
-	return RESET;
+    return RESET;
 }
 
 /**
@@ -199,10 +201,10 @@ flag_status_t trng_get_flag_status(trng_flag_t flag)
   */
 void trng_clear_flag_status(trng_flag_t flag)
 {
-	assert_param(IS_TRNG_FLAG(flag));
-	WRITE_REG(TRNG->IFCR, flag);
+    assert_param(IS_TRNG_FLAG(flag));
+    WRITE_REG(TRNG->IFCR, flag);
 
-	return;
+    return;
 }
 /**
   * @}

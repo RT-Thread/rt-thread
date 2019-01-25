@@ -39,12 +39,12 @@
   */
 void LVD_Handler(void)
 {
-	SYSCFG_UNLOCK();
-	SET_BIT(PMU->LVDCR, PMU_LVDCR_LVDCIF_MSK);
-	SYSCFG_LOCK();
+    SYSCFG_UNLOCK();
+    SET_BIT(PMU->LVDCR, PMU_LVDCR_LVDCIF_MSK);
+    SYSCFG_LOCK();
 
-	lvd_irq_cbk();
-	return;
+    lvd_irq_cbk();
+    return;
 }
 /**
   * @}
@@ -78,16 +78,16 @@ void LVD_Handler(void)
   */
 void pmu_stop1_enter(void)
 {
-	SYSCFG_UNLOCK();
-	MODIFY_REG(PMU->CR, PMU_CR_LPM_MSK, PMU_LP_STOP1 << PMU_CR_LPM_POSS);
-	SYSCFG_LOCK();
+    SYSCFG_UNLOCK();
+    MODIFY_REG(PMU->CR, PMU_CR_LPM_MSK, PMU_LP_STOP1 << PMU_CR_LPM_POSS);
+    SYSCFG_LOCK();
 
-	SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
-	SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
-	__WFI();
-	SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
+    SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
+    SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
+    __WFI();
+    SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
 
-	return;
+    return;
 }
 
 /**
@@ -96,16 +96,16 @@ void pmu_stop1_enter(void)
   */
 void pmu_stop2_enter(void)
 {
-	SYSCFG_UNLOCK();
-	MODIFY_REG(PMU->CR, PMU_CR_LPM_MSK, PMU_LP_STOP2 << PMU_CR_LPM_POSS);
-	SYSCFG_LOCK();
+    SYSCFG_UNLOCK();
+    MODIFY_REG(PMU->CR, PMU_CR_LPM_MSK, PMU_LP_STOP2 << PMU_CR_LPM_POSS);
+    SYSCFG_LOCK();
 
-	SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
-	SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
-	__WFI();
-	SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
+    SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
+    SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
+    __WFI();
+    SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
 
-	return;
+    return;
 
 }
 
@@ -116,27 +116,28 @@ void pmu_stop2_enter(void)
   */
 void pmu_standby_enter(pmu_standby_wakeup_sel_t port)
 {
-	assert_param(IS_PMU_STANDBY_PORT_SEL(port));
+    assert_param(IS_PMU_STANDBY_PORT_SEL(port));
 
-	if (port != PMU_STANDBY_PORT_NONE) {
-		BKPC_UNLOCK();
-		MODIFY_REG(BKPC->CR, BKPC_CR_WKPS_MSK, port << BKPC_CR_WKPS_POSS);
-		SET_BIT(BKPC->CR, BKPC_CR_WKPEN_MSK);
-		BKPC_LOCK();
+    if (port != PMU_STANDBY_PORT_NONE)
+    {
+        BKPC_UNLOCK();
+        MODIFY_REG(BKPC->CR, BKPC_CR_WKPS_MSK, port << BKPC_CR_WKPS_POSS);
+        SET_BIT(BKPC->CR, BKPC_CR_WKPEN_MSK);
+        BKPC_LOCK();
 
-		SYSCFG_UNLOCK();
-		MODIFY_REG(PMU->CR, PMU_CR_WKPS_MSK, port << PMU_CR_WKPS_POSS);
-		SET_BIT(PMU->CR, PMU_CR_WKPEN_MSK);
-		MODIFY_REG(PMU->CR, PMU_CR_LPM_MSK, PMU_LP_STANDBY << PMU_CR_LPM_POSS);
-		SYSCFG_LOCK();
-	}
+        SYSCFG_UNLOCK();
+        MODIFY_REG(PMU->CR, PMU_CR_WKPS_MSK, port << PMU_CR_WKPS_POSS);
+        SET_BIT(PMU->CR, PMU_CR_WKPEN_MSK);
+        MODIFY_REG(PMU->CR, PMU_CR_LPM_MSK, PMU_LP_STANDBY << PMU_CR_LPM_POSS);
+        SYSCFG_LOCK();
+    }
 
-	SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
-	SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
-	__WFI();
-	SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
+    SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
+    SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
+    __WFI();
+    SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
 
-	return;
+    return;
 }
 
 /**
@@ -146,12 +147,12 @@ void pmu_standby_enter(pmu_standby_wakeup_sel_t port)
   */
 flag_status_t pmu_get_status(pmu_status_t sr)
 {
-	assert_param(IS_PMU_STATUS(sr));
+    assert_param(IS_PMU_STATUS(sr));
 
-	if (READ_BIT(PMU->SR, sr))
-		return SET;
+    if (READ_BIT(PMU->SR, sr))
+        return SET;
 
-	return RESET;
+    return RESET;
 }
 
 /**
@@ -161,16 +162,16 @@ flag_status_t pmu_get_status(pmu_status_t sr)
   */
 void pmu_clear_status(pmu_status_t sr)
 {
-	assert_param(IS_PMU_STATUS(sr));
-	SYSCFG_UNLOCK();
+    assert_param(IS_PMU_STATUS(sr));
+    SYSCFG_UNLOCK();
 
-	if (sr == PMU_SR_WUF)
-		SET_BIT(PMU->CR, PMU_CR_CWUF_MSK);
-	else
-		SET_BIT(PMU->CR, PMU_CR_CSTANDBYF_MSK);
+    if (sr == PMU_SR_WUF)
+        SET_BIT(PMU->CR, PMU_CR_CWUF_MSK);
+    else
+        SET_BIT(PMU->CR, PMU_CR_CSTANDBYF_MSK);
 
-	SYSCFG_LOCK();
-	return;
+    SYSCFG_LOCK();
+    return;
 }
 
 
@@ -202,28 +203,30 @@ void pmu_clear_status(pmu_status_t sr)
   */
 void pmu_lvd_config(pmu_lvd_voltage_sel_t sel, pmu_lvd_trigger_mode_t mode, type_func_t state)
 {
-	assert_param(IS_FUNC_STATE(state));
-	SYSCFG_UNLOCK();
+    assert_param(IS_FUNC_STATE(state));
+    SYSCFG_UNLOCK();
 
-	if (state) {
-		assert_param(IS_PMU_LVD_VOL_SEL(sel));
-		assert_param(IS_PMU_LVD_TRIGGER_MODE(mode));
+    if (state)
+    {
+        assert_param(IS_PMU_LVD_VOL_SEL(sel));
+        assert_param(IS_PMU_LVD_TRIGGER_MODE(mode));
 
-		MODIFY_REG(PMU->LVDCR, PMU_LVDCR_LVDS_MSK, sel << PMU_LVDCR_LVDS_POSS);
-		MODIFY_REG(PMU->LVDCR, PMU_LVDCR_LVIFS_MSK, mode << PMU_LVDCR_LVIFS_POSS);
-		SET_BIT(PMU->LVDCR, PMU_LVDCR_LVDFLT_MSK);
-		SET_BIT(PMU->LVDCR, PMU_LVDCR_LVDCIF_MSK);
-		SET_BIT(PMU->LVDCR, PMU_LVDCR_LVDIE_MSK);
-		SET_BIT(PMU->LVDCR, PMU_LVDCR_LVDEN_MSK);
-	}
-	else {
-		SET_BIT(PMU->LVDCR, PMU_LVDCR_LVDCIF_MSK);
-		CLEAR_BIT(PMU->LVDCR, PMU_LVDCR_LVDIE_MSK);
-		CLEAR_BIT(PMU->LVDCR, PMU_LVDCR_LVDEN_MSK);
-	}
+        MODIFY_REG(PMU->LVDCR, PMU_LVDCR_LVDS_MSK, sel << PMU_LVDCR_LVDS_POSS);
+        MODIFY_REG(PMU->LVDCR, PMU_LVDCR_LVIFS_MSK, mode << PMU_LVDCR_LVIFS_POSS);
+        SET_BIT(PMU->LVDCR, PMU_LVDCR_LVDFLT_MSK);
+        SET_BIT(PMU->LVDCR, PMU_LVDCR_LVDCIF_MSK);
+        SET_BIT(PMU->LVDCR, PMU_LVDCR_LVDIE_MSK);
+        SET_BIT(PMU->LVDCR, PMU_LVDCR_LVDEN_MSK);
+    }
+    else
+    {
+        SET_BIT(PMU->LVDCR, PMU_LVDCR_LVDCIF_MSK);
+        CLEAR_BIT(PMU->LVDCR, PMU_LVDCR_LVDIE_MSK);
+        CLEAR_BIT(PMU->LVDCR, PMU_LVDCR_LVDEN_MSK);
+    }
 
-	SYSCFG_LOCK();
-	return;
+    SYSCFG_LOCK();
+    return;
 }
 
 /**
@@ -234,7 +237,7 @@ void pmu_lvd_config(pmu_lvd_voltage_sel_t sel, pmu_lvd_trigger_mode_t mode, type
   */
 __weak void lvd_irq_cbk(void)
 {
-	return;
+    return;
 }
 /**
   * @}

@@ -10,6 +10,7 @@
 #include <rthw.h>
 #include <rtdevice.h>
 #include "board.h"
+#include "drv_gpio.h"
 #include <ald_cmu.h>
 #include <ald_gpio.h>
 
@@ -340,7 +341,7 @@ void es32f0_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     gpio_initstruct.type = GPIO_TYPE_CMOS;
     gpio_initstruct.pupd = GPIO_FLOATING;
     gpio_initstruct.odos = GPIO_PUSH_PULL;
-    
+
     if (mode == PIN_MODE_OUTPUT)
     {
         /* output setting */
@@ -385,7 +386,7 @@ const static struct rt_pin_ops _es32f0_pin_ops =
 int rt_hw_pin_init(void)
 {
     int result;
-    cmu_perh_clock_config(CMU_PERH_GPIO,ENABLE);
+    cmu_perh_clock_config(CMU_PERH_GPIO, ENABLE);
     result = rt_device_pin_register("pin", &_es32f0_pin_ops, RT_NULL);
     return result;
 }

@@ -18,7 +18,7 @@
 #define __ALD_CRC_H__
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 #include "utils.h"
@@ -39,69 +39,75 @@
 /**
   * @brief CRC mode
   */
-typedef enum {
-	CRC_MODE_CCITT = 0,	/**< Ccitt */
-	CRC_MODE_8     = 1,	/**< Crc8 */
-	CRC_MODE_16    = 2,	/**< Crc16 */
-	CRC_MODE_32    = 3,	/**< Crc32 */
+typedef enum
+{
+    CRC_MODE_CCITT = 0, /**< Ccitt */
+    CRC_MODE_8     = 1, /**< Crc8 */
+    CRC_MODE_16    = 2, /**< Crc16 */
+    CRC_MODE_32    = 3, /**< Crc32 */
 } crc_mode_t;
 
 /**
   * @brief CRC input length
   */
-typedef enum {
-	CRC_LEN_AUTO    = 0,	/**< Auto */
-	CRC_DATASIZE_8  = 1,	/**< Byte */
-	CRC_DATASIZE_16 = 2,	/**< Half word */
-	CRC_DATASIZE_32 = 3,	/**< Word */
+typedef enum
+{
+    CRC_LEN_AUTO    = 0,    /**< Auto */
+    CRC_DATASIZE_8  = 1,    /**< Byte */
+    CRC_DATASIZE_16 = 2,    /**< Half word */
+    CRC_DATASIZE_32 = 3,    /**< Word */
 } crc_datasize_t;
 
 /**
   * @brief CRC whether write error or no
   */
-typedef enum {
-	CRC_WERR_NO  = 0,	/**< No error */
-	CRC_WERR_ERR = 1,	/**< Error */
+typedef enum
+{
+    CRC_WERR_NO  = 0,   /**< No error */
+    CRC_WERR_ERR = 1,   /**< Error */
 } crc_werr_t;
 
 /**
   * @brief CRC state structures definition
   */
-typedef enum {
-	CRC_STATE_RESET = 0x0,	/**< Peripheral is not initialized */
-	CRC_STATE_READY = 0x1,	/**< Peripheral Initialized and ready for use */
-	CRC_STATE_BUSY  = 0x2,	/**< An internal process is ongoing */
-	CRC_STATE_ERROR = 0x4,	/**< Error */
+typedef enum
+{
+    CRC_STATE_RESET = 0x0,  /**< Peripheral is not initialized */
+    CRC_STATE_READY = 0x1,  /**< Peripheral Initialized and ready for use */
+    CRC_STATE_BUSY  = 0x2,  /**< An internal process is ongoing */
+    CRC_STATE_ERROR = 0x4,  /**< Error */
 } crc_state_t;
 
 /**
   * @brief CRC init structure definition
   */
-typedef struct {
-	crc_mode_t mode;	/**< CRC mode */
-	type_func_t data_rev;	/**< CRC data reverse or no */
-	type_func_t data_inv;	/**< CRC data inverse or no */
-	type_func_t chs_rev; 	/**< CRC check sum reverse or no */
-	type_func_t chs_inv; 	/**< CRC check sum inverse or no */
-	uint32_t seed;		/**< CRC seed */
+typedef struct
+{
+    crc_mode_t mode;    /**< CRC mode */
+    type_func_t data_rev;   /**< CRC data reverse or no */
+    type_func_t data_inv;   /**< CRC data inverse or no */
+    type_func_t chs_rev;    /**< CRC check sum reverse or no */
+    type_func_t chs_inv;    /**< CRC check sum inverse or no */
+    uint32_t seed;      /**< CRC seed */
 } crc_init_t;
 
 /**
   * @brief  CRC Handle Structure definition
   */
-typedef struct crc_handle_s {
-	CRC_TypeDef *perh;	/**< Register base address */
-	crc_init_t init;  	/**< CRC required parameters */
-	uint8_t *cal_buf; 	/**< The pointer of preparing buffer */
-	uint32_t *cal_res;	/**< The pointer of result */
+typedef struct crc_handle_s
+{
+    CRC_TypeDef *perh;  /**< Register base address */
+    crc_init_t init;    /**< CRC required parameters */
+    uint8_t *cal_buf;   /**< The pointer of preparing buffer */
+    uint32_t *cal_res;  /**< The pointer of result */
 #ifdef ALD_DMA
-	dma_handle_t hdma;	/**< CRC DMA handle parameters */
+    dma_handle_t hdma;  /**< CRC DMA handle parameters */
 #endif
-	lock_state_t lock;	/**< Locking object */
-	crc_state_t state;	/**< CRC operation state */
+    lock_state_t lock;  /**< Locking object */
+    crc_state_t state;  /**< CRC operation state */
 
-	void (*cal_cplt_cbk)(struct crc_handle_s *arg);	/**< Calculate completed callback */
-	void (*err_cplt_cbk)(struct crc_handle_s *arg);	/**< Calculate error callback */
+    void (*cal_cplt_cbk)(struct crc_handle_s *arg); /**< Calculate completed callback */
+    void (*err_cplt_cbk)(struct crc_handle_s *arg); /**< Calculate error callback */
 } crc_handle_t;
 /**
   * @}
@@ -110,12 +116,12 @@ typedef struct crc_handle_s {
 /** @defgroup CRC_Public_Macros CRC Public Macros
   * @{
   */
-#define CRC_ENABLE(handle)		(SET_BIT((handle)->perh->CR, CRC_CR_EN_MSK))
-#define CRC_DISABLE(handle)		(CLEAR_BIT((handle)->perh->CR, CRC_CR_EN_MSK))
-#define CRC_RESET(handle)		(SET_BIT((handle)->perh->CR, CRC_CR_RST_MSK))
-#define CRC_DMA_ENABLE(handle) 		(SET_BIT((handle)->perh->CR, CRC_CR_DMAEN_MSK))
-#define CRC_DMA_DISABLE(handle) 	(CLEAR_BIT((handle)->perh->CR, CRC_CR_DMAEN_MSK))
-#define CRC_CLEAR_ERROR_FLAG(handle)	(SET_BIT((handle)->perh->CR, CRC_CR_WERR_MSK))
+#define CRC_ENABLE(handle)      (SET_BIT((handle)->perh->CR, CRC_CR_EN_MSK))
+#define CRC_DISABLE(handle)     (CLEAR_BIT((handle)->perh->CR, CRC_CR_EN_MSK))
+#define CRC_RESET(handle)       (SET_BIT((handle)->perh->CR, CRC_CR_RST_MSK))
+#define CRC_DMA_ENABLE(handle)      (SET_BIT((handle)->perh->CR, CRC_CR_DMAEN_MSK))
+#define CRC_DMA_DISABLE(handle)     (CLEAR_BIT((handle)->perh->CR, CRC_CR_DMAEN_MSK))
+#define CRC_CLEAR_ERROR_FLAG(handle)    (SET_BIT((handle)->perh->CR, CRC_CR_WERR_MSK))
 /**
   * @}
   */
@@ -123,11 +129,11 @@ typedef struct crc_handle_s {
 /** @defgroup CRC_Private_Macros   CRC Private Macros
   * @{
   */
-#define IS_CRC(x) 	((x) == CRC)
-#define IS_CRC_MODE(x) 	(((x) == CRC_MODE_CCITT) || \
-			 ((x) == CRC_MODE_8)     || \
-			 ((x) == CRC_MODE_16)    || \
-			 ((x) == CRC_MODE_32))
+#define IS_CRC(x)   ((x) == CRC)
+#define IS_CRC_MODE(x)  (((x) == CRC_MODE_CCITT) || \
+             ((x) == CRC_MODE_8)     || \
+             ((x) == CRC_MODE_16)    || \
+             ((x) == CRC_MODE_32))
 /**
   * @}
   */
