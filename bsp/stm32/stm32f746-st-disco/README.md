@@ -35,6 +35,7 @@ STM32F746-disco 是 ST 推出的一款基于 ARM Cortex-M7 内核的开发板，
 ## 外设支持
 
 本 BSP 目前对外设的支持情况如下：
+
 | **板载外设**      | **支持情况** | **备注**                              |
 | :----------------- | :----------: | :------------------------------------- |
 | USB 转串口   |     支持     |              UART1                  |
@@ -95,13 +96,17 @@ STM32F746-disco 是 ST 推出的一款基于 ARM Cortex-M7 内核的开发板，
 ```bash
  \ | /
 - RT -     Thread Operating System
- / | \     4.0.0 build Dec 10 2018
+ / | \     4.0.0 build Jan 26 2019
  2006 - 2018 Copyright by rt-thread team
-msh >
+[D/drv.qspi] qspi init succsee!
+[SFUD] Find a Micron flash chip. Size is 16777216 bytes.
+[SFUD] n25q128 flash device is initialize success.
+[D/drv.qspi] qspi init succsee!
+flash already enter qspi mode
 ```
 ### 进阶使用
 
-此 BSP 默认只开启了 GPIO 和 串口1 的功能，更多高级功能，需要利用 ENV 工具对 BSP 进行配置，步骤如下：
+此 BSP 默认开启了 GPIO， 串口1， QSPI和SFUD的功能，更多高级功能，需要利用 ENV 工具对 BSP 进行配置，步骤如下：
 
 1. 在 bsp 下打开 env 工具。
 
