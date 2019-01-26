@@ -79,6 +79,12 @@
 #define RT_USING_SERIAL
 #define RT_SERIAL_USING_DMA
 #define RT_USING_PIN
+#define RT_USING_SPI
+#define RT_USING_QSPI
+#define RT_USING_SFUD
+#define RT_SFUD_USING_SFDP
+#define RT_SFUD_USING_FLASH_INFO_TABLE
+#define RT_SFUD_USING_QSPI
 
 /* Using WiFi */
 
@@ -125,9 +131,6 @@
 /* Wiced WiFi */
 
 
-/* IoT Cloud */
-
-
 /* security packages */
 
 
@@ -151,8 +154,6 @@
 
 /* sample package */
 
-/* samples: kernel and components samples */
-
 
 /* example package: hello */
 
@@ -166,12 +167,14 @@
 /* Onboard Peripheral Drivers */
 
 #define BSP_USING_USB_TO_USART
+#define BSP_USING_QSPI_FLASH
 
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
+#define BSP_USING_QSPI
 
 /* Board extended module Drivers */
 
