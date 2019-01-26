@@ -281,8 +281,8 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         /* the HAL library use uint16 to save the data length */
         if (message_length > 65535)
         {
-            send_length = 65535;
-            message_length = message_length - 65535;
+            send_length = 65534;
+            message_length = message_length - 65534;
         }
         else
         {
