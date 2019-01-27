@@ -50,6 +50,9 @@ extern "C" {
 #include "f7/tim_config.h"
 #include "f7/sdio_config.h"
 #include "f7/pwm_config.h"
+#elif  defined(SOC_SERIES_STM32L0)
+#include "l0/dma_config.h"
+#include "l0/uart_config.h"
 #elif  defined(SOC_SERIES_STM32L4)
 #include "l4/dma_config.h"
 #include "l4/uart_config.h"
