@@ -156,6 +156,9 @@ static err_t eth_netif_device_init(struct netif *netif)
         /* copy device flags to netif flags */
         netif->flags = (ethif->flags & 0xff);
         netif->mtu = ETHERNET_MTU;
+        
+        /* set output */
+        netif->output       = etharp_output;
 
 #if LWIP_IPV6
         netif->output_ip6 = ethip6_output;
@@ -239,6 +242,9 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, char *name, rt_uint16
     /* maximum transfer unit */
     netif->mtu          = ETHERNET_MTU;
 
+    /* set linkoutput */
+    netif->linkoutput   = ethernetif_linkoutput;
+        
     /* get hardware MAC address */
     rt_device_control(&(dev->parent), NIOCTL_GADDR, netif->hwaddr);
 
@@ -262,10 +268,6 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, char *name, rt_uint16
         IP4_ADDR(&netmask, 0, 0, 0, 0);
 #endif
         netifapi_netif_add(netif, &ipaddr, &netmask, &gw, dev, eth_netif_device_init, tcpip_input);
-
-        /* set output */
-        netif->output       = etharp_output;
-        netif->linkoutput   = ethernetif_linkoutput;
     }
 
     return RT_EOK;
