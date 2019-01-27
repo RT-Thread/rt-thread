@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-08     balanceTWK   change to new framework
+ * 2018-11-08     balanceTWK   first version
  */
 
 #include <board.h>

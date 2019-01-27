@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-06     balanceTWK   change to new framework
+ * 2018-11-06     balanceTWK   first version
  */
 
 #ifndef __BOARD_H__
@@ -14,6 +14,7 @@
 #include <rtthread.h>
 #include <stm32f1xx.h>
 #include "drv_common.h"
+#include "drv_gpio.h"
 
 #ifdef __cplusplus
 extern "C" {
