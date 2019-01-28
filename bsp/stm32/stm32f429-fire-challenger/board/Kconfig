@@ -25,7 +25,7 @@ menu "Onboard Peripheral Drivers"
         default n
         
     config BSP_USING_SPI_FLASH
-        bool "Enable SPI FLASH (w25q256 spi5)"
+        bool "Enable SPI FLASH (W25Q128 spi5)"
         select BSP_USING_SPI
         select BSP_USING_SPI5
         select RT_USING_SFUD
