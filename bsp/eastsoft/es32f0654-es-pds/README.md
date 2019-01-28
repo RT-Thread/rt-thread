@@ -23,7 +23,7 @@ ES-PDS-ES32F0654 是东软载波微电子官方推出的一款基于 ARM Cortex-
 - 常用外设
   - LED：2个，（红色，PC8-PC9）
   - 按键：3个，K1(PF00)，K2（PF01)，RESET(MRST)
-- 常用接口：串口、GPIO
+- 常用接口：串口、GPIO、SPI、I2C
 - 调试接口，ESLinkⅡ(EastSoft官方开发工具，自带CDC串口功能) SWD 下载
 
 ## 外设支持
@@ -56,17 +56,15 @@ ES-PDS-ES32F0654 是东软载波微电子官方推出的一款基于 ARM Cortex-
 
 ### 快速上手
 
-本 BSP 为开发者提供 MDK4、MDK5 和 IAR 工程，并且支持 GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
+本 BSP 为开发者提供MDK5工程，并且支持 GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
 
 #### 硬件连接
 
-使用数据线连接开发板到 PC，打开电源开关。
+使用ESLinkⅡ(自带CDC串口)或Jlink等调试工具连接开发板到PC，拨动开关选择使用调试工具供电或使用外部电源供电。若使用Jlink等调试工具，还需要将UART2_TX(PC12)、UART2_RX(PD2)、GND接到串口工具上。
 
 #### 编译下载
 
-双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
-
-> 工程默认配置使用 JLink 下载程序，在通过 JLink 连接开发板的基础上，点击下载按钮即可下载程序到开发板
+双击 project.uvprojx 文件，打开 MDK5 工程，工程默认配置使用 JLink 下载程序，在通过 JLink 连接开发板的基础上，点击下载按钮即可下载程序到开发板，如果使用ESLinkⅡ，则选择"CMSIS-DAP Debugger"，连接正常后即可编译并下载程序到开发板。
 
 #### 运行结果
 
@@ -75,7 +73,7 @@ ES-PDS-ES32F0654 是东软载波微电子官方推出的一款基于 ARM Cortex-
 ```bash
  \ | /
 - RT -     Thread Operating System
- / | \     3.1.1 build Nov 19 2018
+ / | \     4.0.0 build Jan 28 2019
  2006 - 2018 Copyright by rt-thread team
 msh >
 ```
@@ -100,4 +98,4 @@ msh >
 
 维护人:
 
-- [guozhanxin](https://github.com/Guozhanxin) 
+- [wangyongquan](https://github.com/wangyq2018) 
