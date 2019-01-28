@@ -40,7 +40,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m0 -mthumb -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -std=gnu9x'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-es32f065x.map,-cref,-u,Reset_Handler -T es32f065x.ld'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T link.ld'
 
     CPATH = ''
     LPATH = ''
@@ -51,7 +51,7 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS += ' -O2'
 
-    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread-es32f065x.bin\n' + OBJCPY + ' -O ihex $TARGET rtthread-es32f065x.hex\n' + SIZE + ' $TARGET \n'
+    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + OBJCPY + ' -O ihex $TARGET rtthread.hex\n' + SIZE + ' $TARGET \n'
 
 elif PLATFORM == 'armcc':
     # toolchains
@@ -64,7 +64,7 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --device DARMSTM'
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-es32f065x.map --scatter es32f065x.sct'
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread.map --scatter "board\linker_scripts\link.sct"'
 
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCC/include'
     LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/ARMCC/lib'
@@ -77,7 +77,7 @@ elif PLATFORM == 'armcc':
     else:
         CFLAGS += ' -O2'
 
-    POST_ACTION = 'fromelf --bin $TARGET --output rtthread-es32f065x.bin \nfromelf -z $TARGET'
+    POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
 elif PLATFORM == 'iar':
     # toolchains
@@ -114,7 +114,7 @@ elif PLATFORM == 'iar':
     AFLAGS += ' --cpu Cortex-M0' 
     AFLAGS += ' --fpu None' 
 
-    LFLAGS = ' --config es32f065x_flash.icf'
+    LFLAGS = ' --config link.icf'
     LFLAGS += ' --redirect _Printf=_PrintfTiny' 
     LFLAGS += ' --redirect _Scanf=_ScanfSmall' 
     LFLAGS += ' --entry __iar_program_start'    

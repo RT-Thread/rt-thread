@@ -3,9 +3,7 @@ from building import *
 cwd = GetCurrentDir()
 
 # add the general drivers.
-src = Split("""
-board.c
-""")
+src = []
 
 # add gpio drivers.
 if GetDepend('RT_USING_PIN'):
