@@ -53,10 +53,6 @@ RT-Thread is Open Source software under the Apache License 2.0 since RT-Thread v
 
 Since 9th of September 2018, PRs submitted by the community may be merged into the main line only after signing the Contributor License Agreement(CLA).
 
-NOTE:
-
-RT-Thread using the Apache license v2.0 is only launched after the release of v3.1.1, and is still in preparation right now.
-
 ## Usage ##
 
 RT-Thread RTOS uses [scons](http://www.scons.org) as building system. Therefore, please install scons and Python 2.7 firstly. 
