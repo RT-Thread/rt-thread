@@ -8,9 +8,10 @@
  * 2018-11-19     MurphyZhao   the first version
  */
 
-#include "utest.h"
 #include <rtthread.h>
-#include <finsh.h>
+#include <string.h>
+#include "utest.h"
+#include <utest_log.h>
 
 #undef DBG_SECTION_NAME
 #undef DBG_LEVEL
@@ -31,6 +32,7 @@
 #error "RT_CONSOLEBUF_SIZE is less than 256!"
 #endif
 
+static rt_uint8_t utest_log_lv = UTEST_LOG_ALL;
 static utest_tc_export_t tc_table = RT_NULL;
 static rt_size_t tc_num;
 static struct utest local_utest = {UTEST_PASSED, 0, 0};
@@ -38,6 +40,14 @@ static struct utest local_utest = {UTEST_PASSED, 0, 0};
 #if defined(__ICCARM__) || defined(__ICCRX__)         /* for IAR compiler */
 #pragma section="UtestTcTab"
 #endif
+
+void utest_log_lv_set(rt_uint8_t lv)
+{
+    if (lv == UTEST_LOG_ALL || lv == UTEST_LOG_ASSERT)
+    {
+        utest_log_lv = lv;
+    }
+}
 
 int utest_init(void)
 {
@@ -112,7 +122,7 @@ static void utest_run(const char *utest_name)
         {
             if (tc_table[i].init() != RT_EOK)
             {
-                LOG_I("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
+                LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
                 goto __tc_continue;
             }
         }
@@ -126,19 +136,19 @@ static void utest_run(const char *utest_name)
             }
             else
             {
-                LOG_I("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
+                LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
             }
         }
         else
         {
-            LOG_I("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
+            LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
         }
 
         if (tc_table[i].cleanup != RT_NULL)
         {
             if (tc_table[i].cleanup() != RT_EOK)
             {
-                LOG_I("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
+                LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
                 goto __tc_continue;
             }
         }
@@ -200,7 +210,10 @@ void utest_assert(int value, const char *file, int line, const char *func, const
     }
     else
     {
-        LOG_D("[    OK    ] [ unit     ] (%s:%d) is passed", func, line);
+        if (utest_log_lv == UTEST_LOG_ALL)
+        {
+            LOG_D("[    OK    ] [ unit     ] (%s:%d) is passed", func, line);
+        }
         local_utest.error = UTEST_PASSED;
         local_utest.passed_num ++;
     }
@@ -227,6 +240,37 @@ void utest_assert_string(const char *a, const char *b, rt_bool_t equal, const ch
     else
     {
         if (rt_strcmp(a, b) == 0)
+        {
+            utest_assert(0, file, line, func, msg);
+        }
+        else
+        {
+            utest_assert(1, file, line, func, msg);
+        }
+    }
+}
+
+void utest_assert_buf(const char *a, const char *b, rt_size_t sz, rt_bool_t equal, const char *file, int line, const char *func, const char *msg)
+{
+    if (a == RT_NULL || b == RT_NULL)
+    {
+        utest_assert(0, file, line, func, msg);
+    }
+
+    if (equal)
+    {
+        if (rt_memcmp(a, b, sz) == 0)
+        {
+            utest_assert(1, file, line, func, msg);
+        }
+        else
+        {
+            utest_assert(0, file, line, func, msg);
+        }
+    }
+    else
+    {
+        if (rt_memcmp(a, b, sz) == 0)
         {
             utest_assert(0, file, line, func, msg);
         }

@@ -8,14 +8,11 @@
  * 2019-01-08     zylx         first version
  */
 
-#include <rtthread.h>
-#include <rtdevice.h>
 #include <board.h>
 
 #ifdef BSP_USING_LCD
 #include <lcd_port.h>
 #include <string.h>
-#include "drv_gpio.h"
 
 //#define DRV_DEBUG
 #define LOG_TAG             "drv.lcd"

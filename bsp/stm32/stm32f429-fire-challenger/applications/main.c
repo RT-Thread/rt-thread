@@ -5,14 +5,14 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-06     SummerGift   change to new framework
+ * 2018-11-06     SummerGift   first version
  * 2018-11-19     flybreak     add stm32f429-fire-challenger bsp
  */
 
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
-#include "drv_gpio.h"
+
 /* defined the LED0 pin: PH10 */
 #define LED0_PIN    GET_PIN(H, 10)
 

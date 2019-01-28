@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author            Notes
- * 2018-11-06     balanceTWK        change to new framework
+ * 2018-11-06     balanceTWK        first version
  */
 
 #ifndef __DRV_GPIO_H__

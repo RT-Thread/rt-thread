@@ -8,8 +8,6 @@
  * 2018-12-04     zylx         first version
  */
 
-#include <rtthread.h>
-#include <rtdevice.h>
 #include <board.h>
 
 #ifdef BSP_USING_SDRAM
