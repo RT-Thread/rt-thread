@@ -97,18 +97,14 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  uint32_t hell0;
-hell0 = HAL_RCC_GetPCLK1Freq();
-//printf("hell0:%d",hell0);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	HAL_UART_Transmit(&huart2, "hello\r\n", strlen("hello\r\n"), 10);
-HAL_Delay(1000);
-  /* USER CODE END WHILE */
+    /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
 

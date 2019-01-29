@@ -1,4 +1,4 @@
-# NUCLEO-L053R8 开发板的 BSP 说明
+# NUCLEO-L053R8 开发板 BSP 说明
 
 ## 简介
 
