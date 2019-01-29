@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32f1xx_hal_i2s.c
   * @author  MCD Application Team
-  * @version V1.1.1
-  * @date    12-May-2017
   * @brief   I2S HAL module driver.
   *          This file provides firmware functions to manage the following
   *          functionalities of the Integrated Interchip Sound (I2S) peripheral:
@@ -1363,7 +1361,7 @@ static void I2S_IRQHandler(I2S_HandleTypeDef *hi2s)
       I2S_Receive_IT(hi2s);
     }
 
-    /* I2S Overrun error interrupt occured -------------------------------------*/
+    /* I2S Overrun error interrupt occurred -------------------------------------*/
     if(((i2ssr & I2S_FLAG_OVR) == I2S_FLAG_OVR) && (__HAL_I2S_GET_IT_SOURCE(hi2s, I2S_IT_ERR) != RESET))
     {
       /* Disable RXNE and ERR interrupt */
