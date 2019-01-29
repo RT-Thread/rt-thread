@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32f1xx_hal_i2c.c
   * @author  MCD Application Team
-  * @version V1.1.1
-  * @date    12-May-2017
   * @brief   I2C HAL module driver.
   *          This file provides firmware functions to manage the following
   *          functionalities of the Inter Integrated Circuit (I2C) peripheral:
@@ -406,6 +404,12 @@ HAL_StatusTypeDef HAL_I2C_Init(I2C_HandleTypeDef *hi2c)
   /* Get PCLK1 frequency */
   pclk1 = HAL_RCC_GetPCLK1Freq();
 
+  /* Check the minimum allowed PCLK1 frequency */
+  if (I2C_MIN_PCLK_FREQ(pclk1, hi2c->Init.ClockSpeed) == 1U)
+  {
+    return HAL_ERROR;
+  }
+
   /* Calculate frequency range */
   freqrange = I2C_FREQRANGE(pclk1);
 
@@ -583,7 +587,7 @@ HAL_StatusTypeDef HAL_I2C_DeInit(I2C_HandleTypeDef *hi2c)
   * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
   *                the configuration information for the specified I2C.
   * @param  DevAddress Target device address: The device 7 bits address value
-  *         in datasheet must be shift at right before call interface
+  *         in datasheet must be shifted to the left before calling the interface
   * @param  pData Pointer to data buffer
   * @param  Size Amount of data to be sent
   * @param  Timeout Timeout duration
@@ -715,7 +719,7 @@ HAL_StatusTypeDef HAL_I2C_Master_Transmit(I2C_HandleTypeDef *hi2c, uint16_t DevA
   * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
   *                the configuration information for the specified I2C.
   * @param  DevAddress Target device address: The device 7 bits address value
-  *         in datasheet must be shift at right before call interface
+  *         in datasheet must be shifted to the left before calling the interface
   * @param  pData Pointer to data buffer
   * @param  Size Amount of data to be sent
   * @param  Timeout Timeout duration
@@ -1181,7 +1185,7 @@ HAL_StatusTypeDef HAL_I2C_Slave_Receive(I2C_HandleTypeDef *hi2c, uint8_t *pData,
       hi2c->XferSize--;
       hi2c->XferCount--;
 
-      if((__HAL_I2C_GET_FLAG(hi2c, I2C_FLAG_BTF) == SET) && (Size != 0U))
+      if((__HAL_I2C_GET_FLAG(hi2c, I2C_FLAG_BTF) == SET) && (hi2c->XferSize != 0U))
       {
         /* Read data from DR */
       (*hi2c->pBuffPtr++) = hi2c->Instance->DR;
@@ -1231,7 +1235,7 @@ HAL_StatusTypeDef HAL_I2C_Slave_Receive(I2C_HandleTypeDef *hi2c, uint8_t *pData,
   * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
   *                the configuration information for the specified I2C.
   * @param  DevAddress Target device address: The device 7 bits address value
-  *         in datasheet must be shift at right before call interface
+  *         in datasheet must be shifted to the left before calling the interface
   * @param  pData Pointer to data buffer
   * @param  Size Amount of data to be sent
   * @retval HAL status
@@ -1308,7 +1312,7 @@ HAL_StatusTypeDef HAL_I2C_Master_Transmit_IT(I2C_HandleTypeDef *hi2c, uint16_t D
   * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
   *                the configuration information for the specified I2C.
   * @param  DevAddress Target device address: The device 7 bits address value
-  *         in datasheet must be shift at right before call interface
+  *         in datasheet must be shifted to the left before calling the interface
   * @param  pData Pointer to data buffer
   * @param  Size Amount of data to be sent
   * @retval HAL status
@@ -1390,7 +1394,7 @@ HAL_StatusTypeDef HAL_I2C_Master_Receive_IT(I2C_HandleTypeDef *hi2c, uint16_t De
   * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
   *         the configuration information for the specified I2C.
   * @param  DevAddress Target device address: The device 7 bits address value
-  *         in datasheet must be shift at right before call interface
+  *         in datasheet must be shifted to the left before calling the interface
   * @param  pData Pointer to data buffer
   * @param  Size Amount of data to be sent
   * @param  XferOptions Options of Transfer, value of @ref I2C_XferOptions_definition
@@ -1493,7 +1497,7 @@ HAL_StatusTypeDef HAL_I2C_Master_Sequential_Transmit_IT(I2C_HandleTypeDef *hi2c,
   * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
   *         the configuration information for the specified I2C.
   * @param  DevAddress Target device address: The device 7 bits address value
-  *         in datasheet must be shift at right before call interface
+  *         in datasheet must be shifted to the left before calling the interface
   * @param  pData Pointer to data buffer
   * @param  Size Amount of data to be sent
   * @param  XferOptions Options of Transfer, value of @ref I2C_XferOptions_definition
@@ -1955,7 +1959,7 @@ HAL_StatusTypeDef HAL_I2C_DisableListen_IT(I2C_HandleTypeDef *hi2c)
   * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
   *                the configuration information for the specified I2C.
   * @param  DevAddress Target device address: The device 7 bits address value
-  *         in datasheet must be shift at right before call interface
+  *         in datasheet must be shifted to the left before calling the interface
   * @param  pData Pointer to data buffer
   * @param  Size Amount of data to be sent
   * @retval HAL status
@@ -2073,7 +2077,7 @@ HAL_StatusTypeDef HAL_I2C_Master_Transmit_DMA(I2C_HandleTypeDef *hi2c, uint16_t 
   * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
   *                the configuration information for the specified I2C.
   * @param  DevAddress Target device address: The device 7 bits address value
-  *         in datasheet must be shift at right before call interface
+  *         in datasheet must be shifted to the left before calling the interface
   * @param  pData Pointer to data buffer
   * @param  Size Amount of data to be sent
   * @retval HAL status
@@ -2192,7 +2196,7 @@ HAL_StatusTypeDef HAL_I2C_Master_Receive_DMA(I2C_HandleTypeDef *hi2c, uint16_t D
   * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
   *         the configuration information for the specified I2C.
   * @param  DevAddress Target device address: The device 7 bits address value
-  *         in datasheet must be shift at right before call interface
+  *         in datasheet must be shifted to the left before calling the interface
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_I2C_Master_Abort_IT(I2C_HandleTypeDef *hi2c, uint16_t DevAddress)
@@ -2429,7 +2433,8 @@ HAL_StatusTypeDef HAL_I2C_Slave_Receive_DMA(I2C_HandleTypeDef *hi2c, uint8_t *pD
   * @brief  Write an amount of data in blocking mode to a specific memory address
   * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
   *                the configuration information for the specified I2C.
-  * @param  DevAddress Target device address
+  * @param  DevAddress Target device address: The device 7 bits address value
+  *         in datasheet must be shifted to the left before calling the interface
   * @param  MemAddress Internal memory address
   * @param  MemAddSize Size of internal memory address
   * @param  pData Pointer to data buffer
@@ -2562,7 +2567,8 @@ HAL_StatusTypeDef HAL_I2C_Mem_Write(I2C_HandleTypeDef *hi2c, uint16_t DevAddress
   * @brief  Read an amount of data in blocking mode from a specific memory address
   * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
   *                the configuration information for the specified I2C.
-  * @param  DevAddress Target device address
+  * @param  DevAddress Target device address: The device 7 bits address value
+  *         in datasheet must be shifted to the left before calling the interface
   * @param  MemAddress Internal memory address
   * @param  MemAddSize Size of internal memory address
   * @param  pData Pointer to data buffer
@@ -2827,7 +2833,8 @@ HAL_StatusTypeDef HAL_I2C_Mem_Read(I2C_HandleTypeDef *hi2c, uint16_t DevAddress,
   * @brief  Write an amount of data in non-blocking mode with Interrupt to a specific memory address
   * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
   *                the configuration information for the specified I2C.
-  * @param  DevAddress Target device address
+  * @param  DevAddress Target device address: The device 7 bits address value
+  *         in datasheet must be shifted to the left before calling the interface
   * @param  MemAddress Internal memory address
   * @param  MemAddSize Size of internal memory address
   * @param  pData Pointer to data buffer
@@ -2912,7 +2919,8 @@ HAL_StatusTypeDef HAL_I2C_Mem_Write_IT(I2C_HandleTypeDef *hi2c, uint16_t DevAddr
   * @brief  Read an amount of data in non-blocking mode with Interrupt from a specific memory address
   * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
   *                the configuration information for the specified I2C.
-  * @param  DevAddress Target device address
+  * @param  DevAddress Target device address: The device 7 bits address value
+  *         in datasheet must be shifted to the left before calling the interface
   * @param  MemAddress Internal memory address
   * @param  MemAddSize Size of internal memory address
   * @param  pData Pointer to data buffer
@@ -3002,7 +3010,8 @@ HAL_StatusTypeDef HAL_I2C_Mem_Read_IT(I2C_HandleTypeDef *hi2c, uint16_t DevAddre
   * @brief  Write an amount of data in non-blocking mode with DMA to a specific memory address
   * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
   *                the configuration information for the specified I2C.
-  * @param  DevAddress Target device address
+  * @param  DevAddress Target device address: The device 7 bits address value
+  *         in datasheet must be shifted to the left before calling the interface
   * @param  MemAddress Internal memory address
   * @param  MemAddSize Size of internal memory address
   * @param  pData Pointer to data buffer
@@ -3122,7 +3131,8 @@ HAL_StatusTypeDef HAL_I2C_Mem_Write_DMA(I2C_HandleTypeDef *hi2c, uint16_t DevAdd
   * @brief  Reads an amount of data in non-blocking mode with DMA from a specific memory address.
   * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
   *                the configuration information for the specified I2C.
-  * @param  DevAddress Target device address
+  * @param  DevAddress Target device address: The device 7 bits address value
+  *         in datasheet must be shifted to the left before calling the interface
   * @param  MemAddress Internal memory address
   * @param  MemAddSize Size of internal memory address
   * @param  pData Pointer to data buffer
@@ -3283,7 +3293,8 @@ HAL_StatusTypeDef HAL_I2C_Mem_Read_DMA(I2C_HandleTypeDef *hi2c, uint16_t DevAddr
   * @note   This function is used with Memory devices
   * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
   *                the configuration information for the specified I2C.
-  * @param  DevAddress Target device address
+  * @param  DevAddress Target device address: The device 7 bits address value
+  *         in datasheet must be shifted to the left before calling the interface
   * @param  Trials Number of trials
   * @param  Timeout Timeout duration
   * @retval HAL status
@@ -4766,7 +4777,7 @@ static void I2C_ITError(I2C_HandleTypeDef *hi2c)
   * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
   *         the configuration information for I2C module
   * @param  DevAddress Target device address: The device 7 bits address value
-  *         in datasheet must be shift at right before call interface
+  *         in datasheet must be shifted to the left before calling the interface
   * @param  Timeout Timeout duration
   * @param  Tickstart Tick start value
   * @retval HAL status
@@ -4842,7 +4853,7 @@ static HAL_StatusTypeDef I2C_MasterRequestWrite(I2C_HandleTypeDef *hi2c, uint16_
   * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
   *         the configuration information for I2C module
   * @param  DevAddress Target device address: The device 7 bits address value
-  *         in datasheet must be shift at right before call interface
+  *         in datasheet must be shifted to the left before calling the interface
   * @param  Timeout Timeout duration
   * @param  Tickstart Tick start value
   * @retval HAL status
@@ -4948,7 +4959,8 @@ static HAL_StatusTypeDef I2C_MasterRequestRead(I2C_HandleTypeDef *hi2c, uint16_t
   * @brief  Master sends target device address followed by internal memory address for write request.
   * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
   *         the configuration information for I2C module
-  * @param  DevAddress Target device address
+  * @param  DevAddress Target device address: The device 7 bits address value
+  *         in datasheet must be shifted to the left before calling the interface
   * @param  MemAddress Internal memory address
   * @param  MemAddSize Size of internal memory address
   * @param  Timeout Timeout duration
@@ -5038,7 +5050,8 @@ static HAL_StatusTypeDef I2C_RequestMemoryWrite(I2C_HandleTypeDef *hi2c, uint16_
   * @brief  Master sends target device address followed by internal memory address for read request.
   * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
   *         the configuration information for I2C module
-  * @param  DevAddress Target device address
+  * @param  DevAddress Target device address: The device 7 bits address value
+  *         in datasheet must be shifted to the left before calling the interface
   * @param  MemAddress Internal memory address
   * @param  MemAddSize Size of internal memory address
   * @param  Timeout Timeout duration

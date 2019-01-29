@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32f1xx_hal_rcc.h
   * @author  MCD Application Team
-  * @version V1.1.1
-  * @date    12-May-2017
   * @brief   Header file of RCC HAL module.
   ******************************************************************************
   * @attention
@@ -1170,7 +1168,7 @@ typedef struct
   */
 
 /* Initialization and de-initialization functions  ******************************/
-void              HAL_RCC_DeInit(void);
+HAL_StatusTypeDef HAL_RCC_DeInit(void);
 HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct);
 HAL_StatusTypeDef HAL_RCC_ClockConfig(RCC_ClkInitTypeDef  *RCC_ClkInitStruct, uint32_t FLatency);
 
