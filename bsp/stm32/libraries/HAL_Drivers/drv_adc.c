@@ -214,25 +214,26 @@ static int stm32_adc_init(void)
     {
         /* ADC init */
         stm32_adc_obj[i].ADC_Handler = adc_config[i];
+        if (stm32_adc_obj[i].ADC_Handler.Instance == ADC1)
+        {
+            rt_sprintf(name_buf, "adc1");
+        }
+        if (stm32_adc_obj[i].ADC_Handler.Instance == ADC2)
+        {
+            rt_sprintf(name_buf, "adc2");
+        }
+        if (stm32_adc_obj[i].ADC_Handler.Instance == ADC3)
+        {
+            rt_sprintf(name_buf, "adc3");
+        }
+
         if (HAL_ADC_Init(&stm32_adc_obj[i].ADC_Handler) != HAL_OK)
         {
-            LOG_E("ADC%d init failed", i + 1);
+            LOG_E("%s init failed", name_buf);
             result = -RT_ERROR;
         }
         else
         {
-            if (stm32_adc_obj[i].ADC_Handler.Instance == ADC1)
-            {
-                rt_sprintf(name_buf, "adc1");
-            }
-            if (stm32_adc_obj[i].ADC_Handler.Instance == ADC2)
-            {
-                rt_sprintf(name_buf, "adc2");
-            }
-            if (stm32_adc_obj[i].ADC_Handler.Instance == ADC3)
-            {
-                rt_sprintf(name_buf, "adc3");
-            }
             /* register ADC device */
             if (rt_hw_adc_register(&stm32_adc_obj[i].stm32_adc_device, name_buf, &stm_adc_ops, &stm32_adc_obj[i].ADC_Handler) == RT_EOK)
             {
