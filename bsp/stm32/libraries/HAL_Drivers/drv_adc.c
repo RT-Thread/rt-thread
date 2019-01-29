@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2018-12-05     zylx         first version
  * 2018-12-12     greedyhao    Porting for stm32f7xx
+ * 2019-1-29     yuneizhilin   fix the stm32_adc_init function initialization issue
  */
 
 #include <board.h>
@@ -220,15 +221,26 @@ static int stm32_adc_init(void)
         }
         else
         {
-            rt_sprintf(name_buf, "adc%d", i + 1);
+            if (stm32_adc_obj[i].ADC_Handler.Instance == ADC1)
+            {
+                rt_sprintf(name_buf, "adc1");
+            }
+            if (stm32_adc_obj[i].ADC_Handler.Instance == ADC2)
+            {
+                rt_sprintf(name_buf, "adc2");
+            }
+            if (stm32_adc_obj[i].ADC_Handler.Instance == ADC3)
+            {
+                rt_sprintf(name_buf, "adc3");
+            }
             /* register ADC device */
             if (rt_hw_adc_register(&stm32_adc_obj[i].stm32_adc_device, name_buf, &stm_adc_ops, &stm32_adc_obj[i].ADC_Handler) == RT_EOK)
             {
-                LOG_D("ADC%d init success", i + 1);
+                LOG_D("%s init success", name_buf);
             }
             else
             {
-                LOG_E("ADC%d register failed", i + 1);
+                LOG_E("%s register failed", name_buf);
                 result = -RT_ERROR;
             }
         }
