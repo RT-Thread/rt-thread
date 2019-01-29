@@ -952,6 +952,26 @@ static void pbuf_free_custom(struct pbuf *p)
 	}
 }
 
+
+/** tell tcpip stack if link state is changed
+ *  
+ *  periodic call by timer or thread to check link states
+ * 
+ */
+static void update_link_status(void* param)
+{
+	(void)param;
+
+	int32_t curPhyStatus = LAN8742_GetLinkState(&LAN8742);
+	int8_t isLinkUp = (curPhyStatus != LAN8742_STATUS_READ_ERROR && curPhyStatus != LAN8742_STATUS_LINK_DOWN) ? 1 : 0;
+
+	if(isLinkUp != lan8742_device.parent.link_status)
+	{
+		eth_device_linkchange(&(lan8742_device.parent), isLinkUp);
+	}
+	
+}
+
 int rt_hw_lan8742a_init(void)
 {
 	uint32_t idx, duplex, speed = 0;
@@ -1044,8 +1064,29 @@ int rt_hw_lan8742a_init(void)
     lan8742_device.parent.eth_tx     = rt_lan8742_tx;
 
     eth_device_init(&(lan8742_device.parent), "e0");
-	
-    return 0;
+
+	/* start link check timer */
+	rt_uint8_t timerflag = RT_TIMER_FLAG_PERIODIC;
+
+#ifdef RT_USING_TIMER_SOFT
+		timerflag |= RT_TIMER_FLAG_SOFT_TIMER;
+#endif
+
+	rt_timer_t linkTimer = rt_timer_create("ethlink", 
+											update_link_status, 
+											RT_NULL, 
+											RT_TICK_PER_SECOND, 
+											   timerflag);
+		
+	if(RT_NULL == linkTimer)
+	{
+		rt_kprintf("ethernet: link check timer create failed.");
+		return -RT_ERROR;
+	}
+
+	rt_timer_start(linkTimer);
+
+	return 0;
 }
 INIT_DEVICE_EXPORT(rt_hw_lan8742a_init);
 
