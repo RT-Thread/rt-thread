@@ -41,6 +41,9 @@ if GetDepend(['RT_USING_ADC']):
 if GetDepend('BSP_USING_SDRAM'):
     src += ['drv_sdram.c']
 
+if GetDepend('BSP_USING_NORSRAM'):
+    src += ['drv_norsram.c']
+
 if GetDepend('BSP_USING_LCD'):
     src += ['drv_lcd.c']
 
