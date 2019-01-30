@@ -79,7 +79,7 @@ if GetDepend(['RT_USING_AUDIO']):
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_sai.c']
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_sai_ex.c']
 
-if GetDepend(['RT_USING_MTD_NOR']):
+if GetDepend(['RT_USING_MTD_NOR']) or GetDepend(['BSP_USING_NORSRAM']):
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_nor.c']
 
 if GetDepend(['RT_USING_MTD_NAND']):
