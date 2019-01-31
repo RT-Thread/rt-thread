@@ -556,6 +556,7 @@ rt_err_t es32f0_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     }
     return RT_EOK;
 }
+
 const static struct rt_pin_ops _es32f0_pin_ops =
 {
     es32f0_pin_mode,
@@ -642,4 +643,5 @@ void EXTI12_15_Handler(void)
     GPIO_EXTI_Callback(GPIO_PIN_15);
     rt_interrupt_leave();
 }
+
 #endif
