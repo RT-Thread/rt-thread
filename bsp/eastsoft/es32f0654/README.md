@@ -1,5 +1,5 @@
 # ES-PDS-ES32F0654 开发板 BSP 说明
-标签： EastSoft、Cortex-M0、ES32F0654LT、国产MCU
+标签： EastSoft、国产MCU、Cortex-M0、ES32F0654LT
 
 ## 1. 简介
 
@@ -71,7 +71,7 @@ msh >
 
 4. 输入`scons --target=mdk5/iar` 命令重新生成工程。
 
-更多[ Env 工具]详细的介绍请参考 (https://www.rt-thread.org/document/site/)
+更多 Env 工具的详细介绍请参考 [RT-Thread 文档中心](https://www.rt-thread.org/document/site/)
 
 ## 4. 联系人信息
 

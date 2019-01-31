@@ -2,8 +2,8 @@
 import os
 Import('RTT_ROOT')
 
-cwd = str(Dir('#'))
 objs = []
+cwd = str(Dir('#'))
 list = os.listdir(cwd)
 
 for d in list:

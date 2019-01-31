@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2019-01-23     wangyq       the first version
+ * Date           Author        Notes
+ * 2019-01-23     wangyq        the first version
  */
 
 #include <rthw.h>

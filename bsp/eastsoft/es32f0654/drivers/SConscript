@@ -14,7 +14,6 @@ if GetDepend(['RT_USING_SERIAL']):
     src += ['drv_usart.c']
 
 CPPPATH = [cwd]
-
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
