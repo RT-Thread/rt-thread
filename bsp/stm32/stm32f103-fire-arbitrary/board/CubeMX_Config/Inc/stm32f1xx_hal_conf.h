@@ -5,7 +5,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2018 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2019 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -36,6 +36,8 @@
 #ifndef __STM32F1xx_HAL_CONF_H
 #define __STM32F1xx_HAL_CONF_H
 
+#include <rtconfig.h>
+
 #ifdef __cplusplus
  extern "C" {
 #endif
@@ -51,7 +53,9 @@
 #define HAL_MODULE_ENABLED  
 #define HAL_ADC_MODULE_ENABLED
 /*#define HAL_CRYP_MODULE_ENABLED   */
-/*#define HAL_CAN_MODULE_ENABLED   */
+#ifdef RT_USING_CAN
+    #define HAL_CAN_MODULE_ENABLED
+#endif
 /*#define HAL_CEC_MODULE_ENABLED   */
 /*#define HAL_CORTEX_MODULE_ENABLED   */
 /*#define HAL_CRC_MODULE_ENABLED   */

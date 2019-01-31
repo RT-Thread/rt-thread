@@ -16,7 +16,7 @@
         <TargetCommonOption>
           <Device>STM32F103ZE</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32F1xx_DFP.2.2.0</PackID>
+          <PackID>Keil.STM32F1xx_DFP.2.3.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x10000) IROM(0x08000000,0x80000) CPUTYPE("Cortex-M3") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -184,6 +184,7 @@
             <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
             <RvdsVP>0</RvdsVP>
+            <RvdsMve>0</RvdsMve>
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -337,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER, RT_USING_ARM_LIBC, STM32F103xE</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;.;board;board\CubeMX_Config\Inc;board\ports;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\include;..\..\..\libcpu\arm\cortex-m3;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\compilers\armlibc;..\..\..\components\libc\compilers\common;..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include;..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Inc;..\libraries\STM32F1xx_HAL\CMSIS\Include</IncludePath>
+              <IncludePath>.;..\..\..\include;applications;.;board;board\CubeMX_Config\Inc;board\ports;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\compilers\armlibc;..\..\..\components\libc\compilers\common;..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include;..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Inc;..\libraries\STM32F1xx_HAL\CMSIS\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -378,51 +379,6 @@
         </TargetArmAds>
       </TargetOption>
       <Groups>
-        <Group>
-          <GroupName>Applications</GroupName>
-          <Files>
-            <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\main.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Drivers</GroupName>
-          <Files>
-            <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\board.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f1xx_hal_msp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\CubeMX_Config\Src\stm32f1xx_hal_msp.c</FilePath>
-            </File>
-            <File>
-              <FileName>startup_stm32f103xe.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Source\Templates\arm\startup_stm32f103xe.s</FilePath>
-            </File>
-            <File>
-              <FileName>drv_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HAL_Drivers\drv_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HAL_Drivers\drv_usart.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
-            </File>
-          </Files>
-        </Group>
         <Group>
           <GroupName>Kernel</GroupName>
           <Files>
@@ -509,18 +465,58 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>CORTEX-M3</GroupName>
+          <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>cpuport.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
+              <FilePath>applications\main.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Drivers</GroupName>
+          <Files>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\board.c</FilePath>
             </File>
             <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
+              <FileName>stm32f1xx_hal_msp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\CubeMX_Config\Src\stm32f1xx_hal_msp.c</FilePath>
             </File>
+            <File>
+              <FileName>startup_stm32f103xe.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Source\Templates\arm\startup_stm32f103xe.s</FilePath>
+            </File>
+            <File>
+              <FileName>drv_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HAL_Drivers\drv_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HAL_Drivers\drv_usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HAL_Drivers\drv_can.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>cpu</GroupName>
+          <Files>
             <File>
               <FileName>backtrace.c</FileName>
               <FileType>1</FileType>
@@ -536,11 +532,26 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
+            <File>
+              <FileName>cpuport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
+            </File>
+            <File>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
           <Files>
+            <File>
+              <FileName>can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\can\can.c</FilePath>
+            </File>
             <File>
               <FileName>pin.c</FileName>
               <FileType>1</FileType>
@@ -725,6 +736,11 @@
               <FileName>stm32f1xx_hal_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f1xx_hal_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_can.c</FilePath>
             </File>
           </Files>
         </Group>
