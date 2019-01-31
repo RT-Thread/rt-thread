@@ -71,7 +71,7 @@ msh >
 
 4. 输入`scons --target=mdk5/iar` 命令重新生成工程。
 
-更多[env工具]详细的介绍请参考 (https://www.rt-thread.org/document/site/programming-manual/env/)
+更多[ Env 工具]详细的介绍请参考 (https://www.rt-thread.org/document/site/)
 
 ## 4. 联系人信息
 
@@ -79,5 +79,5 @@ msh >
 
 ## 5. 参考
 
-- [ EastSoft官网](http://www.essemi.com)
+- [ EastSoft 官网](http://www.essemi.com)
 
