@@ -2,14 +2,16 @@
  * File      : drv_gpio.h
  * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd.
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2019-01-23     wangyq       the first version
  */
 
-#ifndef GPIO_H__
-#define GPIO_H__
+#ifndef DRV_GPIO_H__
+#define DRV_GPIO_H__
 
-int es32f0_hw_pin_init(void);
+int rt_hw_pin_init(void);
 
 #endif

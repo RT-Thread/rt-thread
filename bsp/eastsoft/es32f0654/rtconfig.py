@@ -1,5 +1,4 @@
 import os
-
 # toolchains options
 ARCH='arm'
 CPU='cortex-m0'
@@ -10,25 +9,27 @@ if os.getenv('RTT_CC'):
 
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
-if  CROSS_TOOL == 'iar': # not support gcc
-	PLATFORM 	= 'iar'
-	EXEC_PATH 	= 'C:/IAR'
+if  CROSS_TOOL == 'gcc': # not support gcc yet
+	PLATFORM 	= 'gcc'
+	EXEC_PATH 	= 'C:/GCC'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'C:/Keil'
-elif CROSS_TOOL == 'gcc':
-	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= 'C:/GCC'
+elif CROSS_TOOL == 'iar': # not support iar yet
+	PLATFORM 	= 'iar'
+	EXEC_PATH 	= 'C:/IAR'
 
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
+#BUILD = 'release'
 
 if PLATFORM == 'gcc':
     # toolchains
     PREFIX = 'arm-none-eabi-'
     CC = PREFIX + 'gcc'
+    CXX = PREFIX + 'g++'
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
@@ -36,23 +37,21 @@ if PLATFORM == 'gcc':
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
-
-    DEVICE = ' -mcpu=cortex-m0 -mthumb -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -std=gnu9x'
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T link.ld'
+    DEVICE = ' -mcpu=' + CPU + ' -mthumb -ffunction-sections -fdata-sections'
+    CFLAGS = DEVICE + ' -std=c99'
+    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
 
     CPATH = ''
     LPATH = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O0 -gdwarf-2'
+        CFLAGS += ' -O0 -gdwarf-2 -g'
         AFLAGS += ' -gdwarf-2'
     else:
         CFLAGS += ' -O2'
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + OBJCPY + ' -O ihex $TARGET rtthread.hex\n' + SIZE + ' $TARGET \n'
-
 elif PLATFORM == 'armcc':
     # toolchains
     CC = 'armcc'
@@ -62,13 +61,16 @@ elif PLATFORM == 'armcc':
     TARGET_EXT = 'axf'
 
     DEVICE = ' --device DARMSTM'
-    CFLAGS = DEVICE + ' --apcs=interwork'
-    AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread.map --scatter "board\linker_scripts\link.sct"'
+    CFLAGS = '-c ' + DEVICE + ' --apcs=interwork --c99'
+    AFLAGS = DEVICE + ' --apcs=interwork '
+    LFLAGS = DEVICE + ' --scatter "drivers/linker_scripts/link.sct" --info sizes --info totals --info unused --info veneers --list rtthread.map  --strict'
 
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCC/include'
     LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/ARMCC/lib'
 
+    CFLAGS += ' -D__MICROLIB '
+    AFLAGS += ' --pd "__MICROLIB SETA 1" '
+    LFLAGS += ' --library_type=microlib '
     EXEC_PATH += '/ARM/ARMCC/bin'
 
     if BUILD == 'debug':
@@ -87,7 +89,7 @@ elif PLATFORM == 'iar':
     LINK = 'ilinkarm'
     TARGET_EXT = 'out'
 
-    DEVICE = ' -D USE_STDPERIPH_DRIVER' + ' -D STM32F10X_HD'
+    DEVICE = '-Dewarm'
 
     CFLAGS = DEVICE
     CFLAGS += ' --diag_suppress Pa050'
@@ -98,26 +100,31 @@ elif PLATFORM == 'iar':
     CFLAGS += ' --no_tbaa' 
     CFLAGS += ' --no_clustering' 
     CFLAGS += ' --no_scheduling' 
-    CFLAGS += ' --debug' 
     CFLAGS += ' --endian=little' 
     CFLAGS += ' --cpu=Cortex-M0' 
     CFLAGS += ' -e' 
     CFLAGS += ' --fpu=None'
     CFLAGS += ' --dlib_config "' + EXEC_PATH + '/arm/INC/c/DLib_Config_Normal.h"'    
-    CFLAGS += ' -Ol'    
-    CFLAGS += ' --use_c++_inline'
-        
-    AFLAGS = ''
+    CFLAGS += ' --silent'
+
+    AFLAGS = DEVICE
     AFLAGS += ' -s+' 
     AFLAGS += ' -w+' 
     AFLAGS += ' -r' 
     AFLAGS += ' --cpu Cortex-M0' 
     AFLAGS += ' --fpu None' 
+    AFLAGS += ' -S'
 
-    LFLAGS = ' --config link.icf'
+    LFLAGS = ' --config "drivers\linker_scripts\link.icf"'
     LFLAGS += ' --redirect _Printf=_PrintfTiny' 
     LFLAGS += ' --redirect _Scanf=_ScanfSmall' 
-    LFLAGS += ' --entry __iar_program_start'    
+    if BUILD == 'debug':
+        CFLAGS += ' --debug'
+        CFLAGS += ' -On'
+    else:
+        CFLAGS += ' -Oh'
 
+    LFLAGS = ' --config "drivers/linker_scripts/link.icf"'
+    LFLAGS += ' --entry __iar_program_start'    
     EXEC_PATH = EXEC_PATH + '/arm/bin/'
     POST_ACTION = ''

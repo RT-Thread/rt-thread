@@ -2,9 +2,11 @@
  * File      : board.c
  * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd.
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Change Logs:
  * Date           Author       Notes
- * 2019-01-23     wangyq      first implementation
+ * 2019-01-23     wangyq       the first version
  */
 
 #include <rthw.h>
@@ -39,8 +41,11 @@ void NVIC_Configuration(void)
  * Output         : None
  * Return         : None
  *******************************************************************************/
-void  SystemClock_Configuration(void)
+void  SystemClock_Config(void)
 {
+#if !defined(RT_USING_HOSC)
+
+#else
     /* hosc 8MHz, from hosc/2 pll to 48MHz */
     cmu_pll1_config(CMU_PLL1_INPUT_HOSC_2, CMU_PLL1_OUTPUT_48M);
 
@@ -49,6 +54,7 @@ void  SystemClock_Configuration(void)
 
     /* SYSCLK 24MHz */
     cmu_div_config(CMU_SYS, CMU_DIV_2);
+#endif
 }
 
 /*******************************************************************************
@@ -95,7 +101,7 @@ void rt_hw_board_init(void)
     NVIC_Configuration();
 
     /*System Clock Configuration */
-    SystemClock_Configuration();
+    SystemClock_Config();
 
     /* Configure the SysTick */
     SysTick_Configuration();

@@ -2,11 +2,15 @@
  * File      : drv_usart.c
  * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd.
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Change Logs:
  * Date           Author       Notes
- * 2019-01-23     wangyq      the first version
+ * 2019-01-23     wangyq       the first version
  */
 
+#include <rthw.h>
+#include <rtthread.h>
 #include <rtdevice.h>
 #include "board.h"
 #include "drv_usart.h"
@@ -130,14 +134,14 @@ static rt_err_t es32f0x_control(struct rt_serial_device *serial, int cmd, void *
     {
     case RT_DEVICE_CTRL_CLR_INT:
         /* disable rx irq */
-        UART_DISABLE_IRQ(uart->irq);
+        NVIC_DisableIRQ(uart->irq);
         /* disable interrupt */
         uart_interrupt_config(&uart->huart, UART_IT_RXRD, DISABLE);
         break;
 
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
-        UART_ENABLE_IRQ(uart->irq);
+        NVIC_EnableIRQ(uart->irq);
         /* enable interrupt */
         uart_interrupt_config(&uart->huart, UART_IT_RXRD, ENABLE);
         break;

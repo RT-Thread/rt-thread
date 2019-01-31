@@ -2,6 +2,8 @@
  * File      : drv_gpio.c
  * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd.
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Change Logs:
  * Date           Author            Notes
  * 2019-01-23     wangyq            the first version
@@ -19,11 +21,6 @@
 #define __ES32F0_PIN(index, gpio, gpio_index) {index, GPIO##gpio, GPIO_PIN_##gpio_index}
 #define __ES32F0_PIN_DEFAULT {-1, 0, 0}
 
-//static void GPIO_CLK_ENABLE(void)
-//{
-//    cmu_perh_clock_config(CMU_PERH_GPIO,ENABLE);
-//}
-
 /* ES32F0 GPIO driver */
 struct pin_index
 {
@@ -31,6 +28,7 @@ struct pin_index
     GPIO_TypeDef *gpio;
     uint32_t pin;
 };
+
 static const struct pin_index pins[] =
 {
 #if (ES32F0XX_PIN_NUMBERS == 48)
@@ -261,26 +259,45 @@ struct pin_irq_map
     rt_uint16_t pinbit;
     IRQn_Type irqno;
 };
+static const struct pin_irq_map pin_irq_map[] =
+{
+    {GPIO_PIN_0, EXTI0_3_IRQn},
+    {GPIO_PIN_1, EXTI0_3_IRQn},
+    {GPIO_PIN_2, EXTI0_3_IRQn},
+    {GPIO_PIN_3, EXTI0_3_IRQn},
+    {GPIO_PIN_4, EXTI4_7_IRQn},
+    {GPIO_PIN_5, EXTI4_7_IRQn},
+    {GPIO_PIN_6, EXTI4_7_IRQn},
+    {GPIO_PIN_7, EXTI4_7_IRQn},
+    {GPIO_PIN_8, EXTI8_11_IRQn},
+    {GPIO_PIN_9, EXTI8_11_IRQn},
+    {GPIO_PIN_10, EXTI8_11_IRQn},
+    {GPIO_PIN_11, EXTI8_11_IRQn},
+    {GPIO_PIN_12, EXTI12_15_IRQn},
+    {GPIO_PIN_13, EXTI12_15_IRQn},
+    {GPIO_PIN_14, EXTI12_15_IRQn},
+    {GPIO_PIN_15, EXTI12_15_IRQn},
+};
 
-//static const struct pin_irq_map pin_irq_map[] =
-//{
-//    {GPIO_PIN_0, EXTI0_3_IRQn},
-//    {GPIO_PIN_1, EXTI0_3_IRQn},
-//    {GPIO_PIN_2, EXTI0_3_IRQn},
-//    {GPIO_PIN_3, EXTI0_3_IRQn},
-//    {GPIO_PIN_4, EXTI4_7_IRQn},
-//    {GPIO_PIN_5, EXTI4_7_IRQn},
-//    {GPIO_PIN_6, EXTI4_7_IRQn},
-//    {GPIO_PIN_7, EXTI4_7_IRQn},
-//    {GPIO_PIN_8, EXTI8_11_IRQn},
-//    {GPIO_PIN_9, EXTI8_11_IRQn},
-//    {GPIO_PIN_10, EXTI8_11_IRQn},
-//    {GPIO_PIN_11, EXTI8_11_IRQn},
-//    {GPIO_PIN_12, EXTI12_15_IRQn},
-//    {GPIO_PIN_13, EXTI12_15_IRQn},
-//    {GPIO_PIN_14, EXTI12_15_IRQn},
-//    {GPIO_PIN_15, EXTI12_15_IRQn},
-//};
+struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
+{
+    { -1, 0, RT_NULL, RT_NULL},
+    { -1, 0, RT_NULL, RT_NULL},
+    { -1, 0, RT_NULL, RT_NULL},
+    { -1, 0, RT_NULL, RT_NULL},
+    { -1, 0, RT_NULL, RT_NULL},
+    { -1, 0, RT_NULL, RT_NULL},
+    { -1, 0, RT_NULL, RT_NULL},
+    { -1, 0, RT_NULL, RT_NULL},
+    { -1, 0, RT_NULL, RT_NULL},
+    { -1, 0, RT_NULL, RT_NULL},
+    { -1, 0, RT_NULL, RT_NULL},
+    { -1, 0, RT_NULL, RT_NULL},
+    { -1, 0, RT_NULL, RT_NULL},
+    { -1, 0, RT_NULL, RT_NULL},
+    { -1, 0, RT_NULL, RT_NULL},
+    { -1, 0, RT_NULL, RT_NULL},
+};
 
 #define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
 const struct pin_index *get_pin(uint8_t pin)
@@ -376,11 +393,177 @@ void es32f0_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     gpio_init(index->gpio, index->pin, &gpio_initstruct);
 }
 
+rt_inline const struct pin_irq_map *get_pin_irq_map(rt_uint16_t gpio_pin)
+{
+    rt_int32_t mapindex = gpio_pin & 0x00FF;
+    if (mapindex < 0 || mapindex >= ITEM_NUM(pin_irq_map))
+    {
+        return RT_NULL;
+    }
+    return &pin_irq_map[mapindex];
+};
+
+rt_err_t es32f0_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
+                               rt_uint32_t mode, void (*hdr)(void *args), void *args)
+{
+    const struct pin_index *index;
+    rt_base_t level;
+    rt_int32_t irqindex;
+    index = get_pin(pin);
+    if (index == RT_NULL)
+    {
+        return RT_ENOSYS;
+    }
+    /**pin no. convert to dec no.**/
+    for (irqindex = 0; irqindex < 16; irqindex++)
+    {
+        if ((0x01 << irqindex) == index->pin)
+        {
+            break;
+        }
+    }
+    if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
+    {
+        return RT_ENOSYS;
+    }
+    level = rt_hw_interrupt_disable();
+    if (pin_irq_hdr_tab[irqindex].pin == pin &&
+            pin_irq_hdr_tab[irqindex].hdr == hdr &&
+            pin_irq_hdr_tab[irqindex].mode == mode &&
+            pin_irq_hdr_tab[irqindex].args == args)
+    {
+        rt_hw_interrupt_enable(level);
+        return RT_EOK;
+    }
+    if (pin_irq_hdr_tab[irqindex].pin != -1)
+    {
+        rt_hw_interrupt_enable(level);
+        return RT_EBUSY;
+    }
+    pin_irq_hdr_tab[irqindex].pin = pin;
+    pin_irq_hdr_tab[irqindex].hdr = hdr;
+    pin_irq_hdr_tab[irqindex].mode = mode;
+    pin_irq_hdr_tab[irqindex].args = args;
+    rt_hw_interrupt_enable(level);
+    return RT_EOK;
+}
+
+rt_err_t es32f0_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+{
+    const struct pin_index *index;
+    rt_base_t level;
+    rt_int32_t irqindex = -1;
+    index = get_pin(pin);
+    if (index == RT_NULL)
+    {
+        return RT_ENOSYS;
+    }
+    irqindex = index->pin & 0x00FF;
+    if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
+    {
+        return RT_ENOSYS;
+    }
+    level = rt_hw_interrupt_disable();
+    if (pin_irq_hdr_tab[irqindex].pin == -1)
+    {
+        rt_hw_interrupt_enable(level);
+        return RT_EOK;
+    }
+    pin_irq_hdr_tab[irqindex].pin = -1;
+    pin_irq_hdr_tab[irqindex].hdr = RT_NULL;
+    pin_irq_hdr_tab[irqindex].mode = 0;
+    pin_irq_hdr_tab[irqindex].args = RT_NULL;
+    rt_hw_interrupt_enable(level);
+    return RT_EOK;
+}
+
+rt_err_t es32f0_pin_irq_enable(struct rt_device *device, rt_base_t pin,
+                               rt_uint32_t enabled)
+{
+    const struct pin_index *index;
+    const struct pin_irq_map *irqmap;
+    rt_base_t level;
+    rt_int32_t irqindex = -1;
+    /*Configure GPIO_InitStructure & EXTI_InitStructure*/
+    gpio_init_t gpio_initstruct;
+    exti_init_t exti_initstruct;
+    exti_initstruct.filter = DISABLE;
+    exti_initstruct.cks = EXTI_FILTER_CLOCK_10K;
+    exti_initstruct.filter_time = 0x0;
+
+    index = get_pin(pin);
+    if (index == RT_NULL)
+    {
+        return RT_ENOSYS;
+    }
+    if (enabled == PIN_IRQ_ENABLE)
+    {
+        /**pin no. convert to dec no.**/
+        for (irqindex = 0; irqindex < 16; irqindex++)
+        {
+            if ((0x01 << irqindex) == index->pin)
+            {
+                break;
+            }
+        }
+        if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
+        {
+            return RT_ENOSYS;
+        }
+        level = rt_hw_interrupt_disable();
+        if (pin_irq_hdr_tab[irqindex].pin == -1)
+        {
+            rt_hw_interrupt_enable(level);
+            return RT_ENOSYS;
+        }
+        irqmap = &pin_irq_map[irqindex];
+        gpio_exti_init(index->gpio, index->pin, &exti_initstruct);
+        /* Configure GPIO_InitStructure */
+        gpio_initstruct.mode = GPIO_MODE_INPUT;
+        gpio_initstruct.func = GPIO_FUNC_1;
+        switch (pin_irq_hdr_tab[irqindex].mode)
+        {
+        case PIN_IRQ_MODE_RISING:
+            gpio_initstruct.pupd = GPIO_PUSH_DOWN;
+            gpio_exti_interrupt_config(index->pin, EXTI_TRIGGER_RISING_EDGE, ENABLE);
+            break;
+        case PIN_IRQ_MODE_FALLING:
+            gpio_initstruct.pupd = GPIO_PUSH_UP;
+            gpio_exti_interrupt_config(index->pin, EXTI_TRIGGER_TRAILING_EDGE, ENABLE);
+            break;
+        case PIN_IRQ_MODE_RISING_FALLING:
+            gpio_initstruct.pupd = GPIO_FLOATING;
+            gpio_exti_interrupt_config(index->pin, EXTI_TRIGGER_BOTH_EDGE, ENABLE);
+            break;
+        }
+        gpio_init(index->gpio, index->pin, &gpio_initstruct);
+//        NVIC_SetPriority(irqmap->irqno, 5);
+        NVIC_EnableIRQ(irqmap->irqno);
+        rt_hw_interrupt_enable(level);
+    }
+    else if (enabled == PIN_IRQ_DISABLE)
+    {
+        irqmap = get_pin_irq_map(index->pin);
+        if (irqmap == RT_NULL)
+        {
+            return RT_ENOSYS;
+        }
+        NVIC_DisableIRQ(irqmap->irqno);
+    }
+    else
+    {
+        return RT_ENOSYS;
+    }
+    return RT_EOK;
+}
 const static struct rt_pin_ops _es32f0_pin_ops =
 {
     es32f0_pin_mode,
     es32f0_pin_write,
     es32f0_pin_read,
+    es32f0_pin_attach_irq,
+    es32f0_pin_detach_irq,
+    es32f0_pin_irq_enable,
 };
 
 int rt_hw_pin_init(void)
@@ -392,4 +575,71 @@ int rt_hw_pin_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);
 
+rt_inline void pin_irq_hdr(uint16_t GPIO_Pin)
+{
+    uint16_t irqno;
+    /**pin no. convert to dec no.**/
+    for (irqno = 0; irqno < 16; irqno++)
+    {
+        if ((0x01 << irqno) == GPIO_Pin)
+        {
+            break;
+        }
+    }
+    if (irqno == 16)
+        return;
+    if (pin_irq_hdr_tab[irqno].hdr)
+    {
+        pin_irq_hdr_tab[irqno].hdr(pin_irq_hdr_tab[irqno].args);
+    }
+}
+
+void GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    if (gpio_exti_get_flag_status(GPIO_Pin) != RESET)
+    {
+        gpio_exti_clear_flag_status(GPIO_Pin);
+        pin_irq_hdr(GPIO_Pin);
+    }
+}
+
+void EXTI0_3_Handler(void)
+{
+    rt_interrupt_enter();
+    GPIO_EXTI_Callback(GPIO_PIN_0);
+    GPIO_EXTI_Callback(GPIO_PIN_1);
+    GPIO_EXTI_Callback(GPIO_PIN_2);
+    GPIO_EXTI_Callback(GPIO_PIN_3);
+    rt_interrupt_leave();
+}
+
+void EXTI4_7_Handler(void)
+{
+    rt_interrupt_enter();
+    GPIO_EXTI_Callback(GPIO_PIN_4);
+    GPIO_EXTI_Callback(GPIO_PIN_5);
+    GPIO_EXTI_Callback(GPIO_PIN_6);
+    GPIO_EXTI_Callback(GPIO_PIN_7);
+    rt_interrupt_leave();
+}
+
+void EXTI8_11_Handler(void)
+{
+    rt_interrupt_enter();
+    GPIO_EXTI_Callback(GPIO_PIN_8);
+    GPIO_EXTI_Callback(GPIO_PIN_9);
+    GPIO_EXTI_Callback(GPIO_PIN_10);
+    GPIO_EXTI_Callback(GPIO_PIN_11);
+    rt_interrupt_leave();
+}
+
+void EXTI12_15_Handler(void)
+{
+    rt_interrupt_enter();
+    GPIO_EXTI_Callback(GPIO_PIN_12);
+    GPIO_EXTI_Callback(GPIO_PIN_13);
+    GPIO_EXTI_Callback(GPIO_PIN_14);
+    GPIO_EXTI_Callback(GPIO_PIN_15);
+    rt_interrupt_leave();
+}
 #endif
