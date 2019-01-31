@@ -27,9 +27,21 @@ config RT_USING_CAN
     default n
 
 if RT_USING_CAN
+    config USING_BXCAN1
+        bool "USING_BXCAN1"
+        default n
+    endif
+	
+if RT_USING_CAN
+    config USING_BXCAN2
+		bool "USING_BXCAN2"
+        default n
+    endif
+
+if RT_USING_CAN
     config RT_CAN_USING_HDR
         bool "Enable CAN hardware filter"
-        default y
+        default n
 endif
 
 config RT_USING_HWTIMER
