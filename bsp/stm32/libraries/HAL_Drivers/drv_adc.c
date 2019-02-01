@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2018-12-05     zylx         first version
  * 2018-12-12     greedyhao    Porting for stm32f7xx
+ * 2019-02-01     yuneizhilin   fix the stm32_adc_init function initialization issue
  */
 
 #include <board.h>
@@ -206,29 +207,41 @@ static int stm32_adc_init(void)
 {
     int result = RT_EOK;
     /* save adc name */
-    char name_buf[6] = {0};
+    char name_buf[5] = {'a', 'd', 'c', '0', 0};
     int i = 0;
 
     for (i = 0; i < sizeof(adc_config) / sizeof(adc_config[0]); i++)
     {
         /* ADC init */
+        name_buf[3] = '0';
         stm32_adc_obj[i].ADC_Handler = adc_config[i];
+        if (stm32_adc_obj[i].ADC_Handler.Instance == ADC1)
+        {
+            name_buf[3] = '1';
+        }
+        if (stm32_adc_obj[i].ADC_Handler.Instance == ADC2)
+        {
+            name_buf[3] = '2';
+        }
+        if (stm32_adc_obj[i].ADC_Handler.Instance == ADC3)
+        {
+            name_buf[3] = '3';
+        }
         if (HAL_ADC_Init(&stm32_adc_obj[i].ADC_Handler) != HAL_OK)
         {
-            LOG_E("ADC%d init failed", i + 1);
+            LOG_E("%s init failed", name_buf);
             result = -RT_ERROR;
         }
         else
         {
-            rt_sprintf(name_buf, "adc%d", i + 1);
             /* register ADC device */
             if (rt_hw_adc_register(&stm32_adc_obj[i].stm32_adc_device, name_buf, &stm_adc_ops, &stm32_adc_obj[i].ADC_Handler) == RT_EOK)
             {
-                LOG_D("ADC%d init success", i + 1);
+                LOG_D("%s init success", name_buf);
             }
             else
             {
-                LOG_E("ADC%d register failed", i + 1);
+                LOG_E("%s register failed", name_buf);
                 result = -RT_ERROR;
             }
         }
