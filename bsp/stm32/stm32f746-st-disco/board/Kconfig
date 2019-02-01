@@ -11,6 +11,12 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART
         select BSP_USING_UART1
         default y
+    config BSP_USING_QSPI_FLASH
+        bool "Enable QSPI FLASH (N25Q256 qspi1)"
+        select BSP_USING_QSPI
+        select RT_USING_SFUD
+        select RT_SFUD_USING_QSPI
+        default n
 
 endmenu
 
@@ -20,7 +26,6 @@ menu "On-chip Peripheral Drivers"
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
-
     menuconfig BSP_USING_UART
         bool "Enable UART"
         default y
@@ -35,6 +40,11 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                 default n
         endif
+    config BSP_USING_QSPI
+        bool "Enable QSPI BUS"
+        select RT_USING_QSPI
+        select RT_USING_SPI
+        default n
 
 endmenu
 
