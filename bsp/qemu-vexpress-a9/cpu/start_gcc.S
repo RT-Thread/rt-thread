@@ -46,8 +46,8 @@
 
 #define ISR_Stack_Size  (UND_Stack_Size + SVC_Stack_Size + ABT_Stack_Size + \
                  RT_FIQ_STACK_PGSZ + RT_IRQ_STACK_PGSZ)
-
-.section .data.share.isr
+.bss
+.align  2
 /* stack */
 .globl stack_start
 .globl stack_top
@@ -231,12 +231,6 @@ vector_fiq:
     bl      rt_hw_trap_fiq
     ldmfd   sp!,{r0-r7,lr}
     subs    pc, lr, #4
-
-.globl      rt_interrupt_enter
-.globl      rt_interrupt_leave
-.globl      rt_thread_switch_interrupt_flag
-.globl      rt_interrupt_from_thread
-.globl      rt_interrupt_to_thread
 
     .align  5
 .globl vector_irq
