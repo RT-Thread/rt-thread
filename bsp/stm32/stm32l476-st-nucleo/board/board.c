@@ -9,7 +9,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2009-01-05     Bernard      first implementation
+ * 2019-02-05     gw      first implementation
  */
 
 #include <board.h>
