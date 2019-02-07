@@ -6,11 +6,14 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-11-19     MurphyZhao   the first version
+ * 2019-02-07     Bernard      Add loop argument for utest_run
  */
 
 #include <rtthread.h>
 #include <string.h>
-#include "utest.h"
+#include <stdlib.h>
+
+#include <utest.h>
 #include <utest_log.h>
 
 #undef DBG_SECTION_NAME
@@ -163,17 +166,24 @@ __tc_continue:
 
 static void utest_testcase_run(int argc, char** argv)
 {
+    int loop = 1;
     char utest_name[UTEST_NAME_MAX_LEN];
 
     if (argc == 1)
     {
         utest_run(RT_NULL);
     }
-    else if (argc == 2)
+    else if (argc >= 2)
     {
+        int index;
+
         rt_memset(utest_name, 0x0, sizeof(utest_name));
         rt_strncpy(utest_name, argv[1], sizeof(utest_name) -1);
-        utest_run(utest_name);
+
+        if (argc == 3) loop = atoi(argv[2]);
+
+        for (index = 0; index < loop; index ++)
+            utest_run(utest_name);
     }
     else
     {
