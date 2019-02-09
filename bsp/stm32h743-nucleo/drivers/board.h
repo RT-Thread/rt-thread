@@ -14,12 +14,6 @@
 #include <stm32h7xx.h>
 #include "stm32h7xx_hal.h"
 
-// <<< Use Configuration Wizard in Context Menu >>>
-/* board configuration */
-#define RT_USING_UART1
-#define RT_USING_UART2
-#define RT_USING_UART3
-
 // <o> SDCard Driver <1=>SDIO sdcard <0=>SPI MMC card
 //  <i>Default: 1
 #define STM32_USE_SDIO          0
