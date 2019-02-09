@@ -62,10 +62,6 @@ uint8_t Rx_Buff[ETH_RX_DESC_CNT][ETH_MAX_PACKET_SIZE] __attribute__((section(".R
 
 #endif
 
-struct pbuf_custom rx_pbuf[ETH_RX_DESC_CNT];
-uint32_t current_pbuf_idx =0;
-
-
 ETH_HandleTypeDef EthHandle;
 ETH_TxPacketConfig TxConfig; 
 
@@ -916,16 +912,14 @@ struct pbuf *rt_lan8742_rx(rt_device_t dev)
 	if(HAL_ETH_GetRxDataBuffer(&EthHandle, &RxBuff) == HAL_OK) 
 	{
 		HAL_ETH_GetRxDataLength(&EthHandle, &framelength);
-		p = pbuf_alloced_custom(PBUF_RAW, framelength, PBUF_POOL, &rx_pbuf[current_pbuf_idx], RxBuff.buffer, framelength);
 
-		if(current_pbuf_idx < (ETH_RX_DESC_CNT -1))
+		p = pbuf_alloc(PBUF_RAW, framelength, PBUF_RAM);
+
+		if(p != NULL)
 		{
-			current_pbuf_idx++;
+			pbuf_take(p, (void *)RxBuff.buffer, framelength);
 		}
-		else
-		{
-			current_pbuf_idx = 0;
-		}
+
 	}
 	HAL_ETH_BuildRxDescriptors(&EthHandle);
 	
@@ -993,9 +987,6 @@ int rt_hw_lan8742a_init(void)
 	for(idx = 0; idx < ETH_RX_DESC_CNT; idx ++)
 	{
 		HAL_ETH_DescAssignMemory(&EthHandle, idx, Rx_Buff[idx], NULL);
-
-		/* Set Custom pbuf free function */
-		rx_pbuf[idx].custom_free_function = pbuf_free_custom;
 	}
 	
 	memset(&TxConfig, 0 , sizeof(ETH_TxPacketConfig));  
