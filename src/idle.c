@@ -193,6 +193,8 @@ void rt_thread_idle_excute(void)
             /* if it's a system object, not delete it */
             if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
             {
+                /* detach this object */
+                rt_object_detach((rt_object_t)thread);
                 /* unlock scheduler */
                 rt_exit_critical();
 
