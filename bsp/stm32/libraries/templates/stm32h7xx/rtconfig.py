@@ -45,7 +45,7 @@ if PLATFORM == 'gcc':
     DEVICE = '  -mcpu=cortex-m7 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -g -Wall -DSTM32H743xx -DUSE_HAL_DRIVER -D__ASSEMBLY__ -eentry'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread_stm32h7xx.map,-cref,-u,Reset_Handler -T rtthread-stm32h7xx.ld'
+    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread_stm32h7xx.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.ld'
 
     CPATH = ''
     LPATH = ''
@@ -78,7 +78,7 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --cpu Cortex-M7.fp.sp --fpu=FPv4-SP'
     CFLAGS = DEVICE + ' --apcs=interwork -DUSE_HAL_DRIVER -DSTM32H743xx'
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-stm32h7xx.map --scatter rtthread-stm32h7xx.sct'
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-stm32h7xx.map --scatter board/linker_scripts/link.sct'
 
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
     LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
@@ -132,7 +132,7 @@ elif PLATFORM == 'iar':
     AFLAGS += ' --fpu None' 
     AFLAGS += ' -S' 
     
-    LFLAGS = ' --config rtthread-stm32h7xx.icf'
+    LFLAGS = ' --config board/linker_scripts/link.icf'
     LFLAGS += ' --redirect _Printf=_PrintfTiny' 
     LFLAGS += ' --redirect _Scanf=_ScanfSmall' 
     LFLAGS += ' --entry __iar_program_start'    
