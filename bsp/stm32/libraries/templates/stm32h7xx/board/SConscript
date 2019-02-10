@@ -11,11 +11,11 @@ path = [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
 
 if rtconfig.CROSS_TOOL == 'gcc':
-    src += [cwd + '/../../libraries/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/gcc/startup_stm32f767xx.s']
+    src += [cwd + '/../../libraries/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/gcc/startup_stm32H743xx.s']
 elif rtconfig.CROSS_TOOL == 'keil':
-    src += [cwd + '/../../libraries/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/arm/startup_stm32f767xx.s']
+    src += [cwd + '/../../libraries/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/arm/startup_stm32H743xx.s']
 elif rtconfig.CROSS_TOOL == 'iar':
-    src += [cwd + '/../../libraries/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/iar/startup_stm32f767xx.s']
+    src += [cwd + '/../../libraries/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/iar/startup_stm32H743xx.s']
 
 # STM32F756xx || STM32F746xx || STM32F745xx || STM32F767xx  || 
 # STM32F769xx || STM32F777xx || STM32F779xx || STM32F722xx  || 

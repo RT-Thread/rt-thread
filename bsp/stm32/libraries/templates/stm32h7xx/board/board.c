@@ -11,11 +11,10 @@
 
 #include <rtthread.h>
 #include "board.h"
-#include "sram.h"
-#include "drv_mpu.h"
 
-#include "drv_led.h"
+#ifdef RT_USING_SERIAL
 #include "drv_usart.h"
+#endif
 
 /**
  * @addtogroup STM32
@@ -180,9 +179,6 @@ void HAL_ResumeTick(void)
  */
 void rt_hw_board_init()
 {
-    /* Configure the MPU attributes as Write Through */
-    mpu_init();
-
     /* Enable the CPU Cache */
     CPU_CACHE_Enable();
 
