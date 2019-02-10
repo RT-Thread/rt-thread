@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32h7xx_hal_eth_ex.c
   * @author  MCD Application Team
-  * @version V1.2.0
-  * @date   29-December-2017
   * @brief   ETH HAL Extended module driver.
   *
   ******************************************************************************

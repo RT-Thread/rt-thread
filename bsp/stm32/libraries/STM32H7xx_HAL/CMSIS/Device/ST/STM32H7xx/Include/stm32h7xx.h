@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32h7xx.h
   * @author  MCD Application Team
-  * @version V1.2.0
-  * @date    29-December-2017
   * @brief   CMSIS STM32H7xx Device Peripheral Access Layer Header File.
   *
   *          The file is the unique include file that the application programmer
@@ -76,9 +74,10 @@
    application
   */
 
-#if !defined (STM32H743xx) && !defined (STM32H753xx)
+#if !defined (STM32H743xx) && !defined (STM32H753xx) && !defined (STM32H750xx)
   /* #define STM32H743xx */   /*!< STM32H743VI, STM32H743ZI, STM32H743II, STM32H743BI, STM32H743XI Devices */
   /* #define STM32H753xx */   /*!< STM32H753VI, STM32H753ZI, STM32H753II, STM32H753BI, STM32H753XI Devices */
+  /* #define STM32H750xx */   /*!< STM32H750V, STM32H750I, STM32H750X Devices */
 #endif
 
 /*  Tip: To avoid modifying this file each time you need to switch between these
@@ -94,10 +93,10 @@
 #endif /* USE_HAL_DRIVER */
 
 /**
-  * @brief CMSIS Device version number V1.2.0
+  * @brief CMSIS Device version number V1.3.0
   */
 #define __STM32H7xx_CMSIS_DEVICE_VERSION_MAIN   (0x01) /*!< [31:24] main version */
-#define __STM32H7xx_CMSIS_DEVICE_VERSION_SUB1   (0x02) /*!< [23:16] sub1 version */
+#define __STM32H7xx_CMSIS_DEVICE_VERSION_SUB1   (0x03) /*!< [23:16] sub1 version */
 #define __STM32H7xx_CMSIS_DEVICE_VERSION_SUB2   (0x00) /*!< [15:8]  sub2 version */
 #define __STM32H7xx_CMSIS_DEVICE_VERSION_RC     (0x00) /*!< [7:0]  release candidate */
 #define __STM32H7xx_CMSIS_DEVICE_VERSION        ((__CMSIS_DEVICE_VERSION_MAIN     << 24)\
@@ -117,6 +116,8 @@
   #include "stm32h743xx.h"
 #elif defined(STM32H753xx)
   #include "stm32h753xx.h"
+#elif defined(STM32H750xx)
+  #include "stm32h750xx.h"
 #else
  #error "Please select first the target STM32H7xx device used in your application (in stm32h7xx.h file)"
 #endif

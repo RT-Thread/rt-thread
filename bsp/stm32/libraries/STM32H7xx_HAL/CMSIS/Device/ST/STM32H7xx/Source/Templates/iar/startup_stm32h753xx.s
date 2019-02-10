@@ -1,8 +1,6 @@
 ;/******************** (C) COPYRIGHT 2017 STMicroelectronics ********************
 ;* File Name          : startup_stm32h753xx.s
 ;* Author             : MCD Application Team
-;* version            : V1.2.0
-;* Date               : 29-December-2017
 ;* Description        : STM32H753xx devices vector table for EWARM toolchain.
 ;*                      This module performs:
 ;*                      - Set the initial SP

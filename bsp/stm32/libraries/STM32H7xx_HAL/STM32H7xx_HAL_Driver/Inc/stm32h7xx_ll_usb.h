@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32h7xx_ll_usb.h
   * @author  MCD Application Team
-  * @version V1.2.0
-  * @date   29-December-2017
   * @brief   Header file of USB Core HAL module.
   ******************************************************************************
   * @attention

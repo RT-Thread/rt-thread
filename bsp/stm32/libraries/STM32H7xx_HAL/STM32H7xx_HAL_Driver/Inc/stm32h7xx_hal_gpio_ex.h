@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32h7xx_hal_gpio_ex.h
   * @author  MCD Application Team
-  * @version V1.2.0
-  * @date   29-December-2017
   * @brief   Header file of GPIO HAL Extension module.
   ******************************************************************************
   * @attention
@@ -153,7 +151,7 @@
 #define GPIO_AF7_USART6        ((uint8_t)0x07)  /* USART6 Alternate Function mapping */
 #define GPIO_AF7_UART7         ((uint8_t)0x07)  /* UART7 Alternate Function mapping  */
 #define GPIO_AF7_DFSDM1        ((uint8_t)0x07)  /* DFSDM Alternate Function mapping  */
-#define GPIO_AF7_SDIO1         ((uint8_t)0x07)  /* SDIO1 Alternate Function mapping */
+#define GPIO_AF7_SDMMC1        ((uint8_t)0x07)  /* SDMMC1 Alternate Function mapping */
 
 /**
   * @brief   AF 8 selection
@@ -166,7 +164,7 @@
 #define GPIO_AF8_UART8        ((uint8_t)0x08)  /* UART8 Alternate Function mapping  */
 #define GPIO_AF8_SPDIF        ((uint8_t)0x08)  /* SPDIF Alternate Function mapping  */
 #define GPIO_AF8_LPUART       ((uint8_t)0x08)  /* LPUART Alternate Function mapping */
-#define GPIO_AF8_SDIO1        ((uint8_t)0x08)  /* SDIO1 Alternate Function mapping */
+#define GPIO_AF8_SDMMC1       ((uint8_t)0x08)  /* SDMMC1 Alternate Function mapping */
 
 /**
   * @brief   AF 9 selection
@@ -176,7 +174,7 @@
 #define GPIO_AF9_TIM13         ((uint8_t)0x09)  /* TIM13 Alternate Function mapping   */
 #define GPIO_AF9_TIM14         ((uint8_t)0x09)  /* TIM14 Alternate Function mapping   */
 #define GPIO_AF9_QUADSPI       ((uint8_t)0x09)  /* QUADSPI Alternate Function mapping   */
-#define GPIO_AF9_SDIO2         ((uint8_t)0x09)  /* SDIO2 Alternate Function mapping   */
+#define GPIO_AF9_SDMMC2        ((uint8_t)0x09)  /* SDMMC2 Alternate Function mapping   */
 #define GPIO_AF9_LTDC           ((uint8_t)0x09)  /* LTDC Alternate Function mapping   */
 #define GPIO_AF9_SPDIF         ((uint8_t)0x09)  /* SPDIF Alternate Function mapping   */
 #define GPIO_AF9_FMC           ((uint8_t)0x09)  /* FMC Alternate Function mapping     */
@@ -188,7 +186,7 @@
 #define GPIO_AF10_QUADSPI       ((uint8_t)0xA)  /* QUADSPI Alternate Function mapping */
 #define GPIO_AF10_SAI2          ((uint8_t)0xA)  /* SAI2 Alternate Function mapping */
 #define GPIO_AF10_SAI4          ((uint8_t)0xA)  /* SAI4 Alternate Function mapping */
-#define GPIO_AF10_SDIO2         ((uint8_t)0xA)  /* SDIO2 Alternate Function mapping */
+#define GPIO_AF10_SDMMC2        ((uint8_t)0xA)  /* SDMMC2 Alternate Function mapping */
 #define GPIO_AF10_OTG2_HS       ((uint8_t)0xA)  /* OTG2_HS Alternate Function mapping */
 #define GPIO_AF10_OTG1_FS       ((uint8_t)0xA)  /* OTG1_FS Alternate Function mapping */
 #define GPIO_AF10_COMP1         ((uint8_t)0xA)  /* COMP1 Alternate Function mapping */
@@ -203,7 +201,7 @@
 #define GPIO_AF11_MDIOS         ((uint8_t)0x0B)   /* MDIOS Alternate Function mapping   */
 #define GPIO_AF11_OTG1_HS       ((uint8_t)0x0B)  /* OTG1_HS Alternate Function mapping */
 #define GPIO_AF11_UART7         ((uint8_t)0x0B)  /* UART7 Alternate Function mapping */
-#define GPIO_AF11_SDIO2         ((uint8_t)0x0B)  /* SDIO2 Alternate Function mapping */
+#define GPIO_AF11_SDMMC2        ((uint8_t)0x0B)  /* SDMMC2 Alternate Function mapping */
 #define GPIO_AF11_DFSDM1        ((uint8_t)0x0B)  /* DFSDM  Alternate Function mapping   */
 #define GPIO_AF11_COMP1         ((uint8_t)0x0B)  /* COMP1 Alternate Function mapping */
 #define GPIO_AF11_COMP2         ((uint8_t)0x0B)  /* COMP2 Alternate Function mapping */
@@ -213,7 +211,7 @@
   * @brief   AF 12 selection
   */
 #define GPIO_AF12_FMC           ((uint8_t)0xC)  /* FMC Alternate Function mapping     */
-#define GPIO_AF12_SDIO1         ((uint8_t)0xC)  /* SDIO1 Alternate Function mapping  */
+#define GPIO_AF12_SDMMC1        ((uint8_t)0xC)  /* SDMMC1 Alternate Function mapping  */
 #define GPIO_AF12_MDIOS         ((uint8_t)0xC)  /* MDIOS Alternate Function mapping   */
 #define GPIO_AF12_OTG2_FS       ((uint8_t)0xC)  /* OTG2_FS Alternate Function mapping   */
 #define GPIO_AF12_COMP1         ((uint8_t)0xC)  /* COMP1 Alternate Function mapping */

@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32h7xx_hal_mmc_ex.c
   * @author  MCD Application Team
-  * @version V1.2.0
-  * @date   29-December-2017
   * @brief   MMC card Extended HAL module driver.
   *          This file provides firmware functions to manage the following 
   *          functionalities of the Secure Digital (MMC) peripheral:
@@ -23,7 +21,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2018 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -125,7 +123,9 @@ HAL_StatusTypeDef HAL_MMCEx_ConfigDMAMultiBuffer(MMC_HandleTypeDef *hmmc, uint32
 HAL_StatusTypeDef HAL_MMCEx_ReadBlocksDMAMultiBuffer(MMC_HandleTypeDef *hmmc, uint32_t BlockAdd, uint32_t NumberOfBlocks)
 {
   SDMMC_DataInitTypeDef config;
-  uint32_t errorstate = HAL_MMC_ERROR_NONE;
+  uint32_t DmaBase0_reg, DmaBase1_reg;
+  uint32_t errorstate;
+  uint32_t add = BlockAdd;
   
   if(hmmc->State == HAL_MMC_STATE_READY)
   {
@@ -135,7 +135,9 @@ HAL_StatusTypeDef HAL_MMCEx_ReadBlocksDMAMultiBuffer(MMC_HandleTypeDef *hmmc, ui
       return HAL_ERROR;
     }
     
-    if ((hmmc->Instance->IDMABASE0 == 0) || (hmmc->Instance->IDMABASE1 == 0) || (hmmc->Instance->IDMABSIZE == 0))
+    DmaBase0_reg = hmmc->Instance->IDMABASE0;
+    DmaBase1_reg = hmmc->Instance->IDMABASE1;
+    if ((hmmc->Instance->IDMABSIZE == 0U) || (DmaBase0_reg == 0U) || (DmaBase1_reg == 0U))
     {
       hmmc->ErrorCode = HAL_MMC_ERROR_ADDR_OUT_OF_RANGE;
       return HAL_ERROR;
@@ -149,7 +151,7 @@ HAL_StatusTypeDef HAL_MMCEx_ReadBlocksDMAMultiBuffer(MMC_HandleTypeDef *hmmc, ui
 
     if ((hmmc->MmcCard.CardType) != MMC_HIGH_CAPACITY_CARD)
     {
-      BlockAdd *= 512;
+      add *= 512U;
     }
     
     /* Configure the MMC DPSM (Data Path State Machine) */ 
@@ -159,7 +161,7 @@ HAL_StatusTypeDef HAL_MMCEx_ReadBlocksDMAMultiBuffer(MMC_HandleTypeDef *hmmc, ui
     config.TransferDir   = SDMMC_TRANSFER_DIR_TO_SDMMC;
     config.TransferMode  = SDMMC_TRANSFER_MODE_BLOCK;
     config.DPSM          = SDMMC_DPSM_DISABLE;
-    SDMMC_ConfigData(hmmc->Instance, &config);
+    (void)SDMMC_ConfigData(hmmc->Instance, &config);
     
     hmmc->Instance->DCTRL |= SDMMC_DCTRL_FIFORST;
     
@@ -173,7 +175,7 @@ HAL_StatusTypeDef HAL_MMCEx_ReadBlocksDMAMultiBuffer(MMC_HandleTypeDef *hmmc, ui
     hmmc->Context = (MMC_CONTEXT_READ_MULTIPLE_BLOCK | MMC_CONTEXT_DMA);
     
     /* Read Multi Block command */
-    errorstate = SDMMC_CmdReadMultiBlock(hmmc->Instance, BlockAdd);
+    errorstate = SDMMC_CmdReadMultiBlock(hmmc->Instance, add);
     if(errorstate != HAL_MMC_ERROR_NONE)
     {
       hmmc->State = HAL_MMC_STATE_READY;
@@ -201,7 +203,9 @@ HAL_StatusTypeDef HAL_MMCEx_ReadBlocksDMAMultiBuffer(MMC_HandleTypeDef *hmmc, ui
 HAL_StatusTypeDef HAL_MMCEx_WriteBlocksDMAMultiBuffer(MMC_HandleTypeDef *hmmc, uint32_t BlockAdd, uint32_t NumberOfBlocks)
 {
   SDMMC_DataInitTypeDef config;
-  uint32_t errorstate = HAL_MMC_ERROR_NONE;
+  uint32_t errorstate;
+  uint32_t DmaBase0_reg, DmaBase1_reg;
+  uint32_t add = BlockAdd;
   
   if(hmmc->State == HAL_MMC_STATE_READY)
   {
@@ -211,7 +215,9 @@ HAL_StatusTypeDef HAL_MMCEx_WriteBlocksDMAMultiBuffer(MMC_HandleTypeDef *hmmc, u
       return HAL_ERROR;
     }
     
-    if ((hmmc->Instance->IDMABASE0 == 0) || (hmmc->Instance->IDMABASE1 == 0) || (hmmc->Instance->IDMABSIZE == 0))
+    DmaBase0_reg = hmmc->Instance->IDMABASE0;
+    DmaBase1_reg = hmmc->Instance->IDMABASE1;
+    if ((hmmc->Instance->IDMABSIZE == 0U) || (DmaBase0_reg == 0U) || (DmaBase1_reg == 0U))
     {
       hmmc->ErrorCode = HAL_MMC_ERROR_ADDR_OUT_OF_RANGE;
       return HAL_ERROR;
@@ -226,7 +232,7 @@ HAL_StatusTypeDef HAL_MMCEx_WriteBlocksDMAMultiBuffer(MMC_HandleTypeDef *hmmc, u
 
     if ((hmmc->MmcCard.CardType) != MMC_HIGH_CAPACITY_CARD)
     {
-      BlockAdd *= 512;
+      add *= 512U;
     }
     
     /* Configure the MMC DPSM (Data Path State Machine) */ 
@@ -236,7 +242,7 @@ HAL_StatusTypeDef HAL_MMCEx_WriteBlocksDMAMultiBuffer(MMC_HandleTypeDef *hmmc, u
     config.TransferDir   = SDMMC_TRANSFER_DIR_TO_CARD;
     config.TransferMode  = SDMMC_TRANSFER_MODE_BLOCK;
     config.DPSM          = SDMMC_DPSM_DISABLE;
-    SDMMC_ConfigData(hmmc->Instance, &config);
+    (void)SDMMC_ConfigData(hmmc->Instance, &config);
     
     __SDMMC_CMDTRANS_ENABLE( hmmc->Instance);
     
@@ -248,7 +254,7 @@ HAL_StatusTypeDef HAL_MMCEx_WriteBlocksDMAMultiBuffer(MMC_HandleTypeDef *hmmc, u
     hmmc->Context = (MMC_CONTEXT_WRITE_MULTIPLE_BLOCK | MMC_CONTEXT_DMA);
     
     /* Write Multi Block command */
-    errorstate = SDMMC_CmdWriteMultiBlock(hmmc->Instance, BlockAdd);
+    errorstate = SDMMC_CmdWriteMultiBlock(hmmc->Instance, add);
     if(errorstate != HAL_MMC_ERROR_NONE)
     {
       hmmc->State = HAL_MMC_STATE_READY;
@@ -297,15 +303,12 @@ HAL_StatusTypeDef HAL_MMCEx_ChangeDMABuffer(MMC_HandleTypeDef *hmmc, HAL_MMCEx_D
   * @}
   */
 
+#endif /* HAL_MMC_MODULE_ENABLED */
 
 /**
   * @}
   */
-#endif /* HAL_MMC_MODULE_ENABLED */  
-/**
-  * @}
-  */
-  
+
 /**
   * @}
   */

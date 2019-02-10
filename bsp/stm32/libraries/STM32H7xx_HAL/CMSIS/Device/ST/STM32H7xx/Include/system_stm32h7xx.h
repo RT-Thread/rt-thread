@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    system_stm32h7xx.h
   * @author  MCD Application Team
-  * @version V1.2.0
-  * @date    29-December-2017
   * @brief   CMSIS Cortex-Mx Device System Source File for STM32H7xx devices.
   ******************************************************************************
   * @attention

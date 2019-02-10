@@ -2,13 +2,11 @@
   ******************************************************************************
   * @file    stm32h7xx_ll_sdmmc.h
   * @author  MCD Application Team
-  * @version V1.2.0
-  * @date   29-December-2017
   * @brief   Header file of SDMMC HAL module.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2018 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -36,8 +34,8 @@
   */ 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32H7xx_LL_SDMMC_H
-#define __STM32H7xx_LL_SDMMC_H
+#ifndef STM32H7xx_LL_SDMMC_H
+#define STM32H7xx_LL_SDMMC_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -46,7 +44,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32h7xx_hal_def.h"
 
-/** @addtogroup STM32H7xx_HAL_Driver
+/** @addtogroup STM32H7xx_Driver
   * @{
   */
 
@@ -141,7 +139,6 @@ typedef struct
 /** @defgroup SDMMC_LL_Exported_Constants SDMMC_LL Exported Constants
   * @{
   */
-
 #define SDMMC_ERROR_NONE                     ((uint32_t)0x00000000U)    /*!< No error                                                     */
 #define SDMMC_ERROR_CMD_CRC_FAIL             ((uint32_t)0x00000001U)    /*!< Command response received (but CRC check failed)              */
 #define SDMMC_ERROR_DATA_CRC_FAIL            ((uint32_t)0x00000002U)    /*!< Data block sent/received (CRC check failed)                   */
@@ -307,11 +304,11 @@ typedef struct
 #define SDMMC_SDR50_SWITCH_PATTERN         ((uint32_t)0x80FF1F02U)
 #define SDMMC_SDR25_SWITCH_PATTERN         ((uint32_t)0x80FFFF01U)
 
-#define SDMMC_MAX_VOLT_TRIAL               0x0000FFFFU
+#define SDMMC_MAX_VOLT_TRIAL               ((uint32_t)0x0000FFFFU)
  
-#define SDMMC_MAX_TRIAL                    0x0000FFFFU
+#define SDMMC_MAX_TRIAL                    ((uint32_t)0x0000FFFFU)
 
-#define SDMMC_ALLZERO                      0x00000000U
+#define SDMMC_ALLZERO                      ((uint32_t)0x00000000U)
 
 #define SDMMC_WIDE_BUS_SUPPORT             ((uint32_t)0x00040000U)
 #define SDMMC_SINGLE_BUS_SUPPORT           ((uint32_t)0x00010000U)
@@ -335,7 +332,7 @@ typedef struct
 
 #define SDMMC_CMDTIMEOUT                   ((uint32_t)5000U)        /* Command send and response timeout */
 #define SDMMC_MAXERASETIMEOUT              ((uint32_t)63000U)       /* Max erase Timeout 63 s            */
-
+#define SDMMC_STOPTRANSFERTIMEOUT          ((uint32_t)100000000U)   /* Timeout for STOP TRANSMISSION command */
 
 /** @defgroup SDMMC_LL_Clock_Edge Clock Edge
   * @{
@@ -387,10 +384,11 @@ typedef struct
   * @}
   */
   
-/** @defgroup SDMMC_LL_Clock_Division Clock Division  SDMMC_CK frequency = SDMMCCLK / [2 * CLKDIV].
+/** @defgroup SDMMC_LL_Clock_Division Clock Division
   * @{
   */
-#define IS_SDMMC_CLKDIV(DIV)   ((DIV) < 0x400)
+/* SDMMC_CK frequency = SDMMCCLK / [2 * CLKDIV] */
+#define IS_SDMMC_CLKDIV(DIV)   ((DIV) < 0x400U)
 /**
   * @}
   */  
@@ -399,7 +397,7 @@ typedef struct
 /** @defgroup SDMMC_LL_Command_Index Command Index
   * @{
   */
-#define IS_SDMMC_CMD_INDEX(INDEX)            ((INDEX) < 0x40)
+#define IS_SDMMC_CMD_INDEX(INDEX)            ((INDEX) < 0x40U)
 /**
   * @}
   */
@@ -450,7 +448,7 @@ typedef struct
 #define SDMMC_RESP1                          ((uint32_t)0x00000000U)
 #define SDMMC_RESP2                          ((uint32_t)0x00000004U)
 #define SDMMC_RESP3                          ((uint32_t)0x00000008U)
-#define SDMMC_RESP4                          ((uint32_t)0x0000000C)
+#define SDMMC_RESP4                          ((uint32_t)0x0000000CU)
 
 #define IS_SDMMC_RESP(RESP) (((RESP) == SDMMC_RESP1) || \
                             ((RESP) == SDMMC_RESP2) || \
@@ -469,19 +467,10 @@ typedef struct
   * @}
   */
 
-/** @defgroup SDMMC_Instance SDMMC Instance
-  * @{
-  */
-#define IS_SDMMC_ALL_INSTANCE(INSTANCE) (((INSTANCE) == SDMMC1) || \
-                                         ((INSTANCE) == SDMMC2))
-/**
-  * @}
-  */
-  
 /** @defgroup SDMMC_LL_Data_Length Data Lenght
   * @{
   */
-#define IS_SDMMC_DATA_LENGTH(LENGTH) ((LENGTH) <= 0x01FFFFFF)
+#define IS_SDMMC_DATA_LENGTH(LENGTH) ((LENGTH) <= 0x01FFFFFFU)
 /**
   * @}
   */
@@ -540,7 +529,7 @@ typedef struct
   * @{
   */
 #define SDMMC_TRANSFER_MODE_BLOCK             ((uint32_t)0x00000000U)
-#define SDMMC_TRANSFER_MODE_STREAM            SDMMC_DCTRL_DTMODE
+#define SDMMC_TRANSFER_MODE_STREAM            SDMMC_DCTRL_DTMODE_1
 
 #define IS_SDMMC_TRANSFER_MODE(MODE) (((MODE) == SDMMC_TRANSFER_MODE_BLOCK) || \
                                      ((MODE) == SDMMC_TRANSFER_MODE_STREAM))
@@ -575,35 +564,29 @@ typedef struct
 /** @defgroup SDMMC_LL_Interrupt_sources Interrupt Sources
   * @{
   */
-#define SDMMC_IT_CCRCFAIL                  SDMMC_STA_CCRCFAIL
-#define SDMMC_IT_DCRCFAIL                  SDMMC_STA_DCRCFAIL
-#define SDMMC_IT_CTIMEOUT                  SDMMC_STA_CTIMEOUT
-#define SDMMC_IT_DTIMEOUT                  SDMMC_STA_DTIMEOUT
-#define SDMMC_IT_TXUNDERR                  SDMMC_STA_TXUNDERR
-#define SDMMC_IT_RXOVERR                   SDMMC_STA_RXOVERR
-#define SDMMC_IT_CMDREND                   SDMMC_STA_CMDREND
-#define SDMMC_IT_CMDSENT                   SDMMC_STA_CMDSENT
-#define SDMMC_IT_DATAEND                   SDMMC_STA_DATAEND
-#define SDMMC_IT_DHOLD                     SDMMC_STA_DHOLD
-#define SDMMC_IT_DBCKEND                   SDMMC_STA_DBCKEND
-#define SDMMC_IT_DABORT                    SDMMC_STA_DABORT
-#define SDMMC_IT_DPSMACT                   SDMMC_STA_DPSMACT
-#define SDMMC_IT_CMDACT                    SDMMC_STA_CPSMACT
-#define SDMMC_IT_TXFIFOHE                  SDMMC_STA_TXFIFOHE
-#define SDMMC_IT_RXFIFOHF                  SDMMC_STA_RXFIFOHF
-#define SDMMC_IT_TXFIFOF                   SDMMC_STA_TXFIFOF
-#define SDMMC_IT_RXFIFOF                   SDMMC_STA_RXFIFOF
-#define SDMMC_IT_TXFIFOE                   SDMMC_STA_TXFIFOE
-#define SDMMC_IT_RXFIFOE                   SDMMC_STA_RXFIFOE
-#define SDMMC_IT_BUSYD0                    SDMMC_STA_BUSYD0
-#define SDMMC_IT_BUSYD0END                 SDMMC_STA_BUSYD0END
-#define SDMMC_IT_SDMMCIT                   SDMMC_STA_SDMMCIT
-#define SDMMC_IT_ACKFAIL                   SDMMC_STA_ACKFAIL
-#define SDMMC_IT_ACKTIMEOUT                SDMMC_STA_ACKTIMEOUT
-#define SDMMC_IT_VSWEND                    SDMMC_STA_VSWEND
-#define SDMMC_IT_CKSTOP                    SDMMC_STA_CKSTOP
-#define SDMMC_IT_IDMATE                    SDMMC_STA_IDMATE
-#define SDMMC_IT_IDMABTC                   SDMMC_STA_IDMABTC
+#define SDMMC_IT_CCRCFAIL                  SDMMC_MASK_CCRCFAILIE
+#define SDMMC_IT_DCRCFAIL                  SDMMC_MASK_DCRCFAILIE
+#define SDMMC_IT_CTIMEOUT                  SDMMC_MASK_CTIMEOUTIE
+#define SDMMC_IT_DTIMEOUT                  SDMMC_MASK_DTIMEOUTIE
+#define SDMMC_IT_TXUNDERR                  SDMMC_MASK_TXUNDERRIE
+#define SDMMC_IT_RXOVERR                   SDMMC_MASK_RXOVERRIE
+#define SDMMC_IT_CMDREND                   SDMMC_MASK_CMDRENDIE
+#define SDMMC_IT_CMDSENT                   SDMMC_MASK_CMDSENTIE
+#define SDMMC_IT_DATAEND                   SDMMC_MASK_DATAENDIE
+#define SDMMC_IT_DHOLD                     SDMMC_MASK_DHOLDIE
+#define SDMMC_IT_DBCKEND                   SDMMC_MASK_DBCKENDIE
+#define SDMMC_IT_DABORT                    SDMMC_MASK_DABORTIE
+#define SDMMC_IT_TXFIFOHE                  SDMMC_MASK_TXFIFOHEIE
+#define SDMMC_IT_RXFIFOHF                  SDMMC_MASK_RXFIFOHFIE
+#define SDMMC_IT_RXFIFOF                   SDMMC_MASK_RXFIFOFIE
+#define SDMMC_IT_TXFIFOE                   SDMMC_MASK_TXFIFOEIE
+#define SDMMC_IT_BUSYD0END                 SDMMC_MASK_BUSYD0ENDIE
+#define SDMMC_IT_SDIOIT                    SDMMC_MASK_SDIOITIE
+#define SDMMC_IT_ACKFAIL                   SDMMC_MASK_ACKFAILIE
+#define SDMMC_IT_ACKTIMEOUT                SDMMC_MASK_ACKTIMEOUTIE
+#define SDMMC_IT_VSWEND                    SDMMC_MASK_VSWENDIE
+#define SDMMC_IT_CKSTOP                    SDMMC_MASK_CKSTOPIE
+#define SDMMC_IT_IDMABTC                   SDMMC_MASK_IDMABTCIE
 /**
   * @}
   */ 
@@ -633,7 +616,7 @@ typedef struct
 #define SDMMC_FLAG_RXFIFOE                   SDMMC_STA_RXFIFOE
 #define SDMMC_FLAG_BUSYD0                    SDMMC_STA_BUSYD0
 #define SDMMC_FLAG_BUSYD0END                 SDMMC_STA_BUSYD0END
-#define SDMMC_FLAG_SDMMCIT                   SDMMC_STA_SDMMCIT
+#define SDMMC_FLAG_SDIOIT                    SDMMC_STA_SDIOIT
 #define SDMMC_FLAG_ACKFAIL                   SDMMC_STA_ACKFAIL
 #define SDMMC_FLAG_ACKTIMEOUT                SDMMC_STA_ACKTIMEOUT
 #define SDMMC_FLAG_VSWEND                    SDMMC_STA_VSWEND
@@ -644,7 +627,18 @@ typedef struct
 #define SDMMC_STATIC_FLAGS                   ((uint32_t)(SDMMC_FLAG_CCRCFAIL | SDMMC_FLAG_DCRCFAIL | SDMMC_FLAG_CTIMEOUT |\
                                                          SDMMC_FLAG_DTIMEOUT | SDMMC_FLAG_TXUNDERR | SDMMC_FLAG_RXOVERR  |\
                                                          SDMMC_FLAG_CMDREND  | SDMMC_FLAG_CMDSENT  | SDMMC_FLAG_DATAEND  |\
-                                                         SDMMC_FLAG_DBCKEND  | SDMMC_FLAG_BUSYD0END))  
+                                                         SDMMC_FLAG_DHOLD      | SDMMC_FLAG_DBCKEND  | SDMMC_FLAG_DABORT   |\
+                                                         SDMMC_FLAG_BUSYD0END  | SDMMC_FLAG_SDIOIT   | SDMMC_FLAG_ACKFAIL  |\
+                                                         SDMMC_FLAG_ACKTIMEOUT | SDMMC_FLAG_VSWEND   | SDMMC_FLAG_CKSTOP   |\
+                                                         SDMMC_FLAG_IDMATE     | SDMMC_FLAG_IDMABTC))
+
+#define SDMMC_STATIC_CMD_FLAGS               ((uint32_t)(SDMMC_FLAG_CCRCFAIL | SDMMC_FLAG_CTIMEOUT  | SDMMC_FLAG_CMDREND |\
+                                                         SDMMC_FLAG_CMDSENT  | SDMMC_FLAG_BUSYD0END))
+
+#define SDMMC_STATIC_DATA_FLAGS              ((uint32_t)(SDMMC_FLAG_DCRCFAIL | SDMMC_FLAG_DTIMEOUT | SDMMC_FLAG_TXUNDERR |\
+                                                         SDMMC_FLAG_RXOVERR  | SDMMC_FLAG_DATAEND  | SDMMC_FLAG_DHOLD    |\
+                                                         SDMMC_FLAG_DBCKEND  | SDMMC_FLAG_DABORT   | SDMMC_FLAG_IDMATE   |\
+                                                         SDMMC_FLAG_IDMABTC))
 /**
   * @}
   */
@@ -678,7 +672,7 @@ typedef struct
 /* CMD Register clear mask */
 #define CMD_CLEAR_MASK           ((uint32_t)(SDMMC_CMD_CMDINDEX | SDMMC_CMD_WAITRESP |\
                                              SDMMC_CMD_WAITINT  | SDMMC_CMD_WAITPEND |\
-                                             SDMMC_CMD_CPSMEN   ))
+                                             SDMMC_CMD_CPSMEN   | SDMMC_CMD_CMDSUSPEND))
 
 /* SDMMC Initialization Frequency (400KHz max) for IP CLK 200MHz*/
 #define SDMMC_INIT_CLK_DIV ((uint8_t)0xFA)
@@ -686,6 +680,8 @@ typedef struct
 /* SDMMC Default Speed Frequency (25Mhz max) for IP CLK 200MHz*/
 #define SDMMC_NSpeed_CLK_DIV ((uint8_t)0x4)
 
+/* SDMMC High Speed Frequency (50Mhz max) for IP CLK 200MHz*/
+#define SDMMC_HSpeed_CLK_DIV ((uint8_t)0x2)
 /**
   * @}
   */
@@ -795,7 +791,7 @@ typedef struct
   *            @arg SDMMC_FLAG_IDMABTC:    IDMA buffer transfer complete
   * @retval The new state of SDMMC_FLAG (SET or RESET).
   */
-#define __SDMMC_GET_FLAG(__INSTANCE__, __FLAG__)  (((__INSTANCE__)->STA &(__FLAG__)) != RESET)
+#define __SDMMC_GET_FLAG(__INSTANCE__, __FLAG__)  (((__INSTANCE__)->STA &(__FLAG__)) != 0U)
 
 
 /**
@@ -941,16 +937,15 @@ typedef struct
   * @param  __INSTANCE__ : Pointer to SDMMC register base  
   * @retval None
   */  
-#define __SDMMC_SUSPEND_CMD_ENABLE(__INSTANCE__)  ((__INSTANCE__)->CMD |= SDMMC_CMD_SDIOSUSPEND) 
+#define __SDMMC_SUSPEND_CMD_ENABLE(__INSTANCE__)  ((__INSTANCE__)->CMD |= SDMMC_CMD_CMDSUSPEND) 
 
 /**
   * @brief  Disable the SD I/O Suspend command sending.
   * @param  __INSTANCE__ : Pointer to SDMMC register base  
   * @retval None
   */  
-#define __SDMMC_SUSPEND_CMD_DISABLE(__INSTANCE__)  ((__INSTANCE__)->CMD &= ~SDMMC_CMD_SDIOSUSPEND) 
+#define __SDMMC_SUSPEND_CMD_DISABLE(__INSTANCE__)  ((__INSTANCE__)->CMD &= ~SDMMC_CMD_CMDSUSPEND) 
       
-
 /**
   * @brief  Enable the CMDTRANS mode.
   * @param  __INSTANCE__ : Pointer to SDMMC register base  
@@ -964,6 +959,21 @@ typedef struct
   * @retval None
   */  
 #define __SDMMC_CMDTRANS_DISABLE(__INSTANCE__)  ((__INSTANCE__)->CMD &= ~SDMMC_CMD_CMDTRANS) 
+
+/**
+  * @brief  Enable the CMDSTOP mode.
+  * @param  __INSTANCE__ : Pointer to SDMMC register base
+  * @retval None
+  */
+#define __SDMMC_CMDSTOP_ENABLE(__INSTANCE__)  ((__INSTANCE__)->CMD |= SDMMC_CMD_CMDSTOP)
+
+/**
+  * @brief  Disable the CMDSTOP mode.
+  * @param  __INSTANCE__ : Pointer to SDMMC register base
+  * @retval None
+  */
+#define __SDMMC_CMDSTOP_DISABLE(__INSTANCE__)  ((__INSTANCE__)->CMD &= ~SDMMC_CMD_CMDSTOP)
+
 /**
   * @}
   */
@@ -1001,6 +1011,7 @@ HAL_StatusTypeDef SDMMC_WriteFIFO(SDMMC_TypeDef *SDMMCx, uint32_t *pWriteData);
   * @{
   */
 HAL_StatusTypeDef SDMMC_PowerState_ON(SDMMC_TypeDef *SDMMCx);
+HAL_StatusTypeDef SDMMC_PowerState_Cycle(SDMMC_TypeDef *SDMMCx);
 HAL_StatusTypeDef SDMMC_PowerState_OFF(SDMMC_TypeDef *SDMMCx);
 uint32_t          SDMMC_GetPowerState(SDMMC_TypeDef *SDMMCx);
 
@@ -1033,7 +1044,7 @@ uint32_t SDMMC_CmdSelDesel(SDMMC_TypeDef *SDMMCx, uint64_t Addr);
 uint32_t SDMMC_CmdGoIdleState(SDMMC_TypeDef *SDMMCx);
 uint32_t SDMMC_CmdOperCond(SDMMC_TypeDef *SDMMCx);
 uint32_t SDMMC_CmdAppCommand(SDMMC_TypeDef *SDMMCx, uint32_t Argument);
-uint32_t SDMMC_CmdAppOperCommand(SDMMC_TypeDef *SDMMCx, uint32_t SdType);
+uint32_t SDMMC_CmdAppOperCommand(SDMMC_TypeDef *SDMMCx, uint32_t Argument);
 uint32_t SDMMC_CmdBusWidth(SDMMC_TypeDef *SDMMCx, uint32_t BusWidth);
 uint32_t SDMMC_CmdSendSCR(SDMMC_TypeDef *SDMMCx);
 uint32_t SDMMC_CmdSendCID(SDMMC_TypeDef *SDMMCx);
@@ -1073,6 +1084,6 @@ uint32_t SDMMC_CmdSendEXTCSD(SDMMC_TypeDef *SDMMCx, uint32_t Argument);
 }
 #endif
 
-#endif /* __STM32H7xx_LL_SDMMC_H */
+#endif /* STM32H7xx_LL_SDMMC_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

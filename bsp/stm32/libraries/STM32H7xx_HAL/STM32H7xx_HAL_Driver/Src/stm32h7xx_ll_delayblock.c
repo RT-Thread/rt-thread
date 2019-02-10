@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32h7xx_ll_delayblock.c
   * @author  MCD Application Team
-  * @version V1.2.0
-  * @date   29-December-2017
   * @brief   DelayBlock Low Layer HAL module driver.
   *    
   *          This file provides firmware functions to manage the following 

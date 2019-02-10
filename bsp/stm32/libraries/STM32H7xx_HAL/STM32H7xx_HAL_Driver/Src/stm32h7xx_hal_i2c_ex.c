@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32h7xx_hal_i2c_ex.c
   * @author  MCD Application Team
-  * @version V1.2.0
-  * @date   29-December-2017
   * @brief   I2C Extended HAL module driver.
   *          This file provides firmware functions to manage the following
   *          functionalities of I2C Extended peripheral:

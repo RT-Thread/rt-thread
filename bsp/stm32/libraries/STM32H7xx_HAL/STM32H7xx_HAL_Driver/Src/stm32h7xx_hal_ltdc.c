@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32h7xx_hal_ltdc.c
   * @author  MCD Application Team
-  * @version V1.2.0
-  * @date   29-December-2017
   * @brief   LTDC HAL module driver.
   *          This file provides firmware functions to manage the following 
   *          functionalities of the LTDC peripheral:

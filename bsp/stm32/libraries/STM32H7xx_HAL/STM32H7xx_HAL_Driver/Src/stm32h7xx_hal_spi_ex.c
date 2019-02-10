@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32h7xx_hal_spi_ex.c
   * @author  MCD Application Team
-  * @version V1.2.0
-  * @date   29-December-2017
   * @brief   Extended SPI HAL module driver.
   *          This file provides firmware functions to manage the following
   *          SPI peripheral extended functionalities :

@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32_hal_legacy.h
   * @author  MCD Application Team
-  * @version V1.2.0
-  * @date    29-December-2017
+  * @version V1.1.0
+  * @date    31-August-2017
   * @brief   This file contains aliases definition for the STM32Cube HAL constants 
   *          macros and functions maintained for legacy purpose.
   ******************************************************************************
@@ -428,6 +428,15 @@
 #define GPIO_AF12_SDMMC                           GPIO_AF12_SDMMC1
 #endif
 
+#if defined(STM32H7)
+#define GPIO_AF7_SDIO1                            GPIO_AF7_SDMMC1
+#define GPIO_AF8_SDIO1                            GPIO_AF8_SDMMC1
+#define GPIO_AF9_SDIO2                            GPIO_AF9_SDMMC2
+#define GPIO_AF10_SDIO2                           GPIO_AF10_SDMMC2
+#define GPIO_AF11_SDIO2                           GPIO_AF11_SDMMC2
+#define GPIO_AF12_SDIO1                           GPIO_AF12_SDMMC1
+#endif
+
 #define GPIO_AF0_LPTIM                            GPIO_AF0_LPTIM1
 #define GPIO_AF1_LPTIM                            GPIO_AF1_LPTIM1
 #define GPIO_AF2_LPTIM                            GPIO_AF2_LPTIM1
@@ -467,7 +476,7 @@
  #define __HAL_RCC_JPEG_FORCE_RESET              __HAL_RCC_JPGDECRST_FORCE_RESET
  #define __HAL_RCC_JPEG_RELEASE_RESET            __HAL_RCC_JPGDECRST_RELEASE_RESET
  #define __HAL_RCC_JPEG_CLK_SLEEP_ENABLE         __HAL_RCC_JPGDEC_CLK_SLEEP_ENABLE
- #define __HAL_RCC_JPEG_CLK_SLEEP_DISABLE        __HAL_RCC_JPGDEC_CLK_SLEEP_DISABLE
+ #define __HAL_RCC_JPEG_CLK_SLEEP_DISABLE        __HAL_RCC_JPGDEC_CLK_SLEEP_DISABLE  
 
  #define DMA_REQUEST_DAC1 DMA_REQUEST_DAC1_CH1 
  #define DMA_REQUEST_DAC2 DMA_REQUEST_DAC1_CH2
@@ -564,7 +573,7 @@
 #define I2C_NOSTRETCH_ENABLED                   I2C_NOSTRETCH_ENABLE
 #define I2C_ANALOGFILTER_ENABLED                I2C_ANALOGFILTER_ENABLE
 #define I2C_ANALOGFILTER_DISABLED               I2C_ANALOGFILTER_DISABLE
-#if defined(STM32F0) || defined(STM32F1) || defined(STM32F3) || defined(STM32G0) || defined(STM32L4) || defined(STM32L1) || defined(STM32F7)
+#if defined(STM32F0) || defined(STM32F1) || defined(STM32F3) || defined(STM32L4) || defined(STM32L1) || defined(STM32F7)
 #define HAL_I2C_STATE_MEM_BUSY_TX               HAL_I2C_STATE_BUSY_TX
 #define HAL_I2C_STATE_MEM_BUSY_RX               HAL_I2C_STATE_BUSY_RX
 #define HAL_I2C_STATE_MASTER_BUSY_TX            HAL_I2C_STATE_BUSY_TX
@@ -967,9 +976,9 @@
 #define CAN_IT_RQCP2                CAN_IT_TME
 #define INAK_TIMEOUT                CAN_TIMEOUT_VALUE
 #define SLAK_TIMEOUT                CAN_TIMEOUT_VALUE
-#define CAN_TXSTATUS_FAILED         ((uint8_t)0x00)
-#define CAN_TXSTATUS_OK             ((uint8_t)0x01)
-#define CAN_TXSTATUS_PENDING        ((uint8_t)0x02)
+#define CAN_TXSTATUS_FAILED         ((uint8_t)0x00U)
+#define CAN_TXSTATUS_OK             ((uint8_t)0x01U)
+#define CAN_TXSTATUS_PENDING        ((uint8_t)0x02U)
 
 /**
   * @}
@@ -3036,6 +3045,18 @@
 #define  HAL_SD_CardCSDTypedef       HAL_SD_CardCSDTypeDef
 #define  HAL_SD_CardStatusTypedef    HAL_SD_CardStatusTypeDef
 #define  HAL_SD_CardStateTypedef     HAL_SD_CardStateTypeDef
+#endif
+
+#if defined(STM32H7)
+#define HAL_MMCEx_Read_DMADoubleBuffer0CpltCallback   HAL_MMCEx_Read_DMADoubleBuf0CpltCallback
+#define HAL_MMCEx_Read_DMADoubleBuffer1CpltCallback   HAL_MMCEx_Read_DMADoubleBuf1CpltCallback
+#define HAL_MMCEx_Write_DMADoubleBuffer0CpltCallback  HAL_MMCEx_Write_DMADoubleBuf0CpltCallback
+#define HAL_MMCEx_Write_DMADoubleBuffer1CpltCallback  HAL_MMCEx_Write_DMADoubleBuf1CpltCallback
+#define HAL_SDEx_Read_DMADoubleBuffer0CpltCallback    HAL_SDEx_Read_DMADoubleBuf0CpltCallback
+#define HAL_SDEx_Read_DMADoubleBuffer1CpltCallback    HAL_SDEx_Read_DMADoubleBuf1CpltCallback
+#define HAL_SDEx_Write_DMADoubleBuffer0CpltCallback   HAL_SDEx_Write_DMADoubleBuf0CpltCallback
+#define HAL_SDEx_Write_DMADoubleBuffer1CpltCallback   HAL_SDEx_Write_DMADoubleBuf1CpltCallback
+#define HAL_SD_DriveTransciver_1_8V_Callback          HAL_SD_DriveTransceiver_1_8V_Callback
 #endif
 
 /**

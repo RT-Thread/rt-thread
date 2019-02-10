@@ -1,8 +1,6 @@
 ;******************** (C) COPYRIGHT 2017 STMicroelectronics ********************
 ;* File Name          : startup_stm32h743xx.s
 ;* @author  MCD Application Team
-;* version            : V1.2.0
-;* Date               : 29-December-2017
 ;* Description        : STM32H7xx devices vector table for MDK-ARM toolchain. 
 ;*                      This module performs:
 ;*                      - Set the initial SP
