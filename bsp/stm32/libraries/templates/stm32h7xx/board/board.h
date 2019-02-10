@@ -14,8 +14,11 @@
 #include <stm32h7xx.h>
 #include "stm32h7xx_hal.h"
 
+#include <rtthread.h>
+
 #include "drv_common.h"
 #include "drv_usart.h"
+#include "drv_gpio.h"
 
 /* whether use board external SDRAM memory */
 // <e>Use external SDRAM memory on the board
