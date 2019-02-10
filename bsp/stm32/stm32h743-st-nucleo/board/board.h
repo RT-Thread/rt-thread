@@ -14,8 +14,11 @@
 #include <stm32h7xx.h>
 #include "stm32h7xx_hal.h"
 
+#include <rtthread.h>
+
 #include "drv_common.h"
 #include "drv_usart.h"
+#include "drv_gpio.h"
 
 /* whether use board external SDRAM memory */
 // <e>Use external SDRAM memory on the board
@@ -34,7 +37,7 @@
 #define STM32_SRAM_SIZE   (512 * 1024)
 #define HEAP_END          (0x24000000 + STM32_SRAM_SIZE)
 
-void rt_hw_board_init(void);
+void SystemClock_Config(void);
 
 #endif
 
