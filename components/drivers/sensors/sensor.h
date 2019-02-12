@@ -14,6 +14,10 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef RT_USING_RTC
 #define  rt_sen_get_timestamp()  time()          /* API for the sensor to get the timestamp */
 #else
@@ -189,4 +193,9 @@ int rt_hw_sensor_register(rt_sensor_t sensor,
                            const char              *name,
                            rt_uint32_t              flag,
                            void                    *data);
+
+#ifdef __cplusplus
+}
 #endif
+
+#endif /* __SENSOR_H__ */
