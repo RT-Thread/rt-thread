@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2019-01-31     flybreak     first version
  */
- 
+
 #ifndef __SENSOR_H__
 #define __SENSOR_H__
 
@@ -45,7 +45,7 @@ extern "C" {
 #define RT_SEN_CLASS_NOISE             (11) /* Noise Loudness    */
 #define RT_SEN_CLASS_STEP              (12) /* Step sensor       */
 
-/* Sensor vendor types */           
+/* Sensor vendor types */
 
 #define RT_SEN_VENDOR_UNKNOWN          (0)
 #define RT_SEN_VENDOR_STM              (1)  /* STMicroelectronics */
@@ -54,7 +54,7 @@ extern "C" {
 #define RT_SEN_VENDOR_SEMTECH          (4)  /* Semtech */
 #define RT_SEN_VENDOR_GOERTEK          (5)  /* Goertek */
 
-/* Sensor unit types */                
+/* Sensor unit types */
 
 #define  RT_SEN_UNIT_NONE              (0)
 #define  RT_SEN_UNIT_MG                (1)  /* Accelerometer           unit: mG         */
@@ -75,7 +75,7 @@ extern "C" {
 #define  RT_SEN_INTF_UART              (1 << 2)
 #define  RT_SEN_INTF_ONEWIRE           (1 << 3)
 
-/* Sensor power mode types */          
+/* Sensor power mode types */
 
 #define  RT_SEN_POWER_NONE             (0)
 #define  RT_SEN_POWER_DOWN             (1)  /* power down mode   */
@@ -133,15 +133,15 @@ struct rt_sensor_config
 struct rt_sensor_device
 {
     struct rt_device             parent;    /* The standard device */
-                                
+
     struct rt_sensor_info        info;      /* The sensor info data */
     struct rt_sensor_config      config;    /* The sensor config data */
 
     void                        *data_buf;  /* The buf of the data received */
     rt_size_t                    data_len;  /* The size of the data received */
-    
-    struct rt_sensor_ops        *ops;       /* The sensor ops */
-                                
+
+    const struct rt_sensor_ops  *ops;       /* The sensor ops */
+
     struct rt_sensor_module     *module;    /* The sensor module */
 };
 typedef struct rt_sensor_device *rt_sensor_t;
@@ -149,7 +149,7 @@ typedef struct rt_sensor_device *rt_sensor_t;
 struct rt_sensor_module
 {
     rt_mutex_t                   lock;                   /* The module lock */
-                                 
+
     rt_sensor_t                  sen[RT_SEN_MODULE_MAX]; /* The module contains a list of sensors */
     rt_uint8_t                   sen_num;                /* Number of sensors contained in the module */
 };
@@ -180,7 +180,7 @@ struct rt_sensor_data
         rt_int32_t           tvoc;          /* TVOC.                unit: permillage  */
         rt_int32_t           noise;         /* Noise Loudness.      unit: HZ          */
         rt_uint32_t          step;          /* Step sensor.         unit: 1           */
-    }data;
+    } data;
 };
 
 struct rt_sensor_ops
@@ -190,9 +190,9 @@ struct rt_sensor_ops
 };
 
 int rt_hw_sensor_register(rt_sensor_t sensor,
-                           const char              *name,
-                           rt_uint32_t              flag,
-                           void                    *data);
+                          const char              *name,
+                          rt_uint32_t              flag,
+                          void                    *data);
 
 #ifdef __cplusplus
 }
