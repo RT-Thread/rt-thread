@@ -188,7 +188,11 @@ static rt_err_t drv_pwm_get(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
 #if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
 #elif defined(SOC_SERIES_STM32L4)
+#if defined(SOC_STM32L432KC)
+	if (htim->Instance == TIM15 || htim->Instance == TIM16)
+#else
     if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
+#endif	
 #elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0)
     if (0)
 #endif
@@ -233,7 +237,11 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
 #if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
 #elif defined(SOC_SERIES_STM32L4)
+#if defined(SOC_STM32L432KC)
+	if (htim->Instance == TIM15 || htim->Instance == TIM16)
+#else
     if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
+#endif
 #elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0)
     if (0)
 #endif
@@ -414,6 +422,12 @@ static void pwm_get_channel(void)
 #ifdef BSP_USING_PWM2_CH1
     stm32_pwm_obj[PWM2_INDEX].channel |= 1 << 0;
 #endif
+#ifdef BSP_USING_PWM2_CH2
+    stm32_pwm_obj[PWM2_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM2_CH3
+    stm32_pwm_obj[PWM2_INDEX].channel |= 1 << 2;
+#endif
 #ifdef BSP_USING_PWM2_CH4
     stm32_pwm_obj[PWM2_INDEX].channel |= 1 << 3;
 #endif
@@ -467,7 +481,7 @@ static int stm32_pwm_init(void)
             LOG_D("%s init success", stm32_pwm_obj[i].name);
 
             /* register pwm device */
-            if (rt_device_pwm_register(rt_calloc(1, sizeof(struct rt_device_pwm)), stm32_pwm_obj[i].name, &drv_ops, &stm32_pwm_obj[i].tim_handle) == RT_EOK)
+			if (rt_device_pwm_register(&(stm32_pwm_obj[i].pwm_device), stm32_pwm_obj[i].name, &drv_ops, &stm32_pwm_obj[i].tim_handle) == RT_EOK)
             {
 
                 LOG_D("%s register success", stm32_pwm_obj[i].name);

@@ -78,9 +78,8 @@
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
 #define RT_SERIAL_USING_DMA
+#define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
-#define RT_USING_RTC
-#define RT_USING_WDT
 
 /* Using WiFi */
 

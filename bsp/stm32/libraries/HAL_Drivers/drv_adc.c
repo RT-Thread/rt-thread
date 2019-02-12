@@ -215,6 +215,12 @@ static int stm32_adc_init(void)
         /* ADC init */
         name_buf[3] = '0';
         stm32_adc_obj[i].ADC_Handler = adc_config[i];
+#if defined(SOC_STM32L432KC)
+        if (stm32_adc_obj[i].ADC_Handler.Instance == ADC1)
+        {
+            name_buf[3] = '1';
+        }		
+#else
         if (stm32_adc_obj[i].ADC_Handler.Instance == ADC1)
         {
             name_buf[3] = '1';
@@ -227,6 +233,7 @@ static int stm32_adc_init(void)
         {
             name_buf[3] = '3';
         }
+#endif		
         if (HAL_ADC_Init(&stm32_adc_obj[i].ADC_Handler) != HAL_OK)
         {
             LOG_E("%s init failed", name_buf);
