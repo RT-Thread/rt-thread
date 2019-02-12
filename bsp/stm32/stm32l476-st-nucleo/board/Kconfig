@@ -35,7 +35,64 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
                 default n
         endif
+        
+    menuconfig BSP_USING_I2C1
+        bool "Enable I2C1 BUS (software simulation)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C1
+            config BSP_I2C1_SCL_PIN
+                int "i2c1 scl pin number"
+                range 1 176
+                default 22
+            config BSP_I2C1_SDA_PIN
+                int "I2C1 sda pin number"
+                range 1 176
+                default 23
+        endif
 
+    menuconfig BSP_USING_I2C2
+        bool "Enable I2C2 BUS (software simulation)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C2
+            config BSP_I2C2_SCL_PIN
+                int "i2c2 scl pin number"
+                range 1 176
+                default 26
+            config BSP_I2C2_SDA_PIN
+                int "I2C2 sda pin number"
+                range 1 176
+                default 27
+        endif
+
+    menuconfig BSP_USING_I2C3
+        bool "Enable I2C3 BUS (software simulation)"
+        default n
+        select RT_USING_I2CS
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C3
+            config BSP_I2C3_SCL_PIN
+                int "i2c3 scl pin number"
+                range 1 176
+                default 32
+            config BSP_I2C3_SDA_PIN
+                int "I2C3 sda pin number"
+                range 1 176
+                default 33
+        endif
+        
+    config BSP_USING_ONCHIP_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        select RT_USING_LIBC
+        default n
+        
 endmenu
 
 menu "Board extended module Drivers"
