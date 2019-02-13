@@ -12,7 +12,7 @@
 
 #define DBG_ENABLE
 #define DBG_LEVEL DBG_INFO
-#define DBG_SECTION_NAME  "sensor.test"
+#define DBG_SECTION_NAME  "sensor.cmd"
 #define DBG_COLOR
 #include <rtdbg.h>
 
