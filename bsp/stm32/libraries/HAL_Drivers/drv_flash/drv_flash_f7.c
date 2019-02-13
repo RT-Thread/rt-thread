@@ -253,9 +253,9 @@ static int fal_flash_erase_32k(long offset, size_t size);
 static int fal_flash_erase_128k(long offset, size_t size);
 static int fal_flash_erase_256k(long offset, size_t size);
 
-const struct fal_flash_dev stm32_onchip_flash_32k = { "onchip_flash_32k", STM32_FLASH_START_ADRESS, FLASH_SIZE_GRANULARITY_32K, (32 * 1024), {NULL, fal_flash_read_32k, fal_flash_write_32k, fal_flash_erase_32k} };
-const struct fal_flash_dev stm32_onchip_flash_128k = { "onchip_flash_128k", STM32_FLASH_START_ADRESS, FLASH_SIZE_GRANULARITY_128K, (128 * 1024), {NULL, fal_flash_read_128k, fal_flash_write_128k, fal_flash_erase_128k} };
-const struct fal_flash_dev stm32_onchip_flash_256k = { "onchip_flash_256k", STM32_FLASH_START_ADRESS, FLASH_SIZE_GRANULARITY_256K, (256 * 1024), {NULL, fal_flash_read_256k, fal_flash_write_256k, fal_flash_erase_256k} };
+const struct fal_flash_dev stm32_onchip_flash_32k = { "onchip_flash_32k", STM32_FLASH_START_ADRESS_32K, FLASH_SIZE_GRANULARITY_32K, (32 * 1024), {NULL, fal_flash_read_32k, fal_flash_write_32k, fal_flash_erase_32k} };
+const struct fal_flash_dev stm32_onchip_flash_128k = { "onchip_flash_128k", STM32_FLASH_START_ADRESS_128K, FLASH_SIZE_GRANULARITY_128K, (128 * 1024), {NULL, fal_flash_read_128k, fal_flash_write_128k, fal_flash_erase_128k} };
+const struct fal_flash_dev stm32_onchip_flash_256k = { "onchip_flash_256k", STM32_FLASH_START_ADRESS_256K, FLASH_SIZE_GRANULARITY_256K, (256 * 1024), {NULL, fal_flash_read_256k, fal_flash_write_256k, fal_flash_erase_256k} };
 
 static int fal_flash_read_32k(long offset, rt_uint8_t *buf, size_t size)
 {

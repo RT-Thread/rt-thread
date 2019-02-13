@@ -8,9 +8,10 @@
  * 2018-11-19     MurphyZhao   the first version
  */
 
-#include "utest.h"
 #include <rtthread.h>
-#include <finsh.h>
+#include <string.h>
+#include "utest.h"
+#include <utest_log.h>
 
 #undef DBG_SECTION_NAME
 #undef DBG_LEVEL
@@ -31,6 +32,7 @@
 #error "RT_CONSOLEBUF_SIZE is less than 256!"
 #endif
 
+static rt_uint8_t utest_log_lv = UTEST_LOG_ALL;
 static utest_tc_export_t tc_table = RT_NULL;
 static rt_size_t tc_num;
 static struct utest local_utest = {UTEST_PASSED, 0, 0};
@@ -38,6 +40,14 @@ static struct utest local_utest = {UTEST_PASSED, 0, 0};
 #if defined(__ICCARM__) || defined(__ICCRX__)         /* for IAR compiler */
 #pragma section="UtestTcTab"
 #endif
+
+void utest_log_lv_set(rt_uint8_t lv)
+{
+    if (lv == UTEST_LOG_ALL || lv == UTEST_LOG_ASSERT)
+    {
+        utest_log_lv = lv;
+    }
+}
 
 int utest_init(void)
 {
@@ -200,7 +210,10 @@ void utest_assert(int value, const char *file, int line, const char *func, const
     }
     else
     {
-        LOG_D("[    OK    ] [ unit     ] (%s:%d) is passed", func, line);
+        if (utest_log_lv == UTEST_LOG_ALL)
+        {
+            LOG_D("[    OK    ] [ unit     ] (%s:%d) is passed", func, line);
+        }
         local_utest.error = UTEST_PASSED;
         local_utest.passed_num ++;
     }

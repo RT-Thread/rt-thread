@@ -214,7 +214,7 @@ void kbd_thread(void* parameter)
 
     while (1)
     {
-        if(rt_mb_recv(_keyMb, (rt_uint32_t*)&keyId, RT_TICK_PER_SECOND) != RT_EOK)
+        if(rt_mb_recv(_keyMb, (rt_ubase_t*)&keyId, RT_TICK_PER_SECOND) != RT_EOK)
         {
             //if no key pressed,check power key...
             keyId = 0;
