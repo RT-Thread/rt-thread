@@ -476,7 +476,7 @@ rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen)
 {
     const char *sc;
 
-    for (sc = s; *sc != '\0' && sc - s < maxlen; ++sc) /* nothing */
+    for (sc = s; *sc != '\0' && sc - s < (int)maxlen; ++sc) /* nothing */
         ;
 
     return sc - s;
