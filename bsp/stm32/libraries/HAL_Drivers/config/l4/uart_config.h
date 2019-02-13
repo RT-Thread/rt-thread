@@ -17,6 +17,28 @@
 extern "C" {
 #endif
 
+#if defined(BSP_USING_LPUART1)
+#ifndef LPUART1_CONFIG
+#define LPUART1_CONFIG                                              \
+    {                                                               \
+        .name = "lpuart1",                                          \
+        .Instance = LPUART1,                                        \
+        .irq_type = LPUART1_IRQn,                          \
+    }
+#endif /* LPUART1_CONFIG */
+#if defined(BSP_LPUART1_RX_USING_DMA)
+#ifndef LPUART1_DMA_CONFIG
+#define LPUART1_DMA_CONFIG                                          \
+    {                                                               \
+        .Instance = LPUART1_RX_DMA_INSTANCE,                        \
+        .request  = LPUART1_RX_DMA_REQUEST,                         \
+        .dma_rcc  = LPUART1_RX_DMA_RCC,                             \
+        .dma_irq  = LPUART1_RX_DMA_IRQ,                             \
+    }
+#endif /* LPUART1_DMA_CONFIG */
+#endif /* BSP_LPUART1_RX_USING_DMA */
+#endif /* BSP_USING_LPUART1 */
+
 #if defined(BSP_USING_UART1)
 #ifndef UART1_CONFIG
 #define UART1_CONFIG                                                \

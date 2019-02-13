@@ -126,6 +126,12 @@ extern "C" {
 #define QSPI_DMA_INSTANCE               DMA2_Channel7
 #define QSPI_DMA_REQUEST                DMA_REQUEST_3
 #define QSPI_DMA_IRQ                    DMA2_Channel7_IRQn
+#elif defined(BSP_LPUART1_RX_USING_DMA) && !defined(LPUART1_RX_DMA_INSTANCE)
+#define LPUART1_DMA_RX_IRQHandler       DMA2_Channel7_IRQHandler
+#define LPUART1_RX_DMA_RCC              RCC_AHB1ENR_DMA2EN
+#define LPUART1_RX_DMA_INSTANCE         DMA2_Channel7
+#define LPUART1_RX_DMA_REQUEST          DMA_REQUEST_4
+#define LPUART1_RX_DMA_IRQ              DMA2_Channel7_IRQn
 #endif
 
 #ifdef __cplusplus
