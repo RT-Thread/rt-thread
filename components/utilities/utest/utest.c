@@ -32,6 +32,18 @@
 #error "RT_CONSOLEBUF_SIZE is less than 256!"
 #endif
 
+#ifdef UTEST_THR_STACK_SIZE
+#define UTEST_THREAD_STACK_SIZE UTEST_THR_STACK_SIZE
+#else
+#define UTEST_THREAD_STACK_SIZE (4096)
+#endif
+
+#ifdef UTEST_THR_PRIORITY
+#define UTEST_THREAD_PRIORITY   UTEST_THR_PRIORITY
+#else
+#define UTEST_THREAD_PRIORITY   FINSH_THREAD_PRIORITY
+#endif
+
 static rt_uint8_t utest_log_lv = UTEST_LOG_ALL;
 static utest_tc_export_t tc_table = RT_NULL;
 static rt_size_t tc_num;
@@ -163,24 +175,46 @@ __tc_continue:
 
 static void utest_testcase_run(int argc, char** argv)
 {
-    char utest_name[UTEST_NAME_MAX_LEN];
+    void *thr_param = RT_NULL;
+
+    static char utest_name[UTEST_NAME_MAX_LEN];
+    rt_memset(utest_name, 0x0, sizeof(utest_name));
 
     if (argc == 1)
     {
         utest_run(RT_NULL);
+        return;
     }
-    else if (argc == 2)
+    else if (argc == 2 || argc == 3)
     {
-        rt_memset(utest_name, 0x0, sizeof(utest_name));
-        rt_strncpy(utest_name, argv[1], sizeof(utest_name) -1);
-        utest_run(utest_name);
+        if (rt_strcmp(argv[1], "-thread") == 0)
+        {
+            rt_thread_t tid = RT_NULL;
+            if (argc == 3)
+            {
+                rt_strncpy(utest_name, argv[2], sizeof(utest_name) -1);
+                thr_param = (void*)utest_name;
+            }
+            tid = rt_thread_create("utest",
+                                    (void (*)(void *))utest_run, thr_param,
+                                    UTEST_THREAD_STACK_SIZE, UTEST_THREAD_PRIORITY, 10);
+            if (tid != NULL)
+            {
+                rt_thread_startup(tid);
+            }
+        }
+        else
+        {
+            rt_strncpy(utest_name, argv[1], sizeof(utest_name) -1);
+            utest_run(utest_name);
+        }
     }
     else
     {
         LOG_E("[  error   ] at (%s:%d), in param error.", __func__, __LINE__);
     }
 }
-MSH_CMD_EXPORT_ALIAS(utest_testcase_run, utest_run, utest_run [testcase name]);
+MSH_CMD_EXPORT_ALIAS(utest_testcase_run, utest_run, utest_run [-thread] [testcase name]);
 
 utest_t utest_handle_get(void)
 {
