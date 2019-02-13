@@ -1,21 +1,7 @@
 /*
- * File      : drv_i2c.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -78,11 +64,12 @@ static rt_int32_t  drv_get_scl(void *data)
 
 static void drv_udelay(rt_uint32_t us)
 {
-    int i = (HAL_RCC_GetHCLKFreq() / 4000000 * us);
-    while (i)
+    __IO uint32_t Delay = us * (SystemCoreClock / 8U / 1000000U);
+    do 
     {
-        i--;
-    }
+        __NOP();
+    } 
+    while (Delay --);
 }
 
 static const struct rt_i2c_bit_ops drv_bit_ops =

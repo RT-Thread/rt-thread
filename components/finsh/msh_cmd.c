@@ -1,26 +1,7 @@
 /*
- *  internal commands for RT-Thread module shell
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * COPYRIGHT (C) 2013-2015, Shanghai Real-Thread Technology Co., Ltd
- *
- *  This file is part of RT-Thread (http://www.rt-thread.org)
- *  Maintainer: bernard.xiong <bernard.xiong at gmail.com>
- *
- *  All rights reserved.
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -29,11 +10,12 @@
  */
 
 #include <rtthread.h>
-#include <finsh.h>
-
-#include "msh.h"
 
 #ifdef FINSH_USING_MSH
+
+#include <finsh.h>
+#include "msh.h"
+
 #ifdef RT_USING_DFS
 #include <dfs_posix.h>
 
@@ -381,12 +363,19 @@ int cmd_dns(int argc, char **argv)
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_dns, __cmd_dns, list the information of dns);
 #endif
 
-#ifdef RT_LWIP_TCP
+#if defined (RT_LWIP_TCP) || defined (RT_LWIP_UDP)
 int cmd_netstat(int argc, char **argv)
 {
     extern void list_tcps(void);
+    extern void list_udps(void);
 
+#ifdef RT_LWIP_TCP
     list_tcps();
+#endif
+#ifdef RT_LWIP_UDP
+    list_udps();
+#endif
+
     return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_netstat, __cmd_netstat, list the information of TCP / IP);
@@ -430,5 +419,4 @@ int cmd_free(int argc, char **argv)
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_free, __cmd_free, Show the memory usage in the system.);
 #endif
 
-#endif
-
+#endif /* FINSH_USING_MSH */

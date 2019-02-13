@@ -2,13 +2,11 @@
   ******************************************************************************
   * @file    stm32f7xx_hal_hash.h
   * @author  MCD Application Team
-  * @version V1.0.1
-  * @date    25-June-2015
   * @brief   Header file of HASH HAL module.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2015 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -43,7 +41,7 @@
  extern "C" {
 #endif
 
-#if defined(STM32F756xx)
+#if defined (STM32F756xx) || defined (STM32F777xx) || defined (STM32F779xx)
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7xx_hal_def.h"
 
@@ -85,12 +83,12 @@ typedef struct
 
 typedef enum
 {
-  HAL_HASH_STATE_RESET     = 0x00,  /*!< HASH not yet initialized or disabled */
-  HAL_HASH_STATE_READY     = 0x01,  /*!< HASH initialized and ready for use   */
-  HAL_HASH_STATE_BUSY      = 0x02,  /*!< HASH internal process is ongoing     */
-  HAL_HASH_STATE_TIMEOUT   = 0x03,  /*!< HASH timeout state                   */
-  HAL_HASH_STATE_ERROR     = 0x04   /*!< HASH error state                     */
-}HAL_HASH_STATETypeDef;
+  HAL_HASH_STATE_RESET     = 0x00U,  /*!< HASH not yet initialized or disabled */
+  HAL_HASH_STATE_READY     = 0x01U,  /*!< HASH initialized and ready for use   */
+  HAL_HASH_STATE_BUSY      = 0x02U,  /*!< HASH internal process is ongoing     */
+  HAL_HASH_STATE_TIMEOUT   = 0x03U,  /*!< HASH timeout state                   */
+  HAL_HASH_STATE_ERROR     = 0x04U   /*!< HASH error state                     */
+}HAL_HASH_StateTypeDef;
 
 /** 
   * @}
@@ -102,8 +100,8 @@ typedef enum
   
 typedef enum
 {
-  HAL_HASH_PHASE_READY     = 0x01,  /*!< HASH peripheral is ready for initialization */
-  HAL_HASH_PHASE_PROCESS   = 0x02,  /*!< HASH peripheral is in processing phase      */
+  HAL_HASH_PHASE_READY     = 0x01U,  /*!< HASH peripheral is ready for initialization */
+  HAL_HASH_PHASE_PROCESS   = 0x02U,  /*!< HASH peripheral is in processing phase      */
 }HAL_HASHPhaseTypeDef;
 
 /** 
@@ -130,13 +128,13 @@ typedef struct
 
       HAL_StatusTypeDef          Status;            /*!< HASH peripheral status         */
 
-      HAL_HASHPhaseTypeDef       Phase;             /*!< HASH peripheral phase          */
+      HAL_HASH_PhaseTypeDef       Phase;             /*!< HASH peripheral phase          */
 
       DMA_HandleTypeDef          *hdmain;           /*!< HASH In DMA handle parameters  */
 
       HAL_LockTypeDef            Lock;              /*!< HASH locking object            */
 
-     __IO HAL_HASH_STATETypeDef  State;             /*!< HASH peripheral state          */
+     __IO HAL_HASH_StateTypeDef  State;             /*!< HASH peripheral state          */
 } HASH_HandleTypeDef;
 
 /** 
@@ -156,7 +154,7 @@ typedef struct
 /** @defgroup HASH_Exported_Constants_Group1 HASH Algorithm Selection
   * @{
   */
-#define HASH_ALGOSELECTION_SHA1      ((uint32_t)0x0000)  /*!< HASH function is SHA1   */
+#define HASH_ALGOSELECTION_SHA1      ((uint32_t)0x0000U)  /*!< HASH function is SHA1   */
 #define HASH_ALGOSELECTION_SHA224    HASH_CR_ALGO_1      /*!< HASH function is SHA224 */
 #define HASH_ALGOSELECTION_SHA256    HASH_CR_ALGO        /*!< HASH function is SHA256 */
 #define HASH_ALGOSELECTION_MD5       HASH_CR_ALGO_0      /*!< HASH function is MD5    */
@@ -167,7 +165,7 @@ typedef struct
 /** @defgroup HASH_Exported_Constants_Group2 HASH Algorithm Mode
   * @{
   */
-#define HASH_ALGOMODE_HASH         ((uint32_t)0x00000000)  /*!< Algorithm is HASH */ 
+#define HASH_ALGOMODE_HASH         ((uint32_t)0x00000000U)  /*!< Algorithm is HASH */ 
 #define HASH_ALGOMODE_HMAC         HASH_CR_MODE            /*!< Algorithm is HMAC */
 /**
   * @}
@@ -176,7 +174,7 @@ typedef struct
 /** @defgroup HASH_Data_Type HASH Data Type
   * @{
   */
-#define HASH_DATATYPE_32B          ((uint32_t)0x0000) /*!< 32-bit data. No swapping                     */
+#define HASH_DATATYPE_32B          ((uint32_t)0x0000U) /*!< 32-bit data. No swapping                     */
 #define HASH_DATATYPE_16B          HASH_CR_DATATYPE_0 /*!< 16-bit data. Each half word is swapped       */
 #define HASH_DATATYPE_8B           HASH_CR_DATATYPE_1 /*!< 8-bit data. All bytes are swapped            */
 #define HASH_DATATYPE_1B           HASH_CR_DATATYPE   /*!< 1-bit data. In the word all bits are swapped */
@@ -188,7 +186,7 @@ typedef struct
   * @brief HASH HMAC Long key used only for HMAC mode
   * @{
   */
-#define HASH_HMAC_KEYTYPE_SHORTKEY      ((uint32_t)0x00000000)  /*!< HMAC Key is <= 64 bytes */
+#define HASH_HMAC_KEYTYPE_SHORTKEY      ((uint32_t)0x00000000U)  /*!< HMAC Key is <= 64 bytes */
 #define HASH_HMAC_KEYTYPE_LONGKEY       HASH_CR_LKEY            /*!< HMAC Key is > 64 bytes  */
 /**
   * @}
@@ -225,13 +223,13 @@ typedef struct
   */
   
 /** @brief Reset HASH handle state
-  * @param  __HANDLE__: specifies the HASH handle.
+  * @param  __HANDLE__ specifies the HASH handle.
   * @retval None
   */
 #define __HAL_HASH_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_HASH_STATE_RESET)
 
 /** @brief  Check whether the specified HASH flag is set or not.
-  * @param  __FLAG__: specifies the flag to check.
+  * @param  __FLAG__ specifies the flag to check.
   *         This parameter can be one of the following values:
   *            @arg HASH_FLAG_DINIS: A new block can be entered into the input buffer. 
   *            @arg HASH_FLAG_DCIS: Digest calculation complete
@@ -264,7 +262,7 @@ typedef struct
 
 /**
   * @brief Set the number of valid bits in last word written in Data register
-  * @param  SIZE: size in byte of last data written in Data register.
+  * @param  SIZE size in byte of last data written in Data register.
   * @retval None
 */
 #define __HAL_HASH_SET_NBVALIDBITS(SIZE) do{HASH->STR &= ~(HASH_STR_NBW);\
@@ -352,7 +350,7 @@ void HAL_HASH_IRQHandler(HASH_HandleTypeDef *hhash);
 /** @addtogroup HASH_Exported_Functions_Group8
   * @{
   */
-HAL_HASH_STATETypeDef HAL_HASH_GetState(HASH_HandleTypeDef *hhash);
+HAL_HASH_StateTypeDef HAL_HASH_GetState(HASH_HandleTypeDef *hhash);
 void HAL_HASH_MspInit(HASH_HandleTypeDef *hhash);
 void HAL_HASH_MspDeInit(HASH_HandleTypeDef *hhash);
 void HAL_HASH_InCpltCallback(HASH_HandleTypeDef *hhash);
@@ -435,7 +433,7 @@ void HAL_HASH_ErrorCallback(HASH_HandleTypeDef *hhash);
 /**
   * @}
   */ 
-#endif /* STM32F756xx */
+#endif /* STM32F756xx || STM32F777xx || STM32F779xx */
 /**
   * @}
   */

@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #ifndef _SYS_TIME_H_
 #define _SYS_TIME_H_
 
@@ -20,7 +28,10 @@ struct timeval {
 };
 #endif /* _TIMEVAL_DEFINED */
 
-#if defined ( __ICCARM__ ) && (__VER__ >= 8011002)
+/*
+ * Skip define timespec for IAR version over 8.10.1 where __VER__ is 8010001.
+ */
+#if defined ( __ICCARM__ ) && (__VER__ >= 8010001)
 #define _TIMESPEC_DEFINED
 #endif
 
@@ -41,6 +52,7 @@ struct timezone {
 };
 
 int gettimeofday(struct timeval *tp, void *ignore);
+struct tm *gmtime_r(const time_t *timep, struct tm *r);
 
 #ifdef __cplusplus
 }

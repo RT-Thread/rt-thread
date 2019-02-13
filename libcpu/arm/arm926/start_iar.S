@@ -1,21 +1,7 @@
 ;/*
-; * File      : start.S
-; * This file is part of RT-Thread RTOS
-; * COPYRIGHT (C) 2006, RT-Thread Development Team
+; * Copyright (c) 2006-2018, RT-Thread Development Team
 ; *
-; *  This program is free software; you can redistribute it and/or modify
-; *  it under the terms of the GNU General Public License as published by
-; *  the Free Software Foundation; either version 2 of the License, or
-; *  (at your option) any later version.
-; *
-; *  This program is distributed in the hope that it will be useful,
-; *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-; *  GNU General Public License for more details.
-; *
-; *  You should have received a copy of the GNU General Public License along
-; *  with this program; if not, write to the Free Software Foundation, Inc.,
-; *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+; * SPDX-License-Identifier: Apache-2.0
 ; *
 ; * Change Logs:
 ; * Date           Author       Notes
@@ -24,7 +10,9 @@
 ; * 2015-04-21     ArdaFu     Remove remap code. Using mmu to map vector table
 ; * 2015-06-04     aozima     Align stack address to 8 byte.
 ; */
- 
+
+#include "rt_low_level_init.h"
+
 #define S_FRAME_SIZE    (18*4)   ;72
 
 ;#define S_SPSR          (17*4)   ;SPSR
@@ -54,9 +42,8 @@
 #define MODE_ABT        0x17
 #define MODE_UND        0x1B
 #define MODEMASK        0x1F
-#define NOINT           0xC0
 
-#include "rt_low_level_iar.inc"
+#define NOINT           0xC0
 
 ;----------------------- Stack and Heap Definitions ----------------------------
     MODULE ?cstartup

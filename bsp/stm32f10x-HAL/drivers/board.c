@@ -1,11 +1,8 @@
 /*
- * File      : board.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 RT-Thread Develop Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
+ *
  *
  * Change Logs:
  * Date           Author       Notes
@@ -47,36 +44,106 @@ void HAL_MspInit(void)
     __HAL_AFIO_REMAP_SWJ_NOJTAG();
 }
 
+
 void SystemClock_Config(void)
 {
+    rt_err_t ret = RT_EOK;
     RCC_OscInitTypeDef RCC_OscInitStruct;
     RCC_ClkInitTypeDef RCC_ClkInitStruct;
-    /**Initializes the CPU, AHB and APB busses clocks
-      */
+    
+#if !defined(RT_USING_HSI)
+    /* Initializes the CPU, AHB and APB busses clocks */
     RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-    RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+    RCC_OscInitStruct.HSEState       = RCC_HSE_ON;
     RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
-    RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-    RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
-    RT_ASSERT(HAL_RCC_OscConfig(&RCC_OscInitStruct) == HAL_OK);
-    /**Initializes the CPU, AHB and APB busses clocks
-      */
-    RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
-    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-    RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+    RCC_OscInitStruct.HSIState       = RCC_HSI_ON;
+    RCC_OscInitStruct.PLL.PLLState   = RCC_PLL_ON;
+    RCC_OscInitStruct.PLL.PLLSource  = RCC_PLLSOURCE_HSE;
+    RCC_OscInitStruct.PLL.PLLMUL     = RCC_PLL_MUL9;
+    ret = HAL_RCC_OscConfig(&RCC_OscInitStruct);
+    if(ret == HAL_TIMEOUT)
+    {
+        /* HSE timeout switch to HSI */
+        rt_memset(&RCC_OscInitStruct, 0, sizeof(RCC_OscInitStruct));
+        RCC_OscInitStruct.OscillatorType      = RCC_OSCILLATORTYPE_HSI;
+        RCC_OscInitStruct.HSIState            = RCC_HSI_ON;
+        RCC_OscInitStruct.HSICalibrationValue = 16;
+        RCC_OscInitStruct.PLL.PLLState        = RCC_PLL_ON;
+        RCC_OscInitStruct.PLL.PLLSource       = RCC_PLLSOURCE_HSI_DIV2;
+        RCC_OscInitStruct.PLL.PLLMUL          = RCC_PLL_MUL16;
+        ret = HAL_RCC_OscConfig(&RCC_OscInitStruct); 
+        RT_ASSERT(ret == HAL_OK);
+    }
+    
+    /* Initializes the CPU, AHB and APB busses clocks */
+    RCC_ClkInitStruct.ClockType      = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | 
+                                       RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+    RCC_ClkInitStruct.SYSCLKSource   = RCC_SYSCLKSOURCE_PLLCLK;
+    RCC_ClkInitStruct.AHBCLKDivider  = RCC_SYSCLK_DIV1;
     RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
     RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-    RT_ASSERT(HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) == HAL_OK);
-    /**Configure the Systick interrupt time
-      */
+    ret = HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2);
+    RT_ASSERT(ret == HAL_OK);
+    
     HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / RT_TICK_PER_SECOND);
-    /**Configure the Systick
-      */
     HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
-    /* SysTick_IRQn interrupt configuration */
     HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
+#else
+    RCC_OscInitStruct.OscillatorType      = RCC_OSCILLATORTYPE_HSI;
+    RCC_OscInitStruct.HSIState            = RCC_HSI_ON;
+    RCC_OscInitStruct.HSICalibrationValue = 16;
+    RCC_OscInitStruct.PLL.PLLState        = RCC_PLL_ON;
+    RCC_OscInitStruct.PLL.PLLSource       = RCC_PLLSOURCE_HSI_DIV2;
+    RCC_OscInitStruct.PLL.PLLMUL          = RCC_PLL_MUL16;
+    ret = HAL_RCC_OscConfig(&RCC_OscInitStruct); 
+    RT_ASSERT(ret == HAL_OK);
+
+    RCC_ClkInitStruct.ClockType      = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK | 
+                                       RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+    RCC_ClkInitStruct.SYSCLKSource   = RCC_SYSCLKSOURCE_PLLCLK;
+    RCC_ClkInitStruct.AHBCLKDivider  = RCC_SYSCLK_DIV1;
+    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+    ret = HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2); 
+    RT_ASSERT(ret == HAL_OK);
+    
+    HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/RT_TICK_PER_SECOND);
+    HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
+    HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
+#endif
+}
+
+static void m3_m4_delay_us(rt_uint32_t us)
+{
+    __IO uint32_t Delay = us * (SystemCoreClock / 8U / 1000000U);
+    do 
+    {
+        __NOP();
+    } 
+    while (Delay --);
+}
+
+void HAL_Delay(__IO uint32_t Delay)
+{
+    m3_m4_delay_us(Delay * 10);
+}
+
+extern __IO uint32_t uwTick;
+uint32_t HAL_GetTick(void)
+{
+    HAL_Delay(1);
+    uwTick ++;
+    return uwTick;
+}
+
+void HAL_SuspendTick(void)
+{
+    /* we should not suspend tick */
+}
+
+void HAL_ResumeTick(void)
+{
+    /* we should not resume tick */
 }
 
 /**
@@ -87,6 +154,7 @@ void SysTick_Handler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
+
     HAL_IncTick();
     rt_tick_increase();
     /* leave interrupt */
@@ -109,4 +177,21 @@ void rt_hw_board_init(void)
 #ifdef RT_USING_CONSOLE
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
+}
+
+/**
+ * This function will delay for some us.
+ *
+ * @param us the delay time of us
+ */
+void rt_hw_us_delay(rt_uint32_t us)
+{
+    unsigned int start, now, delta, reload, us_tick;
+    start = SysTick->VAL;
+    reload = SysTick->LOAD;
+    us_tick = SystemCoreClock / 1000000UL;
+    do{
+        now = SysTick->VAL;
+        delta = start > now ? start - now : reload + start - now;
+    } while(delta <  us_tick * us);
 }

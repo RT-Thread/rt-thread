@@ -480,7 +480,7 @@ int device_test(const char * device_name)
     device = rt_device_find(device_name);
     if( device == RT_NULL)
     {
-        rt_kprintf("device %s: not found!\r\n");
+        rt_kprintf("device %s: not found!\r\n", device_name);
         return RT_ERROR;
     }
 

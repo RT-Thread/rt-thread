@@ -1,11 +1,7 @@
 /*
- * File      : stm32f1_wdg.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006-2013, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author                Notes
@@ -27,7 +23,7 @@ static rt_err_t stm32f1_wdg_control(rt_watchdog_t *wdt, int cmd, void *arg)
      switch(cmd)
      {
      case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
-          timeout_ms = (rt_uint32_t) arg;
+          timeout_ms = *((rt_uint32_t*) arg);
           IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
           if(timeout_ms >= 13107)
           {

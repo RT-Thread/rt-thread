@@ -34,13 +34,6 @@
 #define CLK_PLL_SRC             (0x02)
 #define PRE_DIV_SRC             (0x03)
 
-/*  */
-#define BE_GATING_DRAM          (0x1<<26)
-#define FE_GATING_DRAM          (0x1<<24)
-#define TVD_GATING_DRAM         (0x1<<3)
-#define DEINTERLACE_GATING_DRAM (0x1<<2)
-#define CSI_GATING_DRAM         (0x1<<1)
-#define VE_GATING_DRAM          (0x1<<0)
 
 /*  */
 #define TCON_PLL_VIDEO_X1       (0x000)
@@ -142,6 +135,21 @@ enum bus_gate
     AUDIO_CODEC_GATING = (0x00 | (0x2 << BUS_GATE_OFFSET_BIT)),
 };
 
+enum dram_gate
+{
+    BE_GATING_DRAM          = 26,
+    FE_GATING_DRAM          = 24,
+    TVD_GATING_DRAM         = 3,
+    DEINTERLACE_GATING_DRAM = 2,
+    CSI_GATING_DRAM         = 1,
+    VE_GATING_DRAM          = 0
+};
+enum mmc_clk_id
+{
+    SDMMC0,
+    SDMMC1,
+};
+
 struct tina_ccu
 {
     volatile rt_uint32_t pll_cpu_ctrl;         /* 0x000 */
@@ -240,4 +248,8 @@ rt_err_t bus_gate_clk_disalbe(enum bus_gate bus);
 rt_err_t bus_software_reset_enalbe(enum bus_gate bus);
 rt_err_t bus_software_reset_disalbe(enum bus_gate bus);
 
+rt_err_t dram_gate_clk_enable(enum dram_gate dram_gate);
+rt_err_t dram_gate_clk_disable(enum dram_gate dram_gate);
+
+rt_err_t mmc_set_clk(enum mmc_clk_id clk_id, int hz);
 #endif

@@ -22,10 +22,10 @@
 
 #ifdef RT_USING_SERIAL
 
-#if !defined(RT_USING_USART0) && !defined(RT_USING_USART1) && \
-    !defined(RT_USING_USART2) && !defined(RT_USING_UART3)  && \
-    !defined(RT_USING_UART4) && !defined(RT_USING_USART5)  && \
-    !defined(RT_USING_UART6) && !defined(RT_USING_UART7)
+#if !defined(BSP_USING_UART0) && !defined(BSP_USING_UART1) && \
+    !defined(BSP_USING_UART2) && !defined(BSP_USING_UART3) && \
+    !defined(BSP_USING_UART4) && !defined(BSP_USING_UART5) && \
+    !defined(BSP_USING_UART6) && !defined(BSP_USING_UART7)
 #error "Please define at least one UARTx"
 
 #endif
@@ -54,7 +54,7 @@ struct gd32_uart
 
 static void uart_isr(struct rt_serial_device *serial);
 
-#if defined(RT_USING_USART0)
+#if defined(BSP_USING_UART0)
 struct rt_serial_device serial0;
 
 void USART0_IRQHandler(void)
@@ -68,9 +68,9 @@ void USART0_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-#endif /* RT_USING_USART0 */
+#endif /* BSP_USING_UART0 */
 
-#if defined(RT_USING_USART1)
+#if defined(BSP_USING_UART1)
 struct rt_serial_device serial1;
 
 void USART1_IRQHandler(void)
@@ -84,9 +84,9 @@ void USART1_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-#endif /* RT_USING_UART1 */
+#endif /* BSP_USING_UART1 */
 
-#if defined(RT_USING_USART2)
+#if defined(BSP_USING_UART2)
 struct rt_serial_device serial2;
 
 void USART2_IRQHandler(void)
@@ -100,9 +100,9 @@ void USART2_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-#endif /* RT_USING_UART2 */
+#endif /* BSP_USING_UART2 */
 
-#if defined(RT_USING_UART3)
+#if defined(BSP_USING_UART3)
 struct rt_serial_device serial3;
 
 void UART3_IRQHandler(void)
@@ -116,9 +116,9 @@ void UART3_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-#endif /* RT_USING_UART3 */
+#endif /* BSP_USING_UART3 */
 
-#if defined(RT_USING_UART4)
+#if defined(BSP_USING_UART4)
 struct rt_serial_device serial4;
 
 void UART4_IRQHandler(void)
@@ -131,9 +131,9 @@ void UART4_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif /* RT_USING_UART4 */
+#endif /* BSP_USING_UART4 */
 
-#if defined(RT_USING_USART5)
+#if defined(BSP_USING_UART5)
 struct rt_serial_device serial5;
 
 void USART5_IRQHandler(void)
@@ -147,9 +147,9 @@ void USART5_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-#endif /* RT_USING_UART5 */
+#endif /* BSP_USING_UART5 */
 
-#if defined(RT_USING_UART6)
+#if defined(BSP_USING_UART6)
 struct rt_serial_device serial6;
 
 void UART6_IRQHandler(void)
@@ -163,9 +163,9 @@ void UART6_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-#endif /* RT_USING_UART6 */
+#endif /* BSP_USING_UART6 */
 
-#if defined(RT_USING_UART7)
+#if defined(BSP_USING_UART7)
 struct rt_serial_device serial7;
 
 void UART7_IRQHandler(void)
@@ -179,10 +179,10 @@ void UART7_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-#endif /* RT_USING_UART7 */
+#endif /* BSP_USING_UART7 */
 
 static const struct gd32_uart uarts[] = {
-    #ifdef RT_USING_USART0
+    #ifdef BSP_USING_UART0
     {
         USART0,                                 // uart peripheral index
         USART0_IRQn,                            // uart iqrn
@@ -194,7 +194,7 @@ static const struct gd32_uart uarts[] = {
     },
     #endif
     
-    #ifdef RT_USING_USART1
+    #ifdef BSP_USING_UART1
     {
         USART1,                                 // uart peripheral index
         USART1_IRQn,                            // uart iqrn
@@ -206,7 +206,7 @@ static const struct gd32_uart uarts[] = {
     },
     #endif
     
-    #ifdef RT_USING_USART2
+    #ifdef BSP_USING_UART2
     {
         USART2,                                 // uart peripheral index
         USART2_IRQn,                            // uart iqrn
@@ -218,7 +218,7 @@ static const struct gd32_uart uarts[] = {
     },
     #endif
     
-    #ifdef RT_USING_UART3
+    #ifdef BSP_USING_UART3
     {
         UART3,                                 // uart peripheral index
         UART3_IRQn,                            // uart iqrn
@@ -230,7 +230,7 @@ static const struct gd32_uart uarts[] = {
     },
     #endif
     
-    #ifdef RT_USING_UART4
+    #ifdef BSP_USING_UART4
     {
         UART4,                                 // uart peripheral index
         UART4_IRQn,                            // uart iqrn
@@ -242,7 +242,7 @@ static const struct gd32_uart uarts[] = {
     },
     #endif
 
-    #ifdef RT_USING_USART5
+    #ifdef BSP_USING_UART5
     {
         USART5,                                 // uart peripheral index
         USART5_IRQn,                            // uart iqrn
@@ -254,7 +254,7 @@ static const struct gd32_uart uarts[] = {
     },
     #endif
     
-    #ifdef RT_USING_UART6
+    #ifdef BSP_USING_UART6
     {
         UART6,                                 // uart peripheral index
         UART6_IRQn,                            // uart iqrn
@@ -266,7 +266,7 @@ static const struct gd32_uart uarts[] = {
     },
     #endif
 
-    #ifdef RT_USING_UART7
+    #ifdef BSP_USING_UART7
     {
         UART7,                                 // uart peripheral index
         UART7_IRQn,                            // uart iqrn

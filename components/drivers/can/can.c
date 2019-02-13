@@ -1,21 +1,7 @@
 /*
- * File      : can.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
@@ -419,6 +405,7 @@ static rt_err_t rt_can_close(struct rt_device *dev)
 
         rt_free(rx_fifo);
         dev->open_flag &= ~RT_DEVICE_FLAG_INT_RX;
+        can->can_rx = RT_NULL;
         /* configure low level device */
         can->ops->control(can, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_RX);
     }
@@ -432,6 +419,7 @@ static rt_err_t rt_can_close(struct rt_device *dev)
 
         rt_free(tx_fifo);
         dev->open_flag &= ~RT_DEVICE_FLAG_INT_TX;
+        can->can_tx = RT_NULL;
         /* configure low level device */
         can->ops->control(can, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_TX);
     }
@@ -687,6 +675,18 @@ static void cantimeout(void *arg)
     }
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops can_device_ops =
+{
+    rt_can_init,
+    rt_can_open,
+    rt_can_close,
+    rt_can_read,
+    rt_can_write,
+    rt_can_control
+};
+#endif
+
 /*
  * can register
  */
@@ -712,12 +712,17 @@ rt_err_t rt_hw_can_register(struct rt_can_device *can,
 #ifdef RT_CAN_USING_BUS_HOOK
     can->bus_hook       = RT_NULL;
 #endif /*RT_CAN_USING_BUS_HOOK*/
+
+#ifdef RT_USING_DEVICE_OPS
+    device->ops         = &can_device_ops;
+#else
     device->init        = rt_can_init;
     device->open        = rt_can_open;
     device->close       = rt_can_close;
     device->read        = rt_can_read;
     device->write       = rt_can_write;
     device->control     = rt_can_control;
+#endif
     can->ops            = ops;
 
     can->status_indicate.ind  = RT_NULL;

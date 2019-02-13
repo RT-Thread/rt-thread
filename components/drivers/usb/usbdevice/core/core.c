@@ -1,21 +1,7 @@
 /*
- * File      : core.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -36,7 +22,7 @@ static rt_list_t device_list;
 static rt_size_t rt_usbd_ep_write(udevice_t device, uep_t ep, void *buffer, rt_size_t size);
 static rt_size_t rt_usbd_ep_read_prepare(udevice_t device, uep_t ep, void *buffer, rt_size_t size);
 static rt_err_t rt_usbd_ep_assign(udevice_t device, uep_t ep);
-static rt_err_t rt_usbd_ep_unassign(udevice_t device, uep_t ep);
+rt_err_t rt_usbd_ep_unassign(udevice_t device, uep_t ep);
 
 /**
  * This function will handle get_device_descriptor bRequest.
@@ -208,7 +194,18 @@ static rt_err_t _get_descriptor(struct udevice* device, ureq_t setup)
             _get_string_descriptor(device, setup);
             break;
         case USB_DESC_TYPE_DEVICEQUALIFIER:
-            _get_qualifier_descriptor(device, setup);
+            /* If a full-speed only device (with a device descriptor version number equal to 0200H) receives a
+            GetDescriptor() request for a device_qualifier, it must respond with a request error. The host must not make
+            a request for an other_speed_configuration descriptor unless it first successfully retrieves the
+            device_qualifier descriptor. */
+            if(device->dcd->device_is_hs)
+            {
+                _get_qualifier_descriptor(device, setup);
+            }
+            else
+            {
+                rt_usbd_ep0_set_stall(device);
+            }
             break;
         case USB_DESC_TYPE_OTHERSPEED:
             _get_config_descriptor(device, setup);
@@ -955,6 +952,7 @@ static rt_size_t rt_usbd_ep_write(udevice_t device, uep_t ep, void *buffer, rt_s
     RT_ASSERT(device->dcd != RT_NULL);
     RT_ASSERT(ep != RT_NULL);    
 
+    rt_enter_critical();
     maxpacket = EP_MAXPACKET(ep);
     if(ep->request.remain_size >= maxpacket)
     {
@@ -968,7 +966,7 @@ static rt_size_t rt_usbd_ep_write(udevice_t device, uep_t ep, void *buffer, rt_s
             ep->request.remain_size);
         ep->request.remain_size = 0;
     }
-
+    rt_exit_critical();
     return size;
 }
 
@@ -1864,7 +1862,7 @@ static rt_err_t rt_usbd_ep_assign(udevice_t device, uep_t ep)
     return -RT_ERROR;
 }
 
-static rt_err_t rt_usbd_ep_unassign(udevice_t device, uep_t ep)
+rt_err_t rt_usbd_ep_unassign(udevice_t device, uep_t ep)
 {
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->dcd != RT_NULL);    

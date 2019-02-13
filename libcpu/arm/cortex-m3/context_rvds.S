@@ -1,11 +1,7 @@
 ;/*
-; * File      : context_rvds.S
-; * This file is part of RT-Thread RTOS
-; * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
+; * Copyright (c) 2006-2018, RT-Thread Development Team
 ; *
-; * The license and distribution terms for this file may be
-; * found in the file LICENSE in this distribution or at
-; * http://www.rt-thread.org/license/LICENSE
+; * SPDX-License-Identifier: Apache-2.0
 ; *
 ; * Change Logs:
 ; * Date           Author       Notes
@@ -186,14 +182,17 @@ HardFault_Handler    PROC
 
     ; get current context
     TST     lr, #0x04               ; if(!EXC_RETURN[2])
-    MRSNE   r0, msp                 ; get fault context from handler.
-    MRSEQ   r0, psp                 ; get fault context from thread.
+    ITE     EQ
+    MRSEQ   r0, msp                 ; [2]=0 ==> Z=1, get fault context from handler.
+    MRSNE   r0, psp                 ; [2]=1 ==> Z=0, get fault context from thread.
 
     STMFD   r0!, {r4 - r11}         ; push r4 - r11 register
     STMFD   r0!, {lr}               ; push exec_return register
 
-    MSRNE   msp, r0                 ; update stack pointer to MSP.
-    MSREQ   psp, r0                 ; update stack pointer to PSP.
+    TST     lr, #0x04               ; if(!EXC_RETURN[2])
+    ITE     EQ
+    MSREQ   msp, r0                 ; [2]=0 ==> Z=1, update stack pointer to MSP.
+    MSRNE   psp, r0                 ; [2]=1 ==> Z=0, update stack pointer to PSP.
 
     PUSH    {lr}
     BL      rt_hw_hard_fault_exception

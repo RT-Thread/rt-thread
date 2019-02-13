@@ -1,26 +1,7 @@
 /*
- *  script for RT-Thread module shell
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * COPYRIGHT (C) 2013-2015, Shanghai Real-Thread Technology Co., Ltd
- *
- *  This file is part of RT-Thread (http://www.rt-thread.org)
- *  Maintainer: bernard.xiong <bernard.xiong at gmail.com>
- *
- *  All rights reserved.
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -28,11 +9,11 @@
  */
 
 #include <rtthread.h>
-#include <finsh.h>
-
-#include "msh.h"
 
 #if defined(FINSH_USING_MSH) && defined(RT_USING_DFS)
+
+#include <finsh.h>
+#include "msh.h"
 #include <dfs_posix.h>
 
 static int msh_readline(int fd, char *line_buf, int size)
@@ -156,4 +137,5 @@ int msh_exec_script(const char *cmd_line, int size)
     return ret;
 }
 
-#endif
+#endif /* defined(FINSH_USING_MSH) && defined(RT_USING_DFS) */
+

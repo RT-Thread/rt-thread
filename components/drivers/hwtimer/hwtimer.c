@@ -1,21 +1,7 @@
 /*
- * File      : hwtimer.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author         Notes
@@ -30,18 +16,18 @@ rt_inline rt_uint32_t timeout_calc(rt_hwtimer_t *timer, rt_hwtimerval_t *tv)
     float overflow;
     float timeout;
     rt_uint32_t counter;
-    int i, index;
+    int i, index = 0;
     float tv_sec;
     float devi_min = 1;
     float devi;
 
-    /* 把定时器溢出时间和定时时间换算成秒 */
+    /* changed to second */
     overflow = timer->info->maxcnt/(float)timer->freq;
     tv_sec = tv->sec + tv->usec/(float)1000000;
 
     if (tv_sec < (1/(float)timer->freq))
     {
-        /* 定时时间小于计数周期 */
+        /* little timeout */
         i = 0;
         timeout = 1/(float)timer->freq;
     }
@@ -55,7 +41,7 @@ rt_inline rt_uint32_t timeout_calc(rt_hwtimer_t *timer, rt_hwtimerval_t *tv)
             {
                 counter = timeout*timer->freq;
                 devi = tv_sec - (counter/(float)timer->freq)*i;
-                /* 计算最小误差 */
+                /* Minimum calculation error */
                 if (devi > devi_min)
                 {
                     i = index;
@@ -89,7 +75,7 @@ static rt_err_t rt_hwtimer_init(struct rt_device *dev)
     rt_hwtimer_t *timer;
 
     timer = (rt_hwtimer_t *)dev;
-    /* 尝试将默认计数频率设为1Mhz */
+    /* try to change to 1MHz */
     if ((1000000 <= timer->info->maxfreq) && (1000000 >= timer->info->minfreq))
     {
         timer->freq = 1000000;
@@ -167,7 +153,7 @@ static rt_size_t rt_hwtimer_read(struct rt_device *dev, rt_off_t pos, void *buff
     cnt = timer->ops->count_get(timer);
     if (timer->info->cntmode == HWTIMER_CNTMODE_DW)
     {
-        cnt = timer->info->maxcnt - cnt;
+        cnt = (timer->freq * timer->period_sec) - cnt;
     }
 
     t = timer->overflow * timer->period_sec + cnt/(float)timer->freq;
@@ -330,6 +316,18 @@ void rt_device_hwtimer_isr(rt_hwtimer_t *timer)
     }
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops hwtimer_ops = 
+{
+    rt_hwtimer_init,
+    rt_hwtimer_open,
+    rt_hwtimer_close,
+    rt_hwtimer_read,
+    rt_hwtimer_write,
+    rt_hwtimer_control
+};
+#endif
+
 rt_err_t rt_device_hwtimer_register(rt_hwtimer_t *timer, const char *name, void *user_data)
 {
     struct rt_device *device;
@@ -344,12 +342,16 @@ rt_err_t rt_device_hwtimer_register(rt_hwtimer_t *timer, const char *name, void 
     device->rx_indicate = RT_NULL;
     device->tx_complete = RT_NULL;
 
+#ifdef RT_USING_DEVICE_OPS
+    device->ops         = &hwtimer_ops;
+#else
     device->init        = rt_hwtimer_init;
     device->open        = rt_hwtimer_open;
     device->close       = rt_hwtimer_close;
     device->read        = rt_hwtimer_read;
     device->write       = rt_hwtimer_write;
     device->control     = rt_hwtimer_control;
+#endif
     device->user_data   = user_data;
 
     return rt_device_register(device, name, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STANDALONE);

@@ -1,21 +1,7 @@
 /*
- * File      : dfs_fs.c
- * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -69,6 +55,7 @@ int dfs_register(const struct dfs_filesystem_ops *ops)
     if (empty == NULL)
     {
         rt_set_errno(-ENOSPC);
+        LOG_E("There is no space to register this file system (%d).", ops->name);
         ret = -1;
     }
     else if (ret == RT_EOK)
@@ -317,6 +304,7 @@ int dfs_mount(const char   *device_name,
     if ((fs == NULL) && (iter == &filesystem_table[DFS_FILESYSTEMS_MAX]))
     {
         rt_set_errno(-ENOSPC);
+        LOG_E("There is no space to mount this file system (%s).", filesystemtype);
         goto err1;
     }
 
@@ -449,6 +437,7 @@ int dfs_mkfs(const char *fs_name, const char *device_name)
     if (dev_id == NULL)
     {
         rt_set_errno(-ENODEV);
+        LOG_E("Device (%s) was not found", device_name);
         return -1;
     }
 
@@ -469,6 +458,7 @@ int dfs_mkfs(const char *fs_name, const char *device_name)
         const struct dfs_filesystem_ops *ops = filesystem_operation_table[index];
         if (ops->mkfs == NULL)
         {
+            LOG_E("The file system (%s) mkfs function was not implement", fs_name);
             rt_set_errno(-ENOSYS);
             return -1;
         }
@@ -476,7 +466,8 @@ int dfs_mkfs(const char *fs_name, const char *device_name)
         return ops->mkfs(dev_id);
     }
 
-    rt_kprintf("Can not find the file system which named as %s.\n", fs_name);
+    LOG_E("File system (%s) was not found.", fs_name);
+
     return -1;
 }
 
@@ -554,8 +545,8 @@ int df(const char *path)
         return -1;
     }
 
-    cap = buffer.f_bsize * buffer.f_bfree / 1024;
-    for (unit_index = 0; unit_index < 3; unit_index ++)
+    cap = ((long long)buffer.f_bsize) * ((long long)buffer.f_bfree) / 1024LL;
+    for (unit_index = 0; unit_index < 2; unit_index ++)
     {
         if (cap < 1024) break;
 
