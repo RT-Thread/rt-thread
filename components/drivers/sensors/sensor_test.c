@@ -25,25 +25,25 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
 {
     switch (sensor->info.type)
     {
-    case RT_SEN_CLASS_ACCE:
+    case RT_SENSOR_CLASS_ACCE:
         LOG_I("num:%3d, x:%5d, y:%5d, z:%5d, timestamp:%5d", num, sensor_data->data.acce.x, sensor_data->data.acce.y, sensor_data->data.acce.z, sensor_data->timestamp);
         break;
-    case RT_SEN_CLASS_GYRO:
+    case RT_SENSOR_CLASS_GYRO:
         LOG_I("num:%3d, x:%8d, y:%8d, z:%8d, timestamp:%5d", num, sensor_data->data.gyro.x, sensor_data->data.gyro.y, sensor_data->data.gyro.z, sensor_data->timestamp);
         break;
-    case RT_SEN_CLASS_MAG:
+    case RT_SENSOR_CLASS_MAG:
         LOG_I("num:%3d, x:%5d, y:%5d, z:%5d, timestamp:%5d", num, sensor_data->data.mag.x, sensor_data->data.mag.y, sensor_data->data.mag.z, sensor_data->timestamp);
         break;
-    case RT_SEN_CLASS_HUMI:
+    case RT_SENSOR_CLASS_HUMI:
         LOG_I("num:%3d, humi:%3d.%d%%, timestamp:%5d", num, sensor_data->data.humi / 10, sensor_data->data.humi % 10, sensor_data->timestamp);
         break;
-    case RT_SEN_CLASS_TEMP:
+    case RT_SENSOR_CLASS_TEMP:
         LOG_I("num:%3d, temp:%3d.%dC, timestamp:%5d", num, sensor_data->data.temp / 10, sensor_data->data.temp % 10, sensor_data->timestamp);
         break;
-    case RT_SEN_CLASS_BARO:
+    case RT_SENSOR_CLASS_BARO:
         LOG_I("num:%3d, press:%5d, timestamp:%5d", num, sensor_data->data.baro, sensor_data->timestamp);
         break;
-    case RT_SEN_CLASS_STEP:
+    case RT_SENSOR_CLASS_STEP:
         LOG_I("num:%3d, step:%5d, timestamp:%5d", num, sensor_data->data.step, sensor_data->timestamp);
         break;
     default:
@@ -65,7 +65,7 @@ static void sensor_fifo_rx_entry(void *parameter)
     struct rt_sensor_info info;
     rt_size_t res, i;
     
-    rt_device_control(dev, RT_SEN_CTRL_GET_INFO, &info);
+    rt_device_control(dev, RT_SENSOR_CTRL_GET_INFO, &info);
 
     data = rt_malloc(sizeof(struct rt_sensor_data) * info.fifo_max);
     if (data == RT_NULL)
@@ -119,12 +119,12 @@ static void sensor_fifo(int argc, char **argv)
 
     rt_device_set_rx_indicate(dev, rx_callback);
 
-    if (rt_device_open(dev, RT_SEN_FLAG_FIFO) != RT_EOK)
+    if (rt_device_open(dev, RT_SENSOR_FLAG_FIFO) != RT_EOK)
     {
         LOG_E("open device failed!");
         return;
     }
-    rt_device_control(dev, RT_SEN_CTRL_SET_ODR, (void *)20);
+    rt_device_control(dev, RT_SENSOR_CTRL_SET_ODR, (void *)20);
 }
 #ifdef FINSH_USING_MSH
 MSH_CMD_EXPORT(sensor_fifo, Sensor fifo mode test function);
@@ -188,7 +188,7 @@ static void sensor_int(int argc, char **argv)
         LOG_E("open device failed!");
         return;
     }
-    rt_device_control(dev, RT_SEN_CTRL_SET_ODR, (void *)20);
+    rt_device_control(dev, RT_SENSOR_CTRL_SET_ODR, (void *)20);
 }
 #ifdef FINSH_USING_MSH
 MSH_CMD_EXPORT(sensor_int, Sensor interrupt mode test function);
@@ -218,7 +218,7 @@ static void sensor_polling(int argc, char **argv)
         LOG_E("open device failed!");
         return;
     }
-    rt_device_control(dev, RT_SEN_CTRL_SET_ODR, (void *)100);
+    rt_device_control(dev, RT_SENSOR_CTRL_SET_ODR, (void *)100);
 
     for (i = 0; i < num; i++)
     {
@@ -263,7 +263,7 @@ static void sensor(int argc, char **argv)
     else if (!strcmp(argv[1], "info"))
     {
         struct rt_sensor_info info;
-        rt_device_control(dev, RT_SEN_CTRL_GET_INFO, &info);
+        rt_device_control(dev, RT_SENSOR_CTRL_GET_INFO, &info);
         rt_kprintf("vendor :%d\n", info.vendor);
         rt_kprintf("model  :%s\n", info.model);
         rt_kprintf("unit   :%d\n", info.unit);
@@ -321,7 +321,7 @@ static void sensor(int argc, char **argv)
                 LOG_E("open device failed!");
                 return;
             }
-            rt_device_control(dev, RT_SEN_CTRL_GET_ID, &reg);
+            rt_device_control(dev, RT_SENSOR_CTRL_GET_ID, &reg);
             LOG_I("device id: 0x%x!", reg);
 
         }
@@ -332,19 +332,19 @@ static void sensor(int argc, char **argv)
         }
         else if (!strcmp(argv[1], "sr"))
         {
-            rt_device_control(dev, RT_SEN_CTRL_SET_RANGE, (void *)atoi(argv[2]));
+            rt_device_control(dev, RT_SENSOR_CTRL_SET_RANGE, (void *)atoi(argv[2]));
         }
         else if (!strcmp(argv[1], "sm"))
         {
-            rt_device_control(dev, RT_SEN_CTRL_SET_MODE, (void *)atoi(argv[2]));
+            rt_device_control(dev, RT_SENSOR_CTRL_SET_MODE, (void *)atoi(argv[2]));
         }
         else if (!strcmp(argv[1], "sp"))
         {
-            rt_device_control(dev, RT_SEN_CTRL_SET_POWER, (void *)atoi(argv[2]));
+            rt_device_control(dev, RT_SENSOR_CTRL_SET_POWER, (void *)atoi(argv[2]));
         }
         else if (!strcmp(argv[1], "sodr"))
         {
-            rt_device_control(dev, RT_SEN_CTRL_SET_ODR, (void *)atoi(argv[2]));
+            rt_device_control(dev, RT_SENSOR_CTRL_SET_ODR, (void *)atoi(argv[2]));
         }
         else
         {

@@ -51,12 +51,12 @@ void rt_sensor_cb(rt_sensor_t sen)
     {
         sen->parent.rx_indicate(&sen->parent, sen->data_len / sizeof(struct rt_sensor_data));
     }
-    else if (sen->config.mode == RT_SEN_MODE_INT)
+    else if (sen->config.mode == RT_SENSOR_MODE_INT)
     {
         /* The interrupt mode only produces one data at a time */
         sen->parent.rx_indicate(&sen->parent, 1);
     }
-    else if (sen->config.mode == RT_SEN_MODE_FIFO)
+    else if (sen->config.mode == RT_SENSOR_MODE_FIFO)
     {
         sen->parent.rx_indicate(&sen->parent, sen->info.fifo_max);
     }
@@ -164,27 +164,27 @@ static rt_err_t rt_sensor_open(rt_device_t dev, rt_uint16_t oflag)
     if (oflag & RT_DEVICE_FLAG_RDONLY && dev->flag & RT_DEVICE_FLAG_RDONLY)
     {
         /* If polling mode is supported, configure it to polling mode */
-        if (sensor->ops->control(sensor, RT_SEN_CTRL_SET_MODE, (void *)RT_SEN_MODE_POLLING) == RT_EOK)
+        if (sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_POLLING) == RT_EOK)
         {
-            sensor->config.mode = RT_SEN_MODE_POLLING;
+            sensor->config.mode = RT_SENSOR_MODE_POLLING;
         }
     }
     else if (oflag & RT_DEVICE_FLAG_INT_RX && dev->flag & RT_DEVICE_FLAG_INT_RX)
     {
         /* If interrupt mode is supported, configure it to interrupt mode */
-        if (sensor->ops->control(sensor, RT_SEN_CTRL_SET_MODE, (void *)RT_SEN_MODE_INT) == RT_EOK)
+        if (sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_INT) == RT_EOK)
         {
-            sensor->config.mode = RT_SEN_MODE_INT;
+            sensor->config.mode = RT_SENSOR_MODE_INT;
             /* Initialization sensor interrupt */
             rt_sensor_irq_init(sensor);
         }
     }
-    else if (oflag & RT_SEN_FLAG_FIFO && dev->flag & RT_SEN_FLAG_FIFO)
+    else if (oflag & RT_SENSOR_FLAG_FIFO && dev->flag & RT_SENSOR_FLAG_FIFO)
     {
         /* If fifo mode is supported, configure it to fifo mode */
-        if (sensor->ops->control(sensor, RT_SEN_CTRL_SET_MODE, (void *)RT_SEN_MODE_FIFO) == RT_EOK)
+        if (sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_FIFO) == RT_EOK)
         {
-            sensor->config.mode = RT_SEN_MODE_FIFO;
+            sensor->config.mode = RT_SENSOR_MODE_FIFO;
             /* Initialization sensor interrupt */
             rt_sensor_irq_init(sensor);
         }
@@ -195,9 +195,9 @@ static rt_err_t rt_sensor_open(rt_device_t dev, rt_uint16_t oflag)
     }
 
     /* Configure power mode to normal mode */
-    if (sensor->ops->control(sensor, RT_SEN_CTRL_SET_POWER, (void *)RT_SEN_POWER_NORMAL) == RT_EOK)
+    if (sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_POWER, (void *)RT_SENSOR_POWER_NORMAL) == RT_EOK)
     {
-        sensor->config.power = RT_SEN_POWER_NORMAL;
+        sensor->config.power = RT_SENSOR_POWER_NORMAL;
     }
 
     if (sensor->module)
@@ -220,9 +220,9 @@ static rt_err_t  rt_sensor_close(rt_device_t dev)
     }
 
     /* Configure power mode to power down mode */
-    if (sensor->ops->control(sensor, RT_SEN_CTRL_SET_POWER, (void *)RT_SEN_POWER_DOWN) == RT_EOK)
+    if (sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_POWER, (void *)RT_SENSOR_POWER_DOWN) == RT_EOK)
     {
-        sensor->config.power = RT_SEN_POWER_DOWN;
+        sensor->config.power = RT_SENSOR_POWER_DOWN;
     }
 
     /* Sensor disable interrupt */
@@ -293,71 +293,71 @@ static rt_err_t rt_sensor_control(rt_device_t dev, int cmd, void *args)
 
     switch (cmd)
     {
-    case RT_SEN_CTRL_GET_ID:
+    case RT_SENSOR_CTRL_GET_ID:
         if (args)
         {
-            sensor->ops->control(sensor, RT_SEN_CTRL_GET_ID, args);
+            sensor->ops->control(sensor, RT_SENSOR_CTRL_GET_ID, args);
         }
         break;
-    case RT_SEN_CTRL_GET_INFO:
+    case RT_SENSOR_CTRL_GET_INFO:
         if (args)
         {
             rt_memcpy(args, &sensor->info, sizeof(struct rt_sensor_info));
         }
         break;
-    case RT_SEN_CTRL_SET_RANGE:
+    case RT_SENSOR_CTRL_SET_RANGE:
 
         /* Configuration measurement range */
-        result = sensor->ops->control(sensor, RT_SEN_CTRL_SET_RANGE, args);
+        result = sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_RANGE, args);
         if (result == RT_EOK)
         {
             sensor->config.range = (rt_int32_t)args;
             LOG_D("set range %d", sensor->config.range);
         }
         break;
-    case RT_SEN_CTRL_SET_ODR:
+    case RT_SENSOR_CTRL_SET_ODR:
         
         /* Configuration data output rate */
-        result = sensor->ops->control(sensor, RT_SEN_CTRL_SET_ODR, args);
+        result = sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_ODR, args);
         if (result == RT_EOK)
         {
             sensor->config.odr = (rt_uint32_t)args & 0xFFFF;
             LOG_D("set odr %d", sensor->config.odr);
         }
         break;
-    case RT_SEN_CTRL_SET_MODE:
+    case RT_SENSOR_CTRL_SET_MODE:
         
         /* Configuration sensor work mode */
-        result = sensor->ops->control(sensor, RT_SEN_CTRL_SET_MODE, args);
+        result = sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_MODE, args);
         if (result == RT_EOK)
         {
             sensor->config.mode = (rt_uint32_t)args & 0xFF;
             LOG_D("set work mode code:", sensor->config.mode);
 
-            if (sensor->config.mode == RT_SEN_MODE_POLLING)
+            if (sensor->config.mode == RT_SENSOR_MODE_POLLING)
             {
                 rt_sensor_irq_disable(sensor);
             }
-            else if (sensor->config.mode == RT_SEN_MODE_INT || sensor->config.mode == RT_SEN_MODE_FIFO)
+            else if (sensor->config.mode == RT_SENSOR_MODE_INT || sensor->config.mode == RT_SENSOR_MODE_FIFO)
             {
                 rt_sensor_irq_enable(sensor);
             }
         }
         break;
-    case RT_SEN_CTRL_SET_POWER:
+    case RT_SENSOR_CTRL_SET_POWER:
         
         /* Configuration sensor power mode */
-        result = sensor->ops->control(sensor, RT_SEN_CTRL_SET_POWER, args);
+        result = sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_POWER, args);
         if (result == RT_EOK)
         {
             sensor->config.power = (rt_uint32_t)args & 0xFF;
             LOG_D("set power mode code:", sensor->config.power);
         }
         break;
-    case RT_SEN_CTRL_SELF_TEST:
+    case RT_SENSOR_CTRL_SELF_TEST:
         
         /* Device self-test */
-        result = sensor->ops->control(sensor, RT_SEN_CTRL_SELF_TEST, args);
+        result = sensor->ops->control(sensor, RT_SENSOR_CTRL_SELF_TEST, args);
         break;
     default:
         return -RT_ERROR;
