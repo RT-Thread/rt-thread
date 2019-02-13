@@ -34,6 +34,9 @@ static const struct stm32_soft_i2c_config soft_i2c_config[] =
 #ifdef BSP_USING_I2C3
     I2C3_BUS_CONFIG,
 #endif
+#ifdef BSP_USING_I2C4
+    I2C4_BUS_CONFIG,
+#endif
 };
 
 static struct stm32_i2c i2c_obj[sizeof(soft_i2c_config) / sizeof(soft_i2c_config[0])];
