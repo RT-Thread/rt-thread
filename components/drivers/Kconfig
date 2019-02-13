@@ -245,8 +245,8 @@ config RT_USING_SENSOR
     default n
 
 if RT_USING_SENSOR
-    config RT_USING_SENSOR_TEST
-        bool "Use Sensor test"
+    config RT_USING_SENSOR_CMD
+        bool "Using Sensor cmd"
         default y
 endif
 
