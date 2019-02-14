@@ -40,22 +40,6 @@ menu "On-chip Peripheral Drivers"
         default y
         select RT_USING_SERIAL
         if BSP_USING_UART
-            config BSP_USING_UART1
-                bool "Enable UART1"
-                default n
-            config BSP_UART1_RX_USING_DMA
-                bool "Enable UART1 RX DMA"
-                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
-                default n
-
-            config BSP_USING_UART2
-                bool "Enable UART2"
-                default n
-            config BSP_UART2_RX_USING_DMA
-                bool "Enable UART2 RX DMA"
-                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
-                default n
-
             config BSP_USING_LPUART1
                 bool "Enable LPUART1"
                 default y
@@ -64,7 +48,7 @@ menu "On-chip Peripheral Drivers"
             depends on BSP_USING_LPUART1 && RT_SERIAL_USING_DMA
                 default n
         endif
-		
+
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
         default n
@@ -121,7 +105,7 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_I2C3
         bool "Enable I2C3 BUS CAM(software simulation)"
         default n
-        select RT_USING_I2CS
+        select RT_USING_I2C
         select RT_USING_I2C_BITOPS
         select RT_USING_PIN
         if BSP_USING_I2C3
@@ -138,7 +122,7 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_I2C4
         bool "Enable I2C4 BUS Sensor(software simulation)"
         default n
-        select RT_USING_I2CS
+        select RT_USING_I2C
         select RT_USING_I2C_BITOPS
         select RT_USING_PIN
         if BSP_USING_I2C4

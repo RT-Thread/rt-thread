@@ -38,7 +38,7 @@ Developer Kit STM32L496 是阿里联合[诺行](http://www.notioni.com/)推出�
 - 常用接口：SD 卡接口、USB OTG Micro USB 接口
 - 调试接口，ST-LINK Micro USB 接口
 
-开发板更多详细信息请参考正点原子 [STM32 潘多拉开发板介绍](https://eboard.taobao.com/index.htm)。
+开发板更多详细信息请参考阿里 [开发板硬件介绍](https://github.com/alibaba/AliOS-Things/wiki/AliOS-Things-Developer-Kit-Hardware-Guide)。
 
 ## 外设支持
 
@@ -46,7 +46,7 @@ Developer Kit STM32L496 是阿里联合[诺行](http://www.notioni.com/)推出�
 
 | **板载外设**      | **支持情况** | **备注**                              |
 | :----------------- | :----------: | :------------------------------------- |
-| 板载 ST-LINK 转串口 |     支持     |                                       |
+| 板载 ST-LINK 转串口 |     支持     | lpuart1 |
 | SD卡               |   支持       |                                       |
 | 温湿度传感器        |    暂不支持     |即将支持                             |
 | 六轴传感器         |    暂不支持     |即将支持                              |
@@ -55,23 +55,19 @@ Developer Kit STM32L496 是阿里联合[诺行](http://www.notioni.com/)推出�
 | TFTLCD           |    不支持     |                                      |
 | WIFI | 不支持 | |
 | **片上外设**      | **支持情况** | **备注**                              |
-| GPIO              |     支持     |                                      |
-| UART              |     支持     |                                      |
-| SPI               |     支持     |                                      |
+| GPIO              |     支持     | PA0, PA1... PI15 ---> PIN: 0, 1...144 |
+| UART              |     支持     | LPUART1 |
+| SPI               |     支持     | SPI1/2 |
 | QSPI              |     不支持     |                                      |
-| I2C               |     支持     |                                      |
-| TIM               |     支持     |                                      |
-| ADC               |     支持     |                                      |
+| I2C               |     支持     | 软件 I2C 2/3/4 |
+| TIM               |     支持     | TIM15/16/17 |
+| ADC               |     支持     | ADC1 |
 | RTC               |     支持     |                                      |
 | WDT               |     支持     |                                      |
-| PWM               |     支持     |                                      |
+| PWM               |     支持     | PWM3 |
 | USB Device        |   暂不支持   | 即将支持                              |
 | USB Host          |   暂不支持   | 即将支持                              |
 | **扩展模块**      | **支持情况** | **备注**                              |
-
-
-
-使用该开发板的更多高级功能请参考 RT-Thread 代码仓库： [RT-Thread IoT-Board SDK](https://github.com/RT-Thread/IoT_Board)。
 
 ## 使用说明
 

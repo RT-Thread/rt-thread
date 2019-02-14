@@ -45,7 +45,7 @@ extern "C" {
 #define UART1_TX_DMA_INSTANCE           DMA1_Channel4
 #define UART1_TX_DMA_REQUEST            DMA_REQUEST_2
 #define UART1_TX_DMA_IRQ                DMA1_Channel4_IRQn
-#elif defined(BSP_SPI2_RX_USING_DMA) && !defined(BSP_SPI2_DMA_INSTANCE)
+#elif defined(BSP_SPI2_RX_USING_DMA) && !defined(SPI2_RX_DMA_INSTANCE)
 #define SPI2_DMA_RX_IRQHandler          DMA1_Channel4_IRQHandler
 #define SPI2_RX_DMA_RCC                 RCC_AHB1ENR_DMA1EN
 #define SPI2_RX_DMA_INSTANCE            DMA1_Channel4
