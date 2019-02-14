@@ -1,6 +1,6 @@
 menu "Hardware Drivers Config"
 
-config SOC_STM32F407ZG
+config SOC_STM32F405RG
     bool
     select SOC_SERIES_STM32F4
     default y
@@ -26,7 +26,7 @@ menu "On-chip Peripheral Drivers"
                 default y
 
             config BSP_UART2_RX_USING_DMA
-                bool "Enable UART1 RX DMA"
+                bool "Enable UART2 RX DMA"
                 depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
                 default n
         endif

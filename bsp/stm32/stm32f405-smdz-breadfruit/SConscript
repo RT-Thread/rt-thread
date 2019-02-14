@@ -2,7 +2,7 @@
 import os
 Import('RTT_ROOT')
 
-cwd = str(Dir('#'))
+cwd = GetCurrentDir()
 objs = []
 list = os.listdir(cwd)
 
