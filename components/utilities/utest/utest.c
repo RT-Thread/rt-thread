@@ -120,6 +120,8 @@ static void utest_run(const char *utest_name)
 {
     rt_size_t i = 0;
 
+    rt_thread_mdelay(1000);
+
     LOG_I("[==========] [ utest    ] started");
     while(i < tc_num)
     {
