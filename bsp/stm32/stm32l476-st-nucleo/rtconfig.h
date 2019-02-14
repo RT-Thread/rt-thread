@@ -38,7 +38,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart2"
-#define RT_VER_NUM 0x40000
+#define RT_VER_NUM 0x40001
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
 #define ARCH_ARM_CORTEX_M4
@@ -88,6 +88,7 @@
 
 /* POSIX layer and C standard library */
 
+#define RT_USING_LIBC
 
 /* Network */
 
