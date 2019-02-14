@@ -294,7 +294,7 @@
 
 /* Hardware Drivers Config */
 
-#define SOC_STM32F407ZG
+#define SOC_STM32F405RG
 
 /* Onboard Peripheral Drivers */
 
