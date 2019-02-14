@@ -10,6 +10,8 @@
 
 #include <rtthread.h>
 #include <string.h>
+#include <stdlib.h>
+
 #include "utest.h"
 #include <utest_log.h>
 
@@ -47,6 +49,7 @@
 static rt_uint8_t utest_log_lv = UTEST_LOG_ALL;
 static utest_tc_export_t tc_table = RT_NULL;
 static rt_size_t tc_num;
+static rt_uint32_t tc_loop;
 static struct utest local_utest = {UTEST_PASSED, 0, 0};
 
 #if defined(__ICCARM__) || defined(__ICCRX__)         /* for IAR compiler */
@@ -118,61 +121,74 @@ static const char *file_basename(const char *file)
 
 static void utest_run(const char *utest_name)
 {
-    rt_size_t i = 0;
+    rt_size_t i;
+    rt_uint32_t index;
 
     rt_thread_mdelay(1000);
 
-    LOG_I("[==========] [ utest    ] started");
-    while(i < tc_num)
+    for (index = 0; index < tc_loop; index ++)
     {
-        if (utest_name && rt_strcmp(utest_name, tc_table[i].name))
+        i = 0;
+        LOG_I("[==========] [ utest    ] started");
+        while(i < tc_num)
         {
-            i++;
-            continue;
-        }
-
-        LOG_I("[----------] [ testcase ] (%s) started", tc_table[i].name);
-        if (tc_table[i].init != RT_NULL)
-        {
-            if (tc_table[i].init() != RT_EOK)
+            if (utest_name)
             {
-                LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
-                goto __tc_continue;
+                int len = strlen(utest_name);
+                if (utest_name[len - 1] == '*')
+                {
+                    len -= 1;
+                }
+                if (rt_memcmp(tc_table[i].name, utest_name, len) != 0)
+                {
+                    i++;
+                    continue;
+                }
             }
-        }
 
-        if (tc_table[i].tc != RT_NULL)
-        {
-            tc_table[i].tc();
-            if (local_utest.failed_num == 0)
+            LOG_I("[----------] [ testcase ] (%s) started", tc_table[i].name);
+            if (tc_table[i].init != RT_NULL)
             {
-                LOG_I("[  PASSED  ] [ result   ] testcase (%s)", tc_table[i].name);
+                if (tc_table[i].init() != RT_EOK)
+                {
+                    LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
+                    goto __tc_continue;
+                }
+            }
+
+            if (tc_table[i].tc != RT_NULL)
+            {
+                tc_table[i].tc();
+                if (local_utest.failed_num == 0)
+                {
+                    LOG_I("[  PASSED  ] [ result   ] testcase (%s)", tc_table[i].name);
+                }
+                else
+                {
+                    LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
+                }
             }
             else
             {
                 LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
             }
-        }
-        else
-        {
-            LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
-        }
 
-        if (tc_table[i].cleanup != RT_NULL)
-        {
-            if (tc_table[i].cleanup() != RT_EOK)
+            if (tc_table[i].cleanup != RT_NULL)
             {
-                LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
-                goto __tc_continue;
+                if (tc_table[i].cleanup() != RT_EOK)
+                {
+                    LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
+                    goto __tc_continue;
+                }
             }
+
+    __tc_continue:
+            LOG_I("[----------] [ testcase ] (%s) finished", tc_table[i].name);
+
+            i++;
         }
-
-__tc_continue:
-        LOG_I("[----------] [ testcase ] (%s) finished", tc_table[i].name);
-
-        i++;
+        LOG_I("[==========] [ utest    ] finished");
     }
-    LOG_I("[==========] [ utest    ] finished");
 }
 
 static void utest_testcase_run(int argc, char** argv)
@@ -182,20 +198,24 @@ static void utest_testcase_run(int argc, char** argv)
     static char utest_name[UTEST_NAME_MAX_LEN];
     rt_memset(utest_name, 0x0, sizeof(utest_name));
 
+    tc_loop = 1;
+
     if (argc == 1)
     {
         utest_run(RT_NULL);
         return;
     }
-    else if (argc == 2 || argc == 3)
+    else if (argc == 2 || argc == 3 || argc == 4)
     {
         if (rt_strcmp(argv[1], "-thread") == 0)
         {
             rt_thread_t tid = RT_NULL;
-            if (argc == 3)
+            if (argc == 3 || argc == 4)
             {
                 rt_strncpy(utest_name, argv[2], sizeof(utest_name) -1);
                 thr_param = (void*)utest_name;
+
+                if (argc == 4) tc_loop = atoi(argv[3]);
             }
             tid = rt_thread_create("utest",
                                     (void (*)(void *))utest_run, thr_param,
@@ -208,6 +228,7 @@ static void utest_testcase_run(int argc, char** argv)
         else
         {
             rt_strncpy(utest_name, argv[1], sizeof(utest_name) -1);
+            if (argc == 3) tc_loop = atoi(argv[2]);
             utest_run(utest_name);
         }
     }
