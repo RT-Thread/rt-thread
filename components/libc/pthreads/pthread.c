@@ -346,12 +346,6 @@ void pthread_exit(void *value)
         ptd->tls = RT_NULL;
     }
 
-    if (ptd->attr.detachstate == PTHREAD_CREATE_JOINABLE)
-    {
-        /* release the joinable pthread */
-        rt_sem_release(ptd->joinable_sem);
-    }
-
     /* detach thread */
     rt_thread_detach(ptd->tid);
     /* reschedule thread */
