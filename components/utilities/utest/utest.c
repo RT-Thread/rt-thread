@@ -119,16 +119,45 @@ static const char *file_basename(const char *file)
     return (const char *)rst;
 }
 
+static int utest_help(void)
+{
+    rt_kprintf("\n");
+    rt_kprintf("Command: utest_run\n");
+    rt_kprintf("   info: Execute test cases.\n");
+    rt_kprintf(" format: utest_run [-thread or -help] [testcase name] [loop num]\n");
+    rt_kprintf("  usage:\n");
+    rt_kprintf("         1. utest_run\n");
+    rt_kprintf("            Do not specify a test case name. Run all test cases.\n");
+    rt_kprintf("         2. utest_run -thread\n");
+    rt_kprintf("            Do not specify a test case name. Run all test cases in threaded mode.\n");
+    rt_kprintf("         3. utest_run testcaseA\n");
+    rt_kprintf("            Run 'testcaseA'.\n");
+    rt_kprintf("         4. utest_run testcaseA 10\n");
+    rt_kprintf("            Run 'testcaseA' ten times.\n");
+    rt_kprintf("         5. utest_run -thread testcaseA\n");
+    rt_kprintf("            Run 'testcaseA' in threaded mode.\n");
+    rt_kprintf("         6. utest_run -thread testcaseA 10\n");
+    rt_kprintf("            Run 'testcaseA' ten times in threaded mode.\n");
+    rt_kprintf("         7. utest_run test*\n");
+    rt_kprintf("            support '*' wildcard. Run all test cases starting with 'test'.\n");
+    rt_kprintf("         8. utest_run -help\n");
+    rt_kprintf("            Show utest help information\n");
+    rt_kprintf("\n");
+    return 0;
+}
+
 static void utest_run(const char *utest_name)
 {
     rt_size_t i;
     rt_uint32_t index;
+    rt_bool_t is_find;
 
     rt_thread_mdelay(1000);
 
     for (index = 0; index < tc_loop; index ++)
     {
         i = 0;
+        is_find = RT_FALSE;
         LOG_I("[==========] [ utest    ] started");
         while(i < tc_num)
         {
@@ -145,6 +174,7 @@ static void utest_run(const char *utest_name)
                     continue;
                 }
             }
+            is_find = RT_TRUE;
 
             LOG_I("[----------] [ testcase ] (%s) started", tc_table[i].name);
             if (tc_table[i].init != RT_NULL)
@@ -187,6 +217,14 @@ static void utest_run(const char *utest_name)
 
             i++;
         }
+
+        if (i == tc_num && is_find == RT_FALSE)
+        {
+            LOG_I("[==========] [ utest    ] Not find (%s)", utest_name);
+            LOG_I("[==========] [ utest    ] finished");
+            break;
+        }
+
         LOG_I("[==========] [ utest    ] finished");
     }
 }
@@ -225,6 +263,10 @@ static void utest_testcase_run(int argc, char** argv)
                 rt_thread_startup(tid);
             }
         }
+        else if (rt_strcmp(argv[1], "-help") == 0)
+        {
+            utest_help();
+        }
         else
         {
             rt_strncpy(utest_name, argv[1], sizeof(utest_name) -1);
@@ -235,9 +277,10 @@ static void utest_testcase_run(int argc, char** argv)
     else
     {
         LOG_E("[  error   ] at (%s:%d), in param error.", __func__, __LINE__);
+        utest_help();
     }
 }
-MSH_CMD_EXPORT_ALIAS(utest_testcase_run, utest_run, utest_run [-thread] [testcase name]);
+MSH_CMD_EXPORT_ALIAS(utest_testcase_run, utest_run, utest_run [-thread or -help] [testcase name] [loop num]);
 
 utest_t utest_handle_get(void)
 {
