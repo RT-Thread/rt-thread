@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2017/10/5      Bernard      the first version
+ * 2019/02/15     Jesven       fixed the problem of si_list
  */
 
 #include <stdint.h>
@@ -80,10 +81,15 @@ static void _signal_deliver(rt_thread_t tid)
 {
     rt_ubase_t level;
 
-    /* thread is not interested in pended signals */
-    if (!(tid->sig_pending & tid->sig_mask)) return;
-
     level = rt_hw_interrupt_disable();
+
+    /* thread is not interested in pended signals */
+    if (!(tid->sig_pending & tid->sig_mask))
+    {
+        rt_hw_interrupt_enable(level);
+        return;
+    }
+
     if ((tid->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND)
     {
         /* resume thread to handle signal */
@@ -133,12 +139,13 @@ static void _signal_deliver(rt_thread_t tid)
 
 rt_sighandler_t rt_signal_install(int signo, rt_sighandler_t handler)
 {
+    rt_base_t level;
     rt_sighandler_t old = RT_NULL;
     rt_thread_t tid = rt_thread_self();
 
     if (!sig_valid(signo)) return SIG_ERR;
 
-    rt_enter_critical();
+    level = rt_hw_interrupt_disable();
     if (tid->sig_vectors == RT_NULL)
     {
         rt_thread_alloc_sig(tid);
@@ -152,7 +159,7 @@ rt_sighandler_t rt_signal_install(int signo, rt_sighandler_t handler)
         else if (handler == SIG_DFL) tid->sig_vectors[signo] = _signal_default_handler;
         else tid->sig_vectors[signo] = handler;
     }
-    rt_exit_critical();
+    rt_hw_interrupt_enable(level);
 
     return old;
 }
@@ -270,7 +277,20 @@ __done:
 
             LOG_D("sigwait: %d sig raised!", signo);
             if (si_prev) si_prev->list.next = si_node->list.next;
-            else tid->si_list = si_node->list.next;
+            else
+            {
+                struct siginfo_node *node_next;
+
+                if (si_node->list.next)
+                {
+                    node_next = (void *)rt_slist_entry(si_node->list.next, struct siginfo_node, list);
+                    tid->si_list = node_next;
+                }
+                else
+                {
+                    tid->si_list = RT_NULL;
+                }
+            }
 
             /* clear pending */
             tid->sig_pending &= ~sig_mask(signo);
@@ -279,7 +299,14 @@ __done:
         }
 
         si_prev = si_node;
-        si_node = (void *)rt_slist_entry(si_node->list.next, struct siginfo_node, list);
+        if (si_node->list.next)
+        {
+            si_node = (void *)rt_slist_entry(si_node->list.next, struct siginfo_node, list);
+        }
+        else
+        {
+            si_node = RT_NULL;
+        }
      }
 
 __done_int:
@@ -318,13 +345,13 @@ void rt_thread_handle_sig(rt_bool_t clean_state)
 
                 signo   = si_node->si.si_signo;
                 handler = tid->sig_vectors[signo];
+                tid->sig_pending &= ~sig_mask(signo);
                 rt_hw_interrupt_enable(level);
 
                 LOG_D("handle signal: %d, handler 0x%08x", signo, handler);
                 if (handler) handler(signo);
 
                 level = rt_hw_interrupt_disable();
-                tid->sig_pending &= ~sig_mask(signo);
                 error = -RT_EINTR;
 
                 rt_mp_free(si_node); /* release this siginfo node */
@@ -333,10 +360,16 @@ void rt_thread_handle_sig(rt_bool_t clean_state)
             }
 
             /* whether clean signal status */
-            if (clean_state == RT_TRUE) tid->stat &= ~RT_THREAD_STAT_SIGNAL;
+            if (clean_state == RT_TRUE)
+            {
+                tid->stat &= ~RT_THREAD_STAT_SIGNAL;
+            }
+            else
+            {
+                return;
+            }
         }
     }
-
     rt_hw_interrupt_enable(level);
 }
 
@@ -362,30 +395,30 @@ void rt_thread_alloc_sig(rt_thread_t tid)
 void rt_thread_free_sig(rt_thread_t tid)
 {
     rt_base_t level;
-    struct siginfo_node *si_list;
+    struct siginfo_node *si_node;
     rt_sighandler_t *sig_vectors;
 
     level = rt_hw_interrupt_disable();
-    si_list = (struct siginfo_node *)tid->si_list;
+    si_node = (struct siginfo_node *)tid->si_list;
     tid->si_list = RT_NULL;
 
     sig_vectors = tid->sig_vectors;
     tid->sig_vectors = RT_NULL;
     rt_hw_interrupt_enable(level);
 
-    if (si_list)
+    if (si_node)
     {
         struct rt_slist_node *node;
-        struct siginfo_node  *si_node;
+        struct rt_slist_node *node_to_free;
 
         LOG_D("free signal info list");
-        node = &(si_list->list);
+        node = &(si_node->list);
         do
         {
-            si_node = rt_slist_entry(node, struct siginfo_node, list);
-            rt_mp_free(si_node);
-
+            node_to_free = node;
             node = node->next;
+            si_node = rt_slist_entry(node_to_free, struct siginfo_node, list);
+            rt_mp_free(si_node);
         } while (node);
     }
 
@@ -416,30 +449,23 @@ int rt_thread_kill(rt_thread_t tid, int sig)
         struct rt_slist_node *node;
         struct siginfo_node  *entry;
 
-        node = (struct rt_slist_node *)tid->si_list;
-        rt_hw_interrupt_enable(level);
+        si_node = (struct siginfo_node *)tid->si_list;
+        if (si_node)
+            node = (struct rt_slist_node *)&si_node->list;
+        else
+            node = RT_NULL;
 
         /* update sig info */
-        rt_enter_critical();
         for (; (node) != RT_NULL; node = node->next)
         {
             entry = rt_slist_entry(node, struct siginfo_node, list);
             if (entry->si.si_signo == sig)
             {
                 memcpy(&(entry->si), &si, sizeof(siginfo_t));
-                rt_exit_critical();
+                rt_hw_interrupt_enable(level);
                 return 0;
             }
         }
-        rt_exit_critical();
-
-        /* disable interrupt to protect tcb */
-        level = rt_hw_interrupt_disable();
-    }
-    else
-    {
-        /* a new signal */
-        tid->sig_pending |= sig_mask(sig);
     }
     rt_hw_interrupt_enable(level);
 
@@ -450,14 +476,22 @@ int rt_thread_kill(rt_thread_t tid, int sig)
         memcpy(&(si_node->si), &si, sizeof(siginfo_t));
 
         level = rt_hw_interrupt_disable();
-        if (!tid->si_list) tid->si_list = si_node;
-        else
+
+        if (tid->si_list)
         {
             struct siginfo_node *si_list;
 
             si_list = (struct siginfo_node *)tid->si_list;
             rt_slist_append(&(si_list->list), &(si_node->list));
         }
+        else
+        {
+            tid->si_list = si_node;
+        }
+
+        /* a new signal */
+        tid->sig_pending |= sig_mask(sig);
+
         rt_hw_interrupt_enable(level);
     }
     else
