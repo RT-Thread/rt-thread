@@ -20,32 +20,62 @@ extern "C" {
 
 /* DMA1 channel1  */
 #if defined(BSP_SPI1_RX_USING_DMA) && !defined(SPI1_RX_DMA_INSTANCE)
-#define SPI1_RX_DMA_IRQHandler           DMA1_Channel1_IRQHandler
+#define SPI1_DMA_RX_IRQHandler           DMA1_Channel1_IRQHandler
 #define SPI1_RX_DMA_RCC                  RCC_AHBENR_DMA1EN
 #define SPI1_RX_DMA_INSTANCE             DMA1_Channel1
 #define SPI1_RX_DMA_REQUEST              DMA_REQUEST_SPI1_RX
 #define SPI1_RX_DMA_IRQ                  DMA1_Channel1_IRQn
+#ifdef BSP_UART1_RX_USING_DMA
+#undef BSP_UART1_RX_USING_DMA
+#endif
+#ifdef BSP_SPI2_RX_USING_DMA
+#undef BSP_SPI2_RX_USING_DMA
+#endif
 #elif defined(BSP_UART1_RX_USING_DMA) && !defined(UART1_RX_DMA_INSTANCE)
 #define UART1_DMA_RX_IRQHandler         DMA1_Channel1_IRQHandler
 #define UART1_RX_DMA_RCC                RCC_AHBENR_DMA1EN
 #define UART1_RX_DMA_INSTANCE           DMA1_Channel1
 #define UART1_RX_DMA_REQUEST            DMA_REQUEST_USART1_RX
 #define UART1_RX_DMA_IRQ                DMA1_Channel1_IRQn
+#ifdef BSP_SPI2_RX_USING_DMA
+#undef BSP_SPI2_RX_USING_DMA
+#endif
+#elif defined(BSP_SPI2_RX_USING_DMA) && !defined(SPI2_RX_DMA_INSTANCE)
+#define SPI2_DMA_RX_IRQHandler          DMA1_Channel1_IRQHandler
+#define SPI2_RX_DMA_RCC                 RCC_AHBENR_DMA1EN
+#define SPI2_RX_DMA_INSTANCE            DMA1_Channel1
+#define SPI2_RX_DMA_REQUEST             DMA_REQUEST_SPI2_RX
+#define SPI2_RX_DMA_IRQ                 DMA1_Channel1_IRQn
 #endif
 
 /* DMA1 channle2-3 */
 #if defined(BSP_SPI1_TX_USING_DMA) && !defined(SPI1_TX_DMA_INSTANCE)
-#define SPI1_TX_DMA_IRQHandler           DMA1_Channel2_3_IRQHandler
-#define SPI1_TX_DMA_RCC                  RCC_AHBENR_DMA1EN
-#define SPI1_TX_DMA_INSTANCE             DMA1_Channel2
-#define SPI1_TX_DMA_REQUEST              DMA_REQUEST_SPI1_TX
-#define SPI1_TX_DMA_IRQ                  DMA1_Channel2_3_IRQn
+#define SPI1_DMA_TX_IRQHandler          DMA1_Channel2_3_IRQHandler
+#define SPI1_TX_DMA_RCC                 RCC_AHBENR_DMA1EN
+#define SPI1_TX_DMA_INSTANCE            DMA1_Channel2
+#define SPI1_TX_DMA_REQUEST             DMA_REQUEST_SPI1_TX
+#define SPI1_TX_DMA_IRQ                 DMA1_Channel2_3_IRQn
+#ifdef BSP_UART2_RX_USING_DMA
+#undef BSP_UART2_RX_USING_DMA
+#endif
+#ifdef BSP_SPI2_TX_USING_DMA
+#undef BSP_SPI2_TX_USING_DMA
+#endif
 #elif defined(BSP_UART2_RX_USING_DMA) && !defined(UART2_RX_DMA_INSTANCE)
 #define UART2_DMA_RX_IRQHandler         DMA1_Channel2_3_IRQHandler
 #define UART2_RX_DMA_RCC                RCC_AHBENR_DMA1EN
 #define UART2_RX_DMA_INSTANCE           DMA1_Channel2
 #define UART2_RX_DMA_REQUEST            DMA_REQUEST_USART2_RX
 #define UART2_RX_DMA_IRQ                DMA1_Channel2_3_IRQn
+#ifdef BSP_SPI2_TX_USING_DMA
+#undef BSP_SPI2_TX_USING_DMA
+#endif
+#elif defined(BSP_SPI2_TX_USING_DMA) && !defined(SPI2_TX_DMA_INSTANCE)
+#define SPI2_DMA_TX_IRQHandler          DMA1_Channel2_3_IRQHandler
+#define SPI2_TX_DMA_RCC                 RCC_AHBENR_DMA1EN
+#define SPI2_TX_DMA_INSTANCE            DMA1_Channel2
+#define SPI2_TX_DMA_REQUEST             DMA_REQUEST_SPI2_TX
+#define SPI2_TX_DMA_IRQ                 DMA1_Channel2_3_IRQn
 #endif
 
 #if defined(BSP_LPUART1_RX_USING_DMA) && !defined(LPUART1_RX_DMA_INSTANCE)
