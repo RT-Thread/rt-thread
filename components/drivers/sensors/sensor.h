@@ -25,7 +25,7 @@ extern "C" {
 #endif
 
 #define  RT_PIN_NONE                   0xFFFF    /* RT PIN NONE */
-#define  RT_SENSOR_FLAG_FIFO           0x200     /* Flag to use when the sensor is open by fifo mode */
+#define  RT_DEVICE_FLAG_FIFO_RX        0x200     /* Flag to use when the sensor is open by fifo mode */
 
 #define  RT_SENSOR_MODULE_MAX          (3)       /* The maximum number of members of a sensor module */
 
@@ -67,6 +67,7 @@ extern "C" {
 #define  RT_SENSOR_UNIT_DCELSIUS       (8)  /* Temperature             unit: dCelsius   */
 #define  RT_SENSOR_UNIT_HZ             (9)  /* Frequency               unit: HZ         */
 #define  RT_SENSOR_UNIT_ONE            (10) /* Dimensionless quantity  unit: 1          */
+#define  RT_SENSOR_UNIT_BPM            (11) /* Heart rate              unit: bpm        */
 
 /* Sensor communication interface types */
 
@@ -176,7 +177,7 @@ struct rt_sensor_data
         rt_int32_t           baro;          /* Pressure.            unit: pascal (Pa) */
         rt_int32_t           light;         /* Light.               unit: lux         */
         rt_int32_t           proximity;     /* Distance.            unit: centimeters */
-        rt_int32_t           hr;            /* Heat rate.           unit: HZ          */
+        rt_int32_t           hr;            /* Heart rate.          unit: bpm         */
         rt_int32_t           tvoc;          /* TVOC.                unit: permillage  */
         rt_int32_t           noise;         /* Noise Loudness.      unit: HZ          */
         rt_uint32_t          step;          /* Step sensor.         unit: 1           */
