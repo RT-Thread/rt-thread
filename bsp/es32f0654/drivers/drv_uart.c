@@ -1,5 +1,4 @@
 /*
- * File      : drv_usart.c
  * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -13,7 +12,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "board.h"
-#include "drv_usart.h"
+#include "drv_uart.h"
 #include <ald_gpio.h>
 #include <ald_uart.h>
 
@@ -283,7 +282,7 @@ void BS16T2_UART3_Handler(void)
 }
 #endif /* BSP_USING_UART3 */
 
-int rt_hw_usart_init(void)
+int rt_hw_uart_init(void)
 {
     struct es32_uart *uart;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
@@ -334,6 +333,6 @@ int rt_hw_usart_init(void)
 
     return 0;
 }
-INIT_BOARD_EXPORT(rt_hw_usart_init);
+INIT_BOARD_EXPORT(rt_hw_uart_init);
 
 #endif
