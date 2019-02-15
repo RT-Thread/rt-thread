@@ -119,7 +119,7 @@ static void sensor_fifo(int argc, char **argv)
 
     rt_device_set_rx_indicate(dev, rx_callback);
 
-    if (rt_device_open(dev, RT_SENSOR_FLAG_FIFO) != RT_EOK)
+    if (rt_device_open(dev, RT_DEVICE_FLAG_FIFO_RX) != RT_EOK)
     {
         LOG_E("open device failed!");
         return;
