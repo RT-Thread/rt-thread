@@ -63,6 +63,7 @@
 #define FINSH_CMD_SIZE 80
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_DEFAULT
+#define FINSH_USING_MSH_ONLY
 #define FINSH_ARG_MAX 10
 
 /* Device virtual file system */
@@ -161,7 +162,14 @@
 
 #define BSP_USING_UART2
 
+/* SPI Drivers */
+
+
+/* I2C Drivers */
+
+
 /* Onboard Peripheral Drivers */
+
 
 /* Offboard Peripheral Drivers */
 
