@@ -55,7 +55,15 @@ struct stm32_i2c
         .bus_name = "i2c3",                              \
     }
 #endif
-
+		
+#ifdef BSP_USING_I2C4
+#define I2C4_BUS_CONFIG                                  \
+    {                                                    \
+        .scl = BSP_I2C4_SCL_PIN,                         \
+        .sda = BSP_I2C4_SDA_PIN,                         \
+        .bus_name = "i2c4",                              \
+    }
+#endif
 int rt_hw_i2c_init(void);
 
 #endif
