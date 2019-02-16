@@ -18,6 +18,15 @@ menu "Onboard Peripheral Drivers"
         select RT_SFUD_USING_QSPI
         default n
 
+    config PHY_USING_LAN8720A
+        bool
+
+    config BSP_USING_ETH
+        bool "Enable Ethernet"
+        select RT_USING_LWIP
+        select PHY_USING_LAN8720A
+        default n
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
