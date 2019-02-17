@@ -60,6 +60,9 @@ void rt_hw_board_init()
 #ifdef RT_USING_HEAP
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
+
+    rt_hw_usart_init();
+
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
