@@ -96,7 +96,26 @@
 |  11  | EMAC     | **配置 ETH 外设的工作模式（一般为 RMII 模式）**              |
 |  12  | SDRAM    | **需要根据板载的 SDRAM 型号配置片选脚，地址线，数据线等**    |
 
-### 5.3 PWM配置步骤
+### 5.3 复杂外设配置教程
+
+本章节着重介绍配置步骤较为复杂的驱动
+
+#### 5.3.1 TIMER 外设驱动添加教程
+
+ 1. 打开 STM32CubeMX 工程，设置 timer 在 Cube 里的选项。如下图：
+
+ ![timer CubeMX 配置](figures/timer_config1.png)
+
+ 2. 打开 stm32/stm32f429-atk-apollo/board/Kconfig ，添加 Kconfig 选项。选中自己添加的选项后，生成一遍工程。如下图：
+
+ ![timer Kconfig 配置](figures/timer_config2.png)
+
+  3. 打开工程进行编译，工程会提示 TIM11_CONFIG 未定义。 可以在 stm32/libraries/HAL_Drivers/config/f4/tim_config.h 中进行定义。
+
+ ![timer 编译](figures/timer_config3.png)
+ ![timer 编译](figures/timer_config4.png)
+
+#### 5.3.2 PWM 外设驱动添加教程
 
  1. 打开 STM32CubeMX 工程，设置 PWM 在 Cube 里的选项。如下图：
 
@@ -107,6 +126,8 @@
  ![pwm Kconfig 配置](figures/pwm_config2.png)
 
  3. 打开工程进行编译，工程会提示 PWM2_CONFIG 未定义。 可以在 stm32/libraries/HAL_Drivers/config/f4/pwm_config.h 中进行定义。
- 
+
  ![pwm 编译](figures/pwm_config3.png)
  ![pwm 编译](figures/pwm_config4.png)
+
+#### 5.3.2 ADC 外设驱动添加教程
