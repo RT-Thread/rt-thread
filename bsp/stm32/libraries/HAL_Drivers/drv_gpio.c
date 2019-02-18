@@ -770,6 +770,10 @@ int rt_hw_pin_init(void)
     __HAL_RCC_GPIOJ_CLK_ENABLE();
 #endif
 
+#if defined(__HAL_RCC_GPIOK_CLK_ENABLE)
+    __HAL_RCC_GPIOK_CLK_ENABLE();
+#endif
+
     return rt_device_pin_register("pin", &_stm32_pin_ops, RT_NULL);
 }
 
