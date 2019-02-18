@@ -131,3 +131,16 @@
  ![pwm 编译](figures/pwm_config4.png)
 
 #### 5.3.2 ADC 外设驱动添加教程
+
+ 1. 打开 STM32CubeMX 工程，设置 ADC 在 Cube 里的选项。如下图：
+
+ ![adc CubeMX 配置](figures/adc_config1.png)
+
+ 2. 打开 stm32/stm32f429-atk-apollo/board/Kconfig ，添加 Kconfig 选项。选中自己添加的选项后，生成一遍工程。如下图：
+
+ ![adc Kconfig 配置](figures/adc_config2.png)
+
+ 3. 打开工程进行编译，工程会提示 ADC1_CONFIG 未定义。 可以在 stm32/libraries/HAL_Drivers/config/f4/adc_config.h 中进行定义。
+
+ ![adc 编译](figures/adc_config3.png)
+ ![adc 编译](figures/adc_config4.png)
