@@ -544,7 +544,7 @@ static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         HAL_GPIO_DeInit(index->gpio, index->pin);
 
         pin_irq_enable_mask &= ~irqmap->pinbit;
-#if defined(SOC_SERIES_STM32F0)
+#if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
         if (( irqmap->pinbit>=GPIO_PIN_0 )&&( irqmap->pinbit<=GPIO_PIN_1 ))
         {
             if(!(pin_irq_enable_mask&(GPIO_PIN_0|GPIO_PIN_1)))
@@ -618,12 +618,24 @@ rt_inline void pin_irq_hdr(int irqno)
     }
 }
 
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+#if defined(SOC_SERIES_STM32G0)
+void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 {
     pin_irq_hdr(bit2bitno(GPIO_Pin));
 }
 
-#if defined(SOC_SERIES_STM32F0)
+void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
+{
+    pin_irq_hdr(bit2bitno(GPIO_Pin));
+}
+#else
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    pin_irq_hdr(bit2bitno(GPIO_Pin));
+}
+#endif
+
+#if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
 void EXTI0_1_IRQHandler(void)
 {
     rt_interrupt_enter();

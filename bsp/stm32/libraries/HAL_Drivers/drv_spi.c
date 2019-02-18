@@ -145,7 +145,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
     uint32_t SPI_APB_CLOCK;
 
-#ifdef SOC_SERIES_STM32F0
+#if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
     SPI_APB_CLOCK = HAL_RCC_GetPCLK1Freq();
 #else
     SPI_APB_CLOCK = HAL_RCC_GetPCLK2Freq();
@@ -203,7 +203,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
     spi_handle->Init.TIMode = SPI_TIMODE_DISABLE;
     spi_handle->Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
     spi_handle->State = HAL_SPI_STATE_RESET;
-#ifdef SOC_SERIES_STM32L4
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
     spi_handle->Init.NSSPMode          = SPI_NSS_PULSE_DISABLE;
 #endif
 
@@ -212,7 +212,8 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
         return RT_EIO;
     }
 
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0)|| defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) \
+        || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32G0)
     SET_BIT(spi_handle->Instance->CR2, SPI_RXFIFO_THRESHOLD_HF);
 #endif
 
@@ -389,7 +390,7 @@ static int rt_hw_spi_bus_init(void)
             spi_bus_obj[i].dma.handle_rx.Instance = spi_config[i].dma_rx->Instance;
 #if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
             spi_bus_obj[i].dma.handle_rx.Init.Channel = spi_config[i].dma_rx->channel;
-#elif defined(SOC_SERIES_STM32L4)
+#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
             spi_bus_obj[i].dma.handle_rx.Init.Request = spi_config[i].dma_rx->request;
 #endif
             spi_bus_obj[i].dma.handle_rx.Init.Direction           = DMA_PERIPH_TO_MEMORY;
@@ -408,7 +409,7 @@ static int rt_hw_spi_bus_init(void)
 
             {
                 rt_uint32_t tmpreg = 0x00U;
-#if defined(SOC_SERIES_STM32F1)
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32G0)
                 /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
                 SET_BIT(RCC->AHBENR, spi_config[i].dma_rx->dma_rcc);
                 tmpreg = READ_BIT(RCC->AHBENR, spi_config[i].dma_rx->dma_rcc);
@@ -427,7 +428,7 @@ static int rt_hw_spi_bus_init(void)
             spi_bus_obj[i].dma.handle_tx.Instance = spi_config[i].dma_tx->Instance;
 #if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
             spi_bus_obj[i].dma.handle_tx.Init.Channel = spi_config[i].dma_tx->channel;
-#elif defined(SOC_SERIES_STM32L4)
+#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
             spi_bus_obj[i].dma.handle_tx.Init.Request = spi_config[i].dma_tx->request;
 #endif
             spi_bus_obj[i].dma.handle_tx.Init.Direction           = DMA_MEMORY_TO_PERIPH;
@@ -446,7 +447,7 @@ static int rt_hw_spi_bus_init(void)
 
             {
                 rt_uint32_t tmpreg = 0x00U;
-#if defined(SOC_SERIES_STM32F1)
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32G0)
                 /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
                 SET_BIT(RCC->AHBENR, spi_config[i].dma_rx->dma_rcc);
                 tmpreg = READ_BIT(RCC->AHBENR, spi_config[i].dma_rx->dma_rcc);
