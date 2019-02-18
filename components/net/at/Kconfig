@@ -75,6 +75,10 @@ if RT_USING_AT
             bool "Enable print RAW format AT command communication data"
             default n
          
+        config AT_CMD_MAX_LEN
+            int "AT send cmd buf max len"
+            default 128
+
     endif
 
     config AT_SW_VERSION_NUM
