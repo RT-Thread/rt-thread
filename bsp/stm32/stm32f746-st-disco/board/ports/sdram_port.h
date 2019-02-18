@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2019-02-16     jinsheng   The first version for STM32F7xx
+ * 2019-02-16     jinsheng     The first version for STM32F7xx
  */
 
 #ifndef __SDRAM_PORT_H__

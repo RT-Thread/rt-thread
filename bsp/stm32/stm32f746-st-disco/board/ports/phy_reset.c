@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2019-02-16     jinsheng   first version
+ * 2019-02-16     jinsheng     first version
  */
 
 #include <rtthread.h>

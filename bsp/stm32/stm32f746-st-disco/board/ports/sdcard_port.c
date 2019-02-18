@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2019-02-17     jinsheng   add sdcard port file
+ * 2019-02-17     jinsheng     add sdcard port file
  */
 
 #include <rtthread.h>
