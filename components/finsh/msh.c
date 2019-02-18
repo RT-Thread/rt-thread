@@ -79,7 +79,7 @@ int msh_help(int argc, char **argv)
 #if defined(FINSH_USING_DESCRIPTION) && defined(FINSH_USING_SYMTAB)
             rt_kprintf("%-16s - %s\n", &index->name[6], index->desc);
 #else
-            rt_kprintf("%s ", &index->name[6]);
+            rt_kprintf("%s \n", &index->name[6]);
 #endif
         }
     }
