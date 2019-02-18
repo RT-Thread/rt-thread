@@ -1,0 +1,41 @@
+menu "Hardware Drivers Config"
+
+    menu "On-chip Peripheral Drivers"
+        config BSP_USING_GPIO
+            bool "Enable GPIO"
+            select RT_USING_PIN
+            default y
+
+        menu "UART Drivers"
+            config BSP_USING_UART0
+                bool "Enable UART0 PB10/PB11(T/R)"
+                select RT_USING_SERIAL
+                default n
+
+            config BSP_USING_UART1
+                bool "Enable UART1 PC10/PC11(T/R)"
+                select RT_USING_SERIAL
+                default n
+        
+            config BSP_USING_UART2
+                bool "Enable UART2 PC12/PD02(T/R)"
+                select RT_USING_SERIAL
+                default y
+
+            config BSP_USING_UART3
+                bool "Enable UART3 PC04/PC05(T/R)"
+                select RT_USING_SERIAL
+                default n
+        endmenu
+
+    endmenu
+
+    menu "Onboard Peripheral Drivers"
+
+    endmenu
+
+    menu "Offboard Peripheral Drivers"
+
+    endmenu
+
+endmenu

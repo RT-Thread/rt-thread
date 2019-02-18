@@ -186,15 +186,12 @@ void rt_hw_board_init(void)
  */
 void rt_hw_us_delay(rt_uint32_t us)
 {
-    rt_uint32_t delta;
-    us = us * (SysTick->LOAD / (1000000 / RT_TICK_PER_SECOND));
-    delta = SysTick->VAL;
-    if (delta < us)
-    {
-        /* wait current OSTick left time gone */
-        while (SysTick->VAL < us);
-        us -= delta;
-        delta = SysTick->LOAD;
-    }
-    while (delta - SysTick->VAL < us);
+    unsigned int start, now, delta, reload, us_tick;
+    start = SysTick->VAL;
+    reload = SysTick->LOAD;
+    us_tick = SystemCoreClock / 1000000UL;
+    do{
+        now = SysTick->VAL;
+        delta = start > now ? start - now : reload + start - now;
+    } while(delta <  us_tick * us);
 }

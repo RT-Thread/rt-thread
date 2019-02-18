@@ -125,9 +125,6 @@
 /* Wiced WiFi */
 
 
-/* IoT Cloud */
-
-
 /* security packages */
 
 
@@ -150,8 +147,6 @@
 
 
 /* sample package */
-
-/* samples: kernel and components samples */
 
 
 /* example package: hello */

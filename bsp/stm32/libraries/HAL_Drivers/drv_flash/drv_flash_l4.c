@@ -53,7 +53,9 @@ static uint32_t GetPage(uint32_t Addr)
 static uint32_t GetBank(uint32_t Addr)
 {
     uint32_t bank = 0;
-
+#if defined (STM32L432xx)
+	bank = FLASH_BANK_1;
+#else
     if (READ_BIT(SYSCFG->MEMRMP, SYSCFG_MEMRMP_FB_MODE) == 0)
     {
         /* No Bank swap */
@@ -78,7 +80,7 @@ static uint32_t GetBank(uint32_t Addr)
             bank = FLASH_BANK_1;
         }
     }
-
+#endif
     return bank;
 }
 
@@ -137,12 +139,6 @@ int stm32_flash_write(rt_uint32_t addr, const uint8_t *buf, size_t size)
     if(addr % 8 != 0)
     {
         LOG_E("write addr must be 8-byte alignment");
-        return -RT_EINVAL;
-    }
-
-    if(size % 8 != 0)
-    {
-        LOG_E("write size must be 8-byte alignment");
         return -RT_EINVAL;
     }
 

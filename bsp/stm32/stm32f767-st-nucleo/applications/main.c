@@ -5,14 +5,13 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-06     SummerGift   change to new framework
- * 2019-1-10      e31207077    change to new framework
+ * 2018-11-06     SummerGift   first version
+ * 2019-1-10      e31207077    add stm32f767-st-nucleo bsp
  */
 
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
-#include "drv_gpio.h"
 
 /* defined the LED1 pin: PB0 */
 #define LED1_PIN    GET_PIN(B, 0)

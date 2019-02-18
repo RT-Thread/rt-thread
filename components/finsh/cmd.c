@@ -800,6 +800,7 @@ static char *const device_type_str[] =
     "Portal Device",
     "Timer Device",
     "Miscellaneous Device",
+    "Sensor Device",
     "Unknown"
 };
 

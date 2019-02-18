@@ -15,8 +15,12 @@
 #include <board.h>
 
 #define FLASH_SIZE_GRANULARITY_32K   (4 * 32 * 1024)
-#define FLASH_SIZE_GRANULARITY_128K  (FLASH_SIZE_GRANULARITY_32K + 128 * 1024)
-#define FLASH_SIZE_GRANULARITY_256K  (FLASH_SIZE_GRANULARITY_128K + 3 * 256 * 1024)
+#define FLASH_SIZE_GRANULARITY_128K  (128 * 1024)
+#define FLASH_SIZE_GRANULARITY_256K  (3 * 256 * 1024)
+
+#define STM32_FLASH_START_ADRESS_32K  STM32_FLASH_START_ADRESS
+#define STM32_FLASH_START_ADRESS_128K (STM32_FLASH_START_ADRESS_32K + FLASH_SIZE_GRANULARITY_32K)
+#define STM32_FLASH_START_ADRESS_256K (STM32_FLASH_START_ADRESS_128K + FLASH_SIZE_GRANULARITY_128K)
 
 extern const struct fal_flash_dev stm32_onchip_flash_32k;
 extern const struct fal_flash_dev stm32_onchip_flash_128k;
@@ -35,9 +39,9 @@ extern const struct fal_flash_dev stm32_onchip_flash_256k;
 /* partition table */
 #define FAL_PART_TABLE                                                                                                     \
 {                                                                                                                          \
-    {FAL_PART_MAGIC_WROD, "bootloader", "onchip_flash_32k",  0 ,                          FLASH_SIZE_GRANULARITY_32K , 0}, \
-    {FAL_PART_MAGIC_WROD, "param",      "onchip_flash_128k", FLASH_SIZE_GRANULARITY_32K , FLASH_SIZE_GRANULARITY_128K, 0}, \
-    {FAL_PART_MAGIC_WROD, "app",        "onchip_flash_256k", FLASH_SIZE_GRANULARITY_128K, FLASH_SIZE_GRANULARITY_256K, 0}, \
+    {FAL_PART_MAGIC_WROD, "bootloader", "onchip_flash_32k",  0 , FLASH_SIZE_GRANULARITY_32K , 0}, \
+    {FAL_PART_MAGIC_WROD, "param",      "onchip_flash_128k", 0 , FLASH_SIZE_GRANULARITY_128K, 0}, \
+    {FAL_PART_MAGIC_WROD, "app",        "onchip_flash_256k", 0 , FLASH_SIZE_GRANULARITY_256K, 0}, \
 }
 
 #endif /* FAL_PART_HAS_TABLE_CFG */

@@ -49,6 +49,8 @@
 #include "lwip/dhcp.h"
 #include "lwip/inet.h"
 
+#include "netif/etharp.h"
+
 #include <string.h>
 #include <stdio.h>
 
@@ -75,6 +77,10 @@ static err_t netif_device_init(struct netif *netif)
 
         /* copy device flags to netif flags */
         netif->flags = ethif->flags;
+        netif->mtu = ETHERNET_MTU;
+        
+        /* set output */
+        netif->output = etharp_output;
 
         return ERR_OK;
     }
@@ -516,7 +522,7 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout)
             t = timeout / (1000/RT_TICK_PER_SECOND);
     }
 
-    ret = rt_mb_recv(*mbox, (rt_uint32_t *)msg, t);
+    ret = rt_mb_recv(*mbox, (rt_ubase_t *)msg, t);
 
     if(ret == -RT_ETIMEOUT)
         return SYS_ARCH_TIMEOUT;
@@ -547,7 +553,7 @@ u32_t sys_arch_mbox_tryfetch(sys_mbox_t *mbox, void **msg)
 {
     int ret;
 
-    ret = rt_mb_recv(*mbox, (rt_uint32_t *)msg, 0);
+    ret = rt_mb_recv(*mbox, (rt_ubase_t *)msg, 0);
 
     if(ret == -RT_ETIMEOUT)
         return SYS_ARCH_TIMEOUT;

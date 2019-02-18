@@ -5,8 +5,8 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-06     SummerGift   change to new framework
- * 2019-01-08     AndeyQi      first version
+ * 2018-11-06     SummerGift   first version
+ * 2019-01-08     AndeyQi      add stm32f446-st-nucleo bsp
  */
 
 #ifndef __BOARD_H__
@@ -15,6 +15,7 @@
 #include <rtthread.h>
 #include <stm32f4xx.h>
 #include "drv_common.h"
+#include "drv_gpio.h"
 
 #define STM32_FLASH_START_ADRESS     ((uint32_t)0x08000000)
 #define STM32_FLASH_SIZE             (512 * 1024)
