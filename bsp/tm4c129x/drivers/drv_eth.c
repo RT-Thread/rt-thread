@@ -634,7 +634,7 @@ tivaif_transmit(net_device_t dev, struct pbuf *p)
           pDesc->Desc.ui32CtrlStatus = 0;
       }
 
-      pDesc->Desc.ui32CtrlStatus |= (DES0_TX_CTRL_IP_ALL_CKHSUMS |
+      pDesc->Desc.ui32CtrlStatus |= (DES0_TX_CTRL_NO_CHKSUM |
                                      DES0_TX_CTRL_CHAINED);
 
       /* Decrement our descriptor counter, move on to the next buffer in the
