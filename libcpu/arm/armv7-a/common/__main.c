@@ -41,7 +41,7 @@ void __main(void)
     uint32_t bytes = (uint32_t)&__bss_end - (uint32_t)&__bss_start;
     memset(&__bss_start, 0, bytes);
 
-    // call C++ constructors of global objects
+    /* call C++ constructors of global objects */
     uint32_t size = (uint32_t*)&__ctors_end__ - (uint32_t*)&__ctors_start__;
     for (uint32_t i = 0; i < size; i++) {
         uint32_t funcPtr = ((uint32_t*)&__ctors_start__)[i];
@@ -51,7 +51,7 @@ void __main(void)
     rt_hw_mmu_init();
     rt_hw_post_init();
 
-    // Corresponds to the armcc/armclang function: $Sub$$main
+    /* Corresponds to the armcc/armclang function: $Sub$$main */
     rt_hw_interrupt_disable();
     rtthread_startup();
 }

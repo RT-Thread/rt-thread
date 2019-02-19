@@ -40,4 +40,4 @@
 #define _ARM_FPSCR_R(fpscr) asm volatile("vmrs %0, fpscr" : "=r"(fpscr));
 #define _ARM_FPSCR_W(fpscr) asm volatile("vmsr fpscr, %0" :: "r"(fpscr));
 
-#endif // __ASMOPR_H__
+#endif

@@ -9,7 +9,7 @@
 #include <rtthread.h>
 #include <cp15.h>
 
-// shutdown CPU
+/* shutdown CPU */
 void rt_hw_cpu_shutdown()
 {
     rt_uint32_t level;

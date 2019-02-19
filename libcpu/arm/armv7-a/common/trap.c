@@ -36,11 +36,13 @@ struct rt_hw_register
     uint32_t lr;
     uint32_t pc;
     uint32_t cpsr;
-    uint32_t rev; // Make the number of registers pushed in even(8 bytes align)
+    uint32_t rev;  /* Make the number of registers pushed in even(8 bytes align) */
 };
 
-// this function will show registers of CPU
-// @param regs the registers point
+/*
+ * this function will show registers of CPU
+ * @param regs the registers point
+ */
 void rt_hw_show_register(struct rt_hw_register *regs)
 {
     rt_kprintf("Execption:\n");
@@ -52,14 +54,16 @@ void rt_hw_show_register(struct rt_hw_register *regs)
     rt_kprintf("cpsr:0x%08x\n", regs->cpsr);
 }
 
-// trap of the undefined instruction
-// @param regs system registers
-// @note never invoke this function in application
+/*
+ * trap of the undefined instruction
+ * @param regs system registers
+ * @note never invoke this function in application
+ */
 void rt_hw_trap_undef(struct rt_hw_register *regs)
 {
 
 #ifdef RT_USING_GDB
-    regs->pc -= 4; //lr in undef is pc + 4
+    regs->pc -= 4;  *lr in undef is pc + 4
     if (gdb_undef_hook(regs))
         return;
 #endif
@@ -75,11 +79,13 @@ void rt_hw_trap_undef(struct rt_hw_register *regs)
     rt_hw_cpu_shutdown();
 }
 
-// The software interrupt instruction (SWI) is used for entering
-// Supervisor mode, usually to request a particular supervisor
-// function.
-// @param regs system registers
-// @note never invoke this function in application
+/*
+ * The software interrupt instruction (SWI) is used for entering
+ * Supervisor mode, usually to request a particular supervisor
+ * function.
+ * @param regs system registers
+ * @note never invoke this function in application
+ */
 void rt_hw_trap_swi(struct rt_hw_register *regs)
 {
     rt_hw_show_register(regs);
@@ -88,10 +94,12 @@ void rt_hw_trap_swi(struct rt_hw_register *regs)
     rt_hw_cpu_shutdown();
 }
 
-// An abort indicates that the current memory access cannot be completed,
-// which occurs during an instruction prefetch.
-// @param regs system registers
-// @note never invoke this function in application
+/*
+ * An abort indicates that the current memory access cannot be completed,
+ * which occurs during an instruction prefetch.
+ * @param regs system registers
+ * @note never invoke this function in application
+ */
 void rt_hw_trap_pabt(struct rt_hw_register *regs)
 {
     rt_hw_show_register(regs);
@@ -105,10 +113,12 @@ void rt_hw_trap_pabt(struct rt_hw_register *regs)
     rt_hw_cpu_shutdown();
 }
 
-// An abort indicates that the current memory access cannot be completed,
-// which occurs during a data access.
-// @param regs system registers
-// @note never invoke this function in application
+/*
+ * An abort indicates that the current memory access cannot be completed,
+ * which occurs during a data access.
+ * @param regs system registers
+ * @note never invoke this function in application
+ */
 void rt_hw_trap_dabt(struct rt_hw_register *regs)
 {
 
