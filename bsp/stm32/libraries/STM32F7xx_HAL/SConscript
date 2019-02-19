@@ -93,6 +93,12 @@ if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_flash.c']
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_flash_ex.c']
 
+if GetDepend(['BSP_USING_LTDC']):
+    src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_ltdc.c']
+    src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_ltdc_ex.c']
+    src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_dma2d.c']
+    src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_ll_dma2d.c']
+
 path = [cwd + '/STM32F7xx_HAL_Driver/Inc',
     cwd + '/CMSIS/Device/ST/STM32F7xx/Include',
     cwd + '/CMSIS/Include']
