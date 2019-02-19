@@ -483,13 +483,12 @@ static void stm32_dma_config(struct rt_serial_device *serial)
 
     __HAL_LINKDMA(&(uart->handle), hdmarx, uart->dma.handle);
 
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) \
-	|| defined(SOC_SERIES_STM32L0)
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32L0)
     uart->dma.handle.Instance                 = uart->config->dma_rx->Instance;
 #elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     uart->dma.handle.Instance                 = uart->config->dma_rx->Instance;
     uart->dma.handle.Init.Channel             = uart->config->dma_rx->channel;
-#elif defined(SOC_SERIES_STM32L4) 
+#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
     uart->dma.handle.Instance                 = uart->config->dma_rx->Instance;
     uart->dma.handle.Init.Request             = uart->config->dma_rx->request;
 #endif

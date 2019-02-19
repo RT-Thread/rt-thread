@@ -47,11 +47,10 @@ if GetDepend(['RT_USING_ADC']):
     src += ['STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_adc.c']
     src += ['STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_adc_ex.c']
     src += ['STM32G0xx_HAL_Driver/Src/stm32g0xx_ll_adc.c']
-    
-if GetDepend(['RT_USING_RTC']):
-    src += ['STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_rtc.c']
-    src += ['STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_rtc_ex.c']
-    src += ['STM32G0xx_HAL_Driver/Src/stm32g0xx_ll_rtc.c']
+
+if GetDepend(['RT_USING_WDT']):
+    src += ['STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_iwdg.c']
+    src += ['STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_wwdg.c']
 
 path = [cwd + '/STM32G0xx_HAL_Driver/Inc', 
     cwd + '/CMSIS/ST/STM32G0xx/Include',

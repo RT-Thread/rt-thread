@@ -34,7 +34,7 @@ struct dma_config {
     rt_uint32_t channel;
 #endif
 
-#if defined(SOC_SERIES_STM32L4)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
     rt_uint32_t request;
 #endif
 };
