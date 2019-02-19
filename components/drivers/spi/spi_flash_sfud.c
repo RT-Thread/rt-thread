@@ -388,9 +388,10 @@ rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const 
                 rt_qspi_configure(qspi_dev, &qspi_cfg);
                 if(qspi_dev->enter_qspi_mode != RT_NULL)
                     qspi_dev->enter_qspi_mode(qspi_dev);
+
+                /* set data lines width */
+                sfud_qspi_fast_read_enable(sfud_dev, qspi_dev->config.qspi_dl_width);
             }
-            /* set data lines width */
-            sfud_qspi_fast_read_enable(sfud_dev, qspi_dev->config.qspi_dl_width);
 #endif /* SFUD_USING_QSPI */
         }
 

@@ -53,7 +53,9 @@ static uint32_t GetPage(uint32_t Addr)
 static uint32_t GetBank(uint32_t Addr)
 {
     uint32_t bank = 0;
-
+#if defined (STM32L432xx)
+	bank = FLASH_BANK_1;
+#else
     if (READ_BIT(SYSCFG->MEMRMP, SYSCFG_MEMRMP_FB_MODE) == 0)
     {
         /* No Bank swap */
@@ -78,7 +80,7 @@ static uint32_t GetBank(uint32_t Addr)
             bank = FLASH_BANK_1;
         }
     }
-
+#endif
     return bank;
 }
 

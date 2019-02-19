@@ -546,6 +546,7 @@ static long _list_device(struct rt_list_node *list)
         "Portal Device",
         "Timer Device",
         "Miscellaneous Device",
+        "Sensor Device",
         "Unknown"
     };
     const char *item_title = "device";
