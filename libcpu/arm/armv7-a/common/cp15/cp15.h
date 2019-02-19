@@ -15,8 +15,12 @@
 
 typedef enum {
     CORTEX_TYPE_UNKNOWN,
+    CORTEX_TYPE_A5,
+    CORTEX_TYPE_A7,
     CORTEX_TYPE_A8,
     CORTEX_TYPE_A9,
+    CORTEX_TYPE_A15,
+    CORTEX_TYPE_A17,
 } CORTEX_TYPE;
 
 #ifdef __cplusplus

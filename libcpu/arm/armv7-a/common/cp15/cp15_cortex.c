@@ -30,9 +30,20 @@ CORTEX_TYPE armv7_get_cortex_type(void)
     uint32_t midr;
     _ARM_CP_MIDR_R(midr);
     uint32_t priPartNum = _E_B_B(midr, 15, 4);
-    if (priPartNum == 0xC09)
-        return CORTEX_TYPE_A9;
-    else if (priPartNum == 0xC08)
+    switch (priPartNum) {
+    case 0xC05:
+        return CORTEX_TYPE_A5;
+    case 0xC07:
+        return CORTEX_TYPE_A7;
+    case 0xC08:
         return CORTEX_TYPE_A8;
-    return CORTEX_TYPE_UNKNOWN;
+    case 0xC09:
+        return CORTEX_TYPE_A9;
+    case 0xC0F:
+        return CORTEX_TYPE_A15;
+    case 0xC11:
+        return CORTEX_TYPE_A17;
+    default:
+        return CORTEX_TYPE_UNKNOWN;
+    }
 }
