@@ -14,14 +14,12 @@
 #include <rthw.h>
 #include <finsh.h>
 
-#define BSP_USING_SPI_LCD
-
 #ifdef BSP_USING_SPI_LCD
 
 static int rt_hw_spi_lcd_init(void)
 {
-	  rt_hw_spi_device_attach("spi1", "spi10", GPIOA, GPIO_PIN_4);
-	
+    rt_hw_spi_device_attach("spi1", "spi10", GPIOA, GPIO_PIN_4);
+
     return RT_EOK;
 }
 INIT_PREV_EXPORT(rt_hw_spi_lcd_init);
