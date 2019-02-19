@@ -79,6 +79,8 @@
 #define RT_USING_SERIAL
 #define RT_SERIAL_USING_DMA
 #define RT_USING_PIN
+#define RT_USING_RTC
+#define RT_USING_WDT
 
 /* Using WiFi */
 
@@ -88,6 +90,7 @@
 
 /* POSIX layer and C standard library */
 
+#define RT_USING_LIBC
 
 /* Network */
 
@@ -149,12 +152,7 @@
 /* miscellaneous packages */
 
 
-/* sample package */
-
 /* samples: kernel and components samples */
-
-
-/* example package: hello */
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32L4

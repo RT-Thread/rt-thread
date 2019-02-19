@@ -78,6 +78,7 @@
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
 #define RT_SERIAL_USING_DMA
+#define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 
 /* Using WiFi */
@@ -88,6 +89,7 @@
 
 /* POSIX layer and C standard library */
 
+#define RT_USING_LIBC
 
 /* Network */
 
@@ -159,6 +161,7 @@
 #define SOC_STM32F103ZE
 
 /* Onboard Peripheral Drivers */
+
 
 /* On-chip Peripheral Drivers */
 
