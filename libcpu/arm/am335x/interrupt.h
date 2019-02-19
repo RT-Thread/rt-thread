@@ -11,7 +11,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-// [ref]spruh73p.pdf: 6.3 ARM Cortex-A8 Interrupts
+/*
+ * [ref]spruh73p.pdf: 6.3 ARM Cortex-A8 Interrupts
+ */
 #define EMU_INT                 0
 #define COMMTX_INT              1
 #define COMMRX_INT              2

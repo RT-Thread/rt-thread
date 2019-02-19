@@ -12,14 +12,16 @@
 #include "asmopr.h"
 #include <rthw.h>
 
-// Insert several NOPs and prevent optimization
+/* Insert several NOPs and prevent optimization */
 #define __INSNOPS   _ARM_NOP();_ARM_NOP();_ARM_NOP()
 
-// M(mask)--get/set valid bit
-// G(get)/S(set)--get/set
-// WA(wait all)--Waiting for the specified bit of the mask (all bits are not specified)
-// W1(wait one)--Wait for any bit in the valid bit
-// WZ(wait zero)--Waiting for 0
+/*
+ * M(mask)--get/set valid bit
+ * G(get)/S(set)--get/set
+ * WA(wait all)--Waiting for the specified bit of the mask (all bits are not specified)
+ * W1(wait one)--Wait for any bit in the valid bit
+ * WZ(wait zero)--Waiting for 0
+ */
 #define REG32___G___(reg)                               HWREG32(reg)
 #define REG32_M_G___(reg, mask)                         (HWREG32(reg) & (mask))
 #define REG32_M_S___(reg, mask, val)                    HWREG32(reg) = (HWREG32(reg) & ~(mask)) | ((uint32_t)(val) & (mask))
@@ -59,4 +61,4 @@
 #define REG08_M___W1(reg, mask)				            while (!(HWREG16(reg) & (mask))){}
 #define REG08_M_S_W1(reg, mask, val)                    do {REG08_M_S___(reg, mask, val); __INSNOPS; REG08_M___W1(reg, mask, val);} while (0)
 
-#endif // __REGOPR_H__
+#endif
