@@ -48,22 +48,31 @@ static void _signal_default_handler(int signo)
 
 static void _signal_entry(void *parameter)
 {
+    register rt_base_t level;
     rt_thread_t tid = rt_thread_self();
 
     dbg_enter;
 
-    /* handle signal */
-    rt_thread_handle_sig(RT_FALSE);
+    while (1)
+    {
+        level = rt_hw_interrupt_disable();
+        if (tid->stat & RT_THREAD_STAT_SIGNAL)
+        {
+            rt_hw_interrupt_enable(level);
+            /* handle signal */
+            rt_thread_handle_sig(RT_FALSE);
+        }
+        else break;
+    }
 
     /* never come back... */
-    rt_hw_interrupt_disable();
-    /* return to thread */
     tid->sp = tid->sig_ret;
     tid->sig_ret = RT_NULL;
 
     LOG_D("switch back to: 0x%08x", tid->sp);
     tid->stat &= ~RT_THREAD_STAT_SIGNAL;
 
+    /* return to thread */
     rt_hw_context_switch_to((rt_uint32_t) & (tid->sp));
 }
 
@@ -324,6 +333,7 @@ void rt_thread_handle_sig(rt_bool_t clean_state)
     struct siginfo_node *si_node;
 
     level = rt_hw_interrupt_disable();
+
     if (tid->sig_pending & tid->sig_mask)
     {
         /* if thread is not waiting for signal */
@@ -363,10 +373,6 @@ void rt_thread_handle_sig(rt_bool_t clean_state)
             if (clean_state == RT_TRUE)
             {
                 tid->stat &= ~RT_THREAD_STAT_SIGNAL;
-            }
-            else
-            {
-                return;
             }
         }
     }
