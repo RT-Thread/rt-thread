@@ -3,17 +3,31 @@ import os
 # toolchains options
 ARCH='arm'
 CPU='am335x'
-CROSS_TOOL='gcc'
+BOARD=CPU+'-beaglebone'
 
 if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
+else:
+    CROSS_TOOL='gcc'
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM 	= 'gcc'
-    EXEC_PATH 	= r'C:\Program Files (x86)\CodeSourcery\Sourcery_CodeBench_Lite_for_ARM_EABI\bin'
-
-if os.getenv('RTT_EXEC_PATH'):
-    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+    if os.getenv('RTT_EXEC_PATH'):
+        EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+    else:
+        EXEC_PATH = r'C:\Program Files (x86)\CodeSourcery\Sourcery_CodeBench_Lite_for_ARM_EABI\bin'
+elif CROSS_TOOL == 'armcc':
+    PLATFORM 	= 'armcc'
+    if os.getenv('RTT_EXEC_PATH'):
+        EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+    else:
+        EXEC_PATH = r'C:\Keil_v5\ARM\ARMCC\bin'
+elif CROSS_TOOL == 'armclang':
+    PLATFORM 	= 'armclang'
+    if os.getenv('RTT_EXEC_PATH'):
+        EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+    else:
+        EXEC_PATH = r'C:\Keil_v5\ARM\ARMCLANG\bin'
 
 BUILD = 'debug'
 
@@ -35,7 +49,7 @@ if PLATFORM == 'gcc':
     #DEVICE = ' '
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__ -I.'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-beaglebone.map,-cref,-u,Reset_Handler -T beaglebone_ram.lds'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=' + BOARD + '.map,-cref,-u,system_vectors -T ' + BOARD + '.lds'
 
     CPATH = ''
     LPATH = ''
@@ -46,5 +60,38 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS += ' -O2'
 
-    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' +\
-                  SIZE + ' $TARGET \n'
+    CXXFLAGS = CFLAGS
+    POST_ACTION = OBJCPY + ' -O binary $TARGET ' + BOARD + '.bin\n' + SIZE + ' $TARGET \n'
+
+elif PLATFORM == 'armcc':
+    # toolchains
+    CC = 'armcc'
+    CXX = 'armcc'
+    AS = 'armasm'
+    AR = 'armar'
+    LINK = 'armlink'
+    TARGET_EXT = 'axf'
+
+    COMFLAGS  = ' --cpu=Cortex-A8 --fpu=VFPv3_D16 --unaligned_access'
+    COMFLAGS += ' -J' + EXEC_PATH + '/../include'
+    if BUILD == 'debug':
+        COMFLAGS += ' -g -O0 -D__SYS_DEBUG'
+    else:
+        COMFLAGS += ' -O3'
+
+    CFLAGS = COMFLAGS + ' --c99 --gnu'
+    CXXFLAGS = CFLAGS + ' --cpp11 --gnu'
+
+    AFLAGS  = ' --cpu=Cortex-A8 --unaligned_access --diag_style=ide --no_brief_diagnostics'
+    AFLAGS += ' --cpreproc --cpreproc_opts=--cpu=Cortex-A8,-I.'
+    if BUILD == 'debug':
+        AFLAGS += ' -g'
+
+    LFLAGS  = ' --cpu=Cortex-A8 --info=sizes,totals,unused,veneers --diag_style=ide --datacompressor=off --no_autoat --entry=system_vectors'
+    LFLAGS += ' --map --list=' + BOARD + '.map --scatter=' + BOARD + '.sct'
+    if BUILD == 'debug':
+        LFLAGS += ' --debug --locals'
+    else:
+        LFLAGS += ' --no_debug --no_locals'
+
+    POST_ACTION = 'fromelf --bin $TARGET --output ' + BOARD + '.bin \nfromelf -z $TARGET'
