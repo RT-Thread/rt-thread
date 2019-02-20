@@ -76,7 +76,7 @@ if RT_USING_AT
             default n
 
         config AT_CMD_MAX_LEN
-            int "AT send cmd buf max len "
+            int "The maximum lenght of AT Commonds buffer"
             default 128
          
     endif
