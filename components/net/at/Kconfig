@@ -74,6 +74,10 @@ if RT_USING_AT
        config AT_PRINT_RAW_CMD
             bool "Enable print RAW format AT command communication data"
             default n
+
+        config AT_CMD_MAX_LEN
+            int "The maximum lenght of AT Commonds buffer"
+            default 128
          
     endif
 
