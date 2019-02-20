@@ -8,6 +8,42 @@
 #ifndef __ASMOPR_H__
 #define __ASMOPR_H__
 
+#if defined(__CC_ARM)
+
+#define _ARM_NOP()          __asm {NOP;}
+#define _ARM_DSB()          __asm {DSB;}
+#define _ARM_ISB()          __asm {ISB;}
+#define _ARM_DMB()          __asm {DMB;}
+#define _ARM_CLZ(y, x)      __asm {CLZ y, x;}
+
+#define _ARM_CP_R(coproc, opcode1, Rt, CRn, CRm, opcode2) \
+    __asm {MRC coproc, opcode1, Rt, CRn, CRm, opcode2;}
+#define _ARM_CP_W(coproc, opcode1, Rt, CRn, CRm, opcode2) \
+    __asm {MCR coproc, opcode1, Rt, CRn, CRm, opcode2;}
+
+#define _ARM_CP64_R(coproc, opcode, Rt64, CRm) \
+    { \
+        uint32_t _lo; \
+        uint32_t _hi; \
+        __asm {MRRC coproc, opcode, _lo, _hi, CRm;} \
+        ((uint32_t*)Rt64)[0] = _lo; \
+        ((uint32_t*)Rt64)[1] = _hi; \
+    }
+#define _ARM_CP64_W(coproc, opcode, Rt64, CRm) \
+    { \
+        uint32_t _lo = ((uint32_t*)Rt64)[0]; \
+        uint32_t _hi = ((uint32_t*)Rt64)[1]; \
+        __asm {MCRR coproc, opcode, _lo, _hi, CRm;} \
+    }
+
+#define _ARM_FPEXC_R(data)  __asm {vmrs data, fpexc;}
+#define _ARM_FPEXC_W(data)  __asm {vmsr fpexc, data;}
+
+#define _ARM_FPSCR_R(data)  __asm {vmrs data, fpscr;}
+#define _ARM_FPSCR_W(data)  __asm {vmsr fpscr, data;}
+
+#else
+
 #define _ARM_NOP()          asm volatile ("NOP\n\t")
 #define _ARM_DSB()          asm volatile ("DSB\n\t")
 #define _ARM_ISB()          asm volatile ("ISB\n\t")
@@ -39,5 +75,7 @@
 
 #define _ARM_FPSCR_R(fpscr) asm volatile("vmrs %0, fpscr" : "=r"(fpscr));
 #define _ARM_FPSCR_W(fpscr) asm volatile("vmsr fpscr, %0" :: "r"(fpscr));
+
+#endif
 
 #endif
