@@ -58,7 +58,7 @@ if PLATFORM == 'gcc':
         CFLAGS += ' -O0 -gdwarf-2'
         AFLAGS += ' -gdwarf-2'
     else:
-        CFLAGS += ' -O2'
+        CFLAGS += ' -O2 -DNDEBUG'
 
     CXXFLAGS = CFLAGS
     POST_ACTION = OBJCPY + ' -O binary $TARGET ' + BOARD + '.bin\n' + SIZE + ' $TARGET \n'
@@ -75,15 +75,49 @@ elif PLATFORM == 'armcc':
     COMFLAGS  = ' --cpu=Cortex-A8 --fpu=VFPv3_D16 --unaligned_access'
     COMFLAGS += ' -J' + EXEC_PATH + '/../include'
     if BUILD == 'debug':
-        COMFLAGS += ' -g -O0 -D__SYS_DEBUG'
+        COMFLAGS += ' -g -O0'
     else:
-        COMFLAGS += ' -O3'
+        COMFLAGS += ' -O3 -DNDEBUG'
 
     CFLAGS = COMFLAGS + ' --c99 --gnu'
     CXXFLAGS = CFLAGS + ' --cpp11 --gnu'
 
     AFLAGS  = ' --cpu=Cortex-A8 --unaligned_access --diag_style=ide --no_brief_diagnostics'
     AFLAGS += ' --cpreproc --cpreproc_opts=--cpu=Cortex-A8,-I.'
+    if BUILD == 'debug':
+        AFLAGS += ' -g'
+
+    LFLAGS  = ' --cpu=Cortex-A8 --info=sizes,totals,unused,veneers --diag_style=ide --datacompressor=off --no_autoat --entry=system_vectors'
+    LFLAGS += ' --map --list=' + BOARD + '.map --scatter=' + BOARD + '.sct'
+    if BUILD == 'debug':
+        LFLAGS += ' --debug --locals'
+    else:
+        LFLAGS += ' --no_debug --no_locals'
+
+    POST_ACTION = 'fromelf --bin $TARGET --output ' + BOARD + '.bin \nfromelf -z $TARGET'
+
+elif PLATFORM == 'armclang':
+    # toolchains
+    CC = 'armclang'
+    CXX = 'armclang'
+    AS = 'armasm'
+    AR = 'armar'
+    LINK = 'armlink'
+    TARGET_EXT = 'axf'
+
+    CFLAGS  = ' --target=arm-arm-none-eabi -mcpu=cortex-a8 -mfloat-abi=hard -munaligned-access'
+    CFLAGS += ' -fshort-wchar -fdiagnostics-format=msvc -fno-exceptions'
+    CFLAGS += ' -Wno-reserved-user-defined-literal -Wno-unused-const-variable'
+    CFLAGS += ' -Wno-incompatible-library-redeclaration'
+    CFLAGS += ' -I' + EXEC_PATH + '/../include'
+    if BUILD == 'debug':
+        CFLAGS += ' -g -O0'
+    else:
+        CFLAGS += ' -O3 -DNDEBUG' ' -Wno-unused-variable'
+    CXXFLAGS = CFLAGS
+
+    AFLAGS  = ' --cpu=Cortex-A8 --unaligned_access --diag_style=ide --no_brief_diagnostics'
+    AFLAGS += ' --cpreproc --cpreproc_opts=--target=arm-arm-none-eabi,-mcpu=cortex-a8,-I.'
     if BUILD == 'debug':
         AFLAGS += ' -g'
 
