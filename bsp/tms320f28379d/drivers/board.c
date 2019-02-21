@@ -10,6 +10,7 @@
  */
 #include <rtthread.h>
 #include "board.h"
+#include "drv_sci.h"
 #include "F28x_Project.h"
 
 extern interrupt void RTOSINT_Handler();
@@ -61,7 +62,7 @@ void rt_hw_board_init()
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
 
-    rt_hw_usart_init();
+    rt_hw_sci_init();
 
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();

@@ -8,8 +8,8 @@
  * 2019-02-02     xuzhuoyi     first version
  */
 
-#ifndef __DRV_USART_H__
-#define __DRV_USART_H__
+#ifndef __DRV_SCI_H__
+#define __DRV_SCI_H__
 
 #include <rtthread.h>
 #include "rtdevice.h"
@@ -17,7 +17,7 @@
 #include "F2837xD_device.h"
 #include "F2837xD_sci.h"
 
-int rt_hw_usart_init(void);
+int rt_hw_sci_init(void);
 
 /* c28x uart dirver class */
 struct c28x_uart
@@ -27,4 +27,4 @@ struct c28x_uart
     struct rt_serial_device serial;
 };
 
-#endif  /* __DRV_USART_H__ */
+#endif  /* __DRV_SCI_H__ */

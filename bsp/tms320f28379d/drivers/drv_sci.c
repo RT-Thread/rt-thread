@@ -9,7 +9,10 @@
  */
  
 #include "board.h"
-#include "drv_usart.h"
+#include "drv_sci.h"
+
+typedef long off_t;
+#include "F2837xD_sci_io.h"
 
 #ifdef RT_USING_SERIAL
 
@@ -69,7 +72,7 @@ static const struct rt_uart_ops c28x_uart_ops =
     .getc = c28x_getc,
 };
 
-int rt_hw_usart_init(void)
+int rt_hw_sci_init(void)
 {
     EALLOW;
     GpioCtrlRegs.GPBMUX1.bit.GPIO42 = 3;
@@ -88,8 +91,6 @@ int rt_hw_usart_init(void)
     result = rt_hw_serial_register(&uart_obj.serial, uart_obj.name,
                                    RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                                    &uart_obj);
-    
-    c28x_configure(&uart_obj.serial, &config);
 
     RT_ASSERT(result == RT_EOK);
 

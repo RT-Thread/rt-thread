@@ -13,11 +13,10 @@
 #define RT_THREAD_PRIORITY_8
 #define RT_THREAD_PRIORITY_MAX 8
 #define RT_TICK_PER_SECOND 100
-#define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_USING_IDLE_HOOK
 #define RT_IDEL_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 256
+#define IDLE_THREAD_STACK_SIZE 1024
 #define RT_DEBUG
 
 /* Inter-Thread communication */
@@ -40,6 +39,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "scia"
+#define RT_VER_NUM 0x40001
 #define ARCH_TIDSP
 #define ARCH_TIDSP_C28X
 #define ARCH_CPU_STACK_GROWS_UPWARD
@@ -69,6 +69,7 @@
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
 #define RT_SERIAL_USING_DMA
+#define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 
 /* Using WiFi */
@@ -133,16 +134,13 @@
 
 /* peripheral libraries and drivers */
 
+/* sensors drivers */
+
 
 /* miscellaneous packages */
 
 
-/* sample package */
-
 /* samples: kernel and components samples */
-
-
-/* example package: hello */
 
 
 #endif
