@@ -179,7 +179,7 @@ static rt_err_t rt_sensor_open(rt_device_t dev, rt_uint16_t oflag)
             rt_sensor_irq_init(sensor);
         }
     }
-    else if (oflag & RT_SENSOR_FLAG_FIFO && dev->flag & RT_SENSOR_FLAG_FIFO)
+    else if (oflag & RT_DEVICE_FLAG_FIFO_RX && dev->flag & RT_DEVICE_FLAG_FIFO_RX)
     {
         /* If fifo mode is supported, configure it to fifo mode */
         if (sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_FIFO) == RT_EOK)

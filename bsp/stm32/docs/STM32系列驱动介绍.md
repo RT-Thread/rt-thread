@@ -30,17 +30,17 @@
 
 | 序号 | 驱动                                                         | 简介                                             |
 | ---- | ------------------------------------------------------------ | ------------------------------------------------ |
-| 1    | [GPIO](https://www.rt-thread.org/document/site/rtthread-application-note/driver/gpio/an0002-rtthread-driver-gpio/) | 操作 GPIO 管脚                                   |
-| 2    | UART                                                         | 通过串口收发数据                                 |
-| 3    | soft I2C                                                     | 通过软件 I2C 收发数据                            |
-| 4    | SPI                                                          | 通过 SPI 收发数据                                |
-| 5    | ADC                                                          | 测量管脚上的模拟量                               |
+| 1    | [GPIO](https://www.rt-thread.org/document/site/programming-manual/device/pin/pin/) | 操作 GPIO 管脚                                   |
+| 2    | [UART](https://www.rt-thread.org/document/site/programming-manual/device/uart/uart/) | 通过串口收发数据                                 |
+| 3    | [soft I2C](https://www.rt-thread.org/document/site/programming-manual/device/i2c/i2c/) | 通过软件 I2C 收发数据                            |
+| 4    | [SPI](https://www.rt-thread.org/document/site/programming-manual/device/spi/spi/) | 通过 SPI 收发数据                                |
+| 5    | [ADC](https://www.rt-thread.org/document/site/programming-manual/device/adc/adc/) | 测量管脚上的模拟量                               |
 | 6    | SDIO                                                         | 通过 SDIO 读写数据                               |
-| 7    | TIMER                                                        | 使用硬件定时器实现测量时间和定时执行回调函数功能 |
-| 8    | PWM                                                          | 在特定的管脚输出 PWM 波形                        |
-| 9    | RTC                                                          | 设置和读取时间                                   |
-| 10   | WDT                                                          | 看门狗驱动                                       |
-| 11   | QSPI                                                         | 通过 SPI（1、2、4线） 收发数据                   |
+| 7    | [TIMER](https://www.rt-thread.org/document/site/programming-manual/device/hwtimer/hwtimer/) | 使用硬件定时器实现测量时间和定时执行回调函数功能 |
+| 8    | [PWM](https://www.rt-thread.org/document/site/programming-manual/device/pwm/pwm/) | 在特定的管脚输出 PWM 波形                        |
+| 9    | [RTC](https://www.rt-thread.org/document/site/programming-manual/device/rtc/rtc/) | 设置和读取时间                                   |
+| 10   | [WDT](https://www.rt-thread.org/document/site/programming-manual/device/watchdog/watchdog/) | 看门狗驱动                                       |
+| 11   | [QSPI](https://www.rt-thread.org/document/site/programming-manual/device/spi/spi/#qspi_1) | 通过 SPI（1、2、4线） 收发数据                   |
 
 ### 2.2 板载外设
 
