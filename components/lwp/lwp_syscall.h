@@ -30,14 +30,19 @@ typedef uint32_t id_t;          /* may contain pid, uid or gid */
 #define	PRIO_PGRP	    1
 #define	PRIO_USER	    2
 
+#ifndef TIMEVAL_TO_TIMESPEC
 #define TIMEVAL_TO_TIMESPEC(tv, ts) {                   \
     (ts)->tv_sec = (tv)->tv_sec;                        \
     (ts)->tv_nsec = (tv)->tv_usec * 1000;               \
 }
+#endif
+
+#ifndef TIMESPEC_TO_TIMEVAL
 #define TIMESPEC_TO_TIMEVAL(tv, ts) {                   \
     (tv)->tv_sec = (ts)->tv_sec;                        \
     (tv)->tv_usec = (ts)->tv_nsec / 1000;               \
 }
+#endif
 
 void sys_exit(int value);
 ssize_t sys_read(int fd, void *buf, size_t nbyte);

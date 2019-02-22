@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2018-01-26     Bernard      Fix pthread_detach issue for a none-joinable
  *                             thread.
+ * 2019-02-07     Bernard      Add _pthread_destroy to release pthread resource.
  */
 
 #include <pthread.h>
@@ -26,6 +27,32 @@ int pthread_system_init(void)
 }
 INIT_COMPONENT_EXPORT(pthread_system_init);
 
+static void _pthread_destroy(_pthread_data_t *ptd)
+{
+    /* delete joinable semaphore */
+    if (ptd->joinable_sem != RT_NULL)
+        rt_sem_delete(ptd->joinable_sem);
+
+    /* release thread resource */
+    if (ptd->attr.stack_base == RT_NULL)
+    {
+        /* release thread allocated stack */
+        rt_free(ptd->tid->stack_addr);
+    }
+    /* clean stack addr pointer */
+    ptd->tid->stack_addr = RT_NULL;
+
+    /*
+    * if this thread create the local thread data,
+    * delete it
+    */
+    if (ptd->tls != RT_NULL) rt_free(ptd->tls);
+    rt_free(ptd->tid);
+    rt_free(ptd);
+
+    return;
+}
+
 static void _pthread_cleanup(rt_thread_t tid)
 {
     _pthread_data_t *ptd;
@@ -40,14 +67,14 @@ static void _pthread_cleanup(rt_thread_t tid)
     else
     {
         /* release pthread resource */
-        pthread_detach(tid);
+        _pthread_destroy(ptd);
     }
 }
 
 static void pthread_entry_stub(void *parameter)
 {
-    _pthread_data_t *ptd;
     void *value;
+    _pthread_data_t *ptd;
 
     ptd = (_pthread_data_t *)parameter;
 
@@ -181,60 +208,60 @@ RTM_EXPORT(pthread_create);
 
 int pthread_detach(pthread_t thread)
 {
-    _pthread_data_t *ptd;
+    int ret = 0;
+    _pthread_data_t *ptd = _pthread_get_data(thread);
 
-    ptd = _pthread_get_data(thread);
-
+    rt_enter_critical();
     if (ptd->attr.detachstate == PTHREAD_CREATE_DETACHED)
     {
         /* The implementation has detected that the value specified by thread does not refer
          * to a joinable thread.
          */
-        return EINVAL;
+        ret = EINVAL;
+        goto __exit;
     }
 
     if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_CLOSE)
     {
-        /* delete joinable semaphore */
-        if (ptd->joinable_sem != RT_NULL)
-            rt_sem_delete(ptd->joinable_sem);
-        /* detach thread object */
-        rt_thread_detach(ptd->tid);
-
-        /* release thread resource */
-        if (ptd->attr.stack_base == RT_NULL)
+        /* this defunct pthread is not handled by idle */
+        if (rt_sem_trytake(ptd->joinable_sem) != RT_EOK)
         {
-            /* release thread allocated stack */
-            rt_free(ptd->tid->stack_addr);
+            rt_sem_release(ptd->joinable_sem);
+
+            /* change to detach state */
+            ptd->attr.detachstate = PTHREAD_CREATE_DETACHED;
+
+            /* detach joinable semaphore */
+            if (ptd->joinable_sem)
+            {
+                rt_sem_delete(ptd->joinable_sem);
+                ptd->joinable_sem = RT_NULL;
+            }
         }
         else
         {
-            /* clean stack addr pointer */
-            ptd->tid->stack_addr = RT_NULL;
+            /* destroy this pthread */
+            _pthread_destroy(ptd);
         }
 
-        /*
-         * if this thread create the local thread data,
-         * delete it
-         */
-        if (ptd->tls != RT_NULL)
-            rt_free(ptd->tls);
-        rt_free(ptd->tid);
-        rt_free(ptd);
+        goto __exit;
     }
     else
     {
-        rt_enter_critical();
         /* change to detach state */
         ptd->attr.detachstate = PTHREAD_CREATE_DETACHED;
 
         /* detach joinable semaphore */
-        rt_sem_delete(ptd->joinable_sem);
-        ptd->joinable_sem = RT_NULL;
-        rt_exit_critical();
+        if (ptd->joinable_sem)
+        {
+            rt_sem_delete(ptd->joinable_sem);
+            ptd->joinable_sem = RT_NULL;
+        }
     }
 
-    return 0;
+__exit:
+    rt_exit_critical();
+    return ret;
 }
 RTM_EXPORT(pthread_detach);
 
@@ -260,8 +287,8 @@ int pthread_join(pthread_t thread, void **value_ptr)
         if (value_ptr != RT_NULL)
             *value_ptr = ptd->return_value;
 
-        /* release resource */
-        pthread_detach(thread);
+        /* destroy this pthread */
+        _pthread_destroy(ptd);
     }
     else
     {
@@ -317,12 +344,6 @@ void pthread_exit(void *value)
         /* release tls area */
         rt_free(ptd->tls);
         ptd->tls = RT_NULL;
-    }
-
-    if (ptd->attr.detachstate == PTHREAD_CREATE_JOINABLE)
-    {
-        /* release the joinable pthread */
-        rt_sem_release(ptd->joinable_sem);
     }
 
     /* detach thread */

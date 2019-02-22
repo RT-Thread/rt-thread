@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-08     balanceTWK   change to new framework
+ * 2018-11-08     balanceTWK   first version
  */
 
 #ifndef __DRV_I2C__
@@ -53,15 +53,6 @@ struct stm32_i2c
         .scl = BSP_I2C3_SCL_PIN,                         \
         .sda = BSP_I2C3_SDA_PIN,                         \
         .bus_name = "i2c3",                              \
-    }
-#endif
-
-#ifdef BSP_USING_I2C4
-#define I2C4_BUS_CONFIG                                  \
-    {                                                    \
-        .scl = BSP_I2C4_SCL_PIN,                         \
-        .sda = BSP_I2C4_SDA_PIN,                         \
-        .bus_name = "i2c4",                              \
     }
 #endif
 

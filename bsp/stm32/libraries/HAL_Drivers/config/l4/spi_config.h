@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-06     SummerGift   change to new framework
+ * 2018-11-06     SummerGift   first version
  */
 
 #ifndef __SPI_CONFIG_H__
@@ -13,23 +13,43 @@
 
 #include <rtthread.h>
 
-#ifdef BSP_USING_SPI1
-#define SPI1_BUS_CONFIG                                  \
-    {                                                    \
-        .Instance = SPI1,                                \
-        .bus_name = "spi1",                              \
-        .dma_rx.dma_rcc = RCC_AHB1ENR_DMA1EN,            \
-        .dma_tx.dma_rcc = RCC_AHB1ENR_DMA1EN,            \
-        .dma_rx.Instance = DMA1_Channel2,                \
-        .dma_rx.request = DMA_REQUEST_1,                 \
-        .dma_rx.dma_irq = DMA1_Channel2_IRQn,            \
-        .dma_tx.Instance = DMA1_Channel3,                \
-        .dma_tx.request = DMA_REQUEST_1,                 \
-        .dma_tx.dma_irq = DMA1_Channel3_IRQn,            \
-    }
-#define SPI1_DMA_RX_IRQHandler           DMA1_Channel2_IRQHandler
-#define SPI1_DMA_TX_IRQHandler           DMA1_Channel3_IRQHandler
+#ifdef __cplusplus
+extern "C" {
 #endif
+
+#ifdef BSP_USING_SPI1
+#ifndef SPI1_BUS_CONFIG
+#define SPI1_BUS_CONFIG                                     \
+    {                                                       \
+        .Instance = SPI1,                                   \
+        .bus_name = "spi1",                                 \
+    }
+#endif /* SPI1_BUS_CONFIG */
+#endif /* BSP_USING_SPI1 */
+
+#ifdef BSP_SPI1_TX_USING_DMA
+#ifndef SPI1_TX_DMA_CONFIG
+#define SPI1_TX_DMA_CONFIG                                  \
+    {                                                       \
+        .dma_rcc = SPI1_TX_DMA_RCC,                         \
+        .Instance = SPI1_TX_DMA_INSTANCE,                   \
+        .request = SPI1_TX_DMA_REQUEST,                     \
+        .dma_irq = SPI1_TX_DMA_IRQ,                         \
+    }
+#endif /* SPI1_TX_DMA_CONFIG */
+#endif /* BSP_SPI1_TX_USING_DMA */
+
+#ifdef BSP_SPI1_RX_USING_DMA
+#ifndef SPI1_RX_DMA_CONFIG
+#define SPI1_RX_DMA_CONFIG                                  \
+    {                                                       \
+        .dma_rcc = SPI1_RX_DMA_RCC,                         \
+        .Instance = SPI1_RX_DMA_INSTANCE,                   \
+        .request = SPI1_RX_DMA_REQUEST,                     \
+        .dma_irq = SPI1_RX_DMA_IRQ,                         \
+    }
+#endif /* SPI1_RX_DMA_CONFIG */
+#endif /* BSP_SPI1_RX_USING_DMA */
 
 #ifdef BSP_USING_SPI2
 #define SPI2_BUS_CONFIG                                  \
@@ -45,8 +65,7 @@
         .dma_tx.request = DMA_REQUEST_1,                 \
         .dma_tx.dma_irq = DMA1_Channel5_IRQn,            \
     }
-#define SPI2_DMA_RX_IRQHandler           DMA1_Channel4_IRQHandler
-#define SPI2_DMA_TX_IRQHandler           DMA1_Channel5_IRQHandler
+
 #endif
 
 #ifdef BSP_USING_SPI3
@@ -63,8 +82,11 @@
         .dma_tx.request = DMA_REQUEST_3,                 \
         .dma_tx.dma_irq = DMA2_Channel2_IRQn,            \
     }
-#define SPI3_DMA_RX_IRQHandler           DMA2_Channel1_IRQHandler
-#define SPI3_DMA_TX_IRQHandler           DMA2_Channel2_IRQHandler
+
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /*__SPI_CONFIG_H__ */

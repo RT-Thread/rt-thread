@@ -193,6 +193,8 @@ void rt_thread_idle_excute(void)
             /* if it's a system object, not delete it */
             if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
             {
+                /* detach this object */
+                rt_object_detach((rt_object_t)thread);
                 /* unlock scheduler */
                 rt_exit_critical();
 
@@ -265,7 +267,7 @@ static void rt_thread_idle_entry(void *parameter)
  */
 void rt_thread_idle_init(void)
 {
-    int i;
+    rt_ubase_t i;
     char tidle_name[RT_NAME_MAX];
 
     for (i = 0; i < _CPUS_NR; i++)

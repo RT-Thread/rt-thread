@@ -265,6 +265,7 @@ void rt_system_scheduler_start(void)
 #endif /*RT_USING_SMP*/
 
     rt_schedule_remove_thread(to_thread);
+    to_thread->stat = RT_THREAD_RUNNING;
 
     /* switch to new thread */
 #ifdef RT_USING_SMP
@@ -311,7 +312,7 @@ void rt_schedule(void)
     int cpu_id;
 
     /* disable interrupt */
-    level = rt_hw_interrupt_disable();
+    level  = rt_hw_interrupt_disable();
 
     cpu_id = rt_hw_cpu_id();
     pcpu   = rt_cpu_index(cpu_id);
@@ -330,7 +331,7 @@ void rt_schedule(void)
         {
             to_thread = _get_highest_priority_thread(&highest_ready_priority);
             current_thread->oncpu = RT_CPU_DETACHED;
-            if ((current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_READY)
+            if ((current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
             {
                 if (current_thread->current_priority < highest_ready_priority)
                 {
@@ -350,6 +351,7 @@ void rt_schedule(void)
                 RT_OBJECT_HOOK_CALL(rt_scheduler_hook, (current_thread, to_thread));
 
                 rt_schedule_remove_thread(to_thread);
+                to_thread->stat = RT_THREAD_RUNNING | (to_thread->stat & ~RT_THREAD_STAT_MASK);
 
                 /* switch to new thread */
                 RT_DEBUG_LOG(RT_DEBUG_SCHEDULER,
@@ -410,11 +412,12 @@ void rt_schedule(void)
 
         if (rt_thread_ready_priority_group != 0)
         {
+            /* need_insert_from_thread: need to insert from_thread to ready queue */
             int need_insert_from_thread = 0;
 
             to_thread = _get_highest_priority_thread(&highest_ready_priority);
 
-            if ((rt_current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_READY)
+            if ((rt_current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
             {
                 if (rt_current_thread->current_priority < highest_ready_priority)
                 {
@@ -441,6 +444,7 @@ void rt_schedule(void)
                 }
 
                 rt_schedule_remove_thread(to_thread);
+                to_thread->stat = RT_THREAD_RUNNING | (to_thread->stat & ~RT_THREAD_STAT_MASK);
 
                 /* switch to new thread */
                 RT_DEBUG_LOG(RT_DEBUG_SCHEDULER,
@@ -482,6 +486,7 @@ void rt_schedule(void)
             else
             {
                 rt_schedule_remove_thread(rt_current_thread);
+                rt_current_thread->stat = RT_THREAD_RUNNING | (rt_current_thread->stat & ~RT_THREAD_STAT_MASK);
             }
         }
     }
@@ -531,7 +536,7 @@ void rt_scheduler_do_irq_switch(void *context)
         {
             to_thread = _get_highest_priority_thread(&highest_ready_priority);
             current_thread->oncpu = RT_CPU_DETACHED;
-            if ((current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_READY)
+            if ((current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
             {
                 if (current_thread->current_priority < highest_ready_priority)
                 {
@@ -552,6 +557,7 @@ void rt_scheduler_do_irq_switch(void *context)
                 RT_OBJECT_HOOK_CALL(rt_scheduler_hook, (current_thread, to_thread));
 
                 rt_schedule_remove_thread(to_thread);
+                to_thread->stat = RT_THREAD_RUNNING | (to_thread->stat & ~RT_THREAD_STAT_MASK);
 
 #ifdef RT_USING_OVERFLOW_CHECK
                 _rt_scheduler_stack_check(to_thread);
@@ -590,13 +596,15 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
-    /* change stat */
-    thread->stat = RT_THREAD_READY | (thread->stat & ~RT_THREAD_STAT_MASK);
-
+    /* it should be RUNNING thread */
     if (thread->oncpu != RT_CPU_DETACHED)
     {
+        thread->stat = RT_THREAD_RUNNING | (thread->stat & ~RT_THREAD_STAT_MASK);
         goto __exit;
     }
+
+    /* READY thread, insert to ready queue */
+    thread->stat = RT_THREAD_READY | (thread->stat & ~RT_THREAD_STAT_MASK);
 
     cpu_id   = rt_hw_cpu_id();
     bind_cpu = thread->bind_cpu ;
@@ -650,14 +658,15 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
     /* disable interrupt */
     temp = rt_hw_interrupt_disable();
 
-    /* change stat */
-    thread->stat = RT_THREAD_READY | (thread->stat & ~RT_THREAD_STAT_MASK);
-
+    /* it's current thread, it should be RUNNING thread */
     if (thread == rt_current_thread)
     {
+        thread->stat = RT_THREAD_RUNNING | (thread->stat & ~RT_THREAD_STAT_MASK);
         goto __exit;
     }
 
+    /* READY thread, insert to ready queue */
+    thread->stat = RT_THREAD_READY | (thread->stat & ~RT_THREAD_STAT_MASK);
     /* insert thread to ready list */
     rt_list_insert_before(&(rt_thread_priority_table[thread->current_priority]),
                           &(thread->tlist));

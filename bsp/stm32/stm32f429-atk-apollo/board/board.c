@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-7      SummerGift   change to new framework
+ * 2018-11-7      SummerGift   first version
  */
 
 #include "board.h"
@@ -64,16 +64,4 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-}
-
-/** Pinout Configuration
-*/
-void MX_GPIO_Init(void)
-{
-  /* GPIO Ports Clock Enable */
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-    __HAL_RCC_GPIOB_CLK_ENABLE();
-    __HAL_RCC_GPIOC_CLK_ENABLE();
-    __HAL_RCC_GPIOD_CLK_ENABLE();
-    __HAL_RCC_GPIOG_CLK_ENABLE();
 }

@@ -234,4 +234,13 @@ config RT_USING_UTEST
     bool "Enable utest (RT-Thread test framework)"
     default n
 
+    if RT_USING_UTEST
+        config UTEST_THR_STACK_SIZE
+            int "The utest thread stack size"
+            default 4096
+        config UTEST_THR_PRIORITY
+            int "The utest thread priority"
+            default 20
+    endif
+
 endmenu

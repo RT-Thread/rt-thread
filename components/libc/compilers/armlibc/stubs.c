@@ -265,12 +265,25 @@ void _sys_exit(int return_code)
  */
 long _sys_flen(FILEHANDLE fh)
 {
+    struct stat stat;
+    
+    if (fh < STDERR)
+        return -1;
+
+#ifndef RT_USING_DFS
     return -1;
+#else
+    fstat(fh, &stat);
+    return stat.st_size;
+#endif
 }
 
 int _sys_istty(FILEHANDLE fh)
 {
-    return 0;
+    if((STDIN <= fh) && (fh <= STDERR))
+        return 1;
+    else
+        return 0;
 }
 
 int remove(const char *filename)

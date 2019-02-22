@@ -5,14 +5,10 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-7      SummerGift   change to new framework
+ * 2018-11-7      SummerGift   first version
  */
 
 #include "drv_common.h"
-
-#ifdef RT_USING_PIN
-#include "drv_gpio.h"
-#endif
 
 #ifdef RT_USING_SERIAL
 #include "drv_usart.h"
@@ -95,15 +91,22 @@ void _Error_Handler(char *s, int num)
  */
 RT_WEAK void rt_hw_board_init()
 {
+#ifdef SCB_EnableICache
+    /* Enable I-Cache---------------------------------------------------------*/
+    SCB_EnableICache();
+#endif
+
+#ifdef SCB_EnableDCache
+    /* Enable D-Cache---------------------------------------------------------*/
+    SCB_EnableDCache();
+#endif
+
     /* HAL_Init() function is called at the beginning of the program */
     HAL_Init();
 
     /* System clock initialization */
     SystemClock_Config();
     rt_hw_systick_init();
-
-    /* Hardware GPIO initialization */
-    MX_GPIO_Init();
 
     /* Heap initialization */
 #if defined(RT_USING_HEAP)

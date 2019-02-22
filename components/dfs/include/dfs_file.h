@@ -44,6 +44,7 @@ struct dfs_fd
     char *path;                  /* Name (below mount point) */
     int ref_count;               /* Descriptor reference count */
 
+    struct dfs_filesystem *fs;
     const struct dfs_file_ops *fops;
 
     uint32_t flags;              /* Descriptor flags */

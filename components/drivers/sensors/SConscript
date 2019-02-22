@@ -3,14 +3,11 @@
 from building import *
 
 cwd = GetCurrentDir()
-src = ['sensor.cpp']
+src = ['sensor.c']
 CPPPATH = [cwd, cwd + '/../include']
 
-if GetDepend('SENSOR_USING_MPU6050') and GetDepend('RT_USING_I2C'):
-    src += ['mpu6050_sensor.cpp'];
-
-if GetDepend('SENSOR_USING_BMI055') and GetDepend('RT_USING_I2C'):
-    src += ['bmi055_sensor.cpp']
+if GetDepend('RT_USING_SENSOR_CMD'):
+    src += ['sensor_cmd.c'];
 
 group = DefineGroup('Sensors', src, depend = ['RT_USING_SENSOR', 'RT_USING_DEVICE'], CPPPATH = CPPPATH)
 

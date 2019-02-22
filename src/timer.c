@@ -399,7 +399,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
     if (timer->parent.flag & RT_TIMER_FLAG_SOFT_TIMER)
     {
         /* check whether timer thread is ready */
-        if ((timer_thread.stat & RT_THREAD_STAT_MASK) != RT_THREAD_READY)
+        if ((timer_thread.stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND)
         {
             /* resume timer thread to check soft timer */
             rt_thread_resume(&timer_thread);

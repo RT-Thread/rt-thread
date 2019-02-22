@@ -19,8 +19,20 @@
 #include <drivers/mmcsd_core.h>
 #include <drivers/sdio.h>
 
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4)
+#define SDCARD_INSTANCE_TYPE              SDIO_TypeDef
+#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7)
+#define SDCARD_INSTANCE_TYPE              SDMMC_TypeDef
+#endif /*  defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4) */
+
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4)
+#define SDCARD_INSTANCE                   SDIO
+#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7)
+#define SDCARD_INSTANCE                   SDMMC1
+#endif /*  defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4) */
+
 #define SDIO_BUFF_SIZE       4096
-#define SDIO_MAX_FREQ        2000000
+#define SDIO_MAX_FREQ        1000000
 #define SDIO_ALIGN_LEN       32
 
 #ifndef SDIO_BASE_ADDRESS
@@ -158,7 +170,7 @@ struct stm32_sdio_des
 
 struct stm32_sdio_config
 {
-    SDIO_TypeDef *Instance;
+    SDCARD_INSTANCE_TYPE *Instance;
     struct dma_config dma_rx, dma_tx;
 };
 

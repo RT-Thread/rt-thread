@@ -478,7 +478,7 @@ rt_inline int _serial_dma_rx(struct rt_serial_device *serial, rt_uint8_t *data, 
 
         RT_ASSERT(rx_fifo != RT_NULL);
 
-        if (length < fifo_recved_len)
+        if (length < (int)fifo_recved_len)
             recv_len = length;
         else
             recv_len = fifo_recved_len;
@@ -566,13 +566,11 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
 
     LOG_D("open serial device: 0x%08x with open flag: 0x%04x",
         dev, oflag);
-#ifdef RT_SERIAL_USING_DMA
     /* check device flag with the open flag */
     if ((oflag & RT_DEVICE_FLAG_DMA_RX) && !(dev->flag & RT_DEVICE_FLAG_DMA_RX))
         return -RT_EIO;
     if ((oflag & RT_DEVICE_FLAG_DMA_TX) && !(dev->flag & RT_DEVICE_FLAG_DMA_TX))
         return -RT_EIO;
-#endif /* RT_SERIAL_USING_DMA */
     if ((oflag & RT_DEVICE_FLAG_INT_RX) && !(dev->flag & RT_DEVICE_FLAG_INT_RX))
         return -RT_EIO;
     if ((oflag & RT_DEVICE_FLAG_INT_TX) && !(dev->flag & RT_DEVICE_FLAG_INT_TX))

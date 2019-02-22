@@ -18,6 +18,10 @@
 #include <lwp.h>
 #endif
 
+#if defined(RT_USING_DFS_DEVFS) && defined(RT_USING_POSIX)
+#include <libc.h>
+#endif
+
 /* Global variables */
 const struct dfs_filesystem_ops *filesystem_operation_table[DFS_FILESYSTEM_TYPES_MAX];
 struct dfs_filesystem filesystem_table[DFS_FILESYSTEMS_MAX];
@@ -119,7 +123,7 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
     int idx;
 
     /* find an empty fd entry */
-    for (idx = startfd; idx < fdt->maxfd; idx++)
+    for (idx = startfd; idx < (int)fdt->maxfd; idx++)
     {
         if (fdt->fds[idx] == RT_NULL)
             break;
@@ -151,7 +155,7 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
     }
 
     /* allocate  'struct dfs_fd' */
-    if (idx < fdt->maxfd &&fdt->fds[idx] == RT_NULL)
+    if (idx < (int)fdt->maxfd && fdt->fds[idx] == RT_NULL)
     {
         fdt->fds[idx] = rt_calloc(1, sizeof(struct dfs_fd));
         if (fdt->fds[idx] == RT_NULL)
@@ -212,9 +216,14 @@ struct dfs_fd *fd_get(int fd)
     struct dfs_fd *d;
     struct dfs_fdtable *fdt;
 
+#if defined(RT_USING_DFS_DEVFS) && defined(RT_USING_POSIX)
+    if ((0 <= fd) && (fd <= 2))
+        fd = libc_stdio_get_console();
+#endif
+
     fdt = dfs_fdtable_get();
     fd = fd - DFS_FD_OFFSET;
-    if (fd < 0 || fd >= fdt->maxfd)
+    if (fd < 0 || fd >= (int)fdt->maxfd)
         return NULL;
 
     dfs_lock();
@@ -254,7 +263,7 @@ void fd_put(struct dfs_fd *fd)
         struct dfs_fdtable *fdt;
 
         fdt = dfs_fdtable_get();
-        for (index = 0; index < fdt->maxfd; index ++)
+        for (index = 0; index < (int)fdt->maxfd; index ++)
         {
             if (fdt->fds[index] == fd)
             {
@@ -311,7 +320,7 @@ int fd_is_open(const char *pathname)
             fd = fdt->fds[index];
             if (fd == NULL || fd->fops == NULL || fd->path == NULL) continue;
 
-            if (fd->fops == fs->ops->fops && strcmp(fd->path, mountpath) == 0)
+            if (fd->fs == fs && strcmp(fd->path, mountpath) == 0)
             {
                 /* found file in file descriptor table */
                 rt_free(fullpath);
@@ -522,7 +531,7 @@ int list_fd(void)
     
     rt_kprintf("fd type    ref magic  path\n");
     rt_kprintf("-- ------  --- ----- ------\n");
-    for (index = 0; index < fd_table->maxfd; index ++)
+    for (index = 0; index < (int)fd_table->maxfd; index ++)
     {
         struct dfs_fd *fd = fd_table->fds[index];
 
