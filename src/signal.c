@@ -38,7 +38,7 @@ struct siginfo_node
 
 static struct rt_mempool *_rt_siginfo_pool;
 static void _signal_deliver(rt_thread_t tid);
-void rt_thread_handle_sig(rt_bool_t clean_state);
+void rt_thread_handle_sig(void);
 
 static void _signal_default_handler(int signo)
 {
@@ -60,7 +60,7 @@ static void _signal_entry(void *parameter)
         {
             rt_hw_interrupt_enable(level);
             /* handle signal */
-            rt_thread_handle_sig(RT_FALSE);
+            rt_thread_handle_sig();
         }
         else break;
     }
@@ -70,9 +70,6 @@ static void _signal_entry(void *parameter)
     tid->sig_ret = RT_NULL;
 
     LOG_D("switch back to: 0x%08x", tid->sp);
-    tid->stat &= ~RT_THREAD_STAT_SIGNAL;
-
-    /* return to thread */
     rt_hw_context_switch_to((rt_uint32_t) & (tid->sp));
 }
 
@@ -121,7 +118,7 @@ static void _signal_deliver(rt_thread_t tid)
             rt_hw_interrupt_enable(level);
 
             /* do signal action in self thread context */
-            rt_thread_handle_sig(RT_TRUE);
+            rt_thread_handle_sig();
         }
         else if (!((tid->stat & RT_THREAD_STAT_SIGNAL_MASK) & RT_THREAD_STAT_SIGNAL))
         {
@@ -325,7 +322,7 @@ __done_return:
     return ret;
 }
 
-void rt_thread_handle_sig(rt_bool_t clean_state)
+void rt_thread_handle_sig(void)
 {
     rt_base_t level;
 
@@ -369,11 +366,8 @@ void rt_thread_handle_sig(rt_bool_t clean_state)
                 tid->error = error;
             }
 
-            /* whether clean signal status */
-            if (clean_state == RT_TRUE)
-            {
-                tid->stat &= ~RT_THREAD_STAT_SIGNAL;
-            }
+            /* clean state */
+            tid->stat &= ~RT_THREAD_STAT_SIGNAL;
         }
     }
     rt_hw_interrupt_enable(level);
