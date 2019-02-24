@@ -21,13 +21,15 @@ extern void $Super$$__cpp_initialize__aeabi_(void);
 
 void $Sub$$__cpp_initialize__aeabi_(void)
 {
-    $Super$$__cpp_initialize__aeabi_();
 }
 
 void _platform_post_lib_init(void) 
 {
     rt_hw_mmu_init();
     rt_hw_post_init();
+#if defined(RT_USING_HEAP) && defined(RT_USING_CPLUSPLUS)
+    $Super$$__cpp_initialize__aeabi_();
+#endif
 }
 
 #elif defined(__GNUC__)
@@ -41,15 +43,17 @@ void __main(void)
     uint32_t bytes = (uint32_t)&__bss_end - (uint32_t)&__bss_start;
     memset(&__bss_start, 0, bytes);
 
+    rt_hw_mmu_init();
+    rt_hw_post_init();
+
     /* call C++ constructors of global objects */
+#if defined(RT_USING_HEAP) && defined(RT_USING_CPLUSPLUS)
     uint32_t size = (uint32_t*)&__ctors_end__ - (uint32_t*)&__ctors_start__;
     for (uint32_t i = 0; i < size; i++) {
         uint32_t funcPtr = ((uint32_t*)&__ctors_start__)[i];
         ((void(*)(void))funcPtr)();
     }
-
-    rt_hw_mmu_init();
-    rt_hw_post_init();
+#endif
 
     /* Corresponds to the armcc/armclang function: $Sub$$main */
     rt_hw_interrupt_disable();
