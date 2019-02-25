@@ -59,10 +59,19 @@ static void _signal_entry(void *parameter)
         if (tid->stat & RT_THREAD_STAT_SIGNAL)
         {
             rt_hw_interrupt_enable(level);
+
             /* handle signal */
             rt_thread_handle_sig();
         }
-        else break;
+        else
+        {
+            /*
+             * Note: interrupt is disabled and no reentrant issue.
+             * 
+             * no signal status in tid->stat. 
+            */
+            break;
+        }
     }
 
     /* never come back... */
