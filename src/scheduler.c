@@ -234,7 +234,7 @@ void rt_schedule(void)
 
             if (rt_interrupt_nest == 0)
             {
-                extern void rt_thread_handle_sig(rt_bool_t clean_state);
+                extern void rt_thread_handle_sig(void);
 
                 rt_hw_context_switch((rt_uint32_t)&from_thread->sp,
                                      (rt_uint32_t)&to_thread->sp);
@@ -243,9 +243,10 @@ void rt_schedule(void)
                 rt_hw_interrupt_enable(level);
 
 #ifdef RT_USING_SIGNALS
-                /* check signal status */
-                rt_thread_handle_sig(RT_TRUE);
+                /* handle signal */
+                rt_thread_handle_sig();
 #endif
+                return ;
             }
             else
             {
@@ -253,21 +254,12 @@ void rt_schedule(void)
 
                 rt_hw_context_switch_interrupt((rt_uint32_t)&from_thread->sp,
                                                (rt_uint32_t)&to_thread->sp);
-                /* enable interrupt */
-                rt_hw_interrupt_enable(level);
             }
         }
-        else
-        {
-            /* enable interrupt */
-            rt_hw_interrupt_enable(level);
-        }
     }
-    else
-    {
-        /* enable interrupt */
-        rt_hw_interrupt_enable(level);
-    }
+
+    /* enable interrupt */
+    rt_hw_interrupt_enable(level);
 }
 
 /*
