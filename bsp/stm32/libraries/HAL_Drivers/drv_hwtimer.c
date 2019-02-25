@@ -168,11 +168,11 @@ static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
         if (tim->Instance == TIM9 || tim->Instance == TIM10 || tim->Instance == TIM11)
 #elif defined(SOC_SERIES_STM32L4)
         if (tim->Instance == TIM15 || tim->Instance == TIM16 || tim->Instance == TIM17)
-#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0)
+#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
         if (0)
 #endif
         {
-#ifndef SOC_SERIES_STM32F0
+#if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
             prescaler_value = (uint32_t)(HAL_RCC_GetPCLK2Freq() * 2 / 10000) - 1;
 #endif
         }
@@ -192,7 +192,7 @@ static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
             tim->Init.CounterMode   = TIM_COUNTERMODE_DOWN;
         }
         tim->Init.RepetitionCounter = 0;
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0)
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
         tim->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 #endif
         if (HAL_TIM_Base_Init(tim) != HAL_OK)
@@ -282,7 +282,7 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
         if (tim->Instance == TIM9 || tim->Instance == TIM10 || tim->Instance == TIM11)
 #elif defined(SOC_SERIES_STM32L4)
         if (tim->Instance == TIM15 || tim->Instance == TIM16 || tim->Instance == TIM17)
-#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0)
+#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
         if (0)
 #endif
         {
@@ -296,7 +296,7 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
         {
 #if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
             val = HAL_RCC_GetPCLK1Freq() * 2 / freq;
-#elif defined(SOC_SERIES_STM32F0)
+#elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
             val = HAL_RCC_GetPCLK1Freq() / freq;
 #endif
         }

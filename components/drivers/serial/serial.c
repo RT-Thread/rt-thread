@@ -478,7 +478,7 @@ rt_inline int _serial_dma_rx(struct rt_serial_device *serial, rt_uint8_t *data, 
 
         RT_ASSERT(rx_fifo != RT_NULL);
 
-        if (length < fifo_recved_len)
+        if (length < (int)fifo_recved_len)
             recv_len = length;
         else
             recv_len = fifo_recved_len;

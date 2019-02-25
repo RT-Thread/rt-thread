@@ -5,14 +5,10 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-7      SummerGift   change to new framework
+ * 2018-11-7      SummerGift   first version
  */
 
 #include "drv_common.h"
-
-#ifdef RT_USING_PIN
-#include "drv_gpio.h"
-#endif
 
 #ifdef RT_USING_SERIAL
 #include "drv_usart.h"
