@@ -16,33 +16,87 @@ typedef long off_t;
 
 #ifdef RT_USING_SERIAL
 
-
 #define LOG_TAG             "drv.sci"
 
-
-static struct c28x_uart uart_obj = {0};
+static struct c28x_uart uart_obj[3] = {0};
 
 static rt_err_t c28x_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
+    struct c28x_uart *uart;
+    RT_ASSERT(serial != RT_NULL);
+    RT_ASSERT(cfg != RT_NULL);
+    uart = (struct c28x_uart *)serial->parent.user_data;
+    RT_ASSERT(uart != RT_NULL);
+
     EALLOW;
-    CpuSysRegs.PCLKCR7.bit.SCI_A = 1;
+
+    // default config
 
     // 1 stop bit,  No loopback
     // No parity,8 char bits,
     // async mode, idle-line protocol
-    SciaRegs.SCICCR.all = 0x0007;
+    uart->sci_regs->SCICCR.all = 0x0007;
 
     // enable TX, RX, internal SCICLK,
     // Disable RX ERR, SLEEP, TXWAKE
-    SciaRegs.SCICTL1.all = 0x0003;
+    uart->sci_regs->SCICTL1.all = 0x0003;
 
-    SciaRegs.SCICTL2.bit.TXINTENA = 1;
-    SciaRegs.SCICTL2.bit.RXBKINTENA = 1;
+    uart->sci_regs->SCICTL2.bit.TXINTENA = 1;
+    uart->sci_regs->SCICTL2.bit.RXBKINTENA = 1;
 
-    SciaRegs.SCIHBAUD.all = 0x0000;  // 115200 baud @LSPCLK = 22.5MHz (90 MHz SYSCLK).
-    SciaRegs.SCILBAUD.all = 53;
+    uart->sci_regs->SCIHBAUD.all = 0x0000;  // 115200 baud @LSPCLK = 22.5MHz (90 MHz SYSCLK).
+    uart->sci_regs->SCILBAUD.all = 53;
 
-    SciaRegs.SCICTL1.all = 0x0023;  // Relinquish SCI from Reset
+    uart->sci_regs->SCICTL1.all = 0x0023;  // Relinquish SCI from Reset
+
+    switch (cfg->data_bits)
+    {
+    case DATA_BITS_5:
+        uart->sci_regs->SCICCR.bit.SCICHAR = 4;
+        break;
+    case DATA_BITS_6:
+        uart->sci_regs->SCICCR.bit.SCICHAR = 5;
+        break;
+    case DATA_BITS_7:
+        uart->sci_regs->SCICCR.bit.SCICHAR = 6;
+        break;
+    case DATA_BITS_8:
+        uart->sci_regs->SCICCR.bit.SCICHAR = 7;
+        break;
+    default:
+        uart->sci_regs->SCICCR.bit.SCICHAR = 7;
+        break;
+    }
+    switch (cfg->stop_bits)
+    {
+    case STOP_BITS_1:
+        uart->sci_regs->SCICCR.bit.STOPBITS = 0;
+        break;
+    case STOP_BITS_2:
+        uart->sci_regs->SCICCR.bit.STOPBITS = 1;
+        break;
+    default:
+        uart->sci_regs->SCICCR.bit.STOPBITS = 0;
+        break;
+    }
+    switch (cfg->parity)
+    {
+    case PARITY_NONE:
+        uart->sci_regs->SCICCR.bit.PARITYENA = 0;
+        break;
+    case PARITY_ODD:
+        uart->sci_regs->SCICCR.bit.PARITYENA = 1;
+        uart->sci_regs->SCICCR.bit.PARITY = 0;
+        break;
+    case PARITY_EVEN:
+        uart->sci_regs->SCICCR.bit.PARITYENA = 1;
+        uart->sci_regs->SCICCR.bit.PARITY = 1;
+        break;
+    default:
+        uart->sci_regs->SCICCR.bit.PARITYENA = 0;
+        break;
+    }
+
     EDIS;
 
     return RT_EOK;
@@ -50,7 +104,26 @@ static rt_err_t c28x_configure(struct rt_serial_device *serial, struct serial_co
 
 static rt_err_t c28x_control(struct rt_serial_device *serial, int cmd, void *arg)
 {
+    struct c28x_uart *uart;
+    uart = (struct c28x_uart *)serial->parent.user_data;
 
+    EALLOW;
+
+    switch (cmd)
+    {
+    /* disable interrupt */
+    case RT_DEVICE_CTRL_CLR_INT:
+        /* disable interrupt */
+        uart->sci_regs->SCICTL2.bit.TXINTENA = 0;
+        uart->sci_regs->SCICTL2.bit.RXBKINTENA = 0;
+        break;
+    /* enable interrupt */
+    case RT_DEVICE_CTRL_SET_INT:
+        /* enable interrupt */
+        uart->sci_regs->SCICTL2.bit.TXINTENA = 1;
+        uart->sci_regs->SCICTL2.bit.RXBKINTENA = 1;
+        break;
+    }
     return RT_EOK;
 }
 
@@ -78,22 +151,61 @@ static const struct rt_uart_ops c28x_uart_ops =
 int rt_hw_sci_init(void)
 {
     EALLOW;
+
     GpioCtrlRegs.GPBMUX1.bit.GPIO42 = 3;
     GpioCtrlRegs.GPBMUX1.bit.GPIO43 = 3;
     GpioCtrlRegs.GPBGMUX1.bit.GPIO42 = 3;
     GpioCtrlRegs.GPBGMUX1.bit.GPIO43 = 3;
+
+    GpioCtrlRegs.GPAMUX2.bit.GPIO18 = 2;
+    GpioCtrlRegs.GPAMUX2.bit.GPIO19 = 2;
+    GpioCtrlRegs.GPAGMUX2.bit.GPIO18 = 0;
+    GpioCtrlRegs.GPAGMUX2.bit.GPIO19 = 0;
+
+    GpioCtrlRegs.GPBMUX2.bit.GPIO56 = 2;
+    GpioCtrlRegs.GPEMUX1.bit.GPIO139 = 2;
+    GpioCtrlRegs.GPBGMUX2.bit.GPIO56 = 1;
+    GpioCtrlRegs.GPEGMUX1.bit.GPIO139 = 1;
+
+    CpuSysRegs.PCLKCR7.bit.SCI_A = 1;
+    CpuSysRegs.PCLKCR7.bit.SCI_B = 1;
+    CpuSysRegs.PCLKCR7.bit.SCI_C = 1;
+
     EDIS;
+
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     rt_err_t result = 0;
 
-    uart_obj.serial.ops    = &c28x_uart_ops;
-    uart_obj.serial.config = config;
-    uart_obj.name          = "scia";
+    uart_obj[0].serial.ops    = &c28x_uart_ops;
+    uart_obj[0].serial.config = config;
+    uart_obj[0].name          = "scia";
+    uart_obj[0].sci_regs      = &SciaRegs;
+
+    uart_obj[1].serial.ops    = &c28x_uart_ops;
+    uart_obj[1].serial.config = config;
+    uart_obj[1].name          = "scib";
+    uart_obj[1].sci_regs      = &ScibRegs;
+
+    uart_obj[2].serial.ops    = &c28x_uart_ops;
+    uart_obj[2].serial.config = config;
+    uart_obj[2].name          = "scic";
+    uart_obj[2].sci_regs      = &ScicRegs;
+
 
     /* register UART device */
-    result = rt_hw_serial_register(&uart_obj.serial, uart_obj.name,
+    result = rt_hw_serial_register(&uart_obj[0].serial, uart_obj[0].name,
                                    RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-                                   &uart_obj);
+                                   &uart_obj[0]);
+
+    /* register UART device */
+    result = rt_hw_serial_register(&uart_obj[1].serial, uart_obj[1].name,
+                                   RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                                   &uart_obj[1]);
+
+    /* register UART device */
+    result = rt_hw_serial_register(&uart_obj[2].serial, uart_obj[2].name,
+                                   RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                                   &uart_obj[2]);
 
     return result;
 }
