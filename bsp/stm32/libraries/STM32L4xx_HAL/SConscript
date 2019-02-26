@@ -73,6 +73,7 @@ if GetDepend(['RT_USING_WDT']):
 if GetDepend(['RT_USING_SDIO']):
     src += ['STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_sd.c']
     src += ['STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_sd_ex.c']
+    src += ['STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_sdmmc.c']
 
 if GetDepend(['RT_USING_AUDIO']):
     src += ['STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_sai.c']

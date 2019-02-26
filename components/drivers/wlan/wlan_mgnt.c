@@ -1800,7 +1800,7 @@ rt_err_t rt_wlan_register_event_handler(rt_wlan_event_t event, rt_wlan_event_han
     }
     RT_WLAN_LOG_D("%s is run event:%d", __FUNCTION__, event);
 
-    MGNT_UNLOCK();
+    MGNT_LOCK();
     /* Registering Callbacks */
     level = rt_hw_interrupt_disable();
     event_tab[event].handler = handler;
