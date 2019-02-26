@@ -15,12 +15,11 @@
 
 extern interrupt void RTOSINT_Handler();
 
-
 /**
  * This is the timer interrupt service routine.
  *
  */
-interrupt void cpu_timer2_isr (void)
+interrupt void cpu_timer2_isr(void)
 {
     CpuTimer2Regs.TCR.all = 0x8000;
     /* enter interrupt */
@@ -30,7 +29,6 @@ interrupt void cpu_timer2_isr (void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-
 
 /**
  * This function will initial STM32 board.
