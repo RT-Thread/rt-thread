@@ -8,8 +8,11 @@
  * 2019-02-02     xuzhuoyi     first version
  */
 
+#include "rtdevice.h"
 #include "board.h"
 #include "drv_sci.h"
+#include "F2837xD_device.h"
+#include "F2837xD_sci.h"
 
 typedef long off_t;
 #include "F2837xD_sci_io.h"
@@ -17,6 +20,14 @@ typedef long off_t;
 #ifdef RT_USING_SERIAL
 
 #define LOG_TAG             "drv.sci"
+
+/* c28x uart driver class */
+struct c28x_uart
+{
+    const char *name;
+    volatile struct SCI_REGS *sci_regs;
+    struct rt_serial_device serial;
+};
 
 static struct c28x_uart uart_obj[3] = {0};
 

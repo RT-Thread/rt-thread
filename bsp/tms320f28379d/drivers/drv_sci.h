@@ -11,20 +11,6 @@
 #ifndef __DRV_SCI_H__
 #define __DRV_SCI_H__
 
-#include <rtthread.h>
-#include "rtdevice.h"
-#include <rthw.h>
-#include "F2837xD_device.h"
-#include "F2837xD_sci.h"
-
 int rt_hw_sci_init(void);
-
-/* c28x uart dirver class */
-struct c28x_uart
-{
-    const char *name;
-    struct SCI_REGS *sci_regs;
-    struct rt_serial_device serial;
-};
 
 #endif  /* __DRV_SCI_H__ */
