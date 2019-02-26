@@ -52,6 +52,7 @@ static rt_uint32_t GetSector(rt_uint32_t Address)
     {
         sector = FLASH_SECTOR_1;
     }
+#if (FLASH_SECTOR_TOTAL >= 4)    
     else if ((Address < ADDR_FLASH_SECTOR_3) && (Address >= ADDR_FLASH_SECTOR_2))
     {
         sector = FLASH_SECTOR_2;
@@ -60,6 +61,7 @@ static rt_uint32_t GetSector(rt_uint32_t Address)
     {
         sector = FLASH_SECTOR_3;
     }
+#elif (FLASH_SECTOR_TOTAL >= 8)    
     else if ((Address < ADDR_FLASH_SECTOR_5) && (Address >= ADDR_FLASH_SECTOR_4))
     {
         sector = FLASH_SECTOR_4;
@@ -76,6 +78,7 @@ static rt_uint32_t GetSector(rt_uint32_t Address)
     {
         sector = FLASH_SECTOR_7;
     }
+#elif (FLASH_SECTOR_TOTAL >= 24)
     else if ((Address < ADDR_FLASH_SECTOR_9) && (Address >= ADDR_FLASH_SECTOR_8))
     {
         sector = FLASH_SECTOR_8;
@@ -88,10 +91,18 @@ static rt_uint32_t GetSector(rt_uint32_t Address)
     {
         sector = FLASH_SECTOR_10;
     }
-    else /* (Address < FLASH_END_ADDR) && (Address >= ADDR_FLASH_SECTOR_11) */
+#else
+    else
     {
+#if (FLASH_SECTOR_TOTAL == 4) 
+        sector = FLASH_SECTOR_4;
+#elif (FLASH_SECTOR_TOTAL == 8) 
+        sector = FLASH_SECTOR_8;
+#elif (FLASH_SECTOR_TOTAL == 24) 
         sector = FLASH_SECTOR_11;
+#endif
     }
+#endif
     return sector;
 }
 
