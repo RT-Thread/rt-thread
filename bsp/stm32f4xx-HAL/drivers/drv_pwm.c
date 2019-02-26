@@ -41,7 +41,7 @@ static rt_err_t drv_pwm_get(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     rt_uint32_t channel = 0x04 * (configuration->channel - 1);
     rt_uint32_t tim_clock;
 #if (RT_HSE_HCLK > 100000000UL)//100M
-    if (htim->Instance == TIM1 && htim->Instance == TIM8)
+    if (htim->Instance == TIM1 || htim->Instance == TIM8)
     {
         tim_clock = SystemCoreClock;
     }
@@ -72,7 +72,7 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     rt_uint32_t tim_clock, psc;
     rt_uint32_t channel = 0x04 * (configuration->channel - 1);
 #if (RT_HSE_HCLK > 100000000UL)//100M
-    if (htim->Instance == TIM1 && htim->Instance == TIM8)
+    if (htim->Instance == TIM1 || htim->Instance == TIM8)
     {
         tim_clock = SystemCoreClock;
     }
