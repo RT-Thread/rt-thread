@@ -10,8 +10,8 @@
  * 2019-01-26     YLZ          redefine `struct stm32_drv_can` add member `Rx1Message`
  * 2019-02-19     YLZ          port to BSP [stm32]
  */
-#ifndef __CAN_H__
-#define __CAN_H__
+#ifndef __DRV_CAN_H__
+#define __DRV_CAN_H__
 #include "board.h"
 #include <rtdevice.h>
 #include <rthw.h>
@@ -49,4 +49,4 @@ extern int rt_hw_can_init(void);
 #ifdef __cplusplus
  }
 #endif
-#endif /*__CAN_H__ */
+#endif /*__DRV_CAN_H__ */
