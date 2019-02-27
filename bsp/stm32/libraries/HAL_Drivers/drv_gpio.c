@@ -307,6 +307,19 @@ static void stm32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     HAL_GPIO_WritePin(index->gpio, index->pin, (GPIO_PinState)value);
 }
 
+static void stm32_pin_toggle(rt_device_t dev, rt_base_t pin)
+{
+    const struct pin_index *index;
+
+    index = get_pin(pin);
+    if (index == RT_NULL)
+    {
+        return;
+    }
+
+    HAL_GPIO_TogglePin(index->gpio, index->pin);
+}
+
 static int stm32_pin_read(rt_device_t dev, rt_base_t pin)
 {
     int value;
@@ -604,6 +617,7 @@ const static struct rt_pin_ops _stm32_pin_ops =
 {
     stm32_pin_mode,
     stm32_pin_write,
+	  stm32_pin_toggle,
     stm32_pin_read,
     stm32_pin_attach_irq,
     stm32_pin_dettach_irq,

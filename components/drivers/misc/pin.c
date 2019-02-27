@@ -46,6 +46,22 @@ static rt_size_t _pin_write(rt_device_t dev, rt_off_t pos, const void *buffer, r
     return size;
 }
 
+static rt_size_t _pin_toggle(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+{
+    struct rt_device_pin_status *status;
+    struct rt_device_pin *pin = (struct rt_device_pin *)dev;
+
+    /* check parameters */
+    RT_ASSERT(pin != RT_NULL);
+
+    status = (struct rt_device_pin_status *) buffer;
+    if (status == RT_NULL || size != sizeof(*status)) return 0;
+
+    pin->ops->pin_toggle(dev, (rt_base_t)status->pin);
+
+    return size;
+}
+
 static rt_err_t  _pin_control(rt_device_t dev, int cmd, void *args)
 {
     struct rt_device_pin_mode *mode;
@@ -70,6 +86,7 @@ const static struct rt_device_ops pin_ops =
     RT_NULL,
     _pin_read,
     _pin_write,
+		_pin_toggle,
     _pin_control
 };
 #endif
@@ -144,6 +161,13 @@ void rt_pin_write(rt_base_t pin, rt_base_t value)
     _hw_pin.ops->pin_write(&_hw_pin.parent, pin, value);
 }
 FINSH_FUNCTION_EXPORT_ALIAS(rt_pin_write, pinWrite, write value to hardware pin);
+
+void rt_pin_toggle(rt_base_t pin)
+{
+    RT_ASSERT(_hw_pin.ops != RT_NULL);
+    _hw_pin.ops->pin_toggle(&_hw_pin.parent, pin);
+}
+FINSH_FUNCTION_EXPORT_ALIAS(rt_pin_toggle, pinToggle, toggle the hardware pin);
 
 int  rt_pin_read(rt_base_t pin)
 {
