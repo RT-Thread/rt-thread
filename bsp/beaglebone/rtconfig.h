@@ -50,6 +50,7 @@
 
 /* C++ features */
 
+#define RT_USING_CPLUSPLUS
 
 /* Command shell */
 

@@ -65,8 +65,8 @@ if PLATFORM == 'gcc':
 
 elif PLATFORM == 'armcc':
     # toolchains
-    CC = 'armcc'
-    CXX = 'armcc'
+    CC = 'armcc --c99 --gnu'
+    CXX = 'armcc --cpp11 --gnu'
     AS = 'armasm'
     AR = 'armar'
     LINK = 'armlink'
@@ -79,8 +79,10 @@ elif PLATFORM == 'armcc':
     else:
         COMFLAGS += ' -O3 -DNDEBUG'
 
-    CFLAGS = COMFLAGS + ' --c99 --gnu'
-    CXXFLAGS = CFLAGS + ' --cpp11 --gnu'
+    CC += COMFLAGS
+    CXX += COMFLAGS
+    CFLAGS = ''
+    CXXFLAGS = ''
 
     AFLAGS  = ' --cpu=Cortex-A8 --unaligned_access --diag_style=ide --no_brief_diagnostics'
     AFLAGS += ' --cpreproc --cpreproc_opts=--cpu=Cortex-A8,-I.'
