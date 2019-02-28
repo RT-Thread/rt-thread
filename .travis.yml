@@ -31,14 +31,4 @@ jobs:
     - stage: AutoTest
       env: none
       rvm: 1
-      script: 
-        - if [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
-            echo "PR mode";
-          curl --request POST 
-               --header "PRIVATE-TOKEN:${GITLAB_ACCESS_TOKEN}" 
-               --header "Content-Type:application/json" 
-               --data '{"ref":"master","tag":"windows","variables":[{"key":"GITHUB_EVENT_TYPE","value":"'${TRAVIS_EVENT_TYPE}'"},{"key":"GITHUB_JOB_ID","value":"'${TRAVIS_BUILD_NUMBER}'"},{"key":"GITHUB_PR_NUMBER","value":"'${TRAVIS_PULL_REQUEST}'"},{"key":"GITHUB_DEFAULT_BRANCH","value":"'${TRAVIS_BRANCH}'"},{"key":"GITHUB_HEAD_SHA","value":"'${TRAVIS_PULL_REQUEST_SHA}'"}]}' 
-               "http://183.193.243.90:666/api/v4/projects/3/pipeline?ref=master";
-          else
-            echo "not PR mode";
-          fi
+      script: echo "hello"
