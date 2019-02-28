@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2019-01-26     jinsheng    first version
+ * 2019-01-26     jinsheng     first version
  */
  
 #include <board.h>

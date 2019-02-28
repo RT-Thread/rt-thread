@@ -125,6 +125,7 @@ static rt_err_t _rym_do_handshake(
     rt_size_t i;
     rt_uint16_t recv_crc, cal_crc;
     rt_size_t data_sz;
+    rt_tick_t tick;
 
     ctx->stage = RYM_STAGE_ESTABLISHING;
     /* send C every second, so the sender could know we are waiting for it. */
@@ -149,8 +150,17 @@ static rt_err_t _rym_do_handshake(
         return -RYM_ERR_TMO;
     }
 
-    i = _rym_read_data(ctx, data_sz-1);
-    if (i != (data_sz-1))
+    /* receive all data */
+    i = 0;
+    /* automatic exit after receiving specified length data, timeout: 100ms */
+    tick = rt_tick_get();
+    while (rt_tick_get() <= (tick + rt_tick_from_millisecond(100)) && i < (data_sz-1))
+    {
+        i += _rym_read_data(ctx, data_sz - 1);
+        rt_thread_mdelay(5);
+    }
+
+    if (i != (data_sz - 1))
         return -RYM_ERR_DSZ;
 
     /* sanity check */
