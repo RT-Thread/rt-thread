@@ -1,5 +1,4 @@
 /*
- * File      : board.c
  * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -12,7 +11,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include "board.h"
-#include "drv_usart.h"
+#include "drv_uart.h"
 #include "drv_gpio.h"
 #include <ald_cmu.h>
 #include <ald_gpio.h>
