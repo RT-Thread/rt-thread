@@ -28,6 +28,7 @@ rt_err_t spi_configure(struct rt_spi_device *device,
     spi_handle_t *hspi;
     hspi = (spi_handle_t *)device->bus->parent.user_data;
 
+    /* config spi mode */
     if (cfg->mode & RT_SPI_SLAVE)
     {
         hspi->init.mode = SPI_MODE_SLAVER;
@@ -77,13 +78,35 @@ rt_err_t spi_configure(struct rt_spi_device *device,
     {
         hspi->init.ss_en = ENABLE;
     }
+
+    /* config spi clock */
     if (cfg->max_hz >= cmu_get_pclk1_clock() / 2)
     {
-        hspi->init.baud = SPI_BAUD_2;
+        /*pclk1 max speed 48MHz, spi master max speed 10MHz*/
+        if (cmu_get_pclk1_clock() / 2 <= 10000000)
+        {
+            hspi->init.baud = SPI_BAUD_2;
+        }
+        else if (cmu_get_pclk1_clock() / 4 <= 10000000)
+        {
+            hspi->init.baud = SPI_BAUD_4;
+        }
+        else
+        {
+            hspi->init.baud = SPI_BAUD_8;
+        }
     }
     else if (cfg->max_hz >= cmu_get_pclk1_clock() / 4)
     {
-        hspi->init.baud = SPI_BAUD_4;
+        /*pclk1 max speed 48MHz, spi master max speed 10MHz*/
+        if (cmu_get_pclk1_clock() / 4 <= 10000000)
+        {
+            hspi->init.baud = SPI_BAUD_4;
+        }
+        else
+        {
+            hspi->init.baud = SPI_BAUD_8;
+        }
     }
     else if (cfg->max_hz >= cmu_get_pclk1_clock() / 8)
     {
@@ -215,7 +238,7 @@ int es32f0_spi_register_bus(SPI_TypeDef *SPIx, const char *name)
     }
     else if (SPIx == SPI1)
     {
-        _spi1.perh = SPI0;
+        _spi1.perh = SPI1;
         spi_bus = &_spi_bus1;
         spi = &_spi1;
 
