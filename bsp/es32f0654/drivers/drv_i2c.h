@@ -5,12 +5,12 @@
  *
  * Change Logs:
  * Date           Author        Notes
- * 2019-01-23     wangyq        the first version
+ * 2019-01-24     wangyq        the first version
  */
 
-#ifndef DRV_GPIO_H__
-#define DRV_GPIO_H__
+#ifndef DRV_I2C_H__
+#define DRV_I2C_H__
 
-int rt_hw_pin_init(void);
+int rt_hw_i2c_init(void);
 
 #endif
