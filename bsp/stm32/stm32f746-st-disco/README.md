@@ -53,7 +53,7 @@ STM32F746-disco 是 ST 推出的一款基于 ARM Cortex-M7 内核的开发板，
 | SPI               |  暂不支持    | 即将支持                        |
 | QSPI              |  支持    | QSPI1                        |
 | I2C               |  暂不支持    | 即将支持                        |
-| FLASH             |  暂不支持    | 即将支持                        |
+| FLASH             |  支持    |                         |
 | WDT               |  暂不支持    | 即将支持                        |
 | SDIO              |   支持   | 支持                              |
 | USB Device        |   暂不支持   | 即将支持                              |

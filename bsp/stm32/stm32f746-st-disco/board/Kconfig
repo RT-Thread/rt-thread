@@ -61,6 +61,9 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                 default n
         endif
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
     config BSP_USING_QSPI
         bool "Enable QSPI BUS"
         select RT_USING_QSPI
