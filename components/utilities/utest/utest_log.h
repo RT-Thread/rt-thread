@@ -11,6 +11,8 @@
 #ifndef __UTEST_LOG_H__
 #define __UTEST_LOG_H__
 
+#include <rtthread.h>
+
 #define UTEST_DEBUG
 
 #undef DBG_SECTION_NAME
@@ -27,5 +29,10 @@
 #endif
 #define DBG_COLOR
 #include <rtdbg.h>
+
+#define UTEST_LOG_ALL    (1u)
+#define UTEST_LOG_ASSERT (2u)
+
+void utest_log_lv_set(rt_uint8_t lv);
 
 #endif /* __UTEST_LOG_H__ */

@@ -163,7 +163,7 @@ static rt_base_t mtd_part_mtd_read_id(struct rt_mtd_nor_device *dev)
     return rt_mtd_nor_read_id(mtd_nor);
 }
 
-static rt_size_t mtd_part_mtd_read(struct rt_mtd_nor_device *dev, rt_off_t offset, rt_uint8_t *buffer, rt_size_t length)
+static rt_size_t mtd_part_mtd_read(struct rt_mtd_nor_device *dev, rt_off_t offset, rt_uint8_t *buffer, rt_uint32_t length)
 {
     struct rt_mtd_nor_partition *mtd_part;
     struct rt_mtd_nor_device *mtd_nor;
@@ -197,7 +197,7 @@ static rt_size_t mtd_part_mtd_read(struct rt_mtd_nor_device *dev, rt_off_t offse
     return 0;
 }
 
-static rt_size_t mtd_part_mtd_write(struct rt_mtd_nor_device *dev, rt_off_t offset, const rt_uint8_t *buffer, rt_size_t length)
+static rt_size_t mtd_part_mtd_write(struct rt_mtd_nor_device *dev, rt_off_t offset, const rt_uint8_t *buffer, rt_uint32_t length)
 {
     struct rt_mtd_nor_partition *mtd_part;
     struct rt_mtd_nor_device *mtd_nor;

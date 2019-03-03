@@ -20,7 +20,12 @@ if RT_USING_SERIAL
     config RT_SERIAL_USING_DMA
         bool "Enable serial DMA mode"
         default y
-endif    
+
+    config RT_SERIAL_RB_BUFSZ
+        int "Set RX buffer size"
+        default 64
+
+endif
 
 config RT_USING_CAN
     bool "Using CAN device drivers"
@@ -120,6 +125,7 @@ config RT_USING_PM
 
 config RT_USING_RTC
     bool "Using RTC device drivers"
+    select RT_USING_LIBC
     default n
 
     if RT_USING_RTC
@@ -233,10 +239,21 @@ config RT_USING_AUDIO
     bool "Using Audio device drivers"
     default n
 
+config RT_USING_SENSOR
+    bool "Using Sensor device drivers"
+    select RT_USING_PIN
+    default n
+
+if RT_USING_SENSOR
+    config RT_USING_SENSOR_CMD
+        bool "Using Sensor cmd"
+        default y
+endif
+
 menu "Using WiFi"
     config RT_USING_WIFI
-    bool "Using Wi-Fi framework"
-    default n
+        bool "Using Wi-Fi framework"
+        default n
 
     if RT_USING_WIFI
         config RT_WLAN_DEVICE_STA_NAME
