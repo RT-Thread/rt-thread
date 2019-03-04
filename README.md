@@ -2,8 +2,6 @@
 
 [![Build Status](https://travis-ci.org/zhaojuntao/rt-thread.svg?branch=AutoTestDev)](https://travis-ci.org/zhaojuntao/rt-thread)
 
-RT-Thread is an open source IoT operating system from China, which has strong scalability: from a tiny kernel running on a tiny core, for example ARM Cortex-M0, or Cortex-M3/4/7, to a rich feature system running on MIPS32, ARM Cortex-A8, ARM Cortex-A9 DualCore etc.
-
 ## Overview ##
 
 RT-Thread RTOS like a traditional real-time operating system. The kernel has real-time multi-task scheduling, semaphore, mutex, mail box, message queue, signal etc. However, it has three different things:
