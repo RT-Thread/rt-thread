@@ -29,7 +29,6 @@
 /* Memory Management */
 
 #define RT_USING_MEMPOOL
-#define RT_USING_MEMHEAP
 #define RT_USING_SMALL_MEM
 #define RT_USING_HEAP
 
@@ -39,7 +38,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x40000
+#define RT_VER_NUM 0x40001
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
 #define ARCH_ARM_CORTEX_M3
@@ -79,6 +78,7 @@
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
 #define RT_SERIAL_USING_DMA
+#define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 
 /* Using WiFi */
@@ -89,7 +89,6 @@
 
 /* POSIX layer and C standard library */
 
-#define RT_USING_LIBC
 
 /* Network */
 
@@ -151,7 +150,12 @@
 /* miscellaneous packages */
 
 
+/* sample package */
+
 /* samples: kernel and components samples */
+
+
+/* example package: hello */
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32F1
@@ -162,13 +166,23 @@
 
 /* Onboard Peripheral Drivers */
 
-#define BSP_USING_USB_TO_USART
 
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
+#define BSP_UART1_RX_USING_DMA
+#define BSP_UART1_TX_USING_DMA
+#define BSP_USING_UART2
+#define BSP_UART2_RX_USING_DMA
+#define BSP_UART2_TX_USING_DMA
+#define BSP_USING_UART3
+#define BSP_UART3_RX_USING_DMA
+#define BSP_UART3_TX_USING_DMA
+#define BSP_USING_UART4
+#define BSP_UART4_RX_USING_DMA
+#define BSP_UART4_TX_USING_DMA
 
 /* Board extended module Drivers */
 

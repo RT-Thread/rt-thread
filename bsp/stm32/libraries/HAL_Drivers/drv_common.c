@@ -21,6 +21,15 @@ static void reboot(uint8_t argc, char **argv)
     rt_hw_cpu_reset();
 }
 FINSH_FUNCTION_EXPORT_ALIAS(reboot, __cmd_reboot, Reboot System);
+
+static void clockfreq(uint8_t argc, char **argv)
+{
+	rt_kprintf("SysClockFreq =%10d\r\n",HAL_RCC_GetSysClockFreq());
+	rt_kprintf("HCLKFreq     =%10d\r\n",HAL_RCC_GetHCLKFreq());
+	rt_kprintf("PCLK1Freq    =%10d\r\n",HAL_RCC_GetPCLK1Freq());
+	rt_kprintf("PCLK2Freq    =%10d\r\n",HAL_RCC_GetPCLK2Freq());
+}
+FINSH_FUNCTION_EXPORT_ALIAS(clockfreq, __cmd_clockfreq, Get System Clock Freq);
 #endif /* RT_USING_FINSH */
 
 /* SysTick configuration */
