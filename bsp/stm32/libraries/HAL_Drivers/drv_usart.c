@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2018-10-30     SummerGift   first version
  */
- 
+
 #include "board.h"
 #include "drv_usart.h"
 #include "drv_config.h"
@@ -53,22 +53,22 @@ enum
 static struct stm32_uart_config uart_config[] =
 {
 #ifdef BSP_USING_UART1
-        UART1_CONFIG,
+    UART1_CONFIG,
 #endif
 #ifdef BSP_USING_UART2
-        UART2_CONFIG,
+    UART2_CONFIG,
 #endif
 #ifdef BSP_USING_UART3
-        UART3_CONFIG,
+    UART3_CONFIG,
 #endif
 #ifdef BSP_USING_UART4
-        UART4_CONFIG,
+    UART4_CONFIG,
 #endif
 #ifdef BSP_USING_UART5
-        UART5_CONFIG,
+    UART5_CONFIG,
 #endif
 #ifdef BSP_USING_LPUART1
-        LPUART1_CONFIG,
+    LPUART1_CONFIG,
 #endif
 };
 
@@ -141,7 +141,7 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
 #ifdef RT_SERIAL_USING_DMA
     rt_ubase_t ctrl_arg = (rt_ubase_t)arg;
 #endif
-    
+
     RT_ASSERT(serial != RT_NULL);
     uart = (struct stm32_uart *)serial->parent.user_data;
     RT_ASSERT(uart != RT_NULL);
@@ -165,7 +165,7 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
 
 #ifdef RT_SERIAL_USING_DMA
     case RT_DEVICE_CTRL_CONFIG:
-				stm32_dma_config(serial, ctrl_arg);
+        stm32_dma_config(serial, ctrl_arg);
         break;
 #endif
     }
@@ -212,22 +212,22 @@ static int stm32_getc(struct rt_serial_device *serial)
 
 static rt_size_t stm32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
 {
-  struct stm32_uart *uart;
-  RT_ASSERT(serial != RT_NULL);
-	uart = (struct stm32_uart*)(serial->parent.user_data);
-  RT_ASSERT(uart != RT_NULL);
-	if (size == 0)
-	{
-		return 0;
-	}
-	if (RT_SERIAL_DMA_TX == direction)
-	{
-		if (HAL_UART_Transmit_DMA(&uart->handle, buf, size) == HAL_OK)
-		{
-			return size;
-		}
-	}
-	return 0;
+    struct stm32_uart *uart;
+    RT_ASSERT(serial != RT_NULL);
+    uart = (struct stm32_uart*)(serial->parent.user_data);
+    RT_ASSERT(uart != RT_NULL);
+    if (size == 0)
+    {
+        return 0;
+    }
+    if (RT_SERIAL_DMA_TX == direction)
+    {
+        if (HAL_UART_Transmit_DMA(&uart->handle, buf, size) == HAL_OK)
+        {
+            return size;
+        }
+    }
+    return 0;
 }
 
 static const struct rt_uart_ops stm32_uart_ops =
@@ -236,7 +236,7 @@ static const struct rt_uart_ops stm32_uart_ops =
     .control = stm32_control,
     .putc = stm32_putc,
     .getc = stm32_getc,
-		.dma_transmit = stm32_dma_transmit
+    .dma_transmit = stm32_dma_transmit
 };
 
 /**
@@ -251,7 +251,7 @@ static void uart_isr(struct rt_serial_device *serial)
     rt_size_t recv_total_index, recv_len;
     rt_base_t level;
 #endif
-    
+
     RT_ASSERT(serial != RT_NULL);
 
     uart = (struct stm32_uart *) serial->parent.user_data;
@@ -259,13 +259,13 @@ static void uart_isr(struct rt_serial_device *serial)
 
     /* UART in mode Receiver -------------------------------------------------*/
     if ((__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_RXNE) != RESET)
-				&&(__HAL_UART_GET_IT_SOURCE(&(uart->handle), UART_IT_RXNE) != RESET))
+            &&(__HAL_UART_GET_IT_SOURCE(&(uart->handle), UART_IT_RXNE) != RESET))
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
 #ifdef RT_SERIAL_USING_DMA
     else if ((uart->uart_dma_flag) && (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_IDLE) != RESET)
-							&&(__HAL_UART_GET_IT_SOURCE(&(uart->handle), UART_IT_IDLE) != RESET))
+             &&(__HAL_UART_GET_IT_SOURCE(&(uart->handle), UART_IT_IDLE) != RESET))
     {
         level = rt_hw_interrupt_disable();
         recv_total_index = serial->config.bufsz - __HAL_DMA_GET_COUNTER(&(uart->dma_rx.handle));
@@ -277,20 +277,20 @@ static void uart_isr(struct rt_serial_device *serial)
         {
             rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
         }
-				__HAL_UART_CLEAR_IDLEFLAG(&uart->handle);
+        __HAL_UART_CLEAR_IDLEFLAG(&uart->handle);
     }
-		else if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TC) != RESET)
-		{
-				if((serial->parent.open_flag & RT_DEVICE_FLAG_DMA_TX) != 0)
-				{
-						rt_hw_serial_isr(&uart->serial, RT_SERIAL_EVENT_TX_DMADONE);
-						HAL_UART_IRQHandler(&(uart->handle));
-				}
-				else
-				{
+    else if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TC) != RESET)
+    {
+        if((serial->parent.open_flag & RT_DEVICE_FLAG_DMA_TX) != 0)
+        {
+            rt_hw_serial_isr(&uart->serial, RT_SERIAL_EVENT_TX_DMADONE);
+            HAL_UART_IRQHandler(&(uart->handle));
+        }
+        else
+        {
             UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_TC);
-				}
-		}
+        }
+    }
 #endif
     else
     {
@@ -342,25 +342,25 @@ static void dma_isr(struct rt_serial_device *serial)
     struct stm32_uart *uart;
     rt_size_t recv_total_index, recv_len;
     rt_base_t level;
-    
+
     RT_ASSERT(serial != RT_NULL);
 
     uart = (struct stm32_uart *) serial->parent.user_data;
     RT_ASSERT(uart != RT_NULL);
-	
+
     if ((__HAL_DMA_GET_IT_SOURCE(&(uart->dma_rx.handle),DMA_IT_TC) != RESET) ||
-				(__HAL_DMA_GET_IT_SOURCE(&(uart->dma_rx.handle),DMA_IT_HT) != RESET))
+            (__HAL_DMA_GET_IT_SOURCE(&(uart->dma_rx.handle),DMA_IT_HT) != RESET))
     {
         level = rt_hw_interrupt_disable();
         recv_total_index = serial->config.bufsz - __HAL_DMA_GET_COUNTER(&(uart->dma_rx.handle));
-				if(recv_total_index == 0)
-				{
-					recv_len = serial->config.bufsz - uart->dma_rx.last_index;
-				}
-				else
-				{
-					recv_len = recv_total_index - uart->dma_rx.last_index;
-				}
+        if(recv_total_index == 0)
+        {
+            recv_len = serial->config.bufsz - uart->dma_rx.last_index;
+        }
+        else
+        {
+            recv_len = recv_total_index - uart->dma_rx.last_index;
+        }
         uart->dma_rx.last_index = recv_total_index;
         rt_hw_interrupt_enable(level);
 
@@ -379,7 +379,7 @@ void USART1_IRQHandler(void)
     rt_interrupt_enter();
 
     uart_isr(&(uart_obj[UART1_INDEX].serial));
-    
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -453,7 +453,7 @@ void USART3_IRQHandler(void)
     rt_interrupt_enter();
 
     uart_isr(&(uart_obj[UART3_INDEX].serial));
-    
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -474,7 +474,7 @@ void UART3_DMA_TX_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-	
+
     HAL_DMA_IRQHandler(&uart_obj[UART3_INDEX].dma_tx.handle);
 
     /* leave interrupt */
@@ -490,7 +490,7 @@ void UART4_IRQHandler(void)
     rt_interrupt_enter();
 
     uart_isr(&(uart_obj[UART4_INDEX].serial));
-    
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -512,7 +512,7 @@ void UART4_DMA_TX_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-		
+
     HAL_DMA_IRQHandler(&uart_obj[UART4_INDEX].dma_tx.handle);
 
     /* leave interrupt */
@@ -528,7 +528,7 @@ void UART5_IRQHandler(void)
     rt_interrupt_enter();
 
     uart_isr(&(uart_obj[UART5_INDEX].serial));
-    
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -553,7 +553,7 @@ void LPUART1_IRQHandler(void)
     rt_interrupt_enter();
 
     uart_isr(&(uart_obj[LPUART1_INDEX].serial));
-    
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -578,19 +578,19 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
     struct stm32_uart *uart = (struct stm32_uart *)serial->parent.user_data;
     RT_ASSERT(uart != RT_NULL);
     struct rt_serial_rx_fifo *rx_fifo;
-		DMA_HandleTypeDef *DMA_Handle;
-		struct dma_config *dma_config;
-	
-		if(RT_DEVICE_FLAG_DMA_RX == flag)
-		{
-			DMA_Handle = &uart->dma_rx.handle;
-			dma_config = uart->config->dma_rx;
-		}
-		else if(RT_DEVICE_FLAG_DMA_TX == flag)
-		{
-			DMA_Handle = &uart->dma_tx.handle;
-			dma_config = uart->config->dma_tx;
-		}
+    DMA_HandleTypeDef *DMA_Handle;
+    struct dma_config *dma_config;
+
+    if(RT_DEVICE_FLAG_DMA_RX == flag)
+    {
+        DMA_Handle = &uart->dma_rx.handle;
+        dma_config = uart->config->dma_rx;
+    }
+    else if(RT_DEVICE_FLAG_DMA_TX == flag)
+    {
+        DMA_Handle = &uart->dma_tx.handle;
+        dma_config = uart->config->dma_tx;
+    }
     LOG_D("%s dma config start", uart->config->name);
 
     {
@@ -604,25 +604,25 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
         /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
         SET_BIT(RCC->AHB1ENR, uart->config->dma_rx->dma_rcc);
         tmpreg = READ_BIT(RCC->AHB1ENR, uart->config->dma_rx->dma_rcc);
-#endif  
+#endif
         UNUSED(tmpreg);   /* To avoid compiler warnings */
     }
 
-		if(RT_DEVICE_FLAG_DMA_RX == flag)
-		{
-			__HAL_LINKDMA(&(uart->handle), hdmarx, uart->dma_rx.handle);
-		}
-		else if(RT_DEVICE_FLAG_DMA_TX == flag)
-		{
-			__HAL_LINKDMA(&(uart->handle), hdmatx, uart->dma_tx.handle);
-		}
+    if(RT_DEVICE_FLAG_DMA_RX == flag)
+    {
+        __HAL_LINKDMA(&(uart->handle), hdmarx, uart->dma_rx.handle);
+    }
+    else if(RT_DEVICE_FLAG_DMA_TX == flag)
+    {
+        __HAL_LINKDMA(&(uart->handle), hdmatx, uart->dma_tx.handle);
+    }
 
 #if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
     DMA_Handle->Instance                 = dma_config->Instance;
 #elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     DMA_Handle->Instance                 = dma_config->Instance;
     DMA_Handle->Init.Channel             = dma_config->channel;
-#elif defined(SOC_SERIES_STM32L4) 
+#elif defined(SOC_SERIES_STM32L4)
     DMA_Handle->Instance                 = dma_config->Instance;
     DMA_Handle->Init.Request             = dma_config->request;
 #endif
@@ -630,16 +630,16 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
     DMA_Handle->Init.MemInc              = DMA_MINC_ENABLE;
     DMA_Handle->Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
     DMA_Handle->Init.MemDataAlignment    = DMA_MDATAALIGN_BYTE;
-		if(RT_DEVICE_FLAG_DMA_RX == flag)
-		{
-			DMA_Handle->Init.Direction           = DMA_PERIPH_TO_MEMORY;
-			DMA_Handle->Init.Mode                = DMA_CIRCULAR;
-		}
-		else if(RT_DEVICE_FLAG_DMA_TX == flag)
-		{
-			DMA_Handle->Init.Direction           = DMA_MEMORY_TO_PERIPH;
-			DMA_Handle->Init.Mode                = DMA_NORMAL;
-		}
+    if(RT_DEVICE_FLAG_DMA_RX == flag)
+    {
+        DMA_Handle->Init.Direction           = DMA_PERIPH_TO_MEMORY;
+        DMA_Handle->Init.Mode                = DMA_CIRCULAR;
+    }
+    else if(RT_DEVICE_FLAG_DMA_TX == flag)
+    {
+        DMA_Handle->Init.Direction           = DMA_MEMORY_TO_PERIPH;
+        DMA_Handle->Init.Mode                = DMA_NORMAL;
+    }
     DMA_Handle->Init.Priority            = DMA_PRIORITY_MEDIUM;
 #if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     DMA_Handle->Init.FIFOMode            = DMA_FIFOMODE_DISABLE;
@@ -655,30 +655,30 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
     }
 
     /* enable interrupt */
-		if (flag == RT_DEVICE_FLAG_DMA_RX)
-		{ 
-			rx_fifo = (struct rt_serial_rx_fifo *)serial->serial_rx;
-			/* Start DMA transfer */
-			if (HAL_UART_Receive_DMA(&(uart->handle), rx_fifo->buffer, serial->config.bufsz) != HAL_OK)
-			{
-					/* Transfer error in reception process */
-					RT_ASSERT(0);
-			}
-			__HAL_UART_ENABLE_IT(&(uart->handle), UART_IT_IDLE);
-		}
-		else if (flag == RT_DEVICE_FLAG_DMA_TX)
-		{  
-			__HAL_UART_ENABLE_IT(&(uart->handle), UART_IT_TC);
-		}
-    
+    if (flag == RT_DEVICE_FLAG_DMA_RX)
+    {
+        rx_fifo = (struct rt_serial_rx_fifo *)serial->serial_rx;
+        /* Start DMA transfer */
+        if (HAL_UART_Receive_DMA(&(uart->handle), rx_fifo->buffer, serial->config.bufsz) != HAL_OK)
+        {
+            /* Transfer error in reception process */
+            RT_ASSERT(0);
+        }
+        __HAL_UART_ENABLE_IT(&(uart->handle), UART_IT_IDLE);
+    }
+    else if (flag == RT_DEVICE_FLAG_DMA_TX)
+    {
+        __HAL_UART_ENABLE_IT(&(uart->handle), UART_IT_TC);
+    }
+
     /* enable irq */
     HAL_NVIC_SetPriority(dma_config->dma_irq, 0, 0);
     HAL_NVIC_EnableIRQ(dma_config->dma_irq);
-    
+
     HAL_NVIC_SetPriority(uart->config->irq_type, 1, 0);
     HAL_NVIC_EnableIRQ(uart->config->irq_type);
-    
-		LOG_D("%s dma %s instance: %x", uart->config->name, flag == RT_DEVICE_FLAG_DMA_RX ? "RX" : "TX", DMA_Handle->Instance);
+
+    LOG_D("%s dma %s instance: %x", uart->config->name, flag == RT_DEVICE_FLAG_DMA_RX ? "RX" : "TX", DMA_Handle->Instance);
     LOG_D("%s dma config done", uart->config->name);
 }
 
@@ -709,14 +709,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     struct stm32_uart *uart;
     RT_ASSERT(huart != NULL);
     uart = (struct stm32_uart *)huart;
-		dma_isr(&uart->serial);
+    dma_isr(&uart->serial);
 }
 void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart)
 {
     struct stm32_uart *uart;
     RT_ASSERT(huart != NULL);
     uart = (struct stm32_uart *)huart;
-		dma_isr(&uart->serial);
+    dma_isr(&uart->serial);
 }
 #endif  /* RT_SERIAL_USING_DMA */
 
@@ -800,19 +800,19 @@ int rt_hw_usart_init(void)
     rt_err_t result = 0;
 
     stm32_uart_get_dma_config();
-    
+
     for (int i = 0; i < obj_num; i++)
     {
         uart_obj[i].config = &uart_config[i];
         uart_obj[i].serial.ops    = &stm32_uart_ops;
         uart_obj[i].serial.config = config;
-				/* register UART device */
-				result = rt_hw_serial_register(&uart_obj[i].serial,uart_obj[i].config->name,
-																			 RT_DEVICE_FLAG_RDWR 
-																			| RT_DEVICE_FLAG_INT_RX 
-																			| RT_DEVICE_FLAG_INT_TX
-																			| uart_obj[i].uart_dma_flag
-																			 ,&uart_obj[i]);
+        /* register UART device */
+        result = rt_hw_serial_register(&uart_obj[i].serial,uart_obj[i].config->name,
+                                       RT_DEVICE_FLAG_RDWR
+                                       | RT_DEVICE_FLAG_INT_RX
+                                       | RT_DEVICE_FLAG_INT_TX
+                                       | uart_obj[i].uart_dma_flag
+                                       ,&uart_obj[i]);
         RT_ASSERT(result == RT_EOK);
     }
 
