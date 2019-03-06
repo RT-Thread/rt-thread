@@ -222,12 +222,6 @@ config RT_USING_ULOG
             select ULOG_OUTPUT_TIME
             select ULOG_USING_FILTER
             default n
-            
-        config ULOG_SW_VERSION_NUM
-            hex
-            default 0x00101
-            help
-                sfotware module version number
     endif
 
 config RT_USING_UTEST

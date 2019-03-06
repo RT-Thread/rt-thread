@@ -47,7 +47,7 @@ extern "C" {
 #define DBG_INFO                       LOG_LVL_INFO
 #define DBG_LOG                        LOG_LVL_DBG
 #define dbg_log(level, ...)                                \
-    if ((level) <= DBG_LEVEL)                              \
+    if ((level) <= LOG_LVL)                                \
     {                                                      \
         ulog_output(level, LOG_TAG, RT_FALSE, __VA_ARGS__);\
     }
