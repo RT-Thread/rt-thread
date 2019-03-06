@@ -12,10 +12,9 @@
 #include "board.h"
 #include <rthw.h>
 #include "drv_flexspi.h"
-#define DBG_ENABLE
-#define DBG_SECTION_NAME  "[FLEXSPI]"
+
+#define DBG_SECTION_NAME  "FLEXSPI"
 #define DBG_LEVEL         DBG_LOG
-#define DBG_COLOR
 #include <rtdbg.h>
 
 #define FLEXSPI_CLOCK kCLOCK_FlexSpi

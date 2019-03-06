@@ -17,17 +17,13 @@
 
 #undef DBG_SECTION_NAME
 #undef DBG_LEVEL
-#undef DBG_COLOR
-#undef DBG_ENABLE
 
-#define DBG_ENABLE
 #define DBG_SECTION_NAME          "utest"
 #ifdef UTEST_DEBUG
 #define DBG_LEVEL                 DBG_LOG
 #else
 #define DBG_LEVEL                 DBG_INFO
 #endif
-#define DBG_COLOR
 #include <rtdbg.h>
 
 #if RT_CONSOLEBUF_SIZE < 256
