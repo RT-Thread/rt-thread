@@ -49,8 +49,6 @@ static void _signal_entry(void *parameter)
 {
     rt_thread_t tid = rt_thread_self();
 
-    dbg_enter;
-
     /* handle signal */
     rt_thread_handle_sig(RT_FALSE);
 

@@ -114,23 +114,6 @@
             __FUNCTION__, __LINE__);                        \
     }
 
-#define dbg_enter                                           \
-    if ((DBG_LEVEL) <= DBG_LOG){                            \
-        _DBG_COLOR(32);                                     \
-        rt_kprintf(DBG_SECTION_NAME " Enter %s\n",          \
-            __FUNCTION__);                                  \
-        _DBG_COLOR(0);                                      \
-    }
-
-#define dbg_exit                                            \
-    if ((DBG_LEVEL) <= DBG_LOG){                            \
-        _DBG_COLOR(32);                                     \
-        rt_kprintf(DBG_SECTION_NAME " Exit  %s:%d\n",       \
-            __FUNCTION__);                                  \
-        _DBG_COLOR(0);                                      \
-    }
-
-
 #define dbg_log_line(lvl, color_n, fmt, ...)                \
     do                                                      \
     {                                                       \
