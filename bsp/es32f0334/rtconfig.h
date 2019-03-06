@@ -162,7 +162,14 @@
 
 #define BSP_USING_UART1
 
+/* SPI Drivers */
+
+
+/* I2C Drivers */
+
+
 /* Onboard Peripheral Drivers */
+
 
 /* Offboard Peripheral Drivers */
 
