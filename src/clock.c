@@ -24,8 +24,6 @@
 static rt_tick_t rt_tick = 0;
 #endif
 
-extern void rt_timer_check(void);
-
 /**
  * This function will init system tick and set it to zero.
  * @ingroup SystemInit
