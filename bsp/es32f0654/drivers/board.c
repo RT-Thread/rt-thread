@@ -42,14 +42,11 @@ void NVIC_Configuration(void)
  *******************************************************************************/
 void  SystemClock_Config(void)
 {
-    /* hosc 8MHz, from hosc/2 pll to 48MHz */
-    cmu_pll1_config(CMU_PLL1_INPUT_HOSC_2, CMU_PLL1_OUTPUT_48M);
+    /* hosc 12MHz, from hosc/3 pll to 48MHz */
+    cmu_pll1_config(CMU_PLL1_INPUT_HOSC_3, CMU_PLL1_OUTPUT_48M);
 
     /*  MCLK 48MHz*/
     cmu_clock_config(CMU_CLOCK_PLL1, 48000000);
-
-    /* SYSCLK 24MHz */
-    cmu_div_config(CMU_SYS, CMU_DIV_2);
 }
 
 /*******************************************************************************
