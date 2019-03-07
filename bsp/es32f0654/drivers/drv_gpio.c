@@ -60,7 +60,7 @@ static const struct pin_index pins[] =
     __ES32F0_PIN(27, B, 1),
     __ES32F0_PIN(28, B, 2),
     __ES32F0_PIN(29, B, 10),
-    __ES32F0_PIN_DEFAULT,
+    __ES32F0_PIN(30, B, 11),
     __ES32F0_PIN_DEFAULT,
     __ES32F0_PIN_DEFAULT,
     __ES32F0_PIN(33, B, 12),
