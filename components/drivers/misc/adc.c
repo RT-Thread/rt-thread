@@ -15,10 +15,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define DBG_ENABLE
 #define DBG_SECTION_NAME "adc"
 #define DBG_LEVEL DBG_INFO
-#define DBG_COLOR
 #include <rtdbg.h>
 
 static rt_size_t _adc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)

@@ -10,10 +10,8 @@
 
 #include "sensor.h"
 
-#define DBG_ENABLE
 #define DBG_LEVEL DBG_INFO
 #define DBG_SECTION_NAME  "sensor"
-#define DBG_COLOR
 #include <rtdbg.h>
 
 #include <string.h>
