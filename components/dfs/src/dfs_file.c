@@ -111,7 +111,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         fd->flags |= DFS_F_DIRECTORY;
     }
 
-    LOG_I("open successful");
+    LOG_D("open successful");
     return 0;
 }
 

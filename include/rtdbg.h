@@ -19,22 +19,28 @@
  * header file.
  *
  * #define DBG_SECTION_NAME    "MOD"
- * #define DBG_ENABLE          // enable debug macro
  * #define DBG_LEVEL           DBG_INFO
- * #include <rtdbg.h>          // must after of DEBUG_ENABLE or some other options
+ * #include <rtdbg.h>          // must after of DBG_LEVEL, DBG_SECTION_NAME or other options
  *
  * Then in your C/C++ file, you can use LOG_X macro to print out logs:
  * LOG_D("this is a debug log!");
  * LOG_E("this is a error log!");
- *
- * If you want to use different color for different kinds log, you can
- * #define DBG_COLOR
  */
 
 #ifndef RT_DBG_H__
 #define RT_DBG_H__
 
 #include <rtconfig.h>
+
+/* the debug log will force enable when RT_DEBUG macro is defined */
+#if defined(RT_DEBUG) && !defined(DBG_ENABLE)
+#define DBG_ENABLE
+#endif
+
+/* it will force output color log when RT_DEBUG_COLOR macro is defined */
+#if defined(RT_DEBUG_COLOR) && !defined(DBG_COLOR)
+#define DBG_COLOR
+#endif
 
 #if defined(RT_USING_ULOG) && defined(DBG_ENABLE)
 /* using ulog compatible with rtdbg  */
@@ -107,23 +113,6 @@
         rt_kprintf(DBG_SECTION_NAME " Here %s:%d\n",        \
             __FUNCTION__, __LINE__);                        \
     }
-
-#define dbg_enter                                           \
-    if ((DBG_LEVEL) <= DBG_LOG){                            \
-        _DBG_COLOR(32);                                     \
-        rt_kprintf(DBG_SECTION_NAME " Enter %s\n",          \
-            __FUNCTION__);                                  \
-        _DBG_COLOR(0);                                      \
-    }
-
-#define dbg_exit                                            \
-    if ((DBG_LEVEL) <= DBG_LOG){                            \
-        _DBG_COLOR(32);                                     \
-        rt_kprintf(DBG_SECTION_NAME " Exit  %s:%d\n",       \
-            __FUNCTION__);                                  \
-        _DBG_COLOR(0);                                      \
-    }
-
 
 #define dbg_log_line(lvl, color_n, fmt, ...)                \
     do                                                      \

@@ -14,14 +14,12 @@
 #include <drivers/mmc.h>
 #include <drivers/sdio.h>
 
-#define DBG_ENABLE
 #define DBG_SECTION_NAME               "SDIO"
 #ifdef RT_SDIO_DEBUG
 #define DBG_LEVEL                      DBG_LOG
 #else
 #define DBG_LEVEL                      DBG_INFO
 #endif /* RT_SDIO_DEBUG */
-#define DBG_COLOR
 #include <rtdbg.h>
 
 #ifndef RT_MMCSD_STACK_SIZE
