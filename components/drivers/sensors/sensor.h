@@ -68,6 +68,7 @@ extern "C" {
 #define  RT_SENSOR_UNIT_HZ             (9)  /* Frequency               unit: HZ         */
 #define  RT_SENSOR_UNIT_ONE            (10) /* Dimensionless quantity  unit: 1          */
 #define  RT_SENSOR_UNIT_BPM            (11) /* Heart rate              unit: bpm        */
+#define  RT_SENSOR_UNIT_MM             (12) /* Distance                unit: mm         */
 
 /* Sensor communication interface types */
 
@@ -131,6 +132,8 @@ struct rt_sensor_config
     rt_int32_t                   range;     /* sensor range of measurement */
 };
 
+typedef struct rt_sensor_device *rt_sensor_t;
+
 struct rt_sensor_device
 {
     struct rt_device             parent;    /* The standard device */
@@ -144,8 +147,9 @@ struct rt_sensor_device
     const struct rt_sensor_ops  *ops;       /* The sensor ops */
 
     struct rt_sensor_module     *module;    /* The sensor module */
+    
+    rt_err_t (*irq_handle)(rt_sensor_t sensor);             /* Called when an interrupt is generated, registered by the driver */
 };
-typedef struct rt_sensor_device *rt_sensor_t;
 
 struct rt_sensor_module
 {
