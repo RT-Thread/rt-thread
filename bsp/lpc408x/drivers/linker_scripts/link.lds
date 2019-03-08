@@ -6,8 +6,8 @@
 /* Program Entry, set to mark it as "used" and avoid gc */
 MEMORY
 {
-    CODE (rx) : ORIGIN = 0x00000000, LENGTH = 0x00080000
-    DATA (rw) : ORIGIN = 0x10000000, LENGTH = 0x00010000
+    CODE (rx) : ORIGIN = 0x00000000, LENGTH = 512k  /* 512k flash */
+    DATA (rw) : ORIGIN = 0x10000000, LENGTH = 64k   /* 64k sram */
 }
 ENTRY(Reset_Handler)
 _system_stack_size = 0x200;
@@ -38,6 +38,7 @@ SECTIONS
         __vsymtab_end = .;
         . = ALIGN(4);
 
+        /* section information for initial. */
         . = ALIGN(4);
         __rt_init_start = .;
         KEEP(*(SORT(.rti_fn*)))
