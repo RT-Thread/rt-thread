@@ -414,6 +414,12 @@ static void pwm_get_channel(void)
 #ifdef BSP_USING_PWM2_CH1
     stm32_pwm_obj[PWM2_INDEX].channel |= 1 << 0;
 #endif
+#ifdef BSP_USING_PWM2_CH2
+    stm32_pwm_obj[PWM2_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM2_CH3
+    stm32_pwm_obj[PWM2_INDEX].channel |= 1 << 2;
+#endif
 #ifdef BSP_USING_PWM2_CH4
     stm32_pwm_obj[PWM2_INDEX].channel |= 1 << 3;
 #endif
@@ -429,20 +435,77 @@ static void pwm_get_channel(void)
 #ifdef BSP_USING_PWM3_CH4
     stm32_pwm_obj[PWM3_INDEX].channel |= 1 << 3;
 #endif
+#ifdef BSP_USING_PWM4_CH1
+    stm32_pwm_obj[PWM4_INDEX].channel |= 1 << 0;
+#endif
 #ifdef BSP_USING_PWM4_CH2
     stm32_pwm_obj[PWM4_INDEX].channel |= 1 << 1;
 #endif
 #ifdef BSP_USING_PWM4_CH3
     stm32_pwm_obj[PWM4_INDEX].channel |= 1 << 2;
 #endif
+#ifdef BSP_USING_PWM4_CH4
+    stm32_pwm_obj[PWM4_INDEX].channel |= 1 << 3;
+#endif
 #ifdef BSP_USING_PWM5_CH1
-    stm32_pwm_obj[PWM5_INDEX].channel |= 1 << 1;
+    stm32_pwm_obj[PWM5_INDEX].channel |= 1 << 0;
 #endif
 #ifdef BSP_USING_PWM5_CH2
-    stm32_pwm_obj[PWM5_INDEX].channel |= 1 << 2;
+    stm32_pwm_obj[PWM5_INDEX].channel |= 1 << 1;
 #endif
 #ifdef BSP_USING_PWM5_CH3
+    stm32_pwm_obj[PWM5_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM5_CH4
     stm32_pwm_obj[PWM5_INDEX].channel |= 1 << 3;
+#endif
+#ifdef BSP_USING_PWM6_CH1
+    stm32_pwm_obj[PWM6_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM6_CH2
+    stm32_pwm_obj[PWM6_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM6_CH3
+    stm32_pwm_obj[PWM6_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM6_CH4
+    stm32_pwm_obj[PWM6_INDEX].channel |= 1 << 3;
+#endif
+#ifdef BSP_USING_PWM7_CH1
+    stm32_pwm_obj[PWM7_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM7_CH2
+    stm32_pwm_obj[PWM7_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM7_CH3
+    stm32_pwm_obj[PWM7_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM7_CH4
+    stm32_pwm_obj[PWM7_INDEX].channel |= 1 << 3;
+#endif
+#ifdef BSP_USING_PWM8_CH1
+    stm32_pwm_obj[PWM8_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM8_CH2
+    stm32_pwm_obj[PWM8_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM8_CH3
+    stm32_pwm_obj[PWM8_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM8_CH4
+    stm32_pwm_obj[PWM8_INDEX].channel |= 1 << 3;
+#endif
+#ifdef BSP_USING_PWM9_CH1
+    stm32_pwm_obj[PWM9_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM9_CH2
+    stm32_pwm_obj[PWM9_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM9_CH3
+    stm32_pwm_obj[PWM9_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM9_CH4
+    stm32_pwm_obj[PWM9_INDEX].channel |= 1 << 3;
 #endif
 }
 
