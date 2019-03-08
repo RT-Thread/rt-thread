@@ -18,9 +18,6 @@ before_script:
   - export RTT_ROOT=`pwd`
   - "[ x$RTT_CC == x ] && export RTT_CC='gcc' || true"
 
-script:
-  - scons -C bsp/$RTT_BSP
-
 env:
 #  - RTT_BSP='simulator' RTT_CC='clang-analyze' RTT_EXEC_PATH=/usr/share/clang/scan-build
   - RTT_BSP='CME_M7' RTT_TOOL_CHAIN='sourcery-arm'
@@ -110,3 +107,24 @@ env:
   - RTT_BSP='frdm-k64f' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='fh8620' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='x1000' RTT_TOOL_CHAIN='sourcery-mips'
+
+stage: compile
+script:
+  - scons -C bsp/$RTT_BSP
+
+jobs:
+  include:
+    - stage: AutoTest
+      env: none
+      script: 
+        - echo "AutoTest"
+        - if [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
+            echo "PR mode";
+            curl --request POST 
+                --header "PRIVATE-TOKEN:${GITLAB_ACCESS_TOKEN}" 
+                --header "Content-Type:application/json" 
+                --data '{"ref":"master","tag":"windows","variables":[{"key":"REPOSITORY_URL","value":"'${REPOSITORY_URL}'"},{"key":"GITHUB_EVENT_TYPE","value":"'${TRAVIS_EVENT_TYPE}'"},{"key":"GITHUB_JOB_ID","value":"'${TRAVIS_BUILD_NUMBER}'"},{"key":"GITHUB_PR_NUMBER","value":"'${TRAVIS_PULL_REQUEST}'"},{"key":"GITHUB_DEFAULT_BRANCH","value":"'${TRAVIS_BRANCH}'"},{"key":"GITHUB_HEAD_SHA","value":"'${TRAVIS_PULL_REQUEST_SHA}'"}]}' 
+                "https://git.rt-thread.com/api/v4/projects/624/pipeline?ref=master";
+          else
+            echo "not PR mode";
+          fi
