@@ -124,7 +124,7 @@ jobs:
                 --header "PRIVATE-TOKEN:${GITLAB_ACCESS_TOKEN}" 
                 --header "Content-Type:application/json" 
                 --data '{"ref":"master","tag":"windows","variables":[{"key":"REPOSITORY_URL","value":"'${REPOSITORY_URL}'"},{"key":"GITHUB_EVENT_TYPE","value":"'${TRAVIS_EVENT_TYPE}'"},{"key":"GITHUB_JOB_ID","value":"'${TRAVIS_BUILD_NUMBER}'"},{"key":"GITHUB_PR_NUMBER","value":"'${TRAVIS_PULL_REQUEST}'"},{"key":"GITHUB_DEFAULT_BRANCH","value":"'${TRAVIS_BRANCH}'"},{"key":"GITHUB_HEAD_SHA","value":"'${TRAVIS_PULL_REQUEST_SHA}'"}]}' 
-                "https://git.rt-thread.com/api/v4/projects/624/pipeline?ref=master";
+                "https://git.rt-thread.com/api/v4/projects/627/pipeline?ref=master";
           else
             echo "not PR mode";
           fi
