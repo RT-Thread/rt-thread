@@ -4,14 +4,13 @@ import os
 ARCH='arm'
 CPU='cortex-m4'
 CROSS_TOOL='keil'
-BOARD_NAME = 'lpc408x'
 
 if os.getenv('RTT_CC'):
 	CROSS_TOOL = os.getenv('RTT_CC')
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= r'D:/Program Files (x86)/CodeSourcery/Sourcery_CodeBench_Lite_for_ARM_EABI/bin'
+	EXEC_PATH 	= r'D:/xxx'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'D:/Keil'
@@ -33,17 +32,18 @@ if PLATFORM == 'gcc':
     CXX = PREFIX + 'g++'
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
-    LINK = PREFIX + 'g++'
+    LINK = PREFIX + 'gcc'
     TARGET_EXT = 'elf'
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -mcpu=cortex-m4 -mthumb'
+    DEVICE = ' -mcpu=' + CPU + ' -mthumb '
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-' + BOARD_NAME + '.map,-cref,-u,Reset_Handler -T rtthread-' + BOARD_NAME + '.ld'
-
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T drivers/linker_scripts/link.lds'
+    CXXFLAGS = CFLAGS
+	
     CPATH = ''
     LPATH = ''
 
@@ -52,8 +52,6 @@ if PLATFORM == 'gcc':
         AFLAGS += ' -gdwarf-2'
     else:
         CFLAGS += ' -O2'
-
-    CXXFLAGS = CFLAGS
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
@@ -66,17 +64,16 @@ elif PLATFORM == 'armcc':
     LINK = 'armlink'
     TARGET_EXT = 'axf'
 
-    DEVICE = ' --cpu Cortex-M4.fp'
-    CFLAGS = DEVICE + ' --apcs=interwork'
-    AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread_' + \
-        BOARD_NAME + '.map --scatter rtthread-' + BOARD_NAME + '.sct'
+    DEVICE = ' --cpu ' + CPU + '.fp '
+    CFLAGS = '-c ' + DEVICE + ' --apcs=interwork'
+    AFLAGS = DEVICE + ' --apcs=interwork '
+    LFLAGS = DEVICE + ' --scatter "drivers/linker_scripts/link.sct" --info sizes --info totals --info unused --info veneers --list rtthread.map --strict'
 
-    CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
-    LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
+    CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCC/INC'
+    LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/ARMCC/LIB'
     CXXFLAGS = CFLAGS
 
-    EXEC_PATH += '/arm/bin40/'
+    EXEC_PATH += '/arm/armcc/bin/'
 
     if BUILD == 'debug':
         CFLAGS += ' -g -O0'

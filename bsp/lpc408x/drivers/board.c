@@ -8,19 +8,14 @@
  * 2009-01-05     Bernard      first implementation
  */
 
-#include <rthw.h>
-#include <rtthread.h>
+#include <board.h>
 
-#include "board.h"
-#include "drv_uart.h"
-#ifdef LPC_EXT_SDRAM
-#include "drv_sdram.h"
+#if defined(BSP_USING_SDRAM) && defined(RT_USING_MEMHEAP_AS_HEAP)
+    #include "drv_sdram.h"
+    extern void rt_hw_sdram_init(void);
+    static struct rt_memheap system_heap;
 #endif
 
-/**
- * This is the timer interrupt service routine.
- *
- */
 void SysTick_Handler(void)
 {
     /* enter interrupt */
@@ -52,14 +47,22 @@ void rt_hw_board_init()
     /* set pend exception priority */
     NVIC_SetPriority(PendSV_IRQn, (1 << __NVIC_PRIO_BITS) - 1);
 
-    /*init uart device*/
-    rt_hw_uart_init();
-    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+#ifdef RT_USING_HEAP
 
-#ifdef LPC_EXT_SDRAM
-    rt_kprintf("Initialize SDRAM ...");
-    lpc_sdram_hw_init();
-    rt_kprintf("done!\n");
+#if defined(BSP_USING_SDRAM) && defined(RT_USING_MEMHEAP_AS_HEAP)
+    rt_hw_sdram_init();
+    rt_system_heap_init((void *)EXT_SDRAM_BEGIN, (void *)EXT_SDRAM_END);
+    rt_memheap_init(&system_heap, "sdram", (void *)HEAP_BEGIN, ((rt_uint32_t)HEAP_END - (rt_uint32_t)HEAP_BEGIN));
+#else
+    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
-    // rt_components_board_init();
+
+#endif /* RT_USING_HEAP */
+
+#ifdef RT_USING_COMPONENTS_INIT
+    rt_components_board_init();
+#endif
+#ifdef RT_USING_CONSOLE
+    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
 }
