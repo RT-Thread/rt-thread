@@ -43,6 +43,11 @@ void rt_sensor_cb(rt_sensor_t sen)
     {
         return;
     }
+    
+    if (sen->irq_handle != RT_NULL)
+    {
+        sen->irq_handle(sen);
+    }
 
     /* The buffer is not empty. Read the data in the buffer first */
     if (sen->data_len > 0)
