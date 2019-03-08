@@ -8,11 +8,11 @@
  * 2013-05-18     Bernard      The first version for LPC40xx
  */
 
-#include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
-
 #include "board.h"
+
+#ifdef RT_USING_SERIAL
 
 struct lpc_uart
 {
@@ -47,7 +47,6 @@ static rt_err_t lpc_configure(struct rt_serial_device *serial, struct serial_con
 
     /*enable and reset FIFO*/
     uart->UART->FCR = 0x07;
-
 
     return RT_EOK;
 }
@@ -104,11 +103,7 @@ static const struct rt_uart_ops lpc_uart_ops =
     lpc_getc,
 };
 
-#ifdef RT_USING_UART0
-/* UART0 device driver structure */
-#if RTTHREAD_VERSION < 20000 /* RT-Thread 1.x */
-struct serial_ringbuffer uart0_int_rx;
-#endif
+#ifdef BSP_USING_UART0
 
 struct lpc_uart uart0 =
 {
@@ -128,14 +123,9 @@ void UART0_IRQHandler(void)
     IIR &= 0x0e;
     switch (IIR)
     {
-
     case 0x04:
     case 0x0C:
-    #if RTTHREAD_VERSION < 20000
-        rt_hw_serial_isr(&serial0);
-    #else
         rt_hw_serial_isr(&serial0, RT_SERIAL_EVENT_RX_IND);
-    #endif
         break;
     case 0x06:
         tmp = LPC_UART0->LSR;
@@ -148,11 +138,8 @@ void UART0_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif
-#ifdef RT_USING_UART2
-/* UART2 device driver structure */
-#if RTTHREAD_VERSION < 20000 /* RT-Thread 1.x */
-struct serial_ringbuffer uart2_int_rx;
-#endif
+
+#ifdef BSP_USING_UART2
 
 struct lpc_uart uart2 =
 {
@@ -174,11 +161,7 @@ void UART2_IRQHandler(void)
     {
     case 0x04:
     case 0x0C:
-    #if RTTHREAD_VERSION < 20000
-        rt_hw_serial_isr(&serial2);
-    #else
         rt_hw_serial_isr(&serial2, RT_SERIAL_EVENT_RX_IND);
-    #endif
         break;
     case 0x06:
         tmp = LPC_UART2->LSR;
@@ -193,66 +176,19 @@ void UART2_IRQHandler(void)
 }
 #endif
 
-#ifdef RT_USING_UART4
-/* UART4 device driver structure */
-#if RTTHREAD_VERSION < 20000 /* RT-Thread 1.x */
-struct serial_ringbuffer uart4_int_rx;
-#endif
-
-struct lpc_uart uart4 =
+int rt_hw_uart_init(void)
 {
-    LPC_UART4,
-    UART4_IRQn,
-};
-struct rt_serial_device serial4;
-
-void UART4_IRQHandler(void)
-{
-    volatile  uint32_t IIR, tmp;
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    IIR = LPC_UART4->IIR;
-    IIR &= 0x0e;
-    switch (IIR)
-    {
-    case 0x04:
-    case 0x0C:
-    #if RTTHREAD_VERSION < 20000
-        rt_hw_serial_isr(&serial4);
-    #else
-        rt_hw_serial_isr(&serial4, RT_SERIAL_EVENT_RX_IND);
-    #endif
-        break;
-    case 0x06:
-        tmp = LPC_UART4->LSR;
-        break;
-    default :
-        tmp = LPC_UART4->LSR;
-        break;
-    }
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-#endif
-
-void rt_hw_uart_init(void)
-{
+    rt_err_t ret = RT_EOK;
     struct lpc_uart *uart;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
-#ifdef RT_USING_UART0
+#ifdef BSP_USING_UART0
     uart = &uart0;
 
     serial0.ops    = &lpc_uart_ops;
     serial0.config = config;
-    #if RTTHREAD_VERSION < 20000
-    serial0.int_rx = &uart0_int_rx;
-    #endif
     serial0.parent.user_data = uart;
-    
+
     /*
      * Initialize UART0 pin connect
      * P0.2: U0_TXD
@@ -273,19 +209,16 @@ void rt_hw_uart_init(void)
     NVIC_EnableIRQ(uart->UART_IRQn);
 
     /* register UART0 device */
-    rt_hw_serial_register(&serial0, "uart0",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
-                          uart);
+    ret = rt_hw_serial_register(&serial0, "uart0",
+                                RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+                                uart);
 #endif
 
-#ifdef RT_USING_UART2
+#ifdef BSP_USING_UART2
     uart = &uart2;
 
     serial2.ops    = &lpc_uart_ops;
     serial2.config = config;
-    #if RTTHREAD_VERSION < 20000
-    serial2.int_rx = &uart2_int_rx;
-    #endif
     serial2.parent.user_data = uart;
 
     /*
@@ -307,42 +240,13 @@ void rt_hw_uart_init(void)
     NVIC_EnableIRQ(uart->UART_IRQn);
 
     /* register UART2 device */
-    rt_hw_serial_register(&serial2, "uart2",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
-                          uart);
+    ret = rt_hw_serial_register(&serial2, "uart2",
+                                RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
+                                uart);
 #endif
 
-#ifdef RT_USING_UART4
-    uart = &uart4;
-
-    serial4.ops    = &lpc_uart_ops;
-    serial4.config = config;
-    #if RTTHREAD_VERSION < 20000
-    serial4.int_rx = &uart4_int_rx;
-    #endif
-    serial4.parent.user_data = uart;
-    
-    /*
-     * Initialize UART2 pin connect
-     * P5.4: U2_TXD
-     * P5.3: U2_RXD
-     */
-    LPC_IOCON->P5_4 &= ~0x07;
-    LPC_IOCON->P5_3 &= ~0x07;
-    LPC_IOCON->P5_4 |= 0x04;
-    LPC_IOCON->P5_3 |= 0x04;
-
-    /* enable the uart4 power and clock */
-    LPC_SC->PCONP |= 0x01 << 8;
-    /* preemption = 1, sub-priority = 1 */
-    NVIC_SetPriority(uart->UART_IRQn, ((0x01 << 3) | 0x01));
-
-    /* Enable Interrupt for UART channel */
-    NVIC_EnableIRQ(uart->UART_IRQn);
-
-    /* register UART2 device */
-    rt_hw_serial_register(&serial4, "uart4",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
-                          uart);
-#endif
+    return ret;
 }
+INIT_BOARD_EXPORT(rt_hw_uart_init);
+
+#endif /* RT_USING_SERIAL */
