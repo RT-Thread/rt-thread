@@ -516,6 +516,7 @@ void *rt_memcpy(void *dest, const void *src, rt_ubase_t n);
 rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count);
 rt_int32_t rt_strcmp(const char *cs, const char *ct);
 rt_size_t rt_strlen(const char *src);
+rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen);
 char *rt_strdup(const char *s);
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
 /* leak strdup interface */
