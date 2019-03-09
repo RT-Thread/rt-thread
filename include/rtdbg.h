@@ -42,7 +42,7 @@
 #define DBG_COLOR
 #endif
 
-#if defined(RT_USING_ULOG) && defined(DBG_ENABLE)
+#if defined(RT_USING_ULOG)
 /* using ulog compatible with rtdbg  */
 #include <ulog.h>
 #else
