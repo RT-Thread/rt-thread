@@ -81,7 +81,7 @@ struct dfs_filesystem *dfs_filesystem_lookup(const char *path)
     struct dfs_filesystem *fs = NULL;
     uint32_t fspath, prefixlen;
 
-    prefixlen = 0;
+    prefixlen = strlen(path);
 
     RT_ASSERT(path);
 
@@ -96,16 +96,15 @@ struct dfs_filesystem *dfs_filesystem_lookup(const char *path)
             continue;
 
         fspath = strlen(iter->path);
-        if ((fspath < prefixlen)
+        if ((fspath > prefixlen)
             || (strncmp(iter->path, path, fspath) != 0))
             continue;
 
         /* check next path separator */
-        if (fspath > 1 && (strlen(path) > fspath) && (path[fspath] != '/'))
+        if (fspath > 1 && (prefixlen > fspath) && (path[fspath] != '/'))
             continue;
 
         fs = iter;
-        prefixlen = fspath;
     }
 
     dfs_unlock();
