@@ -1,25 +1,13 @@
 /*
- * File      : drv_i2c.c
- * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2017-08-08     Yang        the first version
  * 2018-03-24     LaiYiKeTang add hardware iic
+ * 2019-03-11     JiCheng      Adapt RT1020's IO MAP
  */
 
 #include <rtthread.h>
@@ -44,7 +32,7 @@
 #define LPI2C_CLOCK_FREQUENCY ((CLOCK_GetFreq(kCLOCK_Usb1PllClk) / 8) / (LPI2C_CLOCK_SOURCE_DIVIDER))
 
 #ifdef RT_USING_HW_I2C1
-static struct rt1052_i2c_bus lpi2c1 =
+static struct rt1021_i2c_bus lpi2c1 =
 {
     .I2C = LPI2C1,
     .device_name = I2C1BUS_NAME,
@@ -52,7 +40,7 @@ static struct rt1052_i2c_bus lpi2c1 =
 #endif /* RT_USING_HW_I2C1 */
 
 #ifdef RT_USING_HW_I2C2
-static struct rt1052_i2c_bus lpi2c2 =
+static struct rt1021_i2c_bus lpi2c2 =
 {
     .I2C = LPI2C2,
     .device_name = I2C2BUS_NAME,
@@ -60,7 +48,7 @@ static struct rt1052_i2c_bus lpi2c2 =
 #endif /* RT_USING_HW_I2C2 */
 
 #ifdef RT_USING_HW_I2C3
-static struct rt1052_i2c_bus lpi2c3 =
+static struct rt1021_i2c_bus lpi2c3 =
 {
     .I2C = LPI2C3,
     .device_name = I2C3BUS_NAME,
@@ -68,7 +56,7 @@ static struct rt1052_i2c_bus lpi2c3 =
 #endif /* RT_USING_HW_I2C3 */
 
 #ifdef RT_USING_HW_I2C4
-static struct rt1052_i2c_bus lpi2c4 =
+static struct rt1021_i2c_bus lpi2c4 =
 {
     .I2C = LPI2C4,
     .device_name = I2C4BUS_NAME,
@@ -94,7 +82,7 @@ static const struct rt_i2c_bus_device_ops imxrt_i2c_ops =
     imxrt_i2c_bus_control,
 };
 
-void imxrt_lpi2c_gpio_init(struct rt1052_i2c_bus *bus)
+void imxrt_lpi2c_gpio_init(struct rt1021_i2c_bus *bus)
 {
     if (bus->I2C == LPI2C1)
     {
@@ -162,7 +150,7 @@ void imxrt_lpi2c_gpio_init(struct rt1052_i2c_bus *bus)
     }
 }
 
-static rt_err_t imxrt_lpi2c_configure(struct rt1052_i2c_bus *bus, lpi2c_master_config_t *cfg)
+static rt_err_t imxrt_lpi2c_configure(struct rt1021_i2c_bus *bus, lpi2c_master_config_t *cfg)
 {
     RT_ASSERT(bus != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
@@ -250,36 +238,36 @@ static rt_size_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                                     struct rt_i2c_msg msgs[],
                                     rt_uint32_t num)
 {
-    struct rt1052_i2c_bus *rt1052_i2c;
+    struct rt1021_i2c_bus *rt1021_i2c;
     rt_size_t i;
     RT_ASSERT(bus != RT_NULL);
-    rt1052_i2c = (struct rt1052_i2c_bus *) bus;
+    rt1021_i2c = (struct rt1021_i2c_bus *) bus;
 
-    rt1052_i2c->msg = msgs;
-    rt1052_i2c->msg_ptr = 0;
-    rt1052_i2c->msg_cnt = num;
-    rt1052_i2c->dptr = 0;
+    rt1021_i2c->msg = msgs;
+    rt1021_i2c->msg_ptr = 0;
+    rt1021_i2c->msg_cnt = num;
+    rt1021_i2c->dptr = 0;
 
     for (i = 0; i < num; i++)
     {
-        if (rt1052_i2c->msg[i].flags & RT_I2C_RD)
+        if (rt1021_i2c->msg[i].flags & RT_I2C_RD)
         {
-            if (LPI2C_MasterStart(rt1052_i2c->I2C, rt1052_i2c->msg[i].addr, kLPI2C_Read) != kStatus_Success)
+            if (LPI2C_MasterStart(rt1021_i2c->I2C, rt1021_i2c->msg[i].addr, kLPI2C_Read) != kStatus_Success)
             {
                 i = 0;
                 break;
             }
-            if (LPI2C_MasterWaitForTxFifoAllEmpty(rt1052_i2c->I2C) != kStatus_Success)
+            if (LPI2C_MasterWaitForTxFifoAllEmpty(rt1021_i2c->I2C) != kStatus_Success)
             {
                 i = 0;
                 break;
             }
-            if (LPI2C_MasterReceive(rt1052_i2c->I2C, rt1052_i2c->msg[i].buf, rt1052_i2c->msg[i].len) != kStatus_Success)
+            if (LPI2C_MasterReceive(rt1021_i2c->I2C, rt1021_i2c->msg[i].buf, rt1021_i2c->msg[i].len) != kStatus_Success)
             {
                 i = 0;
                 break;
             }
-            if (LPI2C_MasterWaitForTxFifoAllEmpty(rt1052_i2c->I2C) != kStatus_Success)
+            if (LPI2C_MasterWaitForTxFifoAllEmpty(rt1021_i2c->I2C) != kStatus_Success)
             {
                 i = 0;
                 break;
@@ -287,22 +275,22 @@ static rt_size_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
         }
         else
         {
-            if (LPI2C_MasterStart(rt1052_i2c->I2C, rt1052_i2c->msg[i].addr, kLPI2C_Write) != kStatus_Success)
+            if (LPI2C_MasterStart(rt1021_i2c->I2C, rt1021_i2c->msg[i].addr, kLPI2C_Write) != kStatus_Success)
             {
                 i = 0;
                 break;
             }
-            if (LPI2C_MasterWaitForTxFifoAllEmpty(rt1052_i2c->I2C) != kStatus_Success)
+            if (LPI2C_MasterWaitForTxFifoAllEmpty(rt1021_i2c->I2C) != kStatus_Success)
             {
                 i = 0;
                 break;
             }
-            if (LPI2C_MasterSend(rt1052_i2c->I2C, rt1052_i2c->msg[i].buf, rt1052_i2c->msg[i].len) != kStatus_Success)
+            if (LPI2C_MasterSend(rt1021_i2c->I2C, rt1021_i2c->msg[i].buf, rt1021_i2c->msg[i].len) != kStatus_Success)
             {
                 i = 0;
                 break;
             }
-            if (LPI2C_MasterWaitForTxFifoAllEmpty(rt1052_i2c->I2C) != kStatus_Success)
+            if (LPI2C_MasterWaitForTxFifoAllEmpty(rt1021_i2c->I2C) != kStatus_Success)
             {
                 i = 0;
                 break;
@@ -310,15 +298,15 @@ static rt_size_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
         }
     }
     i2c_dbg("send stop condition\n");
-    if (LPI2C_MasterStop(rt1052_i2c->I2C) != kStatus_Success)
+    if (LPI2C_MasterStop(rt1021_i2c->I2C) != kStatus_Success)
     {
         i = 0;
     }
 
-    rt1052_i2c->msg = RT_NULL;
-    rt1052_i2c->msg_ptr = 0;
-    rt1052_i2c->msg_cnt = 0;
-    rt1052_i2c->dptr = 0;
+    rt1021_i2c->msg = RT_NULL;
+    rt1021_i2c->msg_ptr = 0;
+    rt1021_i2c->msg_cnt = 0;
+    rt1021_i2c->dptr = 0;
     return i;
 }
 

@@ -1,25 +1,12 @@
 /*
-* File      : drv_hwtimer.c
-* This file is part of RT-Thread RTOS
-* COPYRIGHT (C) 2017, RT-Thread Development Team
-*
-*  This program is free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation; either version 2 of the License, or
-*  (at your option) any later version.
-*
-*  This program is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*  You should have received a copy of the GNU General Public License along
-*  with this program; if not, write to the Free Software Foundation, Inc.,
-*  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
 * Change Logs:
 * Date           Author       Notes
 * 2018-04-17     WangBing     the first version.
+* 2019-03-11     JiCheng      Change API name from rt1052 to rt1021
 */
 
 #include <rtthread.h>
@@ -47,7 +34,7 @@ static void NVIC_Configuration(void)
     EnableIRQ(GPT1_IRQn);
 }
 
-static rt_err_t rt1052_hwtimer_control(rt_hwtimer_t *timer, rt_uint32_t cmd, void *args)
+static rt_err_t rt1021_hwtimer_control(rt_hwtimer_t *timer, rt_uint32_t cmd, void *args)
 {
     rt_err_t err = RT_EOK;
     GPT_Type *hwtimer_dev;
@@ -73,7 +60,7 @@ static rt_err_t rt1052_hwtimer_control(rt_hwtimer_t *timer, rt_uint32_t cmd, voi
     return err;
 }
 
-static rt_uint32_t rt1052_hwtimer_count_get(rt_hwtimer_t *timer)
+static rt_uint32_t rt1021_hwtimer_count_get(rt_hwtimer_t *timer)
 {
     rt_uint32_t CurrentTimer_Count;
     GPT_Type *hwtimer_dev;
@@ -86,7 +73,7 @@ static rt_uint32_t rt1052_hwtimer_count_get(rt_hwtimer_t *timer)
     return CurrentTimer_Count;
 }
 
-static void rt1052_hwtimer_init(rt_hwtimer_t *timer, rt_uint32_t state)
+static void rt1021_hwtimer_init(rt_hwtimer_t *timer, rt_uint32_t state)
 {
     GPT_Type *hwtimer_dev;
     gpt_config_t gptConfig;
@@ -108,7 +95,7 @@ static void rt1052_hwtimer_init(rt_hwtimer_t *timer, rt_uint32_t state)
     }
 }
 
-static rt_err_t rt1052_hwtimer_start(rt_hwtimer_t *timer, rt_uint32_t cnt, rt_hwtimer_mode_t mode)
+static rt_err_t rt1021_hwtimer_start(rt_hwtimer_t *timer, rt_uint32_t cnt, rt_hwtimer_mode_t mode)
 {
     GPT_Type *hwtimer_dev;
     hwtimer_dev = (GPT_Type *)timer->parent.user_data;
@@ -128,7 +115,7 @@ static rt_err_t rt1052_hwtimer_start(rt_hwtimer_t *timer, rt_uint32_t cnt, rt_hw
     return RT_EOK;
 }
 
-static void rt1052_hwtimer_stop(rt_hwtimer_t *timer)
+static void rt1021_hwtimer_stop(rt_hwtimer_t *timer)
 {
     GPT_Type *hwtimer_dev;
     hwtimer_dev = (GPT_Type *)timer->parent.user_data;
@@ -138,16 +125,16 @@ static void rt1052_hwtimer_stop(rt_hwtimer_t *timer)
     GPT_StopTimer(hwtimer_dev);
 }
 
-static const struct rt_hwtimer_ops rt1052_hwtimer_ops =
+static const struct rt_hwtimer_ops rt1021_hwtimer_ops =
 {
-    rt1052_hwtimer_init,
-    rt1052_hwtimer_start,
-    rt1052_hwtimer_stop,
-    rt1052_hwtimer_count_get,
-    rt1052_hwtimer_control,
+    rt1021_hwtimer_init,
+    rt1021_hwtimer_start,
+    rt1021_hwtimer_stop,
+    rt1021_hwtimer_count_get,
+    rt1021_hwtimer_control,
 };
 
-static const struct rt_hwtimer_info rt1052_hwtimer_info =
+static const struct rt_hwtimer_info rt1021_hwtimer_info =
 {
     25000000,           /* the maximum count frequency can be set */
     6103,               /* the minimum count frequency can be set */
@@ -157,12 +144,12 @@ static const struct rt_hwtimer_info rt1052_hwtimer_info =
 
 static rt_hwtimer_t GPT_timer1;
 
-int rt1052_hw_hwtimer_init(void)
+int rt1021_hw_hwtimer_init(void)
 {
     int ret = RT_EOK;
 
-    GPT_timer1.info = &rt1052_hwtimer_info;
-    GPT_timer1.ops  = &rt1052_hwtimer_ops;
+    GPT_timer1.info = &rt1021_hwtimer_info;
+    GPT_timer1.ops  = &rt1021_hwtimer_ops;
 
     rt_device_hwtimer_register(&GPT_timer1, "_timer", GPT1);
 
@@ -184,6 +171,6 @@ void GPT1_IRQHandler(void)
 #endif
 }
 
-INIT_DEVICE_EXPORT(rt1052_hw_hwtimer_init);
+INIT_DEVICE_EXPORT(rt1021_hw_hwtimer_init);
 
 #endif /*RT_USING_HWTIMER*/
