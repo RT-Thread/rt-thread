@@ -22,6 +22,7 @@
 #define IDLE_THREAD_STACK_SIZE 1024
 /* RT_USING_TIMER_SOFT is not set */
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 #define RT_DEBUG_INIT_CONFIG
 #define RT_DEBUG_INIT 1
 /* RT_DEBUG_THREAD_CONFIG is not set */

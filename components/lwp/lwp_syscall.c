@@ -24,9 +24,7 @@
 #define SYSCALL_NET(f) ((void*)sys_notimpl)
 #endif
 
-#define DBG_ENABLE
 #define DBG_SECTION_NAME    "LWP_CALL"
-#define DBG_COLOR
 #define DBG_LEVEL           DBG_WARNING
 #include <rtdbg.h>
 

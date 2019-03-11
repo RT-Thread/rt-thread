@@ -16,14 +16,13 @@
 #include <wlan_prot.h>
 #include <wlan_workqueue.h>
 
-#define DBG_ENABLE
+
 #ifdef RT_WLAN_MGNT_DEBUG
 #define DBG_LEVEL DBG_LOG
 #else
 #define DBG_LEVEL DBG_INFO
 #endif
 #define DBG_SECTION_NAME  "WLAN.mgnt"
-#define DBG_COLOR
 #include <rtdbg.h>
 
 #ifndef RT_WLAN_DEVICE

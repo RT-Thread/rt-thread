@@ -17,9 +17,7 @@
 #include <dfs_posix.h>
 
 #define DBG_SECTION_NAME    "DLMD"
-#define DBG_ENABLE          // enable debug macro
 #define DBG_LEVEL           DBG_INFO
-#define DBG_COLOR
 #include <rtdbg.h>          // must after of DEBUG_ENABLE or some other options
 
 static struct rt_module_symtab *_rt_module_symtab_begin = RT_NULL;
