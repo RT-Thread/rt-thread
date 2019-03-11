@@ -4,7 +4,7 @@
   <Header>### uVision Project, (C) Keil Software</Header>
   <Targets>
     <Target>
-      <TargetName>rt-thread_es32f065x</TargetName>
+      <TargetName>rt-thread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
