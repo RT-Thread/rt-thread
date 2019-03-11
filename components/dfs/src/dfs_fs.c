@@ -106,6 +106,7 @@ struct dfs_filesystem *dfs_filesystem_lookup(const char *path)
 
         fs = iter;
         prefixlen = fspath;
+        break;
     }
 
     dfs_unlock();
