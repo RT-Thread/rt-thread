@@ -1,15 +1,12 @@
 /*
- * File      : board.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 RT-Thread Develop Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2017-12-04     Tanek        first implementation
+ * 2019-03-11     JiCheng      Adapt RT1020's IO MAP
  */
 #include <stdint.h>
 #include <rthw.h>
@@ -50,32 +47,6 @@ static void _clock_init(void)
 	  _WDWORD(0x400D8030,0x00002001); 
     _WDWORD(0x400D8100,0x001d0000);   
     _WDWORD(0x400FC014,0x00010D40); 
-//		// Enable SYS PLL
-//		_WDWORD(0x400D8030,0x00002001); 
-//		do
-//		{
-//			reg = _RDWORD(0x400D8030);
-//		}while((reg & 0x80000000) == 0);
-
-//		// Ungate SYS PLL PFD2
-//		reg = _RDWORD(0x400D8100);
-//		reg &= ~0x800000;
-//		_WDWORD(0x400D8100,reg);   
-
-//		// SEMC clock source selection.
-//		// SDRAM running at 133Mhz
-//		// CBCDR:
-//		//   SEMC_ALT_CLK_SEL: 0 PLL2 (SYS PLL) PFD2
-//		//   SEMC_CLK_SEL: 1 SEMC_ALT_CLK
-//		//   SEMC_PODF: 2 divide by 3
-//		reg = _RDWORD(0x400FC014);
-//		reg |= 0x20040;
-//		_WDWORD(0x400FC014,reg);   
-
-//		// Disable MPU which will be enabled by ROM to prevent code execution
-//		reg = _RDWORD(0xE000ED94);
-//		reg &= ~0x1;
-//		_WDWORD(0xE000ED94, reg);  
 }
 
 static void _sdr_Init(void)
@@ -219,5 +190,5 @@ int imxrt_sdram_init(void)
     
     return 0;
 }
-
+INIT_PREV_EXPORT(imxrt_sdram_init);
 /*@}*/

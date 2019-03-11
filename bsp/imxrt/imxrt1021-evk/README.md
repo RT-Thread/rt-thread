@@ -15,7 +15,7 @@ BSP默认支持的i.MX RT1021处理器具备以下简要的特性：
 
 ## 2. 编译说明
 
-i.MX RT1021板级包支持MDK5﹑IAR开发环境和GCC编译器，以下是具体版本信息：
+i.MX RT1020板级包支持MDK5﹑IAR开发环境和GCC编译器，以下是具体版本信息：
 
 | IDE/编译器 | 已测试版本 |
 | ---------- | --------- |
@@ -26,15 +26,11 @@ i.MX RT1021板级包支持MDK5﹑IAR开发环境和GCC编译器，以下是具�
 
 ### 3.1 配置工程
 
-i.MX RT1021 BSP支持多块开发板，包括官方开发板MIMXRT1020-EVK。如果不是基于官方开发板，那么需要重新配置并生成工程：
-
-- 在bsp下打开env工具
-- 输入`menuconfig`命令，`RT1021 Board select (***)-->`选择正确的开发板。
-- 输入`scons --target=mdk5 -s`或`scons --target=iar`来生成需要的工程
+i.MX RT1020 BSP默认支持官方开发板MIMXRT1020-EVK。
 
 ### 3.2 下载和仿真
 
-#### 3.2.1 MIMXRT1021-EVK
+#### 3.2.1 MIMXRT1020-EVK
 
 EVK开发板有板载OpenSDA仿真器，仿真器还连接到i.MX RT1021的UART1。使用USB线连接电脑和仿真器的USB口(J23)，就可以进行下载和仿真。在终端工具里打开仿真器的虚拟串口。
 
@@ -46,18 +42,21 @@ EVK开发板有板载OpenSDA仿真器，仿真器还连接到i.MX RT1021的UART1
 
  \ | /
 - RT -     Thread Operating System
- / | \     3.0.4 build May  2 2018
- 2006 - 2018 Copyright by rt-thread team
+ / | \     4.0.1 build Mar 11 2019
+ 2006 - 2019 Copyright by rt-thread team
+[I/FLEXSPI] NorFlash Init
+[I/FLEXSPI] Vendor ID: 0x15
+[I/FLEXSPI] NorFlash Init Done
 lwIP-2.0.2 initialized!
 using armcc, version: 5060750
-build time: May  2 2018 21:52:40
+build time: Mar 11 2019 22:24:46
 msh />[PHY] wait autonegotiation complete...
-SD card capacity 123904 KB
-probe mmcsd block device!
-found part[0], begin: 32256, size: 120.992MB
+[I/SDIO] SD card capacity 15558144 KB.
+found part[0], begin: 32256, size: 14.857GB
 File System initialized!
 [PHY] wait autonegotiation complete...
 ```
+
 
 ## 4. 驱动支持情况及计划
 
@@ -76,7 +75,7 @@ File System initialized!
 ## 5. 联系人信息
 
 维护人：
-
+- [JiCheng](https://github.com/jicheng0622)
 
 ## 6. 参考
 

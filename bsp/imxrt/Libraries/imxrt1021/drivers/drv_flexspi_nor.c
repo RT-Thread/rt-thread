@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-07-05     ZYH    the first version
+ * 2019-03-11     JiCheng    Remove section"itcm", use scatter file to allocate drv_flexspi.o to itcm
  */
 #include <rtthread.h>
 #define PRINTF rt_kprintf

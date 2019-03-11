@@ -1,15 +1,12 @@
 /*
- * File      : drv_rtc.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006-2013, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2018-03-15     Liuguang     the first version.
+ * 2019-03-11     JiCheng      Change the name from rt1052 to RT1021
  */
 #include "drv_rtc.h" 
 
@@ -62,7 +59,7 @@ static int set_timestamp(time_t timestamp)
     return RT_EOK;
 }
 
-static rt_err_t rt1052_hp_rtc_init(rt_device_t dev)
+static rt_err_t rt1021_hp_rtc_init(rt_device_t dev)
 {
     snvs_hp_rtc_config_t snvsRtcConfig;
     
@@ -74,27 +71,27 @@ static rt_err_t rt1052_hp_rtc_init(rt_device_t dev)
     return RT_EOK; 
 }
 
-static rt_err_t rt1052_hp_rtc_open(rt_device_t dev, rt_uint16_t oflag)
+static rt_err_t rt1021_hp_rtc_open(rt_device_t dev, rt_uint16_t oflag)
 {
     return RT_EOK; 
 }
 
-static rt_err_t rt1052_hp_rtc_close(rt_device_t dev) 
+static rt_err_t rt1021_hp_rtc_close(rt_device_t dev) 
 {
     return RT_EOK; 
 } 
 
-static rt_size_t rt1052_hp_rtc_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
+static rt_size_t rt1021_hp_rtc_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
     return 0; 
 }
 
-static rt_size_t rt1052_hp_rtc_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
+static rt_size_t rt1021_hp_rtc_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
     return 0; 
 }
 
-static rt_err_t rt1052_hp_rtc_control(rt_device_t dev, int cmd, void *args)
+static rt_err_t rt1021_hp_rtc_control(rt_device_t dev, int cmd, void *args)
 {
     RT_ASSERT(dev != RT_NULL);
     
@@ -122,12 +119,12 @@ static rt_err_t rt1052_hp_rtc_control(rt_device_t dev, int cmd, void *args)
 static struct rt_device device = 
 {
     .type    = RT_Device_Class_RTC, 
-    .init    = rt1052_hp_rtc_init, 
-    .open    = rt1052_hp_rtc_open, 
-    .close   = rt1052_hp_rtc_close, 
-    .read    = rt1052_hp_rtc_read,
-    .write   = rt1052_hp_rtc_write,
-    .control = rt1052_hp_rtc_control, 
+    .init    = rt1021_hp_rtc_init, 
+    .open    = rt1021_hp_rtc_open, 
+    .close   = rt1021_hp_rtc_close, 
+    .read    = rt1021_hp_rtc_read,
+    .write   = rt1021_hp_rtc_write,
+    .control = rt1021_hp_rtc_control, 
 };
 
 int rt_hw_hp_rtc_init(void)

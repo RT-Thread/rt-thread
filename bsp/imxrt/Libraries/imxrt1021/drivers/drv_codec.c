@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2019-03-11     JiCheng      Adapt RT1020's IO MAP
+ */
+
 #include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -55,21 +65,21 @@ static void _InitPins(void)
 {
     CLOCK_EnableClock(kCLOCK_Iomuxc);
 
-    IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_00_LPI2C1_SCL, 1);
-    IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_01_LPI2C1_SDA, 1);
+    IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_14_LPI2C1_SCL, 1);
+    IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_15_LPI2C1_SDA, 1);
 
-    IOMUXC_SetPinConfig( IOMUXC_GPIO_AD_B1_00_LPI2C1_SCL,  0xD8B0u);
-    IOMUXC_SetPinConfig(  IOMUXC_GPIO_AD_B1_01_LPI2C1_SDA, 0xD8B0u);
+    IOMUXC_SetPinConfig( IOMUXC_GPIO_AD_B1_14_LPI2C1_SCL,  0xD8B0u);
+    IOMUXC_SetPinConfig( IOMUXC_GPIO_AD_B1_15_LPI2C1_SDA, 0xD8B0u);
 
-    IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_09_SAI1_MCLK, 1U);
-    IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_13_SAI1_TX_DATA00, 1U);
-    IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_14_SAI1_TX_BCLK, 1U);
-    IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_15_SAI1_TX_SYNC, 1U);
+    IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_00_SAI1_MCLK, 1U);
+    IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_03_SAI1_TX_DATA00, 1U);
+    IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_01_SAI1_TX_BCLK, 1U);
+    IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_02_SAI1_TX_SYNC, 1U);
 
-    IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_09_SAI1_MCLK, 0x10B0u);
-    IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_13_SAI1_TX_DATA00,  0x10B0u);
-    IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_14_SAI1_TX_BCLK, 0x10B0u);
-    IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_15_SAI1_TX_SYNC, 0x10B0u);
+    IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_00_SAI1_MCLK, 0x10B0u);
+    IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_03_SAI1_TX_DATA00,  0x10B0u);
+    IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_01_SAI1_TX_BCLK, 0x10B0u);
+    IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_02_SAI1_TX_SYNC, 0x10B0u);
 }
 
 static void BOARD_EnableSaiMclkOutput(bool enable)
