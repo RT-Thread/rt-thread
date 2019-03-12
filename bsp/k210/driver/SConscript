@@ -10,6 +10,9 @@ drv_uart.c
 ''')
 CPPPATH = [cwd]
 
+if GetDepend('BSP_USING_LCD'):
+    src += ['drv_lcd.c']
+
 if GetDepend('RT_USING_PIN'):
     src += ['drv_gpio.c']
 
