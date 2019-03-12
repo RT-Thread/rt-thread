@@ -66,7 +66,6 @@
 #define ADC_OVERRUN_IRQ_EN	1
 #define ADC_FIFO_FLUSH		0
 
-
 /*DAC_MIXER_CTRL: 0x20*/
 #define DAC_AG_R_EN		31  /* dac right enable bit */
 #define DAC_AG_L_EN		30  /* dac left enable bit */
@@ -161,8 +160,6 @@
 #define ADDA_PR_WDAT		8
 #define ADDA_PR_RDAT		0
 
-
-
 /* 时钟配置相关寄存器 */
 #define R6_REG_CCU_BASE         0x01c20000
 #define R6_REG_PLL_AUDIO_CTRL   (R6_REG_CCU_BASE + 0x008)
@@ -185,7 +182,6 @@
 #define R6_REG_PD_DRV1          (R6_REG_PIO_BASE + (3 * 0x24 + 0X18))
 #define R6_REG_PD_PUL0          (R6_REG_PIO_BASE + (3 * 0x24 + 0X1c))
 #define R6_REG_PD_PUL1          (R6_REG_PIO_BASE + (3 * 0x24 + 0X20))
-
 
 /* AUDIO配置相关寄存器 */
 #define R6_REG_AC_BASE          0x01c23c00
@@ -211,7 +207,6 @@
 #define REG_NDMA_DES_ADR        (0x8)
 #define REG_NDMA_BYTE_CNT       (0xc)
 // #define REG_NDMA_PAR         (0x300 + 0x1c)
-
 
 #define NDMA_CFG_SRC_DRQ_IR_RX    (0x00 << 0)
 #define NDMA_CFG_SRC_DRQ_NONE     (0x01 << 0)
