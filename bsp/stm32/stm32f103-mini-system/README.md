@@ -18,7 +18,7 @@ STM32F103C8T6最小系统，采用SWD调试接口，可以用3个接口就能完
 
 开发板外观如下图所示：
 
-![board](figures/board.png)
+![board](figures/board1.jpg、figures/board2.jpg、figures/board3.jpg)
 
 该开发板常用 **板载资源** 如下：
 
@@ -101,7 +101,8 @@ msh >
 
 ## 注意事项
 
-- 只能用USB转TTL连接PC机 ;
+- 只能用USB转TTL连接PC机 。
+- 第二次及以后烧录如遇失败的情况，需要按一下复位键，就是点击烧录后马上按下复位键看见进度条即可放开。
 
 ## 联系人信息
 
