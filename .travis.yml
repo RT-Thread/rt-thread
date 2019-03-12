@@ -111,20 +111,3 @@ env:
 stage: compile
 script:
   - scons -C bsp/$RTT_BSP
-
-jobs:
-  include:
-    - stage: AutoTest
-      env: none
-      script: 
-        - echo "AutoTest"
-        - if [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
-            echo "PR mode";
-            curl --request POST 
-                --header "PRIVATE-TOKEN:${GITLAB_ACCESS_TOKEN}" 
-                --header "Content-Type:application/json" 
-                --data '{"ref":"master","tag":"windows","variables":[{"key":"REPOSITORY_URL","value":"'${REPOSITORY_URL}'"},{"key":"GITHUB_EVENT_TYPE","value":"'${TRAVIS_EVENT_TYPE}'"},{"key":"GITHUB_JOB_ID","value":"'${TRAVIS_BUILD_NUMBER}'"},{"key":"GITHUB_PR_NUMBER","value":"'${TRAVIS_PULL_REQUEST}'"},{"key":"GITHUB_DEFAULT_BRANCH","value":"'${TRAVIS_BRANCH}'"},{"key":"GITHUB_HEAD_SHA","value":"'${TRAVIS_PULL_REQUEST_SHA}'"}]}' 
-                "${GITLAB_REPOSITORY_API}";
-          else
-            echo "not PR mode";
-          fi
