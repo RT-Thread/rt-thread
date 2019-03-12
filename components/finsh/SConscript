@@ -28,19 +28,12 @@ msh_file.c
 ''')
 
 CPPPATH = [cwd]
-if rtconfig.CROSS_TOOL == 'keil':
-    LINKFLAGS = ' --keep *.o(FSymTab)'
-
-    if not GetDepend('FINSH_USING_MSH_ONLY'):
-        LINKFLAGS = LINKFLAGS + ' --keep *.o(VSymTab) '
-else:
-    LINKFLAGS = '' 
 
 if GetDepend('FINSH_USING_MSH'):
 	src = src + msh_src
 if not GetDepend('FINSH_USING_MSH_ONLY'):
     src = src + fsh_src
 
-group = DefineGroup('finsh', src, depend = ['RT_USING_FINSH'], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS)
+group = DefineGroup('finsh', src, depend = ['RT_USING_FINSH'], CPPPATH = CPPPATH)
 
 Return('group')
