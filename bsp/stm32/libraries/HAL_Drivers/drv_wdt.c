@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author            Notes
  * 2018-12-07     balanceTWK        first version
+ * 2019-03-09     jinsheng          add wdt_test
  */
 
 #include <board.h>
@@ -77,4 +78,21 @@ int rt_wdt_init(void)
 }
 INIT_BOARD_EXPORT(rt_wdt_init);
 
+#ifdef DRV_DEBUG
+#ifdef FINSH_USING_MSH
+int wdt_test()
+{
+    static rt_device_t wdt_dev;
+    wdt_dev = rt_device_find("wdt");
+
+    rt_device_init(wdt_dev);
+
+    while (1)
+    {
+        rt_thread_mdelay(1000);
+    }
+}
+MSH_CMD_EXPORT(wdt_test, wdt_test);
+#endif /* FINSH_USING_MSH */
+#endif /* DRV_DEBUG */
 #endif /* RT_USING_WDT */

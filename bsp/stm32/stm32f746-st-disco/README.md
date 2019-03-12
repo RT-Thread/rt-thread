@@ -43,7 +43,7 @@ STM32F746-disco 是 ST 推出的一款基于 ARM Cortex-M7 内核的开发板，
 | 以太网            |   支持    |            RMII                   |
 | SDRAM             |  支持     |            SDRAM1                           |
 | SD卡              |   支持   |            SD 4bits               |
-| 4.3寸电容屏       |   暂不支持   |                               |
+| 4.3寸电容屏       |   支持   |            LTDC                   |
 | MEMS麦克风        |   暂不支持   |                               |
 
 | **片上外设** | **支持情况** |               **备注**                |
@@ -54,8 +54,8 @@ STM32F746-disco 是 ST 推出的一款基于 ARM Cortex-M7 内核的开发板，
 | QSPI              |  支持    | QSPI1                        |
 | I2C               |  暂不支持    | 即将支持                        |
 | FLASH             |  支持    |                         |
-| WDT               |  暂不支持    | 即将支持                        |
-| SDIO              |   支持   | 支持                              |
+| WDT               |  支持    |                         |
+| SDIO              |   支持   |                               |
 | USB Device        |   暂不支持   | 即将支持                              |
 | USB Host          |   暂不支持   | 即将支持                              |
 | SAI               |   暂不支持   | 即将支持                              |
