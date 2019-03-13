@@ -60,22 +60,18 @@ BOOL xMBMasterPortSerialInit(UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits,
 #if defined(RT_MODBUS_MASTER_USE_CONTROL_PIN)
     rt_pin_mode(MODBUS_MASTER_RT_CONTROL_PIN_INDEX, PIN_MODE_OUTPUT);
 #endif
-
     /* set serial name */
     if (ucPORT == 1) {
-#if defined(RT_USING_UART1) || defined(RT_USING_REMAP_UART1)
-        extern struct rt_serial_device serial1;
-        serial = &serial1;
+#if defined(RT_USING_UART1) || defined(RT_USING_REMAP_UART1) || defined(BSP_USING_UART1)
+        serial = (rt_serial_t*)rt_device_find("uart1");
 #endif
     } else if (ucPORT == 2) {
-#if defined(RT_USING_UART2)
-        extern struct rt_serial_device serial2;
-        serial = &serial2;
+#if defined(RT_USING_UART2) || defined(BSP_USING_UART2)
+        serial = (rt_serial_t*)rt_device_find("uart2");
 #endif
     } else if (ucPORT == 3) {
-#if defined(RT_USING_UART3)
-        extern struct rt_serial_device serial3;
-        serial = &serial3;
+#if defined(RT_USING_UART3) || defined(BSP_USING_UART3)
+        serial = (rt_serial_t*)rt_device_find("uart3");
 #endif
     }
     /* set serial configure parameter */
