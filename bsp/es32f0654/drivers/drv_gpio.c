@@ -1,5 +1,4 @@
 /*
- * File      : drv_gpio.c
  * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -61,7 +60,7 @@ static const struct pin_index pins[] =
     __ES32F0_PIN(27, B, 1),
     __ES32F0_PIN(28, B, 2),
     __ES32F0_PIN(29, B, 10),
-    __ES32F0_PIN_DEFAULT,
+    __ES32F0_PIN(30, B, 11),
     __ES32F0_PIN_DEFAULT,
     __ES32F0_PIN_DEFAULT,
     __ES32F0_PIN(33, B, 12),

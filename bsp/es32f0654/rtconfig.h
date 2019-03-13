@@ -17,6 +17,7 @@
 #define RT_IDEL_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 
 /* Inter-Thread communication */
 
@@ -63,6 +64,7 @@
 #define FINSH_CMD_SIZE 80
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_DEFAULT
+#define FINSH_USING_MSH_ONLY
 #define FINSH_ARG_MAX 10
 
 /* Device virtual file system */
@@ -161,7 +163,17 @@
 
 #define BSP_USING_UART2
 
+/* SPI Drivers */
+
+
+/* I2C Drivers */
+
+
+/* PWM Drivers */
+
+
 /* Onboard Peripheral Drivers */
+
 
 /* Offboard Peripheral Drivers */
 

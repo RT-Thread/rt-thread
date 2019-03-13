@@ -17,6 +17,7 @@
 #define RT_IDEL_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 
 /* Inter-Thread communication */
 
@@ -147,9 +148,6 @@
 /* peripheral libraries and drivers */
 
 /* sensors drivers */
-
-
-/* miscellaneous packages */
 
 
 /* samples: kernel and components samples */

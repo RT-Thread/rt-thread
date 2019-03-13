@@ -315,7 +315,10 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
         /* is not in interrupt context */
         if (rt_interrupt_get_nest() == 0)
         {
-            log_len += ulog_strcpy(log_len, log_buf + log_len, rt_thread_self()->name);
+            rt_size_t name_len = rt_strnlen(rt_thread_self()->name, RT_NAME_MAX);
+
+            rt_strncpy(log_buf + log_len, rt_thread_self()->name, name_len);
+            log_len += name_len;
         }
         else
         {

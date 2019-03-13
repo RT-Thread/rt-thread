@@ -398,10 +398,10 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
  * Calculate the zone index for the allocation request size and set the
  * allocation request size to that particular zone's chunk size.
  */
-rt_inline int zoneindex(rt_uint32_t *bytes)
+rt_inline int zoneindex(rt_size_t *bytes)
 {
     /* unsigned for shift opt */
-    rt_uint32_t n = (rt_uint32_t) * bytes;
+    rt_uint32_t n = (rt_uint32_t)(*bytes);
 
     if (n < 128)
     {

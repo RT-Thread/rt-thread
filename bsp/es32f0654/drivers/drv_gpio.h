@@ -1,5 +1,4 @@
 /*
- * File      : drv_gpio.h
  * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
