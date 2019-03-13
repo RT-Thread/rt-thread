@@ -2,6 +2,11 @@ import os
 import sys
 import rtconfig
 
+#encoding=utf8
+
+reload(sys)
+sys.setdefaultencoding('gbk')
+
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
 else:
