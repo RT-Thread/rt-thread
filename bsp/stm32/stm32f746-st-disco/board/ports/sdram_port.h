@@ -19,30 +19,30 @@
 /* data width: 8, 16, 32 */
 #define SDRAM_DATA_WIDTH                16
 /* column bit numbers: 8, 9, 10, 11 */
-#define SDRAM_COLUMN_BITS               9
+#define SDRAM_COLUMN_BITS               8
 /* row bit numbers: 11, 12, 13 */
-#define SDRAM_ROW_BITS                  13
+#define SDRAM_ROW_BITS                  12
 /* cas latency clock number: 1, 2, 3 */
 #define SDRAM_CAS_LATENCY               3
 /* read pipe delay: 0, 1, 2 */
-#define SDRAM_RPIPE_DELAY               1
+#define SDRAM_RPIPE_DELAY               0
 /* clock divid: 2, 3 */
 #define SDCLOCK_PERIOD                  2
 /* refresh rate counter */
-#define SDRAM_REFRESH_COUNT             ((uint32_t)0x02AB)
-#define SDRAM_SIZE                      ((uint32_t)0x1000000)
+#define SDRAM_REFRESH_COUNT             ((uint32_t)0x1000)
+#define SDRAM_SIZE                      ((uint32_t)0x800000)
 
 /* Timing configuration for MT48LC4M32B2B5-6A */
 /* TMRD: 2 Clock cycles */
 #define LOADTOACTIVEDELAY               2
 /* TXSR: 7x11.90ns */
-#define EXITSELFREFRESHDELAY            8
+#define EXITSELFREFRESHDELAY            7
 /* TRAS: 4x11.90ns */
-#define SELFREFRESHTIME                 6
+#define SELFREFRESHTIME                 4
 /* TRC:  7x11.90ns */
-#define ROWCYCLEDELAY                   6
+#define ROWCYCLEDELAY                   7
 /* TWR:  2 Clock cycles */
-#define WRITERECOVERYTIME               2
+#define WRITERECOVERYTIME               3
 /* TRP:  2x11.90ns */
 #define RPDELAY                         2
 /* TRCD: 2x11.90ns */
