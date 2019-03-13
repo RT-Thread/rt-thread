@@ -53,6 +53,27 @@ menu "Hardware Drivers Config"
                 default n
         endmenu
 
+        menu "PWM Drivers"
+            config BSP_USING_PWM0
+                bool "Using PWM0 PA08/PA09/PA10/PA11"
+                select RT_USING_PWM
+                default n 
+
+            config BSP_USING_PWM1
+                bool "Using PWM1 PB06/PB07/PB08/PB09"
+                select RT_USING_PWM
+                default n  
+
+            config BSP_USING_PWM2
+                bool "Using PWM2 PA00/PA01"
+                select RT_USING_PWM
+                default n  
+
+            config BSP_USING_PWM3
+                bool "Using PWM3 PC06/PC07"
+                select RT_USING_PWM
+                default n  
+        endmenu
     endmenu
 
     menu "Onboard Peripheral Drivers"
