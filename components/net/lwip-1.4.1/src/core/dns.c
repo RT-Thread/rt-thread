@@ -666,7 +666,6 @@ dns_check_entry(u8_t i)
             pEntry->numdns++;
             pEntry->tmr     = 1;
             pEntry->retries = 0;
-            break;
           } else {
             LWIP_DEBUGF(DNS_DEBUG, ("dns_check_entry: \"%s\": timeout\n", pEntry->name));
             /* call specified callback function if provided */
@@ -678,9 +677,10 @@ dns_check_entry(u8_t i)
             break;
           }
         }
-
-        /* wait longer for the next retry */
-        pEntry->tmr = pEntry->retries;
+        else {
+          /* wait longer for the next retry */
+          pEntry->tmr = pEntry->retries;
+        }
 
         /* send DNS packet for this entry */
         err = dns_send(pEntry->numdns, pEntry->name, i);
