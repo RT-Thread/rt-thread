@@ -45,7 +45,7 @@
 
 #define RT_USING_COMPONENTS_INIT
 #define RT_USING_USER_MAIN
-#define RT_MAIN_THREAD_STACK_SIZE 2048
+#define RT_MAIN_THREAD_STACK_SIZE 512
 #define RT_MAIN_THREAD_PRIORITY 10
 
 /* C++ features */
@@ -53,14 +53,14 @@
 
 /* Command shell */
 
-#define RT_USING_FINSH
+//#define RT_USING_FINSH
 #define FINSH_THREAD_NAME "tshell"
 #define FINSH_USING_HISTORY
 #define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
 #define FINSH_THREAD_PRIORITY 20
-#define FINSH_THREAD_STACK_SIZE 1024
+#define FINSH_THREAD_STACK_SIZE 512
 #define FINSH_CMD_SIZE 80
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_DEFAULT
@@ -144,7 +144,7 @@
 
 /* samples: kernel and components samples */
 
-#define SOC_SWM320VET7
+//#define SOC_SWM320VET7
 
 /* Hardware Drivers Config */
 
@@ -153,5 +153,5 @@
 /* UART Drivers */
 
 #define BSP_USING_UART1
-
+#define BSP_USING_UART2
 #endif

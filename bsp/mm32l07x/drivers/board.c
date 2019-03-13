@@ -33,6 +33,7 @@ void rt_hw_board_init()
 {
     bsp_clock_config();
 #if defined(RT_USING_HEAP)
+
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
 #ifdef RT_USING_COMPONENTS_INIT

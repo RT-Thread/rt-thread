@@ -135,6 +135,10 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
+          <Name>H酗
+?粀H酗
+?粀H酗
+</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -151,34 +155,50 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>593</LineNumber>
+          <LineNumber>53</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134253442</Address>
+          <Address>134241862</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\..\components\drivers\serial\serial.c</Filename>
+          <Filename>applications\main.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\rtthread\../../components/drivers/serial/serial.c\593</Expression>
+          <Expression>\\rtthread\applications/main.c\53</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>565</LineNumber>
+          <LineNumber>242</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134253286</Address>
+          <Address>134258976</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\..\components\drivers\serial\serial.c</Filename>
+          <Filename>..\..\src\components.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\rtthread\../../components/drivers/serial/serial.c\565</Expression>
+          <Expression>\\rtthread\../../src/components.c\242</Expression>
+        </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>207</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134254558</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\..\src\mem.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\rtthread\../../src/mem.c\207</Expression>
         </Bp>
       </Breakpoint>
       <Tracepoint>
@@ -187,7 +207,7 @@
       <DebugFlag>
         <trace>0</trace>
         <periodic>0</periodic>
-        <aLwin>1</aLwin>
+        <aLwin>0</aLwin>
         <aCover>0</aCover>
         <aSer1>0</aSer1>
         <aSer2>0</aSer2>
@@ -434,7 +454,7 @@
 
   <Group>
     <GroupName>Applications</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -454,7 +474,7 @@
 
   <Group>
     <GroupName>Drivers</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -486,7 +506,7 @@
 
   <Group>
     <GroupName>Libraries</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -734,7 +754,7 @@
 
   <Group>
     <GroupName>cpu</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -802,7 +822,7 @@
 
   <Group>
     <GroupName>DeviceDrivers</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
