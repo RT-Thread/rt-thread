@@ -53,7 +53,8 @@ extern "C" {
 #define RT_SENSOR_VENDOR_INVENSENSE    (3)  /* Invensense */
 #define RT_SENSOR_VENDOR_SEMTECH       (4)  /* Semtech */
 #define RT_SENSOR_VENDOR_GOERTEK       (5)  /* Goertek */
-
+#define RT_SENSOR_VENDOR_MEAS          (6)  /* Measurement Specialties Inc */
+    
 /* Sensor unit types */
 
 #define  RT_SENSOR_UNIT_NONE           (0)
