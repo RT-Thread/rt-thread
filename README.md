@@ -96,6 +96,6 @@ msh />
 
 - [MiniBoardStartKit资料包](http://www.mm32.com.cn/download.aspx?cid=2545)
 
-- [ keil pack及其他资料](http://www.mm32.com.cn/download.aspx?cid=2546)
+- [keil pack安装包](http://www.mm32.com.cn/download.aspx?cid=2546)
 
 - [MM32 支持工具包](http://www.mm32.com.cn/download.aspx?cid=2547)

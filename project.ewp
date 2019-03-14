@@ -10,7 +10,7 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>29</version>
+        <version>30</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -65,7 +65,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>8.11.3.13977</state>
+          <state>8.22.2.15993</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -77,7 +77,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>SWM320xE	Synwit SWM320xE</state>
+          <state>MM32L073PF	MindMotion MM32L073PF</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -115,8 +115,8 @@
         </option>
         <option>
           <name>GBECoreSlave</name>
-          <version>25</version>
-          <state>39</state>
+          <version>26</version>
+          <state>34</state>
         </option>
         <option>
           <name>OGUseCmsis</name>
@@ -132,22 +132,22 @@
         </option>
         <option>
           <name>CoreVariant</name>
-          <version>25</version>
-          <state>39</state>
+          <version>26</version>
+          <state>34</state>
         </option>
         <option>
           <name>GFPUDeviceSlave</name>
-          <state>SWM320xE	Synwit SWM320xE</state>
+          <state>MM32L073PF	MindMotion MM32L073PF</state>
         </option>
         <option>
           <name>FPU2</name>
           <version>0</version>
-          <state>4</state>
+          <state>0</state>
         </option>
         <option>
           <name>NrRegs</name>
           <version>0</version>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>NEON</name>
@@ -155,8 +155,8 @@
         </option>
         <option>
           <name>GFPUCoreSlave2</name>
-          <version>25</version>
-          <state>39</state>
+          <version>26</version>
+          <state>34</state>
         </option>
         <option>
           <name>OGCMSISPackSelectDevice</name>
@@ -197,7 +197,11 @@
         </option>
         <option>
           <name>DSPExtension</name>
-          <state>1</state>
+          <state>0</state>
+        </option>
+        <option>
+          <name>TrustZone</name>
+          <state>0</state>
         </option>
       </data>
     </settings>
@@ -215,6 +219,7 @@
         <option>
           <name>CCDefines</name>
           <state />
+          <state>USE_STDPERIPH_DRIVER</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -340,17 +345,18 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\Libraries\CMSIS\DeviceSupport</state>
-          <state>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\Libraries\MM32L0xx\Include</state>
+          <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\Libraries\MM32L0xx\Source</state>
+          <state>$PROJ_DIR$\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m0</state>
+          <state>$PROJ_DIR$\Libraries\CMSIS\CORE</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\Libraries\CMSIS\CoreSupport</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\inc</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1035,7 +1041,7 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>29</version>
+        <version>30</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1140,7 +1146,7 @@
         </option>
         <option>
           <name>GBECoreSlave</name>
-          <version>25</version>
+          <version>26</version>
           <state>1</state>
         </option>
         <option>
@@ -1157,7 +1163,7 @@
         </option>
         <option>
           <name>CoreVariant</name>
-          <version>25</version>
+          <version>26</version>
           <state>0</state>
         </option>
         <option>
@@ -1180,7 +1186,7 @@
         </option>
         <option>
           <name>GFPUCoreSlave2</name>
-          <version>25</version>
+          <version>26</version>
           <state>0</state>
         </option>
         <option>
@@ -1224,6 +1230,10 @@
           <name>DSPExtension</name>
           <state>0</state>
         </option>
+        <option>
+          <name>TrustZone</name>
+          <state>0</state>
+        </option>
       </data>
     </settings>
     <settings>
@@ -1240,6 +1250,7 @@
         <option>
           <name>CCDefines</name>
           <state />
+          <state>USE_STDPERIPH_DRIVER</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1365,17 +1376,18 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\Libraries\CMSIS\DeviceSupport</state>
-          <state>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\Libraries\MM32L0xx\Include</state>
+          <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\Libraries\MM32L0xx\Source</state>
+          <state>$PROJ_DIR$\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m0</state>
+          <state>$PROJ_DIR$\Libraries\CMSIS\CORE</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\Libraries\CMSIS\CoreSupport</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\inc</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2051,90 +2063,6 @@
     </settings>
   </configuration>
   <group>
-    <name>Applications</name>
-    <file>
-      <name>$PROJ_DIR$\applications\main.c</name>
-    </file>
-  </group>
-  <group>
-    <name>Drivers</name>
-    <file>
-      <name>$PROJ_DIR$\drivers\board.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\drv_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\drv_uart.c</name>
-    </file>
-  </group>
-  <group>
-    <name>Libraries</name>
-    <file>
-      <name>$PROJ_DIR$\Libraries\CMSIS\DeviceSupport\system_SWM320.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_adc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_can.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_crc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_dma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_exti.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_flash.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_i2c.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_lcd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_norflash.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_port.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_pwm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_rtc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_sdio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_sdram.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_spi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_timr.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_uart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_wdt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\CMSIS\DeviceSupport\startup\iar\startup_SWM320.s</name>
-    </file>
-  </group>
-  <group>
     <name>Kernel</name>
     <file>
       <name>$PROJ_DIR$\..\..\src\clock.c</name>
@@ -2186,13 +2114,85 @@
     </file>
   </group>
   <group>
-    <name>CORTEX-M4</name>
+    <name>Applications</name>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4\cpuport.c</name>
+      <name>$PROJ_DIR$\applications\main.c</name>
+    </file>
+  </group>
+  <group>
+    <name>Drivers</name>
+    <file>
+      <name>$PROJ_DIR$\drivers\board.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
+      <name>$PROJ_DIR$\drivers\drv_uart.c</name>
     </file>
+  </group>
+  <group>
+    <name>Libraries</name>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\Source\system_MM32L0xx.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_adc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_bkp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_can.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_comp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_dma.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_exti.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_flash.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_iwdg.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_misc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_pwr.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_rcc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_spi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_syscfg.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_tim.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_uart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_wwdg.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\Source\IAR_StartAsm\startup_MM32L0xx.s</name>
+    </file>
+  </group>
+  <group>
+    <name>cpu</name>
     <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
     </file>
@@ -2202,18 +2202,15 @@
     <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\showmem.c</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m0\cpuport.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m0\context_iar.S</name>
+    </file>
   </group>
   <group>
     <name>DeviceDrivers</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\hwtimer\hwtimer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\misc\pin.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\misc\rt_drv_pwm.c</name>
-    </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\serial\serial.c</name>
     </file>
