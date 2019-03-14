@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <fileVersion>2</fileVersion>
+    <fileChecksum>2636995558</fileChecksum>
+    <configuration>
+        <name>Release</name>
+        <outputs />
+    </configuration>
+    <configuration>
+        <name>rt-thread</name>
+        <outputs />
+        <forcedrebuild>
+            <name>[REBUILD_ALL]</name>
+        </forcedrebuild>
+    </configuration>
+</project>
