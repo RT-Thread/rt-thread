@@ -64,9 +64,13 @@ MM32L073PF 是上海灵动微电子股份有限公司的一款面向电机驱动
 ### 3.1 硬件连接
 
 使用MM32-LINK或Jlink等调试工具连接开发板到PC，通过调试调试工具供电或使用Micro-USB供电。若使用Jlink等调试工具，还需要将UART1_TX(PA9)、UART1_RX(PA10)、GND接到串口工具上。
+
 使用MM32-LINK连接开发板如下图所示：
+
 MM32-LINK+MiniBoard Rev.D2
-![MM32 MiniBoard Rev.D2](MM32 MiniBoard Rev.D2.2.jpg "MM32 MiniBoard Rev.D2")
+
+![MM32 MiniBoard Rev.D2_2](MM32 MiniBoard Rev.D2_2.jpg "MM32 MiniBoard Rev.D2_2")
+
 ### 3.2 运行结果
 
 如果编译 & 烧写无误，当复位设备后，会看到板子上的4个LED闪烁。串口打印RT-Thread的启动logo信息：
@@ -86,7 +90,7 @@ msh />
 
 ## 6. 参考
 
-- 芯片[MM32L0xx_n系列数据手册][http://www.mm32.com.cn/userfiles/images/MM32L0XiLieWenDang/UM_MM32L0xx_n_V1.08_SC.pdf]
+- [MM32L0xx_n系列数据手册](http://www.mm32.com.cn/userfiles/images/MM32L0XiLieWenDang/UM_MM32L0xx_n_V1.08_SC.pdf)
 
 - [MM32L0xx_n系列用户手册](http://www.mm32.com.cn/userfiles/images/MM32L0XiLieWenDang/UM_MM32L0xx_n_V1.08_SC.pdf)
 
