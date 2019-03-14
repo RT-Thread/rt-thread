@@ -7,6 +7,6 @@ src     = Split("""
 main.c
 """)
 
-group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('Applications', src, depend = [''])
 
 Return('group')

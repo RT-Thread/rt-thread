@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>rt-thread</name>
+        <name>rtthread</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>

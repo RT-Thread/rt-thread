@@ -1,6 +1,5 @@
 # for module compiling
 import os
-Import('RTT_ROOT')
 from building import *
 
 cwd = GetCurrentDir()

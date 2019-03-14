@@ -22,7 +22,7 @@
   </DaveTm>
 
   <Target>
-    <TargetName>rt-thread</TargetName>
+    <TargetName>rtthread</TargetName>
     <ToolsetNumber>0x4</ToolsetNumber>
     <ToolsetName>ARM-ADS</ToolsetName>
     <TargetOption>
