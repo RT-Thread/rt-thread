@@ -442,7 +442,6 @@ void LPUART1_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_LPUART1_RX_USING_DMA)
 void LPUART1_DMA_RX_IRQHandler(void)
 {
@@ -454,8 +453,8 @@ void LPUART1_DMA_RX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_UART5_RX_USING_DMA) */
-#endif /* BSP_USING_LPUART1 */
+#endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_LPUART1_RX_USING_DMA) */
+#endif /* BSP_USING_LPUART1*/
 
 #ifdef RT_SERIAL_USING_DMA
 static void stm32_dma_config(struct rt_serial_device *serial)
@@ -611,8 +610,8 @@ static void stm32_uart_get_dma_config(void)
 #endif
 #ifdef BSP_LPUART1_RX_USING_DMA
     uart_obj[LPUART1_INDEX].uart_dma_flag = 1;
-    static struct dma_config uart5_dma_rx = LPUART1_DMA_CONFIG;
-    uart_config[LPUART1_INDEX].dma_rx = &uart5_dma_rx;
+    static struct dma_config lpuart1_dma_rx = LPUART1_DMA_CONFIG;
+    uart_config[LPUART1_INDEX].dma_rx = &lpuart1_dma_rx;
 #endif
 }
 

@@ -11,11 +11,32 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART
         select BSP_USING_UART1
         default y
+
+    config BSP_USING_SDRAM
+        bool "Enable SDRAM"
+        default n
+
     config BSP_USING_QSPI_FLASH
         bool "Enable QSPI FLASH (N25Q256 qspi1)"
         select BSP_USING_QSPI
         select RT_USING_SFUD
         select RT_SFUD_USING_QSPI
+        default n
+
+    config PHY_USING_LAN8720A
+        bool
+
+    config BSP_USING_ETH
+        bool "Enable Ethernet"
+        select RT_USING_LWIP
+        select PHY_USING_LAN8720A
+        default n
+
+    config BSP_USING_SDCARD
+        bool "Enable SDCARD (sdio)"
+        select BSP_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
         default n
 
 endmenu
@@ -40,10 +61,19 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                 default n
         endif
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
     config BSP_USING_QSPI
         bool "Enable QSPI BUS"
         select RT_USING_QSPI
         select RT_USING_SPI
+        default n
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
         default n
 
 endmenu

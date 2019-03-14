@@ -49,6 +49,8 @@
 #include "lwip/dhcp.h"
 #include "lwip/inet.h"
 
+#include "netif/etharp.h"
+
 #include <string.h>
 #include <stdio.h>
 
@@ -75,6 +77,10 @@ static err_t netif_device_init(struct netif *netif)
 
         /* copy device flags to netif flags */
         netif->flags = ethif->flags;
+        netif->mtu = ETHERNET_MTU;
+        
+        /* set output */
+        netif->output = etharp_output;
 
         return ERR_OK;
     }

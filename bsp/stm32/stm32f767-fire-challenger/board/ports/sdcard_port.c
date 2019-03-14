@@ -17,10 +17,8 @@
 #include <dfs_posix.h>
 #include "drv_gpio.h"
 
-// #define DBG_ENABLE
-#define DBG_SECTION_NAME  "app.card"
-#define DBG_COLOR
 
+#define DBG_SECTION_NAME  "app.card"
 #define DBG_LEVEL DBG_INFO
 #include <rtdbg.h>
 

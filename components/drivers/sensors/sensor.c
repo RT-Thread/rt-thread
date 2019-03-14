@@ -10,10 +10,8 @@
 
 #include "sensor.h"
 
-#define DBG_ENABLE
 #define DBG_LEVEL DBG_INFO
 #define DBG_SECTION_NAME  "sensor"
-#define DBG_COLOR
 #include <rtdbg.h>
 
 #include <string.h>
@@ -44,6 +42,11 @@ void rt_sensor_cb(rt_sensor_t sen)
     if (sen->parent.rx_indicate == RT_NULL)
     {
         return;
+    }
+    
+    if (sen->irq_handle != RT_NULL)
+    {
+        sen->irq_handle(sen);
     }
 
     /* The buffer is not empty. Read the data in the buffer first */

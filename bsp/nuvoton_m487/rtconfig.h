@@ -17,6 +17,7 @@
 #define RT_IDEL_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 
 /* Inter-Thread communication */
 
@@ -36,6 +37,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
+#define RT_VER_NUM 0x40000
 
 /* RT-Thread Components */
 
@@ -147,11 +149,6 @@
 
 /* RT-Thread online packages */
 
-/* system packages */
-
-/* RT-Thread GUI Engine */
-
-
 /* IoT - internet of things */
 
 
@@ -161,6 +158,9 @@
 
 
 /* Wiced WiFi */
+
+
+/* IoT Cloud */
 
 
 /* security packages */
@@ -175,10 +175,16 @@
 /* tools packages */
 
 
+/* system packages */
+
+
+/* peripheral libraries and drivers */
+
+
 /* miscellaneous packages */
 
 
-/* example package: hello */
+/* samples: kernel and components samples */
 
 
 #endif
