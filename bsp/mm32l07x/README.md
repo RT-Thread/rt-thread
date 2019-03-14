@@ -16,7 +16,7 @@ MM32 MiniBoard Rev.D2 是为了用户快速上手、了解学习MM32系列MCU的
 
 MM32 MiniBoard Rev.D2 
 
-![MM32 MiniBoard Rev.D2](https://github.com/ZhuGangfei/rt-thread/blob/mm32l073/bsp/mm32l07x/figures/MM32%20MiniBoard%20Rev.D2_1.jpg)
+![MM32 MiniBoard Rev.D2](figures/MM32%20MiniBoard%20Rev.D2_1.jpg)
 
 MM32 MiniBoard Rev.D2 开发板板载资源如下：
 
@@ -69,7 +69,7 @@ MM32L073PF 是上海灵动微电子股份有限公司的一款面向电机驱动
 
 MM32-LINK+MiniBoard Rev.D2
 
-![MM32-LINK+MiniBoard Rev.D2](https://github.com/ZhuGangfei/rt-thread/blob/mm32l073/bsp/mm32l07x/figures/MM32%20MiniBoard%20Rev.D2_2.jpg)
+![MM32-LINK+MiniBoard Rev.D2](figures/MM32%20MiniBoard%20Rev.D2_2.jpg)
 
 ### 3.2 运行结果
 
