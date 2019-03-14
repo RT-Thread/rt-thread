@@ -261,6 +261,10 @@ config RT_USING_LWIP
             bool "Enable lwIP statistics"
             default n
 
+        config RT_LWIP_USING_HW_CHECKSUM
+            bool "Enable hardware checksum"
+            default n
+
         menuconfig RT_LWIP_DEBUG
             bool "Enable lwIP Debugging Options"
             default n
