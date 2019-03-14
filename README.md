@@ -16,9 +16,9 @@ MM32 MiniBoard Rev.D2 是为了用户快速上手、了解学习MM32系列MCU的
 
 MM32 MiniBoard Rev.D2 
 
-![MM32 MiniBoard Rev.D2](MM32 MiniBoard Rev.D2.1.jpg "MM32 MiniBoard Rev.D2")
+![MM32 MiniBoard Rev.D2_1](MM32 MiniBoard Rev.D2_1.jpg "MM32 MiniBoard Rev.D2_1")
 
-SWXT-LQ100-32102 V1.1 开发板板载资源如下：
+MM32 MiniBoard Rev.D2 开发板板载资源如下：
 
 - MCU：MM32L073PF  ARM 32-bit Cortex-M0，主频 48MHz，128KB FLASH ，8KB SRAM
 - 常用外设
