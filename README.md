@@ -90,9 +90,9 @@ msh />
 
 ## 6. 参考
 
-- [MM32L0xx_n系列数据手册](http://www.mm32.com.cn/userfiles/images/MM32L0XiLieWenDang/UM_MM32L0xx_n_V1.08_SC.pdf)
+- [MM32L0xx_n系列数据手册](http://www.mm32mcu.com/getfile.aspx?id=611)
 
-- [MM32L0xx_n系列用户手册](http://www.mm32.com.cn/userfiles/images/MM32L0XiLieWenDang/UM_MM32L0xx_n_V1.08_SC.pdf)
+- [MM32L0xx_n系列用户手册](http://www.mm32mcu.com/getfile.aspx?id=611)
 
 - [MiniBoardStartKit资料包](http://www.mm32.com.cn/download.aspx?cid=2545)
 
