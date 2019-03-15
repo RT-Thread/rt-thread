@@ -90,12 +90,12 @@ msh />
 
 ## 6. 参考
 
-- [MM32L0xx_n系列数据手册](http://www.mm32.com.cn/userfiles/images/MM32L0XiLieWenDang/UM_MM32L0xx_n_V1.08_SC.pdf)
+- [MM32L0xx_n系列数据手册](http://www.mm32.com.cn/getfile.aspx?id=615)
 
-- [MM32L0xx_n系列用户手册](http://www.mm32.com.cn/userfiles/images/MM32L0XiLieWenDang/UM_MM32L0xx_n_V1.08_SC.pdf)
+- [MM32L0xx_n系列用户手册](http://www.mm32.com.cn/getfile.aspx?id=611)
 
 - [MiniBoardStartKit资料包](http://www.mm32.com.cn/download.aspx?cid=2545)
 
-- [ keil pack及其他资料](http://www.synwit.cn/support-1/2.html)
+- [keil pack安装包](http://www.mm32.com.cn/download.aspx?cid=2546)
 
 - [MM32 支持工具包](http://www.mm32.com.cn/download.aspx?cid=2547)
