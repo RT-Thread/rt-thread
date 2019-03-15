@@ -12,6 +12,8 @@ cpu/gic.c
 cpu/ccm_pll2.c
 cpu/mmu.c
 cpu/cortex_a_gcc.S
+cpu/interrupt.c
+cpu/trap.c
 ''')
 
 CPPPATH = [ cwd + '/cpu',
