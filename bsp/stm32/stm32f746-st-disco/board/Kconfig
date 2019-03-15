@@ -23,6 +23,12 @@ menu "Onboard Peripheral Drivers"
         select RT_SFUD_USING_QSPI
         default n
 
+    config BSP_USING_LCD
+        bool "Enable LCD"
+        select BSP_USING_LTDC
+        select BSP_USING_SDRAM
+        default n
+
     config PHY_USING_LAN8720A
         bool
 
@@ -70,12 +76,24 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SPI
         default n
 
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+
     config BSP_USING_SDIO
         bool "Enable SDIO"
         select RT_USING_SDIO
         select RT_USING_DFS
         default n
+        
+    config BSP_USING_FMC
+        bool
+        default n
 
+    config BSP_USING_LTDC
+        bool
+        default n
 endmenu
 
 menu "Board extended module Drivers"
