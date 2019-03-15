@@ -45,7 +45,7 @@ static rt_err_t es32f0x_configure(struct rt_serial_device *serial, struct serial
     gpio_initstructure.func = GPIO_FUNC_3;
     gpio_init(GPIOB, GPIO_PIN_10, &gpio_initstructure);
 
-    /* Initialize rx pin ,the same as txpin except mode*/
+    /* Initialize rx pin ,the same as txpin except mode */
     gpio_initstructure.mode = GPIO_MODE_INPUT;
     gpio_init(GPIOB, GPIO_PIN_11, &gpio_initstructure);
 #endif /* uart0 gpio init */
@@ -54,7 +54,7 @@ static rt_err_t es32f0x_configure(struct rt_serial_device *serial, struct serial
     gpio_initstructure.func = GPIO_FUNC_3;
     gpio_init(GPIOC, GPIO_PIN_10, &gpio_initstructure);
 
-    /* Initialize rx pin ,the same as txpin except mode*/
+    /* Initialize rx pin ,the same as txpin except mode */
     gpio_initstructure.mode = GPIO_MODE_INPUT;
     gpio_init(GPIOC, GPIO_PIN_11, &gpio_initstructure);
 #endif /* uart1 gpio init */
@@ -63,7 +63,7 @@ static rt_err_t es32f0x_configure(struct rt_serial_device *serial, struct serial
     gpio_initstructure.func = GPIO_FUNC_5;
     gpio_init(GPIOC, GPIO_PIN_12, &gpio_initstructure);
 
-    /* Initialize rx pin ,the same as txpin except mode*/
+    /* Initialize rx pin ,the same as txpin except mode */
     gpio_initstructure.mode = GPIO_MODE_INPUT;
     gpio_init(GPIOD, GPIO_PIN_2, &gpio_initstructure);
 #endif /* uart2 gpio init */
@@ -72,7 +72,7 @@ static rt_err_t es32f0x_configure(struct rt_serial_device *serial, struct serial
     gpio_initstructure.func = GPIO_FUNC_4;
     gpio_init(GPIOC, GPIO_PIN_4, &gpio_initstructure);
 
-    /* Initialize rx pin ,the same as txpin except mode*/
+    /* Initialize rx pin ,the same as txpin except mode */
     gpio_initstructure.mode = GPIO_MODE_INPUT;
     gpio_init(GPIOC, GPIO_PIN_5, &gpio_initstructure);
 #endif /* uart3 gpio init */
@@ -102,7 +102,7 @@ static rt_err_t es32f0x_configure(struct rt_serial_device *serial, struct serial
         UART_DATA_INV_DISABLE(&uart->huart);
     }
 
-    /*enable rx int*/
+    /* enable rx int */
     uart_interrupt_config(&uart->huart, UART_IT_RXRD, ENABLE);
 
     return RT_EOK;
