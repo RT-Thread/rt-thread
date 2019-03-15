@@ -283,7 +283,7 @@
 /* RT_USING_RYM is not set */
 /* RT_USING_ULOG is not set */
 /* RT_USING_UTEST is not set */
-/* RT_USING_LWP is not set */
+#define RT_USING_LWP
 
 /* RT-Thread online packages */
 
