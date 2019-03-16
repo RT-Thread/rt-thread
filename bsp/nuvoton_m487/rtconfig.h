@@ -37,7 +37,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40000
+#define RT_VER_NUM 0x30103
 
 /* RT-Thread Components */
 
