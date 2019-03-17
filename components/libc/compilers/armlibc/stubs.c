@@ -251,7 +251,7 @@ void _ttywrch(int ch)
 #endif
 }
 
-void _sys_exit(int return_code)
+RT_WEAK void _sys_exit(int return_code)
 {
     /* TODO: perhaps exit the thread which is invoking this function */
     while (1);

@@ -21,10 +21,8 @@
 #define RT_SIG_INFO_MAX 32
 #endif
 
-// #define DBG_ENABLE
 #define DBG_SECTION_NAME    "SIGN"
-#define DBG_COLOR
-#define DBG_LEVEL           DBG_LOG
+#define DBG_LEVEL           DBG_INFO
 #include <rtdbg.h>
 
 #define sig_mask(sig_no)    (1u << sig_no)
@@ -50,8 +48,6 @@ static void _signal_entry(void *parameter)
 {
     register rt_base_t level;
     rt_thread_t tid = rt_thread_self();
-
-    dbg_enter;
 
     while (1)
     {

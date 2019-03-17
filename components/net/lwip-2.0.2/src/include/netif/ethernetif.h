@@ -17,27 +17,35 @@
 
 struct eth_device
 {
-	/* inherit from rt_device */
-	struct rt_device parent;
+    /* inherit from rt_device */
+    struct rt_device parent;
 
-	/* network interface for lwip */
-	struct netif *netif;
-	struct rt_semaphore tx_ack;
+    /* network interface for lwip */
+    struct netif *netif;
+    struct rt_semaphore tx_ack;
 
-	rt_uint16_t flags;
-	rt_uint8_t  link_changed;
-	rt_uint8_t  link_status;
+    rt_uint16_t flags;
+    rt_uint8_t  link_changed;
+    rt_uint8_t  link_status;
 
-	/* eth device interface */
-	struct pbuf* (*eth_rx)(rt_device_t dev);
-	rt_err_t (*eth_tx)(rt_device_t dev, struct pbuf* p);
+    /* eth device interface */
+    struct pbuf* (*eth_rx)(rt_device_t dev);
+    rt_err_t (*eth_tx)(rt_device_t dev, struct pbuf* p);
 };
 
-rt_err_t eth_device_ready(struct eth_device* dev);
-rt_err_t eth_device_init(struct eth_device * dev, char *name);
-rt_err_t eth_device_init_with_flag(struct eth_device *dev, char *name, rt_uint16_t flag);
-rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up);
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-int eth_system_device_init(void);
+    rt_err_t eth_device_ready(struct eth_device* dev);
+    rt_err_t eth_device_init(struct eth_device * dev, const char *name);
+    rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_uint16_t flag);
+    rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up);
+
+    int eth_system_device_init(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __NETIF_ETHERNETIF_H__ */

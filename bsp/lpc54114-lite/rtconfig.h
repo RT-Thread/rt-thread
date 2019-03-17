@@ -17,6 +17,7 @@
 #define RT_IDEL_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 
 /* Inter-Thread communication */
 
@@ -38,7 +39,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x30102
+#define RT_VER_NUM 0x30103
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
 #define ARCH_ARM_CORTEX_M4
@@ -175,7 +176,21 @@
 /* miscellaneous packages */
 
 
+/* sample package */
+
 /* samples: kernel and components samples */
+
+
+/* example package: hello */
+
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* rtpkgs online packages */
 
 #define SOC_LPC54114
 

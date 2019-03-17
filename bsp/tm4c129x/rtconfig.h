@@ -20,6 +20,7 @@
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 512
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 
 /* Inter-Thread communication */
 
@@ -42,7 +43,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x30102
+#define RT_VER_NUM 0x30103
 
 /* RT-Thread Components */
 
@@ -179,6 +180,12 @@
 
 
 /* samples: kernel and components samples */
+
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
 
 #define RT_USING_UART0
 

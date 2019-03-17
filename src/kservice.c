@@ -461,6 +461,7 @@ rt_int32_t rt_strcmp(const char *cs, const char *ct)
     return (*cs - *ct);
 }
 RTM_EXPORT(rt_strcmp);
+
 /**
  * The  strnlen()  function  returns the number of characters in the
  * string pointed to by s, excluding the terminating null byte ('\0'),
@@ -476,11 +477,13 @@ rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen)
 {
     const char *sc;
 
-    for (sc = s; *sc != '\0' && sc - s < maxlen; ++sc) /* nothing */
+    for (sc = s; *sc != '\0' && (rt_ubase_t)(sc - s) < maxlen; ++sc) /* nothing */
         ;
 
     return sc - s;
 }
+RTM_EXPORT(rt_strnlen);
+
 /**
  * This function will return the length of a string, which terminate will
  * null character.
