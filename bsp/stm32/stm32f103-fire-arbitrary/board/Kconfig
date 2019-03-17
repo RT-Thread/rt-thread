@@ -266,6 +266,16 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SDIO
         select RT_USING_DFS
         default n
+	
+	menuconfig BSP_USING_CAN
+        bool "Enable CAN"
+        default n
+        select RT_USING_CAN
+        if BSP_USING_CAN
+            config BSP_USING_CAN1
+                bool "using CAN1"
+                default n
+        endif
 
 endmenu
 
