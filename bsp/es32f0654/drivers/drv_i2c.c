@@ -19,17 +19,14 @@
 #ifdef RT_USING_I2C
 
 #define TIMEOUT 0x0FFF
-
-/*define i2c Instance*/
-struct rt_i2c_bus_device _i2c_device0;
-struct rt_i2c_bus_device _i2c_device1;
-i2c_handle_t _h_i2c0, _h_i2c1;
+/* I2C struct definition */
+static i2c_handle_t _h_i2c0, _h_i2c1;
 
 static void _i2c_init(void)
 {
-    gpio_init_t gpio_instruct;   //i2c function init
+    gpio_init_t gpio_instruct;
 
-    /* Initialize I2C Pin*/
+    /* Initialize I2C Pin */
     gpio_instruct.mode = GPIO_MODE_OUTPUT;
     gpio_instruct.odos = GPIO_PUSH_PULL;
     gpio_instruct.pupd = GPIO_PUSH_UP;
@@ -52,7 +49,7 @@ static void _i2c_init(void)
     i2c_init(&_h_i2c0);
     /* I2C0_SCL->PB8,  I2C0_SDA->PB9 */
     gpio_init(GPIOB, GPIO_PIN_8 | GPIO_PIN_9, &gpio_instruct);
-#endif/*BSP_USING_I2C0*/
+#endif
 
 #ifdef BSP_USING_I2C1
     /* Initialize i2c function */
@@ -68,7 +65,7 @@ static void _i2c_init(void)
     i2c_init(&_h_i2c1);
     /* I2C1_SCL->PB10, I2C1_SDA->PB11 */
     gpio_init(GPIOB, GPIO_PIN_10 | GPIO_PIN_11, &gpio_instruct);
-#endif/*BSP_USING_I2C1*/
+#endif
 }
 
 static rt_size_t es32f0_master_xfer(struct rt_i2c_bus_device *bus,
@@ -120,6 +117,8 @@ int rt_hw_i2c_init(void)
     _i2c_init();
 
 #ifdef BSP_USING_I2C0
+    /* define i2c Instance */
+    static struct rt_i2c_bus_device _i2c_device0;
     rt_memset((void *)&_i2c_device0, 0, sizeof(struct rt_i2c_bus_device));
     _i2c_device0.ops = &es32f0_i2c_ops;
     _i2c_device0.priv = &_h_i2c0;
@@ -127,6 +126,8 @@ int rt_hw_i2c_init(void)
 #endif
 
 #ifdef BSP_USING_I2C1
+    /* define i2c Instance */
+    static struct rt_i2c_bus_device _i2c_device1;
     rt_memset((void *)&_i2c_device1, 0, sizeof(struct rt_i2c_bus_device));
     _i2c_device1.ops = &es32f0_i2c_ops;
     _i2c_device1.priv = &_h_i2c1;
@@ -136,5 +137,5 @@ int rt_hw_i2c_init(void)
     return RT_EOK;
 }
 INIT_DEVICE_EXPORT(rt_hw_i2c_init);
-/* end of i2c driver */
+
 #endif
