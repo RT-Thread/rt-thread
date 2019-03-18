@@ -12,12 +12,42 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
+#include <ald_cmu.h>
 #include <ald_timer.h>
 #include <ald_gpio.h>
+
+static void pwm_set_freq(timer_handle_t *timer_initstruct, uint32_t ns)
+{
+    uint64_t _arr = (uint64_t)cmu_get_pclk1_clock() * ns / 1000000000 /
+                    (timer_initstruct->init.prescaler + 1) - 1;
+
+    WRITE_REG(timer_initstruct->perh->AR, (uint32_t)_arr);
+    timer_initstruct->init.period   = (uint32_t)_arr;
+}
+
+static void pwm_set_duty(timer_handle_t *timer_initstruct, timer_channel_t ch, uint32_t ns)
+{
+    uint64_t tmp = (uint64_t)cmu_get_pclk1_clock() * ns / 1000000000 /
+                   (timer_initstruct->init.prescaler + 1) - 1;
+
+    if (ch == TIMER_CHANNEL_1)
+        WRITE_REG(timer_initstruct->perh->CCVAL1, (uint32_t)tmp);
+    else if (ch == TIMER_CHANNEL_2)
+        WRITE_REG(timer_initstruct->perh->CCVAL2, (uint32_t)tmp);
+    else if (ch == TIMER_CHANNEL_3)
+        WRITE_REG(timer_initstruct->perh->CCVAL3, (uint32_t)tmp);
+    else if (ch == TIMER_CHANNEL_4)
+        WRITE_REG(timer_initstruct->perh->CCVAL4, (uint32_t)tmp);
+    else
+    {
+        ;/* do nothing */
+    }
+}
 
 static rt_err_t es32f0_pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
 {
     rt_err_t ret = RT_EOK;
+    uint32_t _ccep;
     timer_channel_t pwm_channel;
     timer_oc_init_t tim_ocinit;
     timer_handle_t *timer_initstruct = (timer_handle_t *)device->parent.user_data;
@@ -33,21 +63,21 @@ static rt_err_t es32f0_pwm_control(struct rt_device_pwm *device, int cmd, void *
     tim_ocinit.oc_idle      = TIMER_OC_IDLE_RESET;
 
     /* select pwm output channel */
-    if (0 == cfg->channel)
+    if (1 == cfg->channel)
     {
         pwm_channel = TIMER_CHANNEL_1;
     }
-    else if (1 == cfg->channel)
+    else if (2 == cfg->channel)
     {
         pwm_channel = TIMER_CHANNEL_2;
     }
-    else if (2 == cfg->channel)
+    else if (3 == cfg->channel)
     {
         if (timer_initstruct->perh == GP16C2T0 || timer_initstruct->perh == GP16C2T1)
             return RT_EINVAL;
         pwm_channel = TIMER_CHANNEL_3;
     }
-    else if (3 == cfg->channel)
+    else if (4 == cfg->channel)
     {
         if (timer_initstruct->perh == GP16C2T0 || timer_initstruct->perh == GP16C2T1)
             return RT_EINVAL;
@@ -69,21 +99,24 @@ static rt_err_t es32f0_pwm_control(struct rt_device_pwm *device, int cmd, void *
         break;
 
     case PWM_CMD_SET:
-        /* count registers max 0xFFFF, auto adjust prescaler*/
+        _ccep = timer_initstruct->perh->CCEP;
+        /* count registers max 0xFFFF, auto adjust prescaler */
         do
         {
-            timer_pwm_set_freq(timer_initstruct, 1000000000 / cfg->period);
+            pwm_set_freq(timer_initstruct, cfg->period);
             timer_initstruct->init.prescaler ++;
         }
         while (timer_initstruct->init.period > 0xFFFF);
         /* update prescaler */
-        WRITE_REG(timer_initstruct->perh->PRES, -- timer_initstruct->init.prescaler);
+        WRITE_REG(timer_initstruct->perh->PRES, --timer_initstruct->init.prescaler);
         timer_oc_config_channel(timer_initstruct, &tim_ocinit, pwm_channel);
-        timer_pwm_set_duty(timer_initstruct, pwm_channel, cfg->pulse * 100 / cfg->period);
+        pwm_set_duty(timer_initstruct, pwm_channel, cfg->pulse);
+        timer_initstruct->perh->CCEP = _ccep;
         break;
 
     case PWM_CMD_GET:
-        cfg->pulse = timer_read_capture_value(timer_initstruct, pwm_channel) * 100 / READ_REG(timer_initstruct->perh->AR);
+        cfg->pulse = timer_read_capture_value(timer_initstruct, pwm_channel) * 100 /
+                     READ_REG(timer_initstruct->perh->AR);
         break;
 
     default:
@@ -123,7 +156,8 @@ int rt_hw_pwm_init(void)
     gpio_init(GPIOA, GPIO_PIN_10, &gpio_initstructure);
     gpio_init(GPIOA, GPIO_PIN_11, &gpio_initstructure);
 
-    ret = rt_device_pwm_register(&pwm_dev0, "pwm0", &es32f0_pwm_ops, &timer_initstruct0);
+    ret = rt_device_pwm_register(&pwm_dev0, "pwm0", &es32f0_pwm_ops,
+                                 &timer_initstruct0);
 #endif
 
 #ifdef BSP_USING_PWM1 /* 4 channels */
@@ -140,7 +174,8 @@ int rt_hw_pwm_init(void)
     gpio_init(GPIOB, GPIO_PIN_8, &gpio_initstructure);
     gpio_init(GPIOB, GPIO_PIN_9, &gpio_initstructure);
 
-    ret = rt_device_pwm_register(&pwm_dev1, "pwm1", &es32f0_pwm_ops, &timer_initstruct1);
+    ret = rt_device_pwm_register(&pwm_dev1, "pwm1", &es32f0_pwm_ops,
+                                 &timer_initstruct1);
 #endif
 
 #ifdef BSP_USING_PWM2 /* 2 channels */
@@ -155,7 +190,8 @@ int rt_hw_pwm_init(void)
     gpio_init(GPIOA, GPIO_PIN_0, &gpio_initstructure);
     gpio_init(GPIOA, GPIO_PIN_1, &gpio_initstructure);
 
-    ret = rt_device_pwm_register(&pwm_dev2, "pwm2", &es32f0_pwm_ops, &timer_initstruct2);
+    ret = rt_device_pwm_register(&pwm_dev2, "pwm2", &es32f0_pwm_ops,
+                                 &timer_initstruct2);
 #endif
 
 #ifdef BSP_USING_PWM3 /* 2 channels */
@@ -170,7 +206,8 @@ int rt_hw_pwm_init(void)
     gpio_init(GPIOC, GPIO_PIN_6, &gpio_initstructure);
     gpio_init(GPIOC, GPIO_PIN_7, &gpio_initstructure);
 
-    ret = rt_device_pwm_register(&pwm_dev3, "pwm3", &es32f0_pwm_ops, &timer_initstruct3);
+    ret = rt_device_pwm_register(&pwm_dev3, "pwm3", &es32f0_pwm_ops,
+                                 &timer_initstruct3);
 #endif
 
     return ret;
