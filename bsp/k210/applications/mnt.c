@@ -8,8 +8,15 @@
  */
 
 #include <rtthread.h>
-
+#include <spi_msd.h>
+#include <dfs_fs.h>
 int mnt_init(void)
 {
+    msd_init("sd0", "spi10");
+    if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
+    {
+        rt_kprintf("Mount \"/dev/sd0\" on \"/\"\n");
+    }
     return 0;
 }
+INIT_ENV_EXPORT(mnt_init);
