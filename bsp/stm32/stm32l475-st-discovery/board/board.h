@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-5      SummerGift   first version
+ * 2019-3-19   tyustli    first version
  */
 
 #ifndef __BOARD_H__
