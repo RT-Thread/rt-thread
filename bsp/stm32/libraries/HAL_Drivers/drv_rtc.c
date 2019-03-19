@@ -68,11 +68,11 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
     RTC_DateStruct.Year    = p_tm->tm_year - 100;
     RTC_DateStruct.WeekDay = p_tm->tm_wday + 1;
 
-    if(HAL_RTC_SetTime(&RTC_Handler, &RTC_TimeStruct, RTC_FORMAT_BIN) != HAL_OK)
+    if (HAL_RTC_SetTime(&RTC_Handler, &RTC_TimeStruct, RTC_FORMAT_BIN) != HAL_OK)
     {
         return -RT_ERROR;
     }
-    if(HAL_RTC_SetDate(&RTC_Handler, &RTC_DateStruct, RTC_FORMAT_BIN) != HAL_OK)
+    if (HAL_RTC_SetDate(&RTC_Handler, &RTC_DateStruct, RTC_FORMAT_BIN) != HAL_OK)
     {
         return -RT_ERROR;
     }
@@ -87,9 +87,17 @@ static void rt_rtc_init(void)
     __HAL_RCC_PWR_CLK_ENABLE();
 
     RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+#ifdef BSP_RTC_USING_LSI
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI;
+    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+    RCC_OscInitStruct.LSEState = RCC_LSE_OFF;
+    RCC_OscInitStruct.LSIState = RCC_LSI_ON;
+#else
     RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSE;
     RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
     RCC_OscInitStruct.LSEState = RCC_LSE_ON;
+    RCC_OscInitStruct.LSIState = RCC_LSI_OFF;
+#endif
     HAL_RCC_OscConfig(&RCC_OscInitStruct);
 }
 
@@ -99,7 +107,11 @@ static rt_err_t rt_rtc_config(struct rt_device *dev)
 
     HAL_PWR_EnableBkUpAccess();
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
+#ifdef BSP_RTC_USING_LSI
+    PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
+#else
     PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
+#endif
     HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 
     RTC_Handler.Instance = RTC;
@@ -110,13 +122,31 @@ static rt_err_t rt_rtc_config(struct rt_device *dev)
 #if defined(SOC_SERIES_STM32F1)
         RTC_Handler.Init.OutPut = RTC_OUTPUTSOURCE_NONE;
         RTC_Handler.Init.AsynchPrediv = RTC_AUTO_1_SECOND;
-#elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4)
-        RTC_Handler.Init.AsynchPrediv = 0X7F;
-#ifndef SOC_SERIES_STM32F0
-        RTC_Handler.Init.SynchPrediv = 0XFF;
+#elif defined(SOC_SERIES_STM32F0)
+
+        /* set the frequency division */
+#ifdef BSP_RTC_USING_LSI
+        RTC_Handler.Init.AsynchPrediv = 0XA0;
+        RTC_Handler.Init.SynchPrediv = 0xFA;
 #else
+        RTC_Handler.Init.AsynchPrediv = 0X7F;
         RTC_Handler.Init.SynchPrediv = 0x0130;
-#endif
+#endif /* BSP_RTC_USING_LSI */
+
+        RTC_Handler.Init.HourFormat = RTC_HOURFORMAT_24;
+        RTC_Handler.Init.OutPut = RTC_OUTPUT_DISABLE;
+        RTC_Handler.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
+        RTC_Handler.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
+#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4)
+
+        /* set the frequency division */
+#ifdef BSP_RTC_USING_LSI
+        RTC_Handler.Init.AsynchPrediv = 0X7D;
+#else
+        RTC_Handler.Init.AsynchPrediv = 0X7F;
+#endif /* BSP_RTC_USING_LSI */
+        RTC_Handler.Init.SynchPrediv = 0XFF;
+
         RTC_Handler.Init.HourFormat = RTC_HOURFORMAT_24;
         RTC_Handler.Init.OutPut = RTC_OUTPUT_DISABLE;
         RTC_Handler.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
@@ -142,7 +172,7 @@ static rt_err_t rt_rtc_control(rt_device_t dev, int cmd, void *args)
         break;
 
     case RT_DEVICE_CTRL_RTC_SET_TIME:
-        if(set_rtc_time_stamp(*(rt_uint32_t *)args))
+        if (set_rtc_time_stamp(*(rt_uint32_t *)args))
         {
             result = -RT_ERROR;
         }
@@ -154,7 +184,7 @@ static rt_err_t rt_rtc_control(rt_device_t dev, int cmd, void *args)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops rtc_ops = 
+const static struct rt_device_ops rtc_ops =
 {
     RT_NULL,
     RT_NULL,
