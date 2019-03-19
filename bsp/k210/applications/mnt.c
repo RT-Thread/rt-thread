@@ -8,6 +8,7 @@
  */
 
 #include <rtthread.h>
+#if defined(RT_USING_SPI_MSD) && defined(RT_USING_DFS_ELMFAT)
 #include <spi_msd.h>
 #include <dfs_fs.h>
 int mnt_init(void)
@@ -20,3 +21,5 @@ int mnt_init(void)
     return 0;
 }
 INIT_ENV_EXPORT(mnt_init);
+#endif
+

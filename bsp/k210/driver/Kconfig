@@ -50,7 +50,7 @@ if BSP_USING_SPI1
     if BSP_SPI1_USING_SS0
         config BSP_SPI1_SS0_PIN
             int "spi1 ss0 pin number"
-            default 24
+            default 32
     endif
     menuconfig BSP_SPI1_USING_SS1
         bool "SPI1 Enable SS1"

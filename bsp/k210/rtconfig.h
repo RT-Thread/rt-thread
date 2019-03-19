@@ -105,7 +105,22 @@
 #define DFS_FILESYSTEM_TYPES_MAX 4
 #define DFS_FD_MAX 16
 /* RT_USING_DFS_MNTTABLE is not set */
-/* RT_USING_DFS_ELMFAT is not set */
+#define RT_USING_DFS_ELMFAT
+
+/* elm-chan's FatFs, Generic FAT Filesystem Module */
+
+#define RT_DFS_ELM_CODE_PAGE 437
+#define RT_DFS_ELM_WORD_ACCESS
+/* RT_DFS_ELM_USE_LFN_0 is not set */
+/* RT_DFS_ELM_USE_LFN_1 is not set */
+/* RT_DFS_ELM_USE_LFN_2 is not set */
+#define RT_DFS_ELM_USE_LFN_3
+#define RT_DFS_ELM_USE_LFN 3
+#define RT_DFS_ELM_MAX_LFN 255
+#define RT_DFS_ELM_DRIVES 2
+#define RT_DFS_ELM_MAX_SECTOR_SIZE 512
+/* RT_DFS_ELM_USE_ERASE is not set */
+#define RT_DFS_ELM_REENTRANT
 #define RT_USING_DFS_DEVFS
 /* RT_USING_DFS_ROMFS is not set */
 /* RT_USING_DFS_RAMFS is not set */
@@ -123,7 +138,7 @@
 /* RT_USING_HWTIMER is not set */
 /* RT_USING_CPUTIME is not set */
 /* RT_USING_I2C is not set */
-/* RT_USING_PIN is not set */
+#define RT_USING_PIN
 /* RT_USING_ADC is not set */
 /* RT_USING_PWM is not set */
 /* RT_USING_MTD_NOR is not set */
@@ -132,7 +147,14 @@
 /* RT_USING_PM is not set */
 /* RT_USING_RTC is not set */
 /* RT_USING_SDIO is not set */
-/* RT_USING_SPI is not set */
+#define RT_USING_SPI
+/* RT_USING_QSPI is not set */
+#define RT_USING_SPI_MSD
+/* RT_USING_SFUD is not set */
+/* RT_USING_W25QXX is not set */
+/* RT_USING_GD is not set */
+/* RT_USING_ENC28J60 is not set */
+/* RT_USING_SPI_WIFI is not set */
 /* RT_USING_WDT is not set */
 /* RT_USING_AUDIO is not set */
 /* RT_USING_SENSOR is not set */
@@ -196,6 +218,7 @@
 /* PKG_USING_WEBTERMINAL is not set */
 /* PKG_USING_CJSON is not set */
 /* PKG_USING_JSMN is not set */
+/* PKG_USING_LIBMODBUS is not set */
 /* PKG_USING_LJSON is not set */
 /* PKG_USING_EZXML is not set */
 /* PKG_USING_NANOPB is not set */
@@ -292,6 +315,7 @@
 /* PKG_USING_MPU6XXX is not set */
 /* PKG_USING_PCF8574 is not set */
 /* PKG_USING_SX12XX is not set */
+/* PKG_USING_SIGNAL_LED is not set */
 #define PKG_USING_KENDRYTE_SDK
 #define PKG_USING_KENDRYTE_SDK_V052
 /* PKG_USING_KENDRYTE_SDK_LATEST_VERSION is not set */
@@ -318,62 +342,22 @@
 /* PKG_USING_PERIPHERAL_SAMPLES is not set */
 /* PKG_USING_HELLO is not set */
 /* PKG_USING_VI is not set */
-
-/* Privated Packages of RealThread */
-
-/* PKG_USING_CODEC is not set */
-/* PKG_USING_PLAYER is not set */
-/* PKG_USING_MPLAYER is not set */
-/* PKG_USING_PERSIMMON_SRC is not set */
-/* PKG_USING_JS_PERSIMMON is not set */
-/* PKG_USING_JERRYSCRIPT_WIN32 is not set */
-
-/* Network Utilities */
-
-/* PKG_USING_WICED is not set */
-/* PKG_USING_CLOUDSDK is not set */
-/* PKG_USING_COREMARK is not set */
-/* PKG_USING_POWER_MANAGER is not set */
-/* PKG_USING_RT_OTA is not set */
-/* PKG_USING_RDBD_SRC is not set */
-/* PKG_USING_RTINSIGHT is not set */
-/* PKG_USING_SMARTCONFIG is not set */
-/* PKG_USING_RTX is not set */
-/* RT_USING_TESTCASE is not set */
-/* PKG_USING_NGHTTP2 is not set */
-/* PKG_USING_AVS is not set */
-/* PKG_USING_STS is not set */
-/* PKG_USING_DLMS is not set */
-
-/* Test Packages of RealThread */
-
-/* RT-Thread Senior Membership Packages */
-
-/* system packages */
-
-/* PKG_USING_FTL_SRC is not set */
-
-/* IoT - internet of things */
-
-/* Webnet: A web server package for rt-thread */
-
-/* rtpkgs online packages */
-
-/* PKG_USING_CSTRING is not set */
-/* PKG_USING_ARGPARSE is not set */
-/* PKG_USING_LIBBMPREAD is not set */
-/* PKG_USING_LIBUTILS is not set */
-/* PKG_USING_SAM is not set */
-/* PKG_USING_LIBCALLBACK is not set */
-/* PKG_USING_Z_EVENT is not set */
-/* PKG_USING_LIBSTM32HAL is not set */
 #define BOARD_K210_EVB
 #define BSP_USING_UART_HS
 /* BSP_USING_UART1 is not set */
 /* BSP_USING_UART2 is not set */
 /* BSP_USING_UART3 is not set */
 /* BSP_USING_I2C1 is not set */
-/* BSP_USING_SPI1 is not set */
+#define BSP_USING_SPI1
+/* BSP_USING_SPI1_AS_QSPI is not set */
+#define BSP_SPI1_CLK_PIN 29
+#define BSP_SPI1_D0_PIN 30
+#define BSP_SPI1_D1_PIN 31
+#define BSP_SPI1_USING_SS0
+#define BSP_SPI1_SS0_PIN 32
+/* BSP_SPI1_USING_SS1 is not set */
+/* BSP_SPI1_USING_SS2 is not set */
+/* BSP_SPI1_USING_SS3 is not set */
 #define BSP_USING_LCD
 #define BSP_LCD_CS_PIN 6
 #define BSP_LCD_WR_PIN 7
@@ -388,6 +372,7 @@
 #define BSP_CAMERA_CMOS_PWDN_PIN 13
 #define BSP_CAMERA_CMOS_XCLK_PIN 14
 #define BSP_CAMERA_CMOS_PCLK_PIN 15
+#define BSP_CAMERA_CMOS_HREF_PIN 17
 #define __STACKSIZE__ 4096
 
 #endif
