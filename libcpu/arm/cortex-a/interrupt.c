@@ -15,10 +15,9 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include "realview.h"
+#include "interrupt.h"
 #include "gic.h"
 
-#define MAX_HANDLERS                NR_IRQS_PBA8
 
 /* exception and interrupt handler table */
 struct rt_irq_desc isr_table[MAX_HANDLERS];
@@ -46,6 +45,7 @@ void rt_hw_interrupt_init(void)
 {
     rt_uint32_t gic_cpu_base;
     rt_uint32_t gic_dist_base;
+    rt_uint32_t gic_irq_start;
 
     /* initialize vector table */
     rt_hw_vector_init();
@@ -54,10 +54,11 @@ void rt_hw_interrupt_init(void)
     rt_memset(isr_table, 0x00, sizeof(isr_table));
 
     /* initialize ARM GIC */
-    gic_dist_base = REALVIEW_GIC_DIST_BASE;
-    gic_cpu_base = REALVIEW_GIC_CPU_BASE;
+    gic_dist_base = GIC_DIST_BASE;
+    gic_cpu_base = GIC_CPU_BASE;
+    gic_irq_start = GIC_IRQ_START;
 
-    arm_gic_dist_init(0, gic_dist_base, 0);
+    arm_gic_dist_init(0, gic_dist_base, gic_irq_start);
     arm_gic_cpu_init(0, gic_cpu_base);
 }
 
@@ -79,6 +80,23 @@ void rt_hw_interrupt_umask(int vector)
     arm_gic_umask(0, vector);
 }
 
+/**
+ * This function returns the active interrupt number.
+ * @param none
+ */
+int rt_hw_interrupt_get_irq(void)
+{
+    return arm_gic_get_active_irq(0) & GIC_ACK_INTID_MASK;
+}
+
+/**
+ * This function acknowledges the interrupt.
+ * @param vector the interrupt number
+ */
+void rt_hw_interrupt_ack(int vector)
+{
+    arm_gic_ack(0, vector);
+}
 /**
  * This function will install a interrupt service routine to a interrupt.
  * @param vector the interrupt number

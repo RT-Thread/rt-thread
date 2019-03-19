@@ -14,11 +14,10 @@
 
 #include <rtthread.h>
 #include <rthw.h>
-#include <board.h>
+#include <platform.h>
 
 #include "armv7.h"
-
-#include "gic.h"
+#include "interrupt.h"
 
 #ifdef RT_USING_FINSH
 extern long list_thread(void);
@@ -130,18 +129,14 @@ void rt_hw_trap_resv(struct rt_hw_exp_stack *regs)
     rt_hw_cpu_shutdown();
 }
 
-#define GIC_ACK_INTID_MASK              0x000003ff
-
 void rt_hw_trap_irq(void)
 {
     void *param;
-    unsigned long ir;
-    unsigned long fullir;
+    int ir;
     rt_isr_handler_t isr_func;
     extern struct rt_irq_desc isr_table[];
 
-    fullir = arm_gic_get_active_irq(0);
-    ir = fullir & GIC_ACK_INTID_MASK;
+    ir = rt_hw_interrupt_get_irq();
 
     if (ir == 1023)
     {
@@ -163,19 +158,17 @@ void rt_hw_trap_irq(void)
     }
 
     /* end of interrupt */
-    arm_gic_ack(0, fullir);
+    rt_hw_interrupt_ack(ir);
 }
 
 void rt_hw_trap_fiq(void)
 {
     void *param;
-    unsigned long ir;
-    unsigned long fullir;
+    int ir;
     rt_isr_handler_t isr_func;
     extern struct rt_irq_desc isr_table[];
 
-    fullir = arm_gic_get_active_irq(0);
-    ir = fullir & GIC_ACK_INTID_MASK;
+    ir = rt_hw_interrupt_get_irq();
 
     /* get interrupt service routine */
     isr_func = isr_table[ir].handler;
@@ -185,6 +178,6 @@ void rt_hw_trap_fiq(void)
     isr_func(ir, param);
 
     /* end of interrupt */
-    arm_gic_ack(0, fullir);
+    rt_hw_interrupt_ack(ir);
 }
 
