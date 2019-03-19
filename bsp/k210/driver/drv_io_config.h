@@ -18,6 +18,7 @@ enum HS_GPIO_CONFIG
 #ifdef BSP_SPI1_USING_SS3
     SPI1_CS3_PIN,
 #endif
+    GPIO_ALLOC_START /* index of gpio driver start */
 };
 
 extern int io_config_init(void);
