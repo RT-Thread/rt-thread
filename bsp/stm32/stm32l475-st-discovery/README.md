@@ -14,7 +14,7 @@
 
 ## 开发板介绍
 
-STM32L475 IoT Discovery kit 是ST官方推出的一款基于 ARM Cortex-M4 内核的开发板，最高主频为 80Mhz，该开发板具有丰富的板载资源，可以充分发挥 STM32L475 的芯片性能。
+STM32L475 IoT Discovery kit 是 ST 官方推出的一款基于 ARM Cortex-M4 内核的开发板，最高主频为 80Mhz，该开发板具有丰富的板载资源，可以充分发挥 STM32L475 的芯片性能。
 
 开发板外观如下图所示：
 
@@ -32,32 +32,20 @@ STM32L475 IoT Discovery kit 是ST官方推出的一款基于 ARM Cortex-M4 内�
   - 湿度传感器
   - 扩音器
   - 板载 ST LINK V2.1 功能
-- 常用接口：USB OTG、Arduino Uno和Pmod接口
-- 调试接口，ST-LINK Micro USB 接口
-- 支持mbed
+- 常用接口：USB OTG、Arduino Uno 和 Pmod 接口
+- 调试接口：ST-LINK Micro USB 接口(ST-LINK 转串口对应 串口1)
+- 支持 mbed
 
 开发板更多详细信息请参考ST官方网站 [STM32 开发板介绍]https://www.st.com/en/evaluation-tools/b-l475e-iot01a.html
 
 ## 外设支持
 
-本 BSP 目前对外设的支持情况如下：
+本 BSP 目前对片上外设的支持情况如下：
 
-| **板载外设**      | **支持情况** | **备注**                              |
-| :----------------- | :----------: | :------------------------------------- |
-| 板载 ST-LINK 转串口 |     支持     |                                       |
-| 温湿度传感器        |    支持     |                             |
-| 九轴传感器         |    支持     |                              |
-| 音频解码           |    支持     |                                     |
 | **片上外设**      | **支持情况** | **备注**                              |
+| :----------------- | :----------: | :------------------------------------- |
 | GPIO              |     支持     |                                      |
-| UART              |     支持     |                                      |
-| SPI               |     支持     |                                      |
-| I2C               |     支持     |                                      |
-| TIM               |     支持     |                                      |
-| ADC               |     支持     |                                      |
-| RTC               |     支持     |                                      |
-| WDT               |     支持     |                                      |
-| PWM               |     支持     |                                      |
+| UART              |     支持     |     UART1                                 |
 
 ## 使用说明
 
@@ -65,7 +53,7 @@ STM32L475 IoT Discovery kit 是ST官方推出的一款基于 ARM Cortex-M4 内�
 
 - 快速上手
 
-    本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
+    本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果。
 
 - 进阶使用
 
@@ -74,7 +62,7 @@ STM32L475 IoT Discovery kit 是ST官方推出的一款基于 ARM Cortex-M4 内�
 
 ### 快速上手
 
-本 BSP 为开发者提供MDK5 和 IAR 工程，并且支持 GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
+本 BSP 为开发者提供 MDK5 和 IAR 工程，并且支持 GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
 
 #### 硬件连接
 
@@ -93,15 +81,15 @@ STM32L475 IoT Discovery kit 是ST官方推出的一款基于 ARM Cortex-M4 内�
 连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
 
 
-```bash
-  \ | /
+```
+ \ | /
 - RT -     Thread Operating System
  / | \     4.0.1 build Mar 18 2019
  2006 - 2019 Copyright by rt-thread team
 ```
 ### 进阶使用
 
-此 BSP 默认只开启了 GPIO 和 串口1 的功能，如果需使用 更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
+此 BSP 默认只开启了 GPIO 和 串口1 的功能，如果需使用 更多高级功能，需要利用 ENV 工具对 BSP 进行配置，步骤如下：
 
 1. 在 bsp 下打开 env 工具。
 
