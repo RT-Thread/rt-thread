@@ -154,6 +154,7 @@ static void utest_run(const char *utest_name)
     {
         i = 0;
         is_find = RT_FALSE;
+        LOG_I("[==========] [ utest    ] loop %d/%d", index + 1, tc_loop);
         LOG_I("[==========] [ utest    ] started");
         while(i < tc_num)
         {
