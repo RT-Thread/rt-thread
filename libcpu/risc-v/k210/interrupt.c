@@ -230,10 +230,6 @@ uintptr_t handle_irq_m_ext(uintptr_t cause, uintptr_t epc)
         /* Restore primitive IRQ threshold */
         plic->targets.target[core_id].priority_threshold = int_threshold;
     }
-    else
-    {
-        rt_kprintf("unhandled trap!\n");
-    }
 
     return epc;
 }
@@ -270,8 +266,51 @@ uintptr_t handle_trap(uintptr_t mcause, uintptr_t epc)
         rt_hw_interrupt_disable();
 
         tid = rt_thread_self();
+        rt_kprintf("\nException:\n");
+        switch (cause)
+        {
+            case CAUSE_MISALIGNED_FETCH:
+                rt_kprintf("Instruction address misaligned");
+                break;
+            case CAUSE_FAULT_FETCH:
+                rt_kprintf("Instruction access fault");
+                break;
+            case CAUSE_ILLEGAL_INSTRUCTION:
+                rt_kprintf("Illegal instruction");
+                break;
+            case CAUSE_BREAKPOINT:
+                rt_kprintf("Breakpoint");
+                break;
+            case CAUSE_MISALIGNED_LOAD:
+                rt_kprintf("Load address misaligned");
+                break;
+            case CAUSE_FAULT_LOAD:
+                rt_kprintf("Load access fault");
+                break;
+            case CAUSE_MISALIGNED_STORE:
+                rt_kprintf("Store address misaligned");
+                break;
+            case CAUSE_FAULT_STORE:
+                rt_kprintf("Store access fault");
+                break;
+            case CAUSE_USER_ECALL:
+                rt_kprintf("Environment call from U-mode");
+                break;
+            case CAUSE_SUPERVISOR_ECALL:
+                rt_kprintf("Environment call from S-mode");
+                break;
+            case CAUSE_HYPERVISOR_ECALL:
+                rt_kprintf("Environment call from H-mode");
+                break;
+            case CAUSE_MACHINE_ECALL:
+                rt_kprintf("Environment call from M-mode");
+                break;
+            default:
+                rt_kprintf("Uknown exception : %08lX", cause);
+                break;
+        }
         rt_kprintf("\n");
-        rt_kprintf("unhandled trap, epc => 0x%08x, INT[%d]\n", epc, rt_interrupt_get_nest());
+        rt_kprintf("exception pc => 0x%08x\n", epc);
         rt_kprintf("current thread: %.*s\n", RT_NAME_MAX, tid->name);
 #ifdef RT_USING_FINSH
         list_thread();
