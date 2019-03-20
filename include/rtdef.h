@@ -1049,6 +1049,7 @@ struct rt_device_rect_info
     rt_uint16_t y;                                      /**< y coordinate */
     rt_uint16_t width;                                  /**< width */
     rt_uint16_t height;                                 /**< height */
+    rt_uint32_t color;                                  /**< color */
 };
 
 /**
