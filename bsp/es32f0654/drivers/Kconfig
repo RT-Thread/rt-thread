@@ -79,12 +79,12 @@ menu "Hardware Drivers Config"
     menu "Onboard Peripheral Drivers"
 
         config BSP_USING_SPI_FLASH
-        bool "Enable SPI FLASH (W25Q64 spi0)"
-        select BSP_USING_SPI
-        select BSP_USING_SPI0
-        select RT_USING_SFUD
-        select RT_SFUD_USING_SFDP
-        default n
+            bool "Enable SPI FLASH (W25Q64 spi0)"
+            select BSP_USING_SPI
+            select BSP_USING_SPI0
+            select RT_USING_SFUD
+            select RT_SFUD_USING_SFDP
+            default n
 
     endmenu
 
