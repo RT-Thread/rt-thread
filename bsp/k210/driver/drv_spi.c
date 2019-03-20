@@ -19,8 +19,11 @@
 #include <sysctl.h>
 #include <gpiohs.h>
 #include <string.h>
+#include "utils.h"
 
 #define DRV_SPI_DEVICE(spi_bus)    (struct drv_spi_bus *)(spi_bus)
+
+#define MAX_CLOCK   (40000000UL)
 
 struct drv_spi_bus
 {
@@ -48,6 +51,7 @@ static rt_err_t drv_spi_configure(struct rt_spi_device *device,
                                   struct rt_spi_configuration *configuration)
 {
     rt_err_t ret = RT_EOK;
+    int freq = 0;
     struct drv_spi_bus *bus = DRV_SPI_DEVICE(device->bus);
     struct drv_cs * cs = (struct drv_cs *)device->parent.user_data;
     RT_ASSERT(bus != RT_NULL);
@@ -60,31 +64,43 @@ static rt_err_t drv_spi_configure(struct rt_spi_device *device,
 #else
     spi_init(bus->spi_instance, configuration->mode & RT_SPI_MODE_3, SPI_FF_STANDARD, configuration->data_width, 0);
 #endif
-    spi_set_clk_rate(bus->spi_instance, configuration->max_hz);
-
+    freq = spi_set_clk_rate(bus->spi_instance, configuration->max_hz > MAX_CLOCK ? MAX_CLOCK : configuration->max_hz);
+    rt_kprintf("set spi freq %d\n", freq);
     return ret;
 }
 
-extern void spi_receive_data_normal_dma(dmac_channel_number_t dma_send_channel_num,
-                                  dmac_channel_number_t dma_receive_channel_num,
-                                  spi_device_num_t spi_num, spi_chip_select_t chip_select, const void *cmd_buff,
-                                  size_t cmd_len, void *rx_buff, size_t rx_len);
 
-
-
+void __spi_set_tmod(uint8_t spi_num, uint32_t tmod)
+{
+    RT_ASSERT(spi_num < SPI_DEVICE_MAX);
+    volatile spi_t *spi_handle = spi[spi_num];
+    uint8_t tmod_offset = 0;
+    switch(spi_num)
+    {
+        case 0:
+        case 1:
+        case 2:
+            tmod_offset = 8;
+            break;
+        case 3:
+        default:
+            tmod_offset = 10;
+            break;
+    }
+    set_bit(&spi_handle->ctrlr0, 3 << tmod_offset, tmod << tmod_offset);
+}
 
 static rt_uint32_t drv_spi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     struct drv_spi_bus *bus = DRV_SPI_DEVICE(device->bus);
     struct drv_cs * cs = (struct drv_cs *)device->parent.user_data;
     struct rt_spi_configuration *cfg = &device->config;
-    const uint8_t * tx_buff = message->send_buf;
-    uint8_t * rx_buff = message->recv_buf;
-    uint32_t dummy[1024];
-    size_t send_size, recv_size;
+    uint32_t * tx_buff = RT_NULL;
+    uint32_t * rx_buff = RT_NULL;
+    int i;
+    rt_ubase_t dummy = 0xFFFFFFFFU;
 
-    send_size = message->length;
-    recv_size = message->length;
+    __spi_set_tmod(bus->spi_instance, SPI_TMOD_TRANS_RECV);
 
     RT_ASSERT(bus != RT_NULL);
 
@@ -94,18 +110,73 @@ static rt_uint32_t drv_spi_xfer(struct rt_spi_device *device, struct rt_spi_mess
     }
     if(message->length)
     {
-        if(!tx_buff)
+        spi_instance[bus->spi_instance]->dmacr = 0x3;
+        spi_instance[bus->spi_instance]->ssienr = 0x01;
+
+        sysctl_dma_select(bus->dma_send_channel, SYSCTL_DMA_SELECT_SSI0_TX_REQ + bus->spi_instance * 2);
+        sysctl_dma_select(bus->dma_recv_channel, SYSCTL_DMA_SELECT_SSI0_RX_REQ + bus->spi_instance * 2);
+
+        if(!message->recv_buf)
         {
-            tx_buff = (uint8_t *)&dummy;
-            send_size = 1;
+            dmac_set_single_mode(bus->dma_recv_channel, (void *)(&spi_instance[bus->spi_instance]->dr[0]), &dummy, DMAC_ADDR_NOCHANGE, DMAC_ADDR_NOCHANGE,
+                           DMAC_MSIZE_1, DMAC_TRANS_WIDTH_32, message->length);
+        }
+        else
+        {
+            rx_buff = rt_calloc(message->length * 4, 1);
+            if(!rx_buff)
+            {
+                goto transfer_done;
+            }
+            
+            dmac_set_single_mode(bus->dma_recv_channel, (void *)(&spi_instance[bus->spi_instance]->dr[0]), rx_buff, DMAC_ADDR_NOCHANGE, DMAC_ADDR_INCREMENT,
+                           DMAC_MSIZE_1, DMAC_TRANS_WIDTH_32, message->length);
+        }
+        
+
+        if(!message->send_buf)
+        {
+            dmac_set_single_mode(bus->dma_send_channel, &dummy, (void *)(&spi_instance[bus->spi_instance]->dr[0]), DMAC_ADDR_NOCHANGE, DMAC_ADDR_NOCHANGE,
+                           DMAC_MSIZE_4, DMAC_TRANS_WIDTH_32, message->length);
+        }
+        else
+        {
+            tx_buff = rt_malloc(message->length * 4);
+            if(!tx_buff)
+            {
+                goto transfer_done;
+            }
+            for(i = 0; i < message->length; i++)
+            {
+                tx_buff[i] = ((uint8_t *)message->send_buf)[i];
+            }
+            dmac_set_single_mode(bus->dma_send_channel, tx_buff, (void *)(&spi_instance[bus->spi_instance]->dr[0]), DMAC_ADDR_INCREMENT, DMAC_ADDR_NOCHANGE,
+                           DMAC_MSIZE_4, DMAC_TRANS_WIDTH_32, message->length);
+        }
+        
+        spi_instance[bus->spi_instance]->ser = 1U << cs->cs_index;
+        dmac_wait_done(bus->dma_send_channel);
+        dmac_wait_done(bus->dma_recv_channel);
+        spi_instance[bus->spi_instance]->ser = 0x00;
+        spi_instance[bus->spi_instance]->ssienr = 0x00;
+
+        if(message->recv_buf)
+        {
+            for(i = 0; i < message->length; i++)
+            {
+                ((uint8_t *)message->recv_buf)[i] = (uint8_t)rx_buff[i];
+            }
         }
 
-        if(!rx_buff)
+transfer_done:
+        if(tx_buff)
         {
-            rx_buff = (uint8_t *)&dummy;
-            recv_size = 1;
+            rt_free(tx_buff);
         }
-        spi_dup_send_receive_data_dma(bus->dma_send_channel, bus->dma_recv_channel, bus->spi_instance, cs->cs_index, tx_buff, send_size, rx_buff, recv_size);
+        if(rx_buff)
+        {
+            rt_free(rx_buff);
+        }
     }
 
     if(message->cs_release)
