@@ -84,6 +84,8 @@ extern int rt_hw_clint_ipi_enable(void);
 
 void rt_hw_board_init(void)
 {
+    sysctl_pll_set_freq(SYSCTL_PLL0, 800000000UL);
+    sysctl_pll_set_freq(SYSCTL_PLL1, 400000000UL);
     /* Init FPIOA */
     fpioa_init();
     /* Dmac init */
