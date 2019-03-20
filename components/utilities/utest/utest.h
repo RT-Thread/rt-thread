@@ -68,7 +68,7 @@ struct utest_tc_export {
     const char  *name;
     uint32_t     run_timeout;
     rt_err_t   (*init)(void);
-    void       (*tc)(void);
+    rt_err_t   (*tc)(void);
     rt_err_t   (*cleanup)(void);
 };
 typedef struct utest_tc_export *utest_tc_export_t;
