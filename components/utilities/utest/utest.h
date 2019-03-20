@@ -132,7 +132,7 @@ utest_t utest_handle_get(void);
  * 
 */
 #define UTEST_TC_EXPORT(testcase, name, init, cleanup, timeout)                \
-    RT_USED static const struct utest_tc_export _utest_testcase                \
+    RT_USED static const struct utest_tc_export _utest_##testcase                \
     SECTION("UtestTcTab") =                                                    \
     {                                                                          \
         name,                                                                  \
