@@ -12,9 +12,10 @@
 #include <rtdevice.h>
 #include <board.h>
 
-/* defined the LED0 pin: PB1 */
-#define LED0_PIN    GET_PIN(B, 1)
-
+/* defined the LED0 pin: PC4-36 PA8-8,PC5-37,PA10-10*/
+//#define LED0_PIN    GET_PIN(C, 4)
+//#define LED0_PIN    36
+#define LED0_PIN 10
 int main(void)
 {
     int count = 1;
