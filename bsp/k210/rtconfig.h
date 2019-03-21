@@ -49,9 +49,8 @@
 #define RT_USING_MEMPOOL
 /* RT_USING_MEMHEAP is not set */
 /* RT_USING_NOHEAP is not set */
-#define RT_USING_SMALL_MEM
-/* RT_USING_SLAB is not set */
-/* RT_USING_MEMTRACE is not set */
+/* RT_USING_SMALL_MEM is not set */
+#define RT_USING_SLAB
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
@@ -101,9 +100,9 @@
 
 #define RT_USING_DFS
 #define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 4
-#define DFS_FILESYSTEM_TYPES_MAX 4
-#define DFS_FD_MAX 16
+#define DFS_FILESYSTEMS_MAX 16
+#define DFS_FILESYSTEM_TYPES_MAX 16
+#define DFS_FD_MAX 64
 /* RT_USING_DFS_MNTTABLE is not set */
 #define RT_USING_DFS_ELMFAT
 
@@ -118,7 +117,7 @@
 #define RT_DFS_ELM_USE_LFN 3
 #define RT_DFS_ELM_MAX_LFN 255
 #define RT_DFS_ELM_DRIVES 2
-#define RT_DFS_ELM_MAX_SECTOR_SIZE 512
+#define RT_DFS_ELM_MAX_SECTOR_SIZE 4096
 /* RT_DFS_ELM_USE_ERASE is not set */
 #define RT_DFS_ELM_REENTRANT
 #define RT_USING_DFS_DEVFS
@@ -150,7 +149,11 @@
 #define RT_USING_SPI
 /* RT_USING_QSPI is not set */
 #define RT_USING_SPI_MSD
-/* RT_USING_SFUD is not set */
+#define RT_USING_SFUD
+#define RT_SFUD_USING_SFDP
+#define RT_SFUD_USING_FLASH_INFO_TABLE
+/* RT_SFUD_USING_QSPI is not set */
+#define RT_DEBUG_SFUD
 /* RT_USING_W25QXX is not set */
 /* RT_USING_GD is not set */
 /* RT_USING_ENC28J60 is not set */
