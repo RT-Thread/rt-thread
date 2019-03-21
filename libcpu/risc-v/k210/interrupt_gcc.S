@@ -69,7 +69,7 @@ trap_entry:
     call  rt_interrupt_enter
     csrr  a0, mcause
     csrr  a1, mepc
-    mv    a2, sp
+    mv    a2, s0
     call  handle_trap
     call  rt_interrupt_leave
 
