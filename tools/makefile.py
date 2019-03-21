@@ -8,10 +8,14 @@ import rtconfig
 def TargetMakefile(env):
     project = ProjectInfo(env)
 
-    make = open('config.mk', 'w')
-
     BSP_ROOT = os.path.abspath(env['BSP_ROOT'])
     RTT_ROOT = os.path.abspath(env['RTT_ROOT'])
+
+    match_bsp = False
+    if BSP_ROOT.startswith(RTT_ROOT): 
+        match_bsp = True
+
+    make = open('config.mk', 'w')
 
     make.write('BSP_ROOT ?= %s\n' % BSP_ROOT.replace('\\', '\\\\'))
     make.write('RTT_ROOT ?= %s\n' % RTT_ROOT.replace('\\', '\\\\'))
@@ -39,8 +43,25 @@ def TargetMakefile(env):
     Headers = project['HEADERS']
     CPPDEFINES = project['CPPDEFINES']
 
+    paths = [os.path.normpath(i) for i in project['CPPPATH']]
+    CPPPATH = []
+    for path in paths:
+        fn = os.path.normpath(path)
+        if match_bsp:
+            if fn.startswith(BSP_ROOT):
+                fn = '$(BSP_ROOT)' + fn.replace(BSP_ROOT, '')
+            elif fn.startswith(RTT_ROOT):
+                fn = '$(RTT_ROOT)' + fn.replace(RTT_ROOT, '')
+        else:
+            if fn.startswith(RTT_ROOT):
+                fn = '$(RTT_ROOT)' + fn.replace(RTT_ROOT, '')
+            elif fn.startswith(BSP_ROOT):
+                fn = '$(BSP_ROOT)' + fn.replace(BSP_ROOT, '')
+
+        CPPPATH.append(fn)
+
     path = ''
-    paths = [_make_path_relative(BSP_ROOT, os.path.normpath(i)) for i in project['CPPPATH']]
+    paths = CPPPATH
     for item in paths:
         path += '\t-I%s \\\n' % item
 
@@ -59,8 +80,26 @@ def TargetMakefile(env):
     make.write(defines)
     make.write('\n')
 
+    files = Files
+    Files = []
+    for file in files:
+        fn = os.path.normpath(file)
+        if match_bsp:
+            if fn.startswith(BSP_ROOT):
+                fn = '$(BSP_ROOT)' + fn.replace(BSP_ROOT, '')
+            elif fn.startswith(RTT_ROOT):
+                fn = '$(RTT_ROOT)' + fn.replace(RTT_ROOT, '')
+        else:
+            if fn.startswith(RTT_ROOT):
+                fn = '$(RTT_ROOT)' + fn.replace(RTT_ROOT, '')
+            elif fn.startswith(BSP_ROOT):
+                fn = '$(BSP_ROOT)' + fn.replace(BSP_ROOT, '')
+
+        Files.append(fn)
+        # print(fn)
+
     src = open('src.mk', 'w')
-    files = [_make_path_relative(BSP_ROOT, os.path.normpath(i)) for i in Files]
+    files = Files
     src.write('SRC_FILES :=\n')
     for item in files:
         src.write('SRC_FILES +=%s\n' % item)
