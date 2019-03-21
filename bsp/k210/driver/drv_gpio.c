@@ -139,7 +139,7 @@ static void pin_irq(int vector, void *param)
         set_gpio_bit(gpiohs->fall_ie.u32, pin_channel, 1);
     }
 
-    if(irq_table[pin_channel 2019-03-18     ZYH          first version].edge & GPIO_PE_RISING)
+    if(irq_table[pin_channel].edge & GPIO_PE_RISING)
     {
         set_gpio_bit(gpiohs->rise_ie.u32, pin_channel, 0);
         set_gpio_bit(gpiohs->rise_ip.u32, pin_channel, 1);

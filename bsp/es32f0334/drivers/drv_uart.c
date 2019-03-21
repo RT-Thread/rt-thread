@@ -45,13 +45,10 @@ static rt_err_t es32f0x_configure(struct rt_serial_device *serial, struct serial
     gpio_init_initstructure.func = GPIO_FUNC_3;
     gpio_init(GPIOB, GPIO_PIN_10, &gpio_init_initstructure);
 
-    /* Initialize rx pin ,the same as txpin except mode*/
+    /* Initialize rx pin ,the same as txpin except mode */
     gpio_init_initstructure.mode = GPIO_MODE_INPUT;
     gpio_init(GPIOB, GPIO_PIN_11, &gpio_init_initstructure);
-
-    NVIC_EnableIRQ(UART0_IRQn);
-
-#endif /* uart0 gpio init */
+#endif
 
 #ifdef BSP_USING_UART1
     /* Initialize tx pin */
@@ -61,9 +58,7 @@ static rt_err_t es32f0x_configure(struct rt_serial_device *serial, struct serial
     /* Initialize rx pin ,the same as txpin except mode*/
     gpio_init_initstructure.mode = GPIO_MODE_INPUT;
     gpio_init(GPIOC, GPIO_PIN_11, &gpio_init_initstructure);
-
-    NVIC_EnableIRQ(UART1_IRQn);
-#endif /* uart1 gpio init */
+#endif
 
     uart->huart.init.mode        = UART_MODE_UART;
     uart->huart.init.baud        = cfg->baud_rate;
@@ -90,7 +85,7 @@ static rt_err_t es32f0x_configure(struct rt_serial_device *serial, struct serial
         UART_DATA_INV_DISABLE(&uart->huart);
     }
 
-    /*enable rx int*/
+    /* enable rx int */
     uart_interrupt_config(&uart->huart, UART_IT_RXRD, ENABLE);
 
     return RT_EOK;
