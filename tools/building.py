@@ -187,7 +187,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     AddOption('--target',
                       dest = 'target',
                       type = 'string',
-                      help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile')
+                      help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse')
     AddOption('--genconfig',
                 dest = 'genconfig',
                 action = 'store_true',
@@ -229,6 +229,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'ua':('gcc', 'gcc'),
                 'cdk':('gcc', 'gcc'),
                 'makefile':('gcc', 'gcc'),
+                'eclipse':('gcc', 'gcc'),
                 'ses' : ('gcc', 'gcc')}
     tgt_name = GetOption('target')
 
