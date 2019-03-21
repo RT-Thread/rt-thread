@@ -19,8 +19,20 @@
 #define MAX_HANDLERS IMX_INTERRUPT_COUNT
 
 /* the basic constants needed by gic */
-#define GIC_DIST_BASE kGICDBaseOffset
-#define GIC_CPU_BASE kGICCBaseOffset
+static inline rt_uint32_t platform_get_gic_dist_base(void)
+{
+    rt_uint32_t gic_base;
+    asm volatile ("mrc p15, 4, %0, c15, c0, 0" : "=r"(gic_base));
+    return gic_base + kGICDBaseOffset;
+}
+
+static inline rt_uint32_t platform_get_gic_cpu_base(void)
+{
+    rt_uint32_t gic_base;
+    asm volatile ("mrc p15, 4, %0, c15, c0, 0" : "=r"(gic_base));
+    return gic_base + kGICCBaseOffset;
+}
+
 #define GIC_IRQ_START   0
 
 #define GIC_ACK_INTID_MASK              0x000003ff

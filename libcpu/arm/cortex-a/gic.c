@@ -222,6 +222,7 @@ int arm_gic_dist_init(rt_uint32_t index, rt_uint32_t dist_base, int irq_start)
 
     cpumask |= cpumask << 8;
     cpumask |= cpumask << 16;
+    cpumask |= cpumask << 24;
 
     GIC_DIST_CTRL(dist_base) = 0x0;
 
@@ -246,9 +247,11 @@ int arm_gic_dist_init(rt_uint32_t index, rt_uint32_t dist_base, int irq_start)
     for (i = 0; i < _gic_max_irq; i += 32)
         GIC_DIST_IGROUP(dist_base, i) = 0xffffffff;
 #endif
+    for (i = 0; i < _gic_max_irq; i += 32)
+        GIC_DIST_IGROUP(dist_base, i) = 0;
 
     /* Enable group0 and group1 interrupt forwarding. */
-    GIC_DIST_CTRL(dist_base) = 0x03;
+    GIC_DIST_CTRL(dist_base) = 0x01;
 
     return 0;
 }
@@ -260,6 +263,7 @@ int arm_gic_cpu_init(rt_uint32_t index, rt_uint32_t cpu_base)
     _gic_table[index].cpu_hw_base = cpu_base;
 
     GIC_CPU_PRIMASK(cpu_base) = 0xf0;
+    GIC_CPU_BINPOINT(cpu_base) = 0x7;
     /* Enable CPU interrupt */
     GIC_CPU_CTRL(cpu_base) = 0x01;
 

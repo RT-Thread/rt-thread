@@ -54,8 +54,9 @@ void rt_hw_interrupt_init(void)
     rt_memset(isr_table, 0x00, sizeof(isr_table));
 
     /* initialize ARM GIC */
-    gic_dist_base = GIC_DIST_BASE;
-    gic_cpu_base = GIC_CPU_BASE;
+    gic_dist_base = platform_get_gic_dist_base();
+    gic_cpu_base = platform_get_gic_cpu_base();
+
     gic_irq_start = GIC_IRQ_START;
 
     arm_gic_dist_init(0, gic_dist_base, gic_irq_start);

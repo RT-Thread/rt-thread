@@ -49,15 +49,17 @@ stack_top:
 .globl _reset
 _reset:
     /* set the cpu to SVC32 mode and disable interrupt */
-    mrs     r0, cpsr
-    bic     r0, r0, #0x1f
-    orr     r0, r0, #0x13
-    msr     cpsr_c, r0
+    cps #Mode_SVC
+    ldr sp, =svc_stack_2_limit
+    bl flush_cache_all
+    bl rt_cpu_mmu_disable
 
+#ifdef RT_USING_SMP
     mrc p15, 0, r1, c1, c0, 1
     mov r0, #(1<<6)
     orr r1, r0
     mcr p15, 0, r1, c1, c0, 1 //enable smp
+#endif
 
     ldr lr, =after_enable_mmu
     ldr r0, =mtbl
@@ -94,7 +96,6 @@ ctor_loop:
 ctor_end:
 
     /* start RT-Thread Kernel */
-    bl      flush_cache_all
     ldr     pc, _rtthread_startup
 _rtthread_startup:
     .word rtthread_startup
@@ -401,37 +402,5 @@ irq_stack_2:
     .space (1 << 10)
 irq_stack_2_limit:
 
-.data
-#define DEVICE_MEM  0x10c06
-#define NORMAL_MEM  0x11c0e
-.align 14
-mtbl:
-
-    //vaddr: 0x00000000
-    .rept 0x100
-    .word 0x0
-    .endr
-
-    //vaddr: 0x10000000
-    .equ mmu_tbl_map_paddr, 0x10000000
-    .rept 0x400
-    .word mmu_tbl_map_paddr | DEVICE_MEM
-    .equ mmu_tbl_map_paddr, mmu_tbl_map_paddr + 0x100000
-    .endr
-
-    //vaddr: 0x50000000
-    .rept 0x100
-    .word 0x0
-    .endr
-
-    //vaddr: 0x60000000
-    .equ mmu_tbl_map_paddr, 0x60000000
-    .rept 0x800
-    .word mmu_tbl_map_paddr | NORMAL_MEM
-    .equ mmu_tbl_map_paddr, mmu_tbl_map_paddr + 0x100000
-    .endr
-
-    //vaddr: 0xe0000000
-    .rept 0x200
-    .word 0x0
-    .endr
+/* include mmu table defined for the specific platform */
+#include "mtbl.S"
