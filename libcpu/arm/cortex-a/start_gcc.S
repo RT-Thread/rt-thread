@@ -402,5 +402,5 @@ irq_stack_2:
     .space (1 << 10)
 irq_stack_2_limit:
 
-/* include mmu table defined for the specific platform */
+/* include the mmu table defined for the specific platform */
 #include "mtbl.S"
