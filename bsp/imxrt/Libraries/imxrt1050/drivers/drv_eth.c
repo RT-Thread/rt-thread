@@ -666,6 +666,10 @@ static void _enet_config(void)
     //config.interrupt = 0xFFFFFFFF;
     config.miiSpeed = imxrt_eth_device.speed;
     config.miiDuplex = imxrt_eth_device.duplex;
+#ifdef RT_LWIP_USING_HW_CHECKSUM
+    config.rxAccelerConfig = ENET_RACC_PRODIS_MASK | ENET_RACC_IPDIS_MASK;
+    config.txAccelerConfig = ENET_TACC_IPCHK_MASK | ENET_TACC_PROCHK_MASK;
+#endif
 
     /* Set SMI to get PHY link status. */
     sysClock = CLOCK_GetFreq(kCLOCK_AhbClk);

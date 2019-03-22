@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2019-03-19     ZYH          first version
+ */
+
 #include <rtthread.h>
 #include <fpioa.h>
 #include <drv_io_config.h>
@@ -25,23 +35,31 @@ static struct io_config
     {BSP_CAMERA_CMOS_PWDN_PIN, FUNC_CMOS_PWDN},
     {BSP_CAMERA_CMOS_XCLK_PIN, FUNC_CMOS_XCLK},
     {BSP_CAMERA_CMOS_PCLK_PIN, FUNC_CMOS_PCLK},
+    {BSP_CAMERA_CMOS_HREF_PIN, FUNC_CMOS_HREF},
 #endif
 
 #ifdef BSP_USING_SPI1
-    {17, FUNC_CMOS_HREF},
-    {24, FUNC_SPI1_SS3},
-    {29, FUNC_SPI1_SCLK},
-    {30, FUNC_SPI1_D0},
-    {31, FUNC_SPI1_D1},
+    {BSP_SPI1_CLK_PIN, FUNC_SPI1_SCLK},
+    {BSP_SPI1_D0_PIN, FUNC_SPI1_D0},
+    {BSP_SPI1_D1_PIN, FUNC_SPI1_D1},
 #ifdef BSP_USING_SPI1_AS_QSPI
-    {32, FUNC_SPI1_D2},
-    {33, FUNC_SPI1_D3},
+    {BSP_SPI1_D2_PIN, FUNC_SPI1_D2},
+    {BSP_SPI1_D3_PIN, FUNC_SPI1_D3},
+#endif
+#ifdef BSP_SPI1_USING_SS0
+    {BSP_SPI1_SS0_PIN, HS_GPIO(SPI1_CS0_PIN)},
+#endif
+#ifdef BSP_SPI1_USING_SS1
+    {BSP_SPI1_SS1_PIN, HS_GPIO(SPI1_CS1_PIN)},
+#endif
+#ifdef BSP_SPI1_USING_SS2
+    {BSP_SPI1_SS2_PIN, HS_GPIO(SPI1_CS2_PIN)},
+#endif
+#ifdef BSP_SPI1_USING_SS3
+    {BSP_SPI1_SS3_PIN, HS_GPIO(SPI1_CS3_PIN)},
 #endif
 #endif
 
-#ifdef BSP_USING_SDCARD
-    {32, HS_GPIO(SD_CS_PIN)},
-#endif
 };
 
 
@@ -65,3 +83,4 @@ int io_config_init(void)
 
 }
 INIT_BOARD_EXPORT(io_config_init);
+
