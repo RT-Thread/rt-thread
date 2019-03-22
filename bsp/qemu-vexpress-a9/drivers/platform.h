@@ -1,3 +1,15 @@
+/*
+ * platform.h:  informations specific to the platform
+ *
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2018-03-22     quanzhao     first version
+ */
+
 #ifndef __PLATFORM_H__
 #define __PLATFORM_H__
 
