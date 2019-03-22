@@ -1,11 +1,9 @@
 /*
  * File      : gic.c, ARM Generic Interrupt Controller
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2013-2014, RT-Thread Develop Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -17,18 +15,19 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include <board.h>
 
 #include "gic.h"
 #include "cp15.h"
 
 struct arm_gic
 {
-    rt_uint32_t offset;
+    rt_uint32_t offset;		/* the first interrupt index in the exception table */
 
-    rt_uint32_t dist_hw_base;
-    rt_uint32_t cpu_hw_base;
+    rt_uint32_t dist_hw_base;	/* the base address of the gic distributor */
+    rt_uint32_t cpu_hw_base;	/* the base addrees of the gic cpu interface */
 };
+
+/* 'ARM_GIC_MAX_NR' is the number of cores */
 static struct arm_gic _gic_table[ARM_GIC_MAX_NR];
 
 #define GIC_CPU_CTRL(hw_base)               __REG32((hw_base) + 0x00)
@@ -118,6 +117,7 @@ void arm_gic_clear_active(rt_uint32_t index, int irq)
     GIC_DIST_ACTIVE_CLEAR(_gic_table[index].dist_hw_base, irq) = mask;
 }
 
+/* Set up the cpu mask for the specific interrupt */
 void arm_gic_set_cpu(rt_uint32_t index, int irq, unsigned int cpumask)
 {
     rt_uint32_t old_tgt;
@@ -215,11 +215,12 @@ int arm_gic_dist_init(rt_uint32_t index, rt_uint32_t dist_base, int irq_start)
      */
     if (_gic_max_irq > 1020)
         _gic_max_irq = 1020;
-    if (_gic_max_irq > ARM_GIC_NR_IRQS)
+    if (_gic_max_irq > ARM_GIC_NR_IRQS)	/* the platform maximum interrupts */
         _gic_max_irq = ARM_GIC_NR_IRQS;
 
     cpumask |= cpumask << 8;
     cpumask |= cpumask << 16;
+    cpumask |= cpumask << 24;
 
     GIC_DIST_CTRL(dist_base) = 0x0;
 
@@ -244,9 +245,11 @@ int arm_gic_dist_init(rt_uint32_t index, rt_uint32_t dist_base, int irq_start)
     for (i = 0; i < _gic_max_irq; i += 32)
         GIC_DIST_IGROUP(dist_base, i) = 0xffffffff;
 #endif
+    for (i = 0; i < _gic_max_irq; i += 32)
+        GIC_DIST_IGROUP(dist_base, i) = 0;
 
     /* Enable group0 and group1 interrupt forwarding. */
-    GIC_DIST_CTRL(dist_base) = 0x03;
+    GIC_DIST_CTRL(dist_base) = 0x01;
 
     return 0;
 }
@@ -258,6 +261,7 @@ int arm_gic_cpu_init(rt_uint32_t index, rt_uint32_t cpu_base)
     _gic_table[index].cpu_hw_base = cpu_base;
 
     GIC_CPU_PRIMASK(cpu_base) = 0xf0;
+    GIC_CPU_BINPOINT(cpu_base) = 0x7;
     /* Enable CPU interrupt */
     GIC_CPU_CTRL(cpu_base) = 0x01;
 

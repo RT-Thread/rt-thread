@@ -15,6 +15,11 @@ rt_cpu_get_smp_id:
 
 .globl rt_cpu_vector_set_base
 rt_cpu_vector_set_base:
+    /* clear SCTRL.V to customize the vector address */
+    mrc     p15, #0, r1, c1, c0, #0
+    bic     r1, #(1 << 13)
+    mcr     p15, #0, r1, c1, c0, #0
+    /* set up the vector address */
     mcr     p15, #0, r0, c12, c0, #0
     dsb
     bx      lr
