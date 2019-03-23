@@ -44,7 +44,7 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -std=c99 -Dgcc'
+    CFLAGS = DEVICE + ' -Dgcc'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rt-thread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
 
@@ -57,11 +57,15 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS += ' -O2'
 
+    CXXFLAGS = CFLAGS 
+    CFLAGS += ' -std=c99'
+
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
 elif PLATFORM == 'armcc':
     # toolchains
     CC = 'armcc'
+    CXX = 'armcc'
     AS = 'armasm'
     AR = 'armar'
     LINK = 'armlink'
@@ -85,12 +89,15 @@ elif PLATFORM == 'armcc':
     else:
         CFLAGS += ' -O2'
 
-    CXXFLAGS = CFLAGS
+    CXXFLAGS = CFLAGS 
+    CFLAGS += ' -std=c99'
+
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
 elif PLATFORM == 'iar':
     # toolchains
     CC = 'iccarm'
+    CXX = 'iccarm'
     AS = 'iasmarm'
     AR = 'iarchive'
     LINK = 'ilinkarm'
@@ -131,5 +138,7 @@ elif PLATFORM == 'iar':
     LFLAGS = ' --config "board/linker_scripts/link.icf"'
     LFLAGS += ' --entry __iar_program_start'
 
+    CXXFLAGS = CFLAGS
+    
     EXEC_PATH = EXEC_PATH + '/arm/bin/'
     POST_ACTION = 'ielftool --bin $TARGET rtthread.bin'
