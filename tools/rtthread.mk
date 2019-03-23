@@ -8,50 +8,50 @@ endif
 
 $(if $(strip $(BUILD_DIR)),,$(error BUILD_DIR not defined))
 
-RTT_BUILD_DIR := RT-THREAD_OBJS
-BSP_BUILD_DIR := BSP_OBJS
+RTT_BUILD_DIR := .
+BSP_BUILD_DIR := bsp
 
 #################
 
 define add_c_file
+$(eval C_SRC := $(1:$(BSP_ROOT)/%=%)) \
+$(eval C_SRC := $(C_SRC:$(RTT_ROOT)/%=%)) \
 $(eval COBJ := $(1:%.c=%.o)) \
-$(eval COBJ := $(COBJ:$(RTT_ROOT)/%=$(RTT_BUILD_DIR)/%)) \
 $(eval COBJ := $(COBJ:$(BSP_ROOT)/%=$(BSP_BUILD_DIR)/%)) \
-$(eval VPATH += $(dir $1)) \
-$(eval CSRCS += $1) \
+$(eval COBJ := $(COBJ:$(RTT_ROOT)/%=$(RTT_BUILD_DIR)/%)) \
 $(eval LOCALC := $(addprefix $(BUILD_DIR)/,$(COBJ))) \
 $(eval OBJS += $(LOCALC)) \
-$(if $(strip $(LOCALC)),$(eval $(LOCALC): $1
+$(if $(strip $(LOCALC)),$(eval $(LOCALC): $(C_SRC)
 	@if [ ! -d $$(@D) ]; then mkdir -p $$(@D); fi
-	@echo cc $$@
+	@echo cc $$<
 	@$(CROSS_COMPILE)gcc $$(CFLAGS) -c $$< -o $$@))
 endef
 
 define add_cxx_file
+$(eval CXX_SRC := $(1:$(BSP_ROOT)/%=%)) \
+$(eval CXX_SRC := $(CXX_SRC:$(RTT_ROOT)/%=%)) \
 $(eval CXXOBJ := $(1:%.cpp=%.o)) \
-$(eval CXXOBJ := $(CXXOBJ:$(RTT_ROOT)/%=$(RTT_BUILD_DIR)/%)) \
 $(eval CXXOBJ := $(CXXOBJ:$(BSP_ROOT)/%=$(BSP_BUILD_DIR)/%)) \
-$(eval VPATH += $(dir $1)) \
-$(eval CXXSRCS += $1) \
+$(eval CXXOBJ := $(CXXOBJ:$(RTT_ROOT)/%=$(RTT_BUILD_DIR)/%)) \
 $(eval LOCALCXX := $(addprefix $(BUILD_DIR)/,$(CXXOBJ))) \
 $(eval OBJS += $(LOCALCXX)) \
-$(if $(strip $(LOCALCXX)),$(eval $(LOCALCXX): $1
+$(if $(strip $(LOCALCXX)),$(eval $(LOCALCXX): $(CXX_SRC)
 	@if [ ! -d $$(@D) ]; then mkdir -p $$(@D); fi
-	@echo cc $$@
+	@echo cc $$<
 	@$(CROSS_COMPILE)g++ $$(CXXFLAGS) -c $$< -o $$@))
 endef
 
 define add_S_file
+$(eval S_SRC := $(1:$(BSP_ROOT)/%=%)) \
+$(eval S_SRC := $(S_SRC:$(RTT_ROOT)/%=%)) \
 $(eval SOBJ := $(1:%.S=%.o)) \
-$(eval SOBJ := $(SOBJ:$(RTT_ROOT)/%=$(RTT_BUILD_DIR)/%)) \
 $(eval SOBJ := $(SOBJ:$(BSP_ROOT)/%=$(BSP_BUILD_DIR)/%)) \
-$(eval VPATH += $(dir $1)) \
-$(eval SSRCS += $(1)) \
+$(eval SOBJ := $(SOBJ:$(RTT_ROOT)/%=$(RTT_BUILD_DIR)/%)) \
 $(eval LOCALS := $(addprefix $(BUILD_DIR)/,$(SOBJ))) \
 $(eval OBJS += $(LOCALS)) \
-$(if $(strip $(LOCALS)),$(eval $(LOCALS): $1
+$(if $(strip $(LOCALS)),$(eval $(LOCALS): $(S_SRC)
 	@if [ ! -d $$(@D) ]; then mkdir -p $$(@D); fi
-	@echo cc $$@
+	@echo cc $$<
 	@$(CROSS_COMPILE)gcc $$(AFLAGS) -c $$< -o $$@))
 endef
 
@@ -68,10 +68,8 @@ add_def = $(eval CFLAGS += -D$1) \
           $(eval CXXFLAGS += -D$1)
 
 OBJS := 
-CSRCS := 
-CXXSRCS := 
-SSRCS := 
-VPATH :=
+#VPATH := $(BSP_ROOT) $(RTT_ROOT)
+VPATH := $(RTT_ROOT)
 
 CONFIG_FLG := $(strip $(EXTERN_FLAGS))
 $(if $(CONFIG_FLG),$(foreach f,$(CONFIG_FLG),$(call add_flg,$(f))))
