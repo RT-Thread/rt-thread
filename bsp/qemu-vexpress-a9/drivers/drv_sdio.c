@@ -86,12 +86,12 @@ struct sdhci_pl180_pdata_t
     rt_uint32_t virt;
 };
 
-static inline rt_uint32_t read32(uint32_t addr)
+rt_inline rt_uint32_t read32(uint32_t addr)
 {
     return( *((volatile rt_uint32_t *)(addr)) );
 }
 
-static inline void write32(uint32_t addr, rt_uint32_t value)
+rt_inline void write32(uint32_t addr, rt_uint32_t value)
 {
     *((volatile rt_uint32_t *)(addr)) = value;
 }
@@ -286,7 +286,7 @@ static rt_err_t sdhci_pl180_setclock(struct sdhci_t * sdhci, rt_uint32_t clock)
     if(clock)
     {
         temp = read32(pdat->virt + PL180_CLOCK) | (0x1<<8);
-        temp = temp; // skip warning 
+        temp = temp; // skip warning
         write32(pdat->virt + PL180_CLOCK, 0x100);
     }
     else
@@ -353,7 +353,7 @@ static void mmc_request_send(struct rt_mmcsd_host *host, struct rt_mmcsd_req *re
 
     if(req->cmd->err)
         LOG_E("transfer cmd err ");
-    
+
     if (req->stop)
     {
         stop.cmdidx = req->stop->cmd_code;
@@ -382,7 +382,7 @@ static void mmc_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io
     LOG_D("clock:%d bus_width:%d", io_cfg->clock, io_cfg->bus_width);
 }
 
-static const struct rt_mmcsd_host_ops ops = 
+static const struct rt_mmcsd_host_ops ops =
 {
     mmc_request_send,
     mmc_set_iocfg,

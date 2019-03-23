@@ -14,6 +14,7 @@
 
 #include "board.h"
 #include "gic.h"
+#include <interrupt.h>
 #include "drv_timer.h"
 
 #ifdef RT_USING_SMP

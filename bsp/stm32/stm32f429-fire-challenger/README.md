@@ -55,7 +55,7 @@
 | SPI               |     支持     | SPI1/2/5                              |
 | I2C               |     支持     | 软件 I2C                              |
 | ADC               |     支持     |                                     |
-| RTC               |     支持     |                                      |
+| RTC               |     支持     | 支持外部晶振和内部低速时钟 |
 | WDT               |     支持     |                                       |
 | FLASH | 支持 | 已适配 [FAL](https://github.com/RT-Thread-packages/fal) |
 | SDIO              |   暂不支持   | 即将支持                              |
