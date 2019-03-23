@@ -115,6 +115,7 @@ enum gpio_function
     GPIO_INT_HI     = 0x09,  //1001, High Level trigger interrupt
     GPIO_INT_FE     = 0x0a,  //1010, Fall Edge trigger interrupt
     GPIO_INT_RE     = 0x0b,  //1011, Rise Edge trigger interrupt
+    GPIO_PULL 		= 0x10,  //0001 0000, GPIO enable pull
     GPIO_INPUT_PULL = 0x16,  //0001 0110, GPIO as input and enable pull
 };
 
