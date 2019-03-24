@@ -92,13 +92,12 @@ elif PLATFORM == 'armcc':
     CXXFLAGS = CFLAGS 
     CFLAGS += ' -std=c99'
 
-    CXXFLAGS = CFLAGS
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
 elif PLATFORM == 'iar':
     # toolchains
     CC = 'iccarm'
-    CXX = 'iccarm
+    CXX = 'iccarm'
     AS = 'iasmarm'
     AR = 'iarchive'
     LINK = 'ilinkarm'
