@@ -19,7 +19,7 @@
 static void pwm_set_freq(timer_handle_t *timer_initstruct, uint32_t ns)
 {
     uint64_t _arr = (uint64_t)cmu_get_pclk1_clock() * ns / 1000000000 /
-                    (timer_initstruct->init.prescaler + 1) - 1;
+                    (timer_initstruct->init.prescaler + 1);
 
     WRITE_REG(timer_initstruct->perh->AR, (uint32_t)_arr);
     timer_initstruct->init.period   = (uint32_t)_arr;
@@ -28,7 +28,7 @@ static void pwm_set_freq(timer_handle_t *timer_initstruct, uint32_t ns)
 static void pwm_set_duty(timer_handle_t *timer_initstruct, timer_channel_t ch, uint32_t ns)
 {
     uint64_t tmp = (uint64_t)cmu_get_pclk1_clock() * ns / 1000000000 /
-                   (timer_initstruct->init.prescaler + 1) - 1;
+                   (timer_initstruct->init.prescaler + 1);
 
     if (ch == TIMER_CHANNEL_1)
         WRITE_REG(timer_initstruct->perh->CCVAL1, (uint32_t)tmp);
@@ -38,10 +38,6 @@ static void pwm_set_duty(timer_handle_t *timer_initstruct, timer_channel_t ch, u
         WRITE_REG(timer_initstruct->perh->CCVAL3, (uint32_t)tmp);
     else if (ch == TIMER_CHANNEL_4)
         WRITE_REG(timer_initstruct->perh->CCVAL4, (uint32_t)tmp);
-    else
-    {
-        ;/* do nothing */
-    }
 }
 
 static rt_err_t es32f0_pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
