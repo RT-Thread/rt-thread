@@ -42,6 +42,7 @@ ES-PDS-ES32F0334-V1.1
 | SPI               |     支持     | SPI0/1                               |
 | I2C               |     支持     | I2C0/1                               |
 | PWM               |     支持     | PWM0/1/2/3                           |
+| TIMER             |     支持     | TIMER0/1/2/3                         |
 
 更多详细信息请咨询[上海东软载波微电子技术支持](http://www.essemi.com/)
 
