@@ -110,7 +110,7 @@ static rt_err_t rt_rtc_config(struct rt_device *dev)
 #if defined(SOC_SERIES_STM32F1)
         RTC_Handler.Init.OutPut = RTC_OUTPUTSOURCE_NONE;
         RTC_Handler.Init.AsynchPrediv = RTC_AUTO_1_SECOND;
-#elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4)
+#elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4)
         RTC_Handler.Init.AsynchPrediv = 0X7F;
 #ifndef SOC_SERIES_STM32F0
         RTC_Handler.Init.SynchPrediv = 0XFF;

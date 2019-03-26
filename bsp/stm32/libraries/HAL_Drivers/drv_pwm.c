@@ -185,7 +185,7 @@ static rt_err_t drv_pwm_get(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     rt_uint32_t channel = 0x04 * (configuration->channel - 1);
     rt_uint64_t tim_clock;
 
-#if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
 #elif defined(SOC_SERIES_STM32L4)
     if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
@@ -230,7 +230,7 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     /* Converts the channel number to the channel number of Hal library */
     rt_uint32_t channel = 0x04 * (configuration->channel - 1);
 
-#if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
 #elif defined(SOC_SERIES_STM32L4)
     if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
