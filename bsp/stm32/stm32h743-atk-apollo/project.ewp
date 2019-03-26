@@ -77,7 +77,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>STM32F407ZG	ST STM32F407ZG</state>
+          <state>STM32H743II	ST STM32H743II</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
