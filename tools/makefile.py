@@ -5,6 +5,21 @@ from utils import *
 from utils import _make_path_relative
 import rtconfig
 
+makefile = '''phony := all
+all:
+
+include config.mk
+
+ifneq ($(MAKE_LIB),1)
+TARGET := rtthread.elf
+include src.mk
+endif
+
+$(if $(strip $(RTT_ROOT)),,$(error RTT_ROOT not defined))
+
+include $(RTT_ROOT)/tools/rtthread.mk
+'''
+
 def TargetMakefile(env):
     project = ProjectInfo(env)
 
@@ -103,5 +118,9 @@ def TargetMakefile(env):
     src.write('SRC_FILES :=\n')
     for item in files:
         src.write('SRC_FILES +=%s\n' % item)
+
+    make = open('Makefile', 'w')
+    make.write(makefile)
+    make.close()
 
     return
