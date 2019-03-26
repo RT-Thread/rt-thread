@@ -10,9 +10,9 @@ group = []
 list  = os.listdir(cwd)
 
 # add common code files
-group = group + SConscript(os.path.join(cwd, 'common', 'SConscript'))
+group = group + SConscript(os.path.join('common', 'SConscript'))
 
 # cpu porting code files
-group = group + SConscript(os.path.join(cwd, rtconfig.CPU, 'SConscript'))
+group = group + SConscript(os.path.join(rtconfig.CPU, 'SConscript'))
 
 Return('group')
