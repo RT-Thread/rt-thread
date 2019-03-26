@@ -251,6 +251,9 @@ void rt_object_init(struct rt_object         *object,
 
     /* initialize object's parameters */
 
+    /* check object type to avoid re-initialization */
+    RT_ASSERT(object->type != (type | RT_Object_Class_Static));
+
     /* set object type to static */
     object->type = type | RT_Object_Class_Static;
 
