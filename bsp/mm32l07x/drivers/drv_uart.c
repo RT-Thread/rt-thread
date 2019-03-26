@@ -207,15 +207,7 @@ static void UART2PINconfigStepB(void)
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 }
 #endif
-//static void NVIC_Configuration(struct mm32_uart *uart)
-//{
-//    NVIC_InitTypeDef NVIC_InitStructure;
-//    /* Enable the UART Interrupt */
-//    NVIC_InitStructure.NVIC_IRQChannel = uart->irq;
-//    NVIC_InitStructure.NVIC_IRQChannelPriority = 3;
-//    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-//    NVIC_Init(&NVIC_InitStructure);
-//}
+
 int rt_hw_uart_init(void)
 {
     struct mm32_uart *uart;
