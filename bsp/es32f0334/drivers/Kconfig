@@ -63,8 +63,31 @@ menu "Hardware Drivers Config"
             config BSP_USING_PWM3
                 bool "Using PWM3 PC06/PC07"
                 select RT_USING_PWM
-                default n  
+                default n
         endmenu
+
+        menu "HWtimer Drivers"
+            config BSP_USING_HWTIMER0
+                bool "Using timer0"
+                select RT_USING_HWTIMER
+                default n
+
+            config BSP_USING_HWTIMER1
+                bool "Using timer1"
+                select RT_USING_HWTIMER
+                default n
+
+            config BSP_USING_HWTIMER2
+                bool "Using timer2"
+                select RT_USING_HWTIMER
+                default n
+
+            config BSP_USING_HWTIMER3
+                bool "Using timer3"
+                select RT_USING_HWTIMER
+                default n
+        endmenu
+
     endmenu
 
     menu "Onboard Peripheral Drivers"
