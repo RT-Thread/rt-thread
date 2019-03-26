@@ -15,6 +15,11 @@ rt_cpu_get_smp_id:
 
 .globl rt_cpu_vector_set_base
 rt_cpu_vector_set_base:
+    /* clear SCTRL.V to customize the vector address */
+    mrc     p15, #0, r1, c1, c0, #0
+    bic     r1, #(1 << 13)
+    mcr     p15, #0, r1, c1, c0, #0
+    /* set up the vector address */
     mcr     p15, #0, r0, c12, c0, #0
     dsb
     bx      lr
@@ -36,7 +41,7 @@ rt_hw_cpu_icache_enable:
 _FLD_MAX_WAY:
    .word  0x3ff
 _FLD_MAX_IDX:
-   .word  0x7ff
+   .word  0x7fff
 
 .globl rt_cpu_dcache_clean_flush
 rt_cpu_dcache_clean_flush:
@@ -82,6 +87,14 @@ finished:
     dsb
     isb
     pop     {r4-r11}
+    bx      lr
+
+.globl rt_cpu_icache_flush
+rt_cpu_icache_flush:
+    mov r0, #0
+    mcr p15, 0, r0, c7, c5, 0       @ I+BTB cache invalidate
+    dsb
+    isb
     bx      lr
 
 .globl rt_hw_cpu_dcache_disable

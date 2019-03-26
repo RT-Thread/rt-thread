@@ -668,7 +668,7 @@ static char *print_number(char *buf,
 
         while (size-- > 0)
         {
-            if (buf <= end)
+            if (buf < end)
                 *buf = ' ';
             ++ buf;
         }
@@ -676,11 +676,11 @@ static char *print_number(char *buf,
 
     if (sign)
     {
-        if (buf <= end)
+        if (buf < end)
         {
             *buf = sign;
-            -- size;
         }
+        -- size;
         ++ buf;
     }
 
@@ -689,16 +689,16 @@ static char *print_number(char *buf,
     {
         if (base == 8)
         {
-            if (buf <= end)
+            if (buf < end)
                 *buf = '0';
             ++ buf;
         }
         else if (base == 16)
         {
-            if (buf <= end)
+            if (buf < end)
                 *buf = '0';
             ++ buf;
-            if (buf <= end)
+            if (buf < end)
             {
                 *buf = type & LARGE ? 'X' : 'x';
             }
@@ -712,7 +712,7 @@ static char *print_number(char *buf,
     {
         while (size-- > 0)
         {
-            if (buf <= end)
+            if (buf < end)
                 *buf = c;
             ++ buf;
         }
@@ -721,7 +721,7 @@ static char *print_number(char *buf,
 #ifdef RT_PRINTF_PRECISION
     while (i < precision--)
     {
-        if (buf <= end)
+        if (buf < end)
             *buf = '0';
         ++ buf;
     }
@@ -730,14 +730,14 @@ static char *print_number(char *buf,
     /* put number in the temporary buffer */
     while (i-- > 0 && (precision_bak != 0))
     {
-        if (buf <= end)
+        if (buf < end)
             *buf = tmp[i];
         ++ buf;
     }
 
     while (size-- > 0)
     {
-        if (buf <= end)
+        if (buf < end)
             *buf = ' ';
         ++ buf;
     }
@@ -769,7 +769,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
 #endif
 
     str = buf;
-    end = buf + size - 1;
+    end = buf + size;
 
     /* Make sure end is always >= buf */
     if (end < buf)
@@ -782,7 +782,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
     {
         if (*fmt != '%')
         {
-            if (str <= end)
+            if (str < end)
                 *str = *fmt;
             ++ str;
             continue;
@@ -863,20 +863,20 @@ rt_int32_t rt_vsnprintf(char       *buf,
             {
                 while (--field_width > 0)
                 {
-                    if (str <= end) *str = ' ';
+                    if (str < end) *str = ' ';
                     ++ str;
                 }
             }
 
             /* get character */
             c = (rt_uint8_t)va_arg(args, int);
-            if (str <= end) *str = c;
+            if (str < end) *str = c;
             ++ str;
 
             /* put width */
             while (--field_width > 0)
             {
-                if (str <= end) *str = ' ';
+                if (str < end) *str = ' ';
                 ++ str;
             }
             continue;
@@ -894,21 +894,21 @@ rt_int32_t rt_vsnprintf(char       *buf,
             {
                 while (len < field_width--)
                 {
-                    if (str <= end) *str = ' ';
+                    if (str < end) *str = ' ';
                     ++ str;
                 }
             }
 
             for (i = 0; i < len; ++i)
             {
-                if (str <= end) *str = *s;
+                if (str < end) *str = *s;
                 ++ str;
                 ++ s;
             }
 
             while (len < field_width--)
             {
-                if (str <= end) *str = ' ';
+                if (str < end) *str = ' ';
                 ++ str;
             }
             continue;
@@ -931,7 +931,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
             continue;
 
         case '%':
-            if (str <= end) *str = '%';
+            if (str < end) *str = '%';
             ++ str;
             continue;
 
@@ -953,12 +953,12 @@ rt_int32_t rt_vsnprintf(char       *buf,
             break;
 
         default:
-            if (str <= end) *str = '%';
+            if (str < end) *str = '%';
             ++ str;
 
             if (*fmt)
             {
-                if (str <= end) *str = *fmt;
+                if (str < end) *str = *fmt;
                 ++ str;
             }
             else
@@ -995,8 +995,14 @@ rt_int32_t rt_vsnprintf(char       *buf,
 #endif
     }
 
-    if (str <= end) *str = '\0';
-    else *end = '\0';
+    if (size > 0)
+    {
+        if (str < end) *str = '\0';
+        else
+        {
+            end[-1] = '\0';
+        }
+    }
 
     /* the trailing null byte doesn't count towards the total
     * ++str;
