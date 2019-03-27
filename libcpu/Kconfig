@@ -108,6 +108,7 @@ config ARCH_TIDSP_C28X
     bool
     select ARCH_TIDSP
     select ARCH_CPU_STACK_GROWS_UPWARD
+    select RT_USING_ARCH_DATA_TYPE
 
 config ARCH_HOST_SIMULATOR
     bool
