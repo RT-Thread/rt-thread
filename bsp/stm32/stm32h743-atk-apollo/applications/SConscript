@@ -1,0 +1,11 @@
+import rtconfig
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Split("""
+main.c
+""")
+
+group = DefineGroup('Applications', src, depend = [''])
+
+Return('group')
