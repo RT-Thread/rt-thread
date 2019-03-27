@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2019-03-19     ZYH          first version
+ */
+
 #include <rtthread.h>
 #include <fpioa.h>
 #include <drv_io_config.h>
@@ -25,7 +35,7 @@ static struct io_config
     {BSP_CAMERA_CMOS_PWDN_PIN, FUNC_CMOS_PWDN},
     {BSP_CAMERA_CMOS_XCLK_PIN, FUNC_CMOS_XCLK},
     {BSP_CAMERA_CMOS_PCLK_PIN, FUNC_CMOS_PCLK},
-    {BSP_CAMERA_CMOS_PCLK_PIN, FUNC_CMOS_HREF},
+    {BSP_CAMERA_CMOS_HREF_PIN, FUNC_CMOS_HREF},
 #endif
 
 #ifdef BSP_USING_SPI1
@@ -73,3 +83,4 @@ int io_config_init(void)
 
 }
 INIT_BOARD_EXPORT(io_config_init);
+

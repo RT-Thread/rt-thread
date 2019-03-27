@@ -75,7 +75,7 @@ void rt_system_tick_init(void);
 rt_tick_t rt_tick_get(void);
 void rt_tick_set(rt_tick_t tick);
 void rt_tick_increase(void);
-int  rt_tick_from_millisecond(rt_int32_t ms);
+rt_tick_t  rt_tick_from_millisecond(rt_int32_t ms);
 
 void rt_system_timer_init(void);
 void rt_system_timer_thread_init(void);

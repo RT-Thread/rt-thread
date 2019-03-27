@@ -165,7 +165,6 @@
 /* ARM CMSIS */
 
 /* RT_USING_CMSIS_OS is not set */
-#define RT_USING_RTT_CMSIS
 
 /* RT-Thread online packages */
 

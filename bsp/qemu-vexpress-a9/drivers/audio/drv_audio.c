@@ -274,6 +274,18 @@ static rt_err_t codec_control(rt_device_t dev, int cmd, void *args)
     return result;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops codec_ops = 
+{
+    codec_init,
+    codec_open,
+    codec_close,
+    codec_read,
+    codec_write,
+    codec_control
+};
+#endif
+
 int audio_hw_init(void)
 {
     struct audio_device *codec = &audio_device_drive;
@@ -282,12 +294,16 @@ int audio_hw_init(void)
     codec->parent.rx_indicate = RT_NULL;
     codec->parent.tx_complete = RT_NULL;
 
+#ifdef RT_USING_DEVICE_OPS
+    codec->parent.ops     = &codec_ops;
+#else
     codec->parent.init    = codec_init;
     codec->parent.open    = codec_open;
     codec->parent.close   = codec_close;
     codec->parent.read    = codec_read;
     codec->parent.write   = codec_write;
     codec->parent.control = codec_control;
+#endif
 
     codec->parent.user_data   = RT_NULL;
 
