@@ -24,16 +24,7 @@
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 1024
 #define RT_DEBUG
-/* RT_DEBUG_INIT_CONFIG is not set */
-/* RT_DEBUG_THREAD_CONFIG is not set */
-/* RT_DEBUG_SCHEDULER_CONFIG is not set */
-/* RT_DEBUG_IPC_CONFIG is not set */
-/* RT_DEBUG_TIMER_CONFIG is not set */
-/* RT_DEBUG_IRQ_CONFIG is not set */
-/* RT_DEBUG_MEM_CONFIG is not set */
-/* RT_DEBUG_SLAB_CONFIG is not set */
-/* RT_DEBUG_MEMHEAP_CONFIG is not set */
-/* RT_DEBUG_MODULE_CONFIG is not set */
+#define RT_DEBUG_COLOR
 
 /* Inter-Thread communication */
 
@@ -58,12 +49,12 @@
 /* Kernel Device Object */
 
 #define RT_USING_DEVICE
-/* RT_USING_DEVICE_OPS is not set */
+#define RT_USING_DEVICE_OPS
 #define RT_USING_INTERRUPT_INFO
 #define RT_USING_CONSOLE
-#define RT_CONSOLEBUF_SIZE 128
+#define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40000
+#define RT_VER_NUM 0x40001
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_A
 #define ARCH_ARM_CORTEX_A9
@@ -135,6 +126,7 @@
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
 #define RT_SERIAL_USING_DMA
+#define RT_SERIAL_RB_BUFSZ 64
 /* RT_USING_CAN is not set */
 /* RT_USING_HWTIMER is not set */
 /* RT_USING_CPUTIME is not set */
@@ -171,6 +163,7 @@
 /* RT_USING_SPI_WIFI is not set */
 #define RT_USING_WDT
 /* RT_USING_AUDIO is not set */
+/* RT_USING_SENSOR is not set */
 
 /* Using WiFi */
 
@@ -280,6 +273,7 @@
 /* LOG_TRACE_USING_MEMLOG is not set */
 /* RT_USING_RYM is not set */
 /* RT_USING_ULOG is not set */
+/* RT_USING_UTEST is not set */
 #define RT_USING_LWP
 
 /* RT-Thread online packages */
@@ -293,6 +287,7 @@
 /* PKG_USING_WEBTERMINAL is not set */
 /* PKG_USING_CJSON is not set */
 /* PKG_USING_JSMN is not set */
+/* PKG_USING_LIBMODBUS is not set */
 /* PKG_USING_LJSON is not set */
 /* PKG_USING_EZXML is not set */
 /* PKG_USING_NANOPB is not set */
@@ -306,6 +301,7 @@
 /* Wiced WiFi */
 
 /* PKG_USING_WLAN_WICED is not set */
+/* PKG_USING_RW007 is not set */
 /* PKG_USING_COAP is not set */
 /* PKG_USING_NOPOLL is not set */
 /* PKG_USING_NETUTILS is not set */
@@ -319,6 +315,8 @@
 /* PKG_USING_ALI_IOTKIT is not set */
 /* PKG_USING_AZURE is not set */
 /* PKG_USING_TENCENT_IOTKIT is not set */
+/* PKG_USING_NIMBLE is not set */
+/* PKG_USING_OTA_DOWNLOADER is not set */
 
 /* security packages */
 
@@ -346,6 +344,7 @@
 /* PKG_USING_RDB is not set */
 /* PKG_USING_QRCODE is not set */
 /* PKG_USING_ULOG_EASYFLASH is not set */
+/* PKG_USING_ADBD is not set */
 
 /* system packages */
 
@@ -365,6 +364,16 @@
 
 /* peripheral libraries and drivers */
 
+/* sensors drivers */
+
+/* PKG_USING_LSM6DSL is not set */
+/* PKG_USING_LPS22HB is not set */
+/* PKG_USING_HTS221 is not set */
+/* PKG_USING_LSM303AGR is not set */
+/* PKG_USING_BME280 is not set */
+/* PKG_USING_BMA400 is not set */
+/* PKG_USING_BMI160_BMX160 is not set */
+/* PKG_USING_SPL0601 is not set */
 /* PKG_USING_REALTEK_AMEBA is not set */
 /* PKG_USING_SHT2X is not set */
 /* PKG_USING_AHT10 is not set */
@@ -375,6 +384,7 @@
 /* PKG_USING_BUTTON is not set */
 /* PKG_USING_MPU6XXX is not set */
 /* PKG_USING_PCF8574 is not set */
+/* PKG_USING_SX12XX is not set */
 /* PKG_USING_KENDRYTE_SDK is not set */
 
 /* miscellaneous packages */
@@ -389,41 +399,10 @@
 /* PKG_USING_ZLIB is not set */
 /* PKG_USING_DSTR is not set */
 /* PKG_USING_TINYFRAME is not set */
-
-/* sample package */
+/* PKG_USING_KENDRYTE_DEMO is not set */
 
 /* samples: kernel and components samples */
 
-/* PKG_USING_KERNEL_SAMPLES is not set */
-/* PKG_USING_FILESYSTEM_SAMPLES is not set */
-/* PKG_USING_NETWORK_SAMPLES is not set */
-/* PKG_USING_PERIPHERAL_SAMPLES is not set */
-
-/* example package: hello */
-
-/* PKG_USING_HELLO is not set */
-
-/* Privated Packages of RealThread */
-
-/* PKG_USING_CODEC is not set */
-/* PKG_USING_PLAYER is not set */
-/* PKG_USING_PERSIMMON_SRC is not set */
-/* PKG_USING_JS_PERSIMMON is not set */
-/* PKG_USING_JERRYSCRIPT_WIN32 is not set */
-
-/* Network Utilities */
-
-/* PKG_USING_MDNS is not set */
-/* PKG_USING_UPNP is not set */
-/* PKG_USING_WICED is not set */
-/* PKG_USING_CLOUDSDK is not set */
-/* PKG_USING_COREMARK is not set */
-/* PKG_USING_POWER_MANAGER is not set */
-/* PKG_USING_RT_OTA is not set */
-/* PKG_USING_RDBD_SRC is not set */
-/* PKG_USING_RTINSIGHT is not set */
-/* PKG_USING_SMARTCONFIG is not set */
-/* PKG_USING_RTX is not set */
 #define SOC_VEXPRESS_A9
 #define RT_USING_UART0
 #define RT_USING_UART1

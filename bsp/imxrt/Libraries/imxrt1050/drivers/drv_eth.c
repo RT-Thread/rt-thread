@@ -46,9 +46,7 @@
 //#define ETH_RX_DUMP
 //#define ETH_TX_DUMP
 
-#define DBG_ENABLE
 #define DBG_SECTION_NAME    "ETH"
-#define DBG_COLOR
 #define DBG_LEVEL           DBG_INFO
 #include <rtdbg.h>
 
@@ -668,6 +666,10 @@ static void _enet_config(void)
     //config.interrupt = 0xFFFFFFFF;
     config.miiSpeed = imxrt_eth_device.speed;
     config.miiDuplex = imxrt_eth_device.duplex;
+#ifdef RT_LWIP_USING_HW_CHECKSUM
+    config.rxAccelerConfig = ENET_RACC_PRODIS_MASK | ENET_RACC_IPDIS_MASK;
+    config.txAccelerConfig = ENET_TACC_IPCHK_MASK | ENET_TACC_PROCHK_MASK;
+#endif
 
     /* Set SMI to get PHY link status. */
     sysClock = CLOCK_GetFreq(kCLOCK_AhbClk);

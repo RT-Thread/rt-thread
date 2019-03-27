@@ -28,10 +28,8 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-// #define DEBUG_ENABLE
-#define DEBUG_LEVEL         DBG_LOG
+#define DBG_LEVEL           DBG_INFO
 #define DBG_SECTION_NAME    "UART"
-#define DEBUG_COLOR
 #include <rtdbg.h>
 
 #ifdef RT_USING_POSIX
@@ -478,7 +476,7 @@ rt_inline int _serial_dma_rx(struct rt_serial_device *serial, rt_uint8_t *data, 
 
         RT_ASSERT(rx_fifo != RT_NULL);
 
-        if (length < fifo_recved_len)
+        if (length < (int)fifo_recved_len)
             recv_len = length;
         else
             recv_len = fifo_recved_len;
@@ -882,6 +880,7 @@ static int _get_baudrate(speed_t speed)
 
 static void _tc_flush(struct rt_serial_device *serial, int queue)
 {
+    rt_base_t level;
     int ch = -1;
     struct rt_serial_rx_fifo *rx_fifo = RT_NULL;
     struct rt_device *device = RT_NULL;
@@ -901,10 +900,12 @@ static void _tc_flush(struct rt_serial_device *serial, int queue)
             if((device->open_flag & RT_DEVICE_FLAG_INT_RX) || (device->open_flag & RT_DEVICE_FLAG_DMA_RX))
             {
                 RT_ASSERT(RT_NULL != rx_fifo);
+                level = rt_hw_interrupt_disable();
                 rt_memset(rx_fifo->buffer, 0, serial->config.bufsz);
                 rx_fifo->put_index = 0;
                 rx_fifo->get_index = 0;
                 rx_fifo->is_full = RT_FALSE;
+                rt_hw_interrupt_enable(level);
             }
             else
             {

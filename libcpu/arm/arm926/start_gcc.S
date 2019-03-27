@@ -11,295 +11,320 @@
  * 2015-06-04     aozima     Align stack address to 8 byte.
  */
 
-#include "rt_low_level_init.h"
+.equ MODE_USR,        0x10
+.equ MODE_FIQ,        0x11
+.equ MODE_IRQ,        0x12
+.equ MODE_SVC,        0x13
+.equ MODE_ABT,        0x17
+.equ MODE_UND,        0x1B
+.equ MODE_SYS,        0x1F
+.equ MODEMASK,        0x1F
+.equ NOINT,           0xC0
 
-#define S_FRAME_SIZE    (18*4)   //72
+.equ I_BIT,           0x80
+.equ F_BIT,           0x40
 
-@#define S_SPSR          (17*4)   //SPSR
-@#define S_CPSR          (16*4)   //CPSR
-#define S_PC            (15*4)   //R15
-@#define S_LR            (14*4)   //R14
-@#define S_SP            (13*4)   //R13
+.equ UND_STACK_SIZE,  0x00000100
+.equ SVC_STACK_SIZE,  0x00000100
+.equ ABT_STACK_SIZE,  0x00000100
+.equ FIQ_STACK_SIZE,  0x00000100
+.equ IRQ_STACK_SIZE,  0x00000100
+.equ SYS_STACK_SIZE,  0x00000100
 
-@#define S_IP            (12*4)   //R12
-@#define S_FP            (11*4)   //R11
-@#define S_R10           (10*4)
-@#define S_R9            (9*4)
-@#define S_R8            (8*4)
-@#define S_R7            (7*4)
-@#define S_R6            (6*4)
-@#define S_R5            (5*4)
-@#define S_R4            (4*4)
-@#define S_R3            (3*4)
-@#define S_R2            (2*4)
-@#define S_R1            (1*4)
-@#define S_R0            (0*4)
+ /*
+ ***************************************
+ * Interrupt vector table
+ ***************************************
+ */
+.section .vectors
+.code 32
 
-#define MODE_SYS        0x1F
-#define MODE_FIQ        0x11
-#define MODE_IRQ        0x12
-#define MODE_SVC        0x13
-#define MODE_ABT        0x17
-#define MODE_UND        0x1B
-#define MODEMASK        0x1F
+.global system_vectors
+system_vectors:
+    ldr pc, _vector_reset
+    ldr pc, _vector_undef
+    ldr pc, _vector_swi
+    ldr pc, _vector_pabt
+    ldr pc, _vector_dabt
+    ldr pc, _vector_resv
+    ldr pc, _vector_irq
+    ldr pc, _vector_fiq
 
-#define NOINT           0xC0
+_vector_reset:
+    .word reset
+_vector_undef:
+    .word vector_undef
+_vector_swi:
+    .word vector_swi
+_vector_pabt:
+    .word vector_pabt
+_vector_dabt:
+    .word vector_dabt
+_vector_resv:
+    .word vector_resv
+_vector_irq:
+    .word vector_irq
+_vector_fiq:
+    .word vector_fiq
 
-@;----------------------- Stack and Heap Definitions ---------------------------
-    .section .nobss, "w"
+.balignl    16,0xdeadbeef
 
-    .space UND_STK_SIZE
+ /*
+ ***************************************
+ *  Stack and Heap Definitions 
+ ***************************************
+ */
+    .section .data
+    .space UND_STACK_SIZE
     .align 3
-    .global UND_STACK_START
-UND_STACK_START:
+    .global und_stack_start
+und_stack_start:
 
-    .space ABT_STK_SIZE
+    .space ABT_STACK_SIZE
     .align 3
-    .global ABT_STACK_START
-ABT_STACK_START:
+    .global abt_stack_start
+abt_stack_start:
 
-    .space FIQ_STK_SIZE
+    .space FIQ_STACK_SIZE
     .align 3
-    .global FIQ_STACK_START
-FIQ_STACK_START:
+    .global fiq_stack_start
+fiq_stack_start:
 
-    .space IRQ_STK_SIZE
+    .space IRQ_STACK_SIZE
     .align 3
-    .global IRQ_STACK_START
-IRQ_STACK_START:
+    .global irq_stack_start
+irq_stack_start:
 
-    .skip SYS_STK_SIZE
+    .skip SYS_STACK_SIZE
     .align 3
-    .global SYS_STACK_START
-SYS_STACK_START:
+    .global sys_stack_start
+sys_stack_start:
 
-    .space SVC_STK_SIZE
+    .space SVC_STACK_SIZE
     .align 3
-    .global SVC_STACK_START
-SVC_STACK_START:
+    .global svc_stack_start
+svc_stack_start:
 
-@;--------------Jump vector table-----------------------------------------------
-    .section .init, "ax"
-    .arm
+/*
+ ***************************************
+ * Startup Code 
+ ***************************************
+ */
+    .section .text
+    .global reset
+reset:
+    /* Enter svc mode and mask interrupts */
+    mrs r0, cpsr
+    bic r0, r0, #MODEMASK
+    orr r0, r0, #MODE_SVC|NOINT
+    msr cpsr_cxsf, r0
 
-    .global start
-start:
-    LDR     PC, vector_reset
-    LDR     PC, vector_undef
-    LDR     PC, vector_swi
-    LDR     PC, vector_pabt
-    LDR     PC, vector_dabt
-    LDR     PC, vector_resv
-    LDR     PC, vector_irq
-    LDR     PC, vector_fiq
-
-vector_reset:
-    .word  Reset_Handler
-vector_undef:
-    .word  Undef_Handler
-vector_swi:
-    .word  SWI_Handler
-vector_pabt:
-    .word  PAbt_Handler
-vector_dabt:
-    .word  DAbt_Handler
-vector_resv:
-    .word  Resv_Handler
-vector_irq:
-    .word  IRQ_Handler
-vector_fiq:
-    .word  FIQ_Handler
-
-    .balignl     16,0xdeadbeef
-
-@;----------------- Reset Handler ---------------------------------------------
-    .global rt_low_level_init
-    .global main
-    .global Reset_Handler
-Reset_Handler:
-    @; Set the cpu to SVC32 mode
-    MRS     R0, CPSR
-    BIC     R0, R0, #MODEMASK
-    ORR     R0, R0, #MODE_SVC|NOINT
-    MSR     CPSR_cxsf, R0
+    /* init cpu  */
+    bl  cpu_init_crit
     
-    @; Set CO-Processor
-    @; little-end锛宒isbale I/D Cache MMU, vector table is 0x00000000
-    MRC     P15, 0, R0, C1, C0, 0   @; Read CP15
-    LDR     R1, =0x00003085         @; set clear bits
-    BIC     R0, R0, R1
-    MCR     P15, 0, R0, C1, C0, 0   @; Write CP15
+    /* todo:copyself to link address */
+    
+    /* Copy vector to the correct address */
+    ldr r0, =system_vectors
+    mrc p15, 0, r2, c1, c0, 0
+    ands r2, r2, #(1 << 13)
+    ldreq r1, =0x00000000
+    ldrne r1, =0xffff0000
+    ldmia r0!, {r2-r8, r10}
+    stmia r1!, {r2-r8, r10}
+    ldmia r0!, {r2-r8, r10}
+    stmia r1!, {r2-r8, r10}
 
-    @; Call low level init function,
-    @; disable and clear all IRQs, Init MMU, Init interrupt controller, etc.
-    LDR     SP, =SVC_STACK_START
-    LDR     R0, =rt_low_level_init
-    BLX     R0
+    /* turn off the watchdog */
+    ldr r0, =0x01C20CB8
+    mov     r1, #0x0
+    str     r1, [r0]
 
-Setup_Stack:
-    @; Setup Stack for each mode
-    MRS     R0, CPSR
-    BIC     R0, R0, #MODEMASK
-
-    ORR     R1, R0, #MODE_UND|NOINT
-    MSR     CPSR_cxsf, R1            @; Undef mode
-    LDR     SP, =UND_STACK_START
-
-    ORR     R1, R0, #MODE_ABT|NOINT
-    MSR     CPSR_cxsf, R1            @; Abort mode
-    LDR     SP, =ABT_STACK_START
-
-    ORR     R1, R0, #MODE_IRQ|NOINT
-    MSR     CPSR_cxsf, R1            @; IRQ mode
-    LDR     SP, =IRQ_STACK_START
-
-    ORR     R1, R0, #MODE_FIQ|NOINT
-    MSR     CPSR_cxsf, R1            @; FIQ mode
-    LDR     SP, =FIQ_STACK_START
-
-    ORR     R1, R0, #MODE_SYS|NOINT
-    MSR     CPSR_cxsf,R1             @; SYS/User mode
-    LDR     SP, =SYS_STACK_START
-
-    ORR     R1, R0, #MODE_SVC|NOINT
-    MSR     CPSR_cxsf, R1            @; SVC mode
-    LDR     SP, =SVC_STACK_START
-
-    @; clear .bss
-    MOV     R0, #0                   @; get a zero
-    LDR     R1, =__bss_start__       @; bss start
-    LDR     R2, =__bss_end__         @; bss end
+    /* mask all IRQs source */
+    ldr r1, =0xffffffff
+    ldr r0, =0x01C20430
+    str r1, [r0], #0x04
+    str r1, [r0]
+    
+    /* Call low level init function */
+    ldr     sp, =svc_stack_start
+    ldr     r0, =rt_low_level_init
+    blx     r0
+    
+    /* init stack */
+    bl stack_setup
+    
+    /* clear bss */
+    mov     r0, #0
+    ldr     r1, =__bss_start
+    ldr     r2, =__bss_end
 
 bss_clear_loop:
-    CMP     R1, R2                   @; check if data to clear
-    STRLO   R0, [R1], #4             @; clear 4 bytes
-    BLO     bss_clear_loop           @; loop until done
-
-    @; call C++ constructors of global objects
-    LDR     R0, =__ctors_start__
-    LDR     R1, =__ctors_end__
+    cmp     r1, r2
+    strlo   r0, [r1], #4
+    blo     bss_clear_loop
+       
+    /* call c++ constructors of global objects */
+    /*
+    ldr     r0, =__ctors_start__
+    ldr     r1, =__ctors_end__
 
 ctor_loop:
-    CMP     R0, R1
-    BEQ     ctor_end
-    LDR     R2, [R0], #4
-    STMFD   SP!, {R0-R1}
-    MOV     LR, PC
-    BX      R2
-    LDMFD   SP!, {R0-R1}
-    B       ctor_loop
+    cmp     r0, r1
+    beq     ctor_end
+    ldr     r2, [r0], #4
+    stmfd   sp!, {r0-r1}
+    mov     lr, pc
+    bx      r2
+    ldmfd   sp!, {r0-r1}
+    b       ctor_loop
 ctor_end:
+    */
+    /* start RT-Thread Kernel */
+    ldr     pc, _rtthread_startup
+_rtthread_startup:
+    .word  rtthread_startup
 
-    @; Enter the C code
-    LDR     R0, =rtthread_startup
-    BLX     R0
 
-@;----------------- Exception Handler -----------------------------------------
-    .global rt_hw_trap_udef
-    .global rt_hw_trap_swi
-    .global rt_hw_trap_pabt
-    .global rt_hw_trap_dabt
-    .global rt_hw_trap_resv
-    .global rt_hw_trap_irq
-    .global rt_hw_trap_fiq
 
-    .global rt_interrupt_enter
-    .global rt_interrupt_leave
-    .global rt_thread_switch_interrupt_flag
-    .global rt_interrupt_from_thread
-    .global rt_interrupt_to_thread
-    
-    .align  5
-Undef_Handler:
-    SUB     SP, SP, #S_FRAME_SIZE
-    STMIA   SP, {R0 - R12}          @; Calling R0-R12
-    ADD     R8, SP, #S_PC
-    STMDB   R8, {SP, LR}            @; Calling SP, LR
-    STR     LR, [R8, #0]            @; Save calling PC
-    MRS     R6, SPSR
-    STR     R6, [R8, #4]            @; Save CPSR
-    STR     R0, [R8, #8]            @; Save SPSR
-    MOV     R0, SP
-    BL      rt_hw_trap_udef
-    
-    .align  5
-SWI_Handler:
-    BL      rt_hw_trap_swi
-    
-    .align  5
-PAbt_Handler:
-    BL      rt_hw_trap_pabt
+cpu_init_crit:
+    /* invalidate I/D caches */
+    mov r0, #0
+    mcr p15, 0, r0, c7, c7, 0
+    mcr p15, 0, r0, c8, c7, 0
 
-    .align  5
-DAbt_Handler:
-    SUB     SP, SP, #S_FRAME_SIZE
-    STMIA   SP, {R0 - R12}          @; Calling R0-R12
-    ADD     R8, SP, #S_PC
-    STMDB   R8, {SP, LR}            @; Calling SP, LR
-    STR     LR, [R8, #0]            @; Save calling PC
-    MRS     R6, SPSR
-    STR     R6, [R8, #4]            @; Save CPSR
-    STR     R0, [R8, #8]            @; Save SPSR
-    MOV     R0, SP
-    BL      rt_hw_trap_dabt
+    /* disable MMU stuff and caches */
+    mrc p15, 0, r0, c1, c0, 0
+    bic r0, r0, #0x00002300
+    bic r0, r0, #0x00000087
+    orr r0, r0, #0x00000002
+    orr r0, r0, #0x00001000
+    mcr p15, 0, r0, c1, c0, 0
 
-    .align  5
-Resv_Handler:
-    BL      rt_hw_trap_resv
+    bx lr
+ 
+stack_setup:
+    /* Setup Stack for each mode */
+    mrs     r0, cpsr
+    bic     r0, r0, #MODEMASK
 
-    .align  5
-FIQ_Handler:
-    STMFD   SP!, {R0-R7,LR}
-    BL      rt_hw_trap_fiq
-    LDMFD   SP!, {R0-R7,LR}
-    SUBS    PC, LR, #4
+    orr     r1, r0, #MODE_UND|NOINT
+    msr     cpsr_cxsf, r1
+    ldr     sp, =und_stack_start
 
-    .align  5
-IRQ_Handler:
-    STMFD   SP!, {R0-R12,LR}
-    BL      rt_interrupt_enter
-    BL      rt_hw_trap_irq
-    BL      rt_interrupt_leave
+    orr     r1, r0, #MODE_ABT|NOINT
+    msr     cpsr_cxsf, r1
+    ldr     sp, =abt_stack_start
 
-    @; If rt_thread_switch_interrupt_flag set,
-    @; jump to rt_hw_context_switch_interrupt_do and don't return
-    LDR     R0, =rt_thread_switch_interrupt_flag
-    LDR     R1, [R0]
-    CMP     R1, #1
-    BEQ     rt_hw_context_switch_interrupt_do
+    orr     r1, r0, #MODE_IRQ|NOINT
+    msr     cpsr_cxsf, r1
+    ldr     sp, =irq_stack_start
 
-    LDMFD   SP!, {R0-R12,LR}
-    SUBS    PC, LR, #4
+    orr     r1, r0, #MODE_FIQ|NOINT
+    msr     cpsr_cxsf, r1
+    ldr     sp, =fiq_stack_start
 
-@;------ void rt_hw_context_switch_interrupt_do(rt_base_t flag) -----------------
+    orr     r1, r0, #MODE_SYS|NOINT
+    msr     cpsr_cxsf,r1
+    ldr     sp, =sys_stack_start
+
+    orr     r1, r0, #MODE_SVC|NOINT
+    msr     cpsr_cxsf, r1
+    ldr     sp, =svc_stack_start
+
+    bx      lr
+ 
+/*
+ ***************************************
+ * exception handlers 
+ ***************************************
+ */
+    /* Interrupt */
+vector_fiq:
+    stmfd   sp!,{r0-r7,lr}
+    bl      rt_hw_trap_fiq
+    ldmfd   sp!,{r0-r7,lr}
+    subs    pc, lr, #4
+
+vector_irq:
+    stmfd   sp!, {r0-r12,lr}
+
+    bl      rt_interrupt_enter
+    bl      rt_hw_trap_irq
+    bl      rt_interrupt_leave
+
+    ldr     r0, =rt_thread_switch_interrupt_flag
+    ldr     r1, [r0]
+    cmp     r1, #1
+    beq     rt_hw_context_switch_interrupt_do
+
+    ldmfd   sp!, {r0-r12,lr}
+    subs    pc,  lr, #4
+
 rt_hw_context_switch_interrupt_do:
-    MOV     R1,  #0                 @; Clear flag
-    STR     R1,  [R0]               @; Save to flag variable
+    mov     r1,  #0         
+    str     r1,  [r0]
 
-    LDMFD   SP!, {R0-R12,LR}        @; Reload saved registers
-    STMFD   SP, {R0-R2}             @; Save R0-R2
-    SUB     R1,  SP, #4*3           @; Save old task's SP to R1
-    SUB     R2,  LR, #4             @; Save old task's PC to R2
+    mov     r1, sp          
+    add     sp, sp, #4*4
+    ldmfd   sp!, {r4-r12,lr}
+    mrs     r0,  spsr       
+    sub     r2,  lr, #4     
 
-    MRS     R0,  SPSR               @; Get CPSR of interrupt thread
+    msr     cpsr_c, #I_BIT|F_BIT|MODE_SVC
 
-    MSR     CPSR_c, #MODE_SVC|NOINT @; Switch to SVC mode and no interrupt
+    stmfd   sp!, {r2}       
+    stmfd   sp!, {r4-r12,lr}
+    ldmfd   r1,  {r1-r4}    
+    stmfd   sp!, {r1-r4}    
+    stmfd   sp!, {r0}       
 
-    STMFD   SP!, {R2}               @; Push old task's PC
-    STMFD   SP!, {R3-R12,LR}        @; Push old task's LR,R12-R3
-    LDMFD   R1, {R1-R3}
-    STMFD   SP!, {R1-R3}            @; Push old task's R2-R0
-    STMFD   SP!, {R0}               @; Push old task's CPSR
+    ldr     r4,  =rt_interrupt_from_thread
+    ldr     r5,  [r4]
+    str     sp,  [r5]       
 
-    LDR     R4,  =rt_interrupt_from_thread
-    LDR     R5,  [R4]               @; R5 = stack ptr in old tasks's TCB
-    STR     SP,  [R5]               @; Store SP in preempted tasks's TCB
+    ldr     r6,  =rt_interrupt_to_thread
+    ldr     r6,  [r6]
+    ldr     sp,  [r6]       
 
-    LDR     R6,  =rt_interrupt_to_thread
-    LDR     R6,  [R6]               @; R6 = stack ptr in new tasks's TCB
-    LDR     SP,  [R6]               @; Get new task's stack pointer
+    ldmfd   sp!, {r4}       
+    msr     spsr_cxsf, r4
 
-    LDMFD   SP!, {R4}               @; Pop new task's SPSR
-    MSR     SPSR_cxsf, R4
+    ldmfd   sp!, {r0-r12,lr,pc}^ 
 
-    LDMFD   SP!, {R0-R12,LR,PC}^    @; pop new task's R0-R12,LR & PC SPSR 2 CPSR
+    /* Exception */
+.macro push_svc_reg
+    sub     sp, sp, #17 * 4
+    stmia   sp, {r0 - r12} 
+    mov     r0, sp
+    mrs     r6, spsr       
+    str     lr, [r0, #15*4]
+    str     r6, [r0, #16*4]
+    str     sp, [r0, #13*4]
+    str     lr, [r0, #14*4]
+.endm
+
+vector_swi:
+    push_svc_reg
+    bl      rt_hw_trap_swi
+    b       .
+
+vector_undef:
+    push_svc_reg
+    bl      rt_hw_trap_udef
+    b       .
+
+vector_pabt:
+    push_svc_reg
+    bl      rt_hw_trap_pabt
+    b       .
+
+vector_dabt:
+    push_svc_reg
+    bl      rt_hw_trap_dabt
+    b       .
+
+vector_resv:
+    push_svc_reg
+    bl      rt_hw_trap_resv
+    b       .

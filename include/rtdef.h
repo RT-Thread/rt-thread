@@ -58,21 +58,21 @@ extern "C" {
                                          (RT_SUBVERSION * 100) + RT_REVISION)
 
 /* RT-Thread basic data type definitions */
+#ifndef RT_USING_ARCH_DATA_TYPE
 typedef signed   char                   rt_int8_t;      /**<  8bit integer type */
 typedef signed   short                  rt_int16_t;     /**< 16bit integer type */
+typedef signed   int                    rt_int32_t;     /**< 32bit integer type */
 typedef unsigned char                   rt_uint8_t;     /**<  8bit unsigned integer type */
 typedef unsigned short                  rt_uint16_t;    /**< 16bit unsigned integer type */
+typedef unsigned int                    rt_uint32_t;    /**< 32bit unsigned integer type */
 
 #ifdef ARCH_CPU_64BIT
-typedef signed int                      rt_int32_t;     /**< 32bit integer type */
 typedef signed long                     rt_int64_t;     /**< 64bit integer type */
-typedef unsigned int                    rt_uint32_t;    /**< 32bit unsigned integer type */
 typedef unsigned long                   rt_uint64_t;    /**< 64bit unsigned integer type */
 #else
-typedef signed long                     rt_int32_t;     /**< 32bit integer type */
 typedef signed long long                rt_int64_t;     /**< 64bit integer type */
-typedef unsigned long                   rt_uint32_t;    /**< 32bit unsigned integer type */
 typedef unsigned long long              rt_uint64_t;    /**< 64bit unsigned integer type */
+#endif
 #endif
 
 typedef int                             rt_bool_t;      /**< boolean type */
@@ -848,6 +848,7 @@ enum rt_device_class_type
     RT_Device_Class_Portal,                             /**< Portal device */
     RT_Device_Class_Timer,                              /**< Timer device */
     RT_Device_Class_Miscellaneous,                      /**< Miscellaneous device */
+    RT_Device_Class_Sensor,                             /**< Sensor device */
     RT_Device_Class_Unknown                             /**< unknown device */
 };
 

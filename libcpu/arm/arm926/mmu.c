@@ -140,7 +140,7 @@ void mmu_clean_invalidated_dcache(rt_uint32_t buffer, rt_uint32_t size)
 
     ptr = buffer & ~(CACHE_LINE_SIZE - 1);
 
-    while(ptr < buffer + size)
+    while (ptr < buffer + size)
     {
         __asm volatile { MCR p15, 0, ptr, c7, c14, 1 }
         ptr += CACHE_LINE_SIZE;
@@ -211,18 +211,18 @@ void mmu_setttbase(register rt_uint32_t i)
      * set by page table entry
      */
     value = 0;
-    asm volatile ("mcr p15, 0, %0, c8, c7, 0"::"r"(value));
+    asm volatile("mcr p15, 0, %0, c8, c7, 0"::"r"(value));
 
     value = 0x55555555;
-    asm volatile ("mcr p15, 0, %0, c3, c0, 0"::"r"(value));
+    asm volatile("mcr p15, 0, %0, c3, c0, 0"::"r"(value));
 
-    asm volatile ("mcr p15, 0, %0, c2, c0, 0"::"r"(i));
+    asm volatile("mcr p15, 0, %0, c2, c0, 0"::"r"(i));
 
 }
 
 void mmu_set_domain(register rt_uint32_t i)
 {
-    asm volatile ("mcr p15,0, %0, c3, c0,  0": :"r" (i));
+    asm volatile("mcr p15,0, %0, c3, c0,  0": :"r"(i));
 }
 
 void mmu_enable()
@@ -321,7 +321,7 @@ void mmu_disable_alignfault()
 
 void mmu_clean_invalidated_cache_index(int index)
 {
-    asm volatile ("mcr p15, 0, %0, c7, c14, 2": :"r" (index));
+    asm volatile("mcr p15, 0, %0, c7, c14, 2": :"r"(index));
 }
 
 void mmu_clean_invalidated_dcache(rt_uint32_t buffer, rt_uint32_t size)
@@ -330,9 +330,9 @@ void mmu_clean_invalidated_dcache(rt_uint32_t buffer, rt_uint32_t size)
 
     ptr = buffer & ~(CACHE_LINE_SIZE - 1);
 
-    while(ptr < buffer + size)
+    while (ptr < buffer + size)
     {
-        asm volatile ("mcr p15, 0, %0, c7, c14, 1": :"r" (ptr));
+        asm volatile("mcr p15, 0, %0, c7, c14, 1": :"r"(ptr));
 
         ptr += CACHE_LINE_SIZE;
     }
@@ -347,7 +347,7 @@ void mmu_clean_dcache(rt_uint32_t buffer, rt_uint32_t size)
 
     while (ptr < buffer + size)
     {
-        asm volatile ("mcr p15, 0, %0, c7, c10, 1": :"r" (ptr));
+        asm volatile("mcr p15, 0, %0, c7, c10, 1": :"r"(ptr));
 
         ptr += CACHE_LINE_SIZE;
     }
@@ -361,7 +361,7 @@ void mmu_invalidate_dcache(rt_uint32_t buffer, rt_uint32_t size)
 
     while (ptr < buffer + size)
     {
-        asm volatile ("mcr p15, 0, %0, c7, c6, 1": :"r" (ptr));
+        asm volatile("mcr p15, 0, %0, c7, c6, 1": :"r"(ptr));
 
         ptr += CACHE_LINE_SIZE;
     }
@@ -369,19 +369,19 @@ void mmu_invalidate_dcache(rt_uint32_t buffer, rt_uint32_t size)
 
 void mmu_invalidate_tlb()
 {
-    asm volatile ("mcr p15, 0, %0, c8, c7, 0": :"r" (0));
+    asm volatile("mcr p15, 0, %0, c8, c7, 0": :"r"(0));
 
 }
 
 void mmu_invalidate_icache()
 {
-    asm volatile ("mcr p15, 0, %0, c7, c5, 0": :"r" (0));
+    asm volatile("mcr p15, 0, %0, c7, c5, 0": :"r"(0));
 
 }
 
 void mmu_invalidate_dcache_all()
 {
-    asm volatile ("mcr p15, 0, %0, c7, c6, 0": :"r" (0));
+    asm volatile("mcr p15, 0, %0, c7, c6, 0": :"r"(0));
 
 }
 #endif
@@ -389,10 +389,10 @@ void mmu_invalidate_dcache_all()
 /* level1 page table */
 #if defined(__ICCARM__)
 #pragma data_alignment=(16*1024)
-static volatile rt_uint32_t _page_table[4*1024];
+static volatile rt_uint32_t _page_table[4 * 1024];
 #else
-static volatile rt_uint32_t _page_table[4*1024] \
-    __attribute__((aligned(16*1024)));
+static volatile rt_uint32_t _page_table[4 * 1024] \
+__attribute__((aligned(16 * 1024)));
 #endif
 
 void mmu_setmtt(rt_uint32_t vaddrStart, rt_uint32_t vaddrEnd,
@@ -401,11 +401,11 @@ void mmu_setmtt(rt_uint32_t vaddrStart, rt_uint32_t vaddrEnd,
     volatile rt_uint32_t *pTT;
     volatile int nSec;
     int i = 0;
-    pTT=(rt_uint32_t *)_page_table+(vaddrStart>>20);
-    nSec=(vaddrEnd>>20)-(vaddrStart>>20);
-    for(i=0; i<=nSec; i++)
+    pTT = (rt_uint32_t *)_page_table + (vaddrStart >> 20);
+    nSec = (vaddrEnd >> 20) - (vaddrStart >> 20);
+    for (i = 0; i <= nSec; i++)
     {
-        *pTT = attr |(((paddrStart>>20)+i)<<20);
+        *pTT = attr | (((paddrStart >> 20) + i) << 20);
         pTT++;
     }
 }

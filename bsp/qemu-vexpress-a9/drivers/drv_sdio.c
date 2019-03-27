@@ -77,10 +77,8 @@
 #define PL180_CLR_DAT_END       (1 << 8)
 #define PL180_CLR_DAT_BLK_END   (1 << 10)
 
-#define DBG_LEVEL DBG_LOG
-// #define DBG_ENABLE
-#define DBG_COLOR
-
+#define DBG_SECTION_NAME "drv.sdio"
+#define DBG_LEVEL DBG_INFO
 #include "rtdbg.h"
 
 struct sdhci_pl180_pdata_t
@@ -344,10 +342,10 @@ static void mmc_request_send(struct rt_mmcsd_host *host, struct rt_mmcsd_req *re
         req->cmd->err = sdhci_pl180_transfer(sdhci, &cmd, RT_NULL);
     }
 
-    LOG_I("cmdarg:%d", cmd.cmdarg);
-    LOG_I("cmdidx:%d", cmd.cmdidx);
+    LOG_D("cmdarg:%d", cmd.cmdarg);
+    LOG_D("cmdidx:%d", cmd.cmdidx);
 
-    LOG_I("[0]:0x%08x [1]:0x%08x [2]:0x%08x [3]:0x%08x", cmd.response[0], cmd.response[1], cmd.response[2], cmd.response[3]);
+    LOG_D("[0]:0x%08x [1]:0x%08x [2]:0x%08x [3]:0x%08x", cmd.response[0], cmd.response[1], cmd.response[2], cmd.response[3]);
     req->cmd->resp[3] = cmd.response[3];
     req->cmd->resp[2] = cmd.response[2];
     req->cmd->resp[1] = cmd.response[1];
@@ -381,7 +379,7 @@ static void mmc_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io
 
     sdhci_pl180_setclock(sdhci, io_cfg->clock);
     sdhci_pl180_setwidth(sdhci, io_cfg->bus_width);
-    LOG_I("clock:%d bus_width:%d", io_cfg->clock, io_cfg->bus_width);
+    LOG_D("clock:%d bus_width:%d", io_cfg->clock, io_cfg->bus_width);
 }
 
 static const struct rt_mmcsd_host_ops ops = 

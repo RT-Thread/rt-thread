@@ -18,9 +18,7 @@
 #include "drv_wm8978.h"
 #include <stm32f4xx.h>
 
-#define DBG_ENABLE
 #define DBG_LEVEL DBG_INFO
-#define DBG_COLOR
 #define DBG_SECTION_NAME    "MIC"
 #include <rtdbg.h>
 

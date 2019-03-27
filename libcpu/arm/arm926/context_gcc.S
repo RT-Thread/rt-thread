@@ -10,6 +10,7 @@
 
 #define NOINT   0xC0
 
+.text
 ;/*
 ; * rt_base_t rt_hw_interrupt_disable();
 ; */
