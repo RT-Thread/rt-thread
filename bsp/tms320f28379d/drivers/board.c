@@ -10,16 +10,16 @@
  */
 #include <rtthread.h>
 #include "board.h"
+#include "drv_sci.h"
 #include "F28x_Project.h"
 
 extern interrupt void RTOSINT_Handler();
-
 
 /**
  * This is the timer interrupt service routine.
  *
  */
-interrupt void cpu_timer2_isr (void)
+interrupt void cpu_timer2_isr(void)
 {
     CpuTimer2Regs.TCR.all = 0x8000;
     /* enter interrupt */
@@ -29,7 +29,6 @@ interrupt void cpu_timer2_isr (void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-
 
 /**
  * This function will initial STM32 board.
@@ -60,6 +59,9 @@ void rt_hw_board_init()
 #ifdef RT_USING_HEAP
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
+
+    rt_hw_sci_init();
+
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
