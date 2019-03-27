@@ -9,6 +9,7 @@
  * 2019-01-22     YLZ          port from stm324xx-HAL to bsp stm3210x-HAL
  * 2019-02-19     YLZ          add support EXTID RTR Frame. modify send, recv functions. 
  *                             fix bug.port to BSP [stm32]
+ * 2019-03-27     YLZ          support double can channels, support stm32F4xx (only Legacy mode).
  */
 
 #include "drv_can.h"
@@ -80,7 +81,7 @@ void CAN1_TX_IRQHandler(void)
     CAN_HandleTypeDef *hcan;
     hcan = &drv_can1.CanHandle;
     
-    if (__HAL_CAN_TRANSMIT_STATUS(hcan, CAN_TXMAILBOX_0))
+    if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP0))
     {
         if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TXOK0))
         {
@@ -94,9 +95,8 @@ void CAN1_TX_IRQHandler(void)
         SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP0);
     }
 
-    else if (__HAL_CAN_TRANSMIT_STATUS(hcan, CAN_TXMAILBOX_1))
+    else if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP1))
     {
-        
         if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TXOK1))
         {
             rt_hw_can_isr(&dev_can1, RT_CAN_EVENT_TX_DONE | 1 << 8);
@@ -109,7 +109,7 @@ void CAN1_TX_IRQHandler(void)
         SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP1);
     }
     
-    else if (__HAL_CAN_TRANSMIT_STATUS(hcan, CAN_TXMAILBOX_2))
+    else if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP2))
     {
          
         if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TXOK2))
@@ -212,7 +212,7 @@ void CAN1_RX1_IRQHandler(void)
     while (__HAL_CAN_MSG_PENDING(hcan, CAN_FIFO1) != RESET && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_FMP1) != RESET)
     {
         /* beigin get data */
-          
+
         /* Set RxMsg pointer */
         pRxMsg = hcan->pRx1Msg;
          /* Get the Id */
@@ -225,7 +225,7 @@ void CAN1_RX1_IRQHandler(void)
         {
             pRxMsg->ExtId = 0x1FFFFFFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO1].RIR >> 3U);
         }
-  
+        
         pRxMsg->RTR = (uint8_t)0x02U & hcan->Instance->sFIFOMailBox[CAN_FIFO1].RIR;
         /* Get the DLC */
         pRxMsg->DLC = (uint8_t)0x0FU & hcan->Instance->sFIFOMailBox[CAN_FIFO1].RDTR;
@@ -327,7 +327,7 @@ void CAN2_TX_IRQHandler(void)
     CAN_HandleTypeDef *hcan;
     hcan = &drv_can2.CanHandle;
     
-    if (__HAL_CAN_TRANSMIT_STATUS(hcan, CAN_TXMAILBOX_0))
+    if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP0))
     {
         if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TXOK0))
         {
@@ -341,9 +341,8 @@ void CAN2_TX_IRQHandler(void)
         SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP0);
     }
 
-    else if (__HAL_CAN_TRANSMIT_STATUS(hcan, CAN_TXMAILBOX_1))
+    else if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP1))
     {
-        
         if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TXOK1))
         {
             rt_hw_can_isr(&dev_can2, RT_CAN_EVENT_TX_DONE | 1 << 8);
@@ -356,9 +355,8 @@ void CAN2_TX_IRQHandler(void)
         SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP1);
     }
     
-    else if (__HAL_CAN_TRANSMIT_STATUS(hcan, CAN_TXMAILBOX_2))
+    else if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP2))
     {
-         
         if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TXOK2))
         {
             rt_hw_can_isr(&dev_can2, RT_CAN_EVENT_TX_DONE | 2 << 8);
@@ -570,7 +568,7 @@ void CAN2_SCE_IRQHandler(void)
  */
 void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan)
 {
-    __HAL_CAN_ENABLE_IT(hcan, CAN_IT_EWG |
+    __HAL_CAN_ENABLE_IT(hcan,  CAN_IT_EWG |
                                CAN_IT_EPV |
                                CAN_IT_BOF |
                                CAN_IT_LEC |
@@ -588,7 +586,6 @@ static rt_err_t drv_configure(struct rt_can_device *dev_can,
     struct stm32_drv_can *drv_can;
     rt_uint32_t baud_index;
     CAN_InitTypeDef *drv_init;
-    CAN_FilterConfTypeDef *filterConf;
 
     RT_ASSERT(dev_can);
     RT_ASSERT(cfg);
@@ -599,9 +596,9 @@ static rt_err_t drv_configure(struct rt_can_device *dev_can,
     drv_init->TTCM = DISABLE;
     drv_init->ABOM = DISABLE;
     drv_init->AWUM = DISABLE;
-    drv_init->NART = DISABLE;
+    drv_init->NART = ENABLE;
     drv_init->RFLM = DISABLE;
-    drv_init->TXFP = DISABLE;
+    drv_init->TXFP = ENABLE;
 
     switch (cfg->mode)
     {
@@ -630,18 +627,7 @@ static rt_err_t drv_configure(struct rt_can_device *dev_can,
     }
     
     /* Filter conf */
-    filterConf = &drv_can->FilterConfig;
-    filterConf->FilterNumber = 0;
-    filterConf->FilterMode = CAN_FILTERMODE_IDMASK;
-    filterConf->FilterScale = CAN_FILTERSCALE_32BIT;
-    filterConf->FilterIdHigh = 0x0000;
-    filterConf->FilterIdLow = 0x0000;
-    filterConf->FilterMaskIdHigh = 0x0000;
-    filterConf->FilterMaskIdLow = 0x0000;
-    filterConf->FilterFIFOAssignment = CAN_FIFO0;
-    filterConf->FilterActivation = ENABLE;
-    filterConf->BankNumber = 14;
-    HAL_CAN_ConfigFilter(&drv_can->CanHandle, filterConf);
+    HAL_CAN_ConfigFilter(&drv_can->CanHandle, &drv_can->FilterConfig);
     return RT_EOK;
 }
 
@@ -659,7 +645,8 @@ static rt_err_t drv_control(struct rt_can_device *can, int cmd, void *arg)
         argval = (rt_uint32_t) arg;
         if (argval == RT_DEVICE_FLAG_INT_RX)
         {
-            if (CAN1 == drv_can->CanHandle.Instance) {
+            if (CAN1 == drv_can->CanHandle.Instance)
+            {
                 HAL_NVIC_DisableIRQ(CAN1_RX0_IRQn);
                 HAL_NVIC_DisableIRQ(CAN1_RX1_IRQn);
             }
@@ -817,9 +804,9 @@ static rt_err_t drv_control(struct rt_can_device *can, int cmd, void *arg)
             drv_init->TTCM = DISABLE;
             drv_init->ABOM = DISABLE;
             drv_init->AWUM = DISABLE;
-            drv_init->NART = DISABLE;
+            drv_init->NART = ENABLE;
             drv_init->RFLM = DISABLE;
-            drv_init->TXFP = DISABLE;
+            drv_init->TXFP = ENABLE;
             baud_index = get_can_baud_index(can->config.baud_rate);
             drv_init->SJW = BAUD_DATA(SJW, baud_index);
             drv_init->BS1 = BAUD_DATA(BS1, baud_index);
@@ -1059,8 +1046,21 @@ int rt_hw_can_init(void)
     config.maxhdr = 28;
     #endif
 #endif
-
+    /* config default filter */
+    CAN_FilterConfTypeDef filterConf = {0};
+    filterConf.FilterNumber = 0;
+    filterConf.FilterMode = CAN_FILTERMODE_IDMASK;
+    filterConf.FilterScale = CAN_FILTERSCALE_32BIT;
+    filterConf.FilterIdHigh = 0x0000;
+    filterConf.FilterIdLow = 0x0000;
+    filterConf.FilterMaskIdHigh = 0x0000;
+    filterConf.FilterMaskIdLow = 0x0000;
+    filterConf.FilterFIFOAssignment = CAN_FILTER_FIFO0;
+    filterConf.FilterActivation = ENABLE;
+    filterConf.BankNumber = 14;
 #ifdef BSP_USING_CAN1
+    filterConf.FilterNumber = 0;
+    drv_can1.FilterConfig = filterConf;
     drv_can = &drv_can1;
     drv_can->CanHandle.Instance = CAN1;
     drv_can->CanHandle.pTxMsg = &drv_can->TxMessage;
@@ -1075,6 +1075,8 @@ int rt_hw_can_init(void)
 #endif /* BSP_USING_CAN1 */
 
 #ifdef BSP_USING_CAN2
+    filterConf.FilterNumber = filterConf.BankNumber;
+    drv_can2.FilterConfig = filterConf;
     drv_can = &drv_can2;
     drv_can->CanHandle.Instance = CAN2;
     drv_can->CanHandle.pTxMsg = &drv_can->TxMessage;
@@ -1090,7 +1092,5 @@ int rt_hw_can_init(void)
 
     return 0;
 }
-
 INIT_BOARD_EXPORT(rt_hw_can_init);
-
 #endif /* RT_USING_CAN */
