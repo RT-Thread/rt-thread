@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2019 Winner Microelectronics Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *

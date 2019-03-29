@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2019 Winner Microelectronics Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-09-15     flyingcys    add w600
+ * 2018-09-15     flyingcys    1st version
  */
 
 #include <rthw.h>
@@ -50,25 +50,21 @@ const unsigned int HZ = RT_TICK_PER_SECOND;
 
 struct tls_ethif *tls_netif_get_ethif(void)
 {
-    rt_kprintf("===============%s %d\r\n", __FUNCTION__, __LINE__);
     return RT_NULL;
 }
 
 int tls_os_get_type(void)
 {
-    rt_kprintf("===============%s %d\r\n", __FUNCTION__, __LINE__);
     return 0;
 }
 
 err_t tls_dhcp_stop(void)
 {
-    rt_kprintf("===============%s %d\r\n", __FUNCTION__, __LINE__);
     return 0;
 }
 
 u8 tls_get_isr_count(void)
 {
-    rt_kprintf("===============%s %d\r\n", __FUNCTION__, __LINE__);
     return 0;
 }
 

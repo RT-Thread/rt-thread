@@ -1,13 +1,3 @@
-@rem 参数0: exe
-@rem 参数1: 输入bin文件 ,原始文件或者压缩档文件
-@rem 参数2: 输出文件(目标生成文件）
-@rem 参数3: 输入文件类型,0是旧参数布局的image文件，3是新参数布局的image文件
-@rem 参数4: 是否压缩文件：0：plain文件，1：压缩类型文件
-@rem 参数5: 版本号文件
-@rem 参数6：升级文件再FLASH里的存放位置（相对位置）
-@rem 参数7：升级后的文件启动位置（相对位置）
-@rem 参数8：原始bin文件
-
 @echo off
 
 @rem if debug_info=1, Debugging Print Information will be turned on
@@ -27,6 +17,7 @@ set layout_2M_file=.
 @rem Setting the makeimg by adding rtt flash original fls
 set makeimg_new_fls=.
 
+if "%wmlib_path:~0,1%" == "." (set wmlib_path=%~dp0%wmlib_path%)
 @rem find winnermicro libraries full path
 for /f "delims=" %%i in ('dir /ad /b /s %wmlib_path%*') do (set wmlib_path_full=%%i)
 @rem Setting the version.txt file path
@@ -158,3 +149,4 @@ if exist "%out_path%\%bin_name%_2M.FLS" (del "%out_path%\%bin_name%%file_pos_2M%
 
 :end
 echo end
+
