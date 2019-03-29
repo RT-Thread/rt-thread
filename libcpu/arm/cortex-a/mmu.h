@@ -13,6 +13,7 @@
 #include <rtthread.h>
 
 #define DESC_SEC       (0x2)
+#define MEMWBWA        ((1<<12)|(3<<2))     /* write back, write allocate */
 #define MEMWB          (3<<2)  /* write back, no write allocate */
 #define MEMWT          (2<<2)  /* write through, no write allocate */
 #define SHAREDEVICE    (1<<2)  /* shared device */
@@ -34,7 +35,7 @@
 /* device mapping type */
 #define DEVICE_MEM     (SHARED|AP_RW|DOMAIN0|SHAREDEVICE|DESC_SEC|XN)
 /* normal memory mapping type */
-#define NORMAL_MEM     (SHARED|AP_RW|DOMAIN0|MEMWB|DESC_SEC)
+#define NORMAL_MEM     (SHARED|AP_RW|DOMAIN0|MEMWBWA|DESC_SEC)
 
 struct mem_desc
 {
