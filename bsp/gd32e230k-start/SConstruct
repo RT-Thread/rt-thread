@@ -15,7 +15,7 @@ except:
     print(RTT_ROOT)
     exit(-1)
 
-TARGET = 'rtthread-gd32f30x.' + rtconfig.TARGET_EXT
+TARGET = 'rtthread-gd32f230.' + rtconfig.TARGET_EXT
 
 env = Environment(tools = ['mingw'],
     AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,

@@ -6,27 +6,21 @@ cwd = GetCurrentDir()
 
 # The set of source files associated with this SConscript file.
 
-src = Glob('GD32F30x_standard_peripheral/Source/*.c')
-src += [cwd + '/CMSIS/GD/GD32F30x/Source/system_gd32f30x.c']
+src = Glob('GD32E230_standard_peripheral/Source/*.c')
+src += [cwd + '/CMSIS/GD/GD32E230/Source/system_gd32e230.c']
 
 #add for startup script
-if rtconfig.CROSS_TOOL == 'gcc':
-    src += [cwd + '/CMSIS/GD/GD32F30x/Source/GCC/startup_gd32f30x_hd.s']
-elif rtconfig.CROSS_TOOL == 'keil':
-    src += [cwd + '/CMSIS/GD/GD32F30x/Source/ARM/startup_gd32f30x_hd.s']
+if rtconfig.CROSS_TOOL == 'keil':
+    src += [cwd + '/CMSIS/GD/GD32E230/Source/ARM/startup_gd32e230.s']
 elif rtconfig.CROSS_TOOL == 'iar':
-    src += [cwd + '/CMSIS/GD/GD32F30x/Source/IAR/startup_gd32f30x_hd.s']
+    src += [cwd + '/CMSIS/GD/GD32E230/Source/IAR/startup_gd32e230.s']
 
 path = [
-    cwd + '/CMSIS/GD/GD32F30x/Include',
+    cwd + '/CMSIS/GD/GD32E230/Include',
     cwd + '/CMSIS',
-    cwd + '/GD32F30x_standard_peripheral/Include',]
-    
-if GetDepend(['RT_USING_BSP_USB']):
-    path += [cwd + '/GD32F30x_usb_driver/Include']
-    src  += [cwd + '/GD32F30x_usb_driver/Source']
+    cwd + '/GD32E230_standard_peripheral/Include',]
 
-CPPDEFINES = ['USE_STDPERIPH_DRIVER', 'GD32F30X_HD']
+CPPDEFINES = ['GD32E230']
 
 group = DefineGroup('GD32_Lib', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
