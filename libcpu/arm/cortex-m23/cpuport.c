@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2019, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,6 +9,7 @@
  * 2012-05-31     aozima       Merge all of the C source code into cpuport.c
  * 2012-08-17     aozima       fixed bug: store r8 - r11.
  * 2012-12-23     aozima       stack addr align to 8byte.
+ * 2019-03-31     xuzhuoyi     port to Cortex-M23.
  */
 
 #include <rtthread.h>

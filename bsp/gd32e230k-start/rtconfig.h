@@ -148,7 +148,12 @@
 /* miscellaneous packages */
 
 
+/* sample package */
+
 /* samples: kernel and components samples */
+
+
+/* example package: hello */
 
 #define RT_USING_USART0
 #define RT_USING_USART1

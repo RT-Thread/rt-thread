@@ -1,7 +1,7 @@
 /*
  * File      : drv_spi.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2017 RT-Thread Develop Team
+ * COPYRIGHT (C) 2019 RT-Thread Develop Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -11,6 +11,7 @@
  * Date           Author       Notes
  * 2017-06-05     tanek        first implementation.
  * 2018-04-19     misonyo      Porting for gd32f30x
+ * 2019-03-31     xuzhuoyi     Porting for gd32e230
  */
 
 #include "drv_spi.h"
@@ -20,8 +21,7 @@
 #if defined(RT_USING_SPI) && defined(RT_USING_PIN)
 #include <rtdevice.h>
 
-#if !defined(RT_USING_SPI0) && !defined(RT_USING_SPI1) && \
-    !defined(RT_USING_SPI2)
+#if !defined(RT_USING_SPI0) && !defined(RT_USING_SPI1)
 #error "Please define at least one SPIx"
 #endif
 
