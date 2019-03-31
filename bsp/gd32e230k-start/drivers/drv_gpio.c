@@ -1,16 +1,17 @@
 /*
  * File      : drv_gpio.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * COPYRIGHT (C) 2019, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
  * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
- * Date           Author            Notes
+ * Date           Author         Notes
  * 2017-10-20     ZYH            the first version
  * 2018-04-23     misonyo        port to gd32f30x
+ * 2019-03-31     xuzhuoyi       Porting for gd32e230
  */
 
 #include "drv_gpio.h"
@@ -23,7 +24,7 @@
 
 #define __GD32_PIN(index, port, pin) {index, RCU_GPIO##port, GPIO##port, \
         GPIO_PIN_##pin, EXTI_SOURCE_GPIO##port, EXTI_SOURCE_PIN##pin}
-#define __GD32_PIN_DEFAULT {-1, (rcu_periph_enum)0, 0, 0}
+#define __GD32_PIN_DEFAULT {-1, (rcu_periph_enum)0, 0, 0, 0, 0}
 
 /* GD32 GPIO driver */
 struct pin_index
@@ -39,102 +40,37 @@ struct pin_index
 static const struct pin_index pins[] =
 {
     __GD32_PIN_DEFAULT,
+    __GD32_PIN(2, F, 0),
+    __GD32_PIN(3, F, 1),
+	  __GD32_PIN_DEFAULT,
+		__GD32_PIN_DEFAULT,
+    __GD32_PIN(6, A, 0),
+    __GD32_PIN(7, A, 1),
+    __GD32_PIN(8, A, 2),
+    __GD32_PIN(9, A, 3),
+    __GD32_PIN(10, A, 4),
+    __GD32_PIN(11, A, 5),
+    __GD32_PIN(12, A, 6),
+    __GD32_PIN(13, A, 7),
+    __GD32_PIN(14, B, 0),
+    __GD32_PIN(15, B, 1),
+    __GD32_PIN(16, B, 2),
+		__GD32_PIN_DEFAULT,
+    __GD32_PIN(18, A, 8),
+    __GD32_PIN(19, A, 9),
+    __GD32_PIN(20, A, 10),
+    __GD32_PIN(21, A, 11),
+    __GD32_PIN(22, A, 12),
+    __GD32_PIN(23, A, 13),
+    __GD32_PIN(24, A, 14),
+    __GD32_PIN(25, A, 15),
+    __GD32_PIN(26, B, 3),
+    __GD32_PIN(27, B, 4),
+    __GD32_PIN(28, B, 5),
+    __GD32_PIN(29, B, 6),
+    __GD32_PIN(30, B, 7),
     __GD32_PIN_DEFAULT,
-    __GD32_PIN(7, C, 13),
-    __GD32_PIN(8, C, 14),
-    __GD32_PIN(9, C, 15),
-    __GD32_PIN(10, F, 0),
-    __GD32_PIN(11, F, 1),
-    __GD32_PIN(12, F, 2),
-    __GD32_PIN(13, F, 3),
-    __GD32_PIN(14, F, 4),
-    __GD32_PIN(15, F, 5),
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN(18, F, 6),
-    __GD32_PIN(19, F, 7),
-    __GD32_PIN(20, F, 8),
-    __GD32_PIN(21, F, 9),
-    __GD32_PIN(22, F, 10),
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN(26, C, 0),
-    __GD32_PIN(27, C, 1),
-    __GD32_PIN(28, C, 2),
-    __GD32_PIN(29, C, 3),
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN(34, A, 0),
-    __GD32_PIN(35, A, 1),
-    __GD32_PIN(36, A, 2),
-    __GD32_PIN(37, A, 3),
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN(40, A, 4),
-    __GD32_PIN(41, A, 5),
-    __GD32_PIN(42, A, 6),
-    __GD32_PIN(43, A, 7),
-    __GD32_PIN(44, C, 4),
-    __GD32_PIN(45, C, 5),
-    __GD32_PIN(46, B, 0),
-    __GD32_PIN(47, B, 1),
-    __GD32_PIN(48, B, 2),
-    __GD32_PIN(49, F, 11),
-    __GD32_PIN(50, F, 12),
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN(53, F, 13),
-    __GD32_PIN(54, F, 14),
-    __GD32_PIN(55, F, 15),
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN(69, B, 10),
-    __GD32_PIN(70, B, 11),
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN(73, B, 12),
-    __GD32_PIN(74, B, 13),
-    __GD32_PIN(75, B, 14),
-    __GD32_PIN(76, B, 15),
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN(96, C, 6),
-    __GD32_PIN(97, C, 7),
-    __GD32_PIN(98, C, 8),
-    __GD32_PIN(99, C, 9),
-    __GD32_PIN(100, A, 8),
-    __GD32_PIN(101, A, 9),
-    __GD32_PIN(102, A, 10),
-    __GD32_PIN(103, A, 11),
-    __GD32_PIN(104, A, 12),
-    __GD32_PIN(105, A, 13),
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN(109, A, 14),
-    __GD32_PIN(110, A, 15),
-    __GD32_PIN(111, C, 10),
-    __GD32_PIN(112, C, 11),
-    __GD32_PIN(113, C, 12),
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN(133, B, 3),
-    __GD32_PIN(134, B, 4),
-    __GD32_PIN(135, B, 5),
-    __GD32_PIN(136, B, 6),
-    __GD32_PIN(137, B, 7),
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN(139, B, 8),
-    __GD32_PIN(140, B, 9),
-    __GD32_PIN_DEFAULT,
-    __GD32_PIN_DEFAULT,
+    __GD32_PIN(32, B, 8),
 };
 
 struct pin_irq_map

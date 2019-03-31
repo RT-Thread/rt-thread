@@ -11,6 +11,7 @@
  * Date           Author       Notes
  * 2009-01-05     Bernard      the first version
  * 2018-04-19     misonyo      Porting for gd32f30x
+ * 2019-03-31     xuzhuoyi     Porting for gd32e230
  */
 
 #include <rthw.h>
@@ -23,9 +24,7 @@
 #define UART_ENABLE_IRQ(n)            NVIC_EnableIRQ((n))
 #define UART_DISABLE_IRQ(n)           NVIC_DisableIRQ((n))
 
-#if !defined(RT_USING_USART0) && !defined(RT_USING_USART1) && \
-    !defined(RT_USING_USART2) && !defined(RT_USING_UART3)  && \
-    !defined(RT_USING_UART4)
+#if !defined(RT_USING_USART0) && !defined(RT_USING_USART1)
 #error "Please define at least one UARTx"
 
 #endif
@@ -84,53 +83,6 @@ void USART1_IRQHandler(void)
 
 #endif /* RT_USING_UART1 */
 
-#if defined(RT_USING_USART2)
-struct rt_serial_device serial2;
-
-void USART2_IRQHandler(void)
-{
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    uart_isr(&serial2);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-
-#endif /* RT_USING_UART2 */
-
-#if defined(RT_USING_UART3)
-struct rt_serial_device serial3;
-
-void UART3_IRQHandler(void)
-{
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    uart_isr(&serial3);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-
-#endif /* RT_USING_UART3 */
-
-#if defined(RT_USING_UART4)
-struct rt_serial_device serial4;
-
-void UART4_IRQHandler(void)
-{
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    uart_isr(&serial4);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-#endif /* RT_USING_UART4 */
-
 static const struct gd32_uart uarts[] = {
     #ifdef RT_USING_USART0
     {
@@ -153,42 +105,6 @@ static const struct gd32_uart uarts[] = {
         GPIOA, GPIO_PIN_3,                      // rx port, rx pin
         &serial1,
         "uart1",
-    },
-    #endif
-    
-    #ifdef RT_USING_USART2
-    {
-        USART2,                                 // uart peripheral index
-        USART2_IRQn,                            // uart iqrn
-        RCU_USART2, RCU_GPIOB, RCU_GPIOB,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOB, GPIO_PIN_10,                     // tx port, tx alternate, tx pin
-        GPIOB, GPIO_PIN_11,                     // rx port, rx alternate, rx pin
-        &serial2,
-        "uart2",
-    },
-    #endif
-    
-    #ifdef RT_USING_UART3
-    {
-        UART3,                                 // uart peripheral index
-        UART3_IRQn,                            // uart iqrn
-        RCU_UART3, RCU_GPIOC, RCU_GPIOC,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOC, GPIO_PIN_10,                    // tx port, tx alternate, tx pin
-        GPIOC, GPIO_PIN_11,                    // rx port, rx alternate, rx pin
-        &serial3,
-        "uart3",
-    },
-    #endif
-    
-    #ifdef RT_USING_UART4
-    {
-        UART4,                                 // uart peripheral index
-        UART4_IRQn,                            // uart iqrn
-        RCU_UART4, RCU_GPIOC, RCU_GPIOD,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOC, GPIO_PIN_12,                    // tx port, tx alternate, tx pin
-        GPIOD, GPIO_PIN_2,                     // rx port, rx alternate, rx pin
-        &serial4,
-        "uart4",
     },
     #endif
 };

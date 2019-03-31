@@ -1,7 +1,7 @@
 /*
  * File      : drv_i2c.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2019, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * Date           Author       Notes
  * 2017-06-05     tanek        first implementation.
  * 2018-04-19     misonyo      Porting for gd32f30x
+ * 2019-03-31     xuzhuoyi     Porting for gd32e230
  */
 
 #include "drv_i2c.h"

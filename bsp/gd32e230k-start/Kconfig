@@ -53,11 +53,6 @@ config RT_USING_SPI1
     select RT_USING_SPI
     default n  
 
-config RT_USING_SPI2
-    bool "Using SPI2"
-    select RT_USING_SPI
-    default n 
-
 config RT_USING_I2C0
     bool "Using I2C0"
     select RT_USING_I2C

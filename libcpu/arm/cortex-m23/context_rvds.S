@@ -1,5 +1,5 @@
 ;/*
-; * Copyright (c) 2006-2018, RT-Thread Development Team
+; * Copyright (c) 2006-2019, RT-Thread Development Team
 ; *
 ; * SPDX-License-Identifier: Apache-2.0
 ; *
@@ -9,6 +9,7 @@
 ; * 2012-06-01     aozima       set pendsv priority to 0xFF.
 ; * 2012-08-17     aozima       fixed bug: store r8 - r11.
 ; * 2013-06-18     aozima       add restore MSP feature.
+; * 2019-03-31     xuzhuoyi     port to Cortex-M23.
 ; */
 
 ;/**

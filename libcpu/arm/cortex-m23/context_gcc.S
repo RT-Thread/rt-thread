@@ -1,19 +1,20 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2019, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date         Author    Notes
+ * Date         Author       Notes
  * 2010-01-25   Bernard      first version
  * 2012-06-01   aozima       set pendsv priority to 0xFF.
  * 2012-08-17   aozima       fixed bug: store r8 - r11.
  * 2013-02-20   aozima       port to gcc.
  * 2013-06-18   aozima       add restore MSP feature.
  * 2013-11-04   bright       fixed hardfault bug for gcc.
+ * 2019-03-31   xuzhuoyi     port to Cortex-M23.
  */
  
-    .cpu    cortex-m0
+    .cpu    cortex-m23
     .fpu    softvfp
     .syntax unified
     .thumb
