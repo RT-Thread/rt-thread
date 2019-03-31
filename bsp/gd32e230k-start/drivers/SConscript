@@ -24,10 +24,6 @@ if GetDepend('RT_USING_I2C'):
 if GetDepend('RT_USING_PIN'):
     src += ['drv_gpio.c']
 
-# add spi flash drivers.
-if GetDepend('RT_USING_SFUD'):
-    src += ['drv_spi_flash.c']
-
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

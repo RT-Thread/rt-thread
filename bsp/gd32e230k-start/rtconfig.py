@@ -2,7 +2,7 @@ import os
 
 # toolchains options
 ARCH='arm'
-CPU='cortex-m4'
+CPU='cortex-m23'
 CROSS_TOOL='keil'
 
 if os.getenv('RTT_CC'):
@@ -70,8 +70,6 @@ elif PLATFORM == 'armcc':
 
     EXEC_PATH += '/ARM/ARMCC/bin'
     print(EXEC_PATH)
-
-    CFLAGS += ' --c99'
 
     if BUILD == 'debug':
         CFLAGS += ' -g -O0'
