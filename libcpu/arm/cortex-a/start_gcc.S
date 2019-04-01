@@ -51,6 +51,11 @@ _reset:
     /* set the cpu to SVC32 mode and disable interrupt */
     cps #Mode_SVC
 
+    /* disable the data alignment check */
+    mrc p15, 0, r1, c1, c0, 0
+    bic r1, #(1<<1)
+    mcr p15, 0, r1, c1, c0, 0
+
     /* setup stack */
     bl      stack_setup
 
