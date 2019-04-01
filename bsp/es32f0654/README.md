@@ -42,6 +42,7 @@ ES-PDS-ES32F0654-V1.1
 | I2C               |     支持     | I2C0/1                               |
 | PWM               |     支持     | PWM0/1/2/3                           |
 | TIMER             |     支持     | TIMER0/1/2/3                         |
+| RTC               |     支持     | RTC                                  |
 
 ### 1.2  注意事项
 
