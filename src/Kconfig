@@ -100,7 +100,7 @@ config IDLE_THREAD_STACK_SIZE
 
 config RT_USING_TIMER_SOFT
     bool "Enable software timer with a timer thread"
-    default n
+    default y
     help
         the timeout function context of soft-timer is under a high priority timer
         thread.
