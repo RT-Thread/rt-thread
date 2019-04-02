@@ -5,7 +5,7 @@ cwd     = GetCurrentDir()
 src     = []
 CPPPATH = [cwd]
 
-support_arch  = {"arm": ["cortex-m3", "cortex-m4", "cortex-m7", "arm926", "cortex-a9"]}
+support_arch  = {"arm": ["cortex-m3", "cortex-m4", "cortex-m7", "arm926", "cortex-a"]}
 platform_file = {'armcc': 'rvds.S', 'gcc': 'gcc.S', 'iar': 'iar.S'}
 
 if rtconfig.PLATFORM in platform_file.keys():	# support platforms

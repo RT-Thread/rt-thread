@@ -46,6 +46,7 @@
 | 以太网            |     支持     |                                       |
 | MPU6050六轴传感器 |     支持     |                   |
 | SDRAM             |     支持     |                                       |
+| LCD               |     支持     | 支持 RGB 屏                            |
 | SD卡              |   即将支持   |                                       |
 | CAN               |   即将支持   |                                       |
 | EMW1062 | 暂不支持 | |
@@ -55,7 +56,7 @@
 | SPI               |     支持     | SPI1/2/5                              |
 | I2C               |     支持     | 软件 I2C                              |
 | ADC               |     支持     |                                     |
-| RTC               |     支持     |                                      |
+| RTC               |     支持     | 支持外部晶振和内部低速时钟 |
 | WDT               |     支持     |                                       |
 | FLASH | 支持 | 已适配 [FAL](https://github.com/RT-Thread-packages/fal) |
 | SDIO              |   暂不支持   | 即将支持                              |
