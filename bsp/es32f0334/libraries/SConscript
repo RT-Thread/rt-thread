@@ -10,18 +10,17 @@ src = []
 
 src += Glob('ES32F033x_ALD_StdPeriph_Driver/Source/*.c')
 
-
 #add for startup script 
 if rtconfig.CROSS_TOOL == 'gcc':
      src = src + ['CMSIS/Device/EastSoft/es32f033x/Startup/gcc/startup_es32f033x.s']
 elif rtconfig.CROSS_TOOL == 'keil':
      src = src + ['CMSIS/Device/EastSoft/es32f033x/Startup/keil/startup_es32f033x.s']
 elif rtconfig.CROSS_TOOL == 'iar':
-    src = src + ['CMSIS/Device/EastSoft/es32f033x/Startup/iar/startup_es32f033x.s']
+     src = src + ['CMSIS/Device/EastSoft/es32f033x/Startup/iar/startup_es32f033x.s']
 
-path = [cwd + '/CMSIS/Device/EastSoft/es32f033x/Include', 
-    cwd + '/CMSIS/Include',
-    cwd + '/ES32F033x_ALD_StdPeriph_Driver/Include']
+path = [cwd + '/CMSIS/Device/EastSoft/es32f033x/Include',
+        cwd + '/CMSIS/Include',
+        cwd + '/ES32F033x_ALD_StdPeriph_Driver/Include']
 
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
 
