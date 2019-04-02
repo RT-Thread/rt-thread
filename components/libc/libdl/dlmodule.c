@@ -442,6 +442,10 @@ struct rt_dlmodule* dlmodule_load(const char* filename)
         close(fd);
         fd = -1;
     }
+    else
+    {
+        goto __exit;
+    }
 
     /* check ELF header */
     if (rt_memcmp(elf_module->e_ident, RTMMAG, SELFMAG) != 0 &&
