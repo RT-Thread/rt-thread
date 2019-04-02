@@ -737,7 +737,7 @@ int at_recv(int s, void *mem, size_t len, int flags)
 
 int at_sendto(int socket, const void *data, size_t size, int flags, const struct sockaddr *to, socklen_t tolen)
 {
-    struct at_socket *sock;
+    struct at_socket *sock = RT_NULL;
     int len, result = 0;
 
     if (at_dev_ops == RT_NULL)
