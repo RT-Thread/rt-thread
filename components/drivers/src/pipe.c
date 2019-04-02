@@ -97,6 +97,12 @@ static int pipe_fops_close(struct dfs_fd *fd)
 
     rt_mutex_release(&(pipe->lock));
 
+    if (device->ref_count == 0 && pipe->is_named == RT_FALSE)
+    {
+        /* delete the unamed pipe */
+        rt_pipe_delete(device->parent.name);
+    }
+
     return 0;
 }
 
@@ -423,6 +429,7 @@ rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
     if (pipe == RT_NULL) return RT_NULL;
 
     rt_memset(pipe, 0, sizeof(rt_pipe_t));
+    pipe->is_named = RT_TRUE; /* initialize as a named pipe */
     rt_mutex_init(&(pipe->lock), name, RT_IPC_FLAG_FIFO);
     rt_wqueue_init(&(pipe->reader_queue));
     rt_wqueue_init(&(pipe->writer_queue));
@@ -517,6 +524,7 @@ int pipe(int fildes[2])
         return -1;
     }
 
+    pipe->is_named = RT_FALSE; /* unamed pipe */
     rt_snprintf(dev_name, sizeof(dev_name), "/dev/%s", dname);
     fildes[0] = open(dev_name, O_RDONLY, 0);
     if (fildes[0] < 0)

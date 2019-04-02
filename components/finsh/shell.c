@@ -139,13 +139,13 @@ static int finsh_getchar(void)
 #ifdef RT_USING_POSIX
     return getchar();
 #else
-    int ch = 0;
+    char ch = 0;
 
     RT_ASSERT(shell != RT_NULL);
     while (rt_device_read(shell->device, -1, &ch, 1) != 1)
         rt_sem_take(&shell->rx_sem, RT_WAITING_FOREVER);
 
-    return ch;
+    return (int)ch;
 #endif
 }
 

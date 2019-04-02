@@ -23,10 +23,7 @@ elif rtconfig.CROSS_TOOL == 'iar':
 
 path = [cwd + '/CME_M7']
 
-if GetDepend(['RT_USING_BSP_CMSIS']):
-    path += [cwd + '/CMSIS/Include']
-elif GetDepend(['RT_USING_RTT_CMSIS']):
-    path += [RTT_ROOT + '/components/CMSIS/Include']
+path += [cwd + '/CMSIS/Include']
 
 group = DefineGroup('CMSIS', src, depend = [''], CPPPATH = path)
 

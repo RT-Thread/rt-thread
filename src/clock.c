@@ -112,13 +112,13 @@ rt_tick_t rt_tick_from_millisecond(rt_int32_t ms)
     rt_tick_t tick;
 
     if (ms < 0)
-    {    
-        tick = RT_WAITING_FOREVER;
+    {
+        tick = (rt_tick_t)RT_WAITING_FOREVER;
     }
     else
     {
         tick = RT_TICK_PER_SECOND * (ms / 1000);
-        tick += (RT_TICK_PER_SECOND * (ms%1000) + 999) / 1000;
+        tick += (RT_TICK_PER_SECOND * (ms % 1000) + 999) / 1000;
     }
     
     /* return the calculated tick */

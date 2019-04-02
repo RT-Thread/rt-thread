@@ -62,7 +62,7 @@ Developer Kit STM32L496 是阿里联合[诺行](http://www.notioni.com/)推出�
 | I2C               |     支持     | 软件 I2C 2/3/4 |
 | TIM               |     支持     | TIM15/16/17 |
 | ADC               |     支持     | ADC1 |
-| RTC               |     支持     |                                      |
+| RTC               |     支持     | 支持外部晶振和内部低速时钟 |
 | WDT               |     支持     |                                      |
 | PWM               |     支持     | PWM3 |
 | USB Device        |   暂不支持   | 即将支持                              |
