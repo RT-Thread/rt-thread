@@ -43,6 +43,7 @@ ES-PDS-ES32F0654-V1.1
 | PWM               |     支持     | PWM0/1/2/3                           |
 | TIMER             |     支持     | TIMER0/1/2/3                         |
 | RTC               |     支持     | RTC                                  |
+| PM                |     支持     | Power Management                     |
 
 ### 1.2  注意事项
 
