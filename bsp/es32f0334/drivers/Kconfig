@@ -88,6 +88,13 @@ menu "Hardware Drivers Config"
                 default n
         endmenu
 
+        menu "RTC Drivers"
+            config BSP_USING_RTC
+                bool "Using RTC"
+                select RT_USING_RTC
+                default n
+        endmenu
+
     endmenu
 
     menu "Onboard Peripheral Drivers"
