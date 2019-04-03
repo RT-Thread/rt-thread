@@ -139,7 +139,7 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
 
         /* increase the number of FD with 4 step length */
         cnt = fdt->maxfd + 4;
-        cnt = cnt > DFS_FD_MAX? DFS_FD_MAX : cnt;
+        cnt = cnt > DFS_FD_MAX ? DFS_FD_MAX : cnt;
 
         fds = rt_realloc(fdt->fds, cnt * sizeof(struct dfs_fd *));
         if (fds == NULL) goto __exit; /* return fdt->maxfd */
@@ -189,7 +189,7 @@ int fd_new(void)
     if (idx == fdt->maxfd)
     {
         idx = -(1 + DFS_FD_OFFSET);
-        LOG_E( "DFS fd new is failed! Could not found an empty fd entry.");
+        LOG_E("DFS fd new is failed! Could not found an empty fd entry.");
         goto __result;
     }
 
@@ -400,7 +400,7 @@ char *dfs_normalize_path(const char *directory, const char *filename)
 
         /* join path and file name */
         rt_snprintf(fullpath, strlen(directory) + strlen(filename) + 2,
-            "%s/%s", directory, filename);
+                    "%s/%s", directory, filename);
     }
     else
     {
@@ -499,7 +499,7 @@ RTM_EXPORT(dfs_normalize_path);
 /**
  * This function will get the file descriptor table of current process.
  */
-struct dfs_fdtable* dfs_fdtable_get(void)
+struct dfs_fdtable *dfs_fdtable_get(void)
 {
     struct dfs_fdtable *fdt;
 #ifdef RT_USING_LWP
@@ -523,12 +523,12 @@ int list_fd(void)
 {
     int index;
     struct dfs_fdtable *fd_table;
-    
+
     fd_table = dfs_fdtable_get();
     if (!fd_table) return -1;
 
     rt_enter_critical();
-    
+
     rt_kprintf("fd type    ref magic  path\n");
     rt_kprintf("-- ------  --- ----- ------\n");
     for (index = 0; index < (int)fd_table->maxfd; index ++)
