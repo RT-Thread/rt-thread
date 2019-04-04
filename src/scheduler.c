@@ -792,6 +792,12 @@ void rt_enter_critical(void)
     level = rt_hw_local_irq_disable();
 
     current_thread = rt_cpu_self()->current_thread;
+    if (!current_thread)
+    {
+        rt_hw_local_irq_enable(level);
+        return ;
+    }
+
     /*
      * the maximal number of nest is RT_UINT16_MAX, which is big
      * enough and does not check here
@@ -842,6 +848,11 @@ void rt_exit_critical(void)
     level = rt_hw_local_irq_disable();
 
     current_thread = rt_cpu_self()->current_thread;
+    if (!current_thread)
+    {
+        rt_hw_local_irq_enable(level);
+        return ;
+    }
 
     current_thread->scheduler_lock_nest --;
 
