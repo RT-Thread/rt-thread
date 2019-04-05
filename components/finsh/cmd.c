@@ -247,7 +247,6 @@ long list_thread(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_thread, list thread);
-MSH_CMD_EXPORT(list_thread, list thread);
 
 static void show_wait_queue(struct rt_list_node *list)
 {
@@ -328,7 +327,6 @@ long list_sem(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_sem, list semaphore in system);
-MSH_CMD_EXPORT(list_sem, list semaphore in system);
 #endif
 
 #ifdef RT_USING_EVENT
@@ -393,7 +391,6 @@ long list_event(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_event, list event in system);
-MSH_CMD_EXPORT(list_event, list event in system);
 #endif
 
 #ifdef RT_USING_MUTEX
@@ -451,7 +448,6 @@ long list_mutex(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_mutex, list mutex in system);
-MSH_CMD_EXPORT(list_mutex, list mutex in system);
 #endif
 
 #ifdef RT_USING_MAILBOX
@@ -522,7 +518,6 @@ long list_mailbox(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_mailbox, list mail box in system);
-MSH_CMD_EXPORT(list_mailbox, list mail box in system);
 #endif
 
 #ifdef RT_USING_MESSAGEQUEUE
@@ -589,7 +584,6 @@ long list_msgqueue(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_msgqueue, list message queue in system);
-MSH_CMD_EXPORT(list_msgqueue, list message queue in system);
 #endif
 
 #ifdef RT_USING_MEMHEAP
@@ -646,7 +640,6 @@ long list_memheap(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_memheap, list memory heap in system);
-MSH_CMD_EXPORT(list_memheap, list memory heap in system);
 #endif
 
 #ifdef RT_USING_MEMPOOL
@@ -717,7 +710,6 @@ long list_mempool(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_mempool, list memory pool in system)
-MSH_CMD_EXPORT(list_mempool, list memory pool in system);
 #endif
 
 long list_timer(void)
@@ -776,7 +768,6 @@ long list_timer(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_timer, list timer in system);
-MSH_CMD_EXPORT(list_timer, list timer in system);
 
 #ifdef RT_USING_DEVICE
 static char *const device_type_str[] =
@@ -857,7 +848,6 @@ long list_device(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list_device, list device in system);
-MSH_CMD_EXPORT(list_device, list device in system);
 #endif
 
 long list(void)
@@ -920,6 +910,111 @@ long list(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(list, list all symbol in system)
+
+long rtlist(int argc, char **argv)
+{
+    if (argc > 1)
+    {
+#ifdef RT_USING_DEVICE
+        if (!rt_strcmp(argv[1], "device"))
+        {
+            list_device();
+        }
+#endif
+        else if (!rt_strcmp(argv[1], "thread"))
+        {
+            list_thread();
+        }
+#ifdef RT_USING_SEMAPHORE
+        else if (!rt_strcmp(argv[1], "sem"))
+        {
+            list_sem();
+        }
+#endif        
+#ifdef RT_USING_MESSAGEQUEUE        
+        else if (!rt_strcmp(argv[1], "msgqueue"))
+        {
+            list_msgqueue();
+        }
+#endif        
+#ifdef RT_USING_MAILBOX
+        else if (!rt_strcmp(argv[1], "mailbox"))
+        {
+            list_mailbox();
+        }
+#endif        
+#ifdef RT_USING_MUTEX
+        else if (!rt_strcmp(argv[1], "mutex"))
+        {
+            list_mutex();
+        }
+#endif        
+#ifdef RT_USING_EVENT
+        else if (!rt_strcmp(argv[1], "event"))
+        {
+            list_event();
+        }
+#endif        
+#ifdef RT_USING_MEMHEAP
+        else if (!rt_strcmp(argv[1], "memheap"))
+        {
+            list_memheap();
+        }
+#endif        
+#ifdef RT_USING_MEMPOOL
+        else if (!rt_strcmp(argv[1], "mempool"))
+        {
+            list_mempool();
+        }
+#endif
+        else if (!rt_strcmp(argv[1], "timer"))
+        {
+            list_timer();
+        }
+        else
+        {
+            goto __rtlist_help;
+        }
+    }
+    else
+    {
+__rtlist_help:
+
+        rt_kprintf("\nUsage: rtlist OBJECT\n");
+        rt_kprintf("List information about 'OBJECT' in system\n");
+        rt_kprintf("Example: rtlist thread\n");
+        rt_kprintf("OBJECT:\n");
+        rt_kprintf("    thread      List thread\n");
+#ifdef RT_USING_DEVICE        
+        rt_kprintf("    device      List device in system\n");
+#endif        
+        rt_kprintf("    timer       List timer in system\n");        
+#ifdef RT_USING_SEMAPHORE
+        rt_kprintf("    sem         List semaphore system\n");
+#endif
+#ifdef RT_USING_MESSAGEQUEUE
+        rt_kprintf("    msgqueue    List message queue in system\n");
+#endif
+#ifdef RT_USING_MAILBOX        
+        rt_kprintf("    mailbox     List mail box in system\n");
+#endif
+#ifdef RT_USING_MUTEX        
+        rt_kprintf("    mutex       List mutex in system\n");
+#endif
+#ifdef RT_USING_EVENT        
+        rt_kprintf("    event       List event in system\n");
+#endif
+#ifdef RT_USING_MEMHEAP        
+        rt_kprintf("    memheap     List memory heap in system\n");
+#endif
+#ifdef RT_USING_MEMPOOL        
+        rt_kprintf("    mempool     List memory pool in system\n");
+#endif
+    }
+
+    return 0;
+}
+MSH_CMD_EXPORT(rtlist, List information in the system);
 
 #ifndef FINSH_USING_MSH_ONLY
 static int str_is_prefix(const char *prefix, const char *str)
