@@ -544,7 +544,7 @@ void UART5_DMA_RX_IRQHandler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    HAL_DMA_IRQHandler(&uart_obj[UART5_INDEX].dma.handle);
+    HAL_DMA_IRQHandler(&uart_obj[UART5_INDEX].dma_rx.handle);
 
     /* leave interrupt */
     rt_interrupt_leave();
@@ -569,7 +569,7 @@ void UART6_DMA_RX_IRQHandler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    HAL_DMA_IRQHandler(&uart_obj[UART6_INDEX].dma.handle);
+    HAL_DMA_IRQHandler(&uart_obj[UART6_INDEX].dma_rx.handle);
 
     /* leave interrupt */
     rt_interrupt_leave();
@@ -594,7 +594,7 @@ void LPUART1_DMA_RX_IRQHandler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    HAL_DMA_IRQHandler(&uart_obj[LPUART1_INDEX].dma.handle);
+    HAL_DMA_IRQHandler(&uart_obj[LPUART1_INDEX].dma_rx.handle);
 
     /* leave interrupt */
     rt_interrupt_leave();
