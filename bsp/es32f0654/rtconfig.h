@@ -172,6 +172,15 @@
 /* PWM Drivers */
 
 
+/* HWtimer Drivers */
+
+
+/* RTC Drivers */
+
+
+/* PM Drivers */
+
+
 /* Onboard Peripheral Drivers */
 
 

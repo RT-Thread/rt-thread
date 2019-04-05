@@ -270,7 +270,7 @@ struct exception_stack_frame
 
 void print_stack_frame(uintptr_t * sp)
 {
-    struct exception_stack_frame * esf = (struct exception_stack_frame *)sp;
+    struct exception_stack_frame * esf = (struct exception_stack_frame *)(sp+1);
 
     rt_kprintf("\n=================================================================\n");
     rt_kprintf("x1 (ra   : Return address                ) ==> 0x%08x%08x\n", esf->x1 >> 32  , esf->x1 & UINT32_MAX);

@@ -15,53 +15,71 @@
 
 #define HS_GPIO(n) (FUNC_GPIOHS0 + n)
 
+#define IOCONFIG(pin,func)  {pin, func, #func}
+
 static struct io_config
 {
     int io_num;
     fpioa_function_t func;
+    const char * func_name;
 } io_config[] = 
 {
 #ifdef BSP_USING_LCD
-    {BSP_LCD_CS_PIN, FUNC_SPI0_SS0},                 /* LCD CS PIN */
-    {BSP_LCD_WR_PIN, FUNC_SPI0_SCLK},                /* LCD WR PIN */
-    {BSP_LCD_DC_PIN, HS_GPIO(LCD_DC_PIN)},     /* LCD DC PIN */
+    IOCONFIG(BSP_LCD_CS_PIN, FUNC_SPI0_SS0),                 /* LCD CS PIN */
+    IOCONFIG(BSP_LCD_WR_PIN, FUNC_SPI0_SCLK),                /* LCD WR PIN */
+    IOCONFIG(BSP_LCD_DC_PIN, HS_GPIO(LCD_DC_PIN)),     /* LCD DC PIN */
 #endif
 
 #ifdef BSP_USING_CAMERA
-    {BSP_CAMERA_SCCB_SDA_PIN, FUNC_SCCB_SDA},
-    {BSP_CAMERA_SCCB_SCLK_PIN, FUNC_SCCB_SCLK},
-    {BSP_CAMERA_CMOS_RST_PIN, FUNC_CMOS_RST},
-    {BSP_CAMERA_CMOS_VSYNC_PIN, FUNC_CMOS_VSYNC},
-    {BSP_CAMERA_CMOS_PWDN_PIN, FUNC_CMOS_PWDN},
-    {BSP_CAMERA_CMOS_XCLK_PIN, FUNC_CMOS_XCLK},
-    {BSP_CAMERA_CMOS_PCLK_PIN, FUNC_CMOS_PCLK},
-    {BSP_CAMERA_CMOS_HREF_PIN, FUNC_CMOS_HREF},
+    IOCONFIG(BSP_CAMERA_SCCB_SDA_PIN, FUNC_SCCB_SDA),
+    IOCONFIG(BSP_CAMERA_SCCB_SCLK_PIN, FUNC_SCCB_SCLK),
+    IOCONFIG(BSP_CAMERA_CMOS_RST_PIN, FUNC_CMOS_RST),
+    IOCONFIG(BSP_CAMERA_CMOS_VSYNC_PIN, FUNC_CMOS_VSYNC),
+    IOCONFIG(BSP_CAMERA_CMOS_PWDN_PIN, FUNC_CMOS_PWDN),
+    IOCONFIG(BSP_CAMERA_CMOS_XCLK_PIN, FUNC_CMOS_XCLK),
+    IOCONFIG(BSP_CAMERA_CMOS_PCLK_PIN, FUNC_CMOS_PCLK),
+    IOCONFIG(BSP_CAMERA_CMOS_HREF_PIN, FUNC_CMOS_HREF),
 #endif
 
 #ifdef BSP_USING_SPI1
-    {BSP_SPI1_CLK_PIN, FUNC_SPI1_SCLK},
-    {BSP_SPI1_D0_PIN, FUNC_SPI1_D0},
-    {BSP_SPI1_D1_PIN, FUNC_SPI1_D1},
+    IOCONFIG(BSP_SPI1_CLK_PIN, FUNC_SPI1_SCLK),
+    IOCONFIG(BSP_SPI1_D0_PIN, FUNC_SPI1_D0),
+    IOCONFIG(BSP_SPI1_D1_PIN, FUNC_SPI1_D1),
 #ifdef BSP_USING_SPI1_AS_QSPI
-    {BSP_SPI1_D2_PIN, FUNC_SPI1_D2},
-    {BSP_SPI1_D3_PIN, FUNC_SPI1_D3},
+    IOCONFIG(BSP_SPI1_D2_PIN, FUNC_SPI1_D2),
+    IOCONFIG(BSP_SPI1_D3_PIN, FUNC_SPI1_D3),
 #endif
 #ifdef BSP_SPI1_USING_SS0
-    {BSP_SPI1_SS0_PIN, HS_GPIO(SPI1_CS0_PIN)},
+    IOCONFIG(BSP_SPI1_SS0_PIN, HS_GPIO(SPI1_CS0_PIN)),
 #endif
 #ifdef BSP_SPI1_USING_SS1
-    {BSP_SPI1_SS1_PIN, HS_GPIO(SPI1_CS1_PIN)},
+    IOCONFIG(BSP_SPI1_SS1_PIN, HS_GPIO(SPI1_CS1_PIN)),
 #endif
 #ifdef BSP_SPI1_USING_SS2
-    {BSP_SPI1_SS2_PIN, HS_GPIO(SPI1_CS2_PIN)},
+    IOCONFIG(BSP_SPI1_SS2_PIN, HS_GPIO(SPI1_CS2_PIN)),
 #endif
 #ifdef BSP_SPI1_USING_SS3
-    {BSP_SPI1_SS3_PIN, HS_GPIO(SPI1_CS3_PIN)},
+    IOCONFIG(BSP_SPI1_SS3_PIN, HS_GPIO(SPI1_CS3_PIN)),
 #endif
 #endif
 
 };
 
+static int print_io_config()
+{
+    int i;
+    rt_kprintf("IO Configuration Table\n");
+    rt_kprintf("┌───────┬────────────────────────┐\n");
+    rt_kprintf("│Pin    │Function                │\n");
+    rt_kprintf("├───────┼────────────────────────┤\n");
+    for(i = 0; i < sizeof io_config / sizeof io_config[0]; i++)
+    {
+        rt_kprintf("│%-2d     │%-24.24s│\n", io_config[i].io_num, io_config[i].func_name);
+    }
+    rt_kprintf("└───────┴────────────────────────┘\n");
+    return 0;
+}
+MSH_CMD_EXPORT_ALIAS(print_io_config, io, print io config);
 
 int io_config_init(void)
 {

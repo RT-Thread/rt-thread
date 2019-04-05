@@ -8,6 +8,20 @@ if RT_USING_DEVICE_IPC
     config RT_PIPE_BUFSZ
         int "Set pipe buffer size"
         default 512
+    
+    config RT_USING_SYSTEM_WORKQUEUE
+        bool "Using system default workqueue"
+        default n
+
+    if RT_USING_SYSTEM_WORKQUEUE
+        config RT_SYSTEM_WORKQUEUE_STACKSIZE
+            int "The stack size for system workqueue thread"
+            default 2048
+
+    config RT_SYSTEM_WORKQUEUE_PRIORITY
+            int "The priority level of system workqueue thread"
+            default 23
+    endif
 endif
 
 config RT_USING_SERIAL

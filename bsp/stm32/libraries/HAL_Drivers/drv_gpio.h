@@ -12,6 +12,7 @@
 #define __DRV_GPIO_H__
 
 #include <drv_common.h>
+#include <board.h>
 
 #define __STM32_PORT(port)  GPIO##port
 

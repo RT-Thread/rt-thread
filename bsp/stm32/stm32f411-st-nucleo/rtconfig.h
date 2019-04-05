@@ -110,9 +110,6 @@
 /* Utilities */
 
 
-/* ARM CMSIS */
-
-
 /* RT-Thread online packages */
 
 /* IoT - internet of things */
