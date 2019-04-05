@@ -344,6 +344,7 @@
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Inc</state>
           <state>$PROJ_DIR$\board\ports</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\spi</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include</state>
           <state>$PROJ_DIR$\.</state>
@@ -1374,6 +1375,7 @@
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Inc</state>
           <state>$PROJ_DIR$\board\ports</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\spi</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include</state>
           <state>$PROJ_DIR$\.</state>
@@ -2132,6 +2134,9 @@
       <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_usart.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_spi.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_common.c</name>
     </file>
   </group>
@@ -2160,6 +2165,12 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\serial\serial.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\spi\spi_core.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\spi\spi_dev.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\src\completion.c</name>
@@ -2292,6 +2303,15 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_usart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_spi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_spi_ex.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_ll_spi.c</name>
     </file>
   </group>
 </project>

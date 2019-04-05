@@ -16,6 +16,9 @@ if GetDepend(['BSP_USING_ETH']):
 	
 if GetDepend(['BSP_USING_WIFI_OR_GPRS']):
     src += Glob('ports/esp02_device.c')	
+if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
+	src += Glob('ports/on_chip_flash_init.c')
+	
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
 path += [cwd + '/ports']

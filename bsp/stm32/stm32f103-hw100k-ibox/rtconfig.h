@@ -81,6 +81,7 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
+#define RT_USING_SPI
 
 /* Using WiFi */
 
@@ -110,9 +111,6 @@
 
 
 /* Utilities */
-
-
-/* ARM CMSIS */
 
 
 /* RT-Thread online packages */
@@ -147,6 +145,8 @@
 
 
 /* peripheral libraries and drivers */
+
+/* sensors drivers */
 
 
 /* miscellaneous packages */
