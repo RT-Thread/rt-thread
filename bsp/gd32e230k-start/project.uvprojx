@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>GD32E230</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\include;applications;.;drivers;Libraries\CMSIS\GD\GD32E230\Include;Libraries\CMSIS;Libraries\GD32E230_standard_peripheral\Include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m23;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\spi\sfud\inc;..\..\components\drivers\include;..\..\components\finsh</IncludePath>
+              <IncludePath>.;..\..\include;applications;drivers;Libraries\CMSIS\GD\GD32E230\Include;Libraries\CMSIS;Libraries\GD32E230_standard_peripheral\Include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m23;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\spi\sfud\inc;..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -785,91 +785,6 @@
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>finsh</GroupName>
-          <Files>
-            <File>
-              <FileName>shell.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\shell.c</FilePath>
-            </File>
-            <File>
-              <FileName>symbol.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\symbol.c</FilePath>
-            </File>
-            <File>
-              <FileName>cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\cmd.c</FilePath>
-            </File>
-            <File>
-              <FileName>msh.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\msh.c</FilePath>
-            </File>
-            <File>
-              <FileName>msh_cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\msh_cmd.c</FilePath>
-            </File>
-            <File>
-              <FileName>msh_file.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\msh_file.c</FilePath>
-            </File>
-            <File>
-              <FileName>finsh_compiler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_compiler.c</FilePath>
-            </File>
-            <File>
-              <FileName>finsh_error.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_error.c</FilePath>
-            </File>
-            <File>
-              <FileName>finsh_heap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_heap.c</FilePath>
-            </File>
-            <File>
-              <FileName>finsh_init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_init.c</FilePath>
-            </File>
-            <File>
-              <FileName>finsh_node.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_node.c</FilePath>
-            </File>
-            <File>
-              <FileName>finsh_ops.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_ops.c</FilePath>
-            </File>
-            <File>
-              <FileName>finsh_parser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_parser.c</FilePath>
-            </File>
-            <File>
-              <FileName>finsh_var.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_var.c</FilePath>
-            </File>
-            <File>
-              <FileName>finsh_vm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_vm.c</FilePath>
-            </File>
-            <File>
-              <FileName>finsh_token.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_token.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -1,11 +1,7 @@
 /*
- * File      : drv_usart.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * Copyright (c) 2006-2019, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -41,8 +37,10 @@ struct gd32_uart
     rcu_periph_enum tx_gpio_clk;
     rcu_periph_enum rx_gpio_clk;
     uint32_t tx_port;
+    uint32_t tx_af;
     uint16_t tx_pin;
     uint32_t rx_port;
+    uint32_t rx_af;
     uint16_t rx_pin; 
 
     struct rt_serial_device * serial;
@@ -89,8 +87,8 @@ static const struct gd32_uart uarts[] = {
         USART0,                                 // uart peripheral index
         USART0_IRQn,                            // uart iqrn
         RCU_USART0, RCU_GPIOA, RCU_GPIOA,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOA, GPIO_PIN_9,                      // tx port, tx pin
-        GPIOA, GPIO_PIN_10,                     // rx port, rx pin
+        GPIOA, GPIO_AF_1, GPIO_PIN_9,           // tx port, tx pin
+        GPIOA, GPIO_AF_1, GPIO_PIN_10,          // rx port, rx pin
         &serial0,
         "uart0",
     },
@@ -101,8 +99,8 @@ static const struct gd32_uart uarts[] = {
         USART1,                                 // uart peripheral index
         USART1_IRQn,                            // uart iqrn
         RCU_USART1, RCU_GPIOA, RCU_GPIOA,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOA, GPIO_PIN_2,                      // tx port, tx pin
-        GPIOA, GPIO_PIN_3,                      // rx port, rx pin
+        GPIOA, GPIO_AF_1, GPIO_PIN_2,           // tx port, tx pin
+        GPIOA, GPIO_AF_1, GPIO_PIN_3,           // rx port, rx pin
         &serial1,
         "uart1",
     },
@@ -124,14 +122,17 @@ void gd32_uart_gpio_init(struct gd32_uart *uart)
     /* enable USART clock */
     rcu_periph_clock_enable(uart->tx_gpio_clk);
     rcu_periph_clock_enable(uart->rx_gpio_clk);
-    rcu_periph_clock_enable(uart->per_clk);
+    rcu_periph_clock_enable(uart->per_clk);    
 
     /* connect port to USARTx_Tx */
+    gpio_af_set(uart->tx_port, uart->tx_af, uart->tx_pin);
     gpio_mode_set(uart->tx_port, GPIO_MODE_AF, GPIO_PUPD_NONE, uart->tx_pin);
-    gpio_output_options_set(uart->tx_port, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, uart->tx_pin);
+    gpio_output_options_set(uart->tx_port, GPIO_OTYPE_PP, GPIO_OSPEED_10MHZ, uart->tx_pin);
 	
     /* connect port to USARTx_Rx */
+    gpio_af_set(uart->rx_port, uart->rx_af, uart->rx_pin);
     gpio_mode_set(uart->rx_port, GPIO_MODE_INPUT, GPIO_PUPD_NONE, uart->rx_pin);
+    gpio_output_options_set(uart->rx_port, GPIO_OTYPE_PP, GPIO_OSPEED_10MHZ, uart->rx_pin);
 	
     NVIC_SetPriority(uart->irqn, 0);
     NVIC_EnableIRQ(uart->irqn);

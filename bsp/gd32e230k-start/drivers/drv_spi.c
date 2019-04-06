@@ -1,11 +1,7 @@
 /*
- * File      : drv_spi.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2019 RT-Thread Develop Team
+ * Copyright (c) 2006-2019, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -265,10 +261,11 @@ int gd32_hw_spi_init(void)
 
     rcu_periph_clock_enable(RCU_GPIOA);
     rcu_periph_clock_enable(RCU_SPI0);
-    /* SPI0_SCK(PA5), SPI0_MISO(PA6) and SPI0_MOSI(PA7) GPIO pin configuration */
-	  gpio_mode_set(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO_PIN_5 | GPIO_PIN_7);
-    gpio_output_options_set(GPIOA, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_5 | GPIO_PIN_7);
-    gpio_mode_set(GPIOA, GPIO_MODE_INPUT, GPIO_PUPD_NONE, GPIO_PIN_5 | GPIO_PIN_7);
+
+    /* SPI0 GPIO config: SCK/PA5, MISO/PA6, MOSI/PA7 */
+    gpio_af_set(GPIOA, GPIO_AF_0, GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7);
+    gpio_mode_set(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7);
+    gpio_output_options_set(GPIOA, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7);
 #endif
 #ifdef RT_USING_SPI1
     static struct rt_spi_bus spi_bus1;
@@ -279,10 +276,10 @@ int gd32_hw_spi_init(void)
     rcu_periph_clock_enable(RCU_SPI1);
     rcu_periph_clock_enable(RCU_GPIOB);
 
-    /* SPI1_SCK(PB13), SPI1_MISO(PB14) and SPI1_MOSI(PB15) GPIO pin configuration */
-		gpio_mode_set(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO_PIN_13 | GPIO_PIN_15);
-    gpio_output_options_set(GPIOB, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_13 | GPIO_PIN_15);
-		gpio_mode_set(GPIOB, GPIO_MODE_INPUT, GPIO_PUPD_NONE, GPIO_PIN_14);
+    /* SPI1 GPIO config: SCK/PB13, MISO/PB14, MOSI/PB15 */
+    gpio_af_set(GPIOB, GPIO_AF_0, GPIO_PIN_13 | GPIO_PIN_14 |GPIO_PIN_15);
+    gpio_mode_set(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO_PIN_13 | GPIO_PIN_14 |GPIO_PIN_15);
+    gpio_output_options_set(GPIOB, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_13 | GPIO_PIN_14 |GPIO_PIN_15);
 #endif
     return result;
 }

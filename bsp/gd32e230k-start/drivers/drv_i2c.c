@@ -1,21 +1,7 @@
 /*
- * File      : drv_i2c.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2019, RT-Thread Development Team
+ * Copyright (c) 2006-2019, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -328,9 +314,15 @@ int rt_hw_i2c_init(void)
     /* enable GPIOB clock */
     rcu_periph_clock_enable(RCU_GPIOB);
 
-    /* connect PB6 to I2C0_SCL, PB7 to I2C0_SDA */
-    gpio_mode_set(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO_PIN_6 | GPIO_PIN_7);
-    gpio_output_options_set(GPIOB, GPIO_OTYPE_OD, GPIO_OSPEED_50MHZ, GPIO_PIN_6 | GPIO_PIN_7);
+    /* connect PB6 to I2C0_SCL */
+    gpio_af_set(GPIOB, GPIO_AF_1, GPIO_PIN_6);
+    /* connect PB7 to I2C0_SDA */
+    gpio_af_set(GPIOB, GPIO_AF_1, GPIO_PIN_7);
+    /* configure GPIO pins of I2C0 */
+    gpio_mode_set(GPIOB, GPIO_MODE_AF, GPIO_PUPD_PULLUP,GPIO_PIN_6);
+    gpio_output_options_set(GPIOB, GPIO_OTYPE_OD, GPIO_OSPEED_50MHZ,GPIO_PIN_6);
+    gpio_mode_set(GPIOB, GPIO_MODE_AF, GPIO_PUPD_PULLUP,GPIO_PIN_7);
+    gpio_output_options_set(GPIOB, GPIO_OTYPE_OD, GPIO_OSPEED_50MHZ,GPIO_PIN_7);
 
     /* enable I2C clock */
     rcu_periph_clock_enable(RCU_I2C0);
@@ -354,8 +346,15 @@ int rt_hw_i2c_init(void)
     /* enable GPIOB clock */
     rcu_periph_clock_enable(RCU_GPIOB);
 
-    /* connect PB10 to I2C1_SCL, PB11 to I2C1_SDA */
-    gpio_init(GPIOB, GPIO_MODE_AF_OD, GPIO_OSPEED_50MHZ, GPIO_PIN_10 | GPIO_PIN_11);
+    /* connect PB10 to I2C1_SCL */
+    gpio_af_set(GPIOB, GPIO_AF_1, GPIO_PIN_10);
+    /* connect PB11 to I2C1_SDA */
+    gpio_af_set(GPIOB, GPIO_AF_1, GPIO_PIN_11);
+    /* configure GPIO pins of I2C1 */
+    gpio_mode_set(GPIOB, GPIO_MODE_AF, GPIO_PUPD_PULLUP,GPIO_PIN_10);
+    gpio_output_options_set(GPIOB, GPIO_OTYPE_OD, GPIO_OSPEED_50MHZ,GPIO_PIN_10);
+    gpio_mode_set(GPIOB, GPIO_MODE_AF, GPIO_PUPD_PULLUP,GPIO_PIN_11);
+    gpio_output_options_set(GPIOB, GPIO_OTYPE_OD, GPIO_OSPEED_50MHZ,GPIO_PIN_11);
 
     /* enable I2C clock */
     rcu_periph_clock_enable(RCU_I2C1);

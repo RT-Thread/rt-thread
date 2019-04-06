@@ -1,11 +1,7 @@
 /*
- * File      : board.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * Copyright (c) 2006-2019, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -25,7 +21,7 @@
 extern char __ICFEDIT_region_RAM_end__;
 #define GD32_SRAM_END          &__ICFEDIT_region_RAM_end__
 #else
-#define GD32_SRAM_SIZE         64
+#define GD32_SRAM_SIZE         8
 #define GD32_SRAM_END          (0x20000000 + GD32_SRAM_SIZE * 1024)
 #endif
 
