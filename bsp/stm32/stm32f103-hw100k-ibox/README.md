@@ -48,7 +48,7 @@
 | UART              |     支持     | UART1                                 |
 | SPI               |   暂不支持   |                                       |
 | I2C               |     支持     | 软件 I2C (J14)                        |
-| RTC               |     支持     |                                       |
+| RTC               |     支持     | 支持外部晶振和内部低速时钟 |
 | ADC               |     支持     | ADC1_CHANEL_10, ADC1_CHANNEL_11       |
 | PWM               |   暂不支持   |                                       |
 | IWG               |    支持      | 命令：iwdg_sample wdt                 |
