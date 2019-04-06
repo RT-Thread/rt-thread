@@ -36,6 +36,49 @@ menu "Onboard Peripheral Drivers"
                 default 0x00
 
         endif
+    config BSP_USING_LORA
+        bool "Enable LoRa Driver (spi1)"
+        default n
+        select PKG_USING_SX12XX
+        select SX12XX_DEVICE_EXTERN_CONFIG
+        select BSP_USING_SPI1
+        if BSP_USING_LORA
+			if SX12XX_DEVICE_EXTERN_CONFIG
+            config SX12XX_SPI_DEVICE
+                string "SPI device name"
+                default "spi10"
+
+            config SX12XX_RST_PIN
+                int "Reset PIN number"
+                default 7
+
+            config SX12XX_DO0_PIN
+                int "DO0 PIN number"
+                default 103
+				
+            config SX12XX_DO1_PIN
+                int "DO1 PIN number"
+                default 104	
+				
+            config SX12XX_DO2_PIN
+                int "DO2 PIN number"
+                default 105
+				
+            config SX12XX_DO3_PIN
+                int "DO3 PIN number"
+                default 106	
+				
+            config SX12XX_DO4_PIN
+                int "DO4 PIN number"
+                default 107		
+				
+            config SX12XX_DO5_PIN
+                int "DO5 PIN number"
+                default 108	
+
+			endif
+
+        endif		
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -84,6 +127,9 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART4 RX DMA"
                 depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA  				
         endif
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
     menuconfig BSP_USING_I2C1
         bool "Enable I2C1 BUS (software simulation)"
         default n
