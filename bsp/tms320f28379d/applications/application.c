@@ -16,6 +16,7 @@ void rt_init_thread_entry(void* parameter)
 {
     /* initialization RT-Thread Components */
     rt_components_init();
+    finsh_system_init();
 	
 }
 

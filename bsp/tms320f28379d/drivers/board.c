@@ -21,7 +21,7 @@ extern interrupt void RTOSINT_Handler();
  */
 interrupt void cpu_timer2_isr(void)
 {
-    CpuTimer2Regs.TCR.all = 0x8000;
+    CpuTimer2Regs.TCR.all = 0xC000;
     /* enter interrupt */
     rt_interrupt_enter();
 
