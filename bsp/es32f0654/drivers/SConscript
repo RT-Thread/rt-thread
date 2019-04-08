@@ -43,6 +43,10 @@ if GetDepend(['BSP_USING_RTC']):
 if GetDepend(['BSP_USING_PM']):
     src += ['drv_pm.c']
 
+# add adc driver code
+if GetDepend(['BSP_USING_ADC']):
+    src += ['drv_adc.c']
+
 CPPPATH = [cwd]
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
