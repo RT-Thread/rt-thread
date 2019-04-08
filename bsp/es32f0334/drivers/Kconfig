@@ -95,6 +95,20 @@ menu "Hardware Drivers Config"
                 default n
         endmenu
 
+        menu "PM Drivers"
+            config BSP_USING_PM
+                bool "Using PM"
+                select RT_USING_PM
+                default n
+        endmenu
+
+        menu "ADC Drivers"
+            config BSP_USING_ADC
+                bool "Using ADC"
+                select RT_USING_ADC
+                default n
+        endmenu
+
     endmenu
 
     menu "Onboard Peripheral Drivers"
