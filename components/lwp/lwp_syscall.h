@@ -5,11 +5,6 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2006-03-18     Bernard      the first version
- * 2006-04-25     Bernard      add rt_hw_context_switch_interrupt declaration
- * 2006-09-24     Bernard      add rt_hw_context_switch_to declaration
- * 2012-12-29     Bernard      add rt_hw_exception_install declaration
- * 2017-10-17     Hichard      add some micros
  * 2018-12-10     Jesven       fix complie error in iar and keil
  */
 
@@ -35,14 +30,19 @@ typedef uint32_t id_t;          /* may contain pid, uid or gid */
 #define	PRIO_PGRP	    1
 #define	PRIO_USER	    2
 
+#ifndef TIMEVAL_TO_TIMESPEC
 #define TIMEVAL_TO_TIMESPEC(tv, ts) {                   \
     (ts)->tv_sec = (tv)->tv_sec;                        \
     (ts)->tv_nsec = (tv)->tv_usec * 1000;               \
 }
+#endif
+
+#ifndef TIMESPEC_TO_TIMEVAL
 #define TIMESPEC_TO_TIMEVAL(tv, ts) {                   \
     (tv)->tv_sec = (ts)->tv_sec;                        \
     (tv)->tv_usec = (ts)->tv_nsec / 1000;               \
 }
+#endif
 
 void sys_exit(int value);
 ssize_t sys_read(int fd, void *buf, size_t nbyte);

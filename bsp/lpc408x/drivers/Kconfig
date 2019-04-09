@@ -1,21 +1,45 @@
-config RT_USING_UART0
-    bool "Enable UART0"
-    default y
+menu "Hardware Drivers Config"
 
-config RT_USING_UART2
-    bool "Enable UART2"
-    default n
+    menu "On-chip Peripheral Drivers"
 
-config RT_USING_UART4
-    bool "Enable UART4"
-    default n
+        config BSP_USING_EMAC
+            bool "EMAC driver"
+            select RT_USING_LWIP
+            default n
 
-config BSP_DRV_CLCD
-    bool "CLCD driver"
-    depends on PKG_USING_GUIENGINE
-    default y
+        config BSP_USING_HWTIMER0
+            bool "Using timer0"
+            select RT_USING_HWTIMER 
+            default n
 
-config BSP_DRV_EMAC
-    bool "EMAC driver"
-    depends on RT_USING_LWIP
-    default y
+        menu "UART Drivers"
+            config BSP_USING_UART0
+                bool "Enable UART0 P0.2/P0.3(T/R)"
+                select RT_USING_SERIAL
+                default y    
+       
+            config BSP_USING_UART2
+                bool "Enable UART2 P2.8/P0.11(T/R)"
+                select RT_USING_SERIAL
+                default n
+ 
+        endmenu
+
+    endmenu
+    
+    menu "Onboard Peripheral Drivers"
+        
+        config BSP_USING_SDRAM
+            bool "Enable sdram"
+            default n
+
+        config BSP_USING_LED
+            bool "Enable LED"
+            default n
+    endmenu
+    
+    menu "Offboard Peripheral Drivers"
+
+    endmenu
+    
+endmenu

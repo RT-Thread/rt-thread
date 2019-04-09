@@ -105,8 +105,11 @@ class Win32Spawn:
         try:
             proc = subprocess.Popen(cmdline, env=_e, shell=False)
         except Exception as e:
-            print ('Error in calling:\n' + cmdline)
-            print ('Exception: ' + e + ': ' + os.strerror(e.errno))
+            print ('Error in calling command:' + cmdline.split(' ')[0])
+            print ('Exception: ' + os.strerror(e.errno))
+            if (os.strerror(e.errno) == "No such file or directory"):
+                print ("\nPlease check Toolchains PATH setting.\n")
+
             return e.errno
         finally:
             os.environ['PATH'] = old_path
@@ -128,7 +131,7 @@ def GenCconfigFile(env, BuildOptions):
             f = open('cconfig.h', 'r')
             if f:
                 contents = f.read()
-                f.close();
+                f.close()
 
                 prep = PatchedPreProcessor()
                 prep.process_contents(contents)
@@ -184,7 +187,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     AddOption('--target',
                       dest = 'target',
                       type = 'string',
-                      help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses')
+                      help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse')
     AddOption('--genconfig',
                 dest = 'genconfig',
                 action = 'store_true',
@@ -225,6 +228,8 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'cb':('keil', 'armcc'),
                 'ua':('gcc', 'gcc'),
                 'cdk':('gcc', 'gcc'),
+                'makefile':('gcc', 'gcc'),
+                'eclipse':('gcc', 'gcc'),
                 'ses' : ('gcc', 'gcc')}
     tgt_name = GetOption('target')
 
@@ -270,6 +275,13 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         env['LIBLINKSUFFIX'] = '.lib'
         env['LIBDIRPREFIX'] = '--userlibpath '
 
+    elif rtconfig.PLATFORM == 'iar':
+        env['LIBPREFIX'] = ''
+        env['LIBSUFFIX'] = '.a'
+        env['LIBLINKPREFIX'] = ''
+        env['LIBLINKSUFFIX'] = '.a'
+        env['LIBDIRPREFIX'] = '--search '
+
     # patch for win32 spawn
     if env['PLATFORM'] == 'win32':
         win32_spawn = Win32Spawn()
@@ -283,8 +295,8 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     # add program path
     env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
-    # add rtconfig.h path
-    env.Append(CPPPATH = [str(Dir('#').abspath)])
+    # add rtconfig.h/BSP path into Kernel group
+    DefineGroup("Kernel", [], [], CPPPATH=[str(Dir('#').abspath)])
 
     # add library build action
     act = SCons.Action.Action(BuildLibInstallAction, 'Install compiled library... $TARGET')
@@ -346,8 +358,20 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 action = 'store_true',
                 default = False,
                 help = 'make menuconfig for RT-Thread BSP')
-    if GetOption('pyconfig'):
+    AddOption('--pyconfig-silent',
+                dest = 'pyconfig_silent',
+                action = 'store_true',
+                default = False,
+                help = 'Don`t show pyconfig window')
+
+    if GetOption('pyconfig_silent'):    
+        from menuconfig import pyconfig_silent
+
+        pyconfig_silent(Rtt_Root)
+        exit(0)
+    elif GetOption('pyconfig'):
         from menuconfig import pyconfig
+
         pyconfig(Rtt_Root)
         exit(0)
 
@@ -802,6 +826,10 @@ def GenTargetProject(program = None):
         from ses import SESProject
         SESProject(Env)
 
+    if GetOption('target') == 'makefile':
+        from makefile import TargetMakefile
+        TargetMakefile(Env)
+
 def EndBuilding(target, program = None):
     import rtconfig
 
@@ -809,6 +837,12 @@ def EndBuilding(target, program = None):
 
     Env['target']  = program
     Env['project'] = Projects
+
+    if hasattr(rtconfig, 'BSP_LIBRARY_TYPE'):
+        Env['bsp_lib_type'] = rtconfig.BSP_LIBRARY_TYPE
+
+    if hasattr(rtconfig, 'dist_handle'):
+        Env['dist_handle'] = rtconfig.dist_handle
 
     Env.AddPostAction(target, rtconfig.POST_ACTION)
     # Add addition clean files

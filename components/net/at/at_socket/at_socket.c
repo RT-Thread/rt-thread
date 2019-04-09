@@ -572,10 +572,16 @@ __exit:
 
     if (result < 0)
     {
-        at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
+        if (sock != RT_NULL)
+        {
+            at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
+        }
     }
 
-    at_do_event_changes(sock, AT_EVENT_SEND, RT_TRUE);
+    if (sock)
+    {
+        at_do_event_changes(sock, AT_EVENT_SEND, RT_TRUE);
+    }
     
     return result;
 }
@@ -699,23 +705,26 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
 
 __exit:
 
-    if (recv_len > 0)
+    if (sock != RT_NULL)
     {
-        result = recv_len;
-        at_do_event_changes(sock, AT_EVENT_RECV, RT_FALSE);
-        errno = 0;
-        if (!rt_slist_isempty(&sock->recvpkt_list))
+        if (recv_len > 0)
         {
-            at_do_event_changes(sock, AT_EVENT_RECV, RT_TRUE);
+            result = recv_len;
+            at_do_event_changes(sock, AT_EVENT_RECV, RT_FALSE);
+            errno = 0;
+            if (!rt_slist_isempty(&sock->recvpkt_list))
+            {
+                at_do_event_changes(sock, AT_EVENT_RECV, RT_TRUE);
+            }
+            else
+            {
+                at_do_event_clean(sock, AT_EVENT_RECV);
+            }
         }
         else
         {
-            at_do_event_clean(sock, AT_EVENT_RECV);
+            at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
         }
-    }
-    else
-    {
-        at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
     }
 
     return result;
@@ -728,7 +737,7 @@ int at_recv(int s, void *mem, size_t len, int flags)
 
 int at_sendto(int socket, const void *data, size_t size, int flags, const struct sockaddr *to, socklen_t tolen)
 {
-    struct at_socket *sock;
+    struct at_socket *sock = RT_NULL;
     int len, result = 0;
 
     if (at_dev_ops == RT_NULL)
@@ -807,7 +816,10 @@ __exit:
 
     if (result < 0)
     {
-        at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
+        if (sock != RT_NULL)
+        {
+            at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);   
+        }
     }
     else
     {

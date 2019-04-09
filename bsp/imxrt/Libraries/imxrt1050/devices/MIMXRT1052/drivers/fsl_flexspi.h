@@ -34,7 +34,7 @@
 
 #ifndef __FSL_FLEXSPI_H_
 #define __FSL_FLEXSPI_H_
-
+#include <rtthread.h>
 #include <stddef.h>
 #include "fsl_device_registers.h"
 #include "fsl_common.h"
@@ -401,7 +401,7 @@ void FLEXSPI_SetFlashConfig(FLEXSPI_Type *base, flexspi_device_config_t *config,
  *
  * @param base FLEXSPI peripheral base address.
  */
-static inline void FLEXSPI_SoftwareReset(FLEXSPI_Type *base)
+static SECTION("itcm") inline void FLEXSPI_SoftwareReset(FLEXSPI_Type *base)
 {
     base->MCR0 |= FLEXSPI_MCR0_SWRESET_MASK;
     while (base->MCR0 & FLEXSPI_MCR0_SWRESET_MASK)
@@ -415,7 +415,7 @@ static inline void FLEXSPI_SoftwareReset(FLEXSPI_Type *base)
  * @param base FLEXSPI peripheral base address.
  * @param enable True means enable FLEXSPI, false means disable.
  */
-static inline void FLEXSPI_Enable(FLEXSPI_Type *base, bool enable)
+static SECTION("itcm") inline void FLEXSPI_Enable(FLEXSPI_Type *base, bool enable)
 {
     if (enable)
     {
@@ -439,7 +439,7 @@ static inline void FLEXSPI_Enable(FLEXSPI_Type *base, bool enable)
  * @param base FLEXSPI peripheral base address.
  * @param mask FLEXSPI interrupt source.
  */
-static inline void FLEXSPI_EnableInterrupts(FLEXSPI_Type *base, uint32_t mask)
+static SECTION("itcm") inline void FLEXSPI_EnableInterrupts(FLEXSPI_Type *base, uint32_t mask)
 {
     base->INTEN |= mask;
 }
@@ -450,7 +450,7 @@ static inline void FLEXSPI_EnableInterrupts(FLEXSPI_Type *base, uint32_t mask)
  * @param base FLEXSPI peripheral base address.
  * @param mask FLEXSPI interrupt source.
  */
-static inline void FLEXSPI_DisableInterrupts(FLEXSPI_Type *base, uint32_t mask)
+static SECTION("itcm") inline void FLEXSPI_DisableInterrupts(FLEXSPI_Type *base, uint32_t mask)
 {
     base->INTEN &= ~mask;
 }
@@ -466,7 +466,7 @@ static inline void FLEXSPI_DisableInterrupts(FLEXSPI_Type *base, uint32_t mask)
  * @param base FLEXSPI peripheral base address.
  * @param enable Enable flag for transmit DMA request. Pass true for enable, false for disable.
  */
-static inline void FLEXSPI_EnableTxDMA(FLEXSPI_Type *base, bool enable)
+static SECTION("itcm") inline void FLEXSPI_EnableTxDMA(FLEXSPI_Type *base, bool enable)
 {
     if (enable)
     {
@@ -484,7 +484,7 @@ static inline void FLEXSPI_EnableTxDMA(FLEXSPI_Type *base, bool enable)
  * @param base FLEXSPI peripheral base address.
  * @param enable Enable flag for receive DMA request. Pass true for enable, false for disable.
  */
-static inline void FLEXSPI_EnableRxDMA(FLEXSPI_Type *base, bool enable)
+static SECTION("itcm") inline void FLEXSPI_EnableRxDMA(FLEXSPI_Type *base, bool enable)
 {
     if (enable)
     {
@@ -502,7 +502,7 @@ static inline void FLEXSPI_EnableRxDMA(FLEXSPI_Type *base, bool enable)
  * @param base FLEXSPI peripheral base address.
  * @retval The tx fifo address.
  */
-static inline uint32_t FLEXSPI_GetTxFifoAddress(FLEXSPI_Type *base)
+static SECTION("itcm") inline uint32_t FLEXSPI_GetTxFifoAddress(FLEXSPI_Type *base)
 {
     return (uint32_t)&base->TFDR[0];
 }
@@ -513,7 +513,7 @@ static inline uint32_t FLEXSPI_GetTxFifoAddress(FLEXSPI_Type *base)
  * @param base FLEXSPI peripheral base address.
  * @retval The rx fifo address.
  */
-static inline uint32_t FLEXSPI_GetRxFifoAddress(FLEXSPI_Type *base)
+static SECTION("itcm") inline uint32_t FLEXSPI_GetRxFifoAddress(FLEXSPI_Type *base)
 {
     return (uint32_t)&base->RFDR[0];
 }
@@ -529,7 +529,7 @@ static inline uint32_t FLEXSPI_GetRxFifoAddress(FLEXSPI_Type *base)
  * @param txFifo Pass true to reset TX FIFO.
  * @param rxFifo Pass true to reset RX FIFO.
  */
-static inline void FLEXSPI_ResetFifos(FLEXSPI_Type *base, bool txFifo, bool rxFifo)
+static SECTION("itcm") inline void FLEXSPI_ResetFifos(FLEXSPI_Type *base, bool txFifo, bool rxFifo)
 {
     if (txFifo)
     {
@@ -550,7 +550,7 @@ static inline void FLEXSPI_ResetFifos(FLEXSPI_Type *base, bool txFifo, bool rxFi
  * @param[out] rxCount Pointer through which the current number of bytes in the receive FIFO is returned.
  *      Pass NULL if this value is not required.
  */
-static inline void FLEXSPI_GetFifoCounts(FLEXSPI_Type *base, size_t *txCount, size_t *rxCount)
+static SECTION("itcm") inline void FLEXSPI_GetFifoCounts(FLEXSPI_Type *base, size_t *txCount, size_t *rxCount)
 {
     if (txCount)
     {
@@ -574,7 +574,7 @@ static inline void FLEXSPI_GetFifoCounts(FLEXSPI_Type *base, size_t *txCount, si
  * @param base FLEXSPI peripheral base address.
  * @retval interrupt status flag, use status flag to AND #flexspi_flags_t could get the related status.
  */
-static inline uint32_t FLEXSPI_GetInterruptStatusFlags(FLEXSPI_Type *base)
+static SECTION("itcm") inline uint32_t FLEXSPI_GetInterruptStatusFlags(FLEXSPI_Type *base)
 {
     return base->INTR;
 }
@@ -585,7 +585,7 @@ static inline uint32_t FLEXSPI_GetInterruptStatusFlags(FLEXSPI_Type *base)
  * @param base FLEXSPI peripheral base address.
  * @param interrupt status flag.
  */
-static inline void FLEXSPI_ClearInterruptStatusFlags(FLEXSPI_Type *base, uint32_t mask)
+static SECTION("itcm") inline void FLEXSPI_ClearInterruptStatusFlags(FLEXSPI_Type *base, uint32_t mask)
 {
     base->INTR |= mask;
 }
@@ -616,7 +616,7 @@ static inline void FLEXSPI_GetDataLearningPhase(FLEXSPI_Type *base, uint8_t *por
  * @param base FLEXSPI peripheral base address.
  * @retval trigger source of current command sequence.
  */
-static inline flexspi_arb_command_source_t FLEXSPI_GetArbitratorCommandSource(FLEXSPI_Type *base)
+static SECTION("itcm") inline flexspi_arb_command_source_t FLEXSPI_GetArbitratorCommandSource(FLEXSPI_Type *base)
 {
     return (flexspi_arb_command_source_t)((base->STS0 & FLEXSPI_STS0_ARBCMDSRC_MASK) >> FLEXSPI_STS0_ARBCMDSRC_SHIFT);
 }
@@ -627,7 +627,7 @@ static inline flexspi_arb_command_source_t FLEXSPI_GetArbitratorCommandSource(FL
  * @param index Pointer to a uint8_t type variable to receive the sequence index when error detected.
  * @retval error code when IP command error detected.
  */
-static inline flexspi_ip_error_code_t FLEXSPI_GetIPCommandErrorCode(FLEXSPI_Type *base, uint8_t *index)
+static SECTION("itcm") inline flexspi_ip_error_code_t FLEXSPI_GetIPCommandErrorCode(FLEXSPI_Type *base, uint8_t *index)
 {
     *index = (base->STS1 & FLEXSPI_STS1_IPCMDERRID_MASK) >> FLEXSPI_STS1_IPCMDERRID_SHIFT;
     return (flexspi_ip_error_code_t)((base->STS1 & FLEXSPI_STS1_IPCMDERRCODE_MASK) >> FLEXSPI_STS1_IPCMDERRCODE_SHIFT);
@@ -639,7 +639,7 @@ static inline flexspi_ip_error_code_t FLEXSPI_GetIPCommandErrorCode(FLEXSPI_Type
  * @param index Pointer to a uint8_t type variable to receive the sequence index when error detected.
  * @retval error code when AHB command error detected.
  */
-static inline flexspi_ahb_error_code_t FLEXSPI_GetAHBCommandErrorCode(FLEXSPI_Type *base, uint8_t *index)
+static SECTION("itcm") inline flexspi_ahb_error_code_t FLEXSPI_GetAHBCommandErrorCode(FLEXSPI_Type *base, uint8_t *index)
 {
     *index = (base->STS1 & FLEXSPI_STS1_AHBCMDERRID_MASK) >> FLEXSPI_STS1_AHBCMDERRID_SHIFT;
     return (flexspi_ahb_error_code_t)((base->STS1 & FLEXSPI_STS1_AHBCMDERRCODE_MASK) >>
@@ -652,7 +652,7 @@ static inline flexspi_ahb_error_code_t FLEXSPI_GetAHBCommandErrorCode(FLEXSPI_Ty
  * @retval true Bus is idle.
  * @retval false Bus is busy.
  */
-static inline bool FLEXSPI_GetBusIdleStatus(FLEXSPI_Type *base)
+static SECTION("itcm") inline bool FLEXSPI_GetBusIdleStatus(FLEXSPI_Type *base)
 {
     return (base->STS0 & FLEXSPI_STS0_ARBIDLE_MASK) && (base->STS0 & FLEXSPI_STS0_SEQIDLE_MASK);
 }
@@ -668,7 +668,7 @@ static inline bool FLEXSPI_GetBusIdleStatus(FLEXSPI_Type *base)
  * @param base FLEXSPI peripheral base address.
  * @param enable True means enable parallel mode, false means disable parallel mode.
  */
-static inline void FLEXSPI_EnableIPParallelMode(FLEXSPI_Type *base, bool enable)
+static SECTION("itcm") inline void FLEXSPI_EnableIPParallelMode(FLEXSPI_Type *base, bool enable)
 {
     if (enable)
     {
@@ -685,7 +685,7 @@ static inline void FLEXSPI_EnableIPParallelMode(FLEXSPI_Type *base, bool enable)
  * @param base FLEXSPI peripheral base address.
  * @param enable True means enable parallel mode, false means disable parallel mode.
  */
-static inline void FLEXSPI_EnableAHBParallelMode(FLEXSPI_Type *base, bool enable)
+static SECTION("itcm") inline void FLEXSPI_EnableAHBParallelMode(FLEXSPI_Type *base, bool enable)
 {
     if (enable)
     {
@@ -715,7 +715,7 @@ void FLEXSPI_UpdateLUT(FLEXSPI_Type *base, uint32_t index, const uint32_t *cmd, 
  * @param data The data bytes to send
  * @param fifoIndex Destination fifo index.
  */
-static inline void FLEXSPI_WriteData(FLEXSPI_Type *base, uint32_t data, uint8_t fifoIndex)
+static SECTION("itcm") inline void FLEXSPI_WriteData(FLEXSPI_Type *base, uint32_t data, uint8_t fifoIndex)
 {
     base->TFDR[fifoIndex] = data;
 }
@@ -727,7 +727,7 @@ static inline void FLEXSPI_WriteData(FLEXSPI_Type *base, uint32_t data, uint8_t 
  * @param fifoIndex Source fifo index.
  * @return The data in the FIFO.
  */
-static inline uint32_t FLEXSPI_ReadData(FLEXSPI_Type *base, uint8_t fifoIndex)
+static SECTION("itcm") inline uint32_t FLEXSPI_ReadData(FLEXSPI_Type *base, uint8_t fifoIndex)
 {
     return base->RFDR[fifoIndex];
 }

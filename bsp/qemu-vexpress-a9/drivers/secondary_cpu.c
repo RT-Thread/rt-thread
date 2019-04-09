@@ -46,10 +46,6 @@ void secondary_cpu_c_start(void)
     rt_hw_interrupt_install(IRQ_PBA8_TIMER0_1, rt_hw_timer2_isr, RT_NULL, "tick");
     rt_hw_interrupt_umask(IRQ_PBA8_TIMER0_1);
 
-    /* install IPI interrupt */
-    rt_hw_interrupt_install(RT_SCHEDULE_IPI_IRQ, rt_scheduler_ipi_handler, RT_NULL, "ipi");
-    rt_hw_interrupt_umask(RT_SCHEDULE_IPI_IRQ);
-
     rt_system_scheduler_start();
 }
 

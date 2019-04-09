@@ -33,7 +33,6 @@
  */
 
 #include "fsl_flexspi.h"
-
 /* Component ID definition, used by tools. */
 #ifndef FSL_COMPONENT_ID
 #define FSL_COMPONENT_ID "platform.drivers.flexspi"
@@ -113,21 +112,21 @@ static void *s_flexspiHandle[FSL_FEATURE_SOC_FLEXSPI_COUNT];
 #endif
 
 /*! @brief Pointers to flexspi bases for each instance. */
-static FLEXSPI_Type *const s_flexspiBases[] = FLEXSPI_BASE_PTRS;
+static FLEXSPI_Type *const s_flexspiBases[] SECTION("itcm") = FLEXSPI_BASE_PTRS;
 
 /*! @brief Pointers to flexspi IRQ number for each instance. */
-static const IRQn_Type s_flexspiIrqs[] = FLEXSPI_IRQS;
+static const IRQn_Type s_flexspiIrqs[] SECTION("itcm") = FLEXSPI_IRQS;
 
 #if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
 /* Clock name array */
-static const clock_ip_name_t s_flexspiClock[] = FLEXSPI_CLOCKS;
+static const clock_ip_name_t s_flexspiClock[] SECTION("itcm") = FLEXSPI_CLOCKS;
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
 
 /*******************************************************************************
  * Code
  ******************************************************************************/
 
-uint32_t FLEXSPI_GetInstance(FLEXSPI_Type *base)
+SECTION("itcm") uint32_t FLEXSPI_GetInstance(FLEXSPI_Type *base)
 {
     uint32_t instance;
 
@@ -145,7 +144,7 @@ uint32_t FLEXSPI_GetInstance(FLEXSPI_Type *base)
     return instance;
 }
 
-static uint32_t FLEXSPI_ConfigureDll(FLEXSPI_Type *base, flexspi_device_config_t *config)
+SECTION("itcm") static uint32_t FLEXSPI_ConfigureDll(FLEXSPI_Type *base, flexspi_device_config_t *config)
 {
     bool isUnifiedConfig = true;
     uint32_t flexspiDllValue;
@@ -199,7 +198,7 @@ static uint32_t FLEXSPI_ConfigureDll(FLEXSPI_Type *base, flexspi_device_config_t
     return flexspiDllValue;
 }
 
-status_t FLEXSPI_CheckAndClearError(FLEXSPI_Type *base, uint32_t status)
+SECTION("itcm") status_t FLEXSPI_CheckAndClearError(FLEXSPI_Type *base, uint32_t status)
 {
     status_t result = kStatus_Success;
 
@@ -236,7 +235,7 @@ status_t FLEXSPI_CheckAndClearError(FLEXSPI_Type *base, uint32_t status)
     return result;
 }
 
-void FLEXSPI_Init(FLEXSPI_Type *base, const flexspi_config_t *config)
+SECTION("itcm") void FLEXSPI_Init(FLEXSPI_Type *base, const flexspi_config_t *config)
 {
     uint32_t configValue = 0;
     uint8_t i = 0;
@@ -309,7 +308,7 @@ void FLEXSPI_Init(FLEXSPI_Type *base, const flexspi_config_t *config)
     base->IPTXFCR |= FLEXSPI_IPTXFCR_TXWMRK(config->txWatermark / 8 - 1);
 }
 
-void FLEXSPI_GetDefaultConfig(flexspi_config_t *config)
+SECTION("itcm") void FLEXSPI_GetDefaultConfig(flexspi_config_t *config)
 {
     config->rxSampleClock = kFLEXSPI_ReadSampleClkLoopbackInternally;
     config->enableSckFreeRunning = false;
@@ -339,13 +338,13 @@ void FLEXSPI_GetDefaultConfig(flexspi_config_t *config)
     config->ahbConfig.enableAHBCachable = false;
 }
 
-void FLEXSPI_Deinit(FLEXSPI_Type *base)
+SECTION("itcm") void FLEXSPI_Deinit(FLEXSPI_Type *base) 
 {
     /* Reset peripheral. */
     FLEXSPI_SoftwareReset(base);
 }
 
-void FLEXSPI_SetFlashConfig(FLEXSPI_Type *base, flexspi_device_config_t *config, flexspi_port_t port)
+SECTION("itcm") void FLEXSPI_SetFlashConfig(FLEXSPI_Type *base, flexspi_device_config_t *config, flexspi_port_t port)
 {
     uint32_t configValue = 0;
     uint8_t index = port >> 1; /* PortA with index 0, PortB with index 1. */
@@ -416,7 +415,7 @@ void FLEXSPI_SetFlashConfig(FLEXSPI_Type *base, flexspi_device_config_t *config,
     base->MCR0 &= ~FLEXSPI_MCR0_MDIS_MASK;
 }
 
-void FLEXSPI_UpdateLUT(FLEXSPI_Type *base, uint32_t index, const uint32_t *cmd, uint32_t count)
+SECTION("itcm") void FLEXSPI_UpdateLUT(FLEXSPI_Type *base, uint32_t index, const uint32_t *cmd, uint32_t count)
 {
     assert(index < 64U);
 
@@ -443,7 +442,7 @@ void FLEXSPI_UpdateLUT(FLEXSPI_Type *base, uint32_t index, const uint32_t *cmd, 
     base->LUTCR = 0x01;
 }
 
-status_t FLEXSPI_WriteBlocking(FLEXSPI_Type *base, uint32_t *buffer, size_t size)
+SECTION("itcm") status_t FLEXSPI_WriteBlocking(FLEXSPI_Type *base, uint32_t *buffer, size_t size)
 {
     uint8_t txWatermark = ((base->IPTXFCR & FLEXSPI_IPTXFCR_TXWMRK_MASK) >> FLEXSPI_IPTXFCR_TXWMRK_SHIFT) + 1;
     uint32_t status;
@@ -491,7 +490,7 @@ status_t FLEXSPI_WriteBlocking(FLEXSPI_Type *base, uint32_t *buffer, size_t size
     return result;
 }
 
-status_t FLEXSPI_ReadBlocking(FLEXSPI_Type *base, uint32_t *buffer, size_t size)
+SECTION("itcm") status_t FLEXSPI_ReadBlocking(FLEXSPI_Type *base, uint32_t *buffer, size_t size)
 {
     uint8_t rxWatermark = ((base->IPRXFCR & FLEXSPI_IPRXFCR_RXWMRK_MASK) >> FLEXSPI_IPRXFCR_RXWMRK_SHIFT) + 1;
     uint32_t status;
@@ -561,7 +560,7 @@ status_t FLEXSPI_ReadBlocking(FLEXSPI_Type *base, uint32_t *buffer, size_t size)
     return result;
 }
 
-status_t FLEXSPI_TransferBlocking(FLEXSPI_Type *base, flexspi_transfer_t *xfer)
+SECTION("itcm") status_t FLEXSPI_TransferBlocking(FLEXSPI_Type *base, flexspi_transfer_t *xfer)
 {
     uint32_t configValue = 0;
     status_t result = kStatus_Success;
@@ -618,7 +617,7 @@ status_t FLEXSPI_TransferBlocking(FLEXSPI_Type *base, flexspi_transfer_t *xfer)
     return result;
 }
 
-void FLEXSPI_TransferCreateHandle(FLEXSPI_Type *base,
+SECTION("itcm") void FLEXSPI_TransferCreateHandle(FLEXSPI_Type *base,
                                   flexspi_handle_t *handle,
                                   flexspi_transfer_callback_t callback,
                                   void *userData)
@@ -643,7 +642,7 @@ void FLEXSPI_TransferCreateHandle(FLEXSPI_Type *base,
     EnableIRQ(s_flexspiIrqs[instance]);
 }
 
-status_t FLEXSPI_TransferNonBlocking(FLEXSPI_Type *base, flexspi_handle_t *handle, flexspi_transfer_t *xfer)
+SECTION("itcm") status_t FLEXSPI_TransferNonBlocking(FLEXSPI_Type *base, flexspi_handle_t *handle, flexspi_transfer_t *xfer)
 {
     uint32_t configValue = 0;
     status_t result = kStatus_Success;
@@ -709,7 +708,7 @@ status_t FLEXSPI_TransferNonBlocking(FLEXSPI_Type *base, flexspi_handle_t *handl
     return result;
 }
 
-status_t FLEXSPI_TransferGetCount(FLEXSPI_Type *base, flexspi_handle_t *handle, size_t *count)
+SECTION("itcm") status_t FLEXSPI_TransferGetCount(FLEXSPI_Type *base, flexspi_handle_t *handle, size_t *count)
 {
     assert(handle);
 
@@ -727,7 +726,7 @@ status_t FLEXSPI_TransferGetCount(FLEXSPI_Type *base, flexspi_handle_t *handle, 
     return result;
 }
 
-void FLEXSPI_TransferAbort(FLEXSPI_Type *base, flexspi_handle_t *handle)
+SECTION("itcm") void FLEXSPI_TransferAbort(FLEXSPI_Type *base, flexspi_handle_t *handle)
 {
     assert(handle);
 
@@ -735,7 +734,7 @@ void FLEXSPI_TransferAbort(FLEXSPI_Type *base, flexspi_handle_t *handle)
     handle->state = kFLEXSPI_Idle;
 }
 
-void FLEXSPI_TransferHandleIRQ(FLEXSPI_Type *base, flexspi_handle_t *handle)
+SECTION("itcm") void FLEXSPI_TransferHandleIRQ(FLEXSPI_Type *base, flexspi_handle_t *handle)
 {
     uint8_t status;
     status_t result;
@@ -832,7 +831,7 @@ void FLEXSPI_TransferHandleIRQ(FLEXSPI_Type *base, flexspi_handle_t *handle)
 
 #if defined(FSL_DRIVER_TRANSFER_DOUBLE_WEAK_IRQ) && FSL_DRIVER_TRANSFER_DOUBLE_WEAK_IRQ
 #if defined(FLEXSPI)
-void FLEXSPI_DriverIRQHandler(void)
+SECTION("itcm") void FLEXSPI_DriverIRQHandler(void)
 {
     FLEXSPI_TransferHandleIRQ(FLEXSPI, s_flexspiHandle[0]);
 /* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
@@ -844,7 +843,7 @@ void FLEXSPI_DriverIRQHandler(void)
 #endif
 
 #if defined(FLEXSPI0)
-void FLEXSPI0_DriverIRQHandler(void)
+void FLEXSPI0_DriverIRQHandler(void) SECTION("itcm")
 {
     FLEXSPI_TransferHandleIRQ(FLEXSPI0, s_flexspiHandle[0]);
 /* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
@@ -855,7 +854,7 @@ void FLEXSPI0_DriverIRQHandler(void)
 }
 #endif
 #if defined(FLEXSPI1)
-void FLEXSPI1_DriverIRQHandler(void)
+void FLEXSPI1_DriverIRQHandler(void) SECTION("itcm")
 {
     FLEXSPI_TransferHandleIRQ(FLEXSPI1, s_flexspiHandle[1]);
 /* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping

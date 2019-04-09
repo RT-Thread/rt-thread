@@ -31,12 +31,12 @@ static void drv_i2c_gpio_init()
     GPIO_Initure.Pin = I2C_SCL_PIN;
     GPIO_Initure.Mode = GPIO_MODE_OUTPUT_OD;
     GPIO_Initure.Pull = GPIO_PULLUP;
-    GPIO_Initure.Speed = GPIO_SPEED_HIGH;
+    GPIO_Initure.Speed = GPIO_SPEED_FREQ_HIGH;
     HAL_GPIO_Init(I2C_SCL_PORT, &GPIO_Initure);
     GPIO_Initure.Pin = I2C_SDA_PIN;
     GPIO_Initure.Mode = GPIO_MODE_OUTPUT_OD;
     GPIO_Initure.Pull = GPIO_PULLUP;
-    GPIO_Initure.Speed = GPIO_SPEED_HIGH;
+    GPIO_Initure.Speed = GPIO_SPEED_FREQ_HIGH;
     HAL_GPIO_Init(I2C_SDA_PORT, &GPIO_Initure);
     HAL_GPIO_WritePin(I2C_SCL_PORT, I2C_SCL_PIN, GPIO_PIN_SET);
     HAL_GPIO_WritePin(I2C_SDA_PORT, I2C_SDA_PIN, GPIO_PIN_SET);

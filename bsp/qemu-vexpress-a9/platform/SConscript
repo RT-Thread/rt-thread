@@ -1,0 +1,13 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Split('''
+''')
+
+CPPPATH = [ cwd + '/cpu',
+cwd + '/include',
+]
+
+group = DefineGroup('Platform', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

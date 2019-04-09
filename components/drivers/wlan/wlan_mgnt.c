@@ -16,14 +16,13 @@
 #include <wlan_prot.h>
 #include <wlan_workqueue.h>
 
-#define DBG_ENABLE
+
 #ifdef RT_WLAN_MGNT_DEBUG
 #define DBG_LEVEL DBG_LOG
 #else
 #define DBG_LEVEL DBG_INFO
 #endif
 #define DBG_SECTION_NAME  "WLAN.mgnt"
-#define DBG_COLOR
 #include <rtdbg.h>
 
 #ifndef RT_WLAN_DEVICE
@@ -1320,7 +1319,10 @@ rt_err_t rt_wlan_start_ap_adv(struct rt_wlan_info *info, const char *password)
         return -RT_EIO;
     }
     RT_WLAN_LOG_D("%s is run", __FUNCTION__);
-    password_len = rt_strlen(password);
+    if (password != RT_NULL)
+    {
+        password_len = rt_strlen(password);
+    }
     if (password_len > RT_WLAN_PASSWORD_MAX_LENGTH)
     {
         RT_WLAN_LOG_E("key is to long! len:%d", password_len);
@@ -1358,16 +1360,16 @@ rt_err_t rt_wlan_start_ap_adv(struct rt_wlan_info *info, const char *password)
     return err;
 }
 
-int rt_wlan_ap_is_active(void)
+rt_bool_t rt_wlan_ap_is_active(void)
 {
-    int _active = 0;
+    rt_bool_t _active = RT_FALSE;
 
     if (_ap_is_null())
     {
-        return 0;
+        return RT_FALSE;
     }
 
-    _active = _ap_mgnt.state & RT_WLAN_STATE_ACTIVE ? 1 : 0;
+    _active = _ap_mgnt.state & RT_WLAN_STATE_ACTIVE ? RT_TRUE : RT_FALSE;
     RT_WLAN_LOG_D("%s is run active:%s", __FUNCTION__, _active ? "Active" : "Inactive");
     return _active;
 }
@@ -1797,7 +1799,7 @@ rt_err_t rt_wlan_register_event_handler(rt_wlan_event_t event, rt_wlan_event_han
     }
     RT_WLAN_LOG_D("%s is run event:%d", __FUNCTION__, event);
 
-    MGNT_UNLOCK();
+    MGNT_LOCK();
     /* Registering Callbacks */
     level = rt_hw_interrupt_disable();
     event_tab[event].handler = handler;

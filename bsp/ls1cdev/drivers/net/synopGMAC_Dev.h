@@ -1,32 +1,7 @@
-/**\file
- * This file defines the function prototypes for the Synopsys GMAC device and the 
- * Marvell 88E1011/88E1011S integrated 10/100/1000 Gigabit Ethernet Transceiver.
- * Since the phy register mapping are standardised, the phy register map and the 
- * bit definitions remain the same for other phy as well.
- * This also defines some of the Ethernet related parmeters.
- * \internal
- *  -----------------------------REVISION HISTORY------------------------------------
- * Synopsys			   01/Aug/2007				Created
- */
-
 /*
- * File      : synopGMAC_Dev.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) chinesebear
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes

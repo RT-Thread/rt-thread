@@ -156,6 +156,9 @@ static err_t eth_netif_device_init(struct netif *netif)
         /* copy device flags to netif flags */
         netif->flags = (ethif->flags & 0xff);
         netif->mtu = ETHERNET_MTU;
+        
+        /* set output */
+        netif->output       = etharp_output;
 
 #if LWIP_IPV6
         netif->output_ip6 = ethip6_output;
@@ -207,7 +210,7 @@ static err_t eth_netif_device_init(struct netif *netif)
 }
 
 /* Keep old drivers compatible in RT-Thread */
-rt_err_t eth_device_init_with_flag(struct eth_device *dev, char *name, rt_uint16_t flags)
+rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_uint16_t flags)
 {
     struct netif* netif;
 
@@ -239,6 +242,9 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, char *name, rt_uint16
     /* maximum transfer unit */
     netif->mtu          = ETHERNET_MTU;
 
+    /* set linkoutput */
+    netif->linkoutput   = ethernetif_linkoutput;
+        
     /* get hardware MAC address */
     rt_device_control(&(dev->parent), NIOCTL_GADDR, netif->hwaddr);
 
@@ -262,16 +268,12 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, char *name, rt_uint16
         IP4_ADDR(&netmask, 0, 0, 0, 0);
 #endif
         netifapi_netif_add(netif, &ipaddr, &netmask, &gw, dev, eth_netif_device_init, tcpip_input);
-
-        /* set output */
-        netif->output       = etharp_output;
-        netif->linkoutput   = ethernetif_linkoutput;
     }
 
     return RT_EOK;
 }
 
-rt_err_t eth_device_init(struct eth_device * dev, char *name)
+rt_err_t eth_device_init(struct eth_device * dev, const char *name)
 {
     rt_uint16_t flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP;
 
@@ -331,7 +333,7 @@ static void eth_tx_thread_entry(void* parameter)
 
     while (1)
     {
-        if (rt_mb_recv(&eth_tx_thread_mb, (rt_uint32_t*)&msg, RT_WAITING_FOREVER) == RT_EOK)
+        if (rt_mb_recv(&eth_tx_thread_mb, (rt_ubase_t *)&msg, RT_WAITING_FOREVER) == RT_EOK)
         {
             struct eth_device* enetif;
 
@@ -363,7 +365,7 @@ static void eth_rx_thread_entry(void* parameter)
 
     while (1)
     {
-        if (rt_mb_recv(&eth_rx_thread_mb, (rt_uint32_t*)&device, RT_WAITING_FOREVER) == RT_EOK)
+        if (rt_mb_recv(&eth_rx_thread_mb, (rt_ubase_t *)&device, RT_WAITING_FOREVER) == RT_EOK)
         {
             struct pbuf *p;
 

@@ -105,7 +105,7 @@ struct romfs_dirent *dfs_romfs_lookup(struct romfs_dirent *root_dirent, const ch
                 if (dirent[index].type == ROMFS_DIRENT_DIR)
                 {
                     /* enter directory */
-                    dirent = (struct romfs_dirent*)dirent[index].data;
+                    dirent = (struct romfs_dirent *)dirent[index].data;
                     found = 1;
                     break;
                 }
@@ -226,7 +226,7 @@ int dfs_romfs_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
 
     st->st_dev = 0;
     st->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
-    S_IWUSR | S_IWGRP | S_IWOTH;
+                  S_IWUSR | S_IWGRP | S_IWOTH;
 
     if (dirent->type == ROMFS_DIRENT_DIR)
     {

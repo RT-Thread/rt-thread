@@ -12,9 +12,6 @@
  * NOTE: DO NOT include this file on the header file.
  */
 
-#define DBG_ENABLE
-#define DBG_COLOR
-
 #ifndef LOG_TAG
 #define DBG_SECTION_NAME               "at"
 #else

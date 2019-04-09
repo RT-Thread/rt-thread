@@ -1,21 +1,7 @@
 ;/*
-; * File      : start_rvds.S
-; * This file is part of RT-Thread RTOS
-; * COPYRIGHT (C) 2006, RT-Thread Development Team
+; * Copyright (c) 2006-2018, RT-Thread Development Team
 ; *
-; *  This program is free software; you can redistribute it and/or modify
-; *  it under the terms of the GNU General Public License as published by
-; *  the Free Software Foundation; either version 2 of the License, or
-; *  (at your option) any later version.
-; *
-; *  This program is distributed in the hope that it will be useful,
-; *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-; *  GNU General Public License for more details.
-; *
-; *  You should have received a copy of the GNU General Public License along
-; *  with this program; if not, write to the Free Software Foundation, Inc.,
-; *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+; * SPDX-License-Identifier: Apache-2.0
 ; *
 ; * Change Logs:
 ; * Date           Author       Notes
@@ -25,28 +11,16 @@
 ; * 2015-06-04     aozima     Align stack address to 8 byte.
 ; */
 
-#include "rt_low_level_init.h"
+UND_STK_SIZE EQU 512
+SVC_STK_SIZE EQU 4096
+ABT_STK_SIZE EQU 512
+IRQ_STK_SIZE EQU 1024
+FIQ_STK_SIZE EQU 1024
+SYS_STK_SIZE EQU 512
+Heap_Size    EQU 512
 
 S_FRAME_SIZE    EQU     (18*4)   ;72
-;S_SPSR          EQU     (17*4)   ;SPSR
-;S_CPSR          EQU     (16*4)   ;CPSR
 S_PC            EQU     (15*4)   ;R15
-;S_LR            EQU     (14*4)   ;R14
-;S_SP            EQU     (13*4)   ;R13
-
-;S_IP            EQU     (12*4)   ;R12
-;S_FP            EQU     (11*4)   ;R11
-;S_R10           EQU     (10*4)
-;S_R9            EQU     (9*4)
-;S_R8            EQU     (8*4)
-;S_R7            EQU     (7*4)
-;S_R6            EQU     (6*4)
-;S_R5            EQU     (5*4)
-;S_R4            EQU     (4*4)
-;S_R3            EQU     (3*4)
-;S_R2            EQU     (2*4)
-;S_R1            EQU     (1*4)
-;S_R0            EQU     (0*4)
 
 MODE_USR        EQU     0X10
 MODE_FIQ        EQU     0X11

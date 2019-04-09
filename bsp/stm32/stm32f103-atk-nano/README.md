@@ -46,7 +46,7 @@ ATK-NANO STM32F103 是正点原子推出的一款基于 ARM Cortex-M3 内核的�
 | UART              |     支持     | UART1/2/3                             |
 | SPI               |     支持     | SPI1/2                              |
 | I2C               |     支持     | 软件 I2C                              |
-| RTC               |     支持     |                                       |
+| RTC               |     支持     | 支持外部晶振和内部低速时钟 |
 | WDT               |     支持     |                                       |
 | ADC               |     支持     |                                       |
 | FLASH | 支持 | 已适配 [FAL](https://github.com/RT-Thread-packages/fal) |
@@ -108,7 +108,7 @@ msh >
 
 4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
 
-本章节更多详细的介绍请参考 [BSP 进阶使用指南](../docs/BSP进阶使用指南.md)。
+本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32系列BSP外设驱动使用教程.md)。
 
 ## 注意事项
 

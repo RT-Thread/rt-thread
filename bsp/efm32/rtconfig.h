@@ -35,6 +35,7 @@
 
 /* SECTION: RT_DEBUG */
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 //#define RT_DEBUG_MEM 				(1)
 //#define RT_DEBUG_SCHEDULER 			(1)
 //#define RT_DEBUG_IPC 				(1)

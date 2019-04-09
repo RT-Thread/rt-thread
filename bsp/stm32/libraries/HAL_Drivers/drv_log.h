@@ -5,15 +5,12 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-15     SummerGift   change to new framework
+ * 2018-11-15     SummerGift   first version
  */
 
 /*
  * NOTE: DO NOT include this file on the header file.
  */
-
-#define DBG_ENABLE
-#define DBG_COLOR
 
 #ifndef LOG_TAG
 #define DBG_SECTION_NAME               "drv"

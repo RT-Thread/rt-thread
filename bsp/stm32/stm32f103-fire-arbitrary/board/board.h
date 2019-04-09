@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-06     balanceTWK   change to new framework
+ * 2018-11-06     balanceTWK   first version
  */
 
 #ifndef __BOARD_H__
@@ -14,12 +14,10 @@
 #include <rtthread.h>
 #include <stm32f1xx.h>
 #include "drv_common.h"
-
-#ifdef BSP_USING_GPIO
 #include "drv_gpio.h"
-/* Board Pin definitions */
-#define LED0_PIN                       GET_PIN(F, 7)
-#define LED1_PIN                       GET_PIN(F, 8)
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 /* Internal SRAM memory size[Kbytes] <8-64>, Default: 64*/
@@ -44,6 +42,9 @@ extern int __bss_end;
 #define HEAP_END        STM32_SRAM_END
 
 void SystemClock_Config(void);
-void MX_GPIO_Init(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __BOARD_H__ */

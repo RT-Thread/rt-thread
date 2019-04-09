@@ -5,21 +5,18 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-5      SummerGift   change to new framework
+ * 2018-11-5      SummerGift   first version
  */
 
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
-#include <rtthread.h>
 #include <stm32f1xx.h>
 #include "drv_common.h"
-
-#ifdef BSP_USING_GPIO
 #include "drv_gpio.h"
-/* Board Pin definitions */
-#define LED0_PIN                       GET_PIN(C,  0)
-#define LED1_PIN                       GET_PIN(C,  1)
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 #define STM32_FLASH_START_ADRESS     ((uint32_t)0x08000000)
@@ -44,6 +41,9 @@ extern int __bss_end;
 #define HEAP_END        STM32_SRAM_END
 
 void SystemClock_Config(void);
-void MX_GPIO_Init(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __BOARD_H__ */

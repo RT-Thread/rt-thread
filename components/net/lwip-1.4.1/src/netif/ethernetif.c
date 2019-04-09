@@ -177,7 +177,7 @@ static err_t eth_netif_device_init(struct netif *netif)
 }
 
 /* Keep old drivers compatible in RT-Thread */
-rt_err_t eth_device_init_with_flag(struct eth_device *dev, char *name, rt_uint16_t flags)
+rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_uint16_t flags)
 {
     struct netif* netif;
 
@@ -242,7 +242,7 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, char *name, rt_uint16
     return RT_EOK;
 }
 
-rt_err_t eth_device_init(struct eth_device * dev, char *name)
+rt_err_t eth_device_init(struct eth_device * dev, const char *name)
 {
     rt_uint16_t flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP;
 
@@ -307,7 +307,7 @@ static void eth_tx_thread_entry(void* parameter)
 
     while (1)
     {
-        if (rt_mb_recv(&eth_tx_thread_mb, (rt_uint32_t*)&msg, RT_WAITING_FOREVER) == RT_EOK)
+        if (rt_mb_recv(&eth_tx_thread_mb, (rt_ubase_t*)&msg, RT_WAITING_FOREVER) == RT_EOK)
         {
             struct eth_device* enetif;
 
@@ -339,7 +339,7 @@ static void eth_rx_thread_entry(void* parameter)
 
     while (1)
     {
-        if (rt_mb_recv(&eth_rx_thread_mb, (rt_uint32_t*)&device, RT_WAITING_FOREVER) == RT_EOK)
+        if (rt_mb_recv(&eth_rx_thread_mb, (rt_ubase_t*)&device, RT_WAITING_FOREVER) == RT_EOK)
         {
             struct pbuf *p;
 

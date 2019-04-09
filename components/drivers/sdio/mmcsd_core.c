@@ -14,14 +14,12 @@
 #include <drivers/mmc.h>
 #include <drivers/sdio.h>
 
-#define DBG_ENABLE
 #define DBG_SECTION_NAME               "SDIO"
 #ifdef RT_SDIO_DEBUG
 #define DBG_LEVEL                      DBG_LOG
 #else
 #define DBG_LEVEL                      DBG_INFO
 #endif /* RT_SDIO_DEBUG */
-#define DBG_COLOR
 #include <rtdbg.h>
 
 #ifndef RT_MMCSD_STACK_SIZE
@@ -595,7 +593,7 @@ static void mmcsd_power_off(struct rt_mmcsd_host *host)
 int mmcsd_wait_cd_changed(rt_int32_t timeout)
 {
     struct rt_mmcsd_host *host;
-    if (rt_mb_recv(&mmcsd_hotpluge_mb, (rt_uint32_t*)&host, timeout) == RT_EOK)
+    if (rt_mb_recv(&mmcsd_hotpluge_mb, (rt_ubase_t *)&host, timeout) == RT_EOK)
     {
         if(host->card == RT_NULL)
         {
@@ -623,7 +621,7 @@ void mmcsd_detect(void *param)
 
     while (1) 
     {
-        if (rt_mb_recv(&mmcsd_detect_mb, (rt_uint32_t*)&host, RT_WAITING_FOREVER) == RT_EOK)
+        if (rt_mb_recv(&mmcsd_detect_mb, (rt_ubase_t *)&host, RT_WAITING_FOREVER) == RT_EOK)
         {
             if (host->card == RT_NULL)
             {

@@ -1,11 +1,16 @@
+import os
 import rtconfig
 from building import *
 
+Import('SDK_LIB')
+
 cwd = GetCurrentDir()
 
-# add the general drivers.
-src = Glob('board.c')
-src += Glob('CubeMX_Config/Src/stm32f4xx_hal_msp.c')
+# add general drivers
+src = Split('''
+board.c
+CubeMX_Config/Src/stm32f4xx_hal_msp.c
+''')
 
 if GetDepend(['BSP_USING_ETH']):
     src += Glob('ports/phy_reset.c')
@@ -13,19 +18,21 @@ if GetDepend(['BSP_USING_ETH']):
 if GetDepend(['BSP_USING_SPI_FLASH']):
     src += Glob('ports/spi_flash_init.c')
 
-path = [cwd]
+if GetDepend(['BSP_USING_SDCARD']):
+    src += Glob('ports/sdcard_port.c')
+
+path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
 path += [cwd + '/ports']
 
-if GetDepend(['BSP_USING_SDRAM']):
-    path += [cwd + '/ports']
+startup_path_prefix = SDK_LIB
 
 if rtconfig.CROSS_TOOL == 'gcc':
-    src += [cwd + '/../../libraries/STM32F4xx_HAL/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc/startup_stm32f429xx.s']
+    src += [startup_path_prefix + '/STM32F4xx_HAL/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc/startup_stm32f429xx.s']
 elif rtconfig.CROSS_TOOL == 'keil':
-    src += [cwd + '/../../libraries/STM32F4xx_HAL/CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f429xx.s']
+    src += [startup_path_prefix + '/STM32F4xx_HAL/CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f429xx.s']
 elif rtconfig.CROSS_TOOL == 'iar':
-    src += [cwd + '/../../libraries/STM32F4xx_HAL/CMSIS/Device/ST/STM32F4xx/Source/Templates/iar/startup_stm32f429xx.s']
+    src += [startup_path_prefix + '/STM32F4xx_HAL/CMSIS/Device/ST/STM32F4xx/Source/Templates/iar/startup_stm32f429xx.s']
 
 CPPDEFINES = ['STM32F429xx']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)

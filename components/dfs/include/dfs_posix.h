@@ -36,7 +36,7 @@ struct dirent *readdir(DIR *d);
 long telldir(DIR *d);
 void seekdir(DIR *d, off_t offset);
 void rewinddir(DIR *d);
-int closedir(DIR* d);
+int closedir(DIR *d);
 
 /* file api*/
 int open(const char *file, int flags, ...);
