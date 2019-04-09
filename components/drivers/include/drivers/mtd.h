@@ -19,13 +19,13 @@
 #define MTD_TYPE_NOR    1
 #define MTD_TYPE_NAND   2
 
- /**
-  * MTD operation modes
-  *
-  * @MTD_OPM_PLACE_OOB:	OOB data are placed at the given offset (default)
-  * @MTD_OPM_AUTO_OOB:	OOB data are automatically placed at the free areas
-  * @MTD_OPM_RAW:	    data are transferred as-is, with no error correction;
-  */
+/**
+ * MTD operation modes
+ *
+ * @MTD_OPM_PLACE_OOB: OOB data are placed at the given offset (default)
+ * @MTD_OPM_AUTO_OOB:  OOB data are automatically placed at the free areas
+ * @MTD_OPM_RAW:       data are transferred as-is, with no error correction;
+ */
 enum mtd_opm
 {
     MTD_OPM_PLACE_OOB = 0,
@@ -51,15 +51,15 @@ typedef struct mtd_info
 
     uint16_t oob_size;
     uint16_t sector_size;   /* Minimal writable flash unit size */
-    uint32_t block_size:28; /* Erase size for the device */
-    uint32_t type:4;
+    uint32_t block_size: 28; /* Erase size for the device */
+    uint32_t type: 4;
 
     size_t size;    /* Total size of the MTD */
     loff_t offset;  /* At which this MTD starts, from the beginning of the MEMORY */
     struct mtd_info *master;
 
     void *priv;
-}rt_mtd_t;
+} rt_mtd_t;
 
 struct mtd_io_desc
 {
@@ -77,10 +77,10 @@ struct mtd_io_desc
 struct mtd_ops
 {
     int(*erase)(rt_mtd_t *mtd, loff_t addr, size_t len);    /* return 0 if success */
-    int(*read) (rt_mtd_t *mtd, loff_t from, struct mtd_io_desc *ops); /* return 0 if success */
-    int(*write) (rt_mtd_t *mtd, loff_t to, struct mtd_io_desc *ops);  /* return 0 if success */
-    int(*isbad) (rt_mtd_t *mtd, uint32_t block);    /* return 1 if bad, 0 not bad */
-    int(*markbad) (rt_mtd_t *mtd, uint32_t block);  /* return 0 if success */
+    int(*read)(rt_mtd_t *mtd, loff_t from, struct mtd_io_desc *ops);  /* return 0 if success */
+    int(*write)(rt_mtd_t *mtd, loff_t to, struct mtd_io_desc *ops);   /* return 0 if success */
+    int(*isbad)(rt_mtd_t *mtd, uint32_t block);     /* return 1 if bad, 0 not bad */
+    int(*markbad)(rt_mtd_t *mtd, uint32_t block);   /* return 0 if success */
 };
 
 struct mtd_part
@@ -99,7 +99,7 @@ int rt_mtd_write(rt_mtd_t *mtd, loff_t to, const uint8_t *buf, size_t len);
 int rt_mtd_block_markbad(rt_mtd_t *mtd, uint32_t block);
 int rt_mtd_block_isbad(rt_mtd_t *mtd, uint32_t block);
 
-rt_mtd_t* rt_mtd_get(const char *name);
+rt_mtd_t *rt_mtd_get(const char *name);
 int rt_mtd_register(rt_mtd_t *master, const struct mtd_part *parts, int np);
 
 #endif

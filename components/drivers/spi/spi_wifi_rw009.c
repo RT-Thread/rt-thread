@@ -1,6 +1,6 @@
 /*
  * COPYRIGHT (C) 2018, Real-Thread Information Technology Ltd
- * 
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
@@ -93,7 +93,7 @@ static void resp_handler(struct rw009_wifi *wifi_device, struct rw009_resp *resp
     case RW009_CMD_INIT:
         WIFI_DEBUG("resp_handler RW009_CMD_INIT\n");
         resp_return = (struct rw009_resp *)rt_malloc(member_offset(struct rw009_resp, resp) + sizeof(rw009_resp_init)); //TODO:
-        if(resp_return == RT_NULL) break;
+        if (resp_return == RT_NULL) break;
         memcpy(resp_return, resp, member_offset(struct rw009_resp, resp) + sizeof(rw009_resp_init));
 
         WIFI_DEBUG("sn:%-*.*s\n", sizeof(resp->resp.init.sn), sizeof(resp->resp.init.sn), resp->resp.init.sn);
@@ -103,15 +103,15 @@ static void resp_handler(struct rw009_wifi *wifi_device, struct rw009_resp *resp
         break;
 
     case RW009_CMD_SCAN:
-        if( resp->len == sizeof(rw009_ap_info) )
+        if (resp->len == sizeof(rw009_ap_info))
         {
-            rw009_ap_info *ap_scan = rt_realloc(wifi_device->ap_scan, sizeof(rw009_ap_info) * (wifi_device->ap_scan_count + 1) );
-            if(ap_scan != RT_NULL)
+            rw009_ap_info *ap_scan = rt_realloc(wifi_device->ap_scan, sizeof(rw009_ap_info) * (wifi_device->ap_scan_count + 1));
+            if (ap_scan != RT_NULL)
             {
-                memcpy( &ap_scan[wifi_device->ap_scan_count], &resp->resp.ap_info, sizeof(rw009_ap_info) );
+                memcpy(&ap_scan[wifi_device->ap_scan_count], &resp->resp.ap_info, sizeof(rw009_ap_info));
 
                 //dump
-                if(1)
+                if (1)
                 {
 #ifdef WIFI_DEBUG_ON
                     rw009_ap_info *ap_info = &resp->resp.ap_info;
@@ -124,7 +124,7 @@ static void resp_handler(struct rw009_wifi *wifi_device, struct rw009_resp *resp
                                ap_info->bssid[4],
                                ap_info->bssid[5]);
                     WIFI_DEBUG("SCAN rssi:%ddBm\n", ap_info->rssi);
-                    WIFI_DEBUG("SCAN rate:%dMbps\n", ap_info->max_data_rate/1000);
+                    WIFI_DEBUG("SCAN rate:%dMbps\n", ap_info->max_data_rate / 1000);
                     WIFI_DEBUG("SCAN channel:%d\n", ap_info->channel);
                     WIFI_DEBUG("SCAN security:%08X\n\n", ap_info->security);
 #endif /* WIFI_DEBUG_ON */
@@ -141,10 +141,10 @@ static void resp_handler(struct rw009_wifi *wifi_device, struct rw009_resp *resp
     case RW009_CMD_EASY_JOIN:
         WIFI_DEBUG("resp_handler RW009_CMD_EASY_JOIN\n");
         resp_return = (struct rw009_resp *)rt_malloc(member_offset(struct rw009_resp, resp) + sizeof(rw009_resp_join)); //TODO:
-        if(resp_return == RT_NULL) break;
+        if (resp_return == RT_NULL) break;
         memcpy(resp_return, resp, member_offset(struct rw009_resp, resp) + sizeof(rw009_resp_join));
 
-        if( resp->result == 0 )
+        if (resp->result == 0)
         {
             memcpy(&wifi_device->ap_info, &resp_return->resp.ap_info, sizeof(rw009_resp_join));
             wifi_device->active = 1;
@@ -154,11 +154,11 @@ static void resp_handler(struct rw009_wifi *wifi_device, struct rw009_resp *resp
         {
             wifi_device->active = 1;
             eth_device_linkchange(&wifi_device->parent, RT_FALSE);
-            WIFI_DEBUG("RW009_CMD_EASY_JOIN result: %d\n", resp->result );
+            WIFI_DEBUG("RW009_CMD_EASY_JOIN result: %d\n", resp->result);
         }
 
         //dupm
-        if(1)
+        if (1)
         {
 #ifdef WIFI_DEBUG_ON
             rw009_ap_info *ap_info = &resp->resp.ap_info;
@@ -171,7 +171,7 @@ static void resp_handler(struct rw009_wifi *wifi_device, struct rw009_resp *resp
                        ap_info->bssid[4],
                        ap_info->bssid[5]);
             WIFI_DEBUG("JOIN rssi:%ddBm\n", ap_info->rssi);
-            WIFI_DEBUG("JOIN rate:%dMbps\n", ap_info->max_data_rate/1000);
+            WIFI_DEBUG("JOIN rate:%dMbps\n", ap_info->max_data_rate / 1000);
             WIFI_DEBUG("JOIN channel:%d\n", ap_info->channel);
             WIFI_DEBUG("JOIN security:%08X\n\n", ap_info->security);
 #endif /* WIFI_DEBUG_ON */
@@ -189,7 +189,7 @@ static void resp_handler(struct rw009_wifi *wifi_device, struct rw009_resp *resp
 
     case RW009_CMD_SOFTAP:
     {
-        if( resp->result == 0 )
+        if (resp->result == 0)
         {
             ;
             wifi_device->active = 1;
@@ -197,7 +197,7 @@ static void resp_handler(struct rw009_wifi *wifi_device, struct rw009_resp *resp
         }
         else
         {
-            WIFI_DEBUG("RW009_CMD_EASY_JOIN result: %d\n", resp->result );
+            WIFI_DEBUG("RW009_CMD_EASY_JOIN result: %d\n", resp->result);
         }
 
     }
@@ -209,7 +209,7 @@ static void resp_handler(struct rw009_wifi *wifi_device, struct rw009_resp *resp
     }
 
 
-    if(resp->cmd == wifi_device->last_cmd)
+    if (resp->cmd == wifi_device->last_cmd)
     {
         rt_mb_send(&wifi_device->rw009_cmd_mb, (rt_uint32_t)resp_return);
         return;
@@ -237,36 +237,36 @@ static rt_err_t rw009_cmd(struct rw009_wifi *wifi_device, uint32_t cmd, void *ar
     wifi_cmd->cmd = cmd;
     wifi_cmd->len = 0;
 
-    if( cmd == RW009_CMD_INIT )
+    if (cmd == RW009_CMD_INIT)
     {
         wifi_cmd->len = sizeof(rw009_cmd_init);
     }
-    else if( cmd == RW009_CMD_SCAN )
+    else if (cmd == RW009_CMD_SCAN)
     {
         wifi_cmd->len = 0;
-        timeout += RT_TICK_PER_SECOND*10;
+        timeout += RT_TICK_PER_SECOND * 10;
 
-        if(wifi_device->ap_scan)
+        if (wifi_device->ap_scan)
         {
             rt_free(wifi_device->ap_scan);
             wifi_device->ap_scan = RT_NULL;
             wifi_device->ap_scan_count = 0;
         }
     }
-    else if( cmd == RW009_CMD_JOIN )
+    else if (cmd == RW009_CMD_JOIN)
     {
         wifi_cmd->len = sizeof(rw009_cmd_join);
     }
-    else if( cmd == RW009_CMD_EASY_JOIN )
+    else if (cmd == RW009_CMD_EASY_JOIN)
     {
         wifi_cmd->len = sizeof(rw009_cmd_easy_join);
-        timeout += RT_TICK_PER_SECOND*5;
+        timeout += RT_TICK_PER_SECOND * 5;
     }
-    else if( cmd == RW009_CMD_RSSI )
+    else if (cmd == RW009_CMD_RSSI)
     {
         wifi_cmd->len = sizeof(rw009_cmd_rssi);
     }
-    else if( cmd == RW009_CMD_SOFTAP )
+    else if (cmd == RW009_CMD_SOFTAP)
     {
         wifi_cmd->len = sizeof(rw009_cmd_softap);
     }
@@ -278,12 +278,12 @@ static rt_err_t rw009_cmd(struct rw009_wifi *wifi_device, uint32_t cmd, void *ar
         data_packet = RT_NULL;
     }
 
-    if(data_packet == RT_NULL)
+    if (data_packet == RT_NULL)
     {
         goto _exit;
     }
 
-    if(wifi_cmd->len)
+    if (wifi_cmd->len)
         memcpy(&wifi_cmd->params, args, wifi_cmd->len);
 
     data_packet->data_type = data_type_cmd;
@@ -296,17 +296,17 @@ static rt_err_t rw009_cmd(struct rw009_wifi *wifi_device, uint32_t cmd, void *ar
                         (rt_uint32_t *)&resp,
                         timeout);
 
-    if ( result != RT_EOK )
+    if (result != RT_EOK)
     {
-        WIFI_DEBUG("CMD %d error, resultL %d\n", cmd, result );
+        WIFI_DEBUG("CMD %d error, resultL %d\n", cmd, result);
     }
 
-    if(resp != RT_NULL)
+    if (resp != RT_NULL)
         result = resp->result;
 
 _exit:
     wifi_device->last_cmd = 0;
-    if(resp) rt_free(resp);
+    if (resp) rt_free(resp);
     return result;
 }
 
@@ -457,28 +457,28 @@ _bad_resp_magic:
 #if defined(ETH_RX_DUMP) ||  defined(ETH_TX_DUMP)
 static void packet_dump(const char *msg, const struct pbuf *p)
 {
-    const struct pbuf* q;
-    rt_uint32_t i,j;
+    const struct pbuf *q;
+    rt_uint32_t i, j;
     rt_uint8_t *ptr = p->payload;
 
     rt_kprintf("%s %d byte\n", msg, p->tot_len);
 
-    i=0;
-    for(q=p; q != RT_NULL; q= q->next)
+    i = 0;
+    for (q = p; q != RT_NULL; q = q->next)
     {
         ptr = q->payload;
 
-        for(j=0; j<q->len; j++)
+        for (j = 0; j < q->len; j++)
         {
-            if( (i%8) == 0 )
+            if ((i % 8) == 0)
             {
                 rt_kprintf("  ");
             }
-            if( (i%16) == 0 )
+            if ((i % 16) == 0)
             {
                 rt_kprintf("\r\n");
             }
-            rt_kprintf("%02x ",*ptr);
+            rt_kprintf("%02x ", *ptr);
 
             i++;
             ptr++;
@@ -581,7 +581,7 @@ struct pbuf *rw009_wifi_rx(rt_device_t dev)
     }
 
 #ifdef ETH_RX_DUMP
-    if(p)
+    if (p)
         packet_dump("RX dump", p);
 #endif /* ETH_RX_DUMP */
 
@@ -630,8 +630,8 @@ const static struct rt_device_ops rw009_ops =
 rt_err_t rt_hw_wifi_init(const char *spi_device_name, wifi_mode_t mode)
 {
     /* align and struct size check. */
-    RT_ASSERT( (SPI_MAX_DATA_LEN & 0x03) == 0);
-    RT_ASSERT( sizeof(struct rw009_resp) <= SPI_MAX_DATA_LEN);
+    RT_ASSERT((SPI_MAX_DATA_LEN & 0x03) == 0);
+    RT_ASSERT(sizeof(struct rw009_resp) <= SPI_MAX_DATA_LEN);
 
     memset(&rw009_wifi_device, 0, sizeof(struct rw009_wifi));
 
@@ -746,18 +746,18 @@ void spi_wifi_isr(int vector)
 }
 
 /********************************* RW009 tools **************************************/
-rt_err_t rw009_join(const char * SSID, const char * passwd)
+rt_err_t rw009_join(const char *SSID, const char *passwd)
 {
     rt_err_t result;
     rt_device_t wifi_device;
     rw009_cmd_easy_join easy_join;
 
     wifi_device = rt_device_find("w0");
-    if(wifi_device == RT_NULL)
+    if (wifi_device == RT_NULL)
         return -RT_ENOSYS;
 
-    strncpy( easy_join.ssid, SSID, sizeof(easy_join.ssid) );
-    strncpy( easy_join.passwd, passwd, sizeof(easy_join.passwd) );
+    strncpy(easy_join.ssid, SSID, sizeof(easy_join.ssid));
+    strncpy(easy_join.passwd, passwd, sizeof(easy_join.passwd));
 
     result = rt_device_control(wifi_device,
                                RW009_CMD_EASY_JOIN,
@@ -766,18 +766,18 @@ rt_err_t rw009_join(const char * SSID, const char * passwd)
     return result;
 }
 
-rt_err_t rw009_softap(const char * SSID, const char * passwd,uint32_t security,uint32_t channel)
+rt_err_t rw009_softap(const char *SSID, const char *passwd, uint32_t security, uint32_t channel)
 {
     rt_err_t result;
     rt_device_t wifi_device;
     rw009_cmd_softap softap;
 
     wifi_device = rt_device_find("w0");
-    if(wifi_device == RT_NULL)
+    if (wifi_device == RT_NULL)
         return -RT_ENOSYS;
 
-    strncpy( softap.ssid, SSID, sizeof(softap.ssid) );
-    strncpy( softap.passwd, passwd, sizeof(softap.passwd) );
+    strncpy(softap.ssid, SSID, sizeof(softap.ssid));
+    strncpy(softap.passwd, passwd, sizeof(softap.passwd));
 
     softap.security = security;
     softap.channel = channel;
@@ -791,14 +791,14 @@ rt_err_t rw009_softap(const char * SSID, const char * passwd,uint32_t security,u
 int32_t rw009_rssi(void)
 {
     rt_err_t result;
-    struct rw009_wifi * wifi_device;
+    struct rw009_wifi *wifi_device;
 
     wifi_device = (struct rw009_wifi *)rt_device_find("w0");
 
-    if(wifi_device == RT_NULL)
+    if (wifi_device == RT_NULL)
         return 0;
 
-    if(wifi_device->active == 0)
+    if (wifi_device->active == 0)
         return 0;
 
     // SCAN
@@ -806,7 +806,7 @@ int32_t rw009_rssi(void)
                                RW009_CMD_RSSI,
                                RT_NULL);
 
-    if(result == RT_EOK)
+    if (result == RT_EOK)
     {
         return wifi_device->ap_info.rssi;
     }
@@ -820,7 +820,7 @@ int32_t rw009_rssi(void)
 static rt_err_t rw009_scan(void)
 {
     rt_err_t result;
-    struct rw009_wifi * wifi_device;
+    struct rw009_wifi *wifi_device;
 
     wifi_device = (struct rw009_wifi *)rt_device_find("w0");
 
@@ -831,15 +831,15 @@ static rt_err_t rw009_scan(void)
 
     rt_kprintf("CMD RW009_CMD_SCAN result:%d\n", result);
 
-    if(result == RT_EOK)
+    if (result == RT_EOK)
     {
         uint32_t i;
         rw009_ap_info *ap_info;
 
-        for(i=0; i<wifi_device->ap_scan_count; i++)
+        for (i = 0; i < wifi_device->ap_scan_count; i++)
         {
             ap_info = &wifi_device->ap_scan[i];
-            rt_kprintf("AP #%02d SSID: %-32.32s\n", i, ap_info->ssid );
+            rt_kprintf("AP #%02d SSID: %-32.32s\n", i, ap_info->ssid);
         }
     }
 

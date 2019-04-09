@@ -55,7 +55,7 @@ static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops soft_rtc_ops = 
+const static struct rt_device_ops soft_rtc_ops =
 {
     RT_NULL,
     RT_NULL,

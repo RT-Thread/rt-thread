@@ -11,7 +11,7 @@
 
 #include <drivers/mtd.h>
 
-static rt_mtd_t* mtd_part_alloc(rt_mtd_t *master, const struct mtd_part *part)
+static rt_mtd_t *mtd_part_alloc(rt_mtd_t *master, const struct mtd_part *part)
 {
     rt_mtd_t *slave;
 
@@ -30,7 +30,7 @@ out:
     return slave;
 }
 
-rt_mtd_t* rt_mtd_get(const char *name)
+rt_mtd_t *rt_mtd_get(const char *name)
 {
     rt_mtd_t *mtd;
 
@@ -94,7 +94,7 @@ int rt_mtd_block_erase(rt_mtd_t *mtd, uint32_t block)
     uint32_t total_blks;
     loff_t addr;
 
-    total_blks = mtd->size/mtd->block_size;
+    total_blks = mtd->size / mtd->block_size;
     if (block >= total_blks)
         return -EINVAL;
     addr = mtd->offset + mtd->block_size * block;
@@ -184,7 +184,7 @@ int rt_mtd_write(rt_mtd_t *mtd, loff_t to, const uint8_t *buf, size_t len)
     if (!len)
         return 0;
 
-    desc.datbuf = (uint8_t*)buf;
+    desc.datbuf = (uint8_t *)buf;
     desc.datlen = len;
     ret = mtd->ops->write(mtd->master, to + mtd->offset, &desc);
     if (ret)
@@ -229,7 +229,7 @@ int rt_mtd_write_oob(rt_mtd_t *mtd, loff_t to, struct mtd_io_desc *desc)
     if (to < 0 || to >= (loff_t)mtd->size)
         return -EINVAL;
 
-    if (desc->datbuf && (desc->datlen >(mtd->size - to)))
+    if (desc->datbuf && (desc->datlen > (mtd->size - to)))
         return -EINVAL;
 
     return mtd->ops->write(mtd->master, to + mtd->offset, desc);

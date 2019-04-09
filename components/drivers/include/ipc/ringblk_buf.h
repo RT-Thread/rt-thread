@@ -41,9 +41,9 @@ typedef enum rt_rbb_status rt_rbb_status_t;
  */
 struct rt_rbb_blk
 {
-    rt_rbb_status_t status :8;
+    rt_rbb_status_t status : 8;
     /* less then 2^24 */
-    rt_size_t size :24;
+    rt_size_t size : 24;
     rt_uint8_t *buf;
     rt_slist_t list;
 };

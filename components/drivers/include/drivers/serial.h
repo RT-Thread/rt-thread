@@ -94,17 +94,17 @@ struct serial_configure
 {
     rt_uint32_t baud_rate;
 
-    rt_uint32_t data_bits               :4;
-    rt_uint32_t stop_bits               :2;
-    rt_uint32_t parity                  :2;
-    rt_uint32_t bit_order               :1;
-    rt_uint32_t invert                  :1;
-    rt_uint32_t bufsz                   :16;
-    rt_uint32_t reserved                :6;
+    rt_uint32_t data_bits               : 4;
+    rt_uint32_t stop_bits               : 2;
+    rt_uint32_t parity                  : 2;
+    rt_uint32_t bit_order               : 1;
+    rt_uint32_t invert                  : 1;
+    rt_uint32_t bufsz                   : 16;
+    rt_uint32_t reserved                : 6;
 };
 
 /*
- * Serial FIFO mode 
+ * Serial FIFO mode
  */
 struct rt_serial_rx_fifo
 {
@@ -121,7 +121,7 @@ struct rt_serial_tx_fifo
     struct rt_completion completion;
 };
 
-/* 
+/*
  * Serial DMA mode
  */
 struct rt_serial_rx_dma

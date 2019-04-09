@@ -13,6 +13,6 @@
 
 #include <rtthread.h>
 
-extern rt_err_t gd_init(const char * flash_device_name, const char * spi_device_name);
+extern rt_err_t gd_init(const char *flash_device_name, const char *spi_device_name);
 
 #endif /* SPI_FLASH_GD_H_ */

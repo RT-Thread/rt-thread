@@ -53,14 +53,14 @@
 
 static struct spi_flash_sst25vfxx  spi_flash_sst25vfxx;
 
-static uint8_t sst25vfxx_read_status(struct spi_flash_sst25vfxx * spi_flash)
+static uint8_t sst25vfxx_read_status(struct spi_flash_sst25vfxx *spi_flash)
 {
     return rt_spi_sendrecv8(spi_flash->rt_spi_device, CMD_RDSR);
 }
 
-static void sst25vfxx_wait_busy(struct spi_flash_sst25vfxx * spi_flash)
+static void sst25vfxx_wait_busy(struct spi_flash_sst25vfxx *spi_flash)
 {
-    while( sst25vfxx_read_status(spi_flash) & (0x01));
+    while (sst25vfxx_read_status(spi_flash) & (0x01));
 }
 
 /** \brief write N page on [page]
@@ -71,7 +71,7 @@ static void sst25vfxx_wait_busy(struct spi_flash_sst25vfxx * spi_flash)
  * \return uint32_t
  *
  */
-static uint32_t sst25vfxx_page_write(struct spi_flash_sst25vfxx * spi_flash, uint32_t page, const uint8_t * buffer, uint32_t size)
+static uint32_t sst25vfxx_page_write(struct spi_flash_sst25vfxx *spi_flash, uint32_t page, const uint8_t *buffer, uint32_t size)
 {
     uint32_t index;
     uint32_t need_wirte = size;
@@ -104,7 +104,7 @@ static uint32_t sst25vfxx_page_write(struct spi_flash_sst25vfxx * spi_flash, uin
 
     sst25vfxx_wait_busy(spi_flash);
 
-    for(index=0; index < need_wirte/2; index++)
+    for (index = 0; index < need_wirte / 2; index++)
     {
         send_buffer[0] = CMD_AAIP;
         send_buffer[1] = *buffer++;
@@ -129,11 +129,11 @@ static rt_err_t sst25vfxx_flash_open(rt_device_t dev, rt_uint16_t oflag)
 {
     rt_err_t result;
     uint8_t send_buffer[2];
-    struct spi_flash_sst25vfxx * spi_flash = (struct spi_flash_sst25vfxx *)dev;
+    struct spi_flash_sst25vfxx *spi_flash = (struct spi_flash_sst25vfxx *)dev;
 
     /* lock spi flash */
     result = rt_mutex_take(&(spi_flash->lock), RT_WAITING_FOREVER);
-    if(result != RT_EOK)
+    if (result != RT_EOK)
     {
         return result;
     }
@@ -161,7 +161,7 @@ static rt_err_t sst25vfxx_flash_close(rt_device_t dev)
 
 static rt_err_t sst25vfxx_flash_control(rt_device_t dev, int cmd, void *args)
 {
-    struct spi_flash_sst25vfxx * spi_flash;
+    struct spi_flash_sst25vfxx *spi_flash;
 
     spi_flash = (struct spi_flash_sst25vfxx *)dev;
 
@@ -182,16 +182,16 @@ static rt_err_t sst25vfxx_flash_control(rt_device_t dev, int cmd, void *args)
     return RT_EOK;
 }
 
-static rt_size_t sst25vfxx_flash_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
+static rt_size_t sst25vfxx_flash_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     rt_err_t result;
     uint8_t send_buffer[4];
-    struct spi_flash_sst25vfxx * spi_flash = (struct spi_flash_sst25vfxx *)dev;
+    struct spi_flash_sst25vfxx *spi_flash = (struct spi_flash_sst25vfxx *)dev;
     uint32_t offset = pos * spi_flash->geometry.bytes_per_sector;
 
     /* lock spi flash */
     result = rt_mutex_take(&(spi_flash->lock), RT_WAITING_FOREVER);
-    if(result != RT_EOK)
+    if (result != RT_EOK)
     {
         return 0;
     }
@@ -200,8 +200,8 @@ static rt_size_t sst25vfxx_flash_read(rt_device_t dev, rt_off_t pos, void* buffe
     rt_spi_send(spi_flash->rt_spi_device, send_buffer, 1);
 
     send_buffer[0] = CMD_READ;
-    send_buffer[1] = (uint8_t)(offset>>16);
-    send_buffer[2] = (uint8_t)(offset>>8);
+    send_buffer[1] = (uint8_t)(offset >> 16);
+    send_buffer[2] = (uint8_t)(offset >> 8);
     send_buffer[3] = (uint8_t)(offset);
     rt_spi_send_then_recv(spi_flash->rt_spi_device, send_buffer, 4, buffer, size * spi_flash->geometry.bytes_per_sector);
 
@@ -211,21 +211,21 @@ static rt_size_t sst25vfxx_flash_read(rt_device_t dev, rt_off_t pos, void* buffe
     return size;
 }
 
-static rt_size_t sst25vfxx_flash_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
+static rt_size_t sst25vfxx_flash_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     uint32_t i;
     rt_err_t result;
-    const uint8_t * write_buffer = buffer;
-    struct spi_flash_sst25vfxx * spi_flash = (struct spi_flash_sst25vfxx *)dev;
+    const uint8_t *write_buffer = buffer;
+    struct spi_flash_sst25vfxx *spi_flash = (struct spi_flash_sst25vfxx *)dev;
 
     /* lock spi flash */
     result = rt_mutex_take(&(spi_flash->lock), RT_WAITING_FOREVER);
-    if(result != RT_EOK)
+    if (result != RT_EOK)
     {
         return 0;
     }
 
-    for(i=0; i<size; i++)
+    for (i = 0; i < size; i++)
     {
         sst25vfxx_page_write(spi_flash,
                              (pos + i) * spi_flash->geometry.bytes_per_sector,
@@ -252,13 +252,13 @@ const static struct rt_device_ops sst25vfxx_device_ops =
 };
 #endif
 
-rt_err_t sst25vfxx_init(const char * flash_device_name, const char * spi_device_name)
+rt_err_t sst25vfxx_init(const char *flash_device_name, const char *spi_device_name)
 {
-    struct rt_spi_device * rt_spi_device;
-    struct spi_flash_sst25vfxx * spi_flash = &spi_flash_sst25vfxx;
+    struct rt_spi_device *rt_spi_device;
+    struct spi_flash_sst25vfxx *spi_flash = &spi_flash_sst25vfxx;
 
     rt_spi_device = (struct rt_spi_device *)rt_device_find(spi_device_name);
-    if(rt_spi_device == RT_NULL)
+    if (rt_spi_device == RT_NULL)
     {
         FLASH_TRACE("spi device %s not found!\r\n", spi_device_name);
         return -RT_ENOSYS;
@@ -286,7 +286,7 @@ rt_err_t sst25vfxx_init(const char * flash_device_name, const char * spi_device_
         cmd = CMD_JEDEC_ID;
         rt_spi_send_then_recv(spi_flash->rt_spi_device, &cmd, 1, id_recv, 3);
 
-        if(id_recv[0] != MF_ID || id_recv[1] != MT_ID)
+        if (id_recv[0] != MF_ID || id_recv[1] != MT_ID)
         {
             FLASH_TRACE("Manufacturer’s ID or Memory Type error!\r\n");
             FLASH_TRACE("JEDEC Read-ID Data : %02X %02X %02X\r\n", id_recv[0], id_recv[1], id_recv[2]);
@@ -296,32 +296,32 @@ rt_err_t sst25vfxx_init(const char * flash_device_name, const char * spi_device_
         spi_flash->geometry.bytes_per_sector = 4096;
         spi_flash->geometry.block_size = 4096; /* block erase: 4k */
 
-        if(id_recv[2] == MC_ID_SST25VF020B)
+        if (id_recv[2] == MC_ID_SST25VF020B)
         {
             FLASH_TRACE("SST25VF020B detection\r\n");
             spi_flash->geometry.sector_count = 64;
         }
-        else if(id_recv[2] == MC_ID_SST25VF040B)
+        else if (id_recv[2] == MC_ID_SST25VF040B)
         {
             FLASH_TRACE("SST25VF040B detection\r\n");
             spi_flash->geometry.sector_count = 128;
         }
-        else if(id_recv[2] == MC_ID_SST25VF080B)
+        else if (id_recv[2] == MC_ID_SST25VF080B)
         {
             FLASH_TRACE("SST25VF080B detection\r\n");
             spi_flash->geometry.sector_count = 256;
         }
-        else if(id_recv[2] == MC_ID_SST25VF016B)
+        else if (id_recv[2] == MC_ID_SST25VF016B)
         {
             FLASH_TRACE("SST25VF016B detection\r\n");
             spi_flash->geometry.sector_count = 512;
         }
-        else if(id_recv[2] == MC_ID_SST25VF032B)
+        else if (id_recv[2] == MC_ID_SST25VF032B)
         {
             FLASH_TRACE("SST25VF032B detection\r\n");
             spi_flash->geometry.sector_count = 1024;
         }
-        else if(id_recv[2] == MC_ID_SST25VF064C)
+        else if (id_recv[2] == MC_ID_SST25VF064C)
         {
             FLASH_TRACE("SST25VF064C detection\r\n");
             spi_flash->geometry.sector_count = 2048;

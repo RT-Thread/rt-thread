@@ -93,13 +93,13 @@
  */
 typedef enum
 {
-	MSD_CARD_TYPE_UNKNOWN = 0,                      /**< unknown */
-	MSD_CARD_TYPE_MMC,                              /**< MultiMedia Card */
-	MSD_CARD_TYPE_SD_V1_X,                          /**< Ver 1.X  Standard Capacity SD Memory Card */
-	MSD_CARD_TYPE_SD_V2_X,                          /**< Ver 2.00 or later Standard Capacity SD Memory Card */
-	MSD_CARD_TYPE_SD_SDHC,                          /**< High Capacity SD Memory Card */
-	MSD_CARD_TYPE_SD_SDXC,                          /**< later Extended Capacity SD Memory Card */
-}msd_card_type;
+    MSD_CARD_TYPE_UNKNOWN = 0,                      /**< unknown */
+    MSD_CARD_TYPE_MMC,                              /**< MultiMedia Card */
+    MSD_CARD_TYPE_SD_V1_X,                          /**< Ver 1.X  Standard Capacity SD Memory Card */
+    MSD_CARD_TYPE_SD_V2_X,                          /**< Ver 2.00 or later Standard Capacity SD Memory Card */
+    MSD_CARD_TYPE_SD_SDHC,                          /**< High Capacity SD Memory Card */
+    MSD_CARD_TYPE_SD_SDXC,                          /**< later Extended Capacity SD Memory Card */
+} msd_card_type;
 
 typedef enum
 {
@@ -111,17 +111,17 @@ typedef enum
     response_r4,
     response_r5,
     response_r7,
-}response_type;
+} response_type;
 
 struct msd_device
 {
     struct rt_device                parent;      /**< RT-Thread device struct */
     struct rt_device_blk_geometry   geometry;    /**< sector size, sector count */
-    struct rt_spi_device *          spi_device;  /**< SPI interface */
+    struct rt_spi_device           *spi_device;  /**< SPI interface */
     msd_card_type                   card_type;   /**< card type: MMC SD1.x SD2.0 SDHC SDXC */
     uint32_t                        max_clock;   /**< MAX SPI clock */
 };
 
-extern rt_err_t msd_init(const char * sd_device_name, const char * spi_device_name);
+extern rt_err_t msd_init(const char *sd_device_name, const char *spi_device_name);
 
 #endif // SPI_MSD_H_INCLUDED

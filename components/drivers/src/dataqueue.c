@@ -56,7 +56,7 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
     rt_ubase_t  level;
     rt_thread_t thread;
     rt_err_t    result;
-    
+
     RT_ASSERT(queue != RT_NULL);
 
     result = RT_EOK;
@@ -78,7 +78,7 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
 
         /* reset thread error number */
         thread->error = RT_EOK;
-        
+
         /* suspend thread on the push list */
         rt_thread_suspend(thread);
         rt_list_insert_before(&(queue->suspended_push_list), &(thread->tlist));
@@ -138,8 +138,8 @@ __exit:
 RTM_EXPORT(rt_data_queue_push);
 
 rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
-                           const void** data_ptr,
-                           rt_size_t *size, 
+                           const void **data_ptr,
+                           rt_size_t *size,
                            rt_int32_t timeout)
 {
     rt_ubase_t  level;
@@ -168,7 +168,7 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
 
         /* reset thread error number */
         thread->error = RT_EOK;
-        
+
         /* suspend thread on the pop list */
         rt_thread_suspend(thread);
         rt_list_insert_before(&(queue->suspended_pop_list), &(thread->tlist));
@@ -240,7 +240,7 @@ __exit:
 RTM_EXPORT(rt_data_queue_pop);
 
 rt_err_t rt_data_queue_peak(struct rt_data_queue *queue,
-                            const void** data_ptr,
+                            const void **data_ptr,
                             rt_size_t *size)
 {
     rt_ubase_t  level;
@@ -249,10 +249,10 @@ rt_err_t rt_data_queue_peak(struct rt_data_queue *queue,
 
     level = rt_hw_interrupt_disable();
 
-    if (queue->get_index == queue->put_index) 
+    if (queue->get_index == queue->put_index)
     {
         rt_hw_interrupt_enable(level);
-        
+
         return -RT_EEMPTY;
     }
 

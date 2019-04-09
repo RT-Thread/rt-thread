@@ -75,7 +75,7 @@ rt_size_t rt_ringbuffer_getchar(struct rt_ringbuffer *rb, rt_uint8_t *ch);
 rt_size_t rt_ringbuffer_data_len(struct rt_ringbuffer *rb);
 
 #ifdef RT_USING_HEAP
-struct rt_ringbuffer* rt_ringbuffer_create(rt_uint16_t length);
+struct rt_ringbuffer *rt_ringbuffer_create(rt_uint16_t length);
 void rt_ringbuffer_destroy(struct rt_ringbuffer *rb);
 #endif
 

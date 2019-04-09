@@ -176,7 +176,7 @@ static int nand_read_page_hwecc(rt_nand_t *chip, uint8_t *buf, int oob_required,
 }
 
 static int nand_write_page(rt_nand_t *chip, const uint8_t *buf,
-    int oob_required, int page, int raw)
+                           int oob_required, int page, int raw)
 {
     int status;
 
@@ -205,7 +205,7 @@ static int nand_do_read_desc(rt_nand_t *chip, loff_t from, struct mtd_io_desc *d
     uint32_t readlen = desc->datlen;
     uint16_t oobreadlen = desc->ooblen;
     uint16_t max_oobsize = desc->mode == MTD_OPM_AUTO_OOB ?
-        chip->freelayout->length : chip->oobsize;
+                           chip->freelayout->length : chip->oobsize;
 
     uint8_t *oob, *buf, *notalign = 0;
 
@@ -219,8 +219,8 @@ static int nand_do_read_desc(rt_nand_t *chip, loff_t from, struct mtd_io_desc *d
     if (NOTALIGNED(desc->datlen) && !chip->pagebuf)
     {
         chip->pagebuf = rt_malloc(chip->page_size);
-         if (!chip->pagebuf)
-             return -ENOMEM;
+        if (!chip->pagebuf)
+            return -ENOMEM;
     }
 
     page = (int)(from / chip->page_size);
@@ -300,7 +300,7 @@ static int nand_do_write_desc(rt_nand_t *chip, loff_t to, struct mtd_io_desc *de
     uint16_t oob_required = desc->oobbuf ? 1 : 0;
     uint16_t oobwritelen = desc->ooblen;
     uint16_t oobmaxlen = desc->mode == MTD_OPM_AUTO_OOB ?
-        chip->freelayout->length : chip->oobsize;
+                         chip->freelayout->length : chip->oobsize;
 
     uint8_t *oob = desc->oobbuf;
     uint8_t *buf = desc->datbuf;
@@ -628,12 +628,14 @@ int rt_mtd_nand_init(rt_nand_t *nand, int blk_size, int page_size, int oob_size)
     {
         nand->read_page = nand_read_page_raw;
         nand->write_page = nand_write_page_raw;
-    }break;
+    }
+    break;
     case NAND_ECCM_HW:
     {
         nand->read_page = nand_read_page_hwecc;
         nand->write_page = nand_write_page_hwecc;
-    }break;
+    }
+    break;
     default:
     {
         rt_free(buf);

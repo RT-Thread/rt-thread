@@ -49,7 +49,7 @@ static int _nor_write(rt_mtd_t *mtd, loff_t to, struct mtd_io_desc *desc)
         ret = 0;
     }
 
-    return ret; 
+    return ret;
 }
 
 static const struct mtd_ops _ops =

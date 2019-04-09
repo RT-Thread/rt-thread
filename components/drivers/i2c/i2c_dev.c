@@ -89,9 +89,9 @@ static rt_err_t i2c_bus_device_control(rt_device_t dev,
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops i2c_ops = 
+const static struct rt_device_ops i2c_ops =
 {
-    RT_NULL, 
+    RT_NULL,
     RT_NULL,
     RT_NULL,
     i2c_bus_device_read,

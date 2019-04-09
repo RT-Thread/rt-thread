@@ -96,8 +96,8 @@ RTM_EXPORT(rt_ringbuffer_put);
  * When the buffer is full, it will discard the old data.
  */
 rt_size_t rt_ringbuffer_put_force(struct rt_ringbuffer *rb,
-                            const rt_uint8_t     *ptr,
-                            rt_uint16_t           length)
+                                  const rt_uint8_t     *ptr,
+                                  rt_uint16_t           length)
 {
     rt_uint16_t space_length;
 
@@ -207,7 +207,7 @@ rt_size_t rt_ringbuffer_putchar(struct rt_ringbuffer *rb, const rt_uint8_t ch)
     rb->buffer_ptr[rb->write_index] = ch;
 
     /* flip mirror */
-    if (rb->write_index == rb->buffer_size-1)
+    if (rb->write_index == rb->buffer_size - 1)
     {
         rb->write_mirror = ~rb->write_mirror;
         rb->write_index = 0;
@@ -237,7 +237,7 @@ rt_size_t rt_ringbuffer_putchar_force(struct rt_ringbuffer *rb, const rt_uint8_t
     rb->buffer_ptr[rb->write_index] = ch;
 
     /* flip mirror */
-    if (rb->write_index == rb->buffer_size-1)
+    if (rb->write_index == rb->buffer_size - 1)
     {
         rb->write_mirror = ~rb->write_mirror;
         rb->write_index = 0;
@@ -272,7 +272,7 @@ rt_size_t rt_ringbuffer_getchar(struct rt_ringbuffer *rb, rt_uint8_t *ch)
     /* put character */
     *ch = rb->buffer_ptr[rb->read_index];
 
-    if (rb->read_index == rb->buffer_size-1)
+    if (rb->read_index == rb->buffer_size - 1)
     {
         rb->read_mirror = ~rb->read_mirror;
         rb->read_index = 0;
@@ -286,8 +286,8 @@ rt_size_t rt_ringbuffer_getchar(struct rt_ringbuffer *rb, rt_uint8_t *ch)
 }
 RTM_EXPORT(rt_ringbuffer_getchar);
 
-/** 
- * get the size of data in rb 
+/**
+ * get the size of data in rb
  */
 rt_size_t rt_ringbuffer_data_len(struct rt_ringbuffer *rb)
 {
@@ -307,8 +307,8 @@ rt_size_t rt_ringbuffer_data_len(struct rt_ringbuffer *rb)
 }
 RTM_EXPORT(rt_ringbuffer_data_len);
 
-/** 
- * empty the rb 
+/**
+ * empty the rb
  */
 void rt_ringbuffer_reset(struct rt_ringbuffer *rb)
 {
@@ -323,12 +323,12 @@ RTM_EXPORT(rt_ringbuffer_reset);
 
 #ifdef RT_USING_HEAP
 
-struct rt_ringbuffer* rt_ringbuffer_create(rt_uint16_t size)
+struct rt_ringbuffer *rt_ringbuffer_create(rt_uint16_t size)
 {
     struct rt_ringbuffer *rb;
     rt_uint8_t *pool;
 
-	RT_ASSERT(size > 0);
+    RT_ASSERT(size > 0);
 
     size = RT_ALIGN_DOWN(size, RT_ALIGN_SIZE);
 

@@ -52,14 +52,14 @@ static rt_size_t fm24clxx_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_s
     RT_ASSERT(fm24clxx->parent.user_data != 0);
     cfg = (const struct fm24clxx_config *) fm24clxx->parent.user_data;
 
-    if(pos > cfg->size)
+    if (pos > cfg->size)
     {
-         return 0;
+        return 0;
     }
 
-    if(pos + size > cfg->size)
+    if (pos + size > cfg->size)
     {
-         size = cfg->size - pos;
+        size = cfg->size - pos;
     }
 
     msg[0].addr     = cfg->addr;
@@ -92,14 +92,14 @@ static rt_size_t fm24clxx_write(rt_device_t dev, rt_off_t pos, const void *buffe
     RT_ASSERT(fm24clxx->parent.user_data != 0);
     cfg = (const struct fm24clxx_config *) fm24clxx->parent.user_data;
 
-    if(pos > cfg->size)
+    if (pos > cfg->size)
     {
-         return 0;
+        return 0;
     }
 
-    if(pos + size > cfg->size)
+    if (pos + size > cfg->size)
     {
-         size = cfg->size - pos;
+        size = cfg->size - pos;
     }
 
     msg[0].addr     = cfg->addr;

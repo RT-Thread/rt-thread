@@ -14,7 +14,7 @@
 
 #include <rtthread.h>
 
-extern rt_err_t w25qxx_init(const char * flash_device_name,
-                            const char * spi_device_name);
+extern rt_err_t w25qxx_init(const char *flash_device_name,
+                            const char *spi_device_name);
 
 #endif // SPI_FLASH_W25QXX_H_INCLUDED

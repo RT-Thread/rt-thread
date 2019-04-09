@@ -62,7 +62,8 @@ static rt_err_t _audio_send_replay_frame(struct rt_audio_device *audio)
     //pop the head frame...
     rt_data_queue_pop(&audio->replay->queue, &frame.data_ptr, &frame.data_size, RT_WAITING_FOREVER);
 
-    _exit: return result;
+_exit:
+    return result;
 }
 
 static rt_err_t _audio_flush_replay_frame(struct rt_audio_device *audio)
@@ -122,7 +123,7 @@ static rt_err_t _audio_dev_open(struct rt_device *dev, rt_uint16_t oflag)
     /* initialize the Rx/Tx structure according to open flag */
     if (oflag & RT_DEVICE_OFLAG_WRONLY)
     {
-        AUDIO_DBG("open audio device ,oflag = %x\n",oflag);
+        AUDIO_DBG("open audio device ,oflag = %x\n", oflag);
         if (audio->replay == RT_NULL)
         {
             struct rt_audio_replay *replay = (struct rt_audio_replay *) rt_malloc(sizeof(struct rt_audio_replay));
@@ -166,9 +167,9 @@ static rt_err_t _audio_dev_open(struct rt_device *dev, rt_uint16_t oflag)
 
                     return -RT_ENOMEM;
                 }
-                
+
                 rt_audio_pipe_init(&audio_pipe, "recpipe", (rt_int32_t)(RT_PIPE_FLAG_FORCE_WR | RT_PIPE_FLAG_BLOCK_RD), buf,
-                             CFG_AUDIO_RECORD_PIPE_SIZE);
+                                   CFG_AUDIO_RECORD_PIPE_SIZE);
             }
 
             record->activated = RT_FALSE;
@@ -255,11 +256,11 @@ static rt_size_t _audio_dev_write(struct rt_device *dev, rt_off_t pos, const voi
     if (!(dev->open_flag & RT_DEVICE_OFLAG_WRONLY) || (audio->replay == RT_NULL))
         return 0;
 
-    AUDIO_DBG("audio write : pos = %d,buffer = %x,size = %d\n",pos,(rt_uint32_t)buffer,size);
+    AUDIO_DBG("audio write : pos = %d,buffer = %x,size = %d\n", pos, (rt_uint32_t)buffer, size);
     //push a new frame to tx queue
     {
         result = rt_data_queue_push(&audio->replay->queue, buffer, size,
-        RT_WAITING_FOREVER);
+                                    RT_WAITING_FOREVER);
         if (result != RT_EOK)
         {
             AUDIO_DBG("TX frame queue push error\n");
@@ -295,109 +296,109 @@ static rt_err_t _audio_dev_control(struct rt_device *dev, int cmd, void *args)
     //dev stat...
     switch (cmd)
     {
-        case AUDIO_CTL_GETCAPS:
-        {
-            struct rt_audio_caps *caps = (struct rt_audio_caps *) args;
+    case AUDIO_CTL_GETCAPS:
+    {
+        struct rt_audio_caps *caps = (struct rt_audio_caps *) args;
 
-            AUDIO_DBG("AUDIO_CTL_GETCAPS: main_type = %d,sub_type = %d\n",caps->main_type,caps->sub_type);
-            if (audio->ops->getcaps != RT_NULL)
-            {
-                result = audio->ops->getcaps(audio, caps);
-            }
+        AUDIO_DBG("AUDIO_CTL_GETCAPS: main_type = %d,sub_type = %d\n", caps->main_type, caps->sub_type);
+        if (audio->ops->getcaps != RT_NULL)
+        {
+            result = audio->ops->getcaps(audio, caps);
         }
-        break;
-        case AUDIO_CTL_CONFIGURE:
-        {
-            struct rt_audio_caps *caps = (struct rt_audio_caps *) args;
+    }
+    break;
+    case AUDIO_CTL_CONFIGURE:
+    {
+        struct rt_audio_caps *caps = (struct rt_audio_caps *) args;
 
-            AUDIO_DBG("AUDIO_CTL_CONFIGURE: main_type = %d,sub_type = %d\n",caps->main_type,caps->sub_type);
-            if (audio->ops->configure != RT_NULL)
-            {
-                result = audio->ops->configure(audio, caps);
-            }
+        AUDIO_DBG("AUDIO_CTL_CONFIGURE: main_type = %d,sub_type = %d\n", caps->main_type, caps->sub_type);
+        if (audio->ops->configure != RT_NULL)
+        {
+            result = audio->ops->configure(audio, caps);
         }
+    }
 
-        break;
-        case AUDIO_CTL_SHUTDOWN:
+    break;
+    case AUDIO_CTL_SHUTDOWN:
+    {
+        AUDIO_DBG("AUDIO_CTL_SHUTDOWN\n");
+
+        if (audio->ops->shutdown != RT_NULL)
+            result = audio->ops->shutdown(audio);
+
+        //flush replay frame...
+        _audio_flush_replay_frame(audio);
+    }
+    break;
+
+    case AUDIO_CTL_START:
+    {
+        int stream = *(int *) args;
+
+        AUDIO_DBG("AUDIO_CTL_START: stream = %d\n", stream);
+        if (audio->ops->start != RT_NULL)
+            result = audio->ops->start(audio, stream);
+    }
+    break;
+    case AUDIO_CTL_STOP:
+    {
+        int stream = *(int *) args;
+
+        AUDIO_DBG("AUDIO_CTL_STOP: stream = %d\n", stream);
+        if (audio->ops->start != RT_NULL)
+            result = audio->ops->stop(audio, stream);
+
+        if (stream == AUDIO_STREAM_REPLAY)
         {
-            AUDIO_DBG("AUDIO_CTL_SHUTDOWN\n");
-
-            if (audio->ops->shutdown != RT_NULL)
-                result = audio->ops->shutdown(audio);
-
-            //flush replay frame...
             _audio_flush_replay_frame(audio);
         }
-        break;
+    }
+    break;
+    case AUDIO_CTL_PAUSE:
+    {
+        int stream = *(int *) args;
 
-        case AUDIO_CTL_START:
+        AUDIO_DBG("AUDIO_CTL_PAUSE: stream = %d\n", stream);
+        if (audio->ops->start != RT_NULL)
+            result = audio->ops->suspend(audio, stream);
+    }
+    break;
+    case AUDIO_CTL_RESUME:
+    {
+        int stream = *(int *) args;
+
+        AUDIO_DBG("AUDIO_CTL_RESUME: stream = %d\n", stream);
+        if (audio->ops->start != RT_NULL)
+            result = audio->ops->resume(audio, stream);
+
+        //resume tx frame...
+        if (stream == AUDIO_STREAM_REPLAY)
+            _audio_send_replay_frame(audio);
+    }
+    break;
+    case AUDIO_CTL_ALLOCBUFFER:
+    {
+        struct rt_audio_buf_desc *desc = (struct rt_audio_buf_desc *) args;
+
+        if (desc)
         {
-            int stream = *(int *) args;
+            desc->data_size = AUDIO_DEVICE_DECODE_MP_BLOCK_SZ * 2;
+            desc->data_ptr = rt_mp_alloc(&audio->mp, RT_WAITING_FOREVER);
 
-            AUDIO_DBG("AUDIO_CTL_START: stream = %d\n",stream);
-            if (audio->ops->start != RT_NULL)
-                result = audio->ops->start(audio, stream);
+            result = RT_EOK;
         }
-        break;
-        case AUDIO_CTL_STOP:
-        {
-            int stream = *(int *) args;
-
-            AUDIO_DBG("AUDIO_CTL_STOP: stream = %d\n",stream);
-            if (audio->ops->start != RT_NULL)
-                result = audio->ops->stop(audio, stream);
-
-            if (stream == AUDIO_STREAM_REPLAY)
-            {
-                _audio_flush_replay_frame(audio);
-            }
-        }
-        break;
-        case AUDIO_CTL_PAUSE:
-        {
-            int stream = *(int *) args;
-
-            AUDIO_DBG("AUDIO_CTL_PAUSE: stream = %d\n",stream);
-            if (audio->ops->start != RT_NULL)
-                result = audio->ops->suspend(audio, stream);
-        }
-        break;
-        case AUDIO_CTL_RESUME:
-        {
-            int stream = *(int *) args;
-
-            AUDIO_DBG("AUDIO_CTL_RESUME: stream = %d\n",stream);
-            if (audio->ops->start != RT_NULL)
-                result = audio->ops->resume(audio, stream);
-
-            //resume tx frame...
-            if (stream == AUDIO_STREAM_REPLAY)
-                _audio_send_replay_frame(audio);
-        }
-        break;
-        case AUDIO_CTL_ALLOCBUFFER:
-        {
-            struct rt_audio_buf_desc *desc = (struct rt_audio_buf_desc *) args;
-
-            if (desc)
-            {
-                desc->data_size = AUDIO_DEVICE_DECODE_MP_BLOCK_SZ * 2;
-                desc->data_ptr = rt_mp_alloc(&audio->mp, RT_WAITING_FOREVER);
-
-                result = RT_EOK;
-            }
-            else result = -RT_EIO;
-        }
-        break;
-        case AUDIO_CTL_FREEBUFFER:
-        {
-            rt_uint8_t *data_ptr = (rt_uint8_t *) args;
-            if (data_ptr)
-                rt_mp_free(data_ptr);
-        }
-        break;
-        default:
-            result = audio->ops->control(audio, cmd, args);
+        else result = -RT_EIO;
+    }
+    break;
+    case AUDIO_CTL_FREEBUFFER:
+    {
+        rt_uint8_t *data_ptr = (rt_uint8_t *) args;
+        if (data_ptr)
+            rt_mp_free(data_ptr);
+    }
+    break;
+    default:
+        result = audio->ops->control(audio, cmd, args);
         break;
     }
 
@@ -442,7 +443,7 @@ rt_err_t rt_audio_register(struct rt_audio_device *audio, const char *name, rt_u
     {
         rt_uint8_t *mempool = rt_malloc(AUDIO_DEVICE_DECODE_MP_SZ);
         rt_mp_init(&audio->mp, "adu_mp", mempool, AUDIO_DEVICE_DECODE_MP_SZ,
-        AUDIO_DEVICE_DECODE_MP_BLOCK_SZ * 2);
+                   AUDIO_DEVICE_DECODE_MP_BLOCK_SZ * 2);
     }
 
     /* register a character device */
@@ -454,43 +455,43 @@ int rt_audio_samplerate_to_speed(rt_uint32_t bitValue)
     int speed = 0;
     switch (bitValue)
     {
-        case AUDIO_SAMP_RATE_8K:
-            speed = 8000;
+    case AUDIO_SAMP_RATE_8K:
+        speed = 8000;
         break;
-        case AUDIO_SAMP_RATE_11K:
-            speed = 11052;
+    case AUDIO_SAMP_RATE_11K:
+        speed = 11052;
         break;
-        case AUDIO_SAMP_RATE_16K:
-            speed = 16000;
+    case AUDIO_SAMP_RATE_16K:
+        speed = 16000;
         break;
-        case AUDIO_SAMP_RATE_22K:
-            speed = 22050;
+    case AUDIO_SAMP_RATE_22K:
+        speed = 22050;
         break;
-        case AUDIO_SAMP_RATE_32K:
-            speed = 32000;
+    case AUDIO_SAMP_RATE_32K:
+        speed = 32000;
         break;
-        case AUDIO_SAMP_RATE_44K:
-            speed = 44100;
+    case AUDIO_SAMP_RATE_44K:
+        speed = 44100;
         break;
-        case AUDIO_SAMP_RATE_48K:
-            speed = 48000;
+    case AUDIO_SAMP_RATE_48K:
+        speed = 48000;
         break;
-        case AUDIO_SAMP_RATE_96K:
-            speed = 96000;
+    case AUDIO_SAMP_RATE_96K:
+        speed = 96000;
         break;
-        case AUDIO_SAMP_RATE_128K:
-            speed = 128000;
+    case AUDIO_SAMP_RATE_128K:
+        speed = 128000;
         break;
-        case AUDIO_SAMP_RATE_160K:
-            speed = 160000;
+    case AUDIO_SAMP_RATE_160K:
+        speed = 160000;
         break;
-        case AUDIO_SAMP_RATE_172K:
-            speed = 176400;
+    case AUDIO_SAMP_RATE_172K:
+        speed = 176400;
         break;
-        case AUDIO_SAMP_RATE_192K:
-            speed = 192000;
+    case AUDIO_SAMP_RATE_192K:
+        speed = 192000;
         break;
-        default:
+    default:
 
         break;
     }
@@ -502,29 +503,30 @@ rt_uint32_t rt_audio_format_to_bits(rt_uint32_t format)
 {
     switch (format)
     {
-        case AUDIO_FMT_PCM_U8:
-        case AUDIO_FMT_PCM_S8:
-            return 8;
-        case AUDIO_FMT_PCM_S16_LE:
-        case AUDIO_FMT_PCM_S16_BE:
-        case AUDIO_FMT_PCM_U16_LE:
-        case AUDIO_FMT_PCM_U16_BE:
-            return 16;
-        default:
-            return 32;
+    case AUDIO_FMT_PCM_U8:
+    case AUDIO_FMT_PCM_S8:
+        return 8;
+    case AUDIO_FMT_PCM_S16_LE:
+    case AUDIO_FMT_PCM_S16_BE:
+    case AUDIO_FMT_PCM_U16_LE:
+    case AUDIO_FMT_PCM_U16_BE:
+        return 16;
+    default:
+        return 32;
     };
 }
 
 void rt_audio_tx_complete(struct rt_audio_device *audio, rt_uint8_t *pbuf)
 {
     rt_err_t result;
-    AUDIO_DBG("audio tx complete ptr=%x...\n",(rt_uint32_t)pbuf);
+    AUDIO_DBG("audio tx complete ptr=%x...\n", (rt_uint32_t)pbuf);
 
     //try to send all frame
     do
     {
         result = _audio_send_replay_frame(audio);
-    } while (result == RT_EOK);
+    }
+    while (result == RT_EOK);
 
     /* notify transmitted complete. */
     if (audio->parent.tx_complete != RT_NULL)

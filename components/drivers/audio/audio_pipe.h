@@ -63,10 +63,10 @@ struct rt_audio_pipe
 #define PIPE_CTRL_GET_SPACE          0x14            /**< get the remaining size of a pipe device */
 
 rt_err_t rt_audio_pipe_init(struct rt_audio_pipe *pipe,
-                      const char *name,
-                      rt_int32_t flag,
-                      rt_uint8_t *buf,
-                      rt_size_t size);
+                            const char *name,
+                            rt_int32_t flag,
+                            rt_uint8_t *buf,
+                            rt_size_t size);
 rt_err_t rt_audio_pipe_detach(struct rt_audio_pipe *pipe);
 #ifdef RT_USING_HEAP
 rt_err_t rt_audio_pipe_create(const char *name, rt_int32_t flag, rt_size_t size);

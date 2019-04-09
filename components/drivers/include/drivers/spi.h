@@ -15,7 +15,7 @@
 #include <rtthread.h>
 
 #ifdef __cplusplus
-extern "C"{
+extern "C" {
 #endif
 
 #define RT_SPI_CPHA     (1<<0)                             /* bit[0]:CPHA, clock phase */
@@ -45,8 +45,8 @@ extern "C"{
 
 #define RT_SPI_MODE_MASK    (RT_SPI_CPHA | RT_SPI_CPOL | RT_SPI_MSB)
 
-#define RT_SPI_BUS_MODE_SPI         (1<<0)       
-#define RT_SPI_BUS_MODE_QSPI        (1<<1)       
+#define RT_SPI_BUS_MODE_SPI         (1<<0)
+#define RT_SPI_BUS_MODE_QSPI        (1<<1)
 
 #define RT_SPI_CS_HIGH  (1<<4)                             /* Chipselect active high */
 #define RT_SPI_NO_CS    (1<<5)                             /* No chipselect */
@@ -149,7 +149,7 @@ struct rt_qspi_configuration
 };
 
 struct rt_qspi_device
-{ 
+{
     struct rt_spi_device parent;
 
     struct rt_qspi_configuration config;
@@ -250,7 +250,7 @@ rt_size_t rt_spi_transfer(struct rt_spi_device *device,
  *         SPI message which be transmitted failed.
  */
 struct rt_spi_message *rt_spi_transfer_message(struct rt_spi_device  *device,
-                                               struct rt_spi_message *message);
+        struct rt_spi_message *message);
 
 rt_inline rt_size_t rt_spi_recv(struct rt_spi_device *device,
                                 void                 *recv_buf,
@@ -350,7 +350,7 @@ rt_size_t rt_qspi_transfer_message(struct rt_qspi_device  *device, struct rt_qsp
  *
  * @return the status of transmit.
  */
-rt_err_t rt_qspi_send_then_recv(struct rt_qspi_device *device, const void *send_buf, rt_size_t send_length,void *recv_buf, rt_size_t recv_length);
+rt_err_t rt_qspi_send_then_recv(struct rt_qspi_device *device, const void *send_buf, rt_size_t send_length, void *recv_buf, rt_size_t recv_length);
 
 /**
  * This function can send data to QSPI device

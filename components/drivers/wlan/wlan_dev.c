@@ -775,7 +775,7 @@ rt_err_t rt_wlan_dev_register(struct rt_wlan_device *wlan, const char *name, con
     }
 
     rt_memset(wlan, 0, sizeof(struct rt_wlan_device));
-    
+
 #ifdef RT_USING_DEVICE_OPS
     wlan->device.ops = &wlan_ops;
 #else

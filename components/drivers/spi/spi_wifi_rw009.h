@@ -1,6 +1,6 @@
 /*
  * COPYRIGHT (C) 2018, Real-Thread Information Technology Ltd
- * 
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
@@ -71,8 +71,8 @@ struct spi_data_packet
 
 typedef enum
 {
-    MODE_STATION=0,
-    MODE_SOFTAP=1,
+    MODE_STATION = 0,
+    MODE_SOFTAP = 1,
 } wifi_mode_t;
 
 typedef struct _rw009_ap_info
@@ -183,12 +183,12 @@ typedef enum
 {
     SECURITY_OPEN           = 0,                                                /**< Open security                           */
     SECURITY_WEP_PSK        = WEP_ENABLED,                                      /**< WEP Security with open authentication   */
-    SECURITY_WEP_SHARED     = ( WEP_ENABLED | SHARED_ENABLED ),                 /**< WEP Security with shared authentication */
-    SECURITY_WPA_TKIP_PSK   = ( WPA_SECURITY  | TKIP_ENABLED ),                 /**< WPA Security with TKIP                  */
-    SECURITY_WPA_AES_PSK    = ( WPA_SECURITY  | AES_ENABLED ),                  /**< WPA Security with AES                   */
-    SECURITY_WPA2_AES_PSK   = ( WPA2_SECURITY | AES_ENABLED ),                  /**< WPA2 Security with AES                  */
-    SECURITY_WPA2_TKIP_PSK  = ( WPA2_SECURITY | TKIP_ENABLED ),                 /**< WPA2 Security with TKIP                 */
-    SECURITY_WPA2_MIXED_PSK = ( WPA2_SECURITY | AES_ENABLED | TKIP_ENABLED ),   /**< WPA2 Security with AES & TKIP           */
+    SECURITY_WEP_SHARED     = (WEP_ENABLED | SHARED_ENABLED),                   /**< WEP Security with shared authentication */
+    SECURITY_WPA_TKIP_PSK   = (WPA_SECURITY  | TKIP_ENABLED),                   /**< WPA Security with TKIP                  */
+    SECURITY_WPA_AES_PSK    = (WPA_SECURITY  | AES_ENABLED),                    /**< WPA Security with AES                   */
+    SECURITY_WPA2_AES_PSK   = (WPA2_SECURITY | AES_ENABLED),                    /**< WPA2 Security with AES                  */
+    SECURITY_WPA2_TKIP_PSK  = (WPA2_SECURITY | TKIP_ENABLED),                   /**< WPA2 Security with TKIP                 */
+    SECURITY_WPA2_MIXED_PSK = (WPA2_SECURITY | AES_ENABLED | TKIP_ENABLED),     /**< WPA2 Security with AES & TKIP           */
 
     SECURITY_WPS_OPEN       = WPS_ENABLED,                                      /**< WPS with open security                  */
     SECURITY_WPS_SECURE     = (WPS_ENABLED | AES_ENABLED),                      /**< WPS with AES security                   */
@@ -204,9 +204,9 @@ extern void spi_wifi_int_cmd(rt_bool_t cmd);
 extern rt_bool_t spi_wifi_is_busy(void);
 
 /* export API. */
-extern rt_err_t rt_hw_wifi_init(const char *spi_device_name,wifi_mode_t mode);
+extern rt_err_t rt_hw_wifi_init(const char *spi_device_name, wifi_mode_t mode);
 extern int32_t rw009_rssi(void);
-extern rt_err_t rw009_join(const char * SSID, const char * passwd);
-extern rt_err_t rw009_softap(const char * SSID, const char * passwd,uint32_t security,uint32_t channel);
+extern rt_err_t rw009_join(const char *SSID, const char *passwd);
+extern rt_err_t rw009_softap(const char *SSID, const char *passwd, uint32_t security, uint32_t channel);
 
 #endif // SPI_WIFI_H_INCLUDED

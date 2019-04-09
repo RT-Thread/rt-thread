@@ -251,7 +251,7 @@ typedef enum
     USB_STATE_ADDRESS,
     USB_STATE_CONFIGURED,
     USB_STATE_SUSPENDED
-}udevice_state_t;
+} udevice_state_t;
 
 typedef enum
 {
@@ -270,7 +270,7 @@ struct usb_descriptor
     rt_uint8_t bLength;
     rt_uint8_t type;
 };
-typedef struct usb_descriptor* udesc_t;
+typedef struct usb_descriptor *udesc_t;
 
 struct udevice_descriptor
 {
@@ -289,7 +289,7 @@ struct udevice_descriptor
     rt_uint8_t iSerialNumber;
     rt_uint8_t bNumConfigurations;
 };
-typedef struct udevice_descriptor* udev_desc_t;
+typedef struct udevice_descriptor *udev_desc_t;
 
 struct uconfig_descriptor
 {
@@ -303,7 +303,7 @@ struct uconfig_descriptor
     rt_uint8_t MaxPower;
     rt_uint8_t data[256];
 };
-typedef struct uconfig_descriptor* ucfg_desc_t;
+typedef struct uconfig_descriptor *ucfg_desc_t;
 
 struct uinterface_descriptor
 {
@@ -317,7 +317,7 @@ struct uinterface_descriptor
     rt_uint8_t bInterfaceProtocol;
     rt_uint8_t iInterface;
 };
-typedef struct uinterface_descriptor* uintf_desc_t;
+typedef struct uinterface_descriptor *uintf_desc_t;
 
 /* Interface Association Descriptor (IAD) */
 struct uiad_descriptor
@@ -331,7 +331,7 @@ struct uiad_descriptor
     rt_uint8_t bFunctionProtocol;
     rt_uint8_t iFunction;
 };
-typedef struct uiad_descriptor* uiad_desc_t;
+typedef struct uiad_descriptor *uiad_desc_t;
 
 struct uendpoint_descriptor
 {
@@ -342,7 +342,7 @@ struct uendpoint_descriptor
     rt_uint16_t wMaxPacketSize;
     rt_uint8_t  bInterval;
 };
-typedef struct uendpoint_descriptor* uep_desc_t;
+typedef struct uendpoint_descriptor *uep_desc_t;
 
 struct ustring_descriptor
 {
@@ -350,7 +350,7 @@ struct ustring_descriptor
     rt_uint8_t type;
     rt_uint8_t String[64];
 };
-typedef struct ustring_descriptor* ustr_desc_t;
+typedef struct ustring_descriptor *ustr_desc_t;
 
 struct uhub_descriptor
 {
@@ -363,7 +363,7 @@ struct uhub_descriptor
     rt_uint8_t removable[8];
     rt_uint8_t pwr_ctl[8];
 };
-typedef struct uhub_descriptor* uhub_desc_t;
+typedef struct uhub_descriptor *uhub_desc_t;
 
 /* USB_DESC_TYPE_DEVICEQUALIFIER: Device Qualifier descriptor */
 struct usb_qualifier_descriptor
@@ -378,7 +378,7 @@ struct usb_qualifier_descriptor
     rt_uint8_t  bMaxPacketSize0;
     rt_uint8_t  bNumConfigurations;
     rt_uint8_t  bRESERVED;
-} __attribute__ ((packed));
+} __attribute__((packed));
 
 struct usb_os_header_comp_id_descriptor
 {
@@ -388,7 +388,7 @@ struct usb_os_header_comp_id_descriptor
     rt_uint8_t  bCount;
     rt_uint8_t  reserved[7];
 };
-typedef struct usb_os_header_comp_id_descriptor * usb_os_header_desc_t;
+typedef struct usb_os_header_comp_id_descriptor *usb_os_header_desc_t;
 
 struct usb_os_function_comp_id_descriptor
 {
@@ -399,14 +399,14 @@ struct usb_os_function_comp_id_descriptor
     rt_uint8_t subCompatibleID[8];
     rt_uint8_t reserved2[6];
 };
-typedef struct usb_os_function_comp_id_descriptor * usb_os_func_comp_id_desc_t;
+typedef struct usb_os_function_comp_id_descriptor *usb_os_func_comp_id_desc_t;
 
 struct usb_os_comp_id_descriptor
 {
     struct usb_os_header_comp_id_descriptor head_desc;
     rt_list_t func_desc;
 };
-typedef struct usb_os_comp_id_descriptor * usb_os_comp_id_desc_t;
+typedef struct usb_os_comp_id_descriptor *usb_os_comp_id_desc_t;
 
 struct usb_os_property_header
 {
@@ -415,26 +415,26 @@ struct usb_os_property_header
     rt_uint16_t wIndex;
     rt_uint16_t wCount;
 };
-typedef struct usb_os_property_header * usb_os_property_header_t;
+typedef struct usb_os_property_header *usb_os_property_header_t;
 struct usb_os_proerty
 {
     rt_uint32_t dwSize;
     rt_uint32_t dwPropertyDataType;
     rt_uint16_t wPropertyNameLength;
-    const char * bPropertyName;
+    const char *bPropertyName;
     rt_uint32_t dwPropertyDataLength;
-    const char * bPropertyData;
+    const char *bPropertyData;
 };
-typedef struct usb_os_proerty * usb_os_proerty_t;
+typedef struct usb_os_proerty *usb_os_proerty_t;
 
-// Value	Description
-//  1	    A NULL-terminated Unicode String (REG_SZ)
-//  2	    A NULL-terminated Unicode String that includes environment variables (REG_EXPAND_SZ)
-//  3	    Free-form binary (REG_BINARY)
-//  4	    A little-endian 32-bit integer (REG_DWORD_LITTLE_ENDIAN)
-//  5	    A big-endian 32-bit integer (REG_DWORD_BIG_ENDIAN)
-//  6	    A NULL-terminated Unicode string that contains a symbolic link (REG_LINK)
-//  7	    Multiple NULL-terminated Unicode strings (REG_MULTI_SZ)
+// Value    Description
+//  1       A NULL-terminated Unicode String (REG_SZ)
+//  2       A NULL-terminated Unicode String that includes environment variables (REG_EXPAND_SZ)
+//  3       Free-form binary (REG_BINARY)
+//  4       A little-endian 32-bit integer (REG_DWORD_LITTLE_ENDIAN)
+//  5       A big-endian 32-bit integer (REG_DWORD_BIG_ENDIAN)
+//  6       A NULL-terminated Unicode string that contains a symbolic link (REG_LINK)
+//  7       Multiple NULL-terminated Unicode strings (REG_MULTI_SZ)
 #define USB_OS_PROERTY_TYPE_REG_SZ                      0x01UL
 #define USB_OS_PROERTY_TYPE_REG_EXPAND_SZ               0x02UL
 #define USB_OS_PROERTY_TYPE_REG_BINARY                  0x03UL
@@ -470,9 +470,9 @@ struct uhid_descriptor
     {
         rt_uint8_t type;
         rt_uint16_t wLength;
-    }Descriptor[HID_SUB_DESCRIPTOR_MAX];
+    } Descriptor[HID_SUB_DESCRIPTOR_MAX];
 };
-typedef struct uhid_descriptor* uhid_desc_t;
+typedef struct uhid_descriptor *uhid_desc_t;
 
 struct hid_report
 {
@@ -480,7 +480,7 @@ struct hid_report
     rt_uint8_t report[63];
     rt_uint8_t size;
 };
-typedef struct hid_report* hid_report_t;
+typedef struct hid_report *hid_report_t;
 extern void HID_Report_Received(hid_report_t report);
 
 struct urequest
@@ -491,7 +491,7 @@ struct urequest
     rt_uint16_t wIndex;
     rt_uint16_t wLength;
 };
-typedef struct urequest* ureq_t;
+typedef struct urequest *ureq_t;
 
 #ifndef MIN
 #define MIN(a, b) (a < b ? a : b)
@@ -544,7 +544,7 @@ struct ustorage_cbw
     rt_uint8_t cb_len;
     rt_uint8_t cb[16];
 };
-typedef struct ustorage_cbw* ustorage_cbw_t;
+typedef struct ustorage_cbw *ustorage_cbw_t;
 
 struct ustorage_csw
 {
@@ -553,7 +553,7 @@ struct ustorage_csw
     rt_int32_t data_reside;
     rt_uint8_t  status;
 };
-typedef struct ustorage_csw* ustorage_csw_t;
+typedef struct ustorage_csw *ustorage_csw_t;
 
 #pragma pack()
 

@@ -14,7 +14,7 @@
 
 #include "mtd.h"
 
- /* Status bits */
+/* Status bits */
 #define NAND_STATUS_FAIL        0x01
 #define NAND_STATUS_FAIL_N1     0x02
 #define NAND_STATUS_WP          0x80
@@ -54,8 +54,8 @@ struct nand_ecc
 {
     uint8_t mode;    /* nand_eccmode_t */
     uint8_t bytes;   /* gen ecc bytes per ecc step(usually 3) */
-    uint16_t stepsize:12; /* min 256 */
-    uint16_t _step:4;     /*  */
+    uint16_t stepsize: 12; /* min 256 */
+    uint16_t _step: 4;    /*  */
 
     /* driver must set the two interface if HWECC */
     void (*calculate)(struct nand_chip *chip, const uint8_t *dat, uint8_t *ecc_code);
@@ -84,7 +84,7 @@ typedef struct nand_chip
     uint16_t page_size;
     int(*read_page)(struct nand_chip *chip, uint8_t *buf, int oob_required, int page);
     int(*write_page)(struct nand_chip *chip, const uint8_t *buf, int oob_required, int page);
-}rt_nand_t;
+} rt_nand_t;
 
 struct nand_ops
 {

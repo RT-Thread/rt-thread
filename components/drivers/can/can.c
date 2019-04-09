@@ -520,13 +520,13 @@ static rt_err_t rt_can_control(struct rt_device *dev,
                 for (i = 0;  i < can->config.sndboxnumber; i++)
                 {
                     level = rt_hw_interrupt_disable();
-                    if(rt_list_isempty(&tx_fifo->buffer[i].list))
+                    if (rt_list_isempty(&tx_fifo->buffer[i].list))
                     {
-                      rt_sem_release(&(tx_fifo->sem));
+                        rt_sem_release(&(tx_fifo->sem));
                     }
                     else
                     {
-                      rt_list_remove(&tx_fifo->buffer[i].list);
+                        rt_list_remove(&tx_fifo->buffer[i].list);
                     }
                     rt_hw_interrupt_enable(level);
                 }
@@ -587,7 +587,7 @@ static rt_err_t rt_can_control(struct rt_device *dev,
                         rt_hw_interrupt_enable(level);
                         rt_memcpy(&can->hdr[pitem->hdr].filter, pitem,
                                   sizeof(struct rt_can_filter_item));
-			level = rt_hw_interrupt_disable();
+                        level = rt_hw_interrupt_disable();
                         can->hdr[pitem->hdr].connected = 1;
                         can->hdr[pitem->hdr].msgs = 0;
                         rt_list_init(&can->hdr[pitem->hdr].list);
@@ -622,10 +622,10 @@ static rt_err_t rt_can_control(struct rt_device *dev,
                         rt_memset(&can->hdr[pitem->hdr].filter, 0,
                                   sizeof(struct rt_can_filter_item));
                     }
-		    else
-		    {
+                    else
+                    {
                         rt_hw_interrupt_enable(level);
-		    }
+                    }
                     count--;
                     pitem++;
                 }
@@ -664,7 +664,7 @@ static void cantimeout(void *arg)
         can->status_indicate.ind(can, can->status_indicate.args);
     }
 #ifdef RT_CAN_USING_BUS_HOOK
-    if(can->bus_hook)
+    if (can->bus_hook)
     {
         can->bus_hook(can);
     }

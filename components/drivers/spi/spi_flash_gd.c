@@ -49,12 +49,12 @@
 
 static struct spi_flash_device  spi_flash_device;
 
-static void flash_lock(struct spi_flash_device * flash_device)
+static void flash_lock(struct spi_flash_device *flash_device)
 {
     rt_mutex_take(&flash_device->lock, RT_WAITING_FOREVER);
 }
 
-static void flash_unlock(struct spi_flash_device * flash_device)
+static void flash_unlock(struct spi_flash_device *flash_device)
 {
     rt_mutex_release(&flash_device->lock);
 }
@@ -66,7 +66,7 @@ static uint8_t w25qxx_read_status(void)
 
 static void w25qxx_wait_busy(void)
 {
-    while( w25qxx_read_status() & (0x01));
+    while (w25qxx_read_status() & (0x01));
 }
 
 /** \brief read [size] byte from [offset] to [buffer]
@@ -77,7 +77,7 @@ static void w25qxx_wait_busy(void)
  * \return uint32_t byte for read
  *
  */
-static uint32_t w25qxx_read(uint32_t offset, uint8_t * buffer, uint32_t size)
+static uint32_t w25qxx_read(uint32_t offset, uint8_t *buffer, uint32_t size)
 {
     uint8_t send_buffer[4];
 
@@ -85,8 +85,8 @@ static uint32_t w25qxx_read(uint32_t offset, uint8_t * buffer, uint32_t size)
     rt_spi_send(spi_flash_device.rt_spi_device, send_buffer, 1);
 
     send_buffer[0] = CMD_READ;
-    send_buffer[1] = (uint8_t)(offset>>16);
-    send_buffer[2] = (uint8_t)(offset>>8);
+    send_buffer[1] = (uint8_t)(offset >> 16);
+    send_buffer[2] = (uint8_t)(offset >> 8);
     send_buffer[3] = (uint8_t)(offset);
 
     rt_spi_send_then_recv(spi_flash_device.rt_spi_device,
@@ -103,12 +103,12 @@ static uint32_t w25qxx_read(uint32_t offset, uint8_t * buffer, uint32_t size)
  * \return uint32_t
  *
  */
-static uint32_t w25qxx_page_write(uint32_t page_addr, const uint8_t* buffer)
+static uint32_t w25qxx_page_write(uint32_t page_addr, const uint8_t *buffer)
 {
     uint32_t index;
     uint8_t send_buffer[4];
 
-    RT_ASSERT((page_addr&0xFF) == 0); /* page addr must align to 256byte. */
+    RT_ASSERT((page_addr & 0xFF) == 0); /* page addr must align to 256byte. */
 
     send_buffer[0] = CMD_WREN;
     rt_spi_send(spi_flash_device.rt_spi_device, send_buffer, 1);
@@ -121,7 +121,7 @@ static uint32_t w25qxx_page_write(uint32_t page_addr, const uint8_t* buffer)
 
     w25qxx_wait_busy(); // wait erase done.
 
-    for(index=0; index < (PAGE_SIZE / 256); index++)
+    for (index = 0; index < (PAGE_SIZE / 256); index++)
     {
         send_buffer[0] = CMD_WREN;
         rt_spi_send(spi_flash_device.rt_spi_device, send_buffer, 1);
@@ -201,14 +201,14 @@ static rt_err_t w25qxx_flash_control(rt_device_t dev, int cmd, void *args)
 
 static rt_size_t w25qxx_flash_read(rt_device_t dev,
                                    rt_off_t pos,
-                                   void* buffer,
+                                   void *buffer,
                                    rt_size_t size)
 {
     flash_lock((struct spi_flash_device *)dev);
 
-    w25qxx_read(pos*spi_flash_device.geometry.bytes_per_sector,
+    w25qxx_read(pos * spi_flash_device.geometry.bytes_per_sector,
                 buffer,
-                size*spi_flash_device.geometry.bytes_per_sector);
+                size * spi_flash_device.geometry.bytes_per_sector);
 
     flash_unlock((struct spi_flash_device *)dev);
 
@@ -217,16 +217,16 @@ static rt_size_t w25qxx_flash_read(rt_device_t dev,
 
 static rt_size_t w25qxx_flash_write(rt_device_t dev,
                                     rt_off_t pos,
-                                    const void* buffer,
+                                    const void *buffer,
                                     rt_size_t size)
 {
     rt_size_t i = 0;
     rt_size_t block = size;
-    const uint8_t * ptr = buffer;
+    const uint8_t *ptr = buffer;
 
     flash_lock((struct spi_flash_device *)dev);
 
-    while(block--)
+    while (block--)
     {
         w25qxx_page_write((pos + i)*spi_flash_device.geometry.bytes_per_sector,
                           ptr);
@@ -251,9 +251,9 @@ const static struct rt_device_ops gd_device_ops =
 };
 #endif
 
-rt_err_t gd_init(const char * flash_device_name, const char * spi_device_name)
+rt_err_t gd_init(const char *flash_device_name, const char *spi_device_name)
 {
-    struct rt_spi_device * rt_spi_device;
+    struct rt_spi_device *rt_spi_device;
 
     /* initialize mutex */
     if (rt_mutex_init(&spi_flash_device.lock, spi_device_name, RT_IPC_FLAG_FIFO) != RT_EOK)
@@ -263,7 +263,7 @@ rt_err_t gd_init(const char * flash_device_name, const char * spi_device_name)
     }
 
     rt_spi_device = (struct rt_spi_device *)rt_device_find(spi_device_name);
-    if(rt_spi_device == RT_NULL)
+    if (rt_spi_device == RT_NULL)
     {
         FLASH_TRACE("spi device %s not found!\r\n", spi_device_name);
         return -RT_ENOSYS;
@@ -299,7 +299,7 @@ rt_err_t gd_init(const char * flash_device_name, const char * spi_device_name)
 
         flash_unlock(&spi_flash_device);
 
-        if(id_recv[0] != MF_ID)
+        if (id_recv[0] != MF_ID)
         {
             FLASH_TRACE("Manufacturers ID error!\r\n");
             FLASH_TRACE("JEDEC Read-ID Data : %02X %02X %02X\r\n", id_recv[0], id_recv[1], id_recv[2]);
@@ -313,7 +313,7 @@ rt_err_t gd_init(const char * flash_device_name, const char * spi_device_name)
         memory_type_capacity = id_recv[1];
         memory_type_capacity = (memory_type_capacity << 8) | id_recv[2];
 
-        if(memory_type_capacity == MTC_GD25Q128)
+        if (memory_type_capacity == MTC_GD25Q128)
         {
             FLASH_TRACE("GD128 detection\r\n");
             spi_flash_device.geometry.sector_count = 4096;

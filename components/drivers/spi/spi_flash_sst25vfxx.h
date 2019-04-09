@@ -18,11 +18,11 @@ struct spi_flash_sst25vfxx
 {
     struct rt_device                flash_device;
     struct rt_device_blk_geometry   geometry;
-    struct rt_spi_device *          rt_spi_device;
+    struct rt_spi_device           *rt_spi_device;
     struct rt_mutex                 lock;
 };
 
-extern rt_err_t sst25vfxx_init(const char * flash_device_name, const char * spi_device_name);
+extern rt_err_t sst25vfxx_init(const char *flash_device_name, const char *spi_device_name);
 
 
 #endif // SPI_FLASH_SST25VFXX_H_INCLUDED

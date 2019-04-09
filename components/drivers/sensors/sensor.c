@@ -43,7 +43,7 @@ void rt_sensor_cb(rt_sensor_t sen)
     {
         return;
     }
-    
+
     if (sen->irq_handle != RT_NULL)
     {
         sen->irq_handle(sen);
@@ -319,7 +319,7 @@ static rt_err_t rt_sensor_control(rt_device_t dev, int cmd, void *args)
         }
         break;
     case RT_SENSOR_CTRL_SET_ODR:
-        
+
         /* Configuration data output rate */
         result = sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_ODR, args);
         if (result == RT_EOK)
@@ -329,7 +329,7 @@ static rt_err_t rt_sensor_control(rt_device_t dev, int cmd, void *args)
         }
         break;
     case RT_SENSOR_CTRL_SET_MODE:
-        
+
         /* Configuration sensor work mode */
         result = sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_MODE, args);
         if (result == RT_EOK)
@@ -348,7 +348,7 @@ static rt_err_t rt_sensor_control(rt_device_t dev, int cmd, void *args)
         }
         break;
     case RT_SENSOR_CTRL_SET_POWER:
-        
+
         /* Configuration sensor power mode */
         result = sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_POWER, args);
         if (result == RT_EOK)
@@ -358,7 +358,7 @@ static rt_err_t rt_sensor_control(rt_device_t dev, int cmd, void *args)
         }
         break;
     case RT_SENSOR_CTRL_SELF_TEST:
-        
+
         /* Device self-test */
         result = sensor->ops->control(sensor, RT_SENSOR_CTRL_SELF_TEST, args);
         break;

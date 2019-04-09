@@ -19,9 +19,9 @@
 //#define MSD_TRACE
 
 #ifdef MSD_TRACE
-    #define MSD_DEBUG(...)         rt_kprintf("[MSD] %d ", rt_tick_get()); rt_kprintf(__VA_ARGS__);
+#define MSD_DEBUG(...)         rt_kprintf("[MSD] %d ", rt_tick_get()); rt_kprintf(__VA_ARGS__);
 #else
-    #define MSD_DEBUG(...)
+#define MSD_DEBUG(...)
 #endif /* #ifdef MSD_TRACE */
 
 #define DUMMY                 0xFF
@@ -429,7 +429,7 @@ static rt_err_t _write_block(struct rt_spi_device *device, const void *buffer, u
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops msd_ops = 
+const static struct rt_device_ops msd_ops =
 {
     rt_msd_init,
     rt_msd_open,
@@ -439,7 +439,7 @@ const static struct rt_device_ops msd_ops =
     rt_msd_control
 };
 
-const static struct rt_device_ops msd_sdhc_ops = 
+const static struct rt_device_ops msd_sdhc_ops =
 {
     rt_msd_init,
     rt_msd_open,

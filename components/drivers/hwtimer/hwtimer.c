@@ -22,30 +22,30 @@ rt_inline rt_uint32_t timeout_calc(rt_hwtimer_t *timer, rt_hwtimerval_t *tv)
     float devi;
 
     /* changed to second */
-    overflow = timer->info->maxcnt/(float)timer->freq;
-    tv_sec = tv->sec + tv->usec/(float)1000000;
+    overflow = timer->info->maxcnt / (float)timer->freq;
+    tv_sec = tv->sec + tv->usec / (float)1000000;
 
-    if (tv_sec < (1/(float)timer->freq))
+    if (tv_sec < (1 / (float)timer->freq))
     {
         /* little timeout */
         i = 0;
-        timeout = 1/(float)timer->freq;
+        timeout = 1 / (float)timer->freq;
     }
     else
     {
         for (i = 1; i > 0; i ++)
         {
-            timeout = tv_sec/i;
+            timeout = tv_sec / i;
 
             if (timeout <= overflow)
             {
-                counter = timeout*timer->freq;
-                devi = tv_sec - (counter/(float)timer->freq)*i;
+                counter = timeout * timer->freq;
+                devi = tv_sec - (counter / (float)timer->freq) * i;
                 /* Minimum calculation error */
                 if (devi > devi_min)
                 {
                     i = index;
-                    timeout = tv_sec/i;
+                    timeout = tv_sec / i;
                     break;
                 }
                 else if (devi == 0)
@@ -64,7 +64,7 @@ rt_inline rt_uint32_t timeout_calc(rt_hwtimer_t *timer, rt_hwtimerval_t *tv)
     timer->cycles = i;
     timer->reload = i;
     timer->period_sec = timeout;
-    counter = timeout*timer->freq;
+    counter = timeout * timer->freq;
 
     return counter;
 }
@@ -123,7 +123,7 @@ static rt_err_t rt_hwtimer_close(struct rt_device *dev)
     rt_err_t result = RT_EOK;
     rt_hwtimer_t *timer;
 
-    timer = (rt_hwtimer_t*)dev;
+    timer = (rt_hwtimer_t *)dev;
     if (timer->ops->init != RT_NULL)
     {
         timer->ops->init(timer, 0);
@@ -156,10 +156,10 @@ static rt_size_t rt_hwtimer_read(struct rt_device *dev, rt_off_t pos, void *buff
         cnt = (timer->freq * timer->period_sec) - cnt;
     }
 
-    t = timer->overflow * timer->period_sec + cnt/(float)timer->freq;
+    t = timer->overflow * timer->period_sec + cnt / (float)timer->freq;
     tv.sec = t;
     tv.usec = (t - tv.sec) * 1000000;
-    size = size > sizeof(tv)? sizeof(tv) : size;
+    size = size > sizeof(tv) ? sizeof(tv) : size;
     rt_memcpy(buffer, &tv, size);
 
     return size;
@@ -181,7 +181,7 @@ static rt_size_t rt_hwtimer_write(struct rt_device *dev, rt_off_t pos, const voi
     timer->ops->stop(timer);
     timer->overflow = 0;
 
-    t = timeout_calc(timer, (rt_hwtimerval_t*)buffer);
+    t = timeout_calc(timer, (rt_hwtimerval_t *)buffer);
     if ((timer->cycles <= 1) && (timer->mode == HWTIMER_MODE_ONESHOT))
     {
         opm = HWTIMER_MODE_ONESHOT;
@@ -224,7 +224,7 @@ static rt_err_t rt_hwtimer_control(struct rt_device *dev, int cmd, void *args)
             break;
         }
 
-        f = (rt_uint32_t*)args;
+        f = (rt_uint32_t *)args;
         if ((*f > timer->info->maxfreq) || (*f < timer->info->minfreq))
         {
             result = -RT_ERROR;
@@ -253,7 +253,7 @@ static rt_err_t rt_hwtimer_control(struct rt_device *dev, int cmd, void *args)
             break;
         }
 
-        *((struct rt_hwtimer_info*)args) = *timer->info;
+        *((struct rt_hwtimer_info *)args) = *timer->info;
     }
     case HWTIMER_CTRL_MODE_SET:
     {
@@ -265,7 +265,7 @@ static rt_err_t rt_hwtimer_control(struct rt_device *dev, int cmd, void *args)
             break;
         }
 
-        m = (rt_hwtimer_mode_t*)args;
+        m = (rt_hwtimer_mode_t *)args;
 
         if ((*m != HWTIMER_MODE_ONESHOT) && (*m != HWTIMER_MODE_PERIOD))
         {
@@ -317,7 +317,7 @@ void rt_device_hwtimer_isr(rt_hwtimer_t *timer)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops hwtimer_ops = 
+const static struct rt_device_ops hwtimer_ops =
 {
     rt_hwtimer_init,
     rt_hwtimer_open,

@@ -13,9 +13,9 @@
 /* #define ETH_TX_DUMP */
 
 #ifdef NET_TRACE
-    #define NET_DEBUG         rt_kprintf
+#define NET_DEBUG         rt_kprintf
 #else
-    #define NET_DEBUG(...)
+#define NET_DEBUG(...)
 #endif /* #ifdef NET_TRACE */
 
 struct enc28j60_tx_list_typedef
@@ -747,7 +747,7 @@ static struct pbuf *enc28j60_rx(rt_device_t dev)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops enc28j60_ops = 
+const static struct rt_device_ops enc28j60_ops =
 {
     enc28j60_init,
     enc28j60_open,

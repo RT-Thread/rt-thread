@@ -21,7 +21,7 @@ typedef struct
     rt_mtd_t parent;
 
     const struct nor_ops *ops; /* operations interface */
-}rt_nor_t;
+} rt_nor_t;
 
 struct nor_ops
 {

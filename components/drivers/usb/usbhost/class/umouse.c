@@ -27,108 +27,108 @@ static struct uprotocal mouse_protocal;
 #define MKEY_PRESS 0x04
 #define MOUSE_SCALING 0x02
 
-static rt_bool_t lkey_down=RT_FALSE;
-//static rt_bool_t rkey_down=RT_FALSE;
-//static rt_bool_t mkey_down=RT_FALSE;
+static rt_bool_t lkey_down = RT_FALSE;
+//static rt_bool_t rkey_down = RT_FALSE;
+//static rt_bool_t mkey_down = RT_FALSE;
 static struct rtgui_event_mouse emouse;
 #endif
 
-static rt_err_t rt_usbh_hid_mouse_callback(void* arg)
+static rt_err_t rt_usbh_hid_mouse_callback(void *arg)
 {
-    struct uhid* hid;
+    struct uhid *hid;
 #ifdef RT_USING_RTGUI
-    rt_uint16_t xoffset=0;
-    rt_uint16_t yoffset=0;
+    rt_uint16_t xoffset = 0;
+    rt_uint16_t yoffset = 0;
 #endif
-    hid = (struct uhid*)arg;
+    hid = (struct uhid *)arg;
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("hid 0x%x 0x%x\n",
-                                *(rt_uint32_t*)hid->buffer,
-                                *(rt_uint32_t*)(&hid->buffer[4])));
+                                *(rt_uint32_t *)hid->buffer,
+                                *(rt_uint32_t *)(&hid->buffer[4])));
 #ifdef RT_USING_RTGUI
-    if(hid->buffer[1]!=0)
+    if (hid->buffer[1] != 0)
     {
-        if(hid->buffer[1]>127)
+        if (hid->buffer[1] > 127)
         {
-            xoffset=(256-hid->buffer[1])*MOUSE_SCALING;
-            if(emouse.x>xoffset)
+            xoffset = (256 - hid->buffer[1]) * MOUSE_SCALING;
+            if (emouse.x > xoffset)
             {
-                emouse.x-=xoffset;
+                emouse.x -= xoffset;
             }
             else
             {
-                emouse.x=0;
+                emouse.x = 0;
             }
         }
         else
         {
-            xoffset=(hid->buffer[1])*MOUSE_SCALING;
-            if((emouse.x+xoffset)<480)
+            xoffset = (hid->buffer[1]) * MOUSE_SCALING;
+            if ((emouse.x + xoffset) < 480)
             {
-                emouse.x+=xoffset;
+                emouse.x += xoffset;
             }
             else
             {
-                emouse.x=480;
+                emouse.x = 480;
             }
         }
     }
-    if(hid->buffer[2]!=0)
+    if (hid->buffer[2] != 0)
     {
 
-        if(hid->buffer[2]>127)
+        if (hid->buffer[2] > 127)
         {
-            yoffset=(256-hid->buffer[2])*MOUSE_SCALING;
-            if(emouse.y>yoffset)
+            yoffset = (256 - hid->buffer[2]) * MOUSE_SCALING;
+            if (emouse.y > yoffset)
             {
-                emouse.y-=yoffset;
+                emouse.y -= yoffset;
             }
             else
             {
-                emouse.y=0;
+                emouse.y = 0;
             }
         }
         else
         {
-            yoffset=hid->buffer[2]*MOUSE_SCALING;
-            if(emouse.y+yoffset<272)
+            yoffset = hid->buffer[2] * MOUSE_SCALING;
+            if (emouse.y + yoffset < 272)
             {
-                emouse.y+=yoffset;
+                emouse.y += yoffset;
             }
             else
             {
-                emouse.y=272;
+                emouse.y = 272;
             }
         }
     }
-    if(xoffset!=0||yoffset!=0)
+    if (xoffset != 0 || yoffset != 0)
     {
-        cursor_set_position(emouse.x,emouse.y);
+        cursor_set_position(emouse.x, emouse.y);
     }
-    if(hid->buffer[0]&LKEY_PRESS)
+    if (hid->buffer[0]&LKEY_PRESS)
     {
-        if(lkey_down==RT_FALSE)
+        if (lkey_down == RT_FALSE)
         {
             // rt_kprintf("mouse left key press down\n");
             emouse.button = (RTGUI_MOUSE_BUTTON_LEFT | RTGUI_MOUSE_BUTTON_DOWN);
             rtgui_server_post_event(&emouse.parent, sizeof(struct rtgui_event_mouse));
-            lkey_down=RT_TRUE;
+            lkey_down = RT_TRUE;
         }
     }
-    else if(lkey_down==RT_TRUE)
+    else if (lkey_down == RT_TRUE)
     {
         // rt_kprintf("mouse left key press up\n");
         emouse.button = (RTGUI_MOUSE_BUTTON_LEFT | RTGUI_MOUSE_BUTTON_UP);
         rtgui_server_post_event(&emouse.parent, sizeof(struct rtgui_event_mouse));
-        lkey_down=RT_FALSE;
+        lkey_down = RT_FALSE;
     }
 #endif
     return RT_EOK;
 }
 
-static rt_err_t rt_usbh_hid_mouse_init(void* arg)
+static rt_err_t rt_usbh_hid_mouse_init(void *arg)
 {
-    struct uintf* intf = (struct uintf*)arg;
+    struct uintf *intf = (struct uintf *)arg;
 
     RT_ASSERT(intf != RT_NULL);
 

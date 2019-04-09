@@ -115,13 +115,13 @@ enum
 /* the preferred number and size of audio pipeline buffer for the audio device */
 struct rt_audio_buf_info
 {
-  rt_uint32_t buffer_size;          /* Preferred qty of buffers */
-  rt_uint32_t buffer_count;           /* Preferred size of the buffers */
+    rt_uint32_t buffer_size;            /* Preferred qty of buffers */
+    rt_uint32_t buffer_count;           /* Preferred size of the buffers */
 };
 struct rt_audio_buf_desc
 {
-  rt_uint8_t *data_ptr;
-  rt_size_t data_size;
+    rt_uint8_t *data_ptr;
+    rt_size_t data_size;
 };
 
 struct rt_audio_frame
@@ -135,21 +135,21 @@ struct rt_audio_caps;
 struct rt_audio_configure;
 struct rt_audio_ops
 {
-    rt_err_t  (*getcaps)        (struct rt_audio_device *audio,struct rt_audio_caps *caps);
-    rt_err_t  (*configure)      (struct rt_audio_device *audio,struct rt_audio_caps *caps);
+    rt_err_t  (*getcaps)       (struct rt_audio_device *audio,struct rt_audio_caps *caps);
+    rt_err_t  (*configure)     (struct rt_audio_device *audio,struct rt_audio_caps *caps);
 
-    rt_err_t    (*init)         (struct rt_audio_device *audio);
-    rt_err_t    (*shutdown)     (struct rt_audio_device *audio);
-    rt_err_t    (*start)        (struct rt_audio_device *audio,int stream);
-    rt_err_t    (*stop)         (struct rt_audio_device *audio,int stream);
-    rt_err_t    (*suspend)      (struct rt_audio_device *audio,int stream);
-    rt_err_t    (*resume)       (struct rt_audio_device *audio,int stream);
+    rt_err_t   (*init)         (struct rt_audio_device *audio);
+    rt_err_t   (*shutdown)     (struct rt_audio_device *audio);
+    rt_err_t   (*start)        (struct rt_audio_device *audio,int stream);
+    rt_err_t   (*stop)         (struct rt_audio_device *audio,int stream);
+    rt_err_t   (*suspend)      (struct rt_audio_device *audio,int stream);
+    rt_err_t   (*resume)       (struct rt_audio_device *audio,int stream);
 
-    rt_err_t    (*control)      (struct rt_audio_device *audio, int cmd, void *arg);
-    rt_size_t   (*transmit)     (struct rt_audio_device *audio, const void *writeBuf,void *readBuf, rt_size_t size);
+    rt_err_t   (*control)      (struct rt_audio_device *audio, int cmd, void *arg);
+    rt_size_t  (*transmit)     (struct rt_audio_device *audio, const void *writeBuf,void *readBuf, rt_size_t size);
 
     //get page size of codec or private buffer's info
-    void    (*buffer_info)      (struct rt_audio_device *audio,struct rt_audio_buf_info *info );
+    void    (*buffer_info)     (struct rt_audio_device *audio,struct rt_audio_buf_info *info );
 };
 
 
@@ -164,15 +164,15 @@ struct rt_audio_configure
 
 struct rt_audio_caps
 {
-  int main_type;
-  int sub_type;
+    int main_type;
+    int sub_type;
 
-  union
-  {
-    rt_uint32_t mask;
-    int     value;
-    struct rt_audio_configure config;
-  }udata;
+    union
+    {
+        rt_uint32_t mask;
+        int     value;
+        struct rt_audio_configure config;
+    } udata;
 };
 
 struct rt_audio_replay

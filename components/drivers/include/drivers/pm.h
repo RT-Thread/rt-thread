@@ -129,17 +129,17 @@ struct rt_pm_ops
 struct rt_device_pm_ops
 {
 #if PM_RUN_MODE_COUNT > 1
-    void (*frequency_change)(const struct rt_device* device);
+    void (*frequency_change)(const struct rt_device *device);
 #endif
 
-    void (*suspend)(const struct rt_device* device);
-    void (*resume) (const struct rt_device* device);
+    void (*suspend)(const struct rt_device *device);
+    void (*resume)(const struct rt_device *device);
 };
 
 struct rt_device_pm
 {
-    const struct rt_device* device;
-    const struct rt_device_pm_ops* ops;
+    const struct rt_device *device;
+    const struct rt_device_pm_ops *ops;
 };
 
 /**
@@ -156,7 +156,7 @@ struct rt_pm
 
     /* the list of device, which has PM feature */
     rt_uint8_t device_pm_number;
-    struct rt_device_pm* device_pm;
+    struct rt_device_pm *device_pm;
     struct rt_semaphore  device_lock;
 
     /* if the mode has timer, the corresponding bit is 1*/
@@ -171,8 +171,8 @@ void rt_pm_exit(void);
 void rt_pm_request(rt_ubase_t mode);
 void rt_pm_release(rt_ubase_t mode);
 
-void rt_pm_register_device(struct rt_device* device, const struct rt_device_pm_ops* ops);
-void rt_pm_unregister_device(struct rt_device* device);
+void rt_pm_register_device(struct rt_device *device, const struct rt_device_pm_ops *ops);
+void rt_pm_unregister_device(struct rt_device *device);
 
 void rt_system_pm_init(const struct rt_pm_ops *ops,
                        rt_uint8_t              timer_mask,
