@@ -55,7 +55,7 @@ int dfs_register(const struct dfs_filesystem_ops *ops)
     if (empty == NULL)
     {
         rt_set_errno(-ENOSPC);
-        LOG_E("There is no space to register this file system (%d).", ops->name);
+        LOG_E("There is no space to register this file system (%s).", ops->name);
         ret = -1;
     }
     else if (ret == RT_EOK)
