@@ -119,28 +119,8 @@
       <TargetDriverDllRegistry>
         <SetRegEntry>
           <Number>0</Number>
-          <Key>ARMRTXEVENTFLAGS</Key>
-          <Name>-L70 -Z18 -C0 -M0 -T1</Name>
-        </SetRegEntry>
-        <SetRegEntry>
-          <Number>0</Number>
-          <Key>DLGTARM</Key>
-          <Name>(1010=-1,-1,-1,-1,0)(1007=-1,-1,-1,-1,0)(1008=-1,-1,-1,-1,0)(1009=-1,-1,-1,-1,0)(1012=-1,-1,-1,-1,0)</Name>
-        </SetRegEntry>
-        <SetRegEntry>
-          <Number>0</Number>
-          <Key>ARMDBGFLAGS</Key>
-          <Name></Name>
-        </SetRegEntry>
-        <SetRegEntry>
-          <Number>0</Number>
-          <Key>DLGUARM</Key>
-          <Name>(105=-1,-1,-1,-1,0)</Name>
-        </SetRegEntry>
-        <SetRegEntry>
-          <Number>0</Number>
           <Key>ST-LINKIII-KEIL_SWO</Key>
-          <Name>-U0673FF544856824987055526 -O206 -SF4000 -C0 -A0 -I0 -HNlocalhost -HP7184 -P1 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8004 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD20000000 -FC1000 -FN2 -FF0STM32F4xx_2048.FLM -FS08000000 -FL0200000 -FP0($$Device:STM32F469NIHx$CMSIS\Flash\STM32F4xx_2048.FLM) -FF1STM32F469_Quad_SPI.FLM -FS190000000 -FL12000000 -FP1($$Device:STM32F469NIHx$CMSIS\Flash\STM32F469_Quad_SPI.FLM)</Name>
+          <Name>-U0673FF544856824987055526 -O206 -SF4000 -C0 -A0 -I0 -HNlocalhost -HP7184 -P1 -TO18 -TC10000000 -TP21 -TDS8004 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD20000000 -FC1000 -FN2 -FF0STM32F4xx_2048.FLM -FS08000000 -FL0200000 -FP0($$Device:STM32F469NIHx$CMSIS\Flash\STM32F4xx_2048.FLM) -FF1STM32F469_Quad_SPI.FLM -FS190000000 -FL12000000 -FP1($$Device:STM32F469NIHx$CMSIS\Flash\STM32F469_Quad_SPI.FLM)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -160,12 +140,12 @@
       <DebugFlag>
         <trace>0</trace>
         <periodic>0</periodic>
-        <aLwin>1</aLwin>
+        <aLwin>0</aLwin>
         <aCover>0</aCover>
         <aSer1>0</aSer1>
         <aSer2>0</aSer2>
         <aPa>0</aPa>
-        <viewmode>1</viewmode>
+        <viewmode>0</viewmode>
         <vrSel>0</vrSel>
         <aSym>0</aSym>
         <aTbox>0</aTbox>
