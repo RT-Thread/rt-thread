@@ -124,7 +124,7 @@ if RT_DEBUG
 
 config RT_DEBUG_COLOR
     bool "Enable color debugging log"
-    default y
+    default n
 
 config RT_DEBUG_INIT_CONFIG
     bool "Enable debugging of components initialization"

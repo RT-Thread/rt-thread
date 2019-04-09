@@ -123,6 +123,12 @@ extern "C" {
 #define SPI4_TX_DMA_INSTANCE             DMA2_Stream1
 #define SPI4_TX_DMA_CHANNEL              DMA_CHANNEL_4
 #define SPI4_TX_DMA_IRQ                  DMA2_Stream1_IRQn
+#elif defined(BSP_UART6_RX_USING_DMA) && !defined(UART6_RX_DMA_INSTANCE)
+#define UART6_DMA_RX_IRQHandler          DMA2_Stream1_IRQHandler
+#define UART6_RX_DMA_RCC                 RCC_AHB1ENR_DMA2EN
+#define UART6_RX_DMA_INSTANCE            DMA2_Stream1
+#define UART6_RX_DMA_CHANNEL             DMA_CHANNEL_5
+#define UART6_RX_DMA_IRQ                 DMA2_Stream1_IRQn
 #endif
 
 /* DMA2 stream2 */

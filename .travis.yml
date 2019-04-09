@@ -29,6 +29,7 @@ env:
 #  - RTT_BSP='avr32uc3b0' RTT_TOOL_CHAIN='atmel-avr32'
 #  - RTT_BSP='bf533' # no scons
   - RTT_BSP='efm32' RTT_TOOL_CHAIN='sourcery-arm' 
+  - RTT_BSP='gd32e230k-start' RTT_TOOL_CHAIN='sourcery-arm'
 #  - RTT_BSP='gd32450z-eval' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='gkipc' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='lm3s8962' RTT_TOOL_CHAIN='sourcery-arm'

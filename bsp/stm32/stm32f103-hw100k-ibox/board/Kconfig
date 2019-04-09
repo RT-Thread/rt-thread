@@ -36,6 +36,49 @@ menu "Onboard Peripheral Drivers"
                 default 0x00
 
         endif
+    config BSP_USING_LORA
+        bool "Enable LoRa Driver (spi1)"
+        default n
+        select PKG_USING_SX12XX
+        select SX12XX_DEVICE_EXTERN_CONFIG
+        select BSP_USING_SPI1
+        if BSP_USING_LORA
+            if SX12XX_DEVICE_EXTERN_CONFIG
+            config SX12XX_SPI_DEVICE
+                string "SPI device name"
+                default "spi10"
+
+            config SX12XX_RST_PIN
+                int "Reset PIN number"
+                default 7
+
+            config SX12XX_DO0_PIN
+                int "DO0 PIN number"
+                default 103
+
+            config SX12XX_DO1_PIN
+                int "DO1 PIN number"
+                default 104
+
+            config SX12XX_DO2_PIN
+                int "DO2 PIN number"
+                default 105
+
+            config SX12XX_DO3_PIN
+                int "DO3 PIN number"
+                default 106
+
+            config SX12XX_DO4_PIN
+                int "DO4 PIN number"
+                default 107
+
+            config SX12XX_DO5_PIN
+                int "DO5 PIN number"
+                default 108
+
+            endif
+
+        endif
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -65,8 +108,8 @@ menu "On-chip Peripheral Drivers"
             config BSP_UART2_RX_USING_DMA
                 bool "Enable UART2 RX DMA"
                 depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
-                default n	
-				
+                default n
+
             config BSP_USING_UART3
                 bool "Enable UART3"
                 default n
@@ -75,15 +118,18 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART3 RX DMA"
                 depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
                 default n
-				
+
             config BSP_USING_UART4
                 bool "Enable UART4"
                 default n
 
             config BSP_UART4_RX_USING_DMA
                 bool "Enable UART4 RX DMA"
-                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA  				
+                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
         endif
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
     menuconfig BSP_USING_I2C1
         bool "Enable I2C1 BUS (software simulation)"
         default n
@@ -94,11 +140,11 @@ menu "On-chip Peripheral Drivers"
             config BSP_I2C1_SCL_PIN
                 int "i2c1 scl pin number"
                 range 0 144
-                default 22 
+                default 22
             config BSP_I2C1_SDA_PIN
                 int "I2C1 sda pin number"
                 range 0 144
-                default 23 
+                default 23
         endif
     menuconfig BSP_USING_SPI
         bool "Enable SPI BUS"
@@ -113,7 +159,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 TX DMA"
                 depends on BSP_USING_SPI1
                 default n
-                
+
             config BSP_SPI1_RX_USING_DMA
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1
@@ -122,18 +168,18 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_USING_SPI2
                 bool "Enable SPI2 BUS"
-                default n  
-                
+                default n
+
             config BSP_SPI2_TX_USING_DMA
                 bool "Enable SPI2 TX DMA"
                 depends on BSP_USING_SPI2
                 default n
-                
+
             config BSP_SPI2_RX_USING_DMA
                 bool "Enable SPI2 RX DMA"
                 depends on BSP_USING_SPI2
                 select BSP_SPI2_TX_USING_DMA
-                default n                
+                default n
 
         endif
 
@@ -145,8 +191,8 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_ADC1
                 bool "Enable ADC1"
                 default n
-        endif		
-        
+        endif
+
     menuconfig BSP_USING_ONCHIP_RTC
         bool "Enable RTC"
         select RT_USING_RTC
@@ -168,7 +214,7 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_WDT
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
-        default n   
+        default n
 endmenu
 
 menu "Board extended module Drivers"

@@ -175,6 +175,15 @@
 /* HWtimer Drivers */
 
 
+/* RTC Drivers */
+
+
+/* PM Drivers */
+
+
+/* ADC Drivers */
+
+
 /* Onboard Peripheral Drivers */
 
 
