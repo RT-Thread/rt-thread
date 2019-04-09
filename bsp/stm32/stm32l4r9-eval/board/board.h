@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-11-5      SummerGift   first version
+ * 2019-04-09	  jhb
  */
 
 #ifndef __BOARD_H__
