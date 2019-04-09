@@ -60,10 +60,6 @@ void HAL_ResumeTick(void)
 {
 }
 
-void HAL_Delay(__IO uint32_t Delay)
-{
-}
-
 /* re-implement tick interface for STM32 HAL */
 HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 {
