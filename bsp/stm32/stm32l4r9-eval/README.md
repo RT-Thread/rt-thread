@@ -22,20 +22,14 @@
 
 - MCU：STM32L4R9，主频 120MHz，2048KB FLASH ，640KB RAM
 - 外部 FLASH：M29W128GL70ZA6E（NOR FLASH，16MB）
-
 - 常用外设
-
   - 状态指示灯：4个，LED1 - 4
   - 按键：1个，wakeup（PC13），五向摇杆
   - TFTLCD 显示屏：2个
   - 板载 ST LINK
 - 常用接口：SD 卡接口、USB OTG Micro USB 接口、电机接口
-
 - 调试接口，ST-LINK Micro USB 接口
-
-
-开发板更多详细信息请参考 ST 的 [STM32L4R9I-EVAL 介绍](https://www.st.com/content/st_com/zh/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/stm32-mcu-eval-tools/stm32-mcu-eval-boards/stm32l4r9i-eval.html)。
-
+开发板更多详细信息请参考 ST 的 [STM32L4R9I-EVAL](https://www.st.com/content/st_com/zh/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/stm32-mcu-eval-tools/stm32-mcu-eval-boards/stm32l4r9i-eval.html)介绍。
 ## 外设支持
 
 本 BSP 目前对外设的支持情况如下：
@@ -72,7 +66,7 @@
 
 双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
 
-> 工程默认配置使用 xxx 仿真器下载程序，在通过 xxx 连接开发板的基础上，点击下载按钮即可下载程序到开发板
+> 工程默认配置使用 板载STLINK 仿真器下载程序，在通过 STLINK 连接开发板的基础上，点击下载按钮即可下载程序到开发板
 
 #### 运行结果
 
