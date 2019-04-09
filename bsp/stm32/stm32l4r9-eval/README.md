@@ -97,10 +97,19 @@ msh >
 
 ## 注意事项
 
-- 暂无
+- 调试串口为串口3 映射到PB10 PB11
+
+- RAM 分为三部分
+
+ ```
+      RAM1 (rw) : ORIGIN = 0x20000000, LENGTH =  192k /* 192K sram */
+      RAM2 (rw) : ORIGIN = 0x20040000, LENGTH =  384k /* 384K sram */ 
+      RAM3 (rw) : ORIGIN = 0x10000000, LENGTH =   64k /* 64K sram  */
+ ```
+
 
 ## 联系人信息
 
 维护人:
 
--  [jhb](https://github.com/jhbdream?tab=repositories), 邮箱：< jihongbin@rt-thread.com>
+-  [jhb](https://github.com/jhbdream?tab=repositories)
