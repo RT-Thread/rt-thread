@@ -245,8 +245,9 @@ void rt_object_init(struct rt_object         *object,
 #ifdef RT_USING_MODULE
     struct rt_dlmodule *module = dlmodule_self();
 #endif
+#ifdef RT_USING_SMP
     extern rt_thread_t *rt_current_thread;
-
+#endif
     /* get object information */
     information = rt_object_get_information(type);
     RT_ASSERT(information != RT_NULL);
@@ -254,7 +255,9 @@ void rt_object_init(struct rt_object         *object,
     /* check object type to avoid re-initialization */
 
     /* enter critical */
+#ifdef RT_USING_SMP
     if(rt_current_thread != RT_NULL)
+#endif
         rt_enter_critical();
     /* try to find object */
     for (node  = information->object_list.next;
@@ -267,7 +270,9 @@ void rt_object_init(struct rt_object         *object,
         RT_ASSERT(obj != object);
     }
     /* leave critical */
+#ifdef RT_USING_SMP
     if(rt_current_thread != RT_NULL)
+#endif
         rt_exit_critical();
 
     /* initialize object's parameters */
