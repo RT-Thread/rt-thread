@@ -2,7 +2,7 @@
 
 ## 简介
 
-本文档为 RT-Thread 开发团队为 STM32L4R9I-EVAL 开发板提供的 BSP (板级支持包) 说明。
+STM32L4R9I-EVAL 开发板提供的 BSP (板级支持包) 说明。
 
 主要内容如下：
 
