@@ -91,7 +91,7 @@ msh >
 
 3. 输入`pkgs --update`命令更新软件包。
 
-4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
+4. 输入`scons --target=mdk5/iar` 命令重新生成工程。
 
 本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32系列BSP外设驱动使用教程.md)。
 
@@ -102,9 +102,9 @@ msh >
 - RAM 分为三部分
 
  ```
-      RAM1 (rw) : ORIGIN = 0x20000000, LENGTH =  192k /* 192K sram */
-      RAM2 (rw) : ORIGIN = 0x20040000, LENGTH =  384k /* 384K sram */ 
-      RAM3 (rw) : ORIGIN = 0x10000000, LENGTH =   64k /* 64K sram  */
+      RAM1 (rw) : ORIGIN = 0x20000000, LENGTH =  192k /* 192K sram 用于程序定义全局变量 静态变量存放*/
+      RAM2 (rw) : ORIGIN = 0x10000000, LENGTH =   64k /* 64K sram 用于程序定义全局变量 静态变量存放 */ 
+      RAM3 (rw) : ORIGIN = 0x20040000, LENGTH =  384k /* 384K sram 用于heap*/ 
  ```
 
 

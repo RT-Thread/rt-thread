@@ -25,12 +25,12 @@ extern "C" {
 #define STM32_FLASH_SIZE               (2048 * 1024)
 #define STM32_FLASH_END_ADDRESS        ((uint32_t)(STM32_FLASH_START_ADRESS + STM32_FLASH_SIZE))
 
-#define STM32_SRAM1_SIZE               (384)
-#define STM32_SRAM1_START              (0x20040000)
-#define STM32_SRAM1_END                (STM32_SRAM1_START + STM32_SRAM1_SIZE * 1024)
+#define STM32_SRAM3_SIZE               (384)
+#define STM32_SRAM3_START              (0x20040000)
+#define STM32_SRAM3_END                (STM32_SRAM3_START + STM32_SRAM3_SIZE * 1024)
 
-#define HEAP_BEGIN                     STM32_SRAM1_START
-#define HEAP_END                       STM32_SRAM1_END
+#define HEAP_BEGIN                     STM32_SRAM3_START
+#define HEAP_END                       STM32_SRAM3_END
 
 void SystemClock_Config(void);
 
