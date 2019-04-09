@@ -423,11 +423,11 @@ int fcntl(int fildes, int cmd, ...)
     d = fd_get(fildes);
     if (d)
     {
-        void* arg;
+        void *arg;
         va_list ap;
 
         va_start(ap, cmd);
-        arg = va_arg(ap, void*);
+        arg = va_arg(ap, void *);
         va_end(ap);
 
         ret = dfs_file_ioctl(d, cmd, arg);
@@ -459,11 +459,11 @@ RTM_EXPORT(fcntl);
  */
 int ioctl(int fildes, int cmd, ...)
 {
-    void* arg;
+    void *arg;
     va_list ap;
 
     va_start(ap, cmd);
-    arg = va_arg(ap, void*);
+    arg = va_arg(ap, void *);
     va_end(ap);
 
     /* we use fcntl for this API. */
@@ -645,8 +645,8 @@ struct dirent *readdir(DIR *d)
 
     if (d->num)
     {
-        struct dirent* dirent_ptr;
-        dirent_ptr = (struct dirent*)&d->buf[d->cur];
+        struct dirent *dirent_ptr;
+        dirent_ptr = (struct dirent *)&d->buf[d->cur];
         d->cur += dirent_ptr->d_reclen;
     }
 
@@ -654,7 +654,7 @@ struct dirent *readdir(DIR *d)
     {
         /* get a new entry */
         result = dfs_file_getdents(fd,
-                                   (struct dirent*)d->buf,
+                                   (struct dirent *)d->buf,
                                    sizeof(d->buf) - 1);
         if (result <= 0)
         {
@@ -670,7 +670,7 @@ struct dirent *readdir(DIR *d)
 
     fd_put(fd);
 
-    return (struct dirent *)(d->buf+d->cur);
+    return (struct dirent *)(d->buf + d->cur);
 }
 RTM_EXPORT(readdir);
 

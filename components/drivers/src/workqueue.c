@@ -394,7 +394,7 @@ rt_err_t rt_work_cancel(struct rt_work *work)
 
 static int rt_work_sys_workqueue_init(void)
 {
-    sys_workq = rt_workqueue_create("sys_work", RT_SYSTEM_WORKQUEUE_STACKSIZE * 4,
+    sys_workq = rt_workqueue_create("sys_work", RT_SYSTEM_WORKQUEUE_STACKSIZE,
                                     RT_SYSTEM_WORKQUEUE_PRIORITY);
 
     return RT_EOK;
