@@ -28,7 +28,7 @@ STM32F469-ST-DISCO 是 ST 推出的一款基于 ARM Cortex-M4 内核的开发板
 - 常用外设
   - LED：4个，LD1（绿色，PG6），LD2（橙色，PD4），LD3（红色，PD5），LD4（蓝色，PK3）
   - 按键：1个，USER（兼具唤醒功能，PA0）
-  - LCD液晶显示屏
+  - LCD
   - 音频
   - 板载 ST-LINK/V2.1 功能
 - 常用接口：Arduino Uno接口、SD 卡接口、音频接口、LCD 接口等
@@ -108,5 +108,5 @@ msh >
 
 维护人:
 
--  [WillianChan](https://github.com/willianchanlovegithub), 邮箱：<willianchan_lovelife@foxmail.com>
+-  [WillianChan](https://github.com/willianchanlovegithub)
 
