@@ -214,7 +214,6 @@ int rt_hw_sci_init(void)
     CpuSysRegs.PCLKCR7.bit.SCI_C = 1;
 
     PieVectTable.SCIA_RX_INT = &sciaRxFifoIsr;
-    //PieVectTable.SCIA_TX_INT = &sciaTxFifoIsr;
 
     EDIS;
 
@@ -223,8 +222,7 @@ int rt_hw_sci_init(void)
     //
     PieCtrlRegs.PIECTRL.bit.ENPIE = 1;   // Enable the PIE block
     PieCtrlRegs.PIEIER9.bit.INTx1 = 1;   // PIE Group 9, INT1
-    //PieCtrlRegs.PIEIER9.bit.INTx2 = 1;   // PIE Group 9, INT2
-    IER = 0x100;                         // Enable CPU INT
+    IER |= 0x100;                        // Enable CPU INT
     EINT;
 
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
