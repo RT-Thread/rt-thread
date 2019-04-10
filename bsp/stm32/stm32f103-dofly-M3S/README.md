@@ -40,7 +40,7 @@ STM32F103 德飞莱-尼莫 M3S 是徳飞莱推出的一款基于 ARM Cortex-M3 �
 | **片上外设**      | **支持情况** | **备注**                              |
 | :-----: | :-----: | :-----: |
 | GPIO  | 支持 |  |
-| USART | 支持 | USART3 |
+| USART | 支持 | USART1 |
 
 ## 使用说明
 
@@ -104,4 +104,4 @@ msh >
 
 维护人:
 
--  [WillianChan](https://github.com/willianchanlovegithub), 邮箱：<willianchan_lovelife@foxmail.com>
+-  [WillianChan](https://github.com/willianchanlovegithub)
