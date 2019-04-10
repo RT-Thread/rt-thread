@@ -23,15 +23,14 @@ STM32F469-ST-DISCO 是 ST 推出的一款基于 ARM Cortex-M4 内核的开发板
 该开发板常用 **板载资源** 如下：
 
 - MCU：STM32F469NIH6U，主频 180MHz，2048KB FLASH ，384KB (包含64KB 的 CCM) RAM
-- 外部 RAM：型号，16MB
-- 外部 FLASH：型号，16MB
+- 外部 RAM：型号25Q128A，16MB
+- 外部 FLASH：型号7LL12D9NOR，16MB
 - 常用外设
   - LED：4个，LD1（绿色，PG6），LD2（橙色，PD4），LD3（红色，PD5），LD4（蓝色，PK3）
   - 按键：1个，USER（兼具唤醒功能，PA0）
-  - LCD
-  - 音频
-  - 板载 ST-LINK/V2.1 功能
-- 常用接口：Arduino Uno接口、SD 卡接口、音频接口、LCD 接口等
+  - LCD：4寸800×480TFT屏
+  - 音频：SAI音频DAC
+- 常用接口：Arduino UNO V3 接口、MicroSD 卡接口、音频接口、LCD 接口、I2C 接口等
 - 调试接口，板载的 ST-LINK/V2-1 SWD 下载
 
 开发板更多详细信息请参考 ST 的 [STM32F469-ST-DISCO 开发板介绍](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-mpu-eval-tools/stm32-mcu-mpu-eval-tools/stm32-discovery-kits/32f469idiscovery.html)。
@@ -101,7 +100,7 @@ msh >
 
 ## 注意事项
 
-- STM32F469NIH6U 这款芯片，RAM大小为 384KB，但是这 384KB 中有 64KB 是 CCM data RAM。在修改 `board.h` 文件和链接脚本文件的时候不能以 384KB 来配置，而应该以 (348 - 64)KB 即 320KB 来配置。
+- STM32F469NIH6U 这款芯片，RAM大小为 384KB，但是这 384KB 中有 64KB 是 CCM data RAM。在修改 `board.h` 文件和链接脚本文件的时候不能以 384KB 来配置，而应该以 (384 - 64)KB 即 320KB 来配置。
 - 在 STM32CubeMX 软件中配置 USART3 时候，引脚要映射为 PB10 和 PB11。
 
 ## 联系人信息
