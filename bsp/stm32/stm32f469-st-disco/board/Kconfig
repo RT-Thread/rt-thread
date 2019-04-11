@@ -7,6 +7,25 @@ config SOC_STM32F469NI
 
 menu "Onboard Peripheral Drivers"
 
+    config BSP_USING_SDRAM
+        bool "Enable SDRAM"
+        select BSP_USING_FMC
+        default n
+    config BSP_USING_QSPI_FLASH
+        bool "Enable QSPI FLASH (N25Q128A qspi1)"
+        select BSP_USING_QSPI
+        select RT_USING_SFUD
+        select RT_SFUD_USING_QSPI
+        select PKG_USING_FAL
+        select FAL_USING_SFUD_PORT
+        default n
+    config BSP_MOUNT_QSPI_WITH_LFS
+        bool "Mount QSPI flash to / with little fs"
+        depends on BSP_USING_QSPI_FLASH
+        select PKG_USING_LITTLEFS
+        select RT_USING_MTD_NOR
+        select RT_USING_DFS
+        default y
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -25,8 +44,30 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART3"
                 default y
 
+            config BSP_UART3_RX_USING_DMA
+                bool "Enable UART3 RX DMA"
+                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                default n
         endif
 
+    config BSP_USING_QSPI
+        bool "Enable QSPI BUS"
+        select RT_USING_QSPI
+        select RT_USING_SPI
+        default n
+
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
+
+    config BSP_USING_FMC
+        bool
+        default n
+
+    config BSP_USING_USBD_FS
+        bool "Enable OTGFS as USB device"
+        select RT_USING_USB_DEVICE
+        default n
 endmenu
 
 menu "Board extended module Drivers"
