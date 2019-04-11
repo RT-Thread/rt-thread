@@ -98,33 +98,7 @@
 
 /* Device virtual file system */
 
-#define RT_USING_DFS
-#define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 8
-#define DFS_FILESYSTEM_TYPES_MAX 8
-#define DFS_FD_MAX 64
-/* RT_USING_DFS_MNTTABLE is not set */
-#define RT_USING_DFS_ELMFAT
-
-/* elm-chan's FatFs, Generic FAT Filesystem Module */
-
-#define RT_DFS_ELM_CODE_PAGE 437
-#define RT_DFS_ELM_WORD_ACCESS
-/* RT_DFS_ELM_USE_LFN_0 is not set */
-/* RT_DFS_ELM_USE_LFN_1 is not set */
-/* RT_DFS_ELM_USE_LFN_2 is not set */
-#define RT_DFS_ELM_USE_LFN_3
-#define RT_DFS_ELM_USE_LFN 3
-#define RT_DFS_ELM_MAX_LFN 255
-#define RT_DFS_ELM_DRIVES 2
-#define RT_DFS_ELM_MAX_SECTOR_SIZE 512
-/* RT_DFS_ELM_USE_ERASE is not set */
-#define RT_DFS_ELM_REENTRANT
-#define RT_USING_DFS_DEVFS
-/* RT_USING_DFS_ROMFS is not set */
-/* RT_USING_DFS_RAMFS is not set */
-/* RT_USING_DFS_UFFS is not set */
-/* RT_USING_DFS_JFFS2 is not set */
+/* RT_USING_DFS is not set */
 
 /* Device Drivers */
 
@@ -160,21 +134,11 @@
 
 /* RT_USING_USB_HOST is not set */
 /* RT_USING_USB_DEVICE is not set */
-/* _RT_USB_DEVICE_NONE is not set */
-/* _RT_USB_DEVICE_CDC is not set */
-/* _RT_USB_DEVICE_MSTORAGE is not set */
-/* _RT_USB_DEVICE_HID is not set */
-/* _RT_USB_DEVICE_WINUSB is not set */
 
 /* POSIX layer and C standard library */
 
-#define RT_USING_LIBC
+/* RT_USING_LIBC is not set */
 /* RT_USING_PTHREADS is not set */
-#define RT_USING_POSIX
-/* RT_USING_POSIX_MMAP is not set */
-/* RT_USING_POSIX_TERMIOS is not set */
-/* RT_USING_POSIX_AIO is not set */
-/* RT_USING_MODULE is not set */
 
 /* Network */
 
@@ -286,19 +250,12 @@
 /* PKG_USING_LWEXT4 is not set */
 /* PKG_USING_PARTITION is not set */
 /* PKG_USING_FAL is not set */
-/* PKG_USING_FAL_LATEST_VERSION is not set */
-/* PKG_USING_FAL_V00300 is not set */
-/* PKG_USING_FAL_V00200 is not set */
-/* PKG_USING_FAL_V00100 is not set */
 /* PKG_USING_SQLITE is not set */
 /* PKG_USING_RTI is not set */
 /* PKG_USING_LITTLEVGL2RTT is not set */
 /* PKG_USING_CMSIS is not set */
 /* PKG_USING_DFS_YAFFS is not set */
 /* PKG_USING_LITTLEFS is not set */
-/* PKG_USING_LITTLEFS_V090 is not set */
-/* PKG_USING_LITTLEFS_V170 is not set */
-/* PKG_USING_LITTLEFS_LATEST_VERSION is not set */
 /* PKG_USING_THREAD_POOL is not set */
 
 /* peripheral libraries and drivers */
@@ -379,7 +336,7 @@
 
 /* Onboard Peripheral Drivers */
 
-#define BSP_USING_SDRAM
+/* BSP_USING_SDRAM is not set */
 /* BSP_USING_QSPI_FLASH is not set */
 
 /* On-chip Peripheral Drivers */
@@ -390,7 +347,7 @@
 /* BSP_UART3_RX_USING_DMA is not set */
 /* BSP_USING_QSPI is not set */
 /* BSP_USING_ON_CHIP_FLASH is not set */
-#define BSP_USING_FMC
+/* BSP_USING_FMC is not set */
 /* BSP_USING_USBD_FS is not set */
 
 /* Board extended module Drivers */

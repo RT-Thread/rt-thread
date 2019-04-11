@@ -10,9 +10,13 @@ cwd = GetCurrentDir()
 src = Split('''
 board.c
 CubeMX_Config/Src/stm32f4xx_hal_msp.c
-ports/drv_qspi_flash.c
-ports/qspi_mnt.c
 ''')
+
+if GetDepend(['BSP_USING_QSPI_FLASH']):
+    src += Glob('ports/drv_qspi_flash.c')
+
+if GetDepend(['PKG_USING_FAL']):
+    src += Glob('ports/qspi_mnt.c')
 
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
