@@ -25,25 +25,25 @@
  * child sibling  child   sibling
  *                          ...
  */
-static enum finsh_type proc_type(struct finsh_parser* self);
-static int proc_identifier(struct finsh_parser* self, char* id);
-static struct finsh_node* proc_variable_decl(struct finsh_parser* self);
-static struct finsh_node* proc_expr(struct finsh_parser* self);
-static struct finsh_node* proc_assign_expr(struct finsh_parser* self);
-static struct finsh_node* proc_inclusive_or_expr(struct finsh_parser* self);
-static struct finsh_node* proc_exclusive_or_expr(struct finsh_parser* self);
-static struct finsh_node* proc_and_expr(struct finsh_parser* self);
-static struct finsh_node* proc_shift_expr(struct finsh_parser* self);
-static struct finsh_node* proc_additive_expr(struct finsh_parser* self);
-static struct finsh_node* proc_multiplicative_expr(struct finsh_parser* self);
-static struct finsh_node* proc_cast_expr(struct finsh_parser* self);
-static struct finsh_node* proc_unary_expr(struct finsh_parser* self);
-static struct finsh_node* proc_postfix_expr(struct finsh_parser* self);
-static struct finsh_node* proc_primary_expr(struct finsh_parser* self);
-static struct finsh_node* proc_param_list(struct finsh_parser* self);
-static struct finsh_node* proc_expr_statement(struct finsh_parser* self);
-static struct finsh_node* make_sys_node(uint8_t type, struct finsh_node* node1,
-    struct finsh_node* node2);
+static enum finsh_type proc_type(struct finsh_parser *self);
+static int proc_identifier(struct finsh_parser *self, char *id);
+static struct finsh_node *proc_variable_decl(struct finsh_parser *self);
+static struct finsh_node *proc_expr(struct finsh_parser *self);
+static struct finsh_node *proc_assign_expr(struct finsh_parser *self);
+static struct finsh_node *proc_inclusive_or_expr(struct finsh_parser *self);
+static struct finsh_node *proc_exclusive_or_expr(struct finsh_parser *self);
+static struct finsh_node *proc_and_expr(struct finsh_parser *self);
+static struct finsh_node *proc_shift_expr(struct finsh_parser *self);
+static struct finsh_node *proc_additive_expr(struct finsh_parser *self);
+static struct finsh_node *proc_multiplicative_expr(struct finsh_parser *self);
+static struct finsh_node *proc_cast_expr(struct finsh_parser *self);
+static struct finsh_node *proc_unary_expr(struct finsh_parser *self);
+static struct finsh_node *proc_postfix_expr(struct finsh_parser *self);
+static struct finsh_node *proc_primary_expr(struct finsh_parser *self);
+static struct finsh_node *proc_param_list(struct finsh_parser *self);
+static struct finsh_node *proc_expr_statement(struct finsh_parser *self);
+static struct finsh_node *make_sys_node(uint8_t type, struct finsh_node *node1,
+                                        struct finsh_node *node2);
 
 /* check token */
 #define check_token(token, lex, type) if ( (token) != (type) ) \
@@ -74,7 +74,7 @@ declarator_list -> declarator_list ',' declarator
 declarator -> identifier
     | identifier ASSIGN expr_assign
 */
-static struct finsh_node* proc_variable_decl(struct finsh_parser* self)
+static struct finsh_node *proc_variable_decl(struct finsh_parser *self)
 {
     enum finsh_token_type token;
     enum finsh_type type;
@@ -101,7 +101,7 @@ static struct finsh_node* proc_variable_decl(struct finsh_parser* self)
     }
 
     next_token(token, &(self->token));
-    switch ( token )
+    switch (token)
     {
     case finsh_token_type_comma:/*',', it's a variable_list declaration.*/
         if (proc_identifier(self, id) == 0)
@@ -114,14 +114,14 @@ static struct finsh_node* proc_variable_decl(struct finsh_parser* self)
         }
 
         next_token(token, &(self->token));
-        if ( token == finsh_token_type_assign )
+        if (token == finsh_token_type_assign)
         {
             /* get the right side of assign expression */
             assign = proc_assign_expr(self);
 
             if (assign != NULL)
             {
-                struct finsh_node* idnode;
+                struct finsh_node *idnode;
 
                 idnode = finsh_node_new_id(id);
                 end = make_sys_node(FINSH_NODE_SYS_ASSIGN, idnode, assign);
@@ -131,7 +131,7 @@ static struct finsh_node* proc_variable_decl(struct finsh_parser* self)
             }
         }
 
-        while ( token == finsh_token_type_comma )
+        while (token == finsh_token_type_comma)
         {
             if (proc_identifier(self, id) == 0)
             {
@@ -143,14 +143,14 @@ static struct finsh_node* proc_variable_decl(struct finsh_parser* self)
             }
 
             next_token(token, &(self->token));
-            if ( token == finsh_token_type_assign )
+            if (token == finsh_token_type_assign)
             {
                 /* get the right side of assign expression */
                 assign = proc_assign_expr(self);
 
                 if (assign != NULL)
                 {
-                    struct finsh_node* idnode;
+                    struct finsh_node *idnode;
 
                     idnode = finsh_node_new_id(id);
 
@@ -190,7 +190,7 @@ static struct finsh_node* proc_variable_decl(struct finsh_parser* self)
             next_token(token, &(self->token));
         }
 
-        while ( token == finsh_token_type_comma )
+        while (token == finsh_token_type_comma)
         {
             if (proc_identifier(self, id) == 0)
             {
@@ -251,7 +251,7 @@ type_basic -> VOID
     | INT
     | STRING
 */
-static enum finsh_type proc_type(struct finsh_parser* self)
+static enum finsh_type proc_type(struct finsh_parser *self)
 {
     enum finsh_type type;
     enum finsh_token_type token;
@@ -260,7 +260,7 @@ static enum finsh_type proc_type(struct finsh_parser* self)
     type = finsh_type_unknown;
 
     next_token(token, &(self->token));
-    if ( is_base_type(token) ) /* base_type */
+    if (is_base_type(token))   /* base_type */
     {
         switch (token)
         {
@@ -288,10 +288,10 @@ static enum finsh_type proc_type(struct finsh_parser* self)
             goto __return;
         }
     }
-    else if ( token == finsh_token_type_unsigned ) /* unsigned base_type */
+    else if (token == finsh_token_type_unsigned)   /* unsigned base_type */
     {
         next_token(token, &(self->token));
-        if ( is_base_type(token) )
+        if (is_base_type(token))
         {
             switch (token)
             {
@@ -375,13 +375,13 @@ __return:
 /*
 identifier -> IDENTIFIER
 */
-static int proc_identifier(struct finsh_parser* self, char* id)
+static int proc_identifier(struct finsh_parser *self, char *id)
 {
     enum finsh_token_type token;
 
     match_token(token, &(self->token), finsh_token_type_identifier);
 
-    strncpy(id, (char*)self->token.string, FINSH_NAME_MAX);
+    strncpy(id, (char *)self->token.string, FINSH_NAME_MAX);
 
     return 0;
 }
@@ -390,14 +390,14 @@ static int proc_identifier(struct finsh_parser* self, char* id)
 statement_expr -> ';'
     | expr ';'
 */
-static struct finsh_node* proc_expr_statement(struct finsh_parser* self)
+static struct finsh_node *proc_expr_statement(struct finsh_parser *self)
 {
     enum finsh_token_type token;
-    struct finsh_node* expr;
+    struct finsh_node *expr;
 
     expr = NULL;
     next_token(token, &(self->token));
-    if ( token != finsh_token_type_semicolon )
+    if (token != finsh_token_type_semicolon)
     {
         finsh_token_replay(&(self->token));
         expr = proc_expr(self);
@@ -411,7 +411,7 @@ static struct finsh_node* proc_expr_statement(struct finsh_parser* self)
 /*
 expr -> expr_assign
 */
-static struct finsh_node* proc_expr(struct finsh_parser* self)
+static struct finsh_node *proc_expr(struct finsh_parser *self)
 {
     return proc_assign_expr(self);
 }
@@ -420,11 +420,11 @@ static struct finsh_node* proc_expr(struct finsh_parser* self)
 expr_assign -> expr_inclusive_or
     | expr_unary ASSIGN expr_assign
 */
-static struct finsh_node* proc_assign_expr(struct finsh_parser* self)
+static struct finsh_node *proc_assign_expr(struct finsh_parser *self)
 {
     enum finsh_token_type token;
-    struct finsh_node* or;
-    struct finsh_node* assign;
+    struct finsh_node * or;
+    struct finsh_node *assign;
 
     or = proc_inclusive_or_expr(self);
 
@@ -445,16 +445,16 @@ static struct finsh_node* proc_assign_expr(struct finsh_parser* self)
 expr_inclusive_or -> expr_exclusive_or
     | expr_inclusive_or '|' expr_exclusive_or
 */
-static struct finsh_node* proc_inclusive_or_expr(struct finsh_parser* self)
+static struct finsh_node *proc_inclusive_or_expr(struct finsh_parser *self)
 {
     enum finsh_token_type token;
-    struct finsh_node* xor;
-    struct finsh_node* xor_new;
+    struct finsh_node *xor;
+    struct finsh_node *xor_new;
 
     xor = proc_exclusive_or_expr(self);
 
     next_token(token, &(self->token));
-    while ( token == finsh_token_type_or )
+    while (token == finsh_token_type_or)
     {
         xor_new = proc_exclusive_or_expr(self);
 
@@ -472,15 +472,15 @@ static struct finsh_node* proc_inclusive_or_expr(struct finsh_parser* self)
 expr_exclusive_or -> expr_and
     | expr_exclusive '^' expr_and
 */
-static struct finsh_node* proc_exclusive_or_expr(struct finsh_parser* self)
+static struct finsh_node *proc_exclusive_or_expr(struct finsh_parser *self)
 {
     enum finsh_token_type token;
-    struct finsh_node* and;
-    struct finsh_node* and_new;
+    struct finsh_node * and;
+    struct finsh_node *and_new;
 
     and = proc_and_expr(self);
     next_token(token, &(self->token));
-    while ( token == finsh_token_type_xor )
+    while (token == finsh_token_type_xor)
     {
         and_new = proc_and_expr(self);
         if (and_new == NULL) finsh_error_set(FINSH_ERROR_EXPECT_OPERATOR);
@@ -497,16 +497,16 @@ static struct finsh_node* proc_exclusive_or_expr(struct finsh_parser* self)
 expr_and -> expr_shift
     | expr_and '&' expr_shift
 */
-static struct finsh_node* proc_and_expr(struct finsh_parser* self)
+static struct finsh_node *proc_and_expr(struct finsh_parser *self)
 {
     enum finsh_token_type token;
-    struct finsh_node* shift;
-    struct finsh_node* shift_new;
+    struct finsh_node *shift;
+    struct finsh_node *shift_new;
 
     shift = proc_shift_expr(self);
 
     next_token(token, &(self->token));
-    while ( token == finsh_token_type_and )
+    while (token == finsh_token_type_and)
     {
         shift_new = proc_shift_expr(self);
 
@@ -525,16 +525,16 @@ expr_shift -> expr_additive
     | expr_shift '<<' expr_additive
     | expr_shift '>>' expr_additive
 */
-static struct finsh_node* proc_shift_expr(struct finsh_parser* self)
+static struct finsh_node *proc_shift_expr(struct finsh_parser *self)
 {
     enum finsh_token_type token;
-    struct finsh_node* add;
-    struct finsh_node* add_new;
+    struct finsh_node *add;
+    struct finsh_node *add_new;
 
     add = proc_additive_expr(self);
 
     next_token(token, &(self->token));
-    while ( token == finsh_token_type_shl || token == finsh_token_type_shr)
+    while (token == finsh_token_type_shl || token == finsh_token_type_shr)
     {
         add_new = proc_additive_expr(self);
         if (add_new == NULL) finsh_error_set(FINSH_ERROR_EXPECT_OPERATOR);
@@ -565,16 +565,16 @@ expr_additive -> expr_multiplicative
     | expr_additive SUB expr_multiplicative
     | expr_additive ADD expr_multiplicative
 */
-static struct finsh_node* proc_additive_expr(struct finsh_parser* self)
+static struct finsh_node *proc_additive_expr(struct finsh_parser *self)
 {
     enum finsh_token_type token;
-    struct finsh_node* mul;
-    struct finsh_node* mul_new;
+    struct finsh_node *mul;
+    struct finsh_node *mul_new;
 
     mul = proc_multiplicative_expr(self);
 
     next_token(token, &(self->token));
-    while ( token == finsh_token_type_sub || token == finsh_token_type_add )
+    while (token == finsh_token_type_sub || token == finsh_token_type_add)
     {
         mul_new = proc_multiplicative_expr(self);
         if (mul_new == NULL) finsh_error_set(FINSH_ERROR_EXPECT_OPERATOR);
@@ -606,17 +606,17 @@ expr_multiplicative -> expr_cast
     | expr_multiplicative '/' expr_cast
     | expr_multiplicative '%' expr_cast
 */
-static struct finsh_node* proc_multiplicative_expr(struct finsh_parser* self)
+static struct finsh_node *proc_multiplicative_expr(struct finsh_parser *self)
 {
     enum finsh_token_type token;
-    struct finsh_node* cast;
-    struct finsh_node* cast_new;
+    struct finsh_node *cast;
+    struct finsh_node *cast_new;
 
     cast = proc_cast_expr(self);
     next_token(token, &(self->token));
     while (token == finsh_token_type_mul ||
-        token == finsh_token_type_div ||
-        token == finsh_token_type_mod )
+            token == finsh_token_type_div ||
+            token == finsh_token_type_mod)
     {
         cast_new = proc_cast_expr(self);
         if (cast_new == NULL) finsh_error_set(FINSH_ERROR_EXPECT_OPERATOR);
@@ -653,11 +653,11 @@ static struct finsh_node* proc_multiplicative_expr(struct finsh_parser* self)
 expr_cast -> expr_unary
     | '(' type ')' expr_cast
 */
-static struct finsh_node* proc_cast_expr(struct finsh_parser* self)
+static struct finsh_node *proc_cast_expr(struct finsh_parser *self)
 {
     enum finsh_token_type token;
     enum finsh_type type;
-    struct finsh_node* cast;
+    struct finsh_node *cast;
 
     next_token(token, &(self->token));
     if (token == finsh_token_type_left_paren)
@@ -688,7 +688,7 @@ expr_unary -> expr_postfix
     | '*' expr_cast
     | '&' expr_cast
 */
-static struct finsh_node* proc_unary_expr(struct finsh_parser* self)
+static struct finsh_node *proc_unary_expr(struct finsh_parser *self)
 {
     enum finsh_token_type token;
     struct finsh_node *cast;
@@ -736,17 +736,17 @@ expr_postfix -> expr_primary
     | expr_postfix DEC
     | expr_postfix '(' param_list ')'
 */
-static struct finsh_node* proc_postfix_expr(struct finsh_parser* self)
+static struct finsh_node *proc_postfix_expr(struct finsh_parser *self)
 {
     enum finsh_token_type token;
-    struct finsh_node* postfix;
+    struct finsh_node *postfix;
 
     postfix = proc_primary_expr(self);
 
     next_token(token, &(self->token));
-    while ( token == finsh_token_type_inc   ||
-        token == finsh_token_type_dec       ||
-        token == finsh_token_type_left_paren )
+    while (token == finsh_token_type_inc   ||
+            token == finsh_token_type_dec       ||
+            token == finsh_token_type_left_paren)
     {
         switch (token)
         {
@@ -759,22 +759,22 @@ static struct finsh_node* proc_postfix_expr(struct finsh_parser* self)
             break;
 
         case finsh_token_type_left_paren :/* '(' */
+        {
+            struct finsh_node *param_list;
+
+            param_list = NULL;
+            next_token(token, &(self->token));
+            if (token != finsh_token_type_right_paren)
             {
-                struct finsh_node* param_list;
+                finsh_token_replay(&(self->token));
+                param_list = proc_param_list(self);
 
-                param_list = NULL;
-                next_token(token, &(self->token));
-                if (token != finsh_token_type_right_paren)
-                {
-                    finsh_token_replay(&(self->token));
-                    param_list = proc_param_list(self);
-
-                    match_token(token, &(self->token), finsh_token_type_right_paren);
-                }
-
-                postfix = make_sys_node(FINSH_NODE_SYS_FUNC, postfix, param_list);
+                match_token(token, &(self->token), finsh_token_type_right_paren);
             }
-            break;
+
+            postfix = make_sys_node(FINSH_NODE_SYS_FUNC, postfix, param_list);
+        }
+        break;
 
         default:
             break;
@@ -792,22 +792,22 @@ expr_primary -> literal
     | '(' expr ')'
     | identifier
 */
-static struct finsh_node* proc_primary_expr(struct finsh_parser* self)
+static struct finsh_node *proc_primary_expr(struct finsh_parser *self)
 {
     enum finsh_token_type token;
-    struct finsh_node* expr;
+    struct finsh_node *expr;
 
     next_token(token, &(self->token));
-    switch ( token )
+    switch (token)
     {
     case finsh_token_type_identifier:
-        {
-            char id[FINSH_NAME_MAX + 1];
+    {
+        char id[FINSH_NAME_MAX + 1];
 
-            finsh_token_replay(&(self->token));
-            proc_identifier(self, id);
-            return finsh_node_new_id(id);
-        }
+        finsh_token_replay(&(self->token));
+        proc_identifier(self, id);
+        return finsh_node_new_id(id);
+    }
 
     case finsh_token_type_left_paren:
         expr = proc_expr(self);
@@ -824,7 +824,7 @@ static struct finsh_node* proc_primary_expr(struct finsh_parser* self)
         return finsh_node_new_char(self->token.value.char_value);
 
     case finsh_token_type_value_string:
-        return finsh_node_new_string((char*)self->token.string);
+        return finsh_node_new_string((char *)self->token.string);
 
     case finsh_token_type_value_null:
         return finsh_node_new_ptr(NULL);
@@ -842,7 +842,7 @@ param_list -> empty
     | expr_assign
     | param_list ',' expr_assign
 */
-static struct finsh_node* proc_param_list(struct finsh_parser* self)
+static struct finsh_node *proc_param_list(struct finsh_parser *self)
 {
     enum finsh_token_type token;
     struct finsh_node *node, *assign;
@@ -852,7 +852,7 @@ static struct finsh_node* proc_param_list(struct finsh_parser* self)
     node = assign;
 
     next_token(token, &(self->token));
-    while (token == finsh_token_type_comma )
+    while (token == finsh_token_type_comma)
     {
         finsh_node_sibling(assign) = proc_assign_expr(self);
 
@@ -875,9 +875,9 @@ node1__
        \
        node2
 */
-static struct finsh_node* make_sys_node(uint8_t type, struct finsh_node* node1, struct finsh_node* node2)
+static struct finsh_node *make_sys_node(uint8_t type, struct finsh_node *node1, struct finsh_node *node2)
 {
-    struct finsh_node* node;
+    struct finsh_node *node;
 
     node = finsh_node_allocate(type);
 
@@ -894,7 +894,7 @@ static struct finsh_node* make_sys_node(uint8_t type, struct finsh_node* node1, 
 /*
 start -> statement_expr | decl_variable
 */
-void finsh_parser_run(struct finsh_parser* self, const uint8_t* string)
+void finsh_parser_run(struct finsh_parser *self, const uint8_t *string)
 {
     enum finsh_token_type token;
     struct finsh_node *node;
@@ -902,7 +902,7 @@ void finsh_parser_run(struct finsh_parser* self, const uint8_t* string)
     node = NULL;
 
     /* init parser */
-    self->parser_string = (uint8_t*)string;
+    self->parser_string = (uint8_t *)string;
 
     /* init token */
     finsh_token_init(&(self->token), self->parser_string);
@@ -978,7 +978,7 @@ void finsh_parser_run(struct finsh_parser* self, const uint8_t* string)
     }
 }
 
-int finsh_parser_init(struct finsh_parser* self)
+int finsh_parser_init(struct finsh_parser *self)
 {
     memset(self, 0, sizeof(struct finsh_parser));
 

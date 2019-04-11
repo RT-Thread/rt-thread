@@ -45,19 +45,19 @@ struct finsh_shell *shell;
 static char *finsh_prompt_custom = RT_NULL;
 
 #ifdef RT_USING_HEAP
-int finsh_set_prompt(const char * prompt)
+int finsh_set_prompt(const char *prompt)
 {
-    if(finsh_prompt_custom)
+    if (finsh_prompt_custom)
     {
         rt_free(finsh_prompt_custom);
         finsh_prompt_custom = RT_NULL;
     }
 
     /* strdup */
-    if(prompt)
+    if (prompt)
     {
-        finsh_prompt_custom = rt_malloc(strlen(prompt)+1);
-        if(finsh_prompt_custom)
+        finsh_prompt_custom = rt_malloc(strlen(prompt) + 1);
+        if (finsh_prompt_custom)
         {
             strcpy(finsh_prompt_custom, prompt);
         }
@@ -84,9 +84,9 @@ const char *finsh_get_prompt()
         return finsh_prompt;
     }
 
-    if(finsh_prompt_custom)
+    if (finsh_prompt_custom)
     {
-        strncpy(finsh_prompt, finsh_prompt_custom, sizeof(finsh_prompt)-1);
+        strncpy(finsh_prompt, finsh_prompt_custom, sizeof(finsh_prompt) - 1);
         return finsh_prompt;
     }
 
@@ -253,7 +253,8 @@ rt_uint32_t finsh_get_echo()
  * @return result, RT_EOK on OK, -RT_ERROR on the new password length is less than
  *  FINSH_PASSWORD_MIN or greater than FINSH_PASSWORD_MAX
  */
-rt_err_t finsh_set_password(const char *password) {
+rt_err_t finsh_set_password(const char *password)
+{
     rt_ubase_t level;
     rt_size_t pw_len = rt_strlen(password);
 
@@ -348,7 +349,7 @@ static void shell_auto_complete(char *prefix)
 #endif
     {
 #ifndef FINSH_USING_MSH_ONLY
-        extern void list_prefix(char * prefix);
+        extern void list_prefix(char *prefix);
         list_prefix(prefix);
 #endif
     }
@@ -361,7 +362,7 @@ void finsh_run_line(struct finsh_parser *parser, const char *line)
 {
     const char *err_str;
 
-    if(shell->echo_mode)
+    if (shell->echo_mode)
         rt_kprintf("\n");
     finsh_parser_run(parser, (unsigned char *)line);
 
@@ -674,9 +675,14 @@ void finsh_thread_entry(void *parameter)
                 /* add ';' and run the command line */
                 shell->line[shell->line_position] = ';';
 
-                if (shell->line_position != 0) finsh_run_line(&shell->parser, shell->line);
-                else
-                    if (shell->echo_mode) rt_kprintf("\n");
+                if (shell->line_position != 0)
+                {
+                    finsh_run_line(&shell->parser, shell->line);
+                }
+                else if (shell->echo_mode)
+                {
+                    rt_kprintf("\n");
+                }
 #endif
             }
 
@@ -809,8 +815,8 @@ int finsh_system_init(void)
     finsh_system_var_init(&__vsymtab_start, &__vsymtab_end);
 #elif defined(_MSC_VER)
     unsigned int *ptr_begin, *ptr_end;
-		
-    if(shell)
+
+    if (shell)
     {
         rt_kprintf("finsh shell already init.\n");
         return RT_EOK;

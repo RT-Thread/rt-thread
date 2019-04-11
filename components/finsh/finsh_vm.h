@@ -14,15 +14,16 @@
 
 #include "finsh_var.h"
 
-union finsh_value {
+union finsh_value
+{
     char    char_value;
     short   short_value;
     long    long_value;
-    void*   ptr;
+    void   *ptr;
 };
 
-extern union finsh_value*   finsh_sp;       /* stack pointer */
-extern uint8_t*             finsh_pc;       /* PC */
+extern union finsh_value   *finsh_sp;       /* stack pointer */
+extern uint8_t             *finsh_pc;       /* PC */
 
 /* stack */
 extern union finsh_value    finsh_vm_stack[FINSH_STACK_MAX];

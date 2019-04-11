@@ -16,22 +16,22 @@ uint8_t finsh_heap[FINSH_HEAP_MAX];
 struct finsh_block_header
 {
     uint32_t length;
-    struct finsh_block_header* next;
+    struct finsh_block_header *next;
 };
 #define BLOCK_HEADER(x)                 (struct finsh_block_header*)(x)
 #define finsh_block_get_header(data)    (struct finsh_block_header*)((uint8_t*)data - sizeof(struct finsh_block_header))
 #define finsh_block_get_data(header)    (uint8_t*)((struct finsh_block_header*)header + 1)
 #define HEAP_ALIGN_SIZE(size)           (((size) + HEAP_ALIGNMENT - 1) & ~(HEAP_ALIGNMENT-1))
 
-static struct finsh_block_header* free_list;
-static struct finsh_block_header* allocate_list;
+static struct finsh_block_header *free_list;
+static struct finsh_block_header *allocate_list;
 
 static void finsh_heap_gc(void);
 
-static void finsh_block_insert(struct finsh_block_header** list, struct finsh_block_header* header);
-static void finsh_block_remove(struct finsh_block_header** list, struct finsh_block_header* header);
-static void finsh_block_split(struct finsh_block_header* header, size_t size);
-static void finsh_block_merge(struct finsh_block_header** list, struct finsh_block_header* header);
+static void finsh_block_insert(struct finsh_block_header **list, struct finsh_block_header *header);
+static void finsh_block_remove(struct finsh_block_header **list, struct finsh_block_header *header);
+static void finsh_block_split(struct finsh_block_header *header, size_t size);
+static void finsh_block_merge(struct finsh_block_header **list, struct finsh_block_header *header);
 
 int finsh_heap_init(void)
 {
@@ -51,9 +51,9 @@ int finsh_heap_init(void)
 /**
  * allocate a block from heap
  */
-void* finsh_heap_allocate(size_t size)
+void *finsh_heap_allocate(size_t size)
 {
-    struct finsh_block_header* header;
+    struct finsh_block_header *header;
 
     size = HEAP_ALIGN_SIZE(size);
 
@@ -93,9 +93,9 @@ void* finsh_heap_allocate(size_t size)
 /**
  * release the allocated block
  */
-void  finsh_heap_free(void*ptr)
+void  finsh_heap_free(void *ptr)
 {
-    struct finsh_block_header* header;
+    struct finsh_block_header *header;
 
     /* get block header */
     header = finsh_block_get_header(ptr);
@@ -119,7 +119,7 @@ static void finsh_heap_gc(void)
     temp = NULL;
 
     /* find the first fit block */
-    for (header = allocate_list; header != NULL; )
+    for (header = allocate_list; header != NULL;)
     {
         for (i = 0; i < FINSH_VARIABLE_MAX; i ++)
         {
@@ -144,9 +144,9 @@ static void finsh_heap_gc(void)
 /**
  * insert a block to list
  */
-void finsh_block_insert(struct finsh_block_header** list, struct finsh_block_header* header)
+void finsh_block_insert(struct finsh_block_header **list, struct finsh_block_header *header)
 {
-    struct finsh_block_header* node;
+    struct finsh_block_header *node;
 
     if (*list == NULL)
     {
@@ -183,9 +183,9 @@ void finsh_block_insert(struct finsh_block_header** list, struct finsh_block_hea
 /**
  * remove block from list
  */
-void finsh_block_remove(struct finsh_block_header** list, struct finsh_block_header* header)
+void finsh_block_remove(struct finsh_block_header **list, struct finsh_block_header *header)
 {
-    struct finsh_block_header* node;
+    struct finsh_block_header *node;
 
     node = *list;
     if (node == header)
@@ -210,15 +210,15 @@ void finsh_block_remove(struct finsh_block_header** list, struct finsh_block_hea
 /**
  * split block
  */
-void finsh_block_split(struct finsh_block_header* header, size_t size)
+void finsh_block_split(struct finsh_block_header *header, size_t size)
 {
-    struct finsh_block_header* next;
+    struct finsh_block_header *next;
 
     /*
      * split header into two node:
      * header->next->...
      */
-    next = BLOCK_HEADER((uint8_t*)header + sizeof(struct finsh_block_header) + size);
+    next = BLOCK_HEADER((uint8_t *)header + sizeof(struct finsh_block_header) + size);
     next->length = header->length - sizeof(struct finsh_block_header) - size;
     header->length = size;
     next->next = header->next;
@@ -226,10 +226,10 @@ void finsh_block_split(struct finsh_block_header* header, size_t size)
     header->next = next;
 }
 
-void finsh_block_merge(struct finsh_block_header** list, struct finsh_block_header* header)
+void finsh_block_merge(struct finsh_block_header **list, struct finsh_block_header *header)
 {
-    struct finsh_block_header* prev_node;
-    struct finsh_block_header* next_node;
+    struct finsh_block_header *prev_node;
+    struct finsh_block_header *next_node;
 
     next_node = header->next;
 
@@ -237,7 +237,7 @@ void finsh_block_merge(struct finsh_block_header** list, struct finsh_block_head
     else
     {
         /* find out the previous header */
-        for (prev_node = *list; prev_node; prev_node =prev_node->next)
+        for (prev_node = *list; prev_node; prev_node = prev_node->next)
         {
             if (prev_node->next == header)
                 break;
@@ -248,17 +248,17 @@ void finsh_block_merge(struct finsh_block_header** list, struct finsh_block_head
 
     /* merge to previous node */
     if (prev_node != NULL &&
-        ((uint8_t*)prev_node + prev_node->length + sizeof(struct finsh_block_header)
-        == (uint8_t*)header))
+        ((uint8_t *)prev_node + prev_node->length + sizeof(struct finsh_block_header)
+        == (uint8_t *)header))
     {
         /* is it close to next node? */
         if ((next_node != NULL) &&
-            ((uint8_t*)header + header->length + sizeof(struct finsh_block_header)
-            == (uint8_t*)next_node))
+            ((uint8_t *)header + header->length + sizeof(struct finsh_block_header)
+            == (uint8_t *)next_node))
         {
             /* merge three node */
             prev_node->length += header->length + next_node->length +
-                2 * sizeof(struct finsh_block_header);
+                                 2 * sizeof(struct finsh_block_header);
 
             prev_node->next = next_node->next;
         }
@@ -269,11 +269,11 @@ void finsh_block_merge(struct finsh_block_header** list, struct finsh_block_head
         }
     }
     else /* merge to last node */
-    if ( (next_node != NULL) &&
-        ((uint8_t*)header + header->length + sizeof(struct finsh_block_header)
-        == (uint8_t*)next_node))
-    {
-        header->length += next_node->length + sizeof(struct finsh_block_header);
-        header->next = next_node->next;
-    }
+        if ((next_node != NULL) &&
+            ((uint8_t *)header + header->length + sizeof(struct finsh_block_header)
+            == (uint8_t *)next_node))
+        {
+            header->length += next_node->length + sizeof(struct finsh_block_header);
+            header->next = next_node->next;
+        }
 }

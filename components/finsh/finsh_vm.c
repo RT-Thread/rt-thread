@@ -18,11 +18,11 @@ union finsh_value   finsh_vm_stack[FINSH_STACK_MAX];
 /* text segment */
 uint8_t             text_segment[FINSH_TEXT_MAX];
 
-union finsh_value*  finsh_sp;       /* stack pointer */
-uint8_t*            finsh_pc;       /* PC */
+union finsh_value  *finsh_sp;       /* stack pointer */
+uint8_t            *finsh_pc;       /* PC */
 
 /* syscall list, for dynamic system call register */
-struct finsh_syscall_item* global_syscall_list = NULL;
+struct finsh_syscall_item *global_syscall_list = NULL;
 
 // #define FINSH_VM_DISASSEMBLE
 void finsh_vm_run()
@@ -42,7 +42,7 @@ void finsh_vm_run()
     finsh_pc = &text_segment[0];
 
     while ((finsh_pc - &text_segment[0] >= 0) &&
-        (finsh_pc - &text_segment[0] < FINSH_TEXT_MAX))
+            (finsh_pc - &text_segment[0] < FINSH_TEXT_MAX))
     {
         /* get op */
         op = *finsh_pc++;
@@ -53,12 +53,12 @@ void finsh_vm_run()
 }
 
 #ifdef RT_USING_HEAP
-void finsh_syscall_append(const char* name, syscall_func func)
+void finsh_syscall_append(const char *name, syscall_func func)
 {
     /* create the syscall */
-    struct finsh_syscall_item* item;
+    struct finsh_syscall_item *item;
 
-    item = (struct finsh_syscall_item*)rt_malloc(sizeof(struct finsh_syscall_item));
+    item = (struct finsh_syscall_item *)rt_malloc(sizeof(struct finsh_syscall_item));
     if (item != RT_NULL)
     {
         item->next = NULL;
@@ -79,31 +79,31 @@ void finsh_syscall_append(const char* name, syscall_func func)
 #endif
 
 #if defined(_MSC_VER) || (defined(__GNUC__) && defined(__x86_64__))
-struct finsh_syscall* finsh_syscall_next(struct finsh_syscall* call)
+struct finsh_syscall *finsh_syscall_next(struct finsh_syscall *call)
 {
     unsigned int *ptr;
-    ptr = (unsigned int*) (call + 1);
-    while ((*ptr == 0) && ((unsigned int*)ptr < (unsigned int*) _syscall_table_end))
+    ptr = (unsigned int *)(call + 1);
+    while ((*ptr == 0) && ((unsigned int *)ptr < (unsigned int *) _syscall_table_end))
         ptr ++;
 
-    return (struct finsh_syscall*)ptr;
+    return (struct finsh_syscall *)ptr;
 }
 
-struct finsh_sysvar* finsh_sysvar_next(struct finsh_sysvar* call)
+struct finsh_sysvar *finsh_sysvar_next(struct finsh_sysvar *call)
 {
     unsigned int *ptr;
-    ptr = (unsigned int*) (call + 1);
-    while ((*ptr == 0) && ((unsigned int*)ptr < (unsigned int*) _sysvar_table_end))
+    ptr = (unsigned int *)(call + 1);
+    while ((*ptr == 0) && ((unsigned int *)ptr < (unsigned int *) _sysvar_table_end))
         ptr ++;
 
-    return (struct finsh_sysvar*)ptr;
+    return (struct finsh_sysvar *)ptr;
 }
 #endif
 
-struct finsh_syscall* finsh_syscall_lookup(const char* name)
+struct finsh_syscall *finsh_syscall_lookup(const char *name)
 {
-    struct finsh_syscall* index;
-    struct finsh_syscall_item* item;
+    struct finsh_syscall *index;
+    struct finsh_syscall_item *item;
 
     for (index = _syscall_table_begin; index < _syscall_table_end; FINSH_NEXT_SYSCALL(index))
     {

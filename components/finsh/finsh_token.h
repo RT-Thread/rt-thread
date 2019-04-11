@@ -15,17 +15,17 @@
 enum finsh_token_type
 {
     finsh_token_type_left_paren = 1,    /* (        */
-    finsh_token_type_right_paren ,      /* )        */
-    finsh_token_type_comma ,            /* ,        */
-    finsh_token_type_semicolon ,        /* ;        */
-    finsh_token_type_mul ,              /* *        */
-    finsh_token_type_add ,              /* +        */
-    finsh_token_type_inc ,              /* ++       */
-    finsh_token_type_sub ,              /* -        */
-    finsh_token_type_dec ,              /* --       */
-    finsh_token_type_div ,              /* /        */
-    finsh_token_type_mod ,              /* %        */
-    finsh_token_type_assign ,           /* =        */
+    finsh_token_type_right_paren,       /* )        */
+    finsh_token_type_comma,             /* ,        */
+    finsh_token_type_semicolon,         /* ;        */
+    finsh_token_type_mul,               /* *        */
+    finsh_token_type_add,               /* +        */
+    finsh_token_type_inc,               /* ++       */
+    finsh_token_type_sub,               /* -        */
+    finsh_token_type_dec,               /* --       */
+    finsh_token_type_div,               /* /        */
+    finsh_token_type_mod,               /* %        */
+    finsh_token_type_assign,            /* =        */
     finsh_token_type_and,               /* &        */
     finsh_token_type_or,                /* |        */
     finsh_token_type_xor,               /* ^        */
@@ -55,9 +55,9 @@ enum finsh_token_type
 #define finsh_token_position(self) (self)->position
 #define finsh_token_replay(self) (self)->replay = 1
 
-void finsh_token_init(struct finsh_token* self, uint8_t* script);
+void finsh_token_init(struct finsh_token *self, uint8_t *script);
 
-enum finsh_token_type finsh_token_token(struct finsh_token* self);
-void finsh_token_get_token(struct finsh_token* self, uint8_t* token);
+enum finsh_token_type finsh_token_token(struct finsh_token *self);
+void finsh_token_get_token(struct finsh_token *self, uint8_t *token);
 
 #endif

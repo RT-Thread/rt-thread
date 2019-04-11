@@ -307,9 +307,9 @@ void OP_ld_dword()
 
 void OP_ld_value_byte()
 {
-    char* c;
+    char *c;
 
-    c = (char*) (FINSH_GET32(finsh_pc));
+    c = (char *)(FINSH_GET32(finsh_pc));
 
     finsh_sp->char_value = *c;
 
@@ -321,7 +321,7 @@ void OP_ld_value_byte()
 
 void OP_ld_value_byte_stack()
 {
-    char* c;
+    char *c;
 
     c = (char *)(finsh_sp - 1)->long_value;
     (finsh_sp - 1)->char_value = *c;
@@ -331,9 +331,9 @@ void OP_ld_value_byte_stack()
 
 void OP_ld_value_word()
 {
-    short* s;
+    short *s;
 
-    s = (short*) (FINSH_GET32(finsh_pc));
+    s = (short *)(FINSH_GET32(finsh_pc));
 
     finsh_sp->short_value = *s;
 
@@ -345,7 +345,7 @@ void OP_ld_value_word()
 
 void OP_ld_value_word_stack()
 {
-    short* s;
+    short *s;
 
     s = (short *)(finsh_sp - 1)->long_value;
     (finsh_sp - 1)->short_value = *s;
@@ -355,9 +355,9 @@ void OP_ld_value_word_stack()
 
 void OP_ld_value_dword()
 {
-    long* l;
+    long *l;
 
-    l = (long*) (FINSH_GET32(finsh_pc));
+    l = (long *)(FINSH_GET32(finsh_pc));
 
     finsh_sp->long_value = *l;
 
@@ -369,7 +369,7 @@ void OP_ld_value_dword()
 
 void OP_ld_value_dword_stack()
 {
-    long* l;
+    long *l;
 
     l = (long *)(finsh_sp - 1)->long_value;
     (finsh_sp - 1)->long_value = *l;
@@ -384,7 +384,7 @@ void OP_ld_value_dword_stack()
  */
 void OP_st_byte()
 {
-    *(char*)((finsh_sp - 2)->long_value) = (finsh_sp - 1)->char_value;
+    *(char *)((finsh_sp - 2)->long_value) = (finsh_sp - 1)->char_value;
     finsh_sp --;
 
     return ;
@@ -396,7 +396,7 @@ void OP_st_byte()
  */
 void OP_st_word()
 {
-    *(short*)((finsh_sp - 2)->long_value) = (finsh_sp - 1)->short_value;
+    *(short *)((finsh_sp - 2)->long_value) = (finsh_sp - 1)->short_value;
     finsh_sp --;
 
     return ;
@@ -408,7 +408,7 @@ void OP_st_word()
  */
 void OP_st_dword()
 {
-    *(long*)((finsh_sp - 2)->long_value) = (finsh_sp - 1)->long_value;
+    *(long *)((finsh_sp - 2)->long_value) = (finsh_sp - 1)->long_value;
     finsh_sp --;
 
     return ;
@@ -435,7 +435,8 @@ void OP_call()
 
     parameters = *finsh_pc ++;
 
-    i = 0; finsh_sp --;
+    i = 0;
+    finsh_sp --;
     while (i < parameters)
     {
         parameterv[parameters - 1 - i] = finsh_sp->long_value;

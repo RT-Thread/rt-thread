@@ -23,19 +23,20 @@ struct finsh_var
     uint8_t type;                   /* the type of variable */
 
     /* variable value */
-    union {
+    union
+    {
         char    char_value;
         short   short_value;
         int     int_value;
         long    long_value;
-        void*   ptr;
-    }value;
+        void   *ptr;
+    } value;
 };
 extern struct finsh_var global_variable[];
 
 int finsh_var_init(void);
-int finsh_var_insert(const char* name, int type);
-int finsh_var_delete(const char* name);
-struct finsh_var* finsh_var_lookup(const char* name);
+int finsh_var_insert(const char *name, int type);
+int finsh_var_delete(const char *name);
+struct finsh_var *finsh_var_lookup(const char *name);
 
 #endif

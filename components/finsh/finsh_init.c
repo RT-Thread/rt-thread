@@ -16,7 +16,7 @@
 #include "finsh_error.h"
 #include "finsh_heap.h"
 
-int finsh_init(struct finsh_parser* parser)
+int finsh_init(struct finsh_parser *parser)
 {
     finsh_parser_init(parser);
 
@@ -34,7 +34,7 @@ long finsh_stack_bottom()
     return finsh_vm_stack[0].long_value;
 }
 
-int finsh_flush(struct finsh_parser* parser)
+int finsh_flush(struct finsh_parser *parser)
 {
     finsh_parser_init(parser);
 
@@ -45,7 +45,7 @@ int finsh_flush(struct finsh_parser* parser)
     return 0;
 }
 
-int finsh_reset(struct finsh_parser* parser)
+int finsh_reset(struct finsh_parser *parser)
 {
     /* finsh init */
     finsh_node_init();

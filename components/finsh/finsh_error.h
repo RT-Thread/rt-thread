@@ -18,6 +18,6 @@ int finsh_error_init(void);
 uint8_t finsh_errno(void);
 
 int finsh_error_set(uint8_t type);
-const char* finsh_error_string(uint8_t type);
+const char *finsh_error_string(uint8_t type);
 
 #endif

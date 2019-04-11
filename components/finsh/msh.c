@@ -97,7 +97,8 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
     rt_size_t i;
 
     ptr = cmd;
-    position = 0; argc = 0;
+    position = 0;
+    argc = 0;
 
     while (position < length)
     {
@@ -105,13 +106,14 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
         while ((*ptr == ' ' || *ptr == '\t') && position < length)
         {
             *ptr = '\0';
-            ptr ++; position ++;
+            ptr ++;
+            position ++;
         }
 
-        if(argc >= FINSH_ARG_MAX)
+        if (argc >= FINSH_ARG_MAX)
         {
             rt_kprintf("Too many args ! We only Use:\n");
-            for(i = 0; i < argc; i++)
+            for (i = 0; i < argc; i++)
             {
                 rt_kprintf("%s ", argv[i]);
             }
@@ -124,8 +126,10 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
         /* handle string */
         if (*ptr == '"')
         {
-            ptr ++; position ++;
-            argv[argc] = ptr; argc ++;
+            ptr ++;
+            position ++;
+            argv[argc] = ptr;
+            argc ++;
 
             /* skip this string */
             while (*ptr != '"' && position < length)
@@ -134,15 +138,19 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
                 {
                     if (*(ptr + 1) == '"')
                     {
-                        ptr ++; position ++;
+                        ptr ++;
+                        position ++;
                     }
                 }
-                ptr ++; position ++;
+                ptr ++;
+                position ++;
             }
             if (position >= length) break;
 
             /* skip '"' */
-            *ptr = '\0'; ptr ++; position ++;
+            *ptr = '\0';
+            ptr ++;
+            position ++;
         }
         else
         {
@@ -150,7 +158,8 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
             argc ++;
             while ((*ptr != ' ' && *ptr != '\t') && position < length)
             {
-                ptr ++; position ++;
+                ptr ++;
+                position ++;
             }
             if (position >= length) break;
         }
@@ -309,7 +318,7 @@ static int _msh_exec_lwp(char *cmd, rt_size_t length)
     int fd = -1;
     char *pg_name;
 
-    extern int exec(char*, int, char**);
+    extern int exec(char *, int, char **);
 
     /* find the size of first command */
     while ((cmd[cmd0_size] != ' ' && cmd[cmd0_size] != '\t') && cmd0_size < length)

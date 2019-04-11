@@ -11,7 +11,7 @@
 
 uint8_t global_errno;
 
-static const char * finsh_error_string_table[] =
+static const char *finsh_error_string_table[] =
 {
     "No error",
     "Invalid token",
@@ -49,7 +49,7 @@ uint8_t finsh_errno()
     return global_errno;
 }
 
-const char* finsh_error_string(uint8_t type)
+const char *finsh_error_string(uint8_t type)
 {
     return finsh_error_string_table[type];
 }

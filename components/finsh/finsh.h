@@ -82,7 +82,7 @@
 /* system call item */
 struct finsh_syscall_item
 {
-    struct finsh_syscall_item* next;    /* next item */
+    struct finsh_syscall_item *next;    /* next item */
     struct finsh_syscall syscall;       /* syscall */
 };
 extern struct finsh_syscall_item *global_syscall_list;
@@ -90,17 +90,17 @@ extern struct finsh_syscall_item *global_syscall_list;
 /* system variable table */
 struct finsh_sysvar
 {
-    const char*     name;       /* the name of variable */
+    const char     *name;       /* the name of variable */
 #if defined(FINSH_USING_DESCRIPTION) && defined(FINSH_USING_SYMTAB)
-    const char*     desc;       /* description of system variable */
+    const char     *desc;       /* description of system variable */
 #endif
     uint8_t      type;      /* the type of variable */
-    void*        var ;      /* the address of variable */
+    void        *var ;      /* the address of variable */
 };
 
 #if defined(_MSC_VER) || (defined(__GNUC__) && defined(__x86_64__))
-struct finsh_syscall* finsh_syscall_next(struct finsh_syscall* call);
-struct finsh_sysvar* finsh_sysvar_next(struct finsh_sysvar* call);
+struct finsh_syscall *finsh_syscall_next(struct finsh_syscall *call);
+struct finsh_sysvar *finsh_sysvar_next(struct finsh_sysvar *call);
 #define FINSH_NEXT_SYSCALL(index)  index=finsh_syscall_next(index)
 #define FINSH_NEXT_SYSVAR(index)   index=finsh_sysvar_next(index)
 #else
@@ -115,10 +115,10 @@ struct finsh_sysvar_item
     struct finsh_sysvar sysvar;         /* system variable */
 };
 extern struct finsh_sysvar *_sysvar_table_begin, *_sysvar_table_end;
-extern struct finsh_sysvar_item* global_sysvar_list;
+extern struct finsh_sysvar_item *global_sysvar_list;
 
 /* find out system variable, which should be implemented in user program */
-struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
+struct finsh_sysvar *finsh_sysvar_lookup(const char *name);
 
 
 struct finsh_token
@@ -129,14 +129,15 @@ struct finsh_token
     int  position;
     uint8_t current_token;
 
-    union {
+    union
+    {
         char char_value;
         int int_value;
         long long_value;
     } value;
     uint8_t string[FINSH_STRING_MAX];
 
-    uint8_t* line;
+    uint8_t *line;
 };
 
 #define FINSH_IDTYPE_VAR        0x01
@@ -149,20 +150,21 @@ struct finsh_node
     uint8_t data_type;  /* node data node_type */
     uint8_t idtype;     /* id node information */
 
-    union {         /* value node */
+    union           /* value node */
+    {
         char    char_value;
         short   short_value;
         int     int_value;
         long    long_value;
-        void*   ptr;
+        void   *ptr;
     } value;
     union
     {
         /* point to variable identifier or function identifier */
         struct finsh_var    *var;
         struct finsh_sysvar *sysvar;
-        struct finsh_syscall*syscall;
-    }id;
+        struct finsh_syscall *syscall;
+    } id;
 
     /* sibling and child node */
     struct finsh_node *sibling, *child;
@@ -170,10 +172,10 @@ struct finsh_node
 
 struct finsh_parser
 {
-    uint8_t* parser_string;
+    uint8_t *parser_string;
 
     struct finsh_token token;
-    struct finsh_node* root;
+    struct finsh_node *root;
 };
 
 /**
@@ -181,7 +183,8 @@ struct finsh_parser
  *
  * The basic data type in finsh shell
  */
-enum finsh_type {
+enum finsh_type
+{
     finsh_type_unknown = 0, /**< unknown data type */
     finsh_type_void,        /**< void           */
     finsh_type_voidp,       /**< void pointer   */
@@ -200,31 +203,31 @@ enum finsh_type {
 };
 
 /* init finsh environment */
-int finsh_init(struct finsh_parser* parser);
+int finsh_init(struct finsh_parser *parser);
 /* flush finsh node, text segment */
-int finsh_flush(struct finsh_parser* parser);
+int finsh_flush(struct finsh_parser *parser);
 /* reset all of finsh */
-int finsh_reset(struct finsh_parser* parser);
+int finsh_reset(struct finsh_parser *parser);
 #ifdef RT_USING_DEVICE
-void finsh_set_device(const char* device_name);
+void finsh_set_device(const char *device_name);
 #endif
 
 /* run finsh parser to generate abstract synatx tree */
-void finsh_parser_run (struct finsh_parser* parser, const unsigned char* string);
+void finsh_parser_run(struct finsh_parser *parser, const unsigned char *string);
 /* run compiler to compile abstract syntax tree */
-int finsh_compiler_run(struct finsh_node* node);
+int finsh_compiler_run(struct finsh_node *node);
 /* run finsh virtual machine */
 void finsh_vm_run(void);
 
 /* get variable value */
-struct finsh_var* finsh_var_lookup(const char* name);
+struct finsh_var *finsh_var_lookup(const char *name);
 /* get bottom value of stack */
 long finsh_stack_bottom(void);
 
 /* get error number of finsh */
 uint8_t finsh_errno(void);
 /* get error string */
-const char* finsh_error_string(uint8_t type);
+const char *finsh_error_string(uint8_t type);
 
 #ifdef RT_USING_HEAP
 /**
@@ -234,7 +237,7 @@ const char* finsh_error_string(uint8_t type);
  * @param name the name of system call
  * @param func the function pointer of system call
  */
-void finsh_syscall_append(const char* name, syscall_func func);
+void finsh_syscall_append(const char *name, syscall_func func);
 
 /**
  * @ingroup finsh
@@ -244,6 +247,6 @@ void finsh_syscall_append(const char* name, syscall_func func);
  * @param type the data type of system variable
  * @param addr the address of system variable
  */
-void finsh_sysvar_append(const char* name, uint8_t type, void* addr);
+void finsh_sysvar_append(const char *name, uint8_t type, void *addr);
 #endif
 #endif

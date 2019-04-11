@@ -23,7 +23,7 @@ int finsh_node_init()
     return 0;
 }
 
-struct finsh_node* finsh_node_allocate(uint8_t type)
+struct finsh_node *finsh_node_allocate(uint8_t type)
 {
     int i;
 
@@ -42,10 +42,10 @@ struct finsh_node* finsh_node_allocate(uint8_t type)
     return &global_node_table[i];
 }
 
-struct finsh_node* finsh_node_new_id(char* id)
+struct finsh_node *finsh_node_new_id(char *id)
 {
-    struct finsh_node* node;
-    void*  symbol;
+    struct finsh_node *node;
+    void *symbol;
     unsigned char type;
 
     symbol  = NULL;
@@ -53,15 +53,15 @@ struct finsh_node* finsh_node_new_id(char* id)
     node    = NULL;
 
     /* lookup variable firstly */
-    symbol = (void*)finsh_var_lookup(id);
+    symbol = (void *)finsh_var_lookup(id);
     if (symbol == NULL)
     {
         /* then lookup system variable */
-        symbol = (void*)finsh_sysvar_lookup(id);
+        symbol = (void *)finsh_sysvar_lookup(id);
         if (symbol == NULL)
         {
             /* then lookup system call */
-            symbol = (void*)finsh_syscall_lookup(id);
+            symbol = (void *)finsh_syscall_lookup(id);
             if (symbol != NULL) type = FINSH_IDTYPE_SYSCALL;
         }
         else type = FINSH_IDTYPE_SYSVAR;
@@ -84,15 +84,15 @@ struct finsh_node* finsh_node_new_id(char* id)
         switch (type)
         {
         case FINSH_IDTYPE_VAR:
-            node->id.var = (struct finsh_var*)symbol;
+            node->id.var = (struct finsh_var *)symbol;
             break;
 
         case FINSH_IDTYPE_SYSVAR:
-            node->id.sysvar = (struct finsh_sysvar*)symbol;
+            node->id.sysvar = (struct finsh_sysvar *)symbol;
             break;
 
         case FINSH_IDTYPE_SYSCALL:
-            node->id.syscall = (struct finsh_syscall*)symbol;
+            node->id.syscall = (struct finsh_syscall *)symbol;
             break;
         }
         /* fill identifier type */
@@ -103,9 +103,9 @@ struct finsh_node* finsh_node_new_id(char* id)
     return node;
 }
 
-struct finsh_node* finsh_node_new_char(char c)
+struct finsh_node *finsh_node_new_char(char c)
 {
-    struct finsh_node* node;
+    struct finsh_node *node;
 
     node = finsh_node_allocate(FINSH_NODE_VALUE_CHAR);
     if (node == NULL)
@@ -118,9 +118,9 @@ struct finsh_node* finsh_node_new_char(char c)
     return node;
 }
 
-struct finsh_node* finsh_node_new_int(int i)
+struct finsh_node *finsh_node_new_int(int i)
 {
-    struct finsh_node* node;
+    struct finsh_node *node;
 
     node = finsh_node_allocate(FINSH_NODE_VALUE_INT);
     if (node == NULL)
@@ -133,9 +133,9 @@ struct finsh_node* finsh_node_new_int(int i)
     return node;
 }
 
-struct finsh_node* finsh_node_new_long(long l)
+struct finsh_node *finsh_node_new_long(long l)
 {
-    struct finsh_node* node;
+    struct finsh_node *node;
 
     node = finsh_node_allocate(FINSH_NODE_VALUE_LONG);
     if (node == NULL)
@@ -148,9 +148,9 @@ struct finsh_node* finsh_node_new_long(long l)
     return node;
 }
 
-struct finsh_node* finsh_node_new_string(char* s)
+struct finsh_node *finsh_node_new_string(char *s)
 {
-    struct finsh_node* node;
+    struct finsh_node *node;
 
     node = finsh_node_allocate(FINSH_NODE_VALUE_STRING);
     if (node == NULL)
@@ -162,14 +162,14 @@ struct finsh_node* finsh_node_new_string(char* s)
     /* make string */
     node->value.ptr = finsh_heap_allocate(strlen(s) + 1);
     strncpy(node->value.ptr, s, strlen(s));
-    ((uint8_t*)node->value.ptr)[strlen(s)] = '\0';
+    ((uint8_t *)node->value.ptr)[strlen(s)] = '\0';
 
     return node;
 }
 
-struct finsh_node* finsh_node_new_ptr(void* ptr)
+struct finsh_node *finsh_node_new_ptr(void *ptr)
 {
-    struct finsh_node* node;
+    struct finsh_node *node;
 
     node = finsh_node_allocate(FINSH_NODE_VALUE_NULL);
     if (node == NULL)

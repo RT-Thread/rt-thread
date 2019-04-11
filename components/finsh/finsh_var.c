@@ -13,7 +13,7 @@
 #include "finsh_var.h"
 
 struct finsh_var global_variable[FINSH_VARIABLE_MAX];
-struct finsh_sysvar_item* global_sysvar_list;
+struct finsh_sysvar_item *global_sysvar_list;
 
 int finsh_var_init()
 {
@@ -22,7 +22,7 @@ int finsh_var_init()
     return 0;
 }
 
-int finsh_var_insert(const char* name, int type)
+int finsh_var_insert(const char *name, int type)
 {
     int i, empty;
 
@@ -50,7 +50,7 @@ int finsh_var_insert(const char* name, int type)
     return empty;
 }
 
-int finsh_var_delete(const char* name)
+int finsh_var_delete(const char *name)
 {
     int i;
 
@@ -68,7 +68,7 @@ int finsh_var_delete(const char* name)
     return 0;
 }
 
-struct finsh_var* finsh_var_lookup(const char* name)
+struct finsh_var *finsh_var_lookup(const char *name)
 {
     int i;
 
@@ -85,12 +85,12 @@ struct finsh_var* finsh_var_lookup(const char* name)
 }
 
 #ifdef RT_USING_HEAP
-void finsh_sysvar_append(const char* name, uint8_t type, void* var_addr)
+void finsh_sysvar_append(const char *name, uint8_t type, void *var_addr)
 {
     /* create a sysvar */
-    struct finsh_sysvar_item* item;
+    struct finsh_sysvar_item *item;
 
-    item = (struct finsh_sysvar_item*) rt_malloc (sizeof(struct finsh_sysvar_item));
+    item = (struct finsh_sysvar_item *) rt_malloc(sizeof(struct finsh_sysvar_item));
     if (item != NULL)
     {
         item->next = NULL;
@@ -111,10 +111,10 @@ void finsh_sysvar_append(const char* name, uint8_t type, void* var_addr)
 }
 #endif
 
-struct finsh_sysvar* finsh_sysvar_lookup(const char* name)
+struct finsh_sysvar *finsh_sysvar_lookup(const char *name)
 {
-    struct finsh_sysvar* index;
-    struct finsh_sysvar_item* item;
+    struct finsh_sysvar *index;
+    struct finsh_sysvar_item *item;
 
     for (index = _sysvar_table_begin;
          index < _sysvar_table_end;

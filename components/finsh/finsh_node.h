@@ -55,13 +55,13 @@
 
 int finsh_node_init(void);
 
-struct finsh_node* finsh_node_allocate(uint8_t type);
-struct finsh_node* finsh_node_new_id(char* id);
-struct finsh_node* finsh_node_new_char(char c);
-struct finsh_node* finsh_node_new_int(int i);
-struct finsh_node* finsh_node_new_long(long l);
-struct finsh_node* finsh_node_new_string(char* s);
-struct finsh_node* finsh_node_new_ptr(void* ptr);
+struct finsh_node *finsh_node_allocate(uint8_t type);
+struct finsh_node *finsh_node_new_id(char *id);
+struct finsh_node *finsh_node_new_char(char c);
+struct finsh_node *finsh_node_new_int(int i);
+struct finsh_node *finsh_node_new_long(long l);
+struct finsh_node *finsh_node_new_string(char *s);
+struct finsh_node *finsh_node_new_ptr(void *ptr);
 
 #define finsh_node_sibling(node)    ((node)->sibling)
 #define finsh_node_child(node)      ((node)->child)

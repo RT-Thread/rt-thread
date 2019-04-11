@@ -27,8 +27,8 @@
 #define FINSH_OPTION_ECHO   0x01
 
 #define FINSH_PROMPT        finsh_get_prompt()
-const char* finsh_get_prompt(void);
-int finsh_set_prompt(const char * prompt);
+const char *finsh_get_prompt(void);
+int finsh_set_prompt(const char *prompt);
 
 #ifdef FINSH_USING_HISTORY
     #ifndef FINSH_HISTORY_LINES
@@ -64,7 +64,7 @@ struct finsh_shell
 
     enum input_stat stat;
 
-    rt_uint8_t echo_mode:1;
+    rt_uint8_t echo_mode: 1;
     rt_uint8_t prompt_mode: 1;
 
 #ifdef FINSH_USING_HISTORY
@@ -95,8 +95,8 @@ void finsh_set_echo(rt_uint32_t echo);
 rt_uint32_t finsh_get_echo(void);
 
 int finsh_system_init(void);
-void finsh_set_device(const char* device_name);
-const char* finsh_get_device(void);
+void finsh_set_device(const char *device_name);
+const char *finsh_get_device(void);
 
 rt_uint32_t finsh_get_prompt_mode(void);
 void finsh_set_prompt_mode(rt_uint32_t prompt_mode);

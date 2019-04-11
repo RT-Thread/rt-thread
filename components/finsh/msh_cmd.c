@@ -238,7 +238,7 @@ int cmd_mkfs(int argc, char **argv)
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_mkfs, __cmd_mkfs, format disk with file system);
 
 extern int df(const char *path);
-int cmd_df(int argc, char** argv)
+int cmd_df(int argc, char **argv)
 {
     if (argc != 2)
     {
@@ -260,7 +260,7 @@ int cmd_df(int argc, char** argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_df, __cmd_df, disk free);
 
-int cmd_echo(int argc, char** argv)
+int cmd_echo(int argc, char **argv)
 {
     if (argc == 2)
     {
@@ -273,7 +273,7 @@ int cmd_echo(int argc, char** argv)
         fd = open(argv[2], O_RDWR | O_APPEND | O_CREAT, 0);
         if (fd >= 0)
         {
-            write (fd, argv[1], strlen(argv[1]));
+            write(fd, argv[1], strlen(argv[1]));
             close(fd);
         }
         else
@@ -327,7 +327,7 @@ FINSH_FUNCTION_EXPORT_ALIAS(cmd_ifconfig, __cmd_ifconfig, list the information o
 
 int cmd_dns(int argc, char **argv)
 {
-    extern void set_dns(char* dns_server);
+    extern void set_dns(char *dns_server);
 
     if (argc == 1)
     {
@@ -335,14 +335,14 @@ int cmd_dns(int argc, char **argv)
 
 #if (LWIP_VERSION) < 0x02000000U
         ip_addr_t ip_addr;
-        for(index=0; index<DNS_MAX_SERVERS; index++)
+        for (index = 0; index < DNS_MAX_SERVERS; index++)
         {
             ip_addr = dns_getserver(index);
             rt_kprintf("dns server #%d: %s\n", index, ipaddr_ntoa(&ip_addr));
         }
 #else
         const ip_addr_t *ip_addr;
-        for(index=0; index<DNS_MAX_SERVERS; index++)
+        for (index = 0; index < DNS_MAX_SERVERS; index++)
         {
             ip_addr = dns_getserver(index);
             rt_kprintf("dns server #%d: %s\n", index, ipaddr_ntoa(ip_addr));
