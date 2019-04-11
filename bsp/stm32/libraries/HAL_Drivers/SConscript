@@ -24,10 +24,7 @@ if GetDepend(['RT_USING_SPI']):
     src += ['drv_spi.c']
 
 if GetDepend(['RT_USING_QSPI']):
-    src += ['drv_qspi.c'] 
-
-if GetDepend(['RT_USING_USB_DEVICE']):
-    src += ['drv_usb.c']
+    src += ['drv_qspi.c']
 
 if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_BITOPS']):
     src += ['drv_soft_i2c.c']
@@ -70,6 +67,9 @@ if GetDepend(['BSP_USING_WDT']):
 
 if GetDepend(['BSP_USING_SDIO']):
     src += ['drv_sdio.c']
+
+if GetDepend(['BSP_USING_USBD_FS']):
+    src += ['drv_usbd_fs.c']
 
 src += ['drv_common.c']
 

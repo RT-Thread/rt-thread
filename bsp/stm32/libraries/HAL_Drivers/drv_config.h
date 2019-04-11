@@ -37,6 +37,8 @@ extern "C" {
 #include "f4/dma_config.h"
 #include "f4/uart_config.h"
 #include "f4/spi_config.h"
+#include "f4/qspi_config.h"
+#include "f4/usbd_fs_config.h"
 #include "f4/adc_config.h"
 #include "f4/tim_config.h"
 #include "f4/sdio_config.h"
