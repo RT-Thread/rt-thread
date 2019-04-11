@@ -6,10 +6,11 @@ config SOC_STM32F469NI
     default y
 
 menu "Onboard Peripheral Drivers"
+
     config BSP_USING_SDRAM
-            bool "Enable SDRAM"
-            select BSP_USING_FMC
-            default n
+        bool "Enable SDRAM"
+        select BSP_USING_FMC
+        default n
     config BSP_USING_QSPI_FLASH
         bool "Enable QSPI FLASH (N25Q128A qspi1)"
         select BSP_USING_QSPI
