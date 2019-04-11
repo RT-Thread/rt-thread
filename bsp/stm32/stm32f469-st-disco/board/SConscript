@@ -10,10 +10,13 @@ cwd = GetCurrentDir()
 src = Split('''
 board.c
 CubeMX_Config/Src/stm32f4xx_hal_msp.c
+ports/drv_qspi_flash.c
+ports/qspi_mnt.c
 ''')
 
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
+path += [cwd + '/ports']
 
 startup_path_prefix = SDK_LIB
 
