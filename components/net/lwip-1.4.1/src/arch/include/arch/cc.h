@@ -55,10 +55,8 @@ typedef uintptr_t mem_ptr_t;
 #define X32_F "lx"
 
 #ifdef RT_USING_LIBC
-#if defined(__CC_ARM) || defined(__IAR_SYSTEMS_ICC__)
-#include <sys/errno.h>
-#else
-#include <errno.h>
+#if !defined(__CC_ARM) && !defined(__IAR_SYSTEMS_ICC__)
+
 /* some errno not defined in newlib */
 #define ENSRNOTFOUND 163  /* Domain name not found */
 /* WARNING: ESHUTDOWN also not defined in newlib. We chose
