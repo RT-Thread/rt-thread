@@ -27,6 +27,14 @@
 
 /* Reentrant versions of system calls.  */
 
+#ifndef _REENT_ONLY
+int *
+__errno ()
+{
+  return _rt_errno();
+}
+#endif
+
 int
 _close_r(struct _reent *ptr, int fd)
 {
