@@ -64,8 +64,6 @@ typedef uintptr_t mem_ptr_t;
 			in arch.h has been assigned to another error code. */
 #define ESHUTDOWN 180
 #endif /* __CC_ARM/__IAR_SYSTEMS_ICC__ */
-#else
-#define LWIP_PROVIDE_ERRNO
 #endif
 
 #if defined(RT_USING_LIBC) || defined(RT_USING_MINILIBC)
