@@ -496,8 +496,10 @@ static void at_recv_notice_cb(int socket, at_socket_evt_t event, const char *buf
 
     sock = at_get_socket(socket);
     if (sock == RT_NULL)
+    {
+        rt_free((char *)buff);
         return ;
-
+    }
     /* put receive buffer to receiver packet list */
     rt_mutex_take(sock->recv_lock, RT_WAITING_FOREVER);
     at_recvpkt_put(&(sock->recvpkt_list), buff, bfsz);
