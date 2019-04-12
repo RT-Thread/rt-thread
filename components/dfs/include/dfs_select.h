@@ -11,7 +11,7 @@
 #define DFS_SELECT_H__
 
 #include <libc/libc_fdset.h>
-
+#include <sys/time.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
