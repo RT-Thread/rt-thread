@@ -26,8 +26,8 @@
 #include <rthw.h>
 #include <rtdevice.h>
 
-#define DBG_SECTION_NAME  "FLASH"
-#define DBG_LEVEL         DBG_LOG
+#define DBG_TAG  "FLASH"
+#define DBG_LVL  DBG_LOG
 #include <rtdbg.h>
 
 #define SPI_FLASH_DEVICE_NAME       "spi00"

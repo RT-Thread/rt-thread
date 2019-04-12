@@ -13,15 +13,15 @@
  */
 
 #ifndef LOG_TAG
-#define DBG_SECTION_NAME               "at"
+#define DBG_TAG               "at"
 #else
-#define DBG_SECTION_NAME               LOG_TAG
+#define DBG_TAG               LOG_TAG
 #endif /* LOG_TAG */
 
 #ifdef AT_DEBUG
-#define DBG_LEVEL                      DBG_LOG
+#define DBG_LVL               DBG_LOG
 #else
-#define DBG_LEVEL                      DBG_INFO
+#define DBG_LVL               DBG_INFO
 #endif /* AT_DEBUG */
 
 #include <rtdbg.h>

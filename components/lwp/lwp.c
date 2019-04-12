@@ -19,8 +19,8 @@
 
 #include "lwp.h"
 
-#define DBG_SECTION_NAME    "LWP"
-#define DBG_LEVEL           DBG_WARNING
+#define DBG_TAG    "LWP"
+#define DBG_LVL    DBG_WARNING
 #include <rtdbg.h>
 
 extern void lwp_user_entry(void *args, const void *text, void *data);

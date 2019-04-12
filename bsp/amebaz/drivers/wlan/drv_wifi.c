@@ -28,8 +28,8 @@
 #include "drv_wlan.h"
 #include "drv_wifi.h"
 
-#define DBG_LEVEL DBG_INFO
-#define DBG_SECTION_NAME  "WIFI"
+#define DBG_LVL DBG_INFO
+#define DBG_TAG "WIFI"
 #include <rtdbg.h>
 
 #define MAX_ADDR_LEN          (6)

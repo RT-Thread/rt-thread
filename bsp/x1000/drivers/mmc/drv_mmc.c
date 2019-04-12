@@ -33,8 +33,8 @@
 #define DMA_ALIGN       (32U)
 #define PIO_THRESHOLD       64  /* use pio mode if data length < PIO_THRESHOLD */
 
-#define DBG_SECTION_NAME  "SDIO"
-#define DBG_LEVEL         DBG_INFO
+#define DBG_TAG  "SDIO"
+#define DBG_LVL  DBG_INFO
 #include <rtdbg.h>
 
 /*
