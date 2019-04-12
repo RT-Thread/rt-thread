@@ -20,8 +20,8 @@
 #include <string.h>
 
 #define DBG_ENABLE
-#define DBG_SECTION_NAME  "PIN"
-#define DBG_LEVEL         DBG_WARNING
+#define DBG_TAG  "PIN"
+#define DBG_LVL  DBG_WARNING
 #define DBG_COLOR
 #include <rtdbg.h>
 

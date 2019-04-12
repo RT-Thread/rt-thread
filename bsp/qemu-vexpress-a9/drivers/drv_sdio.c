@@ -77,8 +77,8 @@
 #define PL180_CLR_DAT_END       (1 << 8)
 #define PL180_CLR_DAT_BLK_END   (1 << 10)
 
-#define DBG_SECTION_NAME "drv.sdio"
-#define DBG_LEVEL DBG_INFO
+#define DBG_TAG "drv.sdio"
+#define DBG_LVL DBG_INFO
 #include "rtdbg.h"
 
 struct sdhci_pl180_pdata_t
