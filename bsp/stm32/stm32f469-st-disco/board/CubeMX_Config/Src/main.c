@@ -46,7 +46,6 @@
 CRC_HandleTypeDef hcrc;
 
 I2S_HandleTypeDef hi2s3;
-DMA_HandleTypeDef hdma_spi3_rx;
 
 QSPI_HandleTypeDef hqspi;
 
@@ -65,7 +64,6 @@ SDRAM_HandleTypeDef hsdram1;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_DMA_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_FMC_Init(void);
 static void MX_QUADSPI_Init(void);
@@ -111,7 +109,6 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
   MX_USART3_UART_Init();
   MX_FMC_Init();
   MX_QUADSPI_Init();
@@ -445,20 +442,6 @@ static void MX_USB_OTG_FS_PCD_Init(void)
 
 }
 
-/** 
-  * Enable DMA controller clock
-  */
-static void MX_DMA_Init(void) 
-{
-  /* DMA controller clock enable */
-  __HAL_RCC_DMA1_CLK_ENABLE();
-
-  /* DMA interrupt init */
-  /* DMA1_Stream0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Stream0_IRQn);
-
-}
 /* FMC initialization function */
 static void MX_FMC_Init(void)
 {

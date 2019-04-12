@@ -28,8 +28,6 @@
 /* Global variables ---------------------------------------------------------*/
 PDM_Filter_Handler_t PDM1_filter_handler;
 PDM_Filter_Config_t PDM1_filter_config;
-PDM_Filter_Handler_t PDM2_filter_handler;
-PDM_Filter_Config_t PDM2_filter_config;
 
 /* USER CODE BEGIN 1 */
 /* USER CODE END 1 */
@@ -53,30 +51,6 @@ void MX_PDM2PCM_Init(void)
   PDM1_filter_config.output_samples_number = 16;
   PDM1_filter_config.mic_gain = 0; 
   PDM_Filter_setConfig(&PDM1_filter_handler, &PDM1_filter_config);
-
-  PDM2_filter_handler.bit_order = PDM_FILTER_BIT_ORDER_LSB;
-  PDM2_filter_handler.endianness = PDM_FILTER_ENDIANNESS_BE;
-  PDM2_filter_handler.high_pass_tap = 2104533974;
-  PDM2_filter_handler.in_ptr_channels = 2;
-  PDM2_filter_handler.out_ptr_channels = 2; 
-  PDM_Filter_Init(&PDM2_filter_handler);
-
-  PDM2_filter_config.decimation_factor = PDM_FILTER_DEC_FACTOR_64;
-  PDM2_filter_config.output_samples_number = 16;
-  PDM2_filter_config.mic_gain = 0; 
-  PDM_Filter_setConfig(&PDM2_filter_handler, &PDM2_filter_config);
-
-  PDM2_filter_handler.bit_order = PDM_FILTER_BIT_ORDER_LSB;
-  PDM2_filter_handler.endianness = PDM_FILTER_ENDIANNESS_BE;
-  PDM2_filter_handler.high_pass_tap = 2104533974;
-  PDM2_filter_handler.in_ptr_channels = 2;
-  PDM2_filter_handler.out_ptr_channels = 2; 
-  PDM_Filter_Init(&PDM2_filter_handler);
-
-  PDM2_filter_config.decimation_factor = PDM_FILTER_DEC_FACTOR_64;
-  PDM2_filter_config.output_samples_number = 16;
-  PDM2_filter_config.mic_gain = 0; 
-  PDM_Filter_setConfig(&PDM2_filter_handler, &PDM2_filter_config);
 
   /* USER CODE BEGIN 3 */
   /* USER CODE END 3 */
