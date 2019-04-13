@@ -24,8 +24,8 @@
 #define SYSCALL_NET(f) ((void*)sys_notimpl)
 #endif
 
-#define DBG_SECTION_NAME    "LWP_CALL"
-#define DBG_LEVEL           DBG_WARNING
+#define DBG_TAG    "LWP_CALL"
+#define DBG_LVL           DBG_WARNING
 #include <rtdbg.h>
 
 static void __exit_files(rt_thread_t tid)

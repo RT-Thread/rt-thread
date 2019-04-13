@@ -10,8 +10,8 @@
 
 #include "sensor.h"
 
-#define DBG_LEVEL DBG_INFO
-#define DBG_SECTION_NAME  "sensor"
+#define DBG_TAG  "sensor"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #include <string.h>

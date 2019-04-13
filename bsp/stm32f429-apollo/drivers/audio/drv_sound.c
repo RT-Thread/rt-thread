@@ -19,8 +19,8 @@
 #include "drv_wm8978.h"
 #include <stm32f4xx.h>
 
-#define DBG_LEVEL DBG_LOG
-#define DBG_SECTION_NAME    "Sound"
+#define DBG_TAG "Sound"
+#define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
 /**

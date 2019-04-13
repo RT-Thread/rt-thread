@@ -15,14 +15,14 @@
 #include "utest.h"
 #include <utest_log.h>
 
-#undef DBG_SECTION_NAME
-#undef DBG_LEVEL
+#undef DBG_TAG
+#undef DBG_LVL
 
-#define DBG_SECTION_NAME          "utest"
+#define DBG_TAG          "utest"
 #ifdef UTEST_DEBUG
-#define DBG_LEVEL                 DBG_LOG
+#define DBG_LVL          DBG_LOG
 #else
-#define DBG_LEVEL                 DBG_INFO
+#define DBG_LVL          DBG_INFO
 #endif
 #include <rtdbg.h>
 
