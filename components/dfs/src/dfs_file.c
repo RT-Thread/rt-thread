@@ -99,7 +99,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         rt_free(fd->path);
         fd->path = NULL;
 
-        LOG_E("open failed");
+        LOG_D("%s open failed", fullpath);
 
         return result;
     }
