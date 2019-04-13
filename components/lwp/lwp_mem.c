@@ -11,8 +11,8 @@
 #include <rtthread.h>
 #include <lwp.h>
 
-#define DBG_SECTION_NAME    "LWPMEM"
-#define DBG_LEVEL           DBG_WARNING
+#define DBG_TAG    "LWPMEM"
+#define DBG_LVL    DBG_WARNING
 #include <rtdbg.h>
 
 // todo: remove repleat code

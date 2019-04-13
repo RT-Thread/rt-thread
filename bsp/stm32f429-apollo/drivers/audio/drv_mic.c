@@ -18,8 +18,8 @@
 #include "drv_wm8978.h"
 #include <stm32f4xx.h>
 
-#define DBG_LEVEL DBG_INFO
-#define DBG_SECTION_NAME    "MIC"
+#define DBG_TAG "MIC"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 struct micphone_device

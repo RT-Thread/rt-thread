@@ -33,11 +33,11 @@
 #include "drv_clock.h"
 
 
-#define DBG_SECTION_NAME  "MMC"
-// #define DBG_LEVEL DBG_LOG    
-// #define DBG_LEVEL DBG_INFO   
-#define DBG_LEVEL DBG_WARNING
-// #define DBG_LEVEL DBG_ERROR  
+#define DBG_TAG  "MMC"
+// #define DBG_LVL DBG_LOG    
+// #define DBG_LVL DBG_INFO   
+#define DBG_LVL DBG_WARNING
+// #define DBG_LVL DBG_ERROR  
 #include <rtdbg.h>
 
 #ifdef RT_USING_SDIO
