@@ -113,7 +113,6 @@ _reswitch:
     MOVL    XAR5, #_rt_interrupt_to_thread     ; set rt_interrupt_to_thread
     MOVL    *XAR5, XAR4
 
-    ;TRAP    #16
     LRETR
     .endasmfunc
 
@@ -169,8 +168,6 @@ _RTOSINT_Handler:
     MOV     AR1, AL
     CMP     AR1, #0
     B       switch_to_thread, EQ    ; skip register save at the first time 
-
-    ;MOVZ    AR1, @SP                 ; get from thread stack pointer 
     
 ;#if defined (__VFP_FP__) && !defined(__SOFTFP__)
 ;    TST     lr, #0x10           ; if(!EXC_RETURN[4]) 
@@ -205,7 +202,7 @@ switch_to_thread:
 ;#endif
 
     MOV     @SP, AR1
-    ;INC     SP
+
     RT_CTX_RESTORE     ; pop r4 - r11 register
 
 rtosint_exit:
