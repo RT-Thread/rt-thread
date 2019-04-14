@@ -7,6 +7,12 @@ config SOC_STM32F103C8
 
 menu "Onboard Peripheral Drivers"
 
+    config BSP_USING_USB_TO_USART
+        bool "Enable USB TO USART (uart1)"
+        select BSP_USING_UART
+        select BSP_USING_UART1
+        default y
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -29,6 +35,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART1 RX DMA"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                 default n
+        endif
 
     menuconfig BSP_USING_SPI
         bool "Enable SPI BUS"
@@ -49,6 +56,7 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_SPI1
                 select BSP_SPI1_TX_USING_DMA
                 default n
+        endif
 
      menuconfig BSP_USING_ADC
         bool "Enable ADC"
