@@ -110,9 +110,6 @@
 /* Utilities */
 
 
-/* ARM CMSIS */
-
-
 /* RT-Thread online packages */
 
 /* IoT - internet of things */
@@ -150,7 +147,12 @@
 /* miscellaneous packages */
 
 
+/* sample package */
+
 /* samples: kernel and components samples */
+
+
+/* example package: hello */
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32F1
@@ -160,6 +162,8 @@
 #define SOC_STM32F103C8
 
 /* Onboard Peripheral Drivers */
+
+#define BSP_USING_USB_TO_USART
 
 /* On-chip Peripheral Drivers */
 
