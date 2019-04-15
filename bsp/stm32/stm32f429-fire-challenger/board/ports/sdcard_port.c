@@ -17,8 +17,8 @@
 #include <dfs_posix.h>
 #include "drv_gpio.h"
 
-#define DBG_SECTION_NAME  "app.card"
-#define DBG_LEVEL DBG_INFO
+#define DBG_TAG "app.card"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #define WIFI_RESET_PIN                 GET_PIN(G,  9)

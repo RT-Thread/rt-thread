@@ -21,12 +21,12 @@
 #include <dhcp_server.h>
 #endif
 
+#define DBG_TAG "WLAN.lwip"
 #ifdef RT_WLAN_LWIP_DEBUG
-#define DBG_LEVEL DBG_LOG
+#define DBG_LVL DBG_LOG
 #else
-#define DBG_LEVEL DBG_INFO
-#endif
-#define DBG_SECTION_NAME  "WLAN.lwip"
+#define DBG_LVL DBG_INFO
+#endif /* RT_WLAN_LWIP_DEBUG */
 #include <rtdbg.h>
 
 #ifndef IPADDR_STRLEN_MAX

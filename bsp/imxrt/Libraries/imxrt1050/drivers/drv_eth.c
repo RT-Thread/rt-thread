@@ -46,8 +46,8 @@
 //#define ETH_RX_DUMP
 //#define ETH_TX_DUMP
 
-#define DBG_SECTION_NAME    "ETH"
-#define DBG_LEVEL           DBG_INFO
+#define DBG_TAG    "ETH"
+#define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
 #define MAX_ADDR_LEN 6
