@@ -138,7 +138,6 @@ extern int $Super$$main(void);
 /* re-define main function */
 int $Sub$$main(void)
 {
-    rt_hw_interrupt_disable();
     rtthread_startup();
     return 0;
 }
@@ -150,7 +149,6 @@ int __low_level_init(void)
 {
     // call IAR table copy function.
     __iar_data_init3();
-    rt_hw_interrupt_disable();
     rtthread_startup();
     return 0;
 }
@@ -159,7 +157,6 @@ extern int main(void);
 /* Add -eentry to arm-none-eabi-gcc argument */
 int entry(void)
 {
-    rt_hw_interrupt_disable();
     rtthread_startup();
     return 0;
 }
