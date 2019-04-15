@@ -351,9 +351,6 @@ static void mmc_request_send(struct rt_mmcsd_host *host, struct rt_mmcsd_req *re
     req->cmd->resp[1] = cmd.response[1];
     req->cmd->resp[0] = cmd.response[0];
 
-    if(req->cmd->err)
-        LOG_E("transfer cmd err ");
-    
     if (req->stop)
     {
         stop.cmdidx = req->stop->cmd_code;
