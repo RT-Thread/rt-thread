@@ -4,7 +4,6 @@ from building import *
 cwd     = GetCurrentDir()
 src     = Split("""
 main.c
-drv_mpu.c
 """)
 
 group = DefineGroup('Applications', src, depend = [''])
