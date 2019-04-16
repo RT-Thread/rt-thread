@@ -18,6 +18,7 @@ STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_cryp.c
 STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_cryp_ex.c
 STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dma.c
 STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dma_ex.c
+STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_mdma.c
 STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pwr.c
 STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pwr_ex.c
 STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rcc.c
@@ -96,6 +97,10 @@ if GetDepend(['BSP_USING_SDRAM']):
 if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_flash.c']
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_flash_ex.c']
+
+if GetDepend(['BSP_USING_LTDC']):
+    src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_ltdc.c']
+    src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dma2d.c']
 
 path = [cwd + '/STM32H7xx_HAL_Driver/Inc',
     cwd + '/CMSIS/Device/ST/STM32H7xx/Include',
