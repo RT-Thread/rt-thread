@@ -413,7 +413,6 @@ int at_closesocket(int socket)
     {
         if (at_dev_ops->at_closesocket(socket) != 0)
         {
-            LOG_E("AT socket (%d) closesocket failed!", socket);
             free_socket(sock);
             return -1;
         }
@@ -442,7 +441,6 @@ int at_shutdown(int socket, int how)
     {
         if (at_dev_ops->at_closesocket(socket) != 0)
         {
-            LOG_E("AT socket (%d) shutdown failed!", socket);
             free_socket(sock);
             return -1;
         }
@@ -468,7 +466,13 @@ static int socketaddr_to_ipaddr_port(const struct sockaddr *sockaddr, ip_addr_t 
 {
     const struct sockaddr_in* sin = (const struct sockaddr_in*) (const void *) sockaddr;
 
+#if NETDEV_IPV4 && NETDEV_IPV6
     (*addr).u_addr.ip4.addr = sin->sin_addr.s_addr;
+#elif NETDEV_IPV4
+    (*addr).addr = sin->sin_addr.s_addr;
+#elif NETDEV_IPV6
+    LOG_E("not support IPV6.");
+#endif /* NETDEV_IPV4 && NETDEV_IPV6 */
 
     *port = (uint16_t) HTONS_PORT(sin->sin_port);
 
@@ -546,7 +550,7 @@ int at_connect(int socket, const struct sockaddr *name, socklen_t namelen)
 
     if (sock->state != AT_SOCKET_NONE)
     {
-        LOG_E("Socket %d connect state is %d.", sock->socket, sock->state);
+        LOG_E("Socket(%d) connect state is %d.", sock->socket, sock->state);
         result = -1;
         goto __exit;
     }
@@ -557,7 +561,6 @@ int at_connect(int socket, const struct sockaddr *name, socklen_t namelen)
 
     if (at_dev_ops->at_connect(socket, ipstr, remote_port, sock->type, RT_TRUE) < 0)
     {
-        LOG_E("AT socket(%d) connect failed!", socket);
         result = -1;
         goto __exit;
     }
@@ -623,7 +626,6 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
 
         if (at_dev_ops->at_connect(socket, ipstr, remote_port, sock->type, RT_TRUE) < 0)
         {
-            LOG_E("AT socket UDP connect failed!");
             result = -1;
             goto __exit;
         }
@@ -737,7 +739,7 @@ int at_recv(int s, void *mem, size_t len, int flags)
 
 int at_sendto(int socket, const void *data, size_t size, int flags, const struct sockaddr *to, socklen_t tolen)
 {
-    struct at_socket *sock = RT_NULL;
+    struct at_socket *sock;
     int len, result = 0;
 
     if (at_dev_ops == RT_NULL)
@@ -789,7 +791,6 @@ int at_sendto(int socket, const void *data, size_t size, int flags, const struct
 
             if (at_dev_ops->at_connect(socket, ipstr, remote_port, sock->type, RT_TRUE) < 0)
             {
-                LOG_E("AT socket (%d) UDP connect failed!", socket);
                 result = -1;
                 goto __exit;
             }
@@ -999,7 +1000,6 @@ struct hostent *at_gethostbyname(const char *name)
     {
         if (at_dev_ops->at_domain_resolve(name, ipstr) < 0)
         {
-            LOG_E("AT domain (%s) resolve error!", name);
             return RT_NULL;
         }
     }
@@ -1008,8 +1008,14 @@ struct hostent *at_gethostbyname(const char *name)
         strncpy(ipstr, name, strlen(name));
     }
 
+#if NETDEV_IPV4 && NETDEV_IPV6
     addr.u_addr.ip4.addr = ipstr_to_u32(ipstr);
-
+#elif NETDEV_IPV4
+    addr.addr = ipstr_to_u32(ipstr);
+#elif NETDEV_IPV6
+    LOG_E("not support IPV6.");
+#endif /* NETDEV_IPV4 && NETDEV_IPV6 */
+ 
     /* fill hostent structure */
     s_hostent_addr = addr;
     s_phostent_addr[0] = &s_hostent_addr;
@@ -1106,12 +1112,18 @@ int at_getaddrinfo(const char *nodename, const char *servname,
             {
                 strncpy(ip_str, nodename, strlen(nodename));
             }
-
+            
+        #if NETDEV_IPV4 && NETDEV_IPV6 
             addr.type = IPADDR_TYPE_V4;
             if ((addr.u_addr.ip4.addr = ipstr_to_u32(ip_str)) == 0)
             {
                 return EAI_FAIL;
             }
+        #elif NETDEV_IPV4
+            addr.addr = ipstr_to_u32(ip_str);
+        #elif NETDEV_IPV6
+            LOG_E("not support IPV6."); 
+        #endif /* NETDEV_IPV4 && NETDEV_IPV6 */  
         }
     }
     else
@@ -1143,10 +1155,16 @@ int at_getaddrinfo(const char *nodename, const char *servname,
     sa = (struct sockaddr_storage *) (void *) ((uint8_t *) ai + sizeof(struct addrinfo));
     struct sockaddr_in *sa4 = (struct sockaddr_in *) sa;
     /* set up sockaddr */
+#if NETDEV_IPV4 && NETDEV_IPV6
     sa4->sin_addr.s_addr = addr.u_addr.ip4.addr;
+#elif NETDEV_IPV4
+    sa4->sin_addr.s_addr = addr.addr;
+#elif NETDEV_IPV6
+    LOG_E("not support IPV6."); 
+#endif /* NETDEV_IPV4 && NETDEV_IPV6 */
     sa4->sin_family = AF_INET;
     sa4->sin_len = sizeof(struct sockaddr_in);
-    sa4->sin_port = htons((u16_t )port_nr);
+    sa4->sin_port = htons((uint16_t)port_nr);
     ai->ai_family = AF_INET;
 
     /* set up addrinfo */
