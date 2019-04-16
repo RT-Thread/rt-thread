@@ -8,12 +8,12 @@
  * 2018-05-18     ChenYong     First version
  */
 
-#include <sal_ipaddr.h>
 #include <rtthread.h>
+#include <netdev_ipaddr.h>
 
 /* Here for now until needed in other places in lwIP */
 #ifndef isprint
-#define in_range(c, lo, up)  ((u8_t)c >= lo && (u8_t)c <= up)
+#define in_range(c, lo, up)  ((uint8_t)c >= lo && (uint8_t)c <= up)
 #define isprint(c)           in_range(c, 0x20, 0x7f)
 #define isdigit(c)           in_range(c, '0', '9')
 #define isxdigit(c)          (isdigit(c) || in_range(c, 'a', 'f') || in_range(c, 'A', 'F'))
@@ -33,13 +33,13 @@
  * @param addr pointer to which to save the ip address in network order
  * @return 1 if cp could be converted to addr, 0 on failure
  */
-int sal_ip4addr_aton(const char *cp, ip4_addr_t *addr)
+int netdev_ip4addr_aton(const char *cp, ip4_addr_t *addr)
 {
-    u32_t val;
-    u8_t base;
+    uint32_t val;
+    uint8_t base;
     char c;
-    u32_t parts[4];
-    u32_t *pp = parts;
+    uint32_t parts[4];
+    uint32_t *pp = parts;
 
     c = *cp;
     for (;;)
@@ -72,12 +72,12 @@ int sal_ip4addr_aton(const char *cp, ip4_addr_t *addr)
         {
             if (isdigit(c))
             {
-                val = (val * base) + (u32_t) (c - '0');
+                val = (val * base) + (uint32_t) (c - '0');
                 c = *++cp;
             }
             else if (base == 16 && isxdigit(c))
             {
-                val = (val << 4) | (u32_t) (c + 10 - (islower(c) ? 'a' : 'A'));
+                val = (val << 4) | (uint32_t) (c + 10 - (islower(c) ? 'a' : 'A'));
                 c = *++cp;
             }
             else
@@ -180,28 +180,28 @@ int sal_ip4addr_aton(const char *cp, ip4_addr_t *addr)
  * @return either pointer to buf which now holds the ASCII
  *         representation of addr or NULL if buf was too small
  */
-char *sal_ip4addr_ntoa_r(const ip4_addr_t *addr, char *buf, int buflen)
+char *netdev_ip4addr_ntoa_r(const ip4_addr_t *addr, char *buf, int buflen)
 {
-    u32_t s_addr;
+    uint32_t s_addr;
     char inv[3];
     char *rp;
-    u8_t *ap;
-    u8_t rem;
-    u8_t n;
-    u8_t i;
+    uint8_t *ap;
+    uint8_t rem;
+    uint8_t n;
+    uint8_t i;
     int len = 0;
 
     s_addr = ip4_addr_get_u32(addr);
 
     rp = buf;
-    ap = (u8_t *) &s_addr;
+    ap = (uint8_t *) &s_addr;
     for (n = 0; n < 4; n++)
     {
         i = 0;
         do
         {
-            rem = *ap % (u8_t) 10;
-            *ap /= (u8_t) 10;
+            rem = *ap % (uint8_t) 10;
+            *ap /= (uint8_t) 10;
             inv[i++] = (char) ('0' + rem);
         } while (*ap);
         while (i--)
@@ -232,10 +232,10 @@ char *sal_ip4addr_ntoa_r(const ip4_addr_t *addr, char *buf, int buflen)
  * @return pointer to a global static (!) buffer that holds the ASCII
  *         representation of addr
  */
-char *sal_ip4addr_ntoa(const ip4_addr_t *addr)
+char *netdev_ip4addr_ntoa(const ip4_addr_t *addr)
 {
     static char str[IP4ADDR_STRLEN_MAX];
-    return sal_ip4addr_ntoa_r(addr, str, IP4ADDR_STRLEN_MAX);
+    return netdev_ip4addr_ntoa_r(addr, str, IP4ADDR_STRLEN_MAX);
 }
 
 
@@ -246,11 +246,11 @@ char *sal_ip4addr_ntoa(const ip4_addr_t *addr)
  * @param cp IP address in ascii representation (e.g. "127.0.0.1")
  * @return ip address in network order
  */
-in_addr_t sal_ipaddr_addr(const char *cp)
+in_addr_t netdev_ipaddr_addr(const char *cp)
 {
     ip4_addr_t val;
 
-    if (sal_ip4addr_aton(cp, &val)) {
+    if (netdev_ip4addr_aton(cp, &val)) {
         return ip4_addr_get_u32(&val);
     }
     return (IPADDR_NONE);
