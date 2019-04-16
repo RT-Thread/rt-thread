@@ -273,6 +273,7 @@ int at_resp_parse_line_args_by_kw(at_response_t resp, const char *keyword, const
  * @return 0 : success
  *        -1 : response status error
  *        -2 : wait timeout
+ *        -7 : enter AT CLI mode
  */
 int at_obj_exec_cmd(at_client_t client, at_response_t resp, const char *cmd_expr, ...)
 {
@@ -287,6 +288,12 @@ int at_obj_exec_cmd(at_client_t client, at_response_t resp, const char *cmd_expr
     {
         LOG_E("input AT Client object is NULL, please create or get AT Client object!");
         return -RT_ERROR;
+    }
+
+    /* check AT CLI mode */
+    if (client->status == AT_STATUS_CLI && resp)
+    {
+        return -RT_EBUSY;
     }
 
     rt_mutex_take(client->lock, RT_WAITING_FOREVER);
@@ -869,6 +876,12 @@ int at_client_init(const char *dev_name,  rt_size_t recv_bufsz)
     client = &at_client_table[idx];
     client->recv_bufsz = recv_bufsz;
 
+    result = at_client_para_init(client);
+    if (result != RT_EOK)
+    {
+        goto __exit;
+    }
+
     /* find and open command device */
     client->device = rt_device_find(dev_name);
     if (client->device)
@@ -890,12 +903,6 @@ int at_client_init(const char *dev_name,  rt_size_t recv_bufsz)
     {
         LOG_E("AT client initialize failed! Not find the device(%s).", dev_name);
         result = -RT_ERROR;
-        goto __exit;
-    }
-
-    result = at_client_para_init(client);
-    if (result != RT_EOK)
-    {
         goto __exit;
     }
 
