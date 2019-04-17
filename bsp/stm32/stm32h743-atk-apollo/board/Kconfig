@@ -6,6 +6,17 @@ config SOC_STM32H743II
     default y
 
 menu "Onboard Peripheral Drivers"
+    
+    config BSP_USING_SDRAM
+        bool "Enable SDRAM"
+        select BSP_USING_FMC
+        default n
+
+    config BSP_USING_LCD
+        bool "Enable LCD"
+        select BSP_USING_LTDC
+        select BSP_USING_SDRAM
+        default n
 
 endmenu
 
@@ -24,6 +35,14 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART1
                 bool "Enable UART1"
                 default y
+
+    config BSP_USING_FMC
+        bool
+        default n
+
+    config BSP_USING_LTDC
+        bool
+        default n
 
         endif
 

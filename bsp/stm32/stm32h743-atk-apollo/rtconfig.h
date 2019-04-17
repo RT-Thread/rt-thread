@@ -15,7 +15,7 @@
 #define RT_USING_HOOK
 #define RT_USING_IDLE_HOOK
 #define RT_IDEL_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 256
+#define IDLE_THREAD_STACK_SIZE 1024
 #define RT_DEBUG
 
 /* Inter-Thread communication */
@@ -29,7 +29,8 @@
 /* Memory Management */
 
 #define RT_USING_MEMPOOL
-#define RT_USING_SMALL_MEM
+#define RT_USING_MEMHEAP
+#define RT_USING_MEMHEAP_AS_HEAP
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
@@ -110,9 +111,6 @@
 /* Utilities */
 
 
-/* ARM CMSIS */
-
-
 /* RT-Thread online packages */
 
 /* IoT - internet of things */
@@ -146,8 +144,6 @@
 
 /* peripheral libraries and drivers */
 
-/* sensors drivers */
-
 
 /* miscellaneous packages */
 
@@ -162,6 +158,7 @@
 #define SOC_STM32H743II
 
 /* Onboard Peripheral Drivers */
+
 
 /* On-chip Peripheral Drivers */
 
