@@ -146,6 +146,7 @@ static void check_netdev_internet_up_work(struct rt_work *work, void *work_data)
     struct netdev *netdev = (struct netdev *)work_data;
     socklen_t addr_len = sizeof(struct sockaddr_in);
     char send_data[SAL_INTERNET_BUFF_LEN], recv_data = 0;
+    struct rt_delayed_work *delay_work = (struct rt_delayed_work *)work;
 
     const char month[][SAL_INTERNET_MONTH_LEN] = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
     char date[SAL_INTERNET_DATE_LEN];
@@ -156,7 +157,8 @@ static void check_netdev_internet_up_work(struct rt_work *work, void *work_data)
 
     if (work)
     {
-        rt_free((struct rt_delayed_work *)work);
+        rt_timer_detach(&(delay_work->timer));
+        rt_free(delay_work);
     }
 
     /* get network interface socket operations */
