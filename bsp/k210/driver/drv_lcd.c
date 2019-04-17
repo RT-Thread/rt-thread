@@ -21,10 +21,8 @@
 #include <drv_io_config.h>
 #include <rthw.h>
 
-#define DBG_ENABLE
-#define DBG_SECTION_NAME  "LCD"
-#define DBG_LEVEL         DBG_WARNING
-#define DBG_COLOR
+#define DBG_TAG  "LCD"
+#define DBG_LVL  DBG_WARNING
 #include <rtdbg.h>
 
 #define NO_OPERATION            0x00

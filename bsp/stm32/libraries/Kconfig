@@ -35,3 +35,8 @@ config SOC_SERIES_STM32G0
     bool
     select ARCH_ARM_CORTEX_M0
     select SOC_FAMILY_STM32
+
+config SOC_SERIES_STM32H7
+    bool
+    select ARCH_ARM_CORTEX_M7
+    select SOC_FAMILY_STM32

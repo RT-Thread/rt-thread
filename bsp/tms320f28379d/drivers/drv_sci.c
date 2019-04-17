@@ -147,8 +147,25 @@ static int c28x_putc(struct rt_serial_device *serial, char c)
 static int c28x_getc(struct rt_serial_device *serial)
 {
     char ch;
-    SCI_read(0, &ch, 1);
-    return ch;
+    if(SCI_read(0, &ch, 1))
+        return ch;
+    else
+        return -1;
+}
+
+/**
+ * Uart common interrupt process. This need add to uart ISR.
+ *
+ * @param serial serial device
+ */
+static void uart_isr(struct rt_serial_device *serial) {
+    struct c28x_uart *uart = (struct c28x_uart *) serial->parent.user_data;
+
+    RT_ASSERT(uart != RT_NULL);
+
+    rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
+    SciaRegs.SCIFFRX.bit.RXFFINTCLR = 1;   // Clear Interrupt flag
+    PieCtrlRegs.PIEACK.all |= 0x100;       // Issue PIE ack
 }
 
 static const struct rt_uart_ops c28x_uart_ops =
@@ -158,6 +175,20 @@ static const struct rt_uart_ops c28x_uart_ops =
     .putc = c28x_putc,
     .getc = c28x_getc,
 };
+
+//
+// sciaRxFifoIsr - SCIA Receive FIFO ISR
+//
+interrupt void sciaRxFifoIsr(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    uart_isr(&uart_obj[0].serial);
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
 
 int rt_hw_sci_init(void)
 {
@@ -182,7 +213,17 @@ int rt_hw_sci_init(void)
     CpuSysRegs.PCLKCR7.bit.SCI_B = 1;
     CpuSysRegs.PCLKCR7.bit.SCI_C = 1;
 
+    PieVectTable.SCIA_RX_INT = &sciaRxFifoIsr;
+
     EDIS;
+
+    //
+    // Enable interrupts required for this example
+    //
+    PieCtrlRegs.PIECTRL.bit.ENPIE = 1;   // Enable the PIE block
+    PieCtrlRegs.PIEIER9.bit.INTx1 = 1;   // PIE Group 9, INT1
+    IER |= 0x100;                        // Enable CPU INT
+    EINT;
 
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     rt_err_t result = 0;
@@ -201,7 +242,6 @@ int rt_hw_sci_init(void)
     uart_obj[2].serial.config = config;
     uart_obj[2].name          = "scic";
     uart_obj[2].sci_regs      = &ScicRegs;
-
 
     /* register UART device */
     result = rt_hw_serial_register(&uart_obj[0].serial, uart_obj[0].name,

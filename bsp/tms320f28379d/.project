@@ -41,6 +41,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/libcpu/ti-dsp/c28x</locationURI>
 		</link>
 		<link>
+			<name>finsh</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/components/finsh</locationURI>
+		</link>
+		<link>
 			<name>DeviceDrivers/serial.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/components/drivers/serial/serial.c</locationURI>

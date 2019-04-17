@@ -19,8 +19,8 @@
 #endif
 #include <sal.h>
 
-#define DBG_SECTION_NAME               "SAL_SKT"
-#define DBG_LEVEL                      DBG_INFO
+#define DBG_TAG              "SAL_SKT"
+#define DBG_LVL              DBG_INFO
 #include <rtdbg.h>
 
 #define SOCKET_TABLE_STEP_LEN          4

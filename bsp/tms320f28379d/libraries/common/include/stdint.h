@@ -69,6 +69,8 @@
     typedef          int    int32_t;
     typedef unsigned int   uint32_t;
 #else
+    typedef          char   int8_t;
+    typedef unsigned char  uint8_t;
     typedef          int    int16_t;
     typedef unsigned int   uint16_t;
     typedef          long   int32_t;
@@ -186,9 +188,6 @@
 #elif defined(_TMS320C5XX) || defined(__TMS320C55X__) 
 /* sorry, [u]int_fast64_t not implemented for C54x, C55x */
 #endif
-
-typedef uint_fast8_t uint8_t;
-typedef int_fast8_t int8_t;
 
 /* 7.18.1.4 Integer types capable of holding object pointers */
 #if defined(_TMS320C5XX) || defined(__TMS320C55X__)        || \
