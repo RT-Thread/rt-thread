@@ -81,7 +81,7 @@ static int stm32_qspi_init(struct rt_qspi_device *device, struct rt_qspi_configu
     result = HAL_QSPI_Init(&qspi_bus->QSPI_Handler);
     if (result  == HAL_OK)
     {
-        LOG_D("qspi init succsee!");
+        LOG_D("qspi init success!");
     }
     else
     {
