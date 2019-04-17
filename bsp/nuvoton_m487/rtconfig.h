@@ -37,7 +37,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40000
+#define RT_VER_NUM 0x40001
 
 /* RT-Thread Components */
 
@@ -58,7 +58,7 @@
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
 #define FINSH_THREAD_PRIORITY 20
-#define FINSH_THREAD_STACK_SIZE 1024
+#define FINSH_THREAD_STACK_SIZE 2048
 #define FINSH_CMD_SIZE 80
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_DEFAULT
@@ -67,9 +67,22 @@
 /* Device virtual file system */
 
 #define RT_USING_DFS
-#define DFS_FILESYSTEMS_MAX 1
+#define DFS_USING_WORKDIR
+#define DFS_FILESYSTEMS_MAX 2
 #define DFS_FILESYSTEM_TYPES_MAX 2
 #define DFS_FD_MAX 32
+#define RT_USING_DFS_ELMFAT
+
+/* elm-chan's FatFs, Generic FAT Filesystem Module */
+
+#define RT_DFS_ELM_CODE_PAGE 437
+#define RT_DFS_ELM_WORD_ACCESS
+#define RT_DFS_ELM_USE_LFN_3
+#define RT_DFS_ELM_USE_LFN 3
+#define RT_DFS_ELM_MAX_LFN 255
+#define RT_DFS_ELM_DRIVES 2
+#define RT_DFS_ELM_MAX_SECTOR_SIZE 4096
+#define RT_DFS_ELM_REENTRANT
 #define RT_USING_DFS_DEVFS
 
 /* Device Drivers */
@@ -78,6 +91,9 @@
 #define RT_PIPE_BUFSZ 64
 #define RT_USING_SERIAL
 #define RT_SERIAL_USING_DMA
+#define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_SPI
+#define RT_USING_W25QXX
 
 /* Using WiFi */
 
@@ -179,6 +195,8 @@
 
 
 /* peripheral libraries and drivers */
+
+/* sensors drivers */
 
 
 /* miscellaneous packages */
