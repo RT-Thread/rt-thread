@@ -201,11 +201,12 @@ static void UART2PINconfigStepB(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
     /* Configure USART Rx/tx PIN */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2; 
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP; 
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 }
@@ -238,7 +239,7 @@ int rt_hw_uart_init(void)
     config.baud_rate = BAUD_RATE_115200;
     serial2.ops    = &mm32_uart_ops;
     serial2.config = config;
-    /* register UART1 device */
+    /* register UART2 device */
     rt_hw_serial_register(&serial2, "uart2",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);

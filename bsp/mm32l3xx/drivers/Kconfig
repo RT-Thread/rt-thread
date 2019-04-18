@@ -4,7 +4,7 @@ menu "Hardware Drivers Config"
         menu "GPIO Drivers"
             config BSP_USING_GPIO
                 bool "Enable GPIO"
-                select BSP_USING_GPIO
+                select RT_USING_PIN
                 default n
         endmenu 
         menu "UART Drivers"

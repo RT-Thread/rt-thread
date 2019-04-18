@@ -13,7 +13,7 @@
 #include <rtthread.h>
 #include <hal_device.h>
 
-#define SRAM_SIZE 0x2000
+#define SRAM_SIZE 0x5000
 
 #define SRAM_END (SRAM_BASE + SRAM_SIZE)
 #ifdef __CC_ARM

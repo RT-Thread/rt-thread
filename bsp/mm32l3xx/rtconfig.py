@@ -107,7 +107,7 @@ elif PLATFORM == 'iar':
     CFLAGS += ' --no_scheduling' 
 
     CFLAGS += ' --endian=little' 
-    CFLAGS += ' --cpu=Cortex-M4' 
+    CFLAGS += ' --cpu=Cortex-M3' 
     CFLAGS += ' -e' 
 
     CFLAGS += ' --dlib_config "' + EXEC_PATH + '/arm/INC/c/DLib_Config_Normal.h"'    
