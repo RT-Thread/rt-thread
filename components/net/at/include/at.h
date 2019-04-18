@@ -64,7 +64,7 @@ enum at_status
 {
     AT_STATUS_UNINITIALIZED = 0,
     AT_STATUS_INITIALIZED,
-    AT_STATUS_BUSY,
+    AT_STATUS_CLI,
 };
 typedef enum at_status at_status_t;
 

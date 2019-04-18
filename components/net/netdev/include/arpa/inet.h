@@ -8,9 +8,9 @@
  * 2015-02-17     Bernard      First version
  */
 
-#ifndef INET_H__
-#define INET_H__
+#ifndef __INET_H__
+#define __INET_H__
 
-#include <sal_ipaddr.h>
+#include <netdev_ipaddr.h>
 
 #endif

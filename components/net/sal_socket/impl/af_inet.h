@@ -18,14 +18,18 @@ extern "C" {
 #endif
 
 #ifdef SAL_USING_LWIP
-/* lwIP protocol family register */
-int lwip_inet_init(void);
-#endif
+
+/* Set lwIP network interface device protocol family information  */
+int sal_lwip_netdev_set_pf_info(struct netdev *netdev);
+
+#endif /* SAL_USING_LWIP */
 
 #ifdef SAL_USING_AT
-/* AT protocol family register */
-int at_inet_init(void);
-#endif
+
+/* Set AT network interface device protocol family information */
+int sal_at_netdev_set_pf_info(struct netdev *netdev);
+
+#endif /* SAL_USING_AT */
 
 #ifdef __cplusplus
 }
