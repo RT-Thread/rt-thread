@@ -207,9 +207,16 @@ static void client_cli_parser(at_client_t  client)
     static rt_err_t (*client_odev_rx_ind)(rt_device_t dev, rt_size_t size) = RT_NULL;
     rt_base_t int_lvl;
     rt_thread_t at_client;
+    at_status_t client_odev_status;
 
     if (client)
     {
+        /* backup client status */
+        {
+            client_odev_status = client->status;
+            client->status = AT_STATUS_CLI;
+        }
+
         /* backup client device RX indicate */
         {
             int_lvl = rt_hw_interrupt_disable();
@@ -255,6 +262,9 @@ static void client_cli_parser(at_client_t  client)
                     cur_line[cur_line_len++] = ch;
                 }
             }
+
+            /* restore client status */
+            client->status = client_odev_status;
 
             /* restore client device RX indicate */
             {
