@@ -25,7 +25,7 @@ static rt_err_t wdt_init(rt_watchdog_t *wdt)
     hiwdg.Instance = IWDG;
     hiwdg.Init.Prescaler = IWDG_PRESCALER_32;
 
-    hiwdg.Init.Reload = 0x00000FFE;
+    hiwdg.Init.Reload = 0x00000FFF;
 #if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7)
     hiwdg.Init.Window = 0x00000FFF;
 #endif
