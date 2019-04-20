@@ -10,6 +10,6 @@ group = []
 list  = os.listdir(cwd)
 
 if rtconfig.ARCH in list:
-    group = group + SConscript(os.path.join(cwd, rtconfig.ARCH, 'SConscript'))
+    group = group + SConscript(os.path.join(rtconfig.ARCH, 'SConscript'))
 
 Return('group')

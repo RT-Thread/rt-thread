@@ -25,7 +25,7 @@ extern "C" {
 #endif
 
 #define  RT_PIN_NONE                   0xFFFF    /* RT PIN NONE */
-#define  RT_SENSOR_FLAG_FIFO           0x200     /* Flag to use when the sensor is open by fifo mode */
+#define  RT_DEVICE_FLAG_FIFO_RX        0x200     /* Flag to use when the sensor is open by fifo mode */
 
 #define  RT_SENSOR_MODULE_MAX          (3)       /* The maximum number of members of a sensor module */
 
@@ -44,6 +44,7 @@ extern "C" {
 #define RT_SENSOR_CLASS_TVOC           (10) /* TVOC Level        */
 #define RT_SENSOR_CLASS_NOISE          (11) /* Noise Loudness    */
 #define RT_SENSOR_CLASS_STEP           (12) /* Step sensor       */
+#define RT_SENSOR_CLASS_FORCE          (13) /* Force sensor      */
 
 /* Sensor vendor types */
 
@@ -53,6 +54,7 @@ extern "C" {
 #define RT_SENSOR_VENDOR_INVENSENSE    (3)  /* Invensense */
 #define RT_SENSOR_VENDOR_SEMTECH       (4)  /* Semtech */
 #define RT_SENSOR_VENDOR_GOERTEK       (5)  /* Goertek */
+#define RT_SENSOR_VENDOR_MIRAMEMS      (6)  /* MiraMEMS */
 
 /* Sensor unit types */
 
@@ -67,6 +69,9 @@ extern "C" {
 #define  RT_SENSOR_UNIT_DCELSIUS       (8)  /* Temperature             unit: dCelsius   */
 #define  RT_SENSOR_UNIT_HZ             (9)  /* Frequency               unit: HZ         */
 #define  RT_SENSOR_UNIT_ONE            (10) /* Dimensionless quantity  unit: 1          */
+#define  RT_SENSOR_UNIT_BPM            (11) /* Heart rate              unit: bpm        */
+#define  RT_SENSOR_UNIT_MM             (12) /* Distance                unit: mm         */
+#define  RT_SENSOR_UNIT_MN             (13) /* Force                   unit: mN         */
 
 /* Sensor communication interface types */
 
@@ -130,6 +135,8 @@ struct rt_sensor_config
     rt_int32_t                   range;     /* sensor range of measurement */
 };
 
+typedef struct rt_sensor_device *rt_sensor_t;
+
 struct rt_sensor_device
 {
     struct rt_device             parent;    /* The standard device */
@@ -143,8 +150,9 @@ struct rt_sensor_device
     const struct rt_sensor_ops  *ops;       /* The sensor ops */
 
     struct rt_sensor_module     *module;    /* The sensor module */
+    
+    rt_err_t (*irq_handle)(rt_sensor_t sensor);             /* Called when an interrupt is generated, registered by the driver */
 };
-typedef struct rt_sensor_device *rt_sensor_t;
 
 struct rt_sensor_module
 {
@@ -176,10 +184,11 @@ struct rt_sensor_data
         rt_int32_t           baro;          /* Pressure.            unit: pascal (Pa) */
         rt_int32_t           light;         /* Light.               unit: lux         */
         rt_int32_t           proximity;     /* Distance.            unit: centimeters */
-        rt_int32_t           hr;            /* Heat rate.           unit: HZ          */
+        rt_int32_t           hr;            /* Heart rate.          unit: bpm         */
         rt_int32_t           tvoc;          /* TVOC.                unit: permillage  */
         rt_int32_t           noise;         /* Noise Loudness.      unit: HZ          */
         rt_uint32_t          step;          /* Step sensor.         unit: 1           */
+        rt_int32_t           force;         /* Force sensor.        unit: mN          */
     } data;
 };
 

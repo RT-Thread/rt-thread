@@ -16,6 +16,8 @@
 #include <at_socket.h>
 #include <af_inet.h>
 
+#include <netdev.h>
+
 #ifdef SAL_USING_POSIX
 #include <dfs_poll.h>
 #endif
@@ -78,24 +80,12 @@ static const struct sal_socket_ops at_socket_ops =
     NULL,
     NULL,
     NULL,
-
 #ifdef SAL_USING_POSIX
     at_poll,
 #endif /* SAL_USING_POSIX */
 };
 
-static int at_create(struct sal_socket *socket, int type, int protocol)
-{
-    RT_ASSERT(socket);
-
-    //TODO Check type & protocol
-
-    socket->ops = &at_socket_ops;
-
-    return 0;
-}
-
-static struct sal_proto_ops at_proto_ops =
+static const struct sal_netdb_ops at_netdb_ops = 
 {
     at_gethostbyname,
     NULL,
@@ -107,16 +97,18 @@ static const struct sal_proto_family at_inet_family =
 {
     AF_AT,
     AF_INET,
-    at_create,
-    &at_proto_ops,
+    &at_socket_ops,
+    &at_netdb_ops,
 };
 
-int at_inet_init(void)
-{
-    sal_proto_family_register(&at_inet_family);
 
+/* Set AT network interface device protocol family information */
+int sal_at_netdev_set_pf_info(struct netdev *netdev)
+{
+    RT_ASSERT(netdev);
+
+    netdev->sal_user_data = (void *) &at_inet_family;
     return 0;
 }
-INIT_COMPONENT_EXPORT(at_inet_init);
 
 #endif /* SAL_USING_AT */

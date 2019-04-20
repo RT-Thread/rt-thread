@@ -59,7 +59,7 @@ extern "C" {
 /* #define HAL_EXTI_MODULE_ENABLED   */
 /* #define HAL_I2C_MODULE_ENABLED   */
 /* #define HAL_I2S_MODULE_ENABLED   */
-/* #define HAL_IWDG_MODULE_ENABLED   */
+#define HAL_IWDG_MODULE_ENABLED
 /* #define HAL_IRDA_MODULE_ENABLED   */
 /* #define HAL_LPTIM_MODULE_ENABLED   */
 /* #define HAL_RNG_MODULE_ENABLED   */

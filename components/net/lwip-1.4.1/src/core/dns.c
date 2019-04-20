@@ -83,6 +83,8 @@
 
 #include <string.h>
 
+#include <rtthread.h>
+
 /** DNS server IP address */
 #ifndef DNS_SERVER_ADDRESS
 #define DNS_SERVER_ADDRESS(ipaddr)        (ip4_addr_set_u32(ipaddr, ipaddr_addr("208.67.222.222"))) /* resolver1.opendns.com */
@@ -275,6 +277,14 @@ dns_setserver(u8_t numdns, ip_addr_t *dnsserver)
   if ((numdns < DNS_MAX_SERVERS) && (dns_pcb != NULL) &&
       (dnsserver != NULL) && !ip_addr_isany(dnsserver)) {
     dns_servers[numdns] = (*dnsserver);
+    
+#ifdef RT_USING_NETDEV
+      extern struct netdev *netdev_default;
+      extern void netdev_low_level_set_dns_server(struct netdev *netdev, uint8_t dns_num, const ip_addr_t *dns_server);
+
+      /* set network interface device DNS server address */
+      netdev_low_level_set_dns_server(netdev_default, numdns, dnsserver);
+#endif /* RT_USING_NETDEV */
   }
 }
 

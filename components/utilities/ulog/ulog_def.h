@@ -47,14 +47,16 @@ extern "C" {
 #define DBG_INFO                       LOG_LVL_INFO
 #define DBG_LOG                        LOG_LVL_DBG
 #define dbg_log(level, ...)                                \
-    if ((level) <= DBG_LEVEL)                              \
+    if ((level) <= LOG_LVL)                                \
     {                                                      \
         ulog_output(level, LOG_TAG, RT_FALSE, __VA_ARGS__);\
     }
 
 #if !defined(LOG_TAG)
     /* compatible for rtdbg */
-    #if defined(DBG_SECTION_NAME)
+    #if defined(DBG_TAG)
+        #define LOG_TAG                DBG_TAG
+    #elif defined(DBG_SECTION_NAME)
         #define LOG_TAG                DBG_SECTION_NAME
     #else
         #define LOG_TAG                "NO_TAG"
@@ -63,7 +65,9 @@ extern "C" {
 
 #if !defined(LOG_LVL)
     /* compatible for rtdbg */
-    #if defined(DBG_LEVEL)
+    #if defined(DBG_LVL)
+        #define LOG_LVL                DBG_LVL
+    #elif defined(DBG_LEVEL)
         #define LOG_LVL                DBG_LEVEL
     #else
         #define LOG_LVL                LOG_LVL_DBG

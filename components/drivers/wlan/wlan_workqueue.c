@@ -13,10 +13,8 @@
 #include <wlan_workqueue.h>
 #include <ipc/workqueue.h>
 
-#define DBG_ENABLE
-#define DBG_LEVEL DBG_INFO
-#define DBG_SECTION_NAME  "WLAN.work"
-#define DBG_COLOR
+#define DBG_TAG "WLAN.work"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 struct rt_wlan_work

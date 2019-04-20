@@ -13,14 +13,12 @@
 
 #include <drivers/mmcsd_core.h>
 
-#define DBG_ENABLE
-#define DBG_SECTION_NAME               "SDIO"
+#define DBG_TAG               "SDIO"
 #ifdef RT_SDIO_DEBUG
-#define DBG_LEVEL                      DBG_LOG
+#define DBG_LVL               DBG_LOG
 #else
-#define DBG_LEVEL                      DBG_INFO
+#define DBG_LVL               DBG_INFO
 #endif /* RT_SDIO_DEBUG */
-#define DBG_COLOR
 #include <rtdbg.h>
 
 static rt_list_t blk_devices = RT_LIST_OBJECT_INIT(blk_devices);
@@ -369,7 +367,7 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
         return err;
     }
 
-    LOG_I("probe mmcsd block device!");
+    LOG_D("probe mmcsd block device!");
 
     /* get the first sector to read partition table */
     sector = (rt_uint8_t *)rt_malloc(SECTOR_SIZE);

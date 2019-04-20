@@ -37,6 +37,8 @@ extern "C" {
 #include "f4/dma_config.h"
 #include "f4/uart_config.h"
 #include "f4/spi_config.h"
+#include "f4/qspi_config.h"
+#include "f4/usbd_fs_config.h"
 #include "f4/adc_config.h"
 #include "f4/tim_config.h"
 #include "f4/sdio_config.h"
@@ -60,10 +62,24 @@ extern "C" {
 #include "l4/qspi_config.h"
 #include "l4/adc_config.h"
 #include "l4/tim_config.h"
+#include "l4/sdio_config.h"
 #include "l4/pwm_config.h"
 #elif  defined(SOC_SERIES_STM32G0)
 #include "g0/dma_config.h"
 #include "g0/uart_config.h"
+#include "g0/spi_config.h"
+#include "g0/adc_config.h"
+#include "g0/tim_config.h"
+#include "g0/pwm_config.h"
+#elif  defined(SOC_SERIES_STM32H7)
+#include "h7/dma_config.h"
+#include "h7/uart_config.h"
+#include "h7/spi_config.h"
+#include "h7/qspi_config.h"
+#include "h7/adc_config.h"
+#include "h7/tim_config.h"
+#include "h7/sdio_config.h"
+#include "h7/pwm_config.h"
 #endif
 
 #ifdef __cplusplus

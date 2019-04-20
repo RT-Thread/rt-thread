@@ -46,7 +46,7 @@ STM32F091RC-NuCLEO 开发板是 ST 官方推出的一款基于 ARM Cortex-M0 内
 | I2C | 支持 |  |
 | TIMER     |     支持     |                               |
 | ADC | 支持 |  |
-| RTC               |   支持   |                               |
+| RTC               |   支持   | 支持外部晶振和内部低速时钟 |
 | PWM               |   支持   |                               |
 | FLASH | 支持 |  |
 | IWG               |   支持   |                               |

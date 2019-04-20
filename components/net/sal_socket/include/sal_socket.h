@@ -11,7 +11,7 @@
 #ifndef SAL_SOCKET_H__
 #define SAL_SOCKET_H__
 
-#include "sal_ipaddr.h"
+#include <arpa/inet.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -10,10 +10,8 @@
 
 #include "sensor.h"
 
-#define DBG_ENABLE
-#define DBG_LEVEL DBG_INFO
-#define DBG_SECTION_NAME  "sensor.cmd"
-#define DBG_COLOR
+#define DBG_TAG  "sensor.cmd"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #include <stdlib.h>
@@ -45,6 +43,12 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
         break;
     case RT_SENSOR_CLASS_STEP:
         LOG_I("num:%3d, step:%5d, timestamp:%5d", num, sensor_data->data.step, sensor_data->timestamp);
+        break;
+    case RT_SENSOR_CLASS_PROXIMITY:
+        LOG_I("num:%3d, distance:%5d, timestamp:%5d", num, sensor_data->data.proximity, sensor_data->timestamp);
+        break;
+    case RT_SENSOR_CLASS_FORCE:
+        LOG_I("num:%3d, force:%5d, timestamp:%5d", num, sensor_data->data.force, sensor_data->timestamp);
         break;
     default:
         break;
@@ -98,6 +102,12 @@ static void sensor_fifo(int argc, char **argv)
         return;
     }
     sensor = (rt_sensor_t)dev;
+    
+    if (rt_device_open(dev, RT_DEVICE_FLAG_FIFO_RX) != RT_EOK)
+    {
+        LOG_E("open device failed!");
+        return;
+    }
 
     if (sensor_rx_sem == RT_NULL)
     {
@@ -119,11 +129,6 @@ static void sensor_fifo(int argc, char **argv)
 
     rt_device_set_rx_indicate(dev, rx_callback);
 
-    if (rt_device_open(dev, RT_SENSOR_FLAG_FIFO) != RT_EOK)
-    {
-        LOG_E("open device failed!");
-        return;
-    }
     rt_device_control(dev, RT_SENSOR_CTRL_SET_ODR, (void *)20);
 }
 #ifdef FINSH_USING_MSH
