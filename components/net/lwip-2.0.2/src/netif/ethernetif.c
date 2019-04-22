@@ -107,6 +107,7 @@ static char eth_rx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
 
 #ifdef RT_USING_NETDEV
 
+#include "lwip/ip.h"
 #include "lwip/init.h"
 #include "lwip/netdb.h"
 #include <netdev.h>
