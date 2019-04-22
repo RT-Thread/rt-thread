@@ -14,6 +14,8 @@
 
 #ifdef RT_USING_HEAP
 
+static void _delayed_work_timeout_handler(void *parameter);
+
 rt_inline rt_err_t _workqueue_work_completion(struct rt_workqueue *queue)
 {
     rt_err_t result;
@@ -161,7 +163,14 @@ static rt_err_t _workqueue_cancel_delayed_work(struct rt_delayed_work *work)
     }
     else
     {
-        rt_timer_stop(&(work->timer));
+        if (work->work.flags & RT_WORK_STATE_SUBMITTING)
+        {
+            level = rt_hw_interrupt_disable();
+            rt_timer_stop(&(work->timer));
+            rt_timer_detach(&(work->timer));
+            work->work.flags &= ~RT_WORK_STATE_SUBMITTING;
+            rt_hw_interrupt_enable(level);
+        }
     }
 
     level = rt_hw_interrupt_disable();
@@ -210,8 +219,12 @@ static rt_err_t _workqueue_submit_delayed_work(struct rt_workqueue *queue,
     }
     else
     {
+        level = rt_hw_interrupt_disable();
         /* Add timeout */
-        rt_timer_control(&(work->timer), RT_TIMER_CTRL_SET_TIME, &ticks);
+        work->work.flags |= RT_WORK_STATE_SUBMITTING;
+        rt_timer_init(&(work->timer), "work", _delayed_work_timeout_handler, work, ticks,
+                      RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
+        rt_hw_interrupt_enable(level);
         rt_timer_start(&(work->timer));
     }
 
@@ -222,9 +235,14 @@ __exit:
 static void _delayed_work_timeout_handler(void *parameter)
 {
     struct rt_delayed_work *delayed_work;
+    rt_base_t level;
 
     delayed_work = (struct rt_delayed_work *)parameter;
+    level = rt_hw_interrupt_disable();
     rt_timer_stop(&(delayed_work->timer));
+    rt_timer_detach(&(delayed_work->timer));
+    delayed_work->work.flags &= ~RT_WORK_STATE_SUBMITTING;
+    rt_hw_interrupt_enable(level);
     _workqueue_submit_work(delayed_work->workqueue, &(delayed_work->work));
 }
 
@@ -375,8 +393,6 @@ void rt_delayed_work_init(struct rt_delayed_work *work, void (*work_func)(struct
 {
     rt_work_init(&(work->work), work_func, work_data);
     work->work.type = RT_WORK_TYPE_DELAYED;
-    rt_timer_init(&(work->timer), "work", _delayed_work_timeout_handler, work, 0,
-                  RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
 }
 
 #ifdef RT_USING_SYSTEM_WORKQUEUE

@@ -13,7 +13,8 @@
 
 enum
 {
-    RT_WORK_STATE_PENDING,  /* Work item pending state */
+    RT_WORK_STATE_PENDING    = 0x0001,     /* Work item pending state */
+    RT_WORK_STATE_SUBMITTING = 0x0002,     /* Work item submitting state */
 };
 
 /**
@@ -21,7 +22,7 @@ enum
  */
 enum
 {
-    RT_WORK_TYPE_DELAYED,
+    RT_WORK_TYPE_DELAYED     = 0x0001,
 };
 
 /* workqueue implementation */
@@ -81,4 +82,3 @@ void rt_delayed_work_init(struct rt_delayed_work *work, void (*work_func)(struct
 #endif
 
 #endif
-
