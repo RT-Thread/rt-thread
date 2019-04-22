@@ -157,7 +157,6 @@ static void check_netdev_internet_up_work(struct rt_work *work, void *work_data)
 
     if (work)
     {
-        rt_timer_detach(&(delay_work->timer));
         rt_free(delay_work);
     }
 
