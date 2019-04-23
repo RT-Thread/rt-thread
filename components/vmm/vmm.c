@@ -24,14 +24,6 @@ extern void rt_application_init(void);
 
 void vmm_entry(struct vmm_entry_param* param) SECTION(".vmm_init");
 
-#ifdef RT_USING_LOGTRACE
-#include <log_trace.h>
-static struct log_trace_session _lgs = {
-    .id  = {.name = "vmm"},
-    .lvl = LOG_TRACE_LEVEL_VERBOSE,
-};
-#endif
-
 struct rt_thread vmm_thread SECTION(".bss.share.vmm");
 extern rt_uint8_t vmm_stack_start;
 extern rt_uint8_t vmm_stack_end;
@@ -121,15 +113,6 @@ void vmm_entry(struct vmm_entry_param *param)
 
     /* init board */
     rt_hw_board_init();
-
-#ifdef RT_USING_LOGTRACE
-    /* Some parts of VMM use log_trace, so we need to init it right after
-     * board_init. */
-    log_trace_init();
-    log_trace_set_device(RT_CONSOLE_DEVICE_NAME);
-
-    log_trace_register_session(&_lgs);
-#endif
 
     /* show version */
     rt_show_version();
