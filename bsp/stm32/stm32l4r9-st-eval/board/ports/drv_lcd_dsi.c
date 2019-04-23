@@ -18,7 +18,7 @@
 #include "drv_gpio.h"
 #include "gfxmmu_lut_390x390_24bpp.h"
 
-//#define DRV_DEBUG
+#define DRV_DEBUG
 #define LOG_TAG             "drv.lcd"
 #include <drv_log.h>
 
@@ -636,6 +636,23 @@ __exit:
     return result;
 }
 INIT_DEVICE_EXPORT(drv_lcd_hw_init);
+
+#if defined(PKG_USING_GUIENGINE)
+
+#include <rtgui/driver.h>
+int graphic_device_init(void)
+{
+    struct rt_device *device;
+    device = rt_device_find("lcd_dsi");
+    if (device)
+    {
+        rtgui_graphic_set_device(device);
+    }
+
+    return 0;
+}
+INIT_ENV_EXPORT(graphic_device_init);
+#endif
 
 #ifdef DRV_DEBUG
 #ifdef FINSH_USING_MSH

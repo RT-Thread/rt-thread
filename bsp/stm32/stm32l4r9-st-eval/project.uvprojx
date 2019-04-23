@@ -336,9 +336,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HAL_DRIVER, STM32L4R9xx</Define>
+              <Define>USE_HAL_DRIVER, STM32L4R9xx, RT_USING_ARM_LIBC</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\..\include;applications;board;board\CubeMX_Config\Inc;board\ports;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Inc;..\libraries\STM32L4xx_HAL\CMSIS\Device\ST\STM32L4xx\Include;..\libraries\STM32L4xx_HAL\CMSIS\Include</IncludePath>
+              <IncludePath>.;..\..\..\include;applications;board;board\CubeMX_Config\Inc;board\ports\include;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;packages\gui_engine-latest\include;packages\gui_engine-latest\libraries\lodepng;packages\gui_engine-latest\example;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\dfs\include;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\compilers\armlibc;..\..\..\components\libc\compilers\common;..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Inc;..\libraries\STM32L4xx_HAL\CMSIS\Device\ST\STM32L4xx\Include;..\libraries\STM32L4xx_HAL\CMSIS\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -483,6 +483,26 @@
               <FilePath>board\CubeMX_Config\Src\stm32l4xx_hal_msp.c</FilePath>
             </File>
             <File>
+              <FileName>drv_lcd_dsi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\ports\drv_lcd_dsi.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_sram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\ports\drv_sram.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_touch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\ports\drv_touch.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_touch_ft.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\ports\drv_touch_ft.c</FilePath>
+            </File>
+            <File>
               <FileName>startup_stm32l4r9xx.s</FileName>
               <FileType>2</FileType>
               <FilePath>..\libraries\STM32L4xx_HAL\CMSIS\Device\ST\STM32L4xx\Source\Templates\arm\startup_stm32l4r9xx.s</FilePath>
@@ -498,9 +518,249 @@
               <FilePath>..\libraries\HAL_Drivers\drv_usart.c</FilePath>
             </File>
             <File>
+              <FileName>drv_soft_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HAL_Drivers\drv_soft_i2c.c</FilePath>
+            </File>
+            <File>
               <FileName>drv_common.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>GuiEngine</GroupName>
+          <Files>
+            <File>
+              <FileName>asc12font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\asc12font.c</FilePath>
+            </File>
+            <File>
+              <FileName>asc16font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\asc16font.c</FilePath>
+            </File>
+            <File>
+              <FileName>blit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\blit.c</FilePath>
+            </File>
+            <File>
+              <FileName>box.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\box.c</FilePath>
+            </File>
+            <File>
+              <FileName>color.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\color.c</FilePath>
+            </File>
+            <File>
+              <FileName>container.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\container.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\dc.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc_blend.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\dc_blend.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc_buffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\dc_buffer.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc_client.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\dc_client.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc_hw.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\dc_hw.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc_rotozoom.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\dc_rotozoom.c</FilePath>
+            </File>
+            <File>
+              <FileName>dc_trans.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\dc_trans.c</FilePath>
+            </File>
+            <File>
+              <FileName>filerw.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\filerw.c</FilePath>
+            </File>
+            <File>
+              <FileName>font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\font.c</FilePath>
+            </File>
+            <File>
+              <FileName>font_bmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\font_bmp.c</FilePath>
+            </File>
+            <File>
+              <FileName>font_fnt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\font_fnt.c</FilePath>
+            </File>
+            <File>
+              <FileName>font_freetype.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\font_freetype.c</FilePath>
+            </File>
+            <File>
+              <FileName>font_hz_bmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\font_hz_bmp.c</FilePath>
+            </File>
+            <File>
+              <FileName>font_hz_file.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\font_hz_file.c</FilePath>
+            </File>
+            <File>
+              <FileName>gb2312.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\gb2312.c</FilePath>
+            </File>
+            <File>
+              <FileName>hz12font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\hz12font.c</FilePath>
+            </File>
+            <File>
+              <FileName>hz16font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\hz16font.c</FilePath>
+            </File>
+            <File>
+              <FileName>image.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\image.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_bmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\image_bmp.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_container.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\image_container.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_hdc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\image_hdc.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_jpg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\image_jpg.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_png.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\image_png.c</FilePath>
+            </File>
+            <File>
+              <FileName>image_xpm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\image_xpm.c</FilePath>
+            </File>
+            <File>
+              <FileName>matrix.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\matrix.c</FilePath>
+            </File>
+            <File>
+              <FileName>mouse.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\mouse.c</FilePath>
+            </File>
+            <File>
+              <FileName>region.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\region.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtgui_app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\rtgui_app.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtgui_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\rtgui_driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtgui_object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\rtgui_object.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtgui_system.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\rtgui_system.c</FilePath>
+            </File>
+            <File>
+              <FileName>server.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\server.c</FilePath>
+            </File>
+            <File>
+              <FileName>title.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\title.c</FilePath>
+            </File>
+            <File>
+              <FileName>topwin.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\topwin.c</FilePath>
+            </File>
+            <File>
+              <FileName>widget.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\widget.c</FilePath>
+            </File>
+            <File>
+              <FileName>window.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\src\window.c</FilePath>
+            </File>
+            <File>
+              <FileName>lodepng.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\libraries\lodepng\lodepng.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>gui_demo</GroupName>
+          <Files>
+            <File>
+              <FileName>gui_demo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\example\gui_demo.c</FilePath>
+            </File>
+            <File>
+              <FileName>resources.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\gui_engine-latest\example\resources.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -535,8 +795,63 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Filesystem</GroupName>
+          <Files>
+            <File>
+              <FileName>dfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\dfs\src\dfs.c</FilePath>
+            </File>
+            <File>
+              <FileName>dfs_file.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\dfs\src\dfs_file.c</FilePath>
+            </File>
+            <File>
+              <FileName>dfs_fs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\dfs\src\dfs_fs.c</FilePath>
+            </File>
+            <File>
+              <FileName>dfs_posix.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\dfs\src\dfs_posix.c</FilePath>
+            </File>
+            <File>
+              <FileName>poll.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\dfs\src\poll.c</FilePath>
+            </File>
+            <File>
+              <FileName>select.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\dfs\src\select.c</FilePath>
+            </File>
+            <File>
+              <FileName>devfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\dfs\filesystems\devfs\devfs.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>DeviceDrivers</GroupName>
           <Files>
+            <File>
+              <FileName>i2c_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\i2c\i2c_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c_dev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\i2c\i2c_dev.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c-bit-ops.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\i2c\i2c-bit-ops.c</FilePath>
+            </File>
             <File>
               <FileName>pin.c</FileName>
               <FileType>1</FileType>
@@ -616,6 +931,41 @@
               <FileName>msh_file.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh_file.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>libc</GroupName>
+          <Files>
+            <File>
+              <FileName>libc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\libc.c</FilePath>
+            </File>
+            <File>
+              <FileName>mem_std.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
+            </File>
+            <File>
+              <FileName>stdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\stdio.c</FilePath>
+            </File>
+            <File>
+              <FileName>stubs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\stubs.c</FilePath>
+            </File>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\time.c</FilePath>
+            </File>
+            <File>
+              <FileName>gmtime_r.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\gmtime_r.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -726,6 +1076,56 @@
               <FileName>stm32l4xx_hal_usart_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_usart_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_i2c_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_i2c_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_ll_fmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_fmc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_gfxmmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_gfxmmu.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_dsi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_dsi.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_dma2d.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_dma2d.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_ll_dma2d.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_dma2d.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_ltdc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_ltdc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_ltdc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_ltdc_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_sram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_sram.c</FilePath>
             </File>
           </Files>
         </Group>

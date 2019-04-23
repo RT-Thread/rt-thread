@@ -73,6 +73,12 @@
 
 /* Device virtual file system */
 
+#define RT_USING_DFS
+#define DFS_USING_WORKDIR
+#define DFS_FILESYSTEMS_MAX 2
+#define DFS_FILESYSTEM_TYPES_MAX 2
+#define DFS_FD_MAX 16
+#define RT_USING_DFS_DEVFS
 
 /* Device Drivers */
 
@@ -81,6 +87,8 @@
 #define RT_USING_SERIAL
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
 
 /* Using WiFi */
@@ -91,6 +99,8 @@
 
 /* POSIX layer and C standard library */
 
+#define RT_USING_LIBC
+#define RT_USING_POSIX
 
 /* Network */
 
@@ -145,6 +155,17 @@
 
 /* system packages */
 
+#define PKG_USING_GUIENGINE
+#define PKG_USING_GUIENGINE_LATEST_VERSION
+#define PKG_USING_RGB888_PIXEL_BITS_24
+#define PKG_USING_RGB888_PIXEL_BITS 24
+#define GUIENGINE_CMD_STRING_MAX 16
+#define GUIENGINE_USING_FONT16
+#define GUIENGINE_USING_FONT12
+#define GUIENGINE_USING_PNG
+#define GUIENGINE_IMAGE_LODEPNG
+#define GUIENGINE_IMAGE_CONTAINER
+#define GUIENGINE_USING_DEMO
 
 /* peripheral libraries and drivers */
 
@@ -164,12 +185,26 @@
 /* Onboard Peripheral Drivers */
 
 #define BSP_USING_STLINK_TO_USART
+#define BSP_USING_DSI
+
+/* Enable Touch */
+
+#define BSP_USING_TOUCH
+#define BSP_TOUCH_INT_PIN 34
+#define BSP_I2C1_NAME "i2c1"
+#define TOUCH_IC_FT3X67
 
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART3
+#define BSP_USING_SRAM
+#define BSP_USING_I2C1
+#define BSP_I2C1_SCL_PIN 116
+#define BSP_I2C1_SDA_PIN 117
+#define BSP_USING_GFXMMU
+#define BSP_USING_FMC
 
 /* Board extended module Drivers */
 

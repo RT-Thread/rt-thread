@@ -36,11 +36,12 @@
 
 | **板载外设**      		| **支持情况** 	| **备注**                              		|
 | :-----------------	| :----------: 	| :-----------------------------------------|
-| 板载 ST-LINK 转串口 	|     支持     	| PB10 PB11 USART3 |                      	|
+| 板载 ST-LINK 转串口 	|     支持     	| PB10 PB11 USART3                      	|
 | **片上外设**     		| **支持情况** 	| **备注**                              		|
-| GPIO              	|     支持     	| PA0, PA1... PK15 ---> PIN: 0, 1...176 	|
+| GPIO              	|     支持     	| 										 	|
 | UART              	|     支持     	| USART3                             		|
-| LCD            		|     支持     	| DSI mode round lcd                            		|
+| LCD            		|     支持     	| DSI mode round lcd                        |
+| TOUCH            		|     支持     	| touch for round lcd                       |
 
 
 
