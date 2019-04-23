@@ -2136,6 +2136,9 @@
       <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_usart.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_soft_i2c.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_common.c</name>
     </file>
   </group>
@@ -2159,6 +2162,15 @@
   </group>
   <group>
     <name>DeviceDrivers</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\i2c\i2c_core.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\i2c\i2c_dev.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\i2c\i2c-bit-ops.c</name>
+    </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\misc\pin.c</name>
     </file>
@@ -2290,6 +2302,12 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_usart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2c_ex.c</name>
     </file>
   </group>
 </project>
