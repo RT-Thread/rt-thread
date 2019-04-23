@@ -146,8 +146,6 @@
 
 // </RDTConfigurator>
 
-#define RT_USING_LOGTRACE
-
 // <section name="RT_USING_VMM" description="Enable RT-Thread hypervisor" default="true" >
 // #define RT_USING_VMM
 // </section>
