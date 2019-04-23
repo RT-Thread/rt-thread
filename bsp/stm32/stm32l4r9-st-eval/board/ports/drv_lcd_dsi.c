@@ -18,7 +18,7 @@
 #include "drv_gpio.h"
 #include "gfxmmu_lut_390x390_24bpp.h"
 
-#define DRV_DEBUG
+//#define DRV_DEBUG
 #define LOG_TAG             "drv.lcd"
 #include <drv_log.h>
 

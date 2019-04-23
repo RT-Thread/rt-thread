@@ -164,16 +164,12 @@
 /* Onboard Peripheral Drivers */
 
 #define BSP_USING_STLINK_TO_USART
-#define BSP_USING_DSI
 
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART3
-#define BSP_USING_SRAM
-#define BSP_USING_GFXMMU
-#define BSP_USING_FMC
 
 /* Board extended module Drivers */
 
