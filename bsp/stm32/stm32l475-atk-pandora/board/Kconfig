@@ -186,6 +186,14 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_PWM
         if BSP_USING_PWM
+        menuconfig BSP_USING_PWM1
+            bool "Enable timer1 output pwm"
+            default n
+            if BSP_USING_PWM1
+                config BSP_USING_PWM1_CH1
+                    bool "Enable PWM1 channel1"
+                    default n
+            endif
         menuconfig BSP_USING_PWM4
             bool "Enable timer4 output pwm"
             default n
