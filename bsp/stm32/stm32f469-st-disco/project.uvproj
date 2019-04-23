@@ -359,7 +359,7 @@
               <MiscControls />
               <Define>USE_HAL_DRIVER, STM32F469xx</Define>
               <Undefine />
-              <IncludePath>.;..\..\..\include;applications;board;board\CubeMX_Config\Inc;board\ports;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Inc;..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include;..\libraries\STM32F4xx_HAL\CMSIS\Include</IncludePath>
+              <IncludePath>.;..\..\..\include;applications;board;board\CubeMX_Config\Inc;board\ports;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Inc;..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include;..\libraries\STM32F4xx_HAL\CMSIS\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -563,6 +563,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>drv_soft_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HAL_Drivers\drv_soft_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>drv_common.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
@@ -609,6 +616,27 @@
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
+          <Files>
+            <File>
+              <FileName>i2c_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\i2c\i2c_core.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>i2c_dev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\i2c\i2c_dev.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>i2c-bit-ops.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\i2c\i2c-bit-ops.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>pin.c</FileName>
@@ -907,6 +935,20 @@
               <FileName>stm32f4xx_hal_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_usart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32f4xx_hal_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32f4xx_hal_i2c_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2c_ex.c</FilePath>
             </File>
           </Files>
         </Group>
