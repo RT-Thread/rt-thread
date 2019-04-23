@@ -10,6 +10,11 @@
  */
 
 #include "board.h"
+
+/**
+  * @brief System Clock Configuration
+  * @retval None
+  */
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
@@ -50,8 +55,18 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART3;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART3|RCC_PERIPHCLK_DSI
+                              |RCC_PERIPHCLK_LTDC;
   PeriphClkInit.Usart3ClockSelection = RCC_USART3CLKSOURCE_PCLK1;
+  PeriphClkInit.DsiClockSelection = RCC_DSICLKSOURCE_DSIPHY;
+  PeriphClkInit.LtdcClockSelection = RCC_LTDCCLKSOURCE_PLLSAI2_DIV2;
+  PeriphClkInit.PLLSAI2.PLLSAI2Source = RCC_PLLSOURCE_HSE;
+  PeriphClkInit.PLLSAI2.PLLSAI2M = 2;
+  PeriphClkInit.PLLSAI2.PLLSAI2N = 8;
+  PeriphClkInit.PLLSAI2.PLLSAI2P = RCC_PLLP_DIV2;
+  PeriphClkInit.PLLSAI2.PLLSAI2R = RCC_PLLR_DIV2;
+  PeriphClkInit.PLLSAI2.PLLSAI2Q = RCC_PLLQ_DIV2;
+  PeriphClkInit.PLLSAI2.PLLSAI2ClockOut = RCC_PLLSAI2_LTDCCLK;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();

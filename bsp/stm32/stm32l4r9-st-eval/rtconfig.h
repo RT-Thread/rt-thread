@@ -30,7 +30,8 @@
 /* Memory Management */
 
 #define RT_USING_MEMPOOL
-#define RT_USING_SMALL_MEM
+#define RT_USING_MEMHEAP
+#define RT_USING_MEMHEAP_AS_HEAP
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
@@ -96,6 +97,9 @@
 /* Socket abstraction layer */
 
 
+/* Network interface device */
+
+
 /* light weight TCP/IP stack */
 
 
@@ -113,11 +117,6 @@
 
 /* RT-Thread online packages */
 
-/* system packages */
-
-/* RT-Thread GUI Engine */
-
-
 /* IoT - internet of things */
 
 
@@ -127,6 +126,9 @@
 
 
 /* Wiced WiFi */
+
+
+/* IoT Cloud */
 
 
 /* security packages */
@@ -141,10 +143,16 @@
 /* tools packages */
 
 
+/* system packages */
+
+
+/* peripheral libraries and drivers */
+
+
 /* miscellaneous packages */
 
 
-/* example package: hello */
+/* samples: kernel and components samples */
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32L4
@@ -155,11 +163,17 @@
 
 /* Onboard Peripheral Drivers */
 
+#define BSP_USING_STLINK_TO_USART
+#define BSP_USING_DSI
+
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART3
+#define BSP_USING_SRAM
+#define BSP_USING_GFXMMU
+#define BSP_USING_FMC
 
 /* Board extended module Drivers */
 
