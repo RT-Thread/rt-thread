@@ -227,7 +227,6 @@
 // </section>
 
 #define RT_USING_VBUS
-#define RT_USING_LOGTRACE
 
 // </RDTConfigurator>
 
