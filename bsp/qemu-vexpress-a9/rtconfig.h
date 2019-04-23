@@ -219,10 +219,6 @@
 
 
 /* Utilities */
-
-#define RT_USING_LOGTRACE
-#define LOG_TRACE_MAX_SESSION 16
-#define LOG_TRACE_USING_LEVEL_INFO
 #define RT_USING_LWP
 
 /* RT-Thread online packages */
