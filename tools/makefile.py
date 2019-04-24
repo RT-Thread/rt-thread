@@ -32,8 +32,8 @@ def TargetMakefile(env):
 
     make = open('config.mk', 'w')
 
-    make.write('BSP_ROOT ?= %s\n' % BSP_ROOT.replace('\\', '\\\\'))
-    make.write('RTT_ROOT ?= %s\n' % RTT_ROOT.replace('\\', '\\\\'))
+    make.write('BSP_ROOT ?= %s\n' % BSP_ROOT.replace('\\', '/'))
+    make.write('RTT_ROOT ?= %s\n' % RTT_ROOT.replace('\\', '/'))
     make.write('\n')
 
     cross = os.path.abspath(rtconfig.EXEC_PATH)
@@ -117,7 +117,7 @@ def TargetMakefile(env):
     files = Files
     src.write('SRC_FILES :=\n')
     for item in files:
-        src.write('SRC_FILES +=%s\n' % item)
+        src.write('SRC_FILES +=%s\n' % item.replace('\\', '/'))
 
     make = open('Makefile', 'w')
     make.write(makefile)
