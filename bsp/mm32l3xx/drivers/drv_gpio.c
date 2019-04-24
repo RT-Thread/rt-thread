@@ -411,14 +411,14 @@ const static struct rt_pin_ops _mm32_pin_ops =
     mm32_pin_irq_enable,
 };
 
-int mm32_hw_pin_init(void)
+int rt_hw_pin_init(void)
 {
     int result;
 
     result = rt_device_pin_register("pin", &_mm32_pin_ops, RT_NULL);
     return result;
 }
-INIT_BOARD_EXPORT(mm32_hw_pin_init);
+INIT_BOARD_EXPORT(rt_hw_pin_init);
 
 rt_inline void pin_irq_hdr(int irqno)
 {
