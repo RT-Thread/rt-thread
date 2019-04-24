@@ -24,9 +24,9 @@
 
 
 #ifdef TOUCH_IC_FT3X67
-#define CHIP_ID_REG 			0xA8U
-#define CHIP_ID_VALUE        	0x11U
-#define TOUCH_SLAVE_ADDR        0x38U
+#define CHIP_ID_REG                 0xA8U
+#define CHIP_ID_VALUE               0x11U
+#define TOUCH_SLAVE_ADDR            0x38U
 #else
 #error "Please define at least one TOUCH DEVICE"
 /* this driver can be disabled at menuconfig → RT-Thread Components → Device Drivers */
