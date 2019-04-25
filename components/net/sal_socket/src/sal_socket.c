@@ -139,7 +139,7 @@ static void check_netdev_internet_up_work(struct rt_work *work, void *work_data)
 #define SAL_INTERNET_MONTH_LEN 4
 #define SAL_INTERNET_DATE_LEN  16
 
-    int index, sockfd = 0, result = 0;
+    int index, sockfd = -1, result = 0;
     struct sockaddr_in server_addr;
     struct hostent *host;
     struct timeval timeout;
@@ -157,7 +157,6 @@ static void check_netdev_internet_up_work(struct rt_work *work, void *work_data)
 
     if (work)
     {
-        rt_timer_detach(&(delay_work->timer));
         rt_free(delay_work);
     }
 

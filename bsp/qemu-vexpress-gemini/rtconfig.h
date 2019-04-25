@@ -174,7 +174,6 @@
 
 /* Utilities */
 
-#define RT_USING_LOGTRACE
 #define LOG_TRACE_MAX_SESSION 16
 /* LOG_TRACE_USING_LEVEL_NOTRACE is not set */
 /* LOG_TRACE_USING_LEVEL_ERROR is not set */

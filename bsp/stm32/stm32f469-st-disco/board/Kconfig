@@ -6,11 +6,17 @@ config SOC_STM32F469NI
     default y
 
 menu "Onboard Peripheral Drivers"
-
     config BSP_USING_SDRAM
         bool "Enable SDRAM"
         select BSP_USING_FMC
         default n
+        
+    config BSP_USING_LCD_OTM8009A
+        bool "Enable LCD OTM8009A"
+        select BSP_USING_SDRAM
+        select BSP_USING_LTDC
+        default n
+        
     config BSP_USING_QSPI_FLASH
         bool "Enable QSPI FLASH (N25Q128A qspi1)"
         select BSP_USING_QSPI
@@ -19,6 +25,20 @@ menu "Onboard Peripheral Drivers"
         select PKG_USING_FAL
         select FAL_USING_SFUD_PORT
         default n
+        
+    config BSP_USING_TOUCH
+        bool "Enable TOUCH"
+        select BSP_USING_I2C1
+        default n
+        if BSP_USING_TOUCH
+            config BSP_TOUCH_INT_PIN
+                int "Touch interrupt pin"
+                default 149
+            config BSP_I2C_NAME
+                string "I2C Bus Name"
+                default "i2c1"
+        endif
+        
     config BSP_MOUNT_QSPI_WITH_LFS
         bool "Mount QSPI flash to / with little fs"
         depends on BSP_USING_QSPI_FLASH
@@ -29,7 +49,6 @@ menu "Onboard Peripheral Drivers"
 endmenu
 
 menu "On-chip Peripheral Drivers"
-
     config BSP_USING_GPIO
         bool "Enable GPIO"
         select RT_USING_PIN
@@ -49,6 +68,24 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
                 default n
         endif
+        
+    menuconfig BSP_USING_I2C1
+        bool "Enable I2C1 BUS (software simulation)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C1
+            comment "Notice: PB8 --> 24; PB9 --> 25" 
+            config BSP_I2C1_SCL_PIN
+                int "I2C1 scl pin number"
+                range 1 176
+                default 24
+            config BSP_I2C1_SDA_PIN
+                int "I2C1 sda pin number"
+                range 1 176
+                default 25
+        endif
 
     config BSP_USING_QSPI
         bool "Enable QSPI BUS"
@@ -67,6 +104,10 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_USBD_FS
         bool "Enable OTGFS as USB device"
         select RT_USING_USB_DEVICE
+        default n
+
+    config BSP_USING_LTDC
+        bool "Enable LTDC"
         default n
 endmenu
 
