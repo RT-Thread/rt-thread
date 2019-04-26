@@ -13,6 +13,7 @@
 
 #include <registers.h>
 #include <irq_numbers.h>
+#include "imx6ul.h"
 
 #define CONFIG_MX6
 #define CONFIG_MX6UL
