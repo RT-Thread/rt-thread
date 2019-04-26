@@ -1,11 +1,26 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * File      : drv_touch.h
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2017, RT-Thread Development Team
  *
- * SPDX-License-Identifier: Apache-2.0
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
  * 2018-02-08     Zhangyihong  the first version
+ * 2018-10-29     XY
  */
 #ifndef __DRV_TOUCH_H__
 #define __DRV_TOUCH_H__
@@ -24,28 +39,29 @@ struct touch_message
     rt_uint16_t y;
     rt_uint8_t event;
 };
-typedef struct touch_message *touch_msg_t;
+typedef struct touch_message *touch_message_t;
 
 struct touch_ops
 {
-    void (* isr_enable)(rt_bool_t);
-    rt_err_t (* read_point)(touch_msg_t);
-    void (* init)(struct rt_i2c_bus_device *);
-    void (* deinit)(void);
+    void (*init)(struct rt_i2c_bus_device *);
+    void (*deinit)(void);
+    rt_err_t (*read_point)(touch_message_t);
 };
 typedef struct touch_ops *touch_ops_t;
 
-struct touch_drivers
+struct touch_driver
 {
-    rt_list_t       list;
-    unsigned char   address;
+    rt_slist_t      list;
     rt_bool_t (*probe)(struct rt_i2c_bus_device *i2c_bus);
     rt_sem_t        isr_sem;
     touch_ops_t     ops;
-    void           *user_data;
+    void            *user_data;
 };
-typedef struct touch_drivers *touch_drv_t;
+typedef struct touch_driver *touch_driver_t;
 
-extern void rt_touch_drivers_register(touch_drv_t drv);
+rt_err_t rt_touch_drivers_register(touch_driver_t drv);
+
+int rt_touch_read(rt_uint16_t addr, void *cmd_buf, size_t cmd_len, void *data_buf, size_t data_len);
+int rt_touch_write(rt_uint16_t addr, void *data_buf, size_t data_len);
 
 #endif
