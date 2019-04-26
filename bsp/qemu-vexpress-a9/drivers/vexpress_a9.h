@@ -8,8 +8,8 @@
  * 2018-03-22     quanzhao     first version
  */
 
-#ifndef __PLATFORM_H__
-#define __PLATFORM_H__
+#ifndef __VEXPRESS_A9_H__
+#define __VEXPRESS_A9_H__
 
 /* for 'rt_inline' */
 #include <rtdef.h>
@@ -34,4 +34,4 @@ rt_inline rt_uint32_t platform_get_gic_cpu_base(void)
 
 #define GIC_ACK_INTID_MASK  0x000003ff
 
-#endif  /* __PLATFORM_H__ */
+#endif  /* __VEXPRESS_A9_H__ */
