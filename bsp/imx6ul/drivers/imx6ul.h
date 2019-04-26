@@ -7,8 +7,8 @@
  * Date           Author       Notes
  * 2018-03-22     quanzhao     first version
  */
-#ifndef __PLATFORM_H__
-#define __PLATFORM_H__
+#ifndef __IMX6UL_H__
+#define __IMX6UL_H__
 
 #include <rthw.h>
 #include <rtthread.h>
@@ -93,4 +93,4 @@ rt_inline void disable_interrupt(uint32_t irq_id, uint32_t cpu_id)
     rt_hw_interrupt_mask(irq_id);
 }
 
-#endif  /* __PLATFORM_H__ */
+#endif  /* __IMX6UL_H__ */
