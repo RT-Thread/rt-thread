@@ -30,6 +30,9 @@ config RT_USING_UART2
 config RT_USING_UART1
     bool "Using RT_USING_UART1"
     default y      
+config RT_USING_UART3
+    bool "Using RT_USING_UART3"
+    default n      
 
 config RT_UART_RX_BUFFER_SIZE
     int "The rx buffer size"        
