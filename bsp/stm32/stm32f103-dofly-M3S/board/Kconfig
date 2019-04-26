@@ -7,6 +7,14 @@ config SOC_STM32F103RB
 
 menu "Onboard Peripheral Drivers"
 
+    config BSP_USING_SDCARD
+        bool "Enable SDCARD (sdio)"
+        select BSP_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        select RT_USING_PIN
+        default n
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -26,6 +34,12 @@ menu "On-chip Peripheral Drivers"
                 default y
 
         endif
+        
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        default n
 
 endmenu
 
