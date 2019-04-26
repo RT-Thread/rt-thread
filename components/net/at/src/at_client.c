@@ -311,7 +311,7 @@ int at_obj_exec_cmd(at_client_t client, at_response_t resp, const char *cmd_expr
         if (rt_sem_take(client->resp_notice, resp->timeout) != RT_EOK)
         {
             cmd = at_get_last_cmd(&cmd_size);
-            LOG_E("execute command (%.*s) timeout (%d ticks)!", cmd_size, cmd, resp->timeout);
+            LOG_D("execute command (%.*s) timeout (%d ticks)!", cmd_size, cmd, resp->timeout);
             client->resp_status = AT_RESP_TIMEOUT;
             result = -RT_ETIMEOUT;
             goto __exit;
