@@ -370,7 +370,7 @@ static int socket_init(int family, int type, int protocol, struct sal_socket **r
     struct sal_proto_family *pf;
     struct netdev *netdv_def = netdev_default;
     struct netdev *netdev = RT_NULL;
-    rt_bool_t falgs = RT_FALSE;
+    rt_bool_t flag = RT_FALSE;
 
     if (family < 0 || family > AF_MAX)
     {
@@ -388,23 +388,24 @@ static int socket_init(int family, int type, int protocol, struct sal_socket **r
     sock->protocol = protocol;
 
     /* get socket operations from network interface device */
-    if (netdv_def && netdev_is_up(netdv_def))
+    if (netdv_def == RT_NULL)
+    {
+        LOG_E("not find default network interface device for socket create.");
+        return -3;
+    }
+
+    if (netdev_is_up(netdv_def))
     {
         /* check default network interface device protocol family */
         pf = (struct sal_proto_family *) netdv_def->sal_user_data;
         if (pf != RT_NULL && pf->skt_ops && (pf->family == family || pf->sec_family == family))
         {
             sock->netdev = netdv_def;
-            falgs = RT_TRUE;
+            flag = RT_TRUE;
         }
     }
-    else
-    {
-        LOG_E("not find default network interface device for socket create.");
-        return -3;
-    }
     
-    if (falgs == RT_FALSE)
+    if (flag == RT_FALSE)
     {
         /* get network interface device by protocol family */
         netdev = netdev_get_by_family(family);
