@@ -269,8 +269,7 @@ struct netdev *netdev_get_by_family(int family)
     {
         netdev = rt_slist_entry(node, struct netdev, list);
         pf = (struct sal_proto_family *) netdev->sal_user_data;
-        if (pf && pf->skt_ops && pf->family == family &&
-                netdev_is_up(netdev) && netdev_is_link_up(netdev))
+        if (pf && pf->skt_ops && pf->family == family && netdev_is_up(netdev))
         {
             rt_hw_interrupt_enable(level);
             return netdev;
@@ -281,8 +280,7 @@ struct netdev *netdev_get_by_family(int family)
     {
         netdev = rt_slist_entry(node, struct netdev, list);
         pf = (struct sal_proto_family *) netdev->sal_user_data;
-        if (pf && pf->skt_ops && pf->sec_family == family &&
-                netdev_is_up(netdev) && netdev_is_link_up(netdev))
+        if (pf && pf->skt_ops && pf->sec_family == family && netdev_is_up(netdev))
         {
             rt_hw_interrupt_enable(level);
             return netdev;
