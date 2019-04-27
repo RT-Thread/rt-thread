@@ -5,7 +5,6 @@ cwd = GetCurrentDir()
 # add the general drivers.
 src = Split("""
 drv_uart.c
-drv_cache.c
 """)
 
 CPPPATH = [cwd]
