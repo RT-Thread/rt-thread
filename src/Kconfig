@@ -206,7 +206,14 @@ config RT_DEBUG_MODULE
     int
     default 1 if RT_DEBUG_MODULE_CONFIG
 
+if ARCH_ARM_CORTEX_A
+	config RT_DEBUG_UNWIND
+		bool "Enable stack unwind"
+		default n
 endif
+
+endif
+
 
 menu "Inter-Thread communication"
 

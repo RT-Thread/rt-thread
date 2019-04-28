@@ -18,6 +18,17 @@ if rtconfig.PLATFORM == 'gcc':
 if rtconfig.PLATFORM == 'iar':
     src += Glob('*_iar.S')
 
-group = DefineGroup('cpu', src, depend = [''], CPPPATH = CPPPATH)
+if GetDepend(['RT_DEBUG_UNWIND']):
+    linkflags = ' -funwind-tables '
+    ccflags = ' -funwind-tables '
+    cxxflags = ' -funwind-tables '
+    asflags = ' -funwind-tables '
+else:
+    linkflags = ''
+    ccflags = ''
+    cxxflags = ''
+    asflags = ''
+
+group = DefineGroup('cpu', src, depend = [''], CPPPATH = CPPPATH, LINKFLAGS = linkflags, CCFLAGS = ccflags, ASFLAGS = asflags, CXXFLAGS = cxxflags)
 
 Return('group')
