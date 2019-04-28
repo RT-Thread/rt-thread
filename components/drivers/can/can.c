@@ -854,7 +854,7 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
 
                 level = rt_hw_interrupt_disable();
                 /* get rx length */
-                rx_length = rx_fifo->freenumbers * sizeof(struct rt_can_msg);
+                rx_length = rt_list_len(&rx_fifo->uselist)* sizeof(struct rt_can_msg);
                 rt_hw_interrupt_enable(level);
 
                 can->parent.rx_indicate(&can->parent, rx_length);

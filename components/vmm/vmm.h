@@ -30,18 +30,13 @@ unsigned long vmm_find_iomap_by_pa(unsigned long pa);
 
 void vmm_vector_init(void);
 
-#ifndef RT_USING_LOGTRACE
 /* If the rshell is run, we could not rt_kprintf in some situation because
  * write to a vbus channel *Would BLOCK*. So we cannot use it in interrupt
  * context, we cannot use it within the context of idle(vmm). */
 #define vmm_debug(fmt, ...)
 #define vmm_verbose(fmt, ...)
 #define vmm_info(fmt, ...)
-#else // have RT_USING_LOGTRACE
-#define vmm_debug(fmt, ...)   log_trace(LOG_TRACE_DEBUG  "[vmm]"fmt, ##__VA_ARGS__)
-#define vmm_verbose(fmt, ...) log_trace(LOG_TRACE_VERBOSE"[vmm]"fmt, ##__VA_ARGS__)
-#define vmm_info(fmt, ...)    log_trace(LOG_TRACE_INFO   "[vmm]"fmt, ##__VA_ARGS__)
-#endif // RT_USING_LOGTRACE
+
 #endif
 
 #define ARRAY_SIZE(ar)     (sizeof(ar)/sizeof(ar[0]))
