@@ -394,7 +394,7 @@ static int socket_init(int family, int type, int protocol, struct sal_socket **r
         return -3;
     }
 
-    if (netdev_is_up(netdv_def))
+    if (netdev_is_up(netdv_def)&&netdev_is_link_up(netdv_def))
     {
         /* check default network interface device protocol family */
         pf = (struct sal_proto_family *) netdv_def->sal_user_data;
