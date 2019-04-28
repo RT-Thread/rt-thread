@@ -10,8 +10,8 @@
 
 #include "sensor.h"
 
-#define DBG_LEVEL DBG_INFO
-#define DBG_SECTION_NAME  "sensor"
+#define DBG_TAG  "sensor"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #include <string.h>
@@ -31,6 +31,7 @@ static char *const sensor_name_str[] =
     "tvoc_",     /* TVOC Level        */
     "noi_",      /* Noise Loudness    */
     "step_"      /* Step sensor       */
+    "forc_"      /* Force sensor      */
 };
 
 /* Sensor interrupt correlation function */

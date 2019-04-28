@@ -10,8 +10,8 @@
 
 #include "sensor.h"
 
-#define DBG_LEVEL DBG_INFO
-#define DBG_SECTION_NAME  "sensor.cmd"
+#define DBG_TAG  "sensor.cmd"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #include <stdlib.h>
@@ -46,6 +46,9 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
         break;
     case RT_SENSOR_CLASS_PROXIMITY:
         LOG_I("num:%3d, distance:%5d, timestamp:%5d", num, sensor_data->data.proximity, sensor_data->timestamp);
+        break;
+    case RT_SENSOR_CLASS_FORCE:
+        LOG_I("num:%3d, force:%5d, timestamp:%5d", num, sensor_data->data.force, sensor_data->timestamp);
         break;
     default:
         break;

@@ -13,12 +13,12 @@
 #include <wlan_dev.h>
 #include <wlan_prot.h>
 
+#define DBG_TAG "WLAN.dev"
 #ifdef RT_WLAN_DEV_DEBUG
-#define DBG_LEVEL DBG_LOG
+#define DBG_LVL DBG_LOG
 #else
-#define DBG_LEVEL DBG_INFO
-#endif
-#define DBG_SECTION_NAME  "WLAN.dev"
+#define DBG_LVL DBG_INFO
+#endif /* RT_WLAN_DEV_DEBUG */
 #include <rtdbg.h>
 
 #ifndef RT_DEVICE

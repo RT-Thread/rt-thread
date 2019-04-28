@@ -7,8 +7,8 @@
 #include "drv_mouse.h"
 #include "drv_clcd.h"
 
-#define DBG_SECTION_NAME "drv.mouse"
-#define DBG_LEVEL DBG_INFO
+#define DBG_TAG "drv.mouse"
+#define DBG_LVL DBG_INFO
 #include "rtdbg.h"
 
 #define MOUSE_ADDRESS    (0x10007000)

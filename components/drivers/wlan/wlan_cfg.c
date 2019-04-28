@@ -11,12 +11,12 @@
 #include <rtthread.h>
 #include <wlan_cfg.h>
 
+#define DBG_TAG "WLAN.cfg"
 #ifdef RT_WLAN_CFG_DEBUG
-#define DBG_LEVEL DBG_LOG
+#define DBG_LVL DBG_LOG
 #else
-#define DBG_LEVEL DBG_INFO
-#endif
-#define DBG_SECTION_NAME  "WLAN.cfg"
+#define DBG_LVL DBG_INFO
+#endif /* RT_WLAN_CFG_DEBUG */
 #include <rtdbg.h>
 
 #define WLAN_CFG_LOCK()      (rt_mutex_take(&cfg_mutex, RT_WAITING_FOREVER))

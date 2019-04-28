@@ -7,6 +7,8 @@ src     = Split('''
 board.c
 drv_uart.c
 drv_emac.c
+drv_qspi.c
+drv_spiflash.c
 ''')
 CPPPATH = [cwd]
 
