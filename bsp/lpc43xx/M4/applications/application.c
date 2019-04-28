@@ -18,10 +18,6 @@
 #include <shell.h>
 #endif
 
-#ifdef RT_USING_LOGTRACE
-#include <log_trace.h>
-#endif
-
 #ifdef RT_USING_VBUS
 #include <vbus.h>
 #endif
@@ -59,10 +55,6 @@ void rt_init_thread_entry(void *parameter)
      *register unsigned int _psp __asm("psp");
      *rt_kprintf("msp@ %p, psp@ %p\n", _msp, _psp);
      */
-#ifdef RT_USING_LOGTRACE
-    log_trace_init();
-    log_trace_set_device(RT_CONSOLE_DEVICE_NAME);
-#endif
 
 #ifdef RT_USING_FINSH
     /* initialize finsh */

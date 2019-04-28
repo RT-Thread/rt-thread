@@ -189,8 +189,6 @@
 #define RT_LWIP_MSKADDR3 0
 // </section>
 
-#define RT_USING_LOGTRACE
-
 // </RDTConfigurator>
 
 #endif

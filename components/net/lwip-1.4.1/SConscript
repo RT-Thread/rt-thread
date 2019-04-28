@@ -79,8 +79,8 @@ if GetDepend(['RT_LWIP_PPP']):
     path += [GetCurrentDir() + '/src/netif/ppp']
 
 # For testing apps
-if GetDepend(['RT_USING_NETUTILS']):
-    src += Glob('./apps/*.c')
+if GetDepend(['RT_LWIP_USING_PING']):
+    src += Glob('src/apps/ping/ping.c')
 
 group = DefineGroup('LwIP', src, depend = ['RT_USING_LWIP', 'RT_USING_LWIP141'], CPPPATH = path)
 

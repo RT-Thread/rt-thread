@@ -229,10 +229,10 @@ static void bxcan0_hw_init(void)
 #ifdef USING_BXCAN1
 static void bxcan1_hw_init(void)
 {
-    pin_set_purpose(56, PIN_PURPOSE_GPIO);
-    pin_set_purpose(57, PIN_PURPOSE_GPIO);
-    pin_set_remap(56, PIN_REMAP_DEFAULT);
-    pin_set_remap(57, PIN_REMAP_DEFAULT);
+    pin_set_purpose(56, PIN_PURPOSE_OTHER);
+    pin_set_purpose(57, PIN_PURPOSE_OTHER);
+    pin_set_remap(56, PIN_REMAP_THIRD);
+    pin_set_remap(57, PIN_REMAP_THIRD);
 }
 #endif
 

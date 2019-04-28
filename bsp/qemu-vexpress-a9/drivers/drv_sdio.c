@@ -77,8 +77,8 @@
 #define PL180_CLR_DAT_END       (1 << 8)
 #define PL180_CLR_DAT_BLK_END   (1 << 10)
 
-#define DBG_SECTION_NAME "drv.sdio"
-#define DBG_LEVEL DBG_INFO
+#define DBG_TAG "drv.sdio"
+#define DBG_LVL DBG_INFO
 #include "rtdbg.h"
 
 struct sdhci_pl180_pdata_t
@@ -351,9 +351,6 @@ static void mmc_request_send(struct rt_mmcsd_host *host, struct rt_mmcsd_req *re
     req->cmd->resp[1] = cmd.response[1];
     req->cmd->resp[0] = cmd.response[0];
 
-    if(req->cmd->err)
-        LOG_E("transfer cmd err ");
-    
     if (req->stop)
     {
         stop.cmdidx = req->stop->cmd_code;

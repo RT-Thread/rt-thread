@@ -10,7 +10,7 @@
 
 #include <rtthread.h>
 #include <rthw.h>
-#include <platform.h>
+#include <board.h>
 
 #include "armv7.h"
 #include "interrupt.h"

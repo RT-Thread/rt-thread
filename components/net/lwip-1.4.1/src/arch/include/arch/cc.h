@@ -55,10 +55,8 @@ typedef uintptr_t mem_ptr_t;
 #define X32_F "lx"
 
 #ifdef RT_USING_LIBC
-#if defined(__CC_ARM) || defined(__IAR_SYSTEMS_ICC__)
-#include <sys/errno.h>
-#else
-#include <errno.h>
+#if !defined(__CC_ARM) && !defined(__IAR_SYSTEMS_ICC__)
+
 /* some errno not defined in newlib */
 #define ENSRNOTFOUND 163  /* Domain name not found */
 /* WARNING: ESHUTDOWN also not defined in newlib. We chose
@@ -66,8 +64,6 @@ typedef uintptr_t mem_ptr_t;
 			in arch.h has been assigned to another error code. */
 #define ESHUTDOWN 180
 #endif /* __CC_ARM/__IAR_SYSTEMS_ICC__ */
-#else
-#define LWIP_PROVIDE_ERRNO
 #endif
 
 #if defined(RT_USING_LIBC) || defined(RT_USING_MINILIBC)
