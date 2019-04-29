@@ -20,7 +20,7 @@ menu "Onboard Peripheral Drivers"
         default n
 		
     menu "Enable Touch"
-        
+        depends on GUIENGINE_USING_TOUCH
         config BSP_USING_TOUCH
             bool "Enable Touch drivers"
             select BSP_USING_I2C1
@@ -29,16 +29,14 @@ menu "Onboard Peripheral Drivers"
                 config BSP_TOUCH_INT_PIN
                     int "Touch interrupt pin"
                     default 34
-                    config BSP_I2C1_NAME
-                    string "I2C1 Name for Touch"
+                config BSP_TOUCH_IIC_BUS
+                    string "I2C Name for Touch"
                     default i2c1			
             endif
-
         config TOUCH_IC_FT3X67
-        bool "FT3X67"
-        depends on BSP_USING_TOUCH
-        default n
-		
+            bool "FT3X67"
+            depends on BSP_USING_TOUCH
+            default n	
     endmenu		
 endmenu
 
