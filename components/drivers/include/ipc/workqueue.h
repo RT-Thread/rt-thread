@@ -74,6 +74,8 @@ rt_inline void rt_work_init(struct rt_work *work, void (*work_func)(struct rt_wo
     rt_list_init(&(work->list));
     work->work_func = work_func;
     work->work_data = work_data;
+    work->flags = 0;
+    work->type = 0;
 }
 
 void rt_delayed_work_init(struct rt_delayed_work *work, void (*work_func)(struct rt_work *work,
