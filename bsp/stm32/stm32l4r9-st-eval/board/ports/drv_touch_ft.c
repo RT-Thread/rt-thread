@@ -138,8 +138,8 @@ static rt_err_t ft_read_point(touch_msg_t msg)
         return RT_ERROR;
     }
 
-    msg->y = (point[0]&0x0F) << 8 | point[1];
-    msg->x = (point[2]&0x0F) << 8 | point[3];
+    msg->x = (point[0]&0x0F) << 8 | point[1];
+    msg->y = (point[2]&0x0F) << 8 | point[3];
     if (s_tp_down)
     {
         msg->event = TOUCH_EVENT_MOVE;
