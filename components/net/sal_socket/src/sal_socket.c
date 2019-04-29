@@ -139,7 +139,7 @@ static void check_netdev_internet_up_work(struct rt_work *work, void *work_data)
 #define SAL_INTERNET_MONTH_LEN 4
 #define SAL_INTERNET_DATE_LEN  16
 
-    int index, sockfd = 0, result = 0;
+    int index, sockfd = -1, result = 0;
     struct sockaddr_in server_addr;
     struct hostent *host;
     struct timeval timeout;
@@ -370,7 +370,7 @@ static int socket_init(int family, int type, int protocol, struct sal_socket **r
     struct sal_proto_family *pf;
     struct netdev *netdv_def = netdev_default;
     struct netdev *netdev = RT_NULL;
-    rt_bool_t falgs = RT_FALSE;
+    rt_bool_t flag = RT_FALSE;
 
     if (family < 0 || family > AF_MAX)
     {
@@ -388,26 +388,24 @@ static int socket_init(int family, int type, int protocol, struct sal_socket **r
     sock->protocol = protocol;
 
     /* get socket operations from network interface device */
-    if (netdv_def)
-    {
-        if (netdev_is_up(netdv_def) && netdev_is_link_up(netdv_def))
-        {
-            /* check default network interface device protocol family */
-            pf = (struct sal_proto_family *) netdv_def->sal_user_data;
-            if (pf != RT_NULL && pf->skt_ops && (pf->family == family || pf->sec_family == family))
-            {
-                sock->netdev = netdv_def;
-                falgs = RT_TRUE;
-            }
-        }
-    }
-    else
+    if (netdv_def == RT_NULL)
     {
         LOG_E("not find default network interface device for socket create.");
         return -3;
     }
+
+    if (netdev_is_up(netdv_def))
+    {
+        /* check default network interface device protocol family */
+        pf = (struct sal_proto_family *) netdv_def->sal_user_data;
+        if (pf != RT_NULL && pf->skt_ops && (pf->family == family || pf->sec_family == family))
+        {
+            sock->netdev = netdv_def;
+            flag = RT_TRUE;
+        }
+    }
     
-    if (falgs == RT_FALSE)
+    if (flag == RT_FALSE)
     {
         /* get network interface device by protocol family */
         netdev = netdev_get_by_family(family);
@@ -516,8 +514,6 @@ int sal_accept(int socket, struct sockaddr *addr, socklen_t *addrlen)
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
 
-    /* check the network interface is commonicable  */
-    SAL_NETDEV_IS_COMMONICABLE(sock->netdev);
     /* check the network interface socket operations */
     SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, accept);
   

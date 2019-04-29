@@ -20,6 +20,15 @@ if GetDepend(['PKG_USING_FAL']):
     
 if GetDepend(['BSP_USING_LCD_OTM8009A']):
     src += Glob('ports/drv_lcd_otm8009a.c')
+    
+if GetDepend(['BSP_USING_TOUCH']):
+    src += Glob('ports/touch/*.c')
+    
+if GetDepend(['BSP_USING_SDCARD']):
+    src += Glob('ports/drv_sdcard.c')
+    
+if GetDepend(['BSP_USING_QSPI']):
+    src += Glob('ports/drv_qspi_flash.c')
 
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']

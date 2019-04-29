@@ -18,10 +18,6 @@
 #include <shell.h>
 #endif
 
-#ifdef RT_USING_LOGTRACE
-#include <log_trace.h>
-#endif
-
 #ifdef RT_USING_VBUS
 #include <vbus.h>
 #endif
@@ -29,11 +25,6 @@
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
 {
-#ifdef RT_USING_LOGTRACE
-    log_trace_init();
-    log_trace_set_device(RT_CONSOLE_DEVICE_NAME);
-#endif
-
 #ifdef RT_USING_FINSH
     /* initialize finsh */
     finsh_system_init();
