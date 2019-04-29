@@ -12,7 +12,7 @@
 #define __GIC_H__
 
 #include <rthw.h>
-#include <platform.h>
+#include <board.h>
 
 int arm_gic_dist_init(rt_uint32_t index, rt_uint32_t dist_base, int irq_start);
 int arm_gic_cpu_init(rt_uint32_t index, rt_uint32_t cpu_base);

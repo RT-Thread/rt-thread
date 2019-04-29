@@ -13,7 +13,8 @@
 
 enum
 {
-    RT_WORK_STATE_PENDING,  /* Work item pending state */
+    RT_WORK_STATE_PENDING    = 0x0001,     /* Work item pending state */
+    RT_WORK_STATE_SUBMITTING = 0x0002,     /* Work item submitting state */
 };
 
 /**
@@ -21,7 +22,7 @@ enum
  */
 enum
 {
-    RT_WORK_TYPE_DELAYED,
+    RT_WORK_TYPE_DELAYED     = 0x0001,
 };
 
 /* workqueue implementation */
@@ -73,6 +74,8 @@ rt_inline void rt_work_init(struct rt_work *work, void (*work_func)(struct rt_wo
     rt_list_init(&(work->list));
     work->work_func = work_func;
     work->work_data = work_data;
+    work->flags = 0;
+    work->type = 0;
 }
 
 void rt_delayed_work_init(struct rt_delayed_work *work, void (*work_func)(struct rt_work *work,
@@ -81,4 +84,3 @@ void rt_delayed_work_init(struct rt_delayed_work *work, void (*work_func)(struct
 #endif
 
 #endif
-

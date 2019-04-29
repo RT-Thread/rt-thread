@@ -241,9 +241,7 @@ rt_hw_context_switch_interrupt_do:
 .endm
 
     .align  5
-    .globl  vector_swi
-.weak SVC_Handler
-SVC_Handler:
+.weak vector_swi
 vector_swi:
     push_svc_reg
     bl      rt_hw_trap_swi

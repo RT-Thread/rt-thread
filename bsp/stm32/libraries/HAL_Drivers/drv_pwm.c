@@ -411,6 +411,18 @@ __exit:
 
 static void pwm_get_channel(void)
 {
+#ifdef BSP_USING_PWM1_CH1
+    stm32_pwm_obj[PWM1_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM1_CH2
+    stm32_pwm_obj[PWM1_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM1_CH3
+    stm32_pwm_obj[PWM1_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM1_CH4
+    stm32_pwm_obj[PWM1_INDEX].channel |= 1 << 3;
+#endif
 #ifdef BSP_USING_PWM2_CH1
     stm32_pwm_obj[PWM2_INDEX].channel |= 1 << 0;
 #endif

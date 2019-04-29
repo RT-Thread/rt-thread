@@ -119,7 +119,7 @@ struct netdev_ops
 
     /* set network interface device address information operations */
     int (*set_addr_info)(struct netdev *netdev, ip_addr_t *ip_addr, ip_addr_t *netmask, ip_addr_t *gw);
-    int (*set_dns_server)(struct netdev *netdev, ip_addr_t *dns_server);
+    int (*set_dns_server)(struct netdev *netdev, uint8_t dns_num, ip_addr_t *dns_server);
     int (*set_dhcp)(struct netdev *netdev, rt_bool_t is_enabled);
 
     /* set network interface device common network interface device operations */

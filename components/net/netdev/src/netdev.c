@@ -9,6 +9,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 
 #include <rtthread.h>
 #include <rthw.h>
@@ -268,8 +269,7 @@ struct netdev *netdev_get_by_family(int family)
     {
         netdev = rt_slist_entry(node, struct netdev, list);
         pf = (struct sal_proto_family *) netdev->sal_user_data;
-        if (pf && pf->skt_ops && pf->family == family &&
-                netdev_is_up(netdev) && netdev_is_link_up(netdev))
+        if (pf && pf->skt_ops && pf->family == family && netdev_is_up(netdev))
         {
             rt_hw_interrupt_enable(level);
             return netdev;
@@ -280,8 +280,7 @@ struct netdev *netdev_get_by_family(int family)
     {
         netdev = rt_slist_entry(node, struct netdev, list);
         pf = (struct sal_proto_family *) netdev->sal_user_data;
-        if (pf && pf->skt_ops && pf->sec_family == family &&
-                netdev_is_up(netdev) && netdev_is_link_up(netdev))
+        if (pf && pf->skt_ops && pf->sec_family == family && netdev_is_up(netdev))
         {
             rt_hw_interrupt_enable(level);
             return netdev;
@@ -510,7 +509,7 @@ int netdev_set_dns_server(struct netdev *netdev, uint8_t dns_num, const ip_addr_
     }
 
     /* execute network interface device set DNS server address operations */
-    return netdev->ops->set_dns_server(netdev, (ip_addr_t *)dns_server);
+    return netdev->ops->set_dns_server(netdev, dns_num, (ip_addr_t *)dns_server);
 }
 
 /**
@@ -1028,7 +1027,7 @@ static void netdev_list_dns(void)
     rt_hw_interrupt_enable(level);
 }
 
-static void netdev_set_dns(char *netdev_name, char *dns_server)
+static void netdev_set_dns(char *netdev_name, uint8_t dns_num, char *dns_server)
 {
     struct netdev *netdev = RT_NULL;
     ip_addr_t dns_addr;
@@ -1041,7 +1040,7 @@ static void netdev_set_dns(char *netdev_name, char *dns_server)
     }
 
     inet_aton(dns_server, &dns_addr);
-    netdev_set_dns_server(netdev, 0, &dns_addr);
+    netdev_set_dns_server(netdev, dns_num, &dns_addr);
 
     rt_kprintf("set network interface device(%s) dns server #0: %s\n", netdev_name, dns_server);
 }
@@ -1054,11 +1053,16 @@ int netdev_dns(int argc, char **argv)
     }
     else if (argc == 3)
     {
-        netdev_set_dns(argv[1], argv[2]);
+        netdev_set_dns(argv[1], 0, argv[2]);
+    }
+    else if (argc == 4)
+    {
+        netdev_set_dns(argv[1], atoi(argv[2]), argv[3]);
     }
     else
     {
-        rt_kprintf("bad parameter! e.g: dns name 114.114.114.114\n");
+        rt_kprintf("bad parameter! input: dns <netdev_name> [dns_num] <dns_server>\n");
+        return -1;
     }
 
     return 0;

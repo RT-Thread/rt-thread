@@ -113,6 +113,7 @@ if RT_USING_DFS
 
     config RT_USING_DFS_RAMFS
         bool "Enable RAM file system"
+        select RT_USING_MEMHEAP
         default n
 
     config RT_USING_DFS_UFFS
