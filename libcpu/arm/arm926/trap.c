@@ -12,6 +12,7 @@
 #include <rtthread.h>
 #include <rthw.h>
 
+#include "unwind.h"
 #define INT_IRQ     0x00
 #define INT_FIQ     0x01
 
@@ -41,6 +42,70 @@ struct rt_hw_register
     rt_uint32_t cpsr;
     rt_uint32_t ORIG_r0;
 };
+#ifdef RT_DEBUG_UNWIND
+
+#define RT_DUMP_STACK_SIZE 512
+
+void rt_hw_show_system_info(struct rt_hw_register *regs, unsigned int pc_adj)
+{
+    unsigned char *sp, *sp_limit, *spd;
+    int i, dump_size;
+    char curname[RT_NAME_MAX + 1];
+
+    if (rt_current_thread != RT_NULL)
+    {
+        rt_strncpy(curname, rt_current_thread->name, RT_NAME_MAX);
+        curname[RT_NAME_MAX] = '\0';
+        rt_kprintf("Current thread: %s\n", curname);
+    }
+
+    sp = (unsigned char*)regs->sp;
+    sp_limit = (unsigned char*)(rt_current_thread->stack_addr + rt_current_thread->stack_size);
+    if (sp >= (unsigned char*)(rt_current_thread->stack_addr) && sp < sp_limit)
+    {
+
+        spd = (unsigned char*)(regs->sp & ~0xf);
+        rt_kprintf("----------------------------------------------------------\n");
+        rt_kprintf("  stack  | 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F\n");
+        rt_kprintf("----------------------------------------------------------\n");
+        dump_size = sp_limit - sp;
+        if (dump_size > RT_DUMP_STACK_SIZE)
+            dump_size = RT_DUMP_STACK_SIZE;
+        dump_size += (unsigned int)sp & 0xf;
+        for (i = 0; i < dump_size; i++)
+        {
+            if ((i & 0xf) == 0)
+            {
+                rt_kprintf("%08x | ", (unsigned long)spd);
+            }
+            if (spd < sp)
+                rt_kprintf("   ");
+            else
+                rt_kprintf("%02x ", *spd);
+            spd++;
+            if ((i & 0xf) == 0xf)
+            {
+                rt_kprintf("\n");
+            }
+        }
+        if ((unsigned int)spd & 0xf)
+            rt_kprintf("\n");
+        rt_kprintf("----------------------------------------------------------\n");
+        {
+            struct pt_regs e_regs;
+            e_regs.ARM_fp = regs->fp;
+            e_regs.ARM_sp = regs->sp;
+            e_regs.ARM_lr = regs->lr;
+            e_regs.ARM_pc = regs->pc - pc_adj;
+            rt_kprintf("backtrace:\n");
+            unwind_backtrace(&e_regs);
+        }
+    }
+    rt_kprintf("----------------------------------------------------------\n");
+}
+
+#endif /* RT_DEBUG_UNWIND */
+
 static rt_err_t (*rt_exception_hook)(void *context) = RT_NULL;
 void rt_hw_exception_install(rt_err_t (*exception_handle)(void *context))
 {
@@ -93,6 +158,9 @@ void rt_hw_trap_udef(struct rt_hw_register *regs)
 #ifdef RT_USING_FINSH
     list_thread();
 #endif
+#ifdef RT_DEBUG_UNWIND
+    rt_hw_show_system_info(regs, 4);
+#endif /* RT_DEBUG_UNWIND */
     rt_hw_cpu_shutdown();
 }
 
@@ -145,6 +213,9 @@ void rt_hw_trap_pabt(struct rt_hw_register *regs)
 #ifdef RT_USING_FINSH
     list_thread();
 #endif
+#ifdef RT_DEBUG_UNWIND
+    rt_hw_show_system_info(regs, 4);
+#endif /* RT_DEBUG_UNWIND */
     rt_hw_cpu_shutdown();
 }
 
@@ -173,6 +244,9 @@ void rt_hw_trap_dabt(struct rt_hw_register *regs)
 #ifdef RT_USING_FINSH
     list_thread();
 #endif
+#ifdef RT_DEBUG_UNWIND
+    rt_hw_show_system_info(regs, 8);
+#endif /* RT_DEBUG_UNWIND */
     rt_hw_cpu_shutdown();
 }
 

@@ -300,6 +300,12 @@ rt_hw_context_switch_interrupt_do:
     mrs     r6, spsr       
     str     lr, [r0, #15*4]
     str     r6, [r0, #16*4]
+
+    mrs     r6, cpsr
+    bic     r6, #0x1f
+    orr     r6, #MODE_SVC
+    msr     cpsr_c, r6
+
     str     sp, [r0, #13*4]
     str     lr, [r0, #14*4]
 .endm
