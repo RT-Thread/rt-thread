@@ -56,6 +56,7 @@ def _get_filetype(fn):
 
 def MDK4AddGroupForFN(ProjectFiles, parent, name, filename, project_path):
     group = SubElement(parent, 'Group')
+    group.text = name
     group_name = SubElement(group, 'GroupName')
     group_name.text = name
 
@@ -244,9 +245,13 @@ def MDK45Project(tree, target, script):
                         lib_path = full_path
 
                 if lib_path != '':
-                    if (group_tree != None):
-                        MDK4AddLibToGroup(ProjectFiles, group_tree, group['name'], lib_path, project_path)
-                    else:
+                    need_create = 1
+                    for neighbor in groups.iter('Group'):
+                        if neighbor.text == group['name']:
+                            MDK4AddLibToGroup(ProjectFiles, neighbor, group['name'], lib_path, project_path)
+                            need_create = 0
+                            break
+                    if (need_create != 0):
                         MDK4AddGroupForFN(ProjectFiles, groups, group['name'], lib_path, project_path)
 
     # write include path, definitions and link flags
