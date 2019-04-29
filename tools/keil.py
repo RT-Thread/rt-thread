@@ -248,11 +248,10 @@ def MDK45Project(tree, target, script):
                     need_create = 1
                     for neighbor in groups.iter('Group'):
                         if neighbor.text == group['name']:
+                            MDK4AddLibToGroup(ProjectFiles, neighbor, group['name'], lib_path, project_path)
                             need_create = 0
                             break
                     if (need_create != 0):
-                        MDK4AddLibToGroup(ProjectFiles, groups, group['name'], lib_path, project_path)
-                    else:
                         MDK4AddGroupForFN(ProjectFiles, groups, group['name'], lib_path, project_path)
 
     # write include path, definitions and link flags
