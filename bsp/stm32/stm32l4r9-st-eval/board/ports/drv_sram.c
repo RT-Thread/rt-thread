@@ -22,7 +22,7 @@
 static SRAM_HandleTypeDef hsram;
 static FMC_NORSRAM_TimingTypeDef SRAM_Timing;
 #ifdef RT_USING_MEMHEAP_AS_HEAP
-    static struct rt_memheap system_heap;
+static struct rt_memheap system_heap;
 #endif
 
 static int SRAM_Init(void)
