@@ -830,6 +830,10 @@ def GenTargetProject(program = None):
         from makefile import TargetMakefile
         TargetMakefile(Env)
 
+    if GetOption('target') == 'eclipse':
+        from eclipse import TargetEclipse
+        TargetEclipse(Env)
+
 def EndBuilding(target, program = None):
     import rtconfig
 
