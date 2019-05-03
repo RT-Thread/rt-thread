@@ -246,3 +246,5 @@ rt_timer + 动词短语的形式表示能够应用于 timer 对象的方法。
           --lineend=linux
           --convert-tabs
           --verbose
+
+    参数：--style=allman -s4 -xW -p -H -U -n -k3 -z2 -c -v

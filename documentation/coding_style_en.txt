@@ -229,4 +229,4 @@ parameters: --style=allman
             --lineend=linux
             --convert-tabs
             --verbose
-
+parameters: --style=allman -s4 -xW -p -H -U -n -k3 -z2 -c -v
