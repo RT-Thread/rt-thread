@@ -50,6 +50,9 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
     case RT_SENSOR_CLASS_FORCE:
         LOG_I("num:%3d, force:%5d, timestamp:%5d", num, sensor_data->data.force, sensor_data->timestamp);
         break;
+	case RT_SENSOR_CLASS_LIGHT:
+        LOG_I("num:%3d, light:%4d.%d, timestamp:%5d", num, sensor_data->data.light / 10, sensor_data->data.light % 10, sensor_data->timestamp);
+        break;
     default:
         break;
     }
