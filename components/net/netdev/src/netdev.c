@@ -269,7 +269,7 @@ struct netdev *netdev_get_by_family(int family)
     {
         netdev = rt_slist_entry(node, struct netdev, list);
         pf = (struct sal_proto_family *) netdev->sal_user_data;
-        if (pf && pf->skt_ops && pf->family == family && netdev_is_up(netdev) && netdev_is_link_up(netdev))
+        if (pf && pf->skt_ops && pf->family == family && netdev_is_up(netdev))
         {
             rt_hw_interrupt_enable(level);
             return netdev;
@@ -671,6 +671,23 @@ void netdev_low_level_set_dns_server(struct netdev *netdev, uint8_t dns_num, con
     }
 }
 
+#ifdef NETDEV_USING_AUTO_DEFAULT
+/* Change to the first link_up network interface device automatically */
+static void netdev_auto_change_default(struct netdev *netdev)
+{
+    struct netdev *new_netdev = RT_NULL;
+
+    if (rt_memcmp(netdev, netdev_default, sizeof(struct netdev)) == 0)
+    {
+        new_netdev = netdev_get_first_link_up();
+        if (new_netdev)
+        {
+            netdev_set_default(new_netdev);
+        }
+    }
+}
+#endif /* NETDEV_USING_AUTO_DEFAULT */
+
 /**
  * This function will set network interface device status.
  * @NOTE it can only be called in the network interface device driver.
@@ -689,6 +706,11 @@ void netdev_low_level_set_status(struct netdev *netdev, rt_bool_t is_up)
         else
         {
             netdev->flags &= ~NETDEV_FLAG_UP;
+
+#ifdef NETDEV_USING_AUTO_DEFAULT
+            /* change to the first link_up network interface device automatically */
+            netdev_auto_change_default(netdev);
+#endif /* NETDEV_USING_AUTO_DEFAULT */
         }
 
         /* execute  network interface device status change callback function */
@@ -728,6 +750,11 @@ void netdev_low_level_set_link_status(struct netdev *netdev, rt_bool_t is_up)
             
             /* set network interface device flags to internet down */
             netdev->flags &= ~NETDEV_FLAG_INTERNET_UP;
+
+#ifdef NETDEV_USING_AUTO_DEFAULT
+            /* change to the first link_up network interface device automatically */
+            netdev_auto_change_default(netdev);
+#endif /* NETDEV_USING_AUTO_DEFAULT */
         }
 
         /* execute link status change callback function */
