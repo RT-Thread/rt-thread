@@ -387,14 +387,7 @@ static int socket_init(int family, int type, int protocol, struct sal_socket **r
     sock->type = type;
     sock->protocol = protocol;
 
-    /* get socket operations from network interface device */
-    if (netdv_def == RT_NULL)
-    {
-        LOG_E("not find default network interface device for socket create.");
-        return -3;
-    }
-
-    if (netdev_is_up(netdv_def) && netdev_is_link_up(netdv_def))
+    if (netdv_def && netdev_is_up(netdv_def))
     {
         /* check default network interface device protocol family */
         pf = (struct sal_proto_family *) netdv_def->sal_user_data;
