@@ -39,7 +39,7 @@ static int timer_app_init(void)
         rt_timer_start(timer1);
 
         /* keep in timer mode */
-        rt_pm_request(PM_SLEEP_MODE_TIMER);
+        rt_pm_request(PM_SLEEP_MODE_DEEP);
 
         return 0;
     }
