@@ -218,6 +218,48 @@ void USART3_IRQHandler(void)
 }
 #endif /* RT_USING_UART2 */
 
+#if defined(RT_USING_UART4)
+/* UART4 device driver structure */
+struct stm32_uart uart4 =
+{
+    {UART4},
+    UART4_IRQn
+};
+struct rt_serial_device serial4;
+
+void UART4_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    uart_isr(&serial4);
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif /* RT_USING_UART4 */
+
+#if defined(RT_USING_UART5)
+/* UART5 device driver structure */
+struct stm32_uart uart5 =
+{
+    {UART5},
+    UART5_IRQn
+};
+struct rt_serial_device serial5;
+
+void UART5_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    uart_isr(&serial5);
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif /* RT_USING_UART5 */
+
 int rt_hw_usart_init(void)
 {
     struct stm32_uart *uart;
@@ -254,6 +296,28 @@ int rt_hw_usart_init(void)
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
 #endif /* RT_USING_UART1 */
+
+#if defined(RT_USING_UART4)
+    uart = &uart4;
+    config.baud_rate = BAUD_RATE_115200;
+    serial4.ops    = &stm32_uart_ops;
+    serial4.config = config;
+    /* register UART1 device */
+    rt_hw_serial_register(&serial4, "uart4",
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                          uart);
+#endif /* RT_USING_UART5 */
+
+#if defined(RT_USING_UART5)
+    uart = &uart5;
+    config.baud_rate = BAUD_RATE_115200;
+    serial5.ops    = &stm32_uart_ops;
+    serial5.config = config;
+    /* register UART1 device */
+    rt_hw_serial_register(&serial5, "uart5",
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                          uart);
+#endif /* RT_USING_UART5 */
     return 0;
 }
 INIT_BOARD_EXPORT(rt_hw_usart_init);
@@ -337,6 +401,56 @@ void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle)
         /* USER CODE BEGIN USART3_MspInit 1 */
         /* USER CODE END USART3_MspInit 1 */
     }
+    else if (uartHandle->Instance == UART4)
+    {
+        /* USER CODE BEGIN USART4_MspInit 0 */
+        /* USER CODE END USART4_MspInit 0 */
+        /* USART4 clock enable */
+        __HAL_RCC_UART4_CLK_ENABLE();
+        __HAL_RCC_GPIOC_CLK_ENABLE();
+        /**USART4 GPIO Configuration
+        PC10     ------> UART4_TX
+        PC11     ------> UART4_RX
+        */
+        GPIO_InitStruct.Pin = GPIO_PIN_10;
+        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+        HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+        GPIO_InitStruct.Pin = GPIO_PIN_11;
+        GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+        /* UART4 interrupt Init */
+        HAL_NVIC_SetPriority(UART4_IRQn, 5, 0);
+        HAL_NVIC_EnableIRQ(UART4_IRQn);
+        /* USER CODE BEGIN UART4_MspInit 1 */
+        /* USER CODE END UART4_MspInit 1 */
+    }
+    else if (uartHandle->Instance == UART5)
+    {
+        /* USER CODE BEGIN USART5_MspInit 0 */
+        /* USER CODE END USART5_MspInit 0 */
+        /* USART5 clock enable */
+        __HAL_RCC_UART5_CLK_ENABLE();
+        __HAL_RCC_GPIOC_CLK_ENABLE();
+        /**USART5 GPIO Configuration
+        PC12     ------> UART5_TX
+        PD2      ------> UART5_RX
+        */
+        GPIO_InitStruct.Pin = GPIO_PIN_12;
+        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+        HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+        GPIO_InitStruct.Pin = GPIO_PIN_2;
+        GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+        /* USART5 interrupt Init */
+        HAL_NVIC_SetPriority(UART5_IRQn, 5, 0);
+        HAL_NVIC_EnableIRQ(UART5_IRQn);
+        /* USER CODE BEGIN UART5_MspInit 1 */
+        /* USER CODE END UART5_MspInit 1 */
+    }
 }
 
 void HAL_UART_MspDeInit(UART_HandleTypeDef *uartHandle)
@@ -389,4 +503,38 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef *uartHandle)
         /* USER CODE BEGIN USART3_MspDeInit 1 */
         /* USER CODE END USART3_MspDeInit 1 */
     }
+    else if (uartHandle->Instance == UART4)
+    {
+        /* USER CODE BEGIN USART4_MspDeInit 0 */
+        /* USER CODE END USART4_MspDeInit 0 */
+        /* Peripheral clock disable */
+        __HAL_RCC_UART4_CLK_DISABLE();
+        /**USART4 GPIO Configuration
+        PC10     ------> UART4_TX
+        PC11     ------> UART4_RX
+        */
+        HAL_GPIO_DeInit(GPIOC, GPIO_PIN_10 | GPIO_PIN_11);
+        /* UART4 interrupt Deinit */
+        HAL_NVIC_DisableIRQ(UART4_IRQn);
+        /* USER CODE BEGIN USART4_MspDeInit 1 */
+        /* USER CODE END USART4_MspDeInit 1 */
+    }
+    else if (uartHandle->Instance == UART5)
+    {
+        /* USER CODE BEGIN USART4_MspDeInit 0 */
+        /* USER CODE END USART4_MspDeInit 0 */
+        /* Peripheral clock disable */
+        __HAL_RCC_UART5_CLK_DISABLE();
+        /**USART5 GPIO Configuration
+        PC12     ------> UART5_TX
+        PD2      ------> UART5_RX
+        */
+        HAL_GPIO_DeInit(GPIOC, GPIO_PIN_12);
+        HAL_GPIO_DeInit(GPIOD, GPIO_PIN_2);
+        /* UART5 interrupt Deinit */
+        HAL_NVIC_DisableIRQ(UART5_IRQn);
+        /* USER CODE BEGIN UART5_MspDeInit 1 */
+        /* USER CODE END UART5_MspDeInit 1 */
+    }
 }
+
