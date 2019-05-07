@@ -5,8 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-07-31     tanek        first version
- * 2018-05-05     Zero-Free    adapt to the new power management interface
+ * 2019-05-06     Zero-Free    first version
  */
 
 #include <board.h>
@@ -79,7 +78,7 @@ static uint8_t run_speed[PM_RUN_MODE_MAX][2] =
     {2,  3},
 };
 
-static void run(struct rt_pm *pm, uint8_t mode, uint32_t frequency)
+static void run(struct rt_pm *pm, uint8_t mode)
 {
     static uint8_t last_mode;
     static char *run_str[] = PM_RUN_MODE_NAMES;

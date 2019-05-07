@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author          Notes
- * 2012-08-21     heyuanjie87     the first version
+ * 2019-05-06     Zero-Free       first version
  */
 
 #ifndef  __DRV_PMTIMER_H__

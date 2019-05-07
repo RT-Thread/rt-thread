@@ -22,12 +22,12 @@ static struct rt_pm_notify _pm_notify;
 
 #define RT_PM_TICKLESS_THRESH (2)
 
-RT_WEAK uint32_t rt_pm_enter_critical(void)
+RT_WEAK uint32_t rt_pm_enter_critical(uint8_t sleep_mode)
 {
     return rt_hw_interrupt_disable();
 }
 
-RT_WEAK void rt_pm_exit_critical(uint32_t ctx)
+RT_WEAK void rt_pm_exit_critical(uint32_t ctx, uint8_t sleep_mode)
 {
     rt_hw_interrupt_enable(ctx);
 }
@@ -37,17 +37,19 @@ RT_WEAK void rt_pm_exit_critical(uint32_t ctx)
  */
 static int _pm_device_suspend(uint8_t mode)
 {
-    int index;
+    int index, ret = RT_EOK;
 
     for (index = 0; index < _pm.device_pm_number; index++)
     {
         if (_pm.device_pm[index].ops->suspend != RT_NULL)
         {
-            return _pm.device_pm[index].ops->suspend(_pm.device_pm[index].device, mode);
+            ret = _pm.device_pm[index].ops->suspend(_pm.device_pm[index].device, mode);
+            if(ret != RT_EOK)
+                break; 
         }
     }
 
-    return RT_EOK;
+    return ret;
 }
 
 /**
@@ -69,7 +71,7 @@ static void _pm_device_resume(uint8_t mode)
 /**
  * This function will update the frequency of all registered devices
  */
-static void _pm_device_frequency_change(uint8_t mode, uint32_t frequency)
+static void _pm_device_frequency_change(uint8_t mode)
 {
     rt_uint32_t index;
 
@@ -77,7 +79,7 @@ static void _pm_device_frequency_change(uint8_t mode, uint32_t frequency)
     for (index = 0; index < _pm.device_pm_number; index ++)
     {
         if (_pm.device_pm[index].ops->frequency_change != RT_NULL)
-            _pm.device_pm[index].ops->frequency_change(_pm.device_pm[index].device, mode, frequency);
+            _pm.device_pm[index].ops->frequency_change(_pm.device_pm[index].device, mode);
     }
 }
 
@@ -92,9 +94,9 @@ static void _pm_frequency_scaling(struct rt_pm *pm)
     {
         level = rt_hw_interrupt_disable();
         /* change system runing mode */
-        pm->ops->run(pm, pm->run_mode, pm->frequency);
+        pm->ops->run(pm, pm->run_mode);
         /* changer device frequency */
-        _pm_device_frequency_change(pm->run_mode, pm->frequency);
+        _pm_device_frequency_change(pm->run_mode);
         pm->flags &= ~RT_PM_FREQUENCY_PENDING;
         rt_hw_interrupt_enable(level);
     }
@@ -138,7 +140,7 @@ static void _pm_change_sleep_mode(struct rt_pm *pm, uint8_t mode)
     }
     else
     {
-        level = rt_pm_enter_critical();
+        level = rt_pm_enter_critical(mode);
 
         /* Notify app will enter sleep mode */
         if (_pm_notify.notify)
@@ -151,7 +153,7 @@ static void _pm_change_sleep_mode(struct rt_pm *pm, uint8_t mode)
             _pm_device_resume(mode);
             if (_pm_notify.notify)
                 _pm_notify.notify(RT_PM_EXIT_SLEEP, mode, _pm_notify.data);
-            rt_pm_exit_critical(level);
+            rt_pm_exit_critical(level, mode);
 
             return;
         }
@@ -202,7 +204,7 @@ static void _pm_change_sleep_mode(struct rt_pm *pm, uint8_t mode)
         if (_pm_notify.notify)
             _pm_notify.notify(RT_PM_EXIT_SLEEP, mode, _pm_notify.data);
 
-        rt_pm_exit_critical(level);
+        rt_pm_exit_critical(level, mode);
     }
 }
 
@@ -381,11 +383,11 @@ static rt_size_t _rt_pm_device_write(rt_device_t dev,
     {
         /* get request */
         request = *(unsigned char *)buffer;
-        if (request == '1')
+        if (request ==  0x01)
         {
             rt_pm_request(pos);
         }
-        else if (request == '0')
+        else if (request == 0x00)
         {
             rt_pm_release(pos);
         }
@@ -416,7 +418,7 @@ static rt_err_t _rt_pm_device_control(rt_device_t dev,
     return RT_EOK;
 }
 
-int rt_pm_run_mode_set(uint8_t mode, uint32_t frequency)
+int rt_pm_run_enter(uint8_t mode)
 {
     rt_base_t level;
     struct rt_pm *pm;
@@ -429,15 +431,14 @@ int rt_pm_run_mode_set(uint8_t mode, uint32_t frequency)
     if (mode < pm->run_mode)
     {
         /* change system runing mode */
-        pm->ops->run(pm, mode, frequency);
+        pm->ops->run(pm, mode);
         /* changer device frequency */
-        _pm_device_frequency_change(mode, frequency);
+        _pm_device_frequency_change(mode);
     }
     else
     {
         pm->flags |= RT_PM_FREQUENCY_PENDING;
     }
-    pm->frequency = frequency;
     pm->run_mode = mode;
     rt_hw_interrupt_enable(level);
 
@@ -525,9 +526,9 @@ static void rt_pm_run_mode_switch(int argc, char **argv)
         mode = atoi(argv[1]);
     }
 
-    rt_pm_run_mode_set(mode, 0);
+    rt_pm_run_enter(mode);
 }
-MSH_CMD_EXPORT_ALIAS(rt_pm_run_mode_switch, pm_run_set, switch power management run mode);
+MSH_CMD_EXPORT_ALIAS(rt_pm_run_mode_switch, pm_run, switch power management run mode);
 
 static void rt_pm_dump_status(void)
 {
