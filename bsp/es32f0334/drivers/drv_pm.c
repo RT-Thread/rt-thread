@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author        Notes
  * 2019-04-08     wangyq        the first version
+ * 2019-05-06     Zero-Free     adapt to the new power management interface
  */
 
 #include <rthw.h>

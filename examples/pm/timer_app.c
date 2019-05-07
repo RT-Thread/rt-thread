@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-08-07     Tanek        first implementation
+ * 2019-05-06     Zero-Free    adapt to the new power management interface
  */
 
 #include <board.h>

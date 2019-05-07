@@ -77,7 +77,7 @@ enum
  * device control flag to request or release power
  */
 #define RT_PM_DEVICE_CTRL_REQUEST   0x01
-#define RT_PM_DEVICE_CTRL_RELEASE   0x02
+#define RT_PM_DEVICE_CTRL_RELEASE   0x00
 
 struct rt_pm;
 
@@ -87,7 +87,7 @@ struct rt_pm;
 struct rt_pm_ops
 {
     void (*sleep)(struct rt_pm *pm, uint8_t mode);
-    void (*run)(struct rt_pm *pm, uint8_t mode, uint32_t frequency);
+    void (*run)(struct rt_pm *pm, uint8_t mode);
     void (*timer_start)(struct rt_pm *pm, rt_uint32_t timeout);
     void (*timer_stop)(struct rt_pm *pm);
     rt_tick_t (*timer_get_tick)(struct rt_pm *pm);
@@ -97,7 +97,7 @@ struct rt_device_pm_ops
 {
     int (*suspend)(const struct rt_device *device, uint8_t mode);
     void (*resume)(const struct rt_device *device, uint8_t mode);
-    int (*frequency_change)(const struct rt_device *device, uint8_t mode, uint32_t frequency);
+    int (*frequency_change)(const struct rt_device *device, uint8_t mode);
 };
 
 struct rt_device_pm
@@ -122,7 +122,6 @@ struct rt_pm
     rt_uint8_t device_pm_number;
     struct rt_device_pm *device_pm;
 
-    rt_uint32_t frequency;
     /* if the mode has timer, the corresponding bit is 1*/
     rt_uint8_t timer_mask;
     rt_uint8_t flags;
@@ -144,7 +143,7 @@ struct rt_pm_notify
 
 void rt_pm_request(uint8_t sleep_mode);
 void rt_pm_release(uint8_t sleep_mode);
-int rt_pm_run_mode_set(uint8_t run_mode, uint32_t frequency);
+int rt_pm_run_enter(uint8_t run_mode);
 
 void rt_pm_device_register(struct rt_device *device, const struct rt_device_pm_ops *ops);
 void rt_pm_device_unregister(struct rt_device *device);
