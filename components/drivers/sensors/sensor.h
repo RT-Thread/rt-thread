@@ -19,7 +19,7 @@ extern "C" {
 #endif
 
 #ifdef RT_USING_RTC
-#define  rt_sensor_get_ts()  time()          /* API for the sensor to get the timestamp */
+#define  rt_sensor_get_ts()  time(RT_NULL)   /* API for the sensor to get the timestamp */
 #else
 #define  rt_sensor_get_ts()  rt_tick_get()   /* API for the sensor to get the timestamp */
 #endif
