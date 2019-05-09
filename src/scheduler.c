@@ -322,8 +322,23 @@ void rt_schedule(void)
     if (pcpu->irq_nest)
     {
         pcpu->irq_switch_flag = 1;
+        rt_hw_interrupt_enable(level);
+        goto __exit;
     }
-    else if (current_thread->scheduler_lock_nest == 1) /* whether lock scheduler */
+
+#ifdef RT_USING_SIGNALS
+    if ((current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND)
+    {
+        /* if current_thread signal is in pending */
+
+        if ((current_thread->stat & RT_THREAD_STAT_SIGNAL_MASK) & RT_THREAD_STAT_SIGNAL_PENDING)
+        {
+            rt_thread_resume(current_thread);
+        }
+    }
+#endif
+
+    if (current_thread->scheduler_lock_nest == 1) /* whether lock scheduler */
     {
         rt_ubase_t highest_ready_priority;
 
@@ -366,27 +381,32 @@ void rt_schedule(void)
                 _rt_scheduler_stack_check(to_thread);
 #endif
 
-                {
-                    extern void rt_thread_handle_sig(rt_bool_t clean_state);
-
-                    rt_hw_context_switch((rt_ubase_t)&current_thread->sp,
-                                         (rt_ubase_t)&to_thread->sp, to_thread);
-
-                    /* enable interrupt */
-                    rt_hw_interrupt_enable(level);
-
-#ifdef RT_USING_SIGNALS
-                    /* check signal status */
-                    rt_thread_handle_sig(RT_TRUE);
-#endif
-                    goto __exit;
-                }
+                rt_hw_context_switch((rt_ubase_t)&current_thread->sp,
+                        (rt_ubase_t)&to_thread->sp, to_thread);
             }
         }
     }
 
+#ifdef RT_USING_SIGNALS
+    if (current_thread->stat & RT_THREAD_STAT_SIGNAL_PENDING)
+    {
+        extern void rt_thread_handle_sig(rt_bool_t clean_state);
+
+        current_thread->stat &= ~RT_THREAD_STAT_SIGNAL_PENDING;
+
+        rt_hw_interrupt_enable(level);
+
+        /* check signal status */
+        rt_thread_handle_sig(RT_TRUE);
+    }
+    else
+    {
+        rt_hw_interrupt_enable(level);
+    }
+#else
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
+#endif
 
 __exit:
     return ;
@@ -465,13 +485,25 @@ void rt_schedule(void)
 
                     rt_hw_context_switch((rt_ubase_t)&from_thread->sp,
                             (rt_ubase_t)&to_thread->sp);
+#ifdef RT_USING_SIGNALS
+                    if (rt_current_thread->stat & RT_THREAD_STAT_SIGNAL_PENDING)
+                    {
+                        extern void rt_thread_handle_sig(rt_bool_t clean_state);
 
+                        rt_current_thread->stat &= ~RT_THREAD_STAT_SIGNAL_PENDING;
+
+                        rt_hw_interrupt_enable(level);
+
+                        /* check signal status */
+                        rt_thread_handle_sig(RT_TRUE);
+                    }
+                    else
+                    {
+                        rt_hw_interrupt_enable(level);
+                    }
+#else
                     /* enable interrupt */
                     rt_hw_interrupt_enable(level);
-
-#ifdef RT_USING_SIGNALS
-                    /* check signal status */
-                    rt_thread_handle_sig(RT_TRUE);
 #endif
                     goto __exit;
                 }
@@ -518,6 +550,18 @@ void rt_scheduler_do_irq_switch(void *context)
     cpu_id = rt_hw_cpu_id();
     pcpu   = rt_cpu_index(cpu_id);
     current_thread = pcpu->current_thread;
+
+#ifdef RT_USING_SIGNALS
+    if ((current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND)
+    {
+        /* if current_thread signal is in pending */
+
+        if ((current_thread->stat & RT_THREAD_STAT_SIGNAL_MASK) & RT_THREAD_STAT_SIGNAL_PENDING)
+        {
+            rt_thread_resume(current_thread);
+        }
+    }
+#endif
 
     if (pcpu->irq_switch_flag == 0)
     {
