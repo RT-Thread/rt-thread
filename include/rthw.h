@@ -153,10 +153,10 @@ extern rt_hw_spinlock_t _rt_critical_lock;
 
 #define __RT_HW_SPIN_LOCK_INITIALIZER(lockname) {0}
 
-#define __RT_HW_SPIN_LOCK_UNLOCKED(lockname) \
- (struct rt_hw_spinlock ) __RT_HW_SPIN_LOCK_INITIALIZER(lockname)
+#define __RT_HW_SPIN_LOCK_UNLOCKED(lockname)    \
+    (rt_hw_spinlock_t) __RT_HW_SPIN_LOCK_INITIALIZER(lockname)
 
-#define RT_DEFINE_SPINLOCK(x)  struct rt_hw_spinlock x = __RT_HW_SPIN_LOCK_UNLOCKED(x)
+#define RT_DEFINE_SPINLOCK(x)  rt_hw_spinlock_t x = __RT_HW_SPIN_LOCK_UNLOCKED(x)
 
 /**
  *  ipi function
