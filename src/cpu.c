@@ -42,12 +42,16 @@ rt_base_t rt_cpus_lock(void)
     pcpu = rt_cpu_self();
     if (pcpu->current_thread != RT_NULL)
     {
-        if (pcpu->current_thread->cpus_lock_nest++ == 0)
+        register rt_uint16_t lock_nest = pcpu->current_thread->cpus_lock_nest;
+
+        pcpu->current_thread->cpus_lock_nest++;
+        if (lock_nest == 0)
         {
             pcpu->current_thread->scheduler_lock_nest++;
             rt_hw_spin_lock(&_cpus_lock);
         }
     }
+
     return level;
 }
 RTM_EXPORT(rt_cpus_lock);
@@ -61,7 +65,9 @@ void rt_cpus_unlock(rt_base_t level)
 
     if (pcpu->current_thread != RT_NULL)
     {
-        if (--pcpu->current_thread->cpus_lock_nest == 0)
+        pcpu->current_thread->cpus_lock_nest--;
+
+        if (pcpu->current_thread->cpus_lock_nest == 0)
         {
             pcpu->current_thread->scheduler_lock_nest--;
             rt_hw_spin_unlock(&_cpus_lock);
