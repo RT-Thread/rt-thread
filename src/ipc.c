@@ -753,8 +753,8 @@ __again:
 
                 if (thread->error != RT_EOK)
                 {
-                	/* interrupt by signal, try it again */
-                	if (thread->error == -RT_EINTR) goto __again;
+                    /* interrupt by signal, try it again */
+                    if (thread->error == -RT_EINTR) goto __again;
 
                     /* return error */
                     return thread->error;
