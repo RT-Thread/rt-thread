@@ -19,6 +19,7 @@
 static struct rt_pm _pm;
 static uint8_t _pm_default_sleep = RT_PM_DEFAULT_SLEEP_MODE;
 static struct rt_pm_notify _pm_notify;
+static uint8_t _pm_init_flag = 0;
 
 #define RT_PM_TICKLESS_THRESH (2)
 
@@ -215,6 +216,9 @@ void rt_system_power_manager(void)
 {
     uint8_t mode;
 
+    if (_pm_init_flag == 0)
+        return;
+
     /* CPU frequency scaling according to the runing mode settings */
     _pm_frequency_scaling(&_pm);
 
@@ -233,6 +237,9 @@ void rt_pm_request(uint8_t mode)
 {
     rt_base_t level;
     struct rt_pm *pm;
+
+    if (_pm_init_flag == 0)
+        return;
 
     if (mode > (PM_SLEEP_MODE_MAX - 1))
         return;
@@ -255,6 +262,9 @@ void rt_pm_release(uint8_t mode)
 {
     rt_ubase_t level;
     struct rt_pm *pm;
+
+    if (_pm_init_flag == 0)
+        return;
 
     if (mode > (PM_SLEEP_MODE_MAX - 1))
         return;
@@ -423,6 +433,9 @@ int rt_pm_run_enter(uint8_t mode)
     rt_base_t level;
     struct rt_pm *pm;
 
+    if (_pm_init_flag == 0)
+        return -RT_EIO;
+
     if (mode > PM_RUN_MODE_MAX)
         return -RT_EINVAL;
 
@@ -486,6 +499,8 @@ void rt_system_pm_init(const struct rt_pm_ops *ops,
 
     pm->device_pm = RT_NULL;
     pm->device_pm_number = 0;
+
+    _pm_init_flag = 1;
 }
 
 #ifdef RT_USING_FINSH
