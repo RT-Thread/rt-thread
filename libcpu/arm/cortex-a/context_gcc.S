@@ -34,8 +34,9 @@ rt_hw_interrupt_enable:
     bx  lr
 
 /*
- * void rt_hw_context_switch_to(rt_uint32 to);
- * r0 --> to
+ * void rt_hw_context_switch_to(rt_uint32 to, struct rt_thread *to_thread);
+ * r0 --> to (thread stack)
+ * r1 --> to_thread
  */
 .globl rt_hw_context_switch_to
 rt_hw_context_switch_to:
@@ -64,9 +65,10 @@ _guest_switch_lvl:
 
 .section .text.isr, "ax"
 /*
- * void rt_hw_context_switch(rt_uint32 from, rt_uint32 to);
- * r0 --> from
- * r1 --> to
+ * void rt_hw_context_switch(rt_uint32 from, rt_uint32 to, struct rt_thread *to_thread);
+ * r0 --> from (from_thread stack)
+ * r1 --> to (to_thread stack)
+ * r2 --> to_thread
  */
 .globl rt_hw_context_switch
 rt_hw_context_switch:
@@ -158,7 +160,7 @@ rt_hw_context_switch_interrupt:
     bl      rt_cpus_lock_status_restore
 
 #ifdef RT_USING_LWP
-    ldmfd sp, {r13,r14}^  @pop usr_sp usr_lr
+    ldmfd sp, {r13,r14}^    @pop usr_sp usr_lr
     add sp, #8
 #endif
 
