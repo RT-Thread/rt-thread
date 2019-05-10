@@ -128,9 +128,9 @@ static struct rt_thread* _get_highest_priority_thread(rt_ubase_t *highest_prio)
     register struct rt_thread *highest_priority_thread;
     register rt_ubase_t highest_ready_priority, local_highest_ready_priority;
     struct rt_cpu* pcpu = rt_cpu_self();
-
 #if RT_THREAD_PRIORITY_MAX > 32
     register rt_ubase_t number;
+#endif
 
     if (rt_thread_ready_priority_group == 0 && pcpu->priority_group == 0)
     {
@@ -139,6 +139,7 @@ static struct rt_thread* _get_highest_priority_thread(rt_ubase_t *highest_prio)
         return pcpu->current_thread;
     }
 
+#if RT_THREAD_PRIORITY_MAX > 32
     number = __rt_ffs(rt_thread_ready_priority_group) - 1;
     highest_ready_priority = (number << 3) + __rt_ffs(rt_thread_ready_table[number]) - 1;
     number = __rt_ffs(pcpu->priority_group) - 1;
