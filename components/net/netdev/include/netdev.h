@@ -133,7 +133,7 @@ int netdev_register(struct netdev *netdev, const char *name, void *user_data);
 int netdev_unregister(struct netdev *netdev);
 
 /* Get network interface device object */
-struct netdev *netdev_get_first_link_up(void);
+struct netdev *netdev_get_first_by_flags(uint16_t flags);
 struct netdev *netdev_get_by_ipaddr(ip_addr_t *ip_addr);
 struct netdev *netdev_get_by_name(const char *name);
 #ifdef RT_USING_SAL

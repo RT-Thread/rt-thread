@@ -134,12 +134,14 @@ int netdev_unregister(struct netdev *netdev)
 
 /**
  * This function will get the first network interface device
- * with the link_up status in network interface device list.
+ * with the flags in network interface device list.
+ * 
+ * @param flags the network interface device flags
  * 
  * @return != NULL: network interface device object
  *            NULL: get failed 
  */
-struct netdev *netdev_get_first_link_up(void)
+struct netdev *netdev_get_first_by_flags(uint16_t flags)
 {
     rt_base_t level;
     rt_slist_t *node = RT_NULL;
@@ -155,7 +157,7 @@ struct netdev *netdev_get_first_link_up(void)
     for (node = &(netdev_list->list); node; node = rt_slist_next(node))
     {
         netdev = rt_slist_entry(node, struct netdev, list);
-        if (netdev && netdev_is_up(netdev) && netdev_is_link_up(netdev))
+        if (netdev && (netdev->flags & flags) != 0)
         {
             rt_hw_interrupt_enable(level);
             return netdev;
@@ -679,7 +681,7 @@ static void netdev_auto_change_default(struct netdev *netdev)
 
     if (rt_memcmp(netdev, netdev_default, sizeof(struct netdev)) == 0)
     {
-        new_netdev = netdev_get_first_link_up();
+        new_netdev = netdev_get_first_by_flags(NETDEV_FLAG_LINK_UP);
         if (new_netdev)
         {
             netdev_set_default(new_netdev);
@@ -964,7 +966,7 @@ static int netdev_cmd_ping(char* target_name, rt_uint32_t times, rt_size_t size)
     else
     {
         /* using first internet up status network interface device */
-        netdev = netdev_get_first_link_up();
+        netdev = netdev_get_first_by_flags(NETDEV_FLAG_LINK_UP);
         if (netdev == RT_NULL || NETDEV_PING_IS_COMMONICABLE(netdev) == 0)
         {
             rt_kprintf("ping: network interface device get error.\n");
