@@ -37,6 +37,15 @@ menu "Onboard Peripheral Drivers"
         select PKG_USING_MPU6XXX
         select PKG_USING_MPU6XXX_LATEST_VERSION
         default n
+        
+    config BSP_USING_AHT10
+        bool "Enable aht10 (i2c4)"
+        select BSP_USING_I2C
+        select BSP_USING_I2C4
+        select PKG_USING_SENSORS_DRIVERS
+        select PKG_USING_AHT10
+        select PKG_USING_AHT10_LATEST_VERSION
+        default n
 
 endmenu
 
