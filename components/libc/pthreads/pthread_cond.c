@@ -189,7 +189,7 @@ rt_err_t _pthread_cond_timedwait(pthread_cond_t  *cond,
         pthread_cond_init(cond, RT_NULL);
 
     /* The mutex was not owned by the current thread at the time of the call. */
-    if (mutex->lock.owner != pthread_self())
+    if (mutex->lock.owner != rt_thread_self())
         return -RT_ERROR;
     /* unlock a mutex failed */
     if (pthread_mutex_unlock(mutex) != 0)
