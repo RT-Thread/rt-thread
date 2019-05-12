@@ -34,7 +34,7 @@ static void _pthread_destroy(_pthread_data_t *ptd)
         rt_sem_delete(ptd->joinable_sem);
 
     /* release thread resource */
-    if (ptd->attr.stack_base == RT_NULL)
+    if (ptd->attr.stackaddr == RT_NULL)
     {
         /* release thread allocated stack */
         rt_free(ptd->tid->stack_addr);
@@ -119,13 +119,13 @@ int pthread_create(pthread_t            *tid,
     }
 
     rt_snprintf(name, sizeof(name), "pth%02d", pthread_number ++);
-    if (ptd->attr.stack_base == 0)
+    if (ptd->attr.stackaddr == 0)
     {
-        stack = (void *)rt_malloc(ptd->attr.stack_size);
+        stack = (void *)rt_malloc(ptd->attr.stacksize);
     }
     else
     {
-        stack = (void *)(ptd->attr.stack_base);
+        stack = (void *)(ptd->attr.stackaddr);
     }
 
     if (stack == RT_NULL)
@@ -139,7 +139,7 @@ int pthread_create(pthread_t            *tid,
     ptd->tid = (rt_thread_t) rt_malloc(sizeof(struct rt_thread));
     if (ptd->tid == RT_NULL)
     {
-        if (ptd->attr.stack_base == 0)
+        if (ptd->attr.stackaddr == 0)
             rt_free(stack);
         rt_free(ptd);
 
@@ -151,7 +151,7 @@ int pthread_create(pthread_t            *tid,
         ptd->joinable_sem = rt_sem_create(name, 0, RT_IPC_FLAG_FIFO);
         if (ptd->joinable_sem == RT_NULL)
         {
-            if (ptd->attr.stack_base != 0)
+            if (ptd->attr.stackaddr != 0)
                 rt_free(stack);
             rt_free(ptd);
 
@@ -169,10 +169,10 @@ int pthread_create(pthread_t            *tid,
 
     /* initial this pthread to system */
     if (rt_thread_init(ptd->tid, name, pthread_entry_stub, ptd,
-                       stack, ptd->attr.stack_size,
-                       ptd->attr.priority, 5) != RT_EOK)
+                       stack, ptd->attr.stacksize,
+                       ptd->attr.schedparam.sched_priority, 5) != RT_EOK)
     {
-        if (ptd->attr.stack_base == 0)
+        if (ptd->attr.stackaddr == 0)
             rt_free(stack);
         if (ptd->joinable_sem != RT_NULL)
             rt_sem_delete(ptd->joinable_sem);
@@ -195,7 +195,7 @@ int pthread_create(pthread_t            *tid,
 
     /* start thread failed */
     rt_thread_detach(ptd->tid);
-    if (ptd->attr.stack_base == 0)
+    if (ptd->attr.stackaddr == 0)
         rt_free(stack);
     if (ptd->joinable_sem != RT_NULL)
         rt_sem_delete(ptd->joinable_sem);
