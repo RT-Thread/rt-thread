@@ -245,6 +245,7 @@
 /* PKG_USING_NOPOLL is not set */
 /* PKG_USING_NETUTILS is not set */
 /* PKG_USING_AT_DEVICE is not set */
+/* PKG_USING_ATSRV_SOCKET is not set */
 /* PKG_USING_WIZNET is not set */
 
 /* IoT Cloud */
@@ -256,6 +257,7 @@
 /* PKG_USING_TENCENT_IOTKIT is not set */
 /* PKG_USING_NIMBLE is not set */
 /* PKG_USING_OTA_DOWNLOADER is not set */
+/* PKG_USING_IPMSG is not set */
 
 /* security packages */
 
@@ -273,6 +275,7 @@
 
 /* PKG_USING_OPENMV is not set */
 /* PKG_USING_MUPDF is not set */
+/* PKG_USING_STEMWIN is not set */
 
 /* tools packages */
 
@@ -299,33 +302,31 @@
 /* PKG_USING_CMSIS is not set */
 /* PKG_USING_DFS_YAFFS is not set */
 /* PKG_USING_LITTLEFS is not set */
+/* PKG_USING_THREAD_POOL is not set */
 
 /* peripheral libraries and drivers */
 
-/* sensors drivers */
-
-/* PKG_USING_LSM6DSL is not set */
-/* PKG_USING_LPS22HB is not set */
-/* PKG_USING_HTS221 is not set */
-/* PKG_USING_LSM303AGR is not set */
-/* PKG_USING_BME280 is not set */
-/* PKG_USING_BMA400 is not set */
-/* PKG_USING_BMI160_BMX160 is not set */
-/* PKG_USING_SPL0601 is not set */
+/* PKG_USING_SENSORS_DRIVERS is not set */
 /* PKG_USING_REALTEK_AMEBA is not set */
 /* PKG_USING_SHT2X is not set */
-/* PKG_USING_AHT10 is not set */
 /* PKG_USING_AP3216C is not set */
 /* PKG_USING_STM32_SDIO is not set */
 /* PKG_USING_ICM20608 is not set */
 /* PKG_USING_U8G2 is not set */
 /* PKG_USING_BUTTON is not set */
-/* PKG_USING_MPU6XXX is not set */
 /* PKG_USING_PCF8574 is not set */
 /* PKG_USING_SX12XX is not set */
 #define PKG_USING_KENDRYTE_SDK
-#define PKG_USING_KENDRYTE_SDK_V052
+/* PKG_USING_KENDRYTE_SDK_V052 is not set */
+/* PKG_USING_KENDRYTE_SDK_V053 is not set */
+/* PKG_USING_KENDRYTE_SDK_V054 is not set */
+#define PKG_USING_KENDRYTE_SDK_V055
 /* PKG_USING_KENDRYTE_SDK_LATEST_VERSION is not set */
+#define PKG_KENDRYTE_SDK_VERNUM 0x0055
+/* PKG_USING_INFRARED is not set */
+/* PKG_USING_ROSSERIAL is not set */
+/* PKG_USING_AT24CXX is not set */
+/* PKG_USING_MOTIONDRIVER2RTT is not set */
 
 /* miscellaneous packages */
 
