@@ -41,3 +41,4 @@ settings/
 *.uvguix*
 cconfig.h
 .settings
+drivers/automac.h
