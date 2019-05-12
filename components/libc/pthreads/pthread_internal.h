@@ -30,7 +30,10 @@ struct _pthread_key_data
 };
 typedef struct _pthread_key_data _pthread_key_data_t;
 
+#ifndef PTHREAD_NUM_MAX
 #define PTHREAD_NUM_MAX 32
+#endif
+
 #define PTHREAD_MAGIC   0x70746873
 struct _pthread_data
 {
