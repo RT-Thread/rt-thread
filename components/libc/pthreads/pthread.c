@@ -20,6 +20,7 @@ _pthread_data_t *pth_table[PTHREAD_NUM_MAX] = {NULL};
 
 _pthread_data_t *_pthread_get_data(pthread_t thread)
 {
+    RT_DECLARE_SPINLOCK(pth_lock);
     _pthread_data_t *ptd;
 
     if (thread >= PTHREAD_NUM_MAX) return NULL;
@@ -36,6 +37,7 @@ _pthread_data_t *_pthread_get_data(pthread_t thread)
 pthread_t _pthread_data_get_pth(_pthread_data_t *ptd)
 {
     int index;
+    RT_DECLARE_SPINLOCK(pth_lock);
 
     rt_hw_spin_lock(&pth_lock);
     for (index = 0; index < PTHREAD_NUM_MAX; index ++)
@@ -51,11 +53,12 @@ pthread_t _pthread_data_create(void)
 {
     int index;
     _pthread_data_t *ptd = NULL;
+    RT_DECLARE_SPINLOCK(pth_lock);
 
     ptd = (_pthread_data_t*)rt_malloc(sizeof(_pthread_data_t));
     if (!ptd) return PTHREAD_NUM_MAX;
 
-    memset(ptd, 0x0, sizeof(sizeof(_pthread_data_t)));
+    memset(ptd, 0x0, sizeof(_pthread_data_t));
     ptd->canceled = 0;
     ptd->cancelstate = PTHREAD_CANCEL_DISABLE;
     ptd->canceltype = PTHREAD_CANCEL_DEFERRED;
@@ -67,6 +70,7 @@ pthread_t _pthread_data_create(void)
         if (pth_table[index] == NULL)
         {
             pth_table[index] = ptd;
+            break;
         }
     }
     rt_hw_spin_unlock(&pth_lock);
@@ -76,6 +80,8 @@ pthread_t _pthread_data_create(void)
 
 void _pthread_data_destroy(pthread_t pth)
 {
+    RT_DECLARE_SPINLOCK(pth_lock);
+
     _pthread_data_t *ptd = _pthread_get_data(pth);
     if (ptd)
     {

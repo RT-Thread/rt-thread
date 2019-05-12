@@ -157,6 +157,7 @@ extern rt_hw_spinlock_t _rt_critical_lock;
     (rt_hw_spinlock_t) __RT_HW_SPIN_LOCK_INITIALIZER(lockname)
 
 #define RT_DEFINE_SPINLOCK(x)  rt_hw_spinlock_t x = __RT_HW_SPIN_LOCK_UNLOCKED(x)
+#define RT_DECLARE_SPINLOCK(x)
 
 /**
  *  ipi function
@@ -172,6 +173,13 @@ void rt_hw_secondary_cpu_up(void);
  * secondary cpu idle function
  */
 void rt_hw_secondary_cpu_idle_exec(void);
+#else
+
+#define RT_DEFINE_SPINLOCK(x)  
+#define RT_DECLARE_SPINLOCK(x)    rt_ubase_t x
+
+#define rt_hw_spin_lock(lock)     *(lock) = rt_hw_interrupt_disable()
+#define rt_hw_spin_unlock(lock)   rt_hw_interrupt_enable(*(lock))
 
 #endif
 
