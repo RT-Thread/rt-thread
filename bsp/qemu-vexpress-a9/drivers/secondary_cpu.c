@@ -17,6 +17,8 @@
 #include "drv_timer.h"
 
 #ifdef RT_USING_SMP
+#include <interrupt.h>
+
 static void rt_hw_timer2_isr(int vector, void *param)
 {
     rt_tick_increase();
