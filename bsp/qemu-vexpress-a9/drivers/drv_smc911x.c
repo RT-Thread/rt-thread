@@ -2,6 +2,7 @@
 #include <rtthread.h>
 #include <netif/ethernetif.h>
 #include <lwipopts.h>
+#include <automac.h>
 
 #define MAX_ADDR_LEN                6
 #define SMC911X_EMAC_DEVICE(eth)    (struct eth_device_smc911x*)(eth)
@@ -512,12 +513,12 @@ int smc911x_emac_hw_init(void)
     smc911x_reg_write(&_emac, INT_CFG, INT_CFG_IRQ_POL | INT_CFG_IRQ_TYPE);
 
     /* test MAC address */
-    _emac.enetaddr[0] = 0x52;
-    _emac.enetaddr[1] = 0x54;
-    _emac.enetaddr[2] = 0x00;
-    _emac.enetaddr[3] = 0x11;
-    _emac.enetaddr[4] = 0x22;
-    _emac.enetaddr[5] = 0x33;
+    _emac.enetaddr[0] = AUTOMAC0;
+    _emac.enetaddr[1] = AUTOMAC1;
+    _emac.enetaddr[2] = AUTOMAC2;
+    _emac.enetaddr[3] = AUTOMAC3;
+    _emac.enetaddr[4] = AUTOMAC4;
+    _emac.enetaddr[5] = AUTOMAC5;
 
 #ifdef RT_USING_DEVICE_OPS
     _emac.parent.parent.ops        = &smc911x_emac_ops;

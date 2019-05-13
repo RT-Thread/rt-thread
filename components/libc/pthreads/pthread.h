@@ -76,15 +76,21 @@ enum
 #define PTHREAD_SCOPE_PROCESS   0
 #define PTHREAD_SCOPE_SYSTEM    1
 
+struct sched_param
+{
+    int sched_priority;
+};
+
 struct pthread_attr
 {
-    void*       stack_base;
-    rt_uint32_t stack_size;     /* stack size of thread */
+    void* stackaddr;        /* stack address of thread */
+    int   stacksize;        /* stack size of thread */
 
-    rt_uint8_t priority;        /* priority of thread */
-    rt_uint8_t detachstate;     /* detach state */
-    rt_uint8_t policy;          /* scheduler policy */
-    rt_uint8_t inheritsched;    /* Inherit parent prio/policy */
+    int   inheritsched;     /* Inherit parent prio/policy */
+    int   schedpolicy;      /* scheduler policy */
+    struct sched_param schedparam; /* sched parameter */
+
+    int   detachstate;      /* detach state */
 };
 typedef struct pthread_attr pthread_attr_t;
 
@@ -130,11 +136,6 @@ struct pthread_barrier
     pthread_mutex_t mutex;
 };
 typedef struct pthread_barrier pthread_barrier_t;
-
-struct sched_param
-{
-    int sched_priority;
-};
 
 /* pthread thread interface */
 int pthread_attr_destroy(pthread_attr_t *attr);
