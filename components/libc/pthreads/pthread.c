@@ -10,11 +10,11 @@
  * 2019-02-07     Bernard      Add _pthread_destroy to release pthread resource.
  */
 
+#include <rthw.h>
 #include <pthread.h>
 #include <sched.h>
 #include "pthread_internal.h"
 
-#include <rthw.h>
 RT_DEFINE_SPINLOCK(pth_lock);
 _pthread_data_t *pth_table[PTHREAD_NUM_MAX] = {NULL};
 
@@ -75,6 +75,13 @@ pthread_t _pthread_data_create(void)
     }
     rt_hw_spin_unlock(&pth_lock);
 
+    /* full of pthreads, clean magic and release ptd */
+    if (index == PTHREAD_NUM_MAX)
+    {
+        ptd->magic = 0x0;
+        rt_free(ptd);
+    }
+
     return index;
 }
 
@@ -102,7 +109,7 @@ void _pthread_data_destroy(pthread_t pth)
         }
         /* clean stack addr pointer */
         ptd->tid->stack_addr = RT_NULL;
-        
+
         /*
         * if this thread create the local thread data,
         * delete it
@@ -188,7 +195,7 @@ int pthread_create(pthread_t            *pid,
     pthread_t pth_id;
     _pthread_data_t *ptd;
 
-    /* tid shall be provided */
+    /* pid shall be provided */
     RT_ASSERT(pid != RT_NULL);
 
     /* allocate posix thread data */
@@ -198,7 +205,6 @@ int pthread_create(pthread_t            *pid,
         ret = ENOMEM;
         goto __exit;
     }
-
     /* get pthread data */
     ptd = _pthread_get_data(pth_id);
 
