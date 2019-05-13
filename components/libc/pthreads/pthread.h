@@ -32,7 +32,7 @@ extern "C" {
 #define PTHREAD_EXPLICIT_SCHED      0
 #define PTHREAD_INHERIT_SCHED       1
 
-typedef rt_thread_t pthread_t;
+typedef long pthread_t;
 typedef long pthread_condattr_t;
 typedef long pthread_rwlockattr_t;
 typedef long pthread_mutexattr_t;
@@ -172,10 +172,7 @@ rt_inline int pthread_equal (pthread_t t1, pthread_t t2)
     return t1 == t2;
 }
 
-rt_inline pthread_t pthread_self (void)
-{
-    return rt_thread_self();
-}
+pthread_t pthread_self (void);
 
 void pthread_exit (void *value_ptr);
 int pthread_once(pthread_once_t * once_control, void (*init_routine) (void));
