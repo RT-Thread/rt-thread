@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-08-07     Tanek        first implementation
+ * 2019-05-06     Zero-Free    adapt to the new power management interface
  */
 
 #include <board.h>
@@ -39,7 +40,7 @@ static int timer_app_init(void)
         rt_timer_start(timer1);
 
         /* keep in timer mode */
-        rt_pm_request(PM_SLEEP_MODE_TIMER);
+        rt_pm_request(PM_SLEEP_MODE_DEEP);
 
         return 0;
     }
