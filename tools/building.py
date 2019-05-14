@@ -187,7 +187,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     AddOption('--target',
                       dest = 'target',
                       type = 'string',
-                      help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses')
+                      help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/cmake')
     AddOption('--genconfig',
                 dest = 'genconfig',
                 action = 'store_true',
@@ -228,6 +228,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'cb':('keil', 'armcc'),
                 'ua':('gcc', 'gcc'),
                 'cdk':('gcc', 'gcc'),
+                'cmake':('gcc', 'gcc'),
                 'ses' : ('gcc', 'gcc')}
     tgt_name = GetOption('target')
 
@@ -823,6 +824,10 @@ def GenTargetProject(program = None):
     if GetOption('target') == 'ses':
         from ses import SESProject
         SESProject(Env)
+
+    if GetOption('target') == 'cmake':
+        from cmake import CMakeProject
+        CMakeProject(Env,Projects)
 
 def EndBuilding(target, program = None):
     import rtconfig
