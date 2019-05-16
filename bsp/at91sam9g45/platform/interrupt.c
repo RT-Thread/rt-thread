@@ -332,7 +332,7 @@ void rt_hw_interrupt_umask(int irq)
  * @return old handler
  */
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
-                                    void *param, char *name)
+                                    void *param, const char *name)
 {
     rt_isr_handler_t old_handler = RT_NULL;
 
@@ -418,6 +418,29 @@ void rt_hw_interrupt_ack(rt_uint32_t fiq_irq, rt_uint32_t id)
     // or else can't response next interrupt
     AT91C_BASE_AIC->AIC_EOICR = 0x0;
 }
+
+void rt_interrupt_dispatch(rt_uint32_t fiq_irq)
+{
+    rt_isr_handler_t isr_func;
+    rt_uint32_t irq;
+    void *param;
+
+    /* get irq number */
+    irq = rt_hw_interrupt_get_active(fiq_irq);
+
+    /* get interrupt service routine */
+    isr_func = irq_desc[irq].handler;
+    param = irq_desc[irq].param;
+
+    /* turn to interrupt service routine */
+    isr_func(irq, param);
+
+    rt_hw_interrupt_ack(fiq_irq, irq);
+#ifdef RT_USING_INTERRUPT_INFO
+    irq_desc[irq].counter ++;
+#endif
+}
+
 
 #ifdef RT_USING_FINSH
 #ifdef RT_USING_INTERRUPT_INFO

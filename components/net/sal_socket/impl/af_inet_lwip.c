@@ -217,6 +217,19 @@ static int inet_getsockname(int socket, struct sockaddr *name, socklen_t *namele
     return lwip_getsockname(socket, name, namelen);
 }
 
+int inet_ioctlsocket(int socket, long cmd, void *arg)
+{
+    switch (cmd)
+    {
+    case F_GETFL:
+    case F_SETFL:
+        return lwip_fcntl(socket, cmd, (int) arg); 
+
+    default:
+        return lwip_ioctl(socket, cmd, arg);
+    }
+}
+
 #ifdef SAL_USING_POSIX
 static int inet_poll(struct dfs_fd *file, struct rt_pollreq *req)
 {
@@ -278,7 +291,7 @@ static const struct sal_socket_ops lwip_socket_ops =
     lwip_shutdown,
     lwip_getpeername,
     inet_getsockname,
-    lwip_ioctl,
+    inet_ioctlsocket,
 #ifdef SAL_USING_POSIX
     inet_poll,
 #endif
