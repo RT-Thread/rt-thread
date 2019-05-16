@@ -631,6 +631,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     uart = (struct stm32_uart *)huart;
     dma_isr(&uart->serial);
 }
+
+/**
+  * @brief  Rx Half transfer completed callback
+  * @param  huart: UART handle
+  * @note   This example shows a simple way to report end of DMA Rx Half transfer, 
+  *         and you can add your own implementation.
+  * @retval None
+  */
 void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart)
 {
     struct stm32_uart *uart;
