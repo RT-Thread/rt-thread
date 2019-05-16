@@ -1187,6 +1187,8 @@ void ulog_async_waiting_log(rt_int32_t time)
 
 static void async_output_thread_entry(void *param)
 {
+    ulog_async_output();
+
     while (1)
     {
         ulog_async_waiting_log(RT_WAITING_FOREVER);
