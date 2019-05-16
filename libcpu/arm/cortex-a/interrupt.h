@@ -17,6 +17,8 @@
 #define INT_IRQ     0x00
 #define INT_FIQ     0x01
 
+void rt_hw_vector_init(void);
+
 void rt_hw_interrupt_control(int vector, int priority, int route);
 
 void rt_hw_interrupt_init(void);
