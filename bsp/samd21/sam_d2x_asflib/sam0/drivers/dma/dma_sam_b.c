@@ -243,6 +243,7 @@ static void _dma_set_config(struct dma_resource *resource,
 		struct dma_resource_config *config)
 {
 	uint32_t regval = 0;
+	int i;
 
 	/* Static register configuration */
 	regval = PROV_DMA_CTRL_CH0_STATIC_REG0_RD_BURST_MAX_SIZE(config->src.max_burst)|
@@ -275,7 +276,7 @@ static void _dma_set_config(struct dma_resource *resource,
 			(PROV_DMA_CTRL_CORE_PRIORITY_WR_PRIO_HIGH << config->des.enable_proi_high);
 	set_channel_reg_val(resource->channel_id, (uint32_t)&PROV_DMA_CTRL0->CORE_PRIORITY.reg, regval);
 	/* Initial the global variety */
-	for (int i = 0; i < DMA_CALLBACK_N; i++) {
+	for (i = 0; i < DMA_CALLBACK_N; i++) {
 		resource->callback[i] = NULL;
 	}
 	resource->callback_enable = 0;

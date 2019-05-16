@@ -414,6 +414,7 @@ static void _search_i2c_device(rt_device_t dev, uint8_t cmd)
     int count = 0;
     struct rt_i2c_msg msgs[2];
     uint8_t buf = 0;
+    int i;
 
     msgs[0].flags = RT_I2C_WR;
     msgs[0].buf   = &cmd;
@@ -423,7 +424,7 @@ static void _search_i2c_device(rt_device_t dev, uint8_t cmd)
     msgs[1].buf   = &buf;
     msgs[1].len   = 1;
 
-    for (int i = 0; i <= 0x7f; i++)
+    for (i = 0; i <= 0x7f; i++)
     {
         int len;
 

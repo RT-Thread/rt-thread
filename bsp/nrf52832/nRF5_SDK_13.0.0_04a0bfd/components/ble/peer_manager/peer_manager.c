@@ -75,7 +75,8 @@ static ble_conn_state_user_flag_id_t m_bonding_flag_id;                 /**< The
  */
 static void evt_send(pm_evt_t * p_pm_evt)
 {
-    for (int i = 0; i < m_n_registrants; i++)
+    int i;
+    for (i = 0; i < m_n_registrants; i++)
     {
         m_evt_handlers[i](p_pm_evt);
     }

@@ -3855,6 +3855,7 @@ status_t CAU3_TDES_Decrypt(CAU3_Type *base, cau3_handle_t *handle, const uint8_t
 
 status_t CAU3_CHACHA20_POLY1305_SetKey(CAU3_Type *base, cau3_handle_t *handle, const uint8_t *key, size_t keySize)
 {
+    int i;
     /* only work with aligned key[] */
     if (0x3U & (uintptr_t)key)
     {
@@ -3872,7 +3873,7 @@ status_t CAU3_CHACHA20_POLY1305_SetKey(CAU3_Type *base, cau3_handle_t *handle, c
         uint32_t w[8];
     } tempKey;
 
-    for (int i = 0; i < ARRAY_SIZE(tempKey.w); i++)
+    for (i = 0; i < ARRAY_SIZE(tempKey.w); i++)
     {
         tempKey.w[i] = __REV(((const uint32_t *)(uintptr_t)key)[i]);
     }

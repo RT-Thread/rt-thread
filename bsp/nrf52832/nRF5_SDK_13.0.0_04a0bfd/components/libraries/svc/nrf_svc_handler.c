@@ -64,6 +64,7 @@ NRF_SECTION_DEF(svc_data, const nrf_svc_func_t);
 */
 void nrf_svc_handler_c(uint8_t svc_num, uint32_t * p_svc_args)
 {
+    int i;
     uint32_t const  num_funcs = SVC_DATA_SECTION_ITEM_COUNT;
     bool            handled = false;
     uint32_t        svci_num = NRF_SVCI_SVC_NUM_INVALID;
@@ -74,7 +75,7 @@ void nrf_svc_handler_c(uint8_t svc_num, uint32_t * p_svc_args)
         svci_num = p_svc_args[4];
     }
 
-    for (int i = 0; i < num_funcs; i++)
+    for (i = 0; i < num_funcs; i++)
     {
         nrf_svc_func_reg_t const * func_reg = SVC_DATA_SECTION_ITEM_GET(i);
         if (func_reg->svc_num != svc_num)

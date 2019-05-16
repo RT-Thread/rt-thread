@@ -381,12 +381,13 @@ void DMA_StartTransfer(dma_handle_t *handle)
 
 void DMA0_DriverIRQHandler(void)
 {
+    int i;
     dma_handle_t *handle;
     int32_t channel_group;
     int32_t channel_index;
 
     /* Find channels that have completed transfer */
-    for (int i = 0; i < FSL_FEATURE_DMA_NUMBER_OF_CHANNELS; i++)
+    for (i = 0; i < FSL_FEATURE_DMA_NUMBER_OF_CHANNELS; i++)
     {
         handle = s_DMAHandle[i];
         /* Handle is not present */

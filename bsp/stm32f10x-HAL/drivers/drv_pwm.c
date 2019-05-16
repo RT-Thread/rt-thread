@@ -824,6 +824,7 @@ INIT_DEVICE_EXPORT(drv_pwm_init);
 /* pwm test cmd */
 static int pwm_test(int argc, char **argv)
 {
+    int i;
     char *pwmc = argv[1];
     rt_device_t pwmd = rt_device_find(argv[1]);
     struct rt_pwm_configuration cfg =
@@ -832,7 +833,7 @@ static int pwm_test(int argc, char **argv)
             .period = 100, /* unit:ns 1ns~4.29s:1Ghz~0.23hz */
             .pulse = 50    /* unit:ns (pulse<=period) */
         };
-    for (int i = 1; i < 5; i++)
+    for (i = 1; i < 5; i++)
     {
         cfg.channel = i;
         rt_device_control(pwmd, PWM_CMD_SET, &cfg);

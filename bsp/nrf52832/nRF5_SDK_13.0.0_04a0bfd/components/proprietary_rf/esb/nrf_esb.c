@@ -368,14 +368,15 @@ static void reset_fifos()
 
 static void initialize_fifos()
 {
+    int i;
     reset_fifos();
 
-    for (int i = 0; i < NRF_ESB_TX_FIFO_SIZE; i++)
+    for (i = 0; i < NRF_ESB_TX_FIFO_SIZE; i++)
     {
         m_tx_fifo.p_payload[i] = &m_tx_fifo_payload[i];
     }
 
-    for (int i = 0; i < NRF_ESB_RX_FIFO_SIZE; i++)
+    for (i = 0; i < NRF_ESB_RX_FIFO_SIZE; i++)
     {
         m_rx_fifo.p_payload[i] = &m_rx_fifo_payload[i];
     }

@@ -121,6 +121,7 @@ am_hal_itm_enable(void)
 void
 am_hal_itm_disable(void)
 {
+    int ix;
 
     if (g_ui32HALflags & AM_HAL_FLAGS_ITMSKIPENABLEDISABLE_M)
     {
@@ -140,7 +141,7 @@ am_hal_itm_disable(void)
     //
     // Disable the ITM.
     //
-    for (int ix = 0; ix < 100; ix++)
+    for (ix = 0; ix < 100; ix++)
     {
         AM_REG(ITM, TCR) &= ~AM_REG_ITM_TCR_ITM_ENABLE(1);
         while ( AM_REG(ITM, TCR) & (AM_REG_ITM_TCR_ITM_ENABLE(1) | AM_REG_ITM_TCR_BUSY(1)) );

@@ -942,6 +942,7 @@ static void usbd_ep_qh_init(uint_8 controller_ID,
 		unsigned int max_pkt_len,
 		unsigned int zlt, unsigned char mult)
 {
+    int i;
     struct dqh_t qhead;
     unsigned int total_bytes;
 
@@ -974,7 +975,7 @@ static void usbd_ep_qh_init(uint_8 controller_ID,
     g_usbd_queue_info[controller_ID][td_index].tail = NULL;
 
     // Initialize TD flags
-    for (int i = 0; i < MAX_DTDS_PER_EP; i++)
+    for (i = 0; i < MAX_DTDS_PER_EP; i++)
     {
         g_usbd_td_flag[controller_ID][td_index][i].status = DTD_FREE;
         g_usbd_td_flag[controller_ID][td_index][i].total_bytes = 0;

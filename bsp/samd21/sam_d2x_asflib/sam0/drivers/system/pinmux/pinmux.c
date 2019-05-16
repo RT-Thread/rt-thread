@@ -185,9 +185,10 @@ void system_pinmux_group_set_config(
 		const uint32_t mask,
 		const struct system_pinmux_config *const config)
 {
+	int i;
 	Assert(port);
 
-	for (int i = 0; i < 32; i++) {
+	for (i = 0; i < 32; i++) {
 		if (mask & (1UL << i)) {
 			_system_pinmux_config(port, (1UL << i), config);
 		}
@@ -236,9 +237,10 @@ void system_pinmux_group_set_output_slew_rate(
 		const uint32_t mask,
 		const enum system_pinmux_pin_slew_rate mode)
 {
+	int i;
 	Assert(port);
 
-	for (int i = 0; i < 32; i++) {
+	for (i = 0; i < 32; i++) {
 		if (mask & (1UL << i)) {
 			if (mode == SYSTEM_PINMUX_PIN_SLEW_RATE_LIMITED) {
 				port->PINCFG[i].reg |=  PORT_PINCFG_SLEWLIM;
@@ -266,9 +268,10 @@ void system_pinmux_group_set_output_strength(
 		const uint32_t mask,
 		const enum system_pinmux_pin_strength mode)
 {
+	int i;
 	Assert(port);
 
-	for (int i = 0; i < 32; i++) {
+	for (i = 0; i < 32; i++) {
 		if (mask & (1UL << i)) {
 			if (mode == SYSTEM_PINMUX_PIN_STRENGTH_HIGH) {
 				port->PINCFG[i].reg |=  PORT_PINCFG_DRVSTR;
@@ -296,9 +299,10 @@ void system_pinmux_group_set_output_drive(
 		const uint32_t mask,
 		const enum system_pinmux_pin_drive mode)
 {
+	int i;
 	Assert(port);
 
-	for (int i = 0; i < 32; i++) {
+	for (i = 0; i < 32; i++) {
 		if (mask & (1UL << i)) {
 			if (mode == SYSTEM_PINMUX_PIN_DRIVE_OPEN_DRAIN) {
 				port->PINCFG[i].reg |= PORT_PINCFG_ODRAIN;

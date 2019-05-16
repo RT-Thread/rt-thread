@@ -817,6 +817,7 @@ void print_block_info(uint32_t block_cat, uint32_t * p_mem_in_use)
     #define PRINT_BUFFER_SIZE       80
     #define ASCII_VALUE_FOR_SPACE   32
 
+    int            j;
     char           print_buffer[PRINT_BUFFER_SIZE];
     const uint32_t total_count   = (m_block_start[block_cat] + m_block_count[block_cat]);
     uint32_t       in_use        = 0;
@@ -877,7 +878,7 @@ void print_block_info(uint32_t block_cat, uint32_t * p_mem_in_use)
         column_number++;
         const uint32_t column_end = (column_number * PRINT_COLUMN_WIDTH);
 
-        for (int j = 0; j < column_end; j ++)
+        for (j = 0; j < column_end; j ++)
         {
             if (print_buffer[j] == 0)
             {

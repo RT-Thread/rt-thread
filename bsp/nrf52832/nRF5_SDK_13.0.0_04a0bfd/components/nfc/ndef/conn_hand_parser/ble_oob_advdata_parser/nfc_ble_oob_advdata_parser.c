@@ -87,12 +87,13 @@ __STATIC_INLINE ret_code_t flags_decode(uint8_t              const * p_flags_dat
 
 void nfc_oob_data_printout(nfc_ble_oob_pairing_data_t const * const p_pairing_data)
 {
+    int i;
     NRF_LOG_RAW_INFO("\r\n");
     NRF_LOG_INFO("BLE Advertising data contents\r\n");
     NRF_LOG_INFO("Device name: %s\r\n", nrf_log_push((char *)p_pairing_data->device_name.p_name));
     NRF_LOG_INFO("Device Address: ");
 
-    for (int i=0; i < BLE_GAP_ADDR_LEN; ++i)
+    for (i=0; i < BLE_GAP_ADDR_LEN; ++i)
     {
         NRF_LOG_RAW_INFO("%02X ", p_pairing_data->p_device_addr->addr[i]);
     }

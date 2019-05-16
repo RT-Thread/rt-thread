@@ -80,6 +80,7 @@ static rt_size_t wm_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
 {
     struct wm_i2c_bus *wm_i2c;
     rt_size_t i;
+    rt_size_t j;
     RT_ASSERT(bus != RT_NULL);
     wm_i2c = (struct wm_i2c_bus *)bus;
 
@@ -120,7 +121,7 @@ static rt_size_t wm_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
     wm_i2c->dptr = 0;
 
     tls_i2c_stop();
-    for (int j = 0; j < 3000; j++);
+    for (j = 0; j < 3000; j++);
 
     return i;
 }

@@ -202,6 +202,7 @@ static ret_code_t twi_process_error(uint32_t errorsrc)
 
 static void twi_clear_bus(nrf_drv_twi_config_t const * p_config)
 {
+    int i;
     NRF_GPIO->PIN_CNF[p_config->scl] = SCL_PIN_INIT_CONF;
     NRF_GPIO->PIN_CNF[p_config->sda] = SDA_PIN_INIT_CONF;
 
@@ -213,7 +214,7 @@ static void twi_clear_bus(nrf_drv_twi_config_t const * p_config)
 
     nrf_delay_us(4);
 
-    for (int i = 0; i < 9; i++)
+    for (i = 0; i < 9; i++)
     {
         if (nrf_gpio_pin_read(p_config->sda))
         {

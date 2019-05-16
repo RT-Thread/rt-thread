@@ -70,6 +70,7 @@ SoftwareI2CPort::~SoftwareI2CPort()
 
 void SoftwareI2CPort::fillAddressBuffer(uint8_t address, uint32_t subaddress, uint32_t subaddressLength)
 {
+    int i;
     // First clear the address buffer.
     m_addressBuffer[0] = HOST_TO_LE_LONG((address << 1) | kI2CWrite);
     m_addressBuffer[1] = 0;
@@ -80,7 +81,7 @@ void SoftwareI2CPort::fillAddressBuffer(uint8_t address, uint32_t subaddress, ui
     // Now fill in the subaddress if we have one.
     if (subaddressLength)
     {
-        for (int i = subaddressLength; i > 0; --i)
+        for (i = subaddressLength; i > 0; --i)
         {
             addressBytes[i - 1] = subaddress & 0xff;
             subaddress >>= 8;

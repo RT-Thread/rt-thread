@@ -252,7 +252,8 @@ ret_code_t app_timer_stop(app_timer_id_t timer_id)
 
 ret_code_t app_timer_stop_all(void)
 {
-    for (int i = 0; i < app_timer_control.max_timers; i++)
+    int i;
+    for (i = 0; i < app_timer_control.max_timers; i++)
     {
         if (app_timer_control.app_timers[i].id)
         {

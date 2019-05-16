@@ -663,8 +663,9 @@ int lcd_dsi_test()
     rt_uint8_t *ptr = lcd->lcd_info.framebuffer;
     while (1)
     {
+        unsigned long long i;
         /* red */
-        for (unsigned long long i = 0; i < LCD_DSI_BUF_SIZE/4; i++)
+        for (i = 0; i < LCD_DSI_BUF_SIZE/4; i++)
         {
             ptr[4 * i] = 0x00;
             ptr[4 * i + 1] = 0x00;
@@ -675,7 +676,7 @@ int lcd_dsi_test()
         rt_thread_mdelay(1000);
 
         /* green */
-        for (int i = 0; i < LCD_DSI_BUF_SIZE/4; i++)
+        for (i = 0; i < LCD_DSI_BUF_SIZE/4; i++)
         {
             ptr[4 * i] = 0x00;
             ptr[4 * i + 1] = 0xFF;
@@ -686,7 +687,7 @@ int lcd_dsi_test()
         rt_thread_mdelay(1000);
 
         /* blue */
-        for (int i = 0; i < LCD_DSI_BUF_SIZE/4; i++)
+        for (i = 0; i < LCD_DSI_BUF_SIZE/4; i++)
         {
             ptr[4 * i] = 0xFF;
             ptr[4 * i + 1] = 0x00;

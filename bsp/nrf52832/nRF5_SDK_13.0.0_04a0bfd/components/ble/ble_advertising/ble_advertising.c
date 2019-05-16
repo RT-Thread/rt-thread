@@ -399,6 +399,7 @@ uint32_t ble_advertising_init(ble_advdata_t                   const * p_advdata,
                               ble_advertising_error_handler_t const   error_handler)
 {
     uint32_t ret;
+    int i;
 
     if ((p_advdata == NULL) || (p_config == NULL))
     {
@@ -469,12 +470,12 @@ uint32_t ble_advertising_init(ble_advdata_t                   const * p_advdata,
     }
 
 #if (NRF_SD_BLE_API_VERSION <= 2)
-        for (int i = 0; i <BLE_GAP_WHITELIST_ADDR_MAX_COUNT ; i++)
+        for (i = 0; i <BLE_GAP_WHITELIST_ADDR_MAX_COUNT ; i++)
         {
             m_whitelist.pp_addrs[i] = &m_whitelist_addrs[i];
         }
 
-        for (int i = 0; i <BLE_GAP_WHITELIST_IRK_MAX_COUNT ; i++)
+        for (i = 0; i <BLE_GAP_WHITELIST_IRK_MAX_COUNT ; i++)
         {
             m_whitelist.pp_irks[i] = &m_whitelist_irks[i];
         }

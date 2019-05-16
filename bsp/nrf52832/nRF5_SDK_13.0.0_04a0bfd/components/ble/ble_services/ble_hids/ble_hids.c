@@ -615,6 +615,7 @@ static uint32_t rep_char_add(ble_hids_t *                   p_hids,
  */
 static uint32_t rep_map_char_add(ble_hids_t * p_hids, const ble_hids_init_t * p_hids_init)
 {
+    int i;
     uint32_t            err_code;
     ble_gatts_char_md_t char_md;
     ble_gatts_attr_t    attr_char_value;
@@ -664,7 +665,7 @@ static uint32_t rep_map_char_add(ble_hids_t * p_hids, const ble_hids_init_t * p_
     {
         return NRF_ERROR_INVALID_PARAM;
     }
-    for (int i = 0; i < p_hids_init->rep_map.ext_rep_ref_num; ++i)
+    for (i = 0; i < p_hids_init->rep_map.ext_rep_ref_num; ++i)
     {
         uint8_t encoded_rep_ref[sizeof(ble_uuid128_t)];
         uint8_t encoded_rep_ref_len;
