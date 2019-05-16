@@ -11,7 +11,6 @@
  */
 
 #include "rtconfig.h"
-
 .equ Mode_USR,        0x10
 .equ Mode_FIQ,        0x11
 .equ Mode_IRQ,        0x12
@@ -158,20 +157,48 @@ vector_fiq:
 vector_irq:
 #ifdef RT_USING_SMP
     clrex
+
+    stmfd   sp!, {r0, r1}
+    cps     #Mode_SVC
+    mov     r0, sp          /* svc_sp */
+    mov     r1, lr          /* svc_lr */
+
+    cps     #Mode_IRQ
+    sub     lr, #4
+    stmfd   r0!, {r1, lr}       /* svc_lr, svc_pc */
+    stmfd   r0!, {r2 - r12}
+    ldmfd   sp!, {r1, r2}     /* original r0, r1 */
+    stmfd   r0!, {r1 - r2}
+    mrs     r1,  spsr         /* original mode */
+    stmfd   r0!, {r1}
+
+#ifdef RT_USING_LWP
+    stmfd   r0, {r13, r14}^ /* usr_sp, usr_lr */
+    sub   r0, #8
 #endif
+    /* now irq stack is clean */
+    /* r0 is task svc_sp */
+    /* backup r0 -> r8 */
+    mov r8, r0
+
+    bl      rt_interrupt_enter
+    bl      rt_hw_trap_irq
+    bl      rt_interrupt_leave
+
+    cps     #Mode_SVC
+    mov     sp, r8
+    mov     r0, r8
+    bl      rt_scheduler_do_irq_switch
+
+    b       rt_hw_context_switch_exit
+
+#else
     stmfd   sp!, {r0-r12,lr}
 
     bl      rt_interrupt_enter
     bl      rt_hw_trap_irq
     bl      rt_interrupt_leave
 
-#ifdef RT_USING_SMP
-    mov     r0, sp
-    bl      rt_scheduler_do_irq_switch
-
-    ldmfd   sp!, {r0-r12,lr}
-    subs    pc,  lr, #4
-#else
     @ if rt_thread_switch_interrupt_flag set, jump to
     @ rt_hw_context_switch_interrupt_do and don't return
     ldr     r0, =rt_thread_switch_interrupt_flag

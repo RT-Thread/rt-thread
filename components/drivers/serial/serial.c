@@ -675,6 +675,8 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
             serial->serial_tx = tx_dma;
 
             dev->open_flag |= RT_DEVICE_FLAG_DMA_TX;
+            /* configure low level device */
+            serial->ops->control(serial, RT_DEVICE_CTRL_CONFIG, (void *)RT_DEVICE_FLAG_DMA_TX);
         }
 #endif /* RT_SERIAL_USING_DMA */
         else
