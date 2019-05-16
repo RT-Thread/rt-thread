@@ -35,7 +35,9 @@ int dfs_net_getsocket(int fd)
 
 static int dfs_net_ioctl(struct dfs_fd* file, int cmd, void* args)
 {
-    return -EIO;
+    int socket = (int) file->data;
+
+    return sal_ioctlsocket(socket, cmd, args);
 }
 
 static int dfs_net_read(struct dfs_fd* file, void *buf, size_t count)

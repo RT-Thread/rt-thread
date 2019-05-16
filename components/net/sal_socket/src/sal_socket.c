@@ -70,9 +70,9 @@ do {                                                                            
     }                                                                             \
 }while(0)                                                                         \
 
-#define SAL_NETDEV_IS_COMMONICABLE(netdev)                                        \
+#define SAL_NETDEV_IS_UP(netdev)                                                  \
 do {                                                                              \
-    if (!netdev_is_up(netdev) || !netdev_is_link_up(netdev)){                     \
+    if (!netdev_is_up(netdev)) {                                                  \
         return -1;                                                                \
     }                                                                             \
 }while(0)                                                                         \
@@ -86,9 +86,9 @@ do {                                                                            
 }while(0)                                                                         \
 
 #define SAL_NETDEV_NETDBOPS_VALID(netdev, pf, ops)                                \
-((netdev) && netdev_is_up(netdev) && netdev_is_link_up(netdev) &&                 \
+    ((netdev) && netdev_is_up(netdev) &&                                          \
     ((pf) = (struct sal_proto_family *) (netdev)->sal_user_data) != RT_NULL &&    \
-        (pf)->netdb_ops->ops)                                                     \
+    (pf)->netdb_ops->ops)                                                         \
 
 /**
  * SAL (Socket Abstraction Layer) initialize.
@@ -387,14 +387,7 @@ static int socket_init(int family, int type, int protocol, struct sal_socket **r
     sock->type = type;
     sock->protocol = protocol;
 
-    /* get socket operations from network interface device */
-    if (netdv_def == RT_NULL)
-    {
-        LOG_E("not find default network interface device for socket create.");
-        return -3;
-    }
-
-    if (netdev_is_up(netdv_def) && netdev_is_link_up(netdv_def))
+    if (netdv_def && netdev_is_up(netdv_def))
     {
         /* check default network interface device protocol family */
         pf = (struct sal_proto_family *) netdv_def->sal_user_data;
@@ -755,8 +748,8 @@ int sal_connect(int socket, const struct sockaddr *name, socklen_t namelen)
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
 
-    /* check the network interface is commonicable  */
-    SAL_NETDEV_IS_COMMONICABLE(sock->netdev);
+    /* check the network interface is up status */
+    SAL_NETDEV_IS_UP(sock->netdev);
     /* check the network interface socket opreation */
     SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, connect);
 
@@ -799,8 +792,8 @@ int sal_recvfrom(int socket, void *mem, size_t len, int flags,
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
 
-    /* check the network interface is commonicable  */
-    SAL_NETDEV_IS_COMMONICABLE(sock->netdev);
+    /* check the network interface is up status  */
+    SAL_NETDEV_IS_UP(sock->netdev);
     /* check the network interface socket opreation */
     SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, recvfrom);
 
@@ -833,8 +826,8 @@ int sal_sendto(int socket, const void *dataptr, size_t size, int flags,
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
 
-    /* check the network interface is commonicable  */
-    SAL_NETDEV_IS_COMMONICABLE(sock->netdev);
+    /* check the network interface is up status  */
+    SAL_NETDEV_IS_UP(sock->netdev);
     /* check the network interface socket opreation */
     SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, sendto);
 
@@ -972,8 +965,8 @@ int sal_poll(struct dfs_fd *file, struct rt_pollreq *req)
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
 
-    /* check the network interface is commonicable  */
-    SAL_NETDEV_IS_COMMONICABLE(sock->netdev);
+    /* check the network interface is up status  */
+    SAL_NETDEV_IS_UP(sock->netdev);
     /* check the network interface socket opreation */
     SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, poll);
 
@@ -992,8 +985,8 @@ struct hostent *sal_gethostbyname(const char *name)
     }
     else
     {
-        /* get the first network interface device with the link up status */
-        netdev = netdev_get_first_link_up();
+        /* get the first network interface device with up status */
+        netdev = netdev_get_first_by_flags(NETDEV_FLAG_UP);
         if (SAL_NETDEV_NETDBOPS_VALID(netdev, pf, gethostbyname))
         {
             return pf->netdb_ops->gethostbyname(name);
@@ -1015,8 +1008,8 @@ int sal_gethostbyname_r(const char *name, struct hostent *ret, char *buf,
     }
     else
     {
-        /* get the first network interface device with the link up status */
-        netdev = netdev_get_first_link_up();
+        /* get the first network interface device with up status */
+        netdev = netdev_get_first_by_flags(NETDEV_FLAG_UP);
         if (SAL_NETDEV_NETDBOPS_VALID(netdev, pf, gethostbyname_r))
         {
             return pf->netdb_ops->gethostbyname_r(name, ret, buf, buflen, result, h_errnop);
@@ -1040,8 +1033,8 @@ int sal_getaddrinfo(const char *nodename,
     }
     else
     {
-        /* get the first network interface device with the link up status */
-        netdev = netdev_get_first_link_up();
+        /* get the first network interface device with up status */
+        netdev = netdev_get_first_by_flags(NETDEV_FLAG_UP);
         if (SAL_NETDEV_NETDBOPS_VALID(netdev, pf, getaddrinfo))
         {
             return pf->netdb_ops->getaddrinfo(nodename, servname, hints, res);
@@ -1062,8 +1055,8 @@ void sal_freeaddrinfo(struct addrinfo *ai)
     }
     else
     {
-        /* get the first network interface device with the link up status */
-        netdev = netdev_get_first_link_up();
+        /* get the first network interface device with up status */
+        netdev = netdev_get_first_by_flags(NETDEV_FLAG_UP);
         if (SAL_NETDEV_NETDBOPS_VALID(netdev, pf, freeaddrinfo))
         {
             pf->netdb_ops->freeaddrinfo(ai);

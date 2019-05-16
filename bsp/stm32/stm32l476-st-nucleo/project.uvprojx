@@ -369,7 +369,7 @@
             <ScatterFile>.\board\linker_scripts\link.sct</ScatterFile>
             <IncludeLibs />
             <IncludeLibsPath />
-            <Misc> --keep *.o(.rti_fn.*)   --keep *.o(FSymTab)</Misc>
+            <Misc />
             <LinkerInputFile />
             <DisabledWarnings />
           </LDads>
@@ -533,9 +533,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_soft_i2c.c</FileName>
+              <FileName>drv_pm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HAL_Drivers\drv_soft_i2c.c</FilePath>
+              <FilePath>..\libraries\HAL_Drivers\drv_pm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_lptim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HAL_Drivers\drv_lptim.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -588,30 +595,16 @@
           <GroupName>DeviceDrivers</GroupName>
           <Files>
             <File>
-              <FileName>i2c_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\i2c\i2c_core.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>i2c_dev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\i2c\i2c_dev.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>i2c-bit-ops.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\i2c\i2c-bit-ops.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>pin.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\misc\pin.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\pm\pm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -877,13 +870,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>stm32l4xx_hal_sram.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_sram.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>stm32l4xx_hal_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_gpio.c</FilePath>
@@ -919,20 +905,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>stm32l4xx_hal_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32l4xx_hal_i2c_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_i2c_ex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>stm32l4xx_hal_rtc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_rtc.c</FilePath>
@@ -943,6 +915,13 @@
               <FileName>stm32l4xx_hal_rtc_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_rtc_ex.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32l4xx_hal_lptim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_lptim.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -756,6 +756,9 @@ int rt_hw_pin_init(void)
 #endif
 
 #if defined(__HAL_RCC_GPIOG_CLK_ENABLE)
+    #ifdef SOC_SERIES_STM32L4
+        HAL_PWREx_EnableVddIO2();
+    #endif
     __HAL_RCC_GPIOG_CLK_ENABLE();
 #endif
 
