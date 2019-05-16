@@ -47,7 +47,7 @@
 * Improve error log processing in AT socket;
 * Fix serial receive data failed issues when AT client initialization is not completed;
 
-# BSP
+## BSP
 
 * Add ES32 chip BSP from Shanghai Eastsoft Microelectronics Co., Ltd. (EastSoft provides maintenance and support);
 * Add GD32E230K-start, with ARM Cortex-M23 core BSP (xuzhuoyi)
