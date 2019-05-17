@@ -14,52 +14,52 @@
 
 #include "dfs_skt_fs.h"
 
-int dfs_skt_mount(struct dfs_filesystem* fs, unsigned long rwflag, const void* data)
+int dfs_skt_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *data)
 {
     return RT_EOK;
 }
 
-int dfs_skt_unmount(struct dfs_filesystem* fs)
+int dfs_skt_unmount(struct dfs_filesystem *fs)
 {
     return RT_EOK;
 }
 
-int dfs_skt_ioctl(struct dfs_fd* file, int cmd, void* args)
+int dfs_skt_ioctl(struct dfs_fd *file, int cmd, void *args)
 {
     return -RT_EIO;
 }
 
-int dfs_skt_read(struct dfs_fd* file, void *buf, rt_size_t count)
+int dfs_skt_read(struct dfs_fd *file, void *buf, rt_size_t count)
 {
     return count;
 }
 
-int dfs_skt_lseek(struct dfs_fd* file, rt_off_t offset)
+int dfs_skt_lseek(struct dfs_fd *file, rt_off_t offset)
 {
     return -RT_EIO;
 }
 
-int dfs_skt_close(struct dfs_fd* file)
+int dfs_skt_close(struct dfs_fd *file)
 {
     return RT_EOK;
 }
 
-int dfs_skt_open(struct dfs_fd* file)
+int dfs_skt_open(struct dfs_fd *file)
 {
     return RT_EOK;
 }
 
-int dfs_skt_stat(struct dfs_filesystem* fs, const char *path, struct stat *st)
+int dfs_skt_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
 {
     return RT_EOK;
 }
 
-int dfs_skt_getdents(struct dfs_fd* file, struct dirent* dirp, rt_uint32_t count)
+int dfs_skt_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint32_t count)
 {
     return count * sizeof(struct dirent);
 }
 
-static const struct dfs_file_ops _skt_fops = 
+static const struct dfs_file_ops _skt_fops =
 {
     dfs_skt_open,
     dfs_skt_close,

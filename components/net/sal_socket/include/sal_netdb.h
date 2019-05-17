@@ -10,7 +10,7 @@
 #ifndef SAL_NETDB_H__
 #define SAL_NETDB_H__
 
-#include <sal_socket.h>
+#include "sal_socket.h"
 
 #ifdef __cplusplus
 extern "C" {

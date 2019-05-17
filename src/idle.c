@@ -221,6 +221,7 @@ void rt_thread_idle_excute(void)
     }
 }
 
+extern void rt_system_power_manager(void);
 static void rt_thread_idle_entry(void *parameter)
 {
     while (1)
@@ -239,6 +240,9 @@ static void rt_thread_idle_entry(void *parameter)
 #endif
 
         rt_thread_idle_excute();
+#ifdef RT_USING_PM        
+        rt_system_power_manager();
+#endif
     }
 }
 

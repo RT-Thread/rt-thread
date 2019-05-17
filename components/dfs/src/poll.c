@@ -132,7 +132,7 @@ static int do_pollfd(struct pollfd *pollfd, rt_pollreq_t *req)
             mask = POLLMASK_DEFAULT;
             if (f->fops->poll)
             {
-                req->_key = pollfd->events | POLLERR| POLLHUP;
+                req->_key = pollfd->events | POLLERR | POLLHUP;
 
                 mask = f->fops->poll(f, req);
             }

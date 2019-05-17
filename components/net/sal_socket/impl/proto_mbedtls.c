@@ -20,6 +20,8 @@
 #include <netdb.h>
 #include <sal.h>
 
+#include <netdev.h>
+
 #ifdef SAL_USING_TLS
 
 #if !defined(MBEDTLS_CONFIG_FILE)
@@ -76,6 +78,7 @@ int mbedtls_net_send_cb(void *ctx, const unsigned char *buf, size_t len)
 {
     struct sal_socket *sock;
     int socket, ret;
+    struct sal_proto_family *pf;
 
     RT_ASSERT(ctx);
     RT_ASSERT(buf);
@@ -86,9 +89,11 @@ int mbedtls_net_send_cb(void *ctx, const unsigned char *buf, size_t len)
     {
         return -1;
     }
+    
+    pf = (struct sal_proto_family *)sock->netdev->sal_user_data;
 
     /* Register scoket sendto option to TLS send data callback */
-    ret = sock->ops->sendto((int) sock->user_data, (void *)buf, len, 0, RT_NULL, RT_NULL);
+    ret = pf->skt_ops->sendto((int) sock->user_data, (void *)buf, len, 0, RT_NULL, RT_NULL);
     if (ret < 0)
     {
 #ifdef RT_USING_DFS
@@ -109,6 +114,7 @@ int mbedtls_net_send_cb(void *ctx, const unsigned char *buf, size_t len)
 int mbedtls_net_recv_cb( void *ctx, unsigned char *buf, size_t len)
 {
     struct sal_socket *sock;
+    struct sal_proto_family *pf;
     int socket, ret;
 
     RT_ASSERT(ctx);
@@ -121,8 +127,10 @@ int mbedtls_net_recv_cb( void *ctx, unsigned char *buf, size_t len)
         return -1;
     }
 
+    pf = (struct sal_proto_family *)sock->netdev->sal_user_data;
+    
     /* Register scoket recvfrom option to TLS recv data callback */
-    ret = sock->ops->recvfrom((int) sock->user_data, (void *)buf, len, 0, RT_NULL, RT_NULL);
+    ret = pf->skt_ops->recvfrom((int) sock->user_data, (void *)buf, len, 0, RT_NULL, RT_NULL);
     if (ret < 0)
     {
 #ifdef RT_USING_DFS

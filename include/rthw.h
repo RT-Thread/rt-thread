@@ -117,6 +117,12 @@ void rt_hw_exception_install(rt_err_t (*exception_handle)(void *context));
  */
 void rt_hw_us_delay(rt_uint32_t us);
 
+#define RT_DEFINE_SPINLOCK(x)  
+#define RT_DECLARE_SPINLOCK(x)    rt_ubase_t x
+
+#define rt_hw_spin_lock(lock)     *(lock) = rt_hw_interrupt_disable()
+#define rt_hw_spin_unlock(lock)   rt_hw_interrupt_enable(*(lock))
+
 #ifdef __cplusplus
 }
 #endif

@@ -19,7 +19,7 @@ extern "C" {
 #endif
 
 #ifdef RT_USING_RTC
-#define  rt_sensor_get_ts()  time()          /* API for the sensor to get the timestamp */
+#define  rt_sensor_get_ts()  time(RT_NULL)   /* API for the sensor to get the timestamp */
 #else
 #define  rt_sensor_get_ts()  rt_tick_get()   /* API for the sensor to get the timestamp */
 #endif
@@ -44,6 +44,7 @@ extern "C" {
 #define RT_SENSOR_CLASS_TVOC           (10) /* TVOC Level        */
 #define RT_SENSOR_CLASS_NOISE          (11) /* Noise Loudness    */
 #define RT_SENSOR_CLASS_STEP           (12) /* Step sensor       */
+#define RT_SENSOR_CLASS_FORCE          (13) /* Force sensor      */
 
 /* Sensor vendor types */
 
@@ -53,6 +54,7 @@ extern "C" {
 #define RT_SENSOR_VENDOR_INVENSENSE    (3)  /* Invensense */
 #define RT_SENSOR_VENDOR_SEMTECH       (4)  /* Semtech */
 #define RT_SENSOR_VENDOR_GOERTEK       (5)  /* Goertek */
+#define RT_SENSOR_VENDOR_MIRAMEMS      (6)  /* MiraMEMS */
 
 /* Sensor unit types */
 
@@ -69,6 +71,7 @@ extern "C" {
 #define  RT_SENSOR_UNIT_ONE            (10) /* Dimensionless quantity  unit: 1          */
 #define  RT_SENSOR_UNIT_BPM            (11) /* Heart rate              unit: bpm        */
 #define  RT_SENSOR_UNIT_MM             (12) /* Distance                unit: mm         */
+#define  RT_SENSOR_UNIT_MN             (13) /* Force                   unit: mN         */
 
 /* Sensor communication interface types */
 
@@ -185,6 +188,7 @@ struct rt_sensor_data
         rt_int32_t           tvoc;          /* TVOC.                unit: permillage  */
         rt_int32_t           noise;         /* Noise Loudness.      unit: HZ          */
         rt_uint32_t          step;          /* Step sensor.         unit: 1           */
+        rt_int32_t           force;         /* Force sensor.        unit: mN          */
     } data;
 };
 

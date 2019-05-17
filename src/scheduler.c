@@ -74,7 +74,11 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
 {
     RT_ASSERT(thread != RT_NULL);
 
+#if defined(ARCH_CPU_STACK_GROWS_UPWARD)
+	if (*((rt_uint8_t *)((rt_ubase_t)thread->stack_addr + thread->stack_size - 1)) != '#' ||
+#else
     if (*((rt_uint8_t *)thread->stack_addr) != '#' ||
+#endif
         (rt_uint32_t)thread->sp <= (rt_uint32_t)thread->stack_addr ||
         (rt_uint32_t)thread->sp >
         (rt_uint32_t)thread->stack_addr + (rt_uint32_t)thread->stack_size)
@@ -189,7 +193,7 @@ void rt_schedule(void)
     struct rt_thread *from_thread;
 
     /* disable interrupt */
-    level = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();	
 
     /* check the scheduler is enabled or not */
     if (rt_scheduler_lock_nest == 0)
@@ -389,14 +393,17 @@ void rt_exit_critical(void)
     level = rt_hw_interrupt_disable();
 
     rt_scheduler_lock_nest --;
-
     if (rt_scheduler_lock_nest <= 0)
     {
         rt_scheduler_lock_nest = 0;
         /* enable interrupt */
         rt_hw_interrupt_enable(level);
 
-        rt_schedule();
+        if (rt_current_thread)
+        {
+            /* if scheduler is started, do a schedule */
+            rt_schedule();
+        }
     }
     else
     {
