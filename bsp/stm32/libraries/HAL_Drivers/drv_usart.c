@@ -222,10 +222,12 @@ static rt_size_t stm32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t 
     RT_ASSERT(serial != RT_NULL);
     uart = (struct stm32_uart *)(serial->parent.user_data);
     RT_ASSERT(uart != RT_NULL);
+    
     if (size == 0)
     {
         return 0;
     }
+    
     if (RT_SERIAL_DMA_TX == direction)
     {
         if (HAL_UART_Transmit_DMA(&uart->handle, buf, size) == HAL_OK)
@@ -652,6 +654,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
     DMA_Handle->Init.MemInc              = DMA_MINC_ENABLE;
     DMA_Handle->Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
     DMA_Handle->Init.MemDataAlignment    = DMA_MDATAALIGN_BYTE;
+    
     if (RT_DEVICE_FLAG_DMA_RX == flag)
     {
         DMA_Handle->Init.Direction           = DMA_PERIPH_TO_MEMORY;
@@ -662,6 +665,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
         DMA_Handle->Init.Direction           = DMA_MEMORY_TO_PERIPH;
         DMA_Handle->Init.Mode                = DMA_NORMAL;
     }
+    
     DMA_Handle->Init.Priority            = DMA_PRIORITY_MEDIUM;
 #if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     DMA_Handle->Init.FIFOMode            = DMA_FIFOMODE_DISABLE;
