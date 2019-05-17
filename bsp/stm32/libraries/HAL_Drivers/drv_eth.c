@@ -382,7 +382,7 @@ void HAL_ETH_RxCpltCallback(ETH_HandleTypeDef *heth)
     rt_err_t result;
     result = eth_device_ready(&(stm32_eth_device.parent));
     if (result != RT_EOK)
-        LOG_E("RX err = %d", result);
+        LOG_D("Post message to Ethernet thread failed, errno = %d.", result);
 }
 
 void HAL_ETH_ErrorCallback(ETH_HandleTypeDef *heth)
