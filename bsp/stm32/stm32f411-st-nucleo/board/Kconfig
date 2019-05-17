@@ -29,6 +29,15 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART2 RX DMA"
                 depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
                 default n
+
+            config BSP_USING_UART6
+                bool "Enable UART6"
+                default y
+
+            config BSP_UART6_RX_USING_DMA
+                bool "Enable UART6 RX DMA"
+                depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
+                default n
         endif
 
     menuconfig BSP_USING_I2C1
@@ -38,14 +47,36 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_I2C_BITOPS
         select RT_USING_PIN
         if BSP_USING_I2C1
+            comment "Notice: PB8 --> 24; PB9 --> 25" 
             config BSP_I2C1_SCL_PIN
                 int "i2c1 scl pin number"
                 range 0 80
-                default 30
+                default 24
             config BSP_I2C1_SDA_PIN
                 int "I2C1 sda pin number"
                 range 0 80
-                default 31
+                default 25
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS"
+                default n
+
+            config BSP_SPI1_TX_USING_DMA
+                bool "Enable SPI1 TX DMA"
+                depends on BSP_USING_SPI1
+                default n
+                
+            config BSP_SPI1_RX_USING_DMA
+                bool "Enable SPI1 RX DMA"
+                depends on BSP_USING_SPI1
+                select BSP_SPI1_TX_USING_DMA
+                default n
         endif
 
     menuconfig BSP_USING_PWM
@@ -73,6 +104,24 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable PWM3 channel4 (PB1)"
                     default n
             endif
+        endif
+
+    menuconfig BSP_USING_ONCHIP_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        select RT_USING_LIBC
+        default n
+        if BSP_USING_ONCHIP_RTC
+            choice
+                prompt "Select clock source"
+                default BSP_RTC_USING_LSE
+
+                config BSP_RTC_USING_LSE
+                    bool "RTC USING LSE"
+
+                config BSP_RTC_USING_LSI
+                    bool "RTC USING LSI"
+            endchoice
         endif
 
     config BSP_USING_ON_CHIP_FLASH

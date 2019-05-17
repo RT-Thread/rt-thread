@@ -42,9 +42,10 @@
 /* Kernel Device Object */
 
 #define RT_USING_DEVICE
+#define RT_USING_DEVICE_OPS
 #define RT_USING_INTERRUPT_INFO
 #define RT_USING_CONSOLE
-#define RT_CONSOLEBUF_SIZE 128
+#define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_VER_NUM 0x30103
 #define ARCH_ARM
@@ -104,6 +105,9 @@
 
 #define RT_USING_DEVICE_IPC
 #define RT_PIPE_BUFSZ 512
+#define RT_USING_SYSTEM_WORKQUEUE
+#define RT_SYSTEM_WORKQUEUE_STACKSIZE 2048
+#define RT_SYSTEM_WORKQUEUE_PRIORITY 23
 #define RT_USING_SERIAL
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
@@ -138,6 +142,7 @@
 
 #define RT_USING_LIBC
 #define RT_USING_PTHREADS
+#define PTHREAD_NUM_MAX 8
 #define RT_USING_POSIX
 #define RT_USING_POSIX_MMAP
 #define RT_USING_POSIX_TERMIOS
@@ -153,13 +158,19 @@
 
 #define SAL_USING_LWIP
 #define SAL_USING_POSIX
-#define SAL_PROTO_FAMILIES_NUM 4
+
+/* Network interface device */
+
+#define RT_USING_NETDEV
+#define NETDEV_USING_IFCONFIG
+#define NETDEV_USING_PING
+#define NETDEV_USING_NETSTAT
+#define NETDEV_USING_AUTO_DEFAULT
 
 /* light weight TCP/IP stack */
 
 #define RT_USING_LWIP
 #define RT_USING_LWIP202
-#define RT_USING_LWIP_IPV6
 #define RT_LWIP_ICMP
 #define RT_LWIP_DNS
 #define RT_LWIP_DHCP
@@ -173,6 +184,7 @@
 #define RT_LWIP_MSKADDR "255.255.255.0"
 #define RT_LWIP_UDP
 #define RT_LWIP_TCP
+#define RT_LWIP_RAW
 #define RT_MEMP_NUM_NETCONN 8
 #define RT_LWIP_PBUF_NUM 16
 #define RT_LWIP_RAW_PCB_NUM 4
@@ -189,11 +201,13 @@
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
 #define RT_LWIP_REASSEMBLY_FRAG
 #define LWIP_NETIF_STATUS_CALLBACK 1
+#define LWIP_NETIF_LINK_CALLBACK 1
 #define SO_REUSE 1
 #define LWIP_SO_RCVTIMEO 1
 #define LWIP_SO_SNDTIMEO 1
 #define LWIP_SO_RCVBUF 1
 #define LWIP_NETIF_LOOPBACK 0
+#define RT_LWIP_USING_PING
 
 /* Modbus master and slave stack */
 
@@ -206,9 +220,6 @@
 
 /* Utilities */
 
-#define RT_USING_LOGTRACE
-#define LOG_TRACE_MAX_SESSION 16
-#define LOG_TRACE_USING_LEVEL_INFO
 
 /* RT-Thread online packages */
 
@@ -242,8 +253,6 @@
 
 
 /* peripheral libraries and drivers */
-
-/* sensors drivers */
 
 
 /* miscellaneous packages */

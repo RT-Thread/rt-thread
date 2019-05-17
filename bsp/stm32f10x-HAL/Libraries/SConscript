@@ -131,11 +131,8 @@ elif rtconfig.CROSS_TOOL == 'iar':
     src = src + ['CMSIS/Device/ST/STM32F1xx/Source/Templates/iar/' + startup_scripts[STM32_TYPE]]
 
 path = [cwd + '/CMSIS/Device/ST/STM32F1xx/Include', 
-	cwd + '/STM32F1xx_HAL_Driver/Inc',
+    cwd + '/STM32F1xx_HAL_Driver/Inc',
     cwd + '/CMSIS/Include']
-
-if GetDepend(['RT_USING_RTT_CMSIS']):
-    path += [RTT_ROOT + '/components/CMSIS/Include']
 
 CPPDEFINES = ['USE_HAL_DRIVER',STM32_TYPE]
 group = DefineGroup('STM32_HAL', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
