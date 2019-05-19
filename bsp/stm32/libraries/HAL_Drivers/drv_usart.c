@@ -359,20 +359,20 @@ static void dma_isr(struct rt_serial_device *serial)
     uart = (struct stm32_uart *) serial->parent.user_data;
     RT_ASSERT(uart != RT_NULL);
 
-    if ((__HAL_DMA_GET_IT_SOURCE(&(uart->dma.handle), DMA_IT_TC) != RESET) ||
-            (__HAL_DMA_GET_IT_SOURCE(&(uart->dma.handle), DMA_IT_HT) != RESET))
+    if ((__HAL_DMA_GET_IT_SOURCE(&(uart->dma_rx.handle), DMA_IT_TC) != RESET) ||
+            (__HAL_DMA_GET_IT_SOURCE(&(uart->dma_rx.handle), DMA_IT_HT) != RESET))
     {
         level = rt_hw_interrupt_disable();
-        recv_total_index = serial->config.bufsz - __HAL_DMA_GET_COUNTER(&(uart->dma.handle));
+        recv_total_index = serial->config.bufsz - __HAL_DMA_GET_COUNTER(&(uart->dma_rx.handle));
         if (recv_total_index == 0)
         {
-            recv_len = serial->config.bufsz - uart->dma.last_index;
+            recv_len = serial->config.bufsz - uart->dma_rx.last_index;
         }
         else
         {
-            recv_len = recv_total_index - uart->dma.last_index;
+            recv_len = recv_total_index - uart->dma_rx.last_index;
         }
-        uart->dma.last_index = recv_total_index;
+        uart->dma_rx.last_index = recv_total_index;
         rt_hw_interrupt_enable(level);
 
         if (recv_len)
