@@ -270,8 +270,8 @@ static void uart_isr(struct rt_serial_device *serial)
     RT_ASSERT(uart != RT_NULL);
 
     /* UART in mode Receiver -------------------------------------------------*/
-    if ((__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_RXNE) != RESET)
-            && (__HAL_UART_GET_IT_SOURCE(&(uart->handle), UART_IT_RXNE) != RESET))
+    if ((__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_RXNE) != RESET) &&
+            (__HAL_UART_GET_IT_SOURCE(&(uart->handle), UART_IT_RXNE) != RESET))
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
@@ -346,6 +346,42 @@ static void uart_isr(struct rt_serial_device *serial)
         }
     }
 }
+
+#ifdef RT_SERIAL_USING_DMA
+static void dma_isr(struct rt_serial_device *serial)
+{
+    struct stm32_uart *uart;
+    rt_size_t recv_total_index, recv_len;
+    rt_base_t level;
+
+    RT_ASSERT(serial != RT_NULL);
+
+    uart = (struct stm32_uart *) serial->parent.user_data;
+    RT_ASSERT(uart != RT_NULL);
+
+    if ((__HAL_DMA_GET_IT_SOURCE(&(uart->dma.handle), DMA_IT_TC) != RESET) ||
+            (__HAL_DMA_GET_IT_SOURCE(&(uart->dma.handle), DMA_IT_HT) != RESET))
+    {
+        level = rt_hw_interrupt_disable();
+        recv_total_index = serial->config.bufsz - __HAL_DMA_GET_COUNTER(&(uart->dma.handle));
+        if (recv_total_index == 0)
+        {
+            recv_len = serial->config.bufsz - uart->dma.last_index;
+        }
+        else
+        {
+            recv_len = recv_total_index - uart->dma.last_index;
+        }
+        uart->dma.last_index = recv_total_index;
+        rt_hw_interrupt_enable(level);
+
+        if (recv_len)
+        {
+            rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
+        }
+    }
+}
+#endif
 
 #if defined(BSP_USING_UART1)
 void USART1_IRQHandler(void)
@@ -601,7 +637,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
     RT_ASSERT(serial != RT_NULL);
     struct stm32_uart *uart = (struct stm32_uart *)serial->parent.user_data;
     RT_ASSERT(uart != RT_NULL);
-    struct rt_serial_rx_fifo *rx_fifo;
+    struct rt_serial_rx_fifo *rx_fifo
     DMA_HandleTypeDef *DMA_Handle;
     struct dma_config *dma_config;
 
@@ -739,25 +775,25 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
   */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-    struct rt_serial_device *serial;
     struct stm32_uart *uart;
-    rt_size_t recv_len;
-    rt_base_t level;
-
     RT_ASSERT(huart != NULL);
     uart = (struct stm32_uart *)huart;
-    serial = &uart->serial;
+    dma_isr(&uart->serial);
+}
 
-    level = rt_hw_interrupt_disable();
-
-    recv_len = serial->config.bufsz - uart->dma_rx.last_index;
-    uart->dma_rx.last_index = 0;
-
-    rt_hw_interrupt_enable(level);
-    if (recv_len)
-    {
-        rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
-    }
+/**
+  * @brief  Rx Half transfer completed callback
+  * @param  huart: UART handle
+  * @note   This example shows a simple way to report end of DMA Rx Half transfer, 
+  *         and you can add your own implementation.
+  * @retval None
+  */
+void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart)
+{
+    struct stm32_uart *uart;
+    RT_ASSERT(huart != NULL);
+    uart = (struct stm32_uart *)huart;
+    dma_isr(&uart->serial);
 }
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
