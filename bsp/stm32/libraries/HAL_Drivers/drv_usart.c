@@ -634,7 +634,7 @@ void LPUART1_DMA_RX_IRQHandler(void)
 #ifdef RT_SERIAL_USING_DMA
 static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
 {
-    struct rt_serial_rx_fifo *rx_fifo
+    struct rt_serial_rx_fifo *rx_fifo;
     DMA_HandleTypeDef *DMA_Handle;
     struct dma_config *dma_config;
     struct stm32_uart *uart;
