@@ -635,11 +635,11 @@ void LPUART1_DMA_RX_IRQHandler(void)
 static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
 {
     RT_ASSERT(serial != RT_NULL);
-    struct stm32_uart *uart = (struct stm32_uart *)serial->parent.user_data;
-    RT_ASSERT(uart != RT_NULL);
     struct rt_serial_rx_fifo *rx_fifo
     DMA_HandleTypeDef *DMA_Handle;
     struct dma_config *dma_config;
+    struct stm32_uart *uart = (struct stm32_uart *)serial->parent.user_data;
+    RT_ASSERT(uart != RT_NULL);
 
     if (RT_DEVICE_FLAG_DMA_RX == flag)
     {
