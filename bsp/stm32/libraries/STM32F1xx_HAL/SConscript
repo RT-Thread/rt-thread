@@ -64,7 +64,7 @@ if GetDepend(['RT_USING_WDT']):
     src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_wwdg.c']
 
 if GetDepend(['RT_USING_SDIO']):
-    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_mmc.c']
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_sdmmc.c']
     src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_sd.c']
 
 if GetDepend(['RT_USING_AUDIO']):
@@ -83,9 +83,6 @@ if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
 path = [cwd + '/CMSIS/Device/ST/STM32F1xx/Include', 
     cwd + '/STM32F1xx_HAL_Driver/Inc',
     cwd + '/CMSIS/Include']
-
-if GetDepend(['RT_USING_RTT_CMSIS']):
-    path += [RTT_ROOT + '/components/CMSIS/Include']
 
 CPPDEFINES = ['USE_HAL_DRIVER']
 group = DefineGroup('STM32_HAL', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)

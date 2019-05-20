@@ -19,7 +19,7 @@
 #include <drv_log.h>
 
 #if !defined(BSP_USING_UART1) && !defined(BSP_USING_UART2) && !defined(BSP_USING_UART3) \
-    && !defined(BSP_USING_UART4) && !defined(BSP_USING_UART5) && !defined(BSP_USING_LPUART1)
+    && !defined(BSP_USING_UART4) && !defined(BSP_USING_UART5) && !defined(BSP_USING_UART6) && !defined(BSP_USING_LPUART1)
 #error "Please define at least one BSP_USING_UARTx"
 /* this driver can be disabled at menuconfig → RT-Thread Components → Device Drivers */
 #endif
@@ -45,6 +45,9 @@ enum
 #ifdef BSP_USING_UART5
     UART5_INDEX,
 #endif
+#ifdef BSP_USING_UART6
+    UART6_INDEX,
+#endif
 #ifdef BSP_USING_LPUART1
     LPUART1_INDEX,
 #endif
@@ -66,6 +69,9 @@ static struct stm32_uart_config uart_config[] =
 #endif
 #ifdef BSP_USING_UART5
         UART5_CONFIG,
+#endif
+#ifdef BSP_USING_UART6
+        UART6_CONFIG,
 #endif
 #ifdef BSP_USING_LPUART1
         LPUART1_CONFIG,
@@ -183,7 +189,7 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
     uart = (struct stm32_uart *)serial->parent.user_data;
     UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_TC);
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) \
-    || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0)
+    || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7)
     uart->handle.Instance->TDR = c;
 #else
     uart->handle.Instance->DR = c;
@@ -204,7 +210,7 @@ static int stm32_getc(struct rt_serial_device *serial)
     if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_RXNE) != RESET)
     {
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) \
-    || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0)
+    || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7)
         ch = uart->handle.Instance->RDR & 0xff;
 #else
         ch = uart->handle.Instance->DR & 0xff;
@@ -281,7 +287,7 @@ static void uart_isr(struct rt_serial_device *serial)
             __HAL_UART_CLEAR_PEFLAG(&uart->handle);
         }
 #if !defined(SOC_SERIES_STM32L4) && !defined(SOC_SERIES_STM32F7) && !defined(SOC_SERIES_STM32F0) \
-    && !defined(SOC_SERIES_STM32L0) && !defined(SOC_SERIES_STM32G0)
+    && !defined(SOC_SERIES_STM32L0) && !defined(SOC_SERIES_STM32G0) && !defined(SOC_SERIES_STM32H7)
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_LBD) != RESET)
         {
             UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_LBD);
@@ -430,6 +436,31 @@ void UART5_DMA_RX_IRQHandler(void)
 }
 #endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_UART5_RX_USING_DMA) */
 #endif /* BSP_USING_UART5*/
+
+#if defined(BSP_USING_UART6)
+void USART6_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    uart_isr(&(uart_obj[UART6_INDEX].serial));
+    
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART6_RX_USING_DMA)
+void UART6_DMA_RX_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    HAL_DMA_IRQHandler(&uart_obj[UART6_INDEX].dma.handle);
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_UART6_RX_USING_DMA) */
+#endif /* BSP_USING_UART6*/
 
 #if defined(BSP_USING_LPUART1)
 void LPUART1_IRQHandler(void)
@@ -607,6 +638,11 @@ static void stm32_uart_get_dma_config(void)
     uart_obj[UART5_INDEX].uart_dma_flag = 1;
     static struct dma_config uart5_dma_rx = UART5_DMA_CONFIG;
     uart_config[UART5_INDEX].dma_rx = &uart5_dma_rx;
+#endif
+#ifdef BSP_UART6_RX_USING_DMA
+    uart_obj[UART6_INDEX].uart_dma_flag = 1;
+    static struct dma_config uart6_dma_rx = UART6_DMA_CONFIG;
+    uart_config[UART6_INDEX].dma_rx = &uart6_dma_rx;
 #endif
 #ifdef BSP_LPUART1_RX_USING_DMA
     uart_obj[LPUART1_INDEX].uart_dma_flag = 1;

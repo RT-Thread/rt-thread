@@ -15,8 +15,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define DBG_SECTION_NAME "adc"
-#define DBG_LEVEL DBG_INFO
+#define DBG_TAG "adc"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 static rt_size_t _adc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
@@ -60,19 +60,37 @@ static rt_err_t _adc_control(rt_device_t dev, int cmd, void *args)
     return result;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops adc_ops =
+{
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    _adc_read,
+    RT_NULL,
+    _adc_control,
+};
+#endif
+
 rt_err_t rt_hw_adc_register(rt_adc_device_t device, const char *name, const struct rt_adc_ops *ops, const void *user_data)
 {
     rt_err_t result = RT_EOK;
     RT_ASSERT(ops != RT_NULL && ops->convert != RT_NULL);
 
     device->parent.type = RT_Device_Class_Miscellaneous;
-    device->parent.init = RT_NULL;
-    device->parent.open = RT_NULL;
-    device->parent.close = RT_NULL;
-    device->parent.read = _adc_read;
-    device->parent.write = RT_NULL;
-    device->parent.control = _adc_control;
+    device->parent.rx_indicate = RT_NULL;
+    device->parent.tx_complete = RT_NULL;
 
+#ifdef RT_USING_DEVICE_OPS
+    device->parent.ops         = &adc_ops;
+#else
+    device->parent.init        = RT_NULL;
+    device->parent.open        = RT_NULL;
+    device->parent.close       = RT_NULL;
+    device->parent.read        = _adc_read;
+    device->parent.write       = RT_NULL;
+    device->parent.control     = _adc_control;
+#endif
     device->ops = ops;
     device->parent.user_data = (void *)user_data;
 

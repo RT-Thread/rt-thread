@@ -28,11 +28,11 @@
 #include "drv_ac97.h"
 #include "realview.h"
 
-#define DBG_SECTION_NAME  "PL041"
-// #define DBG_LEVEL         DBG_LOG
-// #define DBG_LEVEL         DBG_INFO
-#define DBG_LEVEL         DBG_WARNING
-// #define DBG_LEVEL         DBG_ERROR
+#define DBG_TAG  "PL041"
+// #define DBG_LVL         DBG_LOG
+// #define DBG_LVL         DBG_INFO
+#define DBG_LVL  DBG_WARNING
+// #define DBG_LVL         DBG_ERROR
 #include <rtdbg.h>
 
 #define FRAME_PERIOD_US    (50)

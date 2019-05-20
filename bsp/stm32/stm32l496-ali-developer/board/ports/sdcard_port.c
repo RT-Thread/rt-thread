@@ -16,9 +16,8 @@
 #include <dfs_fs.h>
 #include <dfs_posix.h>
 
-
-#define DBG_SECTION_NAME  "app.card"
-#define DBG_LEVEL DBG_INFO
+#define DBG_TAG "app.card"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 void sd_mount(void *parameter)

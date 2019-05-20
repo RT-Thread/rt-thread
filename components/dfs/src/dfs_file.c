@@ -2,7 +2,7 @@
  * Copyright (c) 2006-2018, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
- * 
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2005-02-22     Bernard      The first version.
@@ -99,7 +99,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         rt_free(fd->path);
         fd->path = NULL;
 
-        LOG_E("open failed");
+        LOG_D("%s open failed", fullpath);
 
         return result;
     }
@@ -543,7 +543,8 @@ void ls(const char *pathname)
                     rt_kprintf("BAD file: %s\n", dirent.d_name);
                 rt_free(fullpath);
             }
-        }while(length > 0);
+        }
+        while (length > 0);
 
         dfs_file_close(&fd);
     }
@@ -565,7 +566,7 @@ void rm(const char *filename)
 }
 FINSH_FUNCTION_EXPORT(rm, remove files or directories);
 
-void cat(const char* filename)
+void cat(const char *filename)
 {
     uint32_t length;
     char buffer[81];
@@ -580,12 +581,13 @@ void cat(const char* filename)
     do
     {
         memset(buffer, 0, sizeof(buffer));
-        length = dfs_file_read(&fd, buffer, sizeof(buffer)-1 );
+        length = dfs_file_read(&fd, buffer, sizeof(buffer) - 1);
         if (length > 0)
         {
             rt_kprintf("%s", buffer);
         }
-    }while (length > 0);
+    }
+    while (length > 0);
 
     dfs_file_close(&fd);
 }
@@ -638,7 +640,8 @@ static void copyfile(const char *src, const char *dst)
                 break;
             }
         }
-    } while (read_bytes > 0);
+    }
+    while (read_bytes > 0);
 
     dfs_file_close(&src_fd);
     dfs_file_close(&fd);
@@ -646,7 +649,7 @@ static void copyfile(const char *src, const char *dst)
 }
 
 extern int mkdir(const char *path, mode_t mode);
-static void copydir(const char * src, const char * dst)
+static void copydir(const char *src, const char *dst)
 {
     struct dirent dirent;
     struct stat stat;
@@ -665,8 +668,8 @@ static void copydir(const char * src, const char * dst)
         length = dfs_file_getdents(&cpfd, &dirent, sizeof(struct dirent));
         if (length > 0)
         {
-            char * src_entry_full = NULL;
-            char * dst_entry_full = NULL;
+            char *src_entry_full = NULL;
+            char *dst_entry_full = NULL;
 
             if (strcmp(dirent.d_name, "..") == 0 || strcmp(dirent.d_name, ".") == 0)
                 continue;
@@ -703,14 +706,15 @@ static void copydir(const char * src, const char * dst)
             rt_free(src_entry_full);
             rt_free(dst_entry_full);
         }
-    }while(length > 0);
+    }
+    while (length > 0);
 
     dfs_file_close(&cpfd);
 }
 
 static const char *_get_path_lastname(const char *path)
 {
-    char * ptr;
+    char *ptr;
     if ((ptr = strrchr(path, '/')) == NULL)
         return path;
 
@@ -767,7 +771,7 @@ void copy(const char *src, const char *dst)
     {
         if (flag & FLAG_DST_IS_DIR)
         {
-            char * fdst;
+            char *fdst;
             fdst = dfs_normalize_path(dst, _get_path_lastname(src));
             if (fdst == NULL)
             {
@@ -786,7 +790,7 @@ void copy(const char *src, const char *dst)
     {
         if (flag & FLAG_DST_IS_DIR)
         {
-            char * fdst;
+            char *fdst;
             fdst = dfs_normalize_path(dst, _get_path_lastname(src));
             if (fdst == NULL)
             {

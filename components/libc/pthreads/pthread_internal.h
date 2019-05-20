@@ -30,6 +30,10 @@ struct _pthread_key_data
 };
 typedef struct _pthread_key_data _pthread_key_data_t;
 
+#ifndef PTHREAD_NUM_MAX
+#define PTHREAD_NUM_MAX 32
+#endif
+
 #define PTHREAD_MAGIC   0x70746873
 struct _pthread_data
 {
@@ -56,17 +60,7 @@ struct _pthread_data
 };
 typedef struct _pthread_data _pthread_data_t;
 
-rt_inline _pthread_data_t *_pthread_get_data(pthread_t thread)
-{
-    _pthread_data_t *ptd;
-    RT_ASSERT(thread != RT_NULL);
-
-    ptd = (_pthread_data_t *)thread->user_data;
-    RT_ASSERT(ptd != RT_NULL);
-    RT_ASSERT(ptd->magic == PTHREAD_MAGIC);
-
-    return ptd;
-}
+_pthread_data_t *_pthread_get_data(pthread_t thread);
 
 int clock_time_to_tick(const struct timespec *time);
 

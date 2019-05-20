@@ -8,6 +8,20 @@ if RT_USING_DEVICE_IPC
     config RT_PIPE_BUFSZ
         int "Set pipe buffer size"
         default 512
+    
+    config RT_USING_SYSTEM_WORKQUEUE
+        bool "Using system default workqueue"
+        default n
+
+    if RT_USING_SYSTEM_WORKQUEUE
+        config RT_SYSTEM_WORKQUEUE_STACKSIZE
+            int "The stack size for system workqueue thread"
+            default 2048
+
+    config RT_SYSTEM_WORKQUEUE_PRIORITY
+            int "The priority level of system workqueue thread"
+            default 23
+    endif
 endif
 
 config RT_USING_SERIAL
@@ -129,22 +143,27 @@ config RT_USING_RTC
     default n
 
     if RT_USING_RTC
-    config RT_USING_SOFT_RTC
-        bool "Using software simulation RTC device"
-        default n
-    config RTC_SYNC_USING_NTP
-        bool "Using NTP auto sync RTC time"
-        depends on PKG_NETUTILS_NTP
-        default y
+        config RT_USING_ALARM
+            bool "Using RTC alarm"
+            default n
 
-        if RTC_SYNC_USING_NTP
-        config RTC_NTP_FIRST_SYNC_DELAY
-            int "NTP first sync delay time(second) for network connect"
-            default 30
-        config RTC_NTP_SYNC_PERIOD
-            int "NTP auto sync period(second)"
-            default 3600
-       endif
+        config RT_USING_SOFT_RTC
+            bool "Using software simulation RTC device"
+            default n
+
+        config RTC_SYNC_USING_NTP
+            bool "Using NTP auto sync RTC time"
+            depends on PKG_NETUTILS_NTP
+            default y
+
+            if RTC_SYNC_USING_NTP
+                config RTC_NTP_FIRST_SYNC_DELAY
+                    int "NTP first sync delay time(second) for network connect"
+                    default 30
+                config RTC_NTP_SYNC_PERIOD
+                    int "NTP auto sync period(second)"
+                    default 3600
+           endif
     endif
 
 config RT_USING_SDIO

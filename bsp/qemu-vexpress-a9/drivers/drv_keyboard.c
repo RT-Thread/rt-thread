@@ -6,7 +6,7 @@
 #include "interrupt.h"
 #include "drv_keyboard.h"
 
-#define DBG_LEVEL DBG_INFO
+#define DBG_LVL DBG_INFO
 #include "rtdbg.h"
 
 #define KEYBOARD_ADDRESS    (0x10006000)

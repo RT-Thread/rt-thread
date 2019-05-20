@@ -23,6 +23,7 @@
 # 2018-07-31     weety        Support pyconfig
 
 import os
+import re
 import sys
 import shutil
 
@@ -75,7 +76,7 @@ def mk_rtconfig(filename):
                 if setting[1] == 'y':
                     rtconfig.write('#define %s\n' % setting[0])
                 else:
-                    rtconfig.write('#define %s %s\n' % (setting[0], setting[1]))
+                    rtconfig.write('#define %s %s\n' % (setting[0], re.findall(r"^.*?=(.*)$",line)[0]))
 
     if os.path.isfile('rtconfig_project.h'):
         rtconfig.write('#include "rtconfig_project.h"\n')

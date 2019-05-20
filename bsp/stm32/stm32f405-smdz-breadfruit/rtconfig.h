@@ -21,7 +21,6 @@
 #define IDLE_THREAD_STACK_SIZE 256
 /* RT_USING_TIMER_SOFT is not set */
 #define RT_DEBUG
-#define RT_DEBUG_COLOR
 /* RT_DEBUG_INIT_CONFIG is not set */
 /* RT_DEBUG_THREAD_CONFIG is not set */
 /* RT_DEBUG_SCHEDULER_CONFIG is not set */
@@ -60,7 +59,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart2"
-#define RT_VER_NUM 0x30103
+#define RT_VER_NUM 0x40001
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
 #define ARCH_ARM_CORTEX_M4

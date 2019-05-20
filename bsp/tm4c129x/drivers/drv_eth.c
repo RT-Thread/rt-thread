@@ -634,8 +634,13 @@ tivaif_transmit(net_device_t dev, struct pbuf *p)
           pDesc->Desc.ui32CtrlStatus = 0;
       }
 
+#ifdef RT_LWIP_USING_HW_CHECKSUM
       pDesc->Desc.ui32CtrlStatus |= (DES0_TX_CTRL_IP_ALL_CKHSUMS |
                                      DES0_TX_CTRL_CHAINED);
+#else
+      pDesc->Desc.ui32CtrlStatus |= (DES0_TX_CTRL_NO_CHKSUM |
+                                     DES0_TX_CTRL_CHAINED);
+#endif
 
       /* Decrement our descriptor counter, move on to the next buffer in the
        * pbuf chain. */
@@ -1373,7 +1378,7 @@ static struct pbuf* eth_dev_rx(rt_device_t dev)
     rt_err_t result;
     rt_uint32_t temp =0;
     net_device_t net_dev = (net_device_t)dev;
-    result = rt_mb_recv(net_dev->rx_pbuf_mb, &temp, RT_WAITING_NO);
+    result = rt_mb_recv(net_dev->rx_pbuf_mb, (rt_ubase_t *)&temp, RT_WAITING_NO);
     
     return (result == RT_EOK)? (struct pbuf*)temp : RT_NULL;
 }
