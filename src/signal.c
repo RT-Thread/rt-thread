@@ -21,8 +21,8 @@
 #define RT_SIG_INFO_MAX 32
 #endif
 
-#define DBG_SECTION_NAME    "SIGN"
-#define DBG_LEVEL           DBG_INFO
+#define DBG_TAG           "SIGN"
+#define DBG_LVL           DBG_WARNING
 #include <rtdbg.h>
 
 #define sig_mask(sig_no)    (1u << sig_no)
@@ -36,7 +36,7 @@ struct siginfo_node
 
 static struct rt_mempool *_rt_siginfo_pool;
 static void _signal_deliver(rt_thread_t tid);
-void rt_thread_handle_sig(void);
+void rt_thread_handle_sig(rt_bool_t clean_state);
 
 static void _signal_default_handler(int signo)
 {
@@ -46,36 +46,19 @@ static void _signal_default_handler(int signo)
 
 static void _signal_entry(void *parameter)
 {
-    register rt_base_t level;
     rt_thread_t tid = rt_thread_self();
 
-    while (1)
-    {
-        level = rt_hw_interrupt_disable();
-        if (tid->stat & RT_THREAD_STAT_SIGNAL)
-        {
-            rt_hw_interrupt_enable(level);
+    /* handle signal */
+    rt_thread_handle_sig(RT_FALSE);
 
-            /* handle signal */
-            rt_thread_handle_sig();
-        }
-        else
-        {
-            /*
-             * Note: interrupt is disabled and no reentrant issue.
-             * 
-             * no signal status in tid->stat. 
-            */
-            break;
-        }
-    }
-
-    /* never come back... */
+    /* return to thread */
     tid->sp = tid->sig_ret;
     tid->sig_ret = RT_NULL;
 
-    LOG_D("switch back to: 0x%08x", tid->sp);
-    rt_hw_context_switch_to((rt_uint32_t) & (tid->sp));
+    LOG_D("switch back to: 0x%08x\n", tid->sp);
+    tid->stat &= ~RT_THREAD_STAT_SIGNAL;
+
+    rt_hw_context_switch_to((rt_ubase_t)&(tid->sp));
 }
 
 /*
@@ -106,7 +89,7 @@ static void _signal_deliver(rt_thread_t tid)
         /* resume thread to handle signal */
         rt_thread_resume(tid);
         /* add signal state */
-        tid->stat |= RT_THREAD_STAT_SIGNAL;
+        tid->stat |= (RT_THREAD_STAT_SIGNAL | RT_THREAD_STAT_SIGNAL_PENDING);
 
         rt_hw_interrupt_enable(level);
 
@@ -123,14 +106,18 @@ static void _signal_deliver(rt_thread_t tid)
             rt_hw_interrupt_enable(level);
 
             /* do signal action in self thread context */
-            rt_thread_handle_sig();
+            if (rt_interrupt_get_nest() == 0)
+            {
+                rt_thread_handle_sig(RT_TRUE);
+            }
         }
         else if (!((tid->stat & RT_THREAD_STAT_SIGNAL_MASK) & RT_THREAD_STAT_SIGNAL))
         {
             /* add signal state */
-            tid->stat |= RT_THREAD_STAT_SIGNAL;
+            tid->stat |= (RT_THREAD_STAT_SIGNAL | RT_THREAD_STAT_SIGNAL_PENDING);
 
             /* point to the signal handle entry */
+            tid->stat &= ~RT_THREAD_STAT_SIGNAL_PENDING;
             tid->sig_ret = tid->sp;
             tid->sp = rt_hw_stack_init((void *)_signal_entry, RT_NULL,
                                        (void *)((char *)tid->sig_ret - 32), RT_NULL);
@@ -327,7 +314,7 @@ __done_return:
     return ret;
 }
 
-void rt_thread_handle_sig(void)
+void rt_thread_handle_sig(rt_bool_t clean_state)
 {
     rt_base_t level;
 
@@ -335,7 +322,6 @@ void rt_thread_handle_sig(void)
     struct siginfo_node *si_node;
 
     level = rt_hw_interrupt_disable();
-
     if (tid->sig_pending & tid->sig_mask)
     {
         /* if thread is not waiting for signal */
@@ -371,8 +357,15 @@ void rt_thread_handle_sig(void)
                 tid->error = error;
             }
 
-            /* clean state */
-            tid->stat &= ~RT_THREAD_STAT_SIGNAL;
+            /* whether clean signal status */
+            if (clean_state == RT_TRUE)
+            {
+                tid->stat &= ~RT_THREAD_STAT_SIGNAL;
+            }
+            else
+            {
+                return;
+            }
         }
     }
     rt_hw_interrupt_enable(level);

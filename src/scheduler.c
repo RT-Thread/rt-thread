@@ -193,7 +193,7 @@ void rt_schedule(void)
     struct rt_thread *from_thread;
 
     /* disable interrupt */
-    level = rt_hw_interrupt_disable();	
+    level = rt_hw_interrupt_disable();
 
     /* check the scheduler is enabled or not */
     if (rt_scheduler_lock_nest == 0)
@@ -238,18 +238,30 @@ void rt_schedule(void)
 
             if (rt_interrupt_nest == 0)
             {
-                extern void rt_thread_handle_sig(void);
-
                 rt_hw_context_switch((rt_uint32_t)&from_thread->sp,
                                      (rt_uint32_t)&to_thread->sp);
 
+#ifdef RT_USING_SIGNALS
+                if (rt_current_thread->stat & RT_THREAD_STAT_SIGNAL_PENDING)
+                {
+                    extern void rt_thread_handle_sig(rt_bool_t clean_state);
+
+                    rt_current_thread->stat &= ~RT_THREAD_STAT_SIGNAL_PENDING;
+
+                    rt_hw_interrupt_enable(level);
+
+                    /* check signal status */
+                    rt_thread_handle_sig(RT_TRUE);
+                }
+                else
+                {
+                    rt_hw_interrupt_enable(level);
+                }
+#else
                 /* enable interrupt */
                 rt_hw_interrupt_enable(level);
-
-#ifdef RT_USING_SIGNALS
-                /* handle signal */
-                rt_thread_handle_sig();
 #endif
+
                 return ;
             }
             else
