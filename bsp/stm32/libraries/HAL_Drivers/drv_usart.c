@@ -731,17 +731,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
         CLEAR_BIT(uart->handle.Instance->CR3, USART_CR3_EIE);
         __HAL_UART_ENABLE_IT(&(uart->handle), UART_IT_IDLE);
     }
-    else if (flag == RT_DEVICE_FLAG_DMA_TX)
-    {
-        __HAL_UART_CLEAR_FLAG(&(uart->handle), UART_FLAG_TC);
-        while (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TC) == RESET)
-        {
-            ;
-        }
-        __HAL_UART_CLEAR_FLAG(&(uart->handle), UART_FLAG_TC);
-        __HAL_UART_ENABLE_IT(&(uart->handle), UART_IT_TC);
-    }
-
+ 
     /* enable irq */
     HAL_NVIC_SetPriority(dma_config->dma_irq, 0, 0);
     HAL_NVIC_EnableIRQ(dma_config->dma_irq);
