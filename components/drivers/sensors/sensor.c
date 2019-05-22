@@ -10,10 +10,8 @@
 
 #include "sensor.h"
 
-#define DBG_ENABLE
-#define DBG_LEVEL DBG_INFO
-#define DBG_SECTION_NAME  "sensor"
-#define DBG_COLOR
+#define DBG_TAG  "sensor"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #include <string.h>
@@ -33,6 +31,7 @@ static char *const sensor_name_str[] =
     "tvoc_",     /* TVOC Level        */
     "noi_",      /* Noise Loudness    */
     "step_"      /* Step sensor       */
+    "forc_"      /* Force sensor      */
 };
 
 /* Sensor interrupt correlation function */
@@ -44,6 +43,11 @@ void rt_sensor_cb(rt_sensor_t sen)
     if (sen->parent.rx_indicate == RT_NULL)
     {
         return;
+    }
+    
+    if (sen->irq_handle != RT_NULL)
+    {
+        sen->irq_handle(sen);
     }
 
     /* The buffer is not empty. Read the data in the buffer first */

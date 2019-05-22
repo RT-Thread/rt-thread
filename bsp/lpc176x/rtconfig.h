@@ -17,6 +17,7 @@
 #define RT_TICK_PER_SECOND	100
 // <section name="RT_DEBUG" description="Kernel Debug Configuration" default="true" >
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 // <bool name="RT_THREAD_DEBUG" description="Thread debug enable" default="false" />
 // #define RT_THREAD_DEBUG
 // <bool name="RT_USING_OVERFLOW_CHECK" description="Thread stack over flow detect" default="true" />
@@ -200,8 +201,6 @@
 
 // <bool name="RT_USING_CMSIS_OS" description="Using CMSIS OS API" default="true" />
 // #define RT_USING_CMSIS_OS
-// <bool name="RT_USING_RTT_CMSIS" description="Using CMSIS in RTT" default="true" />
-#define RT_USING_RTT_CMSIS
 // <bool name="RT_USING_BSP_CMSIS" description="Using CMSIS in BSP" default="true" />
 // #define RT_USING_BSP_CMSIS
 

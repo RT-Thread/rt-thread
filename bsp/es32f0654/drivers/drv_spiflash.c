@@ -18,7 +18,7 @@
 static int rt_hw_spi_flash_init(void)
 {
     es32f0_spi_device_attach(50, "spi0", "spi00");
-    
+
     if (RT_NULL == rt_sfud_flash_probe("W25Q64", "spi00"))
     {
         return -RT_ERROR;
@@ -27,4 +27,5 @@ static int rt_hw_spi_flash_init(void)
     return RT_EOK;
 }
 INIT_COMPONENT_EXPORT(rt_hw_spi_flash_init);
+
 #endif

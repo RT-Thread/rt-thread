@@ -60,7 +60,7 @@ static const struct pin_index pins[] =
     __ES32F0_PIN(27, B, 1),
     __ES32F0_PIN(28, B, 2),
     __ES32F0_PIN(29, B, 10),
-    __ES32F0_PIN_DEFAULT,
+    __ES32F0_PIN(30, B, 11),
     __ES32F0_PIN_DEFAULT,
     __ES32F0_PIN_DEFAULT,
     __ES32F0_PIN(33, B, 12),
@@ -257,7 +257,7 @@ rt_err_t es32f0_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     {
         return RT_ENOSYS;
     }
-    /**pin no. convert to dec no.**/
+    /* pin no. convert to dec no. */
     for (irqindex = 0; irqindex < 16; irqindex++)
     {
         if ((0x01 << irqindex) == index->pin)
@@ -327,7 +327,7 @@ rt_err_t es32f0_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     const struct pin_irq_map *irqmap;
     rt_base_t level;
     rt_int32_t irqindex = -1;
-    /*Configure GPIO_InitStructure & EXTI_InitStructure*/
+    /* Configure GPIO_InitStructure & EXTI_InitStructure */
     gpio_init_t gpio_initstruct;
     exti_init_t exti_initstruct;
     exti_initstruct.filter = DISABLE;
@@ -341,7 +341,7 @@ rt_err_t es32f0_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     }
     if (enabled == PIN_IRQ_ENABLE)
     {
-        /**pin no. convert to dec no.**/
+        /* pin no. convert to dec no. */
         for (irqindex = 0; irqindex < 16; irqindex++)
         {
             if ((0x01 << irqindex) == index->pin)
@@ -421,7 +421,7 @@ INIT_BOARD_EXPORT(rt_hw_pin_init);
 rt_inline void pin_irq_hdr(uint16_t GPIO_Pin)
 {
     uint16_t irqno;
-    /**pin no. convert to dec no.**/
+    /* pin no. convert to dec no. */
     for (irqno = 0; irqno < 16; irqno++)
     {
         if ((0x01 << irqno) == GPIO_Pin)

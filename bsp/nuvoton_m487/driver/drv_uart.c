@@ -26,8 +26,6 @@ struct usart
 typedef struct usart* usart_t;
 
 /* Private functions ------------------------------------------------------------*/
-
-
 static rt_err_t usart_gpio_configure(struct rt_serial_device *serial);
 static rt_err_t usart_configure(struct rt_serial_device *serial, struct serial_configure *cfg);
 static rt_err_t usart_control(struct rt_serial_device *serial, int cmd, void *arg);

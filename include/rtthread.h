@@ -75,7 +75,7 @@ void rt_system_tick_init(void);
 rt_tick_t rt_tick_get(void);
 void rt_tick_set(rt_tick_t tick);
 void rt_tick_increase(void);
-int  rt_tick_from_millisecond(rt_int32_t ms);
+rt_tick_t  rt_tick_from_millisecond(rt_int32_t ms);
 
 void rt_system_timer_init(void);
 void rt_system_timer_thread_init(void);
@@ -516,6 +516,7 @@ void *rt_memcpy(void *dest, const void *src, rt_ubase_t n);
 rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count);
 rt_int32_t rt_strcmp(const char *cs, const char *ct);
 rt_size_t rt_strlen(const char *src);
+rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen);
 char *rt_strdup(const char *s);
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
 /* leak strdup interface */

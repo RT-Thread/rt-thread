@@ -15,7 +15,7 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = r'/opt/riscv64-unknown-elf/bin'
+    EXEC_PATH   = r'/opt/gnu-mcu-eclipse/riscv-none-gcc/8.2.0-2.1-20190425-1021/bin'
 else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)
@@ -27,7 +27,7 @@ BUILD = 'release'
 
 if PLATFORM == 'gcc':
     # toolchains
-    PREFIX  = 'riscv64-unknown-elf-'
+    PREFIX  = 'riscv-none-embed-'
     CC      = PREFIX + 'gcc'
     CXX     = PREFIX + 'g++'
     AS      = PREFIX + 'gcc'
@@ -38,8 +38,8 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY  = PREFIX + 'objcopy'
 
-    DEVICE  = ' -mcmodel=medany'
-    CFLAGS  = DEVICE + ' -fno-common -ffunction-sections -fdata-sections -fstrict-volatile-bitfields '
+    DEVICE  = ' -mcmodel=medany -march=rv64imafdc -mabi=lp64d'
+    CFLAGS  = DEVICE + ' -fno-common -ffunction-sections -fdata-sections -fstrict-volatile-bitfields'
     AFLAGS  = ' -c' + DEVICE + ' -x assembler-with-cpp'
     LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start -T link.lds'
     CPATH   = ''

@@ -15,19 +15,15 @@
 #include "utest.h"
 #include <utest_log.h>
 
-#undef DBG_SECTION_NAME
-#undef DBG_LEVEL
-#undef DBG_COLOR
-#undef DBG_ENABLE
+#undef DBG_TAG
+#undef DBG_LVL
 
-#define DBG_ENABLE
-#define DBG_SECTION_NAME          "utest"
+#define DBG_TAG          "utest"
 #ifdef UTEST_DEBUG
-#define DBG_LEVEL                 DBG_LOG
+#define DBG_LVL          DBG_LOG
 #else
-#define DBG_LEVEL                 DBG_INFO
+#define DBG_LVL          DBG_INFO
 #endif
-#define DBG_COLOR
 #include <rtdbg.h>
 
 #if RT_CONSOLEBUF_SIZE < 256
@@ -158,6 +154,7 @@ static void utest_run(const char *utest_name)
     {
         i = 0;
         is_find = RT_FALSE;
+        LOG_I("[==========] [ utest    ] loop %d/%d", index + 1, tc_loop);
         LOG_I("[==========] [ utest    ] started");
         while(i < tc_num)
         {

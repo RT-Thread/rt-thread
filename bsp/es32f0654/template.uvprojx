@@ -7,14 +7,15 @@
 
   <Targets>
     <Target>
-      <TargetName>rt-thread_es32f065x</TargetName>
+      <TargetName>rt-thread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
+      <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>ES32F0654LT</Device>
           <Vendor>Eastsoft</Vendor>
-          <PackID>Eastsoft.ES32_DFP.1.0.1</PackID>
+          <PackID>Eastsoft.ES32_DFP.1.0.2</PackID>
           <PackURL>http://www.essemi.com</PackURL>
           <Cpu>IRAM(0x20000000,0x00008000) IROM(0x00000000,0x00040000) CPUTYPE("Cortex-M0") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>

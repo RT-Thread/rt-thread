@@ -23,6 +23,12 @@ menu "Onboard Peripheral Drivers"
         select RT_SFUD_USING_QSPI
         default n
 
+    config BSP_USING_LCD
+        bool "Enable LCD"
+        select BSP_USING_LTDC
+        select BSP_USING_SDRAM
+        default n
+
     config PHY_USING_LAN8720A
         bool
 
@@ -47,6 +53,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
+
     menuconfig BSP_USING_UART
         bool "Enable UART"
         default y
@@ -61,13 +68,20 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                 default n
         endif
+
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
         default n
+
     config BSP_USING_QSPI
         bool "Enable QSPI BUS"
         select RT_USING_QSPI
         select RT_USING_SPI
+        default n
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
         default n
 
     config BSP_USING_SDIO
@@ -75,7 +89,14 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SDIO
         select RT_USING_DFS
         default n
+        
+    config BSP_USING_FMC
+        bool
+        default n
 
+    config BSP_USING_LTDC
+        bool
+        default n
 endmenu
 
 menu "Board extended module Drivers"

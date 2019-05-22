@@ -134,18 +134,18 @@ void finsh_set_prompt_mode(rt_uint32_t prompt_mode)
     shell->prompt_mode = prompt_mode;
 }
 
-static char finsh_getchar(void)
+static int finsh_getchar(void)
 {
 #ifdef RT_USING_POSIX
     return getchar();
 #else
-    char ch;
+    char ch = 0;
 
     RT_ASSERT(shell != RT_NULL);
     while (rt_device_read(shell->device, -1, &ch, 1) != 1)
         rt_sem_take(&shell->rx_sem, RT_WAITING_FOREVER);
 
-    return ch;
+    return (int)ch;
 #endif
 }
 
@@ -279,7 +279,7 @@ const char *finsh_get_password(void)
 
 static void finsh_wait_auth(void)
 {
-    char ch;
+    int ch;
     rt_bool_t input_finish = RT_FALSE;
     char password[FINSH_PASSWORD_MAX] = { 0 };
     rt_size_t cur_pos = 0;
@@ -295,6 +295,10 @@ static void finsh_wait_auth(void)
             {
                 /* read one character from device */
                 ch = finsh_getchar();
+                if (ch < 0)
+                {
+                    continue;
+                }
 
                 if (ch >= ' ' && ch <= '~' && cur_pos < FINSH_PASSWORD_MAX)
                 {
@@ -460,7 +464,7 @@ static void shell_push_history(struct finsh_shell *shell)
 
 void finsh_thread_entry(void *parameter)
 {
-    char ch;
+    int ch;
 
     /* normal is echo mode */
 #ifndef FINSH_ECHO_DISABLE_DEFAULT
@@ -503,6 +507,10 @@ void finsh_thread_entry(void *parameter)
     while (1)
     {
         ch = finsh_getchar();
+        if (ch < 0)
+        {
+            continue;
+        }
 
         /*
          * handle control key

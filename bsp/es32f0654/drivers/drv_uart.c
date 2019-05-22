@@ -27,70 +27,54 @@ struct es32_uart
 
 static rt_err_t es32f0x_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
-    gpio_init_t gpio_init_initstructure;
+    gpio_init_t gpio_initstructure;
     struct es32_uart *uart;
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
     uart = (struct es32_uart *)serial->parent.user_data;
 
     /* Initialize tx pin */
-    gpio_init_initstructure.mode = GPIO_MODE_OUTPUT;
-    gpio_init_initstructure.odos = GPIO_PUSH_PULL;
-    gpio_init_initstructure.pupd = GPIO_PUSH_UP;
-    gpio_init_initstructure.odrv = GPIO_OUT_DRIVE_NORMAL;
-    gpio_init_initstructure.flt  = GPIO_FILTER_DISABLE;
-    gpio_init_initstructure.type = GPIO_TYPE_TTL;
+    gpio_initstructure.mode = GPIO_MODE_OUTPUT;
+    gpio_initstructure.odos = GPIO_PUSH_PULL;
+    gpio_initstructure.pupd = GPIO_PUSH_UP;
+    gpio_initstructure.odrv = GPIO_OUT_DRIVE_NORMAL;
+    gpio_initstructure.flt  = GPIO_FILTER_DISABLE;
+    gpio_initstructure.type = GPIO_TYPE_TTL;
 
 #ifdef BSP_USING_UART0
+    gpio_initstructure.func = GPIO_FUNC_3;
+    gpio_init(GPIOB, GPIO_PIN_10, &gpio_initstructure);
 
-    gpio_init_initstructure.func = GPIO_FUNC_3;
-    gpio_init(GPIOB, GPIO_PIN_10, &gpio_init_initstructure);
-
-    /* Initialize rx pin ,the same as txpin except mode*/
-    gpio_init_initstructure.mode = GPIO_MODE_INPUT;
-    gpio_init(GPIOB, GPIO_PIN_11, &gpio_init_initstructure);
-
-    NVIC_EnableIRQ(UART0_IRQn);
-
+    /* Initialize rx pin ,the same as txpin except mode */
+    gpio_initstructure.mode = GPIO_MODE_INPUT;
+    gpio_init(GPIOB, GPIO_PIN_11, &gpio_initstructure);
 #endif /* uart0 gpio init */
 
 #ifdef BSP_USING_UART1
+    gpio_initstructure.func = GPIO_FUNC_3;
+    gpio_init(GPIOC, GPIO_PIN_10, &gpio_initstructure);
 
-    gpio_init_initstructure.func = GPIO_FUNC_3;
-    gpio_init(GPIOC, GPIO_PIN_10, &gpio_init_initstructure);
-
-    /* Initialize rx pin ,the same as txpin except mode*/
-    gpio_init_initstructure.mode = GPIO_MODE_INPUT;
-    gpio_init(GPIOC, GPIO_PIN_11, &gpio_init_initstructure);
-
-    NVIC_EnableIRQ(UART1_IRQn);
-
+    /* Initialize rx pin ,the same as txpin except mode */
+    gpio_initstructure.mode = GPIO_MODE_INPUT;
+    gpio_init(GPIOC, GPIO_PIN_11, &gpio_initstructure);
 #endif /* uart1 gpio init */
 
 #ifdef BSP_USING_UART2
+    gpio_initstructure.func = GPIO_FUNC_5;
+    gpio_init(GPIOC, GPIO_PIN_12, &gpio_initstructure);
 
-    gpio_init_initstructure.func = GPIO_FUNC_5;
-    gpio_init(GPIOC, GPIO_PIN_12, &gpio_init_initstructure);
-
-    /* Initialize rx pin ,the same as txpin except mode*/
-    gpio_init_initstructure.mode = GPIO_MODE_INPUT;
-    gpio_init(GPIOD, GPIO_PIN_2, &gpio_init_initstructure);
-
-    NVIC_EnableIRQ(BS16T1_UART2_IRQn);
-
+    /* Initialize rx pin ,the same as txpin except mode */
+    gpio_initstructure.mode = GPIO_MODE_INPUT;
+    gpio_init(GPIOD, GPIO_PIN_2, &gpio_initstructure);
 #endif /* uart2 gpio init */
 
 #ifdef BSP_USING_UART3
+    gpio_initstructure.func = GPIO_FUNC_4;
+    gpio_init(GPIOC, GPIO_PIN_4, &gpio_initstructure);
 
-    gpio_init_initstructure.func = GPIO_FUNC_4;
-    gpio_init(GPIOC, GPIO_PIN_4, &gpio_init_initstructure);
-
-    /* Initialize rx pin ,the same as txpin except mode*/
-    gpio_init_initstructure.mode = GPIO_MODE_INPUT;
-    gpio_init(GPIOC, GPIO_PIN_5, &gpio_init_initstructure);
-
-    NVIC_EnableIRQ(BS16T2_UART3_IRQn);
-
+    /* Initialize rx pin ,the same as txpin except mode */
+    gpio_initstructure.mode = GPIO_MODE_INPUT;
+    gpio_init(GPIOC, GPIO_PIN_5, &gpio_initstructure);
 #endif /* uart3 gpio init */
 
     uart->huart.init.mode        = UART_MODE_UART;
@@ -118,7 +102,7 @@ static rt_err_t es32f0x_configure(struct rt_serial_device *serial, struct serial
         UART_DATA_INV_DISABLE(&uart->huart);
     }
 
-    /*enable rx int*/
+    /* enable rx int */
     uart_interrupt_config(&uart->huart, UART_IT_RXRD, ENABLE);
 
     return RT_EOK;

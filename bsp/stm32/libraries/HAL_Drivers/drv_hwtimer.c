@@ -399,7 +399,7 @@ void TIM8_UP_TIM13_IRQHandler(void)
 }
 #endif
 #ifdef BSP_USING_TIM14
-#if defined(SOC_SERIES_STM32F4)
+#if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     void TIM8_TRG_COM_TIM14_IRQHandler(void)
 #elif defined(SOC_SERIES_STM32F0)
     void TIM14_IRQHandler(void)

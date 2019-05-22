@@ -17,6 +17,7 @@
 #define RT_IDEL_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 
 /* Inter-Thread communication */
 
@@ -166,6 +167,21 @@
 
 
 /* I2C Drivers */
+
+
+/* PWM Drivers */
+
+
+/* HWtimer Drivers */
+
+
+/* RTC Drivers */
+
+
+/* PM Drivers */
+
+
+/* ADC Drivers */
 
 
 /* Onboard Peripheral Drivers */

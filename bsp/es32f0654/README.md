@@ -9,40 +9,46 @@
 ### 1.1  开发板介绍
 
 主要内容如下：
-ES-PDS-ES32F0654 是东软载波微电子官方推出的一款基于 ARM Cortex-M0 内核的开发板，最高主频为 48Mhz(实际使用24Mhz)，可满足基础功能测试及高端功能扩展等开发需求。
+ES-PDS-ES32F0654 是东软载波微电子官方推出的一款基于 ARM Cortex-M0 内核的开发板，最高主频为 48MHz，可满足基础功能测试及高端功能扩展等开发需求。
 
 开发板外观如下图所示：
 
-ES-PDS-ES32F0654-V1.0
+ES-PDS-ES32F0654-V1.1
 
-![ES32F0654](figures/ES-PDS-ES32F0654-V1.0.jpg)
+![ES32F0654](figures/ES-PDS-ES32F0654-V1.1.jpg)
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：ES32F0654LT，主频 24MHz，256KB FLASH，32KB RAM，54 GPIOs
-- 外部 FLASH：W25Q128（SPI，16MB）、EEPROM（24c02）
+- MCU：ES32F0654LT，主频 48MHz，32KB SRAM，256KB FLASH，54 GPIOs
+- 外部模块：SPI FLASH (MX25L64，8MB)、I2C EEPROM (M24C04，512B)
 - 常用外设
-  - LED：2个，(红色，PC8-PC9)
+  - 可调电阻：1个，(PB00)
+  - LED：2个，(PC8/PC9)
   - 按键：3个，K1(PF00)，K2（PF01)，RESET(MRST)
-- 常用接口：串口、GPIO、SPI、I2C
+- 常用接口：GPIO、UART、SPI、I2C
 - 调试接口，ESLinkⅡ(EastSoft 官方推出的开发工具，有标准版和mini版两种版本，均自带 CDC 串口功能) SWD 下载
 
 外设支持:
 
 本 BSP 目前对外设的支持情况如下：
 
-| **板载外设**      | **支持情况** | **备注**                              |
+| **板载外设**      | **支持情况** | **备注**                             |
 | :---------------- | :----------: | :------------------------------------|
-| SPI FLASH         |     支持     |                                      |
-
-| **片上外设**      | **支持情况** | **备注**                              |
-| :---------------- | :----------: | :------------------------------------|
+| SPI FLASH         |     支持     | SPI0                                 |
+| **片上外设**      | **支持情况** | **备注**                             |
 | GPIO              |     支持     | 54 GPIOs                             |
 | UART              |     支持     | UART0/1/2/3                          |
-| SPI				|     支持     | SPI0/1                               |
+| SPI               |     支持     | SPI0/1                               |
 | I2C               |     支持     | I2C0/1                               |
+| PWM               |     支持     | PWM0/1/2/3                           |
+| TIMER             |     支持     | TIMER0/1/2/3                         |
+| RTC               |     支持     | RTC                                  |
+| PM                |     支持     | Power Management                     |
+| ADC               |     支持     | ADC0                                 |
 
-| **扩展模块**      | **支持情况** | **备注**                              |
+### 1.2  注意事项
+
+- 本BSP中，UART2和TIMER1不能同时使用，UART3和TIMER2不能同时使用
 
 更多详细信息请咨询[上海东软载波微电子技术支持](http://www.essemi.com/)
 
@@ -56,7 +62,7 @@ ES-PDS-ES32F0654-V1.0
 
 使用ESlinkⅡ(mini)连接开发板如下图所示：
 
-ESLinkⅡ(mini) + ES-PDS-ES32F0654-V1.0
+ESLinkⅡ(mini) + ES-PDS-ES32F0654-V1.1
 
 ![ESLinkII](figures/ESLinkII-mini.jpg)
 

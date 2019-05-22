@@ -17,6 +17,7 @@
 #define RT_IDEL_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 
 /* Inter-Thread communication */
 
@@ -126,6 +127,9 @@
 /* Wiced WiFi */
 
 
+/* IoT Cloud */
+
+
 /* security packages */
 
 
@@ -143,14 +147,13 @@
 
 /* peripheral libraries and drivers */
 
+/* sensors drivers */
+
 
 /* miscellaneous packages */
 
 
-/* sample package */
-
-
-/* example package: hello */
+/* samples: kernel and components samples */
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32F7

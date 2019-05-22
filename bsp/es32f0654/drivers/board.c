@@ -42,14 +42,11 @@ void NVIC_Configuration(void)
  *******************************************************************************/
 void  SystemClock_Config(void)
 {
-    /* hosc 8MHz, from hosc/2 pll to 48MHz */
-    cmu_pll1_config(CMU_PLL1_INPUT_HOSC_2, CMU_PLL1_OUTPUT_48M);
+    /* hosc 12MHz, from hosc/3 pll to 48MHz */
+    cmu_pll1_config(CMU_PLL1_INPUT_HOSC_3, CMU_PLL1_OUTPUT_48M);
 
     /*  MCLK 48MHz*/
     cmu_clock_config(CMU_CLOCK_PLL1, 48000000);
-
-    /* SYSCLK 24MHz */
-    cmu_div_config(CMU_SYS, CMU_DIV_2);
 }
 
 /*******************************************************************************
@@ -61,14 +58,8 @@ void  SystemClock_Config(void)
  *******************************************************************************/
 void  SysTick_Configuration(void)
 {
-    rt_uint32_t _mclk;
-    rt_uint32_t _sys_div = READ_BITS(CMU->CFGR, CMU_CFGR_SYSDIV_MSK, CMU_CFGR_SYSDIV_POSS);
-
-    /* get hrc clock*/
-    _mclk = cmu_get_clock();
-
-    /* SYSCLK = MCLK/SYSDIV */
-    SysTick_Config(_mclk / (RT_TICK_PER_SECOND << _sys_div));
+    /* ticks = sysclk / RT_TICK_PER_SECOND */
+    SysTick_Config(cmu_get_sys_clock() / RT_TICK_PER_SECOND);
 }
 
 /**
@@ -110,4 +101,23 @@ void rt_hw_board_init(void)
 #ifdef RT_USING_CONSOLE
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
+}
+
+/**
+ * This function will delay for some us.
+ *
+ * @param us the delay time of us
+ */
+void rt_hw_us_delay(rt_uint32_t us)
+{
+    unsigned int start, now, delta, reload, us_tick;
+    start = SysTick->VAL;
+    reload = SysTick->LOAD;
+    us_tick = cmu_get_sys_clock() / 1000000UL;
+    do
+    {
+        now = SysTick->VAL;
+        delta = start > now ? start - now : reload + start - now;
+    }
+    while (delta <  us_tick * us);
 }

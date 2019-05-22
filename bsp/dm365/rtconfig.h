@@ -21,6 +21,7 @@
 #define RT_TIMER_THREAD_PRIO 8
 #define RT_TIMER_THREAD_STACK_SIZE 512
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 /* RT_DEBUG_INIT_CONFIG is not set */
 /* RT_DEBUG_THREAD_CONFIG is not set */
 /* RT_DEBUG_SCHEDULER_CONFIG is not set */
