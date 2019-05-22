@@ -660,12 +660,12 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
 #if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) \
     || defined(SOC_SERIES_STM32L0)
         /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
-        SET_BIT(RCC->AHBENR, uart->config->dma_rx->dma_rcc);
-        tmpreg = READ_BIT(RCC->AHBENR, uart->config->dma_rx->dma_rcc);
+        SET_BIT(RCC->AHBENR, dma_config->dma_rcc);
+        tmpreg = READ_BIT(RCC->AHBENR, dma_config->dma_rcc);
 #elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4)
         /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
-        SET_BIT(RCC->AHB1ENR, uart->config->dma_rx->dma_rcc);
-        tmpreg = READ_BIT(RCC->AHB1ENR, uart->config->dma_rx->dma_rcc);
+        SET_BIT(RCC->AHB1ENR, dma_config->dma_rcc);
+        tmpreg = READ_BIT(RCC->AHB1ENR, dma_config->dma_rcc);
 #endif
         UNUSED(tmpreg);   /* To avoid compiler warnings */
     }
