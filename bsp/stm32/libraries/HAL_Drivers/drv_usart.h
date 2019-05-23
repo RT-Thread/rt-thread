@@ -41,6 +41,7 @@ struct stm32_uart_config
     USART_TypeDef *Instance;
     IRQn_Type irq_type;
     struct dma_config *dma_rx;
+    struct dma_config *dma_tx;
 };
 
 /* stm32 uart dirver class */
@@ -54,9 +55,13 @@ struct stm32_uart
     {
         DMA_HandleTypeDef handle;
         rt_size_t last_index;
-    } dma;
+    } dma_rx;
+    struct
+    {
+        DMA_HandleTypeDef handle;
+    } dma_tx;
 #endif
-    rt_uint8_t uart_dma_flag;
+    rt_uint16_t uart_dma_flag;
     struct rt_serial_device serial;
 };
 
