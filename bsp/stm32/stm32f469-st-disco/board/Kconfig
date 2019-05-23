@@ -10,11 +10,16 @@ menu "Onboard Peripheral Drivers"
         bool "Enable SDRAM"
         select BSP_USING_FMC
         default n
+
+    config BSP_USING_LCD_MIPI
+        bool
+        default n
         
     config BSP_USING_LCD_OTM8009A
         bool "Enable LCD OTM8009A"
         select BSP_USING_SDRAM
         select BSP_USING_LTDC
+        select BSP_USING_LCD_MIPI
         default n
         
     config BSP_USING_QSPI_FLASH
