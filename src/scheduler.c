@@ -254,13 +254,11 @@ void rt_schedule(void)
                     rt_thread_handle_sig(RT_TRUE);
                 }
                 else
+#endif
                 {
+                    /* enable interrupt */
                     rt_hw_interrupt_enable(level);
                 }
-#else
-                /* enable interrupt */
-                rt_hw_interrupt_enable(level);
-#endif
 
                 return ;
             }
