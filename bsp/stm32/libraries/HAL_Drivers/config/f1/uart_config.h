@@ -163,12 +163,12 @@ extern "C" {
 #endif /* BSP_USING_UART5 */
 
 #if defined(BSP_UART5_RX_USING_DMA)
-#ifndef UART5_DMA_CONFIG
-#define UART5_DMA_CONFIG                                            \
+#ifndef UART5_DMA_RX_CONFIG
+#define UART5_DMA_RX_CONFIG                                            \
     {                                                               \
         .Instance = DMA_NOT_AVAILABLE,                              \
     }
-#endif /* UART5_DMA_CONFIG */
+#endif /* UART5_DMA_RX_CONFIG */
 #endif /* BSP_UART5_RX_USING_DMA */
 
 #ifdef __cplusplus
