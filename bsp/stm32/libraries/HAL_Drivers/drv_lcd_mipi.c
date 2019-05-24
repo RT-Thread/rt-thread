@@ -39,8 +39,7 @@ rt_err_t ltdc_init(void)
     uint32_t VSA = LCD_VSYNC, VFP = LCD_VFP, VBP = LCD_VBP, VACT = LCD_HEIGHT;
 
     stm32_mipi_lcd_init();
-
-    /* ��ʼ��STM32��ʾ��ʱ�� */ 
+ 
     __HAL_RCC_LTDC_CLK_ENABLE();
     __HAL_RCC_LTDC_FORCE_RESET();
     __HAL_RCC_LTDC_RELEASE_RESET();
@@ -57,14 +56,12 @@ rt_err_t ltdc_init(void)
     PeriphClkInitStruct.PLLSAIDivR           = RCC_PLLSAIDIVR_2;
     HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
     
-    /* ����NVIC */ 
     HAL_NVIC_SetPriority(LTDC_IRQn,  3, 0);
     HAL_NVIC_SetPriority(DSI_IRQn,   3, 0);
 
     HAL_NVIC_EnableIRQ(LTDC_IRQn);
     HAL_NVIC_EnableIRQ(DSI_IRQn);
     
-    /* ����DSI */ 
     DSI_PLLInitTypeDef dsi_pll;
     
     hdsi.Instance = DSI; 
