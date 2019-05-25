@@ -15,9 +15,14 @@
 #include <rtdevice.h>
 #include <board.h> 
 
-rt_err_t otm8009a_init(void); 
-void otm8009a_layer_init(uint16_t index, uint32_t framebuffer); 
-void lcd_clear(uint32_t color); 
-void lcd_fill_rect(uint16_t x_pos, uint16_t y_pos, uint16_t width, uint16_t height); 
+#define  LCD_WIDTH    (800U)
+#define  LCD_HEIGHT   (480U)
+
+#define  LCD_HSYNC    (1U)
+#define  LCD_HBP      (15U) 
+#define  LCD_HFP      (16U)
+#define  LCD_VSYNC    (2U)
+#define  LCD_VBP      (34U)
+#define  LCD_VFP      (34U)
 
 #endif
