@@ -84,14 +84,14 @@ if GetDepend(['RT_USING_MTD_NOR']):
 if GetDepend(['RT_USING_MTD_NAND']):
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_nand.c']
 
-if GetDepend(['BSP_USING_FMC']):
+if GetDepend(['BSP_USING_FMC']) or GetDepend(['BSP_USING_FSMC']):
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_fmc.c']
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_fsmc.c']
 
 if GetDepend(['BSP_USING_SDRAM']):
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sdram.c']
 
-if GetDepend(['BSP_USING_EXT_FMC_IO']):
+if GetDepend(['BSP_USING_EXT_FMC_IO']) or GetDepend(['BSP_USING_SRAM']):
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sram.c']
 
 if GetDepend(['BSP_USING_ON_CHIP_FLASH']):

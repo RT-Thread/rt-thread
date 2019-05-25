@@ -33,6 +33,11 @@ menu "Onboard Peripheral Drivers"
         select RT_SFUD_USING_SFDP
         default n
 
+    config BSP_USING_SRAM
+        bool "Enable SRAM"
+        select BSP_USING_FSMC
+        default n
+    
     config BSP_USING_EEPROM
         bool "Enable I2C EEPROM (i2c1)"
         select BSP_USING_I2C1
@@ -210,6 +215,10 @@ menu "On-chip Peripheral Drivers"
                     bool "RTC USING LSI"
             endchoice
         endif
+
+    config BSP_USING_FSMC
+        bool
+        default n
 
     config BSP_USING_WDT
         bool "Enable Watchdog Timer"
