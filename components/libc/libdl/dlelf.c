@@ -107,14 +107,14 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
     {
         if (phdr[index].p_type == PT_LOAD)
         {
-            rt_memcpy(module->mem_space + phdr[index].p_vaddr - vstart_addr,
+            rt_memcpy(((rt_uint8_t *)module->mem_space + phdr[index].p_vaddr - vstart_addr),
                       (rt_uint8_t *)elf_module + phdr[index].p_offset,
                       phdr[index].p_filesz);
         }
     }
 
     /* set module entry */
-    module->entry_addr = module->mem_space + elf_module->e_entry - vstart_addr;
+    module->entry_addr = (rt_dlmodule_entry_func_t)((rt_uint8_t *)module->mem_space + elf_module->e_entry - vstart_addr);
 
     /* handle relocation section */
     for (index = 0; index < elf_module->e_shnum; index ++)
@@ -149,7 +149,7 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
             {
                 Elf32_Addr addr;
 
-                addr = (Elf32_Addr)(module->mem_space + sym->st_value - vstart_addr);
+                addr = (Elf32_Addr)((rt_uint8_t *)module->mem_space + sym->st_value - vstart_addr);
                 dlmodule_relocate(module, rel, addr);
             }
             else if (!linked)
@@ -218,7 +218,7 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
             length = rt_strlen((const char *)(strtab + symtab[i].st_name)) + 1;
 
             module->symtab[count].addr =
-                (void *)(module->mem_space + symtab[i].st_value - module->vstart_addr);
+                (void *)((rt_uint8_t *)module->mem_space + symtab[i].st_value - module->vstart_addr);
             module->symtab[count].name = rt_malloc(length);
             rt_memset((void *)module->symtab[count].name, 0, length);
             rt_memcpy((void *)module->symtab[count].name,

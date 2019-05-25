@@ -6,9 +6,6 @@ cwd = GetCurrentDir()
 group   = []
 CPPPATH = [cwd]
 
-if rtconfig.PLATFORM == 'gcc':
-    group = DefineGroup('libc', src, 
-        depend = ['RT_USING_MODULE'], 
-        CPPPATH = CPPPATH)
+group = DefineGroup('libc', src, depend = ['RT_USING_MODULE'], CPPPATH = CPPPATH)
 
 Return('group')

@@ -500,8 +500,8 @@ struct rt_dlmodule* dlmodule_load(const char* filename)
 #endif
 
     /* set module initialization and cleanup function */
-    module->init_func = dlsym(module, "module_init");
-    module->cleanup_func = dlsym(module, "module_cleanup");
+    module->init_func = (rt_dlmodule_init_func_t)dlsym(module, "module_init");
+    module->cleanup_func = (rt_dlmodule_cleanup_func_t)dlsym(module, "module_cleanup");
     module->stat = RT_DLMODULE_STAT_INIT;
     /* do module initialization */
     if (module->init_func)
