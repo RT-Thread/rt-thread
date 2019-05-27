@@ -122,6 +122,10 @@ extern "C" {
 #include "drivers/mtdnand.h"
 #endif
 
+#ifdef RT_USING_HWCRYPTO
+#include "drivers/crypto.h"
+#endif
+
 #ifdef __cplusplus
 }
 #endif
