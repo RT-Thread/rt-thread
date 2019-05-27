@@ -29,14 +29,14 @@ extern "C" {
 #endif /* BSP_USING_UART1 */
 
 #if defined(BSP_UART1_RX_USING_DMA)
-#ifndef UART1_DMA_CONFIG
-#define UART1_DMA_CONFIG                                            \
+#ifndef UART1_DMA_RX_CONFIG
+#define UART1_DMA_RX_CONFIG                                            \
     {                                                               \
         .Instance = UART1_RX_DMA_INSTANCE,                          \
         .dma_rcc  = UART1_RX_DMA_RCC,                               \
         .dma_irq  = UART1_RX_DMA_IRQ,                               \
     }
-#endif /* UART1_DMA_CONFIG */
+#endif /* UART1_DMA_RX_CONFIG */
 #endif /* BSP_UART1_RX_USING_DMA */
 
 #if defined(BSP_USING_UART2)
@@ -51,14 +51,14 @@ extern "C" {
 #endif /* BSP_USING_UART2 */
     
 #if defined(BSP_UART2_RX_USING_DMA)
-#ifndef UART2_DMA_CONFIG
-#define UART2_DMA_CONFIG                                            \
+#ifndef UART2_DMA_RX_CONFIG
+#define UART2_DMA_RX_CONFIG                                            \
     {                                                               \
         .Instance = UART2_RX_DMA_INSTANCE,                          \
         .dma_rcc  = UART2_RX_DMA_RCC,                               \
         .dma_irq  = UART2_RX_DMA_IRQ,                               \
     }
-#endif /* UART2_DMA_CONFIG */
+#endif /* UART2_DMA_RX_CONFIG */
 #endif /* BSP_UART2_RX_USING_DMA */
 
 #ifdef __cplusplus
