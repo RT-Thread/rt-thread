@@ -234,7 +234,11 @@ config RT_USING_SPI
         config RT_USING_W25QXX
             bool "Using W25QXX SPI NorFlash"
             default n
-
+            
+        config RT_USING_W25QXX_MTD
+            bool "Using W25QXX MTD SPI NorFlash"
+            default n
+            
         config RT_USING_GD
             bool "Using GD SPI NorFlash"
             default n
