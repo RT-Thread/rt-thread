@@ -212,6 +212,9 @@ config RT_USING_SPI
         config RT_USING_SFUD
             bool "Using Serial Flash Universal Driver"
             default n
+            help
+                An using JEDEC's SFDP standard serial (SPI) flash universal driver library
+
             if RT_USING_SFUD
                 config RT_SFUD_USING_SFDP
                 bool "Using auto probe flash JEDEC SFDP parameter"
@@ -230,14 +233,6 @@ config RT_USING_SPI
                 bool "Show more SFUD debug information"
                 default n
             endif
-
-        config RT_USING_W25QXX
-            bool "Using W25QXX SPI NorFlash"
-            default n
-
-        config RT_USING_GD
-            bool "Using GD SPI NorFlash"
-            default n
 
         config RT_USING_ENC28J60
             bool "Using ENC28J60 SPI Ethernet network interface"
