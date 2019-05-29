@@ -64,6 +64,7 @@ extern "C" {
 #include "l4/tim_config.h"
 #include "l4/sdio_config.h"
 #include "l4/pwm_config.h"
+#include "l4/usbd_fs_config.h"
 #elif  defined(SOC_SERIES_STM32G0)
 #include "g0/dma_config.h"
 #include "g0/uart_config.h"
