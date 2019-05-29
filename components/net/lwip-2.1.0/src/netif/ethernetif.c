@@ -317,7 +317,10 @@ static int netdev_add(struct netif *lwip_netif)
 
     rt_strncpy(name, lwip_netif->name, LWIP_NETIF_NAME_LEN);
     result = netdev_register(netdev, name, (void *)lwip_netif);
-
+    netdev->ip_addr = lwip_netif->ip_addr;
+    netdev->gw = lwip_netif->gw;
+    netdev->netmask = lwip_netif->netmask;
+	
 #ifdef RT_LWIP_DHCP
     netdev_low_level_set_dhcp_status(netdev, RT_TRUE);
 #endif
