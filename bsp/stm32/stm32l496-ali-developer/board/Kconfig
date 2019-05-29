@@ -20,6 +20,15 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_DFS_ELMFAT
         default n
 
+    config BSP_USING_SENSOR_6AXIS
+        bool "Enable 6-axis sensor (i2c4)"
+        select BSP_USING_I2C
+        select BSP_USING_I2C4
+        select PKG_USING_SENSORS_DRIVERS
+        select PKG_USING_LSM6DSL
+        select PKG_USING_LSM6DSL_LATEST_VERSION
+        default n
+
 endmenu
 
 menu "On-chip Peripheral Drivers"

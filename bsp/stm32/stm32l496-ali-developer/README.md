@@ -49,7 +49,7 @@ Developer Kit STM32L496 是阿里联合[诺行](http://www.notioni.com/)推出�
 | 板载 ST-LINK 转串口 |     支持     | lpuart1 |
 | SD卡               |   支持       |                                       |
 | 温湿度传感器        |    暂不支持     |即将支持                             |
-| 六轴传感器         |    暂不支持     |即将支持                              |
+| 六轴传感器         |    支持     |                              |
 | 光环境传感器       |    暂不支持     |即将支持                             |
 | 音频解码           |    不支持     |                                     |
 | TFTLCD           |    不支持     |                                      |
@@ -65,8 +65,8 @@ Developer Kit STM32L496 是阿里联合[诺行](http://www.notioni.com/)推出�
 | RTC               |     支持     | 支持外部晶振和内部低速时钟 |
 | WDT               |     支持     |                                      |
 | PWM               |     支持     | PWM3 |
-| USB Device        |   暂不支持   | 即将支持                              |
-| USB Host          |   暂不支持   | 即将支持                              |
+| USB Device        |   支持   | 需要将跳线帽 J403 切换到 Module |
+| USB Host          |   暂不支持   |                               |
 | **扩展模块**      | **支持情况** | **备注**                              |
 
 ## 使用说明
