@@ -303,12 +303,6 @@ static int netdev_add(struct netif *lwip_netif)
         return -ERR_IF;
     }
 
-    netdev->flags = lwip_netif->flags;
-    netdev->mtu = lwip_netif->mtu;
-    netdev->ops = &lwip_netdev_ops;
-    netdev->hwaddr_len =  lwip_netif->hwaddr_len;
-    rt_memcpy(netdev->hwaddr, lwip_netif->hwaddr, lwip_netif->hwaddr_len);
-
 #ifdef SAL_USING_LWIP
     extern int sal_lwip_netdev_set_pf_info(struct netdev *netdev);
     /* set the lwIP network interface device protocol family information */
@@ -317,6 +311,13 @@ static int netdev_add(struct netif *lwip_netif)
 
     rt_strncpy(name, lwip_netif->name, LWIP_NETIF_NAME_LEN);
     result = netdev_register(netdev, name, (void *)lwip_netif);
+	
+    /* Update netdev info after registered */	
+    netdev->flags = lwip_netif->flags;
+    netdev->mtu = lwip_netif->mtu;
+    netdev->ops = &lwip_netdev_ops;
+    netdev->hwaddr_len =  lwip_netif->hwaddr_len;
+    rt_memcpy(netdev->hwaddr, lwip_netif->hwaddr, lwip_netif->hwaddr_len);
     netdev->ip_addr = lwip_netif->ip_addr;
     netdev->gw = lwip_netif->gw;
     netdev->netmask = lwip_netif->netmask;
