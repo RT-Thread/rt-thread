@@ -309,7 +309,7 @@ static void finsh_wait_auth(void)
                 else if (ch == '\b' && cur_pos > 0)
                 {
                     /* backspace */
-		    cur_pos--;
+                    cur_pos--;
                     password[cur_pos] = '\0';
                     rt_kprintf("\b \b");
                 }
