@@ -281,7 +281,7 @@ static void finsh_wait_auth(void)
 {
     int ch;
     rt_bool_t input_finish = RT_FALSE;
-    char password[FINSH_PASSWORD_MAX] = { 0 };
+    char password[FINSH_PASSWORD_MAX + 1] = { 0 };
     rt_size_t cur_pos = 0;
     /* password not set */
     if (rt_strlen(finsh_get_password()) == 0) return;
