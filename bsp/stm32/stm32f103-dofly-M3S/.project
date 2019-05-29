@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>qemu-vexpress-a9</name>
+	<name>stm32f103-dofly-M3S</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -31,24 +31,39 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>rt-thread/bsp</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>rt-thread/components</name>
 			<type>2</type>
-			<locationURI>$%7BPARENT-2-PROJECT_LOC%7D/components</locationURI>
+			<locationURI>$%7BPARENT-3-PROJECT_LOC%7D/components</locationURI>
 		</link>
 		<link>
 			<name>rt-thread/include</name>
 			<type>2</type>
-			<locationURI>$%7BPARENT-2-PROJECT_LOC%7D/include</locationURI>
+			<locationURI>$%7BPARENT-3-PROJECT_LOC%7D/include</locationURI>
 		</link>
 		<link>
 			<name>rt-thread/libcpu</name>
 			<type>2</type>
-			<locationURI>$%7BPARENT-2-PROJECT_LOC%7D/libcpu</locationURI>
+			<locationURI>$%7BPARENT-3-PROJECT_LOC%7D/libcpu</locationURI>
 		</link>
 		<link>
 			<name>rt-thread/src</name>
 			<type>2</type>
-			<locationURI>$%7BPARENT-2-PROJECT_LOC%7D/src</locationURI>
+			<locationURI>$%7BPARENT-3-PROJECT_LOC%7D/src</locationURI>
+		</link>
+		<link>
+			<name>rt-thread/bsp/stm32</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>rt-thread/bsp/stm32/libraries</name>
+			<type>2</type>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/libraries</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
