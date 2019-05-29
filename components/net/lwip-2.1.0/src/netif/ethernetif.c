@@ -315,7 +315,6 @@ static int netdev_add(struct netif *lwip_netif)
 	
     /* Update netdev info after registered */
     netdev->flags = lwip_netif->flags;
-    netdev->mtu = lwip_netif->mtu;
     netdev->ops = &lwip_netdev_ops;
     netdev->hwaddr_len =  lwip_netif->hwaddr_len;
     rt_memcpy(netdev->hwaddr, lwip_netif->hwaddr, lwip_netif->hwaddr_len);
