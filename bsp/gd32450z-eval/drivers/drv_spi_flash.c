@@ -20,16 +20,8 @@
 #include "spi_flash_sfud.h"
 #endif
 
-#ifdef RT_USING_W25QXX
-#include "spi_flash_w25qxx.h"
-#endif
-
 #include <rthw.h>
 #include <finsh.h>
-
-#if defined(RT_USING_SFUD) && defined(RT_USING_W25QXX)
-#error "RT_USING_SFUD and RT_USING_W25QXX only need one"
-#endif
 
 #define SPI_PERIPH                  SPI5
 #define SPI_BUS_NAME                "spi5"
@@ -94,12 +86,4 @@ static int rt_hw_spi_flash_with_sfud_init(void)
 	return RT_EOK;
 }
 INIT_COMPONENT_EXPORT(rt_hw_spi_flash_with_sfud_init)
-#endif
-
-#ifdef RT_USING_W25QXX
-static int rt_hw_spi_flash_init(void)
-{
-    return w25qxx_init(SPI_FLASH_CHIP, SPI_FLASH_DEVICE_NAME);
-}
-INIT_COMPONENT_EXPORT(rt_hw_spi_flash_init)
 #endif
