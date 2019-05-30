@@ -30,7 +30,7 @@ static char *const sensor_name_str[] =
     "hr_",       /* Heart Rate        */
     "tvoc_",     /* TVOC Level        */
     "noi_",      /* Noise Loudness    */
-    "step_"      /* Step sensor       */
+    "step_",     /* Step sensor       */
     "forc_"      /* Force sensor      */
 };
 
