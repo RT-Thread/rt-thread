@@ -12,6 +12,15 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART
         select BSP_USING_UART2
         default y
+		
+	config BSP_USING_SDCARD
+        bool "Enable SDCARD (spi1)"
+        select BSP_USING_SPI
+        select BSP_USING_SPI1
+        select RT_USING_SPI_MSD
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        default n
 
 endmenu
 
