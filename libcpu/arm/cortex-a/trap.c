@@ -45,6 +45,39 @@ void rt_hw_show_register(struct rt_hw_exp_stack *regs)
  */
 void rt_hw_trap_undef(struct rt_hw_exp_stack *regs)
 {
+#ifdef RT_USING_FPU
+    {
+        uint32_t ins;
+        uint32_t addr;
+
+        if (regs->cpsr & (1 << 5))
+        {
+            /* thumb mode */
+            addr = regs->pc - 2;
+            ins = (uint32_t)*(uint16_t*)addr;
+            if ((ins & (3 << 11)) != 0)
+            {
+                /* 32 bit ins */
+                ins <<= 16;
+                ins += *(uint16_t*)(addr + 2);
+            }
+        }
+        else
+        {
+            addr = regs->pc - 4;
+            ins = *(uint32_t*)addr;
+        }
+        if ((ins & 0xe00) == 0xa00)
+        {
+            /* float ins */
+            uint32_t val = (1U << 30);
+
+            asm volatile ("vmsr fpexc, %0"::"r"(val):"memory");
+            regs->pc = addr;
+            return;
+        }
+    }
+#endif
     rt_kprintf("undefined instruction:\n");
     rt_hw_show_register(regs);
 #ifdef RT_USING_FINSH
