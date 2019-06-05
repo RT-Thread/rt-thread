@@ -1,3 +1,215 @@
+# RT-Thread v4.0.1 Change Log
+
+## Kernel
+
+* Fix the `rt_tick_from_millisecond()` compilation warning issue;
+* Remove unnecessary code that disable interrupt several times during startup initialization;
+* Fix the issue that the system object is not detached when handling defunct threads. 
+* Add the value checking of semaphore (the maximum value of semaphore is up to 65535)
+* Fix the 64-bit issue in kservice.c
+* Add the checking and assertion of re-initialization of object.
+* In the rt_enter_critical/rt_exit_critical function, add the checking of whether scheduler is startup or not.
+* Fix the signal issue under SMP and the issue of signal information list in signal.
+* Add 64-bit processor support in slab memory allocation.
+* Fix the definition issue of `ENOTSUP` in libc_errno.h.
+* Simplify the rtdbg.h file and use ulog to make log/debug system easier to use.
+* Add the configuration of RT_USING_ARCH_DATA_TYPE, `rt_int8_t/.../rt_uint32_t` and other basic data types can be defined by BSP itself. (It is recommended to put them into the rtconfig_project.h file, so that this file can be automatically included in rtconfig.h when menuconfig generates it.)
+* Add `RT_Device_Class_Sensor` type devices;
+* In the case of single core, the definition of `rt_hw_spin_lock/rt_hw_spin_unlock` is redefined as the disable/enable interrupt.
+* Add the `rt_strnlen()` function in kservice.c.
+* Support the long long type in rt_kprintf (HubertXie);
+
+## Components
+
+* Remove CMSIS and move to software package as CMSIS package.
+* Remove logtrace component. The system log system switches to ulog;
+* Add more code to support AC6 tool chain in some BSP and components;
+* In DFS file system component, clean up the log and fix the mkfs issue when index may be out of range.
+* Split the running mode from sleep mode in power management, and the frequency change should be clearer. Power management is not use idle hook but execute the sleep action in idle thread directly. (How to use power management, please visit programming document for details)
+* Cleanup the log of MMC/SD driver framework;
+* Rewrite Sensor Framework, replace the original C++ implementation with C version, and add some corresponding sensor software packages; To use the sensor packages, please use this release;
+* Add the DMA transmission operation in the serial driver framework;
+* Add the consistency protection to tc_flush routine of serial driver (loogg).
+* Add rt_sfud_flash_find_by_dev_name API in SFUD.
+* When the Pipe device closed, if it is an unnamed Pipe device and the open count is 0, this Pipe device will be deleted.
+* The delayed work implementation is added to workqueue, and the workqueue of the system is added as an option.
+* Fix the data loss issue when using DMA transmission in USB CDC.
+* Change the return type of finsh_getchar to int;
+* Fix the errno issue in newlib/GCC tool chain.
+* Change the management of pthreads to POSIX thread array instead of mapping pthread_t directly to rt_thread_t; Change the fields definition more similar with newlib/glibc in pthreads.
+* Fix the thread name output in ulog.
+* Add loop parameter in utest, then executes test cases repeatedly; Add thread parameter in utest to execute testcase in a new thread.
+* Add delay in handshake phase to protect incomplete data reception in YModem component.
+* Add netdev component, abstract netdev concept, used to management and control network interface device, and provide netdev operation commands, including ping/ifconfig/dns/netstat etc;
+* Modify SAL for netdev, that is, adds the judgment of netdev status and information when the socket creating and data transmitting;
+* Add options and types for UDP multicast traffic handling and IPPROTO_IP in SAL;
+* Fix `itctrol()` function not support to control socketfd issues in SAL;
+* Improve error log processing in AT socket;
+* Fix serial receive data failed issues when AT client initialization is not completed;
+
+## BSP
+
+* Add ES32 chip BSP from Shanghai Eastsoft Microelectronics Co., Ltd. (EastSoft provides maintenance and support);
+* Add GD32E230K-start, with ARM Cortex-M23 core BSP (xuzhuoyi)
+* Add IMXRT1021-EVK BSP (NXP provides maintenance and support);
+* Add the ETH hardware checksum option in IMXRT1052 ETH driver;
+* Add more peripheral drivers, GPIO, LCD, SPI, camera, etc. in Kendryte K210 BSP.
+* Cleanup the LPC 4088 BSP to use main function entry and support menuconfig;
+* Add LPC1114 BSP with UART driver (SASANO Takayoshi, Japan);
+* The double Frame Buffer mechanism and touch screen driver are added in Godson 1C BSP, then it can better to support Persimmon UI (sundm75).
+* Add watchdog driver in Godson 1C BSP(sundm75);
+* Add MM32 chip BSP from Shanghai MindMotion Microelectronics Co., Ltd. (MindMotion provides maintenance and support);
+* Fix the SysTick interrupt handling issue in nRF52832 and add menuconfig configuration file.
+* Add QSPI and SPI flash driver to Nuvoton M487 BSP (bluebear 233)
+* Change the CPU porting to libcpu/arm/cortex-a folder in QEMU-VExpress A9/IMX6UL BSP;
+* In QEMU-VExpress A9 BSP, the MAC address associated with the local MAC address is used for a unified MAC address in the network.
+* remove stm32f0x, stm32f7-disco, stm32f107, stm32f40x, stm32l072, stm32l475-iot-disco, stm32l476-nucleo BSP (when the new STM32 BSP can completely replace these old BSP, these BSP will be removed);
+* For the new STM32 BSP:
+  * Add CAN driver (ylz0923)
+  * Add CAN driver to stm32f103-fire-arbitrary (ylz0923)
+  * stm32f746-st-disco with LCD, watchdog, SDCard, ethernet, Flash and other drivers (Jinsheng)
+* More board support is added to the new STM32 BSP:
+  * stm32f103-atk-warship V3 ATK Warship V3 (daizhiwang)
+  * STm32f103-dofly-M3S Dofly STM32F103 Development Board
+  * stm32f103-mini-system, the minimum system board for STM32F103 (daizhiwang)
+  * stm32f401-st-nucleo
+  * stm32f405-smdz-breadfruit sanmu electronic stm32405 development board (sunlichao)
+  * stm32f469-st-disco
+  * stm32h743-atk-apollo (whj4674672)
+  * stm32l4r9-st-eval
+  * stm32l053-st-nucleo (sun_shine)
+  * stm32l475-st-discovery
+  * stm32l476-st-nucleo (Vincent-VG)
+  * stm32l496-ali-developer
+
+* Add the ARC support for Synopsys Design Ware ARC EM Starter Kit (Synopsys provides maintenance and support);
+* The SCI driver is added to the TMS320F28379D BSP (xuzuoyi).
+* Add W60X Wi-Fi SoC chip BSP from Winner Microelectronics Co.,Ltd. (Winner Micro and RealThread provide maintenance and support);
+* Fix the UART2 IO configuration issue in X1000 UART driver (Zhou Yanjie);
+* Add SConscript file for each CPU porting.
+* Cleanup the libcpu/arm/cortex-a code;
+* The _rt_hw_context_switch_interrupt/_rt_hw_context_switch is separated in TI DSP TMS320F28379D BSP (xuzuoyi);
+
+## Tool
+
+* Add Makefile generation feature in scons with command `scons –target=makefile -s`. Then developer can use make to build RT-Thread under Linux or Windows.
+* Add Eclipse project generation feature in scons with command `scons –target=eclipse -s`, which will put the necessary information in `.cproject` and `.project` files in current BSP folder. The developer can use Eclipse to build RT-Thread.
+* Fix the multi-group same name issue when generating Keil MDK project file and add a library file into the SConscript (Eric Qiang);
+* Fix the GCC Version Comparing issue
+* ENV version updated to v1.1.2
+  * Update scons version to 3.0.5
+  * Fix VC++ warning issue
+  * Fix Unicode error issue
+
+# RT-Thread v4.0.0 Change Log
+
+## Kernel
+
+* Add SMP support;
+* Add support for 64-bit processors;
+* When the thread is running on CPU, the state of this thread is changed to RUNNING stat instead of READY state in previous version;
+
+## Components
+
+* When formatting the file system, adds FM_SFD option to create a volume in SFD format for FatFs; (HubretXie)
+* Add file system handle pointer in `struct dfs_fd' structure;
+* Fix stdio fd issue when POSIX api is used; (gbcwbz)
+* Fix the `fd_is_open()` issue: when the sub-path is the same in different mounted filesystem. 
+* Change the critical lock/unlock to dfs_lock/unlock in `getcwd()` function of DFS (the critical lock/unlock is different in SMP environment);
+* Rewrite `list_thread/list_*` implementation of finsh cmd to avoid multi-core competition case;
+* Fix the `aio_result` issue, which is returned by `aio_read_work` in AIO; (fullhan)
+* Fix the mmap issue when the addr parameter is NULL; (fullhan)
+* Modify the `_sys_istty` function in armlibc to correctly handle STDIN/STDOUT/STDERR; (gbcwbz)
+* Modify the `_write_r` function in newlib to correctly handle stdout.
+* Add lightweight processes (lwP) and corresponding system calls;
+  * the lwP user application environment will be added later;
+* Fix the at_socket issue when socket is a null pointer; (thomas onegd)
+* Fix the select event issue in `at_recvfrom()` function in at_socket;
+* Divide SAL into `sal_socket_ops/sal_proto_ops` and sal_proto_ops is implemented with gethostbyname/getaddrinfo ops etc.
+* Add socket TLS layer in SAL, that is, upper application can be supported by encrypted transmission without considering lowlevel TLS at all.
+* Fix the length issue of `ulog_strcpy`, which should be not exceed `ULOG_LINE_BUF_SIZE`;
+* Add the macro definition of hexadecimal log output to ulog; (HubretXie)
+* Add uTest component. The uTest is a unit test framework on RT-Thread, and can also be used for automatic testing on board with external Python scripts.
+* Fix some compilation warnings and enumeration mismatches in drivers/audio;
+* Fix the `can_rx/can_tx` issue, which is not cleared to NULL when CAN device is closed in drivers/can; (xeonxu)
+* Fix drivers/hwtimer, time acquisition issue with counting down mode;
+* Add drivers/adc driver framework;
+* Fix the tick compensation issue when enable interrupt too early; (geniusgogo)
+* Add `RT_SERIAL_USING_DMA` option in drivers/serial;
+* Add QSPI support in drivers/spi framework;
+* Add QSPI support in SFUD (based on the QSPI peripheral of stm32); SFUD is upgraded to version 1.1.0;
+* Optimize SPI take/release function call in spi_msd;
+* Fix the `blk_size` issue in `rt_rbb_blk_alloc()`;
+* Fix the FS USB issue in `_get_descriptor` function;
+* Fix the empty password issue in AP mode of drivers/wlan;
+* Fix the return type issue in drivers/wlan;
+* Remove the duplicate opening file check when open a file;
+
+# BSP
+
+* Change the name parameter to `cosnt char *` in `rt_hw_interrupt_install` function; (liruncong)
+* Rewrite the RISC-V porting layer to make as a common and standalone porting layer for RISC-V IMAC 32/64;
+* Fix `$` warning issue in Kconfig files of each BSP;
+* Add the LPC54114-lite BSP, including GPIO, I2C, SDCard, SPI, SPI Flash, UART driver;
+* Add Nuvoton-M487 BSP, including UART, EMAC driver; (Bluebear 233)
+* Add Kendryte K210 BSP with RISC-V64 dual-core SMP BSP, including UART driver, also verified with micropython;
+* Add RV32M1 VEGA BSP, including GPIO, I2C, SDCard, UART and other drivers;
+* Fix the CAN driver issue in STM32F4XX-HAL BSP; (xeonxu)
+* Fix UART DMA settings issue in STM32F10x/STM32F40x BSP; (zhouchuanfu)
+* Fix the HEAP_BEGIN definition issue in STM32H743-Nucleo BSP; (nongxiaoming)
+* Fix GPIO configuration issue in stm32f10x-HAL; (Wu Han)
+* Change stm32f107 BSP as main function entry; (whj4674672)
+* Fix the serial interrupt handling issue in stm32f10x BSP;
+* Add PWM, RTC and watchdog drivers to stm32f10x-HAL BSP; (XXXXzzzz000)
+* Fix the watchdog driver issue in stm32f4xx-HAL BSP; (XXXXzzzz000)
+* Use lwIP version 2.x in stm32f40x/stm32f107 BSP.
+* Fix the link issue when enable cmBacktrace package in stm32f4xx-HAL BSP; (xeonxu)
+* Support Audio and microphones features in stm32f429-apollo BSP;
+* Enable dlmodule support in x86 BSP; (SASANO Takayoshi)
+* Addd uTest section in the link script of qemu-vexpress-a9/stm32f429-atk-apollo BSP for automatic testing;
+* Change the license to Apache License v2.0 in Godson 1C BSP; (sundm75)
+* Add the new BSP framework for STM32 serial chip, such as STM32 G0/F0/L0/F1/F4/F7/H7. In new BSP framework, the SoC drivers is reused. And in same time, lots of STM32 boards are supportted with new BSP framework:
+  * STM32F091-Nucleo Development Board BSP
+  * STM32F411-Nucleo Development Board BSP
+  * STM32L432-Nucleo Development Board BSP; (sun_shine)
+  * STM32F407-Discovery Development Board BSP
+  * STM32F446-Nucleo Development Board BSP; (andeyqi)
+  * STM32F746-Discovery Development Board BSP; (jinsheng)
+  * STM32F767-Nucleo Development Board BSP; (e31207077)
+  * STM32G071-Nucleo Development Board BSP;
+  * ATK STM32F103 NANO Development Board BSP
+  * ATK STM32F407 Explorer Development Board BSP
+  * ATK STM32F429 Apollo Development Board BSP
+  * ATK STM32F767 Apollo Development Board BSP
+  * ATK STM32L475 Pandora IoT Development Board BSP
+  * Fire STM32F103 Arbitrary Development Board BSP
+  * Fire STM32F429 Challenger Development Board BSP
+  * Fire STM32F767 Challenger Development Board BSP; (Hao Zhu)
+  * ArmFly STM32F429-v6 Development Board BSP
+  * STM32F103 iBox development board BSP; (dingo1688)
+  * Dofly STM32F103 Development Board; (FindYGL)
+  * STM32F107 uC/Eval Development Board BSP; (whj4674672)
+  * and more, there are more developers involved for stm32 BSP framework, they are HubretXie, Hao Zhu, e190, etc. to improve the STM32 public driver.
+* Add SWM320 BSP of Synwit.cn, including GPIO, HW Timer, I2C, Watchdog, PWM, RTC, SPI, UART, etc.; (provided and maintained by Synwit)
+* Add TI TMS320F28379D BSP, the first DSP chip supported on RT-Thread; (xuzhuoyi)
+* Fix USB driver issue in X1000; (Zhou YanJie)
+* Add BSP for Synopsys Design Ware ARC EM Starter Kit, bsp/synopsys/emsk_em9d, EM9D core, including GPIO, UART and other drivers; (provided and maintained by Synopsys)
+
+# Tool
+
+* Provide more inforamtion when the tool chain does not exist;
+* Add a draft Segger Embedded Studio project file generation command. Note that the tool chain in SES is a special version not the newlib.
+* Fix the IAR library link command issue when use scons command line under;
+* Fix the BSP path issue in scons `str(Dir('#'))`;
+* Add `scons --pyconfig-silent` command to add some Kconfig configurations and to generate `.config` and `rtconfig.h` files;
+* Update the `scons --dist` command to adapt to the new BSP framework;
+* Modify the mkromfs.py script. Fix the corresponding C code generation When the romfs contains empty files or empty folders;
+* Fix the issue of version string comparison issue for GNU GCC version in utils.py;
+* ENV updated to V1.1.0
+  * Provide better prompt information to improve user experience;
+  * Add `system32` path to environment variables to avoid the `cmd` command cannot be found;
+  * Add `PYTHONHOME` variable to environment variables to avoid PYTHON environment issue;
+
 # RT-Thread v3.1.1 Change Log
 
 ## Kernel

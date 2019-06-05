@@ -26,8 +26,6 @@ struct usart
 typedef struct usart* usart_t;
 
 /* Private functions ------------------------------------------------------------*/
-
-
 static rt_err_t usart_gpio_configure(struct rt_serial_device *serial);
 static rt_err_t usart_configure(struct rt_serial_device *serial, struct serial_configure *cfg);
 static rt_err_t usart_control(struct rt_serial_device *serial, int cmd, void *arg);
@@ -315,11 +313,6 @@ static rt_err_t usart_control(struct rt_serial_device *serial,
         }
         break;
 // TODO 完善DMA接口
-//    case RT_DEVICE_FLAG_DMA_TX:
-//        USART_DMACmd(dev->usart_base, USART_DMAReq_Tx, ENABLE);
-//        stm32_uart_tx_dma_configure(dev, RT_TRUE);
-//        stm32_uart_tx_dma_nvic(dev, RT_TRUE);
-//        break;
     default:
         RT_ASSERT(0)
         ;
@@ -365,9 +358,9 @@ static int usart_receive(struct rt_serial_device *serial)
 /**
  * @brief 串口设备注册
  * @param uart           : UART设备结构体
- * @param uart_base      : STM32 UART外设基地址
- * @param name           : STM32 UART设备名
- * @param tx_dma_channel : STM32 UART TX的DMA通道基地址(可选)
+ * @param uart_base      : UART外设基地址
+ * @param name           : UART设备名
+ * @param tx_dma_channel : UART TX的DMA通道基地址(可选)
  */
 static void rt_hw_uart_register(usart_t usart, UART_T * uart_base, char *name)
 {

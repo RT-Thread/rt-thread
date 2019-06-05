@@ -37,21 +37,14 @@ void init_bss(void)
     }
 }
 
-void cpu_entry(int cpuid)
+void primary_cpu_entry(void)
 {
     extern void entry(void);
 
     /* disable global interrupt */
+    init_bss();
     rt_hw_interrupt_disable();
-    if (cpuid == 0)
-    {
-        init_bss();
-        entry();
-    }
-    else
-    {
-        while (1) ;
-    }
+    entry();
 }
 
 #include <clint.h>
@@ -85,8 +78,14 @@ int freq(void)
 }
 MSH_CMD_EXPORT(freq, show freq info);
 
+#ifdef RT_USING_SMP
+extern int rt_hw_clint_ipi_enable(void);
+#endif
+
 void rt_hw_board_init(void)
 {
+    sysctl_pll_set_freq(SYSCTL_PLL0, 800000000UL);
+    sysctl_pll_set_freq(SYSCTL_PLL1, 400000000UL);
     /* Init FPIOA */
     fpioa_init();
     /* Dmac init */
@@ -96,7 +95,12 @@ void rt_hw_board_init(void)
     rt_hw_interrupt_init();
     /* initialize hardware interrupt */
     rt_hw_uart_init();
+
     rt_hw_tick_init();
+
+#ifdef RT_USING_SMP
+    rt_hw_clint_ipi_enable();
+#endif
 
 #ifdef RT_USING_CONSOLE
     /* set console device */
@@ -113,3 +117,10 @@ void rt_hw_board_init(void)
     rt_components_board_init();
 #endif
 }
+void rt_hw_cpu_reset(void)
+{
+    sysctl->soft_reset.soft_reset = 1;
+    while(1);
+}
+
+MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_reset, reboot, reset machine);

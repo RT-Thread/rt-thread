@@ -11,7 +11,7 @@
 #ifndef SAL_SOCKET_H__
 #define SAL_SOCKET_H__
 
-#include "sal_ipaddr.h"
+#include <arpa/inet.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -97,6 +97,10 @@ typedef uint16_t in_port_t;
 #define MSG_DONTWAIT    0x08    /* Nonblocking i/o for this operation only */
 #define MSG_MORE        0x10    /* Sender will send more */
 
+/* Options for level IPPROTO_IP */
+#define IP_TOS             1
+#define IP_TTL             2
+
 /* Options for level IPPROTO_TCP */
 #define TCP_NODELAY     0x01    /* don't delay send to coalesce packets */
 #define TCP_KEEPALIVE   0x02    /* send KEEPALIVE probes when idle for pcb->keep_idle milliseconds */
@@ -107,12 +111,37 @@ typedef uint16_t in_port_t;
 /* Options and types related to multicast membership */
 #define IP_ADD_MEMBERSHIP  3
 #define IP_DROP_MEMBERSHIP 4
+/* Options and types for UDP multicast traffic handling */
+#define IP_MULTICAST_TTL   5
+#define IP_MULTICAST_IF    6
+#define IP_MULTICAST_LOOP  7
 
 typedef struct ip_mreq
 {
     struct in_addr imr_multiaddr; /* IP multicast address of group */
     struct in_addr imr_interface; /* local IP address of interface */
 } ip_mreq;
+
+/* The Type of Service provides an indication of the abstract parameters of the quality of service desired */
+#define IPTOS_TOS_MASK                 0x1E
+#define IPTOS_TOS(tos)                 ((tos) & IPTOS_TOS_MASK)
+#define IPTOS_LOWDELAY                 0x10
+#define IPTOS_THROUGHPUT               0x08
+#define IPTOS_RELIABILITY              0x04
+#define IPTOS_LOWCOST                  0x02
+#define IPTOS_MINCOST                  IPTOS_LOWCOST
+
+/* The Network Control precedence designation is intended to be used within a network only */
+#define IPTOS_PREC_MASK                0xe0
+#define IPTOS_PREC(tos)                ((tos) & IPTOS_PREC_MASK)
+#define IPTOS_PREC_NETCONTROL          0xe0
+#define IPTOS_PREC_INTERNETCONTROL     0xc0
+#define IPTOS_PREC_CRITIC_ECP          0xa0
+#define IPTOS_PREC_FLASHOVERRIDE       0x80
+#define IPTOS_PREC_FLASH               0x60
+#define IPTOS_PREC_IMMEDIATE           0x40
+#define IPTOS_PREC_PRIORITY            0x20
+#define IPTOS_PREC_ROUTINE             0x00
 
 /* Options for shatdown type */
 #ifndef SHUT_RD

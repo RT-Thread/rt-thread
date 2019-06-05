@@ -191,7 +191,9 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
     thread->sig_mask    = 0x00;
     thread->sig_pending = 0x00;
 
+#ifndef RT_USING_SMP
     thread->sig_ret     = RT_NULL;
+#endif
     thread->sig_vectors = RT_NULL;
     thread->si_list     = RT_NULL;
 #endif
@@ -347,17 +349,17 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
     /* change stat */
     thread->stat = RT_THREAD_CLOSE;
 
-    /* detach object */
-    rt_object_detach((rt_object_t)thread);
-
-    if (thread->cleanup != RT_NULL)
+    if ((rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE) &&
+        thread->cleanup == RT_NULL)
+    {
+        rt_object_detach((rt_object_t)thread);
+    }
+    else
     {
         /* disable interrupt */
         lock = rt_hw_interrupt_disable();
-
         /* insert to defunct thread list */
         rt_list_insert_after(&rt_thread_defunct, &(thread->tlist));
-
         /* enable interrupt */
         rt_hw_interrupt_enable(lock);
     }
@@ -365,7 +367,6 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
     return RT_EOK;
 }
 RTM_EXPORT(rt_thread_detach);
-
 
 #ifdef RT_USING_HEAP
 /**
@@ -655,6 +656,7 @@ RTM_EXPORT(rt_thread_control);
  */
 rt_err_t rt_thread_suspend(rt_thread_t thread)
 {
+    register rt_base_t stat;
     register rt_base_t temp;
 
     /* thread check */
@@ -663,22 +665,25 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
 
     RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread suspend:  %s\n", thread->name));
 
-    if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_READY)
+    stat = thread->stat & RT_THREAD_STAT_MASK;
+    if ((stat != RT_THREAD_READY) && (stat != RT_THREAD_RUNNING))
     {
         RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread suspend: thread disorder, 0x%2x\n",
                                        thread->stat));
-
         return -RT_ERROR;
     }
 
-    RT_ASSERT(thread == rt_thread_self());
-
     /* disable interrupt */
     temp = rt_hw_interrupt_disable();
+    if (stat == RT_THREAD_RUNNING)
+    {
+        /* not suspend running status thread on other core */
+        RT_ASSERT(thread == rt_thread_self());
+    }
 
     /* change thread stat */
-    thread->stat = RT_THREAD_SUSPEND | (thread->stat & ~RT_THREAD_STAT_MASK);
     rt_schedule_remove_thread(thread);
+    thread->stat = RT_THREAD_SUSPEND | (thread->stat & ~RT_THREAD_STAT_MASK);
 
     /* stop thread timer anyway */
     rt_timer_stop(&(thread->thread_timer));

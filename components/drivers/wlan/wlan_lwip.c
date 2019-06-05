@@ -21,14 +21,12 @@
 #include <dhcp_server.h>
 #endif
 
-#define DBG_ENABLE
+#define DBG_TAG "WLAN.lwip"
 #ifdef RT_WLAN_LWIP_DEBUG
-#define DBG_LEVEL DBG_LOG
+#define DBG_LVL DBG_LOG
 #else
-#define DBG_LEVEL DBG_INFO
-#endif
-#define DBG_SECTION_NAME  "WLAN.lwip"
-#define DBG_COLOR
+#define DBG_LVL DBG_INFO
+#endif /* RT_WLAN_LWIP_DEBUG */
 #include <rtdbg.h>
 
 #ifndef IPADDR_STRLEN_MAX
@@ -372,6 +370,18 @@ static rt_err_t rt_wlan_lwip_protocol_send(rt_device_t device, struct pbuf *p)
 #endif
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops wlan_lwip_ops =
+{
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    rt_wlan_lwip_protocol_control
+};
+#endif
+
 static struct rt_wlan_prot *rt_wlan_lwip_protocol_register(struct rt_wlan_prot *prot, struct rt_wlan_device *wlan)
 {
     struct eth_device *eth = RT_NULL;
@@ -417,12 +427,18 @@ static struct rt_wlan_prot *rt_wlan_lwip_protocol_register(struct rt_wlan_prot *
     rt_memset(lwip_prot, 0, sizeof(struct lwip_prot_des));
 
     eth = &lwip_prot->eth;
+
+#ifdef RT_USING_DEVICE_OPS
+    eth->parent.ops        = &wlan_lwip_ops;
+#else
     eth->parent.init       = RT_NULL;
     eth->parent.open       = RT_NULL;
     eth->parent.close      = RT_NULL;
     eth->parent.read       = RT_NULL;
     eth->parent.write      = RT_NULL;
     eth->parent.control    = rt_wlan_lwip_protocol_control;
+#endif
+
     eth->parent.user_data  = wlan;
     eth->eth_rx     = RT_NULL;
     eth->eth_tx     = rt_wlan_lwip_protocol_send;

@@ -64,6 +64,10 @@ Kendryte中文含义为勘智，而勘智取自勘物探智。这颗芯片主要
 
 ![terminal](images/k210.png)
 
+如果是K210-test_v0.2开发板，可以用如下命令来打开串口：
+
+    python -m serial.tools.miniterm --rts 0 --dtr 0 COM9 115200
+
 ## 4. 驱动支持情况及计划
 
 | 驱动 | 支持情况  |  备注  |

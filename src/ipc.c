@@ -201,6 +201,7 @@ rt_err_t rt_sem_init(rt_sem_t    sem,
                      rt_uint8_t  flag)
 {
     RT_ASSERT(sem != RT_NULL);
+    RT_ASSERT(value < 0x10000U);
 
     /* init object */
     rt_object_init(&(sem->parent.parent), RT_Object_Class_Semaphore, name);
@@ -209,7 +210,7 @@ rt_err_t rt_sem_init(rt_sem_t    sem,
     rt_ipc_object_init(&(sem->parent));
 
     /* set init value */
-    sem->value = value;
+    sem->value = (rt_uint16_t)value;
 
     /* set parent */
     sem->parent.parent.flag = flag;
@@ -261,6 +262,7 @@ rt_sem_t rt_sem_create(const char *name, rt_uint32_t value, rt_uint8_t flag)
     rt_sem_t sem;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
+    RT_ASSERT(value < 0x10000U);
 
     /* allocate object */
     sem = (rt_sem_t)rt_object_allocate(RT_Object_Class_Semaphore, name);
@@ -751,8 +753,8 @@ __again:
 
                 if (thread->error != RT_EOK)
                 {
-                	/* interrupt by signal, try it again */
-                	if (thread->error == -RT_EINTR) goto __again;
+                    /* interrupt by signal, try it again */
+                    if (thread->error == -RT_EINTR) goto __again;
 
                     /* return error */
                     return thread->error;

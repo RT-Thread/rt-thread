@@ -6,10 +6,7 @@
 #include "interrupt.h"
 #include "drv_keyboard.h"
 
-#define DBG_LEVEL DBG_LOG
-// #define DBG_ENABLE
-#define DBG_COLOR
-
+#define DBG_LVL DBG_INFO
 #include "rtdbg.h"
 
 #define KEYBOARD_ADDRESS    (0x10006000)
@@ -442,7 +439,7 @@ int rt_hw_keyboard_init(void)
     pdat = rt_malloc(sizeof(struct keyboard_pl050_pdata_t));
     if(!pdat)
     {
-        LOG_E("malloc memory", id);
+        LOG_E("malloc memory failed");
         return RT_ERROR;
     }
     rt_memset(pdat, 0, sizeof(struct keyboard_pl050_pdata_t));

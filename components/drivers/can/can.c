@@ -53,7 +53,7 @@ rt_inline int _can_int_rx(struct rt_can_device *can, struct rt_can_msg *data, in
     {
         rt_base_t level;
 #ifdef RT_CAN_USING_HDR
-        rt_int32_t hdr;
+        rt_int8_t hdr;
 #endif /*RT_CAN_USING_HDR*/
         struct rt_can_msg_list *listmsg = RT_NULL;
 
@@ -405,6 +405,7 @@ static rt_err_t rt_can_close(struct rt_device *dev)
 
         rt_free(rx_fifo);
         dev->open_flag &= ~RT_DEVICE_FLAG_INT_RX;
+        can->can_rx = RT_NULL;
         /* configure low level device */
         can->ops->control(can, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_RX);
     }
@@ -418,6 +419,7 @@ static rt_err_t rt_can_close(struct rt_device *dev)
 
         rt_free(tx_fifo);
         dev->open_flag &= ~RT_DEVICE_FLAG_INT_TX;
+        can->can_tx = RT_NULL;
         /* configure low level device */
         can->ops->control(can, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_TX);
     }
@@ -758,7 +760,7 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
         struct rt_can_rx_fifo *rx_fifo;
         struct rt_can_msg_list *listmsg = RT_NULL;
 #ifdef RT_CAN_USING_HDR
-        rt_int32_t hdr;
+        rt_int8_t hdr;
 #endif
         int ch = -1;
         rt_base_t level;
@@ -852,7 +854,7 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
 
                 level = rt_hw_interrupt_disable();
                 /* get rx length */
-                rx_length = rx_fifo->freenumbers * sizeof(struct rt_can_msg);
+                rx_length = rt_list_len(&rx_fifo->uselist)* sizeof(struct rt_can_msg);
                 rt_hw_interrupt_enable(level);
 
                 can->parent.rx_indicate(&can->parent, rx_length);

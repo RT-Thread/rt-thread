@@ -16,10 +16,7 @@ elif rtconfig.CROSS_TOOL == 'iar':
 
 CPPPATH = [cwd + '/Device/FUJISTU/MB9BF50x/Include']
 
-if GetDepend(['RT_USING_BSP_CMSIS']):
-    CPPPATH += [cwd + '/CMSIS/Include']
-elif GetDepend(['RT_USING_RTT_CMSIS']):
-    CPPPATH += [RTT_ROOT + '/components/CMSIS/Include']
+CPPPATH += [cwd + '/CMSIS/Include']
 
 group = DefineGroup('CMSIS', src, depend = [''], CPPPATH = CPPPATH)
 

@@ -23,6 +23,7 @@
 # 2018-07-31     weety        Support pyconfig
 
 import os
+import re
 import sys
 import shutil
 
@@ -75,7 +76,7 @@ def mk_rtconfig(filename):
                 if setting[1] == 'y':
                     rtconfig.write('#define %s\n' % setting[0])
                 else:
-                    rtconfig.write('#define %s %s\n' % (setting[0], setting[1]))
+                    rtconfig.write('#define %s %s\n' % (setting[0], re.findall(r"^.*?=(.*)$",line)[0]))
 
     if os.path.isfile('rtconfig_project.h'):
         rtconfig.write('#include "rtconfig_project.h"\n')
@@ -251,3 +252,20 @@ def pyconfig(RTT_ROOT):
     if mtime != mtime2:
         mk_rtconfig(fn)
 
+
+# pyconfig_silent for windows and linux
+def pyconfig_silent(RTT_ROOT):
+    import pymenuconfig
+    print("In pyconfig silent mode. Don`t display menuconfig window.")
+
+    touch_env()
+    env_dir = get_env_dir()
+
+    os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
+
+    fn = '.config'
+
+    pymenuconfig.main(['--kconfig', 'Kconfig', '--config', '.config', '--silent', 'True'])
+
+    # silent mode, force to make rtconfig.h
+    mk_rtconfig(fn)

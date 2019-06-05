@@ -17,6 +17,9 @@ rt_uint32_t rt_thread_switch_interrupt_flag;
 /* exception hook */
 static rt_err_t (*rt_exception_hook)(void *context) = RT_NULL;
 
+extern rt_uint16_t rt_hw_get_st0(void);
+extern rt_uint16_t rt_hw_get_st1(void);
+
 struct exception_stack_frame
 {
     rt_uint32_t t_st0;
@@ -59,6 +62,7 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     stk  = stack_addr;
     stk  = (rt_uint8_t *)RT_ALIGN((rt_uint32_t)stk, 8);
     //stk -= sizeof(struct stack_frame);
+    stk += 1;
 
     stack_frame = (struct stack_frame *)stk;
 

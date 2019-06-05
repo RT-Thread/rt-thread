@@ -13,14 +13,12 @@
 #include <wlan_dev.h>
 #include <wlan_prot.h>
 
-#define DBG_ENABLE
+#define DBG_TAG "WLAN.prot"
 #ifdef RT_WLAN_PROT_DEBUG
-#define DBG_LEVEL DBG_LOG
+#define DBG_LVL DBG_LOG
 #else
-#define DBG_LEVEL DBG_INFO
-#endif
-#define DBG_SECTION_NAME  "WLAN.prot"
-#define DBG_COLOR
+#define DBG_LVL DBG_INFO
+#endif /* RT_WLAN_PROT_DEBUG */
 #include <rtdbg.h>
 
 #if RT_WLAN_PROT_NAME_LEN < 4

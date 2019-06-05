@@ -13,9 +13,11 @@
 
 #include "cpuport.h"
 
+#ifndef RT_USING_SMP
 volatile rt_ubase_t  rt_interrupt_from_thread = 0;
 volatile rt_ubase_t  rt_interrupt_to_thread   = 0;
 volatile rt_uint32_t rt_thread_switch_interrupt_flag = 0;
+#endif
 
 struct rt_hw_stack_frame
 {
@@ -93,6 +95,14 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     return stk;
 }
 
+/*
+ * #ifdef RT_USING_SMP
+ * void rt_hw_context_switch_interrupt(void *context, rt_ubase_t from, rt_ubase_t to, struct rt_thread *to_thread);
+ * #else
+ * void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to);
+ * #endif
+ */
+#ifndef RT_USING_SMP
 void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to)
 {
     if (rt_thread_switch_interrupt_flag == 0)
@@ -102,4 +112,18 @@ void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to)
     rt_thread_switch_interrupt_flag = 1;
 
     return ;
+}
+#endif /* end of RT_USING_SMP */
+
+/** shutdown CPU */
+void rt_hw_cpu_shutdown()
+{
+    rt_uint32_t level;
+    rt_kprintf("shutdown...\n");
+
+    level = rt_hw_interrupt_disable();
+    while (level)
+    {
+        RT_ASSERT(0);
+    }
 }

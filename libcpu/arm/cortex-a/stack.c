@@ -50,12 +50,19 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
     *(--stk) = 0xdeadbeef;                  /* r2 */
     *(--stk) = 0xdeadbeef;                  /* r1 */
     *(--stk) = (rt_uint32_t)parameter;      /* r0 : argument */
-
     /* cpsr */
     if ((rt_uint32_t)tentry & 0x01)
         *(--stk) = SVCMODE | 0x20;          /* thumb mode */
     else
         *(--stk) = SVCMODE;                 /* arm mode   */
+
+#ifdef RT_USING_LWP
+    *(--stk) = 0;       /* user lr */
+    *(--stk) = 0;       /* user sp*/
+#endif
+#ifdef RT_USING_FPU
+    *(--stk) = 0;       /* not use fpu*/
+#endif
 
     /* return task's current stack address */
     return (rt_uint8_t *)stk;

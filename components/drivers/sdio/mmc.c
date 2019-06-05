@@ -11,14 +11,12 @@
 #include <drivers/mmcsd_core.h>
 #include <drivers/mmc.h>
 
-#define DBG_ENABLE
-#define DBG_SECTION_NAME               "SDIO"
+#define DBG_TAG               "SDIO"
 #ifdef RT_SDIO_DEBUG
-#define DBG_LEVEL                      DBG_LOG
+#define DBG_LVL               DBG_LOG
 #else
-#define DBG_LEVEL                      DBG_INFO
+#define DBG_LVL               DBG_INFO
 #endif /* RT_SDIO_DEBUG */
-#define DBG_COLOR
 #include <rtdbg.h>
 
 static const rt_uint32_t tran_unit[] =

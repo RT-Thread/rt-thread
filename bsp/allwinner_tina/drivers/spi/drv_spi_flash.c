@@ -26,10 +26,8 @@
 #include <rthw.h>
 #include <rtdevice.h>
 
-#define DBG_ENABLE
-#define DBG_SECTION_NAME  "FLASH"
-#define DBG_LEVEL         DBG_LOG
-#define DBG_COLOR
+#define DBG_TAG  "FLASH"
+#define DBG_LVL  DBG_LOG
 #include <rtdbg.h>
 
 #define SPI_FLASH_DEVICE_NAME       "spi00"
@@ -64,16 +62,6 @@ int rt_hw_spi_flash_with_sfud_init(void)
     return RT_EOK;
 }
 INIT_PREV_EXPORT(rt_hw_spi_flash_with_sfud_init);
-
-#elif defined(RT_USING_W25QXX)
-#include "spi_flash_w25qxx.h"
-
-int rt_hw_spi_flash_init(void)
-{
-    DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
-    return w25qxx_init(SPI_FLASH_CHIP, SPI_FLASH_DEVICE_NAME);
-}
-INIT_DEVICE_EXPORT(rt_hw_spi_flash_init);
 
 #endif
 

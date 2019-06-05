@@ -17,6 +17,7 @@
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 //#define THREAD_DEBUG
 #define SCHEDULER_DEBUG
 //#define IRQ_DEBUG

@@ -5,6 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2018-02-08     RT-Thread    the first version
  */
 
 #ifndef __MMU_H__
@@ -45,5 +46,7 @@ struct mem_desc
 };
 
 void rt_hw_mmu_init(struct mem_desc *mdesc, rt_uint32_t size);
-
+void mmu_clean_invalidated_dcache(rt_uint32_t buffer, rt_uint32_t size);
+void mmu_clean_dcache(rt_uint32_t buffer, rt_uint32_t size);
+void mmu_invalidate_dcache(rt_uint32_t buffer, rt_uint32_t size);
 #endif

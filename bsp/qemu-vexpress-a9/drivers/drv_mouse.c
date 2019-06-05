@@ -7,10 +7,8 @@
 #include "drv_mouse.h"
 #include "drv_clcd.h"
 
-#define DBG_LEVEL DBG_LOG
-// #define DBG_ENABLE
-#define DBG_COLOR
-
+#define DBG_TAG "drv.mouse"
+#define DBG_LVL DBG_INFO
 #include "rtdbg.h"
 
 #define MOUSE_ADDRESS    (0x10007000)
@@ -246,7 +244,7 @@ int rt_hw_mouse_init(void)
     pdat = rt_malloc(sizeof(struct mouse_pl050_pdata_t));
     if(!pdat)
     {
-        LOG_E("malloc memory", id);
+        LOG_E("malloc memory failed");
         return RT_ERROR;
     }
     rt_memset(pdat, 0, sizeof(struct mouse_pl050_pdata_t));

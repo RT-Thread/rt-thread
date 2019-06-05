@@ -461,6 +461,7 @@ rt_int32_t rt_strcmp(const char *cs, const char *ct)
     return (*cs - *ct);
 }
 RTM_EXPORT(rt_strcmp);
+
 /**
  * The  strnlen()  function  returns the number of characters in the
  * string pointed to by s, excluding the terminating null byte ('\0'),
@@ -476,11 +477,13 @@ rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen)
 {
     const char *sc;
 
-    for (sc = s; *sc != '\0' && sc - s < maxlen; ++sc) /* nothing */
+    for (sc = s; *sc != '\0' && (rt_ubase_t)(sc - s) < maxlen; ++sc) /* nothing */
         ;
 
     return sc - s;
 }
+RTM_EXPORT(rt_strnlen);
+
 /**
  * This function will return the length of a string, which terminate will
  * null character.
@@ -535,13 +538,33 @@ void rt_show_version(void)
     rt_kprintf("- RT -     Thread Operating System\n");
     rt_kprintf(" / | \\     %d.%d.%d build %s\n",
                RT_VERSION, RT_SUBVERSION, RT_REVISION, __DATE__);
-    rt_kprintf(" 2006 - 2018 Copyright by rt-thread team\n");
+    rt_kprintf(" 2006 - 2019 Copyright by rt-thread team\n");
 }
 RTM_EXPORT(rt_show_version);
 
 /* private function */
 #define isdigit(c)  ((unsigned)((c) - '0') < 10)
 
+#ifdef RT_PRINTF_LONGLONG
+rt_inline int divide(long long *n, int base)
+{
+    int res;
+
+    /* optimized for processor which does not support divide instructions. */
+    if (base == 10)
+    {
+        res = (int)(((unsigned long long)*n) % 10U);
+        *n = (long long)(((unsigned long long)*n) / 10U);
+    }
+    else
+    {
+        res = (int)(((unsigned long long)*n) % 16U);
+        *n = (long long)(((unsigned long long)*n) / 16U);
+    }
+
+    return res;
+}
+#else
 rt_inline int divide(long *n, int base)
 {
     int res;
@@ -560,6 +583,7 @@ rt_inline int divide(long *n, int base)
 
     return res;
 }
+#endif
 
 rt_inline int skip_atoi(const char **s)
 {
@@ -581,7 +605,11 @@ rt_inline int skip_atoi(const char **s)
 #ifdef RT_PRINTF_PRECISION
 static char *print_number(char *buf,
                           char *end,
+#ifdef RT_PRINTF_LONGLONG
+                          long long  num,
+#else
                           long  num,
+#endif
                           int   base,
                           int   s,
                           int   precision,
@@ -589,7 +617,11 @@ static char *print_number(char *buf,
 #else
 static char *print_number(char *buf,
                           char *end,
+#ifdef RT_PRINTF_LONGLONG
+                          long long  num,
+#else
                           long  num,
+#endif
                           int   base,
                           int   s,
                           int   type)
@@ -601,6 +633,7 @@ static char *print_number(char *buf,
 #else
     char tmp[16];
 #endif
+    int precision_bak = precision;
     const char *digits;
     static const char small_digits[] = "0123456789abcdef";
     static const char large_digits[] = "0123456789ABCDEF";
@@ -664,7 +697,7 @@ static char *print_number(char *buf,
 
         while (size-- > 0)
         {
-            if (buf <= end)
+            if (buf < end)
                 *buf = ' ';
             ++ buf;
         }
@@ -672,11 +705,11 @@ static char *print_number(char *buf,
 
     if (sign)
     {
-        if (buf <= end)
+        if (buf < end)
         {
             *buf = sign;
-            -- size;
         }
+        -- size;
         ++ buf;
     }
 
@@ -685,16 +718,16 @@ static char *print_number(char *buf,
     {
         if (base == 8)
         {
-            if (buf <= end)
+            if (buf < end)
                 *buf = '0';
             ++ buf;
         }
         else if (base == 16)
         {
-            if (buf <= end)
+            if (buf < end)
                 *buf = '0';
             ++ buf;
-            if (buf <= end)
+            if (buf < end)
             {
                 *buf = type & LARGE ? 'X' : 'x';
             }
@@ -708,7 +741,7 @@ static char *print_number(char *buf,
     {
         while (size-- > 0)
         {
-            if (buf <= end)
+            if (buf < end)
                 *buf = c;
             ++ buf;
         }
@@ -717,23 +750,23 @@ static char *print_number(char *buf,
 #ifdef RT_PRINTF_PRECISION
     while (i < precision--)
     {
-        if (buf <= end)
+        if (buf < end)
             *buf = '0';
         ++ buf;
     }
 #endif
 
     /* put number in the temporary buffer */
-    while (i-- > 0)
+    while (i-- > 0 && (precision_bak != 0))
     {
-        if (buf <= end)
+        if (buf < end)
             *buf = tmp[i];
         ++ buf;
     }
 
     while (size-- > 0)
     {
-        if (buf <= end)
+        if (buf < end)
             *buf = ' ';
         ++ buf;
     }
@@ -765,7 +798,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
 #endif
 
     str = buf;
-    end = buf + size - 1;
+    end = buf + size;
 
     /* Make sure end is always >= buf */
     if (end < buf)
@@ -778,7 +811,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
     {
         if (*fmt != '%')
         {
-            if (str <= end)
+            if (str < end)
                 *str = *fmt;
             ++ str;
             continue;
@@ -859,20 +892,20 @@ rt_int32_t rt_vsnprintf(char       *buf,
             {
                 while (--field_width > 0)
                 {
-                    if (str <= end) *str = ' ';
+                    if (str < end) *str = ' ';
                     ++ str;
                 }
             }
 
             /* get character */
             c = (rt_uint8_t)va_arg(args, int);
-            if (str <= end) *str = c;
+            if (str < end) *str = c;
             ++ str;
 
             /* put width */
             while (--field_width > 0)
             {
-                if (str <= end) *str = ' ';
+                if (str < end) *str = ' ';
                 ++ str;
             }
             continue;
@@ -890,21 +923,21 @@ rt_int32_t rt_vsnprintf(char       *buf,
             {
                 while (len < field_width--)
                 {
-                    if (str <= end) *str = ' ';
+                    if (str < end) *str = ' ';
                     ++ str;
                 }
             }
 
             for (i = 0; i < len; ++i)
             {
-                if (str <= end) *str = *s;
+                if (str < end) *str = *s;
                 ++ str;
                 ++ s;
             }
 
             while (len < field_width--)
             {
-                if (str <= end) *str = ' ';
+                if (str < end) *str = ' ';
                 ++ str;
             }
             continue;
@@ -927,7 +960,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
             continue;
 
         case '%':
-            if (str <= end) *str = '%';
+            if (str < end) *str = '%';
             ++ str;
             continue;
 
@@ -949,12 +982,12 @@ rt_int32_t rt_vsnprintf(char       *buf,
             break;
 
         default:
-            if (str <= end) *str = '%';
+            if (str < end) *str = '%';
             ++ str;
 
             if (*fmt)
             {
-                if (str <= end) *str = *fmt;
+                if (str < end) *str = *fmt;
                 ++ str;
             }
             else
@@ -991,8 +1024,14 @@ rt_int32_t rt_vsnprintf(char       *buf,
 #endif
     }
 
-    if (str <= end) *str = '\0';
-    else *end = '\0';
+    if (size > 0)
+    {
+        if (str < end) *str = '\0';
+        else
+        {
+            end[-1] = '\0';
+        }
+    }
 
     /* the trailing null byte doesn't count towards the total
     * ++str;

@@ -20,6 +20,7 @@
 #define IDLE_THREAD_STACK_SIZE	512
 // <section name="RT_DEBUG" description="Kernel Debug Configuration" default="true" >
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 // <bool name="RT_THREAD_DEBUG" description="Thread debug enable" default="false" />
 // #define RT_THREAD_DEBUG
 // <bool name="RT_USING_OVERFLOW_CHECK" description="Thread stack over flow detect" default="true" />
@@ -144,8 +145,6 @@
 // </section>
 
 // </RDTConfigurator>
-
-#define RT_USING_LOGTRACE
 
 // <section name="RT_USING_VMM" description="Enable RT-Thread hypervisor" default="true" >
 // #define RT_USING_VMM

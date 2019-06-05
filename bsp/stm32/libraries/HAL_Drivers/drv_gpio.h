@@ -5,13 +5,14 @@
  *
  * Change Logs:
  * Date           Author            Notes
- * 2018-11-06     balanceTWK        change to new framework
+ * 2018-11-06     balanceTWK        first version
  */
 
 #ifndef __DRV_GPIO_H__
 #define __DRV_GPIO_H__
 
 #include <drv_common.h>
+#include <board.h>
 
 #define __STM32_PORT(port)  GPIO##port
 
