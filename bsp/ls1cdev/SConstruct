@@ -36,7 +36,6 @@ env.Replace(LINKFLAGS = rtconfig.LFLAGS)
 if GetDepend('RT_USING_FPU'):
     env['CCFLAGS']   = env['CCFLAGS'].replace('-msoft-float', '-mhard-float')
     env['ASFLAGS']   = env['ASFLAGS'].replace('-msoft-float', '-mhard-float')
-    env['CXXFLAGS']  = env['CXXFLAGS'].replace('-msoft-float', '-mhard-float')
     env['LINKFLAGS'] = env['LINKFLAGS'].replace('-msoft-float', '-mhard-float')
     
 if GetDepend('RT_USING_RTGUI'):
