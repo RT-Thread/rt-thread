@@ -104,7 +104,6 @@ void HAL_MspInit(void)
 */
 void HAL_DMA2D_MspInit(DMA2D_HandleTypeDef* hdma2d)
 {
-
   if(hdma2d->Instance==DMA2D)
   {
   /* USER CODE BEGIN DMA2D_MspInit 0 */
@@ -125,10 +124,8 @@ void HAL_DMA2D_MspInit(DMA2D_HandleTypeDef* hdma2d)
 * @param hdma2d: DMA2D handle pointer
 * @retval None
 */
-
 void HAL_DMA2D_MspDeInit(DMA2D_HandleTypeDef* hdma2d)
 {
-
   if(hdma2d->Instance==DMA2D)
   {
   /* USER CODE BEGIN DMA2D_MspDeInit 0 */
@@ -151,7 +148,6 @@ void HAL_DMA2D_MspDeInit(DMA2D_HandleTypeDef* hdma2d)
 */
 void HAL_LTDC_MspInit(LTDC_HandleTypeDef* hltdc)
 {
-
   GPIO_InitTypeDef GPIO_InitStruct = {0};
   if(hltdc->Instance==LTDC)
   {
@@ -231,10 +227,8 @@ void HAL_LTDC_MspInit(LTDC_HandleTypeDef* hltdc)
 * @param hltdc: LTDC handle pointer
 * @retval None
 */
-
 void HAL_LTDC_MspDeInit(LTDC_HandleTypeDef* hltdc)
 {
-
   if(hltdc->Instance==LTDC)
   {
   /* USER CODE BEGIN LTDC_MspDeInit 0 */
@@ -284,6 +278,50 @@ void HAL_LTDC_MspDeInit(LTDC_HandleTypeDef* hltdc)
 }
 
 /**
+* @brief RTC MSP Initialization
+* This function configures the hardware resources used in this example
+* @param hrtc: RTC handle pointer
+* @retval None
+*/
+void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
+{
+  if(hrtc->Instance==RTC)
+  {
+  /* USER CODE BEGIN RTC_MspInit 0 */
+
+  /* USER CODE END RTC_MspInit 0 */
+    /* Peripheral clock enable */
+    __HAL_RCC_RTC_ENABLE();
+  /* USER CODE BEGIN RTC_MspInit 1 */
+
+  /* USER CODE END RTC_MspInit 1 */
+  }
+
+}
+
+/**
+* @brief RTC MSP De-Initialization
+* This function freeze the hardware resources used in this example
+* @param hrtc: RTC handle pointer
+* @retval None
+*/
+void HAL_RTC_MspDeInit(RTC_HandleTypeDef* hrtc)
+{
+  if(hrtc->Instance==RTC)
+  {
+  /* USER CODE BEGIN RTC_MspDeInit 0 */
+
+  /* USER CODE END RTC_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_RTC_DISABLE();
+  /* USER CODE BEGIN RTC_MspDeInit 1 */
+
+  /* USER CODE END RTC_MspDeInit 1 */
+  }
+
+}
+
+/**
 * @brief UART MSP Initialization
 * This function configures the hardware resources used in this example
 * @param huart: UART handle pointer
@@ -291,7 +329,6 @@ void HAL_LTDC_MspDeInit(LTDC_HandleTypeDef* hltdc)
 */
 void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 {
-
   GPIO_InitTypeDef GPIO_InitStruct = {0};
   if(huart->Instance==USART1)
   {
@@ -329,10 +366,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 * @param huart: UART handle pointer
 * @retval None
 */
-
 void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
 {
-
   if(huart->Instance==USART1)
   {
   /* USER CODE BEGIN USART1_MspDeInit 0 */
@@ -362,7 +397,7 @@ static void HAL_FMC_MspInit(void){
   /* USER CODE BEGIN FMC_MspInit 0 */
 
   /* USER CODE END FMC_MspInit 0 */
-  GPIO_InitTypeDef GPIO_InitStruct;
+  GPIO_InitTypeDef GPIO_InitStruct ={0};
   if (FMC_Initialized) {
     return;
   }
