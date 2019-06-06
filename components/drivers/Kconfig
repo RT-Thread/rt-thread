@@ -278,7 +278,7 @@ menu "Using Hardware Crypto drivers"
             int "IV max size"
             default "16"
 
-        config HWCRYPTO_KEYBIT_MAX_SIZE
+        config RT_HWCRYPTO_KEYBIT_MAX_SIZE
             int "Key max bit length"
             default 256
 
