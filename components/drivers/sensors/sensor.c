@@ -195,6 +195,11 @@ static rt_err_t rt_sensor_open(rt_device_t dev, rt_uint16_t oflag)
     }
     else
     {
+        if (sensor->module)
+        {
+            /* release the module mutex */
+            rt_mutex_release(sensor->module->lock);
+        }
         return -RT_EINVAL;
     }
 
