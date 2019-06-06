@@ -47,8 +47,29 @@ void SysTick_Handler(void)
     rt_interrupt_leave();
 }
 
+/**
+  * @brief  This function provides delay (in milliseconds) based on CPU cycles method.
+  * @param  mdelay specifies the delay time length, in milliseconds.
+  * @retval None
+  */
+static void _mDelay(uint32_t mdelay)
+{
+    __IO Delay = mdelay * (SystemCoreClock / 8U / 1000U);
+    do
+    {
+        __NOP();
+    }
+    while (Delay --);
+}
+
 uint32_t HAL_GetTick(void)
 {
+    if (RESET == (SysTick->CTRL & SysTick_CTRL_ENABLE_Msk))
+    {
+        _mDelay(1);
+        HAL_IncTick();
+        rt_tick_increase();
+    }
     return rt_tick_get() * 1000 / RT_TICK_PER_SECOND;
 }
 
@@ -60,6 +81,14 @@ void HAL_ResumeTick(void)
 {
 }
 
+void HAL_Delay(uint32_t Delay)
+{
+    uint32_t tickstart = HAL_GetTick();
+    uint32_t wait = Delay;
+    while ((HAL_GetTick() - tickstart) < wait)
+    {
+    }
+}
 /* re-implement tick interface for STM32 HAL */
 HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 {
