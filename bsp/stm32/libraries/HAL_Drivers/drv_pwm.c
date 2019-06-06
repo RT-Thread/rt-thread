@@ -189,17 +189,29 @@ static rt_err_t drv_pwm_get(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
 #elif defined(SOC_SERIES_STM32L4)
     if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
+<<<<<<< HEAD
 #elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0)
     if (0)
 #endif
     {
 #ifndef SOC_SERIES_STM32F0
+=======
+#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
+    if (0)
+#endif
+    {
+#if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
         tim_clock = HAL_RCC_GetPCLK2Freq() * 2;
 #endif
     }
     else
     {
+<<<<<<< HEAD
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0)
+=======
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
         tim_clock = HAL_RCC_GetPCLK1Freq();
 #else
         tim_clock = HAL_RCC_GetPCLK1Freq() * 2;
@@ -234,17 +246,29 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
 #elif defined(SOC_SERIES_STM32L4)
     if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
+<<<<<<< HEAD
 #elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0)
     if (0)
 #endif
     {
 #ifndef SOC_SERIES_STM32F0
+=======
+#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
+    if (0)
+#endif
+    {
+#if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
         tim_clock = HAL_RCC_GetPCLK2Freq() * 2;
 #endif
     }
     else
     {
+<<<<<<< HEAD
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0)
+=======
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
         tim_clock = HAL_RCC_GetPCLK1Freq();
 #else
         tim_clock = HAL_RCC_GetPCLK1Freq() * 2;
@@ -411,9 +435,33 @@ __exit:
 
 static void pwm_get_channel(void)
 {
+<<<<<<< HEAD
 #ifdef BSP_USING_PWM2_CH1
     stm32_pwm_obj[PWM2_INDEX].channel |= 1 << 0;
 #endif
+=======
+#ifdef BSP_USING_PWM1_CH1
+    stm32_pwm_obj[PWM1_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM1_CH2
+    stm32_pwm_obj[PWM1_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM1_CH3
+    stm32_pwm_obj[PWM1_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM1_CH4
+    stm32_pwm_obj[PWM1_INDEX].channel |= 1 << 3;
+#endif
+#ifdef BSP_USING_PWM2_CH1
+    stm32_pwm_obj[PWM2_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM2_CH2
+    stm32_pwm_obj[PWM2_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM2_CH3
+    stm32_pwm_obj[PWM2_INDEX].channel |= 1 << 2;
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #ifdef BSP_USING_PWM2_CH4
     stm32_pwm_obj[PWM2_INDEX].channel |= 1 << 3;
 #endif
@@ -429,12 +477,19 @@ static void pwm_get_channel(void)
 #ifdef BSP_USING_PWM3_CH4
     stm32_pwm_obj[PWM3_INDEX].channel |= 1 << 3;
 #endif
+<<<<<<< HEAD
+=======
+#ifdef BSP_USING_PWM4_CH1
+    stm32_pwm_obj[PWM4_INDEX].channel |= 1 << 0;
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #ifdef BSP_USING_PWM4_CH2
     stm32_pwm_obj[PWM4_INDEX].channel |= 1 << 1;
 #endif
 #ifdef BSP_USING_PWM4_CH3
     stm32_pwm_obj[PWM4_INDEX].channel |= 1 << 2;
 #endif
+<<<<<<< HEAD
 #ifdef BSP_USING_PWM5_CH1
     stm32_pwm_obj[PWM5_INDEX].channel |= 1 << 1;
 #endif
@@ -444,6 +499,71 @@ static void pwm_get_channel(void)
 #ifdef BSP_USING_PWM5_CH3
     stm32_pwm_obj[PWM5_INDEX].channel |= 1 << 3;
 #endif
+=======
+#ifdef BSP_USING_PWM4_CH4
+    stm32_pwm_obj[PWM4_INDEX].channel |= 1 << 3;
+#endif
+#ifdef BSP_USING_PWM5_CH1
+    stm32_pwm_obj[PWM5_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM5_CH2
+    stm32_pwm_obj[PWM5_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM5_CH3
+    stm32_pwm_obj[PWM5_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM5_CH4
+    stm32_pwm_obj[PWM5_INDEX].channel |= 1 << 3;
+#endif
+#ifdef BSP_USING_PWM6_CH1
+    stm32_pwm_obj[PWM6_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM6_CH2
+    stm32_pwm_obj[PWM6_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM6_CH3
+    stm32_pwm_obj[PWM6_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM6_CH4
+    stm32_pwm_obj[PWM6_INDEX].channel |= 1 << 3;
+#endif
+#ifdef BSP_USING_PWM7_CH1
+    stm32_pwm_obj[PWM7_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM7_CH2
+    stm32_pwm_obj[PWM7_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM7_CH3
+    stm32_pwm_obj[PWM7_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM7_CH4
+    stm32_pwm_obj[PWM7_INDEX].channel |= 1 << 3;
+#endif
+#ifdef BSP_USING_PWM8_CH1
+    stm32_pwm_obj[PWM8_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM8_CH2
+    stm32_pwm_obj[PWM8_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM8_CH3
+    stm32_pwm_obj[PWM8_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM8_CH4
+    stm32_pwm_obj[PWM8_INDEX].channel |= 1 << 3;
+#endif
+#ifdef BSP_USING_PWM9_CH1
+    stm32_pwm_obj[PWM9_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM9_CH2
+    stm32_pwm_obj[PWM9_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM9_CH3
+    stm32_pwm_obj[PWM9_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM9_CH4
+    stm32_pwm_obj[PWM9_INDEX].channel |= 1 << 3;
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 static int stm32_pwm_init(void)

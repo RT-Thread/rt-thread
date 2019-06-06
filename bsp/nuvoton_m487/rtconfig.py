@@ -3,7 +3,11 @@ import os
 # toolchains options
 ARCH='arm'
 CPU='cortex-m4'
+<<<<<<< HEAD
 CROSS_TOOL='gcc'
+=======
+CROSS_TOOL='keil'
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 if os.getenv('RTT_CC'):
 	CROSS_TOOL = os.getenv('RTT_CC')

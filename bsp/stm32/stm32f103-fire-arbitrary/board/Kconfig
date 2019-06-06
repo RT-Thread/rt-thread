@@ -9,6 +9,10 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_USB_TO_USART
         bool "Enable USB TO USART (uart1)"
+<<<<<<< HEAD
+=======
+        select BSP_USING_UART
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
         select BSP_USING_UART1
         default y
 
@@ -18,7 +22,12 @@ menu "Onboard Peripheral Drivers"
         default n
 
     config BSP_USING_SPI_FLASH
+<<<<<<< HEAD
         bool "Enable SPI FLASH (w25q64 spi1)"
+=======
+        bool "Enable SPI FLASH (W25Q64 spi1)"
+        select BSP_USING_SPI
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
         select BSP_USING_SPI1
         select RT_USING_SFUD
         select RT_SFUD_USING_SFDP
@@ -52,7 +61,10 @@ menu "Onboard Peripheral Drivers"
         select WIZNET_DEVICE_EXTERN_CONFIG
         select BSP_USING_SPI2
         if BSP_USING_ETH
+<<<<<<< HEAD
 
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
             if WIZNET_DEVICE_EXTERN_CONFIG
                 config WIZ_SPI_DEVICE
                     string
@@ -89,6 +101,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_PIN
         default y
 
+<<<<<<< HEAD
     config BSP_USING_UART1
         bool "Enable UART1"
         select RT_USING_SERIAL
@@ -104,10 +117,46 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SERIAL
         default n
         
+=======
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default y
+
+            config BSP_UART1_RX_USING_DMA
+                bool "Enable UART1 RX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
+
+            config BSP_UART2_RX_USING_DMA
+                bool "Enable UART2 RX DMA"
+                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                default n
+                
+            config BSP_USING_UART3
+                bool "Enable UART3"
+                default n
+
+            config BSP_UART3_RX_USING_DMA
+                bool "Enable UART3 RX DMA"
+                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                default n  
+        endif
+   
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
         default n
 
+<<<<<<< HEAD
     config BSP_USING_SPI1
         bool "Enable SPI1 BUS"
         select RT_USING_SPI
@@ -126,6 +175,58 @@ menu "On-chip Peripheral Drivers"
     config BSP_SPI_USING_DMA
         bool "Enable SPI DMA support"
         default n
+=======
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS"
+                default n
+
+            config BSP_SPI1_TX_USING_DMA
+                bool "Enable SPI1 TX DMA"
+                depends on BSP_USING_SPI1
+                default n
+                
+            config BSP_SPI1_RX_USING_DMA
+                bool "Enable SPI1 RX DMA"
+                depends on BSP_USING_SPI1
+                select BSP_SPI1_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI2
+                bool "Enable SPI2 BUS"
+                default n  
+                
+            config BSP_SPI2_TX_USING_DMA
+                bool "Enable SPI2 TX DMA"
+                depends on BSP_USING_SPI2
+                default n
+                
+            config BSP_SPI2_RX_USING_DMA
+                bool "Enable SPI2 RX DMA"
+                depends on BSP_USING_SPI2
+                select BSP_SPI2_TX_USING_DMA
+                default n
+                
+            config BSP_USING_SPI3
+                bool "Enable SPI3 BUS"
+                default n        
+
+            config BSP_SPI3_TX_USING_DMA
+                bool "Enable SPI3 TX DMA"
+                depends on BSP_USING_SPI3
+                default n
+                
+            config BSP_SPI3_RX_USING_DMA
+                bool "Enable SPI3 RX DMA"
+                depends on BSP_USING_SPI3
+                select BSP_SPI3_TX_USING_DMA
+                default n  
+        endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
     menuconfig BSP_USING_I2C1
         bool "Enable I2C1 BUS (software simulation)"
@@ -199,11 +300,30 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+<<<<<<< HEAD
     config BSP_USING_ONCHIP_RTC
+=======
+    menuconfig BSP_USING_ONCHIP_RTC
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
         bool "Enable RTC"
         select RT_USING_RTC
         select RT_USING_LIBC
         default n
+<<<<<<< HEAD
+=======
+        if BSP_USING_ONCHIP_RTC
+            choice
+                prompt "Select clock source"
+                default BSP_RTC_USING_LSE
+
+                config BSP_RTC_USING_LSE
+                    bool "RTC USING LSE"
+
+                config BSP_RTC_USING_LSI
+                    bool "RTC USING LSI"
+            endchoice
+        endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
     config BSP_USING_WDT
         bool "Enable Watchdog Timer"
@@ -215,6 +335,19 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SDIO
         select RT_USING_DFS
         default n
+<<<<<<< HEAD
+=======
+	
+	menuconfig BSP_USING_CAN
+        bool "Enable CAN"
+        default n
+        select RT_USING_CAN
+        if BSP_USING_CAN
+            config BSP_USING_CAN1
+                bool "using CAN1"
+                default n
+        endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 endmenu
 

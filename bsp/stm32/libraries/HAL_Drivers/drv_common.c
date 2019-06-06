@@ -5,15 +5,22 @@
  *
  * Change Logs:
  * Date           Author       Notes
+<<<<<<< HEAD
  * 2018-11-7      SummerGift   change to new framework
+=======
+ * 2018-11-7      SummerGift   first version
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
  */
 
 #include "drv_common.h"
 
+<<<<<<< HEAD
 #ifdef RT_USING_PIN
 #include "drv_gpio.h"
 #endif
 
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #ifdef RT_USING_SERIAL
 #include "drv_usart.h"
 #endif
@@ -91,6 +98,26 @@ void _Error_Handler(char *s, int num)
 }
 
 /**
+<<<<<<< HEAD
+=======
+ * This function will delay for some us.
+ *
+ * @param us the delay time of us
+ */
+void rt_hw_us_delay(rt_uint32_t us)
+{
+    rt_uint32_t start, now, delta, reload, us_tick;
+    start = SysTick->VAL;
+    reload = SysTick->LOAD;
+    us_tick = SystemCoreClock / 1000000UL;
+    do {
+        now = SysTick->VAL;
+        delta = start > now ? start - now : reload + start - now;
+    } while(delta < us_tick * us);
+}
+
+/**
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
  * This function will initial STM32 board.
  */
 RT_WEAK void rt_hw_board_init()

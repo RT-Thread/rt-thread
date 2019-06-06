@@ -6,6 +6,7 @@
   ******************************************************************************
   * @attention
   *
+<<<<<<< HEAD
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
@@ -29,6 +30,15 @@
   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=======
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   *
   ******************************************************************************
   */
@@ -151,7 +161,11 @@ typedef struct
                                        This parameter can be a value of @ref CAN_filter_scale */
 
   uint32_t FilterActivation;      /*!< Enable or disable the filter.
+<<<<<<< HEAD
                                        This parameter can be set to ENABLE or DISABLE. */
+=======
+                                       This parameter can be a value of @ref CAN_filter_activation */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
   uint32_t SlaveStartFilterBank;  /*!< Select the start filter bank for the slave CAN instance.
                                        For single CAN instances, this parameter is meaningless.
@@ -233,8 +247,63 @@ typedef struct __CAN_HandleTypeDef
   __IO uint32_t               ErrorCode;                 /*!< CAN Error code.
                                                               This parameter can be a value of @ref CAN_Error_Code */
 
+<<<<<<< HEAD
 } CAN_HandleTypeDef;
 
+=======
+#if USE_HAL_CAN_REGISTER_CALLBACKS == 1
+  void (* TxMailbox0CompleteCallback)(struct __CAN_HandleTypeDef *hcan);/*!< CAN Tx Mailbox 0 complete callback    */
+  void (* TxMailbox1CompleteCallback)(struct __CAN_HandleTypeDef *hcan);/*!< CAN Tx Mailbox 1 complete callback    */
+  void (* TxMailbox2CompleteCallback)(struct __CAN_HandleTypeDef *hcan);/*!< CAN Tx Mailbox 2 complete callback    */
+  void (* TxMailbox0AbortCallback)(struct __CAN_HandleTypeDef *hcan);   /*!< CAN Tx Mailbox 0 abort callback       */
+  void (* TxMailbox1AbortCallback)(struct __CAN_HandleTypeDef *hcan);   /*!< CAN Tx Mailbox 1 abort callback       */
+  void (* TxMailbox2AbortCallback)(struct __CAN_HandleTypeDef *hcan);   /*!< CAN Tx Mailbox 2 abort callback       */
+  void (* RxFifo0MsgPendingCallback)(struct __CAN_HandleTypeDef *hcan); /*!< CAN Rx FIFO 0 msg pending callback    */
+  void (* RxFifo0FullCallback)(struct __CAN_HandleTypeDef *hcan);       /*!< CAN Rx FIFO 0 full callback           */
+  void (* RxFifo1MsgPendingCallback)(struct __CAN_HandleTypeDef *hcan); /*!< CAN Rx FIFO 1 msg pending callback    */
+  void (* RxFifo1FullCallback)(struct __CAN_HandleTypeDef *hcan);       /*!< CAN Rx FIFO 1 full callback           */
+  void (* SleepCallback)(struct __CAN_HandleTypeDef *hcan);             /*!< CAN Sleep callback                    */
+  void (* WakeUpFromRxMsgCallback)(struct __CAN_HandleTypeDef *hcan);   /*!< CAN Wake Up from Rx msg callback      */
+  void (* ErrorCallback)(struct __CAN_HandleTypeDef *hcan);             /*!< CAN Error callback                    */
+
+  void (* MspInitCallback)(struct __CAN_HandleTypeDef *hcan);           /*!< CAN Msp Init callback                 */
+  void (* MspDeInitCallback)(struct __CAN_HandleTypeDef *hcan);         /*!< CAN Msp DeInit callback               */
+
+#endif /* (USE_HAL_CAN_REGISTER_CALLBACKS) */
+} CAN_HandleTypeDef;
+
+#if USE_HAL_CAN_REGISTER_CALLBACKS == 1
+/**
+  * @brief  HAL CAN common Callback ID enumeration definition
+  */
+typedef enum
+{
+  HAL_CAN_TX_MAILBOX0_COMPLETE_CB_ID       = 0x00U,    /*!< CAN Tx Mailbox 0 complete callback ID         */
+  HAL_CAN_TX_MAILBOX1_COMPLETE_CB_ID       = 0x01U,    /*!< CAN Tx Mailbox 1 complete callback ID         */
+  HAL_CAN_TX_MAILBOX2_COMPLETE_CB_ID       = 0x02U,    /*!< CAN Tx Mailbox 2 complete callback ID         */
+  HAL_CAN_TX_MAILBOX0_ABORT_CB_ID          = 0x03U,    /*!< CAN Tx Mailbox 0 abort callback ID            */
+  HAL_CAN_TX_MAILBOX1_ABORT_CB_ID          = 0x04U,    /*!< CAN Tx Mailbox 1 abort callback ID            */
+  HAL_CAN_TX_MAILBOX2_ABORT_CB_ID          = 0x05U,    /*!< CAN Tx Mailbox 2 abort callback ID            */
+  HAL_CAN_RX_FIFO0_MSG_PENDING_CB_ID       = 0x06U,    /*!< CAN Rx FIFO 0 message pending callback ID     */
+  HAL_CAN_RX_FIFO0_FULL_CB_ID              = 0x07U,    /*!< CAN Rx FIFO 0 full callback ID                */
+  HAL_CAN_RX_FIFO1_MSG_PENDING_CB_ID       = 0x08U,    /*!< CAN Rx FIFO 1 message pending callback ID     */
+  HAL_CAN_RX_FIFO1_FULL_CB_ID              = 0x09U,    /*!< CAN Rx FIFO 1 full callback ID                */
+  HAL_CAN_SLEEP_CB_ID                      = 0x0AU,    /*!< CAN Sleep callback ID                         */
+  HAL_CAN_WAKEUP_FROM_RX_MSG_CB_ID         = 0x0BU,    /*!< CAN Wake Up fropm Rx msg callback ID          */
+  HAL_CAN_ERROR_CB_ID                      = 0x0CU,    /*!< CAN Error callback ID                         */
+
+  HAL_CAN_MSPINIT_CB_ID                    = 0x0DU,    /*!< CAN MspInit callback ID                       */
+  HAL_CAN_MSPDEINIT_CB_ID                  = 0x0EU,    /*!< CAN MspDeInit callback ID                     */
+
+} HAL_CAN_CallbackIDTypeDef;
+
+/**
+  * @brief  HAL CAN Callback pointer definition
+  */
+typedef  void (*pCAN_CallbackTypeDef)(CAN_HandleTypeDef *hcan); /*!< pointer to a CAN callback function   */
+
+#endif /* USE_HAL_CAN_REGISTER_CALLBACKS */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */
@@ -272,6 +341,14 @@ typedef struct __CAN_HandleTypeDef
 #define HAL_CAN_ERROR_NOT_STARTED     (0x00100000U)  /*!< Peripheral not started                               */
 #define HAL_CAN_ERROR_PARAM           (0x00200000U)  /*!< Parameter error                                      */
 
+<<<<<<< HEAD
+=======
+#if USE_HAL_CAN_REGISTER_CALLBACKS == 1
+#define HAL_CAN_ERROR_INVALID_CALLBACK (0x00400000U) /*!< Invalid Callback error                               */
+#endif /* USE_HAL_CAN_REGISTER_CALLBACKS */
+#define HAL_CAN_ERROR_INTERNAL        (0x00800000U)  /*!< Internal error                                       */
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */
@@ -364,6 +441,18 @@ typedef struct __CAN_HandleTypeDef
   * @}
   */
 
+<<<<<<< HEAD
+=======
+/** @defgroup CAN_filter_activation CAN Filter Activation
+  * @{
+  */
+#define CAN_FILTER_DISABLE          (0x00000000U)  /*!< Disable filter */
+#define CAN_FILTER_ENABLE           (0x00000001U)  /*!< Enable filter  */
+/**
+  * @}
+  */
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /** @defgroup CAN_filter_FIFO CAN Filter FIFO
   * @{
   */
@@ -496,7 +585,19 @@ typedef struct __CAN_HandleTypeDef
   * @param  __HANDLE__ CAN handle.
   * @retval None
   */
+<<<<<<< HEAD
 #define __HAL_CAN_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_CAN_STATE_RESET)
+=======
+#if USE_HAL_CAN_REGISTER_CALLBACKS == 1
+#define __HAL_CAN_RESET_HANDLE_STATE(__HANDLE__) do{                                              \
+                                                     (__HANDLE__)->State = HAL_CAN_STATE_RESET;   \
+                                                     (__HANDLE__)->MspInitCallback = NULL;        \
+                                                     (__HANDLE__)->MspDeInitCallback = NULL;      \
+                                                   } while(0)
+#else
+#define __HAL_CAN_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_CAN_STATE_RESET)
+#endif /*USE_HAL_CAN_REGISTER_CALLBACKS */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /**
   * @brief  Enable the specified CAN interrupts.
@@ -587,6 +688,15 @@ HAL_StatusTypeDef HAL_CAN_DeInit(CAN_HandleTypeDef *hcan);
 void HAL_CAN_MspInit(CAN_HandleTypeDef *hcan);
 void HAL_CAN_MspDeInit(CAN_HandleTypeDef *hcan);
 
+<<<<<<< HEAD
+=======
+#if USE_HAL_CAN_REGISTER_CALLBACKS == 1
+/* Callbacks Register/UnRegister functions  ***********************************/
+HAL_StatusTypeDef HAL_CAN_RegisterCallback(CAN_HandleTypeDef *hcan, HAL_CAN_CallbackIDTypeDef CallbackID, void (* pCallback)(CAN_HandleTypeDef *_hcan));
+HAL_StatusTypeDef HAL_CAN_UnRegisterCallback(CAN_HandleTypeDef *hcan, HAL_CAN_CallbackIDTypeDef CallbackID);
+
+#endif /* (USE_HAL_CAN_REGISTER_CALLBACKS) */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
  * @}
  */
@@ -732,12 +842,23 @@ HAL_StatusTypeDef HAL_CAN_ResetError(CAN_HandleTypeDef *hcan);
                          ((BS2) == CAN_BS2_7TQ) || ((BS2) == CAN_BS2_8TQ))
 #define IS_CAN_PRESCALER(PRESCALER) (((PRESCALER) >= 1U) && ((PRESCALER) <= 1024U))
 #define IS_CAN_FILTER_ID_HALFWORD(HALFWORD) ((HALFWORD) <= 0xFFFFU)
+<<<<<<< HEAD
 #define IS_CAN_FILTER_BANK_DUAL(BANK) ((BANK) <= 27U)
+=======
+#if   defined(CAN2)
+#define IS_CAN_FILTER_BANK_DUAL(BANK) ((BANK) <= 27U)
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define IS_CAN_FILTER_BANK_SINGLE(BANK) ((BANK) <= 13U)
 #define IS_CAN_FILTER_MODE(MODE) (((MODE) == CAN_FILTERMODE_IDMASK) || \
                                   ((MODE) == CAN_FILTERMODE_IDLIST))
 #define IS_CAN_FILTER_SCALE(SCALE) (((SCALE) == CAN_FILTERSCALE_16BIT) || \
                                     ((SCALE) == CAN_FILTERSCALE_32BIT))
+<<<<<<< HEAD
+=======
+#define IS_CAN_FILTER_ACTIVATION(ACTIVATION) (((ACTIVATION) == CAN_FILTER_DISABLE) || \
+                                              ((ACTIVATION) == CAN_FILTER_ENABLE))
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define IS_CAN_FILTER_FIFO(FIFO) (((FIFO) == CAN_FILTER_FIFO0) || \
                                   ((FIFO) == CAN_FILTER_FIFO1))
 #define IS_CAN_TX_MAILBOX(TRANSMITMAILBOX) (((TRANSMITMAILBOX) == CAN_TX_MAILBOX0 ) || \

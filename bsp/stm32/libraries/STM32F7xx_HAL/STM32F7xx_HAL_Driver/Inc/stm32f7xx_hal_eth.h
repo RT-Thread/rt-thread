@@ -6,6 +6,7 @@
   ******************************************************************************
   * @attention
   *
+<<<<<<< HEAD
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
@@ -29,6 +30,15 @@
   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=======
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   *
   ******************************************************************************
   */ 
@@ -628,7 +638,15 @@ typedef struct
   * @brief  ETH Handle Structure definition  
   */
   
+<<<<<<< HEAD
 typedef struct
+=======
+#if (USE_HAL_ETH_REGISTER_CALLBACKS == 1)
+typedef struct __ETH_HandleTypeDef
+#else
+typedef struct
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 {
   ETH_TypeDef                *Instance;     /*!< Register base address       */
   
@@ -646,8 +664,45 @@ typedef struct
   
   HAL_LockTypeDef            Lock;          /*!< ETH Lock                    */
 
+<<<<<<< HEAD
 } ETH_HandleTypeDef;
 
+=======
+  #if (USE_HAL_ETH_REGISTER_CALLBACKS == 1)
+
+  void    (* TxCpltCallback)     ( struct __ETH_HandleTypeDef * heth);  /*!< ETH Tx Complete Callback   */
+  void    (* RxCpltCallback)     ( struct __ETH_HandleTypeDef * heth);  /*!< ETH Rx  Complete Callback   */
+  void    (* DMAErrorCallback)   ( struct __ETH_HandleTypeDef * heth);  /*!< DMA Error Callback      */
+  void    (* MspInitCallback)    ( struct __ETH_HandleTypeDef * heth);  /*!< ETH Msp Init callback       */
+  void    (* MspDeInitCallback)  ( struct __ETH_HandleTypeDef * heth);  /*!< ETH Msp DeInit callback     */
+
+#endif  /* USE_HAL_ETH_REGISTER_CALLBACKS */
+
+} ETH_HandleTypeDef;
+
+
+#if (USE_HAL_ETH_REGISTER_CALLBACKS == 1)
+/**
+  * @brief  HAL ETH Callback ID enumeration definition
+  */
+typedef enum
+{
+  HAL_ETH_MSPINIT_CB_ID            = 0x00U,    /*!< ETH MspInit callback ID            */
+  HAL_ETH_MSPDEINIT_CB_ID          = 0x01U,    /*!< ETH MspDeInit callback ID          */
+  HAL_ETH_TX_COMPLETE_CB_ID        = 0x02U,    /*!< ETH Tx Complete Callback ID        */
+  HAL_ETH_RX_COMPLETE_CB_ID        = 0x03U,    /*!< ETH Rx Complete Callback ID        */
+  HAL_ETH_DMA_ERROR_CB_ID          = 0x04U,    /*!< ETH DMA Error Callback ID          */
+
+}HAL_ETH_CallbackIDTypeDef;
+
+/**
+  * @brief  HAL ETH Callback pointer definition
+  */
+typedef  void (*pETH_CallbackTypeDef)(ETH_HandleTypeDef * heth); /*!< pointer to an ETH callback function */
+
+#endif /* USE_HAL_ETH_REGISTER_CALLBACKS */
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
  /**
   * @}
   */
@@ -1594,7 +1649,19 @@ typedef struct
   * @param  __HANDLE__ specifies the ETH handle.
   * @retval None
   */
+<<<<<<< HEAD
 #define __HAL_ETH_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_ETH_STATE_RESET)
+=======
+#if (USE_HAL_ETH_REGISTER_CALLBACKS == 1)
+#define __HAL_ETH_RESET_HANDLE_STATE(__HANDLE__)  do{                                                 \
+                                                       (__HANDLE__)->State = HAL_ETH_STATE_RESET;     \
+                                                       (__HANDLE__)->MspInitCallback = NULL;          \
+                                                       (__HANDLE__)->MspDeInitCallback = NULL;        \
+                                                     } while(0)
+#else
+#define __HAL_ETH_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_ETH_STATE_RESET)
+#endif /*USE_HAL_ETH_REGISTER_CALLBACKS */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /** 
   * @brief  Checks whether the specified Ethernet DMA Tx Desc flag is set or not.
@@ -2111,6 +2178,14 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth);
 void HAL_ETH_MspDeInit(ETH_HandleTypeDef *heth);
 HAL_StatusTypeDef HAL_ETH_DMATxDescListInit(ETH_HandleTypeDef *heth, ETH_DMADescTypeDef *DMATxDescTab, uint8_t* TxBuff, uint32_t TxBuffCount);
 HAL_StatusTypeDef HAL_ETH_DMARxDescListInit(ETH_HandleTypeDef *heth, ETH_DMADescTypeDef *DMARxDescTab, uint8_t *RxBuff, uint32_t RxBuffCount);
+<<<<<<< HEAD
+=======
+/* Callbacks Register/UnRegister functions  ***********************************/
+#if (USE_HAL_ETH_REGISTER_CALLBACKS == 1)
+HAL_StatusTypeDef HAL_ETH_RegisterCallback(ETH_HandleTypeDef *heth, HAL_ETH_CallbackIDTypeDef CallbackID, pETH_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_ETH_UnRegisterCallback(ETH_HandleTypeDef *heth, HAL_ETH_CallbackIDTypeDef CallbackID);
+#endif /* USE_HAL_ETH_REGISTER_CALLBACKS */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /**
   * @}

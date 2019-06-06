@@ -6,6 +6,7 @@
   ******************************************************************************
   * @attention
   *
+<<<<<<< HEAD
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
@@ -29,21 +30,42 @@
   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=======
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
+<<<<<<< HEAD
 #ifndef __STM32F7xx_HAL_PCD_EX_H
 #define __STM32F7xx_HAL_PCD_EX_H
 
 #ifdef __cplusplus
  extern "C" {
+=======
+#ifndef STM32F7xx_HAL_PCD_EX_H
+#define STM32F7xx_HAL_PCD_EX_H
+
+#ifdef __cplusplus
+extern "C" {
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #endif
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7xx_hal_def.h"
 
+<<<<<<< HEAD
+=======
+#if defined (USB_OTG_FS) || defined (USB_OTG_HS)
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /** @addtogroup STM32F7xx_HAL_Driver
   * @{
   */
@@ -52,6 +74,7 @@
   * @{
   */
 /* Exported types ------------------------------------------------------------*/
+<<<<<<< HEAD
 typedef enum
 {
   PCD_LPM_L0_ACTIVE = 0x00, /* on */
@@ -69,6 +92,8 @@ typedef enum
 
 }PCD_BCD_MsgTypeDef;
 
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /* Exported constants --------------------------------------------------------*/
 /* Exported macros -----------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
@@ -82,10 +107,19 @@ typedef enum
 #if defined (USB_OTG_FS) || defined (USB_OTG_HS)
 HAL_StatusTypeDef HAL_PCDEx_SetTxFiFo(PCD_HandleTypeDef *hpcd, uint8_t fifo, uint16_t size);
 HAL_StatusTypeDef HAL_PCDEx_SetRxFiFo(PCD_HandleTypeDef *hpcd, uint16_t size);
+<<<<<<< HEAD
 #endif /* USB_OTG_FS || USB_OTG_HS */
 
 HAL_StatusTypeDef HAL_PCDEx_ActivateLPM(PCD_HandleTypeDef *hpcd);
 HAL_StatusTypeDef HAL_PCDEx_DeActivateLPM(PCD_HandleTypeDef *hpcd);
+=======
+#endif /* defined (USB_OTG_FS) || defined (USB_OTG_HS) */
+
+
+HAL_StatusTypeDef HAL_PCDEx_ActivateLPM(PCD_HandleTypeDef *hpcd);
+HAL_StatusTypeDef HAL_PCDEx_DeActivateLPM(PCD_HandleTypeDef *hpcd);
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 void HAL_PCDEx_LPM_Callback(PCD_HandleTypeDef *hpcd, PCD_LPM_MsgTypeDef msg);
 void HAL_PCDEx_BCD_Callback(PCD_HandleTypeDef *hpcd, PCD_BCD_MsgTypeDef msg);
 
@@ -104,12 +138,20 @@ void HAL_PCDEx_BCD_Callback(PCD_HandleTypeDef *hpcd, PCD_BCD_MsgTypeDef msg);
 /**
   * @}
   */
+<<<<<<< HEAD
+=======
+#endif /* defined (USB_OTG_FS) || defined (USB_OTG_HS) */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 #ifdef __cplusplus
 }
 #endif
 
 
+<<<<<<< HEAD
 #endif /* __STM32F7xx_HAL_PCD_EX_H */
+=======
+#endif /* STM32F7xx_HAL_PCD_EX_H */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

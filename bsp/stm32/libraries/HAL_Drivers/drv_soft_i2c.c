@@ -5,7 +5,11 @@
  *
  * Change Logs:
  * Date           Author       Notes
+<<<<<<< HEAD
  * 2018-11-08     balanceTWK   change to new framework
+=======
+ * 2018-11-08     balanceTWK   first version
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
  */
 
 #include <board.h>
@@ -18,7 +22,11 @@
 #define LOG_TAG              "drv.i2c"
 #include <drv_log.h>
 
+<<<<<<< HEAD
 #if !defined(BSP_USING_I2C1) && !defined(BSP_USING_I2C2) && !defined(BSP_USING_I2C3)
+=======
+#if !defined(BSP_USING_I2C1) && !defined(BSP_USING_I2C2) && !defined(BSP_USING_I2C3) && !defined(BSP_USING_I2C4)
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #error "Please define at least one BSP_USING_I2Cx"
 /* this driver can be disabled at menuconfig → RT-Thread Components → Device Drivers */
 #endif
@@ -34,6 +42,12 @@ static const struct stm32_soft_i2c_config soft_i2c_config[] =
 #ifdef BSP_USING_I2C3
     I2C3_BUS_CONFIG,
 #endif
+<<<<<<< HEAD
+=======
+#ifdef BSP_USING_I2C4
+    I2C4_BUS_CONFIG,
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 };
 
 static struct stm32_i2c i2c_obj[sizeof(soft_i2c_config) / sizeof(soft_i2c_config[0])];

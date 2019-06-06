@@ -17,6 +17,10 @@
 #define RT_IDEL_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 1024
 #define RT_DEBUG
+<<<<<<< HEAD
+=======
+#define RT_DEBUG_COLOR
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /* Inter-Thread communication */
 
@@ -165,6 +169,10 @@
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
+<<<<<<< HEAD
+=======
+#define BSP_USING_UART
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define BSP_USING_UART1
 
 /* Board extended module Drivers */

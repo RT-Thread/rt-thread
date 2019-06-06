@@ -54,7 +54,11 @@
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
+<<<<<<< HEAD
           <BrowseInformation>1</BrowseInformation>
+=======
+          <BrowseInformation>0</BrowseInformation>
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
           <ListingPath>.\build\keil\List\</ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>

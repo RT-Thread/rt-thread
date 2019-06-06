@@ -5,7 +5,11 @@
  *
  * Change Logs:
  * Date           Author       Notes
+<<<<<<< HEAD
  * 2018-11-5      SummerGift   change to new framework
+=======
+ * 2018-11-5      SummerGift   first version
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
  */
 
 #ifndef __BOARD_H__
@@ -14,6 +18,14 @@
 #include <rtthread.h>
 #include <stm32f7xx.h>
 #include "drv_common.h"
+<<<<<<< HEAD
+=======
+#include "drv_gpio.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 #define STM32_SRAM_SIZE           (512)
 #define STM32_SRAM_END            (0x20000000 + STM32_SRAM_SIZE * 1024)
@@ -37,5 +49,12 @@ extern int __bss_end;
 
 void SystemClock_Config(void);
 
+<<<<<<< HEAD
+=======
+#ifdef __cplusplus
+}
+#endif
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #endif
 

@@ -14,9 +14,16 @@
 #include <rtthread.h>
 #include <stm32f4xx.h>
 #include "drv_common.h"
+<<<<<<< HEAD
 
 #ifdef BSP_USING_GPIO
 #include "drv_gpio.h"
+=======
+#include "drv_gpio.h"
+
+#ifdef __cplusplus
+extern "C" {
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #endif
 
 #define STM32_SRAM_SIZE           (192)
@@ -46,5 +53,12 @@ extern int __bss_end;
 void SystemClock_Config(void);
 void MX_GPIO_Init(void);
 
+<<<<<<< HEAD
+=======
+#ifdef __cplusplus
+}
+#endif
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #endif
 

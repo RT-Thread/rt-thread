@@ -6,6 +6,7 @@
   ******************************************************************************
   * @attention
   *
+<<<<<<< HEAD
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
@@ -29,13 +30,27 @@
   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=======
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
+<<<<<<< HEAD
 #ifndef __STM32F7xx_LL_RNG_H
 #define __STM32F7xx_LL_RNG_H
+=======
+#ifndef STM32F7xx_LL_RNG_H
+#define STM32F7xx_LL_RNG_H
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,7 +63,11 @@ extern "C" {
   * @{
   */
 
+<<<<<<< HEAD
 #if defined(RNG)
+=======
+#if defined (RNG)
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /** @defgroup RNG_LL RNG
   * @{
@@ -65,6 +84,10 @@ extern "C" {
   * @{
   */
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /** @defgroup RNG_LL_EC_GET_FLAG Get Flags Defines
   * @brief    Flags defines which can be used with LL_RNG_ReadReg function
   * @{
@@ -163,7 +186,11 @@ __STATIC_INLINE void LL_RNG_Disable(RNG_TypeDef *RNGx)
   */
 __STATIC_INLINE uint32_t LL_RNG_IsEnabled(RNG_TypeDef *RNGx)
 {
+<<<<<<< HEAD
   return (READ_BIT(RNGx->CR, RNG_CR_RNGEN) == (RNG_CR_RNGEN));
+=======
+  return ((READ_BIT(RNGx->CR, RNG_CR_RNGEN) == (RNG_CR_RNGEN)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -182,7 +209,11 @@ __STATIC_INLINE uint32_t LL_RNG_IsEnabled(RNG_TypeDef *RNGx)
   */
 __STATIC_INLINE uint32_t LL_RNG_IsActiveFlag_DRDY(RNG_TypeDef *RNGx)
 {
+<<<<<<< HEAD
   return (READ_BIT(RNGx->SR, RNG_SR_DRDY) == (RNG_SR_DRDY));
+=======
+  return ((READ_BIT(RNGx->SR, RNG_SR_DRDY) == (RNG_SR_DRDY)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -193,7 +224,11 @@ __STATIC_INLINE uint32_t LL_RNG_IsActiveFlag_DRDY(RNG_TypeDef *RNGx)
   */
 __STATIC_INLINE uint32_t LL_RNG_IsActiveFlag_CECS(RNG_TypeDef *RNGx)
 {
+<<<<<<< HEAD
   return (READ_BIT(RNGx->SR, RNG_SR_CECS) == (RNG_SR_CECS));
+=======
+  return ((READ_BIT(RNGx->SR, RNG_SR_CECS) == (RNG_SR_CECS)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -204,7 +239,11 @@ __STATIC_INLINE uint32_t LL_RNG_IsActiveFlag_CECS(RNG_TypeDef *RNGx)
   */
 __STATIC_INLINE uint32_t LL_RNG_IsActiveFlag_SECS(RNG_TypeDef *RNGx)
 {
+<<<<<<< HEAD
   return (READ_BIT(RNGx->SR, RNG_SR_SECS) == (RNG_SR_SECS));
+=======
+  return ((READ_BIT(RNGx->SR, RNG_SR_SECS) == (RNG_SR_SECS)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -215,7 +254,11 @@ __STATIC_INLINE uint32_t LL_RNG_IsActiveFlag_SECS(RNG_TypeDef *RNGx)
   */
 __STATIC_INLINE uint32_t LL_RNG_IsActiveFlag_CEIS(RNG_TypeDef *RNGx)
 {
+<<<<<<< HEAD
   return (READ_BIT(RNGx->SR, RNG_SR_CEIS) == (RNG_SR_CEIS));
+=======
+  return ((READ_BIT(RNGx->SR, RNG_SR_CEIS) == (RNG_SR_CEIS)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -226,7 +269,11 @@ __STATIC_INLINE uint32_t LL_RNG_IsActiveFlag_CEIS(RNG_TypeDef *RNGx)
   */
 __STATIC_INLINE uint32_t LL_RNG_IsActiveFlag_SEIS(RNG_TypeDef *RNGx)
 {
+<<<<<<< HEAD
   return (READ_BIT(RNGx->SR, RNG_SR_SEIS) == (RNG_SR_SEIS));
+=======
+  return ((READ_BIT(RNGx->SR, RNG_SR_SEIS) == (RNG_SR_SEIS)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -292,7 +339,11 @@ __STATIC_INLINE void LL_RNG_DisableIT(RNG_TypeDef *RNGx)
   */
 __STATIC_INLINE uint32_t LL_RNG_IsEnabledIT(RNG_TypeDef *RNGx)
 {
+<<<<<<< HEAD
   return (READ_BIT(RNGx->CR, RNG_CR_IE) == (RNG_CR_IE));
+=======
+  return ((READ_BIT(RNGx->CR, RNG_CR_IE) == (RNG_CR_IE)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -322,7 +373,10 @@ __STATIC_INLINE uint32_t LL_RNG_ReadRandData32(RNG_TypeDef *RNGx)
 /** @defgroup RNG_LL_EF_Init Initialization and de-initialization functions
   * @{
   */
+<<<<<<< HEAD
 
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 ErrorStatus LL_RNG_DeInit(RNG_TypeDef *RNGx);
 
 /**
@@ -338,7 +392,11 @@ ErrorStatus LL_RNG_DeInit(RNG_TypeDef *RNGx);
   * @}
   */
 
+<<<<<<< HEAD
 #endif /* defined(RNG) */
+=======
+#endif /* RNG */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /**
   * @}

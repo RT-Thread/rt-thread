@@ -119,7 +119,25 @@ def bsp_update_kconfig(dist_dir):
                 found = 1
             if line.find('default') != -1 and found:
                 position = line.find('default')
-                line = line[0:position] + 'default: "rt-thread"\n'
+                line = line[0:position] + 'default "rt-thread"\n'
+                found = 0
+            f.write(line)
+            
+def bsp_update_kconfig_library(dist_dir):
+    # change RTT_ROOT in Kconfig
+    if not os.path.isfile(os.path.join(dist_dir, 'Kconfig')):
+        return
+
+    with open(os.path.join(dist_dir, 'Kconfig'), 'r') as f:
+        data = f.readlines()
+    with open(os.path.join(dist_dir, 'Kconfig'), 'w') as f:
+        found = 0
+        for line in data:
+            if line.find('RTT_ROOT') != -1:
+                found = 1
+            if line.find('../libraries') != -1 and found:
+                position = line.find('../libraries')
+                line = line[0:position] + 'libraries/Kconfig"\n'
                 found = 0
             f.write(line)
             

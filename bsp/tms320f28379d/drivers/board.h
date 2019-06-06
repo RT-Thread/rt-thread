@@ -11,13 +11,25 @@
 
 #ifndef __BOARD_H__
 #define __BOARD_H__
+<<<<<<< HEAD
+=======
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #include <rtthread.h>
 
 #define C28X_SRAM_END          0x00020000
 
+<<<<<<< HEAD
 
 #define HEAP_BEGIN  0x0000E000
 #define HEAP_END    C28X_SRAM_END
 extern void rt_hw_board_init(void);
+=======
+#define HEAP_BEGIN  0x0000E000
+#define HEAP_END    C28X_SRAM_END
+
+extern void rt_hw_board_init(void);
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #endif
 

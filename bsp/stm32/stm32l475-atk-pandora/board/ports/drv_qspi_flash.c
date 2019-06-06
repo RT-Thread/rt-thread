@@ -65,7 +65,11 @@ static int rt_hw_qspi_flash_with_sfud_init(void)
     stm32_qspi_bus_attach_device("qspi1", "qspi10", RT_NULL, 4, w25qxx_enter_qspi_mode, RT_NULL);
     
     /* init w25q128 */
+<<<<<<< HEAD
     if (RT_NULL == rt_sfud_flash_probe("w25q128", "qspi10"))
+=======
+    if (RT_NULL == rt_sfud_flash_probe("W25Q128", "qspi10"))
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     {
         return -RT_ERROR;
     }
@@ -74,4 +78,41 @@ static int rt_hw_qspi_flash_with_sfud_init(void)
 }
 INIT_COMPONENT_EXPORT(rt_hw_qspi_flash_with_sfud_init);
 
+<<<<<<< HEAD
 #endif/* BSP_USING_QSPI_FLASH */
+=======
+#if defined(RT_USING_DFS_ELMFAT) && !defined(BSP_USING_SDCARD)
+#include <dfs_fs.h>
+
+#define BLK_DEV_NAME  "W25Q128"
+
+int mnt_init(void)
+{
+    rt_thread_delay(RT_TICK_PER_SECOND);
+
+    if (dfs_mount(BLK_DEV_NAME, "/", "elm", 0, 0) == 0)
+    {
+        rt_kprintf("file system initialization done!\n");
+    }
+    else
+    {
+        if(dfs_mkfs("elm", BLK_DEV_NAME) == 0)
+        {
+            if (dfs_mount(BLK_DEV_NAME, "/", "elm", 0, 0) == 0)
+            {
+                rt_kprintf("file system initialization done!\n");
+            }
+            else
+            {
+                rt_kprintf("file system initialization failed!\n");
+            }
+        }
+    }
+
+    return 0;
+}
+INIT_ENV_EXPORT(mnt_init);
+
+#endif /* defined(RT_USING_DFS_ELMFAT) && !defined(BSP_USING_SDCARD) */
+#endif /* BSP_USING_QSPI_FLASH */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8

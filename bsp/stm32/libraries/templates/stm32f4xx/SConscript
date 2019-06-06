@@ -1,8 +1,14 @@
 # for module compiling
 import os
 Import('RTT_ROOT')
+<<<<<<< HEAD
 
 cwd = str(Dir('#'))
+=======
+from building import *
+
+cwd = GetCurrentDir()
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 objs = []
 list = os.listdir(cwd)
 

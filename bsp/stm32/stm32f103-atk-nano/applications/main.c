@@ -5,13 +5,21 @@
  *
  * Change Logs:
  * Date           Author       Notes
+<<<<<<< HEAD
  * 2018-11-27     balanceTWK   change to new framework
+=======
+ * 2018-11-27     balanceTWK   first version
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
  */
 
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
+<<<<<<< HEAD
 #include "drv_gpio.h"
+=======
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /* defined the LED0 pin: PC0 */
 #define LED0_PIN    GET_PIN(C, 0)
 

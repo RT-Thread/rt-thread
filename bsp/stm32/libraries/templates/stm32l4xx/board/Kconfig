@@ -16,6 +16,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_PIN
         default y
 
+<<<<<<< HEAD
     config BSP_USING_UART1
         bool "Enable UART1"
         select RT_USING_SERIAL
@@ -29,6 +30,43 @@ menu "On-chip Peripheral Drivers"
     config BSP_SPI_USING_DMA
         bool "Enable SPI DMA support"
         default n
+=======
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default y
+
+            config BSP_UART1_RX_USING_DMA
+                bool "Enable UART1 RX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS"
+                default n
+
+            config BSP_SPI1_TX_USING_DMA
+                bool "Enable SPI1 TX DMA"
+                depends on BSP_USING_SPI1
+                default n
+
+            config BSP_SPI1_RX_USING_DMA
+                bool "Enable SPI1 RX DMA"
+                depends on BSP_USING_SPI1
+                select BSP_SPI1_TX_USING_DMA
+                default n
+        endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
     menuconfig BSP_USING_I2C1
         bool "Enable I2C1 BUS (software simulation)"

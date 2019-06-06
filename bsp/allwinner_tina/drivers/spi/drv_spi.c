@@ -35,14 +35,12 @@
 
 //#define DEBUG
 
-#define DBG_ENABLE
-#define DBG_SECTION_NAME  "SPI"
+#define DBG_TAG  "SPI"
 #ifdef DEBUG
-#define DBG_LEVEL         DBG_LOG
+#define DBG_LVL  DBG_LOG
 #else
-#define DBG_LEVEL         DBG_WARNING
+#define DBG_LVL  DBG_WARNING
 #endif /* DEBUG */
-#define DBG_COLOR
 #include <rtdbg.h>
 
 #ifdef RT_USING_SPI

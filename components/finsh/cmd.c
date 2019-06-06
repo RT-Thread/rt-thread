@@ -326,6 +326,18 @@ long list_sem(void)
 
     return 0;
 }
+<<<<<<< HEAD
+=======
+
+long list_sem(void)
+{
+    struct rt_object_information *info;
+
+    info = rt_object_get_information(RT_Object_Class_Semaphore);
+
+    return _list_sem(&info->object_list);
+}
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 FINSH_FUNCTION_EXPORT(list_sem, list semaphore in system);
 MSH_CMD_EXPORT(list_sem, list semaphore in system);
 #endif
@@ -810,6 +822,35 @@ long list_device(void)
     rt_list_t *next = (rt_list_t*)RT_NULL;
 
     int maxlen;
+<<<<<<< HEAD
+=======
+    struct rt_device *device;
+    struct rt_list_node *node;
+    char *const device_type_str[] =
+    {
+        "Character Device",
+        "Block Device",
+        "Network Interface",
+        "MTD Device",
+        "CAN Device",
+        "RTC",
+        "Sound Device",
+        "Graphic Device",
+        "I2C Bus",
+        "USB Slave Device",
+        "USB Host Bus",
+        "SPI Bus",
+        "SPI Device",
+        "SDIO Bus",
+        "PM Pseudo Device",
+        "Pipe",
+        "Portal Device",
+        "Timer Device",
+        "Miscellaneous Device",
+        "Sensor Device",
+        "Unknown"
+    };
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     const char *item_title = "device";
 
     list_find_init(&find_arg, RT_Object_Class_Device, obj_list, sizeof(obj_list)/sizeof(obj_list[0]));

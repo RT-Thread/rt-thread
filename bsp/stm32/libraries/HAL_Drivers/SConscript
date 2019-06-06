@@ -24,6 +24,7 @@ if GetDepend(['RT_USING_SPI']):
     src += ['drv_spi.c']
 
 if GetDepend(['RT_USING_QSPI']):
+<<<<<<< HEAD
     src += ['drv_qspi.c'] 
 
 if GetDepend(['RT_USING_USB_DEVICE']):
@@ -33,14 +34,39 @@ if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_BITOPS']):
     src += ['drv_soft_i2c.c']
 
 if GetDepend('RT_USING_LWIP'):
+=======
+    src += ['drv_qspi.c']
+
+if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_BITOPS']):
+    if GetDepend('BSP_USING_I2C1') or GetDepend('BSP_USING_I2C2') or GetDepend('BSP_USING_I2C3') or GetDepend('BSP_USING_I2C4'):
+        src += ['drv_soft_i2c.c']
+
+if GetDepend('BSP_USING_ETH'):
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     src += ['drv_eth.c']
 
 if GetDepend(['RT_USING_ADC']):
     src += Glob('drv_adc.c')
 
+<<<<<<< HEAD
 if GetDepend('BSP_USING_SDRAM'):
     src += ['drv_sdram.c']
 
+=======
+if GetDepend(['RT_USING_CAN']):
+    src += ['drv_can.c']
+
+if GetDepend(['RT_USING_PM', 'SOC_SERIES_STM32L4']):
+    src += ['drv_pm.c']
+    src += ['drv_lptim.c']
+
+if GetDepend('BSP_USING_SDRAM'):
+    src += ['drv_sdram.c']
+
+if GetDepend('BSP_USING_LCD'):
+    src += ['drv_lcd.c']
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 if GetDepend('BSP_USING_ONCHIP_RTC'):
     src += ['drv_rtc.c']
 
@@ -65,6 +91,12 @@ if GetDepend(['BSP_USING_WDT']):
 if GetDepend(['BSP_USING_SDIO']):
     src += ['drv_sdio.c']
 
+<<<<<<< HEAD
+=======
+if GetDepend(['BSP_USING_USBD_FS']):
+    src += ['drv_usbd_fs.c']
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 src += ['drv_common.c']
 
 path =  [cwd]

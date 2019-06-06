@@ -16,8 +16,22 @@
 #include <rthw.h>
 #include <drv_common.h>
 
+<<<<<<< HEAD
+=======
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 int stm32_flash_read(rt_uint32_t addr, rt_uint8_t *buf, size_t size);
 int stm32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size);
 int stm32_flash_erase(rt_uint32_t addr, size_t size);
 
+<<<<<<< HEAD
+=======
+#ifdef __cplusplus
+}
+#endif
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #endif  /* __DRV_FLASH_H__ */

@@ -6,6 +6,7 @@
   ******************************************************************************
   * @attention
   *
+<<<<<<< HEAD
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
@@ -29,13 +30,27 @@
   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=======
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
+<<<<<<< HEAD
 #ifndef __STM32F7xx_LL_CRC_H
 #define __STM32F7xx_LL_CRC_H
+=======
+#ifndef STM32F7xx_LL_CRC_H
+#define STM32F7xx_LL_CRC_H
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 #ifdef __cplusplus
 extern "C" {
@@ -134,7 +149,11 @@ extern "C" {
   * @param  __VALUE__ Value to be written in the register
   * @retval None
   */
+<<<<<<< HEAD
 #define LL_CRC_WriteReg(__INSTANCE__, __REG__, __VALUE__) WRITE_REG(__INSTANCE__->__REG__, (__VALUE__))
+=======
+#define LL_CRC_WriteReg(__INSTANCE__, __REG__, __VALUE__) WRITE_REG(__INSTANCE__->__REG__, __VALUE__)
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /**
   * @brief  Read a value in CRC register
@@ -352,7 +371,14 @@ __STATIC_INLINE void LL_CRC_FeedData32(CRC_TypeDef *CRCx, uint32_t InData)
   */
 __STATIC_INLINE void LL_CRC_FeedData16(CRC_TypeDef *CRCx, uint16_t InData)
 {
+<<<<<<< HEAD
   *(uint16_t __IO *)(&CRCx->DR) = (uint16_t) InData;
+=======
+  __IO uint16_t *pReg;
+
+  pReg = (__IO uint16_t *)(__IO void *)(&CRCx->DR);                             /* Derogation MisraC2012 R.11.5 */
+  *pReg = InData;
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -431,7 +457,11 @@ __STATIC_INLINE uint32_t LL_CRC_Read_IDR(CRC_TypeDef *CRCx)
   * @note   This register can be used as a temporary storage location for one byte.
   * @rmtoll IDR          IDR           LL_CRC_Write_IDR
   * @param  CRCx CRC Instance
+<<<<<<< HEAD
   * @param  InData value to be stored in CRC_IDR register (8-bit) between between Min_Data=0 and Max_Data=0xFF
+=======
+  * @param  InData value to be stored in CRC_IDR register (8-bit) between Min_Data=0 and Max_Data=0xFF
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   * @retval None
   */
 __STATIC_INLINE void LL_CRC_Write_IDR(CRC_TypeDef *CRCx, uint32_t InData)
@@ -472,6 +502,10 @@ ErrorStatus LL_CRC_DeInit(CRC_TypeDef *CRCx);
 }
 #endif
 
+<<<<<<< HEAD
 #endif /* __STM32F7xx_LL_CRC_H */
+=======
+#endif /* STM32F7xx_LL_CRC_H */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

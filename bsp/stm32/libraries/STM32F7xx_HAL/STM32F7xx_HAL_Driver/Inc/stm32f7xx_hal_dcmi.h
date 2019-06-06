@@ -6,6 +6,7 @@
   ******************************************************************************
   * @attention
   *
+<<<<<<< HEAD
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
@@ -32,6 +33,18 @@
   *
   ******************************************************************************
   */ 
+=======
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+  *
+  ******************************************************************************
+  */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32F7xx_HAL_DCMI_H
@@ -128,7 +141,11 @@ typedef struct
 /** 
   * @brief  DCMI handle Structure definition
   */
+<<<<<<< HEAD
 typedef struct
+=======
+typedef struct __DCMI_HandleTypeDef
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 {
   DCMI_TypeDef                  *Instance;           /*!< DCMI Register base address   */
 
@@ -149,8 +166,37 @@ typedef struct
   DMA_HandleTypeDef             *DMA_Handle;         /*!< Pointer to the DMA handler   */
 
   __IO uint32_t                 ErrorCode;           /*!< DCMI Error code              */
+<<<<<<< HEAD
 
 }DCMI_HandleTypeDef;
+=======
+#if (USE_HAL_DCMI_REGISTER_CALLBACKS == 1)
+  void    (* FrameEventCallback) ( struct __DCMI_HandleTypeDef *hdcmi);  /*!< DCMI Frame Event Callback */
+  void    (* VsyncEventCallback) ( struct __DCMI_HandleTypeDef *hdcmi);  /*!< DCMI Vsync Event Callback */
+  void    (* LineEventCallback ) ( struct __DCMI_HandleTypeDef *hdcmi);  /*!< DCMI Line Event Callback  */ 
+  void    (* ErrorCallback)      ( struct __DCMI_HandleTypeDef *hdcmi);  /*!< DCMI Error Callback       */
+  void    (* MspInitCallback)    ( struct __DCMI_HandleTypeDef *hdcmi);  /*!< DCMI Msp Init callback    */
+  void    (* MspDeInitCallback)  ( struct __DCMI_HandleTypeDef *hdcmi);  /*!< DCMI Msp DeInit callback  */  
+#endif  /* USE_HAL_DCMI_REGISTER_CALLBACKS */ 
+}DCMI_HandleTypeDef;
+
+#if (USE_HAL_DCMI_REGISTER_CALLBACKS == 1)
+typedef enum
+{
+  HAL_DCMI_FRAME_EVENT_CB_ID    = 0x00U,    /*!< DCMI Frame Event Callback ID */
+  HAL_DCMI_VSYNC_EVENT_CB_ID    = 0x01U,    /*!< DCMI Vsync Event Callback ID */
+  HAL_DCMI_LINE_EVENT_CB_ID     = 0x02U,    /*!< DCMI Line Event Callback ID  */ 
+  HAL_DCMI_ERROR_CB_ID          = 0x03U,    /*!< DCMI Error Callback ID       */
+  HAL_DCMI_MSPINIT_CB_ID        = 0x04U,    /*!< DCMI MspInit callback ID     */
+  HAL_DCMI_MSPDEINIT_CB_ID      = 0x05U     /*!< DCMI MspDeInit callback ID   */
+  
+}HAL_DCMI_CallbackIDTypeDef;
+    
+typedef void (*pDCMI_CallbackTypeDef)(DCMI_HandleTypeDef *hdcmi);
+#endif /* USE_HAL_DCMI_REGISTER_CALLBACKS */
+
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */
@@ -163,11 +209,22 @@ typedef struct
 /** @defgroup DCMI_Error_Code DCMI Error Code
   * @{
   */
+<<<<<<< HEAD
 #define HAL_DCMI_ERROR_NONE      ((uint32_t)0x00000000U)    /*!< No error              */
 #define HAL_DCMI_ERROR_OVR       ((uint32_t)0x00000001U)    /*!< Overrun error         */
 #define HAL_DCMI_ERROR_SYNC      ((uint32_t)0x00000002U)    /*!< Synchronization error */
 #define HAL_DCMI_ERROR_TIMEOUT   ((uint32_t)0x00000020U)    /*!< Timeout error         */
 #define HAL_DCMI_ERROR_DMA       ((uint32_t)0x00000040U)    /*!< DMA error             */
+=======
+#define HAL_DCMI_ERROR_NONE             ((uint32_t)0x00000000U)  /*!< No error              */
+#define HAL_DCMI_ERROR_OVR              ((uint32_t)0x00000001U)  /*!< Overrun error         */
+#define HAL_DCMI_ERROR_SYNC             ((uint32_t)0x00000002U)  /*!< Synchronization error */
+#define HAL_DCMI_ERROR_TIMEOUT          ((uint32_t)0x00000020U)  /*!< Timeout error         */
+#define HAL_DCMI_ERROR_DMA              ((uint32_t)0x00000040U)  /*!< DMA error             */
+#if (USE_HAL_DCMI_REGISTER_CALLBACKS == 1)
+#define HAL_DCMI_ERROR_INVALID_CALLBACK ((uint32_t)0x00000080U)  /*!< Invalid callback error */
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */
@@ -373,7 +430,15 @@ typedef struct
   * @param  __HANDLE__ specifies the DCMI handle.
   * @retval None
   */
+<<<<<<< HEAD
 #define __HAL_DCMI_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_DCMI_STATE_RESET)
+=======
+#define __HAL_DCMI_RESET_HANDLE_STATE(__HANDLE__) do{                                            \
+                                                     (__HANDLE__)->State = HAL_DCMI_STATE_RESET; \
+                                                     (__HANDLE__)->MspInitCallback = NULL;      \
+                                                     (__HANDLE__)->MspDeInitCallback = NULL;    \
+                                                   } while(0)
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /**
   * @brief  Enable the DCMI.
@@ -487,6 +552,15 @@ HAL_StatusTypeDef HAL_DCMI_Init(DCMI_HandleTypeDef *hdcmi);
 HAL_StatusTypeDef HAL_DCMI_DeInit(DCMI_HandleTypeDef *hdcmi);
 void       HAL_DCMI_MspInit(DCMI_HandleTypeDef* hdcmi);
 void       HAL_DCMI_MspDeInit(DCMI_HandleTypeDef* hdcmi);
+<<<<<<< HEAD
+=======
+
+/* Callbacks Register/UnRegister functions  ***********************************/
+#if (USE_HAL_DCMI_REGISTER_CALLBACKS == 1)   
+HAL_StatusTypeDef HAL_DCMI_RegisterCallback(DCMI_HandleTypeDef *hdcmi, HAL_DCMI_CallbackIDTypeDef CallbackID, pDCMI_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_DCMI_UnRegisterCallback(DCMI_HandleTypeDef *hdcmi, HAL_DCMI_CallbackIDTypeDef CallbackID);
+#endif /* USE_HAL_DCMI_REGISTER_CALLBACKS */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */

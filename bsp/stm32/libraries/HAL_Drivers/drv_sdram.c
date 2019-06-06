@@ -5,11 +5,17 @@
  *
  * Change Logs:
  * Date           Author       Notes
+<<<<<<< HEAD
  * 2018-12-04     zylx         The first version for STM32F4xx
  */
 
 #include <rtthread.h>
 #include <rtdevice.h>
+=======
+ * 2018-12-04     zylx         first version
+ */
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #include <board.h>
 
 #ifdef BSP_USING_SDRAM

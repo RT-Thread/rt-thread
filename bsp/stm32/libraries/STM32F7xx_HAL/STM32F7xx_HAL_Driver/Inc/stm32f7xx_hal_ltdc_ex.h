@@ -6,6 +6,7 @@
   ******************************************************************************
   * @attention
   *
+<<<<<<< HEAD
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
@@ -42,6 +43,29 @@
 #endif
 
 #if defined (STM32F769xx) || defined (STM32F779xx)
+=======
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+  *
+  ******************************************************************************
+  */
+
+/* Define to prevent recursive inclusion -------------------------------------*/
+#ifndef STM32F7xx_HAL_LTDC_EX_H
+#define STM32F7xx_HAL_LTDC_EX_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#if defined (LTDC) && defined (DSI)
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7xx_hal_def.h"
 #include "stm32f7xx_hal_dsi.h"
@@ -54,6 +78,7 @@
   * @{
   */
 
+<<<<<<< HEAD
 /* Exported types ------------------------------------------------------------*/ 
 /* Exported constants --------------------------------------------------------*/
    
@@ -97,10 +122,28 @@ HAL_StatusTypeDef HAL_LTDC_StructInitFromAdaptedCommandConfig(LTDC_HandleTypeDef
 /* Private variables ---------------------------------------------------------*/
 /** @defgroup LTDCEx_Private_Variables LTDCEx Private Variables
   * @{
+=======
+/* Exported types ------------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
+/* Exported macro ------------------------------------------------------------*/
+/* Exported functions --------------------------------------------------------*/
+/** @addtogroup LTDCEx_Exported_Functions
+  * @{
+  */
+
+/** @addtogroup LTDCEx_Exported_Functions_Group1
+  * @{
+  */
+HAL_StatusTypeDef HAL_LTDCEx_StructInitFromVideoConfig(LTDC_HandleTypeDef *hltdc, DSI_VidCfgTypeDef *VidCfg);
+HAL_StatusTypeDef HAL_LTDCEx_StructInitFromAdaptedCommandConfig(LTDC_HandleTypeDef *hltdc, DSI_CmdCfgTypeDef *CmdCfg);
+/**
+  * @}
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   */
 
 /**
   * @}
+<<<<<<< HEAD
   */ 
 
 /* Private constants ---------------------------------------------------------*/
@@ -125,6 +168,15 @@ HAL_StatusTypeDef HAL_LTDC_StructInitFromAdaptedCommandConfig(LTDC_HandleTypeDef
 /** @defgroup LTDCEx_Private_Functions LTDCEx Private Functions
   * @{
   */
+=======
+  */
+
+/* Private types -------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
+/* Private constants ---------------------------------------------------------*/
+/* Private macros ------------------------------------------------------------*/
+/* Private functions ---------------------------------------------------------*/
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /**
   * @}
@@ -132,6 +184,7 @@ HAL_StatusTypeDef HAL_LTDC_StructInitFromAdaptedCommandConfig(LTDC_HandleTypeDef
 
 /**
   * @}
+<<<<<<< HEAD
   */ 
 
 /**
@@ -140,10 +193,20 @@ HAL_StatusTypeDef HAL_LTDC_StructInitFromAdaptedCommandConfig(LTDC_HandleTypeDef
 
 #endif /*STM32F769xx | STM32F779xx */
   
+=======
+  */
+
+#endif /* LTDC && DSI */
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #ifdef __cplusplus
 }
 #endif
 
+<<<<<<< HEAD
 #endif /* __STM32F7xx_HAL_LTDC_EX_H */
+=======
+#endif /* STM32F7xx_HAL_LTDC_EX_H */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

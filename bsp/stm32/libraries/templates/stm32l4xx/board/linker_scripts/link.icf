@@ -26,4 +26,8 @@ do not initialize  { section .noinit };
 place at address mem:__ICFEDIT_intvec_start__ { readonly section .intvec };
 
 place in ROM_region   { readonly };
+<<<<<<< HEAD
 place in RAM_region   { readwrite, last block CSTACK};
+=======
+place in RAM_region   { readwrite, last block CSTACK};
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8

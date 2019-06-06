@@ -24,11 +24,16 @@
  * 2018-05-31     Bernard      change version number to v3.1.0
  * 2018-09-04     Bernard      change version number to v3.1.1
  * 2018-09-14     Bernard      apply Apache License v2.0 to RT-Thread Kernel
+<<<<<<< HEAD
  * 2018-10-13     Bernard      change version number to v4.0.0
  * 2018-10-02     Bernard      add 64bit arch support
  * 2018-11-22     Jesven       add smp member to struct rt_thread
  *                             add struct rt_cpu
  *                             add smp relevant macros
+=======
+ * 2018-12-28     armink       change version number to v3.1.2
+ * 2019-03-14     armink       change version number to v3.1.3
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
  */
 
 #ifndef __RT_DEF_H__
@@ -48,17 +53,25 @@ extern "C" {
 /**@{*/
 
 /* RT-Thread version information */
+<<<<<<< HEAD
 #define RT_VERSION                      4L              /**< major version number */
 #define RT_SUBVERSION                   0L              /**< minor version number */
 #define RT_REVISION                     0L              /**< revise version number */
+=======
+#define RT_VERSION                      3L              /**< major version number */
+#define RT_SUBVERSION                   1L              /**< minor version number */
+#define RT_REVISION                     3L              /**< revise version number */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /* RT-Thread version */
 #define RTTHREAD_VERSION                ((RT_VERSION * 10000) + \
                                          (RT_SUBVERSION * 100) + RT_REVISION)
 
 /* RT-Thread basic data type definitions */
+#ifndef RT_USING_ARCH_DATA_TYPE
 typedef signed   char                   rt_int8_t;      /**<  8bit integer type */
 typedef signed   short                  rt_int16_t;     /**< 16bit integer type */
+<<<<<<< HEAD
 typedef signed   int                    rt_int32_t;     /**< 32bit integer type */
 typedef unsigned char                   rt_uint8_t;     /**<  8bit unsigned integer type */
 typedef unsigned short                  rt_uint16_t;    /**< 16bit unsigned integer type */
@@ -71,6 +84,16 @@ typedef unsigned long                   rt_uint64_t;    /**< 64bit unsigned inte
 typedef signed long long                rt_int64_t;     /**< 64bit integer type */
 typedef unsigned long long              rt_uint64_t;    /**< 64bit unsigned integer type */
 #endif
+=======
+typedef signed   long                   rt_int32_t;     /**< 32bit integer type */
+typedef signed long long                rt_int64_t;     /**< 64bit integer type */
+typedef unsigned char                   rt_uint8_t;     /**<  8bit unsigned integer type */
+typedef unsigned short                  rt_uint16_t;    /**< 16bit unsigned integer type */
+typedef unsigned long                   rt_uint32_t;    /**< 32bit unsigned integer type */
+typedef unsigned long long              rt_uint64_t;    /**< 64bit unsigned integer type */
+#endif
+typedef int                             rt_bool_t;      /**< boolean type */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 typedef int                             rt_bool_t;      /**< boolean type */
 typedef long                            rt_base_t;      /**< Nbit CPU related date type */
@@ -489,9 +512,10 @@ typedef siginfo_t rt_siginfo_t;
 #define RT_THREAD_CLOSE                 0x04                /**< Closed status */
 #define RT_THREAD_STAT_MASK             0x0f
 
-#define RT_THREAD_STAT_SIGNAL           0x10
+#define RT_THREAD_STAT_SIGNAL           0x10                /**< task hold signals */
 #define RT_THREAD_STAT_SIGNAL_READY     (RT_THREAD_STAT_SIGNAL | RT_THREAD_READY)
-#define RT_THREAD_STAT_SIGNAL_WAIT      0x20
+#define RT_THREAD_STAT_SIGNAL_WAIT      0x20                /**< task is waiting for signals */
+#define RT_THREAD_STAT_SIGNAL_PENDING   0x40                /**< signals is held and it has not been procressed */
 #define RT_THREAD_STAT_SIGNAL_MASK      0xf0
 
 /**
@@ -653,6 +677,7 @@ struct rt_semaphore
     struct rt_ipc_object parent;                        /**< inherit from ipc_object */
 
     rt_uint16_t          value;                         /**< value of semaphore. */
+    rt_uint16_t          reserved;                      /**< reserved field */
 };
 typedef struct rt_semaphore *rt_sem_t;
 #endif
@@ -845,6 +870,7 @@ enum rt_device_class_type
     RT_Device_Class_Portal,                             /**< Portal device */
     RT_Device_Class_Timer,                              /**< Timer device */
     RT_Device_Class_Miscellaneous,                      /**< Miscellaneous device */
+    RT_Device_Class_Sensor,                             /**< Sensor device */
     RT_Device_Class_Unknown                             /**< unknown device */
 };
 
@@ -1016,6 +1042,7 @@ enum
     RTGRAPHIC_PIXEL_FORMAT_ABGR888,
     RTGRAPHIC_PIXEL_FORMAT_ARGB565,
     RTGRAPHIC_PIXEL_FORMAT_ALPHA,
+    RTGRAPHIC_PIXEL_FORMAT_COLOR,
 };
 
 /**

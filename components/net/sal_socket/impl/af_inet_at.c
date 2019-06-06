@@ -16,6 +16,8 @@
 #include <at_socket.h>
 #include <af_inet.h>
 
+#include <netdev.h>
+
 #ifdef SAL_USING_POSIX
 #include <dfs_poll.h>
 #endif
@@ -78,14 +80,14 @@ static const struct sal_socket_ops at_socket_ops =
     NULL,
     NULL,
     NULL,
-
 #ifdef SAL_USING_POSIX
     at_poll,
 #endif /* SAL_USING_POSIX */
 };
 
-static int at_create(struct sal_socket *socket, int type, int protocol)
+static const struct sal_netdb_ops at_netdb_ops = 
 {
+<<<<<<< HEAD
     RT_ASSERT(socket);
 
     //TODO Check type & protocol
@@ -97,10 +99,13 @@ static int at_create(struct sal_socket *socket, int type, int protocol)
 
 static struct sal_proto_ops at_proto_ops =
 {
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     at_gethostbyname,
     NULL,
     at_getaddrinfo,
     at_freeaddrinfo,
+<<<<<<< HEAD
 };
 
 static const struct sal_proto_family at_inet_family =
@@ -109,14 +114,30 @@ static const struct sal_proto_family at_inet_family =
     AF_INET,
     at_create,
     &at_proto_ops,
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 };
 
-int at_inet_init(void)
+static const struct sal_proto_family at_inet_family =
 {
-    sal_proto_family_register(&at_inet_family);
+    AF_AT,
+    AF_INET,
+    &at_socket_ops,
+    &at_netdb_ops,
+};
 
+
+/* Set AT network interface device protocol family information */
+int sal_at_netdev_set_pf_info(struct netdev *netdev)
+{
+<<<<<<< HEAD
+    sal_proto_family_register(&at_inet_family);
+=======
+    RT_ASSERT(netdev);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
+
+    netdev->sal_user_data = (void *) &at_inet_family;
     return 0;
 }
-INIT_COMPONENT_EXPORT(at_inet_init);
 
 #endif /* SAL_USING_AT */

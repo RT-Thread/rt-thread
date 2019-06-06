@@ -84,6 +84,7 @@ if GetDepend(['RT_USING_MTD_NOR']):
 if GetDepend(['RT_USING_MTD_NAND']):
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_nand.c']
 
+<<<<<<< HEAD
 if GetDepend(['BSP_USING_SDRAM']):
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_fmc.c']
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_fsmc.c']
@@ -91,6 +92,16 @@ if GetDepend(['BSP_USING_SDRAM']):
 
 if GetDepend(['BSP_USING_EXT_FMC_IO']):
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_fmc.c']
+=======
+if GetDepend(['BSP_USING_FMC']):
+    src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_fmc.c']
+    src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_fsmc.c']
+
+if GetDepend(['BSP_USING_SDRAM']):
+    src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sdram.c']
+
+if GetDepend(['BSP_USING_EXT_FMC_IO']):
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sram.c']
 
 if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
@@ -98,6 +109,16 @@ if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c']
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c']
 
+<<<<<<< HEAD
+=======
+if GetDepend(['BSP_USING_LTDC']):
+    src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_ltdc.c']
+    src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_ltdc_ex.c']
+    src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma2d.c']
+    src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_dma2d.c']
+    src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dsi.c']
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 path = [cwd + '/STM32F4xx_HAL_Driver/Inc',
     cwd + '/CMSIS/Device/ST/STM32F4xx/Include',
     cwd + '/CMSIS/Include']

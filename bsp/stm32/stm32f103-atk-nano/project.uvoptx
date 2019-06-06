@@ -187,7 +187,11 @@
 
   <Group>
     <GroupName>Applications</GroupName>
+<<<<<<< HEAD
     <tvExp>0</tvExp>
+=======
+    <tvExp>1</tvExp>
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -207,7 +211,11 @@
 
   <Group>
     <GroupName>Drivers</GroupName>
+<<<<<<< HEAD
     <tvExp>0</tvExp>
+=======
+    <tvExp>1</tvExp>
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -287,7 +295,11 @@
 
   <Group>
     <GroupName>Kernel</GroupName>
+<<<<<<< HEAD
     <tvExp>0</tvExp>
+=======
+    <tvExp>1</tvExp>
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -487,7 +499,11 @@
 
   <Group>
     <GroupName>CORTEX-M3</GroupName>
+<<<<<<< HEAD
     <tvExp>0</tvExp>
+=======
+    <tvExp>1</tvExp>
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -555,7 +571,11 @@
 
   <Group>
     <GroupName>DeviceDrivers</GroupName>
+<<<<<<< HEAD
     <tvExp>0</tvExp>
+=======
+    <tvExp>1</tvExp>
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -671,7 +691,11 @@
 
   <Group>
     <GroupName>finsh</GroupName>
+<<<<<<< HEAD
     <tvExp>0</tvExp>
+=======
+    <tvExp>1</tvExp>
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>

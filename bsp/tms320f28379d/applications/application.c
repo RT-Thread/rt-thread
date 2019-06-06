@@ -12,11 +12,23 @@
 #include <board.h>
 #include <rtthread.h>
 
+<<<<<<< HEAD
 void rt_init_thread_entry(void* parameter)
 {
     /* initialization RT-Thread Components */
     rt_components_init();
 	
+=======
+#ifdef RT_USING_FINSH
+#include "shell.h"
+#endif
+
+void rt_init_thread_entry(void* parameter)
+{
+#ifdef RT_USING_FINSH
+    finsh_system_init();
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 int rt_application_init()

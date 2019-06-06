@@ -43,6 +43,27 @@ typedef uint32_t socklen_t;
 #define SAL_SOCKET_OFFSET              0
 #endif
 
+<<<<<<< HEAD
+=======
+struct sal_socket
+{
+    uint32_t magic;                    /* SAL socket magic word */
+
+    int socket;                        /* SAL socket descriptor */
+    int domain;
+    int type;
+    int protocol;
+
+    struct netdev *netdev;             /* SAL network interface device */
+
+    void *user_data;                   /* user-specific data */
+#ifdef SAL_USING_TLS
+    void *user_data_tls;               /* user-specific TLS data */
+#endif
+};
+
+/* network interface socket opreations */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 struct sal_socket_ops
 {
     int (*socket)     (int domain, int type, int protocol);
@@ -64,6 +85,7 @@ struct sal_socket_ops
 #endif
 };
 
+<<<<<<< HEAD
 struct sal_proto_ops
 {
     struct hostent* (*gethostbyname)  (const char *name);
@@ -87,27 +109,48 @@ struct sal_socket
 #ifdef SAL_USING_TLS
     void *user_data_tls;               /* user-specific TLS data */
 #endif
+=======
+/* sal network database name resolving */
+struct sal_netdb_ops
+{
+    struct hostent* (*gethostbyname)  (const char *name);
+    int             (*gethostbyname_r)(const char *name, struct hostent *ret, char *buf, size_t buflen, struct hostent **result, int *h_errnop);
+    int             (*getaddrinfo)    (const char *nodename, const char *servname, const struct addrinfo *hints, struct addrinfo **res);
+    void            (*freeaddrinfo)   (struct addrinfo *ai);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 };
 
 struct sal_proto_family
 {
+<<<<<<< HEAD
     int family;                        /* primary protocol families type */
     int sec_family;                    /* secondary protocol families type */
     int (*create)(struct sal_socket *sal_socket, int type, int protocol);   /* register socket options */
 
     struct sal_proto_ops *ops;             /* protocol family options */
+=======
+    int family;                                  /* primary protocol families type */
+    int sec_family;                              /* secondary protocol families type */
+    const struct sal_socket_ops *skt_ops;        /* socket opreations */
+    const struct sal_netdb_ops *netdb_ops;       /* network database opreations */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 };
 
 /* SAL(Socket Abstraction Layer) initialize */
 int sal_init(void);
-
+/* Get SAL socket object by socket descriptor */
 struct sal_socket *sal_get_socket(int sock);
 
+<<<<<<< HEAD
 /* SAL protocol family register and unregister operate */
 int sal_proto_family_register(const struct sal_proto_family *pf);
 int sal_proto_family_unregister(int family);
 rt_bool_t sal_proto_family_is_registered(int family);
 struct sal_proto_family *sal_proto_family_find(int family);
+=======
+/* check SAL socket netweork interface device internet status */
+int sal_check_netdev_internet_up(struct netdev *netdev);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 #ifdef __cplusplus
 }

@@ -5,13 +5,21 @@
  *
  * Change Logs:
  * Date           Author       Notes
+<<<<<<< HEAD
  * 2018-11-06     SummerGift   change to new framework
+=======
+ * 2018-11-06     SummerGift   first version
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
  */
 
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
+<<<<<<< HEAD
 #include "drv_gpio.h"
+=======
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /* defined the LED0 pin: PB1 */
 #define LED0_PIN    GET_PIN(B, 1)
 

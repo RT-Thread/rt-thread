@@ -193,6 +193,8 @@ void rt_thread_idle_excute(void)
             /* if it's a system object, not delete it */
             if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
             {
+                /* detach this object */
+                rt_object_detach((rt_object_t)thread);
                 /* unlock scheduler */
                 rt_exit_critical();
 
@@ -226,8 +228,10 @@ void rt_thread_idle_excute(void)
     }
 }
 
+extern void rt_system_power_manager(void);
 static void rt_thread_idle_entry(void *parameter)
 {
+<<<<<<< HEAD
 #ifdef RT_USING_SMP
     if (rt_hw_cpu_id() != 0)
     {
@@ -238,6 +242,8 @@ static void rt_thread_idle_entry(void *parameter)
     }
 #endif
 
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     while (1)
     {
 #ifdef RT_USING_IDLE_HOOK
@@ -253,6 +259,9 @@ static void rt_thread_idle_entry(void *parameter)
 #endif
 
         rt_thread_idle_excute();
+#ifdef RT_USING_PM        
+        rt_system_power_manager();
+#endif
     }
 }
 

@@ -6,6 +6,7 @@
   ******************************************************************************
   * @attention
   *
+<<<<<<< HEAD
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
@@ -29,6 +30,15 @@
   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=======
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   *
   ******************************************************************************
   */
@@ -49,7 +59,11 @@
   * @{
   */
 
+<<<<<<< HEAD
 #if defined (SPI1) || defined (SPI2) || defined (SPI3) || defined(SPI4) || defined(SPI5) || defined(SPI6) 
+=======
+#if defined (SPI1) || defined (SPI2) || defined (SPI3) || defined (SPI4) || defined (SPI5) || defined(SPI6)
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /** @addtogroup SPI_LL
   * @{
@@ -233,7 +247,11 @@ ErrorStatus LL_SPI_DeInit(SPI_TypeDef *SPIx)
 /**
   * @brief  Initialize the SPI registers according to the specified parameters in SPI_InitStruct.
   * @note   As some bits in SPI configuration registers can only be written when the SPI is disabled (SPI_CR1_SPE bit =0),
+<<<<<<< HEAD
   *         SPI IP should be in disabled state prior calling this function. Otherwise, ERROR result will be returned.
+=======
+  *         SPI peripheral should be in disabled state prior calling this function. Otherwise, ERROR result will be returned.
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   * @param  SPIx SPI Instance
   * @param  SPI_InitStruct pointer to a @ref LL_SPI_InitTypeDef structure
   * @retval An ErrorStatus enumeration value. (Return always SUCCESS)
@@ -419,7 +437,11 @@ ErrorStatus LL_I2S_DeInit(SPI_TypeDef *SPIx)
 /**
   * @brief  Initializes the SPI/I2S registers according to the specified parameters in I2S_InitStruct.
   * @note   As some bits in SPI configuration registers can only be written when the SPI is disabled (SPI_CR1_SPE bit =0),
+<<<<<<< HEAD
   *         SPI IP should be in disabled state prior calling this function. Otherwise, ERROR result will be returned.
+=======
+  *         SPI peripheral should be in disabled state prior calling this function. Otherwise, ERROR result will be returned.
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   * @param  SPIx SPI Instance
   * @param  I2S_InitStruct pointer to a @ref LL_I2S_InitTypeDef structure
   * @retval An ErrorStatus enumeration value:
@@ -428,9 +450,15 @@ ErrorStatus LL_I2S_DeInit(SPI_TypeDef *SPIx)
   */
 ErrorStatus LL_I2S_Init(SPI_TypeDef *SPIx, LL_I2S_InitTypeDef *I2S_InitStruct)
 {
+<<<<<<< HEAD
   uint16_t i2sdiv = 2U, i2sodd = 0U, packetlength = 1U;
   uint32_t tmp = 0U;
   uint32_t sourceclock = 0U;
+=======
+  uint32_t i2sdiv = 2U, i2sodd = 0U, packetlength = 1U;
+  uint32_t tmp;
+  uint32_t sourceclock;
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   ErrorStatus status = ERROR;
 
   /* Check the I2S parameters */
@@ -488,18 +516,27 @@ ErrorStatus LL_I2S_Init(SPI_TypeDef *SPIx, LL_I2S_InitTypeDef *I2S_InitStruct)
       if (I2S_InitStruct->MCLKOutput == LL_I2S_MCLK_OUTPUT_ENABLE)
       {
         /* MCLK output is enabled */
+<<<<<<< HEAD
         tmp = (uint16_t)(((((sourceclock / 256U) * 10U) / I2S_InitStruct->AudioFreq)) + 5U);
+=======
+        tmp = (((((sourceclock / 256U) * 10U) / I2S_InitStruct->AudioFreq)) + 5U);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
       }
       else
       {
         /* MCLK output is disabled */
+<<<<<<< HEAD
         tmp = (uint16_t)(((((sourceclock / (32U * packetlength)) * 10U) / I2S_InitStruct->AudioFreq)) + 5U);
+=======
+        tmp = (((((sourceclock / (32U * packetlength)) * 10U) / I2S_InitStruct->AudioFreq)) + 5U);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
       }
 
       /* Remove the floating point */
       tmp = tmp / 10U;
 
       /* Check the parity of the divider */
+<<<<<<< HEAD
       i2sodd = (uint16_t)(tmp & (uint16_t)0x0001U);
 
       /* Compute the i2sdiv prescaler */
@@ -507,6 +544,15 @@ ErrorStatus LL_I2S_Init(SPI_TypeDef *SPIx, LL_I2S_InitTypeDef *I2S_InitStruct)
 
       /* Get the Mask for the Odd bit (SPI_I2SPR[8]) register */
       i2sodd = (uint16_t)(i2sodd << 8U);
+=======
+      i2sodd = (tmp & (uint16_t)0x0001U);
+
+      /* Compute the i2sdiv prescaler */
+      i2sdiv = ((tmp - i2sodd) / 2U);
+
+      /* Get the Mask for the Odd bit (SPI_I2SPR[8]) register */
+      i2sodd = (i2sodd << 8U);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     }
 
     /* Test if the divider is 1 or 0 or greater than 0xFF */
@@ -576,7 +622,11 @@ void LL_I2S_ConfigPrescaler(SPI_TypeDef *SPIx, uint32_t PrescalerLinear, uint32_
   * @}
   */
 
+<<<<<<< HEAD
 #endif /* defined (SPI1) || defined (SPI2) || defined (SPI3) || defined(SPI4) || defined(SPI5) || defined(SPI6)  */
+=======
+#endif /* defined (SPI1) || defined (SPI2) || defined (SPI3) || defined (SPI4) || defined (SPI5) || defined(SPI6) */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /**
   * @}

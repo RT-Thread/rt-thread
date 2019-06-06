@@ -17,6 +17,10 @@
 #define RT_IDEL_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
 #define RT_DEBUG
+<<<<<<< HEAD
+=======
+#define RT_DEBUG_COLOR
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /* Inter-Thread communication */
 
@@ -38,7 +42,11 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart1"
+<<<<<<< HEAD
 #define RT_VER_NUM 0x40000
+=======
+#define RT_VER_NUM 0x40001
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
 #define ARCH_ARM_CORTEX_M4
@@ -78,6 +86,10 @@
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
 #define RT_SERIAL_USING_DMA
+<<<<<<< HEAD
+=======
+#define RT_SERIAL_RB_BUFSZ 64
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define RT_USING_PIN
 
 /* Using WiFi */
@@ -94,6 +106,12 @@
 /* Socket abstraction layer */
 
 
+<<<<<<< HEAD
+=======
+/* Network interface device */
+
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /* light weight TCP/IP stack */
 
 
@@ -109,9 +127,12 @@
 /* Utilities */
 
 
+<<<<<<< HEAD
 /* ARM CMSIS */
 
 
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /* RT-Thread online packages */
 
 /* IoT - internet of things */
@@ -165,6 +186,10 @@
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
+<<<<<<< HEAD
+=======
+#define BSP_USING_UART
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define BSP_USING_UART1
 
 /* Board extended module Drivers */

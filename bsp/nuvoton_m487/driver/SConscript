@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # RT-Thread building script for component
+=======
+﻿# RT-Thread building script for component
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 from building import *
 
@@ -6,6 +10,12 @@ cwd     = GetCurrentDir()
 src     = Split('''
 board.c
 drv_uart.c
+<<<<<<< HEAD
+=======
+drv_emac.c
+drv_qspi.c
+drv_spiflash.c
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 ''')
 CPPPATH = [cwd]
 

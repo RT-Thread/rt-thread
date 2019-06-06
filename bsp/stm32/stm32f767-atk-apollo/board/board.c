@@ -5,7 +5,11 @@
  *
  * Change Logs:
  * Date           Author       Notes
+<<<<<<< HEAD
  * 2018-11-06     SummerGift   change to new framework
+=======
+ * 2018-11-06     SummerGift   first version
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
  */
 
 #include "board.h"

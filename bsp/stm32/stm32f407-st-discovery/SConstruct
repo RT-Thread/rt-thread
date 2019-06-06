@@ -21,13 +21,21 @@ env = Environment(tools = ['mingw'],
     AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
     CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
     AR = rtconfig.AR, ARFLAGS = '-rc',
+<<<<<<< HEAD
+=======
+    CXX = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS,
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
 if rtconfig.PLATFORM == 'iar':
     env.Replace(CCCOM = ['$CC $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES'])
     env.Replace(ARFLAGS = [''])
+<<<<<<< HEAD
     env.Replace(LINKCOM = ['$LINK $SOURCES $LINKFLAGS -o $TARGET --map rtthread.map'])
+=======
+    env.Replace(LINKCOM = env["LINKCOM"] + ' --map rtthread.map')
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 Export('RTT_ROOT')
 Export('rtconfig')

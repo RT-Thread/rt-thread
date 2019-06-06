@@ -6,7 +6,13 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-02-08     Zhangyihong  the first version
+<<<<<<< HEAD
  */
+=======
+ * 2018-10-29     XY
+ */
+ 
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #ifndef __DRV_TOUCH_H__
 #define __DRV_TOUCH_H__
 
@@ -24,6 +30,7 @@ struct touch_message
     rt_uint16_t y;
     rt_uint8_t event;
 };
+<<<<<<< HEAD
 typedef struct touch_message *touch_msg_t;
 
 struct touch_ops
@@ -47,5 +54,31 @@ struct touch_drivers
 typedef struct touch_drivers *touch_drv_t;
 
 extern void rt_touch_drivers_register(touch_drv_t drv);
+=======
+typedef struct touch_message *touch_message_t;
+
+struct touch_ops
+{
+    void (*init)(struct rt_i2c_bus_device *);
+    void (*deinit)(void);
+    rt_err_t (*read_point)(touch_message_t);
+};
+typedef struct touch_ops *touch_ops_t;
+
+struct touch_driver
+{
+    rt_slist_t      list;
+    rt_bool_t (*probe)(struct rt_i2c_bus_device *i2c_bus);
+    rt_sem_t        isr_sem;
+    touch_ops_t     ops;
+    void            *user_data;
+};
+typedef struct touch_driver *touch_driver_t;
+
+rt_err_t rt_touch_drivers_register(touch_driver_t drv);
+
+int rt_touch_read(rt_uint16_t addr, void *cmd_buf, size_t cmd_len, void *data_buf, size_t data_len);
+int rt_touch_write(rt_uint16_t addr, void *data_buf, size_t data_len);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 #endif

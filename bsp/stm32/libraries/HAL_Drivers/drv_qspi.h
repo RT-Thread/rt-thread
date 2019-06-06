@@ -5,7 +5,11 @@
  *
  * Change Logs:
  * Date           Author       Notes
+<<<<<<< HEAD
  * 2018-11-27     zylx         change to new framework
+=======
+ * 2018-11-27     zylx         first version
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
  */
  
 #ifndef __DRV_QSPI_H_

@@ -102,7 +102,7 @@ struct dfs_fd *fd_get(int fd);
 void fd_put(struct dfs_fd *fd);
 int fd_is_open(const char *pathname);
 
-struct dfs_fdtable* dfs_fdtable_get(void);
+struct dfs_fdtable *dfs_fdtable_get(void);
 
 #ifdef __cplusplus
 }

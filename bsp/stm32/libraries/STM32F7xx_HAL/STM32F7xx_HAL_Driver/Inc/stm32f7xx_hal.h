@@ -7,6 +7,7 @@
   ******************************************************************************
   * @attention
   *
+<<<<<<< HEAD
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
@@ -30,6 +31,15 @@
   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=======
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   *
   ******************************************************************************
   */ 
@@ -208,6 +218,20 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority);
   * @}
   */
  
+<<<<<<< HEAD
+=======
+ /* Exported variables ---------------------------------------------------------*/
+/** @addtogroup HAL_Exported_Variables
+  * @{
+  */
+extern __IO uint32_t uwTick;
+extern uint32_t uwTickPrio;
+extern HAL_TickFreqTypeDef uwTickFreq;
+/**
+  * @}
+  */
+ 
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /** @addtogroup HAL_Exported_Functions_Group2
   * @{
   */ 

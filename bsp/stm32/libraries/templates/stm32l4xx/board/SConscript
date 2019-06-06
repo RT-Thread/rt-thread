@@ -36,4 +36,9 @@ elif rtconfig.CROSS_TOOL == 'iar':
 CPPDEFINES = ['STM32L475xx']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
+<<<<<<< HEAD
 Return('group')
+=======
+Return('group')
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8

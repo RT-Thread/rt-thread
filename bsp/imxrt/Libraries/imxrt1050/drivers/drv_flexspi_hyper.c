@@ -14,10 +14,15 @@
 #include <rthw.h>
 #include "drv_flexspi.h"
 
+<<<<<<< HEAD
 #define DBG_ENABLE
 #define DBG_SECTION_NAME  "[Hyper]"
 #define DBG_LEVEL         DBG_LOG
 #define DBG_COLOR
+=======
+#define DBG_TAG  "Hyper"
+#define DBG_LVL  DBG_LOG
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #include <rtdbg.h>
 
 #define FLEXSPI_CLOCK kCLOCK_FlexSpi

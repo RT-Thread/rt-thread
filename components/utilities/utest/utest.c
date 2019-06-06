@@ -8,6 +8,7 @@
  * 2018-11-19     MurphyZhao   the first version
  */
 
+<<<<<<< HEAD
 #include "utest.h"
 #include <rtthread.h>
 #include <finsh.h>
@@ -25,20 +26,68 @@
 #define DBG_LEVEL                 DBG_INFO
 #endif
 #define DBG_COLOR
+=======
+#include <rtthread.h>
+#include <string.h>
+#include <stdlib.h>
+
+#include "utest.h"
+#include <utest_log.h>
+
+#undef DBG_TAG
+#undef DBG_LVL
+
+#define DBG_TAG          "utest"
+#ifdef UTEST_DEBUG
+#define DBG_LVL          DBG_LOG
+#else
+#define DBG_LVL          DBG_INFO
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #include <rtdbg.h>
 
 #if RT_CONSOLEBUF_SIZE < 256
 #error "RT_CONSOLEBUF_SIZE is less than 256!"
 #endif
 
+<<<<<<< HEAD
 static utest_tc_export_t tc_table = RT_NULL;
 static rt_size_t tc_num;
+=======
+#ifdef UTEST_THR_STACK_SIZE
+#define UTEST_THREAD_STACK_SIZE UTEST_THR_STACK_SIZE
+#else
+#define UTEST_THREAD_STACK_SIZE (4096)
+#endif
+
+#ifdef UTEST_THR_PRIORITY
+#define UTEST_THREAD_PRIORITY   UTEST_THR_PRIORITY
+#else
+#define UTEST_THREAD_PRIORITY   FINSH_THREAD_PRIORITY
+#endif
+
+static rt_uint8_t utest_log_lv = UTEST_LOG_ALL;
+static utest_tc_export_t tc_table = RT_NULL;
+static rt_size_t tc_num;
+static rt_uint32_t tc_loop;
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 static struct utest local_utest = {UTEST_PASSED, 0, 0};
 
 #if defined(__ICCARM__) || defined(__ICCRX__)         /* for IAR compiler */
 #pragma section="UtestTcTab"
 #endif
 
+<<<<<<< HEAD
+=======
+void utest_log_lv_set(rt_uint8_t lv)
+{
+    if (lv == UTEST_LOG_ALL || lv == UTEST_LOG_ASSERT)
+    {
+        utest_log_lv = lv;
+    }
+}
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 int utest_init(void)
 {
     /* initialize the utest commands table.*/
@@ -94,6 +143,7 @@ static const char *file_basename(const char *file)
     return (const char *)rst;
 }
 
+<<<<<<< HEAD
 static void utest_run(const char *utest_name)
 {
     rt_size_t i = 0;
@@ -149,28 +199,190 @@ __tc_continue:
         i++;
     }
     LOG_I("[==========] [ utest    ] finished");
+=======
+static int utest_help(void)
+{
+    rt_kprintf("\n");
+    rt_kprintf("Command: utest_run\n");
+    rt_kprintf("   info: Execute test cases.\n");
+    rt_kprintf(" format: utest_run [-thread or -help] [testcase name] [loop num]\n");
+    rt_kprintf("  usage:\n");
+    rt_kprintf("         1. utest_run\n");
+    rt_kprintf("            Do not specify a test case name. Run all test cases.\n");
+    rt_kprintf("         2. utest_run -thread\n");
+    rt_kprintf("            Do not specify a test case name. Run all test cases in threaded mode.\n");
+    rt_kprintf("         3. utest_run testcaseA\n");
+    rt_kprintf("            Run 'testcaseA'.\n");
+    rt_kprintf("         4. utest_run testcaseA 10\n");
+    rt_kprintf("            Run 'testcaseA' ten times.\n");
+    rt_kprintf("         5. utest_run -thread testcaseA\n");
+    rt_kprintf("            Run 'testcaseA' in threaded mode.\n");
+    rt_kprintf("         6. utest_run -thread testcaseA 10\n");
+    rt_kprintf("            Run 'testcaseA' ten times in threaded mode.\n");
+    rt_kprintf("         7. utest_run test*\n");
+    rt_kprintf("            support '*' wildcard. Run all test cases starting with 'test'.\n");
+    rt_kprintf("         8. utest_run -help\n");
+    rt_kprintf("            Show utest help information\n");
+    rt_kprintf("\n");
+    return 0;
+}
+
+static void utest_run(const char *utest_name)
+{
+    rt_size_t i;
+    rt_uint32_t index;
+    rt_bool_t is_find;
+
+    rt_thread_mdelay(1000);
+
+    for (index = 0; index < tc_loop; index ++)
+    {
+        i = 0;
+        is_find = RT_FALSE;
+        LOG_I("[==========] [ utest    ] loop %d/%d", index + 1, tc_loop);
+        LOG_I("[==========] [ utest    ] started");
+        while(i < tc_num)
+        {
+            if (utest_name)
+            {
+                int len = strlen(utest_name);
+                if (utest_name[len - 1] == '*')
+                {
+                    len -= 1;
+                }
+                if (rt_memcmp(tc_table[i].name, utest_name, len) != 0)
+                {
+                    i++;
+                    continue;
+                }
+            }
+            is_find = RT_TRUE;
+
+            LOG_I("[----------] [ testcase ] (%s) started", tc_table[i].name);
+            if (tc_table[i].init != RT_NULL)
+            {
+                if (tc_table[i].init() != RT_EOK)
+                {
+                    LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
+                    goto __tc_continue;
+                }
+            }
+
+            if (tc_table[i].tc != RT_NULL)
+            {
+                tc_table[i].tc();
+                if (local_utest.failed_num == 0)
+                {
+                    LOG_I("[  PASSED  ] [ result   ] testcase (%s)", tc_table[i].name);
+                }
+                else
+                {
+                    LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
+                }
+            }
+            else
+            {
+                LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
+            }
+
+            if (tc_table[i].cleanup != RT_NULL)
+            {
+                if (tc_table[i].cleanup() != RT_EOK)
+                {
+                    LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
+                    goto __tc_continue;
+                }
+            }
+
+    __tc_continue:
+            LOG_I("[----------] [ testcase ] (%s) finished", tc_table[i].name);
+
+            i++;
+        }
+
+        if (i == tc_num && is_find == RT_FALSE)
+        {
+            LOG_I("[==========] [ utest    ] Not find (%s)", utest_name);
+            LOG_I("[==========] [ utest    ] finished");
+            break;
+        }
+
+        LOG_I("[==========] [ utest    ] finished");
+    }
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 static void utest_testcase_run(int argc, char** argv)
 {
+<<<<<<< HEAD
     char utest_name[UTEST_NAME_MAX_LEN];
+=======
+    void *thr_param = RT_NULL;
+
+    static char utest_name[UTEST_NAME_MAX_LEN];
+    rt_memset(utest_name, 0x0, sizeof(utest_name));
+
+    tc_loop = 1;
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
     if (argc == 1)
     {
         utest_run(RT_NULL);
+<<<<<<< HEAD
     }
     else if (argc == 2)
     {
         rt_memset(utest_name, 0x0, sizeof(utest_name));
         rt_strncpy(utest_name, argv[1], sizeof(utest_name) -1);
         utest_run(utest_name);
+=======
+        return;
+    }
+    else if (argc == 2 || argc == 3 || argc == 4)
+    {
+        if (rt_strcmp(argv[1], "-thread") == 0)
+        {
+            rt_thread_t tid = RT_NULL;
+            if (argc == 3 || argc == 4)
+            {
+                rt_strncpy(utest_name, argv[2], sizeof(utest_name) -1);
+                thr_param = (void*)utest_name;
+
+                if (argc == 4) tc_loop = atoi(argv[3]);
+            }
+            tid = rt_thread_create("utest",
+                                    (void (*)(void *))utest_run, thr_param,
+                                    UTEST_THREAD_STACK_SIZE, UTEST_THREAD_PRIORITY, 10);
+            if (tid != NULL)
+            {
+                rt_thread_startup(tid);
+            }
+        }
+        else if (rt_strcmp(argv[1], "-help") == 0)
+        {
+            utest_help();
+        }
+        else
+        {
+            rt_strncpy(utest_name, argv[1], sizeof(utest_name) -1);
+            if (argc == 3) tc_loop = atoi(argv[2]);
+            utest_run(utest_name);
+        }
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     }
     else
     {
         LOG_E("[  error   ] at (%s:%d), in param error.", __func__, __LINE__);
+<<<<<<< HEAD
     }
 }
 MSH_CMD_EXPORT_ALIAS(utest_testcase_run, utest_run, utest_run [testcase name]);
+=======
+        utest_help();
+    }
+}
+MSH_CMD_EXPORT_ALIAS(utest_testcase_run, utest_run, utest_run [-thread or -help] [testcase name] [loop num]);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 utest_t utest_handle_get(void)
 {
@@ -200,7 +412,14 @@ void utest_assert(int value, const char *file, int line, const char *func, const
     }
     else
     {
+<<<<<<< HEAD
         LOG_D("[    OK    ] [ unit     ] (%s:%d) is passed", func, line);
+=======
+        if (utest_log_lv == UTEST_LOG_ALL)
+        {
+            LOG_D("[    OK    ] [ unit     ] (%s:%d) is passed", func, line);
+        }
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
         local_utest.error = UTEST_PASSED;
         local_utest.passed_num ++;
     }
@@ -236,3 +455,37 @@ void utest_assert_string(const char *a, const char *b, rt_bool_t equal, const ch
         }
     }
 }
+<<<<<<< HEAD
+=======
+
+void utest_assert_buf(const char *a, const char *b, rt_size_t sz, rt_bool_t equal, const char *file, int line, const char *func, const char *msg)
+{
+    if (a == RT_NULL || b == RT_NULL)
+    {
+        utest_assert(0, file, line, func, msg);
+    }
+
+    if (equal)
+    {
+        if (rt_memcmp(a, b, sz) == 0)
+        {
+            utest_assert(1, file, line, func, msg);
+        }
+        else
+        {
+            utest_assert(0, file, line, func, msg);
+        }
+    }
+    else
+    {
+        if (rt_memcmp(a, b, sz) == 0)
+        {
+            utest_assert(0, file, line, func, msg);
+        }
+        else
+        {
+            utest_assert(1, file, line, func, msg);
+        }
+    }
+}
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8

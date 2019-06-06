@@ -6,6 +6,7 @@
   ******************************************************************************
   * @attention
   *
+<<<<<<< HEAD
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
@@ -29,13 +30,27 @@
   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=======
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
+<<<<<<< HEAD
 #ifndef __STM32F7xx_LL_SPI_H
 #define __STM32F7xx_LL_SPI_H
+=======
+#ifndef STM32F7xx_LL_SPI_H
+#define STM32F7xx_LL_SPI_H
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,7 +63,11 @@ extern "C" {
   * @{
   */
 
+<<<<<<< HEAD
 #if defined (SPI1) || defined (SPI2) || defined (SPI3) || defined(SPI4) || defined(SPI5) || defined(SPI6) 
+=======
+#if defined (SPI1) || defined (SPI2) || defined (SPI3) || defined (SPI4) || defined (SPI5) || defined(SPI6)
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /** @defgroup SPI_LL SPI
   * @{
@@ -397,7 +416,11 @@ __STATIC_INLINE void LL_SPI_Disable(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE uint32_t LL_SPI_IsEnabled(SPI_TypeDef *SPIx)
 {
+<<<<<<< HEAD
   return (READ_BIT(SPIx->CR1, SPI_CR1_SPE) == (SPI_CR1_SPE));
+=======
+  return ((READ_BIT(SPIx->CR1, SPI_CR1_SPE) == (SPI_CR1_SPE)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -738,7 +761,11 @@ __STATIC_INLINE void LL_SPI_DisableCRC(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE uint32_t LL_SPI_IsEnabledCRC(SPI_TypeDef *SPIx)
 {
+<<<<<<< HEAD
   return (READ_BIT(SPIx->CR1, SPI_CR1_CRCEN) == (SPI_CR1_CRCEN));
+=======
+  return ((READ_BIT(SPIx->CR1, SPI_CR1_CRCEN) == (SPI_CR1_CRCEN)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -902,7 +929,11 @@ __STATIC_INLINE void LL_SPI_DisableNSSPulseMgt(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE uint32_t LL_SPI_IsEnabledNSSPulse(SPI_TypeDef *SPIx)
 {
+<<<<<<< HEAD
   return (READ_BIT(SPIx->CR2, SPI_CR2_NSSP) == (SPI_CR2_NSSP));
+=======
+  return ((READ_BIT(SPIx->CR2, SPI_CR2_NSSP) == (SPI_CR2_NSSP)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -921,7 +952,11 @@ __STATIC_INLINE uint32_t LL_SPI_IsEnabledNSSPulse(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE uint32_t LL_SPI_IsActiveFlag_RXNE(SPI_TypeDef *SPIx)
 {
+<<<<<<< HEAD
   return (READ_BIT(SPIx->SR, SPI_SR_RXNE) == (SPI_SR_RXNE));
+=======
+  return ((READ_BIT(SPIx->SR, SPI_SR_RXNE) == (SPI_SR_RXNE)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -932,7 +967,11 @@ __STATIC_INLINE uint32_t LL_SPI_IsActiveFlag_RXNE(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE uint32_t LL_SPI_IsActiveFlag_TXE(SPI_TypeDef *SPIx)
 {
+<<<<<<< HEAD
   return (READ_BIT(SPIx->SR, SPI_SR_TXE) == (SPI_SR_TXE));
+=======
+  return ((READ_BIT(SPIx->SR, SPI_SR_TXE) == (SPI_SR_TXE)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -943,7 +982,11 @@ __STATIC_INLINE uint32_t LL_SPI_IsActiveFlag_TXE(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE uint32_t LL_SPI_IsActiveFlag_CRCERR(SPI_TypeDef *SPIx)
 {
+<<<<<<< HEAD
   return (READ_BIT(SPIx->SR, SPI_SR_CRCERR) == (SPI_SR_CRCERR));
+=======
+  return ((READ_BIT(SPIx->SR, SPI_SR_CRCERR) == (SPI_SR_CRCERR)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -954,7 +997,11 @@ __STATIC_INLINE uint32_t LL_SPI_IsActiveFlag_CRCERR(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE uint32_t LL_SPI_IsActiveFlag_MODF(SPI_TypeDef *SPIx)
 {
+<<<<<<< HEAD
   return (READ_BIT(SPIx->SR, SPI_SR_MODF) == (SPI_SR_MODF));
+=======
+  return ((READ_BIT(SPIx->SR, SPI_SR_MODF) == (SPI_SR_MODF)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -965,7 +1012,11 @@ __STATIC_INLINE uint32_t LL_SPI_IsActiveFlag_MODF(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE uint32_t LL_SPI_IsActiveFlag_OVR(SPI_TypeDef *SPIx)
 {
+<<<<<<< HEAD
   return (READ_BIT(SPIx->SR, SPI_SR_OVR) == (SPI_SR_OVR));
+=======
+  return ((READ_BIT(SPIx->SR, SPI_SR_OVR) == (SPI_SR_OVR)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -983,7 +1034,11 @@ __STATIC_INLINE uint32_t LL_SPI_IsActiveFlag_OVR(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE uint32_t LL_SPI_IsActiveFlag_BSY(SPI_TypeDef *SPIx)
 {
+<<<<<<< HEAD
   return (READ_BIT(SPIx->SR, SPI_SR_BSY) == (SPI_SR_BSY));
+=======
+  return ((READ_BIT(SPIx->SR, SPI_SR_BSY) == (SPI_SR_BSY)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -994,7 +1049,11 @@ __STATIC_INLINE uint32_t LL_SPI_IsActiveFlag_BSY(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE uint32_t LL_SPI_IsActiveFlag_FRE(SPI_TypeDef *SPIx)
 {
+<<<<<<< HEAD
   return (READ_BIT(SPIx->SR, SPI_SR_FRE) == (SPI_SR_FRE));
+=======
+  return ((READ_BIT(SPIx->SR, SPI_SR_FRE) == (SPI_SR_FRE)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -1048,11 +1107,18 @@ __STATIC_INLINE void LL_SPI_ClearFlag_CRCERR(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE void LL_SPI_ClearFlag_MODF(SPI_TypeDef *SPIx)
 {
+<<<<<<< HEAD
   __IO uint32_t tmpreg;
   tmpreg = SPIx->SR;
   (void) tmpreg;
   tmpreg = CLEAR_BIT(SPIx->CR1, SPI_CR1_SPE);
   (void) tmpreg;
+=======
+  __IO uint32_t tmpreg_sr;
+  tmpreg_sr = SPIx->SR;
+  (void) tmpreg_sr;
+  CLEAR_BIT(SPIx->CR1, SPI_CR1_SPE);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -1170,7 +1236,11 @@ __STATIC_INLINE void LL_SPI_DisableIT_TXE(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE uint32_t LL_SPI_IsEnabledIT_ERR(SPI_TypeDef *SPIx)
 {
+<<<<<<< HEAD
   return (READ_BIT(SPIx->CR2, SPI_CR2_ERRIE) == (SPI_CR2_ERRIE));
+=======
+  return ((READ_BIT(SPIx->CR2, SPI_CR2_ERRIE) == (SPI_CR2_ERRIE)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -1181,7 +1251,11 @@ __STATIC_INLINE uint32_t LL_SPI_IsEnabledIT_ERR(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE uint32_t LL_SPI_IsEnabledIT_RXNE(SPI_TypeDef *SPIx)
 {
+<<<<<<< HEAD
   return (READ_BIT(SPIx->CR2, SPI_CR2_RXNEIE) == (SPI_CR2_RXNEIE));
+=======
+  return ((READ_BIT(SPIx->CR2, SPI_CR2_RXNEIE) == (SPI_CR2_RXNEIE)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -1192,7 +1266,11 @@ __STATIC_INLINE uint32_t LL_SPI_IsEnabledIT_RXNE(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE uint32_t LL_SPI_IsEnabledIT_TXE(SPI_TypeDef *SPIx)
 {
+<<<<<<< HEAD
   return (READ_BIT(SPIx->CR2, SPI_CR2_TXEIE) == (SPI_CR2_TXEIE));
+=======
+  return ((READ_BIT(SPIx->CR2, SPI_CR2_TXEIE) == (SPI_CR2_TXEIE)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -1233,7 +1311,11 @@ __STATIC_INLINE void LL_SPI_DisableDMAReq_RX(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE uint32_t LL_SPI_IsEnabledDMAReq_RX(SPI_TypeDef *SPIx)
 {
+<<<<<<< HEAD
   return (READ_BIT(SPIx->CR2, SPI_CR2_RXDMAEN) == (SPI_CR2_RXDMAEN));
+=======
+  return ((READ_BIT(SPIx->CR2, SPI_CR2_RXDMAEN) == (SPI_CR2_RXDMAEN)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -1266,7 +1348,11 @@ __STATIC_INLINE void LL_SPI_DisableDMAReq_TX(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE uint32_t LL_SPI_IsEnabledDMAReq_TX(SPI_TypeDef *SPIx)
 {
+<<<<<<< HEAD
   return (READ_BIT(SPIx->CR2, SPI_CR2_TXDMAEN) == (SPI_CR2_TXDMAEN));
+=======
+  return ((READ_BIT(SPIx->CR2, SPI_CR2_TXDMAEN) == (SPI_CR2_TXDMAEN)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -1373,7 +1459,16 @@ __STATIC_INLINE uint16_t LL_SPI_ReceiveData16(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE void LL_SPI_TransmitData8(SPI_TypeDef *SPIx, uint8_t TxData)
 {
+<<<<<<< HEAD
   *((__IO uint8_t *)&SPIx->DR) = TxData;
+=======
+#if defined (__GNUC__)
+  __IO uint8_t *spidr = ((__IO uint8_t *)&SPIx->DR);
+  *spidr = TxData;
+#else
+  *((__IO uint8_t *)&SPIx->DR) = TxData;
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -1385,7 +1480,16 @@ __STATIC_INLINE void LL_SPI_TransmitData8(SPI_TypeDef *SPIx, uint8_t TxData)
   */
 __STATIC_INLINE void LL_SPI_TransmitData16(SPI_TypeDef *SPIx, uint16_t TxData)
 {
+<<<<<<< HEAD
   *((__IO uint16_t *)&SPIx->DR) = TxData;
+=======
+#if defined (__GNUC__)
+  __IO uint16_t *spidr = ((__IO uint16_t *)&SPIx->DR);
+  *spidr = TxData;
+#else
+  SPIx->DR = TxData;
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -1665,7 +1769,11 @@ __STATIC_INLINE void LL_I2S_Disable(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE uint32_t LL_I2S_IsEnabled(SPI_TypeDef *SPIx)
 {
+<<<<<<< HEAD
   return (READ_BIT(SPIx->I2SCFGR, SPI_I2SCFGR_I2SE) == (SPI_I2SCFGR_I2SE));
+=======
+  return ((READ_BIT(SPIx->I2SCFGR, SPI_I2SCFGR_I2SE) == (SPI_I2SCFGR_I2SE)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -1874,7 +1982,11 @@ __STATIC_INLINE void LL_I2S_DisableMasterClock(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE uint32_t LL_I2S_IsEnabledMasterClock(SPI_TypeDef *SPIx)
 {
+<<<<<<< HEAD
   return (READ_BIT(SPIx->I2SPR, SPI_I2SPR_MCKOE) == (SPI_I2SPR_MCKOE));
+=======
+  return ((READ_BIT(SPIx->I2SPR, SPI_I2SPR_MCKOE) == (SPI_I2SPR_MCKOE)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 #if defined(SPI_I2SCFGR_ASTRTEN)
@@ -1908,7 +2020,11 @@ __STATIC_INLINE void LL_I2S_DisableAsyncStart(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE uint32_t LL_I2S_IsEnabledAsyncStart(SPI_TypeDef *SPIx)
 {
+<<<<<<< HEAD
   return (READ_BIT(SPIx->I2SCFGR, SPI_I2SCFGR_ASTRTEN) == (SPI_I2SCFGR_ASTRTEN));
+=======
+  return ((READ_BIT(SPIx->I2SCFGR, SPI_I2SCFGR_ASTRTEN) == (SPI_I2SCFGR_ASTRTEN)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 #endif /* SPI_I2SCFGR_ASTRTEN */
 
@@ -1972,7 +2088,11 @@ __STATIC_INLINE uint32_t LL_I2S_IsActiveFlag_OVR(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE uint32_t LL_I2S_IsActiveFlag_UDR(SPI_TypeDef *SPIx)
 {
+<<<<<<< HEAD
   return (READ_BIT(SPIx->SR, SPI_SR_UDR) == (SPI_SR_UDR));
+=======
+  return ((READ_BIT(SPIx->SR, SPI_SR_UDR) == (SPI_SR_UDR)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -1997,7 +2117,11 @@ __STATIC_INLINE uint32_t LL_I2S_IsActiveFlag_FRE(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE uint32_t LL_I2S_IsActiveFlag_CHSIDE(SPI_TypeDef *SPIx)
 {
+<<<<<<< HEAD
   return (READ_BIT(SPIx->SR, SPI_SR_CHSIDE) == (SPI_SR_CHSIDE));
+=======
+  return ((READ_BIT(SPIx->SR, SPI_SR_CHSIDE) == (SPI_SR_CHSIDE)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -2276,7 +2400,11 @@ void        LL_I2S_ConfigPrescaler(SPI_TypeDef *SPIx, uint32_t PrescalerLinear, 
   * @}
   */
 
+<<<<<<< HEAD
 #endif /* defined (SPI1) || defined (SPI2) || defined (SPI3) || defined(SPI4) || defined(SPI5) || defined(SPI6)  */
+=======
+#endif /* defined (SPI1) || defined (SPI2) || defined (SPI3) || defined (SPI4) || defined (SPI5) || defined(SPI6) */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /**
   * @}
@@ -2286,6 +2414,10 @@ void        LL_I2S_ConfigPrescaler(SPI_TypeDef *SPIx, uint32_t PrescalerLinear, 
 }
 #endif
 
+<<<<<<< HEAD
 #endif /* __STM32F7xx_LL_SPI_H */
+=======
+#endif /* STM32F7xx_LL_SPI_H */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

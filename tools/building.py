@@ -187,7 +187,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     AddOption('--target',
                       dest = 'target',
                       type = 'string',
+<<<<<<< HEAD
                       help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses')
+=======
+                      help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse')
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     AddOption('--genconfig',
                 dest = 'genconfig',
                 action = 'store_true',
@@ -228,6 +232,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'cb':('keil', 'armcc'),
                 'ua':('gcc', 'gcc'),
                 'cdk':('gcc', 'gcc'),
+<<<<<<< HEAD
+=======
+                'makefile':('gcc', 'gcc'),
+                'eclipse':('gcc', 'gcc'),
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
                 'ses' : ('gcc', 'gcc')}
     tgt_name = GetOption('target')
 
@@ -273,6 +282,13 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         env['LIBLINKSUFFIX'] = '.lib'
         env['LIBDIRPREFIX'] = '--userlibpath '
 
+    elif rtconfig.PLATFORM == 'iar':
+        env['LIBPREFIX'] = ''
+        env['LIBSUFFIX'] = '.a'
+        env['LIBLINKPREFIX'] = ''
+        env['LIBLINKSUFFIX'] = '.a'
+        env['LIBDIRPREFIX'] = '--search '
+
     # patch for win32 spawn
     if env['PLATFORM'] == 'win32':
         win32_spawn = Win32Spawn()
@@ -286,8 +302,8 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     # add program path
     env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
-    # add rtconfig.h path
-    env.Append(CPPPATH = [str(Dir('#').abspath)])
+    # add rtconfig.h/BSP path into Kernel group
+    DefineGroup("Kernel", [], [], CPPPATH=[str(Dir('#').abspath)])
 
     # add library build action
     act = SCons.Action.Action(BuildLibInstallAction, 'Install compiled library... $TARGET')
@@ -817,6 +833,17 @@ def GenTargetProject(program = None):
         from ses import SESProject
         SESProject(Env)
 
+<<<<<<< HEAD
+=======
+    if GetOption('target') == 'makefile':
+        from makefile import TargetMakefile
+        TargetMakefile(Env)
+
+    if GetOption('target') == 'eclipse':
+        from eclipse import TargetEclipse
+        TargetEclipse(Env)
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 def EndBuilding(target, program = None):
     import rtconfig
 

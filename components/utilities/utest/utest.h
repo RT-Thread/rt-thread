@@ -13,6 +13,10 @@
 
 #include <rtthread.h>
 #include "utest_log.h"
+<<<<<<< HEAD
+=======
+#include "utest_assert.h"
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /**
  * utest_error
@@ -57,7 +61,11 @@ typedef struct utest *utest_t;
  *        Will export the data to `UtestTcTab` section in flash.
  * 
  * @member name        Testcase name.
+<<<<<<< HEAD
  * @member run_timeout Testcase maximum test time.
+=======
+ * @member run_timeout Testcase maximum test time (Time unit: seconds).
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
  * @member init        Necessary initialization before executing the test case function.
  * @member tc          Total number of tests failed.
  * @member cleanup     Total number of tests failed.
@@ -125,7 +133,11 @@ utest_t utest_handle_get(void);
  * @param name     The testcase name.
  * @param init     The initialization function of the test case.
  * @param cleanup  The cleanup function of the test case.
+<<<<<<< HEAD
  * @param timeout  Testcase maximum test time.
+=======
+ * @param timeout  Testcase maximum test time (Time unit: seconds).
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
  * 
  * @return None
  * 

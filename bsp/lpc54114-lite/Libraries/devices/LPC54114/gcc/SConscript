@@ -2,7 +2,11 @@ from building import *
 
 cwd = GetCurrentDir()
 src = Split('''
+<<<<<<< HEAD
 startup_LPC54114_cm4.s
+=======
+startup_LPC54114_cm4.S
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 ''')
 
 group = DefineGroup('Libraries', src, depend = [''], LIBS=['libpower_cm4_hardabi'], LIBPATH=[cwd])

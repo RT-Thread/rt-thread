@@ -6,6 +6,7 @@
   ******************************************************************************
   * @attention
   *
+<<<<<<< HEAD
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
@@ -29,13 +30,27 @@
   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=======
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
+<<<<<<< HEAD
 #ifndef __STM32F7xx_HAL_I2C_EX_H
 #define __STM32F7xx_HAL_I2C_EX_H
+=======
+#ifndef STM32F7xx_HAL_I2C_EX_H
+#define STM32F7xx_HAL_I2C_EX_H
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 #ifdef __cplusplus
 extern "C" {
@@ -152,7 +167,11 @@ void HAL_I2CEx_DisableFastModePlus(uint32_t ConfigFastModePlus);
 
 #define IS_I2C_DIGITAL_FILTER(FILTER)   ((FILTER) <= 0x0000000FU)
 
+<<<<<<< HEAD
 #if defined(SYSCFG_PMC_I2C1_FMP) && defined(SYSCFG_PMC_I2C2_FMP) && defined(SYSCFG_PMC_I2C3_FMP) && defined(SYSCFG_PMC_I2C4_FMP)
+=======
+#if (defined(SYSCFG_PMC_I2C1_FMP) && defined(SYSCFG_PMC_I2C2_FMP) && defined(SYSCFG_PMC_I2C3_FMP) && defined(SYSCFG_PMC_I2C4_FMP))
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define IS_I2C_FASTMODEPLUS(__CONFIG__) ((((__CONFIG__) & I2C_FASTMODEPLUS_PB6)  == I2C_FASTMODEPLUS_PB6)  || \
                                          (((__CONFIG__) & I2C_FASTMODEPLUS_PB7)  == I2C_FASTMODEPLUS_PB7)  || \
                                          (((__CONFIG__) & I2C_FASTMODEPLUS_PB8)  == I2C_FASTMODEPLUS_PB8)  || \
@@ -216,6 +235,10 @@ void HAL_I2CEx_DisableFastModePlus(uint32_t ConfigFastModePlus);
 }
 #endif
 
+<<<<<<< HEAD
 #endif /* __STM32F7xx_HAL_I2C_EX_H */
+=======
+#endif /* STM32F7xx_HAL_I2C_EX_H */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

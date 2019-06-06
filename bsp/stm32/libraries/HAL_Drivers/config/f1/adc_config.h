@@ -13,6 +13,13 @@
 
 #include <rtthread.h>
 
+<<<<<<< HEAD
+=======
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #ifdef BSP_USING_ADC1
 #ifndef ADC1_CONFIG
 #define ADC1_CONFIG                                                \
@@ -61,4 +68,11 @@
 #endif /* ADC3_CONFIG */
 #endif /* BSP_USING_ADC3 */
 
+<<<<<<< HEAD
+=======
+#ifdef __cplusplus
+}
+#endif
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #endif /* __ADC_CONFIG_H__ */

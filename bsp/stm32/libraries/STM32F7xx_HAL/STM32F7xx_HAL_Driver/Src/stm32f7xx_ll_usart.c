@@ -6,6 +6,7 @@
   ******************************************************************************
   * @attention
   *
+<<<<<<< HEAD
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
@@ -29,6 +30,15 @@
   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=======
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   *
   ******************************************************************************
   */
@@ -65,7 +75,10 @@
   * @}
   */
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /* Private macros ------------------------------------------------------------*/
 /** @addtogroup USART_LL_Private_Macros
   * @{
@@ -172,6 +185,7 @@ ErrorStatus LL_USART_DeInit(USART_TypeDef *USARTx)
     /* Release reset of USART clock */
     LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_USART3);
   }
+<<<<<<< HEAD
   else if (USARTx == USART6)
   {
     /* Force reset of USART clock */
@@ -180,6 +194,8 @@ ErrorStatus LL_USART_DeInit(USART_TypeDef *USARTx)
     /* Release reset of USART clock */
     LL_APB2_GRP1_ReleaseReset(LL_APB2_GRP1_PERIPH_USART6);
   }
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   else if (USARTx == UART4)
   {
     /* Force reset of UART clock */
@@ -196,6 +212,17 @@ ErrorStatus LL_USART_DeInit(USART_TypeDef *USARTx)
     /* Release reset of UART clock */
     LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_UART5);
   }
+<<<<<<< HEAD
+=======
+  else if (USARTx == USART6)
+  {
+    /* Force reset of USART clock */
+    LL_APB2_GRP1_ForceReset(LL_APB2_GRP1_PERIPH_USART6);
+
+    /* Release reset of USART clock */
+    LL_APB2_GRP1_ReleaseReset(LL_APB2_GRP1_PERIPH_USART6);
+  }
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   else if (USARTx == UART7)
   {
     /* Force reset of UART clock */
@@ -224,7 +251,11 @@ ErrorStatus LL_USART_DeInit(USART_TypeDef *USARTx)
   * @brief  Initialize USART registers according to the specified
   *         parameters in USART_InitStruct.
   * @note   As some bits in USART configuration registers can only be written when the USART is disabled (USART_CR1_UE bit =0),
+<<<<<<< HEAD
   *         USART IP should be in disabled state prior calling this function. Otherwise, ERROR result will be returned.
+=======
+  *         USART Peripheral should be in disabled state prior calling this function. Otherwise, ERROR result will be returned.
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   * @note   Baud rate value stored in USART_InitStruct BaudRate field, should be valid (different from 0).
   * @param  USARTx USART Instance
   * @param  USART_InitStruct pointer to a LL_USART_InitTypeDef structure
@@ -293,10 +324,13 @@ ErrorStatus LL_USART_Init(USART_TypeDef *USARTx, LL_USART_InitTypeDef *USART_Ini
     {
       periphclk = LL_RCC_GetUSARTClockFreq(LL_RCC_USART3_CLKSOURCE);
     }
+<<<<<<< HEAD
     else if (USARTx == USART6)
     {
       periphclk = LL_RCC_GetUSARTClockFreq(LL_RCC_USART6_CLKSOURCE);
     }
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     else if (USARTx == UART4)
     {
       periphclk = LL_RCC_GetUARTClockFreq(LL_RCC_UART4_CLKSOURCE);
@@ -305,6 +339,13 @@ ErrorStatus LL_USART_Init(USART_TypeDef *USARTx, LL_USART_InitTypeDef *USART_Ini
     {
       periphclk = LL_RCC_GetUARTClockFreq(LL_RCC_UART5_CLKSOURCE);
     }
+<<<<<<< HEAD
+=======
+    else if (USARTx == USART6)
+    {
+      periphclk = LL_RCC_GetUSARTClockFreq(LL_RCC_USART6_CLKSOURCE);
+    }
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     else if (USARTx == UART7)
     {
       periphclk = LL_RCC_GetUARTClockFreq(LL_RCC_UART7_CLKSOURCE);
@@ -334,7 +375,11 @@ ErrorStatus LL_USART_Init(USART_TypeDef *USARTx, LL_USART_InitTypeDef *USART_Ini
       /* Check BRR is greater than or equal to 16d */
       assert_param(IS_LL_USART_BRR_MIN(USARTx->BRR));
 
+<<<<<<< HEAD
       /* Check BRR is greater than or equal to 16d */
+=======
+      /* Check BRR is lower than or equal to 0xFFFF */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
       assert_param(IS_LL_USART_BRR_MAX(USARTx->BRR));
     }
   }
@@ -346,7 +391,11 @@ ErrorStatus LL_USART_Init(USART_TypeDef *USARTx, LL_USART_InitTypeDef *USART_Ini
 /**
   * @brief Set each @ref LL_USART_InitTypeDef field to default value.
   * @param USART_InitStruct pointer to a @ref LL_USART_InitTypeDef structure
+<<<<<<< HEAD
   *                          whose fields will be set to default values.
+=======
+  *                         whose fields will be set to default values.
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   * @retval None
   */
 
@@ -366,7 +415,11 @@ void LL_USART_StructInit(LL_USART_InitTypeDef *USART_InitStruct)
   * @brief  Initialize USART Clock related settings according to the
   *         specified parameters in the USART_ClockInitStruct.
   * @note   As some bits in USART configuration registers can only be written when the USART is disabled (USART_CR1_UE bit =0),
+<<<<<<< HEAD
   *         USART IP should be in disabled state prior calling this function. Otherwise, ERROR result will be returned.
+=======
+  *         USART Peripheral should be in disabled state prior calling this function. Otherwise, ERROR result will be returned.
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   * @param  USARTx USART Instance
   * @param  USART_ClockInitStruct pointer to a @ref LL_USART_ClockInitTypeDef structure
   *         that contains the Clock configuration information for the specified USART peripheral.
@@ -430,7 +483,11 @@ ErrorStatus LL_USART_ClockInit(USART_TypeDef *USARTx, LL_USART_ClockInitTypeDef 
 /**
   * @brief Set each field of a @ref LL_USART_ClockInitTypeDef type structure to default value.
   * @param USART_ClockInitStruct pointer to a @ref LL_USART_ClockInitTypeDef structure
+<<<<<<< HEAD
   *                               whose fields will be set to default values.
+=======
+  *                              whose fields will be set to default values.
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   * @retval None
   */
 void LL_USART_ClockStructInit(LL_USART_ClockInitTypeDef *USART_ClockInitStruct)

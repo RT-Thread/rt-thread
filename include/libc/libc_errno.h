@@ -13,7 +13,11 @@
 
 #include <rtconfig.h>
 
+<<<<<<< HEAD
 #if defined(RT_USING_NEWLIB) || defined(_WIN32) || defined(__CC_ARM) || defined(__IAR_SYSTEMS_ICC__)
+=======
+#if defined(RT_USING_NEWLIB) || defined(_WIN32)
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /* use errno.h file in toolchains */
 #include <errno.h>
 #endif
@@ -161,7 +165,11 @@ defined in armcc/errno.h
 #define EPROTONOSUPPORT (ERROR_BASE_NO + 93)
 #define ESOCKTNOSUPPORT (ERROR_BASE_NO + 94)
 #define EOPNOTSUPP      (ERROR_BASE_NO + 95)
+<<<<<<< HEAD
 #define ENOTSUP         EOPNOTSUPP         )
+=======
+#define ENOTSUP         EOPNOTSUPP         
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define EPFNOSUPPORT    (ERROR_BASE_NO + 96)
 #define EAFNOSUPPORT    (ERROR_BASE_NO + 97)
 #define EADDRINUSE      (ERROR_BASE_NO + 98)

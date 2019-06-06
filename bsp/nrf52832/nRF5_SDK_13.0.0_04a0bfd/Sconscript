@@ -16,7 +16,7 @@ BLE_SERVICE = Glob('./components/ble/ble_services/ble_nus/*.c')
 BLE_SRC = BLE_COMMON + BLE_GATT + BLE_SERVICE + BLE_ADVERTISING
 
 SOFTDEVICE = Glob('./components/softdevice/common/softdevice_handler/*.c')
-SrcRemove(SOFTDEVICE, 'softdevice_handler_appsh.c')
+SrcRemove(SOFTDEVICE, './components/softdevice/common/softdevice_handler/softdevice_handler_appsh.c')
 
 BLE_STACK_SRC = BLE_SRC + SOFTDEVICE
 

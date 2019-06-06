@@ -84,12 +84,15 @@ int stm32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
         return -RT_EINVAL;
     }
 
+<<<<<<< HEAD
     if (size % 4 != 0)
     {
         LOG_E("write size must be 4-byte alignment");
         return -RT_EINVAL;
     }
 
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     if ((end_addr) > STM32_FLASH_END_ADDRESS)
     {
         LOG_E("write outrange flash size! addr is (0x%p)", (void *)(addr + size));
@@ -173,7 +176,11 @@ __exit:
     }
 
     LOG_D("erase done: addr (0x%p), size %d", (void *)addr, size);
+<<<<<<< HEAD
     return result;
+=======
+    return size;
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 #if defined(PKG_USING_FAL)

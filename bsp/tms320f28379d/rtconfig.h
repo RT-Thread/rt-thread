@@ -9,16 +9,29 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
+<<<<<<< HEAD
+=======
+#define RT_USING_ARCH_DATA_TYPE
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_8
 #define RT_THREAD_PRIORITY_MAX 8
 #define RT_TICK_PER_SECOND 100
+<<<<<<< HEAD
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_USING_IDLE_HOOK
 #define RT_IDEL_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
 #define RT_DEBUG
+=======
+#define RT_USING_HOOK
+#define RT_USING_IDLE_HOOK
+#define RT_IDEL_HOOK_LIST_SIZE 4
+#define IDLE_THREAD_STACK_SIZE 1024
+#define RT_DEBUG
+#define RT_DEBUG_COLOR
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /* Inter-Thread communication */
 
@@ -39,7 +52,12 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
+<<<<<<< HEAD
 #define RT_CONSOLE_DEVICE_NAME "uart"
+=======
+#define RT_CONSOLE_DEVICE_NAME "scia"
+#define RT_VER_NUM 0x40001
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define ARCH_TIDSP
 #define ARCH_TIDSP_C28X
 #define ARCH_CPU_STACK_GROWS_UPWARD
@@ -53,6 +71,7 @@
 
 /* Command shell */
 
+<<<<<<< HEAD
 
 /* Device virtual file system */
 
@@ -62,6 +81,18 @@
 #define DFS_FILESYSTEM_TYPES_MAX 2
 #define DFS_FD_MAX 16
 #define RT_USING_DFS_DEVFS
+=======
+#define RT_USING_FINSH
+#define FINSH_THREAD_NAME "tshell"
+#define FINSH_USING_HISTORY
+#define FINSH_HISTORY_LINES 5
+#define FINSH_THREAD_PRIORITY 6
+#define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_CMD_SIZE 80
+
+/* Device virtual file system */
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /* Device Drivers */
 
@@ -69,6 +100,10 @@
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
 #define RT_SERIAL_USING_DMA
+<<<<<<< HEAD
+=======
+#define RT_SERIAL_RB_BUFSZ 64
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define RT_USING_PIN
 
 /* Using WiFi */
@@ -137,6 +172,7 @@
 /* miscellaneous packages */
 
 
+<<<<<<< HEAD
 /* sample package */
 
 /* samples: kernel and components samples */
@@ -144,5 +180,10 @@
 
 /* example package: hello */
 
+=======
+/* samples: kernel and components samples */
+
+#include "rtconfig_project.h"
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 #endif

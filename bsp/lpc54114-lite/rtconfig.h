@@ -17,6 +17,10 @@
 #define RT_IDEL_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
 #define RT_DEBUG
+<<<<<<< HEAD
+=======
+#define RT_DEBUG_COLOR
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /* Inter-Thread communication */
 
@@ -38,7 +42,11 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
+<<<<<<< HEAD
 #define RT_VER_NUM 0x40000
+=======
+#define RT_VER_NUM 0x30103
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
 #define ARCH_ARM_CORTEX_M4

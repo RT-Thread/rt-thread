@@ -71,6 +71,10 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+<<<<<<< HEAD
+=======
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */

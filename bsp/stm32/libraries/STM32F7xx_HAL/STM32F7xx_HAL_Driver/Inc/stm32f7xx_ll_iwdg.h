@@ -6,6 +6,7 @@
   ******************************************************************************
   * @attention
   *
+<<<<<<< HEAD
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
@@ -29,13 +30,27 @@
   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=======
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
+<<<<<<< HEAD
 #ifndef __STM32F7xx_LL_IWDG_H
 #define __STM32F7xx_LL_IWDG_H
+=======
+#ifndef STM32F7xx_LL_IWDG_H
+#define STM32F7xx_LL_IWDG_H
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 #ifdef __cplusplus
 extern "C" {
@@ -61,12 +76,18 @@ extern "C" {
 /** @defgroup IWDG_LL_Private_Constants IWDG Private Constants
   * @{
   */
+<<<<<<< HEAD
 
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define LL_IWDG_KEY_RELOAD                 0x0000AAAAU               /*!< IWDG Reload Counter Enable   */
 #define LL_IWDG_KEY_ENABLE                 0x0000CCCCU               /*!< IWDG Peripheral Enable       */
 #define LL_IWDG_KEY_WR_ACCESS_ENABLE       0x00005555U               /*!< IWDG KR Write Access Enable  */
 #define LL_IWDG_KEY_WR_ACCESS_DISABLE      0x00000000U               /*!< IWDG KR Write Access Disable */
+<<<<<<< HEAD
 
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */
@@ -86,7 +107,10 @@ extern "C" {
 #define LL_IWDG_SR_PVU                     IWDG_SR_PVU                           /*!< Watchdog prescaler value update */
 #define LL_IWDG_SR_RVU                     IWDG_SR_RVU                           /*!< Watchdog counter reload value update */
 #define LL_IWDG_SR_WVU                     IWDG_SR_WVU                           /*!< Watchdog counter window value update */
+<<<<<<< HEAD
 
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */
@@ -160,7 +184,11 @@ extern "C" {
   */
 __STATIC_INLINE void LL_IWDG_Enable(IWDG_TypeDef *IWDGx)
 {
+<<<<<<< HEAD
   WRITE_REG(IWDG->KR, LL_IWDG_KEY_ENABLE);
+=======
+  WRITE_REG(IWDGx->KR, LL_IWDG_KEY_ENABLE);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -171,7 +199,11 @@ __STATIC_INLINE void LL_IWDG_Enable(IWDG_TypeDef *IWDGx)
   */
 __STATIC_INLINE void LL_IWDG_ReloadCounter(IWDG_TypeDef *IWDGx)
 {
+<<<<<<< HEAD
   WRITE_REG(IWDG->KR, LL_IWDG_KEY_RELOAD);
+=======
+  WRITE_REG(IWDGx->KR, LL_IWDG_KEY_RELOAD);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -182,7 +214,11 @@ __STATIC_INLINE void LL_IWDG_ReloadCounter(IWDG_TypeDef *IWDGx)
   */
 __STATIC_INLINE void LL_IWDG_EnableWriteAccess(IWDG_TypeDef *IWDGx)
 {
+<<<<<<< HEAD
   WRITE_REG(IWDG->KR, LL_IWDG_KEY_WR_ACCESS_ENABLE);
+=======
+  WRITE_REG(IWDGx->KR, LL_IWDG_KEY_WR_ACCESS_ENABLE);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -193,7 +229,11 @@ __STATIC_INLINE void LL_IWDG_EnableWriteAccess(IWDG_TypeDef *IWDGx)
   */
 __STATIC_INLINE void LL_IWDG_DisableWriteAccess(IWDG_TypeDef *IWDGx)
 {
+<<<<<<< HEAD
   WRITE_REG(IWDG->KR, LL_IWDG_KEY_WR_ACCESS_DISABLE);
+=======
+  WRITE_REG(IWDGx->KR, LL_IWDG_KEY_WR_ACCESS_DISABLE);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -230,7 +270,11 @@ __STATIC_INLINE void LL_IWDG_SetPrescaler(IWDG_TypeDef *IWDGx, uint32_t Prescale
   */
 __STATIC_INLINE uint32_t LL_IWDG_GetPrescaler(IWDG_TypeDef *IWDGx)
 {
+<<<<<<< HEAD
   return (uint32_t)(READ_REG(IWDGx->PR));
+=======
+  return (READ_REG(IWDGx->PR));
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -253,7 +297,11 @@ __STATIC_INLINE void LL_IWDG_SetReloadCounter(IWDG_TypeDef *IWDGx, uint32_t Coun
   */
 __STATIC_INLINE uint32_t LL_IWDG_GetReloadCounter(IWDG_TypeDef *IWDGx)
 {
+<<<<<<< HEAD
   return (uint32_t)(READ_REG(IWDGx->RLR));
+=======
+  return (READ_REG(IWDGx->RLR));
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -276,7 +324,11 @@ __STATIC_INLINE void LL_IWDG_SetWindow(IWDG_TypeDef *IWDGx, uint32_t Window)
   */
 __STATIC_INLINE uint32_t LL_IWDG_GetWindow(IWDG_TypeDef *IWDGx)
 {
+<<<<<<< HEAD
   return (uint32_t)(READ_REG(IWDGx->WINR));
+=======
+  return (READ_REG(IWDGx->WINR));
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -295,7 +347,11 @@ __STATIC_INLINE uint32_t LL_IWDG_GetWindow(IWDG_TypeDef *IWDGx)
   */
 __STATIC_INLINE uint32_t LL_IWDG_IsActiveFlag_PVU(IWDG_TypeDef *IWDGx)
 {
+<<<<<<< HEAD
   return (READ_BIT(IWDGx->SR, IWDG_SR_PVU) == (IWDG_SR_PVU));
+=======
+  return ((READ_BIT(IWDGx->SR, IWDG_SR_PVU) == (IWDG_SR_PVU)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -306,7 +362,11 @@ __STATIC_INLINE uint32_t LL_IWDG_IsActiveFlag_PVU(IWDG_TypeDef *IWDGx)
   */
 __STATIC_INLINE uint32_t LL_IWDG_IsActiveFlag_RVU(IWDG_TypeDef *IWDGx)
 {
+<<<<<<< HEAD
   return (READ_BIT(IWDGx->SR, IWDG_SR_RVU) == (IWDG_SR_RVU));
+=======
+  return ((READ_BIT(IWDGx->SR, IWDG_SR_RVU) == (IWDG_SR_RVU)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -317,7 +377,11 @@ __STATIC_INLINE uint32_t LL_IWDG_IsActiveFlag_RVU(IWDG_TypeDef *IWDGx)
   */
 __STATIC_INLINE uint32_t LL_IWDG_IsActiveFlag_WVU(IWDG_TypeDef *IWDGx)
 {
+<<<<<<< HEAD
   return (READ_BIT(IWDGx->SR, IWDG_SR_WVU) == (IWDG_SR_WVU));
+=======
+  return ((READ_BIT(IWDGx->SR, IWDG_SR_WVU) == (IWDG_SR_WVU)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -330,7 +394,11 @@ __STATIC_INLINE uint32_t LL_IWDG_IsActiveFlag_WVU(IWDG_TypeDef *IWDGx)
   */
 __STATIC_INLINE uint32_t LL_IWDG_IsReady(IWDG_TypeDef *IWDGx)
 {
+<<<<<<< HEAD
   return (READ_BIT(IWDGx->SR, IWDG_SR_PVU | IWDG_SR_RVU | IWDG_SR_WVU) == 0U);
+=======
+  return ((READ_BIT(IWDGx->SR, IWDG_SR_PVU | IWDG_SR_RVU | IWDG_SR_WVU) == 0U) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -346,7 +414,11 @@ __STATIC_INLINE uint32_t LL_IWDG_IsReady(IWDG_TypeDef *IWDGx)
   * @}
   */
 
+<<<<<<< HEAD
 #endif /* IWDG) */
+=======
+#endif /* IWDG */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /**
   * @}
@@ -356,6 +428,10 @@ __STATIC_INLINE uint32_t LL_IWDG_IsReady(IWDG_TypeDef *IWDGx)
 }
 #endif
 
+<<<<<<< HEAD
 #endif /* __STM32F7xx_LL_IWDG_H */
+=======
+#endif /* STM32F7xx_LL_IWDG_H */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

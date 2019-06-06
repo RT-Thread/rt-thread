@@ -14,6 +14,7 @@
 #include <lwip/netdb.h>
 #include <lwip/api.h>
 #include <lwip/init.h>
+#include <lwip/netif.h>
 
 #ifdef SAL_USING_POSIX
 #include <dfs_poll.h>
@@ -21,6 +22,8 @@
 
 #include <sal.h>
 #include <af_inet.h>
+
+#include <netdev.h>
 
 #if LWIP_VERSION < 0x2000000
 #define SELWAIT_T int
@@ -214,6 +217,19 @@ static int inet_getsockname(int socket, struct sockaddr *name, socklen_t *namele
     return lwip_getsockname(socket, name, namelen);
 }
 
+int inet_ioctlsocket(int socket, long cmd, void *arg)
+{
+    switch (cmd)
+    {
+    case F_GETFL:
+    case F_SETFL:
+        return lwip_fcntl(socket, cmd, (int) arg); 
+
+    default:
+        return lwip_ioctl(socket, cmd, arg);
+    }
+}
+
 #ifdef SAL_USING_POSIX
 static int inet_poll(struct dfs_fd *file, struct rt_pollreq *req)
 {
@@ -275,14 +291,15 @@ static const struct sal_socket_ops lwip_socket_ops =
     lwip_shutdown,
     lwip_getpeername,
     inet_getsockname,
-    lwip_ioctl,
+    inet_ioctlsocket,
 #ifdef SAL_USING_POSIX
     inet_poll,
 #endif
 };
 
-static int inet_create(struct sal_socket *socket, int type, int protocol)
+static const struct sal_netdb_ops lwip_netdb_ops =
 {
+<<<<<<< HEAD
     RT_ASSERT(socket);
 
     //TODO Check type & protocol
@@ -294,10 +311,13 @@ static int inet_create(struct sal_socket *socket, int type, int protocol)
 
 static struct sal_proto_ops lwip_proto_ops =
 {
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     lwip_gethostbyname,
     lwip_gethostbyname_r,
     lwip_getaddrinfo,
     lwip_freeaddrinfo,
+<<<<<<< HEAD
 };
 
 static const struct sal_proto_family lwip_inet_family =
@@ -306,14 +326,29 @@ static const struct sal_proto_family lwip_inet_family =
     AF_INET,
     inet_create,
     &lwip_proto_ops,
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 };
 
-int lwip_inet_init(void)
+static const struct sal_proto_family lwip_inet_family =
 {
+<<<<<<< HEAD
     sal_proto_family_register(&lwip_inet_family);
+=======
+    AF_INET,
+    AF_INET,
+    &lwip_socket_ops,
+    &lwip_netdb_ops,
+};
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
+/* Set lwIP network interface device protocol family information */
+int sal_lwip_netdev_set_pf_info(struct netdev *netdev)
+{
+    RT_ASSERT(netdev);
+    
+    netdev->sal_user_data = (void *) &lwip_inet_family;
     return 0;
 }
-INIT_COMPONENT_EXPORT(lwip_inet_init);
 
 #endif /* SAL_USING_LWIP */

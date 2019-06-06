@@ -6,6 +6,7 @@
   ******************************************************************************
   * @attention
   *
+<<<<<<< HEAD
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
@@ -29,6 +30,15 @@
   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=======
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   *
   ******************************************************************************
   */
@@ -232,11 +242,48 @@ typedef struct __SAI_HandleTypeDef
   __IO HAL_SAI_StateTypeDef State;        /*!< SAI communication state */
 
   __IO uint32_t             ErrorCode;    /*!< SAI Error code */
+<<<<<<< HEAD
+=======
+
+#if (USE_HAL_SAI_REGISTER_CALLBACKS == 1)
+  void (*RxCpltCallback)(struct __SAI_HandleTypeDef *hsai);      /*!< SAI receive complete callback */
+  void (*RxHalfCpltCallback)(struct __SAI_HandleTypeDef *hsai);  /*!< SAI receive half complete callback */
+  void (*TxCpltCallback)(struct __SAI_HandleTypeDef *hsai);      /*!< SAI transmit complete callback */
+  void (*TxHalfCpltCallback)(struct __SAI_HandleTypeDef *hsai);  /*!< SAI transmit half complete callback */
+  void (*ErrorCallback)(struct __SAI_HandleTypeDef *hsai);       /*!< SAI error callback */
+  void (*MspInitCallback)(struct __SAI_HandleTypeDef *hsai);     /*!< SAI MSP init callback */
+  void (*MspDeInitCallback)(struct __SAI_HandleTypeDef *hsai);   /*!< SAI MSP de-init callback */
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }SAI_HandleTypeDef;
 /**
   * @}
   */
 
+<<<<<<< HEAD
+=======
+#if (USE_HAL_SAI_REGISTER_CALLBACKS == 1)
+/**
+  * @brief  SAI callback ID enumeration definition
+  */
+typedef enum
+{
+  HAL_SAI_RX_COMPLETE_CB_ID       = 0x00U, /*!< SAI receive complete callback ID */
+  HAL_SAI_RX_HALFCOMPLETE_CB_ID   = 0x01U, /*!< SAI receive half complete callback ID */
+  HAL_SAI_TX_COMPLETE_CB_ID       = 0x02U, /*!< SAI transmit complete callback ID */
+  HAL_SAI_TX_HALFCOMPLETE_CB_ID   = 0x03U, /*!< SAI transmit half complete callback ID */
+  HAL_SAI_ERROR_CB_ID             = 0x04U, /*!< SAI error callback ID */
+  HAL_SAI_MSPINIT_CB_ID           = 0x05U, /*!< SAI MSP init callback ID */
+  HAL_SAI_MSPDEINIT_CB_ID         = 0x06U  /*!< SAI MSP de-init callback ID */
+} HAL_SAI_CallbackIDTypeDef;
+
+/**
+  * @brief  SAI callback pointer definition
+  */
+typedef void (*pSAI_CallbackTypeDef)(SAI_HandleTypeDef *hsai);
+#endif
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */
@@ -259,6 +306,12 @@ typedef struct __SAI_HandleTypeDef
 #define HAL_SAI_ERROR_WCKCFG  ((uint32_t)0x00000020U)  /*!< Wrong clock configuration                   */
 #define HAL_SAI_ERROR_TIMEOUT ((uint32_t)0x00000040U)  /*!< Timeout error                               */
 #define HAL_SAI_ERROR_DMA     ((uint32_t)0x00000080U)  /*!< DMA error                                   */
+<<<<<<< HEAD
+=======
+#if (USE_HAL_SAI_REGISTER_CALLBACKS == 1)
+#define HAL_SAI_ERROR_INVALID_CALLBACK   0x00000100U  /*!< Invalid callback error */
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */
@@ -394,7 +447,10 @@ typedef struct __SAI_HandleTypeDef
 /**
   * @}
   */
+<<<<<<< HEAD
   
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /** @defgroup SAI_Block_FS_Definition SAI Block FS Definition
   * @{
@@ -422,9 +478,14 @@ typedef struct __SAI_HandleTypeDef
 /**
   * @}
   */
+<<<<<<< HEAD
   
 
   /** @defgroup SAI_Block_Slot_Size SAI Block Slot Size
+=======
+
+/** @defgroup SAI_Block_Slot_Size SAI Block Slot Size
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   * @{
   */
 #define SAI_SLOTSIZE_DATASIZE             ((uint32_t)0x00000000U)
@@ -556,17 +617,36 @@ typedef struct __SAI_HandleTypeDef
   */
 
 /* Exported macro ------------------------------------------------------------*/
+<<<<<<< HEAD
 
 /** @defgroup SAI_Exported_Macros SAI Exported Macros
  *  @brief macros to handle interrupts and specific configurations
  * @{
  */
+=======
+/** @defgroup SAI_Exported_Macros SAI Exported Macros
+  * @brief macros to handle interrupts and specific configurations
+  * @{
+  */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /** @brief Reset SAI handle state.
   * @param  __HANDLE__ specifies the SAI Handle.
   * @retval None
   */
+<<<<<<< HEAD
 #define __HAL_SAI_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_SAI_STATE_RESET)
+=======
+#if (USE_HAL_SAI_REGISTER_CALLBACKS == 1)
+#define __HAL_SAI_RESET_HANDLE_STATE(__HANDLE__) do{                                            \
+                                                     (__HANDLE__)->State = HAL_SAI_STATE_RESET; \
+                                                     (__HANDLE__)->MspInitCallback = NULL;      \
+                                                     (__HANDLE__)->MspDeInitCallback = NULL;    \
+                                                   } while(0U)
+#else
+#define __HAL_SAI_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_SAI_STATE_RESET)
+#endif /* USE_HAL_SAI_REGISTER_CALLBACKS */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /** @brief  Enable or disable the specified SAI interrupts.
   * @param  __HANDLE__ specifies the SAI Handle.
@@ -638,13 +718,19 @@ typedef struct __SAI_HandleTypeDef
   */
 
 /* Exported functions --------------------------------------------------------*/
+<<<<<<< HEAD
 
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /** @addtogroup SAI_Exported_Functions
   * @{
   */
 
 /* Initialization/de-initialization functions  ********************************/
+<<<<<<< HEAD
 
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /** @addtogroup SAI_Exported_Functions_Group1
   * @{
   */
@@ -654,6 +740,17 @@ HAL_StatusTypeDef HAL_SAI_DeInit (SAI_HandleTypeDef *hsai);
 void HAL_SAI_MspInit(SAI_HandleTypeDef *hsai);
 void HAL_SAI_MspDeInit(SAI_HandleTypeDef *hsai);
 
+<<<<<<< HEAD
+=======
+#if (USE_HAL_SAI_REGISTER_CALLBACKS == 1)
+/* SAI callbacks register/unregister functions ********************************/
+HAL_StatusTypeDef HAL_SAI_RegisterCallback(SAI_HandleTypeDef        *hsai,
+                                           HAL_SAI_CallbackIDTypeDef CallbackID,
+                                           pSAI_CallbackTypeDef      pCallback);
+HAL_StatusTypeDef HAL_SAI_UnRegisterCallback(SAI_HandleTypeDef        *hsai,
+                                             HAL_SAI_CallbackIDTypeDef CallbackID);
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */

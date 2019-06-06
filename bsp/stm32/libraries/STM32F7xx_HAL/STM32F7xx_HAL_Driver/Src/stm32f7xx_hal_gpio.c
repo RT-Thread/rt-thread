@@ -93,6 +93,7 @@
   ******************************************************************************
   * @attention
   *
+<<<<<<< HEAD
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
@@ -116,6 +117,15 @@
   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=======
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   *
   ******************************************************************************
   */ 
@@ -327,6 +337,7 @@ void HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin)
 
     if(iocurrent == ioposition)
     {
+<<<<<<< HEAD
       /*------------------------- GPIO Mode Configuration --------------------*/
       /* Configure IO Direction in Input Floating Mode */
       GPIOx->MODER &= ~(GPIO_MODER_MODER0 << (position * 2));
@@ -343,6 +354,8 @@ void HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin)
       /* Deactivate the Pull-up and Pull-down resistor for the current IO */
       GPIOx->PUPDR &= ~(GPIO_PUPDR_PUPDR0 << (position * 2));
 
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
       /*------------------------- EXTI Mode Configuration --------------------*/
       tmp = SYSCFG->EXTICR[position >> 2];
       tmp &= (((uint32_t)0x0F) << (4 * (position & 0x03)));
@@ -359,7 +372,26 @@ void HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin)
         /* Clear Rising Falling edge configuration */
         EXTI->RTSR &= ~((uint32_t)iocurrent);
         EXTI->FTSR &= ~((uint32_t)iocurrent);
+<<<<<<< HEAD
 	  }
+=======
+      }
+      /*------------------------- GPIO Mode Configuration --------------------*/
+      /* Configure IO Direction in Input Floating Mode */
+      GPIOx->MODER &= ~(GPIO_MODER_MODER0 << (position * 2));
+
+      /* Configure the default Alternate Function in current IO */
+      GPIOx->AFR[position >> 3] &= ~((uint32_t)0xF << ((uint32_t)(position & (uint32_t)0x07) * 4)) ;
+
+      /* Configure the default value for IO Speed */
+      GPIOx->OSPEEDR &= ~(GPIO_OSPEEDER_OSPEEDR0 << (position * 2));
+
+      /* Configure the default value IO Output Type */
+      GPIOx->OTYPER  &= ~(GPIO_OTYPER_OT_0 << position) ;
+
+      /* Deactivate the Pull-up and Pull-down resistor for the current IO */
+      GPIOx->PUPDR &= ~(GPIO_PUPDR_PUPDR0 << (position * 2));
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     }
   }
 }
@@ -448,7 +480,18 @@ void HAL_GPIO_TogglePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
   /* Check the parameters */
   assert_param(IS_GPIO_PIN(GPIO_Pin));
 
+<<<<<<< HEAD
   GPIOx->ODR ^= GPIO_Pin;
+=======
+  if ((GPIOx->ODR & GPIO_Pin) == GPIO_Pin)
+  {
+    GPIOx->BSRR = (uint32_t)GPIO_Pin << GPIO_NUMBER;
+  }
+  else
+  {
+    GPIOx->BSRR = GPIO_Pin;
+  }
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**

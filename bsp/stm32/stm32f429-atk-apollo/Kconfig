@@ -1,16 +1,28 @@
 mainmenu "RT-Thread Configuration"
 
+<<<<<<< HEAD
 config $BSP_DIR
+=======
+config BSP_DIR
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     string
     option env="BSP_ROOT"
     default "."
 
+<<<<<<< HEAD
 config $RTT_DIR
+=======
+config RTT_DIR
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     string
     option env="RTT_ROOT"
     default "../../.."
 
+<<<<<<< HEAD
 config $PKGS_DIR
+=======
+config PKGS_DIR
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     string
     option env="PKGS_ROOT"
     default "packages"

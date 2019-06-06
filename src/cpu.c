@@ -11,6 +11,7 @@
 #include <rtthread.h>
 #include <rthw.h>
 
+<<<<<<< HEAD
 #ifdef RT_USING_SMP
 
 static struct rt_cpu rt_cpus[RT_CPUS_NR];
@@ -89,3 +90,6 @@ void rt_cpus_lock_status_restore(struct rt_thread *thread)
 RTM_EXPORT(rt_cpus_lock_status_restore);
 
 #endif
+=======
+/* nothing on non-smp version */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8

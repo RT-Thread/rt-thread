@@ -7,7 +7,11 @@
 MEMORY
 {
     ROM (rx) : ORIGIN = 0x08000000, LENGTH = 1024k /* 1024KB flash */
+<<<<<<< HEAD
     RAM (rw) : ORIGIN = 0x20000000, LENGTH =  128k /* 128K sram */
+=======
+    RAM (rw) : ORIGIN = 0x20000000, LENGTH =  512k /* 128K sram */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 ENTRY(Reset_Handler)
 _system_stack_size = 0x200;
@@ -47,6 +51,17 @@ SECTIONS
         __rt_init_end = .;
 
         . = ALIGN(4);
+<<<<<<< HEAD
+=======
+
+        PROVIDE(__ctors_start__ = .);
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        PROVIDE(__ctors_end__ = .);
+
+        . = ALIGN(4);
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
         _etext = .;
     } > ROM = 0
 
@@ -73,6 +88,14 @@ SECTIONS
         *(.data.*)
         *(.gnu.linkonce.d*)
 
+<<<<<<< HEAD
+=======
+        PROVIDE(__dtors_start__ = .);
+        KEEP(*(SORT(.dtors.*)))
+        KEEP(*(.dtors))
+        PROVIDE(__dtors_end__ = .);
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
         _edata = . ;

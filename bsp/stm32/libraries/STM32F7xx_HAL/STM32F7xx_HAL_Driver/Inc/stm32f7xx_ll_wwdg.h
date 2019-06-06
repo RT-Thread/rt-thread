@@ -6,6 +6,7 @@
   ******************************************************************************
   * @attention
   *
+<<<<<<< HEAD
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
@@ -29,13 +30,27 @@
   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=======
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
+<<<<<<< HEAD
 #ifndef __STM32F7xx_LL_WWDG_H
 #define __STM32F7xx_LL_WWDG_H
+=======
+#ifndef STM32F7xx_LL_WWDG_H
+#define STM32F7xx_LL_WWDG_H
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 #ifdef __cplusplus
 extern "C" {
@@ -56,23 +71,35 @@ extern "C" {
 
 /* Private types -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+<<<<<<< HEAD
 
 /* Private constants ---------------------------------------------------------*/
 
 /* Private macros ------------------------------------------------------------*/
 
+=======
+/* Private constants ---------------------------------------------------------*/
+/* Private macros ------------------------------------------------------------*/
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /** @defgroup WWDG_LL_Exported_Constants WWDG Exported Constants
   * @{
   */
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /** @defgroup WWDG_LL_EC_IT IT Defines
   * @brief    IT defines which can be used with LL_WWDG_ReadReg and  LL_WWDG_WriteReg functions
   * @{
   */
+<<<<<<< HEAD
 #define LL_WWDG_CFR_EWI                    WWDG_CFR_EWI
+=======
+#define LL_WWDG_CFR_EWI                     WWDG_CFR_EWI
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */
@@ -80,10 +107,17 @@ extern "C" {
 /** @defgroup WWDG_LL_EC_PRESCALER  PRESCALER
 * @{
 */
+<<<<<<< HEAD
 #define LL_WWDG_PRESCALER_1                0x00000000U                                             /*!< WWDG counter clock = (PCLK1/4096)/1 */
 #define LL_WWDG_PRESCALER_2                WWDG_CFR_WDGTB_0                                        /*!< WWDG counter clock = (PCLK1/4096)/2 */
 #define LL_WWDG_PRESCALER_4                WWDG_CFR_WDGTB_1                                        /*!< WWDG counter clock = (PCLK1/4096)/4 */
 #define LL_WWDG_PRESCALER_8                (WWDG_CFR_WDGTB_0 | WWDG_CFR_WDGTB_1)                   /*!< WWDG counter clock = (PCLK1/4096)/8 */
+=======
+#define LL_WWDG_PRESCALER_1                 0x00000000u                                               /*!< WWDG counter clock = (PCLK1/4096)/1 */
+#define LL_WWDG_PRESCALER_2                 WWDG_CFR_WDGTB_0                                          /*!< WWDG counter clock = (PCLK1/4096)/2 */
+#define LL_WWDG_PRESCALER_4                 WWDG_CFR_WDGTB_1                                          /*!< WWDG counter clock = (PCLK1/4096)/4 */
+#define LL_WWDG_PRESCALER_8                 (WWDG_CFR_WDGTB_0 | WWDG_CFR_WDGTB_1)                     /*!< WWDG counter clock = (PCLK1/4096)/8 */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */
@@ -119,7 +153,10 @@ extern "C" {
   * @}
   */
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */
@@ -155,7 +192,11 @@ __STATIC_INLINE void LL_WWDG_Enable(WWDG_TypeDef *WWDGx)
   */
 __STATIC_INLINE uint32_t LL_WWDG_IsEnabled(WWDG_TypeDef *WWDGx)
 {
+<<<<<<< HEAD
   return (READ_BIT(WWDGx->CR, WWDG_CR_WDGA) == (WWDG_CR_WDGA));
+=======
+  return ((READ_BIT(WWDGx->CR, WWDG_CR_WDGA) == (WWDG_CR_WDGA)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -182,7 +223,11 @@ __STATIC_INLINE void LL_WWDG_SetCounter(WWDG_TypeDef *WWDGx, uint32_t Counter)
   */
 __STATIC_INLINE uint32_t LL_WWDG_GetCounter(WWDG_TypeDef *WWDGx)
 {
+<<<<<<< HEAD
   return (uint32_t)(READ_BIT(WWDGx->CR, WWDG_CR_T));
+=======
+  return (READ_BIT(WWDGx->CR, WWDG_CR_T));
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -196,7 +241,11 @@ __STATIC_INLINE uint32_t LL_WWDG_GetCounter(WWDG_TypeDef *WWDGx)
   *         @arg @ref LL_WWDG_PRESCALER_2
   *         @arg @ref LL_WWDG_PRESCALER_4
   *         @arg @ref LL_WWDG_PRESCALER_8
+<<<<<<< HEAD
   * @retval None
+=======
+* @retval None
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   */
 __STATIC_INLINE void LL_WWDG_SetPrescaler(WWDG_TypeDef *WWDGx, uint32_t Prescaler)
 {
@@ -215,7 +264,11 @@ __STATIC_INLINE void LL_WWDG_SetPrescaler(WWDG_TypeDef *WWDGx, uint32_t Prescale
   */
 __STATIC_INLINE uint32_t LL_WWDG_GetPrescaler(WWDG_TypeDef *WWDGx)
 {
+<<<<<<< HEAD
   return (uint32_t)(READ_BIT(WWDGx->CFR, WWDG_CFR_WDGTB));
+=======
+  return (READ_BIT(WWDGx->CFR, WWDG_CFR_WDGTB));
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -247,7 +300,11 @@ __STATIC_INLINE void LL_WWDG_SetWindow(WWDG_TypeDef *WWDGx, uint32_t Window)
   */
 __STATIC_INLINE uint32_t LL_WWDG_GetWindow(WWDG_TypeDef *WWDGx)
 {
+<<<<<<< HEAD
   return (uint32_t)(READ_BIT(WWDGx->CFR, WWDG_CFR_W));
+=======
+  return (READ_BIT(WWDGx->CFR, WWDG_CFR_W));
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -268,7 +325,11 @@ __STATIC_INLINE uint32_t LL_WWDG_GetWindow(WWDG_TypeDef *WWDGx)
   */
 __STATIC_INLINE uint32_t LL_WWDG_IsActiveFlag_EWKUP(WWDG_TypeDef *WWDGx)
 {
+<<<<<<< HEAD
   return (READ_BIT(WWDGx->SR, WWDG_SR_EWIF) == (WWDG_SR_EWIF));
+=======
+  return ((READ_BIT(WWDGx->SR, WWDG_SR_EWIF) == (WWDG_SR_EWIF)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**
@@ -310,7 +371,11 @@ __STATIC_INLINE void LL_WWDG_EnableIT_EWKUP(WWDG_TypeDef *WWDGx)
   */
 __STATIC_INLINE uint32_t LL_WWDG_IsEnabledIT_EWKUP(WWDG_TypeDef *WWDGx)
 {
+<<<<<<< HEAD
   return (READ_BIT(WWDGx->CFR, WWDG_CFR_EWI) == (WWDG_CFR_EWI));
+=======
+  return ((READ_BIT(WWDGx->CFR, WWDG_CFR_EWI) == (WWDG_CFR_EWI)) ? 1UL : 0UL);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**

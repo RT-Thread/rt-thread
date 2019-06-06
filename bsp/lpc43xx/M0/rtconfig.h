@@ -22,6 +22,7 @@
 //#define RT_USING_MODULE
 // <section name="RT_DEBUG" description="Kernel Debug Configuration" default="true" >
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 // <bool name="RT_DEBUG_INIT" description="debug init enable" default=0 />
 #define RT_DEBUG_INIT   0
 //#define RT_DEBUG_SCHEDULER             1
@@ -226,7 +227,6 @@
 // </section>
 
 #define RT_USING_VBUS
-#define RT_USING_LOGTRACE
 
 // </RDTConfigurator>
 

@@ -13,6 +13,13 @@
 
 #include <rtthread.h>
 
+<<<<<<< HEAD
+=======
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #ifndef TIM_DEV_INFO_CONFIG
 #define TIM_DEV_INFO_CONFIG                     \
     {                                           \
@@ -67,4 +74,11 @@
 #endif /* TIM5_CONFIG */
 #endif /* BSP_USING_TIM5 */
 
+<<<<<<< HEAD
+=======
+#ifdef __cplusplus
+}
+#endif
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #endif /* __TIM_CONFIG_H__ */

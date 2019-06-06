@@ -6,6 +6,7 @@
   ******************************************************************************
   * @attention
   *
+<<<<<<< HEAD
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
@@ -39,6 +40,25 @@
 
 #ifdef __cplusplus
  extern "C" {
+=======
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+  *
+  ******************************************************************************
+  */
+
+/* Define to prevent recursive inclusion -------------------------------------*/
+#ifndef STM32F7xx_HAL_CEC_H
+#define STM32F7xx_HAL_CEC_H
+
+#ifdef __cplusplus
+extern "C" {
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -53,6 +73,7 @@
 /** @addtogroup CEC
   * @{
   */
+<<<<<<< HEAD
   
 /* Exported types ------------------------------------------------------------*/ 
 /** @defgroup CEC_Exported_Types CEC Exported Types
@@ -76,12 +97,38 @@ typedef struct
 
   uint32_t BRERxStop;                    /*!< Set BRESTP bit @ref CEC_BRERxStop : specifies whether or not a Bit Rising Error stops the reception. 
                                               CEC_NO_RX_STOP_ON_BRE: reception is not stopped. 
+=======
+
+/* Exported types ------------------------------------------------------------*/
+/** @defgroup CEC_Exported_Types CEC Exported Types
+  * @{
+  */
+
+/**
+  * @brief CEC Init Structure definition
+  */
+typedef struct
+{
+  uint32_t SignalFreeTime;               /*!< Set SFT field, specifies the Signal Free Time.
+                                              It can be one of @ref CEC_Signal_Free_Time
+                                              and belongs to the set {0,...,7} where
+                                              0x0 is the default configuration
+                                              else means 0.5 + (SignalFreeTime - 1) nominal data bit periods */
+
+  uint32_t Tolerance;                    /*!< Set RXTOL bit, specifies the tolerance accepted on the received waveforms,
+                                              it can be a value of @ref CEC_Tolerance : it is either CEC_STANDARD_TOLERANCE
+                                              or CEC_EXTENDED_TOLERANCE */
+
+  uint32_t BRERxStop;                    /*!< Set BRESTP bit @ref CEC_BRERxStop : specifies whether or not a Bit Rising Error stops the reception.
+                                              CEC_NO_RX_STOP_ON_BRE: reception is not stopped.
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
                                               CEC_RX_STOP_ON_BRE:    reception is stopped. */
 
   uint32_t BREErrorBitGen;               /*!< Set BREGEN bit @ref CEC_BREErrorBitGen : specifies whether or not an Error-Bit is generated on the
                                               CEC line upon Bit Rising Error detection.
                                               CEC_BRE_ERRORBIT_NO_GENERATION: no error-bit generation.
                                               CEC_BRE_ERRORBIT_GENERATION:    error-bit generation if BRESTP is set. */
+<<<<<<< HEAD
                                               
   uint32_t LBPEErrorBitGen;              /*!< Set LBPEGEN bit @ref CEC_LBPEErrorBitGen : specifies whether or not an Error-Bit is generated on the
                                               CEC line upon Long Bit Period Error detection.
@@ -116,10 +163,47 @@ typedef struct
                                                 
                                               CEC_FULL_LISTENING_MODE: CEC peripheral receives messages addressed to its own 
                                                 address (OAR) with positive acknowledge. Messages addressed to different destination 
+=======
+
+  uint32_t LBPEErrorBitGen;              /*!< Set LBPEGEN bit @ref CEC_LBPEErrorBitGen : specifies whether or not an Error-Bit is generated on the
+                                              CEC line upon Long Bit Period Error detection.
+                                              CEC_LBPE_ERRORBIT_NO_GENERATION:  no error-bit generation.
+                                              CEC_LBPE_ERRORBIT_GENERATION:     error-bit generation. */
+
+  uint32_t BroadcastMsgNoErrorBitGen;    /*!< Set BRDNOGEN bit @ref CEC_BroadCastMsgErrorBitGen : allows to avoid an Error-Bit generation on the CEC line
+                                              upon an error detected on a broadcast message.
+
+                                              It supersedes BREGEN and LBPEGEN bits for a broadcast message error handling. It can take two values:
+
+                                              1) CEC_BROADCASTERROR_ERRORBIT_GENERATION.
+                                                 a) BRE detection: error-bit generation on the CEC line if BRESTP=CEC_RX_STOP_ON_BRE
+                                                    and BREGEN=CEC_BRE_ERRORBIT_NO_GENERATION.
+                                                 b) LBPE detection: error-bit generation on the CEC line
+                                                    if LBPGEN=CEC_LBPE_ERRORBIT_NO_GENERATION.
+
+                                              2) CEC_BROADCASTERROR_NO_ERRORBIT_GENERATION.
+                                                 no error-bit generation in case neither a) nor b) are satisfied. Additionally,
+                                                 there is no error-bit generation in case of Short Bit Period Error detection in
+                                                 a broadcast message while LSTN bit is set. */
+
+  uint32_t SignalFreeTimeOption;         /*!< Set SFTOP bit @ref CEC_SFT_Option : specifies when SFT timer starts.
+                                              CEC_SFT_START_ON_TXSOM SFT:    timer starts when TXSOM is set by software.
+                                              CEC_SFT_START_ON_TX_RX_END:  SFT timer starts automatically at the end of message transmission/reception. */
+
+  uint32_t ListenMode;                   /*!< Set LSTN bit @ref CEC_Listening_Mode : specifies device listening mode. It can take two values:
+
+                                              CEC_REDUCED_LISTENING_MODE: CEC peripheral receives only message addressed to its
+                                                own address (OAR). Messages addressed to different destination are ignored.
+                                                Broadcast messages are always received.
+
+                                              CEC_FULL_LISTENING_MODE: CEC peripheral receives messages addressed to its own
+                                                address (OAR) with positive acknowledge. Messages addressed to different destination
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
                                                 are received, but without interfering with the CEC bus: no acknowledge sent.  */
 
   uint16_t  OwnAddress;                 /*!< Own addresses configuration
                                              This parameter can be a value of @ref CEC_OWN_ADDRESS */
+<<<<<<< HEAD
   
   uint8_t  *RxBuffer;                    /*!< CEC Rx buffer pointeur */
   
@@ -130,11 +214,27 @@ typedef struct
   * @brief HAL CEC State structures definition 
   * @note  HAL CEC State value is a combination of 2 different substates: gState and RxState.
   *        - gState contains CEC state information related to global Handle management 
+=======
+
+  uint8_t  *RxBuffer;                    /*!< CEC Rx buffer pointeur */
+
+
+} CEC_InitTypeDef;
+
+/**
+  * @brief HAL CEC State definition
+  * @note  HAL CEC State value is a combination of 2 different substates: gState and RxState (see @ref CEC_State_Definition).
+  *        - gState contains CEC state information related to global Handle management
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   *          and also information related to Tx operations.
   *          gState value coding follow below described bitmap :
   *          b7 (not used)
   *             x  : Should be set to 0
+<<<<<<< HEAD
   *          b6  Error information 
+=======
+  *          b6  Error information
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   *             0  : No Error
   *             1  : Error
   *          b5     IP initilisation status
@@ -163,6 +263,7 @@ typedef struct
   *             0  : Ready (no Rx operation ongoing)
   *             1  : Busy (Rx operation ongoing)
   *          b0     (not used)
+<<<<<<< HEAD
   *             x  : Should be set to 0.  
   */ 
 typedef enum
@@ -209,6 +310,76 @@ typedef struct
   uint32_t                ErrorCode;      /*!< For errors handling purposes, copy of ISR register 
                                                in case error is reported */    
 }CEC_HandleTypeDef;
+=======
+  *             x  : Should be set to 0.
+  */
+typedef uint32_t HAL_CEC_StateTypeDef;
+
+/**
+  * @brief  CEC handle Structure definition
+  */
+#if (USE_HAL_CEC_REGISTER_CALLBACKS == 1)
+typedef struct __CEC_HandleTypeDef
+#else
+typedef struct
+#endif /* USE_HAL_CEC_REGISTER_CALLBACKS */
+{
+  CEC_TypeDef             *Instance;      /*!< CEC registers base address */
+
+  CEC_InitTypeDef         Init;           /*!< CEC communication parameters */
+
+  uint8_t                 *pTxBuffPtr;    /*!< Pointer to CEC Tx transfer Buffer */
+
+  uint16_t                TxXferCount;    /*!< CEC Tx Transfer Counter */
+
+  uint16_t                RxXferSize;     /*!< CEC Rx Transfer size, 0: header received only */
+
+  HAL_LockTypeDef         Lock;           /*!< Locking object */
+
+  HAL_CEC_StateTypeDef    gState;         /*!< CEC state information related to global Handle management
+                                               and also related to Tx operations.
+                                               This parameter can be a value of @ref HAL_CEC_StateTypeDef */
+
+  HAL_CEC_StateTypeDef    RxState;        /*!< CEC state information related to Rx operations.
+                                               This parameter can be a value of @ref HAL_CEC_StateTypeDef */
+
+  uint32_t                ErrorCode;      /*!< For errors handling purposes, copy of ISR register
+                                               in case error is reported */
+
+#if (USE_HAL_CEC_REGISTER_CALLBACKS == 1)
+  void (* TxCpltCallback)(struct __CEC_HandleTypeDef
+                          *hcec);                                /*!< CEC Tx Transfer completed callback */
+  void (* RxCpltCallback)(struct __CEC_HandleTypeDef *hcec,
+                          uint32_t RxFrameSize);          /*!< CEC Rx Transfer completed callback */
+  void (* ErrorCallback)(struct __CEC_HandleTypeDef *hcec);                                 /*!< CEC error callback */
+
+  void (* MspInitCallback)(struct __CEC_HandleTypeDef *hcec);               /*!< CEC Msp Init callback              */
+  void (* MspDeInitCallback)(struct __CEC_HandleTypeDef *hcec);             /*!< CEC Msp DeInit callback            */
+
+#endif /* (USE_HAL_CEC_REGISTER_CALLBACKS) */
+} CEC_HandleTypeDef;
+
+#if (USE_HAL_CEC_REGISTER_CALLBACKS == 1)
+/**
+  * @brief  HAL CEC Callback ID enumeration definition
+  */
+typedef enum
+{
+  HAL_CEC_TX_CPLT_CB_ID      = 0x00U,    /*!< CEC Tx Transfer completed callback ID  */
+  HAL_CEC_RX_CPLT_CB_ID      = 0x01U,    /*!< CEC Rx Transfer completed callback ID  */
+  HAL_CEC_ERROR_CB_ID        = 0x02U,    /*!< CEC error callback ID                 */
+  HAL_CEC_MSPINIT_CB_ID      = 0x03U,    /*!< CEC Msp Init callback ID               */
+  HAL_CEC_MSPDEINIT_CB_ID    = 0x04U     /*!< CEC Msp DeInit callback ID             */
+} HAL_CEC_CallbackIDTypeDef;
+
+/**
+  * @brief  HAL CEC Callback pointer definition
+  */
+typedef  void (*pCEC_CallbackTypeDef)(CEC_HandleTypeDef *hcec);  /*!< pointer to an CEC callback function */
+typedef  void (*pCEC_RxCallbackTypeDef)(CEC_HandleTypeDef *hcec,
+                                        uint32_t RxFrameSize);  /*!< pointer to an Rx Transfer completed callback function */
+#endif /* USE_HAL_CEC_REGISTER_CALLBACKS */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */
@@ -217,10 +388,35 @@ typedef struct
 /** @defgroup CEC_Exported_Constants CEC Exported Constants
   * @{
   */
+<<<<<<< HEAD
 
 /** @defgroup CEC_Error_Code CEC Error Code
   * @{
   */ 
+=======
+/** @defgroup CEC_State_Definition CEC State Code Definition
+  * @{
+  */
+#define   HAL_CEC_STATE_RESET      ((uint32_t)0x00000000)   /*!< Peripheral is not yet Initialized
+                                                                 Value is allowed for gState and RxState  */
+#define   HAL_CEC_STATE_READY      ((uint32_t)0x00000020)   /*!< Peripheral Initialized and ready for use
+                                                                 Value is allowed for gState and RxState  */
+#define   HAL_CEC_STATE_BUSY       ((uint32_t)0x00000024)   /*!< an internal process is ongoing
+                                                                 Value is allowed for gState only         */
+#define   HAL_CEC_STATE_BUSY_RX    ((uint32_t)0x00000022)   /*!< Data Reception process is ongoing
+                                                                 Value is allowed for RxState only        */
+#define   HAL_CEC_STATE_BUSY_TX    ((uint32_t)0x00000021)   /*!< Data Transmission process is ongoing
+                                                                 Value is allowed for gState only         */
+#define   HAL_CEC_STATE_BUSY_RX_TX ((uint32_t)0x00000023)   /*!< an internal process is ongoing
+                                                                 Value is allowed for gState only         */
+#define   HAL_CEC_STATE_ERROR      ((uint32_t)0x00000050)   /*!< Error Value is allowed for gState only   */
+/**
+  * @}
+  */
+/** @defgroup CEC_Error_Code CEC Error Code
+  * @{
+  */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define HAL_CEC_ERROR_NONE    (uint32_t) 0x0000U     /*!< no error                      */
 #define HAL_CEC_ERROR_RXOVR   CEC_ISR_RXOVR          /*!< CEC Rx-Overrun                */
 #define HAL_CEC_ERROR_BRE     CEC_ISR_BRE            /*!< CEC Rx Bit Rising Error       */
@@ -231,10 +427,20 @@ typedef struct
 #define HAL_CEC_ERROR_TXUDR   CEC_ISR_TXUDR          /*!< CEC Tx-Buffer Underrun        */
 #define HAL_CEC_ERROR_TXERR   CEC_ISR_TXERR          /*!< CEC Tx-Error                  */
 #define HAL_CEC_ERROR_TXACKE  CEC_ISR_TXACKE         /*!< CEC Tx Missing Acknowledge    */
+<<<<<<< HEAD
 /**
   * @}
   */
        
+=======
+#if (USE_HAL_CEC_REGISTER_CALLBACKS == 1)
+#define  HAL_CEC_ERROR_INVALID_CALLBACK ((uint32_t)0x00002000U) /*!< Invalid Callback Error  */
+#endif /* USE_HAL_CEC_REGISTER_CALLBACKS */
+/**
+  * @}
+  */
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /** @defgroup CEC_Signal_Free_Time  CEC Signal Free Time setting parameter
   * @{
   */
@@ -257,7 +463,11 @@ typedef struct
 #define CEC_EXTENDED_TOLERANCE             ((uint32_t)CEC_CFGR_RXTOL)
 /**
   * @}
+<<<<<<< HEAD
   */ 
+=======
+  */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /** @defgroup CEC_BRERxStop CEC Reception Stop on Error
   * @{
@@ -266,62 +476,110 @@ typedef struct
 #define CEC_RX_STOP_ON_BRE                ((uint32_t)CEC_CFGR_BRESTP)
 /**
   * @}
+<<<<<<< HEAD
   */            
              
 /** @defgroup CEC_BREErrorBitGen  CEC Error Bit Generation if Bit Rise Error reported
   * @{
   */ 
+=======
+  */
+
+/** @defgroup CEC_BREErrorBitGen  CEC Error Bit Generation if Bit Rise Error reported
+  * @{
+  */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define CEC_BRE_ERRORBIT_NO_GENERATION     ((uint32_t)0x00000000U)
 #define CEC_BRE_ERRORBIT_GENERATION        ((uint32_t)CEC_CFGR_BREGEN)
 /**
   * @}
+<<<<<<< HEAD
   */ 
                         
 /** @defgroup CEC_LBPEErrorBitGen  CEC Error Bit Generation if Long Bit Period Error reported
   * @{
   */ 
+=======
+  */
+
+/** @defgroup CEC_LBPEErrorBitGen  CEC Error Bit Generation if Long Bit Period Error reported
+  * @{
+  */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define CEC_LBPE_ERRORBIT_NO_GENERATION     ((uint32_t)0x00000000U)
 #define CEC_LBPE_ERRORBIT_GENERATION        ((uint32_t)CEC_CFGR_LBPEGEN)
 /**
   * @}
+<<<<<<< HEAD
   */    
 
 /** @defgroup CEC_BroadCastMsgErrorBitGen  CEC Error Bit Generation on Broadcast message
   * @{
   */ 
+=======
+  */
+
+/** @defgroup CEC_BroadCastMsgErrorBitGen  CEC Error Bit Generation on Broadcast message
+  * @{
+  */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define CEC_BROADCASTERROR_ERRORBIT_GENERATION     ((uint32_t)0x00000000U)
 #define CEC_BROADCASTERROR_NO_ERRORBIT_GENERATION  ((uint32_t)CEC_CFGR_BRDNOGEN)
 /**
   * @}
   */
+<<<<<<< HEAD
   
 /** @defgroup CEC_SFT_Option     CEC Signal Free Time start option
   * @{
   */ 
+=======
+
+/** @defgroup CEC_SFT_Option     CEC Signal Free Time start option
+  * @{
+  */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define CEC_SFT_START_ON_TXSOM           ((uint32_t)0x00000000U)
 #define CEC_SFT_START_ON_TX_RX_END       ((uint32_t)CEC_CFGR_SFTOPT)
 /**
   * @}
   */
+<<<<<<< HEAD
   
 /** @defgroup CEC_Listening_Mode    CEC Listening mode option
   * @{
   */ 
+=======
+
+/** @defgroup CEC_Listening_Mode    CEC Listening mode option
+  * @{
+  */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define CEC_REDUCED_LISTENING_MODE          ((uint32_t)0x00000000U)
 #define CEC_FULL_LISTENING_MODE             ((uint32_t)CEC_CFGR_LSTN)
 /**
   * @}
   */
+<<<<<<< HEAD
   
 /** @defgroup CEC_OAR_Position   CEC Device Own Address position in CEC CFGR register     
+=======
+
+/** @defgroup CEC_OAR_Position   CEC Device Own Address position in CEC CFGR register
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   * @{
   */
 #define CEC_CFGR_OAR_LSB_POS            ((uint32_t) 16U)
 /**
   * @}
   */
+<<<<<<< HEAD
   
 /** @defgroup CEC_Initiator_Position   CEC Initiator logical address position in message header     
+=======
+
+/** @defgroup CEC_Initiator_Position   CEC Initiator logical address position in message header
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   * @{
   */
 #define CEC_INITIATOR_LSB_POS           ((uint32_t) 4U)
@@ -329,7 +587,11 @@ typedef struct
   * @}
   */
 
+<<<<<<< HEAD
 /** @defgroup CEC_OWN_ADDRESS   CEC Own Address    
+=======
+/** @defgroup CEC_OWN_ADDRESS   CEC Own Address
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   * @{
   */
 #define CEC_OWN_ADDRESS_NONE           ((uint16_t) 0x0000U)   /* Reset value */
@@ -351,7 +613,11 @@ typedef struct
 /**
   * @}
   */
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /** @defgroup CEC_Interrupts_Definitions  CEC Interrupts definition
   * @{
   */
@@ -391,36 +657,62 @@ typedef struct
 /**
   * @}
   */
+<<<<<<< HEAD
   
 /** @defgroup CEC_ALL_ERROR CEC all RX or TX errors flags 
   * @{
   */
 #define CEC_ISR_ALL_ERROR              ((uint32_t)CEC_ISR_RXOVR|CEC_ISR_BRE|CEC_ISR_SBPE|CEC_ISR_LBPE|CEC_ISR_RXACKE|\
                                                   CEC_ISR_ARBLST|CEC_ISR_TXUDR|CEC_ISR_TXERR|CEC_ISR_TXACKE)
+=======
+
+/** @defgroup CEC_ALL_ERROR CEC all RX or TX errors flags
+  * @{
+  */
+#define CEC_ISR_ALL_ERROR              ((uint32_t)CEC_ISR_RXOVR|CEC_ISR_BRE|CEC_ISR_SBPE|CEC_ISR_LBPE|CEC_ISR_RXACKE|\
+                                        CEC_ISR_ARBLST|CEC_ISR_TXUDR|CEC_ISR_TXERR|CEC_ISR_TXACKE)
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */
 
+<<<<<<< HEAD
 /** @defgroup CEC_IER_ALL_RX CEC all RX errors interrupts enabling flag 
+=======
+/** @defgroup CEC_IER_ALL_RX CEC all RX errors interrupts enabling flag
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   * @{
   */
 #define CEC_IER_RX_ALL_ERR              ((uint32_t)CEC_IER_RXACKEIE|CEC_IER_LBPEIE|CEC_IER_SBPEIE|CEC_IER_BREIE|CEC_IER_RXOVRIE)
 /**
   * @}
   */
+<<<<<<< HEAD
   
 /** @defgroup CEC_IER_ALL_TX CEC all TX errors interrupts enabling flag 
+=======
+
+/** @defgroup CEC_IER_ALL_TX CEC all TX errors interrupts enabling flag
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   * @{
   */
 #define CEC_IER_TX_ALL_ERR              ((uint32_t)CEC_IER_TXACKEIE|CEC_IER_TXERRIE|CEC_IER_TXUDRIE|CEC_IER_ARBLSTIE)
 /**
   * @}
   */
+<<<<<<< HEAD
   
 /**
   * @}
   */  
   
+=======
+
+/**
+  * @}
+  */
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /* Exported macros -----------------------------------------------------------*/
 /** @defgroup CEC_Exported_Macros CEC Exported Macros
   * @{
@@ -430,11 +722,27 @@ typedef struct
   * @param  __HANDLE__ CEC handle.
   * @retval None
   */
+<<<<<<< HEAD
 #define __HAL_CEC_RESET_HANDLE_STATE(__HANDLE__) do{                                                   \
                                                        (__HANDLE__)->gState = HAL_CEC_STATE_RESET;     \
                                                        (__HANDLE__)->RxState = HAL_CEC_STATE_RESET;    \
                                                      } while(0)
 
+=======
+#if (USE_HAL_CEC_REGISTER_CALLBACKS == 1)
+#define __HAL_CEC_RESET_HANDLE_STATE(__HANDLE__) do{                                                   \
+                                                       (__HANDLE__)->gState = HAL_CEC_STATE_RESET;     \
+                                                       (__HANDLE__)->RxState = HAL_CEC_STATE_RESET;    \
+                                                       (__HANDLE__)->MspInitCallback = NULL;           \
+                                                       (__HANDLE__)->MspDeInitCallback = NULL;         \
+                                                     } while(0)
+#else
+#define __HAL_CEC_RESET_HANDLE_STATE(__HANDLE__) do{                                                   \
+                                                       (__HANDLE__)->gState = HAL_CEC_STATE_RESET;     \
+                                                       (__HANDLE__)->RxState = HAL_CEC_STATE_RESET;    \
+                                                     } while(0)
+#endif /* USE_HAL_CEC_REGISTER_CALLBACKS */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /** @brief  Checks whether or not the specified CEC interrupt flag is set.
   * @param  __HANDLE__ specifies the CEC Handle.
   * @param  __FLAG__ specifies the flag to check.
@@ -444,16 +752,27 @@ typedef struct
   *            @arg CEC_FLAG_TXEND: End of transmission (successful transmission of the last byte).
   *            @arg CEC_FLAG_TXBR: Tx-Byte Request.
   *            @arg CEC_FLAG_ARBLST: Arbitration Lost
+<<<<<<< HEAD
   *            @arg CEC_FLAG_RXACKE: Rx-Missing Acknowledge 
+=======
+  *            @arg CEC_FLAG_RXACKE: Rx-Missing Acknowledge
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   *            @arg CEC_FLAG_LBPE: Rx Long period Error
   *            @arg CEC_FLAG_SBPE: Rx Short period Error
   *            @arg CEC_FLAG_BRE: Rx Bit Rising Error
   *            @arg CEC_FLAG_RXOVR: Rx Overrun.
   *            @arg CEC_FLAG_RXEND: End Of Reception.
+<<<<<<< HEAD
   *            @arg CEC_FLAG_RXBR: Rx-Byte Received.      
   * @retval ITStatus
   */
 #define __HAL_CEC_GET_FLAG(__HANDLE__, __FLAG__)        ((__HANDLE__)->Instance->ISR & (__FLAG__)) 
+=======
+  *            @arg CEC_FLAG_RXBR: Rx-Byte Received.
+  * @retval ITStatus
+  */
+#define __HAL_CEC_GET_FLAG(__HANDLE__, __FLAG__)        ((__HANDLE__)->Instance->ISR & (__FLAG__))
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /** @brief  Clears the interrupt or status flag when raised (write at 1)
   * @param  __HANDLE__ specifies the CEC Handle.
@@ -465,21 +784,33 @@ typedef struct
   *            @arg CEC_FLAG_TXEND: End of transmission (successful transmission of the last byte).
   *            @arg CEC_FLAG_TXBR: Tx-Byte Request.
   *            @arg CEC_FLAG_ARBLST: Arbitration Lost
+<<<<<<< HEAD
   *            @arg CEC_FLAG_RXACKE: Rx-Missing Acknowledge 
+=======
+  *            @arg CEC_FLAG_RXACKE: Rx-Missing Acknowledge
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   *            @arg CEC_FLAG_LBPE: Rx Long period Error
   *            @arg CEC_FLAG_SBPE: Rx Short period Error
   *            @arg CEC_FLAG_BRE: Rx Bit Rising Error
   *            @arg CEC_FLAG_RXOVR: Rx Overrun.
   *            @arg CEC_FLAG_RXEND: End Of Reception.
+<<<<<<< HEAD
   *            @arg CEC_FLAG_RXBR: Rx-Byte Received. 
   * @retval none  
   */
 #define __HAL_CEC_CLEAR_FLAG(__HANDLE__, __FLAG__)         ((__HANDLE__)->Instance->ISR |= (__FLAG__)) 
+=======
+  *            @arg CEC_FLAG_RXBR: Rx-Byte Received.
+  * @retval none
+  */
+#define __HAL_CEC_CLEAR_FLAG(__HANDLE__, __FLAG__)         ((__HANDLE__)->Instance->ISR |= (__FLAG__))
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /** @brief  Enables the specified CEC interrupt.
   * @param  __HANDLE__ specifies the CEC Handle.
   * @param  __INTERRUPT__ specifies the CEC interrupt to enable.
   *          This parameter can be one of the following values:
+<<<<<<< HEAD
   *            @arg CEC_IT_TXACKE: Tx Missing acknowledge Error IT Enable 
   *            @arg CEC_IT_TXERR: Tx Error IT Enable 
   *            @arg CEC_IT_TXUDR: Tx-Buffer Underrun IT Enable 
@@ -496,11 +827,30 @@ typedef struct
   * @retval none
   */
 #define __HAL_CEC_ENABLE_IT(__HANDLE__, __INTERRUPT__)     ((__HANDLE__)->Instance->IER |= (__INTERRUPT__))  
+=======
+  *            @arg CEC_IT_TXACKE: Tx Missing acknowledge Error IT Enable
+  *            @arg CEC_IT_TXERR: Tx Error IT Enable
+  *            @arg CEC_IT_TXUDR: Tx-Buffer Underrun IT Enable
+  *            @arg CEC_IT_TXEND: End of transmission IT Enable
+  *            @arg CEC_IT_TXBR: Tx-Byte Request IT Enable
+  *            @arg CEC_IT_ARBLST: Arbitration Lost IT Enable
+  *            @arg CEC_IT_RXACKE: Rx-Missing Acknowledge IT Enable
+  *            @arg CEC_IT_LBPE: Rx Long period Error IT Enable
+  *            @arg CEC_IT_SBPE: Rx Short period Error IT Enable
+  *            @arg CEC_IT_BRE: Rx Bit Rising Error IT Enable
+  *            @arg CEC_IT_RXOVR: Rx Overrun IT Enable
+  *            @arg CEC_IT_RXEND: End Of Reception IT Enable
+  *            @arg CEC_IT_RXBR: Rx-Byte Received IT Enable
+  * @retval none
+  */
+#define __HAL_CEC_ENABLE_IT(__HANDLE__, __INTERRUPT__)     ((__HANDLE__)->Instance->IER |= (__INTERRUPT__))
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /** @brief  Disables the specified CEC interrupt.
   * @param  __HANDLE__ specifies the CEC Handle.
   * @param  __INTERRUPT__ specifies the CEC interrupt to disable.
   *          This parameter can be one of the following values:
+<<<<<<< HEAD
   *            @arg CEC_IT_TXACKE: Tx Missing acknowledge Error IT Enable 
   *            @arg CEC_IT_TXERR: Tx Error IT Enable 
   *            @arg CEC_IT_TXUDR: Tx-Buffer Underrun IT Enable 
@@ -517,11 +867,30 @@ typedef struct
   * @retval none
   */   
 #define __HAL_CEC_DISABLE_IT(__HANDLE__, __INTERRUPT__)    ((__HANDLE__)->Instance->IER &= (~(__INTERRUPT__)))  
+=======
+  *            @arg CEC_IT_TXACKE: Tx Missing acknowledge Error IT Enable
+  *            @arg CEC_IT_TXERR: Tx Error IT Enable
+  *            @arg CEC_IT_TXUDR: Tx-Buffer Underrun IT Enable
+  *            @arg CEC_IT_TXEND: End of transmission IT Enable
+  *            @arg CEC_IT_TXBR: Tx-Byte Request IT Enable
+  *            @arg CEC_IT_ARBLST: Arbitration Lost IT Enable
+  *            @arg CEC_IT_RXACKE: Rx-Missing Acknowledge IT Enable
+  *            @arg CEC_IT_LBPE: Rx Long period Error IT Enable
+  *            @arg CEC_IT_SBPE: Rx Short period Error IT Enable
+  *            @arg CEC_IT_BRE: Rx Bit Rising Error IT Enable
+  *            @arg CEC_IT_RXOVR: Rx Overrun IT Enable
+  *            @arg CEC_IT_RXEND: End Of Reception IT Enable
+  *            @arg CEC_IT_RXBR: Rx-Byte Received IT Enable
+  * @retval none
+  */
+#define __HAL_CEC_DISABLE_IT(__HANDLE__, __INTERRUPT__)    ((__HANDLE__)->Instance->IER &= (~(__INTERRUPT__)))
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /** @brief  Checks whether or not the specified CEC interrupt is enabled.
   * @param  __HANDLE__ specifies the CEC Handle.
   * @param  __INTERRUPT__ specifies the CEC interrupt to check.
   *          This parameter can be one of the following values:
+<<<<<<< HEAD
   *            @arg CEC_IT_TXACKE: Tx Missing acknowledge Error IT Enable 
   *            @arg CEC_IT_TXERR: Tx Error IT Enable 
   *            @arg CEC_IT_TXUDR: Tx-Buffer Underrun IT Enable 
@@ -536,41 +905,84 @@ typedef struct
   *            @arg CEC_IT_RXEND: End Of Reception IT Enable 
   *            @arg CEC_IT_RXBR: Rx-Byte Received IT Enable                  
   * @retval FlagStatus  
+=======
+  *            @arg CEC_IT_TXACKE: Tx Missing acknowledge Error IT Enable
+  *            @arg CEC_IT_TXERR: Tx Error IT Enable
+  *            @arg CEC_IT_TXUDR: Tx-Buffer Underrun IT Enable
+  *            @arg CEC_IT_TXEND: End of transmission IT Enable
+  *            @arg CEC_IT_TXBR: Tx-Byte Request IT Enable
+  *            @arg CEC_IT_ARBLST: Arbitration Lost IT Enable
+  *            @arg CEC_IT_RXACKE: Rx-Missing Acknowledge IT Enable
+  *            @arg CEC_IT_LBPE: Rx Long period Error IT Enable
+  *            @arg CEC_IT_SBPE: Rx Short period Error IT Enable
+  *            @arg CEC_IT_BRE: Rx Bit Rising Error IT Enable
+  *            @arg CEC_IT_RXOVR: Rx Overrun IT Enable
+  *            @arg CEC_IT_RXEND: End Of Reception IT Enable
+  *            @arg CEC_IT_RXBR: Rx-Byte Received IT Enable
+  * @retval FlagStatus
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   */
 #define __HAL_CEC_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) ((__HANDLE__)->Instance->IER & (__INTERRUPT__))
 
 /** @brief  Enables the CEC device
+<<<<<<< HEAD
   * @param  __HANDLE__ specifies the CEC Handle.               
   * @retval none 
+=======
+  * @param  __HANDLE__ specifies the CEC Handle.
+  * @retval none
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   */
 #define __HAL_CEC_ENABLE(__HANDLE__)                   ((__HANDLE__)->Instance->CR |=  CEC_CR_CECEN)
 
 /** @brief  Disables the CEC device
+<<<<<<< HEAD
   * @param  __HANDLE__ specifies the CEC Handle.               
   * @retval none 
+=======
+  * @param  __HANDLE__ specifies the CEC Handle.
+  * @retval none
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   */
 #define __HAL_CEC_DISABLE(__HANDLE__)                  ((__HANDLE__)->Instance->CR &=  ~CEC_CR_CECEN)
 
 /** @brief  Set Transmission Start flag
+<<<<<<< HEAD
   * @param  __HANDLE__ specifies the CEC Handle.               
   * @retval none 
+=======
+  * @param  __HANDLE__ specifies the CEC Handle.
+  * @retval none
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   */
 #define __HAL_CEC_FIRST_BYTE_TX_SET(__HANDLE__)        ((__HANDLE__)->Instance->CR |=  CEC_CR_TXSOM)
 
 /** @brief  Set Transmission End flag
+<<<<<<< HEAD
   * @param  __HANDLE__ specifies the CEC Handle.               
   * @retval none 
   * If the CEC message consists of only one byte, TXEOM must be set before of TXSOM.  
+=======
+  * @param  __HANDLE__ specifies the CEC Handle.
+  * @retval none
+  * If the CEC message consists of only one byte, TXEOM must be set before of TXSOM.
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   */
 #define __HAL_CEC_LAST_BYTE_TX_SET(__HANDLE__)         ((__HANDLE__)->Instance->CR |=  CEC_CR_TXEOM)
 
 /** @brief  Get Transmission Start flag
+<<<<<<< HEAD
   * @param  __HANDLE__ specifies the CEC Handle.               
   * @retval FlagStatus 
+=======
+  * @param  __HANDLE__ specifies the CEC Handle.
+  * @retval FlagStatus
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   */
 #define __HAL_CEC_GET_TRANSMISSION_START_FLAG(__HANDLE__) ((__HANDLE__)->Instance->CR & CEC_CR_TXSOM)
 
 /** @brief  Get Transmission End flag
+<<<<<<< HEAD
   * @param  __HANDLE__ specifies the CEC Handle.               
   * @retval FlagStatus 
   */
@@ -579,20 +991,40 @@ typedef struct
 /** @brief  Clear OAR register
   * @param  __HANDLE__ specifies the CEC Handle.               
   * @retval none 
+=======
+  * @param  __HANDLE__ specifies the CEC Handle.
+  * @retval FlagStatus
+  */
+#define __HAL_CEC_GET_TRANSMISSION_END_FLAG(__HANDLE__)   ((__HANDLE__)->Instance->CR & CEC_CR_TXEOM)
+
+/** @brief  Clear OAR register
+  * @param  __HANDLE__ specifies the CEC Handle.
+  * @retval none
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   */
 #define __HAL_CEC_CLEAR_OAR(__HANDLE__)   CLEAR_BIT((__HANDLE__)->Instance->CFGR, CEC_CFGR_OAR)
 
 /** @brief  Set OAR register (without resetting previously set address in case of multi-address mode)
   *          To reset OAR, __HAL_CEC_CLEAR_OAR() needs to be called beforehand
+<<<<<<< HEAD
   * @param  __HANDLE__ specifies the CEC Handle. 
   * @param  __ADDRESS__ Own Address value (CEC logical address is identified by bit position)                   
   * @retval none 
+=======
+  * @param  __HANDLE__ specifies the CEC Handle.
+  * @param  __ADDRESS__ Own Address value (CEC logical address is identified by bit position)
+  * @retval none
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   */
 #define __HAL_CEC_SET_OAR(__HANDLE__,__ADDRESS__)   SET_BIT((__HANDLE__)->Instance->CFGR, (__ADDRESS__)<< CEC_CFGR_OAR_LSB_POS)
 
 /**
   * @}
+<<<<<<< HEAD
   */                       
+=======
+  */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup CEC_Exported_Functions
@@ -608,6 +1040,18 @@ HAL_StatusTypeDef HAL_CEC_DeInit(CEC_HandleTypeDef *hcec);
 HAL_StatusTypeDef HAL_CEC_SetDeviceAddress(CEC_HandleTypeDef *hcec, uint16_t CEC_OwnAddress);
 void HAL_CEC_MspInit(CEC_HandleTypeDef *hcec);
 void HAL_CEC_MspDeInit(CEC_HandleTypeDef *hcec);
+<<<<<<< HEAD
+=======
+
+#if (USE_HAL_CEC_REGISTER_CALLBACKS == 1)
+HAL_StatusTypeDef HAL_CEC_RegisterCallback(CEC_HandleTypeDef *hcec, HAL_CEC_CallbackIDTypeDef CallbackID,
+                                           pCEC_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_CEC_UnRegisterCallback(CEC_HandleTypeDef *hcec, HAL_CEC_CallbackIDTypeDef CallbackID);
+
+HAL_StatusTypeDef HAL_CEC_RegisterRxCpltCallback(CEC_HandleTypeDef *hcec, pCEC_RxCallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_CEC_UnRegisterRxCpltCallback(CEC_HandleTypeDef *hcec);
+#endif /* USE_HAL_CEC_REGISTER_CALLBACKS */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */
@@ -616,9 +1060,16 @@ void HAL_CEC_MspDeInit(CEC_HandleTypeDef *hcec);
   * @{
   */
 /* I/O operation functions  ***************************************************/
+<<<<<<< HEAD
 HAL_StatusTypeDef HAL_CEC_Transmit_IT(CEC_HandleTypeDef *hcec, uint8_t InitiatorAddress,uint8_t DestinationAddress, uint8_t *pData, uint32_t Size);
 uint32_t HAL_CEC_GetLastReceivedFrameSize(CEC_HandleTypeDef *hcec);
 void HAL_CEC_ChangeRxBuffer(CEC_HandleTypeDef *hcec, uint8_t* Rxbuffer);
+=======
+HAL_StatusTypeDef HAL_CEC_Transmit_IT(CEC_HandleTypeDef *hcec, uint8_t InitiatorAddress, uint8_t DestinationAddress,
+                                      uint8_t *pData, uint32_t Size);
+uint32_t HAL_CEC_GetLastReceivedFrameSize(CEC_HandleTypeDef *hcec);
+void HAL_CEC_ChangeRxBuffer(CEC_HandleTypeDef *hcec, uint8_t *Rxbuffer);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 void HAL_CEC_IRQHandler(CEC_HandleTypeDef *hcec);
 void HAL_CEC_TxCpltCallback(CEC_HandleTypeDef *hcec);
 void HAL_CEC_RxCpltCallback(CEC_HandleTypeDef *hcec, uint32_t RxFrameSize);
@@ -640,7 +1091,11 @@ uint32_t HAL_CEC_GetError(CEC_HandleTypeDef *hcec);
 /**
   * @}
   */
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /* Private types -------------------------------------------------------------*/
 /** @defgroup CEC_Private_Types CEC Private Types
   * @{
@@ -648,16 +1103,27 @@ uint32_t HAL_CEC_GetError(CEC_HandleTypeDef *hcec);
 
 /**
   * @}
+<<<<<<< HEAD
   */ 
+=======
+  */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /* Private variables ---------------------------------------------------------*/
 /** @defgroup CEC_Private_Variables CEC Private Variables
   * @{
   */
+<<<<<<< HEAD
   
 /**
   * @}
   */ 
+=======
+
+/**
+  * @}
+  */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /* Private constants ---------------------------------------------------------*/
 /** @defgroup CEC_Private_Constants CEC Private Constants
@@ -666,12 +1132,17 @@ uint32_t HAL_CEC_GetError(CEC_HandleTypeDef *hcec);
 
 /**
   * @}
+<<<<<<< HEAD
   */ 
+=======
+  */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /* Private macros ------------------------------------------------------------*/
 /** @defgroup CEC_Private_Macros CEC Private Macros
   * @{
   */
+<<<<<<< HEAD
   
 #define IS_CEC_SIGNALFREETIME(__SFT__)     ((__SFT__) <= CEC_CFGR_SFT)  
 
@@ -681,11 +1152,23 @@ uint32_t HAL_CEC_GetError(CEC_HandleTypeDef *hcec);
 #define IS_CEC_BRERXSTOP(__BRERXSTOP__)   (((__BRERXSTOP__) == CEC_NO_RX_STOP_ON_BRE) || \
                                            ((__BRERXSTOP__) == CEC_RX_STOP_ON_BRE))
                                            
+=======
+
+#define IS_CEC_SIGNALFREETIME(__SFT__)     ((__SFT__) <= CEC_CFGR_SFT)
+
+#define IS_CEC_TOLERANCE(__RXTOL__)        (((__RXTOL__) == CEC_STANDARD_TOLERANCE) || \
+                                            ((__RXTOL__) == CEC_EXTENDED_TOLERANCE))
+
+#define IS_CEC_BRERXSTOP(__BRERXSTOP__)   (((__BRERXSTOP__) == CEC_NO_RX_STOP_ON_BRE) || \
+                                           ((__BRERXSTOP__) == CEC_RX_STOP_ON_BRE))
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define IS_CEC_BREERRORBITGEN(__ERRORBITGEN__) (((__ERRORBITGEN__) == CEC_BRE_ERRORBIT_NO_GENERATION) || \
                                                 ((__ERRORBITGEN__) == CEC_BRE_ERRORBIT_GENERATION))
 
 #define IS_CEC_LBPEERRORBITGEN(__ERRORBITGEN__) (((__ERRORBITGEN__) == CEC_LBPE_ERRORBIT_NO_GENERATION) || \
                                                  ((__ERRORBITGEN__) == CEC_LBPE_ERRORBIT_GENERATION))
+<<<<<<< HEAD
                                                  
 #define IS_CEC_BROADCASTERROR_NO_ERRORBIT_GENERATION(__ERRORBITGEN__) (((__ERRORBITGEN__) == CEC_BROADCASTERROR_ERRORBIT_GENERATION) || \
                                                                        ((__ERRORBITGEN__) == CEC_BROADCASTERROR_NO_ERRORBIT_GENERATION))
@@ -693,10 +1176,20 @@ uint32_t HAL_CEC_GetError(CEC_HandleTypeDef *hcec);
 #define IS_CEC_SFTOP(__SFTOP__)          (((__SFTOP__) == CEC_SFT_START_ON_TXSOM) || \
                                           ((__SFTOP__) == CEC_SFT_START_ON_TX_RX_END))
                                           
+=======
+
+#define IS_CEC_BROADCASTERROR_NO_ERRORBIT_GENERATION(__ERRORBITGEN__) (((__ERRORBITGEN__) == CEC_BROADCASTERROR_ERRORBIT_GENERATION) || \
+                                                                       ((__ERRORBITGEN__) == CEC_BROADCASTERROR_NO_ERRORBIT_GENERATION))
+
+#define IS_CEC_SFTOP(__SFTOP__)          (((__SFTOP__) == CEC_SFT_START_ON_TXSOM) || \
+                                          ((__SFTOP__) == CEC_SFT_START_ON_TX_RX_END))
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define IS_CEC_LISTENING_MODE(__MODE__)     (((__MODE__) == CEC_REDUCED_LISTENING_MODE) || \
                                              ((__MODE__) == CEC_FULL_LISTENING_MODE))
 
 /** @brief Check CEC message size.
+<<<<<<< HEAD
   *       The message size is the payload size: without counting the header, 
   *       it varies from 0 byte (ping operation, one header only, no payload) to 
   *       15 bytes (1 opcode and up to 14 operands following the header). 
@@ -718,6 +1211,29 @@ uint32_t HAL_CEC_GetError(CEC_HandleTypeDef *hcec);
   * @retval Test result (TRUE or FALSE).
   */
 #define IS_CEC_ADDRESS(__ADDRESS__) ((__ADDRESS__) <= 0xF) 
+=======
+  *       The message size is the payload size: without counting the header,
+  *       it varies from 0 byte (ping operation, one header only, no payload) to
+  *       15 bytes (1 opcode and up to 14 operands following the header).
+  * @param  __SIZE__ CEC message size.
+  * @retval Test result (TRUE or FALSE).
+  */
+#define IS_CEC_MSGSIZE(__SIZE__) ((__SIZE__) <= 0x10U)
+
+/** @brief Check CEC device Own Address Register (OAR) setting.
+  *        OAR address is written in a 15-bit field within CEC_CFGR register.
+  * @param  __ADDRESS__ CEC own address.
+  * @retval Test result (TRUE or FALSE).
+  */
+#define IS_CEC_OWN_ADDRESS(__ADDRESS__) ((__ADDRESS__) <= 0x7FFFU)
+
+/** @brief Check CEC initiator or destination logical address setting.
+  *        Initiator and destination addresses are coded over 4 bits.
+  * @param  __ADDRESS__ CEC initiator or logical address.
+  * @retval Test result (TRUE or FALSE).
+  */
+#define IS_CEC_ADDRESS(__ADDRESS__) ((__ADDRESS__) <= 0xFU)
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */
@@ -725,6 +1241,7 @@ uint32_t HAL_CEC_GetError(CEC_HandleTypeDef *hcec);
 /** @defgroup CEC_Private_Functions CEC Private Functions
   * @{
   */
+<<<<<<< HEAD
   
 /**
   * @}
@@ -737,6 +1254,20 @@ uint32_t HAL_CEC_GetError(CEC_HandleTypeDef *hcec);
 /**
   * @}
   */ 
+=======
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 #endif /* CEC */
 
@@ -744,6 +1275,10 @@ uint32_t HAL_CEC_GetError(CEC_HandleTypeDef *hcec);
 }
 #endif
 
+<<<<<<< HEAD
 #endif /* __STM32F7xx_HAL_CEC_H */
+=======
+#endif /* STM32F7xxHAL_CEC_H */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -14,6 +14,13 @@
 #include <rtthread.h>
 #include "stm32f1xx_hal.h"
 
+<<<<<<< HEAD
+=======
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #ifdef BSP_USING_SDIO
 #define SDIO_BUS_CONFIG                                  \
     {                                                    \
@@ -28,6 +35,13 @@
 
 #endif
 
+<<<<<<< HEAD
+=======
+#ifdef __cplusplus
+}
+#endif
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #endif /*__SDIO_CONFIG_H__ */
 
 

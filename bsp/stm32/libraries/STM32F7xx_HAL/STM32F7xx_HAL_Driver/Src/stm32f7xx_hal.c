@@ -21,6 +21,7 @@
   ******************************************************************************
   * @attention
   *
+<<<<<<< HEAD
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
@@ -44,6 +45,15 @@
   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=======
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   *
   ******************************************************************************
   */ 
@@ -66,11 +76,19 @@
   * @{
   */
 /**
+<<<<<<< HEAD
  * @brief STM32F7xx HAL Driver version number V1.2.6
    */
 #define __STM32F7xx_HAL_VERSION_MAIN   (0x01) /*!< [31:24] main version */
 #define __STM32F7xx_HAL_VERSION_SUB1   (0x02) /*!< [23:16] sub1 version */
 #define __STM32F7xx_HAL_VERSION_SUB2   (0x06) /*!< [15:8]  sub2 version */
+=======
+ * @brief STM32F7xx HAL Driver version number V1.2.7
+   */
+#define __STM32F7xx_HAL_VERSION_MAIN   (0x01) /*!< [31:24] main version */
+#define __STM32F7xx_HAL_VERSION_SUB1   (0x02) /*!< [23:16] sub1 version */
+#define __STM32F7xx_HAL_VERSION_SUB2   (0x07) /*!< [15:8]  sub2 version */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define __STM32F7xx_HAL_VERSION_RC     (0x00) /*!< [7:0]  release candidate */ 
 #define __STM32F7xx_HAL_VERSION         ((__STM32F7xx_HAL_VERSION_MAIN << 24)\
                                         |(__STM32F7xx_HAL_VERSION_SUB1 << 16)\
@@ -83,8 +101,13 @@
   */
 
 /* Private macro -------------------------------------------------------------*/
+<<<<<<< HEAD
 /* Private variables ---------------------------------------------------------*/
 /** @addtogroup HAL_Private_Variables
+=======
+/* Exported variables ---------------------------------------------------------*/
+/** @addtogroup HAL_Exported_Variables
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   * @{
   */
 __IO uint32_t uwTick;

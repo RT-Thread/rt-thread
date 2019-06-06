@@ -25,7 +25,11 @@ static rt_err_t wdt_init(rt_watchdog_t *wdt)
     hiwdg.Instance = IWDG;
     hiwdg.Init.Prescaler = IWDG_PRESCALER_32;
 
+<<<<<<< HEAD
     hiwdg.Init.Reload = 0x00000FFE;
+=======
+    hiwdg.Init.Reload = 0x00000FFF;
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7)
     hiwdg.Init.Window = 0x00000FFF;
 #endif
@@ -48,7 +52,11 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
         break;
         /* set watchdog timeout */
     case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
+<<<<<<< HEAD
         hiwdg.Init.Reload = (rt_uint32_t)arg;
+=======
+        hiwdg.Init.Reload = *((rt_uint32_t*)arg);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
         if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
         {
             LOG_E("wdg set timeout failed.");

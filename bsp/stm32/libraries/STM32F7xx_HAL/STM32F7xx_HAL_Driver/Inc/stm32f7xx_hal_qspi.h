@@ -6,6 +6,7 @@
   ******************************************************************************
   * @attention
   *
+<<<<<<< HEAD
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
@@ -31,6 +32,17 @@
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *
   ******************************************************************************  
+=======
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics. 
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the 
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+  *
+  ******************************************************************************
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -112,7 +124,15 @@ typedef enum
 /** 
   * @brief  QSPI Handle Structure definition  
   */  
+<<<<<<< HEAD
 typedef struct
+=======
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+typedef struct __QSPI_HandleTypeDef
+#else
+typedef struct
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 {
   QUADSPI_TypeDef            *Instance;        /* QSPI registers base address        */
   QSPI_InitTypeDef           Init;             /* QSPI communication parameters      */
@@ -126,7 +146,26 @@ typedef struct
   __IO HAL_LockTypeDef       Lock;             /* Locking object                     */
   __IO HAL_QSPI_StateTypeDef State;            /* QSPI communication state           */
   __IO uint32_t              ErrorCode;        /* QSPI Error code                    */
+<<<<<<< HEAD
   uint32_t                   Timeout;          /* Timeout for the QSPI memory access */ 
+=======
+  uint32_t                   Timeout;          /* Timeout for the QSPI memory access */
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+  void (* ErrorCallback)        (struct __QSPI_HandleTypeDef *hqspi);
+  void (* AbortCpltCallback)    (struct __QSPI_HandleTypeDef *hqspi);
+  void (* FifoThresholdCallback)(struct __QSPI_HandleTypeDef *hqspi);
+  void (* CmdCpltCallback)      (struct __QSPI_HandleTypeDef *hqspi);
+  void (* RxCpltCallback)       (struct __QSPI_HandleTypeDef *hqspi);
+  void (* TxCpltCallback)       (struct __QSPI_HandleTypeDef *hqspi);
+  void (* RxHalfCpltCallback)   (struct __QSPI_HandleTypeDef *hqspi);
+  void (* TxHalfCpltCallback)   (struct __QSPI_HandleTypeDef *hqspi);
+  void (* StatusMatchCallback)  (struct __QSPI_HandleTypeDef *hqspi);
+  void (* TimeOutCallback)      (struct __QSPI_HandleTypeDef *hqspi);
+
+  void (* MspInitCallback)      (struct __QSPI_HandleTypeDef *hqspi);
+  void (* MspDeInitCallback)    (struct __QSPI_HandleTypeDef *hqspi);
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }QSPI_HandleTypeDef;
 
 /** 
@@ -194,7 +233,38 @@ typedef struct
                                   This parameter can be any value between 0 and 0xFFFF */
   uint32_t TimeOutActivation;  /* Specifies if the time out counter is enabled to release the chip select. 
                                   This parameter can be a value of @ref QSPI_TimeOutActivation */
+<<<<<<< HEAD
 }QSPI_MemoryMappedTypeDef;                                     
+=======
+}QSPI_MemoryMappedTypeDef;
+
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+/**
+  * @brief  HAL QSPI Callback ID enumeration definition
+  */
+typedef enum
+{
+  HAL_QSPI_ERROR_CB_ID          = 0x00U,  /*!< QSPI Error Callback ID            */
+  HAL_QSPI_ABORT_CB_ID          = 0x01U,  /*!< QSPI Abort Callback ID            */
+  HAL_QSPI_FIFO_THRESHOLD_CB_ID = 0x02U,  /*!< QSPI FIFO Threshold Callback ID   */
+  HAL_QSPI_CMD_CPLT_CB_ID       = 0x03U,  /*!< QSPI Command Complete Callback ID */
+  HAL_QSPI_RX_CPLT_CB_ID        = 0x04U,  /*!< QSPI Rx Complete Callback ID      */
+  HAL_QSPI_TX_CPLT_CB_ID        = 0x05U,  /*!< QSPI Tx Complete Callback ID      */
+  HAL_QSPI_RX_HALF_CPLT_CB_ID   = 0x06U,  /*!< QSPI Rx Half Complete Callback ID */
+  HAL_QSPI_TX_HALF_CPLT_CB_ID   = 0x07U,  /*!< QSPI Tx Half Complete Callback ID */
+  HAL_QSPI_STATUS_MATCH_CB_ID   = 0x08U,  /*!< QSPI Status Match Callback ID     */
+  HAL_QSPI_TIMEOUT_CB_ID        = 0x09U,  /*!< QSPI Timeout Callback ID          */
+
+  HAL_QSPI_MSP_INIT_CB_ID       = 0x0AU,  /*!< QSPI MspInit Callback ID          */
+  HAL_QSPI_MSP_DEINIT_CB_ID     = 0x0B0   /*!< QSPI MspDeInit Callback ID        */
+}HAL_QSPI_CallbackIDTypeDef;
+
+/**
+  * @brief  HAL QSPI Callback pointer definition
+  */
+typedef void (*pQSPI_CallbackTypeDef)(QSPI_HandleTypeDef *hqspi);
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */
@@ -211,6 +281,12 @@ typedef struct
 #define HAL_QSPI_ERROR_TRANSFER        ((uint32_t)0x00000002U) /*!< Transfer error     */
 #define HAL_QSPI_ERROR_DMA             ((uint32_t)0x00000004U) /*!< DMA transfer error */
 #define HAL_QSPI_ERROR_INVALID_PARAM   ((uint32_t)0x00000008U) /*!< Invalid parameters error */
+<<<<<<< HEAD
+=======
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+#define HAL_QSPI_ERROR_INVALID_CALLBACK 0x00000010U /*!< Invalid callback error   */
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */ 
@@ -432,7 +508,19 @@ typedef struct
   * @param  __HANDLE__ QSPI handle.
   * @retval None
   */
+<<<<<<< HEAD
 #define __HAL_QSPI_RESET_HANDLE_STATE(__HANDLE__)           ((__HANDLE__)->State = HAL_QSPI_STATE_RESET)
+=======
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+#define __HAL_QSPI_RESET_HANDLE_STATE(__HANDLE__)           do {                                              \
+                                                                  (__HANDLE__)->State = HAL_QSPI_STATE_RESET; \
+                                                                  (__HANDLE__)->MspInitCallback = NULL;       \
+                                                                  (__HANDLE__)->MspDeInitCallback = NULL;     \
+                                                               } while(0)
+#else
+#define __HAL_QSPI_RESET_HANDLE_STATE(__HANDLE__)           ((__HANDLE__)->State = HAL_QSPI_STATE_RESET)
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /** @brief  Enable QSPI
   * @param  __HANDLE__ specifies the QSPI Handle.
@@ -580,6 +668,15 @@ void                  HAL_QSPI_StatusMatchCallback  (QSPI_HandleTypeDef *hqspi);
 
 /* QSPI memory-mapped mode */
 void                  HAL_QSPI_TimeOutCallback      (QSPI_HandleTypeDef *hqspi);
+<<<<<<< HEAD
+=======
+
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+/* QSPI callback registering/unregistering */
+HAL_StatusTypeDef     HAL_QSPI_RegisterCallback     (QSPI_HandleTypeDef *hqspi, HAL_QSPI_CallbackIDTypeDef CallbackId, pQSPI_CallbackTypeDef pCallback);
+HAL_StatusTypeDef     HAL_QSPI_UnRegisterCallback   (QSPI_HandleTypeDef *hqspi, HAL_QSPI_CallbackIDTypeDef CallbackId);
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */

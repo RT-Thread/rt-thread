@@ -15,6 +15,7 @@
 #define SRAM_SIZE         (160)
 #define SRAM_END          (0x20000000 + SRAM_SIZE * 1024)
 
+<<<<<<< HEAD
 #define RT_UART_485_MODE      1
 #define RT_UART_FLOW_CTS_CTRL 2
 #define RT_UART_FLOW_RTS_CTRL 3
@@ -32,5 +33,9 @@ unsigned char *eth_get_default_mac(void);
 void eth_set_mac(const unsigned char * mac);
 void wdt_reload(void);
 unsigned int get_uid(void);
+=======
+void rt_hw_board_init(void);
+void rt_hw_cpu_reset(void);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 #endif /* BOARD_H_ */

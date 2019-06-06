@@ -6,6 +6,7 @@
   ******************************************************************************
   * @attention
   *
+<<<<<<< HEAD
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
@@ -29,6 +30,15 @@
   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=======
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   *
   ******************************************************************************
   */ 
@@ -127,7 +137,11 @@ typedef struct
 /** 
   * @brief  SD handle Structure definition
   */ 
+<<<<<<< HEAD
 typedef struct
+=======
+typedef struct __SD_HandleTypeDef
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 {
   SD_TypeDef                   *Instance;        /*!< SD registers base address           */
   
@@ -159,6 +173,18 @@ typedef struct
   
   uint32_t                     CID[4];           /*!< SD card identification number table */
   
+<<<<<<< HEAD
+=======
+#if (USE_HAL_SD_REGISTER_CALLBACKS == 1)
+  void (* TxCpltCallback)                 (struct __SD_HandleTypeDef *hsd);
+  void (* RxCpltCallback)                 (struct __SD_HandleTypeDef *hsd);
+  void (* ErrorCallback)                  (struct __SD_HandleTypeDef *hsd);
+  void (* AbortCpltCallback)              (struct __SD_HandleTypeDef *hsd);
+
+  void (* MspInitCallback)                (struct __SD_HandleTypeDef *hsd);
+  void (* MspDeInitCallback)              (struct __SD_HandleTypeDef *hsd);
+#endif  
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }SD_HandleTypeDef;
 
 /** 
@@ -255,6 +281,35 @@ typedef struct
   * @}
   */
 
+<<<<<<< HEAD
+=======
+#if (USE_HAL_SD_REGISTER_CALLBACKS == 1)
+/** @defgroup SD_Exported_Types_Group7 SD Callback ID enumeration definition 
+  * @{
+  */
+typedef enum
+{
+  HAL_SD_TX_CPLT_CB_ID                 = 0x00U,  /*!< SD Tx Complete Callback ID                     */
+  HAL_SD_RX_CPLT_CB_ID                 = 0x01U,  /*!< SD Rx Complete Callback ID                     */
+  HAL_SD_ERROR_CB_ID                   = 0x02U,  /*!< SD Error Callback ID                           */
+  HAL_SD_ABORT_CB_ID                   = 0x03U,  /*!< SD Abort Callback ID                           */
+
+  HAL_SD_MSP_INIT_CB_ID                = 0x10U,  /*!< SD MspInit Callback ID                         */
+  HAL_SD_MSP_DEINIT_CB_ID              = 0x11U   /*!< SD MspDeInit Callback ID                       */
+}HAL_SD_CallbackIDTypeDef;
+/** 
+  * @}
+  */
+
+/** @defgroup SD_Exported_Types_Group8 SD Callback pointer definition 
+  * @{
+  */
+typedef void (*pSD_CallbackTypeDef)           (SD_HandleTypeDef *hsd);
+/** 
+  * @}
+  */
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /** 
   * @}
   */
@@ -306,6 +361,13 @@ typedef struct
 #define HAL_SD_ERROR_DMA                      SDMMC_ERROR_DMA                     /*!< Error while DMA transfer                                      */
 #define HAL_SD_ERROR_TIMEOUT                  SDMMC_ERROR_TIMEOUT                 /*!< Timeout error                                                 */
                                                 
+<<<<<<< HEAD
+=======
+#if (USE_HAL_SD_REGISTER_CALLBACKS == 1)
+#define HAL_SD_ERROR_INVALID_CALLBACK         SDMMC_ERROR_INVALID_PARAMETER       /*!< Invalid callback error                                        */
+#endif
+                                                
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /** 
   * @}
   */
@@ -354,6 +416,22 @@ typedef struct
  *  @brief macros to handle interrupts and specific clock configurations
  * @{
  */
+<<<<<<< HEAD
+=======
+/** @brief Reset SD handle state.
+  * @param  __HANDLE__ : SD handle.
+  * @retval None
+  */
+#if (USE_HAL_SD_REGISTER_CALLBACKS == 1)
+#define __HAL_SD_RESET_HANDLE_STATE(__HANDLE__)           do {                                              \
+                                                               (__HANDLE__)->State = HAL_SD_STATE_RESET; \
+                                                               (__HANDLE__)->MspInitCallback = NULL;       \
+                                                               (__HANDLE__)->MspDeInitCallback = NULL;     \
+                                                             } while(0)
+#else
+#define __HAL_SD_RESET_HANDLE_STATE(__HANDLE__)           ((__HANDLE__)->State = HAL_SD_STATE_RESET)
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
  
 /**
   * @brief  Enable the SD device.
@@ -584,6 +662,15 @@ void HAL_SD_TxCpltCallback(SD_HandleTypeDef *hsd);
 void HAL_SD_RxCpltCallback(SD_HandleTypeDef *hsd);
 void HAL_SD_ErrorCallback(SD_HandleTypeDef *hsd);
 void HAL_SD_AbortCallback(SD_HandleTypeDef *hsd);
+<<<<<<< HEAD
+=======
+
+#if (USE_HAL_SD_REGISTER_CALLBACKS == 1)
+/* SD callback registering/unregistering */
+HAL_StatusTypeDef HAL_SD_RegisterCallback  (SD_HandleTypeDef *hsd, HAL_SD_CallbackIDTypeDef CallbackId, pSD_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_SD_UnRegisterCallback(SD_HandleTypeDef *hsd, HAL_SD_CallbackIDTypeDef CallbackId);
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */

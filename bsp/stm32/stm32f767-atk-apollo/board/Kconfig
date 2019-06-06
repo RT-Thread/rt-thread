@@ -9,11 +9,19 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_USB_TO_USART
         bool "Enable USB TO USART (uart1)"
+<<<<<<< HEAD
+=======
+        select BSP_USING_UART
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
         select BSP_USING_UART1
         default y
 
     config BSP_USING_RS232
         bool "Enable RS232 (uart2 pin conflict with Ethernet)"
+<<<<<<< HEAD
+=======
+	    select BSP_USING_UART
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
         select BSP_USING_UART2
         default n
 
@@ -67,6 +75,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_PIN
         default y
 
+<<<<<<< HEAD
     config BSP_USING_UART1
         bool "Enable UART1"
         select RT_USING_SERIAL
@@ -76,11 +85,38 @@ menu "On-chip Peripheral Drivers"
         bool "Enable UART2"
         select RT_USING_SERIAL
         default n
+=======
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default y
+
+            config BSP_UART1_RX_USING_DMA
+                bool "Enable UART1 RX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
+
+            config BSP_UART2_RX_USING_DMA
+                bool "Enable UART2 RX DMA"
+                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                default n
+
+        endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
         default n
 
+<<<<<<< HEAD
     config BSP_USING_SPI2
         bool "Enable SPI2 BUS"
         select RT_USING_SPI
@@ -89,6 +125,44 @@ menu "On-chip Peripheral Drivers"
     config BSP_SPI_USING_DMA
         bool "Enable SPI DMA support"
         default n
+=======
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS"
+                default n
+
+            config BSP_SPI1_TX_USING_DMA
+                bool "Enable SPI1 TX DMA"
+                depends on BSP_USING_SPI1
+                default n
+                
+            config BSP_SPI1_RX_USING_DMA
+                bool "Enable SPI1 RX DMA"
+                depends on BSP_USING_SPI1
+                select BSP_SPI1_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI2
+                bool "Enable SPI2 BUS"
+                default n  
+                
+            config BSP_SPI2_TX_USING_DMA
+                bool "Enable SPI2 TX DMA"
+                depends on BSP_USING_SPI2
+                default n
+                
+            config BSP_SPI2_RX_USING_DMA
+                bool "Enable SPI2 RX DMA"
+                depends on BSP_USING_SPI2
+                select BSP_SPI2_TX_USING_DMA
+                default n
+        endif
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
     config BSP_USING_QSPI
         bool "Enable QSPI BUS"
@@ -171,11 +245,30 @@ menu "On-chip Peripheral Drivers"
                 default 117
         endif
 
+<<<<<<< HEAD
     config BSP_USING_ONCHIP_RTC
+=======
+    menuconfig BSP_USING_ONCHIP_RTC
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
         bool "Enable RTC"
         select RT_USING_RTC
         select RT_USING_LIBC
         default n
+<<<<<<< HEAD
+=======
+        if BSP_USING_ONCHIP_RTC
+            choice
+                prompt "Select clock source"
+                default BSP_RTC_USING_LSE
+
+                config BSP_RTC_USING_LSE
+                    bool "RTC USING LSE"
+
+                config BSP_RTC_USING_LSI
+                    bool "RTC USING LSI"
+            endchoice
+        endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
     config BSP_USING_WDT
         bool "Enable Watchdog Timer"

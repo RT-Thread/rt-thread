@@ -13,14 +13,12 @@
 #include <wlan_dev.h>
 #include <wlan_prot.h>
 
-#define DBG_ENABLE
+#define DBG_TAG "WLAN.dev"
 #ifdef RT_WLAN_DEV_DEBUG
-#define DBG_LEVEL DBG_LOG
+#define DBG_LVL DBG_LOG
 #else
-#define DBG_LEVEL DBG_INFO
-#endif
-#define DBG_SECTION_NAME  "WLAN.dev"
-#define DBG_COLOR
+#define DBG_LVL DBG_INFO
+#endif /* RT_WLAN_DEV_DEBUG */
 #include <rtdbg.h>
 
 #ifndef RT_DEVICE
@@ -754,6 +752,21 @@ static rt_err_t _rt_wlan_dev_control(rt_device_t dev, int cmd, void *args)
     return err;
 }
 
+<<<<<<< HEAD
+=======
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops wlan_ops =
+{
+    _rt_wlan_dev_init,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    _rt_wlan_dev_control
+};
+#endif
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 rt_err_t rt_wlan_dev_register(struct rt_wlan_device *wlan, const char *name, const struct rt_wlan_dev_ops *ops, rt_uint32_t flag, void *user_data)
 {
     rt_err_t err = RT_EOK;
@@ -765,13 +778,18 @@ rt_err_t rt_wlan_dev_register(struct rt_wlan_device *wlan, const char *name, con
     }
 
     rt_memset(wlan, 0, sizeof(struct rt_wlan_device));
-
+    
+#ifdef RT_USING_DEVICE_OPS
+    wlan->device.ops = &wlan_ops;
+#else
     wlan->device.init       = _rt_wlan_dev_init;
     wlan->device.open       = RT_NULL;
     wlan->device.close      = RT_NULL;
     wlan->device.read       = RT_NULL;
     wlan->device.write      = RT_NULL;
     wlan->device.control    = _rt_wlan_dev_control;
+#endif
+
     wlan->device.user_data  = RT_NULL;
 
     wlan->device.type = RT_Device_Class_NetIf;

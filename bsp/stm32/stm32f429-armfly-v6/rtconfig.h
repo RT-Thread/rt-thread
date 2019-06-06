@@ -17,6 +17,10 @@
 #define RT_IDEL_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
 #define RT_DEBUG
+<<<<<<< HEAD
+=======
+#define RT_DEBUG_COLOR
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /* Inter-Thread communication */
 
@@ -150,6 +154,7 @@
 /* miscellaneous packages */
 
 
+<<<<<<< HEAD
 /* sample package */
 
 /* samples: kernel and components samples */
@@ -163,6 +168,10 @@
 
 /* Network Utilities */
 
+=======
+/* samples: kernel and components samples */
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32F4
 
@@ -178,7 +187,13 @@
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
+<<<<<<< HEAD
 #define BSP_USING_UART1
+=======
+#define BSP_USING_UART
+#define BSP_USING_UART1
+#define BSP_USING_FMC
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /* Board extended module Drivers */
 

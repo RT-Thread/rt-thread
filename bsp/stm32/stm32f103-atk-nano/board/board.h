@@ -5,15 +5,29 @@
  *
  * Change Logs:
  * Date           Author       Notes
+<<<<<<< HEAD
  * 2018-11-5      SummerGift   change to new framework
+=======
+ * 2018-11-5      SummerGift   first version
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
  */
 
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
+<<<<<<< HEAD
 #include <rtthread.h>
 #include <stm32f1xx.h>
 #include "drv_common.h"
+=======
+#include <stm32f1xx.h>
+#include "drv_common.h"
+#include "drv_gpio.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 #define STM32_FLASH_START_ADRESS     ((uint32_t)0x08000000)
 #define STM32_FLASH_SIZE             (128 * 1024)
@@ -23,7 +37,11 @@
 #define STM32_SRAM_SIZE      20
 #define STM32_SRAM_END       (0x20000000 + STM32_SRAM_SIZE * 1024)
 
+<<<<<<< HEAD
 #ifdef __CC_ARM
+=======
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #define HEAP_BEGIN      ((void *)&Image$$RW_IRAM1$$ZI$$Limit)
 #elif __ICCARM__
@@ -38,4 +56,11 @@ extern int __bss_end;
 
 void SystemClock_Config(void);
 
+<<<<<<< HEAD
+=======
+#ifdef __cplusplus
+}
+#endif
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #endif /* __BOARD_H__ */

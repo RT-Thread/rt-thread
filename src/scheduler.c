@@ -87,9 +87,15 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
 #else
     if (*((rt_uint8_t *)thread->stack_addr) != '#' ||
 #endif
+<<<<<<< HEAD
         (rt_ubase_t)thread->sp <= (rt_ubase_t)thread->stack_addr ||
         (rt_ubase_t)thread->sp >
         (rt_ubase_t)thread->stack_addr + (rt_ubase_t)thread->stack_size)
+=======
+        (rt_uint32_t)thread->sp <= (rt_uint32_t)thread->stack_addr ||
+        (rt_uint32_t)thread->sp >
+        (rt_uint32_t)thread->stack_addr + (rt_uint32_t)thread->stack_size)
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     {
         rt_ubase_t level;
 
@@ -455,6 +461,7 @@ void rt_schedule(void)
                 _rt_scheduler_stack_check(to_thread);
 #endif
 
+<<<<<<< HEAD
                 if (rt_interrupt_nest == 0)
                 {
                     extern void rt_thread_handle_sig(rt_bool_t clean_state);
@@ -566,6 +573,45 @@ void rt_scheduler_do_irq_switch(void *context)
             }
         }
     }
+=======
+            if (rt_interrupt_nest == 0)
+            {
+                rt_hw_context_switch((rt_uint32_t)&from_thread->sp,
+                                     (rt_uint32_t)&to_thread->sp);
+
+#ifdef RT_USING_SIGNALS
+                if (rt_current_thread->stat & RT_THREAD_STAT_SIGNAL_PENDING)
+                {
+                    extern void rt_thread_handle_sig(rt_bool_t clean_state);
+
+                    rt_current_thread->stat &= ~RT_THREAD_STAT_SIGNAL_PENDING;
+
+                    rt_hw_interrupt_enable(level);
+
+                    /* check signal status */
+                    rt_thread_handle_sig(RT_TRUE);
+                }
+                else
+#endif
+                {
+                    /* enable interrupt */
+                    rt_hw_interrupt_enable(level);
+                }
+
+                return ;
+            }
+            else
+            {
+                RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("switch in interrupt\n"));
+
+                rt_hw_context_switch_interrupt((rt_uint32_t)&from_thread->sp,
+                                               (rt_uint32_t)&to_thread->sp);
+            }
+        }
+    }
+
+    /* enable interrupt */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     rt_hw_interrupt_enable(level);
 }
 #endif /*RT_USING_SMP*/
@@ -864,14 +910,17 @@ void rt_exit_critical(void)
     level = rt_hw_interrupt_disable();
 
     rt_scheduler_lock_nest --;
-
     if (rt_scheduler_lock_nest <= 0)
     {
         rt_scheduler_lock_nest = 0;
         /* enable interrupt */
         rt_hw_interrupt_enable(level);
 
-        rt_schedule();
+        if (rt_current_thread)
+        {
+            /* if scheduler is started, do a schedule */
+            rt_schedule();
+        }
     }
     else
     {

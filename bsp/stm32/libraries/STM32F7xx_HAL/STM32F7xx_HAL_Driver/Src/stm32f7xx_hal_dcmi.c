@@ -56,11 +56,66 @@
  
      [..] 
        (@) You can refer to the DCMI HAL driver header file for more useful macros
+<<<<<<< HEAD
       
+=======
+	   
+    *** Callback registration ***
+    =============================
+
+    The compilation define USE_HAL_DCMI_REGISTER_CALLBACKS when set to 1
+    allows the user to configure dynamically the driver callbacks.
+    Use functions @ref HAL_DCMI_RegisterCallback() to register a user callback.
+
+    Function @ref HAL_DCMI_RegisterCallback() allows to register following callbacks:
+      (+) FrameEventCallback : DCMI Frame Event.
+      (+) VsyncEventCallback : DCMI Vsync Event.
+      (+) LineEventCallback  : DCMI Line Event.
+      (+) ErrorCallback      : DCMI error.
+      (+) MspInitCallback    : DCMI MspInit.
+      (+) MspDeInitCallback  : DCMI MspDeInit.
+    This function takes as parameters the HAL peripheral handle, the callback ID
+    and a pointer to the user callback function.
+
+    Use function @ref HAL_DCMI_UnRegisterCallback() to reset a callback to the default
+    weak (surcharged) function.
+    @ref HAL_DCMI_UnRegisterCallback() takes as parameters the HAL peripheral handle,
+    and the callback ID.
+    This function allows to reset following callbacks:
+      (+) FrameEventCallback : DCMI Frame Event.
+      (+) VsyncEventCallback : DCMI Vsync Event.
+      (+) LineEventCallback  : DCMI Line Event.
+      (+) ErrorCallback      : DCMI error.
+      (+) MspInitCallback    : DCMI MspInit.
+      (+) MspDeInitCallback  : DCMI MspDeInit.
+
+    By default, after the @ref HAL_DCMI_Init and if the state is HAL_DCMI_STATE_RESET
+    all callbacks are reset to the corresponding legacy weak (surcharged) functions:
+    examples @ref FrameEventCallback(), @ref HAL_DCMI_ErrorCallback().
+    Exception done for MspInit and MspDeInit callbacks that are respectively
+    reset to the legacy weak (surcharged) functions in the @ref HAL_DCMI_Init
+    and @ref  HAL_DCMI_DeInit only when these callbacks are null (not registered beforehand).
+    If not, MspInit or MspDeInit are not null, the @ref HAL_DCMI_Init and @ref HAL_DCMI_DeInit
+    keep and use the user MspInit/MspDeInit callbacks (registered beforehand).
+
+    Callbacks can be registered/unregistered in READY state only.
+    Exception done for MspInit/MspDeInit callbacks that can be registered/unregistered
+    in READY or RESET state, thus registered (user) MspInit/DeInit callbacks can be used
+    during the Init/DeInit.
+    In that case first register the MspInit/MspDeInit user callbacks
+    using @ref HAL_DCMI_RegisterCallback before calling @ref HAL_DCMI_DeInit
+    or @ref HAL_DCMI_Init function.
+
+    When the compilation define USE_HAL_DCMI_REGISTER_CALLBACKS is set to 0 or
+    not defined, the callback registering feature is not available
+    and weak (surcharged) callbacks are used.
+	
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   @endverbatim
   ******************************************************************************
   * @attention
   *
+<<<<<<< HEAD
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
@@ -87,6 +142,18 @@
   *
   ******************************************************************************
   */ 
+=======
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+  *
+  ******************************************************************************
+  */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7xx_hal.h"
@@ -165,8 +232,29 @@ HAL_StatusTypeDef HAL_DCMI_Init(DCMI_HandleTypeDef *hdcmi)
                 
   if(hdcmi->State == HAL_DCMI_STATE_RESET)
   {
+<<<<<<< HEAD
     /* Init the low level hardware */
     HAL_DCMI_MspInit(hdcmi);
+=======
+  /* Init the DCMI Callback settings */
+#if (USE_HAL_DCMI_REGISTER_CALLBACKS == 1)
+    hdcmi->FrameEventCallback = HAL_DCMI_FrameEventCallback; /* Legacy weak FrameEventCallback  */ 
+    hdcmi->VsyncEventCallback = HAL_DCMI_VsyncEventCallback; /* Legacy weak VsyncEventCallback  */ 
+    hdcmi->LineEventCallback  = HAL_DCMI_LineEventCallback;  /* Legacy weak LineEventCallback   */  
+    hdcmi->ErrorCallback      = HAL_DCMI_ErrorCallback;      /* Legacy weak ErrorCallback       */ 
+    
+    if(hdcmi->MspInitCallback == NULL)  
+    {
+      /* Legacy weak MspInit Callback        */
+      hdcmi->MspInitCallback = HAL_DCMI_MspInit;
+    }
+    /* Initialize the low level hardware (MSP) */
+    hdcmi->MspInitCallback(hdcmi);
+#else  
+    /* Init the low level hardware : GPIO, CLOCK, NVIC and DMA */
+    HAL_DCMI_MspInit(hdcmi);
+#endif /* (USE_HAL_DCMI_REGISTER_CALLBACKS) */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   } 
   
   /* Change the DCMI state */
@@ -215,8 +303,22 @@ HAL_StatusTypeDef HAL_DCMI_Init(DCMI_HandleTypeDef *hdcmi)
 
 HAL_StatusTypeDef HAL_DCMI_DeInit(DCMI_HandleTypeDef *hdcmi)
 {
+<<<<<<< HEAD
   /* DeInit the low level hardware */
   HAL_DCMI_MspDeInit(hdcmi);
+=======
+#if (USE_HAL_DCMI_REGISTER_CALLBACKS == 1)  
+  if(hdcmi->MspDeInitCallback == NULL)  
+  {
+    hdcmi->MspDeInitCallback = HAL_DCMI_MspDeInit;
+  }
+  /* De-Initialize the low level hardware (MSP) */
+  hdcmi->MspDeInitCallback(hdcmi);
+#else
+  /* DeInit the low level hardware: GPIO, CLOCK, NVIC and DMA */
+  HAL_DCMI_MspDeInit(hdcmi);
+#endif /* (USE_HAL_DCMI_REGISTER_CALLBACKS) */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
   /* Update error code */
   hdcmi->ErrorCode = HAL_DCMI_ERROR_NONE;
@@ -546,7 +648,16 @@ void HAL_DCMI_IRQHandler(DCMI_HandleTypeDef *hdcmi)
     __HAL_DCMI_CLEAR_FLAG(hdcmi, DCMI_FLAG_LINERI);
     
     /* Line interrupt Callback */
+<<<<<<< HEAD
     HAL_DCMI_LineEventCallback(hdcmi);
+=======
+#if (USE_HAL_DCMI_REGISTER_CALLBACKS == 1)
+    /*Call registered DCMI line event callback*/
+    hdcmi->LineEventCallback(hdcmi);
+#else  
+    HAL_DCMI_LineEventCallback(hdcmi);
+#endif /* USE_HAL_DCMI_REGISTER_CALLBACKS */     
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   }
   /* VSYNC interrupt management ***********************************************/
   if((isr_value & DCMI_FLAG_VSYNCRI) == DCMI_FLAG_VSYNCRI)
@@ -555,7 +666,16 @@ void HAL_DCMI_IRQHandler(DCMI_HandleTypeDef *hdcmi)
     __HAL_DCMI_CLEAR_FLAG(hdcmi, DCMI_FLAG_VSYNCRI);
     
     /* VSYNC Callback */
+<<<<<<< HEAD
     HAL_DCMI_VsyncEventCallback(hdcmi);
+=======
+#if (USE_HAL_DCMI_REGISTER_CALLBACKS == 1)
+    /*Call registered DCMI vsync event callback*/
+    hdcmi->VsyncEventCallback(hdcmi);
+#else  
+    HAL_DCMI_VsyncEventCallback(hdcmi);
+#endif /* USE_HAL_DCMI_REGISTER_CALLBACKS */ 
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   }
   /* FRAME interrupt management ***********************************************/
   if((isr_value & DCMI_FLAG_FRAMERI) == DCMI_FLAG_FRAMERI)   
@@ -574,7 +694,16 @@ void HAL_DCMI_IRQHandler(DCMI_HandleTypeDef *hdcmi)
     __HAL_DCMI_CLEAR_FLAG(hdcmi, DCMI_FLAG_FRAMERI);
     
     /* Frame Callback */
+<<<<<<< HEAD
     HAL_DCMI_FrameEventCallback(hdcmi);
+=======
+#if (USE_HAL_DCMI_REGISTER_CALLBACKS == 1)
+    /*Call registered DCMI frame event callback*/
+    hdcmi->FrameEventCallback(hdcmi);
+#else  
+    HAL_DCMI_FrameEventCallback(hdcmi);
+#endif /* USE_HAL_DCMI_REGISTER_CALLBACKS */      
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   }
 }
 
@@ -790,6 +919,175 @@ uint32_t HAL_DCMI_GetError(DCMI_HandleTypeDef *hdcmi)
   return hdcmi->ErrorCode;
 }
 
+<<<<<<< HEAD
+=======
+#if (USE_HAL_DCMI_REGISTER_CALLBACKS == 1)
+/**
+  * @brief DCMI Callback registering
+  * @param hdcmi        pointer to a DCMI_HandleTypeDef structure that contains
+  *                     the configuration information for DCMI.
+  * @param CallbackID   dcmi Callback ID
+  * @param pCallback    pointer to DCMI_CallbackTypeDef structure
+  * @retval status
+  */
+HAL_StatusTypeDef HAL_DCMI_RegisterCallback(DCMI_HandleTypeDef *hdcmi, HAL_DCMI_CallbackIDTypeDef CallbackID, pDCMI_CallbackTypeDef pCallback)
+{
+  HAL_StatusTypeDef status = HAL_OK;
+  
+  if(pCallback == NULL)
+  {
+    /* update the error code */
+    hdcmi->ErrorCode |= HAL_DCMI_ERROR_INVALID_CALLBACK;  
+    /* update return status */
+    status = HAL_ERROR;
+  }
+  else
+  {
+    if(hdcmi->State == HAL_DCMI_STATE_READY)
+    {
+      switch (CallbackID)
+      {
+      case HAL_DCMI_FRAME_EVENT_CB_ID :
+        hdcmi->FrameEventCallback = pCallback;
+        break;
+        
+      case HAL_DCMI_VSYNC_EVENT_CB_ID :
+        hdcmi->VsyncEventCallback = pCallback;
+        break; 
+        
+      case HAL_DCMI_LINE_EVENT_CB_ID :
+        hdcmi->LineEventCallback = pCallback;
+        break;
+        
+      case HAL_DCMI_ERROR_CB_ID :
+        hdcmi->ErrorCallback = pCallback;
+        break;
+        
+      case HAL_DCMI_MSPINIT_CB_ID :
+        hdcmi->MspInitCallback = pCallback;
+        break;
+        
+      case HAL_DCMI_MSPDEINIT_CB_ID :
+        hdcmi->MspDeInitCallback = pCallback;
+        break;	  
+        
+      default : 
+        /* Return error status */
+        status =  HAL_ERROR;
+        break;
+      }
+    }
+    else if(hdcmi->State == HAL_DCMI_STATE_RESET)
+    {
+      switch (CallbackID)
+      {
+      case HAL_DCMI_MSPINIT_CB_ID :
+        hdcmi->MspInitCallback = pCallback;
+        break;
+        
+      case HAL_DCMI_MSPDEINIT_CB_ID :
+        hdcmi->MspDeInitCallback = pCallback;
+        break;	  
+        
+      default : 
+        /* update the error code */
+        hdcmi->ErrorCode |= HAL_DCMI_ERROR_INVALID_CALLBACK;
+        /* update return status */
+        status = HAL_ERROR;
+        break;
+      }		
+    }  
+    else
+    {
+      /* update the error code */
+      hdcmi->ErrorCode |= HAL_DCMI_ERROR_INVALID_CALLBACK;
+      /* update return status */
+      status = HAL_ERROR;
+    }
+  }
+  
+  return status;
+}
+
+/**
+  * @brief DCMI Callback Unregistering
+  * @param hdcmi       dcmi handle
+  * @param CallbackID  dcmi Callback ID
+  * @retval status
+  */
+HAL_StatusTypeDef HAL_DCMI_UnRegisterCallback(DCMI_HandleTypeDef *hdcmi, HAL_DCMI_CallbackIDTypeDef CallbackID)
+{
+  HAL_StatusTypeDef status = HAL_OK;
+  
+  if(hdcmi->State == HAL_DCMI_STATE_READY)
+  {
+    switch (CallbackID)
+    {
+    case HAL_DCMI_FRAME_EVENT_CB_ID :
+      hdcmi->FrameEventCallback = HAL_DCMI_FrameEventCallback;  /* Legacy weak  FrameEventCallback  */ 
+      break;
+      
+    case HAL_DCMI_VSYNC_EVENT_CB_ID :
+      hdcmi->VsyncEventCallback = HAL_DCMI_VsyncEventCallback;  /* Legacy weak VsyncEventCallback       */ 
+      break;
+      
+    case HAL_DCMI_LINE_EVENT_CB_ID :
+      hdcmi->LineEventCallback = HAL_DCMI_LineEventCallback;    /* Legacy weak LineEventCallback   */
+      break;
+      
+    case HAL_DCMI_ERROR_CB_ID :
+      hdcmi->ErrorCallback = HAL_DCMI_ErrorCallback;           /* Legacy weak ErrorCallback        */ 
+      break;  
+      
+    case HAL_DCMI_MSPINIT_CB_ID :
+      hdcmi->MspInitCallback = HAL_DCMI_MspInit;
+      break;
+      
+    case HAL_DCMI_MSPDEINIT_CB_ID :
+      hdcmi->MspDeInitCallback = HAL_DCMI_MspDeInit;
+      break;	  
+      
+    default : 
+      /* update the error code */
+      hdcmi->ErrorCode |= HAL_DCMI_ERROR_INVALID_CALLBACK;
+      /* update return status */
+      status = HAL_ERROR;
+      break;
+    }
+  }
+  else if(hdcmi->State == HAL_DCMI_STATE_RESET)
+  {
+    switch (CallbackID)
+    {
+    case HAL_DCMI_MSPINIT_CB_ID :
+      hdcmi->MspInitCallback = HAL_DCMI_MspInit;
+      break;
+      
+    case HAL_DCMI_MSPDEINIT_CB_ID :
+      hdcmi->MspDeInitCallback = HAL_DCMI_MspDeInit;
+      break;	  
+      
+    default : 
+      /* update the error code */
+      hdcmi->ErrorCode |= HAL_DCMI_ERROR_INVALID_CALLBACK;
+      /* update return status */
+      status = HAL_ERROR;
+      break;
+    }		
+  }   
+  else
+  {
+    /* update the error code */
+    hdcmi->ErrorCode |= HAL_DCMI_ERROR_INVALID_CALLBACK;
+    /* update return status */
+    status = HAL_ERROR;
+  }
+  
+  return status;
+}
+#endif /* USE_HAL_DCMI_REGISTER_CALLBACKS */
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */
@@ -873,8 +1171,19 @@ static void DCMI_DMAError(DMA_HandleTypeDef *hdma)
     hdcmi->ErrorCode |= HAL_DCMI_ERROR_DMA;
   }
 
+<<<<<<< HEAD
   /* DCMI error Callback */  
   HAL_DCMI_ErrorCallback(hdcmi);
+=======
+  /* DCMI error Callback */
+#if (USE_HAL_DCMI_REGISTER_CALLBACKS == 1)
+    /*Call registered DCMI error callback*/
+    hdcmi->ErrorCallback(hdcmi);
+#else  
+    HAL_DCMI_ErrorCallback(hdcmi);
+#endif /* USE_HAL_DCMI_REGISTER_CALLBACKS */   
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 }
 
 /**

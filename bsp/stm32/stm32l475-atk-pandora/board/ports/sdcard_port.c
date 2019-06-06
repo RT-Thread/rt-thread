@@ -18,11 +18,16 @@
 #include "drv_spi.h"
 #include "spi_msd.h"
 
+<<<<<<< HEAD
 #define DBG_ENABLE
 #define DBG_SECTION_NAME  "app.card"
 #define DBG_COLOR
 
 #define DBG_LEVEL DBG_INFO
+=======
+#define DBG_TAG "app.card"
+#define DBG_LVL DBG_INFO
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #include <rtdbg.h>
 
 void sd_mount(void *parameter)

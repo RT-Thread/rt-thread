@@ -20,8 +20,29 @@ config SOC_SERIES_STM32F7
     bool
     select ARCH_ARM_CORTEX_M7
     select SOC_FAMILY_STM32
+<<<<<<< HEAD
+=======
+    
+config SOC_SERIES_STM32L0
+    bool
+    select ARCH_ARM_CORTEX_M0
+    select SOC_FAMILY_STM32
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 config SOC_SERIES_STM32L4
     bool
     select ARCH_ARM_CORTEX_M4
+<<<<<<< HEAD
+=======
+    select SOC_FAMILY_STM32
+
+config SOC_SERIES_STM32G0
+    bool
+    select ARCH_ARM_CORTEX_M0
+    select SOC_FAMILY_STM32
+
+config SOC_SERIES_STM32H7
+    bool
+    select ARCH_ARM_CORTEX_M7
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     select SOC_FAMILY_STM32

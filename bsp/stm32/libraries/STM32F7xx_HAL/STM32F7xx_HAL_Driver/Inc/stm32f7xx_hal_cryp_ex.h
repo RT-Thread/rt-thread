@@ -6,6 +6,7 @@
   ******************************************************************************
   * @attention
   *
+<<<<<<< HEAD
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
@@ -29,6 +30,15 @@
   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=======
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics. 
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the 
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
   *
   ******************************************************************************
   */ 
@@ -44,8 +54,11 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7xx_hal_def.h"
 
+<<<<<<< HEAD
 #if defined (CRYP)
 
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /** @addtogroup STM32F7xx_HAL_Driver
   * @{
   */
@@ -53,6 +66,7 @@
 /** @addtogroup CRYPEx
   * @{
   */
+<<<<<<< HEAD
 
 /* Exported types ------------------------------------------------------------*/ 
 /* Exported constants --------------------------------------------------------*/
@@ -147,16 +161,35 @@ HAL_StatusTypeDef HAL_CRYPEx_AESCCM_Decrypt_DMA(CRYP_HandleTypeDef *hcryp, uint8
     
 void HAL_CRYPEx_GCMCCM_IRQHandler(CRYP_HandleTypeDef *hcryp);
 
+=======
+/* Exported types ------------------------------------------------------------*/ 
+/** @defgroup CRYPEx_Exported_Types CRYPEx Exported types
+  * @{
+  */
+
+/**
+  * @}
+  */ 
+/* Exported constants --------------------------------------------------------*/
+/** @defgroup CRYPEx_Exported_Constants CRYPEx Exported constants
+  * @{
+  */
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /**
   * @}
   */ 
  
+<<<<<<< HEAD
  /**
   * @}
   */ 
  
 
  /* Private types -------------------------------------------------------------*/
+=======
+/* Private types -------------------------------------------------------------*/
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /** @defgroup CRYPEx_Private_Types CRYPEx Private Types
   * @{
   */
@@ -200,6 +233,7 @@ void HAL_CRYPEx_GCMCCM_IRQHandler(CRYP_HandleTypeDef *hcryp);
 /**
   * @}
   */
+<<<<<<< HEAD
    
 /**
   * @}
@@ -261,10 +295,39 @@ void HAL_CRYPEx_ProcessSuspend(CRYP_HandleTypeDef *hcryp);
   * @}
   */  
   
+=======
+
+/* Exported functions --------------------------------------------------------*/
+/** @defgroup CRYPEx_Exported_Functions CRYPEx Exported Functions
+  * @{
+  */
+#if defined (CRYP) || defined (AES)
+/** @addtogroup CRYPEx_Exported_Functions_Group1
+  * @{
+  */    
+HAL_StatusTypeDef HAL_CRYPEx_AESGCM_GenerateAuthTAG(CRYP_HandleTypeDef *hcryp, uint32_t *AuthTag, uint32_t Timeout);
+HAL_StatusTypeDef HAL_CRYPEx_AESCCM_GenerateAuthTAG(CRYP_HandleTypeDef *hcryp, uint32_t *AuthTag, uint32_t Timeout);
+/**
+  * @}
+  */
+#endif /* CRYP||AES */
+
+#if defined (AES)    
+/** @addtogroup CRYPEx_Exported_Functions_Group2
+  * @{
+  */    
+void  HAL_CRYPEx_EnableAutoKeyDerivation(CRYP_HandleTypeDef *hcryp);
+void  HAL_CRYPEx_DisableAutoKeyDerivation(CRYP_HandleTypeDef *hcryp);
+/**
+  * @}
+  */
+#endif /* AES */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /**
   * @}
   */ 
+<<<<<<< HEAD
   
 /* Private functions -----------------------------------------------------------*/
 /** @addtogroup CRYPEx_Private_Functions CRYPEx Private Functions
@@ -277,6 +340,12 @@ HAL_StatusTypeDef CRYP_AES_Auth_IT(CRYP_HandleTypeDef *hcryp);
   */
  
 #endif /* AES */
+=======
+   
+/**
+  * @}
+  */ 
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /**
   * @}

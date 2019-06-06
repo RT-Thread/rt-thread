@@ -24,6 +24,7 @@
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 1024
 #define RT_DEBUG
+<<<<<<< HEAD
 /* RT_DEBUG_INIT_CONFIG is not set */
 /* RT_DEBUG_THREAD_CONFIG is not set */
 /* RT_DEBUG_SCHEDULER_CONFIG is not set */
@@ -34,6 +35,9 @@
 /* RT_DEBUG_SLAB_CONFIG is not set */
 /* RT_DEBUG_MEMHEAP_CONFIG is not set */
 /* RT_DEBUG_MODULE_CONFIG is not set */
+=======
+#define RT_DEBUG_COLOR
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /* Inter-Thread communication */
 
@@ -58,12 +62,20 @@
 /* Kernel Device Object */
 
 #define RT_USING_DEVICE
+<<<<<<< HEAD
 /* RT_USING_DEVICE_OPS is not set */
+=======
+#define RT_USING_DEVICE_OPS
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define RT_USING_INTERRUPT_INFO
 #define RT_USING_CONSOLE
-#define RT_CONSOLEBUF_SIZE 128
+#define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
+<<<<<<< HEAD
 #define RT_VER_NUM 0x40000
+=======
+#define RT_VER_NUM 0x30103
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_A
 #define ARCH_ARM_CORTEX_A9
@@ -133,11 +145,18 @@
 
 #define RT_USING_DEVICE_IPC
 #define RT_PIPE_BUFSZ 512
+#define RT_USING_SYSTEM_WORKQUEUE
+#define RT_SYSTEM_WORKQUEUE_STACKSIZE 2048
+#define RT_SYSTEM_WORKQUEUE_PRIORITY 23
 #define RT_USING_SERIAL
 #define RT_SERIAL_USING_DMA
+<<<<<<< HEAD
 /* RT_USING_CAN is not set */
 /* RT_USING_HWTIMER is not set */
 /* RT_USING_CPUTIME is not set */
+=======
+#define RT_SERIAL_RB_BUFSZ 64
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
@@ -185,6 +204,7 @@
 
 #define RT_USING_LIBC
 #define RT_USING_PTHREADS
+#define PTHREAD_NUM_MAX 8
 #define RT_USING_POSIX
 #define RT_USING_POSIX_MMAP
 #define RT_USING_POSIX_TERMIOS
@@ -201,16 +221,26 @@
 
 #define SAL_USING_LWIP
 #define SAL_USING_POSIX
-#define SAL_PROTO_FAMILIES_NUM 4
+
+/* Network interface device */
+
+#define RT_USING_NETDEV
+#define NETDEV_USING_IFCONFIG
+#define NETDEV_USING_PING
+#define NETDEV_USING_NETSTAT
+#define NETDEV_USING_AUTO_DEFAULT
 
 /* light weight TCP/IP stack */
 
 #define RT_USING_LWIP
 /* RT_USING_LWIP141 is not set */
 #define RT_USING_LWIP202
+<<<<<<< HEAD
 /* RT_USING_LWIP210 is not set */
 #define RT_USING_LWIP_IPV6
 /* RT_LWIP_IGMP is not set */
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define RT_LWIP_ICMP
 /* RT_LWIP_SNMP is not set */
 #define RT_LWIP_DNS
@@ -225,8 +255,12 @@
 #define RT_LWIP_MSKADDR "255.255.255.0"
 #define RT_LWIP_UDP
 #define RT_LWIP_TCP
+<<<<<<< HEAD
 /* RT_LWIP_RAW is not set */
 /* RT_LWIP_PPP is not set */
+=======
+#define RT_LWIP_RAW
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define RT_MEMP_NUM_NETCONN 8
 #define RT_LWIP_PBUF_NUM 16
 #define RT_LWIP_RAW_PCB_NUM 4
@@ -245,14 +279,19 @@
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
 #define RT_LWIP_REASSEMBLY_FRAG
 #define LWIP_NETIF_STATUS_CALLBACK 1
+#define LWIP_NETIF_LINK_CALLBACK 1
 #define SO_REUSE 1
 #define LWIP_SO_RCVTIMEO 1
 #define LWIP_SO_SNDTIMEO 1
 #define LWIP_SO_RCVBUF 1
 /* RT_LWIP_NETIF_LOOPBACK is not set */
 #define LWIP_NETIF_LOOPBACK 0
+<<<<<<< HEAD
 /* RT_LWIP_STATS is not set */
 /* RT_LWIP_DEBUG is not set */
+=======
+#define RT_LWIP_USING_PING
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /* Modbus master and slave stack */
 
@@ -269,6 +308,7 @@
 
 /* Utilities */
 
+<<<<<<< HEAD
 #define RT_USING_LOGTRACE
 #define LOG_TRACE_MAX_SESSION 16
 /* LOG_TRACE_USING_LEVEL_NOTRACE is not set */
@@ -281,6 +321,8 @@
 /* RT_USING_RYM is not set */
 /* RT_USING_ULOG is not set */
 #define RT_USING_LWP
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /* RT-Thread online packages */
 
@@ -390,10 +432,9 @@
 /* PKG_USING_DSTR is not set */
 /* PKG_USING_TINYFRAME is not set */
 
-/* sample package */
-
 /* samples: kernel and components samples */
 
+<<<<<<< HEAD
 /* PKG_USING_KERNEL_SAMPLES is not set */
 /* PKG_USING_FILESYSTEM_SAMPLES is not set */
 /* PKG_USING_NETWORK_SAMPLES is not set */
@@ -424,6 +465,8 @@
 /* PKG_USING_RTINSIGHT is not set */
 /* PKG_USING_SMARTCONFIG is not set */
 /* PKG_USING_RTX is not set */
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define SOC_VEXPRESS_A9
 #define RT_USING_UART0
 #define RT_USING_UART1

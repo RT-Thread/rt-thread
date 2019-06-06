@@ -24,7 +24,11 @@
 #endif
 
 #define SRAM_END (SRAM_BASE + SRAM_SIZE)
+<<<<<<< HEAD
 #ifdef __CC_ARM
+=======
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     extern int Image$$RW_IRAM1$$ZI$$Limit;
     #define HEAP_BEGIN ((void *)&Image$$RW_IRAM1$$ZI$$Limit)
 #elif __ICCARM__

@@ -35,6 +35,10 @@ if PLATFORM == 'gcc':
     PREFIX = 'arm-none-eabi-'
     CC = PREFIX + 'gcc'
     AS = PREFIX + 'gcc'
+<<<<<<< HEAD
+=======
+    CXX = PREFIX + 'g++'
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
     TARGET_EXT = 'elf'
@@ -43,7 +47,11 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
+<<<<<<< HEAD
     CFLAGS = DEVICE + ' -std=c99 -Dgcc'
+=======
+    CFLAGS = DEVICE + ' -Dgcc'
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rt-thread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
 
@@ -56,11 +64,20 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS += ' -O2'
 
+<<<<<<< HEAD
+=======
+    CXXFLAGS = CFLAGS 
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
 elif PLATFORM == 'armcc':
     # toolchains
     CC = 'armcc'
+<<<<<<< HEAD
+=======
+    CXX = 'armcc'
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     AS = 'armasm'
     AR = 'armar'
     LINK = 'armlink'
@@ -84,11 +101,21 @@ elif PLATFORM == 'armcc':
     else:
         CFLAGS += ' -O2'
 
+<<<<<<< HEAD
+=======
+    CXXFLAGS = CFLAGS 
+    CFLAGS += ' -std=c99'
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
 elif PLATFORM == 'iar':
     # toolchains
     CC = 'iccarm'
+<<<<<<< HEAD
+=======
+    CXX = 'iccarm'
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     AS = 'iasmarm'
     AR = 'iarchive'
     LINK = 'ilinkarm'
@@ -129,5 +156,11 @@ elif PLATFORM == 'iar':
     LFLAGS = ' --config "board/linker_scripts/link.icf"'
     LFLAGS += ' --entry __iar_program_start'
 
+<<<<<<< HEAD
+=======
+
+    CXXFLAGS = CFLAGS
+    
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     EXEC_PATH = EXEC_PATH + '/arm/bin/'
     POST_ACTION = 'ielftool --bin $TARGET rtthread.bin'

@@ -5,13 +5,21 @@
  *
  * Change Logs:
  * Date           Author            Notes
+<<<<<<< HEAD
  * 2018-11-06     balanceTWK        change to new framework
+=======
+ * 2018-11-06     balanceTWK        first version
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
  */
 
 #ifndef __DRV_GPIO_H__
 #define __DRV_GPIO_H__
 
 #include <drv_common.h>
+<<<<<<< HEAD
+=======
+#include <board.h>
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 #define __STM32_PORT(port)  GPIO##port
 

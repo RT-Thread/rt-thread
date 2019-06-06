@@ -5,7 +5,11 @@
  *
  * Change Logs:
  * Date           Author       Notes
+<<<<<<< HEAD
  * 2018-11-5      SummerGift   change to new framework
+=======
+ * 2018-11-5      SummerGift   first version
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
  */
 
 #ifndef __BOARD_H__
@@ -14,6 +18,14 @@
 #include <rtthread.h>
 #include <stm32l4xx.h>
 #include "drv_common.h"
+<<<<<<< HEAD
+=======
+#include "drv_gpio.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 #define STM32_FLASH_START_ADRESS       ((uint32_t)0x08000000)
 #define STM32_FLASH_SIZE               (512 * 1024)
@@ -27,6 +39,19 @@
 #define HEAP_END                       STM32_SRAM1_END
 
 void SystemClock_Config(void);
+<<<<<<< HEAD
+=======
+void SystemClock_MSI_ON(void);
+void SystemClock_MSI_OFF(void);
+void SystemClock_80M(void);
+void SystemClock_24M(void);
+void SystemClock_2M(void);
+void SystemClock_ReConfig(uint8_t mode);
+
+#ifdef __cplusplus
+}
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 #endif
 

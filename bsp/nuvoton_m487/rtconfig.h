@@ -17,6 +17,10 @@
 #define RT_IDEL_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
 #define RT_DEBUG
+<<<<<<< HEAD
+=======
+#define RT_DEBUG_COLOR
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /* Inter-Thread communication */
 
@@ -36,6 +40,10 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
+<<<<<<< HEAD
+=======
+#define RT_VER_NUM 0x30103
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /* RT-Thread Components */
 
@@ -56,7 +64,11 @@
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
 #define FINSH_THREAD_PRIORITY 20
+<<<<<<< HEAD
 #define FINSH_THREAD_STACK_SIZE 1024
+=======
+#define FINSH_THREAD_STACK_SIZE 2048
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define FINSH_CMD_SIZE 80
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_DEFAULT
@@ -65,9 +77,28 @@
 /* Device virtual file system */
 
 #define RT_USING_DFS
+<<<<<<< HEAD
 #define DFS_FILESYSTEMS_MAX 1
 #define DFS_FILESYSTEM_TYPES_MAX 2
 #define DFS_FD_MAX 32
+=======
+#define DFS_USING_WORKDIR
+#define DFS_FILESYSTEMS_MAX 2
+#define DFS_FILESYSTEM_TYPES_MAX 2
+#define DFS_FD_MAX 32
+#define RT_USING_DFS_ELMFAT
+
+/* elm-chan's FatFs, Generic FAT Filesystem Module */
+
+#define RT_DFS_ELM_CODE_PAGE 437
+#define RT_DFS_ELM_WORD_ACCESS
+#define RT_DFS_ELM_USE_LFN_3
+#define RT_DFS_ELM_USE_LFN 3
+#define RT_DFS_ELM_MAX_LFN 255
+#define RT_DFS_ELM_DRIVES 2
+#define RT_DFS_ELM_MAX_SECTOR_SIZE 4096
+#define RT_DFS_ELM_REENTRANT
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define RT_USING_DFS_DEVFS
 
 /* Device Drivers */
@@ -76,6 +107,12 @@
 #define RT_PIPE_BUFSZ 64
 #define RT_USING_SERIAL
 #define RT_SERIAL_USING_DMA
+<<<<<<< HEAD
+=======
+#define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_SPI
+#define RT_USING_W25QXX
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /* Using WiFi */
 
@@ -93,6 +130,13 @@
 /* Socket abstraction layer */
 
 
+<<<<<<< HEAD
+=======
+/* Network interface device */
+
+#define NETDEV_USING_PING
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /* light weight TCP/IP stack */
 
 #define RT_USING_LWIP
@@ -127,11 +171,19 @@
 #define RT_LWIP_ETHTHREAD_STACKSIZE 768
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
 #define LWIP_NETIF_STATUS_CALLBACK 1
+<<<<<<< HEAD
+=======
+#define LWIP_NETIF_LINK_CALLBACK 1
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define SO_REUSE 1
 #define LWIP_SO_RCVTIMEO 1
 #define LWIP_SO_SNDTIMEO 1
 #define LWIP_SO_RCVBUF 1
 #define LWIP_NETIF_LOOPBACK 0
+<<<<<<< HEAD
+=======
+#define RT_LWIP_USING_PING
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 /* Modbus master and slave stack */
 
@@ -147,11 +199,14 @@
 
 /* RT-Thread online packages */
 
+<<<<<<< HEAD
 /* system packages */
 
 /* RT-Thread GUI Engine */
 
 
+=======
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /* IoT - internet of things */
 
 
@@ -163,6 +218,12 @@
 /* Wiced WiFi */
 
 
+<<<<<<< HEAD
+=======
+/* IoT Cloud */
+
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 /* security packages */
 
 
@@ -175,10 +236,23 @@
 /* tools packages */
 
 
+<<<<<<< HEAD
 /* miscellaneous packages */
 
 
 /* example package: hello */
+=======
+/* system packages */
+
+
+/* peripheral libraries and drivers */
+
+
+/* miscellaneous packages */
+
+
+/* samples: kernel and components samples */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 
 #endif

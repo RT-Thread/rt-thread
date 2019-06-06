@@ -13,6 +13,13 @@
 
 #include <rtthread.h>
 
+<<<<<<< HEAD
+=======
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #ifdef BSP_USING_QSPI
 #ifndef QSPI_BUS_CONFIG
 #define QSPI_BUS_CONFIG                                        \
@@ -29,8 +36,13 @@
 #ifndef QSPI_DMA_CONFIG
 #define QSPI_DMA_CONFIG                                        \
     {                                                          \
+<<<<<<< HEAD
         .Instance = DMA1_Channel5,                             \
         .Init.Request = DMA_REQUEST_5,                         \
+=======
+        .Instance = QSPI_DMA_INSTANCE,                         \
+        .Init.Request = QSPI_DMA_REQUEST,                      \
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
         .Init.Direction = DMA_PERIPH_TO_MEMORY,                \
         .Init.PeriphInc = DMA_PINC_DISABLE,                    \
         .Init.MemInc = DMA_MINC_ENABLE,                        \
@@ -42,10 +54,19 @@
 #endif /* QSPI_DMA_CONFIG */
 #endif /* BSP_QSPI_USING_DMA */
 
+<<<<<<< HEAD
 #define QSPI_DMA_CLK_ENABLE         __HAL_RCC_DMA1_CLK_ENABLE()
 #define QSPI_IRQn                   QUADSPI_IRQn
 #define QSPI_DMA_IRQn               DMA1_Channel5_IRQn
 #define QSPI_IRQHandler             QUADSPI_IRQHandler
 #define QSPI_DMA_IRQHandler         DMA1_Channel5_IRQHandler
+=======
+#define QSPI_IRQn                   QUADSPI_IRQn
+#define QSPI_IRQHandler             QUADSPI_IRQHandler
+
+#ifdef __cplusplus
+}
+#endif
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 
 #endif /* __QSPI_CONFIG_H__ */

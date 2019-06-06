@@ -2,7 +2,6 @@
 #ifndef __RTTHREAD_CFG_H__
 #define __RTTHREAD_CFG_H__
 
-#define RT_DEBUG
 /* #define RT_DEBUG_IRQ 1 */
 /* #define RT_DEBUG_TIMER 1 */
 
@@ -29,6 +28,7 @@
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 /* #define RT_THREAD_DEBUG */
 
 #define RT_USING_OVERFLOW_CHECK

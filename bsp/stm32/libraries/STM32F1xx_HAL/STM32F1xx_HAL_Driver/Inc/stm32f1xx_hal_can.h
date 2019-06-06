@@ -374,7 +374,11 @@ typedef struct
 #define CAN_FLAG_RQCP2             ((uint32_t)((TSR_REGISTER_INDEX << 8U) | CAN_TSR_RQCP2_BIT_POSITION))  /*!< Request MailBox2 flag         */
 #define CAN_FLAG_TXOK0             ((uint32_t)((TSR_REGISTER_INDEX << 8U) | CAN_TSR_TXOK0_BIT_POSITION))  /*!< Transmission OK MailBox0 flag */
 #define CAN_FLAG_TXOK1             ((uint32_t)((TSR_REGISTER_INDEX << 8U) | CAN_TSR_TXOK1_BIT_POSITION))  /*!< Transmission OK MailBox1 flag */
+<<<<<<< HEAD
 #define CAN_FLAG_TXOK2             ((uint32_t)((TSR_REGISTER_INDEX << 8U) | CAN_TSR_RQCP0_BIT_POSITION))  /*!< Transmission OK MailBox2 flag */
+=======
+#define CAN_FLAG_TXOK2             ((uint32_t)((TSR_REGISTER_INDEX << 8U) | CAN_TSR_TXOK2_BIT_POSITION))  /*!< Transmission OK MailBox2 flag */
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #define CAN_FLAG_TME0              ((uint32_t)((TSR_REGISTER_INDEX << 8U) | CAN_TSR_TME0_BIT_POSITION))   /*!< Transmit mailbox 0 empty flag */
 #define CAN_FLAG_TME1              ((uint32_t)((TSR_REGISTER_INDEX << 8U) | CAN_TSR_TME1_BIT_POSITION))   /*!< Transmit mailbox 0 empty flag */
 #define CAN_FLAG_TME2              ((uint32_t)((TSR_REGISTER_INDEX << 8U) | CAN_TSR_TME2_BIT_POSITION))   /*!< Transmit mailbox 0 empty flag */

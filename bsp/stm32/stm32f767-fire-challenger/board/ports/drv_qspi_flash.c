@@ -5,7 +5,11 @@
  *
  * Change Logs:
  * Date           Author       Notes
+<<<<<<< HEAD
  * 2018-11-27     zylx         change to new framework
+=======
+ * 2018-11-27     zylx         first version
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
  */
  
 #include <board.h>
@@ -65,7 +69,11 @@ static int rt_hw_qspi_flash_with_sfud_init(void)
     stm32_qspi_bus_attach_device("qspi1", "qspi10", RT_NULL, 4, w25qxx_enter_qspi_mode, RT_NULL);
     
     /* init w25q128 */
+<<<<<<< HEAD
     if (RT_NULL == rt_sfud_flash_probe("w25q128", "qspi10"))
+=======
+    if (RT_NULL == rt_sfud_flash_probe("W25Q128", "qspi10"))
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     {
         return -RT_ERROR;
     }

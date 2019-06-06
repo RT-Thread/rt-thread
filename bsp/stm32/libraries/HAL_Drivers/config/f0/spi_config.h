@@ -5,7 +5,11 @@
  *
  * Change Logs:
  * Date           Author       Notes
+<<<<<<< HEAD
  * 2018-11-06     SummerGift   change to new framework
+=======
+ * 2018-11-06     SummerGift   first version
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
  */
 
 #ifndef __SPI_CONFIG_H__
@@ -13,6 +17,13 @@
 
 #include <rtthread.h>
 
+<<<<<<< HEAD
+=======
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #ifdef BSP_USING_SPI1
 #define SPI1_BUS_CONFIG                                  \
     {                                                    \
@@ -30,6 +41,13 @@
 #define SPI1_DMA_TX_IRQHandler           DMA1_Ch2_3_DMA2_Ch1_2_IRQHandler
 #endif
 
+<<<<<<< HEAD
+=======
+#ifdef __cplusplus
+}
+#endif
+
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
 #endif /*__SPI_CONFIG_H__ */
 
 

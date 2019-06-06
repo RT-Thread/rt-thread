@@ -7,6 +7,10 @@
  * Date           Author       Notes
  * 2018-12-05     zylx         first version
  * 2018-12-12     greedyhao    Porting for stm32f7xx
+<<<<<<< HEAD
+=======
+ * 2019-02-01     yuneizhilin   fix the stm32_adc_init function initialization issue
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
  */
 
 #include <board.h>
@@ -49,7 +53,11 @@ static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
 
     if (enabled)
     {
+<<<<<<< HEAD
 #ifdef SOC_SERIES_STM32L4
+=======
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
         ADC_Enable(stm32_adc_handler);
 #else
         __HAL_ADC_ENABLE(stm32_adc_handler);
@@ -57,7 +65,11 @@ static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
     }
     else
     {
+<<<<<<< HEAD
 #ifdef SOC_SERIES_STM32L4
+=======
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
         ADC_Disable(stm32_adc_handler);
 #else
         __HAL_ADC_DISABLE(stm32_adc_handler);
@@ -149,7 +161,12 @@ static rt_err_t stm32_get_adc_value(struct rt_adc_device *device, rt_uint32_t ch
 
 #if defined(SOC_SERIES_STM32F1)
     if (channel <= 17)
+<<<<<<< HEAD
 #elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4)
+=======
+#elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) \
+        || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     if (channel <= 18)
 #endif
     {
@@ -160,7 +177,12 @@ static rt_err_t stm32_get_adc_value(struct rt_adc_device *device, rt_uint32_t ch
     {
 #if defined(SOC_SERIES_STM32F1)
         LOG_E("ADC channel must be between 0 and 17.");
+<<<<<<< HEAD
 #elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4)
+=======
+#elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) \
+        || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
         LOG_E("ADC channel must be between 0 and 18.");
 #endif
         return -RT_ERROR;
@@ -206,20 +228,51 @@ static int stm32_adc_init(void)
 {
     int result = RT_EOK;
     /* save adc name */
+<<<<<<< HEAD
     char name_buf[6] = {0};
+=======
+    char name_buf[5] = {'a', 'd', 'c', '0', 0};
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
     int i = 0;
 
     for (i = 0; i < sizeof(adc_config) / sizeof(adc_config[0]); i++)
     {
         /* ADC init */
+<<<<<<< HEAD
         stm32_adc_obj[i].ADC_Handler = adc_config[i];
         if (HAL_ADC_Init(&stm32_adc_obj[i].ADC_Handler) != HAL_OK)
         {
             LOG_E("ADC%d init failed", i + 1);
+=======
+        name_buf[3] = '0';
+        stm32_adc_obj[i].ADC_Handler = adc_config[i];
+#if defined(ADC1)
+        if (stm32_adc_obj[i].ADC_Handler.Instance == ADC1)
+        {
+            name_buf[3] = '1';
+        }
+#endif
+#if defined(ADC2)
+        if (stm32_adc_obj[i].ADC_Handler.Instance == ADC2)
+        {
+            name_buf[3] = '2';
+        }
+#endif
+#if defined(ADC3)
+        if (stm32_adc_obj[i].ADC_Handler.Instance == ADC3)
+        {
+            name_buf[3] = '3';
+        }
+#endif
+        if (HAL_ADC_Init(&stm32_adc_obj[i].ADC_Handler) != HAL_OK)
+        {
+            LOG_E("%s init failed", name_buf);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
             result = -RT_ERROR;
         }
         else
         {
+<<<<<<< HEAD
             rt_sprintf(name_buf, "adc%d", i + 1);
             /* register ADC device */
             if (rt_hw_adc_register(&stm32_adc_obj[i].stm32_adc_device, name_buf, &stm_adc_ops, &stm32_adc_obj[i].ADC_Handler) == RT_EOK)
@@ -229,6 +282,16 @@ static int stm32_adc_init(void)
             else
             {
                 LOG_E("ADC%d register failed", i + 1);
+=======
+            /* register ADC device */
+            if (rt_hw_adc_register(&stm32_adc_obj[i].stm32_adc_device, name_buf, &stm_adc_ops, &stm32_adc_obj[i].ADC_Handler) == RT_EOK)
+            {
+                LOG_D("%s init success", name_buf);
+            }
+            else
+            {
+                LOG_E("%s register failed", name_buf);
+>>>>>>> 49e424905b5922b07aa7166ec7a0eeb90adf58a8
                 result = -RT_ERROR;
             }
         }
