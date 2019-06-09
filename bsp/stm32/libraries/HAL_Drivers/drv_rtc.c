@@ -44,15 +44,9 @@ static time_t get_rtc_timestamp(void)
 
 static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 {
-    RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
     RTC_TimeTypeDef RTC_TimeStruct = {0};
     RTC_DateTypeDef RTC_DateStruct = {0};
     struct tm *p_tm;
-
-    HAL_PWR_EnableBkUpAccess();
-    PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
-    PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
-    HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 
     p_tm = localtime(&time_stamp);
     if (p_tm->tm_year < 100)
