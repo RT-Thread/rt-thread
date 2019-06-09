@@ -91,10 +91,10 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
     EthHandle.Init.RxMode = ETH_RXINTERRUPT_MODE;
 #ifdef RT_LWIP_USING_HW_CHECKSUM
     EthHandle.Init.ChecksumMode = ETH_CHECKSUM_BY_HARDWARE;
-#else    
+#else
     EthHandle.Init.ChecksumMode = ETH_CHECKSUM_BY_SOFTWARE;
 #endif
-    
+
     HAL_ETH_DeInit(&EthHandle);
 
     /* configure ethernet peripheral (GPIOs, clocks, MAC, DMA) */
@@ -431,31 +431,34 @@ static void phy_monitor_thread_entry(void *parameter)
     uint8_t phy_addr = 0xFF;
     uint8_t phy_speed_new = 0;
     rt_uint32_t status = 0;
+    uint8_t detected_count = 0;
 
-    /* phy search */
-    rt_uint32_t i, temp;
-    for (i = 0; i <= 0x1F; i++)
+    while(phy_addr == 0xFF)
     {
-        EthHandle.Init.PhyAddress = i;
-
-        HAL_ETH_ReadPHYRegister(&EthHandle, PHY_ID1_REG, (uint32_t *)&temp);
-
-        if (temp != 0xFFFF && temp != 0x00)
+        /* phy search */
+        rt_uint32_t i, temp;
+        for (i = 0; i <= 0x1F; i++)
         {
-            phy_addr = i;
-            break;
+            EthHandle.Init.PhyAddress = i;
+            HAL_ETH_ReadPHYRegister(&EthHandle, PHY_ID1_REG, (uint32_t *)&temp);
+
+            if (temp != 0xFFFF && temp != 0x00)
+            {
+                phy_addr = i;
+                break;
+            }
+        }
+
+        detected_count++;
+        rt_thread_mdelay(1000);
+
+        if (detected_count > 10)
+        {
+            LOG_E("No PHY device was detected, please check hardware!");
         }
     }
 
-    if (phy_addr == 0xFF)
-    {
-        LOG_E("phy not probe!");
-        return;
-    }
-    else
-    {
-        LOG_D("found a phy, address:0x%02X", phy_addr);
-    }
+    LOG_D("Found a phy, address:0x%02X", phy_addr);
 
     /* RESET PHY */
     LOG_D("RESET PHY!");
@@ -667,4 +670,4 @@ __exit:
 
     return state;
 }
-INIT_APP_EXPORT(rt_hw_stm32_eth_init);
+INIT_DEVICE_EXPORT(rt_hw_stm32_eth_init);

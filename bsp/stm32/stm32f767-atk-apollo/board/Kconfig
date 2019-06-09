@@ -24,7 +24,7 @@ menu "Onboard Peripheral Drivers"
         default n
 
     config BSP_USING_QSPI_FLASH
-        bool "Enable QSPI FLASH (w25q128 qspi)"
+        bool "Enable QSPI FLASH (W25Q256 qspi)"
         select BSP_USING_QSPI
         select RT_USING_SFUD
         select RT_SFUD_USING_QSPI

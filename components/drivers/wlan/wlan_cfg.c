@@ -55,9 +55,12 @@ static rt_uint16_t rt_wlan_cal_crc(rt_uint8_t *buff, int len)
 
     while (len--)
     {
+        int i;
+
         wChar = *(buff++);
         wCRCin ^= (wChar << 8);
-        for (int i = 0; i < 8; i++)
+
+        for (i = 0; i < 8; i++)
         {
             if (wCRCin & 0x8000)
                 wCRCin = (wCRCin << 1) ^ wCPoly;

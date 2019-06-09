@@ -24,13 +24,13 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
     switch (sensor->info.type)
     {
     case RT_SENSOR_CLASS_ACCE:
-        LOG_I("num:%3d, x:%5d, y:%5d, z:%5d, timestamp:%5d", num, sensor_data->data.acce.x, sensor_data->data.acce.y, sensor_data->data.acce.z, sensor_data->timestamp);
+        LOG_I("num:%3d, x:%5d, y:%5d, z:%5d mg, timestamp:%5d", num, sensor_data->data.acce.x, sensor_data->data.acce.y, sensor_data->data.acce.z, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_GYRO:
-        LOG_I("num:%3d, x:%8d, y:%8d, z:%8d, timestamp:%5d", num, sensor_data->data.gyro.x, sensor_data->data.gyro.y, sensor_data->data.gyro.z, sensor_data->timestamp);
+        LOG_I("num:%3d, x:%8d, y:%8d, z:%8d dps, timestamp:%5d", num, sensor_data->data.gyro.x / 1000, sensor_data->data.gyro.y / 1000, sensor_data->data.gyro.z / 1000, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_MAG:
-        LOG_I("num:%3d, x:%5d, y:%5d, z:%5d, timestamp:%5d", num, sensor_data->data.mag.x, sensor_data->data.mag.y, sensor_data->data.mag.z, sensor_data->timestamp);
+        LOG_I("num:%3d, x:%5d, y:%5d, z:%5d mGauss, timestamp:%5d", num, sensor_data->data.mag.x, sensor_data->data.mag.y, sensor_data->data.mag.z, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_HUMI:
         LOG_I("num:%3d, humi:%3d.%d%%, timestamp:%5d", num, sensor_data->data.humi / 10, sensor_data->data.humi % 10, sensor_data->timestamp);
@@ -39,13 +39,16 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
         LOG_I("num:%3d, temp:%3d.%dC, timestamp:%5d", num, sensor_data->data.temp / 10, sensor_data->data.temp % 10, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_BARO:
-        LOG_I("num:%3d, press:%5d, timestamp:%5d", num, sensor_data->data.baro, sensor_data->timestamp);
+        LOG_I("num:%3d, press:%5d pa, timestamp:%5d", num, sensor_data->data.baro, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_STEP:
         LOG_I("num:%3d, step:%5d, timestamp:%5d", num, sensor_data->data.step, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_PROXIMITY:
         LOG_I("num:%3d, distance:%5d, timestamp:%5d", num, sensor_data->data.proximity, sensor_data->timestamp);
+        break;
+    case RT_SENSOR_CLASS_FORCE:
+        LOG_I("num:%3d, force:%5d, timestamp:%5d", num, sensor_data->data.force, sensor_data->timestamp);
         break;
     default:
         break;

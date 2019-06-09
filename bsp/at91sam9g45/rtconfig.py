@@ -10,7 +10,7 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
-	EXEC_PATH = r'D:\arm-2013.11\bin'
+	EXEC_PATH = '/usr/bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'C:/Keil_v5'

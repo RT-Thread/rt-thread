@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2019, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -403,15 +403,15 @@ void ulog_output_to_all_backend(rt_uint32_t level, const char *tag, rt_bool_t is
         else
         {
             /* recalculate the log start address and log size when backend not supported color */
-            rt_size_t color_info_len = rt_strlen(color_output_info[level]);
+            rt_size_t color_info_len = rt_strlen(color_output_info[level]), output_size = size;
             if (color_info_len)
             {
                 rt_size_t color_hdr_len = rt_strlen(CSI_START) + color_info_len;
 
                 log += color_hdr_len;
-                size -= (color_hdr_len + (sizeof(CSI_END) - 1));
+                output_size -= (color_hdr_len + (sizeof(CSI_END) - 1));
             }
-            backend->output(backend, level, tag, is_raw, log, size);
+            backend->output(backend, level, tag, is_raw, log, output_size);
         }
 #endif /* !defined(ULOG_USING_COLOR) || defined(ULOG_USING_SYSLOG) */
     }
@@ -1187,6 +1187,8 @@ void ulog_async_waiting_log(rt_int32_t time)
 
 static void async_output_thread_entry(void *param)
 {
+    ulog_async_output();
+
     while (1)
     {
         ulog_async_waiting_log(RT_WAITING_FOREVER);

@@ -30,7 +30,8 @@ static char *const sensor_name_str[] =
     "hr_",       /* Heart Rate        */
     "tvoc_",     /* TVOC Level        */
     "noi_",      /* Noise Loudness    */
-    "step_"      /* Step sensor       */
+    "step_",     /* Step sensor       */
+    "forc_"      /* Force sensor      */
 };
 
 /* Sensor interrupt correlation function */
@@ -194,6 +195,11 @@ static rt_err_t rt_sensor_open(rt_device_t dev, rt_uint16_t oflag)
     }
     else
     {
+        if (sensor->module)
+        {
+            /* release the module mutex */
+            rt_mutex_release(sensor->module->lock);
+        }
         return -RT_EINVAL;
     }
 

@@ -1,0 +1,34 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+CPPPATH = [cwd, str(Dir('#'))]
+
+src  = ['hwcrypto.c']
+
+if (GetDepend(['RT_HWCRYPTO_USING_AES'])  or
+    GetDepend(['RT_HWCRYPTO_USING_DES'])  or
+    GetDepend(['RT_HWCRYPTO_USING_3DES']) or
+    GetDepend(['RT_HWCRYPTO_USING_RC4'])):
+    src += ['hw_symmetric.c']
+    if GetDepend(['RT_HWCRYPTO_USING_GCM']):
+        src += ['hw_gcm.c']
+
+if (GetDepend(['RT_HWCRYPTO_USING_MD5'])  or
+    GetDepend(['RT_HWCRYPTO_USING_SHA1']) or
+    GetDepend(['RT_HWCRYPTO_USING_SHA2'])):
+    src += ['hw_hash.c']
+
+if GetDepend(['RT_HWCRYPTO_USING_RNG']):
+    src += ['hw_rng.c']
+
+if GetDepend(['RT_HWCRYPTO_USING_CRC']):
+    src += ['hw_crc.c']
+
+if GetDepend(['RT_HWCRYPTO_USING_BIGNUM']):
+    src += ['hw_bignum.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_HWCRYPTO'], CPPPATH = CPPPATH)
+
+Return('group')

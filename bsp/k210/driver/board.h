@@ -11,6 +11,12 @@
 #ifndef BOARD_H__
 #define BOARD_H__
 
+#include <rtconfig.h>
+
+#if PKG_KENDRYTE_SDK_VERNUM < 0x0054
+#error The version of Kendryte sdk is too old, please update to V0.5.4 or newer
+#endif
+
 extern unsigned int __bss_start;
 extern unsigned int __bss_end;
 

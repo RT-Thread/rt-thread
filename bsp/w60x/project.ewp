@@ -221,6 +221,7 @@
           <state>__inline__=inline</state>
           <state>RT_USING_DLIBC</state>
           <state>_DLIB_FILE_DESCRIPTOR</state>
+          <state>_DLIB_THREAD_SUPPORT</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -380,6 +381,7 @@
           <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\spi</state>
           <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\math</state>
           <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\components\net\netdev\include</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip_dhcpd</state>
           <state>$PROJ_DIR$\packages\wm_libraries-latest\Include\Driver</state>
@@ -1283,6 +1285,7 @@
           <state>__inline__=inline</state>
           <state>RT_USING_DLIBC</state>
           <state>_DLIB_FILE_DESCRIPTOR</state>
+          <state>_DLIB_THREAD_SUPPORT</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1442,6 +1445,7 @@
           <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\spi</state>
           <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\math</state>
           <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\components\net\netdev\include</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip_dhcpd</state>
           <state>$PROJ_DIR$\packages\wm_libraries-latest\Include\Driver</state>
@@ -2610,14 +2614,23 @@
       <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\ipv4\ip4_frag.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\apps\ping\ping.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\components\net\lwip_dhcpd\dhcp_server_raw.c</name>
     </file>
   </group>
   <group>
-    <name>SAL</name>
+    <name>netdev</name>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\sal_socket\src\sal_ipaddr.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\netdev\src\netdev.c</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\net\netdev\src\netdev_ipaddr.c</name>
+    </file>
+  </group>
+  <group>
+    <name>SAL</name>
     <file>
       <name>$PROJ_DIR$\..\..\components\net\sal_socket\src\sal_socket.c</name>
     </file>

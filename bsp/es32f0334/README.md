@@ -44,6 +44,8 @@ ES-PDS-ES32F0334-V1.1
 | PWM               |     支持     | PWM0/1/2/3                           |
 | TIMER             |     支持     | TIMER0/1/2/3                         |
 | RTC               |     支持     | RTC                                  |
+| PM                |     支持     | Power Management                     |
+| ADC               |     支持     | ADC0                                 |
 
 更多详细信息请咨询[上海东软载波微电子技术支持](http://www.essemi.com/)
 

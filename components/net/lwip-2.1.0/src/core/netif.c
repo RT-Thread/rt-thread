@@ -90,6 +90,13 @@
 #include "lwip/nd6.h"
 #endif
 
+#include <rtthread.h>
+
+#ifdef RT_USING_NETDEV
+#include "lwip/netdb.h"
+#include <netdev.h>
+#endif /* RT_USING_NETDEV */
+
 #if LWIP_NETIF_STATUS_CALLBACK
 #define NETIF_STATUS_CALLBACK(n) do{ if (n->status_callback) { (n->status_callback)(n); }}while(0)
 #else
@@ -481,6 +488,12 @@ netif_do_set_ipaddr(struct netif *netif, const ip4_addr_t *ipaddr, ip_addr_t *ol
     netif_issue_reports(netif, NETIF_REPORT_TYPE_IPV4);
 
     NETIF_STATUS_CALLBACK(netif);
+
+#ifdef RT_USING_NETDEV
+  /* rt-thread sal network interface device set IP address operations */
+  netdev_low_level_set_ipaddr(netdev_get_by_name(netif->name), (ip_addr_t *)ipaddr);
+#endif /* RT_USING_NETDEV */
+
     return 1; /* address changed */
   }
   return 0; /* address unchanged */
@@ -541,6 +554,12 @@ netif_do_set_netmask(struct netif *netif, const ip4_addr_t *netmask, ip_addr_t *
                 ip4_addr2_16(netif_ip4_netmask(netif)),
                 ip4_addr3_16(netif_ip4_netmask(netif)),
                 ip4_addr4_16(netif_ip4_netmask(netif))));
+
+#ifdef RT_USING_NETDEV
+  /* rt-thread network interface device set netmask address */
+  netdev_low_level_set_netmask(netdev_get_by_name(netif->name), (ip_addr_t *)netmask);
+#endif /* RT_USING_NETDEV */
+
     return 1; /* netmask changed */
   }
   return 0; /* netmask unchanged */
@@ -603,6 +622,12 @@ netif_do_set_gw(struct netif *netif, const ip4_addr_t *gw, ip_addr_t *old_gw)
                 ip4_addr2_16(netif_ip4_gw(netif)),
                 ip4_addr3_16(netif_ip4_gw(netif)),
                 ip4_addr4_16(netif_ip4_gw(netif))));
+
+#ifdef RT_USING_NETDEV
+    /* rt_thread network interface device set gateway address */
+    netdev_low_level_set_gw(netdev_get_by_name(netif->name), (ip_addr_t *)gw);
+#endif /* RT_USING_NETDEV */
+
     return 1; /* gateway changed */
   }
   return 0; /* gateway unchanged */
@@ -866,6 +891,11 @@ netif_set_up(struct netif *netif)
 #if LWIP_IPV6
     nd6_restart_netif(netif);
 #endif /* LWIP_IPV6 */
+
+#ifdef RT_USING_NETDEV
+    /* rt-thread network interface device set up status */
+    netdev_low_level_set_status(netdev_get_by_name(netif->name), RT_TRUE);
+#endif /* RT_USING_NETDEV */
   }
 }
 
@@ -945,6 +975,11 @@ netif_set_down(struct netif *netif)
 #endif /* LWIP_IPV6 */
 
     NETIF_STATUS_CALLBACK(netif);
+
+#ifdef RT_USING_NETDEV
+    /* rt-thread network interface device set down status */
+    netdev_low_level_set_status(netdev_get_by_name(netif->name), RT_FALSE);
+#endif /* RT_USING_NETDEV */
   }
 }
 
@@ -1015,6 +1050,11 @@ netif_set_link_up(struct netif *netif)
       netif_invoke_ext_callback(netif, LWIP_NSC_LINK_CHANGED, &args);
     }
 #endif
+
+#ifdef RT_USING_NETDEV
+    /* rt-thread network interface device set link up status */
+    netdev_low_level_set_link_status(netdev_get_by_name(netif->name), RT_TRUE);
+#endif /* RT_USING_NETDEV */
   }
 }
 
@@ -1039,6 +1079,11 @@ netif_set_link_down(struct netif *netif)
       netif_invoke_ext_callback(netif, LWIP_NSC_LINK_CHANGED, &args);
     }
 #endif
+
+#ifdef RT_USING_NETDEV
+    /* rt-thread network interface device set link down status */
+    netdev_low_level_set_link_status(netdev_get_by_name(netif->name), RT_FALSE);
+#endif /* RT_USING_NETDEV */
   }
 }
 
