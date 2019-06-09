@@ -359,20 +359,21 @@ __err:
     return RT_NULL;
 }
 
-static struct at_socket *alloc_socket(int domain)
+static struct at_socket *alloc_socket(void)
 {
     extern struct netdev *netdev_default;
     struct netdev *netdev = RT_NULL;
     struct at_device *device = RT_NULL;
 
-    if (netdev_default && netdev_is_up(netdev_default))
+    if (netdev_default && netdev_is_up(netdev_default) &&
+            netdev_family_get(netdev_default) == AF_AT)
     {
         netdev = netdev_default;
     }
     else
     {
-        /* get network interface device by protocol family */
-        netdev = netdev_get_by_family(domain);
+        /* get network interface device by protocol family AF_AT */
+        netdev = netdev_get_by_family(AF_AT);
         if (netdev == RT_NULL)
         {
             return RT_NULL;
@@ -414,7 +415,7 @@ int at_socket(int domain, int type, int protocol)
     }
 
     /* allocate and initialize a new AT socket */
-    sock = alloc_socket(domain);
+    sock = alloc_socket();
     if (sock == RT_NULL)
     {
         return -1;

@@ -561,8 +561,7 @@ int sal_bind(int socket, const struct sockaddr *name, socklen_t namelen)
 {
     struct sal_socket *sock;
     struct sal_proto_family *pf;
-    struct netdev *new_netdev;
-    ip_addr_t local_addr;
+    ip_addr_t input_ipaddr;
 
     RT_ASSERT(name);
 
@@ -570,44 +569,43 @@ int sal_bind(int socket, const struct sockaddr *name, socklen_t namelen)
     SAL_SOCKET_OBJ_GET(sock, socket);
 
     /* bind network interface by ip address */
-    sal_sockaddr_to_ipaddr(name,  &local_addr);
+    sal_sockaddr_to_ipaddr(name, &input_ipaddr);
 
     /* check input ipaddr is default netdev ipaddr */
-    if (local_addr.addr == INADDR_ANY)
+    if (input_ipaddr.addr != INADDR_ANY)
     {
-        SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, bind);
-        return pf->skt_ops->bind((int) sock->user_data, name, namelen);
-    }
+        struct sal_proto_family *input_pf = RT_NULL, *local_pf = RT_NULL;
+        struct netdev *new_netdev = RT_NULL;
 
-    new_netdev = netdev_get_by_ipaddr(&local_addr);
-    if (new_netdev == RT_NULL)
-    {
-        LOG_E("Not find network interface device ipaddr(%s).", inet_ntoa(local_addr));
-        return -1;
-    }
-
-    /* change network interface device parameter in sal socket object */
-    if (sock->netdev != new_netdev)
-    {
-        struct sal_proto_family *old_pf, *new_pf;
-        int new_socket = 0;
-
-        /* close old netdev socket */
-        SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, old_pf, closesocket);
-        old_pf->skt_ops->closesocket(socket);
-
-        /* open new netdev socket */
-        SAL_NETDEV_SOCKETOPS_VALID(new_netdev, new_pf, socket);
-        new_socket = new_pf->skt_ops->socket(sock->domain, sock->type, sock->protocol);
-        if (new_socket < 0)
+        new_netdev = netdev_get_by_ipaddr(&input_ipaddr);
+        if (new_netdev == RT_NULL)
         {
             return -1;
         }
-        sock->netdev = new_netdev;
-        sock->user_data = (void *) new_socket;
-    }
 
-    /* check the network interface socket opreation */
+        /* get input and local ip address proto_family */
+        SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, local_pf, bind);
+        SAL_NETDEV_SOCKETOPS_VALID(new_netdev, input_pf, bind);
+
+        /* check the network interface protocol family type */
+        if (input_pf->family != local_pf->family)
+        {
+            int new_socket = -1;
+
+            /* protocol family is different, close old socket and create new socket by input ip address */
+            local_pf->skt_ops->closesocket(socket);
+
+            new_socket = input_pf->skt_ops->socket(input_pf->family, sock->type, sock->protocol);
+            if (new_socket < 0)
+            {
+                return -1;
+            }
+            sock->netdev = new_netdev;
+            sock->user_data = (void *) new_socket;
+        }
+    }
+    
+    /* check and get protocol families by the network interface device */
     SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, bind);
     return pf->skt_ops->bind((int) sock->user_data, name, namelen);
 }
