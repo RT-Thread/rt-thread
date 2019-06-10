@@ -501,13 +501,16 @@ static void phy_monitor_thread_entry(void *parameter)
                 }
                 else
                 {
-                    LOG_D("PHY Control/Status REG read error."); 
+                    LOG_D("PHY PHY_Status_REG read error."); 
+                    rt_thread_mdelay(100);
                     continue;
                 }
             }
         }
         else
         {
+            LOG_D("PHY_BASIC_STATUS_REG read error."); 
+            rt_thread_mdelay(100);
             continue;
         }
 
