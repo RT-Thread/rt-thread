@@ -468,32 +468,40 @@ static void phy_monitor_thread_entry(void *parameter)
 
     while (1)
     {
-        HAL_ETH_ReadPHYRegister(&EthHandle, PHY_BASIC_STATUS_REG, (uint32_t *)&status);
-        LOG_D("PHY BASIC STATUS REG:0x%04X", status);
-
         phy_speed_new = 0;
 
-        if (status & (PHY_AUTONEGO_COMPLETE_MASK | PHY_LINKED_STATUS_MASK))
+        if(HAL_ETH_ReadPHYRegister(&EthHandle, PHY_BASIC_STATUS_REG, (uint32_t *)&status) == HAL_OK)
         {
-            rt_uint32_t SR;
-
-            phy_speed_new = PHY_LINK_MASK;
-
-            SR = HAL_ETH_ReadPHYRegister(&EthHandle, PHY_Status_REG, (uint32_t *)&SR);
-            LOG_D("PHY Control/Status REG:0x%04X ", SR);
-
-            if (SR & PHY_100M_MASK)
+            LOG_D("PHY BASIC STATUS REG:0x%04X", status);
+            
+            if (status & (PHY_AUTONEGO_COMPLETE_MASK | PHY_LINKED_STATUS_MASK))
             {
-                phy_speed_new |= PHY_100M_MASK;
-            }
-            else if (SR & PHY_10M_MASK)
-            {
-                phy_speed_new |= PHY_10M_MASK;
-            }
+                rt_uint32_t SR;
 
-            if (SR & PHY_FULL_DUPLEX_MASK)
-            {
-                phy_speed_new |= PHY_FULL_DUPLEX_MASK;
+                phy_speed_new = PHY_LINK_MASK;
+
+                if(HAL_ETH_ReadPHYRegister(&EthHandle, PHY_Status_REG, (uint32_t *)&SR) == HAL_OK)
+                {
+                    LOG_D("PHY Control/Status REG:0x%04X ", SR); 
+
+                    if (SR & PHY_100M_MASK)
+                    {
+                        phy_speed_new |= PHY_100M_MASK;
+                    }
+                    else if (SR & PHY_10M_MASK)
+                    {
+                        phy_speed_new |= PHY_10M_MASK;
+                    }
+
+                    if (SR & PHY_FULL_DUPLEX_MASK)
+                    {
+                        phy_speed_new |= PHY_FULL_DUPLEX_MASK;
+                    }
+                }
+                else
+                {
+                    LOG_D("PHY Control/Status REG read error."); 
+                }
             }
         }
 
