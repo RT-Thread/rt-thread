@@ -11658,6 +11658,8 @@ typedef struct
    ((INSTANCE) == TIM5)    || \
    ((INSTANCE) == TIM12))
 
+#define IS_TIM_SYNCHRO_INSTANCE(INSTANCE)  IS_TIM_MASTER_INSTANCE(INSTANCE)
+
 #define IS_TIM_DMABURST_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
    ((INSTANCE) == TIM8)    || \
