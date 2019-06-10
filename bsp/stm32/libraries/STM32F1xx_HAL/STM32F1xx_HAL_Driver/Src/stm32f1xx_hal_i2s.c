@@ -1361,7 +1361,7 @@ static void I2S_IRQHandler(I2S_HandleTypeDef *hi2s)
       I2S_Receive_IT(hi2s);
     }
 
-    /* I2S Overrun error interrupt occured -------------------------------------*/
+    /* I2S Overrun error interrupt occurred -------------------------------------*/
     if(((i2ssr & I2S_FLAG_OVR) == I2S_FLAG_OVR) && (__HAL_I2S_GET_IT_SOURCE(hi2s, I2S_IT_ERR) != RESET))
     {
       /* Disable RXNE and ERR interrupt */

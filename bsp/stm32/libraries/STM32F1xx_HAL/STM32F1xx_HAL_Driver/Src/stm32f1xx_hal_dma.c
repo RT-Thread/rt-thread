@@ -216,13 +216,6 @@ HAL_StatusTypeDef HAL_DMA_Init(DMA_HandleTypeDef *hdma)
   /* Write to DMA Channel CR register */
   hdma->Instance->CCR = tmp;
 
-
-  /* Clean callbacks */
-  hdma->XferCpltCallback = NULL;
-  hdma->XferHalfCpltCallback = NULL;
-  hdma->XferErrorCallback = NULL;
-  hdma->XferAbortCallback = NULL;
-
   /* Initialise the error code */
   hdma->ErrorCode = HAL_DMA_ERROR_NONE;
 
@@ -230,7 +223,7 @@ HAL_StatusTypeDef HAL_DMA_Init(DMA_HandleTypeDef *hdma)
   hdma->State = HAL_DMA_STATE_READY;
   /* Allocate lock resource and initialize it */
   hdma->Lock = HAL_UNLOCKED;
-  
+
   return HAL_OK;
 }
 
@@ -274,7 +267,7 @@ HAL_StatusTypeDef HAL_DMA_DeInit(DMA_HandleTypeDef *hdma)
     hdma->ChannelIndex = (((uint32_t)hdma->Instance - (uint32_t)DMA1_Channel1) / ((uint32_t)DMA1_Channel2 - (uint32_t)DMA1_Channel1)) << 2;
     hdma->DmaBaseAddress = DMA1;
   }
-  else 
+  else
   {
     /* DMA2 */
     hdma->ChannelIndex = (((uint32_t)hdma->Instance - (uint32_t)DMA2_Channel1) / ((uint32_t)DMA2_Channel2 - (uint32_t)DMA2_Channel1)) << 2;
@@ -289,10 +282,16 @@ HAL_StatusTypeDef HAL_DMA_DeInit(DMA_HandleTypeDef *hdma)
   /* Clear all flags */
   hdma->DmaBaseAddress->IFCR = (DMA_ISR_GIF1 << (hdma->ChannelIndex));
 
-  /* Initialize the error code */
+  /* Clean all callbacks */
+  hdma->XferCpltCallback = NULL;
+  hdma->XferHalfCpltCallback = NULL;
+  hdma->XferErrorCallback = NULL;
+  hdma->XferAbortCallback = NULL;
+
+  /* Reset the error code */
   hdma->ErrorCode = HAL_DMA_ERROR_NONE;
 
-  /* Initialize the DMA state */
+  /* Reset the DMA state */
   hdma->State = HAL_DMA_STATE_RESET;
 
   /* Release Lock */
