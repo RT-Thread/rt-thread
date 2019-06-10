@@ -640,6 +640,13 @@ menu "Using USB"
                     string "msc class disk name"
                     default "flash0"
                 endif
+
+                if RT_USB_DEVICE_RNDIS
+                    config RNDIS_DELAY_LINK_UP
+                        bool "Delay linkup media connection"
+                        default n
+                endif
+
                 if RT_USB_DEVICE_HID
                     config RT_USB_DEVICE_HID_KEYBOARD
                         bool "Use to HID device as Keyboard"
