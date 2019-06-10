@@ -1602,7 +1602,7 @@ __STATIC_INLINE uint32_t LL_RCC_PLL_GetPrediv(void)
 #if defined(RCC_CFGR2_PREDIV1)
   return (uint32_t)(READ_BIT(RCC->CFGR2, RCC_CFGR2_PREDIV1));
 #else
-  return (uint32_t)(READ_BIT(RCC->CFGR, RCC_CFGR_PLLXTPRE));
+  return (uint32_t)(READ_BIT(RCC->CFGR, RCC_CFGR_PLLXTPRE) >> RCC_CFGR_PLLXTPRE_Pos);
 #endif /*RCC_CFGR2_PREDIV1*/
 }
 
