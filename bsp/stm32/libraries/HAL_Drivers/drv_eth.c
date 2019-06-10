@@ -501,8 +501,13 @@ static void phy_monitor_thread_entry(void *parameter)
                 else
                 {
                     LOG_D("PHY Control/Status REG read error."); 
+                    continue;
                 }
             }
+        }
+        else
+        {
+            continue;
         }
 
         /* linkchange */
