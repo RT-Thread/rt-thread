@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2018-11-19     SummerGift   first version
  * 2018-12-25     zylx         fix some bugs
+ * 2019-06-10     SummerGift   optimize PHY state detection process 
  */
 
 #include "board.h"
