@@ -418,11 +418,16 @@ rt_err_t rt_ecm_eth_tx(rt_device_t dev, struct pbuf* p)
                      USB_ETH_MTU, p->tot_len);
         p->tot_len = USB_ETH_MTU;
     }
-    result = rt_sem_take(&ecm_eth_dev->tx_buffer_free, RT_WAITING_FOREVER);
+
+    result = rt_sem_take(&device->tx_buffer_free, rt_tick_from_millisecond(1000));
     if(result != RT_EOK)
     {
+        LOG_W("wait for buffer free timeout");
+        /* if cost 1s to wait send done it said that connection is close . drop it */
+        rt_sem_release(&device->tx_buffer_free);
         return result;
     }
+    
     pbuffer = (char *)&ecm_eth_dev->tx_buffer;
     for (q = p; q != NULL; q = q->next)
     {
@@ -473,10 +478,8 @@ static rt_err_t _function_enable(ufunction_t func)
     eps->ep_out->buffer = ecm_device->rx_pool;
 
     /* reset eth rx tx */
-    rt_sem_release(&ecm_device->tx_buffer_free);
     ecm_device->rx_size = 0;
     ecm_device->rx_offset = 0;
-    eth_device_ready(&ecm_device->parent);
     
     eps->ep_out->request.buffer = (void *)eps->ep_out->buffer;
     eps->ep_out->request.size = EP_MAXPACKET(eps->ep_out);
@@ -499,10 +502,8 @@ static rt_err_t _function_disable(ufunction_t func)
     eth_device_linkchange(&((rt_ecm_eth_t)func->user_data)->parent, RT_FALSE);
 
     /* reset eth rx tx */
-    rt_sem_release(&((rt_ecm_eth_t)func->user_data)->tx_buffer_free);
     ((rt_ecm_eth_t)func->user_data)->rx_size = 0;
     ((rt_ecm_eth_t)func->user_data)->rx_offset = 0;
-    eth_device_ready(&((rt_ecm_eth_t)func->user_data)->parent);
 
     return RT_EOK;
 }

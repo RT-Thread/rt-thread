@@ -644,6 +644,7 @@ menu "Using USB"
                 if RT_USB_DEVICE_RNDIS
                     config RNDIS_DELAY_LINK_UP
                         bool "Delay linkup media connection"
+                        select RT_USING_TIMER_SOFT
                         default n
                 endif
 
