@@ -1391,7 +1391,7 @@ ufunction_t rt_usbd_function_rndis_create(udevice_t device)
                   timer_timeout,
                   _rndis,
                   RT_TICK_PER_SECOND * 2,
-                  RT_TIMER_FLAG_ONE_SHOT);
+                  RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
 #endif  /* RNDIS_DELAY_LINK_UP */
 
     /* OUI 00-00-00, only for test. */
