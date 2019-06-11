@@ -644,8 +644,6 @@ static rt_err_t _rndis_reset_response(ufunction_t func,rndis_set_msg_t msg)
     /* reset eth rx tx */
     ((rt_rndis_eth_t)func->user_data)->rx_frist = RT_TRUE;
     ((rt_rndis_eth_t)func->user_data)->rx_flag = RT_FALSE;
-    rt_sem_release(&((rt_rndis_eth_t)func->user_data)->tx_buffer_free);
-    eth_device_ready(&(((rt_rndis_eth_t)func->user_data)->parent));
 
 
     resp->MessageType = REMOTE_NDIS_RESET_CMPLT;
@@ -719,9 +717,6 @@ static rt_err_t _rndis_msg_parser(ufunction_t func, rt_uint8_t *msg)
         /* reset eth rx tx */
         ((rt_rndis_eth_t)func->user_data)->rx_frist = RT_TRUE;
         ((rt_rndis_eth_t)func->user_data)->rx_flag = RT_FALSE;
-        rt_sem_release(&((rt_rndis_eth_t)func->user_data)->tx_buffer_free);
-        eth_device_ready(&(((rt_rndis_eth_t)func->user_data)->parent));
-
         break;
 
     case REMOTE_NDIS_QUERY_MSG:
@@ -964,7 +959,7 @@ static rt_err_t _function_enable(ufunction_t func)
 
     ((rt_rndis_eth_t)func->user_data)->rx_flag = RT_FALSE;
     ((rt_rndis_eth_t)func->user_data)->rx_frist = RT_TRUE;
-    eth_device_ready(&(((rt_rndis_eth_t)func->user_data)->parent));
+    // eth_device_ready(&(((rt_rndis_eth_t)func->user_data)->parent));
 
 #ifdef  RNDIS_DELAY_LINK_UP
     /* stop link up timer. */
@@ -1034,8 +1029,6 @@ static rt_err_t _function_disable(ufunction_t func)
     /* reset eth rx tx */
     ((rt_rndis_eth_t)func->user_data)->rx_frist = RT_TRUE;
     ((rt_rndis_eth_t)func->user_data)->rx_flag = RT_FALSE;
-    rt_sem_release(&((rt_rndis_eth_t)func->user_data)->tx_buffer_free);
-    eth_device_ready(&(((rt_rndis_eth_t)func->user_data)->parent));
 
     return RT_EOK;
 }
@@ -1173,7 +1166,7 @@ rt_err_t rt_rndis_eth_tx(rt_device_t dev, struct pbuf* p)
         return RT_EOK;
     }
 
-    RT_ASSERT(p->tot_len < sizeof(device->tx_buffer));
+    //RT_ASSERT(p->tot_len < sizeof(device->tx_buffer));
     if(p->tot_len > sizeof(device->tx_buffer))
     {
         LOG_W("RNDIS MTU is:%d, but the send packet size is %d",
@@ -1182,9 +1175,12 @@ rt_err_t rt_rndis_eth_tx(rt_device_t dev, struct pbuf* p)
     }
 
     /* wait for buffer free. */
-    result = rt_sem_take(&device->tx_buffer_free, RT_WAITING_FOREVER);
+    result = rt_sem_take(&device->tx_buffer_free, rt_tick_from_millisecond(1000));
     if(result != RT_EOK)
     {
+        LOG_W("wait for buffer free timeout");
+        /* if cost 1s to wait send done it said that connection is close . drop it */
+        rt_sem_release(&device->tx_buffer_free);
         return result;
     }
 
@@ -1395,7 +1391,7 @@ ufunction_t rt_usbd_function_rndis_create(udevice_t device)
                   timer_timeout,
                   _rndis,
                   RT_TICK_PER_SECOND * 2,
-                  RT_TIMER_FLAG_ONE_SHOT);
+                  RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
 #endif  /* RNDIS_DELAY_LINK_UP */
 
     /* OUI 00-00-00, only for test. */
