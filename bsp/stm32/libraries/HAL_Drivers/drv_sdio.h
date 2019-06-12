@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-12-13     BalanceTWK   first version
+ * 2019-06-11     WillianChan   Add SD card hot plug detection
  */
 
 #ifndef _DRV_SDIO_H
@@ -186,5 +187,7 @@ struct stm32_sdio_class
         DMA_HandleTypeDef handle_tx;
     } dma;
 };
+
+extern void stm32_mmcsd_change(void);
 
 #endif

@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2018-06-22     tyx          first
  * 2018-12-12     balanceTWK   first version
+ * 2019-06-11     WillianChan   Add SD card hot plug detection
  */
 
 #include "board.h"
@@ -877,5 +878,10 @@ int rt_hw_sdio_init(void)
     return 0;
 }
 INIT_DEVICE_EXPORT(rt_hw_sdio_init);
+
+void stm32_mmcsd_change(void)
+{
+    mmcsd_change(host);
+}
 
 #endif
