@@ -26,7 +26,7 @@
 /* SD Card hot plug detection pin */
 #define SD_CHECK_PIN GET_PIN(G, 2)
 
-void _sdcard_mount(void)
+static void _sdcard_mount(void)
 {
     rt_device_t device;
     
@@ -51,7 +51,7 @@ void _sdcard_mount(void)
     }
 }
 
-void _sdcard_unmount(void)
+static void _sdcard_unmount(void)
 {
     rt_thread_mdelay(200);
     dfs_unmount("/");
@@ -62,7 +62,7 @@ void _sdcard_unmount(void)
     mmcsd_wait_cd_changed(RT_WAITING_FOREVER);
 }
 
-void sd_mount(void *parameter)
+static void sd_mount(void *parameter)
 {
     rt_uint8_t re_sd_check = 1;
     
