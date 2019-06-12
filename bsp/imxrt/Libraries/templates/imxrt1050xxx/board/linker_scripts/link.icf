@@ -1,0 +1,95 @@
+/*
+** ###################################################################
+**     Processors:          MIMXRT1052CVJ5B
+**                          MIMXRT1052CVL5B
+**                          MIMXRT1052DVJ6B
+**                          MIMXRT1052DVL6B
+**
+**     Compiler:            IAR ANSI C/C++ Compiler for ARM
+**     Reference manual:    IMXRT1050RM Rev.1, 03/2018
+**     Version:             rev. 1.0, 2018-09-21
+**     Build:               b180921
+**
+**     Abstract:
+**         Linker file for the IAR ANSI C/C++ Compiler for ARM
+**
+**     Copyright 2016 Freescale Semiconductor, Inc.
+**     Copyright 2016-2018 NXP
+**     All rights reserved.
+**
+**     SPDX-License-Identifier: BSD-3-Clause
+**
+**     http:                 www.nxp.com
+**     mail:                 support@nxp.com
+**
+** ###################################################################
+*/
+
+define symbol m_interrupts_start       = 0x60002000;
+define symbol m_interrupts_end         = 0x600023FF;
+
+define symbol m_text_start             = 0x60002400;
+define symbol m_text_end               = 0x63FFFFFF;
+
+define symbol m_data_start             = 0x20000000;
+define symbol m_data_end               = 0x2001FFFF;
+
+define symbol m_data2_start            = 0x20200000;
+define symbol m_data2_end              = 0x2023FFFF;
+
+define exported symbol m_boot_hdr_conf_start = 0x60000000;
+define symbol m_boot_hdr_ivt_start           = 0x60001000;
+define symbol m_boot_hdr_boot_data_start     = 0x60001020;
+define symbol m_boot_hdr_dcd_data_start      = 0x60001030;
+
+/* Sizes */
+if (isdefinedsymbol(__stack_size__)) {
+  define symbol __size_cstack__        = __stack_size__;
+} else {
+  define symbol __size_cstack__        = 0x0400;
+}
+
+if (isdefinedsymbol(__heap_size__)) {
+  define symbol __size_heap__          = __heap_size__;
+} else {
+  define symbol __size_heap__          = 0x0400;
+}
+
+define exported symbol __VECTOR_TABLE  = m_interrupts_start;
+define exported symbol __VECTOR_RAM    = m_interrupts_start;
+define exported symbol __RAM_VECTOR_TABLE_SIZE = 0x0;
+define exported symbol __RTT_HEAP_END = m_data2_end;
+
+define memory mem with size = 4G;
+define region TEXT_region = mem:[from m_interrupts_start to m_interrupts_end]
+                          | mem:[from m_text_start to m_text_end];
+
+define region DATA_region = mem:[from m_data_start to m_data_end-__size_cstack__];
+define region DATA2_region = mem:[from m_data2_start to m_data2_end];
+define region CSTACK_region = mem:[from m_data_end-__size_cstack__+1 to m_data_end];
+
+define block CSTACK    with alignment = 8, size = __size_cstack__   { };
+define block HEAP      with alignment = 8, size = __size_heap__     { };
+define block RW        { readwrite };
+define block ZI        { zi };
+define block NCACHE_VAR    { section NonCacheable , section NonCacheable.init };
+
+initialize by copy { readwrite, section .textrw };
+do not initialize  { section .noinit };
+
+place at address mem: m_interrupts_start    { readonly section .intvec };
+
+place at address mem:m_boot_hdr_conf_start { section .boot_hdr.conf };
+place at address mem:m_boot_hdr_ivt_start { section .boot_hdr.ivt };
+place at address mem:m_boot_hdr_boot_data_start { readonly section .boot_hdr.boot_data };
+place at address mem:m_boot_hdr_dcd_data_start { readonly section .boot_hdr.dcd_data };
+
+keep{ section .boot_hdr.conf, section .boot_hdr.ivt, section .boot_hdr.boot_data, section .boot_hdr.dcd_data };
+
+place in TEXT_region                        { readonly };
+place in DATA_region                        { block RW };
+place in DATA_region                        { block ZI };
+place in DATA_region                        { last block HEAP };
+place in DATA_region                        { block NCACHE_VAR };
+place in CSTACK_region                      { block CSTACK };
+
