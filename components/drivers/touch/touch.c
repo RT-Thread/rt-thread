@@ -16,7 +16,7 @@
 #include <rtdbg.h>
 
 /* touch interrupt handler function */
-void rt_touch_cb(rt_touch_t touch)
+static void rt_touch_cb(rt_touch_t touch)
 {
     if (touch->parent.rx_indicate == RT_NULL)
     {
@@ -46,7 +46,7 @@ static rt_err_t rt_touch_irq_init(rt_touch_t touch)
 {
     if (touch->config.irq_pin.pin == RT_PIN_NONE)
     {
-        return -RT_EINVAL;
+        return RT_EINVAL;
     }
 
     rt_pin_mode(touch->config.irq_pin.pin, touch->config.irq_pin.mode);
@@ -68,7 +68,7 @@ static rt_err_t rt_touch_irq_init(rt_touch_t touch)
 
     LOG_I("interrupt init success");
 
-    return 0;
+    return RT_EOK;
 }
 
 /* touch interrupt enable */
@@ -104,7 +104,7 @@ static rt_err_t rt_touch_open(rt_device_t dev, rt_uint16_t oflag)
     return RT_EOK;
 }
 
-static rt_err_t  rt_touch_close(rt_device_t dev)
+static rt_err_t rt_touch_close(rt_device_t dev)
 {
     rt_touch_t touch;
     RT_ASSERT(dev != RT_NULL);
@@ -199,7 +199,7 @@ static rt_err_t rt_touch_control(rt_device_t dev, int cmd, void *args)
 
         break;
     default:
-        return -RT_ERROR;
+        return RT_ERROR;
     }
 
     return result;
@@ -229,21 +229,6 @@ int rt_hw_touch_register(rt_touch_t touch,
     rt_device_t device;
     RT_ASSERT(touch != RT_NULL);
 
-    char *touch_name = RT_NULL;
-    char *device_name = RT_NULL;
-
-    touch_name = "touch_";
-    device_name = rt_calloc(1, rt_strlen(touch_name) + 1 + rt_strlen(name));
-
-    if (device_name == RT_NULL)
-    {
-        LOG_E("device_name calloc failed!");
-        return -RT_ERROR;
-    }
-
-    rt_memcpy(device_name, touch_name, rt_strlen(touch_name) + 1);
-    strcat(device_name, name);
-
     device = &touch->parent;
 
 #ifdef RT_USING_DEVICE_OPS
@@ -261,7 +246,7 @@ int rt_hw_touch_register(rt_touch_t touch,
     device->tx_complete = RT_NULL;
     device->user_data   = data;
 
-    result = rt_device_register(device, device_name, flag | RT_DEVICE_FLAG_STANDALONE);
+    result = rt_device_register(device, name, flag | RT_DEVICE_FLAG_STANDALONE);
 
     if (result != RT_EOK)
     {
