@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author        Notes
  * 2018-12-13     balanceTWK    add sdcard port file
+ * 2019-06-11     WillianChan   Add SD card hot plug detection
  */
 
 #include <rtthread.h>
@@ -16,37 +17,80 @@
 #include <dfs_fs.h>
 #include <dfs_posix.h>
 #include "drv_gpio.h"
+#include "drv_sdio.h"
 
 #define DBG_TAG "app.card"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
+/* SD Card hot plug detection pin */
+#define SD_CHECK_PIN GET_PIN(G, 2)
+
+void __mount(void)
+{
+    rt_device_t device;
+    
+    device = rt_device_find("sd0");
+    if (device == NULL)
+    {
+        mmcsd_wait_cd_changed(0);
+        stm32_mmcsd_change();
+        mmcsd_wait_cd_changed(RT_WAITING_FOREVER);
+        device = rt_device_find("sd0");
+    }
+    
+    if (device != RT_NULL)
+    {
+        if (dfs_mount("sd0", "/", "elm", 0, 0) == RT_EOK)
+        {
+            LOG_I("sd card mount to '/'");
+        }
+        else
+        {
+            LOG_W("sd card mount to '/' failed!");
+        }
+    }
+}
+
+void __unmount(void)
+{
+    rt_thread_mdelay(200);
+    dfs_unmount("/");
+    LOG_I("Unmount \"/\"");
+    
+    mmcsd_wait_cd_changed(0);
+    stm32_mmcsd_change();
+    mmcsd_wait_cd_changed(RT_WAITING_FOREVER);
+
+}
+
 void sd_mount(void *parameter)
 {
+    rt_uint8_t re_sd_check = 1;
+    
     while (1)
     {
-        rt_thread_mdelay(500);
-        if(rt_device_find("sd0") != RT_NULL)
+        rt_thread_mdelay(200);
+        if(re_sd_check && !rt_pin_read(SD_CHECK_PIN))
         {
-            if (dfs_mount("sd0", "/", "elm", 0, 0) == RT_EOK)
-            {
-                LOG_I("sd card mount to '/'");
-                break;
-            }
-            else
-            {
-                LOG_W("sd card mount to '/' failed!");
-            }
+            __mount();
         }
+        if (!re_sd_check && rt_pin_read(SD_CHECK_PIN))
+        {
+            __unmount();
+        }
+        re_sd_check = rt_pin_read(SD_CHECK_PIN);
     }
 }
 
 int stm32_sdcard_mount(void)
 {
     rt_thread_t tid;
+    
+    rt_pin_mode(SD_CHECK_PIN, PIN_MODE_INPUT_PULLUP);
 
     tid = rt_thread_create("sd_mount", sd_mount, RT_NULL,
-                           1024, RT_THREAD_PRIORITY_MAX - 2, 20);
+                           1024, RT_THREAD_PRIORITY_MAX - 1, 20);
     if (tid != RT_NULL)
     {
         rt_thread_startup(tid);
