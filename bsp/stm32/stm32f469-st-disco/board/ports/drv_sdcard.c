@@ -26,7 +26,7 @@
 /* SD Card hot plug detection pin */
 #define SD_CHECK_PIN GET_PIN(G, 2)
 
-void __mount(void)
+void _sdcard_mount(void)
 {
     rt_device_t device;
     
@@ -38,7 +38,6 @@ void __mount(void)
         mmcsd_wait_cd_changed(RT_WAITING_FOREVER);
         device = rt_device_find("sd0");
     }
-    
     if (device != RT_NULL)
     {
         if (dfs_mount("sd0", "/", "elm", 0, 0) == RT_EOK)
@@ -52,7 +51,7 @@ void __mount(void)
     }
 }
 
-void __unmount(void)
+void _sdcard_unmount(void)
 {
     rt_thread_mdelay(200);
     dfs_unmount("/");
@@ -61,7 +60,6 @@ void __unmount(void)
     mmcsd_wait_cd_changed(0);
     stm32_mmcsd_change();
     mmcsd_wait_cd_changed(RT_WAITING_FOREVER);
-
 }
 
 void sd_mount(void *parameter)
@@ -73,11 +71,11 @@ void sd_mount(void *parameter)
         rt_thread_mdelay(200);
         if(re_sd_check && !rt_pin_read(SD_CHECK_PIN))
         {
-            __mount();
+            _sdcard_mount();
         }
         if (!re_sd_check && rt_pin_read(SD_CHECK_PIN))
         {
-            __unmount();
+            _sdcard_unmount();
         }
         re_sd_check = rt_pin_read(SD_CHECK_PIN);
     }
