@@ -139,6 +139,7 @@ static rt_err_t rt_sensor_open(rt_device_t dev, rt_uint16_t oflag)
 {
     rt_sensor_t sensor = (rt_sensor_t)dev;
     RT_ASSERT(dev != RT_NULL);
+    rt_err_t res = RT_EOK;
 
     if (sensor->module)
     {
@@ -152,7 +153,8 @@ static rt_err_t rt_sensor_open(rt_device_t dev, rt_uint16_t oflag)
         sensor->data_buf = rt_malloc(sizeof(struct rt_sensor_data) * sensor->info.fifo_max);
         if (sensor->data_buf == RT_NULL)
         {
-            return -RT_ENOMEM;
+            res = -RT_ENOMEM;
+            goto __exit;
         }
     }
 
@@ -186,12 +188,8 @@ static rt_err_t rt_sensor_open(rt_device_t dev, rt_uint16_t oflag)
     }
     else
     {
-        if (sensor->module)
-        {
-            /* release the module mutex */
-            rt_mutex_release(sensor->module->lock);
-        }
-        return -RT_EINVAL;
+        res = -RT_EINVAL;
+        goto __exit;
     }
 
     /* Configure power mode to normal mode */
@@ -200,13 +198,14 @@ static rt_err_t rt_sensor_open(rt_device_t dev, rt_uint16_t oflag)
         sensor->config.power = RT_SENSOR_POWER_NORMAL;
     }
 
+__exit:
     if (sensor->module)
     {
         /* release the module mutex */
         rt_mutex_release(sensor->module->lock);
     }
 
-    return RT_EOK;
+    return res;
 }
 
 static rt_err_t  rt_sensor_close(rt_device_t dev)
