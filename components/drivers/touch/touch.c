@@ -66,8 +66,6 @@ static rt_err_t rt_touch_irq_init(rt_touch_t touch)
 
     rt_pin_irq_enable(touch->config.irq_pin.pin, PIN_IRQ_ENABLE);
 
-    LOG_I("interrupt init success");
-
     return RT_EOK;
 }
 
@@ -197,6 +195,12 @@ static rt_err_t rt_touch_control(rt_device_t dev, int cmd, void *args)
             LOG_D("set y coordinate range :%d \n", touch->info.range_x);
         }
 
+        break;
+    case RT_TOUCH_CTRL_DISABLE_INT:
+        rt_touch_irq_disable(touch);
+        break;
+    case RT_TOUCH_CTRL_ENABLE_INT:
+        rt_touch_irq_enable(touch);
         break;
     default:
         return RT_ERROR;
