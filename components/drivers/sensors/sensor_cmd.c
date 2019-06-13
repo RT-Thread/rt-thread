@@ -55,7 +55,7 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
     }
 }
 
-rt_err_t rx_callback(rt_device_t dev, rt_size_t size)
+static rt_err_t rx_callback(rt_device_t dev, rt_size_t size)
 {
     rt_sem_release(sensor_rx_sem);
     return 0;
