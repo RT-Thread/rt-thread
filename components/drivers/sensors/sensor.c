@@ -116,24 +116,6 @@ static rt_err_t rt_sensor_irq_init(rt_sensor_t sensor)
     return 0;
 }
 
-/* Sensor interrupt enable */
-static void rt_sensor_irq_enable(rt_sensor_t sensor)
-{
-    if (sensor->config.irq_pin.pin != RT_PIN_NONE)
-    {
-        rt_pin_irq_enable(sensor->config.irq_pin.pin, RT_TRUE);
-    }
-}
-
-/* Sensor interrupt disable */
-static void rt_sensor_irq_disable(rt_sensor_t sensor)
-{
-    if (sensor->config.irq_pin.pin != RT_PIN_NONE)
-    {
-        rt_pin_irq_enable(sensor->config.irq_pin.pin, RT_FALSE);
-    }
-}
-
 /* RT-Thread Device Interface */
 static rt_err_t rt_sensor_open(rt_device_t dev, rt_uint16_t oflag)
 {
@@ -160,31 +142,34 @@ static rt_err_t rt_sensor_open(rt_device_t dev, rt_uint16_t oflag)
 
     if (oflag & RT_DEVICE_FLAG_RDONLY && dev->flag & RT_DEVICE_FLAG_RDONLY)
     {
-        /* If polling mode is supported, configure it to polling mode */
-        if (sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_POLLING) == RT_EOK)
+        if (sensor->ops->control != RT_NULL)
         {
-            sensor->config.mode = RT_SENSOR_MODE_POLLING;
+            /* If polling mode is supported, configure it to polling mode */
+            sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_POLLING);
         }
+        sensor->config.mode = RT_SENSOR_MODE_POLLING;
     }
     else if (oflag & RT_DEVICE_FLAG_INT_RX && dev->flag & RT_DEVICE_FLAG_INT_RX)
     {
-        /* If interrupt mode is supported, configure it to interrupt mode */
-        if (sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_INT) == RT_EOK)
+        if (sensor->ops->control != RT_NULL)
         {
-            sensor->config.mode = RT_SENSOR_MODE_INT;
-            /* Initialization sensor interrupt */
-            rt_sensor_irq_init(sensor);
+            /* If interrupt mode is supported, configure it to interrupt mode */
+            sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_INT);
         }
+        /* Initialization sensor interrupt */
+        rt_sensor_irq_init(sensor);
+        sensor->config.mode = RT_SENSOR_MODE_INT;
     }
     else if (oflag & RT_DEVICE_FLAG_FIFO_RX && dev->flag & RT_DEVICE_FLAG_FIFO_RX)
     {
-        /* If fifo mode is supported, configure it to fifo mode */
-        if (sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_FIFO) == RT_EOK)
+        if (sensor->ops->control != RT_NULL)
         {
-            sensor->config.mode = RT_SENSOR_MODE_FIFO;
-            /* Initialization sensor interrupt */
-            rt_sensor_irq_init(sensor);
+            /* If fifo mode is supported, configure it to fifo mode */
+            sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_FIFO);
         }
+        /* Initialization sensor interrupt */
+        rt_sensor_irq_init(sensor);
+        sensor->config.mode = RT_SENSOR_MODE_FIFO;
     }
     else
     {
@@ -208,7 +193,7 @@ __exit:
     return res;
 }
 
-static rt_err_t  rt_sensor_close(rt_device_t dev)
+static rt_err_t rt_sensor_close(rt_device_t dev)
 {
     rt_sensor_t sensor = (rt_sensor_t)dev;
     int i;
@@ -227,7 +212,10 @@ static rt_err_t  rt_sensor_close(rt_device_t dev)
     }
 
     /* Sensor disable interrupt */
-    rt_sensor_irq_disable(sensor);
+    if (sensor->config.irq_pin.pin != RT_PIN_NONE)
+    {
+        rt_pin_irq_enable(sensor->config.irq_pin.pin, RT_FALSE);
+    }
 
     if (sensor->module != RT_NULL && sensor->info.fifo_max > 0 && sensor->data_buf != RT_NULL)
     {
@@ -344,25 +332,6 @@ static rt_err_t rt_sensor_control(rt_device_t dev, int cmd, void *args)
         {
             sensor->config.odr = (rt_uint32_t)args & 0xFFFF;
             LOG_D("set odr %d", sensor->config.odr);
-        }
-        break;
-    case RT_SENSOR_CTRL_SET_MODE:
-
-        /* Configuration sensor work mode */
-        result = sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_MODE, args);
-        if (result == RT_EOK)
-        {
-            sensor->config.mode = (rt_uint32_t)args & 0xFF;
-            LOG_D("set work mode code:", sensor->config.mode);
-
-            if (sensor->config.mode == RT_SENSOR_MODE_POLLING)
-            {
-                rt_sensor_irq_disable(sensor);
-            }
-            else if (sensor->config.mode == RT_SENSOR_MODE_INT || sensor->config.mode == RT_SENSOR_MODE_FIFO)
-            {
-                rt_sensor_irq_enable(sensor);
-            }
         }
         break;
     case RT_SENSOR_CTRL_SET_POWER:
