@@ -74,11 +74,13 @@ NUCLEO-F072RB 开发板常用 **板载资源** 如下：
 
 USB 虚拟 COM 端口默认连接串口 2，在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
 
+```
  \ | /
 - RT -     Thread Operating System
  / | \     4.0.2 build May 30 2019
  2006 - 2019 Copyright by rt-thread team
 msh >
+```
 
 ### 进阶使用
 
