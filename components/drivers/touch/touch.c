@@ -15,9 +15,13 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-/* touch interrupt handler function */
-static void rt_touch_cb(rt_touch_t touch)
+/* ISR for touch interrupt */
+static void irq_callback(void *args)
 {
+    rt_touch_t touch;
+
+    touch = (rt_touch_t)args;
+
     if (touch->parent.rx_indicate == RT_NULL)
     {
         return;
@@ -31,22 +35,12 @@ static void rt_touch_cb(rt_touch_t touch)
     touch->parent.rx_indicate(&touch->parent, 1);
 }
 
-/* ISR for touch interrupt */
-static void irq_callback(void *args)
-{
-    rt_touch_t touch;
-
-    touch = (rt_touch_t)args;
-
-    rt_touch_cb(touch);
-}
-
 /* touch interrupt initialization function */
 static rt_err_t rt_touch_irq_init(rt_touch_t touch)
 {
     if (touch->config.irq_pin.pin == RT_PIN_NONE)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     rt_pin_mode(touch->config.irq_pin.pin, touch->config.irq_pin.mode);
@@ -147,7 +141,7 @@ static rt_err_t rt_touch_control(rt_device_t dev, int cmd, void *args)
         }
         else
         {
-            result = RT_ERROR;
+            result = -RT_ERROR;
         }
 
         break;
@@ -158,7 +152,7 @@ static rt_err_t rt_touch_control(rt_device_t dev, int cmd, void *args)
         }
         else
         {
-            result = RT_ERROR;
+            result = -RT_ERROR;
         }
 
         break;
@@ -203,7 +197,7 @@ static rt_err_t rt_touch_control(rt_device_t dev, int cmd, void *args)
         rt_touch_irq_enable(touch);
         break;
     default:
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return result;
