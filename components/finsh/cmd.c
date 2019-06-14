@@ -801,6 +801,7 @@ static char *const device_type_str[] =
     "Timer Device",
     "Miscellaneous Device",
     "Sensor Device",
+    "Touch Device",
     "Unknown"
 };
 
