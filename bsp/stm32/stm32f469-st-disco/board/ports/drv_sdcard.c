@@ -64,20 +64,20 @@ static void _sdcard_unmount(void)
 
 static void sd_mount(void *parameter)
 {
-    rt_uint8_t re_sd_check = 1;
+    rt_uint8_t re_sd_check_pin = 1;
     
     while (1)
     {
         rt_thread_mdelay(200);
-        if(re_sd_check && !rt_pin_read(SD_CHECK_PIN))
+        if(re_sd_check_pin && (re_sd_check_pin = rt_pin_read(SD_CHECK_PIN)) == 0)
         {
             _sdcard_mount();
         }
-        if (!re_sd_check && rt_pin_read(SD_CHECK_PIN))
+        
+        if (!re_sd_check_pin && (re_sd_check_pin = rt_pin_read(SD_CHECK_PIN)) != 0)
         {
             _sdcard_unmount();
         }
-        re_sd_check = rt_pin_read(SD_CHECK_PIN);
     }
 }
 
@@ -88,7 +88,7 @@ int stm32_sdcard_mount(void)
     rt_pin_mode(SD_CHECK_PIN, PIN_MODE_INPUT_PULLUP);
 
     tid = rt_thread_create("sd_mount", sd_mount, RT_NULL,
-                           1024, RT_THREAD_PRIORITY_MAX - 1, 20);
+                           1024, RT_THREAD_PRIORITY_MAX - 2, 20);
     if (tid != RT_NULL)
     {
         rt_thread_startup(tid);
