@@ -806,7 +806,15 @@ static rt_err_t drv_control(struct rt_can_device *can, int cmd, void *arg)
         if (argval != can->config.mode)
         {
             can->config.mode = argval;
+            if (HAL_CAN_Stop(&drv_can->CanHandle) != HAL_OK)
+            {
+                return RT_ERROR;
+            }
             if (HAL_CAN_Init(&drv_can->CanHandle) != HAL_OK)
+            {
+                return RT_ERROR;
+            }
+            if (HAL_CAN_Start(&drv_can->CanHandle) != HAL_OK)
             {
                 return RT_ERROR;
             }
@@ -844,7 +852,15 @@ static rt_err_t drv_control(struct rt_can_device *can, int cmd, void *arg)
             drv_init->TimeSeg2 = BAUD_DATA(BS2, baud_index);
             drv_init->Prescaler = BAUD_DATA(RRESCL, baud_index);
 
+            if (HAL_CAN_Stop(&drv_can->CanHandle) != HAL_OK)
+            {
+                return RT_ERROR;
+            }
             if (HAL_CAN_Init(&drv_can->CanHandle) != HAL_OK)
+            {
+                return RT_ERROR;
+            }
+            if (HAL_CAN_Start(&drv_can->CanHandle) != HAL_OK)
             {
                 return RT_ERROR;
             }
@@ -860,7 +876,15 @@ static rt_err_t drv_control(struct rt_can_device *can, int cmd, void *arg)
         if (argval != can->config.privmode)
         {
             can->config.privmode = argval;
+            if (HAL_CAN_Stop(&drv_can->CanHandle) != HAL_OK)
+            {
+                return RT_ERROR;
+            }
             if (HAL_CAN_Init(&drv_can->CanHandle) != HAL_OK)
+            {
+                return RT_ERROR;
+            }
+            if (HAL_CAN_Start(&drv_can->CanHandle) != HAL_OK)
             {
                 return RT_ERROR;
             }
