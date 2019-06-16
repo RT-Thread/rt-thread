@@ -15,6 +15,10 @@
 
 #ifdef RT_USING_CAN
 
+#ifdef RT_CAN_USING_HDR
+  #error "The CAN driver does not support hardware filters, Please disable RT_CAN_USING_HDR"
+#endif
+
 #if defined (SOC_SERIES_STM32F1)
 static const struct stm_baud_rate_tab can_baud_rate_tab[] =
 {
