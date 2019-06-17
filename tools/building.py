@@ -161,6 +161,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                       action = 'store_true',
                       default = False,
                       help = 'make distribution and strip useless files')
+    AddOption('--dist-ide',
+                      dest = 'make-dist-ide',
+                      type = 'string',
+                      default = False,
+                      help = 'make distribution for rt-thread eclipse ide')
     AddOption('--cscope',
                       dest = 'cscope',
                       action = 'store_true',
@@ -864,6 +869,12 @@ def EndBuilding(target, program = None):
     if GetOption('make-dist-strip') and program != None:
         from mkdist import MkDist_Strip
         MkDist_Strip(program, BSP_ROOT, Rtt_Root, Env)
+        need_exit = True
+    if GetOption('make-dist-ide') and program != None:
+        from mkdist import MkDist
+        output_path = GetOption('make-dist-ide')[5:]
+        rtt_ide = {'output_path': output_path}
+        MkDist(program, BSP_ROOT, Rtt_Root, Env, rtt_ide)
         need_exit = True
     if GetOption('cscope'):
         from cscope import CscopeDatabase
