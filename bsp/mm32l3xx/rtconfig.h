@@ -40,7 +40,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x40001
+#define RT_VER_NUM 0x40002
 
 /* RT-Thread Components */
 
@@ -78,6 +78,9 @@
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 
+/* Using Hardware Crypto drivers */
+
+
 /* Using WiFi */
 
 
@@ -90,6 +93,9 @@
 /* Network */
 
 /* Socket abstraction layer */
+
+
+/* Network interface device */
 
 
 /* light weight TCP/IP stack */
@@ -140,11 +146,19 @@
 
 /* peripheral libraries and drivers */
 
+/* sensors drivers */
+
 
 /* miscellaneous packages */
 
 
 /* samples: kernel and components samples */
+
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
 
 
 /* Hardware Drivers Config */
