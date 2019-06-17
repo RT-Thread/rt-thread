@@ -141,7 +141,7 @@ def bsp_update_kconfig_library(dist_dir):
                 found = 0
             f.write(line)
 
-def bs_update_ide_project(bsp_root, rtt_root):
+def bs_update_ide_project(bsp_root, rtt_root, rttide = None):
     import subprocess
     # default update the projects which have template file
     tgt_dict = {'mdk4':('keil', 'armcc'),
@@ -150,6 +150,11 @@ def bs_update_ide_project(bsp_root, rtt_root):
                 'vs':('msvc', 'cl'),
                 'vs2012':('msvc', 'cl'),
                 'cdk':('gcc', 'gcc')}
+
+    ide_dict = {'eclipse':('gcc', 'gcc')}
+
+    if rttide != None:
+        tgt_dict = ide_dict
 
     scons_env = os.environ.copy()
     scons_env['RTT_ROOT'] = rtt_root
@@ -302,11 +307,15 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
 
     print('done!')
 
-def MkDist(program, BSP_ROOT, RTT_ROOT, Env):
+def MkDist(program, BSP_ROOT, RTT_ROOT, Env, rttide = None):
     print('make distribution....')
 
     dist_name = os.path.basename(BSP_ROOT)
-    dist_dir  = os.path.join(BSP_ROOT, 'dist', dist_name)
+
+    if isinstance(rttide, dict):
+        dist_dir = rttide['output_path']
+    else:
+        dist_dir = os.path.join(BSP_ROOT, 'dist', dist_name)
 
     target_path = os.path.join(dist_dir, 'rt-thread')
 
@@ -366,11 +375,16 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env):
     # change RTT_ROOT in Kconfig
     bsp_update_kconfig(dist_dir)
     bsp_update_kconfig_library(dist_dir)
+
     # update all project files
-    bs_update_ide_project(dist_dir, target_path)
+    if rttide != None:
+        bs_update_ide_project(dist_dir, target_path, rttide)
+    else:
+        bs_update_ide_project(dist_dir, target_path)
 
     # make zip package
-    zip_dist(dist_dir, dist_name)
+    if rttide != None:
+        zip_dist(dist_dir, dist_name)
 
     print('done!')
 
