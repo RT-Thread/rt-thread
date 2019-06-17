@@ -10,19 +10,25 @@
 
 "--semihosting" 
 
-"--device=MIMXRT1064xxx6A" 
+"--device=MIMXRT1052xxx5B" 
 
-"--drv_communication=USB0" 
+"--multicore_nr_of_cores=1" 
 
-"--drv_interface_speed=auto" 
+"--jet_probe=cmsisdap" 
 
-"--jlink_initial_speed=1000" 
+"--jet_standard_reset=4,0,0" 
 
-"--jlink_reset_strategy=0,0" 
+"--reset_style=\"0,-,0,Disabled__no_reset_\"" 
 
-"--drv_catch_exceptions=0x000" 
+"--reset_style=\"1,-,0,Software\"" 
 
-"--jlink_device_name=MCIMXRT1064" 
+"--reset_style=\"2,-,0,Hardware\"" 
+
+"--reset_style=\"3,-,0,Core\"" 
+
+"--reset_style=\"4,-,1,System\"" 
+
+"--drv_catch_exceptions=0xff0" 
 
 
 

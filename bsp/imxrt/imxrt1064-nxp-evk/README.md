@@ -108,7 +108,7 @@ msh >
 
 3. 输入`pkgs --update`命令更新软件包。
 
-4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
+4. 输入`scons --target=mdk/iar` 命令重新生成工程。
 
 本章节更多详细的介绍请参考 [IMXRT 系列 BSP 外设驱动使用教程](../docs/IMXRT系列BSP外设驱动使用教程.md)。
 
