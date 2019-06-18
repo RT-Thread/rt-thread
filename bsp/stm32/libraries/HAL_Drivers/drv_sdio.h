@@ -33,8 +33,11 @@
 #endif /*  defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4) */
 
 #define SDIO_BUFF_SIZE       4096
-#define SDIO_MAX_FREQ        1000000
 #define SDIO_ALIGN_LEN       32
+
+#ifndef SDIO_MAX_FREQ
+#define SDIO_MAX_FREQ        (1000000)
+#endif
 
 #ifndef SDIO_BASE_ADDRESS
 #define SDIO_BASE_ADDRESS    (0x40012800U)

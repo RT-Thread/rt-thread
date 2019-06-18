@@ -46,6 +46,12 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_DFS_ELMFAT
         select RT_USING_PIN
         default n
+    if BSP_USING_SDCARD
+    config SDIO_MAX_FREQ
+        int "sdio max freq"
+        range 0 24000000
+        default 24000000
+    endif
         
     config BSP_USING_TOUCH
         bool "Enable TOUCH"
