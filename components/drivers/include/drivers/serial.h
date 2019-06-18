@@ -15,6 +15,7 @@
 #define __SERIAL_H__
 
 #include <rtthread.h>
+#include <rtdevice.h>
 
 #define BAUD_RATE_2400                  2400
 #define BAUD_RATE_4800                  4800
