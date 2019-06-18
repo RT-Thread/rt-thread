@@ -167,15 +167,20 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                       default = False,
                       help = 'make distribution for RT-Thread Studio IDE')
     AddOption('--project-path',
-                      dest = 'make-project-path',
+                      dest = 'project-path',
                       type = 'string',
                       default = False,
                       help = 'set dist-ide project output path')
     AddOption('--project-name',
-                      dest = 'make-project-name',
+                      dest = 'project-name',
                       type = 'string',
                       default = False,
                       help = 'set project name')
+    AddOption('--reset-project-config',
+                      dest = 'reset-project-config',
+                      action = 'store_true',
+                      default = False,
+                      help = 'reset the project configurations to default')
     AddOption('--cscope',
                       dest = 'cscope',
                       action = 'store_true',
@@ -847,7 +852,8 @@ def GenTargetProject(program = None):
 
     if GetOption('target') == 'eclipse':
         from eclipse import TargetEclipse
-        TargetEclipse(Env)
+        TargetEclipse(Env, GetOption('reset-project-config'), GetOption('project-name'))
+
 
 def EndBuilding(target, program = None):
     import rtconfig
@@ -882,8 +888,8 @@ def EndBuilding(target, program = None):
         need_exit = True
     if GetOption('make-dist-ide') and program != None:
         from mkdist import MkDist
-        project_path = GetOption('make-project-path')
-        project_name = GetOption('make-project-name')
+        project_path = GetOption('project-path')
+        project_name = GetOption('project-name')
 
         if not isinstance(project_path, str) or len(project_path) == 0 :
             print("\nwarning : --project-path=your_project_path parameter is required.")
