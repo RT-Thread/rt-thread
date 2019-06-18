@@ -101,7 +101,7 @@ void rt_hwcrypto_hash_reset(struct rt_hwcrypto_ctx *ctx);
  *
  * @return          RT_EOK on success.
  */
-rt_err_t rt_hwcrypto_hash_type(struct rt_hwcrypto_ctx *ctx, hwcrypto_type type);
+rt_err_t rt_hwcrypto_hash_set_type(struct rt_hwcrypto_ctx *ctx, hwcrypto_type type);
 
 #ifdef __cplusplus
 }

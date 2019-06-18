@@ -1,0 +1,90 @@
+/*
+** ###################################################################
+**     Processors:          MIMXRT1052CVJ5B
+**                          MIMXRT1052CVL5B
+**                          MIMXRT1052DVJ6B
+**                          MIMXRT1052DVL6B
+**
+**     Compiler:            IAR ANSI C/C++ Compiler for ARM
+**     Reference manual:    IMXRT1050RM Rev.1, 03/2018
+**     Version:             rev. 1.0, 2018-09-21
+**     Build:               b180921
+**
+**     Abstract:
+**         Linker file for the IAR ANSI C/C++ Compiler for ARM
+**
+**     Copyright 2016 Freescale Semiconductor, Inc.
+**     Copyright 2016-2018 NXP
+**     All rights reserved.
+**
+**     SPDX-License-Identifier: BSD-3-Clause
+**
+**     http:                 www.nxp.com
+**     mail:                 support@nxp.com
+**
+** ###################################################################
+*/
+
+define symbol m_interrupts_start       = 0x00000000;
+define symbol m_interrupts_end         = 0x000003FF;
+
+define symbol m_text_start             = 0x00000400;
+define symbol m_text_end               = 0x0001FFFF;
+
+define symbol m_data_start             = 0x20000000;
+define symbol m_data_end               = 0x2001FFFF;
+
+define symbol m_data2_start            = 0x20200000;
+define symbol m_data2_end              = 0x2023FFFF;
+
+define symbol m_data3_start            = 0x80000000;
+define symbol m_data3_end              = 0x81DFFFFF;
+
+define symbol m_ncache_start           = 0x81E00000;
+define symbol m_ncache_end             = 0x81FFFFFF;
+
+/* Sizes */
+if (isdefinedsymbol(__stack_size__)) {
+  define symbol __size_cstack__        = __stack_size__;
+} else {
+  define symbol __size_cstack__        = 0x0400;
+}
+
+if (isdefinedsymbol(__heap_size__)) {
+  define symbol __size_heap__          = __heap_size__;
+} else {
+  define symbol __size_heap__          = 0x0400;
+}
+
+define exported symbol __VECTOR_TABLE  = m_interrupts_start;
+define exported symbol __VECTOR_RAM    = m_interrupts_start;
+define exported symbol __RAM_VECTOR_TABLE_SIZE = 0x0;
+
+define memory mem with size = 4G;
+define region TEXT_region = mem:[from m_interrupts_start to m_interrupts_end]
+                          | mem:[from m_text_start to m_text_end];
+
+define region DATA_region = mem:[from m_data_start to m_data_end];
+define region DATA2_region = mem:[from m_data2_start to m_data2_end];
+define region DATA3_region  = mem:[from m_data3_start to m_data3_end-__size_cstack__];
+define region CSTACK_region = mem:[from m_data3_end-__size_cstack__+1 to m_data3_end];
+define region NCACHE_region = mem:[from m_ncache_start to m_ncache_end];
+
+define block CSTACK    with alignment = 8, size = __size_cstack__   { };
+define block HEAP      with alignment = 8, size = __size_heap__     { };
+define block RW        { first readwrite, section m_usb_dma_init_data };
+define block ZI         with alignment = 32  { first zi, section m_usb_dma_noninit_data };
+define block NCACHE_VAR with size = 0x200000 , alignment = 0x100000  { section NonCacheable , section NonCacheable.init };
+
+initialize by copy { readwrite, section .textrw };
+do not initialize  { section .noinit };
+
+place at address mem: m_interrupts_start    { readonly section .intvec };
+
+place in TEXT_region                        { readonly };
+place in DATA3_region                       { block RW };
+place in DATA3_region                       { block ZI };
+place in DATA3_region                       { last block HEAP };
+place in CSTACK_region                      { block CSTACK };
+place in NCACHE_region                      { block NCACHE_VAR };
+

@@ -31,21 +31,23 @@ Kendryte中文含义为勘智，而勘智取自勘物探智。这颗芯片主要
 
 ## 2. 编译说明
 
-编译K210，需要先下载K210 BSP以及RT-Thread代码：
+编译K210，需要有RT-Thread的代码，因为K210的sdk是以软件包方式，所以需要在bsp/k210下做软件包更新。Windows下推进使用[env工具][1]，然后在console下进入bsp/k210目录中，运行：
 
-    git clone https://github.com/BernardXiong/K210.git
-    cd K210
-    git submodule init
-    git submodule update
+    cd bsp/k210
+    pkgs --update
 
-    git clone https://github.com/RT-Thread/rt-thread.git
-    cd rt-thread
-    git checkout -b dev-4.0.x origin/dev-4.0.x
+如果在Linux平台下，可以先执行
 
-注意，因为RT-Thread整体代码太庞大，所以并未把RT-Thread git repo以一个submodule方式加入到K210 BSP git repo中，
-而是需要把RT-Thread代码克隆到K210目录下，并切换到dev-4.0.x分支。
+    scons --menuconfig
 
-编译推荐使用[env工具][1]，可以在console下进入到`K210`目录中，运行以下命令：
+它会自动下载env相关脚本到~/.env目录，然后执行
+
+    source ~/.env/env.sh
+    
+    cd bsp/k210
+    pkgs --update
+
+更新完软件包后，设置risc-v的工具链，然后执行scons编译：
 
     set RTT_EXEC_PATH=your_toolchains
     scons
