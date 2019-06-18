@@ -202,7 +202,7 @@ int dfs_elm_mkfs(rt_device_t dev_id)
     int index;
     char logic_nbr[2] = {'0', ':'};
 
-    work = rt_malloc(_MAX_SS);
+    work = (BYTE *)rt_malloc(_MAX_SS);
     if (RT_NULL == work)
     {
         return -ENOMEM;
@@ -233,7 +233,7 @@ int dfs_elm_mkfs(rt_device_t dev_id)
         }
         else
         {
-            fat = rt_malloc(sizeof(FATFS));
+            fat = (FATFS *)rt_malloc(sizeof(FATFS));
             if (fat == RT_NULL)
             {
                 rt_free(work); /* release memory */
@@ -340,7 +340,7 @@ int dfs_elm_open(struct dfs_fd *file)
     vol = elm_get_vol((FATFS *)fs->data);
     if (vol < 0)
         return -ENOENT;
-    drivers_fn = rt_malloc(256);
+    drivers_fn = (char *)rt_malloc(256);
     if (drivers_fn == RT_NULL)
         return -ENOMEM;
 
@@ -648,7 +648,7 @@ int dfs_elm_unlink(struct dfs_filesystem *fs, const char *path)
     vol = elm_get_vol((FATFS *)fs->data);
     if (vol < 0)
         return -ENOENT;
-    drivers_fn = rt_malloc(256);
+    drivers_fn = (char *)rt_malloc(256);
     if (drivers_fn == RT_NULL)
         return -ENOMEM;
 
@@ -680,7 +680,7 @@ int dfs_elm_rename(struct dfs_filesystem *fs, const char *oldpath, const char *n
     if (vol < 0)
         return -ENOENT;
 
-    drivers_oldfn = rt_malloc(256);
+    drivers_oldfn = (char *)rt_malloc(256);
     if (drivers_oldfn == RT_NULL)
         return -ENOMEM;
     drivers_newfn = newpath;
@@ -714,7 +714,7 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
     vol = elm_get_vol((FATFS *)fs->data);
     if (vol < 0)
         return -ENOENT;
-    drivers_fn = rt_malloc(256);
+    drivers_fn = (char *)rt_malloc(256);
     if (drivers_fn == RT_NULL)
         return -ENOMEM;
 

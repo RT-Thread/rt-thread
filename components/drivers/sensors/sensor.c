@@ -69,7 +69,7 @@ void rt_sensor_cb(rt_sensor_t sen)
 /* ISR for sensor interrupt */
 static void irq_callback(void *args)
 {
-    rt_sensor_t sensor = args;
+    rt_sensor_t sensor = (rt_sensor_t)args;
     rt_uint8_t i;
 
     if (sensor->module)
@@ -389,7 +389,7 @@ int rt_hw_sensor_register(rt_sensor_t sensor,
 
     /* Add a type name for the sensor device */
     sensor_name = sensor_name_str[sensor->info.type];
-    device_name = rt_calloc(1, rt_strlen(sensor_name) + 1 + rt_strlen(name));
+    device_name = (char *)rt_calloc(1, rt_strlen(sensor_name) + 1 + rt_strlen(name));
     if (device_name == RT_NULL)
     {
         LOG_E("device_name calloc failed!");

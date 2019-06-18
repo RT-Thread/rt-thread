@@ -141,7 +141,7 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
         cnt = fdt->maxfd + 4;
         cnt = cnt > DFS_FD_MAX ? DFS_FD_MAX : cnt;
 
-        fds = rt_realloc(fdt->fds, cnt * sizeof(struct dfs_fd *));
+        fds = (struct dfs_fd **)rt_realloc(fdt->fds, cnt * sizeof(struct dfs_fd *));
         if (fds == NULL) goto __exit; /* return fdt->maxfd */
 
         /* clean the new allocated fds */
@@ -157,7 +157,7 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
     /* allocate  'struct dfs_fd' */
     if (idx < (int)fdt->maxfd && fdt->fds[idx] == RT_NULL)
     {
-        fdt->fds[idx] = rt_calloc(1, sizeof(struct dfs_fd));
+        fdt->fds[idx] = (struct dfs_fd *)rt_calloc(1, sizeof(struct dfs_fd));
         if (fdt->fds[idx] == RT_NULL)
             idx = fdt->maxfd;
     }
@@ -393,7 +393,7 @@ char *dfs_normalize_path(const char *directory, const char *filename)
 
     if (filename[0] != '/') /* it's a absolute path, use it directly */
     {
-        fullpath = rt_malloc(strlen(directory) + strlen(filename) + 2);
+        fullpath = (char *)rt_malloc(strlen(directory) + strlen(filename) + 2);
 
         if (fullpath == NULL)
             return NULL;

@@ -28,7 +28,7 @@ static rt_size_t i2c_bus_device_read(rt_device_t dev,
     addr = pos & 0xffff;
     flags = (pos >> 16) & 0xffff;
 
-    return rt_i2c_master_recv(bus, addr, flags, buffer, count);
+    return rt_i2c_master_recv(bus, addr, flags, (rt_uint8_t *)buffer, count);
 }
 
 static rt_size_t i2c_bus_device_write(rt_device_t dev,
@@ -48,7 +48,7 @@ static rt_size_t i2c_bus_device_write(rt_device_t dev,
     addr = pos & 0xffff;
     flags = (pos >> 16) & 0xffff;
 
-    return rt_i2c_master_send(bus, addr, flags, buffer, count);
+    return rt_i2c_master_send(bus, addr, flags, (const rt_uint8_t *)buffer, count);
 }
 
 static rt_err_t i2c_bus_device_control(rt_device_t dev,
