@@ -312,10 +312,14 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, rttide = None):
 
     dist_name = os.path.basename(BSP_ROOT)
 
-    if isinstance(rttide, dict):
-        dist_dir = rttide['output_path']
-    else:
+    if rttide == None:
         dist_dir = os.path.join(BSP_ROOT, 'dist', dist_name)
+    else:
+        dist_dir = rttide['project_path']
+        if not isinstance(dist_dir, str):
+            print("\n--target-path=your_project_path parameter is required.")
+            print("\nstop!")
+            return
 
     target_path = os.path.join(dist_dir, 'rt-thread')
 
@@ -377,13 +381,13 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, rttide = None):
     bsp_update_kconfig_library(dist_dir)
 
     # update all project files
-    if rttide != None:
-        bs_update_ide_project(dist_dir, target_path, rttide)
-    else:
+    if rttide == None:
         bs_update_ide_project(dist_dir, target_path)
+    else:
+        bs_update_ide_project(dist_dir, target_path, rttide)
 
     # make zip package
-    if rttide != None:
+    if rttide == None:
         zip_dist(dist_dir, dist_name)
 
     print('done!')
