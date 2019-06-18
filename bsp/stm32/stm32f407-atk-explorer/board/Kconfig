@@ -59,6 +59,12 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_DFS
         select RT_USING_DFS_ELMFAT
         default n
+    if BSP_USING_SDCARD
+    config SDIO_MAX_FREQ
+        int "sdio max freq"
+        range 0 24000000
+        default 1000000
+    endif
 
 endmenu
 
@@ -101,7 +107,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART2 TX DMA"
                 depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
                 default n
-		              
+
             config BSP_USING_UART3
                 bool "Enable UART3"
                 default n
@@ -115,7 +121,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART3 TX DMA"
                 depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
                 default n
-		              
+
             config BSP_USING_UART4
                 bool "Enable UART4"
                 default n
@@ -129,7 +135,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART4 TX DMA"
                 depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
                 default n
-		              
+
             config BSP_USING_UART5
                 bool "Enable UART5"
                 default n
@@ -143,7 +149,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART5 TX DMA"
                 depends on BSP_USING_UART5 && RT_SERIAL_USING_DMA
                 default n
-		              
+
             config BSP_USING_UART6
                 bool "Enable UART6"
                 default n
