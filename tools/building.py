@@ -163,9 +163,19 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                       help = 'make distribution and strip useless files')
     AddOption('--dist-ide',
                       dest = 'make-dist-ide',
-                      type = 'string',
+                      action = 'store_true',
                       default = False,
                       help = 'make distribution for rt-thread eclipse ide')
+    AddOption('--project-path',
+                      dest = 'make-project-path',
+                      type = 'string',
+                      default = False,
+                      help = 'set dist-ide project output path')
+    AddOption('--project-name',
+                      dest = 'make-project-name',
+                      type = 'string',
+                      default = False,
+                      help = 'set dist-ide project name')
     AddOption('--cscope',
                       dest = 'cscope',
                       action = 'store_true',
@@ -872,8 +882,9 @@ def EndBuilding(target, program = None):
         need_exit = True
     if GetOption('make-dist-ide') and program != None:
         from mkdist import MkDist
-        output_path = GetOption('make-dist-ide')[5:]
-        rtt_ide = {'output_path': output_path}
+        project_path = GetOption('make-project-path')
+        project_name = GetOption('make-project-name')
+        rtt_ide = {'project_path' : project_path, 'project_name' : project_name}
         MkDist(program, BSP_ROOT, Rtt_Root, Env, rtt_ide)
         need_exit = True
     if GetOption('cscope'):
