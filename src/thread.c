@@ -141,7 +141,7 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
                                           (void *)rt_thread_exit);
 #else
     thread->sp = (void *)rt_hw_stack_init(thread->entry, thread->parameter,
-                                          (void *)((char *)thread->stack_addr + thread->stack_size - sizeof(rt_ubase_t)),
+                                          (rt_uint8_t *)((char *)thread->stack_addr + thread->stack_size - sizeof(rt_ubase_t)),
                                           (void *)rt_thread_exit);
 #endif
 
