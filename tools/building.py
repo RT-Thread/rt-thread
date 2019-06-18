@@ -165,7 +165,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                       dest = 'make-dist-ide',
                       action = 'store_true',
                       default = False,
-                      help = 'make distribution for rt-thread eclipse ide')
+                      help = 'make distribution for RT-Thread Studio IDE')
     AddOption('--project-path',
                       dest = 'make-project-path',
                       type = 'string',
@@ -175,7 +175,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                       dest = 'make-project-name',
                       type = 'string',
                       default = False,
-                      help = 'set dist-ide project name')
+                      help = 'set project name')
     AddOption('--cscope',
                       dest = 'cscope',
                       action = 'store_true',
