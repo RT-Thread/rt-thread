@@ -144,17 +144,16 @@ def bsp_update_kconfig_library(dist_dir):
 def bs_update_ide_project(bsp_root, rtt_root, rttide = None):
     import subprocess
     # default update the projects which have template file
-    tgt_dict = {'mdk4':('keil', 'armcc'),
-                'mdk5':('keil', 'armcc'),
-                'iar':('iar', 'iar'),
-                'vs':('msvc', 'cl'),
-                'vs2012':('msvc', 'cl'),
-                'cdk':('gcc', 'gcc')}
 
-    ide_dict = {'eclipse':('gcc', 'gcc')}
-
-    if rttide != None:
-        tgt_dict = ide_dict
+    if rttide == None:
+        tgt_dict = {'mdk4':('keil', 'armcc'),
+                    'mdk5':('keil', 'armcc'),
+                    'iar':('iar', 'iar'),
+                    'vs':('msvc', 'cl'),
+                    'vs2012':('msvc', 'cl'),
+                    'cdk':('gcc', 'gcc')}
+    else:
+        tgt_dict = {'eclipse':('gcc', 'gcc')}
 
     scons_env = os.environ.copy()
     scons_env['RTT_ROOT'] = rtt_root
