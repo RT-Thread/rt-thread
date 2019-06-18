@@ -264,6 +264,10 @@ if RT_USING_SENSOR
         default y
 endif
 
+config RT_USING_TOUCH
+    bool "Using Touch device drivers"
+    default n
+
 menu "Using Hardware Crypto drivers"
     config RT_USING_HWCRYPTO
         bool "Using Hardware Crypto"
