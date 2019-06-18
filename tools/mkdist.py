@@ -153,7 +153,8 @@ def bs_update_ide_project(bsp_root, rtt_root, rttide = None):
                     'vs2012':('msvc', 'cl'),
                     'cdk':('gcc', 'gcc')}
     else:
-        tgt_dict = {'eclipse':('gcc', 'gcc')}
+        item = 'eclipse --project-name=' + rttide['project_name']
+        tgt_dict = {item:('gcc', 'gcc')}
 
     scons_env = os.environ.copy()
     scons_env['RTT_ROOT'] = rtt_root
@@ -315,10 +316,6 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, rttide = None):
         dist_dir = os.path.join(BSP_ROOT, 'dist', dist_name)
     else:
         dist_dir = rttide['project_path']
-        if not isinstance(dist_dir, str):
-            print("\n--project-path=your_project_path parameter is required.")
-            print("\nstop!")
-            return
 
     target_path = os.path.join(dist_dir, 'rt-thread')
 
