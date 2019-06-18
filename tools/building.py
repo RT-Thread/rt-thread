@@ -884,6 +884,17 @@ def EndBuilding(target, program = None):
         from mkdist import MkDist
         project_path = GetOption('make-project-path')
         project_name = GetOption('make-project-name')
+
+        if not isinstance(project_path, str) or len(project_path) == 0 :
+            print("\nwarning : --project-path=your_project_path parameter is required.")
+            print("\nstop!")
+            exit(0)
+
+        if not isinstance(project_name, str) or len(project_name) == 0:
+            print("\nwarning : --project-name=your_project_name parameter is required.")
+            print("\nstop!")
+            exit(0)
+
         rtt_ide = {'project_path' : project_path, 'project_name' : project_name}
         MkDist(program, BSP_ROOT, Rtt_Root, Env, rtt_ide)
         need_exit = True
