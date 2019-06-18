@@ -20,13 +20,13 @@
 #include <drivers/mmcsd_core.h>
 #include <drivers/sdio.h>
 
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4)
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4)
 #define SDCARD_INSTANCE_TYPE              SDIO_TypeDef
 #elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7)
 #define SDCARD_INSTANCE_TYPE              SDMMC_TypeDef
 #endif /*  defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4) */
 
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4)
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4)
 #define SDCARD_INSTANCE                   SDIO
 #elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7)
 #define SDCARD_INSTANCE                   SDMMC1
