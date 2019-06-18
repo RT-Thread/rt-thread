@@ -316,7 +316,7 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, rttide = None):
     else:
         dist_dir = rttide['project_path']
         if not isinstance(dist_dir, str):
-            print("\n--target-path=your_project_path parameter is required.")
+            print("\n--project-path=your_project_path parameter is required.")
             print("\nstop!")
             return
 
