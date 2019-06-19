@@ -203,17 +203,17 @@ static const struct pin_index pins[] =
     __STM32_PIN(173, K, 13),
     __STM32_PIN(174, K, 14),
     __STM32_PIN(175, K, 15),
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
+#endif /* defined(GPIOK) */
+#endif /* defined(GPIOJ) */
+#endif /* defined(GPIOI) */
+#endif /* defined(GPIOH) */
+#endif /* defined(GPIOG) */
+#endif /* defined(GPIOF) */
+#endif /* defined(GPIOE) */
+#endif /* defined(GPIOD) */
+#endif /* defined(GPIOC) */
+#endif /* defined(GPIOB) */
+#endif /* defined(GPIOA) */
 };
 
 static const struct pin_irq_map pin_irq_map[] =
