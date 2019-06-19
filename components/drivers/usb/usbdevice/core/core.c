@@ -995,7 +995,7 @@ udevice_t rt_usbd_device_new(void)
     RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_device_new\n"));
 
     /* allocate memory for the object */
-    udevice = rt_malloc(sizeof(struct udevice));
+    udevice = (udevice_t)rt_malloc(sizeof(struct udevice));
     if(udevice == RT_NULL)
     {
         rt_kprintf("alloc memery failed\n");
@@ -1109,7 +1109,7 @@ uconfig_t rt_usbd_config_new(void)
     RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_config_new\n"));
 
     /* allocate memory for the object */
-    cfg = rt_malloc(sizeof(struct uconfig));
+    cfg = (uconfig_t)rt_malloc(sizeof(struct uconfig));
     if(cfg == RT_NULL)
     {
         rt_kprintf("alloc memery failed\n");
@@ -2053,7 +2053,7 @@ rt_size_t rt_usbd_ep0_write(udevice_t device, void *buffer, rt_size_t size)
 
     ep0 = &device->dcd->ep0;
     ep0->request.size = size;
-    ep0->request.buffer = buffer;
+    ep0->request.buffer = (rt_uint8_t *)buffer;
     ep0->request.remain_size = size;
     if(size >= ep0->id->maxpacket)
     {
@@ -2079,7 +2079,7 @@ rt_size_t rt_usbd_ep0_read(udevice_t device, void *buffer, rt_size_t size,
     RT_ASSERT(buffer != RT_NULL);
 
     ep0 = &device->dcd->ep0;
-    ep0->request.buffer = buffer;    
+    ep0->request.buffer = (rt_uint8_t *)buffer;    
     ep0->request.remain_size = size;
     ep0->rx_indicate = rx_ind;
     if(size >= ep0->id->maxpacket)
