@@ -791,16 +791,16 @@ static rt_size_t rt_serial_read(struct rt_device *dev,
 
     if (dev->open_flag & RT_DEVICE_FLAG_INT_RX)
     {
-        return _serial_int_rx(serial, buffer, size);
+        return _serial_int_rx(serial, (rt_uint8_t *)buffer, size);
     }
 #ifdef RT_SERIAL_USING_DMA
     else if (dev->open_flag & RT_DEVICE_FLAG_DMA_RX)
     {
-        return _serial_dma_rx(serial, buffer, size);
+        return _serial_dma_rx(serial, (rt_uint8_t *)buffer, size);
     }
 #endif /* RT_SERIAL_USING_DMA */    
 
-    return _serial_poll_rx(serial, buffer, size);
+    return _serial_poll_rx(serial, (rt_uint8_t *)buffer, size);
 }
 
 static rt_size_t rt_serial_write(struct rt_device *dev,
@@ -817,17 +817,17 @@ static rt_size_t rt_serial_write(struct rt_device *dev,
 
     if (dev->open_flag & RT_DEVICE_FLAG_INT_TX)
     {
-        return _serial_int_tx(serial, buffer, size);
+        return _serial_int_tx(serial, (const rt_uint8_t *)buffer, size);
     }
 #ifdef RT_SERIAL_USING_DMA    
     else if (dev->open_flag & RT_DEVICE_FLAG_DMA_TX)
     {
-        return _serial_dma_tx(serial, buffer, size);
+        return _serial_dma_tx(serial, (const rt_uint8_t *)buffer, size);
     }
 #endif /* RT_SERIAL_USING_DMA */
     else
     {
-        return _serial_poll_tx(serial, buffer, size);
+        return _serial_poll_tx(serial, (const rt_uint8_t *)buffer, size);
     }
 }
 

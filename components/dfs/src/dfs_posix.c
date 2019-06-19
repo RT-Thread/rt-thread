@@ -265,11 +265,11 @@ RTM_EXPORT(lseek);
  *
  * note: the old and new file name must be belong to a same file system.
  */
-int rename(const char *old, const char *new)
+int rename(const char *old_file, const char *new_file)
 {
     int result;
 
-    result = dfs_file_rename(old, new);
+    result = dfs_file_rename(old_file, new_file);
     if (result < 0)
     {
         rt_set_errno(result);
