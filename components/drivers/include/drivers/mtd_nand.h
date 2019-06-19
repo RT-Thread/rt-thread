@@ -45,71 +45,71 @@ struct rt_mtd_nand_device
     rt_uint32_t block_end;          /* The end of available block */
 
     /* operations interface */
-    const struct rt_mtd_nand_driver_ops* ops;
+    const struct rt_mtd_nand_driver_ops *ops;
 };
 
 struct rt_mtd_nand_driver_ops
 {
-    rt_err_t (*read_id) (struct rt_mtd_nand_device* device);
+    rt_err_t (*read_id)(struct rt_mtd_nand_device *device);
 
-    rt_err_t (*read_page)(struct rt_mtd_nand_device* device,
+    rt_err_t (*read_page)(struct rt_mtd_nand_device *device,
                           rt_off_t page,
-                          rt_uint8_t* data, rt_uint32_t data_len,
-                          rt_uint8_t * spare, rt_uint32_t spare_len);
+                          rt_uint8_t *data, rt_uint32_t data_len,
+                          rt_uint8_t *spare, rt_uint32_t spare_len);
 
-    rt_err_t (*write_page)(struct rt_mtd_nand_device * device,
+    rt_err_t (*write_page)(struct rt_mtd_nand_device *device,
                            rt_off_t page,
-                           const rt_uint8_t * data, rt_uint32_t data_len,
-                           const rt_uint8_t * spare, rt_uint32_t spare_len);
-    rt_err_t (*move_page) (struct rt_mtd_nand_device *device, rt_off_t src_page, rt_off_t dst_page);
+                           const rt_uint8_t *data, rt_uint32_t data_len,
+                           const rt_uint8_t *spare, rt_uint32_t spare_len);
+    rt_err_t (*move_page)(struct rt_mtd_nand_device *device, rt_off_t src_page, rt_off_t dst_page);
 
-    rt_err_t (*erase_block)(struct rt_mtd_nand_device* device, rt_uint32_t block);
-    rt_err_t (*check_block)(struct rt_mtd_nand_device* device, rt_uint32_t block);
-    rt_err_t (*mark_badblock)(struct rt_mtd_nand_device* device, rt_uint32_t block);
+    rt_err_t (*erase_block)(struct rt_mtd_nand_device *device, rt_uint32_t block);
+    rt_err_t (*check_block)(struct rt_mtd_nand_device *device, rt_uint32_t block);
+    rt_err_t (*mark_badblock)(struct rt_mtd_nand_device *device, rt_uint32_t block);
 };
 
-rt_err_t rt_mtd_nand_register_device(const char* name, struct rt_mtd_nand_device* device);
+rt_err_t rt_mtd_nand_register_device(const char *name, struct rt_mtd_nand_device *device);
 
-rt_inline rt_uint32_t rt_mtd_nand_read_id(struct rt_mtd_nand_device* device)
+rt_inline rt_uint32_t rt_mtd_nand_read_id(struct rt_mtd_nand_device *device)
 {
     return device->ops->read_id(device);
 }
 
 rt_inline rt_err_t rt_mtd_nand_read(
-    struct rt_mtd_nand_device* device,
+    struct rt_mtd_nand_device *device,
     rt_off_t page,
-    rt_uint8_t* data, rt_uint32_t data_len,
-    rt_uint8_t * spare, rt_uint32_t spare_len)
+    rt_uint8_t *data, rt_uint32_t data_len,
+    rt_uint8_t *spare, rt_uint32_t spare_len)
 {
     return device->ops->read_page(device, page, data, data_len, spare, spare_len);
 }
 
 rt_inline rt_err_t rt_mtd_nand_write(
-    struct rt_mtd_nand_device* device,
+    struct rt_mtd_nand_device *device,
     rt_off_t page,
-    const rt_uint8_t* data, rt_uint32_t data_len,
-    const rt_uint8_t * spare, rt_uint32_t spare_len)
+    const rt_uint8_t *data, rt_uint32_t data_len,
+    const rt_uint8_t *spare, rt_uint32_t spare_len)
 {
     return device->ops->write_page(device, page, data, data_len, spare, spare_len);
 }
 
-rt_inline rt_err_t rt_mtd_nand_move_page(struct rt_mtd_nand_device* device,
-                                         rt_off_t src_page, rt_off_t dst_page)
+rt_inline rt_err_t rt_mtd_nand_move_page(struct rt_mtd_nand_device *device,
+        rt_off_t src_page, rt_off_t dst_page)
 {
     return device->ops->move_page(device, src_page, dst_page);
 }
 
-rt_inline rt_err_t rt_mtd_nand_erase_block(struct rt_mtd_nand_device* device, rt_uint32_t block)
+rt_inline rt_err_t rt_mtd_nand_erase_block(struct rt_mtd_nand_device *device, rt_uint32_t block)
 {
     return device->ops->erase_block(device, block);
 }
 
-rt_inline rt_err_t rt_mtd_nand_check_block(struct rt_mtd_nand_device* device, rt_uint32_t block)
+rt_inline rt_err_t rt_mtd_nand_check_block(struct rt_mtd_nand_device *device, rt_uint32_t block)
 {
     return device->ops->check_block(device, block);
 }
 
-rt_inline rt_err_t rt_mtd_nand_mark_badblock(struct rt_mtd_nand_device* device, rt_uint32_t block)
+rt_inline rt_err_t rt_mtd_nand_mark_badblock(struct rt_mtd_nand_device *device, rt_uint32_t block)
 {
     return device->ops->mark_badblock(device, block);
 }
