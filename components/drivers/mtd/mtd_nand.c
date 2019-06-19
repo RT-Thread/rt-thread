@@ -131,7 +131,6 @@ int mtd_nandid(const char *name)
 
     return rt_mtd_nand_read_id(nand);
 }
-FINSH_FUNCTION_EXPORT_ALIAS(mtd_nandid, nand_id, read ID - nandid(name));
 
 int mtd_nand_read(const char *name, int block, int page)
 {
@@ -169,7 +168,6 @@ int mtd_nand_read(const char *name, int block, int page)
     rt_free(page_ptr);
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_read, nand_read, read page in nand - nand_read(name, block, page));
 
 int mtd_nand_readoob(const char *name, int block, int page)
 {
@@ -199,7 +197,6 @@ int mtd_nand_readoob(const char *name, int block, int page)
     rt_free(oob_ptr);
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_readoob, nand_readoob, read spare data in nand - nand_readoob(name, block, page));
 
 int mtd_nand_write(const char *name, int block, int page)
 {
@@ -247,7 +244,6 @@ int mtd_nand_write(const char *name, int block, int page)
     rt_free(page_ptr);
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_write, nand_write, write dump data to nand - nand_write(name, block, page));
 
 int mtd_nand_erase(const char *name, int block)
 {
@@ -261,7 +257,6 @@ int mtd_nand_erase(const char *name, int block)
 
     return rt_mtd_nand_erase_block(nand, block);
 }
-FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_erase, nand_erase, nand_erase(name, block));
 
 int mtd_nand_erase_all(const char *name)
 {
@@ -282,7 +277,86 @@ int mtd_nand_erase_all(const char *name)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_erase_all, nand_erase_all, erase all of nand device - nand_erase_all(name, block));
-#endif
 
-#endif
+#ifdef FINSH_USING_MSH
+static void mtd_nand(int argc, char **argv)
+{
+    /* If the number of arguments less than 2 */
+    if (argc < 3)
+    {
+help:
+        rt_kprintf("\n");
+        rt_kprintf("mtd_nand [OPTION] [PARAM ...]\n");
+        rt_kprintf("         id       <name>            Get nandid by given name\n");
+        rt_kprintf("         read     <name> <bn> <pn>  Read data on page <pn> of block <bn> of device <name>\n");
+        rt_kprintf("         readoob  <name> <bn> <pn>  Read oob  on page <pn> of block <bn> of device <name>\n");
+        rt_kprintf("         write    <name> <bn> <pn>  Run write test on page <pn> of block <bn> of device <name>\n");
+        rt_kprintf("         erase    <name> <bn>       Erase on block <bn> of device <name>\n");
+        rt_kprintf("         eraseall <name>            Erase all block on device <name>\n");
+        return ;
+    }
+    else if (!strcmp(argv[1], "id"))
+    {
+        mtd_nandid(argv[2]);
+    }
+    else if (!strcmp(argv[1], "read"))
+    {
+        if (argc < 5)
+        {
+            rt_kprintf("The input parameters are too few!\n");
+            goto help;
+        }
+        mtd_nand_read(argv[2], atoi(argv[3]), atoi(argv[4]));
+    }
+    else if (!strcmp(argv[1], "readoob"))
+    {
+        if (argc < 5)
+        {
+            rt_kprintf("The input parameters are too few!\n");
+            goto help;
+        }
+        mtd_nand_readoob(argv[2], atoi(argv[3]), atoi(argv[4]));
+    }
+    else if (!strcmp(argv[1], "write"))
+    {
+        if (argc < 5)
+        {
+            rt_kprintf("The input parameters are too few!\n");
+            goto help;
+        }
+        mtd_nand_write(argv[2], atoi(argv[3]), atoi(argv[4]));
+    }
+    else if (!strcmp(argv[1], "erase"))
+    {
+        if (argc < 4)
+        {
+            rt_kprintf("The input parameters are too few!\n");
+            goto help;
+        }
+        mtd_nand_erase(argv[2], atoi(argv[3]));
+    }
+    else if (!strcmp(argv[1], "eraseall"))
+    {
+        mtd_nand_erase_all(argv[2]);
+    }
+    else
+    {
+        rt_kprintf("Input parameters are not supported!\n");
+        goto help;
+    }
+}
+MSH_CMD_EXPORT(mtd_nand, MTD nand device test function);
+#endif /* FINSH_USING_MSH */
+
+#ifndef FINSH_USING_MSH_ONLY
+FINSH_FUNCTION_EXPORT_ALIAS(mtd_nandid, nand_id, read ID - nandid(name));
+FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_read, nand_read, read page in nand - nand_read(name, block, page));
+FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_readoob, nand_readoob, read spare data in nand - nand_readoob(name, block, page));
+FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_write, nand_write, write dump data to nand - nand_write(name, block, page));
+FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_erase, nand_erase, nand_erase(name, block));
+FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_erase_all, nand_erase_all, erase all of nand device - nand_erase_all(name, block));
+#endif /* FINSH_USING_MSH_ONLY */
+
+#endif /* defined(RT_MTD_NAND_DEBUG) && defined(RT_USING_FINSH) */
+
+#endif /* RT_USING_MTD_NAND */
