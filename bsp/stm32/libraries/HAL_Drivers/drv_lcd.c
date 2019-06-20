@@ -21,6 +21,7 @@
 #define LCD_DEVICE(dev)     (struct drv_lcd_device*)(dev)
 
 static LTDC_HandleTypeDef LtdcHandle = {0};
+struct rt_device_rect_info old_rect_info = {0, 0, 0, 0};
 
 struct drv_lcd_device
 {
@@ -46,6 +47,40 @@ static rt_err_t drv_lcd_init(struct rt_device *device)
     return RT_EOK;
 }
 
+static void lcd_buf_rect_copy(rt_uint8_t *dest, rt_uint8_t *src, struct rt_device_rect_info *rect_info)
+{
+    rt_uint32_t x1, x2, y1, y2;
+    rt_uint32_t buf_pos, old_buf_pos;
+    rt_uint32_t lcd_width, lcd_pixel_size;
+    rt_uint32_t old_x1, old_x2, old_y1, old_y2;
+
+    lcd_width = _lcd.lcd_info.width;
+    lcd_pixel_size = _lcd.lcd_info.bits_per_pixel / 8;
+
+    x1 = rect_info->x;
+    y1 = rect_info->y;
+    x2 = rect_info->x + rect_info->width;
+    y2 = rect_info->y + rect_info->height;
+
+    old_x1 = old_rect_info.x;
+    old_y1 = old_rect_info.y;
+    old_x2 = old_rect_info.x + old_rect_info.width;
+    old_y2 = old_rect_info.y + old_rect_info.height;
+
+    buf_pos = y1 * lcd_width * lcd_pixel_size + x1 * lcd_pixel_size;
+
+    if (x1 <= old_x1 && y1 <= old_y1 && x2 >= old_x2 && y2 >= old_y2)
+    {
+        memcpy(dest + buf_pos, src + buf_pos, (rect_info->height + 1) * rect_info->width * lcd_pixel_size);
+    }
+    else
+    {
+        old_buf_pos = old_y1 * lcd_width * lcd_pixel_size + old_x1 * lcd_pixel_size;
+        memcpy(dest + old_buf_pos, src + old_buf_pos, (old_rect_info.height + 1) * old_rect_info.width * lcd_pixel_size);
+        memcpy(dest + buf_pos, src + buf_pos, (rect_info->height + 1) * rect_info->width * lcd_pixel_size);
+    }
+}
+
 static rt_err_t drv_lcd_control(struct rt_device *device, int cmd, void *args)
 {
     struct drv_lcd_device *lcd = LCD_DEVICE(device);
@@ -54,25 +89,18 @@ static rt_err_t drv_lcd_control(struct rt_device *device, int cmd, void *args)
     {
     case RTGRAPHIC_CTRL_RECT_UPDATE:
     {
-        /* update */
         if (_lcd.cur_buf)
         {
-            /* back_buf is being used */
-            memcpy(_lcd.front_buf, _lcd.lcd_info.framebuffer, LCD_BUF_SIZE);
-            /* Configure the color frame buffer start address */
-            LTDC_LAYER(&LtdcHandle, 0)->CFBAR &= ~(LTDC_LxCFBAR_CFBADD);
-            LTDC_LAYER(&LtdcHandle, 0)->CFBAR = (uint32_t)(_lcd.front_buf);
+            lcd_buf_rect_copy(_lcd.front_buf, _lcd.lcd_info.framebuffer, args);
             _lcd.cur_buf = 0;
+            
         }
         else
         {
-            /* front_buf is being used */
-            memcpy(_lcd.back_buf, _lcd.lcd_info.framebuffer, LCD_BUF_SIZE);
-            /* Configure the color frame buffer start address */
-            LTDC_LAYER(&LtdcHandle, 0)->CFBAR &= ~(LTDC_LxCFBAR_CFBADD);
-            LTDC_LAYER(&LtdcHandle, 0)->CFBAR = (uint32_t)(_lcd.back_buf);
+            lcd_buf_rect_copy(_lcd.back_buf, _lcd.lcd_info.framebuffer, args);
             _lcd.cur_buf = 1;
         }
+        old_rect_info = *(struct rt_device_rect_info *)args;
         rt_sem_take(&_lcd.lcd_lock, RT_TICK_PER_SECOND / 20);
         HAL_LTDC_Relaod(&LtdcHandle, LTDC_SRCR_VBR);
     }
@@ -354,6 +382,7 @@ __exit:
 }
 INIT_DEVICE_EXPORT(drv_lcd_hw_init);
 
+#define DRV_DEBUG
 #ifdef DRV_DEBUG
 #ifdef FINSH_USING_MSH
 int lcd_test()
