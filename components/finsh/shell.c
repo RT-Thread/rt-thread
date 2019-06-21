@@ -56,7 +56,7 @@ int finsh_set_prompt(const char * prompt)
     /* strdup */
     if(prompt)
     {
-        finsh_prompt_custom = rt_malloc(strlen(prompt)+1);
+        finsh_prompt_custom = (char *)rt_malloc(strlen(prompt)+1);
         if(finsh_prompt_custom)
         {
             strcpy(finsh_prompt_custom, prompt);
@@ -309,8 +309,8 @@ static void finsh_wait_auth(void)
                 else if (ch == '\b' && cur_pos > 0)
                 {
                     /* backspace */
-                    password[cur_pos] = '\0';
                     cur_pos--;
+                    password[cur_pos] = '\0';
                     rt_kprintf("\b \b");
                 }
                 else if (ch == '\r' || ch == '\n')

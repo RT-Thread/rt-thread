@@ -198,6 +198,10 @@ static void TIM_SlaveTimer_SetConfig(TIM_HandleTypeDef *htim,
 /**
   * @brief  Initializes the TIM Time base Unit according to the specified
   *         parameters in the TIM_HandleTypeDef and create the associated handle.
+  * @note Switching from Center Aligned counter mode to Edge counter mode (or reverse)
+  *       requires a timer reset to avoid unexpected direction
+  *       due to DIR bit readonly in center aligned mode.
+  *       Ex: call @ref HAL_TIM_Base_DeInit() before HAL_TIM_Base_Init()
   * @param  htim : TIM Base handle
   * @retval HAL status
   */
@@ -474,6 +478,10 @@ HAL_StatusTypeDef HAL_TIM_Base_Stop_DMA(TIM_HandleTypeDef *htim)
 /**
   * @brief  Initializes the TIM Output Compare according to the specified
   *         parameters in the TIM_HandleTypeDef and create the associated handle.
+  * @note Switching from Center Aligned counter mode to Edge counter mode (or reverse)
+  *       requires a timer reset to avoid unexpected direction
+  *       due to DIR bit readonly in center aligned mode.
+  *       Ex: call @ref HAL_TIM_OC_DeInit() before HAL_TIM_OC_Init()
   * @param  htim : TIM Output Compare handle
   * @retval HAL status
   */
@@ -979,6 +987,10 @@ HAL_StatusTypeDef HAL_TIM_OC_Stop_DMA(TIM_HandleTypeDef *htim, uint32_t Channel)
 /**
   * @brief  Initializes the TIM PWM Time Base according to the specified
   *         parameters in the TIM_HandleTypeDef and create the associated handle.
+  * @note Switching from Center Aligned counter mode to Edge counter mode (or reverse)
+  *       requires a timer reset to avoid unexpected direction
+  *       due to DIR bit readonly in center aligned mode.
+  *       Ex: call @ref HAL_TIM_PWM_DeInit() before HAL_TIM_PWM_Init()
   * @param  htim : TIM handle
   * @retval HAL status
   */
@@ -1487,6 +1499,10 @@ HAL_StatusTypeDef HAL_TIM_PWM_Stop_DMA(TIM_HandleTypeDef *htim, uint32_t Channel
 /**
   * @brief  Initializes the TIM Input Capture Time base according to the specified
   *         parameters in the TIM_HandleTypeDef and create the associated handle.
+  * @note Switching from Center Aligned counter mode to Edge counter mode (or reverse)
+  *       requires a timer reset to avoid unexpected direction
+  *       due to DIR bit readonly in center aligned mode.
+  *       Ex: call @ref HAL_TIM_IC_DeInit() before HAL_TIM_IC_Init()
   * @param  htim : TIM Input Capture handle
   * @retval HAL status
   */
@@ -1957,6 +1973,10 @@ HAL_StatusTypeDef HAL_TIM_IC_Stop_DMA(TIM_HandleTypeDef *htim, uint32_t Channel)
 /**
   * @brief  Initializes the TIM One Pulse Time Base according to the specified
   *         parameters in the TIM_HandleTypeDef and create the associated handle.
+  * @note Switching from Center Aligned counter mode to Edge counter mode (or reverse)
+  *       requires a timer reset to avoid unexpected direction
+  *       due to DIR bit readonly in center aligned mode.
+  *       Ex: call @ref HAL_TIM_OnePulse_DeInit() before HAL_TIM_OnePulse_Init()
   * @param  htim : TIM OnePulse handle
   * @param  OnePulseMode : Select the One pulse mode.
   *         This parameter can be one of the following values:
@@ -2243,6 +2263,10 @@ HAL_StatusTypeDef HAL_TIM_OnePulse_Stop_IT(TIM_HandleTypeDef *htim, uint32_t Out
   */
 /**
   * @brief  Initializes the TIM Encoder Interface and create the associated handle.
+  * @note Switching from Center Aligned counter mode to Edge counter mode (or reverse)
+  *       requires a timer reset to avoid unexpected direction
+  *       due to DIR bit readonly in center aligned mode.
+  *       Ex: call @ref HAL_TIM_Encoder_DeInit() before HAL_TIM_Encoder_Init()
   * @param  htim : TIM Encoder Interface handle
   * @param  sConfig : TIM Encoder Interface configuration structure
   * @retval HAL status
@@ -5028,6 +5052,7 @@ static void TIM_SlaveTimer_SetConfig(TIM_HandleTypeDef *htim,
   *          This parameter can be one of the following values:
   *            @arg TIM_ICPOLARITY_RISING
   *            @arg TIM_ICPOLARITY_FALLING
+  *            @arg TIM_ICPOLARITY_BOTHEDGE
   * @param  TIM_ICSelection : specifies the input to be used.
   *          This parameter can be one of the following values:
   *            @arg TIM_ICSELECTION_DIRECTTI:    TIM Input 1 is selected to be connected to IC1.
@@ -5082,6 +5107,7 @@ void TIM_TI1_SetConfig(TIM_TypeDef *TIMx, uint32_t TIM_ICPolarity, uint32_t TIM_
   *          This parameter can be one of the following values:
   *            @arg TIM_ICPOLARITY_RISING   
   *            @arg TIM_ICPOLARITY_FALLING
+  *            @arg TIM_ICPOLARITY_BOTHEDGE
   * @param  TIM_ICFilter : Specifies the Input Capture Filter.
   *          This parameter must be a value between 0x00 and 0x0F.
   * @retval None
@@ -5116,6 +5142,7 @@ static void TIM_TI1_ConfigInputStage(TIM_TypeDef *TIMx, uint32_t TIM_ICPolarity,
   *          This parameter can be one of the following values:
   *            @arg TIM_ICPOLARITY_RISING   
   *            @arg TIM_ICPOLARITY_FALLING
+  *            @arg TIM_ICPOLARITY_BOTHEDGE
   * @param  TIM_ICSelection : specifies the input to be used.
   *          This parameter can be one of the following values:
   *            @arg TIM_ICSELECTION_DIRECTTI:   TIM Input 2 is selected to be connected to IC2.
@@ -5163,6 +5190,7 @@ static void TIM_TI2_SetConfig(TIM_TypeDef *TIMx, uint32_t TIM_ICPolarity, uint32
   *          This parameter can be one of the following values:
   *            @arg TIM_ICPOLARITY_RISING  
   *            @arg TIM_ICPOLARITY_FALLING
+  *            @arg TIM_ICPOLARITY_BOTHEDGE
   * @param  TIM_ICFilter : Specifies the Input Capture Filter.
   *          This parameter must be a value between 0x00 and 0x0F.
   * @retval None
@@ -5229,8 +5257,8 @@ static void TIM_TI3_SetConfig(TIM_TypeDef *TIMx, uint32_t TIM_ICPolarity, uint32
   tmpccmr2 |= ((TIM_ICFilter << 4U) & TIM_CCMR2_IC3F);
 
   /* Select the Polarity and set the CC3E Bit */
-  tmpccer &= ~(TIM_CCER_CC3P | TIM_CCER_CC3NP);
-  tmpccer |= ((TIM_ICPolarity << 8U) & (TIM_CCER_CC3P | TIM_CCER_CC3NP));
+  tmpccer &= ~(TIM_CCER_CC3P);
+  tmpccer |= ((TIM_ICPolarity << 8U) & (TIM_CCER_CC3P));
 
   /* Write to TIMx CCMR2 and CCER registers */
   TIMx->CCMR2 = tmpccmr2;

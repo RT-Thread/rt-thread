@@ -440,14 +440,11 @@ int pl180_init(void)
     sdhci->priv = pdat;
     write32(pdat->virt + PL180_POWER, 0xbf);
 
-    // rt_kprintf("power:0x%08x\n", read32(pdat->virt + PL180_POWER));
-
     host->ops = &ops;
     host->freq_min = 400000;
     host->freq_max = 50000000;
     host->valid_ocr = VDD_32_33 | VDD_33_34;
-    // host->flags = MMCSD_MUTBLKWRITE | MMCSD_SUP_HIGHSPEED | MMCSD_SUP_SDIO_IRQ | MMCSD_BUSWIDTH_4;
-    host->flags = MMCSD_MUTBLKWRITE | MMCSD_SUP_HIGHSPEED | MMCSD_SUP_SDIO_IRQ;
+    host->flags = MMCSD_MUTBLKWRITE | MMCSD_SUP_HIGHSPEED | MMCSD_SUP_SDIO_IRQ | MMCSD_BUSWIDTH_4;
     host->max_seg_size = 2048;
     host->max_dma_segs = 10;
     host->max_blk_size = 512;

@@ -33,6 +33,14 @@ extern "C" {
 #include "f1/tim_config.h"
 #include "f1/sdio_config.h"
 #include "f1/pwm_config.h"
+#elif  defined(SOC_SERIES_STM32F2)
+#include "f2/dma_config.h"
+#include "f2/uart_config.h"
+#include "f2/spi_config.h"
+#include "f2/adc_config.h"
+#include "f2/tim_config.h"
+#include "f2/sdio_config.h"
+#include "f2/pwm_config.h"	
 #elif  defined(SOC_SERIES_STM32F4)
 #include "f4/dma_config.h"
 #include "f4/uart_config.h"
@@ -64,6 +72,7 @@ extern "C" {
 #include "l4/tim_config.h"
 #include "l4/sdio_config.h"
 #include "l4/pwm_config.h"
+#include "l4/usbd_fs_config.h"
 #elif  defined(SOC_SERIES_STM32G0)
 #include "g0/dma_config.h"
 #include "g0/uart_config.h"

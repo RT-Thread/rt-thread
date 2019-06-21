@@ -24,13 +24,13 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
     switch (sensor->info.type)
     {
     case RT_SENSOR_CLASS_ACCE:
-        LOG_I("num:%3d, x:%5d, y:%5d, z:%5d, timestamp:%5d", num, sensor_data->data.acce.x, sensor_data->data.acce.y, sensor_data->data.acce.z, sensor_data->timestamp);
+        LOG_I("num:%3d, x:%5d, y:%5d, z:%5d mg, timestamp:%5d", num, sensor_data->data.acce.x, sensor_data->data.acce.y, sensor_data->data.acce.z, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_GYRO:
-        LOG_I("num:%3d, x:%8d, y:%8d, z:%8d, timestamp:%5d", num, sensor_data->data.gyro.x, sensor_data->data.gyro.y, sensor_data->data.gyro.z, sensor_data->timestamp);
+        LOG_I("num:%3d, x:%8d, y:%8d, z:%8d dps, timestamp:%5d", num, sensor_data->data.gyro.x / 1000, sensor_data->data.gyro.y / 1000, sensor_data->data.gyro.z / 1000, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_MAG:
-        LOG_I("num:%3d, x:%5d, y:%5d, z:%5d, timestamp:%5d", num, sensor_data->data.mag.x, sensor_data->data.mag.y, sensor_data->data.mag.z, sensor_data->timestamp);
+        LOG_I("num:%3d, x:%5d, y:%5d, z:%5d mGauss, timestamp:%5d", num, sensor_data->data.mag.x, sensor_data->data.mag.y, sensor_data->data.mag.z, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_HUMI:
         LOG_I("num:%3d, humi:%3d.%d%%, timestamp:%5d", num, sensor_data->data.humi / 10, sensor_data->data.humi % 10, sensor_data->timestamp);
@@ -39,7 +39,7 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
         LOG_I("num:%3d, temp:%3d.%dC, timestamp:%5d", num, sensor_data->data.temp / 10, sensor_data->data.temp % 10, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_BARO:
-        LOG_I("num:%3d, press:%5d, timestamp:%5d", num, sensor_data->data.baro, sensor_data->timestamp);
+        LOG_I("num:%3d, press:%5d pa, timestamp:%5d", num, sensor_data->data.baro, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_STEP:
         LOG_I("num:%3d, step:%5d, timestamp:%5d", num, sensor_data->data.step, sensor_data->timestamp);
@@ -55,7 +55,7 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
     }
 }
 
-rt_err_t rx_callback(rt_device_t dev, rt_size_t size)
+static rt_err_t rx_callback(rt_device_t dev, rt_size_t size)
 {
     rt_sem_release(sensor_rx_sem);
     return 0;
@@ -63,15 +63,15 @@ rt_err_t rx_callback(rt_device_t dev, rt_size_t size)
 
 static void sensor_fifo_rx_entry(void *parameter)
 {
-    rt_device_t dev = parameter;
-    rt_sensor_t sensor = parameter;
+    rt_device_t dev = (rt_device_t)parameter;
+    rt_sensor_t sensor = (rt_sensor_t)parameter;
     struct rt_sensor_data *data = RT_NULL;
     struct rt_sensor_info info;
     rt_size_t res, i;
     
     rt_device_control(dev, RT_SENSOR_CTRL_GET_INFO, &info);
 
-    data = rt_malloc(sizeof(struct rt_sensor_data) * info.fifo_max);
+    data = (struct rt_sensor_data *)rt_malloc(sizeof(struct rt_sensor_data) * info.fifo_max);
     if (data == RT_NULL)
     {
         LOG_E("Memory allocation failed!");
@@ -137,8 +137,8 @@ MSH_CMD_EXPORT(sensor_fifo, Sensor fifo mode test function);
 
 static void sensor_irq_rx_entry(void *parameter)
 {
-    rt_device_t dev = parameter;
-    rt_sensor_t sensor = parameter;
+    rt_device_t dev = (rt_device_t)parameter;
+    rt_sensor_t sensor = (rt_sensor_t)parameter;
     struct rt_sensor_data data;
     rt_size_t res, i = 0;
 

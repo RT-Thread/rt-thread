@@ -264,7 +264,7 @@ static rt_int32_t mmcsd_switch(struct rt_mmcsd_card *card)
 
     if ((buf[16] & 0xF) != 1) 
     {
-        LOG_E("switching card to high speed failed!");
+        LOG_I("switching card to high speed failed!");
         goto err;
     }
 

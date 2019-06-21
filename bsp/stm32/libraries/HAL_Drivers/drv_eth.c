@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2018-11-19     SummerGift   first version
  * 2018-12-25     zylx         fix some bugs
+ * 2019-06-10     SummerGift   optimize PHY state detection process 
  */
 
 #include "board.h"
@@ -91,10 +92,10 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
     EthHandle.Init.RxMode = ETH_RXINTERRUPT_MODE;
 #ifdef RT_LWIP_USING_HW_CHECKSUM
     EthHandle.Init.ChecksumMode = ETH_CHECKSUM_BY_HARDWARE;
-#else    
+#else
     EthHandle.Init.ChecksumMode = ETH_CHECKSUM_BY_SOFTWARE;
 #endif
-    
+
     HAL_ETH_DeInit(&EthHandle);
 
     /* configure ethernet peripheral (GPIOs, clocks, MAC, DMA) */
@@ -382,7 +383,7 @@ void HAL_ETH_RxCpltCallback(ETH_HandleTypeDef *heth)
     rt_err_t result;
     result = eth_device_ready(&(stm32_eth_device.parent));
     if (result != RT_EOK)
-        LOG_E("RX err = %d", result);
+        LOG_I("RxCpltCallback err = %d", result);
 }
 
 void HAL_ETH_ErrorCallback(ETH_HandleTypeDef *heth)
@@ -431,31 +432,34 @@ static void phy_monitor_thread_entry(void *parameter)
     uint8_t phy_addr = 0xFF;
     uint8_t phy_speed_new = 0;
     rt_uint32_t status = 0;
+    uint8_t detected_count = 0;
 
-    /* phy search */
-    rt_uint32_t i, temp;
-    for (i = 0; i <= 0x1F; i++)
+    while(phy_addr == 0xFF)
     {
-        EthHandle.Init.PhyAddress = i;
-
-        HAL_ETH_ReadPHYRegister(&EthHandle, PHY_ID1_REG, (uint32_t *)&temp);
-
-        if (temp != 0xFFFF && temp != 0x00)
+        /* phy search */
+        rt_uint32_t i, temp;
+        for (i = 0; i <= 0x1F; i++)
         {
-            phy_addr = i;
-            break;
+            EthHandle.Init.PhyAddress = i;
+            HAL_ETH_ReadPHYRegister(&EthHandle, PHY_ID1_REG, (uint32_t *)&temp);
+
+            if (temp != 0xFFFF && temp != 0x00)
+            {
+                phy_addr = i;
+                break;
+            }
+        }
+
+        detected_count++;
+        rt_thread_mdelay(1000);
+
+        if (detected_count > 10)
+        {
+            LOG_E("No PHY device was detected, please check hardware!");
         }
     }
 
-    if (phy_addr == 0xFF)
-    {
-        LOG_E("phy not probe!");
-        return;
-    }
-    else
-    {
-        LOG_D("found a phy, address:0x%02X", phy_addr);
-    }
+    LOG_D("Found a phy, address:0x%02X", phy_addr);
 
     /* RESET PHY */
     LOG_D("RESET PHY!");
@@ -465,33 +469,49 @@ static void phy_monitor_thread_entry(void *parameter)
 
     while (1)
     {
-        HAL_ETH_ReadPHYRegister(&EthHandle, PHY_BASIC_STATUS_REG, (uint32_t *)&status);
-        LOG_D("PHY BASIC STATUS REG:0x%04X", status);
-
         phy_speed_new = 0;
 
-        if (status & (PHY_AUTONEGO_COMPLETE_MASK | PHY_LINKED_STATUS_MASK))
+        if(HAL_ETH_ReadPHYRegister(&EthHandle, PHY_BASIC_STATUS_REG, (uint32_t *)&status) == HAL_OK)
         {
-            rt_uint32_t SR;
-
-            phy_speed_new = PHY_LINK_MASK;
-
-            SR = HAL_ETH_ReadPHYRegister(&EthHandle, PHY_Status_REG, (uint32_t *)&SR);
-            LOG_D("PHY Control/Status REG:0x%04X ", SR);
-
-            if (SR & PHY_100M_MASK)
+            LOG_D("PHY BASIC STATUS REG:0x%04X", status);
+            
+            if (status & (PHY_AUTONEGO_COMPLETE_MASK | PHY_LINKED_STATUS_MASK))
             {
-                phy_speed_new |= PHY_100M_MASK;
-            }
-            else if (SR & PHY_10M_MASK)
-            {
-                phy_speed_new |= PHY_10M_MASK;
-            }
+                rt_uint32_t SR;
 
-            if (SR & PHY_FULL_DUPLEX_MASK)
-            {
-                phy_speed_new |= PHY_FULL_DUPLEX_MASK;
+                phy_speed_new = PHY_LINK_MASK;
+
+                if(HAL_ETH_ReadPHYRegister(&EthHandle, PHY_Status_REG, (uint32_t *)&SR) == HAL_OK)
+                {
+                    LOG_D("PHY Control/Status REG:0x%04X ", SR); 
+
+                    if (SR & PHY_100M_MASK)
+                    {
+                        phy_speed_new |= PHY_100M_MASK;
+                    }
+                    else if (SR & PHY_10M_MASK)
+                    {
+                        phy_speed_new |= PHY_10M_MASK;
+                    }
+
+                    if (SR & PHY_FULL_DUPLEX_MASK)
+                    {
+                        phy_speed_new |= PHY_FULL_DUPLEX_MASK;
+                    }
+                }
+                else
+                {
+                    LOG_D("PHY PHY_Status_REG read error."); 
+                    rt_thread_mdelay(100);
+                    continue;
+                }
             }
+        }
+        else
+        {
+            LOG_D("PHY_BASIC_STATUS_REG read error."); 
+            rt_thread_mdelay(100);
+            continue;
         }
 
         /* linkchange */
@@ -667,4 +687,4 @@ __exit:
 
     return state;
 }
-INIT_APP_EXPORT(rt_hw_stm32_eth_init);
+INIT_DEVICE_EXPORT(rt_hw_stm32_eth_init);

@@ -5,6 +5,7 @@ menu "Socket abstraction layer"
 config RT_USING_SAL
     bool "Enable socket abstraction layer"
     select RT_USING_NETDEV
+    select RT_USING_LIBC
     select RT_USING_SYSTEM_WORKQUEUE
     default n
 
@@ -36,7 +37,6 @@ config RT_USING_SAL
             bool "Enable BSD socket operated by file system API"
             default n
             select RT_USING_DFS
-            select RT_USING_LIBC
             select RT_USING_POSIX
             help
                 Let BSD socket operated by file system API, such as read/write and involveed in select/poll POSIX APIs.
@@ -73,6 +73,9 @@ config RT_USING_NETDEV
             bool "Enable netstat features"
             default y
 
+        config NETDEV_USING_AUTO_DEFAULT
+            bool "Enable default netdev automatic change features"
+            default y
     endif
 
 endmenu

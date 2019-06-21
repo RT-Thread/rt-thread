@@ -64,14 +64,14 @@ static int rt_hw_qspi_flash_with_sfud_init(void)
 {
     stm32_qspi_bus_attach_device("qspi1", "qspi10", RT_NULL, 4, w25qxx_enter_qspi_mode, RT_NULL);
     
-    /* init w25q128 */
-    if (RT_NULL == rt_sfud_flash_probe("W25Q128", "qspi10"))
+    /* init W25Q256 */
+    if (RT_NULL == rt_sfud_flash_probe("W25Q256", "qspi10"))
     {
         return -RT_ERROR;
     }
 
     return RT_EOK;
 }
-INIT_COMPONENT_EXPORT(rt_hw_qspi_flash_with_sfud_init);
+INIT_DEVICE_EXPORT(rt_hw_qspi_flash_with_sfud_init);
 
 #endif/* BSP_USING_QSPI_FLASH */

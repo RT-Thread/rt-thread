@@ -141,7 +141,7 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
                                           (void *)rt_thread_exit);
 #else
     thread->sp = (void *)rt_hw_stack_init(thread->entry, thread->parameter,
-                                          (void *)((char *)thread->stack_addr + thread->stack_size - sizeof(rt_ubase_t)),
+                                          (rt_uint8_t *)((char *)thread->stack_addr + thread->stack_size - sizeof(rt_ubase_t)),
                                           (void *)rt_thread_exit);
 #endif
 
@@ -191,7 +191,9 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
     thread->sig_mask    = 0x00;
     thread->sig_pending = 0x00;
 
+#ifndef RT_USING_SMP
     thread->sig_ret     = RT_NULL;
+#endif
     thread->sig_vectors = RT_NULL;
     thread->si_list     = RT_NULL;
 #endif

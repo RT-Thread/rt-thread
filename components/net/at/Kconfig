@@ -83,7 +83,7 @@ if RT_USING_AT
 
     config AT_SW_VERSION_NUM
         hex
-        default 0x10200
+        default 0x10300
         help
             sfotware module version number
 
