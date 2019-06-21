@@ -9,6 +9,8 @@
  * 2019-01-22     YLZ          port from stm324xx-HAL to bsp stm3210x-HAL
  * 2019-02-19     YLZ          add support EXTID RTR Frame. modify send, recv functions. 
  *                             fix bug.port to BSP [stm32]
+ * 2019-03-27     YLZ          support double can channels, support stm32F4xx (only Legacy mode).
+ * 2019-06-17     YLZ          port to new STM32F1xx HAL V1.1.3.
  */
 
 #include "drv_can.h"
@@ -68,6 +70,8 @@ static rt_uint32_t get_can_baud_index(rt_uint32_t baud)
     return 0;
 }
 
+static void drv_rx_isr(struct rt_can_device *can, rt_uint32_t fifo);
+
 #ifdef BSP_USING_CAN1
 static struct stm32_drv_can drv_can1;
 struct rt_can_device dev_can1;
@@ -79,8 +83,7 @@ void CAN1_TX_IRQHandler(void)
     rt_interrupt_enter();
     CAN_HandleTypeDef *hcan;
     hcan = &drv_can1.CanHandle;
-    
-    if (__HAL_CAN_TRANSMIT_STATUS(hcan, CAN_TXMAILBOX_0))
+    if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP0))
     {
         if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TXOK0))
         {
@@ -93,10 +96,8 @@ void CAN1_TX_IRQHandler(void)
         /* Write 0 to Clear transmission status flag RQCPx */
         SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP0);
     }
-
-    else if (__HAL_CAN_TRANSMIT_STATUS(hcan, CAN_TXMAILBOX_1))
+    else if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP1))
     {
-        
         if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TXOK1))
         {
             rt_hw_can_isr(&dev_can1, RT_CAN_EVENT_TX_DONE | 1 << 8);
@@ -108,10 +109,8 @@ void CAN1_TX_IRQHandler(void)
         /* Write 0 to Clear transmission status flag RQCPx */
         SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP1);
     }
-    
-    else if (__HAL_CAN_TRANSMIT_STATUS(hcan, CAN_TXMAILBOX_2))
+    else if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP2))
     {
-         
         if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TXOK2))
         {
             rt_hw_can_isr(&dev_can1, RT_CAN_EVENT_TX_DONE | 2 << 8);
@@ -123,7 +122,6 @@ void CAN1_TX_IRQHandler(void)
          /* Write 0 to Clear transmission status flag RQCPx */
         SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP2);
     }
-
     rt_interrupt_leave();
 }
 
@@ -133,68 +131,7 @@ void CAN1_TX_IRQHandler(void)
 void CAN1_RX0_IRQHandler(void)
 {
     rt_interrupt_enter();
-    
-    CanRxMsgTypeDef* pRxMsg = NULL;
-    CAN_HandleTypeDef *hcan;
-    hcan = &drv_can1.CanHandle;
-    /* check FMP0 and get data */
-    while (__HAL_CAN_MSG_PENDING(hcan, CAN_FIFO0) != RESET && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_FMP0) != RESET)
-    {
-        /* beigin get data */
-        
-        /* Set RxMsg pointer */
-        pRxMsg = hcan->pRxMsg;
-         /* Get the Id */
-        pRxMsg->IDE = (uint8_t)0x04U & hcan->Instance->sFIFOMailBox[CAN_FIFO0].RIR;
-        if (pRxMsg->IDE == CAN_ID_STD)
-        {
-            pRxMsg->StdId = 0x000007FFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO0].RIR >> 21U);
-        }
-        else
-        {
-            pRxMsg->ExtId = 0x1FFFFFFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO0].RIR >> 3U);
-        }
-  
-        pRxMsg->RTR = (uint8_t)0x02U & hcan->Instance->sFIFOMailBox[CAN_FIFO0].RIR;
-        /* Get the DLC */
-        pRxMsg->DLC = (uint8_t)0x0FU & hcan->Instance->sFIFOMailBox[CAN_FIFO0].RDTR;
-        /* Get the FIFONumber */
-        pRxMsg->FIFONumber = CAN_FIFO0;
-        /* Get the FMI */
-        pRxMsg->FMI = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO0].RDTR >> 8U);
-        /* Get the data field */
-        pRxMsg->Data[0] = (uint8_t)0xFFU & hcan->Instance->sFIFOMailBox[CAN_FIFO0].RDLR;
-        pRxMsg->Data[1] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO0].RDLR >> 8U);
-        pRxMsg->Data[2] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO0].RDLR >> 16U);
-        pRxMsg->Data[3] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO0].RDLR >> 24U);
-        pRxMsg->Data[4] = (uint8_t)0xFFU & hcan->Instance->sFIFOMailBox[CAN_FIFO0].RDHR;
-        pRxMsg->Data[5] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO0].RDHR >> 8U);
-        pRxMsg->Data[6] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO0].RDHR >> 16U);
-        pRxMsg->Data[7] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO0].RDHR >> 24U);
-        
-        /* Release FIFO0 */
-        __HAL_CAN_FIFO_RELEASE(hcan, CAN_FIFO0);
-        
-        /* end get data */
-
-        /* save to user fifo */
-        rt_hw_can_isr(&dev_can1, RT_CAN_EVENT_RX_IND | 0 << 8);
-    }
-    
-    /* Check Overrun flag for FIFO0 */
-    if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_FF0) != RESET && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_FF0) != RESET)
-    {
-        /* Clear FIFO0 FULL Flag */
-        __HAL_CAN_CLEAR_FLAG(hcan, CAN_FLAG_FF0);
-    }
-    
-    /* Check Overrun flag for FIFO0 */
-    if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_FOV0) != RESET && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_FOV0) != RESET)
-    {
-        /* Clear FIFO0 Overrun Flag */
-        __HAL_CAN_CLEAR_FLAG(hcan, CAN_FLAG_FOV0);
-        rt_hw_can_isr(&dev_can1, RT_CAN_EVENT_RXOF_IND | 0 << 8);
-    }
+    drv_rx_isr(&dev_can1, CAN_RX_FIFO0);
     rt_interrupt_leave();
 }
 
@@ -204,68 +141,7 @@ void CAN1_RX0_IRQHandler(void)
 void CAN1_RX1_IRQHandler(void)
 {
     rt_interrupt_enter();
-    
-    CanRxMsgTypeDef* pRxMsg = NULL;
-    CAN_HandleTypeDef *hcan;
-    hcan = &drv_can1.CanHandle;
-    /* check FMP1 and get data */
-    while (__HAL_CAN_MSG_PENDING(hcan, CAN_FIFO1) != RESET && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_FMP1) != RESET)
-    {
-        /* beigin get data */
-          
-        /* Set RxMsg pointer */
-        pRxMsg = hcan->pRx1Msg;
-         /* Get the Id */
-        pRxMsg->IDE = (uint8_t)0x04U & hcan->Instance->sFIFOMailBox[CAN_FIFO1].RIR;
-        if (pRxMsg->IDE == CAN_ID_STD)
-        {
-            pRxMsg->StdId = 0x000007FFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO1].RIR >> 21U);
-        }
-        else
-        {
-            pRxMsg->ExtId = 0x1FFFFFFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO1].RIR >> 3U);
-        }
-  
-        pRxMsg->RTR = (uint8_t)0x02U & hcan->Instance->sFIFOMailBox[CAN_FIFO1].RIR;
-        /* Get the DLC */
-        pRxMsg->DLC = (uint8_t)0x0FU & hcan->Instance->sFIFOMailBox[CAN_FIFO1].RDTR;
-        /* Get the FIFONumber */
-        pRxMsg->FIFONumber = CAN_FIFO1;
-        /* Get the FMI */
-        pRxMsg->FMI = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO1].RDTR >> 8U);
-        /* Get the data field */
-        pRxMsg->Data[0] = (uint8_t)0xFFU & hcan->Instance->sFIFOMailBox[CAN_FIFO1].RDLR;
-        pRxMsg->Data[1] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO1].RDLR >> 8U);
-        pRxMsg->Data[2] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO1].RDLR >> 16U);
-        pRxMsg->Data[3] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO1].RDLR >> 24U);
-        pRxMsg->Data[4] = (uint8_t)0xFFU & hcan->Instance->sFIFOMailBox[CAN_FIFO1].RDHR;
-        pRxMsg->Data[5] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO1].RDHR >> 8U);
-        pRxMsg->Data[6] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO1].RDHR >> 16U);
-        pRxMsg->Data[7] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO1].RDHR >> 24U);
-        
-        /* Release FIFO1 */
-        __HAL_CAN_FIFO_RELEASE(hcan, CAN_FIFO1);
-        
-        /* end get data */
-
-        /* save to user fifo */
-        rt_hw_can_isr(&dev_can1, RT_CAN_EVENT_RX_IND | 1 << 8);
-    }
-    
-    /* Check Overrun flag for FIFO1 */
-    if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_FF1) != RESET && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_FF1) != RESET)
-    {
-        /* Clear FIFO1 FULL Flag */
-        __HAL_CAN_CLEAR_FLAG(hcan, CAN_FLAG_FF1);
-    }
-    
-    /* Check Overrun flag for FIFO1 */
-    if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_FOV1) != RESET && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_FOV1) != RESET)
-    {
-        /* Clear FIFO1 Overrun Flag */
-        __HAL_CAN_CLEAR_FLAG(hcan, CAN_FLAG_FOV1);
-        rt_hw_can_isr(&dev_can1, RT_CAN_EVENT_RXOF_IND | 1 << 8);
-    }
+    drv_rx_isr(&dev_can1, CAN_RX_FIFO1);
     rt_interrupt_leave();
 }
 
@@ -326,8 +202,7 @@ void CAN2_TX_IRQHandler(void)
     rt_interrupt_enter();
     CAN_HandleTypeDef *hcan;
     hcan = &drv_can2.CanHandle;
-    
-    if (__HAL_CAN_TRANSMIT_STATUS(hcan, CAN_TXMAILBOX_0))
+    if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP0))
     {
         if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TXOK0))
         {
@@ -340,10 +215,8 @@ void CAN2_TX_IRQHandler(void)
          /* Write 0 to Clear transmission status flag RQCPx */
         SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP0);
     }
-
-    else if (__HAL_CAN_TRANSMIT_STATUS(hcan, CAN_TXMAILBOX_1))
+    else if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP1))
     {
-        
         if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TXOK1))
         {
             rt_hw_can_isr(&dev_can2, RT_CAN_EVENT_TX_DONE | 1 << 8);
@@ -355,10 +228,8 @@ void CAN2_TX_IRQHandler(void)
         /* Write 0 to Clear transmission status flag RQCPx */
         SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP1);
     }
-    
-    else if (__HAL_CAN_TRANSMIT_STATUS(hcan, CAN_TXMAILBOX_2))
+    else if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_RQCP2))
     {
-         
         if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TXOK2))
         {
             rt_hw_can_isr(&dev_can2, RT_CAN_EVENT_TX_DONE | 2 << 8);
@@ -370,7 +241,6 @@ void CAN2_TX_IRQHandler(void)
          /* Write 0 to Clear transmission status flag RQCPx */
         SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP2);
     }
-
     rt_interrupt_leave();
 }
 
@@ -380,68 +250,7 @@ void CAN2_TX_IRQHandler(void)
 void CAN2_RX0_IRQHandler(void)
 {
     rt_interrupt_enter();
-    
-    CanRxMsgTypeDef* pRxMsg = NULL;
-    CAN_HandleTypeDef *hcan;
-    hcan = &drv_can2.CanHandle;
-    /* check FMP0 and get data */
-    while (__HAL_CAN_MSG_PENDING(hcan, CAN_FIFO0) != RESET && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_FMP0) != RESET)
-    {
-        /* beigin get data */
-        
-        /* Set RxMsg pointer */
-        pRxMsg = hcan->pRxMsg;
-         /* Get the Id */
-        pRxMsg->IDE = (uint8_t)0x04U & hcan->Instance->sFIFOMailBox[CAN_FIFO0].RIR;
-        if (pRxMsg->IDE == CAN_ID_STD)
-        {
-            pRxMsg->StdId = 0x000007FFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO0].RIR >> 21U);
-        }
-        else
-        {
-            pRxMsg->ExtId = 0x1FFFFFFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO0].RIR >> 3U);
-        }
-  
-        pRxMsg->RTR = (uint8_t)0x02U & hcan->Instance->sFIFOMailBox[CAN_FIFO0].RIR;
-        /* Get the DLC */
-        pRxMsg->DLC = (uint8_t)0x0FU & hcan->Instance->sFIFOMailBox[CAN_FIFO0].RDTR;
-        /* Get the FIFONumber */
-        pRxMsg->FIFONumber = CAN_FIFO0;
-        /* Get the FMI */
-        pRxMsg->FMI = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO0].RDTR >> 8U);
-        /* Get the data field */
-        pRxMsg->Data[0] = (uint8_t)0xFFU & hcan->Instance->sFIFOMailBox[CAN_FIFO0].RDLR;
-        pRxMsg->Data[1] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO0].RDLR >> 8U);
-        pRxMsg->Data[2] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO0].RDLR >> 16U);
-        pRxMsg->Data[3] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO0].RDLR >> 24U);
-        pRxMsg->Data[4] = (uint8_t)0xFFU & hcan->Instance->sFIFOMailBox[CAN_FIFO0].RDHR;
-        pRxMsg->Data[5] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO0].RDHR >> 8U);
-        pRxMsg->Data[6] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO0].RDHR >> 16U);
-        pRxMsg->Data[7] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO0].RDHR >> 24U);
-        
-        /* Release FIFO0 */
-        __HAL_CAN_FIFO_RELEASE(hcan, CAN_FIFO0);
-        
-        /* end get data */
-
-        /* save to user fifo */
-        rt_hw_can_isr(&dev_can2, RT_CAN_EVENT_RX_IND | 0 << 8);
-    }
-    
-    /* Check Overrun flag for FIFO0 */
-    if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_FF0) != RESET && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_FF0) != RESET)
-    {
-        /* Clear FIFO0 FULL Flag */
-        __HAL_CAN_CLEAR_FLAG(hcan, CAN_FLAG_FF0);
-    }
-    
-    /* Check Overrun flag for FIFO0 */
-    if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_FOV0) != RESET && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_FOV0) != RESET)
-    {
-        /* Clear FIFO0 Overrun Flag */
-        __HAL_CAN_CLEAR_FLAG(hcan, CAN_FLAG_FOV0);
-        rt_hw_can_isr(&dev_can2, RT_CAN_EVENT_RXOF_IND | 0 << 8);
-    }
+    drv_rx_isr(&dev_can2, CAN_RX_FIFO0);
     rt_interrupt_leave();
 }
 
@@ -451,68 +260,7 @@ void CAN2_RX0_IRQHandler(void)
 void CAN2_RX1_IRQHandler(void)
 {
     rt_interrupt_enter();
-    
-    CanRxMsgTypeDef* pRxMsg = NULL;
-    CAN_HandleTypeDef *hcan;
-    hcan = &drv_can2.CanHandle;
-    /* check FMP1 and get data */
-    while (__HAL_CAN_MSG_PENDING(hcan, CAN_FIFO1) != RESET && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_FMP1) != RESET)
-    {
-        /* beigin get data */
-          
-        /* Set RxMsg pointer */
-        pRxMsg = hcan->pRx1Msg;
-         /* Get the Id */
-        pRxMsg->IDE = (uint8_t)0x04U & hcan->Instance->sFIFOMailBox[CAN_FIFO1].RIR;
-        if (pRxMsg->IDE == CAN_ID_STD)
-        {
-            pRxMsg->StdId = 0x000007FFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO1].RIR >> 21U);
-        }
-        else
-        {
-            pRxMsg->ExtId = 0x1FFFFFFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO1].RIR >> 3U);
-        }
-  
-        pRxMsg->RTR = (uint8_t)0x02U & hcan->Instance->sFIFOMailBox[CAN_FIFO1].RIR;
-        /* Get the DLC */
-        pRxMsg->DLC = (uint8_t)0x0FU & hcan->Instance->sFIFOMailBox[CAN_FIFO1].RDTR;
-        /* Get the FIFONumber */
-        pRxMsg->FIFONumber = CAN_FIFO1;
-        /* Get the FMI */
-        pRxMsg->FMI = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO1].RDTR >> 8U);
-        /* Get the data field */
-        pRxMsg->Data[0] = (uint8_t)0xFFU & hcan->Instance->sFIFOMailBox[CAN_FIFO1].RDLR;
-        pRxMsg->Data[1] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO1].RDLR >> 8U);
-        pRxMsg->Data[2] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO1].RDLR >> 16U);
-        pRxMsg->Data[3] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO1].RDLR >> 24U);
-        pRxMsg->Data[4] = (uint8_t)0xFFU & hcan->Instance->sFIFOMailBox[CAN_FIFO1].RDHR;
-        pRxMsg->Data[5] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO1].RDHR >> 8U);
-        pRxMsg->Data[6] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO1].RDHR >> 16U);
-        pRxMsg->Data[7] = (uint8_t)0xFFU & (hcan->Instance->sFIFOMailBox[CAN_FIFO1].RDHR >> 24U);
-        
-        /* Release FIFO1 */
-        __HAL_CAN_FIFO_RELEASE(hcan, CAN_FIFO1);
-        
-        /* end get data */
-
-        /* save to user fifo */
-        rt_hw_can_isr(&dev_can2, RT_CAN_EVENT_RX_IND | 1 << 8);
-    }
-    
-    /* Check Overrun flag for FIFO1 */
-    if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_FF1) != RESET && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_FF1) != RESET)
-    {
-        /* Clear FIFO1 FULL Flag */
-        __HAL_CAN_CLEAR_FLAG(hcan, CAN_FLAG_FF1);
-    }
-    
-    /* Check Overrun flag for FIFO1 */
-    if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_FOV1) != RESET && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_FOV1) != RESET)
-    {
-        /* Clear FIFO1 Overrun Flag */
-        __HAL_CAN_CLEAR_FLAG(hcan, CAN_FLAG_FOV1);
-        rt_hw_can_isr(&dev_can2, RT_CAN_EVENT_RXOF_IND | 1 << 8);
-    }
+    drv_rx_isr(&dev_can2, CAN_RX_FIFO1);
     rt_interrupt_leave();
 }
 
@@ -570,17 +318,20 @@ void CAN2_SCE_IRQHandler(void)
  */
 void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan)
 {
-    __HAL_CAN_ENABLE_IT(hcan, CAN_IT_EWG |
-                               CAN_IT_EPV |
-                               CAN_IT_BOF |
-                               CAN_IT_LEC |
-                               CAN_IT_ERR |
-                               CAN_IT_FMP0|
-                               CAN_IT_FOV0|
-                               CAN_IT_FMP1|
-                               CAN_IT_FOV1|
-                               CAN_IT_TME);
+    __HAL_CAN_ENABLE_IT(hcan,  CAN_IT_ERROR_WARNING |
+                               CAN_IT_ERROR_PASSIVE |
+                               CAN_IT_BUSOFF |
+                               CAN_IT_LAST_ERROR_CODE |
+                               CAN_IT_ERROR |
+                               CAN_IT_RX_FIFO0_MSG_PENDING|
+                               CAN_IT_RX_FIFO0_OVERRUN|
+                               CAN_IT_RX_FIFO1_MSG_PENDING|
+                               CAN_IT_RX_FIFO1_OVERRUN|
+                               CAN_IT_TX_MAILBOX_EMPTY);
 }
+
+
+
 
 static rt_err_t drv_configure(struct rt_can_device *dev_can,
                               struct can_configure *cfg)
@@ -588,7 +339,6 @@ static rt_err_t drv_configure(struct rt_can_device *dev_can,
     struct stm32_drv_can *drv_can;
     rt_uint32_t baud_index;
     CAN_InitTypeDef *drv_init;
-    CAN_FilterConfTypeDef *filterConf;
 
     RT_ASSERT(dev_can);
     RT_ASSERT(cfg);
@@ -596,12 +346,12 @@ static rt_err_t drv_configure(struct rt_can_device *dev_can,
     drv_can = (struct stm32_drv_can *)dev_can->parent.user_data;
     drv_init = &drv_can->CanHandle.Init;
 
-    drv_init->TTCM = DISABLE;
-    drv_init->ABOM = DISABLE;
-    drv_init->AWUM = DISABLE;
-    drv_init->NART = DISABLE;
-    drv_init->RFLM = DISABLE;
-    drv_init->TXFP = DISABLE;
+    drv_init->TimeTriggeredMode = DISABLE;
+    drv_init->AutoBusOff = ENABLE;
+    drv_init->AutoWakeUp = DISABLE;
+    drv_init->AutoRetransmission = DISABLE;
+    drv_init->ReceiveFifoLocked = DISABLE;
+    drv_init->TransmitFifoPriority = ENABLE;
 
     switch (cfg->mode)
     {
@@ -620,9 +370,9 @@ static rt_err_t drv_configure(struct rt_can_device *dev_can,
     }
 
     baud_index = get_can_baud_index(cfg->baud_rate);
-    drv_init->SJW = BAUD_DATA(SJW, baud_index);
-    drv_init->BS1 = BAUD_DATA(BS1, baud_index);
-    drv_init->BS2 = BAUD_DATA(BS2, baud_index);
+    drv_init->SyncJumpWidth = BAUD_DATA(SJW, baud_index);
+    drv_init->TimeSeg1 = BAUD_DATA(BS1, baud_index);
+    drv_init->TimeSeg2 = BAUD_DATA(BS2, baud_index);
     drv_init->Prescaler = BAUD_DATA(RRESCL, baud_index);
     if (HAL_CAN_Init(&drv_can->CanHandle) != HAL_OK)
     {
@@ -630,26 +380,18 @@ static rt_err_t drv_configure(struct rt_can_device *dev_can,
     }
     
     /* Filter conf */
-    filterConf = &drv_can->FilterConfig;
-    filterConf->FilterNumber = 0;
-    filterConf->FilterMode = CAN_FILTERMODE_IDMASK;
-    filterConf->FilterScale = CAN_FILTERSCALE_32BIT;
-    filterConf->FilterIdHigh = 0x0000;
-    filterConf->FilterIdLow = 0x0000;
-    filterConf->FilterMaskIdHigh = 0x0000;
-    filterConf->FilterMaskIdLow = 0x0000;
-    filterConf->FilterFIFOAssignment = CAN_FIFO0;
-    filterConf->FilterActivation = ENABLE;
-    filterConf->BankNumber = 14;
-    HAL_CAN_ConfigFilter(&drv_can->CanHandle, filterConf);
+    HAL_CAN_ConfigFilter(&drv_can->CanHandle, &drv_can->FilterConfig);
+    /* can start */
+    HAL_CAN_Start(&drv_can->CanHandle);
     return RT_EOK;
 }
 
 static rt_err_t drv_control(struct rt_can_device *can, int cmd, void *arg)
 {
-    struct stm32_drv_can *drv_can;
+    struct stm32_drv_can *drv_can = RT_NULL;
     rt_uint32_t argval;
-
+    struct rt_can_filter_config *filter_cfg = RT_NULL;
+    CAN_FilterTypeDef can_filter;
     drv_can = (struct stm32_drv_can *) can->parent.user_data;
     assert_param(drv_can != RT_NULL);
 
@@ -659,7 +401,8 @@ static rt_err_t drv_control(struct rt_can_device *can, int cmd, void *arg)
         argval = (rt_uint32_t) arg;
         if (argval == RT_DEVICE_FLAG_INT_RX)
         {
-            if (CAN1 == drv_can->CanHandle.Instance) {
+            if (CAN1 == drv_can->CanHandle.Instance)
+            {
                 HAL_NVIC_DisableIRQ(CAN1_RX0_IRQn);
                 HAL_NVIC_DisableIRQ(CAN1_RX1_IRQn);
             }
@@ -670,12 +413,12 @@ static rt_err_t drv_control(struct rt_can_device *can, int cmd, void *arg)
                 HAL_NVIC_DisableIRQ(CAN2_RX1_IRQn);
             }
             #endif
-            __HAL_CAN_DISABLE_IT(&drv_can->CanHandle, CAN_IT_FMP0);
-            __HAL_CAN_DISABLE_IT(&drv_can->CanHandle, CAN_IT_FF0 );
-            __HAL_CAN_DISABLE_IT(&drv_can->CanHandle, CAN_IT_FOV0);
-            __HAL_CAN_DISABLE_IT(&drv_can->CanHandle, CAN_IT_FMP1);
-            __HAL_CAN_DISABLE_IT(&drv_can->CanHandle, CAN_IT_FF1 );
-            __HAL_CAN_DISABLE_IT(&drv_can->CanHandle, CAN_IT_FOV1);
+            __HAL_CAN_DISABLE_IT(&drv_can->CanHandle, CAN_IT_RX_FIFO0_MSG_PENDING);
+            __HAL_CAN_DISABLE_IT(&drv_can->CanHandle, CAN_IT_RX_FIFO0_FULL);
+            __HAL_CAN_DISABLE_IT(&drv_can->CanHandle, CAN_IT_RX_FIFO0_OVERRUN);
+            __HAL_CAN_DISABLE_IT(&drv_can->CanHandle, CAN_IT_RX_FIFO1_MSG_PENDING);
+            __HAL_CAN_DISABLE_IT(&drv_can->CanHandle, CAN_IT_RX_FIFO1_FULL);
+            __HAL_CAN_DISABLE_IT(&drv_can->CanHandle, CAN_IT_RX_FIFO1_OVERRUN);
         }
         else if (argval == RT_DEVICE_FLAG_INT_TX)
         {
@@ -689,7 +432,7 @@ static rt_err_t drv_control(struct rt_can_device *can, int cmd, void *arg)
                 HAL_NVIC_DisableIRQ(CAN2_TX_IRQn);
             }
             #endif
-            __HAL_CAN_DISABLE_IT(&drv_can->CanHandle, CAN_IT_TME);
+            __HAL_CAN_DISABLE_IT(&drv_can->CanHandle, CAN_IT_TX_MAILBOX_EMPTY);
         }
         else if (argval == RT_DEVICE_CAN_INT_ERR)
         {
@@ -703,21 +446,21 @@ static rt_err_t drv_control(struct rt_can_device *can, int cmd, void *arg)
                 NVIC_DisableIRQ(CAN2_SCE_IRQn);
             }
             #endif
-            __HAL_CAN_DISABLE_IT(&drv_can->CanHandle, CAN_IT_BOF);
-            __HAL_CAN_DISABLE_IT(&drv_can->CanHandle, CAN_IT_LEC);
-            __HAL_CAN_DISABLE_IT(&drv_can->CanHandle, CAN_IT_ERR);
+            __HAL_CAN_DISABLE_IT(&drv_can->CanHandle, CAN_IT_BUSOFF);
+            __HAL_CAN_DISABLE_IT(&drv_can->CanHandle, CAN_IT_LAST_ERROR_CODE);
+            __HAL_CAN_DISABLE_IT(&drv_can->CanHandle, CAN_IT_ERROR);
         }
         break;
     case RT_DEVICE_CTRL_SET_INT:
         argval = (rt_uint32_t) arg;
         if (argval == RT_DEVICE_FLAG_INT_RX)
         {
-            __HAL_CAN_ENABLE_IT(&drv_can->CanHandle, CAN_IT_FMP0);
-            __HAL_CAN_ENABLE_IT(&drv_can->CanHandle, CAN_IT_FF0);
-            __HAL_CAN_ENABLE_IT(&drv_can->CanHandle, CAN_IT_FOV0);
-            __HAL_CAN_ENABLE_IT(&drv_can->CanHandle, CAN_IT_FMP1);
-            __HAL_CAN_ENABLE_IT(&drv_can->CanHandle, CAN_IT_FF1);
-            __HAL_CAN_ENABLE_IT(&drv_can->CanHandle, CAN_IT_FOV1);
+            __HAL_CAN_ENABLE_IT(&drv_can->CanHandle, CAN_IT_RX_FIFO0_MSG_PENDING);
+            __HAL_CAN_ENABLE_IT(&drv_can->CanHandle, CAN_IT_RX_FIFO0_FULL);
+            __HAL_CAN_ENABLE_IT(&drv_can->CanHandle, CAN_IT_RX_FIFO0_OVERRUN);
+            __HAL_CAN_ENABLE_IT(&drv_can->CanHandle, CAN_IT_RX_FIFO1_MSG_PENDING);
+            __HAL_CAN_ENABLE_IT(&drv_can->CanHandle, CAN_IT_RX_FIFO1_FULL);
+            __HAL_CAN_ENABLE_IT(&drv_can->CanHandle, CAN_IT_RX_FIFO1_OVERRUN);
 
             if (CAN1 == drv_can->CanHandle.Instance)
             {
@@ -738,7 +481,7 @@ static rt_err_t drv_control(struct rt_can_device *can, int cmd, void *arg)
         }
         else if (argval == RT_DEVICE_FLAG_INT_TX)
         {
-            __HAL_CAN_ENABLE_IT(&drv_can->CanHandle, CAN_IT_TME);
+            __HAL_CAN_ENABLE_IT(&drv_can->CanHandle, CAN_IT_TX_MAILBOX_EMPTY);
 
             if (CAN1 == drv_can->CanHandle.Instance)
             {
@@ -755,9 +498,9 @@ static rt_err_t drv_control(struct rt_can_device *can, int cmd, void *arg)
         }
         else if (argval == RT_DEVICE_CAN_INT_ERR)
         {
-            __HAL_CAN_ENABLE_IT(&drv_can->CanHandle, CAN_IT_BOF);
-            __HAL_CAN_ENABLE_IT(&drv_can->CanHandle, CAN_IT_LEC);
-            __HAL_CAN_ENABLE_IT(&drv_can->CanHandle, CAN_IT_ERR);
+            __HAL_CAN_ENABLE_IT(&drv_can->CanHandle, CAN_IT_BUSOFF);
+            __HAL_CAN_ENABLE_IT(&drv_can->CanHandle, CAN_IT_LAST_ERROR_CODE);
+            __HAL_CAN_ENABLE_IT(&drv_can->CanHandle, CAN_IT_ERROR);
 
             if (CAN1 == drv_can->CanHandle.Instance)
             {
@@ -774,7 +517,30 @@ static rt_err_t drv_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_SET_FILTER:
-        /* TODO: filter*/
+        if (RT_NULL == arg)
+        {
+            /* default Filter conf */
+            HAL_CAN_ConfigFilter(&drv_can->CanHandle, &drv_can->FilterConfig);
+        }
+        else
+        {
+            filter_cfg = (struct rt_can_filter_config *)arg;
+            /* get default filter */
+            can_filter = drv_can->FilterConfig;
+            for (int i = 0; i < filter_cfg->count; ++i)
+            {
+                can_filter.FilterBank = filter_cfg->items[i].hdr;
+                can_filter.FilterIdHigh = (filter_cfg->items[i].id >> 13) & 0xFFFF;
+                can_filter.FilterIdLow = ((filter_cfg->items[i].id << 3) | 
+                                         (filter_cfg->items[i].ide << 2) | 
+                                         (filter_cfg->items[i].rtr << 1)) & 0xFFFF;
+                can_filter.FilterMaskIdHigh = (filter_cfg->items[i].mask >> 16) & 0xFFFF;
+                can_filter.FilterMaskIdLow = filter_cfg->items[i].mask & 0xFFFF;
+                can_filter.FilterMode = filter_cfg->items[i].mode;
+                /* Filter conf */
+                HAL_CAN_ConfigFilter(&drv_can->CanHandle, &can_filter);
+            }
+        }
         break;
     case RT_CAN_CMD_SET_MODE:
         argval = (rt_uint32_t) arg;
@@ -788,10 +554,7 @@ static rt_err_t drv_control(struct rt_can_device *can, int cmd, void *arg)
         if (argval != can->config.mode)
         {
             can->config.mode = argval;
-            if (HAL_CAN_Init(&drv_can->CanHandle) != HAL_OK)
-            {
-                return RT_ERROR;
-            }
+            return drv_configure(can, &can->config);
         }
         break;
     case RT_CAN_CMD_SET_BAUD:
@@ -813,23 +576,7 @@ static rt_err_t drv_control(struct rt_can_device *can, int cmd, void *arg)
             CAN_InitTypeDef *drv_init;
             rt_uint32_t baud_index;
             can->config.baud_rate = argval;
-            drv_init = &drv_can->CanHandle.Init;
-            drv_init->TTCM = DISABLE;
-            drv_init->ABOM = DISABLE;
-            drv_init->AWUM = DISABLE;
-            drv_init->NART = DISABLE;
-            drv_init->RFLM = DISABLE;
-            drv_init->TXFP = DISABLE;
-            baud_index = get_can_baud_index(can->config.baud_rate);
-            drv_init->SJW = BAUD_DATA(SJW, baud_index);
-            drv_init->BS1 = BAUD_DATA(BS1, baud_index);
-            drv_init->BS2 = BAUD_DATA(BS2, baud_index);
-            drv_init->Prescaler = BAUD_DATA(RRESCL, baud_index);
-
-            if (HAL_CAN_Init(&drv_can->CanHandle) != HAL_OK)
-            {
-                return RT_ERROR;
-            }
+            return drv_configure(can, &can->config);
         }
         break;
     case RT_CAN_CMD_SET_PRIV:
@@ -842,10 +589,7 @@ static rt_err_t drv_control(struct rt_can_device *can, int cmd, void *arg)
         if (argval != can->config.privmode)
         {
             can->config.privmode = argval;
-            if (HAL_CAN_Init(&drv_can->CanHandle) != HAL_OK)
-            {
-                return RT_ERROR;
-            }
+            return drv_configure(can, &can->config);
         }
         break;
     case RT_CAN_CMD_GET_STATUS:
@@ -871,11 +615,12 @@ static int drv_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t b
     CAN_HandleTypeDef *hcan = RT_NULL;
     hcan = &((struct stm32_drv_can *) can->parent.user_data)->CanHandle;
     struct rt_can_msg *pmsg = (struct rt_can_msg *) buf;
+    CAN_TxHeaderTypeDef txheader = {0};
     
     /*check Select mailbox  is empty */
-    switch (boxno)
+    switch (1 << boxno)
     {
-        case CAN_TXMAILBOX_0:   
+        case CAN_TX_MAILBOX0:   
             if (HAL_IS_BIT_SET(hcan->Instance->TSR, CAN_TSR_TME0) != SET) 
             {    
                 /* Change CAN state */
@@ -884,7 +629,7 @@ static int drv_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t b
                 return -RT_ERROR;
             }
             break;
-        case CAN_TXMAILBOX_1:
+        case CAN_TX_MAILBOX1:
             if (HAL_IS_BIT_SET(hcan->Instance->TSR, CAN_TSR_TME1) != SET) 
             {    
                 /* Change CAN state */
@@ -893,7 +638,7 @@ static int drv_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t b
                 return -RT_ERROR;
             }
             break;
-        case CAN_TXMAILBOX_2:
+        case CAN_TX_MAILBOX2:
             if (HAL_IS_BIT_SET(hcan->Instance->TSR, CAN_TSR_TME2) != SET) 
             {    
                 /* Change CAN state */
@@ -907,133 +652,141 @@ static int drv_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t b
             break;
     }
     
-    /* check id type */
     if (RT_CAN_STDID == pmsg->ide)
     {
-        hcan->pTxMsg->IDE = CAN_ID_STD;
-        hcan->pTxMsg->StdId = pmsg->id;
-        hcan->pTxMsg->ExtId = 0xFFFFFFFFU;
+        txheader.IDE = CAN_ID_STD;
+        txheader.StdId = pmsg->id;
     }
-    else if (RT_CAN_EXTID == pmsg->ide)
+    else
     {
-        hcan->pTxMsg->IDE = CAN_ID_EXT;
-        hcan->pTxMsg->StdId = 0xFFFFFFFFU;
-        hcan->pTxMsg->ExtId = pmsg->id;
+        txheader.IDE = CAN_ID_EXT;
+        txheader.ExtId = pmsg->id;
     }
-       
-    /* check frame type */
+    
     if (RT_CAN_DTR == pmsg->rtr)
     {
-        hcan->pTxMsg->RTR = CAN_RTR_DATA;
+        txheader.RTR = CAN_RTR_DATA;
     }
-    else if (RT_CAN_RTR == pmsg->rtr)
+    else
     {
-        hcan->pTxMsg->RTR = CAN_RTR_REMOTE;
+        txheader.RTR = CAN_RTR_REMOTE;
     }
-
-    hcan->pTxMsg->DLC = pmsg->len;
-    /* copy user data to hcan */
-    hcan->pTxMsg->Data[0] = pmsg->data[0];
-    hcan->pTxMsg->Data[1] = pmsg->data[1];
-    hcan->pTxMsg->Data[2] = pmsg->data[2];
-    hcan->pTxMsg->Data[3] = pmsg->data[3];
-    hcan->pTxMsg->Data[4] = pmsg->data[4];
-    hcan->pTxMsg->Data[5] = pmsg->data[5];
-    hcan->pTxMsg->Data[6] = pmsg->data[6];
-    hcan->pTxMsg->Data[7] = pmsg->data[7];
     
     /* clear TIR */
     hcan->Instance->sTxMailBox[boxno].TIR &= CAN_TI0R_TXRQ;
     /* Set up the Id */
-    if (hcan->pTxMsg->IDE == CAN_ID_STD)
+    if (RT_CAN_STDID == pmsg->ide)
     {
-      assert_param(IS_CAN_STDID(hcan->pTxMsg->StdId));
-      hcan->Instance->sTxMailBox[boxno].TIR |= ((hcan->pTxMsg->StdId << CAN_TI0R_STID_Pos) | \
-                                                           hcan->pTxMsg->RTR);
+        hcan->Instance->sTxMailBox[boxno].TIR |= (txheader.StdId << CAN_TI0R_STID_Pos) | txheader.IDE | txheader.RTR;
     }
     else
     {
-      assert_param(IS_CAN_EXTID(hcan->pTxMsg->ExtId));
-      hcan->Instance->sTxMailBox[boxno].TIR |= ((hcan->pTxMsg->ExtId << CAN_TI0R_EXID_Pos) | \
-                                                           hcan->pTxMsg->IDE |
-                                                           hcan->pTxMsg->RTR);
+        hcan->Instance->sTxMailBox[boxno].TIR |= (txheader.ExtId << CAN_TI0R_EXID_Pos) | txheader.IDE | txheader.RTR;
     }
     /* Set up the DLC */
-    hcan->pTxMsg->DLC &= (uint8_t)0x0000000FU;
-    hcan->Instance->sTxMailBox[boxno].TDTR &= 0xFFFFFFF0U;
-    hcan->Instance->sTxMailBox[boxno].TDTR |= hcan->pTxMsg->DLC;
-
+    hcan->Instance->sTxMailBox[boxno].TDTR = pmsg->len & 0x0FU;
     /* Set up the data field */
-    WRITE_REG(hcan->Instance->sTxMailBox[boxno].TDLR, ((uint32_t)hcan->pTxMsg->Data[3U] << CAN_TDL0R_DATA3_Pos) |
-                                                                ((uint32_t)hcan->pTxMsg->Data[2U] << CAN_TDL0R_DATA2_Pos) |
-                                                                ((uint32_t)hcan->pTxMsg->Data[1U] << CAN_TDL0R_DATA1_Pos) |
-                                                                ((uint32_t)hcan->pTxMsg->Data[0U] << CAN_TDL0R_DATA0_Pos));
-    WRITE_REG(hcan->Instance->sTxMailBox[boxno].TDHR, ((uint32_t)hcan->pTxMsg->Data[7U] << CAN_TDL0R_DATA3_Pos) |
-                                                                ((uint32_t)hcan->pTxMsg->Data[6U] << CAN_TDL0R_DATA2_Pos) |
-                                                                ((uint32_t)hcan->pTxMsg->Data[5U] << CAN_TDL0R_DATA1_Pos) |
-                                                                ((uint32_t)hcan->pTxMsg->Data[4U] << CAN_TDL0R_DATA0_Pos));
-
+    WRITE_REG(hcan->Instance->sTxMailBox[boxno].TDHR,
+            ((uint32_t)pmsg->data[7] << CAN_TDH0R_DATA7_Pos) |
+            ((uint32_t)pmsg->data[6] << CAN_TDH0R_DATA6_Pos) |
+            ((uint32_t)pmsg->data[5] << CAN_TDH0R_DATA5_Pos) |
+            ((uint32_t)pmsg->data[4] << CAN_TDH0R_DATA4_Pos));
+    WRITE_REG(hcan->Instance->sTxMailBox[boxno].TDLR,
+            ((uint32_t)pmsg->data[3] << CAN_TDL0R_DATA3_Pos) |
+            ((uint32_t)pmsg->data[2] << CAN_TDL0R_DATA2_Pos) |
+            ((uint32_t)pmsg->data[1] << CAN_TDL0R_DATA1_Pos) |
+            ((uint32_t)pmsg->data[0] << CAN_TDL0R_DATA0_Pos));
     /* Request transmission */
-    hcan->Instance->sTxMailBox[boxno].TIR |= CAN_TI0R_TXRQ;
-    
+    SET_BIT(hcan->Instance->sTxMailBox[boxno].TIR, CAN_TI0R_TXRQ);
     return RT_EOK;
 }
 
-static int drv_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxno)
+static void drv_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
 {
     CAN_HandleTypeDef *hcan;
+    hcan = &((struct stm32_drv_can *) can->parent.user_data)->CanHandle;
+    
+    switch (fifo)
+    {
+    case CAN_RX_FIFO0:
+        /* save to user list */
+        if (HAL_CAN_GetRxFifoFillLevel(hcan, CAN_RX_FIFO0) && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_RX_FIFO0_MSG_PENDING))
+        {
+            rt_hw_can_isr(can, RT_CAN_EVENT_RX_IND | fifo << 8);
+        }
+        /* Check FULL flag for FIFO0 */
+        if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_FF0) && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_RX_FIFO0_FULL))
+        {
+            /* Clear FIFO0 FULL Flag */
+            __HAL_CAN_CLEAR_FLAG(hcan, CAN_FLAG_FF0);
+        }
+        
+        /* Check Overrun flag for FIFO0 */
+        if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_FOV0) && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_RX_FIFO0_OVERRUN))
+        {
+            /* Clear FIFO0 Overrun Flag */
+            __HAL_CAN_CLEAR_FLAG(hcan, CAN_FLAG_FOV0);
+            rt_hw_can_isr(can, RT_CAN_EVENT_RXOF_IND | fifo << 8);
+        }
+        break;
+    case CAN_RX_FIFO1:
+        /* save to user list */
+        if (HAL_CAN_GetRxFifoFillLevel(hcan, CAN_RX_FIFO1) && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_RX_FIFO1_MSG_PENDING))
+        {
+            rt_hw_can_isr(can, RT_CAN_EVENT_RX_IND | fifo << 8);
+        }
+        /* Check FULL flag for FIFO1 */
+        if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_FF1) && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_RX_FIFO1_FULL))
+        {
+            /* Clear FIFO1 FULL Flag */
+            __HAL_CAN_CLEAR_FLAG(hcan, CAN_FLAG_FF1);
+        }
+        
+        /* Check Overrun flag for FIFO1 */
+        if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_FOV1) && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_RX_FIFO1_OVERRUN))
+        {
+            /* Clear FIFO1 Overrun Flag */
+            __HAL_CAN_CLEAR_FLAG(hcan, CAN_FLAG_FOV1);
+            rt_hw_can_isr(can, RT_CAN_EVENT_RXOF_IND | fifo << 8);
+        }
+        break;
+    }
+}
+
+static int drv_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
+{
+    HAL_StatusTypeDef status;
+    CAN_HandleTypeDef *hcan = RT_NULL;
     struct rt_can_msg *pmsg = (struct rt_can_msg *) buf;
     hcan = &((struct stm32_drv_can *) can->parent.user_data)->CanHandle;
-    CanRxMsgTypeDef *pRxMsg = RT_NULL;
-    
-    /* get FIFO */
-    switch (boxno)
-    {
-        case CAN_FIFO0:
-            pRxMsg = hcan->pRxMsg;
-            break;
-        case CAN_FIFO1:
-            pRxMsg = hcan->pRx1Msg;
-            break;
-        default:
-            RT_ASSERT(0);
-            break;
-    }
-    
-    /* copy data */
+    CAN_RxHeaderTypeDef rxheader = {0};
+    /* get data */
+    status = HAL_CAN_GetRxMessage(hcan, fifo, &rxheader, pmsg->data);
+    if (HAL_OK != status) return -RT_ERROR;
     /* get id */
-    if (CAN_ID_STD == pRxMsg->IDE)
+    if (CAN_ID_STD == rxheader.IDE)
     {
         pmsg->ide = RT_CAN_STDID;
-        pmsg->id = pRxMsg->StdId;
+        pmsg->id = rxheader.StdId;
     }
-    else if (CAN_ID_EXT == pRxMsg->IDE)
+    else
     {
         pmsg->ide = RT_CAN_EXTID;
-        pmsg->id = pRxMsg->ExtId;
+        pmsg->id = rxheader.ExtId;
     }
     /* get type */
-    if (CAN_RTR_DATA == pRxMsg->RTR)
+    if (CAN_RTR_DATA == rxheader.RTR)
     {
         pmsg->rtr = RT_CAN_DTR;
     }
-    else if (CAN_RTR_REMOTE == pRxMsg->RTR)
+    else
     {
         pmsg->rtr = RT_CAN_RTR;
     }
     /* get len */
-    pmsg->len = pRxMsg->DLC;
+    pmsg->len = rxheader.DLC;
     /* get hdr */
-    pmsg->hdr = pRxMsg->FMI;
-    /* get data */
-    pmsg->data[0] = pRxMsg->Data[0];
-    pmsg->data[1] = pRxMsg->Data[1];
-    pmsg->data[2] = pRxMsg->Data[2];
-    pmsg->data[3] = pRxMsg->Data[3];
-    pmsg->data[4] = pRxMsg->Data[4];
-    pmsg->data[5] = pRxMsg->Data[5];
-    pmsg->data[6] = pRxMsg->Data[6];
-    pmsg->data[7] = pRxMsg->Data[7];
+    pmsg->hdr = rxheader.FilterMatchIndex;
     return RT_EOK;
 }
 
@@ -1059,13 +812,24 @@ int rt_hw_can_init(void)
     config.maxhdr = 28;
     #endif
 #endif
-
+    /* config default filter */
+    CAN_FilterTypeDef filterConf = {0};
+    filterConf.FilterBank = 0;
+    filterConf.FilterMode = CAN_FILTERMODE_IDMASK;
+    filterConf.FilterScale = CAN_FILTERSCALE_32BIT;
+    filterConf.FilterIdHigh = 0x0000;
+    filterConf.FilterIdLow = 0x0000;
+    filterConf.FilterMaskIdHigh = 0x0000;
+    filterConf.FilterMaskIdLow = 0x0000;
+    filterConf.FilterFIFOAssignment = CAN_FILTER_FIFO0;
+    filterConf.FilterActivation = ENABLE;
+    filterConf.SlaveStartFilterBank = 14;
+    
 #ifdef BSP_USING_CAN1
+    filterConf.FilterBank = 0;
+    drv_can1.FilterConfig = filterConf;
     drv_can = &drv_can1;
     drv_can->CanHandle.Instance = CAN1;
-    drv_can->CanHandle.pTxMsg = &drv_can->TxMessage;
-    drv_can->CanHandle.pRxMsg = &drv_can->RxMessage;
-    drv_can->CanHandle.pRx1Msg = &drv_can->Rx1Message;
     dev_can1.ops    = &drv_can_ops;
     dev_can1.config = config;
     /* register CAN1 device */
@@ -1075,11 +839,10 @@ int rt_hw_can_init(void)
 #endif /* BSP_USING_CAN1 */
 
 #ifdef BSP_USING_CAN2
+    filterConf.FilterBank = filterConf.SlaveStartFilterBank;
+    drv_can2.FilterConfig = filterConf;
     drv_can = &drv_can2;
     drv_can->CanHandle.Instance = CAN2;
-    drv_can->CanHandle.pTxMsg = &drv_can->TxMessage;
-    drv_can->CanHandle.pRxMsg = &drv_can->RxMessage;
-    drv_can->CanHandle.pRx1Msg = &drv_can->Rx1Message;
     dev_can2.ops    = &drv_can_ops;
     dev_can2.config = config;
     /* register CAN2 device */
@@ -1090,7 +853,5 @@ int rt_hw_can_init(void)
 
     return 0;
 }
-
 INIT_BOARD_EXPORT(rt_hw_can_init);
-
 #endif /* RT_USING_CAN */

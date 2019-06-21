@@ -48,7 +48,7 @@ config RT_USING_CAN
 if RT_USING_CAN
     config RT_CAN_USING_HDR
         bool "Enable CAN hardware filter"
-        default y
+        default n
 endif
 
 config RT_USING_HWTIMER
