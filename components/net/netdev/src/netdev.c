@@ -294,6 +294,20 @@ struct netdev *netdev_get_by_family(int family)
     return RT_NULL;
 }
 
+/**
+ * This function will get the family type from network interface device
+ * 
+ * @param netdev network interface device object
+ * 
+ * @return the network interface device family type
+ */
+int netdev_family_get(struct netdev *netdev)
+{
+    RT_ASSERT(netdev); 
+    
+    return ((struct sal_proto_family *)netdev->sal_user_data)->family;
+}
+
 #endif /* RT_USING_SAL */
 
 /**
