@@ -138,6 +138,7 @@ struct netdev *netdev_get_by_ipaddr(ip_addr_t *ip_addr);
 struct netdev *netdev_get_by_name(const char *name);
 #ifdef RT_USING_SAL
 struct netdev *netdev_get_by_family(int family);
+int netdev_family_get(struct netdev *netdev);
 #endif /* RT_USING_SAL */
 
 /* Set default network interface device in list */
