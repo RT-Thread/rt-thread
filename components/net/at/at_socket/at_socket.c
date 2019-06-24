@@ -540,11 +540,12 @@ static int socketaddr_to_ipaddr_port(const struct sockaddr *sockaddr, ip_addr_t 
     const struct sockaddr_in* sin = (const struct sockaddr_in*) (const void *) sockaddr;
 
 #if NETDEV_IPV4 && NETDEV_IPV6
-    (*addr).u_addr.ip4.addr = sin->sin_addr.s_addr;
+    addr->u_addr.ip4.addr = sin->sin_addr.s_addr;
+    addr->type = IPADDR_TYPE_V4;
 #elif NETDEV_IPV4
-    (*addr).addr = sin->sin_addr.s_addr;
+    addr->addr = sin->sin_addr.s_addr;
 #elif NETDEV_IPV6
-    LOG_E("not support IPV6.");
+#error "not support IPV6."
 #endif /* NETDEV_IPV4 && NETDEV_IPV6 */
 
     *port = (uint16_t) HTONS_PORT(sin->sin_port);
@@ -1126,10 +1127,11 @@ struct hostent *at_gethostbyname(const char *name)
 
 #if NETDEV_IPV4 && NETDEV_IPV6
     addr.u_addr.ip4.addr = ipstr_to_u32(ipstr);
+	addr.type = IPADDR_TYPE_V4;
 #elif NETDEV_IPV4
     addr.addr = ipstr_to_u32(ipstr);
 #elif NETDEV_IPV6
-    LOG_E("not support IPV6.");
+#error "not support IPV6."
 #endif /* NETDEV_IPV4 && NETDEV_IPV6 */
  
     /* fill hostent structure */
@@ -1202,7 +1204,7 @@ int at_getaddrinfo(const char *nodename, const char *servname,
         if ((hints != RT_NULL) && (hints->ai_flags & AI_NUMERICHOST))
         {
             /* no DNS lookup, just parse for an address string */
-            if (!inet_aton(nodename, (ip4_addr_t * )&addr))
+            if (!inet_aton(nodename, &addr))
             {
                 return EAI_NONAME;
             }
@@ -1240,7 +1242,7 @@ int at_getaddrinfo(const char *nodename, const char *servname,
         #elif NETDEV_IPV4
             addr.addr = ipstr_to_u32(ip_str);
         #elif NETDEV_IPV6
-            LOG_E("not support IPV6."); 
+        #error "not support IPV6."
         #endif /* NETDEV_IPV4 && NETDEV_IPV6 */  
         }
     }
@@ -1275,10 +1277,11 @@ int at_getaddrinfo(const char *nodename, const char *servname,
     /* set up sockaddr */
 #if NETDEV_IPV4 && NETDEV_IPV6
     sa4->sin_addr.s_addr = addr.u_addr.ip4.addr;
+    sa4->type = IPADDR_TYPE_V4;
 #elif NETDEV_IPV4
     sa4->sin_addr.s_addr = addr.addr;
 #elif NETDEV_IPV6
-    LOG_E("not support IPV6."); 
+#error "not support IPV6."
 #endif /* NETDEV_IPV4 && NETDEV_IPV6 */
     sa4->sin_family = AF_INET;
     sa4->sin_len = sizeof(struct sockaddr_in);
