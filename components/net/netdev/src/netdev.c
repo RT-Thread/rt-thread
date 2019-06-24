@@ -58,9 +58,21 @@ int netdev_register(struct netdev *netdev, const char *name, void *user_data)
     ip_addr_set_zero(&(netdev->ip_addr));
     ip_addr_set_zero(&(netdev->netmask));
     ip_addr_set_zero(&(netdev->gw));
+
+    IP_SET_TYPE_VAL(netdev->ip_addr, IPADDR_TYPE_V4);
+    IP_SET_TYPE_VAL(netdev->netmask, IPADDR_TYPE_V4);
+    IP_SET_TYPE_VAL(netdev->gw, IPADDR_TYPE_V4);
+#if NETDEV_IPV6
+    for (index = 0; index < NETDEV_IPV6_NUM_ADDRESSES; index++)
+    {
+        ip_addr_set_zero(&(netdev->ip6_addr[index]));
+        IP_SET_TYPE_VAL(netdev->ip_addr, IPADDR_TYPE_V6);
+    }
+#endif /* NETDEV_IPV6 */
     for (index = 0; index < NETDEV_DNS_SERVERS_NUM; index++)
     {
         ip_addr_set_zero(&(netdev->dns_servers[index]));
+        IP_SET_TYPE_VAL(netdev->ip_addr, IPADDR_TYPE_V4);
     }
     netdev->status_callback = RT_NULL;
     netdev->addr_callback = RT_NULL;
@@ -839,7 +851,7 @@ static void netdev_list_if(void)
 
         rt_kprintf("network interface device: %s%s\n",
                    netdev->name,
-                   (netdev == netdev_default)?" (Default)":"");
+                   (netdev == netdev_default) ? " (Default)" : "");
         rt_kprintf("MTU: %d\n", netdev->mtu);
 
         /* 6 - MAC address, 8 - IEMI */
@@ -880,6 +892,28 @@ static void netdev_list_if(void)
         rt_kprintf("ip address: %s\n", inet_ntoa(netdev->ip_addr));
         rt_kprintf("gw address: %s\n", inet_ntoa(netdev->gw));
         rt_kprintf("net mask  : %s\n", inet_ntoa(netdev->netmask));
+
+#if NETDEV_IPV6
+        {
+            ip_addr_t *addr;
+            int i;
+            
+            addr = &netdev->ip6_addr[0];
+            
+            if (!ip_addr_isany(addr))
+            {
+                rt_kprintf("ipv6 link-local: %s %s\n", inet_ntoa(*addr),
+                        !ip_addr_isany(addr) ? "VALID" : "INVALID");
+
+                for (i = 1; i < NETDEV_IPV6_NUM_ADDRESSES; i++)
+                {
+                    addr = &netdev->ip6_addr[i];
+                    rt_kprintf("ipv6[%d] address: %s %s\n", i, inet_ntoa(*addr),
+                            !ip_addr_isany(addr) ? "VALID" : "INVALID");
+                }
+            }    
+        }
+#endif /* NETDEV_IPV6 */
 
         for (index = 0; index < NETDEV_DNS_SERVERS_NUM; index++)
         {
