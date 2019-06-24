@@ -157,7 +157,7 @@ static rt_err_t _audio_dev_open(struct rt_device *dev, rt_uint16_t oflag)
 
             //init pipe for record
             {
-                rt_uint8_t *buf = rt_malloc(CFG_AUDIO_RECORD_PIPE_SIZE);
+                rt_uint8_t *buf = (rt_uint8_t *)rt_malloc(CFG_AUDIO_RECORD_PIPE_SIZE);
 
                 if (buf == RT_NULL)
                 {
@@ -382,7 +382,7 @@ static rt_err_t _audio_dev_control(struct rt_device *dev, int cmd, void *args)
             if (desc)
             {
                 desc->data_size = AUDIO_DEVICE_DECODE_MP_BLOCK_SZ * 2;
-                desc->data_ptr = rt_mp_alloc(&audio->mp, RT_WAITING_FOREVER);
+                desc->data_ptr = (rt_uint8_t *)rt_mp_alloc(&audio->mp, RT_WAITING_FOREVER);
 
                 result = RT_EOK;
             }
@@ -440,7 +440,7 @@ rt_err_t rt_audio_register(struct rt_audio_device *audio, const char *name, rt_u
 
     //init memory pool for replay
     {
-        rt_uint8_t *mempool = rt_malloc(AUDIO_DEVICE_DECODE_MP_SZ);
+        rt_uint8_t *mempool = (rt_uint8_t *)rt_malloc(AUDIO_DEVICE_DECODE_MP_SZ);
         rt_mp_init(&audio->mp, "adu_mp", mempool, AUDIO_DEVICE_DECODE_MP_SZ,
         AUDIO_DEVICE_DECODE_MP_BLOCK_SZ * 2);
     }

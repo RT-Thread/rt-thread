@@ -50,7 +50,7 @@ static rt_size_t rt_pipe_read(rt_device_t dev,
     if (!(pipe->flag & RT_PIPE_FLAG_BLOCK_RD))
     {
         level = rt_hw_interrupt_disable();
-        read_nbytes = rt_ringbuffer_get(&(pipe->ringbuffer), buffer, size);
+        read_nbytes = rt_ringbuffer_get(&(pipe->ringbuffer), (rt_uint8_t *)buffer, size);
 
         /* if the ringbuffer is empty, there won't be any writer waiting */
         if (read_nbytes)
@@ -68,7 +68,7 @@ static rt_size_t rt_pipe_read(rt_device_t dev,
 
     do {
         level = rt_hw_interrupt_disable();
-        read_nbytes = rt_ringbuffer_get(&(pipe->ringbuffer), buffer, size);
+        read_nbytes = rt_ringbuffer_get(&(pipe->ringbuffer), (rt_uint8_t *)buffer, size);
         if (read_nbytes == 0)
         {
             rt_thread_suspend(thread);
@@ -134,10 +134,10 @@ static rt_size_t rt_pipe_write(rt_device_t dev,
 
         if (pipe->flag & RT_PIPE_FLAG_FORCE_WR)
             write_nbytes = rt_ringbuffer_put_force(&(pipe->ringbuffer),
-                                                   buffer, size);
+                                                   (const rt_uint8_t *)buffer, size);
         else
             write_nbytes = rt_ringbuffer_put(&(pipe->ringbuffer),
-                                             buffer, size);
+                                             (const rt_uint8_t *)buffer, size);
 
         _rt_pipe_resume_reader(pipe);
 
@@ -153,7 +153,7 @@ static rt_size_t rt_pipe_write(rt_device_t dev,
 
     do {
         level = rt_hw_interrupt_disable();
-        write_nbytes = rt_ringbuffer_put(&(pipe->ringbuffer), buffer, size);
+        write_nbytes = rt_ringbuffer_put(&(pipe->ringbuffer), (const rt_uint8_t *)buffer, size);
         if (write_nbytes == 0)
         {
             /* pipe full, waiting on suspended write list */
@@ -270,7 +270,7 @@ rt_err_t rt_audio_pipe_create(const char *name, rt_int32_t flag, rt_size_t size)
         return -RT_ENOMEM;
 
     /* create ring buffer of pipe */
-    rb_memptr = rt_malloc(size);
+    rb_memptr = (rt_uint8_t *)rt_malloc(size);
     if (rb_memptr == RT_NULL)
     {
         rt_free(pipe);

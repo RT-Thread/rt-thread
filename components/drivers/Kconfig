@@ -48,7 +48,7 @@ config RT_USING_CAN
 if RT_USING_CAN
     config RT_CAN_USING_HDR
         bool "Enable CAN hardware filter"
-        default y
+        default n
 endif
 
 config RT_USING_HWTIMER
@@ -263,6 +263,10 @@ if RT_USING_SENSOR
         bool "Using Sensor cmd"
         default y
 endif
+
+config RT_USING_TOUCH
+    bool "Using Touch device drivers"
+    default n
 
 menu "Using Hardware Crypto drivers"
     config RT_USING_HWCRYPTO

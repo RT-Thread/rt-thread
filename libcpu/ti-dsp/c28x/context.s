@@ -73,7 +73,9 @@ RT_CTX_RESTORE  .macro
 ;
     .asmfunc
 _rt_hw_interrupt_disable:
-    DINT
+    PUSH  ST1
+    SETC  INTM,DBGM
+    MOV   AL, *--SP
     LRETR
     .endasmfunc
 
@@ -82,7 +84,8 @@ _rt_hw_interrupt_disable:
 ;
     .asmfunc
 _rt_hw_interrupt_enable:
-    EINT
+    MOV   *SP++, AL
+    POP   ST1
     LRETR
     .endasmfunc
     

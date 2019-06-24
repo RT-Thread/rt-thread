@@ -44,15 +44,9 @@ static time_t get_rtc_timestamp(void)
 
 static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 {
-    RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
     RTC_TimeTypeDef RTC_TimeStruct = {0};
     RTC_DateTypeDef RTC_DateStruct = {0};
     struct tm *p_tm;
-
-    HAL_PWR_EnableBkUpAccess();
-    PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
-    PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
-    HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 
     p_tm = localtime(&time_stamp);
     if (p_tm->tm_year < 100)
@@ -139,7 +133,7 @@ static rt_err_t rt_rtc_config(struct rt_device *dev)
         RTC_Handler.Init.OutPut = RTC_OUTPUT_DISABLE;
         RTC_Handler.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
         RTC_Handler.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
-#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32H7)
+#elif defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32H7)
 
         /* set the frequency division */
 #ifdef BSP_RTC_USING_LSI
