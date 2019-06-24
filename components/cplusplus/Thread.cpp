@@ -14,7 +14,7 @@ Thread::Thread(rt_uint32_t stack_size,
                rt_uint8_t  priority,
                rt_uint32_t tick,
                const char *name)
-: _entry(RT_NULL), _param(RT_NULL), started(false)
+    : _entry(RT_NULL), _param(RT_NULL), started(false)
 {
     rt_event_init(&_event, name, 0);
 
@@ -32,12 +32,12 @@ Thread::Thread(void (*entry)(void *p),
                rt_uint8_t  priority,
                rt_uint32_t tick,
                const char *name)
-: _entry(RT_NULL), _param(p), started(false)
+    : _entry(entry), _param(p), started(false)
 {
     rt_event_init(&_event, name, 0);
 
     _thread = rt_thread_create(name,
-                               (thread_func_t)func,
+                               (thread_func_t)entry,
                                this,
                                stack_size,
                                priority,
@@ -46,6 +46,7 @@ Thread::Thread(void (*entry)(void *p),
 
 Thread::~Thread()
 {
+	rt_event_detach(&_event);
     rt_thread_delete(_thread);
 }
 
