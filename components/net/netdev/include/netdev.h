@@ -27,6 +27,13 @@ extern "C" {
 #define NETDEV_DNS_SERVERS_NUM         2U
 #endif
 
+#if NETDEV_IPV6
+/* the maximum of dns server number supported */
+#ifndef NETDEV_IPV6_NUM_ADDRESSES
+#define NETDEV_IPV6_NUM_ADDRESSES      3U
+#endif
+#endif /* NETDEV_IPV6 */
+
 /* whether the network interface device is 'up' (set by the network interface driver or application) */
 #define NETDEV_FLAG_UP                 0x01U
 /* if set, the network interface device has broadcast capability, only supported in the 'lwIP' stack */
@@ -78,6 +85,9 @@ struct netdev
     ip_addr_t ip_addr;                                 /* IP address */
     ip_addr_t netmask;                                 /* subnet mask */
     ip_addr_t gw;                                      /* gateway */
+#if NETDEV_IPV6
+    ip_addr_t ip6_addr[NETDEV_IPV6_NUM_ADDRESSES];     /* array of IPv6 addresses */
+#endif /* NETDEV_IPV6 */
     ip_addr_t dns_servers[NETDEV_DNS_SERVERS_NUM];     /* DNS server */
     uint8_t hwaddr_len;                                /* hardware address length */
     uint8_t hwaddr[NETDEV_HWADDR_MAX_LEN];             /* hardware address */
@@ -163,6 +173,7 @@ int netdev_set_dns_server(struct netdev *netdev, uint8_t dns_num, const ip_addr_
 
 /* Set network interface device callback, it can be called when the status or address changed */
 void netdev_set_status_callback(struct netdev *netdev, netdev_callback_fn status_callback);
+void netdev_set_addr_callback(struct netdev *netdev, netdev_callback_fn addr_callback);
 
 /* Set network interface device status and address, this function can only be called in the network interface device driver */
 void netdev_low_level_set_ipaddr(struct netdev *netdev, const ip_addr_t *ipaddr);
