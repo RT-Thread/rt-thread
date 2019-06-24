@@ -46,7 +46,7 @@ Thread::Thread(void (*entry)(void *p),
 
 Thread::~Thread()
 {
-	rt_event_detach(&_event);
+    rt_event_detach(&_event);
     rt_thread_delete(_thread);
 }
 
