@@ -37,7 +37,7 @@ Thread::Thread(void (*entry)(void *p),
     rt_event_init(&_event, name, 0);
 
     _thread = rt_thread_create(name,
-                               (thread_func_t)entry,
+                               (thread_func_t)func,
                                this,
                                stack_size,
                                priority,
