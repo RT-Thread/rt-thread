@@ -55,10 +55,10 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
         }
         else
         {
-            LOG_E("Please defined LSI_VALUE`s value!");
+            LOG_E("Please define the value of LSI_VALUE!");
         }
 #else
-  #error "Please defined LSI_VALUE`s value!"
+  #error "Please define the value of LSI_VALUE!"
 #endif
         if(hiwdg.Init.Reload > 0xFFF)
         {
@@ -79,10 +79,10 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
         }
         else
         {
-            LOG_E("Please defined LSI_VALUE`s value!");
+            LOG_E("Please define the value of LSI_VALUE!");
         }
 #else
-  #error "Please defined LSI_VALUE`s value!"
+  #error "Please define the value of LSI_VALUE!"
 #endif
         break;
     default:
