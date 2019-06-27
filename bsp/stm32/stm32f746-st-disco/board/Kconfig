@@ -84,6 +84,16 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_WDT
         default n
 
+    menuconfig BSP_USING_TIM
+        bool "Enable timer"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_TIM
+            config BSP_USING_TIM11
+                bool "Enable TIM11"
+                default n
+        endif
+
     config BSP_USING_SDIO
         bool "Enable SDIO"
         select RT_USING_SDIO
