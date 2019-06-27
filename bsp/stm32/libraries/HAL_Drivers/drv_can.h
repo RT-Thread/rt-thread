@@ -36,17 +36,19 @@ struct stm_baud_rate_tab
 struct stm32_drv_can
 {
     CAN_HandleTypeDef CanHandle;
-    CanTxMsgTypeDef TxMessage;
-    CanRxMsgTypeDef RxMessage;
-    CanRxMsgTypeDef Rx1Message;
-    CAN_FilterConfTypeDef FilterConfig;
+    CAN_TxHeaderTypeDef TxMessage;
+    CAN_RxHeaderTypeDef RxMessage;
+    uint8_t RxMessage_Data[8];
+    CAN_RxHeaderTypeDef Rx1Message;
+    uint8_t Rx1Message_Data[8];
+    CAN_FilterTypeDef FilterConfig;
 };
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 extern int rt_hw_can_init(void);
 #ifdef __cplusplus
- }
+}
 #endif
 #endif /*__DRV_CAN_H__ */

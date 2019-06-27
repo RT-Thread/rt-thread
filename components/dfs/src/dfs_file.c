@@ -600,7 +600,7 @@ static void copyfile(const char *src, const char *dst)
     rt_uint8_t *block_ptr;
     rt_int32_t read_bytes;
 
-    block_ptr = rt_malloc(BUF_SZ);
+    block_ptr = (rt_uint8_t *)rt_malloc(BUF_SZ);
     if (block_ptr == NULL)
     {
         rt_kprintf("out of memory\n");
@@ -715,7 +715,7 @@ static void copydir(const char *src, const char *dst)
 static const char *_get_path_lastname(const char *path)
 {
     char *ptr;
-    if ((ptr = strrchr(path, '/')) == NULL)
+    if ((ptr = (char *)strrchr(path, '/')) == NULL)
         return path;
 
     /* skip the '/' then return */

@@ -87,11 +87,13 @@ yf-ufun STM32F103 是优凡（天津）科技有限公司推出的一款基于 A
 
 连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
 
+```
  \ | /
 - RT -     Thread Operating System
  / | \     4.0.2 build May 23 2019
  2006 - 2019 Copyright by rt-thread team
 msh >
+```
 
 ### 进阶使用
 

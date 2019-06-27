@@ -1308,7 +1308,7 @@ rt_err_t rt_mb_init(rt_mailbox_t mb,
     rt_ipc_object_init(&(mb->parent));
 
     /* init mailbox */
-    mb->msg_pool   = msgpool;
+    mb->msg_pool   = (rt_ubase_t *)msgpool;
     mb->size       = size;
     mb->entry      = 0;
     mb->in_offset  = 0;
@@ -1376,7 +1376,7 @@ rt_mailbox_t rt_mb_create(const char *name, rt_size_t size, rt_uint8_t flag)
 
     /* init mailbox */
     mb->size     = size;
-    mb->msg_pool = RT_KERNEL_MALLOC(mb->size * sizeof(rt_ubase_t));
+    mb->msg_pool = (rt_ubase_t *)RT_KERNEL_MALLOC(mb->size * sizeof(rt_ubase_t));
     if (mb->msg_pool == RT_NULL)
     {
         /* delete mailbox object */
@@ -1816,7 +1816,7 @@ rt_err_t rt_mq_init(rt_mq_t     mq,
     {
         head = (struct rt_mq_message *)((rt_uint8_t *)mq->msg_pool +
                                         temp * (mq->msg_size + sizeof(struct rt_mq_message)));
-        head->next = mq->msg_queue_free;
+        head->next = (struct rt_mq_message *)mq->msg_queue_free;
         mq->msg_queue_free = head;
     }
 
@@ -1909,7 +1909,7 @@ rt_mq_t rt_mq_create(const char *name,
     {
         head = (struct rt_mq_message *)((rt_uint8_t *)mq->msg_pool +
                                         temp * (mq->msg_size + sizeof(struct rt_mq_message)));
-        head->next = mq->msg_queue_free;
+        head->next = (struct rt_mq_message *)mq->msg_queue_free;
         mq->msg_queue_free = head;
     }
 
@@ -2093,7 +2093,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, void *buffer, rt_size_t size)
     temp = rt_hw_interrupt_disable();
 
     /* link msg to the beginning of message queue */
-    msg->next = mq->msg_queue_head;
+    msg->next = (struct rt_mq_message *)mq->msg_queue_head;
     mq->msg_queue_head = msg;
 
     /* if there is no tail */

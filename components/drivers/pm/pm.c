@@ -45,8 +45,8 @@ static int _pm_device_suspend(uint8_t mode)
         if (_pm.device_pm[index].ops->suspend != RT_NULL)
         {
             ret = _pm.device_pm[index].ops->suspend(_pm.device_pm[index].device, mode);
-            if(ret != RT_EOK)
-                break; 
+            if (ret != RT_EOK)
+                break;
         }
     }
 
@@ -458,6 +458,18 @@ int rt_pm_run_enter(uint8_t mode)
     return RT_EOK;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops pm_ops =
+{
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    _rt_pm_device_read,
+    _rt_pm_device_write,
+    _rt_pm_device_control,
+};
+#endif
+
 /**
  * This function will initialize power management.
  *
@@ -479,12 +491,16 @@ void rt_system_pm_init(const struct rt_pm_ops *ops,
     device->rx_indicate = RT_NULL;
     device->tx_complete = RT_NULL;
 
+#ifdef RT_USING_DEVICE_OPS
+    device->ops = &pm_ops;
+#else
     device->init        = RT_NULL;
     device->open        = RT_NULL;
     device->close       = RT_NULL;
     device->read        = _rt_pm_device_read;
     device->write       = _rt_pm_device_write;
     device->control     = _rt_pm_device_control;
+#endif
     device->user_data   = user_data;
 
     /* register PM device to the system */

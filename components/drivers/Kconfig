@@ -48,7 +48,7 @@ config RT_USING_CAN
 if RT_USING_CAN
     config RT_CAN_USING_HDR
         bool "Enable CAN hardware filter"
-        default y
+        default n
 endif
 
 config RT_USING_HWTIMER
@@ -263,6 +263,10 @@ if RT_USING_SENSOR
         bool "Using Sensor cmd"
         default y
 endif
+
+config RT_USING_TOUCH
+    bool "Using Touch device drivers"
+    default n
 
 menu "Using Hardware Crypto drivers"
     config RT_USING_HWCRYPTO
@@ -640,6 +644,14 @@ menu "Using USB"
                     string "msc class disk name"
                     default "flash0"
                 endif
+
+                if RT_USB_DEVICE_RNDIS
+                    config RNDIS_DELAY_LINK_UP
+                        bool "Delay linkup media connection"
+                        select RT_USING_TIMER_SOFT
+                        default n
+                endif
+
                 if RT_USB_DEVICE_HID
                     config RT_USB_DEVICE_HID_KEYBOARD
                         bool "Use to HID device as Keyboard"
