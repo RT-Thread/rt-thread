@@ -16,6 +16,17 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_PIN
         default y
 
+    menuconfig BSP_USING_CAN
+        bool "Enable CAN"
+        select RT_USING_CAN
+        default n
+
+        if BSP_USING_CAN
+            config BSP_USING_CAN1
+                bool "Enable CAN1"
+                default y
+        endif
+
     menuconfig BSP_USING_LPUART
         bool "Enable UART"
         select RT_USING_SERIAL
