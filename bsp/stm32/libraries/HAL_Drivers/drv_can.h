@@ -9,10 +9,11 @@
  * 2019-01-22     YLZ          port from stm324xx-HAL to bsp stm3210x-HAL
  * 2019-01-26     YLZ          redefine `struct stm32_drv_can` add member `Rx1Message`
  * 2019-02-19     YLZ          port to BSP [stm32]
+ * 2019-06-17     YLZ          modify struct stm32_drv_can.
  */
 #ifndef __DRV_CAN_H__
 #define __DRV_CAN_H__
-#include "board.h"
+#include <board.h>
 #include <rtdevice.h>
 #include <rthw.h>
 #include <rtthread.h>
@@ -36,19 +37,14 @@ struct stm_baud_rate_tab
 struct stm32_drv_can
 {
     CAN_HandleTypeDef CanHandle;
-    CAN_TxHeaderTypeDef TxMessage;
-    CAN_RxHeaderTypeDef RxMessage;
-    uint8_t RxMessage_Data[8];
-    CAN_RxHeaderTypeDef Rx1Message;
-    uint8_t Rx1Message_Data[8];
     CAN_FilterTypeDef FilterConfig;
 };
 
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
-extern int rt_hw_can_init(void);
+int rt_hw_can_init(void);
 #ifdef __cplusplus
-}
+ }
 #endif
 #endif /*__DRV_CAN_H__ */
