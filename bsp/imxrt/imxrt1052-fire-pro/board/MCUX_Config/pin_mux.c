@@ -110,6 +110,32 @@ void BOARD_InitPins(void) {
   IOMUXC_SetPinMux(
       IOMUXC_GPIO_B1_13_LPUART5_RX,           /* GPIO_B1_13 is configured as LPUART5_RX */
       0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+  IOMUXC_SetPinMux(
+      IOMUXC_GPIO_AD_B0_14_FLEXCAN2_TX,       /* GPIO_AD_B0_14 is configured as FLEXCAN2_TX */
+      1U);                                    /* Software Input On Field: Force input path of pad GPIO_AD_B0_14 */
+  IOMUXC_SetPinMux(
+      IOMUXC_GPIO_AD_B0_15_FLEXCAN2_RX,       /* GPIO_AD_B0_15 is configured as FLEXCAN2_RX */
+      1U);                                    /* Software Input On Field: Force input path of pad GPIO_AD_B0_15 */
+  IOMUXC_SetPinConfig(
+      IOMUXC_GPIO_AD_B0_14_FLEXCAN2_TX,       /* GPIO_AD_B0_14 PAD functional properties : */
+      0x10B0u);                               /* Slew Rate Field: Slow Slew Rate
+                                                 Drive Strength Field: R0/6
+                                                 Speed Field: medium(100MHz)
+                                                 Open Drain Enable Field: Open Drain Disabled
+                                                 Pull / Keep Enable Field: Pull/Keeper Enabled
+                                                 Pull / Keep Select Field: Keeper
+                                                 Pull Up / Down Config. Field: 100K Ohm Pull Down
+                                                 Hyst. Enable Field: Hysteresis Disabled */
+  IOMUXC_SetPinConfig(
+      IOMUXC_GPIO_AD_B0_15_FLEXCAN2_RX,       /* GPIO_AD_B0_15 PAD functional properties : */
+      0x10B0u);                               /* Slew Rate Field: Slow Slew Rate
+                                                 Drive Strength Field: R0/6
+                                                 Speed Field: medium(100MHz)
+                                                 Open Drain Enable Field: Open Drain Disabled
+                                                 Pull / Keep Enable Field: Pull/Keeper Enabled
+                                                 Pull / Keep Select Field: Keeper
+                                                 Pull Up / Down Config. Field: 100K Ohm Pull Down
+                                                 Hyst. Enable Field: Hysteresis Disabled */
 }
 
 /***********************************************************************************************************************
