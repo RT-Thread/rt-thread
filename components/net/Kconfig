@@ -446,8 +446,6 @@ config RT_USING_LWIP
 
 endmenu
 
-source "$RTT_DIR/components/net/freemodbus/Kconfig"
-
 source "$RTT_DIR/components/net/at/Kconfig"
 
 if RT_USING_LWIP
