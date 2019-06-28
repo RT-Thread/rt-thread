@@ -54,6 +54,7 @@ i.MX RT1052 EVK Pro 是野火推出的一款基于 ARM Cortex-M7 内核的开发
 | WDT               |     支持     |                                       |
 | PWM               |     支持 |                              |
 | GPT               |     支持 |                              |
+| CAN               |     支持 |        CAN1                      |
 
 ## 使用说明
 
