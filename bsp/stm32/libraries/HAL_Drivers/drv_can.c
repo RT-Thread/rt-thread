@@ -586,8 +586,6 @@ static rt_err_t drv_control(struct rt_can_device *can, int cmd, void *arg)
         }
         if (argval != can->config.baud_rate)
         {
-            CAN_InitTypeDef *drv_init;
-            rt_uint32_t baud_index;
             can->config.baud_rate = argval;
             return drv_configure(can, &can->config);
         }

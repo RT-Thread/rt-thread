@@ -43,7 +43,7 @@ struct stm32_drv_can
 #ifdef __cplusplus
  extern "C" {
 #endif
-rt_err_t rt_hw_can_init(void);
+int rt_hw_can_init(void);
 #ifdef __cplusplus
  }
 #endif
