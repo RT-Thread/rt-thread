@@ -6,36 +6,20 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F4xx_LL_DMA2D_H
-#define __STM32F4xx_LL_DMA2D_H
+#ifndef STM32F4xx_LL_DMA2D_H
+#define STM32F4xx_LL_DMA2D_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -133,7 +117,9 @@ typedef struct
 
                                       This parameter can be modified afterwards using unitary function @ref LL_DMA2D_SetOutputMemAddr(). */
 
-  uint32_t  LineOffset;          /*!< Specifies the output line offset value.
+
+
+  uint32_t LineOffset;           /*!< Specifies the output line offset value.
                                       - This parameter must be a number between Min_Data = 0x0000 and Max_Data = 0x3FFF.
 
                                       This parameter can be modified afterwards using unitary function @ref LL_DMA2D_SetLineOffset(). */
@@ -147,6 +133,7 @@ typedef struct
                                       - This parameter must be a number between Min_Data = 0x0000 and Max_Data = 0x3FFF.
 
                                       This parameter can be modified afterwards using unitary function @ref LL_DMA2D_SetNbrOfPixelsPerLines(). */
+
 
 } LL_DMA2D_InitTypeDef;
 
@@ -162,7 +149,7 @@ typedef struct
                                       - @ref LL_DMA2D_FGND_SetMemAddr() for foreground layer,
                                       - @ref LL_DMA2D_BGND_SetMemAddr() for background layer. */
 
-  uint32_t  LineOffset;          /*!< Specifies the foreground or background line offset value.
+  uint32_t LineOffset;           /*!< Specifies the foreground or background line offset value.
                                       - This parameter must be a number between Min_Data = 0x0000 and Max_Data = 0x3FFF.
 
                                       This parameter can be modified afterwards using unitary functions
@@ -231,6 +218,8 @@ typedef struct
                                       This parameter can be modified afterwards using unitary functions
                                       - @ref LL_DMA2D_FGND_SetCLUTMemAddr() for foreground layer,
                                       - @ref LL_DMA2D_BGND_SetCLUTMemAddr() for background layer. */
+
+
 
 } LL_DMA2D_LayerCfgTypeDef;
 
@@ -326,10 +315,10 @@ typedef struct
 /** @defgroup DMA2D_LL_EC_MODE Mode
   * @{
   */
-#define LL_DMA2D_MODE_M2M            0x00000000U                     /*!< DMA2D memory to memory transfer mode */
-#define LL_DMA2D_MODE_M2M_PFC        DMA2D_CR_MODE_0                 /*!< DMA2D memory to memory with pixel format conversion transfer mode */
-#define LL_DMA2D_MODE_M2M_BLEND      DMA2D_CR_MODE_1                 /*!< DMA2D memory to memory with blending transfer mode */
-#define LL_DMA2D_MODE_R2M            DMA2D_CR_MODE                   /*!< DMA2D register to memory transfer mode */
+#define LL_DMA2D_MODE_M2M                       0x00000000U                       /*!< DMA2D memory to memory transfer mode */
+#define LL_DMA2D_MODE_M2M_PFC                   DMA2D_CR_MODE_0                   /*!< DMA2D memory to memory with pixel format conversion transfer mode */
+#define LL_DMA2D_MODE_M2M_BLEND                 DMA2D_CR_MODE_1                   /*!< DMA2D memory to memory with blending transfer mode */
+#define LL_DMA2D_MODE_R2M                       DMA2D_CR_MODE                     /*!< DMA2D register to memory transfer mode */
 /**
   * @}
   */
@@ -375,6 +364,9 @@ typedef struct
   * @}
   */
 
+
+
+
 /** @defgroup DMA2D_LL_EC_CLUT_COLOR_MODE CLUT Color Mode
   * @{
   */
@@ -383,6 +375,7 @@ typedef struct
 /**
   * @}
   */
+
 
 /**
   * @}
@@ -404,7 +397,7 @@ typedef struct
   * @param  __VALUE__ Value to be written in the register
   * @retval None
   */
-#define LL_DMA2D_WriteReg(__INSTANCE__, __REG__, __VALUE__) WRITE_REG(__INSTANCE__->__REG__, (__VALUE__))
+#define LL_DMA2D_WriteReg(__INSTANCE__, __REG__, __VALUE__) WRITE_REG((__INSTANCE__)->__REG__, (__VALUE__))
 
 /**
   * @brief  Read a value in DMA2D register.
@@ -412,7 +405,7 @@ typedef struct
   * @param  __REG__ Register to be read
   * @retval Register value
   */
-#define LL_DMA2D_ReadReg(__INSTANCE__, __REG__) READ_REG(__INSTANCE__->__REG__)
+#define LL_DMA2D_ReadReg(__INSTANCE__, __REG__) READ_REG((__INSTANCE__)->__REG__)
 /**
   * @}
   */
@@ -449,7 +442,7 @@ __STATIC_INLINE void LL_DMA2D_Start(DMA2D_TypeDef *DMA2Dx)
   */
 __STATIC_INLINE uint32_t LL_DMA2D_IsTransferOngoing(DMA2D_TypeDef *DMA2Dx)
 {
-  return (READ_BIT(DMA2Dx->CR, DMA2D_CR_START) == (DMA2D_CR_START));
+  return ((READ_BIT(DMA2Dx->CR, DMA2D_CR_START) == (DMA2D_CR_START)) ? 1UL : 0UL);
 }
 
 /**
@@ -486,7 +479,7 @@ __STATIC_INLINE void LL_DMA2D_Resume(DMA2D_TypeDef *DMA2Dx)
   */
 __STATIC_INLINE uint32_t LL_DMA2D_IsSuspended(DMA2D_TypeDef *DMA2Dx)
 {
-  return (READ_BIT(DMA2Dx->CR, DMA2D_CR_SUSP) == (DMA2D_CR_SUSP));
+  return ((READ_BIT(DMA2Dx->CR, DMA2D_CR_SUSP) == (DMA2D_CR_SUSP)) ? 1UL : 0UL);
 }
 
 /**
@@ -511,7 +504,7 @@ __STATIC_INLINE void LL_DMA2D_Abort(DMA2D_TypeDef *DMA2Dx)
   */
 __STATIC_INLINE uint32_t LL_DMA2D_IsAborted(DMA2D_TypeDef *DMA2Dx)
 {
-  return (READ_BIT(DMA2Dx->CR, DMA2D_CR_ABORT) == (DMA2D_CR_ABORT));
+  return ((READ_BIT(DMA2Dx->CR, DMA2D_CR_ABORT) == (DMA2D_CR_ABORT)) ? 1UL : 0UL);
 }
 
 /**
@@ -577,6 +570,9 @@ __STATIC_INLINE uint32_t LL_DMA2D_GetOutputColorMode(DMA2D_TypeDef *DMA2Dx)
 {
   return (uint32_t)(READ_BIT(DMA2Dx->OPFCCR, DMA2D_OPFCCR_CM));
 }
+
+
+
 
 /**
   * @brief  Set DMA2D line offset, expressed on 14 bits ([13:0] bits).
@@ -784,7 +780,7 @@ __STATIC_INLINE void LL_DMA2D_DisableDeadTime(DMA2D_TypeDef *DMA2Dx)
   */
 __STATIC_INLINE uint32_t LL_DMA2D_IsEnabledDeadTime(DMA2D_TypeDef *DMA2Dx)
 {
-  return (READ_BIT(DMA2Dx->AMTCR, DMA2D_AMTCR_EN) == (DMA2D_AMTCR_EN));
+  return ((READ_BIT(DMA2Dx->AMTCR, DMA2D_AMTCR_EN) == (DMA2D_AMTCR_EN)) ? 1UL : 0UL);
 }
 
 /** @defgroup DMA2D_LL_EF_FGND_Configuration Foreground Configuration Functions
@@ -833,7 +829,7 @@ __STATIC_INLINE void LL_DMA2D_FGND_EnableCLUTLoad(DMA2D_TypeDef *DMA2Dx)
   */
 __STATIC_INLINE uint32_t LL_DMA2D_FGND_IsEnabledCLUTLoad(DMA2D_TypeDef *DMA2Dx)
 {
-  return (READ_BIT(DMA2Dx->FGPFCCR, DMA2D_FGPFCCR_START) == (DMA2D_FGPFCCR_START));
+  return ((READ_BIT(DMA2Dx->FGPFCCR, DMA2D_FGPFCCR_START) == (DMA2D_FGPFCCR_START)) ? 1UL : 0UL);
 }
 
 /**
@@ -932,6 +928,7 @@ __STATIC_INLINE uint32_t LL_DMA2D_FGND_GetAlpha(DMA2D_TypeDef *DMA2Dx)
 {
   return (uint32_t)(READ_BIT(DMA2Dx->FGPFCCR, DMA2D_FGPFCCR_ALPHA) >> DMA2D_FGPFCCR_ALPHA_Pos);
 }
+
 
 /**
   * @brief  Set DMA2D foreground line offset, expressed on 14 bits ([13:0] bits).
@@ -1165,7 +1162,7 @@ __STATIC_INLINE void LL_DMA2D_BGND_EnableCLUTLoad(DMA2D_TypeDef *DMA2Dx)
   */
 __STATIC_INLINE uint32_t LL_DMA2D_BGND_IsEnabledCLUTLoad(DMA2D_TypeDef *DMA2Dx)
 {
-  return (READ_BIT(DMA2Dx->BGPFCCR, DMA2D_BGPFCCR_START) == (DMA2D_BGPFCCR_START));
+  return ((READ_BIT(DMA2Dx->BGPFCCR, DMA2D_BGPFCCR_START) == (DMA2D_BGPFCCR_START)) ? 1UL : 0UL);
 }
 
 /**
@@ -1264,6 +1261,7 @@ __STATIC_INLINE uint32_t  LL_DMA2D_BGND_GetAlpha(DMA2D_TypeDef *DMA2Dx)
 {
   return (uint32_t)(READ_BIT(DMA2Dx->BGPFCCR, DMA2D_BGPFCCR_ALPHA) >> DMA2D_BGPFCCR_ALPHA_Pos);
 }
+
 
 /**
   * @brief  Set DMA2D background line offset, expressed on 14 bits ([13:0] bits).
@@ -1468,7 +1466,7 @@ __STATIC_INLINE uint32_t  LL_DMA2D_BGND_GetCLUTColorMode(DMA2D_TypeDef *DMA2Dx)
   */
 __STATIC_INLINE uint32_t LL_DMA2D_IsActiveFlag_CE(DMA2D_TypeDef *DMA2Dx)
 {
-  return (READ_BIT(DMA2Dx->ISR, DMA2D_ISR_CEIF) == (DMA2D_ISR_CEIF));
+  return ((READ_BIT(DMA2Dx->ISR, DMA2D_ISR_CEIF) == (DMA2D_ISR_CEIF)) ? 1UL : 0UL);
 }
 
 /**
@@ -1479,7 +1477,7 @@ __STATIC_INLINE uint32_t LL_DMA2D_IsActiveFlag_CE(DMA2D_TypeDef *DMA2Dx)
   */
 __STATIC_INLINE uint32_t LL_DMA2D_IsActiveFlag_CTC(DMA2D_TypeDef *DMA2Dx)
 {
-  return (READ_BIT(DMA2Dx->ISR, DMA2D_ISR_CTCIF) == (DMA2D_ISR_CTCIF));
+  return ((READ_BIT(DMA2Dx->ISR, DMA2D_ISR_CTCIF) == (DMA2D_ISR_CTCIF)) ? 1UL : 0UL);
 }
 
 /**
@@ -1490,7 +1488,7 @@ __STATIC_INLINE uint32_t LL_DMA2D_IsActiveFlag_CTC(DMA2D_TypeDef *DMA2Dx)
   */
 __STATIC_INLINE uint32_t LL_DMA2D_IsActiveFlag_CAE(DMA2D_TypeDef *DMA2Dx)
 {
-  return (READ_BIT(DMA2Dx->ISR, DMA2D_ISR_CAEIF) == (DMA2D_ISR_CAEIF));
+  return ((READ_BIT(DMA2Dx->ISR, DMA2D_ISR_CAEIF) == (DMA2D_ISR_CAEIF)) ? 1UL : 0UL);
 }
 
 /**
@@ -1501,7 +1499,7 @@ __STATIC_INLINE uint32_t LL_DMA2D_IsActiveFlag_CAE(DMA2D_TypeDef *DMA2Dx)
   */
 __STATIC_INLINE uint32_t LL_DMA2D_IsActiveFlag_TW(DMA2D_TypeDef *DMA2Dx)
 {
-  return (READ_BIT(DMA2Dx->ISR, DMA2D_ISR_TWIF) == (DMA2D_ISR_TWIF));
+  return ((READ_BIT(DMA2Dx->ISR, DMA2D_ISR_TWIF) == (DMA2D_ISR_TWIF)) ? 1UL : 0UL);
 }
 
 /**
@@ -1512,7 +1510,7 @@ __STATIC_INLINE uint32_t LL_DMA2D_IsActiveFlag_TW(DMA2D_TypeDef *DMA2Dx)
   */
 __STATIC_INLINE uint32_t LL_DMA2D_IsActiveFlag_TC(DMA2D_TypeDef *DMA2Dx)
 {
-  return (READ_BIT(DMA2Dx->ISR, DMA2D_ISR_TCIF) == (DMA2D_ISR_TCIF));
+  return ((READ_BIT(DMA2Dx->ISR, DMA2D_ISR_TCIF) == (DMA2D_ISR_TCIF)) ? 1UL : 0UL);
 }
 
 /**
@@ -1523,7 +1521,7 @@ __STATIC_INLINE uint32_t LL_DMA2D_IsActiveFlag_TC(DMA2D_TypeDef *DMA2Dx)
   */
 __STATIC_INLINE uint32_t LL_DMA2D_IsActiveFlag_TE(DMA2D_TypeDef *DMA2Dx)
 {
-  return (READ_BIT(DMA2Dx->ISR, DMA2D_ISR_TEIF) == (DMA2D_ISR_TEIF));
+  return ((READ_BIT(DMA2Dx->ISR, DMA2D_ISR_TEIF) == (DMA2D_ISR_TEIF)) ? 1UL : 0UL);
 }
 
 /**
@@ -1740,7 +1738,7 @@ __STATIC_INLINE void LL_DMA2D_DisableIT_TE(DMA2D_TypeDef *DMA2Dx)
   */
 __STATIC_INLINE uint32_t LL_DMA2D_IsEnabledIT_CE(DMA2D_TypeDef *DMA2Dx)
 {
-  return (READ_BIT(DMA2Dx->CR, DMA2D_CR_CEIE) == (DMA2D_CR_CEIE));
+  return ((READ_BIT(DMA2Dx->CR, DMA2D_CR_CEIE) == (DMA2D_CR_CEIE)) ? 1UL : 0UL);
 }
 
 /**
@@ -1751,7 +1749,7 @@ __STATIC_INLINE uint32_t LL_DMA2D_IsEnabledIT_CE(DMA2D_TypeDef *DMA2Dx)
   */
 __STATIC_INLINE uint32_t LL_DMA2D_IsEnabledIT_CTC(DMA2D_TypeDef *DMA2Dx)
 {
-  return (READ_BIT(DMA2Dx->CR, DMA2D_CR_CTCIE) == (DMA2D_CR_CTCIE));
+  return ((READ_BIT(DMA2Dx->CR, DMA2D_CR_CTCIE) == (DMA2D_CR_CTCIE)) ? 1UL : 0UL);
 }
 
 /**
@@ -1762,7 +1760,7 @@ __STATIC_INLINE uint32_t LL_DMA2D_IsEnabledIT_CTC(DMA2D_TypeDef *DMA2Dx)
   */
 __STATIC_INLINE uint32_t LL_DMA2D_IsEnabledIT_CAE(DMA2D_TypeDef *DMA2Dx)
 {
-  return (READ_BIT(DMA2Dx->CR, DMA2D_CR_CAEIE) == (DMA2D_CR_CAEIE));
+  return ((READ_BIT(DMA2Dx->CR, DMA2D_CR_CAEIE) == (DMA2D_CR_CAEIE)) ? 1UL : 0UL);
 }
 
 /**
@@ -1773,7 +1771,7 @@ __STATIC_INLINE uint32_t LL_DMA2D_IsEnabledIT_CAE(DMA2D_TypeDef *DMA2Dx)
   */
 __STATIC_INLINE uint32_t LL_DMA2D_IsEnabledIT_TW(DMA2D_TypeDef *DMA2Dx)
 {
-  return (READ_BIT(DMA2Dx->CR, DMA2D_CR_TWIE) == (DMA2D_CR_TWIE));
+  return ((READ_BIT(DMA2Dx->CR, DMA2D_CR_TWIE) == (DMA2D_CR_TWIE)) ? 1UL : 0UL);
 }
 
 /**
@@ -1784,7 +1782,7 @@ __STATIC_INLINE uint32_t LL_DMA2D_IsEnabledIT_TW(DMA2D_TypeDef *DMA2Dx)
   */
 __STATIC_INLINE uint32_t LL_DMA2D_IsEnabledIT_TC(DMA2D_TypeDef *DMA2Dx)
 {
-  return (READ_BIT(DMA2Dx->CR, DMA2D_CR_TCIE) == (DMA2D_CR_TCIE));
+  return ((READ_BIT(DMA2Dx->CR, DMA2D_CR_TCIE) == (DMA2D_CR_TCIE)) ? 1UL : 0UL);
 }
 
 /**
@@ -1795,7 +1793,7 @@ __STATIC_INLINE uint32_t LL_DMA2D_IsEnabledIT_TC(DMA2D_TypeDef *DMA2Dx)
   */
 __STATIC_INLINE uint32_t LL_DMA2D_IsEnabledIT_TE(DMA2D_TypeDef *DMA2Dx)
 {
-  return (READ_BIT(DMA2Dx->CR, DMA2D_CR_TEIE) == (DMA2D_CR_TEIE));
+  return ((READ_BIT(DMA2Dx->CR, DMA2D_CR_TEIE) == (DMA2D_CR_TEIE)) ? 1UL : 0UL);
 }
 
 
@@ -1844,6 +1842,6 @@ void LL_DMA2D_ConfigSize(DMA2D_TypeDef *DMA2Dx, uint32_t NbrOfLines, uint32_t Nb
 }
 #endif
 
-#endif /* __STM32F4xx_LL_DMA2D_H */
+#endif /* STM32F4xx_LL_DMA2D_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
