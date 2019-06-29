@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -141,7 +125,7 @@ extern "C" {
   * @retval Pointer to register address
 */
 #define __DAC_PTR_REG_OFFSET(__REG__, __REG_OFFFSET__)                         \
- ((uint32_t *)((uint32_t) ((uint32_t)(&(__REG__)) + ((__REG_OFFFSET__) << 2U))))
+ ((__IO uint32_t *)((uint32_t) ((uint32_t)(&(__REG__)) + ((__REG_OFFFSET__) << 2U))))
 
 /**
   * @}
@@ -1122,7 +1106,7 @@ __STATIC_INLINE void LL_DAC_TrigSWConversion(DAC_TypeDef *DACx, uint32_t DAC_Cha
   */
 __STATIC_INLINE void LL_DAC_ConvertData12RightAligned(DAC_TypeDef *DACx, uint32_t DAC_Channel, uint32_t Data)
 {
-  register uint32_t *preg = __DAC_PTR_REG_OFFSET(DACx->DHR12R1, __DAC_MASK_SHIFT(DAC_Channel, DAC_REG_DHR12RX_REGOFFSET_MASK));
+  register __IO uint32_t *preg = __DAC_PTR_REG_OFFSET(DACx->DHR12R1, __DAC_MASK_SHIFT(DAC_Channel, DAC_REG_DHR12RX_REGOFFSET_MASK));
   
   MODIFY_REG(*preg,
              DAC_DHR12R1_DACC1DHR,
@@ -1147,7 +1131,7 @@ __STATIC_INLINE void LL_DAC_ConvertData12RightAligned(DAC_TypeDef *DACx, uint32_
   */
 __STATIC_INLINE void LL_DAC_ConvertData12LeftAligned(DAC_TypeDef *DACx, uint32_t DAC_Channel, uint32_t Data)
 {
-  register uint32_t *preg = __DAC_PTR_REG_OFFSET(DACx->DHR12R1, __DAC_MASK_SHIFT(DAC_Channel, DAC_REG_DHR12LX_REGOFFSET_MASK));
+  register __IO uint32_t *preg = __DAC_PTR_REG_OFFSET(DACx->DHR12R1, __DAC_MASK_SHIFT(DAC_Channel, DAC_REG_DHR12LX_REGOFFSET_MASK));
   
   MODIFY_REG(*preg,
              DAC_DHR12L1_DACC1DHR,
@@ -1172,7 +1156,7 @@ __STATIC_INLINE void LL_DAC_ConvertData12LeftAligned(DAC_TypeDef *DACx, uint32_t
   */
 __STATIC_INLINE void LL_DAC_ConvertData8RightAligned(DAC_TypeDef *DACx, uint32_t DAC_Channel, uint32_t Data)
 {
-  register uint32_t *preg = __DAC_PTR_REG_OFFSET(DACx->DHR12R1, __DAC_MASK_SHIFT(DAC_Channel, DAC_REG_DHR8RX_REGOFFSET_MASK));
+  register __IO uint32_t *preg = __DAC_PTR_REG_OFFSET(DACx->DHR12R1, __DAC_MASK_SHIFT(DAC_Channel, DAC_REG_DHR8RX_REGOFFSET_MASK));
   
   MODIFY_REG(*preg,
              DAC_DHR8R1_DACC1DHR,
@@ -1257,7 +1241,7 @@ __STATIC_INLINE void LL_DAC_ConvertDualData8RightAligned(DAC_TypeDef *DACx, uint
   */
 __STATIC_INLINE uint32_t LL_DAC_RetrieveOutputData(DAC_TypeDef *DACx, uint32_t DAC_Channel)
 {
-  register uint32_t *preg = __DAC_PTR_REG_OFFSET(DACx->DOR1, __DAC_MASK_SHIFT(DAC_Channel, DAC_REG_DORX_REGOFFSET_MASK));
+  register __IO uint32_t *preg = __DAC_PTR_REG_OFFSET(DACx->DOR1, __DAC_MASK_SHIFT(DAC_Channel, DAC_REG_DORX_REGOFFSET_MASK));
   
   return (uint16_t) READ_BIT(*preg, DAC_DOR1_DACC1DOR);
 }
