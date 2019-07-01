@@ -128,23 +128,23 @@ static int lwip_netdev_set_addr_info(struct netdev *netif, ip_addr_t *ip_addr, i
 {
     if (ip_addr && netmask && gw)
     {
-        netif_set_addr((struct netif *)netif->user_data, ip_addr, netmask, gw);
+        netif_set_addr((struct netif *)netif->user_data, ip_2_ip4(ip_addr), ip_2_ip4(netmask), ip_2_ip4(gw));
     }
     else
     {
         if (ip_addr)
         {
-            netif_set_ipaddr((struct netif *)netif->user_data, ip_addr);
+            netif_set_ipaddr((struct netif *)netif->user_data, ip_2_ip4(ip_addr));
         }
 
         if (netmask)
         {
-            netif_set_netmask((struct netif *)netif->user_data, netmask);
+            netif_set_netmask((struct netif *)netif->user_data, ip_2_ip4(netmask));
         }
 
         if (gw)
         {
-            netif_set_gw((struct netif *)netif->user_data, gw);
+            netif_set_gw((struct netif *)netif->user_data, ip_2_ip4(gw));
         }
     }
 

@@ -125,8 +125,13 @@ RT_WEAK void rt_hw_board_init()
     /* HAL_Init() function is called at the beginning of the program */
     HAL_Init();
 
+    /* enable interrupt */
+    __set_PRIMASK(0);
     /* System clock initialization */
     SystemClock_Config();
+    /* disbale interrupt */
+    __set_PRIMASK(1);
+
     rt_hw_systick_init();
 
     /* Heap initialization */

@@ -76,6 +76,25 @@ config RT_USING_NETDEV
         config NETDEV_USING_AUTO_DEFAULT
             bool "Enable default netdev automatic change features"
             default y
+        
+        config NETDEV_USING_IPV6 
+            bool "Enable IPV6 protocol support"
+            default n
+
+        config NETDEV_IPV4
+            int
+            default 1
+
+        config NETDEV_IPV6
+            int
+            default 1 if NETDEV_USING_IPV6
+            default 0 if !NETDEV_USING_IPV6
+
+        config NETDEV_IPV6_SCOPES
+            bool
+            help
+                Defined to synchronize the ip6_addr structure state
+            default n 
     endif
 
 endmenu
@@ -104,11 +123,11 @@ config RT_USING_LWIP
         endchoice
 
         if (RT_USING_LWIP210 || RT_USING_LWIP202)
-            if (!RT_USING_NETDEV || (RT_USING_NETDEV && NETDEV_IPV6))
-                config RT_USING_LWIP_IPV6
-                    bool "IPV6 protocol"
-                    default n
-            endif
+            config RT_USING_LWIP_IPV6
+                bool "IPV6 protocol"
+                default n
+                select NETDEV_USING_IPV6
+                select NETDEV_IPV6_SCOPES if RT_USING_LWIP210
         endif
 
         config RT_LWIP_IGMP
@@ -426,8 +445,6 @@ config RT_USING_LWIP
     endif
 
 endmenu
-
-source "$RTT_DIR/components/net/freemodbus/Kconfig"
 
 source "$RTT_DIR/components/net/at/Kconfig"
 
