@@ -549,12 +549,13 @@ static void sal_sockaddr_to_ipaddr(const struct sockaddr *name, ip_addr_t *local
     const struct sockaddr_in *svr_addr = (const struct sockaddr_in *) name;
 
 #if NETDEV_IPV4 && NETDEV_IPV6
-    (*local_ipaddr).u_addr.ip4.addr = svr_addr->sin_addr.s_addr;
+    local_ipaddr->u_addr.ip4.addr = svr_addr->sin_addr.s_addr;
+    local_ipaddr->type = IPADDR_TYPE_V4;
 #elif NETDEV_IPV4
-    (*local_ipaddr).addr = svr_addr->sin_addr.s_addr;
+    local_ipaddr->addr = svr_addr->sin_addr.s_addr;
 #elif NETDEV_IPV6
-    LOG_E("not support IPV6");
-#endif /* SAL_IPV4 && SAL_IPV6*/
+#error "not only support IPV6"
+#endif /* NETDEV_IPV4 && NETDEV_IPV6*/
 }   
 
 int sal_bind(int socket, const struct sockaddr *name, socklen_t namelen)
@@ -572,7 +573,7 @@ int sal_bind(int socket, const struct sockaddr *name, socklen_t namelen)
     sal_sockaddr_to_ipaddr(name, &input_ipaddr);
 
     /* check input ipaddr is default netdev ipaddr */
-    if (input_ipaddr.addr != INADDR_ANY)
+    if (!ip_addr_isany_val(input_ipaddr))
     {
         struct sal_proto_family *input_pf = RT_NULL, *local_pf = RT_NULL;
         struct netdev *new_netdev = RT_NULL;

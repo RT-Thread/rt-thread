@@ -101,6 +101,8 @@ xdr_mountres3(register XDR *xdrs, mountres3 *objp)
 		if (!xdr_mountres3_ok(xdrs, &objp->mountres3_u.mountinfo))
 			return (FALSE);
 		break;
+	default :
+		return (FALSE);
 	}
 	return (TRUE);
 }
