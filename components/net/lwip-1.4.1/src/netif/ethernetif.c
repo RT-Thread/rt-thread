@@ -160,7 +160,7 @@ static int lwip_netdev_set_dhcp(struct netdev *netif, rt_bool_t is_enabled)
 }
 #endif /* RT_LWIP_DHCP */
 
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_FINSH
 #ifdef RT_LWIP_USING_PING
 extern int lwip_ping_recv(int s, int *ttl);
 extern err_t lwip_ping_send(int s, ip_addr_t *addr, int size);
@@ -251,7 +251,7 @@ void lwip_netdev_netstat(struct netdev *netif)
 #endif
 }
 #endif /* RT_LWIP_TCP || RT_LWIP_UDP */
-#endif /* FINSH_USING_MSH */
+#endif /* RT_USING_FINSH */
 
 const struct netdev_ops lwip_netdev_ops =
 {
@@ -271,7 +271,7 @@ const struct netdev_ops lwip_netdev_ops =
     NULL,
 #endif /* RT_LWIP_DHCP */
 
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_FINSH
 #ifdef RT_LWIP_USING_PING
     lwip_netdev_ping,
 #else
@@ -281,7 +281,7 @@ const struct netdev_ops lwip_netdev_ops =
 #if defined (RT_LWIP_TCP) || defined (RT_LWIP_UDP)
     lwip_netdev_netstat,
 #endif /* RT_LWIP_TCP || RT_LWIP_UDP */
-#endif /* FINSH_USING_MSH */
+#endif /* RT_USING_FINSH */
 };
 
 static int netdev_add(struct netif *lwip_netif)
