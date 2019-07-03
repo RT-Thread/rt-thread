@@ -255,6 +255,13 @@ endmenu
 
 menu "Board extended module Drivers"
 
+    config BSP_USING_NRF24L01
+        bool "Enable NRF24L01"
+        select BSP_USING_SPI
+        select BSP_USING_SPI2
+        select PKG_USING_NRF24L01
+        default n
+
 endmenu
 
 endmenu
