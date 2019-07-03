@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-09-01     xuzhuoyi     the first version.
+ * 2019-07-03     zhaoxiaowei  add support for __rt_ffs.
  */
 
 #include <rtthread.h>
@@ -19,6 +20,7 @@ static rt_err_t (*rt_exception_hook)(void *context) = RT_NULL;
 
 extern rt_uint16_t rt_hw_get_st0(void);
 extern rt_uint16_t rt_hw_get_st1(void);
+extern int rt_hw_calc_csb(int value);
 
 struct exception_stack_frame
 {
@@ -102,6 +104,19 @@ struct exception_info
     struct stack_frame stack_frame;
 };
 
+#ifdef RT_USING_CPU_FFS
+/*
+ * This function called rt_hw_calc_csb to finds the first bit set in value.
+ * rt_hw_calc_csb is a native assembly program that use "CSB" instruction in C28x.
+ * When you use this function, remember that "int" is only 16-bit in C28x's C compiler.
+ * If value is a number bigger that 0xFFFF, trouble may be caused.
+ * Maybe change "int __rt_ffs(int value)" to "rt_int32_t __rt_ffs(rt_int32_t value)" will be better.
+ */
+int __rt_ffs(int value)
+{
+    return rt_hw_calc_csb(value);
+}
+#endif
 
 /**
  * shutdown CPU
