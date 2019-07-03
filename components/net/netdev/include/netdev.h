@@ -132,10 +132,11 @@ struct netdev_ops
     int (*set_dns_server)(struct netdev *netdev, uint8_t dns_num, ip_addr_t *dns_server);
     int (*set_dhcp)(struct netdev *netdev, rt_bool_t is_enabled);
 
+#ifdef RT_USING_FINSH
     /* set network interface device common network interface device operations */
     int (*ping)(struct netdev *netdev, const char *host, size_t data_len, uint32_t timeout, struct netdev_ping_resp *ping_resp);
     void (*netstat)(struct netdev *netdev);
-
+#endif
 };
 
 /* The network interface device registered and unregistered*/
