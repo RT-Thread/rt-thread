@@ -2,7 +2,7 @@ from building import *
 
 cwd = GetCurrentDir()
 
-if GetDepend('RT_USING_LWIP202'):
+if GetDepend('RT_USING_LWIP202') or GetDepend('RT_USING_LWIP210') :
     src = ['dhcp_server_raw.c']
 else:
     src = ['dhcp_server.c']
