@@ -1159,7 +1159,14 @@ static void netdev_cmd_netstat(void)
         }
     }
 
-    netdev->ops->netstat(netdev);
+    if (netdev->ops->netstat != RT_NULL)
+    {
+        netdev->ops->netstat(netdev);
+    }
+    else
+    {
+        rt_kprintf("netstat: this command is not supported!\n");
+    }
 }
 
 int netdev_netstat(int argc, char **argv)
