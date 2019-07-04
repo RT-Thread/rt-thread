@@ -715,8 +715,6 @@ int eth_system_device_init_private(void)
     return (int)result;
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
 void set_if(char* netif_name, char* ip_addr, char* gw_addr, char* nm_addr)
 {
     ip4_addr_t *ip;
@@ -762,6 +760,9 @@ void set_if(char* netif_name, char* ip_addr, char* gw_addr, char* nm_addr)
         netif_set_netmask(netif, ip);
     }
 }
+
+#ifdef RT_USING_FINSH
+#include <finsh.h>
 FINSH_FUNCTION_EXPORT(set_if, set network interface address);
 
 #if LWIP_DNS
