@@ -72,15 +72,15 @@ extern "C" {
 #endif /* BSP_USING_TIM5 */
 
 #ifdef BSP_USING_TIM7
-#ifndef TIM5_CONFIG
-#define TIM5_CONFIG                             \
+#ifndef TIM7_CONFIG
+#define TIM7_CONFIG                             \
     {                                           \
        .tim_handle.Instance     = TIM7,         \
        .tim_irqn                = TIM7_IRQn,    \
        .name                    = "timer7",     \
     }
 #endif /* TIM7_CONFIG */
-#endif /* BSP_USING_TIM5 */
+#endif /* BSP_USING_TIM7 */
 
 #ifdef __cplusplus
 }
