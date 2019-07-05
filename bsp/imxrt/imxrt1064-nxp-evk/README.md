@@ -18,7 +18,7 @@
 
 开发板外观如下图所示：
 
-![board](MIMXRT1064EVK-TOP.jpg)
+![board](figures/MIMXRT1064EVK-TOP.jpg)
 
 该开发板常用 **板载资源** 如下：
 
