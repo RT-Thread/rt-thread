@@ -36,7 +36,6 @@ extern int heap_end;
 
 #define HEAP_SIZE           ((uint32_t)HEAP_END - (uint32_t)HEAP_BEGIN)
 
-#define SDRAM_MPU_INIT
 #define SDRAM_BEGIN         (0x80000000u)
 #define SDRAM_END           (0x81E00000u)
 
