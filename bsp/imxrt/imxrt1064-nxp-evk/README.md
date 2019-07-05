@@ -14,8 +14,6 @@
 
 ## 开发板介绍
 
-【此处简单介绍一下开发板】
-
 开发板外观如下图所示：
 
 ![board](figures/MIMXRT1064EVK-TOP.jpg)
@@ -87,15 +85,15 @@
 
 #### 运行结果
 
-下载程序成功之后，系统会自动运行，【这里写开发板运行起来之后的现象，如：LED 闪烁等】。
+下载程序成功之后，系统会自动运行，LED会以1Hz的频率闪烁。
 
 连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
 
 ```bash
  \ | /
 - RT -     Thread Operating System
- / | \     3.1.1 build Nov 19 2018
- 2006 - 2018 Copyright by rt-thread team
+ / | \     4.0.2 build Jul  5 2019
+ 2006 - 2019 Copyright by rt-thread team
 msh >
 ```
 ### 进阶使用
@@ -112,9 +110,6 @@ msh >
 
 本章节更多详细的介绍请参考 [IMXRT 系列 BSP 外设驱动使用教程](../docs/IMXRT系列BSP外设驱动使用教程.md)。
 
-## 注意事项
-
-- 
 
 ## 联系人信息
 
