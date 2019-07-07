@@ -1,8 +1,8 @@
-# STM32F103 yf-ufun 开发板 BSP 说明
+# ufun_verb 开发板 BSP 说明
 
 ## 简介
 
-本文档为刘恒为 STM32F103 yf-ufun 开发板提供的 BSP (板级支持包) 说明。
+本文档为刘恒为 ufun_verb 开发板提供的 BSP (板级支持包) 说明。
 
 主要内容如下：
 
@@ -14,7 +14,7 @@
 
 ## 开发板介绍
 
-yf-ufun STM32F103 是优凡（天津）科技有限公司推出的一款基于 ARM Cortex-M3 内核的开发板，最高主频为 72Mhz，该开发板具有丰富的板载资源，可以充分发挥 STM32F103 的芯片性能。正面有 Micro SD 卡槽，usb 接口（供电、ISP 下载、USB 转串口），LED，触摸按键控制芯片 TTP224N-BSB，CH340 USB 转串口芯片。背面有电源开关，BOOT 配置拨码开关，蜂鸣器，RGB LED，RTC 超级电容，复位按键，触摸按键，SWD 调试接口。通过 miniPCIe 连接扩展板。
+ufun_verb 是优凡（天津）科技有限公司推出的一款基于 ARM Cortex-M3 内核的开发板，最高主频为 72Mhz，该开发板具有丰富的板载资源，可以充分发挥 STM32F103 的芯片性能。正面有 Micro SD 卡槽，usb 接口（供电、ISP 下载、USB 转串口），触摸按键控制芯片 TTP224N-BSB，CH340T USB 转串口芯片，模拟量信号采集运放，40pin 2mm 双排插座扩展接口。背面有蜂鸣器，RGB LED，RTC 超级电容，复位按键，触摸按键，环境光传感器 PTSMD021，三轴加速度传感器。
 
 开发板外观如下图所示：
 
@@ -24,12 +24,11 @@ yf-ufun STM32F103 是优凡（天津）科技有限公司推出的一款基于 A
 
 - MCU：STM32F103RCT6，主频 72MHz，256KB FLASH ，48KB RAM
 - 常用外设
-  - LED：2个，LED3（R，PA3），LED1（RGB，PA1，PA2，PA0）
+  - LED：1个，LED1（RGB，PA2，PA1，PA0）
   - 按键：5个，K1 复位，上下左右4个触摸按键
-- 常用接口：USB 转串口、SD 卡接口，miniPCIe 扩展接口等
-- 调试接口，标准 SWD 调试下载接口
+- 常用接口：USB 转串口、SD 卡接口，40pin 2mm 双排插座扩展接口等
 
-开发板更多详细信息请参考优凡 [ufun 资料] 链接:  https://pan.baidu.com/s/12WzPnuGVufoiKUtzhdXNeg 提取码:  mp4h
+开发板更多详细信息请参考优凡 [ufun_varb资料] 链接：https://pan.baidu.com/s/1JujZLrt3n9I4X-HipLd3qQ 提取码：j3pg ，或 ufun 官网:  http://www.myufun.com/
 
 ## 外设支持
 
@@ -39,10 +38,9 @@ yf-ufun STM32F103 是优凡（天津）科技有限公司推出的一款基于 A
 | :----------------- | :----------: | :------------------------------------|
 | USB 转串口        |     支持     |                                       |
 | 蜂鸣器            |   暂不支持   |                                       |
-| LED               |     支持     |                                       |
-| RGB LED           |   暂不支持   |                                       |
+| RGB LED           |   部分支持   | 暂只支持 B LED                        |
 | 触摸按键          |   暂不支持   |                                       |
-| **片上外设**      | **支持情况** | **备注**                              |
+| **片上外设**      | **支持情况** | **备注**                             |
 | GPIO              |     支持     | PA0-PA14，PB0-PB15，PC0-PC5，PC7-PC12 |
 | UART              |     支持     | UART1                                 |
 | SPI               |   暂不支持   |                                       |
@@ -53,7 +51,7 @@ yf-ufun STM32F103 是优凡（天津）科技有限公司推出的一款基于 A
 | USB Device        |   暂不支持   |                                       |
 | USB Host          |   暂不支持   | 		                               |
 | IWG               |   暂不支持   | 		                               |
-| **扩展模块**      | **支持情况** | **备注**                              |
+| **扩展模块**      | **支持情况** | **备注**                             |
 
 ## 使用说明
 
@@ -90,7 +88,7 @@ yf-ufun STM32F103 是优凡（天津）科技有限公司推出的一款基于 A
 ```
  \ | /
 - RT -     Thread Operating System
- / | \     4.0.2 build May 23 2019
+ / | \     4.0.2 build Jul  7 2019
  2006 - 2019 Copyright by rt-thread team
 msh >
 ```
