@@ -15,43 +15,22 @@
 #include "drv_crypto.h"
 #include "board.h"
 
-#if !defined(SOC_SERIES_STM32F0)&& !defined(SOC_SERIES_STM32F1) && !defined(SOC_SERIES_STM32F4) \
-    && !defined(SOC_SERIES_STM32F7)&& !defined(SOC_SERIES_STM32L4)  && !defined(SOC_SERIES_STM32H7)
-    #error "Please define at least one SOC_SERIES"
-#endif
-
-#if defined(SOC_SERIES_STM32L4)|| defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
-    static struct hwcrypto_crc_cfg  crc_backup_cfg;
-#endif
-
 struct stm32_hwcrypto_device
 {
     struct rt_hwcrypto_device dev;
     struct rt_mutex mutex;
 };
 
+#if defined(BSP_USING_CRC)
+
 struct hash_ctx_des
 {
     CRC_HandleTypeDef contex;
 };
 
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
-static rt_uint32_t _rng_rand(struct hwcrypto_rng *ctx)
-{
-    rt_uint32_t gen_random = 0;
+#if defined(SOC_SERIES_STM32L4)|| defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
+static struct hwcrypto_crc_cfg  crc_backup_cfg;
 
-    RNG_HandleTypeDef *HW_TypeDef = (RNG_HandleTypeDef *)(ctx->parent.contex);
-
-    if (HAL_OK ==  HAL_RNG_GenerateRandomNumber(HW_TypeDef, &gen_random))
-    {
-        return gen_random ;
-    }
-
-    return 0;
-}
-#endif
-
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
 static int reverse_bit(rt_uint32_t n)
 {
     n = ((n >> 1) & 0x55555555) | ((n << 1) & 0xaaaaaaaa);
@@ -68,12 +47,13 @@ static rt_uint32_t _crc_update(struct hwcrypto_crc *ctx, const rt_uint8_t *in, r
 {
     rt_uint32_t result = 0;
     struct stm32_hwcrypto_device *stm32_hw_dev = (struct stm32_hwcrypto_device *)ctx->parent.device->user_data;
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
+
+#if defined(SOC_SERIES_STM32L4)|| defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
     CRC_HandleTypeDef *HW_TypeDef = (CRC_HandleTypeDef *)(ctx->parent.contex);
 #endif
 
     rt_mutex_take(&stm32_hw_dev->mutex, RT_WAITING_FOREVER);
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32L4)|| defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
     if (0 != memcmp(&crc_backup_cfg, &ctx->crc_cfg, sizeof(struct hwcrypto_crc_cfg)))
     {
         if (HW_TypeDef->Init.DefaultPolynomialUse == DEFAULT_POLYNOMIAL_DISABLE)
@@ -122,8 +102,9 @@ static rt_uint32_t _crc_update(struct hwcrypto_crc *ctx, const rt_uint8_t *in, r
     {
         goto _exit;
     }
-#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F1)
-    if (length % 4 != 0)
+#else
+    if (ctx->crc_cfg.flags == 0 && ctx->crc_cfg.last_val == 0xFFFFFFFF && \
+        ctx->crc_cfg.xorout == 0 && length % 4 != 0)
     {
         goto _exit;
     }
@@ -132,7 +113,7 @@ static rt_uint32_t _crc_update(struct hwcrypto_crc *ctx, const rt_uint8_t *in, r
 
     result = HAL_CRC_Accumulate(ctx->parent.contex, (rt_uint32_t *)in, length);
 
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32L4)|| defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
     if (HW_TypeDef->Init.OutputDataInversionMode)
     {
         ctx ->crc_cfg.last_val = reverse_bit(result);
@@ -143,32 +124,48 @@ static rt_uint32_t _crc_update(struct hwcrypto_crc *ctx, const rt_uint8_t *in, r
     }
     crc_backup_cfg.last_val = ctx ->crc_cfg.last_val;
     result = (result ? result ^ (ctx ->crc_cfg.xorout) : result);
-
 #endif
+
 _exit:
     rt_mutex_release(&stm32_hw_dev->mutex);
 
     return result;
 }
 
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
-static const struct hwcrypto_rng_ops rng_ops =
-{
-    .update = _rng_rand,
-};
-#endif
-
 static const struct hwcrypto_crc_ops crc_ops =
 {
     .update = _crc_update,
 };
+#endif /* BSP_USING_CRC */
+
+#if defined(BSP_USING_RNG)
+static rt_uint32_t _rng_rand(struct hwcrypto_rng *ctx)
+{
+    rt_uint32_t gen_random = 0;
+
+    RNG_HandleTypeDef *HW_TypeDef = (RNG_HandleTypeDef *)(ctx->parent.contex);
+
+    if (HAL_OK ==  HAL_RNG_GenerateRandomNumber(HW_TypeDef, &gen_random))
+    {
+        return gen_random ;
+    }
+
+    return 0;
+}
+
+static const struct hwcrypto_rng_ops rng_ops =
+{
+    .update = _rng_rand,
+};
+#endif /* BSP_USING_RNG */
+
 static rt_err_t _crypto_create(struct rt_hwcrypto_ctx *ctx)
 {
     rt_err_t res = RT_EOK;
 
     switch (ctx->type & HWCRYPTO_MAIN_TYPE_MASK)
     {
-#if defined(SOC_SERIES_STM32L4)	|| defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
+#if defined(BSP_USING_RNG)
     case HWCRYPTO_TYPE_RNG:
     {
         RNG_HandleTypeDef *hrng = rt_calloc(1, sizeof(RNG_HandleTypeDef));
@@ -180,7 +177,9 @@ static rt_err_t _crypto_create(struct rt_hwcrypto_ctx *ctx)
 
         break;
     }
-#endif
+#endif /* BSP_USING_RNG */
+
+#if defined(BSP_USING_CRC)
     case HWCRYPTO_TYPE_CRC:
     {
         CRC_HandleTypeDef *hcrc = rt_calloc(1, sizeof(CRC_HandleTypeDef));
@@ -191,13 +190,13 @@ static rt_err_t _crypto_create(struct rt_hwcrypto_ctx *ctx)
         }
 
         hcrc->Instance = CRC;
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32L4)|| defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
         hcrc->Init.DefaultPolynomialUse = DEFAULT_POLYNOMIAL_ENABLE;
         hcrc->Init.DefaultInitValueUse = DEFAULT_INIT_VALUE_DISABLE;
         hcrc->Init.InputDataInversionMode = CRC_INPUTDATA_INVERSION_BYTE;
         hcrc->Init.OutputDataInversionMode = CRC_OUTPUTDATA_INVERSION_ENABLE;
         hcrc->InputDataFormat = CRC_INPUTDATA_FORMAT_BYTES;
-#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F1)
+#else
         if (HAL_CRC_Init(hcrc) != HAL_OK)
         {
             res = -RT_ERROR;
@@ -207,11 +206,11 @@ static rt_err_t _crypto_create(struct rt_hwcrypto_ctx *ctx)
         ((struct hwcrypto_crc *)ctx)->ops = &crc_ops;
         break;
     }
+#endif /* BSP_USING_CRC */
     default:
         res = -RT_ERROR;
         break;
     }
-
     return res;
 }
 
@@ -219,11 +218,16 @@ static void _crypto_destroy(struct rt_hwcrypto_ctx *ctx)
 {
     switch (ctx->type & HWCRYPTO_MAIN_TYPE_MASK)
     {
+#if defined(BSP_USING_RNG)
     case HWCRYPTO_TYPE_RNG:
         break;
+#endif /* BSP_USING_RNG */
+
+#if defined(BSP_USING_CRC)
     case HWCRYPTO_TYPE_CRC:
         HAL_CRC_DeInit((CRC_HandleTypeDef *)(ctx->contex));
         break;
+#endif /* BSP_USING_CRC */
     default:
         break;
     }
@@ -237,14 +241,23 @@ static rt_err_t _crypto_clone(struct rt_hwcrypto_ctx *des, const struct rt_hwcry
 
     switch (src->type & HWCRYPTO_MAIN_TYPE_MASK)
     {
+#if defined(BSP_USING_RNG)
     case HWCRYPTO_TYPE_RNG:
+        if (des->contex && src->contex)
+        {
+            rt_memcpy(des->contex, src->contex, sizeof(struct hash_ctx_des));
+        }    
         break;
+#endif /* BSP_USING_RNG */
+
+#if defined(BSP_USING_CRC)
     case HWCRYPTO_TYPE_CRC:
         if (des->contex && src->contex)
         {
             rt_memcpy(des->contex, src->contex, sizeof(struct hash_ctx_des));
         }
         break;
+#endif /* BSP_USING_CRC */
     default:
         res = -RT_ERROR;
         break;
@@ -256,11 +269,16 @@ static void _crypto_reset(struct rt_hwcrypto_ctx *ctx)
 {
     switch (ctx->type & HWCRYPTO_MAIN_TYPE_MASK)
     {
+#if defined(BSP_USING_RNG)
     case HWCRYPTO_TYPE_RNG:
         break;
+#endif /* BSP_USING_RNG */
+
+#if defined(BSP_USING_CRC)
     case HWCRYPTO_TYPE_CRC:
         __HAL_CRC_DR_RESET((CRC_HandleTypeDef *)ctx-> contex);
         break;
+#endif /* BSP_USING_CRC */
     default:
         break;
     }
@@ -277,8 +295,10 @@ static const struct rt_hwcrypto_ops _ops =
 int stm32_hw_crypto_device_init(void)
 {
     static struct stm32_hwcrypto_device _crypto_dev;
-
     rt_uint32_t cpuid[3] = {0};
+
+    _crypto_dev.dev.ops = &_ops;
+#if defined(BSP_USING_UDID)
 
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F7)
     cpuid[0] = HAL_GetUIDw0();
@@ -289,14 +309,15 @@ int stm32_hw_crypto_device_init(void)
     cpuid[0] = HAL_GetREVID();
     cpuid[1] = HAL_GetDEVID();
 #endif
-    _crypto_dev.dev.ops = &_ops;
+
+#endif /* BSP_USING_UDID */
+
     _crypto_dev.dev.id = 0;
     rt_memcpy(&_crypto_dev.dev.id, cpuid, 8);
 
     _crypto_dev.dev.user_data = &_crypto_dev;
 
-    if (rt_hwcrypto_register(&_crypto_dev.dev,
-                             RT_HWCRYPTO_DEFAULT_NAME) != RT_EOK)
+    if (rt_hwcrypto_register(&_crypto_dev.dev, RT_HWCRYPTO_DEFAULT_NAME) != RT_EOK)
     {
         return -1;
     }

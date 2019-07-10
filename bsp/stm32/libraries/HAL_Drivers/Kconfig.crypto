@@ -1,0 +1,20 @@
+
+config BSP_USING_CRC
+    bool "Enable CRC (CRC-32 0x04C11DB7 polynomial)"
+    select RT_USING_HWCRYPTO
+    select RT_HWCRYPTO_USING_CRC
+    default n 
+
+config BSP_USING_RNG
+    bool "Enable RNG"
+    select RT_USING_HWCRYPTO
+    select RT_HWCRYPTO_USING_RNG
+    depends on (SOC_SERIES_STM32L4 || SOC_SERIES_STM32F4 || SOC_SERIES_STM32F7 || \
+                SOC_SERIES_STM32H7)
+    default n
+    
+config BSP_USING_UDID
+    bool "Enable unique device identifier"
+    select RT_USING_HWCRYPTO
+    default n
+
