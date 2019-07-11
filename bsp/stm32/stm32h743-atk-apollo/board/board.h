@@ -16,6 +16,10 @@
 #include "drv_common.h"
 #include "drv_gpio.h"
 
+#if !defined  (LSI_VALUE) 
+  #define LSI_VALUE  ((uint32_t)32000)
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

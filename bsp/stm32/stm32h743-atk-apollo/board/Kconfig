@@ -63,6 +63,11 @@ menu "On-chip Peripheral Drivers"
             endchoice
         endif
 
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+
 endmenu
 
 menu "Board extended module Drivers"

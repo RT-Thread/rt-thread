@@ -50,8 +50,8 @@ if GetDepend(['RT_USING_USB_HOST']) or GetDepend(['RT_USING_USB_DEVICE']):
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_hcd.c']
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_usb.c']
 
-if GetDepend(['RT_USING_CAN']):
-    src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_can.c']
+if GetDepend(['RT_USING_FDCAN']):
+    src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_fdcan.c']
 
 if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']):
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim.c']
