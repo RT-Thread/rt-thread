@@ -97,6 +97,10 @@
 #define LWIP_NETIF_LOCK(...)
 #define LWIP_NETIF_UNLOCK(...)
 
+#ifndef DHCP_SERVER_PORT
+#define DHCP_SERVER_PORT 67
+#endif
+
 /**
 * The dhcp client node struct.
 */
