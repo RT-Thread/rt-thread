@@ -16,25 +16,17 @@
 #define LOG_TAG             "drv.wdt"
 #include <drv_log.h>
 
-static IWDG_HandleTypeDef hiwdg;
+struct stm32_wdt_obj
+{
+    IWDG_HandleTypeDef hiwdg;
+    rt_uint16_t is_start;
+};
+static struct stm32_wdt_obj stm32_wdt;
 static struct rt_watchdog_ops ops;
 static rt_watchdog_t watchdog;
 
 static rt_err_t wdt_init(rt_watchdog_t *wdt)
 {
-    hiwdg.Instance = IWDG;
-    hiwdg.Init.Prescaler = IWDG_PRESCALER_256;
-
-    hiwdg.Init.Reload = 0x00000FFF;
-#if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7)
-    hiwdg.Init.Window = 0x00000FFF;
-#endif
-
-    if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
-    {
-        LOG_E("wdt init failed.");
-        return -RT_ERROR;
-    }
     return RT_EOK;
 }
 
@@ -44,38 +36,44 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
     {
         /* feed the watchdog */
     case RT_DEVICE_CTRL_WDT_KEEPALIVE:
-        HAL_IWDG_Refresh(&hiwdg);
+        if(HAL_IWDG_Refresh(&stm32_wdt.hiwdg) != HAL_OK)
+        {
+            LOG_E("watch dog keepalive fail.");
+        }
         break;
         /* set watchdog timeout */
     case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
 #if defined(LSI_VALUE)
         if(LSI_VALUE)
         {
-            hiwdg.Init.Reload = (*((rt_uint32_t*)arg)) * LSI_VALUE / 256 ;
+            stm32_wdt.hiwdg.Init.Reload = (*((rt_uint32_t*)arg)) * LSI_VALUE / 256 ;
         }
         else
         {
             LOG_E("Please define the value of LSI_VALUE!");
         }
+        if(stm32_wdt.hiwdg.Init.Reload > 0xFFF)
+        {
+            LOG_E("wdg set timeout parameter too large, please less than %ds",0xFFF * 256 / LSI_VALUE);
+            return -RT_EINVAL;
+        }
 #else
   #error "Please define the value of LSI_VALUE!"
 #endif
-        if(hiwdg.Init.Reload > 0xFFF)
+        if(stm32_wdt.is_start)
         {
-            LOG_E("wdg set timeout parameter too large.");
-            return -RT_EINVAL;
-        }
-        if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
-        {
-            LOG_E("wdg set timeout failed.");
-            return -RT_ERROR;
+            if (HAL_IWDG_Init(&stm32_wdt.hiwdg) != HAL_OK)
+            {
+                LOG_E("wdg set timeout failed.");
+                return -RT_ERROR;
+            }
         }
         break;
     case RT_DEVICE_CTRL_WDT_GET_TIMEOUT:
 #if defined(LSI_VALUE)
         if(LSI_VALUE)
         {
-            (*((rt_uint32_t*)arg)) = hiwdg.Init.Reload * 256 / LSI_VALUE;
+            (*((rt_uint32_t*)arg)) = stm32_wdt.hiwdg.Init.Reload * 256 / LSI_VALUE;
         }
         else
         {
@@ -85,6 +83,13 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
   #error "Please define the value of LSI_VALUE!"
 #endif
         break;
+    case RT_DEVICE_CTRL_WDT_START:
+        if (HAL_IWDG_Init(&stm32_wdt.hiwdg) != HAL_OK)
+        {
+            LOG_E("wdt start failed.");
+            return -RT_ERROR;
+        }
+        stm32_wdt.is_start = 1;
     default:
         return -RT_ERROR;
     }
@@ -93,6 +98,15 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
 
 int rt_wdt_init(void)
 {
+    stm32_wdt.hiwdg.Instance = IWDG;
+    stm32_wdt.hiwdg.Init.Prescaler = IWDG_PRESCALER_256;
+
+    stm32_wdt.hiwdg.Init.Reload = 0x00000FFF;
+#if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7)
+    stm32_wdt.hiwdg.Init.Window = 0x00000FFF;
+#endif
+    stm32_wdt.is_start = 0;
+
     ops.init = &wdt_init;
     ops.control = &wdt_control;
     watchdog.ops = &ops;
