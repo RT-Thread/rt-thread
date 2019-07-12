@@ -224,6 +224,7 @@ static void _crypto_destroy(struct rt_hwcrypto_ctx *ctx)
 
 #if defined(BSP_USING_CRC)
     case HWCRYPTO_TYPE_CRC:
+        __HAL_CRC_DR_RESET((CRC_HandleTypeDef *)ctx-> contex);			
         HAL_CRC_DeInit((CRC_HandleTypeDef *)(ctx->contex));
         break;
 #endif /* BSP_USING_CRC */
