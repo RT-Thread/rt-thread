@@ -3,6 +3,9 @@ config BSP_USING_CRC
     bool "Enable CRC (CRC-32 0x04C11DB7 Polynomial)"
     select RT_USING_HWCRYPTO
     select RT_HWCRYPTO_USING_CRC
+    # "Crypto device frame dose not support above 8-bits granularity"
+    # "Reserve progress, running well, about 32-bits granularity, such as stm32f1, stm32f4"
+    depends on (SOC_SERIES_STM32L4 || SOC_SERIES_STM32F0 || SOC_SERIES_STM32F7 || SOC_SERIES_STM32H7)
     default n 
 
 config BSP_USING_RNG
