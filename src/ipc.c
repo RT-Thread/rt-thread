@@ -1960,7 +1960,7 @@ RTM_EXPORT(rt_mq_delete);
  *
  * @return the error code
  */
-rt_err_t rt_mq_send(rt_mq_t mq, void *buffer, rt_size_t size)
+rt_err_t rt_mq_send(rt_mq_t mq, const void *buffer, rt_size_t size)
 {
     register rt_ubase_t temp;
     struct rt_mq_message *msg;
@@ -2050,7 +2050,7 @@ RTM_EXPORT(rt_mq_send);
  *
  * @return the error code
  */
-rt_err_t rt_mq_urgent(rt_mq_t mq, void *buffer, rt_size_t size)
+rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
 {
     register rt_ubase_t temp;
     struct rt_mq_message *msg;
