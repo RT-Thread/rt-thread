@@ -44,20 +44,20 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -mcpu=cortex-m3 -mthumb -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -Dgcc'
+    CCFLAGS = DEVICE + ' -Dgcc'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rt-thread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
+    CFLAGS = ' -std=c99'
+    CXXFLAGS = ' -std=c++11'
 
     CPATH = ''
     LPATH = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O0 -gdwarf-2 -g'
+        CCFLAGS += ' -O0 -gdwarf-2 -g'
         AFLAGS += ' -gdwarf-2'
     else:
-        CFLAGS += ' -O2'
-
-    CXXFLAGS = CFLAGS 
+        CCFLAGS += ' -O2'
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
@@ -70,11 +70,13 @@ elif PLATFORM == 'armcc':
     LINK = 'armlink'
     TARGET_EXT = 'axf'
 
+    CFLAGS = ' --c99'
+    CXXFLAGS = ' --cpp11'
     DEVICE = ' --cpu Cortex-M3 '
-    CFLAGS = '-c ' + DEVICE + ' --apcs=interwork --c99'
+    CCFLAGS = '-c ' + DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE + ' --apcs=interwork '
     LFLAGS = DEVICE + ' --scatter "board\linker_scripts\link.sct" --info sizes --info totals --info unused --info veneers --list rt-thread.map --strict'
-    CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCC/include'
+    CCFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCC/include'
     LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCC/lib'
 
     CFLAGS += ' -D__MICROLIB '
@@ -83,13 +85,10 @@ elif PLATFORM == 'armcc':
     EXEC_PATH += '/ARM/ARMCC/bin/'
 
     if BUILD == 'debug':
-        CFLAGS += ' -g -O0'
+        CCFLAGS += ' -g -O0'
         AFLAGS += ' -g'
     else:
-        CFLAGS += ' -O2'
-
-    CXXFLAGS = CFLAGS 
-    CFLAGS += ' -std=c99'
+        CCFLAGS += ' -O2'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
@@ -104,21 +103,21 @@ elif PLATFORM == 'iar':
 
     DEVICE = '-Dewarm'
 
-    CFLAGS = DEVICE
-    CFLAGS += ' --diag_suppress Pa050'
-    CFLAGS += ' --no_cse'
-    CFLAGS += ' --no_unroll'
-    CFLAGS += ' --no_inline'
-    CFLAGS += ' --no_code_motion'
-    CFLAGS += ' --no_tbaa'
-    CFLAGS += ' --no_clustering'
-    CFLAGS += ' --no_scheduling'
-    CFLAGS += ' --endian=little'
-    CFLAGS += ' --cpu=Cortex-M3'
-    CFLAGS += ' -e'
-    CFLAGS += ' --fpu=None'
-    CFLAGS += ' --dlib_config "' + EXEC_PATH + '/arm/INC/c/DLib_Config_Normal.h"'
-    CFLAGS += ' --silent'
+    CCFLAGS = DEVICE
+    CCFLAGS += ' --diag_suppress Pa050'
+    CCFLAGS += ' --no_cse'
+    CCFLAGS += ' --no_unroll'
+    CCFLAGS += ' --no_inline'
+    CCFLAGS += ' --no_code_motion'
+    CCFLAGS += ' --no_tbaa'
+    CCFLAGS += ' --no_clustering'
+    CCFLAGS += ' --no_scheduling'
+    CCFLAGS += ' --endian=little'
+    CCFLAGS += ' --cpu=Cortex-M3'
+    CCFLAGS += ' -e'
+    CCFLAGS += ' --fpu=None'
+    CCFLAGS += ' --dlib_config "' + EXEC_PATH + '/arm/INC/c/DLib_Config_Normal.h"'
+    CCFLAGS += ' --silent'
 
     AFLAGS = DEVICE
     AFLAGS += ' -s+'
@@ -129,15 +128,16 @@ elif PLATFORM == 'iar':
     AFLAGS += ' -S'
 
     if BUILD == 'debug':
-        CFLAGS += ' --debug'
-        CFLAGS += ' -On'
+        CCFLAGS += ' --debug'
+        CCFLAGS += ' -On'
     else:
-        CFLAGS += ' -Oh'
+        CCFLAGS += ' -Oh'
 
     LFLAGS = ' --config "board/linker_scripts/link.icf"'
     LFLAGS += ' --entry __iar_program_start'
     
-    CXXFLAGS = CFLAGS
-
+    CFLAGS = ' '
+    CXXFLAGS = ' '
+    
     EXEC_PATH = EXEC_PATH + '/arm/bin/'
     POST_ACTION = 'ielftool --bin $TARGET rtthread.bin'
