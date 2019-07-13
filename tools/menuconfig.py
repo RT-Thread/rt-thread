@@ -21,6 +21,7 @@
 # Date           Author       Notes
 # 2017-12-29     Bernard      The first version
 # 2018-07-31     weety        Support pyconfig
+# 2019-07-13     armink       Support guiconfig
 
 import os
 import re
@@ -266,6 +267,23 @@ def pyconfig_silent(RTT_ROOT):
     fn = '.config'
 
     pymenuconfig.main(['--kconfig', 'Kconfig', '--config', '.config', '--silent', 'True'])
+
+    # silent mode, force to make rtconfig.h
+    mk_rtconfig(fn)
+
+# guiconfig for windows and linux
+def guiconfig(RTT_ROOT):
+    import pyguiconfig
+
+    touch_env()
+    env_dir = get_env_dir()
+
+    os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
+
+    fn = '.config'
+
+    sys.argv = ['guiconfig', 'Kconfig'];
+    pyguiconfig._main()
 
     # silent mode, force to make rtconfig.h
     mk_rtconfig(fn)

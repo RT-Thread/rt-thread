@@ -377,12 +377,17 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 dest = 'pyconfig',
                 action = 'store_true',
                 default = False,
-                help = 'make menuconfig for RT-Thread BSP')
+                help = 'Python ASCII menuconfig for RT-Thread BSP')
     AddOption('--pyconfig-silent',
                 dest = 'pyconfig_silent',
                 action = 'store_true',
                 default = False,
                 help = 'Don`t show pyconfig window')
+    AddOption('--guiconfig',
+                dest = 'guiconfig',
+                action = 'store_true',
+                default = False,
+                help = 'Python GUI menuconfig for RT-Thread BSP')
 
     if GetOption('pyconfig_silent'):    
         from menuconfig import pyconfig_silent
@@ -393,6 +398,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         from menuconfig import pyconfig
 
         pyconfig(Rtt_Root)
+        exit(0)
+    elif GetOption('guiconfig'):
+        from menuconfig import guiconfig
+
+        guiconfig(Rtt_Root)
         exit(0)
 
     configfn = GetOption('useconfig')
