@@ -146,14 +146,14 @@ static void pin_irq(int vector, void *param)
         set_gpio_bit(gpiohs->rise_ie.u32, pin_channel, 1);
     }
 
-    if(irq_table[pin_channel].edge & GPIO_PE_LOW)
+    if(irq_table[pin_channel].edge & GPIO_PV_LOW)
     {
         set_gpio_bit(gpiohs->low_ie.u32, pin_channel, 0);
         set_gpio_bit(gpiohs->low_ip.u32, pin_channel, 1);
         set_gpio_bit(gpiohs->low_ie.u32, pin_channel, 1);
     }
 
-    if(irq_table[pin_channel].edge & GPIO_PE_HIGH)
+    if(irq_table[pin_channel].edge & GPIO_PV_HIGH)
     {
         set_gpio_bit(gpiohs->high_ie.u32, pin_channel, 0);
         set_gpio_bit(gpiohs->high_ip.u32, pin_channel, 1);
@@ -189,10 +189,10 @@ static rt_err_t drv_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
             irq_table[pin_channel].edge = GPIO_PE_BOTH;
             break;
         case PIN_IRQ_MODE_HIGH_LEVEL:
-            irq_table[pin_channel].edge = GPIO_PE_LOW;
+            irq_table[pin_channel].edge = GPIO_PV_LOW;
             break;
         case PIN_IRQ_MODE_LOW_LEVEL:
-            irq_table[pin_channel].edge = GPIO_PE_HIGH;
+            irq_table[pin_channel].edge = GPIO_PV_HIGH;
             break;
         default:
             break;
