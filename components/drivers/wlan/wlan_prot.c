@@ -21,6 +21,8 @@
 #endif /* RT_WLAN_PROT_DEBUG */
 #include <rtdbg.h>
 
+#ifdef RT_WLAN_PROT_ENABLE
+
 #if RT_WLAN_PROT_NAME_LEN < 4
 #error "The name is too short"
 #endif
@@ -160,7 +162,7 @@ rt_err_t rt_wlan_prot_attach_dev(struct rt_wlan_device *wlan, const char *prot_n
 {
     int i = 0;
     struct rt_wlan_prot *prot = wlan->prot;
-    rt_wlan_dev_event_t event;
+    rt_wlan_dev_event_handler handler = rt_wlan_prot_event_handle;
 
     if (wlan == RT_NULL)
     {
@@ -180,7 +182,7 @@ rt_err_t rt_wlan_prot_attach_dev(struct rt_wlan_device *wlan, const char *prot_n
         rt_wlan_prot_detach_dev(wlan);
 
 #ifdef RT_WLAN_PROT_LWIP_PBUF_FORCE
-    if (rt_strcmp(RT_WLAN_PROT_LWIP, prot_name) != 0)
+    if (rt_strcmp(RT_WLAN_PROT_LWIP_NAME, prot_name) != 0)
     {
         return -RT_ERROR;
     }
@@ -202,13 +204,12 @@ rt_err_t rt_wlan_prot_attach_dev(struct rt_wlan_device *wlan, const char *prot_n
         return -RT_ERROR;
     }
 
-    for (event = RT_WLAN_DEV_EVT_INIT_DONE; event < RT_WLAN_DEV_EVT_MAX; event ++)
-    {
-        if (rt_wlan_dev_register_event_handler(wlan, event, rt_wlan_prot_event_handle, RT_NULL) != RT_EOK)
-        {
-            LOG_E("prot register event filed:%d", event);
-        }
-    }
+    rt_wlan_dev_register_event_handler(wlan, RT_WLAN_DEV_EVT_CONNECT, handler, RT_NULL);
+    rt_wlan_dev_register_event_handler(wlan, RT_WLAN_DEV_EVT_DISCONNECT, handler, RT_NULL);
+    rt_wlan_dev_register_event_handler(wlan, RT_WLAN_DEV_EVT_AP_START, handler, RT_NULL);
+    rt_wlan_dev_register_event_handler(wlan, RT_WLAN_DEV_EVT_AP_STOP, handler, RT_NULL);
+    rt_wlan_dev_register_event_handler(wlan, RT_WLAN_DEV_EVT_AP_ASSOCIATED, handler, RT_NULL);
+    rt_wlan_dev_register_event_handler(wlan, RT_WLAN_DEV_EVT_AP_DISASSOCIATED, handler, RT_NULL);
 
     return RT_EOK;
 }
@@ -360,3 +361,4 @@ void rt_wlan_prot_dump(void)
         }
     }
 }
+#endif

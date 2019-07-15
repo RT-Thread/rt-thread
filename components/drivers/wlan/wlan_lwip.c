@@ -14,11 +14,16 @@
 #include <wlan_prot.h>
 #include <wlan_workqueue.h>
 
+#if defined(RT_WLAN_PROT_ENABLE) && defined(RT_WLAN_PROT_LWIP_ENABLE)
+
 #ifdef RT_USING_LWIP
 #include <netif/ethernetif.h>
 #include <lwip/netifapi.h>
 #ifdef LWIP_USING_DHCPD
 #include <dhcp_server.h>
+#endif
+#ifdef RT_USING_NETDEV
+#include <netdev.h>
 #endif
 
 #define DBG_TAG "WLAN.lwip"
@@ -31,6 +36,10 @@
 
 #ifndef IPADDR_STRLEN_MAX
 #define IPADDR_STRLEN_MAX    (32)
+#endif
+
+#ifndef RT_WLAN_PROT_LWIP_NAME
+#define RT_WLAN_PROT_LWIP_NAME  ("lwip")
 #endif
 
 struct lwip_prot_des
@@ -100,12 +109,16 @@ static void netif_is_ready(struct rt_work *work, void *parameter)
     LOG_I("Got IP address : %s", str);
 exit:
     level = rt_hw_interrupt_disable();
-    rt_memset(work, 0, sizeof(struct rt_work));
+    if (work)
+    {
+        rt_memset(work, 0, sizeof(struct rt_work));
+    }
     rt_hw_interrupt_enable(level);
 }
 
 static void timer_callback(void *parameter)
 {
+#ifdef RT_WLAN_WORK_THREAD_ENABLE
     struct rt_workqueue *workqueue;
     struct rt_wlan_device *wlan = parameter;
     struct lwip_prot_des *lwip_prot = (struct lwip_prot_des *)wlan->prot;
@@ -125,6 +138,10 @@ static void timer_callback(void *parameter)
             rt_hw_interrupt_enable(level);
         }
     }
+#else
+    netif_is_ready(RT_NULL, parameter);
+#endif
+
 }
 
 static void netif_set_connected(void *parameter)
@@ -238,8 +255,11 @@ static void rt_wlan_lwip_event_handle(struct rt_wlan_prot *port, struct rt_wlan_
     }
     if (flag_old != lwip_prot->connected_flag)
     {
+#ifdef RT_WLAN_WORK_THREAD_ENABLE
         rt_wlan_workqueue_dowork(netif_set_connected, wlan);
-        // netif_set_connected(wlan);
+#else
+        netif_set_connected(wlan);
+#endif
     }
 }
 
@@ -460,7 +480,9 @@ static struct rt_wlan_prot *rt_wlan_lwip_protocol_register(struct rt_wlan_prot *
     }
     netif_set_up(eth->netif);
     LOG_I("eth device init ok name:%s", eth_name);
-
+#ifdef RT_USING_NETDEV
+    wlan->netdev = netdev_get_by_name(eth_name);
+#endif
     return &lwip_prot->prot;
 }
 
@@ -483,7 +505,7 @@ int rt_wlan_lwip_init(void)
     rt_wlan_prot_event_t event;
 
     rt_memset(&prot, 0, sizeof(prot));
-    rt_strncpy(&prot.name[0], RT_WLAN_PROT_LWIP, RT_WLAN_PROT_NAME_LEN);
+    rt_strncpy(&prot.name[0], RT_WLAN_PROT_LWIP_NAME, RT_WLAN_PROT_NAME_LEN);
     prot.ops = &ops;
 
     if (rt_wlan_prot_regisetr(&prot) != RT_EOK)
@@ -501,4 +523,5 @@ int rt_wlan_lwip_init(void)
 }
 INIT_PREV_EXPORT(rt_wlan_lwip_init);
 
+#endif
 #endif
