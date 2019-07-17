@@ -200,6 +200,14 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
         bsp_copy_files(os.path.join(library_path, 'HAL_Drivers'), os.path.join(library_dir, 'HAL_Drivers'))
         bsp_copy_files(os.path.join(library_path, Env['bsp_lib_type']), os.path.join(library_dir, Env['bsp_lib_type']))
         shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
+    elif os.path.basename(os.path.dirname(BSP_ROOT)) == 'imxrt':
+        print("=> copy imxrt bsp library")
+        library_path = os.path.join(os.path.dirname(BSP_ROOT), 'Libraries')
+        library_dir  = os.path.join(dist_dir, 'Libraries')
+        bsp_copy_files(os.path.join(library_path, 'drivers'), os.path.join(library_dir, 'drivers'))
+        bsp_copy_files(os.path.join(library_path, Env['bsp_lib_type']), os.path.join(library_dir, Env['bsp_lib_type']))
+        shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
+
 
     # do bsp special dist handle
     if 'dist_handle' in Env:       
@@ -329,6 +337,13 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, rttide = None):
         library_path = os.path.join(os.path.dirname(BSP_ROOT), 'libraries')
         library_dir  = os.path.join(dist_dir, 'libraries')
         bsp_copy_files(os.path.join(library_path, 'HAL_Drivers'), os.path.join(library_dir, 'HAL_Drivers'))
+        bsp_copy_files(os.path.join(library_path, Env['bsp_lib_type']), os.path.join(library_dir, Env['bsp_lib_type']))
+        shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
+    elif os.path.basename(os.path.dirname(BSP_ROOT)) == 'imxrt':
+        print("=> copy imxrt bsp library")
+        library_path = os.path.join(os.path.dirname(BSP_ROOT), 'Libraries')
+        library_dir  = os.path.join(dist_dir, 'Libraries')
+        bsp_copy_files(os.path.join(library_path, 'drivers'), os.path.join(library_dir, 'drivers'))
         bsp_copy_files(os.path.join(library_path, Env['bsp_lib_type']), os.path.join(library_dir, Env['bsp_lib_type']))
         shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
 
