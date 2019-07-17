@@ -103,8 +103,8 @@ rt_uint32_t rt_hwcrypto_rng_update(void)
     /* Default device does not exist ? */
     if (ctx_default == RT_NULL)
     {
-        /* try create Context from dufault device */
-        rt_hwcrypto_rng_default(rt_hwcrypto_dev_dufault());
+        /* try create Context from default device */
+        rt_hwcrypto_rng_default(rt_hwcrypto_dev_default());
     }
     return rt_hwcrypto_rng_update_ctx(ctx_default);
 }

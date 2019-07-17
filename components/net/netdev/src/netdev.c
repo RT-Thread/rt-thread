@@ -821,7 +821,7 @@ void netdev_low_level_set_dhcp_status(struct netdev *netdev, rt_bool_t is_enable
     }
 }
 
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_FINSH
 
 #include <finsh.h>
 
@@ -832,7 +832,6 @@ static void netdev_list_if(void)
 #define NETDEV_IFCONFIG_IEMI_MAX_LEN   8
 
     rt_ubase_t index;
-    rt_base_t level;
     rt_slist_t *node  = RT_NULL;
     struct netdev *netdev = RT_NULL;
     struct netdev *cur_netdev_list = netdev_list;
@@ -843,14 +842,12 @@ static void netdev_list_if(void)
         return;
     }
 
-    level = rt_hw_interrupt_disable();
-
     for (node = &(cur_netdev_list->list); node; node = rt_slist_next(node))
     {
         netdev = rt_list_entry(node, struct netdev, list);
 
-        rt_kprintf("network interface device: %s%s\n",
-                   netdev->name,
+        rt_kprintf("network interface device: %.*s%s\n",
+                   RT_NAME_MAX, netdev->name,
                    (netdev == netdev_default) ? " (Default)" : "");
         rt_kprintf("MTU: %d\n", netdev->mtu);
 
@@ -925,8 +922,6 @@ static void netdev_list_if(void)
             rt_kprintf("\n");
         }
     }
-
-    rt_hw_interrupt_enable(level);
 }
 
 static void netdev_set_if(char* netdev_name, char* ip_addr, char* gw_addr, char* nm_addr)
@@ -985,7 +980,7 @@ FINSH_FUNCTION_EXPORT_ALIAS(netdev_ifconfig, __cmd_ifconfig, list the informatio
 #endif /* NETDEV_USING_IFCONFIG */
 
 #ifdef NETDEV_USING_PING
-static int netdev_cmd_ping(char* target_name, rt_uint32_t times, rt_size_t size)
+int netdev_cmd_ping(char* target_name, rt_uint32_t times, rt_size_t size)
 {
 #define NETDEV_PING_DATA_SIZE       32
 /** ping receive timeout - in milliseconds */
@@ -1075,19 +1070,16 @@ FINSH_FUNCTION_EXPORT_ALIAS(netdev_ping, __cmd_ping, ping network host);
 
 static void netdev_list_dns(void)
 {
-    rt_base_t level;
     int index = 0;
     struct netdev *netdev = RT_NULL;
     rt_slist_t *node  = RT_NULL;
-
-    level = rt_hw_interrupt_disable();
 
     for (node = &(netdev_list->list); node; node = rt_slist_next(node))
     {
         netdev = rt_list_entry(node, struct netdev, list);
 
-        rt_kprintf("network interface device: %s%s\n",
-                netdev->name,
+        rt_kprintf("network interface device: %.*s%s\n",
+                RT_NAME_MAX, netdev->name,
                 (netdev == netdev_default)?" (Default)":"");
 
         for(index = 0; index < NETDEV_DNS_SERVERS_NUM; index++)
@@ -1100,8 +1092,6 @@ static void netdev_list_dns(void)
             rt_kprintf("\n");
         }
     }
-
-    rt_hw_interrupt_enable(level);
 }
 
 static void netdev_set_dns(char *netdev_name, uint8_t dns_num, char *dns_server)
@@ -1149,7 +1139,6 @@ FINSH_FUNCTION_EXPORT_ALIAS(netdev_dns, __cmd_dns, list and set the information 
 #ifdef NETDEV_USING_NETSTAT
 static void netdev_cmd_netstat(void)
 {
-    rt_base_t level;
     rt_slist_t *node  = RT_NULL;
     struct netdev *netdev = RT_NULL;
     struct netdev *cur_netdev_list = netdev_list;
@@ -1159,8 +1148,6 @@ static void netdev_cmd_netstat(void)
         rt_kprintf("netstat: network interface device list error.\n");
         return;
     }
-
-    level = rt_hw_interrupt_disable();
 
     for (node = &(cur_netdev_list->list); node; node = rt_slist_next(node))
     {
@@ -1172,9 +1159,14 @@ static void netdev_cmd_netstat(void)
         }
     }
 
-    rt_hw_interrupt_enable(level);
-
-    netdev->ops->netstat(netdev);
+    if (netdev->ops->netstat != RT_NULL)
+    {
+        netdev->ops->netstat(netdev);
+    }
+    else
+    {
+        rt_kprintf("netstat: this command is not supported!\n");
+    }
 }
 
 int netdev_netstat(int argc, char **argv)
@@ -1193,4 +1185,4 @@ int netdev_netstat(int argc, char **argv)
 FINSH_FUNCTION_EXPORT_ALIAS(netdev_netstat, __cmd_netstat, list the information of TCP / IP);
 #endif /* NETDEV_USING_NETSTAT */
 
-#endif /* FINSH_USING_MSH */
+#endif /* RT_USING_FINSH */

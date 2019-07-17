@@ -175,7 +175,7 @@ rt_err_t rt_hwcrypto_register(struct rt_hwcrypto_device *device, const char *nam
  * @return          Hardware crypto device
  *
  */
-struct rt_hwcrypto_device *rt_hwcrypto_dev_dufault(void);
+struct rt_hwcrypto_device *rt_hwcrypto_dev_default(void);
 
 /**
  * @brief           Get the unique ID of the device
