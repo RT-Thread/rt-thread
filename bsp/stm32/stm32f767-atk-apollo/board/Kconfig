@@ -245,7 +245,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_DFS
         default n
 	
- source "../libraries/HAL_Drivers/Kconfig.crypto"
+ source "../libraries/HAL_Drivers/Kconfig"
     
 endmenu
 

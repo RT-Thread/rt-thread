@@ -69,7 +69,7 @@ menu "On-chip Peripheral Drivers"
         default n
 
 	
-    source "../libraries/HAL_Drivers/Kconfig.crypto"
+    source "../libraries/HAL_Drivers/Kconfig"
 
 endmenu
 

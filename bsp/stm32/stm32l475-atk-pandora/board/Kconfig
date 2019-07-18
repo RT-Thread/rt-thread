@@ -251,7 +251,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_USB_DEVICE
         default n
    
-    source "../libraries/HAL_Drivers/Kconfig.crypto"
+    source "../libraries/HAL_Drivers/Kconfig"
     
 endmenu
 

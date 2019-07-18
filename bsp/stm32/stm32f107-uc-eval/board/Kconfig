@@ -39,7 +39,7 @@ menu "On-chip Peripheral Drivers"
 
       endif
 
-    source "../libraries/HAL_Drivers/Kconfig.crypto"
+    source "../libraries/HAL_Drivers/Kconfig"
     
 endmenu
 
