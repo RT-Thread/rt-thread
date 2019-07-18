@@ -288,7 +288,7 @@ menu "On-chip Peripheral Drivers"
                 bool "using CAN1"
                 default n
         endif
-    source "../libraries/HAL_Drivers/Kconfig.crypto"
+    source "../libraries/HAL_Drivers/Kconfig"
     
 endmenu
 
