@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2006-2019, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2011-05-24     aozima       first version
+ * 2019-07-19     Zhou Yanjie  clean up code
+ */
+
 #ifndef __ASSEMBLY__
 #define __ASSEMBLY__
 #endif

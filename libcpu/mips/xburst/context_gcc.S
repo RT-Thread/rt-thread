@@ -1,9 +1,13 @@
 /*
- * File      : context_gcc.S
+ * Copyright (c) 2006-2019, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2010-05-17     swkyer       first version
- * 2010-09-11     bernard      port to Jz4755
+ * 2010-09-11     bernard      port to JZ4755
+ * 2019-07-19     Zhou Yanjie  clean up code
  */
 
 #ifndef __ASSEMBLY__
