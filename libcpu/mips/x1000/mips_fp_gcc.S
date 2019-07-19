@@ -23,7 +23,7 @@
  */
 
 #ifndef __ASSEMBLY__
-#	define __ASSEMBLY__
+#define __ASSEMBLY__
 #endif
 
 #ifdef __mips_hard_float

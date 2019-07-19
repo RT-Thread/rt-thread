@@ -5,7 +5,12 @@
  * 2010-05-17     swkyer       first version
  * 2010-09-11     bernard      port to Jz4755
  */
-#include "../common/mips.inc"
+
+#ifndef __ASSEMBLY__
+#define __ASSEMBLY__
+#endif
+
+#include "../common/mips_def.h"
 #include "../common/stackframe.h"
 #include "stack.h"
 
