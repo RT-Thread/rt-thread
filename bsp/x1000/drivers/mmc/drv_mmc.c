@@ -275,7 +275,7 @@ rt_inline void jzmmc_submit_dma(struct jzmmc_host *host, struct rt_mmcsd_data *d
     host->dma_desc.nda  = 0;
     host->dma_desc.len  = data->blks * data->blksize;
     host->dma_desc.da   = virt_to_phys(data->buf);
-    host->dma_desc.dcmd = DMACMD_ENDI | DMACMD_LINK; /* only one DMA descriptor */
+    host->dma_desc.dcmd = DMACMD_ENDI; /* only one DMA descriptor */
 
 #ifdef DMA_BUFFER
     if ((uint32_t)(data->buf) & (DMA_ALIGN - 1))
