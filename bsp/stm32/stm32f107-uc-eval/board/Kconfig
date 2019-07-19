@@ -39,7 +39,8 @@ menu "On-chip Peripheral Drivers"
 
       endif
 
-
+    source "../libraries/HAL_Drivers/Kconfig"
+    
 endmenu
 
 menu "Board extended module Drivers"

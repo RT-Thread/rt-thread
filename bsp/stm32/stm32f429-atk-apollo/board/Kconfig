@@ -251,6 +251,8 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_FMC
         bool
         default n
+    source "../libraries/HAL_Drivers/Kconfig"
+    
 endmenu
 
 menu "Board extended module Drivers"
