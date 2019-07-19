@@ -14,8 +14,13 @@
  * 2011-08-08     lgnq         port to Loongson LS1B
  * 2015-07-08     chinesebear  port to Loongson LS1C
  */
+
+#ifndef __ASSEMBLY__
+#define __ASSEMBLY__
+#endif
+
 #include "../common/mipsregs.h"
-#include "../common/mips.inc"
+#include "../common/mips_def.h"
 #include "../common/asm.h"
 #include "cache.h"
 

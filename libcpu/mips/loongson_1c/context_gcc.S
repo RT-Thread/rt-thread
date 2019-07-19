@@ -14,7 +14,11 @@
  * 2011-08-08     lgnq         port to Loongson LS1B
  */
 
-#include "../common/mips.inc"
+#ifndef __ASSEMBLY__
+#define __ASSEMBLY__
+#endif
+
+#include "../common/mips_def.h"
 #include "../common/stackframe.h"
 #include "stackframe_fpu.h"
 

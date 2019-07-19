@@ -6,7 +6,11 @@
  * 2010-09-04     bernard      porting to Jz47xx
  */
 
-#include "../common/mips.inc"
+#ifndef __ASSEMBLY__
+#define __ASSEMBLY__
+#endif
+
+#include "../common/mips_def.h"
 #include "../common/stackframe.h"
 #include "stack.h"
 

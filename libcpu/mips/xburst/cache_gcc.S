@@ -4,7 +4,12 @@
  * Date           Author       Notes
  * 2010-05-17     swkyer       first version
  */
-#include "../common/mips.inc"
+
+#ifndef __ASSEMBLY__
+#define __ASSEMBLY__
+#endif
+
+#include "../common/mips_def.h"
 #include "../common/mipsregs.h"
 #include "../common/stackframe.h"
 

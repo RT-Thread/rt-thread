@@ -1,5 +1,9 @@
+#ifndef __ASSEMBLY__
+#define __ASSEMBLY__
+#endif
+
 #include <p32xxxx.h>
-#include "../common/mips.inc"
+#include "../common/mips_def.h"
 #include "../common/stackframe.h"
 
     .section ".text", "ax"
