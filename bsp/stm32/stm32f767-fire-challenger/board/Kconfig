@@ -225,6 +225,8 @@ menuconfig BSP_USING_SPI
         bool
         default n
         
+    source "../libraries/HAL_Drivers/Kconfig"
+    
 endmenu
 
 menu "Board extended module Drivers"
