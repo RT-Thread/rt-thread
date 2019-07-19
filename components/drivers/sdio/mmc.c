@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author        Notes
- * 2015-06-15     hichard     first version
+ * Date           Author       Notes
+ * 2015-06-15     hichard      first version
  */
 
 #include <drivers/mmcsd_core.h>
