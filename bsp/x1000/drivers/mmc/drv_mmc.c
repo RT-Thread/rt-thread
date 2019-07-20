@@ -670,7 +670,11 @@ static void jzmmc_sdio_request(struct rt_mmcsd_host *mmc, struct rt_mmcsd_req *r
     writew(0xFFFF, host->hw_base + MSC_IREG_OFFSET);
     disable_msc_irq(host, 0xffffffff);
 
-    if (host->flags & MSC_CMDAT_BUS_WIDTH_4BIT)
+    if(host->flags & MSC_CMDAT_BUS_WIDTH_8BIT)
+    {
+        host->cmdat |= MSC_CMDAT_BUS_WIDTH_8BIT;
+    }
+    else if(host->flags & MSC_CMDAT_BUS_WIDTH_4BIT)
     {
         host->cmdat |= MSC_CMDAT_BUS_WIDTH_4BIT;
     }
@@ -819,14 +823,19 @@ static void jzmmc_sdio_set_iocfg(struct rt_mmcsd_host *host,
 
     LOG_D("set_iocfg clock: %d", io_cfg->clock);
 
-    if (io_cfg->bus_width == MMCSD_BUS_WIDTH_4)
+    if(io_cfg->bus_width == MMCSD_BUS_WIDTH_8)
+    {
+        LOG_D("MMC: Setting controller bus width to 8");
+        jz_sdio->flags |= MSC_CMDAT_BUS_WIDTH_8BIT;
+    }
+    else if(io_cfg->bus_width == MMCSD_BUS_WIDTH_4)
     {
         LOG_D("MMC: Setting controller bus width to 4");
         jz_sdio->flags |= MSC_CMDAT_BUS_WIDTH_4BIT;
     }
     else
     {
-        jz_sdio->flags &= ~(MSC_CMDAT_BUS_WIDTH_4BIT);
+        jz_sdio->flags &= ~(MSC_CMDAT_BUS_WIDTH_4BIT | MSC_CMDAT_BUS_WIDTH_8BIT);
         LOG_D("MMC: Setting controller bus width to 1");
     }
 
@@ -963,10 +972,21 @@ int jzmmc_sdio_init(void)
      * X1000  MSC0_D1:  PA22  1
      * X1000  MSC0_D2:  PA21  1
      * X1000  MSC0_D3:  PA20  1
+     * X1000  MSC0_D4:  PA19  1
+     * X1000  MSC0_D5:  PA18  1
+     * X1000  MSC0_D6:  PA17  1
+     * X1000  MSC0_D7:  PA16  1
      * X1000  MSC0_CMD: PA25  1
      * X1000  MSC0_CLK: PA24  1
+     * X1000  MSC0_RSTN: PA10 
      */
     {
+#ifdef CONFIG_MSC0_PA_BIT
+        gpio_set_func(GPIO_PORT_A, GPIO_Pin_16, GPIO_FUNC_1);
+        gpio_set_func(GPIO_PORT_A, GPIO_Pin_17, GPIO_FUNC_1);
+        gpio_set_func(GPIO_PORT_A, GPIO_Pin_18, GPIO_FUNC_1);
+        gpio_set_func(GPIO_PORT_A, GPIO_Pin_19, GPIO_FUNC_1);
+#endif
 #ifdef CONFIG_MSC0_PA_4BIT
         gpio_set_func(GPIO_PORT_A, GPIO_Pin_20, GPIO_FUNC_1);
         gpio_set_func(GPIO_PORT_A, GPIO_Pin_21, GPIO_FUNC_1);
@@ -1000,6 +1020,9 @@ int jzmmc_sdio_init(void)
 #endif
 #ifdef CONFIG_MSC0_PA_4BIT
     host->flags = MMCSD_BUSWIDTH_4 | MMCSD_MUTBLKWRITE | MMCSD_SUP_SDIO_IRQ | MMCSD_SUP_HIGHSPEED;
+#endif
+#ifdef CONFIG_MSC0_PA_8BIT
+	host->flags = MMCSD_BUSWIDTH_8 |MMCSD_MUTBLKWRITE | MMCSD_SUP_SDIO_IRQ | MMCSD_SUP_HIGHSPEED;
 #endif
 
     host->max_seg_size = 65535;
