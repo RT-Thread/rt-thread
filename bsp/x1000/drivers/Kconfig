@@ -60,6 +60,9 @@ if RT_USING_SDIO
 
             config CONFIG_MSC0_PA_4BIT
                 bool "PORT A, data with 4 bit"
+
+            config CONFIG_MSC0_PA_8BIT
+                bool "PORT A, data with 8 bit"
         endchoice
     endif
 
