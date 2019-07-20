@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2006-2019, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2017-11-11     enkiller     first version
+ */
+
 #include <board.h>
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -132,20 +142,23 @@ int io_realboard_v2(void)
     gpio_direction_output(AUDIO_SHUTDOWN_PORT,AUDIO_SHUTDOWN_PIN, AUDIO_SHUTDOWN_MUTE);
     gpio_set_value(AUDIO_SHUTDOWN_PORT,AUDIO_SHUTDOWN_PIN, AUDIO_SHUTDOWN_MUTE);
 
-    /* Reset lcd,TP,... */
+#ifdef RT_USING_TOUCH
+    /* Reset LCD */
     gpio_direction_output(LCD_TP_INT_PORT, LCD_TP_INT_PIN,1);
     _delay_ms(300);
+#endif
+#ifdef RT_USING_SLCD
+    /* Reset TP */
     gpio_direction_output(LCD_RST_PORT, LCD_RST_PIN,0);
     _delay_ms(100);
     gpio_set_value(LCD_RST_PORT, LCD_RST_PIN, 1);
-
+#endif
 
     /* LED */
     gpio_direction_output(BLINK_LED0_PORT, BLINK_LED0_PIN,1);
     gpio_direction_output(BLINK_LED1_PORT, BLINK_LED1_PIN,1);
     gpio_direction_output(BLINK_LED2_PORT, BLINK_LED2_PIN,1);
     gpio_direction_output(BLINK_LED3_PORT, BLINK_LED3_PIN,1);
-
 
     return 0;
 }
