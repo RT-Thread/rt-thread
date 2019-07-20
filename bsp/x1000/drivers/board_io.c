@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2006-2019, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2017-11-11     enkiller     first version
+ */
+
 #include <board.h>
 #include <rtthread.h>
 #include <rtdevice.h>
