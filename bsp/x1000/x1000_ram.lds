@@ -43,6 +43,11 @@ SECTIONS
 
     .text : 
     {
+        *(.text.unlikely .text.*_unlikely .text.unlikely.*)
+        *(.text.exit .text.exit.*)
+        *(.text.startup .text.startup.*)
+        *(.text.hot .text.hot.*)
+        *(.text .stub .text.* .gnu.linkonce.t.*)
         *(.text)                        /* remaining code */
         *(.text.*)                      /* remaining code */
         *(.rodata)                      /* read-only data (constants) */
@@ -86,6 +91,12 @@ SECTIONS
          *(.eh_frame_entry.*)
     } > DRAM
     .eh_frame : ONLY_IF_RO { KEEP (*(.eh_frame)) } > DRAM
+
+    . = ALIGN(4);
+    .gnu_extab :
+    {
+        *(.gnu_extab.*)
+    } > DRAM
 
     . = ALIGN(4);
     .ctors :
