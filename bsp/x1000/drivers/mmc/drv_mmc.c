@@ -9,6 +9,7 @@
  * 2013-03-29     aozima       support JZ4770.
  * 2013-04-01     aozima       add interrupt support for JZ4770.
  * 2019-04-04     Jean-Luc     fix bug in jzmmc_submit_dma.
+ *                             add 4bit mode support for msc0.
  */
 
 #include <rthw.h>
