@@ -966,9 +966,11 @@ int jzmmc_sdio_init(void)
      * X1000  MSC0_CLK: PA24  1
      */
     {
+#ifdef CONFIG_MSC0_PA_4BIT
         gpio_set_func(GPIO_PORT_A, GPIO_Pin_20, GPIO_FUNC_1);
         gpio_set_func(GPIO_PORT_A, GPIO_Pin_21, GPIO_FUNC_1);
         gpio_set_func(GPIO_PORT_A, GPIO_Pin_22, GPIO_FUNC_1);
+#endif
         gpio_set_func(GPIO_PORT_A, GPIO_Pin_23, GPIO_FUNC_1);
         gpio_set_func(GPIO_PORT_A, GPIO_Pin_24, GPIO_FUNC_1);
         gpio_set_func(GPIO_PORT_A, GPIO_Pin_25, GPIO_FUNC_1);
@@ -991,8 +993,14 @@ int jzmmc_sdio_init(void)
     host->ops = &ops;
     host->valid_ocr = VDD_27_28 | VDD_28_29 | VDD_29_30 | VDD_30_31 | VDD_31_32 |
         VDD_32_33 | VDD_33_34 | VDD_34_35 | VDD_35_36;
-    // host->flags = MMCSD_BUSWIDTH_4 | MMCSD_MUTBLKWRITE | MMCSD_SUP_SDIO_IRQ | MMCSD_SUP_HIGHSPEED;
-    host->flags = MMCSD_MUTBLKWRITE | MMCSD_SUP_SDIO_IRQ | MMCSD_SUP_HIGHSPEED;
+
+#ifdef CONFIG_MSC0_PA_1BIT
+	host->flags = MMCSD_MUTBLKWRITE | MMCSD_SUP_SDIO_IRQ | MMCSD_SUP_HIGHSPEED;
+#endif
+#ifdef CONFIG_MSC0_PA_4BIT
+    host->flags = MMCSD_BUSWIDTH_4 | MMCSD_MUTBLKWRITE | MMCSD_SUP_SDIO_IRQ | MMCSD_SUP_HIGHSPEED;
+#endif
+
     host->max_seg_size = 65535;
     host->max_dma_segs = 2;
     host->max_blk_size = 512;
