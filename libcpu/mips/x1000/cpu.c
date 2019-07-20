@@ -31,13 +31,15 @@
 
 mips32_core_cfg_t g_mips_core =
 {
-	.icache_line_size 	= 32,
-	.icache_size		= 16384,
+    .icache_line_size		= 32,
+    .icache_sets_per_way	= 128,
+    .icache_ways			= 4,
 
-	.dcache_line_size 	= 32,
-	.dcache_size		= 16384,
+    .dcache_line_size		= 32,
+    .dcache_sets_per_way	= 128,
+    .dcache_ways			= 4,
 
-	.max_tlb_entries 	= 16,		/* max_tlb_entries */
+    .max_tlb_entries		= 16,		/* max_tlb_entries */
 };
 
 void rt_hw_tlb_init(void)

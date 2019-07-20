@@ -193,31 +193,43 @@ static inline void invalidate_dcache_line(rt_ubase_t addr)
 }
 static inline void blast_dcache16(void)
 {
-	rt_ubase_t start = KSEG0BASE;
-	rt_ubase_t end = start + g_mips_core.dcache_size;
-	rt_ubase_t addr;
+    rt_ubase_t dcache_ways = g_mips_core.dcache_ways;
+    rt_ubase_t dcache_sets = g_mips_core.dcache_sets_per_way;
+    rt_ubase_t dcache_line_size = g_mips_core.dcache_line_size;
+    rt_ubase_t dcache_size = dcache_sets * dcache_ways * dcache_line_size;
+    rt_ubase_t start = KSEG0BASE;
+    rt_ubase_t end = start + dcache_size;
+    rt_ubase_t addr;
 
-	for (addr = start; addr < end; addr += g_mips_core.dcache_line_size)
+	for (addr = start; addr < end; addr += dcache_line_size)
 		cache16_unroll32(addr, INDEX_WRITEBACK_INV_D);
 }
 
 static inline void inv_dcache16(void)
 {
-	rt_ubase_t start = KSEG0BASE;
-	rt_ubase_t end = start + g_mips_core.dcache_size;
-	rt_ubase_t addr;
+    rt_ubase_t dcache_ways = g_mips_core.dcache_ways;
+    rt_ubase_t dcache_sets = g_mips_core.dcache_sets_per_way;
+    rt_ubase_t dcache_line_size = g_mips_core.dcache_line_size;
+    rt_ubase_t dcache_size = dcache_sets * dcache_ways * dcache_line_size;
+    rt_ubase_t start = KSEG0BASE;
+    rt_ubase_t end = start + dcache_size;
+    rt_ubase_t addr;
 
-	for (addr = start; addr < end; addr += g_mips_core.dcache_line_size)
+	for (addr = start; addr < end; addr += dcache_line_size)
 		cache16_unroll32(addr, HIT_INVALIDATE_D);
 }
 
 static inline void blast_icache16(void)
 {
-	rt_ubase_t start = KSEG0BASE;
-	rt_ubase_t end = start + g_mips_core.icache_size;
-	rt_ubase_t addr;
+    rt_ubase_t icache_ways = g_mips_core.icache_ways;
+    rt_ubase_t icache_sets = g_mips_core.icache_sets_per_way;
+    rt_ubase_t icache_line_size = g_mips_core.icache_line_size;
+    rt_ubase_t icache_size = icache_sets * icache_ways * icache_line_size;
+    rt_ubase_t start = KSEG0BASE;
+    rt_ubase_t end = start + icache_size;
+    rt_ubase_t addr;
 
-	for (addr = start; addr < end; addr += g_mips_core.icache_line_size)
+	for (addr = start; addr < end; addr += icache_line_size)
 		cache16_unroll32(addr, INDEX_INVALIDATE_I);
 }
 
