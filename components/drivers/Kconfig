@@ -254,6 +254,10 @@ config RT_USING_TOUCH
     bool "Using Touch device drivers"
     default n
 
+config RT_USING_LCD
+    bool "Using LCD device drivers"
+    default n
+
 menuconfig RT_USING_HWCRYPTO
         bool "Using Hardware Crypto drivers"
         default n

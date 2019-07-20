@@ -1,0 +1,8 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = ['lcd.c']
+CPPPATH = [cwd + '/../include']
+group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_LCD'], CPPPATH = CPPPATH)
+
+Return('group')
