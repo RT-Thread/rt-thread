@@ -50,6 +50,19 @@ if RT_USING_SDIO
         bool "Using MMC/SD 0"
         default y
 
+    if RT_USING_MSC0
+        choice
+            prompt "GPIO function pins select"
+            default CONFIG_MSC0_PA_4BIT
+
+            config CONFIG_MSC0_PA_1BIT
+                bool "PORT A, data with 1 bit"
+
+            config CONFIG_MSC0_PA_4BIT
+                bool "PORT A, data with 4 bit"
+        endchoice
+    endif
+
     config RT_USING_MSC1
         bool "Using MMC/SD 1"
         default y
