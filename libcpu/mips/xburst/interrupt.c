@@ -129,7 +129,7 @@ rt_inline int fls(int x)
 }
 #endif
 
-#include <mipsregs.h>
+#include <mips_regs.h>
 
 void rt_interrupt_dispatch(void *ptreg)
 {

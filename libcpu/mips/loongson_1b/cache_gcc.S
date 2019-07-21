@@ -15,7 +15,7 @@
 #define __ASSEMBLY__
 #endif
 
-#include "../common/mipsregs.h"
+#include "../common/mips_regs.h"
 #include "../common/mips_def.h"
 #include "../common/asm.h"
 #include "cache.h"

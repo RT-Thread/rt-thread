@@ -69,9 +69,8 @@ void rt_hw_fpu_init(void)
 
     // 配置FPU
     c1_status = read_c1_status();
-    c1_status |= (FPU_CSR_FS | FPU_CSR_FO | FPU_CSR_FN);    // set FS, FO, FN
     c1_status &= ~(FPU_CSR_ALL_E);                          // disable exception
-    c1_status = (c1_status & (~FPU_CSR_RM)) | FPU_CSR_RN;   // set RN
+    c1_status = (c1_status & (~FPU_CSR_RD)) | FPU_CSR_RN;   // set RN
     write_c1_status(c1_status);
 
     return ;

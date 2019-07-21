@@ -9,7 +9,7 @@
 
 
 #include "../common/asm.h"
-#include "../common/mipsregs.h"
+#include "../common/mips_regs.h"
 #include "../common/stackframe.h"
 
 

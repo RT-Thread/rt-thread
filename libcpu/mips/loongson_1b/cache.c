@@ -14,7 +14,7 @@
  */
  
 #include <rtthread.h>
-#include "../common/mipsregs.h"
+#include "../common/mips_regs.h"
 
 #define K0BASE			0x80000000
 #define PRID_LS1B		0x4220

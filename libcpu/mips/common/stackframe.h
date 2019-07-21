@@ -12,7 +12,7 @@
 #define __STACKFRAME_H__
 
 #include "asm.h"
-#include "mipsregs.h"
+#include "mips_regs.h"
 
 /*
  * Stack layout for the INT exception handler

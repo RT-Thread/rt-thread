@@ -378,7 +378,7 @@
 		<Unit filename="..\..\libcpu\mips\common\exception.h" />
 		<Unit filename="..\..\libcpu\mips\common\mips_def.h" />
 		<Unit filename="..\..\libcpu\mips\common\mipscfg.h" />
-		<Unit filename="..\..\libcpu\mips\common\mipsregs.h" />
+		<Unit filename="..\..\libcpu\mips\common\mips_regs.h" />
 		<Unit filename="..\..\libcpu\mips\common\stackframe.h" />
 		<Unit filename="..\..\libcpu\mips\pic32\context_gcc.S" />
 		<Unit filename="..\..\libcpu\mips\pic32\cpuport.c">

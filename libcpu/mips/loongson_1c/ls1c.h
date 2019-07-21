@@ -16,7 +16,7 @@
 #ifndef __LS1C_H__
 #define __LS1C_H__
 
-#include "../common/mipsregs.h"
+#include "../common/mips_regs.h"
 
 #define LS1C_ACPI_IRQ	0
 #define LS1C_HPET_IRQ	1

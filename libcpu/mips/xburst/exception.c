@@ -23,7 +23,7 @@
 #include <rtthread.h>
 #include <rthw.h>
 #include "../common/exception.h"
-#include "../common/mipsregs.h"
+#include "../common/mips_regs.h"
 
 /**
  * @addtogroup Ingenic

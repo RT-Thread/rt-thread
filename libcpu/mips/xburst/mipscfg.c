@@ -21,7 +21,7 @@
  * 2010-05-27     swkyer       first version
  */
 #include <rtthread.h>
-#include "../common/mipsregs.h"
+#include "../common/mips_regs.h"
 #include "../common/mipscfg.h"
 
 mips32_core_cfg_t g_mips_core =
