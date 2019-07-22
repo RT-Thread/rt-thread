@@ -21,7 +21,11 @@ end = '''
 #endif
 '''
 
-with open('drivers/automac.h', 'w') as f:
+AUTOMAC_PATH = 'drivers/automac.h'
+if os.getenv('BSP_ROOT') is not None:
+	AUTOMAC_PATH = os.path.join(os.getenv('BSP_ROOT'), AUTOMAC_PATH);
+
+with open( AUTOMAC_PATH, 'w') as f:
     f.write(header + get_mac_address() + end)
 
 # toolchains options
