@@ -41,7 +41,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40001
+#define RT_VER_NUM 0x40002
 
 /* RT-Thread Components */
 
@@ -78,6 +78,9 @@
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 
+/* Using Hardware Crypto drivers */
+
+
 /* Using WiFi */
 
 
@@ -86,16 +89,17 @@
 
 /* POSIX layer and C standard library */
 
+#define RT_USING_LIBC
 
 /* Network */
 
 /* Socket abstraction layer */
 
 
+/* Network interface device */
+
+
 /* light weight TCP/IP stack */
-
-
-/* Modbus master and slave stack */
 
 
 /* AT commands */

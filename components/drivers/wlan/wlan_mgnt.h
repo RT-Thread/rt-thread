@@ -37,6 +37,10 @@ extern "C" {
 #define RT_WLAN_EBOX_NUM           (10)
 #endif
 
+#ifndef RT_WLAN_SCAN_RETRY_CNT
+#define RT_WLAN_SCAN_RETRY_CNT      (3)
+#endif
+
 /*state fot station*/
 #define RT_WLAN_STATE_CONNECT     (1UL << 0)
 #define RT_WLAN_STATE_CONNECTING  (1UL << 1)

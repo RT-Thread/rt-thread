@@ -105,6 +105,8 @@ menu "On-chip Peripheral Drivers"
             endchoice
         endif
         
+    source "../libraries/HAL_Drivers/Kconfig"
+    
 endmenu
 
 menu "Board extended module Drivers"
