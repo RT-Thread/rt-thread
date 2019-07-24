@@ -1,185 +1,119 @@
-# HIFIVE1 #
+# GD32VF103 #
 
 ## 简介
 
-[HIFIVE1](https://www.sifive.com/products/hifive1/) 是由 SiFive 公司推出的全球首款基于开源指令集 RISC-V 架构的商用 SoC Freedom E310 的开发板。
-
-![1538284005769](figures/board.png)
-
-
+gd32vf103v-eval 是由兆易创新公司推出的基于开源指令集 RISC-V 架构的开发板。
 
 ### 板载资源：
 
 | 硬件 | 描述 |
 | -- | -- |
-|Soc| SiFive Freedom E310 (FE310) |
-| 内核    | SiFive E31 RISC-V Core                                      |
+| 内核    | Bumblebee                                     |
 | 架构       |  32-bit RV32IMAC                                         |
-| 主频       | 320+ MHz                                              |
-| 性能 | 1.61 DMIPs/MHz, 2.73 Coremark/MHz            |
-|SRAM| 16KB |
-|Flash| 16MB QSPI + 16KB 指令Cache |
+| 主频       | 108 MHz                                              |
 
 ## 编译说明
 
-### 下载 Freedom Studio
+### 导入工程
+打开 Eclipse 选择工作空间
 
-Freedom Studio 是 SiFive 公司推出的一个集成开发环境，用来编写和调试基于 SiFive 处理器的软件。内嵌了编译好的 RISC-V GCC 工具链、OpenOCD、以及一些示例和文档。
+![指定工作空间](figures/open_eclipse.png)
 
-下载地址：[官网下载](https://www.sifive.com/products/tools/)
+打开 Eclipse 后需要导入 RT-Thread 工程
 
-![1538295358180](figures/dowmload.png)
+![导入工程](figures/file.png)
 
-下载成功之后，解压到和 rt-thread 源码同一目录下
+选择以存在的工程，并指定工程路径
 
-![1538295750998](figures/untar.png)
+![选择存在工程](figures/exist.png)
 
-### 配置工具链
+指定工程路径
 
-工具链就在解压开的 IDE  `F:\FreedomStudio\SiFive\riscv64-unknown-elf-gcc-20171231-x86_64-w64-mingw32\bin` 目录下。
+![指定工程路径](figures/finish_port.png)
 
-在源码  `rt-thread/bsp/hifive1/` 目录下，运行 env 工具，输入下面的命令设置 gcc 工具链路径
-
-```
-set RTT_EXEC_PATH=F:\FreedomStudio\SiFive\riscv64-unknown-elf-gcc-20171231-x86_64-w64-mingw32\bin
-```
 
 ### 添加环境变量
+设置 Build Tools Path
 
-将 **工具链**和**编译工具**的路径 添加到环境变量里，输入命令如下
+![build_path](figures/build_path.png)
 
-```
-set path=%path%;工具链的路径;编译工具的路径;
-```
+点击 MCU 列表中的 Build Tools Path 选项，为其选择 SDK 文件包中提供的对应工具
 
-例如：
+设置 OpenOCD Path
 
-```
-set path=%path%;F:\FreedomStudio\SiFive\riscv64-unknown-elf-gcc-20171231-x86_64-w64-mingw32\bin;F:\FreedomStudio\build-tools\bin
-```
+![open_ocd](figures/open_ocd.png)
 
-![1538296570129](figures/env.png)
+点击 MCU 列表中的 OpenOCD Path 选项，为其选择 SDK 文件包中提供的对应工具。
 
-### 从 env 工具打开 IDE
+设置 RISC-V Toolchains Path
 
-利用 cd 命令，切换到解压开的 IDE 目录
+![risc-v](figures/risc-v-tool.png)
 
-![1538296766437](figures/cd.png)
+点击 MCU 列表中的 RISC-V Toolchains Paths 选项，为其选择 SDK 文件包中提供的对应工具。
 
-输入 Freedom Studio 按 Tab 键 自动补全，然后按回车运行 IDE。
+按照以上步骤设置好路径点击编译即可编译工程
 
-![1538296878924](figures/open_ide.png)
-
-在弹出的窗口输入 workspace 创建工作空间，然后点击启动打开 IDE。
-
-![1538296978929](figures/ide.png)
-
-### 导入工程
-
-在菜单栏点击 `File->Import` 
-
-![1538297215062](figures/import.png)
-
-按照下面的图片导入工程
-
-![1538297303505](figures/import2.png)
-
-![1538297553367](figures/import3.png)
-
-
-
-### 编译
-
-![1538297679868](figures/build.png)
-
-然后等待编译完成
-
-![1538297922206](figures/builded.png)
-
-
-
+![build](figures/build_project.png)
 
 ## 烧写及执行
 
-### 安装驱动
+### 替换驱动
 
-1. 使用 Micro USB 线连接电脑和开发板。
+1.  执行 JLink_Windows_V622c.exe (可以是任意版本)安装 JLink 驱动程序。
+2.  执行 Zadig.exe，点击 Options->List All Devices。
+3.  在下图 1 处选择 J-Link，2 处选择 WinUSB， 之后点击 3 处 Replace Driver 进行驱动替换。
 
-2. 然后双击安装 IDE 目录 `F:\FreedomStudio\SiFive\Drivers` 下的驱动文件
+![zadig](figures/zadig.png)
 
-### 添加字符串定义
+安装完成之后会弹出如下窗口：
 
-点击菜单栏 `Window->preferences`  按下图的步骤将 字符串 `cross_prefix` 定义为 `riscv64-unknown-elf-`
+![close](figures/close.png)
 
-![1538298633528](figures/string.png)
+### 配置 GDB 调试
 
-### 配置 Debug 参数
+在菜单栏中，点击 Run->Debug Configurations，进入 Debug 配置界面，如下图所示：
 
-选中生成的 `rtthread.elf` 文件,右键配置 Debug 参数，如下图所示
+![open_debug](figures/open_debug.png)
 
-![1538298914673](figures/debug.png)
+这里使用 OpenOCD 作为 GDB Server，使用GCC工具链中的 GDB 工具作为 GDB Client。双击 GDB OpenOCD Debugging，新建一套 OpenOCD 的配置选项。
 
-按下图新建一个 Debug 选项
+Main 选项卡
 
-![1538299063801](figures/debug1.png)
+Main 选项卡配置界面
 
-打开 `Debugger` 选项卡 添加如下参数
+![main_select](figures/main_select.png)
 
-```
--f openocd.cfg
+选择当前工程 GD32VF103，并且选择当前型号的可执行文件，例如：GD32VF103xB\GD32VF103xB.elf。
 
-set mem inaccessible-by-default off
-set arch riscv:rv32
-set remotetimeout 250
-```
+Debugger 选项卡
+ Debugger 选项卡配置界面
 
-如下图所示：
+![debug_select](figures/debug_select.png)
 
-![1538299273874](figures/debug2.png)
+在 Debugger 选项卡中，确认红圈中的配置正确。
+其中，“Config options” 是为 OpenOCD 选择配置文件，需要根据当前使用的下载器选择不同的 cfg 文件。
 
-打开 `startup` 选项卡，去掉**主机模式**和**复位命令**
-
-![1538299521246](figures/debug3.png)
-
-然后待程序停止在 main 函数处，然后点击继续运行程序就运行起来了。
-
-![1538299736730](figures/run.png)
-
+上述配置内容配置好后，点击应用调试。
 ### 运行结果
 
-下载程序之后，连接串口(115200-N-8-1)，可以看到RT-Thread的输出信息：
+下载程序之后，连接串口(115200-N-8-1)，可以看到 RT-Thread 的输出信息：
 
 ```
  \ | /
 - RT -     Thread Operating System
- / | \     3.0.4 build May 30 2018
- 2006 - 2018 Copyright by rt-thread team
+ / | \     4.0.2 build Jul 24 2019
+ 2006 - 2019 Copyright by rt-thread team
 msh >
 ```
 
-## 4. 驱动支持情况及计划
+## 驱动支持情况
 
 | 驱动 | 支持情况  |  备注  |
 | ------ | ----  | :------:  |
-| UART | 支持 | UART0_RX/TX：GPIO 16/17 |
-
-
-### 4.1 IO在板级支持包中的映射情况
-
-| IO号 | 板级包中的定义 |
-| -- | -- |
-| GPIO19 | LED_GREEN |
-| GPIO21 | LED_BLUE |
-| GPIO22 | LED_RED |
+| USART | 支持 | UART0_TX/RX：GPIO 9/10 |
 
 ## 5. 联系人信息
 
 维护人：
-- [tanek](https://github.com/TanekLiang)
+- [tyustli](https://github.com/tyustli)
 
-## 6. 参考
-
-* [HIFIVE1 Info](https://www.sifive.com/products/hifive1/)
-* [HIFIVE1 Software Development Tools](https://www.sifive.com/products/tools/)
-* [hifive1-getting-started-guide](https://www.sifive.com/documentation/boards/hifive1/hifive1-getting-started-guide/)
-* [hifive1-schematics](https://www.sifive.com/documentation/boards/hifive1/hifive1-schematics/)
