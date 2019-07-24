@@ -1,8 +1,8 @@
 menu "Hardware Drivers Config"
 
-config SOC_STM32F429IG
+config SOC_GD32VF103V
     bool
-    select SOC_SERIES_STM32F4
+    select SOC_SERIES_GD32VF103V
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -17,12 +17,12 @@ endmenu
 menu "On-chip Peripheral Drivers"
 
     menuconfig BSP_USING_UART
-        bool "Enable UART"
+        bool "Enable USART"
         default y
         select RT_USING_SERIAL
         if BSP_USING_UART
             config BSP_USING_UART0
-                bool "Enable UART0"
+                bool "Enable USART0"
                 default y
         endif
 endmenu

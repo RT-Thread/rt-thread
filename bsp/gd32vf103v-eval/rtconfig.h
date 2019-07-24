@@ -40,7 +40,7 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart0"
+#define RT_CONSOLE_DEVICE_NAME "uart"
 #define RT_VER_NUM 0x40002
 
 /* RT-Thread Components */
@@ -137,8 +137,6 @@
 
 /* peripheral libraries and drivers */
 
-#define PKG_USING_AT24CXX
-#define PKG_USING_AT24CXX_LATEST_VERSION
 
 /* miscellaneous packages */
 
@@ -154,7 +152,7 @@
 
 /* Hardware Drivers Config */
 
-#define SOC_STM32F429IG
+#define SOC_GD32VF103V
 
 /* Onboard Peripheral Drivers */
 
