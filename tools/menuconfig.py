@@ -282,8 +282,37 @@ def guiconfig(RTT_ROOT):
 
     fn = '.config'
 
+    if os.path.isfile(fn):
+        mtime = os.path.getmtime(fn)
+    else:
+        mtime = -1
+
     sys.argv = ['guiconfig', 'Kconfig'];
     pyguiconfig._main()
+
+    if os.path.isfile(fn):
+        mtime2 = os.path.getmtime(fn)
+    else:
+        mtime2 = -1
+
+    # make rtconfig.h
+    if mtime != mtime2:
+        mk_rtconfig(fn)
+
+
+# guiconfig for windows and linux
+def guiconfig_silent(RTT_ROOT):
+    import defconfig
+
+    touch_env()
+    env_dir = get_env_dir()
+
+    os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
+
+    fn = '.config'
+
+    sys.argv = ['defconfig', '--kconfig', 'Kconfig', '.config']
+    defconfig.main()
 
     # silent mode, force to make rtconfig.h
     mk_rtconfig(fn)
