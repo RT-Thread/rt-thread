@@ -39,12 +39,15 @@ enum {
 static struct gd32_usart usart_config[] = {
 #ifdef BSP_USING_UART0
         { "uart0",
-        USART0, RCU_USART0, RCU_GPIOA,
+        USART0,
+        RCU_USART0,
+        RCU_GPIOA,
         GPIOA,
         GPIO_PIN_9,
-        GPIO_PIN_10, USART0_IRQn, },
+        GPIO_PIN_10,
+        USART0_IRQn, },
 #endif
-        };
+};
 
 static rt_err_t gd32_configure(struct rt_serial_device *serial,
         struct serial_configure *cfg) {

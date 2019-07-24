@@ -4,14 +4,14 @@ ENTRY( _start )
 
 MEMORY
 { 
-	/* Run in FLASH */ 
-	flash (rxai!w) : ORIGIN = 0x08000000, LENGTH = 128k
-	ram   (wxa!ri) : ORIGIN = 0x20000000, LENGTH = 32K 
+    /* Run in FLASH */ 
+    flash (rxai!w) : ORIGIN = 0x08000000, LENGTH = 128k
+    ram   (wxa!ri) : ORIGIN = 0x20000000, LENGTH = 32K 
 
-	/* Run in RAM */ 
-/*	flash (rxai!w) : ORIGIN = 0x20000000, LENGTH = 24k
-	ram   (wxa!ri) : ORIGIN = 0x20006000, LENGTH = 8K
-*/	
+    /* Run in RAM */ 
+/* flash (rxai!w) : ORIGIN = 0x20000000, LENGTH = 24k
+    ram   (wxa!ri) : ORIGIN = 0x20006000, LENGTH = 8K
+*/
 }
 
 
