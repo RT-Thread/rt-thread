@@ -471,6 +471,12 @@ menuconfig RT_USING_WIFI
                 select RT_WLAN_CFG_ENABLE
                 select RT_WLAN_WORK_THREAD_ENABLE
                 default y
+
+            if RT_WLAN_AUTO_CONNECT_ENABLE
+                config AUTO_CONNECTION_PERIOD_MS
+                    int "Auto connect period(ms)"
+                    default 2000
+            endif
         endif
 
         config RT_WLAN_CFG_ENABLE
