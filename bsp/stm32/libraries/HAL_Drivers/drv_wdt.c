@@ -90,7 +90,9 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
             return -RT_ERROR;
         }
         stm32_wdt.is_start = 1;
+        break;
     default:
+        LOG_W("This command is not supported.");
         return -RT_ERROR;
     }
     return RT_EOK;
