@@ -273,6 +273,8 @@ static int inet_poll(struct dfs_fd *file, struct rt_pollreq *req)
         if (sock->errevent)
         {
             mask |= POLLERR;
+            /* clean error event */
+            sock->errevent = 0;
         }
         rt_hw_interrupt_enable(level);
     }
