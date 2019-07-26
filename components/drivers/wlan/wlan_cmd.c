@@ -468,6 +468,10 @@ static int wifi_debug_set_mode(int argc, char *argv[])
     {
         mode = RT_WLAN_AP;
     }
+    else if (rt_strcmp("none", argv[1]) == 0)
+    {
+        mode = RT_WLAN_NONE;
+    }
     else
         return -1;
 
