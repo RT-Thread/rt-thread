@@ -537,7 +537,7 @@ int list_fd(void)
 
         if (fd && fd->fops)
         {
-            rt_kprintf("%2d ", index);
+            rt_kprintf("%2d ", index + DFS_FD_OFFSET);
             if (fd->type == FT_DIRECTORY)    rt_kprintf("%-7.7s ", "dir");
             else if (fd->type == FT_REGULAR) rt_kprintf("%-7.7s ", "file");
             else if (fd->type == FT_SOCKET)  rt_kprintf("%-7.7s ", "socket");
