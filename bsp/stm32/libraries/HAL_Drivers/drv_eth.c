@@ -586,7 +586,7 @@ static int rt_hw_stm32_eth_init(void)
     }
 
     Tx_Buff = (rt_uint8_t *)rt_calloc(ETH_TXBUFNB, ETH_MAX_PACKET_SIZE);
-    if (Rx_Buff == RT_NULL)
+    if (Tx_Buff == RT_NULL)
     {
         LOG_E("No memory");
         state = -RT_ENOMEM;
