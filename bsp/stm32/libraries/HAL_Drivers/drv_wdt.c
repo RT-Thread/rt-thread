@@ -90,7 +90,9 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
             return -RT_ERROR;
         }
         stm32_wdt.is_start = 1;
+        break;
     default:
+        LOG_W("This command is not supported.");
         return -RT_ERROR;
     }
     return RT_EOK;
@@ -98,11 +100,16 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
 
 int rt_wdt_init(void)
 {
+#if defined(SOC_SERIES_STM32H7)
+    stm32_wdt.hiwdg.Instance = IWDG1;
+#else
     stm32_wdt.hiwdg.Instance = IWDG;
+#endif
     stm32_wdt.hiwdg.Init.Prescaler = IWDG_PRESCALER_256;
 
     stm32_wdt.hiwdg.Init.Reload = 0x00000FFF;
-#if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7) \
+    || defined(SOC_SERIES_STM32H7)
     stm32_wdt.hiwdg.Init.Window = 0x00000FFF;
 #endif
     stm32_wdt.is_start = 0;

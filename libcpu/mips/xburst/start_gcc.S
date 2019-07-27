@@ -1,12 +1,20 @@
 /*
- * File      : start_gcc.S
+ * Copyright (c) 2006-2019, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2010-05-17     swkyer       first version
- * 2010-09-04     bernard      porting to Jz47xx
+ * 2010-09-04     bernard      porting to JZ47xx
+ * 2019-07-19     Zhou Yanjie  clean up code
  */
 
-#include "../common/mips.inc"
+#ifndef __ASSEMBLY__
+#define __ASSEMBLY__
+#endif
+
+#include "../common/mips_def.h"
 #include "../common/stackframe.h"
 #include "stack.h"
 
