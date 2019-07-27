@@ -869,7 +869,7 @@ void SPI1_DMA_RX_TX_IRQHandler(void)
 #endif
     
 #if defined(BSP_USING_SPI1) && defined(BSP_SPI1_RX_USING_DMA)
-	SPI1_DMA_RX_IRQHandler();
+    SPI1_DMA_RX_IRQHandler();
 #endif
 }
 
@@ -880,7 +880,7 @@ void SPI2_DMA_RX_TX_IRQHandler(void)
 #endif
     
 #if defined(BSP_USING_SPI2) && defined(BSP_SPI2_RX_USING_DMA)
-	SPI2_DMA_RX_IRQHandler();
+    SPI2_DMA_RX_IRQHandler();
 #endif
 }
 #endif  /* SOC_SERIES_STM32F0 */
