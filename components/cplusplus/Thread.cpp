@@ -80,23 +80,23 @@ void Thread::func(Thread *pThis)
     }
     else
     {
-        pThis->run();
+        pThis->run(pThis->_param);
     }
 
     rt_event_send(&pThis->_event, 1);
 }
 
-void Thread::run()
+void Thread::run(void *parameter)
 {
     /* please overload this method */
 }
 
-void Thread::wait(int32_t millisec)
+rt_err_t Thread::wait(int32_t millisec)
 {
-    join(millisec);
+    return join(millisec);
 }
 
-void Thread::join(int32_t millisec)
+rt_err_t Thread::join(int32_t millisec)
 {
     if (started)
     {
@@ -107,6 +107,10 @@ void Thread::join(int32_t millisec)
         else
             tick = rt_tick_from_millisecond(millisec);
 
-        rt_event_recv(&_event, 1, RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR, tick, RT_NULL);
+        return rt_event_recv(&_event, 1, RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR, tick, RT_NULL);
+    }
+    else
+    {
+        return -RT_ENOSYS;
     }
 }
