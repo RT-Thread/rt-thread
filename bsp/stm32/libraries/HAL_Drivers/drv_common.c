@@ -9,6 +9,7 @@
  */
 
 #include "drv_common.h"
+#include "board.h"
 
 #ifdef RT_USING_SERIAL
 #include "drv_usart.h"
