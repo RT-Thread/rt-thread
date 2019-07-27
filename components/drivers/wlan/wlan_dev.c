@@ -535,8 +535,16 @@ rt_err_t rt_wlan_dev_scan(struct rt_wlan_device *device, struct rt_wlan_info *in
         }
         rt_memcpy(&scan_info.ssid, &info->ssid, sizeof(rt_wlan_ssid_t));
         rt_memcpy(scan_info.bssid, info->bssid, RT_WLAN_BSSID_MAX_LENGTH);
-        scan_info.channel_min = -1;
-        scan_info.channel_max = -1;
+        if (info->channel > 0)
+        {
+            scan_info.channel_min = info->channel;
+            scan_info.channel_max = info->channel;
+        }
+        else
+        {
+            scan_info.channel_min = -1;
+            scan_info.channel_max = -1;
+        }
         p_scan_info = &scan_info;
     }
     result = rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_SCAN, p_scan_info);

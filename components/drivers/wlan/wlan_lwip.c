@@ -56,12 +56,16 @@ static void netif_is_ready(struct rt_work *work, void *parameter)
     ip_addr_t ip_addr_zero = { 0 };
     struct rt_wlan_device *wlan = parameter;
     struct lwip_prot_des *lwip_prot = (struct lwip_prot_des *)wlan->prot;
-    struct eth_device *eth_dev = &lwip_prot->eth;
+    struct eth_device *eth_dev;
     rt_base_t level;
     struct rt_wlan_buff buff;
     rt_uint32_t ip_addr[4];
     char str[IPADDR_STRLEN_MAX];
 
+    if (lwip_prot == RT_NULL)
+        return;
+
+    eth_dev = &lwip_prot->eth;
     rt_timer_stop(&lwip_prot->timer);
     if (ip_addr_cmp(&(eth_dev->netif->ip_addr), &ip_addr_zero) != 0)
     {
@@ -122,9 +126,13 @@ static void timer_callback(void *parameter)
     struct rt_workqueue *workqueue;
     struct rt_wlan_device *wlan = parameter;
     struct lwip_prot_des *lwip_prot = (struct lwip_prot_des *)wlan->prot;
-    struct rt_work *work = &lwip_prot->work;
+    struct rt_work *work;
     rt_base_t level;
 
+    if (lwip_prot == RT_NULL)
+        return;
+
+    work = &lwip_prot->work;
     workqueue = rt_wlan_get_workqueue();
     if (workqueue != RT_NULL)
     {
@@ -148,7 +156,12 @@ static void netif_set_connected(void *parameter)
 {
     struct rt_wlan_device *wlan = parameter;
     struct lwip_prot_des *lwip_prot = wlan->prot;
-    struct eth_device *eth_dev = &lwip_prot->eth;
+    struct eth_device *eth_dev;
+
+    if (lwip_prot == RT_NULL)
+        return;
+
+    eth_dev = &lwip_prot->eth;
 
     if (lwip_prot->connected_flag)
     {
@@ -208,6 +221,9 @@ static void rt_wlan_lwip_event_handle(struct rt_wlan_prot *port, struct rt_wlan_
 {
     struct lwip_prot_des *lwip_prot = (struct lwip_prot_des *)wlan->prot;
     rt_bool_t flag_old;
+
+    if (lwip_prot == RT_NULL)
+        return;
 
     flag_old = lwip_prot->connected_flag;
 
@@ -472,12 +488,9 @@ static struct rt_wlan_prot *rt_wlan_lwip_protocol_register(struct rt_wlan_prot *
         return RT_NULL;
     }
     rt_memcpy(&lwip_prot->prot, prot, sizeof(struct rt_wlan_prot));
-    if (wlan->mode == RT_WLAN_STATION)
-    {
-        rt_sprintf(timer_name, "timer_%s", eth_name);
-        rt_timer_init(&lwip_prot->timer, timer_name, timer_callback, wlan, rt_tick_from_millisecond(1000),
-                      RT_TIMER_FLAG_SOFT_TIMER | RT_TIMER_FLAG_ONE_SHOT);
-    }
+    rt_sprintf(timer_name, "timer_%s", eth_name);
+    rt_timer_init(&lwip_prot->timer, timer_name, timer_callback, wlan, rt_tick_from_millisecond(1000),
+                    RT_TIMER_FLAG_SOFT_TIMER | RT_TIMER_FLAG_ONE_SHOT);
     netif_set_up(eth->netif);
     LOG_I("eth device init ok name:%s", eth_name);
 #ifdef RT_USING_NETDEV

@@ -21,11 +21,9 @@ STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_pwr_ex.c
 STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_rcc.c
 STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_rcc_ex.c
 STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_rng.c
+STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_gpio.c
 ''')
-
-if GetDepend(['RT_USING_PIN']):
-    src += ['STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_gpio.c']
-    
+ 
 if GetDepend(['RT_USING_SERIAL']):
     src += ['STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_uart.c']
     src += ['STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_uart_ex.c']

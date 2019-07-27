@@ -58,10 +58,6 @@
 #define TIME_START()
 #endif
 
-#ifndef DISCONNECT_RESPONSE_MS
-#define DISCONNECT_RESPONSE_MS    (2000)
-#endif
-
 #if RT_WLAN_EBOX_NUM < 1
 #error "event box num Too few"
 #endif
@@ -532,7 +528,7 @@ static void rt_wlan_auto_connect_run(struct rt_work *work, void *parameter)
 
     if (id >= rt_wlan_cfg_get_num()) id = 0;
 
-    if ((cfg_info.key.len > 0) && (cfg_info.key.len < RT_WLAN_PASSWORD_MAX_LENGTH))
+    if ((cfg_info.key.len > 0) && (cfg_info.key.len <= RT_WLAN_PASSWORD_MAX_LENGTH))
     {
         cfg_info.key.val[cfg_info.key.len] = '\0';
         password = (char *)(&cfg_info.key.val[0]);
@@ -2020,7 +2016,7 @@ int rt_wlan_init(void)
         rt_mutex_init(&complete_mutex, "complete", RT_IPC_FLAG_FIFO);
 #ifdef RT_WLAN_AUTO_CONNECT_ENABLE
         rt_timer_init(&reconnect_time, "wifi_tim", rt_wlan_cyclic_check, RT_NULL,
-                      rt_tick_from_millisecond(DISCONNECT_RESPONSE_MS),
+                      rt_tick_from_millisecond(AUTO_CONNECTION_PERIOD_MS),
                       RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
 #endif
         _init_flag = 1;
