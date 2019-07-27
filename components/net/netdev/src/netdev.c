@@ -129,7 +129,7 @@ int netdev_unregister(struct netdev *netdev)
     for (node = &(netdev_list->list); node; node = rt_slist_next(node))
     {
         cur_netdev = rt_slist_entry(node, struct netdev, list);
-        if (cur_netdev && (rt_memcpy(cur_netdev, netdev, sizeof(struct netdev)) == 0))
+        if (cur_netdev && (rt_memcmp(cur_netdev, netdev, sizeof(struct netdev)) == 0))
         {
             rt_slist_remove(&(netdev_list->list), &(cur_netdev->list));
             rt_hw_interrupt_enable(level);
