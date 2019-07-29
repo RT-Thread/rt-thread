@@ -89,8 +89,7 @@ static size_t at_recvpkt_put(rt_slist_t *rlist, const char *ptr, size_t length)
         LOG_E("No memory for receive packet table!");
         return 0;
     }
-
-    
+  
     pkt->bfsz_totle = length;
     pkt->bfsz_index = 0;
     pkt->buff = (char *) ptr;
@@ -142,12 +141,10 @@ static int at_recvpkt_node_delete(rt_slist_t *rlist, rt_slist_t *node)
     pkt = rt_slist_entry(node, struct at_recv_pkt, list);
     if (pkt->buff)
     {
-      
         rt_free(pkt->buff);
     }
     if (pkt)
     {
-       
         rt_free(pkt);
         pkt = RT_NULL;
     }
