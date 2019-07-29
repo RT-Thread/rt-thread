@@ -90,6 +90,7 @@ static size_t at_recvpkt_put(rt_slist_t *rlist, const char *ptr, size_t length)
         return 0;
     }
 
+    
     pkt->bfsz_totle = length;
     pkt->bfsz_index = 0;
     pkt->buff = (char *) ptr;
@@ -131,25 +132,26 @@ static int at_recvpkt_all_delete(rt_slist_t *rlist)
 static int at_recvpkt_node_delete(rt_slist_t *rlist, rt_slist_t *node)
 {
     at_recv_pkt_t pkt = RT_NULL;
-
     if (rt_slist_isempty(rlist))
     {
         return 0;
     }
 
     rt_slist_remove(rlist, node);
-
+   
     pkt = rt_slist_entry(node, struct at_recv_pkt, list);
     if (pkt->buff)
     {
+      
         rt_free(pkt->buff);
     }
     if (pkt)
     {
+       
         rt_free(pkt);
         pkt = RT_NULL;
     }
-
+    
     return 0;
 }
 
@@ -168,9 +170,7 @@ static size_t at_recvpkt_get(rt_slist_t *rlist, char *mem, size_t len)
     for (node = rt_slist_first(rlist); node; node = rt_slist_next(node))
     {
         pkt = rt_slist_entry(node, struct at_recv_pkt, list);
-
         page_pos = pkt->bfsz_totle - pkt->bfsz_index;
-
         if (page_pos >= len - content_pos)
         {
             memcpy((char *) mem + content_pos, pkt->buff + pkt->bfsz_index, len - content_pos);
@@ -178,6 +178,7 @@ static size_t at_recvpkt_get(rt_slist_t *rlist, char *mem, size_t len)
             if (pkt->bfsz_index == pkt->bfsz_totle)
             {
                 at_recvpkt_node_delete(rlist, node);
+                node = RT_NULL;
             }
             content_pos = len;
             break;
@@ -187,10 +188,11 @@ static size_t at_recvpkt_get(rt_slist_t *rlist, char *mem, size_t len)
             memcpy((char *) mem + content_pos, pkt->buff + pkt->bfsz_index, page_pos);
             content_pos += page_pos;
             pkt->bfsz_index += page_pos;
+
             at_recvpkt_node_delete(rlist, node);
+             node = RT_NULL;
         }
     }
-
     return content_pos;
 }
 
@@ -540,12 +542,11 @@ static int socketaddr_to_ipaddr_port(const struct sockaddr *sockaddr, ip_addr_t 
     const struct sockaddr_in* sin = (const struct sockaddr_in*) (const void *) sockaddr;
 
 #if NETDEV_IPV4 && NETDEV_IPV6
-    addr->u_addr.ip4.addr = sin->sin_addr.s_addr;
-    addr->type = IPADDR_TYPE_V4;
+    (*addr).u_addr.ip4.addr = sin->sin_addr.s_addr;
 #elif NETDEV_IPV4
-    addr->addr = sin->sin_addr.s_addr;
+    (*addr).addr = sin->sin_addr.s_addr;
 #elif NETDEV_IPV6
-#error "not support IPV6."
+    LOG_E("not support IPV6.");
 #endif /* NETDEV_IPV4 && NETDEV_IPV6 */
 
     *port = (uint16_t) HTONS_PORT(sin->sin_port);
@@ -1127,11 +1128,10 @@ struct hostent *at_gethostbyname(const char *name)
 
 #if NETDEV_IPV4 && NETDEV_IPV6
     addr.u_addr.ip4.addr = ipstr_to_u32(ipstr);
-	addr.type = IPADDR_TYPE_V4;
 #elif NETDEV_IPV4
     addr.addr = ipstr_to_u32(ipstr);
 #elif NETDEV_IPV6
-#error "not support IPV6."
+    LOG_E("not support IPV6.");
 #endif /* NETDEV_IPV4 && NETDEV_IPV6 */
  
     /* fill hostent structure */
@@ -1204,7 +1204,7 @@ int at_getaddrinfo(const char *nodename, const char *servname,
         if ((hints != RT_NULL) && (hints->ai_flags & AI_NUMERICHOST))
         {
             /* no DNS lookup, just parse for an address string */
-            if (!inet_aton(nodename, &addr))
+            if (!inet_aton(nodename, (ip4_addr_t * )&addr))
             {
                 return EAI_NONAME;
             }
@@ -1242,7 +1242,7 @@ int at_getaddrinfo(const char *nodename, const char *servname,
         #elif NETDEV_IPV4
             addr.addr = ipstr_to_u32(ip_str);
         #elif NETDEV_IPV6
-        #error "not support IPV6."
+            LOG_E("not support IPV6."); 
         #endif /* NETDEV_IPV4 && NETDEV_IPV6 */  
         }
     }
@@ -1277,11 +1277,10 @@ int at_getaddrinfo(const char *nodename, const char *servname,
     /* set up sockaddr */
 #if NETDEV_IPV4 && NETDEV_IPV6
     sa4->sin_addr.s_addr = addr.u_addr.ip4.addr;
-    sa4->type = IPADDR_TYPE_V4;
 #elif NETDEV_IPV4
     sa4->sin_addr.s_addr = addr.addr;
 #elif NETDEV_IPV6
-#error "not support IPV6."
+    LOG_E("not support IPV6."); 
 #endif /* NETDEV_IPV4 && NETDEV_IPV6 */
     sa4->sin_family = AF_INET;
     sa4->sin_len = sizeof(struct sockaddr_in);

@@ -248,7 +248,10 @@ rt_inline rt_slist_t *rt_slist_tail(rt_slist_t *l)
 
 rt_inline rt_slist_t *rt_slist_next(rt_slist_t *n)
 {
-    return n->next;
+    if(n != RT_NULL)
+        return n->next;
+    else 
+        return RT_NULL;
 }
 
 rt_inline int rt_slist_isempty(rt_slist_t *l)
