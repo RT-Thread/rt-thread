@@ -29,24 +29,6 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_DFS_ELMFAT
         default n
 
-    config BSP_USING_ICM20608
-        bool "Enable icm20608 (i2c3)"
-        select BSP_USING_I2C
-        select BSP_USING_I2C3
-        select PKG_USING_SENSORS_DRIVERS
-        select PKG_USING_MPU6XXX
-        select PKG_USING_MPU6XXX_LATEST_VERSION
-        default n
-        
-    config BSP_USING_AHT10
-        bool "Enable aht10 (i2c4)"
-        select BSP_USING_I2C
-        select BSP_USING_I2C4
-        select PKG_USING_SENSORS_DRIVERS
-        select PKG_USING_AHT10
-        select PKG_USING_AHT10_LATEST_VERSION
-        default n
-
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -68,16 +50,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_UART1_RX_USING_DMA
                 bool "Enable UART1 RX DMA"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
-                default n
-
-            config BSP_USING_UART2
-                bool "Enable UART2"
-                default n
-
-            config BSP_UART2_RX_USING_DMA
-                bool "Enable UART2 RX DMA"
-                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
-                default n
+                default n            
         endif
 
     config BSP_USING_ON_CHIP_FLASH
@@ -102,22 +75,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1
                 select BSP_SPI1_TX_USING_DMA
-                default n
-
-            config BSP_USING_SPI2
-                bool "Enable SPI2 BUS"
-                default n  
-                
-            config BSP_SPI2_TX_USING_DMA
-                bool "Enable SPI2 TX DMA"
-                depends on BSP_USING_SPI2
-                default n
-                
-            config BSP_SPI2_RX_USING_DMA
-                bool "Enable SPI2 RX DMA"
-                depends on BSP_USING_SPI2
-                select BSP_SPI2_TX_USING_DMA
-                default n
+                default n           
         endif
 
     config BSP_USING_QSPI
@@ -150,22 +108,7 @@ menu "On-chip Peripheral Drivers"
                         int "I2C3 sda pin number"
                         range 1 176
                         default 33
-                endif
-
-            menuconfig BSP_USING_I2C4
-                bool "Enable I2C4 BUS (AHT10)"
-                default n
-                if BSP_USING_I2C4
-                    comment "Notice: PC1 --> 33; PD6 --> 54" 
-                    config BSP_I2C4_SCL_PIN
-                        int "i2c4 scl pin number"
-                        range 1 176
-                        default 54
-                    config BSP_I2C4_SDA_PIN
-                        int "I2C4 sda pin number"
-                        range 1 176
-                        default 33
-                endif
+                endif            
         endif
 
     menuconfig BSP_USING_TIM
@@ -175,14 +118,6 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_TIM
             config BSP_USING_TIM15
                 bool "Enable TIM15"
-                default n
-
-            config BSP_USING_TIM16
-                bool "Enable TIM16"
-                default n
-
-            config BSP_USING_TIM17
-                bool "Enable TIM17"
                 default n
         endif
 
@@ -197,32 +132,6 @@ menu "On-chip Peripheral Drivers"
             if BSP_USING_PWM1
                 config BSP_USING_PWM1_CH1
                     bool "Enable PWM1 channel1"
-                    default n
-            endif
-
-        menuconfig BSP_USING_PWM2
-            bool "Enable timer2 output pwm"
-            default n
-            if BSP_USING_PWM2
-                config BSP_USING_PWM2_CH3
-                    bool "Enable PWM2 channel3"
-                    default n
-
-                config BSP_USING_PWM2_CH4
-                    bool "Enable PWM2 channel4"
-                    default n
-            endif
-
-        menuconfig BSP_USING_PWM4
-            bool "Enable timer4 output pwm"
-            default n
-            if BSP_USING_PWM4
-                config BSP_USING_PWM4_CH2
-                    bool "Enable PWM4 channel2"
-                    default n
-            
-                config BSP_USING_PWM4_CH3
-                    bool "Enable PWM4 channel3"
                     default n
             endif
         endif

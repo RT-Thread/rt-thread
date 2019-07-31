@@ -528,7 +528,7 @@ static void rt_wlan_auto_connect_run(struct rt_work *work, void *parameter)
 
     if (id >= rt_wlan_cfg_get_num()) id = 0;
 
-    if ((cfg_info.key.len > 0) && (cfg_info.key.len < RT_WLAN_PASSWORD_MAX_LENGTH))
+    if ((cfg_info.key.len > 0) && (cfg_info.key.len <= RT_WLAN_PASSWORD_MAX_LENGTH))
     {
         cfg_info.key.val[cfg_info.key.len] = '\0';
         password = (char *)(&cfg_info.key.val[0]);
