@@ -8,28 +8,27 @@
  * 2019-07-31     tyustli      the first version
  *
  */
-#include "board.h"
-#include "drv_lcd_spi.h"
+#include "lcd_spi.h"
 
-#define DBG_TAG "drv_lcd_spi"
+#define DBG_TAG "lcd_spi"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-struct intf_spi_device
+struct bus_spi_device
 {
-    struct rt_lcd_intf intf;
+    struct rt_lcd_bus bus;
     struct rt_spi_device *spi_dev_lcd;
 };
-static struct intf_spi_device lcd_intf;
+static struct bus_spi_device lcd_bus;
 
-static rt_err_t _lcd_intf_write_data(struct rt_lcd_intf *device, void *data, rt_size_t len)
+static rt_err_t _lcd_bus_write_data(struct rt_lcd_bus *device, void *data, rt_size_t len)
 {
     rt_size_t writed_len;
-    struct intf_spi_device *lcd;
+    struct bus_spi_device *lcd;
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(data != RT_NULL);
 
-    lcd = (struct intf_spi_device*)device->parent.user_data;
+    lcd = (struct bus_spi_device*)device->parent.user_data;
     RT_ASSERT(lcd != RT_NULL);
 
     writed_len = rt_spi_send(lcd->spi_dev_lcd, data, len);
@@ -44,38 +43,38 @@ static rt_err_t _lcd_intf_write_data(struct rt_lcd_intf *device, void *data, rt_
     }
 }
 
-static rt_err_t _lcd_intf_config(struct rt_lcd_intf *device, void *args)
+static rt_err_t _lcd_bus_config(struct rt_lcd_bus *device, void *args)
 {
     struct rt_spi_configuration *config_spi;
-    struct intf_spi_device *lcd;
+    struct bus_spi_device *lcd;
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(args != RT_NULL);
 
-    lcd = (struct intf_spi_device*)device->parent.user_data;
+    lcd = (struct bus_spi_device*)device->parent.user_data;
     RT_ASSERT(lcd != RT_NULL);
     config_spi = (struct rt_spi_configuration *)args;
 
     return rt_spi_configure(lcd->spi_dev_lcd, config_spi);
 }
 
-static struct rt_lcd_intf_ops _lcd_intf_ops =
+static struct rt_lcd_bus_ops _lcd_bus_ops =
 {
     RT_NULL,
-    _lcd_intf_write_data,
+    _lcd_bus_write_data,
     RT_NULL,
     RT_NULL,
-    _lcd_intf_config,
+    _lcd_bus_config,
 };
 
-int rt_lcd_intf_init(const char *name)
+int rt_lcd_bus_init(const char *name)
 {
     rt_err_t result;
-    
     result = RT_EOK;
-    lcd_intf.spi_dev_lcd = (struct rt_spi_device *)rt_device_find(name);
-    RT_ASSERT(lcd_intf.spi_dev_lcd != RT_NULL);
 
-    result = rt_lcd_intf_register(&lcd_intf.intf, "lcd_intf", &_lcd_intf_ops, &lcd_intf);
+    lcd_bus.spi_dev_lcd = (struct rt_spi_device *)rt_device_find(name);
+    RT_ASSERT(lcd_bus.spi_dev_lcd != RT_NULL);
+
+    result = rt_lcd_bus_register(&lcd_bus.bus, "lcd_bus", &_lcd_bus_ops, &lcd_bus);
     if (result != RT_EOK)
     {
         LOG_E("register lcd interface device failed error code = %d\n", result);
@@ -85,3 +84,4 @@ int rt_lcd_intf_init(const char *name)
 }
 
 /****************** end of file *******************/
+

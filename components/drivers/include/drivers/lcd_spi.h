@@ -9,14 +9,14 @@
  *
  */
 
-#ifndef __DRV_LCD_SPI_H__
-#define __DRV_LCD_SPI_H__
+#ifndef __LCD_SPI_H__
+#define __LCD_SPI_H__
 
 #include <rtthread.h>
 #include <rtdevice.h>
 
-int rt_lcd_intf_init(const char *name);
+int rt_lcd_bus_init(const char *name);
 
-#endif /* __DRV_LCD_SPI_H__ */
+#endif /* __LCD_SPI_H__ */
 
 /****************** end of file *******************/

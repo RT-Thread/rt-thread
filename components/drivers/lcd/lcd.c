@@ -18,7 +18,7 @@
 #include <rtdbg.h>
 
 #ifdef RT_USING_DEVICE_OPS
-static struct rt_device_ops lcd_intf_ops =
+static struct rt_device_ops rt_lcd_bus_ops =
 {
     RT_NULL,
     RT_NULL,
@@ -29,7 +29,7 @@ static struct rt_device_ops lcd_intf_ops =
 };
 #endif
 
-rt_err_t rt_lcd_intf_register(struct rt_lcd_intf *device, const char *name, struct rt_lcd_intf_ops *ops, void *user_data)
+rt_err_t rt_lcd_bus_register(struct rt_lcd_bus *device, const char *name, struct rt_lcd_bus_ops *ops, void *user_data)
 {
     rt_err_t result;
 
@@ -41,7 +41,7 @@ rt_err_t rt_lcd_intf_register(struct rt_lcd_intf *device, const char *name, stru
     device->parent.tx_complete = RT_NULL;
 
 #ifdef RT_USING_DEVICE_OPS
-    device->parent.ops         = &lcd_intf_ops;
+    device->parent.ops         = &rt_lcd_bus_ops;
 #else
     device->parent.init        = RT_NULL;
     device->parent.open        = RT_NULL;
@@ -58,7 +58,7 @@ rt_err_t rt_lcd_intf_register(struct rt_lcd_intf *device, const char *name, stru
     return result;
 }
 
-rt_err_t rt_lcd_write_cmd(struct rt_lcd_intf *device, void *cmd, rt_size_t len)
+rt_err_t rt_lcd_write_cmd(struct rt_lcd_bus *device, void *cmd, rt_size_t len)
 {
     rt_err_t result;
 
@@ -76,7 +76,7 @@ rt_err_t rt_lcd_write_cmd(struct rt_lcd_intf *device, void *cmd, rt_size_t len)
     return result;
 }
 
-rt_err_t rt_lcd_write_data(struct rt_lcd_intf *device, void *data, rt_size_t len)
+rt_err_t rt_lcd_write_data(struct rt_lcd_bus *device, void *data, rt_size_t len)
 {
     rt_err_t result;
 
@@ -94,7 +94,7 @@ rt_err_t rt_lcd_write_data(struct rt_lcd_intf *device, void *data, rt_size_t len
     return result;
 }
 
-rt_uint32_t rt_lcd_read_data(struct rt_lcd_intf *device, rt_uint32_t reg)
+rt_uint32_t rt_lcd_read_data(struct rt_lcd_bus *device, rt_uint32_t reg)
 {
     rt_uint32_t value;
 
@@ -104,7 +104,7 @@ rt_uint32_t rt_lcd_read_data(struct rt_lcd_intf *device, rt_uint32_t reg)
     return value;
 }
 
-rt_err_t rt_lcd_write_reg(struct rt_lcd_intf *device, rt_uint32_t reg, rt_uint32_t data)
+rt_err_t rt_lcd_write_reg(struct rt_lcd_bus *device, rt_uint32_t reg, rt_uint32_t data)
 {
     rt_err_t result;
 
@@ -122,7 +122,7 @@ rt_err_t rt_lcd_write_reg(struct rt_lcd_intf *device, rt_uint32_t reg, rt_uint32
     return result;
 }
 
-rt_err_t rt_lcd_config(struct rt_lcd_intf *device, void *config)
+rt_err_t rt_lcd_config(struct rt_lcd_bus *device, void *config)
 {
     rt_err_t result;
 
