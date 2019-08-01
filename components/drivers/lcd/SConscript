@@ -1,8 +1,15 @@
+Import('RTT_ROOT')
 from building import *
 
 cwd = GetCurrentDir()
 src = ['lcd.c']
-CPPPATH = [cwd + '/../include']
-group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_LCD'], CPPPATH = CPPPATH)
+
+if GetDepend('RT_USING_LCD_SPI'):
+    src = src + ['lcd_spi.c']
+
+# The set of source files associated with this SConscript file.
+path = [cwd + '/../include']
+
+group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_LCD'], CPPPATH = path)
 
 Return('group')

@@ -8,9 +8,10 @@
  * 2019-07-01     tyustli      the first version
  *
  */
- 
+
 #include "board.h"
 #include <rtthread.h>
+#include <rtdevice.h>
 
 #define DBG_TAG "drv_lcd_mcu"
 #define DBG_LVL DBG_INFO
@@ -22,23 +23,23 @@ typedef struct
     rt_uint16_t lcd_data;
 } lcd_typedef;
 
-struct intf_mcu_device
+struct lcd_mcu_bus
 {
-    struct rt_lcd_intf  intf;
+    struct rt_lcd_bus  bus;
     FMC_NORSRAM_TimingTypeDef FMC_ReadWriteTim;
     FMC_NORSRAM_TimingTypeDef FMC_WriteTim;
     SRAM_HandleTypeDef SRAM_Handler;
     lcd_typedef *lcd_addr;
 };
-static struct intf_mcu_device lcd_intf;
+static struct lcd_mcu_bus mcu_bus;
 
-static rt_err_t _lcd_intf_write_cmd(struct rt_lcd_intf *device, void *cmd, rt_size_t len)
+static rt_err_t _lcd_bus_write_cmd(struct rt_lcd_bus *device, void *cmd, rt_size_t len)
 {
     rt_uint32_t *write_cmd;
-    struct intf_mcu_device *mcu_device;
+    struct lcd_mcu_bus *mcu_device;
     RT_ASSERT(device);
 
-    mcu_device = (struct intf_mcu_device *)device->parent.user_data;
+    mcu_device = (struct lcd_mcu_bus *)device->parent.user_data;
     RT_ASSERT(mcu_device);
 
     write_cmd = (rt_uint32_t *)cmd;
@@ -50,13 +51,13 @@ static rt_err_t _lcd_intf_write_cmd(struct rt_lcd_intf *device, void *cmd, rt_si
     return RT_EOK;
 }
 
-static rt_err_t _lcd_intf_write_data(struct rt_lcd_intf *device, void *data, rt_size_t len)
+static rt_err_t _lcd_bus_write_data(struct rt_lcd_bus *device, void *data, rt_size_t len)
 {
     rt_uint32_t *write_data;
-    struct intf_mcu_device *mcu_device;
+    struct lcd_mcu_bus *mcu_device;
     RT_ASSERT(device);
 
-    mcu_device = (struct intf_mcu_device *)device->parent.user_data;
+    mcu_device = (struct lcd_mcu_bus *)device->parent.user_data;
     RT_ASSERT(mcu_device);
 
     write_data = (rt_uint32_t *)data;
@@ -68,12 +69,12 @@ static rt_err_t _lcd_intf_write_data(struct rt_lcd_intf *device, void *data, rt_
     return RT_EOK;
 }
 
-static rt_err_t _lcd_intf_read_data(struct rt_lcd_intf *device, rt_uint32_t read_reg, void *read_data)
+static rt_err_t _lcd_bus_read_data(struct rt_lcd_bus *device, rt_uint32_t read_reg, void *read_data)
 {
-    struct intf_mcu_device *mcu_device;
+    struct lcd_mcu_bus *mcu_device;
     RT_ASSERT(device);
 
-    mcu_device = (struct intf_mcu_device *)device->parent.user_data;
+    mcu_device = (struct lcd_mcu_bus *)device->parent.user_data;
     RT_ASSERT(mcu_device);
 
     *(rt_uint32_t *)read_data = mcu_device->lcd_addr->lcd_data;
@@ -81,12 +82,12 @@ static rt_err_t _lcd_intf_read_data(struct rt_lcd_intf *device, rt_uint32_t read
     return RT_EOK;
 }
 
-static rt_err_t _lcd_intf_write_reg(struct rt_lcd_intf *device, rt_uint32_t write_reg, rt_uint32_t write_data)
+static rt_err_t _lcd_bus_write_reg(struct rt_lcd_bus *device, rt_uint32_t write_reg, rt_uint32_t write_data)
 {
-    struct intf_mcu_device *mcu_device;
+    struct lcd_mcu_bus *mcu_device;
     RT_ASSERT(device);
 
-    mcu_device = (struct intf_mcu_device *)device->parent.user_data;
+    mcu_device = (struct lcd_mcu_bus *)device->parent.user_data;
     RT_ASSERT(mcu_device);
 
     mcu_device->lcd_addr->lcd_cmd = write_reg;
@@ -95,18 +96,17 @@ static rt_err_t _lcd_intf_write_reg(struct rt_lcd_intf *device, rt_uint32_t writ
     return RT_EOK;
 }
 
-static rt_err_t _lcd_intf_config(struct rt_lcd_intf *device, void *args)
+static rt_err_t _lcd_bus_config(struct rt_lcd_bus *device, void *args)
 {
-    struct rt_lcd_intf_config *config;
-    struct intf_mcu_device *mcu_device;
+    struct rt_lcd_bus_config *config;
+    struct lcd_mcu_bus *mcu_device;
 
     RT_ASSERT(device);
-    mcu_device = (struct intf_mcu_device *)device->parent.user_data;
+    mcu_device = (struct lcd_mcu_bus *)device->parent.user_data;
     RT_ASSERT(mcu_device);
-    config = (struct rt_lcd_intf_config *)args;
+    config = (struct rt_lcd_bus_config *)args;
     RT_ASSERT(config);
 
-    mcu_device = (struct intf_mcu_device *)device;
     mcu_device->lcd_addr = (lcd_typedef *)config->addr;
     mcu_device->SRAM_Handler.Instance = FMC_NORSRAM_DEVICE;
     mcu_device->SRAM_Handler.Extended = FMC_NORSRAM_EXTENDED_DEVICE;
@@ -143,22 +143,21 @@ static rt_err_t _lcd_intf_config(struct rt_lcd_intf *device, void *args)
     return RT_EOK;
 }
 
-static struct rt_lcd_intf_ops _lcd_intf_ops =
+static struct rt_lcd_bus_ops _lcd_bus_ops =
 {
-    _lcd_intf_write_cmd,
-    _lcd_intf_write_data,
-    _lcd_intf_read_data,
-    _lcd_intf_write_reg,
-    _lcd_intf_config,
+    _lcd_bus_write_cmd,
+    _lcd_bus_write_data,
+    _lcd_bus_read_data,
+    _lcd_bus_write_reg,
+    _lcd_bus_config,
 };
 
-int rt_lcd_intf_init(void)
+int rt_lcd_bus_init(void)
 {
     rt_err_t result;
 
     result = RT_EOK;
-
-    result = rt_lcd_intf_register(&lcd_intf.intf, "lcd_intf", &_lcd_intf_ops, &lcd_intf);
+    result = rt_lcd_bus_register(&mcu_bus.bus, "lcd_bus", &_lcd_bus_ops, &mcu_bus);
     if (result != RT_EOK)
     {
         LOG_E("register lcd interface device failed error code = %d\n", result);
@@ -167,6 +166,7 @@ int rt_lcd_intf_init(void)
     return result;
 }
 
-INIT_PREV_EXPORT(rt_lcd_intf_init);
+INIT_PREV_EXPORT(rt_lcd_bus_init);
 
 /****************** end of file *******************/
+
