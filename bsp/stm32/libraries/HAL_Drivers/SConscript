@@ -55,6 +55,9 @@ if GetDepend('BSP_USING_LCD_MIPI'):
 if GetDepend('BSP_USING_LCD_MCU'):
     src += ['drv_lcd_mcu.c']
 
+if GetDepend('BSP_USING_LCD_SPI'):
+    src += ['drv_lcd_spi.c']
+
 if GetDepend('BSP_USING_ONCHIP_RTC'):
     src += ['drv_rtc.c']
 
