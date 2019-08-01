@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2019-07-01     tyustli      the first version
+ * 2019-07-31     tyustli      the first version
  */
 
 #ifndef __LCD_H_
@@ -44,11 +44,11 @@ struct rt_lcd_intf_config
 /* lcd interface ops */
 struct rt_lcd_intf_ops
 {
-    rt_err_t (*write_cmd) (struct rt_lcd_intf *device, void *cmd, rt_uint32_t len);
-    rt_err_t (*write_data) (struct rt_lcd_intf *device, void *data, rt_uint32_t len);
+    rt_err_t (*write_cmd) (struct rt_lcd_intf *device, void *cmd, rt_size_t len);
+    rt_err_t (*write_data) (struct rt_lcd_intf *device, void *data, rt_size_t len);
     rt_err_t (*read_data) (struct rt_lcd_intf *device, rt_uint32_t reg, void *data);
     rt_err_t (*write_reg) (struct rt_lcd_intf *device, rt_uint32_t reg, rt_uint32_t data);
-    rt_err_t (*config) (struct rt_lcd_intf *device, struct rt_lcd_intf_config *config);
+    rt_err_t (*config) (struct rt_lcd_intf *device, void *config);
 };
 
 /* lcd device */
@@ -65,10 +65,10 @@ typedef struct rt_lcd_device *rt_lcd_t;
 rt_err_t rt_lcd_intf_register(struct rt_lcd_intf *device, const char *name, struct rt_lcd_intf_ops *ops, void *user_data);
 
 /* lcd interface write cmd */
-rt_err_t rt_lcd_write_cmd(struct rt_lcd_intf *device, void *cmd, rt_uint32_t len);
+rt_err_t rt_lcd_write_cmd(struct rt_lcd_intf *device, void *cmd, rt_size_t len);
 
 /* lcd interface write data */
-rt_err_t rt_lcd_write_data(struct rt_lcd_intf *device, void *write_data, rt_uint32_t len);
+rt_err_t rt_lcd_write_data(struct rt_lcd_intf *device, void *write_data, rt_size_t len);
 
 /* lcd interface read data */
 rt_uint32_t rt_lcd_read_data(struct rt_lcd_intf *device, rt_uint32_t reg);
@@ -77,9 +77,11 @@ rt_uint32_t rt_lcd_read_data(struct rt_lcd_intf *device, rt_uint32_t reg);
 rt_err_t rt_lcd_write_reg(struct rt_lcd_intf *device, rt_uint32_t reg, rt_uint32_t data);
 
 /* lcd interface config */
-rt_err_t rt_lcd_config(struct rt_lcd_intf *device, struct rt_lcd_intf_config *config);
+rt_err_t rt_lcd_config(struct rt_lcd_intf *device, void *config);
 
-/* the following API is for pixel device */
+/*
+ * the following API is for pixel device to draw a point/picture
+ */
 
 /* set a point pixel*/
 rt_err_t rt_set_pixel(struct rt_lcd_device *device, const char *pixel, int x, int y);

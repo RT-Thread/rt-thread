@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2019-07-01     tyustli      the first version
+ * 2019-07-31     tyustli      the first version
  *
  */
 
@@ -53,19 +53,17 @@ rt_err_t rt_lcd_intf_register(struct rt_lcd_intf *device, const char *name, stru
 
     device->ops = ops;
     device->parent.user_data = (void *)user_data;
-
     result = rt_device_register(&device->parent, name, RT_DEVICE_FLAG_RDWR);
 
     return result;
 }
 
-rt_err_t rt_lcd_write_cmd(struct rt_lcd_intf *device, void *cmd, rt_uint32_t len)
+rt_err_t rt_lcd_write_cmd(struct rt_lcd_intf *device, void *cmd, rt_size_t len)
 {
     rt_err_t result;
 
     result = RT_EOK;
     RT_ASSERT(device);
-
     if (device->ops->write_cmd != RT_NULL)
     {
         result = device->ops->write_cmd(device, cmd, len);
@@ -78,12 +76,12 @@ rt_err_t rt_lcd_write_cmd(struct rt_lcd_intf *device, void *cmd, rt_uint32_t len
     return result;
 }
 
-rt_err_t rt_lcd_write_data(struct rt_lcd_intf *device, void *data, rt_uint32_t len)
+rt_err_t rt_lcd_write_data(struct rt_lcd_intf *device, void *data, rt_size_t len)
 {
-    rt_err_t result = RT_EOK;
+    rt_err_t result;
 
+    result = RT_EOK;
     RT_ASSERT(device);
-
     if (device->ops->write_data != RT_NULL)
     {
         result = device->ops->write_data(device, data, len);
@@ -112,7 +110,6 @@ rt_err_t rt_lcd_write_reg(struct rt_lcd_intf *device, rt_uint32_t reg, rt_uint32
 
     result = RT_EOK;
     RT_ASSERT(device);
-
     if (device->ops->write_reg != RT_NULL)
     {
         result = device->ops->write_reg(device, reg, data);
@@ -125,13 +122,12 @@ rt_err_t rt_lcd_write_reg(struct rt_lcd_intf *device, rt_uint32_t reg, rt_uint32
     return result;
 }
 
-rt_err_t rt_lcd_config(struct rt_lcd_intf *device, struct rt_lcd_intf_config *config)
+rt_err_t rt_lcd_config(struct rt_lcd_intf *device, void *config)
 {
     rt_err_t result;
 
     result = RT_EOK;
     RT_ASSERT(device);
-
     if (device->ops->config != RT_NULL)
     {
         result = device->ops->config(device, config);
@@ -143,6 +139,10 @@ rt_err_t rt_lcd_config(struct rt_lcd_intf *device, struct rt_lcd_intf_config *co
 
     return result;
 }
+
+/*
+ * the following API is for pixel device to draw a point/picture
+ */
 
 /* set a point pixel*/
 rt_err_t rt_set_pixel(struct rt_lcd_device *device, const char *pixel, int x, int y)
@@ -164,8 +164,6 @@ rt_err_t rt_set_pixel(struct rt_lcd_device *device, const char *pixel, int x, in
 
     return result;
 }
-
-/* the following API is for pixel device */
 
 /* get a point pixel*/
 rt_err_t rt_get_pixel(struct rt_lcd_device *device, char *pixel, int x, int y)
@@ -219,7 +217,6 @@ rt_err_t rt_draw_vline(struct rt_lcd_device *device, const char *pixel, int x, i
     RT_ASSERT(device);
     result = RT_EOK;
     graphic_ops = (struct rt_device_graphic_ops *)device->parent.user_data;
-
     if (graphic_ops != RT_NULL)
     {
         graphic_ops->draw_vline(pixel, x, y1, y2);
@@ -241,7 +238,6 @@ rt_err_t rt_blit_line(struct rt_lcd_device *device, const char *pixel, int x, in
     RT_ASSERT(device);
     result = RT_EOK;
     graphic_ops = (struct rt_device_graphic_ops *)device->parent.user_data;
-
     if (graphic_ops != RT_NULL)
     {
         graphic_ops->blit_line(pixel, x, y, size);

@@ -8,11 +8,11 @@
  * 2019-07-01     tyustli      the first version
  *
  */
-
+ 
 #include "board.h"
 #include <rtthread.h>
 
-#define DBG_TAG "drv_mcu"
+#define DBG_TAG "drv_lcd_mcu"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
@@ -32,13 +32,15 @@ struct intf_mcu_device
 };
 static struct intf_mcu_device lcd_intf;
 
-static rt_err_t _lcd_intf_write_cmd(struct rt_lcd_intf *device, void *cmd, rt_uint32_t len)
+static rt_err_t _lcd_intf_write_cmd(struct rt_lcd_intf *device, void *cmd, rt_size_t len)
 {
     rt_uint32_t *write_cmd;
     struct intf_mcu_device *mcu_device;
     RT_ASSERT(device);
 
-    mcu_device = (struct intf_mcu_device *)device;
+    mcu_device = (struct intf_mcu_device *)device->parent.user_data;
+    RT_ASSERT(mcu_device);
+
     write_cmd = (rt_uint32_t *)cmd;
     while(len--)
     {
@@ -48,13 +50,15 @@ static rt_err_t _lcd_intf_write_cmd(struct rt_lcd_intf *device, void *cmd, rt_ui
     return RT_EOK;
 }
 
-static rt_err_t _lcd_intf_write_data(struct rt_lcd_intf *device, void *data, rt_uint32_t len)
+static rt_err_t _lcd_intf_write_data(struct rt_lcd_intf *device, void *data, rt_size_t len)
 {
     rt_uint32_t *write_data;
     struct intf_mcu_device *mcu_device;
     RT_ASSERT(device);
 
-    mcu_device = (struct intf_mcu_device *)device;
+    mcu_device = (struct intf_mcu_device *)device->parent.user_data;
+    RT_ASSERT(mcu_device);
+
     write_data = (rt_uint32_t *)data;
     while(len--)
     {
@@ -69,7 +73,9 @@ static rt_err_t _lcd_intf_read_data(struct rt_lcd_intf *device, rt_uint32_t read
     struct intf_mcu_device *mcu_device;
     RT_ASSERT(device);
 
-    mcu_device = (struct intf_mcu_device *)device;
+    mcu_device = (struct intf_mcu_device *)device->parent.user_data;
+    RT_ASSERT(mcu_device);
+
     *(rt_uint32_t *)read_data = mcu_device->lcd_addr->lcd_data;
 
     return RT_EOK;
@@ -80,17 +86,25 @@ static rt_err_t _lcd_intf_write_reg(struct rt_lcd_intf *device, rt_uint32_t writ
     struct intf_mcu_device *mcu_device;
     RT_ASSERT(device);
 
-    mcu_device = (struct intf_mcu_device *)device;
+    mcu_device = (struct intf_mcu_device *)device->parent.user_data;
+    RT_ASSERT(mcu_device);
+
     mcu_device->lcd_addr->lcd_cmd = write_reg;
     mcu_device->lcd_addr->lcd_data = write_data;
 
     return RT_EOK;
 }
 
-static rt_err_t _lcd_intf_config(struct rt_lcd_intf *device, struct rt_lcd_intf_config *config)
+static rt_err_t _lcd_intf_config(struct rt_lcd_intf *device, void *args)
 {
+    struct rt_lcd_intf_config *config;
     struct intf_mcu_device *mcu_device;
+
     RT_ASSERT(device);
+    mcu_device = (struct intf_mcu_device *)device->parent.user_data;
+    RT_ASSERT(mcu_device);
+    config = (struct rt_lcd_intf_config *)args;
+    RT_ASSERT(config);
 
     mcu_device = (struct intf_mcu_device *)device;
     mcu_device->lcd_addr = (lcd_typedef *)config->addr;
@@ -144,7 +158,7 @@ int rt_lcd_intf_init(void)
 
     result = RT_EOK;
 
-    result = rt_lcd_intf_register(&lcd_intf.intf, "lcd_intf", &_lcd_intf_ops, RT_NULL);
+    result = rt_lcd_intf_register(&lcd_intf.intf, "lcd_intf", &_lcd_intf_ops, &lcd_intf);
     if (result != RT_EOK)
     {
         LOG_E("register lcd interface device failed error code = %d\n", result);
