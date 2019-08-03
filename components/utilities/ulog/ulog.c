@@ -684,7 +684,7 @@ void ulog_hexdump(const char *tag, rt_size_t width, rt_uint8_t *buf, rt_size_t s
             log_len = 6 + name_len + 2;
             rt_memset(log_buf, ' ', log_len);
         }
-        fmt_result = rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE, "%04X-%04X: ", i, i + width);
+        fmt_result = rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE, "%04X-%04X: ", i, i + width - 1);
         /* calculate log length */
         if ((fmt_result > -1) && (fmt_result <= ULOG_LINE_BUF_SIZE))
         {
