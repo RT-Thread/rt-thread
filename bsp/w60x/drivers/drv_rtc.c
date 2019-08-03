@@ -20,6 +20,10 @@
 
 #ifdef BSP_USING_RTC
 
+#if defined(RT_USING_SOFT_RTC)
+#error "Please CANCEL the RT_USING_SOFT_RTC option. Make sure there is only one RTC device on the system."
+#endif
+
 static struct rt_rtc_device rtc_device;
 
 static time_t wm_get_timestamp(void)

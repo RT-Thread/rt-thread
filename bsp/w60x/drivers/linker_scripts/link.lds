@@ -8,8 +8,8 @@
 
 MEMORY
 {
-  FLASH (rx) : ORIGIN = 0x8010100, LENGTH = 959K    /* 960K-256B */
-  RAM (rwx) : ORIGIN = 0x20000000, LENGTH = 0x3C000 /* 240K */
+    FLASH (rx) : ORIGIN = 0x8010100, LENGTH = 959K    /* 960K-256B */
+    RAM (rw) : ORIGIN = 0x20000000, LENGTH = 0x28000  /* 160K */
 }
 
 /* Linker script to place sections and symbol values. Should be used together
@@ -77,6 +77,12 @@ SECTIONS
         __rt_init_start = .;
         KEEP(*(SORT(.rti_fn*)))
         __rt_init_end = .;
+
+        . = ALIGN(4);
+        __rtatcmdtab_start = .;
+        KEEP(*(RtAtCmdTab))
+        __rtatcmdtab_end = .;
+        . = ALIGN(4);
 
         . = ALIGN(4);
         KEEP(*(.init))
