@@ -143,7 +143,7 @@ rt_rbb_blk_t rt_rbb_blk_alloc(rt_rbb_t rbb, rt_size_t blk_size)
 
     new_rbb = find_empty_blk_in_set(rbb);
 
-    if (rt_slist_len(&rbb->blk_list) < rbb->blk_max_num && new_rbb)
+    if (new_rbb)
     {
         if (rt_slist_len(&rbb->blk_list) > 0)
         {
@@ -214,10 +214,6 @@ rt_rbb_blk_t rt_rbb_blk_alloc(rt_rbb_t rbb, rt_size_t blk_size)
             new_rbb->buf = rbb->buf;
             new_rbb->size = blk_size;
         }
-    }
-    else
-    {
-        new_rbb = NULL;
     }
 
     rt_hw_interrupt_enable(level);
