@@ -230,7 +230,9 @@ def menuconfig(RTT_ROOT):
 def guiconfig(RTT_ROOT):
     import pyguiconfig
 
-    touch_env()
+    if sys.platform != 'win32':
+        touch_env()
+
     env_dir = get_env_dir()
 
     os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
@@ -259,7 +261,9 @@ def guiconfig(RTT_ROOT):
 def guiconfig_silent(RTT_ROOT):
     import defconfig
 
-    touch_env()
+    if sys.platform != 'win32':
+        touch_env()
+
     env_dir = get_env_dir()
 
     os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
