@@ -1,5 +1,13 @@
 mainmenu "RT-Thread Configuration"
 
+config RT_USING_COMPONENTS_INIT
+    bool 
+    default y
+    
+config RT_USING_USER_MAIN
+    bool 
+    default y
+
 config RTT_DIR
     string
     option env="RTT_ROOT"
