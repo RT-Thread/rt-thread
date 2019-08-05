@@ -5,12 +5,12 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-12     fanwenl      1st version
+ * 2019-05-17     tyx          1st version
  */
 
-#ifndef __DRV_SPI_FLASH_H_
-#define __DRV_SPI_FLASH_H_
+#ifndef __DRV_CRYPTO_H__
+#define __DRV_CRYPTO_H__
 
-int wm_nor_flash_init(void);
+int wm_hw_crypto_device_init(void);
 
-#endif /* __DRV_SPI_FLASH_H_ */
+#endif /* __DRV_CRYPTO_H__ */
