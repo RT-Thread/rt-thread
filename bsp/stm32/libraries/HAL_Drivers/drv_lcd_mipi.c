@@ -17,24 +17,24 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-struct lcd_mipi_bus
+struct lcd_mipi_device
 {
-    struct rt_lcd_bus *bus;
+    struct rt_lcd_mcu   mcu;
     DSI_HandleTypeDef   hdsi;
     DSI_VidCfgTypeDef   hdsi_video;
     LTDC_HandleTypeDef  hltdc;
     LTDC_LayerCfgTypeDef layer_cfg;
 };
-static struct lcd_mipi_bus mipi_bus;
+static struct lcd_mipi_device mipi_device;
 
-static rt_err_t _mipi_write_cmd(struct rt_lcd_bus *device, void *p, rt_size_t num)
+static rt_err_t _mipi_write_cmd(struct rt_lcd_mcu *device, void *p, rt_size_t num)
 {
     rt_uint8_t *write;
     write = (rt_uint8_t *)p;
-    struct lcd_mipi_bus *mipi_device;
+    struct lcd_mipi_device *mipi_device;
 
     RT_ASSERT(device != RT_NULL);
-    mipi_device = (struct lcd_mipi_bus *)device->parent.user_data;
+    mipi_device = (struct lcd_mipi_device *)device->parent.user_data;
     RT_ASSERT(mipi_device != RT_NULL);
 
     if (num <= 1)
@@ -49,17 +49,17 @@ static rt_err_t _mipi_write_cmd(struct rt_lcd_bus *device, void *p, rt_size_t nu
     return RT_EOK;
 }
 
-static rt_err_t _mipi_bus_config(struct rt_lcd_bus *device, void *args)
+static rt_err_t _mipi_config(struct rt_lcd_mcu *device, void *args)
 {
+    struct rt_lcd_mcu_config *config;
+    struct lcd_mipi_device *mipi_device;
+
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(args != RT_NULL);
 
-    struct rt_lcd_bus_config *config;
-    struct lcd_mipi_bus *mipi_device;
-
-    config = (struct rt_lcd_bus_config *)args;
+    config = (struct rt_lcd_mcu_config *)args;
     RT_ASSERT(config != RT_NULL);
-    mipi_device = (struct lcd_mipi_bus *)device->parent.user_data;
+    mipi_device = (struct lcd_mipi_device *)device->parent.user_data;
     RT_ASSERT(mipi_device != RT_NULL);
 
     RCC_PeriphCLKInitTypeDef PeriphClkInitStruct;
@@ -197,28 +197,21 @@ static rt_err_t _mipi_bus_config(struct rt_lcd_bus *device, void *args)
     return RT_EOK;
 }
 
-static struct rt_lcd_bus_ops mipi_ops =
+static struct rt_lcd_mcu_ops mipi_ops =
 {
     _mipi_write_cmd,
     RT_NULL,
     RT_NULL,
     RT_NULL,
-    _mipi_bus_config,
+    _mipi_config,
 };
 
-int rt_lcd_bus_init(void)
+int rt_lcd_mcu_init(void)
 {
     rt_err_t result;
 
     result = RT_EOK;
-    mipi_bus.bus = (struct rt_lcd_bus *)rt_malloc(sizeof(struct rt_lcd_bus));
-    if (mipi_bus.bus == RT_NULL)
-    {
-        LOG_E("malloc memory failed\n");
-        return -RT_ERROR;
-    }
-
-    result = rt_lcd_bus_register(mipi_bus.bus, "lcd_bus", &mipi_ops, &mipi_bus);
+    result = rt_lcd_mcu_register(&mipi_device.mcu, "lcd_mcu", &mipi_ops, &mipi_device);
     if (result != RT_EOK)
     {
         LOG_E("register lcd interface device failed error code = %d\n", result);
@@ -227,6 +220,6 @@ int rt_lcd_bus_init(void)
     return result;
 }
 
-INIT_PREV_EXPORT(rt_lcd_bus_init);
+INIT_PREV_EXPORT(rt_lcd_mcu_init);
 
 /*********************** end of file ***********************/

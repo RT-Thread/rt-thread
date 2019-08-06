@@ -7,6 +7,12 @@ src = ['lcd.c']
 if GetDepend('RT_USING_LCD_SPI'):
     src = src + ['lcd_spi.c']
 
+if GetDepend('RT_USING_LCD_RGB'):
+    src = src + ['lcd_rgb.c']
+
+if GetDepend('RT_USING_LCD_MCU'):
+    src = src + ['lcd_mcu.c']
+
 # The set of source files associated with this SConscript file.
 path = [cwd + '/../include']
 

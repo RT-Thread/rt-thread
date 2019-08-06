@@ -130,6 +130,18 @@ extern "C" {
 #include "drivers/lcd.h"
 #endif
 
+#ifdef RT_USINT_LCD_RGB
+#include "drivers/lcd_rgb.h"
+#endif
+
+#ifdef RT_USING_LCD_MCU
+#include "drivers/lcd_mcu.h"
+#endif
+
+#ifdef RT_USING_LCD_SPI
+#include "drivers/lcd_spi.h"
+#endif
+
 #ifdef __cplusplus
 }
 #endif
