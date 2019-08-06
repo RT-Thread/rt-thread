@@ -272,6 +272,19 @@ config RT_USING_LCD
     bool "Using LCD device drivers"
     default n
 
+    if RT_USING_LCD  
+        config RT_USING_LCD_MCU
+            bool "Enable LCD MCU"
+            default n
+        config RT_USING_LCD_RGB
+            bool "Enable LCD RGB"
+            default n
+        config RT_USING_LCD_SPI
+            select RT_USING_SPI
+            bool "Enable LCD SPI"
+            default n
+    endif
+
 menuconfig RT_USING_HWCRYPTO
         bool "Using Hardware Crypto drivers"
         default n
