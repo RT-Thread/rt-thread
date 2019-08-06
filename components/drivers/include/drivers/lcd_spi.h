@@ -15,7 +15,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-int rt_lcd_bus_init(const char *name);
+int rt_lcd_spi_init(const char *name);
 
 #endif /* __LCD_SPI_H__ */
 
