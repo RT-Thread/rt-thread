@@ -133,6 +133,21 @@ static void _idle_hook_callback(void)
 #endif
 }
 
+static void _thread_inited_hook(rt_thread_t thread)
+{
+    rt_uint32_t stack_size, stk_start;
+
+    stack_size = (rt_uint32_t)thread->stack_size;
+    stk_start = (rt_uint32_t)thread->stack_addr;
+
+    if ((stk_start + stack_size) >= TASK_STACK_USING_MEM_UPPER_RANGE)
+    {
+        rt_kprintf("thread[%s] stack only between 0x%08x and 0x%08x, please use rt_create_thread()!!\n",
+                   thread->name, TASK_STACK_USING_MEM_LOWER_RANGE, TASK_STACK_USING_MEM_UPPER_RANGE);
+    }
+    RT_ASSERT((stk_start + stack_size) < TASK_STACK_USING_MEM_UPPER_RANGE);
+}
+
 void wm_sys_clk_config(void)
 {
     tls_sys_clk sysclk;
@@ -188,6 +203,14 @@ void rt_hw_board_init(void)
 
     NVIC_SystemLPConfig(NVIC_LP_SLEEPDEEP, ENABLE);
     rt_thread_idle_sethook(_idle_hook_callback);
+    rt_thread_inited_sethook(_thread_inited_hook);
+}
+
+#include <wm_watchdog.h>
+void rt_hw_cpu_reset(void)
+{
+    extern void tls_sys_reset(void);
+    tls_sys_reset();
 }
 
 #ifdef RT_USING_FINSH
