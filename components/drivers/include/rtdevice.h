@@ -130,7 +130,7 @@ extern "C" {
 #include "drivers/lcd.h"
 #endif
 
-#ifdef RT_USINT_LCD_RGB
+#ifdef RT_USING_LCD_RGB
 #include "drivers/lcd_rgb.h"
 #endif
 
