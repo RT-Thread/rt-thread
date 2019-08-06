@@ -8,11 +8,11 @@ CPPPATH = [cwd + '/../include']
 group = []
 
 if GetDepend(['RT_USING_MTD_NOR']):
-    src += ['mtd_nor.c']
+    src += ['rt_mtd_nor.c']
     depend += ['RT_USING_MTD_NOR']
 
 if GetDepend(['RT_USING_MTD_NAND']):
-    src += ['mtd_nand.c']
+    src += ['rt_mtd_nand.c']
     depend += ['RT_USING_MTD_NAND']
 
 if src:

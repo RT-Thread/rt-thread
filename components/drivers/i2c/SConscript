@@ -3,12 +3,12 @@ from building import *
 
 cwd = GetCurrentDir()
 src = Split("""
-i2c_core.c
-i2c_dev.c
+rt_i2c_core.c
+rt_i2c_dev.c
 """)
 
 if GetDepend('RT_USING_I2C_BITOPS'):
-    src = src + ['i2c-bit-ops.c']
+    src = src + ['rt_i2c-bit-ops.c']
 
 # The set of source files associated with this SConscript file.
 path = [cwd + '/../include']

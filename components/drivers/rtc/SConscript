@@ -3,11 +3,11 @@ from building import *
 cwd = GetCurrentDir()
 src = [] 
 
-rtc = ['rtc.c']
+rtc = ['rt_rtc.c']
 
-rtc_alarm = ['alarm.c']
+rtc_alarm = ['rt_alarm.c']
 
-soft_rtc = ['soft_rtc.c']
+soft_rtc = ['rt_soft_rtc.c']
 
 CPPPATH = [cwd + '/../include']
 group = []

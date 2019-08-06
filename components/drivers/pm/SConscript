@@ -6,7 +6,7 @@ CPPPATH = [cwd + '/../include']
 group = []
 
 if GetDepend(['RT_USING_PM']):
-    src = src + ['pm.c']
+    src = src + ['rt_pm.c']
 
 if len(src):
     group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
