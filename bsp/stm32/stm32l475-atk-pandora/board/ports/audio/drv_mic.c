@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ * 
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Date           Author       Notes
+ * 2019-07-31     Zero-Free    first implementation
+ */
+
 #include <board.h>
 
 #include "drv_es8388.h"
