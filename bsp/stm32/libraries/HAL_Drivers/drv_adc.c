@@ -44,9 +44,9 @@ static struct stm32_adc stm32_adc_obj[sizeof(adc_config) / sizeof(adc_config[0])
 
 static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
 {
-    ADC_HandleTypeDef *stm32_adc_handler = device->parent.user_data;
-
+    ADC_HandleTypeDef *stm32_adc_handler;
     RT_ASSERT(device != RT_NULL);
+    stm32_adc_handler = device->parent.user_data;
 
     if (enabled)
     {
@@ -141,10 +141,12 @@ static rt_uint32_t stm32_adc_get_channel(rt_uint32_t channel)
 static rt_err_t stm32_get_adc_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
 {
     ADC_ChannelConfTypeDef ADC_ChanConf;
-    ADC_HandleTypeDef *stm32_adc_handler = device->parent.user_data;
+    ADC_HandleTypeDef *stm32_adc_handler;
 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(value != RT_NULL);
+
+    stm32_adc_handler = device->parent.user_data;
 
     rt_memset(&ADC_ChanConf, 0, sizeof(ADC_ChanConf));
 
