@@ -47,6 +47,23 @@ menu "Onboard Peripheral Drivers"
         select PKG_USING_AHT10_LATEST_VERSION
         default n
 
+    menuconfig BSP_USING_AUDIO
+        bool "Enable Audio Device"
+        select RT_USING_AUDIO
+        select BSP_USING_I2C
+        select BSP_USING_I2C3
+        default n
+
+        if BSP_USING_AUDIO
+            config BSP_USING_AUDIO_PLAY
+            bool "Enable Audio Play"
+            default y
+
+            config BSP_USING_AUDIO_RECORD
+            bool "Enable Audio Record"
+            default n
+        endif
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
