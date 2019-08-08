@@ -225,7 +225,7 @@ typedef void (*pl041_irq_fun_t)(rt_uint32_t status, void * user_data);
 rt_err_t aaci_pl041_init(void);
 void aaci_ac97_write(rt_uint16_t reg, rt_uint16_t val);
 rt_uint16_t aaci_ac97_read(rt_uint16_t reg);
-int aaci_pl041_channle_cfg(int channle, pl041_cfg_t cgf);
+int aaci_pl041_channle_cfg(int channle, pl041_cfg_t cfg);
 int aaci_pl041_channle_write(int channle, rt_uint16_t *buff, int count);
 int aaci_pl041_channle_read(int channle, rt_uint16_t *buff, int count);
 int aaci_pl041_channle_enable(int channle);
