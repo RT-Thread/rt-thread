@@ -1,11 +1,7 @@
 /*
- * File      : cache_gcc.S
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2011, RT-Thread Development Team
+ * Copyright (c) 2006-2019, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -13,9 +9,15 @@
  * 2010-09-11     bernard      port to Loongson SoC3210
  * 2011-08-08     lgnq         port to Loongson LS1B
  * 2015-07-08     chinesebear  port to Loongson LS1C
+ * 2019-07-19     Zhou Yanjie  clean up code
  */
+
+#ifndef __ASSEMBLY__
+#define __ASSEMBLY__
+#endif
+
 #include "../common/mipsregs.h"
-#include "../common/mips.inc"
+#include "../common/mips_def.h"
 #include "../common/asm.h"
 #include "cache.h"
 

@@ -17,6 +17,8 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
+#ifdef RT_WLAN_WORK_THREAD_ENABLE
+
 struct rt_wlan_work
 {
     struct rt_work work;
@@ -95,3 +97,5 @@ int rt_wlan_workqueue_init(void)
     return 0;
 }
 INIT_PREV_EXPORT(rt_wlan_workqueue_init);
+
+#endif

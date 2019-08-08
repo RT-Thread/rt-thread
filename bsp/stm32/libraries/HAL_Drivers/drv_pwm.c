@@ -542,7 +542,7 @@ static int stm32_pwm_init(void)
             LOG_D("%s init success", stm32_pwm_obj[i].name);
 
             /* register pwm device */
-            if (rt_device_pwm_register(rt_calloc(1, sizeof(struct rt_device_pwm)), stm32_pwm_obj[i].name, &drv_ops, &stm32_pwm_obj[i].tim_handle) == RT_EOK)
+            if (rt_device_pwm_register(&stm32_pwm_obj[i].pwm_device, stm32_pwm_obj[i].name, &drv_ops, &stm32_pwm_obj[i].tim_handle) == RT_EOK)
             {
 
                 LOG_D("%s register success", stm32_pwm_obj[i].name);

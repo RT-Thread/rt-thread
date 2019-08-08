@@ -10,6 +10,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
+#include "board.h"
 #include "wm_hostspi.h"
 #include "wm_spi_hal.h"
 #include "wm_io.h"
@@ -92,10 +93,13 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
 
     rt_int32_t length = 0;
     rt_int32_t remain_length = message->length;
+    rt_int32_t int_status;
+
+    tls_irq_disable(SPI0_INT);
 
     length = spi_fill_txfifo(&tls_transfer, remain_length);
     spi_set_sclk_length(length * 8, 0);
-    if (message->cs_take)
+    if (message->cs_take && cs)
     {
         tls_gpio_write((enum tls_io_name)cs->pin, 0);
     }
@@ -112,7 +116,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         {
             while (spi_i2s_get_busy_status() == 1)
                 ;
-            if (message->cs_release)
+            if (message->cs_release && cs)
             {
                 tls_gpio_write((enum tls_io_name)cs->pin, 1);
             }
@@ -129,10 +133,15 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
 
     while (spi_i2s_get_busy_status() == 1)
         ;
-    if (message->cs_release)
+    if (message->cs_release && cs)
     {
         tls_gpio_write((enum tls_io_name)cs->pin, 1);
     }
+
+    int_status = spi_get_int_status();
+    spi_clear_int_status(int_status);
+    tls_irq_enable(SPI0_INT);
+
     return message->length - remain_length;
 }
 
@@ -193,7 +202,11 @@ int wm_hw_spi_bus_init(void)
     }
 
     wm_spi_bus.parent.user_data = &spi;
+#ifdef WM_SPI_BUS_NAME
+    rt_spi_bus_register(&wm_spi_bus, WM_SPI_BUS_NAME, &wm_spi_ops);
+#else
     rt_spi_bus_register(&wm_spi_bus, "spi0", &wm_spi_ops);
+#endif
 
     return RT_EOK;
 }

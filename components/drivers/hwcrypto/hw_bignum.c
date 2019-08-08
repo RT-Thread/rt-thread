@@ -22,7 +22,7 @@ rt_inline rt_err_t hwcrypto_bignum_dev_is_init(void)
     {
         return RT_EOK;
     }
-    dev = rt_hwcrypto_dev_dufault();
+    dev = rt_hwcrypto_dev_default();
     if (dev == RT_NULL)
     {
         return -RT_ERROR;

@@ -44,6 +44,28 @@ struct finsh_shell _shell;
 struct finsh_shell *shell;
 static char *finsh_prompt_custom = RT_NULL;
 
+#if defined(_MSC_VER) || (defined(__GNUC__) && defined(__x86_64__))
+struct finsh_syscall* finsh_syscall_next(struct finsh_syscall* call)
+{
+    unsigned int *ptr;
+    ptr = (unsigned int*) (call + 1);
+    while ((*ptr == 0) && ((unsigned int*)ptr < (unsigned int*) _syscall_table_end))
+        ptr ++;
+
+    return (struct finsh_syscall*)ptr;
+}
+
+struct finsh_sysvar* finsh_sysvar_next(struct finsh_sysvar* call)
+{
+    unsigned int *ptr;
+    ptr = (unsigned int*) (call + 1);
+    while ((*ptr == 0) && ((unsigned int*)ptr < (unsigned int*) _sysvar_table_end))
+        ptr ++;
+
+    return (struct finsh_sysvar*)ptr;
+}
+#endif /* defined(_MSC_VER) || (defined(__GNUC__) && defined(__x86_64__)) */
+
 #ifdef RT_USING_HEAP
 int finsh_set_prompt(const char * prompt)
 {
