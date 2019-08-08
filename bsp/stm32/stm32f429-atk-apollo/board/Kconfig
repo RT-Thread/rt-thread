@@ -60,7 +60,24 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_DFS
         select RT_USING_DFS_ELMFAT
         default n
+        
+    config BSP_USING_AUDIO
+        bool "Enable AUDIO (WM8978)"
+        select BSP_USING_I2C1
+        select RT_USING_AUDIO
+        default n
+        
+        if BSP_USING_AUDIO
+            config BSP_USING_AUDIO_PLAY
+            bool "Enable Audio Play"
+            default y
 
+            config BSP_USING_AUDIO_RECORD
+            bool "Enable Audio Record"
+            select BSP_USING_AUDIO_PLAY
+            default n
+        endif        
+        
 endmenu
 
 menu "On-chip Peripheral Drivers"
