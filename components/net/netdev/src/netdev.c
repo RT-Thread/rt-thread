@@ -99,7 +99,7 @@ int netdev_register(struct netdev *netdev, const char *name, void *user_data)
 
     rt_hw_interrupt_enable(level);
 
-    return RT_EOK;    
+    return RT_EOK;
 }
 
 /**
@@ -118,7 +118,7 @@ int netdev_unregister(struct netdev *netdev)
     struct netdev *cur_netdev = RT_NULL;
 
     RT_ASSERT(netdev);
-    
+
     if (netdev_list == RT_NULL)
     {
         return -RT_ERROR;
@@ -129,18 +129,35 @@ int netdev_unregister(struct netdev *netdev)
     for (node = &(netdev_list->list); node; node = rt_slist_next(node))
     {
         cur_netdev = rt_slist_entry(node, struct netdev, list);
-        if (cur_netdev && (rt_memcmp(cur_netdev, netdev, sizeof(struct netdev)) == 0))
+        if (cur_netdev == netdev)
         {
-            rt_slist_remove(&(netdev_list->list), &(cur_netdev->list));
-            rt_hw_interrupt_enable(level);
-
-            return RT_EOK;
+            /* find this network interface device in network interface device list */
+            if (netdev_list == netdev && rt_slist_next(&netdev_list->list) == RT_NULL)
+            {
+                netdev_list = RT_NULL;
+            }
+            else
+            {
+                rt_slist_remove(&(netdev_list->list), &(cur_netdev->list));
+            }
+            if (netdev_default == netdev)
+            {
+                netdev_default = netdev_list;
+            }
+            break;
         }
     }
-
     rt_hw_interrupt_enable(level);
 
-    /* not find this network interface device in network interface device list */
+    if (cur_netdev == netdev)
+    {
+#ifdef RT_USING_SAL
+        extern int sal_netdev_cleanup(struct netdev *netdev);
+        sal_netdev_cleanup(netdev);
+#endif
+        rt_memset(netdev, 0, sizeof(*netdev));
+    }
+
     return -RT_ERROR;
 }
 
@@ -678,6 +695,10 @@ void netdev_low_level_set_dns_server(struct netdev *netdev, uint8_t dns_num, con
 
     RT_ASSERT(dns_server);
 
+    if (netdev == RT_NULL)
+    {
+        return;
+    }
     /* check DNS servers is exist */
     for (index = 0; index < NETDEV_DNS_SERVERS_NUM; index++)
     {
@@ -687,7 +708,7 @@ void netdev_low_level_set_dns_server(struct netdev *netdev, uint8_t dns_num, con
         }
     }
 
-    if (netdev && dns_num < NETDEV_DNS_SERVERS_NUM)
+    if (dns_num < NETDEV_DNS_SERVERS_NUM)
     {
         ip_addr_copy(netdev->dns_servers[dns_num], *dns_server);
 
