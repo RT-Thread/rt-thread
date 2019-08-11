@@ -476,6 +476,7 @@ struct rt_scan_info
     rt_uint8_t bssid[6];
     rt_int16_t channel_min;
     rt_int16_t channel_max;
+    rt_bool_t passive;
 };
 
 struct rt_wlan_dev_ops
