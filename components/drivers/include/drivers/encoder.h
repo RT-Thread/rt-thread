@@ -19,20 +19,18 @@ extern "C" {
 #endif
 
 /* encoder control command */
-typedef enum
-{
-    ENCODER_INFO_GET = 0x01,        /* get a encoder feature information */
-    ENCODER_SWITCH_ON,              /* switch on encoder */
-    ENCODER_SWITCH_OFF,             /* switch off encoder */
-    ENCODER_COUNT_CLEAR,            /* clear encoder count */
-} rt_encoder_ctrl_t;
+#define ENCODER_CMD_GET_TYPE       (128 + 0)    /* get a encoder type information */
+#define ENCODER_CMD_ENABLE         (128 + 1)    /* enable encoder */
+#define ENCODER_CMD_DISABLE        (128 + 2)    /* disable encoder */
+#define ENCODER_CMD_CLEAR_COUNT    (128 + 3)    /* clear encoder count */
 
 /* encoder type */
-typedef enum
+enum rt_encoder_type
 {
-    SINGLE_PHASE_ENCODER = 0x01,    /* single phase encoder */
+    UNKNOWN_ENCODER_TYPE = 0x00,    /* Unknown encoder type */
+    SINGLE_PHASE_ENCODER,           /* single phase encoder */
     AB_PHASE_ENCODER                /* two phase encoder */
-} rt_encoder_type_t;
+};
 
 struct rt_encoder_device;
 
@@ -43,20 +41,14 @@ struct rt_encoder_ops
     rt_err_t (*control)(struct rt_encoder_device *encoder, rt_uint32_t cmd, void *args);
 };
 
-/* Encoder feature information */
-struct rt_encoder_info
-{
-    rt_encoder_type_t type;    /* the type of encoder */
-};
-
-typedef struct rt_encoder_device
+struct rt_encoder_device
 {
     struct rt_device parent;
     const struct rt_encoder_ops *ops;
-    const struct rt_encoder_info *info;
-} rt_encoder_t;
+    enum rt_encoder_type type;
+};
 
-rt_err_t rt_device_encoder_register(rt_encoder_t *encoder, const char *name, void *user_data);
+rt_err_t rt_device_encoder_register(struct rt_encoder_device *encoder, const char *name, void *user_data);
 
 #ifdef __cplusplus
 }

@@ -13,9 +13,9 @@
 
 static rt_err_t rt_encoder_init(struct rt_device *dev)
 {
-    rt_encoder_t *encoder;
+    struct rt_encoder_device *encoder;
 
-    encoder = (rt_encoder_t *)dev;
+    encoder = (struct rt_encoder_device *)dev;
     if (encoder->ops->init)
     {
         return encoder->ops->init(encoder);
@@ -28,12 +28,12 @@ static rt_err_t rt_encoder_init(struct rt_device *dev)
 
 static rt_err_t rt_encoder_open(struct rt_device *dev, rt_uint16_t oflag)
 {
-    rt_encoder_t *encoder;
+    struct rt_encoder_device *encoder;
 
-    encoder = (rt_encoder_t *)dev;
+    encoder = (struct rt_encoder_device *)dev;
     if (encoder->ops->control)
     {
-        return encoder->ops->control(encoder, ENCODER_SWITCH_ON, RT_NULL);
+        return encoder->ops->control(encoder, ENCODER_CMD_ENABLE, RT_NULL);
     }
     else
     {
@@ -43,12 +43,12 @@ static rt_err_t rt_encoder_open(struct rt_device *dev, rt_uint16_t oflag)
 
 static rt_err_t rt_encoder_close(struct rt_device *dev)
 {
-    rt_encoder_t *encoder;
+    struct rt_encoder_device *encoder;
 
-    encoder = (rt_encoder_t *)dev;
+    encoder = (struct rt_encoder_device *)dev;
     if (encoder->ops->control)
     {
-        return encoder->ops->control(encoder, ENCODER_SWITCH_OFF, RT_NULL);
+        return encoder->ops->control(encoder, ENCODER_CMD_DISABLE, RT_NULL);
     }
     else
     {
@@ -58,9 +58,9 @@ static rt_err_t rt_encoder_close(struct rt_device *dev)
 
 static rt_size_t rt_encoder_read(struct rt_device *dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
-    rt_encoder_t *encoder;
+    struct rt_encoder_device *encoder;
 
-    encoder = (rt_encoder_t *)dev;
+    encoder = (struct rt_encoder_device *)dev;
     if (encoder->ops->get_count)
     {
         *(rt_int32_t *)buffer = encoder->ops->get_count(encoder);
@@ -71,18 +71,18 @@ static rt_size_t rt_encoder_read(struct rt_device *dev, rt_off_t pos, void *buff
 static rt_err_t rt_encoder_control(struct rt_device *dev, int cmd, void *args)
 {
     rt_err_t result;
-    rt_encoder_t *encoder;
+    struct rt_encoder_device *encoder;
 
     result = RT_EOK;
-    encoder = (rt_encoder_t *)dev;
+    encoder = (struct rt_encoder_device *)dev;
     switch (cmd)
     {
-    case ENCODER_INFO_GET:
-        *(struct rt_encoder_info *)args = *encoder->info;
+    case ENCODER_CMD_GET_TYPE:
+        *(enum rt_encoder_type *)args = encoder->type;
         break;
-    case ENCODER_SWITCH_ON:
-    case ENCODER_SWITCH_OFF:
-    case ENCODER_COUNT_CLEAR:
+    case ENCODER_CMD_ENABLE:
+    case ENCODER_CMD_DISABLE:
+    case ENCODER_CMD_CLEAR_COUNT:
         result = encoder->ops->control(encoder, cmd, args);
         break;
     default:
@@ -105,13 +105,12 @@ const static struct rt_device_ops encoder_ops =
 };
 #endif
 
-rt_err_t rt_device_encoder_register(rt_encoder_t *encoder, const char *name, void *user_data)
+rt_err_t rt_device_encoder_register(struct rt_encoder_device *encoder, const char *name, void *user_data)
 {
     struct rt_device *device;
 
     RT_ASSERT(encoder != RT_NULL);
     RT_ASSERT(encoder->ops != RT_NULL);
-    RT_ASSERT(encoder->info != RT_NULL);
 
     device = &(encoder->parent);
 
