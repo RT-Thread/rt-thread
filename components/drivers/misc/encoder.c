@@ -77,12 +77,14 @@ static rt_err_t rt_encoder_control(struct rt_device *dev, int cmd, void *args)
     encoder = (struct rt_encoder_device *)dev;
     switch (cmd)
     {
+    case ENCODER_CMD_CLEAR_COUNT:
+        result = encoder->ops->clear_count(encoder);
+        break;
     case ENCODER_CMD_GET_TYPE:
         *(enum rt_encoder_type *)args = encoder->type;
         break;
     case ENCODER_CMD_ENABLE:
     case ENCODER_CMD_DISABLE:
-    case ENCODER_CMD_CLEAR_COUNT:
         result = encoder->ops->control(encoder, cmd, args);
         break;
     default:
