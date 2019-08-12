@@ -38,6 +38,7 @@ struct rt_encoder_ops
 {
     rt_err_t (*init)(struct rt_encoder_device *encoder);
     rt_int32_t (*get_count)(struct rt_encoder_device *encoder);
+    rt_err_t (*clear_count)(struct rt_encoder_device *encoder);
     rt_err_t (*control)(struct rt_encoder_device *encoder, rt_uint32_t cmd, void *args);
 };
 
