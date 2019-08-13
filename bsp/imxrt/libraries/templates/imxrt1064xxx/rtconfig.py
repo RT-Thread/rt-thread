@@ -23,7 +23,7 @@ elif CROSS_TOOL == 'iar':
     EXEC_PATH   = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
 
 if os.getenv('RTT_EXEC_PATH'):
-	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 #BUILD = 'debug'
 BUILD = 'release'
