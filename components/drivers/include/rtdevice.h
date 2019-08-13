@@ -130,6 +130,10 @@ extern "C" {
 #include "drivers/encoder.h"
 #endif
 
+#ifdef RT_USING_CAPTURE
+#include "drivers/rt_capture.h"
+#endif
+
 #ifdef __cplusplus
 }
 #endif
