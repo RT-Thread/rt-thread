@@ -545,6 +545,7 @@ rt_err_t rt_wlan_dev_scan(struct rt_wlan_device *device, struct rt_wlan_info *in
             scan_info.channel_min = -1;
             scan_info.channel_max = -1;
         }
+        scan_info.passive = info->hidden ? RT_TRUE : RT_FALSE;
         p_scan_info = &scan_info;
     }
     result = rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_SCAN, p_scan_info);
