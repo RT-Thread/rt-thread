@@ -444,7 +444,7 @@ config RT_USING_CAPTURE
 
 if RT_USING_CAPTURE
     config RT_CAPTURE_RB_SIZE
-        int "Set capture rinbuffer size"
+        int "Set capture ringbuffer size"
         default 100
 endif
 
