@@ -48,8 +48,8 @@ Export('rtconfig')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
-objs = objs + SConscript('../Libraries/drivers/SConscript')
-objs = objs + SConscript('../Libraries/MIMXRT1064/SConscript')
+objs = objs + SConscript('../libraries/drivers/SConscript')
+objs = objs + SConscript('../libraries/MIMXRT1064/SConscript')
 
 # make a building
 DoBuilding(TARGET, objs)
