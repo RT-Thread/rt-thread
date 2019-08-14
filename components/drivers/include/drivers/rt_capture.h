@@ -22,19 +22,19 @@ extern "C" {
 #define CAPTURE_CMD_CLEAR_BUF        (128 + 0)    /* clear capture buf */
 #define CAPTURE_CMD_SET_WATERMARK    (128 + 1)    /* Set the callback threshold */
 
-struct capture_data_struct
+struct capture_data
 {
-    rt_bool_t   is_high;
     rt_uint32_t pulsewidth_us;
+    rt_bool_t   is_high;
 };
 
 struct rt_capture_device
 {
-    struct rt_device          parent;
+    struct rt_device               parent;
 
-    const struct rt_capture_ops *ops;
-    struct rt_ringbuffer *ringbuff;
-    rt_size_t watermark;
+    const struct rt_capture_ops    *ops;
+    struct rt_ringbuffer           *ringbuff;
+    rt_size_t                      watermark;
 };
 
 /**
@@ -50,10 +50,9 @@ struct rt_capture_ops
 
 void rt_hw_capture_isr(struct rt_capture_device *capture, rt_bool_t level);
 
-rt_err_t rt_hw_capture_register(struct rt_capture_device *capture,
-                               const char              *name,
-                               rt_uint32_t              flag,
-                               void                    *data);
+rt_err_t rt_device_capture_register(struct rt_capture_device *capture,
+                                    const char               *name,
+                                    void                     *data);
 #ifdef __cplusplus
 }
 #endif
