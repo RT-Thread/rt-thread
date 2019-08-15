@@ -181,6 +181,7 @@ def HandleToolOption(tools, env, project, reset):
         if tool.get('id').find('c.linker') != -1:
             options = tool.findall('option')
             for option in options:
+                # update linker script config
                 if option.get('id').find('c.linker.scriptfile') != -1:
                     linker_script = 'link.lds'
                     items = env['LINKFLAGS'].split(' ')
@@ -201,11 +202,21 @@ def HandleToolOption(tools, env, project, reset):
                         linker_script = ConverToEclipsePathFormat(items[items.index('-T') + 1]).strip('"')
                         option.set('value',linker_script)
 
+                # update nostartfiles config
                 if option.get('id').find('c.linker.nostart') != -1:
                     if env['LINKFLAGS'].find('-nostartfiles') != -1:
                         option.set('value', 'true')
                     else:
                         option.set('value', 'false')
+
+                # update libs
+                if option.get('id').find('c.linker.libs') != -1 and env.has_key('LIBS'):
+                    # remove old libs
+                    for item in option.findall('listOptionValue'):
+                        option.remove(item)
+                    # add new libs
+                    for lib in env['LIBS']:
+                        SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': lib})
 
     return
 
