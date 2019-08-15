@@ -314,6 +314,9 @@ static rt_err_t stm32_hw_pwm_init(struct stm32_pwm *device)
 
     tim = (TIM_HandleTypeDef *)&device->tim_handle;
 
+    /* enable timer clock */
+    HAL_TIM_PWM_MspInit(tim);
+
     /* configure the timer to pwm mode */
     tim->Init.Prescaler = 0;
     tim->Init.CounterMode = TIM_COUNTERMODE_UP;
