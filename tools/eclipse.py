@@ -218,6 +218,15 @@ def HandleToolOption(tools, env, project, reset):
                     for lib in env['LIBS']:
                         SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': lib})
 
+                # update lib paths
+                if option.get('id').find('c.linker.paths') != -1 and env.has_key('LIBPATH'):
+                    # remove old lib paths
+                    for item in option.findall('listOptionValue'):
+                        option.remove(item)
+                    # add new old lib paths
+                    for path in env['LIBPATH']:
+                        SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': path})
+
     return
 
 
