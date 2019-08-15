@@ -13,7 +13,11 @@
 #define USB_HOST_CONTROLLER_NAME      "usbh"
 
 #if defined(RT_USBH_HID_KEYBOARD) || defined(RT_USBH_HID_MOUSE)
-#include <hid.h>
+#include "../class/hid.h"
+#endif
+
+#ifdef RT_USBH_CDC
+#include "../class/hcdc.h"
 #endif
 
 /**
@@ -43,6 +47,18 @@ rt_err_t rt_usb_host_init(void)
 #ifdef RT_USBH_MSTORAGE
     /* register mass storage class driver */
     drv = rt_usbh_class_driver_storage();
+    rt_usbh_class_driver_register(drv);
+#endif
+    
+#ifdef RT_USBH_HID
+    /* register hid class driver */
+    drv = rt_usbh_class_driver_hid();
+    rt_usbh_class_driver_register(drv);
+#endif
+    
+#ifdef RT_USBH_CDC
+    /* register cdc class driver */
+    drv = rt_usbh_class_driver_cdc();
     rt_usbh_class_driver_register(drv);
 #endif
 
