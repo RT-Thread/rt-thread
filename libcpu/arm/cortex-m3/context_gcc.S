@@ -24,7 +24,7 @@
     .equ    PENDSVSET_BIT, 0x10000000       /* value to trigger PendSV exception */
     
     .equ    SHPR3, 0xE000ED20               /* system priority register (3) */
-    .equ    PENDSV_PRI_LOWEST, 0x00FF0000   /* PendSV priority value (lowest) */
+    .equ    PENDSV_PRI_LOWEST, 0xF0F00000   /* systic/PendSV priority value (lowest) */
 
 /*
  * rt_base_t rt_hw_interrupt_disable();

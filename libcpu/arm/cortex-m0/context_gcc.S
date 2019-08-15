@@ -22,7 +22,7 @@
 	.equ 	SCB_VTOR, 0xE000ED08            /* Vector Table Offset Register */
 	.equ 	NVIC_INT_CTRL, 0xE000ED04       /* interrupt control state register */
 	.equ 	NVIC_SHPR3, 0xE000ED20          /* system priority register (3) */
-	.equ 	NVIC_PENDSV_PRI, 0x00FF0000     /* PendSV priority value (lowest) */
+	.equ 	NVIC_PENDSV_PRI, 0xF0F00000     /* PendSV priority value (lowest) */
 	.equ 	NVIC_PENDSVSET, 0x10000000      /* value to trigger PendSV exception */
 
 /*
