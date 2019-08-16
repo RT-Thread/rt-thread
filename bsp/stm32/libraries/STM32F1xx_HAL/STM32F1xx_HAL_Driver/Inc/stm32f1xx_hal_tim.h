@@ -458,8 +458,9 @@ typedef struct
 /** @defgroup TIM_Input_Capture_Polarity TIM Input Capture Polarity
   * @{
   */
-#define  TIM_ICPOLARITY_RISING             TIM_INPUTCHANNELPOLARITY_RISING
-#define  TIM_ICPOLARITY_FALLING            TIM_INPUTCHANNELPOLARITY_FALLING
+#define  TIM_ICPOLARITY_RISING             TIM_INPUTCHANNELPOLARITY_RISING      /*!< Capture triggered by rising edge on timer input */
+#define  TIM_ICPOLARITY_FALLING            TIM_INPUTCHANNELPOLARITY_FALLING     /*!< Capture triggered by falling edge on timer input */
+#define  TIM_ICPOLARITY_BOTHEDGE           TIM_INPUTCHANNELPOLARITY_BOTHEDGE    /*!< Capture triggered by both rising and falling edges on timer input */
 /**
   * @}
   */
@@ -937,8 +938,9 @@ typedef struct
                                                 ((CHANNEL) == TIM_CHANNEL_2) || \
                                                 ((CHANNEL) == TIM_CHANNEL_3))
 
-#define IS_TIM_IC_POLARITY(POLARITY) (((POLARITY) == TIM_ICPOLARITY_RISING)   || \
-                                      ((POLARITY) == TIM_ICPOLARITY_FALLING))
+#define IS_TIM_IC_POLARITY(__POLARITY__) (((__POLARITY__) == TIM_ICPOLARITY_RISING)   || \
+                                          ((__POLARITY__) == TIM_ICPOLARITY_FALLING)  || \
+                                          ((__POLARITY__) == TIM_ICPOLARITY_BOTHEDGE))
 
 #define IS_TIM_IC_SELECTION(SELECTION) (((SELECTION) == TIM_ICSELECTION_DIRECTTI)   || \
                                         ((SELECTION) == TIM_ICSELECTION_INDIRECTTI) || \

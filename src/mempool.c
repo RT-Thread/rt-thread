@@ -85,6 +85,9 @@ rt_err_t rt_mp_init(struct rt_mempool *mp,
 
     /* parameter check */
     RT_ASSERT(mp != RT_NULL);
+    RT_ASSERT(name != RT_NULL);
+    RT_ASSERT(start != RT_NULL);
+    RT_ASSERT(size > 0 && block_size > 0);
 
     /* initialize object */
     rt_object_init(&(mp->parent), RT_Object_Class_MemPool, name);
@@ -191,6 +194,10 @@ rt_mp_t rt_mp_create(const char *name,
     register rt_size_t offset;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
+
+    /* parameter check */
+    RT_ASSERT(name != RT_NULL);
+    RT_ASSERT(block_count > 0 && block_size > 0);
 
     /* allocate object */
     mp = (struct rt_mempool *)rt_object_allocate(RT_Object_Class_MemPool, name);
@@ -308,6 +315,9 @@ void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
     struct rt_thread *thread;
     rt_uint32_t before_sleep = 0;
 
+    /* parameter check */
+    RT_ASSERT(mp != RT_NULL);
+
     /* get current thread */
     thread = rt_thread_self();
 
@@ -401,6 +411,9 @@ void rt_mp_free(void *block)
     struct rt_mempool *mp;
     struct rt_thread *thread;
     register rt_base_t level;
+
+    /* parameter check */
+    if (block == RT_NULL) return;
 
     /* get the control block of pool which the block belongs to */
     block_ptr = (rt_uint8_t **)((rt_uint8_t *)block - sizeof(rt_uint8_t *));

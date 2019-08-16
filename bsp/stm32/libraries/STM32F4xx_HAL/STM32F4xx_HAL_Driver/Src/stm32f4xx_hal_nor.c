@@ -49,33 +49,56 @@
        
       (+) NOR_WRITE : NOR memory write data to specified address
 
+    *** Callback registration ***
+    =============================================
+    [..]
+      The compilation define  USE_HAL_NOR_REGISTER_CALLBACKS when set to 1
+      allows the user to configure dynamically the driver callbacks.
+
+      Use Functions @ref HAL_NOR_RegisterCallback() to register a user callback,
+      it allows to register following callbacks:
+        (+) MspInitCallback    : NOR MspInit.
+        (+) MspDeInitCallback  : NOR MspDeInit.
+      This function takes as parameters the HAL peripheral handle, the Callback ID
+      and a pointer to the user callback function.
+
+      Use function @ref HAL_NOR_UnRegisterCallback() to reset a callback to the default
+      weak (surcharged) function. It allows to reset following callbacks:
+        (+) MspInitCallback    : NOR MspInit.
+        (+) MspDeInitCallback  : NOR MspDeInit.
+      This function) takes as parameters the HAL peripheral handle and the Callback ID.
+
+      By default, after the @ref HAL_NOR_Init and if the state is HAL_NOR_STATE_RESET
+      all callbacks are reset to the corresponding legacy weak (surcharged) functions.
+      Exception done for MspInit and MspDeInit callbacks that are respectively
+      reset to the legacy weak (surcharged) functions in the @ref HAL_NOR_Init
+      and @ref  HAL_NOR_DeInit only when these callbacks are null (not registered beforehand).
+      If not, MspInit or MspDeInit are not null, the @ref HAL_NOR_Init and @ref HAL_NOR_DeInit
+      keep and use the user MspInit/MspDeInit callbacks (registered beforehand)
+
+      Callbacks can be registered/unregistered in READY state only.
+      Exception done for MspInit/MspDeInit callbacks that can be registered/unregistered
+      in READY or RESET state, thus registered (user) MspInit/DeInit callbacks can be used
+      during the Init/DeInit.
+      In that case first register the MspInit/MspDeInit user callbacks
+      using @ref HAL_NOR_RegisterCallback before calling @ref HAL_NOR_DeInit
+      or @ref HAL_NOR_Init function.
+
+      When The compilation define USE_HAL_NOR_REGISTER_CALLBACKS is set to 0 or
+      not defined, the callback registering feature is not available
+      and weak (surcharged) callbacks are used.
+
   @endverbatim
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */ 
@@ -189,8 +212,19 @@ HAL_StatusTypeDef HAL_NOR_Init(NOR_HandleTypeDef *hnor, FMC_NORSRAM_TimingTypeDe
   {
     /* Allocate lock resource and initialize it */
     hnor->Lock = HAL_UNLOCKED;
+
+#if (USE_HAL_NOR_REGISTER_CALLBACKS == 1)
+    if(hnor->MspInitCallback == NULL)
+    {
+      hnor->MspInitCallback = HAL_NOR_MspInit;
+    }
+
+    /* Init the low level hardware */
+    hnor->MspInitCallback(hnor);
+#else
     /* Initialize the low level hardware (MSP) */
     HAL_NOR_MspInit(hnor);
+#endif /* (USE_HAL_NOR_REGISTER_CALLBACKS) */
   }
   
   /* Initialize NOR control Interface */
@@ -229,9 +263,19 @@ HAL_StatusTypeDef HAL_NOR_Init(NOR_HandleTypeDef *hnor, FMC_NORSRAM_TimingTypeDe
   */
 HAL_StatusTypeDef HAL_NOR_DeInit(NOR_HandleTypeDef *hnor)  
 {
+#if (USE_HAL_NOR_REGISTER_CALLBACKS == 1)
+  if(hnor->MspDeInitCallback == NULL)
+  {
+    hnor->MspDeInitCallback = HAL_NOR_MspDeInit;
+  }
+
+  /* DeInit the low level hardware */
+  hnor->MspDeInitCallback(hnor);
+#else
   /* De-Initialize the low level hardware (MSP) */
   HAL_NOR_MspDeInit(hnor);
- 
+#endif /* (USE_HAL_NOR_REGISTER_CALLBACKS) */
+
   /* Configure the NOR registers with their reset values */
   FMC_NORSRAM_DeInit(hnor->Instance, hnor->Extended, hnor->Init.NSBank);
   
@@ -863,6 +907,105 @@ HAL_StatusTypeDef HAL_NOR_Read_CFI(NOR_HandleTypeDef *hnor, NOR_CFITypeDef *pNOR
   return HAL_OK;
 }
 
+#if (USE_HAL_NOR_REGISTER_CALLBACKS == 1)
+/**
+  * @brief  Register a User NOR Callback
+  *         To be used instead of the weak (surcharged) predefined callback
+  * @param hnor : NOR handle
+  * @param CallbackId : ID of the callback to be registered
+  *        This parameter can be one of the following values:
+  *          @arg @ref HAL_NOR_MSP_INIT_CB_ID       NOR MspInit callback ID
+  *          @arg @ref HAL_NOR_MSP_DEINIT_CB_ID     NOR MspDeInit callback ID
+  * @param pCallback : pointer to the Callback function
+  * @retval status
+  */
+HAL_StatusTypeDef HAL_NOR_RegisterCallback (NOR_HandleTypeDef *hnor, HAL_NOR_CallbackIDTypeDef CallbackId, pNOR_CallbackTypeDef pCallback)
+{
+  HAL_StatusTypeDef status = HAL_OK;
+  HAL_NOR_StateTypeDef state;
+
+  if(pCallback == NULL)
+  {
+    return HAL_ERROR;
+  }
+
+  /* Process locked */
+  __HAL_LOCK(hnor);
+
+  state = hnor->State;
+  if((state == HAL_NOR_STATE_READY) || (state == HAL_NOR_STATE_RESET) || (state == HAL_NOR_STATE_PROTECTED))
+  {
+    switch (CallbackId)
+    {
+    case HAL_NOR_MSP_INIT_CB_ID :
+      hnor->MspInitCallback = pCallback;
+      break;
+    case HAL_NOR_MSP_DEINIT_CB_ID :
+      hnor->MspDeInitCallback = pCallback;
+      break;
+    default :
+      /* update return status */
+      status =  HAL_ERROR;
+      break;
+    }
+  }
+  else
+  {
+    /* update return status */
+    status =  HAL_ERROR;
+  }
+
+  /* Release Lock */
+  __HAL_UNLOCK(hnor);
+  return status;
+}
+
+/**
+  * @brief  Unregister a User NOR Callback
+  *         NOR Callback is redirected to the weak (surcharged) predefined callback
+  * @param hnor : NOR handle
+  * @param CallbackId : ID of the callback to be unregistered
+  *        This parameter can be one of the following values:
+  *          @arg @ref HAL_NOR_MSP_INIT_CB_ID       NOR MspInit callback ID
+  *          @arg @ref HAL_NOR_MSP_DEINIT_CB_ID     NOR MspDeInit callback ID
+  * @retval status
+  */
+HAL_StatusTypeDef HAL_NOR_UnRegisterCallback (NOR_HandleTypeDef *hnor, HAL_NOR_CallbackIDTypeDef CallbackId)
+{
+  HAL_StatusTypeDef status = HAL_OK;
+  HAL_NOR_StateTypeDef state;
+
+  /* Process locked */
+  __HAL_LOCK(hnor);
+
+  state = hnor->State;
+  if((state == HAL_NOR_STATE_READY) || (state == HAL_NOR_STATE_RESET) || (state == HAL_NOR_STATE_PROTECTED))
+  {
+    switch (CallbackId)
+    {
+    case HAL_NOR_MSP_INIT_CB_ID :
+      hnor->MspInitCallback = HAL_NOR_MspInit;
+      break;
+    case HAL_NOR_MSP_DEINIT_CB_ID :
+      hnor->MspDeInitCallback = HAL_NOR_MspDeInit;
+      break;
+    default :
+      /* update return status */
+      status =  HAL_ERROR;
+      break;
+    }
+  }
+  else
+  {
+    /* update return status */
+    status =  HAL_ERROR;
+  }
+
+  /* Release Lock */
+  __HAL_UNLOCK(hnor);
+  return status;
+}
+#endif /* (USE_HAL_NOR_REGISTER_CALLBACKS) */
 /**
   * @}
   */

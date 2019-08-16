@@ -19,7 +19,7 @@
 
 #ifdef RT_USING_RTC
 
-static void rtc_init(rtc_init_t *init)
+static void __rtc_init(rtc_init_t *init)
 {
     assert_param(IS_RTC_HOUR_FORMAT(init->hour_format));
     assert_param(IS_RTC_OUTPUT_SEL(init->output));
@@ -129,7 +129,7 @@ int rt_hw_rtc_init(void)
     rtc_initstruct.asynch_pre_div = 0;
     rtc_initstruct.synch_pre_div = 32767;
     rtc_initstruct.output = RTC_OUTPUT_DISABLE;
-    rtc_init(&rtc_initstruct);
+    __rtc_init(&rtc_initstruct);
 
     rtc_dev.type = RT_Device_Class_RTC;
     rtc_dev.rx_indicate = RT_NULL;

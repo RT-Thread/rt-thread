@@ -302,7 +302,7 @@ static void aaci_pl041_irq_handle(int irqno, void *param)
     void *p_status;
 
     mask = PL041_READ(&PL041->allints);
-    PL041_WRITE(PL041->intclr, mask);
+    PL041_WRITE(&PL041->intclr, mask);
 
     for (channle = 0; (channle < PL041_CHANNLE_NUM) && (mask); channle++)
     {

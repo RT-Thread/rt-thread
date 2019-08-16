@@ -19,9 +19,9 @@
     (+) The IWDG is clocked by Low-Speed clock (LSI) and thus stays active even
         if the main clock fails.
 
-    (+) Once the IWDG is started, the LSI is forced ON and both can not be 
+    (+) Once the IWDG is started, the LSI is forced ON and both can not be
         disabled. The counter starts counting down from the reset value (0xFFF).
-        When it reaches the end of count value (0x000) a reset signal is 
+        When it reaches the end of count value (0x000) a reset signal is
         generated (IWDG reset).
 
     (+) Whenever the key value 0x0000 AAAA is written in the IWDG_KR register,
@@ -36,7 +36,7 @@
     (+) Debug mode : When the microcontroller enters debug mode (core halted),
         the IWDG counter either continues to work normally or stops, depending
         on DBG_IWDG_STOP configuration bit in DBG module, accessible through
-        __HAL_DBGMCU_FREEZE_IWDG() and __HAL_DBGMCU_UNFREEZE_IWDG() macros
+        __HAL_DBGMCU_FREEZE_IWDG() and __HAL_DBGMCU_UNFREEZE_IWDG() macros.
 
     [..] Min-max timeout value @32KHz (LSI): ~125us / ~32.7s
          The IWDG timeout may vary due to LSI frequency dispersion. STM32F4xx
@@ -48,13 +48,14 @@
   ==============================================================================
   [..]
     (#) Use IWDG using HAL_IWDG_Init() function to :
-      (++) Enable instance by writing Start keyword in IWDG_KEY register. LSI
-           clock is forced ON and IWDG counter starts downcounting.
-      (++) Enable write access to configuration register: IWDG_PR & IWDG_RLR.
-      (++) Configure the IWDG prescaler and counter reload value. This reload
+      (+) Enable instance by writing Start keyword in IWDG_KEY register. LSI
+           clock is forced ON and IWDG counter starts counting down.
+      (+) Enable write access to configuration registers:
+          IWDG_PR and IWDG_RLR.
+      (+) Configure the IWDG prescaler and counter reload value. This reload
            value will be loaded in the IWDG counter each time the watchdog is
            reloaded, then the IWDG will start counting down from this value.
-      (++) wait for status flags to be reset"
+      (+) Wait for status flags to be reset.
 
     (#) Then the application program must refresh the IWDG counter at regular
         intervals during normal operation to prevent an MCU reset, using
@@ -72,29 +73,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -107,7 +92,7 @@
   */
 
 #ifdef HAL_IWDG_MODULE_ENABLED
-/** @defgroup IWDG IWDG
+/** @addtogroup IWDG
   * @brief IWDG HAL module driver.
   * @{
   */
@@ -117,10 +102,10 @@
 /** @defgroup IWDG_Private_Defines IWDG Private Defines
   * @{
   */
-/* Status register need 5 RC LSI divided by prescaler clock to be updated. With 
-   higher prescaler (256), and according to HSI variation, we need to wait at
+/* Status register need 5 RC LSI divided by prescaler clock to be updated. With
+   higher prescaler (256), and according to LSI variation, we need to wait at
    least 6 cycles so 48 ms. */
-#define HAL_IWDG_DEFAULT_TIMEOUT            48U
+#define HAL_IWDG_DEFAULT_TIMEOUT            48u
 /**
   * @}
   */
@@ -135,8 +120,8 @@
   */
 
 /** @addtogroup IWDG_Exported_Functions_Group1
-  *  @brief    Initialization and Start functions.
-  *
+ *  @brief    Initialization and Start functions.
+ *
 @verbatim
  ===============================================================================
           ##### Initialization and Start functions #####
@@ -164,7 +149,7 @@ HAL_StatusTypeDef HAL_IWDG_Init(IWDG_HandleTypeDef *hiwdg)
   uint32_t tickstart;
 
   /* Check the IWDG handle allocation */
-  if(hiwdg == NULL)
+  if (hiwdg == NULL)
   {
     return HAL_ERROR;
   }
@@ -174,10 +159,11 @@ HAL_StatusTypeDef HAL_IWDG_Init(IWDG_HandleTypeDef *hiwdg)
   assert_param(IS_IWDG_PRESCALER(hiwdg->Init.Prescaler));
   assert_param(IS_IWDG_RELOAD(hiwdg->Init.Reload));
 
-  /* Enable IWDG. LSI is turned on automaticaly */
+  /* Enable IWDG. LSI is turned on automatically */
   __HAL_IWDG_START(hiwdg);
 
-  /* Enable write access to IWDG_PR and IWDG_RLR registers by writing 0x5555 in KR */
+  /* Enable write access to IWDG_PR and IWDG_RLR registers by writing
+  0x5555 in KR */
   IWDG_ENABLE_WRITE_ACCESS(hiwdg);
 
   /* Write to IWDG registers the Prescaler & Reload values to work with */
@@ -188,9 +174,9 @@ HAL_StatusTypeDef HAL_IWDG_Init(IWDG_HandleTypeDef *hiwdg)
   tickstart = HAL_GetTick();
 
   /* Wait for register to be updated */
-  while(hiwdg->Instance->SR != RESET)
+  while (hiwdg->Instance->SR != 0x00u)
   {
-    if((HAL_GetTick() - tickstart ) > HAL_IWDG_DEFAULT_TIMEOUT)
+    if ((HAL_GetTick() - tickstart) > HAL_IWDG_DEFAULT_TIMEOUT)
     {
       return HAL_TIMEOUT;
     }
@@ -207,9 +193,10 @@ HAL_StatusTypeDef HAL_IWDG_Init(IWDG_HandleTypeDef *hiwdg)
   * @}
   */
 
+
 /** @addtogroup IWDG_Exported_Functions_Group2
-  *  @brief   IO operation functions
-  *
+ *  @brief   IO operation functions
+ *
 @verbatim
  ===============================================================================
                       ##### IO operation functions #####
@@ -220,6 +207,7 @@ HAL_StatusTypeDef HAL_IWDG_Init(IWDG_HandleTypeDef *hiwdg)
 @endverbatim
   * @{
   */
+
 
 /**
   * @brief  Refresh the IWDG.

@@ -10,6 +10,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
+#include "board.h"
 #include "wm_io.h"
 #include "wm_uart.h"
 #include "wm_gpio_afsel.h"

@@ -47,6 +47,23 @@ menu "Onboard Peripheral Drivers"
         select PKG_USING_AHT10_LATEST_VERSION
         default n
 
+    menuconfig BSP_USING_AUDIO
+        bool "Enable Audio Device"
+        select RT_USING_AUDIO
+        select BSP_USING_I2C
+        select BSP_USING_I2C3
+        default n
+
+        if BSP_USING_AUDIO
+            config BSP_USING_AUDIO_PLAY
+            bool "Enable Audio Play"
+            default y
+
+            config BSP_USING_AUDIO_RECORD
+            bool "Enable Audio Record"
+            default n
+        endif
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -199,6 +216,20 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable PWM1 channel1"
                     default n
             endif
+
+        menuconfig BSP_USING_PWM2
+            bool "Enable timer2 output pwm"
+            default n
+            if BSP_USING_PWM2
+                config BSP_USING_PWM2_CH3
+                    bool "Enable PWM2 channel3"
+                    default n
+
+                config BSP_USING_PWM2_CH4
+                    bool "Enable PWM2 channel4"
+                    default n
+            endif
+
         menuconfig BSP_USING_PWM4
             bool "Enable timer4 output pwm"
             default n
@@ -250,10 +281,19 @@ menu "On-chip Peripheral Drivers"
         bool "Enable OTGFS as USB device"
         select RT_USING_USB_DEVICE
         default n
-
+   
+    source "../libraries/HAL_Drivers/Kconfig"
+    
 endmenu
 
 menu "Board extended module Drivers"
+
+    config BSP_USING_NRF24L01
+        bool "Enable NRF24L01"
+        select BSP_USING_SPI
+        select BSP_USING_SPI2
+        select PKG_USING_NRF24L01
+        default n
 
 endmenu
 

@@ -71,9 +71,9 @@
 | USB Device        |   暂不支持   | 即将支持                              |
 | USB Host          |   暂不支持   | 即将支持                              |
 | **扩展模块**      | **支持情况** | **备注**                              |
+| NRF24L01 模块  |     支持    | 根据实际板子接线情况修改 NRF24L01 软件包中的 `NRF24L01_CE_PIN` 和 `NRF24_IRQ_PIN` 的宏定义，以及 SPI 设备名 |
 | ATK-ESP8266 模块  |    暂不支持  | 即将支持                              |
 | enc28j60 模块  |     暂不支持    | 即将支持                              |
-
 使用该开发板的更多高级功能请参考 RT-Thread 代码仓库： [RT-Thread IoT-Board SDK](https://github.com/RT-Thread/IoT_Board)。
 
 ## 使用说明

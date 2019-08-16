@@ -425,7 +425,7 @@ rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
     rt_pipe_t *pipe;
     rt_device_t dev;
 
-    pipe = rt_malloc(sizeof(rt_pipe_t));
+    pipe = (rt_pipe_t *)rt_malloc(sizeof(rt_pipe_t));
     if (pipe == RT_NULL) return RT_NULL;
 
     rt_memset(pipe, 0, sizeof(rt_pipe_t));

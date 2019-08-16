@@ -21,6 +21,7 @@
 # Date           Author       Notes
 # 2017-12-29     Bernard      The first version
 # 2018-07-31     weety        Support pyconfig
+# 2019-07-13     armink       Support guiconfig
 
 import os
 import re
@@ -225,11 +226,13 @@ def menuconfig(RTT_ROOT):
     if mtime != mtime2:
         mk_rtconfig(fn)
 
-# pyconfig for windows and linux
-def pyconfig(RTT_ROOT):
-    import pymenuconfig
+# guiconfig for windows and linux
+def guiconfig(RTT_ROOT):
+    import pyguiconfig
 
-    touch_env()
+    if sys.platform != 'win32':
+        touch_env()
+
     env_dir = get_env_dir()
 
     os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
@@ -241,7 +244,8 @@ def pyconfig(RTT_ROOT):
     else:
         mtime = -1
 
-    pymenuconfig.main(['--kconfig', 'Kconfig', '--config', '.config'])
+    sys.argv = ['guiconfig', 'Kconfig'];
+    pyguiconfig._main()
 
     if os.path.isfile(fn):
         mtime2 = os.path.getmtime(fn)
@@ -253,19 +257,21 @@ def pyconfig(RTT_ROOT):
         mk_rtconfig(fn)
 
 
-# pyconfig_silent for windows and linux
-def pyconfig_silent(RTT_ROOT):
-    import pymenuconfig
-    print("In pyconfig silent mode. Don`t display menuconfig window.")
+# guiconfig for windows and linux
+def guiconfig_silent(RTT_ROOT):
+    import defconfig
 
-    touch_env()
+    if sys.platform != 'win32':
+        touch_env()
+
     env_dir = get_env_dir()
 
     os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
 
     fn = '.config'
 
-    pymenuconfig.main(['--kconfig', 'Kconfig', '--config', '.config', '--silent', 'True'])
+    sys.argv = ['defconfig', '--kconfig', 'Kconfig', '.config']
+    defconfig.main()
 
     # silent mode, force to make rtconfig.h
     mk_rtconfig(fn)

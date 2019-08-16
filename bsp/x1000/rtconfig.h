@@ -300,7 +300,7 @@
 /* RT_USING_TRULY_TFT240240 is not set */
 /* RT_USING_GT9XX is not set */
 /* RT_USING_FT6x06 is not set */
-#define RT_USING_AUDIO
+/* RT_USING_AUDIO is not set */
 #define RT_USING_ICODEC
 #define RT_USING_CPU_FFS
 

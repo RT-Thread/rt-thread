@@ -221,7 +221,6 @@
           <state>__inline__=inline</state>
           <state>RT_USING_DLIBC</state>
           <state>_DLIB_FILE_DESCRIPTOR</state>
-          <state>_DLIB_THREAD_SUPPORT</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -350,6 +349,7 @@
           <state>$PROJ_DIR$\..\..\components\net\sal_socket\include\socket</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\ipv4</state>
           <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Boot\gcc</state>
+          <state>$PROJ_DIR$\oneshot</state>
           <state>$PROJ_DIR$\..\..\components\net\sal_socket\include</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\netif</state>
@@ -368,9 +368,11 @@
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\packages\wm_libraries-latest\Include\OS</state>
           <state>$PROJ_DIR$\..\..\components\utilities\ulog</state>
-          <state>$PROJ_DIR$\..\..\components\dfs\include</state>
-          <state>$PROJ_DIR$\packages\wm_libraries-latest\Include\Platform</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
+          <state>$PROJ_DIR$\packages\netutils-v1.1.0\ntp</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Include\Platform</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\hwcrypto</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\include</state>
           <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Inc</state>
           <state>$PROJ_DIR$\..\..\components\net\sal_socket\include\socket\sys_socket</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include</state>
@@ -379,6 +381,7 @@
           <state>$PROJ_DIR$\packages\wm_libraries-latest\Include\WiFi</state>
           <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto</state>
           <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\spi</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\spi</state>
           <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\math</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\components\net\netdev\include</state>
@@ -774,7 +777,7 @@
         </option>
         <option>
           <name>IlinkMapFile</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>IlinkLogFile</name>
@@ -1149,7 +1152,7 @@
         </option>
         <option>
           <name>GEndianModeBE</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OGBufferedTerminalOutput</name>
@@ -1180,7 +1183,7 @@
         <option>
           <name>GBECoreSlave</name>
           <version>26</version>
-          <state>1</state>
+          <state>38</state>
         </option>
         <option>
           <name>OGUseCmsis</name>
@@ -1197,7 +1200,7 @@
         <option>
           <name>CoreVariant</name>
           <version>26</version>
-          <state>0</state>
+          <state>38</state>
         </option>
         <option>
           <name>GFPUDeviceSlave</name>
@@ -1220,7 +1223,7 @@
         <option>
           <name>GFPUCoreSlave2</name>
           <version>26</version>
-          <state>0</state>
+          <state>38</state>
         </option>
         <option>
           <name>OGCMSISPackSelectDevice</name>
@@ -1285,7 +1288,6 @@
           <state>__inline__=inline</state>
           <state>RT_USING_DLIBC</state>
           <state>_DLIB_FILE_DESCRIPTOR</state>
-          <state>_DLIB_THREAD_SUPPORT</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1374,7 +1376,7 @@
         </option>
         <option>
           <name>CCSignedPlainChar</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCRequirePrototypes</name>
@@ -1414,6 +1416,7 @@
           <state>$PROJ_DIR$\..\..\components\net\sal_socket\include\socket</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\ipv4</state>
           <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Boot\gcc</state>
+          <state>$PROJ_DIR$\oneshot</state>
           <state>$PROJ_DIR$\..\..\components\net\sal_socket\include</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\netif</state>
@@ -1432,9 +1435,11 @@
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\packages\wm_libraries-latest\Include\OS</state>
           <state>$PROJ_DIR$\..\..\components\utilities\ulog</state>
-          <state>$PROJ_DIR$\..\..\components\dfs\include</state>
-          <state>$PROJ_DIR$\packages\wm_libraries-latest\Include\Platform</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
+          <state>$PROJ_DIR$\packages\netutils-v1.1.0\ntp</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Include\Platform</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\hwcrypto</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\include</state>
           <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Inc</state>
           <state>$PROJ_DIR$\..\..\components\net\sal_socket\include\socket\sys_socket</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include</state>
@@ -1443,6 +1448,7 @@
           <state>$PROJ_DIR$\packages\wm_libraries-latest\Include\WiFi</state>
           <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto</state>
           <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\spi</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\spi</state>
           <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\math</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\components\net\netdev\include</state>
@@ -1476,7 +1482,7 @@
         </option>
         <option>
           <name>CCOptLevelSlave</name>
-          <state>1</state>
+          <state>3</state>
         </option>
         <option>
           <name>CompilerMisraRules98</name>
@@ -1739,15 +1745,15 @@
         <option>
           <name>OOCOutputFormat</name>
           <version>3</version>
-          <state>0</state>
+          <state>3</state>
         </option>
         <option>
           <name>OCOutputOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state />
+          <state>../../rtthread.bin</state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>
@@ -1755,7 +1761,7 @@
         </option>
         <option>
           <name>OOCObjCopyEnable</name>
-          <state>0</state>
+          <state>1</state>
         </option>
       </data>
     </settings>
@@ -1778,7 +1784,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild />
-        <postbuild />
+        <postbuild>cmd /c "$PROJ_DIR$\makeimg.bat"</postbuild>
       </data>
     </settings>
     <settings>
@@ -1838,7 +1844,7 @@
         </option>
         <option>
           <name>IlinkMapFile</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>IlinkLogFile</name>
@@ -1862,11 +1868,11 @@
         </option>
         <option>
           <name>IlinkIcfOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>lnk0t.icf</state>
+          <state>$PROJ_DIR$\.\drivers\linker_scripts\link.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -2191,6 +2197,9 @@
       <name>$PROJ_DIR$\drivers\drv_uart.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\drivers\drv_flash.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\drivers\pin_map.c</name>
     </file>
     <file>
@@ -2198,6 +2207,18 @@
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\drv_pin.c</name>
+    </file>
+  </group>
+  <group>
+    <name>oneshot</name>
+    <file>
+      <name>$PROJ_DIR$\oneshot\oneshot.c</name>
+    </file>
+  </group>
+  <group>
+    <name>NetUtils</name>
+    <file>
+      <name>$PROJ_DIR$\packages\netutils-v1.1.0\ntp\ntp.c</name>
     </file>
   </group>
   <group>
@@ -2266,13 +2287,13 @@
       <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\wm_crypto_hard.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\digest\hmac.c</name>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\digest\wm_crypto_hmac.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\digest\md2.c</name>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\digest\wm_crypto_md2.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\digest\md4.c</name>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\digest\wm_crypto_md4.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\digest\sha224.c</name>
@@ -2281,16 +2302,16 @@
       <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\digest\sha384.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\digest\sha512.c</name>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\digest\wm_crypto_sha512.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\keyformat\asn1.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\keyformat\base64.c</name>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\keyformat\wm_crypto_base64.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\keyformat\x509.c</name>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\keyformat\wm_crypto_x509.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\math\pstm_mul_comba.c</name>
@@ -2314,7 +2335,7 @@
       <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\pubkey\pubkey.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\pubkey\rsa.c</name>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\pubkey\wm_crypto_rsa.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\symmetric\aesGCM.c</name>
@@ -2389,10 +2410,55 @@
   <group>
     <name>DeviceDrivers</name>
     <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\hwcrypto\hwcrypto.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\hwcrypto\hw_symmetric.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\hwcrypto\hw_hash.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\hwcrypto\hw_rng.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\hwcrypto\hw_crc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\hwcrypto\hw_bignum.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\hwtimer\hwtimer.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\i2c\i2c_core.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\i2c\i2c_dev.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\i2c\i2c-bit-ops.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\components\drivers\misc\pin.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\misc\rt_drv_pwm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\rtc\rtc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\rtc\soft_rtc.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\components\drivers\serial\serial.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\spi\spi_core.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\spi\spi_dev.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\src\completion.c</name>
@@ -2416,22 +2482,25 @@
       <name>$PROJ_DIR$\..\..\components\drivers\src\workqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\wlan\wlan_cfg.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\wlan\wlan_cmd.c</name>
+      <name>$PROJ_DIR$\..\..\components\drivers\watchdog\watchdog.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\wlan\wlan_dev.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\wlan\wlan_lwip.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\components\drivers\wlan\wlan_mgnt.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\wlan\wlan_cmd.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\components\drivers\wlan\wlan_prot.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\wlan\wlan_lwip.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\wlan\wlan_cfg.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\wlan\wlan_workqueue.c</name>

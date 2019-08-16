@@ -345,15 +345,15 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\Libraries\CMSIS\KEIL_CORE</state>
+          <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\Libraries\MM32L3xx\HAL_lib\inc</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
-          <state>$PROJ_DIR$\Libraries\CMSIS\CORE</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\Libraries\MM32L3xx\Source</state>
           <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\Libraries\MM32L3xx\Include</state>
@@ -1376,15 +1376,15 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\Libraries\CMSIS\KEIL_CORE</state>
+          <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\Libraries\MM32L3xx\HAL_lib\inc</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
-          <state>$PROJ_DIR$\Libraries\CMSIS\CORE</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\Libraries\MM32L3xx\Source</state>
           <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\Libraries\MM32L3xx\Include</state>
