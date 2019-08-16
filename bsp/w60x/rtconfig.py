@@ -1,4 +1,5 @@
 import os
+import sys
 
 # toolchains options
 ARCH='arm'
@@ -27,6 +28,15 @@ if os.getenv('RTT_EXEC_PATH'):
 
 BUILD = 'debug'
 
+if os.path.exists(os.path.abspath('./') + '/drivers'):
+    gcc_linkscripts_path   = 'drivers/linker_scripts/link.lds'
+    armcc_linkscripts_path = 'drivers/linker_scripts/link.sct'
+    iar_linkscripts_path   = 'drivers/linker_scripts/link.icf'
+else:
+    gcc_linkscripts_path   = '../../drivers/linker_scripts/link.lds'
+    armcc_linkscripts_path = '../../drivers/linker_scripts/link.sct'
+    iar_linkscripts_path   = '../../drivers/linker_scripts/link.icf'
+
 if PLATFORM == 'gcc':
     # toolchains
     PREFIX = 'arm-none-eabi-'
@@ -44,7 +54,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m3 -mthumb -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -std=gnu99 -w -fno-common -fomit-frame-pointer -fno-short-enums -fsigned-char'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -g --specs=nano.specs -nostartfiles -Wl,-Map=rtthread-w60x.map -Os -Wl,--gc-sections -Wl,--cref -Wl,--entry=Reset_Handler -Wl,--no-enum-size-warning -Wl,--no-wchar-size-warning -T ./drivers/linker_scripts/link.lds'
+    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -g --specs=nano.specs -nostartfiles -Wl,-Map=rtthread-w60x.map -Os -Wl,--gc-sections -Wl,--cref -Wl,--entry=Reset_Handler -Wl,--no-enum-size-warning -Wl,--no-wchar-size-warning -T ' + gcc_linkscripts_path
 
     CPATH = ''
     LPATH = ''
@@ -69,7 +79,7 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --cpu=Cortex-M3'
     CFLAGS = DEVICE + ' --apcs=interwork --c99 --gnu'
     AFLAGS = DEVICE + ' --apcs=interwork '
-    LFLAGS = DEVICE + ' --scatter "./drivers/linker_scripts/link.sct" --info sizes --info totals --info unused --info veneers --list rt-thread.map --strict'
+    LFLAGS = DEVICE + ' --scatter ' + armcc_linkscripts_path + ' --info sizes --info totals --info unused --info veneers --list rt-thread.map --strict'
     LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCC/lib'
 
     EXEC_PATH += '/ARM/ARMCC/bin/'
@@ -123,7 +133,7 @@ elif PLATFORM == 'iar':
     else:
         CFLAGS += ' -Oh'
 
-    LFLAGS = ' --config ./drivers/linker_scripts/link.icf'
+    LFLAGS = ' --config ' + iar_linkscripts_path
     LFLAGS += ' --entry __iar_program_start'
 
     EXEC_PATH = EXEC_PATH + '/arm/bin/'

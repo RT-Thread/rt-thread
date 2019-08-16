@@ -63,7 +63,7 @@ int rt_hw_wdt_init(void)
     swm320_wdt.ops = &swm320_wdt_ops;
 
     result = rt_hw_watchdog_register(&swm320_wdt,
-                                     "iwg",
+                                     "wdt",
                                      RT_DEVICE_FLAG_RDWR,
                                      WDT);
 

@@ -102,15 +102,15 @@ def ExcludeFiles(infiles, files):
 
 
 # caluclate the exclude path for project
-def ExcludePaths(filepath, paths):
+def ExcludePaths(rootpath, paths):
     ret = []
 
-    files = os.listdir(filepath)
+    files = os.listdir(rootpath)
     for file in files:
         if file.startswith('.'):
             continue
 
-        fullname = os.path.join(filepath, file)
+        fullname = os.path.join(rootpath, file)
 
         if os.path.isdir(fullname):
             # print(fullname)
@@ -128,7 +128,7 @@ def ConverToEclipsePathFormat(path):
     return '"${workspace_loc:/${ProjName}/' + path + '}"'
 
 
-def HandleToolOption(tools, env, project):
+def HandleToolOption(tools, env, project, reset):
     BSP_ROOT = os.path.abspath(env['BSP_ROOT'])
 
     CPPDEFINES = project['CPPDEFINES']
@@ -138,12 +138,16 @@ def HandleToolOption(tools, env, project):
         if tool.get('id').find('c.compile') != 1:
             options = tool.findall('option')
             for option in options:
-                if option.get('id').find('c.compiler.include.paths') != -1:
+                if option.get('id').find('c.compiler.include.paths') != -1 or option.get('id').find('c.compiler.option.includepaths') != -1:
                     # find all of paths in this project
                     include_paths = option.findall('listOptionValue')
                     project_paths = []
                     for item in include_paths:
-                        project_paths += [item.get('value')]
+                        if reset is True:
+                            # clean all old configuration
+                            option.remove(item)
+                        else:
+                            project_paths += [item.get('value')]
 
                     if len(project_paths) > 0:
                         cproject_paths = set(paths) - set(project_paths)
@@ -155,11 +159,15 @@ def HandleToolOption(tools, env, project):
                     for item in cproject_paths:
                         SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': item})
 
-                if option.get('id').find('c.compiler.defs') != -1:
+                if option.get('id').find('c.compiler.defs') != -1 or option.get('id').find('c.compiler.option.definedsymbols') != -1:
                     defs = option.findall('listOptionValue')
                     project_defs = []
                     for item in defs:
-                        project_defs += [item.get('value')]
+                        if reset is True:
+                            # clean all old configuration
+                            option.remove(item)
+                        else:
+                            project_defs += [item.get('value')]
                     if len(project_defs) > 0:
                         cproject_defs = set(CPPDEFINES) - set(project_defs)
                     else:
@@ -186,6 +194,13 @@ def HandleToolOption(tools, env, project):
                     else:
                         SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': linker_script})
 
+                # scriptfile in stm32cubeIDE        
+                if option.get('id').find('c.linker.option.script') != -1:
+                    items = env['LINKFLAGS'].split(' ')
+                    if '-T' in items:
+                        linker_script = ConverToEclipsePathFormat(items[items.index('-T') + 1]).strip('"')
+                        option.set('value',linker_script)
+
                 if option.get('id').find('c.linker.nostart') != -1:
                     if env['LINKFLAGS'].find('-nostartfiles') != -1:
                         option.set('value', 'true')
@@ -194,61 +209,54 @@ def HandleToolOption(tools, env, project):
 
     return
 
-def UpdateProjectStructure(env):
+
+def UpdateProjectStructure(env, prj_name):
     bsp_root = env['BSP_ROOT']
     rtt_root = env['RTT_ROOT']
 
-    if not rtt_root.startswith(bsp_root):
-        to_SubElement = True
-        # print('handle virtual root')
+    project = etree.parse('.project')
+    root = project.getroot()
 
-        # always use '/' path separator
-        rtt_root = rtt_root.replace('\\', '/')
+    if rtt_root.startswith(bsp_root):
+        linkedResources = root.find('linkedResources')
+        if linkedResources == None:
+            linkedResources = SubElement(root, 'linkedResources')
 
-        # TODO create the virtual folder
+        links = linkedResources.findall('link')
+        # delete all RT-Thread folder links
+        for link in links:
+            if link.find('name').text.startswith('rt-thread'):
+                linkedResources.remove(link)
 
-#         project = etree.parse('.project')
-#         root = project.getroot()
-#
-#         linkedResources = root.find('linkedResources')
-#         if linkedResources == None:
-#             # add linkedResources
-#             linkedResources = SubElement(root, 'linkedResources')
-#             # print('add linkedResources')
-#         else:
-#             links = linkedResources.findall('link')
-#             # search exist 'rt-thread' virtual folder
-#             for link in links:
-#                 if link.find('name').text == 'rt-thread':
-#                     # handle location
-#                     to_SubElement = False
-#                     location = link.find('location')
-#                     location.text = rtt_root
-#
-#         if to_SubElement:
-#             # print('to subelement for virtual folder')
-#             link = SubElement(linkedResources, 'link')
-#             name = SubElement(link, 'name')
-#             name.text = 'rt-thread'
-#             type = SubElement(link, 'type')
-#             type.text = '2'
-#             location = SubElement(link, 'location')
-#             location.text = rtt_root
-#
-#         out = open('.project', 'w')
-#         out.write('<?xml version="1.0" encoding="UTF-8"?>\n')
-#         xml_indent(root)
-#         out.write(etree.tostring(root, encoding='utf-8'))
-#         out.close()
+    if prj_name:
+        name = root.find('name')
+        if name == None:
+            name = SubElement(root, 'name')
+        name.text = prj_name
+
+    out = open('.project', 'w')
+    out.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+    xml_indent(root)
+    out.write(etree.tostring(root, encoding = 'utf-8'))
+    out.close()
 
     return
 
 def GenExcluding(env, project):
     rtt_root = os.path.abspath(env['RTT_ROOT'])
+    bsp_root = os.path.abspath(env['BSP_ROOT'])
     coll_dirs = CollectPaths(project['DIRS'])
     all_paths = [OSPath(path) for path in coll_dirs]
 
-    exclude_paths = ExcludePaths(rtt_root, all_paths)
+    if bsp_root.startswith(rtt_root):
+        # bsp folder is in the RT-Thread root folder, such as the RT-Thread source code on GitHub
+        exclude_paths = ExcludePaths(rtt_root, all_paths)
+    elif rtt_root.startswith(bsp_root):
+        # RT-Thread root folder is in the bsp folder, such as project folder which generate by 'scons --dist' cmd
+        exclude_paths = ExcludePaths(bsp_root, all_paths)
+    else:
+        exclude_paths = ExcludePaths(rtt_root, all_paths)
+        exclude_paths += ExcludePaths(bsp_root, all_paths)
 
     paths = exclude_paths
     exclude_paths = []
@@ -292,7 +300,7 @@ def RelativeProjectPath(env, path):
     return path
 
 
-def UpdateCproject(env, project, excluding):
+def UpdateCproject(env, project, excluding, reset):
     excluding = sorted(excluding)
 
     cproject = etree.parse('.cproject')
@@ -301,7 +309,7 @@ def UpdateCproject(env, project, excluding):
     cconfigurations = root.findall('storageModule/cconfiguration')
     for cconfiguration in cconfigurations:
         tools = cconfiguration.findall('storageModule/configuration/folderInfo/toolChain/tool')
-        HandleToolOption(tools, env, project)
+        HandleToolOption(tools, env, project, reset)
 
         sourceEntries = cconfiguration.find('storageModule/configuration/sourceEntries')
         entry = sourceEntries.find('entry')
@@ -326,7 +334,7 @@ def UpdateCproject(env, project, excluding):
     out.close()
 
 
-def TargetEclipse(env):
+def TargetEclipse(env, reset = False, prj_name = None):
     global source_pattern
 
     print('Update eclipse setting...')
@@ -338,13 +346,13 @@ def TargetEclipse(env):
     project = ProjectInfo(env)
 
     # update the project file structure info on '.project' file
-    UpdateProjectStructure(env)
+    UpdateProjectStructure(env, prj_name)
 
     # generate the exclude paths and files
     excluding = GenExcluding(env, project)
 
     # update the project configuration on '.cproject' file
-    UpdateCproject(env, project, excluding)
+    UpdateCproject(env, project, excluding, reset)
 
     print('done!')
 

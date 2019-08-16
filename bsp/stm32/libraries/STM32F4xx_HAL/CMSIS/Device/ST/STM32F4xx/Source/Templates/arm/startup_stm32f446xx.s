@@ -182,8 +182,8 @@ __Vectors       DCD     __initial_sp               ; Top of Stack
                 DCD     QUADSPI_IRQHandler                ; QuadSPI
                 DCD     CEC_IRQHandler                    ; CEC
                 DCD     SPDIF_RX_IRQHandler               ; SPDIF RX
-                DCD     I2C4_Event_IRQHandler             ; I2C 4 Event
-                DCD     I2C4_Error_IRQHandler             ; I2C 4 Error                         
+                DCD     FMPI2C1_EV_IRQHandler             ; FMPI2C Event
+                DCD     FMPI2C1_ER_IRQHandler             ; FMPI2C Error                         
 __Vectors_End
 
 __Vectors_Size  EQU  __Vectors_End - __Vectors
@@ -334,8 +334,8 @@ Default_Handler PROC
                 EXPORT  QUADSPI_IRQHandler                [WEAK]
                 EXPORT  CEC_IRQHandler                    [WEAK]
                 EXPORT  SPDIF_RX_IRQHandler               [WEAK]
-                EXPORT  I2C4_Event_IRQHandler             [WEAK]
-                EXPORT  I2C4_Error_IRQHandler             [WEAK]
+                EXPORT  FMPI2C1_EV_IRQHandler             [WEAK]
+                EXPORT  FMPI2C1_ER_IRQHandler             [WEAK]
 				
 WWDG_IRQHandler                                                       
 PVD_IRQHandler                                      
@@ -421,8 +421,8 @@ SAI2_IRQHandler
 QUADSPI_IRQHandler   
 CEC_IRQHandler       
 SPDIF_RX_IRQHandler  
-I2C4_Event_IRQHandler
-I2C4_Error_IRQHandler               
+FMPI2C1_EV_IRQHandler
+FMPI2C1_ER_IRQHandler               
                 B       .
 
                 ENDP

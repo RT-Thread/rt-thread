@@ -10,12 +10,13 @@
       <TargetName>rtthread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060422::V5.06 update 4 (build 422)::ARMCC</pCCUsed>
+      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
+      <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>nRF52832_xxAA</Device>
           <Vendor>Nordic Semiconductor</Vendor>
-          <PackID>NordicSemiconductor.nRF_DeviceFamilyPack.8.17.0</PackID>
+          <PackID>NordicSemiconductor.nRF_DeviceFamilyPack.8.24.1</PackID>
           <PackURL>http://developer.nordicsemi.com/nRF5_SDK/pieces/nRF_DeviceFamilyPack/</PackURL>
           <Cpu>IRAM(0x20000000,0x10000) IROM(0x00000000,0x80000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -183,10 +184,11 @@
             <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
+            <RvdsMve>0</RvdsMve>
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
-            <useUlib>1</useUlib>
+            <useUlib>0</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
@@ -323,6 +325,7 @@
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
+            <uGnu>0</uGnu>
             <useXO>0</useXO>
             <v6Lang>1</v6Lang>
             <v6LangP>1</v6LangP>
@@ -333,9 +336,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--reduce_paths</MiscControls>
-              <Define>NRF52_PAN_55, NRF52_PAN_12, NRF52_PAN_15, NRF52_PAN_58, SWI_DISABLE0, SOFTDEVICE_PRESENT, NRF52_PAN_54, NRF52, BLE_STACK_SUPPORT_REQD, NRF52_PAN_51, NRF52_PAN_36, RTTHREAD, CONFIG_GPIO_AS_PINRESET, NRF52_PAN_64, NRF52_PAN_20, NRF52_PAN_74, NRF52832_XXAA, S132, NRF_SD_BLE_API_VERSION=4, NRF52_PAN_31</Define>
+              <Define>NRF52_PAN_55, NRF52_PAN_12, NRF52_PAN_15, NRF52_PAN_58, SWI_DISABLE0, SOFTDEVICE_PRESENT, NRF52_PAN_54, NRF52, BLE_STACK_SUPPORT_REQD, NRF52_PAN_51, NRF52_PAN_36, RTTHREAD, CONFIG_GPIO_AS_PINRESET, NRF52_PAN_64, NRF52_PAN_20, NRF52_PAN_74, NRF52832_XXAA, S132, NRF_SD_BLE_API_VERSION=4, NRF52_PAN_31, RT_USING_ARM_LIBC</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\include;applications;.;board;nRF5_SDK_13.0.0_04a0bfd\components;nRF5_SDK_13.0.0_04a0bfd\components\softdevice\common\softdevice_handler;nRF5_SDK_13.0.0_04a0bfd\components\softdevice\s132\headers;nRF5_SDK_13.0.0_04a0bfd\components\softdevice\s132\headers\nrf52;nRF5_SDK_13.0.0_04a0bfd\components\ble\common;nRF5_SDK_13.0.0_04a0bfd\components\ble\nrf_ble_gatt;nRF5_SDK_13.0.0_04a0bfd\components\ble\ble_advertising;nRF5_SDK_13.0.0_04a0bfd\components\ble\ble_services\ble_nus;startups;nRF5_SDK_13.0.0_04a0bfd\components;nRF5_SDK_13.0.0_04a0bfd\components\device;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\delay;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\uart;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\clock;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\gpiote;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\common;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\hal;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\pwm;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\saadc;nRF5_SDK_13.0.0_04a0bfd\components\libraries\util;nRF5_SDK_13.0.0_04a0bfd\components\libraries\timer;nRF5_SDK_13.0.0_04a0bfd\components\libraries\fstorage;nRF5_SDK_13.0.0_04a0bfd\components\libraries\experimental_section_vars;nRF5_SDK_13.0.0_04a0bfd\components\libraries\log;nRF5_SDK_13.0.0_04a0bfd\components\libraries\log\src;nRF5_SDK_13.0.0_04a0bfd\components\libraries\strerror;nRF5_SDK_13.0.0_04a0bfd\components\toolchain\cmsis\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh</IncludePath>
+              <IncludePath>.;..\..\include;applications;.;board;nRF5_SDK_13.0.0_04a0bfd\components;nRF5_SDK_13.0.0_04a0bfd\components\softdevice\common\softdevice_handler;nRF5_SDK_13.0.0_04a0bfd\components\softdevice\s132\headers;nRF5_SDK_13.0.0_04a0bfd\components\softdevice\s132\headers\nrf52;nRF5_SDK_13.0.0_04a0bfd\components\ble\common;nRF5_SDK_13.0.0_04a0bfd\components\ble\nrf_ble_gatt;nRF5_SDK_13.0.0_04a0bfd\components\ble\ble_advertising;nRF5_SDK_13.0.0_04a0bfd\components\ble\ble_services\ble_nus;startups;nRF5_SDK_13.0.0_04a0bfd\components;nRF5_SDK_13.0.0_04a0bfd\components\device;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\delay;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\uart;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\clock;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\gpiote;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\common;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\hal;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\pwm;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\saadc;nRF5_SDK_13.0.0_04a0bfd\components\libraries\util;nRF5_SDK_13.0.0_04a0bfd\components\libraries\timer;nRF5_SDK_13.0.0_04a0bfd\components\libraries\fstorage;nRF5_SDK_13.0.0_04a0bfd\components\libraries\experimental_section_vars;nRF5_SDK_13.0.0_04a0bfd\components\libraries\log;nRF5_SDK_13.0.0_04a0bfd\components\libraries\log\src;nRF5_SDK_13.0.0_04a0bfd\components\libraries\strerror;nRF5_SDK_13.0.0_04a0bfd\components\toolchain\cmsis\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\armlibc;..\..\components\libc\compilers\common</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -748,6 +751,36 @@
               <FileName>msh_file.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\msh_file.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>libc</GroupName>
+          <Files>
+            <File>
+              <FileName>libc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\libc.c</FilePath>
+            </File>
+            <File>
+              <FileName>mem_std.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
+            </File>
+            <File>
+              <FileName>stubs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\stubs.c</FilePath>
+            </File>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\time.c</FilePath>
+            </File>
+            <File>
+              <FileName>gmtime_r.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\gmtime_r.c</FilePath>
             </File>
           </Files>
         </Group>

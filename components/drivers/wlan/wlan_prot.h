@@ -25,8 +25,6 @@ extern "C" {
 
 #define RT_LWAN_ID_PREFIX      (0x5054)
 
-#define RT_WLAN_PROT_LWIP  ("lwip")
-
 typedef enum
 {
     RT_WLAN_PROT_EVT_INIT_DONE = 0,

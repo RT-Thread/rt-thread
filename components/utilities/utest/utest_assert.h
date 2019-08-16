@@ -14,6 +14,10 @@
 #include "utest.h"
 #include <rtthread.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* No need for the user to use this function directly */
 void utest_assert(int value, const char *file, int line, const char *func, const char *msg);
 
@@ -60,5 +64,9 @@ void utest_assert_buf(const char *a, const char *b, rt_size_t sz, rt_bool_t equa
 
 #define uassert_in_range(value, min, max)     __utest_assert(((value >= min) && (value <= max)), "(" #value ") not in range("#min","#max")") 
 #define uassert_not_in_range(value, min, max) __utest_assert(!((value >= min) && (value <= max)), "(" #value ") in range("#min","#max")")
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __UTEST_ASSERT_H__ */

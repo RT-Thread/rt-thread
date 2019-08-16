@@ -14,7 +14,7 @@ Thread::Thread(rt_uint32_t stack_size,
                rt_uint8_t  priority,
                rt_uint32_t tick,
                const char *name)
-: _entry(RT_NULL), _param(RT_NULL), started(false)
+    : _entry(RT_NULL), _param(RT_NULL), started(false)
 {
     rt_event_init(&_event, name, 0);
 
@@ -32,7 +32,7 @@ Thread::Thread(void (*entry)(void *p),
                rt_uint8_t  priority,
                rt_uint32_t tick,
                const char *name)
-: _entry(RT_NULL), _param(p), started(false)
+    : _entry(entry), _param(p), started(false)
 {
     rt_event_init(&_event, name, 0);
 
@@ -46,6 +46,7 @@ Thread::Thread(void (*entry)(void *p),
 
 Thread::~Thread()
 {
+    rt_event_detach(&_event);
     rt_thread_delete(_thread);
 }
 
@@ -79,23 +80,23 @@ void Thread::func(Thread *pThis)
     }
     else
     {
-        pThis->run();
+        pThis->run(pThis->_param);
     }
 
     rt_event_send(&pThis->_event, 1);
 }
 
-void Thread::run()
+void Thread::run(void *parameter)
 {
     /* please overload this method */
 }
 
-void Thread::wait(int32_t millisec)
+rt_err_t Thread::wait(int32_t millisec)
 {
-    join(millisec);
+    return join(millisec);
 }
 
-void Thread::join(int32_t millisec)
+rt_err_t Thread::join(int32_t millisec)
 {
     if (started)
     {
@@ -106,6 +107,10 @@ void Thread::join(int32_t millisec)
         else
             tick = rt_tick_from_millisecond(millisec);
 
-        rt_event_recv(&_event, 1, RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR, tick, RT_NULL);
+        return rt_event_recv(&_event, 1, RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR, tick, RT_NULL);
+    }
+    else
+    {
+        return -RT_ENOSYS;
     }
 }

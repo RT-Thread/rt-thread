@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -87,10 +71,13 @@
 #define IS_LL_DMA2D_BLUE(BLUE)          ((BLUE)  <= LL_DMA2D_COLOR)
 #define IS_LL_DMA2D_ALPHA(ALPHA)        ((ALPHA) <= LL_DMA2D_COLOR)
 
+
 #define IS_LL_DMA2D_OFFSET(OFFSET)      ((OFFSET) <= LL_DMA2D_OFFSET_MAX)
 
 #define IS_LL_DMA2D_LINE(LINES)         ((LINES)  <= LL_DMA2D_NUMBEROFLINES)
 #define IS_LL_DMA2D_PIXEL(PIXELS)       ((PIXELS) <= LL_DMA2D_NUMBEROFPIXELS)
+
+
 
 #define IS_LL_DMA2D_LCMODE(MODE_ARGB)   (((MODE_ARGB) == LL_DMA2D_INPUT_MODE_ARGB8888) || \
                                          ((MODE_ARGB) == LL_DMA2D_INPUT_MODE_RGB888)   || \
@@ -112,6 +99,8 @@
 #define IS_LL_DMA2D_ALPHAMODE(MODE)     (((MODE) == LL_DMA2D_ALPHA_MODE_NO_MODIF) || \
                                          ((MODE) == LL_DMA2D_ALPHA_MODE_REPLACE)  || \
                                          ((MODE) == LL_DMA2D_ALPHA_MODE_COMBINE))
+
+
 /**
   * @}
   */
@@ -162,7 +151,7 @@ ErrorStatus LL_DMA2D_DeInit(DMA2D_TypeDef *DMA2Dx)
   * @note   DMA2D transfers must be disabled to set initialization bits in configuration registers,
   *         otherwise ERROR result is returned.
   * @param  DMA2Dx DMA2D Instance
-  * @param  DMA2D_InitStruct pointer to a LL_DMA2D_InitTypeDef structure
+  * @param  DMA2D_InitStruct  pointer to a LL_DMA2D_InitTypeDef structure
   *         that contains the configuration information for the specified DMA2D peripheral.
   * @retval An ErrorStatus enumeration value:
   *          - SUCCESS: DMA2D registers are initialized according to DMA2D_InitStruct content
@@ -172,7 +161,8 @@ ErrorStatus LL_DMA2D_Init(DMA2D_TypeDef *DMA2Dx, LL_DMA2D_InitTypeDef *DMA2D_Ini
 {
   ErrorStatus status = ERROR;
   LL_DMA2D_ColorTypeDef DMA2D_ColorStruct;
-  uint32_t tmp = 0U, tmp1 = 0U, tmp2 = 0U;
+  uint32_t tmp, tmp1, tmp2;
+  uint32_t regMask, regValue;
 
   /* Check the parameters */
   assert_param(IS_DMA2D_ALL_INSTANCE(DMA2Dx));
@@ -196,7 +186,13 @@ ErrorStatus LL_DMA2D_Init(DMA2D_TypeDef *DMA2Dx, LL_DMA2D_InitTypeDef *DMA2D_Ini
     LL_DMA2D_SetMode(DMA2Dx, DMA2D_InitStruct->Mode);
 
     /* DMA2D OPFCCR register configuration ---------------------------------------*/
-    MODIFY_REG(DMA2Dx->OPFCCR, DMA2D_OPFCCR_CM, DMA2D_InitStruct->ColorMode);
+    regMask = DMA2D_OPFCCR_CM;
+    regValue = DMA2D_InitStruct->ColorMode;
+
+
+
+
+    MODIFY_REG(DMA2Dx->OPFCCR, regMask, regValue);
 
     /* DMA2D OOR register configuration ------------------------------------------*/
     LL_DMA2D_SetLineOffset(DMA2Dx, DMA2D_InitStruct->LineOffset);
@@ -224,7 +220,7 @@ ErrorStatus LL_DMA2D_Init(DMA2D_TypeDef *DMA2Dx, LL_DMA2D_InitTypeDef *DMA2D_Ini
 
 /**
   * @brief Set each @ref LL_DMA2D_InitTypeDef field to default value.
-  * @param DMA2D_InitStruct pointer to a @ref LL_DMA2D_InitTypeDef structure
+  * @param DMA2D_InitStruct  pointer to a @ref LL_DMA2D_InitTypeDef structure
   *                          whose fields will be set to default values.
   * @retval None
   */
@@ -247,9 +243,9 @@ void LL_DMA2D_StructInit(LL_DMA2D_InitTypeDef *DMA2D_InitStruct)
   * @brief  Configure the foreground or background according to the specified parameters
   *         in the LL_DMA2D_LayerCfgTypeDef structure.
   * @param  DMA2Dx DMA2D Instance
-  * @param  DMA2D_LayerCfg pointer to a LL_DMA2D_LayerCfgTypeDef structure that contains
+  * @param  DMA2D_LayerCfg  pointer to a LL_DMA2D_LayerCfgTypeDef structure that contains
   *         the configuration information for the specified layer.
-  * @param  LayerIdx DMA2D Layer index.
+  * @param  LayerIdx  DMA2D Layer index.
   *                   This parameter can be one of the following values:
   *                   0(background) / 1(foreground)
   * @retval None
@@ -266,6 +262,7 @@ void LL_DMA2D_ConfigLayer(DMA2D_TypeDef *DMA2Dx, LL_DMA2D_LayerCfgTypeDef *DMA2D
   assert_param(IS_LL_DMA2D_RED(DMA2D_LayerCfg->Red));
   assert_param(IS_LL_DMA2D_BLUE(DMA2D_LayerCfg->Blue));
   assert_param(IS_LL_DMA2D_ALPHA(DMA2D_LayerCfg->Alpha));
+
 
   if (LayerIdx == 0U)
   {
@@ -313,7 +310,7 @@ void LL_DMA2D_ConfigLayer(DMA2D_TypeDef *DMA2Dx, LL_DMA2D_LayerCfgTypeDef *DMA2D
 
 /**
   * @brief Set each @ref LL_DMA2D_LayerCfgTypeDef field to default value.
-  * @param DMA2D_LayerCfg pointer to a @ref LL_DMA2D_LayerCfgTypeDef structure
+  * @param DMA2D_LayerCfg  pointer to a @ref LL_DMA2D_LayerCfgTypeDef structure
   *                        whose fields will be set to default values.
   * @retval None
   */
@@ -337,15 +334,15 @@ void LL_DMA2D_LayerCfgStructInit(LL_DMA2D_LayerCfgTypeDef *DMA2D_LayerCfg)
   * @brief  Initialize DMA2D output color register according to the specified parameters
   *         in DMA2D_ColorStruct.
   * @param  DMA2Dx DMA2D Instance
-  * @param  DMA2D_ColorStruct pointer to a LL_DMA2D_ColorTypeDef structure that contains
+  * @param  DMA2D_ColorStruct  pointer to a LL_DMA2D_ColorTypeDef structure that contains
   *         the color configuration information for the specified DMA2D peripheral.
   * @retval None
   */
 void LL_DMA2D_ConfigOutputColor(DMA2D_TypeDef *DMA2Dx, LL_DMA2D_ColorTypeDef *DMA2D_ColorStruct)
 {
-  uint32_t outgreen = 0U;
-  uint32_t outred   = 0U;
-  uint32_t outalpha = 0U;
+  uint32_t outgreen;
+  uint32_t outred;
+  uint32_t outalpha;
 
   /* Check the parameters */
   assert_param(IS_DMA2D_ALL_INSTANCE(DMA2Dx));
@@ -402,7 +399,7 @@ void LL_DMA2D_ConfigOutputColor(DMA2D_TypeDef *DMA2Dx, LL_DMA2D_ColorTypeDef *DM
   */
 uint32_t LL_DMA2D_GetOutputBlueColor(DMA2D_TypeDef *DMA2Dx, uint32_t ColorMode)
 {
-  uint32_t color = 0U;
+  uint32_t color;
 
   /* Check the parameters */
   assert_param(IS_DMA2D_ALL_INSTANCE(DMA2Dx));
@@ -429,7 +426,7 @@ uint32_t LL_DMA2D_GetOutputBlueColor(DMA2D_TypeDef *DMA2Dx, uint32_t ColorMode)
   {
     color = (uint32_t)(READ_BIT(DMA2Dx->OCOLR, 0xFU));
   }
-  
+
   return color;
 }
 
@@ -446,7 +443,7 @@ uint32_t LL_DMA2D_GetOutputBlueColor(DMA2D_TypeDef *DMA2Dx, uint32_t ColorMode)
   */
 uint32_t LL_DMA2D_GetOutputGreenColor(DMA2D_TypeDef *DMA2Dx, uint32_t ColorMode)
 {
-  uint32_t color = 0U;
+  uint32_t color;
 
   /* Check the parameters */
   assert_param(IS_DMA2D_ALL_INSTANCE(DMA2Dx));
@@ -473,7 +470,7 @@ uint32_t LL_DMA2D_GetOutputGreenColor(DMA2D_TypeDef *DMA2Dx, uint32_t ColorMode)
   {
     color = (uint32_t)(READ_BIT(DMA2Dx->OCOLR, 0xF0U) >> 4U);
   }
-  
+
   return color;
 }
 
@@ -490,7 +487,7 @@ uint32_t LL_DMA2D_GetOutputGreenColor(DMA2D_TypeDef *DMA2Dx, uint32_t ColorMode)
   */
 uint32_t LL_DMA2D_GetOutputRedColor(DMA2D_TypeDef *DMA2Dx, uint32_t ColorMode)
 {
-  uint32_t color = 0U;
+  uint32_t color;
 
   /* Check the parameters */
   assert_param(IS_DMA2D_ALL_INSTANCE(DMA2Dx));
@@ -517,7 +514,7 @@ uint32_t LL_DMA2D_GetOutputRedColor(DMA2D_TypeDef *DMA2Dx, uint32_t ColorMode)
   {
     color = (uint32_t)(READ_BIT(DMA2Dx->OCOLR, 0xF00U) >> 8U);
   }
-  
+
   return color;
 }
 
@@ -534,7 +531,7 @@ uint32_t LL_DMA2D_GetOutputRedColor(DMA2D_TypeDef *DMA2Dx, uint32_t ColorMode)
   */
 uint32_t LL_DMA2D_GetOutputAlphaColor(DMA2D_TypeDef *DMA2Dx, uint32_t ColorMode)
 {
-  uint32_t color = 0U;
+  uint32_t color;
 
   /* Check the parameters */
   assert_param(IS_DMA2D_ALL_INSTANCE(DMA2Dx));
@@ -557,7 +554,7 @@ uint32_t LL_DMA2D_GetOutputAlphaColor(DMA2D_TypeDef *DMA2Dx, uint32_t ColorMode)
   {
     color = (uint32_t)(READ_BIT(DMA2Dx->OCOLR, 0xF000U) >> 12U);
   }
-  
+
   return color;
 }
 
@@ -595,3 +592,4 @@ void LL_DMA2D_ConfigSize(DMA2D_TypeDef *DMA2Dx, uint32_t NbrOfLines, uint32_t Nb
 #endif /* USE_FULL_LL_DRIVER */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+

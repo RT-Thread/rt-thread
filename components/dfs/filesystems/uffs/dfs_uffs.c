@@ -226,7 +226,7 @@ static int dfs_uffs_mkfs(rt_device_t dev_id)
     }
 
     /*2. then unmount the partition */
-    uffs_Mount(nand_part[index].mount_path);
+    uffs_UnMount(nand_part[index].mount_path);
     mtd = nand_part[index].dev;
 
     /*3. erase all blocks on the partition */
@@ -234,11 +234,13 @@ static int dfs_uffs_mkfs(rt_device_t dev_id)
     for (; block <= mtd->block_end; block++)
     {
         rt_mtd_nand_erase_block(mtd, block);
+#if defined(RT_UFFS_USE_CHECK_MARK_FUNCITON)
         if (rt_mtd_nand_check_block(mtd, block) != RT_EOK)
         {
             rt_kprintf("found bad block %d\n", block);
             rt_mtd_nand_mark_badblock(mtd, block);
         }
+#endif
     }
 
     /*4. remount it */

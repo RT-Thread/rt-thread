@@ -58,9 +58,21 @@ int netdev_register(struct netdev *netdev, const char *name, void *user_data)
     ip_addr_set_zero(&(netdev->ip_addr));
     ip_addr_set_zero(&(netdev->netmask));
     ip_addr_set_zero(&(netdev->gw));
+
+    IP_SET_TYPE_VAL(netdev->ip_addr, IPADDR_TYPE_V4);
+    IP_SET_TYPE_VAL(netdev->netmask, IPADDR_TYPE_V4);
+    IP_SET_TYPE_VAL(netdev->gw, IPADDR_TYPE_V4);
+#if NETDEV_IPV6
+    for (index = 0; index < NETDEV_IPV6_NUM_ADDRESSES; index++)
+    {
+        ip_addr_set_zero(&(netdev->ip6_addr[index]));
+        IP_SET_TYPE_VAL(netdev->ip_addr, IPADDR_TYPE_V6);
+    }
+#endif /* NETDEV_IPV6 */
     for (index = 0; index < NETDEV_DNS_SERVERS_NUM; index++)
     {
         ip_addr_set_zero(&(netdev->dns_servers[index]));
+        IP_SET_TYPE_VAL(netdev->ip_addr, IPADDR_TYPE_V4);
     }
     netdev->status_callback = RT_NULL;
     netdev->addr_callback = RT_NULL;
@@ -87,7 +99,7 @@ int netdev_register(struct netdev *netdev, const char *name, void *user_data)
 
     rt_hw_interrupt_enable(level);
 
-    return RT_EOK;    
+    return RT_EOK;
 }
 
 /**
@@ -106,7 +118,7 @@ int netdev_unregister(struct netdev *netdev)
     struct netdev *cur_netdev = RT_NULL;
 
     RT_ASSERT(netdev);
-    
+
     if (netdev_list == RT_NULL)
     {
         return -RT_ERROR;
@@ -117,18 +129,35 @@ int netdev_unregister(struct netdev *netdev)
     for (node = &(netdev_list->list); node; node = rt_slist_next(node))
     {
         cur_netdev = rt_slist_entry(node, struct netdev, list);
-        if (cur_netdev && (rt_memcpy(cur_netdev, netdev, sizeof(struct netdev)) == 0))
+        if (cur_netdev == netdev)
         {
-            rt_slist_remove(&(netdev_list->list), &(cur_netdev->list));
-            rt_hw_interrupt_enable(level);
-
-            return RT_EOK;
+            /* find this network interface device in network interface device list */
+            if (netdev_list == netdev && rt_slist_next(&netdev_list->list) == RT_NULL)
+            {
+                netdev_list = RT_NULL;
+            }
+            else
+            {
+                rt_slist_remove(&(netdev_list->list), &(cur_netdev->list));
+            }
+            if (netdev_default == netdev)
+            {
+                netdev_default = netdev_list;
+            }
+            break;
         }
     }
-
     rt_hw_interrupt_enable(level);
 
-    /* not find this network interface device in network interface device list */
+    if (cur_netdev == netdev)
+    {
+#ifdef RT_USING_SAL
+        extern int sal_netdev_cleanup(struct netdev *netdev);
+        sal_netdev_cleanup(netdev);
+#endif
+        rt_memset(netdev, 0, sizeof(*netdev));
+    }
+
     return -RT_ERROR;
 }
 
@@ -666,6 +695,10 @@ void netdev_low_level_set_dns_server(struct netdev *netdev, uint8_t dns_num, con
 
     RT_ASSERT(dns_server);
 
+    if (netdev == RT_NULL)
+    {
+        return;
+    }
     /* check DNS servers is exist */
     for (index = 0; index < NETDEV_DNS_SERVERS_NUM; index++)
     {
@@ -675,7 +708,7 @@ void netdev_low_level_set_dns_server(struct netdev *netdev, uint8_t dns_num, con
         }
     }
 
-    if (netdev && dns_num < NETDEV_DNS_SERVERS_NUM)
+    if (dns_num < NETDEV_DNS_SERVERS_NUM)
     {
         ip_addr_copy(netdev->dns_servers[dns_num], *dns_server);
 
@@ -809,7 +842,7 @@ void netdev_low_level_set_dhcp_status(struct netdev *netdev, rt_bool_t is_enable
     }
 }
 
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_FINSH
 
 #include <finsh.h>
 
@@ -820,7 +853,6 @@ static void netdev_list_if(void)
 #define NETDEV_IFCONFIG_IEMI_MAX_LEN   8
 
     rt_ubase_t index;
-    rt_base_t level;
     rt_slist_t *node  = RT_NULL;
     struct netdev *netdev = RT_NULL;
     struct netdev *cur_netdev_list = netdev_list;
@@ -831,15 +863,13 @@ static void netdev_list_if(void)
         return;
     }
 
-    level = rt_hw_interrupt_disable();
-
     for (node = &(cur_netdev_list->list); node; node = rt_slist_next(node))
     {
         netdev = rt_list_entry(node, struct netdev, list);
 
-        rt_kprintf("network interface device: %s%s\n",
-                   netdev->name,
-                   (netdev == netdev_default)?" (Default)":"");
+        rt_kprintf("network interface device: %.*s%s\n",
+                   RT_NAME_MAX, netdev->name,
+                   (netdev == netdev_default) ? " (Default)" : "");
         rt_kprintf("MTU: %d\n", netdev->mtu);
 
         /* 6 - MAC address, 8 - IEMI */
@@ -881,6 +911,28 @@ static void netdev_list_if(void)
         rt_kprintf("gw address: %s\n", inet_ntoa(netdev->gw));
         rt_kprintf("net mask  : %s\n", inet_ntoa(netdev->netmask));
 
+#if NETDEV_IPV6
+        {
+            ip_addr_t *addr;
+            int i;
+            
+            addr = &netdev->ip6_addr[0];
+            
+            if (!ip_addr_isany(addr))
+            {
+                rt_kprintf("ipv6 link-local: %s %s\n", inet_ntoa(*addr),
+                        !ip_addr_isany(addr) ? "VALID" : "INVALID");
+
+                for (i = 1; i < NETDEV_IPV6_NUM_ADDRESSES; i++)
+                {
+                    addr = &netdev->ip6_addr[i];
+                    rt_kprintf("ipv6[%d] address: %s %s\n", i, inet_ntoa(*addr),
+                            !ip_addr_isany(addr) ? "VALID" : "INVALID");
+                }
+            }    
+        }
+#endif /* NETDEV_IPV6 */
+
         for (index = 0; index < NETDEV_DNS_SERVERS_NUM; index++)
         {
             rt_kprintf("dns server #%d: %s\n", index, inet_ntoa(netdev->dns_servers[index]));
@@ -891,8 +943,6 @@ static void netdev_list_if(void)
             rt_kprintf("\n");
         }
     }
-
-    rt_hw_interrupt_enable(level);
 }
 
 static void netdev_set_if(char* netdev_name, char* ip_addr, char* gw_addr, char* nm_addr)
@@ -951,7 +1001,7 @@ FINSH_FUNCTION_EXPORT_ALIAS(netdev_ifconfig, __cmd_ifconfig, list the informatio
 #endif /* NETDEV_USING_IFCONFIG */
 
 #ifdef NETDEV_USING_PING
-static int netdev_cmd_ping(char* target_name, rt_uint32_t times, rt_size_t size)
+int netdev_cmd_ping(char* target_name, rt_uint32_t times, rt_size_t size)
 {
 #define NETDEV_PING_DATA_SIZE       32
 /** ping receive timeout - in milliseconds */
@@ -1041,19 +1091,16 @@ FINSH_FUNCTION_EXPORT_ALIAS(netdev_ping, __cmd_ping, ping network host);
 
 static void netdev_list_dns(void)
 {
-    rt_base_t level;
     int index = 0;
     struct netdev *netdev = RT_NULL;
     rt_slist_t *node  = RT_NULL;
-
-    level = rt_hw_interrupt_disable();
 
     for (node = &(netdev_list->list); node; node = rt_slist_next(node))
     {
         netdev = rt_list_entry(node, struct netdev, list);
 
-        rt_kprintf("network interface device: %s%s\n",
-                netdev->name,
+        rt_kprintf("network interface device: %.*s%s\n",
+                RT_NAME_MAX, netdev->name,
                 (netdev == netdev_default)?" (Default)":"");
 
         for(index = 0; index < NETDEV_DNS_SERVERS_NUM; index++)
@@ -1066,8 +1113,6 @@ static void netdev_list_dns(void)
             rt_kprintf("\n");
         }
     }
-
-    rt_hw_interrupt_enable(level);
 }
 
 static void netdev_set_dns(char *netdev_name, uint8_t dns_num, char *dns_server)
@@ -1115,7 +1160,6 @@ FINSH_FUNCTION_EXPORT_ALIAS(netdev_dns, __cmd_dns, list and set the information 
 #ifdef NETDEV_USING_NETSTAT
 static void netdev_cmd_netstat(void)
 {
-    rt_base_t level;
     rt_slist_t *node  = RT_NULL;
     struct netdev *netdev = RT_NULL;
     struct netdev *cur_netdev_list = netdev_list;
@@ -1125,8 +1169,6 @@ static void netdev_cmd_netstat(void)
         rt_kprintf("netstat: network interface device list error.\n");
         return;
     }
-
-    level = rt_hw_interrupt_disable();
 
     for (node = &(cur_netdev_list->list); node; node = rt_slist_next(node))
     {
@@ -1138,9 +1180,14 @@ static void netdev_cmd_netstat(void)
         }
     }
 
-    rt_hw_interrupt_enable(level);
-
-    netdev->ops->netstat(netdev);
+    if (netdev->ops->netstat != RT_NULL)
+    {
+        netdev->ops->netstat(netdev);
+    }
+    else
+    {
+        rt_kprintf("netstat: this command is not supported!\n");
+    }
 }
 
 int netdev_netstat(int argc, char **argv)
@@ -1159,4 +1206,4 @@ int netdev_netstat(int argc, char **argv)
 FINSH_FUNCTION_EXPORT_ALIAS(netdev_netstat, __cmd_netstat, list the information of TCP / IP);
 #endif /* NETDEV_USING_NETSTAT */
 
-#endif /* FINSH_USING_MSH */
+#endif /* RT_USING_FINSH */

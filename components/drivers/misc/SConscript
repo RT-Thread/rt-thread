@@ -13,6 +13,9 @@ if GetDepend(['RT_USING_ADC']):
     
 if GetDepend(['RT_USING_PWM']):
     src = src + ['rt_drv_pwm.c']
+    
+if GetDepend(['RT_USING_ENCODER']):
+    src = src + ['encoder.c']
 
 if len(src):
     group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)

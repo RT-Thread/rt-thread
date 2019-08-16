@@ -54,7 +54,7 @@ static void _poll_add(rt_wqueue_t *wq, rt_pollreq_t *req)
     struct rt_poll_table *pt;
     struct rt_poll_node *node;
 
-    node = rt_malloc(sizeof(struct rt_poll_node));
+    node = (struct rt_poll_node *)rt_malloc(sizeof(struct rt_poll_node));
     if (node == RT_NULL)
         return;
 

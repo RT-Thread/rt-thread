@@ -25,6 +25,12 @@
 
 #include <netdev.h>
 
+#if (LWIP_VERSION < 0x2000000) && NETDEV_IPV6
+#error "The lwIP version is not support IPV6, please disable netdev IPV6 configuration "
+#elif (LWIP_VERSION > 0x2000000) && (NETDEV_IPV6 != LWIP_IPV6)
+#error "IPV6 configuration error, Please check and synchronize netdev and lwip IPV6 configuration."
+#endif
+
 #if LWIP_VERSION < 0x2000000
 #define SELWAIT_T int
 #else
@@ -267,6 +273,8 @@ static int inet_poll(struct dfs_fd *file, struct rt_pollreq *req)
         if (sock->errevent)
         {
             mask |= POLLERR;
+            /* clean error event */
+            sock->errevent = 0;
         }
         rt_hw_interrupt_enable(level);
     }
@@ -308,7 +316,11 @@ static const struct sal_netdb_ops lwip_netdb_ops =
 static const struct sal_proto_family lwip_inet_family =
 {
     AF_INET,
+#if LWIP_VERSION > 0x2000000
+    AF_INET6,
+#else
     AF_INET,
+#endif 
     &lwip_socket_ops,
     &lwip_netdb_ops,
 };

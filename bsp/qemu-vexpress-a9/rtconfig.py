@@ -21,7 +21,8 @@ end = '''
 #endif
 '''
 
-with open('drivers/automac.h', 'w') as f:
+automac_h_fn = os.path.join(os.path.dirname(__file__), 'drivers', 'automac.h')
+with open(automac_h_fn, 'w') as f:
     f.write(header + get_mac_address() + end)
 
 # toolchains options

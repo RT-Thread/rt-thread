@@ -146,8 +146,8 @@ static int lwip_netdev_set_addr_info(struct netdev *netif, ip_addr_t *ip_addr, i
 #ifdef RT_LWIP_DNS
 static int lwip_netdev_set_dns_server(struct netdev *netif, uint8_t dns_num, ip_addr_t *dns_server)
 {
-    extern void set_dns(uint8_t dns_num, char* dns_server);
-    set_dns(dns_num, ipaddr_ntoa(dns_server));
+    extern void dns_setserver(uint8_t dns_num, ip_addr_t *dns_server);
+    dns_setserver(dns_num, dns_server);
     return ERR_OK;
 }
 #endif /* RT_LWIP_DNS */
@@ -160,6 +160,7 @@ static int lwip_netdev_set_dhcp(struct netdev *netif, rt_bool_t is_enabled)
 }
 #endif /* RT_LWIP_DHCP */
 
+#ifdef RT_USING_FINSH
 #ifdef RT_LWIP_USING_PING
 extern int lwip_ping_recv(int s, int *ttl);
 extern err_t lwip_ping_send(int s, ip_addr_t *addr, int size);
@@ -250,6 +251,7 @@ void lwip_netdev_netstat(struct netdev *netif)
 #endif
 }
 #endif /* RT_LWIP_TCP || RT_LWIP_UDP */
+#endif /* RT_USING_FINSH */
 
 const struct netdev_ops lwip_netdev_ops =
 {
@@ -269,6 +271,7 @@ const struct netdev_ops lwip_netdev_ops =
     NULL,
 #endif /* RT_LWIP_DHCP */
 
+#ifdef RT_USING_FINSH
 #ifdef RT_LWIP_USING_PING
     lwip_netdev_ping,
 #else
@@ -278,6 +281,7 @@ const struct netdev_ops lwip_netdev_ops =
 #if defined (RT_LWIP_TCP) || defined (RT_LWIP_UDP)
     lwip_netdev_netstat,
 #endif /* RT_LWIP_TCP || RT_LWIP_UDP */
+#endif /* RT_USING_FINSH */
 };
 
 static int netdev_add(struct netif *lwip_netif)
@@ -682,8 +686,6 @@ int eth_system_device_init(void)
 }
 INIT_PREV_EXPORT(eth_system_device_init);
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
 void set_if(char* netif_name, char* ip_addr, char* gw_addr, char* nm_addr)
 {
     struct ip_addr *ip;
@@ -729,6 +731,9 @@ void set_if(char* netif_name, char* ip_addr, char* gw_addr, char* nm_addr)
         netif_set_netmask(netif, ip);
     }
 }
+
+#ifdef RT_USING_FINSH
+#include <finsh.h>
 FINSH_FUNCTION_EXPORT(set_if, set network interface address);
 
 #if LWIP_DNS
