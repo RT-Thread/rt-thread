@@ -847,7 +847,7 @@ long list_device(void)
                         device->parent.name,
                         (device->type <= RT_Device_Class_Unknown) ?
                         device_type_str[device->type] :
-                        device_type_str[RT_Device_Class_Unknown],
+                        device_type_str[RT_Device_Class_Unknown - 1],
                         device->ref_count);
 
             }
