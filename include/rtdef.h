@@ -972,6 +972,7 @@ struct rt_device
 #endif
 
     void                     *user_data;                /**< device private data */
+    void                     *private_data;             /**< application private data */
 };
 
 /**
