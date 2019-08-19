@@ -1,23 +1,12 @@
 /*
- * File      : x1000_ram.lds
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * Copyright (c) 2006-2019, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * 2015-12-12     bernard       first version
+ * Date           Author       Notes
+ * 2015-12-12     bernard      first version
+ * 2019-04-04     Jean-Luc     add support for large number of sections.
  */
 
 OUTPUT_FORMAT("elf32-tradlittlemips", "elf32-tradlittlemips", "elf32-tradlittlemips")
@@ -43,6 +32,11 @@ SECTIONS
 
     .text : 
     {
+        *(.text.unlikely .text.*_unlikely .text.unlikely.*)
+        *(.text.exit .text.exit.*)
+        *(.text.startup .text.startup.*)
+        *(.text.hot .text.hot.*)
+        *(.text .stub .text.* .gnu.linkonce.t.*)
         *(.text)                        /* remaining code */
         *(.text.*)                      /* remaining code */
         *(.rodata)                      /* read-only data (constants) */
@@ -86,6 +80,12 @@ SECTIONS
          *(.eh_frame_entry.*)
     } > DRAM
     .eh_frame : ONLY_IF_RO { KEEP (*(.eh_frame)) } > DRAM
+
+    . = ALIGN(4);
+    .gnu_extab :
+    {
+        *(.gnu_extab.*)
+    } > DRAM
 
     . = ALIGN(4);
     .ctors :

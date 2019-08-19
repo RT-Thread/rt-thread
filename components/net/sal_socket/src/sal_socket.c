@@ -351,6 +351,37 @@ static void sal_unlock(void)
 }
 
 /**
+ * This function will clean the netdev.
+ *
+ * @note please don't invoke it on ISR.
+ */
+int sal_netdev_cleanup(struct netdev *netdev)
+{
+    int idx = 0, find_dev;
+
+    do
+    {
+        find_dev = 0;
+        sal_lock();
+        for (idx = 0; idx < socket_table.max_socket; idx++)
+        {
+            if (socket_table.sockets[idx] && socket_table.sockets[idx]->netdev == netdev)
+            {
+                find_dev = 1;
+                break;
+            }
+        }
+        sal_unlock();
+        if (find_dev)
+        {
+            rt_thread_mdelay(rt_tick_from_millisecond(100));
+        }
+    } while (find_dev);
+
+    return 0;
+}
+
+/**
  * This function will initialize sal socket object and set socket options
  *
  * @param family    protocol family

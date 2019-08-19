@@ -238,6 +238,20 @@ config RT_USING_WDT
 config RT_USING_AUDIO
     bool "Using Audio device drivers"
     default n
+    
+    if RT_USING_AUDIO
+        config RT_AUDIO_REPLAY_MP_BLOCK_SIZE
+            int "Replay memmory pool block size"
+            default 4096
+
+        config RT_AUDIO_REPLAY_MP_BLOCK_COUNT
+            int "Replay memmory pool block count"
+            default 2
+
+        config RT_AUDIO_RECORD_PIPE_SIZE
+            int "Record pipe size"
+            default 2048
+    endif
 
 config RT_USING_SENSOR
     bool "Using Sensor device drivers"
@@ -420,6 +434,10 @@ menuconfig RT_USING_HWCRYPTO
         endif
     endif
 
+config RT_USING_ENCODER
+    bool "Using ENCODER device drivers"
+    default n
+
 menuconfig RT_USING_WIFI
     bool "Using Wi-Fi framework"
     default n
@@ -471,6 +489,12 @@ menuconfig RT_USING_WIFI
                 select RT_WLAN_CFG_ENABLE
                 select RT_WLAN_WORK_THREAD_ENABLE
                 default y
+
+            if RT_WLAN_AUTO_CONNECT_ENABLE
+                config AUTO_CONNECTION_PERIOD_MS
+                    int "Auto connect period(ms)"
+                    default 2000
+            endif
         endif
 
         config RT_WLAN_CFG_ENABLE

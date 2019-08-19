@@ -141,6 +141,19 @@ def bsp_update_kconfig_library(dist_dir):
                 found = 0
             f.write(line)
 
+    # change board/kconfig path 
+    if not os.path.isfile(os.path.join(dist_dir, 'board/Kconfig')):
+        return
+
+    with open(os.path.join(dist_dir, 'board/Kconfig'), 'r') as f:
+        data = f.readlines()
+    with open(os.path.join(dist_dir, 'board/Kconfig'), 'w') as f:
+        for line in data:
+            if line.find('../libraries/HAL_Drivers/Kconfig') != -1:
+                position = line.find('../libraries/HAL_Drivers/Kconfig')
+                line = line[0:position] + 'libraries/HAL_Drivers/Kconfig"\n'
+            f.write(line)
+
 def bs_update_ide_project(bsp_root, rtt_root, rttide = None):
     import subprocess
     # default update the projects which have template file

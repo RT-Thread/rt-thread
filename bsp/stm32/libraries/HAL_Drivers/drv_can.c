@@ -557,9 +557,9 @@ static rt_err_t drv_control(struct rt_can_device *can, int cmd, void *arg)
         break;
     case RT_CAN_CMD_SET_MODE:
         argval = (rt_uint32_t) arg;
-        if (argval != RT_CAN_MODE_NORMAL ||
-            argval != RT_CAN_MODE_LISEN ||
-            argval != RT_CAN_MODE_LOOPBACK ||
+        if (argval != RT_CAN_MODE_NORMAL &&
+            argval != RT_CAN_MODE_LISEN &&
+            argval != RT_CAN_MODE_LOOPBACK &&
             argval != RT_CAN_MODE_LOOPBACKANLISEN)
         {
             return RT_ERROR;
@@ -592,7 +592,7 @@ static rt_err_t drv_control(struct rt_can_device *can, int cmd, void *arg)
         break;
     case RT_CAN_CMD_SET_PRIV:
         argval = (rt_uint32_t) arg;
-        if (argval != RT_CAN_MODE_PRIV ||
+        if (argval != RT_CAN_MODE_PRIV &&
             argval != RT_CAN_MODE_NOPRIV)
         {
             return RT_ERROR;

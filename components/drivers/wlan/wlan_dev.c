@@ -147,8 +147,8 @@ rt_err_t rt_wlan_dev_ap_start(struct rt_wlan_device *device, struct rt_wlan_info
         return -RT_ERROR;
     }
 
-    if ((password_len >= RT_WLAN_PASSWORD_MAX_LENGTH) ||
-            (info->ssid.len >= RT_WLAN_SSID_MAX_LENGTH))
+    if ((password_len > RT_WLAN_PASSWORD_MAX_LENGTH) ||
+            (info->ssid.len > RT_WLAN_SSID_MAX_LENGTH))
     {
         LOG_E("L:%d password or ssid is to long", __LINE__);
         return -RT_ERROR;
@@ -528,15 +528,24 @@ rt_err_t rt_wlan_dev_scan(struct rt_wlan_device *device, struct rt_wlan_info *in
 
     if (info != RT_NULL)
     {
-        if (info->ssid.len >= RT_WLAN_SSID_MAX_LENGTH)
+        if (info->ssid.len > RT_WLAN_SSID_MAX_LENGTH)
         {
             LOG_E("L:%d ssid is to long", __LINE__);
             return -RT_EINVAL;
         }
         rt_memcpy(&scan_info.ssid, &info->ssid, sizeof(rt_wlan_ssid_t));
         rt_memcpy(scan_info.bssid, info->bssid, RT_WLAN_BSSID_MAX_LENGTH);
-        scan_info.channel_min = -1;
-        scan_info.channel_max = -1;
+        if (info->channel > 0)
+        {
+            scan_info.channel_min = info->channel;
+            scan_info.channel_max = info->channel;
+        }
+        else
+        {
+            scan_info.channel_min = -1;
+            scan_info.channel_max = -1;
+        }
+        scan_info.passive = info->hidden ? RT_TRUE : RT_FALSE;
         p_scan_info = &scan_info;
     }
     result = rt_device_control(RT_DEVICE(device), RT_WLAN_CMD_SCAN, p_scan_info);

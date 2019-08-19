@@ -138,7 +138,7 @@ def HandleToolOption(tools, env, project, reset):
         if tool.get('id').find('c.compile') != 1:
             options = tool.findall('option')
             for option in options:
-                if option.get('id').find('c.compiler.include.paths') != -1:
+                if option.get('id').find('c.compiler.include.paths') != -1 or option.get('id').find('c.compiler.option.includepaths') != -1:
                     # find all of paths in this project
                     include_paths = option.findall('listOptionValue')
                     project_paths = []
@@ -159,7 +159,7 @@ def HandleToolOption(tools, env, project, reset):
                     for item in cproject_paths:
                         SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': item})
 
-                if option.get('id').find('c.compiler.defs') != -1:
+                if option.get('id').find('c.compiler.defs') != -1 or option.get('id').find('c.compiler.option.definedsymbols') != -1:
                     defs = option.findall('listOptionValue')
                     project_defs = []
                     for item in defs:
@@ -181,6 +181,7 @@ def HandleToolOption(tools, env, project, reset):
         if tool.get('id').find('c.linker') != -1:
             options = tool.findall('option')
             for option in options:
+                # update linker script config
                 if option.get('id').find('c.linker.scriptfile') != -1:
                     linker_script = 'link.lds'
                     items = env['LINKFLAGS'].split(' ')
@@ -194,11 +195,37 @@ def HandleToolOption(tools, env, project, reset):
                     else:
                         SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': linker_script})
 
+                # scriptfile in stm32cubeIDE        
+                if option.get('id').find('c.linker.option.script') != -1:
+                    items = env['LINKFLAGS'].split(' ')
+                    if '-T' in items:
+                        linker_script = ConverToEclipsePathFormat(items[items.index('-T') + 1]).strip('"')
+                        option.set('value',linker_script)
+
+                # update nostartfiles config
                 if option.get('id').find('c.linker.nostart') != -1:
                     if env['LINKFLAGS'].find('-nostartfiles') != -1:
                         option.set('value', 'true')
                     else:
                         option.set('value', 'false')
+
+                # update libs
+                if option.get('id').find('c.linker.libs') != -1 and env.has_key('LIBS'):
+                    # remove old libs
+                    for item in option.findall('listOptionValue'):
+                        option.remove(item)
+                    # add new libs
+                    for lib in env['LIBS']:
+                        SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': lib})
+
+                # update lib paths
+                if option.get('id').find('c.linker.paths') != -1 and env.has_key('LIBPATH'):
+                    # remove old lib paths
+                    for item in option.findall('listOptionValue'):
+                        option.remove(item)
+                    # add new old lib paths
+                    for path in env['LIBPATH']:
+                        SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': path})
 
     return
 

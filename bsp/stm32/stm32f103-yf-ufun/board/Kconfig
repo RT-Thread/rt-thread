@@ -69,6 +69,15 @@ menu "On-chip Peripheral Drivers"
                 default 16
         endif
 
+    config BSP_USING_SDIO
+        bool "Enable SDCARD (sdio)"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        default n
+
+    source "../libraries/HAL_Drivers/Kconfig"
+    
 endmenu
 
 menu "Board extended module Drivers"

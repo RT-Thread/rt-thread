@@ -44,6 +44,7 @@ extern "C" {
 #endif
 
 void dhcpd_start(const char *netif_name);
+void dhcpd_stop(const char *netif_name);
 
 #ifdef __cplusplus
 }
