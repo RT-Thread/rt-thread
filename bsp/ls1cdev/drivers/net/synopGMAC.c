@@ -572,8 +572,7 @@ struct pbuf *rt_eth_rx(rt_device_t device)
     }
 
     /*Handle the Receive Descriptors*/
-    do
-    {
+    //do{
         desc_index = synopGMAC_get_rx_qptr(gmacdev, &status, &dma_addr1, NULL, &data1, &dma_addr2, NULL, &data2);
 
         if (desc_index >= 0 && data1 != 0)
@@ -582,12 +581,13 @@ struct pbuf *rt_eth_rx(rt_device_t device)
 
             if (synopGMAC_is_rx_desc_valid(status) || SYNOP_PHY_LOOPBACK)
             {
-                pbuf = pbuf_alloc(PBUF_LINK, MAX_ETHERNET_PAYLOAD, PBUF_RAM);
+               
+                dma_addr1 =  plat_dma_map_single(gmacdev, (void *)data1, RX_BUF_SIZE);
+                len =  synopGMAC_get_rx_desc_frame_length(status)-4; //Not interested in Ethernet CRC bytes
+                    
+                pbuf = pbuf_alloc(PBUF_LINK, len, PBUF_RAM);
                 if (pbuf == 0) rt_kprintf("===error in pbuf_alloc\n");
 
-
-                dma_addr1 =  plat_dma_map_single(gmacdev, (void *)data1, RX_BUF_SIZE);
-                len =  synopGMAC_get_rx_desc_frame_length(status); //Not interested in Ethernet CRC bytes
                 rt_memcpy(pbuf->payload, (char *)data1, len);
                 DEBUG_MES("==get pkg len: %d\n", len);
             }
@@ -612,7 +612,7 @@ struct pbuf *rt_eth_rx(rt_device_t device)
             }
 
         }
-    }while(desc_index >= 0);
+    //}while(desc_index >= 0);
     rt_sem_release(&sem_lock);
     DEBUG_MES("%s : before return \n", __FUNCTION__);
     return pbuf;
