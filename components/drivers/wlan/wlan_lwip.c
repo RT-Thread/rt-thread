@@ -181,14 +181,10 @@ static void netif_set_connected(void *parameter)
             netifapi_netif_common(eth_dev->netif, netif_set_link_up, NULL);
 #ifdef LWIP_USING_DHCPD
             {
-                char netif_name[8];
-                int i;
+                char netif_name[RT_NAME_MAX];
 
                 rt_memset(netif_name, 0, sizeof(netif_name));
-                for (i = 0; i < sizeof(eth_dev->netif->name); i++)
-                {
-                    netif_name[i] = eth_dev->netif->name[i];
-                }
+                rt_memcpy(netif_name, eth_dev->netif->name, sizeof(eth_dev->netif->name));
                 dhcpd_start(netif_name);
             }
 #endif
@@ -196,24 +192,24 @@ static void netif_set_connected(void *parameter)
     }
     else
     {
-        if (wlan->mode == RT_WLAN_STATION)
-        {
-            LOG_D("F:%s L:%d dhcp stop run", __FUNCTION__, __LINE__);
-            netifapi_netif_common(eth_dev->netif, netif_set_link_down, NULL);
+        LOG_D("F:%s L:%d set linkdown", __FUNCTION__, __LINE__);
+        netifapi_netif_common(eth_dev->netif, netif_set_link_down, NULL);
+        rt_timer_stop(&lwip_prot->timer);
 #ifdef RT_LWIP_DHCP
-            {
-                ip_addr_t ip_addr = { 0 };
-                dhcp_stop(eth_dev->netif);
-                netif_set_addr(eth_dev->netif, &ip_addr, &ip_addr, &ip_addr);
-            }
-#endif
-            rt_timer_stop(&lwip_prot->timer);
-        }
-        else if (wlan->mode == RT_WLAN_AP)
         {
-            LOG_D("F:%s L:%d dhcpd stop run", __FUNCTION__, __LINE__);
-            netifapi_netif_common(eth_dev->netif, netif_set_link_down, NULL);
+            ip_addr_t ip_addr = { 0 };
+            dhcp_stop(eth_dev->netif);
+            netif_set_addr(eth_dev->netif, &ip_addr, &ip_addr, &ip_addr);
         }
+#endif
+#ifdef LWIP_USING_DHCPD
+        {
+            char netif_name[RT_NAME_MAX];
+            rt_memset(netif_name, 0, sizeof(netif_name));
+            rt_memcpy(netif_name, lwip_prot->eth.netif->name, sizeof(lwip_prot->eth.netif->name));
+            dhcpd_stop(netif_name);
+        }
+#endif
     }
 }
 
@@ -421,7 +417,7 @@ const static struct rt_device_ops wlan_lwip_ops =
 static struct rt_wlan_prot *rt_wlan_lwip_protocol_register(struct rt_wlan_prot *prot, struct rt_wlan_device *wlan)
 {
     struct eth_device *eth = RT_NULL;
-    static rt_uint8_t id = 0;
+    rt_uint8_t id = 0;
     char eth_name[4], timer_name[16];
     rt_device_t device = RT_NULL;
     struct lwip_prot_des *lwip_prot;
@@ -501,8 +497,30 @@ static struct rt_wlan_prot *rt_wlan_lwip_protocol_register(struct rt_wlan_prot *
 
 static void rt_wlan_lwip_protocol_unregister(struct rt_wlan_prot *prot, struct rt_wlan_device *wlan)
 {
-    /*TODO*/
+    struct lwip_prot_des *lwip_prot = (struct lwip_prot_des *)prot;
+
     LOG_D("F:%s L:%d is run wlan:0x%08x", __FUNCTION__, __LINE__, wlan);
+#if !defined(RT_USING_LWIP141)
+    wlan->prot = RT_NULL;
+    if (lwip_prot == RT_NULL)
+    {
+        return;
+    }
+
+#ifdef LWIP_USING_DHCPD
+    {
+        char netif_name[RT_NAME_MAX];
+        rt_memset(netif_name, 0, sizeof(netif_name));
+        rt_memcpy(netif_name, lwip_prot->eth.netif->name, sizeof(lwip_prot->eth.netif->name));
+        dhcpd_stop(netif_name);
+    }
+#endif
+    eth_device_deinit(&lwip_prot->eth);
+    rt_device_close((rt_device_t)wlan);
+    rt_timer_detach(&lwip_prot->timer);
+    wlan->netdev = RT_NULL;
+    rt_free(lwip_prot);
+#endif
 }
 
 static struct rt_wlan_prot_ops ops =
