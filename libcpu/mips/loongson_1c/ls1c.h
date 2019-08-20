@@ -145,8 +145,8 @@ struct ls1c_cop_regs
 
 /* Watch Dog registers */
 #define WDT_EN				__REG32(WDT_BASE + 0x00)
-#define WDT_SET				__REG32(WDT_BASE + 0x04)
-#define WDT_TIMER			__REG32(WDT_BASE + 0x08)
+#define WDT_SET				__REG32(WDT_BASE + 0x08)
+#define WDT_TIMER			__REG32(WDT_BASE + 0x04)
 
 #define PLL_FREQ 				__REG32(0xbfe78030)
 #define PLL_DIV_PARAM 			__REG32(0xbfe78034)
