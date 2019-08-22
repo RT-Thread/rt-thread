@@ -102,7 +102,6 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
     if (HAL_ETH_Init(&EthHandle) != HAL_OK)
     {
         LOG_E("eth hardware init failed");
-        return -RT_ERROR;
     }
     else
     {
