@@ -235,7 +235,7 @@ static rt_err_t timer_start(rt_hwtimer_t *timer, rt_uint32_t t, rt_hwtimer_mode_
         /* set timer to single mode */
         tim->Instance->CR1 |= TIM_OPMODE_SINGLE;
     }
-	else
+    else
     {
         tim->Instance->CR1 &= (~TIM_OPMODE_SINGLE);
     }
