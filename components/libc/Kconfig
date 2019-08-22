@@ -39,4 +39,10 @@ if RT_USING_LIBC && RT_USING_DFS
         default n
 endif
 
+if RT_USING_LIBC != y
+        config RT_USING_MINI_TIME
+        bool "Enable MINI TIME FUNCTIONS WITHOUT COMPILER'S LIBC"
+        default y
+endif
+
 endmenu
