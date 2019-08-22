@@ -40,8 +40,8 @@ if RT_USING_LIBC && RT_USING_DFS
 endif
 
 if RT_USING_LIBC != y
-        config RT_USING_MINI_TIME
-        bool "Enable MINI TIME FUNCTIONS WITHOUT COMPILER'S LIBC"
+        config RT_LIBC_USING_TIME
+        bool "Enable TIME FUNCTIONS WITHOUT COMPILER'S LIBC"
         default y
 endif
 
