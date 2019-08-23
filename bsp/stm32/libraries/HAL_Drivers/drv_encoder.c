@@ -103,6 +103,7 @@ rt_err_t encoder_init(struct rt_encoder_device *encoder)
 
     if (HAL_TIM_Encoder_Init(tim_handler, &sConfig) != HAL_OK)
     {
+        LOG_E("encoder init failed");
         return -RT_ERROR;
     }
 
@@ -111,6 +112,7 @@ rt_err_t encoder_init(struct rt_encoder_device *encoder)
 
     if (HAL_TIMEx_MasterConfigSynchronization(tim_handler, &sMasterConfig))
     {
+        LOG_E("TIMx master config failed");
         return -RT_ERROR;
     }
 
