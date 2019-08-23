@@ -367,13 +367,14 @@ dns_setserver(u8_t numdns, const ip_addr_t *dnsserver)
       dns_servers[numdns] = (*dnsserver);
 
 #ifdef RT_USING_NETDEV
-      extern struct netif *netif_default;
+      extern struct netif *netif_list;
       extern struct netdev *netdev_get_by_name(const char *name);
       extern void netdev_low_level_set_dns_server(struct netdev *netdev, uint8_t dns_num, const ip_addr_t *dns_server);
+      struct netif *netif = NULL;
 
       /* set network interface device DNS server address */
-      if (netif_default) {
-        netdev_low_level_set_dns_server(netdev_get_by_name(netif_default->name), numdns, dnsserver);
+      for (netif = netif_list; netif != NULL; netif = netif->next) {
+          netdev_low_level_set_dns_server(netdev_get_by_name(netif->name), numdns, dnsserver);
       }
 #endif /* RT_USING_NETDEV */
     } else {
