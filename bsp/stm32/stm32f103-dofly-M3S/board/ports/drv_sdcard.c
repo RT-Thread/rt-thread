@@ -6,12 +6,12 @@
  * Change Logs:
  * Date           Author        Notes
  * 2018-12-13     balanceTWK    add sdcard port file
+ * 2019-08-23     WillianChan   add spi sdcard port code
  */
 
 #include <rtthread.h>
 
-#ifdef BSP_USING_SDCARD
-
+#if defined BSP_USING_SDIO_SDCARD || defined BSP_USING_SPI_SDCARD
 #include <dfs_elm.h>
 #include <dfs_fs.h>
 #include <dfs_posix.h>
@@ -58,5 +58,16 @@ int stm32_sdcard_mount(void)
     return RT_EOK;
 }
 INIT_APP_EXPORT(stm32_sdcard_mount);
+#endif /* BSP_USING_SDIO_SDCARD || BSP_USING_SPI_SDCARD */
 
-#endif /* BSP_USING_SDCARD */
+#ifdef BSP_USING_SPI_SDCARD
+#include "drv_spi.h"
+#include "spi_msd.h"
+static int rt_hw_spi2_tfcard(void)
+{
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    rt_hw_spi_device_attach("spi2", "spi20", GPIOD, GPIO_PIN_2);
+    return msd_init("sd0", "spi20");
+}
+INIT_DEVICE_EXPORT(rt_hw_spi2_tfcard);
+#endif /* BSP_USING_SPI_SDCARD */
