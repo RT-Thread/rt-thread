@@ -52,6 +52,7 @@ extern "C" {
 #include "f4/tim_config.h"
 #include "f4/sdio_config.h"
 #include "f4/pwm_config.h"
+#include "f4/encoder_config.h"
 #elif  defined(SOC_SERIES_STM32F7)
 #include "f7/dma_config.h"
 #include "f7/uart_config.h"
