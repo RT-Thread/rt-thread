@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_proj.xsd">
+<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_projx.xsd">
 
-  <SchemaVersion>1.0</SchemaVersion>
+  <SchemaVersion>2.1</SchemaVersion>
 
   <Header>### uVision Project, (C) Keil Software</Header>
 
@@ -10,31 +10,37 @@
       <TargetName>rt-thread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
+      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
+      <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>STM32F429IG</Device>
+          <Device>STM32L431RCTx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <Cpu>IRAM(0x20000000-0x2002FFFF) IRAM2(0x10000000-0x1000FFFF) IROM(0x8000000-0x80FFFFF) CLOCK(25000000) CPUTYPE("Cortex-M4") FPU2</Cpu>
+          <PackID>Keil.STM32L4xx_DFP.2.2.0</PackID>
+          <PackURL>http://www.keil.com/pack</PackURL>
+          <Cpu>IRAM(0x20000000,0x0000C000) IRAM2(0x10000000,0x00004000) IROM(0x08000000,0x00040000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
-          <StartupFile>"Startup\ST\STM32F4xx\startup_stm32f429_439xx.s" ("STM32F429/439xx Startup Code")</StartupFile>
-          <FlashDriverDll>UL2CM3(-O207 -S0 -C0 -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F4xx_1024 -FS08000000 -FL0100000)</FlashDriverDll>
-          <DeviceId>7030</DeviceId>
-          <RegisterFile>stm32f4xx.h</RegisterFile>
+          <StartupFile></StartupFile>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32L4xx_256 -FS08000000 -FL040000 -FP0($$Device:STM32L431RCTx$CMSIS\Flash\STM32L4xx_256.FLM))</FlashDriverDll>
+          <DeviceId>0</DeviceId>
+          <RegisterFile>$$Device:STM32L431RCTx$Drivers\CMSIS\Device\ST\STM32L4xx\Include\stm32l4xx.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
           <Linker></Linker>
           <OHString></OHString>
           <InfinionOptionDll></InfinionOptionDll>
-          <SLE66CMisc>-DSTM32F429_439xx</SLE66CMisc>
+          <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
+          <SFDFile>$$Device:STM32L431RCTx$CMSIS\SVD\STM32L4x1.svd</SFDFile>
+          <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
           <IncludePath></IncludePath>
           <LibPath></LibPath>
-          <RegisterFilePath>ST\STM32F4xx\</RegisterFilePath>
-          <DBRegisterFilePath>ST\STM32F4xx\</DBRegisterFilePath>
+          <RegisterFilePath></RegisterFilePath>
+          <DBRegisterFilePath></DBRegisterFilePath>
           <TargetStatus>
             <Error>0</Error>
             <ExitCodeStop>0</ExitCodeStop>
@@ -60,6 +66,8 @@
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
+            <nStopU1X>0</nStopU1X>
+            <nStopU2X>0</nStopU2X>
           </BeforeCompile>
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
@@ -68,6 +76,8 @@
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
+            <nStopB1X>0</nStopB1X>
+            <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
             <RunUserProg1>1</RunUserProg1>
@@ -76,6 +86,8 @@
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
+            <nStopA1X>0</nStopA1X>
+            <nStopA2X>0</nStopA2X>
           </AfterMake>
           <SelectedForBatchBuild>0</SelectedForBatchBuild>
           <SVCSIdString></SVCSIdString>
@@ -94,14 +106,15 @@
           <StopOnExitCode>3</StopOnExitCode>
           <CustomArgument></CustomArgument>
           <IncludeLibraryModules></IncludeLibraryModules>
+          <ComprImg>1</ComprImg>
         </CommonProperty>
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
-          <SimDllArguments>-MPU -REMAP</SimDllArguments>
+          <SimDllArguments> -REMAP -MPU</SimDllArguments>
           <SimDlgDll>DCM.DLL</SimDlgDll>
           <SimDlgDllArguments>-pCM4</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
-          <TargetDllArguments>-MPU</TargetDllArguments>
+          <TargetDllArguments> -MPU</TargetDllArguments>
           <TargetDlgDll>TCM.DLL</TargetDlgDll>
           <TargetDlgDllArguments>-pCM4</TargetDlgDllArguments>
         </DllOption>
@@ -113,44 +126,6 @@
             <HexOffset>0</HexOffset>
             <Oh166RecLen>16</Oh166RecLen>
           </OPTHX>
-          <Simulator>
-            <UseSimulator>0</UseSimulator>
-            <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
-            <RunToMain>1</RunToMain>
-            <RestoreBreakpoints>1</RestoreBreakpoints>
-            <RestoreWatchpoints>1</RestoreWatchpoints>
-            <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
-            <RestoreFunctions>1</RestoreFunctions>
-            <RestoreToolbox>1</RestoreToolbox>
-            <LimitSpeedToRealTime>0</LimitSpeedToRealTime>
-          </Simulator>
-          <Target>
-            <UseTarget>1</UseTarget>
-            <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
-            <RunToMain>1</RunToMain>
-            <RestoreBreakpoints>1</RestoreBreakpoints>
-            <RestoreWatchpoints>1</RestoreWatchpoints>
-            <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
-            <RestoreFunctions>0</RestoreFunctions>
-            <RestoreToolbox>1</RestoreToolbox>
-          </Target>
-          <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>7</TargetSelection>
-          <SimDlls>
-            <CpuDll></CpuDll>
-            <CpuDllArguments></CpuDllArguments>
-            <PeripheralDll></PeripheralDll>
-            <PeripheralDllArguments></PeripheralDllArguments>
-            <InitializationFile></InitializationFile>
-          </SimDlls>
-          <TargetDlls>
-            <CpuDll></CpuDll>
-            <CpuDllArguments></CpuDllArguments>
-            <PeripheralDll></PeripheralDll>
-            <PeripheralDllArguments></PeripheralDllArguments>
-            <InitializationFile></InitializationFile>
-            <Driver>Segger\JL2CM3.dll</Driver>
-          </TargetDlls>
         </DebugOption>
         <Utilities>
           <Flash1>
@@ -161,9 +136,14 @@
             <Capability>1</Capability>
             <DriverSelection>4096</DriverSelection>
           </Flash1>
+          <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
           <Flash3></Flash3>
           <Flash4></Flash4>
+          <pFcarmOut></pFcarmOut>
+          <pFcarmGrp></pFcarmGrp>
+          <pFcArmRoot></pFcArmRoot>
+          <FcArmLst>0</FcArmLst>
         </Utilities>
         <TargetArmAds>
           <ArmAdsMisc>
@@ -204,14 +184,16 @@
             <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
+            <RvdsMve>0</RvdsMve>
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
             <useUlib>0</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
+            <nSecure>0</nSecure>
             <RoSelD>3</RoSelD>
-            <RwSelD>3</RwSelD>
+            <RwSelD>4</RwSelD>
             <CodeSel>0</CodeSel>
             <OptFeed>0</OptFeed>
             <NoZi1>0</NoZi1>
@@ -263,12 +245,12 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x30000</Size>
+                <Size>0xc000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x100000</Size>
+                <Size>0x40000</Size>
               </IROM>
               <XRAM>
                 <Type>0</Type>
@@ -293,7 +275,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x100000</Size>
+                <Size>0x40000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -318,12 +300,12 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x30000</Size>
+                <Size>0xc000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
                 <StartAddress>0x10000000</StartAddress>
-                <Size>0x10000</Size>
+                <Size>0x4000</Size>
               </OCR_RVCT10>
             </OnChipMemories>
             <RvctStartVector></RvctStartVector>
@@ -341,6 +323,17 @@
             <Rwpi>0</Rwpi>
             <wLevel>0</wLevel>
             <uThumb>0</uThumb>
+            <uSurpInc>0</uSurpInc>
+            <uC99>1</uC99>
+            <uGnu>0</uGnu>
+            <useXO>0</useXO>
+            <v6Lang>1</v6Lang>
+            <v6LangP>1</v6LangP>
+            <vShortEn>1</vShortEn>
+            <vShortWch>1</vShortWch>
+            <v6Lto>0</v6Lto>
+            <v6WtE>0</v6WtE>
+            <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -356,6 +349,9 @@
             <SplitLS>0</SplitLS>
             <SwStkChk>0</SwStkChk>
             <NoWarn>0</NoWarn>
+            <uSurpInc>0</uSurpInc>
+            <useXO>0</useXO>
+            <uClangAs>0</uClangAs>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -372,6 +368,7 @@
             <useFile>0</useFile>
             <TextAddressRange>0x08000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
+            <pXoBase></pXoBase>
             <ScatterFile>.\board\linker_scripts\link.sct</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
@@ -381,7 +378,18 @@
           </LDads>
         </TargetArmAds>
       </TargetOption>
+      <Groups>
+        <Group>
+          <GroupName>Source Group 1</GroupName>
+        </Group>
+      </Groups>
     </Target>
   </Targets>
+
+  <RTE>
+    <apis/>
+    <components/>
+    <files/>
+  </RTE>
 
 </Project>
