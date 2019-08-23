@@ -13,47 +13,47 @@
 
 static rt_err_t rt_encoder_init(struct rt_device *dev)
 {
+    rt_err_t ret;
     struct rt_encoder_device *encoder;
 
+    ret = RT_EOK;
     encoder = (struct rt_encoder_device *)dev;
     if (encoder->ops->init)
     {
-        return encoder->ops->init(encoder);
+        ret = encoder->ops->init(encoder);
     }
-    else
-    {
-        return -RT_ENOSYS;
-    }
+
+    return ret;
 }
 
 static rt_err_t rt_encoder_open(struct rt_device *dev, rt_uint16_t oflag)
 {
+    rt_err_t ret;
     struct rt_encoder_device *encoder;
 
+    ret = RT_EOK;
     encoder = (struct rt_encoder_device *)dev;
     if (encoder->ops->control)
     {
-        return encoder->ops->control(encoder, ENCODER_CMD_ENABLE, RT_NULL);
+        ret = encoder->ops->control(encoder, ENCODER_CMD_ENABLE, RT_NULL);
     }
-    else
-    {
-        return -RT_ENOSYS;
-    }
+
+    return ret;
 }
 
 static rt_err_t rt_encoder_close(struct rt_device *dev)
 {
+    rt_err_t ret;
     struct rt_encoder_device *encoder;
 
+    ret = RT_EOK;
     encoder = (struct rt_encoder_device *)dev;
     if (encoder->ops->control)
     {
-        return encoder->ops->control(encoder, ENCODER_CMD_DISABLE, RT_NULL);
+        ret = encoder->ops->control(encoder, ENCODER_CMD_DISABLE, RT_NULL);
     }
-    else
-    {
-        return -RT_ENOSYS;
-    }
+
+    return ret;
 }
 
 static rt_size_t rt_encoder_read(struct rt_device *dev, rt_off_t pos, void *buffer, rt_size_t size)
@@ -113,6 +113,7 @@ rt_err_t rt_device_encoder_register(struct rt_encoder_device *encoder, const cha
 
     RT_ASSERT(encoder != RT_NULL);
     RT_ASSERT(encoder->ops != RT_NULL);
+    RT_ASSERT(encoder->ops->get_count != RT_NULL);
 
     device = &(encoder->parent);
 
