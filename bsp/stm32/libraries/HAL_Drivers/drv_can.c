@@ -515,7 +515,11 @@ static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
     /* get len */
     pmsg->len = rxheader.DLC;
     /* get hdr */
+#ifdef BSP_USING_CAN2
     pmsg->hdr = rxheader.FilterMatchIndex;
+#else
+    pmsg->hdr = (rxheader.FilterMatchIndex + 1) >> 1;
+#endif
 
     return RT_EOK;
 }
