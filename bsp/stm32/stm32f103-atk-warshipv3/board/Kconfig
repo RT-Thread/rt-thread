@@ -200,7 +200,18 @@ menu "On-chip Peripheral Drivers"
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
         default n
-	
+
+    menuconfig BSP_USING_ENCODER
+        bool "Enable Encoder"
+        default n
+        select RT_USING_ENCODER
+        if BSP_USING_ENCODER
+            config BSP_USING_ENCODER3
+                bool "Enable Encoder3"
+                default n
+
+        endif
+
  source "../libraries/HAL_Drivers/Kconfig"
     
 endmenu

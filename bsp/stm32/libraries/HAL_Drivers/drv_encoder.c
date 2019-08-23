@@ -1,11 +1,4 @@
 /*
- * @Description: In User Settings Edit
- * @Author: your name
- * @Date: 2019-08-09 15:25:34
- * @LastEditTime: 2019-08-09 17:29:27
- * @LastEditors: Please set LastEditors
- */
-/*
  * Copyright (c) 2006-2018, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
