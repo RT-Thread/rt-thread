@@ -39,6 +39,7 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32l053-st-nucleo](stm32l053-st-nucleo) | ST 官方 STM32L053-nucleo 开发板 |
 | **L4 系列** |  |
 | [stm32l4r9-st-eval](stm32l4r9-st-eval) | ST 官方 STM32L4R9I-EVAL 开发板 |
+| [stm32l431-iotclub-bearpi](stm32l431-iotclub-bearpi) | 物联网俱乐部 STM32L431RCT6 BearPi 开发板 |
 | [stm32l432-st-nucleo](stm32l432-st-nucleo) | ST 官方 STM32L432-nucleo 开发板 |
 | [stm32l475-atk-pandora](stm32l475-atk-pandora) | 正点原子 L475 潘多拉 IoT 开发板 |
 | [stm32l475-st-discovery](stm32l475-st-discovery) | ST 官方 stm32l475-discovery 开发板 |
