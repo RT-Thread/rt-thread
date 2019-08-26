@@ -27,6 +27,8 @@ import sys
 import string
 import utils
 
+from SCons.Script import *
+
 import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import SubElement
 from utils import _make_path_relative
@@ -201,5 +203,6 @@ def IARVersion():
 
     # example stdout: IAR ANSI C/C++ Compiler V8.20.1.14183/W32 for ARM
     iar_version = re.search('[\d\.]+', stdout).group(0)
-    print("IAR version: %s" % iar_version)
+    if GetOption('verbose'):
+        print("IAR version: %s" % iar_version)
     return iar_version
