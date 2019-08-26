@@ -100,6 +100,12 @@ void at_cli_deinit(void)
 }
 
 #ifdef AT_USING_SERVER
+static rt_err_t at_server_console_getchar(struct at_server *server, char *ch, rt_int32_t timeout)
+{
+    *ch = console_getchar();
+    return RT_EOK;
+}
+
 static void server_cli_parser(void)
 {
     extern at_server_t at_get_server(void);
@@ -107,7 +113,7 @@ static void server_cli_parser(void)
     at_server_t server = at_get_server();
     rt_base_t int_lvl;
     static rt_device_t device_bak;
-    static char (*getchar_bak)(void);
+    static rt_err_t (*getchar_bak)(struct at_server *server, char *ch, rt_int32_t timeout);
     static char endmark_back[AT_END_MARK_LEN];
 
     /* backup server device and getchar function */
@@ -122,7 +128,7 @@ static void server_cli_parser(void)
 
         /* setup server device as console device */
         server->device = rt_console_get_device();
-        server->get_char = console_getchar;
+        server->get_char = at_server_console_getchar;
 
         memset(server->end_mark, 0x00, AT_END_MARK_LEN);
         server->end_mark[0] = '\r';
