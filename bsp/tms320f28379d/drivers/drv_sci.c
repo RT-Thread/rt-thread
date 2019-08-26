@@ -223,7 +223,6 @@ int rt_hw_sci_init(void)
     PieCtrlRegs.PIECTRL.bit.ENPIE = 1;   // Enable the PIE block
     PieCtrlRegs.PIEIER9.bit.INTx1 = 1;   // PIE Group 9, INT1
     IER |= 0x100;                        // Enable CPU INT
-    EINT;
 
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     rt_err_t result = 0;
