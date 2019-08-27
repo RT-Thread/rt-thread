@@ -8,13 +8,10 @@
  * 2019-08-21     zhangjun     copy from minilibc
  */
 
-#if defined(__CC_ARM) || defined(__CLANG_ARM) || defined (__IAR_SYSTEMS_ICC__)  
 #include <time.h>
 #include <rtthread.h>
 
-/* seconds per day */
-#define SPD 24*60*60
-
+#if !defined (__IAR_SYSTEMS_ICC__)
 
 /* days per month -- nonleap! */
 const short __spm[13] =
@@ -93,15 +90,7 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
     return r;
 }
 
-#if defined (__IAR_SYSTEMS_ICC__) &&  (__VER__) >= 6020000
-#if _DLIB_TIME_USES_64
-struct tm* __gmtime64(const time_t* t)
-#else
-struct tm* __gmtime32(const time_t* t)
-#endif
-#else
 struct tm* gmtime(const time_t* t)
-#endif
 {
     static struct tm tmp;
     return gmtime_r(t, &tmp);
@@ -113,29 +102,13 @@ struct tm* localtime_r(const time_t* t, struct tm* r)
     return gmtime_r(t, r);
 }
 
-#if defined (__IAR_SYSTEMS_ICC__) &&  (__VER__) >= 6020000
-#if _DLIB_TIME_USES_64
-struct tm* __localtime64(const time_t* t)
-#else
-struct tm* __localtime32(const time_t* t)
-#endif
-#else
 struct tm* localtime(const time_t* t)
-#endif
 {
     static struct tm tmp;
     return localtime_r(t, &tmp);
 }
 
-#if defined (__IAR_SYSTEMS_ICC__) &&  (__VER__) >= 6020000
-#if _DLIB_TIME_USES_64
-time_t __mktime64(struct tm * const t)
-#else
-time_t __mktime32(struct tm * const t)
-#endif
-#else
 time_t mktime(struct tm * const t)
-#endif
 {
     register time_t day;
     register time_t i;
@@ -242,15 +215,7 @@ char* asctime(const struct tm *timeptr)
     return asctime_r(timeptr, buf);
 }
 
-#if defined (__IAR_SYSTEMS_ICC__) &&  (__VER__) >= 6020000
-#if _DLIB_TIME_USES_64
-char* __ctime64(const time_t *timep)
-#else
-char* __ctime32(const time_t *timep)
-#endif
-#else
 char* ctime(const time_t *timep)
-#endif
 {
     return asctime(localtime(timep));
 }
@@ -284,6 +249,8 @@ int _gettimeofday( struct timeval *tv, void *ignore)
     return 0;  // return non-zero for error
 }
 #endif
+
+#endif /* __IAR_SYSTEMS_ICC__ */
 
 /**
  * Returns the current time.
@@ -340,4 +307,3 @@ RT_WEAK clock_t clock(void)
 {
     return rt_tick_get();
 }
-#endif
