@@ -22,7 +22,7 @@ menu "Onboard Peripheral Drivers"
     
     config BSP_USING_SPI_LCD
         bool "Enable LCD (spi3)"
-		select BSP_USING_SPI
+        select BSP_USING_SPI
         select BSP_USING_SPI3
         default n
 
