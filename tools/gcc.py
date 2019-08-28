@@ -34,10 +34,8 @@ def GetGCCRoot(rtconfig):
 
     if exec_path == '/usr/bin':
         root_path = os.path.join('/usr/lib', prefix)
-        print(root_path)
     else:
         root_path = os.path.join(exec_path, '..', prefix)
-        print(root_path)
 
     return root_path
 
