@@ -167,6 +167,79 @@ void rt_at_server_print_all_cmd(void)
     }
 }
 
+/**
+ * Send data to AT Client by uart device.
+ *
+ * @param server current AT server object
+ * @param buf   send data buffer
+ * @param size  send fixed data size
+ *
+ * @return >0: send data size
+ *         =0: send failed
+ */
+rt_size_t at_server_send(at_server_t server, const char *buf, rt_size_t size)
+{
+    RT_ASSERT(buf);
+
+    if (server == RT_NULL)
+    {
+        LOG_E("input AT Server object is NULL, please create or get AT Server object!");
+        return 0;
+    }
+
+    return rt_device_write(server->device, 0, buf, size);
+}
+
+/**
+ * AT Server receive fixed-length data.
+ *
+ * @param client current AT Server object
+ * @param buf   receive data buffer
+ * @param size  receive fixed data size
+ * @param timeout  receive data timeout (ms)
+ *
+ * @note this function can only be used in execution function of AT commands
+ *
+ * @return >0: receive data size
+ *         =0: receive failed
+ */
+rt_size_t at_server_recv(at_server_t server, char *buf, rt_size_t size, rt_int32_t timeout)
+{
+    rt_size_t read_idx = 0;
+    rt_err_t result = RT_EOK;
+    char ch = 0;
+
+    RT_ASSERT(buf);
+
+    if (server == RT_NULL)
+    {
+        LOG_E("input AT Server object is NULL, please create or get AT Server object!");
+        return 0;
+    }
+
+    while (1)
+    {
+        if (read_idx < size)
+        {
+            /* check get data value */
+            result = server->get_char(server, &ch, timeout);
+            if (result != RT_EOK)
+            {
+                LOG_E("AT Server receive failed, uart device get data error.");
+                return 0;
+            }
+
+            buf[read_idx++] = ch;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    return read_idx;
+}
+
 at_server_t at_get_server(void)
 {
     RT_ASSERT(at_server_local);
@@ -339,17 +412,21 @@ static rt_err_t at_cmd_get_name(const char *cmd_buffer, char *cmd_name)
     return -RT_ERROR;
 }
 
-static char at_server_gerchar(void)
+static rt_err_t at_server_gerchar(at_server_t server, char *ch, rt_int32_t timeout)
 {
-    char ch;
+    rt_err_t result = RT_EOK;
 
-    while (rt_device_read(at_server_local->device, 0, &ch, 1) == 0)
+    while (rt_device_read(at_server_local->device, 0, ch, 1) == 0)
     {
         rt_sem_control(at_server_local->rx_notice, RT_IPC_CMD_RESET, RT_NULL);
-        rt_sem_take(at_server_local->rx_notice, RT_WAITING_FOREVER);
+        result = rt_sem_take(at_server_local->rx_notice, rt_tick_from_millisecond(timeout));
+        if (result != RT_EOK)
+        {
+            return result;
+        }
     }
 
-    return ch;
+    return result;
 }
 
 static void server_parser(at_server_t server)
@@ -365,13 +442,23 @@ static void server_parser(at_server_t server)
     RT_ASSERT(server);
     RT_ASSERT(server->status != AT_STATUS_UNINITIALIZED);
 
-    while (ESC_KEY != (ch = server->get_char()))
+    while (1)
     {
+        server->get_char(server, &ch, RT_WAITING_FOREVER);
+        if (ESC_KEY == ch)
+        {
+            break;
+        }
+
         if (server->echo_mode)
         {
             if (ch == AT_CMD_CR || (ch == AT_CMD_LF && last_ch != AT_CMD_CR))
             {
                 at_server_printf("%c%c", AT_CMD_CR, AT_CMD_LF);
+            }
+            else if (ch == AT_CMD_LF)
+            {
+                // skip the end sign check
             }
             else if (ch == BACKSPACE_KEY || ch == DELECT_KEY)
             {
