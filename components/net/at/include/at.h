@@ -96,7 +96,7 @@ struct at_server
     rt_device_t device;
 
     at_status_t status;
-    char (*get_char)(void);
+    rt_err_t (*get_char)(struct at_server *server, char *ch, rt_int32_t timeout);
     rt_bool_t echo_mode;
 
     char recv_buffer[AT_SERVER_RECV_BUFF_LEN];
@@ -194,6 +194,8 @@ int at_server_init(void);
 void at_server_printf(const char *format, ...);
 void at_server_printfln(const char *format, ...);
 void at_server_print_result(at_result_t result);
+rt_size_t at_server_send(at_server_t server, const char *buf, rt_size_t size);
+rt_size_t at_server_recv(at_server_t server, char *buf, rt_size_t size, rt_int32_t timeout);
 
 /* AT server request arguments parse */
 int at_req_parse_args(const char *req_args, const char *req_expr, ...);

@@ -27,6 +27,8 @@ import sys
 import string
 import utils
 
+from SCons.Script import *
+
 import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import SubElement
 from utils import _make_path_relative
@@ -194,10 +196,13 @@ def IARVersion():
         cmd = os.path.join(path, 'iccarm.exe')
     else:
         print('Error: get IAR version failed. Please update the IAR installation path in rtconfig.py!')
-        return "0.0"
+        exit(-1)
 
     child = subprocess.Popen([cmd, '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     stdout, stderr = child.communicate()
 
     # example stdout: IAR ANSI C/C++ Compiler V8.20.1.14183/W32 for ARM
-    return re.search('[\d\.]+', stdout).group(0)
+    iar_version = re.search('[\d\.]+', stdout).group(0)
+    if GetOption('verbose'):
+        print("IAR version: %s" % iar_version)
+    return iar_version

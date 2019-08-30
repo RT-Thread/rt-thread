@@ -66,6 +66,7 @@
 #define FINSH_CMD_SIZE 80
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_DEFAULT
+#define FINSH_USING_MSH_ONLY
 #define FINSH_ARG_MAX 10
 
 /* Device virtual file system */
@@ -83,6 +84,7 @@
 
 /* POSIX layer and C standard library */
 
+#define RT_USING_LIBC
 
 /* Network */
 
@@ -142,12 +144,6 @@
 
 
 /* samples: kernel and components samples */
-
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
 
 
 /* Hardware Drivers Config */

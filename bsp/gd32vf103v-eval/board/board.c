@@ -41,6 +41,12 @@ void eclic_mtip_handler(void) {
     rt_interrupt_leave();
 }
 
+/* fixed misaligned bug for qemu */
+void *__wrap_memset(void *s, int c, size_t n)
+{
+    return rt_memset(s, c, n);
+}
+
 void rt_hw_board_init(void) {
     systick_config(TMR_FREQ / RT_TICK_PER_SECOND);
 
