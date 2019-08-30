@@ -294,13 +294,13 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_DFS
         default n
 
-    menuconfig BSP_USING_ENCODER
-        bool "Enable Encoder"
+    menuconfig BSP_USING_PULSE_ENCODER
+        bool "Enable Pulse Encoder"
         default n
-        select RT_USING_ENCODER
-        if BSP_USING_ENCODER
-            config BSP_USING_ENCODER4
-                bool "Enable Encoder4"
+        select RT_USING_PULSE_ENCODER
+        if BSP_USING_PULSE_ENCODER
+            config BSP_USING_PULSE_ENCODER4
+                bool "Enable Pulse Encoder4"
                 default n
 
         endif
