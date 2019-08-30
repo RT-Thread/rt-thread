@@ -14,8 +14,8 @@ if GetDepend(['RT_USING_ADC']):
 if GetDepend(['RT_USING_PWM']):
     src = src + ['rt_drv_pwm.c']
     
-if GetDepend(['RT_USING_ENCODER']):
-    src = src + ['encoder.c']
+if GetDepend(['RT_USING_PULSE_ENCODER']):
+    src = src + ['pulse_encoder.c']
 
 if GetDepend(['RT_USING_INPUT_CAPTURE']):
     src = src + ['rt_inputcapture.c']
