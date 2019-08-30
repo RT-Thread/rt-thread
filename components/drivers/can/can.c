@@ -853,7 +853,10 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
             level = rt_hw_interrupt_disable();
             rx_length = can->hdr[hdr].msgs * sizeof(struct rt_can_msg);
             rt_hw_interrupt_enable(level);
-            can->hdr[hdr].filter.ind(&can->parent, can->hdr[hdr].filter.args, hdr, rx_length);
+            if (rx_length)
+            {
+                can->hdr[hdr].filter.ind(&can->parent, can->hdr[hdr].filter.args, hdr, rx_length);
+            }
         }
         else
 #endif
@@ -867,7 +870,10 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
                 rx_length = rt_list_len(&rx_fifo->uselist)* sizeof(struct rt_can_msg);
                 rt_hw_interrupt_enable(level);
 
-                can->parent.rx_indicate(&can->parent, rx_length);
+                if (rx_length)
+                {
+                    can->parent.rx_indicate(&can->parent, rx_length);
+                }
             }
         }
         break;

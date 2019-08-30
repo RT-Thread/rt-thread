@@ -355,7 +355,7 @@ void netdev_set_default(struct netdev *netdev)
             /* set default network interface device in the current network stack */
             netdev->ops->set_default(netdev);
         }
-        LOG_D("Setting default network interface device name(%s) successfully.", netdev->name);       
+        LOG_D("Setting default network interface device name(%s) successfully.", netdev->name);
     }
 }
 
@@ -1037,16 +1037,30 @@ int netdev_cmd_ping(char* target_name, rt_uint32_t times, rt_size_t size)
     {
         /* using first internet up status network interface device */
         netdev = netdev_get_first_by_flags(NETDEV_FLAG_LINK_UP);
-        if (netdev == RT_NULL || NETDEV_PING_IS_COMMONICABLE(netdev) == 0)
+        if (netdev == RT_NULL)
         {
-            rt_kprintf("ping: network interface device get error.\n");
+            rt_kprintf("ping: not found available network interface device.\n");
+            return -RT_ERROR;
+        }
+        else if (netdev->ops == RT_NULL || netdev->ops->ping == RT_NULL)
+        {
+            rt_kprintf("ping: network interface device(%s) not support ping feature.\n", netdev->name);
+            return -RT_ERROR;
+        }
+        else if (!netdev_is_up(netdev) || !netdev_is_link_up(netdev))
+        {
+            rt_kprintf("ping: network interface device(%s) status error.\n", netdev->name);
             return -RT_ERROR;
         }
     }
 
     for (index = 0; index < times; index++)
     {
+        int delay_tick = 0;
+        rt_tick_t start_tick = 0;
+
         rt_memset(&ping_resp, 0x00, sizeof(struct netdev_ping_resp));
+        start_tick = rt_tick_get();
         ret = netdev->ops->ping(netdev, (const char *)target_name, size, NETDEV_PING_RECV_TIMEO, &ping_resp);
         if (ret == -RT_ETIMEOUT)
         {
@@ -1073,7 +1087,9 @@ int netdev_cmd_ping(char* target_name, rt_uint32_t times, rt_size_t size)
             }
         }
 
-        rt_thread_mdelay(NETDEV_PING_DELAY);
+        /* if the response time is more than NETDEV_PING_DELAY, no nead to delay */
+        delay_tick = ((rt_tick_get() - start_tick) > NETDEV_PING_DELAY) || (index == times) ? 0 : NETDEV_PING_DELAY;
+        rt_thread_delay(delay_tick);
     }
 
     return RT_EOK;

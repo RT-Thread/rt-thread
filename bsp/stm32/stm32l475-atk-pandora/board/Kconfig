@@ -19,6 +19,12 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_SFUD
         select RT_SFUD_USING_QSPI
         default n
+    
+    config BSP_USING_SPI_LCD
+        bool "Enable LCD (spi3)"
+        select BSP_USING_SPI
+        select BSP_USING_SPI3
+        default n
 
     config BSP_USING_SDCARD
         bool "Enable SDCARD (spi1)"
@@ -134,6 +140,21 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI2 RX DMA"
                 depends on BSP_USING_SPI2
                 select BSP_SPI2_TX_USING_DMA
+                default n
+                
+            config BSP_USING_SPI3
+                bool "Enable SPI3 BUS"
+                default n
+
+            config BSP_SPI3_TX_USING_DMA
+                bool "Enable SPI3 TX DMA"
+                depends on BSP_USING_SPI3
+                default n
+                
+            config BSP_SPI3_RX_USING_DMA
+                bool "Enable SPI3 RX DMA"
+                depends on BSP_USING_SPI3
+                select BSP_SPI3_TX_USING_DMA
                 default n
         endif
 
