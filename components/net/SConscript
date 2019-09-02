@@ -8,7 +8,7 @@ cwd = GetCurrentDir()
 list = os.listdir(cwd)
 
 # the default version of LWIP is 2.0.2
-if not GetDepend('RT_USING_LWIP141') and not GetDepend('RT_USING_LWIP202') and not GetDepend('RT_USING_LWIP210'):
+if not GetDepend('RT_USING_LWIP141') and not GetDepend('RT_USING_LWIP202') and not GetDepend('RT_USING_LWIP212'):
     AddDepend('RT_USING_LWIP202')
 
 for d in list:
