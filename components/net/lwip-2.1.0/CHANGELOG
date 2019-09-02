@@ -6,6 +6,61 @@ HISTORY
 
   * [Enter new changes just after this line - do not remove this line]
 
+(STABLE-2.1.2):
+
+  ++ Bugfixes:
+
+  2018-11-21: Jens Nielsen
+  * netbiosns.c: fix expecting too large packet (bug #55069)
+
+  2018-11-19: Dirk Ziegelmeier
+  * smtp.c: fix compiling with strict C compatibility because of strnlen (bug #55034)
+
+  2018-11-12: Simon Goldschmidt
+  * tcp.c: fix overflow check in tcp_recved triggering invalid assertion (bug #55015)
+
+  2018-11-12: Simon Goldschmidt
+  * tcp.c: fix a bug in sending RST segments (sent from port 0)
+
+(STABLE-2.1.1):
+
+  ++ Bugfixes:
+
+  2018-11-01: Joan Lledó
+  * sockets.c: fix bad assertion in lwip_poll_dec_sockets_used() (bug #54933)
+
+  2018-11-01: Dirk Ziegelmeier
+  * ip4.c: don't send 127.* to default netif (bug #54670)
+
+  2018-10-23: David Girault
+  * altcp_tls_mbedtls.c: fix use-after free (bug #54774)
+
+  2018-10-23: Ognjen Bjelica, Dirk Ziegelmeier
+  * snmp_scalar.c: Avoid NULL pointer dereference (bug #54886)
+
+  2018-10-23: Simon Goldschmidt
+  * Fix missing standard includes in multiple files
+
+  2018-10-17: Ivan Warren
+  * def.h: fix casting htonX and ntohX to u16_t (bug #54850)
+
+  2018-10-12: Simon Goldschmidt
+  * Revert "tcp_abandon: no need to buffer pcb->local_port" (fix that source port was 0 for RST
+    called when aborting a connection)
+
+  2018-10-11: Jonas Rabenstein
+  * tcp.c: tcp_recved: check for overflow and warn about too big values (patch #9699)              
+
+  2018-10-06: Joan Lledó
+  * sockets.c: alloc_socket(): Check for LWIP_SOCKET_POLL when setting select-
+    related variables (patch #9696)
+
+  2018-10-04: Spencer
+  * tcp.c: Update prev pointer when skipping entries in tcp_slowtmr (patch #9694)
+
+  2018-09-27: Martine Lenders
+  * lowpan6.c: Fix IEEE 802.15.4 address setting (bug #54749)
+
 (STABLE-2.1.0):
 
   ++ New features:

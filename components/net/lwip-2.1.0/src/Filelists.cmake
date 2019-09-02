@@ -10,7 +10,7 @@
 
 set(LWIP_VERSION_MAJOR    "2")
 set(LWIP_VERSION_MINOR    "1")
-set(LWIP_VERSION_REVISION "0")
+set(LWIP_VERSION_REVISION "2")
 # LWIP_VERSION_RC is set to LWIP_RC_RELEASE for official releases
 # LWIP_VERSION_RC is set to LWIP_RC_DEVELOPMENT for Git versions
 # Numbers 1..31 are reserved for release candidates

@@ -65,7 +65,7 @@
 #include "lwip/altcp_tcp.h"
 #include "lwip/altcp_tls.h"
 
-#include <string.h> /* strnlen, memcpy */
+#include <string.h> /* strlen, memcpy */
 #include <stdlib.h>
 
 /** TCP poll interval. Unit is 0.5 sec. */
@@ -353,9 +353,8 @@ smtp_set_server_addr(const char* server)
   LWIP_ASSERT_CORE_LOCKED();
 
   if (server != NULL) {
-    /* strnlen: returns length WITHOUT terminating 0 byte OR
-     * SMTP_MAX_SERVERNAME_LEN+1 when string is too long */
-    len = strnlen(server, SMTP_MAX_SERVERNAME_LEN+1);
+    /* strlen: returns length WITHOUT terminating 0 byte */
+    len = strlen(server);
   }
   if (len > SMTP_MAX_SERVERNAME_LEN) {
     return ERR_MEM;

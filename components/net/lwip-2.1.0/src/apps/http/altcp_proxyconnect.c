@@ -51,6 +51,8 @@
 #include "lwip/mem.h"
 #include "lwip/init.h"
 
+#include <stdio.h>
+
 /** This string is passed in the HTTP header as "User-Agent: " */
 #ifndef ALTCP_PROXYCONNECT_CLIENT_AGENT
 #define ALTCP_PROXYCONNECT_CLIENT_AGENT "lwIP/" LWIP_VERSION_STRING " (http://savannah.nongnu.org/projects/lwip)"

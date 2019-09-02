@@ -1,0 +1,4 @@
+# These files are text and should be normalized
+*.txt     text
+*.c       text
+*.h       text

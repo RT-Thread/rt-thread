@@ -630,11 +630,11 @@ lowpan6_output(struct netif *netif, struct pbuf *q, const ip6_addr_t *ip6addr)
   }
 
   /* Send out the packet using the returned hardware address. */
-  result = lowpan6_hwaddr_to_addr(netif, &dest);
-  if (result != ERR_OK) {
-    MIB2_STATS_NETIF_INC(netif, ifoutdiscards);
-    return result;
-  }
+  dest.addr_len = netif->hwaddr_len;
+  /* XXX: Inferring the length of the source address from the destination address
+   * is not correct for IEEE 802.15.4, but currently we don't get this information
+   * from the neighbor cache */
+  SMEMCPY(dest.addr, hwaddr, netif->hwaddr_len);
   MIB2_STATS_NETIF_INC(netif, ifoutucastpkts);
   return lowpan6_frag(netif, q, &src, &dest);
 }

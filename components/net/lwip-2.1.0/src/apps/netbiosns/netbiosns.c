@@ -111,6 +111,22 @@ PACK_STRUCT_END
 #  include "arch/epstruct.h"
 #endif
 
+/** NetBIOS message question part */
+#ifdef PACK_STRUCT_USE_INCLUDES
+#  include "arch/bpstruct.h"
+#endif
+PACK_STRUCT_BEGIN
+struct netbios_question_hdr {
+  PACK_STRUCT_FLD_8(u8_t  nametype);
+  PACK_STRUCT_FLD_8(u8_t  encname[(NETBIOS_NAME_LEN * 2) + 1]);
+  PACK_STRUCT_FIELD(u16_t type);
+  PACK_STRUCT_FIELD(u16_t cls);
+} PACK_STRUCT_STRUCT;
+PACK_STRUCT_END
+#ifdef PACK_STRUCT_USE_INCLUDES
+#  include "arch/epstruct.h"
+#endif
+
 /** NetBIOS message name part */
 #ifdef PACK_STRUCT_USE_INCLUDES
 #  include "arch/bpstruct.h"
@@ -335,11 +351,11 @@ netbiosns_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p, const ip_addr_t 
   /* if packet is valid */
   if (p != NULL) {
     char   netbios_name[NETBIOS_NAME_LEN + 1];
-    struct netbios_hdr      *netbios_hdr      = (struct netbios_hdr *)p->payload;
-    struct netbios_name_hdr *netbios_name_hdr = (struct netbios_name_hdr *)(netbios_hdr + 1);
+    struct netbios_hdr          *netbios_hdr          = (struct netbios_hdr *)p->payload;
+    struct netbios_question_hdr *netbios_question_hdr = (struct netbios_question_hdr *)(netbios_hdr + 1);
 
     /* is the packet long enough (we need the header in one piece) */
-    if (p->len < (sizeof(struct netbios_hdr) + sizeof(struct netbios_name_hdr))) {
+    if (p->len < (sizeof(struct netbios_hdr) + sizeof(struct netbios_question_hdr))) {
       /* packet too short */
       pbuf_free(p);
       return;
@@ -352,9 +368,9 @@ netbiosns_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p, const ip_addr_t 
           ((netbios_hdr->flags & PP_NTOHS(NETB_HFLAG_RESPONSE)) == 0) &&
           (netbios_hdr->questions == PP_NTOHS(1))) {
         /* decode the NetBIOS name */
-        netbiosns_name_decode((char *)(netbios_name_hdr->encname), netbios_name, sizeof(netbios_name));
+        netbiosns_name_decode((char *)(netbios_question_hdr->encname), netbios_name, sizeof(netbios_name));
         /* check the request type */
-        if (netbios_name_hdr->type == PP_HTONS(NETB_QTYPE_NB)) {
+        if (netbios_question_hdr->type == PP_HTONS(NETB_QTYPE_NB)) {
           /* if the packet is for us */
           if (lwip_strnicmp(netbios_name, NETBIOS_LOCAL_NAME, sizeof(NETBIOS_LOCAL_NAME)) == 0) {
             struct pbuf *q;
@@ -376,10 +392,10 @@ netbiosns_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p, const ip_addr_t 
               resp->resp_hdr.additionalRRs = 0;
 
               /* prepare NetBIOS header datas */
-              MEMCPY( resp->resp_name.encname, netbios_name_hdr->encname, sizeof(netbios_name_hdr->encname));
-              resp->resp_name.nametype     = netbios_name_hdr->nametype;
-              resp->resp_name.type         = netbios_name_hdr->type;
-              resp->resp_name.cls          = netbios_name_hdr->cls;
+              MEMCPY( resp->resp_name.encname, netbios_question_hdr->encname, sizeof(netbios_question_hdr->encname));
+              resp->resp_name.nametype     = netbios_question_hdr->nametype;
+              resp->resp_name.type         = netbios_question_hdr->type;
+              resp->resp_name.cls          = netbios_question_hdr->cls;
               resp->resp_name.ttl          = PP_HTONL(NETBIOS_NAME_TTL);
               resp->resp_name.datalen      = PP_HTONS(sizeof(resp->resp_name.flags) + sizeof(resp->resp_name.addr));
               resp->resp_name.flags        = PP_HTONS(NETB_NFLAG_NODETYPE_BNODE);
@@ -393,7 +409,7 @@ netbiosns_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p, const ip_addr_t 
             }
           }
 #if LWIP_NETBIOS_RESPOND_NAME_QUERY
-        } else if (netbios_name_hdr->type == PP_HTONS(NETB_QTYPE_NBSTAT)) {
+        } else if (netbios_question_hdr->type == PP_HTONS(NETB_QTYPE_NBSTAT)) {
           /* if the packet is for us or general query */
           if (!lwip_strnicmp(netbios_name, NETBIOS_LOCAL_NAME, sizeof(NETBIOS_LOCAL_NAME)) ||
               !lwip_strnicmp(netbios_name, "*", sizeof(NETBIOS_LOCAL_NAME))) {
@@ -419,9 +435,9 @@ netbiosns_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p, const ip_addr_t 
               /* resp->answer_hdr.authorityRRs    = PP_HTONS(0); done by memset() */
               /* resp->answer_hdr.additionalRRs   = PP_HTONS(0); done by memset() */
               /* we will copy the length of the station name */
-              resp->name_size                  = netbios_name_hdr->nametype;
+              resp->name_size                  = netbios_question_hdr->nametype;
               /* we will copy the queried name */
-              MEMCPY(resp->query_name, netbios_name_hdr->encname, (NETBIOS_NAME_LEN * 2) + 1);
+              MEMCPY(resp->query_name, netbios_question_hdr->encname, (NETBIOS_NAME_LEN * 2) + 1);
               /* NBSTAT */
               resp->packet_type                = PP_HTONS(0x21);
               /* Internet name */

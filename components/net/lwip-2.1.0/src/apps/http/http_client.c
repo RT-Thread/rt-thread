@@ -55,6 +55,7 @@
 #include "lwip/init.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #if LWIP_TCP && LWIP_CALLBACK_API

@@ -583,6 +583,7 @@ tcp_abandon(struct tcp_pcb *pcb, int reset)
     tcp_free(pcb);
   } else {
     int send_rst = 0;
+    u16_t local_port = 0;
     enum tcp_state last_state;
     seqno = pcb->snd_nxt;
     ackno = pcb->rcv_nxt;
@@ -597,6 +598,7 @@ tcp_abandon(struct tcp_pcb *pcb, int reset)
       }
     } else {
       send_rst = reset;
+      local_port = pcb->local_port;
       TCP_PCB_REMOVE_ACTIVE(pcb);
     }
     if (pcb->unacked != NULL) {
@@ -613,7 +615,7 @@ tcp_abandon(struct tcp_pcb *pcb, int reset)
     tcp_backlog_accepted(pcb);
     if (send_rst) {
       LWIP_DEBUGF(TCP_RST_DEBUG, ("tcp_abandon: sending RST\n"));
-      tcp_rst(pcb, seqno, ackno, &pcb->local_ip, &pcb->remote_ip, pcb->local_port, pcb->remote_port);
+      tcp_rst(pcb, seqno, ackno, &pcb->local_ip, &pcb->remote_ip, local_port, pcb->remote_port);
     }
     last_state = pcb->state;
     tcp_free(pcb);
@@ -966,6 +968,7 @@ void
 tcp_recved(struct tcp_pcb *pcb, u16_t len)
 {
   u32_t wnd_inflation;
+  tcpwnd_size_t rcv_wnd;
 
   LWIP_ASSERT_CORE_LOCKED();
 
@@ -975,19 +978,13 @@ tcp_recved(struct tcp_pcb *pcb, u16_t len)
   LWIP_ASSERT("don't call tcp_recved for listen-pcbs",
               pcb->state != LISTEN);
 
-  pcb->rcv_wnd = (tcpwnd_size_t)(pcb->rcv_wnd + len);
-  if (pcb->rcv_wnd > TCP_WND_MAX(pcb)) {
+  rcv_wnd = (tcpwnd_size_t)(pcb->rcv_wnd + len);
+  if ((rcv_wnd > TCP_WND_MAX(pcb)) || (rcv_wnd < pcb->rcv_wnd)) {
+    /* window got too big or tcpwnd_size_t overflow */
+    LWIP_DEBUGF(TCP_DEBUG, ("tcp_recved: window got too big or tcpwnd_size_t overflow\n"));
     pcb->rcv_wnd = TCP_WND_MAX(pcb);
-  } else if (pcb->rcv_wnd == 0) {
-    /* rcv_wnd overflowed */
-    if (TCP_STATE_IS_CLOSING(pcb->state)) {
-      /* In passive close, we allow this, since the FIN bit is added to rcv_wnd
-         by the stack itself, since it is not mandatory for an application
-         to call tcp_recved() for the FIN bit, but e.g. the netconn API does so. */
-      pcb->rcv_wnd = TCP_WND_MAX(pcb);
-    } else {
-      LWIP_ASSERT("tcp_recved: len wrapped rcv_wnd\n", 0);
-    }
+  } else  {
+    pcb->rcv_wnd = rcv_wnd;
   }
 
   wnd_inflation = tcp_update_rcv_ann_wnd(pcb);
@@ -1219,6 +1216,7 @@ tcp_slowtmr_start:
     LWIP_ASSERT("tcp_slowtmr: active pcb->state != TIME-WAIT\n", pcb->state != TIME_WAIT);
     if (pcb->last_timer == tcp_timer_ctr) {
       /* skip this pcb, we have already processed it */
+      prev = pcb;
       pcb = pcb->next;
       continue;
     }

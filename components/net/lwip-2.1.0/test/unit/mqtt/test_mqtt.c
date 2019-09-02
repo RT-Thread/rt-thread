@@ -94,6 +94,8 @@ START_TEST(basic_connect)
   p = pbuf_alloc(PBUF_RAW, sizeof(rxbuf), PBUF_REF);
   fail_unless(p != NULL);
   p->payload = rxbuf;
+  /* since we hack the rx path, we have to hack the rx window, too: */
+  client->conn->rcv_wnd -= p->tot_len;
   if (client->conn->recv(client->conn->callback_arg, client->conn, p, ERR_OK) != ERR_OK) {
     pbuf_free(p);
   }

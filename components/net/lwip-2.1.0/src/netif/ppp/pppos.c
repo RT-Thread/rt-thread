@@ -482,7 +482,7 @@ pppos_input(ppp_pcb *ppp, u8_t *s, int l)
   u8_t cur_char;
   u8_t escaped;
   PPPOS_DECL_PROTECT(lev);
-#if PPP_INPROC_IRQ_SAFE
+#if !PPP_INPROC_IRQ_SAFE
   LWIP_ASSERT_CORE_LOCKED();
 #endif
 

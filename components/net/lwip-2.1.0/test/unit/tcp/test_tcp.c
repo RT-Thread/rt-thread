@@ -330,6 +330,53 @@ START_TEST(test_tcp_passive_close)
 }
 END_TEST
 
+START_TEST(test_tcp_active_abort)
+{
+  struct test_tcp_counters counters;
+  struct tcp_pcb* pcb;
+  char data = 0x0f;
+  struct netif netif;
+  struct test_tcp_txcounters txcounters;
+  LWIP_UNUSED_ARG(_i);
+
+  memset(&txcounters, 0, sizeof(txcounters));
+
+  /* initialize local vars */
+  test_tcp_init_netif(&netif, &txcounters, &test_local_ip, &test_netmask);
+
+  /* initialize counter struct */
+  memset(&counters, 0, sizeof(counters));
+  counters.expected_data_len = 1;
+  counters.expected_data = &data;
+
+  /* create and initialize the pcb */
+  pcb = test_tcp_new_counters_pcb(&counters);
+  EXPECT_RET(pcb != NULL);
+  tcp_set_state(pcb, ESTABLISHED, &test_local_ip, &test_remote_ip, TEST_LOCAL_PORT, TEST_REMOTE_PORT);
+
+  /* abort the pcb */
+  EXPECT_RET(txcounters.num_tx_calls == 0);
+  txcounters.copy_tx_packets = 1;
+  tcp_abort(pcb);
+  txcounters.copy_tx_packets = 0;
+  EXPECT(txcounters.num_tx_calls == 1);
+  EXPECT(txcounters.num_tx_bytes == 40U);
+  EXPECT(txcounters.tx_packets != NULL);
+  if (txcounters.tx_packets != NULL) {
+    u16_t ret;
+    struct tcp_hdr tcphdr;
+    ret = pbuf_copy_partial(txcounters.tx_packets, &tcphdr, 20, 20);
+    EXPECT(ret == 20);
+    EXPECT(tcphdr.dest == PP_HTONS(TEST_REMOTE_PORT));
+    EXPECT(tcphdr.src == PP_HTONS(TEST_LOCAL_PORT));
+    pbuf_free(txcounters.tx_packets);
+    txcounters.tx_packets = NULL;
+  }
+
+  /* don't free the pcb here (part of the test!) */
+}
+END_TEST
+
 /** Check that we handle malformed tcp headers, and discard the pbuf(s) */
 START_TEST(test_tcp_malformed_header)
 {
@@ -1627,6 +1674,7 @@ tcp_suite(void)
     TESTFUNC(test_tcp_recv_inseq),
     TESTFUNC(test_tcp_recv_inseq_trim),
     TESTFUNC(test_tcp_passive_close),
+    TESTFUNC(test_tcp_active_abort),
     TESTFUNC(test_tcp_malformed_header),
     TESTFUNC(test_tcp_fast_retx_recover),
     TESTFUNC(test_tcp_fast_rexmit_wraparound),

@@ -541,17 +541,17 @@ alloc_socket(struct netconn *newconn, int accepted)
          after having marked it as used. */
       SYS_ARCH_UNPROTECT(lev);
       sockets[i].lastdata.pbuf = NULL;
-#if LWIP_SOCKET_SELECT
+#if LWIP_SOCKET_SELECT || LWIP_SOCKET_POLL
       LWIP_ASSERT("sockets[i].select_waiting == 0", sockets[i].select_waiting == 0);
       sockets[i].rcvevent   = 0;
       /* TCP sendbuf is empty, but the socket is not yet writable until connected
        * (unless it has been created by accept()). */
       sockets[i].sendevent  = (NETCONNTYPE_GROUP(newconn->type) == NETCONN_TCP ? (accepted != 0) : 1);
       sockets[i].errevent   = 0;
-#endif /* LWIP_SOCKET_SELECT */
-      #ifdef SAL_USING_POSIX
-            rt_wqueue_init(&sockets[i].wait_head);
-      #endif
+#endif /* LWIP_SOCKET_SELECT || LWIP_SOCKET_POLL */
+#ifdef SAL_USING_POSIX
+      rt_wqueue_init(&sockets[i].wait_head);
+#endif
       return i + LWIP_SOCKET_OFFSET;
     }
     SYS_ARCH_UNPROTECT(lev);
@@ -1327,7 +1327,7 @@ lwip_recvmsg(int s, struct msghdr *message, int flags)
     if ((message->msg_iov[i].iov_base == NULL) || ((ssize_t)message->msg_iov[i].iov_len <= 0) ||
         ((size_t)(ssize_t)message->msg_iov[i].iov_len != message->msg_iov[i].iov_len) ||
         ((ssize_t)(buflen + (ssize_t)message->msg_iov[i].iov_len) <= 0)) {
-      sock_set_errno(sock, ERR_VAL);
+      sock_set_errno(sock, err_to_errno(ERR_VAL));
       done_socket(sock);
       return -1;
     }
@@ -2326,7 +2326,6 @@ lwip_poll_dec_sockets_used(struct pollfd *fds, nfds_t nfds)
     /* Go through each struct pollfd in the array. */
     for (fdi = 0; fdi < nfds; fdi++) {
       struct lwip_sock *sock = tryget_socket_unconn_nouse(fds[fdi].fd);
-      LWIP_ASSERT("socket gone at the end of select", sock != NULL);
       if (sock != NULL) {
         done_socket(sock);
       }
