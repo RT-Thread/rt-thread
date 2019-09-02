@@ -3,7 +3,7 @@ import os
 import uuid
 def get_mac_address(): 
     mac=uuid.UUID(int = uuid.getnode()).hex[-12:] 
-    return "#define AUTOMAC".join([str(e/2 + 1) + '  0x' + mac[e:e+2] + '\n' for e in range(5,11,2)])
+    return "#define AUTOMAC".join([str(int(e/2) + 1) + '  0x' + mac[e:e+2] + '\n' for e in range(5,11,2)])
 
 header = '''
 #ifndef __MAC_AUTO_GENERATE_H__
