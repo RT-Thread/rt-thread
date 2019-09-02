@@ -120,6 +120,7 @@ config RT_USING_LWIP
 
             config RT_USING_LWIP212
                 bool "lwIP v2.1.2"
+                select RT_USING_LIBC
         endchoice
 
         if (RT_USING_LWIP212 || RT_USING_LWIP202)
