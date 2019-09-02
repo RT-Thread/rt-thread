@@ -126,8 +126,12 @@ extern "C" {
 #include "drivers/crypto.h"
 #endif
 
-#ifdef RT_USING_ENCODER
-#include "drivers/encoder.h"
+#ifdef RT_USING_PULSE_ENCODER
+#include "drivers/pulse_encoder.h"
+#endif
+
+#ifdef RT_USING_INPUT_CAPTURE
+#include "drivers/rt_inputcapture.h"
 #endif
 
 #ifdef __cplusplus

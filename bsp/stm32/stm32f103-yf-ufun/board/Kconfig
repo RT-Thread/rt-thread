@@ -69,6 +69,29 @@ menu "On-chip Peripheral Drivers"
                 default 16
         endif
 
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+        menuconfig BSP_USING_PWM2
+            bool "Enable timer2 output pwm"
+            default n
+            if BSP_USING_PWM2
+                config BSP_USING_PWM2_CH1
+                    bool "Enable PWM2 channel 1"
+                    default n
+
+                config BSP_USING_PWM2_CH2
+                    bool "Enable PWM2 channel 2"
+                    default n
+
+                config BSP_USING_PWM2_CH3
+                    bool "Enable PWM2 channel 3"
+                    default n
+            endif
+        endif
+
     config BSP_USING_SDIO
         bool "Enable SDCARD (sdio)"
         select RT_USING_SDIO

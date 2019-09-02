@@ -85,6 +85,9 @@ if GetDepend(['BSP_USING_SDIO']):
 if GetDepend(['BSP_USING_USBD_FS']):
     src += ['drv_usbd_fs.c']
 
+if GetDepend(['BSP_USING_PULSE_ENCODER']):
+    src += ['drv_pulse_encoder.c']
+
 src += ['drv_common.c']
 
 path =  [cwd]
