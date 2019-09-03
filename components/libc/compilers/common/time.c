@@ -34,15 +34,6 @@ static long int timezone;
 static const char days[] = "Sun Mon Tue Wed Thu Fri Sat ";
 static const char months[] = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ";
 
-/*
- * Structure returned by gettimeofday(2) system call,
- * and used in other calls.
- */
-struct timeval {
-	long	tv_sec;		/* seconds */
-	long	tv_usec;	/* and microseconds */
-};
-
 /* seconds per day */
 #define SPD 24*60*60
 
@@ -220,6 +211,17 @@ char* ctime(const time_t *timep)
     return asctime(localtime(timep));
 }
 
+#endif /* __IAR_SYSTEMS_ICC__ */
+
+/*
+ * Structure returned by gettimeofday(2) system call,
+ * and used in other calls.
+ */
+struct timeval {
+    long    tv_sec;     /* seconds */
+    long    tv_usec;    /* and microseconds */
+};
+
 #ifdef RT_USING_DEVICE
 int gettimeofday(struct timeval *tp, void *ignore)
 {
@@ -250,7 +252,6 @@ int _gettimeofday( struct timeval *tv, void *ignore)
 }
 #endif
 
-#endif /* __IAR_SYSTEMS_ICC__ */
 
 /**
  * Returns the current time.
