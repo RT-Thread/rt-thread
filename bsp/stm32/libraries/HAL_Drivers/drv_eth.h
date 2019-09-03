@@ -39,7 +39,7 @@
 /*  The PHY interrupt source flag register. */
 #define PHY_INTERRUPT_FLAG_REG      0x1DU
 /*  The PHY interrupt mask register. */
-#define PHY_INTERRUPT_MSAK_REG      0x1EU
+#define PHY_INTERRUPT_MASK_REG      0x1EU
 #define PHY_LINK_DOWN_MASK          (1<<4)
 #define PHY_AUTO_NEGO_COMPLETE_MASK (1<<6)
 
@@ -58,7 +58,7 @@
 /*  The PHY interrupt source flag register. */
 #define PHY_INTERRUPT_FLAG_REG      0x15U
 /*  The PHY interrupt mask register. */
-#define PHY_INTERRUPT_MSAK_REG      0x15U
+#define PHY_INTERRUPT_MASK_REG      0x15U
 #define PHY_LINK_CHANGE_FLAG        (1<<2)
 #define PHY_LINK_CHANGE_MASK        (1<<9)
 #define PHY_INT_MASK                0

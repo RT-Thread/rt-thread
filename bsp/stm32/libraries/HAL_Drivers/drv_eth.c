@@ -552,7 +552,7 @@ static void phy_monitor_thread_entry(void *parameter)
                 rt_pin_irq_enable(PHY_INT_PIN, PIN_IRQ_ENABLE);
 
                 /* enable phy interrupt */
-                HAL_ETH_WritePHYRegister(&EthHandle, PHY_INTERRUPT_MSAK_REG, PHY_INT_MASK);
+                HAL_ETH_WritePHYRegister(&EthHandle, PHY_INTERRUPT_MASK_REG, PHY_INT_MASK);
 
                 break;
 #endif
