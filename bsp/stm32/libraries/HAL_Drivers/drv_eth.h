@@ -48,6 +48,9 @@
 #define PHY_10M_MASK                (1<<2)
 #define PHY_100M_MASK               (1<<3)
 #define PHY_FULL_DUPLEX_MASK        (1<<4)
+#define PHY_Status_SPEED_10M(sr)    ((sr) & PHY_10M_MASK)
+#define PHY_Status_SPEED_100M(sr)   ((sr) & PHY_100M_MASK)
+#define PHY_Status_FULL_DUPLEX(sr)  ((sr) & PHY_FULL_DUPLEX_MASK)
 #endif /* PHY_USING_LAN8720A */
 
 #ifdef PHY_USING_DM9161CEP
@@ -55,6 +58,9 @@
 #define PHY_10M_MASK                ((1<<12) || (1<<13))
 #define PHY_100M_MASK               ((1<<14) || (1<<15))
 #define PHY_FULL_DUPLEX_MASK        ((1<<15) || (1<<13))
+#define PHY_Status_SPEED_10M(sr)    ((sr) & PHY_10M_MASK)
+#define PHY_Status_SPEED_100M(sr)   ((sr) & PHY_100M_MASK)
+#define PHY_Status_FULL_DUPLEX(sr)  ((sr) & PHY_FULL_DUPLEX_MASK)
 /*  The PHY interrupt source flag register. */
 #define PHY_INTERRUPT_FLAG_REG      0x15U
 /*  The PHY interrupt mask register. */
