@@ -2,7 +2,7 @@ import rtconfig
 from building import *
 
 cwd     = GetCurrentDir()
-CPPPATH = [cwd, str(Dir('#'))]
+CPPPATH = [cwd]
 src     = Split("""
 main.c
 """)

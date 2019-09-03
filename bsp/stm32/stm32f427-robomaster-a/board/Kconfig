@@ -28,18 +28,18 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART6 RX DMA"
                 depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
                 default n
-			
-			config BSP_USING_UART3
+
+            config BSP_USING_UART3
                 bool "Enable UART3"
-                default y
+                default n
 
             config BSP_UART3_RX_USING_DMA
                 bool "Enable UART3 RX DMA"
                 depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
                 default n
         endif
-		
-		menuconfig BSP_USING_CAN
+
+        menuconfig BSP_USING_CAN
         bool "Enable CAN"
         default n
         select RT_USING_CAN
@@ -47,17 +47,16 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_CAN1
                 bool "using CAN1"
                 default n
-			config BSP_USING_CAN2
+            config BSP_USING_CAN2
                 bool "using CAN2"
                 default n
         endif
-		
+
     source "../libraries/HAL_Drivers/Kconfig"    
-    
+
 endmenu
 
 menu "Board extended module Drivers"
 
 endmenu
- 
 endmenu
