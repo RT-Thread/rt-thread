@@ -110,6 +110,9 @@ static rt_err_t rt_rtc_config(struct rt_device *dev)
 #endif
     HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 
+    /* Enable RTC Clock */
+    __HAL_RCC_RTC_ENABLE();
+
     RTC_Handler.Instance = RTC;
     if (HAL_RTCEx_BKUPRead(&RTC_Handler, RTC_BKP_DR1) != BKUP_REG_DATA)
     {
