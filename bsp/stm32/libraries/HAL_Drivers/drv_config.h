@@ -66,6 +66,9 @@ extern "C" {
 #elif  defined(SOC_SERIES_STM32L0)
 #include "l0/dma_config.h"
 #include "l0/uart_config.h"
+#elif  defined(SOC_SERIES_STM32L1)
+#include "l1/dma_config.h"
+#include "l1/uart_config.h"
 #elif  defined(SOC_SERIES_STM32L4)
 #include "l4/dma_config.h"
 #include "l4/uart_config.h"
