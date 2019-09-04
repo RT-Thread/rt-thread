@@ -426,7 +426,8 @@ static void phy_linkchange()
         }
     }
 
-    if (phy_speed != phy_speed_new) {
+    if (phy_speed != phy_speed_new)
+    {
         phy_speed = phy_speed_new;
         if (phy_speed & PHY_LINK)
         {
