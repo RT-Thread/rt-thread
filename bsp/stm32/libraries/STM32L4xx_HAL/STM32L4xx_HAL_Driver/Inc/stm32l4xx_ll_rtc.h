@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -265,8 +249,6 @@ typedef struct
 #define LL_RTC_ICSR_INITS                  RTC_ICSR_INITS
 #define LL_RTC_ICSR_SHPF                   RTC_ICSR_SHPF
 #define LL_RTC_ICSR_WUTWF                  RTC_ICSR_WUTWF
-#define LL_RTC_ICSR_ALRBWF                 RTC_ICSR_ALRBWF
-#define LL_RTC_ICSR_ALRAWF                 RTC_ICSR_ALRAWF
 #else /* #if defined(STM32L412xx) || defined(STM32L422xx) */
 #define LL_RTC_ISR_ITSF                    RTC_ISR_ITSF
 #define LL_RTC_ISR_RECALPF                 RTC_ISR_RECALPF
@@ -365,10 +347,11 @@ typedef struct
 /** @defgroup RTC_LL_EC_ALARM_OUTPUTTYPE  ALARM OUTPUT TYPE
   * @{
   */
-#define LL_RTC_ALARM_OUTPUTTYPE_OPENDRAIN  0x00000000U            /*!< RTC_ALARM is open-drain output */
 #if defined(STM32L412xx) || defined(STM32L422xx)
-#define LL_RTC_ALARM_OUTPUTTYPE_PUSHPULL   RTC_CR_TAMPALRM_TYPE   /*!< RTC_ALARM is push-pull output */
+#define LL_RTC_ALARM_OUTPUTTYPE_OPENDRAIN  RTC_CR_TAMPALRM_TYPE   /*!< RTC_ALARM is open-drain output */
+#define LL_RTC_ALARM_OUTPUTTYPE_PUSHPULL   0x00000000U            /*!< RTC_ALARM is push-pull output */
 #else /* #if defined(STM32L412xx) || defined(STM32L422xx) */
+#define LL_RTC_ALARM_OUTPUTTYPE_OPENDRAIN  0x00000000U            /*!< RTC_ALARM is open-drain output */
 #define LL_RTC_ALARM_OUTPUTTYPE_PUSHPULL   RTC_OR_ALARMOUTTYPE    /*!< RTC_ALARM, when mapped on PC13, is push-pull output */
 #endif /* #if defined(STM32L412xx) || defined(STM32L422xx) */
 /**
@@ -1462,7 +1445,7 @@ __STATIC_INLINE void LL_RTC_TIME_SetMinute(RTC_TypeDef *RTCx, uint32_t Minutes)
   */
 __STATIC_INLINE uint32_t LL_RTC_TIME_GetMinute(RTC_TypeDef *RTCx)
 {
-  return ((READ_BIT(RTCx->TR, (RTC_TR_MNT | RTC_TR_MNU)))>> RTC_TR_MNU_Pos);
+  return ((READ_BIT(RTCx->TR, (RTC_TR_MNT | RTC_TR_MNU))) >> RTC_TR_MNU_Pos);
 }
 
 /**
@@ -1783,7 +1766,7 @@ __STATIC_INLINE void LL_RTC_DATE_SetMonth(RTC_TypeDef *RTCx, uint32_t Month)
   */
 __STATIC_INLINE uint32_t LL_RTC_DATE_GetMonth(RTC_TypeDef *RTCx)
 {
-  return ((READ_BIT(RTCx->DR, (RTC_DR_MT | RTC_DR_MU)))>> RTC_DR_MU_Pos);
+  return ((READ_BIT(RTCx->DR, (RTC_DR_MT | RTC_DR_MU))) >> RTC_DR_MU_Pos);
 }
 
 /**
@@ -2553,7 +2536,7 @@ __STATIC_INLINE void LL_RTC_ALMB_ConfigTime(RTC_TypeDef *RTCx, uint32_t Format12
          (((Minutes & 0xF0U) << (RTC_ALRMBR_MNT_Pos - 4U)) | ((Minutes & 0x0FU) << RTC_ALRMBR_MNU_Pos)) | \
          (((Seconds & 0xF0U) << (RTC_ALRMBR_ST_Pos - 4U)) | ((Seconds & 0x0FU) << RTC_ALRMBR_SU_Pos));
 
-  MODIFY_REG(RTCx->ALRMBR, RTC_ALRMBR_PM| RTC_ALRMBR_HT | RTC_ALRMBR_HU | RTC_ALRMBR_MNT | RTC_ALRMBR_MNU | RTC_ALRMBR_ST | RTC_ALRMBR_SU, temp);
+  MODIFY_REG(RTCx->ALRMBR, RTC_ALRMBR_PM | RTC_ALRMBR_HT | RTC_ALRMBR_HU | RTC_ALRMBR_MNT | RTC_ALRMBR_MNU | RTC_ALRMBR_ST | RTC_ALRMBR_SU, temp);
 }
 
 /**
@@ -3712,28 +3695,6 @@ __STATIC_INLINE uint32_t LL_RTC_IsActiveFlag_SHP(RTC_TypeDef *RTCx)
 __STATIC_INLINE uint32_t LL_RTC_IsActiveFlag_WUTW(RTC_TypeDef *RTCx)
 {
   return (READ_BIT(RTCx->ICSR, RTC_ICSR_WUTWF) == (RTC_ICSR_WUTWF));
-}
-
-/**
-  * @brief  Get Alarm B write flag
-  * @rmtoll RTC_ICSR          ALRBWF        LL_RTC_IsActiveFlag_ALRBW
-  * @param  RTCx RTC Instance
-  * @retval State of bit (1 or 0).
-  */
-__STATIC_INLINE uint32_t LL_RTC_IsActiveFlag_ALRBW(RTC_TypeDef *RTCx)
-{
-  return (READ_BIT(RTCx->ICSR, RTC_ICSR_ALRBWF) == (RTC_ICSR_ALRBWF));
-}
-
-/**
-  * @brief  Get Alarm A write flag
-  * @rmtoll RTC_ICSR          ALRAWF        LL_RTC_IsActiveFlag_ALRAW
-  * @param  RTCx RTC Instance
-  * @retval State of bit (1 or 0).
-  */
-__STATIC_INLINE uint32_t LL_RTC_IsActiveFlag_ALRAW(RTC_TypeDef *RTCx)
-{
-  return (READ_BIT(RTCx->ICSR, RTC_ICSR_ALRAWF) == (RTC_ICSR_ALRAWF));
 }
 
 /**

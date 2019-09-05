@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -931,20 +915,26 @@ typedef struct
 #if defined(RCC_PLLSAI1P_DIV_2_31_SUPPORT)
 
 #define __HAL_RCC_PLLSAI1_CONFIG(__PLLSAI1M__, __PLLSAI1N__, __PLLSAI1P__, __PLLSAI1Q__, __PLLSAI1R__) \
-                  WRITE_REG(RCC->PLLSAI1CFGR, ((__PLLSAI1N__) << RCC_PLLSAI1CFGR_PLLSAI1N_Pos) | \
-                   ((((__PLLSAI1Q__) >> 1U) - 1U) << RCC_PLLSAI1CFGR_PLLSAI1Q_Pos) | \
-                   ((((__PLLSAI1R__) >> 1U) - 1U) << RCC_PLLSAI1CFGR_PLLSAI1R_Pos) | \
-                   ((__PLLSAI1P__) << RCC_PLLSAI1CFGR_PLLSAI1PDIV_Pos) | \
-                   (((__PLLSAI1M__) - 1U) << RCC_PLLSAI1CFGR_PLLSAI1M_Pos))
+                  MODIFY_REG(RCC->PLLSAI1CFGR, \
+                             (RCC_PLLSAI1CFGR_PLLSAI1M | RCC_PLLSAI1CFGR_PLLSAI1N | RCC_PLLSAI1CFGR_PLLSAI1P | \
+                              RCC_PLLSAI1CFGR_PLLSAI1Q | RCC_PLLSAI1CFGR_PLLSAI1R | RCC_PLLSAI1CFGR_PLLSAI1PDIV), \
+                             ((((__PLLSAI1M__) - 1U) << RCC_PLLSAI1CFGR_PLLSAI1M_Pos) | \
+                              ((__PLLSAI1N__) << RCC_PLLSAI1CFGR_PLLSAI1N_Pos) | \
+                              ((((__PLLSAI1Q__) >> 1U) - 1U) << RCC_PLLSAI1CFGR_PLLSAI1Q_Pos) | \
+                              ((((__PLLSAI1R__) >> 1U) - 1U) << RCC_PLLSAI1CFGR_PLLSAI1R_Pos) | \
+                              ((uint32_t)(__PLLSAI1P__) << RCC_PLLSAI1CFGR_PLLSAI1PDIV_Pos)))
 
 #else
 
 #define __HAL_RCC_PLLSAI1_CONFIG(__PLLSAI1M__, __PLLSAI1N__, __PLLSAI1P__, __PLLSAI1Q__, __PLLSAI1R__) \
-                  WRITE_REG(RCC->PLLSAI1CFGR, ((__PLLSAI1N__) << RCC_PLLSAI1CFGR_PLLSAI1N_Pos) | \
-                   (((__PLLSAI1P__) >> 4U) << RCC_PLLSAI1CFGR_PLLSAI1P_Pos) | \
-                   ((((__PLLSAI1Q__) >> 1U) - 1U) << RCC_PLLSAI1CFGR_PLLSAI1Q_Pos) | \
-                   ((((__PLLSAI1R__) >> 1U) - 1U) << RCC_PLLSAI1CFGR_PLLSAI1R_Pos) | \
-                   (((__PLLSAI1M__) - 1U) << RCC_PLLSAI1CFGR_PLLSAI1M_Pos))
+                  MODIFY_REG(RCC->PLLSAI1CFGR, \
+                             (RCC_PLLSAI1CFGR_PLLSAI1M | RCC_PLLSAI1CFGR_PLLSAI1N | RCC_PLLSAI1CFGR_PLLSAI1P | \
+                              RCC_PLLSAI1CFGR_PLLSAI1Q | RCC_PLLSAI1CFGR_PLLSAI1R), \
+                             ((((__PLLSAI1M__) - 1U) << RCC_PLLSAI1CFGR_PLLSAI1M_Pos) | \
+                              ((__PLLSAI1N__) << RCC_PLLSAI1CFGR_PLLSAI1N_Pos) | \
+                              ((((__PLLSAI1Q__) >> 1U) - 1U) << RCC_PLLSAI1CFGR_PLLSAI1Q_Pos) | \
+                              ((((__PLLSAI1R__) >> 1U) - 1U) << RCC_PLLSAI1CFGR_PLLSAI1R_Pos) | \
+                              (((__PLLSAI1P__) >> 4U) << RCC_PLLSAI1CFGR_PLLSAI1P_Pos)))
 
 #endif /* RCC_PLLSAI1P_DIV_2_31_SUPPORT */
 
@@ -953,18 +943,24 @@ typedef struct
 #if defined(RCC_PLLSAI1P_DIV_2_31_SUPPORT)
 
 #define __HAL_RCC_PLLSAI1_CONFIG(__PLLSAI1N__, __PLLSAI1P__, __PLLSAI1Q__, __PLLSAI1R__) \
-                  WRITE_REG(RCC->PLLSAI1CFGR, ((__PLLSAI1N__) << RCC_PLLSAI1CFGR_PLLSAI1N_Pos) | \
-                   ((((__PLLSAI1Q__) >> 1U) - 1U) << RCC_PLLSAI1CFGR_PLLSAI1Q_Pos) | \
-                   ((((__PLLSAI1R__) >> 1U) - 1U) << RCC_PLLSAI1CFGR_PLLSAI1R_Pos) | \
-                   ((__PLLSAI1P__) << RCC_PLLSAI1CFGR_PLLSAI1PDIV_Pos))
+                  MODIFY_REG(RCC->PLLSAI1CFGR, \
+                             (RCC_PLLSAI1CFGR_PLLSAI1N | RCC_PLLSAI1CFGR_PLLSAI1P | \
+                              RCC_PLLSAI1CFGR_PLLSAI1Q | RCC_PLLSAI1CFGR_PLLSAI1R | RCC_PLLSAI1CFGR_PLLSAI1PDIV), \
+                             (((__PLLSAI1N__) << RCC_PLLSAI1CFGR_PLLSAI1N_Pos) | \
+                              ((((__PLLSAI1Q__) >> 1U) - 1U) << RCC_PLLSAI1CFGR_PLLSAI1Q_Pos) | \
+                              ((((__PLLSAI1R__) >> 1U) - 1U) << RCC_PLLSAI1CFGR_PLLSAI1R_Pos) | \
+                              ((uint32_t)(__PLLSAI1P__) << RCC_PLLSAI1CFGR_PLLSAI1PDIV_Pos)))
 
 #else
 
 #define __HAL_RCC_PLLSAI1_CONFIG(__PLLSAI1N__, __PLLSAI1P__, __PLLSAI1Q__, __PLLSAI1R__) \
-                  WRITE_REG(RCC->PLLSAI1CFGR, ((__PLLSAI1N__) << RCC_PLLSAI1CFGR_PLLSAI1N_Pos) | \
-                   (((__PLLSAI1P__) >> 4U) << RCC_PLLSAI1CFGR_PLLSAI1P_Pos) | \
-                   ((((__PLLSAI1Q__) >> 1U) - 1U) << RCC_PLLSAI1CFGR_PLLSAI1Q_Pos) | \
-                   ((((__PLLSAI1R__) >> 1U) - 1U) << RCC_PLLSAI1CFGR_PLLSAI1R_Pos))
+                  MODIFY_REG(RCC->PLLSAI1CFGR, \
+                             (RCC_PLLSAI1CFGR_PLLSAI1N | RCC_PLLSAI1CFGR_PLLSAI1P | \
+                              RCC_PLLSAI1CFGR_PLLSAI1Q | RCC_PLLSAI1CFGR_PLLSAI1R), \
+                             (((__PLLSAI1N__) << RCC_PLLSAI1CFGR_PLLSAI1N_Pos) | \
+                              ((((__PLLSAI1Q__) >> 1U) - 1U) << RCC_PLLSAI1CFGR_PLLSAI1Q_Pos) | \
+                              ((((__PLLSAI1R__) >> 1U) - 1U) << RCC_PLLSAI1CFGR_PLLSAI1R_Pos) | \
+                              (((__PLLSAI1P__) >> 4U) << RCC_PLLSAI1CFGR_PLLSAI1P_Pos)))
 
 #endif /* RCC_PLLSAI1P_DIV_2_31_SUPPORT */
 
@@ -1146,27 +1142,36 @@ typedef struct
 # if defined(RCC_PLLSAI2P_DIV_2_31_SUPPORT) && defined(RCC_PLLSAI2Q_DIV_SUPPORT)
 
 #define __HAL_RCC_PLLSAI2_CONFIG(__PLLSAI2M__, __PLLSAI2N__, __PLLSAI2P__, __PLLSAI2Q__, __PLLSAI2R__) \
-                  WRITE_REG(RCC->PLLSAI2CFGR, ((__PLLSAI2N__) << RCC_PLLSAI2CFGR_PLLSAI2N_Pos) | \
-                   ((((__PLLSAI2Q__) >> 1U) - 1U) << RCC_PLLSAI2CFGR_PLLSAI2Q_Pos) | \
-                   ((((__PLLSAI2R__) >> 1U) - 1U) << RCC_PLLSAI2CFGR_PLLSAI2R_Pos) | \
-                   ((__PLLSAI2P__) << RCC_PLLSAI2CFGR_PLLSAI2PDIV_Pos) | \
-                   (((__PLLSAI2M__) - 1U) << RCC_PLLSAI2CFGR_PLLSAI2M_Pos))
+                  MODIFY_REG(RCC->PLLSAI2CFGR, \
+                             (RCC_PLLSAI2CFGR_PLLSAI2M | RCC_PLLSAI2CFGR_PLLSAI2N | RCC_PLLSAI2CFGR_PLLSAI2P | \
+                              RCC_PLLSAI2CFGR_PLLSAI2Q | RCC_PLLSAI2CFGR_PLLSAI2R | RCC_PLLSAI2CFGR_PLLSAI2PDIV), \
+                             ((((__PLLSAI2M__) - 1U) << RCC_PLLSAI2CFGR_PLLSAI2M_Pos) | \
+                              ((__PLLSAI2N__) << RCC_PLLSAI2CFGR_PLLSAI2N_Pos) | \
+                              ((((__PLLSAI2Q__) >> 1U) - 1U) << RCC_PLLSAI2CFGR_PLLSAI2Q_Pos) | \
+                              ((((__PLLSAI2R__) >> 1U) - 1U) << RCC_PLLSAI2CFGR_PLLSAI2R_Pos) | \
+                              ((uint32_t)(__PLLSAI2P__) << RCC_PLLSAI2CFGR_PLLSAI2PDIV_Pos)))
 
 # elif defined(RCC_PLLSAI2P_DIV_2_31_SUPPORT)
 
 #define __HAL_RCC_PLLSAI2_CONFIG(__PLLSAI2M__, __PLLSAI2N__, __PLLSAI2P__, __PLLSAI2R__) \
-                  WRITE_REG(RCC->PLLSAI2CFGR, ((__PLLSAI2N__) << RCC_PLLSAI2CFGR_PLLSAI2N_Pos) | \
-                   ((((__PLLSAI2R__) >> 1U) - 1U) << RCC_PLLSAI2CFGR_PLLSAI2R_Pos) | \
-                   ((__PLLSAI2P__) << RCC_PLLSAI2CFGR_PLLSAI2PDIV_Pos) | \
-                   (((__PLLSAI2M__) - 1U) << RCC_PLLSAI2CFGR_PLLSAI2M_Pos))
+                  MODIFY_REG(RCC->PLLSAI2CFGR, \
+                             (RCC_PLLSAI2CFGR_PLLSAI2M | RCC_PLLSAI2CFGR_PLLSAI2N | RCC_PLLSAI2CFGR_PLLSAI2P | \
+                              RCC_PLLSAI2CFGR_PLLSAI2R | RCC_PLLSAI2CFGR_PLLSAI2PDIV), \
+                             ((((__PLLSAI2M__) - 1U) << RCC_PLLSAI2CFGR_PLLSAI2M_Pos) | \
+                              ((__PLLSAI2N__) << RCC_PLLSAI2CFGR_PLLSAI2N_Pos) | \
+                              ((((__PLLSAI2R__) >> 1U) - 1U) << RCC_PLLSAI2CFGR_PLLSAI2R_Pos) | \
+                              ((uint32_t)(__PLLSAI2P__) << RCC_PLLSAI2CFGR_PLLSAI2PDIV_Pos)))
 
 # else
 
 #define __HAL_RCC_PLLSAI2_CONFIG(__PLLSAI2M__, __PLLSAI2N__, __PLLSAI2P__, __PLLSAI2R__) \
-                  WRITE_REG(RCC->PLLSAI2CFGR, ((__PLLSAI2N__) << RCC_PLLSAI2CFGR_PLLSAI2N_Pos) | \
-                   (((__PLLSAI2P__) >> 4U) << RCC_PLLSAI2CFGR_PLLSAI2P_Pos) | \
-                   ((((__PLLSAI2R__) >> 1U) - 1U) << RCC_PLLSAI2CFGR_PLLSAI2R_Pos) | \
-                   (((__PLLSAI2M__) - 1U) << RCC_PLLSAI2CFGR_PLLSAI2M_Pos))
+                  MODIFY_REG(RCC->PLLSAI2CFGR, \
+                             (RCC_PLLSAI2CFGR_PLLSAI2M | RCC_PLLSAI2CFGR_PLLSAI2N | RCC_PLLSAI2CFGR_PLLSAI2P | \
+                              RCC_PLLSAI2CFGR_PLLSAI2R), \
+                             ((((__PLLSAI2M__) - 1U) << RCC_PLLSAI2CFGR_PLLSAI2M_Pos) | \
+                              ((__PLLSAI2N__) << RCC_PLLSAI2CFGR_PLLSAI2N_Pos) | \
+                              ((((__PLLSAI2R__) >> 1U) - 1U) << RCC_PLLSAI2CFGR_PLLSAI2R_Pos) | \
+                              (((__PLLSAI2P__) >> 4U) << RCC_PLLSAI2CFGR_PLLSAI2P_Pos)))
 
 # endif /* RCC_PLLSAI2P_DIV_2_31_SUPPORT && RCC_PLLSAI2Q_DIV_SUPPORT */
 
@@ -1175,24 +1180,33 @@ typedef struct
 #  if defined(RCC_PLLSAI2P_DIV_2_31_SUPPORT) && defined(RCC_PLLSAI2Q_DIV_SUPPORT)
 
 #define __HAL_RCC_PLLSAI2_CONFIG(__PLLSAI2N__, __PLLSAI2P__, __PLLSAI2Q__, __PLLSAI2R__) \
-                  WRITE_REG(RCC->PLLSAI2CFGR, ((__PLLSAI2N__) << RCC_PLLSAI2CFGR_PLLSAI2N_Pos) | \
-                   ((((__PLLSAI2Q__) >> 1U) - 1U) << RCC_PLLSAI2CFGR_PLLSAI2Q_Pos) | \
-                   ((((__PLLSAI2R__) >> 1U) - 1U) << RCC_PLLSAI2CFGR_PLLSAI2R_Pos) | \
-                   ((__PLLSAI2P__) << RCC_PLLSAI2CFGR_PLLSAI2PDIV_Pos))
+                  MODIFY_REG(RCC->PLLSAI2CFGR, \
+                             (RCC_PLLSAI2CFGR_PLLSAI2N | RCC_PLLSAI2CFGR_PLLSAI2P | \
+                              RCC_PLLSAI2CFGR_PLLSAI2Q | RCC_PLLSAI2CFGR_PLLSAI2R | RCC_PLLSAI2CFGR_PLLSAI2PDIV), \
+                             (((__PLLSAI2N__) << RCC_PLLSAI2CFGR_PLLSAI2N_Pos) | \
+                              ((((__PLLSAI2Q__) >> 1U) - 1U) << RCC_PLLSAI2CFGR_PLLSAI2Q_Pos) | \
+                              ((((__PLLSAI2R__) >> 1U) - 1U) << RCC_PLLSAI2CFGR_PLLSAI2R_Pos) | \
+                              ((uint32_t)(__PLLSAI2P__) << RCC_PLLSAI2CFGR_PLLSAI2PDIV_Pos)))
 
 # elif defined(RCC_PLLSAI2P_DIV_2_31_SUPPORT)
 
 #define __HAL_RCC_PLLSAI2_CONFIG(__PLLSAI2N__, __PLLSAI2P__, __PLLSAI2R__) \
-                  WRITE_REG(RCC->PLLSAI2CFGR, ((__PLLSAI2N__) << RCC_PLLSAI2CFGR_PLLSAI2N_Pos) | \
-                   ((((__PLLSAI2R__) >> 1U) - 1U) << RCC_PLLSAI2CFGR_PLLSAI2R_Pos) | \
-                   ((__PLLSAI2P__) << RCC_PLLSAI2CFGR_PLLSAI2PDIV_Pos))
+                  MODIFY_REG(RCC->PLLSAI2CFGR, \
+                             (RCC_PLLSAI2CFGR_PLLSAI2N | RCC_PLLSAI2CFGR_PLLSAI2P | \
+                              RCC_PLLSAI2CFGR_PLLSAI2R | RCC_PLLSAI2CFGR_PLLSAI2PDIV), \
+                             (((__PLLSAI2N__) << RCC_PLLSAI2CFGR_PLLSAI2N_Pos) | \
+                              ((((__PLLSAI2R__) >> 1U) - 1U) << RCC_PLLSAI2CFGR_PLLSAI2R_Pos) | \
+                              ((uint32_t)(__PLLSAI2P__) << RCC_PLLSAI2CFGR_PLLSAI2PDIV_Pos)))
 
 # else
 
 #define __HAL_RCC_PLLSAI2_CONFIG(__PLLSAI2N__, __PLLSAI2P__, __PLLSAI2R__) \
-                  WRITE_REG(RCC->PLLSAI2CFGR, ((__PLLSAI2N__) << RCC_PLLSAI2CFGR_PLLSAI2N_Pos) | \
-                    (((__PLLSAI2P__) >> 4U) << RCC_PLLSAI2CFGR_PLLSAI2P_Pos) | \
-                    ((((__PLLSAI2R__) >> 1U) - 1U) << RCC_PLLSAI2CFGR_PLLSAI2R_Pos))
+                  MODIFY_REG(RCC->PLLSAI2CFGR, \
+                             (RCC_PLLSAI2CFGR_PLLSAI2N | RCC_PLLSAI2CFGR_PLLSAI2P | \
+                              RCC_PLLSAI2CFGR_PLLSAI2R), \
+                             (((__PLLSAI2N__) << RCC_PLLSAI2CFGR_PLLSAI2N_Pos) | \
+                              ((((__PLLSAI2R__) >> 1U) - 1U) << RCC_PLLSAI2CFGR_PLLSAI2R_Pos) | \
+                              (((__PLLSAI2P__) >> 4U) << RCC_PLLSAI2CFGR_PLLSAI2P_Pos)))
 
 # endif /* RCC_PLLSAI2P_DIV_2_31_SUPPORT && RCC_PLLSAI2Q_DIV_SUPPORT */
 
