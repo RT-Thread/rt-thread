@@ -220,12 +220,6 @@ HAL_StatusTypeDef HAL_DMA_Init(DMA_HandleTypeDef *hdma)
     hdma->DMAmuxRequestGenStatusMask = 0U;
   }
 
-  /* Clean callbacks */
-  hdma->XferCpltCallback = NULL;
-  hdma->XferHalfCpltCallback = NULL;
-  hdma->XferErrorCallback = NULL;
-  hdma->XferAbortCallback = NULL;
-
   /* Initialize the error code */
   hdma->ErrorCode = HAL_DMA_ERROR_NONE;
 
@@ -292,6 +286,12 @@ HAL_StatusTypeDef HAL_DMA_DeInit(DMA_HandleTypeDef *hdma)
     /* Clear the DMAMUX request generator overrun flag */
     hdma->DMAmuxRequestGenStatus->RGCFR = hdma->DMAmuxRequestGenStatusMask;
   }
+
+  /* Clean callbacks */
+  hdma->XferCpltCallback = NULL;
+  hdma->XferHalfCpltCallback = NULL;
+  hdma->XferErrorCallback = NULL;
+  hdma->XferAbortCallback = NULL;
 
   hdma->DMAmuxRequestGen = 0U;
   hdma->DMAmuxRequestGenStatus = 0U;

@@ -45,6 +45,8 @@
 #if defined(STM32G081xx) || defined(STM32G071xx) || defined(STM32G070xx)
 #define IS_LL_RCC_USART_CLKSOURCE(__VALUE__)  (((__VALUE__) == LL_RCC_USART1_CLKSOURCE) \
                                             || ((__VALUE__) == LL_RCC_USART2_CLKSOURCE))
+#elif defined(STM32G041xx) || defined(STM32G031xx) || defined(STM32G030xx)
+#define IS_LL_RCC_USART_CLKSOURCE(__VALUE__)  ((__VALUE__) == LL_RCC_USART1_CLKSOURCE)
 #endif
 
 #if defined(LPUART1)

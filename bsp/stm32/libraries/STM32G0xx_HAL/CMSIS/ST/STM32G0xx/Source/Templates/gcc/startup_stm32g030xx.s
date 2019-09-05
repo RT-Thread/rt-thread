@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file      startup_stm32g030xx.s
   * @author    MCD Application Team
-  * @brief     STM32G030xx devices vector table for Atollic TrueSTUDIO toolchain.
+  * @brief     STM32G030xx devices vector table for SW4STM32 toolchain.
   *            This module performs:
   *                - Set the initial SP
   *                - Set the initial PC == Reset_Handler,
@@ -14,8 +14,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2019 STMicroelectronics. All rights reserved.
   *
   * This software component is licensed by ST under BSD 3-Clause license,
   * the "License"; You may not use this file except in compliance with the 
@@ -85,9 +84,9 @@ LoopFillZerobss:
 /* Call the clock system intitialization function.*/
   bl  SystemInit
 /* Call static constructors */
-  bl __libc_init_array
+/* bl __libc_init_array */
 /* Call the application's entry point.*/
-  bl main
+  bl entry
 
 LoopForever:
     b LoopForever
@@ -218,8 +217,8 @@ g_pfnVectors:
   .weak      DMA1_Channel2_3_IRQHandler
   .thumb_set DMA1_Channel2_3_IRQHandler,Default_Handler
 
-  .weak      DMA1_Ch4_7_DMAMUX1_OVR_IRQHandler
-  .thumb_set DMA1_Ch4_7_DMAMUX1_OVR_IRQHandler,Default_Handler
+  .weak      DMA1_Ch4_5_DMAMUX1_OVR_IRQHandler
+  .thumb_set DMA1_Ch4_5_DMAMUX1_OVR_IRQHandler,Default_Handler
 
   .weak      ADC1_IRQHandler
   .thumb_set ADC1_IRQHandler,Default_Handler

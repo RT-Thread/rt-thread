@@ -31,7 +31,7 @@
   * @{
   */
 
-#if defined (GPIOA) || defined (GPIOB) || defined (GPIOC) || defined (GPIOD) || defined (GPIOF)
+#if defined (GPIOA) || defined (GPIOB) || defined (GPIOC) || defined (GPIOD) || defined (GPIOE) || defined (GPIOF)
 
 /** @addtogroup GPIO_LL
   * @{
@@ -128,6 +128,13 @@ ErrorStatus LL_GPIO_DeInit(GPIO_TypeDef *GPIOx)
     LL_IOP_GRP1_ReleaseReset(LL_IOP_GRP1_PERIPH_GPIOD);
   }
 #endif /* GPIOD */
+#if defined(GPIOE)
+  else if (GPIOx == GPIOE)
+  {
+    LL_IOP_GRP1_ForceReset(LL_IOP_GRP1_PERIPH_GPIOE);
+    LL_IOP_GRP1_ReleaseReset(LL_IOP_GRP1_PERIPH_GPIOE);
+  }
+#endif /* GPIOE */
 #if defined(GPIOF)
   else if (GPIOx == GPIOF)
   {
@@ -251,7 +258,7 @@ void LL_GPIO_StructInit(LL_GPIO_InitTypeDef *GPIO_InitStruct)
   * @}
   */
 
-#endif /* defined (GPIOA) || defined (GPIOB) || defined (GPIOC) || defined (GPIOD) || defined (GPIOF) */
+#endif /* defined (GPIOA) || defined (GPIOB) || defined (GPIOC) || defined (GPIOD) || defined (GPIOE) || defined (GPIOF) */
 
 /**
   * @}
