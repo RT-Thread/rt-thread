@@ -4,31 +4,15 @@
   * @author  MCD Application Team
   * @brief   TIM LL module driver.
   ******************************************************************************
-  * @attention
+    * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -221,9 +205,9 @@ ErrorStatus LL_TIM_DeInit(TIM_TypeDef *TIMx)
 void LL_TIM_StructInit(LL_TIM_InitTypeDef *TIM_InitStruct)
 {
   /* Set the default configuration */
-  TIM_InitStruct->Prescaler         = (uint16_t)0x0000U;
+  TIM_InitStruct->Prescaler         = (uint16_t)0x0000;
   TIM_InitStruct->CounterMode       = LL_TIM_COUNTERMODE_UP;
-  TIM_InitStruct->Autoreload        = (uint32_t)0xFFFFFFFFU;
+  TIM_InitStruct->Autoreload        = 0xFFFFFFFFU;
   TIM_InitStruct->ClockDivision     = LL_TIM_CLOCKDIVISION_DIV1;
 }
 
@@ -237,7 +221,7 @@ void LL_TIM_StructInit(LL_TIM_InitTypeDef *TIM_InitStruct)
   */
 ErrorStatus LL_TIM_Init(TIM_TypeDef *TIMx, LL_TIM_InitTypeDef *TIM_InitStruct)
 {
-  uint32_t tmpcr1 = 0U;
+  uint32_t tmpcr1;
 
   /* Check the parameters */
   assert_param(IS_TIM_INSTANCE(TIMx));
@@ -284,7 +268,7 @@ void LL_TIM_OC_StructInit(LL_TIM_OC_InitTypeDef *TIM_OC_InitStruct)
   /* Set the default configuration */
   TIM_OC_InitStruct->OCMode       = LL_TIM_OCMODE_FROZEN;
   TIM_OC_InitStruct->OCState      = LL_TIM_OCSTATE_DISABLE;
-  TIM_OC_InitStruct->CompareValue = (uint32_t)0x00000000U;
+  TIM_OC_InitStruct->CompareValue = 0x00000000U;
   TIM_OC_InitStruct->OCPolarity   = LL_TIM_OCPOLARITY_HIGH;
 }
 
@@ -408,8 +392,8 @@ void LL_TIM_ENCODER_StructInit(LL_TIM_ENCODER_InitTypeDef *TIM_EncoderInitStruct
   */
 ErrorStatus LL_TIM_ENCODER_Init(TIM_TypeDef *TIMx, LL_TIM_ENCODER_InitTypeDef *TIM_EncoderInitStruct)
 {
-  uint32_t tmpccmr1 = 0U;
-  uint32_t tmpccer = 0U;
+  uint32_t tmpccmr1;
+  uint32_t tmpccer;
 
   /* Check the parameters */
   assert_param(IS_TIM_ENCODER_INTERFACE_INSTANCE(TIMx));
@@ -462,7 +446,6 @@ ErrorStatus LL_TIM_ENCODER_Init(TIM_TypeDef *TIMx, LL_TIM_ENCODER_InitTypeDef *T
   return SUCCESS;
 }
 
-
 /**
   * @}
   */
@@ -485,9 +468,9 @@ ErrorStatus LL_TIM_ENCODER_Init(TIM_TypeDef *TIMx, LL_TIM_ENCODER_InitTypeDef *T
   */
 static ErrorStatus OC1Config(TIM_TypeDef *TIMx, LL_TIM_OC_InitTypeDef *TIM_OCInitStruct)
 {
-  uint32_t tmpccmr1 = 0U;
-  uint32_t tmpccer = 0U;
-  uint32_t tmpcr2 = 0U;
+  uint32_t tmpccmr1;
+  uint32_t tmpccer;
+  uint32_t tmpcr2;
 
   /* Check the parameters */
   assert_param(IS_TIM_CC1_INSTANCE(TIMx));
@@ -544,9 +527,9 @@ static ErrorStatus OC1Config(TIM_TypeDef *TIMx, LL_TIM_OC_InitTypeDef *TIM_OCIni
   */
 static ErrorStatus OC2Config(TIM_TypeDef *TIMx, LL_TIM_OC_InitTypeDef *TIM_OCInitStruct)
 {
-  uint32_t tmpccmr1 = 0U;
-  uint32_t tmpccer = 0U;
-  uint32_t tmpcr2 = 0U;
+  uint32_t tmpccmr1;
+  uint32_t tmpccer;
+  uint32_t tmpcr2;
 
   /* Check the parameters */
   assert_param(IS_TIM_CC2_INSTANCE(TIMx));
@@ -603,9 +586,9 @@ static ErrorStatus OC2Config(TIM_TypeDef *TIMx, LL_TIM_OC_InitTypeDef *TIM_OCIni
   */
 static ErrorStatus OC3Config(TIM_TypeDef *TIMx, LL_TIM_OC_InitTypeDef *TIM_OCInitStruct)
 {
-  uint32_t tmpccmr2 = 0U;
-  uint32_t tmpccer = 0U;
-  uint32_t tmpcr2 = 0U;
+  uint32_t tmpccmr2;
+  uint32_t tmpccer;
+  uint32_t tmpcr2;
 
   /* Check the parameters */
   assert_param(IS_TIM_CC3_INSTANCE(TIMx));
@@ -662,9 +645,9 @@ static ErrorStatus OC3Config(TIM_TypeDef *TIMx, LL_TIM_OC_InitTypeDef *TIM_OCIni
   */
 static ErrorStatus OC4Config(TIM_TypeDef *TIMx, LL_TIM_OC_InitTypeDef *TIM_OCInitStruct)
 {
-  uint32_t tmpccmr2 = 0U;
-  uint32_t tmpccer = 0U;
-  uint32_t tmpcr2 = 0U;
+  uint32_t tmpccmr2;
+  uint32_t tmpccer;
+  uint32_t tmpcr2;
 
   /* Check the parameters */
   assert_param(IS_TIM_CC4_INSTANCE(TIMx));

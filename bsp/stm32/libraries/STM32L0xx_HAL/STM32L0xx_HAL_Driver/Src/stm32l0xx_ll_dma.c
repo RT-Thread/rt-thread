@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -81,7 +65,7 @@
                                                  ((__VALUE__) == LL_DMA_MDATAALIGN_HALFWORD)  || \
                                                  ((__VALUE__) == LL_DMA_MDATAALIGN_WORD))
 
-#define IS_LL_DMA_NBDATA(__VALUE__)             ((__VALUE__)  <= (uint32_t)0x0000FFFFU)
+#define IS_LL_DMA_NBDATA(__VALUE__)             ((__VALUE__)  <=  0x0000FFFFU)
 
 #define IS_LL_DMA_PERIPHREQUEST(__VALUE__)      (((__VALUE__) == LL_DMA_REQUEST_0)  || \
                                                  ((__VALUE__) == LL_DMA_REQUEST_1)  || \
@@ -163,7 +147,7 @@
   *          - SUCCESS: DMA registers are de-initialized
   *          - ERROR: DMA registers are not de-initialized
   */
-uint32_t LL_DMA_DeInit(DMA_TypeDef *DMAx, uint32_t Channel)
+ErrorStatus LL_DMA_DeInit(DMA_TypeDef *DMAx, uint32_t Channel)
 {
   DMA_Channel_TypeDef *tmp = (DMA_Channel_TypeDef *)DMA1_Channel1;
   ErrorStatus status = SUCCESS;
@@ -288,7 +272,7 @@ uint32_t LL_DMA_DeInit(DMA_TypeDef *DMAx, uint32_t Channel)
   *          - SUCCESS: DMA registers are initialized
   *          - ERROR: Not applicable
   */
-uint32_t LL_DMA_Init(DMA_TypeDef *DMAx, uint32_t Channel, LL_DMA_InitTypeDef *DMA_InitStruct)
+ErrorStatus LL_DMA_Init(DMA_TypeDef *DMAx, uint32_t Channel, LL_DMA_InitTypeDef *DMA_InitStruct)
 {
   /* Check the DMA Instance DMAx and Channel parameters*/
   assert_param(IS_LL_DMA_ALL_CHANNEL_INSTANCE(DMAx, Channel));
@@ -343,7 +327,7 @@ uint32_t LL_DMA_Init(DMA_TypeDef *DMAx, uint32_t Channel, LL_DMA_InitTypeDef *DM
   LL_DMA_SetDataLength(DMAx, Channel, DMA_InitStruct->NbData);
 
   /*--------------------------- DMAx CSELR Configuration -----------------------
-   * Configure the peripheral base address with parameter :
+   * Configure the DMA request for DMA instance on Channel x with parameter :
    * - PeriphRequest: DMA_CSELR[31:0] bits
    */
   LL_DMA_SetPeriphRequest(DMAx, Channel, DMA_InitStruct->PeriphRequest);
@@ -359,15 +343,15 @@ uint32_t LL_DMA_Init(DMA_TypeDef *DMAx, uint32_t Channel, LL_DMA_InitTypeDef *DM
 void LL_DMA_StructInit(LL_DMA_InitTypeDef *DMA_InitStruct)
 {
   /* Set DMA_InitStruct fields to default values */
-  DMA_InitStruct->PeriphOrM2MSrcAddress  = (uint32_t)0x00000000U;
-  DMA_InitStruct->MemoryOrM2MDstAddress  = (uint32_t)0x00000000U;
+  DMA_InitStruct->PeriphOrM2MSrcAddress  = 0x00000000U;
+  DMA_InitStruct->MemoryOrM2MDstAddress  = 0x00000000U;
   DMA_InitStruct->Direction              = LL_DMA_DIRECTION_PERIPH_TO_MEMORY;
   DMA_InitStruct->Mode                   = LL_DMA_MODE_NORMAL;
   DMA_InitStruct->PeriphOrM2MSrcIncMode  = LL_DMA_PERIPH_NOINCREMENT;
   DMA_InitStruct->MemoryOrM2MDstIncMode  = LL_DMA_MEMORY_NOINCREMENT;
   DMA_InitStruct->PeriphOrM2MSrcDataSize = LL_DMA_PDATAALIGN_BYTE;
   DMA_InitStruct->MemoryOrM2MDstDataSize = LL_DMA_MDATAALIGN_BYTE;
-  DMA_InitStruct->NbData                 = (uint32_t)0x00000000U;
+  DMA_InitStruct->NbData                 = 0x00000000U;
   DMA_InitStruct->PeriphRequest          = LL_DMA_REQUEST_0;
   DMA_InitStruct->Priority               = LL_DMA_PRIORITY_LOW;
 }
