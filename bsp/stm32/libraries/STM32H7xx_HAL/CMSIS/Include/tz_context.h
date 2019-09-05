@@ -1,5 +1,11 @@
+/******************************************************************************
+ * @file     tz_context.h
+ * @brief    Context Management for Armv8-M TrustZone
+ * @version  V1.0.1
+ * @date     10. January 2018
+ ******************************************************************************/
 /*
- * Copyright (c) 2015-2016 ARM Limited. All rights reserved.
+ * Copyright (c) 2017-2018 Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,19 +20,14 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * ----------------------------------------------------------------------------
- *
- * $Date:        21. September 2016
- * $Revision:    V1.0
- *
- * Project:      TrustZone for ARMv8-M
- * Title:        Context Management for ARMv8-M TrustZone
- *
- * Version 1.0
- *    Initial Release
- *---------------------------------------------------------------------------*/
-  
+ */
+
+#if   defined ( __ICCARM__ )
+  #pragma system_include         /* treat file as system include file for MISRA check */
+#elif defined (__clang__)
+  #pragma clang system_header   /* treat file as system include file */
+#endif
+
 #ifndef TZ_CONTEXT_H
 #define TZ_CONTEXT_H
  
