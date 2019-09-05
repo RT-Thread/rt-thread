@@ -99,6 +99,28 @@ rt_err_t rt_spi_configure(struct rt_spi_device        *device,
     return RT_EOK;
 }
 
+rt_err_t rt_spi_device_occupy_bus(struct rt_spi_device *device)
+{
+    rt_err_t result;
+
+    result = RT_EOK;
+    if (device->bus->owner != device)
+    {
+        /* not the same owner as current, re-configure SPI bus */
+        result = device->bus->ops->configure(device, &device->config);
+        if (result == RT_EOK)
+        {
+            /* set SPI bus owner */
+            device->bus->owner = device;
+        }
+        else
+        {
+            /* configure SPI bus failed */
+            result = -RT_EIO;
+        }
+    }
+}
+
 rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
                                const void           *send_buf1,
                                rt_size_t             send_length1,
@@ -114,21 +136,10 @@ rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
     result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
     if (result == RT_EOK)
     {
-        if (device->bus->owner != device)
+        result = rt_spi_device_occupy_bus(device);
+        if (result == -RT_EIO) 
         {
-            /* not the same owner as current, re-configure SPI bus */
-            result = device->bus->ops->configure(device, &device->config);
-            if (result == RT_EOK)
-            {
-                /* set SPI bus owner */
-                device->bus->owner = device;
-            }
-            else
-            {
-                /* configure SPI bus failed */
-                result = -RT_EIO;
-                goto __exit;
-            }
+            goto __exit;
         }
 
         /* send data1 */
@@ -189,21 +200,10 @@ rt_err_t rt_spi_send_then_recv(struct rt_spi_device *device,
     result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
     if (result == RT_EOK)
     {
-        if (device->bus->owner != device)
+        result = rt_spi_device_occupy_bus(device);
+        if (result == -RT_EIO) 
         {
-            /* not the same owner as current, re-configure SPI bus */
-            result = device->bus->ops->configure(device, &device->config);
-            if (result == RT_EOK)
-            {
-                /* set SPI bus owner */
-                device->bus->owner = device;
-            }
-            else
-            {
-                /* configure SPI bus failed */
-                result = -RT_EIO;
-                goto __exit;
-            }
+            goto __exit;
         }
 
         /* send data */
@@ -263,22 +263,13 @@ rt_size_t rt_spi_transfer(struct rt_spi_device *device,
     result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
     if (result == RT_EOK)
     {
-        if (device->bus->owner != device)
+        result = rt_spi_device_occupy_bus(device);
+        if (result == -RT_EIO) 
         {
-            /* not the same owner as current, re-configure SPI bus */
-            result = device->bus->ops->configure(device, &device->config);
-            if (result == RT_EOK)
-            {
-                /* set SPI bus owner */
-                device->bus->owner = device;
-            }
-            else
-            {
-                /* configure SPI bus failed */
-                rt_set_errno(-RT_EIO);
-                result = 0;
-                goto __exit;
-            }
+            /* configure SPI bus failed */
+            rt_set_errno(-RT_EIO);
+            result = 0;
+            goto __exit;
         }
 
         /* initial message */
@@ -334,24 +325,13 @@ struct rt_spi_message *rt_spi_transfer_message(struct rt_spi_device  *device,
     /* reset errno */
     rt_set_errno(RT_EOK);
 
-    /* configure SPI bus */
-    if (device->bus->owner != device)
+    result = rt_spi_device_occupy_bus(device);
+    if (result == -RT_EIO) 
     {
-        /* not the same owner as current, re-configure SPI bus */
-        result = device->bus->ops->configure(device, &device->config);
-        if (result == RT_EOK)
-        {
-            /* set SPI bus owner */
-            device->bus->owner = device;
-        }
-        else
-        {
-            /* configure SPI bus failed */
-            rt_set_errno(-RT_EIO);
-            goto __exit;
-        }
+        rt_set_errno(-RT_EIO);
+        goto __exit;
     }
-
+    
     /* transmit each SPI message */
     while (index != RT_NULL)
     {
@@ -391,25 +371,14 @@ rt_err_t rt_spi_take_bus(struct rt_spi_device *device)
     /* reset errno */
     rt_set_errno(RT_EOK);
 
-    /* configure SPI bus */
-    if (device->bus->owner != device)
+    result = rt_spi_device_occupy_bus(device);
+    if (result == -RT_EIO) 
     {
-        /* not the same owner as current, re-configure SPI bus */
-        result = device->bus->ops->configure(device, &device->config);
-        if (result == RT_EOK)
-        {
-            /* set SPI bus owner */
-            device->bus->owner = device;
-        }
-        else
-        {
-            /* configure SPI bus failed */
-            rt_set_errno(-RT_EIO);
-            /* release lock */
-            rt_mutex_release(&(device->bus->lock));
+        rt_set_errno(-RT_EIO);
 
-            return -RT_EIO;
-        }
+        /* release lock */
+        rt_mutex_release(&(device->bus->lock));
+        return -RT_EIO;
     }
 
     return result;
