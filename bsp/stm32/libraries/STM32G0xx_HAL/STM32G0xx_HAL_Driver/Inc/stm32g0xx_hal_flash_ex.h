@@ -6,11 +6,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -44,8 +44,8 @@ extern "C" {
 /** @defgroup FLASHEx_Empty_Check FLASHEx Empty Check
   * @{
   */
-#define FLASH_PROG_NOT_EMPTY                0x00000000u         /*!< 1st location in Flash is programmed */
-#define FLASH_PROG_EMPTY                    FLASH_ACR_PROGEMPTY /*!< 1st location in Flash is empty */
+#define FLASH_PROG_NOT_EMPTY                0x00000000u          /*!< 1st location in Flash is programmed */
+#define FLASH_PROG_EMPTY                    FLASH_ACR_PROGEMPTY  /*!< 1st location in Flash is empty */
 /**
   * @}
   */
@@ -86,8 +86,8 @@ void              HAL_FLASHEx_OBGetConfig(FLASH_OBProgramInitTypeDef *pOBInit);
 /** @defgroup FLASHEx_Private_Constants FLASHEx Private Constants
   * @{
   */
-#define FLASH_PCROP_GRANULARITY_OFFSET             9u
-#define FLASH_PCROP_GRANULARITY                    (1u << FLASH_PCROP_GRANULARITY_OFFSET)
+#define FLASH_PCROP_GRANULARITY_OFFSET             9u                                        /*!< FLASH Code Readout Protection granularity offset */
+#define FLASH_PCROP_GRANULARITY                    (1UL << FLASH_PCROP_GRANULARITY_OFFSET)   /*!< FLASH Code Readout Protection granularity, 512 Bytes */
 /**
   * @}
   */
@@ -97,7 +97,7 @@ void              HAL_FLASHEx_OBGetConfig(FLASH_OBProgramInitTypeDef *pOBInit);
   *  @{
   */
 #define IS_FLASH_EMPTY_CHECK(__VALUE__)     (((__VALUE__) == FLASH_PROG_EMPTY) || ((__VALUE__) == FLASH_PROG_NOT_EMPTY))
-
+void              FLASH_PageErase(uint32_t Page);
 /**
   * @}
   */

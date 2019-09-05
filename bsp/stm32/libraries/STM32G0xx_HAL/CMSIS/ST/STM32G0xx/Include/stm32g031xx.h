@@ -14,7 +14,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -22,7 +22,7 @@
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
-  ******************************************************************************
+  ******************************************************************************  
   */
 
 /** @addtogroup CMSIS_Device
@@ -99,7 +99,7 @@ typedef enum
   TIM17_IRQn                  = 22,     /*!< TIM17 global Interrupt                                            */
   I2C1_IRQn                   = 23,     /*!< I2C1 Interrupt  (combined with EXTI 23)                           */
   I2C2_IRQn                   = 24,     /*!< I2C2 Interrupt                                                    */
-  SPI1_IRQn                   = 25,     /*!< SPI1 Interrupt                                                    */
+  SPI1_IRQn                   = 25,     /*!< SPI1/I2S1 Interrupt                                               */
   SPI2_IRQn                   = 26,     /*!< SPI2 Interrupt                                                    */
   USART1_IRQn                 = 27,     /*!< USART1 Interrupt                                                  */
   USART2_IRQn                 = 28,     /*!< USART2 Interrupt                                                  */
@@ -148,6 +148,7 @@ typedef struct
 {
   __IO uint32_t CCR;          /*!< ADC common configuration register,             Address offset: ADC1 base address + 0x308 */
 } ADC_Common_TypeDef;
+
 
 
 
@@ -550,7 +551,6 @@ typedef struct
 #define SRAM_BASE             (0x20000000UL)  /*!< SRAM base address */
 #define PERIPH_BASE           (0x40000000UL)  /*!< Peripheral base address */
 #define IOPORT_BASE           (0x50000000UL)  /*!< IOPORT base address */
-
 #define SRAM_SIZE_MAX         (0x00002000UL)  /*!< maximum SRAM size (up to 8 KBytes) */
 
 /*!< Peripheral memory map */
@@ -615,7 +615,6 @@ typedef struct
 
 #define DMAMUX1_ChannelStatus_BASE      (DMAMUX1_BASE + 0x00000080UL)
 #define DMAMUX1_RequestGenStatus_BASE   (DMAMUX1_BASE + 0x00000140UL)
-#define DMAMUX1_IdRegisters_BASE        (DMAMUX1_BASE + 0x000003EC)
 
 /*!< IOPORT */
 #define GPIOA_BASE            (IOPORT_BASE + 0x00000000UL)
@@ -661,7 +660,6 @@ typedef struct
 #define TIM16               ((TIM_TypeDef *) TIM16_BASE)
 #define TIM17               ((TIM_TypeDef *) TIM17_BASE)
 #define DMA1                ((DMA_TypeDef *) DMA1_BASE)
-
 #define FLASH               ((FLASH_TypeDef *) FLASH_R_BASE)
 #define CRC                 ((CRC_TypeDef *) CRC_BASE)
 #define GPIOA               ((GPIO_TypeDef *) GPIOA_BASE)
@@ -680,7 +678,6 @@ typedef struct
 #define DMA1_Channel3       ((DMA_Channel_TypeDef *) DMA1_Channel3_BASE)
 #define DMA1_Channel4       ((DMA_Channel_TypeDef *) DMA1_Channel4_BASE)
 #define DMA1_Channel5       ((DMA_Channel_TypeDef *) DMA1_Channel5_BASE)
-
 #define DMAMUX1                ((DMAMUX_Channel_TypeDef *) DMAMUX1_BASE)
 #define DMAMUX1_Channel0       ((DMAMUX_Channel_TypeDef *) DMAMUX1_Channel0_BASE)
 #define DMAMUX1_Channel1       ((DMAMUX_Channel_TypeDef *) DMAMUX1_Channel1_BASE)
@@ -695,7 +692,6 @@ typedef struct
 
 #define DMAMUX1_ChannelStatus      ((DMAMUX_ChannelStatus_TypeDef *) DMAMUX1_ChannelStatus_BASE)
 #define DMAMUX1_RequestGenStatus   ((DMAMUX_RequestGenStatus_TypeDef *) DMAMUX1_RequestGenStatus_BASE)
-#define DMAMUX1_IdRegisters        ((DMAMUX_IdRegisters_TypeDef *) DMAMUX1_IdRegisters_BASE)
 
 #define DBG              ((DBG_TypeDef *) DBG_BASE)
 
@@ -1323,9 +1319,10 @@ typedef struct
 #define ADC_CCR_VBATEN_Msk             (0x1UL << ADC_CCR_VBATEN_Pos)           /*!< 0x01000000 */
 #define ADC_CCR_VBATEN                 ADC_CCR_VBATEN_Msk                      /*!< ADC internal path to battery voltage enable */
 
+/* Legacy */
 #define ADC_CCR_LFMEN_Pos              (25U)
 #define ADC_CCR_LFMEN_Msk              (0x1UL << ADC_CCR_LFMEN_Pos)            /*!< 0x02000000 */
-#define ADC_CCR_LFMEN                  ADC_CCR_LFMEN_Msk                       /*!< ADC common clock low frequency mode */
+#define ADC_CCR_LFMEN                  ADC_CCR_LFMEN_Msk                       /*!< Legacy feature, useless on STM32G0 (ADC common clock low frequency mode is automatically managed by ADC peripheral on STM32G0) */
 
 
 /******************************************************************************/
@@ -1771,27 +1768,6 @@ typedef struct
 #define DMAMUX_RGCFR_COF3_Msk                  (0x1UL << DMAMUX_RGCFR_COF3_Pos) /*!< 0x00000008 */
 #define DMAMUX_RGCFR_COF3                      DMAMUX_RGCFR_COF3_Msk            /*!< Clear Overrun flag 3                 */
 
-/*****************  Bits definition for DMAMUX_IPHW_CFGR2 register  ************/
-#define DMAMUX_IPHW_CFGR2_NB_EXT_REQ_Pos       (0U)
-#define DMAMUX_IPHW_CFGR2_NB_EXT_REQ_Msk       (0xFFUL << DMAMUX_IPHW_CFGR2_NB_EXT_REQ_Pos) /*!< 0x000000FF */
-#define DMAMUX_IPHW_CFGR2_NB_EXT_REQ           DMAMUX_IPHW_CFGR2_NB_EXT_REQ_Msk /*!< Number of external request sources   */
-
-/*****************  Bits definition for DMAMUX_IPHW_CFGR1 register  ************/
-#define DMAMUX_IPHW_CFGR1_NB_STREAMS_Pos       (0U)
-#define DMAMUX_IPHW_CFGR1_NB_STREAMS_Msk       (0xFFUL << DMAMUX_IPHW_CFGR1_NB_STREAMS_Pos) /*!< 0x000000FF */
-#define DMAMUX_IPHW_CFGR1_NB_STREAMS           DMAMUX_IPHW_CFGR1_NB_STREAMS_Msk /*!< Number of DMA streams                */
-
-#define DMAMUX_IPHW_CFGR1_NB_PERIPH_REQ_Pos    (8U)
-#define DMAMUX_IPHW_CFGR1_NB_PERIPH_REQ_Msk    (0xFFUL << DMAMUX_IPHW_CFGR1_NB_PERIPH_REQ_Pos) /*!< 0x0000FF00 */
-#define DMAMUX_IPHW_CFGR1_NB_PERIPH_REQ        DMAMUX_IPHW_CFGR1_NB_PERIPH_REQ_Msk /*!< Number of peripheral requests     */
-
-#define DMAMUX_IPHW_CFGR1_NB_SYNC_TRIG_Pos     (16U)
-#define DMAMUX_IPHW_CFGR1_NB_SYNC_TRIG_Msk     (0xFFUL << DMAMUX_IPHW_CFGR1_NB_SYNC_TRIG_Pos) /*!< 0x00FF0000 */
-#define DMAMUX_IPHW_CFGR1_NB_SYNC_TRIG         DMAMUX_IPHW_CFGR1_NB_SYNC_TRIG_Msk /*!< Number of synchronization triggers */
-
-#define DMAMUX_IPHW_CFGR1_NB_REQ_GEN_Pos       (24U)
-#define DMAMUX_IPHW_CFGR1_NB_REQ_GEN_Msk       (0xFFUL << DMAMUX_IPHW_CFGR1_NB_REQ_GEN_Pos) /*!< 0xFF000000 */
-#define DMAMUX_IPHW_CFGR1_NB_REQ_GEN           DMAMUX_IPHW_CFGR1_NB_REQ_GEN_Msk /*!< Number of request generation blocks  */
 /******************************************************************************/
 /*                                                                            */
 /*                    External Interrupt/Event Controller                     */
@@ -2344,7 +2320,6 @@ typedef struct
 #define EXTI_EMR1_EM31_Pos           (31U)
 #define EXTI_EMR1_EM31_Msk           (0x1UL << EXTI_EMR1_EM31_Pos)             /*!< 0x80000000 */
 #define EXTI_EMR1_EM31               EXTI_EMR1_EM31_Msk                        /*!< Event Mask on line 31 */
-
 
 
 /******************************************************************************/
@@ -4041,6 +4016,7 @@ typedef struct
 #define PWR_PUCRD_PU3_Pos         (3U)
 #define PWR_PUCRD_PU3_Msk         (0x1UL << PWR_PUCRD_PU3_Pos)                 /*!< 0x00000008 */
 #define PWR_PUCRD_PU3             PWR_PUCRD_PU3_Msk                            /*!< Pin PD3 Pull-Up set */
+
 /********************  Bit definition for PWR_PDCRD register  *****************/
 #define PWR_PDCRD_PD0_Pos         (0U)
 #define PWR_PDCRD_PD0_Msk         (0x1UL << PWR_PDCRD_PD0_Pos)                 /*!< 0x00000001 */
@@ -4562,10 +4538,10 @@ typedef struct
 #define RCC_APBSMENR1_RTCAPBSMEN_Msk     (0x1UL << RCC_APBSMENR1_RTCAPBSMEN_Pos) /*!< 0x00000400 */
 #define RCC_APBSMENR1_RTCAPBSMEN         RCC_APBSMENR1_RTCAPBSMEN_Msk
 #define RCC_APBSMENR1_WWDGSMEN_Pos       (11U)
-#define RCC_APBSMENR1_WWDGSMEN_Msk       (0x1UL << RCC_APBSMENR1_WWDGSMEN_Pos)  /*!< 0x00000800 */
+#define RCC_APBSMENR1_WWDGSMEN_Msk       (0x1UL << RCC_APBSMENR1_WWDGSMEN_Pos)   /*!< 0x00000800 */
 #define RCC_APBSMENR1_WWDGSMEN           RCC_APBSMENR1_WWDGSMEN_Msk
 #define RCC_APBSMENR1_SPI2SMEN_Pos       (14U)
-#define RCC_APBSMENR1_SPI2SMEN_Msk       (0x1UL << RCC_APBSMENR1_SPI2SMEN_Pos)  /*!< 0x00004000 */
+#define RCC_APBSMENR1_SPI2SMEN_Msk       (0x1UL << RCC_APBSMENR1_SPI2SMEN_Pos)   /*!< 0x00004000 */
 #define RCC_APBSMENR1_SPI2SMEN           RCC_APBSMENR1_SPI2SMEN_Msk
 #define RCC_APBSMENR1_USART2SMEN_Pos     (17U)
 #define RCC_APBSMENR1_USART2SMEN_Msk     (0x1UL << RCC_APBSMENR1_USART2SMEN_Pos) /*!< 0x00020000 */
@@ -5314,7 +5290,6 @@ typedef struct
 #define RTC_SCR_CALRAF_Msk           (0x1UL << RTC_SCR_CALRAF_Pos)             /*!< 0x00000001 */
 #define RTC_SCR_CALRAF               RTC_SCR_CALRAF_Msk
 
-
 /******************************************************************************/
 /*                                                                            */
 /*                     Tamper and backup register (TAMP)                      */
@@ -5485,7 +5460,6 @@ typedef struct
 #define TAMP_BKP4R_Pos               (0U)
 #define TAMP_BKP4R_Msk               (0xFFFFFFFFUL << TAMP_BKP4R_Pos)           /*!< 0xFFFFFFFF */
 #define TAMP_BKP4R                   TAMP_BKP4R_Msk
-
 
 /******************************************************************************/
 /*                                                                            */
@@ -7395,7 +7369,6 @@ typedef struct
 #define USART_PRESC_PRESCALER_2      (0x4UL << USART_PRESC_PRESCALER_Pos)      /*!< 0x00000004 */
 #define USART_PRESC_PRESCALER_3      (0x8UL << USART_PRESC_PRESCALER_Pos)      /*!< 0x00000008 */
 
-
 /******************************************************************************/
 /*                                                                            */
 /*                                 VREFBUF                                    */
@@ -7568,7 +7541,6 @@ typedef struct
                                         ((INSTANCE) == GPIOC) || \
                                         ((INSTANCE) == GPIOD) || \
                                         ((INSTANCE) == GPIOF))
-
 /******************************* GPIO AF Instances ****************************/
 #define IS_GPIO_AF_INSTANCE(INSTANCE)   IS_GPIO_ALL_INSTANCE(INSTANCE)
 
@@ -7594,6 +7566,7 @@ typedef struct
 /******************************** SPI Instances *******************************/
 #define IS_SPI_ALL_INSTANCE(INSTANCE) (((INSTANCE) == SPI1) || \
                                        ((INSTANCE) == SPI2))
+
 /******************************** SPI Instances *******************************/
 #define IS_I2S_ALL_INSTANCE(INSTANCE)  ((INSTANCE) == SPI1)
 
@@ -7839,7 +7812,6 @@ typedef struct
 /******************** UART Instances : Asynchronous mode **********************/
 #define IS_UART_INSTANCE(INSTANCE) (((INSTANCE) == USART1) || \
                                     ((INSTANCE) == USART2))
-
 
 /******************** USART Instances : Synchronous mode **********************/
 #define IS_USART_INSTANCE(INSTANCE) (((INSTANCE) == USART1) || \

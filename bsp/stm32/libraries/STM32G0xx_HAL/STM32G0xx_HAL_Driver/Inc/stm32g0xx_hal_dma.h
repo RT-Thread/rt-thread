@@ -277,6 +277,7 @@ typedef struct __DMA_HandleTypeDef
 #define DMA_REQUEST_UCPD2_RX         60U               /*!< DMAMUX UCPD2 RX request       */
 #define DMA_REQUEST_UCPD2_TX         61U               /*!< DMAMUX UCPD2 TX request       */
 #endif
+
 /**
   * @}
   */
@@ -668,6 +669,8 @@ uint32_t             HAL_DMA_GetError(DMA_HandleTypeDef *hdma);
 
 #if defined(STM32G081xx)||defined(STM32G071xx)||defined(STM32G070xx)
 #define IS_DMA_ALL_REQUEST(REQUEST) ((REQUEST) <= DMA_REQUEST_UCPD2_TX)
+#elif defined(STM32G041xx)||defined(STM32G031xx)||defined(STM32G030xx)
+#define IS_DMA_ALL_REQUEST(REQUEST) ((REQUEST) <= DMA_REQUEST_USART2_TX)
 #endif
 
 #define IS_DMA_PERIPHERAL_DATA_SIZE(SIZE) (((SIZE) == DMA_PDATAALIGN_BYTE)     || \

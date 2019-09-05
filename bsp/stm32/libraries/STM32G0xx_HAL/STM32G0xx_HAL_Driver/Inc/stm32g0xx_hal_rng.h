@@ -6,11 +6,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -22,16 +22,17 @@
 #define STM32G0xx_HAL_RNG_H
 
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
 
-#if defined(STM32G081xx)
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g0xx_hal_def.h"
 
 /** @addtogroup STM32G0xx_HAL_Driver
   * @{
   */
+
+#if defined (RNG)
 
 /** @defgroup RNG RNG
   * @brief RNG HAL module driver
@@ -76,7 +77,11 @@ typedef enum
 /** @defgroup RNG_Exported_Types_Group3 RNG Handle Structure definition
   * @{
   */
+#if (USE_HAL_RNG_REGISTER_CALLBACKS == 1)
 typedef struct  __RNG_HandleTypeDef
+#else
+typedef struct
+#endif /* (USE_HAL_RNG_REGISTER_CALLBACKS) */
 {
   RNG_TypeDef                 *Instance;    /*!< Register base address   */
 
@@ -166,12 +171,14 @@ typedef  void (*pRNG_ReadyDataCallbackTypeDef)(RNG_HandleTypeDef *hrng, uint32_t
 /** @defgroup RNG_Error_Definition   RNG Error Definition
   * @{
   */
-#define  HAL_RNG_ERROR_NONE             0x00000000U    /*!< No error                */
+#define  HAL_RNG_ERROR_NONE             0x00000000U    /*!< No error             */
 #if (USE_HAL_RNG_REGISTER_CALLBACKS == 1)
 #define  HAL_RNG_ERROR_INVALID_CALLBACK 0x00000001U    /*!< Invalid Callback error  */
 #endif /* USE_HAL_RNG_REGISTER_CALLBACKS */
 #define  HAL_RNG_ERROR_TIMEOUT          0x00000002U    /*!< Timeout error        */
-
+#define  HAL_RNG_ERROR_BUSY             0x00000004U    /*!< Busy error        */
+#define  HAL_RNG_ERROR_SEED             0x00000008U    /*!< Seed error        */
+#define  HAL_RNG_ERROR_CLOCK            0x00000010U   /*!< Clock error        */
 /**
   * @}
   */
@@ -341,6 +348,7 @@ uint32_t             HAL_RNG_GetError(RNG_HandleTypeDef *hrng);
 #define IS_RNG_FLAG(FLAG) (((FLAG) == RNG_FLAG_DRDY) || \
                             ((FLAG) == RNG_FLAG_CECS) || \
                             ((FLAG) == RNG_FLAG_SECS))
+
 /**
   * @brief Verify the RNG Clock Error Detection mode.
   * @param __MODE__ RNG Clock Error Detection mode
@@ -356,14 +364,16 @@ uint32_t             HAL_RNG_GetError(RNG_HandleTypeDef *hrng);
   * @}
   */
 
+#endif /* RNG */
+
 /**
   * @}
   */
 
-#endif
 #ifdef __cplusplus
 }
 #endif
+
 
 #endif /* STM32G0xx_HAL_RNG_H */
 
