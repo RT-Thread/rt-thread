@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -76,41 +60,41 @@
 /** @defgroup SPI_LL_Private_Macros SPI Private Macros
   * @{
   */
-#define IS_LL_SPI_TRANSFER_DIRECTION(__VALUE__) (((__VALUE__) == LL_SPI_FULL_DUPLEX)    \
-                                              || ((__VALUE__) == LL_SPI_SIMPLEX_RX)     \
-                                              || ((__VALUE__) == LL_SPI_HALF_DUPLEX_RX) \
-                                              || ((__VALUE__) == LL_SPI_HALF_DUPLEX_TX))
+#define IS_LL_SPI_TRANSFER_DIRECTION(__VALUE__) (((__VALUE__) == LL_SPI_FULL_DUPLEX)       \
+                                                 || ((__VALUE__) == LL_SPI_SIMPLEX_RX)     \
+                                                 || ((__VALUE__) == LL_SPI_HALF_DUPLEX_RX) \
+                                                 || ((__VALUE__) == LL_SPI_HALF_DUPLEX_TX))
 
 #define IS_LL_SPI_MODE(__VALUE__) (((__VALUE__) == LL_SPI_MODE_MASTER) \
-                                || ((__VALUE__) == LL_SPI_MODE_SLAVE))
+                                   || ((__VALUE__) == LL_SPI_MODE_SLAVE))
 
 #define IS_LL_SPI_DATAWIDTH(__VALUE__) (((__VALUE__) == LL_SPI_DATAWIDTH_8BIT)  \
-                                     || ((__VALUE__) == LL_SPI_DATAWIDTH_16BIT))
+                                        || ((__VALUE__) == LL_SPI_DATAWIDTH_16BIT))
 
 #define IS_LL_SPI_POLARITY(__VALUE__) (((__VALUE__) == LL_SPI_POLARITY_LOW) \
-                                    || ((__VALUE__) == LL_SPI_POLARITY_HIGH))
+                                       || ((__VALUE__) == LL_SPI_POLARITY_HIGH))
 
 #define IS_LL_SPI_PHASE(__VALUE__) (((__VALUE__) == LL_SPI_PHASE_1EDGE) \
-                                 || ((__VALUE__) == LL_SPI_PHASE_2EDGE))
+                                    || ((__VALUE__) == LL_SPI_PHASE_2EDGE))
 
-#define IS_LL_SPI_NSS(__VALUE__) (((__VALUE__) == LL_SPI_NSS_SOFT) \
-                               || ((__VALUE__) == LL_SPI_NSS_HARD_INPUT) \
-                               || ((__VALUE__) == LL_SPI_NSS_HARD_OUTPUT))
+#define IS_LL_SPI_NSS(__VALUE__) (((__VALUE__) == LL_SPI_NSS_SOFT)          \
+                                  || ((__VALUE__) == LL_SPI_NSS_HARD_INPUT) \
+                                  || ((__VALUE__) == LL_SPI_NSS_HARD_OUTPUT))
 
-#define IS_LL_SPI_BAUDRATE(__VALUE__) (((__VALUE__) == LL_SPI_BAUDRATEPRESCALER_DIV2)   \
-                                    || ((__VALUE__) == LL_SPI_BAUDRATEPRESCALER_DIV4)   \
-                                    || ((__VALUE__) == LL_SPI_BAUDRATEPRESCALER_DIV8)   \
-                                    || ((__VALUE__) == LL_SPI_BAUDRATEPRESCALER_DIV16)  \
-                                    || ((__VALUE__) == LL_SPI_BAUDRATEPRESCALER_DIV32)  \
-                                    || ((__VALUE__) == LL_SPI_BAUDRATEPRESCALER_DIV64)  \
-                                    || ((__VALUE__) == LL_SPI_BAUDRATEPRESCALER_DIV128) \
-                                    || ((__VALUE__) == LL_SPI_BAUDRATEPRESCALER_DIV256))
+#define IS_LL_SPI_BAUDRATE(__VALUE__) (((__VALUE__) == LL_SPI_BAUDRATEPRESCALER_DIV2)      \
+                                       || ((__VALUE__) == LL_SPI_BAUDRATEPRESCALER_DIV4)   \
+                                       || ((__VALUE__) == LL_SPI_BAUDRATEPRESCALER_DIV8)   \
+                                       || ((__VALUE__) == LL_SPI_BAUDRATEPRESCALER_DIV16)  \
+                                       || ((__VALUE__) == LL_SPI_BAUDRATEPRESCALER_DIV32)  \
+                                       || ((__VALUE__) == LL_SPI_BAUDRATEPRESCALER_DIV64)  \
+                                       || ((__VALUE__) == LL_SPI_BAUDRATEPRESCALER_DIV128) \
+                                       || ((__VALUE__) == LL_SPI_BAUDRATEPRESCALER_DIV256))
 
 #define IS_LL_SPI_BITORDER(__VALUE__) (((__VALUE__) == LL_SPI_LSB_FIRST) \
-                                    || ((__VALUE__) == LL_SPI_MSB_FIRST))
+                                       || ((__VALUE__) == LL_SPI_MSB_FIRST))
 
 #define IS_LL_SPI_CRCCALCULATION(__VALUE__) (((__VALUE__) == LL_SPI_CRCCALCULATION_ENABLE) \
-                                          || ((__VALUE__) == LL_SPI_CRCCALCULATION_DISABLE))
+                                             || ((__VALUE__) == LL_SPI_CRCCALCULATION_DISABLE))
 
 #define IS_LL_SPI_CRC_POLYNOMIAL(__VALUE__) ((__VALUE__) >= 0x1U)
 
@@ -186,7 +170,7 @@ ErrorStatus LL_SPI_DeInit(SPI_TypeDef *SPIx)
 /**
   * @brief  Initialize the SPI registers according to the specified parameters in SPI_InitStruct.
   * @note   As some bits in SPI configuration registers can only be written when the SPI is disabled (SPI_CR1_SPE bit =0),
-  *         SPI IP should be in disabled state prior calling this function. Otherwise, ERROR result will be returned.
+  *         SPI peripheral should be in disabled state prior calling this function. Otherwise, ERROR result will be returned.
   * @param  SPIx SPI Instance
   * @param  SPI_InitStruct pointer to a @ref LL_SPI_InitTypeDef structure
   * @retval An ErrorStatus enumeration value. (Return always SUCCESS)
@@ -313,36 +297,36 @@ void LL_SPI_StructInit(LL_SPI_InitTypeDef *SPI_InitStruct)
   * @{
   */
 
-#define IS_LL_I2S_DATAFORMAT(__VALUE__)  (((__VALUE__) == LL_I2S_DATAFORMAT_16B)          \
-                                       || ((__VALUE__) == LL_I2S_DATAFORMAT_16B_EXTENDED) \
-                                       || ((__VALUE__) == LL_I2S_DATAFORMAT_24B)          \
-                                       || ((__VALUE__) == LL_I2S_DATAFORMAT_32B))
+#define IS_LL_I2S_DATAFORMAT(__VALUE__)  (((__VALUE__) == LL_I2S_DATAFORMAT_16B)             \
+                                          || ((__VALUE__) == LL_I2S_DATAFORMAT_16B_EXTENDED) \
+                                          || ((__VALUE__) == LL_I2S_DATAFORMAT_24B)          \
+                                          || ((__VALUE__) == LL_I2S_DATAFORMAT_32B))
 
 #define IS_LL_I2S_CPOL(__VALUE__)        (((__VALUE__) == LL_I2S_POLARITY_LOW)  \
-                                       || ((__VALUE__) == LL_I2S_POLARITY_HIGH))
+                                          || ((__VALUE__) == LL_I2S_POLARITY_HIGH))
 
-#define IS_LL_I2S_STANDARD(__VALUE__)    (((__VALUE__) == LL_I2S_STANDARD_PHILIPS)   \
-                                       || ((__VALUE__) == LL_I2S_STANDARD_MSB)       \
-                                       || ((__VALUE__) == LL_I2S_STANDARD_LSB)       \
-                                       || ((__VALUE__) == LL_I2S_STANDARD_PCM_SHORT) \
-                                       || ((__VALUE__) == LL_I2S_STANDARD_PCM_LONG))
+#define IS_LL_I2S_STANDARD(__VALUE__)    (((__VALUE__) == LL_I2S_STANDARD_PHILIPS)      \
+                                          || ((__VALUE__) == LL_I2S_STANDARD_MSB)       \
+                                          || ((__VALUE__) == LL_I2S_STANDARD_LSB)       \
+                                          || ((__VALUE__) == LL_I2S_STANDARD_PCM_SHORT) \
+                                          || ((__VALUE__) == LL_I2S_STANDARD_PCM_LONG))
 
-#define IS_LL_I2S_MODE(__VALUE__)        (((__VALUE__) == LL_I2S_MODE_SLAVE_TX)  \
-                                       || ((__VALUE__) == LL_I2S_MODE_SLAVE_RX)  \
-                                       || ((__VALUE__) == LL_I2S_MODE_MASTER_TX) \
-                                       || ((__VALUE__) == LL_I2S_MODE_MASTER_RX))
+#define IS_LL_I2S_MODE(__VALUE__)        (((__VALUE__) == LL_I2S_MODE_SLAVE_TX)     \
+                                          || ((__VALUE__) == LL_I2S_MODE_SLAVE_RX)  \
+                                          || ((__VALUE__) == LL_I2S_MODE_MASTER_TX) \
+                                          || ((__VALUE__) == LL_I2S_MODE_MASTER_RX))
 
 #define IS_LL_I2S_MCLK_OUTPUT(__VALUE__) (((__VALUE__) == LL_I2S_MCLK_OUTPUT_ENABLE) \
-                                       || ((__VALUE__) == LL_I2S_MCLK_OUTPUT_DISABLE))
+                                          || ((__VALUE__) == LL_I2S_MCLK_OUTPUT_DISABLE))
 
-#define IS_LL_I2S_AUDIO_FREQ(__VALUE__) ((((__VALUE__) >= LL_I2S_AUDIOFREQ_8K)    \
-                                       && ((__VALUE__) <= LL_I2S_AUDIOFREQ_192K)) \
-                                       || ((__VALUE__) == LL_I2S_AUDIOFREQ_DEFAULT))
+#define IS_LL_I2S_AUDIO_FREQ(__VALUE__) ((((__VALUE__) >= LL_I2S_AUDIOFREQ_8K)       \
+                                          && ((__VALUE__) <= LL_I2S_AUDIOFREQ_192K)) \
+                                         || ((__VALUE__) == LL_I2S_AUDIOFREQ_DEFAULT))
 
 #define IS_LL_I2S_PRESCALER_LINEAR(__VALUE__)  ((__VALUE__) >= 0x2U)
 
 #define IS_LL_I2S_PRESCALER_PARITY(__VALUE__) (((__VALUE__) == LL_I2S_PRESCALER_PARITY_EVEN) \
-                                           || ((__VALUE__) == LL_I2S_PRESCALER_PARITY_ODD))
+                                               || ((__VALUE__) == LL_I2S_PRESCALER_PARITY_ODD))
 /**
   * @}
   */
@@ -373,7 +357,7 @@ ErrorStatus LL_I2S_DeInit(SPI_TypeDef *SPIx)
 /**
   * @brief  Initializes the SPI/I2S registers according to the specified parameters in I2S_InitStruct.
   * @note   As some bits in SPI configuration registers can only be written when the SPI is disabled (SPI_CR1_SPE bit =0),
-  *         SPI IP should be in disabled state prior calling this function. Otherwise, ERROR result will be returned.
+  *         SPI peripheral should be in disabled state prior calling this function. Otherwise, ERROR result will be returned.
   * @param  SPIx SPI Instance
   * @param  I2S_InitStruct pointer to a @ref LL_I2S_InitTypeDef structure
   * @retval An ErrorStatus enumeration value:
@@ -382,13 +366,12 @@ ErrorStatus LL_I2S_DeInit(SPI_TypeDef *SPIx)
   */
 ErrorStatus LL_I2S_Init(SPI_TypeDef *SPIx, LL_I2S_InitTypeDef *I2S_InitStruct)
 {
-  uint16_t i2sdiv = 2U, i2sodd = 0U, packetlength = 1U;
-  uint32_t tmp = 0U;
-  uint32_t sourceclock = 0U;
-#if defined(I2S2_I2S3_CLOCK_FEATURE)
-#else
+  uint32_t i2sdiv = 2U;
+  uint32_t i2sodd = 0U;
+  uint32_t packetlength = 1U;
+  uint32_t tmp;
   LL_RCC_ClocksTypeDef rcc_clocks;
-#endif /* I2S2_I2S3_CLOCK_FEATURE */
+  uint32_t sourceclock;
   ErrorStatus status = ERROR;
 
   /* Check the I2S parameters */
@@ -436,49 +419,36 @@ ErrorStatus LL_I2S_Init(SPI_TypeDef *SPIx, LL_I2S_InitTypeDef *I2S_InitStruct)
         /* Packet length is 32 bits */
         packetlength = 2U;
       }
-#if defined(I2S2_I2S3_CLOCK_FEATURE)
-      /* If an external I2S clock has to be used, the specific define should be set
-      in the project configuration or in the stm32f1xx_ll_rcc.h file */
-      if(SPIx == SPI2)
-      {
-        /* Get the I2S source clock value */
-        sourceclock = LL_RCC_GetI2SClockFreq(LL_RCC_I2S2_CLKSOURCE);
-      }
-      else /* SPI3 */
-      {
-        /* Get the I2S source clock value */
-        sourceclock = LL_RCC_GetI2SClockFreq(LL_RCC_I2S3_CLKSOURCE);        
-      }
-#else
-        /* I2S Clock source is System clock: Get System Clock frequency */
+
+      /* I2S Clock source is System clock: Get System Clock frequency */
       LL_RCC_GetSystemClocksFreq(&rcc_clocks);
 
       /* Get the source clock value: based on System Clock value */
-      sourceclock = rcc_clocks.SYSCLK_Frequency;    
-#endif /* I2S2_I2S3_CLOCK_FEATURE */
+      sourceclock = rcc_clocks.SYSCLK_Frequency;
+
       /* Compute the Real divider depending on the MCLK output state with a floating point */
       if (I2S_InitStruct->MCLKOutput == LL_I2S_MCLK_OUTPUT_ENABLE)
       {
         /* MCLK output is enabled */
-        tmp = (uint16_t)(((((sourceclock / 256U) * 10U) / I2S_InitStruct->AudioFreq)) + 5U);
+        tmp = (((((sourceclock / 256U) * 10U) / I2S_InitStruct->AudioFreq)) + 5U);
       }
       else
       {
         /* MCLK output is disabled */
-        tmp = (uint16_t)(((((sourceclock / (32U * packetlength)) * 10U) / I2S_InitStruct->AudioFreq)) + 5U);
+        tmp = (((((sourceclock / (32U * packetlength)) * 10U) / I2S_InitStruct->AudioFreq)) + 5U);
       }
 
       /* Remove the floating point */
       tmp = tmp / 10U;
 
       /* Check the parity of the divider */
-      i2sodd = (uint16_t)(tmp & (uint16_t)0x0001U);
+      i2sodd = (tmp & (uint16_t)0x0001U);
 
       /* Compute the i2sdiv prescaler */
-      i2sdiv = (uint16_t)((tmp - i2sodd) / 2U);
+      i2sdiv = ((tmp - i2sodd) / 2U);
 
       /* Get the Mask for the Odd bit (SPI_I2SPR[8]) register */
-      i2sodd = (uint16_t)(i2sodd << 8U);
+      i2sodd = (i2sodd << 8U);
     }
 
     /* Test if the divider is 1 or 0 or greater than 0xFF */
@@ -519,7 +489,7 @@ void LL_I2S_StructInit(LL_I2S_InitTypeDef *I2S_InitStruct)
   * @note   To calculate value of PrescalerLinear(I2SDIV[7:0] bits) and PrescalerParity(ODD bit)\n
   *         Check Audio frequency table and formulas inside Reference Manual (SPI/I2S).
   * @param  SPIx SPI Instance
-  * @param  PrescalerLinear value: Min_Data=0x02 and Max_Data=0xFF.
+  * @param  PrescalerLinear value Min_Data=0x02 and Max_Data=0xFF.
   * @param  PrescalerParity This parameter can be one of the following values:
   *         @arg @ref LL_I2S_PRESCALER_PARITY_EVEN
   *         @arg @ref LL_I2S_PRESCALER_PARITY_ODD
