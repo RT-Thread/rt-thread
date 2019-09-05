@@ -6,36 +6,20 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  *
-  ******************************************************************************  
+  ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32H7xx_HAL_COMP_H
-#define __STM32H7xx_HAL_COMP_H
+#ifndef STM32H7xx_HAL_COMP_H
+#define STM32H7xx_HAL_COMP_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -110,15 +94,42 @@ typedef enum
 /** 
   * @brief  COMP Handle Structure definition
   */
+#if (USE_HAL_COMP_REGISTER_CALLBACKS == 1)
+typedef struct __COMP_HandleTypeDef
+#else
 typedef struct
+#endif /* USE_HAL_COMP_REGISTER_CALLBACKS */
 {
   COMP_TypeDef       *Instance;       /*!< Register base address    */
   COMP_InitTypeDef   Init;            /*!< COMP required parameters */
   HAL_LockTypeDef    Lock;            /*!< Locking object           */
   __IO HAL_COMP_StateTypeDef  State;  /*!< COMP communication state */
+  __IO uint32_t      ErrorCode;       /*!< COMP error code */
+#if (USE_HAL_COMP_REGISTER_CALLBACKS == 1)
+  void (* TriggerCallback)(struct __COMP_HandleTypeDef *hcomp);   /*!< COMP trigger callback */
+  void (* MspInitCallback)(struct __COMP_HandleTypeDef *hcomp);   /*!< COMP Msp Init callback */
+  void (* MspDeInitCallback)(struct __COMP_HandleTypeDef *hcomp); /*!< COMP Msp DeInit callback */
+#endif /* USE_HAL_COMP_REGISTER_CALLBACKS */
 
 } COMP_HandleTypeDef;
 
+#if (USE_HAL_COMP_REGISTER_CALLBACKS == 1)
+/**
+  * @brief  HAL COMP Callback ID enumeration definition
+  */
+typedef enum
+{
+  HAL_COMP_TRIGGER_CB_ID                = 0x00U,  /*!< COMP trigger callback ID */
+  HAL_COMP_MSPINIT_CB_ID                = 0x01U,  /*!< COMP Msp Init callback ID */
+  HAL_COMP_MSPDEINIT_CB_ID              = 0x02U   /*!< COMP Msp DeInit callback ID */
+} HAL_COMP_CallbackIDTypeDef;
+
+/**
+  * @brief  HAL COMP Callback pointer definition
+  */
+typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer to a COMP callback function */
+
+#endif /* USE_HAL_COMP_REGISTER_CALLBACKS */
 /**
   * @}
   */
@@ -127,6 +138,18 @@ typedef struct
 /** @defgroup COMP_Exported_Constants COMP Exported Constants
   * @{
   */
+  
+/** @defgroup COMP_Error_Code COMP Error Code
+  * @{
+  */
+#define HAL_COMP_ERROR_NONE             (0x00U)   /*!< No error */
+#if (USE_HAL_COMP_REGISTER_CALLBACKS == 1)
+#define HAL_COMP_ERROR_INVALID_CALLBACK (0x01U)   /*!< Invalid Callback error */
+#endif /* USE_HAL_COMP_REGISTER_CALLBACKS */
+/**
+  * @}
+  */
+  
 /** @defgroup COMP_WindowMode COMP Window Mode
   * @{
   */
@@ -287,10 +310,25 @@ typedef struct
   */
 
 /** @brief  Reset COMP handle state.
-  * @param  __HANDLE__ COMP handle
+  * @param  __HANDLE__  COMP handle
   * @retval None
   */
-#define __HAL_COMP_RESET_HANDLE_STATE(__HANDLE__)  ((__HANDLE__)->State = HAL_COMP_STATE_RESET)
+#if (USE_HAL_COMP_REGISTER_CALLBACKS == 1)
+#define __HAL_COMP_RESET_HANDLE_STATE(__HANDLE__) do{                                                   \
+                                                     (__HANDLE__)->State = HAL_COMP_STATE_RESET;      \
+                                                     (__HANDLE__)->MspInitCallback = NULL;            \
+                                                     (__HANDLE__)->MspDeInitCallback = NULL;          \
+                                                    } while(0)
+#else
+#define __HAL_COMP_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_COMP_STATE_RESET)
+#endif
+
+/**
+  * @brief Clear COMP error code (set it to no error code "HAL_COMP_ERROR_NONE").
+  * @param __HANDLE__ COMP handle
+  * @retval None
+  */
+#define COMP_CLEAR_ERRORCODE(__HANDLE__) ((__HANDLE__)->ErrorCode = HAL_COMP_ERROR_NONE) 
 
 /**
   * @brief  Enable the specified comparator.
@@ -431,6 +469,44 @@ typedef struct
   */
 #define __HAL_COMP_COMP1_EXTID3_DISABLE_EVENT()        CLEAR_BIT(EXTI->D3PMR1, COMP_EXTI_LINE_COMP1)
 
+#if defined(DUAL_CORE)
+/**
+  * @brief  Enable the COMP1 D2 EXTI line in interrupt mode.
+  * @retval None
+  */                                         
+#define __HAL_COMP_COMP1_EXTID2_ENABLE_IT()           SET_BIT(EXTI_D2->IMR1, COMP_EXTI_LINE_COMP1)
+
+/**
+  * @brief  Disable the COMP1 D2 EXTI line in interrupt mode.
+  * @retval None
+  */
+#define __HAL_COMP_COMP1_EXTID2_DISABLE_IT()          CLEAR_BIT(EXTI_D2->IMR1, COMP_EXTI_LINE_COMP1)
+
+/**
+  * @brief  Enable the COMP1 D2 EXTI Line in event mode.
+  * @retval None
+  */
+#define __HAL_COMP_COMP1_EXTID2_ENABLE_EVENT()         SET_BIT(EXTI_D2->EMR1, COMP_EXTI_LINE_COMP1)
+
+/**
+  * @brief  Disable the COMP1 D2 EXTI Line in event mode.
+  * @retval None
+  */
+#define __HAL_COMP_COMP1_EXTID2_DISABLE_EVENT()        CLEAR_BIT(EXTI_D2->EMR1, COMP_EXTI_LINE_COMP1)
+
+/**
+  * @brief  Check whether the COMP1 D2 EXTI line flag is set or not.
+  * @retval RESET or SET
+  */
+#define __HAL_COMP_COMP1_EXTID2_GET_FLAG()              READ_BIT(EXTI_D2->PR1, COMP_EXTI_LINE_COMP1)     
+
+/**
+  * @brief  Clear the COMP1 D2 EXTI flag.
+  * @retval None
+  */
+#define __HAL_COMP_COMP1_EXTID2_CLEAR_FLAG()            WRITE_REG(EXTI_D2->PR1, COMP_EXTI_LINE_COMP1)
+
+#endif
 
 /**
   * @brief  Enable the COMP2 EXTI line rising edge trigger.
@@ -527,6 +603,50 @@ typedef struct
   */
 #define __HAL_COMP_COMP2_EXTI_GENERATE_SWIT()         SET_BIT(EXTI->SWIER1, COMP_EXTI_LINE_COMP2)
 
+#if defined(DUAL_CORE)
+/**
+  * @brief  Enable the COMP2 D2 EXTI line
+  * @retval None
+  */                                         
+#define __HAL_COMP_COMP2_EXTID2_ENABLE_IT()           SET_BIT(EXTI_D2->IMR1, COMP_EXTI_LINE_COMP2)
+
+
+/**
+  * @brief  Disable the COMP2 D2 EXTI line.
+  * @retval None
+  */
+#define __HAL_COMP_COMP2_EXTID2_DISABLE_IT()          CLEAR_BIT(EXTI_D2->IMR1, COMP_EXTI_LINE_COMP2)
+
+
+
+/**
+  * @brief  Enable the COMP2 D2 EXTI Line in event mode.
+  * @retval None
+  */
+#define __HAL_COMP_COMP2_EXTID2_ENABLE_EVENT()         SET_BIT(EXTI_D2->EMR1, COMP_EXTI_LINE_COMP2)
+
+
+
+/**
+  * @brief  Disable the COMP2 D2 EXTI Line in event mode.
+  * @retval None
+  */
+#define __HAL_COMP_COMP2_EXTID2_DISABLE_EVENT()        CLEAR_BIT(EXTI_D2->EMR1, COMP_EXTI_LINE_COMP2)
+
+
+/**
+  * @brief  Check whether the COMP2 D2 EXTI line flag is set or not.
+  * @retval RESET or SET
+  */
+#define __HAL_COMP_COMP2_EXTID2_GET_FLAG()            READ_BIT(EXTI_D2->PR1, COMP_EXTI_LINE_COMP2)     
+
+/**
+  * @brief  Clear the the COMP2 D2 EXTI flag.
+  * @retval None
+  */
+#define __HAL_COMP_COMP2_EXTID2_CLEAR_FLAG()          WRITE_REG(EXTI_D2->PR1, COMP_EXTI_LINE_COMP2)
+
+#endif
 /** @brief  Checks if the specified COMP interrupt source is enabled or disabled.
   * @param  __HANDLE__: specifies the COMP Handle.
   *         This parameter can be COMP1 where x: 1 or 2 to select the COMP peripheral.
@@ -745,6 +865,11 @@ HAL_StatusTypeDef HAL_COMP_Init(COMP_HandleTypeDef *hcomp);
 HAL_StatusTypeDef HAL_COMP_DeInit (COMP_HandleTypeDef *hcomp);
 void              HAL_COMP_MspInit(COMP_HandleTypeDef *hcomp);
 void              HAL_COMP_MspDeInit(COMP_HandleTypeDef *hcomp);
+#if (USE_HAL_COMP_REGISTER_CALLBACKS == 1)
+/* Callbacks Register/UnRegister functions  ***********************************/
+HAL_StatusTypeDef HAL_COMP_RegisterCallback(COMP_HandleTypeDef *hcomp, HAL_COMP_CallbackIDTypeDef CallbackID, pCOMP_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_COMP_UnRegisterCallback(COMP_HandleTypeDef *hcomp, HAL_COMP_CallbackIDTypeDef CallbackID);
+#endif /* USE_HAL_COMP_REGISTER_CALLBACKS */
 /**
   * @}
   */
@@ -780,6 +905,7 @@ void              HAL_COMP_TriggerCallback(COMP_HandleTypeDef *hcomp);
   * @{
   */
 HAL_COMP_StateTypeDef HAL_COMP_GetState(COMP_HandleTypeDef *hcomp);
+uint32_t              HAL_COMP_GetError(COMP_HandleTypeDef *hcomp);
 /**
   * @}
   */
@@ -800,6 +926,6 @@ HAL_COMP_StateTypeDef HAL_COMP_GetState(COMP_HandleTypeDef *hcomp);
 }
 #endif
 
-#endif /* __STM32H7xx_HAL_COMP_H */
+#endif /* STM32H7xx_HAL_COMP_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

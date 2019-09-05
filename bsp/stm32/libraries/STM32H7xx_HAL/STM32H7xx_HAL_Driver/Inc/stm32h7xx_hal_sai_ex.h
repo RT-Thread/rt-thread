@@ -6,39 +6,23 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32H7xx_HAL_SAI_EX_H
-#define __STM32H7xx_HAL_SAI_EX_H
+#ifndef STM32H7xx_HAL_SAI_EX_H
+#define STM32H7xx_HAL_SAI_EX_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -53,7 +37,6 @@
   */
 
 /* Exported types ------------------------------------------------------------*/
-
 /** @defgroup SAIEx_Exported_Types SAIEx Exported Types
   * @{
   */
@@ -64,14 +47,14 @@
 typedef struct
 {
   uint32_t MicPair;     /*!< Specifies which pair of microphones is selected.
-                             This parameter must be a number between Min_Data = 1 and Max_Data = 4. */
+                             This parameter must be a number between Min_Data = 1 and Max_Data = 3. */
 
   uint32_t LeftDelay;   /*!< Specifies the delay in PDM clock unit to apply on left microphone.
                              This parameter must be a number between Min_Data = 0 and Max_Data = 7. */
 
   uint32_t RightDelay;  /*!< Specifies the delay in PDM clock unit to apply on right microphone.
                              This parameter must be a number between Min_Data = 0 and Max_Data = 7. */
-}SAIEx_PdmMicDelayParamTypeDef;
+} SAIEx_PdmMicDelayParamTypeDef;
 
 /**
   * @}
@@ -80,7 +63,6 @@ typedef struct
 /* Exported constants --------------------------------------------------------*/
 /* Exported macros -----------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-
 /** @addtogroup SAIEx_Exported_Functions SAIEx Extended Exported Functions
   * @{
   */
@@ -88,9 +70,7 @@ typedef struct
 /** @addtogroup SAIEx_Exported_Functions_Group1 Peripheral Control functions
   * @{
   */
-
 HAL_StatusTypeDef HAL_SAIEx_ConfigPdmMicDelay(SAI_HandleTypeDef *hsai, SAIEx_PdmMicDelayParamTypeDef *pdmMicDelay);
-
 /**
   * @}
   */
@@ -100,13 +80,10 @@ HAL_StatusTypeDef HAL_SAIEx_ConfigPdmMicDelay(SAI_HandleTypeDef *hsai, SAIEx_Pdm
   */
 
 /* Private macros ------------------------------------------------------------*/
-
 /** @addtogroup SAIEx_Private_Macros SAIEx Extended Private Macros
   * @{
   */
-
 #define IS_SAI_PDM_MIC_DELAY(VALUE)   ((VALUE) <= 7U)
-
 /**
   * @}
   */
@@ -123,6 +100,6 @@ HAL_StatusTypeDef HAL_SAIEx_ConfigPdmMicDelay(SAI_HandleTypeDef *hsai, SAIEx_Pdm
 }
 #endif
 
-#endif /* __STM32H7xx_HAL_SAI_EX_H */
+#endif /* STM32H7xx_HAL_SAI_EX_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
