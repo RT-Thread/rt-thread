@@ -139,12 +139,13 @@
 
     *** Callback registration ***
     =============================
-
+    [..]
     The compilation define USE_HAL_SAI_REGISTER_CALLBACKS when set to 1
     allows the user to configure dynamically the driver callbacks.
-    Use functions @ref HAL_SAI_RegisterCallback() to register a user callback.
+    Use functions HAL_SAI_RegisterCallback() to register a user callback.
 
-    Function @ref HAL_SAI_RegisterCallback() allows to register following callbacks:
+    [..]
+    Function HAL_SAI_RegisterCallback() allows to register following callbacks:
       (+) RxCpltCallback     : SAI receive complete.
       (+) RxHalfCpltCallback : SAI receive half complete.
       (+) TxCpltCallback     : SAI transmit complete.
@@ -152,13 +153,16 @@
       (+) ErrorCallback      : SAI error.
       (+) MspInitCallback    : SAI MspInit.
       (+) MspDeInitCallback  : SAI MspDeInit.
+    [..]
     This function takes as parameters the HAL peripheral handle, the callback ID
     and a pointer to the user callback function.
 
-    Use function @ref HAL_SAI_UnRegisterCallback() to reset a callback to the default
+    [..]
+    Use function HAL_SAI_UnRegisterCallback() to reset a callback to the default
     weak (surcharged) function.
-    @ref HAL_SAI_UnRegisterCallback() takes as parameters the HAL peripheral handle,
+    HAL_SAI_UnRegisterCallback() takes as parameters the HAL peripheral handle,
     and the callback ID.
+    [..]
     This function allows to reset following callbacks:
       (+) RxCpltCallback     : SAI receive complete.
       (+) RxHalfCpltCallback : SAI receive half complete.
@@ -168,23 +172,26 @@
       (+) MspInitCallback    : SAI MspInit.
       (+) MspDeInitCallback  : SAI MspDeInit.
 
-    By default, after the @ref HAL_SAI_Init and if the state is HAL_SAI_STATE_RESET
+    [..]
+    By default, after the HAL_SAI_Init and if the state is HAL_SAI_STATE_RESET
     all callbacks are reset to the corresponding legacy weak (surcharged) functions:
-    examples @ref HAL_SAI_RxCpltCallback(), @ref HAL_SAI_ErrorCallback().
+    examples HAL_SAI_RxCpltCallback(), HAL_SAI_ErrorCallback().
     Exception done for MspInit and MspDeInit callbacks that are respectively
-    reset to the legacy weak (surcharged) functions in the @ref HAL_SAI_Init
-    and @ref  HAL_SAI_DeInit only when these callbacks are null (not registered beforehand).
-    If not, MspInit or MspDeInit are not null, the @ref HAL_SAI_Init and @ref HAL_SAI_DeInit
+    reset to the legacy weak (surcharged) functions in the HAL_SAI_Init
+    and HAL_SAI_DeInit only when these callbacks are null (not registered beforehand).
+    If not, MspInit or MspDeInit are not null, the HAL_SAI_Init and HAL_SAI_DeInit
     keep and use the user MspInit/MspDeInit callbacks (registered beforehand).
 
+    [..]
     Callbacks can be registered/unregistered in READY state only.
     Exception done for MspInit/MspDeInit callbacks that can be registered/unregistered
     in READY or RESET state, thus registered (user) MspInit/DeInit callbacks can be used
     during the Init/DeInit.
     In that case first register the MspInit/MspDeInit user callbacks
-    using @ref HAL_SAI_RegisterCallback before calling @ref HAL_SAI_DeInit
-    or @ref HAL_SAI_Init function.
+    using HAL_SAI_RegisterCallback before calling HAL_SAI_DeInit
+    or HAL_SAI_Init function.
 
+    [..]
     When the compilation define USE_HAL_SAI_REGISTER_CALLBACKS is set to 0 or
     not defined, the callback registering feature is not available
     and weak (surcharged) callbacks are used.
@@ -193,29 +200,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -1849,7 +1840,11 @@ void HAL_SAI_IRQHandler(SAI_HandleTypeDef *hsai)
             hsai->ErrorCode |= HAL_SAI_ERROR_DMA;
 
             /* Call SAI error callback */
+#if (USE_HAL_SAI_REGISTER_CALLBACKS == 1)
+            hsai->ErrorCallback(hsai);
+#else
             HAL_SAI_ErrorCallback(hsai);
+#endif
           }
         }
         if (hsai->hdmarx != NULL)
@@ -1864,7 +1859,11 @@ void HAL_SAI_IRQHandler(SAI_HandleTypeDef *hsai)
             hsai->ErrorCode |= HAL_SAI_ERROR_DMA;
 
             /* Call SAI error callback */
+#if (USE_HAL_SAI_REGISTER_CALLBACKS == 1)
+            hsai->ErrorCallback(hsai);
+#else
             HAL_SAI_ErrorCallback(hsai);
+#endif
           }
         }
       }
@@ -1904,7 +1903,11 @@ void HAL_SAI_IRQHandler(SAI_HandleTypeDef *hsai)
             hsai->ErrorCode |= HAL_SAI_ERROR_DMA;
 
             /* Call SAI error callback */
+#if (USE_HAL_SAI_REGISTER_CALLBACKS == 1)
+            hsai->ErrorCallback(hsai);
+#else
             HAL_SAI_ErrorCallback(hsai);
+#endif
           }
         }
         if (hsai->hdmarx != NULL)
@@ -1919,7 +1922,11 @@ void HAL_SAI_IRQHandler(SAI_HandleTypeDef *hsai)
             hsai->ErrorCode |= HAL_SAI_ERROR_DMA;
 
             /* Call SAI error callback */
+#if (USE_HAL_SAI_REGISTER_CALLBACKS == 1)
+            hsai->ErrorCallback(hsai);
+#else
             HAL_SAI_ErrorCallback(hsai);
+#endif
           }
         }
       }
@@ -1959,7 +1966,11 @@ void HAL_SAI_IRQHandler(SAI_HandleTypeDef *hsai)
             hsai->ErrorCode |= HAL_SAI_ERROR_DMA;
 
             /* Call SAI error callback */
+#if (USE_HAL_SAI_REGISTER_CALLBACKS == 1)
+            hsai->ErrorCallback(hsai);
+#else
             HAL_SAI_ErrorCallback(hsai);
+#endif
           }
         }
         if (hsai->hdmarx != NULL)
@@ -1974,7 +1985,11 @@ void HAL_SAI_IRQHandler(SAI_HandleTypeDef *hsai)
             hsai->ErrorCode |= HAL_SAI_ERROR_DMA;
 
             /* Call SAI error callback */
+#if (USE_HAL_SAI_REGISTER_CALLBACKS == 1)
+            hsai->ErrorCallback(hsai);
+#else
             HAL_SAI_ErrorCallback(hsai);
+#endif
           }
         }
       }
