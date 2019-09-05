@@ -6,32 +6,17 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
+
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_ll_rcc.h"
 #include "stm32f1xx_ll_utils.h"
@@ -69,7 +54,7 @@
 #define UTILS_LATENCY1_FREQ         24000000U        /*!< SYSCLK frequency to set FLASH latency 1 */
 #define UTILS_LATENCY2_FREQ         48000000U        /*!< SYSCLK frequency to set FLASH latency 2 */
 #else
-    /*!< No Latency Configuration in this device */
+/*!< No Latency Configuration in this device */
 #endif
 /**
   * @}
@@ -267,9 +252,9 @@ void LL_SetSystemCoreClock(uint32_t HCLKFrequency)
   * @note   Function is based on the following formula:
   *         - PLL output frequency = ((HSI frequency / PREDIV) * PLLMUL)
   *         - PREDIV: Set to 2 for few devices
-  *         - PLLMUL: The application software must set correctly the PLL multiplication factor to 
+  *         - PLLMUL: The application software must set correctly the PLL multiplication factor to
   *                   not exceed 72MHz
-  * @note   FLASH latency can be modified through this function. 
+  * @note   FLASH latency can be modified through this function.
   * @param  UTILS_PLLInitStruct pointer to a @ref LL_UTILS_PLLInitTypeDef structure that contains
   *                             the configuration information for the PLL.
   * @param  UTILS_ClkInitStruct pointer to a @ref LL_UTILS_ClkInitTypeDef structure that contains
@@ -328,9 +313,9 @@ ErrorStatus LL_PLL_ConfigSystemClock_HSI(LL_UTILS_PLLInitTypeDef *UTILS_PLLInitS
   * @note   Function is based on the following formula:
   *         - PLL output frequency = ((HSI frequency / PREDIV) * PLLMUL)
   *         - PREDIV: Set to 2 for few devices
-  *         - PLLMUL: The application software must set correctly the PLL multiplication factor to 
+  *         - PLLMUL: The application software must set correctly the PLL multiplication factor to
   *                   not exceed @ref UTILS_PLL_OUTPUT_MAX
-  * @note   FLASH latency can be modified through this function. 
+  * @note   FLASH latency can be modified through this function.
   * @param  HSEFrequency Value between Min_Data = RCC_HSE_MIN and Max_Data = RCC_HSE_MAX
   * @param  HSEBypass This parameter can be one of the following values:
   *         @arg @ref LL_UTILS_HSEBYPASS_ON
@@ -382,7 +367,7 @@ ErrorStatus LL_PLL_ConfigSystemClock_HSE(uint32_t HSEFrequency, uint32_t HSEBypa
       }
     }
 
-      /* Configure PLL */
+    /* Configure PLL */
     LL_RCC_PLL_ConfigDomain_SYS((RCC_CFGR_PLLSRC | UTILS_PLLInitStruct->Prediv), UTILS_PLLInitStruct->PLLMul);
 
     /* Enable PLL and switch system clock to PLL */
@@ -475,8 +460,6 @@ static uint32_t UTILS_GetPLLOutputFrequency(uint32_t PLL_InputFrequency, LL_UTIL
   /* Check different PLL parameters according to RM                          */
 #if defined (RCC_CFGR2_PREDIV1)
   pllfreq = __LL_RCC_CALC_PLLCLK_FREQ(PLL_InputFrequency / (UTILS_PLLInitStruct->Prediv + 1U), UTILS_PLLInitStruct->PLLMul);
-#elif defined(RCC_CFGR2_PREDIV1SRC)
-  pllfreq = __LL_RCC_CALC_PLLCLK_FREQ(PLL_InputFrequency, UTILS_PLLInitStruct->PLLMul, UTILS_PLLInitStruct->PLLDiv);
 #else
   pllfreq = __LL_RCC_CALC_PLLCLK_FREQ(PLL_InputFrequency / ((UTILS_PLLInitStruct->Prediv >> RCC_CFGR_PLLXTPRE_Pos) + 1U), UTILS_PLLInitStruct->PLLMul);
 #endif /*RCC_CFGR2_PREDIV1SRC*/
@@ -560,13 +543,15 @@ static ErrorStatus UTILS_EnablePLLAndSwitchSystem(uint32_t SYSCLK_Frequency, LL_
   if (status == SUCCESS)
   {
 #if defined(RCC_PLL2_SUPPORT)
-    /* Enable PLL2 */
-    LL_RCC_PLL2_Enable();
-    while (LL_RCC_PLL2_IsReady() != 1U)
+    if (LL_RCC_PLL_GetMainSource() != LL_RCC_PLLSOURCE_HSI_DIV_2)
     {
-      /* Wait for PLL2 ready */
+      /* Enable PLL2 */
+      LL_RCC_PLL2_Enable();
+      while (LL_RCC_PLL2_IsReady() != 1U)
+      {
+        /* Wait for PLL2 ready */
+      }
     }
-    
 #endif /* RCC_PLL2_SUPPORT */
     /* Enable PLL */
     LL_RCC_PLL_Enable();
